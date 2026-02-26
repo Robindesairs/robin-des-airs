@@ -1,0 +1,48 @@
+# Robin des Airs — configuration Netlify
+# index.html est dans le dossier "files" (dernier dossier de la liste du dépôt)
+[build]
+  publish = "files"
+  command = ""
+
+# Redirections pour URLs sans .html (optionnel)
+[[redirects]]
+  from = "/choix-reclamation"
+  to = "/choix-reclamation.html"
+  status = 200
+
+[[redirects]]
+  from = "/dossier"
+  to = "/dossier.html"
+  status = 200
+
+[[redirects]]
+  from = "/guide-whatsapp"
+  to = "/guide-whatsapp.html"
+  status = 200
+
+[[redirects]]
+  from = "/suivi-dossier"
+  to = "/suivi-dossier.html"
+  status = 200
+
+[[redirects]]
+  from = "/cgv"
+  to = "/cgv.html"
+  status = 200
+
+[[redirects]]
+  from = "/politique-confidentialite"
+  to = "/politique-confidentialite.html"
+  status = 200
+
+[[redirects]]
+  from = "/mandat-representation"
+  to = "/mandat-representation.html"
+  status = 200
+
+[[redirects]]
+  from = "/droit-retractation"
+  to = "/droit-retractation.html"
+  status = 200
+
+# Page 404 personnalisée (créer 404.html si vous en voulez une)

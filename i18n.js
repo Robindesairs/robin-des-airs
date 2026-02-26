@@ -1,0 +1,416 @@
+/* Robin des Airs — Traductions multilingues (FR, EN, ES, NL, PT, DE) */
+window.I18N = (function() {
+  var currentLang = (localStorage.getItem('robin_lang') || 'fr').toLowerCase();
+  var T = {
+    fr: {
+      hero_title: "Robin prend\naux compagnies,\n",
+      hero_title_neon: "rend aux voyageurs.",
+      hero_desc: "Vol retardé de +3h, annulé ou surbooké ? La loi européenne vous doit <strong>jusqu'à 600€</strong>. Nous récupérons votre argent — <strong>zéro CB, zéro frais si on ne gagne pas.</strong>",
+      hero_btn_calc: "🧮 Calculer mon indemnité",
+      hero_btn_wa: "💬 Parler à un conseiller",
+      hero_stat_max: "Indemnité max",
+      hero_stat_won: "Dossiers gagnés",
+      hero_stat_lost: "Si on perd",
+      hero_stat_24h: "Réponse garantie",
+      nav_cta: "Obtenir mon indemnité →",
+      nav_drawer_loi: "📋 La loi CE 261",
+      nav_drawer_how: "⚙️ Comment ça marche",
+      nav_drawer_tarifs: "💰 Nos tarifs",
+      nav_drawer_testi: "⭐ Témoignages",
+      nav_drawer_faq: "❓ FAQ",
+      calc_tag: "Diagnostic de vol",
+      calc_title: "Quelle est votre\nsituation ?",
+      funnel_subtitle: "situation ?",
+      step1_eyebrow: "Étape 1 sur 5 — Ce qui s'est passé",
+      step1_retard: "Vol retardé",
+      step1_retard_sub: "Arrivée avec +3h de retard",
+      step1_annulation: "Vol annulé",
+      step1_annulation_sub: "Annulation par la compagnie",
+      step1_surbook: "Surbooking / Refus d'embarquement",
+      step1_surbook_sub: "La compagnie vous a refusé l'accès à bord",
+      step1_wa: "Parler directement à Robin",
+      step1_wa_sub: "Cas complexe ou question → WhatsApp immédiat",
+      step1c_eyebrow: "Étape 1c — Raison invoquée",
+      step1c_q: "La compagnie vous a expliqué pourquoi ?",
+      raison_meteo: "🌩️ Météo / Conditions climatiques",
+      raison_technique: "🔧 Problème technique / Panne",
+      raison_greve: "✊ Grève",
+      raison_securite: "🛡️ Raison de sécurité",
+      raison_sans: "🤷 Aucune explication donnée",
+      section_loi_tag: "Ce que vous ne savez peut-être pas",
+      section_loi_title: "D'où vient<br><span class=\"neon\">cet argent ?</span>",
+      section_how_tag: "La méthode Robin",
+      section_how_title: "4 flèches.\nUn seul objectif.",
+      section_faq_tag: "Questions fréquentes",
+      section_faq_title: "Tout ce que vous\nvoulez savoir.",
+      cta_final_tag: "Passez à l'action maintenant",
+      cta_final_title: "Votre argent\nvous attend.",
+      cta_btn_calc: "Calculer mon indemnité →",
+      cta_wa: "WhatsApp direct",
+      cta_recall: "Jusqu'à 600€ · 25% · Zéro frais si on perd",
+      footer_tagline: "Réclamation aérienne · Spécialiste Diaspora · Prix fixe · No win no fee",
+      footer_nav: "Navigation",
+      footer_legal: "Légal",
+      footer_contact: "Contact",
+      footer_loi: "La loi CE 261/2004",
+      footer_how: "Comment ça marche",
+      footer_tarifs: "Nos tarifs",
+      footer_histoire: "Notre histoire",
+      ready_claim: "Prêt à réclamer ?",
+      obt_indemnite: "Obtenir mon indemnité →"
+    },
+    en: {
+      hero_title: "Robin takes from\nairlines,\n",
+      hero_title_neon: "gives back to travellers.",
+      hero_desc: "Flight delayed +3h, cancelled or overbooked? EU law entitles you to up to <strong>€600</strong>. We get your money back — <strong>no card, no fee if we don't win.</strong>",
+      hero_btn_calc: "🧮 Calculate my compensation",
+      hero_btn_wa: "💬 Talk to an advisor",
+      hero_stat_max: "Max compensation",
+      hero_stat_won: "Cases won",
+      hero_stat_lost: "If we lose",
+      hero_stat_24h: "Reply within 24h",
+      nav_cta: "Get my compensation →",
+      nav_drawer_loi: "📋 EU Regulation 261",
+      nav_drawer_how: "⚙️ How it works",
+      nav_drawer_tarifs: "💰 Our rates",
+      nav_drawer_testi: "⭐ Testimonials",
+      nav_drawer_faq: "❓ FAQ",
+      calc_tag: "Flight checker",
+      calc_title: "What's your\nsituation?",
+      funnel_subtitle: "situation?",
+      step1_eyebrow: "Step 1 of 5 — What happened",
+      step1_retard: "Delayed flight",
+      step1_retard_sub: "Arrival +3h late",
+      step1_annulation: "Cancelled flight",
+      step1_annulation_sub: "Cancelled by the airline",
+      step1_surbook: "Overbooking / Denied boarding",
+      step1_surbook_sub: "Airline denied you boarding",
+      step1_wa: "Talk directly to Robin",
+      step1_wa_sub: "Complex case or question → WhatsApp",
+      step1c_eyebrow: "Step 1c — Reason given",
+      step1c_q: "Did the airline explain why?",
+      raison_meteo: "🌩️ Weather / Climate",
+      raison_technique: "🔧 Technical issue / Breakdown",
+      raison_greve: "✊ Strike",
+      raison_securite: "🛡️ Safety reason",
+      raison_sans: "🤷 No explanation given",
+      section_loi_tag: "What you might not know",
+      section_loi_title: "Where does<br><span class=\"neon\">this money come from?</span>",
+      section_how_tag: "The Robin method",
+      section_how_title: "4 steps.\nOne goal.",
+      section_faq_tag: "Frequently asked questions",
+      section_faq_title: "Everything you\nwant to know.",
+      cta_final_tag: "Take action now",
+      cta_final_title: "Your money\nis waiting.",
+      cta_btn_calc: "Calculate my compensation →",
+      cta_wa: "WhatsApp",
+      cta_recall: "Up to €600 · 25% · No fee if we lose",
+      footer_tagline: "Air claim · Diaspora specialist · Fixed price · No win no fee",
+      footer_nav: "Navigation",
+      footer_legal: "Legal",
+      footer_contact: "Contact",
+      footer_loi: "EU Regulation 261/2004",
+      footer_how: "How it works",
+      footer_tarifs: "Our rates",
+      footer_histoire: "Our story",
+      ready_claim: "Ready to claim?",
+      obt_indemnite: "Get my compensation →"
+    },
+    es: {
+      hero_title: "Robin quita a las\naerolíneas,\n",
+      hero_title_neon: "devuelve a los viajeros.",
+      hero_desc: "¿Vuelo con más de +3h de retraso, cancelado o overbooking? La ley europea te da hasta <strong>600€</strong>. Recuperamos tu dinero — <strong>sin tarjeta, sin gastos si no ganamos.</strong>",
+      hero_btn_calc: "🧮 Calcular mi indemnización",
+      hero_btn_wa: "💬 Hablar con un asesor",
+      hero_stat_max: "Indemnización máx.",
+      hero_stat_won: "Casos ganados",
+      hero_stat_lost: "Si perdemos",
+      hero_stat_24h: "Respuesta en 24h",
+      nav_cta: "Obtener mi indemnización →",
+      nav_drawer_loi: "📋 Reglamento CE 261",
+      nav_drawer_how: "⚙️ Cómo funciona",
+      nav_drawer_tarifs: "💰 Nuestros precios",
+      nav_drawer_testi: "⭐ Testimonios",
+      nav_drawer_faq: "❓ FAQ",
+      calc_tag: "Diagnóstico de vuelo",
+      calc_title: "¿Cuál es tu\nsituación?",
+      funnel_subtitle: "situación?",
+      step1_eyebrow: "Paso 1 de 5 — Qué pasó",
+      step1_retard: "Vuelo retrasado",
+      step1_retard_sub: "Llegada con +3h de retraso",
+      step1_annulation: "Vuelo cancelado",
+      step1_annulation_sub: "Cancelado por la compañía",
+      step1_surbook: "Overbooking / Denegación de embarque",
+      step1_surbook_sub: "La compañía te denegó el embarque",
+      step1_wa: "Hablar con Robin",
+      step1_wa_sub: "Caso complejo → WhatsApp",
+      step1c_eyebrow: "Paso 1c — Motivo invocado",
+      step1c_q: "¿La compañía te explicó por qué?",
+      raison_meteo: "🌩️ Meteorología",
+      raison_technique: "🔧 Problema técnico",
+      raison_greve: "✊ Huelga",
+      raison_securite: "🛡️ Seguridad",
+      raison_sans: "🤷 Sin explicación",
+      section_loi_tag: "Lo que quizá no sabes",
+      section_loi_title: "¿De dónde sale<br><span class=\"neon\">este dinero?</span>",
+      section_how_tag: "El método Robin",
+      section_how_title: "4 pasos.\nUn solo objetivo.",
+      section_faq_tag: "Preguntas frecuentes",
+      section_faq_title: "Todo lo que\nquieres saber.",
+      cta_final_tag: "Actúa ahora",
+      cta_final_title: "Tu dinero\nte espera.",
+      cta_btn_calc: "Calcular mi indemnización →",
+      cta_wa: "WhatsApp",
+      cta_recall: "Hasta 600€ · 25% · Sin gastos si perdemos",
+      footer_tagline: "Reclamación aérea · Especialista diáspora · Precio fijo",
+      footer_nav: "Navegación",
+      footer_legal: "Legal",
+      footer_contact: "Contacto",
+      footer_loi: "Reglamento CE 261/2004",
+      footer_how: "Cómo funciona",
+      footer_tarifs: "Nuestros precios",
+      footer_histoire: "Nuestra historia",
+      ready_claim: "¿Listo para reclamar?",
+      obt_indemnite: "Obtener mi indemnización →"
+    },
+    nl: {
+      hero_title: "Robin neemt van\nde luchtvaartmaatschappijen,\n",
+      hero_title_neon: "geeft terug aan reizigers.",
+      hero_desc: "Vlucht +3u vertraagd, geannuleerd of overboekt? De EU-regelgeving geeft u recht op tot <strong>600€</strong>. Wij halen uw geld op — <strong>geen kaart, geen kosten als we niet winnen.</strong>",
+      hero_btn_calc: "🧮 Mijn vergoeding berekenen",
+      hero_btn_wa: "💬 Praat met een adviseur",
+      hero_stat_max: "Max. vergoeding",
+      hero_stat_won: "Zaken gewonnen",
+      hero_stat_lost: "Als we verliezen",
+      hero_stat_24h: "Antwoord binnen 24u",
+      nav_cta: "Mijn vergoeding →",
+      nav_drawer_loi: "📋 EU Verordening 261",
+      nav_drawer_how: "⚙️ Hoe het werkt",
+      nav_drawer_tarifs: "💰 Onze tarieven",
+      nav_drawer_testi: "⭐ Getuigenissen",
+      nav_drawer_faq: "❓ FAQ",
+      calc_tag: "Vluchtcheck",
+      calc_title: "Wat is uw\nsituatie?",
+      funnel_subtitle: "situatie?",
+      step1_eyebrow: "Stap 1 van 5 — Wat is er gebeurd",
+      step1_retard: "Vertraagde vlucht",
+      step1_retard_sub: "Aankomst +3u te laat",
+      step1_annulation: "Geannuleerde vlucht",
+      step1_annulation_sub: "Geannuleerd door de maatschappij",
+      step1_surbook: "Overbooking / Weigering",
+      step1_surbook_sub: "Geen toegang tot het vliegtuig",
+      step1_wa: "Direct contact met Robin",
+      step1_wa_sub: "Complexe vraag → WhatsApp",
+      step1c_eyebrow: "Stap 1c — Opgegeven reden",
+      step1c_q: "Heeft de maatschappij uitgelegd waarom?",
+      raison_meteo: "🌩️ Weer",
+      raison_technique: "🔧 Technisch probleem",
+      raison_greve: "✊ Staking",
+      raison_securite: "🛡️ Veiligheid",
+      raison_sans: "🤷 Geen uitleg",
+      section_loi_tag: "Wat u misschien niet weet",
+      section_loi_title: "Waar komt<br><span class=\"neon\">dit geld vandaan?</span>",
+      section_how_tag: "De Robin-methode",
+      section_how_title: "4 stappen.\nEén doel.",
+      section_faq_tag: "Veelgestelde vragen",
+      section_faq_title: "Alles wat u\nwilt weten.",
+      cta_final_tag: "Nu actie ondernemen",
+      cta_final_title: "Uw geld\nwacht op u.",
+      cta_btn_calc: "Mijn vergoeding berekenen →",
+      cta_wa: "WhatsApp",
+      cta_recall: "Tot 600€ · 25% · Geen kosten bij verlies",
+      footer_tagline: "Luchtvaartclaim · Diaspora · Vast tarief",
+      footer_nav: "Navigatie",
+      footer_legal: "Legal",
+      footer_contact: "Contact",
+      footer_loi: "EU Verordening 261/2004",
+      footer_how: "Hoe het werkt",
+      footer_tarifs: "Onze tarieven",
+      footer_histoire: "Ons verhaal",
+      ready_claim: "Klaar om te claimen?",
+      obt_indemnite: "Mijn vergoeding →"
+    },
+    pt: {
+      hero_title: "Robin tira das\ncompanhias aéreas,\n",
+      hero_title_neon: "devolve aos viajantes.",
+      hero_desc: "Voo atrasado +3h, cancelado ou overbooking? A lei europeia dá-lhe até <strong>600€</strong>. Recuperamos o seu dinheiro — <strong>sem cartão, sem custos se não ganharmos.</strong>",
+      hero_btn_calc: "🧮 Calcular a minha indemnização",
+      hero_btn_wa: "💬 Falar com um consultor",
+      hero_stat_max: "Indemnização máx.",
+      hero_stat_won: "Casos ganhos",
+      hero_stat_lost: "Se perdemos",
+      hero_stat_24h: "Resposta em 24h",
+      nav_cta: "Obter a minha indemnização →",
+      nav_drawer_loi: "📋 Regulamento CE 261",
+      nav_drawer_how: "⚙️ Como funciona",
+      nav_drawer_tarifs: "💰 Os nossos preços",
+      nav_drawer_testi: "⭐ Testemunhos",
+      nav_drawer_faq: "❓ FAQ",
+      calc_tag: "Diagnóstico de voo",
+      calc_title: "Qual é a sua\nsituação?",
+      funnel_subtitle: "situação?",
+      step1_eyebrow: "Passo 1 de 5 — O que aconteceu",
+      step1_retard: "Voo atrasado",
+      step1_retard_sub: "Chegada com +3h de atraso",
+      step1_annulation: "Voo cancelado",
+      step1_annulation_sub: "Cancelado pela companhia",
+      step1_surbook: "Overbooking / Negada embarque",
+      step1_surbook_sub: "Companhia recusou embarque",
+      step1_wa: "Falar com Robin",
+      step1_wa_sub: "Caso complexo → WhatsApp",
+      step1c_eyebrow: "Passo 1c — Motivo invocado",
+      step1c_q: "A companhia explicou porquê?",
+      raison_meteo: "🌩️ Meteorologia",
+      raison_technique: "🔧 Problema técnico",
+      raison_greve: "✊ Greve",
+      raison_securite: "🛡️ Segurança",
+      raison_sans: "🤷 Sem explicação",
+      section_loi_tag: "O que talvez não saiba",
+      section_loi_title: "De onde vem<br><span class=\"neon\">este dinheiro?</span>",
+      section_how_tag: "O método Robin",
+      section_how_title: "4 passos.\nUm objetivo.",
+      section_faq_tag: "Perguntas frequentes",
+      section_faq_title: "Tudo o que\nquer saber.",
+      cta_final_tag: "Agir agora",
+      cta_final_title: "O seu dinheiro\nespera por si.",
+      cta_btn_calc: "Calcular a minha indemnização →",
+      cta_wa: "WhatsApp",
+      cta_recall: "Até 600€ · 25% · Sem custos se perdemos",
+      footer_tagline: "Reclamação aérea · Especialista diáspora · Preço fixo",
+      footer_nav: "Navegação",
+      footer_legal: "Legal",
+      footer_contact: "Contacto",
+      footer_loi: "Regulamento CE 261/2004",
+      footer_how: "Como funciona",
+      footer_tarifs: "Os nossos preços",
+      footer_histoire: "A nossa história",
+      ready_claim: "Pronto para reclamar?",
+      obt_indemnite: "Obter a minha indemnização →"
+    },
+    de: {
+      hero_title: "Robin nimmt den\nAirlines,\n",
+      hero_title_neon: "gibt den Reisenden zurück.",
+      hero_desc: "Flug +3h verspätet, annulliert oder überbucht? Die EU-Verordnung gibt Ihnen bis zu <strong>600€</strong>. Wir holen Ihr Geld — <strong>keine Karte, keine Gebühren bei Verlust.</strong>",
+      hero_btn_calc: "🧮 Meine Entschädigung berechnen",
+      hero_btn_wa: "💬 Mit Berater sprechen",
+      hero_stat_max: "Max. Entschädigung",
+      hero_stat_won: "Gewonnene Fälle",
+      hero_stat_lost: "Wenn wir verlieren",
+      hero_stat_24h: "Antwort in 24h",
+      nav_cta: "Entschädigung sichern →",
+      nav_drawer_loi: "📋 EU-Verordnung 261",
+      nav_drawer_how: "⚙️ So funktioniert's",
+      nav_drawer_tarifs: "💰 Unsere Tarife",
+      nav_drawer_testi: "⭐ Erfahrungsberichte",
+      nav_drawer_faq: "❓ FAQ",
+      calc_tag: "Flug-Check",
+      calc_title: "Was ist Ihre\nSituation?",
+      funnel_subtitle: "Situation?",
+      step1_eyebrow: "Schritt 1 von 5 — Was ist passiert",
+      step1_retard: "Verspäteter Flug",
+      step1_retard_sub: "Ankunft +3h Verspätung",
+      step1_annulation: "Stornierter Flug",
+      step1_annulation_sub: "Von der Airline storniert",
+      step1_surbook: "Überbuchung / Beförderungsverweigerung",
+      step1_surbook_sub: "Airline hat Sie abgewiesen",
+      step1_wa: "Direkt mit Robin sprechen",
+      step1_wa_sub: "Komplexer Fall → WhatsApp",
+      step1c_eyebrow: "Schritt 1c — Genannter Grund",
+      step1c_q: "Hat die Airline den Grund erklärt?",
+      raison_meteo: "🌩️ Wetter",
+      raison_technique: "🔧 Technisches Problem",
+      raison_greve: "✊ Streik",
+      raison_securite: "🛡️ Sicherheit",
+      raison_sans: "🤷 Keine Erklärung",
+      section_loi_tag: "Was Sie vielleicht nicht wissen",
+      section_loi_title: "Woher kommt<br><span class=\"neon\">dieses Geld?</span>",
+      section_how_tag: "Die Robin-Methode",
+      section_how_title: "4 Schritte.\nEin Ziel.",
+      section_faq_tag: "Häufige Fragen",
+      section_faq_title: "Alles, was Sie\nwissen wollen.",
+      cta_final_tag: "Jetzt handeln",
+      cta_final_title: "Ihr Geld\nwartet auf Sie.",
+      cta_btn_calc: "Entschädigung berechnen →",
+      cta_wa: "WhatsApp",
+      cta_recall: "Bis 600€ · 25% · Keine Gebühren bei Verlust",
+      footer_tagline: "Flugentschädigung · Diaspora · Festpreis",
+      footer_nav: "Navigation",
+      footer_legal: "Rechtliches",
+      footer_contact: "Kontakt",
+      footer_loi: "EU-Verordnung 261/2004",
+      footer_how: "So funktioniert's",
+      footer_tarifs: "Unsere Tarife",
+      footer_histoire: "Unsere Geschichte",
+      ready_claim: "Bereit zur Reklamation?",
+      obt_indemnite: "Entschädigung sichern →"
+    }
+  };
+
+  function get(key) {
+    var lang = T[currentLang] ? currentLang : 'fr';
+    return (T[lang] && T[lang][key]) || T.fr[key] || key;
+  }
+
+  function apply() {
+    document.documentElement.lang = currentLang === 'fr' ? 'fr' : currentLang;
+    document.querySelectorAll('[data-i18n]').forEach(function(el) {
+      var key = el.getAttribute('data-i18n');
+      var val = get(key);
+      if (val && el.tagName !== 'INPUT' && el.tagName !== 'TEXTAREA') el.textContent = val.replace(/\\n/g, '\n');
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
+      var key = el.getAttribute('data-i18n-html');
+      var val = get(key);
+      if (val) el.innerHTML = val.replace(/\\n/g, '<br>');
+    });
+    var funnelSub = document.getElementById('funnel-subtitle');
+    if (funnelSub) funnelSub.textContent = get('funnel_subtitle');
+    var step1 = document.getElementById('step-1');
+    if (step1) {
+      var eb = step1.querySelector('.fstep-eyebrow');
+      if (eb) eb.textContent = get('step1_eyebrow');
+      var cbs = step1.querySelectorAll('.cb');
+      if (cbs.length >= 4) {
+        cbs[0].querySelector('.cb-main').textContent = get('step1_retard');
+        cbs[0].querySelector('.cb-sub').textContent = get('step1_retard_sub');
+        cbs[1].querySelector('.cb-main').textContent = get('step1_annulation');
+        cbs[1].querySelector('.cb-sub').textContent = get('step1_annulation_sub');
+        cbs[2].querySelector('.cb-main').textContent = get('step1_surbook');
+        cbs[2].querySelector('.cb-sub').textContent = get('step1_surbook_sub');
+        cbs[3].querySelector('.cb-main').textContent = get('step1_wa');
+        cbs[3].querySelector('.cb-sub').textContent = get('step1_wa_sub');
+      }
+    }
+    var step1c = document.getElementById('step-1c');
+    if (step1c) {
+      var eb1c = step1c.querySelector('.fstep-eyebrow');
+      if (eb1c) eb1c.textContent = get('step1c_eyebrow');
+      var q1c = step1c.querySelector('.fstep-q');
+      if (q1c) q1c.textContent = get('step1c_q');
+      var reasonBtns = step1c.querySelectorAll('.reason-btn');
+      if (reasonBtns.length >= 5) {
+        reasonBtns[0].innerHTML = get('raison_meteo');
+        reasonBtns[1].innerHTML = get('raison_technique');
+        reasonBtns[2].innerHTML = get('raison_greve');
+        reasonBtns[3].innerHTML = get('raison_securite');
+        reasonBtns[4].innerHTML = get('raison_sans');
+      }
+    }
+  }
+
+  function setLang(code) {
+    var c = (code || 'fr').toLowerCase();
+    if (T[c]) {
+      currentLang = c;
+      try { localStorage.setItem('robin_lang', c); } catch (e) {}
+      apply();
+    }
+  }
+
+  return {
+    get: get,
+    apply: apply,
+    setLang: setLang,
+    getLang: function() { return currentLang; }
+  };
+})();
