@@ -26,7 +26,13 @@
     .back-link:hover{color:white}
     .page-wrap{max-width:720px;margin:0 auto;padding:40px 24px 80px}
     .page-title{font-size:clamp(26px,5vw,34px);font-weight:900;color:var(--navy);margin-bottom:12px;line-height:1.15}
-    .page-sub{font-size:15px;color:var(--gray);margin-bottom:36px;line-height:1.7}
+    .page-sub{font-size:15px;color:var(--gray);margin-bottom:24px;line-height:1.7}
+    .page-recall{
+      display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px 24px;
+      padding:14px 20px;margin-bottom:32px;background:linear-gradient(135deg,rgba(0,200,122,0.08),rgba(11,31,58,0.04));
+      border:1px solid rgba(0,200,122,0.25);border-radius:12px;font-size:13px;font-weight:700;color:var(--navy);
+    }
+    .page-recall span{display:inline-flex;align-items:center;gap:6px}
     .options{display:flex;flex-direction:column;gap:20px}
     .option-card{
       background:white;
@@ -61,7 +67,11 @@
   <div class="page-wrap">
     <h1 class="page-title">Comment voulez-vous déposer votre dossier ?</h1>
     <p class="page-sub">Deux options possibles. Choisissez celle qui vous convient le mieux — le résultat est le même : nous réclamons pour vous et vous recevez votre indemnité.</p>
-
+    <div class="page-recall" role="status">
+      <span>💰 Jusqu'à 600€</span>
+      <span>📊 25% — no win no fee</span>
+      <span>✅ Zéro frais si on perd</span>
+    </div>
     <div class="options">
 
       <a href="guide-whatsapp.html" class="option-card wa">

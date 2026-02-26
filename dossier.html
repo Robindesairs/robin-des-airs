@@ -131,6 +131,7 @@ body{background:var(--off);font-family:'Montserrat',sans-serif;color:var(--text)
   border-color:var(--neon);background:white;
 }
 .field input.err,.field select.err{border-color:var(--red)}
+.field-hint{font-size:11px;color:var(--gray2);margin-top:6px;margin-bottom:0;}
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 
 /* ── BANDEAU NOS AVANTAGES (visible tout le long) ── */
@@ -148,6 +149,14 @@ body{background:var(--off);font-family:'Montserrat',sans-serif;color:var(--text)
   font-size:12px;font-weight:700;color:var(--navy);
 }
 .avantage-pill span:first-child{font-size:16px}
+
+.trust-band{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 12px;
+  font-size:11px;color:var(--gray2);margin-bottom:20px;letter-spacing:0.3px;
+}
+.trust-band span:nth-child(odd){font-weight:600;color:var(--gray);}
+.dossier-steps-remaining{font-size:12px;font-weight:700;color:var(--neon-dark);margin-bottom:8px;text-align:center;}
+.dossier-brouillon-msg{padding:10px 16px;background:rgba(0,200,122,0.1);border:1px solid rgba(0,200,122,0.25);border-radius:8px;font-size:12px;color:var(--neon-dark);margin-bottom:16px;text-align:center;}
 
 /* ── CHOIX VOL DIRECT / CORRESPONDANCE (comme diagnostic) ── */
 .trajet-choice{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
@@ -473,11 +482,20 @@ body{background:var(--off);font-family:'Montserrat',sans-serif;color:var(--text)
     <span class="avantage-pill"><span>💰</span> 25% — commission la moins chère</span>
     <span class="avantage-pill"><span>⚡</span> Réponse sous 24h</span>
   </div>
+  <div class="trust-band" role="status">
+    <span>🔒 Données sécurisées</span>
+    <span>·</span>
+    <span>RGPD conforme</span>
+    <span>·</span>
+    <span>Votre brouillon est enregistré automatiquement</span>
+  </div>
 
   <!-- Progress bar -->
   <div class="progress-bar-wrap">
     <div class="progress-bar" id="progress-bar" style="width:20%"></div>
   </div>
+  <p class="dossier-steps-remaining" id="steps-remaining" aria-live="polite">Plus que 5 étapes</p>
+  <div class="dossier-brouillon-msg" id="brouillon-msg" style="display:none;">✓ Brouillon restauré — vous pouvez reprendre où vous en étiez.</div>
 
   <!-- Stepper -->
   <div class="stepper" id="stepper">
@@ -809,7 +827,8 @@ body{background:var(--off);font-family:'Montserrat',sans-serif;color:var(--text)
         <div class="field">
           <label for="sepa-iban">IBAN *</label>
           <input type="text" id="sepa-iban" placeholder="FR76 XXXX XXXX XXXX XXXX XXXX XXX"
-            oninput="formatIBAN(this)" maxlength="34">
+            oninput="formatIBAN(this)" maxlength="34" aria-describedby="iban-help">
+          <p id="iban-help" class="field-hint">Format : 2 lettres + 25 chiffres (ex. FR76…). Les espaces sont ajoutés automatiquement.</p>
         </div>
         <div class="field-row">
           <div class="field">
@@ -850,7 +869,7 @@ body{background:var(--off);font-family:'Montserrat',sans-serif;color:var(--text)
       <div class="success-title">Dossier reçu !</div>
       <div class="success-sub">
         Votre dossier a bien été transmis à l'équipe Robin des Airs.<br>
-        Vous allez recevoir une confirmation par <strong>email et WhatsApp</strong> sous 30 minutes.
+        Nous vous recontactons sous <strong>24h</strong> par email et WhatsApp. Vous pouvez aussi nous écrire pour toute question.
       </div>
       <div class="success-steps">
         <div class="success-step">
@@ -871,6 +890,7 @@ body{background:var(--off);font-family:'Montserrat',sans-serif;color:var(--text)
          style="display:inline-flex;align-items:center;gap:8px;background:#25D366;color:white;padding:14px 28px;border-radius:8px;font-weight:700;font-size:12px;letter-spacing:1px;text-decoration:none;text-transform:uppercase;">
         💬 Suivre sur WhatsApp
       </a>
+      <p style="margin-top:14px;font-size:12px;color:var(--gray);"><a href="suivi-dossier.html" style="color:var(--neon-dark);font-weight:600;">Où en est mon dossier ?</a> — page dédiée au suivi</p>
     </div>
   </div>
 
@@ -893,6 +913,75 @@ body{background:var(--off);font-family:'Montserrat',sans-serif;color:var(--text)
 /* ══ STEP NAVIGATION ══ */
 let currentStep = 1;
 const TOTAL_STEPS = 5;
+const BROUILLON_KEY = 'robin_dossier_brouillon';
+
+function saveDossierBrouillon() {
+  try {
+    const data = {
+      step: currentStep,
+      trajet: document.getElementById('f-trajet')?.value,
+      vol: document.getElementById('f-vol')?.value,
+      vol1: document.getElementById('f-vol1')?.value,
+      vol2: document.getElementById('f-vol2')?.value,
+      compagnie: document.getElementById('f-compagnie')?.value,
+      destination: document.getElementById('f-destination')?.value,
+      dateVol: document.getElementById('f-date-vol')?.value,
+      pax: document.getElementById('f-pax-val')?.textContent,
+      motif: document.getElementById('f-motif')?.value,
+      prenom: document.getElementById('f-prenom')?.value,
+      nom: document.getElementById('f-nom')?.value,
+      email: document.getElementById('f-email')?.value,
+      tel: document.getElementById('f-tel')?.value,
+      sepaLater: document.getElementById('sepa-later')?.checked,
+      sepaIban: document.getElementById('sepa-iban')?.value,
+      sepaTitulaire: document.getElementById('sepa-titulaire')?.value,
+      sepaBanque: document.getElementById('sepa-banque')?.value
+    };
+    localStorage.setItem(BROUILLON_KEY, JSON.stringify(data));
+  } catch (e) {}
+}
+
+function restoreDossierBrouillon() {
+  try {
+    const raw = localStorage.getItem(BROUILLON_KEY);
+    if (!raw) return false;
+    const data = JSON.parse(raw);
+    if (data.step && data.step > 1) {
+      const set = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.value = val; };
+      const setPax = (v) => { const el = document.getElementById('f-pax-val'); if (el) el.textContent = v || '1'; };
+      set('f-trajet', data.trajet);
+      if (data.trajet && typeof setTrajetDossier === 'function') setTrajetDossier(data.trajet);
+      set('f-vol', data.vol);
+      set('f-vol1', data.vol1);
+      set('f-vol2', data.vol2);
+      set('f-compagnie', data.compagnie);
+      set('f-destination', data.destination);
+      set('f-date-vol', data.dateVol);
+      setPax(data.pax);
+      set('f-motif', data.motif);
+      set('f-prenom', data.prenom);
+      set('f-nom', data.nom);
+      set('f-email', data.email);
+      set('f-tel', data.tel);
+      set('sepa-iban', data.sepaIban);
+      set('sepa-titulaire', data.sepaTitulaire);
+      set('sepa-banque', data.sepaBanque);
+      if (data.sepaLater) document.getElementById('sepa-later').checked = true; toggleSepaFields();
+      currentStep = Math.min(Math.max(1, data.step), TOTAL_STEPS);
+      setStep(currentStep);
+      if (data.vol) { const el = document.getElementById('f-vol'); if (el) el.dispatchEvent(new Event('input', { bubbles: true })); }
+      if (data.vol2) { const el = document.getElementById('f-vol2'); if (el) el.dispatchEvent(new Event('input', { bubbles: true })); }
+      document.getElementById('brouillon-msg').style.display = 'block';
+      setTimeout(function(){ document.getElementById('brouillon-msg').style.display = 'none'; }, 6000);
+      return true;
+    }
+  } catch (e) {}
+  return false;
+}
+
+function clearDossierBrouillon() {
+  try { localStorage.removeItem(BROUILLON_KEY); } catch (e) {}
+}
 
 /* ══ ÉTAPE 1 — VOL & TRAJET (comme diagnostic) ══ */
 const VOL_DB = {
@@ -969,7 +1058,13 @@ function setStep(n) {
   // Progress bar
   document.getElementById('progress-bar').style.width = ((n / TOTAL_STEPS) * 100) + '%';
 
+  // Plus que X étapes
+  const remaining = TOTAL_STEPS - n;
+  const remEl = document.getElementById('steps-remaining');
+  if (remEl) remEl.textContent = remaining > 0 ? 'Plus que ' + remaining + ' étape' + (remaining > 1 ? 's' : '') : 'Dernière étape !';
+
   currentStep = n;
+  saveDossierBrouillon();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -993,6 +1088,7 @@ function validateStep(n) {
     ['f-vol','f-vol2'].forEach(id => { const e = document.getElementById(id); if (e) e.classList.remove('err'); });
     if (!volNum) {
       document.getElementById(trajet === 'direct' ? 'f-vol' : 'f-vol2').classList.add('err');
+      alert('Veuillez renseigner le numéro de vol (ex. AF718, BA123).');
       ok = false;
     }
     required.forEach(id => {
@@ -1237,30 +1333,75 @@ function formatIBAN(input) {
 }
 
 /* ══ SUBMIT ══ */
+// URL d'envoi : remplacer par votre webhook (Make.com, n8n, backend). Si vide, affichage succès sans envoi.
+const DOSSIER_WEBHOOK_URL = ''; // ex: 'https://hook.eu1.make.com/xxxx' ou '/api/dossier'
+
 function submitDossier() {
   if (!validateStep(5)) return;
   const btn = document.getElementById('btn-submit');
   btn.textContent = '⏳ Envoi en cours...';
   btn.disabled = true;
 
-  // Simulate submit (real: send to backend / Make.com webhook)
-  setTimeout(() => {
+  function showSuccess() {
+    clearDossierBrouillon();
     document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
     document.getElementById('fs-success').classList.add('active');
     document.getElementById('progress-bar').style.width = '100%';
     document.querySelectorAll('.step-item').forEach(el => el.classList.add('done'));
+    const remEl = document.getElementById('steps-remaining'); if (remEl) remEl.textContent = 'Dossier envoyé !';
     window.scrollTo({ top:0, behavior:'smooth' });
-  }, 1800);
+  }
+
+  const payload = {
+    trajet: document.getElementById('f-trajet')?.value,
+    vol: document.getElementById('f-vol')?.value,
+    vol1: document.getElementById('f-vol1')?.value,
+    vol2: document.getElementById('f-vol2')?.value,
+    compagnie: document.getElementById('f-compagnie')?.value,
+    destination: document.getElementById('f-destination')?.value,
+    dateVol: document.getElementById('f-date-vol')?.value,
+    pax: document.getElementById('f-pax-val')?.textContent,
+    motif: document.getElementById('f-motif')?.value,
+    prenom: document.getElementById('f-prenom')?.value,
+    nom: document.getElementById('f-nom')?.value,
+    email: document.getElementById('f-email')?.value,
+    tel: document.getElementById('f-tel')?.value,
+    sepaLater: document.getElementById('sepa-later')?.checked,
+    sepaTitulaire: document.getElementById('sepa-titulaire')?.value
+  };
+
+  if (DOSSIER_WEBHOOK_URL) {
+    fetch(DOSSIER_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function() { showSuccess(); }).catch(function() {
+      alert('L\'envoi a échoué. Vous pouvez nous envoyer votre dossier par WhatsApp.');
+      btn.textContent = 'Soumettre mon dossier';
+      btn.disabled = false;
+    });
+  } else {
+    setTimeout(showSuccess, 1200);
+  }
 }
 
 /* ══ INIT ══ */
 document.addEventListener('DOMContentLoaded', () => {
   initSig('sig-mandat', 'sig-mandat-status');
 
-  // Default date
-  const d = new Date(); d.setDate(d.getDate() - 10);
-  const el = document.getElementById('f-date-vol');
-  if (el) el.value = d.toISOString().split('T')[0];
+  // Default date (only if no brouillon)
+  const restored = restoreDossierBrouillon();
+  if (!restored) {
+    const d = new Date(); d.setDate(d.getDate() - 10);
+    const el = document.getElementById('f-date-vol');
+    if (el) el.value = d.toISOString().split('T')[0];
+  }
+
+  // Sauvegarde brouillon sur changement des champs texte
+  ['f-vol','f-vol1','f-vol2','f-compagnie','f-destination','f-date-vol','f-motif','f-prenom','f-nom','f-email','f-tel','sepa-iban','sepa-titulaire','sepa-banque'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('change', saveDossierBrouillon);
+  });
 });
 
 window.addEventListener('resize', () => {
