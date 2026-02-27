@@ -87,6 +87,13 @@ a{text-decoration:none;color:inherit}
 .flight-leg-num{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon-dark);margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .leg-rm{position:absolute;top:12px;right:12px;background:none;border:1px solid rgba(231,76,60,.2);color:var(--red);font-family:"Montserrat",sans-serif;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;cursor:pointer}
 .add-leg-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:11px;background:none;border:1.5px dashed var(--border);border-radius:8px;font-family:"Montserrat",sans-serif;font-size:11px;font-weight:700;color:var(--gray);cursor:pointer;transition:all .2s;margin-top:4px}
+/* Step 3 progressive blocks */
+.step3-block{display:none;margin-top:20px;animation:fadeUp .25s ease}
+.step3-block.visible{display:block}
+.step3-suite{width:100%;padding:12px;margin-top:16px;font-family:"Montserrat",sans-serif;font-size:12px;font-weight:700;color:var(--neon-dark);background:rgba(0,200,122,.1);border:1px solid rgba(0,200,122,.25);border-radius:8px;cursor:pointer;transition:all .2s}
+.step3-suite:hover{background:rgba(0,200,122,.18)}
+.retard-3h-legal{display:none;margin-top:10px;padding:12px;font-size:11px;line-height:1.55;color:var(--gray);background:var(--off);border-radius:8px;border-left:3px solid var(--neon-dark)}
+.retard-3h-legal.visible{display:block}
 .add-leg-btn:hover{border-color:var(--neon);color:var(--neon-dark)}
 
 .info-box{display:flex;align-items:flex-start;gap:9px;background:rgba(0,200,122,.05);border:1px solid rgba(0,200,122,.18);border-radius:8px;padding:11px 14px;margin-bottom:14px;font-size:12px;color:var(--gray);line-height:1.6}
@@ -286,37 +293,79 @@ a{text-decoration:none;color:inherit}
     </div>
   </div>
 
-  <!-- ══ 3 — VOL & CORRESPONDANCES ══ -->
+  <!-- ══ 3 — VOL & CORRESPONDANCES (affichage progressif) ══ -->
   <div class="fs" id="fs-3">
     <div class="card">
       <div class="card-eye">Étape 3 sur 7</div>
       <div class="card-title">Votre itinéraire</div>
-      <div class="card-sub">Renseignez votre vol (ou chaque segment si vous aviez des correspondances).</div>
+      <div class="card-sub">On avance pas à pas : route, puis compagnie et vol, puis les détails.</div>
 
-      <div id="legs-container">
-        <!-- Les segments de vol sont générés dynamiquement -->
+      <!-- Bloc 1 : La route -->
+      <div class="step3-block visible" id="step3-block-1">
+        <div class="field" style="margin-bottom:0">
+          <label>Ville de départ</label>
+          <input type="text" id="f-ville-depart" placeholder="Ex. Paris CDG">
+        </div>
+        <div class="field">
+          <label>Ville d'arrivée finale</label>
+          <input type="text" id="f-ville-arrivee" placeholder="Ex. Dakar, Abidjan…">
+        </div>
+        <button type="button" class="step3-suite" onclick="showStep3Block(2)">Suite : compagnie et numéro de vol →</button>
       </div>
 
-      <button class="add-leg-btn" onclick="addLeg()" id="add-leg-btn" type="button">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-        Ajouter une correspondance (vol 2, vol 3…)
-      </button>
-
-      <div style="margin-top:18px">
+      <!-- Bloc 2 : Compagnie et vol(s) -->
+      <div class="step3-block" id="step3-block-2">
         <div class="field">
           <label>Compagnie aérienne</label>
-          <input type="text" id="f-compagnie" placeholder="Ex. Air France, Corsair, Transavia…">
+          <select id="f-compagnie">
+            <option value="">— Sélectionnez —</option>
+            <optgroup label="Europe – Afrique (principales)">
+              <option value="Air France">Air France</option>
+              <option value="Corsair">Corsair</option>
+              <option value="Transavia France">Transavia France</option>
+              <option value="Brussels Airlines">Brussels Airlines</option>
+              <option value="Royal Air Maroc">Royal Air Maroc</option>
+              <option value="Tunisair">Tunisair</option>
+              <option value="Air Algérie">Air Algérie</option>
+              <option value="ASKY Airlines">ASKY Airlines</option>
+              <option value="Ethiopian Airlines">Ethiopian Airlines</option>
+              <option value="Kenya Airways">Kenya Airways</option>
+              <option value="Air Senegal">Air Sénégal</option>
+              <option value="Camair-Co">Camair-Co</option>
+              <option value="Air Côte d'Ivoire">Air Côte d'Ivoire</option>
+              <option value="Air Burkina">Air Burkina</option>
+              <option value="TAP Air Portugal">TAP Air Portugal</option>
+              <option value="Turkish Airlines">Turkish Airlines</option>
+              <option value="EgyptAir">EgyptAir</option>
+              <option value="Air Arabia Maroc">Air Arabia Maroc</option>
+            </optgroup>
+            <optgroup label="Majors européennes">
+              <option value="Lufthansa">Lufthansa</option>
+              <option value="British Airways">British Airways</option>
+              <option value="KLM">KLM</option>
+              <option value="Swiss">Swiss</option>
+              <option value="Austrian">Austrian</option>
+              <option value="Iberia">Iberia</option>
+              <option value="Vueling">Vueling</option>
+              <option value="Ryanair">Ryanair</option>
+              <option value="easyJet">easyJet</option>
+              <option value="Norwegian">Norwegian</option>
+              <option value="SAS">SAS</option>
+              <option value="Finnair">Finnair</option>
+            </optgroup>
+            <option value="Autre">Autre</option>
+          </select>
         </div>
-        <div class="frow">
-          <div class="field">
-            <label>Ville de départ</label>
-            <input type="text" id="f-ville-depart" placeholder="Ex. Paris CDG">
-          </div>
-          <div class="field">
-            <label>Ville d'arrivée finale</label>
-            <input type="text" id="f-ville-arrivee" placeholder="Ex. Dakar, Abidjan…">
-          </div>
-        </div>
+        <div id="legs-container"></div>
+        <button class="add-leg-btn" onclick="addLeg()" id="add-leg-btn" type="button">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          Ajouter une correspondance (vol 2, vol 3…)
+        </button>
+        <button type="button" class="step3-suite" onclick="showStep3Block(3)">Suite : PNR, date et motif →</button>
+      </div>
+
+      <!-- Bloc 3 : Détails (PNR, date, motif, retard) -->
+      <div class="step3-block" id="step3-block-3">
         <div class="field">
           <label>Numéro de réservation (PNR)</label>
           <input type="text" id="f-pnr" placeholder="Ex. ABC123" maxlength="6" style="text-transform:uppercase">
@@ -334,10 +383,16 @@ a{text-decoration:none;color:inherit}
             <option value="surbook">🚫 Surbooking / Refus d'embarquement</option>
           </select>
         </div>
-        <div class="field" style="margin-top:14px">
-          <label style="margin-bottom:8px">Retard à l'arrivée (si vol retardé)</label>
-          <div class="chk" style="margin-bottom:6px"><input type="checkbox" id="f-retard-3h" name="retard"><span>Plus de 3 heures de retard</span></div>
-          <div class="chk"><input type="checkbox" id="f-retard-4h" name="retard"><span>Plus de 4 heures de retard</span></div>
+        <div class="field">
+          <label>Retard à l'arrivée (si vol retardé)</label>
+          <select id="f-retard-arrivee">
+            <option value="">— Choisir —</option>
+            <option value="3h">Plus de 3 heures de retard</option>
+            <option value="4h">Plus de 4 heures de retard</option>
+          </select>
+        </div>
+        <div class="retard-3h-legal" id="retard-3h-legal">
+          <strong>Règlement (CE) n° 261/2004 :</strong> le droit à indemnisation s’ouvre à partir de <strong>3 heures de retard à l’arrivée</strong> (vol au départ de l’UE). Le montant peut varier selon la distance ; dans tous les cas nous visons l’indemnité maximale de <strong>600 €</strong> lorsque la distance le permet.
         </div>
       </div>
 
@@ -772,12 +827,19 @@ function setStep(n) {
 function nextStep(from) {
   if (!validate(from)) return;
   if (from === 1) buildStep2();
-  if (from === 2) buildLegsContainer();
+  if (from === 2) { buildLegsContainer(); showStep3Block(1); }
   if (from === 3) { buildDocBlock("boarding-container","b","🎫","Carte ou e-ticket"); prefillMandat(); }
   if (from === 4) buildDocBlock("id-container","id","🪪","Passeport ou CNI");
   setStep(from + 1);
 }
 function prevStep(from) { setStep(from - 1); }
+
+function showStep3Block(n) {
+  [1, 2, 3].forEach(function (i) {
+    var el = document.getElementById("step3-block-" + i);
+    if (el) el.classList.toggle("visible", i === n);
+  });
+}
 
 /* ── Counter ── */
 function changePax(d) {
@@ -920,8 +982,7 @@ function submitDossier() {
   fd.append("compagnie", (document.getElementById("f-compagnie")?.value || "").trim());
   fd.append("ville_depart", (document.getElementById("f-ville-depart")?.value || "").trim());
   fd.append("ville_arrivee_finale", (document.getElementById("f-ville-arrivee")?.value || "").trim());
-  fd.append("retard_3h", document.getElementById("f-retard-3h")?.checked ? "1" : "0");
-  fd.append("retard_4h", document.getElementById("f-retard-4h")?.checked ? "1" : "0");
+  fd.append("retard_arrivee", (document.getElementById("f-retard-arrivee")?.value || "").trim());
 
   fd.append("boarding_later", laterActive.boarding ? "1" : "0");
   fd.append("id_later", laterActive.id ? "1" : "0");
@@ -1060,6 +1121,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const d = new Date(); d.setDate(d.getDate() - 7);
   const dateEl = document.getElementById("f-date");
   if (dateEl) dateEl.value = d.toISOString().split("T")[0];
+
+  const retardEl = document.getElementById("f-retard-arrivee");
+  const legal3h = document.getElementById("retard-3h-legal");
+  if (retardEl && legal3h) {
+    retardEl.addEventListener("change", function () {
+      legal3h.classList.toggle("visible", retardEl.value === "3h");
+    });
+  }
 
   const obs = new MutationObserver(() => {
     if (document.getElementById("fs-6")?.classList.contains("active") && !sigState.mandat) setTimeout(() => initSig("mandat"), 60);
