@@ -304,6 +304,10 @@ a{text-decoration:none;color:inherit}
 
       <div style="margin-top:18px">
         <div class="field">
+          <label>Numéro de réservation (PNR)</label>
+          <input type="text" id="f-pnr" placeholder="Ex. ABC123" maxlength="6" style="text-transform:uppercase">
+        </div>
+        <div class="field">
           <label>Date du vol <span class="req">*</span></label>
           <input type="date" id="f-date">
         </div>
@@ -501,7 +505,7 @@ a{text-decoration:none;color:inherit}
 ═══════════════════════════════════════════════ */
 
 const TOTAL_STEPS = 7;
-const WEBHOOK_URL = "https://hook.eu1.make.com/gcjyjh92i34k4tme411ubmcgen8dcjhl";
+const WEBHOOK_URL = "https://hook.eu1.make.com/4qmys4f8z588h6rsen6vadu474fajyya";
 let curStep = 1, totalPax = 1, legCount = 0;
 const sigState = {};
 const laterActive = { boarding: false, id: false, sepa: false };
@@ -893,6 +897,7 @@ function submitDossier() {
   }
   fd.append("date_vol", document.getElementById("f-date")?.value || "");
   fd.append("motif", document.getElementById("f-motif")?.value || "");
+  fd.append("pnr", (document.getElementById("f-pnr")?.value || "").trim().toUpperCase());
 
   fd.append("boarding_later", laterActive.boarding ? "1" : "0");
   fd.append("id_later", laterActive.id ? "1" : "0");
