@@ -1,7 +1,7 @@
 # Robin des Airs — configuration Netlify
-# index.html est dans le dossier "files" (dernier dossier de la liste du dépôt)
+# Publier la racine du dépôt (index.html, 404.html, _redirects sont ici)
 [build]
-  publish = "files"
+  publish = "."
   command = ""
 
 # Redirections pour URLs sans .html (optionnel)

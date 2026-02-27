@@ -1,0 +1,6 @@
+# Robin des Airs — indemnités aériennes CE 261/2004
+User-agent: *
+Allow: /
+
+# Sitemap pour le référencement
+Sitemap: https://robindesairs.eu/sitemap.xml

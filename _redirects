@@ -1,12 +1,12 @@
 # Netlify : forcer la racine à servir index.html
-/    /index.html   200
+/    /index.html    200
 
 # Redirections pour URLs sans .html
-/choix-reclamation    /choix-reclamation.html   200
-/dossier              /dossier.html             200
-/guide-whatsapp       /guide-whatsapp.html     200
-/suivi-dossier        /suivi-dossier.html      200
-/cgv                  /cgv.html                200
-/politique-confidentialite    /politique-confidentialite.html   200
-/mandat-representation        /mandat-representation.html       200
-/droit-retractation           /droit-retractation.html          200
+/choix-reclamation           /choix-reclamation.html           200
+/dossier                     /dossier.html                     200
+/guide-whatsapp              /guide-whatsapp.html              200
+/suivi-dossier               /suivi-dossier.html               200
+/cgv                         /cgv.html                         200
+/politique-confidentialite   /politique-confidentialite.html   200
+/mandat-representation       /mandat-representation.html       200
+/droit-retractation          /droit-retractation.html          200
