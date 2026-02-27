@@ -421,6 +421,22 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   font-weight: 600;
 }
 
+.hero-lang-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  font-size: 12px;
+  color: var(--gray2);
+  font-weight: 600;
+}
+.hero-lang-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--neon-dark);
+}
+
 /* HERO RIGHT — Calculateur (style épuré, compact) */
 .hero-right {
   background: linear-gradient(165deg, var(--navy) 0%, var(--navy2) 100%);
@@ -1768,7 +1784,7 @@ footer {
       </div>
     </div>
     <!-- CTA visible sur desktop -->
-    <a href="/depot-simple.html" class="nav-cta nav-cta-inline" data-i18n="nav_cta">Obtenir mon indemnité →</a>
+    <a href="#funnel-box" class="nav-cta nav-cta-inline" data-i18n="nav_cta">CALCULER MON INDEMNITÉ 🟢</a>
     <!-- Hamburger toujours visible -->
     <button class="nav-burger" id="nav-burger" onclick="toggleMobileNav()" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -1784,7 +1800,7 @@ footer {
     <li><a href="#comparatif" onclick="closeMobileNav()" data-i18n="nav_drawer_tarifs">💰 Nos tarifs</a></li>
     <li><a href="#temoignages" onclick="closeMobileNav()" data-i18n="nav_drawer_testi">⭐ Témoignages</a></li>
     <li><a href="#faq" onclick="closeMobileNav()" data-i18n="nav_drawer_faq">❓ FAQ</a></li>
-    <li><a href="/depot-simple.html" onclick="closeMobileNav()" class="drawer-cta" data-i18n="nav_cta">💬 Obtenir mon indemnité →</a></li>
+    <li><a href="#funnel-box" onclick="closeMobileNav(); document.getElementById('funnel-box')&&document.getElementById('funnel-box').scrollIntoView({behavior:'smooth'});" class="drawer-cta" data-i18n="nav_cta">CALCULER MON INDEMNITÉ 🟢</a></li>
   </ul>
 </div>
 
@@ -1811,7 +1827,7 @@ footer {
 
       <!-- Deux options d'entrée -->
       <div class="hero-entry">
-        <a href="#funnel-box" class="hero-entry-btn primary" id="btn-calc-hero" onclick="scrollToCalcWithAnimation(event)" data-i18n="hero_btn_calc">🧮 Calculer mon indemnité</a>
+        <a href="#funnel-box" class="hero-entry-btn primary" id="btn-calc-hero" onclick="scrollToCalcWithAnimation(event)" data-i18n="hero_btn_calc">CALCULER MON INDEMNITÉ 🟢</a>
         <a href="https://wa.me/33756863630?text=%5BFR%5D%20Bonjour%20Robin%20des%20Airs%20%21%0AJe%20voudrais%20parler%20%C3%A0%20un%20conseiller.%0A%0AMon%20vol%20%3A%20%0ADate%20%3A%20" target="_blank" class="hero-entry-btn secondary" data-i18n="hero_btn_wa">💬 Parler à un conseiller</a>
       </div>
 
@@ -1836,6 +1852,10 @@ footer {
           <span class="stat-label" data-i18n="hero_stat_24h">Réponse garantie</span>
         </div>
       </div>
+      <p class="hero-lang-line">
+        <span class="hero-lang-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></span>
+        Service disponible en : Français, Wolof, Bambara, Soninké, Pulaar, Lingala.
+      </p>
     </div>
 
     <!-- RIGHT — CALCULATEUR ENTONNOIR -->
@@ -1899,6 +1919,7 @@ footer {
             <span class="reason-icon">💭</span> Je ne sais pas / Je ne m'en souviens plus
           </button>
         </div>
+        <p class="reason-nesaispas-msg" id="step1c-nesaispas-msg" style="display:none; font-size:11px; color:var(--neon-b); margin-top:10px; font-weight:600;">Pas de souci, on vérifiera les registres météo pour vous.</p>
         <button class="back-btn" id="back1c" onclick="">← Retour</button>
       </div>
 
@@ -2184,66 +2205,9 @@ footer {
       </div>
     </div>
     <div style="margin-top:48px;text-align:center;">
-      <a href="/depot-simple.html" class="btn-primary">Obtenir mon indemnité →</a>
+      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary">VÉRIFIER MES 600€ MAINTENANT 🚀</a>
       <p style="font-size:11px;color:var(--gray);margin-top:10px;">Jusqu'à 600€ · 25% · Zéro frais si on perd</p>
-      <p style="font-size:12px;margin-top:14px;"><a href="/depot-en-ligne.html" style="color:var(--neon-dark);font-weight:600;">Formulaire guidé complet (7 étapes)</a></p>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════ COMMENT CA MARCHE ═══════ -->
-<section id="comment-ca-marche">
-  <div class="ccm-wrap reveal">
-    <div class="ccm-header">
-      <div class="section-tag" data-i18n="section_how_tag">La méthode Robin</div>
-      <h2 class="section-title" data-i18n-html="section_how_title">4 flèches.<br>Un seul objectif.</h2>
-    </div>
-
-    <div class="steps-grid" style="grid-template-columns:repeat(4,1fr);">
-      <div class="step-card">
-        <span class="step-num">01</span>
-        <div class="step-icon-wrap">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C87A" stroke-width="2.2" stroke-linecap="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </div>
-        <h3 class="step-title">Vous vérifiez</h3>
-        <p class="step-desc">Entrez votre vol dans le diagnostic. En 60 secondes, vous savez si vous êtes éligible et combien vous touchez net.</p>
-        <span class="step-time">⏱ 60 secondes</span>
-      </div>
-
-      <div class="step-card">
-        <span class="step-num">02</span>
-        <div class="step-icon-wrap">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C87A" stroke-width="2.2" stroke-linecap="round"><path d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
-        </div>
-        <h3 class="step-title">Vous signez</h3>
-        <p class="step-desc">3 minutes sur WhatsApp ou en ligne. Vous signez le mandat électronique. C'est tout — on prend la main.</p>
-        <span class="step-time">⏱ 3 minutes</span>
-      </div>
-
-      <div class="step-card">
-        <span class="step-num">03</span>
-        <div class="step-icon-wrap">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C87A" stroke-width="2.2" stroke-linecap="round"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-        </div>
-        <h3 class="step-title">On monte le dossier</h3>
-        <p class="step-desc">Sous 24h, nos experts constituent un dossier béton : bulletins météo METAR (aéroport départ + arrivée), relevés des vols d'autres compagnies au même moment, analyse de la route SAF. Si d'autres avions ont pu décoller ce jour-là — on le prouve. C'est pour ça qu'on affiche <strong>98% de réussite.</strong></p>
-        <span class="step-time">⏱ 24 heures</span>
-      </div>
-
-      <div class="step-card" style="padding-right:0;">
-        <span class="step-num">04</span>
-        <div class="step-icon-wrap">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C87A" stroke-width="2.2" stroke-linecap="round"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-        </div>
-        <h3 class="step-title">Vous encaissez</h3>
-        <p class="step-desc">Robin négocie, relance, plaide si besoin. Dès que les fonds arrivent, on vous vire l'argent. Vous savez exactement ce que vous allez toucher avant même de signer.</p>
-        <span class="step-time">⏱ 4 à 12 semaines</span>
-      </div>
-    </div>
-    <div style="margin-top:48px;text-align:center;">
-      <a href="/depot-simple.html" class="btn-primary">Obtenir mon indemnité →</a>
-      <p style="font-size:11px;color:var(--gray);margin-top:10px;">Réponse sous 24h · Dossier en 3 min</p>
-      <p style="font-size:12px;margin-top:14px;"><a href="/depot-en-ligne.html" style="color:var(--neon-dark);font-weight:600;">Formulaire guidé (7 étapes)</a></p>
+      <p style="font-size:12px;margin-top:14px;"><a href="/depot-en-ligne.html" style="color:var(--neon-dark);font-weight:600;">Scan rapide (7 étapes)</a></p>
     </div>
   </div>
 </section>
@@ -2299,6 +2263,18 @@ footer {
         <div class="comp-cell hl"><span class="check">✓</span> &nbsp;<span class="price-green">Notre cœur de métier</span></div>
         <div class="comp-cell"><span class="cross">✗</span> &nbsp;Non</div>
         <div class="comp-cell"><span class="cross">✗</span> &nbsp;Non</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell feature">Langues parlées</div>
+        <div class="comp-cell hl"><span class="check">✓</span> &nbsp;<span class="price-green">Français, Wolof, Bambara, Lingala…</span></div>
+        <div class="comp-cell"><span class="cross">✗</span> &nbsp;Anglais / Français uniquement</div>
+        <div class="comp-cell"><span class="cross">✗</span> &nbsp;Anglais / Français uniquement</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell feature">Proximité</div>
+        <div class="comp-cell hl"><span class="check">✓</span> &nbsp;<span class="price-green">Support vocal & WhatsApp dédié</span></div>
+        <div class="comp-cell"><span class="cross">✗</span> &nbsp;Chatbots froids</div>
+        <div class="comp-cell"><span class="cross">✗</span> &nbsp;Chatbots froids</div>
       </div>
       <div class="comp-row">
         <div class="comp-cell feature">Suivi WhatsApp + Email</div>
@@ -2431,6 +2407,63 @@ footer {
   </div>
 </section>
 
+<!-- ═══════ COMMENT CA MARCHE — La méthode Robin ═══════ -->
+<section id="comment-ca-marche">
+  <div class="ccm-wrap reveal">
+    <div class="ccm-header">
+      <div class="section-tag" data-i18n="section_how_tag">La méthode Robin</div>
+      <h2 class="section-title" data-i18n-html="section_how_title">4 flèches.<br>Un seul objectif.</h2>
+    </div>
+
+    <div class="steps-grid" style="grid-template-columns:repeat(4,1fr);">
+      <div class="step-card">
+        <span class="step-num">01</span>
+        <div class="step-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C87A" stroke-width="2.2" stroke-linecap="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h3 class="step-title">Vous vérifiez</h3>
+        <p class="step-desc">Entrez votre vol dans le diagnostic. En 60 secondes, vous savez si vous êtes éligible et combien vous touchez net.</p>
+        <span class="step-time">⏱ 60 secondes</span>
+      </div>
+
+      <div class="step-card">
+        <span class="step-num">02</span>
+        <div class="step-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C87A" stroke-width="2.2" stroke-linecap="round"><path d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+        </div>
+        <h3 class="step-title">Vous signez</h3>
+        <p class="step-desc">3 minutes sur WhatsApp ou en ligne. Vous signez le mandat électronique. C'est tout — on prend la main.</p>
+        <span class="step-time">⏱ 3 minutes</span>
+      </div>
+
+      <div class="step-card">
+        <span class="step-num">03</span>
+        <div class="step-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C87A" stroke-width="2.2" stroke-linecap="round"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        </div>
+        <h3 class="step-title">On monte le dossier</h3>
+        <p class="step-desc">Sous 24h, nos experts constituent un dossier béton : bulletins météo METAR (aéroport départ + arrivée), relevés des vols d'autres compagnies au même moment, analyse de la route SAF. Si d'autres avions ont pu décoller ce jour-là — on le prouve. C'est pour ça qu'on affiche <strong>98% de réussite.</strong></p>
+        <span class="step-time">⏱ 24 heures</span>
+      </div>
+
+      <div class="step-card" style="padding-right:0;">
+        <span class="step-num">04</span>
+        <div class="step-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C87A" stroke-width="2.2" stroke-linecap="round"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h3 class="step-title">Vous encaissez</h3>
+        <p class="step-desc">Robin négocie, relance, plaide si besoin. Dès que les fonds arrivent, on vous vire l'argent. Vous savez exactement ce que vous allez toucher avant même de signer.</p>
+        <span class="step-time">⏱ 4 à 12 semaines</span>
+      </div>
+    </div>
+    <div style="margin-top:48px;text-align:center;">
+      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary">VÉRIFIER MES 600€ MAINTENANT 🚀</a>
+      <p style="font-size:11px;color:var(--gray);margin-top:10px;">Réponse sous 24h · Scan rapide 3 min</p>
+      <p style="font-size:12px;margin-top:14px;"><a href="/depot-en-ligne.html" style="color:var(--neon-dark);font-weight:600;">Scan rapide (7 étapes)</a></p>
+    </div>
+  </div>
+</section>
+
 <!-- ═══════ QUI SUIS-JE ═══════ -->
 <section id="qui-suis-je">
   <div class="qui-wrap reveal">
@@ -2448,6 +2481,7 @@ footer {
     <div style="display:flex;flex-direction:column;gap:24px;font-size:14px;line-height:1.9;color:rgba(255,255,255,0.65);">
       <p>Vingt ans dans le secteur aérien. <strong style="color:white;">J'ai vu fonctionner la machine de l'intérieur.</strong> Les délais, les process, les scripts téléphoniques conçus pour décourager. Ces règles, les compagnies les ignorent dès qu'elles coûtent de l'argent.</p>
       <p>J'ai vu des familles entières se faire taxer à l'embarquement pour un kilo de trop. J'ai vu ces compagnies sortir leur manuel d'excuses quand leur avion avait 4h de retard : <strong style="color:white;">« circonstances extraordinaires », « météo imprévisible ».</strong> Le tout avec un sourire de façade.</p>
+      <p>J'ai vu trop de voyageurs abandonner face à la complexité des formulaires et au jargon des compagnies. <strong style="color:white;">Chez Robin, on simplifie tout : on gère votre dossier en français, mais aussi en Wolof, Bambara ou Lingala.</strong> Parce qu'on se comprend toujours mieux quand on parle la même langue.</p>
       <p>La Diaspora, en particulier, implique des voyages plus longs. Il y a moins l'habitude de réclamer et moins de temps à perdre. Nous prenons 25% — no win no fee — parce que notre modèle n'est pas basé sur le volume maximum. Nous aimons un tarif clair, un client heureux, et une recommandation plutôt qu'une grosse commission. <strong style="color:white;">Vous savez ce que vous touchez avant de signer.</strong></p>
     </div>
 
@@ -2476,7 +2510,8 @@ footer {
 
     <div style="margin-top:48px;text-align:center;">
       <a href="https://wa.me/33756863630?text=%5BFR%5D%20Bonjour%20Robin%20%21%0AJ%27ai%20lu%20votre%20histoire%20et%20je%20veux%20vous%20confier%20mon%20dossier." target="_blank" style="display:inline-flex;align-items:center;gap:10px;background:var(--neon-b);color:var(--navy);padding:16px 36px;border-radius:4px;font-weight:900;font-size:12px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;">
-        💬 Confier mon dossier à Robin
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        CONFIER MON DOSSIER À ROBIN
       </a>
       <p style="margin-top:12px;font-size:11px;color:rgba(255,255,255,0.25);">Zéro frais si on perd · Réponse en moins de 2h · Droit de rétractation 14 jours</p>
     </div>
@@ -2623,7 +2658,7 @@ footer {
 
       <div style="margin-top:40px;padding:28px 24px;background:linear-gradient(135deg,rgba(0,200,122,0.08),rgba(11,31,58,0.04));border:1px solid rgba(0,200,122,0.25);border-radius:12px;text-align:center;">
         <p style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:16px;" data-i18n="ready_claim">Prêt à réclamer ?</p>
-        <a href="/depot-simple.html" class="btn-primary" data-i18n="obt_indemnite">Obtenir mon indemnité →</a>
+        <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary" data-i18n="obt_indemnite">VÉRIFIER MES 600€ MAINTENANT 🚀</a>
       </div>
     </div>
   </div>
@@ -2638,7 +2673,7 @@ footer {
       Chaque mois sans réclamer, c'est de l'argent que vous laissez sur la table. Le délai de prescription est de 5 ans — mais ça ne dure pas.
     </p>
     <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
-      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary" data-i18n="cta_btn_calc">Calculer mon indemnité →</a>
+      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary" data-i18n="cta_btn_calc">VÉRIFIER MES 600€ MAINTENANT 🚀</a>
       <a href="https://wa.me/33756863630?text=%5BFR%5D%20Bonjour%20Robin%20des%20Airs%20%21%0AJe%20veux%20ouvrir%20mon%20dossier." target="_blank" class="btn-ghost" data-i18n="cta_wa">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.108.549 4.086 1.508 5.8L0 24l6.335-1.483A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.817 9.817 0 01-5.002-1.368l-.36-.214-3.722.976.994-3.63-.234-.373A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182c5.43 0 9.818 4.388 9.818 9.818 0 5.43-4.388 9.818-9.818 9.818z"/></svg>
         WhatsApp direct
@@ -3007,10 +3042,11 @@ function pickMotif(m) {
 /* ── Étape 1c : raison ── */
 function pickRaison(r) {
   S.raison = r;
-  // Highlight selected button
   document.querySelectorAll('.reason-btn').forEach(b => b.classList.remove('selected'));
   event.currentTarget.classList.add('selected');
-  setTimeout(() => goTo('step-2', 50), 300); // Short delay after selection
+  var msg = document.getElementById('step1c-nesaispas-msg');
+  if (msg) msg.style.display = (r === 'nesaispas') ? 'block' : 'none';
+  setTimeout(() => goTo('step-2', 50), 300);
   document.getElementById('back2').onclick = () => goTo('step-1c', 33);
 }
 
