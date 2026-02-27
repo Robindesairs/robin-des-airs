@@ -33,23 +33,38 @@
 
     .top-bar {
       background: var(--navy);
-      padding: 16px 24px;
+      padding: 14px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
     }
     .top-bar a {
       color: var(--white);
       text-decoration: none;
       font-weight: 800;
-      font-size: 16px;
+      font-size: 15px;
     }
-    .top-bar a span { color: var(--neon-b); }
+    .top-bar .nav-logo {
+      font-size: 17px;
+      letter-spacing: -0.3px;
+    }
+    .top-bar .nav-logo span { color: var(--neon-b); }
     .top-bar .back {
       font-size: 14px;
       font-weight: 600;
-      color: rgba(255,255,255,0.8);
+      color: rgba(255,255,255,0.85);
     }
+    .top-bar .back:hover { color: var(--white); }
+    .top-bar .nav-link {
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.7);
+    }
+    .top-bar .nav-link:hover { color: var(--neon-b); }
 
     .page {
       max-width: 520px;
@@ -61,12 +76,20 @@
       text-align: center;
       margin-bottom: 36px;
     }
+    .intro .page-badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--neon-dark);
+      margin-bottom: 10px;
+    }
     .intro h1 {
-      font-size: 22px;
+      font-size: 26px;
       font-weight: 800;
       color: var(--navy);
-      line-height: 1.3;
-      margin-bottom: 10px;
+      line-height: 1.25;
+      margin-bottom: 8px;
     }
     .intro p {
       font-size: 15px;
@@ -136,6 +159,42 @@
     }
     .field-block.full { grid-column: 1 / -1; }
 
+    .stepper-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background: var(--white);
+    }
+    .stepper-wrap label { margin-bottom: 0; }
+    .stepper-btn {
+      width: 44px;
+      height: 44px;
+      border: 2px solid var(--neon);
+      border-radius: 10px;
+      background: var(--neon);
+      color: var(--navy);
+      font-size: 22px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .stepper-btn:hover { background: var(--neon-dark); color: var(--white); }
+    .stepper-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .stepper-val {
+      min-width: 36px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--navy);
+    }
+
     .doc-buttons {
       display: flex;
       flex-direction: column;
@@ -165,18 +224,21 @@
       background: rgba(0,200,122,0.06);
     }
     .doc-btn .icon {
-      font-size: 32px;
+      font-size: 36px;
       flex-shrink: 0;
+      line-height: 1;
     }
-    .doc-btn .label { flex: 1; }
+    .doc-btn .label { flex: 1; font-size: 15px; line-height: 1.35; }
     .doc-btn .check {
-      font-size: 24px;
+      font-size: 26px;
       opacity: 0;
       transition: opacity 0.2s;
+      flex-shrink: 0;
     }
     .doc-btn.done {
       border-color: var(--neon);
-      background: rgba(0,200,122,0.12);
+      background: rgba(0,200,122,0.14);
+      box-shadow: 0 0 0 1px rgba(0,200,122,0.2);
     }
     .doc-btn.done .check { opacity: 1; color: var(--neon-dark); }
 
@@ -200,15 +262,26 @@
     }
     .rgpd a { color: var(--neon-dark); font-weight: 600; }
 
+    .link-alt {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: var(--gray2);
+      margin-bottom: 24px;
+    }
+    .link-alt a { color: var(--neon-dark); font-weight: 600; }
+    .link-alt a:hover { text-decoration: underline; }
+
     .btn-send {
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 12px;
       width: 100%;
-      padding: 22px 28px;
-      font-size: 18px;
+      padding: 26px 28px;
+      font-size: 19px;
       font-weight: 800;
+      letter-spacing: 0.3px;
       color: var(--navy);
       background: var(--neon);
       border: none;
@@ -216,7 +289,7 @@
       cursor: pointer;
       font-family: inherit;
       transition: background 0.2s, transform 0.1s;
-      box-shadow: 0 4px 20px rgba(0,200,122,0.35);
+      box-shadow: 0 4px 24px rgba(0,200,122,0.4);
     }
     .btn-send:hover { background: var(--neon-dark); }
     .btn-send:active { transform: scale(0.98); }
@@ -269,40 +342,40 @@
 <body>
 
   <header class="top-bar">
-    <a href="/">← Retour</a>
-    <a href="/">Robin <span>des Airs</span></a>
-    <span></span>
+    <a href="/" class="back">← Retour</a>
+    <a href="/" class="nav-logo">Robin <span>des Airs</span></a>
+    <a href="/" class="nav-link">Accueil</a>
   </header>
 
   <main class="page">
     <div class="form-view" id="form-view">
       <div class="intro">
-        <h1>Envoyez vos documents en 3 clics</h1>
-        <p>On a besoin de deux infos au départ, puis vos photos. Sarah vérifie tout et vous recontacte sur WhatsApp.</p>
+        <p class="page-badge">Robin des Airs</p>
+        <h1>Déposez vos Documents</h1>
+        <p>Notre IA extrait vos données. Quelques infos, trois photos, c'est parti.</p>
       </div>
 
       <div class="field-row">
         <div class="field-block">
-          <label for="nb_passagers">Nombre de passagers *</label>
-          <select id="nb_passagers" name="nb_passagers" required>
-            <option value="1">1 passager</option>
-            <option value="2">2 passagers</option>
-            <option value="3">3 passagers</option>
-            <option value="4">4 passagers</option>
-            <option value="5">5 passagers</option>
-            <option value="6">6 ou plus</option>
-          </select>
+          <label>Nombre de passagers *</label>
+          <div class="stepper-wrap">
+            <button type="button" class="stepper-btn" id="btn-passagers-minus" aria-label="Moins">−</button>
+            <span class="stepper-val" id="val-passagers">1</span>
+            <button type="button" class="stepper-btn" id="btn-passagers-plus" aria-label="Plus">+</button>
+          </div>
+          <input type="hidden" id="nb_passagers" name="nb_passagers" value="1">
         </div>
         <div class="field-block">
-          <label for="nb_vols">Nombre de vols *</label>
-          <select id="nb_vols" name="nb_vols" required>
-            <option value="1">1 vol (direct)</option>
-            <option value="2">2 vols (ex. correspondance)</option>
-            <option value="3">3 vols ou plus</option>
-          </select>
+          <label>Nombre de vols *</label>
+          <div class="stepper-wrap">
+            <button type="button" class="stepper-btn" id="btn-vols-minus" aria-label="Moins">−</button>
+            <span class="stepper-val" id="val-vols">1</span>
+            <button type="button" class="stepper-btn" id="btn-vols-plus" aria-label="Plus">+</button>
+          </div>
+          <input type="hidden" id="nb_vols" name="nb_vols" value="1">
         </div>
       </div>
-      <p class="hint-vols" style="font-size:12px;color:var(--gray2);margin-bottom:24px;">Ex. Dakar → Paris puis Paris → Strasbourg = <strong>2 vols</strong>. Il vous faut alors <strong>2 cartes d'embarquement par passager</strong> (une par vol).</p>
+      <p class="hint-vols" style="font-size:12px;color:var(--gray2);margin-bottom:24px;">2 vols (ex. correspondance) = 2 cartes d'embarquement par passager.</p>
 
       <div class="field-whatsapp">
         <label for="whatsapp">Votre numéro WhatsApp *</label>
@@ -316,30 +389,32 @@
       <div class="doc-buttons">
         <label class="doc-btn" id="btn-passeport">
           <span class="icon">🪪</span>
-          <span class="label">Prendre en photo mon Passeport ou ma Carte d'Identité</span>
+          <span class="label">Passeport ou Carte d'identité — Prendre une photo</span>
           <span class="check">✅</span>
           <input type="file" id="file-passeport" name="file_passeport" accept="image/*" capture="environment">
         </label>
         <label class="doc-btn" id="btn-boarding">
           <span class="icon">🎫</span>
-          <span class="label">Prendre en photo mes Cartes d'Embarquement (toutes — 1 par vol par passager)</span>
+          <span class="label">Cartes d'embarquement — Photo ou plusieurs fichiers</span>
           <span class="check">✅</span>
           <input type="file" id="file-boarding" name="file_boarding" accept="image/*" capture="environment" multiple>
         </label>
         <label class="doc-btn" id="btn-billet">
-          <span class="icon">📄</span>
-          <span class="label">Prendre en photo mon Billet ou Itinéraire (si vous l'avez)</span>
+          <span class="icon">🖼️</span>
+          <span class="label">Photo depuis la galerie</span>
           <span class="check">✅</span>
-          <input type="file" id="file-billet" name="file_billet" accept="image/*" capture="environment">
+          <input type="file" id="file-billet" name="file_billet" accept="image/*">
         </label>
       </div>
+
+      <p class="link-alt">Pas de documents sous la main ? <a href="/choix-reclamation.html">Passez au formulaire classique</a></p>
 
       <p class="rgpd">
         🔒 Vos documents sont sécurisés et traités uniquement pour votre réclamation, conformément au <a href="/politique-confidentialite.html" target="_blank" rel="noopener">RGPD</a>. Nous ne les utilisons pas à d'autres fins.
       </p>
 
       <button type="button" class="btn-send" id="btn-send">
-        Sarah, aidez-moi à récupérer mon argent !
+        🚀 Sarah, aidez-moi à récupérer mon argent !
       </button>
     </div>
 
@@ -364,11 +439,47 @@
     const btnBillet = document.getElementById('btn-billet');
     const whatsappInput = document.getElementById('whatsapp');
     const emailInput = document.getElementById('email');
-    const nbPassagers = document.getElementById('nb_passagers');
-    const nbVols = document.getElementById('nb_vols');
+    const nbPassagersInput = document.getElementById('nb_passagers');
+    const nbVolsInput = document.getElementById('nb_vols');
+    const valPassagers = document.getElementById('val-passagers');
+    const valVols = document.getElementById('val-vols');
     const btnSend = document.getElementById('btn-send');
     const formView = document.getElementById('form-view');
     const successView = document.getElementById('success-view');
+
+    // Préremplir WhatsApp depuis l'URL (?whatsapp=33612345678 ou ?tel=0612345678)
+    (function() {
+      var p = new URLSearchParams(window.location.search);
+      var tel = p.get('whatsapp') || p.get('tel');
+      if (tel) {
+        tel = tel.replace(/\s/g, '').replace(/^33/, '0').replace(/(\d{2})(?=\d)/g, '$1 ');
+        whatsappInput.value = tel;
+      }
+    })();
+
+    // Stepper passagers (1–9)
+    function setPassagers(v) {
+      v = Math.max(1, Math.min(9, v));
+      nbPassagersInput.value = v;
+      if (valPassagers) valPassagers.textContent = v;
+      document.getElementById('btn-passagers-minus').disabled = (v <= 1);
+      document.getElementById('btn-passagers-plus').disabled = (v >= 9);
+    }
+    document.getElementById('btn-passagers-minus').addEventListener('click', function() { setPassagers(parseInt(nbPassagersInput.value, 10) - 1); });
+    document.getElementById('btn-passagers-plus').addEventListener('click', function() { setPassagers(parseInt(nbPassagersInput.value, 10) + 1); });
+    setPassagers(1);
+
+    // Stepper vols (1–5)
+    function setVols(v) {
+      v = Math.max(1, Math.min(5, v));
+      nbVolsInput.value = v;
+      if (valVols) valVols.textContent = v;
+      document.getElementById('btn-vols-minus').disabled = (v <= 1);
+      document.getElementById('btn-vols-plus').disabled = (v >= 5);
+    }
+    document.getElementById('btn-vols-minus').addEventListener('click', function() { setVols(parseInt(nbVolsInput.value, 10) - 1); });
+    document.getElementById('btn-vols-plus').addEventListener('click', function() { setVols(parseInt(nbVolsInput.value, 10) + 1); });
+    setVols(1);
 
     function markDone(btn) {
       if (btn) btn.classList.add('done');
@@ -391,8 +502,8 @@
       }
 
       var formData = new FormData();
-      formData.append('nb_passagers', nbPassagers.value);
-      formData.append('nb_vols', nbVols.value);
+      formData.append('nb_passagers', nbPassagersInput.value);
+      formData.append('nb_vols', nbVolsInput.value);
       formData.append('whatsapp', formatTel(tel));
       var email = (emailInput.value || '').trim();
       if (email) formData.append('email', email);
@@ -416,7 +527,7 @@
       }).catch(function() {
         alert('L\'envoi a échoué. Envoyez vos documents directement sur WhatsApp : +33 7 56 86 36 30');
         btnSend.disabled = false;
-        btnSend.textContent = 'Sarah, aidez-moi à récupérer mon argent !';
+        btnSend.textContent = 'Robin, aide-moi à récupérer mon argent !';
       });
     });
   </script>
