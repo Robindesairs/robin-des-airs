@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18/build/css/intlTelInput.css">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
@@ -56,18 +57,6 @@
       font-size: 15px;
     }
     .top-bar .logo { color: var(--emerald); }
-    .progress-bar {
-      height: 3px;
-      background: var(--card-border);
-      display: flex;
-    }
-    .progress-bar .step {
-      flex: 1;
-      background: var(--card-border);
-      transition: background 0.25s;
-    }
-    .progress-bar .step.done { background: var(--emerald); }
-    .progress-bar .step.active { background: var(--emerald); }
 
     .page {
       max-width: 480px;
@@ -139,10 +128,11 @@
       color: var(--emerald);
       letter-spacing: -0.03em;
       line-height: 1.2;
+      font-size: clamp(14px, 3.5vw, 16px);
     }
     .indemnity-line .amount .number {
       display: inline-block;
-      font-size: clamp(22px, 6vw, 32px);
+      font-size: clamp(24px, 7vw, 34px);
       min-width: 0.5em;
     }
     .indemnity-line .disclaimer {
@@ -150,6 +140,9 @@
       color: var(--muted);
       margin-top: 10px;
     }
+    .iti { width: 100%; }
+    .iti input { padding-left: 52px; }
+    .iti__flag-container { padding: 0 0 0 12px; }
 
     /* Mode Photo / Manuel */
     .mode-photo { display: block; }
@@ -221,7 +214,7 @@
     .doc-btn .content { flex: 1; min-width: 0; }
     .doc-btn .title { font-size: 15px; font-weight: 600; color: var(--text); }
     .doc-btn .sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
-    .doc-btn .filename { font-size: 11px; color: var(--emerald); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .doc-btn .filename { font-size: 12px; color: var(--emerald); margin-top: 4px; font-weight: 600; }
     .doc-btn .check { font-size: 22px; opacity: 0; flex-shrink: 0; transition: opacity 0.2s ease; }
     .doc-btn.done {
       border-color: var(--emerald);
@@ -244,32 +237,6 @@
       margin-left: 2px;
       padding: 0 4px;
     }
-    .doc-attention {
-      font-size: 12px;
-      color: var(--muted);
-      margin-bottom: 12px;
-      padding: 10px 14px;
-      background: rgba(0,0,0,0.03);
-      border-radius: 10px;
-      border-left: 3px solid var(--emerald);
-    }
-    .add-doc-btn {
-      display: block;
-      width: 100%;
-      padding: 12px 16px;
-      margin-bottom: 12px;
-      font-size: 13px;
-      font-weight: 600;
-      font-family: inherit;
-      color: var(--emerald);
-      background: var(--emerald-light);
-      border: 1px dashed var(--emerald);
-      border-radius: 12px;
-      cursor: pointer;
-      transition: background 0.2s, border-color 0.2s;
-    }
-    .add-doc-btn:hover { background: rgba(5, 150, 105, 0.15); }
-
     .link-switch {
       text-align: center;
       margin-bottom: 24px;
@@ -316,84 +283,14 @@
     .sticky-cta .btn-cta:hover { background: var(--emerald-hover); }
     .sticky-cta .btn-cta:active { transform: scale(0.98); }
     .sticky-cta .btn-cta:disabled { opacity: 0.6; cursor: not-allowed; }
-    .sticky-cta .reassurance {
+    .sticky-cta .legal-mention {
       text-align: center;
       font-size: 10px;
       color: var(--muted);
       line-height: 1.5;
+      max-width: 360px;
+      margin: 0 auto;
     }
-    .sticky-cta .reassurance span { display: block; }
-
-    /* Modal Mandat */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 100;
-      display: none;
-      align-items: flex-end;
-      justify-content: center;
-    }
-    .modal-overlay.visible { display: flex; }
-    .modal {
-      width: 100%;
-      max-width: 480px;
-      max-height: 90vh;
-      background: var(--card);
-      border-radius: 20px 20px 0 0;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
-    }
-    .modal-header {
-      padding: 20px 20px 12px;
-      border-bottom: 1px solid var(--card-border);
-    }
-    .modal-header h2 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
-    .modal-header p { font-size: 13px; color: var(--muted); }
-    .mandat-key {
-      padding: 16px 20px;
-      background: var(--emerald-light);
-      border-left: 4px solid var(--emerald);
-      margin: 0 20px 16px;
-      border-radius: 0 10px 10px 0;
-      font-size: 14px;
-      line-height: 1.6;
-      color: var(--text);
-    }
-    .mandat-key strong { color: var(--emerald); }
-    .mandat-scroll {
-      flex: 1;
-      overflow-y: auto;
-      padding: 0 20px 20px;
-      -webkit-overflow-scrolling: touch;
-    }
-    .mandat-scroll h3 {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin: 16px 0 6px;
-    }
-    .mandat-scroll h3:first-child { margin-top: 0; }
-    .mandat-scroll p { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 10px; }
-    .mandat-footer {
-      padding: 16px 20px 24px;
-      border-top: 1px solid var(--card-border);
-      background: var(--card);
-    }
-    .mandat-check {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 14px;
-      cursor: pointer;
-    }
-    .mandat-check input { width: 20px; height: 20px; margin-top: 2px; flex-shrink: 0; accent-color: var(--emerald); }
-    .mandat-check span { font-size: 14px; color: var(--text); }
-    .modal .btn-cta { margin-top: 4px; }
 
     /* Success */
     .success-view {
@@ -429,11 +326,6 @@
       <a href="/" class="logo">Robin des Airs</a>
       <span></span>
     </header>
-    <div class="progress-bar" id="progress-bar">
-      <span class="step active" data-step="1" title="Upload"></span>
-      <span class="step" data-step="2" title="Signature"></span>
-      <span class="step" data-step="3" title="Sarah"></span>
-    </div>
   </div>
 
   <main class="page">
@@ -455,56 +347,66 @@
         </div>
         <input type="hidden" id="nb_passagers" value="1">
         <div class="indemnity-line" id="indemnity-line">
-          <div class="amount" id="indemnity-amount">Jusqu'à <span class="number" id="indemnity-number">600</span> € à récupérer</div>
+          <div class="amount" id="indemnity-amount">INDEMNITÉ POTENTIELLE : Jusqu'à <span class="number" id="indemnity-number">600</span> € 🟢</div>
           <div class="disclaimer">Estimation basée sur le barème légal maximum (600 €/pers).</div>
         </div>
 
         <div class="field">
+          <label for="prenom">Prénom *</label>
+          <input type="text" id="prenom" name="prenom" placeholder="Jean" required>
+        </div>
+        <div class="field">
+          <label for="nom">Nom *</label>
+          <input type="text" id="nom" name="nom" placeholder="Dupont" required>
+        </div>
+        <div class="field">
+          <label for="email">Email *</label>
+          <input type="email" id="email" name="email" placeholder="jean.dupont@email.com" required>
+        </div>
+        <div class="field">
           <label for="whatsapp">WhatsApp *</label>
-          <div class="field-wrap">
-            <span class="wa-icon">💬</span>
-            <input type="tel" id="whatsapp" placeholder="Votre numéro WhatsApp" required autocomplete="tel">
-          </div>
+          <input type="tel" id="whatsapp" placeholder="Votre numéro WhatsApp" required autocomplete="tel">
         </div>
 
         <div class="doc-grid">
-          <div class="passeport-section">
-            <div class="passeport-cards" id="passeport-cards">
-              <div class="doc-card">
-                <label class="doc-btn btn-passeport">
-                  <span class="icon">🪪</span>
-                  <div class="content">
-                    <div class="title">Passeport ou ID</div>
-                    <div class="sub">Pour valider votre identité</div>
-                    <div class="filename name-passeport"></div>
-                  </div>
-                  <span class="check">✅</span>
-                  <input type="file" name="file_passeport" accept="image/*" capture="environment" multiple>
-                </label>
-                <p class="doc-tip tip-passeport">Conseil : Posez le document à plat pour un scan instantané ⚡</p>
+          <div class="doc-card">
+            <label class="doc-btn" id="btn-passeport">
+              <span class="icon">🪪</span>
+              <div class="content">
+                <div class="title">Passeports / ID</div>
+                <div class="sub">Pour valider l'identité des passagers</div>
+                <div class="filename" id="name-passeport"></div>
               </div>
-            </div>
-            <button type="button" class="add-doc-btn" id="add-passager">+ Ajouter un autre passager</button>
+              <span class="check">✅</span>
+              <input type="file" id="file-passeport" name="file_passeport" accept="image/*" capture="environment" multiple>
+            </label>
+            <p class="doc-tip">Conseil : Posez le document à plat pour un scan instantané ⚡</p>
           </div>
-
-          <div class="boarding-section">
-            <p class="doc-attention">Attention : s'il y avait deux vols pour arriver à destination, ajoutez les deux cartes d'embarquement pour chaque passager.</p>
-            <div class="boarding-cards" id="boarding-cards">
-              <div class="doc-card">
-                <label class="doc-btn btn-boarding">
-                  <span class="icon">🎫</span>
-                  <div class="content">
-                    <div class="title">Carte d'embarquement ou étiquette itinéraire passager</div>
-                    <div class="sub">Preuve de présence à bord</div>
-                    <div class="filename name-boarding"></div>
-                  </div>
-                  <span class="check">✅</span>
-                  <input type="file" name="file_boarding" accept="image/*" capture="environment" multiple>
-                </label>
-                <p class="doc-tip">Conseil : Posez le document à plat pour un scan instantané ⚡</p>
+          <div class="doc-card">
+            <label class="doc-btn" id="btn-boarding">
+              <span class="icon">🎫</span>
+              <div class="content">
+                <div class="title">Cartes d'embarquement</div>
+                <div class="sub">Preuve de présence à bord</div>
+                <div class="filename" id="name-boarding"></div>
               </div>
-            </div>
-            <button type="button" class="add-doc-btn" id="add-boarding">+ Ajouter une carte d'embarquement</button>
+              <span class="check">✅</span>
+              <input type="file" id="file-boarding" name="file_boarding" accept="image/*" capture="environment" multiple>
+            </label>
+            <p class="doc-tip">Conseil : Posez le document à plat pour un scan instantané ⚡</p>
+          </div>
+          <div class="doc-card">
+            <label class="doc-btn" id="btn-billet">
+              <span class="icon">📄</span>
+              <div class="content">
+                <div class="title">Confirmation de vol</div>
+                <div class="sub">Pour extraire les données du vol</div>
+                <div class="filename" id="name-billet"></div>
+              </div>
+              <span class="check">✅</span>
+              <input type="file" id="file-billet" name="file_billet" accept="image/*" capture="environment" multiple>
+            </label>
+            <p class="doc-tip">Conseil : Posez le document à plat pour un scan instantané ⚡</p>
           </div>
         </div>
 
@@ -555,49 +457,18 @@
 
     <div class="success-view" id="success-view">
       <div class="icon">✅</div>
-      <h2>Dossier transmis.</h2>
-      <p>Sarah s'occupe du reste. On se parle sur WhatsApp !</p>
+      <h2>Dossier transmis !</h2>
+      <p>Sarah analyse vos documents et vous contacte sur WhatsApp dans quelques instants.</p>
       <a href="https://wa.me/33756863630" target="_blank" rel="noopener" class="wa-link">Ouvrir WhatsApp</a>
     </div>
   </main>
 
   <div class="sticky-cta" id="sticky-cta">
-    <button type="button" class="btn-cta" id="btn-launch">ENVOYER MON DOSSIER À ROBIN →</button>
-    <p class="reassurance">
-      <span>Certifié conforme au Règlement Européen 261/2004</span>
-      <span>Données cryptées et sécurisées</span>
-    </p>
+    <button type="button" class="btn-cta" id="btn-launch">ROBIN ANALYSEZ MON DOSSIER 🚀</button>
+    <p class="legal-mention">En cliquant, vous demandez une analyse gratuite. ROBIN vous recontactera sur WhatsApp pour finaliser la signature de votre dossier.</p>
   </div>
 
-  <div class="modal-overlay" id="modal-mandat">
-    <div class="modal">
-      <div class="modal-header">
-        <h2>Mandat de réclamation</h2>
-        <p>Signature électronique simple. Lisez et validez.</p>
-      </div>
-      <div class="mandat-key">
-        • <strong>Potentiel : 250 € à 600 € par passager</strong><br>
-        • Refus des avoirs : on exige du cash pour vous.<br>
-        • Commission : 25 % TTC au succès uniquement.
-      </div>
-      <div class="mandat-scroll" id="mandat-scroll">
-        <h3>Gestion email</h3>
-        <p>Le mandant autorise Robin des Airs à créer une adresse email de correspondance dédiée pour centraliser les échanges avec la compagnie.</p>
-        <h3>Encaissement</h3>
-        <p>Le mandant accepte que l'indemnité soit versée sur le compte de Robin des Airs, qui reversera la somme (moins la commission) sous 48 h.</p>
-        <h3>Refus des bons d'achat / avoirs</h3>
-        <p>Le mandant refuse d'avance toute offre d'indemnisation par bon d'achat ou avoir.</p>
-      </div>
-      <div class="mandat-footer">
-        <label class="mandat-check">
-          <input type="checkbox" id="mandat-check" autocomplete="off">
-          <span>Je signe ce mandat électroniquement.</span>
-        </label>
-        <button type="button" class="btn-cta" id="btn-sign-submit" disabled>Signer et envoyer</button>
-      </div>
-    </div>
-  </div>
-
+  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18/build/js/intlTelInput.min.js"></script>
   <script>
     (function() {
       var WEBHOOK = 'https://hook.eu1.make.com/gcjyjh92i34k4tme411ubmcgen8dcjhl';
@@ -607,25 +478,31 @@
       var formView = document.getElementById('form-view');
       var successView = document.getElementById('success-view');
       var stickyCta = document.getElementById('sticky-cta');
-      var progressBar = document.getElementById('progress-bar');
       var nbPassagersInput = document.getElementById('nb_passagers');
-      var whatsapp = document.getElementById('whatsapp');
+      var whatsappInput = document.getElementById('whatsapp');
       var btnLaunch = document.getElementById('btn-launch');
-      var passeportCards = document.getElementById('passeport-cards');
-      var boardingCards = document.getElementById('boarding-cards');
       var btnLaunchManuel = document.getElementById('btn-launch-manuel');
-      var modalMandat = document.getElementById('modal-mandat');
-      var mandatScroll = document.getElementById('mandat-scroll');
-      var mandatCheck = document.getElementById('mandat-check');
-      var btnSignSubmit = document.getElementById('btn-sign-submit');
+      var filePasseport = document.getElementById('file-passeport');
+      var fileBoarding = document.getElementById('file-boarding');
+      var fileBillet = document.getElementById('file-billet');
+      var btnPasseport = document.getElementById('btn-passeport');
+      var btnBoarding = document.getElementById('btn-boarding');
+      var btnBillet = document.getElementById('btn-billet');
 
       var amounts = { 1: 600, 2: 1200, 3: 1800, 4: 2400, 5: 3000, 6: 3600, 7: 4200 };
       var indemnityNumber = document.getElementById('indemnity-number');
       var currentDisplay = 600;
+      var iti = null;
+
+      if (typeof intlTelInput !== 'undefined') {
+        iti = intlTelInput(whatsappInput, {
+          initialCountry: 'fr',
+          preferredCountries: ['fr', 'be', 'ch']
+        });
+      }
 
       function formatAmount(n) {
-        var v = n >= 1000 ? String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : String(n);
-        return v;
+        return n >= 1000 ? String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : String(n);
       }
 
       function animateAmount(from, to, duration, done) {
@@ -641,15 +518,6 @@
         requestAnimationFrame(step);
       }
 
-      function updatePasseportTip(n) {
-        var firstTip = document.querySelector('.passeport-cards .doc-tip');
-        if (firstTip) {
-          firstTip.textContent = n > 1
-            ? "Shootez les passeports de tous les passagers d'un coup 📸"
-            : "Conseil : Posez le document à plat pour un scan instantané ⚡";
-        }
-      }
-
       document.getElementById('passager-btns').addEventListener('click', function(e) {
         var btn = e.target.closest('.passager-btn');
         if (!btn) return;
@@ -659,32 +527,20 @@
         btn.classList.add('active');
         var target = amounts[n];
         animateAmount(currentDisplay, target, 320, function() { currentDisplay = target; });
-        updatePasseportTip(n);
       });
       document.querySelector('.passager-btn[data-n="1"]').classList.add('active');
-      updatePasseportTip(1);
 
-      // Progress (étape 1 = upload)
-      function setProgress(step) {
-        var steps = progressBar.querySelectorAll('.step');
-        steps.forEach(function(s, i) {
-          s.classList.remove('active', 'done');
-          if (i + 1 < step) s.classList.add('done');
-          else if (i + 1 === step) s.classList.add('active');
-        });
-      }
-
-      // Préremplir WhatsApp
       var p = new URLSearchParams(window.location.search);
-      var tel = p.get('whatsapp') || p.get('tel');
-      if (tel) {
-        tel = tel.replace(/\s/g, '').replace(/^33/, '0').replace(/(\d{2})(?=\d)/g, '$1 ');
-        whatsapp.value = tel;
+      var telParam = p.get('whatsapp') || p.get('tel');
+      if (telParam) {
+        var telClean = telParam.replace(/\s/g, '').replace(/^33/, '0');
+        var telDisplay = telClean.replace(/(\d{2})(?=\d)/g, '$1 ');
+        whatsappInput.value = telDisplay;
+        if (iti) iti.setNumber('+33' + telClean.replace(/^0/, '').replace(/\s/g, ''));
         var mWa = document.getElementById('m-whatsapp');
-        if (mWa) mWa.value = tel;
+        if (mWa) mWa.value = telDisplay;
       }
 
-      // Bascule Mode Photo / Manuel
       document.getElementById('go-manuel').addEventListener('click', function(e) {
         e.preventDefault();
         modePhoto.classList.add('hidden');
@@ -701,119 +557,61 @@
       function markDone(btn, nameEl, files) {
         if (btn) btn.classList.add('done');
         if (nameEl && files && files.length) {
-          var names = [];
-          for (var i = 0; i < Math.min(files.length, 3); i++) names.push(files[i].name);
-          nameEl.textContent = names.length > 1 ? names.join(', ') : names[0];
+          var n = files.length;
+          nameEl.textContent = n === 1 ? '1 fichier' : n + ' fichiers';
         }
       }
 
-      function wireDocCard(card) {
-        var label = card.querySelector('.doc-btn');
-        var input = card.querySelector('input[type="file"]');
-        var nameEl = card.querySelector('.filename');
-        if (input && label) {
-          input.addEventListener('change', function() {
-            markDone(label, nameEl, this.files);
-          });
-        }
-      }
-      document.querySelectorAll('.passeport-cards .doc-card, .boarding-cards .doc-card').forEach(wireDocCard);
-
-      function addPassagerCard() {
-        var first = passeportCards.querySelector('.doc-card');
-        if (!first) return;
-        var clone = first.cloneNode(true);
-        clone.querySelector('input').value = '';
-        clone.querySelector('.filename').textContent = '';
-        clone.querySelector('.doc-btn').classList.remove('done');
-        passeportCards.appendChild(clone);
-        wireDocCard(clone);
-      }
-      function addBoardingCard() {
-        var first = boardingCards.querySelector('.doc-card');
-        if (!first) return;
-        var clone = first.cloneNode(true);
-        clone.querySelector('input').value = '';
-        clone.querySelector('.filename').textContent = '';
-        clone.querySelector('.doc-btn').classList.remove('done');
-        boardingCards.appendChild(clone);
-        wireDocCard(clone);
-      }
-      document.getElementById('add-passager').addEventListener('click', addPassagerCard);
-      document.getElementById('add-boarding').addEventListener('click', addBoardingCard);
-
-      function openMandat() {
-        setProgress(2);
-        modalMandat.classList.add('visible');
-        mandatScroll.scrollTop = 0;
-        mandatCheck.checked = false;
-        btnSignSubmit.textContent = 'Signer et envoyer';
-        updateSignButton();
-      }
-
-      btnLaunch.addEventListener('click', function() {
-        var tel = (whatsapp.value || '').trim();
-        if (!tel) { whatsapp.focus(); alert('Indiquez votre numéro WhatsApp.'); return; }
-        openMandat();
+      filePasseport.addEventListener('change', function() {
+        markDone(btnPasseport, document.getElementById('name-passeport'), this.files);
       });
-      btnLaunchManuel.addEventListener('click', function() {
-        var nom = (document.getElementById('m-nom').value || '').trim();
-        var prenom = (document.getElementById('m-prenom').value || '').trim();
-        var email = (document.getElementById('m-email').value || '').trim();
-        var vol = (document.getElementById('m-numero-vol').value || '').trim();
-        var pnr = (document.getElementById('m-pnr').value || '').trim();
-        var wa = (document.getElementById('m-whatsapp').value || '').trim();
-        if (!nom || !prenom || !email || !vol || !pnr || !wa) {
-          alert('Remplissez tous les champs obligatoires.');
+      fileBoarding.addEventListener('change', function() {
+        markDone(btnBoarding, document.getElementById('name-boarding'), this.files);
+      });
+      fileBillet.addEventListener('change', function() {
+        markDone(btnBillet, document.getElementById('name-billet'), this.files);
+      });
+
+      function getWhatsAppNumber() {
+        if (iti) {
+          var num = iti.getNumber();
+          return num ? num.replace(/^\+/, '') : '';
+        }
+        return (whatsappInput.value || '').replace(/\s/g, '').replace(/^0/, '33');
+      }
+
+      function sendPhotoMode() {
+        var prenom = (document.getElementById('prenom').value || '').trim();
+        var nom = (document.getElementById('nom').value || '').trim();
+        var email = (document.getElementById('email').value || '').trim();
+        var wa = getWhatsAppNumber();
+        if (!prenom || !nom || !email) {
+          alert('Remplissez Prénom, Nom et Email.');
           return;
         }
-        openMandat();
-      });
+        if (!wa || wa.length < 10) {
+          whatsappInput.focus();
+          alert('Indiquez un numéro WhatsApp valide.');
+          return;
+        }
 
-      function updateSignButton() {
-        var el = mandatScroll;
-        var scrolledToBottom = el.scrollHeight - el.scrollTop <= el.clientHeight + 24;
-        btnSignSubmit.disabled = !scrolledToBottom || !mandatCheck.checked;
-      }
-      mandatScroll.addEventListener('scroll', updateSignButton);
-      mandatCheck.addEventListener('change', updateSignButton);
-
-      function formatTel(v) {
-        return (v || '').replace(/\s/g, '').replace(/^0/, '33');
-      }
-
-      btnSignSubmit.addEventListener('click', function() {
-        if (btnSignSubmit.disabled) return;
-        btnSignSubmit.disabled = true;
-        btnSignSubmit.textContent = 'Envoi…';
+        btnLaunch.disabled = true;
+        btnLaunch.textContent = 'Envoi…';
 
         var formData = new FormData();
-        formData.append('mandat_signed', '1');
+        formData.append('mode', 'photo');
+        formData.append('prenom', prenom);
+        formData.append('nom', nom);
+        formData.append('email', email);
+        formData.append('whatsapp', wa);
         formData.append('nb_passagers', nbPassagersInput.value);
-
-        if (modeManuel.classList.contains('visible')) {
-          formData.append('mode', 'manuel');
-          formData.append('nom', (document.getElementById('m-nom').value || '').trim());
-          formData.append('prenom', (document.getElementById('m-prenom').value || '').trim());
-          formData.append('email', (document.getElementById('m-email').value || '').trim());
-          formData.append('numero_vol', (document.getElementById('m-numero-vol').value || '').trim());
-          formData.append('pnr', (document.getElementById('m-pnr').value || '').trim());
-          formData.append('whatsapp', formatTel(document.getElementById('m-whatsapp').value));
-        } else {
-          formData.append('mode', 'photo');
-          formData.append('whatsapp', formatTel(whatsapp.value));
-          document.querySelectorAll('input[name="file_passeport"]').forEach(function(inp) {
-            for (var i = 0; i < inp.files.length; i++) formData.append('file_passeport', inp.files[i]);
-          });
-          document.querySelectorAll('input[name="file_boarding"]').forEach(function(inp) {
-            for (var i = 0; i < inp.files.length; i++) formData.append('file_boarding', inp.files[i]);
-          });
-        }
+        var i;
+        for (i = 0; i < filePasseport.files.length; i++) formData.append('file_passeport', filePasseport.files[i]);
+        for (i = 0; i < fileBoarding.files.length; i++) formData.append('file_boarding', fileBoarding.files[i]);
+        for (i = 0; i < fileBillet.files.length; i++) formData.append('file_billet', fileBillet.files[i]);
 
         fetch(WEBHOOK, { method: 'POST', body: formData })
           .then(function() {
-            setProgress(3);
-            modalMandat.classList.remove('visible');
             formView.classList.add('hidden');
             stickyCta.style.display = 'none';
             successView.classList.add('visible');
@@ -821,16 +619,49 @@
           })
           .catch(function() {
             alert('Envoi échoué. Contactez-nous sur WhatsApp : +33 7 56 86 36 30');
-            btnSignSubmit.disabled = false;
-            btnSignSubmit.textContent = 'Signer et envoyer';
           })
           .finally(function() {
-            btnSignSubmit.textContent = 'Signer et envoyer';
+            btnLaunch.disabled = false;
+            btnLaunch.textContent = 'ROBIN ANALYSEZ MON DOSSIER 🚀';
           });
-      });
+      }
 
-      modalMandat.addEventListener('click', function(e) {
-        if (e.target === modalMandat) modalMandat.classList.remove('visible');
+      btnLaunch.addEventListener('click', sendPhotoMode);
+
+      btnLaunchManuel.addEventListener('click', function() {
+        var nom = (document.getElementById('m-nom').value || '').trim();
+        var prenom = (document.getElementById('m-prenom').value || '').trim();
+        var email = (document.getElementById('m-email').value || '').trim();
+        var vol = (document.getElementById('m-numero-vol').value || '').trim();
+        var pnr = (document.getElementById('m-pnr').value || '').trim();
+        var wa = (document.getElementById('m-whatsapp').value || '').trim().replace(/\s/g, '').replace(/^0/, '33');
+        if (!nom || !prenom || !email || !vol || !pnr || !wa) {
+          alert('Remplissez tous les champs obligatoires.');
+          return;
+        }
+        btnLaunchManuel.disabled = true;
+        btnLaunchManuel.textContent = 'Envoi…';
+        var formData = new FormData();
+        formData.append('mode', 'manuel');
+        formData.append('nom', nom);
+        formData.append('prenom', prenom);
+        formData.append('email', email);
+        formData.append('numero_vol', vol);
+        formData.append('pnr', pnr);
+        formData.append('whatsapp', wa);
+        fetch(WEBHOOK, { method: 'POST', body: formData })
+          .then(function() {
+            formView.classList.add('hidden');
+            successView.classList.add('visible');
+            window.scrollTo(0, 0);
+          })
+          .catch(function() {
+            alert('Envoi échoué. Contactez-nous sur WhatsApp : +33 7 56 86 36 30');
+          })
+          .finally(function() {
+            btnLaunchManuel.disabled = false;
+            btnLaunchManuel.textContent = 'Lancer ma réclamation';
+          });
       });
     })();
   </script>
