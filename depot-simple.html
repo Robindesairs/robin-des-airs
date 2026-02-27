@@ -4,78 +4,149 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Déposer — Robin des Airs</title>
-  <meta name="description" content="Dépôt photo ou formulaire. Mandat en 1 clic. Indemnités 250–600€, cash uniquement.">
+  <meta name="description" content="Indemnités jusqu'à 600€ par passager. Dépôt photo ou formulaire. Cash uniquement.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
-      --bg: #0f0f0f;
-      --card: #1a1a1a;
-      --card-border: #2a2a2a;
-      --text: #f5f5f5;
-      --muted: #888;
-      --accent: #00d26a;
-      --accent-hover: #00b85c;
-      --danger: #e5484d;
+      --bg: #F9FAFB;
+      --card: #FFFFFF;
+      --card-border: #E5E7EB;
+      --text: #111827;
+      --muted: #6B7280;
+      --muted-light: #9CA3AF;
+      --emerald: #059669;
+      --emerald-hover: #047857;
+      --emerald-light: rgba(5, 150, 105, 0.08);
+      --shadow: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-card: 0 2px 8px rgba(0,0,0,0.04);
     }
     html { scroll-behavior: smooth; }
     body {
-      font-family: 'DM Sans', system-ui, sans-serif;
+      font-family: 'Inter', system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
       font-size: 15px;
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
+      padding-bottom: 100px;
     }
 
+    /* Header + Progress */
+    .header-wrap {
+      background: var(--card);
+      border-bottom: 1px solid var(--card-border);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
     .top-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 14px 20px;
-      border-bottom: 1px solid var(--card-border);
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: var(--bg);
     }
     .top-bar a {
       color: var(--text);
       text-decoration: none;
       font-weight: 700;
-      font-size: 14px;
+      font-size: 15px;
     }
-    .top-bar .logo { color: var(--accent); font-size: 16px; }
+    .top-bar .logo { color: var(--emerald); }
+    .progress-bar {
+      height: 3px;
+      background: var(--card-border);
+      display: flex;
+    }
+    .progress-bar .step {
+      flex: 1;
+      background: var(--card-border);
+      transition: background 0.25s;
+    }
+    .progress-bar .step.done { background: var(--emerald); }
+    .progress-bar .step.active { background: var(--emerald); }
 
     .page {
-      max-width: 440px;
+      max-width: 480px;
       margin: 0 auto;
-      padding: 28px 20px 40px;
+      padding: 24px 20px 32px;
     }
 
     .section-title {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 700;
-      margin-bottom: 8px;
-      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+      color: var(--text);
     }
     .section-sub {
       font-size: 14px;
       color: var(--muted);
-      margin-bottom: 24px;
+      margin-bottom: 22px;
     }
 
-    /* Mode Photo */
+    /* Passagers */
+    .passager-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 12px;
+      display: block;
+    }
+    .passager-btns {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .passager-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 2px solid var(--card-border);
+      background: var(--card);
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+      box-shadow: var(--shadow);
+    }
+    .passager-btn:hover { border-color: var(--emerald); background: var(--emerald-light); }
+    .passager-btn.active {
+      border-color: var(--emerald);
+      background: var(--emerald);
+      color: #fff;
+    }
+    .indemnity-line {
+      padding: 14px 18px;
+      background: var(--emerald-light);
+      border-radius: 12px;
+      margin-bottom: 24px;
+      border: 1px solid rgba(5, 150, 105, 0.2);
+    }
+    .indemnity-line .amount {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--emerald);
+      letter-spacing: -0.02em;
+    }
+    .indemnity-line .disclaimer {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    /* Mode Photo / Manuel */
     .mode-photo { display: block; }
     .mode-manuel { display: none; }
     .mode-photo.hidden { display: none; }
     .mode-manuel.visible { display: block; }
 
     .field {
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
     .field label {
       display: block;
@@ -83,8 +154,6 @@
       font-weight: 600;
       color: var(--muted);
       margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
     }
     .field input {
       width: 100%;
@@ -92,17 +161,29 @@
       font-size: 16px;
       font-family: inherit;
       border: 1px solid var(--card-border);
-      border-radius: 10px;
+      border-radius: 12px;
       background: var(--card);
       color: var(--text);
       transition: border-color 0.15s;
+      box-shadow: var(--shadow);
     }
-    .field input::placeholder { color: var(--muted); }
+    .field input::placeholder { color: var(--muted-light); }
     .field input:focus {
       outline: none;
-      border-color: var(--accent);
+      border-color: var(--emerald);
     }
+    .field-wrap { position: relative; }
+    .field-wrap .wa-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 22px;
+      pointer-events: none;
+    }
+    .field-wrap input { padding-left: 44px; }
 
+    /* Cartes documents */
     .doc-grid {
       display: flex;
       flex-direction: column;
@@ -112,26 +193,27 @@
     .doc-btn {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
       padding: 18px 20px;
       background: var(--card);
       border: 1px solid var(--card-border);
-      border-radius: 12px;
+      border-radius: 16px;
       cursor: pointer;
-      transition: border-color 0.15s, background 0.15s;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
       text-align: left;
       font-family: inherit;
-      font-size: 15px;
-      font-weight: 600;
-      color: var(--text);
+      box-shadow: var(--shadow-card);
     }
-    .doc-btn:hover { border-color: var(--accent); background: rgba(0,210,106,0.06); }
+    .doc-btn:hover { border-color: var(--emerald); box-shadow: 0 4px 12px rgba(5,150,105,0.12); }
     .doc-btn .icon { font-size: 28px; flex-shrink: 0; }
-    .doc-btn .label { flex: 1; }
-    .doc-btn .check { font-size: 20px; opacity: 0; flex-shrink: 0; }
+    .doc-btn .content { flex: 1; min-width: 0; }
+    .doc-btn .title { font-size: 15px; font-weight: 600; color: var(--text); }
+    .doc-btn .sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .doc-btn .filename { font-size: 11px; color: var(--emerald); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .doc-btn .check { font-size: 22px; opacity: 0; flex-shrink: 0; transition: opacity 0.2s ease; }
     .doc-btn.done {
-      border-color: var(--accent);
-      background: rgba(0,210,106,0.1);
+      border-color: var(--emerald);
+      background: var(--emerald-light);
     }
     .doc-btn.done .check { opacity: 1; }
     .doc-btn input[type="file"] {
@@ -140,85 +222,100 @@
       opacity: 0;
       pointer-events: none;
     }
+    .doc-card {
+      margin-bottom: 12px;
+    }
+    .doc-tip {
+      font-size: 11px;
+      color: var(--muted-light);
+      margin-top: 6px;
+      margin-left: 2px;
+      padding: 0 4px;
+    }
 
     .link-switch {
       text-align: center;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
     }
     .link-switch a {
       font-size: 13px;
       color: var(--muted);
       text-decoration: none;
     }
-    .link-switch a:hover { color: var(--accent); }
+    .link-switch a:hover { color: var(--emerald); }
 
-    /* Mode Manuel */
-    .form-manuel .field { margin-bottom: 18px; }
+    .form-manuel .field { margin-bottom: 16px; }
 
-    /* CTA */
-    .btn-cta {
+    /* Sticky CTA */
+    .sticky-cta {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px 20px 20px;
+      background: linear-gradient(to top, var(--card) 80%, transparent);
+      z-index: 40;
+    }
+    .sticky-cta .btn-cta {
       width: 100%;
+      max-width: 440px;
+      margin: 0 auto;
+      display: block;
       padding: 18px 24px;
       font-size: 16px;
       font-weight: 700;
       font-family: inherit;
-      color: var(--bg);
-      background: var(--accent);
+      color: #fff;
+      background: var(--emerald);
       border: none;
-      border-radius: 12px;
+      border-radius: 14px;
       cursor: pointer;
-      transition: background 0.15s, transform 0.05s;
+      transition: background 0.2s, transform 0.05s;
+      box-shadow: 0 4px 20px rgba(5, 150, 105, 0.35);
     }
-    .btn-cta:hover { background: var(--accent-hover); }
-    .btn-cta:active { transform: scale(0.98); }
-    .btn-cta:disabled { opacity: 0.5; cursor: not-allowed; }
+    .sticky-cta .btn-cta:hover { background: var(--emerald-hover); }
+    .sticky-cta .btn-cta:active { transform: scale(0.98); }
+    .sticky-cta .btn-cta:disabled { opacity: 0.6; cursor: not-allowed; }
 
     /* Modal Mandat */
     .modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.85);
+      background: rgba(0,0,0,0.5);
       z-index: 100;
       display: none;
       align-items: flex-end;
       justify-content: center;
-      padding: 0;
     }
-    .modal-overlay.visible {
-      display: flex;
-    }
+    .modal-overlay.visible { display: flex; }
     .modal {
       width: 100%;
-      max-width: 440px;
-      max-height: 92vh;
+      max-width: 480px;
+      max-height: 90vh;
       background: var(--card);
       border-radius: 20px 20px 0 0;
-      border: 1px solid var(--card-border);
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      box-shadow: 0 -4px 24px rgba(0,0,0,0.12);
     }
     .modal-header {
-      padding: 20px 20px 16px;
+      padding: 20px 20px 12px;
       border-bottom: 1px solid var(--card-border);
-      flex-shrink: 0;
     }
-    .modal-header h2 {
-      font-size: 18px;
-      font-weight: 700;
-      margin-bottom: 4px;
-    }
+    .modal-header h2 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
     .modal-header p { font-size: 13px; color: var(--muted); }
     .mandat-key {
       padding: 16px 20px;
-      background: rgba(0,210,106,0.08);
-      border-left: 3px solid var(--accent);
+      background: var(--emerald-light);
+      border-left: 4px solid var(--emerald);
       margin: 0 20px 16px;
-      border-radius: 0 8px 8px 0;
+      border-radius: 0 10px 10px 0;
       font-size: 14px;
       line-height: 1.6;
+      color: var(--text);
     }
-    .mandat-key strong { color: var(--accent); }
+    .mandat-key strong { color: var(--emerald); }
     .mandat-scroll {
       flex: 1;
       overflow-y: auto;
@@ -226,24 +323,18 @@
       -webkit-overflow-scrolling: touch;
     }
     .mandat-scroll h3 {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
       color: var(--muted);
       text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin: 16px 0 8px;
+      letter-spacing: 0.06em;
+      margin: 16px 0 6px;
     }
     .mandat-scroll h3:first-child { margin-top: 0; }
-    .mandat-scroll p {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.65;
-      margin-bottom: 12px;
-    }
+    .mandat-scroll p { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 10px; }
     .mandat-footer {
       padding: 16px 20px 24px;
       border-top: 1px solid var(--card-border);
-      flex-shrink: 0;
       background: var(--card);
     }
     .mandat-check {
@@ -253,33 +344,31 @@
       margin-bottom: 14px;
       cursor: pointer;
     }
-    .mandat-check input {
-      width: 20px;
-      height: 20px;
-      margin-top: 2px;
-      flex-shrink: 0;
-      accent-color: var(--accent);
-    }
+    .mandat-check input { width: 20px; height: 20px; margin-top: 2px; flex-shrink: 0; accent-color: var(--emerald); }
     .mandat-check span { font-size: 14px; color: var(--text); }
     .modal .btn-cta { margin-top: 4px; }
 
     /* Success */
-    .success-view { display: none; padding: 40px 20px; text-align: center; }
+    .success-view {
+      display: none;
+      padding: 48px 20px;
+      text-align: center;
+    }
     .success-view.visible { display: block; }
-    .success-view .icon { font-size: 48px; margin-bottom: 16px; }
-    .success-view h2 { font-size: 20px; font-weight: 700; margin-bottom: 10px; }
-    .success-view p { font-size: 15px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+    .success-view .icon { font-size: 52px; margin-bottom: 20px; }
+    .success-view h2 { font-size: 22px; font-weight: 700; margin-bottom: 10px; color: var(--text); }
+    .success-view p { font-size: 15px; color: var(--muted); margin-bottom: 28px; line-height: 1.6; }
     .success-view .wa-link {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 14px 24px;
+      padding: 16px 28px;
       background: #25D366;
       color: #fff;
       font-weight: 600;
       font-size: 15px;
       text-decoration: none;
-      border-radius: 10px;
+      border-radius: 12px;
     }
 
     .form-view.hidden { display: none; }
@@ -287,76 +376,125 @@
 </head>
 <body>
 
-  <header class="top-bar">
-    <a href="/">← Retour</a>
-    <a href="/" class="logo">Robin des Airs</a>
-    <span></span>
-  </header>
+  <div class="header-wrap">
+    <header class="top-bar">
+      <a href="/">← Retour</a>
+      <a href="/" class="logo">Robin des Airs</a>
+      <span></span>
+    </header>
+    <div class="progress-bar" id="progress-bar">
+      <span class="step active" data-step="1" title="Upload"></span>
+      <span class="step" data-step="2" title="Signature"></span>
+      <span class="step" data-step="3" title="Sarah"></span>
+    </div>
+  </div>
 
   <main class="page">
     <div class="form-view" id="form-view">
-      <!-- Mode A : Photo (défaut) -->
+      <!-- Mode Photo -->
       <div class="mode-photo" id="mode-photo">
         <h1 class="section-title">Dépôt photo</h1>
         <p class="section-sub">3 pièces, 1 numéro. On s’occupe du reste.</p>
+
+        <span class="passager-label">Combien de passagers ?</span>
+        <div class="passager-btns" id="passager-btns">
+          <button type="button" class="passager-btn" data-n="1">1</button>
+          <button type="button" class="passager-btn" data-n="2">2</button>
+          <button type="button" class="passager-btn" data-n="3">3</button>
+          <button type="button" class="passager-btn" data-n="4">4+</button>
+        </div>
+        <input type="hidden" id="nb_passagers" value="1">
+        <div class="indemnity-line" id="indemnity-line">
+          <div class="amount" id="indemnity-amount">Indemnité potentielle : Jusqu'à 600 €</div>
+          <div class="disclaimer">Estimation basée sur le barème légal maximum (600 €/pers).</div>
+        </div>
+
         <div class="field">
           <label for="whatsapp">WhatsApp *</label>
-          <input type="tel" id="whatsapp" name="whatsapp" placeholder="06 12 34 56 78" required autocomplete="tel">
+          <div class="field-wrap">
+            <span class="wa-icon">💬</span>
+            <input type="tel" id="whatsapp" placeholder="06 12 34 56 78" required autocomplete="tel">
+          </div>
         </div>
+
         <div class="doc-grid">
-          <label class="doc-btn" id="btn-passeport">
-            <span class="icon">🪪</span>
-            <span class="label">Passeport</span>
-            <span class="check">✅</span>
-            <input type="file" id="file-passeport" accept="image/*" capture="environment">
-          </label>
-          <label class="doc-btn" id="btn-boarding">
-            <span class="icon">🎫</span>
-            <span class="label">Carte d'embarquement</span>
-            <span class="check">✅</span>
-            <input type="file" id="file-boarding" accept="image/*" capture="environment" multiple>
-          </label>
-          <label class="doc-btn" id="btn-billet">
-            <span class="icon">📄</span>
-            <span class="label">Billet / Confirmation</span>
-            <span class="check">✅</span>
-            <input type="file" id="file-billet" accept="image/*,.pdf">
-          </label>
+          <div class="doc-card">
+            <label class="doc-btn" id="btn-passeport">
+              <span class="icon">🪪</span>
+              <div class="content">
+                <div class="title">Passeport ou ID</div>
+                <div class="sub">Pour valider votre identité</div>
+                <div class="filename" id="name-passeport"></div>
+              </div>
+              <span class="check">✅</span>
+              <input type="file" id="file-passeport" accept="image/*" capture="environment">
+            </label>
+            <p class="doc-tip">Conseil : Posez le document à plat pour un scan instantané ⚡</p>
+          </div>
+          <div class="doc-card">
+            <label class="doc-btn" id="btn-boarding">
+              <span class="icon">🎫</span>
+              <div class="content">
+                <div class="title">Cartes d'embarquement</div>
+                <div class="sub">Preuve de présence à bord</div>
+                <div class="filename" id="name-boarding"></div>
+              </div>
+              <span class="check">✅</span>
+              <input type="file" id="file-boarding" accept="image/*" capture="environment" multiple>
+            </label>
+            <p class="doc-tip">Conseil : Posez le document à plat pour un scan instantané ⚡</p>
+          </div>
+          <div class="doc-card">
+            <label class="doc-btn" id="btn-billet">
+              <span class="icon">📄</span>
+              <div class="content">
+                <div class="title">Confirmation de vol</div>
+                <div class="sub">Pour extraire les données du vol</div>
+                <div class="filename" id="name-billet"></div>
+              </div>
+              <span class="check">✅</span>
+              <input type="file" id="file-billet" accept="image/*,.pdf" capture="environment">
+            </label>
+            <p class="doc-tip">Conseil : Posez le document à plat pour un scan instantané ⚡</p>
+          </div>
         </div>
+
         <p class="link-switch">
-          <a href="#" id="go-manuel">Pas les documents sous la main ? Remplir manuellement</a>
+          <a href="#" id="go-manuel">Pas les documents ? Remplir le formulaire texte</a>
         </p>
-        <button type="button" class="btn-cta" id="btn-launch">Lancer ma réclamation</button>
       </div>
 
-      <!-- Mode B : Manuel -->
+      <!-- Mode Manuel -->
       <div class="mode-manuel" id="mode-manuel">
         <h1 class="section-title">Formulaire manuel</h1>
         <p class="section-sub">On traite votre dossier sans les pièces jointes.</p>
         <div class="form-manuel">
           <div class="field">
             <label for="m-nom">Nom *</label>
-            <input type="text" id="m-nom" name="nom" required placeholder="Dupont">
+            <input type="text" id="m-nom" placeholder="Dupont">
           </div>
           <div class="field">
             <label for="m-prenom">Prénom *</label>
-            <input type="text" id="m-prenom" name="prenom" required placeholder="Marie">
+            <input type="text" id="m-prenom" placeholder="Marie">
           </div>
           <div class="field">
             <label for="m-email">Email *</label>
-            <input type="email" id="m-email" name="email" required placeholder="marie@email.com">
+            <input type="email" id="m-email" placeholder="marie@email.com">
           </div>
           <div class="field">
             <label for="m-numero-vol">N° de vol *</label>
-            <input type="text" id="m-numero-vol" name="numero_vol" required placeholder="AF 1234">
+            <input type="text" id="m-numero-vol" placeholder="AF 1234">
           </div>
           <div class="field">
             <label for="m-pnr">PNR (code réservation) *</label>
-            <input type="text" id="m-pnr" name="pnr" required placeholder="ABC123" autocomplete="off">
+            <input type="text" id="m-pnr" placeholder="ABC123" autocomplete="off">
           </div>
           <div class="field">
             <label for="m-whatsapp">WhatsApp *</label>
-            <input type="tel" id="m-whatsapp" name="whatsapp_manuel" placeholder="06 12 34 56 78" required autocomplete="tel">
+            <div class="field-wrap">
+              <span class="wa-icon">💬</span>
+              <input type="tel" id="m-whatsapp" placeholder="06 12 34 56 78" autocomplete="tel">
+            </div>
           </div>
         </div>
         <p class="link-switch">
@@ -366,7 +504,6 @@
       </div>
     </div>
 
-    <!-- Succès -->
     <div class="success-view" id="success-view">
       <div class="icon">✅</div>
       <h2>Dossier transmis.</h2>
@@ -375,23 +512,26 @@
     </div>
   </main>
 
-  <!-- Modal Mandat Cash-Protect -->
+  <div class="sticky-cta" id="sticky-cta">
+    <button type="button" class="btn-cta" id="btn-launch">LANCER MA RÉCLAMATION 🚀</button>
+  </div>
+
   <div class="modal-overlay" id="modal-mandat">
     <div class="modal">
       <div class="modal-header">
         <h2>Mandat de réclamation</h2>
-        <p>Lisez et signez pour continuer.</p>
+        <p>Signature électronique simple. Lisez et validez.</p>
       </div>
       <div class="mandat-key">
-        • Récupérez entre <strong>250€ et 600€</strong> par passager.<br>
-        • <strong>REFUS DES AVOIRS</strong> : Nous exigeons uniquement du cash (virement).<br>
-        • <strong>COMMISSION</strong> : 25% TTC au succès uniquement.
+        • <strong>Potentiel : 250 € à 600 € par passager</strong><br>
+        • Refus des avoirs : on exige du cash pour vous.<br>
+        • Commission : 25 % TTC au succès uniquement.
       </div>
       <div class="mandat-scroll" id="mandat-scroll">
         <h3>Gestion email</h3>
         <p>Le mandant autorise Robin des Airs à créer une adresse email de correspondance dédiée pour centraliser les échanges avec la compagnie.</p>
         <h3>Encaissement</h3>
-        <p>Le mandant accepte que l'indemnité soit versée sur le compte de Robin des Airs, qui reversera la somme (moins la commission) sous 48h.</p>
+        <p>Le mandant accepte que l'indemnité soit versée sur le compte de Robin des Airs, qui reversera la somme (moins la commission) sous 48 h.</p>
         <h3>Refus des bons d'achat / avoirs</h3>
         <p>Le mandant refuse d'avance toute offre d'indemnisation par bon d'achat ou avoir.</p>
       </div>
@@ -413,6 +553,10 @@
       var modeManuel = document.getElementById('mode-manuel');
       var formView = document.getElementById('form-view');
       var successView = document.getElementById('success-view');
+      var stickyCta = document.getElementById('sticky-cta');
+      var progressBar = document.getElementById('progress-bar');
+      var nbPassagersInput = document.getElementById('nb_passagers');
+      var indemnityAmount = document.getElementById('indemnity-amount');
       var whatsapp = document.getElementById('whatsapp');
       var filePasseport = document.getElementById('file-passeport');
       var fileBoarding = document.getElementById('file-boarding');
@@ -426,6 +570,35 @@
       var mandatScroll = document.getElementById('mandat-scroll');
       var mandatCheck = document.getElementById('mandat-check');
       var btnSignSubmit = document.getElementById('btn-sign-submit');
+
+      var labels = {
+        1: "Indemnité potentielle : Jusqu'à 600 €",
+        2: "Indemnité potentielle : Jusqu'à 1 200 €",
+        3: "Indemnité potentielle : Jusqu'à 1 800 €",
+        4: "Indemnité potentielle : Jusqu'à 2 400 €+"
+      };
+
+      // Passagers
+      document.getElementById('passager-btns').addEventListener('click', function(e) {
+        var btn = e.target.closest('.passager-btn');
+        if (!btn) return;
+        var n = parseInt(btn.dataset.n, 10);
+        nbPassagersInput.value = n;
+        document.querySelectorAll('.passager-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        indemnityAmount.textContent = labels[n];
+      });
+      document.querySelector('.passager-btn[data-n="1"]').classList.add('active');
+
+      // Progress (étape 1 = upload)
+      function setProgress(step) {
+        var steps = progressBar.querySelectorAll('.step');
+        steps.forEach(function(s, i) {
+          s.classList.remove('active', 'done');
+          if (i + 1 < step) s.classList.add('done');
+          else if (i + 1 === step) s.classList.add('active');
+        });
+      }
 
       // Préremplir WhatsApp
       var p = new URLSearchParams(window.location.search);
@@ -442,27 +615,43 @@
         e.preventDefault();
         modePhoto.classList.add('hidden');
         modeManuel.classList.add('visible');
+        stickyCta.style.display = 'none';
       });
       document.getElementById('go-photo').addEventListener('click', function(e) {
         e.preventDefault();
         modeManuel.classList.remove('visible');
         modePhoto.classList.remove('hidden');
+        stickyCta.style.display = 'block';
       });
 
-      // Feedback upload
-      function markDone(btn) { if (btn) btn.classList.add('done'); }
-      filePasseport.addEventListener('change', function() { if (this.files.length) markDone(btnPasseport); });
-      fileBoarding.addEventListener('change', function() { if (this.files.length) markDone(btnBoarding); });
-      fileBillet.addEventListener('change', function() { if (this.files.length) markDone(btnBillet); });
+      // Upload + nom de fichier
+      function markDone(btn, nameEl, files) {
+        if (btn) btn.classList.add('done');
+        if (nameEl && files && files.length) {
+          var names = [];
+          for (var i = 0; i < Math.min(files.length, 3); i++) names.push(files[i].name);
+          nameEl.textContent = names.length > 1 ? names.join(', ') : names[0];
+        }
+      }
+      filePasseport.addEventListener('change', function() {
+        markDone(btnPasseport, document.getElementById('name-passeport'), this.files);
+      });
+      fileBoarding.addEventListener('change', function() {
+        markDone(btnBoarding, document.getElementById('name-boarding'), this.files);
+      });
+      fileBillet.addEventListener('change', function() {
+        markDone(btnBillet, document.getElementById('name-billet'), this.files);
+      });
 
-      // Ouvrir modal au clic sur "Lancer ma réclamation"
       function openMandat() {
+        setProgress(2);
         modalMandat.classList.add('visible');
         mandatScroll.scrollTop = 0;
         mandatCheck.checked = false;
         btnSignSubmit.textContent = 'Signer et envoyer';
         updateSignButton();
       }
+
       btnLaunch.addEventListener('click', function() {
         var tel = (whatsapp.value || '').trim();
         if (!tel) { whatsapp.focus(); alert('Indiquez votre numéro WhatsApp.'); return; }
@@ -482,10 +671,9 @@
         openMandat();
       });
 
-      // Scroll complet + case cochée => activer le bouton
       function updateSignButton() {
         var el = mandatScroll;
-        var scrolledToBottom = el.scrollHeight - el.scrollTop <= el.clientHeight + 20;
+        var scrolledToBottom = el.scrollHeight - el.scrollTop <= el.clientHeight + 24;
         btnSignSubmit.disabled = !scrolledToBottom || !mandatCheck.checked;
       }
       mandatScroll.addEventListener('scroll', updateSignButton);
@@ -502,6 +690,7 @@
 
         var formData = new FormData();
         formData.append('mandat_signed', '1');
+        formData.append('nb_passagers', nbPassagersInput.value);
 
         if (modeManuel.classList.contains('visible')) {
           formData.append('mode', 'manuel');
@@ -521,8 +710,10 @@
 
         fetch(WEBHOOK, { method: 'POST', body: formData })
           .then(function() {
+            setProgress(3);
             modalMandat.classList.remove('visible');
             formView.classList.add('hidden');
+            stickyCta.style.display = 'none';
             successView.classList.add('visible');
             window.scrollTo(0, 0);
           })
@@ -536,7 +727,6 @@
           });
       });
 
-      // Fermer modal en tapant en dehors (optionnel)
       modalMandat.addEventListener('click', function(e) {
         if (e.target === modalMandat) modalMandat.classList.remove('visible');
       });
