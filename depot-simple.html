@@ -471,7 +471,7 @@
         <div class="result-amount">Indemnité potentielle : 600 € par passager</div>
       </div>
 
-      <!-- Capture lead : passagers, prénom, WhatsApp, CTA Sarah -->
+      <!-- Capture lead : passagers, prénom, WhatsApp, CTA Robin -->
       <div class="lead-form" id="lead-form">
         <span class="passager-label">Nombre de passagers :</span>
         <div class="passager-btns" id="passager-btns">
@@ -489,14 +489,14 @@
           <label for="whatsapp">WhatsApp *</label>
           <input type="tel" id="whatsapp" placeholder="Votre numéro WhatsApp" required autocomplete="tel">
         </div>
-        <button type="button" class="btn-sarah" id="btn-sarah">SARAH, RÉCUPÉREZ MES <span id="cta-amount">600</span> € 🚀</button>
+        <button type="button" class="btn-sarah" id="btn-sarah">ROBIN, RÉCUPÉREZ MES <span id="cta-amount">600</span> € 🚀</button>
       </div>
     </div>
 
     <div class="success-view" id="success-view">
       <div class="icon">✅</div>
       <h2>Dossier transmis !</h2>
-      <p>Sarah analyse vos documents et vous contacte sur WhatsApp dans quelques instants.</p>
+      <p>Robin des Airs analyse vos documents et vous contacte sur WhatsApp dans quelques instants.</p>
       <a href="https://wa.me/33756863630" target="_blank" rel="noopener" class="wa-link">Ouvrir WhatsApp</a>
     </div>
   </main>
@@ -520,7 +520,7 @@
       var nbPassagersInput = document.getElementById('nb_passagers');
       var whatsappInput = document.getElementById('whatsapp');
       var prenomInput = document.getElementById('prenom');
-      var btnSarah = document.getElementById('btn-sarah');
+      var btnRobin = document.getElementById('btn-sarah');
       var ctaAmount = document.getElementById('cta-amount');
 
       var amounts = { 1: 600, 2: 1200, 3: 1800, 4: 2400 };
@@ -613,14 +613,14 @@
         return (wa || '').replace(/\D/g, '').length >= 9;
       }
 
-      btnSarah.addEventListener('click', function() {
+      btnRobin.addEventListener('click', function() {
         var prenom = (prenomInput.value || '').trim();
         var wa = getWhatsAppNumber();
         if (!prenom) { prenomInput.focus(); alert('Indiquez votre prénom.'); return; }
         if (!isValidPhone(wa)) { whatsappInput.focus(); alert('Indiquez un numéro WhatsApp valide.'); return; }
 
-        btnSarah.disabled = true;
-        btnSarah.textContent = 'Envoi…';
+            btnRobin.disabled = true;
+            btnRobin.textContent = 'Envoi…';
 
         var formData = new FormData();
         formData.append('mode', modeScan ? 'scan' : 'manual');
@@ -644,7 +644,7 @@
             alert('Envoi échoué. Contactez-nous sur WhatsApp : +33 7 56 86 36 30');
           })
           .finally(function() {
-            btnSarah.disabled = false;
+            btnRobin.disabled = false;
             var span = document.getElementById('cta-amount');
             if (span) span.textContent = formatAmount(amounts[parseInt(nbPassagersInput.value, 10)] || 600);
           });

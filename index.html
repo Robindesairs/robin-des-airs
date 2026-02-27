@@ -332,11 +332,11 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 80px;
+  gap: 48px;
   align-items: center;
   position: relative;
   z-index: 2;
-  padding-bottom: 80px;
+  padding-bottom: 56px;
 }
 
 /* HERO LEFT — texte blanc sur fond implicite */
@@ -421,11 +421,11 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   font-weight: 600;
 }
 
-/* HERO RIGHT — Calculateur sur fond navy */
+/* HERO RIGHT — Calculateur (style épuré) */
 .hero-right {
   background: linear-gradient(165deg, var(--navy) 0%, var(--navy2) 100%);
   border-radius: var(--radius-lg);
-  padding: 44px;
+  padding: 28px 32px;
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-premium);
@@ -453,7 +453,7 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 }
 
 .calc-header {
-  margin-bottom: 28px;
+  margin-bottom: 18px;
 }
 
 .calc-tag {
@@ -632,7 +632,7 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 
 .btn-wa-hero:hover { background: #20bd5a; }
 
-/* CTA principal Sarah — style pilule WhatsApp */
+/* CTA principal Robin — style pilule WhatsApp */
 .btn-sarah-cta {
   display: inline-flex;
   align-items: center;
@@ -1688,6 +1688,15 @@ footer {
 .dist-pill.active { background: rgba(0,229,160,0.2); border-color: var(--neon-b); color: white; }
 .dist-pill .pill-amount { font-size: 14px; color: var(--neon-b); margin-top: 2px; }
 .dist-pill.active .pill-amount { color: white; }
+.calc-robin-hint { font-size: 11px; color: rgba(255,255,255,0.5); margin-bottom: 14px; text-align: center; }
+.vol-search-wrap { text-align: center; margin-bottom: 12px; }
+.calc-label-center { display: block; text-align: center; margin-bottom: 8px; }
+.calc-input-big { font-size: 18px; letter-spacing: 2px; text-align: center; padding: 16px 20px; }
+.route-line { font-size: 13px; color: var(--neon-b); font-weight: 700; margin-top: 10px; min-height: 20px; }
+.vol-chip-wrap { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: rgba(255,255,255,0.06); border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); }
+.vol-chip-wrap .chip-route { font-weight: 700; }
+.vol-chip-wrap .chip-dist { font-size: 10px; color: rgba(255,255,255,0.5); }
+.distance-result { font-size: 12px; font-weight: 700; color: var(--neon-b); padding: 10px 14px; background: rgba(0,229,160,0.1); border-radius: 8px; margin-bottom: 12px; min-height: 20px; }
 #da-dist-wrap.flash, #eb-dist-wrap.flash {
   box-shadow: 0 0 0 3px rgba(255,80,80,0.35);
   border-radius: 10px;
@@ -1833,7 +1842,7 @@ footer {
     <div class="hero-right" id="funnel-box">
 
       <div class="calc-header">
-        <div class="calc-tag" data-i18n="calc_tag">Diagnostic de vol</div>
+        <div class="calc-tag" data-i18n="calc_tag">Diagnostic de vol · Robin des Airs</div>
         <div class="calc-title">Quelle est votre<br><span id="funnel-subtitle">situation ?</span></div>
         <div class="funnel-progress"><div class="fp-bar" id="fp-bar" style="width:0%"></div></div>
         <div class="funnel-crumbs" id="funnel-crumbs"></div>
@@ -1931,33 +1940,46 @@ footer {
         <button class="back-btn" id="back2">← Retour</button>
       </div>
 
-      <!-- ══ ÉTAPE 3a — VOL DIRECT ══ -->
+      <!-- ══ ÉTAPE 3a — VOL DIRECT (Robin des Airs) ══ -->
       <div class="fstep" id="step-3a">
         <div class="fstep-eyebrow">Étape 3 sur 5 — Détails du vol</div>
+        <p class="calc-robin-hint">Robin des Airs vérifie votre trajet en un clic.</p>
 
-        <div class="calc-field">
-          <label class="calc-label" for="da-vol">Numéro de vol</label>
-          <input type="text" id="da-vol" class="calc-input"
-            placeholder="Tout vol monde (ex: AF718, BA123, LH456…)"
-            maxlength="8" autocomplete="off"
-            oninput="volLookup(this,'da-chip','da-dist-wrap','da-dist')">
-          <div class="vol-chip" id="da-chip">
-            <span class="chip-ico">✈️</span>
-            <div><div class="chip-route" id="da-chip-route"></div><div class="chip-dist" id="da-chip-dist"></div></div>
-            <span class="chip-badge" id="da-chip-badge"></span>
-          </div>
-          <p class="calc-vol-hint">Entrez n'importe quel numéro de vol. Si le vol n'est pas reconnu, choisissez la distance ci-dessous.</p>
+        <div class="vol-search-wrap">
+          <label class="calc-label calc-label-center" for="da-vol">Numéro de vol</label>
+          <input type="text" id="da-vol" class="calc-input calc-input-big" placeholder="Ex : AF718, BA123, LH456…" maxlength="8" autocomplete="off" oninput="volLookup(this,'da-chip','da-dist-wrap','da-dist')">
+          <div class="route-line" id="da-route-line"></div>
         </div>
 
-        <div class="calc-field" id="da-dist-wrap">
-          <label class="calc-label">Distance du trajet</label>
-          <div class="dist-pills" role="group" aria-label="Choisir la distance">
+        <div class="calc-field vol-chip-wrap" id="da-chip" style="display:none;">
+          <span class="chip-ico">✈️</span>
+          <div><div class="chip-route" id="da-chip-route"></div><div class="chip-dist" id="da-chip-dist"></div></div>
+          <span class="chip-badge" id="da-chip-badge"></span>
+        </div>
+
+        <div class="calc-field" id="da-manual-wrap" style="display:none;">
+          <label class="calc-label">Vol non trouvé ? Indiquez les villes</label>
+          <div class="calc-row">
+            <select id="da-ville-depart" class="calc-select" onchange="updateManualDist('da')">
+              <option value="">— Ville de départ —</option>
+            </select>
+            <select id="da-ville-arrivee" class="calc-select" onchange="updateManualDist('da')">
+              <option value="">— Ville d'arrivée —</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="distance-result" id="da-distance-line"></div>
+
+        <div class="calc-field" id="da-dist-wrap" style="display:none;">
+          <label class="calc-label">Choisissez la distance du trajet</label>
+          <div class="dist-pills" role="group">
             <button type="button" class="dist-pill" data-dist="250" onclick="setDist('da-dist',250,this)">Court<br><span class="pill-amount">250€</span></button>
             <button type="button" class="dist-pill" data-dist="400" onclick="setDist('da-dist',400,this)">Moyen<br><span class="pill-amount">400€</span></button>
             <button type="button" class="dist-pill" data-dist="600" onclick="setDist('da-dist',600,this)">Long<br><span class="pill-amount">600€</span></button>
           </div>
-          <input type="hidden" id="da-dist" value="">
         </div>
+        <input type="hidden" id="da-dist" value="">
 
         <div class="calc-row">
           <div class="calc-field">
@@ -1984,6 +2006,7 @@ footer {
       <!-- ══ ÉTAPE 3b — AVEC ESCALE ══ -->
       <div class="fstep" id="step-3b">
         <div class="fstep-eyebrow">Étape 3 sur 5 — Vos deux vols</div>
+        <p class="calc-robin-hint">Robin des Airs : c’est le dernier vol qui détermine l’indemnité.</p>
 
         <div class="escale-info">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--neon-b)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -2079,12 +2102,12 @@ footer {
           </div>
         </div>
 
-        <!-- CTA principal Sarah + lien dossier en ligne -->
+        <!-- CTA principal Robin + lien dossier en ligne -->
         <div style="margin-bottom:14px;">
           <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
             <a id="wa-cta" href="#" target="_blank" class="btn-sarah-cta">
               <svg class="wa-bubble" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.108.549 4.086 1.508 5.8L0 24l6.335-1.483A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.817 9.817 0 01-5.002-1.368l-.36-.214-3.722.976.994-3.63-.234-.373A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182c5.43 0 9.818 4.388 9.818 9.818 0 5.43-4.388 9.818-9.818 9.818z"/></svg>
-              Lancer ma demande avec Sarah 🟢
+              Lancer ma demande avec Robin 🟢
             </a>
             <p style="font-size:10px;color:rgba(255,255,255,0.4);">Analyse gratuite et sans engagement.</p>
             <a href="/depot-en-ligne.html" target="_blank" class="btn-dossier-secondary">📄 Déposer un dossier en ligne</a>
@@ -2856,9 +2879,20 @@ const PFX = {
 };
 
 const COMMISSION_RATE = 0.25; /* 25% no win no fee */
-/** Numéro WhatsApp (format international sans +). Changez ici pour mettre à jour tous les liens du site. */
 const WHATSAPP_NUMBER = '33756863630';
 const DLABEL = { 600:'Long-courrier · +3 500 km', 400:'Moyen-courrier · 1 500–3 500 km', 250:'Court-courrier · <1 500 km' };
+const DISTANCE_LINE = { 600:'Vol Long-Courrier (>3 500 km) → Indemnité de 600€', 400:'Vol Moyen-Courrier (1 500–3 500 km) → Indemnité de 400€', 250:'Vol Court-Courrier (<1 500 km) → Indemnité de 250€' };
+/* Aéroport → Ville (pour affichage Départ | Arrivée) */
+const AIRPORT_CITY = { CDG:'Paris', ORY:'Paris', LYS:'Lyon', MRS:'Marseille', NCE:'Nice', TLS:'Toulouse', BOD:'Bordeaux', NTE:'Nantes', LIS:'Lisbonne', OPO:'Porto', MAD:'Madrid', BCN:'Barcelone', FCO:'Rome', NAP:'Naples', MXP:'Milan', VIE:'Vienne', BRU:'Bruxelles', AMS:'Amsterdam', FRA:'Francfort', MUC:'Munich', LHR:'Londres', DUB:'Dublin', GVA:'Genève', ADD:'Addis-Abeba', ABJ:'Abidjan', BKO:'Bamako', DKR:'Dakar', DLA:'Douala', LBV:'Libreville', NIM:'Niamey', OUA:'Ouagadougou', LFW:'Lomé', COO:'Cotonou', DSS:'Dakar', NDJ:'Ndjamena', BGF:'Bangui', BZV:'Brazzaville', FIH:'Kinshasa', JNB:'Johannesburg', CPT:'Le Cap', CMN:'Casablanca', ALG:'Alger', TUN:'Tunis', CAI:'Le Caire', NBO:'Nairobi', LAG:'Lagos', NKC:'Nouakchott', TIP:'Tripoli', PTP:'Pointe-à-Pitre', FDF:'Fort-de-France', CAY:'Cayenne', DOH:'Doha', DXB:'Dubaï', IST:'Istanbul', NRT:'Tokyo', MIA:'Miami', CRL:'Charleroi', NSI:'Yaoundé' };
+const ROUTE_AMOUNT = {};
+(function(){ for (var k in DB) { var r = DB[k].r.replace('→','-'); ROUTE_AMOUNT[r] = DB[k].c; var rev = r.split('-').reverse().join('-'); if (!ROUTE_AMOUNT[rev]) ROUTE_AMOUNT[rev] = DB[k].c; } })();
+/* Villes pour fallback manuel (ordre: France, Europe, Afrique, Autres) */
+const VILLES_OPTIONS = [
+  { n:'Paris (CDG/ORY)', c:'CDG' }, { n:'Lyon', c:'LYS' }, { n:'Marseille', c:'MRS' }, { n:'Nice', c:'NCE' }, { n:'Toulouse', c:'TLS' }, { n:'Bordeaux', c:'BOD' }, { n:'Nantes', c:'NTE' },
+  { n:'Bruxelles', c:'BRU' }, { n:'Amsterdam', c:'AMS' }, { n:'Londres', c:'LHR' }, { n:'Francfort', c:'FRA' }, { n:'Madrid', c:'MAD' }, { n:'Barcelone', c:'BCN' }, { n:'Lisbonne', c:'LIS' }, { n:'Porto', c:'OPO' }, { n:'Rome', c:'FCO' }, { n:'Genève', c:'GVA' }, { n:'Vienne', c:'VIE' },
+  { n:'Dakar', c:'DKR' }, { n:'Abidjan', c:'ABJ' }, { n:'Bamako', c:'BKO' }, { n:'Casablanca', c:'CMN' }, { n:'Alger', c:'ALG' }, { n:'Tunis', c:'TUN' }, { n:'Douala', c:'DLA' }, { n:'Yaoundé', c:'NSI' }, { n:'Libreville', c:'LBV' }, { n:'Cotonou', c:'COO' }, { n:'Lomé', c:'LFW' }, { n:'Niamey', c:'NIM' }, { n:'Ouagadougou', c:'OUA' }, { n:'Ndjamena', c:'NDJ' }, { n:'Kinshasa', c:'FIH' }, { n:'Addis-Abeba', c:'ADD' }, { n:'Nairobi', c:'NBO' }, { n:'Johannesburg', c:'JNB' }, { n:'Le Caire', c:'CAI' }, { n:'Lagos', c:'LAG' }, { n:'Nouakchott', c:'NKC' }, { n:'Pointe-à-Pitre', c:'PTP' }, { n:'Fort-de-France', c:'FDF' },
+  { n:'Istanbul', c:'IST' }, { n:'Dubaï', c:'DXB' }, { n:'Doha', c:'DOH' }, { n:'Miami', c:'MIA' }
+];
 
 const RAISON_LABELS = {
   meteo: { t:'Météo / Conditions climatiques', n:'⚡ Invoquée souvent à tort — notre dossier METAR le démontre dans 80% des cas.' },
@@ -3010,9 +3044,13 @@ function restartFunnel() {
   S.motif = null; S.trajet = null; S.raison = 'nesaispas'; S.crumbs = [];
   document.getElementById('funnel-crumbs').textContent = '';
   ['da-vol','eb-vol1','eb-vol2'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
-  ['da-chip','eb-chip1','eb-chip2'].forEach(id => { const el = document.getElementById(id); if(el) el.classList.remove('show'); });
+  var daChip = document.getElementById('da-chip'); if(daChip) daChip.style.display = 'none';
+  ['eb-chip1','eb-chip2'].forEach(id => { const el = document.getElementById(id); if(el) el.classList.remove('show'); });
+  ['da-route-line','da-distance-line'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = ''; });
+  var daManual = document.getElementById('da-manual-wrap'); if(daManual) daManual.style.display = 'none';
+  ['da-ville-depart','da-ville-arrivee'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
   ['da-dist','eb-dist'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
-  ['da-dist-wrap','eb-dist-wrap'].forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'block'; });
+  ['da-dist-wrap','eb-dist-wrap'].forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; });
   document.querySelectorAll('.dist-pill').forEach(p => p.classList.remove('active'));
   ['da-pax-val','eb-pax-val'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = '1'; });
   goTo('step-1', 12);
@@ -3024,6 +3062,35 @@ function setDist(inputId, value, btn) {
   const wrap = btn.closest('.calc-field');
   if (wrap) wrap.querySelectorAll('.dist-pill').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
+  var line = document.getElementById('da-distance-line');
+  if (line) line.textContent = DISTANCE_LINE[value] || '';
+}
+
+function updateManualDist(prefix) {
+  var dep = document.getElementById(prefix + '-ville-depart');
+  var arr = document.getElementById(prefix + '-ville-arrivee');
+  var distIn = document.getElementById(prefix + '-dist');
+  var distWrap = document.getElementById(prefix + '-dist-wrap');
+  var line = document.getElementById(prefix + '-distance-line');
+  if (!dep || !arr || !distIn) return;
+  var c1 = dep.value, c2 = arr.value;
+  if (!c1 || !c2) {
+    line.textContent = '';
+    distIn.value = '';
+    if (distWrap) distWrap.style.display = 'none';
+    return;
+  }
+  var key = c1 + '-' + c2, keyRev = c2 + '-' + c1;
+  var amount = ROUTE_AMOUNT[key] || ROUTE_AMOUNT[keyRev];
+  if (amount) {
+    distIn.value = String(amount);
+    if (line) line.textContent = DISTANCE_LINE[amount] || '';
+    if (distWrap) distWrap.style.display = 'none';
+  } else {
+    distIn.value = '';
+    if (line) line.textContent = '';
+    if (distWrap) { distWrap.style.display = 'block'; distWrap.querySelectorAll('.dist-pill').forEach(p => p.classList.remove('active')); }
+  }
 }
 
 /* ═══ VOL LOOKUP ═══ */
@@ -3031,35 +3098,42 @@ function volLookup(input, chipId, distWrapId, distId) {
   const raw = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
   input.value = raw;
 
-  const chipEl   = document.getElementById(chipId);
+  const chipEl = document.getElementById(chipId);
   const distWrap = distWrapId ? document.getElementById(distWrapId) : null;
-  const distSel  = distId     ? document.getElementById(distId)     : null;
+  const distSel = distId ? document.getElementById(distId) : null;
+  const routeLine = document.getElementById('da-route-line');
+  const distanceLine = document.getElementById('da-distance-line');
+  const manualWrap = document.getElementById('da-manual-wrap');
 
-  const match  = DB[raw];
+  const match = DB[raw];
   const prefix = raw.slice(0, 2);
 
   if (match) {
-    const cls = { 600:'badge-long', 400:'badge-mid', 250:'badge-short' }[match.c];
-    document.getElementById(chipId + '-route').textContent = match.a + ' · ' + match.r;
-    document.getElementById(chipId + '-dist').textContent  = DLABEL[match.c];
-    const badge = document.getElementById(chipId + '-badge');
-    badge.textContent = match.c + '€'; badge.className = 'chip-badge ' + cls;
-    chipEl.classList.add('show');
-    if (distSel) {
-      distSel.value = String(match.c);
-      if (distWrap) { distWrap.style.opacity = '0'; setTimeout(() => { distWrap.style.display = 'none'; distWrap.style.opacity = '1'; }, 280); }
+    var parts = match.r.split('→');
+    var depCity = AIRPORT_CITY[parts[0].trim()] || parts[0];
+    var arrCity = AIRPORT_CITY[parts[1].trim()] || parts[1];
+    if (routeLine) routeLine.textContent = 'Départ : ' + depCity + ' | Arrivée : ' + arrCity;
+    if (chipEl) {
+      document.getElementById(chipId + '-route').textContent = match.a + ' · ' + match.r;
+      document.getElementById(chipId + '-dist').textContent = DLABEL[match.c];
+      var badge = document.getElementById(chipId + '-badge');
+      badge.textContent = match.c + '€'; badge.className = 'chip-badge ' + ({ 600:'badge-long', 400:'badge-mid', 250:'badge-short' }[match.c]);
+      chipEl.style.display = 'flex';
     }
+    if (distanceLine) distanceLine.textContent = DISTANCE_LINE[match.c] || '';
+    if (distSel) distSel.value = String(match.c);
+    if (distWrap) distWrap.style.display = 'none';
+    if (manualWrap) manualWrap.style.display = 'none';
   } else {
-    chipEl.classList.remove('show');
-    if (distWrap) { distWrap.style.display = 'block'; distWrap.style.opacity = '1'; }
+    if (routeLine) routeLine.textContent = '';
+    if (chipEl) chipEl.style.display = 'none';
     if (distSel && raw.length === 0) distSel.value = '';
-    if (distWrap) distWrap.querySelectorAll('.dist-pill').forEach(p => p.classList.remove('active'));
+    if (distanceLine) distanceLine.textContent = '';
+    if (distWrap) { distWrap.style.display = 'none'; distWrap.querySelectorAll('.dist-pill').forEach(p => p.classList.remove('active')); }
     if (PFX[prefix] && raw.length >= 4) {
-      document.getElementById(chipId + '-route').textContent = PFX[prefix] + ' · Choisissez la distance';
-      document.getElementById(chipId + '-dist').textContent  = 'Cliquez sur un montant ci-dessous';
-      const badge = document.getElementById(chipId + '-badge');
-      badge.textContent = '?'; badge.className = 'chip-badge badge-unk';
-      chipEl.classList.add('show');
+      if (manualWrap) manualWrap.style.display = 'block';
+    } else {
+      if (manualWrap) manualWrap.style.display = 'none';
     }
   }
 }
@@ -3228,13 +3302,23 @@ document.addEventListener('DOMContentLoaded', () => {
   ['da-date','eb-date'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ds; });
   goTo('step-1', 12);
 });
+/* Remplir les listes Ville de départ / arrivée (étape 3a) */
+(function fillVilleOptions() {
+  var dep = document.getElementById('da-ville-depart');
+  var arr = document.getElementById('da-ville-arrivee');
+  if (!dep || !arr || !window.VILLES_OPTIONS) return;
+  VILLES_OPTIONS.forEach(function(v) {
+    var o1 = document.createElement('option'); o1.value = v.c; o1.textContent = v.n; dep.appendChild(o1);
+    var o2 = document.createElement('option'); o2.value = v.c; o2.textContent = v.n; arr.appendChild(o2);
+  });
+})();
 </script>
 
 <!-- Barre CTA sticky (mobile + desktop) -->
 <div class="sticky-cta-bar" id="sticky-cta-bar">
-  <a href="https://wa.me/33756863630?text=%5BFR%5D%20Bonjour%20Sarah%20%2C%20je%20souhaite%20lancer%20ma%20demande%20d%27indemnisation%20avec%20Robin%20des%20Airs%20." target="_blank" class="btn-sarah-cta" id="sticky-wa-cta">
+  <a href="https://wa.me/33756863630?text=%5BFR%5D%20Bonjour%20Robin%20des%20Airs%20%2C%20je%20souhaite%20lancer%20ma%20demande%20d%27indemnisation%20." target="_blank" class="btn-sarah-cta" id="sticky-wa-cta">
     <svg class="wa-bubble" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.108.549 4.086 1.508 5.8L0 24l6.335-1.483A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.817 9.817 0 01-5.002-1.368l-.36-.214-3.722.976.994-3.63-.234-.373A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182c5.43 0 9.818 4.388 9.818 9.818 0 5.43-4.388 9.818-9.818 9.818z"/></svg>
-    Lancer ma demande avec Sarah 🟢
+    Lancer ma demande avec Robin 🟢
   </a>
   <span class="cta-micro">Analyse gratuite et sans engagement.</span>
 </div>
