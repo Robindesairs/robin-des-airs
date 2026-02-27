@@ -698,7 +698,7 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   background: rgba(255,255,255,0.06);
   color: #fff;
 }
-/* Barre CTA sticky en bas */
+/* Barre CTA sticky en bas — compacte */
 .sticky-cta-bar {
   position: fixed;
   bottom: 0;
@@ -706,23 +706,27 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   right: 0;
   z-index: 100;
   background: #fff;
-  padding: 14px 20px 22px;
-  box-shadow: 0 -4px 24px rgba(0,0,0,0.08);
+  padding: 8px 14px 10px;
+  box-shadow: 0 -2px 16px rgba(0,0,0,0.06);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 3px;
 }
 .sticky-cta-bar .btn-sarah-cta {
   max-width: 100%;
   margin: 0;
+  padding: 10px 20px;
+  font-size: 11px;
+  letter-spacing: 1.2px;
 }
+.sticky-cta-bar .btn-sarah-cta .wa-bubble { width: 16px; height: 16px; }
 .sticky-cta-bar .cta-micro {
-  font-size: 10px;
+  font-size: 9px;
   color: #9CA3AF;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
 }
-body:has(.sticky-cta-bar) { padding-bottom: 100px; }
+body:has(.sticky-cta-bar) { padding-bottom: 62px; }
 
 .calc-disclaimer {
   margin-top: 14px;
@@ -1685,23 +1689,25 @@ footer {
   opacity: 0.8;
 }
 
-/* Calendrier Flatpickr — thème Robin (navy + neon) */
+/* Calendrier Flatpickr — thème Robin (navy + neon), taille réduite */
 .flatpickr-calendar.inline,
 .flatpickr-calendar.open {
   background: linear-gradient(165deg, #0B1F3A 0%, #122a47 100%);
   border: 1px solid rgba(0,229,160,0.2);
-  border-radius: 14px;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+  transform: scale(0.78);
+  transform-origin: top center;
 }
 .flatpickr-months { background: transparent; }
-.flatpickr-current-month { color: #fff; font-size: 14px; font-weight: 700; padding-top: 12px; }
-.flatpickr-prev-month svg, .flatpickr-next-month svg { fill: rgba(255,255,255,0.7); }
+.flatpickr-current-month { color: #fff; font-size: 12px; font-weight: 700; padding-top: 8px; }
+.flatpickr-prev-month svg, .flatpickr-next-month svg { fill: rgba(255,255,255,0.7); width: 10px; height: 10px; }
 .flatpickr-prev-month:hover svg, .flatpickr-next-month:hover svg { fill: #00E5A0; }
 .flatpickr-weekdays { background: transparent; }
-span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 11px; font-weight: 600; }
+span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-weight: 600; }
 .flatpickr-days { background: transparent; border-color: rgba(255,255,255,0.06); }
 .dayContainer { background: transparent; }
-.flatpickr-day { color: rgba(255,255,255,0.85); border-radius: 8px; }
+.flatpickr-day { color: rgba(255,255,255,0.85); border-radius: 6px; font-size: 12px; line-height: 28px; max-width: 28px; height: 28px; }
 .flatpickr-day:hover { background: rgba(0,229,160,0.15); border-color: transparent; color: #fff; }
 .flatpickr-day.selected { background: #00E5A0; border-color: #00E5A0; color: #0B1F3A; }
 .flatpickr-day.today { border-color: rgba(0,229,160,0.5); color: #00E5A0; }
@@ -2260,13 +2266,13 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 11px; font-we
       </div>
       <div class="comp-row">
         <div class="comp-cell feature">Modèle tarifaire</div>
-        <div class="comp-cell hl"><span class="price-green">Prix fixe</span></div>
+        <div class="comp-cell hl"><span class="price-green">25% — no win no fee</span></div>
         <div class="comp-cell"><span class="price-red">~35%</span></div>
         <div class="comp-cell"><span class="price-red">~30%</span></div>
       </div>
       <div class="comp-row">
         <div class="comp-cell feature">Notre commission</div>
-        <div class="comp-cell hl"><span class="price-green">25% — no win no fee</span></div>
+        <div class="comp-cell hl"><span class="price-green">25%</span></div>
         <div class="comp-cell"><span class="price-red">35–50%</span></div>
         <div class="comp-cell"><span class="price-red">30–44%</span></div>
       </div>
@@ -2283,10 +2289,10 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 11px; font-we
         <div class="comp-cell"><span class="cross">✗</span> &nbsp;+14% en plus</div>
       </div>
       <div class="comp-row">
-        <div class="comp-cell feature">CB pour ouvrir un dossier</div>
-        <div class="comp-cell hl"><span class="check">✓</span> &nbsp;<span class="price-green">Jamais</span></div>
-        <div class="comp-cell"><span class="cross">✗</span> &nbsp;Obligatoire</div>
-        <div class="comp-cell"><span class="cross">✗</span> &nbsp;Obligatoire</div>
+        <div class="comp-cell feature">CB ou ROB pour ouvrir un dossier</div>
+        <div class="comp-cell hl"><span class="check">✓</span> &nbsp;<span class="price-green">CB ou ROB</span></div>
+        <div class="comp-cell"><span class="cross">✗</span> &nbsp;Non</div>
+        <div class="comp-cell"><span class="cross">✗</span> &nbsp;Non</div>
       </div>
       <div class="comp-row">
         <div class="comp-cell feature">Spécialiste vols Diaspora</div>
@@ -3374,7 +3380,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.flatpickr) {
     var fpOpt = {
       locale: 'fr',
-      dateFormat: 'Y-m-d',
+      dateFormat: 'd.m.Y',
       defaultDate: ds,
       maxDate: 'today',
       allowInput: true
