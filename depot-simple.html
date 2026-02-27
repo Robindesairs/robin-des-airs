@@ -244,6 +244,31 @@
       margin-left: 2px;
       padding: 0 4px;
     }
+    .doc-attention {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 12px;
+      padding: 10px 14px;
+      background: rgba(0,0,0,0.03);
+      border-radius: 10px;
+      border-left: 3px solid var(--emerald);
+    }
+    .add-doc-btn {
+      display: block;
+      width: 100%;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      color: var(--emerald);
+      background: var(--emerald-light);
+      border: 1px dashed var(--emerald);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .add-doc-btn:hover { background: rgba(5, 150, 105, 0.15); }
 
     .link-switch {
       text-align: center;
@@ -416,7 +441,7 @@
       <!-- Mode Photo -->
       <div class="mode-photo" id="mode-photo">
         <h1 class="section-title">Dépôt photo</h1>
-        <p class="section-sub">3 pièces, 1 numéro. On s’occupe du reste.</p>
+        <p class="section-sub">Passeport, cartes d'embarquement. On s’occupe du reste.</p>
 
         <span class="passager-label">Combien de passagers ?</span>
         <div class="passager-btns" id="passager-btns">
@@ -443,44 +468,43 @@
         </div>
 
         <div class="doc-grid">
-          <div class="doc-card">
-            <label class="doc-btn" id="btn-passeport">
-              <span class="icon">🪪</span>
-              <div class="content">
-                <div class="title">Passeport ou ID</div>
-                <div class="sub">Pour valider votre identité</div>
-                <div class="filename" id="name-passeport"></div>
+          <div class="passeport-section">
+            <div class="passeport-cards" id="passeport-cards">
+              <div class="doc-card">
+                <label class="doc-btn btn-passeport">
+                  <span class="icon">🪪</span>
+                  <div class="content">
+                    <div class="title">Passeport ou ID</div>
+                    <div class="sub">Pour valider votre identité</div>
+                    <div class="filename name-passeport"></div>
+                  </div>
+                  <span class="check">✅</span>
+                  <input type="file" name="file_passeport" accept="image/*" capture="environment" multiple>
+                </label>
+                <p class="doc-tip tip-passeport">Conseil : Posez le document à plat pour un scan instantané ⚡</p>
               </div>
-              <span class="check">✅</span>
-              <input type="file" id="file-passeport" accept="image/*" capture="environment" multiple>
-            </label>
-            <p class="doc-tip" id="tip-passeport">Conseil : Posez le document à plat pour un scan instantané ⚡</p>
+            </div>
+            <button type="button" class="add-doc-btn" id="add-passager">+ Ajouter un autre passager</button>
           </div>
-          <div class="doc-card">
-            <label class="doc-btn" id="btn-boarding">
-              <span class="icon">🎫</span>
-              <div class="content">
-                <div class="title">Cartes d'embarquement</div>
-                <div class="sub">Preuve de présence à bord</div>
-                <div class="filename" id="name-boarding"></div>
+
+          <div class="boarding-section">
+            <p class="doc-attention">Attention : s'il y avait deux vols pour arriver à destination, ajoutez les deux cartes d'embarquement pour chaque passager.</p>
+            <div class="boarding-cards" id="boarding-cards">
+              <div class="doc-card">
+                <label class="doc-btn btn-boarding">
+                  <span class="icon">🎫</span>
+                  <div class="content">
+                    <div class="title">Carte d'embarquement ou étiquette itinéraire passager</div>
+                    <div class="sub">Preuve de présence à bord</div>
+                    <div class="filename name-boarding"></div>
+                  </div>
+                  <span class="check">✅</span>
+                  <input type="file" name="file_boarding" accept="image/*" capture="environment" multiple>
+                </label>
+                <p class="doc-tip">Conseil : Posez le document à plat pour un scan instantané ⚡</p>
               </div>
-              <span class="check">✅</span>
-              <input type="file" id="file-boarding" accept="image/*" capture="environment" multiple>
-            </label>
-            <p class="doc-tip">Conseil : Posez le document à plat pour un scan instantané ⚡</p>
-          </div>
-          <div class="doc-card">
-            <label class="doc-btn" id="btn-billet">
-              <span class="icon">📄</span>
-              <div class="content">
-                <div class="title">Confirmation de vol</div>
-                <div class="sub">Pour extraire les données du vol</div>
-                <div class="filename" id="name-billet"></div>
-              </div>
-              <span class="check">✅</span>
-              <input type="file" id="file-billet" accept="image/*,.pdf" capture="environment">
-            </label>
-            <p class="doc-tip">Conseil : Posez le document à plat pour un scan instantané ⚡</p>
+            </div>
+            <button type="button" class="add-doc-btn" id="add-boarding">+ Ajouter une carte d'embarquement</button>
           </div>
         </div>
 
@@ -538,7 +562,7 @@
   </main>
 
   <div class="sticky-cta" id="sticky-cta">
-    <button type="button" class="btn-cta" id="btn-launch">ENVOYER MON DOSSIER À SARAH 🟢</button>
+    <button type="button" class="btn-cta" id="btn-launch">ENVOYER MON DOSSIER À ROBIN →</button>
     <p class="reassurance">
       <span>Certifié conforme au Règlement Européen 261/2004</span>
       <span>Données cryptées et sécurisées</span>
@@ -586,13 +610,9 @@
       var progressBar = document.getElementById('progress-bar');
       var nbPassagersInput = document.getElementById('nb_passagers');
       var whatsapp = document.getElementById('whatsapp');
-      var filePasseport = document.getElementById('file-passeport');
-      var fileBoarding = document.getElementById('file-boarding');
-      var fileBillet = document.getElementById('file-billet');
-      var btnPasseport = document.getElementById('btn-passeport');
-      var btnBoarding = document.getElementById('btn-boarding');
-      var btnBillet = document.getElementById('btn-billet');
       var btnLaunch = document.getElementById('btn-launch');
+      var passeportCards = document.getElementById('passeport-cards');
+      var boardingCards = document.getElementById('boarding-cards');
       var btnLaunchManuel = document.getElementById('btn-launch-manuel');
       var modalMandat = document.getElementById('modal-mandat');
       var mandatScroll = document.getElementById('mandat-scroll');
@@ -601,7 +621,6 @@
 
       var amounts = { 1: 600, 2: 1200, 3: 1800, 4: 2400, 5: 3000, 6: 3600, 7: 4200 };
       var indemnityNumber = document.getElementById('indemnity-number');
-      var tipPasseport = document.getElementById('tip-passeport');
       var currentDisplay = 600;
 
       function formatAmount(n) {
@@ -623,8 +642,9 @@
       }
 
       function updatePasseportTip(n) {
-        if (tipPasseport) {
-          tipPasseport.textContent = n > 1
+        var firstTip = document.querySelector('.passeport-cards .doc-tip');
+        if (firstTip) {
+          firstTip.textContent = n > 1
             ? "Shootez les passeports de tous les passagers d'un coup 📸"
             : "Conseil : Posez le document à plat pour un scan instantané ⚡";
         }
@@ -678,7 +698,6 @@
         stickyCta.style.display = 'block';
       });
 
-      // Upload + nom de fichier
       function markDone(btn, nameEl, files) {
         if (btn) btn.classList.add('done');
         if (nameEl && files && files.length) {
@@ -687,15 +706,41 @@
           nameEl.textContent = names.length > 1 ? names.join(', ') : names[0];
         }
       }
-      filePasseport.addEventListener('change', function() {
-        markDone(btnPasseport, document.getElementById('name-passeport'), this.files);
-      });
-      fileBoarding.addEventListener('change', function() {
-        markDone(btnBoarding, document.getElementById('name-boarding'), this.files);
-      });
-      fileBillet.addEventListener('change', function() {
-        markDone(btnBillet, document.getElementById('name-billet'), this.files);
-      });
+
+      function wireDocCard(card) {
+        var label = card.querySelector('.doc-btn');
+        var input = card.querySelector('input[type="file"]');
+        var nameEl = card.querySelector('.filename');
+        if (input && label) {
+          input.addEventListener('change', function() {
+            markDone(label, nameEl, this.files);
+          });
+        }
+      }
+      document.querySelectorAll('.passeport-cards .doc-card, .boarding-cards .doc-card').forEach(wireDocCard);
+
+      function addPassagerCard() {
+        var first = passeportCards.querySelector('.doc-card');
+        if (!first) return;
+        var clone = first.cloneNode(true);
+        clone.querySelector('input').value = '';
+        clone.querySelector('.filename').textContent = '';
+        clone.querySelector('.doc-btn').classList.remove('done');
+        passeportCards.appendChild(clone);
+        wireDocCard(clone);
+      }
+      function addBoardingCard() {
+        var first = boardingCards.querySelector('.doc-card');
+        if (!first) return;
+        var clone = first.cloneNode(true);
+        clone.querySelector('input').value = '';
+        clone.querySelector('.filename').textContent = '';
+        clone.querySelector('.doc-btn').classList.remove('done');
+        boardingCards.appendChild(clone);
+        wireDocCard(clone);
+      }
+      document.getElementById('add-passager').addEventListener('click', addPassagerCard);
+      document.getElementById('add-boarding').addEventListener('click', addBoardingCard);
 
       function openMandat() {
         setProgress(2);
@@ -757,9 +802,12 @@
         } else {
           formData.append('mode', 'photo');
           formData.append('whatsapp', formatTel(whatsapp.value));
-          for (var i = 0; i < filePasseport.files.length; i++) formData.append('file_passeport', filePasseport.files[i]);
-          for (var i = 0; i < fileBoarding.files.length; i++) formData.append('file_boarding', fileBoarding.files[i]);
-          if (fileBillet.files.length) formData.append('file_billet', fileBillet.files[0]);
+          document.querySelectorAll('input[name="file_passeport"]').forEach(function(inp) {
+            for (var i = 0; i < inp.files.length; i++) formData.append('file_passeport', inp.files[i]);
+          });
+          document.querySelectorAll('input[name="file_boarding"]').forEach(function(inp) {
+            for (var i = 0; i < inp.files.length; i++) formData.append('file_boarding', inp.files[i]);
+          });
         }
 
         fetch(WEBHOOK, { method: 'POST', body: formData })
