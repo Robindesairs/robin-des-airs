@@ -97,17 +97,18 @@
     }
     .passager-btns {
       display: flex;
-      gap: 10px;
-      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
     }
     .passager-btn {
-      width: 48px;
-      height: 48px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       border: 2px solid var(--card-border);
       background: var(--card);
       color: var(--text);
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
       cursor: pointer;
       transition: all 0.2s;
@@ -121,22 +122,33 @@
       color: #fff;
     }
     .indemnity-line {
-      padding: 14px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px 16px;
       background: var(--emerald-light);
-      border-radius: 12px;
-      margin-bottom: 24px;
+      border-radius: 16px;
+      margin-bottom: 28px;
       border: 1px solid rgba(5, 150, 105, 0.2);
     }
     .indemnity-line .amount {
-      font-size: 22px;
+      white-space: nowrap;
       font-weight: 800;
       color: var(--emerald);
-      letter-spacing: -0.02em;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+    }
+    .indemnity-line .amount .number {
+      display: inline-block;
+      font-size: clamp(22px, 6vw, 32px);
+      min-width: 0.5em;
     }
     .indemnity-line .disclaimer {
-      font-size: 12px;
+      font-size: 11px;
       color: var(--muted);
-      margin-top: 6px;
+      margin-top: 10px;
     }
 
     /* Mode Photo / Manuel */
@@ -253,13 +265,16 @@
       left: 0;
       right: 0;
       padding: 16px 20px 20px;
-      background: linear-gradient(to top, var(--card) 80%, transparent);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       z-index: 40;
+      border-top: 1px solid rgba(0,0,0,0.06);
     }
     .sticky-cta .btn-cta {
       width: 100%;
       max-width: 440px;
-      margin: 0 auto;
+      margin: 0 auto 12px;
       display: block;
       padding: 18px 24px;
       font-size: 16px;
@@ -276,6 +291,13 @@
     .sticky-cta .btn-cta:hover { background: var(--emerald-hover); }
     .sticky-cta .btn-cta:active { transform: scale(0.98); }
     .sticky-cta .btn-cta:disabled { opacity: 0.6; cursor: not-allowed; }
+    .sticky-cta .reassurance {
+      text-align: center;
+      font-size: 10px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .sticky-cta .reassurance span { display: block; }
 
     /* Modal Mandat */
     .modal-overlay {
@@ -401,11 +423,14 @@
           <button type="button" class="passager-btn" data-n="1">1</button>
           <button type="button" class="passager-btn" data-n="2">2</button>
           <button type="button" class="passager-btn" data-n="3">3</button>
-          <button type="button" class="passager-btn" data-n="4">4+</button>
+          <button type="button" class="passager-btn" data-n="4">4</button>
+          <button type="button" class="passager-btn" data-n="5">5</button>
+          <button type="button" class="passager-btn" data-n="6">6</button>
+          <button type="button" class="passager-btn" data-n="7">7+</button>
         </div>
         <input type="hidden" id="nb_passagers" value="1">
         <div class="indemnity-line" id="indemnity-line">
-          <div class="amount" id="indemnity-amount">Indemnité potentielle : Jusqu'à 600 €</div>
+          <div class="amount" id="indemnity-amount">Jusqu'à <span class="number" id="indemnity-number">600</span> € à récupérer</div>
           <div class="disclaimer">Estimation basée sur le barème légal maximum (600 €/pers).</div>
         </div>
 
@@ -413,7 +438,7 @@
           <label for="whatsapp">WhatsApp *</label>
           <div class="field-wrap">
             <span class="wa-icon">💬</span>
-            <input type="tel" id="whatsapp" placeholder="06 12 34 56 78" required autocomplete="tel">
+            <input type="tel" id="whatsapp" placeholder="Votre numéro WhatsApp" required autocomplete="tel">
           </div>
         </div>
 
@@ -427,9 +452,9 @@
                 <div class="filename" id="name-passeport"></div>
               </div>
               <span class="check">✅</span>
-              <input type="file" id="file-passeport" accept="image/*" capture="environment">
+              <input type="file" id="file-passeport" accept="image/*" capture="environment" multiple>
             </label>
-            <p class="doc-tip">Conseil : Posez le document à plat pour un scan instantané ⚡</p>
+            <p class="doc-tip" id="tip-passeport">Conseil : Posez le document à plat pour un scan instantané ⚡</p>
           </div>
           <div class="doc-card">
             <label class="doc-btn" id="btn-boarding">
@@ -513,7 +538,11 @@
   </main>
 
   <div class="sticky-cta" id="sticky-cta">
-    <button type="button" class="btn-cta" id="btn-launch">LANCER MA RÉCLAMATION 🚀</button>
+    <button type="button" class="btn-cta" id="btn-launch">ENVOYER MON DOSSIER À SARAH 🟢</button>
+    <p class="reassurance">
+      <span>Certifié conforme au Règlement Européen 261/2004</span>
+      <span>Données cryptées et sécurisées</span>
+    </p>
   </div>
 
   <div class="modal-overlay" id="modal-mandat">
@@ -556,7 +585,6 @@
       var stickyCta = document.getElementById('sticky-cta');
       var progressBar = document.getElementById('progress-bar');
       var nbPassagersInput = document.getElementById('nb_passagers');
-      var indemnityAmount = document.getElementById('indemnity-amount');
       var whatsapp = document.getElementById('whatsapp');
       var filePasseport = document.getElementById('file-passeport');
       var fileBoarding = document.getElementById('file-boarding');
@@ -571,14 +599,37 @@
       var mandatCheck = document.getElementById('mandat-check');
       var btnSignSubmit = document.getElementById('btn-sign-submit');
 
-      var labels = {
-        1: "Indemnité potentielle : Jusqu'à 600 €",
-        2: "Indemnité potentielle : Jusqu'à 1 200 €",
-        3: "Indemnité potentielle : Jusqu'à 1 800 €",
-        4: "Indemnité potentielle : Jusqu'à 2 400 €+"
-      };
+      var amounts = { 1: 600, 2: 1200, 3: 1800, 4: 2400, 5: 3000, 6: 3600, 7: 4200 };
+      var indemnityNumber = document.getElementById('indemnity-number');
+      var tipPasseport = document.getElementById('tip-passeport');
+      var currentDisplay = 600;
 
-      // Passagers
+      function formatAmount(n) {
+        var v = n >= 1000 ? String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : String(n);
+        return v;
+      }
+
+      function animateAmount(from, to, duration, done) {
+        var start = performance.now();
+        function step(now) {
+          var t = Math.min((now - start) / duration, 1);
+          t = 1 - Math.pow(1 - t, 2);
+          var val = Math.round(from + (to - from) * t);
+          indemnityNumber.textContent = formatAmount(val);
+          if (t < 1) requestAnimationFrame(step);
+          else if (done) done();
+        }
+        requestAnimationFrame(step);
+      }
+
+      function updatePasseportTip(n) {
+        if (tipPasseport) {
+          tipPasseport.textContent = n > 1
+            ? "Shootez les passeports de tous les passagers d'un coup 📸"
+            : "Conseil : Posez le document à plat pour un scan instantané ⚡";
+        }
+      }
+
       document.getElementById('passager-btns').addEventListener('click', function(e) {
         var btn = e.target.closest('.passager-btn');
         if (!btn) return;
@@ -586,9 +637,12 @@
         nbPassagersInput.value = n;
         document.querySelectorAll('.passager-btn').forEach(function(b) { b.classList.remove('active'); });
         btn.classList.add('active');
-        indemnityAmount.textContent = labels[n];
+        var target = amounts[n];
+        animateAmount(currentDisplay, target, 320, function() { currentDisplay = target; });
+        updatePasseportTip(n);
       });
       document.querySelector('.passager-btn[data-n="1"]').classList.add('active');
+      updatePasseportTip(1);
 
       // Progress (étape 1 = upload)
       function setProgress(step) {
@@ -703,7 +757,7 @@
         } else {
           formData.append('mode', 'photo');
           formData.append('whatsapp', formatTel(whatsapp.value));
-          if (filePasseport.files.length) formData.append('file_passeport', filePasseport.files[0]);
+          for (var i = 0; i < filePasseport.files.length; i++) formData.append('file_passeport', filePasseport.files[i]);
           for (var i = 0; i < fileBoarding.files.length; i++) formData.append('file_boarding', fileBoarding.files[i]);
           if (fileBillet.files.length) formData.append('file_billet', fileBillet.files[0]);
         }
