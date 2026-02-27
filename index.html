@@ -632,6 +632,81 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 
 .btn-wa-hero:hover { background: #20bd5a; }
 
+/* CTA principal Sarah — style pilule WhatsApp */
+.btn-sarah-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+  background: #25D366;
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  padding: 18px 28px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.15s;
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
+}
+.btn-sarah-cta:hover { background: #20bd5a; transform: translateY(-1px); }
+.btn-sarah-cta .wa-bubble { opacity: 0.9; }
+/* Lien secondaire dossier en ligne */
+.btn-dossier-secondary {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 14px 20px;
+  margin-top: 10px;
+  background: transparent;
+  border: 1.5px solid rgba(255,255,255,0.25);
+  color: rgba(255,255,255,0.85);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+.btn-dossier-secondary:hover {
+  border-color: rgba(255,255,255,0.45);
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+}
+/* Barre CTA sticky en bas */
+.sticky-cta-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: #fff;
+  padding: 14px 20px 22px;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.sticky-cta-bar .btn-sarah-cta {
+  max-width: 100%;
+  margin: 0;
+}
+.sticky-cta-bar .cta-micro {
+  font-size: 10px;
+  color: #9CA3AF;
+  letter-spacing: 0.3px;
+}
+body:has(.sticky-cta-bar) { padding-bottom: 100px; }
+
 .calc-disclaimer {
   margin-top: 14px;
   font-size: 9px;
@@ -1553,12 +1628,72 @@ footer {
 .testi-dots { display: flex; gap: 6px; }
 .testi-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); cursor: pointer; transition: all 0.2s; }
 .testi-dot.active { background: var(--neon); width: 18px; border-radius: 3px; }
-.custom-date-wrap { position: relative; }
-.custom-date-wrap input[type="date"] { cursor: pointer; }
-.custom-date-wrap input[type="date"]::-webkit-calendar-picker-indicator {
-  opacity: 0; position: absolute; right: 0; width: 100%; height: 100%; cursor: pointer;
+/* Calendrier stylisé (étape 3) */
+.custom-date-wrap {
+  position: relative;
+  background: rgba(255,255,255,0.06);
+  border: 1.5px solid rgba(255,255,255,0.12);
+  border-radius: 999px;
+  padding: 4px 4px 4px 18px;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
-.date-display { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); pointer-events: none; font-size: 14px; color: rgba(255,255,255,0.4); }
+.custom-date-wrap:focus-within {
+  border-color: var(--neon-b);
+  box-shadow: 0 0 0 3px rgba(0,229,160,0.12);
+}
+.custom-date-wrap input[type="date"] {
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  font-size: 15px;
+  color: white;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.custom-date-wrap input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+.date-display {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 18px;
+  opacity: 0.8;
+}
+/* Pills distance (remplace le select) */
+.dist-pills { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+.dist-pill {
+  flex: 1;
+  min-width: 90px;
+  padding: 12px 14px;
+  border-radius: 999px;
+  border: 1.5px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.8);
+  font-size: 12px; font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Montserrat', sans-serif;
+  text-align: center;
+}
+.dist-pill:hover { background: rgba(0,229,160,0.1); border-color: rgba(0,229,160,0.35); color: white; }
+.dist-pill.active { background: rgba(0,229,160,0.2); border-color: var(--neon-b); color: white; }
+.dist-pill .pill-amount { font-size: 14px; color: var(--neon-b); margin-top: 2px; }
+.dist-pill.active .pill-amount { color: white; }
+#da-dist-wrap.flash, #eb-dist-wrap.flash {
+  box-shadow: 0 0 0 3px rgba(255,80,80,0.35);
+  border-radius: 10px;
+  padding: 4px;
+  transition: box-shadow 0.2s;
+}
 .result-loader { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 24px; text-align: center; }
 .loader-dots { display: flex; gap: 8px; }
 .loader-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--neon); animation: dotPulse 1.2s ease infinite; }
@@ -1811,24 +1946,24 @@ footer {
             <div><div class="chip-route" id="da-chip-route"></div><div class="chip-dist" id="da-chip-dist"></div></div>
             <span class="chip-badge" id="da-chip-badge"></span>
           </div>
-          <p class="calc-vol-hint">Entrez n'importe quel numéro de vol au monde, puis choisissez la distance ci-dessous.</p>
+          <p class="calc-vol-hint">Entrez n'importe quel numéro de vol. Si le vol n'est pas reconnu, choisissez la distance ci-dessous.</p>
         </div>
 
         <div class="calc-field" id="da-dist-wrap">
-          <label class="calc-label" for="da-dist">Distance du vol</label>
-          <select id="da-dist" class="calc-select">
-            <option value="">— Sélectionnez votre trajet —</option>
-            <option value="250">Moins de 1 500 km &nbsp;(ex : Lyon→Alger, Nice→Tunis)</option>
-            <option value="400">1 500 – 3 500 km &nbsp;(ex : Marseille→Dakar, Lyon→Casablanca)</option>
-            <option value="600">Plus de 3 500 km &nbsp;(ex : Paris→Bamako, Bordeaux→Douala) ✈</option>
-          </select>
+          <label class="calc-label">Distance du trajet</label>
+          <div class="dist-pills" role="group" aria-label="Choisir la distance">
+            <button type="button" class="dist-pill" data-dist="250" onclick="setDist('da-dist',250,this)">Court<br><span class="pill-amount">250€</span></button>
+            <button type="button" class="dist-pill" data-dist="400" onclick="setDist('da-dist',400,this)">Moyen<br><span class="pill-amount">400€</span></button>
+            <button type="button" class="dist-pill" data-dist="600" onclick="setDist('da-dist',600,this)">Long<br><span class="pill-amount">600€</span></button>
+          </div>
+          <input type="hidden" id="da-dist" value="">
         </div>
 
         <div class="calc-row">
           <div class="calc-field">
             <label class="calc-label" for="da-date">Date du vol</label>
             <div class="custom-date-wrap">
-              <input type="date" id="da-date" class="calc-input" style="padding-right:36px;">
+              <input type="date" id="da-date" class="calc-input" style="padding-right:44px;">
               <span class="date-display">📅</span>
             </div>
           </div>
@@ -1882,20 +2017,20 @@ footer {
         </div>
 
         <div class="calc-field" id="eb-dist-wrap">
-          <label class="calc-label" for="eb-dist">Distance totale du voyage</label>
-          <select id="eb-dist" class="calc-select">
-            <option value="">— Distance départ → destination finale —</option>
-            <option value="250">Moins de 1 500 km</option>
-            <option value="400">1 500 – 3 500 km &nbsp;(ex : Europe → Afrique du Nord/Maghreb)</option>
-            <option value="600">Plus de 3 500 km &nbsp;(ex : Europe → Afrique subsaharienne) ✈</option>
-          </select>
+          <label class="calc-label">Distance totale (départ → destination finale)</label>
+          <div class="dist-pills" role="group" aria-label="Choisir la distance">
+            <button type="button" class="dist-pill" data-dist="250" onclick="setDist('eb-dist',250,this)">Court<br><span class="pill-amount">250€</span></button>
+            <button type="button" class="dist-pill" data-dist="400" onclick="setDist('eb-dist',400,this)">Moyen<br><span class="pill-amount">400€</span></button>
+            <button type="button" class="dist-pill" data-dist="600" onclick="setDist('eb-dist',600,this)">Long<br><span class="pill-amount">600€</span></button>
+          </div>
+          <input type="hidden" id="eb-dist" value="">
         </div>
 
         <div class="calc-row">
           <div class="calc-field">
             <label class="calc-label" for="eb-date">Date de départ</label>
             <div class="custom-date-wrap">
-              <input type="date" id="eb-date" class="calc-input" style="padding-right:36px;">
+              <input type="date" id="eb-date" class="calc-input" style="padding-right:44px;">
               <span class="date-display">📅</span>
             </div>
           </div>
@@ -1944,19 +2079,16 @@ footer {
           </div>
         </div>
 
-        <!-- Option WhatsApp OU Formulaire en ligne -->
+        <!-- CTA principal Sarah + lien dossier en ligne -->
         <div style="margin-bottom:14px;">
-          <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-bottom:10px;">Choisissez comment ouvrir votre dossier :</div>
-          <div style="display:grid;grid-template-columns:1fr;gap:8px;">
-            <a id="wa-cta" href="#" target="_blank" class="btn-wa-hero" style="margin-top:0;">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.108.549 4.086 1.508 5.8L0 24l6.335-1.483A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.817 9.817 0 01-5.002-1.368l-.36-.214-3.722.976.994-3.63-.234-.373A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182c5.43 0 9.818 4.388 9.818 9.818 0 5.43-4.388 9.818-9.818 9.818z"/></svg>
-              📲 Ouvrir via WhatsApp (+ rapide)
+          <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+            <a id="wa-cta" href="#" target="_blank" class="btn-sarah-cta">
+              <svg class="wa-bubble" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.108.549 4.086 1.508 5.8L0 24l6.335-1.483A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.817 9.817 0 01-5.002-1.368l-.36-.214-3.722.976.994-3.63-.234-.373A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182c5.43 0 9.818 4.388 9.818 9.818 0 5.43-4.388 9.818-9.818 9.818z"/></svg>
+              Lancer ma demande avec Sarah 🟢
             </a>
-            <a href="/depot-en-ligne.html" target="_blank" style="display:block;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.7);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;padding:13px;border-radius:6px;cursor:pointer;transition:all 0.2s;letter-spacing:0.5px;text-align:center;text-decoration:none;" onmouseover="this.style.borderColor='rgba(255,255,255,0.3)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)'">
-              📄 Déposer un dossier en ligne
-            </a>
+            <p style="font-size:10px;color:rgba(255,255,255,0.4);">Analyse gratuite et sans engagement.</p>
+            <a href="/depot-en-ligne.html" target="_blank" class="btn-dossier-secondary">📄 Déposer un dossier en ligne</a>
           </div>
-
         </div>
 
         <button class="back-btn" onclick="restartFunnel()">↺ Recommencer le diagnostic</button>
@@ -2551,58 +2683,176 @@ footer {
    ROBIN DES AIRS v46 — Full JS
 ════════════════════════════════════════════════════ */
 
-/* ── Flight DB ── */
+/* ── Flight DB (vols UE / Afrique / monde) ── */
 const DB = {
-  'AF700':{ r:'CDG→ABJ', a:'Air France',         c:600 },
-  'AF701':{ r:'ABJ→CDG', a:'Air France',         c:600 },
-  'AF702':{ r:'CDG→DKR', a:'Air France',         c:600 },
-  'AF703':{ r:'DKR→CDG', a:'Air France',         c:600 },
-  'AF704':{ r:'CDG→DLA', a:'Air France',         c:600 },
-  'AF705':{ r:'DLA→CDG', a:'Air France',         c:600 },
-  'AF706':{ r:'CDG→LBV', a:'Air France',         c:600 },
-  'AF718':{ r:'CDG→DKR', a:'Air France',         c:600 },
-  'AF719':{ r:'DKR→CDG', a:'Air France',         c:600 },
-  'AF732':{ r:'CDG→BKO', a:'Air France',         c:600 },
-  'AF733':{ r:'BKO→CDG', a:'Air France',         c:600 },
-  'AF950':{ r:'CDG→CMN', a:'Air France',         c:400 },
-  'AF560':{ r:'CDG→TUN', a:'Air France',         c:400 },
-  'AF490':{ r:'CDG→ALG', a:'Air France',         c:400 },
-  'SS891':{ r:'CDG→DKR', a:'Air Sénégal',        c:600 },
-  'SS892':{ r:'DKR→CDG', a:'Air Sénégal',        c:600 },
-  'SS101':{ r:'ORY→DKR', a:'Air Sénégal',        c:600 },
-  'SS102':{ r:'DKR→ORY', a:'Air Sénégal',        c:600 },
-  'TO755':{ r:'ORY→TUN', a:'Transavia',          c:400 },
-  'TO756':{ r:'TUN→ORY', a:'Transavia',          c:400 },
-  'TO760':{ r:'ORY→ALG', a:'Transavia',          c:400 },
-  'TO761':{ r:'ALG→ORY', a:'Transavia',          c:400 },
-  'TO770':{ r:'ORY→CMN', a:'Transavia',          c:400 },
-  'TO850':{ r:'ORY→DKR', a:'Transavia',          c:600 },
-  'DS255':{ r:'ORY→ABJ', a:'Corsair',            c:600 },
-  'DS256':{ r:'ABJ→ORY', a:'Corsair',            c:600 },
-  'DS780':{ r:'ORY→DLA', a:'Corsair',            c:600 },
-  'DS781':{ r:'DLA→ORY', a:'Corsair',            c:600 },
-  'DS891':{ r:'ORY→PTP', a:'Corsair',            c:600 },
-  'DS892':{ r:'PTP→ORY', a:'Corsair',            c:600 },
-  'SN373':{ r:'BRU→ABJ', a:'Brussels Airlines',  c:600 },
-  'SN374':{ r:'ABJ→BRU', a:'Brussels Airlines',  c:600 },
-  'SN255':{ r:'BRU→DKR', a:'Brussels Airlines',  c:600 },
-  'SN256':{ r:'DKR→BRU', a:'Brussels Airlines',  c:600 },
-  'SN401':{ r:'BRU→FIH', a:'Brussels Airlines',  c:600 },
-  'SN402':{ r:'FIH→BRU', a:'Brussels Airlines',  c:600 },
-  'ET704':{ r:'CDG→ADD', a:'Ethiopian Airlines', c:600 },
-  'ET705':{ r:'ADD→CDG', a:'Ethiopian Airlines', c:600 },
-  'AT200':{ r:'CDG→CMN', a:'Royal Air Maroc',    c:400 },
-  'AT201':{ r:'CMN→CDG', a:'Royal Air Maroc',    c:400 },
-  'AT202':{ r:'ORY→CMN', a:'Royal Air Maroc',    c:400 },
-  'AT700':{ r:'CDG→DKR', a:'Royal Air Maroc',    c:600 },
-  'TU700':{ r:'ORY→TUN', a:'Tunisair',           c:400 },
-  'TU701':{ r:'TUN→ORY', a:'Tunisair',           c:400 },
+  /* Air France — Afrique & Maghreb */
+  'AF700':{ r:'CDG→ABJ', a:'Air France', c:600 }, 'AF701':{ r:'ABJ→CDG', a:'Air France', c:600 },
+  'AF702':{ r:'CDG→DKR', a:'Air France', c:600 }, 'AF703':{ r:'DKR→CDG', a:'Air France', c:600 },
+  'AF704':{ r:'CDG→DLA', a:'Air France', c:600 }, 'AF705':{ r:'DLA→CDG', a:'Air France', c:600 },
+  'AF706':{ r:'CDG→LBV', a:'Air France', c:600 }, 'AF718':{ r:'CDG→DKR', a:'Air France', c:600 },
+  'AF719':{ r:'DKR→CDG', a:'Air France', c:600 }, 'AF732':{ r:'CDG→BKO', a:'Air France', c:600 },
+  'AF733':{ r:'BKO→CDG', a:'Air France', c:600 }, 'AF734':{ r:'CDG→NIM', a:'Air France', c:600 },
+  'AF735':{ r:'NIM→CDG', a:'Air France', c:600 }, 'AF736':{ r:'CDG→OUA', a:'Air France', c:600 },
+  'AF737':{ r:'OUA→CDG', a:'Air France', c:600 }, 'AF738':{ r:'CDG→LFW', a:'Air France', c:600 },
+  'AF739':{ r:'LFW→CDG', a:'Air France', c:600 }, 'AF740':{ r:'CDG→COO', a:'Air France', c:600 },
+  'AF741':{ r:'COO→CDG', a:'Air France', c:600 }, 'AF742':{ r:'CDG→DSS', a:'Air France', c:600 },
+  'AF743':{ r:'DSS→CDG', a:'Air France', c:600 }, 'AF750':{ r:'CDG→NDJ', a:'Air France', c:600 },
+  'AF751':{ r:'NDJ→CDG', a:'Air France', c:600 }, 'AF752':{ r:'CDG→BGF', a:'Air France', c:600 },
+  'AF753':{ r:'BGF→CDG', a:'Air France', c:600 }, 'AF754':{ r:'CDG→BZV', a:'Air France', c:600 },
+  'AF755':{ r:'BZV→CDG', a:'Air France', c:600 }, 'AF756':{ r:'CDG→FIH', a:'Air France', c:600 },
+  'AF757':{ r:'FIH→CDG', a:'Air France', c:600 }, 'AF758':{ r:'CDG→JNB', a:'Air France', c:600 },
+  'AF759':{ r:'JNB→CDG', a:'Air France', c:600 }, 'AF950':{ r:'CDG→CMN', a:'Air France', c:400 },
+  'AF951':{ r:'CMN→CDG', a:'Air France', c:400 }, 'AF952':{ r:'ORY→CMN', a:'Air France', c:400 },
+  'AF953':{ r:'CMN→ORY', a:'Air France', c:400 }, 'AF560':{ r:'CDG→TUN', a:'Air France', c:400 },
+  'AF561':{ r:'TUN→CDG', a:'Air France', c:400 }, 'AF562':{ r:'ORY→TUN', a:'Air France', c:400 },
+  'AF563':{ r:'TUN→ORY', a:'Air France', c:400 }, 'AF490':{ r:'CDG→ALG', a:'Air France', c:400 },
+  'AF491':{ r:'ALG→CDG', a:'Air France', c:400 }, 'AF492':{ r:'ORY→ALG', a:'Air France', c:400 },
+  'AF493':{ r:'ALG→ORY', a:'Air France', c:400 }, 'AF494':{ r:'MRS→ALG', a:'Air France', c:400 },
+  'AF495':{ r:'ALG→MRS', a:'Air France', c:400 }, 'AF496':{ r:'CDG→CAI', a:'Air France', c:400 },
+  'AF497':{ r:'CAI→CDG', a:'Air France', c:400 },
+  /* Air France — Europe court/moyen */
+  'AF1234':{ r:'CDG→MAD', a:'Air France', c:400 }, 'AF1235':{ r:'MAD→CDG', a:'Air France', c:400 },
+  'AF1340':{ r:'CDG→LIS', a:'Air France', c:400 }, 'AF1341':{ r:'LIS→CDG', a:'Air France', c:400 },
+  'AF1440':{ r:'CDG→BCN', a:'Air France', c:400 }, 'AF1441':{ r:'BCN→CDG', a:'Air France', c:400 },
+  'AF1540':{ r:'CDG→FCO', a:'Air France', c:400 }, 'AF1541':{ r:'FCO→CDG', a:'Air France', c:400 },
+  'AF1640':{ r:'CDG→ATH', a:'Air France', c:400 }, 'AF1641':{ r:'ATH→CDG', a:'Air France', c:400 },
+  'AF1740':{ r:'CDG→LHR', a:'Air France', c:250 }, 'AF1741':{ r:'LHR→CDG', a:'Air France', c:250 },
+  'AF1840':{ r:'CDG→AMS', a:'Air France', c:250 }, 'AF1841':{ r:'AMS→CDG', a:'Air France', c:250 },
+  'AF1940':{ r:'CDG→FRA', a:'Air France', c:250 }, 'AF1941':{ r:'FRA→CDG', a:'Air France', c:250 },
+  'AF2040':{ r:'CDG→BRU', a:'Air France', c:250 }, 'AF2041':{ r:'BRU→CDG', a:'Air France', c:250 },
+  'AF2140':{ r:'CDG→GVA', a:'Air France', c:250 }, 'AF2141':{ r:'GVA→CDG', a:'Air France', c:250 },
+  'AF2240':{ r:'CDG→MXP', a:'Air France', c:250 }, 'AF2241':{ r:'MXP→CDG', a:'Air France', c:250 },
+  'AF2340':{ r:'ORY→MRS', a:'Air France', c:250 }, 'AF2341':{ r:'MRS→ORY', a:'Air France', c:250 },
+  'AF2440':{ r:'CDG→TLS', a:'Air France', c:250 }, 'AF2441':{ r:'TLS→CDG', a:'Air France', c:250 },
+  'AF2540':{ r:'CDG→NCE', a:'Air France', c:250 }, 'AF2541':{ r:'NCE→CDG', a:'Air France', c:250 },
+  /* Air Sénégal */
+  'SS891':{ r:'CDG→DKR', a:'Air Sénégal', c:600 }, 'SS892':{ r:'DKR→CDG', a:'Air Sénégal', c:600 },
+  'SS101':{ r:'ORY→DKR', a:'Air Sénégal', c:600 }, 'SS102':{ r:'DKR→ORY', a:'Air Sénégal', c:600 },
+  'SS103':{ r:'MRS→DKR', a:'Air Sénégal', c:600 }, 'SS104':{ r:'DKR→MRS', a:'Air Sénégal', c:600 },
+  'SS105':{ r:'CDG→BKO', a:'Air Sénégal', c:600 }, 'SS106':{ r:'BKO→CDG', a:'Air Sénégal', c:600 },
+  /* Transavia */
+  'TO755':{ r:'ORY→TUN', a:'Transavia', c:400 }, 'TO756':{ r:'TUN→ORY', a:'Transavia', c:400 },
+  'TO760':{ r:'ORY→ALG', a:'Transavia', c:400 }, 'TO761':{ r:'ALG→ORY', a:'Transavia', c:400 },
+  'TO770':{ r:'ORY→CMN', a:'Transavia', c:400 }, 'TO771':{ r:'CMN→ORY', a:'Transavia', c:400 },
+  'TO850':{ r:'ORY→DKR', a:'Transavia', c:600 }, 'TO851':{ r:'DKR→ORY', a:'Transavia', c:600 },
+  'TO3820':{ r:'ORY→LIS', a:'Transavia', c:400 }, 'TO3821':{ r:'LIS→ORY', a:'Transavia', c:400 },
+  'TO3840':{ r:'ORY→OPO', a:'Transavia', c:400 }, 'TO3841':{ r:'OPO→ORY', a:'Transavia', c:400 },
+  'TO3920':{ r:'ORY→BCN', a:'Transavia', c:400 }, 'TO3921':{ r:'BCN→ORY', a:'Transavia', c:400 },
+  'TO3940':{ r:'ORY→MAD', a:'Transavia', c:400 }, 'TO3941':{ r:'MAD→ORY', a:'Transavia', c:400 },
+  'TO4020':{ r:'CDG→NAP', a:'Transavia', c:400 }, 'TO4021':{ r:'NAP→CDG', a:'Transavia', c:400 },
+  /* Corsair */
+  'DS255':{ r:'ORY→ABJ', a:'Corsair', c:600 }, 'DS256':{ r:'ABJ→ORY', a:'Corsair', c:600 },
+  'DS780':{ r:'ORY→DLA', a:'Corsair', c:600 }, 'DS781':{ r:'DLA→ORY', a:'Corsair', c:600 },
+  'DS891':{ r:'ORY→PTP', a:'Corsair', c:600 }, 'DS892':{ r:'PTP→ORY', a:'Corsair', c:600 },
+  'DS893':{ r:'ORY→FDF', a:'Corsair', c:600 }, 'DS894':{ r:'FDF→ORY', a:'Corsair', c:600 },
+  'DS895':{ r:'ORY→CAY', a:'Corsair', c:600 }, 'DS896':{ r:'CAY→ORY', a:'Corsair', c:600 },
+  /* Brussels Airlines */
+  'SN373':{ r:'BRU→ABJ', a:'Brussels Airlines', c:600 }, 'SN374':{ r:'ABJ→BRU', a:'Brussels Airlines', c:600 },
+  'SN255':{ r:'BRU→DKR', a:'Brussels Airlines', c:600 }, 'SN256':{ r:'DKR→BRU', a:'Brussels Airlines', c:600 },
+  'SN401':{ r:'BRU→FIH', a:'Brussels Airlines', c:600 }, 'SN402':{ r:'FIH→BRU', a:'Brussels Airlines', c:600 },
+  'SN359':{ r:'BRU→CMN', a:'Brussels Airlines', c:400 }, 'SN360':{ r:'CMN→BRU', a:'Brussels Airlines', c:400 },
+  'SN315':{ r:'BRU→NBO', a:'Brussels Airlines', c:600 }, 'SN316':{ r:'NBO→BRU', a:'Brussels Airlines', c:600 },
+  'SN205':{ r:'BRU→FCO', a:'Brussels Airlines', c:400 }, 'SN206':{ r:'FCO→BRU', a:'Brussels Airlines', c:400 },
+  'SN2583':{ r:'BRU→BCN', a:'Brussels Airlines', c:400 }, 'SN2584':{ r:'BCN→BRU', a:'Brussels Airlines', c:400 },
+  /* Ethiopian */
+  'ET704':{ r:'CDG→ADD', a:'Ethiopian Airlines', c:600 }, 'ET705':{ r:'ADD→CDG', a:'Ethiopian Airlines', c:600 },
+  'ET702':{ r:'BRU→ADD', a:'Ethiopian Airlines', c:600 }, 'ET703':{ r:'ADD→BRU', a:'Ethiopian Airlines', c:600 },
+  'ET706':{ r:'FCO→ADD', a:'Ethiopian Airlines', c:600 }, 'ET707':{ r:'ADD→FCO', a:'Ethiopian Airlines', c:600 },
+  /* Royal Air Maroc */
+  'AT200':{ r:'CDG→CMN', a:'Royal Air Maroc', c:400 }, 'AT201':{ r:'CMN→CDG', a:'Royal Air Maroc', c:400 },
+  'AT202':{ r:'ORY→CMN', a:'Royal Air Maroc', c:400 }, 'AT203':{ r:'CMN→ORY', a:'Royal Air Maroc', c:400 },
+  'AT204':{ r:'MRS→CMN', a:'Royal Air Maroc', c:400 }, 'AT205':{ r:'CMN→MRS', a:'Royal Air Maroc', c:400 },
+  'AT700':{ r:'CDG→DKR', a:'Royal Air Maroc', c:600 }, 'AT701':{ r:'DKR→CDG', a:'Royal Air Maroc', c:600 },
+  'AT800':{ r:'CMN→DKR', a:'Royal Air Maroc', c:400 }, 'AT801':{ r:'DKR→CMN', a:'Royal Air Maroc', c:400 },
+  'AT850':{ r:'CMN→NBO', a:'Royal Air Maroc', c:600 }, 'AT851':{ r:'NBO→CMN', a:'Royal Air Maroc', c:600 },
+  'AT860':{ r:'CMN→ABJ', a:'Royal Air Maroc', c:600 }, 'AT861':{ r:'ABJ→CMN', a:'Royal Air Maroc', c:600 },
+  /* Tunisair */
+  'TU700':{ r:'ORY→TUN', a:'Tunisair', c:400 }, 'TU701':{ r:'TUN→ORY', a:'Tunisair', c:400 },
+  'TU702':{ r:'CDG→TUN', a:'Tunisair', c:400 }, 'TU703':{ r:'TUN→CDG', a:'Tunisair', c:400 },
+  'TU704':{ r:'MRS→TUN', a:'Tunisair', c:400 }, 'TU705':{ r:'TUN→MRS', a:'Tunisair', c:400 },
+  'TU710':{ r:'LYS→TUN', a:'Tunisair', c:400 }, 'TU711':{ r:'TUN→LYS', a:'Tunisair', c:400 },
+  /* easyJet */
+  'U21234':{ r:'CDG→BCN', a:'easyJet', c:400 }, 'U21235':{ r:'BCN→CDG', a:'easyJet', c:400 },
+  'U21456':{ r:'ORY→MAD', a:'easyJet', c:400 }, 'U21457':{ r:'MAD→ORY', a:'easyJet', c:400 },
+  'U21678':{ r:'CDG→LIS', a:'easyJet', c:400 }, 'U21679':{ r:'LIS→CDG', a:'easyJet', c:400 },
+  'U21890':{ r:'CDG→MXP', a:'easyJet', c:400 }, 'U21891':{ r:'MXP→CDG', a:'easyJet', c:400 },
+  'U22100':{ r:'CDG→LHR', a:'easyJet', c:250 }, 'U22101':{ r:'LHR→CDG', a:'easyJet', c:250 },
+  'U22200':{ r:'CDG→AMS', a:'easyJet', c:250 }, 'U22201':{ r:'AMS→CDG', a:'easyJet', c:250 },
+  'U22300':{ r:'CDG→FCO', a:'easyJet', c:400 }, 'U22301':{ r:'FCO→CDG', a:'easyJet', c:400 },
+  'U22400':{ r:'NCE→BCN', a:'easyJet', c:400 }, 'U22401':{ r:'BCN→NCE', a:'easyJet', c:400 },
+  'U22500':{ r:'LYS→LIS', a:'easyJet', c:400 }, 'U22501':{ r:'LIS→LYS', a:'easyJet', c:400 },
+  /* Ryanair */
+  'FR1234':{ r:'BVA→DUB', a:'Ryanair', c:250 }, 'FR1235':{ r:'DUB→BVA', a:'Ryanair', c:250 },
+  'FR2345':{ r:'CDG→MAD', a:'Ryanair', c:400 }, 'FR2346':{ r:'MAD→CDG', a:'Ryanair', c:400 },
+  'FR3456':{ r:'BVA→BCN', a:'Ryanair', c:400 }, 'FR3457':{ r:'BCN→BVA', a:'Ryanair', c:400 },
+  'FR4567':{ r:'BVA→OPO', a:'Ryanair', c:400 }, 'FR4568':{ r:'OPO→BVA', a:'Ryanair', c:400 },
+  'FR5678':{ r:'BVA→FCO', a:'Ryanair', c:400 }, 'FR5679':{ r:'FCO→BVA', a:'Ryanair', c:400 },
+  'FR6789':{ r:'BVA→CRL', a:'Ryanair', c:250 }, 'FR6790':{ r:'CRL→BVA', a:'Ryanair', c:250 },
+  'FR7890':{ r:'NTE→OPO', a:'Ryanair', c:400 }, 'FR7891':{ r:'OPO→NTE', a:'Ryanair', c:400 },
+  'FR8901':{ r:'MRS→BCN', a:'Ryanair', c:400 }, 'FR8902':{ r:'BCN→MRS', a:'Ryanair', c:400 },
+  /* Lufthansa */
+  'LH1234':{ r:'FRA→CDG', a:'Lufthansa', c:250 }, 'LH1235':{ r:'CDG→FRA', a:'Lufthansa', c:250 },
+  'LH1800':{ r:'FRA→JNB', a:'Lufthansa', c:600 }, 'LH1801':{ r:'JNB→FRA', a:'Lufthansa', c:600 },
+  'LH1820':{ r:'FRA→ADD', a:'Lufthansa', c:600 }, 'LH1821':{ r:'ADD→FRA', a:'Lufthansa', c:600 },
+  'LH1840':{ r:'MUC→CPT', a:'Lufthansa', c:600 }, 'LH1841':{ r:'CPT→MUC', a:'Lufthansa', c:600 },
+  'LH1860':{ r:'FRA→CAI', a:'Lufthansa', c:400 }, 'LH1861':{ r:'CAI→FRA', a:'Lufthansa', c:400 },
+  'LH1880':{ r:'FRA→CMN', a:'Lufthansa', c:400 }, 'LH1881':{ r:'CMN→FRA', a:'Lufthansa', c:400 },
+  'LH1900':{ r:'FRA→TUN', a:'Lufthansa', c:400 }, 'LH1901':{ r:'TUN→FRA', a:'Lufthansa', c:400 },
+  'LH1920':{ r:'FRA→ALG', a:'Lufthansa', c:400 }, 'LH1921':{ r:'ALG→FRA', a:'Lufthansa', c:400 },
+  'LH3600':{ r:'FRA→MIA', a:'Lufthansa', c:600 }, 'LH3601':{ r:'MIA→FRA', a:'Lufthansa', c:600 },
+  'LH4300':{ r:'FRA→NRT', a:'Lufthansa', c:600 }, 'LH4301':{ r:'NRT→FRA', a:'Lufthansa', c:600 },
+  /* British Airways */
+  'BA304':{ r:'LHR→CDG', a:'British Airways', c:250 }, 'BA305':{ r:'CDG→LHR', a:'British Airways', c:250 },
+  'BA178':{ r:'LHR→JNB', a:'British Airways', c:600 }, 'BA179':{ r:'JNB→LHR', a:'British Airways', c:600 },
+  'BA180':{ r:'LHR→CAI', a:'British Airways', c:400 }, 'BA181':{ r:'CAI→LHR', a:'British Airways', c:400 },
+  'BA182':{ r:'LHR→LAG', a:'British Airways', c:600 }, 'BA183':{ r:'LAG→LHR', a:'British Airways', c:600 },
+  'BA384':{ r:'LHR→MIA', a:'British Airways', c:600 }, 'BA385':{ r:'MIA→LHR', a:'British Airways', c:600 },
+  'BA206':{ r:'LHR→BCN', a:'British Airways', c:400 }, 'BA207':{ r:'BCN→LHR', a:'British Airways', c:400 },
+  'BA398':{ r:'LHR→FCO', a:'British Airways', c:400 }, 'BA399':{ r:'FCO→LHR', a:'British Airways', c:400 },
+  /* Turkish Airlines */
+  'TK1820':{ r:'CDG→IST', a:'Turkish Airlines', c:400 }, 'TK1821':{ r:'IST→CDG', a:'Turkish Airlines', c:400 },
+  'TK1830':{ r:'ORY→IST', a:'Turkish Airlines', c:400 }, 'TK1831':{ r:'IST→ORY', a:'Turkish Airlines', c:400 },
+  'TK1840':{ r:'IST→JNB', a:'Turkish Airlines', c:600 }, 'TK1841':{ r:'JNB→IST', a:'Turkish Airlines', c:600 },
+  'TK1850':{ r:'IST→ADD', a:'Turkish Airlines', c:600 }, 'TK1851':{ r:'ADD→IST', a:'Turkish Airlines', c:600 },
+  'TK1860':{ r:'IST→DKR', a:'Turkish Airlines', c:600 }, 'TK1861':{ r:'DKR→IST', a:'Turkish Airlines', c:600 },
+  'TK1870':{ r:'IST→CAI', a:'Turkish Airlines', c:400 }, 'TK1871':{ r:'CAI→IST', a:'Turkish Airlines', c:400 },
+  /* Emirates / Qatar / EgyptAir / Kenya / ASKY */
+  'EK072':{ r:'CDG→DXB', a:'Emirates', c:600 }, 'EK073':{ r:'DXB→CDG', a:'Emirates', c:600 },
+  'EK121':{ r:'LHR→DXB', a:'Emirates', c:600 }, 'EK122':{ r:'DXB→LHR', a:'Emirates', c:600 },
+  'QR040':{ r:'CDG→DOH', a:'Qatar Airways', c:600 }, 'QR041':{ r:'DOH→CDG', a:'Qatar Airways', c:600 },
+  'MS798':{ r:'CDG→CAI', a:'EgyptAir', c:400 }, 'MS799':{ r:'CAI→CDG', a:'EgyptAir', c:400 },
+  'KQ116':{ r:'CDG→NBO', a:'Kenya Airways', c:600 }, 'KQ117':{ r:'NBO→CDG', a:'Kenya Airways', c:600 },
+  'KQ150':{ r:'AMS→NBO', a:'Kenya Airways', c:600 }, 'KQ151':{ r:'NBO→AMS', a:'Kenya Airways', c:600 },
+  'KP100':{ r:'CDG→LFW', a:'ASKY', c:600 }, 'KP101':{ r:'LFW→CDG', a:'ASKY', c:600 },
+  /* Volotea / Vueling / Iberia */
+  'V72500':{ r:'BOD→BCN', a:'Volotea', c:400 }, 'V72501':{ r:'BCN→BOD', a:'Volotea', c:400 },
+  'VY6120':{ r:'CDG→BCN', a:'Vueling', c:400 }, 'VY6121':{ r:'BCN→CDG', a:'Vueling', c:400 },
+  'IB3440':{ r:'CDG→MAD', a:'Iberia', c:400 }, 'IB3441':{ r:'MAD→CDG', a:'Iberia', c:400 },
+  'IB3442':{ r:'ORY→BCN', a:'Iberia', c:400 }, 'IB3443':{ r:'BCN→ORY', a:'Iberia', c:400 },
+  /* TAP / Swiss / Austrian / KLM */
+  'TP440':{ r:'CDG→LIS', a:'TAP Portugal', c:400 }, 'TP441':{ r:'LIS→CDG', a:'TAP Portugal', c:400 },
+  'TP442':{ r:'ORY→OPO', a:'TAP Portugal', c:400 }, 'TP443':{ r:'OPO→ORY', a:'TAP Portugal', c:400 },
+  'LX636':{ r:'GVA→CDG', a:'Swiss', c:250 }, 'LX637':{ r:'CDG→GVA', a:'Swiss', c:250 },
+  'OS502':{ r:'VIE→CDG', a:'Austrian', c:400 }, 'OS503':{ r:'CDG→VIE', a:'Austrian', c:400 },
+  'KL1224':{ r:'AMS→CDG', a:'KLM', c:250 }, 'KL1225':{ r:'CDG→AMS', a:'KLM', c:250 },
+  'KL1234':{ r:'AMS→BCN', a:'KLM', c:400 }, 'KL1235':{ r:'BCN→AMS', a:'KLM', c:400 },
+  /* Air Algérie / Mauritania */
+  'AH2060':{ r:'CDG→ALG', a:'Air Algérie', c:400 }, 'AH2061':{ r:'ALG→CDG', a:'Air Algérie', c:400 },
+  'AH2062':{ r:'ORY→ALG', a:'Air Algérie', c:400 }, 'AH2063':{ r:'ALG→ORY', a:'Air Algérie', c:400 },
+  'AH2064':{ r:'MRS→ALG', a:'Air Algérie', c:400 }, 'AH2065':{ r:'ALG→MRS', a:'Air Algérie', c:400 },
+  'LR761':{ r:'CDG→NKC', a:'Mauritania Airlines', c:600 }, 'LR762':{ r:'NKC→CDG', a:'Mauritania Airlines', c:600 },
+  /* Camair-Co / ECAir / Afriqiyah */
+  'QC100':{ r:'CDG→DLA', a:'Camair-Co', c:600 }, 'QC101':{ r:'DLA→CDG', a:'Camair-Co', c:600 },
+  '8U900':{ r:'CDG→TIP', a:'Afriqiyah Airways', c:400 }, '8U901':{ r:'TIP→CDG', a:'Afriqiyah Airways', c:400 },
 };
 
 const PFX = {
   AF:'Air France', SS:'Air Sénégal', TO:'Transavia', DS:'Corsair',
   SN:'Brussels Airlines', ET:'Ethiopian Airlines', AT:'Royal Air Maroc',
-  TU:'Tunisair', U2:'easyJet', FR:'Ryanair', LH:'Lufthansa', BA:'British Airways'
+  TU:'Tunisair', U2:'easyJet', FR:'Ryanair', LH:'Lufthansa', BA:'British Airways',
+  TK:'Turkish Airlines', EK:'Emirates', QR:'Qatar Airways', MS:'EgyptAir', KQ:'Kenya Airways',
+  KP:'ASKY', V7:'Volotea', VY:'Vueling', IB:'Iberia', TP:'TAP Portugal', LX:'Swiss', OS:'Austrian', KL:'KLM',
+  AH:'Air Algérie', LR:'Mauritania Airlines', QC:'Camair-Co', '8U':'Afriqiyah Airways'
 };
 
 const COMMISSION_RATE = 0.25; /* 25% no win no fee */
@@ -2763,8 +3013,17 @@ function restartFunnel() {
   ['da-chip','eb-chip1','eb-chip2'].forEach(id => { const el = document.getElementById(id); if(el) el.classList.remove('show'); });
   ['da-dist','eb-dist'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
   ['da-dist-wrap','eb-dist-wrap'].forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'block'; });
+  document.querySelectorAll('.dist-pill').forEach(p => p.classList.remove('active'));
   ['da-pax-val','eb-pax-val'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = '1'; });
   goTo('step-1', 12);
+}
+
+function setDist(inputId, value, btn) {
+  const el = document.getElementById(inputId);
+  if (el) el.value = String(value);
+  const wrap = btn.closest('.calc-field');
+  if (wrap) wrap.querySelectorAll('.dist-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
 }
 
 /* ═══ VOL LOOKUP ═══ */
@@ -2788,15 +3047,16 @@ function volLookup(input, chipId, distWrapId, distId) {
     chipEl.classList.add('show');
     if (distSel) {
       distSel.value = String(match.c);
-      if (distWrap) { distWrap.style.opacity='0'; setTimeout(() => { distWrap.style.display='none'; distWrap.style.opacity='1'; }, 280); }
+      if (distWrap) { distWrap.style.opacity = '0'; setTimeout(() => { distWrap.style.display = 'none'; distWrap.style.opacity = '1'; }, 280); }
     }
   } else {
     chipEl.classList.remove('show');
-    if (distWrap) { distWrap.style.display='block'; distWrap.style.opacity='1'; }
+    if (distWrap) { distWrap.style.display = 'block'; distWrap.style.opacity = '1'; }
     if (distSel && raw.length === 0) distSel.value = '';
+    if (distWrap) distWrap.querySelectorAll('.dist-pill').forEach(p => p.classList.remove('active'));
     if (PFX[prefix] && raw.length >= 4) {
-      document.getElementById(chipId + '-route').textContent = PFX[prefix] + ' · Numéro non trouvé';
-      document.getElementById(chipId + '-dist').textContent  = 'Sélectionnez la distance ci-dessous';
+      document.getElementById(chipId + '-route').textContent = PFX[prefix] + ' · Choisissez la distance';
+      document.getElementById(chipId + '-dist').textContent  = 'Cliquez sur un montant ci-dessous';
       const badge = document.getElementById(chipId + '-badge');
       badge.textContent = '?'; badge.className = 'chip-badge badge-unk';
       chipEl.classList.add('show');
@@ -2862,7 +3122,10 @@ function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
     + '\nMotif : ' + motifTxt + '\nRaison compagnie : ' + raisonInfo.t
     + '\nVous recevrez : ' + totalNet + '€ nets\n(Indemnité brute : ' + totalBrut + '€ — commission 25% = ' + totalFee + '€)\n\nMon prénom :\nMon email :\n'
   );
-  document.getElementById('wa-cta').href = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + msg;
+  const waHref = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + msg;
+  document.getElementById('wa-cta').href = waHref;
+  var stickyWa = document.getElementById('sticky-wa-cta');
+  if (stickyWa) stickyWa.href = waHref;
 
   return true;
 }
@@ -2872,7 +3135,7 @@ function calcDirect() {
   const dist = document.getElementById('da-dist').value;
   const pax  = document.getElementById('da-pax-val').textContent;
   const date = document.getElementById('da-date').value;
-  if (!dist) { flash('da-dist'); return; }
+  if (!dist) { flash('da-dist-wrap'); return; }
   showLoader(() => {
     doCalc(dist, pax, vol, date, null);
     goTo('step-result', 100);
@@ -2885,7 +3148,7 @@ function calcEscale() {
   const dist = document.getElementById('eb-dist').value;
   const pax  = document.getElementById('eb-pax-val').textContent;
   const date = document.getElementById('eb-date').value;
-  if (!dist) { flash('eb-dist'); return; }
+  if (!dist) { flash('eb-dist-wrap'); return; }
   showLoader(() => {
     doCalc(dist, pax, vol2 || vol1, date, vol1);
     goTo('step-result', 100);
@@ -2895,10 +3158,9 @@ function calcEscale() {
 function flash(id) {
   const el = document.getElementById(id);
   if (!el) return;
-  el.style.borderColor = 'rgba(255,80,80,0.7)';
-  el.style.boxShadow   = '0 0 0 3px rgba(255,80,80,0.12)';
-  el.focus();
-  setTimeout(() => { el.style.borderColor = ''; el.style.boxShadow = ''; }, 2200);
+  el.classList.add('flash');
+  if (el.focus) el.focus();
+  setTimeout(() => el.classList.remove('flash'), 2200);
 }
 
 /* Dépôt dossier → page dédiée dossier.html */
@@ -2967,5 +3229,15 @@ document.addEventListener('DOMContentLoaded', () => {
   goTo('step-1', 12);
 });
 </script>
+
+<!-- Barre CTA sticky (mobile + desktop) -->
+<div class="sticky-cta-bar" id="sticky-cta-bar">
+  <a href="https://wa.me/33756863630?text=%5BFR%5D%20Bonjour%20Sarah%20%2C%20je%20souhaite%20lancer%20ma%20demande%20d%27indemnisation%20avec%20Robin%20des%20Airs%20." target="_blank" class="btn-sarah-cta" id="sticky-wa-cta">
+    <svg class="wa-bubble" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.108.549 4.086 1.508 5.8L0 24l6.335-1.483A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.817 9.817 0 01-5.002-1.368l-.36-.214-3.722.976.994-3.63-.234-.373A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182c5.43 0 9.818 4.388 9.818 9.818 0 5.43-4.388 9.818-9.818 9.818z"/></svg>
+    Lancer ma demande avec Sarah 🟢
+  </a>
+  <span class="cta-micro">Analyse gratuite et sans engagement.</span>
+</div>
+
 </body>
 </html>
