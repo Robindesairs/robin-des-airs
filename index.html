@@ -1621,6 +1621,7 @@ footer {
         <div class="lang-option" data-lang="nl" onclick="switchLang('NL','🇳🇱')">🇳🇱 &nbsp;Nederlands</div>
         <div class="lang-option" data-lang="pt" onclick="switchLang('PT','🇵🇹')">🇵🇹 &nbsp;Português</div>
         <div class="lang-option" data-lang="de" onclick="switchLang('DE','🇩🇪')">🇩🇪 &nbsp;Deutsch</div>
+        <div class="lang-option" data-lang="wo" onclick="switchLang('WO','🇸🇳')">🇸🇳 &nbsp;Wolof</div>
       </div>
     </div>
     <!-- CTA visible sur desktop -->
@@ -2945,7 +2946,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Appliquer la langue sauvegardée (ou FR) et mettre à jour le drapeau
   if (window.I18N) {
     var lang = window.I18N.getLang();
-    var flags = { fr: '🇫🇷', en: '🇬🇧', es: '🇪🇸', nl: '🇳🇱', pt: '🇵🇹', de: '🇩🇪' };
+    var flags = { fr: '🇫🇷', en: '🇬🇧', es: '🇪🇸', nl: '🇳🇱', pt: '🇵🇹', de: '🇩🇪', wo: '🇸🇳' };
     var cf = document.getElementById('current-flag');
     if (cf && flags[lang]) { cf.textContent = flags[lang]; }
     document.querySelectorAll('.lang-option').forEach(o => o.classList.remove('active'));

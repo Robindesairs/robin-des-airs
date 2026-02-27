@@ -1,4 +1,4 @@
-/* Robin des Airs — Traductions multilingues (FR, EN, ES, NL, PT, DE) */
+/* Robin des Airs — Traductions multilingues (FR, EN, ES, NL, PT, DE, WO Wolof) */
 window.I18N = (function() {
   var currentLang = (localStorage.getItem('robin_lang') || 'fr').toLowerCase();
   var T = {
@@ -343,6 +343,63 @@ window.I18N = (function() {
       footer_histoire: "Unsere Geschichte",
       ready_claim: "Bereit zur Reklamation?",
       obt_indemnite: "Entschädigung sichern →"
+    },
+    wo: {
+      hero_title: "Robin jël ci compagnie yi,\n",
+      hero_title_neon: "dellu ci julliti ñi.",
+      hero_desc: "Niay gàtt +3h, wàcc walla surbooking? Sàkku Europe bi may la <strong>ba 600€</strong>. Nun ngi leen dellu woon alal — <strong>kartu néew, frais néew bu nu gàñul.</strong>",
+      hero_btn_calc: "🧮 Xàmble warugar bi am",
+      hero_btn_wa: "💬 Wax ak conseiller",
+      hero_stat_max: "Warugar bu gën a màgg",
+      hero_stat_won: "Dossier yu nu gaña",
+      hero_stat_lost: "Bu nu gàñee",
+      hero_stat_24h: "Tontu ci 24h",
+      nav_cta: "Am warugar bi →",
+      nav_drawer_loi: "📋 Sàkku CE 261",
+      nav_drawer_how: "⚙️ Naka la ko def",
+      nav_drawer_tarifs: "💰 Tarif bi",
+      nav_drawer_testi: "⭐ Témoignage",
+      nav_drawer_faq: "❓ FAQ",
+      calc_tag: "Diagnostic niay",
+      calc_title: "Lan mooy\nsituation bi?",
+      funnel_subtitle: "situation?",
+      step1_eyebrow: "Step 1 ci 5 — Lu xew?",
+      step1_retard: "Niay gàtt",
+      step1_retard_sub: "Ñëw +3h gàtt",
+      step1_annulation: "Niay wàcc",
+      step1_annulation_sub: "Compagnie wàcc ko",
+      step1_surbook: "Surbooking / Refus d'embarquement",
+      step1_surbook_sub: "Compagnie dàq la ci niay bi",
+      step1_wa: "Wax direct ak Robin",
+      step1_wa_sub: "Cas complexe → WhatsApp",
+      step1c_eyebrow: "Step 1c — Lu compagnie wax?",
+      step1c_q: "Compagnie bi indil la xam?",
+      raison_meteo: "🌩️ Nguru / Asamaan",
+      raison_technique: "🔧 Problème technique",
+      raison_greve: "✊ Grève",
+      raison_securite: "🛡️ Sécurité",
+      raison_sans: "🤷 Amul xam-xam",
+      section_loi_tag: "Lu nga xamul",
+      section_loi_title: "Alal bi<br><span class=\"neon\">nag fi?</span>",
+      section_how_tag: "Méthode Robin",
+      section_how_title: "4 flèche.\nBenn objectif.",
+      section_faq_tag: "Làppi yu gën a ñew",
+      section_faq_title: "Lu nga bëgg\nxam.",
+      cta_final_tag: "Jublu walla",
+      cta_final_title: "Alal bi\nnga taxaw.",
+      cta_btn_calc: "Xàmble warugar bi →",
+      cta_wa: "WhatsApp",
+      cta_recall: "Ba 600€ · 25% · Frais néew bu nu gàñee",
+      footer_tagline: "Réclamation niay · Diaspora · Prix fixe · No win no fee",
+      footer_nav: "Navigation",
+      footer_legal: "Légal",
+      footer_contact: "Contact",
+      footer_loi: "Sàkku CE 261/2004",
+      footer_how: "Naka la ko def",
+      footer_tarifs: "Tarif bi",
+      footer_histoire: "Histoire bi",
+      ready_claim: "Dégg nga réclamer?",
+      obt_indemnite: "Am warugar bi →"
     }
   };
 
@@ -352,7 +409,7 @@ window.I18N = (function() {
   }
 
   function apply() {
-    document.documentElement.lang = currentLang === 'fr' ? 'fr' : currentLang;
+    document.documentElement.lang = currentLang;
     document.querySelectorAll('[data-i18n]').forEach(function(el) {
       var key = el.getAttribute('data-i18n');
       var val = get(key);
