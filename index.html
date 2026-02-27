@@ -17,6 +17,7 @@
 <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fontsource/montserrat@5.0.0/files/montserrat-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fontsource/bebas-neue@5.0.0/files/bebas-neue-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fontsource/archivo-black@5.0.0/files/archivo-black-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
 <style>
 /* ═══════ POLICES (Fontsource via jsDelivr — pas de blocage Google) ═══════ */
@@ -1683,6 +1684,35 @@ footer {
   font-size: 18px;
   opacity: 0.8;
 }
+
+/* Calendrier Flatpickr — thème Robin (navy + neon) */
+.flatpickr-calendar.inline,
+.flatpickr-calendar.open {
+  background: linear-gradient(165deg, #0B1F3A 0%, #122a47 100%);
+  border: 1px solid rgba(0,229,160,0.2);
+  border-radius: 14px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+}
+.flatpickr-months { background: transparent; }
+.flatpickr-current-month { color: #fff; font-size: 14px; font-weight: 700; padding-top: 12px; }
+.flatpickr-prev-month svg, .flatpickr-next-month svg { fill: rgba(255,255,255,0.7); }
+.flatpickr-prev-month:hover svg, .flatpickr-next-month:hover svg { fill: #00E5A0; }
+.flatpickr-weekdays { background: transparent; }
+span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 11px; font-weight: 600; }
+.flatpickr-days { background: transparent; border-color: rgba(255,255,255,0.06); }
+.dayContainer { background: transparent; }
+.flatpickr-day { color: rgba(255,255,255,0.85); border-radius: 8px; }
+.flatpickr-day:hover { background: rgba(0,229,160,0.15); border-color: transparent; color: #fff; }
+.flatpickr-day.selected { background: #00E5A0; border-color: #00E5A0; color: #0B1F3A; }
+.flatpickr-day.today { border-color: rgba(0,229,160,0.5); color: #00E5A0; }
+.flatpickr-day.today:hover { background: rgba(0,229,160,0.2); color: #fff; }
+.flatpickr-day.flatpickr-disabled { color: rgba(255,255,255,0.2); }
+.flatpickr-months .flatpickr-month { background: transparent; color: #fff; }
+.flatpickr-months .flatpickr-prev-month, .flatpickr-months .flatpickr-next-month { fill: rgba(255,255,255,0.6); }
+.numInputWrapper span.arrowUp:after { border-bottom-color: rgba(255,255,255,0.5); }
+.numInputWrapper span.arrowDown:after { border-top-color: rgba(255,255,255,0.5); }
+.flatpickr-input[readonly] { cursor: pointer; }
+
 /* Pills distance (remplace le select) */
 .dist-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
 .dist-pill {
@@ -2735,6 +2765,8 @@ footer {
 
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
 <script src="i18n.js"></script>
 <script>
 /* ════════════════════════════════════════════════════
@@ -3337,6 +3369,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const ds = d.toISOString().split('T')[0];
   ['da-date','eb-date'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ds; });
   goTo('step-1', 12);
+
+  // Calendrier stylisé (Flatpickr) pour le diagnostic
+  if (window.flatpickr) {
+    var fpOpt = {
+      locale: 'fr',
+      dateFormat: 'Y-m-d',
+      defaultDate: ds,
+      maxDate: 'today',
+      allowInput: true
+    };
+    var da = document.getElementById('da-date');
+    var eb = document.getElementById('eb-date');
+    if (da) window.flatpickr(da, fpOpt);
+    if (eb) window.flatpickr(eb, Object.assign({}, fpOpt));
+  }
 });
 /* Remplir les listes Ville de départ / arrivée (étape 3a) */
 (function fillVilleOptions() {
