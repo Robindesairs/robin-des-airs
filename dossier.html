@@ -619,6 +619,10 @@ body{background:var(--off);font-family:'Montserrat',sans-serif;color:var(--text)
           <option value="surbook">Surbooking / Refus d'embarquement</option>
         </select>
       </div>
+      <div class="field">
+        <label for="f-pnr">Code PNR (réservation) <span style="color:var(--gray);font-weight:400;">optionnel</span></label>
+        <input type="text" id="f-pnr" placeholder="Ex: AB12CD (6 caractères, sur votre billet ou carte d'embarquement)" maxlength="10" autocomplete="off" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
+      </div>
 
       <p style="font-size:11px;font-weight:700;color:var(--gray);margin:24px 0 12px;letter-spacing:1px;">Vos coordonnées</p>
       <div class="field-row">
@@ -867,9 +871,10 @@ body{background:var(--off);font-family:'Montserrat',sans-serif;color:var(--text)
     <div class="success-card">
       <div class="success-icon">🎉</div>
       <div class="success-title">Dossier reçu !</div>
+      <p class="success-sub" style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:8px;">Sarah vous contacte sur WhatsApp.</p>
+      <p id="success-numero-dossier" class="success-numero" style="display:none; margin-bottom:12px; font-size:13px; color:var(--navy); font-weight:700;">Votre numéro de dossier : <strong id="success-numero-value"></strong></p>
       <div class="success-sub">
-        Votre dossier a bien été transmis à l'équipe Robin des Airs.<br>
-        Nous vous recontactons sous <strong>24h</strong> par email et WhatsApp. Vous pouvez aussi nous écrire pour toute question.
+        Votre dossier a bien été transmis. Consultez WhatsApp pour la suite.
       </div>
       <div class="success-steps">
         <div class="success-step">
@@ -928,6 +933,7 @@ function saveDossierBrouillon() {
       dateVol: document.getElementById('f-date-vol')?.value,
       pax: document.getElementById('f-pax-val')?.textContent,
       motif: document.getElementById('f-motif')?.value,
+      pnr: document.getElementById('f-pnr')?.value,
       prenom: document.getElementById('f-prenom')?.value,
       nom: document.getElementById('f-nom')?.value,
       email: document.getElementById('f-email')?.value,
@@ -959,6 +965,7 @@ function restoreDossierBrouillon() {
       set('f-date-vol', data.dateVol);
       setPax(data.pax);
       set('f-motif', data.motif);
+      set('f-pnr', data.pnr);
       set('f-prenom', data.prenom);
       set('f-nom', data.nom);
       set('f-email', data.email);
@@ -1333,8 +1340,18 @@ function formatIBAN(input) {
 }
 
 /* ══ SUBMIT ══ */
-// URL d'envoi : remplacer par votre webhook (Make.com, n8n, backend). Si vide, affichage succès sans envoi.
-const DOSSIER_WEBHOOK_URL = ''; // ex: 'https://hook.eu1.make.com/xxxx' ou '/api/dossier'
+// Webhook Make.com — toutes les données sont envoyées en JSON au clic sur "Soumettre mon dossier"
+const DOSSIER_WEBHOOK_URL = 'https://hook.eu1.make.com/gcjyjh92i34k4tme411ubmcgen8dcjhl';
+
+/** Génère un numéro de dossier RDA : RDA-YYMMDD-XXXX (donne l'impression d'un volume élevé de dossiers) */
+function generateNumeroDossier() {
+  const d = new Date();
+  const yy = String(d.getFullYear()).slice(-2);
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  const seq = String(Math.floor(1000 + Math.random() * 9000)); // 1000–9999
+  return 'RDA-' + yy + mm + dd + '-' + seq;
+}
 
 function submitDossier() {
   if (!validateStep(5)) return;
@@ -1342,10 +1359,15 @@ function submitDossier() {
   btn.textContent = '⏳ Envoi en cours...';
   btn.disabled = true;
 
+  const numeroDossier = generateNumeroDossier();
+
   function showSuccess() {
     clearDossierBrouillon();
     document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
     document.getElementById('fs-success').classList.add('active');
+    const numEl = document.getElementById('success-numero-dossier');
+    const valEl = document.getElementById('success-numero-value');
+    if (numEl && valEl) { numEl.style.display = 'block'; valEl.textContent = numeroDossier; }
     document.getElementById('progress-bar').style.width = '100%';
     document.querySelectorAll('.step-item').forEach(el => el.classList.add('done'));
     const remEl = document.getElementById('steps-remaining'); if (remEl) remEl.textContent = 'Dossier envoyé !';
@@ -1353,21 +1375,29 @@ function submitDossier() {
   }
 
   const payload = {
+    dossier_id: numeroDossier,
+    numero_dossier: numeroDossier,
+    mode: 'en_ligne',
+    timestamp: new Date().toISOString(),
+    nom: document.getElementById('f-nom')?.value,
+    prenom: document.getElementById('f-prenom')?.value,
+    email: document.getElementById('f-email')?.value,
+    tel: document.getElementById('f-tel')?.value,
+    pnr: (document.getElementById('f-pnr')?.value || '').trim(),
+    compagnie: document.getElementById('f-compagnie')?.value,
     trajet: document.getElementById('f-trajet')?.value,
     vol: document.getElementById('f-vol')?.value,
     vol1: document.getElementById('f-vol1')?.value,
     vol2: document.getElementById('f-vol2')?.value,
-    compagnie: document.getElementById('f-compagnie')?.value,
     destination: document.getElementById('f-destination')?.value,
     dateVol: document.getElementById('f-date-vol')?.value,
     pax: document.getElementById('f-pax-val')?.textContent,
     motif: document.getElementById('f-motif')?.value,
-    prenom: document.getElementById('f-prenom')?.value,
-    nom: document.getElementById('f-nom')?.value,
-    email: document.getElementById('f-email')?.value,
-    tel: document.getElementById('f-tel')?.value,
     sepaLater: document.getElementById('sepa-later')?.checked,
-    sepaTitulaire: document.getElementById('sepa-titulaire')?.value
+    sepaTitulaire: document.getElementById('sepa-titulaire')?.value,
+    sepaIban: document.getElementById('sepa-iban')?.value?.replace(/\s/g, '') || '',
+    sepaBic: document.getElementById('sepa-bic')?.value || '',
+    sepaBanque: document.getElementById('sepa-banque')?.value || ''
   };
 
   if (DOSSIER_WEBHOOK_URL) {
@@ -1398,7 +1428,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Sauvegarde brouillon sur changement des champs texte
-  ['f-vol','f-vol1','f-vol2','f-compagnie','f-destination','f-date-vol','f-motif','f-prenom','f-nom','f-email','f-tel','sepa-iban','sepa-titulaire','sepa-banque'].forEach(id => {
+  ['f-vol','f-vol1','f-vol2','f-compagnie','f-destination','f-date-vol','f-motif','f-pnr','f-prenom','f-nom','f-email','f-tel','sepa-iban','sepa-titulaire','sepa-banque'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('change', saveDossierBrouillon);
   });

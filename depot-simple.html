@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Déposer mes documents — Robin des Airs</title>
+  <meta name="description" content="Envoyez vos documents en 3 clics : passeport, cartes d'embarquement, billet. Sarah vous recontacte sur WhatsApp.">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fontsource/montserrat@5.0.0/files/montserrat-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --navy: #0B1F3A;
+      --neon: #00C87A;
+      --neon-b: #00E5A0;
+      --neon-dark: #009960;
+      --white: #FFFFFF;
+      --off: #F7F8FA;
+      --text: #1a2436;
+      --gray: #6B7A90;
+      --gray2: #8C9AB0;
+      --border: #E2E6EE;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+      background: var(--off);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .top-bar {
+      background: var(--navy);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .top-bar a {
+      color: var(--white);
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 16px;
+    }
+    .top-bar a span { color: var(--neon-b); }
+    .top-bar .back {
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.8);
+    }
+
+    .page {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+
+    .intro {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .intro h1 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.3;
+      margin-bottom: 10px;
+    }
+    .intro p {
+      font-size: 15px;
+      color: var(--gray);
+      line-height: 1.6;
+    }
+
+    .field-whatsapp {
+      margin-bottom: 28px;
+    }
+    .field-whatsapp label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+    .field-whatsapp input {
+      width: 100%;
+      padding: 18px 20px;
+      font-size: 18px;
+      font-family: inherit;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background: var(--white);
+      color: var(--text);
+    }
+    .field-whatsapp input::placeholder { color: var(--gray2); }
+    .field-whatsapp input:focus {
+      outline: none;
+      border-color: var(--neon);
+      box-shadow: 0 0 0 4px rgba(0,200,122,0.15);
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 480px) {
+      .field-row { grid-template-columns: 1fr; }
+    }
+    .field-block label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 10px;
+    }
+    .field-block input,
+    .field-block select {
+      width: 100%;
+      padding: 16px 18px;
+      font-size: 16px;
+      font-family: inherit;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background: var(--white);
+      color: var(--text);
+    }
+    .field-block input:focus,
+    .field-block select:focus {
+      outline: none;
+      border-color: var(--neon);
+      box-shadow: 0 0 0 4px rgba(0,200,122,0.15);
+    }
+    .field-block.full { grid-column: 1 / -1; }
+
+    .doc-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .doc-btn {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      width: 100%;
+      padding: 22px 24px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--navy);
+      background: var(--white);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s;
+      font-family: inherit;
+      box-shadow: 0 2px 8px rgba(11,31,58,0.06);
+    }
+    .doc-btn:hover {
+      border-color: var(--neon);
+      background: rgba(0,200,122,0.06);
+    }
+    .doc-btn .icon {
+      font-size: 32px;
+      flex-shrink: 0;
+    }
+    .doc-btn .label { flex: 1; }
+    .doc-btn .check {
+      font-size: 24px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .doc-btn.done {
+      border-color: var(--neon);
+      background: rgba(0,200,122,0.12);
+    }
+    .doc-btn.done .check { opacity: 1; color: var(--neon-dark); }
+
+    .doc-btn input[type="file"] {
+      position: absolute;
+      width: 0;
+      height: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .rgpd {
+      font-size: 12px;
+      color: var(--gray2);
+      line-height: 1.5;
+      margin-bottom: 28px;
+      padding: 14px 18px;
+      background: rgba(0,200,122,0.06);
+      border-radius: 10px;
+      border: 1px solid rgba(0,200,122,0.2);
+    }
+    .rgpd a { color: var(--neon-dark); font-weight: 600; }
+
+    .btn-send {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      width: 100%;
+      padding: 22px 28px;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--navy);
+      background: var(--neon);
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 4px 20px rgba(0,200,122,0.35);
+    }
+    .btn-send:hover { background: var(--neon-dark); }
+    .btn-send:active { transform: scale(0.98); }
+    .btn-send:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    .success-card {
+      text-align: center;
+      padding: 40px 24px;
+      background: var(--white);
+      border-radius: 16px;
+      border: 2px solid var(--neon);
+      box-shadow: 0 8px 32px rgba(11,31,58,0.08);
+    }
+    .success-card .icon { font-size: 56px; margin-bottom: 16px; }
+    .success-card h2 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--navy);
+      margin-bottom: 12px;
+    }
+    .success-card p {
+      font-size: 16px;
+      color: var(--gray);
+      line-height: 1.7;
+      max-width: 400px;
+      margin: 0 auto 24px;
+    }
+    .success-card .wa-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 28px;
+      background: #25D366;
+      color: var(--white);
+      font-weight: 700;
+      font-size: 15px;
+      text-decoration: none;
+      border-radius: 12px;
+    }
+
+    .form-view { display: block; }
+    .success-view { display: none; }
+    .form-view.hidden { display: none; }
+    .success-view.visible { display: block; }
+  </style>
+</head>
+<body>
+
+  <header class="top-bar">
+    <a href="/">← Retour</a>
+    <a href="/">Robin <span>des Airs</span></a>
+    <span></span>
+  </header>
+
+  <main class="page">
+    <div class="form-view" id="form-view">
+      <div class="intro">
+        <h1>Envoyez vos documents en 3 clics</h1>
+        <p>On a besoin de deux infos au départ, puis vos photos. Sarah vérifie tout et vous recontacte sur WhatsApp.</p>
+      </div>
+
+      <div class="field-row">
+        <div class="field-block">
+          <label for="nb_passagers">Nombre de passagers *</label>
+          <select id="nb_passagers" name="nb_passagers" required>
+            <option value="1">1 passager</option>
+            <option value="2">2 passagers</option>
+            <option value="3">3 passagers</option>
+            <option value="4">4 passagers</option>
+            <option value="5">5 passagers</option>
+            <option value="6">6 ou plus</option>
+          </select>
+        </div>
+        <div class="field-block">
+          <label for="nb_vols">Nombre de vols *</label>
+          <select id="nb_vols" name="nb_vols" required>
+            <option value="1">1 vol (direct)</option>
+            <option value="2">2 vols (ex. correspondance)</option>
+            <option value="3">3 vols ou plus</option>
+          </select>
+        </div>
+      </div>
+      <p class="hint-vols" style="font-size:12px;color:var(--gray2);margin-bottom:24px;">Ex. Dakar → Paris puis Paris → Strasbourg = <strong>2 vols</strong>. Il vous faut alors <strong>2 cartes d'embarquement par passager</strong> (une par vol).</p>
+
+      <div class="field-whatsapp">
+        <label for="whatsapp">Votre numéro WhatsApp *</label>
+        <input type="tel" id="whatsapp" name="whatsapp" placeholder="06 12 34 56 78" required autocomplete="tel">
+      </div>
+      <div class="field-whatsapp" style="margin-bottom:20px;">
+        <label for="email">Votre email <span style="font-weight:400;color:var(--gray2);">(si vous en avez un)</span></label>
+        <input type="email" id="email" name="email" placeholder="exemple@email.com" autocomplete="email">
+      </div>
+
+      <div class="doc-buttons">
+        <label class="doc-btn" id="btn-passeport">
+          <span class="icon">🪪</span>
+          <span class="label">Prendre en photo mon Passeport ou ma Carte d'Identité</span>
+          <span class="check">✅</span>
+          <input type="file" id="file-passeport" name="file_passeport" accept="image/*" capture="environment">
+        </label>
+        <label class="doc-btn" id="btn-boarding">
+          <span class="icon">🎫</span>
+          <span class="label">Prendre en photo mes Cartes d'Embarquement (toutes — 1 par vol par passager)</span>
+          <span class="check">✅</span>
+          <input type="file" id="file-boarding" name="file_boarding" accept="image/*" capture="environment" multiple>
+        </label>
+        <label class="doc-btn" id="btn-billet">
+          <span class="icon">📄</span>
+          <span class="label">Prendre en photo mon Billet ou Itinéraire (si vous l'avez)</span>
+          <span class="check">✅</span>
+          <input type="file" id="file-billet" name="file_billet" accept="image/*" capture="environment">
+        </label>
+      </div>
+
+      <p class="rgpd">
+        🔒 Vos documents sont sécurisés et traités uniquement pour votre réclamation, conformément au <a href="/politique-confidentialite.html" target="_blank" rel="noopener">RGPD</a>. Nous ne les utilisons pas à d'autres fins.
+      </p>
+
+      <button type="button" class="btn-send" id="btn-send">
+        Sarah, aidez-moi à récupérer mon argent !
+      </button>
+    </div>
+
+    <div class="success-view" id="success-view">
+      <div class="success-card">
+        <div class="icon">✅</div>
+        <h2>C'est reçu !</h2>
+        <p>Ne faites plus rien. Sarah vérifie vos documents et vous envoie un message sur WhatsApp dans quelques minutes.</p>
+        <a href="https://wa.me/33756863630" target="_blank" rel="noopener" class="wa-link">💬 Ouvrir WhatsApp</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const WEBHOOK_URL = 'https://hook.eu1.make.com/gcjyjh92i34k4tme411ubmcgen8dcjhl';
+
+    const filePasseport = document.getElementById('file-passeport');
+    const fileBoarding = document.getElementById('file-boarding');
+    const fileBillet = document.getElementById('file-billet');
+    const btnPasseport = document.getElementById('btn-passeport');
+    const btnBoarding = document.getElementById('btn-boarding');
+    const btnBillet = document.getElementById('btn-billet');
+    const whatsappInput = document.getElementById('whatsapp');
+    const emailInput = document.getElementById('email');
+    const nbPassagers = document.getElementById('nb_passagers');
+    const nbVols = document.getElementById('nb_vols');
+    const btnSend = document.getElementById('btn-send');
+    const formView = document.getElementById('form-view');
+    const successView = document.getElementById('success-view');
+
+    function markDone(btn) {
+      if (btn) btn.classList.add('done');
+    }
+
+    filePasseport.addEventListener('change', function() { if (this.files.length) markDone(btnPasseport); });
+    fileBoarding.addEventListener('change', function() { if (this.files.length) markDone(btnBoarding); });
+    fileBillet.addEventListener('change', function() { if (this.files.length) markDone(btnBillet); });
+
+    function formatTel(v) {
+      return v.replace(/\s/g, '').replace(/^0/, '33');
+    }
+
+    btnSend.addEventListener('click', function() {
+      var tel = (whatsappInput.value || '').trim();
+      if (!tel) {
+        whatsappInput.focus();
+        alert('Merci d\'indiquer votre numéro WhatsApp.');
+        return;
+      }
+
+      var formData = new FormData();
+      formData.append('nb_passagers', nbPassagers.value);
+      formData.append('nb_vols', nbVols.value);
+      formData.append('whatsapp', formatTel(tel));
+      var email = (emailInput.value || '').trim();
+      if (email) formData.append('email', email);
+      if (filePasseport.files.length) formData.append('file_passeport', filePasseport.files[0]);
+      var i;
+      for (i = 0; i < fileBoarding.files.length; i++) {
+        formData.append('file_boarding', fileBoarding.files[i]);
+      }
+      if (fileBillet.files.length) formData.append('file_billet', fileBillet.files[0]);
+
+      btnSend.disabled = true;
+      btnSend.textContent = '⏳ Envoi en cours...';
+
+      fetch(WEBHOOK_URL, {
+        method: 'POST',
+        body: formData
+      }).then(function() {
+        formView.classList.add('hidden');
+        successView.classList.add('visible');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }).catch(function() {
+        alert('L\'envoi a échoué. Envoyez vos documents directement sur WhatsApp : +33 7 56 86 36 30');
+        btnSend.disabled = false;
+        btnSend.textContent = 'Sarah, aidez-moi à récupérer mon argent !';
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-/* Robin des Airs — Traductions multilingues (FR, EN, ES, NL, PT, DE, WO Wolof) */
+/* Robin des Airs — Traductions multilingues (FR, EN, ES, NL, PT, DE) */
 window.I18N = (function() {
   var currentLang = (localStorage.getItem('robin_lang') || 'fr').toLowerCase();
   var T = {
@@ -57,7 +57,15 @@ window.I18N = (function() {
       footer_tarifs: "Nos tarifs",
       footer_histoire: "Notre histoire",
       ready_claim: "Prêt à réclamer ?",
-      obt_indemnite: "Obtenir mon indemnité →"
+      obt_indemnite: "Obtenir mon indemnité →",
+      section_comp_tag: "Transparence totale",
+      section_comp_title: "Robin vs les autres.",
+      section_comp_desc: "Vous savez exactement ce que vous allez toucher avant de vous engager. Pas de mauvaise surprise.",
+      section_testi_tag: "Ils ont récupéré leur argent",
+      section_testi_title: "Vrais passagers.\nVrai argent récupéré.",
+      section_founder_tag: "Le fondateur",
+      section_founder_title: "20 ans dans les coulisses.<br><span style=\"color:var(--neon-b);\">J'ai vu ce qu'ils cachent.</span>",
+      cta_final_note: "Chaque mois sans réclamer, c'est de l'argent que vous laissez sur la table. Le délai de prescription est de 5 ans — mais ça ne dure pas."
     },
     en: {
       hero_title: "Robin takes from\nairlines,\n",
@@ -114,7 +122,15 @@ window.I18N = (function() {
       footer_tarifs: "Our rates",
       footer_histoire: "Our story",
       ready_claim: "Ready to claim?",
-      obt_indemnite: "Get my compensation →"
+      obt_indemnite: "Get my compensation →",
+      section_comp_tag: "Full transparency",
+      section_comp_title: "Robin vs the others.",
+      section_comp_desc: "You know exactly what you will get before you commit. No bad surprises.",
+      section_testi_tag: "They got their money back",
+      section_testi_title: "Real passengers.\nReal money recovered.",
+      section_founder_tag: "The founder",
+      section_founder_title: "20 years behind the scenes.<br><span style=\"color:var(--neon-b);\">I've seen what they hide.</span>",
+      cta_final_note: "Every month without claiming is money left on the table. The limitation period is 5 years — but it doesn't last forever."
     },
     es: {
       hero_title: "Robin quita a las\naerolíneas,\n",
@@ -171,7 +187,15 @@ window.I18N = (function() {
       footer_tarifs: "Nuestros precios",
       footer_histoire: "Nuestra historia",
       ready_claim: "¿Listo para reclamar?",
-      obt_indemnite: "Obtener mi indemnización →"
+      obt_indemnite: "Obtener mi indemnización →",
+      section_comp_tag: "Transparencia total",
+      section_comp_title: "Robin frente a los demás.",
+      section_comp_desc: "Sabes exactamente cuánto vas a recibir antes de comprometerte. Sin malas sorpresas.",
+      section_testi_tag: "Han recuperado su dinero",
+      section_testi_title: "Pasajeros reales.\nDinero real recuperado.",
+      section_founder_tag: "El fundador",
+      section_founder_title: "20 años entre bastidores.<br><span style=\"color:var(--neon-b);\">He visto lo que ocultan.</span>",
+      cta_final_note: "Cada mes sin reclamar es dinero que dejas sobre la mesa. El plazo de prescripción es de 5 años — pero no dura para siempre."
     },
     nl: {
       hero_title: "Robin neemt van\nde luchtvaartmaatschappijen,\n",
@@ -228,7 +252,15 @@ window.I18N = (function() {
       footer_tarifs: "Onze tarieven",
       footer_histoire: "Ons verhaal",
       ready_claim: "Klaar om te claimen?",
-      obt_indemnite: "Mijn vergoeding →"
+      obt_indemnite: "Mijn vergoeding →",
+      section_comp_tag: "Volledige transparantie",
+      section_comp_title: "Robin vs de rest.",
+      section_comp_desc: "U weet precies wat u krijgt voordat u zich verbindt. Geen vervelende verrassingen.",
+      section_testi_tag: "Zij kregen hun geld terug",
+      section_testi_title: "Echte passagiers.\nEcht geld terug.",
+      section_founder_tag: "De oprichter",
+      section_founder_title: "20 jaar achter de schermen.<br><span style=\"color:var(--neon-b);\">Ik heb gezien wat ze verbergen.</span>",
+      cta_final_note: "Elke maand zonder claim is geld dat u laat liggen. De verjaringstermijn is 5 jaar — maar die duurt niet eeuwig."
     },
     pt: {
       hero_title: "Robin tira das\ncompanhias aéreas,\n",
@@ -285,7 +317,15 @@ window.I18N = (function() {
       footer_tarifs: "Os nossos preços",
       footer_histoire: "A nossa história",
       ready_claim: "Pronto para reclamar?",
-      obt_indemnite: "Obter a minha indemnização →"
+      obt_indemnite: "Obter a minha indemnização →",
+      section_comp_tag: "Transparência total",
+      section_comp_title: "Robin vs os outros.",
+      section_comp_desc: "Sabe exatamente o que vai receber antes de se comprometer. Sem más surpresas.",
+      section_testi_tag: "Eles recuperaram o dinheiro",
+      section_testi_title: "Passageiros reais.\nDinheiro real recuperado.",
+      section_founder_tag: "O fundador",
+      section_founder_title: "20 anos nos bastidores.<br><span style=\"color:var(--neon-b);\">Vi o que eles escondem.</span>",
+      cta_final_note: "Cada mês sem reclamar é dinheiro que deixa na mesa. O prazo de prescrição é de 5 anos — mas não dura para sempre."
     },
     de: {
       hero_title: "Robin nimmt den\nAirlines,\n",
@@ -342,64 +382,15 @@ window.I18N = (function() {
       footer_tarifs: "Unsere Tarife",
       footer_histoire: "Unsere Geschichte",
       ready_claim: "Bereit zur Reklamation?",
-      obt_indemnite: "Entschädigung sichern →"
-    },
-    wo: {
-      hero_title: "Robin jël ci compagnie yi,\n",
-      hero_title_neon: "dellu ci julliti ñi.",
-      hero_desc: "Niay gàtt +3h, wàcc walla surbooking? Sàkku Europe bi may la <strong>ba 600€</strong>. Nun ngi leen dellu woon alal — <strong>kartu néew, frais néew bu nu gàñul.</strong>",
-      hero_btn_calc: "🧮 Xàmble warugar bi am",
-      hero_btn_wa: "💬 Wax ak conseiller",
-      hero_stat_max: "Warugar bu gën a màgg",
-      hero_stat_won: "Dossier yu nu gaña",
-      hero_stat_lost: "Bu nu gàñee",
-      hero_stat_24h: "Tontu ci 24h",
-      nav_cta: "Am warugar bi →",
-      nav_drawer_loi: "📋 Sàkku CE 261",
-      nav_drawer_how: "⚙️ Naka la ko def",
-      nav_drawer_tarifs: "💰 Tarif bi",
-      nav_drawer_testi: "⭐ Témoignage",
-      nav_drawer_faq: "❓ FAQ",
-      calc_tag: "Diagnostic niay",
-      calc_title: "Lan mooy\nsituation bi?",
-      funnel_subtitle: "situation?",
-      step1_eyebrow: "Step 1 ci 5 — Lu xew?",
-      step1_retard: "Niay gàtt",
-      step1_retard_sub: "Ñëw +3h gàtt",
-      step1_annulation: "Niay wàcc",
-      step1_annulation_sub: "Compagnie wàcc ko",
-      step1_surbook: "Surbooking / Refus d'embarquement",
-      step1_surbook_sub: "Compagnie dàq la ci niay bi",
-      step1_wa: "Wax direct ak Robin",
-      step1_wa_sub: "Cas complexe → WhatsApp",
-      step1c_eyebrow: "Step 1c — Lu compagnie wax?",
-      step1c_q: "Compagnie bi indil la xam?",
-      raison_meteo: "🌩️ Nguru / Asamaan",
-      raison_technique: "🔧 Problème technique",
-      raison_greve: "✊ Grève",
-      raison_securite: "🛡️ Sécurité",
-      raison_sans: "🤷 Amul xam-xam",
-      section_loi_tag: "Lu nga xamul",
-      section_loi_title: "Alal bi<br><span class=\"neon\">nag fi?</span>",
-      section_how_tag: "Méthode Robin",
-      section_how_title: "4 flèche.\nBenn objectif.",
-      section_faq_tag: "Làppi yu gën a ñew",
-      section_faq_title: "Lu nga bëgg\nxam.",
-      cta_final_tag: "Jublu walla",
-      cta_final_title: "Alal bi\nnga taxaw.",
-      cta_btn_calc: "Xàmble warugar bi →",
-      cta_wa: "WhatsApp",
-      cta_recall: "Ba 600€ · 25% · Frais néew bu nu gàñee",
-      footer_tagline: "Réclamation niay · Diaspora · Prix fixe · No win no fee",
-      footer_nav: "Navigation",
-      footer_legal: "Légal",
-      footer_contact: "Contact",
-      footer_loi: "Sàkku CE 261/2004",
-      footer_how: "Naka la ko def",
-      footer_tarifs: "Tarif bi",
-      footer_histoire: "Histoire bi",
-      ready_claim: "Dégg nga réclamer?",
-      obt_indemnite: "Am warugar bi →"
+      obt_indemnite: "Entschädigung sichern →",
+      section_comp_tag: "Volle Transparenz",
+      section_comp_title: "Robin vs die anderen.",
+      section_comp_desc: "Sie wissen genau, was Sie bekommen, bevor Sie sich festlegen. Keine bösen Überraschungen.",
+      section_testi_tag: "Sie haben ihr Geld zurück",
+      section_testi_title: "Echte Passagiere.\nEchtes Geld zurück.",
+      section_founder_tag: "Der Gründer",
+      section_founder_title: "20 Jahre hinter den Kulissen.<br><span style=\"color:var(--neon-b);\">Ich habe gesehen, was sie verbergen.</span>",
+      cta_final_note: "Jeden Monat ohne Reklamation ist Geld, das Sie liegen lassen. Die Verjährungsfrist beträgt 5 Jahre — aber die dauert nicht ewig."
     }
   };
 
@@ -418,7 +409,7 @@ window.I18N = (function() {
     document.querySelectorAll('[data-i18n-html]').forEach(function(el) {
       var key = el.getAttribute('data-i18n-html');
       var val = get(key);
-      if (val) el.innerHTML = val.replace(/\\n/g, '<br>');
+      if (val) el.innerHTML = val.replace(/\n/g, '<br>');
     });
     var funnelSub = document.getElementById('funnel-subtitle');
     if (funnelSub) funnelSub.textContent = get('funnel_subtitle');

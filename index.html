@@ -670,9 +670,9 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 }
 
 .section-title {
-  font-family: 'Syne', 'Montserrat', sans-serif;
+  font-family: 'Archivo Black', 'Syne', 'Montserrat', sans-serif;
   font-size: clamp(30px, 4.2vw, 48px);
-  font-weight: 800;
+  font-weight: 400;
   color: var(--navy);
   letter-spacing: -1.8px;
   line-height: 1.05;
@@ -1621,7 +1621,6 @@ footer {
         <div class="lang-option" data-lang="nl" onclick="switchLang('NL','🇳🇱')">🇳🇱 &nbsp;Nederlands</div>
         <div class="lang-option" data-lang="pt" onclick="switchLang('PT','🇵🇹')">🇵🇹 &nbsp;Português</div>
         <div class="lang-option" data-lang="de" onclick="switchLang('DE','🇩🇪')">🇩🇪 &nbsp;Deutsch</div>
-        <div class="lang-option" data-lang="wo" onclick="switchLang('WO','🇸🇳')">🇸🇳 &nbsp;Wolof</div>
       </div>
     </div>
     <!-- CTA visible sur desktop -->
@@ -2096,9 +2095,9 @@ footer {
 <section id="comparatif">
   <div class="comp-wrap reveal">
     <div class="comp-header-section">
-      <div class="section-tag">Transparence totale</div>
-      <h2 class="section-title">Robin vs les autres.</h2>
-      <p style="font-size:14px;color:var(--gray);margin-top:12px;">Vous savez exactement ce que vous allez toucher avant de vous engager. Pas de mauvaise surprise.</p>
+      <div class="section-tag" data-i18n="section_comp_tag">Transparence totale</div>
+      <h2 class="section-title" data-i18n-html="section_comp_title">Robin vs les autres.</h2>
+      <p class="section-desc" style="font-size:14px;color:var(--gray);margin-top:12px;" data-i18n="section_comp_desc">Vous savez exactement ce que vous allez toucher avant de vous engager. Pas de mauvaise surprise.</p>
     </div>
 
     <div class="comp-table">
@@ -2165,8 +2164,8 @@ footer {
 <section id="temoignages">
   <div class="testi-wrap reveal">
     <div class="testi-header">
-      <div class="section-tag">Ils ont récupéré leur argent</div>
-      <h2 class="section-title">Vrais passagers.<br>Vrai argent récupéré.</h2>
+      <div class="section-tag" data-i18n="section_testi_tag">Ils ont récupéré leur argent</div>
+      <h2 class="section-title" data-i18n-html="section_testi_title">Vrais passagers.<br>Vrai argent récupéré.</h2>
     </div>
 
     <!-- Viewport: montre exactement 3 cartes, les autres masquées -->
@@ -2279,8 +2278,8 @@ footer {
 <section id="qui-suis-je">
   <div class="qui-wrap reveal">
     <div style="margin-bottom:56px;">
-      <div class="section-tag" style="color:var(--neon-b);">Le fondateur</div>
-      <h2 class="section-title" style="color:white;">20 ans dans les coulisses.<br><span style="color:var(--neon-b);">J'ai vu ce qu'ils cachent.</span></h2>
+      <div class="section-tag" style="color:var(--neon-b);" data-i18n="section_founder_tag">Le fondateur</div>
+      <h2 class="section-title" style="color:white;" data-i18n-html="section_founder_title">20 ans dans les coulisses.<br><span style="color:var(--neon-b);">J'ai vu ce qu'ils cachent.</span></h2>
     </div>
 
     <div style="border-left:3px solid var(--neon-b);padding:22px 32px;margin-bottom:48px;background:rgba(0,229,160,0.04);border-radius:0 8px 8px 0;">
@@ -2478,8 +2477,8 @@ footer {
   <div style="max-width:640px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:24px;text-align:center;" class="reveal">
     <div class="section-tag" style="justify-content:center;" data-i18n="cta_final_tag">Passez à l'action maintenant</div>
     <h2 class="section-title" data-i18n-html="cta_final_title">Votre argent<br>vous attend.</h2>
-    <p style="font-size:15px;color:var(--gray);line-height:1.75;max-width:480px;">
-      Chaque mois sans réclamer, c'est de l'argent que vous laissez sur la table. Le délai de prescription est de <strong style="color:var(--navy);">5 ans</strong> — mais ça ne dure pas.
+    <p class="cta-final-note" style="font-size:15px;color:var(--gray);line-height:1.75;max-width:480px;" data-i18n="cta_final_note">
+      Chaque mois sans réclamer, c'est de l'argent que vous laissez sur la table. Le délai de prescription est de 5 ans — mais ça ne dure pas.
     </p>
     <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
       <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary" data-i18n="cta_btn_calc">Calculer mon indemnité →</a>
@@ -2946,7 +2945,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Appliquer la langue sauvegardée (ou FR) et mettre à jour le drapeau
   if (window.I18N) {
     var lang = window.I18N.getLang();
-    var flags = { fr: '🇫🇷', en: '🇬🇧', es: '🇪🇸', nl: '🇳🇱', pt: '🇵🇹', de: '🇩🇪', wo: '🇸🇳' };
+    var flags = { fr: '🇫🇷', en: '🇬🇧', es: '🇪🇸', nl: '🇳🇱', pt: '🇵🇹', de: '🇩🇪' };
     var cf = document.getElementById('current-flag');
     if (cf && flags[lang]) { cf.textContent = flags[lang]; }
     document.querySelectorAll('.lang-option').forEach(o => o.classList.remove('active'));

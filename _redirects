@@ -3,6 +3,7 @@
 
 # Redirections pour URLs sans .html
 /choix-reclamation           /choix-reclamation.html           200
+/depot-simple                /depot-simple.html                200
 /dossier                     /dossier.html                     200
 /guide-whatsapp              /guide-whatsapp.html              200
 /suivi-dossier               /suivi-dossier.html               200
