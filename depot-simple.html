@@ -237,6 +237,23 @@
       margin-left: 2px;
       padding: 0 4px;
     }
+    .add-doc-btn {
+      display: block;
+      width: 100%;
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: inherit;
+      color: var(--emerald);
+      background: var(--emerald-light);
+      border: 1px dashed var(--emerald);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .add-doc-btn:hover { background: rgba(5, 150, 105, 0.15); }
+
     .link-switch {
       text-align: center;
       margin-bottom: 24px;
@@ -316,6 +333,86 @@
     }
 
     .form-view.hidden { display: none; }
+
+    /* Longest Flight First */
+    .hero-scan {
+      min-height: 55vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin-bottom: 24px;
+    }
+    .hero-scan.hidden { display: none; }
+    .hero-scan-zone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+      background: var(--card);
+      border: 2px dashed var(--card-border);
+      border-radius: 24px;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+      box-shadow: var(--shadow-card);
+    }
+    .hero-scan-zone:hover { border-color: var(--emerald); background: var(--emerald-light); }
+    .hero-scan-zone input[type="file"] { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none; }
+    .hero-scan-zone .hero-icon { font-size: 56px; margin-bottom: 16px; }
+    .hero-scan-zone .hero-title { font-size: 18px; font-weight: 800; color: var(--text); text-align: center; margin-bottom: 8px; line-height: 1.3; }
+    .hero-scan-zone .hero-sub { font-size: 14px; color: var(--muted); text-align: center; }
+    .manual-link-wrap { text-align: center; margin-top: 20px; }
+    .manual-link { font-size: 13px; color: var(--muted); text-decoration: none; }
+    .manual-link:hover { color: var(--emerald); }
+    .manual-form { display: none; margin-top: 20px; padding: 20px; background: var(--card); border-radius: 16px; border: 1px solid var(--card-border); }
+    .manual-form.visible { display: block; }
+    .manual-form .field { margin-bottom: 14px; }
+    .manual-form .btn-validate { width: 100%; padding: 14px; margin-top: 8px; font-size: 15px; font-weight: 700; font-family: inherit; color: #fff; background: var(--emerald); border: none; border-radius: 12px; cursor: pointer; }
+    .manual-form .btn-validate:hover { background: var(--emerald-hover); }
+
+    .scan-animation {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      background: rgba(0,0,0,0.6);
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    .scan-animation.visible { display: flex; }
+    .scan-laser {
+      width: 90%;
+      max-width: 320px;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, var(--emerald), transparent);
+      border-radius: 2px;
+      box-shadow: 0 0 20px var(--emerald);
+      animation: scanMove 3s ease-in-out 1;
+    }
+    @keyframes scanMove {
+      0%, 100% { transform: translateY(-80px); opacity: 0.5; }
+      15% { opacity: 1; }
+      50% { transform: translateY(0); opacity: 1; }
+      85% { opacity: 1; }
+      100% { transform: translateY(80px); opacity: 0.5; }
+    }
+    .scan-animation .scan-text { color: #fff; font-size: 14px; margin-top: 24px; font-weight: 600; }
+
+    .result-card { display: none; margin-bottom: 28px; padding: 24px; background: var(--card); border-radius: 20px; border: 2px solid var(--emerald); box-shadow: 0 8px 32px rgba(5,150,105,0.15); }
+    .result-card.visible { display: block; }
+    .result-card .result-ok { font-size: 18px; font-weight: 700; color: var(--emerald); margin-bottom: 12px; }
+    .result-card .result-route { font-size: 20px; font-weight: 800; color: var(--text); margin-bottom: 8px; }
+    .result-card .result-amount { font-size: 15px; color: var(--muted); }
+
+    .lead-form { display: none; }
+    .lead-form.visible { display: block; }
+    .lead-form .passager-label { margin-bottom: 10px; }
+    .lead-form .passager-btns { margin-bottom: 20px; }
+    .lead-form .field { margin-bottom: 18px; }
+    .lead-form .btn-sarah { width: 100%; padding: 20px 24px; font-size: 17px; font-weight: 800; font-family: inherit; color: #fff; background: var(--emerald); border: none; border-radius: 14px; cursor: pointer; margin-top: 8px; box-shadow: 0 4px 20px rgba(5,150,105,0.35); }
+    .lead-form .btn-sarah:hover { background: var(--emerald-hover); }
   </style>
 </head>
 <body>
@@ -330,128 +427,66 @@
 
   <main class="page">
     <div class="form-view" id="form-view">
-      <!-- Mode Photo -->
-      <div class="mode-photo" id="mode-photo">
-        <h1 class="section-title">Dépôt photo</h1>
-        <p class="section-sub">Passeport, cartes d'embarquement. On s’occupe du reste.</p>
+      <!-- Hero : scan vol le plus long -->
+      <div class="hero-scan" id="hero-scan">
+        <label class="hero-scan-zone" id="hero-scan-zone">
+          <span class="hero-icon">📸</span>
+          <span class="hero-title">SCANNEZ VOTRE VOL</span>
+          <span class="hero-sub">C'est ce vol qui peut vous rapporter jusqu'à 600€.</span>
+          <input type="file" id="file-longest-flight" accept="image/*" capture="environment">
+        </label>
+        <p class="manual-link-wrap">
+          <a href="#" class="manual-link" id="manual-link">🔗 Je préfère taper les infos du vol à la main</a>
+        </p>
+        <div class="manual-form" id="manual-form">
+          <div class="field">
+            <label for="manual-depart">Départ *</label>
+            <input type="text" id="manual-depart" placeholder="Paris CDG">
+          </div>
+          <div class="field">
+            <label for="manual-arrivee">Arrivée *</label>
+            <input type="text" id="manual-arrivee" placeholder="New York JFK">
+          </div>
+          <div class="field">
+            <label for="manual-numero">N° de vol *</label>
+            <input type="text" id="manual-numero" placeholder="AF 123">
+          </div>
+          <button type="button" class="btn-validate" id="manual-validate">Valider le vol</button>
+        </div>
+      </div>
 
-        <span class="passager-label">Combien de passagers ?</span>
+      <!-- Animation laser 3s -->
+      <div class="scan-animation" id="scan-animation">
+        <div class="scan-laser"></div>
+        <span class="scan-text">Analyse en cours…</span>
+      </div>
+
+      <!-- Carte résultat (trajet + 600€/pers) -->
+      <div class="result-card" id="result-card">
+        <div class="result-ok">Analyse terminée ✅</div>
+        <div class="result-route" id="result-route">Trajet détecté : Paris ✈️ New York</div>
+        <div class="result-amount">Indemnité potentielle : 600 € par passager</div>
+      </div>
+
+      <!-- Capture lead : passagers, prénom, WhatsApp, CTA Sarah -->
+      <div class="lead-form" id="lead-form">
+        <span class="passager-label">Nombre de passagers :</span>
         <div class="passager-btns" id="passager-btns">
           <button type="button" class="passager-btn" data-n="1">1</button>
           <button type="button" class="passager-btn" data-n="2">2</button>
           <button type="button" class="passager-btn" data-n="3">3</button>
-          <button type="button" class="passager-btn" data-n="4">4</button>
-          <button type="button" class="passager-btn" data-n="5">5</button>
-          <button type="button" class="passager-btn" data-n="6">6</button>
-          <button type="button" class="passager-btn" data-n="7">7+</button>
+          <button type="button" class="passager-btn" data-n="4">4+</button>
         </div>
         <input type="hidden" id="nb_passagers" value="1">
-        <div class="indemnity-line" id="indemnity-line">
-          <div class="amount" id="indemnity-amount">INDEMNITÉ POTENTIELLE : Jusqu'à <span class="number" id="indemnity-number">600</span> € 🟢</div>
-          <div class="disclaimer">Estimation basée sur le barème légal maximum (600 €/pers).</div>
-        </div>
-
         <div class="field">
           <label for="prenom">Prénom *</label>
-          <input type="text" id="prenom" name="prenom" placeholder="Jean" required>
-        </div>
-        <div class="field">
-          <label for="nom">Nom *</label>
-          <input type="text" id="nom" name="nom" placeholder="Dupont" required>
-        </div>
-        <div class="field">
-          <label for="email">Email *</label>
-          <input type="email" id="email" name="email" placeholder="jean.dupont@email.com" required>
+          <input type="text" id="prenom" placeholder="Mariam" required>
         </div>
         <div class="field">
           <label for="whatsapp">WhatsApp *</label>
           <input type="tel" id="whatsapp" placeholder="Votre numéro WhatsApp" required autocomplete="tel">
         </div>
-
-        <div class="doc-grid">
-          <div class="doc-card">
-            <label class="doc-btn" id="btn-passeport">
-              <span class="icon">🪪</span>
-              <div class="content">
-                <div class="title">Passeports / ID</div>
-                <div class="sub">Pour valider l'identité des passagers</div>
-                <div class="filename" id="name-passeport"></div>
-              </div>
-              <span class="check">✅</span>
-              <input type="file" id="file-passeport" name="file_passeport" accept="image/*" capture="environment" multiple>
-            </label>
-            <p class="doc-tip">Conseil : Posez le document à plat pour un scan instantané ⚡</p>
-          </div>
-          <div class="doc-card">
-            <label class="doc-btn" id="btn-boarding">
-              <span class="icon">🎫</span>
-              <div class="content">
-                <div class="title">Cartes d'embarquement</div>
-                <div class="sub">Preuve de présence à bord</div>
-                <div class="filename" id="name-boarding"></div>
-              </div>
-              <span class="check">✅</span>
-              <input type="file" id="file-boarding" name="file_boarding" accept="image/*" capture="environment" multiple>
-            </label>
-            <p class="doc-tip">Conseil : Posez le document à plat pour un scan instantané ⚡</p>
-          </div>
-          <div class="doc-card">
-            <label class="doc-btn" id="btn-billet">
-              <span class="icon">📄</span>
-              <div class="content">
-                <div class="title">Confirmation de vol</div>
-                <div class="sub">Pour extraire les données du vol</div>
-                <div class="filename" id="name-billet"></div>
-              </div>
-              <span class="check">✅</span>
-              <input type="file" id="file-billet" name="file_billet" accept="image/*" capture="environment" multiple>
-            </label>
-            <p class="doc-tip">Conseil : Posez le document à plat pour un scan instantané ⚡</p>
-          </div>
-        </div>
-
-        <p class="link-switch">
-          <a href="#" id="go-manuel">Pas les documents ? Remplir le formulaire texte</a>
-        </p>
-      </div>
-
-      <!-- Mode Manuel -->
-      <div class="mode-manuel" id="mode-manuel">
-        <h1 class="section-title">Formulaire manuel</h1>
-        <p class="section-sub">On traite votre dossier sans les pièces jointes.</p>
-        <div class="form-manuel">
-          <div class="field">
-            <label for="m-nom">Nom *</label>
-            <input type="text" id="m-nom" placeholder="Dupont">
-          </div>
-          <div class="field">
-            <label for="m-prenom">Prénom *</label>
-            <input type="text" id="m-prenom" placeholder="Marie">
-          </div>
-          <div class="field">
-            <label for="m-email">Email *</label>
-            <input type="email" id="m-email" placeholder="marie@email.com">
-          </div>
-          <div class="field">
-            <label for="m-numero-vol">N° de vol *</label>
-            <input type="text" id="m-numero-vol" placeholder="AF 1234">
-          </div>
-          <div class="field">
-            <label for="m-pnr">PNR (code réservation) *</label>
-            <input type="text" id="m-pnr" placeholder="ABC123" autocomplete="off">
-          </div>
-          <div class="field">
-            <label for="m-whatsapp">WhatsApp *</label>
-            <div class="field-wrap">
-              <span class="wa-icon">💬</span>
-              <input type="tel" id="m-whatsapp" placeholder="06 12 34 56 78" autocomplete="tel">
-            </div>
-          </div>
-        </div>
-        <p class="link-switch">
-          <a href="#" id="go-photo">← Retour aux photos</a>
-        </p>
-        <button type="button" class="btn-cta" id="btn-launch-manuel">Lancer ma réclamation</button>
+        <button type="button" class="btn-sarah" id="btn-sarah">SARAH, RÉCUPÉREZ MES <span id="cta-amount">600</span> € 🚀</button>
       </div>
     </div>
 
@@ -463,60 +498,82 @@
     </div>
   </main>
 
-  <div class="sticky-cta" id="sticky-cta">
-    <button type="button" class="btn-cta" id="btn-launch">ROBIN ANALYSEZ MON DOSSIER 🚀</button>
-    <p class="legal-mention">En cliquant, vous demandez une analyse gratuite. ROBIN vous recontactera sur WhatsApp pour finaliser la signature de votre dossier.</p>
-  </div>
-
   <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18/build/js/intlTelInput.min.js"></script>
   <script>
     (function() {
       var WEBHOOK = 'https://hook.eu1.make.com/gcjyjh92i34k4tme411ubmcgen8dcjhl';
 
-      var modePhoto = document.getElementById('mode-photo');
-      var modeManuel = document.getElementById('mode-manuel');
+      var heroScan = document.getElementById('hero-scan');
+      var manualLink = document.getElementById('manual-link');
+      var manualForm = document.getElementById('manual-form');
+      var manualValidate = document.getElementById('manual-validate');
+      var fileLongest = document.getElementById('file-longest-flight');
+      var scanAnimation = document.getElementById('scan-animation');
+      var resultCard = document.getElementById('result-card');
+      var resultRoute = document.getElementById('result-route');
+      var leadForm = document.getElementById('lead-form');
       var formView = document.getElementById('form-view');
       var successView = document.getElementById('success-view');
-      var stickyCta = document.getElementById('sticky-cta');
       var nbPassagersInput = document.getElementById('nb_passagers');
       var whatsappInput = document.getElementById('whatsapp');
-      var btnLaunch = document.getElementById('btn-launch');
-      var btnLaunchManuel = document.getElementById('btn-launch-manuel');
-      var filePasseport = document.getElementById('file-passeport');
-      var fileBoarding = document.getElementById('file-boarding');
-      var fileBillet = document.getElementById('file-billet');
-      var btnPasseport = document.getElementById('btn-passeport');
-      var btnBoarding = document.getElementById('btn-boarding');
-      var btnBillet = document.getElementById('btn-billet');
+      var prenomInput = document.getElementById('prenom');
+      var btnSarah = document.getElementById('btn-sarah');
+      var ctaAmount = document.getElementById('cta-amount');
 
-      var amounts = { 1: 600, 2: 1200, 3: 1800, 4: 2400, 5: 3000, 6: 3600, 7: 4200 };
-      var indemnityNumber = document.getElementById('indemnity-number');
-      var currentDisplay = 600;
+      var amounts = { 1: 600, 2: 1200, 3: 1800, 4: 2400 };
+      var detectedDepart = 'Paris';
+      var detectedArrivee = 'New York';
+      var modeScan = true;
+      var uploadedFile = null;
       var iti = null;
 
       if (typeof intlTelInput !== 'undefined') {
-        iti = intlTelInput(whatsappInput, {
-          initialCountry: 'fr',
-          preferredCountries: ['fr', 'be', 'ch']
-        });
+        iti = intlTelInput(whatsappInput, { initialCountry: 'fr', preferredCountries: ['fr', 'be', 'ch'] });
       }
 
       function formatAmount(n) {
         return n >= 1000 ? String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : String(n);
       }
 
-      function animateAmount(from, to, duration, done) {
-        var start = performance.now();
-        function step(now) {
-          var t = Math.min((now - start) / duration, 1);
-          t = 1 - Math.pow(1 - t, 2);
-          var val = Math.round(from + (to - from) * t);
-          indemnityNumber.textContent = formatAmount(val);
-          if (t < 1) requestAnimationFrame(step);
-          else if (done) done();
-        }
-        requestAnimationFrame(step);
+      function showResultThenLead() {
+        resultRoute.textContent = 'Trajet détecté : ' + detectedDepart + ' ✈️ ' + detectedArrivee;
+        resultCard.classList.add('visible');
+        leadForm.classList.add('visible');
+        heroScan.classList.add('hidden');
+        var firstBtn = document.querySelector('.passager-btn[data-n="1"]');
+        if (firstBtn) firstBtn.classList.add('active');
+        updateCtaAmount();
       }
+
+      manualLink.addEventListener('click', function(e) {
+        e.preventDefault();
+        manualForm.classList.toggle('visible');
+      });
+
+      manualValidate.addEventListener('click', function() {
+        var depart = (document.getElementById('manual-depart').value || '').trim();
+        var arrivee = (document.getElementById('manual-arrivee').value || '').trim();
+        var numero = (document.getElementById('manual-numero').value || '').trim();
+        if (!depart || !arrivee || !numero) {
+          alert('Remplissez Départ, Arrivée et N° de vol.');
+          return;
+        }
+        detectedDepart = depart;
+        detectedArrivee = arrivee;
+        modeScan = false;
+        manualForm.classList.remove('visible');
+        showResultThenLead();
+      });
+
+      fileLongest.addEventListener('change', function() {
+        if (!this.files || !this.files.length) return;
+        uploadedFile = this.files[0];
+        scanAnimation.classList.add('visible');
+        setTimeout(function() {
+          scanAnimation.classList.remove('visible');
+          showResultThenLead();
+        }, 3000);
+      });
 
       document.getElementById('passager-btns').addEventListener('click', function(e) {
         var btn = e.target.closest('.passager-btn');
@@ -525,10 +582,14 @@
         nbPassagersInput.value = n;
         document.querySelectorAll('.passager-btn').forEach(function(b) { b.classList.remove('active'); });
         btn.classList.add('active');
-        var target = amounts[n];
-        animateAmount(currentDisplay, target, 320, function() { currentDisplay = target; });
+        updateCtaAmount();
       });
       document.querySelector('.passager-btn[data-n="1"]').classList.add('active');
+
+      function updateCtaAmount() {
+        var n = parseInt(nbPassagersInput.value, 10) || 1;
+        ctaAmount.textContent = formatAmount(amounts[n] || 2400);
+      }
 
       var p = new URLSearchParams(window.location.search);
       var telParam = p.get('whatsapp') || p.get('tel');
@@ -537,118 +598,39 @@
         var telDisplay = telClean.replace(/(\d{2})(?=\d)/g, '$1 ');
         whatsappInput.value = telDisplay;
         if (iti) iti.setNumber('+33' + telClean.replace(/^0/, '').replace(/\s/g, ''));
-        var mWa = document.getElementById('m-whatsapp');
-        if (mWa) mWa.value = telDisplay;
       }
-
-      document.getElementById('go-manuel').addEventListener('click', function(e) {
-        e.preventDefault();
-        modePhoto.classList.add('hidden');
-        modeManuel.classList.add('visible');
-        stickyCta.style.display = 'none';
-      });
-      document.getElementById('go-photo').addEventListener('click', function(e) {
-        e.preventDefault();
-        modeManuel.classList.remove('visible');
-        modePhoto.classList.remove('hidden');
-        stickyCta.style.display = 'block';
-      });
-
-      function markDone(btn, nameEl, files) {
-        if (btn) btn.classList.add('done');
-        if (nameEl && files && files.length) {
-          var n = files.length;
-          nameEl.textContent = n === 1 ? '1 fichier' : n + ' fichiers';
-        }
-      }
-
-      filePasseport.addEventListener('change', function() {
-        markDone(btnPasseport, document.getElementById('name-passeport'), this.files);
-      });
-      fileBoarding.addEventListener('change', function() {
-        markDone(btnBoarding, document.getElementById('name-boarding'), this.files);
-      });
-      fileBillet.addEventListener('change', function() {
-        markDone(btnBillet, document.getElementById('name-billet'), this.files);
-      });
 
       function getWhatsAppNumber() {
-        if (iti) {
-          var num = iti.getNumber();
-          return num ? num.replace(/^\+/, '') : '';
-        }
-        return (whatsappInput.value || '').replace(/\s/g, '').replace(/^0/, '33');
+        var digits = (whatsappInput.value || '').replace(/\D/g, '');
+        if (digits.length === 0) return '';
+        if (digits.startsWith('0') && digits.length >= 9) return '33' + digits.slice(1);
+        return digits;
+      }
+      function isValidPhone(wa) {
+        return (wa || '').replace(/\D/g, '').length >= 9;
       }
 
-      function sendPhotoMode() {
-        var prenom = (document.getElementById('prenom').value || '').trim();
-        var nom = (document.getElementById('nom').value || '').trim();
-        var email = (document.getElementById('email').value || '').trim();
+      btnSarah.addEventListener('click', function() {
+        var prenom = (prenomInput.value || '').trim();
         var wa = getWhatsAppNumber();
-        if (!prenom || !nom || !email) {
-          alert('Remplissez Prénom, Nom et Email.');
-          return;
-        }
-        if (!wa || wa.length < 10) {
-          whatsappInput.focus();
-          alert('Indiquez un numéro WhatsApp valide.');
-          return;
-        }
+        if (!prenom) { prenomInput.focus(); alert('Indiquez votre prénom.'); return; }
+        if (!isValidPhone(wa)) { whatsappInput.focus(); alert('Indiquez un numéro WhatsApp valide.'); return; }
 
-        btnLaunch.disabled = true;
-        btnLaunch.textContent = 'Envoi…';
+        btnSarah.disabled = true;
+        btnSarah.textContent = 'Envoi…';
 
         var formData = new FormData();
-        formData.append('mode', 'photo');
+        formData.append('mode', modeScan ? 'scan' : 'manual');
         formData.append('prenom', prenom);
-        formData.append('nom', nom);
-        formData.append('email', email);
         formData.append('whatsapp', wa);
         formData.append('nb_passagers', nbPassagersInput.value);
-        var i;
-        for (i = 0; i < filePasseport.files.length; i++) formData.append('file_passeport', filePasseport.files[i]);
-        for (i = 0; i < fileBoarding.files.length; i++) formData.append('file_boarding', fileBoarding.files[i]);
-        for (i = 0; i < fileBillet.files.length; i++) formData.append('file_billet', fileBillet.files[i]);
-
-        fetch(WEBHOOK, { method: 'POST', body: formData })
-          .then(function() {
-            formView.classList.add('hidden');
-            stickyCta.style.display = 'none';
-            successView.classList.add('visible');
-            window.scrollTo(0, 0);
-          })
-          .catch(function() {
-            alert('Envoi échoué. Contactez-nous sur WhatsApp : +33 7 56 86 36 30');
-          })
-          .finally(function() {
-            btnLaunch.disabled = false;
-            btnLaunch.textContent = 'ROBIN ANALYSEZ MON DOSSIER 🚀';
-          });
-      }
-
-      btnLaunch.addEventListener('click', sendPhotoMode);
-
-      btnLaunchManuel.addEventListener('click', function() {
-        var nom = (document.getElementById('m-nom').value || '').trim();
-        var prenom = (document.getElementById('m-prenom').value || '').trim();
-        var email = (document.getElementById('m-email').value || '').trim();
-        var vol = (document.getElementById('m-numero-vol').value || '').trim();
-        var pnr = (document.getElementById('m-pnr').value || '').trim();
-        var wa = (document.getElementById('m-whatsapp').value || '').trim().replace(/\s/g, '').replace(/^0/, '33');
-        if (!nom || !prenom || !email || !vol || !pnr || !wa) {
-          alert('Remplissez tous les champs obligatoires.');
-          return;
+        formData.append('depart', detectedDepart);
+        formData.append('arrivee', detectedArrivee);
+        if (modeScan && uploadedFile) formData.append('file_longest_flight', uploadedFile);
+        else {
+          formData.append('numero_vol', (document.getElementById('manual-numero').value || '').trim());
         }
-        btnLaunchManuel.disabled = true;
-        btnLaunchManuel.textContent = 'Envoi…';
-        var formData = new FormData();
-        formData.append('mode', 'manuel');
-        formData.append('nom', nom);
-        formData.append('prenom', prenom);
-        formData.append('email', email);
-        formData.append('numero_vol', vol);
-        formData.append('pnr', pnr);
-        formData.append('whatsapp', wa);
+
         fetch(WEBHOOK, { method: 'POST', body: formData })
           .then(function() {
             formView.classList.add('hidden');
@@ -659,8 +641,9 @@
             alert('Envoi échoué. Contactez-nous sur WhatsApp : +33 7 56 86 36 30');
           })
           .finally(function() {
-            btnLaunchManuel.disabled = false;
-            btnLaunchManuel.textContent = 'Lancer ma réclamation';
+            btnSarah.disabled = false;
+            var span = document.getElementById('cta-amount');
+            if (span) span.textContent = formatAmount(amounts[parseInt(nbPassagersInput.value, 10)] || 600);
           });
       });
     })();
