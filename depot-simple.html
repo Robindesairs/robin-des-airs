@@ -3,533 +3,544 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Déposer mes documents — Robin des Airs</title>
-  <meta name="description" content="Envoyez vos documents en 3 clics : passeport, cartes d'embarquement, billet. Sarah vous recontacte sur WhatsApp.">
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fontsource/montserrat@5.0.0/files/montserrat-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <title>Déposer — Robin des Airs</title>
+  <meta name="description" content="Dépôt photo ou formulaire. Mandat en 1 clic. Indemnités 250–600€, cash uniquement.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
     :root {
-      --navy: #0B1F3A;
-      --neon: #00C87A;
-      --neon-b: #00E5A0;
-      --neon-dark: #009960;
-      --white: #FFFFFF;
-      --off: #F7F8FA;
-      --text: #1a2436;
-      --gray: #6B7A90;
-      --gray2: #8C9AB0;
-      --border: #E2E6EE;
+      --bg: #0f0f0f;
+      --card: #1a1a1a;
+      --card-border: #2a2a2a;
+      --text: #f5f5f5;
+      --muted: #888;
+      --accent: #00d26a;
+      --accent-hover: #00b85c;
+      --danger: #e5484d;
     }
     html { scroll-behavior: smooth; }
     body {
-      font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
-      background: var(--off);
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      line-height: 1.6;
+      font-size: 15px;
+      line-height: 1.5;
       -webkit-font-smoothing: antialiased;
     }
 
     .top-bar {
-      background: var(--navy);
-      padding: 14px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--card-border);
       position: sticky;
       top: 0;
-      z-index: 100;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      z-index: 50;
+      background: var(--bg);
     }
     .top-bar a {
-      color: var(--white);
+      color: var(--text);
       text-decoration: none;
-      font-weight: 800;
-      font-size: 15px;
-    }
-    .top-bar .nav-logo {
-      font-size: 17px;
-      letter-spacing: -0.3px;
-    }
-    .top-bar .nav-logo span { color: var(--neon-b); }
-    .top-bar .back {
+      font-weight: 700;
       font-size: 14px;
-      font-weight: 600;
-      color: rgba(255,255,255,0.85);
     }
-    .top-bar .back:hover { color: var(--white); }
-    .top-bar .nav-link {
-      font-size: 12px;
-      font-weight: 600;
-      color: rgba(255,255,255,0.7);
-    }
-    .top-bar .nav-link:hover { color: var(--neon-b); }
+    .top-bar .logo { color: var(--accent); font-size: 16px; }
 
     .page {
-      max-width: 520px;
+      max-width: 440px;
       margin: 0 auto;
-      padding: 32px 20px 48px;
+      padding: 28px 20px 40px;
     }
 
-    .intro {
-      text-align: center;
-      margin-bottom: 36px;
-    }
-    .intro .page-badge {
-      font-size: 10px;
+    .section-title {
+      font-size: 22px;
       font-weight: 700;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--neon-dark);
-      margin-bottom: 10px;
-    }
-    .intro h1 {
-      font-size: 26px;
-      font-weight: 800;
-      color: var(--navy);
-      line-height: 1.25;
       margin-bottom: 8px;
+      letter-spacing: -0.02em;
     }
-    .intro p {
-      font-size: 15px;
-      color: var(--gray);
-      line-height: 1.6;
-    }
-
-    .field-whatsapp {
-      margin-bottom: 28px;
-    }
-    .field-whatsapp label {
-      display: block;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--navy);
-      margin-bottom: 10px;
-    }
-    .field-whatsapp input {
-      width: 100%;
-      padding: 18px 20px;
-      font-size: 18px;
-      font-family: inherit;
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      background: var(--white);
-      color: var(--text);
-    }
-    .field-whatsapp input::placeholder { color: var(--gray2); }
-    .field-whatsapp input:focus {
-      outline: none;
-      border-color: var(--neon);
-      box-shadow: 0 0 0 4px rgba(0,200,122,0.15);
+    .section-sub {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 24px;
     }
 
-    .field-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
+    /* Mode Photo */
+    .mode-photo { display: block; }
+    .mode-manuel { display: none; }
+    .mode-photo.hidden { display: none; }
+    .mode-manuel.visible { display: block; }
+
+    .field {
       margin-bottom: 20px;
     }
-    @media (max-width: 480px) {
-      .field-row { grid-template-columns: 1fr; }
-    }
-    .field-block label {
+    .field label {
       display: block;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--navy);
-      margin-bottom: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
     }
-    .field-block input,
-    .field-block select {
+    .field input {
       width: 100%;
-      padding: 16px 18px;
+      padding: 14px 16px;
       font-size: 16px;
       font-family: inherit;
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      background: var(--white);
-      color: var(--text);
-    }
-    .field-block input:focus,
-    .field-block select:focus {
-      outline: none;
-      border-color: var(--neon);
-      box-shadow: 0 0 0 4px rgba(0,200,122,0.15);
-    }
-    .field-block.full { grid-column: 1 / -1; }
-
-    .stepper-wrap {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 14px 18px;
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      background: var(--white);
-    }
-    .stepper-wrap label { margin-bottom: 0; }
-    .stepper-btn {
-      width: 44px;
-      height: 44px;
-      border: 2px solid var(--neon);
+      border: 1px solid var(--card-border);
       border-radius: 10px;
-      background: var(--neon);
-      color: var(--navy);
-      font-size: 22px;
-      font-weight: 800;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: background 0.2s;
+      background: var(--card);
+      color: var(--text);
+      transition: border-color 0.15s;
     }
-    .stepper-btn:hover { background: var(--neon-dark); color: var(--white); }
-    .stepper-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-    .stepper-val {
-      min-width: 36px;
-      text-align: center;
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--navy);
+    .field input::placeholder { color: var(--muted); }
+    .field input:focus {
+      outline: none;
+      border-color: var(--accent);
     }
 
-    .doc-buttons {
+    .doc-grid {
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      margin-bottom: 28px;
+      gap: 12px;
+      margin-bottom: 20px;
     }
     .doc-btn {
       display: flex;
       align-items: center;
-      gap: 18px;
-      width: 100%;
-      padding: 22px 24px;
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--navy);
-      background: var(--white);
-      border: 2px solid var(--border);
-      border-radius: 14px;
+      gap: 16px;
+      padding: 18px 20px;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
       cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
       text-align: left;
-      transition: all 0.2s;
       font-family: inherit;
-      box-shadow: 0 2px 8px rgba(11,31,58,0.06);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
     }
-    .doc-btn:hover {
-      border-color: var(--neon);
-      background: rgba(0,200,122,0.06);
-    }
-    .doc-btn .icon {
-      font-size: 36px;
-      flex-shrink: 0;
-      line-height: 1;
-    }
-    .doc-btn .label { flex: 1; font-size: 15px; line-height: 1.35; }
-    .doc-btn .check {
-      font-size: 26px;
-      opacity: 0;
-      transition: opacity 0.2s;
-      flex-shrink: 0;
-    }
+    .doc-btn:hover { border-color: var(--accent); background: rgba(0,210,106,0.06); }
+    .doc-btn .icon { font-size: 28px; flex-shrink: 0; }
+    .doc-btn .label { flex: 1; }
+    .doc-btn .check { font-size: 20px; opacity: 0; flex-shrink: 0; }
     .doc-btn.done {
-      border-color: var(--neon);
-      background: rgba(0,200,122,0.14);
-      box-shadow: 0 0 0 1px rgba(0,200,122,0.2);
+      border-color: var(--accent);
+      background: rgba(0,210,106,0.1);
     }
-    .doc-btn.done .check { opacity: 1; color: var(--neon-dark); }
-
+    .doc-btn.done .check { opacity: 1; }
     .doc-btn input[type="file"] {
       position: absolute;
-      width: 0;
-      height: 0;
+      width: 0; height: 0;
       opacity: 0;
       pointer-events: none;
     }
 
-    .rgpd {
-      font-size: 12px;
-      color: var(--gray2);
-      line-height: 1.5;
+    .link-switch {
+      text-align: center;
       margin-bottom: 28px;
-      padding: 14px 18px;
-      background: rgba(0,200,122,0.06);
-      border-radius: 10px;
-      border: 1px solid rgba(0,200,122,0.2);
     }
-    .rgpd a { color: var(--neon-dark); font-weight: 600; }
-
-    .link-alt {
-      display: block;
-      text-align: center;
+    .link-switch a {
       font-size: 13px;
-      color: var(--gray2);
-      margin-bottom: 24px;
+      color: var(--muted);
+      text-decoration: none;
     }
-    .link-alt a { color: var(--neon-dark); font-weight: 600; }
-    .link-alt a:hover { text-decoration: underline; }
+    .link-switch a:hover { color: var(--accent); }
 
-    .btn-send {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
+    /* Mode Manuel */
+    .form-manuel .field { margin-bottom: 18px; }
+
+    /* CTA */
+    .btn-cta {
       width: 100%;
-      padding: 26px 28px;
-      font-size: 19px;
-      font-weight: 800;
-      letter-spacing: 0.3px;
-      color: var(--navy);
-      background: var(--neon);
-      border: none;
-      border-radius: 14px;
-      cursor: pointer;
+      padding: 18px 24px;
+      font-size: 16px;
+      font-weight: 700;
       font-family: inherit;
-      transition: background 0.2s, transform 0.1s;
-      box-shadow: 0 4px 24px rgba(0,200,122,0.4);
+      color: var(--bg);
+      background: var(--accent);
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.05s;
     }
-    .btn-send:hover { background: var(--neon-dark); }
-    .btn-send:active { transform: scale(0.98); }
-    .btn-send:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
+    .btn-cta:hover { background: var(--accent-hover); }
+    .btn-cta:active { transform: scale(0.98); }
+    .btn-cta:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    .success-card {
-      text-align: center;
-      padding: 40px 24px;
-      background: var(--white);
-      border-radius: 16px;
-      border: 2px solid var(--neon);
-      box-shadow: 0 8px 32px rgba(11,31,58,0.08);
+    /* Modal Mandat */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 100;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0;
     }
-    .success-card .icon { font-size: 56px; margin-bottom: 16px; }
-    .success-card h2 {
-      font-size: 22px;
-      font-weight: 800;
-      color: var(--navy);
+    .modal-overlay.visible {
+      display: flex;
+    }
+    .modal {
+      width: 100%;
+      max-width: 440px;
+      max-height: 92vh;
+      background: var(--card);
+      border-radius: 20px 20px 0 0;
+      border: 1px solid var(--card-border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .modal-header {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--card-border);
+      flex-shrink: 0;
+    }
+    .modal-header h2 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .modal-header p { font-size: 13px; color: var(--muted); }
+    .mandat-key {
+      padding: 16px 20px;
+      background: rgba(0,210,106,0.08);
+      border-left: 3px solid var(--accent);
+      margin: 0 20px 16px;
+      border-radius: 0 8px 8px 0;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .mandat-key strong { color: var(--accent); }
+    .mandat-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 20px 20px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .mandat-scroll h3 {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 16px 0 8px;
+    }
+    .mandat-scroll h3:first-child { margin-top: 0; }
+    .mandat-scroll p {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.65;
       margin-bottom: 12px;
     }
-    .success-card p {
-      font-size: 16px;
-      color: var(--gray);
-      line-height: 1.7;
-      max-width: 400px;
-      margin: 0 auto 24px;
+    .mandat-footer {
+      padding: 16px 20px 24px;
+      border-top: 1px solid var(--card-border);
+      flex-shrink: 0;
+      background: var(--card);
     }
-    .success-card .wa-link {
+    .mandat-check {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+      cursor: pointer;
+    }
+    .mandat-check input {
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      flex-shrink: 0;
+      accent-color: var(--accent);
+    }
+    .mandat-check span { font-size: 14px; color: var(--text); }
+    .modal .btn-cta { margin-top: 4px; }
+
+    /* Success */
+    .success-view { display: none; padding: 40px 20px; text-align: center; }
+    .success-view.visible { display: block; }
+    .success-view .icon { font-size: 48px; margin-bottom: 16px; }
+    .success-view h2 { font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+    .success-view p { font-size: 15px; color: var(--muted); margin-bottom: 24px; line-height: 1.6; }
+    .success-view .wa-link {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      padding: 16px 28px;
+      gap: 8px;
+      padding: 14px 24px;
       background: #25D366;
-      color: var(--white);
-      font-weight: 700;
+      color: #fff;
+      font-weight: 600;
       font-size: 15px;
       text-decoration: none;
-      border-radius: 12px;
+      border-radius: 10px;
     }
 
-    .form-view { display: block; }
-    .success-view { display: none; }
     .form-view.hidden { display: none; }
-    .success-view.visible { display: block; }
   </style>
 </head>
 <body>
 
   <header class="top-bar">
-    <a href="/" class="back">← Retour</a>
-    <a href="/" class="nav-logo">Robin <span>des Airs</span></a>
-    <a href="/" class="nav-link">Accueil</a>
+    <a href="/">← Retour</a>
+    <a href="/" class="logo">Robin des Airs</a>
+    <span></span>
   </header>
 
   <main class="page">
     <div class="form-view" id="form-view">
-      <div class="intro">
-        <p class="page-badge">Robin des Airs</p>
-        <h1>Déposez vos Documents</h1>
-        <p>Notre IA extrait vos données. Quelques infos, trois photos, c'est parti.</p>
-      </div>
-
-      <div class="field-row">
-        <div class="field-block">
-          <label>Nombre de passagers *</label>
-          <div class="stepper-wrap">
-            <button type="button" class="stepper-btn" id="btn-passagers-minus" aria-label="Moins">−</button>
-            <span class="stepper-val" id="val-passagers">1</span>
-            <button type="button" class="stepper-btn" id="btn-passagers-plus" aria-label="Plus">+</button>
-          </div>
-          <input type="hidden" id="nb_passagers" name="nb_passagers" value="1">
+      <!-- Mode A : Photo (défaut) -->
+      <div class="mode-photo" id="mode-photo">
+        <h1 class="section-title">Dépôt photo</h1>
+        <p class="section-sub">3 pièces, 1 numéro. On s’occupe du reste.</p>
+        <div class="field">
+          <label for="whatsapp">WhatsApp *</label>
+          <input type="tel" id="whatsapp" name="whatsapp" placeholder="06 12 34 56 78" required autocomplete="tel">
         </div>
-        <div class="field-block">
-          <label>Nombre de vols *</label>
-          <div class="stepper-wrap">
-            <button type="button" class="stepper-btn" id="btn-vols-minus" aria-label="Moins">−</button>
-            <span class="stepper-val" id="val-vols">1</span>
-            <button type="button" class="stepper-btn" id="btn-vols-plus" aria-label="Plus">+</button>
-          </div>
-          <input type="hidden" id="nb_vols" name="nb_vols" value="1">
+        <div class="doc-grid">
+          <label class="doc-btn" id="btn-passeport">
+            <span class="icon">🪪</span>
+            <span class="label">Passeport</span>
+            <span class="check">✅</span>
+            <input type="file" id="file-passeport" accept="image/*" capture="environment">
+          </label>
+          <label class="doc-btn" id="btn-boarding">
+            <span class="icon">🎫</span>
+            <span class="label">Carte d'embarquement</span>
+            <span class="check">✅</span>
+            <input type="file" id="file-boarding" accept="image/*" capture="environment" multiple>
+          </label>
+          <label class="doc-btn" id="btn-billet">
+            <span class="icon">📄</span>
+            <span class="label">Billet / Confirmation</span>
+            <span class="check">✅</span>
+            <input type="file" id="file-billet" accept="image/*,.pdf">
+          </label>
         </div>
-      </div>
-      <p class="hint-vols" style="font-size:12px;color:var(--gray2);margin-bottom:24px;">2 vols (ex. correspondance) = 2 cartes d'embarquement par passager.</p>
-
-      <div class="field-whatsapp">
-        <label for="whatsapp">Votre numéro WhatsApp *</label>
-        <input type="tel" id="whatsapp" name="whatsapp" placeholder="06 12 34 56 78" required autocomplete="tel">
-      </div>
-      <div class="field-whatsapp" style="margin-bottom:20px;">
-        <label for="email">Votre email <span style="font-weight:400;color:var(--gray2);">(si vous en avez un)</span></label>
-        <input type="email" id="email" name="email" placeholder="exemple@email.com" autocomplete="email">
+        <p class="link-switch">
+          <a href="#" id="go-manuel">Pas les documents sous la main ? Remplir manuellement</a>
+        </p>
+        <button type="button" class="btn-cta" id="btn-launch">Lancer ma réclamation</button>
       </div>
 
-      <div class="doc-buttons">
-        <label class="doc-btn" id="btn-passeport">
-          <span class="icon">🪪</span>
-          <span class="label">Passeport ou Carte d'identité — Prendre une photo</span>
-          <span class="check">✅</span>
-          <input type="file" id="file-passeport" name="file_passeport" accept="image/*" capture="environment">
-        </label>
-        <label class="doc-btn" id="btn-boarding">
-          <span class="icon">🎫</span>
-          <span class="label">Cartes d'embarquement — Photo ou plusieurs fichiers</span>
-          <span class="check">✅</span>
-          <input type="file" id="file-boarding" name="file_boarding" accept="image/*" capture="environment" multiple>
-        </label>
-        <label class="doc-btn" id="btn-billet">
-          <span class="icon">🖼️</span>
-          <span class="label">Photo depuis la galerie</span>
-          <span class="check">✅</span>
-          <input type="file" id="file-billet" name="file_billet" accept="image/*">
-        </label>
+      <!-- Mode B : Manuel -->
+      <div class="mode-manuel" id="mode-manuel">
+        <h1 class="section-title">Formulaire manuel</h1>
+        <p class="section-sub">On traite votre dossier sans les pièces jointes.</p>
+        <div class="form-manuel">
+          <div class="field">
+            <label for="m-nom">Nom *</label>
+            <input type="text" id="m-nom" name="nom" required placeholder="Dupont">
+          </div>
+          <div class="field">
+            <label for="m-prenom">Prénom *</label>
+            <input type="text" id="m-prenom" name="prenom" required placeholder="Marie">
+          </div>
+          <div class="field">
+            <label for="m-email">Email *</label>
+            <input type="email" id="m-email" name="email" required placeholder="marie@email.com">
+          </div>
+          <div class="field">
+            <label for="m-numero-vol">N° de vol *</label>
+            <input type="text" id="m-numero-vol" name="numero_vol" required placeholder="AF 1234">
+          </div>
+          <div class="field">
+            <label for="m-pnr">PNR (code réservation) *</label>
+            <input type="text" id="m-pnr" name="pnr" required placeholder="ABC123" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="m-whatsapp">WhatsApp *</label>
+            <input type="tel" id="m-whatsapp" name="whatsapp_manuel" placeholder="06 12 34 56 78" required autocomplete="tel">
+          </div>
+        </div>
+        <p class="link-switch">
+          <a href="#" id="go-photo">← Retour aux photos</a>
+        </p>
+        <button type="button" class="btn-cta" id="btn-launch-manuel">Lancer ma réclamation</button>
       </div>
-
-      <p class="link-alt">Pas de documents sous la main ? <a href="/choix-reclamation.html">Passez au formulaire classique</a></p>
-
-      <p class="rgpd">
-        🔒 Vos documents sont sécurisés et traités uniquement pour votre réclamation, conformément au <a href="/politique-confidentialite.html" target="_blank" rel="noopener">RGPD</a>. Nous ne les utilisons pas à d'autres fins.
-      </p>
-
-      <button type="button" class="btn-send" id="btn-send">
-        🚀 Sarah, aidez-moi à récupérer mon argent !
-      </button>
     </div>
 
+    <!-- Succès -->
     <div class="success-view" id="success-view">
-      <div class="success-card">
-        <div class="icon">✅</div>
-        <h2>C'est reçu !</h2>
-        <p>Ne faites plus rien. Sarah vérifie vos documents et vous envoie un message sur WhatsApp dans quelques minutes.</p>
-        <a href="https://wa.me/33756863630" target="_blank" rel="noopener" class="wa-link">💬 Ouvrir WhatsApp</a>
-      </div>
+      <div class="icon">✅</div>
+      <h2>Dossier transmis.</h2>
+      <p>Sarah s'occupe du reste. On se parle sur WhatsApp !</p>
+      <a href="https://wa.me/33756863630" target="_blank" rel="noopener" class="wa-link">Ouvrir WhatsApp</a>
     </div>
   </main>
 
+  <!-- Modal Mandat Cash-Protect -->
+  <div class="modal-overlay" id="modal-mandat">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Mandat de réclamation</h2>
+        <p>Lisez et signez pour continuer.</p>
+      </div>
+      <div class="mandat-key">
+        • Récupérez entre <strong>250€ et 600€</strong> par passager.<br>
+        • <strong>REFUS DES AVOIRS</strong> : Nous exigeons uniquement du cash (virement).<br>
+        • <strong>COMMISSION</strong> : 25% TTC au succès uniquement.
+      </div>
+      <div class="mandat-scroll" id="mandat-scroll">
+        <h3>Gestion email</h3>
+        <p>Le mandant autorise Robin des Airs à créer une adresse email de correspondance dédiée pour centraliser les échanges avec la compagnie.</p>
+        <h3>Encaissement</h3>
+        <p>Le mandant accepte que l'indemnité soit versée sur le compte de Robin des Airs, qui reversera la somme (moins la commission) sous 48h.</p>
+        <h3>Refus des bons d'achat / avoirs</h3>
+        <p>Le mandant refuse d'avance toute offre d'indemnisation par bon d'achat ou avoir.</p>
+      </div>
+      <div class="mandat-footer">
+        <label class="mandat-check">
+          <input type="checkbox" id="mandat-check" autocomplete="off">
+          <span>Je signe ce mandat électroniquement.</span>
+        </label>
+        <button type="button" class="btn-cta" id="btn-sign-submit" disabled>Signer et envoyer</button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    const WEBHOOK_URL = 'https://hook.eu1.make.com/gcjyjh92i34k4tme411ubmcgen8dcjhl';
-
-    const filePasseport = document.getElementById('file-passeport');
-    const fileBoarding = document.getElementById('file-boarding');
-    const fileBillet = document.getElementById('file-billet');
-    const btnPasseport = document.getElementById('btn-passeport');
-    const btnBoarding = document.getElementById('btn-boarding');
-    const btnBillet = document.getElementById('btn-billet');
-    const whatsappInput = document.getElementById('whatsapp');
-    const emailInput = document.getElementById('email');
-    const nbPassagersInput = document.getElementById('nb_passagers');
-    const nbVolsInput = document.getElementById('nb_vols');
-    const valPassagers = document.getElementById('val-passagers');
-    const valVols = document.getElementById('val-vols');
-    const btnSend = document.getElementById('btn-send');
-    const formView = document.getElementById('form-view');
-    const successView = document.getElementById('success-view');
-
-    // Préremplir WhatsApp depuis l'URL (?whatsapp=33612345678 ou ?tel=0612345678)
     (function() {
+      var WEBHOOK = 'https://hook.eu1.make.com/gcjyjh92i34k4tme411ubmcgen8dcjhl';
+
+      var modePhoto = document.getElementById('mode-photo');
+      var modeManuel = document.getElementById('mode-manuel');
+      var formView = document.getElementById('form-view');
+      var successView = document.getElementById('success-view');
+      var whatsapp = document.getElementById('whatsapp');
+      var filePasseport = document.getElementById('file-passeport');
+      var fileBoarding = document.getElementById('file-boarding');
+      var fileBillet = document.getElementById('file-billet');
+      var btnPasseport = document.getElementById('btn-passeport');
+      var btnBoarding = document.getElementById('btn-boarding');
+      var btnBillet = document.getElementById('btn-billet');
+      var btnLaunch = document.getElementById('btn-launch');
+      var btnLaunchManuel = document.getElementById('btn-launch-manuel');
+      var modalMandat = document.getElementById('modal-mandat');
+      var mandatScroll = document.getElementById('mandat-scroll');
+      var mandatCheck = document.getElementById('mandat-check');
+      var btnSignSubmit = document.getElementById('btn-sign-submit');
+
+      // Préremplir WhatsApp
       var p = new URLSearchParams(window.location.search);
       var tel = p.get('whatsapp') || p.get('tel');
       if (tel) {
         tel = tel.replace(/\s/g, '').replace(/^33/, '0').replace(/(\d{2})(?=\d)/g, '$1 ');
-        whatsappInput.value = tel;
-      }
-    })();
-
-    // Stepper passagers (1–9)
-    function setPassagers(v) {
-      v = Math.max(1, Math.min(9, v));
-      nbPassagersInput.value = v;
-      if (valPassagers) valPassagers.textContent = v;
-      document.getElementById('btn-passagers-minus').disabled = (v <= 1);
-      document.getElementById('btn-passagers-plus').disabled = (v >= 9);
-    }
-    document.getElementById('btn-passagers-minus').addEventListener('click', function() { setPassagers(parseInt(nbPassagersInput.value, 10) - 1); });
-    document.getElementById('btn-passagers-plus').addEventListener('click', function() { setPassagers(parseInt(nbPassagersInput.value, 10) + 1); });
-    setPassagers(1);
-
-    // Stepper vols (1–5)
-    function setVols(v) {
-      v = Math.max(1, Math.min(5, v));
-      nbVolsInput.value = v;
-      if (valVols) valVols.textContent = v;
-      document.getElementById('btn-vols-minus').disabled = (v <= 1);
-      document.getElementById('btn-vols-plus').disabled = (v >= 5);
-    }
-    document.getElementById('btn-vols-minus').addEventListener('click', function() { setVols(parseInt(nbVolsInput.value, 10) - 1); });
-    document.getElementById('btn-vols-plus').addEventListener('click', function() { setVols(parseInt(nbVolsInput.value, 10) + 1); });
-    setVols(1);
-
-    function markDone(btn) {
-      if (btn) btn.classList.add('done');
-    }
-
-    filePasseport.addEventListener('change', function() { if (this.files.length) markDone(btnPasseport); });
-    fileBoarding.addEventListener('change', function() { if (this.files.length) markDone(btnBoarding); });
-    fileBillet.addEventListener('change', function() { if (this.files.length) markDone(btnBillet); });
-
-    function formatTel(v) {
-      return v.replace(/\s/g, '').replace(/^0/, '33');
-    }
-
-    btnSend.addEventListener('click', function() {
-      var tel = (whatsappInput.value || '').trim();
-      if (!tel) {
-        whatsappInput.focus();
-        alert('Merci d\'indiquer votre numéro WhatsApp.');
-        return;
+        whatsapp.value = tel;
+        var mWa = document.getElementById('m-whatsapp');
+        if (mWa) mWa.value = tel;
       }
 
-      var formData = new FormData();
-      formData.append('nb_passagers', nbPassagersInput.value);
-      formData.append('nb_vols', nbVolsInput.value);
-      formData.append('whatsapp', formatTel(tel));
-      var email = (emailInput.value || '').trim();
-      if (email) formData.append('email', email);
-      if (filePasseport.files.length) formData.append('file_passeport', filePasseport.files[0]);
-      var i;
-      for (i = 0; i < fileBoarding.files.length; i++) {
-        formData.append('file_boarding', fileBoarding.files[i]);
-      }
-      if (fileBillet.files.length) formData.append('file_billet', fileBillet.files[0]);
-
-      btnSend.disabled = true;
-      btnSend.textContent = '⏳ Envoi en cours...';
-
-      fetch(WEBHOOK_URL, {
-        method: 'POST',
-        body: formData
-      }).then(function() {
-        formView.classList.add('hidden');
-        successView.classList.add('visible');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }).catch(function() {
-        alert('L\'envoi a échoué. Envoyez vos documents directement sur WhatsApp : +33 7 56 86 36 30');
-        btnSend.disabled = false;
-        btnSend.textContent = 'Robin, aide-moi à récupérer mon argent !';
+      // Bascule Mode Photo / Manuel
+      document.getElementById('go-manuel').addEventListener('click', function(e) {
+        e.preventDefault();
+        modePhoto.classList.add('hidden');
+        modeManuel.classList.add('visible');
       });
-    });
+      document.getElementById('go-photo').addEventListener('click', function(e) {
+        e.preventDefault();
+        modeManuel.classList.remove('visible');
+        modePhoto.classList.remove('hidden');
+      });
+
+      // Feedback upload
+      function markDone(btn) { if (btn) btn.classList.add('done'); }
+      filePasseport.addEventListener('change', function() { if (this.files.length) markDone(btnPasseport); });
+      fileBoarding.addEventListener('change', function() { if (this.files.length) markDone(btnBoarding); });
+      fileBillet.addEventListener('change', function() { if (this.files.length) markDone(btnBillet); });
+
+      // Ouvrir modal au clic sur "Lancer ma réclamation"
+      function openMandat() {
+        modalMandat.classList.add('visible');
+        mandatScroll.scrollTop = 0;
+        mandatCheck.checked = false;
+        btnSignSubmit.textContent = 'Signer et envoyer';
+        updateSignButton();
+      }
+      btnLaunch.addEventListener('click', function() {
+        var tel = (whatsapp.value || '').trim();
+        if (!tel) { whatsapp.focus(); alert('Indiquez votre numéro WhatsApp.'); return; }
+        openMandat();
+      });
+      btnLaunchManuel.addEventListener('click', function() {
+        var nom = (document.getElementById('m-nom').value || '').trim();
+        var prenom = (document.getElementById('m-prenom').value || '').trim();
+        var email = (document.getElementById('m-email').value || '').trim();
+        var vol = (document.getElementById('m-numero-vol').value || '').trim();
+        var pnr = (document.getElementById('m-pnr').value || '').trim();
+        var wa = (document.getElementById('m-whatsapp').value || '').trim();
+        if (!nom || !prenom || !email || !vol || !pnr || !wa) {
+          alert('Remplissez tous les champs obligatoires.');
+          return;
+        }
+        openMandat();
+      });
+
+      // Scroll complet + case cochée => activer le bouton
+      function updateSignButton() {
+        var el = mandatScroll;
+        var scrolledToBottom = el.scrollHeight - el.scrollTop <= el.clientHeight + 20;
+        btnSignSubmit.disabled = !scrolledToBottom || !mandatCheck.checked;
+      }
+      mandatScroll.addEventListener('scroll', updateSignButton);
+      mandatCheck.addEventListener('change', updateSignButton);
+
+      function formatTel(v) {
+        return (v || '').replace(/\s/g, '').replace(/^0/, '33');
+      }
+
+      btnSignSubmit.addEventListener('click', function() {
+        if (btnSignSubmit.disabled) return;
+        btnSignSubmit.disabled = true;
+        btnSignSubmit.textContent = 'Envoi…';
+
+        var formData = new FormData();
+        formData.append('mandat_signed', '1');
+
+        if (modeManuel.classList.contains('visible')) {
+          formData.append('mode', 'manuel');
+          formData.append('nom', (document.getElementById('m-nom').value || '').trim());
+          formData.append('prenom', (document.getElementById('m-prenom').value || '').trim());
+          formData.append('email', (document.getElementById('m-email').value || '').trim());
+          formData.append('numero_vol', (document.getElementById('m-numero-vol').value || '').trim());
+          formData.append('pnr', (document.getElementById('m-pnr').value || '').trim());
+          formData.append('whatsapp', formatTel(document.getElementById('m-whatsapp').value));
+        } else {
+          formData.append('mode', 'photo');
+          formData.append('whatsapp', formatTel(whatsapp.value));
+          if (filePasseport.files.length) formData.append('file_passeport', filePasseport.files[0]);
+          for (var i = 0; i < fileBoarding.files.length; i++) formData.append('file_boarding', fileBoarding.files[i]);
+          if (fileBillet.files.length) formData.append('file_billet', fileBillet.files[0]);
+        }
+
+        fetch(WEBHOOK, { method: 'POST', body: formData })
+          .then(function() {
+            modalMandat.classList.remove('visible');
+            formView.classList.add('hidden');
+            successView.classList.add('visible');
+            window.scrollTo(0, 0);
+          })
+          .catch(function() {
+            alert('Envoi échoué. Contactez-nous sur WhatsApp : +33 7 56 86 36 30');
+            btnSignSubmit.disabled = false;
+            btnSignSubmit.textContent = 'Signer et envoyer';
+          })
+          .finally(function() {
+            btnSignSubmit.textContent = 'Signer et envoyer';
+          });
+      });
+
+      // Fermer modal en tapant en dehors (optionnel)
+      modalMandat.addEventListener('click', function(e) {
+        if (e.target === modalMandat) modalMandat.classList.remove('visible');
+      });
+    })();
   </script>
 </body>
 </html>
