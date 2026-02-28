@@ -681,35 +681,56 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   background: rgba(255,255,255,0.06);
   color: #fff;
 }
-/* Barre CTA sticky en bas — compacte */
+/* Bouton sticky Ultra-Convertisseur — vert WhatsApp #25D366 */
 .sticky-cta-bar {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 100;
-  background: #fff;
-  padding: 8px 14px 10px;
-  box-shadow: 0 -2px 16px rgba(0,0,0,0.06);
+  padding: 10px 14px 14px;
+  padding-bottom: max(14px, env(safe-area-inset-bottom));
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.12);
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+}
+.sticky-wa-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
+  justify-content: center;
+  width: 100%;
+  max-width: 420px;
+  padding: 14px 20px;
+  background: #25D366;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 12px;
+  font-family: 'Montserrat', sans-serif;
+  transition: background 0.2s, transform 0.1s;
+  box-shadow: 0 2px 12px rgba(37,211,102,0.35);
 }
-.sticky-cta-bar .btn-sarah-cta {
-  max-width: 100%;
-  margin: 0;
-  padding: 10px 20px;
-  font-size: 11px;
+.sticky-wa-btn:hover {
+  background: #20bd5a;
+  color: #fff;
+  transform: translateY(-1px);
+}
+.sticky-wa-line1 {
+  font-size: 14px;
+  font-weight: 700;
   letter-spacing: 1.2px;
+  text-transform: uppercase;
+  line-height: 1.3;
 }
-.sticky-cta-bar .btn-sarah-cta .wa-bubble { width: 16px; height: 16px; }
-.sticky-cta-bar .cta-micro {
-  font-size: 9px;
-  color: #9CA3AF;
+.sticky-wa-line2 {
+  font-size: 11px;
+  font-weight: 500;
+  opacity: 0.95;
+  margin-top: 2px;
   letter-spacing: 0.2px;
 }
-body:has(.sticky-cta-bar) { padding-bottom: 62px; }
+body:has(.sticky-cta-bar) { padding-bottom: max(78px, calc(14px + env(safe-area-inset-bottom))); }
 
 .calc-disclaimer {
   margin-top: 14px;
@@ -1599,7 +1620,17 @@ footer {
 .res-tag    { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--neon-b); margin-bottom: 4px; }
 .res-amount { font-family: 'Bebas Neue', sans-serif; font-size: 72px; color: var(--neon-b); letter-spacing: -2px; line-height: 1; }
 .res-amount span { font-size: 36px; color: var(--neon-b); }
-.res-route  { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 4px; }
+.res-route-wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; }
+.res-route      { font-size: 13px; color: rgba(255,255,255,0.75); font-weight: 500; }
+.res-motif-badge {
+  font-size: 10px;
+  color: rgba(255,255,255,0.5);
+  background: rgba(255,255,255,0.08);
+  padding: 3px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
 .res-net    { margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(0,229,160,0.13); font-size: 12px; color: rgba(255,255,255,0.55); }
 .res-net strong { color: var(--neon-b); font-size: 14px; }
 

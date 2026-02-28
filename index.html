@@ -430,13 +430,15 @@
         <div class="res-box">
           <div class="res-tag" style="text-align:center;margin-bottom:8px;">✈ Votre indemnité CE 261/2004</div>
           <!-- Montant NET — affiché en GRAND pour l'impact psychologique -->
-          <div style="text-align:center;margin-bottom:4px;">
+          <div style="text-align:center;margin-bottom:8px;">
             <div class="res-amount" id="res-net-big"><span id="res-net-value">0</span><span>€</span></div>
             <div style="font-size:12px;color:var(--neon-b);font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-top:2px;">dans votre poche</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:6px;">Net pour vous</div>
           </div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:4px;text-align:center;" id="res-brut-line">Montant légal : 600€ brut — Commission Robin 25% : 150€</div>
-          <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:6px;text-align:center;" id="res-distance-mention">Éligibilité au palier maximum de la loi CE 261/2004.</div>
-          <div class="res-route" id="res-route" style="text-align:center;">Par passager · CE 261/2004</div>
+          <div class="res-route-wrap" style="text-align:center;margin-top:10px;">
+            <span class="res-route" id="res-route">—</span>
+            <span class="res-motif-badge" id="res-motif-badge"></span>
+          </div>
           <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(0,229,160,0.13);">
             <div style="font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Raison invoquée par la compagnie :</div>
             <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.7);" id="res-raison-txt">—</div>
@@ -449,20 +451,6 @@
               <li style="margin-bottom:6px;"><strong style="color:rgba(255,255,255,0.9);">Zéro Risque :</strong> Aucun frais de dossier, aucune avance. Si on ne gagne pas, vous ne payez rien.</li>
               <li><strong style="color:rgba(255,255,255,0.9);">Accompagnement WhatsApp :</strong> Un suivi humain et direct sans attente téléphonique.</li>
             </ul>
-          </div>
-        </div>
-
-        <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.9);text-align:center;margin-bottom:14px;padding:10px 12px;background:rgba(0,229,160,0.08);border-radius:6px;border:1px solid rgba(0,229,160,0.2);" id="res-calc-line">600€ (Indemnité brute) − 150€ (Service Robin) = 450€ Net pour vous</div>
-
-        <!-- CTA principal Robin + lien dossier en ligne -->
-        <div style="margin-bottom:14px;">
-          <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
-            <a id="wa-cta" href="#" target="_blank" class="btn-sarah-cta">
-              <svg class="wa-bubble" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.108.549 4.086 1.508 5.8L0 24l6.335-1.483A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.817 9.817 0 01-5.002-1.368l-.36-.214-3.722.976.994-3.63-.234-.373A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182c5.43 0 9.818 4.388 9.818 9.818 0 5.43-4.388 9.818-9.818 9.818z"/></svg>
-              Lancer ma demande avec Robin 🟢
-            </a>
-            <p style="font-size:10px;color:rgba(255,255,255,0.4);">Analyse gratuite et sans engagement.</p>
-            <a href="/depot-en-ligne.html" target="_blank" class="btn-dossier-secondary">📄 Déposer un dossier en ligne</a>
           </div>
         </div>
 
@@ -1443,26 +1431,22 @@ function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
 
   const motifTxt = { retard:'Retard +3h', annulation:'Annulation', surbook:"Refus d'embarquement" }[S.motif] || '';
   const match    = DB[(volRef || '').toUpperCase()];
-  const route    = match ? match.a + ' → ' + match.r.split('→')[1]?.trim() + ' · ' : (volRef ? volRef + ' · ' : '');
-
-  /* Montant net : on affiche 0 + €, l'animation count-up sera lancée à l'affichage du résultat */
-  document.getElementById('res-net-big').innerHTML = '<span id="res-net-value">0</span><span>€</span>';
-  document.getElementById('res-brut-line').textContent =
-    (pax > 1 ? pax + ' passagers · ' : '') +
-    'Montant légal : ' + totalBrut + '€ brut · Vous recevrez ' + totalNet + '€ net (commission 25% : ' + totalFee + '€)';
-  var calcLineEl = document.getElementById('res-calc-line');
-  if (calcLineEl) calcLineEl.textContent = totalBrut + '€ (Indemnité brute) − ' + totalFee + '€ (Service Robin) = ' + totalNet + '€ Net pour vous';
-  var palierTxt = (ind === 600) ? 'maximum' : (ind === 400) ? 'moyen' : 'court';
-  var mentionEl = document.getElementById('res-distance-mention');
-  if (mentionEl) {
-    if (window.lastCalculatedDistanceKm != null && !isNaN(window.lastCalculatedDistanceKm)) {
-      var kmFormatted = String(Math.round(window.lastCalculatedDistanceKm)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-      mentionEl.textContent = 'Distance calculée : ' + kmFormatted + ' km (Grand Cercle). Éligibilité au palier ' + palierTxt + ' de la loi CE 261/2004.';
-    } else {
-      mentionEl.textContent = 'Éligibilité au palier ' + palierTxt + ' de la loi CE 261/2004.';
-    }
+  var routeStr   = '—';
+  if (match && match.r) {
+    var parts = match.r.split('→');
+    var depIata = (parts[0] || '').trim();
+    var arrIata = (parts[1] || '').trim();
+    routeStr = depIata + ' ➔ ' + arrIata + ' • ' + pax + (pax > 1 ? ' Passagers' : ' Passager');
+  } else if (volRef) {
+    routeStr = volRef.replace(' → ', ' ➔ ') + ' • ' + pax + (pax > 1 ? ' Passagers' : ' Passager');
   }
-  document.getElementById('res-route').textContent = route + motifTxt + ' · CE 261/2004';
+  document.getElementById('res-net-big').innerHTML = '<span id="res-net-value">0</span><span>€</span>';
+  document.getElementById('res-route').textContent = routeStr;
+  var badgeEl = document.getElementById('res-motif-badge');
+  if (badgeEl) {
+    badgeEl.textContent = motifTxt;
+    badgeEl.style.display = motifTxt ? '' : 'none';
+  }
 
   const raisonInfo = RAISON_LABELS[S.raison] || RAISON_LABELS.nesaispas;
   document.getElementById('res-raison-txt').textContent  = raisonInfo.t;
@@ -1472,9 +1456,10 @@ function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
   var flightNum = (flightNumberInput && flightNumberInput.value && flightNumberInput.value.trim()) ? flightNumberInput.value.trim().toUpperCase() : (volRef || '—');
   var waMsg = 'Bonjour Robin ! Je viens de faire le diagnostic pour mon vol ' + flightNum + '. Mon indemnité estimée est de ' + totalNet + '€ nets. Voici mes documents pour lancer mon dossier.';
   var waHref = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(waMsg);
-  document.getElementById('wa-cta').href = waHref;
   var stickyWa = document.getElementById('sticky-wa-cta');
   if (stickyWa) stickyWa.href = waHref;
+  var stickyAmountEl = document.getElementById('sticky-cta-amount');
+  if (stickyAmountEl) stickyAmountEl.textContent = 'RÉCUPÉRER MES ' + totalNet + ' EUROS';
 
   return totalNet;
 }
@@ -1885,13 +1870,12 @@ function toggleEscaleVol3() {
 /* Villes / aéroports : gérés par Tom Select + data/airports.js (priorité CDG, ORY, DSS, LYS, MRS, CMN, BRU) */
 </script>
 
-<!-- Barre CTA sticky (mobile + desktop) -->
+<!-- Bouton sticky Ultra-Convertisseur (vert WhatsApp #25D366) -->
 <div class="sticky-cta-bar" id="sticky-cta-bar">
-  <a href="https://wa.me/33756863630?text=%5BFR%5D%20Bonjour%20Robin%20des%20Airs%20%2C%20je%20souhaite%20lancer%20ma%20demande%20d%27indemnisation%20." target="_blank" class="btn-sarah-cta" id="sticky-wa-cta">
-    <svg class="wa-bubble" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.108.549 4.086 1.508 5.8L0 24l6.335-1.483A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.817 9.817 0 01-5.002-1.368l-.36-.214-3.722.976.994-3.63-.234-.373A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182c5.43 0 9.818 4.388 9.818 9.818 0 5.43-4.388 9.818-9.818 9.818z"/></svg>
-    Lancer ma demande avec Robin 🟢
+  <a href="https://wa.me/33756863630?text=%5BFR%5D%20Bonjour%20Robin%20des%20Airs%20%2C%20je%20souhaite%20lancer%20ma%20demande%20d%27indemnisation%20." target="_blank" class="sticky-wa-btn" id="sticky-wa-cta">
+    <span class="sticky-wa-line1">⚡ <span id="sticky-cta-amount">RÉCUPÉRER MES INDEMNITÉS</span></span>
+    <span class="sticky-wa-line2">Lancer mon dossier gratuitement sur WhatsApp</span>
   </a>
-  <span class="cta-micro">Analyse gratuite et sans engagement.</span>
 </div>
 
 </body>

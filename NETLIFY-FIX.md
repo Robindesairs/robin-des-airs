@@ -52,3 +52,17 @@ Envoie-moi (ou note) :
 3. Ce que tu as mis dans **Publish directory** et **Build command** dans Netlify.
 
 Avec ça on pourra cibler le réglage exact.
+
+---
+
+## 7. Forcer le site en HTTPS (redirection http → https)
+
+Le site est déjà accessible en **https** (Netlify fournit le certificat). Pour que les visiteurs qui tapent `http://...` soient redirigés automatiquement vers **https** :
+
+1. Va sur **https://app.netlify.com** → ton site.
+2. **Domain management** (ou **Site configuration** → **Domain management**).
+3. Onglet **HTTPS**.
+4. Active **« Force TLS connection »** ou **« Redirect HTTP to HTTPS »** (libellé selon l’interface).
+5. Enregistre si besoin.
+
+Après ça, toute requête en `http://ton-site.netlify.app` ou `http://ton-domaine.fr` sera redirigée en **https**.
