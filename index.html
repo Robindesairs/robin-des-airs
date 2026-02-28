@@ -1749,16 +1749,21 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
 .dist-pill .pill-amount { font-size: 12px; color: var(--neon-b); margin-top: 1px; }
 .dist-pill.active .pill-amount { color: white; }
 .calc-robin-hint { font-size: 10px; color: rgba(255,255,255,0.5); margin-bottom: 8px; text-align: center; }
-/* Tom Select — thème diagnostic (fond navy) */
-.fstep .ts-wrapper.single .ts-control { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 10px 14px; min-height: 44px; color: #fff; }
-.fstep .ts-wrapper .ts-control .ts-input input { color: #fff; }
-.fstep .ts-wrapper .ts-control .ts-input input::placeholder { color: rgba(255,255,255,0.4); }
+/* Tom Select — thème diagnostic (fond navy) : texte blanc lisible, pas bleu sur noir */
+.fstep .ts-wrapper.single .ts-control { background: rgba(255,255,255,0.12); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 10px; padding: 10px 14px; min-height: 44px; color: #fff !important; }
+.fstep .ts-wrapper .ts-control .ts-input input { color: #fff !important; }
+.fstep .ts-wrapper .ts-control .ts-input input::placeholder { color: rgba(255,255,255,0.55); }
+.fstep .ts-wrapper .ts-control .item { color: #fff !important; }
 .fstep .ts-wrapper.dropdown-active .ts-control { border-color: rgba(0,229,160,0.5); }
-.fstep .ts-dropdown { background: linear-gradient(165deg, #0B1F3A 0%, #122a47 100%); border: 1px solid rgba(0,229,160,0.25); border-radius: 10px; box-shadow: 0 12px 32px rgba(0,0,0,0.35); }
-.fstep .ts-dropdown .option { color: rgba(255,255,255,0.9); padding: 10px 14px; }
-.fstep .ts-dropdown .option.active { background: rgba(0,229,160,0.2); color: #00E5A0; }
-.fstep .ts-dropdown .optgroup-header { color: rgba(255,255,255,0.5); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; padding: 8px 14px; }
-.fstep .ts-wrapper .ts-control .item { color: #fff; }
+/* Dropdown : liste des villes/compagnies (texte blanc lisible) */
+.fstep .ts-wrapper .ts-dropdown,
+.fstep .ts-dropdown { background: linear-gradient(165deg, #0d2445 0%, #122a47 100%); border: 1px solid rgba(0,229,160,0.35); border-radius: 10px; box-shadow: 0 12px 32px rgba(0,0,0,0.4); }
+.fstep .ts-wrapper .ts-dropdown .option,
+.fstep .ts-dropdown .option { color: #fff !important; padding: 10px 14px; }
+.fstep .ts-wrapper .ts-dropdown .option.active,
+.fstep .ts-dropdown .option.active { background: rgba(0,229,160,0.25); color: #00E5A0 !important; }
+.fstep .ts-wrapper .ts-dropdown .optgroup-header,
+.fstep .ts-dropdown .optgroup-header { color: rgba(255,255,255,0.7); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; padding: 8px 14px; }
 .vol-search-wrap { text-align: center; margin-bottom: 8px; }
 .calc-label-center { display: block; text-align: center; margin-bottom: 5px; }
 .calc-input-big { font-size: 15px; letter-spacing: 1.5px; text-align: center; padding: 11px 14px; }
