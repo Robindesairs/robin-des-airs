@@ -1749,21 +1749,24 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
 .dist-pill .pill-amount { font-size: 12px; color: var(--neon-b); margin-top: 1px; }
 .dist-pill.active .pill-amount { color: white; }
 .calc-robin-hint { font-size: 10px; color: rgba(255,255,255,0.5); margin-bottom: 8px; text-align: center; }
-/* Tom Select — thème diagnostic (fond navy) : texte blanc lisible, pas bleu sur noir */
-.fstep .ts-wrapper.single .ts-control { background: rgba(255,255,255,0.12); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 10px; padding: 10px 14px; min-height: 44px; color: #fff !important; }
-.fstep .ts-wrapper .ts-control .ts-input input { color: #fff !important; }
-.fstep .ts-wrapper .ts-control .ts-input input::placeholder { color: rgba(255,255,255,0.55); }
-.fstep .ts-wrapper .ts-control .item { color: #fff !important; }
-.fstep .ts-wrapper.dropdown-active .ts-control { border-color: rgba(0,229,160,0.5); }
-/* Dropdown : liste des villes/compagnies (texte blanc lisible) */
+/* Tom Select — diagnostic : fond BLANC pour villes/compagnie, texte noir lisible */
+.fstep .ts-wrapper.single .ts-control { background: #fff !important; border: 1.5px solid #E2E6EE; border-radius: 10px; padding: 10px 14px; min-height: 44px; color: #0B1F3A !important; }
+.fstep .ts-wrapper .ts-control .ts-input input { color: #0B1F3A !important; }
+.fstep .ts-wrapper .ts-control .ts-input input::placeholder { color: #6B7A90; }
+.fstep .ts-wrapper .ts-control .item { color: #0B1F3A !important; }
+.fstep .ts-wrapper.dropdown-active .ts-control { border-color: var(--neon); }
+/* Dropdown : liste sur fond blanc, texte noir */
 .fstep .ts-wrapper .ts-dropdown,
-.fstep .ts-dropdown { background: linear-gradient(165deg, #0d2445 0%, #122a47 100%); border: 1px solid rgba(0,229,160,0.35); border-radius: 10px; box-shadow: 0 12px 32px rgba(0,0,0,0.4); }
+.fstep .ts-dropdown { background: #fff !important; border: 1px solid #E2E6EE; border-radius: 10px; box-shadow: 0 12px 32px rgba(11,31,58,0.15); }
 .fstep .ts-wrapper .ts-dropdown .option,
-.fstep .ts-dropdown .option { color: #fff !important; padding: 10px 14px; }
+.fstep .ts-dropdown .option { color: #1a2436 !important; padding: 10px 14px; }
 .fstep .ts-wrapper .ts-dropdown .option.active,
-.fstep .ts-dropdown .option.active { background: rgba(0,229,160,0.25); color: #00E5A0 !important; }
+.fstep .ts-dropdown .option.active { background: rgba(0,229,160,0.12); color: #009960 !important; }
 .fstep .ts-wrapper .ts-dropdown .optgroup-header,
-.fstep .ts-dropdown .optgroup-header { color: rgba(255,255,255,0.7); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; padding: 8px 14px; }
+.fstep .ts-dropdown .optgroup-header { color: #009960; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; padding: 8px 14px; }
+/* Champs texte diagnostic (numéro de vol, date) : fond blanc, texte lisible */
+.fstep .calc-input { background: #fff !important; color: #0B1F3A !important; border-color: #E2E6EE; }
+.fstep .calc-input::placeholder { color: #6B7A90; }
 .vol-search-wrap { text-align: center; margin-bottom: 8px; }
 .calc-label-center { display: block; text-align: center; margin-bottom: 5px; }
 .calc-input-big { font-size: 15px; letter-spacing: 1.5px; text-align: center; padding: 11px 14px; }
@@ -1777,6 +1780,7 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
 .calc-field-label-vol { font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 10px; }
 .eb-add-vol-btn { width: 100%; padding: 10px; margin-top: 6px; margin-bottom: 12px; font-size: 11px; font-weight: 700; color: var(--neon-b); background: rgba(0,229,160,0.08); border: 1px dashed rgba(0,229,160,0.35); border-radius: 8px; cursor: pointer; transition: all 0.2s; }
 .eb-add-vol-btn:hover { background: rgba(0,229,160,0.15); }
+#da-dist-wrap, #eb-dist-wrap { display: none !important; }
 #da-dist-wrap.flash, #eb-dist-wrap.flash {
   box-shadow: 0 0 0 3px rgba(255,80,80,0.35);
   border-radius: 10px;
@@ -2223,7 +2227,7 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
           <div class="res-tag" style="text-align:center;margin-bottom:8px;">✈ Votre indemnité CE 261/2004</div>
           <!-- Montant NET — affiché en GRAND pour l'impact psychologique -->
           <div style="text-align:center;margin-bottom:4px;">
-            <div class="res-amount" id="res-net-big">450<span>€</span></div>
+            <div class="res-amount" id="res-net-big"><span id="res-net-value">0</span><span>€</span></div>
             <div style="font-size:12px;color:var(--neon-b);font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-top:2px;">dans votre poche</div>
           </div>
           <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:4px;text-align:center;" id="res-brut-line">Montant légal : 600€ brut — Commission Robin 25% : 150€</div>
@@ -3276,9 +3280,9 @@ function updateManualDist(prefix) {
     if (distWrap) distWrap.style.display = 'none';
     window.lastCalculatedDistanceKm = null;
   } else {
-    distIn.value = '';
-    if (line) line.textContent = '';
-    if (distWrap) { distWrap.style.display = 'block'; distWrap.querySelectorAll('.dist-pill').forEach(p => p.classList.remove('active')); }
+    distIn.value = '600';
+    if (line) line.textContent = (typeof DISTANCE_LINE !== 'undefined' && DISTANCE_LINE[600]) || '';
+    if (distWrap) distWrap.style.display = 'none';
   }
 }
 
@@ -3349,6 +3353,22 @@ function showLoader(callback) {
   }, 2200);
 }
 
+/* ═══ Count-up montant net (requestAnimationFrame, 1.5s) ═══ */
+function animateValue(id, start, end, duration) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var startTime = null;
+  function step(timestamp) {
+    if (startTime === null) startTime = timestamp;
+    var elapsed = timestamp - startTime;
+    var progress = Math.min(1, elapsed / duration);
+    var current = Math.round(start + (end - start) * progress);
+    el.textContent = current;
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
 /* ═══ CALCUL ═══ */
 function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
   if (!dist) return false;
@@ -3366,8 +3386,8 @@ function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
   const match    = DB[(volRef || '').toUpperCase()];
   const route    = match ? match.a + ' → ' + match.r.split('→')[1]?.trim() + ' · ' : (volRef ? volRef + ' · ' : '');
 
-  /* Affiche le montant BRUT légal — la commission est déduite à l'encaissement */
-  document.getElementById('res-net-big').innerHTML = totalNet + '<span>€</span>';
+  /* Montant net : on affiche 0 + €, l'animation count-up sera lancée à l'affichage du résultat */
+  document.getElementById('res-net-big').innerHTML = '<span id="res-net-value">0</span><span>€</span>';
   document.getElementById('res-brut-line').textContent =
     (pax > 1 ? pax + ' passagers · ' : '') +
     'Montant légal : ' + totalBrut + '€ brut · Vous recevrez ' + totalNet + '€ net (commission 25% : ' + totalFee + '€)';
@@ -3397,7 +3417,7 @@ function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
   var stickyWa = document.getElementById('sticky-wa-cta');
   if (stickyWa) stickyWa.href = waHref;
 
-  return true;
+  return totalNet;
 }
 
 function calcDirect() {
@@ -3407,11 +3427,12 @@ function calcDirect() {
   const pax  = document.getElementById('da-pax-val').textContent;
   const date = document.getElementById('da-date').value;
   if (!depCode || !arrCode) { flash('da-manual-wrap'); return; }
-  if (!dist) { flash('da-dist-wrap'); return; }
+  if (!dist) { flash('da-manual-wrap'); return; }
   const routeRef = depCode && arrCode ? depCode + ' → ' + arrCode : '';
   showLoader(() => {
-    doCalc(dist, pax, routeRef, date, null);
+    var totalNet = doCalc(dist, pax, routeRef, date, null);
     goTo('step-result', 100);
+    if (totalNet) requestAnimationFrame(function() { animateValue('res-net-value', 0, totalNet, 1500); });
   });
 }
 
@@ -3425,10 +3446,11 @@ function calcEscale() {
   const dist = document.getElementById('eb-dist').value;
   const pax  = document.getElementById('eb-pax-val').textContent;
   const date = document.getElementById('eb-date').value;
-  if (!dist) { flash('eb-dist-wrap'); return; }
+  if (!dist) { flash('eb-vol-block-2'); return; }
   showLoader(() => {
-    doCalc(dist, pax, lastVol || vol1, date, vol1);
+    var totalNet = doCalc(dist, pax, lastVol || vol1, date, vol1);
     goTo('step-result', 100);
+    if (totalNet) requestAnimationFrame(function() { animateValue('res-net-value', 0, totalNet, 1500); });
   });
 }
 
@@ -3779,12 +3801,11 @@ function updateEscaleDist() {
   if (amount) {
     distIn.value = String(amount);
     if (line) line.textContent = (typeof DISTANCE_LINE !== 'undefined' && DISTANCE_LINE[amount]) || '';
-    distWrap.style.display = 'none';
-  } else {
-    distIn.value = '';
-    if (line) line.textContent = '';
-    distWrap.style.display = 'block';
-    if (distWrap.querySelectorAll) distWrap.querySelectorAll('.dist-pill').forEach(function(p) { p.classList.remove('active'); });
+  }
+  distWrap.style.display = 'none';
+  if (!amount) {
+    distIn.value = '600';
+    if (line) line.textContent = (typeof DISTANCE_LINE !== 'undefined' && DISTANCE_LINE[600]) || '';
   }
 }
 
