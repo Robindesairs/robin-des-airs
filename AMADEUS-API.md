@@ -1,26 +1,32 @@
-# API Amadeus — Recherche aéroports et villes
+# API recherche aéroports et villes (Aviation Edge / Amadeus)
 
-Les champs **Départ** et **Arrivée** (diagnostic et dépôt en ligne) utilisent l’API **Amadeus Airport & City Search**. Dès que l’utilisateur tape **3 caractères**, une requête est envoyée pour suggérer villes et aéroports mondiaux. L’affichage est au format : **Nom de la ville (Code IATA) – Nom de l’aéroport**.
+Les champs **Départ** et **Arrivée** (diagnostic et dépôt en ligne) appellent le proxy `/.netlify/functions/airport-search`. Dès que l’utilisateur tape **3 caractères**, une requête est envoyée pour suggérer villes et aéroports. L’affichage est au format : **Nom de la ville (Code IATA) – Nom de l’aéroport**.
 
-## Sécuriser la clé API (obligatoire)
+Le proxy utilise **Aviation Edge** en priorité si la clé est définie, sinon **Amadeus**. Les clés ne sont **jamais** exposées côté frontend.
 
-La clé API ne doit **jamais** apparaître dans le code frontend (HTML/JS). Elle est utilisée uniquement côté **serveur**, dans une fonction Netlify qui fait office de proxy.
+## Option 1 : Aviation Edge (recommandé — une seule clé)
 
-1. **Créer un compte** sur [Amadeus for Developers](https://developers.amadeus.com/) et récupérer une **API Key** + **API Secret** (environnement Test ou Production).
-2. **Configurer les variables d’environnement sur Netlify** :
-   - Netlify → ton site → **Site configuration** → **Environment variables**
-   - Ajouter :
-     - `AMADEUS_CLIENT_ID` = ta clé API (API Key)
-     - `AMADEUS_CLIENT_SECRET` = ton secret (API Secret)
-   - Optionnel : `AMADEUS_HOST` = `test.api.amadeus.com` (test) ou `api.amadeus.com` (prod). Par défaut le proxy utilise l’environnement de test.
-3. **Redéployer** le site après avoir ajouté les variables (ou déclencher un nouveau déploiement).
+1. **Obtenir une clé** sur [Aviation Edge](https://aviation-edge.com/airport-autocomplete/) (autocomplete cities & airports).
+2. **Sur Netlify** : **Site configuration** → **Environment variables**  
+   - `AVIATION_EDGE_KEY` = ta clé API (clé secrète, jamais exposée au client)
+3. Redéployer. Aucune autre variable nécessaire.
 
-Le frontend appelle uniquement l’URL du proxy : `/.netlify/functions/airport-search?keyword=xxx`. C’est la fonction Netlify qui possède les identifiants et appelle Amadeus ; le navigateur ne voit jamais la clé.
+## Option 2 : Amadeus
+
+1. **Créer un compte** sur [Amadeus for Developers](https://developers.amadeus.com/) et récupérer **API Key** + **API Secret**.
+2. **Sur Netlify** :
+   - `AMADEUS_CLIENT_ID` = ta clé API
+   - `AMADEUS_CLIENT_SECRET` = ton secret
+   - Optionnel : `AMADEUS_HOST` = `test.api.amadeus.com` ou `api.amadeus.com`
+3. Redéployer.
+
+Le frontend appelle uniquement `/.netlify/functions/airport-search?keyword=xxx`. C’est la fonction Netlify qui possède les identifiants et appelle Aviation Edge ou Amadeus ; le navigateur ne voit jamais les clés.
 
 ## Comportement
 
-- **Sans variables d’environnement** : la fonction renverra une erreur ; le site utilisera en secours la liste statique d’aéroports (`data/airports.js`) pour la recherche locale.
-- **Avec variables configurées** : les suggestions viennent d’Amadeus (villes et aéroports du monde).
+- **Sans aucune clé** (ni Aviation Edge ni Amadeus) : le proxy renvoie une liste vide ; le site utilise en secours la liste statique (`data/airports.js`) pour la recherche locale.
+- **Avec `AVIATION_EDGE_KEY`** : les suggestions viennent d’Aviation Edge (villes et aéroports du monde).
+- **Avec uniquement Amadeus** (sans Aviation Edge) : les suggestions viennent d’Amadeus.
 
 ## LocalStorage (liaison WhatsApp / étape suivante)
 

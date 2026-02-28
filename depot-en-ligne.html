@@ -722,14 +722,15 @@ function addLeg() {
   cont.appendChild(div);
   if (typeof TomSelect !== "undefined") {
     if (!window.legTomSelects) window.legTomSelects = {};
-    var airportSearchApi = (typeof window.AIRPORT_SEARCH_API !== "undefined" && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : "/.netlify/functions/airport-search";
+    var airportSearchApi = (typeof window.AIRPORT_SEARCH_API !== "undefined" && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : (window.location.origin + "/.netlify/functions/airport-search");
     var aopts = {
+      options: [],
       valueField: "value", labelField: "text", searchField: ["text", "value"], maxItems: 1,
       placeholder: "Tapez 3 caractères (ville ou IATA)…", create: false, allowEmptyOption: true,
       load: function(query, callback) {
         if (query.length < 3) { callback(); return; }
         var q = encodeURIComponent(query);
-        fetch(airportSearchApi + "?keyword=" + q).then(function(r) { return r.ok ? r.json() : Promise.reject(); }).then(function(data) { callback(data || []); }).catch(function() {
+        fetch(airportSearchApi + "?keyword=" + q).then(function(r) { return r.ok ? r.json() : Promise.reject(r); }).then(function(data) { callback(data || []); }).catch(function() {
           var list = (window.AIRPORTS_DATA || []).filter(function(a) { var s = (a.search || a.text || a.value || "").toLowerCase(); return s.indexOf(query.toLowerCase()) !== -1; });
           callback(list);
         });
@@ -1151,8 +1152,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (typeof TomSelect !== "undefined") {
-    var airportSearchApi = (typeof window.AIRPORT_SEARCH_API !== "undefined" && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : "/.netlify/functions/airport-search";
+    var airportSearchApi = (typeof window.AIRPORT_SEARCH_API !== "undefined" && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : (window.location.origin + "/.netlify/functions/airport-search");
     var airportOpts = {
+      options: [],
       valueField: "value",
       labelField: "text",
       searchField: ["text", "value"],
@@ -1163,7 +1165,7 @@ document.addEventListener("DOMContentLoaded", () => {
       load: function(query, callback) {
         if (query.length < 3) { callback(); return; }
         var q = encodeURIComponent(query);
-        fetch(airportSearchApi + "?keyword=" + q).then(function(r) { return r.ok ? r.json() : Promise.reject(); }).then(function(data) { callback(data || []); }).catch(function() {
+        fetch(airportSearchApi + "?keyword=" + q).then(function(r) { return r.ok ? r.json() : Promise.reject(r); }).then(function(data) { callback(data || []); }).catch(function() {
           var list = (window.AIRPORTS_DATA || []).filter(function(a) { var s = (a.search || a.text || a.value || "").toLowerCase(); return s.indexOf(query.toLowerCase()) !== -1; });
           callback(list);
         });

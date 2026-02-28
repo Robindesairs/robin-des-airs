@@ -3499,8 +3499,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Tom Select — Aéroports Départ / Arrivée (Amadeus API à 3 caractères + fallback static)
   if (typeof TomSelect !== 'undefined') {
-    var airportSearchApi = (typeof window.AIRPORT_SEARCH_API !== 'undefined' && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : '/.netlify/functions/airport-search';
+    var airportSearchApi = (typeof window.AIRPORT_SEARCH_API !== 'undefined' && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : (window.location.origin + '/.netlify/functions/airport-search');
     var aopts = {
+      options: [],
       valueField: 'value',
       labelField: 'text',
       searchField: ['text', 'value'],
@@ -3511,7 +3512,7 @@ document.addEventListener('DOMContentLoaded', () => {
       load: function(query, callback) {
         if (query.length < 3) { callback(); return; }
         var q = encodeURIComponent(query);
-        fetch(airportSearchApi + '?keyword=' + q).then(function(r) { return r.ok ? r.json() : Promise.reject(); }).then(function(data) {
+        fetch(airportSearchApi + '?keyword=' + q).then(function(r) { return r.ok ? r.json() : Promise.reject(r); }).then(function(data) {
           callback(data || []);
         }).catch(function() {
           var list = (window.AIRPORTS_DATA || []).filter(function(a) {
@@ -3550,7 +3551,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Tom Select — Escale : Vol 1, 2, 3 (compagnie + villes Amadeus)
   if (typeof TomSelect !== 'undefined' && window.AIRLINES_DATA) {
-    var airportSearchApi = (typeof window.AIRPORT_SEARCH_API !== 'undefined' && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : '/.netlify/functions/airport-search';
+    var airportSearchApi = (typeof window.AIRPORT_SEARCH_API !== 'undefined' && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : (window.location.origin + '/.netlify/functions/airport-search');
     var tsComp = {
       options: window.AIRLINES_DATA,
       optgroups: [{ value: 'Europe – Afrique', label: 'Europe – Afrique' }, { value: 'Majors européennes', label: 'Majors européennes' }, { value: 'Long-courrier', label: 'Long-courrier' }, { value: 'Autre', label: 'Autre' }],
@@ -3558,6 +3559,7 @@ document.addEventListener('DOMContentLoaded', () => {
       valueField: 'value', labelField: 'text', searchField: 'text', maxItems: 1, placeholder: 'Compagnie', create: false, allowEmptyOption: true
     };
     var tsVilleOpts = {
+      options: [],
       valueField: 'value',
       labelField: 'text',
       searchField: ['text', 'value'],
@@ -3568,7 +3570,7 @@ document.addEventListener('DOMContentLoaded', () => {
       load: function(query, callback) {
         if (query.length < 3) { callback(); return; }
         var q = encodeURIComponent(query);
-        fetch(airportSearchApi + '?keyword=' + q).then(function(r) { return r.ok ? r.json() : Promise.reject(); }).then(function(data) { callback(data || []); }).catch(function() {
+        fetch(airportSearchApi + '?keyword=' + q).then(function(r) { return r.ok ? r.json() : Promise.reject(r); }).then(function(data) { callback(data || []); }).catch(function() {
           var list = (window.AIRPORTS_DATA || []).filter(function(a) { var s = (a.search || a.text || a.value || '').toLowerCase(); return s.indexOf(query.toLowerCase()) !== -1; });
           callback(list);
         });
