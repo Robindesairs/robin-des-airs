@@ -439,6 +439,7 @@
             <span class="res-route" id="res-route">—</span>
             <span class="res-motif-badge" id="res-motif-badge"></span>
           </div>
+          <div class="res-calc-detail" id="res-calc-detail" style="display:none;">—</div>
           <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(0,229,160,0.13);">
             <div style="font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Raison invoquée par la compagnie :</div>
             <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.7);" id="res-raison-txt">—</div>
@@ -1446,6 +1447,12 @@ function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
   if (badgeEl) {
     badgeEl.textContent = motifTxt;
     badgeEl.style.display = motifTxt ? '' : 'none';
+  }
+  var calcDetailEl = document.getElementById('res-calc-detail');
+  if (calcDetailEl) {
+    var detailTxt = totalBrut + '€ (indemnité légale' + (pax > 1 ? ' · ' + brut + '€ × ' + pax + ' pass.' : '') + ') − 25% Robin (' + totalFee + '€) = ' + totalNet + '€ net';
+    calcDetailEl.textContent = detailTxt;
+    calcDetailEl.style.display = 'block';
   }
 
   const raisonInfo = RAISON_LABELS[S.raison] || RAISON_LABELS.nesaispas;
