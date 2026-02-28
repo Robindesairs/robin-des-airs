@@ -1760,6 +1760,11 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
 .vol-chip-wrap .chip-route { font-weight: 700; font-size: 11px; }
 .vol-chip-wrap .chip-dist { font-size: 9px; color: rgba(255,255,255,0.5); }
 .distance-result { font-size: 11px; font-weight: 700; color: var(--neon-b); padding: 8px 11px; background: rgba(0,229,160,0.1); border-radius: 6px; margin-bottom: 8px; min-height: 18px; }
+.eb-vol-block { padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 6px; }
+.eb-vol-block:last-of-type { border-bottom: none; }
+.calc-field-label-vol { font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 10px; }
+.eb-add-vol-btn { width: 100%; padding: 10px; margin-top: 6px; margin-bottom: 12px; font-size: 11px; font-weight: 700; color: var(--neon-b); background: rgba(0,229,160,0.08); border: 1px dashed rgba(0,229,160,0.35); border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+.eb-add-vol-btn:hover { background: rgba(0,229,160,0.15); }
 #da-dist-wrap.flash, #eb-dist-wrap.flash {
   box-shadow: 0 0 0 3px rgba(255,80,80,0.35);
   border-radius: 10px;
@@ -2018,20 +2023,8 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
           <select id="da-compagnie" placeholder="Rechercher une compagnie…"><option value="">Rechercher une compagnie…</option></select>
         </div>
 
-        <div class="vol-search-wrap">
-          <label class="calc-label calc-label-center" for="da-vol">Numéro de vol</label>
-          <input type="text" id="da-vol" class="calc-input calc-input-big" placeholder="Ex : AF718, BA123, LH456…" maxlength="8" autocomplete="off" oninput="volLookup(this,'da-chip','da-dist-wrap','da-dist')">
-          <div class="route-line" id="da-route-line"></div>
-        </div>
-
-        <div class="calc-field vol-chip-wrap" id="da-chip" style="display:none;">
-          <span class="chip-ico">✈️</span>
-          <div><div class="chip-route" id="da-chip-route"></div><div class="chip-dist" id="da-chip-dist"></div></div>
-          <span class="chip-badge" id="da-chip-badge"></span>
-        </div>
-
-        <div class="calc-field" id="da-manual-wrap" style="display:none;">
-          <label class="calc-label">Vol non trouvé ? Indiquez les villes (recherche : ville ou code IATA)</label>
+        <div class="calc-field" id="da-manual-wrap">
+          <label class="calc-label">Ville de départ et d'arrivée (recherche : ville ou code IATA)</label>
           <div class="calc-row">
             <select id="da-ville-depart" class="calc-select" placeholder="Départ (ex. Paris, CDG)"><option value="">Départ</option></select>
             <select id="da-ville-arrivee" class="calc-select" placeholder="Arrivée (ex. Dakar, DKR)"><option value="">Arrivée</option></select>
@@ -2079,39 +2072,86 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
 
         <div class="escale-info">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--neon-b)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <span>La loi CE 261 prend la <strong>distance totale</strong> départ → destination finale. Indiquez le <strong>dernier vol</strong> — c'est lui qui détermine l'indemnité.</span>
+          <span>La loi CE 261 prend la <strong>distance totale</strong> départ (1er vol) → arrivée finale (dernier vol). Le <strong>dernier vol</strong> détermine l'indemnité.</span>
         </div>
 
-        <div class="calc-field" style="margin-bottom:12px">
-          <label class="calc-label" for="eb-compagnie">Compagnie (optionnel)</label>
-          <select id="eb-compagnie" placeholder="Rechercher une compagnie…"><option value="">Rechercher une compagnie…</option></select>
-        </div>
-
-        <div class="calc-field">
-          <label class="calc-label" for="eb-vol1">Vol 1 — Premier tronçon <span style="color:rgba(255,255,255,0.25);font-weight:400;font-size:9px;">optionnel</span></label>
-          <input type="text" id="eb-vol1" class="calc-input"
-            placeholder="Optionnel (ex: AF1234)"
-            maxlength="8" autocomplete="off"
-            oninput="volLookup(this,'eb-chip1',null,null)">
-          <div class="vol-chip" id="eb-chip1">
+        <div class="eb-vol-block" id="eb-vol-block-1">
+          <div class="calc-field-label-vol">Vol 1 — Premier tronçon</div>
+          <div class="calc-field">
+            <label class="calc-label">Compagnie</label>
+            <select id="eb-compagnie-1" placeholder="Compagnie…"><option value="">Compagnie</option></select>
+          </div>
+          <div class="calc-row">
+            <div class="calc-field">
+              <label class="calc-label">Ville de départ</label>
+              <select id="eb-ville-depart-1" placeholder="Départ"><option value="">Départ</option></select>
+            </div>
+            <div class="calc-field">
+              <label class="calc-label">Ville de fin</label>
+              <select id="eb-ville-arrivee-1" placeholder="Arrivée"><option value="">Arrivée</option></select>
+            </div>
+          </div>
+          <div class="calc-field">
+            <label class="calc-label" for="eb-vol1">Numéro de vol <span style="color:rgba(255,255,255,0.35);font-size:9px;">optionnel</span></label>
+            <input type="text" id="eb-vol1" class="calc-input" placeholder="Ex: AF1234" maxlength="8" autocomplete="off" oninput="volLookup(this,'eb-chip1',null,null)">
+          </div>
+          <div class="vol-chip" id="eb-chip1" style="display:none;">
             <span class="chip-ico">✈️</span>
             <div><div class="chip-route" id="eb-chip1-route"></div><div class="chip-dist" id="eb-chip1-dist"></div></div>
             <span class="chip-badge" id="eb-chip1-badge"></span>
           </div>
         </div>
 
-        <div class="calc-field">
-          <label class="calc-label" for="eb-vol2">Vol 2 — Dernier tronçon <span style="color:var(--neon-b);font-size:9px;letter-spacing:1px;">CE VOL COMPTE</span></label>
-          <input type="text" id="eb-vol2" class="calc-input"
-            placeholder="Tout vol monde (ex: AF718, BA123…)"
-            maxlength="8" autocomplete="off"
-            oninput="volLookup(this,'eb-chip2','eb-dist-wrap','eb-dist')">
-          <div class="vol-chip" id="eb-chip2">
+        <div class="eb-vol-block" id="eb-vol-block-2">
+          <div class="calc-field-label-vol">Vol 2 — Dernier tronçon <span style="color:var(--neon-b);font-size:9px;">CE VOL COMPTE</span></div>
+          <div class="calc-field">
+            <label class="calc-label">Compagnie</label>
+            <select id="eb-compagnie-2" placeholder="Compagnie…"><option value="">Compagnie</option></select>
+          </div>
+          <div class="calc-row">
+            <div class="calc-field">
+              <label class="calc-label">Ville de départ</label>
+              <select id="eb-ville-depart-2" placeholder="Départ"><option value="">Départ</option></select>
+            </div>
+            <div class="calc-field">
+              <label class="calc-label">Ville de fin</label>
+              <select id="eb-ville-arrivee-2" placeholder="Arrivée"><option value="">Arrivée</option></select>
+            </div>
+          </div>
+          <div class="calc-field">
+            <label class="calc-label" for="eb-vol2">Numéro de vol</label>
+            <input type="text" id="eb-vol2" class="calc-input" placeholder="Ex: AF718" maxlength="8" autocomplete="off" oninput="volLookup(this,'eb-chip2','eb-dist-wrap','eb-dist'); updateEscaleDist();">
+          </div>
+          <div class="vol-chip" id="eb-chip2" style="display:none;">
             <span class="chip-ico">✈️</span>
             <div><div class="chip-route" id="eb-chip2-route"></div><div class="chip-dist" id="eb-chip2-dist"></div></div>
             <span class="chip-badge" id="eb-chip2-badge"></span>
           </div>
         </div>
+
+        <div class="eb-vol-block" id="eb-vol-block-3" style="display:none;">
+          <div class="calc-field-label-vol">Vol 3</div>
+          <div class="calc-field">
+            <label class="calc-label">Compagnie</label>
+            <select id="eb-compagnie-3" placeholder="Compagnie…"><option value="">Compagnie</option></select>
+          </div>
+          <div class="calc-row">
+            <div class="calc-field">
+              <label class="calc-label">Ville de départ</label>
+              <select id="eb-ville-depart-3" placeholder="Départ"><option value="">Départ</option></select>
+            </div>
+            <div class="calc-field">
+              <label class="calc-label">Ville de fin</label>
+              <select id="eb-ville-arrivee-3" placeholder="Arrivée"><option value="">Arrivée</option></select>
+            </div>
+          </div>
+          <div class="calc-field">
+            <label class="calc-label" for="eb-vol3">Numéro de vol</label>
+            <input type="text" id="eb-vol3" class="calc-input" placeholder="Ex: BA456" maxlength="8" autocomplete="off" oninput="updateEscaleDist()">
+          </div>
+        </div>
+
+        <button type="button" class="eb-add-vol-btn" id="eb-add-vol-btn" onclick="toggleEscaleVol3()">+ Ajouter un 3e vol</button>
 
         <div class="calc-field" id="eb-dist-wrap">
           <label class="calc-label">Distance totale (départ → destination finale)</label>
@@ -3137,11 +3177,20 @@ function goWaDirect() {
 function restartFunnel() {
   S.motif = null; S.trajet = null; S.raison = 'nesaispas'; S.crumbs = [];
   document.getElementById('funnel-crumbs').textContent = '';
-  ['da-vol','eb-vol1','eb-vol2'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
-  var daChip = document.getElementById('da-chip'); if(daChip) daChip.style.display = 'none';
+  ['eb-vol1','eb-vol2','eb-vol3'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
   ['eb-chip1','eb-chip2'].forEach(id => { const el = document.getElementById(id); if(el) el.classList.remove('show'); });
-  ['da-route-line','da-distance-line'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = ''; });
-  var daManual = document.getElementById('da-manual-wrap'); if(daManual) daManual.style.display = 'none';
+  var block3 = document.getElementById('eb-vol-block-3');
+  if (block3) block3.style.display = 'none';
+  var addVolBtn = document.getElementById('eb-add-vol-btn');
+  if (addVolBtn) addVolBtn.textContent = '+ Ajouter un 3e vol';
+  [1,2,3].forEach(function(i) {
+    ['eb-compagnie-'+i,'eb-ville-depart-'+i,'eb-ville-arrivee-'+i].forEach(function(id) {
+      var el = document.getElementById(id);
+      var ts = (el && el.tomselect) || (el && el.parentNode && el.parentNode.tomselect);
+      if (ts) ts.clear();
+    });
+  });
+  ['da-distance-line'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = ''; });
   if (window.tomSelectDaVilleDep) window.tomSelectDaVilleDep.clear();
   if (window.tomSelectDaVilleArr) window.tomSelectDaVilleArr.clear();
   updateManualDist('da');
@@ -3302,26 +3351,33 @@ function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
 }
 
 function calcDirect() {
-  const vol  = (document.getElementById('da-vol').value || '').trim().toUpperCase();
+  const depCode = (window.tomSelectDaVilleDep && window.tomSelectDaVilleDep.getValue()) || '';
+  const arrCode = (window.tomSelectDaVilleArr && window.tomSelectDaVilleArr.getValue()) || '';
   const dist = document.getElementById('da-dist').value;
   const pax  = document.getElementById('da-pax-val').textContent;
   const date = document.getElementById('da-date').value;
+  if (!depCode || !arrCode) { flash('da-manual-wrap'); return; }
   if (!dist) { flash('da-dist-wrap'); return; }
+  const routeRef = depCode && arrCode ? depCode + ' → ' + arrCode : '';
   showLoader(() => {
-    doCalc(dist, pax, vol, date, null);
+    doCalc(dist, pax, routeRef, date, null);
     goTo('step-result', 100);
   });
 }
 
 function calcEscale() {
-  const vol2 = (document.getElementById('eb-vol2').value || '').trim().toUpperCase();
   const vol1 = (document.getElementById('eb-vol1').value || '').trim().toUpperCase();
+  const vol2 = (document.getElementById('eb-vol2').value || '').trim().toUpperCase();
+  const vol3El = document.getElementById('eb-vol3');
+  const vol3 = (vol3El && vol3El.value) ? (vol3El.value || '').trim().toUpperCase() : '';
+  const block3 = document.getElementById('eb-vol-block-3');
+  const lastVol = (block3 && block3.style.display !== 'none' && vol3) ? vol3 : vol2;
   const dist = document.getElementById('eb-dist').value;
   const pax  = document.getElementById('eb-pax-val').textContent;
   const date = document.getElementById('eb-date').value;
   if (!dist) { flash('eb-dist-wrap'); return; }
   showLoader(() => {
-    doCalc(dist, pax, vol2 || vol1, date, vol1);
+    doCalc(dist, pax, lastVol || vol1, date, vol1);
     goTo('step-result', 100);
   });
 }
@@ -3464,7 +3520,70 @@ document.addEventListener('DOMContentLoaded', () => {
       window.tomSelectDaVilleArr.on('change', function() { updateManualDist('da'); });
     }
   }
+
+  // Tom Select — Escale : Vol 1, 2, 3 (compagnie + villes)
+  if (typeof TomSelect !== 'undefined' && window.AIRLINES_DATA && window.AIRPORTS_DATA) {
+    var tsComp = {
+      options: window.AIRLINES_DATA,
+      optgroups: [{ value: 'Europe – Afrique', label: 'Europe – Afrique' }, { value: 'Majors européennes', label: 'Majors européennes' }, { value: 'Long-courrier', label: 'Long-courrier' }, { value: 'Autre', label: 'Autre' }],
+      optgroupField: 'optgroup', optgroupLabelField: 'label', optgroupValueField: 'value',
+      valueField: 'value', labelField: 'text', searchField: 'text', maxItems: 1, placeholder: 'Compagnie', create: false, allowEmptyOption: true
+    };
+    var tsVille = { options: window.AIRPORTS_DATA, valueField: 'value', labelField: 'text', searchField: 'search', maxItems: 1, placeholder: 'Ville ou IATA', create: false, allowEmptyOption: true };
+    [1, 2, 3].forEach(function(i) {
+      var c = document.getElementById('eb-compagnie-' + i);
+      if (c && !c.tomselect) new TomSelect('#eb-compagnie-' + i, tsComp);
+      var d = document.getElementById('eb-ville-depart-' + i);
+      if (d && !d.tomselect) { new TomSelect('#eb-ville-depart-' + i, tsVille).on('change', updateEscaleDist); }
+      var a = document.getElementById('eb-ville-arrivee-' + i);
+      if (a && !a.tomselect) { new TomSelect('#eb-ville-arrivee-' + i, tsVille).on('change', updateEscaleDist); }
+    });
+  }
 });
+
+function getEscaleSelectValue(id) {
+  var sel = document.querySelector('#' + id + ' select');
+  return (sel && sel.value) || '';
+}
+function updateEscaleDist() {
+  var block3 = document.getElementById('eb-vol-block-3');
+  var dep1 = getEscaleSelectValue('eb-ville-depart-1');
+  var arrLast = '';
+  if (block3 && block3.style.display !== 'none') arrLast = getEscaleSelectValue('eb-ville-arrivee-3');
+  if (!arrLast) arrLast = getEscaleSelectValue('eb-ville-arrivee-2');
+  var distIn = document.getElementById('eb-dist');
+  var distWrap = document.getElementById('eb-dist-wrap');
+  var line = document.getElementById('eb-distance-line');
+  if (!distIn || !distWrap) return;
+  if (!dep1 || !arrLast) { distIn.value = ''; if (line) line.textContent = ''; distWrap.style.display = 'block'; return; }
+  var key = dep1 + '-' + arrLast, keyRev = arrLast + '-' + dep1;
+  var amount = (typeof ROUTE_AMOUNT !== 'undefined' && ROUTE_AMOUNT[key]) || (typeof ROUTE_AMOUNT !== 'undefined' && ROUTE_AMOUNT[keyRev]);
+  if (amount) {
+    distIn.value = String(amount);
+    if (line) line.textContent = (typeof DISTANCE_LINE !== 'undefined' && DISTANCE_LINE[amount]) || '';
+    distWrap.style.display = 'none';
+  } else {
+    distIn.value = '';
+    if (line) line.textContent = '';
+    distWrap.style.display = 'block';
+    if (distWrap.querySelectorAll) distWrap.querySelectorAll('.dist-pill').forEach(function(p) { p.classList.remove('active'); });
+  }
+}
+
+function toggleEscaleVol3() {
+  var block = document.getElementById('eb-vol-block-3');
+  var btn = document.getElementById('eb-add-vol-btn');
+  if (!block || !btn) return;
+  if (block.style.display === 'none') {
+    block.style.display = 'block';
+    btn.textContent = '− Masquer le 3e vol';
+    updateEscaleDist();
+  } else {
+    block.style.display = 'none';
+    btn.textContent = '+ Ajouter un 3e vol';
+    updateEscaleDist();
+  }
+}
 /* Villes / aéroports : gérés par Tom Select + data/airports.js (priorité CDG, ORY, DSS, LYS, MRS, CMN, BRU) */
 </script>
 
