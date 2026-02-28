@@ -19,6 +19,7 @@
     { value: "TLS", text: "Toulouse — TLS", city: "Toulouse", country: "France" },
     { value: "BOD", text: "Bordeaux — BOD", city: "Bordeaux", country: "France" },
     { value: "NTE", text: "Nantes — NTE", city: "Nantes", country: "France" },
+    { value: "LIL", text: "Lille — LIL", city: "Lille", country: "France" },
     { value: "SXB", text: "Strasbourg — SXB", city: "Strasbourg", country: "France" },
     { value: "GVA", text: "Genève — GVA", city: "Genève", country: "Suisse" },
     { value: "LHR", text: "Londres — LHR", city: "Londres", country: "Royaume-Uni" },

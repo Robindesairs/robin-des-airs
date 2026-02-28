@@ -2219,7 +2219,6 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
             <div style="font-size:12px;color:var(--neon-b);font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-top:2px;">dans votre poche</div>
           </div>
           <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:4px;text-align:center;" id="res-brut-line">Montant légal : 600€ brut — Commission Robin 25% : 150€</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:8px;text-align:center;font-style:italic;" id="res-promesse">Sur vos 600€, vous recevez 450€ net. Robin s'occupe de tout pour 150€ (25% au succès).</div>
           <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:6px;text-align:center;" id="res-distance-mention">Éligibilité au palier maximum de la loi CE 261/2004.</div>
           <div class="res-route" id="res-route" style="text-align:center;">Par passager · CE 261/2004</div>
           <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(0,229,160,0.13);">
@@ -2227,7 +2226,17 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
             <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.7);" id="res-raison-txt">—</div>
             <div style="font-size:10px;color:var(--neon-b);margin-top:3px;" id="res-raison-note"></div>
           </div>
+          <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(0,229,160,0.13);">
+            <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">La Promesse Robin</div>
+            <ul style="font-size:11px;color:rgba(255,255,255,0.7);line-height:1.6;margin:0;padding-left:18px;">
+              <li style="margin-bottom:6px;"><strong style="color:rgba(255,255,255,0.9);">Commission transparente :</strong> Nous retenons 25% uniquement au succès pour financer les preuves techniques (Aviation Edge) et le suivi. Les autres prennent souvent 35% à 50%.</li>
+              <li style="margin-bottom:6px;"><strong style="color:rgba(255,255,255,0.9);">Zéro Risque :</strong> Aucun frais de dossier, aucune avance. Si on ne gagne pas, vous ne payez rien.</li>
+              <li><strong style="color:rgba(255,255,255,0.9);">Accompagnement WhatsApp :</strong> Un suivi humain et direct sans attente téléphonique.</li>
+            </ul>
+          </div>
         </div>
+
+        <div style="font-size:13px;font-weight:700;color:rgba(255,255,255,0.9);text-align:center;margin-bottom:14px;padding:10px 12px;background:rgba(0,229,160,0.08);border-radius:6px;border:1px solid rgba(0,229,160,0.2);" id="res-calc-line">600€ (Indemnité brute) − 150€ (Service Robin) = 450€ Net pour vous</div>
 
         <!-- CTA principal Robin + lien dossier en ligne -->
         <div style="margin-bottom:14px;">
@@ -3354,8 +3363,8 @@ function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
   document.getElementById('res-brut-line').textContent =
     (pax > 1 ? pax + ' passagers · ' : '') +
     'Montant légal : ' + totalBrut + '€ brut · Vous recevrez ' + totalNet + '€ net (commission 25% : ' + totalFee + '€)';
-  var promEl = document.getElementById('res-promesse');
-  if (promEl) promEl.textContent = 'Sur vos ' + totalBrut + '€, vous recevez ' + totalNet + '€ net. Robin s\'occupe de tout pour ' + totalFee + '€ (25% au succès).';
+  var calcLineEl = document.getElementById('res-calc-line');
+  if (calcLineEl) calcLineEl.textContent = totalBrut + '€ (Indemnité brute) − ' + totalFee + '€ (Service Robin) = ' + totalNet + '€ Net pour vous';
   var palierTxt = (ind === 600) ? 'maximum' : (ind === 400) ? 'moyen' : 'court';
   var mentionEl = document.getElementById('res-distance-mention');
   if (mentionEl) {
@@ -3372,15 +3381,10 @@ function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
   document.getElementById('res-raison-txt').textContent  = raisonInfo.t;
   document.getElementById('res-raison-note').textContent = raisonInfo.n;
 
-  // WA link
-  const vol1TxtLine = S.trajet === 'escale' ? `Vol 1 : ${vol1Str || '—'}\nVol 2 (final) : ${volRef || '—'}` : `Vol : ${volRef || '—'}`;
-  const msg = encodeURIComponent(
-    '[FR] Bonjour Robin des Airs !\n\nJ\'ai utilisé votre diagnostic.\n\n'
-    + vol1TxtLine + '\nDate : ' + (dateStr || '—') + '\nPassagers : ' + pax
-    + '\nMotif : ' + motifTxt + '\nRaison compagnie : ' + raisonInfo.t
-    + '\nVous recevrez : ' + totalNet + '€ nets\n(Indemnité brute : ' + totalBrut + '€ — commission 25% = ' + totalFee + '€)\n\nMon prénom :\nMon email :\n'
-  );
-  const waHref = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + msg;
+  var flightNumberInput = document.getElementById('flight_number');
+  var flightNum = (flightNumberInput && flightNumberInput.value && flightNumberInput.value.trim()) ? flightNumberInput.value.trim().toUpperCase() : (volRef || '—');
+  var waMsg = 'Bonjour Robin ! Je viens de faire le diagnostic pour mon vol ' + flightNum + '. Mon indemnité estimée est de ' + totalNet + '€ nets. Voici mes documents pour lancer mon dossier.';
+  var waHref = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(waMsg);
   document.getElementById('wa-cta').href = waHref;
   var stickyWa = document.getElementById('sticky-wa-cta');
   if (stickyWa) stickyWa.href = waHref;
