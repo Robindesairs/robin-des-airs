@@ -24,8 +24,7 @@ function formatAviationEdge(data) {
 async function searchAviationEdge(keyword) {
   const apiKey = process.env.AVIATION_EDGE_KEY;
   if (!apiKey) return null;
-  const q = encodeURIComponent(keyword);
-  const url = `https://aviation-edge.com/v2/public/autocomplete?key=${apiKey}&query=${q}`;
+  const url = `https://aviation-edge.com/v2/public/autocomplete?key=${apiKey}&query=${encodeURIComponent(keyword)}`;
 
   console.log("--- NOUVELLE RECHERCHE ---");
   console.log("Mot-clé tapé :", keyword);
