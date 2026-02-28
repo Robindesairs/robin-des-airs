@@ -1047,6 +1047,20 @@ body:has(.sticky-cta-bar) { padding-bottom: 62px; }
 .comp-row:last-child { border-bottom: none; }
 .comp-row:hover { background: var(--off); }
 
+/* Top Destinations — grille cartes 600€ */
+#top-destinations { padding: 80px 24px 100px; background: linear-gradient(180deg, #FAFBFD 0%, var(--white) 100%); }
+.dest-wrap { max-width: 900px; margin: 0 auto; }
+.dest-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 28px; }
+.dest-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; cursor: pointer; text-decoration: none; color: inherit; display: block; }
+.dest-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,229,160,0.2); border-color: var(--neon); }
+.dest-card:focus { outline: 2px solid var(--neon); outline-offset: 2px; }
+.dest-card-city { font-size: 18px; font-weight: 800; color: var(--navy); margin-bottom: 6px; }
+.dest-card-iata { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: var(--neon-dark); margin-bottom: 12px; }
+.dest-card-line { font-size: 11px; color: var(--gray); margin-bottom: 4px; }
+.dest-card-amount { font-size: 14px; font-weight: 800; color: var(--neon-dark); }
+@media (max-width: 700px) { .dest-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 400px) { .dest-grid { grid-template-columns: 1fr; } }
+
 .comp-cell {
   padding: 16px 24px;
   font-size: 13px;
@@ -1313,7 +1327,7 @@ footer {
   .btn-calc, .btn-wa-hero { min-height: 50px; padding: 18px 24px; font-size: 13px; }
   .pax-btn { width: 44px; height: 48px; font-size: 20px; }
   .back-btn { min-height: 44px; padding: 12px 0; display: flex; align-items: center; }
-  #la-loi, #comment-ca-marche, #comparatif, #temoignages, #qui-suis-je, #faq, #cta-final {
+  #la-loi, #comment-ca-marche, #top-destinations, #comparatif, #temoignages, #qui-suis-je, #faq, #cta-final {
     padding: 48px 16px;
     padding-left: env(safe-area-inset-left, 16px);
     padding-right: env(safe-area-inset-right, 16px);
@@ -1383,7 +1397,7 @@ footer {
   }
 
   .loi-header, .loi-cards, .testi-grid, .steps-grid, .footer-main { grid-template-columns: 1fr; }
-  #la-loi, #comment-ca-marche, #comparatif, #temoignages, #qui-suis-je, #faq, #cta-final, footer {
+  #la-loi, #comment-ca-marche, #top-destinations, #comparatif, #temoignages, #qui-suis-je, #faq, #cta-final, footer {
     padding: 60px 24px;
   }
 
@@ -1861,6 +1875,7 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
     <li><a href="#funnel-box" onclick="closeMobileNav(); document.getElementById('funnel-box')&&document.getElementById('funnel-box').scrollIntoView({behavior:'smooth'});">🧮 Calculateur</a></li>
     <li><a href="#la-loi" onclick="closeMobileNav()" data-i18n="nav_drawer_loi">📋 La loi CE 261</a></li>
     <li><a href="#comment-ca-marche" onclick="closeMobileNav()" data-i18n="nav_drawer_how">⚙️ Comment ça marche</a></li>
+    <li><a href="#top-destinations" onclick="closeMobileNav()">✈️ Top destinations 600€</a></li>
     <li><a href="#comparatif" onclick="closeMobileNav()" data-i18n="nav_drawer_tarifs">💰 Nos tarifs</a></li>
     <li><a href="#temoignages" onclick="closeMobileNav()" data-i18n="nav_drawer_testi">⭐ Témoignages</a></li>
     <li><a href="#faq" onclick="closeMobileNav()" data-i18n="nav_drawer_faq">❓ FAQ</a></li>
@@ -2335,6 +2350,41 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
   </div>
 </section>
 
+<!-- ═══════ TOP DESTINATIONS 600€ ═══════ -->
+<section id="top-destinations" class="reveal">
+  <div class="dest-wrap">
+    <div class="section-tag">Lignes long-courrier</div>
+    <h2 class="section-title">Top destinations · <span class="neon">Indemnité 600€</span></h2>
+    <p class="section-desc" style="margin-top:10px;">Vol retardé ou annulé vers ces villes ? Vous êtes éligible au palier maximum de la loi CE 261.</p>
+    <div class="dest-grid">
+      <a href="/destinations/dakar.html" class="dest-card">
+        <div class="dest-card-city">Dakar</div>
+        <div class="dest-card-iata">DSS</div>
+        <div class="dest-card-line">Ligne surveillée par Robin</div>
+        <div class="dest-card-amount">Indemnité standard : 600€</div>
+      </a>
+      <a href="/destinations/abidjan.html" class="dest-card">
+        <div class="dest-card-city">Abidjan</div>
+        <div class="dest-card-iata">ABJ</div>
+        <div class="dest-card-line">Ligne surveillée par Robin</div>
+        <div class="dest-card-amount">Indemnité standard : 600€</div>
+      </a>
+      <a href="/destinations/kinshasa.html" class="dest-card">
+        <div class="dest-card-city">Kinshasa</div>
+        <div class="dest-card-iata">FIH</div>
+        <div class="dest-card-line">Ligne surveillée par Robin</div>
+        <div class="dest-card-amount">Indemnité standard : 600€</div>
+      </a>
+      <a href="/destinations/bamako.html" class="dest-card">
+        <div class="dest-card-city">Bamako</div>
+        <div class="dest-card-iata">BKO</div>
+        <div class="dest-card-line">Ligne surveillée par Robin</div>
+        <div class="dest-card-amount">Indemnité standard : 600€</div>
+      </a>
+    </div>
+  </div>
+</section>
+
 <!-- ═══════ COMPARATIF ═══════ -->
 <section id="comparatif">
   <div class="comp-wrap reveal">
@@ -2368,18 +2418,6 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
         <div class="comp-cell hl"><span class="price-green">450€ pour vous</span></div>
         <div class="comp-cell"><span style="color:#c0392b;font-weight:600;">390€ pour vous</span></div>
         <div class="comp-cell"><span style="color:#c0392b;font-weight:600;">336€ pour vous</span></div>
-      </div>
-      <div class="comp-row">
-        <div class="comp-cell feature">Frais procès (nous : inclus dans le tarif de base)</div>
-        <div class="comp-cell hl"><span class="check">✓</span> &nbsp;<span class="price-green">Inclus · nous 25%</span></div>
-        <div class="comp-cell"><span class="cross">✗</span> &nbsp;+15% en plus · eux 44–50%</div>
-        <div class="comp-cell"><span class="cross">✗</span> &nbsp;+14% en plus · eux 44%</div>
-      </div>
-      <div class="comp-row">
-        <div class="comp-cell feature">CB ou ROB pour ouvrir un dossier</div>
-        <div class="comp-cell hl"><span class="check">✓</span> &nbsp;<span class="price-green">CB ou ROB</span></div>
-        <div class="comp-cell"><span class="cross">✗</span> &nbsp;Non</div>
-        <div class="comp-cell"><span class="cross">✗</span> &nbsp;Non</div>
       </div>
       <div class="comp-row">
         <div class="comp-cell feature">Spécialiste vols Diaspora</div>
@@ -3045,6 +3083,9 @@ const COMMISSION_RATE = 0.25; /* 25% no win no fee */
 const WHATSAPP_NUMBER = '33756863630';
 const DLABEL = { 600:'Long-courrier · +3 500 km', 400:'Moyen-courrier · 1 500–3 500 km', 250:'Court-courrier · <1 500 km' };
 const DISTANCE_LINE = { 600:'Vol Long-Courrier (>3 500 km) → Indemnité de 600€', 400:'Vol Moyen-Courrier (1 500–3 500 km) → Indemnité de 400€', 250:'Vol Court-Courrier (<1 500 km) → Indemnité de 250€' };
+/* Destinations couvertes à 600€ (long-courrier) — base site + SEO meta */
+/* Destinations 600€ (long-courrier) — base site + SEO meta */
+const DESTINATIONS_600 = { ABJ:'Abidjan', ABV:'Abuja', ACC:'Accra', ADD:'Addis-Abeba', TNR:'Antananarivo', BKO:'Bamako', BGF:'Bangui', BJL:'Banjul', BZV:'Brazzaville', BJM:'Bujumbura', CKY:'Conakry', COO:'Cotonou', DSS:'Dakar', DAR:'Dar es Salaam', JIB:'Djibouti', DLA:'Douala', EBB:'Entebbe', FNA:'Freetown', JNB:'Johannesburg', KGL:'Kigali', JRO:'Arusha', FIH:'Kinshasa', LOS:'Lagos', CPT:'Le Cap', LBV:'Libreville', LFW:'Lomé', LAD:'Luanda', SSG:'Malabo', MRU:'Île Maurice', ROB:'Monrovia', NDJ:'Ndjamena', NBO:'Nairobi', NIM:'Niamey', OUA:'Ouagadougou', PHC:'Port Harcourt', RUN:'La Réunion', WDH:'Windhoek', NSI:'Yaoundé', ZNZ:'Zanzibar' };
 /* Aéroport → Ville (pour affichage Départ | Arrivée) */
 const AIRPORT_CITY = { CDG:'Paris', ORY:'Paris', LYS:'Lyon', MRS:'Marseille', NCE:'Nice', TLS:'Toulouse', BOD:'Bordeaux', NTE:'Nantes', LIS:'Lisbonne', OPO:'Porto', MAD:'Madrid', BCN:'Barcelone', FCO:'Rome', NAP:'Naples', MXP:'Milan', VIE:'Vienne', BRU:'Bruxelles', AMS:'Amsterdam', FRA:'Francfort', MUC:'Munich', LHR:'Londres', DUB:'Dublin', GVA:'Genève', ADD:'Addis-Abeba', ABJ:'Abidjan', BKO:'Bamako', DKR:'Dakar', DLA:'Douala', LBV:'Libreville', NIM:'Niamey', OUA:'Ouagadougou', LFW:'Lomé', COO:'Cotonou', DSS:'Dakar', NDJ:'Ndjamena', BGF:'Bangui', BZV:'Brazzaville', FIH:'Kinshasa', JNB:'Johannesburg', CPT:'Le Cap', CMN:'Casablanca', ALG:'Alger', TUN:'Tunis', CAI:'Le Caire', NBO:'Nairobi', LAG:'Lagos', NKC:'Nouakchott', TIP:'Tripoli', PTP:'Pointe-à-Pitre', FDF:'Fort-de-France', CAY:'Cayenne', DOH:'Doha', DXB:'Dubaï', IST:'Istanbul', NRT:'Tokyo', MIA:'Miami', CRL:'Charleroi', NSI:'Yaoundé' };
 const ROUTE_AMOUNT = {};
