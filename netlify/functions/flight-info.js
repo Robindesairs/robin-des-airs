@@ -21,20 +21,41 @@ exports.handler = async (event) => {
     const response = await fetch(url);
     const data = await response.json();
 
-    console.log("Recherche vol :", flightNumber);
-    console.log("Résultat :", Array.isArray(data) && data.length > 0 ? "Trouvé" : "Non trouvé");
+    if (!Array.isArray(data) || data.length === 0) {
+      console.error("flight-info: données vides ou invalides", { flightNumber, type: typeof data, isArray: Array.isArray(data), length: Array.isArray(data) ? data.length : null });
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({ error: "Vérifiez votre numéro de vol" })
+      };
+    }
 
+    const first = data[0];
+    const dep = first.departure || {};
+    const arr = first.arrival || {};
+    const depIata = dep.iataCode || (dep.airport && dep.airport.iataCode) || '';
+    const arrIata = arr.iataCode || (arr.airport && arr.airport.iataCode) || '';
+    if (!depIata || !arrIata) {
+      console.error("flight-info: structure invalide (departure/arrival.iataCode manquants)", { flightNumber, first });
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({ error: "Vérifiez votre numéro de vol" })
+      };
+    }
+
+    console.log("Recherche vol :", flightNumber, "→ Départ:", depIata, "Arrivée:", arrIata);
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       body: JSON.stringify(data)
     };
   } catch (error) {
-    console.error("ERREUR flight-info :", error.message || error);
+    console.error("ERREUR flight-info :", error.message || error, error);
     return {
-      statusCode: 500,
+      statusCode: 200,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ error: "Erreur serveur" })
+      body: JSON.stringify({ error: "Vérifiez votre numéro de vol" })
     };
   }
 };

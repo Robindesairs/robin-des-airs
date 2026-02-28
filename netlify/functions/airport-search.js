@@ -7,18 +7,16 @@
 const AMADEUS_HOST = process.env.AMADEUS_HOST || 'test.api.amadeus.com';
 const TOKEN_CACHE = { token: null, expires: 0 };
 
+/** Mapping Aviation Edge : nameCity/nameAirport, codeIataCity/codeIataAirport → value, text pour Tom Select */
 function formatAviationEdge(data) {
-  const items = [];
-  const seen = new Set();
-  function add(code, cityName, name) {
-    if (!code || seen.has(code)) return;
-    seen.add(code);
-    const text = cityName && code ? cityName + ' (' + code + ') - ' + (name || cityName) : (name || code);
-    items.push({ value: code, text });
-  }
-  (data.cities || []).forEach((c) => add(c.code || c.cityCode, c.cityName || c.name, c.name));
-  (data.airports || []).forEach((a) => add(a.code, a.cityName || a.name, a.name));
-  return items.slice(0, 30);
+  const raw = Array.isArray(data) ? data : (data && (data.cities || data.airports)) ? [].concat(data.cities || [], data.airports || []) : [];
+  return raw
+    .map(item => ({
+      value: item.codeIataAirport || item.codeIataCity || item.code || item.cityCode,
+      text: (item.nameAirport || item.nameCity || item.name || item.cityName || item.value || '') + ' (' + (item.codeIataAirport || item.codeIataCity || item.code || item.cityCode || '') + ')'
+    }))
+    .filter(x => x.value && x.text)
+    .slice(0, 30);
 }
 
 async function searchAviationEdge(keyword) {
@@ -34,7 +32,12 @@ async function searchAviationEdge(keyword) {
   const res = await fetch(url);
   if (!res.ok) return null;
   const data = await res.json();
-  const items = formatAviationEdge(data);
+  const items = Array.isArray(data)
+    ? data.map(item => ({
+        value: item.codeIataAirport || item.codeIataCity,
+        text: (item.nameAirport || item.nameCity || '') + ' (' + (item.codeIataAirport || item.codeIataCity) + ')'
+      })).filter(x => x.value && x.text && !x.text.includes('undefined')).slice(0, 30)
+    : formatAviationEdge(data);
   console.log("Réponse API reçue ! Nombre de résultats :", items.length);
   return items;
 }

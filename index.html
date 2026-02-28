@@ -10,6 +10,8 @@
 <meta property="og:title" content="Robin des Airs — Votre vol retardé vaut jusqu'à 600€">
 <meta property="og:description" content="Vol retardé ou annulé ? Récupérez jusqu'à 600€ d'indemnité légale. Zéro frais si on ne gagne pas. Dossier en 2 minutes via WhatsApp.">
 <meta name="theme-color" content="#0B1F3A">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/favicon.png">
 <link rel="canonical" href="https://robindesairs.fr">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fontsource/syne@5.2.6/files/syne-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -3612,10 +3614,17 @@ document.addEventListener('DOMContentLoaded', () => {
           raw = raw.replace(/\s/g, ''); // Diaspora : "AF 718" → "AF718" pour maximiser les retrouvailles
           var apiUrl = window.location.origin + '/.netlify/functions/flight-info?flight=' + encodeURIComponent(raw);
           fetch(apiUrl).then(function(r) { return r.json(); }).then(function(data) {
+            if (data && data.error) {
+              console.error('flight-info API error:', data.error);
+              flightStatusEl.className = 'flight-status error';
+              flightStatusEl.textContent = 'Vérifiez votre numéro de vol';
+              return;
+            }
             var list = Array.isArray(data) ? data : [];
             if (list.length === 0) {
+              console.error('flight-info: données vides', data);
               flightStatusEl.className = 'flight-status error';
-              flightStatusEl.textContent = 'Vol non trouvé automatiquement, merci de compléter manuellement';
+              flightStatusEl.textContent = 'Vérifiez votre numéro de vol';
               return;
             }
             var f = list[0];
@@ -3623,17 +3632,23 @@ document.addEventListener('DOMContentLoaded', () => {
             var arr = f.arrival || {};
             var depIata = String(dep.iataCode || (dep.airport && dep.airport.iataCode) || '').toUpperCase();
             var arrIata = String(arr.iataCode || (arr.airport && arr.airport.iataCode) || '').toUpperCase();
+            if (!depIata || !arrIata) {
+              console.error('flight-info: departure/arrival.iataCode manquants', f);
+              flightStatusEl.className = 'flight-status error';
+              flightStatusEl.textContent = 'Vérifiez votre numéro de vol';
+              return;
+            }
             var depName = (dep.airport && dep.airport.name) || dep.city || depIata;
             var arrName = (arr.airport && arr.airport.name) || arr.city || arrIata;
-            var depText = depIata ? (depName + ' (' + depIata + ') - ' + ((dep.airport && dep.airport.name) || depName)) : depIata;
-            var arrText = arrIata ? (arrName + ' (' + arrIata + ') - ' + ((arr.airport && arr.airport.name) || arrName)) : arrIata;
+            var depText = depName + ' (' + depIata + ') - ' + ((dep.airport && dep.airport.name) || depName);
+            var arrText = arrName + ' (' + arrIata + ') - ' + ((arr.airport && arr.airport.name) || arrName);
             if (window.tomSelectDaVilleDep && depIata) {
               window.tomSelectDaVilleDep.addOption({ value: depIata, text: depText });
-              window.tomSelectDaVilleDep.setValue(depIata);
+              window.tomSelectDaVilleDep.addItem(depIata, true);
             }
             if (window.tomSelectDaVilleArr && arrIata) {
               window.tomSelectDaVilleArr.addOption({ value: arrIata, text: arrText });
-              window.tomSelectDaVilleArr.setValue(arrIata);
+              window.tomSelectDaVilleArr.addItem(arrIata, true);
             }
             updateManualDist('da');
             var distIn = document.getElementById('da-dist');
@@ -3667,9 +3682,10 @@ document.addEventListener('DOMContentLoaded', () => {
               flightStatusEl.className = 'flight-status';
               flightStatusEl.textContent = 'Vol trouvé — Départ et arrivée renseignés';
             }
-          }).catch(function() {
+          }).catch(function(err) {
+            console.error('flight-info fetch error:', err);
             flightStatusEl.className = 'flight-status error';
-            flightStatusEl.textContent = 'Vol non trouvé automatiquement, merci de compléter manuellement';
+            flightStatusEl.textContent = 'Vérifiez votre numéro de vol';
           });
         }, 400);
       });
