@@ -84,26 +84,30 @@ exports.handler = async (event) => {
       if (typeof arr.delay === 'number') delayMinutes = arr.delay;
       else if (typeof dep.delay === 'number') delayMinutes = dep.delay;
 
+      const statusRaw = (f.status || '').toLowerCase();
+      const cancelled = statusRaw === 'cancelled' || statusRaw === 'canceled' || statusRaw === 'annulé';
+
       const originCountry = type === 'departure' ? getCountry(depIata) : getCountry(arrIata);
       const destCountry = type === 'departure' ? getCountry(arrIata) : getCountry(depIata);
       const eligible = checkEligible(originCountry, destCountry, airlineIata);
-      const color = getColor(delayMinutes, eligible);
+      const color = cancelled ? 'CANCELLED' : getColor(delayMinutes, eligible);
 
       flights.push({
         flight: flightNumber,
         airline: airlineIata,
         dep: depIata || '—',
         arr: arrIata || '—',
-        delayMinutes,
+        delayMinutes: cancelled ? null : delayMinutes,
         eligible,
         color,
+        cancelled: !!cancelled,
         status: f.status || '—'
       });
     }
 
-    // Priorité : ROUGE en haut, puis ORANGE, puis JAUNE, puis VERT, puis GRIS
-    const order = { RED: 0, ORANGE: 1, YELLOW: 2, GREEN: 3, GREY: 4 };
-    flights.sort((a, b) => (order[a.color] ?? 5) - (order[b.color] ?? 5) || (b.delayMinutes - a.delayMinutes));
+    // Priorité : ANNULÉ en haut, puis ROUGE, ORANGE, JAUNE, VERT, GRIS
+    const order = { CANCELLED: 0, RED: 1, ORANGE: 2, YELLOW: 3, GREEN: 4, GREY: 5 };
+    flights.sort((a, b) => (order[a.color] ?? 6) - (order[b.color] ?? 6) || ((b.delayMinutes || 0) - (a.delayMinutes || 0)));
 
     return {
       statusCode: 200,

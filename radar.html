@@ -27,6 +27,7 @@
     .badge-YELLOW { background: #ca8a04; color: #fff; }
     .badge-GREEN { background: #16a34a; color: #fff; }
     .badge-GREY { background: #64748b; color: #fff; }
+    .badge-CANCELLED { background: #991b1b; color: #fff; }
     .err { color: #f87171; margin-top: 12px; }
     .loading { color: rgba(255,255,255,0.5); margin-top: 12px; }
   </style>
@@ -42,6 +43,7 @@
   <h1>Radar vols Afrique – Europe · Dakar</h1>
   <div class="legend">
     <span><strong>Priorité en haut du tableau :</strong></span>
+    <span class="badge badge-CANCELLED">ANNULÉ</span>
     <span class="badge badge-RED">ROUGE ≥ 2h30</span>
     <span class="badge badge-ORANGE">ORANGE 1h–2h30</span>
     <span class="badge badge-YELLOW">JAUNE ~1h (à surveiller)</span>
@@ -129,14 +131,15 @@
 
       var table = '<table><thead><tr><th>Vol</th><th>Compagnie</th><th>Départ</th><th>Arrivée</th><th>Retard</th><th>Éligible</th><th>Signal</th></tr></thead><tbody>';
       data.flights.forEach(function(f) {
+        var signalLabel = f.cancelled ? 'ANNULÉ' : (f.color || 'GREY');
         table += '<tr>' +
           '<td>' + (f.flight || '—') + '</td>' +
           '<td>' + (f.airline || '—') + '</td>' +
           '<td>' + (f.dep || '—') + '</td>' +
           '<td>' + (f.arr || '—') + '</td>' +
-          '<td>' + (f.delayMinutes != null ? f.delayMinutes + ' min' : '—') + '</td>' +
+          '<td>' + (f.cancelled ? '—' : (f.delayMinutes != null ? f.delayMinutes + ' min' : '—')) + '</td>' +
           '<td>' + (f.eligible ? 'Oui' : 'Non') + '</td>' +
-          '<td><span class="badge badge-' + (f.color || 'GREY') + '">' + (f.color || 'GREY') + '</span></td>' +
+          '<td><span class="badge badge-' + (f.color || 'GREY') + '">' + signalLabel + '</span></td>' +
           '</tr>';
       });
       table += '</tbody></table>';
