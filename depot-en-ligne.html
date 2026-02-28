@@ -720,11 +720,34 @@ function addLeg() {
     </div>
   `;
   cont.appendChild(div);
-  if (typeof TomSelect !== "undefined" && window.AIRPORTS_DATA) {
+  if (typeof TomSelect !== "undefined") {
     if (!window.legTomSelects) window.legTomSelects = {};
-    var aopts = { options: window.AIRPORTS_DATA, valueField: "value", labelField: "text", searchField: "search", maxItems: 1, placeholder: "Ville ou code IATA", create: false, allowEmptyOption: true };
+    var airportSearchApi = (typeof window.AIRPORT_SEARCH_API !== "undefined" && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : "/.netlify/functions/airport-search";
+    var aopts = {
+      valueField: "value", labelField: "text", searchField: ["text", "value"], maxItems: 1,
+      placeholder: "Tapez 3 caractères (ville ou IATA)…", create: false, allowEmptyOption: true,
+      load: function(query, callback) {
+        if (query.length < 3) { callback(); return; }
+        var q = encodeURIComponent(query);
+        fetch(airportSearchApi + "?keyword=" + q).then(function(r) { return r.ok ? r.json() : Promise.reject(); }).then(function(data) { callback(data || []); }).catch(function() {
+          var list = (window.AIRPORTS_DATA || []).filter(function(a) { var s = (a.search || a.text || a.value || "").toLowerCase(); return s.indexOf(query.toLowerCase()) !== -1; });
+          callback(list);
+        });
+      }
+    };
+    function saveLegVille(legIdx, type, value, text) {
+      try {
+        var key = "leg" + legIdx + "_" + type;
+        if (value) { localStorage.setItem("robin_" + key, value); localStorage.setItem("robin_" + key + "_text", text || value); }
+        else { localStorage.removeItem("robin_" + key); localStorage.removeItem("robin_" + key + "_text"); }
+      } catch (e) {}
+    }
     try {
-      window.legTomSelects[i] = { dep: new TomSelect("#leg" + i + "-dep", aopts), arr: new TomSelect("#leg" + i + "-arr", aopts) };
+      var tsDep = new TomSelect("#leg" + i + "-dep", aopts);
+      var tsArr = new TomSelect("#leg" + i + "-arr", aopts);
+      tsDep.on("change", function(v) { var o = tsDep.options && tsDep.options[v]; saveLegVille(i, "dep", v, o ? o.text : v); });
+      tsArr.on("change", function(v) { var o = tsArr.options && tsArr.options[v]; saveLegVille(i, "arr", v, o ? o.text : v); });
+      window.legTomSelects[i] = { dep: tsDep, arr: tsArr };
     } catch (e) {}
   }
   document.getElementById("add-leg-btn").style.display = legCount >= 6 ? "none" : "";
@@ -1127,20 +1150,41 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  if (typeof TomSelect !== "undefined" && window.AIRPORTS_DATA) {
+  if (typeof TomSelect !== "undefined") {
+    var airportSearchApi = (typeof window.AIRPORT_SEARCH_API !== "undefined" && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : "/.netlify/functions/airport-search";
     var airportOpts = {
-      options: window.AIRPORTS_DATA,
       valueField: "value",
       labelField: "text",
-      searchField: "search",
+      searchField: ["text", "value"],
       maxItems: 1,
-      placeholder: "Rechercher (ville ou code IATA)…",
+      placeholder: "Tapez 3 caractères (ville ou code IATA)…",
       create: false,
-      allowEmptyOption: true
+      allowEmptyOption: true,
+      load: function(query, callback) {
+        if (query.length < 3) { callback(); return; }
+        var q = encodeURIComponent(query);
+        fetch(airportSearchApi + "?keyword=" + q).then(function(r) { return r.ok ? r.json() : Promise.reject(); }).then(function(data) { callback(data || []); }).catch(function() {
+          var list = (window.AIRPORTS_DATA || []).filter(function(a) { var s = (a.search || a.text || a.value || "").toLowerCase(); return s.indexOf(query.toLowerCase()) !== -1; });
+          callback(list);
+        });
+      }
     };
+    function saveDepotVille(key, value, text) {
+      try {
+        if (value) { localStorage.setItem("robin_" + key, value); localStorage.setItem("robin_" + key + "_text", text || value); }
+        else { localStorage.removeItem("robin_" + key); localStorage.removeItem("robin_" + key + "_text"); }
+      } catch (e) {}
+    }
     ["f-ville-depart", "f-ville-arrivee"].forEach(function(id) {
       var el = document.getElementById(id);
-      if (el && !el.tomselect) new TomSelect("#" + id, airportOpts);
+      if (el && !el.tomselect) {
+        var key = id === "f-ville-depart" ? "ville_depart" : "ville_arrivee";
+        var ts = new TomSelect("#" + id, airportOpts);
+        ts.on("change", function(v) {
+          var t = (ts.options && ts.options[v]) ? ts.options[v].text : v;
+          saveDepotVille(key, v, t);
+        });
+      }
     });
   }
 

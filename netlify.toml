@@ -1,5 +1,6 @@
 # Robin des Airs — configuration Netlify
 # Publier la racine du dépôt (index.html, 404.html, _redirects sont ici)
+# Fonctions serverless : netlify/functions/ (ex. airport-search pour API Amadeus)
 [build]
   publish = "."
   command = ""

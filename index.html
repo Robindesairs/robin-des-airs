@@ -3497,46 +3497,108 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Tom Select — Aéroports Départ / Arrivée (diagnostic)
-  if (typeof TomSelect !== 'undefined' && window.AIRPORTS_DATA) {
+  // Tom Select — Aéroports Départ / Arrivée (Amadeus API à 3 caractères + fallback static)
+  if (typeof TomSelect !== 'undefined') {
+    var airportSearchApi = (typeof window.AIRPORT_SEARCH_API !== 'undefined' && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : '/.netlify/functions/airport-search';
     var aopts = {
-      options: window.AIRPORTS_DATA,
       valueField: 'value',
       labelField: 'text',
-      searchField: 'search',
+      searchField: ['text', 'value'],
       maxItems: 1,
-      placeholder: 'Ville ou code IATA',
+      placeholder: 'Tapez 3 caractères (ville ou code IATA)…',
       create: false,
-      allowEmptyOption: true
+      allowEmptyOption: true,
+      load: function(query, callback) {
+        if (query.length < 3) { callback(); return; }
+        var q = encodeURIComponent(query);
+        fetch(airportSearchApi + '?keyword=' + q).then(function(r) { return r.ok ? r.json() : Promise.reject(); }).then(function(data) {
+          callback(data || []);
+        }).catch(function() {
+          var list = (window.AIRPORTS_DATA || []).filter(function(a) {
+            var s = (a.search || a.text || a.value || '').toLowerCase();
+            return s.indexOf(query.toLowerCase()) !== -1;
+          });
+          callback(list);
+        });
+      }
+    };
+    var saveVilleStorage = function(key, value, text) {
+      try {
+        if (value) { localStorage.setItem('robin_' + key, value); localStorage.setItem('robin_' + key + '_text', text || value); }
+        else { localStorage.removeItem('robin_' + key); localStorage.removeItem('robin_' + key + '_text'); }
+      } catch (e) {}
     };
     var daDep = document.getElementById('da-ville-depart');
     var daArr = document.getElementById('da-ville-arrivee');
     if (daDep && !daDep.tomselect) {
       window.tomSelectDaVilleDep = new TomSelect('#da-ville-depart', aopts);
-      window.tomSelectDaVilleDep.on('change', function() { updateManualDist('da'); });
+      window.tomSelectDaVilleDep.on('change', function(v) {
+        updateManualDist('da');
+        var t = (window.tomSelectDaVilleDep.options && window.tomSelectDaVilleDep.options[v]) ? window.tomSelectDaVilleDep.options[v].text : v;
+        saveVilleStorage('ville_depart', v, t);
+      });
     }
     if (daArr && !daArr.tomselect) {
       window.tomSelectDaVilleArr = new TomSelect('#da-ville-arrivee', aopts);
-      window.tomSelectDaVilleArr.on('change', function() { updateManualDist('da'); });
+      window.tomSelectDaVilleArr.on('change', function(v) {
+        updateManualDist('da');
+        var t = (window.tomSelectDaVilleArr.options && window.tomSelectDaVilleArr.options[v]) ? window.tomSelectDaVilleArr.options[v].text : v;
+        saveVilleStorage('ville_arrivee', v, t);
+      });
     }
   }
 
-  // Tom Select — Escale : Vol 1, 2, 3 (compagnie + villes)
-  if (typeof TomSelect !== 'undefined' && window.AIRLINES_DATA && window.AIRPORTS_DATA) {
+  // Tom Select — Escale : Vol 1, 2, 3 (compagnie + villes Amadeus)
+  if (typeof TomSelect !== 'undefined' && window.AIRLINES_DATA) {
+    var airportSearchApi = (typeof window.AIRPORT_SEARCH_API !== 'undefined' && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : '/.netlify/functions/airport-search';
     var tsComp = {
       options: window.AIRLINES_DATA,
       optgroups: [{ value: 'Europe – Afrique', label: 'Europe – Afrique' }, { value: 'Majors européennes', label: 'Majors européennes' }, { value: 'Long-courrier', label: 'Long-courrier' }, { value: 'Autre', label: 'Autre' }],
       optgroupField: 'optgroup', optgroupLabelField: 'label', optgroupValueField: 'value',
       valueField: 'value', labelField: 'text', searchField: 'text', maxItems: 1, placeholder: 'Compagnie', create: false, allowEmptyOption: true
     };
-    var tsVille = { options: window.AIRPORTS_DATA, valueField: 'value', labelField: 'text', searchField: 'search', maxItems: 1, placeholder: 'Ville ou IATA', create: false, allowEmptyOption: true };
+    var tsVilleOpts = {
+      valueField: 'value',
+      labelField: 'text',
+      searchField: ['text', 'value'],
+      maxItems: 1,
+      placeholder: 'Tapez 3 caractères (ville ou IATA)…',
+      create: false,
+      allowEmptyOption: true,
+      load: function(query, callback) {
+        if (query.length < 3) { callback(); return; }
+        var q = encodeURIComponent(query);
+        fetch(airportSearchApi + '?keyword=' + q).then(function(r) { return r.ok ? r.json() : Promise.reject(); }).then(function(data) { callback(data || []); }).catch(function() {
+          var list = (window.AIRPORTS_DATA || []).filter(function(a) { var s = (a.search || a.text || a.value || '').toLowerCase(); return s.indexOf(query.toLowerCase()) !== -1; });
+          callback(list);
+        });
+      }
+    };
+    var saveEscaleVille = function(prefix, value, text) {
+      try {
+        if (value) { localStorage.setItem('robin_' + prefix, value); localStorage.setItem('robin_' + prefix + '_text', text || value); }
+        else { localStorage.removeItem('robin_' + prefix); localStorage.removeItem('robin_' + prefix + '_text'); }
+      } catch (e) {}
+    };
     [1, 2, 3].forEach(function(i) {
       var c = document.getElementById('eb-compagnie-' + i);
       if (c && !c.tomselect) new TomSelect('#eb-compagnie-' + i, tsComp);
       var d = document.getElementById('eb-ville-depart-' + i);
-      if (d && !d.tomselect) { new TomSelect('#eb-ville-depart-' + i, tsVille).on('change', updateEscaleDist); }
+      if (d && !d.tomselect) {
+        var tsDep = new TomSelect('#eb-ville-depart-' + i, tsVilleOpts);
+        tsDep.on('change', function() {
+          updateEscaleDist();
+          var v = tsDep.getValue(); var o = tsDep.options && tsDep.options[v]; saveEscaleVille('eb_ville_depart_' + i, v, o ? o.text : v);
+        });
+      }
       var a = document.getElementById('eb-ville-arrivee-' + i);
-      if (a && !a.tomselect) { new TomSelect('#eb-ville-arrivee-' + i, tsVille).on('change', updateEscaleDist); }
+      if (a && !a.tomselect) {
+        var tsArr = new TomSelect('#eb-ville-arrivee-' + i, tsVilleOpts);
+        tsArr.on('change', function() {
+          updateEscaleDist();
+          var v = tsArr.getValue(); var o = tsArr.options && tsArr.options[v]; saveEscaleVille('eb_ville_arrivee_' + i, v, o ? o.text : v);
+        });
+      }
     });
   }
 });
