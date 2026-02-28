@@ -525,6 +525,11 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 .calc-input::placeholder { color: rgba(255,255,255,0.2); font-weight: 400; }
 .calc-input:focus { border-color: rgba(0,229,160,0.5); background: rgba(255,255,255,0.08); }
 
+.flight-status { margin-top: 8px; font-size: 12px; min-height: 20px; color: rgba(255,255,255,0.7); }
+.flight-status.loading { color: rgba(0,229,160,0.9); }
+.flight-status.success { color: var(--neon-b); font-weight: 600; }
+.flight-status.error { color: rgba(255,255,255,0.6); }
+
 .calc-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
 .calc-select {
@@ -2023,6 +2028,12 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
           <select id="da-compagnie" placeholder="Rechercher une compagnie…"><option value="">Rechercher une compagnie…</option></select>
         </div>
 
+        <div class="calc-field" style="margin-bottom:12px">
+          <label class="calc-label" for="flight_number">Numéro de vol</label>
+          <input type="text" id="flight_number" class="calc-input" placeholder="Ex: AF718" maxlength="8" autocomplete="off">
+          <div id="flight_number_status" class="flight-status" aria-live="polite"></div>
+        </div>
+
         <div class="calc-field" id="da-manual-wrap">
           <label class="calc-label">Ville de départ et d'arrivée (recherche : ville ou code IATA)</label>
           <div class="calc-row">
@@ -2208,6 +2219,8 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
             <div style="font-size:12px;color:var(--neon-b);font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-top:2px;">dans votre poche</div>
           </div>
           <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:4px;text-align:center;" id="res-brut-line">Montant légal : 600€ brut — Commission Robin 25% : 150€</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-bottom:8px;text-align:center;font-style:italic;" id="res-promesse">Sur vos 600€, vous recevez 450€ net. Robin s'occupe de tout pour 150€ (25% au succès).</div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:6px;text-align:center;" id="res-distance-mention">Éligibilité au palier maximum de la loi CE 261/2004.</div>
           <div class="res-route" id="res-route" style="text-align:center;">Par passager · CE 261/2004</div>
           <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(0,229,160,0.13);">
             <div style="font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Raison invoquée par la compagnie :</div>
@@ -3019,6 +3032,12 @@ const DISTANCE_LINE = { 600:'Vol Long-Courrier (>3 500 km) → Indemnité de
 const AIRPORT_CITY = { CDG:'Paris', ORY:'Paris', LYS:'Lyon', MRS:'Marseille', NCE:'Nice', TLS:'Toulouse', BOD:'Bordeaux', NTE:'Nantes', LIS:'Lisbonne', OPO:'Porto', MAD:'Madrid', BCN:'Barcelone', FCO:'Rome', NAP:'Naples', MXP:'Milan', VIE:'Vienne', BRU:'Bruxelles', AMS:'Amsterdam', FRA:'Francfort', MUC:'Munich', LHR:'Londres', DUB:'Dublin', GVA:'Genève', ADD:'Addis-Abeba', ABJ:'Abidjan', BKO:'Bamako', DKR:'Dakar', DLA:'Douala', LBV:'Libreville', NIM:'Niamey', OUA:'Ouagadougou', LFW:'Lomé', COO:'Cotonou', DSS:'Dakar', NDJ:'Ndjamena', BGF:'Bangui', BZV:'Brazzaville', FIH:'Kinshasa', JNB:'Johannesburg', CPT:'Le Cap', CMN:'Casablanca', ALG:'Alger', TUN:'Tunis', CAI:'Le Caire', NBO:'Nairobi', LAG:'Lagos', NKC:'Nouakchott', TIP:'Tripoli', PTP:'Pointe-à-Pitre', FDF:'Fort-de-France', CAY:'Cayenne', DOH:'Doha', DXB:'Dubaï', IST:'Istanbul', NRT:'Tokyo', MIA:'Miami', CRL:'Charleroi', NSI:'Yaoundé' };
 const ROUTE_AMOUNT = {};
 (function(){ for (var k in DB) { var r = DB[k].r.replace('→','-'); ROUTE_AMOUNT[r] = DB[k].c; var rev = r.split('-').reverse().join('-'); if (!ROUTE_AMOUNT[rev]) ROUTE_AMOUNT[rev] = DB[k].c; } })();
+function distanceKmToAmount(km) { if (km < 1500) return 250; if (km <= 3500) return 400; return 600; }
+function haversineKm(lat1, lon1, lat2, lon2) {
+  var R = 6371, dLat = (lat2 - lat1) * Math.PI / 180, dLon = (lon2 - lon1) * Math.PI / 180;
+  var a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
+  return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+}
 /* Villes pour fallback manuel (ordre: France, Europe, Afrique, Autres) */
 const VILLES_OPTIONS = [
   { n:'Paris (CDG/ORY)', c:'CDG' }, { n:'Lyon', c:'LYS' }, { n:'Marseille', c:'MRS' }, { n:'Nice', c:'NCE' }, { n:'Toulouse', c:'TLS' }, { n:'Bordeaux', c:'BOD' }, { n:'Nantes', c:'NTE' },
@@ -3191,6 +3210,11 @@ function restartFunnel() {
     });
   });
   ['da-distance-line'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = ''; });
+  window.lastCalculatedDistanceKm = null;
+  var fn = document.getElementById('flight_number');
+  if (fn) fn.value = '';
+  var fns = document.getElementById('flight_number_status');
+  if (fns) { fns.textContent = ''; fns.className = 'flight-status'; }
   if (window.tomSelectDaVilleDep) window.tomSelectDaVilleDep.clear();
   if (window.tomSelectDaVilleArr) window.tomSelectDaVilleArr.clear();
   updateManualDist('da');
@@ -3202,6 +3226,7 @@ function restartFunnel() {
 }
 
 function setDist(inputId, value, btn) {
+  window.lastCalculatedDistanceKm = null;
   const el = document.getElementById(inputId);
   if (el) el.value = String(value);
   const wrap = btn.closest('.calc-field');
@@ -3232,6 +3257,7 @@ function updateManualDist(prefix) {
     distIn.value = String(amount);
     if (line) line.textContent = DISTANCE_LINE[amount] || '';
     if (distWrap) distWrap.style.display = 'none';
+    window.lastCalculatedDistanceKm = null;
   } else {
     distIn.value = '';
     if (line) line.textContent = '';
@@ -3327,7 +3353,19 @@ function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
   document.getElementById('res-net-big').innerHTML = totalNet + '<span>€</span>';
   document.getElementById('res-brut-line').textContent =
     (pax > 1 ? pax + ' passagers · ' : '') +
-    `Montant légal : ${totalBrut}€ brut · Vous recevrez ${totalNet}€ net (commission 25% : ${totalFee}€)`;
+    'Montant légal : ' + totalBrut + '€ brut · Vous recevrez ' + totalNet + '€ net (commission 25% : ' + totalFee + '€)';
+  var promEl = document.getElementById('res-promesse');
+  if (promEl) promEl.textContent = 'Sur vos ' + totalBrut + '€, vous recevez ' + totalNet + '€ net. Robin s\'occupe de tout pour ' + totalFee + '€ (25% au succès).';
+  var palierTxt = (ind === 600) ? 'maximum' : (ind === 400) ? 'moyen' : 'court';
+  var mentionEl = document.getElementById('res-distance-mention');
+  if (mentionEl) {
+    if (window.lastCalculatedDistanceKm != null && !isNaN(window.lastCalculatedDistanceKm)) {
+      var kmFormatted = String(Math.round(window.lastCalculatedDistanceKm)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+      mentionEl.textContent = 'Distance calculée : ' + kmFormatted + ' km (Grand Cercle). Éligibilité au palier ' + palierTxt + ' de la loi CE 261/2004.';
+    } else {
+      mentionEl.textContent = 'Éligibilité au palier ' + palierTxt + ' de la loi CE 261/2004.';
+    }
+  }
   document.getElementById('res-route').textContent = route + motifTxt + ' · CE 261/2004';
 
   const raisonInfo = RAISON_LABELS[S.raison] || RAISON_LABELS.nesaispas;
@@ -3549,6 +3587,86 @@ document.addEventListener('DOMContentLoaded', () => {
         updateManualDist('da');
         var t = (window.tomSelectDaVilleArr.options && window.tomSelectDaVilleArr.options[v]) ? window.tomSelectDaVilleArr.options[v].text : v;
         saveVilleStorage('ville_arrivee', v, t);
+      });
+    }
+
+    var flightNumberInput = document.getElementById('flight_number');
+    var flightStatusEl = document.getElementById('flight_number_status');
+    var flightCheckTimeout = null;
+    if (flightNumberInput && flightStatusEl) {
+      flightNumberInput.addEventListener('input', function() {
+        var raw = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        this.value = raw;
+        if (flightCheckTimeout) clearTimeout(flightCheckTimeout);
+        flightStatusEl.textContent = '';
+        flightStatusEl.className = 'flight-status';
+        if (raw.length < 5) return;
+        flightStatusEl.className = 'flight-status loading';
+        flightStatusEl.textContent = 'Vérification des radars... ✈️';
+        flightCheckTimeout = setTimeout(function() {
+          raw = raw.replace(/\s/g, ''); // Diaspora : "AF 718" → "AF718" pour maximiser les retrouvailles
+          var apiUrl = window.location.origin + '/.netlify/functions/flight-info?flight=' + encodeURIComponent(raw);
+          fetch(apiUrl).then(function(r) { return r.json(); }).then(function(data) {
+            var list = Array.isArray(data) ? data : [];
+            if (list.length === 0) {
+              flightStatusEl.className = 'flight-status error';
+              flightStatusEl.textContent = 'Vol non trouvé automatiquement, merci de compléter manuellement';
+              return;
+            }
+            var f = list[0];
+            var dep = f.departure || {};
+            var arr = f.arrival || {};
+            var depIata = String(dep.iataCode || (dep.airport && dep.airport.iataCode) || '').toUpperCase();
+            var arrIata = String(arr.iataCode || (arr.airport && arr.airport.iataCode) || '').toUpperCase();
+            var depName = (dep.airport && dep.airport.name) || dep.city || depIata;
+            var arrName = (arr.airport && arr.airport.name) || arr.city || arrIata;
+            var depText = depIata ? (depName + ' (' + depIata + ') - ' + ((dep.airport && dep.airport.name) || depName)) : depIata;
+            var arrText = arrIata ? (arrName + ' (' + arrIata + ') - ' + ((arr.airport && arr.airport.name) || arrName)) : arrIata;
+            if (window.tomSelectDaVilleDep && depIata) {
+              window.tomSelectDaVilleDep.addOption({ value: depIata, text: depText });
+              window.tomSelectDaVilleDep.setValue(depIata);
+            }
+            if (window.tomSelectDaVilleArr && arrIata) {
+              window.tomSelectDaVilleArr.addOption({ value: arrIata, text: arrText });
+              window.tomSelectDaVilleArr.setValue(arrIata);
+            }
+            updateManualDist('da');
+            var distIn = document.getElementById('da-dist');
+            var distWrap = document.getElementById('da-dist-wrap');
+            var lineEl = document.getElementById('da-distance-line');
+            if (distIn && (!distIn.value || distIn.value === '')) {
+              var km = null;
+              if (f.geography && typeof f.geography.distance === 'number') km = f.geography.distance;
+              else if (typeof f.distance === 'number') km = f.distance;
+              else if (f.distance && typeof f.distance === 'string') km = parseInt(f.distance.replace(/\D/g, ''), 10);
+              if (km == null && dep && arr) {
+                var lat1 = dep.latitude != null ? Number(dep.latitude) : (dep.airport && dep.airport.latitude != null) ? Number(dep.airport.latitude) : NaN;
+                var lon1 = dep.longitude != null ? Number(dep.longitude) : (dep.airport && dep.airport.longitude != null) ? Number(dep.airport.longitude) : NaN;
+                var lat2 = arr.latitude != null ? Number(arr.latitude) : (arr.airport && arr.airport.latitude != null) ? Number(arr.airport.latitude) : NaN;
+                var lon2 = arr.longitude != null ? Number(arr.longitude) : (arr.airport && arr.airport.longitude != null) ? Number(arr.airport.longitude) : NaN;
+                if (!isNaN(lat1) && !isNaN(lon1) && !isNaN(lat2) && !isNaN(lon2)) km = haversineKm(lat1, lon1, lat2, lon2);
+              }
+              if (km != null && !isNaN(km)) {
+                var amount = distanceKmToAmount(km);
+                distIn.value = String(amount);
+                if (lineEl) lineEl.textContent = (typeof DISTANCE_LINE !== 'undefined' && DISTANCE_LINE[amount]) || '';
+                if (distWrap) { distWrap.style.display = 'none'; distWrap.querySelectorAll('.dist-pill').forEach(function(p) { p.classList.remove('active'); }); }
+                window.lastCalculatedDistanceKm = km;
+              }
+            }
+            var delayMin = arr.delay != null ? Number(arr.delay) : (arr.duration ? parseInt(String(arr.duration).replace(/\D/g, ''), 10) : 0);
+            if (delayMin > 180) {
+              flightStatusEl.className = 'flight-status success';
+              flightStatusEl.textContent = 'Indemnité potentielle confirmée';
+            } else {
+              flightStatusEl.className = 'flight-status';
+              flightStatusEl.textContent = 'Vol trouvé — Départ et arrivée renseignés';
+            }
+          }).catch(function() {
+            flightStatusEl.className = 'flight-status error';
+            flightStatusEl.textContent = 'Vol non trouvé automatiquement, merci de compléter manuellement';
+          });
+        }, 400);
       });
     }
   }
