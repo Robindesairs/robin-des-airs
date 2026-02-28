@@ -3512,14 +3512,18 @@ document.addEventListener('DOMContentLoaded', () => {
       load: function(query, callback) {
         if (query.length < 3) { callback(); return; }
         var q = encodeURIComponent(query);
+        var staticList = (window.AIRPORTS_DATA || []).filter(function(a) {
+          var s = (a.search || a.text || a.value || '').toLowerCase();
+          return s.indexOf(query.toLowerCase()) !== -1;
+        });
         fetch(airportSearchApi + '?keyword=' + q).then(function(r) { return r.ok ? r.json() : Promise.reject(r); }).then(function(data) {
-          callback(data || []);
+          var api = data || [];
+          var seen = {};
+          api.forEach(function(o) { seen[o.value] = true; });
+          staticList.forEach(function(o) { if (!seen[o.value]) { seen[o.value] = true; api.push(o); } });
+          callback(api);
         }).catch(function() {
-          var list = (window.AIRPORTS_DATA || []).filter(function(a) {
-            var s = (a.search || a.text || a.value || '').toLowerCase();
-            return s.indexOf(query.toLowerCase()) !== -1;
-          });
-          callback(list);
+          callback(staticList);
         });
       }
     };
@@ -3570,9 +3574,15 @@ document.addEventListener('DOMContentLoaded', () => {
       load: function(query, callback) {
         if (query.length < 3) { callback(); return; }
         var q = encodeURIComponent(query);
-        fetch(airportSearchApi + '?keyword=' + q).then(function(r) { return r.ok ? r.json() : Promise.reject(r); }).then(function(data) { callback(data || []); }).catch(function() {
-          var list = (window.AIRPORTS_DATA || []).filter(function(a) { var s = (a.search || a.text || a.value || '').toLowerCase(); return s.indexOf(query.toLowerCase()) !== -1; });
-          callback(list);
+        var staticList = (window.AIRPORTS_DATA || []).filter(function(a) { var s = (a.search || a.text || a.value || '').toLowerCase(); return s.indexOf(query.toLowerCase()) !== -1; });
+        fetch(airportSearchApi + '?keyword=' + q).then(function(r) { return r.ok ? r.json() : Promise.reject(r); }).then(function(data) {
+          var api = data || [];
+          var seen = {};
+          api.forEach(function(o) { seen[o.value] = true; });
+          staticList.forEach(function(o) { if (!seen[o.value]) { seen[o.value] = true; api.push(o); } });
+          callback(api);
+        }).catch(function() {
+          callback(staticList);
         });
       }
     };
