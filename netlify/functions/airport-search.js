@@ -1,27 +1,13 @@
 /**
- * Proxy recherche aéroports/villes — Aviation Edge OU Amadeus (clé jamais exposée côté client).
- *
- * Aviation Edge (prioritaire si la clé est définie) :
- *   Variable Netlify : AVIATION_EDGE_KEY
- *   Doc : https://aviation-edge.com/airport-autocomplete
- *
- * Amadeus (sinon) :
- *   Variables Netlify : AMADEUS_CLIENT_ID, AMADEUS_CLIENT_SECRET
- *   Optionnel : AMADEUS_HOST (test.api.amadeus.com ou api.amadeus.com)
+ * Proxy recherche aéroports/villes — Aviation Edge (prioritaire) ou Amadeus.
+ * Variable Netlify : AVIATION_EDGE_KEY
+ * Doc : https://aviation-edge.com/airport-autocomplete
  */
 
 const AMADEUS_HOST = process.env.AMADEUS_HOST || 'test.api.amadeus.com';
 const TOKEN_CACHE = { token: null, expires: 0 };
 
-// ——— Aviation Edge : autocomplete (clé secrète côté serveur uniquement)
-async function searchAviationEdge(keyword) {
-  const key = process.env.AVIATION_EDGE_KEY;
-  if (!key) return null;
-  const q = encodeURIComponent(keyword);
-  const url = `https://aviation-edge.com/v2/public/autocomplete?key=${key}&city=${q}`;
-  const res = await fetch(url);
-  if (!res.ok) return null;
-  const data = await res.json();
+function formatAviationEdge(data) {
   const items = [];
   const seen = new Set();
   function add(code, cityName, name) {
@@ -32,10 +18,28 @@ async function searchAviationEdge(keyword) {
   }
   (data.cities || []).forEach((c) => add(c.code || c.cityCode, c.cityName || c.name, c.name));
   (data.airports || []).forEach((a) => add(a.code, a.cityName || a.name, a.name));
-  return items.slice(0, 20);
+  return items.slice(0, 30);
 }
 
-// ——— Amadeus : token + locations
+async function searchAviationEdge(keyword) {
+  const apiKey = process.env.AVIATION_EDGE_KEY;
+  if (!apiKey) return null;
+  const q = encodeURIComponent(keyword);
+  const url = `https://aviation-edge.com/v2/public/autocomplete?key=${apiKey}&query=${q}`;
+
+  console.log("--- NOUVELLE RECHERCHE ---");
+  console.log("Mot-clé tapé :", keyword);
+  console.log("Clé API détectée :", apiKey ? "OUI (finit par " + apiKey.slice(-4) + ")" : "NON (VIDE)");
+  console.log("Appel URL :", url.replace(apiKey, "SECRET_KEY"));
+
+  const res = await fetch(url);
+  if (!res.ok) return null;
+  const data = await res.json();
+  const items = formatAviationEdge(data);
+  console.log("Réponse API reçue ! Nombre de résultats :", items.length);
+  return items;
+}
+
 async function getAmadeusToken() {
   if (TOKEN_CACHE.token && Date.now() < TOKEN_CACHE.expires) return TOKEN_CACHE.token;
   const clientId = process.env.AMADEUS_CLIENT_ID;
@@ -76,34 +80,45 @@ async function searchAmadeus(keyword) {
 }
 
 exports.handler = async (event) => {
-  const keyword = (event.queryStringParameters?.keyword || event.queryStringParameters?.q || '').trim();
+  const keyword = (event.queryStringParameters?.query || event.queryStringParameters?.keyword || event.queryStringParameters?.q || '').trim();
+
+  if (!keyword) {
+    return {
+      statusCode: 400,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify({ error: "Keyword manquant" })
+    };
+  }
   if (keyword.length < 3) {
     return {
       statusCode: 400,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ error: 'keyword must be at least 3 characters' })
+      body: JSON.stringify({ error: "Au moins 3 caractères" })
     };
   }
   if (keyword.length > 50) {
     return {
       statusCode: 400,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ error: 'keyword too long' })
+      body: JSON.stringify({ error: "Recherche trop longue" })
     };
   }
+
   try {
     let items = await searchAviationEdge(keyword);
     if (!items || items.length === 0) items = await searchAmadeus(keyword);
+
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       body: JSON.stringify(items || [])
     };
-  } catch (e) {
+  } catch (error) {
+    console.error("ERREUR API :", error.message || error);
     return {
       statusCode: 500,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ error: e.message || 'Server error' })
+      body: JSON.stringify({ error: "Erreur lors de la recherche" })
     };
   }
 };
