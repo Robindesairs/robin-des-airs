@@ -18,6 +18,7 @@
 <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fontsource/bebas-neue@5.0.0/files/bebas-neue-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fontsource/archivo-black@5.0.0/files/archivo-black-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2/dist/css/tom-select.css">
 
 <style>
 /* ═══════ POLICES (Fontsource via jsDelivr — pas de blocage Google) ═══════ */
@@ -1741,6 +1742,16 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
 .dist-pill .pill-amount { font-size: 12px; color: var(--neon-b); margin-top: 1px; }
 .dist-pill.active .pill-amount { color: white; }
 .calc-robin-hint { font-size: 10px; color: rgba(255,255,255,0.5); margin-bottom: 8px; text-align: center; }
+/* Tom Select — thème diagnostic (fond navy) */
+.fstep .ts-wrapper.single .ts-control { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 10px 14px; min-height: 44px; color: #fff; }
+.fstep .ts-wrapper .ts-control .ts-input input { color: #fff; }
+.fstep .ts-wrapper .ts-control .ts-input input::placeholder { color: rgba(255,255,255,0.4); }
+.fstep .ts-wrapper.dropdown-active .ts-control { border-color: rgba(0,229,160,0.5); }
+.fstep .ts-dropdown { background: linear-gradient(165deg, #0B1F3A 0%, #122a47 100%); border: 1px solid rgba(0,229,160,0.25); border-radius: 10px; box-shadow: 0 12px 32px rgba(0,0,0,0.35); }
+.fstep .ts-dropdown .option { color: rgba(255,255,255,0.9); padding: 10px 14px; }
+.fstep .ts-dropdown .option.active { background: rgba(0,229,160,0.2); color: #00E5A0; }
+.fstep .ts-dropdown .optgroup-header { color: rgba(255,255,255,0.5); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; padding: 8px 14px; }
+.fstep .ts-wrapper .ts-control .item { color: #fff; }
 .vol-search-wrap { text-align: center; margin-bottom: 8px; }
 .calc-label-center { display: block; text-align: center; margin-bottom: 5px; }
 .calc-input-big { font-size: 15px; letter-spacing: 1.5px; text-align: center; padding: 11px 14px; }
@@ -2002,6 +2013,11 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
         <div class="fstep-eyebrow">Étape 3 sur 5 — Détails du vol</div>
         <p class="calc-robin-hint">Robin des Airs vérifie votre trajet en un clic.</p>
 
+        <div class="calc-field" style="margin-bottom:12px">
+          <label class="calc-label" for="da-compagnie">Compagnie (optionnel)</label>
+          <select id="da-compagnie" placeholder="Rechercher une compagnie…"><option value="">Rechercher une compagnie…</option></select>
+        </div>
+
         <div class="vol-search-wrap">
           <label class="calc-label calc-label-center" for="da-vol">Numéro de vol</label>
           <input type="text" id="da-vol" class="calc-input calc-input-big" placeholder="Ex : AF718, BA123, LH456…" maxlength="8" autocomplete="off" oninput="volLookup(this,'da-chip','da-dist-wrap','da-dist')">
@@ -2015,14 +2031,10 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
         </div>
 
         <div class="calc-field" id="da-manual-wrap" style="display:none;">
-          <label class="calc-label">Vol non trouvé ? Indiquez les villes</label>
+          <label class="calc-label">Vol non trouvé ? Indiquez les villes (recherche : ville ou code IATA)</label>
           <div class="calc-row">
-            <select id="da-ville-depart" class="calc-select" onchange="updateManualDist('da')">
-              <option value="">— Ville de départ —</option>
-            </select>
-            <select id="da-ville-arrivee" class="calc-select" onchange="updateManualDist('da')">
-              <option value="">— Ville d'arrivée —</option>
-            </select>
+            <select id="da-ville-depart" class="calc-select" placeholder="Départ (ex. Paris, CDG)"><option value="">Départ</option></select>
+            <select id="da-ville-arrivee" class="calc-select" placeholder="Arrivée (ex. Dakar, DKR)"><option value="">Arrivée</option></select>
           </div>
         </div>
 
@@ -2068,6 +2080,11 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
         <div class="escale-info">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--neon-b)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           <span>La loi CE 261 prend la <strong>distance totale</strong> départ → destination finale. Indiquez le <strong>dernier vol</strong> — c'est lui qui détermine l'indemnité.</span>
+        </div>
+
+        <div class="calc-field" style="margin-bottom:12px">
+          <label class="calc-label" for="eb-compagnie">Compagnie (optionnel)</label>
+          <select id="eb-compagnie" placeholder="Rechercher une compagnie…"><option value="">Rechercher une compagnie…</option></select>
         </div>
 
         <div class="calc-field">
@@ -2271,10 +2288,10 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
         <div class="comp-cell"><span class="price-red">~30%</span></div>
       </div>
       <div class="comp-row">
-        <div class="comp-cell feature">Notre commission</div>
-        <div class="comp-cell hl"><span class="price-green">25%</span></div>
-        <div class="comp-cell"><span class="price-red">35–50%</span></div>
-        <div class="comp-cell"><span class="price-red">30–44%</span></div>
+        <div class="comp-cell feature">Leur commission · Si procès (la nôtre reste 25%)</div>
+        <div class="comp-cell hl"><span class="price-green">25% inclus, inchangé si procès</span></div>
+        <div class="comp-cell"><span class="price-red">35–50% · si procès eux 44–50%</span></div>
+        <div class="comp-cell"><span class="price-red">30–44% · si procès eux 44%</span></div>
       </div>
       <div class="comp-row">
         <div class="comp-cell feature">Sur <strong>600€</strong> récupérés</div>
@@ -2283,10 +2300,10 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
         <div class="comp-cell"><span style="color:#c0392b;font-weight:600;">336€ pour vous</span></div>
       </div>
       <div class="comp-row">
-        <div class="comp-cell feature">Frais si procès nécessaire</div>
-        <div class="comp-cell hl"><span class="check">✓</span> &nbsp;<span class="price-green">Inclus</span></div>
-        <div class="comp-cell"><span class="cross">✗</span> &nbsp;+15% en plus</div>
-        <div class="comp-cell"><span class="cross">✗</span> &nbsp;+14% en plus</div>
+        <div class="comp-cell feature">Frais procès (nous : inclus dans le tarif de base)</div>
+        <div class="comp-cell hl"><span class="check">✓</span> &nbsp;<span class="price-green">Inclus · nous 25%</span></div>
+        <div class="comp-cell"><span class="cross">✗</span> &nbsp;+15% en plus · eux 44–50%</div>
+        <div class="comp-cell"><span class="cross">✗</span> &nbsp;+14% en plus · eux 44%</div>
       </div>
       <div class="comp-row">
         <div class="comp-cell feature">CB ou ROB pour ouvrir un dossier</div>
@@ -2773,6 +2790,9 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
+<script src="data/airlines.js"></script>
+<script src="data/airports.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2/dist/js/tom-select.complete.min.js"></script>
 <script src="i18n.js"></script>
 <script>
 /* ════════════════════════════════════════════════════
@@ -3122,7 +3142,9 @@ function restartFunnel() {
   ['eb-chip1','eb-chip2'].forEach(id => { const el = document.getElementById(id); if(el) el.classList.remove('show'); });
   ['da-route-line','da-distance-line'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = ''; });
   var daManual = document.getElementById('da-manual-wrap'); if(daManual) daManual.style.display = 'none';
-  ['da-ville-depart','da-ville-arrivee'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+  if (window.tomSelectDaVilleDep) window.tomSelectDaVilleDep.clear();
+  if (window.tomSelectDaVilleArr) window.tomSelectDaVilleArr.clear();
+  updateManualDist('da');
   ['da-dist','eb-dist'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
   ['da-dist-wrap','eb-dist-wrap'].forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; });
   document.querySelectorAll('.dist-pill').forEach(p => p.classList.remove('active'));
@@ -3146,8 +3168,9 @@ function updateManualDist(prefix) {
   var distIn = document.getElementById(prefix + '-dist');
   var distWrap = document.getElementById(prefix + '-dist-wrap');
   var line = document.getElementById(prefix + '-distance-line');
-  if (!dep || !arr || !distIn) return;
-  var c1 = dep.value, c2 = arr.value;
+  if (!distIn) return;
+  var c1 = (prefix === 'da' && window.tomSelectDaVilleDep) ? window.tomSelectDaVilleDep.getValue() : (dep ? dep.value : '');
+  var c2 = (prefix === 'da' && window.tomSelectDaVilleArr) ? window.tomSelectDaVilleArr.getValue() : (arr ? arr.value : '');
   if (!c1 || !c2) {
     line.textContent = '';
     distIn.value = '';
@@ -3390,17 +3413,59 @@ document.addEventListener('DOMContentLoaded', () => {
     if (da) window.flatpickr(da, fpOpt);
     if (eb) window.flatpickr(eb, Object.assign({}, fpOpt));
   }
+
+  // Tom Select — Compagnie (diagnostic)
+  if (typeof TomSelect !== 'undefined' && window.AIRLINES_DATA) {
+    var tsOpt = {
+      options: window.AIRLINES_DATA,
+      optgroups: [
+        { value: 'Europe – Afrique', label: 'Europe – Afrique' },
+        { value: 'Majors européennes', label: 'Majors européennes' },
+        { value: 'Long-courrier', label: 'Long-courrier' },
+        { value: 'Autre', label: 'Autre' }
+      ],
+      optgroupField: 'optgroup',
+      optgroupLabelField: 'label',
+      optgroupValueField: 'value',
+      valueField: 'value',
+      labelField: 'text',
+      searchField: 'text',
+      maxItems: 1,
+      placeholder: 'Rechercher une compagnie…',
+      create: false,
+      allowEmptyOption: true
+    };
+    ['da-compagnie', 'eb-compagnie'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el && !el.tomselect) new TomSelect('#' + id, tsOpt);
+    });
+  }
+
+  // Tom Select — Aéroports Départ / Arrivée (diagnostic)
+  if (typeof TomSelect !== 'undefined' && window.AIRPORTS_DATA) {
+    var aopts = {
+      options: window.AIRPORTS_DATA,
+      valueField: 'value',
+      labelField: 'text',
+      searchField: 'search',
+      maxItems: 1,
+      placeholder: 'Ville ou code IATA',
+      create: false,
+      allowEmptyOption: true
+    };
+    var daDep = document.getElementById('da-ville-depart');
+    var daArr = document.getElementById('da-ville-arrivee');
+    if (daDep && !daDep.tomselect) {
+      window.tomSelectDaVilleDep = new TomSelect('#da-ville-depart', aopts);
+      window.tomSelectDaVilleDep.on('change', function() { updateManualDist('da'); });
+    }
+    if (daArr && !daArr.tomselect) {
+      window.tomSelectDaVilleArr = new TomSelect('#da-ville-arrivee', aopts);
+      window.tomSelectDaVilleArr.on('change', function() { updateManualDist('da'); });
+    }
+  }
 });
-/* Remplir les listes Ville de départ / arrivée (étape 3a) */
-(function fillVilleOptions() {
-  var dep = document.getElementById('da-ville-depart');
-  var arr = document.getElementById('da-ville-arrivee');
-  if (!dep || !arr || !window.VILLES_OPTIONS) return;
-  VILLES_OPTIONS.forEach(function(v) {
-    var o1 = document.createElement('option'); o1.value = v.c; o1.textContent = v.n; dep.appendChild(o1);
-    var o2 = document.createElement('option'); o2.value = v.c; o2.textContent = v.n; arr.appendChild(o2);
-  });
-})();
+/* Villes / aéroports : gérés par Tom Select + data/airports.js (priorité CDG, ORY, DSS, LYS, MRS, CMN, BRU) */
 </script>
 
 <!-- Barre CTA sticky (mobile + desktop) -->

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Déposer mon dossier — Robin des Airs</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2/dist/css/tom-select.css">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -94,6 +95,20 @@ a{text-decoration:none;color:inherit}
 .step3-suite:hover{background:rgba(0,200,122,.18)}
 .retard-3h-legal{display:none;margin-top:10px;padding:12px;font-size:11px;line-height:1.55;color:var(--gray);background:var(--off);border-radius:8px;border-left:3px solid var(--neon-dark)}
 .retard-3h-legal.visible{display:block}
+
+/* Tom Select — thème Robin des Airs */
+.ts-wrapper.single .ts-control{background:var(--off);border:1.5px solid var(--border);border-radius:7px;padding:10px 12px;font-family:"Montserrat",sans-serif;font-size:13px;min-height:42px}
+.ts-wrapper.single .ts-control:focus-within{border-color:var(--neon);box-shadow:0 0 0 3px rgba(0,200,122,.09)}
+.ts-wrapper .ts-control .ts-input input{color:var(--text);font-size:13px}
+.ts-wrapper.dropdown-active .ts-control{border-color:var(--neon);border-bottom-left-radius:0;border-bottom-right-radius:0}
+.ts-dropdown{background:white;border:1.5px solid var(--neon);border-top:none;border-radius:0 0 7px 7px;box-shadow:0 8px 24px rgba(11,31,58,.12)}
+.ts-dropdown .ts-dropdown-content{max-height:220px}
+.ts-dropdown .option,.ts-dropdown .optgroup-header{font-size:12.5px;padding:10px 13px}
+.ts-dropdown .option{color:var(--text)}
+.ts-dropdown .option.active{background:rgba(0,200,122,.12);color:var(--navy)}
+.ts-dropdown .optgroup-header{font-weight:700;color:var(--neon-dark);font-size:10px;letter-spacing:1px;text-transform:uppercase}
+.ts-wrapper .ts-control .item{color:var(--navy);font-weight:600}
+.ts-wrapper.single .ts-control .item{display:block}
 .add-leg-btn:hover{border-color:var(--neon);color:var(--neon-dark)}
 
 .info-box{display:flex;align-items:flex-start;gap:9px;background:rgba(0,200,122,.05);border:1px solid rgba(0,200,122,.18);border-radius:8px;padding:11px 14px;margin-bottom:14px;font-size:12px;color:var(--gray);line-height:1.6}
@@ -304,11 +319,11 @@ a{text-decoration:none;color:inherit}
       <div class="step3-block visible" id="step3-block-1">
         <div class="field" style="margin-bottom:0">
           <label>Ville de départ</label>
-          <input type="text" id="f-ville-depart" placeholder="Ex. Paris CDG">
+          <select id="f-ville-depart" placeholder="Ex. Paris CDG, Dakar…"><option value="">Rechercher (ville ou code IATA)…</option></select>
         </div>
         <div class="field">
           <label>Ville d'arrivée finale</label>
-          <input type="text" id="f-ville-arrivee" placeholder="Ex. Dakar, Abidjan…">
+          <select id="f-ville-arrivee" placeholder="Ex. Dakar, Abidjan…"><option value="">Rechercher (ville ou code IATA)…</option></select>
         </div>
         <button type="button" class="step3-suite" onclick="showStep3Block(2)">Suite : compagnie et numéro de vol →</button>
       </div>
@@ -317,44 +332,7 @@ a{text-decoration:none;color:inherit}
       <div class="step3-block" id="step3-block-2">
         <div class="field">
           <label>Compagnie aérienne</label>
-          <select id="f-compagnie">
-            <option value="">— Sélectionnez —</option>
-            <optgroup label="Europe – Afrique (principales)">
-              <option value="Air France">Air France</option>
-              <option value="Corsair">Corsair</option>
-              <option value="Transavia France">Transavia France</option>
-              <option value="Brussels Airlines">Brussels Airlines</option>
-              <option value="Royal Air Maroc">Royal Air Maroc</option>
-              <option value="Tunisair">Tunisair</option>
-              <option value="Air Algérie">Air Algérie</option>
-              <option value="ASKY Airlines">ASKY Airlines</option>
-              <option value="Ethiopian Airlines">Ethiopian Airlines</option>
-              <option value="Kenya Airways">Kenya Airways</option>
-              <option value="Air Senegal">Air Sénégal</option>
-              <option value="Camair-Co">Camair-Co</option>
-              <option value="Air Côte d'Ivoire">Air Côte d'Ivoire</option>
-              <option value="Air Burkina">Air Burkina</option>
-              <option value="TAP Air Portugal">TAP Air Portugal</option>
-              <option value="Turkish Airlines">Turkish Airlines</option>
-              <option value="EgyptAir">EgyptAir</option>
-              <option value="Air Arabia Maroc">Air Arabia Maroc</option>
-            </optgroup>
-            <optgroup label="Majors européennes">
-              <option value="Lufthansa">Lufthansa</option>
-              <option value="British Airways">British Airways</option>
-              <option value="KLM">KLM</option>
-              <option value="Swiss">Swiss</option>
-              <option value="Austrian">Austrian</option>
-              <option value="Iberia">Iberia</option>
-              <option value="Vueling">Vueling</option>
-              <option value="Ryanair">Ryanair</option>
-              <option value="easyJet">easyJet</option>
-              <option value="Norwegian">Norwegian</option>
-              <option value="SAS">SAS</option>
-              <option value="Finnair">Finnair</option>
-            </optgroup>
-            <option value="Autre">Autre</option>
-          </select>
+          <select id="f-compagnie" placeholder="Rechercher une compagnie…"><option value="">Rechercher une compagnie…</option></select>
         </div>
         <div id="legs-container"></div>
         <button class="add-leg-btn" onclick="addLeg()" id="add-leg-btn" type="button">
@@ -571,6 +549,9 @@ a{text-decoration:none;color:inherit}
 
 </div>
 
+<script src="data/airlines.js"></script>
+<script src="data/airports.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2/dist/js/tom-select.complete.min.js"></script>
 <script>
 /* ═══════════════════════════════════════════════
    ROBIN DES AIRS — Formulaire Dossier v3
@@ -730,19 +711,30 @@ function addLeg() {
     <div class="frow">
       <div class="field">
         <label>Départ</label>
-        ${makeAirportInput("leg" + i + "-dep", "Paris CDG")}
+        <select id="leg${i}-dep" placeholder="Paris CDG, Dakar…"><option value="">Ville ou code IATA</option></select>
       </div>
       <div class="field">
         <label>Arrivée</label>
-        ${makeAirportInput("leg" + i + "-arr", "Dakar DKR")}
+        <select id="leg${i}-arr" placeholder="Dakar, Abidjan…"><option value="">Ville ou code IATA</option></select>
       </div>
     </div>
   `;
   cont.appendChild(div);
+  if (typeof TomSelect !== "undefined" && window.AIRPORTS_DATA) {
+    if (!window.legTomSelects) window.legTomSelects = {};
+    var aopts = { options: window.AIRPORTS_DATA, valueField: "value", labelField: "text", searchField: "search", maxItems: 1, placeholder: "Ville ou code IATA", create: false, allowEmptyOption: true };
+    try {
+      window.legTomSelects[i] = { dep: new TomSelect("#leg" + i + "-dep", aopts), arr: new TomSelect("#leg" + i + "-arr", aopts) };
+    } catch (e) {}
+  }
   document.getElementById("add-leg-btn").style.display = legCount >= 6 ? "none" : "";
 }
 
 function removeLeg(i) {
+  if (window.legTomSelects && window.legTomSelects[i]) {
+    try { window.legTomSelects[i].dep.destroy(); window.legTomSelects[i].arr.destroy(); } catch (e) {}
+    delete window.legTomSelects[i];
+  }
   const el = document.getElementById("leg-" + i);
   if (el) el.remove();
   document.getElementById("add-leg-btn").style.display = "";
@@ -970,8 +962,10 @@ function submitDossier() {
 
   for (let i = 1; i <= legCount; i++) {
     const vol = document.getElementById("leg" + i + "-vol")?.value?.trim();
-    const dep = document.getElementById("leg" + i + "-dep")?.value?.trim();
-    const arr = document.getElementById("leg" + i + "-arr")?.value?.trim();
+    var depVal = (window.legTomSelects && window.legTomSelects[i]) ? window.legTomSelects[i].dep.getValue() : (document.querySelector("#leg" + i + "-dep select") || document.getElementById("leg" + i + "-dep"))?.value;
+    var arrVal = (window.legTomSelects && window.legTomSelects[i]) ? window.legTomSelects[i].arr.getValue() : (document.querySelector("#leg" + i + "-arr select") || document.getElementById("leg" + i + "-arr"))?.value;
+    const dep = (depVal || "").toString().trim();
+    const arr = (arrVal || "").toString().trim();
     if (vol) fd.append("leg" + i + "_vol", vol);
     if (dep) fd.append("leg" + i + "_dep", dep);
     if (arr) fd.append("leg" + i + "_arr", arr);
@@ -979,9 +973,12 @@ function submitDossier() {
   fd.append("date_vol", document.getElementById("f-date")?.value || "");
   fd.append("motif", document.getElementById("f-motif")?.value || "");
   fd.append("pnr", (document.getElementById("f-pnr")?.value || "").trim().toUpperCase());
-  fd.append("compagnie", (document.getElementById("f-compagnie")?.value || "").trim());
-  fd.append("ville_depart", (document.getElementById("f-ville-depart")?.value || "").trim());
-  fd.append("ville_arrivee_finale", (document.getElementById("f-ville-arrivee")?.value || "").trim());
+  var compagnieVal = (window.tomSelectCompagnie && window.tomSelectCompagnie.getValue()) || "";
+  fd.append("compagnie", String(compagnieVal || "").trim());
+  var villeDepEl = document.querySelector("#f-ville-depart select") || document.getElementById("f-ville-depart");
+  var villeArrEl = document.querySelector("#f-ville-arrivee select") || document.getElementById("f-ville-arrivee");
+  fd.append("ville_depart", (villeDepEl?.value || "").trim());
+  fd.append("ville_arrivee_finale", (villeArrEl?.value || "").trim());
   fd.append("retard_arrivee", (document.getElementById("f-retard-arrivee")?.value || "").trim());
 
   fd.append("boarding_later", laterActive.boarding ? "1" : "0");
@@ -1128,6 +1125,48 @@ document.addEventListener("DOMContentLoaded", () => {
     retardEl.addEventListener("change", function () {
       legal3h.classList.toggle("visible", retardEl.value === "3h");
     });
+  }
+
+  if (typeof TomSelect !== "undefined" && window.AIRPORTS_DATA) {
+    var airportOpts = {
+      options: window.AIRPORTS_DATA,
+      valueField: "value",
+      labelField: "text",
+      searchField: "search",
+      maxItems: 1,
+      placeholder: "Rechercher (ville ou code IATA)…",
+      create: false,
+      allowEmptyOption: true
+    };
+    ["f-ville-depart", "f-ville-arrivee"].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el && !el.tomselect) new TomSelect("#" + id, airportOpts);
+    });
+  }
+
+  if (typeof TomSelect !== "undefined" && window.AIRLINES_DATA) {
+    var selCompagnie = document.getElementById("f-compagnie");
+    if (selCompagnie && !selCompagnie.tomselect) {
+      window.tomSelectCompagnie = new TomSelect("#f-compagnie", {
+        options: window.AIRLINES_DATA,
+        optgroups: [
+          { value: "Europe – Afrique", label: "Europe – Afrique" },
+          { value: "Majors européennes", label: "Majors européennes" },
+          { value: "Long-courrier", label: "Long-courrier" },
+          { value: "Autre", label: "Autre" }
+        ],
+        optgroupField: "optgroup",
+        optgroupLabelField: "label",
+        optgroupValueField: "value",
+        valueField: "value",
+        labelField: "text",
+        searchField: "text",
+        maxItems: 1,
+        placeholder: "Rechercher une compagnie…",
+        create: false,
+        allowEmptyOption: true
+      });
+    }
   }
 
   const obs = new MutationObserver(() => {
