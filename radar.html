@@ -23,6 +23,8 @@
     select { padding: 8px 12px; border-radius: 6px; border: 1px solid #444; background: #1e1e1e; color: #fff; font-size: 14px; }
     .btn { padding: 8px 16px; border-radius: 6px; border: none; background: #25D366; color: #fff; font-weight: 600; cursor: pointer; font-size: 13px; }
     .btn:hover { opacity: 0.9; }
+    .btn-reset-total { background: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; }
+    .btn-reset-total:hover { background: #c0392b; }
     table { width: 100%; border-collapse: collapse; background: #161616; border-radius: 8px; overflow: hidden; font-size: 14px; }
     th { background: #222; padding: 15px; text-align: left; color: #666; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
     td { padding: 15px; border-bottom: 1px solid #222; }
@@ -93,6 +95,7 @@
     </div>
 
     <div class="toolbar">
+      <button type="button" onclick="forcerRafraichissement()" class="btn-reset-total">🔄 RAFRAÎCHIR LE CIEL (RESET TOTAL)</button>
       <button class="btn" id="btn-refresh">Rafraîchir</button>
     </div>
 
@@ -301,6 +304,19 @@
         if (typeof Notification !== 'undefined' && Notification.permission === 'default')
           Notification.requestPermission();
       } catch (e) {}
+    }
+
+    function forcerRafraichissement() {
+      loadInProgress = false;
+      alertedKeys = {};
+      try { sessionStorage.removeItem('radar_alerted'); } catch (e) {}
+      var body = document.getElementById('flight-body');
+      var loader = document.getElementById('loader');
+      var table = document.getElementById('flight-table');
+      if (body) body.innerHTML = '';
+      if (loader) { loader.textContent = LOADER_TEXT; loader.style.display = 'block'; }
+      if (table) table.style.display = 'none';
+      load();
     }
 
     document.getElementById('btn-refresh').addEventListener('click', load);
