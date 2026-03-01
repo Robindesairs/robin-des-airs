@@ -154,9 +154,10 @@ exports.handler = async (event) => {
   try {
     const allRaw = [];
     const arrivalRaw = [];
+    const cacheBuster = Date.now();
     for (const hub of HUBS) {
-      const depUrl = `https://aviation-edge.com/v2/public/timetable?key=${apiKey}&iataCode=${hub}&type=departure`;
-      const arrUrl = `https://aviation-edge.com/v2/public/timetable?key=${apiKey}&iataCode=${hub}&type=arrival`;
+      const depUrl = `https://aviation-edge.com/v2/public/timetable?key=${apiKey}&iataCode=${hub}&type=departure&_=${cacheBuster}`;
+      const arrUrl = `https://aviation-edge.com/v2/public/timetable?key=${apiKey}&iataCode=${hub}&type=arrival&_=${cacheBuster}`;
       const [depRes, arrRes] = await Promise.all([fetch(depUrl), fetch(arrUrl)]);
       const depData = await depRes.json();
       const arrData = await arrRes.json();
