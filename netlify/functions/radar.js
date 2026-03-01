@@ -64,6 +64,17 @@ function toTimeStr(val) {
   return '—';
 }
 
+/** Calcule le retard en minutes = différence (heure effective − heure prévue). Retourne null si impossible. */
+function delayMinutesFromTimes(scheduledTime, actualOrEstimatedTime) {
+  if (!scheduledTime || !actualOrEstimatedTime) return null;
+  const s = new Date(scheduledTime).getTime();
+  const a = new Date(actualOrEstimatedTime).getTime();
+  if (isNaN(s) || isNaN(a)) return null;
+  const diffMs = a - s;
+  const diffMin = Math.round(diffMs / 60000);
+  return diffMin > 0 ? diffMin : 0;
+}
+
 exports.handler = async (event) => {
   const apiKey = process.env.AVIATION_EDGE_KEY;
   if (!apiKey) {
@@ -102,9 +113,13 @@ exports.handler = async (event) => {
       const airlineIata = (f.airline?.iataCode || (f.flight?.iata && f.flight.iata.slice(0, 2)) || '').toUpperCase();
       const flightNumber = f.flight?.iata || f.flight?.number || f.flight?.icao || '—';
 
-      let delayMinutes = 0;
-      if (typeof arr.delay === 'number') delayMinutes = arr.delay;
-      else if (typeof dep.delay === 'number') delayMinutes = dep.delay;
+      const effectiveTime = dep.actualTime || dep.estimatedTime;
+      let delayMinutes = delayMinutesFromTimes(dep.scheduledTime, effectiveTime);
+      if (delayMinutes == null) {
+        delayMinutes = 0;
+        if (typeof arr.delay === 'number') delayMinutes = arr.delay;
+        else if (typeof dep.delay === 'number') delayMinutes = dep.delay;
+      }
 
       const statusRaw = (f.status || '').toLowerCase();
       const cancelled = statusRaw === 'cancelled' || statusRaw === 'canceled' || statusRaw === 'annulé';
