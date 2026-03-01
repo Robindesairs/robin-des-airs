@@ -349,19 +349,22 @@
     }
 
     var LOADER_TEXT = '🚀 Robin scanne les couloirs aériens entre l\'Afrique et l\'Europe...';
+    var RADAR_API_ORIGIN = ''; // Vide = même origine. En local (file/localhost), mets l'URL de ton site Netlify, ex: 'https://robin-des-airs.netlify.app'
 
     function api() {
-      var url = '/.netlify/functions/radar?_=' + Date.now();
+      var origin = RADAR_API_ORIGIN || (window.location.origin || '');
+      var isLocal = !origin || origin === 'file://' || origin === 'null' || /^https?:\/\/localhost(:\d+)?$/i.test(origin);
+      if (isLocal) origin = 'https://robin-des-airs.netlify.app';
+      var url = origin + '/.netlify/functions/radar?_=' + Date.now();
       return fetch(url, { cache: 'no-store', headers: { Pragma: 'no-cache', 'Cache-Control': 'no-cache' } }).then(function(r) {
         return r.text().then(function(text) {
-          var ct = (r.headers.get('content-type') || '').toLowerCase();
           if (!r.ok || !text.trim().startsWith('{')) {
-            return { flights: [], error: 'Le serveur a renvoyé une page d\'erreur (HTML). Vérifiez le déploiement Netlify et la variable AVIATION_EDGE_KEY.' };
+            return { flights: [], error: 'Le serveur a renvoyé du HTML au lieu de JSON. Vérifiez : 1) Ouvrir cette URL dans un onglet : ' + url + ' 2) Variable AVIATION_EDGE_KEY dans Netlify. 3) Page radar ouverte depuis l\'URL Netlify (pas en local).' };
           }
           try {
             return JSON.parse(text);
           } catch (e) {
-            return { flights: [], error: 'Réponse invalide (attendu JSON). Vérifiez Netlify et la clé API.' };
+            return { flights: [], error: 'Réponse invalide. Testez l\'API directement : ' + url };
           }
         });
       });

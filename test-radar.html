@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEST RADAR - Robin des Airs</title>
+    <style>
+        body { background: #111; color: #eee; font-family: sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .vol-card { background: #222; padding: 12px; margin: 10px 0; border-left: 5px solid #3b82f6; font-size: 14px; }
+        button { padding: 15px 24px; background: #e74c3c; color: white; border: none; cursor: pointer; font-weight: bold; border-radius: 6px; }
+        button:hover { background: #c0392b; }
+        #status { margin: 16px 0; font-size: 15px; line-height: 1.5; }
+        .ok { color: #2ecc71; }
+        .err { color: #ff6b6b; }
+        .warn { color: #ffcc00; }
+        p { color: #888; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <h1>🔍 Test connexion radar</h1>
+    <p>Appelle la fonction Netlify <code>/.netlify/functions/radar</code> (clé API côté serveur). Aucun filtre : on vérifie juste que la data arrive.</p>
+    
+    <button onclick="testerAPI()">LANCER LE TEST</button>
+    <div id="status"></div>
+    <div id="resultats"></div>
+
+<script>
+    function apiOrigin() {
+        var o = window.location.origin || '';
+        if (!o || o === 'file://' || o === 'null' || /^https?:\/\/localhost(:\d+)?$/i.test(o)) {
+            return 'https://robin-des-airs.netlify.app';
+        }
+        return o;
+    }
+
+    async function testerAPI() {
+        var resDiv = document.getElementById('resultats');
+        var statusDiv = document.getElementById('status');
+        
+        resDiv.innerHTML = '';
+        statusDiv.innerHTML = '⏳ Connexion en cours...';
+        statusDiv.className = '';
+
+        var url = apiOrigin() + '/.netlify/functions/radar?_=' + Date.now();
+
+        try {
+            var response = await fetch(url);
+            var text = await response.text();
+
+            if (!response.ok || !text.trim().startsWith('{')) {
+                statusDiv.innerHTML = '<span class="err">❌ Le serveur a renvoyé du HTML ou une erreur (pas du JSON).<br>Ouvrez cette URL dans un onglet pour voir la réponse :<br><a href="' + url + '" target="_blank" style="color:#3b82f6">' + url + '</a><br><br>Vérifiez : variable AVIATION_EDGE_KEY dans Netlify, et que cette page est ouverte depuis l\'URL Netlify.</span>';
+                statusDiv.className = 'err';
+                return;
+            }
+
+            var data = JSON.parse(text);
+
+            if (data.error && (!data.flights || data.flights.length === 0)) {
+                statusDiv.innerHTML = '<span class="err">❌ Erreur : ' + data.error + '</span>';
+                statusDiv.className = 'err';
+                return;
+            }
+
+            var flights = data.flights || [];
+            statusDiv.innerHTML = '<span class="ok">✅ Succès : ' + flights.length + ' vol(s) reçu(s) par la fonction radar.</span>';
+            statusDiv.className = 'ok';
+
+            flights.slice(0, 5).forEach(function(f) {
+                resDiv.innerHTML += '<div class="vol-card"><b>Vol</b> ' + (f.flight || '—') + ' | ' + (f.dep || '—') + ' → ' + (f.arr || '—') + ' | Retard : ' + (f.delayMinutes != null ? f.delayMinutes : '—') + ' min | ' + (f.eligible ? 'Loi EU 261 ✅' : '') + '</div>';
+            });
+            if (flights.length > 5) {
+                resDiv.innerHTML += '<p style="margin-top:12px;color:#888;">… et ' + (flights.length - 5) + ' autre(s) vol(s).</p>';
+            }
+
+        } catch (e) {
+            statusDiv.innerHTML = '<span class="err">⚠️ Erreur : ' + (e.message || e) + '</span>';
+            statusDiv.className = 'err';
+        }
+    }
+</script>
+</body>
+</html>
