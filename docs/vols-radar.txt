@@ -1,0 +1,17 @@
+RADAR ROBIN DES AIRS — TOUS LES VOLS EUROPE–AFRIQUE
+====================================================
+
+POUR VOIR TOUS LES VOLS EUROPE–AFRIQUE :
+
+1. Ouvre un terminal (dans Cursor : Terminal → Nouveau terminal).
+
+2. Lance cette commande :
+   bash scripts/fetch-vols-radar.sh
+
+3. Ouvre ce fichier dans Cursor (docs/vols-radar.txt) ou rafraîchis-le :
+   tu verras la liste pour tous les aéroports (Dakar, Paris CDG/Orly, Marseille, Lyon, Bruxelles, Casablanca, Abidjan, Bamako) — départs ET arrivées.
+
+Condition : le site doit être déployé sur Netlify (avec la clé API Aviation Edge) pour que les données s’affichent. Sinon tu verras "Pas de données" jusqu’au prochain déploiement.
+
+---
+(Les vols s’afficheront ici après avoir exécuté la commande ci-dessus.)

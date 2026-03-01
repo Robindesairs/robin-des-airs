@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Radar Robin des Airs — Surveillance des vols Afrique ↔ Europe</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 700px; margin: 0 auto; padding: 40px 24px; line-height: 1.6; color: #1a1a1a; }
+    h1 { font-size: 1.5rem; margin-bottom: 8px; color: #0B1F3A; border-bottom: 2px solid #00E5A0; padding-bottom: 8px; }
+    h2 { font-size: 1.15rem; margin-top: 28px; margin-bottom: 12px; color: #0B1F3A; }
+    h3 { font-size: 1rem; margin-top: 20px; margin-bottom: 8px; color: #333; }
+    p { margin-bottom: 12px; }
+    ul { margin: 8px 0 16px 24px; }
+    li { margin-bottom: 6px; }
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+    th, td { border: 1px solid #ddd; padding: 10px 12px; text-align: left; }
+    th { background: #0B1F3A; color: #fff; font-weight: 600; }
+    tr:nth-child(even) { background: #f8f9fa; }
+    code { background: #f0f0f0; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+    .meta { font-size: 12px; color: #666; margin-top: 32px; }
+    hr { border: none; border-top: 1px solid #ddd; margin: 24px 0; }
+    @media print {
+      body { padding: 20px; }
+      h1 { font-size: 1.35rem; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Radar Robin des Airs — Surveillance des vols Afrique ↔ Europe</h1>
+  <p>Ce document définit le périmètre et les règles d’affichage du radar (tableau des vols en retard).</p>
+
+  <hr>
+
+  <h2>1. Périmètre</h2>
+  <p><strong>Objet :</strong> surveillance des vols entre <strong>toute l’Afrique</strong> et <strong>toute l’Europe</strong>.</p>
+  <ul>
+    <li><strong>Afrique :</strong> tout le continent africain (tous les pays et territoires).</li>
+    <li><strong>Europe :</strong> tout le continent européen (tous les pays et territoires).</li>
+  </ul>
+  <p>Les vols concernés sont ceux qui relient un aéroport en Afrique à un aéroport en Europe, ou l’inverse.</p>
+
+  <hr>
+
+  <h2>2. Priorité dans le tableau (du haut vers le bas)</h2>
+  <p>L’élément le plus important est de voir <strong>quels vols vont être en retard</strong>. Le tableau affiche en priorité :</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Ordre</th>
+        <th>Couleur</th>
+        <th>Retard</th>
+        <th>Signification</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1</strong></td>
+        <td><strong>ANNULÉ</strong></td>
+        <td>—</td>
+        <td>Vol annulé</td>
+      </tr>
+      <tr>
+        <td><strong>2</strong></td>
+        <td><strong>ROUGE</strong></td>
+        <td>≥ 2h30 (150 min)</td>
+        <td>Plus de 2h30 de retard</td>
+      </tr>
+      <tr>
+        <td><strong>3</strong></td>
+        <td><strong>ORANGE</strong></td>
+        <td>1h à 2h30 (60–149 min)</td>
+        <td>Entre 1h et 2h30</td>
+      </tr>
+      <tr>
+        <td><strong>4</strong></td>
+        <td><strong>JAUNE</strong></td>
+        <td>~1h / à surveiller (30–59 min)</td>
+        <td>Un peu plus d’une heure</td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>Vert</td>
+        <td>&lt; 30 min</td>
+        <td>RAS</td>
+      </tr>
+      <tr>
+        <td>6</td>
+        <td>Gris</td>
+        <td>—</td>
+        <td>Hors périmètre (non éligible)</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>Les vols <strong>annulés</strong> sont en tout en haut, puis les <strong>rouges</strong>, les <strong>orange</strong>, puis les <strong>jaunes</strong>.</p>
+
+  <hr>
+
+  <h2>3. Où est le fichier du radar et comment l’ouvrir</h2>
+  <h3>Fichier à ouvrir : la page du tableau (le radar)</h3>
+  <ul>
+    <li><strong>Nom du fichier :</strong> <code>radar.html</code></li>
+    <li><strong>Emplacement :</strong> à la racine du dossier du site (au même niveau que index.html).</li>
+    <li><strong>Chemin sur ton Mac :</strong> <code>/Users/climbie/Downloads/files/radar.html</code></li>
+  </ul>
+  <h3>Comment l’ouvrir</h3>
+  <p><strong>Option A — En ligne (après déploiement Netlify)</strong><br>
+  Ouvre ton navigateur et va sur : <code>https://ton-site.netlify.app/radar.html</code></p>
+  <p><strong>Option B — Sur ton ordinateur</strong><br>
+  Finder → Téléchargements → dossier <strong>files</strong> → double-clic sur <strong>radar.html</strong> (s’ouvre dans le navigateur).</p>
+  <p>Pour enregistrer ce document en PDF : dans le navigateur, <strong>Fichier → Imprimer → Enregistrer au format PDF</strong>.</p>
+
+  <p class="meta">Dernière mise à jour : février 2026.</p>
+</body>
+</html>
