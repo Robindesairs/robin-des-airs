@@ -77,25 +77,7 @@
     </header>
 
     <div class="toolbar">
-      <label>Aéroport
-        <select id="airport">
-          <option value="DSS" selected>DSS — Dakar</option>
-          <option value="CDG">CDG — Paris</option>
-          <option value="ORY">ORY — Orly</option>
-          <option value="BRU">BRU — Bruxelles</option>
-          <option value="MRS">MRS — Marseille</option>
-          <option value="LYS">LYS — Lyon</option>
-          <option value="CMN">CMN — Casablanca</option>
-        </select>
-      </label>
-      <label>Type
-        <select id="type">
-          <option value="departure">Départs</option>
-          <option value="arrival">Arrivées</option>
-        </select>
-      </label>
       <button class="btn" id="btn-refresh">Rafraîchir</button>
-      <span class="meta" id="updated"></span>
     </div>
 
     <div id="loader">🚀 Robin scanne les couloirs aériens entre l'Afrique et l'Europe...</div>
@@ -106,7 +88,9 @@
           <th>Vol</th>
           <th>Cie</th>
           <th>Trajet (Origine ➔ Dest)</th>
-          <th>Retard (Minutes)</th>
+          <th>Heure départ prévue</th>
+          <th>Heure départ estimée / effectif</th>
+          <th>Retard (minutes)</th>
           <th>Statut</th>
           <th>Indemnité</th>
           <th>Action Directe</th>
@@ -136,11 +120,6 @@
       document.getElementById('radar-content').style.display = 'block';
     }
 
-    function api(airport, type) {
-      return fetch('/.netlify/functions/radar?airport=' + encodeURIComponent(airport) + '&type=' + encodeURIComponent(type))
-        .then(function(r) { return r.json(); });
-    }
-
     function render(data) {
       var loader = document.getElementById('loader');
       var table = document.getElementById('flight-table');
@@ -167,13 +146,19 @@
         var waMsg = '🚨 ALERTE ROBIN DES AIRS\nVol : ' + (f.flight || '') + '\nTrajet : ' + (f.dep || '') + ' ➔ ' + (f.arr || '') + '\nRetard : ' + (f.cancelled ? 'vol annulé' : (f.delayMinutes != null ? f.delayMinutes + ' minutes' : '—')) + '.\nVous avez droit à 600€ d\'indemnité légale. Nous récupérons cet argent pour vous.';
         var waUrl = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(waMsg);
 
+        var scheduledDep = (f.scheduledDeparture != null && f.scheduledDeparture !== '—') ? f.scheduledDeparture : '—';
+        var estimatedDep = (f.estimatedDeparture != null && f.estimatedDeparture !== '—') ? f.estimatedDeparture : '—';
+        var retardNum = f.cancelled ? '—' : (f.delayMinutes != null ? String(f.delayMinutes) + ' min' : '—');
+
         var tr = document.createElement('tr');
         if (rowClass) tr.className = rowClass;
         tr.innerHTML =
           '<td><strong>' + (f.flight || '—') + '</strong></td>' +
           '<td><span class="airline-tag">' + (f.airline || '—') + '</span></td>' +
           '<td>' + (f.dep || '—') + ' ➔ ' + (f.arr || '—') + '</td>' +
-          '<td><span class="delay-box">' + retard + '</span></td>' +
+          '<td>' + scheduledDep + '</td>' +
+          '<td>' + estimatedDep + '</td>' +
+          '<td><span class="delay-box">' + retardNum + '</span></td>' +
           '<td><span class="badge ' + badgeClass + '">' + statusLabel + '</span></td>' +
           '<td>' + indemnite + '</td>' +
           '<td><a href="' + waUrl + '" target="_blank" class="btn-whatsapp">WhatsApp</a></td>';
@@ -184,15 +169,16 @@
       document.getElementById('total-cash').textContent = totalCash + ' €';
       var timeStr = data && data.updatedAt ? new Date(data.updatedAt).toLocaleTimeString('fr-FR') : '—';
       document.getElementById('update-time').textContent = 'MAJ : ' + timeStr;
-      if (document.getElementById('updated')) document.getElementById('updated').textContent = 'MAJ : ' + timeStr;
+    }
+
+    function api() {
+      return fetch('/.netlify/functions/radar').then(function(r) { return r.json(); });
     }
 
     function load() {
-      var airport = document.getElementById('airport').value;
-      var type = document.getElementById('type').value;
       document.getElementById('loader').style.display = 'block';
       document.getElementById('flight-table').style.display = 'none';
-      api(airport, type).then(function(data) {
+      api().then(function(data) {
         render(data);
       }).catch(function(e) {
         document.getElementById('loader').innerHTML = 'Erreur : ' + (e.message || 'réseau');
@@ -201,8 +187,6 @@
     }
 
     document.getElementById('btn-refresh').addEventListener('click', load);
-    document.getElementById('airport').addEventListener('change', load);
-    document.getElementById('type').addEventListener('change', load);
 
     if (checkAccess()) {
       showRadar();

@@ -1,8 +1,8 @@
 /**
- * Radar Robin des Airs — Vols Afrique ↔ Europe par aéroport.
+ * Radar Robin des Airs — Vols Afrique ↔ Europe (tous hubs, sans filtre aéroport).
  * Priorité : ANNULÉ → ROUGE (≥2h30) → ORANGE (1h–2h30) → JAUNE (~1h).
  * Variable Netlify : AVIATION_EDGE_KEY
- * Query : airport (ex. CDG), type=departure|arrival
+ * Query : sans param = tous les vols Afrique-Europe (multi-hubs)
  */
 
 const EU_COUNTRIES = ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO'];
@@ -19,6 +19,9 @@ const AIRPORT_COUNTRY = {
   CPT:'ZA', DLA:'CM', NSI:'CM', LBV:'GA', BZV:'CG', FIH:'CD', RUN:'RE', PTP:'GP', FDF:'MQ', MRU:'MU',
   TNR:'MG', MPM:'MZ', ACC:'GH', LOS:'NG', ABV:'NG'
 };
+
+/** Hubs pour scanner tous les vols Afrique ↔ Europe (sans filtre aéroport) */
+const HUBS = ['CDG', 'ORY', 'BRU', 'MAD', 'LIS', 'AMS', 'FRA', 'MRS', 'LYS', 'DSS', 'ABJ', 'BKO', 'CMN', 'NCE', 'TLS'];
 
 function getCountry(iata) {
   return AIRPORT_COUNTRY[(iata || '').toUpperCase()] || null;
@@ -43,12 +46,26 @@ function getColor(delayMinutes, eligible) {
   return 'GREEN';
 }
 
+function isEurope(country) {
+  return country && EU_COUNTRIES.includes(country.toUpperCase());
+}
+function isAfrica(country) {
+  return country && AFRICA_COUNTRIES.includes(country.toUpperCase());
+}
+
+/** Extrait HH:mm d'une chaîne ISO (ex. 2024-01-15T10:30:00) ou "HH:mm" */
+function toTimeStr(val) {
+  if (!val) return '—';
+  const s = String(val).trim();
+  const iso = s.match(/T(\d{2}):(\d{2})/);
+  if (iso) return iso[1] + ':' + iso[2];
+  const hhmm = s.match(/(\d{1,2}):(\d{2})/);
+  if (hhmm) return hhmm[1].padStart(2, '0') + ':' + hhmm[2];
+  return '—';
+}
+
 exports.handler = async (event) => {
   const apiKey = process.env.AVIATION_EDGE_KEY;
-  const airport = (event.queryStringParameters?.airport || 'CDG').trim().toUpperCase();
-  let type = (event.queryStringParameters?.type || 'departure').toLowerCase();
-  if (type !== 'departure' && type !== 'arrival') type = 'departure';
-
   if (!apiKey) {
     return {
       statusCode: 500,
@@ -58,24 +75,30 @@ exports.handler = async (event) => {
   }
 
   try {
-    const url = `https://aviation-edge.com/v2/public/timetable?key=${apiKey}&iataCode=${airport}&type=${type}`;
-    const res = await fetch(url);
-    const data = await res.json();
-
-    if (!Array.isArray(data)) {
-      return {
-        statusCode: 200,
-        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-        body: JSON.stringify({ flights: [], airport, type, updatedAt: new Date().toISOString(), error: 'Réponse API invalide' })
-      };
+    const allRaw = [];
+    for (const hub of HUBS) {
+      const url = `https://aviation-edge.com/v2/public/timetable?key=${apiKey}&iataCode=${hub}&type=departure`;
+      const res = await fetch(url);
+      const data = await res.json();
+      if (Array.isArray(data)) allRaw.push(...data);
     }
 
+    const seen = new Set();
     const flights = [];
-    for (const f of data) {
+    for (const f of allRaw) {
       const dep = f.departure || {};
       const arr = f.arrival || {};
       const depIata = (dep.iataCode || '').toUpperCase();
       const arrIata = (arr.iataCode || '').toUpperCase();
+      const depCountry = getCountry(depIata);
+      const arrCountry = getCountry(arrIata);
+      const isAfricaEurope = (isEurope(depCountry) && isAfrica(arrCountry)) || (isAfrica(depCountry) && isEurope(arrCountry));
+      if (!isAfricaEurope) continue;
+
+      const flightKey = (f.flight?.iata || f.flight?.number || '') + depIata + arrIata + (dep.scheduledTime || '');
+      if (seen.has(flightKey)) continue;
+      seen.add(flightKey);
+
       const airlineIata = (f.airline?.iataCode || (f.flight?.iata && f.flight.iata.slice(0, 2)) || '').toUpperCase();
       const flightNumber = f.flight?.iata || f.flight?.number || f.flight?.icao || '—';
 
@@ -86,16 +109,19 @@ exports.handler = async (event) => {
       const statusRaw = (f.status || '').toLowerCase();
       const cancelled = statusRaw === 'cancelled' || statusRaw === 'canceled' || statusRaw === 'annulé';
 
-      const originCountry = type === 'departure' ? getCountry(depIata) : getCountry(arrIata);
-      const destCountry = type === 'departure' ? getCountry(arrIata) : getCountry(depIata);
-      const eligible = checkEligible(originCountry, destCountry, airlineIata);
+      const eligible = checkEligible(depCountry, arrCountry, airlineIata);
       const color = cancelled ? 'CANCELLED' : getColor(delayMinutes, eligible);
+
+      const scheduledDeparture = toTimeStr(dep.scheduledTime);
+      const estimatedDeparture = toTimeStr(dep.actualTime || dep.estimatedTime || dep.scheduledTime);
 
       flights.push({
         flight: flightNumber,
         airline: airlineIata,
         dep: depIata || '—',
         arr: arrIata || '—',
+        scheduledDeparture,
+        estimatedDeparture,
         delayMinutes: cancelled ? null : delayMinutes,
         eligible,
         color,
@@ -112,8 +138,6 @@ exports.handler = async (event) => {
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       body: JSON.stringify({
         flights,
-        airport,
-        type,
         updatedAt: new Date().toISOString()
       })
     };
@@ -124,8 +148,6 @@ exports.handler = async (event) => {
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       body: JSON.stringify({
         flights: [],
-        airport,
-        type,
         updatedAt: new Date().toISOString(),
         error: err.message || 'Erreur radar'
       })
