@@ -87,6 +87,48 @@ function delayMinutesFromTimes(scheduledTime, actualOrEstimatedTime) {
   return diffMin > 0 ? diffMin : 0;
 }
 
+/** Statut vol API → libellé français (Décollé, Au sol, Taxi, etc.) */
+function statusToFr(statusRaw) {
+  const s = (statusRaw || '').toLowerCase();
+  if (s === 'cancelled' || s === 'canceled' || s === 'annulé') return 'Annulé';
+  if (s === 'landed' || s === 'arrived') return 'Atterri';
+  if (s === 'active' || s === 'in flight' || s === 'en vol') return 'En vol';
+  if (s === 'departed' || s === 'departure') return 'Décollé';
+  if (s === 'boarding') return 'Embarquement';
+  if (s === 'taxi' || s === 'taxiing') return 'Taxi';
+  if (s === 'delayed') return 'Retardé';
+  if (s === 'scheduled' || s === 'ontime') return 'Prévu';
+  if (s === 'diverted' || s === 'redirected') return 'Dérouté';
+  if (s === 'incident') return 'Incident';
+  if (s && s !== '—') return s.charAt(0).toUpperCase() + s.slice(1);
+  return 'Au sol';
+}
+
+/** Traqueur vol compagnie : URL avec numéro de vol si possible. */
+const AIRLINE_TRACKER = {
+  AF: 'https://www.airfrance.fr/flightstatus/search',
+  KL: 'https://www.klm.com/flightstatus',
+  SN: 'https://www.brusselsairlines.com/en/flight-status',
+  LH: 'https://www.lufthansa.com/flight-status',
+  IB: 'https://www.iberia.com/flight-status',
+  TP: 'https://www.flytap.com/flight-status',
+  FR: 'https://www.ryanair.com/flight-status',
+  U2: 'https://www.easyjet.com/en/flight-tracker',
+  VY: 'https://www.vueling.com/en/flight-status',
+  EI: 'https://www.aerlingus.com/flight-status',
+  LX: 'https://www.swiss.com/flight-status',
+  OS: 'https://www.austrian.com/flight-status',
+  DS: 'https://www.easyjet.com/en/flight-tracker'
+};
+function getTrackerUrl(airlineIata, flightNumber) {
+  const base = AIRLINE_TRACKER[(airlineIata || '').toUpperCase()];
+  if (!base) return null;
+  const fn = (flightNumber || '').replace(/\s/g, '');
+  if (base.includes('airfrance')) return base + '?flightNumber=' + encodeURIComponent(fn);
+  if (base.includes('klm.com')) return base + '?searchKey=' + encodeURIComponent(fn);
+  return base + (base.includes('?') ? '&' : '?') + 'flight=' + encodeURIComponent(fn);
+}
+
 exports.handler = async (event) => {
   const apiKey = process.env.AVIATION_EDGE_KEY;
   if (!apiKey) {
@@ -136,7 +178,9 @@ exports.handler = async (event) => {
       const cancelled = statusRaw === 'cancelled' || statusRaw === 'canceled' || statusRaw === 'annulé';
       const hasActualDep = !!(dep.actualTime);
       const flightStatus = cancelled ? 'cancelled' : (hasActualDep ? 'departed' : 'scheduled');
+      const statusFr = cancelled ? 'Annulé' : (hasActualDep ? 'Décollé' : statusToFr(f.status));
       const cancelledAt = cancelled ? (toTimeStrZulu(dep.estimatedTime || dep.actualTime || f.updatedAt || dep.scheduledTime) || null) : null;
+      const trackerUrl = getTrackerUrl(airlineIata, flightNumber);
 
       const eligible = checkEligible(depCountry, arrCountry, airlineIata);
       const color = cancelled ? 'CANCELLED' : getColor(delayMinutes, eligible);
@@ -161,9 +205,11 @@ exports.handler = async (event) => {
         color,
         cancelled: !!cancelled,
         status: f.status || '—',
+        statusFr,
         flightStatus,
         cancelledAt,
-        scheduledDate
+        scheduledDate,
+        trackerUrl
       };
 
       if (!routeMap.has(routeKey)) {

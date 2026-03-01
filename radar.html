@@ -51,6 +51,8 @@
       font-size: 12px; font-weight: bold; display: inline-block; transition: 0.3s;
     }
     .btn-ciblage:hover { transform: scale(1.05); background: #6d28d9; color: white; }
+    .btn-tracker { background: #0ea5e9; color: white; text-decoration: none; padding: 8px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; display: inline-block; }
+    .btn-tracker:hover { background: #0284c7; color: white; }
     .airline-tag { background: #333; padding: 2px 6px; border-radius: 3px; font-size: 11px; color: #ccc; }
     #loader { text-align: center; padding: 100px; font-size: 18px; color: #555; }
     .meta { font-size: 12px; color: #666; }
@@ -76,7 +78,7 @@
     <header>
       <div class="logo">🏹 ROBIN DES AIRS : SURVEILLANCE AFRIQUE-EUROPE</div>
       <div style="display:flex; flex-wrap:wrap; align-items:center; gap:14px;">
-        <div class="stat-card">Vols critiques (≥2h30) <span id="count-red" style="color:var(--red)">0</span></div>
+        <div class="stat-card">Vols critiques (≥2h30 + annulés) <span id="count-red" style="color:var(--red)">0</span></div>
         <div class="stat-card">Potentiel Cash <span id="total-cash" style="color:var(--green)">0 €</span></div>
         <div class="status-bar" id="update-time">Mise à jour en cours...</div>
       </div>
@@ -104,10 +106,11 @@
           <th>Scheduled landing (Z)</th>
           <th>Estimated arrival (Z)</th>
           <th class="retard-col">Retard (min)</th>
-          <th>Décollé ?</th>
+          <th>État vol</th>
           <th>Annulé</th>
           <th>Statut</th>
           <th>Indemnité</th>
+          <th>Traqueur</th>
           <th>Ciblage pub</th>
         </tr>
       </thead>
@@ -153,7 +156,7 @@
       body.innerHTML = '';
 
       var flights = (data && data.flights) ? data.flights : [];
-      var redCount = 0;
+      var criticalCount = 0;
       var totalCash = 0;
 
       flights.forEach(function(f) {
@@ -166,7 +169,7 @@
         var retard = f.cancelled ? '—' : (f.delayMinutes != null ? f.delayMinutes + ' min' : '—');
         var indemnite = (f.eligible && (color === 'RED' || color === 'ORANGE' || color === 'YELLOW')) ? (color === 'RED' || color === 'ORANGE' ? '600 €' : 'POTENTIEL 600€') : (f.eligible ? '—' : '—');
         if (f.eligible && (color === 'RED' || color === 'ORANGE') && !f.surveillanceRetour) totalCash += 450;
-        if (color === 'RED') redCount++;
+        if (color === 'RED' || f.cancelled) criticalCount++;
 
         var depCode = (f.dep || '').trim();
         var ciblageHref = (CIBLAGE_PUB_URL ? (CIBLAGE_PUB_URL + (CIBLAGE_PUB_URL.indexOf('?') >= 0 ? '&' : '?') + 'airport=' + encodeURIComponent(depCode)) : '#');
@@ -177,8 +180,10 @@
         var scheduledArr = (f.scheduledArrival != null && f.scheduledArrival !== '—') ? f.scheduledArrival : '—';
         var estimatedArr = (f.estimatedArrival != null && f.estimatedArrival !== '—') ? f.estimatedArrival : '—';
         var retardNum = f.cancelled ? '—' : (f.delayMinutes != null ? String(f.delayMinutes) + ' min' : '0 min');
-        var decolleLabel = f.flightStatus === 'cancelled' ? 'Annulé' : (f.flightStatus === 'departed' ? 'Oui' : 'Non');
+        var stateLabel = (f.statusFr != null && f.statusFr !== '') ? f.statusFr : (f.flightStatus === 'cancelled' ? 'Annulé' : (f.flightStatus === 'departed' ? 'Décollé' : 'Au sol'));
         var annuleCell = f.cancelled ? ('Oui' + (f.cancelledAt && f.cancelledAt !== '—' ? ' (~' + f.cancelledAt + ')' : '')) : '—';
+        var trackerHref = (f.trackerUrl && f.trackerUrl !== '#') ? f.trackerUrl : '#';
+        var trackerLabel = f.trackerUrl ? 'Traqueur ' + (f.airline || '') : '—';
 
         var tr = document.createElement('tr');
         if (rowClass) tr.className = rowClass;
@@ -191,27 +196,36 @@
           '<td>' + scheduledArr + '</td>' +
           '<td>' + estimatedArr + '</td>' +
           '<td><span class="delay-box">' + retardNum + '</span></td>' +
-          '<td>' + decolleLabel + '</td>' +
+          '<td>' + stateLabel + '</td>' +
           '<td>' + annuleCell + '</td>' +
           '<td><span class="badge ' + badgeClass + '">' + statusLabel + '</span></td>' +
           '<td>' + indemnite + '</td>' +
+          '<td>' + (trackerHref !== '#' ? '<a href="' + trackerHref + '" target="_blank" class="btn-tracker">' + trackerLabel + '</a>' : '—') + '</td>' +
           '<td><a href="' + ciblageHref + '" target="_blank" class="btn-ciblage" data-airport="' + (depCode || '') + '">' + ciblageLabel + '</a></td>';
         body.appendChild(tr);
 
         var key = (f.flight || '') + '|' + (f.dep || '') + '|' + (f.arr || '') + '|' + (f.scheduledDate || '');
-        var shouldAlert = f.cancelled || (f.delayMinutes != null && f.delayMinutes >= 150);
-        if (shouldAlert && !alertedKeys[key]) {
-          alertedKeys[key] = true;
-          var alertMsg = f.cancelled ? ('Vol ' + (f.flight || '') + ' ' + (f.dep || '') + ' → ' + (f.arr || '') + ' annulé.') : ('Vol ' + (f.flight || '') + ' : ' + f.delayMinutes + ' min de retard (≥ 150 min).');
-          showToast(alertMsg);
+        var isCritical = f.cancelled || (f.delayMinutes != null && f.delayMinutes >= 150);
+        var isSurveillance = !f.cancelled && f.delayMinutes != null && f.delayMinutes >= 30 && f.delayMinutes < 150;
+        if (isCritical && alertedKeys[key] !== 'critical') {
+          alertedKeys[key] = 'critical';
+          var criticalMsg = f.cancelled ? ('ALARME : Vol ' + (f.flight || '') + ' ' + (f.dep || '') + ' → ' + (f.arr || '') + ' annulé.') : ('ALARME : Vol ' + (f.flight || '') + ' — ' + f.delayMinutes + ' min de retard (≥ 150 min).');
+          showToast(criticalMsg);
           if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
-            new Notification('Robin des Airs — Radar', { body: alertMsg });
+            new Notification('Robin des Airs — ALARME CRITIQUE', { body: criticalMsg, tag: 'radar-critical' });
+          }
+          try { sessionStorage.setItem('radar_alerted', JSON.stringify(alertedKeys)); } catch (e) {}
+        } else if (isSurveillance && !alertedKeys[key]) {
+          alertedKeys[key] = 'surveillance';
+          var survMsg = 'Surveillance : Vol ' + (f.flight || '') + ' — ' + f.delayMinutes + ' min de retard.';
+          if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+            new Notification('Robin des Airs — Surveillance', { body: survMsg, tag: 'radar-surveillance' });
           }
           try { sessionStorage.setItem('radar_alerted', JSON.stringify(alertedKeys)); } catch (e) {}
         }
       });
 
-      document.getElementById('count-red').textContent = redCount;
+      document.getElementById('count-red').textContent = criticalCount;
       document.getElementById('total-cash').textContent = totalCash + ' €';
       var timeStr = data && data.updatedAt ? new Date(data.updatedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '—';
       document.getElementById('update-time').textContent = 'MAJ : ' + timeStr;
