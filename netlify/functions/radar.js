@@ -64,6 +64,18 @@ function toTimeStr(val) {
   return '—';
 }
 
+/** Heure en Zulu (UTC) : retourne "HH:mmZ" pour affichage radar. Les chaînes sans fuseau sont supposées UTC (standard aviation). */
+function toTimeStrZulu(val) {
+  if (!val) return '—';
+  let s = String(val).trim();
+  if (!/Z$|[+-]\d{2}:?\d{2}$/.test(s) && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(s)) s = s.replace(/\.\d+$/, '') + 'Z';
+  const d = new Date(s);
+  if (isNaN(d.getTime())) return toTimeStr(val);
+  const h = d.getUTCHours();
+  const m = d.getUTCMinutes();
+  return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + 'Z';
+}
+
 /** Calcule le retard en minutes = différence (heure effective − heure prévue). Retourne null si impossible. */
 function delayMinutesFromTimes(scheduledTime, actualOrEstimatedTime) {
   if (!scheduledTime || !actualOrEstimatedTime) return null;
@@ -125,13 +137,15 @@ exports.handler = async (event) => {
       const cancelled = statusRaw === 'cancelled' || statusRaw === 'canceled' || statusRaw === 'annulé';
       const hasActualDep = !!(dep.actualTime);
       const flightStatus = cancelled ? 'cancelled' : (hasActualDep ? 'departed' : 'scheduled');
-      const cancelledAt = cancelled ? (toTimeStr(dep.estimatedTime || dep.actualTime || f.updatedAt || dep.scheduledTime) || null) : null;
+      const cancelledAt = cancelled ? (toTimeStrZulu(dep.estimatedTime || dep.actualTime || f.updatedAt || dep.scheduledTime) || null) : null;
 
       const eligible = checkEligible(depCountry, arrCountry, airlineIata);
       const color = cancelled ? 'CANCELLED' : getColor(delayMinutes, eligible);
 
-      const scheduledDeparture = toTimeStr(dep.scheduledTime);
-      const estimatedDeparture = toTimeStr(dep.actualTime || dep.estimatedTime || dep.scheduledTime);
+      const scheduledDeparture = toTimeStrZulu(dep.scheduledTime);
+      const estimatedDeparture = toTimeStrZulu(dep.actualTime || dep.estimatedTime || dep.scheduledTime);
+      const scheduledArrival = toTimeStrZulu(arr.scheduledTime);
+      const estimatedArrival = toTimeStrZulu(arr.actualTime || arr.estimatedTime || arr.scheduledTime);
       const scheduledDate = (dep.scheduledTime && String(dep.scheduledTime).slice(0, 10)) || null;
 
       flights.push({
@@ -141,6 +155,8 @@ exports.handler = async (event) => {
         arr: arrIata || '—',
         scheduledDeparture,
         estimatedDeparture,
+        scheduledArrival,
+        estimatedArrival,
         delayMinutes: cancelled ? null : delayMinutes,
         eligible,
         color,

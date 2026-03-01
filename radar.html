@@ -84,6 +84,7 @@
 
     <div class="radar-date-bar" id="radar-date-bar">
       <span class="radar-view-date" id="radar-view-date">Vue du — — Dernière MAJ : —</span>
+      <span class="radar-zulu-note" style="display:block; margin-top:6px; font-size:12px; color:#888;">Toutes les heures en Zulu (UTC) — suffixe Z</span>
     </div>
 
     <div class="toolbar">
@@ -98,8 +99,10 @@
           <th>Vol</th>
           <th>Cie</th>
           <th>Trajet (Origine ➔ Dest)</th>
-          <th>Heure départ prévue</th>
-          <th>Heure départ (estimée ou réelle)</th>
+          <th>Heure départ prévue (Z)</th>
+          <th>Heure départ estimée ou réelle (Z)</th>
+          <th>Scheduled landing (Z)</th>
+          <th>Estimated arrival (Z)</th>
           <th class="retard-col">Retard (min)</th>
           <th>Décollé ?</th>
           <th>Annulé</th>
@@ -171,6 +174,8 @@
 
         var scheduledDep = (f.scheduledDeparture != null && f.scheduledDeparture !== '—') ? f.scheduledDeparture : '—';
         var estimatedDep = (f.estimatedDeparture != null && f.estimatedDeparture !== '—') ? f.estimatedDeparture : '—';
+        var scheduledArr = (f.scheduledArrival != null && f.scheduledArrival !== '—') ? f.scheduledArrival : '—';
+        var estimatedArr = (f.estimatedArrival != null && f.estimatedArrival !== '—') ? f.estimatedArrival : '—';
         var retardNum = f.cancelled ? '—' : (f.delayMinutes != null ? String(f.delayMinutes) + ' min' : '0 min');
         var decolleLabel = f.flightStatus === 'cancelled' ? 'Annulé' : (f.flightStatus === 'departed' ? 'Oui' : 'Non');
         var annuleCell = f.cancelled ? ('Oui' + (f.cancelledAt && f.cancelledAt !== '—' ? ' (~' + f.cancelledAt + ')' : '')) : '—';
@@ -183,6 +188,8 @@
           '<td>' + (f.dep || '—') + ' ➔ ' + (f.arr || '—') + '</td>' +
           '<td>' + scheduledDep + '</td>' +
           '<td>' + estimatedDep + '</td>' +
+          '<td>' + scheduledArr + '</td>' +
+          '<td>' + estimatedArr + '</td>' +
           '<td><span class="delay-box">' + retardNum + '</span></td>' +
           '<td>' + decolleLabel + '</td>' +
           '<td>' + annuleCell + '</td>' +
@@ -213,7 +220,9 @@
         return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
       })() : new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
       var dateBarEl = document.getElementById('radar-view-date');
-      if (dateBarEl) dateBarEl.textContent = 'Vue du ' + viewDateStr + ' — Dernière MAJ : ' + timeStr;
+      var nowZ = new Date();
+      var zuluNow = String(nowZ.getUTCHours()).padStart(2, '0') + ':' + String(nowZ.getUTCMinutes()).padStart(2, '0') + 'Z';
+      if (dateBarEl) dateBarEl.textContent = 'Vue du ' + viewDateStr + ' — Dernière MAJ : ' + timeStr + ' — Heure Zulu : ' + zuluNow;
     }
 
     function api() {
