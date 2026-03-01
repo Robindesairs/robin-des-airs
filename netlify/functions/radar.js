@@ -152,6 +152,19 @@ exports.handler = async (event) => {
       });
     }
 
+    // Lier les vols retour aux vols aller annulés : marquer en SURVEILLANCE RETOUR
+    for (const fl of flights) {
+      if (fl.cancelled && fl.dep && fl.arr) {
+        const returnFlights = flights.filter(
+          (f) => !f.cancelled && f.dep === fl.arr && f.arr === fl.dep
+        );
+        returnFlights.forEach((r) => {
+          r.surveillanceRetour = true;
+          r.linkedCancelledFlight = fl.flight;
+        });
+      }
+    }
+
     const order = { CANCELLED: 0, RED: 1, ORANGE: 2, YELLOW: 3, GREEN: 4, GREY: 5 };
     flights.sort((a, b) => (order[a.color] ?? 6) - (order[b.color] ?? 6) || ((b.delayMinutes || 0) - (a.delayMinutes || 0)));
 

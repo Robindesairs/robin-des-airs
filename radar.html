@@ -46,11 +46,11 @@
     .radar-date-bar { margin-bottom: 12px; padding: 10px 14px; background: #1a1a1a; border-radius: 8px; border-left: 4px solid var(--red); }
     .radar-view-date { font-size: 15px; font-weight: 700; color: #e0e0e0; }
     th.retard-col { color: var(--yellow); }
-    .btn-whatsapp {
-      background: #25D366; color: white; text-decoration: none; padding: 10px 15px; border-radius: 6px;
+    .btn-ciblage {
+      background: #7c3aed; color: white; text-decoration: none; padding: 10px 15px; border-radius: 6px;
       font-size: 12px; font-weight: bold; display: inline-block; transition: 0.3s;
     }
-    .btn-whatsapp:hover { transform: scale(1.05); background: #1ebe57; }
+    .btn-ciblage:hover { transform: scale(1.05); background: #6d28d9; color: white; }
     .airline-tag { background: #333; padding: 2px 6px; border-radius: 3px; font-size: 11px; color: #ccc; }
     #loader { text-align: center; padding: 100px; font-size: 18px; color: #555; }
     .meta { font-size: 12px; color: #666; }
@@ -58,6 +58,9 @@
     #gate input { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #444; background: #1e1e1e; color: #fff; font-size: 14px; margin-bottom: 10px; }
     #gate .btn { width: 100%; }
     .gate-err { font-size: 12px; color: var(--red); margin-top: 8px; display: none; }
+    .badge-surveillance-retour { background: #7c3aed; color: white; }
+    .toast-alert { position: fixed; bottom: 24px; right: 24px; max-width: 360px; padding: 14px 18px; background: #1a1a1a; border: 2px solid var(--red); border-radius: 8px; color: #e0e0e0; font-size: 13px; z-index: 9999; box-shadow: 0 8px 24px rgba(0,0,0,0.5); animation: toastIn 0.3s ease; }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
@@ -96,13 +99,13 @@
           <th>Cie</th>
           <th>Trajet (Origine ➔ Dest)</th>
           <th>Heure départ prévue</th>
-          <th>Heure départ effectif</th>
+          <th>Heure départ (estimée ou réelle)</th>
           <th class="retard-col">Retard (min)</th>
           <th>Décollé ?</th>
           <th>Annulé</th>
           <th>Statut</th>
           <th>Indemnité</th>
-          <th>Action Directe</th>
+          <th>Ciblage pub</th>
         </tr>
       </thead>
       <tbody id="flight-body"></tbody>
@@ -111,8 +114,9 @@
 
   <script>
     var RADAR_PWD = 'robin-dakar';
-    var WHATSAPP_NUMBER = '33756863630';
+    var CIBLAGE_PUB_URL = ''; // ex: 'https://business.facebook.com/adsmanager' — le paramètre ?airport= sera ajouté
     var refreshTimer;
+    var alertedKeys = {}; // clés déjà notifiées (retard >= 150 ou annulé)
 
     function checkAccess() {
       try { return sessionStorage.getItem('radar_ok') === '1'; } catch (e) { return false; }
@@ -129,6 +133,14 @@
       document.getElementById('radar-content').style.display = 'block';
     }
 
+    function showToast(msg) {
+      var el = document.createElement('div');
+      el.className = 'toast-alert';
+      el.textContent = msg;
+      document.body.appendChild(el);
+      setTimeout(function() { el.remove(); }, 6000);
+    }
+
     function render(data) {
       var loader = document.getElementById('loader');
       var table = document.getElementById('flight-table');
@@ -143,17 +155,19 @@
 
       flights.forEach(function(f) {
         var color = f.cancelled ? 'CANCELLED' : (f.color || 'GREY');
+        if (f.surveillanceRetour) color = 'ORANGE';
         var rowClass = 'row-' + (color === 'RED' ? 'red' : color === 'ORANGE' ? 'orange' : color === 'YELLOW' ? 'yellow' : color === 'CANCELLED' ? 'cancelled' : '');
         if ((f.airline || '').toUpperCase() === 'AF') rowClass += ' row-af';
-        var badgeClass = 'badge-' + (color === 'CANCELLED' ? 'cancelled' : color.toLowerCase());
-        var statusLabel = f.cancelled ? 'ANNULÉ' : (color === 'RED' ? '🔴 CRITIQUE' : color === 'ORANGE' ? '🟠 SURVEILLANCE' : color === 'YELLOW' ? '🟡 SURVEILLANCE' : color === 'GREEN' ? 'OK' : '—');
+        var badgeClass = f.surveillanceRetour ? 'badge-surveillance-retour' : ('badge-' + (color === 'CANCELLED' ? 'cancelled' : color.toLowerCase()));
+        var statusLabel = f.surveillanceRetour ? '🟣 SURVEILLANCE RETOUR' : (f.cancelled ? 'ANNULÉ' : (color === 'RED' ? '🔴 CRITIQUE' : color === 'ORANGE' ? '🟠 SURVEILLANCE' : color === 'YELLOW' ? '🟡 SURVEILLANCE' : color === 'GREEN' ? 'OK' : '—'));
         var retard = f.cancelled ? '—' : (f.delayMinutes != null ? f.delayMinutes + ' min' : '—');
         var indemnite = (f.eligible && (color === 'RED' || color === 'ORANGE' || color === 'YELLOW')) ? (color === 'RED' || color === 'ORANGE' ? '600 €' : 'POTENTIEL 600€') : (f.eligible ? '—' : '—');
-        if (f.eligible && (color === 'RED' || color === 'ORANGE')) totalCash += 450;
+        if (f.eligible && (color === 'RED' || color === 'ORANGE') && !f.surveillanceRetour) totalCash += 450;
         if (color === 'RED') redCount++;
 
-        var waMsg = '🚨 ALERTE ROBIN DES AIRS\nVol : ' + (f.flight || '') + '\nTrajet : ' + (f.dep || '') + ' ➔ ' + (f.arr || '') + '\nRetard : ' + (f.cancelled ? 'vol annulé' : (f.delayMinutes != null ? f.delayMinutes + ' minutes' : '—')) + '.\nVous avez droit à 600€ d\'indemnité légale. Nous récupérons cet argent pour vous.';
-        var waUrl = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(waMsg);
+        var depCode = (f.dep || '').trim();
+        var ciblageHref = (CIBLAGE_PUB_URL ? (CIBLAGE_PUB_URL + (CIBLAGE_PUB_URL.indexOf('?') >= 0 ? '&' : '?') + 'airport=' + encodeURIComponent(depCode)) : '#');
+        var ciblageLabel = depCode ? ('Ciblage ' + depCode) : 'Ciblage pub';
 
         var scheduledDep = (f.scheduledDeparture != null && f.scheduledDeparture !== '—') ? f.scheduledDeparture : '—';
         var estimatedDep = (f.estimatedDeparture != null && f.estimatedDeparture !== '—') ? f.estimatedDeparture : '—';
@@ -174,8 +188,20 @@
           '<td>' + annuleCell + '</td>' +
           '<td><span class="badge ' + badgeClass + '">' + statusLabel + '</span></td>' +
           '<td>' + indemnite + '</td>' +
-          '<td><a href="' + waUrl + '" target="_blank" class="btn-whatsapp">WhatsApp</a></td>';
+          '<td><a href="' + ciblageHref + '" target="_blank" class="btn-ciblage" data-airport="' + (depCode || '') + '">' + ciblageLabel + '</a></td>';
         body.appendChild(tr);
+
+        var key = (f.flight || '') + '|' + (f.dep || '') + '|' + (f.arr || '') + '|' + (f.scheduledDate || '');
+        var shouldAlert = f.cancelled || (f.delayMinutes != null && f.delayMinutes >= 150);
+        if (shouldAlert && !alertedKeys[key]) {
+          alertedKeys[key] = true;
+          var alertMsg = f.cancelled ? ('Vol ' + (f.flight || '') + ' ' + (f.dep || '') + ' → ' + (f.arr || '') + ' annulé.') : ('Vol ' + (f.flight || '') + ' : ' + f.delayMinutes + ' min de retard (≥ 150 min).');
+          showToast(alertMsg);
+          if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
+            new Notification('Robin des Airs — Radar', { body: alertMsg });
+          }
+          try { sessionStorage.setItem('radar_alerted', JSON.stringify(alertedKeys)); } catch (e) {}
+        }
       });
 
       document.getElementById('count-red').textContent = redCount;
@@ -205,10 +231,19 @@
       });
     }
 
+    function requestNotificationPermission() {
+      try {
+        if (typeof Notification !== 'undefined' && Notification.permission === 'default')
+          Notification.requestPermission();
+      } catch (e) {}
+    }
+
     document.getElementById('btn-refresh').addEventListener('click', load);
 
     if (checkAccess()) {
       showRadar();
+      requestNotificationPermission();
+      try { var s = sessionStorage.getItem('radar_alerted'); if (s) alertedKeys = JSON.parse(s); } catch (e) {}
       load();
       refreshTimer = setInterval(load, 5 * 60 * 1000);
     } else {
@@ -220,6 +255,8 @@
           setAccess(true);
           err.style.display = 'none';
           showRadar();
+          requestNotificationPermission();
+          try { var s = sessionStorage.getItem('radar_alerted'); if (s) alertedKeys = JSON.parse(s); } catch (e) {}
           load();
           refreshTimer = setInterval(load, 5 * 60 * 1000);
         } else {
