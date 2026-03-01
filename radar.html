@@ -27,10 +27,12 @@
     th { background: #222; padding: 15px; text-align: left; color: #666; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
     td { padding: 15px; border-bottom: 1px solid #222; }
     tr:hover { background: rgba(255,255,255,0.03); }
-    .row-red { background: rgba(255, 77, 77, 0.12); border-left: 6px solid var(--red); }
-    .row-orange { background: rgba(234, 88, 12, 0.1); border-left: 6px solid var(--orange); }
-    .row-yellow { background: rgba(255, 204, 0, 0.08); border-left: 6px solid var(--yellow); }
-    .row-cancelled { background: rgba(153, 27, 27, 0.2); border-left: 6px solid #991b1b; }
+    /* Style épuré : peu de fond, on colore le texte et la bordure */
+    .row-red { color: var(--red); border-left: 5px solid var(--red); background: rgba(255, 77, 77, 0.02); }
+    .row-orange { color: var(--orange); border-left: 5px solid var(--orange); background: rgba(234, 88, 12, 0.02); }
+    .row-yellow { color: #ffcc00; border-left: 5px solid #ffcc00; background: rgba(255, 204, 0, 0.02); }
+    .row-green { color: #2ecc71; border-left: 5px solid #2ecc71; }
+    .row-cancelled { color: #ccc; border-left: 5px solid #991b1b; background: rgba(153, 27, 27, 0.08); }
     .row-af { border-left-color: #3b82f6 !important; }
     .badge { padding: 5px 10px; border-radius: 4px; font-weight: bold; font-size: 11px; }
     .badge-red { background: var(--red); color: white; }
@@ -39,10 +41,11 @@
     .badge-green { background: var(--green); color: white; }
     .badge-grey { background: #64748b; color: white; }
     .badge-cancelled { background: #991b1b; color: white; }
-    .delay-box { font-size: 20px; font-weight: bold; }
-    .row-red .delay-box { color: var(--red); }
-    .row-yellow .delay-box, .row-orange .delay-box { color: var(--yellow); }
-    .row-cancelled .delay-box { color: #ccc; }
+    .delay-box, .delay-val { font-weight: bold; font-size: 16px; }
+    .row-red .delay-box, .row-red .delay-val { color: var(--red); }
+    .row-yellow .delay-box, .row-yellow .delay-val, .row-orange .delay-box, .row-orange .delay-val { color: #ffcc00; }
+    .row-green .delay-box, .row-green .delay-val { color: #2ecc71; }
+    .row-cancelled .delay-box, .row-cancelled .delay-val { color: #ccc; }
     .radar-date-bar { margin-bottom: 12px; padding: 10px 14px; background: #1a1a1a; border-radius: 8px; border-left: 4px solid var(--red); }
     .radar-view-date { font-size: 15px; font-weight: 700; color: #e0e0e0; }
     th.retard-col { color: var(--yellow); }
