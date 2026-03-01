@@ -154,7 +154,22 @@
     var RADAR_PWD = 'robin-dakar';
     var CIBLAGE_PUB_URL = ''; // ex: 'https://business.facebook.com/adsmanager' — le paramètre ?airport= sera ajouté
     var refreshTimer;
+    var countdownInterval;
+    var nextScanAt = 0; // timestamp du prochain scan auto
     var alertedKeys = {}; // clés déjà notifiées (retard >= 150 ou annulé)
+
+    function updateCountdown() {
+      var el = document.getElementById('next-scan-time');
+      if (!el) return;
+      var remaining = Math.max(0, Math.floor((nextScanAt - Date.now()) / 1000));
+      if (remaining <= 0) {
+        el.textContent = 'Prochain scan : bientôt...';
+        return;
+      }
+      var min = Math.floor(remaining / 60);
+      var sec = remaining % 60;
+      el.textContent = 'Prochain scan : ' + (min > 0 ? min + ' min ' : '') + sec + ' s';
+    }
 
     function checkAccess() {
       try { return sessionStorage.getItem('radar_ok') === '1'; } catch (e) { return false; }
@@ -339,9 +354,10 @@
       if (apiStatusEl) apiStatusEl.textContent = flights.length + ' vol' + (flights.length !== 1 ? 's' : '') + ' éligible' + (flights.length !== 1 ? 's' : '') + ' détecté' + (flights.length !== 1 ? 's' : '') + ' à ' + new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
       var timeStr = data && data.updatedAt ? new Date(data.updatedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', hour12: false }) : '—';
       document.getElementById('update-time').textContent = 'MAJ : ' + timeStr;
-      var nextScanAt = new Date(Date.now() + 5 * 60 * 1000);
-      var nextScanEl = document.getElementById('next-scan-time');
-      if (nextScanEl) nextScanEl.textContent = 'Prochain scan : ' + nextScanAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+      nextScanAt = Date.now() + 5 * 60 * 1000;
+      if (countdownInterval) clearInterval(countdownInterval);
+      updateCountdown();
+      countdownInterval = setInterval(updateCountdown, 1000);
       var viewDateStr = (data && data.viewDate) ? (function() {
         var d = new Date(data.viewDate + 'T12:00:00');
         return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
