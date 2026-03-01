@@ -162,7 +162,7 @@
           </button>
           <button class="cb" onclick="pickMotif('correspondance')">
             <span class="cb-icon">🔄</span>
-            <span class="cb-main">Correspondance manquée</span>
+            <span class="cb-main">Correspondance manquée / Vol manqué</span>
             <span class="cb-sub">Retard du 1er vol → vous avez raté votre liaison</span>
           </button>
         </div>
@@ -1228,7 +1228,7 @@ function goTo(stepId, pct) {
 
 function setCrumbs() {
   const MAP = {
-    retard: '⏱ Retard', annulation: '❌ Annulation', surbook: '🚫 Surbooking', correspondance: '🔄 Correspondance manquée',
+    retard: '⏱ Retard', annulation: '❌ Annulation', surbook: '🚫 Surbooking', correspondance: '🔄 Vol manqué',
     direct: '✈ Direct', escale: '🔄 Escale'
   };
   document.getElementById('funnel-crumbs').textContent =
@@ -1454,7 +1454,7 @@ function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
   const totalNet  = net  * pax;
   const totalFee  = fee  * pax;
 
-  const motifTxt = { retard:'Retard +3h', annulation:'Annulation', surbook:"Refus d'embarquement", correspondance:'Correspondance manquée' }[S.motif] || '';
+  const motifTxt = { retard:'Retard +3h', annulation:'Annulation', surbook:"Refus d'embarquement", correspondance:'Correspondance manquée / Vol manqué' }[S.motif] || '';
   const match    = DB[(volRef || '').toUpperCase()];
   var routeStr   = '—';
   if (match && match.r) {
