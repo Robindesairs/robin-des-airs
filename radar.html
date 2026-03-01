@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
   <title>ROBIN DES AIRS — Command Center / Elite Africa</title>
   <link rel="icon" href="/favicon.png" type="image/png">
   <style>
@@ -381,7 +383,13 @@
         render(data);
       }).catch(function(e) {
         loadInProgress = false;
-        loader.textContent = 'Erreur : ' + (e.message || 'réseau') + '. Vérifiez que la page est bien déployée sur Netlify et que la variable AVIATION_EDGE_KEY est définie.';
+        var msg = e.message || 'réseau';
+        if (msg.indexOf('JSON') !== -1 || msg.indexOf('Unexpected token') !== -1) {
+          msg = 'Le serveur a renvoyé du HTML au lieu de JSON (erreur Netlify ou clé API). Ouvrez la page depuis l\'URL Netlify (pas en local). Rafraîchissement forcé : Ctrl+Shift+R (ou Cmd+Shift+R sur Mac).';
+        } else {
+          msg = msg + ' — Vérifiez le déploiement Netlify et la variable AVIATION_EDGE_KEY.';
+        }
+        loader.textContent = 'Erreur : ' + msg;
         loader.style.display = 'block';
         table.style.display = 'none';
         if (body) body.innerHTML = '';
