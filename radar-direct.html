@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <title>ROBIN DES AIRS — Command Center / Elite Africa</title>
+    <style>
+        :root { --red: #e74c3c; --green: #2ecc71; --purple: #8e44ad; --orange: #e67e22; --blue: #3498db; --dark-bg: #0f0f0f; --card-bg: #1a1a1a; --border: #333; }
+        body { background-color: var(--dark-bg); color: #fff; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 20px; }
+        .header { display: flex; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; }
+        .logo { color: var(--red); font-weight: 900; font-size: 24px; text-transform: uppercase; margin-right: 20px; }
+        .stats-container { display: flex; flex-wrap: wrap; gap: 15px; align-items: center; margin-bottom: 20px; }
+        .stat-card { background: var(--card-bg); padding: 15px 25px; border-radius: 8px; border: 1px solid var(--border); text-align: center; min-width: 120px; }
+        .stat-card.red { border-bottom: 4px dotted var(--red); }
+        .stat-card.green { border-bottom: 4px dotted var(--green); }
+        .stat-label { font-size: 14px; color: #aaa; margin-bottom: 5px; }
+        .stat-value { font-size: 28px; font-weight: 900; }
+        .val-red { color: var(--red); }
+        .val-green { color: var(--green); }
+        .controls { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; background: #111; padding: 15px; border: 1px solid var(--border); border-radius: 5px; margin-bottom: 20px; }
+        .btn { border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; color: white; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-green { background: var(--green); }
+        .btn-purple { background: var(--purple); }
+        .btn-orange { background: var(--orange); margin-left: auto; }
+        .table-wrapper { overflow-x: auto; background: var(--card-bg); border-radius: 5px; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; }
+        th { background: #222; color: #888; text-transform: uppercase; padding: 12px 8px; text-align: left; border-bottom: 1px solid var(--border); }
+        td { padding: 12px 8px; border-bottom: 1px solid #222; }
+        tr.row-critical { background: rgba(231, 76, 60, 0.1); }
+        .badge-eligible { background: #2c3e50; color: #3498db; padding: 4px 8px; border-radius: 3px; font-weight: bold; font-size: 10px; }
+        #loader { text-align: center; padding: 40px; color: #666; font-style: italic; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo">🏹 ROBIN DES AIRS : SUIVI EN DIRECT</div>
+        <div style="color: #aaa; font-size: 14px;">Vols éligibles (Cies EU ou Départs EU)</div>
+    </div>
+
+    <div class="stats-container">
+        <div class="stat-card red">
+            <div class="stat-label">Vols critiques</div>
+            <div id="count-critical" class="stat-value val-red">0</div>
+        </div>
+        <div class="stat-card green">
+            <div class="stat-label">Potentiel Cash</div>
+            <div id="total-cash" class="stat-value val-green">0 €</div>
+        </div>
+        <div style="align-self: flex-end; color: #666; font-size: 12px; margin-bottom: 10px;">
+            <span id="scan-status">0 vols éligibles détectés</span> — MAJ : <span id="last-update">--:--</span>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn btn-green" onclick="demarrerScan()">Rafraîchir</button>
+        <button class="btn btn-purple" onclick="requestNotif()">🔔 Alertes critiques</button>
+        <span style="font-size: 11px; color: #555;" id="notif-txt"></span>
+        <button class="btn btn-orange" onclick="demarrerScan()">🔄 RAFRAÎCHIR LE CIEL</button>
+    </div>
+
+    <div class="table-wrapper">
+        <div id="loader">En attente du premier scan...</div>
+        <table id="main-table" style="display: none;">
+            <thead>
+                <tr>
+                    <th>VOL</th>
+                    <th>CIE</th>
+                    <th>TRAJET (ORIGINE ➔ DEST)</th>
+                    <th>DÉPART PRÉVU (Z)</th>
+                    <th>STATUT PISTE / RÉEL (Z)</th>
+                    <th>EST. ARRIVAL (Z)</th>
+                    <th>RETARD</th>
+                    <th>INDEMNITÉ</th>
+                    <th>LOI EU 261</th>
+                    <th>ACTION</th>
+                </tr>
+            </thead>
+            <tbody id="flight-list"></tbody>
+        </table>
+    </div>
+
+<script>
+(function() {
+    var RADAR_API_ORIGIN = '';
+    function apiOrigin() {
+        var o = window.location.origin || '';
+        if (!o || o === 'file://' || o === 'null' || /^https?:\/\/localhost(:\d+)?$/i.test(o))
+            return 'https://robin-des-airs.netlify.app';
+        return o;
+    }
+    function api() {
+        var url = apiOrigin() + '/.netlify/functions/radar?_=' + Date.now();
+        return fetch(url, { cache: 'no-store' }).then(function(r) {
+            return r.text().then(function(text) {
+                if (!r.ok || !text.trim().startsWith('{'))
+                    return { flights: [], error: 'Serveur a renvoyé du HTML. Vérifiez Netlify et AVIATION_EDGE_KEY. URL : ' + url };
+                try { return JSON.parse(text); } catch (e) { return { flights: [], error: 'JSON invalide' }; }
+            });
+        });
+    }
+    function fmt(t) {
+        if (!t) return '--:--';
+        var s = String(t).trim(), m = s.match(/(\d{1,2}):(\d{2})/);
+        if (m) return m[1].padStart(2,'0') + 'h' + m[2];
+        var d = new Date(s);
+        return isNaN(d.getTime()) ? '--:--' : (d.getUTCHours()+'').padStart(2,'0') + 'h' + (d.getUTCMinutes()+'').padStart(2,'0');
+    }
+    function getArrival(f) {
+        if (f.landedAtZulu && f.landedAtZulu !== '—') return '🏁 ' + fmt(f.landedAtZulu);
+        if (f.estimatedArrival && f.estimatedArrival !== '—') return '🕒 ' + fmt(f.estimatedArrival);
+        return fmt(f.scheduledArrival) || '--:--';
+    }
+    function requestNotif() {
+        if (typeof Notification !== 'undefined' && Notification.permission === 'default')
+            Notification.requestPermission().then(function() { updateNotifTxt(); });
+        updateNotifTxt();
+    }
+    function updateNotifTxt() {
+        var el = document.getElementById('notif-txt');
+        if (!el) return;
+        if (typeof Notification === 'undefined') { el.textContent = ''; return; }
+        if (Notification.permission === 'granted') el.textContent = '✓ Alertes activées (vols critiques même onglet en arrière-plan)';
+        else if (Notification.permission === 'denied') el.textContent = 'Alertes refusées';
+        else el.textContent = 'Cliquez sur 🔔 pour activer les alertes.';
+    }
+    function demarrerScan() {
+        var list = document.getElementById('flight-list');
+        var loader = document.getElementById('loader');
+        var table = document.getElementById('main-table');
+        if (list) list.innerHTML = '';
+        loader.style.display = 'block';
+        loader.textContent = '📡 Scan en cours...';
+        table.style.display = 'none';
+        api().then(function(data) {
+            loader.style.display = 'none';
+            var flights = (data && data.flights) ? data.flights : [];
+            if (data && data.error && flights.length === 0) {
+                loader.style.display = 'block';
+                loader.textContent = 'Erreur : ' + (data.error || 'données invalides');
+                return;
+            }
+            var isCrit = function(f) { return f.cancelled || (f.delayMinutes != null && f.delayMinutes >= 150); };
+            flights = flights.filter(function(f) { return f.eligible || isCrit(f); });
+            flights.sort(function(a,b) {
+                if (isCrit(a) !== isCrit(b)) return isCrit(a) ? -1 : 1;
+                return (b.delayMinutes || 0) - (a.delayMinutes || 0);
+            });
+            var criticalCount = 0, totalCash = 0;
+            flights.forEach(function(f) {
+                var crit = isCrit(f);
+                if (crit) criticalCount++;
+                if (f.eligible && (f.color === 'RED' || f.color === 'ORANGE') && !f.surveillanceRetour) totalCash += 450;
+                var rowClass = crit ? 'row-critical' : '';
+                var indemnite = (f.eligible && (f.color === 'RED' || f.color === 'ORANGE' || f.color === 'YELLOW')) ? ((f.color === 'RED' || f.color === 'ORANGE') ? '600 €' : 'POTENTIEL 600€') : '—';
+                var delay = f.cancelled ? '—' : (f.delayMinutes != null ? f.delayMinutes + ' min' : '—');
+                var loi = f.eligible ? '<span class="badge-eligible">Loi EU 261 OK ✅</span>' : '—';
+                list.innerHTML += '<tr class="' + rowClass + '"><td><b>' + (f.flight || '—') + '</b></td><td>' + (f.airline || '—') + '</td><td>' + (f.dep || '—') + ' ➔ ' + (f.arr || '—') + '</td><td>' + (f.scheduledDeparture || '—') + '</td><td>' + (f.estimatedDeparture || '—') + '</td><td>' + getArrival(f) + '</td><td><b>' + delay + '</b></td><td style="color:var(--green)">' + indemnite + '</td><td>' + loi + '</td><td><a href="#" style="color:var(--blue);font-size:11px">PUB</a></td></tr>';
+            });
+            document.getElementById('count-critical').textContent = criticalCount;
+            document.getElementById('total-cash').textContent = totalCash + ' €';
+            document.getElementById('scan-status').textContent = flights.length + ' vol(s) éligible(s) détecté(s)';
+            document.getElementById('last-update').textContent = data && data.updatedAt ? new Date(data.updatedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', hour12: false }) : '--:--';
+            table.style.display = 'table';
+        }).catch(function(e) {
+            loader.style.display = 'block';
+            loader.textContent = 'Erreur : ' + (e.message || 'réseau');
+        });
+    }
+    updateNotifTxt();
+    demarrerScan();
+})();
+</script>
+</body>
+</html>
