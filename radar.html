@@ -70,7 +70,6 @@
       font-size: 12px; font-weight: bold; display: inline-block; transition: 0.3s;
     }
     .btn-ciblage:hover { transform: scale(1.05); background: #6d28d9; color: white; }
-    .badge-eu { background: #003399; color: white; padding: 3px 8px; border-radius: 3px; font-size: 10px; font-weight: bold; }
     .btn-ads { background: var(--blue); color: white; border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; text-decoration: none; display: inline-block; }
     .btn-ads:hover { opacity: 0.9; color: white; }
     .btn-alertes { background: #7c3aed; }
@@ -140,7 +139,6 @@
             <th>Annulé</th>
             <th>Statut</th>
             <th>Indemnité</th>
-            <th>Loi EU 261</th>
             <th>Traqueur</th>
             <th>Ciblage pub</th>
           </tr>
@@ -293,7 +291,6 @@
         var trackerHref = (f.trackerUrl && f.trackerUrl !== '#') ? f.trackerUrl : '#';
         var trackerLabel = f.trackerUrl ? 'Traqueur ' + (f.airline || '') : '—';
 
-        var loiEuCell = f.eligible ? '<span class="badge-eu">Loi EU 261 OK ✅</span>' : '—';
         var tr = document.createElement('tr');
         if (rowClass) tr.className = rowClass;
         tr.innerHTML =
@@ -312,7 +309,6 @@
           '<td>' + annuleCell + '</td>' +
           '<td><span class="badge ' + badgeClass + '">' + statusLabel + '</span></td>' +
           '<td>' + indemnite + '</td>' +
-          '<td>' + loiEuCell + '</td>' +
           '<td>' + (trackerHref !== '#' ? '<a href="' + trackerHref + '" target="_blank" class="btn-tracker">' + trackerLabel + '</a>' : '—') + '</td>' +
           '<td><a href="' + ciblageHref + '" target="_blank" class="btn-ads" data-airport="' + (depCode || '') + '">CIBLER ' + (depCode || '') + '</a></td>';
         body.appendChild(tr);
@@ -354,7 +350,7 @@
       if (apiStatusEl) apiStatusEl.textContent = flights.length + ' vol' + (flights.length !== 1 ? 's' : '') + ' éligible' + (flights.length !== 1 ? 's' : '') + ' détecté' + (flights.length !== 1 ? 's' : '') + ' à ' + new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
       var timeStr = data && data.updatedAt ? new Date(data.updatedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', hour12: false }) : '—';
       document.getElementById('update-time').textContent = 'MAJ : ' + timeStr;
-      nextScanAt = Date.now() + 5 * 60 * 1000;
+      nextScanAt = Date.now() + 10 * 60 * 1000;
       if (countdownInterval) clearInterval(countdownInterval);
       updateCountdown();
       countdownInterval = setInterval(updateCountdown, 1000);
@@ -467,7 +463,7 @@
       requestNotificationPermission();
       try { var s = sessionStorage.getItem('radar_alerted'); if (s) alertedKeys = JSON.parse(s); } catch (e) {}
       load();
-      refreshTimer = setInterval(load, 5 * 60 * 1000);
+      refreshTimer = setInterval(load, 10 * 60 * 1000);
     } else {
       showGate();
       document.getElementById('btn-unlock').onclick = function() {
@@ -481,7 +477,7 @@
           requestNotificationPermission();
           try { var s = sessionStorage.getItem('radar_alerted'); if (s) alertedKeys = JSON.parse(s); } catch (e) {}
           load();
-          refreshTimer = setInterval(load, 5 * 60 * 1000);
+          refreshTimer = setInterval(load, 10 * 60 * 1000);
         } else {
           err.style.display = 'block';
         }
