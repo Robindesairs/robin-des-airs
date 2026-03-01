@@ -142,7 +142,6 @@
                 return;
             }
             var isCrit = function(f) { return f.cancelled || (f.delayMinutes != null && f.delayMinutes >= 150); };
-            flights = flights.filter(function(f) { return f.eligible || isCrit(f); });
             flights.sort(function(a,b) {
                 if (isCrit(a) !== isCrit(b)) return isCrit(a) ? -1 : 1;
                 return (b.delayMinutes || 0) - (a.delayMinutes || 0);

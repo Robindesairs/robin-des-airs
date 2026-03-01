@@ -231,10 +231,10 @@
 
       var criticalCount = 0;
       var totalCash = 0;
-      /* Filtre : tous les vols éligibles EU 261 + vols critiques (annulés ou ≥2h30) toujours affichés en tête */
+      /* Tous les vols (pas de filtre éligibilité) — tri : critiques en tête, puis par retard */
       var raw = (data && data.flights) ? data.flights : [];
       var isCritical = function(f) { return f.cancelled || (f.delayMinutes != null && f.delayMinutes >= 150); };
-      flights = raw.filter(function(f) { return f.eligible || isCritical(f); });
+      flights = raw.slice();
       /* Tri : vols critiques toujours en haut (annulés puis rouge ≥2h30), puis le reste par retard décroissant */
       flights.sort(function(a, b) {
         var ac = isCritical(a) ? 0 : 1;
