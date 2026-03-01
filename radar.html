@@ -146,13 +146,20 @@
     }
 
     function formatExactTime(dateOrTimeStr) {
-      if (!dateOrTimeStr) return '—';
+      if (!dateOrTimeStr) return '--:--';
       var s = String(dateOrTimeStr).trim();
       var m = s.match(/(\d{1,2}):(\d{2})/);
       if (m) return m[1].padStart(2, '0') + 'h' + m[2];
       var d = new Date(s);
       if (!isNaN(d.getTime())) return String(d.getUTCHours()).padStart(2, '0') + 'h' + String(d.getUTCMinutes()).padStart(2, '0');
-      return '—';
+      return '--:--';
+    }
+
+    function getDynamicArrivalTime(f) {
+      if (f.landedAtZulu && f.landedAtZulu !== '—') return '🏁 ' + formatExactTime(f.landedAtZulu);
+      if (f.estimatedArrival && f.estimatedArrival !== '—') return '🕒 ' + formatExactTime(f.estimatedArrival);
+      if (f.scheduledArrival && f.scheduledArrival !== '—') return formatExactTime(f.scheduledArrival);
+      return '--:--';
     }
 
     function getPreciseStatus(f) {
@@ -207,8 +214,8 @@
 
         var scheduledDep = (f.scheduledDeparture != null && f.scheduledDeparture !== '—') ? f.scheduledDeparture : '—';
         var estimatedDep = (f.estimatedDeparture != null && f.estimatedDeparture !== '—') ? f.estimatedDeparture : '—';
-        var scheduledArr = (f.scheduledArrival != null && f.scheduledArrival !== '—') ? f.scheduledArrival : '—';
-        var estimatedArr = (f.estimatedArrival != null && f.estimatedArrival !== '—') ? f.estimatedArrival : '—';
+        var scheduledArr = formatExactTime(f.scheduledArrival);
+        var dynamicArrival = getDynamicArrivalTime(f);
         var delayDisplay = f.cancelled ? '—' : (f.delayMinutes != null ? '<span class="delay-val">' + String(f.delayMinutes) + '</span> min' : '0 min');
         var stateLabel = getPreciseStatus(f);
         var annuleCell = f.cancelled ? ('Oui' + (f.cancelledAt && f.cancelledAt !== '—' ? ' (~' + f.cancelledAt + ')' : '')) : '—';
@@ -224,7 +231,7 @@
           '<td>' + scheduledDep + '</td>' +
           '<td>' + estimatedDep + '</td>' +
           '<td>' + scheduledArr + '</td>' +
-          '<td>' + estimatedArr + '</td>' +
+          '<td style="font-weight:bold;color:#3b82f6;">' + dynamicArrival + '</td>' +
           '<td>' + delayDisplay + '</td>' +
           '<td>' + stateLabel + '</td>' +
           '<td>' + annuleCell + '</td>' +
