@@ -5,24 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
-  <title>ROBIN DES AIRS — Sniper No Limit 🚀</title>
+  <title>ROBIN DES AIRS — Command Center / Elite Africa</title>
   <link rel="icon" href="/favicon.png" type="image/png">
   <style>
-    :root { --red: #ff4d4d; --yellow: #ffcc00; --green: #2ecc71; --orange: #f39c12; --blue: #3498db; --af-blue: #002366; --bg: #0a0a0a; --panel: #161616; --card: #161616; }
+    :root { --red: #ff4d4d; --yellow: #ffcc00; --green: #2ecc71; --orange: #ea580c; --blue: #3b82f6; --af-blue: #002366; --bg: #0a0a0a; --panel: #161616; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg); color: #fff; font-family: 'Segoe UI', Roboto, sans-serif; min-height: 100vh; padding: 20px; overflow-x: hidden; }
+    body { background: var(--bg); color: #e0e0e0; font-family: 'Segoe UI', Roboto, sans-serif; min-height: 100vh; padding: 0; overflow-x: hidden; }
     .dashboard { max-width: 100%; margin: 0; }
-    .header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; border-bottom: 2px solid var(--red); padding-bottom: 15px; margin-bottom: 20px; }
-    .logo { font-size: 24px; font-weight: 900; color: var(--red); letter-spacing: 1px; }
-    #clock { font-family: monospace; color: var(--orange); }
-    .stats { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
-    .stat-box { background: var(--card); padding: 20px; border-radius: 8px; flex: 1; min-width: 140px; border: 1px solid #333; text-align: center; }
-    .stat-box h3 { margin: 0; font-size: 12px; color: #888; text-transform: uppercase; }
-    .stat-box .stat-value { font-size: 32px; font-weight: 900; margin-top: 10px; }
-    .toolbar { background: #111; padding: 15px; border-radius: 8px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px; border: 1px solid #222; flex-wrap: wrap; }
-    .btn-scan { background: var(--red); color: white; }
-    .btn-auto { background: var(--blue); color: white; }
-    .btn-auto.active { background: var(--green); box-shadow: 0 0 15px var(--green); }
+    /* Barre de commande fixe (sticky) — reste en haut au scroll, espace en bas pour lisibilité */
+    header.top-bar {
+      position: sticky; top: 0; z-index: 2000;
+      min-height: 64px;
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;
+      padding: 15px 30px 20px; margin-bottom: 0;
+      background: rgba(26, 26, 26, 0.98); backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 2px solid var(--red); box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      border-radius: 0;
+    }
+    .logo { font-size: 22px; font-weight: 900; color: var(--red); letter-spacing: 1px; }
     .status-bar, #api-status { font-size: 12px; color: #888; }
     .stat-card { background: #222; padding: 12px 20px; border-radius: 8px; text-align: center; display: inline-block; }
     .stat-card span { display: block; font-size: 22px; font-weight: bold; }
@@ -61,9 +62,6 @@
     .row-yellow .delay-box, .row-yellow .delay-val, .row-orange .delay-box, .row-orange .delay-val { color: #ffcc00; }
     .row-green .delay-box, .row-green .delay-val { color: #2ecc71; }
     .row-cancelled .delay-box, .row-cancelled .delay-val { color: #ccc; }
-    .critical { background: rgba(255, 77, 77, 0.12) !important; animation: pulse 2s infinite; }
-    @keyframes pulse { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
-    .cash-tag { background: var(--green); color: black; padding: 4px 8px; border-radius: 4px; font-weight: 900; }
     .radar-date-bar { margin-bottom: 12px; padding: 10px 14px; background: #1a1a1a; border-radius: 8px; border-left: 4px solid var(--red); }
     .radar-view-date { font-size: 15px; font-weight: 700; color: #e0e0e0; }
     th.retard-col { color: var(--yellow); }
@@ -101,31 +99,26 @@
   </div>
 
   <div id="radar-content" class="dashboard" style="display:none;">
-    <div class="header">
-      <div class="logo">🏹 ROBIN DES AIRS — SNIPER NO LIMIT 🚀</div>
-      <div id="clock" style="font-family: monospace; color: var(--orange);"></div>
+    <header class="top-bar">
+      <div class="logo">🏹 ROBIN DES AIRS : SUIVI EN TEMPS RÉEL — Tous les vols éligibles</div>
+      <div style="display:flex; flex-wrap:wrap; align-items:center; gap:14px;">
+        <div class="stat-card">Vols critiques <span id="count-red" style="color:var(--red)">0</span></div>
+        <div class="stat-card">Potentiel Cash <span id="total-cash" style="color:var(--green)">0 €</span></div>
+        <div id="api-status" class="status-bar"></div>
+        <div class="status-bar" id="update-time">Mise à jour...</div>
+        <div class="status-bar" id="next-scan-time">Prochain scan : —</div>
+      </div>
+      <button type="button" onclick="forcerRafraichissement()" class="btn-reset-total" style="margin-bottom:0;">🔄 RAFRAÎCHIR LE CIEL</button>
+    </header>
+
+    <div class="radar-date-bar" id="radar-date-bar" style="margin: 12px 20px;">
+      <span class="radar-view-date" id="radar-view-date">Vue du — — Dernière MAJ : —</span>
+      <span class="radar-zulu-note" style="display:block; margin-top:6px; font-size:12px; color:#888;">Toutes les heures en Zulu (UTC) — suffixe Z</span>
     </div>
 
-    <div class="stats">
-      <div class="stat-box" style="border-bottom: 4px solid var(--red);">
-        <h3>Vols Critiques (+3H)</h3>
-        <div id="count-red" class="stat-value" style="color: var(--red);">0</div>
-      </div>
-      <div class="stat-box" style="border-bottom: 4px solid var(--green);">
-        <h3>Cash Potentiel</h3>
-        <div id="total-cash" class="stat-value" style="color: var(--green);">0 €</div>
-      </div>
-      <div class="stat-box">
-        <h3>Prochain Scan</h3>
-        <div id="next-scan" class="stat-value" style="color: var(--blue);">MANUEL</div>
-      </div>
-    </div>
-
-    <div class="toolbar">
-      <button type="button" class="btn btn-scan" id="btn-refresh" style="padding: 12px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; border: none;">🚀 SCAN MANUEL</button>
-      <button type="button" id="btn-auto" class="btn btn-auto" style="padding: 12px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; border: none;">🔄 AUTO-SCAN (2 MIN)</button>
+    <div class="toolbar" style="margin: 0 20px 10px; align-items: center;">
+      <button class="btn" id="btn-refresh">Rafraîchir</button>
       <button type="button" class="btn btn-alertes" id="btn-notif" title="Recevoir des notifications (vols annulés, retard ≥2h30) même si l’onglet est en arrière-plan. Gardez l’onglet ouvert.">🔔 Alertes critiques</button>
-      <span id="status-text" style="color: #666; font-size: 12px;">Départs Paris Orly — prêt.</span>
       <span id="notif-status" class="meta" style="font-size:11px; color:#666;"></span>
     </div>
 
@@ -161,10 +154,7 @@
     var RADAR_PWD = 'robin-dakar';
     var CIBLAGE_PUB_URL = ''; // ex: 'https://business.facebook.com/adsmanager' — le paramètre ?airport= sera ajouté
     var refreshTimer;
-    var autoInterval = null;
-    var countdown = 0;
-    var CRITICAL_DELAY_MIN = 180; // +3H = critique (Sniper No Limit)
-    var alertedKeys = {}; // clés déjà notifiées (retard >= 180 ou annulé)
+    var alertedKeys = {}; // clés déjà notifiées (retard >= 150 ou annulé)
 
     function checkAccess() {
       try { return sessionStorage.getItem('radar_ok') === '1'; } catch (e) { return false; }
@@ -242,10 +232,10 @@
 
       var criticalCount = 0;
       var totalCash = 0;
-      /* Tous les vols (pas de filtre éligibilité) — tri : critiques en tête, puis par retard */
+      /* Filtre : tous les vols éligibles EU 261 + vols critiques (annulés ou ≥2h30) toujours affichés en tête */
       var raw = (data && data.flights) ? data.flights : [];
-      var isCritical = function(f) { return f.cancelled || (f.delayMinutes != null && f.delayMinutes >= CRITICAL_DELAY_MIN); };
-      flights = raw.slice();
+      var isCritical = function(f) { return f.cancelled || (f.delayMinutes != null && f.delayMinutes >= 150); };
+      flights = raw.filter(function(f) { return f.eligible || isCritical(f); });
       /* Tri : vols critiques toujours en haut (annulés puis rouge ≥2h30), puis le reste par retard décroissant */
       flights.sort(function(a, b) {
         var ac = isCritical(a) ? 0 : 1;
@@ -269,10 +259,9 @@
         var badgeClass = f.surveillanceRetour ? 'badge-surveillance-retour' : ('badge-' + (color === 'CANCELLED' ? 'cancelled' : color.toLowerCase()));
         var statusLabel = f.surveillanceRetour ? '🟣 SURVEILLANCE RETOUR' : (f.cancelled ? 'ANNULÉ' : (color === 'RED' ? '🔴 CRITIQUE' : color === 'ORANGE' ? '🟠 SURVEILLANCE' : color === 'YELLOW' ? '🟡 SURVEILLANCE' : color === 'GREEN' ? 'OK' : '—'));
         var retard = f.cancelled ? '—' : (f.delayMinutes != null ? f.delayMinutes + ' min' : '—');
-        var indemnite = (f.eligible && (color === 'RED' || color === 'ORANGE' || color === 'YELLOW')) ? (color === 'RED' || color === 'ORANGE' || isCrit ? '<span class="cash-tag">600 €</span>' : 'POTENTIEL 600€') : (f.eligible ? '—' : '—');
+        var indemnite = (f.eligible && (color === 'RED' || color === 'ORANGE' || color === 'YELLOW')) ? (color === 'RED' || color === 'ORANGE' ? '600 €' : 'POTENTIEL 600€') : (f.eligible ? '—' : '—');
         if (f.eligible && (color === 'RED' || color === 'ORANGE') && !f.surveillanceRetour) totalCash += 450;
-        var isCrit = isCritical(f);
-        if (isCrit) criticalCount++;
+        if (color === 'RED' || f.cancelled) criticalCount++;
 
         var depCode = (f.dep || '').trim();
         var ciblageHref = (CIBLAGE_PUB_URL ? (CIBLAGE_PUB_URL + (CIBLAGE_PUB_URL.indexOf('?') >= 0 ? '&' : '?') + 'airport=' + encodeURIComponent(depCode)) : '#');
@@ -292,7 +281,6 @@
         var loiEuCell = f.eligible ? '<span class="badge-eu">Loi EU 261 OK ✅</span>' : '—';
         var tr = document.createElement('tr');
         if (rowClass) tr.className = rowClass;
-        if (isCrit) tr.classList.add('critical');
         tr.innerHTML =
           '<td><strong>' + (f.flight || '—') + '</strong></td>' +
           '<td><span class="airline-tag">' + (f.airline || '—') + '</span></td>' +
@@ -315,13 +303,13 @@
         body.appendChild(tr);
 
         var key = (f.flight || '') + '|' + (f.dep || '') + '|' + (f.arr || '') + '|' + (f.scheduledDate || '');
-        var isCriticalFlight = f.cancelled || (f.delayMinutes != null && f.delayMinutes >= CRITICAL_DELAY_MIN);
+        var isCriticalFlight = f.cancelled || (f.delayMinutes != null && f.delayMinutes >= 150);
         var isSurveillance = !f.cancelled && f.delayMinutes != null && f.delayMinutes >= 30 && f.delayMinutes < 150;
         if (isCriticalFlight) criticalFlightsForTelegram.push({ flight: f.flight, dep: f.dep, arr: f.arr, cancelled: f.cancelled, delayMinutes: f.delayMinutes, airline: f.airline, scheduledDeparture: f.scheduledDeparture, scheduledArrival: f.scheduledArrival, statusFr: f.statusFr });
         if (isCriticalFlight && alertedKeys[key] !== 'critical') {
           alertedKeys[key] = 'critical';
           hasNewCritical = true;
-          var criticalMsg = f.cancelled ? ('ALARME : Vol ' + (f.flight || '') + ' ' + (f.dep || '') + ' → ' + (f.arr || '') + ' annulé.') : ('ALARME : Vol ' + (f.flight || '') + ' — ' + f.delayMinutes + ' min de retard (≥3h).');
+          var criticalMsg = f.cancelled ? ('ALARME : Vol ' + (f.flight || '') + ' ' + (f.dep || '') + ' → ' + (f.arr || '') + ' annulé.') : ('ALARME : Vol ' + (f.flight || '') + ' — ' + f.delayMinutes + ' min de retard (≥ 150 min).');
           showToast(criticalMsg);
           if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
             new Notification('Robin des Airs — ALARME CRITIQUE', { body: criticalMsg, tag: 'radar-critical' });
@@ -347,12 +335,21 @@
 
       document.getElementById('count-red').textContent = criticalCount;
       document.getElementById('total-cash').textContent = totalCash + ' €';
-      var statusEl = document.getElementById('status-text');
-      if (statusEl) statusEl.textContent = 'Dernier scan : ' + flights.length + ' vol(s) (Orly).';
-      if (!autoInterval) {
-        var nextEl = document.getElementById('next-scan');
-        if (nextEl) nextEl.textContent = 'MANUEL';
-      }
+      var apiStatusEl = document.getElementById('api-status');
+      if (apiStatusEl) apiStatusEl.textContent = flights.length + ' vol' + (flights.length !== 1 ? 's' : '') + ' éligible' + (flights.length !== 1 ? 's' : '') + ' détecté' + (flights.length !== 1 ? 's' : '') + ' à ' + new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+      var timeStr = data && data.updatedAt ? new Date(data.updatedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', hour12: false }) : '—';
+      document.getElementById('update-time').textContent = 'MAJ : ' + timeStr;
+      var nextScanAt = new Date(Date.now() + 5 * 60 * 1000);
+      var nextScanEl = document.getElementById('next-scan-time');
+      if (nextScanEl) nextScanEl.textContent = 'Prochain scan : ' + nextScanAt.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+      var viewDateStr = (data && data.viewDate) ? (function() {
+        var d = new Date(data.viewDate + 'T12:00:00');
+        return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      })() : new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      var dateBarEl = document.getElementById('radar-view-date');
+      var nowZ = new Date();
+      var zuluNow = String(nowZ.getUTCHours()).padStart(2, '0') + ':' + String(nowZ.getUTCMinutes()).padStart(2, '0') + 'Z';
+      if (dateBarEl) dateBarEl.textContent = 'Vue du ' + viewDateStr + ' — Dernière MAJ : ' + timeStr + ' — Heure Zulu : ' + zuluNow;
     }
 
     var LOADER_TEXT = '🚀 Robin scanne les couloirs aériens entre l\'Afrique et l\'Europe...';
@@ -388,8 +385,6 @@
       loader.textContent = LOADER_TEXT;
       loader.style.display = 'block';
       table.style.display = 'none';
-      var statusEl = document.getElementById('status-text');
-      if (statusEl) statusEl.textContent = '📡 Scan en cours (Paris Orly)...';
       api().then(function(data) {
         loadInProgress = false;
         render(data);
@@ -447,41 +442,7 @@
       load();
     }
 
-    function updateClock() {
-      var el = document.getElementById('clock');
-      if (el) el.textContent = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
-
-    function toggleAuto() {
-      var btn = document.getElementById('btn-auto');
-      if (autoInterval) {
-        clearInterval(autoInterval);
-        autoInterval = null;
-        btn.classList.remove('active');
-        btn.textContent = '🔄 AUTO-SCAN (2 MIN)';
-        var nextEl = document.getElementById('next-scan');
-        if (nextEl) nextEl.textContent = 'MANUEL';
-      } else {
-        load();
-        countdown = 120;
-        btn.classList.add('active');
-        btn.textContent = '🔄 AUTO-SCAN (ON)';
-        autoInterval = setInterval(function() {
-          countdown--;
-          var nextEl = document.getElementById('next-scan');
-          if (nextEl) nextEl.textContent = countdown + ' s';
-          if (countdown <= 0) {
-            load();
-            countdown = 120;
-          }
-        }, 1000);
-      }
-    }
-
-    document.getElementById('btn-refresh').addEventListener('click', function() { load(); });
-    document.getElementById('btn-auto').addEventListener('click', toggleAuto);
+    document.getElementById('btn-refresh').addEventListener('click', load);
     document.getElementById('btn-notif').addEventListener('click', requestNotificationPermission);
 
     if (checkAccess()) {
