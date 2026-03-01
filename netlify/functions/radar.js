@@ -17,11 +17,18 @@ const AIRPORT_COUNTRY = {
   DSS:'SN', DKR:'SN', ABJ:'CI', BKO:'ML', NIM:'NE', OUA:'BF', NDJ:'TD', COO:'BJ', LFW:'TG', CKY:'GN',
   BJL:'GM', CMN:'MA', RAK:'MA', ALG:'DZ', TUN:'TN', CAI:'EG', ADD:'ET', NBO:'KE', DAR:'TZ', JNB:'ZA',
   CPT:'ZA', DLA:'CM', NSI:'CM', LBV:'GA', BZV:'CG', FIH:'CD', RUN:'RE', PTP:'GP', FDF:'MQ', MRU:'MU',
-  TNR:'MG', MPM:'MZ', ACC:'GH', LOS:'NG', ABV:'NG'
+  TNR:'MG', MPM:'MZ', ACC:'GH', LOS:'NG', ABV:'NG',
+  NKC:'MR', FNA:'SL', ROB:'LR', PNR:'CG', LAD:'AO', SSG:'GQ', BGF:'CF', KGL:'RW', JIB:'DJ', ZNZ:'TZ', DZA:'FR'
 };
 
-/** Hubs pour scanner tous les vols Afrique ↔ Europe (sans filtre aéroport) */
-const HUBS = ['CDG', 'ORY', 'BRU', 'MAD', 'LIS', 'AMS', 'FRA', 'MRS', 'LYS', 'DSS', 'ABJ', 'BKO', 'CMN', 'NCE', 'TLS'];
+/** Réseau Air France Afrique (version Elite) : Europe + Afrique Ouest/Centre/Est-Sud + Océan Indien + Banjul */
+const HUBS = [
+  'CDG', 'ORY', 'BRU', 'AMS',
+  'DSS', 'ABJ', 'BKO', 'CKY', 'OUA', 'LFW', 'ACC', 'ABV', 'LOS', 'COO', 'NKC', 'NIM', 'FNA', 'ROB', 'BJL',
+  'DLA', 'NSI', 'LBV', 'FIH', 'BZV', 'PNR', 'BGF', 'LAD', 'SSG', 'NDJ',
+  'NBO', 'DAR', 'ADD', 'JNB', 'CPT', 'KGL', 'JIB', 'ZNZ',
+  'TNR', 'MRU', 'RUN', 'DZA'
+];
 
 function getCountry(iata) {
   return AIRPORT_COUNTRY[(iata || '').toUpperCase()] || null;
