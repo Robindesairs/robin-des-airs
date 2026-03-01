@@ -98,7 +98,7 @@
 
   <div id="radar-content" class="dashboard" style="display:none;">
     <header class="top-bar">
-      <div class="logo">🏹 ROBIN DES AIRS : ELITE AFRICA SCANNER</div>
+      <div class="logo">🏹 ROBIN DES AIRS : SUIVI EN TEMPS RÉEL — Tous les vols éligibles</div>
       <div style="display:flex; flex-wrap:wrap; align-items:center; gap:14px;">
         <div class="stat-card">Vols critiques <span id="count-red" style="color:var(--red)">0</span></div>
         <div class="stat-card">Potentiel Cash <span id="total-cash" style="color:var(--green)">0 €</span></div>
@@ -350,7 +350,19 @@
 
     function api() {
       var url = '/.netlify/functions/radar?_=' + Date.now();
-      return fetch(url, { cache: 'no-store', headers: { Pragma: 'no-cache', 'Cache-Control': 'no-cache' } }).then(function(r) { return r.json(); });
+      return fetch(url, { cache: 'no-store', headers: { Pragma: 'no-cache', 'Cache-Control': 'no-cache' } }).then(function(r) {
+        return r.text().then(function(text) {
+          var ct = (r.headers.get('content-type') || '').toLowerCase();
+          if (!r.ok || !text.trim().startsWith('{')) {
+            return { flights: [], error: 'Le serveur a renvoyé une page d\'erreur (HTML). Vérifiez le déploiement Netlify et la variable AVIATION_EDGE_KEY.' };
+          }
+          try {
+            return JSON.parse(text);
+          } catch (e) {
+            return { flights: [], error: 'Réponse invalide (attendu JSON). Vérifiez Netlify et la clé API.' };
+          }
+        });
+      });
     }
 
     var loadInProgress = false;
@@ -369,10 +381,10 @@
         render(data);
       }).catch(function(e) {
         loadInProgress = false;
-        loader.textContent = 'Erreur : ' + (e.message || 'réseau');
+        loader.textContent = 'Erreur : ' + (e.message || 'réseau') + '. Vérifiez que la page est bien déployée sur Netlify et que la variable AVIATION_EDGE_KEY est définie.';
         loader.style.display = 'block';
         table.style.display = 'none';
-        body.innerHTML = '';
+        if (body) body.innerHTML = '';
       });
     }
 
@@ -424,7 +436,7 @@
       requestNotificationPermission();
       try { var s = sessionStorage.getItem('radar_alerted'); if (s) alertedKeys = JSON.parse(s); } catch (e) {}
       load();
-      refreshTimer = setInterval(load, 15 * 60 * 1000);
+      refreshTimer = setInterval(load, 5 * 60 * 1000);
     } else {
       showGate();
       document.getElementById('btn-unlock').onclick = function() {
@@ -438,7 +450,7 @@
           requestNotificationPermission();
           try { var s = sessionStorage.getItem('radar_alerted'); if (s) alertedKeys = JSON.parse(s); } catch (e) {}
           load();
-          refreshTimer = setInterval(load, 15 * 60 * 1000);
+          refreshTimer = setInterval(load, 5 * 60 * 1000);
         } else {
           err.style.display = 'block';
         }
