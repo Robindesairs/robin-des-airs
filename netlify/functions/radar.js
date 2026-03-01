@@ -64,16 +64,18 @@ function toTimeStr(val) {
   return '—';
 }
 
-/** Heure en Zulu (UTC) : "HH:mmZ" à la minute près, sans aucun arrondi (troncature, jamais :00/:05 forcé). */
+/** Heure en Zulu (UTC) : "HH:mmZ" exactement à la minute (09:33 → 09:33Z, jamais arrondi à 09:35). */
 function toTimeStrZulu(val) {
   if (!val) return '—';
   const s = String(val).trim();
-  const isoMatch = s.match(/T(\d{2}):(\d{2})(?::(\d{2}))?(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?/);
-  if (isoMatch) return isoMatch[1] + ':' + isoMatch[2] + 'Z';
+  const tMatch = s.match(/[T\s](\d{1,2}):(\d{2})(?::\d{2})?(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?/);
+  if (tMatch) return String(parseInt(tMatch[1], 10)).padStart(2, '0') + ':' + tMatch[2] + 'Z';
+  const anyHhMm = s.match(/(\d{1,2}):(\d{2})/);
+  if (anyHhMm) return String(parseInt(anyHhMm[1], 10)).padStart(2, '0') + ':' + anyHhMm[2] + 'Z';
   let s2 = s;
-  if (!/Z$|[+-]\d{2}:?\d{2}$/.test(s2) && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(s2)) s2 = s2.replace(/\.\d+$/, '') + 'Z';
+  if (!/Z$|[+-]\d{2}:?\d{2}$/.test(s2) && /^\d{4}-\d{2}-\d{2}[T\s]\d{2}:\d{2}/.test(s2)) s2 = s2.replace(/\.\d+$/, '') + 'Z';
   const d = new Date(s2);
-  if (isNaN(d.getTime())) return toTimeStr(val);
+  if (isNaN(d.getTime())) return '—';
   const h = d.getUTCHours();
   const m = d.getUTCMinutes();
   return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + 'Z';
