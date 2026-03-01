@@ -106,8 +106,8 @@ exports.handler = async (event) => {
       if (Array.isArray(data)) allRaw.push(...data);
     }
 
-    const seen = new Set();
-    const flights = [];
+    /** Code-share : une seule ligne par vol physique = celle opérée par la compagnie (numéro de vol = préfixe compagnie). */
+    const routeMap = new Map(); // routeKey -> { data, isOperating }
     for (const f of allRaw) {
       const dep = f.departure || {};
       const arr = f.arrival || {};
@@ -118,12 +118,11 @@ exports.handler = async (event) => {
       const isAfricaEurope = (isEurope(depCountry) && isAfrica(arrCountry)) || (isAfrica(depCountry) && isEurope(arrCountry));
       if (!isAfricaEurope) continue;
 
-      const flightKey = (f.flight?.iata || f.flight?.number || '') + depIata + arrIata + (dep.scheduledTime || '');
-      if (seen.has(flightKey)) continue;
-      seen.add(flightKey);
-
       const airlineIata = (f.airline?.iataCode || (f.flight?.iata && f.flight.iata.slice(0, 2)) || '').toUpperCase();
       const flightNumber = f.flight?.iata || f.flight?.number || f.flight?.icao || '—';
+      const flightPrefix = (String(flightNumber).replace(/\s/g, '').match(/^[A-Za-z]{2}/) || [])[0]?.toUpperCase() || '';
+      const isOperatingRow = flightPrefix === airlineIata;
+      const routeKey = depIata + arrIata + (dep.scheduledTime || '');
 
       const effectiveTime = dep.actualTime || dep.estimatedTime;
       let delayMinutes = delayMinutesFromTimes(dep.scheduledTime, effectiveTime);
@@ -148,7 +147,7 @@ exports.handler = async (event) => {
       const estimatedArrival = toTimeStrZulu(arr.actualTime || arr.estimatedTime || arr.scheduledTime);
       const scheduledDate = (dep.scheduledTime && String(dep.scheduledTime).slice(0, 10)) || null;
 
-      flights.push({
+      const flightObj = {
         flight: flightNumber,
         airline: airlineIata,
         dep: depIata || '—',
@@ -165,8 +164,18 @@ exports.handler = async (event) => {
         flightStatus,
         cancelledAt,
         scheduledDate
-      });
+      };
+
+      if (!routeMap.has(routeKey)) {
+        routeMap.set(routeKey, { data: flightObj, isOperating: isOperatingRow });
+      } else {
+        const cur = routeMap.get(routeKey);
+        if (cur.isOperating) continue;
+        if (isOperatingRow) routeMap.set(routeKey, { data: flightObj, isOperating: true });
+      }
     }
+
+    const flights = Array.from(routeMap.values()).map((v) => v.data);
 
     // Lier les vols retour aux vols aller annulés : marquer en SURVEILLANCE RETOUR
     for (const fl of flights) {
