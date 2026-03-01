@@ -3,44 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Radar Robin des Airs — Elite Africa (AF-KL-LH-SN)</title>
+  <title>Radar Robin des Airs — Surveillance Totale Afrique-Europe</title>
   <link rel="icon" href="/favicon.png" type="image/png">
   <style>
-    :root { --red: #ff4d4d; --yellow: #ffcc00; --green: #2ecc71; --orange: #ea580c; --bg: #121212; }
+    :root { --red: #ff4d4d; --yellow: #ffcc00; --green: #2ecc71; --orange: #ea580c; --af-blue: #002366; --bg: #0d0d0d; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; min-height: 100vh; padding: 20px; }
-    .dashboard { max-width: 1300px; margin: auto; }
-    header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 20px; }
-    .logo { font-size: 22px; font-weight: bold; color: var(--red); }
-    .stat-card { background: #1e1e1e; padding: 12px 20px; border-radius: 8px; border: 1px solid #333; text-align: center; display: inline-block; }
+    body { background: var(--bg); color: #e0e0e0; font-family: 'Segoe UI', Roboto, sans-serif; min-height: 100vh; padding: 20px; }
+    .dashboard { max-width: 1400px; margin: auto; }
+    header {
+      display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;
+      padding: 20px; background: #1a1a1a; border-radius: 10px; border-bottom: 3px solid var(--red);
+      margin-bottom: 25px;
+    }
+    .logo { font-size: 26px; font-weight: 900; color: var(--red); letter-spacing: 2px; }
+    .status-bar { font-size: 14px; color: #888; }
+    .stat-card { background: #222; padding: 12px 20px; border-radius: 8px; text-align: center; display: inline-block; }
     .stat-card span { display: block; font-size: 22px; font-weight: bold; }
     .toolbar { margin-bottom: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
     select { padding: 8px 12px; border-radius: 6px; border: 1px solid #444; background: #1e1e1e; color: #fff; font-size: 14px; }
     .btn { padding: 8px 16px; border-radius: 6px; border: none; background: #25D366; color: #fff; font-weight: 600; cursor: pointer; font-size: 13px; }
     .btn:hover { opacity: 0.9; }
-    table { width: 100%; border-collapse: collapse; background: #1e1e1e; border-radius: 10px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-size: 14px; }
-    th { background: #252525; padding: 14px 12px; text-align: left; color: #888; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }
-    td { padding: 14px 12px; border-bottom: 1px solid #252525; }
+    table { width: 100%; border-collapse: collapse; background: #161616; border-radius: 8px; overflow: hidden; font-size: 14px; }
+    th { background: #222; padding: 15px; text-align: left; color: #666; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+    td { padding: 15px; border-bottom: 1px solid #222; }
     tr:hover { background: rgba(255,255,255,0.03); }
-    .row-red { background: rgba(255, 77, 77, 0.15); border-left: 5px solid var(--red); }
-    .row-orange { background: rgba(234, 88, 12, 0.12); border-left: 5px solid var(--orange); }
-    .row-yellow { background: rgba(255, 204, 0, 0.08); border-left: 5px solid var(--yellow); }
-    .row-cancelled { background: rgba(153, 27, 27, 0.2); border-left: 5px solid #991b1b; }
-    .badge { padding: 4px 10px; border-radius: 4px; font-weight: bold; font-size: 11px; }
+    .row-red { background: rgba(255, 77, 77, 0.12); border-left: 6px solid var(--red); }
+    .row-orange { background: rgba(234, 88, 12, 0.1); border-left: 6px solid var(--orange); }
+    .row-yellow { background: rgba(255, 204, 0, 0.08); border-left: 6px solid var(--yellow); }
+    .row-cancelled { background: rgba(153, 27, 27, 0.2); border-left: 6px solid #991b1b; }
+    .row-af { border-left-color: #3b82f6 !important; }
+    .badge { padding: 5px 10px; border-radius: 4px; font-weight: bold; font-size: 11px; }
     .badge-red { background: var(--red); color: white; }
     .badge-orange { background: var(--orange); color: white; }
     .badge-yellow { background: var(--yellow); color: black; }
     .badge-green { background: var(--green); color: white; }
     .badge-grey { background: #64748b; color: white; }
     .badge-cancelled { background: #991b1b; color: white; }
-    .btn-whatsapp { background: #25D366; color: white; border: none; padding: 8px 14px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 12px; text-decoration: none; display: inline-block; }
-    .btn-whatsapp:hover { opacity: 0.9; }
-    .airline-tag { font-weight: bold; background: #444; padding: 3px 8px; border-radius: 3px; font-size: 12px; }
-    .delay-big { font-size: 16px; font-weight: bold; color: var(--yellow); }
-    .row-red .delay-big { color: var(--red); }
-    .row-cancelled .delay-big { color: #ccc; }
-    #loader { text-align: center; padding: 40px; color: #888; }
-    .meta { font-size: 12px; color: #666; margin-top: 8px; }
+    .delay-box { font-size: 20px; font-weight: bold; }
+    .row-red .delay-box { color: var(--red); }
+    .row-yellow .delay-box, .row-orange .delay-box { color: var(--yellow); }
+    .row-cancelled .delay-box { color: #ccc; }
+    .btn-whatsapp {
+      background: #25D366; color: white; text-decoration: none; padding: 10px 15px; border-radius: 6px;
+      font-size: 12px; font-weight: bold; display: inline-block; transition: 0.3s;
+    }
+    .btn-whatsapp:hover { transform: scale(1.05); background: #1ebe57; }
+    .airline-tag { background: #333; padding: 2px 6px; border-radius: 3px; font-size: 11px; color: #ccc; }
+    #loader { text-align: center; padding: 100px; font-size: 18px; color: #555; }
+    .meta { font-size: 12px; color: #666; }
     #gate { max-width: 320px; margin: 40px auto; text-align: center; }
     #gate input { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #444; background: #1e1e1e; color: #fff; font-size: 14px; margin-bottom: 10px; }
     #gate .btn { width: 100%; }
@@ -58,10 +68,11 @@
 
   <div id="radar-content" class="dashboard" style="display:none;">
     <header>
-      <div class="logo">🏹 ROBIN DES AIRS : RADAR ELITE</div>
-      <div style="display:flex; flex-wrap:wrap; gap:10px;">
+      <div class="logo">🏹 ROBIN DES AIRS : SURVEILLANCE AFRIQUE-EUROPE</div>
+      <div style="display:flex; flex-wrap:wrap; align-items:center; gap:14px;">
         <div class="stat-card">Vols critiques (≥2h30) <span id="count-red" style="color:var(--red)">0</span></div>
         <div class="stat-card">Potentiel Cash <span id="total-cash" style="color:var(--green)">0 €</span></div>
+        <div class="status-bar" id="update-time">Mise à jour en cours...</div>
       </div>
     </header>
 
@@ -87,18 +98,18 @@
       <span class="meta" id="updated"></span>
     </div>
 
-    <div id="loader">Scan en cours : AF, KL, LH, SN…</div>
+    <div id="loader">🚀 Robin scanne les couloirs aériens entre l'Afrique et l'Europe...</div>
 
     <table id="flight-table" style="display:none;">
       <thead>
         <tr>
           <th>Vol</th>
-          <th>Compagnie</th>
-          <th>Itinéraire</th>
-          <th>Retard</th>
+          <th>Cie</th>
+          <th>Trajet (Origine ➔ Dest)</th>
+          <th>Retard (Minutes)</th>
           <th>Statut</th>
           <th>Indemnité</th>
-          <th>Action</th>
+          <th>Action Directe</th>
         </tr>
       </thead>
       <tbody id="flight-body"></tbody>
@@ -145,14 +156,15 @@
       flights.forEach(function(f) {
         var color = f.cancelled ? 'CANCELLED' : (f.color || 'GREY');
         var rowClass = 'row-' + (color === 'RED' ? 'red' : color === 'ORANGE' ? 'orange' : color === 'YELLOW' ? 'yellow' : color === 'CANCELLED' ? 'cancelled' : '');
+        if ((f.airline || '').toUpperCase() === 'AF') rowClass += ' row-af';
         var badgeClass = 'badge-' + (color === 'CANCELLED' ? 'cancelled' : color.toLowerCase());
-        var statusLabel = f.cancelled ? 'ANNULÉ' : (color === 'RED' ? '≥2h30' : color === 'ORANGE' ? '1h–2h30' : color === 'YELLOW' ? '~1h' : color === 'GREEN' ? 'OK' : '—');
+        var statusLabel = f.cancelled ? 'ANNULÉ' : (color === 'RED' ? '🔴 CRITIQUE' : color === 'ORANGE' ? '🟠 SURVEILLANCE' : color === 'YELLOW' ? '🟡 SURVEILLANCE' : color === 'GREEN' ? 'OK' : '—');
         var retard = f.cancelled ? '—' : (f.delayMinutes != null ? f.delayMinutes + ' min' : '—');
-        var indemnite = (f.eligible && (color === 'RED' || color === 'ORANGE' || color === 'YELLOW')) ? '450 €' : (f.eligible ? '—' : '—');
+        var indemnite = (f.eligible && (color === 'RED' || color === 'ORANGE' || color === 'YELLOW')) ? (color === 'RED' || color === 'ORANGE' ? '600 €' : 'POTENTIEL 600€') : (f.eligible ? '—' : '—');
         if (f.eligible && (color === 'RED' || color === 'ORANGE')) totalCash += 450;
         if (color === 'RED') redCount++;
 
-        var waMsg = 'Bonjour Robin ! Mon vol ' + (f.flight || '') + ' (' + (f.dep || '') + ' → ' + (f.arr || '') + ') a ' + (f.cancelled ? 'été annulé' : retard + ' de retard') + '. Je souhaite lancer mon dossier.';
+        var waMsg = '🚨 ALERTE ROBIN DES AIRS\nVol : ' + (f.flight || '') + '\nTrajet : ' + (f.dep || '') + ' ➔ ' + (f.arr || '') + '\nRetard : ' + (f.cancelled ? 'vol annulé' : (f.delayMinutes != null ? f.delayMinutes + ' minutes' : '—')) + '.\nVous avez droit à 600€ d\'indemnité légale. Nous récupérons cet argent pour vous.';
         var waUrl = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(waMsg);
 
         var tr = document.createElement('tr');
@@ -160,8 +172,8 @@
         tr.innerHTML =
           '<td><strong>' + (f.flight || '—') + '</strong></td>' +
           '<td><span class="airline-tag">' + (f.airline || '—') + '</span></td>' +
-          '<td>' + (f.dep || '—') + ' → ' + (f.arr || '—') + '</td>' +
-          '<td><span class="delay-big">' + retard + '</span></td>' +
+          '<td>' + (f.dep || '—') + ' ➔ ' + (f.arr || '—') + '</td>' +
+          '<td><span class="delay-box">' + retard + '</span></td>' +
           '<td><span class="badge ' + badgeClass + '">' + statusLabel + '</span></td>' +
           '<td>' + indemnite + '</td>' +
           '<td><a href="' + waUrl + '" target="_blank" class="btn-whatsapp">WhatsApp</a></td>';
@@ -170,7 +182,9 @@
 
       document.getElementById('count-red').textContent = redCount;
       document.getElementById('total-cash').textContent = totalCash + ' €';
-      document.getElementById('updated').textContent = 'MAJ : ' + (data && data.updatedAt ? new Date(data.updatedAt).toLocaleTimeString('fr-FR') : '—');
+      var timeStr = data && data.updatedAt ? new Date(data.updatedAt).toLocaleTimeString('fr-FR') : '—';
+      document.getElementById('update-time').textContent = 'MAJ : ' + timeStr;
+      if (document.getElementById('updated')) document.getElementById('updated').textContent = 'MAJ : ' + timeStr;
     }
 
     function load() {
