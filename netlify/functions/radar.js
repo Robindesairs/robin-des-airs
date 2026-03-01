@@ -81,6 +81,14 @@ function toTimeStrZulu(val) {
   return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + 'Z';
 }
 
+/** Clé normalisée pour matcher départ et arrivée (même vol) entre API departure et arrival. */
+function arrivalMapKey(flightNumber, depIata, arrIata) {
+  const fn = String(flightNumber || '').replace(/\s/g, '').toUpperCase();
+  const dep = (depIata || '').toUpperCase();
+  const arr = (arrIata || '').toUpperCase();
+  return fn + '|' + dep + '|' + arr;
+}
+
 /** Calcule le retard en minutes = différence (heure effective − heure prévue). Retourne null si impossible. */
 function delayMinutesFromTimes(scheduledTime, actualOrEstimatedTime) {
   if (!scheduledTime || !actualOrEstimatedTime) return null;
@@ -156,7 +164,7 @@ exports.handler = async (event) => {
       if (Array.isArray(arrData)) arrivalRaw.push(...arrData);
     }
 
-    /** Map arrivées : (flightNumber|dep|arr) -> meilleure heure d'arrivée estimée/réelle (pour mise à jour L'heure d'arrivée estimée). */
+    /** Map arrivées : clé normalisée -> heure d'arrivée estimée/réelle (API arrival = à jour). */
     const arrivalMap = new Map();
     for (const f of arrivalRaw) {
       const dep = f.departure || {};
@@ -164,7 +172,7 @@ exports.handler = async (event) => {
       const depIata = (dep.iataCode || '').toUpperCase();
       const arrIata = (arr.iataCode || '').toUpperCase();
       const flightNumber = f.flight?.iata || f.flight?.number || f.flight?.icao || '';
-      const key = flightNumber + '|' + depIata + '|' + arrIata;
+      const key = arrivalMapKey(flightNumber, depIata, arrIata);
       const est = arr.actualTime || arr.estimatedTime || arr.estTime || arr.revisedTime;
       if (est) arrivalMap.set(key, est);
     }
@@ -210,8 +218,14 @@ exports.handler = async (event) => {
       const scheduledDeparture = toTimeStrZulu(dep.scheduledTime);
       const estimatedDeparture = toTimeStrZulu(dep.actualTime || dep.estimatedTime || dep.scheduledTime);
       const scheduledArrival = toTimeStrZulu(arr.scheduledTime);
-      const arrivalEstFromApi = arrivalMap.get(flightNumber + '|' + depIata + '|' + arrIata);
-      const estimatedArrival = toTimeStrZulu(arrivalEstFromApi || arr.actualTime || arr.estimatedTime || arr.estTime || arr.revisedTime || arr.scheduledTime);
+      const keyNorm = arrivalMapKey(flightNumber, depIata, arrIata);
+      const arrivalEstFromApi = arrivalMap.get(keyNorm);
+      let estimatedArrivalRaw = arrivalEstFromApi || arr.actualTime || arr.estimatedTime || arr.estTime || arr.revisedTime;
+      if (!estimatedArrivalRaw && typeof arr.delay === 'number' && arr.delay > 0 && arr.scheduledTime) {
+        const sched = new Date(arr.scheduledTime);
+        if (!isNaN(sched.getTime())) estimatedArrivalRaw = new Date(sched.getTime() + arr.delay * 60000).toISOString();
+      }
+      const estimatedArrival = toTimeStrZulu(estimatedArrivalRaw || arr.scheduledTime);
       const scheduledDate = (dep.scheduledTime && String(dep.scheduledTime).slice(0, 10)) || null;
 
       const flightObj = {

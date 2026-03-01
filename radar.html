@@ -174,11 +174,22 @@
       return '--:--';
     }
 
-    function getDynamicArrivalTime(f) {
-      if (f.landedAtZulu && f.landedAtZulu !== '—') return '🏁 ' + formatExactTime(f.landedAtZulu);
-      if (f.estimatedArrival && f.estimatedArrival !== '—') return '🕒 ' + formatExactTime(f.estimatedArrival);
-      if (f.scheduledArrival && f.scheduledArrival !== '—') return formatExactTime(f.scheduledArrival);
-      return '--:--';
+    /** Logique de précision temps réel : priorité réel > ETA live > estimé > prévu. */
+    function getMeilleureArrivee(f) {
+      var sched = (f.scheduledArrival || '').toString().trim();
+      var schedNorm = sched.replace(/Z$/i, '');
+      if (f.landedAtZulu && f.landedAtZulu !== '—') {
+        return { time: f.landedAtZulu, label: '🏁 RÉEL', color: 'var(--green)' };
+      }
+      if (f.estimatedArrival && f.estimatedArrival !== '—') {
+        var estNorm = (f.estimatedArrival || '').toString().replace(/Z$/i, '');
+        if (schedNorm && estNorm !== schedNorm) {
+          return { time: f.estimatedArrival, label: '✈️ LIVE ETA', color: 'var(--blue)' };
+        }
+        return { time: f.estimatedArrival, label: '🕒 ESTIMÉ', color: 'var(--blue)' };
+      }
+      if (sched) return { time: f.scheduledArrival, label: '📅 PRÉVU', color: '#888' };
+      return { time: null, label: '—', color: '#888' };
     }
 
     function getPreciseStatus(f) {
@@ -239,7 +250,8 @@
         var scheduledDep = (f.scheduledDeparture != null && f.scheduledDeparture !== '—') ? f.scheduledDeparture : '—';
         var estimatedDep = (f.estimatedDeparture != null && f.estimatedDeparture !== '—') ? f.estimatedDeparture : '—';
         var scheduledArr = formatExactTime(f.scheduledArrival);
-        var dynamicArrival = getDynamicArrivalTime(f);
+        var infoArrivee = getMeilleureArrivee(f);
+        var heureArrivee = infoArrivee.time ? formatExactTime(infoArrivee.time) : '--:--';
         var delayDisplay = f.cancelled ? '—' : (f.delayMinutes != null ? '<span class="delay-val">' + String(f.delayMinutes) + '</span> min' : '0 min');
         var stateLabel = getPreciseStatus(f);
         var annuleCell = f.cancelled ? ('Oui' + (f.cancelledAt && f.cancelledAt !== '—' ? ' (~' + f.cancelledAt + ')' : '')) : '—';
@@ -256,7 +268,10 @@
           '<td>' + scheduledDep + '</td>' +
           '<td>' + estimatedDep + '</td>' +
           '<td>' + scheduledArr + '</td>' +
-          '<td style="font-weight:bold;color:var(--blue);">' + dynamicArrival + '</td>' +
+          '<td style="background:rgba(59,130,246,0.08); padding:10px 15px;">' +
+            '<div style="font-size:10px;color:' + infoArrivee.color + ';font-weight:bold;">' + infoArrivee.label + '</div>' +
+            '<div style="font-size:15px;font-weight:900;color:#fff;">' + heureArrivee + '</div>' +
+          '</td>' +
           '<td>' + delayDisplay + '</td>' +
           '<td>' + stateLabel + '</td>' +
           '<td>' + annuleCell + '</td>' +
