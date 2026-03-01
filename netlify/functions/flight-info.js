@@ -19,6 +19,17 @@ exports.handler = async (event) => {
   try {
     const url = `https://aviation-edge.com/v2/public/flights?key=${apiKey}&flightIata=${flightNumber}`;
     const response = await fetch(url);
+
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+      console.error('flight-info: réponse non-JSON (HTML ou erreur)', { flightNumber, contentType: response.headers.get('content-type') });
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({ error: 'Oups ! Le serveur a renvoyé une erreur (HTML) au lieu de JSON. Quota API ou erreur Netlify possible.' })
+      };
+    }
+
     const data = await response.json();
 
     if (!Array.isArray(data) || data.length === 0) {
@@ -55,7 +66,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ error: "Vérifiez votre numéro de vol" })
+      body: JSON.stringify({ error: "Erreur technique : quota Netlify ou Aviation Edge probablement épuisé, ou réseau indisponible." })
     };
   }
 };

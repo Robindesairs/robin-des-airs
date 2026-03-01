@@ -334,8 +334,8 @@
       document.getElementById('count-red').textContent = criticalCount;
       document.getElementById('total-cash').textContent = totalCash + ' €';
       var apiStatusEl = document.getElementById('api-status');
-      if (apiStatusEl) apiStatusEl.textContent = flights.length + ' vols éligibles détectés à ' + new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-      var timeStr = data && data.updatedAt ? new Date(data.updatedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '—';
+      if (apiStatusEl) apiStatusEl.textContent = flights.length + ' vol' + (flights.length !== 1 ? 's' : '') + ' éligible' + (flights.length !== 1 ? 's' : '') + ' détecté' + (flights.length !== 1 ? 's' : '') + ' à ' + new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+      var timeStr = data && data.updatedAt ? new Date(data.updatedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', hour12: false }) : '—';
       document.getElementById('update-time').textContent = 'MAJ : ' + timeStr;
       var viewDateStr = (data && data.viewDate) ? (function() {
         var d = new Date(data.viewDate + 'T12:00:00');
