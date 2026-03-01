@@ -160,10 +160,10 @@
             <span class="cb-main">Surbooking / Refus d'embarquement</span>
             <span class="cb-sub">La compagnie vous a refusé l'accès à bord</span>
           </button>
-          <button class="cb wa-cb" onclick="goWaDirect()">
-            <span class="cb-icon">🏹</span>
-            <span class="cb-main">Parler directement à Robin</span>
-            <span class="cb-sub">Jusqu'à 600€ par passager. Les moins chers du marché — inutile de regarder ailleurs.</span>
+          <button class="cb" onclick="pickMotif('correspondance')">
+            <span class="cb-icon">🔄</span>
+            <span class="cb-main">Correspondance manquée</span>
+            <span class="cb-sub">Retard du 1er vol → vous avez raté votre liaison</span>
           </button>
         </div>
       </div>
@@ -1228,7 +1228,7 @@ function goTo(stepId, pct) {
 
 function setCrumbs() {
   const MAP = {
-    retard: '⏱ Retard', annulation: '❌ Annulation', surbook: '🚫 Surbooking',
+    retard: '⏱ Retard', annulation: '❌ Annulation', surbook: '🚫 Surbooking', correspondance: '🔄 Correspondance manquée',
     direct: '✈ Direct', escale: '🔄 Escale'
   };
   document.getElementById('funnel-crumbs').textContent =
@@ -1243,7 +1243,7 @@ function pickMotif(m) {
   if (m === 'annulation') {
     goTo('step-1b', 20);
   } else {
-    goTo('step-1c', 33);
+    goTo('step-1c', 33); // retard, surbook, correspondance
     document.getElementById('back1c').onclick = () => goTo('step-1', 12);
     document.getElementById('back2').onclick   = () => goTo('step-1c', 33);
   }
@@ -1454,7 +1454,7 @@ function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
   const totalNet  = net  * pax;
   const totalFee  = fee  * pax;
 
-  const motifTxt = { retard:'Retard +3h', annulation:'Annulation', surbook:"Refus d'embarquement" }[S.motif] || '';
+  const motifTxt = { retard:'Retard +3h', annulation:'Annulation', surbook:"Refus d'embarquement", correspondance:'Correspondance manquée' }[S.motif] || '';
   const match    = DB[(volRef || '').toUpperCase()];
   var routeStr   = '—';
   if (match && match.r) {
