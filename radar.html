@@ -10,12 +10,12 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: var(--bg); color: #e0e0e0; font-family: 'Segoe UI', Roboto, sans-serif; min-height: 100vh; padding: 0; overflow-x: hidden; }
     .dashboard { max-width: 100%; margin: 0; }
-    /* Barre de commande fixe (sticky) — reste en haut au scroll */
+    /* Barre de commande fixe (sticky) — reste en haut au scroll, espace en bas pour lisibilité */
     header.top-bar {
       position: sticky; top: 0; z-index: 2000;
       min-height: 64px;
       display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;
-      padding: 15px 30px; margin-bottom: 0;
+      padding: 15px 30px 20px; margin-bottom: 0;
       background: rgba(26, 26, 26, 0.98); backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       border-bottom: 2px solid var(--red); box-shadow: 0 4px 20px rgba(0,0,0,0.5);
@@ -33,10 +33,10 @@
     .btn-reset-total:hover { background: #c0392b; }
     .table-container { padding: 0 20px 40px 20px; }
     table { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--panel); border-radius: 8px; font-size: 13px; }
-    /* En-tête du tableau sticky — reste sous la barre au scroll */
+    /* En-tête du tableau sticky — bien en dessous de la barre pour rester lisible au scroll */
     thead th {
-      position: sticky; top: 74px;
-      background: #222; padding: 15px; text-align: left; color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+      position: sticky; top: 100px;
+      background: #222; padding: 14px 15px; text-align: left; color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
       z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border-bottom: 1px solid #333;
     }
     td { padding: 15px; border-bottom: 1px solid #222; }
