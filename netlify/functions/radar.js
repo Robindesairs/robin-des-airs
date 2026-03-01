@@ -1,5 +1,5 @@
 /**
- * Radar Robin des Airs — Tous les vols au départ de Paris Orly (ORY).
+ * Radar Robin des Airs — Tous les vols au départ ou à l'arrivée en France.
  * Priorité : ANNULÉ → ROUGE (≥2h30) → ORANGE (1h–2h30) → JAUNE (~1h).
  * Variable Netlify : AVIATION_EDGE_KEY
  */
@@ -9,7 +9,7 @@ const AFRICA_COUNTRIES = ['DZ','AO','BJ','BW','BF','BI','CV','CM','CF','TD','KM'
 const EU_AIRLINES_IATA = ['AF','SN','TP','IB','SS','TO','DS','AT','U2','FR','VY','EI','LX','OS','KL'];
 
 const AIRPORT_COUNTRY = {
-  CDG:'FR', ORY:'FR', MRS:'FR', LYS:'FR', NCE:'FR', BOD:'FR', TLS:'FR', NTE:'FR', LIL:'FR', SXB:'FR',
+  CDG:'FR', ORY:'FR', MRS:'FR', LYS:'FR', NCE:'FR', BOD:'FR', TLS:'FR', NTE:'FR', LIL:'FR', SXB:'FR', RUN:'FR',
   BRU:'BE', GVA:'CH', ZRH:'CH', LHR:'GB', LGW:'GB', AMS:'NL', FRA:'DE', MUC:'DE', MAD:'ES', BCN:'ES',
   LIS:'PT', OPO:'PT', FCO:'IT', MXP:'IT', VIE:'AT', CPH:'DK', OSL:'NO', ARN:'SE', HEL:'FI', DUB:'IE',
   ATH:'GR', IST:'TR', DXB:'AE', DOH:'QA', JFK:'US', EWR:'US', MIA:'US',
@@ -20,8 +20,8 @@ const AIRPORT_COUNTRY = {
   NKC:'MR', FNA:'SL', ROB:'LR', PNR:'CG', LAD:'AO', SSG:'GQ', BGF:'CF', KGL:'RW', JIB:'DJ', ZNZ:'TZ', DZA:'FR'
 };
 
-/** Un seul hub : Paris Orly — tous les vols au départ, sans filtre trajet. */
-const HUBS = ['ORY'];
+/** Tous les départs France : principaux aéroports métropole + La Réunion. */
+const HUBS = ['CDG', 'ORY', 'MRS', 'LYS', 'NCE', 'BOD', 'TLS', 'NTE', 'LIL', 'SXB', 'RUN'];
 
 function getCountry(iata) {
   return AIRPORT_COUNTRY[(iata || '').toUpperCase()] || null;
@@ -187,7 +187,7 @@ exports.handler = async (event) => {
       const arrIata = (arr.iataCode || '').toUpperCase();
       const depCountry = getCountry(depIata);
       const arrCountry = getCountry(arrIata);
-      /* Pas de filtre trajet : on garde tous les départs (ORY). */
+      /* Pas de filtre trajet : on garde tous les départs (France). */
 
       const airlineIata = (f.airline?.iataCode || (f.flight?.iata && f.flight.iata.slice(0, 2)) || '').toUpperCase();
       const flightNumber = f.flight?.iata || f.flight?.number || f.flight?.icao || '—';
@@ -257,6 +257,80 @@ exports.handler = async (event) => {
         if (cur.isOperating) continue;
         if (isOperatingRow) routeMap.set(routeKey, { data: flightObj, isOperating: true });
       }
+    }
+
+    /** Arrivées en France : ajouter les vols qui arrivent sur un hub français (sans dupliquer les domestiques). */
+    const hubsSet = new Set(HUBS.map((h) => h.toUpperCase()));
+    for (const f of arrivalRaw) {
+      const dep = f.departure || {};
+      const arr = f.arrival || {};
+      const depIata = (dep.iataCode || '').toUpperCase();
+      const arrIata = (arr.iataCode || '').toUpperCase();
+      if (!hubsSet.has(arrIata)) continue;
+      const routeKey = depIata + arrIata + (dep.scheduledTime || '');
+      if (routeMap.has(routeKey)) continue;
+
+      const depCountry = getCountry(depIata);
+      const arrCountry = getCountry(arrIata);
+      const airlineIata = (f.airline?.iataCode || (f.flight?.iata && f.flight.iata.slice(0, 2)) || '').toUpperCase();
+      const flightNumber = f.flight?.iata || f.flight?.number || f.flight?.icao || '—';
+      const flightPrefix = (String(flightNumber).replace(/\s/g, '').match(/^[A-Za-z]{2}/) || [])[0]?.toUpperCase() || '';
+      const isOperatingRow = flightPrefix === airlineIata;
+
+      const effectiveArr = arr.actualTime || arr.estimatedTime;
+      let delayMinutes = delayMinutesFromTimes(arr.scheduledTime, effectiveArr);
+      if (delayMinutes == null) {
+        delayMinutes = 0;
+        if (typeof arr.delay === 'number') delayMinutes = arr.delay;
+        else if (typeof dep.delay === 'number') delayMinutes = dep.delay;
+      }
+
+      const statusRaw = (f.status || '').toLowerCase();
+      const cancelled = statusRaw === 'cancelled' || statusRaw === 'canceled' || statusRaw === 'annulé';
+      const hasActualArr = !!(arr.actualTime);
+      const statusFr = cancelled ? 'Annulé' : (statusRaw === 'landed' || statusRaw === 'arrived' ? 'Atterri' : (hasActualArr ? 'Atterri' : statusToFr(f.status)));
+      const landedAtZulu = (statusRaw === 'landed' || statusRaw === 'arrived') && (arr.actualTime || arr.estimatedTime) ? toTimeStrZulu(arr.actualTime || arr.estimatedTime) : null;
+      const cancelledAt = cancelled ? (toTimeStrZulu(dep.estimatedTime || dep.actualTime || f.updatedAt || dep.scheduledTime) || null) : null;
+      const trackerUrl = getTrackerUrl(airlineIata, flightNumber);
+
+      const eligible = checkEligible(depCountry, arrCountry, airlineIata);
+      const color = cancelled ? 'CANCELLED' : getColor(delayMinutes, eligible);
+
+      const scheduledDeparture = toTimeStrZulu(dep.scheduledTime);
+      const estimatedDeparture = toTimeStrZulu(dep.actualTime || dep.estimatedTime || dep.scheduledTime);
+      const scheduledArrival = toTimeStrZulu(arr.scheduledTime);
+      const keyNorm = arrivalMapKey(flightNumber, depIata, arrIata);
+      const arrivalEstFromApi = arrivalMap.get(keyNorm);
+      let estimatedArrivalRaw = arrivalEstFromApi || arr.actualTime || arr.estimatedTime || arr.estTime || arr.revisedTime;
+      if (!estimatedArrivalRaw && typeof arr.delay === 'number' && arr.delay > 0 && arr.scheduledTime) {
+        const sched = new Date(arr.scheduledTime);
+        if (!isNaN(sched.getTime())) estimatedArrivalRaw = new Date(sched.getTime() + arr.delay * 60000).toISOString();
+      }
+      const estimatedArrival = toTimeStrZulu(estimatedArrivalRaw || arr.scheduledTime);
+      const scheduledDate = (dep.scheduledTime && String(dep.scheduledTime).slice(0, 10)) || null;
+
+      const flightObj = {
+        flight: flightNumber,
+        airline: airlineIata,
+        dep: depIata || '—',
+        arr: arrIata || '—',
+        scheduledDeparture,
+        estimatedDeparture,
+        scheduledArrival,
+        estimatedArrival,
+        delayMinutes: cancelled ? null : delayMinutes,
+        eligible,
+        color,
+        cancelled: !!cancelled,
+        status: f.status || '—',
+        statusFr,
+        landedAtZulu,
+        flightStatus: cancelled ? 'cancelled' : (hasActualArr ? 'arrived' : 'scheduled'),
+        cancelledAt,
+        scheduledDate,
+        trackerUrl
+      };
+      routeMap.set(routeKey, { data: flightObj, isOperating: isOperatingRow });
     }
 
     const flights = Array.from(routeMap.values()).map((v) => v.data);
