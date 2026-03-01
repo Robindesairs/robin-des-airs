@@ -43,6 +43,9 @@
     .row-red .delay-box { color: var(--red); }
     .row-yellow .delay-box, .row-orange .delay-box { color: var(--yellow); }
     .row-cancelled .delay-box { color: #ccc; }
+    .radar-date-bar { margin-bottom: 12px; padding: 10px 14px; background: #1a1a1a; border-radius: 8px; border-left: 4px solid var(--red); }
+    .radar-view-date { font-size: 15px; font-weight: 700; color: #e0e0e0; }
+    th.retard-col { color: var(--yellow); }
     .btn-whatsapp {
       background: #25D366; color: white; text-decoration: none; padding: 10px 15px; border-radius: 6px;
       font-size: 12px; font-weight: bold; display: inline-block; transition: 0.3s;
@@ -76,6 +79,10 @@
       </div>
     </header>
 
+    <div class="radar-date-bar" id="radar-date-bar">
+      <span class="radar-view-date" id="radar-view-date">Vue du — — Dernière MAJ : —</span>
+    </div>
+
     <div class="toolbar">
       <button class="btn" id="btn-refresh">Rafraîchir</button>
     </div>
@@ -89,8 +96,10 @@
           <th>Cie</th>
           <th>Trajet (Origine ➔ Dest)</th>
           <th>Heure départ prévue</th>
-          <th>Heure départ estimée / effectif</th>
-          <th>Retard (minutes)</th>
+          <th>Heure départ effectif</th>
+          <th class="retard-col">Retard (min)</th>
+          <th>Décollé ?</th>
+          <th>Annulé</th>
           <th>Statut</th>
           <th>Indemnité</th>
           <th>Action Directe</th>
@@ -148,7 +157,9 @@
 
         var scheduledDep = (f.scheduledDeparture != null && f.scheduledDeparture !== '—') ? f.scheduledDeparture : '—';
         var estimatedDep = (f.estimatedDeparture != null && f.estimatedDeparture !== '—') ? f.estimatedDeparture : '—';
-        var retardNum = f.cancelled ? '—' : (f.delayMinutes != null ? String(f.delayMinutes) + ' min' : '—');
+        var retardNum = f.cancelled ? '—' : (f.delayMinutes != null ? String(f.delayMinutes) + ' min' : '0 min');
+        var decolleLabel = f.flightStatus === 'cancelled' ? 'Annulé' : (f.flightStatus === 'departed' ? 'Oui' : 'Non');
+        var annuleCell = f.cancelled ? ('Oui' + (f.cancelledAt && f.cancelledAt !== '—' ? ' (~' + f.cancelledAt + ')' : '')) : '—';
 
         var tr = document.createElement('tr');
         if (rowClass) tr.className = rowClass;
@@ -159,6 +170,8 @@
           '<td>' + scheduledDep + '</td>' +
           '<td>' + estimatedDep + '</td>' +
           '<td><span class="delay-box">' + retardNum + '</span></td>' +
+          '<td>' + decolleLabel + '</td>' +
+          '<td>' + annuleCell + '</td>' +
           '<td><span class="badge ' + badgeClass + '">' + statusLabel + '</span></td>' +
           '<td>' + indemnite + '</td>' +
           '<td><a href="' + waUrl + '" target="_blank" class="btn-whatsapp">WhatsApp</a></td>';
@@ -167,8 +180,14 @@
 
       document.getElementById('count-red').textContent = redCount;
       document.getElementById('total-cash').textContent = totalCash + ' €';
-      var timeStr = data && data.updatedAt ? new Date(data.updatedAt).toLocaleTimeString('fr-FR') : '—';
+      var timeStr = data && data.updatedAt ? new Date(data.updatedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '—';
       document.getElementById('update-time').textContent = 'MAJ : ' + timeStr;
+      var viewDateStr = (data && data.viewDate) ? (function() {
+        var d = new Date(data.viewDate + 'T12:00:00');
+        return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      })() : new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+      var dateBarEl = document.getElementById('radar-view-date');
+      if (dateBarEl) dateBarEl.textContent = 'Vue du ' + viewDateStr + ' — Dernière MAJ : ' + timeStr;
     }
 
     function api() {

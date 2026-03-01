@@ -108,12 +108,16 @@ exports.handler = async (event) => {
 
       const statusRaw = (f.status || '').toLowerCase();
       const cancelled = statusRaw === 'cancelled' || statusRaw === 'canceled' || statusRaw === 'annulé';
+      const hasActualDep = !!(dep.actualTime);
+      const flightStatus = cancelled ? 'cancelled' : (hasActualDep ? 'departed' : 'scheduled');
+      const cancelledAt = cancelled ? (toTimeStr(dep.estimatedTime || dep.actualTime || f.updatedAt || dep.scheduledTime) || null) : null;
 
       const eligible = checkEligible(depCountry, arrCountry, airlineIata);
       const color = cancelled ? 'CANCELLED' : getColor(delayMinutes, eligible);
 
       const scheduledDeparture = toTimeStr(dep.scheduledTime);
       const estimatedDeparture = toTimeStr(dep.actualTime || dep.estimatedTime || dep.scheduledTime);
+      const scheduledDate = (dep.scheduledTime && String(dep.scheduledTime).slice(0, 10)) || null;
 
       flights.push({
         flight: flightNumber,
@@ -126,19 +130,26 @@ exports.handler = async (event) => {
         eligible,
         color,
         cancelled: !!cancelled,
-        status: f.status || '—'
+        status: f.status || '—',
+        flightStatus,
+        cancelledAt,
+        scheduledDate
       });
     }
 
     const order = { CANCELLED: 0, RED: 1, ORANGE: 2, YELLOW: 3, GREEN: 4, GREY: 5 };
     flights.sort((a, b) => (order[a.color] ?? 6) - (order[b.color] ?? 6) || ((b.delayMinutes || 0) - (a.delayMinutes || 0)));
 
+    const now = new Date();
+    const viewDate = now.toISOString().slice(0, 10);
+
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       body: JSON.stringify({
         flights,
-        updatedAt: new Date().toISOString()
+        viewDate,
+        updatedAt: now.toISOString()
       })
     };
   } catch (err) {
