@@ -3,96 +3,119 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Radar vols Afrique–Europe — Robin des Airs</title>
+  <title>Radar Robin des Airs — Elite Africa (AF-KL-LH-SN)</title>
   <link rel="icon" href="/favicon.png" type="image/png">
   <style>
+    :root { --red: #ff4d4d; --yellow: #ffcc00; --green: #2ecc71; --orange: #ea580c; --bg: #121212; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0B1F3A; color: #e2e8f0; min-height: 100vh; padding: 20px; }
-    h1 { font-size: 1.35rem; margin-bottom: 8px; color: #00E5A0; }
-    .legend { font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 16px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-    .legend span { display: inline-flex; align-items: center; gap: 6px; }
-    .toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 16px; }
-    select { padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); color: #fff; font-size: 14px; }
-    select option { background: #1e293b; color: #fff; }
-    .btn { padding: 8px 16px; border-radius: 6px; border: none; background: #00E5A0; color: #0B1F3A; font-weight: 600; cursor: pointer; font-size: 13px; }
-    .btn:hover { background: #00c78a; }
-    .meta { font-size: 12px; color: rgba(255,255,255,0.5); margin-bottom: 12px; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.08); }
-    th { color: rgba(255,255,255,0.6); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+    body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; min-height: 100vh; padding: 20px; }
+    .dashboard { max-width: 1300px; margin: auto; }
+    header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; border-bottom: 2px solid #333; padding-bottom: 20px; margin-bottom: 20px; }
+    .logo { font-size: 22px; font-weight: bold; color: var(--red); }
+    .stat-card { background: #1e1e1e; padding: 12px 20px; border-radius: 8px; border: 1px solid #333; text-align: center; display: inline-block; }
+    .stat-card span { display: block; font-size: 22px; font-weight: bold; }
+    .toolbar { margin-bottom: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    select { padding: 8px 12px; border-radius: 6px; border: 1px solid #444; background: #1e1e1e; color: #fff; font-size: 14px; }
+    .btn { padding: 8px 16px; border-radius: 6px; border: none; background: #25D366; color: #fff; font-weight: 600; cursor: pointer; font-size: 13px; }
+    .btn:hover { opacity: 0.9; }
+    table { width: 100%; border-collapse: collapse; background: #1e1e1e; border-radius: 10px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); font-size: 14px; }
+    th { background: #252525; padding: 14px 12px; text-align: left; color: #888; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }
+    td { padding: 14px 12px; border-bottom: 1px solid #252525; }
     tr:hover { background: rgba(255,255,255,0.03); }
-    .badge { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 700; }
-    .badge-RED { background: #dc2626; color: #fff; }
-    .badge-ORANGE { background: #ea580c; color: #fff; }
-    .badge-YELLOW { background: #ca8a04; color: #fff; }
-    .badge-GREEN { background: #16a34a; color: #fff; }
-    .badge-GREY { background: #64748b; color: #fff; }
-    .badge-CANCELLED { background: #991b1b; color: #fff; }
-    .err { color: #f87171; margin-top: 12px; }
-    .loading { color: rgba(255,255,255,0.5); margin-top: 12px; }
+    .row-red { background: rgba(255, 77, 77, 0.15); border-left: 5px solid var(--red); }
+    .row-orange { background: rgba(234, 88, 12, 0.12); border-left: 5px solid var(--orange); }
+    .row-yellow { background: rgba(255, 204, 0, 0.08); border-left: 5px solid var(--yellow); }
+    .row-cancelled { background: rgba(153, 27, 27, 0.2); border-left: 5px solid #991b1b; }
+    .badge { padding: 4px 10px; border-radius: 4px; font-weight: bold; font-size: 11px; }
+    .badge-red { background: var(--red); color: white; }
+    .badge-orange { background: var(--orange); color: white; }
+    .badge-yellow { background: var(--yellow); color: black; }
+    .badge-green { background: var(--green); color: white; }
+    .badge-grey { background: #64748b; color: white; }
+    .badge-cancelled { background: #991b1b; color: white; }
+    .btn-whatsapp { background: #25D366; color: white; border: none; padding: 8px 14px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 12px; text-decoration: none; display: inline-block; }
+    .btn-whatsapp:hover { opacity: 0.9; }
+    .airline-tag { font-weight: bold; background: #444; padding: 3px 8px; border-radius: 3px; font-size: 12px; }
+    .delay-big { font-size: 16px; font-weight: bold; color: var(--yellow); }
+    .row-red .delay-big { color: var(--red); }
+    .row-cancelled .delay-big { color: #ccc; }
+    #loader { text-align: center; padding: 40px; color: #888; }
+    .meta { font-size: 12px; color: #666; margin-top: 8px; }
+    #gate { max-width: 320px; margin: 40px auto; text-align: center; }
+    #gate input { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #444; background: #1e1e1e; color: #fff; font-size: 14px; margin-bottom: 10px; }
+    #gate .btn { width: 100%; }
+    .gate-err { font-size: 12px; color: var(--red); margin-top: 8px; display: none; }
   </style>
 </head>
 <body>
-  <div id="gate" style="display:none; max-width:320px; margin:40px auto; text-align:center;">
-    <p style="margin-bottom:16px; color:rgba(255,255,255,0.8);">Accès privé — Radar Dakar</p>
-    <input type="password" id="pwd" placeholder="Mot de passe" style="width:100%; padding:12px; border-radius:6px; border:1px solid rgba(255,255,255,0.2); background:rgba(255,255,255,0.08); color:#fff; font-size:14px; margin-bottom:10px;">
+
+  <div id="gate" style="display:none;">
+    <p style="margin-bottom:16px; color:#ccc;">Accès privé — Radar Elite</p>
+    <input type="password" id="pwd" placeholder="Mot de passe">
     <button type="button" class="btn" id="btn-unlock">Accéder</button>
-    <p id="gate-err" style="font-size:12px; color:#f87171; margin-top:8px; display:none;">Mot de passe incorrect.</p>
-  </div>
-  <div id="radar-content" style="display:none;">
-  <h1>Radar vols Afrique – Europe · Dakar</h1>
-  <div class="legend">
-    <span><strong>Priorité en haut du tableau :</strong></span>
-    <span class="badge badge-CANCELLED">ANNULÉ</span>
-    <span class="badge badge-RED">ROUGE ≥ 2h30</span>
-    <span class="badge badge-ORANGE">ORANGE 1h–2h30</span>
-    <span class="badge badge-YELLOW">JAUNE ~1h (à surveiller)</span>
-    <span class="badge badge-GREEN">Vert &lt; 30 min</span>
-    <span class="badge badge-GREY">Gris (hors périmètre)</span>
-  </div>
-  <p class="meta">Rafraîchissement auto : 5 min.</p>
-
-  <div class="toolbar">
-    <label>
-      Aéroport
-      <select id="airport">
-        <option value="DSS" selected>DSS — Dakar</option>
-        <option value="CDG">CDG — Paris CDG</option>
-        <option value="ORY">ORY — Paris Orly</option>
-        <option value="MRS">MRS — Marseille</option>
-        <option value="LYS">LYS — Lyon</option>
-        <option value="BRU">BRU — Bruxelles</option>
-        <option value="CMN">CMN — Casablanca</option>
-      </select>
-    </label>
-    <label>
-      Type
-      <select id="type">
-        <option value="departure">Départs</option>
-        <option value="arrival">Arrivées</option>
-      </select>
-    </label>
-    <button class="btn" id="btn-refresh">Rafraîchir</button>
-    <span class="meta" id="updated"></span>
+    <p class="gate-err" id="gate-err">Mot de passe incorrect.</p>
   </div>
 
-  <div id="out"></div>
-  <div id="status" class="loading"></div>
+  <div id="radar-content" class="dashboard" style="display:none;">
+    <header>
+      <div class="logo">🏹 ROBIN DES AIRS : RADAR ELITE</div>
+      <div style="display:flex; flex-wrap:wrap; gap:10px;">
+        <div class="stat-card">Vols critiques (≥2h30) <span id="count-red" style="color:var(--red)">0</span></div>
+        <div class="stat-card">Potentiel Cash <span id="total-cash" style="color:var(--green)">0 €</span></div>
+      </div>
+    </header>
+
+    <div class="toolbar">
+      <label>Aéroport
+        <select id="airport">
+          <option value="DSS" selected>DSS — Dakar</option>
+          <option value="CDG">CDG — Paris</option>
+          <option value="ORY">ORY — Orly</option>
+          <option value="BRU">BRU — Bruxelles</option>
+          <option value="MRS">MRS — Marseille</option>
+          <option value="LYS">LYS — Lyon</option>
+          <option value="CMN">CMN — Casablanca</option>
+        </select>
+      </label>
+      <label>Type
+        <select id="type">
+          <option value="departure">Départs</option>
+          <option value="arrival">Arrivées</option>
+        </select>
+      </label>
+      <button class="btn" id="btn-refresh">Rafraîchir</button>
+      <span class="meta" id="updated"></span>
+    </div>
+
+    <div id="loader">Scan en cours : AF, KL, LH, SN…</div>
+
+    <table id="flight-table" style="display:none;">
+      <thead>
+        <tr>
+          <th>Vol</th>
+          <th>Compagnie</th>
+          <th>Itinéraire</th>
+          <th>Retard</th>
+          <th>Statut</th>
+          <th>Indemnité</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="flight-body"></tbody>
+    </table>
   </div>
 
   <script>
+    var RADAR_PWD = 'robin-dakar';
+    var WHATSAPP_NUMBER = '33756863630';
     var refreshTimer;
-    var RADAR_PWD = 'robin-dakar'; // Mot de passe privé — à changer si besoin
 
     function checkAccess() {
-      try {
-        return sessionStorage.getItem('radar_ok') === '1';
-      } catch (e) { return false; }
+      try { return sessionStorage.getItem('radar_ok') === '1'; } catch (e) { return false; }
     }
     function setAccess(ok) {
       try { sessionStorage.setItem('radar_ok', ok ? '1' : '0'); } catch (e) {}
     }
-
     function showGate() {
       document.getElementById('gate').style.display = 'block';
       document.getElementById('radar-content').style.display = 'none';
@@ -102,59 +125,64 @@
       document.getElementById('radar-content').style.display = 'block';
     }
 
-    function api() {
-      var airport = document.getElementById('airport').value;
-      var type = document.getElementById('type').value;
+    function api(airport, type) {
       return fetch('/.netlify/functions/radar?airport=' + encodeURIComponent(airport) + '&type=' + encodeURIComponent(type))
         .then(function(r) { return r.json(); });
     }
 
     function render(data) {
-      var out = document.getElementById('out');
-      var status = document.getElementById('status');
-      out.innerHTML = '';
-      status.textContent = '';
+      var loader = document.getElementById('loader');
+      var table = document.getElementById('flight-table');
+      var body = document.getElementById('flight-body');
+      loader.style.display = 'none';
+      table.style.display = 'table';
+      body.innerHTML = '';
 
-      if (data.error && !data.flights) {
-        status.className = 'err';
-        status.textContent = data.error;
-        return;
-      }
+      var flights = (data && data.flights) ? data.flights : [];
+      var redCount = 0;
+      var totalCash = 0;
 
-      document.getElementById('updated').textContent = 'Dernière MAJ : ' + (data.updatedAt ? new Date(data.updatedAt).toLocaleTimeString('fr-FR') : '—');
+      flights.forEach(function(f) {
+        var color = f.cancelled ? 'CANCELLED' : (f.color || 'GREY');
+        var rowClass = 'row-' + (color === 'RED' ? 'red' : color === 'ORANGE' ? 'orange' : color === 'YELLOW' ? 'yellow' : color === 'CANCELLED' ? 'cancelled' : '');
+        var badgeClass = 'badge-' + (color === 'CANCELLED' ? 'cancelled' : color.toLowerCase());
+        var statusLabel = f.cancelled ? 'ANNULÉ' : (color === 'RED' ? '≥2h30' : color === 'ORANGE' ? '1h–2h30' : color === 'YELLOW' ? '~1h' : color === 'GREEN' ? 'OK' : '—');
+        var retard = f.cancelled ? '—' : (f.delayMinutes != null ? f.delayMinutes + ' min' : '—');
+        var indemnite = (f.eligible && (color === 'RED' || color === 'ORANGE' || color === 'YELLOW')) ? '450 €' : (f.eligible ? '—' : '—');
+        if (f.eligible && (color === 'RED' || color === 'ORANGE')) totalCash += 450;
+        if (color === 'RED') redCount++;
 
-      if (!data.flights || data.flights.length === 0) {
-        status.className = 'meta';
-        status.textContent = 'Aucun vol retourné. Vérifiez la clé API ou l’aéroport.';
-        return;
-      }
+        var waMsg = 'Bonjour Robin ! Mon vol ' + (f.flight || '') + ' (' + (f.dep || '') + ' → ' + (f.arr || '') + ') a ' + (f.cancelled ? 'été annulé' : retard + ' de retard') + '. Je souhaite lancer mon dossier.';
+        var waUrl = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(waMsg);
 
-      var table = '<table><thead><tr><th>Vol</th><th>Compagnie</th><th>Départ</th><th>Arrivée</th><th>Retard</th><th>Éligible</th><th>Signal</th></tr></thead><tbody>';
-      data.flights.forEach(function(f) {
-        var signalLabel = f.cancelled ? 'ANNULÉ' : (f.color || 'GREY');
-        table += '<tr>' +
-          '<td>' + (f.flight || '—') + '</td>' +
-          '<td>' + (f.airline || '—') + '</td>' +
-          '<td>' + (f.dep || '—') + '</td>' +
-          '<td>' + (f.arr || '—') + '</td>' +
-          '<td>' + (f.cancelled ? '—' : (f.delayMinutes != null ? f.delayMinutes + ' min' : '—')) + '</td>' +
-          '<td>' + (f.eligible ? 'Oui' : 'Non') + '</td>' +
-          '<td><span class="badge badge-' + (f.color || 'GREY') + '">' + signalLabel + '</span></td>' +
-          '</tr>';
+        var tr = document.createElement('tr');
+        if (rowClass) tr.className = rowClass;
+        tr.innerHTML =
+          '<td><strong>' + (f.flight || '—') + '</strong></td>' +
+          '<td><span class="airline-tag">' + (f.airline || '—') + '</span></td>' +
+          '<td>' + (f.dep || '—') + ' → ' + (f.arr || '—') + '</td>' +
+          '<td><span class="delay-big">' + retard + '</span></td>' +
+          '<td><span class="badge ' + badgeClass + '">' + statusLabel + '</span></td>' +
+          '<td>' + indemnite + '</td>' +
+          '<td><a href="' + waUrl + '" target="_blank" class="btn-whatsapp">WhatsApp</a></td>';
+        body.appendChild(tr);
       });
-      table += '</tbody></table>';
-      out.innerHTML = table;
+
+      document.getElementById('count-red').textContent = redCount;
+      document.getElementById('total-cash').textContent = totalCash + ' €';
+      document.getElementById('updated').textContent = 'MAJ : ' + (data && data.updatedAt ? new Date(data.updatedAt).toLocaleTimeString('fr-FR') : '—');
     }
 
     function load() {
-      var status = document.getElementById('status');
-      status.className = 'loading';
-      status.textContent = 'Chargement…';
-      api().then(function(data) {
+      var airport = document.getElementById('airport').value;
+      var type = document.getElementById('type').value;
+      document.getElementById('loader').style.display = 'block';
+      document.getElementById('flight-table').style.display = 'none';
+      api(airport, type).then(function(data) {
         render(data);
       }).catch(function(e) {
-        status.className = 'err';
-        status.textContent = 'Erreur : ' + (e.message || 'réseau');
+        document.getElementById('loader').innerHTML = 'Erreur : ' + (e.message || 'réseau');
+        document.getElementById('loader').style.display = 'block';
       });
     }
 

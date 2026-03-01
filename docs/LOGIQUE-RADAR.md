@@ -49,7 +49,7 @@ Les vols **rouges** sont donc tout en haut, puis les **orange**, puis les **jaun
 1. Déploie ton site sur Netlify (git push).  
 2. Ouvre ton navigateur (Chrome, Safari, etc.).  
 3. Dans la barre d’adresse, tape l’URL de ton site puis `/radar.html`.  
-   - Exemple : `https://robindesairs.netlify.app/radar.html`  
+   - Exemple : `https://robindesairs.eu/radar.html`  
    (remplace par ton vrai nom de site si différent).  
 4. Tu vois le tableau des vols avec les couleurs ROUGE, ORANGE, JAUNE en tête.
 
@@ -66,7 +66,7 @@ Les vols **rouges** sont donc tout en haut, puis les **orange**, puis les **jaun
 3. Ouvre **radar.html** pour modifier le code.  
 4. Pour **voir** le tableau dans un navigateur : dans l’explorateur de fichiers à gauche, clic droit sur **radar.html** → **Reveal in Finder** (ou **Open in File Manager**), puis double-clique sur le fichier pour l’ouvrir dans le navigateur.
 
-En résumé : le fichier du tableau est **radar.html**, il est dans **Downloads/files/**. Tu peux l’ouvrir en double-cliquant dessus dans le Finder, ou en allant sur **ton-site.netlify.app/radar.html** après déploiement.
+En résumé : le fichier du tableau est **radar.html**, il est dans **Downloads/files/**. Tu peux l’ouvrir en double-cliquant dessus dans le Finder, ou en allant sur **robindesairs.eu/radar.html** après déploiement.
 
 ---
 

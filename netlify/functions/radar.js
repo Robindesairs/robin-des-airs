@@ -1,6 +1,6 @@
 /**
  * Radar Robin des Airs — Vols Afrique ↔ Europe par aéroport.
- * Priorité affichage : ROUGE (≥ 2h30) → ORANGE (1h à 2h30) → JAUNE (≈ 1h / à surveiller).
+ * Priorité : ANNULÉ → ROUGE (≥2h30) → ORANGE (1h–2h30) → JAUNE (~1h).
  * Variable Netlify : AVIATION_EDGE_KEY
  * Query : airport (ex. CDG), type=departure|arrival
  */
@@ -34,13 +34,12 @@ function checkEligible(originCountry, destCountry, airlineIata) {
   return false;
 }
 
-// ROUGE ≥ 2h30 (150 min) | ORANGE 1h–2h30 (60–149) | JAUNE ~1h / à surveiller (30–59) | vert < 30 | gris non éligible
 function getColor(delayMinutes, eligible) {
   if (!eligible) return 'GREY';
   const d = delayMinutes || 0;
-  if (d >= 150) return 'RED';    // ≥ 2h30
-  if (d >= 60) return 'ORANGE';   // 1h à 2h30
-  if (d >= 30) return 'YELLOW';   // à surveiller (~1h)
+  if (d >= 150) return 'RED';
+  if (d >= 60) return 'ORANGE';
+  if (d >= 30) return 'YELLOW';
   return 'GREEN';
 }
 
@@ -105,7 +104,6 @@ exports.handler = async (event) => {
       });
     }
 
-    // Priorité : ANNULÉ en haut, puis ROUGE, ORANGE, JAUNE, VERT, GRIS
     const order = { CANCELLED: 0, RED: 1, ORANGE: 2, YELLOW: 3, GREEN: 4, GREY: 5 };
     flights.sort((a, b) => (order[a.color] ?? 6) - (order[b.color] ?? 6) || ((b.delayMinutes || 0) - (a.delayMinutes || 0)));
 

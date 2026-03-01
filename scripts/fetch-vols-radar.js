@@ -3,13 +3,13 @@
  * Pour voir les vols dans Cursor : exécute ce script puis ouvre docs/vols-radar.txt
  *
  * Usage : node scripts/fetch-vols-radar.js
- * (Optionnel) SITE_URL=https://ton-site.netlify.app node scripts/fetch-vols-radar.js
+ * (Optionnel) SITE_URL=https://robindesairs.eu node scripts/fetch-vols-radar.js
  */
 
 const fs = require('fs');
 const path = require('path');
 
-const SITE_URL = process.env.SITE_URL || 'https://robindesairs.netlify.app';
+const SITE_URL = process.env.SITE_URL || 'https://robindesairs.eu';
 const AIRPORT = process.env.AIRPORT || 'DSS';
 const TYPE = process.env.TYPE || 'departure';
 

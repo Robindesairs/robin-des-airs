@@ -3,7 +3,7 @@
 # Écrit docs/vols-radar.txt — Ouvre ce fichier dans Cursor pour voir la liste.
 # Usage : bash scripts/fetch-vols-radar.sh
 
-SITE_URL="${SITE_URL:-https://robindesairs.netlify.app}"
+SITE_URL="${SITE_URL:-https://robindesairs.eu}"
 OUT="docs/vols-radar.txt"
 DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
