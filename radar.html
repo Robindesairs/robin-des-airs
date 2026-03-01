@@ -71,6 +71,8 @@
     .badge-eu { background: #003399; color: white; padding: 3px 8px; border-radius: 3px; font-size: 10px; font-weight: bold; }
     .btn-ads { background: var(--blue); color: white; border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; text-decoration: none; display: inline-block; }
     .btn-ads:hover { opacity: 0.9; color: white; }
+    .btn-alertes { background: #7c3aed; }
+    .btn-alertes:hover { background: #6d28d9; }
     .btn-tracker { background: #0ea5e9; color: white; text-decoration: none; padding: 8px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; display: inline-block; }
     .btn-tracker:hover { background: #0284c7; color: white; }
     .airline-tag { background: #333; padding: 2px 6px; border-radius: 3px; font-size: 11px; color: #ccc; }
@@ -111,8 +113,10 @@
       <span class="radar-zulu-note" style="display:block; margin-top:6px; font-size:12px; color:#888;">Toutes les heures en Zulu (UTC) — suffixe Z</span>
     </div>
 
-    <div class="toolbar" style="margin: 0 20px 10px;">
+    <div class="toolbar" style="margin: 0 20px 10px; align-items: center;">
       <button class="btn" id="btn-refresh">Rafraîchir</button>
+      <button type="button" class="btn btn-alertes" id="btn-notif" title="Recevoir des notifications (vols annulés, retard ≥2h30) même si l’onglet est en arrière-plan. Gardez l’onglet ouvert.">🔔 Alertes critiques</button>
+      <span id="notif-status" class="meta" style="font-size:11px; color:#666;"></span>
     </div>
 
     <div id="loader">🚀 Prêt pour le scan...</div>
@@ -225,11 +229,25 @@
 
       var criticalCount = 0;
       var totalCash = 0;
-      /* Filtre Cash Garanti (Loi EU 261) : n'afficher que les vols éligibles avec retard > 15 min ou annulés */
-      var eligibleOnly = (data && data.flights) ? data.flights.filter(function(f) {
-        return f.eligible && (f.cancelled || (f.delayMinutes != null && f.delayMinutes > 15));
-      }) : [];
-      flights = eligibleOnly;
+      /* Filtre : vols critiques (annulés ou ≥2h30) TOUJOURS affichés + vols éligibles avec retard > 15 min */
+      var raw = (data && data.flights) ? data.flights : [];
+      var isCritical = function(f) { return f.cancelled || (f.delayMinutes != null && f.delayMinutes >= 150); };
+      var eligibleWithDelay = function(f) { return f.eligible && (f.cancelled || (f.delayMinutes != null && f.delayMinutes > 15)); };
+      flights = raw.filter(function(f) { return isCritical(f) || eligibleWithDelay(f); });
+      /* Tri : vols critiques toujours en haut (annulés puis rouge ≥2h30), puis le reste par retard décroissant */
+      flights.sort(function(a, b) {
+        var ac = isCritical(a) ? 0 : 1;
+        var bc = isCritical(b) ? 0 : 1;
+        if (ac !== bc) return ac - bc;
+        if (a.cancelled && !b.cancelled) return -1;
+        if (!a.cancelled && b.cancelled) return 1;
+        var ad = a.delayMinutes != null ? a.delayMinutes : 0;
+        var bd = b.delayMinutes != null ? b.delayMinutes : 0;
+        return bd - ad;
+      });
+
+      var criticalFlightsForTelegram = [];
+      var hasNewCritical = false;
 
       flights.forEach(function(f) {
         var color = f.cancelled ? 'CANCELLED' : (f.color || 'GREY');
@@ -283,10 +301,12 @@
         body.appendChild(tr);
 
         var key = (f.flight || '') + '|' + (f.dep || '') + '|' + (f.arr || '') + '|' + (f.scheduledDate || '');
-        var isCritical = f.cancelled || (f.delayMinutes != null && f.delayMinutes >= 150);
+        var isCriticalFlight = f.cancelled || (f.delayMinutes != null && f.delayMinutes >= 150);
         var isSurveillance = !f.cancelled && f.delayMinutes != null && f.delayMinutes >= 30 && f.delayMinutes < 150;
-        if (isCritical && alertedKeys[key] !== 'critical') {
+        if (isCriticalFlight) criticalFlightsForTelegram.push({ flight: f.flight, dep: f.dep, arr: f.arr, cancelled: f.cancelled, delayMinutes: f.delayMinutes, airline: f.airline, scheduledDeparture: f.scheduledDeparture, scheduledArrival: f.scheduledArrival, statusFr: f.statusFr });
+        if (isCriticalFlight && alertedKeys[key] !== 'critical') {
           alertedKeys[key] = 'critical';
+          hasNewCritical = true;
           var criticalMsg = f.cancelled ? ('ALARME : Vol ' + (f.flight || '') + ' ' + (f.dep || '') + ' → ' + (f.arr || '') + ' annulé.') : ('ALARME : Vol ' + (f.flight || '') + ' — ' + f.delayMinutes + ' min de retard (≥ 150 min).');
           showToast(criticalMsg);
           if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
@@ -302,6 +322,14 @@
           try { sessionStorage.setItem('radar_alerted', JSON.stringify(alertedKeys)); } catch (e) {}
         }
       });
+
+      if (hasNewCritical && criticalFlightsForTelegram.length > 0) {
+        fetch('/.netlify/functions/telegram-notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ flights: criticalFlightsForTelegram })
+        }).catch(function() {});
+      }
 
       document.getElementById('count-red').textContent = criticalCount;
       document.getElementById('total-cash').textContent = totalCash + ' €';
@@ -349,10 +377,26 @@
       });
     }
 
+    function updateNotifStatus() {
+      var el = document.getElementById('notif-status');
+      if (!el) return;
+      if (typeof Notification === 'undefined') { el.textContent = ''; return; }
+      if (Notification.permission === 'granted') el.textContent = '✓ Alertes activées (vols critiques même onglet en arrière-plan)';
+      else if (Notification.permission === 'denied') el.textContent = 'Alertes refusées';
+      else el.textContent = 'Cliquez sur 🔔 pour être notifié des vols critiques.';
+    }
+
     function requestNotificationPermission() {
       try {
-        if (typeof Notification !== 'undefined' && Notification.permission === 'default')
-          Notification.requestPermission();
+        if (typeof Notification === 'undefined') return;
+        if (Notification.permission === 'granted') { updateNotifStatus(); return; }
+        if (Notification.permission === 'default') {
+          Notification.requestPermission().then(function(p) {
+            updateNotifStatus();
+            if (p === 'granted') showToast('Alertes activées : vous serez notifié des vols critiques (annulés, ≥2h30) même si l’onglet est en arrière-plan.');
+            if (p === 'denied') showToast('Notifications refusées. Vous pouvez les autoriser plus tard dans les paramètres du navigateur.');
+          });
+        } else updateNotifStatus();
       } catch (e) {}
     }
 
@@ -373,9 +417,11 @@
     }
 
     document.getElementById('btn-refresh').addEventListener('click', load);
+    document.getElementById('btn-notif').addEventListener('click', requestNotificationPermission);
 
     if (checkAccess()) {
       showRadar();
+      updateNotifStatus();
       requestNotificationPermission();
       try { var s = sessionStorage.getItem('radar_alerted'); if (s) alertedKeys = JSON.parse(s); } catch (e) {}
       load();
@@ -389,6 +435,7 @@
           setAccess(true);
           err.style.display = 'none';
           showRadar();
+          updateNotifStatus();
           requestNotificationPermission();
           try { var s = sessionStorage.getItem('radar_alerted'); if (s) alertedKeys = JSON.parse(s); } catch (e) {}
           load();
