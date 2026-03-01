@@ -151,11 +151,17 @@
       var loader = document.getElementById('loader');
       var table = document.getElementById('flight-table');
       var body = document.getElementById('flight-body');
+      body.innerHTML = '';
+      var flights = (data && data.flights) ? data.flights : [];
+      if (data && data.error && flights.length === 0) {
+        loader.textContent = 'Erreur : ' + (data.error || 'données invalides');
+        loader.style.display = 'block';
+        table.style.display = 'none';
+        return;
+      }
       loader.style.display = 'none';
       table.style.display = 'table';
-      body.innerHTML = '';
 
-      var flights = (data && data.flights) ? data.flights : [];
       var criticalCount = 0;
       var totalCash = 0;
 
@@ -239,18 +245,33 @@
       if (dateBarEl) dateBarEl.textContent = 'Vue du ' + viewDateStr + ' — Dernière MAJ : ' + timeStr + ' — Heure Zulu : ' + zuluNow;
     }
 
+    var LOADER_TEXT = '🚀 Robin scanne les couloirs aériens entre l\'Afrique et l\'Europe...';
+
     function api() {
-      return fetch('/.netlify/functions/radar').then(function(r) { return r.json(); });
+      var url = '/.netlify/functions/radar?_=' + Date.now();
+      return fetch(url, { cache: 'no-store', headers: { Pragma: 'no-cache', 'Cache-Control': 'no-cache' } }).then(function(r) { return r.json(); });
     }
 
+    var loadInProgress = false;
     function load() {
-      document.getElementById('loader').style.display = 'block';
-      document.getElementById('flight-table').style.display = 'none';
+      if (loadInProgress) return;
+      loadInProgress = true;
+      var loader = document.getElementById('loader');
+      var table = document.getElementById('flight-table');
+      var body = document.getElementById('flight-body');
+      body.innerHTML = '';
+      loader.textContent = LOADER_TEXT;
+      loader.style.display = 'block';
+      table.style.display = 'none';
       api().then(function(data) {
+        loadInProgress = false;
         render(data);
       }).catch(function(e) {
-        document.getElementById('loader').innerHTML = 'Erreur : ' + (e.message || 'réseau');
-        document.getElementById('loader').style.display = 'block';
+        loadInProgress = false;
+        loader.textContent = 'Erreur : ' + (e.message || 'réseau');
+        loader.style.display = 'block';
+        table.style.display = 'none';
+        body.innerHTML = '';
       });
     }
 
@@ -268,7 +289,7 @@
       requestNotificationPermission();
       try { var s = sessionStorage.getItem('radar_alerted'); if (s) alertedKeys = JSON.parse(s); } catch (e) {}
       load();
-      refreshTimer = setInterval(load, 5 * 60 * 1000);
+      refreshTimer = setInterval(load, 15 * 60 * 1000);
     } else {
       showGate();
       document.getElementById('btn-unlock').onclick = function() {
@@ -281,7 +302,7 @@
           requestNotificationPermission();
           try { var s = sessionStorage.getItem('radar_alerted'); if (s) alertedKeys = JSON.parse(s); } catch (e) {}
           load();
-          refreshTimer = setInterval(load, 5 * 60 * 1000);
+          refreshTimer = setInterval(load, 15 * 60 * 1000);
         } else {
           err.style.display = 'block';
         }
