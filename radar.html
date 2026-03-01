@@ -3,20 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Radar Robin des Airs — Surveillance Totale Afrique-Europe</title>
+  <title>ROBIN DES AIRS — Command Center / Elite Africa</title>
   <link rel="icon" href="/favicon.png" type="image/png">
   <style>
-    :root { --red: #ff4d4d; --yellow: #ffcc00; --green: #2ecc71; --orange: #ea580c; --af-blue: #002366; --bg: #0d0d0d; }
+    :root { --red: #ff4d4d; --yellow: #ffcc00; --green: #2ecc71; --orange: #ea580c; --blue: #3b82f6; --af-blue: #002366; --bg: #0a0a0a; --panel: #161616; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg); color: #e0e0e0; font-family: 'Segoe UI', Roboto, sans-serif; min-height: 100vh; padding: 20px; }
-    .dashboard { max-width: 1400px; margin: auto; }
-    header {
+    body { background: var(--bg); color: #e0e0e0; font-family: 'Segoe UI', Roboto, sans-serif; min-height: 100vh; padding: 0; overflow-x: hidden; }
+    .dashboard { max-width: 100%; margin: 0; }
+    /* Barre de commande fixe (sticky) */
+    header.top-bar {
+      position: sticky; top: 0; z-index: 2000;
       display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px;
-      padding: 20px; background: #1a1a1a; border-radius: 10px; border-bottom: 3px solid var(--red);
-      margin-bottom: 25px;
+      padding: 15px 30px; margin-bottom: 0;
+      background: rgba(26, 26, 26, 0.95); backdrop-filter: blur(10px);
+      border-bottom: 2px solid var(--red); box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      border-radius: 0;
     }
-    .logo { font-size: 26px; font-weight: 900; color: var(--red); letter-spacing: 2px; }
-    .status-bar { font-size: 14px; color: #888; }
+    .logo { font-size: 22px; font-weight: 900; color: var(--red); letter-spacing: 1px; }
+    .status-bar, #api-status { font-size: 12px; color: #888; }
     .stat-card { background: #222; padding: 12px 20px; border-radius: 8px; text-align: center; display: inline-block; }
     .stat-card span { display: block; font-size: 22px; font-weight: bold; }
     .toolbar { margin-bottom: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
@@ -25,8 +29,13 @@
     .btn:hover { opacity: 0.9; }
     .btn-reset-total { background: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; margin-bottom: 20px; }
     .btn-reset-total:hover { background: #c0392b; }
-    table { width: 100%; border-collapse: collapse; background: #161616; border-radius: 8px; overflow: hidden; font-size: 14px; }
-    th { background: #222; padding: 15px; text-align: left; color: #666; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+    .table-container { padding: 0 20px 40px 20px; }
+    table { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--panel); border-radius: 8px; font-size: 13px; }
+    thead th {
+      position: sticky; top: 72px;
+      background: #222; padding: 15px; text-align: left; color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: 1px;
+      z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.3); border-bottom: 1px solid #333;
+    }
     td { padding: 15px; border-bottom: 1px solid #222; }
     tr:hover { background: rgba(255,255,255,0.03); }
     /* Style épuré : peu de fond, on colore le texte et la bordure */
@@ -56,6 +65,9 @@
       font-size: 12px; font-weight: bold; display: inline-block; transition: 0.3s;
     }
     .btn-ciblage:hover { transform: scale(1.05); background: #6d28d9; color: white; }
+    .badge-eu { background: #003399; color: white; padding: 3px 8px; border-radius: 3px; font-size: 10px; font-weight: bold; }
+    .btn-ads { background: var(--blue); color: white; border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 11px; text-decoration: none; display: inline-block; }
+    .btn-ads:hover { opacity: 0.9; color: white; }
     .btn-tracker { background: #0ea5e9; color: white; text-decoration: none; padding: 8px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; display: inline-block; }
     .btn-tracker:hover { background: #0284c7; color: white; }
     .airline-tag { background: #333; padding: 2px 6px; border-radius: 3px; font-size: 11px; color: #ccc; }
@@ -80,48 +92,52 @@
   </div>
 
   <div id="radar-content" class="dashboard" style="display:none;">
-    <header>
-      <div class="logo">🏹 ROBIN DES AIRS : SURVEILLANCE AFRIQUE-EUROPE</div>
+    <header class="top-bar">
+      <div class="logo">🏹 ROBIN DES AIRS : ELITE AFRICA SCANNER</div>
       <div style="display:flex; flex-wrap:wrap; align-items:center; gap:14px;">
-        <div class="stat-card">Vols critiques (≥2h30 + annulés) <span id="count-red" style="color:var(--red)">0</span></div>
+        <div class="stat-card">Vols critiques <span id="count-red" style="color:var(--red)">0</span></div>
         <div class="stat-card">Potentiel Cash <span id="total-cash" style="color:var(--green)">0 €</span></div>
-        <div class="status-bar" id="update-time">Mise à jour en cours...</div>
+        <div id="api-status" class="status-bar"></div>
+        <div class="status-bar" id="update-time">Mise à jour...</div>
       </div>
+      <button type="button" onclick="forcerRafraichissement()" class="btn-reset-total" style="margin-bottom:0;">🔄 RAFRAÎCHIR LE CIEL</button>
     </header>
 
-    <div class="radar-date-bar" id="radar-date-bar">
+    <div class="radar-date-bar" id="radar-date-bar" style="margin: 12px 20px;">
       <span class="radar-view-date" id="radar-view-date">Vue du — — Dernière MAJ : —</span>
       <span class="radar-zulu-note" style="display:block; margin-top:6px; font-size:12px; color:#888;">Toutes les heures en Zulu (UTC) — suffixe Z</span>
     </div>
 
-    <div class="toolbar">
-      <button type="button" onclick="forcerRafraichissement()" class="btn-reset-total">🔄 RAFRAÎCHIR LE CIEL (RESET TOTAL)</button>
+    <div class="toolbar" style="margin: 0 20px 10px;">
       <button class="btn" id="btn-refresh">Rafraîchir</button>
     </div>
 
-    <div id="loader">🚀 Robin scanne les couloirs aériens entre l'Afrique et l'Europe...</div>
+    <div id="loader">🚀 Prêt pour le scan...</div>
 
-    <table id="flight-table" style="display:none;">
-      <thead>
-        <tr>
-          <th>Vol</th>
-          <th>Cie</th>
-          <th>Trajet (Origine ➔ Dest)</th>
-          <th>Heure départ prévue (Z)</th>
-          <th>Heure départ estimée ou réelle (Z)</th>
-          <th>Scheduled landing (Z)</th>
-          <th>Estimated arrival (Z)</th>
-          <th class="retard-col">Retard (min)</th>
-          <th>État vol</th>
-          <th>Annulé</th>
-          <th>Statut</th>
-          <th>Indemnité</th>
-          <th>Traqueur</th>
-          <th>Ciblage pub</th>
-        </tr>
-      </thead>
-      <tbody id="flight-body"></tbody>
-    </table>
+    <div class="table-container">
+      <table id="flight-table" style="display:none;">
+        <thead>
+          <tr>
+            <th>Vol</th>
+            <th>Cie</th>
+            <th>Trajet (Origine ➔ Dest)</th>
+            <th>Départ prévu (Z)</th>
+            <th>Statut piste / Réel (Z)</th>
+            <th>Sched. Landing (Z)</th>
+            <th>Est. Arrival (Z)</th>
+            <th class="retard-col">Retard (min)</th>
+            <th>État vol</th>
+            <th>Annulé</th>
+            <th>Statut</th>
+            <th>Indemnité</th>
+            <th>Loi EU 261</th>
+            <th>Traqueur</th>
+            <th>Ciblage pub</th>
+          </tr>
+        </thead>
+        <tbody id="flight-body"></tbody>
+      </table>
+    </div>
   </div>
 
   <script>
@@ -195,6 +211,11 @@
 
       var criticalCount = 0;
       var totalCash = 0;
+      /* Filtre Cash Garanti (Loi EU 261) : n'afficher que les vols éligibles avec retard > 15 min ou annulés */
+      var eligibleOnly = (data && data.flights) ? data.flights.filter(function(f) {
+        return f.eligible && (f.cancelled || (f.delayMinutes != null && f.delayMinutes > 15));
+      }) : [];
+      flights = eligibleOnly;
 
       flights.forEach(function(f) {
         var color = f.cancelled ? 'CANCELLED' : (f.color || 'GREY');
@@ -222,6 +243,7 @@
         var trackerHref = (f.trackerUrl && f.trackerUrl !== '#') ? f.trackerUrl : '#';
         var trackerLabel = f.trackerUrl ? 'Traqueur ' + (f.airline || '') : '—';
 
+        var loiEuCell = f.eligible ? '<span class="badge-eu">Loi EU 261 OK ✅</span>' : '—';
         var tr = document.createElement('tr');
         if (rowClass) tr.className = rowClass;
         tr.innerHTML =
@@ -231,14 +253,15 @@
           '<td>' + scheduledDep + '</td>' +
           '<td>' + estimatedDep + '</td>' +
           '<td>' + scheduledArr + '</td>' +
-          '<td style="font-weight:bold;color:#3b82f6;">' + dynamicArrival + '</td>' +
+          '<td style="font-weight:bold;color:var(--blue);">' + dynamicArrival + '</td>' +
           '<td>' + delayDisplay + '</td>' +
           '<td>' + stateLabel + '</td>' +
           '<td>' + annuleCell + '</td>' +
           '<td><span class="badge ' + badgeClass + '">' + statusLabel + '</span></td>' +
           '<td>' + indemnite + '</td>' +
+          '<td>' + loiEuCell + '</td>' +
           '<td>' + (trackerHref !== '#' ? '<a href="' + trackerHref + '" target="_blank" class="btn-tracker">' + trackerLabel + '</a>' : '—') + '</td>' +
-          '<td><a href="' + ciblageHref + '" target="_blank" class="btn-ciblage" data-airport="' + (depCode || '') + '">' + ciblageLabel + '</a></td>';
+          '<td><a href="' + ciblageHref + '" target="_blank" class="btn-ads" data-airport="' + (depCode || '') + '">CIBLER ' + (depCode || '') + '</a></td>';
         body.appendChild(tr);
 
         var key = (f.flight || '') + '|' + (f.dep || '') + '|' + (f.arr || '') + '|' + (f.scheduledDate || '');
@@ -264,6 +287,8 @@
 
       document.getElementById('count-red').textContent = criticalCount;
       document.getElementById('total-cash').textContent = totalCash + ' €';
+      var apiStatusEl = document.getElementById('api-status');
+      if (apiStatusEl) apiStatusEl.textContent = flights.length + ' vols éligibles détectés à ' + new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
       var timeStr = data && data.updatedAt ? new Date(data.updatedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '—';
       document.getElementById('update-time').textContent = 'MAJ : ' + timeStr;
       var viewDateStr = (data && data.viewDate) ? (function() {
