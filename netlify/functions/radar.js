@@ -1,8 +1,7 @@
 /**
- * Radar Robin des Airs — Vols Afrique ↔ Europe (tous hubs, sans filtre aéroport).
+ * Radar Robin des Airs — Tous les vols au départ de Paris Orly (ORY).
  * Priorité : ANNULÉ → ROUGE (≥2h30) → ORANGE (1h–2h30) → JAUNE (~1h).
  * Variable Netlify : AVIATION_EDGE_KEY
- * Query : sans param = tous les vols Afrique-Europe (multi-hubs)
  */
 
 const EU_COUNTRIES = ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO'];
@@ -21,14 +20,8 @@ const AIRPORT_COUNTRY = {
   NKC:'MR', FNA:'SL', ROB:'LR', PNR:'CG', LAD:'AO', SSG:'GQ', BGF:'CF', KGL:'RW', JIB:'DJ', ZNZ:'TZ', DZA:'FR'
 };
 
-/** Réseau Air France Afrique (version Elite) : Europe + Afrique Ouest/Centre/Est-Sud + Océan Indien + Banjul */
-const HUBS = [
-  'CDG', 'ORY', 'BRU', 'AMS', 'FCO', 'MXP', 'MAD', 'LHR', 'LGW',
-  'DSS', 'ABJ', 'BKO', 'CKY', 'OUA', 'LFW', 'ACC', 'ABV', 'LOS', 'COO', 'NKC', 'NIM', 'FNA', 'ROB', 'BJL',
-  'DLA', 'NSI', 'LBV', 'FIH', 'BZV', 'PNR', 'BGF', 'LAD', 'SSG', 'NDJ',
-  'NBO', 'DAR', 'ADD', 'JNB', 'CPT', 'KGL', 'JIB', 'ZNZ',
-  'TNR', 'MRU', 'RUN', 'DZA'
-];
+/** Un seul hub : Paris Orly — tous les vols au départ, sans filtre trajet. */
+const HUBS = ['ORY'];
 
 function getCountry(iata) {
   return AIRPORT_COUNTRY[(iata || '').toUpperCase()] || null;
@@ -194,8 +187,7 @@ exports.handler = async (event) => {
       const arrIata = (arr.iataCode || '').toUpperCase();
       const depCountry = getCountry(depIata);
       const arrCountry = getCountry(arrIata);
-      const isAfricaEurope = (isEurope(depCountry) && isAfrica(arrCountry)) || (isAfrica(depCountry) && isEurope(arrCountry));
-      if (!isAfricaEurope) continue;
+      /* Pas de filtre trajet : on garde tous les départs (ORY). */
 
       const airlineIata = (f.airline?.iataCode || (f.flight?.iata && f.flight.iata.slice(0, 2)) || '').toUpperCase();
       const flightNumber = f.flight?.iata || f.flight?.number || f.flight?.icao || '—';

@@ -36,7 +36,7 @@
 
     <div class="header">
         <div class="logo">🏹 ROBIN DES AIRS : SUIVI EN DIRECT</div>
-        <div style="color: #aaa; font-size: 14px;">Vols éligibles (Cies EU ou Départs EU)</div>
+        <div style="color: #aaa; font-size: 14px;">Départs Paris Orly — tous les vols</div>
     </div>
 
     <div class="stats-container">
@@ -159,7 +159,7 @@
             });
             document.getElementById('count-critical').textContent = criticalCount;
             document.getElementById('total-cash').textContent = totalCash + ' €';
-            document.getElementById('scan-status').textContent = flights.length + ' vol(s) éligible(s) détecté(s)';
+            document.getElementById('scan-status').textContent = flights.length + ' vol(s) au départ d\'Orly';
             document.getElementById('last-update').textContent = data && data.updatedAt ? new Date(data.updatedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', hour12: false }) : '--:--';
             table.style.display = 'table';
         }).catch(function(e) {
