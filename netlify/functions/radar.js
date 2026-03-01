@@ -64,12 +64,15 @@ function toTimeStr(val) {
   return '—';
 }
 
-/** Heure en Zulu (UTC) : retourne "HH:mmZ" pour affichage radar. Les chaînes sans fuseau sont supposées UTC (standard aviation). */
+/** Heure en Zulu (UTC) : "HH:mmZ" à la minute près, sans aucun arrondi (troncature, jamais :00/:05 forcé). */
 function toTimeStrZulu(val) {
   if (!val) return '—';
-  let s = String(val).trim();
-  if (!/Z$|[+-]\d{2}:?\d{2}$/.test(s) && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(s)) s = s.replace(/\.\d+$/, '') + 'Z';
-  const d = new Date(s);
+  const s = String(val).trim();
+  const isoMatch = s.match(/T(\d{2}):(\d{2})(?::(\d{2}))?(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?/);
+  if (isoMatch) return isoMatch[1] + ':' + isoMatch[2] + 'Z';
+  let s2 = s;
+  if (!/Z$|[+-]\d{2}:?\d{2}$/.test(s2) && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(s2)) s2 = s2.replace(/\.\d+$/, '') + 'Z';
+  const d = new Date(s2);
   if (isNaN(d.getTime())) return toTimeStr(val);
   const h = d.getUTCHours();
   const m = d.getUTCMinutes();
@@ -87,13 +90,12 @@ function delayMinutesFromTimes(scheduledTime, actualOrEstimatedTime) {
   return diffMin > 0 ? diffMin : 0;
 }
 
-/** Statut vol API → libellé français (Décollé, Au sol, Taxi, etc.) */
+/** Statut vol API → libellé français. Distinction claire : Taxi = au sol ; En vol = en l'air (décollé ou en route). */
 function statusToFr(statusRaw) {
   const s = (statusRaw || '').toLowerCase();
   if (s === 'cancelled' || s === 'canceled' || s === 'annulé') return 'Annulé';
   if (s === 'landed' || s === 'arrived') return 'Atterri';
-  if (s === 'active' || s === 'in flight' || s === 'en vol') return 'En vol';
-  if (s === 'departed' || s === 'departure') return 'Décollé';
+  if (s === 'active' || s === 'in flight' || s === 'en vol' || s === 'departed' || s === 'departure') return 'En vol';
   if (s === 'boarding') return 'Embarquement';
   if (s === 'taxi' || s === 'taxiing') return 'Taxi';
   if (s === 'delayed') return 'Retardé';
@@ -141,11 +143,28 @@ exports.handler = async (event) => {
 
   try {
     const allRaw = [];
+    const arrivalRaw = [];
     for (const hub of HUBS) {
-      const url = `https://aviation-edge.com/v2/public/timetable?key=${apiKey}&iataCode=${hub}&type=departure`;
-      const res = await fetch(url);
-      const data = await res.json();
-      if (Array.isArray(data)) allRaw.push(...data);
+      const depUrl = `https://aviation-edge.com/v2/public/timetable?key=${apiKey}&iataCode=${hub}&type=departure`;
+      const arrUrl = `https://aviation-edge.com/v2/public/timetable?key=${apiKey}&iataCode=${hub}&type=arrival`;
+      const [depRes, arrRes] = await Promise.all([fetch(depUrl), fetch(arrUrl)]);
+      const depData = await depRes.json();
+      const arrData = await arrRes.json();
+      if (Array.isArray(depData)) allRaw.push(...depData);
+      if (Array.isArray(arrData)) arrivalRaw.push(...arrData);
+    }
+
+    /** Map arrivées : (flightNumber|dep|arr) -> meilleure heure d'arrivée estimée/réelle (pour mise à jour L'heure d'arrivée estimée). */
+    const arrivalMap = new Map();
+    for (const f of arrivalRaw) {
+      const dep = f.departure || {};
+      const arr = f.arrival || {};
+      const depIata = (dep.iataCode || '').toUpperCase();
+      const arrIata = (arr.iataCode || '').toUpperCase();
+      const flightNumber = f.flight?.iata || f.flight?.number || f.flight?.icao || '';
+      const key = flightNumber + '|' + depIata + '|' + arrIata;
+      const est = arr.actualTime || arr.estimatedTime || arr.estTime || arr.revisedTime;
+      if (est) arrivalMap.set(key, est);
     }
 
     /** Code-share : une seule ligne par vol physique = celle opérée par la compagnie (numéro de vol = préfixe compagnie). */
@@ -178,7 +197,7 @@ exports.handler = async (event) => {
       const cancelled = statusRaw === 'cancelled' || statusRaw === 'canceled' || statusRaw === 'annulé';
       const hasActualDep = !!(dep.actualTime);
       const flightStatus = cancelled ? 'cancelled' : (hasActualDep ? 'departed' : 'scheduled');
-      const statusFr = cancelled ? 'Annulé' : (hasActualDep ? 'Décollé' : statusToFr(f.status));
+      const statusFr = cancelled ? 'Annulé' : (hasActualDep ? 'En vol' : statusToFr(f.status));
       const cancelledAt = cancelled ? (toTimeStrZulu(dep.estimatedTime || dep.actualTime || f.updatedAt || dep.scheduledTime) || null) : null;
       const trackerUrl = getTrackerUrl(airlineIata, flightNumber);
 
@@ -188,7 +207,8 @@ exports.handler = async (event) => {
       const scheduledDeparture = toTimeStrZulu(dep.scheduledTime);
       const estimatedDeparture = toTimeStrZulu(dep.actualTime || dep.estimatedTime || dep.scheduledTime);
       const scheduledArrival = toTimeStrZulu(arr.scheduledTime);
-      const estimatedArrival = toTimeStrZulu(arr.actualTime || arr.estimatedTime || arr.scheduledTime);
+      const arrivalEstFromApi = arrivalMap.get(flightNumber + '|' + depIata + '|' + arrIata);
+      const estimatedArrival = toTimeStrZulu(arrivalEstFromApi || arr.actualTime || arr.estimatedTime || arr.estTime || arr.revisedTime || arr.scheduledTime);
       const scheduledDate = (dep.scheduledTime && String(dep.scheduledTime).slice(0, 10)) || null;
 
       const flightObj = {

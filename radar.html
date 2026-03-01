@@ -186,7 +186,7 @@
         var scheduledArr = (f.scheduledArrival != null && f.scheduledArrival !== '—') ? f.scheduledArrival : '—';
         var estimatedArr = (f.estimatedArrival != null && f.estimatedArrival !== '—') ? f.estimatedArrival : '—';
         var retardNum = f.cancelled ? '—' : (f.delayMinutes != null ? String(f.delayMinutes) + ' min' : '0 min');
-        var stateLabel = (f.statusFr != null && f.statusFr !== '') ? f.statusFr : (f.flightStatus === 'cancelled' ? 'Annulé' : (f.flightStatus === 'departed' ? 'Décollé' : 'Au sol'));
+        var stateLabel = (f.statusFr != null && f.statusFr !== '') ? f.statusFr : (f.flightStatus === 'cancelled' ? 'Annulé' : (f.flightStatus === 'departed' ? 'En vol' : 'Au sol'));
         var annuleCell = f.cancelled ? ('Oui' + (f.cancelledAt && f.cancelledAt !== '—' ? ' (~' + f.cancelledAt + ')' : '')) : '—';
         var trackerHref = (f.trackerUrl && f.trackerUrl !== '#') ? f.trackerUrl : '#';
         var trackerLabel = f.trackerUrl ? 'Traqueur ' + (f.airline || '') : '—';
