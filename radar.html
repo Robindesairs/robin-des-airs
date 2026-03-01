@@ -142,6 +142,24 @@
       document.getElementById('radar-content').style.display = 'block';
     }
 
+    function formatExactTime(dateOrTimeStr) {
+      if (!dateOrTimeStr) return '—';
+      var s = String(dateOrTimeStr).trim();
+      var m = s.match(/(\d{1,2}):(\d{2})/);
+      if (m) return m[1].padStart(2, '0') + 'h' + m[2];
+      var d = new Date(s);
+      if (!isNaN(d.getTime())) return String(d.getUTCHours()).padStart(2, '0') + 'h' + String(d.getUTCMinutes()).padStart(2, '0');
+      return '—';
+    }
+
+    function getPreciseStatus(f) {
+      if (f.cancelled) return 'Annulé';
+      if (f.statusFr === 'Atterri' && f.landedAtZulu) return 'Atterri à ' + formatExactTime(f.landedAtZulu);
+      if (f.statusFr === 'En vol') return 'En vol';
+      if (f.statusFr === 'Incident' || f.statusFr === 'Dérouté') return 'Incident / Dérouté';
+      return (f.statusFr != null && f.statusFr !== '') ? f.statusFr : 'Au sol';
+    }
+
     function showToast(msg) {
       var el = document.createElement('div');
       el.className = 'toast-alert';
@@ -188,8 +206,8 @@
         var estimatedDep = (f.estimatedDeparture != null && f.estimatedDeparture !== '—') ? f.estimatedDeparture : '—';
         var scheduledArr = (f.scheduledArrival != null && f.scheduledArrival !== '—') ? f.scheduledArrival : '—';
         var estimatedArr = (f.estimatedArrival != null && f.estimatedArrival !== '—') ? f.estimatedArrival : '—';
-        var retardNum = f.cancelled ? '—' : (f.delayMinutes != null ? String(f.delayMinutes) + ' min' : '0 min');
-        var stateLabel = (f.statusFr != null && f.statusFr !== '') ? f.statusFr : (f.flightStatus === 'cancelled' ? 'Annulé' : (f.flightStatus === 'departed' ? 'En vol' : 'Au sol'));
+        var delayDisplay = f.cancelled ? '—' : (f.delayMinutes != null ? '<span class="delay-val">' + String(f.delayMinutes) + '</span> min' : '0 min');
+        var stateLabel = getPreciseStatus(f);
         var annuleCell = f.cancelled ? ('Oui' + (f.cancelledAt && f.cancelledAt !== '—' ? ' (~' + f.cancelledAt + ')' : '')) : '—';
         var trackerHref = (f.trackerUrl && f.trackerUrl !== '#') ? f.trackerUrl : '#';
         var trackerLabel = f.trackerUrl ? 'Traqueur ' + (f.airline || '') : '—';
@@ -204,7 +222,7 @@
           '<td>' + estimatedDep + '</td>' +
           '<td>' + scheduledArr + '</td>' +
           '<td>' + estimatedArr + '</td>' +
-          '<td><span class="delay-box">' + retardNum + '</span></td>' +
+          '<td>' + delayDisplay + '</td>' +
           '<td>' + stateLabel + '</td>' +
           '<td>' + annuleCell + '</td>' +
           '<td><span class="badge ' + badgeClass + '">' + statusLabel + '</span></td>' +

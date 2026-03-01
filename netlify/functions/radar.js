@@ -199,7 +199,8 @@ exports.handler = async (event) => {
       const cancelled = statusRaw === 'cancelled' || statusRaw === 'canceled' || statusRaw === 'annulé';
       const hasActualDep = !!(dep.actualTime);
       const flightStatus = cancelled ? 'cancelled' : (hasActualDep ? 'departed' : 'scheduled');
-      const statusFr = cancelled ? 'Annulé' : (hasActualDep ? 'En vol' : statusToFr(f.status));
+      const statusFr = cancelled ? 'Annulé' : (statusRaw === 'landed' || statusRaw === 'arrived' ? 'Atterri' : (hasActualDep ? 'En vol' : statusToFr(f.status)));
+      const landedAtZulu = (statusRaw === 'landed' || statusRaw === 'arrived') && (arr.actualTime || arr.estimatedTime) ? toTimeStrZulu(arr.actualTime || arr.estimatedTime) : null;
       const cancelledAt = cancelled ? (toTimeStrZulu(dep.estimatedTime || dep.actualTime || f.updatedAt || dep.scheduledTime) || null) : null;
       const trackerUrl = getTrackerUrl(airlineIata, flightNumber);
 
@@ -228,6 +229,7 @@ exports.handler = async (event) => {
         cancelled: !!cancelled,
         status: f.status || '—',
         statusFr,
+        landedAtZulu,
         flightStatus,
         cancelledAt,
         scheduledDate,
