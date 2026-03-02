@@ -26,14 +26,15 @@ Dans **Netlify** → ton site → **Site configuration** → **Environment varia
 | Nom | Valeur | Sensible |
 |-----|--------|----------|
 | `TELEGRAM_BOT_TOKEN` | Le token donné par BotFather | Oui |
-| `TELEGRAM_CHAT_ID` | Ton Chat ID (ex. `123456789`) | Non |
+| `TELEGRAM_CHAT_ID` | Ton Chat ID (ex. `6894457026`) | Non |
+
+Tu peux aussi envoyer `chat_id` dans le body du POST (ex. `{ "flights": [...], "chat_id": "6894457026" }`) : il remplace la variable pour cet envoi.
 
 Redéploie le site (ou déclenche un déploiement) pour que les variables soient prises en compte.
 
 ## Comportement
 
-- Dès qu’**au moins un nouveau vol critique** est détecté (annulé ou retard ≥ 150 min), le radar envoie **un seul message Telegram** qui **liste tous les vols critiques** du moment (vol 1, vol 2, etc.). Plus de spam : une notification = un récap avec tous les vols en problème.
-- Un même vol ne déclenche qu’**une seule alerte** dans la journée (jusqu’à « Rafraîchir le ciel » ou nouveau jour).
+- À **chaque scan** où il y a au moins un vol critique (annulé ou retard ≥ 180 min), le radar envoie **un message Telegram** qui **liste tous les vols critiques** du moment (détails complets pour chaque vol).
 - Le message contient pour chaque vol : numéro, compagnie, trajet, retard (ou annulation), heures prévues, statut.
 
 ## WhatsApp

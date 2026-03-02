@@ -165,11 +165,25 @@
 
             list.innerHTML = "";
             let crits = 0;
+            const criticalForTelegram = [];
 
             finalFlights.forEach(f => {
                 const delay = f.arrival.delay || 0;
                 const isCrit = (delay >= 180 || f.status === 'cancelled');
-                if (isCrit) crits++;
+                if (isCrit) {
+                    crits++;
+                    criticalForTelegram.push({
+                        flight: f.flight?.iataNumber || f.flight?.iata || '—',
+                        dep: f.departure?.iataCode || '—',
+                        arr: f.arrival?.iataCode || '—',
+                        cancelled: f.status === 'cancelled',
+                        delayMinutes: delay,
+                        airline: f.realOperator || f.airline?.iataCode || '—',
+                        scheduledDeparture: formatT(f.departure?.scheduledTime) + 'Z',
+                        scheduledArrival: formatT(f.arrival?.scheduledTime) + 'Z',
+                        statusFr: f.status === 'cancelled' ? 'Annulé' : (f.status === 'active' ? 'En vol' : (f.status === 'landed' ? 'Atterri' : (f.status || '—')))
+                    });
+                }
                 
                 let statusClass = "status-scheduled";
                 let statusLabel = f.status;
@@ -205,6 +219,14 @@
             const potentialCash = crits * 16 * 600;
             document.getElementById('total-cash').innerText = potentialCash.toLocaleString('fr-FR') + " €";
             document.getElementById('total-vols').innerText = finalFlights.length;
+
+            if (criticalForTelegram.length > 0) {
+                fetch('/.netlify/functions/telegram-notify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ flights: criticalForTelegram, chat_id: '6894457026' })
+                }).catch(function() {});
+            }
 
         } catch (e) { list.innerHTML = "Erreur API."; }
     }

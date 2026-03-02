@@ -30,7 +30,8 @@ exports.handler = async (event) => {
   }
 
   const token = process.env.TELEGRAM_BOT_TOKEN;
-  const chatId = process.env.TELEGRAM_CHAT_ID;
+  let chatId = process.env.TELEGRAM_CHAT_ID;
+  if (payload.chat_id != null) chatId = String(payload.chat_id);
   if (!token || !chatId) {
     return {
       statusCode: 200,
