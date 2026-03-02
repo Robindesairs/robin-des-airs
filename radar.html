@@ -4,16 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <title>ROBIN DES AIRS — Radar Commander V5</title>
+  <title>ROBIN DES AIRS — Radar Spécial Afrique</title>
   <link rel="icon" href="/favicon.png" type="image/png">
   <style>
     :root {
       --bg: #0a0a0a;
-      --card: #141414;
-      --border: #2a2a2a;
+      --card: #161616;
+      --border: #333;
       --red: #ff4d4d;
       --green: #2ecc71;
-      --gray: #666;
+      --gray: #888;
       --text: #e0e0e0;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -25,12 +25,11 @@
       align-items: center;
       flex-wrap: wrap;
       gap: 16px;
-      border-bottom: 3px solid var(--red);
-      padding-bottom: 18px;
+      border-bottom: 2px solid var(--red);
+      padding-bottom: 16px;
       margin-bottom: 24px;
-      background: linear-gradient(180deg, rgba(20,20,20,0.98) 0%, transparent 100%);
     }
-    .logo { font-size: 24px; font-weight: 900; color: var(--red); letter-spacing: 2px; text-transform: uppercase; }
+    .logo { font-size: 22px; font-weight: 900; color: var(--red); letter-spacing: 1px; }
 
     .dashboard {
       display: flex;
@@ -41,59 +40,61 @@
     .stat-card {
       background: var(--card);
       flex: 1;
-      min-width: 160px;
-      padding: 22px;
-      border-radius: 8px;
+      min-width: 140px;
+      padding: 20px;
+      border-radius: 12px;
       border: 1px solid var(--border);
       text-align: center;
-      border-left: 4px solid var(--red);
     }
-    .stat-card.cash { border-left-color: var(--green); }
-    .stat-label { font-size: 10px; color: var(--gray); text-transform: uppercase; font-weight: bold; letter-spacing: 1px; margin-bottom: 10px; }
-    .stat-value { font-size: 32px; font-weight: 900; }
+    .stat-card.critical { border-bottom: 4px solid var(--red); }
+    .stat-card.cash { border-bottom: 4px solid var(--green); }
+    .stat-label { font-size: 11px; color: var(--gray); text-transform: uppercase; font-weight: bold; margin-bottom: 8px; }
+    .stat-value { font-size: 28px; font-weight: 900; }
     .stat-value.red { color: var(--red); }
     .stat-value.green { color: var(--green); }
 
     .toolbar {
-      background: var(--card);
-      padding: 18px 22px;
-      border-radius: 8px;
+      background: #111;
+      padding: 16px 20px;
+      border-radius: 12px;
       display: flex;
       align-items: center;
-      gap: 18px;
+      gap: 16px;
       margin-bottom: 24px;
       border: 1px solid var(--border);
       flex-wrap: wrap;
     }
-    .search-wrap { flex: 1; min-width: 220px; }
+    .search-wrap {
+      flex: 1;
+      min-width: 200px;
+    }
     .search-wrap input {
       width: 100%;
       padding: 12px 16px;
-      border-radius: 6px;
+      border-radius: 8px;
       border: 1px solid var(--border);
-      background: #0a0a0a;
+      background: var(--card);
       color: var(--text);
       font-size: 14px;
     }
     .search-wrap input::placeholder { color: var(--gray); }
     .btn {
       padding: 12px 24px;
-      border-radius: 6px;
+      border-radius: 8px;
       border: none;
       font-weight: bold;
       cursor: pointer;
       font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      transition: opacity 0.2s;
     }
     .btn:hover { opacity: 0.9; }
     .btn-scan { background: var(--red); color: white; }
-    .btn-auto { background: #222; color: var(--text); border: 1px solid var(--border); }
-    .btn-auto.active { background: var(--green); color: #0a0a0a; border-color: var(--green); }
+    .btn-auto { background: var(--border); color: var(--text); }
+    .btn-auto.active { background: var(--green); color: #0a0a0a; box-shadow: 0 0 16px rgba(46, 204, 113, 0.4); }
 
     .table-wrap {
       background: var(--card);
-      border-radius: 8px;
+      border-radius: 12px;
       overflow: hidden;
       border: 1px solid var(--border);
     }
@@ -105,27 +106,26 @@
       text-align: left;
       font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      border-bottom: 2px solid var(--red);
+      letter-spacing: 0.5px;
     }
     tbody td { padding: 14px 16px; border-bottom: 1px solid #222; }
-    tbody tr:hover { background: rgba(255,255,255,0.02); }
-    .row-critical { background: rgba(255, 77, 77, 0.06); border-left: 4px solid var(--red); }
-    .badge-cash { background: var(--green); color: #0a0a0a; padding: 6px 12px; border-radius: 4px; font-weight: 900; font-size: 12px; }
+    tbody tr:hover { background: rgba(255,255,255,0.03); }
+    .row-critical { background: rgba(255, 77, 77, 0.08); border-left: 4px solid var(--red); }
+    .badge-cash { background: var(--green); color: #0a0a0a; padding: 6px 12px; border-radius: 6px; font-weight: 900; font-size: 12px; }
     .delay-val { font-weight: bold; }
     .delay-val.critical { color: var(--red); }
     #loader { text-align: center; padding: 60px 20px; color: var(--gray); font-size: 16px; }
-    .status-msg { font-size: 12px; color: var(--gray); }
+    .status-msg { font-size: 12px; color: var(--gray); font-style: italic; }
   </style>
 </head>
 <body>
 
   <header class="header">
-    <div class="logo">🏹 Robin des Airs — Commander V5</div>
+    <div class="logo">🏹 ROBIN DES AIRS — Radar Spécial Afrique</div>
   </header>
 
   <div class="dashboard">
-    <div class="stat-card">
+    <div class="stat-card critical">
       <div class="stat-label">Vols critiques</div>
       <div id="count-critical" class="stat-value red">0</div>
     </div>
@@ -141,14 +141,14 @@
 
   <div class="toolbar">
     <div class="search-wrap">
-      <input type="text" id="search-airline" placeholder="Filtrer par compagnie..." autocomplete="off">
+      <input type="text" id="search-airline" placeholder="Filtrer par compagnie (ex: AF, Air France)..." autocomplete="off">
     </div>
     <button type="button" class="btn btn-scan" id="btn-scan">Scan rapide</button>
     <button type="button" class="btn btn-auto" id="btn-auto">Auto-Scan (2 min)</button>
     <span id="status-msg" class="status-msg">Prêt.</span>
   </div>
 
-  <div id="loader" style="display: none;">Scan des 45 hubs...</div>
+  <div id="loader" style="display: none;">Scan des 45 hubs en cours...</div>
   <div class="table-wrap" id="table-wrap">
     <table>
       <thead>
@@ -167,18 +167,13 @@
 
 <script>
 (function() {
-  const p1 = 'ea71e3';
-  const p2 = 'c99347';
-  const API_KEY = p1 + '-' + p2;
-
-  var HUBS_AFRICA = [
+  var API_KEY = 'ea71e3-c99347';
+  var HUBS = [
     'DSS','ABJ','BKO','CKY','OUA','LFW','ACC','ABV','LOS','COO','NKC','NIM','FNA','ROB',
     'DLA','NSI','LBV','FIH','BZV','PNR','BGF','LAD','SSG','NDJ',
-    'NBO','DAR','ADD','JNB','CPT','KGL','JIB','ZNZ','TNR','MRU','RUN','DZA'
+    'NBO','DAR','ADD','JNB','CPT','KGL','JIB','ZNZ','TNR','MRU','RUN','DZA',
+    'CDG','ORY','BRU','AMS','LIS','MAD','FRA','LHR','BCN'
   ];
-  var HUBS_EUROPE = ['CDG','ORY','BRU','AMS','LIS','MAD','FRA','LHR','BCN'];
-  var HUBS = HUBS_AFRICA.concat(HUBS_EUROPE);
-
   var EU_AIRLINES = ['AF','SN','KL','LH','TP','IB','BA','VY','TO'];
   var EUROPE_HUBS = ['CDG','ORY','BRU','AMS','LIS','MAD','FRA','LHR','BCN'];
   var CRITICAL_DELAY_MIN = 180;
@@ -292,7 +287,7 @@
     }).catch(function(err) {
       if (loader) loader.style.display = 'none';
       if (status) status.textContent = 'Erreur : ' + (err.message || 'réseau');
-      if (body) body.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--gray);">Échec du scan.</td></tr>';
+      if (body) body.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--gray);">Échec du scan. Vérifiez la clé API et les requêtes HTTPS.</td></tr>';
     });
   }
 
