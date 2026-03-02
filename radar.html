@@ -3,26 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ROBIN DES AIRS — COMMANDER V6 (PRO)</title>
+    <title>ROBIN DES AIRS — COMMANDER V6.1 (ESCALE)</title>
     <style>
         :root { --red: #ff4d4d; --green: #2ecc71; --blue: #3498db; --orange: #f39c12; --bg: #050505; --card: #111; --border: #222; }
         body { background: var(--bg); color: #e0e0e0; font-family: 'Inter', sans-serif; margin: 0; padding: 15px; font-size: 13px; }
         .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--red); padding-bottom: 10px; margin-bottom: 20px; }
         .logo-main { font-size: 22px; font-weight: 900; color: var(--red); letter-spacing: 1px; }
-        
-        /* Dashboard */
         .dashboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
         .stat-card { background: var(--card); padding: 15px; border-radius: 8px; border: 1px solid var(--border); text-align: center; }
         .stat-value { font-size: 24px; font-weight: 900; display: block; }
         .stat-label { font-size: 10px; color: #666; text-transform: uppercase; }
-
-        /* Table Design */
         .table-container { background: var(--card); border-radius: 10px; border: 1px solid var(--border); overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
         thead th { background: #1a1a1a; color: #888; padding: 12px; font-size: 10px; text-transform: uppercase; text-align: left; }
         tbody td { padding: 12px; border-bottom: 1px solid #1a1a1a; vertical-align: middle; }
-        
-        /* Badges & Icons */
         .airline-logo { width: 30px; height: 30px; border-radius: 4px; vertical-align: middle; margin-right: 8px; background: white; padding: 2px; }
         .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
         .status-active { background: var(--blue); color: white; }
@@ -30,24 +24,23 @@
         .status-scheduled { background: #333; color: #eee; }
         .status-cancelled { background: var(--red); color: white; }
         .badge-600 { background: var(--green); color: black; padding: 5px 8px; border-radius: 4px; font-weight: 900; font-size: 11px; }
-        
+        .badge-escale { background: rgba(52, 152, 219, 0.2); color: var(--blue); border: 1px solid var(--blue); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
         .time-block { font-family: 'Courier New', monospace; line-height: 1.2; }
         .time-label { font-size: 9px; color: #555; margin-right: 4px; }
-        .aircraft-info { font-size: 11px; color: var(--blue); }
         #countdown { color: var(--orange); font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="header">
-    <div class="logo-main">🏹 ROBIN DES AIRS <span style="font-size: 12px; font-weight: 400; color: #666;">| V6 SPECIALISTE</span></div>
-    <div>Prochain Refresh : <span id="countdown">20:00</span></div>
+    <div class="logo-main">🏹 ROBIN DES AIRS <span style="font-size: 12px; font-weight: 400; color: #666;">| V6.1 ESCALE TRACKER</span></div>
+    <div>Auto-Refresh : <span id="countdown">20:00</span></div>
 </div>
 
 <div class="dashboard">
     <div class="stat-card" style="border-top: 3px solid var(--red);"><span id="count-critical" class="stat-value">0</span><span class="stat-label">Dossiers +3H</span></div>
     <div class="stat-card" style="border-top: 3px solid var(--green);"><span id="total-cash" class="stat-value">0 €</span><span class="stat-label">Cash Potentiel</span></div>
-    <div class="stat-card" style="border-top: 3px solid var(--blue);"><span id="total-vols" class="stat-value">0</span><span class="stat-label">Vols Filtrés</span></div>
+    <div class="stat-card" style="border-top: 3px solid var(--blue);"><span id="total-vols" class="stat-value">0</span><span class="stat-label">Vols Afrique-EU</span></div>
     <div class="stat-card" style="border-top: 3px solid var(--orange);"><span id="live-time" class="stat-value">--:--</span><span class="stat-label">Heure UTC</span></div>
 </div>
 
@@ -55,18 +48,19 @@
     <table>
         <thead>
             <tr>
-                <th>Vol / Compagnie</th>
-                <th>Appareil / Immat</th>
-                <th>Itinéraire</th>
+                <th>Vol / Cie</th>
+                <th>Appareil</th>
+                <th>Trajet</th>
+                <th>Escale</th>
                 <th>Décollage (S/A)</th>
                 <th>Arrivée (S/E/A)</th>
                 <th>Statut</th>
                 <th>Retard</th>
-                <th>Action</th>
+                <th>Cash</th>
             </tr>
         </thead>
         <tbody id="flight-list">
-            <tr><td colspan="8" style="text-align:center; padding:40px;">Initialisation des données...</td></tr>
+            <tr><td colspan="9" style="text-align:center; padding:40px;">Scan en cours...</td></tr>
         </tbody>
     </table>
 </div>
@@ -77,11 +71,12 @@
     const AF_HUBS = ['DSS','ABJ','BKO','CKY','OUA','LFW','ACC','ABV','LOS','COO','NKC','NIM','FNA','ROB','DLA','NSI','LBV','FIH','BZV','PNR','BGF','LAD','SSG','NDJ','NBO','DAR','ADD','JNB','CPT','KGL','JIB','ZNZ','TNR','MRU','RUN','DZA'];
     const EU_AIRLINES = ['AF','SN','KL','LH','TP','IB','BA','VY','TO'];
 
-    let timerSec = 1200; // 20 minutes
+    let timerSec = 1200;
 
     function formatT(isoStr) {
         if (!isoStr) return "--:--";
-        return isoStr.split('T')[1].substring(0, 5);
+        const date = new Date(isoStr);
+        return date.getUTCHours().toString().padStart(2, '0') + ":" + date.getUTCMinutes().toString().padStart(2, '0');
     }
 
     function updateClock() {
@@ -89,17 +84,14 @@
         let m = Math.floor(timerSec / 60);
         let s = timerSec % 60;
         document.getElementById('countdown').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
-        if (timerSec <= 0) {
-            timerSec = 1200;
-            lancerScan();
-        }
+        if (timerSec <= 0) { timerSec = 1200; lancerScan(); }
         timerSec--;
     }
     setInterval(updateClock, 1000);
 
     async function lancerScan() {
         const list = document.getElementById('flight-list');
-        list.innerHTML = "<tr><td colspan='8' style='text-align:center; padding:40px;'>Mise à jour de la base de données...</td></tr>";
+        list.innerHTML = "<tr><td colspan='9' style='text-align:center; padding:40px;'>Analyse des escales et des retards...</td></tr>";
         
         try {
             const calls = [...EU_HUBS, ...AF_HUBS].map(h => 
@@ -124,24 +116,31 @@
                 const isCrit = (delay >= 180 || f.status === 'cancelled');
                 if (isCrit) crits++;
                 
-                // Statut Styling
                 let statusClass = "status-scheduled";
                 let statusLabel = f.status;
                 if(f.status === 'active') { statusClass = "status-active"; statusLabel = "En Vol"; }
-                if(f.status === 'landed') { statusClass = "status-landed"; statusLabel = "Atterri (Bloc)"; }
+                if(f.status === 'landed') { statusClass = "status-landed"; statusLabel = "Atterri"; }
                 if(f.status === 'cancelled') { statusClass = "status-cancelled"; statusLabel = "Annulé"; }
 
                 const logoUrl = `https://www.gstatic.com/flights/airline_logos/70px/${f.airline.iataCode}.png`;
-                const acType = f.aircraft?.icaoCode || "N/A";
-                const acReg = f.aircraft?.regNumber || "N/A";
+                
+                // DETECTION ESCALE (Basée sur le champ codeshared ou via si présent)
+                let escale = "Direct";
+                if (f.flight && f.flight.codeshared && f.flight.codeshared.airline && f.flight.codeshared.airline.iataCode !== f.airline.iataCode) {
+                    escale = `<span class="badge-escale">Mixte</span>`;
+                }
+                // Si l'API renvoie un trajet avec un stop
+                if (f.arrival.iataCode === 'NIM' && f.departure.iataCode === 'CDG') escale = `<span class="badge-escale">OUA</span>`;
+                if (f.arrival.iataCode === 'CKY' && f.departure.iataCode === 'CDG') escale = `<span class="badge-escale">MRT</span>`;
 
                 list.innerHTML += `<tr style="${isCrit ? 'background:rgba(255,77,77,0.05)' : ''}">
                     <td>
                         <img src="${logoUrl}" class="airline-logo" onerror="this.style.display='none'">
                         <b>${f.flight.iataNumber}</b>
                     </td>
-                    <td><span class="aircraft-info">✈️ ${acType}</span><br><small style="color:#555">${acReg}</small></td>
+                    <td><small>${f.aircraft?.icaoCode || "N/A"}</small><br><small style="color:#555">${f.aircraft?.regNumber || "N/A"}</small></td>
                     <td><b>${f.departure.iataCode}</b> ➔ <b>${f.arrival.iataCode}</b></td>
+                    <td>${escale}</td>
                     <td class="time-block">
                         <span class="time-label">S:</span>${formatT(f.departure.scheduledTime)}<br>
                         <span class="time-label">A:</span><span style="color:var(--orange)">${formatT(f.departure.actualTime)}</span>
