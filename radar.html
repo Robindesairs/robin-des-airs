@@ -3,45 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ROBIN DES AIRS — COMMANDER V6.1 (ESCALE)</title>
+    <title>ROBIN DES AIRS — V6.3 STICKY & CASH PRO</title>
     <style>
         :root { --red: #ff4d4d; --green: #2ecc71; --blue: #3498db; --orange: #f39c12; --bg: #050505; --card: #111; --border: #222; }
-        body { background: var(--bg); color: #e0e0e0; font-family: 'Inter', sans-serif; margin: 0; padding: 15px; font-size: 13px; }
-        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--red); padding-bottom: 10px; margin-bottom: 20px; }
+        
+        body { background: var(--bg); color: #e0e0e0; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
+        
+        .top-container { 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+            background: var(--bg); 
+            padding: 15px 20px 5px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .logo-main { font-size: 22px; font-weight: 900; color: var(--red); letter-spacing: 1px; }
-        .dashboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
-        .stat-card { background: var(--card); padding: 15px; border-radius: 8px; border: 1px solid var(--border); text-align: center; }
-        .stat-value { font-size: 24px; font-weight: 900; display: block; }
+        
+        .dashboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 10px; }
+        .stat-card { background: var(--card); padding: 12px; border-radius: 8px; border: 1px solid var(--border); text-align: center; }
+        .stat-value { font-size: 22px; font-weight: 900; display: block; }
         .stat-label { font-size: 10px; color: #666; text-transform: uppercase; }
-        .table-container { background: var(--card); border-radius: 10px; border: 1px solid var(--border); overflow-x: auto; }
+
+        .table-container { padding: 0 20px 20px 20px; }
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
-        thead th { background: #1a1a1a; color: #888; padding: 12px; font-size: 10px; text-transform: uppercase; text-align: left; }
+        
+        thead th { 
+            position: sticky; 
+            top: 135px;
+            z-index: 900;
+            background: #1a1a1a; 
+            color: #888; 
+            padding: 12px; 
+            font-size: 10px; 
+            text-transform: uppercase; 
+            text-align: left;
+            border-bottom: 2px solid var(--border);
+        }
+
         tbody td { padding: 12px; border-bottom: 1px solid #1a1a1a; vertical-align: middle; }
+
+        @keyframes blink {
+            0% { background-color: var(--green); color: black; }
+            50% { background-color: var(--red); color: white; }
+            100% { background-color: var(--green); color: black; }
+        }
+        .badge-600 { 
+            animation: blink 1.5s infinite; 
+            padding: 5px 10px; 
+            border-radius: 4px; 
+            font-weight: 900; 
+            font-size: 11px; 
+            cursor: pointer;
+        }
+
         .airline-logo { width: 30px; height: 30px; border-radius: 4px; vertical-align: middle; margin-right: 8px; background: white; padding: 2px; }
         .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
         .status-active { background: var(--blue); color: white; }
         .status-landed { background: var(--green); color: black; }
         .status-scheduled { background: #333; color: #eee; }
         .status-cancelled { background: var(--red); color: white; }
-        .badge-600 { background: var(--green); color: black; padding: 5px 8px; border-radius: 4px; font-weight: 900; font-size: 11px; }
-        .badge-escale { background: rgba(52, 152, 219, 0.2); color: var(--blue); border: 1px solid var(--blue); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
-        .time-block { font-family: 'Courier New', monospace; line-height: 1.2; }
+        
+        .time-block { font-family: 'Courier New', monospace; line-height: 1.2; font-size: 12px; }
         .time-label { font-size: 9px; color: #555; margin-right: 4px; }
         #countdown { color: var(--orange); font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <div class="logo-main">🏹 ROBIN DES AIRS <span style="font-size: 12px; font-weight: 400; color: #666;">| V6.1 ESCALE TRACKER</span></div>
-    <div>Auto-Refresh : <span id="countdown">20:00</span></div>
-</div>
+<div class="top-container">
+    <div class="header">
+        <div class="logo-main">🏹 ROBIN DES AIRS <span style="font-size: 12px; font-weight: 400; color: #666;">| V6.3 CASH OPTIMIZER</span></div>
+        <div>Refresh : <span id="countdown">20:00</span></div>
+    </div>
 
-<div class="dashboard">
-    <div class="stat-card" style="border-top: 3px solid var(--red);"><span id="count-critical" class="stat-value">0</span><span class="stat-label">Dossiers +3H</span></div>
-    <div class="stat-card" style="border-top: 3px solid var(--green);"><span id="total-cash" class="stat-value">0 €</span><span class="stat-label">Cash Potentiel</span></div>
-    <div class="stat-card" style="border-top: 3px solid var(--blue);"><span id="total-vols" class="stat-value">0</span><span class="stat-label">Vols Afrique-EU</span></div>
-    <div class="stat-card" style="border-top: 3px solid var(--orange);"><span id="live-time" class="stat-value">--:--</span><span class="stat-label">Heure UTC</span></div>
+    <div class="dashboard">
+        <div class="stat-card" style="border-top: 3px solid var(--red);"><span id="count-critical" class="stat-value">0</span><span class="stat-label">Vols Critiques</span></div>
+        <div class="stat-card" style="border-top: 3px solid var(--green);"><span id="total-cash" class="stat-value" style="color:var(--green)">0 €</span><span class="stat-label">Cash Potentiel (5%)</span></div>
+        <div class="stat-card" style="border-top: 3px solid var(--blue);"><span id="total-vols" class="stat-value">0</span><span class="stat-label">Vols Afrique-EU</span></div>
+        <div class="stat-card" style="border-top: 3px solid var(--orange);"><span id="live-time" class="stat-value">--:--</span><span class="stat-label">Heure UTC (Z)</span></div>
+    </div>
 </div>
 
 <div class="table-container">
@@ -56,11 +98,11 @@
                 <th>Arrivée (S/E/A)</th>
                 <th>Statut</th>
                 <th>Retard</th>
-                <th>Cash</th>
+                <th>Cash Est.</th>
             </tr>
         </thead>
         <tbody id="flight-list">
-            <tr><td colspan="9" style="text-align:center; padding:40px;">Scan en cours...</td></tr>
+            <tr><td colspan="9" style="text-align:center; padding:100px; color:#555;">Démarrage des systèmes...</td></tr>
         </tbody>
     </table>
 </div>
@@ -91,7 +133,7 @@
 
     async function lancerScan() {
         const list = document.getElementById('flight-list');
-        list.innerHTML = "<tr><td colspan='9' style='text-align:center; padding:40px;'>Nettoyage des doublons et analyse...</td></tr>";
+        list.innerHTML = "<tr><td colspan='9' style='text-align:center; padding:100px;'>Mise à jour des données en cours...</td></tr>";
         
         try {
             const calls = [...EU_HUBS, ...AF_HUBS].map(h => 
@@ -99,7 +141,6 @@
             );
             const results = await Promise.all(calls);
             
-            // 1. Premier filtrage (Cies EU + Trajet Afrique)
             let rawFlights = results.flat().filter(f => {
                 if (!f.arrival || !f.departure || !f.airline) return false;
                 const isEuAirline = EU_AIRLINES.includes(f.airline.iataCode);
@@ -108,19 +149,13 @@
                 return isEuAirline && (isEuToAf || isAfToEu);
             });
 
-            // 2. DÉDOUBLONNAGE (La Magie)
             const uniqueFlights = new Map();
-
             rawFlights.forEach(f => {
                 const isMarketing = f.flight && f.flight.codeshared && f.flight.codeshared.airline;
-                const operatingIata = isMarketing ? (f.flight.codeshared.airline.iataCode || f.airline.iataCode) : f.airline.iataCode;
-                const operatingNumber = isMarketing ? (f.flight.codeshared.flight_number || f.flight.iataNumber) : (f.flight && f.flight.iataNumber);
-
+                const operatingIata = isMarketing ? f.flight.codeshared.airline.iataCode : f.airline.iataCode;
                 const uniqueKey = `${f.arrival.scheduledTime}_${f.departure.iataCode}_${f.arrival.iataCode}`;
-
                 if (!uniqueFlights.has(uniqueKey)) {
                     f.realOperator = operatingIata;
-                    f.realFlightNumber = operatingNumber || '—';
                     uniqueFlights.set(uniqueKey, f);
                 }
             });
@@ -136,42 +171,42 @@
                 const isCrit = (delay >= 180 || f.status === 'cancelled');
                 if (isCrit) crits++;
                 
-                const logoUrl = `https://www.gstatic.com/flights/airline_logos/70px/${f.realOperator}.png`;
-                
                 let statusClass = "status-scheduled";
                 let statusLabel = f.status;
                 if(f.status === 'active') { statusClass = "status-active"; statusLabel = "En Vol"; }
                 if(f.status === 'landed') { statusClass = "status-landed"; statusLabel = "Atterri"; }
                 if(f.status === 'cancelled') { statusClass = "status-cancelled"; statusLabel = "Annulé"; }
 
-                list.innerHTML += `<tr style="${isCrit ? 'background:rgba(255,77,77,0.05)' : ''}">
+                const logoUrl = `https://www.gstatic.com/flights/airline_logos/70px/${f.realOperator}.png`;
+
+                list.innerHTML += `<tr>
                     <td>
                         <img src="${logoUrl}" class="airline-logo" onerror="this.style.display='none'">
-                        <b>${f.realFlightNumber}</b><br><small style="color:#666">Opéré par ${f.realOperator}</small>
+                        <b>${f.flight.iataNumber}</b>
                     </td>
                     <td><small>${f.aircraft?.icaoCode || "N/A"}</small><br><small style="color:var(--blue)">${f.aircraft?.regNumber || "N/A"}</small></td>
                     <td><b>${f.departure.iataCode}</b> ➔ <b>${f.arrival.iataCode}</b></td>
-                    <td>${f.departure.iataCode === 'CDG' && (f.arrival.iataCode === 'NIM' || f.arrival.iataCode === 'OUA') ? '<span class="badge-escale">Triangle</span>' : 'Direct'}</td>
+                    <td><small>${f.departure.iataCode === 'CDG' && f.arrival.iataCode === 'NIM' ? 'Via OUA' : 'Direct'}</small></td>
                     <td class="time-block">
                         <span class="time-label">S:</span>${formatT(f.departure.scheduledTime)}<br>
                         <span class="time-label">A:</span><span style="color:var(--orange)">${formatT(f.departure.actualTime)}</span>
                     </td>
                     <td class="time-block">
                         <span class="time-label">S:</span>${formatT(f.arrival.scheduledTime)}<br>
-                        <span class="time-label">E:</span>${formatT(f.arrival.estimatedTime)}<br>
                         <span class="time-label">A:</span><span style="color:var(--green)">${formatT(f.arrival.actualTime)}</span>
                     </td>
                     <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
                     <td style="color:${delay > 0 ? 'var(--red)' : 'inherit'}"><b>${delay} min</b></td>
-                    <td>${isCrit ? '<span class="badge-600">600 €</span>' : '--'}</td>
+                    <td>${isCrit ? '<span class="badge-600">9 600 €</span>' : '--'}</td>
                 </tr>`;
             });
 
             document.getElementById('count-critical').innerText = crits;
-            document.getElementById('total-cash').innerText = (crits * 600) + " €";
+            const potentialCash = crits * 16 * 600;
+            document.getElementById('total-cash').innerText = potentialCash.toLocaleString('fr-FR') + " €";
             document.getElementById('total-vols').innerText = finalFlights.length;
 
-        } catch (e) { list.innerHTML = "Erreur de connexion API."; console.error(e); }
+        } catch (e) { list.innerHTML = "Erreur API."; }
     }
     lancerScan();
 </script>
