@@ -42,45 +42,62 @@
     </table>
 </div>
 <script>
-    // Camouflage de la clé pour éviter le blocage Netlify
     const p1 = 'ea71e3'; const p2 = 'c99347'; const API_KEY = p1 + '-' + p2;
     
-    const HUBS = ['CDG','ORY','BRU','AMS','LIS','MAD','FRA','LHR','BCN','DSS','ABJ','BKO','CKY','OUA','LFW','ACC','ABV','LOS','COO','NKC','NIM','FNA','ROB','DLA','NSI','LBV','FIH','BZV','PNR','BGF','LAD','SSG','NDJ','NBO','DAR','ADD','JNB','CPT','KGL','JIB','ZNZ','TNR','MRU','RUN','DZA'];
+    const EU_HUBS = ['CDG','ORY','BRU','AMS','LIS','MAD','FRA','LHR','BCN'];
+    const AF_HUBS = ['DSS','ABJ','BKO','CKY','OUA','LFW','ACC','ABV','LOS','COO','NKC','NIM','FNA','ROB','DLA','NSI','LBV','FIH','BZV','PNR','BGF','LAD','SSG','NDJ','NBO','DAR','ADD','JNB','CPT','KGL','JIB','ZNZ','TNR','MRU','RUN','DZA'];
+    const ALL_HUBS = [...EU_HUBS, ...AF_HUBS];
     const EU_AIRLINES = ['AF','SN','KL','LH','TP','IB','BA','VY','TO'];
 
     setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString('fr-FR'); }, 1000);
 
     async function lancerScan() {
         const list = document.getElementById('flight-list');
-        list.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Analyse des 45 hubs en cours...</td></tr>";
+        list.innerHTML = "<tr><td colspan='6' style='text-align:center;'>Filtrage spécial Europe-Afrique en cours...</td></tr>";
         try {
-            const calls = HUBS.map(h => fetch(`https://aviation-edge.com/v2/public/timetable?key=${API_KEY}&iataCode=${h}&type=arrival`).then(r => r.json()).catch(() => []));
+            const calls = ALL_HUBS.map(h => fetch(`https://aviation-edge.com/v2/public/timetable?key=${API_KEY}&iataCode=${h}&type=arrival`).then(r => r.json()).catch(() => []));
             const results = await Promise.all(calls);
-            let flights = results.flat().filter(f => f.arrival && f.airline && EU_AIRLINES.includes(f.airline.iataCode));
             
+            let flights = results.flat().filter(f => {
+                if (!f.arrival || !f.departure || !f.airline) return false;
+                
+                const dep = f.departure.iataCode;
+                const arr = f.arrival.iataCode;
+                const isEuAirline = EU_AIRLINES.includes(f.airline.iataCode);
+                
+                // LOGIQUE EUROPE <-> AFRIQUE
+                const isEuToAf = EU_HUBS.includes(dep) && AF_HUBS.includes(arr);
+                const isAfToEu = AF_HUBS.includes(dep) && EU_HUBS.includes(arr);
+                
+                return isEuAirline && (isEuToAf || isAfToEu);
+            });
+            
+            // Tri par retard décroissant
             flights.sort((a,b) => (b.arrival.delay || 0) - (a.arrival.delay || 0));
+            
             list.innerHTML = "";
             let crits = 0;
-            
             flights.forEach(f => {
                 const delay = f.arrival.delay || 0;
                 const isCrit = (delay >= 180 || f.status === 'cancelled');
                 if (isCrit) crits++;
-                const arrTime = f.arrival.actualTime || f.arrival.estimatedTime || f.arrival.scheduledTime;
+                const arrTime = f.arrival.estimatedTime || f.arrival.scheduledTime;
                 
-                list.innerHTML += `<tr style="${isCrit ? 'background:rgba(255,77,77,0.08); border-left:4px solid var(--red);' : ''}">
+                list.innerHTML += `<tr style="${isCrit ? 'background:rgba(255,77,77,0.1); border-left:4px solid var(--red);' : ''}">
                     <td><b>${f.flight.iataNumber}</b></td>
                     <td><span class="airline-tag">${f.airline.iataCode}</span></td>
-                    <td>${f.departure.iataCode} ➔ ${f.arrival.iataCode}</td>
-                    <td style="color:var(--orange)"><b>${new Date(arrTime).getUTCHours()}h${new Date(arrTime).getUTCMinutes()}Z</b></td>
+                    <td>${f.departure.iataCode} ✈️ ${f.arrival.iataCode}</td>
+                    <td style="color:var(--orange)"><b>${new Date(arrTime).toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'})}</b></td>
                     <td><b>${delay} min</b></td>
                     <td>${isCrit ? '<span class="badge-600">600 €</span>' : '--'}</td>
                 </tr>`;
             });
+            
             document.getElementById('count-critical').innerText = crits;
             document.getElementById('total-cash').innerText = (crits * 600) + " €";
             document.getElementById('total-vols').innerText = flights.length;
-        } catch (e) { list.innerHTML = "Erreur de connexion."; }
+            
+        } catch (e) { list.innerHTML = "Erreur technique."; }
     }
     lancerScan();
 </script>
