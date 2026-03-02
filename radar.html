@@ -91,7 +91,7 @@
 
     async function lancerScan() {
         const list = document.getElementById('flight-list');
-        list.innerHTML = "<tr><td colspan='9' style='text-align:center; padding:40px;'>Analyse des escales et des retards...</td></tr>";
+        list.innerHTML = "<tr><td colspan='9' style='text-align:center; padding:40px;'>Nettoyage des doublons et analyse...</td></tr>";
         
         try {
             const calls = [...EU_HUBS, ...AF_HUBS].map(h => 
@@ -99,7 +99,8 @@
             );
             const results = await Promise.all(calls);
             
-            let flights = results.flat().filter(f => {
+            // 1. Premier filtrage (Cies EU + Trajet Afrique)
+            let rawFlights = results.flat().filter(f => {
                 if (!f.arrival || !f.departure || !f.airline) return false;
                 const isEuAirline = EU_AIRLINES.includes(f.airline.iataCode);
                 const isEuToAf = EU_HUBS.includes(f.departure.iataCode) && AF_HUBS.includes(f.arrival.iataCode);
@@ -107,14 +108,35 @@
                 return isEuAirline && (isEuToAf || isAfToEu);
             });
 
-            flights.sort((a,b) => (b.arrival.delay || 0) - (a.arrival.delay || 0));
+            // 2. DÉDOUBLONNAGE (La Magie)
+            const uniqueFlights = new Map();
+
+            rawFlights.forEach(f => {
+                const isMarketing = f.flight && f.flight.codeshared && f.flight.codeshared.airline;
+                const operatingIata = isMarketing ? (f.flight.codeshared.airline.iataCode || f.airline.iataCode) : f.airline.iataCode;
+                const operatingNumber = isMarketing ? (f.flight.codeshared.flight_number || f.flight.iataNumber) : (f.flight && f.flight.iataNumber);
+
+                const uniqueKey = `${f.arrival.scheduledTime}_${f.departure.iataCode}_${f.arrival.iataCode}`;
+
+                if (!uniqueFlights.has(uniqueKey)) {
+                    f.realOperator = operatingIata;
+                    f.realFlightNumber = operatingNumber || '—';
+                    uniqueFlights.set(uniqueKey, f);
+                }
+            });
+
+            const finalFlights = Array.from(uniqueFlights.values());
+            finalFlights.sort((a,b) => (b.arrival.delay || 0) - (a.arrival.delay || 0));
+
             list.innerHTML = "";
             let crits = 0;
 
-            flights.forEach(f => {
+            finalFlights.forEach(f => {
                 const delay = f.arrival.delay || 0;
                 const isCrit = (delay >= 180 || f.status === 'cancelled');
                 if (isCrit) crits++;
+                
+                const logoUrl = `https://www.gstatic.com/flights/airline_logos/70px/${f.realOperator}.png`;
                 
                 let statusClass = "status-scheduled";
                 let statusLabel = f.status;
@@ -122,25 +144,14 @@
                 if(f.status === 'landed') { statusClass = "status-landed"; statusLabel = "Atterri"; }
                 if(f.status === 'cancelled') { statusClass = "status-cancelled"; statusLabel = "Annulé"; }
 
-                const logoUrl = `https://www.gstatic.com/flights/airline_logos/70px/${f.airline.iataCode}.png`;
-                
-                // DETECTION ESCALE (Basée sur le champ codeshared ou via si présent)
-                let escale = "Direct";
-                if (f.flight && f.flight.codeshared && f.flight.codeshared.airline && f.flight.codeshared.airline.iataCode !== f.airline.iataCode) {
-                    escale = `<span class="badge-escale">Mixte</span>`;
-                }
-                // Si l'API renvoie un trajet avec un stop
-                if (f.arrival.iataCode === 'NIM' && f.departure.iataCode === 'CDG') escale = `<span class="badge-escale">OUA</span>`;
-                if (f.arrival.iataCode === 'CKY' && f.departure.iataCode === 'CDG') escale = `<span class="badge-escale">MRT</span>`;
-
                 list.innerHTML += `<tr style="${isCrit ? 'background:rgba(255,77,77,0.05)' : ''}">
                     <td>
                         <img src="${logoUrl}" class="airline-logo" onerror="this.style.display='none'">
-                        <b>${f.flight.iataNumber}</b>
+                        <b>${f.realFlightNumber}</b><br><small style="color:#666">Opéré par ${f.realOperator}</small>
                     </td>
-                    <td><small>${f.aircraft?.icaoCode || "N/A"}</small><br><small style="color:#555">${f.aircraft?.regNumber || "N/A"}</small></td>
+                    <td><small>${f.aircraft?.icaoCode || "N/A"}</small><br><small style="color:var(--blue)">${f.aircraft?.regNumber || "N/A"}</small></td>
                     <td><b>${f.departure.iataCode}</b> ➔ <b>${f.arrival.iataCode}</b></td>
-                    <td>${escale}</td>
+                    <td>${f.departure.iataCode === 'CDG' && (f.arrival.iataCode === 'NIM' || f.arrival.iataCode === 'OUA') ? '<span class="badge-escale">Triangle</span>' : 'Direct'}</td>
                     <td class="time-block">
                         <span class="time-label">S:</span>${formatT(f.departure.scheduledTime)}<br>
                         <span class="time-label">A:</span><span style="color:var(--orange)">${formatT(f.departure.actualTime)}</span>
@@ -158,9 +169,9 @@
 
             document.getElementById('count-critical').innerText = crits;
             document.getElementById('total-cash').innerText = (crits * 600) + " €";
-            document.getElementById('total-vols').innerText = flights.length;
+            document.getElementById('total-vols').innerText = finalFlights.length;
 
-        } catch (e) { list.innerHTML = "Erreur de connexion API."; }
+        } catch (e) { list.innerHTML = "Erreur de connexion API."; console.error(e); }
     }
     lancerScan();
 </script>
