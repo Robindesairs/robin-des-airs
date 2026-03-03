@@ -3,86 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ROBIN DES AIRS — V6.3 STICKY & CASH PRO</title>
+    <title>ROBIN DES AIRS — V7 GHOST ANALYTICS</title>
     <style>
         :root { --red: #ff4d4d; --green: #2ecc71; --blue: #3498db; --orange: #f39c12; --bg: #050505; --card: #111; --border: #222; }
-        
         body { background: var(--bg); color: #e0e0e0; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
         
-        .top-container { 
-            position: sticky; 
-            top: 0; 
-            z-index: 1000; 
-            background: var(--bg); 
-            padding: 15px 20px 5px 20px;
-            border-bottom: 1px solid var(--border);
-        }
-
+        .top-container { position: sticky; top: 0; z-index: 1000; background: var(--bg); padding: 15px 20px; border-bottom: 2px solid var(--border); }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .logo-main { font-size: 22px; font-weight: 900; color: var(--red); letter-spacing: 1px; }
         
-        .dashboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 10px; }
+        .dashboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
         .stat-card { background: var(--card); padding: 12px; border-radius: 8px; border: 1px solid var(--border); text-align: center; }
         .stat-value { font-size: 22px; font-weight: 900; display: block; }
         .stat-label { font-size: 10px; color: #666; text-transform: uppercase; }
 
-        .table-container { padding: 0 20px 20px 20px; }
-        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
-        
-        thead th { 
-            position: sticky; 
-            top: 135px;
-            z-index: 900;
-            background: #1a1a1a; 
-            color: #888; 
-            padding: 12px; 
-            font-size: 10px; 
-            text-transform: uppercase; 
-            text-align: left;
-            border-bottom: 2px solid var(--border);
-        }
+        .controls { display: flex; align-items: center; gap: 15px; }
+        .btn-refresh { background: var(--red); color: white; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-refresh:hover { background: #cc0000; transform: scale(1.05); }
 
+        .table-container { padding: 20px; }
+        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+        thead th { position: sticky; top: 145px; z-index: 900; background: #1a1a1a; color: #888; padding: 12px; font-size: 10px; text-transform: uppercase; text-align: left; border-bottom: 2px solid var(--border); }
         tbody td { padding: 12px; border-bottom: 1px solid #1a1a1a; vertical-align: middle; }
 
-        @keyframes blink {
-            0% { background-color: var(--green); color: black; }
-            50% { background-color: var(--red); color: white; }
-            100% { background-color: var(--green); color: black; }
-        }
-        .badge-600 { 
-            animation: blink 1.5s infinite; 
-            padding: 5px 10px; 
-            border-radius: 4px; 
-            font-weight: 900; 
-            font-size: 11px; 
-            cursor: pointer;
-        }
+        .return-row { background: rgba(52, 152, 219, 0.05) !important; font-size: 12px; color: #aaa; }
+        .return-tag { color: var(--blue); font-weight: bold; font-size: 10px; text-transform: uppercase; margin-right: 5px; }
 
-        .airline-logo { width: 30px; height: 30px; border-radius: 4px; vertical-align: middle; margin-right: 8px; background: white; padding: 2px; }
+        @keyframes blink { 0% { background: var(--green); } 50% { background: var(--red); } 100% { background: var(--green); } }
+        .badge-600 { animation: blink 1s infinite; padding: 5px 10px; border-radius: 4px; font-weight: 900; color: white; font-size: 11px; }
+        
+        .airline-logo { width: 28px; height: 28px; border-radius: 4px; vertical-align: middle; margin-right: 8px; background: white; padding: 2px; }
         .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
         .status-active { background: var(--blue); color: white; }
         .status-landed { background: var(--green); color: black; }
         .status-scheduled { background: #333; color: #eee; }
         .status-cancelled { background: var(--red); color: white; }
-        
         .time-block { font-family: 'Courier New', monospace; line-height: 1.2; font-size: 12px; }
-        .time-label { font-size: 9px; color: #555; margin-right: 4px; }
-        #countdown { color: var(--orange); font-weight: bold; }
+        .reg-tag { font-size: 10px; color: var(--blue); font-weight: bold; background: rgba(52,152,219,0.1); padding: 2px 4px; border-radius: 3px; }
     </style>
 </head>
 <body>
 
 <div class="top-container">
     <div class="header">
-        <div class="logo-main">🏹 ROBIN DES AIRS <span style="font-size: 12px; font-weight: 400; color: #666;">| V6.3 CASH OPTIMIZER</span></div>
-        <div>Refresh : <span id="countdown">20:00</span></div>
+        <div class="logo-main">🏹 ROBIN DES AIRS <span style="font-size: 12px; font-weight: 400; color: #666;">| V7 GHOST ANALYTICS</span></div>
+        <div class="controls">
+            <button class="btn-refresh" onclick="lancerScan()">🔄 Rafraîchir</button>
+            <div style="font-size: 12px;">Auto-Update: <span id="countdown" style="color:var(--orange)">20:00</span></div>
+        </div>
     </div>
 
     <div class="dashboard">
         <div class="stat-card" style="border-top: 3px solid var(--red);"><span id="count-critical" class="stat-value">0</span><span class="stat-label">Vols Critiques</span></div>
-        <div class="stat-card" style="border-top: 3px solid var(--green);"><span id="total-cash" class="stat-value" style="color:var(--green)">0 €</span><span class="stat-label">Cash Potentiel (5%)</span></div>
-        <div class="stat-card" style="border-top: 3px solid var(--blue);"><span id="total-vols" class="stat-value">0</span><span class="stat-label">Vols Afrique-EU</span></div>
-        <div class="stat-card" style="border-top: 3px solid var(--orange);"><span id="live-time" class="stat-value">--:--</span><span class="stat-label">Heure UTC (Z)</span></div>
+        <div class="stat-card" style="border-top: 3px solid var(--green);"><span id="total-cash" class="stat-value" style="color:var(--green)">0 €</span><span class="stat-label">Potentiel (16 pax/vol)</span></div>
+        <div class="stat-card" style="border-top: 3px solid var(--blue);"><span id="total-vols" class="stat-value">0</span><span class="stat-label">Vols Traqués</span></div>
+        <div class="stat-card" style="border-top: 3px solid var(--orange);"><span id="live-time" class="stat-value">--:--</span><span class="stat-label">UTC Time (Z)</span></div>
     </div>
 </div>
 
@@ -90,19 +65,19 @@
     <table>
         <thead>
             <tr>
-                <th>Vol / Cie</th>
-                <th>Appareil</th>
+                <th>Date</th>
+                <th>Vol / Opérateur</th>
+                <th>Appareil (Reg)</th>
                 <th>Trajet</th>
-                <th>Escale</th>
                 <th>Décollage (S/A)</th>
-                <th>Arrivée (S/E/A)</th>
+                <th>Arrivée (S/A)</th>
                 <th>Statut</th>
                 <th>Retard</th>
-                <th>Cash Est.</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody id="flight-list">
-            <tr><td colspan="9" style="text-align:center; padding:100px; color:#555;">Démarrage des systèmes...</td></tr>
+            <tr><td colspan="9" style="text-align:center; padding:100px;">Chargement du radar...</td></tr>
         </tbody>
     </table>
 </div>
@@ -115,6 +90,12 @@
 
     let timerSec = 1200;
 
+    function formatDate(isoStr) {
+        if (!isoStr) return "—";
+        const d = new Date(isoStr);
+        return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' });
+    }
+
     function formatT(isoStr) {
         if (!isoStr) return "--:--";
         const date = new Date(isoStr);
@@ -122,7 +103,7 @@
     }
 
     function updateClock() {
-        document.getElementById('live-time').innerText = new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit', timeZone: 'UTC'}) + " Z";
+        document.getElementById('live-time').innerText = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' }) + " Z";
         let m = Math.floor(timerSec / 60);
         let s = timerSec % 60;
         document.getElementById('countdown').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
@@ -133,7 +114,7 @@
 
     async function lancerScan() {
         const list = document.getElementById('flight-list');
-        list.innerHTML = "<tr><td colspan='9' style='text-align:center; padding:100px;'>Mise à jour des données en cours...</td></tr>";
+        list.innerHTML = "<tr><td colspan='9' style='text-align:center; padding:100px;'>Mise à jour des données...</td></tr>";
         
         try {
             const calls = [...EU_HUBS, ...AF_HUBS].map(h => 
@@ -187,31 +168,26 @@
                 
                 let statusClass = "status-scheduled";
                 let statusLabel = f.status;
-                if(f.status === 'active') { statusClass = "status-active"; statusLabel = "En Vol"; }
-                if(f.status === 'landed') { statusClass = "status-landed"; statusLabel = "Atterri"; }
-                if(f.status === 'cancelled') { statusClass = "status-cancelled"; statusLabel = "Annulé"; }
+                if (f.status === 'active') { statusClass = "status-active"; statusLabel = "En Vol"; }
+                if (f.status === 'landed') { statusClass = "status-landed"; statusLabel = "Atterri"; }
+                if (f.status === 'cancelled') { statusClass = "status-cancelled"; statusLabel = "Annulé"; }
 
                 const logoUrl = `https://www.gstatic.com/flights/airline_logos/70px/${f.realOperator}.png`;
+                const depDate = formatDate(f.departure?.scheduledTime);
 
                 list.innerHTML += `<tr>
+                    <td>${depDate}</td>
                     <td>
                         <img src="${logoUrl}" class="airline-logo" onerror="this.style.display='none'">
-                        <b>${f.flight.iataNumber}</b>
+                        <b>${f.flight.iataNumber}</b><br><small style="color:#666">${f.realOperator}</small>
                     </td>
-                    <td><small>${f.aircraft?.icaoCode || "N/A"}</small><br><small style="color:var(--blue)">${f.aircraft?.regNumber || "N/A"}</small></td>
+                    <td><small>${f.aircraft?.icaoCode || "N/A"}</small><br><span class="reg-tag">${f.aircraft?.regNumber || "—"}</span></td>
                     <td><b>${f.departure.iataCode}</b> ➔ <b>${f.arrival.iataCode}</b></td>
-                    <td><small>${f.departure.iataCode === 'CDG' && f.arrival.iataCode === 'NIM' ? 'Via OUA' : 'Direct'}</small></td>
-                    <td class="time-block">
-                        <span class="time-label">S:</span>${formatT(f.departure.scheduledTime)}<br>
-                        <span class="time-label">A:</span><span style="color:var(--orange)">${formatT(f.departure.actualTime)}</span>
-                    </td>
-                    <td class="time-block">
-                        <span class="time-label">S:</span>${formatT(f.arrival.scheduledTime)}<br>
-                        <span class="time-label">A:</span><span style="color:var(--green)">${formatT(f.arrival.actualTime)}</span>
-                    </td>
+                    <td class="time-block">S: ${formatT(f.departure.scheduledTime)}<br>A: <span style="color:var(--orange)">${formatT(f.departure.actualTime)}</span></td>
+                    <td class="time-block">S: ${formatT(f.arrival.scheduledTime)}<br>A: <span style="color:var(--green)">${formatT(f.arrival.actualTime)}</span></td>
                     <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
                     <td style="color:${delay > 0 ? 'var(--red)' : 'inherit'}"><b>${delay} min</b></td>
-                    <td>${isCrit ? '<span class="badge-600">9 600 €</span>' : '--'}</td>
+                    <td>${isCrit ? '<span class="badge-600">9 600 €</span>' : '—'}</td>
                 </tr>`;
             });
 
@@ -228,7 +204,7 @@
                 }).catch(function() {});
             }
 
-        } catch (e) { list.innerHTML = "Erreur API."; }
+        } catch (e) { list.innerHTML = "<tr><td colspan='9' style='text-align:center; padding:40px; color:var(--red);'>Erreur API.</td></tr>"; }
     }
     lancerScan();
 </script>
