@@ -1468,6 +1468,13 @@ button:focus-visible,
   color: rgba(255,255,255,0.45);
   margin-top: 6px;
 }
+.funnel-hint {
+  font-size: 0.82em;
+  color: #999;
+  font-style: italic;
+  margin-top: 4px;
+  margin-bottom: 12px;
+}
 .fstep-reassure {
   font-size: 11px;
   color: rgba(255,255,255,0.5);
