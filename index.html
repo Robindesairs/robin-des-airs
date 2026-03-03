@@ -101,7 +101,7 @@
       <!-- Deux options d'entrée -->
       <div class="hero-entry">
         <a href="#funnel-box" class="hero-entry-btn primary" id="btn-calc-hero" onclick="scrollToCalcWithAnimation(event)" data-i18n="hero_btn_calc">Vérifier mon éligibilité gratuitement →</a>
-        <a href="https://wa.me/33756863630?text=%5BFR%5D%20Bonjour%20Robin%20des%20Airs%20%21%0AJe%20voudrais%20parler%20%C3%A0%20un%20conseiller.%0A%0AMon%20vol%20%3A%20%0ADate%20%3A%20" target="_blank" class="hero-entry-btn secondary" data-i18n="hero_btn_wa">💬 Préfère WhatsApp ? On répond en moins de 2h</a>
+        <a href="https://wa.me/33756863630?text=%5BFR%5D%20Bonjour%20Robin%20des%20Airs%20%21%0AJe%20voudrais%20parler%20%C3%A0%20un%20conseiller.%0A%0AMon%20vol%20%3A%20%0ADate%20%3A%20" target="_blank" class="hero-entry-btn secondary" data-i18n="hero_btn_wa">💬 On répond immédiatement</a>
       </div>
 
       <div class="hero-stats">
@@ -474,9 +474,6 @@
         <div class="nope-box">
           <div class="nope-title">⚠️ Probablement non-éligible à l'indemnisation</div>
           <p class="nope-body">L'annulation a été communiquée plus de 14 jours avant le départ. La loi CE 261 n'impose pas d'indemnisation dans ce cas. Vous avez cependant droit au <strong>remboursement intégral de votre billet.</strong></p>
-          <a class="nope-link"
-            href="https://wa.me/33756863630?text=%5BFR%5D%20Bonjour%20Robin%20%21%0AMon%20vol%20a%20%C3%A9t%C3%A9%20annul%C3%A9%20avec%20plus%20de%2014%20jours%20de%20pr%C3%A9avis.%20Pouvez-vous%20confirmer%20mes%20droits%20%3F"
-            target="_blank">→ Confirmer mes droits avec Robin sur WhatsApp</a>
         </div>
         <div style="margin-top:20px;padding:16px;border:1px solid #eee;border-radius:8px;text-align:center;">
           <p style="font-weight:600;margin-bottom:4px;">📩 Vous avez un prochain vol prévu ?</p>
@@ -1499,7 +1496,7 @@ function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
   const totalNet  = net  * pax;
   const totalFee  = fee  * pax;
 
-  const motifTxt = { retard:'Retard +3h', annulation:'Annulation', surbook:"Refus d'embarquement", correspondance:'Correspondance manquée / Vol manqué' }[S.motif] || '';
+  const motifTxt = { retard:'Retard +3h', annulation:'Annulation', surbook:"Refus d'embarquement", correspondance:"J'ai raté ma correspondance à cause d'un retard" }[S.motif] || '';
   const match    = DB[(volRef || '').toUpperCase()];
   var routeStr   = '—';
   if (match && match.r) {
