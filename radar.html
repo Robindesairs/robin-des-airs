@@ -43,39 +43,36 @@
         .btn-gen { background: #333; color: white; }
         .btn-spec { background: var(--red); color: white; }
 
-        .return-row { background: rgba(52, 152, 219, 0.05) !important; font-size: 12px; color: #aaa; }
-        .return-tag { color: var(--blue); font-weight: bold; font-size: 10px; text-transform: uppercase; margin-right: 5px; }
-
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-        .badge-600 { background: var(--green); color: black; animation: blink 1s infinite; padding: 5px 10px; border-radius: 4px; font-weight: 900; font-size: 11px; }
-        
-        .airline-logo { width: 28px; height: 28px; border-radius: 4px; vertical-align: middle; margin-right: 8px; background: white; padding: 2px; }
+        .badge-600 { background: var(--green); color: black; padding: 5px 10px; border-radius: 4px; font-weight: 900; animation: blink 1.2s infinite; font-size: 11px; }
+
+        .return-row { background: rgba(52, 152, 219, 0.07) !important; font-size: 12px; color: #aaa; border-left: 3px solid var(--blue); }
+        .reg-tag { font-size: 10px; color: var(--blue); font-weight: bold; background: rgba(52,152,219,0.1); padding: 2px 5px; border-radius: 3px; border: 1px solid rgba(52,152,219,0.2); }
+        .time-block { font-family: 'Courier New', monospace; line-height: 1.2; font-size: 12px; }
+        .airline-logo { width: 25px; height: 25px; border-radius: 4px; vertical-align: middle; margin-right: 8px; background: white; padding: 2px; }
+        .toast { position: fixed; bottom: 25px; right: 25px; background: var(--green); color: black; padding: 12px 20px; border-radius: 8px; font-weight: 900; z-index: 2000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
         .status-active { background: var(--blue); color: white; }
         .status-landed { background: var(--green); color: black; }
         .status-scheduled { background: #333; color: #eee; }
         .status-cancelled { background: var(--red); color: white; }
-        .time-block { font-family: 'Courier New', monospace; line-height: 1.2; font-size: 12px; }
-        .reg-tag { font-size: 10px; color: var(--blue); font-weight: bold; background: rgba(52,152,219,0.1); padding: 2px 4px; border-radius: 3px; }
     </style>
 </head>
 <body>
 
 <div class="top-container">
     <div class="header">
-        <div class="logo-main">🏹 ROBIN DES AIRS <span style="font-size: 12px; font-weight: 400; color: #666;">| V7.5 FINAL GHOST</span></div>
+        <div class="logo-main">🏹 ROBIN DES AIRS <span style="font-size: 11px; font-weight: 400; color: #666;">| V7.5 GHOST MASTER</span></div>
         <div class="controls">
-            <button class="btn-refresh" onclick="lancerScan()">🔄 Rafraîchir</button>
-            <button class="btn-refresh" style="background:var(--green);" onclick="copierMessage('general')" title="Copie un message général (sans vol)">📋 Message général</button>
-            <div style="font-size: 12px;">Auto-Update: <span id="countdown" style="color:var(--orange)">20:00</span></div>
+            <button class="btn-refresh" onclick="lancerScan()">🔄 SCAN LIVE</button>
+            <div style="font-size: 12px; background: #222; padding: 5px 10px; border-radius: 5px;">Auto: <span id="countdown" style="color:var(--orange); font-weight: bold;">20:00</span></div>
         </div>
     </div>
-
     <div class="dashboard">
         <div class="stat-card" style="border-top: 3px solid var(--red);"><span id="count-critical" class="stat-value">0</span><span class="stat-label">Vols Critiques</span></div>
         <div class="stat-card" style="border-top: 3px solid var(--green);"><span id="total-cash" class="stat-value" style="color:var(--green)">0 €</span><span class="stat-label">Potentiel (16 pax/vol)</span></div>
-        <div class="stat-card" style="border-top: 3px solid var(--blue);"><span id="total-vols" class="stat-value">0</span><span class="stat-label">Vols Traqués</span></div>
-        <div class="stat-card" style="border-top: 3px solid var(--orange);"><span id="live-time" class="stat-value">--:--</span><span class="stat-label">UTC Time (Z)</span></div>
+        <div class="stat-card" style="border-top: 3px solid var(--blue);"><span id="total-vols" class="stat-value">0</span><span class="stat-label">Vols Afrique-EU</span></div>
+        <div class="stat-card" style="border-top: 3px solid var(--orange);"><span id="live-time" class="stat-value">--:--</span><span class="stat-label">Actualisé (UTC)</span></div>
     </div>
 </div>
 
@@ -95,36 +92,62 @@
             </tr>
         </thead>
         <tbody id="flight-list">
-            <tr><td colspan="9" style="text-align:center; padding:100px;">Chargement du radar...</td></tr>
+            <tr><td colspan="9" style="text-align:center; padding:100px; color:#555;">Initialisation...</td></tr>
         </tbody>
     </table>
 </div>
 
 <script>
+    // --- SÉCURITÉ ---
+    const accessCode = "robin-dakar";
     const p1 = 'ea71e3'; const p2 = 'c99347'; const API_KEY = p1 + '-' + p2;
+
+    if (sessionStorage.getItem('auth_v7') !== 'granted') {
+        if (prompt("Accès restreint - Code Admin :") === accessCode) {
+            sessionStorage.setItem('auth_v7', 'granted');
+        } else {
+            window.location.href = "https://google.com";
+        }
+    }
+
     const EU_HUBS = ['CDG','ORY','BRU','AMS','LIS','MAD','FRA','LHR','BCN'];
     const AF_HUBS = ['DSS','ABJ','BKO','CKY','OUA','LFW','ACC','ABV','LOS','COO','NKC','NIM','FNA','ROB','DLA','NSI','LBV','FIH','BZV','PNR','BGF','LAD','SSG','NDJ','NBO','DAR','ADD','JNB','CPT','KGL','JIB','ZNZ','TNR','MRU','RUN','DZA'];
     const EU_AIRLINES = ['AF','SN','KL','LH','TP','IB','BA','VY','TO'];
 
     let timerSec = 1200;
 
-    function formatDate(isoStr) {
-        if (!isoStr) return "—";
-        const d = new Date(isoStr);
-        return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' });
+    function copierMessage(type, vol, retard, trajet) {
+        const url = "https://robindesairs.eu";
+        const messagesGen = [
+            "🏹 ROBIN DES AIRS : Votre vol Afrique-Europe a +3h de retard ? Récupérez 600€ sans avance de frais. On s'occupe de tout : " + url,
+            "⚠️ Vol retardé ? Ne laissez pas 600€ à la compagnie. Commission transparente, zéro frais cachés. Vérifiez ici : " + url,
+            "🚀 Marre d'attendre ? Transformez votre retard en cash. Pas de succès, pas de frais. L'expertise Robin des Airs : " + url
+        ];
+        const messagesSpec = [
+            "🎯 Vol " + vol + " (" + trajet + ") : Retard de " + retard + " min. Passagers, vous êtes éligibles à 600€. Zéro avance de frais avec Robin des Airs.",
+            "⚠️ Alerte " + vol + " : Votre retard de " + retard + " min vous donne droit à 600€. On gère votre dossier sans frais cachés. DM pour info !"
+        ];
+        const list = (type === 'general') ? messagesGen : messagesSpec;
+        const randomMsg = list[Math.floor(Math.random() * list.length)];
+        navigator.clipboard.writeText(randomMsg).then(function() {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML = "✅ MESSAGE COPIÉ";
+            document.body.appendChild(toast);
+            setTimeout(function() { toast.remove(); }, 2500);
+        });
     }
 
-    function formatT(isoStr) {
-        if (!isoStr) return "--:--";
-        const date = new Date(isoStr);
-        return date.getUTCHours().toString().padStart(2, '0') + ":" + date.getUTCMinutes().toString().padStart(2, '0');
+    function formatT(iso) {
+        if (!iso) return "--:--";
+        const d = new Date(iso);
+        return d.getUTCHours().toString().padStart(2, '0') + ":" + d.getUTCMinutes().toString().padStart(2, '0');
     }
 
     function updateClock() {
-        document.getElementById('live-time').innerText = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' }) + " Z";
-        let m = Math.floor(timerSec / 60);
-        let s = timerSec % 60;
-        document.getElementById('countdown').innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
+        var m = Math.floor(timerSec / 60);
+        var s = timerSec % 60;
+        document.getElementById('countdown').innerText = m + ":" + (s < 10 ? '0' : '') + s;
         if (timerSec <= 0) { timerSec = 1200; lancerScan(); }
         timerSec--;
     }
@@ -132,93 +155,80 @@
 
     async function lancerScan() {
         const list = document.getElementById('flight-list');
-        list.innerHTML = "<tr><td colspan='9' style='text-align:center; padding:100px;'>Mise à jour des données...</td></tr>";
-        
+        list.innerHTML = "<tr><td colspan='9' style='text-align:center; padding:100px; color:var(--orange); font-weight:bold;'>🔄 SYNCHRONISATION LIVE...</td></tr>";
         try {
-            const calls = [...EU_HUBS, ...AF_HUBS].map(h => 
-                fetch(`https://aviation-edge.com/v2/public/timetable?key=${API_KEY}&iataCode=${h}&type=arrival`).then(r => r.json()).catch(() => [])
-            );
-            const results = await Promise.all(calls);
-            
-            let rawFlights = results.flat().filter(f => {
-                if (!f.arrival || !f.departure || !f.airline) return false;
-                const isEuAirline = EU_AIRLINES.includes(f.airline.iataCode);
-                const isEuToAf = EU_HUBS.includes(f.departure.iataCode) && AF_HUBS.includes(f.arrival.iataCode);
-                const isAfToEu = AF_HUBS.includes(f.departure.iataCode) && EU_HUBS.includes(f.arrival.iataCode);
-                return isEuAirline && (isEuToAf || isAfToEu);
+            const calls = [...EU_HUBS, ...AF_HUBS].map(function(h) {
+                return fetch("https://aviation-edge.com/v2/public/timetable?key=" + API_KEY + "&iataCode=" + h + "&type=arrival&_=" + new Date().getTime())
+                    .then(function(r) { return r.json(); }).catch(function() { return []; });
             });
-
-            // --- LOGIQUE DE DÉDOUBLONNAGE PRO-OPÉRATEUR ---
+            const res = await Promise.all(calls);
+            var raw = res.flat().filter(function(f) {
+                if (!f.arrival || !f.departure || !f.airline) return false;
+                if (!EU_AIRLINES.includes(f.airline.iataCode)) return false;
+                var isEuToAf = EU_HUBS.indexOf(f.departure.iataCode) >= 0 && AF_HUBS.indexOf(f.arrival.iataCode) >= 0;
+                var isAfToEu = AF_HUBS.indexOf(f.departure.iataCode) >= 0 && EU_HUBS.indexOf(f.arrival.iataCode) >= 0;
+                return isEuToAf || isAfToEu;
+            });
             const unique = new Map();
-            rawFlights.forEach(f => {
-                const isCodeshare = f.flight && f.flight.codeshared && f.flight.codeshared.airline;
-                const realOpIata = isCodeshare ? f.flight.codeshared.airline.iataCode : f.airline.iataCode;
-                const realFlightNum = isCodeshare ? (f.flight.codeshared.iataNumber || f.flight.codeshared.flight_number) : f.flight.iataNumber;
-                const key = `${f.arrival.scheduledTime}_${f.departure.iataCode}_${f.arrival.iataCode}`;
-                const hasReg = f.aircraft && f.aircraft.regNumber;
+            raw.forEach(function(f) {
+                var isMark = f.flight && f.flight.codeshared && f.flight.codeshared.airline;
+                var opIata = isMark ? f.flight.codeshared.airline.iataCode : f.airline.iataCode;
+                var key = f.arrival.scheduledTime + "_" + f.departure.iataCode + "_" + f.arrival.iataCode;
+                var hasReg = f.aircraft && f.aircraft.regNumber;
                 if (!unique.has(key) || hasReg) {
-                    f.realOp = realOpIata;
-                    f.realNum = realFlightNum;
-                    f.realOperator = realOpIata;
+                    f.realOp = opIata;
+                    f.realNum = isMark ? (f.flight.codeshared.iataNumber || f.flight.codeshared.flight_number) : (f.flight && f.flight.iataNumber);
                     unique.set(key, f);
                 }
             });
-
-            const finalFlights = Array.from(unique.values());
-            finalFlights.sort((a,b) => (b.arrival.delay || 0) - (a.arrival.delay || 0));
-
+            const flights = Array.from(unique.values()).sort(function(a, b) { return (b.arrival.delay || 0) - (a.arrival.delay || 0); });
             list.innerHTML = "";
-            let crits = 0;
-            const criticalForTelegram = [];
-
-            finalFlights.forEach(f => {
-                const delay = f.arrival.delay || 0;
-                const isCrit = (delay >= 180 || f.status === 'cancelled');
+            var crits = 0;
+            var criticalForTelegram = [];
+            flights.forEach(function(f) {
+                var delay = f.arrival.delay || 0;
+                var isCrit = (delay >= 180 || f.status === 'cancelled');
                 if (isCrit) {
                     crits++;
                     criticalForTelegram.push({
-                        flight: f.realNum || f.flight?.iataNumber || f.flight?.iata || '—',
-                        dep: f.departure?.iataCode || '—',
-                        arr: f.arrival?.iataCode || '—',
+                        flight: f.realNum || (f.flight && f.flight.iataNumber) || '—',
+                        dep: f.departure.iataCode || '—',
+                        arr: f.arrival.iataCode || '—',
                         cancelled: f.status === 'cancelled',
                         delayMinutes: delay,
-                        airline: f.realOperator || f.airline?.iataCode || '—',
-                        scheduledDeparture: formatT(f.departure?.scheduledTime) + 'Z',
-                        scheduledArrival: formatT(f.arrival?.scheduledTime) + 'Z',
+                        airline: f.realOp || f.airline.iataCode || '—',
+                        scheduledDeparture: formatT(f.departure.scheduledTime) + 'Z',
+                        scheduledArrival: formatT(f.arrival.scheduledTime) + 'Z',
                         statusFr: f.status === 'cancelled' ? 'Annulé' : (f.status === 'active' ? 'En vol' : (f.status === 'landed' ? 'Atterri' : (f.status || '—')))
                     });
                 }
-                
-                let statusClass = "status-scheduled";
-                let statusLabel = f.status;
-                if (f.status === 'active') { statusClass = "status-active"; statusLabel = "En Vol"; }
-                if (f.status === 'landed') { statusClass = "status-landed"; statusLabel = "Atterri"; }
-                if (f.status === 'cancelled') { statusClass = "status-cancelled"; statusLabel = "Annulé"; }
-
-                const logoUrl = `https://www.gstatic.com/flights/airline_logos/70px/${f.realOperator}.png`;
-                const depDate = formatDate(f.departure?.scheduledTime);
-
-                list.innerHTML += `<tr>
-                    <td>${depDate}</td>
-                    <td>
-                        <img src="${logoUrl}" class="airline-logo" onerror="this.style.display='none'">
-                        <b>${f.realNum || f.flight.iataNumber}</b><br><small style="color:#666">${f.realOperator}</small>
-                    </td>
-                    <td><small>${f.aircraft?.icaoCode || "N/A"}</small><br><span class="reg-tag">${f.aircraft?.regNumber || "—"}</span></td>
-                    <td><b>${f.departure.iataCode}</b> ➔ <b>${f.arrival.iataCode}</b></td>
-                    <td class="time-block">S: ${formatT(f.departure.scheduledTime)}<br>A: <span style="color:var(--orange)">${formatT(f.departure.actualTime)}</span></td>
-                    <td class="time-block">S: ${formatT(f.arrival.scheduledTime)}<br>A: <span style="color:var(--green)">${formatT(f.arrival.actualTime)}</span></td>
-                    <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
-                    <td style="color:${delay > 0 ? 'var(--red)' : 'inherit'}"><b>${delay} min</b></td>
-                    <td>${isCrit ? `<span class="badge-600">9 600 €</span> <button class="btn-refresh" style="margin-left:6px;padding:4px 8px;font-size:10px;" onclick="copierMessage('spec','${f.realNum || f.flight.iataNumber}',${delay},'${f.departure.iataCode} → ${f.arrival.iataCode}')" title="Copier un message spécifique à ce vol">📋</button>` : '—'}</td>
-                </tr>`;
+                var dateV = new Date(f.arrival.scheduledTime).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+                var reg = (f.aircraft && f.aircraft.regNumber) || "NO-REG";
+                var statusClass = 'status-scheduled';
+                if (f.status === 'active') statusClass = 'status-active';
+                if (f.status === 'landed') statusClass = 'status-landed';
+                if (f.status === 'cancelled') statusClass = 'status-cancelled';
+                var statusLabel = f.status === 'active' ? 'En vol' : (f.status === 'landed' ? 'Atterri' : (f.status === 'cancelled' ? 'Annulé' : (f.status || '—')));
+                var trajetStr = f.departure.iataCode + " → " + f.arrival.iataCode;
+                list.innerHTML += "<tr style=\"" + (isCrit ? "background:rgba(255,77,77,0.05)" : "") + "\">" +
+                    "<td><b>" + dateV + "</b></td>" +
+                    "<td><img src=\"https://www.gstatic.com/flights/airline_logos/70px/" + f.realOp + ".png\" class=\"airline-logo\" onerror=\"this.style.display='none'\"><b>" + (f.realNum || (f.flight && f.flight.iataNumber) || '—') + "</b></td>" +
+                    "<td><span class=\"reg-tag\">" + reg + "</span></td>" +
+                    "<td><b>" + f.departure.iataCode + "</b> ➔ <b>" + f.arrival.iataCode + "</b></td>" +
+                    "<td class=\"time-block\">S:" + formatT(f.departure.scheduledTime) + "<br>A:<span style=\"color:var(--orange)\">" + formatT(f.departure.actualTime) + "</span></td>" +
+                    "<td class=\"time-block\">S:" + formatT(f.arrival.scheduledTime) + "<br>A:<span style=\"color:var(--green)\">" + formatT(f.arrival.actualTime) + "</span></td>" +
+                    "<td><span class=\"status-badge " + statusClass + "\">" + statusLabel + "</span></td>" +
+                    "<td style=\"color:" + (delay > 180 ? 'var(--red)' : 'inherit') + "\"><b>" + delay + " min</b></td>" +
+                    "<td><div style=\"display:flex; gap:8px;\">" +
+                    (isCrit ? "<span class=\"badge-600\">9 600 €</span>" : "--") +
+                    "<button class=\"btn-action btn-gen\" onclick=\"copierMessage('general')\" title=\"Générique\">📢</button>" +
+                    "<button class=\"btn-action btn-spec\" onclick=\"copierMessage('specific', '" + (f.realNum || (f.flight && f.flight.iataNumber) || '') + "', " + delay + ", '" + trajetStr.replace(/'/g, "\\'") + "')\" title=\"Ciblé\">🎯</button>" +
+                    "</div></td></tr>";
             });
-
             document.getElementById('count-critical').innerText = crits;
-            const potentialCash = crits * 16 * 600;
-            document.getElementById('total-cash').innerText = potentialCash.toLocaleString('fr-FR') + " €";
-            document.getElementById('total-vols').innerText = finalFlights.length;
-
+            document.getElementById('total-cash').innerText = (crits * 16 * 600).toLocaleString('fr-FR') + " €";
+            document.getElementById('total-vols').innerText = flights.length;
+            document.getElementById('live-time').innerText = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' }) + " Z";
             if (criticalForTelegram.length > 0) {
                 fetch('/.netlify/functions/telegram-notify', {
                     method: 'POST',
@@ -226,38 +236,10 @@
                     body: JSON.stringify({ flights: criticalForTelegram, chat_id: '6894457026' })
                 }).catch(function() {});
             }
-
-        } catch (e) { list.innerHTML = "<tr><td colspan='9' style='text-align:center; padding:40px; color:var(--red);'>Erreur API.</td></tr>"; }
+        } catch (e) {
+            list.innerHTML = "<tr><td colspan='9' style='text-align:center; padding:40px; color:var(--red);'>Erreur de connexion.</td></tr>";
+        }
     }
-
-    // --- GÉNÉRATEUR DE MESSAGES PROFESSIONNELS (SANS FRAIS CACHÉS) ---
-    function copierMessage(type, vol, retard, trajet) {
-        const url = "https://robindesairs.eu";
-        const messagesGen = [
-            `🏹 ROBIN DES AIRS : Votre vol Afrique-Europe a +3h de retard ? Récupérez 600€ sans avance de frais. On s'occupe de tout : ${url}`,
-            `⚠️ Vol retardé ? Ne laissez pas 600€ à la compagnie. Commission transparente, zéro frais cachés. Vérifiez ici : ${url}`,
-            `🚀 Marre d'attendre ? Transformez votre retard en cash. Pas de succès, pas de frais. L'expertise Robin des Airs : ${url}`,
-            `💸 Plus de 3h de retard ? La loi vous doit 600€. Dossier géré de A à Z sans sortir votre carte bleue : ${url}`,
-            `🏹 Spécialiste des vols Afrique : récupérez votre indemnité légale simplement. Zéro frais si on ne gagne pas : ${url}`
-        ];
-        const messagesSpec = [
-            `🎯 Vol ${vol} (${trajet}) : Retard de ${retard} min. Passagers, vous êtes éligibles à 600€. Zéro avance de frais avec Robin des Airs.`,
-            `⚠️ Alerte ${vol} : Votre retard de ${retard} min vous donne droit à 600€. On gère votre dossier sans frais cachés. DM pour info !`,
-            `🔎 Retard détecté sur le vol ${vol}. Ne perdez pas vos 600€ d'indemnité. Expertise Robin des Airs, zéro frais d'entrée : ${url}`,
-            `🔥 Passagers du ${vol} : Le retard dépasse les 3h. La loi vous doit 600€. On récupère votre cash, on se rémunère au succès. ${url}`,
-            `🎯 Avis au vol ${vol} : Votre retard est éligible à 600€. Paiement au résultat uniquement, pas de frais cachés. Infos ici : ${url}`
-        ];
-        const list = (type === 'general') ? messagesGen : messagesSpec;
-        const randomMsg = list[Math.floor(Math.random() * list.length)];
-        navigator.clipboard.writeText(randomMsg).then(function() {
-            const n = document.createElement('div');
-            n.innerHTML = "✅ Message 'Transparent' Copié !";
-            n.style.cssText = "position:fixed;bottom:20px;right:20px;background:#2ecc71;color:black;padding:12px;border-radius:8px;font-weight:900;z-index:2000;";
-            document.body.appendChild(n);
-            setTimeout(function() { n.remove(); }, 2500);
-        });
-    }
-
     lancerScan();
 </script>
 </body>
