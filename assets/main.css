@@ -1260,7 +1260,7 @@ footer {
   max-width: 1100px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr;
   gap: 60px;
   padding-bottom: 40px;
   border-bottom: 1px solid rgba(255,255,255,0.07);
@@ -1297,6 +1297,36 @@ footer {
 .footer-legal { font-size: 10px; color: rgba(255,255,255,0.2); line-height: 1.7; }
 .footer-reg { font-size: 9px; color: rgba(255,255,255,0.15); text-align: right; letter-spacing: 0.5px; }
 
+/* ═══════ PREUVE SOCIALE (strip) ═══════ */
+.social-proof-strip {
+  background: linear-gradient(135deg, rgba(0,200,122,0.06), rgba(11,31,58,0.02));
+  border-top: 1px solid rgba(0,200,122,0.15);
+  border-bottom: 1px solid rgba(0,200,122,0.1);
+  padding: 20px 24px;
+}
+.wrap-social-proof {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px 16px;
+  font-size: 13px;
+  color: var(--text);
+}
+.sp-item strong { color: var(--navy); }
+.sp-sep { color: var(--gray); font-weight: 700; }
+
+/* Focus visible (accessibilité) */
+a:focus-visible,
+button:focus-visible,
+.cb:focus-visible,
+.faq-question:focus-visible {
+  outline: 2px solid var(--neon);
+  outline-offset: 2px;
+}
+
 /* ═══════ RESPONSIVE — Mobile first (usage principal téléphone) ═══════ */
 
 /* Petit mobile (< 480px) */
@@ -1325,6 +1355,15 @@ footer {
   .back-btn { min-height: 44px; padding: 12px 0; display: flex; align-items: center; }
   #la-loi, #comment-ca-marche, #top-destinations, #comparatif, #temoignages, #qui-suis-je, #faq, #cta-final {
     padding: 48px 16px;
+    padding-left: env(safe-area-inset-left, 16px);
+    padding-right: env(safe-area-inset-right, 16px);
+  }
+  .social-proof-strip {
+    padding: 16px 16px;
+  }
+  .wrap-social-proof {
+    font-size: 12px;
+    gap: 8px 12px;
     padding-left: env(safe-area-inset-left, 16px);
     padding-right: env(safe-area-inset-right, 16px);
   }
