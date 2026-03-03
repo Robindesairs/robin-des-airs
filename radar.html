@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ROBIN DES AIRS — V7.6 TRADER TERMINAL</title>
+    <title>ROBIN DES AIRS — V7.5 STABLE</title>
     <style>
         :root { --red: #ff4d4d; --green: #2ecc71; --blue: #3498db; --orange: #f39c12; --bg: #050505; --card: #111; --border: #222; }
         body { background: var(--bg); color: #e0e0e0; font-family: 'Inter', sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
         
-        /* Sticky Header */
         .top-container { position: sticky; top: 0; z-index: 1000; background: var(--bg); padding: 15px 20px; border-bottom: 2px solid var(--border); }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .logo-main { font-size: 22px; font-weight: 900; color: var(--red); letter-spacing: 1px; }
@@ -22,7 +21,6 @@
         .btn-refresh { background: var(--red); color: white; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .btn-refresh:hover { transform: scale(1.05); background: #cc0000; }
 
-        /* Table Design */
         .table-container { padding: 20px; }
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
         thead th {
@@ -39,26 +37,15 @@
         }
         tbody td { padding: 12px; border-bottom: 1px solid #1a1a1a; vertical-align: middle; }
 
-        /* Trader Side Panel */
-        #trader-panel { position: fixed; right: -400px; top: 0; width: 350px; height: 100vh; background: #0a0a0a; border-left: 2px solid var(--red); z-index: 2000; transition: 0.3s; padding: 25px; box-shadow: -10px 0 30px rgba(0,0,0,0.8); overflow-y: auto; }
-        #trader-panel.open { right: 0; }
-        .panel-close { position: absolute; top: 15px; right: 15px; cursor: pointer; font-size: 20px; color: var(--red); }
-        .panel-title { color: var(--red); font-weight: 900; border-bottom: 1px solid #222; padding-bottom: 10px; margin-bottom: 20px; }
-        .data-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 12px; border-bottom: 1px solid #111; padding-bottom: 5px; }
-        .data-label { color: #555; text-transform: uppercase; font-weight: bold; }
-        .data-value { color: #eee; font-family: 'Courier New', monospace; }
-
-        /* Badges & Action Buttons */
         .btn-action { cursor: pointer; border: none; border-radius: 4px; padding: 6px 10px; font-size: 14px; transition: 0.2s; color: white; }
         .btn-gen { background: #333; }
         .btn-spec { background: var(--red); }
-        .btn-trade { background: var(--blue); }
 
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
         .badge-600 { background: var(--green); color: black; padding: 5px 10px; border-radius: 4px; font-weight: 900; animation: blink 1.2s infinite; font-size: 11px; }
 
         .return-row { background: rgba(52, 152, 219, 0.07) !important; font-size: 12px; color: #aaa; border-left: 3px solid var(--blue); }
-        .reg-tag { font-size: 10px; color: var(--blue); font-weight: bold; background: rgba(52,152,219,0.1); padding: 2px 5px; border-radius: 3px; border: 1px solid rgba(52,152,219,0.2); }
+        .reg-tag { font-size: 10px; color: var(--blue); font-weight: bold; background: rgba(52,152,219,0.1); padding: 2px 5px; border-radius: 3px; }
         .time-block { font-family: 'Courier New', monospace; line-height: 1.2; font-size: 12px; }
         .airline-logo { width: 25px; height: 25px; border-radius: 4px; vertical-align: middle; margin-right: 8px; background: white; padding: 2px; }
         .toast { position: fixed; bottom: 25px; right: 25px; background: var(--green); color: black; padding: 12px 20px; border-radius: 8px; font-weight: 900; z-index: 2000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -73,9 +60,8 @@
 
 <div class="top-container">
     <div class="header">
-        <div class="logo-main">🏹 ROBIN DES AIRS <span style="font-size: 11px; font-weight: 400; color: #666;">| V7.6 TRADER TERMINAL</span></div>
+        <div class="logo-main">🏹 ROBIN DES AIRS <span style="font-size: 11px; font-weight: 400; color: #666;">| V7.5 STABLE</span></div>
         <div class="controls">
-            <button class="btn-refresh" onclick="toggleTraderPanel()" title="Ouvrir le panneau Trader">📊 TRADER</button>
             <button class="btn-refresh" onclick="lancerScan()">🔄 SCAN LIVE</button>
             <div style="font-size: 12px; background: #222; padding: 5px 10px; border-radius: 5px;">Auto: <span id="countdown" style="color:var(--orange); font-weight: bold;">20:00</span></div>
         </div>
@@ -83,8 +69,8 @@
     <div class="dashboard">
         <div class="stat-card" style="border-top: 3px solid var(--red);"><span id="count-critical" class="stat-value">0</span><span class="stat-label">Vols Critiques</span></div>
         <div class="stat-card" style="border-top: 3px solid var(--green);"><span id="total-cash" class="stat-value" style="color:var(--green)">0 €</span><span class="stat-label">Potentiel (16 pax/vol)</span></div>
-        <div class="stat-card" style="border-top: 3px solid var(--blue);"><span id="total-vols" class="stat-value">0</span><span class="stat-label">Vols Afrique-EU</span></div>
-        <div class="stat-card" style="border-top: 3px solid var(--orange);"><span id="live-time" class="stat-value">--:--</span><span class="stat-label">Actualisé (UTC)</span></div>
+        <div class="stat-card" style="border-top: 3px solid var(--blue);"><span id="total-vols" class="stat-value">0</span><span class="stat-label">Vols Filtrés</span></div>
+        <div class="stat-card" style="border-top: 3px solid var(--orange);"><span id="live-time" class="stat-value">--:--</span><span class="stat-label">UTC (Z)</span></div>
     </div>
 </div>
 
@@ -104,16 +90,9 @@
             </tr>
         </thead>
         <tbody id="flight-list">
-            <tr><td colspan="9" style="text-align:center; padding:100px; color:#555;">Initialisation...</td></tr>
+            <tr><td colspan="9" style="text-align:center; padding:100px; color:#555;">Initialisation du radar...</td></tr>
         </tbody>
     </table>
-</div>
-
-<!-- Trader Side Panel -->
-<div id="trader-panel">
-    <span class="panel-close" onclick="closeTraderPanel()" title="Fermer">×</span>
-    <div class="panel-title">📊 DÉTAIL VOL</div>
-    <div id="trader-panel-content"></div>
 </div>
 
 <script>
@@ -122,7 +101,7 @@
     const p1 = 'ea71e3'; const p2 = 'c99347'; const API_KEY = p1 + '-' + p2;
 
     if (sessionStorage.getItem('auth_v7') !== 'granted') {
-        if (prompt("Accès restreint - Code Admin :") === accessCode) {
+        if (prompt("Code Admin :") === accessCode) {
             sessionStorage.setItem('auth_v7', 'granted');
         } else {
             window.location.href = "https://google.com";
@@ -171,25 +150,6 @@
         timerSec--;
     }
     setInterval(updateClock, 1000);
-
-    function openTraderPanel(data) {
-        var c = document.getElementById('trader-panel-content');
-        c.innerHTML =
-            '<div class="data-row"><span class="data-label">Vol</span><span class="data-value">' + (data.flight || '—') + '</span></div>' +
-            '<div class="data-row"><span class="data-label">Trajet</span><span class="data-value">' + (data.dep || '') + ' → ' + (data.arr || '') + '</span></div>' +
-            '<div class="data-row"><span class="data-label">Retard</span><span class="data-value">' + (data.delay || 0) + ' min</span></div>' +
-            '<div class="data-row"><span class="data-label">Statut</span><span class="data-value">' + (data.status || '—') + '</span></div>' +
-            '<div class="data-row"><span class="data-label">Date</span><span class="data-value">' + (data.date || '—') + '</span></div>' +
-            '<div class="data-row"><span class="data-label">Reg</span><span class="data-value">' + (data.reg || '—') + '</span></div>' +
-            '<div class="data-row"><span class="data-label">Décollage S/A</span><span class="data-value">' + (data.depS || '—') + ' / ' + (data.depA || '—') + '</span></div>' +
-            '<div class="data-row"><span class="data-label">Arrivée S/A</span><span class="data-value">' + (data.arrS || '—') + ' / ' + (data.arrA || '—') + '</span></div>';
-        document.getElementById('trader-panel').classList.add('open');
-    }
-    function closeTraderPanel() { document.getElementById('trader-panel').classList.remove('open'); }
-    function toggleTraderPanel() {
-        var p = document.getElementById('trader-panel');
-        if (p.classList.contains('open')) closeTraderPanel(); else p.classList.add('open');
-    }
 
     async function lancerScan() {
         const list = document.getElementById('flight-list');
@@ -261,7 +221,6 @@
                     (isCrit ? "<span class=\"badge-600\">9 600 €</span>" : "--") +
                     "<button class=\"btn-action btn-gen\" onclick=\"copierMessage('general')\" title=\"Générique\">📢</button>" +
                     "<button class=\"btn-action btn-spec\" onclick=\"copierMessage('specific', '" + (f.realNum || (f.flight && f.flight.iataNumber) || '') + "', " + delay + ", '" + trajetStr.replace(/'/g, "\\'") + "')\" title=\"Ciblé\">🎯</button>" +
-                    "<button class=\"btn-action btn-trade\" onclick=\"openTraderPanel({flight:'" + (f.realNum || (f.flight && f.flight.iataNumber) || '').replace(/'/g, "\\'") + "',dep:'" + f.departure.iataCode + "',arr:'" + f.arrival.iataCode + "',delay:" + delay + ",status:'" + (statusLabel || '').replace(/'/g, "\\'") + "',date:'" + dateV + "',reg:'" + reg.replace(/'/g, "\\'") + "',depS:'" + formatT(f.departure.scheduledTime) + "',depA:'" + formatT(f.departure.actualTime) + "',arrS:'" + formatT(f.arrival.scheduledTime) + "',arrA:'" + formatT(f.arrival.actualTime) + "'})\" title=\"Détail\">📊</button>" +
                     "</div></td></tr>";
             });
             document.getElementById('count-critical').innerText = crits;
