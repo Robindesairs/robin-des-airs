@@ -26,7 +26,8 @@
     <div class="header">
         <div style="font-size:22px; font-weight:900; color:var(--red);">🏹 ROBIN V8.3</div>
         <div id="api-check" class="api-status status-ok">PRÊT AU SCAN</div>
-        <button class="btn-refresh" onclick="lancerScan()">🔄 SCAN LIVE</button>
+        <button class="btn-refresh" onclick="lancerScan(false)">🔄 SCAN LIVE</button>
+        <button class="btn-refresh" onclick="lancerScan(true)" style="background:#333; margin-left:8px;" title="Moins d’appels API pour préserver le quota">📡 Scan léger (CDG+ORY)</button>
     </div>
     <div class="dashboard">
         <div class="stat-card"><span id="count-critical" style="font-size:20px; font-weight:900;">0</span><br><small style="color:#666">CRITIQUES</small></div>
@@ -77,28 +78,29 @@
         return (f.airline.iataCode || (f.airline.icaoCode && f.airline.icaoCode.substring(0, 2)) || '').toUpperCase();
     }
 
-    async function lancerScan() {
+    async function lancerScan(modeLeger) {
         const list = document.getElementById('flight-list');
         const apiCheck = document.getElementById('api-check');
-        list.innerHTML = "<tr><td colspan='6' style='text-align:center; padding:80px;'>Analyse des radars africains en cours...</td></tr>";
+        list.innerHTML = "<tr><td colspan='6' style='text-align:center; padding:80px;'>" + (modeLeger ? "Scan léger (CDG + ORY)..." : "Analyse des radars africains en cours...") + "</td></tr>";
 
         try {
             const test = await fetch(`https://aviation-edge.com/v2/public/timetable?key=${API_KEY}&iataCode=CDG&type=arrival`);
             const checkData = await test.json();
-            const testFlights = extractFlights(checkData);
 
             if (checkData && checkData.error) {
                 apiCheck.innerText = "❌ QUOTA ÉPUISÉ";
                 apiCheck.className = "api-status status-error";
-                list.innerHTML = "<tr><td colspan='6' style='text-align:center; padding:80px; color:var(--red);'>Limite API atteinte. Revenez dans 24h ou changez de clé.</td></tr>";
+                list.innerHTML = "<tr><td colspan='6' style='text-align:center; padding:80px; color:var(--red);'>Limite API atteinte. Revenez dans 24h ou changez de clé. Utilisez « Scan léger » pour moins d’appels.</td></tr>";
                 return;
             }
 
             apiCheck.innerText = "✅ API OPÉRATIONNELLE";
             apiCheck.className = "api-status status-ok";
 
-            const callsArr = HUBS_ARRIVAL.map(h => fetch(`https://aviation-edge.com/v2/public/timetable?key=${API_KEY}&iataCode=${h}&type=arrival&_=${Date.now()}`).then(r => r.json()).catch(() => []));
-            const callsDep = HUBS_DEPARTURE.map(h => fetch(`https://aviation-edge.com/v2/public/timetable?key=${API_KEY}&iataCode=${h}&type=departure&_=${Date.now()}`).then(r => r.json()).catch(() => []));
+            const hubsArr = modeLeger ? ['CDG','ORY'] : HUBS_ARRIVAL;
+            const hubsDep = modeLeger ? ['CDG','ORY'] : HUBS_DEPARTURE;
+            const callsArr = hubsArr.map(h => fetch(`https://aviation-edge.com/v2/public/timetable?key=${API_KEY}&iataCode=${h}&type=arrival&_=${Date.now()}`).then(r => r.json()).catch(() => []));
+            const callsDep = hubsDep.map(h => fetch(`https://aviation-edge.com/v2/public/timetable?key=${API_KEY}&iataCode=${h}&type=departure&_=${Date.now()}`).then(r => r.json()).catch(() => []));
             const results = await Promise.all([...callsArr, ...callsDep]);
             const allFlights = results.flatMap(extractFlights);
             let raw = allFlights.filter(f => {
@@ -158,7 +160,7 @@
             apiCheck.className = "api-status status-error";
         }
     }
-    lancerScan();
+    lancerScan(false);
 </script>
 </body>
 </html>
