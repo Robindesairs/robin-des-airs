@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ROBIN DES AIRS — V7 GHOST ANALYTICS</title>
+    <title>ROBIN DES AIRS — V7.5 FINAL GHOST</title>
     <style>
         :root { --red: #ff4d4d; --green: #2ecc71; --blue: #3498db; --orange: #f39c12; --bg: #050505; --card: #111; --border: #222; }
-        body { background: var(--bg); color: #e0e0e0; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
+        body { background: var(--bg); color: #e0e0e0; font-family: 'Inter', sans-serif; margin: 0; padding: 0; overflow-x: hidden; }
         
+        /* Structure Sticky Header */
         .top-container { position: sticky; top: 0; z-index: 1000; background: var(--bg); padding: 15px 20px; border-bottom: 2px solid var(--border); }
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .logo-main { font-size: 22px; font-weight: 900; color: var(--red); letter-spacing: 1px; }
@@ -19,18 +20,34 @@
 
         .controls { display: flex; align-items: center; gap: 15px; }
         .btn-refresh { background: var(--red); color: white; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-refresh:hover { background: #cc0000; transform: scale(1.05); }
+        .btn-refresh:hover { transform: scale(1.05); background: #cc0000; }
 
+        /* Table Design */
         .table-container { padding: 20px; }
         table { width: 100%; border-collapse: collapse; white-space: nowrap; }
-        thead th { position: sticky; top: 145px; z-index: 900; background: #1a1a1a; color: #888; padding: 12px; font-size: 10px; text-transform: uppercase; text-align: left; border-bottom: 2px solid var(--border); }
+        thead th {
+            position: sticky;
+            top: 145px;
+            z-index: 900;
+            background: #1a1a1a;
+            color: #888;
+            padding: 12px;
+            font-size: 10px;
+            text-transform: uppercase;
+            text-align: left;
+            border-bottom: 2px solid var(--border);
+        }
         tbody td { padding: 12px; border-bottom: 1px solid #1a1a1a; vertical-align: middle; }
+
+        .btn-action { cursor: pointer; border: none; border-radius: 4px; padding: 6px 10px; font-size: 14px; transition: 0.2s; }
+        .btn-gen { background: #333; color: white; }
+        .btn-spec { background: var(--red); color: white; }
 
         .return-row { background: rgba(52, 152, 219, 0.05) !important; font-size: 12px; color: #aaa; }
         .return-tag { color: var(--blue); font-weight: bold; font-size: 10px; text-transform: uppercase; margin-right: 5px; }
 
-        @keyframes blink { 0% { background: var(--green); } 50% { background: var(--red); } 100% { background: var(--green); } }
-        .badge-600 { animation: blink 1s infinite; padding: 5px 10px; border-radius: 4px; font-weight: 900; color: white; font-size: 11px; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+        .badge-600 { background: var(--green); color: black; animation: blink 1s infinite; padding: 5px 10px; border-radius: 4px; font-weight: 900; font-size: 11px; }
         
         .airline-logo { width: 28px; height: 28px; border-radius: 4px; vertical-align: middle; margin-right: 8px; background: white; padding: 2px; }
         .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
@@ -46,7 +63,7 @@
 
 <div class="top-container">
     <div class="header">
-        <div class="logo-main">🏹 ROBIN DES AIRS <span style="font-size: 12px; font-weight: 400; color: #666;">| V7 GHOST ANALYTICS</span></div>
+        <div class="logo-main">🏹 ROBIN DES AIRS <span style="font-size: 12px; font-weight: 400; color: #666;">| V7.5 FINAL GHOST</span></div>
         <div class="controls">
             <button class="btn-refresh" onclick="lancerScan()">🔄 Rafraîchir</button>
             <button class="btn-refresh" style="background:var(--green);" onclick="copierMessage('general')" title="Copie un message général (sans vol)">📋 Message général</button>
@@ -131,18 +148,23 @@
                 return isEuAirline && (isEuToAf || isAfToEu);
             });
 
-            const uniqueFlights = new Map();
+            // --- LOGIQUE DE DÉDOUBLONNAGE PRO-OPÉRATEUR ---
+            const unique = new Map();
             rawFlights.forEach(f => {
-                const isMarketing = f.flight && f.flight.codeshared && f.flight.codeshared.airline;
-                const operatingIata = isMarketing ? f.flight.codeshared.airline.iataCode : f.airline.iataCode;
-                const uniqueKey = `${f.arrival.scheduledTime}_${f.departure.iataCode}_${f.arrival.iataCode}`;
-                if (!uniqueFlights.has(uniqueKey)) {
-                    f.realOperator = operatingIata;
-                    uniqueFlights.set(uniqueKey, f);
+                const isCodeshare = f.flight && f.flight.codeshared && f.flight.codeshared.airline;
+                const realOpIata = isCodeshare ? f.flight.codeshared.airline.iataCode : f.airline.iataCode;
+                const realFlightNum = isCodeshare ? (f.flight.codeshared.iataNumber || f.flight.codeshared.flight_number) : f.flight.iataNumber;
+                const key = `${f.arrival.scheduledTime}_${f.departure.iataCode}_${f.arrival.iataCode}`;
+                const hasReg = f.aircraft && f.aircraft.regNumber;
+                if (!unique.has(key) || hasReg) {
+                    f.realOp = realOpIata;
+                    f.realNum = realFlightNum;
+                    f.realOperator = realOpIata;
+                    unique.set(key, f);
                 }
             });
 
-            const finalFlights = Array.from(uniqueFlights.values());
+            const finalFlights = Array.from(unique.values());
             finalFlights.sort((a,b) => (b.arrival.delay || 0) - (a.arrival.delay || 0));
 
             list.innerHTML = "";
@@ -155,7 +177,7 @@
                 if (isCrit) {
                     crits++;
                     criticalForTelegram.push({
-                        flight: f.flight?.iataNumber || f.flight?.iata || '—',
+                        flight: f.realNum || f.flight?.iataNumber || f.flight?.iata || '—',
                         dep: f.departure?.iataCode || '—',
                         arr: f.arrival?.iataCode || '—',
                         cancelled: f.status === 'cancelled',
@@ -180,7 +202,7 @@
                     <td>${depDate}</td>
                     <td>
                         <img src="${logoUrl}" class="airline-logo" onerror="this.style.display='none'">
-                        <b>${f.flight.iataNumber}</b><br><small style="color:#666">${f.realOperator}</small>
+                        <b>${f.realNum || f.flight.iataNumber}</b><br><small style="color:#666">${f.realOperator}</small>
                     </td>
                     <td><small>${f.aircraft?.icaoCode || "N/A"}</small><br><span class="reg-tag">${f.aircraft?.regNumber || "—"}</span></td>
                     <td><b>${f.departure.iataCode}</b> ➔ <b>${f.arrival.iataCode}</b></td>
@@ -188,7 +210,7 @@
                     <td class="time-block">S: ${formatT(f.arrival.scheduledTime)}<br>A: <span style="color:var(--green)">${formatT(f.arrival.actualTime)}</span></td>
                     <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
                     <td style="color:${delay > 0 ? 'var(--red)' : 'inherit'}"><b>${delay} min</b></td>
-                    <td>${isCrit ? `<span class="badge-600">9 600 €</span> <button class="btn-refresh" style="margin-left:6px;padding:4px 8px;font-size:10px;" onclick="copierMessage('spec','${f.flight.iataNumber}',${delay},'${f.departure.iataCode} → ${f.arrival.iataCode}')" title="Copier un message spécifique à ce vol">📋</button>` : '—'}</td>
+                    <td>${isCrit ? `<span class="badge-600">9 600 €</span> <button class="btn-refresh" style="margin-left:6px;padding:4px 8px;font-size:10px;" onclick="copierMessage('spec','${f.realNum || f.flight.iataNumber}',${delay},'${f.departure.iataCode} → ${f.arrival.iataCode}')" title="Copier un message spécifique à ce vol">📋</button>` : '—'}</td>
                 </tr>`;
             });
 
