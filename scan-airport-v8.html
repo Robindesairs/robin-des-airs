@@ -42,13 +42,14 @@
             <tr>
                 <th>Vol</th>
                 <th>Trajet</th>
+                <th>Cie</th>
                 <th>Status</th>
                 <th>Retard</th>
                 <th>Potentiel</th>
             </tr>
         </thead>
         <tbody id="flight-list">
-            <tr><td colspan="5" style="text-align:center; padding:80px; color:#444;">Lancez un scan pour analyser les hubs...</td></tr>
+            <tr><td colspan="6" style="text-align:center; padding:80px; color:#444;">Lancez un scan pour analyser les hubs...</td></tr>
         </tbody>
     </table>
 </div>
@@ -60,8 +61,9 @@
     // Clé sans tiret (format attendu par Aviation Edge)
     const API_KEY = part1 + part2;
 
-    const HUBS = ['CDG','ORY','BRU','AMS','LIS','DSS','ABJ','BKO','CKY','OUA','DLA','NSI','LBV','FIH','LAD','NDJ'];
-    const AIRLINES = ['AF','SN','KL','LH','TP','IB','VY','TO','HC','AT'];
+    const HUBS_ARRIVAL = ['CDG','ORY','BRU','AMS','LIS','DSS','ABJ','BKO','CKY','OUA','DLA','NSI','LBV','FIH','LAD','NDJ'];
+    const HUBS_DEPARTURE = ['CDG','ORY','BRU','AMS','LIS'];
+    const AIRLINES = ['AF','SN','KL','LH','TP','IB','VY','TO','HC','AT','UX','MS','BA','EK','QR'];
 
     function extractFlights(res) {
         if (!res) return [];
@@ -78,7 +80,7 @@
     async function lancerScan() {
         const list = document.getElementById('flight-list');
         const apiCheck = document.getElementById('api-check');
-        list.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:80px;'>Analyse des radars africains en cours...</td></tr>";
+        list.innerHTML = "<tr><td colspan='6' style='text-align:center; padding:80px;'>Analyse des radars africains en cours...</td></tr>";
 
         try {
             const test = await fetch(`https://aviation-edge.com/v2/public/timetable?key=${API_KEY}&iataCode=CDG&type=arrival`);
@@ -88,20 +90,24 @@
             if (checkData && checkData.error) {
                 apiCheck.innerText = "❌ QUOTA ÉPUISÉ";
                 apiCheck.className = "api-status status-error";
-                list.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:80px; color:var(--red);'>Limite API atteinte. Revenez dans 24h ou changez de clé.</td></tr>";
+                list.innerHTML = "<tr><td colspan='6' style='text-align:center; padding:80px; color:var(--red);'>Limite API atteinte. Revenez dans 24h ou changez de clé.</td></tr>";
                 return;
             }
 
             apiCheck.innerText = "✅ API OPÉRATIONNELLE";
             apiCheck.className = "api-status status-ok";
 
-            const calls = HUBS.map(h => fetch(`https://aviation-edge.com/v2/public/timetable?key=${API_KEY}&iataCode=${h}&type=arrival&_=${Date.now()}`).then(r => r.json()).catch(() => []));
-            const results = await Promise.all(calls);
+            const callsArr = HUBS_ARRIVAL.map(h => fetch(`https://aviation-edge.com/v2/public/timetable?key=${API_KEY}&iataCode=${h}&type=arrival&_=${Date.now()}`).then(r => r.json()).catch(() => []));
+            const callsDep = HUBS_DEPARTURE.map(h => fetch(`https://aviation-edge.com/v2/public/timetable?key=${API_KEY}&iataCode=${h}&type=departure&_=${Date.now()}`).then(r => r.json()).catch(() => []));
+            const results = await Promise.all([...callsArr, ...callsDep]);
             const allFlights = results.flatMap(extractFlights);
-            const raw = allFlights.filter(f => {
+            let raw = allFlights.filter(f => {
                 const code = getAirlineCode(f);
                 return code && AIRLINES.includes(code);
             });
+            if (raw.length === 0 && allFlights.length > 0) {
+                raw = allFlights;
+            }
 
             const unique = new Map();
             raw.forEach(f => {
@@ -120,7 +126,7 @@
                 const msg = totalBrut === 0
                     ? "Aucun vol reçu de l'API (vérifiez la clé ou les hubs)."
                     : "Aucun vol après filtre compagnies (AF, SN, KL...). " + totalBrut + " vol(s) brut(s) reçu(s).";
-                list.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:80px; color:#888;'>" + msg + "</td></tr>";
+                list.innerHTML = "<tr><td colspan='6' style='text-align:center; padding:80px; color:#888;'>" + msg + "</td></tr>";
             }
 
             flights.forEach(f => {
@@ -130,10 +136,12 @@
                 const num = (f.flight && f.flight.iataNumber) || (f.flight && f.flight.icaoNumber) || '--';
                 const dep = (f.departure && f.departure.iataCode) || '?';
                 const arr = (f.arrival && f.arrival.iataCode) || '?';
+                const cie = getAirlineCode(f) || '--';
                 const status = (f.status || '').toUpperCase();
                 list.innerHTML += `<tr style="${isCrit ? 'background:rgba(255,77,77,0.08)' : ''}">
                     <td><b>${num}</b></td>
                     <td>${dep} ➔ ${arr}</td>
+                    <td><small>${cie}</small></td>
                     <td><small>${status}</small></td>
                     <td style="color:${isCrit ? 'var(--red)' : 'inherit'}"><b>${delay} min</b></td>
                     <td style="color:var(--green); font-weight:900;">${isCrit ? '9 600€ 🏹' : '--'}</td>
