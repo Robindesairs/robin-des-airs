@@ -6,8 +6,8 @@ window.I18N = (function() {
       hero_title: "Robin prend\naux compagnies,\n",
       hero_title_neon: "rend aux voyageurs.",
       hero_desc: "Vol retardé de +3h, annulé ou surbooké ? La loi européenne vous doit <strong>jusqu'à 600€</strong>. Nous récupérons votre argent — <strong>zéro CB, zéro frais si on ne gagne pas.</strong>",
-      hero_btn_calc: "🧮 Vérifier mon éligibilité gratuitement",
-      hero_btn_wa: "💬 Parler à un conseiller",
+      hero_btn_calc: "Vérifier mon éligibilité gratuitement →",
+      hero_btn_wa: "💬 On répond immédiatement",
       hero_stat_max: "Indemnité max",
       hero_stat_won: "Dossiers gagnés",
       hero_stat_lost: "Si on perd",
@@ -28,8 +28,9 @@ window.I18N = (function() {
       step1_annulation_sub: "Annulation par la compagnie",
       step1_surbook: "Surbooking / Refus d'embarquement",
       step1_surbook_sub: "La compagnie vous a refusé l'accès à bord",
-      step1_wa: "Parler directement à Robin",
-      step1_wa_sub: "Cas complexe ou question → WhatsApp immédiat",
+      step1_correspondance: "Correspondance manquée",
+      step1_correspondance_sub: "J'ai raté ma correspondance à cause d'un retard",
+      step1_correspondance_note: "Le retard de votre 1er vol vous a empêché de prendre la suite — vous êtes éligible.",
       step1c_eyebrow: "Étape 1c — Raison invoquée",
       step1c_q: "La compagnie vous a expliqué pourquoi ?",
       raison_meteo: "🌩️ Météo / Conditions climatiques",
@@ -425,8 +426,10 @@ window.I18N = (function() {
         cbs[1].querySelector('.cb-sub').textContent = get('step1_annulation_sub');
         cbs[2].querySelector('.cb-main').textContent = get('step1_surbook');
         cbs[2].querySelector('.cb-sub').textContent = get('step1_surbook_sub');
-        cbs[3].querySelector('.cb-main').textContent = get('step1_wa');
-        cbs[3].querySelector('.cb-sub').textContent = get('step1_wa_sub');
+        cbs[3].querySelector('.cb-main').textContent = get('step1_correspondance');
+        cbs[3].querySelector('.cb-sub').textContent = get('step1_correspondance_sub');
+        var noteEl = cbs[3].querySelector('.cb-note');
+        if (noteEl) noteEl.textContent = get('step1_correspondance_note');
       }
     }
     var step1c = document.getElementById('step-1c');
