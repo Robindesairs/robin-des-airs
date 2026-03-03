@@ -57,10 +57,23 @@
     // SÉCURITÉ : Fragmenté pour Netlify Stealth
     const part1 = "ea71e3";
     const part2 = "c99347";
-    const API_KEY = part1 + "-" + part2;
+    // Clé sans tiret (format attendu par Aviation Edge)
+    const API_KEY = part1 + part2;
 
     const HUBS = ['CDG','ORY','BRU','AMS','LIS','DSS','ABJ','BKO','CKY','OUA','DLA','NSI','LBV','FIH','LAD','NDJ'];
     const AIRLINES = ['AF','SN','KL','LH','TP','IB','VY','TO','HC','AT'];
+
+    function extractFlights(res) {
+        if (!res) return [];
+        if (Array.isArray(res)) return res;
+        if (res.error) return [];
+        return res.data || res.response || [];
+    }
+
+    function getAirlineCode(f) {
+        if (!f || !f.airline) return null;
+        return (f.airline.iataCode || (f.airline.icaoCode && f.airline.icaoCode.substring(0, 2)) || '').toUpperCase();
+    }
 
     async function lancerScan() {
         const list = document.getElementById('flight-list');
@@ -70,8 +83,9 @@
         try {
             const test = await fetch(`https://aviation-edge.com/v2/public/timetable?key=${API_KEY}&iataCode=CDG&type=arrival`);
             const checkData = await test.json();
+            const testFlights = extractFlights(checkData);
 
-            if (checkData.error) {
+            if (checkData && checkData.error) {
                 apiCheck.innerText = "❌ QUOTA ÉPUISÉ";
                 apiCheck.className = "api-status status-error";
                 list.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:80px; color:var(--red);'>Limite API atteinte. Revenez dans 24h ou changez de clé.</td></tr>";
@@ -83,11 +97,17 @@
 
             const calls = HUBS.map(h => fetch(`https://aviation-edge.com/v2/public/timetable?key=${API_KEY}&iataCode=${h}&type=arrival&_=${Date.now()}`).then(r => r.json()).catch(() => []));
             const results = await Promise.all(calls);
-            const raw = results.flat().filter(f => f && f.airline && AIRLINES.includes(f.airline.iataCode));
+            const allFlights = results.flatMap(extractFlights);
+            const raw = allFlights.filter(f => {
+                const code = getAirlineCode(f);
+                return code && AIRLINES.includes(code);
+            });
 
             const unique = new Map();
             raw.forEach(f => {
-                const key = `${f.flight.iataNumber}_${f.arrival.iataCode}`;
+                const num = (f.flight && f.flight.iataNumber) || (f.flight && f.flight.icaoNumber) || '';
+                const arr = (f.arrival && f.arrival.iataCode) || '';
+                const key = num + '_' + arr + '_' + (f.departure && f.departure.scheduledTime || '');
                 if (!unique.has(key)) unique.set(key, f);
             });
 
@@ -96,17 +116,25 @@
             let crits = 0;
 
             if (flights.length === 0) {
-                list.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:80px;'>Aucun vol détecté sur les hubs cibles.</td></tr>";
+                const totalBrut = allFlights.length;
+                const msg = totalBrut === 0
+                    ? "Aucun vol reçu de l'API (vérifiez la clé ou les hubs)."
+                    : "Aucun vol après filtre compagnies (AF, SN, KL...). " + totalBrut + " vol(s) brut(s) reçu(s).";
+                list.innerHTML = "<tr><td colspan='5' style='text-align:center; padding:80px; color:#888;'>" + msg + "</td></tr>";
             }
 
             flights.forEach(f => {
-                const delay = f.arrival.delay || 0;
+                const delay = Number(f.arrival && f.arrival.delay) || 0;
                 const isCrit = delay >= 180;
                 if(isCrit) crits++;
+                const num = (f.flight && f.flight.iataNumber) || (f.flight && f.flight.icaoNumber) || '--';
+                const dep = (f.departure && f.departure.iataCode) || '?';
+                const arr = (f.arrival && f.arrival.iataCode) || '?';
+                const status = (f.status || '').toUpperCase();
                 list.innerHTML += `<tr style="${isCrit ? 'background:rgba(255,77,77,0.08)' : ''}">
-                    <td><b>${f.flight.iataNumber}</b></td>
-                    <td>${f.departure.iataCode} ➔ ${f.arrival.iataCode}</td>
-                    <td><small>${f.status.toUpperCase()}</small></td>
+                    <td><b>${num}</b></td>
+                    <td>${dep} ➔ ${arr}</td>
+                    <td><small>${status}</small></td>
                     <td style="color:${isCrit ? 'var(--red)' : 'inherit'}"><b>${delay} min</b></td>
                     <td style="color:var(--green); font-weight:900;">${isCrit ? '9 600€ 🏹' : '--'}</td>
                 </tr>`;
