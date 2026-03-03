@@ -49,6 +49,7 @@
         <div class="logo-main">🏹 ROBIN DES AIRS <span style="font-size: 12px; font-weight: 400; color: #666;">| V7 GHOST ANALYTICS</span></div>
         <div class="controls">
             <button class="btn-refresh" onclick="lancerScan()">🔄 Rafraîchir</button>
+            <button class="btn-refresh" style="background:var(--green);" onclick="copierMessage('general')" title="Copie un message général (sans vol)">📋 Message général</button>
             <div style="font-size: 12px;">Auto-Update: <span id="countdown" style="color:var(--orange)">20:00</span></div>
         </div>
     </div>
@@ -187,7 +188,7 @@
                     <td class="time-block">S: ${formatT(f.arrival.scheduledTime)}<br>A: <span style="color:var(--green)">${formatT(f.arrival.actualTime)}</span></td>
                     <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
                     <td style="color:${delay > 0 ? 'var(--red)' : 'inherit'}"><b>${delay} min</b></td>
-                    <td>${isCrit ? '<span class="badge-600">9 600 €</span>' : '—'}</td>
+                    <td>${isCrit ? `<span class="badge-600">9 600 €</span> <button class="btn-refresh" style="margin-left:6px;padding:4px 8px;font-size:10px;" onclick="copierMessage('spec','${f.flight.iataNumber}',${delay},'${f.departure.iataCode} → ${f.arrival.iataCode}')" title="Copier un message spécifique à ce vol">📋</button>` : '—'}</td>
                 </tr>`;
             });
 
@@ -206,6 +207,35 @@
 
         } catch (e) { list.innerHTML = "<tr><td colspan='9' style='text-align:center; padding:40px; color:var(--red);'>Erreur API.</td></tr>"; }
     }
+
+    // --- GÉNÉRATEUR DE MESSAGES PROFESSIONNELS (SANS FRAIS CACHÉS) ---
+    function copierMessage(type, vol, retard, trajet) {
+        const url = "https://robindesairs.eu";
+        const messagesGen = [
+            `🏹 ROBIN DES AIRS : Votre vol Afrique-Europe a +3h de retard ? Récupérez 600€ sans avance de frais. On s'occupe de tout : ${url}`,
+            `⚠️ Vol retardé ? Ne laissez pas 600€ à la compagnie. Commission transparente, zéro frais cachés. Vérifiez ici : ${url}`,
+            `🚀 Marre d'attendre ? Transformez votre retard en cash. Pas de succès, pas de frais. L'expertise Robin des Airs : ${url}`,
+            `💸 Plus de 3h de retard ? La loi vous doit 600€. Dossier géré de A à Z sans sortir votre carte bleue : ${url}`,
+            `🏹 Spécialiste des vols Afrique : récupérez votre indemnité légale simplement. Zéro frais si on ne gagne pas : ${url}`
+        ];
+        const messagesSpec = [
+            `🎯 Vol ${vol} (${trajet}) : Retard de ${retard} min. Passagers, vous êtes éligibles à 600€. Zéro avance de frais avec Robin des Airs.`,
+            `⚠️ Alerte ${vol} : Votre retard de ${retard} min vous donne droit à 600€. On gère votre dossier sans frais cachés. DM pour info !`,
+            `🔎 Retard détecté sur le vol ${vol}. Ne perdez pas vos 600€ d'indemnité. Expertise Robin des Airs, zéro frais d'entrée : ${url}`,
+            `🔥 Passagers du ${vol} : Le retard dépasse les 3h. La loi vous doit 600€. On récupère votre cash, on se rémunère au succès. ${url}`,
+            `🎯 Avis au vol ${vol} : Votre retard est éligible à 600€. Paiement au résultat uniquement, pas de frais cachés. Infos ici : ${url}`
+        ];
+        const list = (type === 'general') ? messagesGen : messagesSpec;
+        const randomMsg = list[Math.floor(Math.random() * list.length)];
+        navigator.clipboard.writeText(randomMsg).then(function() {
+            const n = document.createElement('div');
+            n.innerHTML = "✅ Message 'Transparent' Copié !";
+            n.style.cssText = "position:fixed;bottom:20px;right:20px;background:#2ecc71;color:black;padding:12px;border-radius:8px;font-weight:900;z-index:2000;";
+            document.body.appendChild(n);
+            setTimeout(function() { n.remove(); }, 2500);
+        });
+    }
+
     lancerScan();
 </script>
 </body>
