@@ -1453,11 +1453,31 @@ button:focus-visible,
   margin-top: 14px;
   overflow: hidden;
 }
+.funnel-progress-bar,
 .fp-bar {
   height: 100%;
   background: linear-gradient(90deg, var(--neon), var(--neon-b));
   border-radius: 2px;
   transition: width 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.funnel-progress-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  margin-top: 6px;
+}
+.fstep-reassure {
+  font-size: 11px;
+  color: rgba(255,255,255,0.5);
+  font-style: italic;
+  margin-bottom: 8px;
+}
+.da-dist-note {
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+  margin-top: 8px;
 }
 
 /* ── Fil d'Ariane ── */
@@ -1697,6 +1717,56 @@ button:focus-visible,
 .nope-body strong { color: rgba(255,255,255,0.8); }
 .nope-link  { display: inline-block; margin-top: 12px; font-size: 11px; font-weight: 700; color: var(--neon-b); text-decoration: underline; }
 
+.non-eligible-email,
+.non-eligible-referral {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+}
+.non-eligible-email p:first-child,
+.non-eligible-referral p:first-child { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.9); margin-bottom: 4px; }
+.non-eligible-email .text-sm,
+.non-eligible-referral .text-sm { font-size: 11px; color: rgba(255,255,255,0.5); line-height: 1.5; margin-bottom: 12px; }
+.non-eligible-input {
+  display: block;
+  width: 100%;
+  max-width: 280px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-family: 'Montserrat', sans-serif;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  color: white;
+  outline: none;
+}
+.non-eligible-input::placeholder { color: rgba(255,255,255,0.35); }
+.non-eligible-input:focus { border-color: var(--neon-b); box-shadow: 0 0 0 2px rgba(0,229,160,0.2); }
+.non-eligible-btn {
+  padding: 10px 18px;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+  color: var(--navy);
+  background: var(--neon-b);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.non-eligible-btn:hover { background: var(--neon); }
+.non-eligible-link {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--neon-b);
+  text-decoration: underline;
+}
+.non-eligible-link:hover { color: var(--neon); }
+
 /* ── Hero entry, témoignages slider, date picker, loader, raison, reveal, pax, form ── */
 .hero-entry { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
 .hero-entry-btn {
@@ -1846,6 +1916,7 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
 .eb-add-vol-btn { width: 100%; padding: 10px; margin-top: 6px; margin-bottom: 12px; font-size: 11px; font-weight: 700; color: var(--neon-b); background: rgba(0,229,160,0.08); border: 1px dashed rgba(0,229,160,0.35); border-radius: 8px; cursor: pointer; transition: all 0.2s; }
 .eb-add-vol-btn:hover { background: rgba(0,229,160,0.15); }
 #da-dist-wrap, #eb-dist-wrap { display: none !important; }
+#funnel-box.step-3a-active #da-dist-wrap { display: block !important; }
 #da-dist-wrap.flash, #eb-dist-wrap.flash {
   box-shadow: 0 0 0 3px rgba(255,80,80,0.35);
   border-radius: 10px;

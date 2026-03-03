@@ -6,13 +6,13 @@
 <title>Robin des Airs — Indemnités aériennes jusqu'à 600€ | Premium</title>
 <meta name="description" content="Vol retardé ou annulé ? Récupérez jusqu'à 600€ d'indemnité. Service premium — 25% de commission, zéro frais si on ne gagne pas. Réponse sous 24h.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://robindesairs.fr">
+<meta property="og:url" content="https://robindesairs.eu">
 <meta property="og:title" content="Robin des Airs — Votre vol retardé vaut jusqu'à 600€">
 <meta property="og:description" content="Vol retardé ou annulé ? Récupérez jusqu'à 600€ d'indemnité légale. Zéro frais si on ne gagne pas. Dossier en 2 minutes via WhatsApp.">
 <meta name="theme-color" content="#0B1F3A">
 <link rel="icon" href="/favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="/favicon.png">
-<link rel="canonical" href="https://robindesairs.fr">
+<link rel="canonical" href="https://robindesairs.eu">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fontsource/syne@5.2.6/files/syne-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fontsource/montserrat@5.0.0/files/montserrat-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
@@ -55,7 +55,7 @@
       </div>
     </div>
     <!-- CTA visible sur desktop -->
-    <a href="#funnel-box" class="nav-cta nav-cta-inline" data-i18n="nav_cta">CALCULER MON INDEMNITÉ 🟢</a>
+    <a href="#funnel-box" class="nav-cta nav-cta-inline" data-i18n="nav_cta">Vérifier mon éligibilité gratuitement →</a>
     <!-- Hamburger toujours visible -->
     <button class="nav-burger" id="nav-burger" onclick="toggleMobileNav()" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -72,7 +72,7 @@
     <li><a href="#comparatif" onclick="closeMobileNav()" data-i18n="nav_drawer_tarifs">💰 Nos tarifs</a></li>
     <li><a href="#temoignages" onclick="closeMobileNav()" data-i18n="nav_drawer_testi">⭐ Témoignages</a></li>
     <li><a href="#faq" onclick="closeMobileNav()" data-i18n="nav_drawer_faq">❓ FAQ</a></li>
-    <li><a href="#funnel-box" onclick="closeMobileNav(); document.getElementById('funnel-box')&&document.getElementById('funnel-box').scrollIntoView({behavior:'smooth'});" class="drawer-cta" data-i18n="nav_cta">CALCULER MON INDEMNITÉ 🟢</a></li>
+    <li><a href="#funnel-box" onclick="closeMobileNav(); document.getElementById('funnel-box')&&document.getElementById('funnel-box').scrollIntoView({behavior:'smooth'});" class="drawer-cta" data-i18n="nav_cta">Vérifier mon éligibilité gratuitement →</a></li>
   </ul>
 </div>
 
@@ -100,8 +100,8 @@
 
       <!-- Deux options d'entrée -->
       <div class="hero-entry">
-        <a href="#funnel-box" class="hero-entry-btn primary" id="btn-calc-hero" onclick="scrollToCalcWithAnimation(event)" data-i18n="hero_btn_calc">CALCULER MON INDEMNITÉ 🟢</a>
-        <a href="https://wa.me/33756863630?text=%5BFR%5D%20Bonjour%20Robin%20des%20Airs%20%21%0AJe%20voudrais%20parler%20%C3%A0%20un%20conseiller.%0A%0AMon%20vol%20%3A%20%0ADate%20%3A%20" target="_blank" class="hero-entry-btn secondary" data-i18n="hero_btn_wa">💬 Parler à un conseiller</a>
+        <a href="#funnel-box" class="hero-entry-btn primary" id="btn-calc-hero" onclick="scrollToCalcWithAnimation(event)" data-i18n="hero_btn_calc">Vérifier mon éligibilité gratuitement →</a>
+        <a href="https://wa.me/33756863630?text=%5BFR%5D%20Bonjour%20Robin%20des%20Airs%20%21%0AJe%20voudrais%20parler%20%C3%A0%20un%20conseiller.%0A%0AMon%20vol%20%3A%20%0ADate%20%3A%20" target="_blank" class="hero-entry-btn secondary" data-i18n="hero_btn_wa">💬 Préfère WhatsApp ? On répond instantanément</a>
       </div>
 
       <div class="hero-stats">
@@ -125,6 +125,7 @@
           <span class="stat-label" data-i18n="hero_stat_24h">Réponse garantie</span>
         </div>
       </div>
+      <p style="margin-top:14px;"><a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" style="font-size:13px;font-weight:700;color:var(--neon-b);text-decoration:none;">Je vérifie mon vol maintenant</a></p>
       <p class="hero-lang-line">
         <span class="hero-lang-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></span>
         Service disponible en : Français, Wolof, Bambara, Soninké, Pulaar, Lingala.
@@ -137,13 +138,17 @@
       <div class="calc-header">
         <div class="calc-tag" data-i18n="calc_tag">Diagnostic de vol · Robin des Airs</div>
         <div class="calc-title">Quelle est votre<br><span id="funnel-subtitle">situation ?</span></div>
-        <div class="funnel-progress"><div class="fp-bar" id="fp-bar" style="width:0%"></div></div>
+        <div class="funnel-progress">
+          <div class="funnel-progress-bar" id="fp-bar" style="width: calc(var(--funnel-step, 1) / 5 * 100%)"></div>
+          <p class="funnel-progress-label">Étape <span id="current-step">1</span> sur 5</p>
+        </div>
         <div class="funnel-crumbs" id="funnel-crumbs"></div>
       </div>
 
       <!-- ══ ÉTAPE 1 — MOTIF ══ -->
       <div class="fstep" id="step-1">
         <div class="fstep-eyebrow">Étape 1 sur 5 — Ce qui s'est passé</div>
+        <p class="fstep-reassure text-sm text-gray-400 italic mt-1">Pas de souci si vous ne vous souvenez plus des détails — on vérifie pour vous.</p>
         <div class="choice-grid one-col">
           <button class="cb" onclick="pickMotif('retard')">
             <span class="cb-icon">⏱️</span>
@@ -162,8 +167,8 @@
           </button>
           <button class="cb" onclick="pickMotif('correspondance')">
             <span class="cb-icon">🔄</span>
-            <span class="cb-main">Correspondance manquée / Vol manqué</span>
-            <span class="cb-sub">Retard du 1er vol → vous avez raté votre liaison</span>
+            <span class="cb-main">J'ai raté ma correspondance à cause d'un retard</span>
+            <span class="cb-sub">Le retard de mon 1er vol m'a fait rater la suite</span>
           </button>
         </div>
       </div>
@@ -218,17 +223,20 @@
       <!-- ══ ÉTAPE 2 — DIRECT ou ESCALE ══ -->
       <div class="fstep" id="step-2">
         <div class="fstep-eyebrow">Étape 2 sur 5 — Type de trajet</div>
+        <p class="fstep-reassure text-sm text-gray-400 italic mt-1">60 secondes et vous savez exactement ce que vous touchez.</p>
         <p class="fstep-q">Ce voyage était-il direct ou avec correspondance ?</p>
         <div class="choice-grid">
           <button class="cb" onclick="pickTrajet('direct')">
             <span class="cb-icon">✈️</span>
             <span class="cb-main">Vol direct</span>
             <span class="cb-sub">Sans escale</span>
+            <small class="block text-sm text-gray-500 mt-1">Sans escale — calcul simplifié</small>
           </button>
           <button class="cb" onclick="pickTrajet('escale')">
             <span class="cb-icon">🔄</span>
             <span class="cb-main">Avec correspondance</span>
             <span class="cb-sub">1 escale ou plus</span>
+            <small class="block text-sm text-gray-500 mt-1">C'est le dernier vol qui compte — on explique</small>
           </button>
         </div>
         <button class="back-btn" id="back2">← Retour</button>
@@ -237,6 +245,7 @@
       <!-- ══ ÉTAPE 3a — VOL DIRECT (Robin des Airs) ══ -->
       <div class="fstep" id="step-3a">
         <div class="fstep-eyebrow">Étape 3 sur 5 — Détails du vol</div>
+        <p class="fstep-reassure text-sm text-gray-400 italic mt-1">Vous n'avez pas besoin du numéro de vol — la ville et la date suffisent.</p>
         <p class="calc-robin-hint">Robin des Airs vérifie votre trajet en un clic.</p>
 
         <div class="calc-field" style="margin-bottom:12px">
@@ -265,8 +274,9 @@
           <div class="dist-pills" role="group">
             <button type="button" class="dist-pill" data-dist="250" onclick="setDist('da-dist',250,this)">Court<br><span class="pill-amount">250€</span></button>
             <button type="button" class="dist-pill" data-dist="400" onclick="setDist('da-dist',400,this)">Moyen<br><span class="pill-amount">400€</span></button>
-            <button type="button" class="dist-pill" data-dist="600" onclick="setDist('da-dist',600,this)">Long<br><span class="pill-amount">600€</span></button>
+            <button type="button" class="dist-pill" data-dist="600" onclick="setDist('da-dist',600,this)">Long &gt; 3 500 km<br><span class="pill-amount">600€</span></button>
           </div>
+          <p class="da-dist-note text-sm text-gray-500 mt-2">La majorité de nos clients sont sur des vols long-courrier. Ajustez si nécessaire.</p>
         </div>
         <input type="hidden" id="da-dist" value="">
 
@@ -414,6 +424,7 @@
 
       <!-- ══ LOADER SUSPENSE ══ -->
       <div class="fstep" id="step-loader">
+        <p class="fstep-reassure text-sm text-gray-400 italic mt-1">Plus qu'une étape. Votre résultat arrive.</p>
         <div class="result-loader">
           <div class="loader-dots">
             <div class="loader-dot"></div>
@@ -466,6 +477,17 @@
           <a class="nope-link"
             href="https://wa.me/33756863630?text=%5BFR%5D%20Bonjour%20Robin%20%21%0AMon%20vol%20a%20%C3%A9t%C3%A9%20annul%C3%A9%20avec%20plus%20de%2014%20jours%20de%20pr%C3%A9avis.%20Pouvez-vous%20confirmer%20mes%20droits%20%3F"
             target="_blank">→ Confirmer mes droits avec Robin sur WhatsApp</a>
+        </div>
+        <div class="non-eligible-email">
+          <p>📩 Vous avez un prochain vol prévu ?</p>
+          <p class="text-sm">Laissez votre email — on vous alerte si un retard ouvre un droit.</p>
+          <input type="email" placeholder="votre@email.com" class="non-eligible-input" />
+          <button type="button" class="non-eligible-btn">M'alerter gratuitement</button>
+        </div>
+        <div class="non-eligible-referral">
+          <p>👥 Vous connaissez quelqu'un dont le vol a été retardé ?</p>
+          <p class="text-sm">Partagez Robin — et touchez une prime de parrainage.</p>
+          <a href="/parrainage" class="non-eligible-link">Partager Robin →</a>
         </div>
         <button class="back-btn" onclick="restartFunnel()">↺ Recommencer le diagnostic</button>
       </div>
@@ -525,7 +547,7 @@
       </div>
     </div>
     <div style="margin-top:48px;text-align:center;">
-      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary">VÉRIFIER MES 600€ MAINTENANT 🚀</a>
+      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary">Choisir Robin — 25%, zéro frais si on perd</a>
       <p style="font-size:11px;color:var(--gray);margin-top:10px;">Jusqu'à 600€ · 25% · Zéro frais si on perd</p>
       <p style="font-size:12px;margin-top:14px;"><a href="/depot-en-ligne.html" style="color:var(--neon-dark);font-weight:600;">Scan rapide (7 étapes)</a></p>
     </div>
@@ -758,6 +780,8 @@
     <span class="sp-item">Réponse sous <strong>24h</strong></span>
     <span class="sp-sep">·</span>
     <span class="sp-item">Des centaines de passagers nous ont confié leur dossier</span>
+    <span class="sp-sep">·</span>
+    <a href="#funnel-box" onclick="document.getElementById('funnel-box')&&document.getElementById('funnel-box').scrollIntoView({behavior:'smooth'}); return false;" class="sp-cta">Rejoindre nos passagers remboursés →</a>
   </div>
 </section>
 
@@ -811,7 +835,7 @@
       </div>
     </div>
     <div style="margin-top:48px;text-align:center;">
-      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary">VÉRIFIER MES 600€ MAINTENANT 🚀</a>
+      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary">Lancer mon dossier en 3 minutes</a>
       <p style="font-size:11px;color:var(--gray);margin-top:10px;">Réponse sous 24h · Scan rapide 3 min</p>
       <p style="font-size:12px;margin-top:14px;"><a href="/depot-en-ligne.html" style="color:var(--neon-dark);font-weight:600;">Scan rapide (7 étapes)</a></p>
       <p style="font-size:12px;color:var(--gray);margin-top:18px;">Pour aller plus loin : <a href="/meteo-dossier-indemnite.html" style="color:var(--neon-dark);font-weight:600;">Météo et dossier (TAF, METAR…)</a> · <a href="/pourquoi-si-peu-reclament.html" style="color:var(--neon-dark);font-weight:600;">Pourquoi si peu récupèrent leur indemnité ?</a></p>
@@ -1013,7 +1037,7 @@
 
       <div style="margin-top:40px;padding:28px 24px;background:linear-gradient(135deg,rgba(0,200,122,0.08),rgba(11,31,58,0.04));border:1px solid rgba(0,200,122,0.25);border-radius:12px;text-align:center;">
         <p style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:16px;" data-i18n="ready_claim">Prêt à réclamer ?</p>
-        <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary" data-i18n="obt_indemnite">VÉRIFIER MES 600€ MAINTENANT 🚀</a>
+        <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary" data-i18n="obt_indemnite">Mon argent m'attend — je réclame maintenant</a>
       </div>
     </div>
   </div>
@@ -1028,7 +1052,7 @@
       Chaque mois sans réclamer, c'est de l'argent que vous laissez sur la table. Le délai de prescription est de 5 ans — mais ça ne dure pas.
     </p>
     <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
-      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary" data-i18n="cta_btn_calc">VÉRIFIER MES 600€ MAINTENANT 🚀</a>
+      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary" data-i18n="cta_btn_calc">Mon argent m'attend — je réclame maintenant</a>
       <a href="https://wa.me/33756863630?text=%5BFR%5D%20Bonjour%20Robin%20des%20Airs%20%21%0AJe%20veux%20ouvrir%20mon%20dossier." target="_blank" class="btn-ghost" data-i18n="cta_wa">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.108.549 4.086 1.508 5.8L0 24l6.335-1.483A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.817 9.817 0 01-5.002-1.368l-.36-.214-3.722.976.994-3.63-.234-.373A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182c5.43 0 9.818 4.388 9.818 9.818 0 5.43-4.388 9.818-9.818 9.818z"/></svg>
         WhatsApp direct
@@ -1083,7 +1107,7 @@
       <ul>
         <li><a href="https://wa.me/33756863630" target="_blank">💬 WhatsApp</a></li>
         <li><a href="/suivi-dossier.html">📋 Où en est mon dossier ?</a></li>
-        <li><a href="/cdn-cgi/l/email-protection#dcbfb3b2a8bdbfa89caeb3beb5b2b8b9afbdb5aeaff2baae"><span class="__cf_email__" data-cfemail="d1b2bebfa5b0b2a591a3beb3b8bfb5b4a2b0b8a3a2ffb7a3">[email&#160;protected]</span></a></li>
+        <li><a href="mailto:expert@robindesairs.eu">expert@robindesairs.eu</a></li>
         <li><a href="#faq">FAQ</a></li>
         <li class="footer-crisis"><strong>Ligne crise (plusieurs vols annulés)</strong> — ouverte uniquement en période de crise : <a href="tel:+33189628969">01 89 62 89 69</a></li>
       </ul>
@@ -1212,10 +1236,34 @@ function changePax(valId, delta) {
 }
 
 /* ═══ FUNNEL NAVIGATION ═══ */
+var STEP_TO_NUM = { 'step-1':1, 'step-1b':1, 'step-1c':1, 'step-2':2, 'step-3a':3, 'step-3b':3, 'step-loader':4, 'step-result':5, 'step-nope':5 };
 function goTo(stepId, pct) {
   document.querySelectorAll('.fstep').forEach(s => s.classList.remove('active'));
   document.getElementById(stepId).classList.add('active');
+  var stepNum = STEP_TO_NUM[stepId] != null ? STEP_TO_NUM[stepId] : 1;
+  document.documentElement.style.setProperty('--funnel-step', String(stepNum));
+  var curEl = document.getElementById('current-step');
+  if (curEl) curEl.textContent = String(stepNum);
   document.getElementById('fp-bar').style.width = pct + '%';
+  var funnelBox = document.getElementById('funnel-box');
+  if (funnelBox) {
+    if (stepId === 'step-3a') funnelBox.classList.add('step-3a-active');
+    else funnelBox.classList.remove('step-3a-active');
+  }
+  if (stepId === 'step-3a') {
+    var daDist = document.getElementById('da-dist');
+    var daWrap = document.getElementById('da-dist-wrap');
+    var daLine = document.getElementById('da-distance-line');
+    if (daDist && (!daDist.value || daDist.value === '')) {
+      daDist.value = '600';
+      if (daLine && typeof DISTANCE_LINE !== 'undefined') daLine.textContent = DISTANCE_LINE[600] || '';
+      if (daWrap) {
+        daWrap.querySelectorAll('.dist-pill').forEach(function(p) { p.classList.remove('active'); });
+        var pill600 = daWrap.querySelector('.dist-pill[data-dist="600"]');
+        if (pill600) pill600.classList.add('active');
+      }
+    }
+  }
   setTimeout(() => {
     document.getElementById('funnel-box').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, 30);
