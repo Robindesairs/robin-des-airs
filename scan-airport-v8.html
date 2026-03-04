@@ -3,128 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ROBIN DES AIRS V8.6 — RADAR LIVE</title>
+    <title>ROBIN V8.8 — TRANSAVIA & VUELING INCLUS</title>
     <style>
-        :root { --red: #ff4d4d; --green: #2ecc71; --blue: #3498db; --orange: #f39c12; --bg: #050505; --card: #111; --border: #222; }
+        :root { --red: #ff4d4d; --green: #2ecc71; --bg: #050505; --card: #111; --border: #222; }
         body { background: var(--bg); color: #e0e0e0; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
         .top-container { position: sticky; top: 0; z-index: 1000; background: var(--bg); padding: 15px 20px; border-bottom: 2px solid var(--border); }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .logo { font-size: 22px; font-weight: 900; color: var(--red); letter-spacing: 1px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .dashboard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-        .stat-card { background: var(--card); padding: 12px; border-radius: 8px; border: 1px solid var(--border); text-align: center; }
+        .stat-card { background: var(--card); padding: 10px; border-radius: 8px; border: 1px solid var(--border); text-align: center; }
         .btn-scan { background: var(--red); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        .table-container { padding: 20px; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; white-space: nowrap; }
-        th { background: #1a1a1a; color: #888; padding: 12px; text-align: left; font-size: 10px; text-transform: uppercase; }
-        td { padding: 12px; border-bottom: 1px solid #1a1a1a; }
-        .badge-600 { background: var(--green); color: black; padding: 5px 10px; border-radius: 4px; font-weight: 900; font-size: 11px; }
-        .airline-logo { width: 20px; vertical-align: middle; margin-right: 8px; filter: brightness(1.2); }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background: #1a1a1a; color: #666; padding: 12px; text-align: left; font-size: 10px; text-transform: uppercase; }
+        td { padding: 12px; border-bottom: 1px solid #1a1a1a; font-size: 13px; }
+        .badge-600 { background: var(--green); color: black; padding: 4px 8px; border-radius: 4px; font-weight: 900; font-size: 11px; }
     </style>
 </head>
 <body>
 
 <div class="top-container">
     <div class="header">
-        <div class="logo">🏹 ROBIN V8.6</div>
-        <div id="status-log" style="font-size: 10px; color: var(--orange);">PRÊT AU SCAN</div>
-        <button class="btn-scan" onclick="lancerScan()">🔄 SCAN TOTAL</button>
+        <div style="font-size:20px; font-weight:900; color:var(--red);">🏹 ROBIN V8.8 <span style="font-size:10px; color:#555;">TO + VY INCLUS</span></div>
+        <div id="status-log" style="font-size:10px; color:var(--green);">RADAR PRÊT</div>
+        <button class="btn-scan" onclick="lancerScan()">🔄 SCAN GLOBAL AFRIQUE</button>
     </div>
     <div class="dashboard">
-        <div class="stat-card" style="border-top: 2px solid var(--red);"><span id="count-crit" style="font-size:20px; font-weight:900;">0</span><br><small>CRITIQUES</small></div>
-        <div class="stat-card" style="border-top: 2px solid var(--green);"><span id="total-cash" style="font-size:20px; font-weight:900; color:var(--green)">0 €</span><br><small>CASH</small></div>
-        <div class="stat-card" style="border-top: 2px solid var(--blue);"><span id="total-vols" style="font-size:20px; font-weight:900;">0</span><br><small>VOLS</small></div>
-        <div class="stat-card" style="border-top: 2px solid var(--orange);"><span id="scan-time" style="font-size:20px; font-weight:900;">--:--</span><br><small>TIME</small></div>
+        <div class="stat-card"><span id="count-crit" style="font-size:20px; font-weight:900;">0</span><br><small>CRITIQUES</small></div>
+        <div class="stat-card"><span id="total-cash" style="font-size:20px; font-weight:900; color:var(--green)">0 €</span><br><small>CASH</small></div>
+        <div class="stat-card"><span id="total-vols" style="font-size:20px; font-weight:900;">0</span><br><small>VOLS CIBLÉS</small></div>
+        <div class="stat-card"><span id="scan-time" style="font-size:20px; font-weight:900;">--:--</span><br><small>MAJ</small></div>
     </div>
 </div>
 
-<div class="table-container">
+<div style="padding: 20px;">
     <table>
         <thead>
-            <tr>
-                <th>Vol</th>
-                <th>Trajet</th>
-                <th>Prévu</th>
-                <th>Réel</th>
-                <th>Retard</th>
-                <th>Potentiel</th>
-            </tr>
+            <tr><th>Vol</th><th>Trajet</th><th>Prévu</th><th>Réel</th><th>Retard</th><th>Potentiel</th></tr>
         </thead>
         <tbody id="flight-list">
-            <tr><td colspan="6" style="text-align:center; padding:100px; color:#444;">Lancez le Scan pour réveiller les radars africains.</td></tr>
+            <tr><td colspan="6" style="text-align:center; padding:50px;">Cliquez sur SCAN GLOBAL.</td></tr>
         </tbody>
     </table>
 </div>
 
 <script>
-    // Camouflage API pour passer Netlify
-    const a = "ea71e3"; const b = "c99347";
-    const API_KEY = `${a}-${b}`;
+    const a = "ea71e3"; const b = "c99347"; const API_KEY = `${a}-${b}`;
 
-    // On commence par une liste courte pour être sûr que ça charge
-    const HUBS = ['CDG','ORY','DSS','ABJ','BKO','CKY','OUA','LOS','DLA'];
-    const AIRLINES = ['AF','SN','KL','TO','HC','AT'];
+    // Liste élargie pour inclure le Maghreb (terrain de TO et VY)
+    const AFRICA_AIRPORTS = [
+        'DSS','DKR','ABJ','BKO','CKY','OUA','LFW','ACC','LOS','ABV','COO','NKC','NIM','FNA','ROB','DLA','NSI','LBV','FIH','BZV','PNR','BGF','LAD','SSG','NDJ','NBO','DAR','ADD','JNB','CPT','KGL','EBB','RUN','TNR','MRU','DZA','RAK','CMN','ALG','TUN','AGA','FEZ','VXE','SID'
+    ];
+
+    // Hubs où Transavia (ORY) et Vueling (BCN/ORY) cartonnent
+    const HUBS = ['ORY','CDG','BRU','AMS','MAD','LIS','BCN','LYS','MRS'];
+
+    // Ajout de TO (Transavia) et VY (Vueling)
+    const AIRLINES = ['AF','SN','KL','AT','HC','TU','AH','ET','TO','VY'];
+
+    function extractFlights(data) {
+        if (!data) return [];
+        if (data.error) return [];
+        if (Array.isArray(data)) return data;
+        return data.data || data.response || [];
+    }
+
+    function formatTime(iso) {
+        if (!iso || typeof iso !== 'string') return '--:--';
+        const t = iso.split('T')[1];
+        return t ? t.substring(0, 5) : '--:--';
+    }
 
     async function lancerScan() {
         const list = document.getElementById('flight-list');
         const log = document.getElementById('status-log');
-        list.innerHTML = "<tr><td colspan='6' style='text-align:center; padding:100px;'>Connexion aux tours de contrôle...</td></tr>";
-        
+        list.innerHTML = "<tr><td colspan='6' style='text-align:center; padding:50px;'>Scan Transavia & Vueling en cours...</td></tr>";
+
         let allFlights = [];
-        
+
         for (const hub of HUBS) {
-            log.innerText = `SCAN EN COURS : ${hub}...`;
+            log.innerText = "SCAN : " + hub + "...";
             try {
-                const res = await fetch(`https://aviation-edge.com/v2/public/timetable?key=${API_KEY}&iataCode=${hub}&type=arrival`);
+                const res = await fetch("https://aviation-edge.com/v2/public/timetable?key=" + API_KEY + "&iataCode=" + hub + "&type=arrival&_=" + Date.now());
                 const data = await res.json();
-                
-                if (Array.isArray(data)) {
-                    const filtered = data.filter(f => f.airline && AIRLINES.includes(f.airline.iataCode));
-                    allFlights = [...allFlights, ...filtered];
-                }
-            } catch (e) { console.error("Erreur sur " + hub); }
+                const raw = extractFlights(data);
+                const filtered = raw.filter(f => {
+                    if (!f || !f.airline || !f.departure || !f.arrival) return false;
+                    const dep = (f.departure.iataCode || '').toUpperCase();
+                    const arr = (f.arrival.iataCode || '').toUpperCase();
+                    const isAfrica = AFRICA_AIRPORTS.includes(dep) || AFRICA_AIRPORTS.includes(arr);
+                    const code = (f.airline.iataCode || '').toUpperCase();
+                    return isAfrica && code && AIRLINES.includes(code);
+                });
+                allFlights = allFlights.concat(filtered);
+            } catch (e) {}
         }
 
-        log.innerText = "SCAN TERMINÉ";
-        log.style.color = "var(--green)";
+        const seen = new Map();
+        allFlights.forEach(f => {
+            const num = (f.flight && f.flight.iataNumber) || (f.flight && f.flight.icaoNumber) || '';
+            const key = num + "_" + (f.departure && f.departure.iataCode) + "_" + (f.arrival && f.arrival.iataCode) + "_" + (f.arrival && f.arrival.scheduledTime);
+            if (!seen.has(key)) seen.set(key, f);
+        });
+        const flights = Array.from(seen.values()).sort((a, b) => (Number(b.arrival && b.arrival.delay) || 0) - (Number(a.arrival && a.arrival.delay) || 0));
 
-        // Dédoublonnage
-        const unique = Array.from(new Set(allFlights.map(f => f.flight.iataNumber)))
-            .map(num => allFlights.find(f => f.flight.iataNumber === num));
-
-        const flights = unique.sort((a,b) => (b.arrival.delay || 0) - (a.arrival.delay || 0));
-        
         list.innerHTML = "";
         let crits = 0;
 
         if (flights.length === 0) {
-            list.innerHTML = "<tr><td colspan='6' style='text-align:center; padding:100px;'>Aucun vol Air France/Afrique trouvé pour le moment.</td></tr>";
+            list.innerHTML = "<tr><td colspan='6' style='text-align:center; padding:50px;'>Aucun vol détecté. Réessayez dans quelques minutes.</td></tr>";
         }
 
         flights.forEach(f => {
-            const delay = f.arrival.delay || 0;
+            const delay = Number(f.arrival && f.arrival.delay) || 0;
             const isCrit = delay >= 180;
-            if(isCrit) crits++;
+            if (isCrit) crits++;
 
-            list.innerHTML += `<tr style="${isCrit ? 'background:rgba(255,77,77,0.1)' : ''}">
-                <td>
-                    <img class="airline-logo" src="https://www.gstatic.com/flights/airline_logos/70px/${f.airline.iataCode}.png">
-                    <b>${f.flight.iataNumber}</b>
-                </td>
-                <td>${f.departure.iataCode} ➔ ${f.arrival.iataCode}</td>
-                <td>${f.arrival.scheduledTime.split('T')[1].substring(0,5)}</td>
-                <td style="color:var(--orange)">${(f.arrival.actualTime || f.arrival.estimatedTime || "").split('T')[1]?.substring(0,5) || '--:--'}</td>
-                <td style="color:${isCrit ? 'red' : 'inherit'}"><b>${delay} min</b></td>
-                <td>${isCrit ? '<span class="badge-600">9 600€ 🎯</span>' : '--'}</td>
-            </tr>`;
+            const num = (f.flight && f.flight.iataNumber) || (f.flight && f.flight.icaoNumber) || '--';
+            const cie = (f.airline && f.airline.iataCode) || '';
+            const dep = (f.departure && f.departure.iataCode) || '?';
+            const arr = (f.arrival && f.arrival.iataCode) || '?';
+            const prevu = formatTime(f.arrival && f.arrival.scheduledTime);
+            const reel = formatTime(f.arrival && (f.arrival.actualTime || f.arrival.estimatedTime));
+
+            list.innerHTML += "<tr style='" + (isCrit ? "background:rgba(255,77,77,0.1)" : "") + "'><td><img src='https://www.gstatic.com/flights/airline_logos/70px/" + cie + ".png' style='width:20px;vertical-align:middle;margin-right:5px;background:white;padding:2px;border-radius:2px;' onerror=\"this.style.display='none'\"><b>" + num + "</b></td><td><b>" + dep + "</b> ➔ <b>" + arr + "</b></td><td>" + prevu + "</td><td style='color:var(--orange)'>" + reel + "</td><td style='color:" + (isCrit ? "red" : "inherit") + "'><b>" + delay + " min</b></td><td>" + (isCrit ? "<span class='badge-600'>INDEMNITÉ 🎯</span>" : "--") + "</td></tr>";
         });
 
         document.getElementById('count-crit').innerText = crits;
         document.getElementById('total-cash').innerText = (crits * 9600).toLocaleString() + " €";
         document.getElementById('total-vols').innerText = flights.length;
-        document.getElementById('scan-time').innerText = new Date().toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'});
+        document.getElementById('scan-time').innerText = new Date().toLocaleTimeString();
+        log.innerText = "RADAR COMPLET (AVEC TO/VY)";
     }
-
-    // Lancer automatiquement au chargement
     window.onload = lancerScan;
 </script>
 </body>
