@@ -24,6 +24,12 @@
 
 <link rel="stylesheet" href="/assets/main.css">
 <style id="inline-critical">/* critical above-the-fold kept minimal — full CSS in main.css */</style>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Organization","name":"Robin des Airs","url":"https://robindesairs.eu","logo":"https://robindesairs.eu/logo.png","description":"Service de récupération d'indemnités aériennes CE 261/2004, spécialiste diaspora africaine.","address":{"@type":"PostalAddress","streetAddress":"66 avenue des Champs-Élysées","addressLocality":"Paris","postalCode":"75008","addressCountry":"FR"},"contactPoint":{"@type":"ContactPoint","telephone":"+33756863630","contactType":"customer service","availableLanguage":["French","English","Wolof","Bambara","Lingala"]},"sameAs":["https://wa.me/33756863630"]}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Combien je touche exactement sur mon compte ?","acceptedAnswer":{"@type":"Answer","text":"Robin prend 25% uniquement en cas de succès. Sur un vol long-courrier (>3500km), l'indemnité est de 600€ par passager — vous touchez 450€ nets. Pour une famille de 4 : 1 800€ nets."}},{"@type":"Question","name":"La compagnie m'a proposé un bon d'achat — je l'accepte ?","acceptedAnswer":{"@type":"Answer","text":"Non. Le bon d'achat retourne dans la poche de la compagnie si vous ne l'utilisez pas. Sa valeur est presque toujours inférieure aux 600€ en cash auxquels vous avez droit légalement. Contactez Robin des Airs avant d'accepter."}},{"@type":"Question","name":"La compagnie invoque la météo — est-ce que je perds mon droit ?","acceptedAnswer":{"@type":"Answer","text":"Pas forcément. Notre dossier intègre les bulletins météo aéronautiques officiels (METAR, TAF). On compare avec les vols qui ont décollé dans la même fenêtre horaire. Si d'autres avions ont volé ce jour-là, l'excuse météo ne tient plus."}},{"@type":"Question","name":"Pourquoi Robin des Airs est moins cher que les concurrents ?","acceptedAnswer":{"@type":"Answer","text":"Nos concurrents facturent entre 30% et 50%. Robin prend 25% — no win no fee. Un tarif clair, un client heureux, et une recommandation plutôt qu'une grosse commission."}},{"@type":"Question","name":"Combien de temps pour être remboursé ?","acceptedAnswer":{"@type":"Answer","text":"Dossier envoyé sous 24h. En moyenne les compagnies règlent en 4 à 12 semaines. Relances, argumentation et escalade légale incluses sans frais supplémentaires."}}]}
+</script>
 </head>
 <body>
 <a href="#hero" class="skip-link">Aller au contenu principal</a>
@@ -55,7 +61,7 @@
       </div>
     </div>
     <!-- CTA visible sur desktop -->
-    <a href="#funnel-box" class="nav-cta nav-cta-inline" data-i18n="nav_cta">Vérifier mon éligibilité gratuitement →</a>
+    <a href="#funnel-box" class="nav-cta nav-cta-inline" data-i18n="nav_cta">Combien je touche ? →</a>
     <!-- Hamburger toujours visible -->
     <button class="nav-burger" id="nav-burger" onclick="toggleMobileNav()" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -72,7 +78,7 @@
     <li><a href="#comparatif" onclick="closeMobileNav()" data-i18n="nav_drawer_tarifs">💰 Nos tarifs</a></li>
     <li><a href="#temoignages" onclick="closeMobileNav()" data-i18n="nav_drawer_testi">⭐ Témoignages</a></li>
     <li><a href="#faq" onclick="closeMobileNav()" data-i18n="nav_drawer_faq">❓ FAQ</a></li>
-    <li><a href="#funnel-box" onclick="closeMobileNav(); document.getElementById('funnel-box')&&document.getElementById('funnel-box').scrollIntoView({behavior:'smooth'});" class="drawer-cta" data-i18n="nav_cta">Vérifier mon éligibilité gratuitement →</a></li>
+    <li><a href="#funnel-box" onclick="closeMobileNav(); document.getElementById('funnel-box')&&document.getElementById('funnel-box').scrollIntoView({behavior:'smooth'});" class="drawer-cta" data-i18n="nav_cta">Combien je touche ? →</a></li>
   </ul>
 </div>
 
@@ -100,7 +106,7 @@
 
       <!-- Deux options d'entrée -->
       <div class="hero-entry">
-        <a href="#funnel-box" class="hero-entry-btn primary" id="btn-calc-hero" onclick="scrollToCalcWithAnimation(event)" data-i18n="hero_btn_calc">Vérifier mon éligibilité gratuitement →</a>
+        <a href="#funnel-box" class="hero-entry-btn primary" id="btn-calc-hero" onclick="scrollToCalcWithAnimation(event)" data-i18n="hero_btn_calc">Mon vol vaut combien ? →</a>
         <a href="https://wa.me/33756863630?text=%5BFR%5D%20Bonjour%20Robin%20des%20Airs%20%21%0AJe%20voudrais%20parler%20%C3%A0%20un%20conseiller.%0A%0AMon%20vol%20%3A%20%0ADate%20%3A%20" target="_blank" class="hero-entry-btn secondary" data-i18n="hero_btn_wa">💬 On répond immédiatement</a>
       </div>
 
@@ -111,7 +117,7 @@
         </div>
         <div style="width:1px;background:var(--border);height:40px;"></div>
         <div class="stat">
-          <span class="stat-num">98%</span>
+          <span class="stat-num">9/10</span>
           <span class="stat-label" data-i18n="hero_stat_won">Dossiers gagnés</span>
         </div>
         <div style="width:1px;background:var(--border);height:40px;"></div>
@@ -125,7 +131,7 @@
           <span class="stat-label" data-i18n="hero_stat_24h">Réponse garantie</span>
         </div>
       </div>
-      <p style="margin-top:14px;"><a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" style="font-size:13px;font-weight:700;color:var(--neon-b);text-decoration:none;">Je vérifie mon vol maintenant</a></p>
+      <p style="margin-top:14px;"><a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" style="font-size:13px;font-weight:700;color:var(--neon-b);text-decoration:none;">60 secondes pour savoir →</a></p>
       <p class="hero-lang-line">
         <span class="hero-lang-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></span>
         Service disponible en : Français, Wolof, Bambara, Soninké, Pulaar, Lingala.
@@ -275,9 +281,9 @@
           <div class="dist-pills" role="group">
             <button type="button" class="dist-pill" data-dist="250" onclick="setDist('da-dist',250,this)">Court<br><span class="pill-amount">250€</span></button>
             <button type="button" class="dist-pill" data-dist="400" onclick="setDist('da-dist',400,this)">Moyen<br><span class="pill-amount">400€</span></button>
-            <button type="button" class="dist-pill" data-dist="600" onclick="setDist('da-dist',600,this)">Long &gt; 3 500 km<br><span class="pill-amount">600€</span></button>
+            <button type="button" class="dist-pill" data-dist="600" onclick="setDist('da-dist',600,this)">Long &gt; 3 500 km · <span class="pill-amount">600€</span></button>
           </div>
-          <p style="font-size:0.8em;color:#999;margin-top:4px;">La majorité de nos clients sont sur des vols long-courrier. Ajustez si nécessaire.</p>
+          <p class="dist-preselect-hint" style="font-size:0.8em;color:#999;margin-top:8px;">Pré-sélectionné : la majorité de nos clients voyagent sur des vols long-courrier (Europe ↔ Afrique).</p>
         </div>
         <input type="hidden" id="da-dist" value="">
 
@@ -470,25 +476,27 @@
         <button class="back-btn" onclick="restartFunnel()">↺ Recommencer le diagnostic</button>
       </div>
 
-      <!-- ══ NON-ÉLIGIBLE ══ -->
+      <!-- ══ NON-ÉLIGIBLE (sortie douce pour tous les cas) ══ -->
       <div class="fstep" id="step-nope">
-        <div class="nope-box">
-          <div class="nope-title">⚠️ Probablement non-éligible à l'indemnisation</div>
-          <p class="nope-body">L'annulation a été communiquée plus de 14 jours avant le départ. La loi CE 261 n'impose pas d'indemnisation dans ce cas. Vous avez cependant droit au <strong>remboursement intégral de votre billet.</strong></p>
+        <div class="non-eligible-exit">
+          <h3 class="nope-title">⚠️ Ce vol ne semble pas éligible à l'indemnisation</h3>
+          <p class="nope-body" id="step-nope-reason">L'annulation a été communiquée plus de 14 jours avant le départ. La loi CE 261 n'impose pas d'indemnisation dans ce cas. Vous avez cependant droit au <strong>remboursement intégral de votre billet.</strong></p>
+
+          <div class="exit-capture">
+            <h4>📩 Vous avez un prochain vol prévu ?</h4>
+            <p>Laissez votre email — on vous alerte automatiquement si un retard ouvre un droit.</p>
+            <input type="email" class="non-eligible-input" placeholder="votre@email.com" />
+            <button type="button" class="non-eligible-btn">M'alerter gratuitement</button>
+          </div>
+
+          <div class="exit-referral">
+            <h4>👥 Vous connaissez quelqu'un dont le vol a été retardé ?</h4>
+            <p>Partagez Robin — chaque passager peut toucher jusqu'à 600€.</p>
+            <a href="https://wa.me/?text=Mon%20ami%20Robin%20des%20Airs%20récupère%20les%20indemnités%20aériennes.%20Si%20ton%20vol%20a%20été%20retardé%20tu%20as%20droit%20à%20600€%20%3A%20https%3A%2F%2Frobindesairs.eu" class="btn-whatsapp non-eligible-link" target="_blank" rel="noopener">💬 Partager sur WhatsApp</a>
+          </div>
+
+          <button class="btn-restart back-btn" onclick="restartFunnel()">↺ Recommencer le diagnostic</button>
         </div>
-        <div style="margin-top:20px;padding:16px;border:1px solid #eee;border-radius:8px;text-align:center;">
-          <p style="font-weight:600;margin-bottom:4px;">📩 Vous avez un prochain vol prévu ?</p>
-          <p style="font-size:0.85em;color:#666;margin-bottom:12px;">Laissez votre email — on vous alerte si un retard ouvre un droit.</p>
-          <input type="email" placeholder="votre@email.com" style="padding:8px 12px;border:1px solid #ccc;border-radius:6px;width:100%;max-width:280px;margin-bottom:8px;" />
-          <br/>
-          <button type="button" style="margin-top:8px;padding:10px 20px;background:#1a1a1a;color:#fff;border:none;border-radius:6px;cursor:pointer;">M'alerter gratuitement</button>
-        </div>
-        <div style="margin-top:12px;padding:16px;border:1px solid #eee;border-radius:8px;text-align:center;">
-          <p style="font-weight:600;margin-bottom:4px;">👥 Vous connaissez quelqu'un dont le vol a été retardé ?</p>
-          <p style="font-size:0.85em;color:#666;margin-bottom:10px;">Partagez Robin — et touchez une prime de parrainage.</p>
-          <a href="/parrainage" style="padding:10px 20px;background:#f5f5f5;color:#1a1a1a;border-radius:6px;text-decoration:none;font-weight:600;">Partager Robin →</a>
-        </div>
-        <button class="back-btn" onclick="restartFunnel()">↺ Recommencer le diagnostic</button>
       </div>
 
       <p class="calc-disclaimer">ZÉRO CB · RÉPONSE SOUS 24H · ZÉRO FRAIS SI ON PERD</p>
@@ -546,7 +554,7 @@
       </div>
     </div>
     <div style="margin-top:48px;text-align:center;">
-      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary">Choisir Robin — 25%, zéro frais si on perd</a>
+      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary">Je récupère mon argent →</a>
       <p style="font-size:11px;color:var(--gray);margin-top:10px;">Jusqu'à 600€ · 25% · Zéro frais si on perd</p>
       <p style="font-size:12px;margin-top:14px;"><a href="/depot-en-ligne.html" style="color:var(--neon-dark);font-weight:600;">Scan rapide (7 étapes)</a></p>
     </div>
@@ -654,6 +662,9 @@
       </div>
     </div>
     <p style="font-size:9px;color:var(--gray2);margin-top:10px;text-align:right;letter-spacing:0.5px;">* Données comparatives à titre indicatif.</p>
+    <div style="margin-top:24px;text-align:center;">
+      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary">Robin s'en occupe — lancer mon dossier</a>
+    </div>
   </div>
 </section>
 
@@ -774,13 +785,13 @@
 <!-- ═══════ PREUVE SOCIALE ═══════ -->
 <section class="social-proof-strip" aria-label="Chiffres clés">
   <div class="wrap-social-proof">
-    <span class="sp-item"><strong>98%</strong> de dossiers gagnés</span>
+    <span class="sp-item"><strong>9 dossiers sur 10</strong> remportés</span>
     <span class="sp-sep">·</span>
     <span class="sp-item">Réponse sous <strong>24h</strong></span>
     <span class="sp-sep">·</span>
     <span class="sp-item">Des centaines de passagers nous ont confié leur dossier</span>
     <span class="sp-sep">·</span>
-    <a href="#funnel-box" onclick="document.getElementById('funnel-box')&&document.getElementById('funnel-box').scrollIntoView({behavior:'smooth'}); return false;" class="sp-cta">Rejoindre nos passagers remboursés →</a>
+    <a href="#funnel-box" onclick="document.getElementById('funnel-box')&&document.getElementById('funnel-box').scrollIntoView({behavior:'smooth'}); return false;" class="sp-cta">C'est mon tour →</a>
   </div>
 </section>
 
@@ -819,7 +830,7 @@
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C87A" stroke-width="2.2" stroke-linecap="round"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
         </div>
         <h3 class="step-title">On monte le dossier</h3>
-        <p class="step-desc">Sous 24h, nos experts constituent un dossier béton : bulletins météo METAR et TAF (aéroport départ + arrivée), relevés des vols d'autres compagnies au même moment, analyse des prévisions. Si d'autres avions ont pu décoller ce jour-là — on le prouve. C'est pour ça qu'on affiche <strong>98% de réussite.</strong></p>
+        <p class="step-desc">Sous 24h, nos experts constituent un dossier béton : bulletins météo METAR et TAF (aéroport départ + arrivée), relevés des vols d'autres compagnies au même moment, analyse des prévisions. Si d'autres avions ont pu décoller ce jour-là — on le prouve. C'est pour ça qu'on affiche <strong>9 dossiers sur 10</strong> remportés.</p>
         <span class="step-time">⏱ 24 heures</span>
       </div>
 
@@ -834,7 +845,7 @@
       </div>
     </div>
     <div style="margin-top:48px;text-align:center;">
-      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary">Lancer mon dossier en 3 minutes</a>
+      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary">3 minutes et c'est réglé →</a>
       <p style="font-size:11px;color:var(--gray);margin-top:10px;">Réponse sous 24h · Scan rapide 3 min</p>
       <p style="font-size:12px;margin-top:14px;"><a href="/depot-en-ligne.html" style="color:var(--neon-dark);font-weight:600;">Scan rapide (7 étapes)</a></p>
       <p style="font-size:12px;color:var(--gray);margin-top:18px;">Pour aller plus loin : <a href="/meteo-dossier-indemnite.html" style="color:var(--neon-dark);font-weight:600;">Météo et dossier (TAF, METAR…)</a> · <a href="/pourquoi-si-peu-reclament.html" style="color:var(--neon-dark);font-weight:600;">Pourquoi si peu récupèrent leur indemnité ?</a></p>
@@ -870,7 +881,7 @@
         <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1.5px;text-transform:uppercase;margin-top:4px;">Années dans le secteur</div>
       </div>
       <div style="background:rgba(0,229,160,0.06);border:1px solid rgba(0,229,160,0.12);border-radius:8px;padding:18px;text-align:center;">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--neon-b);line-height:1;">98%</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:40px;color:var(--neon-b);line-height:1;">9/10</div>
         <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1.5px;text-transform:uppercase;margin-top:4px;">Dossiers remportés</div>
       </div>
       <div style="background:rgba(0,229,160,0.06);border:1px solid rgba(0,229,160,0.12);border-radius:8px;padding:18px;text-align:center;">
@@ -912,24 +923,14 @@
         </div>
         <div class="faq-answer">
           <div class="faq-answer-inner">
-            <p style="margin-bottom:14px;">Selon la distance de votre vol :</p>
-            <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px;">
-              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--off);border-radius:6px;border:1px solid var(--border);">
-                <span style="font-size:12px;color:var(--gray);">Vols courts — &lt; 1 500 km</span>
-                <span style="font-weight:900;color:var(--navy);">188€ <span style="font-size:10px;color:var(--gray);font-weight:400;">nets (frais : 69€)</span></span>
-              </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(0,200,122,0.05);border-radius:6px;border:1.5px solid rgba(0,200,122,0.2);">
-                <span style="font-size:12px;color:var(--text);font-weight:600;">Vols moyens — 1 500 à 3 500 km ⭐</span>
-                <span style="font-weight:900;color:var(--neon-dark);">300€ <span style="font-size:10px;color:var(--gray);font-weight:400;">nets (frais : 99€)</span></span>
-              </div>
-              <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--off);border-radius:6px;border:1px solid var(--border);">
-                <span style="font-size:12px;color:var(--gray);">Vols longs — &gt; 3 500 km</span>
-                <span style="font-weight:900;color:var(--navy);">450€ <span style="font-size:10px;color:var(--gray);font-weight:400;">nets (frais : 139€)</span></span>
-              </div>
-            </div>
-            <div style="background:rgba(0,200,122,0.05);border:1px solid rgba(0,200,122,0.2);border-radius:6px;padding:10px 14px;font-size:12px;color:var(--gray);">
-              🏹 Ces frais ne sont prélevés <strong>QUE SI ON GAGNE</strong>. Procès inclus dans le tarif fixe.
-            </div>
+            <p style="margin-bottom:14px;"><strong>Robin prend 25% uniquement si on gagne.</strong> Vous recevez 75% nets.</p>
+            <ul style="margin-bottom:14px;padding-left:18px;font-size:13px;color:var(--gray);line-height:1.8;">
+              <li>Vol court (&lt; 1 500 km) → indemnité 250€ → vous touchez <strong>188€</strong></li>
+              <li>Vol moyen (1 500–3 500 km) → indemnité 400€ → vous touchez <strong>300€</strong></li>
+              <li>Vol long (&gt; 3 500 km) → indemnité 600€ → vous touchez <strong>450€</strong></li>
+            </ul>
+            <p style="margin-bottom:10px;font-size:13px;">Famille de 4 sur un Paris-Dakar ? 4 × 600€ = 2 400€ brut → <strong>1 800€ nets</strong> pour vous.</p>
+            <p style="font-size:12px;color:var(--gray);">🏹 Zéro frais si on ne gagne pas. Commission identique même en cas de procédure judiciaire.</p>
           </div>
         </div>
       </div>
@@ -1036,7 +1037,7 @@
 
       <div style="margin-top:40px;padding:28px 24px;background:linear-gradient(135deg,rgba(0,200,122,0.08),rgba(11,31,58,0.04));border:1px solid rgba(0,200,122,0.25);border-radius:12px;text-align:center;">
         <p style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:16px;" data-i18n="ready_claim">Prêt à réclamer ?</p>
-        <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary" data-i18n="obt_indemnite">Mon argent m'attend — je réclame maintenant</a>
+        <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary" data-i18n="obt_indemnite">Mon argent m'attend →</a>
       </div>
     </div>
   </div>
@@ -1051,7 +1052,7 @@
       Chaque mois sans réclamer, c'est de l'argent que vous laissez sur la table. Le délai de prescription est de 5 ans — mais ça ne dure pas.
     </p>
     <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
-      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary" data-i18n="cta_btn_calc">Mon argent m'attend — je réclame maintenant</a>
+      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary" data-i18n="cta_btn_calc">Mon argent m'attend →</a>
       <a href="https://wa.me/33756863630?text=%5BFR%5D%20Bonjour%20Robin%20des%20Airs%20%21%0AJe%20veux%20ouvrir%20mon%20dossier." target="_blank" class="btn-ghost" data-i18n="cta_wa">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.108.549 4.086 1.508 5.8L0 24l6.335-1.483A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.817 9.817 0 01-5.002-1.368l-.36-.214-3.722.976.994-3.63-.234-.373A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182c5.43 0 9.818 4.388 9.818 9.818 0 5.43-4.388 9.818-9.818 9.818z"/></svg>
         WhatsApp direct
@@ -1113,7 +1114,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <div class="footer-legal">© 2026 Robin des Airs · Réclamation aérienne · En cours d'immatriculation</div>
+    <div class="footer-legal">© 2026 SAS Robin des Airs — Paris · Réclamation aérienne · Spécialiste Diaspora</div>
     <div class="footer-reg">Fondé sur le Règlement CE 261/2004<br>Données protégées · RGPD conforme</div>
   </div>
 </footer>
@@ -1264,6 +1265,11 @@ function goTo(stepId, pct) {
       }
     }
   }
+  if (stepId === 'step-nope') {
+    var reasonEl = document.getElementById('step-nope-reason');
+    var defaultReason = "L'annulation a été communiquée plus de 14 jours avant le départ. La loi CE 261 n'impose pas d'indemnisation dans ce cas. Vous avez cependant droit au <strong>remboursement intégral de votre billet.</strong>";
+    if (reasonEl) reasonEl.innerHTML = (typeof window.nopeReason === 'string' && window.nopeReason) ? window.nopeReason : defaultReason;
+  }
   setTimeout(() => {
     document.getElementById('funnel-box').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }, 30);
@@ -1306,6 +1312,7 @@ function pickRaison(r) {
 /* ── Étape 1b : préavis annulation ── */
 function pickAnnDelai(val) {
   if (val === 'early') {
+    window.nopeReason = "L'annulation a été communiquée plus de 14 jours avant le départ. La loi CE 261 n'impose pas d'indemnisation dans ce cas. Vous avez cependant droit au <strong>remboursement intégral de votre billet.</strong>";
     goTo('step-nope', 100);
   } else {
     goTo('step-1c', 33);
@@ -1947,7 +1954,7 @@ function toggleEscaleVol3() {
 <!-- Bouton sticky Ultra-Convertisseur (vert WhatsApp #25D366) -->
 <div class="sticky-cta-bar" id="sticky-cta-bar">
   <a href="https://wa.me/33756863630?text=%5BFR%5D%20Bonjour%20Robin%20des%20Airs%20%2C%20je%20souhaite%20lancer%20ma%20demande%20d%27indemnisation%20." target="_blank" class="sticky-wa-btn" id="sticky-wa-cta">
-    <span class="sticky-wa-line1">⚡ <span id="sticky-cta-amount">RÉCUPÉRER MES INDEMNITÉS</span></span>
+    <span class="sticky-wa-line1">⚡ <span id="sticky-cta-amount">600€ vous attendent</span></span>
     <span class="sticky-wa-line2">Lancer mon dossier gratuitement sur WhatsApp</span>
   </a>
 </div>

@@ -1724,8 +1724,20 @@ button:focus-visible,
 .nope-body strong { color: rgba(255,255,255,0.8); }
 .nope-link  { display: inline-block; margin-top: 12px; font-size: 11px; font-weight: 700; color: var(--neon-b); text-decoration: underline; }
 
+.non-eligible-exit { margin-top: 0; }
+.non-eligible-exit .nope-title { font-size: 14px; margin-bottom: 10px; }
+.non-eligible-exit .exit-capture,
+.non-eligible-exit .exit-referral { margin-top: 20px; }
+.non-eligible-exit .exit-capture h4,
+.non-eligible-exit .exit-referral h4 { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.9); margin: 0 0 6px; }
+.non-eligible-exit .exit-capture p,
+.non-eligible-exit .exit-referral p { font-size: 12px; color: rgba(255,255,255,0.5); line-height: 1.5; margin-bottom: 12px; }
+.non-eligible-exit .btn-restart { margin-top: 20px; }
+
 .non-eligible-email,
-.non-eligible-referral {
+.non-eligible-referral,
+.exit-capture,
+.exit-referral {
   background: rgba(255,255,255,0.04);
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: 10px;
