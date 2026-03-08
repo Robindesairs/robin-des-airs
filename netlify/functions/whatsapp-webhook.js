@@ -582,8 +582,10 @@ exports.handler = async (event) => {
   }
 
   const d360KeyForMedia = process.env.WHATSAPP_360DIALOG_API_KEY;
-  const phoneNumberIdFilter = process.env.WHATSAPP_PHONE_NUMBER_ID;
-  const businessAccountIdFilter = process.env.WHATSAPP_BUSINESS_ACCOUNT_ID;
+  // Ne filtrer par numéro/compte que si on envoie via Meta (sinon 360dialog peut avoir un autre format et tout ignorer)
+  const useMetaSend = sendConfig.provider === 'meta' && sendConfig.phoneNumberId && sendConfig.accessToken;
+  const phoneNumberIdFilter = useMetaSend ? process.env.WHATSAPP_PHONE_NUMBER_ID : null;
+  const businessAccountIdFilter = useMetaSend ? process.env.WHATSAPP_BUSINESS_ACCOUNT_ID : null;
   const contactNumber = process.env.WHATSAPP_CONTACT_NUMBER || '';
   const contactLink = contactNumber ? ` https://wa.me/${contactNumber.replace(/\D/g, '')}` : '';
 
@@ -603,7 +605,10 @@ exports.handler = async (event) => {
   }
 
   for (const entry of entries) {
-    if (businessAccountIdFilter && entry.id && entry.id !== businessAccountIdFilter) continue;
+    if (businessAccountIdFilter && entry.id && entry.id !== businessAccountIdFilter) {
+      console.log('whatsapp-webhook: skip entry (business_account_id)', entry.id, '!==', businessAccountIdFilter);
+      continue;
+    }
 
     const changes = entry.changes || [];
     for (const change of changes) {
@@ -611,7 +616,10 @@ exports.handler = async (event) => {
         continue;
       }
       const value = change.value || {};
-      if (phoneNumberIdFilter && value.metadata?.phone_number_id && value.metadata.phone_number_id !== phoneNumberIdFilter) continue;
+      if (phoneNumberIdFilter && value.metadata?.phone_number_id && value.metadata.phone_number_id !== phoneNumberIdFilter) {
+        console.log('whatsapp-webhook: skip change (phone_number_id)', value.metadata.phone_number_id, '!==', phoneNumberIdFilter);
+        continue;
+      }
 
       const messages = value.messages || [];
       const from = value.contacts?.[0]?.wa_id || value.metadata?.phone_number_id;
@@ -622,6 +630,25 @@ exports.handler = async (event) => {
         const text = (msg.text && msg.text.body) ? String(msg.text.body).trim() : '';
         const msgId = msg.id;
         const msgType = msg.type || 'text';
+
+        // Déduplication : ne répondre qu'une fois par message_id (évite 5 réponses si le webhook est appelé 5 fois)
+        let repliedIds = [];
+        try {
+          const blobs = require('@netlify/blobs');
+          if (blobs.connectLambda && event) blobs.connectLambda(event);
+          const store = blobs.getStore('robin-wa');
+          const raw = await store.get('replied_msg_ids');
+          repliedIds = (typeof raw === 'string' ? (() => { try { return JSON.parse(raw); } catch (_) { return []; } })() : raw) || [];
+          if (Array.isArray(repliedIds) && repliedIds.includes(msgId)) {
+            console.log('whatsapp-webhook: skip duplicate message_id', msgId);
+            continue;
+          }
+          repliedIds.push(msgId);
+          if (repliedIds.length > 300) repliedIds = repliedIds.slice(-300);
+          await store.set('replied_msg_ids', JSON.stringify(repliedIds));
+        } catch (e) {
+          console.log('whatsapp-webhook: dedup check failed', e.message);
+        }
 
         const logPayload = {
           wa_id: fromId,
@@ -657,6 +684,11 @@ exports.handler = async (event) => {
             if (msgType === 'image') {
               imageBase64 = await getImageBase64FromMessage(msg, d360KeyForMedia);
               if (msg.image && msg.image.mime_type) imageMime = msg.image.mime_type;
+              if (!imageBase64) {
+                console.log('whatsapp-webhook: image not fetched (url/id + d360Key?)', !!msg.image?.url, !!msg.image?.id, !!d360KeyForMedia);
+                await sendWhatsAppText(to, "Je n'ai pas pu récupérer votre photo. Réessayez d'envoyer l'image (carte d'embarquement ou confirmation de billet), ou envoyez « Bonjour » pour le menu.");
+                continue;
+              }
             }
 
             // Relais Gemini après 20s : message texte → mise en attente + accusé ; les images sont traitées tout de suite
@@ -696,8 +728,14 @@ exports.handler = async (event) => {
           }
 
         if (msgType === 'image') {
-          const ocr = await geminiVisionOcr(await getImageBase64FromMessage(msg, d360KeyForMedia), (msg.image && msg.image.mime_type) ? msg.image.mime_type : 'image/jpeg');
-          if (ocr.flightNumber) {
+          const imageBase64ForOcr = await getImageBase64FromMessage(msg, d360KeyForMedia);
+          if (!imageBase64ForOcr) {
+            console.log('whatsapp-webhook: image not fetched for OCR', !!msg.image?.url, !!msg.image?.id, !!d360KeyForMedia);
+            await sendWhatsAppText(to, "Je n'ai pas pu récupérer votre photo. Réessayez d'envoyer l'image (carte d'embarquement ou confirmation de billet).");
+            continue;
+          }
+          const ocr = await geminiVisionOcr(imageBase64ForOcr, (msg.image && msg.image.mime_type) ? msg.image.mime_type : 'image/jpeg');
+          if (ocr && ocr.flightNumber) {
             const reply = `Je vois le vol *${ocr.flightNumber}*, est-ce correct ?${ocr.passengerName ? ` (Passager : ${ocr.passengerName})` : ''} Répondez OUI ou NON.`;
             await sendWhatsAppText(to, reply);
           } else {

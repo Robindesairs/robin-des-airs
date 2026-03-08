@@ -118,11 +118,15 @@ Si vous voulez qu’un **humain** puisse répondre en premier et que **Gemini pr
 ## WhatsApp ne répond pas (toujours pas de réponse)
 
 **Diagnostic rapide** — Après avoir envoyé un message au numéro WhatsApp :
-- Dans Netlify → **Functions** → **whatsapp-webhook** → **Logs**, chercher :
-  - `whatsapp-webhook: POST received` = le webhook est bien appelé par 360dialog.
-  - `whatsapp-webhook: sending reply to` = une réponse a été envoyée.
-  - `whatsapp-webhook: send error` = l’envoi a échoué (vérifier **WHATSAPP_360DIALOG_API_KEY**).
-- **Si aucun log n’apparaît** : 360dialog n’appelle pas l’URL. Vérifier dans 360dialog : URL = `https://robindesairs.eu/api/whatsapp-webhook`, Verify token = **exactement** la valeur de **WHATSAPP_API_KEY** dans Netlify. Vérifier aussi que le domaine robindesairs.eu pointe vers **Netlify** (pas un autre hébergeur).
+1. Ouvrir **https://robindesairs.eu/api/whatsapp-status** : `can_send_replies: true` confirme que l’envoi est configuré (360dialog ou Meta).
+2. Dans Netlify → **Functions** → **whatsapp-webhook** → **Logs**, chercher :
+   - `whatsapp-webhook: POST received` = le webhook est bien appelé.
+   - `whatsapp-webhook: message` = un message a été reçu et traité.
+   - `whatsapp-webhook: sending reply to` = une réponse a été envoyée.
+   - `whatsapp-webhook: send error` = l’envoi a échoué (vérifier **WHATSAPP_360DIALOG_API_KEY** ou **WHATSAPP_ACCESS_TOKEN**).
+   - `whatsapp-webhook: skip entry` / `skip change` = en mode Meta, le message a été ignoré car reçu sur un autre numéro/compte (filtres WHATSAPP_PHONE_NUMBER_ID / WHATSAPP_BUSINESS_ACCOUNT_ID).
+3. **Si vous utilisez uniquement 360dialog** : les filtres par Phone Number ID / Business Account ID ne s’appliquent pas ; tous les messages reçus sont traités. Ils ne s’activent que si **WHATSAPP_PHONE_NUMBER_ID** et **WHATSAPP_ACCESS_TOKEN** sont tous deux définis (envoi via Meta).
+4. **Si aucun log n’apparaît** : 360dialog n’appelle pas l’URL. Vérifier dans 360dialog : URL = `https://robindesairs.eu/api/whatsapp-webhook`, Verify token = **exactement** la valeur de **WHATSAPP_API_KEY** dans Netlify. Vérifier aussi que le domaine robindesairs.eu pointe vers **Netlify** (pas un autre hébergeur).
 
 1. **Vérifier que le webhook est appelé**  
    Netlify → Site → Functions → ouvrir la fonction `whatsapp-webhook` → onglet **Logs**. Envoyez un message sur WhatsApp puis regardez si une ligne apparaît (ex. `whatsapp-webhook: message`).  
