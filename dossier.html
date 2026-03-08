@@ -917,6 +917,7 @@ body{background:var(--off);font-family:'Montserrat',sans-serif;color:var(--text)
 </div>
 <canvas id="webcam-canvas" style="display:none"></canvas>
 
+<script src="assets/feedback-modal.js"></script>
 <script>
 /* ══ STEP NAVIGATION ══ */
 let currentStep = 1;
@@ -1375,6 +1376,15 @@ function submitDossier() {
     document.querySelectorAll('.step-item').forEach(el => el.classList.add('done'));
     const remEl = document.getElementById('steps-remaining'); if (remEl) remEl.textContent = 'Dossier envoyé !';
     window.scrollTo({ top:0, behavior:'smooth' });
+    setTimeout(function() {
+      if (window.FeedbackModal) {
+        window.FeedbackModal.show({
+          webhookUrl: DOSSIER_WEBHOOK_URL,
+          googleReviewUrl: 'https://search.google.com/local/writereview?placeid=TON_LIEN_GOOGLE_BUSINESS',
+          source: 'dossier'
+        });
+      }
+    }, 800);
   }
 
   const payload = {

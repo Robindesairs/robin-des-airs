@@ -555,6 +555,7 @@ a{text-decoration:none;color:inherit}
 <script src="data/airlines.js"></script>
 <script src="data/airports.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tom-select@2/dist/js/tom-select.complete.min.js"></script>
+<script src="assets/feedback-modal.js"></script>
 <script>
 /* ═══════════════════════════════════════════════
    ROBIN DES AIRS — Formulaire Dossier v3
@@ -1057,6 +1058,15 @@ function submitDossier() {
       );
       document.getElementById("wa-followup").href = "https://wa.me/33652893858?text=" + msg;
       setStep(TOTAL_STEPS + 1);
+      setTimeout(function() {
+        if (window.FeedbackModal) {
+          window.FeedbackModal.show({
+            webhookUrl: WEBHOOK_URL,
+            googleReviewUrl: "https://search.google.com/local/writereview?placeid=TON_LIEN_GOOGLE_BUSINESS",
+            source: "depot_en_ligne"
+          });
+        }
+      }, 800);
     })
     .catch(() => {
       btn.disabled = false;
