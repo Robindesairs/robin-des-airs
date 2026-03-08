@@ -29,6 +29,10 @@
 
 ## Configuration côté 360dialog
 
+**À ne pas confondre :** L’API 360dialog (`https://waba-v2.360dialog.io`) est déjà utilisée dans le code pour envoyer les réponses. L’URL du webhook à configurer ci-dessous est *votre* site (pas waba-v2.360dialog.io), pour que 360dialog envoie les messages entrants vers Robin. Si votre numéro n’est pas encore enregistré sur Meta Business, vous pouvez utiliser un autre numéro en attendant (même clé et même URL de webhook).
+
+**Utiliser un numéro précis (ex. +1 555-784-0392 — Robindesairs) :** Dans 360dialog, associez ce numéro au canal WhatsApp qui pointe vers votre webhook. Toutes les conversations auront lieu sur ce téléphone ; aucun changement de code n’est nécessaire.
+
 1. Dans le **Partner Hub** ou la config du canal WhatsApp, définir l’URL du webhook :  
    `https://robindesairs.eu/api/whatsapp-webhook` (ou votre domaine Netlify).
 2. Définir le **Verify token** : choisir une valeur secrète et la mettre dans Netlify comme `WHATSAPP_API_KEY` (et la même valeur dans le champ « Verify token » 360dialog).
