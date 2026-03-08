@@ -13,6 +13,19 @@
 
 ---
 
+## Où mettre les clés (360dialog vs Netlify)
+
+| Où ? | Quoi ? | Détail |
+|------|--------|--------|
+| **Dans 360dialog** (config webhook) | **URL du webhook** | `https://robindesairs.eu/api/whatsapp-webhook` |
+| **Dans 360dialog** (config webhook) | **Verify token** | Une phrase secrète de votre choix (ex. `robin-secret-2024`). À recopier **à l’identique** dans Netlify (voir ci‑dessous). |
+| **Dans Netlify** (variables d’environnement) | **WHATSAPP_API_KEY** | La **même** valeur que le Verify token saisi dans 360dialog. |
+| **Dans Netlify** (variables d’environnement) | **WHATSAPP_360DIALOG_API_KEY** | La clé API 360dialog (D360-API-KEY) que vous **récupérez** dans le compte 360dialog (API Keys / Credentials). On ne met **pas** cette clé dans l’app 360dialog, seulement dans Netlify. |
+
+En résumé : dans 360dialog vous ne saisissez que l’**URL du webhook** et le **Verify token**. La clé API 360dialog, vous la prenez dans 360dialog et vous la mettez **uniquement** dans Netlify.
+
+---
+
 ## Route
 
 - **URL** : `https://VOTRE-DOMAINE.netlify.app/api/whatsapp-webhook`

@@ -17,7 +17,7 @@ const MENU_BIENVENUE = `👋 *Robin des Airs* — Récupérez jusqu'à 600€ si
 • Envoyez-nous votre *numéro de vol* (ex: AF718, BA123) pour vérifier votre éligibilité.
 • Ou dites *Bonjour* pour ce menu.
 • Déposer un dossier : https://robindesairs.eu/depot-en-ligne.html
-• Nous contacter : https://wa.me/33756863630`;
+• Nous contacter : https://wa.me/15557840392`;
 
 const ROBIN_ACCUEIL = "Bonjour ! Je suis Robin 🏹. Envoyez-moi une photo de votre carte d'embarquement, je m'occupe d'analyser vos droits en 30 secondes.";
 
@@ -652,7 +652,7 @@ exports.handler = async (event) => {
         } catch (err) {
           console.error('whatsapp-webhook: processing error', err.message || err, err.stack);
           try {
-            await sendWhatsAppText(to, 'Désolé, un problème technique est survenu. Réessayez dans un instant ou contactez-nous : https://wa.me/33756863630', d360Key);
+            await sendWhatsAppText(to, 'Désolé, un problème technique est survenu. Réessayez dans un instant ou contactez-nous : https://wa.me/15557840392', d360Key);
           } catch (sendErr) {
             console.error('whatsapp-webhook: fallback send failed', sendErr.message);
           }
