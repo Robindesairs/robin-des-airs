@@ -1264,6 +1264,20 @@ function goTo(stepId, pct) {
         if (pill600) pill600.classList.add('active');
       }
     }
+    // Rafraîchir les Tom Select aéroports une fois l’étape visible (sinon le dropdown peut rester vide)
+    setTimeout(function() {
+      if (window.tomSelectDaVilleDep && window.tomSelectDaVilleDep.sync) window.tomSelectDaVilleDep.sync();
+      if (window.tomSelectDaVilleArr && window.tomSelectDaVilleArr.sync) window.tomSelectDaVilleArr.sync();
+    }, 100);
+  }
+  if (stepId === 'step-3b') {
+    setTimeout(function() {
+      [1, 2, 3].forEach(function(i) {
+        var d = document.getElementById('eb-ville-depart-' + i); var a = document.getElementById('eb-ville-arrivee-' + i);
+        if (d && d.tomselect && d.tomselect.sync) d.tomselect.sync();
+        if (a && a.tomselect && a.tomselect.sync) a.tomselect.sync();
+      });
+    }, 100);
   }
   if (stepId === 'step-nope') {
     var reasonEl = document.getElementById('step-nope-reason');
@@ -1694,23 +1708,37 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Tom Select — Aéroports Départ / Arrivée (Amadeus API à 3 caractères + fallback static)
+  // Tom Select — Aéroports Départ / Arrivée : liste complète au chargement + recherche API à 2 caractères
   if (typeof TomSelect !== 'undefined') {
     var airportSearchApi = (typeof window.AIRPORT_SEARCH_API !== 'undefined' && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : (window.location.origin + '/.netlify/functions/airport-search');
+    var airportsRaw = window.AIRPORTS_DATA && window.AIRPORTS_DATA.length ? window.AIRPORTS_DATA : [
+      { value: 'CDG', text: 'Paris — CDG', city: 'Paris' }, { value: 'ORY', text: 'Paris — ORY', city: 'Paris' },
+      { value: 'DSS', text: 'Dakar — DSS', city: 'Dakar' }, { value: 'LYS', text: 'Lyon — LYS', city: 'Lyon' },
+      { value: 'MRS', text: 'Marseille — MRS', city: 'Marseille' }, { value: 'CMN', text: 'Casablanca — CMN', city: 'Casablanca' },
+      { value: 'BRU', text: 'Bruxelles — BRU', city: 'Bruxelles' }
+    ];
+    var allAirportsOptions = airportsRaw.map(function(a) { return { value: a.value, text: a.text || (a.city + ' — ' + a.value) }; });
     var aopts = {
-      options: [],
+      options: allAirportsOptions,
       valueField: 'value',
       labelField: 'text',
       searchField: ['text', 'value'],
       maxItems: 1,
-      placeholder: 'Tapez 3 caractères (ville ou code IATA)…',
+      placeholder: 'Choisir ou taper (ville ou code IATA)…',
       create: false,
       allowEmptyOption: true,
       load: function(query, callback) {
-        if (query.length < 3) { callback(); return; }
+        var qLower = (query || '').toLowerCase();
+        if (qLower.length < 2) {
+          callback(allAirportsOptions.filter(function(o) {
+            var s = (o.text + ' ' + o.value).toLowerCase();
+            return s.indexOf(qLower) !== -1;
+          }));
+          return;
+        }
         var q = encodeURIComponent(query);
-        var staticList = (window.AIRPORTS_DATA || []).filter(function(a) {
-          var s = (a.search || a.text || a.value || '').toLowerCase();
+        var staticList = airportsRaw.map(function(a) { return { value: a.value, text: a.text || (a.city + ' — ' + a.value) }; }).filter(function(a) {
+          var s = (a.text + ' ' + a.value).toLowerCase();
           return s.indexOf(query.toLowerCase()) !== -1;
         });
         fetch(airportSearchApi + '?keyword=' + q).then(function(r) { return r.ok ? r.json() : Promise.reject(r); }).then(function(data) {
@@ -1720,7 +1748,7 @@ document.addEventListener('DOMContentLoaded', () => {
           staticList.forEach(function(o) { if (!seen[o.value]) { seen[o.value] = true; api.push(o); } });
           callback(api);
         }).catch(function() {
-          callback(staticList);
+          callback(staticList.length ? staticList : allAirportsOptions);
         });
       }
     };
@@ -1844,9 +1872,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Tom Select — Escale : Vol 1, 2, 3 (compagnie + villes Amadeus)
+  // Tom Select — Escale : Vol 1, 2, 3 (compagnie + villes — liste complète comme vol direct)
   if (typeof TomSelect !== 'undefined' && window.AIRLINES_DATA) {
-    var airportSearchApi = (typeof window.AIRPORT_SEARCH_API !== 'undefined' && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : (window.location.origin + '/.netlify/functions/airport-search');
+    var airportSearchApiEscale = (typeof window.AIRPORT_SEARCH_API !== 'undefined' && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : (window.location.origin + '/.netlify/functions/airport-search');
+    var airportsRawEscale = window.AIRPORTS_DATA && window.AIRPORTS_DATA.length ? window.AIRPORTS_DATA : [
+      { value: 'CDG', text: 'Paris — CDG', city: 'Paris' }, { value: 'ORY', text: 'Paris — ORY', city: 'Paris' },
+      { value: 'DSS', text: 'Dakar — DSS', city: 'Dakar' }, { value: 'LYS', text: 'Lyon — LYS', city: 'Lyon' },
+      { value: 'MRS', text: 'Marseille — MRS', city: 'Marseille' }, { value: 'CMN', text: 'Casablanca — CMN', city: 'Casablanca' },
+      { value: 'BRU', text: 'Bruxelles — BRU', city: 'Bruxelles' }
+    ];
+    var allAirportsOptionsEscale = airportsRawEscale.map(function(a) { return { value: a.value, text: a.text || (a.city + ' — ' + a.value) }; });
     var tsComp = {
       options: window.AIRLINES_DATA,
       optgroups: [{ value: 'Europe – Afrique', label: 'Europe – Afrique' }, { value: 'Majors européennes', label: 'Majors européennes' }, { value: 'Long-courrier', label: 'Long-courrier' }, { value: 'Autre', label: 'Autre' }],
@@ -1854,26 +1889,36 @@ document.addEventListener('DOMContentLoaded', () => {
       valueField: 'value', labelField: 'text', searchField: 'text', maxItems: 1, placeholder: 'Compagnie', create: false, allowEmptyOption: true
     };
     var tsVilleOpts = {
-      options: [],
+      options: allAirportsOptionsEscale,
       valueField: 'value',
       labelField: 'text',
       searchField: ['text', 'value'],
       maxItems: 1,
-      placeholder: 'Tapez 3 caractères (ville ou IATA)…',
+      placeholder: 'Choisir ou taper (ville ou IATA)…',
       create: false,
       allowEmptyOption: true,
       load: function(query, callback) {
-        if (query.length < 3) { callback(); return; }
+        var qLower = (query || '').toLowerCase();
+        if (qLower.length < 2) {
+          callback(allAirportsOptionsEscale.filter(function(o) {
+            var s = (o.text + ' ' + o.value).toLowerCase();
+            return s.indexOf(qLower) !== -1;
+          }));
+          return;
+        }
         var q = encodeURIComponent(query);
-        var staticList = (window.AIRPORTS_DATA || []).filter(function(a) { var s = (a.search || a.text || a.value || '').toLowerCase(); return s.indexOf(query.toLowerCase()) !== -1; });
-        fetch(airportSearchApi + '?keyword=' + q).then(function(r) { return r.ok ? r.json() : Promise.reject(r); }).then(function(data) {
+        var staticList = airportsRawEscale.map(function(a) { return { value: a.value, text: a.text || (a.city + ' — ' + a.value) }; }).filter(function(a) {
+          var s = (a.text + ' ' + a.value).toLowerCase();
+          return s.indexOf(qLower) !== -1;
+        });
+        fetch(airportSearchApiEscale + '?keyword=' + q).then(function(r) { return r.ok ? r.json() : Promise.reject(r); }).then(function(data) {
           var api = data || [];
           var seen = {};
           api.forEach(function(o) { seen[o.value] = true; });
           staticList.forEach(function(o) { if (!seen[o.value]) { seen[o.value] = true; api.push(o); } });
           callback(api);
         }).catch(function() {
-          callback(staticList);
+          callback(staticList.length ? staticList : allAirportsOptionsEscale);
         });
       }
     };

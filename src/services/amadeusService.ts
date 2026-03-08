@@ -29,11 +29,11 @@ function getClient(): InstanceType<typeof Amadeus> | null {
   return amadeus;
 }
 
-/** 44 hubs africains (référence Robin des Airs — vols Europe ↔ Afrique). */
+/** Hubs africains et diaspora (vols Europe ↔ Afrique). Liste étendue pour couvrir tous les aéroports utilisés. */
 export const AFRICAN_HUBS_IATA = [
-  'ABJ', 'ACC', 'ABV', 'ADD', 'ALG', 'BGF', 'BJL', 'BKO', 'BZV', 'CAI', 'CMN', 'COO', 'CPT', 'DAR', 'DKR', 'DLA', 'DSS',
+  'ABJ', 'ACC', 'ABV', 'ADD', 'ALG', 'BGF', 'BJL', 'BKO', 'BZV', 'CAI', 'CMN', 'COO', 'CPT', 'CKY', 'DAR', 'DKR', 'DLA', 'DSS',
   'FDF', 'FIH', 'FNA', 'JIB', 'JNB', 'KGL', 'LAD', 'LBV', 'LFW', 'LOS', 'MRU', 'NBO', 'NDJ', 'NIM', 'NKC', 'NSI', 'OUA',
-  'PNR', 'PTP', 'RAK', 'ROB', 'RUN', 'SSG', 'TNR', 'TUN', 'ZNZ',
+  'PNR', 'PTP', 'RAK', 'ROB', 'RUN', 'SSG', 'TNR', 'TUN', 'MPM', 'ZNZ',
 ];
 
 export interface AirportInfo {
@@ -160,39 +160,60 @@ export async function checkFlightVerification(
 // ─── Référence Aéroports (Airport & City Search) ─────────────────────────────
 
 /**
- * Récupère les coordonnées et le timezone d'un aéroport via l'API Amadeus Airport & City Search.
+ * Récupère les coordonnées et le timezone d'un aéroport.
+ * 1) Amadeus Airport & City Search (en prod : données complètes ; en TEST : limité US, ES, UK, DE, IN).
+ * 2) Repli statique (NKC, etc.) si Amadeus ne renvoie rien.
  */
 export async function fetchAirportByIata(iataCode: string): Promise<AirportInfo | null> {
-  const client = getClient();
-  if (!client) return null;
   const iata = (iataCode || '').trim().toUpperCase();
   if (!iata || iata.length !== 3) return null;
-  try {
-    const response = await (client as any).referenceData.locations.get({
-      keyword: iata,
-      subType: 'AIRPORT',
-      view: 'FULL',
-      'page[limit]': 5,
-    });
-    const data = (response as any)?.data;
-    const list = Array.isArray(data) ? data : [];
-    const airport = list.find((loc: any) => (loc.iataCode || '').toUpperCase() === iata && (loc.subType || '').toUpperCase() === 'AIRPORT') || list[0];
-    if (!airport) return null;
-    const geo = airport.geoCode || {};
-    const addr = airport.address || {};
-    return {
-      iataCode: (airport.iataCode || iata).toUpperCase(),
-      name: airport.name || airport.detailedName || null,
-      cityCode: addr.cityCode || null,
-      cityName: addr.cityName || null,
-      countryCode: addr.countryCode || null,
-      latitude: typeof geo.latitude === 'number' ? geo.latitude : null,
-      longitude: typeof geo.longitude === 'number' ? geo.longitude : null,
-      timezoneOffset: airport.timeZoneOffset ?? null,
-    };
-  } catch {
-    return null;
+
+  const client = getClient();
+  if (client) {
+    try {
+      const response = await (client as any).referenceData.locations.get({
+        keyword: iata,
+        subType: 'AIRPORT',
+        view: 'FULL',
+        'page[limit]': 5,
+      });
+      const data = (response as any)?.data;
+      const list = Array.isArray(data) ? data : [];
+      const airport = list.find((loc: any) => (loc.iataCode || '').toUpperCase() === iata && (loc.subType || '').toUpperCase() === 'AIRPORT') || list[0];
+      if (airport) {
+        const geo = airport.geoCode || {};
+        const addr = airport.address || {};
+        return {
+          iataCode: (airport.iataCode || iata).toUpperCase(),
+          name: airport.name || airport.detailedName || null,
+          cityCode: addr.cityCode || null,
+          cityName: addr.cityName || null,
+          countryCode: addr.countryCode || null,
+          latitude: typeof geo.latitude === 'number' ? geo.latitude : null,
+          longitude: typeof geo.longitude === 'number' ? geo.longitude : null,
+          timezoneOffset: airport.timeZoneOffset ?? null,
+        };
+      }
+    } catch {
+      // fallthrough to fallback
+    }
   }
+
+  const { getAirportFallback } = require('../data/airportsFallback');
+  const fallback = getAirportFallback(iata);
+  if (fallback) {
+    return {
+      iataCode: fallback.iataCode,
+      name: fallback.name,
+      cityCode: null,
+      cityName: fallback.cityName,
+      countryCode: fallback.countryCode,
+      latitude: fallback.latitude,
+      longitude: fallback.longitude,
+      timezoneOffset: fallback.timezoneOffset,
+    };
+  }
+  return null;
 }
 
 /**

@@ -62,8 +62,10 @@ Ouvrir **`src/views/dashboard.html`** (ou le servir via le même serveur / un h�
 
 ## 7. Référence Aéroports et Horaires officiels
 
-- **Aéroports** : API Amadeus *Airport & City Search* pour coordonnées et timezone des **44 hubs africains** (ABJ, DSS, DLA, etc.). Stockage en table **`airports`** de `robin.db`.
-  - `fetchAirportByIata(iata)` → infos aéroport (lat, lon, timezone).
+- **Aéroports** : API Amadeus *Airport & City Search* pour coordonnées et timezone des hubs africains (ABJ, DSS, DLA, NKC, etc.). Stockage en table **`airports`** de `robin.db`.
+  - En **production** Amadeus (`AMADEUS_HOST=api.amadeus.com`) : données mondiales.
+  - En **test** Amadeus : données limitées (US, ES, UK, DE, IN) → un **repli statique** (`src/data/airportsFallback.ts`) fournit NKC, ABJ, DLA, etc. quand Amadeus ne renvoie rien.
+  - `fetchAirportByIata(iata)` → Amadeus puis repli si besoin.
   - `fetchAndStoreAfricanHubs()` → remplit la table. Lancer : `npm run seed:hubs`.
 - **Vols (référence)** : API Amadeus *Flight Schedules* → horaires théoriques.
   - `verifyOfficialTime(flightNumber, date)` → `{ scheduledDeparture, scheduledArrival, depIata, arrIata }` = **Vérité de Référence**.

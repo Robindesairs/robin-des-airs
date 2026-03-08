@@ -416,13 +416,15 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   color: var(--neon-dark);
 }
 
-/* HERO RIGHT — Calculateur (style épuré, compact) */
+/* HERO RIGHT — Calculateur (style épuré, compact) — tout le diagnostic doit apparaître */
 .hero-right {
   background: linear-gradient(165deg, var(--navy) 0%, var(--navy2) 100%);
   border-radius: var(--radius-lg);
   padding: 20px 24px;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: min(90vh, 900px);
   box-shadow: var(--shadow-premium);
   transform-style: preserve-3d;
   transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
