@@ -1,0 +1,38 @@
+{
+  "name": "files",
+  "version": "1.0.0",
+  "description": "",
+  "main": "i18n.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "certify": "node -r ts-node/register src/runCertification.ts",
+    "certify:server": "node -r ts-node/register src/server.ts",
+    "seed:hubs": "node -r ts-node/register src/seedAfricanHubs.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Robindesairs/robin-des-airs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Robindesairs/robin-des-airs/issues"
+  },
+  "homepage": "https://github.com/Robindesairs/robin-des-airs#readme",
+  "dependencies": {
+    "amadeus": "^11.0.0",
+    "better-sqlite3": "^12.6.2",
+    "dotenv": "^17.3.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^25.3.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  }
+}

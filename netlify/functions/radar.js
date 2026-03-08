@@ -333,7 +333,26 @@ exports.handler = async (event) => {
       routeMap.set(routeKey, { data: flightObj, isOperating: isOperatingRow });
     }
 
-    const flights = Array.from(routeMap.values()).map((v) => v.data);
+    let flights = Array.from(routeMap.values()).map((v) => v.data);
+
+    // Croisement Amadeus (optionnel) : si CERTIFICATION_API_URL est défini, récupérer is_certified_amadeus
+    const certificationApiUrl = process.env.CERTIFICATION_API_URL;
+    if (certificationApiUrl && flights.length > 0) {
+      try {
+        const flightKey = (f) => [f.flight, f.dep, f.arr, f.scheduledDate || ''].map((s) => (s || '').trim().toUpperCase()).join('|');
+        const keys = [...new Set(flights.map(flightKey).filter(Boolean))];
+        if (keys.length > 0) {
+          const url = certificationApiUrl.replace(/\/$/, '') + '/api/certifications?keys=' + encodeURIComponent(keys.join(','));
+          const certRes = await fetch(url, { cache: 'no-store' });
+          if (certRes.ok) {
+            const certMap = await certRes.json();
+            flights = flights.map((f) => ({ ...f, is_certified_amadeus: !!certMap[flightKey(f)] }));
+          }
+        }
+      } catch (_) {
+        // Ne jamais faire échouer le radar si l'API certifications est indisponible
+      }
+    }
 
     // Lier les vols retour aux vols aller annulés : marquer en SURVEILLANCE RETOUR
     for (const fl of flights) {

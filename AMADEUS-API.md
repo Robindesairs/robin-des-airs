@@ -2,7 +2,11 @@
 
 Les champs **Départ** et **Arrivée** (diagnostic et dépôt en ligne) appellent le proxy `/.netlify/functions/airport-search`. Dès que l’utilisateur tape **3 caractères**, une requête est envoyée pour suggérer villes et aéroports. L’affichage est au format : **Nom de la ville (Code IATA) – Nom de l’aéroport**.
 
-Le proxy utilise **Aviation Edge** en priorité si la clé est définie, sinon **Amadeus**. Les clés ne sont **jamais** exposées côté frontend.
+Le proxy utilise **Aviation Edge** en priorité ; si la réponse est vide ou en erreur, **Amadeus** est appelé en secours. Les clés ne sont **jamais** exposées côté frontend.
+
+---
+
+**Brancher Amadeus** : compte sur [developers.amadeus.com](https://developers.amadeus.com/) → récupérer API Key + API Secret → sur Netlify ajouter `AMADEUS_CLIENT_ID` et `AMADEUS_CLIENT_SECRET` → redéployer. Détail ci‑dessous.
 
 ## Option 1 : Aviation Edge (recommandé — une seule clé)
 
@@ -11,14 +15,17 @@ Le proxy utilise **Aviation Edge** en priorité si la clé est définie, sinon *
    - `AVIATION_EDGE_KEY` = ta clé API (clé secrète, jamais exposée au client)
 3. Redéployer. Aucune autre variable nécessaire.
 
-## Option 2 : Amadeus
+## Option 2 : Amadeus (brancher en secours ou en priorité)
 
-1. **Créer un compte** sur [Amadeus for Developers](https://developers.amadeus.com/) et récupérer **API Key** + **API Secret**.
-2. **Sur Netlify** :
-   - `AMADEUS_CLIENT_ID` = ta clé API
-   - `AMADEUS_CLIENT_SECRET` = ton secret
-   - Optionnel : `AMADEUS_HOST` = `test.api.amadeus.com` ou `api.amadeus.com`
-3. Redéployer.
+1. **Créer un compte** sur [Amadeus for Developers](https://developers.amadeus.com/).
+2. Dans le dashboard : **My Self-Service APIs** → créer ou ouvrir une app → récupérer **API Key** (Client ID) et **API Secret**.
+3. **Sur Netlify** : **Site configuration** → **Environment variables** → **Add a variable** / **Add multiple** :
+   - `AMADEUS_CLIENT_ID` = ta **API Key** (Client ID)
+   - `AMADEUS_CLIENT_SECRET` = ton **API Secret**
+   - (Optionnel) `AMADEUS_HOST` = `test.api.amadeus.com` pour le sandbox, ou `api.amadeus.com` pour la prod.
+4. **Redéployer** le site (Deploys → Trigger deploy).
+
+Une fois branché, le proxy `airport-search` utilise **Aviation Edge en premier** ; si la réponse est vide ou en erreur, il appelle **Amadeus** automatiquement.
 
 Le frontend appelle uniquement `/.netlify/functions/airport-search?keyword=xxx`. C’est la fonction Netlify qui possède les identifiants et appelle Aviation Edge ou Amadeus ; le navigateur ne voit jamais les clés.
 
