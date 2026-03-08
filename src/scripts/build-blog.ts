@@ -56,7 +56,7 @@ function renderArticlePage(post: Awaited<ReturnType<typeof getBySlug>>): string 
       <p>
         <a href="${SITE_URL}/#funnel-box" class="text-[#00E5A0] font-bold mx-2">Vérifier mon indemnité</a>
         <span class="text-white/50">·</span>
-        <a href="https://wa.me/33756863630" class="text-[#00E5A0] font-bold mx-2">WhatsApp direct</a>
+        <a href="https://wa.me/15557840392" class="text-[#00E5A0] font-bold mx-2">WhatsApp direct</a>
       </p>
     </div>
   </main>
@@ -107,7 +107,7 @@ function renderIndexPage(posts: ReturnType<typeof getAllPosts>): string {
       <p>
         <a href="${SITE_URL}/#funnel-box" class="text-[#00E5A0] font-bold mx-2">Diagnostic gratuit</a>
         <span class="text-white/50">·</span>
-        <a href="https://wa.me/33756863630" class="text-[#00E5A0] font-bold mx-2">WhatsApp direct</a>
+        <a href="https://wa.me/15557840392" class="text-[#00E5A0] font-bold mx-2">WhatsApp direct</a>
       </p>
     </div>
   </main>
