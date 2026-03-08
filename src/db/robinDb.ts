@@ -5,16 +5,29 @@
 import Database from 'better-sqlite3';
 import path from 'path';
 
-const DB_PATH = process.env.ROBIN_DB_PATH || path.join(process.cwd(), 'data', 'robin.db');
+const DEFAULT_DB_PATH = process.env.ROBIN_DB_PATH || path.join(process.cwd(), 'data', 'robin.db');
+const FALLBACK_DB_PATH = process.platform !== 'win32' ? '/tmp/robin.db' : path.join(process.cwd(), 'data', 'robin.db');
 
 let db: Database.Database | null = null;
 
+function tryOpenDb(dbPath: string): Database.Database {
+  const fs = require('fs');
+  const dir = path.dirname(dbPath);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  return new Database(dbPath);
+}
+
 export function getDb(): Database.Database {
   if (!db) {
-    const fs = require('fs');
-    const dir = path.dirname(DB_PATH);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    db = new Database(DB_PATH);
+    try {
+      db = tryOpenDb(DEFAULT_DB_PATH);
+    } catch {
+      try {
+        db = tryOpenDb(FALLBACK_DB_PATH);
+      } catch (e) {
+        throw e;
+      }
+    }
     db.exec(`
       CREATE TABLE IF NOT EXISTS radar_flights (
         flight_key TEXT PRIMARY KEY,
