@@ -488,21 +488,23 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 
 .calc-input {
   width: 100%;
-  background: rgba(255,255,255,0.06);
-  border: 1.5px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.1);
+  border: 1.5px solid rgba(255,255,255,0.25);
   border-radius: 6px;
   padding: 10px 12px;
   font-family: 'Montserrat', sans-serif;
   font-size: 12px;
   font-weight: 600;
-  color: white;
+  color: #fff;
+  -webkit-text-fill-color: #fff;
   outline: none;
   transition: border-color 0.2s;
   letter-spacing: 0.5px;
 }
 
-.calc-input::placeholder { color: rgba(255,255,255,0.2); font-weight: 400; }
-.calc-input:focus { border-color: rgba(0,229,160,0.5); background: rgba(255,255,255,0.08); }
+.calc-input::placeholder { color: rgba(255,255,255,0.65); font-weight: 500; }
+.calc-input:focus { border-color: rgba(0,229,160,0.6); background: rgba(255,255,255,0.12); }
+.calc-input:-webkit-autofill { -webkit-text-fill-color: #fff; }
 
 .flight-status { margin-top: 8px; font-size: 12px; min-height: 20px; color: rgba(255,255,255,0.7); }
 .flight-status.loading { color: rgba(0,229,160,0.9); }
@@ -1909,20 +1911,25 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
 .dist-pill .pill-amount { font-size: 12px; color: var(--neon-b); margin-top: 1px; }
 .dist-pill.active .pill-amount { color: white; }
 .calc-robin-hint { font-size: 10px; color: rgba(255,255,255,0.5); margin-bottom: 8px; text-align: center; }
-/* Tom Select — diagnostic : même style que la case Passagers (pax-control) */
-.fstep .ts-wrapper.single .ts-control { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 10px 12px; min-height: 36px; color: #fff !important; }
-.fstep .ts-wrapper .ts-control .ts-input input { color: #fff !important; font-size: 12px; font-weight: 700; -webkit-text-fill-color: #fff; }
-.fstep .ts-wrapper .ts-control .ts-input input::placeholder { color: rgba(255,255,255,0.5); }
+/* Tom Select — diagnostic : contraste renforcé pour la recherche Départ/Arrivée */
+.fstep .ts-wrapper.single .ts-control { background: rgba(255,255,255,0.12); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 6px; padding: 10px 12px; min-height: 36px; color: #fff !important; }
+.fstep .ts-wrapper .ts-control .ts-input input { color: #fff !important; font-size: 13px; font-weight: 700; -webkit-text-fill-color: #fff !important; }
+.fstep .ts-wrapper .ts-control .ts-input input::placeholder { color: rgba(255,255,255,0.75) !important; }
 .fstep .ts-wrapper .ts-control .item { color: #fff !important; font-size: 12px; font-weight: 700; }
-.fstep .ts-wrapper.dropdown-active .ts-control { border-color: rgba(255,255,255,0.2); }
+.fstep .ts-wrapper.dropdown-active .ts-control { border-color: rgba(0,229,160,0.5); background: rgba(255,255,255,0.14); }
+/* Liste déroulante (Départ / Arrivée) : fond sombre, texte bien lisible */
 .fstep .ts-wrapper .ts-dropdown,
-.fstep .ts-dropdown { background: rgba(13,36,69,0.98); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 6px; box-shadow: 0 8px 24px rgba(0,0,0,0.35); }
+.fstep .ts-dropdown,
+#funnel-box .ts-dropdown { background: #0d2445; border: 1.5px solid rgba(255,255,255,0.35); border-radius: 6px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
 .fstep .ts-wrapper .ts-dropdown .option,
-.fstep .ts-dropdown .option { color: #fff !important; font-size: 12px; font-weight: 700; padding: 10px 12px; }
+.fstep .ts-dropdown .option,
+#funnel-box .ts-dropdown .option { color: #fff !important; font-size: 13px; font-weight: 600; padding: 11px 13px; }
 .fstep .ts-wrapper .ts-dropdown .option.active,
-.fstep .ts-dropdown .option.active { background: rgba(0,229,160,0.15); color: #00E5A0 !important; }
+.fstep .ts-dropdown .option.active,
+#funnel-box .ts-dropdown .option.active { background: rgba(0,229,160,0.25); color: #00E5A0 !important; }
 .fstep .ts-wrapper .ts-dropdown .optgroup-header,
-.fstep .ts-dropdown .optgroup-header { color: rgba(255,255,255,0.7); font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 8px 12px; }
+.fstep .ts-dropdown .optgroup-header,
+#funnel-box .ts-dropdown .optgroup-header { color: rgba(255,255,255,0.9); font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 8px 12px; }
 .vol-search-wrap { text-align: center; margin-bottom: 8px; }
 .calc-label-center { display: block; text-align: center; margin-bottom: 5px; }
 .calc-input-big { font-size: 15px; letter-spacing: 1.5px; text-align: center; padding: 11px 14px; }

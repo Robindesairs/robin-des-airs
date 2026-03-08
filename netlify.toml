@@ -50,4 +50,10 @@
   to = "/droit-retractation.html"
   status = 200
 
+# Webhook WhatsApp 360dialog
+[[redirects]]
+  from = "/api/whatsapp-webhook"
+  to = "/.netlify/functions/whatsapp-webhook"
+  status = 200
+
 # Page 404 personnalisée (créer 404.html si vous en voulez une)
