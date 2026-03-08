@@ -5,6 +5,13 @@
 # HTTPS : Netlify sert déjà le site en https. Pour forcer la redirection
 #         http → https, active "Force TLS" dans le dashboard :
 #         Domain management → HTTPS → "Force TLS connection" (ou "Redirect HTTP to HTTPS").
+[functions]
+  directory = "api"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
 [build]
   publish = "."
   command = ""
@@ -54,6 +61,12 @@
 [[redirects]]
   from = "/api/whatsapp-webhook"
   to = "/.netlify/functions/whatsapp-webhook"
+  status = 200
+
+# Statut connexion WhatsApp (vérification rapide)
+[[redirects]]
+  from = "/api/whatsapp-status"
+  to = "/.netlify/functions/whatsapp-status"
   status = 200
 
 # Page 404 personnalisée (créer 404.html si vous en voulez une)

@@ -188,14 +188,30 @@ export function insertWhatsAppMessage(row: {
     );
 }
 
-/** Étapes du tunnel conversationnel Robin. */
+/** Étapes du tunnel conversationnel Robin (éligibilité) + Étape 1 collecte mandat. */
 export type TunnelStep =
   | 'AWAITING_CARD'
   | 'CONFIRM_FLIGHT'
   | 'CHECK_CONNECTION'
   | 'ASK_PASSENGERS'
   | 'CONFIRM_DATE'
-  | 'VERDICT';
+  | 'VERDICT'
+  // Étape 1 — Conversation WhatsApp (cheminement mandat)
+  | 'PASSENGER_FIRST'
+  | 'PASSENGER_LAST'
+  | 'PASSENGER_ANOTHER'
+  | 'PASSENGERS_CONFIRM'
+  | 'CONFIRM_PHONE'
+  | 'ASK_CONTACT_PHONE'
+  | 'TRAJET_FLIGHT'
+  | 'TRAJET_DATE'
+  | 'TRAJET_CONNECTION'
+  | 'TRAJET_CONFIRM'
+  | 'ASK_PNR'
+  | 'CONFIRM_PNR'
+  | 'ASK_AIRLINE'
+  | 'ASK_ADDRESS'
+  | 'STEP1_DONE';
 
 export interface WhatsAppSessionRow {
   phone_number: string;
@@ -211,9 +227,22 @@ export interface WhatsAppSessionRow {
 export interface FlightData {
   flightNumber?: string;
   date?: string;
+  passengerName?: string;
   hasConnection?: boolean;
   dep?: string;
   arr?: string;
+}
+
+/** Données collectées pour Étape 1 (mandat) — stockées dans flight_data en mode collecte. */
+export interface Step1FormData {
+  passengers?: { firstName: string; lastName: string }[];
+  passengerIndex?: number;
+  contactPhone?: string;
+  flights?: { flightNumber: string; date: string }[];
+  segmentIndex?: number;
+  pnr?: string;
+  airline?: string;
+  address?: string;
 }
 
 export function getSession(phoneNumber: string): WhatsAppSessionRow | null {

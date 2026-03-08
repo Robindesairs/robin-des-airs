@@ -21,6 +21,24 @@ const MENU_BIENVENUE = `👋 *Robin des Airs* — Récupérez jusqu'à 600€ si
 
 const ROBIN_ACCUEIL = "Bonjour ! Je suis Robin 🏹. Envoyez-moi une photo de votre carte d'embarquement, je m'occupe d'analyser vos droits en 30 secondes.";
 
+// Étape 1 (grand 1 — collecte mandat) : démarrage au premier message ou "Bonjour"
+const STEP1_STEPS = ['PASSENGER_FIRST', 'PASSENGER_LAST', 'PASSENGER_ANOTHER', 'PASSENGERS_CONFIRM', 'CONFIRM_PHONE', 'ASK_CONTACT_PHONE', 'TRAJET_FLIGHT', 'TRAJET_DATE', 'TRAJET_CONNECTION', 'TRAJET_CONFIRM', 'ASK_PNR', 'CONFIRM_PNR', 'ASK_AIRLINE', 'ASK_ADDRESS', 'STEP1_DONE'];
+function isStep1(step) { return STEP1_STEPS.includes(step); }
+function isBonjourLike(t) { return /^(bonjour|bonsoir|salut|hello|coucou)\s*[!.]?$/i.test((t || '').trim()); }
+function step1Form(session) {
+  const fd = session.flightData || {};
+  return {
+    passengers: fd.passengers || [],
+    passengerIndex: fd.passengerIndex ?? 0,
+    flights: fd.flights || [],
+    segmentIndex: fd.segmentIndex ?? 0,
+    contactPhone: fd.contactPhone,
+    pnr: fd.pnr,
+    airline: fd.airline,
+    address: fd.address
+  };
+}
+
 function parseFlightNumber(text) {
   if (!text || typeof text !== 'string') return null;
   const cleaned = text.replace(/\s+/g, '').toUpperCase();
@@ -109,10 +127,11 @@ function setTunnelSession(phone, data) {
   tunnelSessions.set(phone, { ...getTunnelSession(phone), ...data });
 }
 
-async function geminiOcr(imageBase64, mimeType) {
+async function geminiVisionOcr(imageBase64, mimeType) {
   const key = process.env.GEMINI_API_KEY;
-  if (!key) return { flightNumber: null, date: null };
+  if (!key) return { flightNumber: null, date: null, passengerName: null };
   const data = imageBase64.replace(/^data:image\/\w+;base64,/, '');
+  const prompt = 'Extrait UNIQUEMENT un objet JSON avec: "flightNumber" (ex: AF718), "date" (JJ/MM/AAAA), "passengerName" (nom complet du passager). Si un champ est illisible mets null. Réponds uniquement le JSON.';
   const res = await fetch(`${GEMINI_BASE}?key=${key}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -120,19 +139,23 @@ async function geminiOcr(imageBase64, mimeType) {
       contents: [{
         parts: [
           { inlineData: { mimeType: mimeType || 'image/jpeg', data } },
-          { text: 'Extrait UNIQUEMENT du JSON: flightNumber (ex: AF718) et date (JJ/MM/AAAA). Réponds uniquement le JSON.' }
+          { text: prompt }
         ]
       }]
     })
   });
   const json = await res.json().catch(() => ({}));
-  const text = json.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '';
+  const text = (json.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '').replace(/```json?\s*/gi, '').replace(/```\s*/g, '').trim();
   try {
     const o = JSON.parse(text);
-    return { flightNumber: o.flightNumber || null, date: o.date || null };
+    return {
+      flightNumber: o.flightNumber || null,
+      date: o.date || null,
+      passengerName: o.passengerName || null
+    };
   } catch {
     const m = text.match(/\b([A-Z]{2}\d{2,4})\b/i);
-    return { flightNumber: m ? m[1] : null, date: null };
+    return { flightNumber: m ? m[1] : null, date: null, passengerName: null };
   }
 }
 
@@ -154,24 +177,55 @@ async function geminiSideAnswer(userMessage, currentStep) {
 
 async function handleTunnel(phone, text, imageBase64, imageMime, origin, d360Key) {
   const to = normalizeTo(phone);
-  if (imageBase64) {
-    const ocr = await geminiOcr(imageBase64, imageMime);
-    if (ocr.flightNumber) {
-      setTunnelSession(phone, { step: 'CONFIRM_FLIGHT', flightData: { flightNumber: ocr.flightNumber, date: ocr.date } });
-      const reply = `Merci ! Je vois le vol *${ocr.flightNumber}*. Est-ce bien le bon vol ? (Répondez OUI ou NON)`;
-      await sendWhatsAppText(to, reply, d360Key);
-      return;
-    }
-    await sendWhatsAppText(to, "Je n'ai pas pu lire le numéro de vol. Envoyez une photo plus nette de la carte d'embarquement.", d360Key);
-    return;
-  }
   const session = getTunnelSession(phone);
   const msg = (text || '').trim();
   const upper = (msg || '').toUpperCase();
   const isOuiNon = /^(OUI|NON)$/i.test(upper);
   const isNum = /^\d+$/.test(msg);
   const isDate = /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(msg);
-  if (msg && !isOuiNon && !isNum && !isDate && msg.length > 2) {
+
+  if (imageBase64) {
+    const ocr = await geminiVisionOcr(imageBase64, imageMime);
+    if (ocr.flightNumber && session.step === 'TRAJET_FLIGHT') {
+      const form = step1Form(session);
+      const flights = [...(form.flights || [])];
+      const segIdx = form.segmentIndex ?? 0;
+      while (flights.length <= segIdx) flights.push({ flightNumber: '', date: '' });
+      flights[segIdx] = { flightNumber: ocr.flightNumber, date: ocr.date || '' };
+      const nextStep = ocr.date ? 'TRAJET_CONNECTION' : 'TRAJET_DATE';
+      setTunnelSession(phone, { step: nextStep, flightData: { ...session.flightData, flights, segmentIndex: segIdx } });
+      const nextMsg = nextStep === 'TRAJET_DATE' ? "Quelle est la date du vol ? (format JJ/MM/AAAA)" : "Y a-t-il une correspondance (autre vol sur la même réservation) ? (Oui / Non)";
+      await sendWhatsAppText(to, `Je vois le vol *${ocr.flightNumber}*. ${nextMsg}`, d360Key);
+      return;
+    }
+    if (ocr.flightNumber) {
+      setTunnelSession(phone, { step: 'CONFIRM_FLIGHT', flightData: { flightNumber: ocr.flightNumber, date: ocr.date, passengerName: ocr.passengerName } });
+      const reply = `Je vois le vol *${ocr.flightNumber}*, est-ce correct ?${ocr.passengerName ? ` (Passager : ${ocr.passengerName})` : ''} Répondez OUI ou NON.`;
+      await sendWhatsAppText(to, reply, d360Key);
+      return;
+    }
+    await sendWhatsAppText(to, "Je n'ai pas pu lire la carte d'embarquement. Envoyez une photo plus nette.", d360Key);
+    return;
+  }
+
+  // Premier message ou "Bonjour" → démarrer l'Étape 1 (grand 1)
+  if (!msg && session.step === 'AWAITING_CARD') {
+    setTunnelSession(phone, { step: 'PASSENGER_FIRST', flightData: { passengers: [], passengerIndex: 0, flights: [], segmentIndex: 0 } });
+    await sendWhatsAppText(to, 'Prénom du passager 1 ?', d360Key);
+    return;
+  }
+  if (msg && session.step === 'AWAITING_CARD' && isBonjourLike(msg)) {
+    setTunnelSession(phone, { step: 'PASSENGER_FIRST', flightData: { passengers: [], passengerIndex: 0, flights: [], segmentIndex: 0 } });
+    await sendWhatsAppText(to, 'Prénom du passager 1 ?', d360Key);
+    return;
+  }
+  if (!msg && isStep1(session.step)) {
+    const prompts = { PASSENGER_FIRST: 'Prénom du passager 1 ?', PASSENGER_LAST: 'Nom du passager ?', PASSENGER_ANOTHER: 'Y a-t-il un autre passager ? (Oui / Non)', PASSENGERS_CONFIRM: 'Confirmer la liste des passagers ? (Oui / Non)', CONFIRM_PHONE: 'Est-ce bien ce numéro pour vous joindre ? (Oui / Non)', ASK_CONTACT_PHONE: 'Quel numéro pour ce dossier ?', TRAJET_FLIGHT: "Numéro de vol (ex. AF123) ou photo de la carte d'embarquement.", TRAJET_DATE: 'Date du vol (JJ/MM/AAAA)', TRAJET_CONNECTION: 'Correspondance ? (Oui / Non)', TRAJET_CONFIRM: 'Confirmer le trajet ? (Oui / Non)', ASK_PNR: 'Code PNR (6 caractères)', CONFIRM_PNR: 'Confirmer le PNR ? (Oui / Non)', ASK_AIRLINE: 'Compagnie aérienne ?', ASK_ADDRESS: 'Adresse postale (ville, code postal, pays) ?', STEP1_DONE: 'Prochaine étape : envoi du mandat (Yousign).' };
+    await sendWhatsAppText(to, prompts[session.step] || 'Répondez à la question ci-dessus.', d360Key);
+    return;
+  }
+
+  if (msg && !isOuiNon && !isNum && !isDate && msg.length > 2 && !isStep1(session.step)) {
     const side = await geminiSideAnswer(msg, session.step);
     if (side) {
       const stepMsg = session.step === 'AWAITING_CARD' ? ROBIN_ACCUEIL : (session.step === 'CONFIRM_FLIGHT' && session.flightData?.flightNumber) ? `Est-ce bien le vol *${session.flightData.flightNumber}* ? (OUI/NON)` : 'Répondez à la question ci-dessus.';
@@ -180,6 +234,173 @@ async function handleTunnel(phone, text, imageBase64, imageMime, origin, d360Key
     }
   }
   switch (session.step) {
+    case 'PASSENGER_FIRST': {
+      const form = step1Form(session);
+      const idx = form.passengerIndex ?? 0;
+      const passengers = [...(form.passengers || [])];
+      while (passengers.length <= idx) passengers.push({ firstName: '', lastName: '' });
+      passengers[idx] = { ...passengers[idx], firstName: msg };
+      setTunnelSession(phone, { step: 'PASSENGER_LAST', flightData: { ...session.flightData, passengers, passengerIndex: idx } });
+      await sendWhatsAppText(to, `Nom du passager ${idx + 1} ?`, d360Key);
+      return;
+    }
+    case 'PASSENGER_LAST': {
+      const form = step1Form(session);
+      const idx = form.passengerIndex ?? 0;
+      const passengers = [...(form.passengers || [])];
+      while (passengers.length <= idx) passengers.push({ firstName: '', lastName: '' });
+      passengers[idx] = { ...passengers[idx], lastName: msg };
+      setTunnelSession(phone, { step: 'PASSENGER_ANOTHER', flightData: { ...session.flightData, passengers, passengerIndex: idx } });
+      await sendWhatsAppText(to, "Y a-t-il un autre passager ? (Oui / Non)", d360Key);
+      return;
+    }
+    case 'PASSENGER_ANOTHER':
+      if (isOuiNon && upper === 'OUI') {
+        const form = step1Form(session);
+        const idx = (form.passengerIndex ?? 0) + 1;
+        setTunnelSession(phone, { step: 'PASSENGER_FIRST', flightData: { ...session.flightData, passengerIndex: idx } });
+        await sendWhatsAppText(to, `Prénom du passager ${idx + 1} ?`, d360Key);
+      } else if (isOuiNon && upper === 'NON') {
+        const form = step1Form(session);
+        const list = (form.passengers || []).map(p => `${(p.firstName || '').trim()} ${(p.lastName || '').trim()}`.trim()).filter(Boolean).join(', ') || '—';
+        setTunnelSession(phone, { step: 'PASSENGERS_CONFIRM', flightData: session.flightData });
+        await sendWhatsAppText(to, `Passagers : ${list}. Confirmer ? (Oui / Non)`, d360Key);
+      } else {
+        await sendWhatsAppText(to, 'Répondez Oui ou Non.', d360Key);
+      }
+      return;
+    case 'PASSENGERS_CONFIRM':
+      if (isOuiNon && upper === 'OUI') {
+        setTunnelSession(phone, { step: 'CONFIRM_PHONE', flightData: session.flightData });
+        const displayPhone = to.replace(/^33/, '0');
+        await sendWhatsAppText(to, `Est-ce bien le numéro auquel nous pouvons vous joindre pour ce dossier : *${displayPhone}* ? (Oui / Non)`, d360Key);
+      } else if (isOuiNon && upper === 'NON') {
+        setTunnelSession(phone, { step: 'PASSENGER_FIRST', flightData: { passengers: [], passengerIndex: 0, flights: [], segmentIndex: 0 } });
+        await sendWhatsAppText(to, 'Prénom du passager 1 ?', d360Key);
+      } else {
+        await sendWhatsAppText(to, 'Répondez Oui ou Non pour confirmer la liste des passagers.', d360Key);
+      }
+      return;
+    case 'CONFIRM_PHONE':
+      if (isOuiNon && upper === 'OUI') {
+        setTunnelSession(phone, { step: 'TRAJET_FLIGHT', flightData: session.flightData });
+        await sendWhatsAppText(to, "Quel est le numéro de vol ? (ex. AF123) — ou envoyez une photo de votre carte d'embarquement.", d360Key);
+      } else if (isOuiNon && upper === 'NON') {
+        setTunnelSession(phone, { step: 'ASK_CONTACT_PHONE', flightData: session.flightData });
+        await sendWhatsAppText(to, "Quel numéro de téléphone souhaitez-vous utiliser pour ce dossier ?", d360Key);
+      } else {
+        await sendWhatsAppText(to, 'Répondez Oui ou Non.', d360Key);
+      }
+      return;
+    case 'ASK_CONTACT_PHONE': {
+      const num = (msg || '').replace(/\D/g, '');
+      if (num.length >= 8) {
+        setTunnelSession(phone, { step: 'TRAJET_FLIGHT', flightData: { ...session.flightData, contactPhone: msg } });
+        await sendWhatsAppText(to, "Quel est le numéro de vol ? (ex. AF123) — ou envoyez une photo de votre carte d'embarquement.", d360Key);
+      } else {
+        await sendWhatsAppText(to, 'Indiquez un numéro de téléphone valide.', d360Key);
+      }
+      return;
+    }
+    case 'TRAJET_FLIGHT': {
+      const flightMatch = msg.match(/\b([A-Z]{2}\s*\d{2,4})\b/i);
+      if (flightMatch) {
+        const flightNumber = flightMatch[1].replace(/\s/g, '').toUpperCase();
+        const form = step1Form(session);
+        const flights = [...(form.flights || [])];
+        const segIdx = form.segmentIndex ?? 0;
+        while (flights.length <= segIdx) flights.push({ flightNumber: '', date: '' });
+        flights[segIdx] = { flightNumber, date: '' };
+        setTunnelSession(phone, { step: 'TRAJET_DATE', flightData: { ...session.flightData, flights, segmentIndex: segIdx } });
+        await sendWhatsAppText(to, 'Quelle est la date du vol ? (format JJ/MM/AAAA)', d360Key);
+      } else {
+        await sendWhatsAppText(to, "Indiquez un numéro de vol (ex. AF123) ou envoyez une photo de la carte d'embarquement.", d360Key);
+      }
+      return;
+    }
+    case 'TRAJET_DATE':
+      if (isDate) {
+        const [, d, m, y] = msg.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+        const dateStr = `${d.padStart(2, '0')}/${m.padStart(2, '0')}/${y}`;
+        const form = step1Form(session);
+        const flights = [...(form.flights || [])];
+        const segIdx = form.segmentIndex ?? 0;
+        while (flights.length <= segIdx) flights.push({ flightNumber: '', date: '' });
+        flights[segIdx] = { ...flights[segIdx], date: dateStr };
+        setTunnelSession(phone, { step: 'TRAJET_CONNECTION', flightData: { ...session.flightData, flights } });
+        await sendWhatsAppText(to, "Y a-t-il une correspondance (autre vol sur la même réservation) ? (Oui / Non)", d360Key);
+      } else {
+        await sendWhatsAppText(to, 'Date au format JJ/MM/AAAA.', d360Key);
+      }
+      return;
+    case 'TRAJET_CONNECTION':
+      if (isOuiNon && upper === 'OUI') {
+        const form = step1Form(session);
+        const flights = [...(form.flights || []), { flightNumber: '', date: '' }];
+        setTunnelSession(phone, { step: 'TRAJET_FLIGHT', flightData: { ...session.flightData, flights, segmentIndex: (form.segmentIndex ?? 0) + 1 } });
+        await sendWhatsAppText(to, 'Numéro du vol de correspondance ? (ex. AT456)', d360Key);
+      } else if (isOuiNon && upper === 'NON') {
+        const form = step1Form(session);
+        const summary = (form.flights || []).map((f, i) => `Vol ${i + 1} ${f.flightNumber} (${f.date})`).join(', ');
+        setTunnelSession(phone, { step: 'TRAJET_CONFIRM', flightData: session.flightData });
+        await sendWhatsAppText(to, `Trajet : ${summary || '—'}. Confirmer ? (Oui / Non)`, d360Key);
+      } else {
+        await sendWhatsAppText(to, 'Répondez Oui ou Non (correspondance ?).', d360Key);
+      }
+      return;
+    case 'TRAJET_CONFIRM':
+      if (isOuiNon && upper === 'OUI') {
+        setTunnelSession(phone, { step: 'ASK_PNR', flightData: session.flightData });
+        await sendWhatsAppText(to, 'Quel est votre code PNR (réservation) ? (6 caractères, ex. ABC123)', d360Key);
+      } else if (isOuiNon && upper === 'NON') {
+        setTunnelSession(phone, { step: 'TRAJET_FLIGHT', flightData: { ...session.flightData, segmentIndex: 0 } });
+        await sendWhatsAppText(to, "Quel est le numéro de vol ? (ex. AF123) — ou envoyez une photo de votre carte d'embarquement.", d360Key);
+      } else {
+        await sendWhatsAppText(to, 'Répondez Oui ou Non.', d360Key);
+      }
+      return;
+    case 'ASK_PNR': {
+      const pnr = (msg || '').replace(/\s/g, '').toUpperCase().slice(0, 6);
+      if (pnr.length >= 4) {
+        setTunnelSession(phone, { step: 'CONFIRM_PNR', flightData: { ...session.flightData, pnr } });
+        await sendWhatsAppText(to, `PNR saisi : *${pnr}*. Confirmer ? (Oui / Non)`, d360Key);
+      } else {
+        await sendWhatsAppText(to, 'Code PNR : 6 caractères (ex. ABC123).', d360Key);
+      }
+      return;
+    }
+    case 'CONFIRM_PNR':
+      if (isOuiNon && upper === 'OUI') {
+        setTunnelSession(phone, { step: 'ASK_AIRLINE', flightData: session.flightData });
+        await sendWhatsAppText(to, "Quelle est la compagnie aérienne du vol principal ?", d360Key);
+      } else if (isOuiNon && upper === 'NON') {
+        setTunnelSession(phone, { step: 'ASK_PNR', flightData: { ...session.flightData, pnr: undefined } });
+        await sendWhatsAppText(to, 'Quel est votre code PNR (réservation) ? (6 caractères, ex. ABC123)', d360Key);
+      } else {
+        await sendWhatsAppText(to, 'Répondez Oui ou Non.', d360Key);
+      }
+      return;
+    case 'ASK_AIRLINE':
+      setTunnelSession(phone, { step: 'ASK_ADDRESS', flightData: { ...session.flightData, airline: msg } });
+      await sendWhatsAppText(to, "Quelle est votre adresse postale ? (ville, code postal, pays)", d360Key);
+      return;
+    case 'ASK_ADDRESS': {
+      const form = step1Form(session);
+      const recap = [
+        `Passagers : ${(form.passengers || []).map(p => `${p.firstName} ${p.lastName}`).join(', ')}`,
+        `Vol(s) : ${(form.flights || []).map(f => `${f.flightNumber} (${f.date})`).join(', ')}`,
+        `PNR : ${form.pnr || '—'}`,
+        `Compagnie : ${form.airline || '—'}`,
+        `Adresse : ${msg}`,
+      ].join('\n');
+      setTunnelSession(phone, { step: 'STEP1_DONE', flightData: { ...session.flightData, address: msg } });
+      await sendWhatsAppText(to, `Nous avons bien enregistré toutes les informations pour votre dossier.\n\n${recap}\n\nProchaine étape : nous vous enverrons le mandat à signer (Yousign).`, d360Key);
+      return;
+    }
+    case 'STEP1_DONE':
+      await sendWhatsAppText(to, "Pour toute question, répondez ici. Pour recommencer un nouveau dossier, tapez NOUVEAU.", d360Key);
+      return;
+
     case 'AWAITING_CARD':
       await sendWhatsAppText(to, ROBIN_ACCUEIL, d360Key);
       return;
@@ -320,14 +541,21 @@ exports.handler = async (event) => {
   try {
     body = typeof event.body === 'string' ? JSON.parse(event.body) : event.body || {};
   } catch (e) {
+    console.error('whatsapp-webhook: body parse error', e.message);
     return { statusCode: 400, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ error: 'Invalid JSON' }) };
   }
 
   const entries = body.entry || [];
+  if (entries.length === 0) {
+    console.log('whatsapp-webhook: no entry in body', JSON.stringify(body).slice(0, 500));
+  }
+
   for (const entry of entries) {
     const changes = entry.changes || [];
     for (const change of changes) {
-      if (change.field !== 'messages') continue;
+      if (change.field !== 'messages') {
+        continue;
+      }
       const value = change.value || {};
       const messages = value.messages || [];
       const from = value.contacts?.[0]?.wa_id || value.metadata?.phone_number_id;
@@ -335,7 +563,7 @@ exports.handler = async (event) => {
 
       for (const msg of messages) {
         const fromId = msg.from || from;
-        const text = (msg.text && msg.text.body) ? msg.text.body.trim() : '';
+        const text = (msg.text && msg.text.body) ? String(msg.text.body).trim() : '';
         const msgId = msg.id;
         const msgType = msg.type || 'text';
 
@@ -348,7 +576,7 @@ exports.handler = async (event) => {
           raw_payload: JSON.stringify(msg),
           direction: 'in'
         };
-        console.log('whatsapp-webhook: message', logPayload);
+        console.log('whatsapp-webhook: message', JSON.stringify(logPayload));
         if (logWebhookUrl) {
           try {
             await fetch(logWebhookUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(logPayload) });
@@ -358,10 +586,16 @@ exports.handler = async (event) => {
         }
 
         const to = normalizeTo(fromId);
+        if (!to) {
+          console.error('whatsapp-webhook: could not normalize to', fromId);
+          continue;
+        }
 
-        if (process.env.ROBIN_TUNNEL_ENABLED === 'true') {
-          let imageBase64 = null;
-          let imageMime = 'image/jpeg';
+        try {
+          const tunnelEnabled = process.env.ROBIN_TUNNEL_ENABLED === 'true' || (process.env.GEMINI_API_KEY && process.env.ROBIN_TUNNEL_ENABLED !== 'false');
+          if (tunnelEnabled) {
+            let imageBase64 = null;
+            let imageMime = 'image/jpeg';
           if (msgType === 'image') {
             imageBase64 = await getImageBase64FromMessage(msg, d360Key);
             if (msg.image && msg.image.mime_type) imageMime = msg.image.mime_type;
@@ -370,29 +604,51 @@ exports.handler = async (event) => {
           continue;
         }
 
-        if (!text) continue;
-
-        if (isBonjourLike(text)) {
-          await sendWhatsAppText(to, MENU_BIENVENUE, d360Key);
-          continue;
-        }
-
-        const flightNum = parseFlightNumber(text);
-        if (flightNum) {
-          const result = await getFlightEligibility(flightNum, origin);
-          if (result.eligible && result.amount >= 600) {
-            const reply = `Bonne nouvelle ! Votre vol ${flightNum} est éligible à 600€. Cliquez ici pour signer votre dossier : ${LIEN_DEPOT}`;
+        if (msgType === 'image') {
+          const ocr = await geminiVisionOcr(await getImageBase64FromMessage(msg, d360Key), (msg.image && msg.image.mime_type) ? msg.image.mime_type : 'image/jpeg');
+          if (ocr.flightNumber) {
+            const reply = `Je vois le vol *${ocr.flightNumber}*, est-ce correct ?${ocr.passengerName ? ` (Passager : ${ocr.passengerName})` : ''} Répondez OUI ou NON.`;
             await sendWhatsAppText(to, reply, d360Key);
           } else {
-            const reply = result.dep && result.arr
-              ? `Vol ${flightNum} (${result.dep} → ${result.arr}) trouvé. Pour confirmer l'éligibilité (retard ≥3h), déposez votre dossier : ${LIEN_DEPOT}`
-              : `Nous n'avons pas pu vérifier le vol ${flightNum}. Déposez votre dossier avec le numéro et la date du vol : ${LIEN_DEPOT}`;
-            await sendWhatsAppText(to, reply, d360Key);
+            await sendWhatsAppText(to, "Je n'ai pas pu lire la carte d'embarquement. Envoyez une photo plus nette.", d360Key);
           }
-          continue;
-        }
+            continue;
+          }
 
-        await sendWhatsAppText(to, `Pour vérifier votre éligibilité, envoyez-nous votre numéro de vol (ex: AF718). Ou déposez directement : ${LIEN_DEPOT}`, d360Key);
+          if (!text) {
+            await sendWhatsAppText(to, MENU_BIENVENUE, d360Key);
+            continue;
+          }
+
+          if (isBonjourLike(text)) {
+            await sendWhatsAppText(to, MENU_BIENVENUE, d360Key);
+            continue;
+          }
+
+          const flightNum = parseFlightNumber(text);
+          if (flightNum) {
+            const result = await getFlightEligibility(flightNum, origin);
+            if (result.eligible && result.amount >= 600) {
+              const reply = `Bonne nouvelle ! Votre vol ${flightNum} est éligible à 600€. Cliquez ici pour signer votre dossier : ${LIEN_DEPOT}`;
+              await sendWhatsAppText(to, reply, d360Key);
+            } else {
+              const reply = result.dep && result.arr
+                ? `Vol ${flightNum} (${result.dep} → ${result.arr}) trouvé. Pour confirmer l'éligibilité (retard ≥3h), déposez votre dossier : ${LIEN_DEPOT}`
+                : `Nous n'avons pas pu vérifier le vol ${flightNum}. Déposez votre dossier avec le numéro et la date du vol : ${LIEN_DEPOT}`;
+              await sendWhatsAppText(to, reply, d360Key);
+            }
+            continue;
+          }
+
+          await sendWhatsAppText(to, `Pour vérifier votre éligibilité, envoyez-nous votre numéro de vol (ex: AF718). Ou déposez directement : ${LIEN_DEPOT}`, d360Key);
+        } catch (err) {
+          console.error('whatsapp-webhook: processing error', err.message || err, err.stack);
+          try {
+            await sendWhatsAppText(to, 'Désolé, un problème technique est survenu. Réessayez dans un instant ou contactez-nous : https://wa.me/33756863630', d360Key);
+          } catch (sendErr) {
+            console.error('whatsapp-webhook: fallback send failed', sendErr.message);
+          }
+        }
       }
     }
   }
