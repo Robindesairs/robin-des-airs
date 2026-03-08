@@ -1911,7 +1911,7 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
 .calc-robin-hint { font-size: 10px; color: rgba(255,255,255,0.5); margin-bottom: 8px; text-align: center; }
 /* Tom Select — diagnostic : même style que la case Passagers (pax-control) */
 .fstep .ts-wrapper.single .ts-control { background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 6px; padding: 10px 12px; min-height: 36px; color: #fff !important; }
-.fstep .ts-wrapper .ts-control .ts-input input { color: #fff !important; font-size: 12px; font-weight: 700; }
+.fstep .ts-wrapper .ts-control .ts-input input { color: #fff !important; font-size: 12px; font-weight: 700; -webkit-text-fill-color: #fff; }
 .fstep .ts-wrapper .ts-control .ts-input input::placeholder { color: rgba(255,255,255,0.5); }
 .fstep .ts-wrapper .ts-control .item { color: #fff !important; font-size: 12px; font-weight: 700; }
 .fstep .ts-wrapper.dropdown-active .ts-control { border-color: rgba(255,255,255,0.2); }
@@ -1930,6 +1930,8 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
 .vol-chip-wrap { display: flex; align-items: center; gap: 8px; padding: 9px 12px; background: rgba(255,255,255,0.06); border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
 .vol-chip-wrap .chip-route { font-weight: 700; font-size: 11px; }
 .vol-chip-wrap .chip-dist { font-size: 9px; color: rgba(255,255,255,0.5); }
+.link-no-vol { display: block; margin-top: 6px; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.7); background: none; border: none; cursor: pointer; text-decoration: underline; padding: 0; }
+.link-no-vol:hover { color: var(--neon-b); }
 .distance-result { font-size: 11px; font-weight: 700; color: var(--neon-b); padding: 8px 11px; background: rgba(0,229,160,0.1); border-radius: 6px; margin-bottom: 8px; min-height: 18px; }
 .eb-vol-block { padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 6px; }
 .eb-vol-block:last-of-type { border-bottom: none; }
@@ -1937,7 +1939,6 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
 .eb-add-vol-btn { width: 100%; padding: 10px; margin-top: 6px; margin-bottom: 12px; font-size: 11px; font-weight: 700; color: var(--neon-b); background: rgba(0,229,160,0.08); border: 1px dashed rgba(0,229,160,0.35); border-radius: 8px; cursor: pointer; transition: all 0.2s; }
 .eb-add-vol-btn:hover { background: rgba(0,229,160,0.15); }
 #da-dist-wrap, #eb-dist-wrap { display: none !important; }
-#funnel-box.step-3a-active #da-dist-wrap { display: block !important; }
 #da-dist-wrap.flash, #eb-dist-wrap.flash {
   box-shadow: 0 0 0 3px rgba(255,80,80,0.35);
   border-radius: 10px;

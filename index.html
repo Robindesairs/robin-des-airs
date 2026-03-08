@@ -252,39 +252,24 @@
       <!-- ══ ÉTAPE 3a — VOL DIRECT (Robin des Airs) ══ -->
       <div class="fstep" id="step-3a">
         <div class="fstep-eyebrow">Étape 3 sur 5 — Détails du vol</div>
-        <p class="funnel-hint">Vous n'avez pas besoin du numéro de vol — la ville et la date suffisent.</p>
-        <p class="calc-robin-hint">Robin des Airs vérifie votre trajet en un clic.</p>
-
-        <div class="calc-field" style="margin-bottom:12px">
-          <label class="calc-label" for="da-compagnie">Compagnie (optionnel)</label>
-          <select id="da-compagnie" placeholder="Rechercher une compagnie…"><option value="">Rechercher une compagnie…</option></select>
-        </div>
+        <p class="calc-robin-hint">Indiquez votre numéro de vol, ou les villes de départ et d'arrivée.</p>
 
         <div class="calc-field" style="margin-bottom:12px">
           <label class="calc-label" for="flight_number">Numéro de vol</label>
           <input type="text" id="flight_number" class="calc-input" placeholder="Ex: AF718" maxlength="8" autocomplete="off">
           <div id="flight_number_status" class="flight-status" aria-live="polite"></div>
+          <button type="button" class="link-no-vol" id="btn-je-ne-trouve-pas-mon-vol">Je ne trouve pas mon vol</button>
         </div>
 
         <div class="calc-field" id="da-manual-wrap">
           <label class="calc-label">Ville de départ et d'arrivée (recherche : ville ou code IATA)</label>
           <div class="calc-row">
-            <select id="da-ville-depart" class="calc-select" placeholder="Départ (ex. Paris, CDG)"><option value="">Départ</option></select>
-            <select id="da-ville-arrivee" class="calc-select" placeholder="Arrivée (ex. Dakar, DKR)"><option value="">Arrivée</option></select>
+            <select id="da-ville-depart" class="calc-select calc-select-airport" placeholder="Départ (ex. Paris, CDG)"><option value="">Départ</option></select>
+            <select id="da-ville-arrivee" class="calc-select calc-select-airport" placeholder="Arrivée (ex. Dakar, DKR)"><option value="">Arrivée</option></select>
           </div>
         </div>
 
         <div class="distance-result" id="da-distance-line"></div>
-
-        <div class="calc-field" id="da-dist-wrap" style="display:none;">
-          <label class="calc-label">Choisissez la distance du trajet</label>
-          <div class="dist-pills" role="group">
-            <button type="button" class="dist-pill" data-dist="250" onclick="setDist('da-dist',250,this)">Court<br><span class="pill-amount">250€</span></button>
-            <button type="button" class="dist-pill" data-dist="400" onclick="setDist('da-dist',400,this)">Moyen<br><span class="pill-amount">400€</span></button>
-            <button type="button" class="dist-pill" data-dist="600" onclick="setDist('da-dist',600,this)">Long &gt; 3 500 km · <span class="pill-amount">600€</span></button>
-          </div>
-          <p class="dist-preselect-hint" style="font-size:0.8em;color:#999;margin-top:8px;">Pré-sélectionné : la majorité de nos clients voyagent sur des vols long-courrier (Europe ↔ Afrique).</p>
-        </div>
         <input type="hidden" id="da-dist" value="">
 
         <div class="calc-row">
@@ -321,18 +306,14 @@
 
         <div class="eb-vol-block" id="eb-vol-block-1">
           <div class="calc-field-label-vol">Vol 1 — Premier tronçon</div>
-          <div class="calc-field">
-            <label class="calc-label">Compagnie</label>
-            <select id="eb-compagnie-1" placeholder="Compagnie…"><option value="">Compagnie</option></select>
-          </div>
           <div class="calc-row">
             <div class="calc-field">
               <label class="calc-label">Ville de départ</label>
-              <select id="eb-ville-depart-1" placeholder="Départ"><option value="">Départ</option></select>
+              <select id="eb-ville-depart-1" class="calc-select-airport" placeholder="Départ"><option value="">Départ</option></select>
             </div>
             <div class="calc-field">
               <label class="calc-label">Ville de fin</label>
-              <select id="eb-ville-arrivee-1" placeholder="Arrivée"><option value="">Arrivée</option></select>
+              <select id="eb-ville-arrivee-1" class="calc-select-airport" placeholder="Arrivée"><option value="">Arrivée</option></select>
             </div>
           </div>
           <div class="calc-field">
@@ -348,23 +329,19 @@
 
         <div class="eb-vol-block" id="eb-vol-block-2">
           <div class="calc-field-label-vol">Vol 2 — Dernier tronçon <span style="color:var(--neon-b);font-size:9px;">CE VOL COMPTE</span></div>
-          <div class="calc-field">
-            <label class="calc-label">Compagnie</label>
-            <select id="eb-compagnie-2" placeholder="Compagnie…"><option value="">Compagnie</option></select>
-          </div>
           <div class="calc-row">
             <div class="calc-field">
               <label class="calc-label">Ville de départ</label>
-              <select id="eb-ville-depart-2" placeholder="Départ"><option value="">Départ</option></select>
+              <select id="eb-ville-depart-2" class="calc-select-airport" placeholder="Départ"><option value="">Départ</option></select>
             </div>
             <div class="calc-field">
               <label class="calc-label">Ville de fin</label>
-              <select id="eb-ville-arrivee-2" placeholder="Arrivée"><option value="">Arrivée</option></select>
+              <select id="eb-ville-arrivee-2" class="calc-select-airport" placeholder="Arrivée"><option value="">Arrivée</option></select>
             </div>
           </div>
           <div class="calc-field">
             <label class="calc-label" for="eb-vol2">Numéro de vol</label>
-            <input type="text" id="eb-vol2" class="calc-input" placeholder="Ex: AF718" maxlength="8" autocomplete="off" oninput="volLookup(this,'eb-chip2','eb-dist-wrap','eb-dist'); updateEscaleDist();">
+            <input type="text" id="eb-vol2" class="calc-input" placeholder="Ex: AF718" maxlength="8" autocomplete="off" oninput="volLookup(this,'eb-chip2',null,null); updateEscaleDist();">
           </div>
           <div class="vol-chip" id="eb-chip2" style="display:none;">
             <span class="chip-ico">✈️</span>
@@ -375,18 +352,14 @@
 
         <div class="eb-vol-block" id="eb-vol-block-3" style="display:none;">
           <div class="calc-field-label-vol">Vol 3</div>
-          <div class="calc-field">
-            <label class="calc-label">Compagnie</label>
-            <select id="eb-compagnie-3" placeholder="Compagnie…"><option value="">Compagnie</option></select>
-          </div>
           <div class="calc-row">
             <div class="calc-field">
               <label class="calc-label">Ville de départ</label>
-              <select id="eb-ville-depart-3" placeholder="Départ"><option value="">Départ</option></select>
+              <select id="eb-ville-depart-3" class="calc-select-airport" placeholder="Départ"><option value="">Départ</option></select>
             </div>
             <div class="calc-field">
               <label class="calc-label">Ville de fin</label>
-              <select id="eb-ville-arrivee-3" placeholder="Arrivée"><option value="">Arrivée</option></select>
+              <select id="eb-ville-arrivee-3" class="calc-select-airport" placeholder="Arrivée"><option value="">Arrivée</option></select>
             </div>
           </div>
           <div class="calc-field">
@@ -396,16 +369,7 @@
         </div>
 
         <button type="button" class="eb-add-vol-btn" id="eb-add-vol-btn" onclick="toggleEscaleVol3()">+ Ajouter un 3e vol</button>
-
-        <div class="calc-field" id="eb-dist-wrap">
-          <label class="calc-label">Distance totale (départ → destination finale)</label>
-          <div class="dist-pills" role="group" aria-label="Choisir la distance">
-            <button type="button" class="dist-pill" data-dist="250" onclick="setDist('eb-dist',250,this)">Court<br><span class="pill-amount">250€</span></button>
-            <button type="button" class="dist-pill" data-dist="400" onclick="setDist('eb-dist',400,this)">Moyen<br><span class="pill-amount">400€</span></button>
-            <button type="button" class="dist-pill" data-dist="600" onclick="setDist('eb-dist',600,this)">Long<br><span class="pill-amount">600€</span></button>
-          </div>
-          <input type="hidden" id="eb-dist" value="">
-        </div>
+        <input type="hidden" id="eb-dist" value="">
 
         <div class="calc-row">
           <div class="calc-field">
@@ -1253,16 +1217,10 @@ function goTo(stepId, pct) {
   }
   if (stepId === 'step-3a') {
     var daDist = document.getElementById('da-dist');
-    var daWrap = document.getElementById('da-dist-wrap');
     var daLine = document.getElementById('da-distance-line');
     if (daDist && (!daDist.value || daDist.value === '')) {
       daDist.value = '600';
       if (daLine && typeof DISTANCE_LINE !== 'undefined') daLine.textContent = DISTANCE_LINE[600] || '';
-      if (daWrap) {
-        daWrap.querySelectorAll('.dist-pill').forEach(function(p) { p.classList.remove('active'); });
-        var pill600 = daWrap.querySelector('.dist-pill[data-dist="600"]');
-        if (pill600) pill600.classList.add('active');
-      }
     }
     // Rafraîchir les Tom Select aéroports une fois l’étape visible (sinon le dropdown peut rester vide)
     setTimeout(function() {
@@ -1360,7 +1318,7 @@ function restartFunnel() {
   var addVolBtn = document.getElementById('eb-add-vol-btn');
   if (addVolBtn) addVolBtn.textContent = '+ Ajouter un 3e vol';
   [1,2,3].forEach(function(i) {
-    ['eb-compagnie-'+i,'eb-ville-depart-'+i,'eb-ville-arrivee-'+i].forEach(function(id) {
+    ['eb-ville-depart-'+i,'eb-ville-arrivee-'+i].forEach(function(id) {
       var el = document.getElementById(id);
       var ts = (el && el.tomselect) || (el && el.parentNode && el.parentNode.tomselect);
       if (ts) ts.clear();
@@ -1576,6 +1534,7 @@ function calcDirect() {
 }
 
 function calcEscale() {
+  updateEscaleDist();
   const vol1 = (document.getElementById('eb-vol1').value || '').trim().toUpperCase();
   const vol2 = (document.getElementById('eb-vol2').value || '').trim().toUpperCase();
   const vol3El = document.getElementById('eb-vol3');
@@ -1681,33 +1640,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (eb) window.flatpickr(eb, Object.assign({}, fpOpt));
   }
 
-  // Tom Select — Compagnie (diagnostic)
-  if (typeof TomSelect !== 'undefined' && window.AIRLINES_DATA) {
-    var tsOpt = {
-      options: window.AIRLINES_DATA,
-      optgroups: [
-        { value: 'Europe – Afrique', label: 'Europe – Afrique' },
-        { value: 'Majors européennes', label: 'Majors européennes' },
-        { value: 'Long-courrier', label: 'Long-courrier' },
-        { value: 'Autre', label: 'Autre' }
-      ],
-      optgroupField: 'optgroup',
-      optgroupLabelField: 'label',
-      optgroupValueField: 'value',
-      valueField: 'value',
-      labelField: 'text',
-      searchField: 'text',
-      maxItems: 1,
-      placeholder: 'Rechercher une compagnie…',
-      create: false,
-      allowEmptyOption: true
-    };
-    ['da-compagnie', 'eb-compagnie'].forEach(function(id) {
-      var el = document.getElementById(id);
-      if (el && !el.tomselect) new TomSelect('#' + id, tsOpt);
-    });
-  }
-
   // Tom Select — Aéroports Départ / Arrivée : liste complète au chargement + recherche API à 2 caractères
   if (typeof TomSelect !== 'undefined') {
     var airportSearchApi = (typeof window.AIRPORT_SEARCH_API !== 'undefined' && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : (window.location.origin + '/.netlify/functions/airport-search');
@@ -1774,6 +1706,15 @@ document.addEventListener('DOMContentLoaded', () => {
         updateManualDist('da');
         var t = (window.tomSelectDaVilleArr.options && window.tomSelectDaVilleArr.options[v]) ? window.tomSelectDaVilleArr.options[v].text : v;
         saveVilleStorage('ville_arrivee', v, t);
+      });
+    }
+
+    var btnNoVol = document.getElementById('btn-je-ne-trouve-pas-mon-vol');
+    if (btnNoVol) {
+      btnNoVol.addEventListener('click', function() {
+        var wrap = document.getElementById('da-manual-wrap');
+        if (wrap) { wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+        if (window.tomSelectDaVilleDep && window.tomSelectDaVilleDep.control) window.tomSelectDaVilleDep.focus();
       });
     }
 
@@ -1872,8 +1813,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Tom Select — Escale : Vol 1, 2, 3 (compagnie + villes — liste complète comme vol direct)
-  if (typeof TomSelect !== 'undefined' && window.AIRLINES_DATA) {
+  // Tom Select — Escale : Vol 1, 2, 3 (villes départ/arrivée — liste complète comme vol direct)
+  if (typeof TomSelect !== 'undefined') {
     var airportSearchApiEscale = (typeof window.AIRPORT_SEARCH_API !== 'undefined' && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : (window.location.origin + '/.netlify/functions/airport-search');
     var airportsRawEscale = window.AIRPORTS_DATA && window.AIRPORTS_DATA.length ? window.AIRPORTS_DATA : [
       { value: 'CDG', text: 'Paris — CDG', city: 'Paris' }, { value: 'ORY', text: 'Paris — ORY', city: 'Paris' },
@@ -1882,12 +1823,6 @@ document.addEventListener('DOMContentLoaded', () => {
       { value: 'BRU', text: 'Bruxelles — BRU', city: 'Bruxelles' }
     ];
     var allAirportsOptionsEscale = airportsRawEscale.map(function(a) { return { value: a.value, text: a.text || (a.city + ' — ' + a.value) }; });
-    var tsComp = {
-      options: window.AIRLINES_DATA,
-      optgroups: [{ value: 'Europe – Afrique', label: 'Europe – Afrique' }, { value: 'Majors européennes', label: 'Majors européennes' }, { value: 'Long-courrier', label: 'Long-courrier' }, { value: 'Autre', label: 'Autre' }],
-      optgroupField: 'optgroup', optgroupLabelField: 'label', optgroupValueField: 'value',
-      valueField: 'value', labelField: 'text', searchField: 'text', maxItems: 1, placeholder: 'Compagnie', create: false, allowEmptyOption: true
-    };
     var tsVilleOpts = {
       options: allAirportsOptionsEscale,
       valueField: 'value',
@@ -1929,8 +1864,6 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch (e) {}
     };
     [1, 2, 3].forEach(function(i) {
-      var c = document.getElementById('eb-compagnie-' + i);
-      if (c && !c.tomselect) new TomSelect('#eb-compagnie-' + i, tsComp);
       var d = document.getElementById('eb-ville-depart-' + i);
       if (d && !d.tomselect) {
         var tsDep = new TomSelect('#eb-ville-depart-' + i, tsVilleOpts);
@@ -1952,8 +1885,10 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function getEscaleSelectValue(id) {
-  var sel = document.querySelector('#' + id + ' select');
-  return (sel && sel.value) || '';
+  var el = document.getElementById(id);
+  if (!el) return '';
+  if (el.tomselect && el.tomselect.getValue) return el.tomselect.getValue() || '';
+  return el.value || '';
 }
 function updateEscaleDist() {
   var block3 = document.getElementById('eb-vol-block-3');
@@ -1962,21 +1897,12 @@ function updateEscaleDist() {
   if (block3 && block3.style.display !== 'none') arrLast = getEscaleSelectValue('eb-ville-arrivee-3');
   if (!arrLast) arrLast = getEscaleSelectValue('eb-ville-arrivee-2');
   var distIn = document.getElementById('eb-dist');
-  var distWrap = document.getElementById('eb-dist-wrap');
-  var line = document.getElementById('eb-distance-line');
-  if (!distIn || !distWrap) return;
-  if (!dep1 || !arrLast) { distIn.value = ''; if (line) line.textContent = ''; distWrap.style.display = 'block'; return; }
+  if (!distIn) return;
+  if (!dep1 || !arrLast) { distIn.value = ''; return; }
   var key = dep1 + '-' + arrLast, keyRev = arrLast + '-' + dep1;
   var amount = (typeof ROUTE_AMOUNT !== 'undefined' && ROUTE_AMOUNT[key]) || (typeof ROUTE_AMOUNT !== 'undefined' && ROUTE_AMOUNT[keyRev]);
-  if (amount) {
-    distIn.value = String(amount);
-    if (line) line.textContent = (typeof DISTANCE_LINE !== 'undefined' && DISTANCE_LINE[amount]) || '';
-  }
-  distWrap.style.display = 'none';
-  if (!amount) {
-    distIn.value = '600';
-    if (line) line.textContent = (typeof DISTANCE_LINE !== 'undefined' && DISTANCE_LINE[600]) || '';
-  }
+  if (amount) distIn.value = String(amount);
+  else distIn.value = '600';
 }
 
 function toggleEscaleVol3() {

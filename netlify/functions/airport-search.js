@@ -91,11 +91,11 @@ exports.handler = async (event) => {
       body: JSON.stringify({ error: "Keyword manquant" })
     };
   }
-  if (keyword.length < 3) {
+  if (keyword.length < 2) {
     return {
       statusCode: 400,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ error: "Au moins 3 caractères" })
+      body: JSON.stringify({ error: "Au moins 2 caractères" })
     };
   }
   if (keyword.length > 50) {
