@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/Robindesairs/robin-des-airs#readme",
   "dependencies": {
+    "@netlify/blobs": "^5.0.0",
     "amadeus": "^11.0.0",
     "better-sqlite3": "^12.6.2",
     "dotenv": "^17.3.1",

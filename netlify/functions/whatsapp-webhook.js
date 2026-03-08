@@ -6,6 +6,7 @@
  *
  * Variables : WHATSAPP_API_KEY, WHATSAPP_360DIALOG_API_KEY, ROBIN_LOG_WEBHOOK_URL,
  *   ROBIN_TUNNEL_ENABLED (optionnel), GEMINI_API_KEY (si tunnel).
+ * Si ROBIN_GEMINI_DELAY_ENABLED=true : les messages texte sont mis en attente 20s puis Gemini répond (relais).
  */
 
 const D360_BASE = 'https://waba-v2.360dialog.io';
@@ -601,16 +602,51 @@ exports.handler = async (event) => {
 
         try {
           const tunnelEnabled = process.env.ROBIN_TUNNEL_ENABLED === 'true' || (process.env.GEMINI_API_KEY && process.env.ROBIN_TUNNEL_ENABLED !== 'false');
+          const geminiDelayEnabled = process.env.ROBIN_GEMINI_DELAY_ENABLED === 'true';
+
           if (tunnelEnabled) {
             let imageBase64 = null;
             let imageMime = 'image/jpeg';
-          if (msgType === 'image') {
-            imageBase64 = await getImageBase64FromMessage(msg, d360Key);
-            if (msg.image && msg.image.mime_type) imageMime = msg.image.mime_type;
+            if (msgType === 'image') {
+              imageBase64 = await getImageBase64FromMessage(msg, d360Key);
+              if (msg.image && msg.image.mime_type) imageMime = msg.image.mime_type;
+            }
+
+            // Relais Gemini après 20s : message texte → mise en attente + accusé ; les images sont traitées tout de suite
+            if (geminiDelayEnabled && msgType !== 'image') {
+              let store;
+              try {
+                const blobs = require('@netlify/blobs');
+                if (blobs.connectLambda && event) blobs.connectLambda(event);
+                store = blobs.getStore('robin-wa');
+              } catch (e) {
+                console.log('whatsapp-webhook: blobs not available, no delay', e.message);
+              }
+              if (store) {
+                const phone = normalizeTo(fromId);
+                const convoKey = 'convo/' + phone;
+                const pendingKey = 'pending/' + phone;
+                const userText = (text || '').trim();
+                try {
+                  let convo = [];
+                  try {
+                    const raw = await store.get(convoKey);
+                    convo = (typeof raw === 'string' ? JSON.parse(raw) : raw) || [];
+                  } catch (_) {}
+                  convo.push({ role: 'user', text: userText });
+                  await store.set(convoKey, JSON.stringify(convo.slice(-30)));
+                  await store.set(pendingKey, JSON.stringify({ at: Date.now(), lastText: userText }));
+                  await sendWhatsAppText(to, "Un instant, je vous réponds dans quelques secondes…", d360Key);
+                  continue;
+                } catch (blobErr) {
+                  console.error('whatsapp-webhook: blob write failed', blobErr.message);
+                }
+              }
+            }
+
+            await handleTunnel(fromId, text || '', imageBase64, imageMime, origin, d360Key);
+            continue;
           }
-          await handleTunnel(fromId, text || '', imageBase64, imageMime, origin, d360Key);
-          continue;
-        }
 
         if (msgType === 'image') {
           const ocr = await geminiVisionOcr(await getImageBase64FromMessage(msg, d360Key), (msg.image && msg.image.mime_type) ? msg.image.mime_type : 'image/jpeg');

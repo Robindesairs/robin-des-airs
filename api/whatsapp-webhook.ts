@@ -1,5 +1,5 @@
 /**
- * Webhook WhatsApp (360dialog) — réception des messages.
+ * Webhook WhatsApp (360dialog / Meta) — réception des messages.
  * Conforme à TUNNEL-ROBIN.md.
  *
  * — Réception : GET (vérification webhook) et POST (messages entrants).
@@ -9,11 +9,17 @@
  * — Tunnel : handleTunnelMessage (sessionManager + robin.db).
  *
  * Variables : WHATSAPP_API_KEY, WHATSAPP_360DIALOG_API_KEY, GEMINI_API_KEY.
+ * Pour que les réponses partent via un numéro précis :
+ *   WHATSAPP_PHONE_NUMBER_ID (ID du numéro WhatsApp Business)
+ *   WHATSAPP_BUSINESS_ACCOUNT_ID (optionnel, filtre les entrées webhook)
+ * Si envoi via Meta Cloud API : WHATSAPP_ACCESS_TOKEN (les réponses partent via ce Phone Number ID).
+ * Sinon envoi via 360dialog (D360-API-KEY). Lien contact erreur : WHATSAPP_CONTACT_NUMBER (ex. 15557840392 pour wa.me).
  */
 
 import { handleTunnelMessage } from '../src/webhook/whatsapp-webhook';
 
 const D360_BASE = 'https://waba-v2.360dialog.io';
+const META_GRAPH_BASE = 'https://graph.facebook.com/v18.0';
 
 function normalizeTo(waId: string): string {
   const s = String(waId ?? '').replace(/\D/g, '');
@@ -22,25 +28,71 @@ function normalizeTo(waId: string): string {
   return s;
 }
 
-async function sendWhatsAppText(to: string, text: string, apiKey: string): Promise<boolean> {
-  const url = `${D360_BASE}/messages`;
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'D360-API-KEY': apiKey, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      messaging_product: 'whatsapp',
-      recipient_type: 'individual',
-      to: String(to).replace(/\D/g, ''),
-      type: 'text',
-      text: { body: text.slice(0, 4096) },
-    }),
-  });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    console.error('whatsapp-webhook: send error', res.status, data);
+function getSendConfig(): {
+  provider: 'meta' | '360dialog';
+  phoneNumberId?: string;
+  accessToken?: string;
+  d360Key?: string;
+} {
+  const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+  const accessToken = process.env.WHATSAPP_ACCESS_TOKEN;
+  const d360Key = process.env.WHATSAPP_360DIALOG_API_KEY;
+  if (phoneNumberId && accessToken) {
+    return { provider: 'meta', phoneNumberId, accessToken };
+  }
+  return { provider: '360dialog', d360Key: d360Key || undefined };
+}
+
+/** Envoie un message texte. Utilise WHATSAPP_PHONE_NUMBER_ID + WHATSAPP_ACCESS_TOKEN (Meta) si définis, sinon 360dialog. */
+async function sendWhatsAppText(to: string, text: string): Promise<boolean> {
+  const config = getSendConfig();
+  const toClean = String(to).replace(/\D/g, '');
+  if (!toClean || toClean.length < 8) {
+    console.error('whatsapp-webhook: send skipped, to invalid', to);
     return false;
   }
-  return true;
+  const payload = {
+    messaging_product: 'whatsapp' as const,
+    recipient_type: 'individual' as const,
+    to: toClean,
+    type: 'text' as const,
+    text: { body: text.slice(0, 4096) },
+  };
+
+  if (config.provider === 'meta' && config.phoneNumberId && config.accessToken) {
+    const url = `${META_GRAPH_BASE}/${config.phoneNumberId}/messages`;
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${config.accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      console.error('whatsapp-webhook: send error (Meta)', res.status, data);
+      return false;
+    }
+    return true;
+  }
+
+  if (config.d360Key) {
+    const res = await fetch(`${D360_BASE}/messages`, {
+      method: 'POST',
+      headers: { 'D360-API-KEY': config.d360Key, 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      console.error('whatsapp-webhook: send error (360dialog)', res.status, data);
+      return false;
+    }
+    return true;
+  }
+
+  console.error('whatsapp-webhook: no send config (WHATSAPP_360DIALOG_API_KEY or WHATSAPP_PHONE_NUMBER_ID+WHATSAPP_ACCESS_TOKEN)');
+  return false;
 }
 
 async function getImageBase64FromMessage(
@@ -107,19 +159,28 @@ export async function whatsappWebhookHandler(request: Request): Promise<Response
     });
   }
 
-  if (!d360Key) {
-    console.error('whatsapp-webhook: WHATSAPP_360DIALOG_API_KEY manquant');
+  const sendConfig = getSendConfig();
+  const canSend = sendConfig.provider === 'meta' || (sendConfig.provider === '360dialog' && sendConfig.d360Key);
+  if (!canSend) {
+    console.error('whatsapp-webhook: configuration manquante (WHATSAPP_360DIALOG_API_KEY ou WHATSAPP_PHONE_NUMBER_ID+WHATSAPP_ACCESS_TOKEN)');
     return new Response(JSON.stringify({ error: 'Configuration manquante' }), {
       status: 500,
       headers: { 'Content-Type': 'application/json' },
     });
   }
 
+  const phoneNumberIdFilter = process.env.WHATSAPP_PHONE_NUMBER_ID;
+  const businessAccountIdFilter = process.env.WHATSAPP_BUSINESS_ACCOUNT_ID;
+  const contactNumber = process.env.WHATSAPP_CONTACT_NUMBER || '';
+  const contactLink = contactNumber ? ` https://wa.me/${contactNumber.replace(/\D/g, '')}` : '';
+
   let body: {
     entry?: Array<{
+      id?: string;
       changes?: Array<{
         field?: string;
         value?: {
+          metadata?: { phone_number_id?: string };
           messages?: Array<{
             from?: string;
             id?: string;
@@ -140,12 +201,18 @@ export async function whatsappWebhookHandler(request: Request): Promise<Response
     });
   }
 
+  const d360KeyForMedia = process.env.WHATSAPP_360DIALOG_API_KEY;
+
   const entries = body.entry || [];
   for (const entry of entries) {
+    if (businessAccountIdFilter && entry.id && entry.id !== businessAccountIdFilter) continue;
+
     const changes = entry.changes || [];
     for (const change of changes) {
       if (change.field !== 'messages') continue;
       const value = change.value || {};
+      if (phoneNumberIdFilter && value.metadata?.phone_number_id && value.metadata.phone_number_id !== phoneNumberIdFilter) continue;
+
       const messages = value.messages || [];
       for (const msg of messages) {
         const fromId = msg.from ?? '';
@@ -157,9 +224,8 @@ export async function whatsappWebhookHandler(request: Request): Promise<Response
         let imageBase64: string | null = null;
         let imageMimeType = 'image/jpeg';
 
-        // Image : téléchargement puis OCR par Gemini 1.5 Flash (visionService) dans handleTunnelMessage
         if (msgType === 'image') {
-          const img = await getImageBase64FromMessage(msg, d360Key);
+          const img = await getImageBase64FromMessage(msg, d360KeyForMedia || '');
           if (img) {
             imageBase64 = img.base64;
             imageMimeType = img.mimeType;
@@ -167,20 +233,18 @@ export async function whatsappWebhookHandler(request: Request): Promise<Response
         }
 
         try {
-          // handleTunnelMessage utilise Gemini 1.5 Flash pour l'OCR (carte d'embarquement) et la discussion (TUNNEL-ROBIN.md)
           const result = await handleTunnelMessage({
             phoneNumber: fromId,
             messageText: text || undefined,
             imageBase64: imageBase64 ?? undefined,
             imageMimeType,
           });
-          await sendWhatsAppText(to, result.reply, d360Key);
+          await sendWhatsAppText(to, result.reply);
         } catch (err) {
           console.error('whatsapp-webhook: processing error', (err as Error).message, (err as Error).stack);
           await sendWhatsAppText(
             to,
-            'Désolé, un problème technique est survenu. Réessayez dans un instant ou contactez-nous : https://wa.me/33756863630',
-            d360Key
+            `Désolé, un problème technique est survenu. Réessayez dans un instant ou contactez-nous.${contactLink}`.trim()
           );
         }
       }

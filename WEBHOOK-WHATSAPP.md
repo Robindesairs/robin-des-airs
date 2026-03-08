@@ -37,7 +37,11 @@ En résumé : dans 360dialog vous ne saisissez que l’**URL du webhook** et le 
 | Variable | Obligatoire | Description |
 |----------|-------------|-------------|
 | `WHATSAPP_API_KEY` | Oui | Clé que vous définissez : elle doit être **identique** au « Verify token » saisi dans le dashboard 360dialog pour la validation GET du webhook. |
-| `WHATSAPP_360DIALOG_API_KEY` | Oui | Clé API 360dialog (D360-API-KEY) pour envoyer les réponses. |
+| `WHATSAPP_360DIALOG_API_KEY` | Oui* | Clé API 360dialog (D360-API-KEY) pour envoyer les réponses. *Ou voir ci‑dessous (Meta). |
+| `WHATSAPP_PHONE_NUMBER_ID` | Non | ID du numéro WhatsApp Business. Si défini avec `WHATSAPP_ACCESS_TOKEN`, les réponses partent via l’API Meta (ce numéro). Permet aussi de filtrer les messages entrants (ne traiter que ceux reçus sur ce numéro). |
+| `WHATSAPP_BUSINESS_ACCOUNT_ID` | Non | ID du compte WhatsApp Business. Si défini, seules les entrées webhook dont `entry.id` correspond sont traitées. |
+| `WHATSAPP_ACCESS_TOKEN` | Non | Token d’accès Meta. Si défini avec `WHATSAPP_PHONE_NUMBER_ID`, l’envoi des réponses se fait via l’API Graph Meta (réponses bien envoyées depuis ce Phone Number ID). |
+| `WHATSAPP_CONTACT_NUMBER` | Non | Numéro de contact pour le lien wa.me dans le message d’erreur (ex. `15557840392`). Si non défini, le message d’erreur ne contient pas de lien. |
 | `ROBIN_LOG_WEBHOOK_URL` | Non | URL à laquelle le webhook envoie en POST chaque message entrant (JSON). Votre backend peut écrire dans `robin.db` (table `whatsapp_messages`) pour le Dashboard. |
 
 ## Configuration côté 360dialog
@@ -59,6 +63,16 @@ Pour que Robin propose le **tunnel** (« Envoyez une photo de votre carte d'emba
 - **Option 2** : Définir **`GEMINI_API_KEY`** (clé API Gemini). Si cette variable est présente, le tunnel est activé automatiquement (sauf si `ROBIN_TUNNEL_ENABLED=false`).
 
 Variables nécessaires pour le tunnel : **`GEMINI_API_KEY`** (obligatoire pour l’OCR des photos).
+
+### Relais Gemini après 20 secondes (optionnel)
+
+Si vous voulez qu’un **humain** puisse répondre en premier et que **Gemini prenne le relais** environ 20 secondes plus tard s’il n’y a pas de réponse :
+
+- Définir **`ROBIN_GEMINI_DELAY_ENABLED=true`** dans les variables Netlify.
+- Le site doit avoir la dépendance **`@netlify/blobs`** (stockage des conversations en attente).
+- **Comportement** : à chaque message **texte** du client, le webhook envoie immédiatement « Un instant, je vous réponds dans quelques secondes… », enregistre la conversation en attente. Une **fonction planifiée** (`whatsapp-gemini-fallback`) s’exécute **toutes les minutes** ; pour toute conversation en attente depuis au moins 20 secondes, Gemini génère une réponse et l’envoie sur WhatsApp. Les **photos** sont toujours traitées tout de suite (OCR, tunnel).
+- Variable optionnelle : **`ROBIN_GEMINI_DELAY_SECONDS`** (défaut 20) — délai minimal en secondes avant que Gemini réponde.
+- La fonction `whatsapp-gemini-fallback` doit être planifiée dans `netlify.toml` avec `schedule = "* * * * *"` (toutes les minutes). Le délai réel peut donc être entre 20 secondes et environ 1 minute 20 selon l’heure d’envoi du message.
 
 ## Comportement (mode classique, sans tunnel)
 

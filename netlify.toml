@@ -9,6 +9,10 @@
 [functions]
   directory = "netlify/functions"
 
+# Relais Gemini après ~20s sans réponse humaine (traitement toutes les minutes)
+[functions."whatsapp-gemini-fallback"]
+  schedule = "* * * * *"
+
 [build]
   publish = "."
   command = ""
