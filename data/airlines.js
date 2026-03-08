@@ -35,7 +35,6 @@ window.AIRLINES_DATA = [
   { value: "Iberia", text: "Iberia", optgroup: "Majors européennes" },
   { value: "Vueling", text: "Vueling", optgroup: "Majors européennes" },
   { value: "Ryanair", text: "Ryanair", optgroup: "Majors européennes" },
-  { value: "easyJet", text: "easyJet", optgroup: "Majors européennes" },
   { value: "Norwegian", text: "Norwegian", optgroup: "Majors européennes" },
   { value: "SAS", text: "SAS Scandinavian Airlines", optgroup: "Majors européennes" },
   { value: "Finnair", text: "Finnair", optgroup: "Majors européennes" },

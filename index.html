@@ -268,6 +268,9 @@
             <select id="da-ville-depart" class="calc-select calc-select-airport" placeholder="Départ (ex. Paris, CDG)"><option value="">Départ</option></select>
             <select id="da-ville-arrivee" class="calc-select calc-select-airport" placeholder="Arrivée (ex. Dakar, DKR)"><option value="">Arrivée</option></select>
           </div>
+          <p id="funnel-guide-dakar" class="funnel-guide-link" style="display:none; margin-top:8px; font-size:11px;">
+            Besoin d'aide ? <a href="/blog/vol-retarde-dakar-paris-indemnite.html" target="_blank" rel="noopener">Lire notre guide sur le vol Paris-Dakar</a>
+          </p>
         </div>
 
         <div class="distance-result" id="da-distance-line"></div>
@@ -1052,9 +1055,14 @@
       </ul>
     </div>
     <div class="footer-col">
-      <h4>Ressources</h4>
+      <h4>Guide du Voyageur</h4>
       <ul>
         <li><a href="/blog/">Blog — guides et articles</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Ressources</h4>
+      <ul>
         <li><a href="/meteo-dossier-indemnite.html">Météo et dossier (TAF, METAR…)</a></li>
         <li><a href="/pourquoi-si-peu-reclament.html">Pourquoi si peu récupèrent leur indemnité ?</a></li>
       </ul>
@@ -1708,6 +1716,8 @@ document.addEventListener('DOMContentLoaded', () => {
         updateManualDist('da');
         var t = (window.tomSelectDaVilleArr.options && window.tomSelectDaVilleArr.options[v]) ? window.tomSelectDaVilleArr.options[v].text : v;
         saveVilleStorage('ville_arrivee', v, t);
+        var guideDakar = document.getElementById('funnel-guide-dakar');
+        if (guideDakar) guideDakar.style.display = (v === 'DSS' || v === 'DKR') ? 'block' : 'none';
       });
     }
 

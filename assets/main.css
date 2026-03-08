@@ -1932,6 +1932,9 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
 .vol-chip-wrap .chip-dist { font-size: 9px; color: rgba(255,255,255,0.5); }
 .link-no-vol { display: block; margin-top: 6px; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.7); background: none; border: none; cursor: pointer; text-decoration: underline; padding: 0; }
 .link-no-vol:hover { color: var(--neon-b); }
+.funnel-guide-link { color: rgba(255,255,255,0.7); }
+.funnel-guide-link a { color: var(--neon-b); font-weight: 600; text-decoration: underline; }
+.funnel-guide-link a:hover { color: #00E5A0; }
 .distance-result { font-size: 11px; font-weight: 700; color: var(--neon-b); padding: 8px 11px; background: rgba(0,229,160,0.1); border-radius: 6px; margin-bottom: 8px; min-height: 18px; }
 .eb-vol-block { padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 6px; }
 .eb-vol-block:last-of-type { border-bottom: none; }

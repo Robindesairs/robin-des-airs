@@ -86,16 +86,6 @@ var DB = {
   'TU702':{ r:'CDG→TUN', a:'Tunisair', c:400 }, 'TU703':{ r:'TUN→CDG', a:'Tunisair', c:400 },
   'TU704':{ r:'MRS→TUN', a:'Tunisair', c:400 }, 'TU705':{ r:'TUN→MRS', a:'Tunisair', c:400 },
   'TU710':{ r:'LYS→TUN', a:'Tunisair', c:400 }, 'TU711':{ r:'TUN→LYS', a:'Tunisair', c:400 },
-  /* easyJet */
-  'U21234':{ r:'CDG→BCN', a:'easyJet', c:400 }, 'U21235':{ r:'BCN→CDG', a:'easyJet', c:400 },
-  'U21456':{ r:'ORY→MAD', a:'easyJet', c:400 }, 'U21457':{ r:'MAD→ORY', a:'easyJet', c:400 },
-  'U21678':{ r:'CDG→LIS', a:'easyJet', c:400 }, 'U21679':{ r:'LIS→CDG', a:'easyJet', c:400 },
-  'U21890':{ r:'CDG→MXP', a:'easyJet', c:400 }, 'U21891':{ r:'MXP→CDG', a:'easyJet', c:400 },
-  'U22100':{ r:'CDG→LHR', a:'easyJet', c:250 }, 'U22101':{ r:'LHR→CDG', a:'easyJet', c:250 },
-  'U22200':{ r:'CDG→AMS', a:'easyJet', c:250 }, 'U22201':{ r:'AMS→CDG', a:'easyJet', c:250 },
-  'U22300':{ r:'CDG→FCO', a:'easyJet', c:400 }, 'U22301':{ r:'FCO→CDG', a:'easyJet', c:400 },
-  'U22400':{ r:'NCE→BCN', a:'easyJet', c:400 }, 'U22401':{ r:'BCN→NCE', a:'easyJet', c:400 },
-  'U22500':{ r:'LYS→LIS', a:'easyJet', c:400 }, 'U22501':{ r:'LIS→LYS', a:'easyJet', c:400 },
   /* Ryanair */
   'FR1234':{ r:'BVA→DUB', a:'Ryanair', c:250 }, 'FR1235':{ r:'DUB→BVA', a:'Ryanair', c:250 },
   'FR2345':{ r:'CDG→MAD', a:'Ryanair', c:400 }, 'FR2346':{ r:'MAD→CDG', a:'Ryanair', c:400 },
@@ -164,7 +154,7 @@ var DB = {
 var PFX = {
   AF:'Air France', SS:'Air Sénégal', TO:'Transavia', DS:'Corsair',
   SN:'Brussels Airlines', ET:'Ethiopian Airlines', AT:'Royal Air Maroc',
-  TU:'Tunisair', U2:'easyJet', FR:'Ryanair', LH:'Lufthansa', BA:'British Airways',
+  TU:'Tunisair', FR:'Ryanair', LH:'Lufthansa', BA:'British Airways',
   TK:'Turkish Airlines', EK:'Emirates', QR:'Qatar Airways', MS:'EgyptAir', KQ:'Kenya Airways',
   KP:'ASKY', V7:'Volotea', VY:'Vueling', IB:'Iberia', TP:'TAP Portugal', LX:'Swiss', OS:'Austrian', KL:'KLM',
   AH:'Air Algérie', LR:'Mauritania Airlines', QC:'Camair-Co', '8U':'Afriqiyah Airways'

@@ -125,12 +125,11 @@ const AIRLINE_TRACKER = {
   IB: 'https://www.iberia.com/flight-status',
   TP: 'https://www.flytap.com/flight-status',
   FR: 'https://www.ryanair.com/flight-status',
-  U2: 'https://www.easyjet.com/en/flight-tracker',
   VY: 'https://www.vueling.com/en/flight-status',
   EI: 'https://www.aerlingus.com/flight-status',
   LX: 'https://www.swiss.com/flight-status',
   OS: 'https://www.austrian.com/flight-status',
-  DS: 'https://www.easyjet.com/en/flight-tracker'
+  DS: 'https://www.corsair.com/fr/suivi-de-vol'
 };
 function getTrackerUrl(airlineIata, flightNumber) {
   const base = AIRLINE_TRACKER[(airlineIata || '').toUpperCase()];
