@@ -84,7 +84,14 @@ Variables nécessaires pour le tunnel : **`GEMINI_API_KEY`** (obligatoire pour l
 - Chaque message entrant est **logué dans la console** Netlify.
 - Si `ROBIN_LOG_WEBHOOK_URL` est défini, le webhook envoie un **POST** avec le payload (wa_id, from_phone, message_id, body_text, etc.). Vous pouvez créer un petit backend qui reçoit ce POST et appelle `insertWhatsAppMessage` (voir `src/db/robinDb.ts`) pour remplir la table `whatsapp_messages` de `robin.db`, visible depuis votre Dashboard.
 
-## WhatsApp ne répond pas
+## WhatsApp ne répond pas (toujours pas de réponse)
+
+**Diagnostic rapide** — Après avoir envoyé un message au numéro WhatsApp :
+- Dans Netlify → **Functions** → **whatsapp-webhook** → **Logs**, chercher :
+  - `whatsapp-webhook: POST received` = le webhook est bien appelé par 360dialog.
+  - `whatsapp-webhook: sending reply to` = une réponse a été envoyée.
+  - `whatsapp-webhook: send error` = l’envoi a échoué (vérifier **WHATSAPP_360DIALOG_API_KEY**).
+- **Si aucun log n’apparaît** : 360dialog n’appelle pas l’URL. Vérifier dans 360dialog : URL = `https://robindesairs.eu/api/whatsapp-webhook`, Verify token = **exactement** la valeur de **WHATSAPP_API_KEY** dans Netlify. Vérifier aussi que le domaine robindesairs.eu pointe vers **Netlify** (pas un autre hébergeur).
 
 1. **Vérifier que le webhook est appelé**  
    Netlify → Site → Functions → ouvrir la fonction `whatsapp-webhook` → onglet **Logs**. Envoyez un message sur WhatsApp puis regardez si une ligne apparaît (ex. `whatsapp-webhook: message`).  

@@ -92,15 +92,21 @@ async function getFlightEligibility(flightNumber, origin) {
 
 async function sendWhatsAppText(to, text, apiKey) {
   const url = `${D360_BASE}/messages`;
+  const toClean = String(to).replace(/\D/g, '');
+  if (!toClean || toClean.length < 8) {
+    console.error('whatsapp-webhook: send skipped, to invalid', to);
+    return false;
+  }
+  console.log('whatsapp-webhook: sending reply to', toClean.slice(-4) + '****', 'len=' + (text && text.length));
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'D360-API-KEY': apiKey, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       messaging_product: 'whatsapp',
       recipient_type: 'individual',
-      to: String(to).replace(/\D/g, ''),
+      to: toClean,
       type: 'text',
-      text: { body: text.slice(0, 4096) }
+      text: { body: (text || '').slice(0, 4096) }
     })
   });
   const data = await res.json().catch(() => ({}));
@@ -546,6 +552,8 @@ exports.handler = async (event) => {
   }
 
   const entries = body.entry || [];
+  const msgCount = entries.reduce((acc, e) => acc + ((e.changes || []).filter(c => c.field === 'messages').reduce((a, c) => a + ((c.value && c.value.messages) || []).length, 0)), 0);
+  console.log('whatsapp-webhook: POST received', 'entries=' + entries.length, 'messages=' + msgCount);
   if (entries.length === 0) {
     console.log('whatsapp-webhook: no entry in body', JSON.stringify(body).slice(0, 500));
   }
