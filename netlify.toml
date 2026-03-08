@@ -5,9 +5,9 @@
 # HTTPS : Netlify sert déjà le site en https. Pour forcer la redirection
 #         http → https, active "Force TLS" dans le dashboard :
 #         Domain management → HTTPS → "Force TLS connection" (ou "Redirect HTTP to HTTPS").
-# Fonctions serverless : netlify/functions/ (JS). Les fichiers api/*.ts sont pour un autre runtime (ex. Vercel / Node).
-# [functions]
-#   directory = "netlify/functions"  # défaut Netlify si non précisé
+# Fonctions serverless : toutes les .js de netlify/functions/ (airport-search, flight-info, radar, send-whatsapp, telegram-notify, whatsapp-status, whatsapp-webhook).
+[functions]
+  directory = "netlify/functions"
 
 [build]
   publish = "."

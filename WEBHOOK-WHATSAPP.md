@@ -1,5 +1,18 @@
 # Webhook WhatsApp (360dialog) — Configuration
 
+## Vérification rapide (Robin répond-il ?)
+
+| Étape | Action | Résultat attendu |
+|-------|--------|------------------|
+| 1 | Ouvrir **https://robindesairs.eu/api/whatsapp-status** | JSON avec `"can_send_replies": true` (ou `whatsapp: "ok"`). Si `config_missing` → ajouter les variables Netlify et redéployer. |
+| 2 | Dans **360dialog** : Webhook URL = `https://robindesairs.eu/api/whatsapp-webhook`, Verify token = même valeur que `WHATSAPP_API_KEY` | Enregistrement accepté (GET de vérification renvoie 200). |
+| 3 | Envoyer **Bonjour** au numéro WhatsApp Business | Robin répond avec le menu ou « Envoyez une photo de votre carte d'embarquement ». |
+| 4 | Netlify → **Functions** → **whatsapp-webhook** → **Logs** | Après envoi d’un message, une ligne du type `whatsapp-webhook: message` apparaît. Si rien → l’URL webhook ou le token 360dialog est incorrect. |
+
+**Variables Netlify obligatoires :** `WHATSAPP_API_KEY`, `WHATSAPP_360DIALOG_API_KEY`. Pour le tunnel (photo + OCR) : `GEMINI_API_KEY`.
+
+---
+
 ## Route
 
 - **URL** : `https://VOTRE-DOMAINE.netlify.app/api/whatsapp-webhook`
