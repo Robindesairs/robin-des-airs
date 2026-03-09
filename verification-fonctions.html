@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vérification des fonctions Netlify — Robin des Airs</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { font-size: 1.25rem; }
+    .fn { margin: 0.75rem 0; padding: 0.75rem; border-radius: 8px; border: 1px solid #ddd; }
+    .fn.ok { background: #e8f5e9; border-color: #81c784; }
+    .fn.err { background: #ffebee; border-color: #e57373; }
+    .fn.pending { background: #fff8e1; border-color: #ffb74d; }
+    .fn strong { display: block; margin-bottom: 0.25rem; }
+    .fn small { color: #666; }
+    button { margin-top: 0.5rem; padding: 0.5rem 1rem; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Vérification des fonctions Netlify</h1>
+  <p>Clique sur « Lancer les tests » pour appeler les endpoints GET. Base : <span id="base"></span></p>
+  <button id="run">Lancer les tests</button>
+  <div id="results"></div>
+
+  <script>
+    function base() {
+      if (typeof window !== 'undefined' && window.location.origin) return window.location.origin;
+      return 'https://robindesairs.eu';
+    }
+    document.getElementById('base').textContent = base();
+
+    var tests = [
+      { name: 'whatsapp-status', url: base() + '/api/whatsapp-status', check: function(r, d) { return r.ok && d && (d.whatsapp === 'ok' || d.can_send_replies !== undefined); } },
+      { name: 'flight-info', url: base() + '/.netlify/functions/flight-info?flight=AF718', check: function(r) { return r.ok; } },
+      { name: 'airport-search', url: base() + '/.netlify/functions/airport-search?query=paris', check: function(r) { return r.ok; } },
+      { name: 'radar', url: base() + '/.netlify/functions/radar', check: function(r) { return r.ok; } }
+    ];
+
+    document.getElementById('run').onclick = async function() {
+      var el = document.getElementById('results');
+      el.innerHTML = '';
+      for (var i = 0; i < tests.length; i++) {
+        var t = tests[i];
+        var div = document.createElement('div');
+        div.className = 'fn pending';
+        div.innerHTML = '<strong>' + t.name + '</strong><small>Appel en cours…</small>';
+        el.appendChild(div);
+        try {
+          var res = await fetch(t.url, { method: 'GET' });
+          var data = null;
+          var ct = res.headers.get('content-type') || '';
+          if (ct.indexOf('json') !== -1) data = await res.json().catch(function() { return null; });
+          var ok = t.check(res, data);
+          div.className = 'fn ' + (ok ? 'ok' : 'err');
+          div.innerHTML = '<strong>' + t.name + '</strong><small>' + (ok ? 'OK ' : 'Échec ') + res.status + (data && data.error ? ' — ' + data.error : '') + '</small>';
+        } catch (e) {
+          div.className = 'fn err';
+          div.innerHTML = '<strong>' + t.name + '</strong><small>Erreur: ' + (e.message || e) + '</small>';
+        }
+      }
+    };
+  </script>
+</body>
+</html>

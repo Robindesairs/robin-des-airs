@@ -112,7 +112,7 @@ async function sendWhatsAppText(to, text) {
     console.error('whatsapp-webhook: send skipped, to invalid', to);
     return false;
   }
-  console.log('whatsapp-webhook: sending reply to', toClean.slice(-4) + '****', 'len=' + (text && text.length));
+  console.log('whatsapp-webhook: sending reply to', toClean.slice(-4) + '****', 'provider=' + (config.provider || '?'), 'len=' + (text && text.length));
   const payload = {
     messaging_product: 'whatsapp',
     recipient_type: 'individual',
@@ -632,22 +632,22 @@ exports.handler = async (event) => {
         const msgType = msg.type || 'text';
 
         // Déduplication : ne répondre qu'une fois par message_id (évite 5 réponses si le webhook est appelé 5 fois)
-        let repliedIds = [];
-        try {
-          const blobs = require('@netlify/blobs');
-          if (blobs.connectLambda && event) blobs.connectLambda(event);
-          const store = blobs.getStore('robin-wa');
-          const raw = await store.get('replied_msg_ids');
-          repliedIds = (typeof raw === 'string' ? (() => { try { return JSON.parse(raw); } catch (_) { return []; } })() : raw) || [];
-          if (Array.isArray(repliedIds) && repliedIds.includes(msgId)) {
-            console.log('whatsapp-webhook: skip duplicate message_id', msgId);
-            continue;
+        if (msgId) {
+          try {
+            const blobs = require('@netlify/blobs');
+            if (blobs.connectLambda && event) blobs.connectLambda(event);
+            const store = blobs.getStore('robin-wa');
+            const raw = await store.get('replied_msg_ids');
+            const repliedIds = (typeof raw === 'string' ? (() => { try { return JSON.parse(raw); } catch (_) { return []; } })() : raw) || [];
+            if (Array.isArray(repliedIds) && repliedIds.includes(msgId)) {
+              console.log('whatsapp-webhook: skip duplicate message_id', msgId);
+              continue;
+            }
+            const nextIds = [...(repliedIds || []), msgId].slice(-300);
+            await store.set('replied_msg_ids', JSON.stringify(nextIds));
+          } catch (e) {
+            console.log('whatsapp-webhook: dedup check failed', e.message);
           }
-          repliedIds.push(msgId);
-          if (repliedIds.length > 300) repliedIds = repliedIds.slice(-300);
-          await store.set('replied_msg_ids', JSON.stringify(repliedIds));
-        } catch (e) {
-          console.log('whatsapp-webhook: dedup check failed', e.message);
         }
 
         const logPayload = {
