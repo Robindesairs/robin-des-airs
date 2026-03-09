@@ -125,8 +125,10 @@ Si vous voulez qu’un **humain** puisse répondre en premier et que **Gemini pr
    - `whatsapp-webhook: sending reply to` = une réponse a été envoyée.
    - `whatsapp-webhook: send error` = l’envoi a échoué (vérifier **WHATSAPP_360DIALOG_API_KEY** ou **WHATSAPP_ACCESS_TOKEN**).
    - `whatsapp-webhook: skip entry` / `skip change` = en mode Meta, le message a été ignoré car reçu sur un autre numéro/compte (filtres WHATSAPP_PHONE_NUMBER_ID / WHATSAPP_BUSINESS_ACCOUNT_ID).
+   - `whatsapp-webhook: will process and reply` = le message n’a pas été ignoré (dédup), on va traiter et envoyer une réponse.
+   - `whatsapp-webhook: skip duplicate message_id` = ce message a déjà été traité (réponse envoyée une fois) ; pour tester sans dédup, définir **`ROBIN_DEDUP_DISABLED=true`** dans Netlify (attention : risque de réponses en double si 360dialog renvoie le même événement).
 3. **Si vous utilisez uniquement 360dialog** : les filtres par Phone Number ID / Business Account ID ne s’appliquent pas ; tous les messages reçus sont traités. Ils ne s’activent que si **WHATSAPP_PHONE_NUMBER_ID** et **WHATSAPP_ACCESS_TOKEN** sont tous deux définis (envoi via Meta).
-4. **Si aucun log n’apparaît** : 360dialog n’appelle pas l’URL. Vérifier dans 360dialog : URL = `https://robindesairs.eu/api/whatsapp-webhook`, Verify token = **exactement** la valeur de **WHATSAPP_API_KEY** dans Netlify. Vérifier aussi que le domaine robindesairs.eu pointe vers **Netlify** (pas un autre hébergeur).
+4. **Si aucun log n’apparaît** : 360dialog n’appelle pas l’URL pour **ce numéro**. Dans 360dialog, vérifier que le **numéro qui reçoit les messages** (celui que vous contactez sur WhatsApp) est bien celui pour lequel l’URL du webhook est configurée : `https://robindesairs.eu/api/whatsapp-webhook`, Verify token = **exactement** la valeur de **WHATSAPP_API_KEY** dans Netlify. Vérifier aussi que le domaine robindesairs.eu pointe vers **Netlify** (pas un autre hébergeur).
 
 1. **Vérifier que le webhook est appelé**  
    Netlify → Site → Functions → ouvrir la fonction `whatsapp-webhook` → onglet **Logs**. Envoyez un message sur WhatsApp puis regardez si une ligne apparaît (ex. `whatsapp-webhook: message`).  

@@ -632,7 +632,8 @@ exports.handler = async (event) => {
         const msgType = msg.type || 'text';
 
         // Déduplication : ne répondre qu'une fois par message_id (évite 5 réponses si le webhook est appelé 5 fois)
-        if (msgId) {
+        const dedupDisabled = process.env.ROBIN_DEDUP_DISABLED === 'true';
+        if (!dedupDisabled && msgId) {
           try {
             const blobs = require('@netlify/blobs');
             if (blobs.connectLambda && event) blobs.connectLambda(event);
@@ -649,6 +650,8 @@ exports.handler = async (event) => {
             console.log('whatsapp-webhook: dedup check failed', e.message);
           }
         }
+
+        console.log('whatsapp-webhook: will process and reply', 'from=' + (fromId || '').slice(-4) + '****', 'msgId=' + (msgId || 'none'));
 
         const logPayload = {
           wa_id: fromId,
