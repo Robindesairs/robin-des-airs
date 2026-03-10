@@ -1913,8 +1913,9 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
 .calc-robin-hint { font-size: 10px; color: rgba(255,255,255,0.5); margin-bottom: 8px; text-align: center; }
 /* Tom Select — diagnostic : contraste renforcé pour la recherche Départ/Arrivée */
 .fstep .ts-wrapper.single .ts-control { background: rgba(255,255,255,0.12); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 6px; padding: 10px 12px; min-height: 36px; color: #fff !important; }
-.fstep .ts-wrapper .ts-control .ts-input input { color: #fff !important; font-size: 13px; font-weight: 700; -webkit-text-fill-color: #fff !important; }
+.fstep .ts-wrapper .ts-control .ts-input input { color: #fff !important; font-size: 13px; font-weight: 700; -webkit-text-fill-color: #fff !important; opacity: 1; caret-color: #00E5A0; }
 .fstep .ts-wrapper .ts-control .ts-input input::placeholder { color: rgba(255,255,255,0.75) !important; }
+#funnel-box .ts-wrapper .ts-control .ts-input input { color: #fff !important; -webkit-text-fill-color: #fff !important; opacity: 1; }
 .fstep .ts-wrapper .ts-control .item { color: #fff !important; font-size: 12px; font-weight: 700; }
 .fstep .ts-wrapper.dropdown-active .ts-control { border-color: rgba(0,229,160,0.5); background: rgba(255,255,255,0.14); }
 /* Liste déroulante (Départ / Arrivée) : fond sombre, texte bien lisible */

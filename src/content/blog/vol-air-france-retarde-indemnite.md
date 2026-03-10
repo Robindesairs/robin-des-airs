@@ -22,7 +22,7 @@ Pour un retard entre 3h et 4h sur un vol de plus de 3 500 km, la compagnie peut 
 
 Les lignes long-courrier vers l'Afrique de l'Ouest et centrale sont parmi les plus impactées. Les raisons : rotation d'avion depuis un vol précédent en retard, problème technique, surcharge opérationnelle en période de pointe (Noël, été, Tabaski).
 
-Les routes Paris → Dakar (AF718/AF720), Paris → Abidjan (AF552/AF702), Paris → Bamako (AF732), Paris → Douala (AF704) et Paris → Kinshasa sont régulièrement concernées.
+Les routes Paris → Dakar (AF718/AF720), Paris → Abidjan (AF552/AF702), Paris → Bamako (AF732), Paris → Douala (AF704) et Paris → Kinshasa sont régulièrement concernées. Lire aussi : [Vol retardé Paris-Dakar](/blog/vol-retarde-dakar-paris-indemnite.html), [Vol retardé Paris-Abidjan](/blog/vol-retarde-abidjan-paris-indemnite.html), [Grève Air France et indemnité](/blog/greve-air-france-indemnite-vol-retarde.html).
 
 ## "Circonstances extraordinaires" : l'excuse préférée
 

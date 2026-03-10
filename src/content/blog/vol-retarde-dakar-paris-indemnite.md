@@ -34,7 +34,7 @@ Pour un vol au départ hors UE (Dakar → Paris), le CE 261/2004 ne s'applique q
 
 La loi ne fait pas de distinction d'âge. Chaque passager ayant un billet compte, y compris les enfants et bébés ayant payé des taxes. Une famille de 5 sur un Paris-Dakar retardé de 4h ? C'est 5 × 600€ = 3 000€ brut, soit **2 250€ nets** après commission Robin de 25%.
 
-Service disponible en français, wolof, pulaar et soninké.
+Service disponible en français, wolof, pulaar et soninké. Sur le même thème : [Vol Air France retardé](/blog/vol-air-france-retarde-indemnite.html), [Indemnité famille et enfants](/blog/indemnite-vol-retarde-famille-enfants.html).
 
 → [Vérifier mon vol Paris-Dakar](https://robindesairs.eu/#funnel-box)
 → [WhatsApp direct](https://wa.me/15557840392)

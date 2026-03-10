@@ -564,7 +564,9 @@ exports.handler = async (event) => {
     const mode = q['hub.mode'] || q.hub_mode;
     const token = q['hub.verify_token'] || q.hub_verify_token;
     const challenge = q['hub.challenge'] || q.hub_challenge;
-    if (mode === 'subscribe' && token === apiKey && challenge) {
+    // 360dialog n'a pas de champ "verify token" dans son interface — on accepte si challenge présent
+    const tokenOk = !apiKey || token === apiKey;
+    if (mode === 'subscribe' && tokenOk && challenge) {
       return { statusCode: 200, body: challenge };
     }
     return { statusCode: 403, body: 'Forbidden' };

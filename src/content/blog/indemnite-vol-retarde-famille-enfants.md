@@ -25,7 +25,7 @@ Le CE 261/2004 ne mentionne jamais l'âge du passager. Si votre enfant a un siè
 
 En droit français, le délai de prescription est de 5 ans. Si votre famille a subi un retard depuis 2021, vous pouvez encore réclamer pour chaque passager.
 
-Le passager référent (un parent) signe pour toute la famille. Les mineurs sont automatiquement représentés. Envoyez simplement toutes les cartes d'embarquement sur WhatsApp.
+Le passager référent (un parent) signe pour toute la famille. Les mineurs sont automatiquement représentés. Envoyez simplement toutes les cartes d'embarquement sur WhatsApp. Sur le même thème : [Vol retardé Paris-Dakar](/blog/vol-retarde-dakar-paris-indemnite.html), [Combien de temps pour réclamer ?](/blog/combien-temps-reclamer-indemnite-vol.html).
 
 → [Calculer l'indemnité pour ma famille](https://robindesairs.eu/#funnel-box)
 → [WhatsApp — j'ai voyagé en famille](https://wa.me/15557840392)

@@ -15,9 +15,24 @@
 
 [build]
   publish = "."
-  command = ""
+  command = "npm run build:sitemap && npm run build:blog"
 
-# Redirections pour URLs sans .html (optionnel)
+# Redirections pour URLs sans .html
+[[redirects]]
+  from = "/depot-en-ligne"
+  to = "/depot-en-ligne.html"
+  status = 200
+
+[[redirects]]
+  from = "/depot-simple"
+  to = "/depot-simple.html"
+  status = 200
+
+[[redirects]]
+  from = "/blog"
+  to = "/blog/index.html"
+  status = 200
+
 [[redirects]]
   from = "/choix-reclamation"
   to = "/choix-reclamation.html"

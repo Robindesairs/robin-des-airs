@@ -9,6 +9,11 @@
 <meta property="og:url" content="https://robindesairs.eu">
 <meta property="og:title" content="Robin des Airs — Votre vol retardé vaut jusqu'à 600€">
 <meta property="og:description" content="Vol retardé ou annulé ? Récupérez jusqu'à 600€ d'indemnité légale. Zéro frais si on ne gagne pas. Dossier en 2 minutes via WhatsApp.">
+<meta property="og:image" content="https://robindesairs.eu/og-blog.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://robindesairs.eu/og-blog.png">
 <meta name="theme-color" content="#0B1F3A">
 <link rel="icon" href="/favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="/favicon.png">
@@ -79,6 +84,7 @@
     <li><a href="#temoignages" onclick="closeMobileNav()" data-i18n="nav_drawer_testi">⭐ Témoignages</a></li>
     <li><a href="#faq" onclick="closeMobileNav()" data-i18n="nav_drawer_faq">❓ FAQ</a></li>
     <li><a href="/blog/" onclick="closeMobileNav()">📝 Blog</a></li>
+    <li><a href="/choix-reclamation.html" onclick="closeMobileNav()">📤 Déposer mon dossier</a></li>
     <li><a href="#funnel-box" onclick="closeMobileNav(); document.getElementById('funnel-box')&&document.getElementById('funnel-box').scrollIntoView({behavior:'smooth'});" class="drawer-cta" data-i18n="nav_cta">Combien je touche ? →</a></li>
   </ul>
 </div>
@@ -524,7 +530,7 @@
     <div style="margin-top:48px;text-align:center;">
       <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary">Je récupère mon argent →</a>
       <p style="font-size:11px;color:var(--gray);margin-top:10px;">Jusqu'à 600€ · 25% · Zéro frais si on perd</p>
-      <p style="font-size:12px;margin-top:14px;"><a href="/depot-en-ligne.html" style="color:var(--neon-dark);font-weight:600;">Scan rapide (7 étapes)</a></p>
+      <p style="font-size:12px;margin-top:14px;"><a href="/choix-reclamation.html" style="color:var(--neon-dark);font-weight:600;">Déposer un dossier (WhatsApp ou en ligne) →</a></p>
     </div>
   </div>
 </section>
@@ -631,7 +637,7 @@
     </div>
     <p style="font-size:9px;color:var(--gray2);margin-top:10px;text-align:right;letter-spacing:0.5px;">* Données comparatives à titre indicatif.</p>
     <div style="margin-top:24px;text-align:center;">
-      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary">Robin s'en occupe — lancer mon dossier</a>
+      <a href="/choix-reclamation.html" class="btn-primary">Déposer mon dossier (WhatsApp ou en ligne) →</a>
     </div>
   </div>
 </section>
@@ -815,7 +821,7 @@
     <div style="margin-top:48px;text-align:center;">
       <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary">3 minutes et c'est réglé →</a>
       <p style="font-size:11px;color:var(--gray);margin-top:10px;">Réponse sous 24h · Scan rapide 3 min</p>
-      <p style="font-size:12px;margin-top:14px;"><a href="/depot-en-ligne.html" style="color:var(--neon-dark);font-weight:600;">Scan rapide (7 étapes)</a></p>
+      <p style="font-size:12px;margin-top:14px;"><a href="/choix-reclamation.html" style="color:var(--neon-dark);font-weight:600;">Déposer un dossier (WhatsApp ou en ligne) →</a></p>
       <p style="font-size:12px;color:var(--gray);margin-top:18px;">Pour aller plus loin : <a href="/meteo-dossier-indemnite.html" style="color:var(--neon-dark);font-weight:600;">Météo et dossier (TAF, METAR…)</a> · <a href="/pourquoi-si-peu-reclament.html" style="color:var(--neon-dark);font-weight:600;">Pourquoi si peu récupèrent leur indemnité ?</a></p>
     </div>
   </div>
@@ -1020,8 +1026,9 @@
       Chaque mois sans réclamer, c'est de l'argent que vous laissez sur la table. Le délai de prescription est de 5 ans — mais ça ne dure pas.
     </p>
     <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
-      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary" data-i18n="cta_btn_calc">Mon argent m'attend →</a>
-      <a href="https://wa.me/15557840392?text=%5BFR%5D%20Bonjour%20Robin%20des%20Airs%20%21%0AJe%20veux%20ouvrir%20mon%20dossier." target="_blank" class="btn-ghost" data-i18n="cta_wa">
+      <a href="/choix-reclamation.html" class="btn-primary">Déposer mon dossier (WhatsApp ou en ligne) →</a>
+      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-ghost" data-i18n="cta_btn_calc">Mon argent m'attend →</a>
+      <a href="https://wa.me/15557840392?text=%5BFR%5D%20Bonjour%20Robin%20des%20Airs%20%21%0AJe%20veux%20parler%20%C3%A0%20un%20conseiller." target="_blank" class="btn-ghost" data-i18n="cta_wa">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.108.549 4.086 1.508 5.8L0 24l6.335-1.483A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.817 9.817 0 01-5.002-1.368l-.36-.214-3.722.976.994-3.63-.234-.373A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182c5.43 0 9.818 4.388 9.818 9.818 0 5.43-4.388 9.818-9.818 9.818z"/></svg>
         WhatsApp direct
       </a>
@@ -1082,13 +1089,14 @@
         <li><a href="https://wa.me/15557840392" target="_blank">💬 WhatsApp</a></li>
         <li><a href="/suivi-dossier.html">📋 Où en est mon dossier ?</a></li>
         <li><a href="mailto:expert@robindesairs.eu">expert@robindesairs.eu</a></li>
+        <li>66 avenue des Champs-Élysées, 75008 Paris</li>
         <li><a href="#faq">FAQ</a></li>
         <li class="footer-crisis"><strong>Ligne crise (plusieurs vols annulés)</strong> — ouverte uniquement en période de crise : <a href="tel:+33189628969">01 89 62 89 69</a></li>
       </ul>
     </div>
   </div>
   <div class="footer-bottom">
-    <div class="footer-legal">© 2026 SAS Robin des Airs — Paris · Réclamation aérienne · Spécialiste Diaspora</div>
+    <div class="footer-legal">© 2026 SASU Robin des Airs — 66 av. des Champs-Élysées, 75008 Paris · Réclamation aérienne · Spécialiste Diaspora</div>
     <div class="footer-reg">Fondé sur le Règlement CE 261/2004<br>Données protégées · RGPD conforme</div>
   </div>
 </footer>
@@ -1669,8 +1677,13 @@ document.addEventListener('DOMContentLoaded', () => {
       placeholder: 'Choisir ou taper (ville ou code IATA)…',
       create: false,
       allowEmptyOption: true,
+      openOnFocus: false,
       load: function(query, callback) {
-        var qLower = (query || '').toLowerCase();
+        var qLower = (query || '').toLowerCase().trim();
+        if (qLower.length < 1) {
+          callback([]);
+          return;
+        }
         if (qLower.length < 2) {
           callback(allAirportsOptions.filter(function(o) {
             var s = (o.text + ' ' + o.value).toLowerCase();
@@ -1749,15 +1762,15 @@ document.addEventListener('DOMContentLoaded', () => {
           fetch(apiUrl).then(function(r) { return r.json(); }).then(function(data) {
             if (data && data.error) {
               console.error('flight-info API error:', data.error);
-              flightStatusEl.className = 'flight-status error';
-              flightStatusEl.textContent = 'Vérifiez votre numéro de vol';
+              flightStatusEl.className = 'flight-status';
+              flightStatusEl.textContent = 'Vol non trouvé. Indiquez les villes ci-dessous.';
               return;
             }
             var list = Array.isArray(data) ? data : [];
             if (list.length === 0) {
               console.error('flight-info: données vides', data);
-              flightStatusEl.className = 'flight-status error';
-              flightStatusEl.textContent = 'Vérifiez votre numéro de vol';
+              flightStatusEl.className = 'flight-status';
+              flightStatusEl.textContent = 'Vol non trouvé. Indiquez les villes ci-dessous.';
               return;
             }
             var f = list[0];
@@ -1767,8 +1780,8 @@ document.addEventListener('DOMContentLoaded', () => {
             var arrIata = String(arr.iataCode || (arr.airport && arr.airport.iataCode) || '').toUpperCase();
             if (!depIata || !arrIata) {
               console.error('flight-info: departure/arrival.iataCode manquants', f);
-              flightStatusEl.className = 'flight-status error';
-              flightStatusEl.textContent = 'Vérifiez votre numéro de vol';
+              flightStatusEl.className = 'flight-status';
+              flightStatusEl.textContent = 'Vol non trouvé. Indiquez les villes ci-dessous.';
               return;
             }
             var depName = (dep.airport && dep.airport.name) || dep.city || depIata;
@@ -1817,8 +1830,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           }).catch(function(err) {
             console.error('flight-info fetch error:', err);
-            flightStatusEl.className = 'flight-status error';
-            flightStatusEl.textContent = 'Vérifiez votre numéro de vol';
+            flightStatusEl.className = 'flight-status';
+            flightStatusEl.textContent = 'Vol non trouvé. Indiquez les villes ci-dessous.';
           });
         }, 400);
       });
@@ -1844,8 +1857,13 @@ document.addEventListener('DOMContentLoaded', () => {
       placeholder: 'Choisir ou taper (ville ou IATA)…',
       create: false,
       allowEmptyOption: true,
+      openOnFocus: false,
       load: function(query, callback) {
-        var qLower = (query || '').toLowerCase();
+        var qLower = (query || '').toLowerCase().trim();
+        if (qLower.length < 1) {
+          callback([]);
+          return;
+        }
         if (qLower.length < 2) {
           callback(allAirportsOptionsEscale.filter(function(o) {
             var s = (o.text + ' ' + o.value).toLowerCase();
@@ -1936,9 +1954,9 @@ function toggleEscaleVol3() {
 
 <!-- Bouton sticky Ultra-Convertisseur (vert WhatsApp #25D366) -->
 <div class="sticky-cta-bar" id="sticky-cta-bar">
-  <a href="https://wa.me/15557840392?text=%5BFR%5D%20Bonjour%20Robin%20des%20Airs%20%2C%20je%20souhaite%20lancer%20ma%20demande%20d%27indemnisation%20." target="_blank" class="sticky-wa-btn" id="sticky-wa-cta">
+  <a href="/choix-reclamation.html" class="sticky-wa-btn" id="sticky-wa-cta">
     <span class="sticky-wa-line1">⚡ <span id="sticky-cta-amount">600€ vous attendent</span></span>
-    <span class="sticky-wa-line2">Lancer mon dossier gratuitement sur WhatsApp</span>
+    <span class="sticky-wa-line2">Déposer mon dossier (WhatsApp recommandé ou en ligne)</span>
   </a>
 </div>
 
