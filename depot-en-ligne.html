@@ -63,6 +63,9 @@ a{text-decoration:none;color:inherit}
 .field input:focus,.field select:focus{border-color:var(--neon);background:white;box-shadow:0 0 0 3px rgba(0,200,122,.09)}
 .field input.err{border-color:var(--red);box-shadow:0 0 0 3px rgba(231,76,60,.09)}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.phone-row{display:flex;gap:8px;align-items:stretch}
+.phone-prefix{width:auto;min-width:100px;flex-shrink:0;padding:11px 10px}
+.phone-input{flex:1;min-width:0}
 
 /* Airport autocomplete */
 .airport-wrap{position:relative}
@@ -131,8 +134,8 @@ a{text-decoration:none;color:inherit}
 .minor-badge{display:inline-block;font-size:8.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--orange);background:rgba(243,156,18,.1);border:1px solid rgba(243,156,18,.2);border-radius:10px;padding:2px 7px;margin-left:5px}
 
 .counter-wrap{display:flex;align-items:center;border:1.5px solid var(--border);border-radius:7px;overflow:hidden;background:white;width:fit-content}
-.counter-btn{width:36px;height:36px;background:none;border:none;font-size:18px;font-weight:700;color:var(--navy);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
-.counter-btn:hover{background:var(--off)}
+.counter-btn{width:36px;height:36px;background:var(--neon);border:none;font-size:18px;font-weight:700;color:var(--navy);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,color .15s;border-radius:6px}
+.counter-btn:hover{background:var(--neon-dark);color:white}
 .counter-val{min-width:34px;text-align:center;font-size:14px;font-weight:700;color:var(--navy);border-left:1px solid var(--border);border-right:1px solid var(--border);padding:0 5px;line-height:36px}
 
 /* Document upload */
@@ -206,6 +209,7 @@ a{text-decoration:none;color:inherit}
 .chk a{color:var(--neon-dark)}
 .doc-link{display:inline-block;margin:4px 0;color:var(--neon-dark);font-weight:600;text-decoration:none;font-size:14px}
 .doc-link:hover{text-decoration:underline}
+.doc-link-underline{text-decoration:underline}
 
 .sepa-flow{display:flex;align-items:center;gap:7px;margin:10px 0;flex-wrap:wrap}
 .sepa-step{text-align:center;flex:1;min-width:70px}
@@ -291,11 +295,38 @@ a{text-decoration:none;color:inherit}
         <div class="field"><label>Nom <span class="req">*</span></label><input id="p0-nom" placeholder="Mbaye" autocomplete="family-name"></div>
       </div>
       <div class="field"><label>Email <span class="req">*</span></label><input type="email" id="p0-email" placeholder="aminata@email.com" autocomplete="email"></div>
-      <div class="field"><label>Téléphone WhatsApp <span class="req">*</span></label><input type="tel" id="p0-tel" placeholder="+33 6 XX XX XX XX" autocomplete="tel"></div>
+      <div class="field">
+        <label>Téléphone WhatsApp <span class="req">*</span></label>
+        <div class="phone-row">
+          <select id="p0-tel-prefix" class="phone-prefix" title="Indicatif pays">
+            <option value="33" data-flag="🇫🇷">🇫🇷 +33</option>
+            <option value="221" data-flag="🇸🇳">🇸🇳 +221</option>
+            <option value="41" data-flag="🇨🇭">🇨🇭 +41</option>
+            <option value="32" data-flag="🇧🇪">🇧🇪 +32</option>
+            <option value="44" data-flag="🇬🇧">🇬🇧 +44</option>
+            <option value="49" data-flag="🇩🇪">🇩🇪 +49</option>
+            <option value="39" data-flag="🇮🇹">🇮🇹 +39</option>
+            <option value="34" data-flag="🇪🇸">🇪🇸 +34</option>
+            <option value="223" data-flag="🇲🇱">🇲🇱 +223</option>
+            <option value="225" data-flag="🇨🇮">🇨🇮 +225</option>
+            <option value="237" data-flag="🇨🇲">🇨🇲 +237</option>
+            <option value="242" data-flag="🇨🇬">🇨🇬 +242</option>
+            <option value="243" data-flag="🇨🇩">🇨🇩 +243</option>
+            <option value="228" data-flag="🇹🇬">🇹🇬 +228</option>
+            <option value="224" data-flag="🇬🇳">🇬🇳 +224</option>
+            <option value="other" data-flag="🌐">🌐 Autre</option>
+          </select>
+          <input type="tel" id="p0-tel" placeholder="6 12 34 56 78" autocomplete="tel" class="phone-input">
+        </div>
+      </div>
       <div class="field address-autocomplete-wrap">
         <label>Adresse</label>
         <input type="text" id="p0-adresse" placeholder="Commencez à taper (ex. 10 rue de, 75008 Paris)…" autocomplete="off">
         <div class="address-suggestions" id="address-suggestions" role="listbox" aria-hidden="true"></div>
+        <label class="chk chk-address-free" style="margin-top:8px">
+          <input type="checkbox" id="chk-no-address" onchange="toggleAddressFree()">
+          <span>Je ne trouve pas mon adresse — je la saisis moi-même</span>
+        </label>
       </div>
       <div class="field" style="margin-top:18px">
         <label>Nombre total de passagers dans votre groupe <span class="req">*</span></label>
@@ -438,10 +469,10 @@ a{text-decoration:none;color:inherit}
       <div class="card-title">Mandat de représentation & cession de créance</div>
       <div class="card-sub">Un seul mandat pour tout le groupe. Cochez, signez, c’est parti.</div>
       <p style="margin-bottom:10px;font-size:13px;color:var(--gray)">
-        <a href="/mandat.html" target="_blank" rel="noopener" class="doc-link">Mandat</a> · <a href="/cgv.html" target="_blank" rel="noopener" class="doc-link">CGV</a>
+        <a href="#" id="link-mandat" onclick="var u=getMandatUrl();if(u){window.open(u);}return false;" class="doc-link">Mandat</a> · <a href="/cgv.html" target="_blank" rel="noopener" class="doc-link">CGV</a>
       </p>
       <div style="margin-bottom:16px">
-        <label class="chk"><input type="checkbox" id="chk-mandat"><span>J’ai pris connaissance du mandat et des CGV et je les accepte. 25% d’honoraires uniquement en cas de succès.</span></label>
+        <label class="chk"><input type="checkbox" id="chk-mandat"><span>J’ai pris connaissance du <a href="#" class="doc-link doc-link-underline" onclick="var u=getMandatUrl();if(u){window.open(u);}return false;">mandat</a> et des <a href="/cgv.html" target="_blank" rel="noopener" class="doc-link doc-link-underline">CGV</a> et je les accepte. <strong>25% d’honoraires uniquement en cas de succès.</strong></span></label>
       </div>
       <label class="sig-label">Signature <span style="color:var(--red)">*</span></label>
       <div class="sig-wrap"><canvas class="sig-canvas" id="sig-mandat"></canvas>
@@ -491,7 +522,7 @@ a{text-decoration:none;color:inherit}
     <div class="success-card">
       <span class="success-icon">🎉</span>
       <div class="success-title">Dossier reçu !</div>
-      <div class="success-sub"><strong id="ok-name">Votre dossier</strong> a bien été transmis.<br>Confirmation <strong>WhatsApp + email</strong> dans 30 minutes.</div>
+      <div class="success-sub">Le dossier de <strong id="ok-name">Aminata</strong> a bien été transmis.<br>Confirmation <strong>WhatsApp + email</strong> dans les 30 minutes.</div>
       <div class="next-steps">
         <div class="ns"><div class="ns-n">1</div><span><strong>30 min :</strong> Message WhatsApp de confirmation + récap par email.</span></div>
         <div class="ns"><div class="ns-n">2</div><span><strong>24h :</strong> Analyse du dossier + rédaction réclamation avec preuves METAR.</span></div>
@@ -542,8 +573,8 @@ const AIRPORTS = [
   {code:"LIS",name:"Humberto Delgado",city:"Lisbonne",country:"Portugal"},
   {code:"FCO",name:"Fiumicino",city:"Rome",country:"Italie"},
   {code:"FRA",name:"Frankfurt",city:"Francfort",country:"Allemagne"},
-  {code:"DKR",name:"Blaise Diagne",city:"Dakar",country:"Sénégal"},
-  {code:"DSS",name:"Blaise Diagne (ancien)",city:"Dakar",country:"Sénégal"},
+  {code:"DSS",name:"Blaise Diagne",city:"Dakar",country:"Sénégal"},
+  {code:"BSL",name:"Bâle-Mulhouse",city:"Bâle",country:"Suisse"},
   {code:"ABJ",name:"Félix Houphouët-Boigny",city:"Abidjan",country:"Côte d'Ivoire"},
   {code:"ACC",name:"Kotoka",city:"Accra",country:"Ghana"},
   {code:"LOS",name:"Murtala Muhammed",city:"Lagos",country:"Nigeria"},
@@ -739,21 +770,21 @@ function buildDocBlock(containerId, type, icon, hint) {
   const cont = document.getElementById(containerId);
   cont.innerHTML = "";
   for (let i = 0; i < totalPax; i++) {
-    const fn = i === 0
-      ? (document.getElementById("p0-prenom")?.value || "Passager 1")
-      : (document.getElementById("pax" + i + "-prenom")?.value || "Passager " + (i+1));
+    const prenom = i === 0 ? (document.getElementById("p0-prenom")?.value || "").trim() : (document.getElementById("pax" + i + "-prenom")?.value || "").trim();
+    const nom = i === 0 ? (document.getElementById("p0-nom")?.value || "").trim() : (document.getElementById("pax" + i + "-nom")?.value || "").trim();
+    const fullName = (prenom + " " + nom).trim() || ("Passager " + (i + 1));
     const uid = type + "-" + i;
     const div = document.createElement("div");
     div.className = "doc-upload-block";
     div.innerHTML = `
-      <div class="doc-pax-label">${icon} ${fn.trim() || "Passager " + (i+1)}</div>
+      <div class="doc-pax-label">${icon} ${fullName}</div>
       <div class="upload-methods">
         <div class="upload-method">
           <input type="file" id="file-${uid}" accept="image/*,.pdf" capture="environment"
             onchange="fileChosen('file-${uid}','prev-${uid}','dz-${uid}')">
           <span class="um-icon">📷</span>
           <span class="um-title">Prendre en photo</span>
-          <span class="um-sub">Appareil photo</span>
+          <span class="um-sub">Appareil photo (mobile)</span>
         </div>
         <div class="upload-method" id="dz-${uid}"
           ondragover="dzOver(event,'dz-${uid}')" ondragleave="dzLeave('dz-${uid}')" ondrop="dzDrop(event,'dz-${uid}','prev-${uid}')">
@@ -761,7 +792,7 @@ function buildDocBlock(containerId, type, icon, hint) {
             onchange="fileChosen('file-${uid}-browse','prev-${uid}','dz-${uid}')">
           <span class="um-icon">📁</span>
           <span class="um-title">Choisir un fichier</span>
-          <span class="um-sub">PDF, JPG, PNG</span>
+          <span class="um-sub">ou glisser-déposer · PDF, JPG, PNG</span>
         </div>
       </div>
       <div class="file-prev" id="prev-${uid}">
@@ -919,7 +950,10 @@ function prefillMandat() {
   const fullname = (fn + " " + ln).trim() || "—";
   const set = function(id, text) { const el = document.getElementById(id); if (el) el.textContent = text || "—"; };
   set("m-name", fullname);
-  set("m-phone", document.getElementById("p0-tel")?.value?.trim());
+  var px = document.getElementById("p0-tel-prefix");
+  var pv = (px && px.value && px.value !== "other") ? px.value : "33";
+  var tn = (document.getElementById("p0-tel")?.value || "").replace(/\D/g, "");
+  set("m-phone", (pv === "33" ? "+33 " : "+" + pv + " ") + (tn || "—"));
   set("m-address", document.getElementById("p0-adresse")?.value?.trim());
   set("m-email", document.getElementById("p0-email")?.value?.trim());
   set("m-vol", document.getElementById("leg1-vol")?.value?.trim());
@@ -943,7 +977,49 @@ function prefillMandat() {
     if (pf || pl) paxList += (paxList ? ", " : "") + pf + " " + pl;
   }
   set("m-pax-list", paxList || null);
-  if (document.getElementById("ok-name")) document.getElementById("ok-name").textContent = fn + ",";
+  if (document.getElementById("ok-name")) document.getElementById("ok-name").textContent = (fn && fn.trim()) ? fn.trim() : "Aminata";
+}
+
+function getMandatUrl() {
+  var fn = (document.getElementById("p0-prenom")?.value || "").trim();
+  var ln = (document.getElementById("p0-nom")?.value || "").trim();
+  var name = (fn + " " + ln).trim() || "";
+  var px = document.getElementById("p0-tel-prefix");
+  var pv = (px && px.value && px.value !== "other") ? px.value : "33";
+  var tn = (document.getElementById("p0-tel")?.value || "").replace(/\D/g, "");
+  var phone = (pv + tn) ? "+" + pv + " " + tn : "";
+  var addr = (document.getElementById("p0-adresse")?.value || "").trim();
+  var email = (document.getElementById("p0-email")?.value || "").trim();
+  var vol = (document.getElementById("leg1-vol")?.value || "").trim();
+  var dt = document.getElementById("f-date")?.value;
+  var date = dt ? new Date(dt + "T00:00").toLocaleDateString("fr-FR") : "";
+  var route = "";
+  for (var i = 1; i <= (window.legCount || 0); i++) {
+    var dep = (window.legTomSelects && window.legTomSelects[i]) ? window.legTomSelects[i].dep.getValue() : (document.querySelector("#leg" + i + "-dep")?.value || "");
+    var arr = (window.legTomSelects && window.legTomSelects[i]) ? window.legTomSelects[i].arr.getValue() : (document.querySelector("#leg" + i + "-arr")?.value || "");
+    if (dep || arr) route += (route ? " / " : "") + (dep || "?") + " → " + (arr || "?");
+  }
+  var motifVal = document.getElementById("f-motif")?.value;
+  var motif = { retard: "Retard", annulation: "Annulation", surbook: "Surbooking", correspondance: "Correspondance manquée" }[motifVal] || motifVal || "";
+  var pnr = (document.getElementById("f-pnr")?.value || "").trim().toUpperCase();
+  var paxList = name;
+  for (var j = 1; j < (window.totalPax || 1); j++) {
+    var pf = (document.getElementById("pax" + j + "-prenom")?.value || "").trim();
+    var pl = (document.getElementById("pax" + j + "-nom")?.value || "").trim();
+    if (pf || pl) paxList += (paxList ? ", " : "") + pf + " " + pl;
+  }
+  var q = new URLSearchParams();
+  if (name) q.set("name", name);
+  if (phone) q.set("phone", phone);
+  if (addr) q.set("address", addr);
+  if (email) q.set("email", email);
+  if (vol) q.set("vol", vol);
+  if (date) q.set("date", date);
+  if (route) q.set("route", route);
+  if (motif) q.set("motif", motif);
+  if (pnr) q.set("pnr", pnr);
+  if (paxList) q.set("paxlist", paxList);
+  return "/mandat.html" + (q.toString() ? "?" + q.toString() : "");
 }
 
 /* ── Validation ── */
@@ -997,7 +1073,12 @@ function submitDossier() {
   fd.append("prenom", prenomVal);
   fd.append("nom", nomVal);
   fd.append("email", document.getElementById("p0-email")?.value.trim() || "");
-  fd.append("whatsapp", (document.getElementById("p0-tel")?.value || "").replace(/\D/g, "").replace(/^0/, "33"));
+  var prefixSelect = document.getElementById("p0-tel-prefix");
+    var prefix = (prefixSelect && prefixSelect.value && prefixSelect.value !== "other") ? prefixSelect.value : "33";
+    var telNum = (document.getElementById("p0-tel")?.value || "").replace(/\D/g, "");
+    if (telNum && telNum.charAt(0) === "0") telNum = prefix + telNum.slice(1);
+    else if (telNum) telNum = prefix + telNum;
+    fd.append("whatsapp", telNum);
   fd.append("adresse", document.getElementById("p0-adresse")?.value?.trim() || "");
   fd.append("nb_passagers", String(totalPax));
   // Nom du dossier : 2026_03_11_L_12345_Prenom_Nom (L = en ligne, W = WhatsApp)
@@ -1255,12 +1336,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  window.toggleAddressFree = function() {
+    var chk = document.getElementById("chk-no-address");
+    var input = document.getElementById("p0-adresse");
+    if (!input) return;
+    if (chk && chk.checked) {
+      input.placeholder = "Saisissez votre adresse (rue, code postal, ville)";
+      document.getElementById("address-suggestions").classList.remove("show");
+      document.getElementById("address-suggestions").innerHTML = "";
+    } else {
+      input.placeholder = "Commencez à taper (ex. 10 rue de, 75008 Paris)…";
+    }
+  };
+
   (function initAddressAutocomplete() {
     var input = document.getElementById("p0-adresse");
     var list = document.getElementById("address-suggestions");
     if (!input || !list) return;
     var debounce = null;
     input.addEventListener("input", function() {
+      if (document.getElementById("chk-no-address")?.checked) return;
       clearTimeout(debounce);
       var q = (input.value || "").trim();
       list.classList.remove("show");
