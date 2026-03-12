@@ -28,8 +28,8 @@ Donc **les vrais fichiers** (carte d’embarquement, passeport, etc.) sont envoy
 **Fichiers / images**  
 - `file_boarding` — carte(s) d’embarquement (plusieurs possibles si plusieurs passagers, même nom de champ)
 - `file_id` — pièce(s) d’identité (passeport, etc.)
-- `mandat_signature` — image de la signature du mandat (format Data URL PNG)
-- `sepa_signature` — image de la signature SEPA (Data URL PNG), si fournie
+- `mandat_signature_file` — **fichier** image de la signature du mandat (PNG, signé sur le formulaire) — à utiliser dans Make comme les autres fichiers (`.data`)
+- `sepa_signature_file` — **fichier** image de la signature SEPA (PNG), si fournie
 
 ### Dépôt simple (`depot-simple.html`)
 

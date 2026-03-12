@@ -47,9 +47,8 @@ a{text-decoration:none;color:inherit}
 .stepper[data-s="3"]::before{background:linear-gradient(90deg,var(--neon) 28%,var(--border) 28%)}
 .stepper[data-s="4"]::before{background:linear-gradient(90deg,var(--neon) 43%,var(--border) 43%)}
 .stepper[data-s="5"]::before{background:linear-gradient(90deg,var(--neon) 57%,var(--border) 57%)}
-.stepper[data-s="6"]::before{background:linear-gradient(90deg,var(--neon) 71%,var(--border) 71%)}
-.stepper[data-s="7"]::before{background:linear-gradient(90deg,var(--neon) 86%,var(--border) 86%)}
-.stepper[data-s="8"]::before{background:var(--neon)}
+.stepper[data-s="6"]::before{background:linear-gradient(90deg,var(--neon) 86%,var(--border) 86%)}
+.stepper[data-s="7"]::before{background:var(--neon)}
 
 .card{background:white;border:1.5px solid var(--border);border-radius:14px;padding:30px 34px;box-shadow:var(--shadow);animation:fadeUp .28s ease}
 @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
@@ -113,6 +112,14 @@ a{text-decoration:none;color:inherit}
 .ts-wrapper.single .ts-control .item{display:block}
 .add-leg-btn:hover{border-color:var(--neon);color:var(--neon-dark)}
 
+.address-autocomplete-wrap{position:relative}
+.address-suggestions{position:absolute;top:100%;left:0;right:0;z-index:100;margin-top:4px;background:white;border:1.5px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(11,31,58,.12);max-height:220px;overflow-y:auto;display:none}
+.address-suggestions.show{display:block;animation:fadeUp .15s ease}
+.address-suggestion{padding:10px 14px;cursor:pointer;font-size:12.5px;color:var(--text);border-bottom:1px solid var(--off);transition:background .12s}
+.address-suggestion:last-child{border-bottom:none}
+.address-suggestion:hover{background:var(--off)}
+.address-suggestion strong{color:var(--navy)}
+
 .info-box{display:flex;align-items:flex-start;gap:9px;background:rgba(0,200,122,.05);border:1px solid rgba(0,200,122,.18);border-radius:8px;padding:11px 14px;margin-bottom:14px;font-size:12px;color:var(--gray);line-height:1.6}
 .info-box strong{color:var(--navy)}
 .info-box.orange{background:rgba(243,156,18,.05);border-color:rgba(243,156,18,.22)}
@@ -168,6 +175,14 @@ a{text-decoration:none;color:inherit}
 .later-info.show{display:block}
 
 .doc-box{background:var(--off);border:1px solid var(--border);border-radius:8px;padding:15px 17px;font-size:11.5px;color:var(--gray);line-height:1.85;max-height:200px;overflow-y:auto;margin-bottom:14px;scrollbar-width:thin}
+.doc-box.mandat-bilingue{max-height:420px;font-size:11px}
+.doc-box .m-fill{color:var(--navy);font-weight:700}
+.doc-box .mandat-section{margin-top:14px;margin-bottom:6px}
+.doc-box .mandat-note{margin-top:8px;font-size:10.5px;opacity:.9}
+.doc-box .mandat-company{font-size:10px;margin-bottom:10px;opacity:.9}
+.doc-box .mandat-signed{margin-top:12px;font-style:italic}
+.doc-box .en{font-size:10px;opacity:.85;display:block;margin-top:2px}
+.doc-box h4.en{margin-top:4px;font-size:11px}
 .doc-box h4{font-size:12px;font-weight:700;color:var(--navy);margin-bottom:7px}
 .doc-box ul{margin:6px 0 10px 16px}
 .doc-box strong{color:var(--navy)}
@@ -189,6 +204,8 @@ a{text-decoration:none;color:inherit}
 .chk input{width:15px;height:15px;margin-top:3px;accent-color:var(--neon-dark);cursor:pointer;flex-shrink:0}
 .chk span{font-size:12px;color:var(--gray);line-height:1.6}
 .chk a{color:var(--neon-dark)}
+.doc-link{display:inline-block;margin:4px 0;color:var(--neon-dark);font-weight:600;text-decoration:none;font-size:14px}
+.doc-link:hover{text-decoration:underline}
 
 .sepa-flow{display:flex;align-items:center;gap:7px;margin:10px 0;flex-wrap:wrap}
 .sepa-step{text-align:center;flex:1;min-width:70px}
@@ -258,16 +275,15 @@ a{text-decoration:none;color:inherit}
     <div class="si" data-s="2"><div class="sn">2</div><div class="sl">Groupe</div></div>
     <div class="si" data-s="3"><div class="sn">3</div><div class="sl">Vol</div></div>
     <div class="si" data-s="4"><div class="sn">4</div><div class="sl">Embarquement</div></div>
-    <div class="si" data-s="5"><div class="sn">5</div><div class="sl">Identité</div></div>
-    <div class="si" data-s="6"><div class="sn">6</div><div class="sl">Mandat</div></div>
-    <div class="si" data-s="7"><div class="sn">7</div><div class="sl">SEPA</div></div>
-    <div class="si" data-s="8"><div class="sn">✓</div><div class="sl">Envoyé</div></div>
+    <div class="si" data-s="5"><div class="sn">5</div><div class="sl">Mandat</div></div>
+    <div class="si" data-s="6"><div class="sn">6</div><div class="sl">Pièce d'identité</div></div>
+    <div class="si" data-s="7"><div class="sn">✓</div><div class="sl">Envoyé</div></div>
   </div>
 
   <!-- ══ 1 — PASSAGER PRINCIPAL ══ -->
   <div class="fs active" id="fs-1">
     <div class="card">
-      <div class="card-eye">Étape 1 sur 7</div>
+      <div class="card-eye">Étape 1 sur 6</div>
       <div class="card-title">Passager principal</div>
       <div class="card-sub">Vos coordonnées. Vous signerez le mandat au nom de tout le groupe.</div>
       <div class="frow">
@@ -276,6 +292,11 @@ a{text-decoration:none;color:inherit}
       </div>
       <div class="field"><label>Email <span class="req">*</span></label><input type="email" id="p0-email" placeholder="aminata@email.com" autocomplete="email"></div>
       <div class="field"><label>Téléphone WhatsApp <span class="req">*</span></label><input type="tel" id="p0-tel" placeholder="+33 6 XX XX XX XX" autocomplete="tel"></div>
+      <div class="field address-autocomplete-wrap">
+        <label>Adresse</label>
+        <input type="text" id="p0-adresse" placeholder="Commencez à taper (ex. 10 rue de, 75008 Paris)…" autocomplete="off">
+        <div class="address-suggestions" id="address-suggestions" role="listbox" aria-hidden="true"></div>
+      </div>
       <div class="field" style="margin-top:18px">
         <label>Nombre total de passagers dans votre groupe <span class="req">*</span></label>
         <div style="display:flex;align-items:center;gap:14px;margin-top:7px">
@@ -295,7 +316,7 @@ a{text-decoration:none;color:inherit}
   <!-- ══ 2 — AUTRES PASSAGERS ══ -->
   <div class="fs" id="fs-2">
     <div class="card">
-      <div class="card-eye">Étape 2 sur 7</div>
+      <div class="card-eye">Étape 2 sur 6</div>
       <div class="card-title" id="step2-title">Autres passagers</div>
       <div class="card-sub" id="step2-sub">Renseignez les autres membres de votre groupe.</div>
       <div id="extra-pax-container"></div>
@@ -313,9 +334,9 @@ a{text-decoration:none;color:inherit}
   <!-- ══ 3 — VOL & CORRESPONDANCES (affichage progressif) ══ -->
   <div class="fs" id="fs-3">
     <div class="card">
-      <div class="card-eye">Étape 3 sur 7</div>
+      <div class="card-eye">Étape 3 sur 6</div>
       <div class="card-title">Votre itinéraire</div>
-      <div class="card-sub">On avance pas à pas : route, puis compagnie et vol, puis les détails.</div>
+      <div class="card-sub">Route (départ → arrivée), puis nombre de vols, puis détails. Les infos de la page précédente sont reprises.</div>
 
       <!-- Bloc 1 : La route -->
       <div class="step3-block visible" id="step3-block-1">
@@ -327,21 +348,36 @@ a{text-decoration:none;color:inherit}
           <label>Ville d'arrivée finale</label>
           <select id="f-ville-arrivee" placeholder="Ex. Dakar, Abidjan…"><option value="">Rechercher (ville ou code IATA)…</option></select>
         </div>
-        <button type="button" class="step3-suite" onclick="showStep3Block(2)">Suite : compagnie et numéro de vol →</button>
+        <button type="button" class="step3-suite" onclick="showStep3Block(2)">Suite : nombre de vols et détail →</button>
       </div>
 
-      <!-- Bloc 2 : Compagnie et vol(s) -->
+      <!-- Bloc 2 : Nombre de vols (préremplit la route) puis compagnie + numéros de vol -->
       <div class="step3-block" id="step3-block-2">
         <div class="field">
-          <label>Compagnie aérienne</label>
-          <select id="f-compagnie" placeholder="Rechercher une compagnie…"><option value="">Rechercher une compagnie…</option></select>
+          <label>Combien de vols dans votre itinéraire ? <span class="req">*</span></label>
+          <select id="f-nb-vols" onchange="buildLegsFromRoute()">
+            <option value="">— Choisir —</option>
+            <option value="1">1 vol (direct)</option>
+            <option value="2">2 vols (1 correspondance)</option>
+            <option value="3">3 vols</option>
+            <option value="4">4 vols</option>
+            <option value="5">5 vols</option>
+            <option value="6">6 vols</option>
+          </select>
         </div>
-        <div id="legs-container"></div>
-        <button class="add-leg-btn" onclick="addLeg()" id="add-leg-btn" type="button">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-          Ajouter une correspondance (vol 2, vol 3…)
-        </button>
-        <button type="button" class="step3-suite" onclick="showStep3Block(3)">Suite : PNR, date et motif →</button>
+        <p style="font-size:12px;color:var(--gray);margin-bottom:12px" id="step3-route-recap">La route saisie ci-dessus sera reprise pour chaque vol.</p>
+        <div id="legs-container-wrap" style="display:none">
+          <div class="field">
+            <label>Compagnie aérienne</label>
+            <select id="f-compagnie" placeholder="Rechercher une compagnie…"><option value="">Rechercher une compagnie…</option></select>
+          </div>
+          <div id="legs-container"></div>
+          <button class="add-leg-btn" onclick="addLeg()" id="add-leg-btn" type="button" style="display:none">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            Ajouter une correspondance
+          </button>
+        </div>
+        <button type="button" class="step3-suite" id="step3-suite-to-3" onclick="showStep3Block(3)" style="margin-top:16px;display:none">Suite : PNR, date et motif →</button>
       </div>
 
       <!-- Bloc 3 : Détails (PNR, date, motif, retard) -->
@@ -376,7 +412,9 @@ a{text-decoration:none;color:inherit}
         </div>
       </div>
 
-      <button class="btn-next" onclick="nextStep(3)">Continuer →</button>
+      <div id="step3-continuer-wrap" style="display:none">
+        <button class="btn-next" onclick="nextStep(3)">Continuer →</button>
+      </div>
       <button class="btn-back" onclick="prevStep(3)">← Retour</button>
     </div>
   </div>
@@ -384,7 +422,7 @@ a{text-decoration:none;color:inherit}
   <!-- ══ 4 — CARTE D'EMBARQUEMENT ══ -->
   <div class="fs" id="fs-4">
     <div class="card">
-      <div class="card-eye">Étape 4 sur 7</div>
+      <div class="card-eye">Étape 4 sur 6</div>
       <div class="card-title">Carte d'embarquement</div>
       <div class="card-sub">Une carte par passager. Photo, scan ou PDF — tout est accepté.</div>
       <div class="info-box secure">
@@ -403,10 +441,37 @@ a{text-decoration:none;color:inherit}
     </div>
   </div>
 
-  <!-- ══ 5 — PIÈCE D'IDENTITÉ ══ -->
+  <!-- ══ 5 — MANDAT (liens + signature + case lu) ══ -->
   <div class="fs" id="fs-5">
     <div class="card">
-      <div class="card-eye">Étape 5 sur 7</div>
+      <div class="card-eye">Étape 5 sur 6</div>
+      <div class="card-title">Mandat de représentation & cession de créance</div>
+      <div class="card-sub">Un seul mandat pour tout le groupe. Cochez, signez, c’est parti.</div>
+      <p style="margin-bottom:10px;font-size:13px;color:var(--gray)">
+        <a href="/mandat.html" target="_blank" rel="noopener" class="doc-link">Mandat</a> · <a href="/cgv.html" target="_blank" rel="noopener" class="doc-link">CGV</a>
+      </p>
+      <div style="margin-bottom:16px">
+        <label class="chk"><input type="checkbox" id="chk-mandat"><span>J’ai pris connaissance du mandat et des CGV et je les accepte. 25% d’honoraires uniquement en cas de succès.</span></label>
+      </div>
+      <label class="sig-label">Signature <span style="color:var(--red)">*</span></label>
+      <div class="sig-wrap"><canvas class="sig-canvas" id="sig-mandat"></canvas>
+        <div class="sig-bar"><span class="sig-hint">✏️ Signez ici</span><button class="sig-clear-btn" type="button" onclick="clearSig('mandat')">Effacer</button></div>
+      </div>
+      <div class="sig-status-row"><span class="sig-dot" id="dot-mandat"></span><span id="txt-mandat">Non signé</span></div>
+      <div class="sig-err" id="err-mandat">Veuillez signer le mandat.</div>
+      <div class="info-box" style="margin-top:10px">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--neon-dark)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span><strong>1 signature = tout le groupe couvert.</strong> Le passager principal signe pour l'ensemble, y compris les mineurs.</span>
+      </div>
+      <button class="btn-next" onclick="nextStep(5)">Continuer →</button>
+      <button class="btn-back" onclick="prevStep(5)">← Retour</button>
+    </div>
+  </div>
+
+  <!-- ══ 6 — PIÈCE D'IDENTITÉ (après signature du mandat) ══ -->
+  <div class="fs" id="fs-6">
+    <div class="card">
+      <div class="card-eye">Étape 6 sur 6</div>
       <div class="card-title">Pièce d'identité</div>
       <div class="card-sub">Passeport ou carte d'identité, une pièce par passager. Le nom doit correspondre au billet.</div>
       <div class="info-box secure">
@@ -420,114 +485,14 @@ a{text-decoration:none;color:inherit}
       <div class="later-info" id="id-later-info">
         ✅ <strong>Vous pouvez continuer.</strong> Nous vous relancerons par WhatsApp et email pour récupérer ce document avant le dépôt de la réclamation.
       </div>
-      <button class="btn-next" onclick="nextStep(5)" style="margin-top:18px">Continuer →</button>
-      <button class="btn-back" onclick="prevStep(5)">← Retour</button>
-    </div>
-  </div>
-
-  <!-- ══ 6 — MANDAT ══ -->
-  <div class="fs" id="fs-6">
-    <div class="card">
-      <div class="card-eye">Étape 6 sur 7</div>
-      <div class="card-title">Mandat de représentation</div>
-      <div class="card-sub">Un seul mandat pour tout votre groupe. Lisez et signez.</div>
-      <div class="doc-box">
-        <h4>MANDAT DE REPRÉSENTATION — CE 261/2004</h4>
-        <p>Je soussigné(e) <strong id="m-name">[Votre nom]</strong>, agissant en mon nom et au nom de <strong id="m-pax-list">l'ensemble des passagers du groupe</strong>, donne mandat à la société <strong>Robin des Airs</strong> de nous représenter auprès de la compagnie aérienne dans le cadre de la réclamation relative au vol <strong id="m-vol">[numéro]</strong> du <strong id="m-date">[date]</strong>.</p>
-        <br>
-        <p>Ce mandat autorise Robin des Airs à :</p>
-        <ul>
-          <li>Contacter la compagnie aérienne au nom de l'ensemble du groupe</li>
-          <li>Réclamer l'indemnisation prévue par le Règlement (CE) n° 261/2004</li>
-          <li>Engager toute procédure amiable ou judiciaire si nécessaire</li>
-          <li>Percevoir les fonds et reverser les montants nets à chaque passager</li>
-        </ul>
-        <br>
-        <p><strong>Rémunération :</strong> commission de <strong>25%</strong> du montant brut récupéré. En cas d'échec : <strong>0€ facturé.</strong></p>
-        <p>Le Mandant (le client) confirme avoir déjà sollicité le Transporteur ou mandate expressément Robin des Airs pour effectuer cette première démarche en son nom afin de faciliter la résolution amiable du litige.</p>
-        <br>
-        <p><strong>Flux de paiement :</strong> La compagnie aérienne verse l'indemnité à Robin des Airs (mandataire). Robin des Airs déduit 25% de commission et reverse le solde (75%) à chaque passager par virement bancaire.</p>
-        <br>
-        <p><strong>Droit de rétractation :</strong> 14 jours à compter de la signature.</p>
+      <div style="margin-top:18px">
+        <label class="chk"><input type="checkbox" id="chk-rgpd"><span>J'accepte la <a href="/politique-confidentialite.html" target="_blank" style="color:var(--neon-dark)">politique de confidentialité</a> et le traitement RGPD.</span></label>
       </div>
-      <div class="info-box">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--neon-dark)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span><strong>1 signature = tout le groupe couvert.</strong> Le passager principal signe pour l'ensemble, y compris les mineurs.</span>
-      </div>
-      <label class="sig-label">Signature <span style="color:var(--red)">*</span></label>
-      <div class="sig-wrap"><canvas class="sig-canvas" id="sig-mandat"></canvas>
-        <div class="sig-bar"><span class="sig-hint">✏️ Signez à la souris ou au doigt</span><button class="sig-clear-btn" type="button" onclick="clearSig('mandat')">Effacer</button></div>
-      </div>
-      <div class="sig-status-row"><span class="sig-dot" id="dot-mandat"></span><span id="txt-mandat">Non signé</span></div>
-      <div class="sig-err" id="err-mandat">Veuillez signer le mandat.</div>
-      <div style="margin-top:14px">
-        <label class="chk"><input type="checkbox" id="chk-mandat"><span>J'ai lu et accepte le mandat au nom de l'ensemble du groupe. <strong>Robin des Airs prélève 25% uniquement en cas de succès.</strong></span></label>
-      </div>
-      <button class="btn-next" onclick="nextStep(6)">Continuer →</button>
-      <button class="btn-back" onclick="prevStep(6)">← Retour</button>
-    </div>
-  </div>
-
-  <!-- ══ 7 — SEPA ══ -->
-  <div class="fs" id="fs-7">
-    <div class="card">
-      <div class="card-eye">Étape 7 sur 7</div>
-      <div class="card-title">Coordonnées bancaires</div>
-      <div class="card-sub">Pour recevoir votre indemnité ou pour que nous puissions vous débiter si la compagnie vous a payé directement.</div>
-
-      <div class="info-box blue" style="margin-bottom:16px">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3498db" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <div>
-          <strong>À qui la compagnie va-t-elle verser l'argent ?</strong><br>
-          <span style="margin-top:4px;display:block">Dans la majorité des cas, la compagnie verse directement à <strong>Robin des Airs</strong> (mandataire) qui vous reverse votre part nette. <br>Dans certains cas, la compagnie peut payer <strong>directement le passager</strong> — dans ce cas, Robin des Airs est autorisé à <strong>prélever sa commission (25%) sur votre compte</strong> via le mandat SEPA ci-dessous.</span>
-        </div>
-      </div>
-
-      <div style="background:var(--off);border:1px solid var(--border);border-radius:9px;padding:14px 16px;margin-bottom:18px;font-size:12px;color:var(--gray);line-height:1.7">
-        <strong style="color:var(--navy);display:block;margin-bottom:8px">💡 Comment ça marche :</strong>
-        <div class="sepa-flow">
-          <div class="sepa-step"><div class="ss-n">1</div><div class="ss-t">Compagnie verse<br><strong>ex. 600€</strong></div></div>
-          <div class="sepa-arrow">→</div>
-          <div class="sepa-step"><div class="ss-n">2a</div><div class="ss-t">À Robin :<br>Robin garde 150€<br>vire 450€ au client</div></div>
-          <div class="sepa-arrow">ou</div>
-          <div class="sepa-step"><div class="ss-n">2b</div><div class="ss-t">Au client :<br>Robin prélève<br>150€ via SEPA</div></div>
-        </div>
-      </div>
-
-      <button class="later-toggle" id="sepa-later-btn" onclick="toggleLater('sepa')" type="button">
-        📅 Je n'ai pas mon RIB maintenant
-      </button>
-      <div class="later-info" id="sepa-later-info">
-        ✅ <strong>Vous pouvez continuer.</strong> Nous vous demanderons le RIB par WhatsApp dès que les fonds seront disponibles.
-      </div>
-
-      <div id="sepa-fields" style="margin-top:14px">
-        <div class="field"><label>Titulaire du compte <span class="req">*</span></label><input id="iban-tit" placeholder="Aminata Mbaye" autocomplete="name"></div>
-        <div class="field"><label>IBAN <span class="req">*</span></label><input id="iban-num" placeholder="FR76 XXXX XXXX XXXX XXXX XXXX XXX" oninput="fmtIBAN(this)" maxlength="34" autocomplete="off"></div>
-        <div class="frow">
-          <div class="field"><label>BIC / SWIFT</label><input id="iban-bic" placeholder="BNPAFRPP" maxlength="11" oninput="this.value=this.value.toUpperCase()"></div>
-          <div class="field"><label>Banque</label><input id="iban-bank" placeholder="BNP Paribas"></div>
-        </div>
-        <label class="sig-label" style="margin-top:8px">Signature mandat SEPA <span style="color:var(--red)">*</span></label>
-        <div class="sig-wrap"><canvas class="sig-canvas" id="sig-sepa"></canvas>
-          <div class="sig-bar"><span class="sig-hint">✏️ Signez à la souris ou au doigt</span><button class="sig-clear-btn" type="button" onclick="clearSig('sepa')">Effacer</button></div>
-        </div>
-        <div class="sig-status-row"><span class="sig-dot" id="dot-sepa"></span><span id="txt-sepa">Non signé</span></div>
-        <div class="sig-err" id="err-sepa">Veuillez signer le mandat SEPA.</div>
-        <div style="margin-top:12px">
-          <label class="chk"><input type="checkbox" id="chk-sepa"><span>J'autorise Robin des Airs à <strong>virer mon indemnité sur ce compte</strong> et, si la compagnie me paie directement, à <strong>prélever sa commission (25%) via ce mandat SEPA</strong>.</span></label>
-        </div>
-      </div>
-
-      <div style="margin-top:10px">
-        <label class="chk"><input type="checkbox" id="chk-rgpd"><span>J'accepte la <a href="#" style="color:var(--neon-dark)">politique de confidentialité</a> et le traitement RGPD.</span></label>
-      </div>
-
-      <button class="btn-next" onclick="submitDossier()" id="btn-submit">
+      <button class="btn-next" onclick="submitDossier()" id="btn-submit" style="margin-top:14px">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
         Soumettre mon dossier
       </button>
-      <button class="btn-back" onclick="prevStep(7)">← Retour</button>
+      <button class="btn-back" onclick="prevStep(6)">← Retour</button>
     </div>
   </div>
 
@@ -563,11 +528,11 @@ a{text-decoration:none;color:inherit}
    Upload later non-bloquant · SEPA débit/crédit
 ═══════════════════════════════════════════════ */
 
-const TOTAL_STEPS = 7;
-const WEBHOOK_URL = "https://hook.eu1.make.com/dpdckubaeu9xlwh6c7xh85yffckbsrs0";
+const TOTAL_STEPS = 6;
+const WEBHOOK_URL = "https://hook.eu1.make.com/ws1orot1jnhysq1amavv9ypj4wyiqmwz";
 let curStep = 1, totalPax = 1, legCount = 0;
 const sigState = {};
-const laterActive = { boarding: false, id: false, sepa: false };
+const laterActive = { boarding: false, id: false };
 
 /* ── Airport database (top 120 routes diaspora) ── */
 const AIRPORTS = [
@@ -689,15 +654,20 @@ function hideSug(sugId) {
 /* ── Flight legs ── */
 function buildLegsContainer() {
   const cont = document.getElementById("legs-container");
+  if (!cont) return;
   cont.innerHTML = "";
   legCount = 0;
   addLeg();
 }
 
-function addLeg() {
+function addLeg(prefill) {
   legCount++;
   const i = legCount;
   const cont = document.getElementById("legs-container");
+  if (!cont) return;
+  prefill = prefill || {};
+  const depOpt = (prefill.dep && prefill.dep.value) ? '<option value="' + String(prefill.dep.value).replace(/"/g, "&quot;") + '" selected>' + (prefill.dep.text || prefill.dep.value).replace(/</g, "&lt;") + "</option>" : "";
+  const arrOpt = (prefill.arr && prefill.arr.value) ? '<option value="' + String(prefill.arr.value).replace(/"/g, "&quot;") + '" selected>' + (prefill.arr.text || prefill.arr.value).replace(/</g, "&lt;") + "</option>" : "";
   const div = document.createElement("div");
   div.className = "flight-leg";
   div.id = "leg-" + i;
@@ -715,11 +685,11 @@ function addLeg() {
     <div class="frow">
       <div class="field">
         <label>Départ</label>
-        <select id="leg${i}-dep" placeholder="Paris CDG, Dakar…"><option value="">Ville ou code IATA</option></select>
+        <select id="leg${i}-dep" placeholder="Paris CDG, Dakar…"><option value="">Ville ou code IATA</option>${depOpt}</select>
       </div>
       <div class="field">
         <label>Arrivée</label>
-        <select id="leg${i}-arr" placeholder="Dakar, Abidjan…"><option value="">Ville ou code IATA</option></select>
+        <select id="leg${i}-arr" placeholder="Dakar, Abidjan…"><option value="">Ville ou code IATA</option>${arrOpt}</select>
       </div>
     </div>
   `;
@@ -823,13 +793,8 @@ function toggleLater(type) {
   info.classList.toggle("show", laterActive[type]);
   btn.textContent = laterActive[type]
     ? "✅ Document fourni plus tard — annuler"
-    : (type === "sepa" ? "📅 Je n'ai pas mon RIB maintenant" :
-       type === "boarding" ? "📅 Je n'ai pas mes cartes d'embarquement maintenant" :
+    : (type === "boarding" ? "📅 Je n'ai pas mes cartes d'embarquement maintenant" :
        "📅 Je n'ai pas mes pièces d'identité maintenant");
-  if (type === "sepa") {
-    const sf = document.getElementById("sepa-fields");
-    if (sf) { sf.style.opacity = laterActive.sepa ? ".35" : "1"; sf.style.pointerEvents = laterActive.sepa ? "none" : ""; }
-  }
 }
 
 /* ── Step navigation ── */
@@ -853,9 +818,10 @@ function setStep(n) {
 function nextStep(from) {
   if (!validate(from)) return;
   if (from === 1) buildStep2();
-  if (from === 2) { buildLegsContainer(); showStep3Block(1); }
+  if (from === 2) { showStep3Block(1); }
   if (from === 3) { buildDocBlock("boarding-container","b","🎫","Carte ou e-ticket"); prefillMandat(); }
-  if (from === 4) buildDocBlock("id-container","id","🪪","Passeport ou CNI");
+  if (from === 4) prefillMandat();
+  if (from === 5) buildDocBlock("id-container","id","🪪","Passeport ou CNI");
   setStep(from + 1);
 }
 function prevStep(from) { setStep(from - 1); }
@@ -865,6 +831,50 @@ function showStep3Block(n) {
     var el = document.getElementById("step3-block-" + i);
     if (el) el.classList.toggle("visible", i === n);
   });
+  var continuerWrap = document.getElementById("step3-continuer-wrap");
+  if (continuerWrap) continuerWrap.style.display = n === 3 ? "block" : "none";
+}
+
+function getStep3Route() {
+  var depEl = document.querySelector("#f-ville-depart select") || document.getElementById("f-ville-depart");
+  var arrEl = document.querySelector("#f-ville-arrivee select") || document.getElementById("f-ville-arrivee");
+  var depVal = (depEl && depEl.value) ? depEl.value.trim() : "";
+  var arrVal = (arrEl && arrEl.value) ? arrEl.value.trim() : "";
+  var depOpt = depEl && depEl.options ? depEl.options[depEl.selectedIndex] : null;
+  var arrOpt = arrEl && arrEl.options ? arrEl.options[arrEl.selectedIndex] : null;
+  return {
+    dep: depVal ? { value: depVal, text: (depOpt && depOpt.textContent) ? depOpt.textContent.trim() : depVal } : null,
+    arr: arrVal ? { value: arrVal, text: (arrOpt && arrOpt.textContent) ? arrOpt.textContent.trim() : arrVal } : null
+  };
+}
+
+function buildLegsFromRoute() {
+  var nb = parseInt(document.getElementById("f-nb-vols")?.value, 10);
+  if (!nb || nb < 1 || nb > 6) return;
+  var route = getStep3Route();
+  var cont = document.getElementById("legs-container");
+  var wrap = document.getElementById("legs-container-wrap");
+  var suiteBtn = document.getElementById("step3-suite-to-3");
+  var addBtn = document.getElementById("add-leg-btn");
+  if (!cont || !wrap) return;
+  cont.innerHTML = "";
+  if (window.legTomSelects) {
+    Object.keys(window.legTomSelects).forEach(function (k) {
+      try { if (window.legTomSelects[k].dep) window.legTomSelects[k].dep.destroy(); if (window.legTomSelects[k].arr) window.legTomSelects[k].arr.destroy(); } catch (e) {}
+    });
+    window.legTomSelects = {};
+  }
+  legCount = 0;
+  for (var i = 1; i <= nb; i++) {
+    var prefill = {};
+    if (i === 1 && route.dep) prefill.dep = route.dep;
+    if (i === 1 && nb === 1 && route.arr) prefill.arr = route.arr;
+    if (i === nb && nb > 1 && route.arr) prefill.arr = route.arr;
+    addLeg(prefill);
+  }
+  wrap.style.display = "block";
+  if (suiteBtn) suiteBtn.style.display = "block";
+  if (addBtn) addBtn.style.display = nb >= 6 ? "none" : "flex";
 }
 
 /* ── Counter ── */
@@ -912,27 +922,38 @@ function toggleMinor(i) {
   if (b) b.style.display = v === "mineur" ? "inline-block" : "none";
 }
 
-/* ── Prefill mandat ── */
+/* ── Prefill mandat (rempli au fur et à mesure depuis les étapes 1–5) ── */
 function prefillMandat() {
   const fn = document.getElementById("p0-prenom")?.value.trim() || "";
   const ln = document.getElementById("p0-nom")?.value.trim() || "";
-  const fullname = fn + " " + ln;
-  document.getElementById("m-name").textContent = fullname;
-  // First leg vol number
-  const vol = document.getElementById("leg1-vol")?.value || "—";
-  document.getElementById("m-vol").textContent = vol;
+  const fullname = (fn + " " + ln).trim() || "—";
+  const set = function(id, text) { const el = document.getElementById(id); if (el) el.textContent = text || "—"; };
+  set("m-name", fullname);
+  set("m-phone", document.getElementById("p0-tel")?.value?.trim());
+  set("m-address", document.getElementById("p0-adresse")?.value?.trim());
+  set("m-email", document.getElementById("p0-email")?.value?.trim());
+  set("m-vol", document.getElementById("leg1-vol")?.value?.trim());
   const dt = document.getElementById("f-date")?.value;
-  document.getElementById("m-date").textContent = dt ? new Date(dt + "T00:00").toLocaleDateString("fr-FR") : "—";
-  document.getElementById("iban-tit").value = fullname;
-  document.getElementById("ok-name").textContent = fn + ",";
-  // Pax list
-  let paxList = fullname;
-  for (let i = 1; i < totalPax; i++) {
-    const pf = document.getElementById("pax" + i + "-prenom")?.value.trim() || "";
-    const pl = document.getElementById("pax" + i + "-nom")?.value.trim() || "";
-    if (pf || pl) paxList += ", " + pf + " " + pl;
+  set("m-date", dt ? new Date(dt + "T00:00").toLocaleDateString("fr-FR") : null);
+  var route = "";
+  for (var i = 1; i <= legCount; i++) {
+    var dep = (window.legTomSelects && window.legTomSelects[i] && window.legTomSelects[i].dep) ? window.legTomSelects[i].dep.getValue() : (document.querySelector("#leg" + i + "-dep select") || document.getElementById("leg" + i + "-dep"))?.value;
+    var arr = (window.legTomSelects && window.legTomSelects[i] && window.legTomSelects[i].arr) ? window.legTomSelects[i].arr.getValue() : (document.querySelector("#leg" + i + "-arr select") || document.getElementById("leg" + i + "-arr"))?.value;
+    if (dep || arr) route += (route ? " / " : "") + (dep || "?") + " → " + (arr || "?");
   }
-  document.getElementById("m-pax-list").textContent = paxList;
+  set("m-route", route || null);
+  var motifVal = document.getElementById("f-motif")?.value;
+  var motifLabel = { retard: "Retard", annulation: "Annulation", surbook: "Surbooking" }[motifVal] || (document.getElementById("f-motif")?.options[document.getElementById("f-motif")?.selectedIndex]?.textContent) || motifVal;
+  set("m-motif", motifLabel);
+  set("m-pnr", document.getElementById("f-pnr")?.value?.trim()?.toUpperCase());
+  var paxList = fullname !== "—" ? fullname : "";
+  for (var i = 1; i < totalPax; i++) {
+    var pf = document.getElementById("pax" + i + "-prenom")?.value.trim() || "";
+    var pl = document.getElementById("pax" + i + "-nom")?.value.trim() || "";
+    if (pf || pl) paxList += (paxList ? ", " : "") + pf + " " + pl;
+  }
+  set("m-pax-list", paxList || null);
+  if (document.getElementById("ok-name")) document.getElementById("ok-name").textContent = fn + ",";
 }
 
 /* ── Validation ── */
@@ -955,28 +976,26 @@ function validate(n) {
       if (!el?.value.trim()) { el?.classList.add("err"); ok = false; }
       else el?.classList.remove("err");
     });
-    if (!ok) return false;
+    if (!ok) {
+      document.querySelector("#fs-3 .err")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      alert("Veuillez renseigner le numéro de vol, la date du vol et le motif de la réclamation.");
+      return false;
+    }
   }
-  // Steps 4 & 5: never block — "later" is always acceptable
-  if (n === 6) {
+  // Step 4 (boarding) & Step 6 (ID): "later" always acceptable
+  if (n === 5) {
     if (!sigState.mandat?.signed) { document.getElementById("err-mandat").classList.add("show"); return false; }
     if (!document.getElementById("chk-mandat").checked) { alert("Veuillez cocher la case du mandat."); return false; }
   }
-  if (n === 7) {
-    if (!laterActive.sepa) {
-      const iban = document.getElementById("iban-num")?.value.replace(/\s/g,"") || "";
-      if (iban && iban.length < 14) { document.getElementById("iban-num").classList.add("err"); alert("IBAN invalide."); return false; }
-      if (iban && !sigState.sepa?.signed) { document.getElementById("err-sepa").classList.add("show"); return false; }
-      if (iban && !document.getElementById("chk-sepa")?.checked) { alert("Veuillez cocher la case SEPA."); return false; }
-    }
-    if (!document.getElementById("chk-rgpd").checked) { alert("Veuillez accepter la politique de confidentialité."); return false; }
+  if (n === 6) {
+    if (!document.getElementById("chk-rgpd")?.checked) { alert("Veuillez accepter la politique de confidentialité."); return false; }
   }
   return true;
 }
 
 /* ── Submit ── */
 function submitDossier() {
-  if (!validate(7)) return;
+  if (!validate(6)) return;
   const btn = document.getElementById("btn-submit");
   btn.disabled = true;
   btn.innerHTML = "⏳ Envoi en cours...";
@@ -989,6 +1008,7 @@ function submitDossier() {
   fd.append("nom", nomVal);
   fd.append("email", document.getElementById("p0-email")?.value.trim() || "");
   fd.append("whatsapp", (document.getElementById("p0-tel")?.value || "").replace(/\D/g, "").replace(/^0/, "33"));
+  fd.append("adresse", document.getElementById("p0-adresse")?.value?.trim() || "");
   fd.append("nb_passagers", String(totalPax));
   // Nom du dossier : 2026_03_11_L_12345_Prenom_Nom (L = en ligne, W = WhatsApp)
   const d = new Date();
@@ -1027,7 +1047,6 @@ function submitDossier() {
 
   fd.append("boarding_later", laterActive.boarding ? "1" : "0");
   fd.append("id_later", laterActive.id ? "1" : "0");
-  fd.append("sepa_later", laterActive.sepa ? "1" : "0");
 
   for (let i = 0; i < totalPax; i++) {
     const fb = document.getElementById("file-b-" + i)?.files[0] || document.getElementById("file-b-" + i + "-browse")?.files[0];
@@ -1036,23 +1055,28 @@ function submitDossier() {
     if (fi) fd.append("file_id", fi);
   }
 
+  /* Convertir data URL en fichier pour que Make/Drive le reçoive comme les autres pièces */
+  function dataURLtoFile(dataUrl, fileName) {
+    const arr = dataUrl.split(",");
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) u8arr[n] = bstr.charCodeAt(n);
+    return new File([u8arr], fileName, { type: mime });
+  }
   if (sigState.mandat?.signed) {
     const c = document.getElementById("sig-mandat");
-    if (c) fd.append("mandat_signature", c.toDataURL("image/png"));
+    if (c) {
+      const dataUrl = c.toDataURL("image/png");
+      fd.append("mandat_signature", dataUrl);
+      try {
+        const file = dataURLtoFile(dataUrl, "mandat_signature.png");
+        fd.append("mandat_signature_file", file);
+      } catch (e) {}
+    }
   }
   fd.append("mandat_signed", sigState.mandat?.signed ? "1" : "0");
-
-  if (!laterActive.sepa) {
-    fd.append("iban_titulaire", document.getElementById("iban-tit")?.value?.trim() || "");
-    fd.append("iban", (document.getElementById("iban-num")?.value || "").replace(/\s/g, ""));
-    fd.append("bic", document.getElementById("iban-bic")?.value?.trim() || "");
-    fd.append("banque", document.getElementById("iban-bank")?.value?.trim() || "");
-    if (sigState.sepa?.signed) {
-      const c = document.getElementById("sig-sepa");
-      if (c) fd.append("sepa_signature", c.toDataURL("image/png"));
-    }
-    fd.append("sepa_signed", sigState.sepa?.signed ? "1" : "0");
-  }
 
   fetch(WEBHOOK_URL, { method: "POST", body: fd })
     .then(() => {
@@ -1067,7 +1091,7 @@ function submitDossier() {
         "\nDossier soumis via le formulaire."
       );
       document.getElementById("wa-followup").href = "https://wa.me/15557840392?text=" + msg;
-      setStep(TOTAL_STEPS + 1);
+      setStep(TOTAL_STEPS + 1); // fs-ok
       setTimeout(function() {
         if (window.FeedbackModal) {
           window.FeedbackModal.show({
@@ -1250,15 +1274,56 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  (function initAddressAutocomplete() {
+    var input = document.getElementById("p0-adresse");
+    var list = document.getElementById("address-suggestions");
+    if (!input || !list) return;
+    var debounce = null;
+    input.addEventListener("input", function() {
+      clearTimeout(debounce);
+      var q = (input.value || "").trim();
+      list.classList.remove("show");
+      list.innerHTML = "";
+      if (q.length < 3) return;
+      debounce = setTimeout(function() {
+        fetch("https://api-adresse.data.gouv.fr/search/?q=" + encodeURIComponent(q) + "&limit=6")
+          .then(function(r) { return r.json(); })
+          .then(function(data) {
+            var features = (data && data.features) || [];
+            list.innerHTML = "";
+            features.forEach(function(f) {
+              var prop = f.properties || {};
+              var label = prop.label || "";
+              var cp = prop.postcode || "";
+              var city = prop.city || "";
+              var div = document.createElement("div");
+              div.className = "address-suggestion";
+              div.setAttribute("role", "option");
+              div.innerHTML = "<strong>" + (label || "").replace(/</g, "&lt;") + "</strong>" + (cp || city ? " — " + (cp ? cp + " " : "") + (city || "") : "");
+              div.addEventListener("click", function() {
+                input.value = label;
+                list.classList.remove("show");
+                list.innerHTML = "";
+              });
+              list.appendChild(div);
+            });
+            if (features.length) list.classList.add("show");
+            list.setAttribute("aria-hidden", features.length ? "false" : "true");
+          })
+          .catch(function() {});
+      }, 280);
+    });
+    input.addEventListener("blur", function() { setTimeout(function() { list.classList.remove("show"); }, 200); });
+  })();
+
   const obs = new MutationObserver(() => {
-    if (document.getElementById("fs-6")?.classList.contains("active") && !sigState.mandat) setTimeout(() => initSig("mandat"), 60);
-    if (document.getElementById("fs-7")?.classList.contains("active") && !sigState.sepa)   setTimeout(() => initSig("sepa"), 60);
+    if (document.getElementById("fs-5")?.classList.contains("active") && !sigState.mandat) setTimeout(() => initSig("mandat"), 60);
   });
   document.querySelectorAll(".fs").forEach(el => obs.observe(el, {attributes:true}));
 });
 
 window.addEventListener("resize", () => {
-  ["mandat","sepa"].forEach(id => {
+  ["mandat"].forEach(id => {
     const c = document.getElementById("sig-" + id);
     if (!c || !sigState[id]) return;
     const saved = c.toDataURL(); c.width = c.parentElement.offsetWidth || 560;
