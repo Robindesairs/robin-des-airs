@@ -631,6 +631,13 @@
         formData.append('nb_passagers', nbPassagersInput.value);
         formData.append('depart', detectedDepart);
         formData.append('arrivee', detectedArrivee);
+        // Nom du dossier : 2026_03_11_L_12345_NomClient (L = en ligne)
+        var d = new Date();
+        var datePart = d.getFullYear() + '_' + String(d.getMonth() + 1).padStart(2, '0') + '_' + String(d.getDate()).padStart(2, '0');
+        var randomNum = String(Math.floor(1000 + Math.random() * 9000));
+        var nomClient = (prenom || 'Client').replace(/\s+/g, '_').replace(/[/\\:*?"<>|]/g, '');
+        var dossierNom = datePart + '_L_' + randomNum + '_' + nomClient;
+        formData.append('dossier_nom', dossierNom);
         if (modeScan && uploadedFile) formData.append('file_longest_flight', uploadedFile);
         else {
           formData.append('numero_vol', (document.getElementById('manual-numero').value || '').trim());

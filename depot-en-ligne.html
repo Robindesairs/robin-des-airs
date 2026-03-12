@@ -983,11 +983,21 @@ function submitDossier() {
 
   const fd = new FormData();
   fd.append("mode", "formulaire_en_ligne");
-  fd.append("prenom", document.getElementById("p0-prenom")?.value.trim() || "");
-  fd.append("nom", document.getElementById("p0-nom")?.value.trim() || "");
+  const prenomVal = document.getElementById("p0-prenom")?.value.trim() || "";
+  const nomVal = document.getElementById("p0-nom")?.value.trim() || "";
+  fd.append("prenom", prenomVal);
+  fd.append("nom", nomVal);
   fd.append("email", document.getElementById("p0-email")?.value.trim() || "");
   fd.append("whatsapp", (document.getElementById("p0-tel")?.value || "").replace(/\D/g, "").replace(/^0/, "33"));
   fd.append("nb_passagers", String(totalPax));
+  // Nom du dossier : 2026_03_11_L_12345_Prenom_Nom (L = en ligne, W = WhatsApp)
+  const d = new Date();
+  const datePart = d.getFullYear() + "_" + String(d.getMonth() + 1).padStart(2, "0") + "_" + String(d.getDate()).padStart(2, "0");
+  const randomNum = String(Math.floor(1000 + Math.random() * 9000));
+  const nomClient = (prenomVal + " " + nomVal).trim() || "Client";
+  const nomClientSafe = nomClient.replace(/\s+/g, "_").replace(/[/\\:*?"<>|]/g, "");
+  const dossierNom = datePart + "_L_" + randomNum + "_" + nomClientSafe;
+  fd.append("dossier_nom", dossierNom);
 
   for (let i = 1; i <= totalPax - 1; i++) {
     fd.append("pax" + i + "_prenom", document.getElementById("pax" + i + "-prenom")?.value.trim() || "");
