@@ -148,6 +148,9 @@ a{text-decoration:none;color:inherit}
 .mandat-benefit-card{display:flex;align-items:flex-start;gap:6px;padding:10px 12px;background:var(--white);border:1px solid rgba(0,200,122,.25);border-radius:8px;font-size:11.5px;font-weight:600;color:var(--navy);line-height:1.4}
 .mandat-benefit-ok{color:var(--neon-dark);flex-shrink:0}
 .mandat-benefits-cta{font-size:12px;color:var(--navy);font-weight:700;margin:0}
+.mandat-resume-list{margin:0;padding-left:18px;font-size:12.5px;line-height:1.7;color:var(--navy)}
+.mandat-resume-list li{margin-bottom:6px}
+.mandat-resume-list li:last-child{margin-bottom:0}
 @media (max-width:480px){.mandat-benefits-grid{grid-template-columns:1fr}}
 
 .pax-card{background:var(--off);border:1.5px solid var(--border);border-radius:10px;padding:14px;margin-bottom:9px;position:relative}
@@ -505,18 +508,19 @@ a{text-decoration:none;color:inherit}
         <label class="chk"><input type="checkbox" id="chk-mandat"><span>✅ J'ai lu et j'accepte le <a href="#" class="doc-link doc-link-underline" onclick="var u=getMandatUrl();if(u){window.open(u);}return false;">mandat de représentation & cession de créance</a> et les <a href="/cgv.html" target="_blank" rel="noopener" class="doc-link doc-link-underline">CGV</a>. <span class="req">*</span></span></label>
         <div id="mandat-pouvoir-wrap" style="display:none">
           <label class="chk" style="margin-top:10px"><input type="checkbox" id="chk-pouvoir"><span>✅ J'atteste disposer du pouvoir de représenter les passagers majeurs listés ou avoir leur accord exprès. <span class="req">*</span></span></label>
-          <p class="field-hint" style="margin-top:6px;margin-bottom:0">En pratique, une seule signature (la vôtre) est utilisée lorsque vous avez l'accord des autres passagers majeurs. En cas de doute juridique, consultez un professionnel du droit.</p>
+          <p class="field-hint" style="margin-top:6px;margin-bottom:0">Plus de 92 % des personnes qui réclament seules n'obtiennent rien (source : Médiateur du Tourisme et du Voyage — MTV).</p>
         </div>
       </div>
 
-      <div class="mandat-benefits">
-        <p class="mandat-benefits-intro">🔒 + de 9 500 passagers ont récupéré leur indemnité avec nous</p>
-        <div class="mandat-benefits-grid">
-          <div class="mandat-benefit-card"><span class="mandat-benefit-ok">✅</span> Mise en demeure LRAR en 48h</div>
-          <div class="mandat-benefit-card"><span class="mandat-benefit-ok">✅</span> 25% — moins chère du marché</div>
-          <div class="mandat-benefit-card"><span class="mandat-benefit-ok">✅</span> Frais de justice compris (tribunal)</div>
-          <div class="mandat-benefit-card"><span class="mandat-benefit-ok">✅</span> Aucune commission si on ne récupère pas votre indemnité</div>
-        </div>
+      <div class="mandat-benefits" id="mandat-resume-block">
+        <p class="mandat-benefits-intro">✅ RÉSUMÉ EN 30 SECONDES</p>
+        <ul class="mandat-resume-list">
+          <li><strong>1️⃣ Vous touchez 75 % nets</strong> <span id="resume-montant">(450 € sur 600 €)</span></li>
+          <li><strong>2️⃣ Nous prenons 25 % uniquement en cas de succès</strong> — 0 € si on ne récupère rien</li>
+          <li><strong>3️⃣ 1 signature = TOUT le groupe couvert</strong></li>
+          <li><strong>4️⃣ Mise en demeure envoyée sous 48 h</strong></li>
+          <li><strong>5️⃣ Paiement sous 3 semaines en moyenne</strong></li>
+        </ul>
       </div>
 
       <label class="sig-label">Signature électronique <span class="req">*</span></label>
@@ -887,6 +891,7 @@ function setStep(n) {
     targetEl.classList.add("active");
     var pouvoirWrap = document.getElementById("mandat-pouvoir-wrap");
     if (pouvoirWrap && targetId === "fs-5") pouvoirWrap.style.display = (typeof totalPax !== "undefined" && totalPax > 1) ? "block" : "none";
+    if (targetId === "fs-5" && typeof updateMandatResumeMontant === "function") updateMandatResumeMontant();
     document.getElementById("stepper").dataset.s = Math.min(n, TOTAL_STEPS + 1);
     document.querySelectorAll(".si").forEach(function(el, i) {
       var s = i + 1;
@@ -1075,6 +1080,22 @@ function prefillMandat() {
   }
   set("m-pax-list", paxList || "—");
   if (document.getElementById("ok-name")) document.getElementById("ok-name").textContent = (fn && fn.trim()) ? fn.trim() : "Aminata";
+}
+
+function updateMandatResumeMontant() {
+  var el = document.getElementById("resume-montant");
+  if (!el) return;
+  var nbpax = Math.max(1, window.totalPax || 1);
+  var indemniteEl = document.getElementById("f-indemnite");
+  var indemnite = 600;
+  if (indemniteEl && indemniteEl.value) {
+    var v = parseInt(indemniteEl.value, 10);
+    if (v === 250 || v === 400 || v === 600) indemnite = v;
+  }
+  var totalBrut = nbpax * indemnite;
+  var totalNet = Math.round(totalBrut * 0.75);
+  function fmt(n) { return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "\u202f"); }
+  el.textContent = "(" + fmt(totalNet) + " € sur " + fmt(totalBrut) + " €)";
 }
 
 function getMandatUrl() {

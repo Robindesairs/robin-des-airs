@@ -109,11 +109,13 @@
   if (motifEn) { var me = document.getElementById("m-motif-en"); if (me) me.textContent = "(" + motifEn + ")"; }
   set("m-pnr", q.get("pnr"));
   set("m-compagnie", q.get("compagnie") || "—");
-  var paxList = q.get("paxlist") || "";
+  var paxList = (q.get("paxlist") || "").trim();
   set("m-pax-list", paxList || "—");
   var nbpax = Math.max(1, parseInt(q.get("nbpax"), 10) || 1);
+  var others = paxList ? paxList.split(/\s*,\s*/).map(function(s) { return s.trim(); }).filter(Boolean) : [];
+  if (others.length > 0 && nbpax <= 1) nbpax = 1 + others.length;
   var names = [q.get("name") || "Passager 1"];
-  if (paxList) { var others = paxList.split(/\s*,\s*/); for (var i = 0; i < others.length; i++) names.push(others[i].trim() || ("Passager " + (i + 2))); }
+  for (var i = 0; i < others.length; i++) names.push(others[i] || ("Passager " + (i + 2)));
   while (names.length < nbpax) names.push("Passager " + (names.length + 1));
   var indemniteParam = parseInt(q.get("indemnite"), 10);
   var indemnite = (indemniteParam === 250 || indemniteParam === 400 || indemniteParam === 600) ? indemniteParam : 600;
