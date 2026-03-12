@@ -61,7 +61,7 @@ a{text-decoration:none;color:inherit}
 .field label .req{color:var(--red);margin-left:2px}
 .field input,.field select{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:7px;font-family:"Montserrat",sans-serif;font-size:13px;font-weight:500;color:var(--text);background:var(--off);outline:none;transition:border-color .2s,background .2s,box-shadow .2s;-webkit-appearance:none;appearance:none}
 .field input:focus,.field select:focus{border-color:var(--neon);background:white;box-shadow:0 0 0 3px rgba(0,200,122,.09)}
-.field input.err{border-color:var(--red);box-shadow:0 0 0 3px rgba(231,76,60,.09)}
+.field input.err,.field select.err{border-color:var(--red);box-shadow:0 0 0 3px rgba(231,76,60,.09)}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:11px}
 .phone-row{display:flex;gap:8px;align-items:stretch}
 .phone-prefix{width:auto;min-width:100px;flex-shrink:0;padding:11px 10px}
@@ -90,6 +90,7 @@ a{text-decoration:none;color:inherit}
 /* Flight legs */
 .flight-leg{background:var(--off);border:1.5px solid var(--border);border-radius:10px;padding:16px;margin-bottom:10px;position:relative}
 .flight-leg-num{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon-dark);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.leg-route-readonly{font-size:12px;color:var(--gray);margin-bottom:10px;padding:8px 10px;background:rgba(0,200,122,.06);border-radius:8px;border:1px solid rgba(0,200,122,.15)}
 .leg-rm{position:absolute;top:12px;right:12px;background:none;border:1px solid rgba(231,76,60,.2);color:var(--red);font-family:"Montserrat",sans-serif;font-size:11px;font-weight:700;padding:3px 8px;border-radius:4px;cursor:pointer}
 .add-leg-btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:11px;background:none;border:1.5px dashed var(--border);border-radius:8px;font-family:"Montserrat",sans-serif;font-size:11px;font-weight:700;color:var(--gray);cursor:pointer;transition:all .2s;margin-top:4px}
 /* Step 3 progressive blocks */
@@ -205,6 +206,9 @@ a{text-decoration:none;color:inherit}
 
 .chk{display:flex;align-items:flex-start;gap:9px;margin-bottom:10px;cursor:pointer}
 .chk input{width:15px;height:15px;margin-top:3px;accent-color:var(--neon-dark);cursor:pointer;flex-shrink:0}
+.chk-address-free input{appearance:none;width:20px;height:20px;border:2px solid var(--border);border-radius:4px;cursor:pointer;flex-shrink:0;margin-top:0;transition:border-color .2s,background .2s}
+.chk-address-free input:checked{border-color:var(--neon);background:var(--neon);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");background-size:14px 14px;background-position:center;background-repeat:no-repeat}
+.chk-address-free input:not(:checked){background:var(--white)}
 .chk span{font-size:12px;color:var(--gray);line-height:1.6}
 .chk a{color:var(--neon-dark)}
 .doc-link{display:inline-block;margin:4px 0;color:var(--neon-dark);font-weight:600;text-decoration:none;font-size:14px}
@@ -226,6 +230,10 @@ a{text-decoration:none;color:inherit}
 
 .fs{display:none}
 .fs.active{display:block}
+.fs.active:not(.fs-leaving) .card{animation:stepIn 0.4s cubic-bezier(0.4,0,0.2,1) forwards}
+.fs.fs-leaving.active .card{animation:stepOut 0.25s ease forwards}
+@keyframes stepIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes stepOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-14px)}}
 
 .success-card{text-align:center;padding:46px 26px;background:white;border:1.5px solid var(--border);border-radius:14px;box-shadow:var(--shadow)}
 .success-icon{font-size:58px;margin-bottom:15px;display:block}
@@ -296,28 +304,18 @@ a{text-decoration:none;color:inherit}
       </div>
       <div class="field"><label>Email <span class="req">*</span></label><input type="email" id="p0-email" placeholder="aminata@email.com" autocomplete="email"></div>
       <div class="field">
-        <label>Téléphone WhatsApp <span class="req">*</span></label>
-        <div class="phone-row">
-          <select id="p0-tel-prefix" class="phone-prefix" title="Indicatif pays">
-            <option value="33" data-flag="🇫🇷">🇫🇷 +33</option>
-            <option value="221" data-flag="🇸🇳">🇸🇳 +221</option>
-            <option value="41" data-flag="🇨🇭">🇨🇭 +41</option>
-            <option value="32" data-flag="🇧🇪">🇧🇪 +32</option>
-            <option value="44" data-flag="🇬🇧">🇬🇧 +44</option>
-            <option value="49" data-flag="🇩🇪">🇩🇪 +49</option>
-            <option value="39" data-flag="🇮🇹">🇮🇹 +39</option>
-            <option value="34" data-flag="🇪🇸">🇪🇸 +34</option>
-            <option value="223" data-flag="🇲🇱">🇲🇱 +223</option>
-            <option value="225" data-flag="🇨🇮">🇨🇮 +225</option>
-            <option value="237" data-flag="🇨🇲">🇨🇲 +237</option>
-            <option value="242" data-flag="🇨🇬">🇨🇬 +242</option>
-            <option value="243" data-flag="🇨🇩">🇨🇩 +243</option>
-            <option value="228" data-flag="🇹🇬">🇹🇬 +228</option>
-            <option value="224" data-flag="🇬🇳">🇬🇳 +224</option>
-            <option value="other" data-flag="🌐">🌐 Autre</option>
-          </select>
-          <input type="tel" id="p0-tel" placeholder="6 12 34 56 78" autocomplete="tel" class="phone-input">
-        </div>
+        <label>Indicatif pays <span class="req">*</span></label>
+        <select id="p0-tel-prefix" class="phone-prefix" title="Indicatif pays">
+          <option value="">— Choisir un pays —</option>
+        </select>
+      </div>
+      <div class="field" id="p0-tel-other-wrap" style="display:none">
+        <label>Indicatif (saisie libre)</label>
+        <input type="text" id="p0-tel-other" placeholder="Ex. 33, 221…" maxlength="5" inputmode="numeric" pattern="[0-9]+">
+      </div>
+      <div class="field">
+        <label>Votre numéro (sans indicatif) <span class="req">*</span></label>
+        <input type="tel" id="p0-tel" placeholder="6 12 34 56 78" autocomplete="tel" class="phone-input">
       </div>
       <div class="field address-autocomplete-wrap">
         <label>Adresse</label>
@@ -400,7 +398,7 @@ a{text-decoration:none;color:inherit}
         <div id="legs-container-wrap" style="display:none">
           <div class="field">
             <label>Compagnie aérienne</label>
-            <select id="f-compagnie" placeholder="Rechercher une compagnie…"><option value="">Rechercher une compagnie…</option></select>
+            <input type="text" id="f-compagnie" placeholder="Ex. Air France, Transavia, Ryanair…" autocomplete="organization">
           </div>
           <div id="legs-container"></div>
           <button class="add-leg-btn" onclick="addLeg()" id="add-leg-btn" type="button" style="display:none">
@@ -540,6 +538,7 @@ a{text-decoration:none;color:inherit}
 
 <script src="data/airlines.js"></script>
 <script src="data/airports.js"></script>
+<script src="data/country-codes.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/tom-select@2/dist/js/tom-select.complete.min.js"></script>
 <script src="assets/feedback-modal.js"></script>
 <script>
@@ -687,6 +686,9 @@ function addLeg(prefill) {
   const cont = document.getElementById("legs-container");
   if (!cont) return;
   prefill = prefill || {};
+  const isDirect = prefill.direct === true;
+  const depText = (prefill.depText || "").replace(/</g, "&lt;");
+  const arrText = (prefill.arrText || "").replace(/</g, "&lt;");
   const depOpt = (prefill.dep && prefill.dep.value) ? '<option value="' + String(prefill.dep.value).replace(/"/g, "&quot;") + '" selected>' + (prefill.dep.text || prefill.dep.value).replace(/</g, "&lt;") + "</option>" : "";
   const arrOpt = (prefill.arr && prefill.arr.value) ? '<option value="' + String(prefill.arr.value).replace(/"/g, "&quot;") + '" selected>' + (prefill.arr.text || prefill.arr.value).replace(/</g, "&lt;") + "</option>" : "";
   const div = document.createElement("div");
@@ -698,11 +700,13 @@ function addLeg(prefill) {
       ${isFirst ? "✈ Vol principal" : `✈ Correspondance ${i}`}
       ${!isFirst ? `<button class="leg-rm" type="button" onclick="removeLeg(${i})">✕ Supprimer</button>` : ""}
     </div>
+    ${isDirect ? `<p class="leg-route-readonly">Trajet : ${depText || "—"} → ${arrText || "—"}</p>` : ""}
     <div class="field">
       <label>Numéro de vol <span class="req">*</span></label>
       <input id="leg${i}-vol" placeholder="AF718" maxlength="8"
         oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
     </div>
+    ${!isDirect ? `
     <div class="frow">
       <div class="field">
         <label>Départ</label>
@@ -713,9 +717,10 @@ function addLeg(prefill) {
         <select id="leg${i}-arr" placeholder="Dakar, Abidjan…"><option value="">Ville ou code IATA</option>${arrOpt}</select>
       </div>
     </div>
+    ` : ""}
   `;
   cont.appendChild(div);
-  if (typeof TomSelect !== "undefined") {
+  if (!isDirect && typeof TomSelect !== "undefined") {
     if (!window.legTomSelects) window.legTomSelects = {};
     var airportSearchApi = (typeof window.AIRPORT_SEARCH_API !== "undefined" && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : (window.location.origin + "/.netlify/functions/airport-search");
     var aopts = {
@@ -751,6 +756,8 @@ function addLeg(prefill) {
       tsArr.on("change", function(v) { var o = tsArr.options && tsArr.options[v]; saveLegVille(i, "arr", v, o ? o.text : v); });
       window.legTomSelects[i] = { dep: tsDep, arr: tsArr };
     } catch (e) {}
+  } else if (isDirect && window.legTomSelects) {
+    window.legTomSelects[i] = { dep: null, arr: null };
   }
   document.getElementById("add-leg-btn").style.display = legCount >= 6 ? "none" : "";
 }
@@ -818,22 +825,37 @@ function toggleLater(type) {
        "📅 Je n'ai pas mes pièces d'identité maintenant");
 }
 
-/* ── Step navigation ── */
+/* ── Step navigation (avec animation entre étapes) ── */
+var STEP_OUT_MS = 240;
 function setStep(n) {
-  document.querySelectorAll(".fs").forEach(s => s.classList.remove("active"));
-  const target = n > TOTAL_STEPS ? "fs-ok" : "fs-" + n;
-  document.getElementById(target).classList.add("active");
-  document.getElementById("stepper").dataset.s = Math.min(n, TOTAL_STEPS + 1);
-  document.querySelectorAll(".si").forEach((el, i) => {
-    const s = i + 1;
-    el.classList.toggle("active", s === n);
-    el.classList.toggle("done", s < n);
-    const sn = el.querySelector(".sn");
-    sn.textContent = s < n ? "✓" : (s === TOTAL_STEPS + 1 ? "✓" : s);
-  });
-  document.getElementById("prog").style.width = Math.round(Math.min(n, TOTAL_STEPS) / TOTAL_STEPS * 100) + "%";
-  curStep = n;
-  window.scrollTo({ top:0, behavior:"smooth" });
+  var current = document.querySelector(".fs.active");
+  var targetId = n > TOTAL_STEPS ? "fs-ok" : "fs-" + n;
+  var targetEl = document.getElementById(targetId);
+  if (!targetEl) return;
+
+  function applyStep() {
+    if (current) current.classList.remove("active", "fs-leaving");
+    targetEl.classList.add("active");
+    document.getElementById("stepper").dataset.s = Math.min(n, TOTAL_STEPS + 1);
+    document.querySelectorAll(".si").forEach(function(el, i) {
+      var s = i + 1;
+      el.classList.toggle("active", s === n);
+      el.classList.toggle("done", s < n);
+      var sn = el.querySelector(".sn");
+      if (sn) sn.textContent = s < n ? "✓" : (s === TOTAL_STEPS + 1 ? "✓" : s);
+    });
+    var prog = document.getElementById("prog");
+    if (prog) prog.style.width = Math.round(Math.min(n, TOTAL_STEPS) / TOTAL_STEPS * 100) + "%";
+    curStep = n;
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  if (current && current !== targetEl) {
+    current.classList.add("fs-leaving");
+    setTimeout(applyStep, STEP_OUT_MS);
+  } else {
+    applyStep();
+  }
 }
 
 function nextStep(from) {
@@ -891,6 +913,7 @@ function buildLegsFromRoute() {
     if (i === 1 && route.dep) prefill.dep = route.dep;
     if (i === 1 && nb === 1 && route.arr) prefill.arr = route.arr;
     if (i === nb && nb > 1 && route.arr) prefill.arr = route.arr;
+    if (nb === 1) { prefill.direct = true; prefill.depText = (route.dep && route.dep.text) ? route.dep.text : (route.dep && route.dep.value) ? route.dep.value : ""; prefill.arrText = (route.arr && route.arr.text) ? route.arr.text : (route.arr && route.arr.value) ? route.arr.value : ""; }
     addLeg(prefill);
   }
   wrap.style.display = "block";
@@ -951,7 +974,9 @@ function prefillMandat() {
   const set = function(id, text) { const el = document.getElementById(id); if (el) el.textContent = text || "—"; };
   set("m-name", fullname);
   var px = document.getElementById("p0-tel-prefix");
-  var pv = (px && px.value && px.value !== "other") ? px.value : "33";
+  var pv = (px && px.value && px.value !== "other") ? px.value : "";
+  if (pv === "" && px && px.value === "other") { var o = document.getElementById("p0-tel-other"); pv = (o && o.value) ? (o.value || "").replace(/\D/g, "") : ""; }
+  if (!pv) pv = "33";
   var tn = (document.getElementById("p0-tel")?.value || "").replace(/\D/g, "");
   set("m-phone", (pv === "33" ? "+33 " : "+" + pv + " ") + (tn || "—"));
   set("m-address", document.getElementById("p0-adresse")?.value?.trim());
@@ -959,10 +984,20 @@ function prefillMandat() {
   set("m-vol", document.getElementById("leg1-vol")?.value?.trim());
   const dt = document.getElementById("f-date")?.value;
   set("m-date", dt ? new Date(dt + "T00:00").toLocaleDateString("fr-FR") : null);
+  var routeStep3 = (typeof getStep3Route === "function") ? getStep3Route() : {};
   var route = "";
   for (var i = 1; i <= legCount; i++) {
-    var dep = (window.legTomSelects && window.legTomSelects[i] && window.legTomSelects[i].dep) ? window.legTomSelects[i].dep.getValue() : (document.querySelector("#leg" + i + "-dep select") || document.getElementById("leg" + i + "-dep"))?.value;
-    var arr = (window.legTomSelects && window.legTomSelects[i] && window.legTomSelects[i].arr) ? window.legTomSelects[i].arr.getValue() : (document.querySelector("#leg" + i + "-arr select") || document.getElementById("leg" + i + "-arr"))?.value;
+    var dep, arr;
+    if (window.legTomSelects && window.legTomSelects[i] && window.legTomSelects[i].dep && window.legTomSelects[i].arr) {
+      dep = window.legTomSelects[i].dep.getValue();
+      arr = window.legTomSelects[i].arr.getValue();
+    } else if (i === 1 && legCount === 1 && (routeStep3.dep || routeStep3.arr)) {
+      dep = routeStep3.dep ? (routeStep3.dep.text || routeStep3.dep.value) : "";
+      arr = routeStep3.arr ? (routeStep3.arr.text || routeStep3.arr.value) : "";
+    } else {
+      dep = (document.querySelector("#leg" + i + "-dep select") || document.getElementById("leg" + i + "-dep"))?.value || "";
+      arr = (document.querySelector("#leg" + i + "-arr select") || document.getElementById("leg" + i + "-arr"))?.value || "";
+    }
     if (dep || arr) route += (route ? " / " : "") + (dep || "?") + " → " + (arr || "?");
   }
   set("m-route", route || null);
@@ -985,7 +1020,9 @@ function getMandatUrl() {
   var ln = (document.getElementById("p0-nom")?.value || "").trim();
   var name = (fn + " " + ln).trim() || "";
   var px = document.getElementById("p0-tel-prefix");
-  var pv = (px && px.value && px.value !== "other") ? px.value : "33";
+  var pv = (px && px.value && px.value !== "other") ? px.value : "";
+  if (pv === "" && px && px.value === "other") { var o = document.getElementById("p0-tel-other"); pv = (o && o.value) ? (o.value || "").replace(/\D/g, "") : ""; }
+  if (!pv) pv = "33";
   var tn = (document.getElementById("p0-tel")?.value || "").replace(/\D/g, "");
   var phone = (pv + tn) ? "+" + pv + " " + tn : "";
   var addr = (document.getElementById("p0-adresse")?.value || "").trim();
@@ -994,9 +1031,19 @@ function getMandatUrl() {
   var dt = document.getElementById("f-date")?.value;
   var date = dt ? new Date(dt + "T00:00").toLocaleDateString("fr-FR") : "";
   var route = "";
+  var routeStep3 = (typeof getStep3Route === "function") ? getStep3Route() : {};
   for (var i = 1; i <= (window.legCount || 0); i++) {
-    var dep = (window.legTomSelects && window.legTomSelects[i]) ? window.legTomSelects[i].dep.getValue() : (document.querySelector("#leg" + i + "-dep")?.value || "");
-    var arr = (window.legTomSelects && window.legTomSelects[i]) ? window.legTomSelects[i].arr.getValue() : (document.querySelector("#leg" + i + "-arr")?.value || "");
+    var dep, arr;
+    if (window.legTomSelects && window.legTomSelects[i] && window.legTomSelects[i].dep && window.legTomSelects[i].arr) {
+      dep = window.legTomSelects[i].dep.getValue();
+      arr = window.legTomSelects[i].arr.getValue();
+    } else if (i === 1 && (window.legCount || 0) === 1 && (routeStep3.dep || routeStep3.arr)) {
+      dep = routeStep3.dep ? (routeStep3.dep.text || routeStep3.dep.value) : "";
+      arr = routeStep3.arr ? (routeStep3.arr.text || routeStep3.arr.value) : "";
+    } else {
+      dep = (document.querySelector("#leg" + i + "-dep select") || document.getElementById("leg" + i + "-dep"))?.value || "";
+      arr = (document.querySelector("#leg" + i + "-arr select") || document.getElementById("leg" + i + "-arr"))?.value || "";
+    }
     if (dep || arr) route += (route ? " / " : "") + (dep || "?") + " → " + (arr || "?");
   }
   var motifVal = document.getElementById("f-motif")?.value;
@@ -1025,25 +1072,41 @@ function getMandatUrl() {
 /* ── Validation ── */
 function validate(n) {
   if (n === 1) {
+    document.querySelectorAll("#fs-1 input, #fs-1 select").forEach(function(el) { el.classList.remove("err"); });
     const req = ["p0-prenom","p0-nom","p0-email","p0-tel"];
     let ok = true;
     req.forEach(id => {
       const el = document.getElementById(id);
-      if (!el?.value.trim()) { el?.classList.add("err"); ok = false; }
-      else el?.classList.remove("err");
+      if (!el?.value.trim()) { if (el) el.classList.add("err"); ok = false; }
+      else if (el) el.classList.remove("err");
     });
-    if (!ok) { document.querySelector(".err")?.scrollIntoView({ behavior:"smooth", block:"nearest" }); return false; }
+    var prefixEl = document.getElementById("p0-tel-prefix");
+    if (prefixEl && (!prefixEl.value || prefixEl.value === "other")) {
+      var otherEl = document.getElementById("p0-tel-other");
+      if (prefixEl.value === "other" && (!otherEl || !/^[0-9]+$/.test((otherEl.value || "").trim()))) {
+        if (otherEl) otherEl.classList.add("err"); ok = false;
+      } else if (prefixEl.value === "" && !prefixEl.disabled) { prefixEl.classList.add("err"); ok = false; }
+    }
+    var emailEl = document.getElementById("p0-email");
+    var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (emailEl && emailEl.value.trim() && !emailRe.test(emailEl.value.trim())) {
+      emailEl.classList.add("err"); ok = false;
+    }
+    if (!ok) { document.querySelector("#fs-1 .err")?.scrollIntoView({ behavior:"smooth", block:"nearest" }); return false; }
   }
   if (n === 3) {
+    document.querySelectorAll("#fs-3 input, #fs-3 select").forEach(function(el) { el.classList.remove("err"); });
     const req = ["leg1-vol","f-date","f-motif","f-pnr"];
     let ok = true;
     req.forEach(id => {
       const el = document.getElementById(id);
-      if (!el?.value.trim()) { el?.classList.add("err"); ok = false; }
-      else el?.classList.remove("err");
+      if (!el) return;
+      if (!el.value.trim()) { el.classList.add("err"); ok = false; }
+      else el.classList.remove("err");
     });
     if (!ok) {
-      document.querySelector("#fs-3 .err")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      var firstErr = document.querySelector("#fs-3 .err");
+      if (firstErr) firstErr.scrollIntoView({ behavior: "smooth", block: "nearest" });
       alert("Veuillez renseigner le code de réservation (6 caractères), le numéro de vol, la date du vol et le motif de la réclamation.");
       return false;
     }
@@ -1074,7 +1137,12 @@ function submitDossier() {
   fd.append("nom", nomVal);
   fd.append("email", document.getElementById("p0-email")?.value.trim() || "");
   var prefixSelect = document.getElementById("p0-tel-prefix");
-    var prefix = (prefixSelect && prefixSelect.value && prefixSelect.value !== "other") ? prefixSelect.value : "33";
+    var prefix = (prefixSelect && prefixSelect.value && prefixSelect.value !== "other") ? prefixSelect.value : "";
+    if (prefix === "" && prefixSelect && prefixSelect.value === "other") {
+      var otherEl = document.getElementById("p0-tel-other");
+      prefix = (otherEl && otherEl.value) ? (otherEl.value || "").replace(/\D/g, "") : "";
+    }
+    if (!prefix) prefix = "33";
     var telNum = (document.getElementById("p0-tel")?.value || "").replace(/\D/g, "");
     if (telNum && telNum.charAt(0) === "0") telNum = prefix + telNum.slice(1);
     else if (telNum) telNum = prefix + telNum;
@@ -1095,10 +1163,22 @@ function submitDossier() {
     fd.append("pax" + i + "_nom", document.getElementById("pax" + i + "-nom")?.value.trim() || "");
   }
 
+  var step3Route = (typeof getStep3Route === "function") ? getStep3Route() : {};
   for (let i = 1; i <= legCount; i++) {
     const vol = document.getElementById("leg" + i + "-vol")?.value?.trim();
-    var depVal = (window.legTomSelects && window.legTomSelects[i]) ? window.legTomSelects[i].dep.getValue() : (document.querySelector("#leg" + i + "-dep select") || document.getElementById("leg" + i + "-dep"))?.value;
-    var arrVal = (window.legTomSelects && window.legTomSelects[i]) ? window.legTomSelects[i].arr.getValue() : (document.querySelector("#leg" + i + "-arr select") || document.getElementById("leg" + i + "-arr"))?.value;
+    var depVal, arrVal;
+    if (window.legTomSelects && window.legTomSelects[i] && window.legTomSelects[i].dep && window.legTomSelects[i].arr) {
+      depVal = window.legTomSelects[i].dep.getValue();
+      arrVal = window.legTomSelects[i].arr.getValue();
+    } else if (i === 1 && legCount === 1 && (step3Route.dep || step3Route.arr)) {
+      depVal = step3Route.dep ? step3Route.dep.value : "";
+      arrVal = step3Route.arr ? step3Route.arr.value : "";
+    } else {
+      var depEl = document.querySelector("#leg" + i + "-dep select") || document.getElementById("leg" + i + "-dep");
+      var arrEl = document.querySelector("#leg" + i + "-arr select") || document.getElementById("leg" + i + "-arr");
+      depVal = depEl?.value;
+      arrVal = arrEl?.value;
+    }
     const dep = (depVal || "").toString().trim();
     const arr = (arrVal || "").toString().trim();
     if (vol) fd.append("leg" + i + "_vol", vol);
@@ -1108,7 +1188,8 @@ function submitDossier() {
   fd.append("date_vol", document.getElementById("f-date")?.value || "");
   fd.append("motif", document.getElementById("f-motif")?.value || "");
   fd.append("pnr", (document.getElementById("f-pnr")?.value || "").trim().toUpperCase());
-  var compagnieVal = (window.tomSelectCompagnie && window.tomSelectCompagnie.getValue()) || "";
+  var compagnieEl = document.getElementById("f-compagnie");
+  var compagnieVal = (compagnieEl && compagnieEl.value) ? compagnieEl.value.trim() : "";
   fd.append("compagnie", String(compagnieVal || "").trim());
   var villeDepEl = document.querySelector("#f-ville-depart select") || document.getElementById("f-ville-depart");
   var villeArrEl = document.querySelector("#f-ville-arrivee select") || document.getElementById("f-ville-arrivee");
@@ -1311,30 +1392,28 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  if (typeof TomSelect !== "undefined" && window.AIRLINES_DATA) {
-    var selCompagnie = document.getElementById("f-compagnie");
-    if (selCompagnie && !selCompagnie.tomselect) {
-      window.tomSelectCompagnie = new TomSelect("#f-compagnie", {
-        options: window.AIRLINES_DATA,
-        optgroups: [
-          { value: "Europe – Afrique", label: "Europe – Afrique" },
-          { value: "Majors européennes", label: "Majors européennes" },
-          { value: "Long-courrier", label: "Long-courrier" },
-          { value: "Autre", label: "Autre" }
-        ],
-        optgroupField: "optgroup",
-        optgroupLabelField: "label",
-        optgroupValueField: "value",
-        valueField: "value",
-        labelField: "text",
-        searchField: "text",
-        maxItems: 1,
-        placeholder: "Rechercher une compagnie…",
-        create: false,
-        allowEmptyOption: true
-      });
+  (function initCountryDialCodes() {
+    var sel = document.getElementById("p0-tel-prefix");
+    var otherWrap = document.getElementById("p0-tel-other-wrap");
+    var otherInput = document.getElementById("p0-tel-other");
+    if (!sel) return;
+    var list = window.COUNTRY_DIAL_CODES || [];
+    list.forEach(function(c) {
+      var opt = document.createElement("option");
+      opt.value = c.code;
+      opt.textContent = "+" + c.code + " " + (c.name || "");
+      sel.appendChild(opt);
+    });
+    var optOther = document.createElement("option");
+    optOther.value = "other";
+    optOther.textContent = "Autre (saisir indicatif ci-dessous)";
+    sel.appendChild(optOther);
+    function toggleOther() {
+      if (otherWrap) otherWrap.style.display = (sel.value === "other") ? "block" : "none";
     }
-  }
+    sel.addEventListener("change", toggleOther);
+    toggleOther();
+  })();
 
   window.toggleAddressFree = function() {
     var chk = document.getElementById("chk-no-address");
