@@ -454,6 +454,14 @@ a{text-decoration:none;color:inherit}
             <option value="correspondance">🔀 Correspondance manquée</option>
           </select>
         </div>
+        <div class="field">
+          <label>Montant indemnité par passager (CE 261)</label>
+          <select id="f-indemnite">
+            <option value="250">250 € (court-courrier &lt; 1 500 km)</option>
+            <option value="400">400 € (moyen-courrier 1 500–3 500 km)</option>
+            <option value="600" selected>600 € (long-courrier &gt; 3 500 km)</option>
+          </select>
+        </div>
       </div>
 
       <div id="step3-continuer-wrap" style="display:none">
@@ -1124,8 +1132,13 @@ function getMandatUrl() {
   if (motif) q.set("motif", motif);
   if (motifEn) q.set("motif_en", motifEn);
   if (pnr) q.set("pnr", pnr);
+  var compagnieVal = (document.getElementById("f-compagnie")?.value || "").trim();
+  if (compagnieVal) q.set("compagnie", compagnieVal);
   if (paxList) q.set("paxlist", paxList);
   q.set("nbpax", String(window.totalPax || 1));
+  var indemniteVal = document.getElementById("f-indemnite") ? document.getElementById("f-indemnite").value : "";
+  if (indemniteVal === "250" || indemniteVal === "400" || indemniteVal === "600") q.set("indemnite", indemniteVal);
+  else q.set("indemnite", "600");
   return "/mandat.html" + (q.toString() ? "?" + q.toString() : "");
 }
 

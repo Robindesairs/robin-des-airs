@@ -22,7 +22,7 @@
     .doc-box.mandat-bilingue .mandat-section .en{font-weight:600;font-size:11px;color:var(--gray);margin-top:4px;background:none}
     .doc-box.mandat-bilingue p{margin:0 0 16px;line-height:1.78;font-size:14px;color:var(--text)}
     .doc-box.mandat-bilingue p .m-fill{color:var(--navy);font-weight:700}
-    .doc-box.mandat-bilingue #m-name,.doc-box.mandat-bilingue #m-phone,.doc-box.mandat-bilingue #m-address,.doc-box.mandat-bilingue #m-email,.doc-box.mandat-bilingue #m-vol,.doc-box.mandat-bilingue #m-date,.doc-box.mandat-bilingue #m-route,.doc-box.mandat-bilingue #m-motif,.doc-box.mandat-bilingue #m-pnr,.doc-box.mandat-bilingue #m-pax-list{color:var(--navy);font-weight:700;font-size:14px}
+    .doc-box.mandat-bilingue #m-name,.doc-box.mandat-bilingue #m-phone,.doc-box.mandat-bilingue #m-address,.doc-box.mandat-bilingue #m-email,.doc-box.mandat-bilingue #m-vol,.doc-box.mandat-bilingue #m-date,.doc-box.mandat-bilingue #m-route,.doc-box.mandat-bilingue #m-motif,.doc-box.mandat-bilingue #m-pnr,.doc-box.mandat-bilingue #m-compagnie,.doc-box.mandat-bilingue #m-pax-list{color:var(--navy);font-weight:700;font-size:14px}
     .doc-box.mandat-bilingue .en{font-size:11.5px;color:var(--gray);opacity:.9;display:block;margin-top:6px;line-height:1.5}
     .doc-box.mandat-bilingue .mandat-note{margin-top:16px;font-size:11.5px;color:var(--gray);font-style:italic;background:linear-gradient(90deg, var(--neon-light) 0%, var(--off) 100%);padding:14px 18px;border-radius:10px;border-left:4px solid var(--neon-dark);line-height:1.65}
 .doc-box.mandat-bilingue .mandat-highlight{margin:14px 0;padding:14px 18px;border-radius:10px;border:2px solid var(--neon-dark);background:var(--neon-light);line-height:1.7}
@@ -60,6 +60,7 @@
       <p><strong>Trajet / Route</strong> <span id="m-route" class="m-fill">—</span></p>
       <p><strong>Motif / Claim type</strong> <span id="m-motif" class="m-fill">—</span> <span id="m-motif-en" class="en"></span></p>
       <p><strong>N° PNR / PNR No.</strong> <span id="m-pnr" class="m-fill">—</span></p>
+      <p><strong>Compagnie qui effectue le vol / Operating carrier</strong> <span id="m-compagnie" class="m-fill">—</span></p>
       <p><strong>Autres passagers représentés / Other passengers represented</strong><br><span id="m-pax-list" class="m-fill">—</span></p>
       <p class="mandat-note"><em>Chaque passager adulte peut co-signer ce contrat. Les mineurs sont représentés par leur(s) parent(s). Le passager principal signe pour l'ensemble du groupe, y compris les mineurs qu'il représente.<br>Each adult passenger may co-sign. Minors are represented by their parent(s). The lead passenger signs for the whole group, including any minors they represent.</em></p>
 
@@ -86,7 +87,8 @@
       <p class="en">Robin des Airs: handle the case from A to Z, inform the Principal, notify the assignment, transfer the 75% net within 5 working days. The Principal agrees to: forward any contact from the airline to Robin, not accept vouchers or direct offers, provide boarding passes, ID, emails.</p>
 
       <p class="mandat-section"><strong>5. INFORMATIONS LÉGALES</strong><br><span class="en">5. LEGAL INFORMATION</span></p>
-      <p><strong>Rétractation :</strong> 14 jours (art. L221-18 C. cons.). Formulaire sur demande à expert@robindesairs.eu.<br><strong>RGPD :</strong> Responsable SAS Robin des Airs. Finalité : recouvrement. Conservation : durée du dossier + 5 ans. Droits : accès, rectification, suppression — expert@robindesairs.eu.<br><strong>Médiateur :</strong> MTV, 15 rue Maréchal Foch, 93601 Aulnay-sous-Bois — www.mtv.travel.<br><strong>Langue prévalante :</strong> version française. <strong>Loi applicable :</strong> droit français — Tribunaux de Paris.</p>
+      <p><strong>Démarrage immédiat & rétractation :</strong> En signant ce mandat, le Mandant autorise Robin des Airs à commencer immédiatement le traitement du dossier et renonce expressément à son droit de rétractation de 14 jours (art. L221-18 C. cons.). Formulaire de rétractation sur demande à expert@robindesairs.eu.<br><span class="en"><strong>Immediate start & withdrawal:</strong> By signing this mandate, the Principal authorizes Robin des Airs to start processing the case immediately and expressly waives the 14-day right of withdrawal (Art. L221-18 Consumer Code). Withdrawal form on request at expert@robindesairs.eu.</span></p>
+      <p><strong>RGPD :</strong> Responsable SAS Robin des Airs. Finalité : recouvrement. Conservation : durée du dossier + 5 ans. Droits : accès, rectification, suppression — expert@robindesairs.eu.<br><strong>Médiateur :</strong> MTV, 15 rue Maréchal Foch, 93601 Aulnay-sous-Bois — www.mtv.travel.<br><strong>Langue prévalante :</strong> version française. <strong>Loi applicable :</strong> droit français — Tribunaux de Paris.</p>
       <p class="en"><strong>Withdrawal:</strong> 14 days (Art. L221-18 Consumer Code). Form on request at expert@robindesairs.eu. <strong>GDPR:</strong> Data controller SAS Robin des Airs. Purpose: recovery. Retention: case duration + 5 years. Rights: access, rectification, erasure — expert@robindesairs.eu. <strong>Prevalent language:</strong> French. <strong>Applicable law:</strong> French law — Courts of Paris.</p>
       <p class="mandat-signed">Document signé électroniquement via le formulaire Robin des Airs. Lu et approuvé — Bon pour mandat et cession de créance.<br><span class="en">Document electronically signed via Robin des Airs form. Read and approved — Valid as power of attorney and assignment of claim.</span></p>
     </div>
@@ -106,13 +108,15 @@
   var motifEn = q.get("motif_en");
   if (motifEn) { var me = document.getElementById("m-motif-en"); if (me) me.textContent = "(" + motifEn + ")"; }
   set("m-pnr", q.get("pnr"));
+  set("m-compagnie", q.get("compagnie") || "—");
   var paxList = q.get("paxlist") || "";
   set("m-pax-list", paxList || "—");
   var nbpax = Math.max(1, parseInt(q.get("nbpax"), 10) || 1);
   var names = [q.get("name") || "Passager 1"];
   if (paxList) { var others = paxList.split(/\s*,\s*/); for (var i = 0; i < others.length; i++) names.push(others[i].trim() || ("Passager " + (i + 2))); }
   while (names.length < nbpax) names.push("Passager " + (names.length + 1));
-  var indemnite = 600;
+  var indemniteParam = parseInt(q.get("indemnite"), 10);
+  var indemnite = (indemniteParam === 250 || indemniteParam === 400 || indemniteParam === 600) ? indemniteParam : 600;
   var honoraire = Math.round(indemnite * 0.25);
   var net = indemnite - honoraire;
   var total = nbpax * indemnite;
