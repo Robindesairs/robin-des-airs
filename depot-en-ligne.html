@@ -380,10 +380,10 @@ a{text-decoration:none;color:inherit}
         <button type="button" class="step3-suite" id="step3-suite-to-3" onclick="showStep3Block(3)" style="margin-top:16px;display:none">Suite : PNR, date et motif →</button>
       </div>
 
-      <!-- Bloc 3 : Détails (PNR, date, motif, retard) -->
+      <!-- Bloc 3 : Détails (code résa, date, motif) -->
       <div class="step3-block" id="step3-block-3">
         <div class="field">
-          <label>Numéro de réservation (PNR)</label>
+          <label>Votre code de réservation (6 chiffres et lettres) <span class="req">*</span></label>
           <input type="text" id="f-pnr" placeholder="Ex. ABC123" maxlength="6" style="text-transform:uppercase">
         </div>
         <div class="field">
@@ -394,21 +394,11 @@ a{text-decoration:none;color:inherit}
           <label>Motif de la réclamation <span class="req">*</span></label>
           <select id="f-motif">
             <option value="">— Sélectionnez —</option>
-            <option value="retard">✈ Vol retardé de +3h à l'arrivée</option>
+            <option value="retard">✈ Vol retardé (+3h à l'arrivée)</option>
             <option value="annulation">✕ Vol annulé</option>
             <option value="surbook">🚫 Surbooking / Refus d'embarquement</option>
+            <option value="correspondance">🔀 Correspondance manquée</option>
           </select>
-        </div>
-        <div class="field">
-          <label>Retard à l'arrivée (si vol retardé)</label>
-          <select id="f-retard-arrivee">
-            <option value="">— Choisir —</option>
-            <option value="3h">Plus de 3 heures de retard</option>
-            <option value="4h">Plus de 4 heures de retard</option>
-          </select>
-        </div>
-        <div class="retard-3h-legal" id="retard-3h-legal">
-          <strong>Règlement (CE) n° 261/2004 :</strong> le droit à indemnisation s’ouvre à partir de <strong>3 heures de retard à l’arrivée</strong> (vol au départ de l’UE). Le montant peut varier selon la distance ; dans tous les cas nous visons l’indemnité maximale de <strong>600 €</strong> lorsque la distance le permet.
         </div>
       </div>
 
@@ -943,7 +933,7 @@ function prefillMandat() {
   }
   set("m-route", route || null);
   var motifVal = document.getElementById("f-motif")?.value;
-  var motifLabel = { retard: "Retard", annulation: "Annulation", surbook: "Surbooking" }[motifVal] || (document.getElementById("f-motif")?.options[document.getElementById("f-motif")?.selectedIndex]?.textContent) || motifVal;
+  var motifLabel = { retard: "Retard", annulation: "Annulation", surbook: "Surbooking", correspondance: "Correspondance manquée" }[motifVal] || (document.getElementById("f-motif")?.options[document.getElementById("f-motif")?.selectedIndex]?.textContent) || motifVal;
   set("m-motif", motifLabel);
   set("m-pnr", document.getElementById("f-pnr")?.value?.trim()?.toUpperCase());
   var paxList = fullname !== "—" ? fullname : "";
@@ -969,7 +959,7 @@ function validate(n) {
     if (!ok) { document.querySelector(".err")?.scrollIntoView({ behavior:"smooth", block:"nearest" }); return false; }
   }
   if (n === 3) {
-    const req = ["leg1-vol","f-date","f-motif"];
+    const req = ["leg1-vol","f-date","f-motif","f-pnr"];
     let ok = true;
     req.forEach(id => {
       const el = document.getElementById(id);
@@ -978,7 +968,7 @@ function validate(n) {
     });
     if (!ok) {
       document.querySelector("#fs-3 .err")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      alert("Veuillez renseigner le numéro de vol, la date du vol et le motif de la réclamation.");
+      alert("Veuillez renseigner le code de réservation (6 caractères), le numéro de vol, la date du vol et le motif de la réclamation.");
       return false;
     }
   }
@@ -1043,7 +1033,6 @@ function submitDossier() {
   var villeArrEl = document.querySelector("#f-ville-arrivee select") || document.getElementById("f-ville-arrivee");
   fd.append("ville_depart", (villeDepEl?.value || "").trim());
   fd.append("ville_arrivee_finale", (villeArrEl?.value || "").trim());
-  fd.append("retard_arrivee", (document.getElementById("f-retard-arrivee")?.value || "").trim());
 
   fd.append("boarding_later", laterActive.boarding ? "1" : "0");
   fd.append("id_later", laterActive.id ? "1" : "0");
@@ -1195,14 +1184,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const d = new Date(); d.setDate(d.getDate() - 7);
   const dateEl = document.getElementById("f-date");
   if (dateEl) dateEl.value = d.toISOString().split("T")[0];
-
-  const retardEl = document.getElementById("f-retard-arrivee");
-  const legal3h = document.getElementById("retard-3h-legal");
-  if (retardEl && legal3h) {
-    retardEl.addEventListener("change", function () {
-      legal3h.classList.toggle("visible", retardEl.value === "3h");
-    });
-  }
 
   if (typeof TomSelect !== "undefined") {
     var airportSearchApi = (typeof window.AIRPORT_SEARCH_API !== "undefined" && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : (window.location.origin + "/.netlify/functions/airport-search");
