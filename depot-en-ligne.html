@@ -58,6 +58,7 @@ a{text-decoration:none;color:inherit}
 
 .field{margin-bottom:13px}
 .field label{display:block;font-size:9.5px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;color:var(--gray);margin-bottom:5px}
+.field-hint{display:block;font-size:11px;color:var(--gray);margin-bottom:6px;line-height:1.4}
 .field label .req{color:var(--red);margin-left:2px}
 .field input,.field select{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:7px;font-family:"Montserrat",sans-serif;font-size:13px;font-weight:500;color:var(--text);background:var(--off);outline:none;transition:border-color .2s,background .2s,box-shadow .2s;-webkit-appearance:none;appearance:none}
 .field input:focus,.field select:focus{border-color:var(--neon);background:white;box-shadow:0 0 0 3px rgba(0,200,122,.09)}
@@ -304,18 +305,18 @@ a{text-decoration:none;color:inherit}
       </div>
       <div class="field"><label>Email <span class="req">*</span></label><input type="email" id="p0-email" placeholder="aminata@email.com" autocomplete="email"></div>
       <div class="field">
-        <label>Indicatif pays <span class="req">*</span></label>
-        <select id="p0-tel-prefix" class="phone-prefix" title="Indicatif pays">
-          <option value="">— Choisir un pays —</option>
-        </select>
+        <label>Numéro WhatsApp <span class="req">*</span></label>
+        <span class="field-hint">Nous vous recontacterons sur ce numéro via WhatsApp.</span>
+        <div class="phone-row">
+          <select id="p0-tel-prefix" class="phone-prefix" title="Indicatif">
+            <option value="">—</option>
+          </select>
+          <input type="tel" id="p0-tel" placeholder="6 12 34 56 78" autocomplete="tel" class="phone-input">
+        </div>
       </div>
       <div class="field" id="p0-tel-other-wrap" style="display:none">
         <label>Indicatif (saisie libre)</label>
         <input type="text" id="p0-tel-other" placeholder="Ex. 33, 221…" maxlength="5" inputmode="numeric" pattern="[0-9]+">
-      </div>
-      <div class="field">
-        <label>Votre numéro (sans indicatif) <span class="req">*</span></label>
-        <input type="tel" id="p0-tel" placeholder="6 12 34 56 78" autocomplete="tel" class="phone-input">
       </div>
       <div class="field address-autocomplete-wrap">
         <label>Adresse</label>
@@ -465,14 +466,15 @@ a{text-decoration:none;color:inherit}
     <div class="card">
       <div class="card-eye">Étape 5 sur 6</div>
       <div class="card-title">Mandat de représentation & cession de créance</div>
-      <div class="card-sub">Un seul mandat pour tout le groupe. Cochez, signez, c’est parti.</div>
-      <p style="margin-bottom:10px;font-size:13px;color:var(--gray)">
-        <a href="#" id="link-mandat" onclick="var u=getMandatUrl();if(u){window.open(u);}return false;" class="doc-link">Mandat</a> · <a href="/cgv.html" target="_blank" rel="noopener" class="doc-link">CGV</a>
+      <div class="card-sub">Un seul mandat pour tout le groupe. Ouvrez le document pour vérifier vos informations (trajet, motif, montants), puis cochez et signez.</div>
+      <p style="margin-bottom:14px">
+        <a href="#" onclick="var u=getMandatUrl();if(u){window.open(u);}return false;" class="doc-link doc-link-underline" style="font-weight:700;font-size:13px">📄 Ouvrir le mandat (nouvel onglet)</a>
       </p>
       <div style="margin-bottom:16px">
         <label class="chk"><input type="checkbox" id="chk-mandat"><span>J’ai pris connaissance du <a href="#" class="doc-link doc-link-underline" onclick="var u=getMandatUrl();if(u){window.open(u);}return false;">mandat</a> et des <a href="/cgv.html" target="_blank" rel="noopener" class="doc-link doc-link-underline">CGV</a> et je les accepte. <strong>25% d’honoraires uniquement en cas de succès.</strong></span></label>
       </div>
-      <label class="sig-label">Signature <span style="color:var(--red)">*</span></label>
+      <label class="sig-label">Signature électronique <span style="color:var(--red)">*</span></label>
+      <p class="field-hint" style="margin-bottom:8px">En signant ci-dessous, vous acceptez que cette signature ait la même valeur qu’une signature manuscrite (signature électronique).</p>
       <div class="sig-wrap"><canvas class="sig-canvas" id="sig-mandat"></canvas>
         <div class="sig-bar"><span class="sig-hint">✏️ Signez ici</span><button class="sig-clear-btn" type="button" onclick="clearSig('mandat')">Effacer</button></div>
       </div>
@@ -987,10 +989,12 @@ function prefillMandat() {
   var routeStep3 = (typeof getStep3Route === "function") ? getStep3Route() : {};
   var route = "";
   for (var i = 1; i <= legCount; i++) {
-    var dep, arr;
+    var dep = "", arr = "";
     if (window.legTomSelects && window.legTomSelects[i] && window.legTomSelects[i].dep && window.legTomSelects[i].arr) {
-      dep = window.legTomSelects[i].dep.getValue();
-      arr = window.legTomSelects[i].arr.getValue();
+      var dVal = window.legTomSelects[i].dep.getValue();
+      var aVal = window.legTomSelects[i].arr.getValue();
+      dep = (window.legTomSelects[i].dep.options && window.legTomSelects[i].dep.options[dVal] && window.legTomSelects[i].dep.options[dVal].text) ? window.legTomSelects[i].dep.options[dVal].text : (dVal || "");
+      arr = (window.legTomSelects[i].arr.options && window.legTomSelects[i].arr.options[aVal] && window.legTomSelects[i].arr.options[aVal].text) ? window.legTomSelects[i].arr.options[aVal].text : (aVal || "");
     } else if (i === 1 && legCount === 1 && (routeStep3.dep || routeStep3.arr)) {
       dep = routeStep3.dep ? (routeStep3.dep.text || routeStep3.dep.value) : "";
       arr = routeStep3.arr ? (routeStep3.arr.text || routeStep3.arr.value) : "";
@@ -1002,16 +1006,18 @@ function prefillMandat() {
   }
   set("m-route", route || null);
   var motifVal = document.getElementById("f-motif")?.value;
-  var motifLabel = { retard: "Retard", annulation: "Annulation", surbook: "Surbooking", correspondance: "Correspondance manquée" }[motifVal] || (document.getElementById("f-motif")?.options[document.getElementById("f-motif")?.selectedIndex]?.textContent) || motifVal;
+  var motifLabels = { retard: { fr: "Retard", en: "Delay" }, annulation: { fr: "Annulation", en: "Cancellation" }, surbook: { fr: "Surbooking", en: "Denied boarding" }, correspondance: { fr: "Correspondance manquée", en: "Missed connection" } };
+  var motifLabel = (motifLabels[motifVal] && motifLabels[motifVal].fr) ? motifLabels[motifVal].fr : (document.getElementById("f-motif")?.options[document.getElementById("f-motif")?.selectedIndex]?.textContent) || motifVal || "";
   set("m-motif", motifLabel);
+  if (document.getElementById("m-motif-en")) document.getElementById("m-motif-en").textContent = (motifLabels[motifVal] && motifLabels[motifVal].en) ? motifLabels[motifVal].en : "";
   set("m-pnr", document.getElementById("f-pnr")?.value?.trim()?.toUpperCase());
-  var paxList = fullname !== "—" ? fullname : "";
+  var paxList = "";
   for (var i = 1; i < totalPax; i++) {
     var pf = document.getElementById("pax" + i + "-prenom")?.value.trim() || "";
     var pl = document.getElementById("pax" + i + "-nom")?.value.trim() || "";
     if (pf || pl) paxList += (paxList ? ", " : "") + pf + " " + pl;
   }
-  set("m-pax-list", paxList || null);
+  set("m-pax-list", paxList || "—");
   if (document.getElementById("ok-name")) document.getElementById("ok-name").textContent = (fn && fn.trim()) ? fn.trim() : "Aminata";
 }
 
@@ -1033,10 +1039,12 @@ function getMandatUrl() {
   var route = "";
   var routeStep3 = (typeof getStep3Route === "function") ? getStep3Route() : {};
   for (var i = 1; i <= (window.legCount || 0); i++) {
-    var dep, arr;
+    var dep = "", arr = "";
     if (window.legTomSelects && window.legTomSelects[i] && window.legTomSelects[i].dep && window.legTomSelects[i].arr) {
-      dep = window.legTomSelects[i].dep.getValue();
-      arr = window.legTomSelects[i].arr.getValue();
+      var dVal = window.legTomSelects[i].dep.getValue();
+      var aVal = window.legTomSelects[i].arr.getValue();
+      dep = (window.legTomSelects[i].dep.options && window.legTomSelects[i].dep.options[dVal] && window.legTomSelects[i].dep.options[dVal].text) ? window.legTomSelects[i].dep.options[dVal].text : (dVal || "");
+      arr = (window.legTomSelects[i].arr.options && window.legTomSelects[i].arr.options[aVal] && window.legTomSelects[i].arr.options[aVal].text) ? window.legTomSelects[i].arr.options[aVal].text : (aVal || "");
     } else if (i === 1 && (window.legCount || 0) === 1 && (routeStep3.dep || routeStep3.arr)) {
       dep = routeStep3.dep ? (routeStep3.dep.text || routeStep3.dep.value) : "";
       arr = routeStep3.arr ? (routeStep3.arr.text || routeStep3.arr.value) : "";
@@ -1047,9 +1055,11 @@ function getMandatUrl() {
     if (dep || arr) route += (route ? " / " : "") + (dep || "?") + " → " + (arr || "?");
   }
   var motifVal = document.getElementById("f-motif")?.value;
-  var motif = { retard: "Retard", annulation: "Annulation", surbook: "Surbooking", correspondance: "Correspondance manquée" }[motifVal] || motifVal || "";
+  var motifLabels = { retard: { fr: "Retard", en: "Delay" }, annulation: { fr: "Annulation", en: "Cancellation" }, surbook: { fr: "Surbooking", en: "Denied boarding" }, correspondance: { fr: "Correspondance manquée", en: "Missed connection" } };
+  var motif = (motifLabels[motifVal] && motifLabels[motifVal].fr) ? motifLabels[motifVal].fr : motifVal || "";
+  var motifEn = (motifLabels[motifVal] && motifLabels[motifVal].en) ? motifLabels[motifVal].en : "";
   var pnr = (document.getElementById("f-pnr")?.value || "").trim().toUpperCase();
-  var paxList = name;
+  var paxList = "";
   for (var j = 1; j < (window.totalPax || 1); j++) {
     var pf = (document.getElementById("pax" + j + "-prenom")?.value || "").trim();
     var pl = (document.getElementById("pax" + j + "-nom")?.value || "").trim();
@@ -1064,8 +1074,10 @@ function getMandatUrl() {
   if (date) q.set("date", date);
   if (route) q.set("route", route);
   if (motif) q.set("motif", motif);
+  if (motifEn) q.set("motif_en", motifEn);
   if (pnr) q.set("pnr", pnr);
   if (paxList) q.set("paxlist", paxList);
+  q.set("nbpax", String(window.totalPax || 1));
   return "/mandat.html" + (q.toString() ? "?" + q.toString() : "");
 }
 
@@ -1393,20 +1405,25 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   (function initCountryDialCodes() {
+    function isoToFlag(iso) {
+      if (!iso || iso.length !== 2) return "🌐";
+      var a = iso.toUpperCase().charCodeAt(0); var b = iso.toUpperCase().charCodeAt(1);
+      if (a < 65 || a > 90 || b < 65 || b > 90) return "🌐";
+      return String.fromCodePoint(0x1F1E6 + a - 65, 0x1F1E6 + b - 65);
+    }
     var sel = document.getElementById("p0-tel-prefix");
     var otherWrap = document.getElementById("p0-tel-other-wrap");
-    var otherInput = document.getElementById("p0-tel-other");
     if (!sel) return;
     var list = window.COUNTRY_DIAL_CODES || [];
     list.forEach(function(c) {
       var opt = document.createElement("option");
       opt.value = c.code;
-      opt.textContent = "+" + c.code + " " + (c.name || "");
+      opt.textContent = (c.iso ? isoToFlag(c.iso) : "🌐") + " +" + c.code;
       sel.appendChild(opt);
     });
     var optOther = document.createElement("option");
     optOther.value = "other";
-    optOther.textContent = "Autre (saisir indicatif ci-dessous)";
+    optOther.textContent = "🌐 Autre";
     sel.appendChild(optOther);
     function toggleOther() {
       if (otherWrap) otherWrap.style.display = (sel.value === "other") ? "block" : "none";

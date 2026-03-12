@@ -25,10 +25,18 @@
     .doc-box.mandat-bilingue #m-name,.doc-box.mandat-bilingue #m-phone,.doc-box.mandat-bilingue #m-address,.doc-box.mandat-bilingue #m-email,.doc-box.mandat-bilingue #m-vol,.doc-box.mandat-bilingue #m-date,.doc-box.mandat-bilingue #m-route,.doc-box.mandat-bilingue #m-motif,.doc-box.mandat-bilingue #m-pnr,.doc-box.mandat-bilingue #m-pax-list{color:var(--navy);font-weight:700;font-size:14px}
     .doc-box.mandat-bilingue .en{font-size:11.5px;color:var(--gray);opacity:.9;display:block;margin-top:6px;line-height:1.5}
     .doc-box.mandat-bilingue .mandat-note{margin-top:16px;font-size:11.5px;color:var(--gray);font-style:italic;background:linear-gradient(90deg, var(--neon-light) 0%, var(--off) 100%);padding:14px 18px;border-radius:10px;border-left:4px solid var(--neon-dark);line-height:1.65}
-    .doc-box.mandat-bilingue .mandat-signed{margin-top:32px;font-size:11.5px;color:var(--gray-light);font-style:italic;text-align:right;padding-top:20px;border-top:2px solid var(--border);letter-spacing:0.02em}
-    .doc-box.mandat-bilingue strong{color:var(--navy);font-weight:700}
-    .doc-box.mandat-bilingue sup{font-size:0.7em;vertical-align:baseline}
-    @media (max-width:600px){.wrap{padding:32px 18px 60px}.doc-box{padding:28px 22px;border-radius:12px}.doc-box.mandat-bilingue .mandat-section{padding:8px 0 8px 12px;font-size:12.5px}}
+.doc-box.mandat-bilingue .mandat-highlight{margin:14px 0;padding:14px 18px;border-radius:10px;border:2px solid var(--neon-dark);background:var(--neon-light);line-height:1.7}
+.doc-box.mandat-bilingue .mandat-highlight p{margin:0;font-size:13px}
+.doc-box.mandat-bilingue .mandat-signed{margin-top:32px;font-size:11.5px;color:var(--gray-light);font-style:italic;text-align:right;padding-top:20px;border-top:2px solid var(--border);letter-spacing:0.02em}
+.doc-box.mandat-bilingue strong{color:var(--navy);font-weight:700}
+.doc-box.mandat-bilingue sup{font-size:0.7em;vertical-align:baseline}
+.mandat-creance{overflow-x:auto;margin:12px 0;border:1px solid var(--border);border-radius:8px}
+.mandat-creance table{width:100%;border-collapse:collapse;font-size:13px}
+.mandat-creance th,.mandat-creance td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}
+.mandat-creance th{background:var(--neon-light);font-weight:700;color:var(--navy);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+.mandat-creance tr:last-child td{border-bottom:none}
+.mandat-creance .num{text-align:right}
+@media (max-width:600px){.wrap{padding:32px 18px 60px}.doc-box{padding:28px 22px;border-radius:12px}.doc-box.mandat-bilingue .mandat-section{padding:8px 0 8px 12px;font-size:12.5px}.mandat-creance th,.mandat-creance td{padding:8px}}
   </style>
 </head>
 <body>
@@ -50,32 +58,41 @@
       <p><strong>N° de vol / Flight No.</strong> <span id="m-vol" class="m-fill">—</span></p>
       <p><strong>Date / Date</strong> <span id="m-date" class="m-fill">—</span></p>
       <p><strong>Trajet / Route</strong> <span id="m-route" class="m-fill">—</span></p>
-      <p><strong>Motif</strong> <span id="m-motif" class="m-fill">—</span> <span class="en">(Retard / Annulation / Surbooking / Corresp. manquée)</span></p>
+      <p><strong>Motif / Claim type</strong> <span id="m-motif" class="m-fill">—</span> <span id="m-motif-en" class="en"></span></p>
       <p><strong>N° PNR / PNR No.</strong> <span id="m-pnr" class="m-fill">—</span></p>
       <p><strong>Autres passagers représentés / Other passengers represented</strong><br><span id="m-pax-list" class="m-fill">—</span></p>
-      <p class="mandat-note"><em>Chaque passager adulte doit co-signer ce contrat. Les mineurs sont représentés par leur(s) parent(s).<br>Each adult passenger must co-sign. Minors are represented by their parent(s).</em></p>
+      <p class="mandat-note"><em>Chaque passager adulte peut co-signer ce contrat. Les mineurs sont représentés par leur(s) parent(s). Le passager principal signe pour l'ensemble du groupe, y compris les mineurs qu'il représente.<br>Each adult passenger may co-sign. Minors are represented by their parent(s). The lead passenger signs for the whole group, including any minors they represent.</em></p>
 
       <p class="mandat-section"><strong>2. NOTRE MISSION — On s'occupe de tout</strong><br><span class="en">2. OUR MISSION — We handle everything</span></p>
-      <p>Je charge <strong>Robin des Airs</strong>, à titre exclusif, d'obtenir le paiement de mon indemnité de 300 € ou 600 € par passager selon la durée du retard (CE 261/2004). Je cède ma créance (art. 1321 C. civ.) pour permettre à Robin des Airs d'agir en son nom propre. Robin des Airs notifiera cette cession à la compagnie aérienne (art. 1324 C. civ.). Ce mandat, conclu dans l'intérêt commun du mandant et du mandataire, est <strong>non révocable</strong> dès l'envoi de la 1<sup>ère</sup> mise en demeure (art. 2003 C. civ.).</p>
-      <p class="en">I appoint Robin des Airs, on an exclusive basis, to obtain my compensation of €300 or €600 per passenger depending on delay duration (EU 261/2004). I assign my claim (Art. 1321 French Civil Code) so Robin des Airs may act in its own name. Robin des Airs shall notify this assignment to the airline (Art. 1324). This mandate is non-revocable from the 1st formal notice (Art. 2003).</p>
+      <p>Je charge <strong>Robin des Airs</strong>, à titre exclusif, d'obtenir le paiement de mon indemnité (250 €, 400 € ou 600 € par passager selon la distance et le cas — CE 261/2004). Je cède ma créance (art. 1321 C. civ.) pour permettre à Robin des Airs d'agir en son nom propre. Robin des Airs notifiera cette cession à la compagnie aérienne (art. 1324 C. civ.). Ce mandat, conclu dans l'intérêt commun du mandant et du mandataire, est <strong>non révocable</strong> à compter de l'envoi de la première mise en demeure à la compagnie aérienne (art. 2003 C. civ.).</p>
+      <p class="en">I appoint Robin des Airs, on an exclusive basis, to obtain my compensation (€250, €400 or €600 per passenger depending on distance and case — EU 261/2004). I assign my claim (Art. 1321 French Civil Code) so Robin des Airs may act in its own name. Robin des Airs shall notify this assignment to the airline (Art. 1324). This mandate is non-revocable as from the first formal notice sent to the airline (Art. 2003).</p>
       <p><strong>Engagement Robin :</strong> Aucun résultat → 0 € de frais. Succès → vous recevez 75 % nets.<br><span class="en">Robin's commitment: Nothing recovered → €0 fee. Success → you receive 75% net.</span></p>
-      <p><strong>Paiement direct :</strong> Si la compagnie vous paie directement suite à nos démarches, conservez vos 75 % nets et reversez les 25 % d'honoraires à Robin des Airs sous 48h.</p>
+      <div class="mandat-highlight">
+        <p><strong>Paiement direct par la compagnie :</strong> Si la compagnie vous paie directement suite à nos démarches, conservez vos 75 % nets et <strong>reversez les 25 % d'honoraires à Robin des Airs sous 48 h</strong>.<br><span class="en"><strong>Direct payment by the airline:</strong> If the airline pays you directly following our action, keep your 75% net and <strong>transfer the 25% fee to Robin des Airs within 48 hours</strong>.</span></p>
+      </div>
 
       <p class="mandat-section"><strong>3. HONORAIRES — « Pas de résultat, pas de frais »</strong><br><span class="en">3. FEES — « No win, no fee »</span></p>
-      <p>Vol +3 500 km · retard +4h à l'arrivée : 600 € brut / passager → Robin 25 % (150 €), Vous 75 % nets (450 €).<br>Vol +3 500 km · retard entre 3h et 4h : 300 € brut / passager → Robin 25 %, Vous 75 % nets.<br><span class="en">Art. 7§2 CE 261/2004 : réduction 50 % possible si réacheminement et retard &lt; 4h.</span></p>
+      <p><strong>Robin des Airs intervient principalement sur les créances à 600 €</strong> (vol long-courrier +3 500 km, retard +4 h à l'arrivée) : 600 € brut / passager → Robin 25 % (150 €), Vous 75 % nets (450 €). Pour les vols court ou moyen-courrier, le règlement CE 261 prévoit des indemnités de 250 € ou 400 € selon la distance → même répartition 25 % / 75 %.</p>
+      <p class="en"><strong>Robin des Airs mainly handles €600 claims</strong> (long-haul +3,500 km, delay +4h at arrival): €600 gross per passenger → Robin 25% (€150), You 75% net (€450). For short or medium-haul flights, EU 261 provides €250 or €400 depending on distance → same 25% / 75% split.</p>
+
+      <p class="mandat-section"><strong>Ligne(s) de créance — Montant demandé à la compagnie</strong><br><span class="en">Claim line(s) — Amount claimed from the airline</span></p>
+      <div id="m-creance-table" class="mandat-creance"></div>
+      <p class="mandat-note"><strong>Total demandé à la compagnie aérienne / Total claimed from the airline :</strong> <span id="m-total-demandé" class="m-fill">—</span></p>
 
       <p class="mandat-section"><strong>4. ENGAGEMENTS RÉCIPROQUES</strong><br><span class="en">4. MUTUAL COMMITMENTS</span></p>
-      <p>Robin des Airs : gérer le dossier de A à Z, informer le Mandant, notifier la cession, virer les 75 % nets sous 5 jours ouvrés.<br>Le Mandant s'engage à : transmettre tout contact de la compagnie à Robin, ne pas accepter bon d'achat ou offre directe, fournir cartes d'embarquement, pièce d'identité, e-mails.</p>
+      <p>Robin des Airs : gérer le dossier de A à Z, informer le Mandant, notifier la cession, virer les 75 % nets sous 5 jours ouvrés. Le Mandant s'engage à : transmettre tout contact de la compagnie à Robin, ne pas accepter bon d'achat ou offre directe, fournir cartes d'embarquement, pièce d'identité, e-mails.</p>
+      <p class="en">Robin des Airs: handle the case from A to Z, inform the Principal, notify the assignment, transfer the 75% net within 5 working days. The Principal agrees to: forward any contact from the airline to Robin, not accept vouchers or direct offers, provide boarding passes, ID, emails.</p>
 
       <p class="mandat-section"><strong>5. INFORMATIONS LÉGALES</strong><br><span class="en">5. LEGAL INFORMATION</span></p>
       <p><strong>Rétractation :</strong> 14 jours (art. L221-18 C. cons.). Formulaire sur demande à expert@robindesairs.eu.<br><strong>RGPD :</strong> Responsable SAS Robin des Airs. Finalité : recouvrement. Conservation : durée du dossier + 5 ans. Droits : accès, rectification, suppression — expert@robindesairs.eu.<br><strong>Médiateur :</strong> MTV, 15 rue Maréchal Foch, 93601 Aulnay-sous-Bois — www.mtv.travel.<br><strong>Langue prévalante :</strong> version française. <strong>Loi applicable :</strong> droit français — Tribunaux de Paris.</p>
-      <p class="mandat-signed">Document signé électroniquement via le formulaire Robin des Airs. Lu et approuvé — Bon pour mandat et cession de créance.</p>
+      <p class="en"><strong>Withdrawal:</strong> 14 days (Art. L221-18 Consumer Code). Form on request at expert@robindesairs.eu. <strong>GDPR:</strong> Data controller SAS Robin des Airs. Purpose: recovery. Retention: case duration + 5 years. Rights: access, rectification, erasure — expert@robindesairs.eu. <strong>Prevalent language:</strong> French. <strong>Applicable law:</strong> French law — Courts of Paris.</p>
+      <p class="mandat-signed">Document signé électroniquement via le formulaire Robin des Airs. Lu et approuvé — Bon pour mandat et cession de créance.<br><span class="en">Document electronically signed via Robin des Airs form. Read and approved — Valid as power of attorney and assignment of claim.</span></p>
     </div>
   </div>
 <script>
 (function() {
   var q = new URLSearchParams(window.location.search);
-  function set(id, val) { var el = document.getElementById(id); if (el && val) el.textContent = val; }
+  function set(id, val) { var el = document.getElementById(id); if (el && val !== undefined && val !== null) el.textContent = val; }
   set("m-name", q.get("name"));
   set("m-phone", q.get("phone"));
   set("m-address", q.get("address"));
@@ -84,8 +101,29 @@
   set("m-date", q.get("date"));
   set("m-route", q.get("route"));
   set("m-motif", q.get("motif"));
+  var motifEn = q.get("motif_en");
+  if (motifEn) { var me = document.getElementById("m-motif-en"); if (me) me.textContent = "(" + motifEn + ")"; }
   set("m-pnr", q.get("pnr"));
-  set("m-pax-list", q.get("paxlist"));
+  var paxList = q.get("paxlist") || "";
+  set("m-pax-list", paxList || "—");
+  var nbpax = Math.max(1, parseInt(q.get("nbpax"), 10) || 1);
+  var names = [q.get("name") || "Passager 1"];
+  if (paxList) { var others = paxList.split(/\s*,\s*/); for (var i = 0; i < others.length; i++) names.push(others[i].trim() || ("Passager " + (i + 2))); }
+  while (names.length < nbpax) names.push("Passager " + (names.length + 1));
+  var indemnite = 600;
+  var honoraire = Math.round(indemnite * 0.25);
+  var net = indemnite - honoraire;
+  var total = nbpax * indemnite;
+  var tableEl = document.getElementById("m-creance-table");
+  if (tableEl) {
+    var html = "<table><thead><tr><th>Passager / Passenger</th><th class=\"num\">Indemnité brute / Gross comp.</th><th class=\"num\">Honoraires 25% / Fee 25%</th><th class=\"num\">Vous / You (75%)</th></tr></thead><tbody>";
+    for (var i = 0; i < nbpax; i++) {
+      html += "<tr><td>" + (names[i] || "—") + "</td><td class=\"num\">" + indemnite + " €</td><td class=\"num\">" + honoraire + " €</td><td class=\"num\">" + net + " €</td></tr>";
+    }
+    html += "</tbody></table>";
+    tableEl.innerHTML = html;
+  }
+  set("m-total-demandé", total + " €");
 })();
 </script>
 </body>
