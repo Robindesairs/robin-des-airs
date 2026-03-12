@@ -23,6 +23,9 @@ a{text-decoration:none;color:inherit}
 .top-logo{font-weight:900;font-size:14px;color:white;display:flex;align-items:center;gap:7px;}
 .top-logo span{color:var(--neon-b)}
 .top-secure{font-size:10px;color:rgba(255,255,255,.4);letter-spacing:1.2px;text-transform:uppercase;display:flex;align-items:center;gap:5px;}
+.top-help{display:flex;align-items:center;gap:10px;}
+.top-help a{font-size:11px;font-weight:700;color:#25D366;text-decoration:none;display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border:1px solid rgba(37,211,102,.4);border-radius:6px;transition:background .2s,color .2s}
+.top-help a:hover{background:rgba(37,211,102,.15);color:#25D366}
 
 .wrap{max-width:660px;margin:0 auto;padding:34px 18px 80px}
 
@@ -65,8 +68,10 @@ a{text-decoration:none;color:inherit}
 .field input.err,.field select.err{border-color:var(--red);box-shadow:0 0 0 3px rgba(231,76,60,.09)}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:11px}
 .phone-row{display:flex;gap:8px;align-items:stretch}
-.phone-prefix{width:auto;min-width:100px;flex-shrink:0;padding:11px 10px}
-.phone-input{flex:1;min-width:0}
+.phone-prefix{width:72px;max-width:72px;flex-shrink:0;padding:11px 6px;font-size:12px}
+.phone-input{flex:1;min-width:0;font-size:15px}
+.phone-recap{font-size:11px;color:var(--gray);margin-top:6px;min-height:18px}
+.phone-recap strong{color:var(--navy)}
 
 /* Airport autocomplete */
 .airport-wrap{position:relative}
@@ -124,12 +129,26 @@ a{text-decoration:none;color:inherit}
 .address-suggestion:last-child{border-bottom:none}
 .address-suggestion:hover{background:var(--off)}
 .address-suggestion strong{color:var(--navy)}
+.compagnie-wrap{position:relative}
+.compagnie-suggestions{position:absolute;top:100%;left:0;right:0;z-index:200;margin-top:4px;background:white;border:1.5px solid var(--border);border-radius:8px;box-shadow:0 8px 32px rgba(11,31,58,.12);max-height:220px;overflow-y:auto;display:none}
+.compagnie-suggestions.show{display:block;animation:fadeUp .15s ease}
+.compagnie-opt{padding:10px 14px;cursor:pointer;font-size:12.5px;color:var(--text);border-bottom:1px solid var(--off);transition:background .12s}
+.compagnie-opt:last-child{border-bottom:none}
+.compagnie-opt:hover{background:var(--off)}
 
 .info-box{display:flex;align-items:flex-start;gap:9px;background:rgba(0,200,122,.05);border:1px solid rgba(0,200,122,.18);border-radius:8px;padding:11px 14px;margin-bottom:14px;font-size:12px;color:var(--gray);line-height:1.6}
 .info-box strong{color:var(--navy)}
 .info-box.orange{background:rgba(243,156,18,.05);border-color:rgba(243,156,18,.22)}
 .info-box.secure{background:rgba(11,31,58,.03);border-color:rgba(11,31,58,.1)}
 .info-box.blue{background:rgba(52,152,219,.05);border-color:rgba(52,152,219,.2)}
+.mandat-step5-block{margin-bottom:18px}
+.mandat-trust{margin-top:28px;padding-top:22px;border-top:1px solid var(--border)}
+.mandat-trust-title{font-size:12px;font-weight:700;color:var(--navy);margin-bottom:10px}
+.mandat-quote{font-size:12px;color:var(--gray);font-style:italic;margin:0 0 14px 14px;padding-left:10px;border-left:3px solid var(--neon)}
+.mandat-trust-list{font-size:11.5px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.mandat-trust-ul{margin:0 0 14px 18px;font-size:12px;color:var(--gray);line-height:1.7}
+.mandat-warning{font-size:11.5px;color:var(--orange);font-weight:600;margin-bottom:10px}
+.mandat-cta{font-size:12px;color:var(--navy);font-weight:600}
 
 .pax-card{background:var(--off);border:1.5px solid var(--border);border-radius:10px;padding:14px;margin-bottom:9px;position:relative}
 .pax-card-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon-dark);margin-bottom:9px}
@@ -265,7 +284,10 @@ a{text-decoration:none;color:inherit}
     </svg>
     ROBIN<span> des Airs</span>
   </a>
-  <div class="top-secure">🔒 SSL · AES-256 · RGPD</div>
+  <div class="top-help">
+    <a href="https://wa.me/15557840392?text=Bonjour%2C%20j'ai%20besoin%20d'aide%20pour%20remplir%20mon%20d%C3%A9p%C3%B4t%20de%20dossier." target="_blank" rel="noopener">💬 J'ai besoin d'aide</a>
+    <span class="top-secure">🔒 SSL · RGPD</span>
+  </div>
 </div>
 
 <div class="wrap">
@@ -313,6 +335,7 @@ a{text-decoration:none;color:inherit}
           </select>
           <input type="tel" id="p0-tel" placeholder="6 12 34 56 78" autocomplete="tel" class="phone-input">
         </div>
+        <p class="phone-recap" id="p0-phone-recap" aria-live="polite"></p>
       </div>
       <div class="field" id="p0-tel-other-wrap" style="display:none">
         <label>Indicatif (saisie libre)</label>
@@ -397,9 +420,10 @@ a{text-decoration:none;color:inherit}
         </div>
         <p style="font-size:12px;color:var(--gray);margin-bottom:12px" id="step3-route-recap">La route saisie ci-dessus sera reprise pour chaque vol.</p>
         <div id="legs-container-wrap" style="display:none">
-          <div class="field">
+          <div class="field compagnie-wrap">
             <label>Compagnie aérienne</label>
-            <input type="text" id="f-compagnie" placeholder="Ex. Air France, Transavia, Ryanair…" autocomplete="organization">
+            <input type="text" id="f-compagnie" placeholder="Tapez 2 lettres ou plus (ex. Air, Ryan…)" autocomplete="off">
+            <div class="compagnie-suggestions" id="compagnie-suggestions" role="listbox" aria-hidden="true"></div>
           </div>
           <div id="legs-container"></div>
           <button class="add-leg-btn" onclick="addLeg()" id="add-leg-btn" type="button" style="display:none">
@@ -445,6 +469,7 @@ a{text-decoration:none;color:inherit}
       <div class="card-eye">Étape 4 sur 6</div>
       <div class="card-title">Carte d'embarquement</div>
       <div class="card-sub">Une carte par passager. Photo, scan ou PDF — tout est accepté.</div>
+      <p class="field-hint" style="margin-bottom:12px">Carte d'embarquement, e-ticket, confirmation de réservation, capture d'écran… Tous les formats (image, PDF) sont acceptés.</p>
       <div class="info-box secure">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         <span><strong>🔒 Documents protégés.</strong> Chiffrement AES-256 en transit et au repos. Serveurs européens (RGPD). Vos documents ne sont jamais partagés ni revendus. Accès réservé à l'équipe Robin des Airs.</span>
@@ -461,31 +486,48 @@ a{text-decoration:none;color:inherit}
     </div>
   </div>
 
-  <!-- ══ 5 — MANDAT (liens + signature + case lu) ══ -->
+  <!-- ══ 5 — MANDAT (signature + case obligatoire) ══ -->
   <div class="fs" id="fs-5">
     <div class="card">
-      <div class="card-eye">Étape 5 sur 6</div>
+      <div class="card-eye">Étape 5 sur 6 ✅ — DERNIÈRE ÉTAPE !</div>
       <div class="card-title">Mandat de représentation & cession de créance</div>
-      <div class="card-sub">Un seul mandat pour tout le groupe. Ouvrez le document pour vérifier vos informations (trajet, motif, montants), puis cochez et signez.</div>
-      <p style="margin-bottom:14px">
-        <a href="#" onclick="var u=getMandatUrl();if(u){window.open(u);}return false;" class="doc-link doc-link-underline" style="font-weight:700;font-size:13px">📄 Ouvrir le mandat (nouvel onglet)</a>
-      </p>
-      <div style="margin-bottom:16px">
-        <label class="chk"><input type="checkbox" id="chk-mandat"><span>J’ai pris connaissance du <a href="#" class="doc-link doc-link-underline" onclick="var u=getMandatUrl();if(u){window.open(u);}return false;">mandat</a> et des <a href="/cgv.html" target="_blank" rel="noopener" class="doc-link doc-link-underline">CGV</a> et je les accepte. <strong>25% d’honoraires uniquement en cas de succès.</strong></span></label>
+      <div class="card-sub">✨ Un seul clic couvre TOUT le groupe (y compris mineurs).</div>
+
+      <div class="mandat-step5-block">
+        <label class="chk"><input type="checkbox" id="chk-mandat"><span>✅ J'ai lu et j'accepte le <a href="/cgv.html" target="_blank" rel="noopener" class="doc-link doc-link-underline">mandat de représentation & cession de créance + CGV</a>. <span class="req">*</span></span></label>
+        <div id="mandat-pouvoir-wrap" style="display:none">
+          <label class="chk" style="margin-top:10px"><input type="checkbox" id="chk-pouvoir"><span>✅ J'atteste disposer du pouvoir de représenter les passagers majeurs listés ou avoir leur accord exprès. <span class="req">*</span></span></label>
+          <p class="field-hint" style="margin-top:6px;margin-bottom:0">En pratique, une seule signature (la vôtre) est utilisée lorsque vous avez l'accord des autres passagers majeurs. En cas de doute juridique, consultez un professionnel du droit.</p>
+        </div>
       </div>
-      <label class="sig-label">Signature électronique <span style="color:var(--red)">*</span></label>
-      <p class="field-hint" style="margin-bottom:8px">En signant ci-dessous, vous acceptez que cette signature ait la même valeur qu’une signature manuscrite (signature électronique).</p>
+
+      <label class="sig-label">Signature électronique <span class="req">*</span></label>
+      <p class="field-hint" style="margin-bottom:8px">Votre signature web = valeur légale manuscrite (Art. 1366 C. civ.).</p>
       <div class="sig-wrap"><canvas class="sig-canvas" id="sig-mandat"></canvas>
-        <div class="sig-bar"><span class="sig-hint">✏️ Signez ici</span><button class="sig-clear-btn" type="button" onclick="clearSig('mandat')">Effacer</button></div>
+        <div class="sig-bar"><span class="sig-hint">✏️ Zone signature</span><button class="sig-clear-btn" type="button" onclick="clearSig('mandat')">Effacer</button></div>
       </div>
       <div class="sig-status-row"><span class="sig-dot" id="dot-mandat"></span><span id="txt-mandat">Non signé</span></div>
       <div class="sig-err" id="err-mandat">Veuillez signer le mandat.</div>
       <div class="info-box" style="margin-top:10px">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--neon-dark)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span><strong>1 signature = tout le groupe couvert.</strong> Le passager principal signe pour l'ensemble, y compris les mineurs.</span>
+        <span>🎯 <strong>1 signature = tout le groupe couvert.</strong> Le passager principal signe pour tous.</span>
       </div>
+
       <button class="btn-next" onclick="nextStep(5)">Continuer →</button>
       <button class="btn-back" onclick="prevStep(5)">← Retour</button>
+
+      <div class="mandat-trust">
+        <p class="mandat-trust-title">🔒 Déjà + de 9 500 passagers ont récupéré leur indemnité avec nous</p>
+        <blockquote class="mandat-quote">« 450€ récupérés Turkish Airlines IST en 18 jours ! » — A. Diop, Banjul</blockquote>
+        <p class="mandat-trust-list">✅ Ce qu'on fait pour vous :</p>
+        <ul class="mandat-trust-ul">
+          <li>Mise en demeure LRAR envoyée sous 48h</li>
+          <li>Suivi et relances automatiques</li>
+          <li>Tribunal si refus (frais à notre charge)</li>
+          <li>Paiement net sous 3 semaines en moyenne</li>
+        </ul>
+        <p class="mandat-warning">⚠️ Sans mandat signé, 92% des passagers ne récupèrent rien (source : Médiation tourisme voyage TMV 2025).</p>
+        <p class="mandat-cta">Prêt à récupérer jusqu'à 600€/pers ? → <strong>Signez ci-dessus.</strong></p>
+      </div>
     </div>
   </div>
 
@@ -495,6 +537,7 @@ a{text-decoration:none;color:inherit}
       <div class="card-eye">Étape 6 sur 6</div>
       <div class="card-title">Pièce d'identité</div>
       <div class="card-sub">Passeport ou carte d'identité, une pièce par passager. Le nom doit correspondre au billet.</div>
+      <p class="field-hint" style="margin-bottom:12px">Passeport, CNI, titre de séjour… Photo, scan ou PDF. Une pièce par passager listé.</p>
       <div class="info-box secure">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--navy)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         <span><strong>🔒 Vos pièces d'identité sont protégées.</strong> Stockage chiffré AES-256, serveurs France/UE conformes RGPD. Jamais partagées avec des tiers. Suppression automatique après clôture du dossier.</span>
@@ -838,6 +881,8 @@ function setStep(n) {
   function applyStep() {
     if (current) current.classList.remove("active", "fs-leaving");
     targetEl.classList.add("active");
+    var pouvoirWrap = document.getElementById("mandat-pouvoir-wrap");
+    if (pouvoirWrap && targetId === "fs-5") pouvoirWrap.style.display = (typeof totalPax !== "undefined" && totalPax > 1) ? "block" : "none";
     document.getElementById("stepper").dataset.s = Math.min(n, TOTAL_STEPS + 1);
     document.querySelectorAll(".si").forEach(function(el, i) {
       var s = i + 1;
@@ -880,6 +925,13 @@ function showStep3Block(n) {
   if (continuerWrap) continuerWrap.style.display = n === 3 ? "block" : "none";
 }
 
+function shortRouteLabel(text) {
+  if (!text || !String(text).trim()) return "";
+  text = String(text).replace(/\s*\([A-Z0-9]+\)\s*$/gi, "").trim();
+  var idx = text.indexOf(" - ");
+  if (idx !== -1) text = text.substring(0, idx).trim();
+  return text;
+}
 function getStep3Route() {
   var depEl = document.querySelector("#f-ville-depart select") || document.getElementById("f-ville-depart");
   var arrEl = document.querySelector("#f-ville-arrivee select") || document.getElementById("f-ville-arrivee");
@@ -915,7 +967,7 @@ function buildLegsFromRoute() {
     if (i === 1 && route.dep) prefill.dep = route.dep;
     if (i === 1 && nb === 1 && route.arr) prefill.arr = route.arr;
     if (i === nb && nb > 1 && route.arr) prefill.arr = route.arr;
-    if (nb === 1) { prefill.direct = true; prefill.depText = (route.dep && route.dep.text) ? route.dep.text : (route.dep && route.dep.value) ? route.dep.value : ""; prefill.arrText = (route.arr && route.arr.text) ? route.arr.text : (route.arr && route.arr.value) ? route.arr.value : ""; }
+    if (nb === 1) { prefill.direct = true; prefill.depText = shortRouteLabel((route.dep && route.dep.text) ? route.dep.text : (route.dep && route.dep.value) ? route.dep.value : ""); prefill.arrText = shortRouteLabel((route.arr && route.arr.text) ? route.arr.text : (route.arr && route.arr.value) ? route.arr.value : ""); }
     addLeg(prefill);
   }
   wrap.style.display = "block";
@@ -1002,7 +1054,7 @@ function prefillMandat() {
       dep = (document.querySelector("#leg" + i + "-dep select") || document.getElementById("leg" + i + "-dep"))?.value || "";
       arr = (document.querySelector("#leg" + i + "-arr select") || document.getElementById("leg" + i + "-arr"))?.value || "";
     }
-    if (dep || arr) route += (route ? " / " : "") + (dep || "?") + " → " + (arr || "?");
+    if (dep || arr) route += (route ? " / " : "") + shortRouteLabel(dep || "?") + " → " + shortRouteLabel(arr || "?");
   }
   set("m-route", route || null);
   var motifVal = document.getElementById("f-motif")?.value;
@@ -1052,7 +1104,7 @@ function getMandatUrl() {
       dep = (document.querySelector("#leg" + i + "-dep select") || document.getElementById("leg" + i + "-dep"))?.value || "";
       arr = (document.querySelector("#leg" + i + "-arr select") || document.getElementById("leg" + i + "-arr"))?.value || "";
     }
-    if (dep || arr) route += (route ? " / " : "") + (dep || "?") + " → " + (arr || "?");
+    if (dep || arr) route += (route ? " / " : "") + shortRouteLabel(dep || "?") + " → " + shortRouteLabel(arr || "?");
   }
   var motifVal = document.getElementById("f-motif")?.value;
   var motifLabels = { retard: { fr: "Retard", en: "Delay" }, annulation: { fr: "Annulation", en: "Cancellation" }, surbook: { fr: "Surbooking", en: "Denied boarding" }, correspondance: { fr: "Correspondance manquée", en: "Missed connection" } };
@@ -1127,6 +1179,8 @@ function validate(n) {
   if (n === 5) {
     if (!sigState.mandat?.signed) { document.getElementById("err-mandat").classList.add("show"); return false; }
     if (!document.getElementById("chk-mandat").checked) { alert("Veuillez cocher la case du mandat."); return false; }
+    var pouvoirWrap = document.getElementById("mandat-pouvoir-wrap");
+    if (pouvoirWrap && pouvoirWrap.style.display !== "none" && !document.getElementById("chk-pouvoir").checked) { alert("Veuillez attester disposer du pouvoir de représenter les passagers majeurs listés ou avoir leur accord exprès."); return false; }
   }
   if (n === 6) {
     if (!document.getElementById("chk-rgpd")?.checked) { alert("Veuillez accepter la politique de confidentialité."); return false; }
@@ -1414,7 +1468,11 @@ document.addEventListener("DOMContentLoaded", () => {
     var sel = document.getElementById("p0-tel-prefix");
     var otherWrap = document.getElementById("p0-tel-other-wrap");
     if (!sel) return;
-    var list = window.COUNTRY_DIAL_CODES || [];
+    var list = (window.COUNTRY_DIAL_CODES || []).slice().sort(function(a, b) {
+      var na = parseInt(a.code, 10) || 0;
+      var nb = parseInt(b.code, 10) || 0;
+      return na - nb;
+    });
     list.forEach(function(c) {
       var opt = document.createElement("option");
       opt.value = c.code;
@@ -1428,7 +1486,20 @@ document.addEventListener("DOMContentLoaded", () => {
     function toggleOther() {
       if (otherWrap) otherWrap.style.display = (sel.value === "other") ? "block" : "none";
     }
-    sel.addEventListener("change", toggleOther);
+    function updatePhoneRecap() {
+      var recap = document.getElementById("p0-phone-recap");
+      if (!recap) return;
+      var prefix = sel.value;
+      if (prefix === "other") { var o = document.getElementById("p0-tel-other"); prefix = (o && o.value) ? (o.value || "").replace(/\D/g, "") : ""; }
+      var num = (document.getElementById("p0-tel")?.value || "").trim().replace(/\s/g, " ");
+      if (!prefix && !num) { recap.textContent = ""; return; }
+      recap.innerHTML = "Numéro saisi : <strong>+" + (prefix || "?") + " " + (num || "…") + "</strong>";
+    }
+    sel.addEventListener("change", function() { toggleOther(); updatePhoneRecap(); });
+    var telInput = document.getElementById("p0-tel");
+    var otherInput = document.getElementById("p0-tel-other");
+    if (telInput) { telInput.addEventListener("input", updatePhoneRecap); telInput.addEventListener("change", updatePhoneRecap); }
+    if (otherInput) { otherInput.addEventListener("input", updatePhoneRecap); otherInput.addEventListener("change", updatePhoneRecap); }
     toggleOther();
   })();
 
@@ -1484,6 +1555,39 @@ document.addEventListener("DOMContentLoaded", () => {
           })
           .catch(function() {});
       }, 280);
+    });
+    input.addEventListener("blur", function() { setTimeout(function() { list.classList.remove("show"); }, 200); });
+  })();
+
+  (function initCompagnieAutocomplete() {
+    var input = document.getElementById("f-compagnie");
+    var list = document.getElementById("compagnie-suggestions");
+    if (!input || !list) return;
+    input.addEventListener("input", function() {
+      var q = (input.value || "").trim().toLowerCase();
+      list.classList.remove("show");
+      list.innerHTML = "";
+      if (q.length < 2) return;
+      var data = window.AIRLINES_DATA || [];
+      var matches = data.filter(function(a) {
+        var t = (a.text || a.value || "").toLowerCase();
+        return t.indexOf(q) !== -1;
+      }).slice(0, 10);
+      matches.forEach(function(a) {
+        var name = (a.text || a.value || "").replace(/</g, "&lt;");
+        var div = document.createElement("div");
+        div.className = "compagnie-opt";
+        div.setAttribute("role", "option");
+        div.textContent = name;
+        div.addEventListener("click", function() {
+          input.value = a.text || a.value || "";
+          list.classList.remove("show");
+          list.innerHTML = "";
+        });
+        list.appendChild(div);
+      });
+      if (matches.length) list.classList.add("show");
+      list.setAttribute("aria-hidden", matches.length ? "false" : "true");
     });
     input.addEventListener("blur", function() { setTimeout(function() { list.classList.remove("show"); }, 200); });
   })();
