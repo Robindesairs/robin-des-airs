@@ -23,7 +23,10 @@ Ouvrir [http://localhost:3000](http://localhost:3000).
 
 ## Base Supabase
 
-1. Créer un projet sur [supabase.com](https://supabase.com).
+- **Project ID** : `qrrvzvltwtfzgvfiynkv`
+- **Dashboard** : [https://supabase.com/dashboard/project/qrrvzvltwtfzgvfiynkv](https://supabase.com/dashboard/project/qrrvzvltwtfzgvfiynkv)
+
+1. Créer un projet sur [supabase.com](https://supabase.com) (ou utiliser le projet ci-dessus).
 2. Dans **SQL Editor**, exécuter le script :
    `supabase/migrations/20260101000000_schema_dossiers_v2.sql`
 3. Copier l’URL du projet et la clé anon dans `.env.local`.
