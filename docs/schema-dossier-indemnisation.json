@@ -1,0 +1,145 @@
+{
+  "version_schema": "2.0",
+  "description": "Structure universelle dossier indemnisation Robin des Airs",
+
+  "dossier": {
+    "id_interne": "string (ex: RDA-2026-001)",
+    "statut": "enum (BROUILLON | ELIGIBLE | NON_ELIGIBLE | MANDAT_SIGNE | LRAR_ENVOYEE | RELANCE_1 | RELANCE_2 | MEDIATEUR | CONTENTIEUX | PAYE | REFUSE_DEFINITIF | ABANDON | PRESCRIT)",
+    "motif_non_eligibilite": "string | null (ex: retard < 3h, annulation > 14j préavis, vol non UE)",
+    "priorite": "enum (BASSE | STANDARD | HAUTE | URGENTE)",
+    "date_creation": "ISO-8601",
+    "date_derniere_action": "ISO-8601",
+    "source_acquisition": "string (ex: tiktok_ad | fb_reels | whatsapp_organique | referral | site_direct)",
+    "agent_responsable": "string (prénom agent Robin des Airs)",
+    "langue_client": "enum (fr | wo | bm | ln | ff | snk | en)"
+  },
+
+  "passagers": [
+    {
+      "rang": "number (1 = passager principal / signataire du mandat)",
+      "prenom": "string",
+      "nom": "string",
+      "email": "string | null",
+      "telephone": "string | null",
+      "type_piece_identite": "enum (PASSEPORT | CNI)",
+      "numero_piece_identite": "string",
+      "iban": "string (format FR — collecté uniquement au moment du reversement)",
+      "mandat_signe": "boolean",
+      "url_mandat_pdf": "url | null",
+      "date_signature_mandat": "ISO-8601 | null",
+      "documents": {
+        "boarding_pass": "url | null",
+        "eticket": "url | null",
+        "piece_identite": "url | null"
+      }
+    }
+  ],
+
+  "vol": {
+    "pnr": "string (6 caractères)",
+    "type_trajet": "enum (DIRECT | CORRESPONDANCE)",
+    "troncons": [
+      {
+        "ordre": "number (1 = premier vol, 2 = correspondance)",
+        "compagnie_operante": "string (celle qui opère réellement le vol)",
+        "code_iata_compagnie_operante": "string (ex: AF)",
+        "compagnie_emettrice_billet": "string | null (si différente — important CE 261)",
+        "numero_vol": "string",
+        "date_vol": "YYYY-MM-DD",
+        "heure_depart_prevue": "HH:MM",
+        "heure_arrivee_prevue": "HH:MM",
+        "heure_arrivee_reelle": "HH:MM | null",
+        "aeroport_depart": "string (IATA)",
+        "aeroport_arrivee": "string (IATA)",
+        "duree_retard_minutes": "number | null",
+        "troncon_determinant_ce261": "boolean (true sur le dernier tronçon)"
+      }
+    ],
+    "incident": {
+      "type": "enum (RETARD | ANNULATION | CORRESPONDANCE_MANQUEE | REFUS_EMBARQUEMENT)",
+      "raison_officielle_compagnie": "string | null",
+      "raison_categorie": "enum (METEO | PANNE_TECHNIQUE | GREVE_INTERNE | GREVE_EXTERNE | SECURITE | AUCUNE | INCONNUE)",
+      "circonstance_extraordinaire_invoquee": "boolean"
+    },
+    "preuves_meteorologiques": {
+      "metar_depart": "url | null",
+      "taf_depart": "url | null",
+      "metar_arrivee": "url | null",
+      "taf_arrivee": "url | null",
+      "autres_vols_meme_creneau": "boolean | null (true = météo non extraordinaire prouvée)"
+    }
+  },
+
+  "calculs_financiers": {
+    "distance_km": "number (origine → destination finale, pour déterminer le palier)",
+    "palier_ce261": "enum (250 | 400 | 600)",
+    "nombre_passagers": "number",
+    "indemnite_brute_totale": "number (palier × nombre_passagers)",
+    "frais_recouvrement_40e": {
+      "applicable": "boolean (default: true — B2B art. L.441-10 Code commerce)",
+      "montant": "number (default: 40)"
+    },
+    "interets_legaux": {
+      "taux_annuel": "number (ex: 0.0665 pour 6.65%)",
+      "date_debut_calcul": "ISO-8601 (J+16 après réception LRAR)",
+      "jours_ecoules": "number",
+      "montant_cumule": "number"
+    },
+    "total_reclame_compagnie": "number (indemnite_brute + 40€ + intérêts)",
+    "commission_robin_pourcentage": 25,
+    "commission_robin_montant": "number (25% de indemnite_brute_totale)",
+    "montant_net_client": "number (75% de indemnite_brute_totale)",
+    "montant_net_client_par_passager": "number"
+  },
+
+  "suivi_juridique": {
+    "envois": [
+      {
+        "type": "enum (EMAIL | LRAR_PAPIER | LRE | WHATSAPP_FORMEL)",
+        "numero": "number (1 = 1ère mise en demeure, 2 = relance, etc.)",
+        "date_envoi": "ISO-8601",
+        "identifiant_suivi": "string | null (n° AR ou LRE)",
+        "date_reception_confirmee": "ISO-8601 | null",
+        "url_preuve": "url | null"
+      }
+    ],
+    "delais": {
+      "date_limite_paiement_15j": "ISO-8601 (date_reception + 15 jours)",
+      "date_debut_interets_j16": "ISO-8601 (date_reception + 16 jours)",
+      "date_prescription": "ISO-8601 (date_vol + 5 ans, art. 2224 Code civil)"
+    },
+    "reponse_compagnie": {
+      "recue": "boolean",
+      "date": "ISO-8601 | null",
+      "type_reponse": "enum (PAIEMENT | REFUS_MOTIVE | REFUS_SANS_MOTIF | OFFRE_VOUCHER | SILENCE) | null",
+      "montant_propose": "number | null",
+      "voucher_propose": "boolean",
+      "motif_refus": "string | null"
+    },
+    "escalade": {
+      "mediateur_saisi": "boolean",
+      "date_saisine_mediateur": "ISO-8601 | null",
+      "contentieux_ouvert": "boolean",
+      "date_ouverture_contentieux": "ISO-8601 | null",
+      "tribunal_competent": "string | null"
+    },
+    "historique_evenements": [
+      {
+        "date": "ISO-8601",
+        "action": "string",
+        "auteur": "string (agent Robin des Airs ou système)",
+        "commentaire": "string | null"
+      }
+    ]
+  },
+
+  "resultat_final": {
+    "statut": "enum (EN_COURS | PAYE | REFUSE | ABANDONNE | PRESCRIT) | null",
+    "date_encaissement": "ISO-8601 | null",
+    "montant_encaisse": "number | null",
+    "date_reversement_client": "ISO-8601 | null",
+    "montant_reverse_client": "number | null",
+    "preuve_virement_client": "url | null",
+    "satisfaction_client": "number (1-5) | null"
+  }
+}

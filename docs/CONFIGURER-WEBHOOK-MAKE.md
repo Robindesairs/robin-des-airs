@@ -83,3 +83,17 @@ Pour que chaque envoi crée **un dossier** dans Google Drive avec les pièces du
 | **WhatsApp** (messages / photos des clients) | ❌ Non par défaut | — |
 
 Les messages et photos **WhatsApp** arrivent d’abord au **webhook Netlify** (`/api/whatsapp-webhook`), pas à Make. Pour envoyer aussi une **copie** de chaque message WhatsApp à Make (texte, numéro, type de message), définissez dans **Netlify** la variable d’environnement **`ROBIN_LOG_WEBHOOK_URL`** avec votre URL Make. Make recevra alors un JSON par message (pas le fichier image lui-même ; pour récupérer les pièces WhatsApp, il faudrait une intégration Make ↔ WhatsApp ou un scénario supplémentaire).
+
+---
+
+## 7. Webhook « Envoi mise en demeure compagnie »
+
+Un **second scénario** Make peut être utilisé pour l’envoi de la mise en demeure à la compagnie aérienne (AR24, envoi courrier, etc.). L’URL de ce webhook est à utiliser lorsque vous déclenchez l’envoi de la mise en demeure vers la compagnie (depuis Make ou un autre outil).
+
+**URL webhook — Envoi mise en demeure compagnie :**
+
+```
+https://hook.eu1.make.com/boq1nyapajc6g94dwpdro4ttf8ueteit
+```
+
+À configurer dans le scénario Make qui envoie la mise en demeure à la compagnie (ou à appeler en POST depuis l’outil qui gère l’AR24 / le courrier).
