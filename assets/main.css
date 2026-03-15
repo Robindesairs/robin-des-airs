@@ -152,9 +152,44 @@ a:focus-visible, button:focus-visible, .cb:focus-visible, .reason-btn:focus-visi
   box-shadow: var(--focus-ring);
 }
 
+/* ── Bandeau diaspora (drapeaux + spécialité) ── */
+.diaspora-bar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1001;
+  background: var(--navy);
+}
+
+.diaspora-bar-inner {
+  padding: 7px 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.diaspora-bar-flags {
+  font-size: 1rem;
+  letter-spacing: 1px;
+}
+
+.diaspora-bar-sep {
+  width: 1px;
+  height: 12px;
+  background: rgba(255,255,255,0.15);
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+.diaspora-bar-text {
+  color: rgba(255,255,255,0.35);
+  font-size: 11px;
+  letter-spacing: 0.4px;
+}
+
 /* ═══════ NAV ═══════ */
 nav {
-  position: fixed; top: 0; left: 0; right: 0;
+  position: fixed; top: 36px; left: 0; right: 0;
   z-index: 1000;
   height: 72px; padding: 0 32px;
   display: flex; align-items: center; justify-content: space-between;
@@ -269,7 +304,7 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 
 /* ═══════ HERO — FOND BLANC AVEC CALCULATEUR ═══════ */
 #hero {
-  padding: 100px 60px 0;
+  padding: 120px 60px 0;
   background: linear-gradient(180deg, var(--white) 0%, #FAFBFD 100%);
   position: relative;
   overflow: hidden;
@@ -1390,7 +1425,7 @@ button:focus-visible,
   body { font-size: 16px; }
   nav { padding: 0 12px; height: 56px; padding-bottom: env(safe-area-inset-bottom, 0); }
   .nav-logo { font-size: 14px; }
-  #hero { padding: 64px 16px 28px; min-height: auto; padding-left: env(safe-area-inset-left, 16px); padding-right: env(safe-area-inset-right, 16px); }
+  #hero { padding: 100px 16px 28px; min-height: auto; padding-left: env(safe-area-inset-left, 16px); padding-right: env(safe-area-inset-right, 16px); }
   .hero-wrap { gap: 28px; padding-bottom: 40px; }
   .hero-title { font-size: clamp(32px, 10vw, 44px); margin-bottom: 20px; }
   .hero-desc { font-size: 15px; margin-bottom: 28px; }
@@ -1442,7 +1477,7 @@ button:focus-visible,
   nav { padding: 0 16px; padding-bottom: env(safe-area-inset-bottom, 0); }
   .skip-link:focus { left: env(safe-area-inset-left, 16px); }
   #hero {
-    padding: 72px 20px 36px;
+    padding: 108px 20px 36px;
     min-height: auto;
     padding-left: env(safe-area-inset-left, 20px);
     padding-right: env(safe-area-inset-right, 20px);
@@ -1478,7 +1513,7 @@ button:focus-visible,
 @media (max-width: 1080px) {
   nav { padding: 0 16px; }
 
-  #hero { padding: 80px 24px 40px; min-height: auto; }
+  #hero { padding: 116px 24px 40px; min-height: auto; }
   .hero-bg-shape, .hero-bg-dots { display: none; }
   .hero-wrap { grid-template-columns: 1fr; gap: 40px; }
   @media (min-width: 769px) {
