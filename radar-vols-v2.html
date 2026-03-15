@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Robin des Airs — Radar Vols v2</title>
+<style>
+:root{--navy:#0B1F3A;--green:#007A4C;--green2:#005e3a;--gold:#C9A84C;--red:#C0392B;--orange:#E67E22;--purple:#6C3483;--bg:#F0F2F5;--card:#FFFFFF;--border:#E2E4E8;--text:#1A1A2E;--text2:#6B7280;--text3:#9CA3AF;--r:10px;--r2:6px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:13px;min-height:100vh}
+.topbar{background:var(--navy);padding:11px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:50}
+.brand{font-size:17px;font-weight:700;color:#fff}.brand span{color:var(--gold)}
+.brand-sub{font-size:10px;color:rgba(255,255,255,.45);margin-top:1px}
+.top-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.live-badge{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 10px;font-size:11px;color:#fff}
+.dot-live{width:7px;height:7px;border-radius:50%;background:#2ECC71;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.countdown{font-size:11px;color:rgba(255,255,255,.6);min-width:90px;text-align:right}
+.btn{padding:6px 13px;border-radius:var(--r2);border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
+.btn:hover{background:#f0f0f0}
+.btn-primary{background:var(--green);color:#fff;border-color:var(--green)}.btn-primary:hover{background:var(--green2)}
+.btn-gold{background:var(--gold);color:var(--navy);border-color:var(--gold);font-weight:700}.btn-gold:hover{background:#b8942a}
+.btn-red{background:var(--red);color:#fff;border-color:var(--red)}
+.btn-purple{background:var(--purple);color:#fff;border-color:var(--purple)}
+.btn-sm{padding:4px 9px;font-size:11px}
+.app{max-width:1600px;margin:0 auto;padding:14px}
+/* METRICS */
+.metrics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.metric{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px}
+.metric-label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.metric-val{font-size:22px;font-weight:700;line-height:1}
+.metric-val.green{color:var(--green)}.metric-val.red{color:var(--red)}.metric-val.orange{color:var(--orange)}.metric-val.gold{color:var(--gold)}.metric-val.navy{color:var(--navy)}.metric-val.purple{color:var(--purple)}
+.metric-sub{font-size:10px;color:var(--text3);margin-top:2px}
+/* MAIN TABS */
+.main-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--card);border-radius:var(--r) var(--r) 0 0;padding:0 16px;overflow-x:auto}
+.tab-btn{padding:10px 16px;font-size:12px;font-weight:500;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s}
+.tab-btn:hover{color:var(--navy)}.tab-btn.active{color:var(--green);border-bottom-color:var(--green);font-weight:700}
+.tab-pane{display:none}.tab-pane.active{display:block}
+/* STATS PERIOD TABS */
+.period-tabs{display:flex;gap:6px;margin-bottom:14px}
+.period-btn{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--card);color:var(--text2);transition:all .15s}
+.period-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+/* CONTROLS */
+.controls{display:flex;gap:7px;margin-bottom:11px;flex-wrap:wrap;align-items:center}
+.controls input,.controls select{font-size:12px;padding:6px 10px;border-radius:var(--r2);border:1px solid var(--border);background:var(--card);color:var(--text);outline:none}
+.controls input:focus,.controls select:focus{border-color:var(--green)}
+.controls input{flex:1;min-width:140px}
+/* TABLE */
+.tcard{background:var(--card);border:1px solid var(--border);border-radius:0 0 var(--r) var(--r);overflow:hidden}
+.twrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:1300px}
+thead th{background:#F7F8FA;padding:8px 11px;text-align:left;font-weight:700;color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#F0FAF6}
+tbody tr.row-hot{background:#FFF0E0;border-left:3px solid var(--orange)}
+tbody tr.row-hot:hover{background:#FDEBD0}
+tbody tr.row-critical{background:#FFF0F0;border-left:3px solid var(--red)}
+tbody tr.row-critical:hover{background:#FADBD8}
+tbody tr.row-eligible{background:#F0FAF6;border-left:3px solid var(--green)}
+tbody tr.row-eligible:hover{background:#D5F5E3}
+tbody td{padding:9px 11px;vertical-align:middle}
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap}
+.b-ok{background:#D5F5E3;color:#1E8449}.b-retard{background:#FDEBD0;color:#784212}.b-annule{background:#FADBD8;color:#922B21}
+.b-eu{background:#EBF5FB;color:#1A5276}.b-af{background:#E8F8F5;color:#0E6655}
+/* PHASE VOL */
+.phase{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;white-space:nowrap}
+.ph-taxi{background:#FEF9E7;color:#7D6608}.ph-depart{background:#EBF5FB;color:#1A5276}.ph-vol{background:#D6EAF8;color:#1A5276}
+.ph-approche{background:#E8F8F5;color:#0E6655}.ph-atterri{background:#D5F5E3;color:#1E8449}.ph-annule{background:#FADBD8;color:#922B21}
+/* RETARD COLONNE */
+.retard-h{font-weight:700;font-size:13px}.retard-ok{color:var(--green)}.retard-warn{color:var(--orange)}.retard-crit{color:var(--red)}
+/* SCORE */
+.score-bar{display:flex;align-items:center;gap:5px}
+.score-bg{width:50px;height:6px;background:#E2E4E8;border-radius:3px;overflow:hidden}
+.score-fill{height:100%;border-radius:3px;transition:width .3s}
+.score-num{font-size:11px;font-weight:700;min-width:26px}
+/* CAUSE */
+.cause-pill{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
+.cause-meteo{background:#EBF5FB;color:#1A5276}.cause-technique{background:#FEF9E7;color:#7D6608}
+.cause-greve{background:#FDEDEC;color:#922B21}.cause-trafic{background:#F0F0F0;color:#555}.cause-inconnue{background:#F5EEF8;color:#6C3483}
+.immat{font-family:monospace;font-size:10px;background:#F0F2F5;padding:2px 5px;border-radius:3px;color:var(--navy)}
+/* PRIORITY TAG */
+.prio-tag{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px}
+.prio-urgent{background:#FADBD8;color:#922B21;animation:blink .8s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
+.prio-high{background:#FDEBD0;color:#784212}.prio-normal{background:#EBF5FB;color:#1A5276}.prio-low{background:#F0F0F0;color:#888}
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:200;padding:12px}
+.modal{background:var(--card);border-radius:var(--r);border:1px solid var(--border);width:100%;max-width:820px;max-height:94vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.2)}
+.modal-sm{max-width:480px}
+.modal-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--card);z-index:1}
+.modal-header h2{font-size:15px;font-weight:700;color:var(--navy)}
+.modal-body{padding:18px}
+.modal-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;position:sticky;bottom:0;background:var(--card)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.info-box{background:#F7F8FA;border:1px solid var(--border);border-radius:var(--r2);padding:11px 13px}
+.info-box-title{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+.info-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid #EAECEE}
+.info-row:last-child{border-bottom:none}
+.info-label{color:var(--text2)}.info-val{font-weight:600;text-align:right;max-width:60%}
+.meteo-box{background:linear-gradient(135deg,#EBF5FB,#D6EAF8);border:1px solid #AED6F1;border-radius:var(--r2);padding:11px 13px}
+.meteo-box-title{font-size:10px;font-weight:700;color:#1A5276;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
+.evidence-box{background:#FDFEFE;border:1px solid var(--border);border-radius:var(--r2);padding:11px 13px;margin-top:10px}
+.ev-item{display:flex;align-items:flex-start;gap:8px;font-size:12px;margin-bottom:7px;padding:7px;background:#F7F8FA;border-radius:4px}
+.ev-icon{font-size:15px;flex-shrink:0}
+.elig-verdict{border-radius:var(--r2);padding:11px 14px;margin-top:10px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px}
+.elig-green{background:#D5F5E3;color:#145A32;border:1px solid #A9DFBF}
+.elig-red{background:#FADBD8;color:#7B241C;border:1px solid #F1948A}
+.elig-orange{background:#FDEBD0;color:#784212;border:1px solid #F0B27A}
+/* PUB */
+.pub-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:10px 0}
+.pub-platform{border:2px solid var(--border);border-radius:var(--r2);padding:10px;text-align:center;cursor:pointer;transition:all .15s}
+.pub-platform:hover,.pub-platform.selected{border-color:var(--green);background:#F0FAF6}
+.pub-platform .icon{font-size:20px;margin-bottom:3px}
+.pub-platform .name{font-size:11px;font-weight:600}
+.pub-platform .cpc{font-size:10px;color:var(--text2)}
+.budget-display{font-size:28px;font-weight:700;color:var(--navy);text-align:center;margin:8px 0}
+/* STATS CHARTS */
+.stat-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;font-size:12px}
+.stat-bar-label{width:140px;flex-shrink:0;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.stat-bar-bg{flex:1;height:8px;background:#E2E4E8;border-radius:4px;overflow:hidden}
+.stat-bar-fill{height:100%;border-radius:4px;transition:width .4s}
+.stat-bar-val{width:50px;text-align:right;font-weight:600;flex-shrink:0}
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:16px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.stat-card-val{font-size:26px;font-weight:700;margin-bottom:3px}
+.stat-card-label{font-size:11px;color:var(--text2)}
+/* ELIG CARD */
+.elig-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 15px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;cursor:pointer;transition:background .1s}
+.elig-card:hover{background:#F0FAF6}
+.amount-badge{background:#D5F5E3;color:#145A32;font-size:14px;font-weight:700;padding:5px 12px;border-radius:20px}
+/* SECTION TITLE */
+.sec-title{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin:14px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+@media(max-width:700px){.metrics{grid-template-columns:repeat(2,1fr)}.grid2,.grid3{grid-template-columns:1fr}.app{padding:8px}.pub-grid{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div>
+    <div class="brand">ROBIN <span>des Airs</span> — Radar Vols</div>
+    <div class="brand-sub">Europe ↔ Afrique · 240+ liaisons · Score CE 261 · Actualisation automatique</div>
+  </div>
+  <div class="top-right">
+    <div id="last-refresh" style="font-size:10px;color:rgba(255,255,255,.5)"></div>
+    <div class="live-badge"><div class="dot-live"></div> LIVE</div>
+    <div class="countdown" id="countdown">↻ 25:00</div>
+    <button class="btn btn-primary btn-sm" onclick="refreshAll()">↻ Actualiser</button>
+  </div>
+</div>
+
+<div class="app">
+  <div class="metrics" id="metrics"></div>
+
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
+    <div class="main-tabs" id="main-tabs-nav">
+      <div class="tab-btn active" onclick="switchTab(this,'t-radar')">📡 Radar temps réel</div>
+      <div class="tab-btn" onclick="switchTab(this,'t-eligible')">✅ Éligibles <span id="elig-count-badge" style="background:#D5F5E3;color:#145A32;border-radius:20px;padding:1px 6px;font-size:10px;margin-left:4px">0</span></div>
+      <div class="tab-btn" onclick="switchTab(this,'t-stats')">📊 Statistiques</div>
+    </div>
+
+    <!-- RADAR -->
+    <div class="tab-pane active" id="t-radar" style="padding:14px">
+      <div class="controls">
+        <input type="text" id="r-search" placeholder="🔍  Vol, aéroport, compagnie…" oninput="renderRadar()">
+        <select id="r-sens" onchange="renderRadar()">
+          <option value="">Tous sens</option>
+          <option value="EU_AF">Europe → Afrique</option>
+          <option value="AF_EU">Afrique → Europe</option>
+        </select>
+        <select id="r-statut" onchange="renderRadar()">
+          <option value="">Tous statuts</option>
+          <option value="A_LHEURE">À l'heure</option>
+          <option value="RETARD">Retard</option>
+          <option value="ANNULE">Annulé</option>
+        </select>
+        <select id="r-phase" onchange="renderRadar()">
+          <option value="">Toutes phases</option>
+          <option value="TAXI">Taxi</option>
+          <option value="DEPART">Décollage</option>
+          <option value="VOL">En vol</option>
+          <option value="APPROCHE">Approche</option>
+          <option value="ATTERRI">Atterri</option>
+        </select>
+        <select id="r-comp" onchange="renderRadar()"><option value="">Toutes compagnies</option></select>
+        <select id="r-elig" onchange="renderRadar()">
+          <option value="">Tous</option>
+          <option value="OUI">CE 261 ✓</option>
+          <option value="PEUT_ETRE">À vérifier</option>
+        </select>
+        <select id="r-prio" onchange="renderRadar()">
+          <option value="">Toutes priorités</option>
+          <option value="URGENT">🔴 Urgent</option>
+          <option value="HIGH">🟠 Haute</option>
+          <option value="NORMAL">🔵 Normale</option>
+        </select>
+      </div>
+      <div class="tcard">
+        <div class="twrap">
+          <table>
+            <thead><tr>
+              <th>Priorité</th><th>Vol</th><th>Compagnie</th><th>Sens</th>
+              <th>Départ</th><th>Arrivée</th>
+              <th>STD</th><th>STA prévue</th><th>Heure réelle arr.</th>
+              <th>Retard</th><th>Phase</th>
+              <th>Cause</th><th>Score CE 261</th><th>Immat.</th><th>Actions</th>
+            </tr></thead>
+            <tbody id="radar-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ELIGIBLES -->
+    <div class="tab-pane" id="t-eligible" style="padding:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+        <div style="font-size:12px;color:var(--text2)">Vols confirmés CE 261 — retard ≥ 3h ou annulation non extraordinaire</div>
+        <button class="btn btn-sm" onclick="clearElig()">Vider</button>
+      </div>
+      <div id="elig-list"></div>
+    </div>
+
+    <!-- STATS -->
+    <div class="tab-pane" id="t-stats" style="padding:14px">
+      <div class="period-tabs">
+        <button class="period-btn active" onclick="switchPeriod(this,'jour')">Aujourd'hui</button>
+        <button class="period-btn" onclick="switchPeriod(this,'semaine')">7 jours</button>
+        <button class="period-btn" onclick="switchPeriod(this,'mois')">30 jours</button>
+        <button class="period-btn" onclick="switchPeriod(this,'annee')">12 mois</button>
+      </div>
+      <div id="stats-body"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DÉTAIL -->
+<div class="modal-bg" id="modal-detail" style="display:none" onclick="if(event.target===this)closeModals()">
+  <div class="modal">
+    <div class="modal-header"><h2 id="md-title">Détail vol</h2><button class="btn btn-sm" onclick="closeModals()">✕</button></div>
+    <div class="modal-body" id="md-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-sm" onclick="closeModals()">Fermer</button>
+      <button class="btn btn-primary btn-sm" id="md-elig-btn">+ Ajouter aux éligibles</button>
+      <button class="btn btn-gold btn-sm" id="md-pub-btn">📣 Lancer pub</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PUB -->
+<div class="modal-bg" id="modal-pub" style="display:none" onclick="if(event.target===this)closeModals()">
+  <div class="modal modal-sm">
+    <div class="modal-header"><h2>📣 Lancer une publicité</h2><button class="btn btn-sm" onclick="closeModals()">✕</button></div>
+    <div class="modal-body">
+      <div id="pub-info" style="background:#F7F8FA;border:1px solid var(--border);border-radius:var(--r2);padding:9px 12px;margin-bottom:12px;font-size:12px;font-weight:600;color:var(--navy)"></div>
+      <div class="sec-title">Plateformes</div>
+      <div class="pub-grid">
+        <div class="pub-platform selected" data-p="instagram" onclick="this.classList.toggle('selected')"><div class="icon">📸</div><div class="name">Instagram</div><div class="cpc">~0.80€/clic</div></div>
+        <div class="pub-platform selected" data-p="facebook" onclick="this.classList.toggle('selected')"><div class="icon">👥</div><div class="name">Facebook</div><div class="cpc">~0.60€/clic</div></div>
+        <div class="pub-platform selected" data-p="tiktok" onclick="this.classList.toggle('selected')"><div class="icon">🎵</div><div class="name">TikTok</div><div class="cpc">~0.50€/clic</div></div>
+        <div class="pub-platform" data-p="snapchat" onclick="this.classList.toggle('selected')"><div class="icon">👻</div><div class="name">Snapchat</div><div class="cpc">~0.40€/clic</div></div>
+        <div class="pub-platform" data-p="youtube" onclick="this.classList.toggle('selected')"><div class="icon">▶️</div><div class="name">YouTube</div><div class="cpc">~0.10€/vue</div></div>
+        <div class="pub-platform" data-p="whatsapp" onclick="this.classList.toggle('selected')"><div class="icon">💬</div><div class="name">WhatsApp</div><div class="cpc">~0.30€/clic</div></div>
+      </div>
+      <div class="sec-title">Budget</div>
+      <div class="budget-display" id="budget-disp">10 €</div>
+      <input type="range" style="width:100%" min="5" max="500" step="5" value="10" id="budget-sl" oninput="updBudget()">
+      <div style="font-size:11px;color:var(--text2);text-align:center;margin-top:4px" id="budget-reach">~200 personnes · Diaspora africaine · Aéroport concerné</div>
+      <div style="background:#FEF9E7;border:1px solid #F6C847;border-radius:var(--r2);padding:9px 12px;margin-top:10px;font-size:11px;color:#7D6608">
+        <strong>Ciblage auto :</strong> Diaspora africaine FR/BE/CH · Intérêts voyage · Langue FR + langue locale selon destination
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeModals()">Annuler</button>
+      <button class="btn btn-gold" onclick="lancerPub()">🚀 Lancer — <span id="pub-total">10 €</span></button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════ DONNÉES DE BASE ════════════
+const AF_AIRPORTS=[
+  {code:'DSS',ville:'Dakar',pays:'Sénégal'},{code:'ABJ',ville:'Abidjan',pays:"Côte d'Ivoire"},
+  {code:'FIH',ville:'Kinshasa',pays:'RDC'},{code:'BKO',ville:'Bamako',pays:'Mali'},
+  {code:'DLA',ville:'Douala',pays:'Cameroun'},{code:'NSI',ville:'Yaoundé',pays:'Cameroun'},
+  {code:'COO',ville:'Cotonou',pays:'Bénin'},{code:'LOS',ville:'Lagos',pays:'Nigeria'},
+  {code:'ACC',ville:'Accra',pays:'Ghana'},{code:'LFW',ville:'Lomé',pays:'Togo'},
+  {code:'OUA',ville:'Ouagadougou',pays:'Burkina'},{code:'NIM',ville:'Niamey',pays:'Niger'},
+  {code:'LBV',ville:'Libreville',pays:'Gabon'},{code:'BZV',ville:'Brazzaville',pays:'Congo'},
+  {code:'RAK',ville:'Marrakech',pays:'Maroc'},{code:'CMN',ville:'Casablanca',pays:'Maroc'},
+  {code:'ALG',ville:'Alger',pays:'Algérie'},{code:'ORN',ville:'Oran',pays:'Algérie'},
+  {code:'TUN',ville:'Tunis',pays:'Tunisie'},{code:'CAI',ville:'Le Caire',pays:'Égypte'},
+  {code:'ADD',ville:'Addis-Abeba',pays:'Éthiopie'},{code:'NBO',ville:'Nairobi',pays:'Kenya'},
+  {code:'JNB',ville:'Johannesburg',pays:'Afrique du Sud'},{code:'MRU',ville:'Maurice',pays:'Maurice'},
+  {code:'RUN',ville:'La Réunion',pays:'Réunion'},{code:'TNR',ville:'Antananarivo',pays:'Madagascar'},
+  {code:'BJL',ville:'Banjul',pays:'Gambie'},{code:'CKY',ville:'Conakry',pays:'Guinée'},
+  {code:'FNA',ville:'Freetown',pays:'Sierra Leone'},{code:'ABV',ville:'Abuja',pays:'Nigeria'},
+  {code:'NDJ',ville:"N'Djamena",pays:'Tchad'},{code:'KGL',ville:'Kigali',pays:'Rwanda'},
+  {code:'EBB',ville:'Entebbe',pays:'Ouganda'},{code:'DAR',ville:'Dar es Salaam',pays:'Tanzanie'},
+  {code:'GOA',ville:'Goma',pays:'RDC'},{code:'HAH',ville:'Moroni',pays:'Comores'},
+  {code:'PHC',ville:'Port Harcourt',pays:'Nigeria'},{code:'BGF',ville:'Bangui',pays:'RCA'},
+  {code:'SSG',ville:'Malabo',pays:'Guinée Éq.'},{code:'VXE',ville:'São Vicente',pays:'Cap-Vert'},{code:'RAI',ville:'Praia',pays:'Cap-Vert'},
+  {code:'OXB',ville:'Bissau',pays:'Guinée-Bissau'},{code:'MGQ',ville:'Mogadiscio',pays:'Somalie'},{code:'JIB',ville:'Djibouti',pays:'Djibouti'},
+  {code:'ASM',ville:'Asmara',pays:'Érythrée'},{code:'SEZ',ville:'Mahé',pays:'Seychelles'},
+  {code:'CPT',ville:'Le Cap',pays:'Afrique du Sud'},{code:'MPM',ville:'Maputo',pays:'Mozambique'},
+];
+const EU_AIRPORTS=[
+  {code:'CDG',ville:'Paris CDG'},{code:'ORY',ville:'Paris Orly'},{code:'BRU',ville:'Bruxelles'},
+  {code:'AMS',ville:'Amsterdam'},{code:'FCO',ville:'Rome'},{code:'MXP',ville:'Milan'},
+  {code:'MAD',ville:'Madrid'},{code:'LIS',ville:'Lisbonne'},{code:'ZRH',ville:'Zurich'},
+  {code:'GVA',ville:'Genève'},{code:'LHR',ville:'Londres'},{code:'FRA',ville:'Francfort'},
+  {code:'NCE',ville:'Nice'},{code:'LYS',ville:'Lyon'},{code:'MRS',ville:'Marseille'},
+  {code:'TLS',ville:'Toulouse'},{code:'BOD',ville:'Bordeaux'},{code:'NTE',ville:'Nantes'},
+];
+const COMPS_EU_AF=['Air France','Transavia','Brussels Airlines','KLM','ITA Airways','Iberia','TAP Air Portugal','Swiss','Vueling','easyJet','Corsair'];
+const COMPS_AF_EU=[...COMPS_EU_AF,'Royal Air Maroc','Air Algérie','Tunisair','Ethiopian Airlines','Kenya Airways','Air Sénégal','Nouvelair','Corsair'];
+const IMMAT={'Air France':'F-G','Transavia':'F-H','Brussels Airlines':'OO-','KLM':'PH-','ITA Airways':'EI-','TAP Air Portugal':'CS-','Swiss':'HB-','Royal Air Maroc':'CN-','Air Algérie':'7T-','Tunisair':'TS-','Air Sénégal':'6V-','Ethiopian Airlines':'ET-','Kenya Airways':'5Y-','Corsair':'F-H','Iberia':'EC-','Vueling':'EC-','easyJet':'G-'};
+const TYPES=['A320','A321','A330','A350','B737','B777','B787'];
+const PHASES=['TAXI','DEPART','VOL','APPROCHE','ATTERRI'];
+const PHASE_LBL={TAXI:'Taxi',DEPART:'Décollage',VOL:'En vol',APPROCHE:'Approche',ATTERRI:'Atterri',ANNULE:'Annulé'};
+const PHASE_CLS={TAXI:'ph-taxi',DEPART:'ph-depart',VOL:'ph-vol',APPROCHE:'ph-approche',ATTERRI:'ph-atterri',ANNULE:'ph-annule'};
+const CAUSES=['METEO','TECHNIQUE','GREVE_INTERNE','TRAFIC','INCONNUE'];
+const CAUSE_LBL={METEO:'Météo',TECHNIQUE:'Panne technique',GREVE_INTERNE:'Grève interne',TRAFIC:'Trafic',INCONNUE:'Inconnue'};
+const CAUSE_CLS={METEO:'cause-meteo',TECHNIQUE:'cause-technique',GREVE_INTERNE:'cause-greve',TRAFIC:'cause-trafic',INCONNUE:'cause-inconnue'};
+const CAUSE_SCORE={TECHNIQUE:92,GREVE_INTERNE:88,TRAFIC:75,INCONNUE:60,METEO:35};
+
+function rnd(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function pick(a){return a[Math.floor(Math.random()*a.length)];}
+function hm(h,m){return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');}
+function addMin(t,n){if(!t)return null;const[h,m]=t.split(':').map(Number),tot=h*60+m+n;return hm(Math.floor(tot/60)%24,tot%60);}
+function retardH(min){if(min===0)return'À l\'heure';const h=Math.floor(min/60),m=min%60;return h>0?(h+'h'+(m>0?String(m).padStart(2,'0'):'')):(m+'min');}
+function immat(c){const p=IMMAT[c]||'F-G',L='ABCDEFGHJKLMNPQRSTUVWXYZ';return p+pick(L)+pick(L)+pick(L);}
+
+let VOLS=[];
+let ELIGIBLES=[];
+let currentPeriod='jour';
+let countdownSec=25*60;
+let currentPubVol=null;
+
+function scoreColor(s){return s>=80?'var(--green)':s>=55?'var(--orange)':'var(--red)';}
+function priorityFromVol(v){
+  if(v.statut==='ANNULE') return 'URGENT';
+  if(v.statut==='RETARD'&&v.retardMin>=180&&v.elig==='OUI') return 'URGENT';
+  if(v.statut==='RETARD'&&v.retardMin>=180) return 'HIGH';
+  if(v.statut==='RETARD'&&v.retardMin>=120) return 'HIGH';
+  if(v.statut==='RETARD'&&v.retardMin>=60) return 'NORMAL';
+  return 'LOW';
+}
+const PRIO_LBL={URGENT:'🔴 Urgent',HIGH:'🟠 Haute',NORMAL:'🔵 Normal',LOW:'⚪ Basse'};
+const PRIO_CLS={URGENT:'prio-urgent',HIGH:'prio-high',NORMAL:'prio-normal',LOW:'prio-low'};
+
+function genVols(){
+  VOLS=[];
+  for(let i=0;i<240;i++){
+    const euToAf=Math.random()>.45;
+    const comp=euToAf?pick(COMPS_EU_AF):pick(COMPS_AF_EU);
+    const af=pick(AF_AIRPORTS), eu=pick(EU_AIRPORTS);
+    const dep=euToAf?eu:af, arr=euToAf?af:eu;
+    const h=rnd(0,23),m=pick([0,5,10,15,20,25,30,35,40,45,50,55]);
+    const std=hm(h,m);
+    const r=Math.random();
+    let statut,retardMin=0,cause=null;
+    if(r<.70){statut='A_LHEURE';}
+    else if(r<.92){statut='RETARD';retardMin=rnd(15,400);cause=pick(CAUSES);}
+    else{statut='ANNULE';cause=pick(CAUSES);}
+    const sta=statut==='A_LHEURE'?std:statut==='ANNULE'?null:addMin(std,retardMin);
+    const duree=rnd(360,600);
+    const etd=statut==='ANNULE'?null:addMin(std,statut==='RETARD'?retardMin:0);
+    const eta=etd?addMin(etd,duree):null;
+    let score=0,elig='NON';
+    if(statut==='RETARD'&&retardMin>=180){score=CAUSE_SCORE[cause]||50;elig=score>=60?'OUI':'PEUT_ETRE';}
+    else if(statut==='ANNULE'){score=CAUSE_SCORE[cause]||50;elig=score>=60?'OUI':'PEUT_ETRE';}
+    else if(statut==='RETARD'&&retardMin>=120){score=Math.min(CAUSE_SCORE[cause]||40,40);elig='NON';}
+    const phase=statut==='ANNULE'?'ANNULE':pick(PHASES);
+    const prio=priorityFromVol({statut,retardMin,elig});
+    const codeComp=comp.substring(0,2).toUpperCase();
+    VOLS.push({
+      id:'FL'+i,vol:codeComp+rnd(100,999),comp,
+      sens:euToAf?'EU_AF':'AF_EU',
+      dep:dep.code,dep_ville:dep.ville,arr:arr.code,arr_ville:arr.ville,
+      std,sta,eta,etd,dureeMin:duree,
+      statut,retardMin,cause,elig,score,phase,prio,
+      immat:immat(comp),type:pick(TYPES),pax:rnd(120,350),
+      af_pays:af.pays,rotRetard:Math.random()>.5,rotMin:rnd(20,120),
+    });
+  }
+}
+
+function filteredVols(){
+  const q=(document.getElementById('r-search')?.value||'').toLowerCase();
+  const sens=document.getElementById('r-sens')?.value||'';
+  const st=document.getElementById('r-statut')?.value||'';
+  const ph=document.getElementById('r-phase')?.value||'';
+  const comp=document.getElementById('r-comp')?.value||'';
+  const elig=document.getElementById('r-elig')?.value||'';
+  const prio=document.getElementById('r-prio')?.value||'';
+  return VOLS.filter(v=>{
+    const txt=(v.vol+' '+v.comp+' '+v.dep+' '+v.arr+' '+v.dep_ville+' '+v.arr_ville).toLowerCase();
+    return(!q||txt.includes(q))&&(!sens||v.sens===sens)&&(!st||v.statut===st)&&(!ph||v.phase===ph)&&(!comp||v.comp===comp)&&(!elig||v.elig===elig)&&(!prio||v.prio===prio);
+  }).sort((a,b)=>{const O={URGENT:0,HIGH:1,NORMAL:2,LOW:3};return(O[a.prio]||3)-(O[b.prio]||3);});
+}
+
+function renderMetrics(){
+  const retardsLong=VOLS.filter(v=>v.statut==='RETARD'&&v.retardMin>=180).length;
+  const annules=VOLS.filter(v=>v.statut==='ANNULE').length;
+  const eligOui=VOLS.filter(v=>v.elig==='OUI').length;
+  const urgents=VOLS.filter(v=>v.prio==='URGENT').length;
+  document.getElementById('metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Vols surveillés</div><div class="metric-val navy">${VOLS.length}</div><div class="metric-sub">Europe ↔ Afrique</div></div>
+    <div class="metric"><div class="metric-label">À l'heure</div><div class="metric-val green">${VOLS.filter(v=>v.statut==='A_LHEURE').length}</div><div class="metric-sub">${Math.round(VOLS.filter(v=>v.statut==='A_LHEURE').length/VOLS.length*100)}%</div></div>
+    <div class="metric"><div class="metric-label">Retards ≥ 3h</div><div class="metric-val orange">${retardsLong}</div><div class="metric-sub">CE 261 potentiel</div></div>
+    <div class="metric"><div class="metric-label">Annulés</div><div class="metric-val red">${annules}</div><div class="metric-sub">—</div></div>
+    <div class="metric"><div class="metric-label">CE 261 éligibles</div><div class="metric-val gold">${eligOui}</div><div class="metric-sub">score ≥ 60</div></div>
+    <div class="metric"><div class="metric-label">🔴 Urgents</div><div class="metric-val purple">${urgents}</div><div class="metric-sub">Action immédiate</div></div>`;
+}
+
+function renderRadar(){
+  const rows=filteredVols();
+  const tbody=document.getElementById('radar-tbody');
+  if(!rows.length){tbody.innerHTML='<tr><td colspan="15" style="text-align:center;padding:2rem;color:#9CA3AF">Aucun vol</td></tr>';return;}
+  tbody.innerHTML=rows.map(v=>{
+    const sensHtml=v.sens==='EU_AF'?'<span class="badge b-eu">EU→AF</span>':'<span class="badge b-af">AF→EU</span>';
+    let statutHtml,retardHtml='<span style="color:var(--green);font-weight:700">0h00</span>';
+    if(v.statut==='A_LHEURE') statutHtml='<span class="badge b-ok">✓ À l\'heure</span>';
+    else if(v.statut==='RETARD'){ statutHtml='<span class="badge b-retard">Retard</span>'; const cls=v.retardMin>=180?'retard-crit':v.retardMin>=60?'retard-warn':'retard-ok'; retardHtml='<span class="retard-h '+cls+'">'+retardH(v.retardMin)+'</span>'; }
+    else { statutHtml='<span class="badge b-annule">Annulé</span>'; retardHtml='<span style="color:var(--red);font-weight:700">—</span>'; }
+    const causeHtml=v.cause?'<span class="cause-pill '+CAUSE_CLS[v.cause]+'">'+CAUSE_LBL[v.cause]+'</span>':'—';
+    const scoreHtml=v.score>0?'<div class="score-bar"><div class="score-bg"><div class="score-fill" style="width:'+v.score+'%;background:'+scoreColor(v.score)+'"></div></div><span class="score-num" style="color:'+scoreColor(v.score)+'">'+v.score+'</span></div>':'<span style="color:#9CA3AF;font-size:11px">—</span>';
+    const prioHtml='<span class="prio-tag '+PRIO_CLS[v.prio]+'">'+PRIO_LBL[v.prio]+'</span>';
+    const phaseHtml='<span class="phase '+(PHASE_CLS[v.phase]||'')+'">'+(PHASE_LBL[v.phase]||v.phase)+'</span>';
+    const rowCls=v.prio==='URGENT'?(v.statut==='ANNULE'?'row-critical':'row-hot'):v.elig==='OUI'?'row-eligible':'';
+    return'<tr class="'+rowCls+'" onclick="openDetail(\''+v.id+'\')"><td>'+prioHtml+'</td><td style="font-weight:700;color:var(--navy);font-size:12px">'+v.vol+'</td><td style="font-size:12px">'+v.comp+'</td><td>'+sensHtml+'</td><td><strong>'+v.dep+'</strong><div style="font-size:10px;color:#9CA3AF">'+v.dep_ville+'</div></td><td><strong>'+v.arr+'</strong><div style="font-size:10px;color:#9CA3AF">'+v.arr_ville+'</div></td><td style="font-family:monospace;font-size:12px">'+v.std+'</td><td style="font-family:monospace;font-size:12px">'+(v.sta||'<span style="color:var(--red)">—</span>')+'</td><td style="font-family:monospace;font-size:12px">'+(v.eta||'<span style="color:var(--red)">Annulé</span>')+'</td><td>'+retardHtml+'</td><td>'+phaseHtml+'</td><td>'+causeHtml+'</td><td>'+scoreHtml+'</td><td><span class="immat">'+v.immat+'</span><div style="font-size:10px;color:#9CA3AF">'+v.type+'</div></td><td style="white-space:nowrap"><button class="btn btn-sm" onclick="event.stopPropagation();openDetail(\''+v.id+'\')" title="Détail">🔍</button>'+(v.elig==='OUI'||v.elig==='PEUT_ETRE'?'<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();addElig(\''+v.id+'\')" title="Éligible">✓</button>':'')+'<button class="btn btn-gold btn-sm" onclick="event.stopPropagation();openPub(\''+v.id+'\')" title="Pub">📣</button></td></tr>';
+  }).join('');
+}
+
+function renderCompFilter(){
+  const comps=[...new Set(VOLS.map(v=>v.comp))].sort();
+  document.getElementById('r-comp').innerHTML='<option value="">Toutes compagnies</option>'+comps.map(c=>'<option value="'+c+'">'+c+'</option>').join('');
+}
+
+function statsForPeriod(p){
+  const mult={jour:1,semaine:7,mois:30,annee:365};
+  const m=mult[p]||1;
+  const r=VOLS.filter(v=>v.statut==='RETARD').length;
+  const rLong=VOLS.filter(v=>v.statut==='RETARD'&&v.retardMin>=180).length;
+  const an=VOLS.filter(v=>v.statut==='ANNULE').length;
+  const elig=VOLS.filter(v=>v.elig==='OUI').length;
+  const total=VOLS.length;
+  const vary=()=>0.85+Math.random()*.3;
+  return{
+    total:Math.round(total*m*vary()),
+    retards:Math.round(r*m*vary()),
+    retardsLong:Math.round(rLong*m*vary()),
+    annules:Math.round(an*m*vary()),
+    eligibles:Math.round(elig*m*vary()),
+    ca:Math.round(elig*m*vary()*450),
+    taux:Math.round((r+an)/total*100),
+    tauxLong:Math.round(rLong/total*100),
+    byComp:Object.fromEntries([...new Set(VOLS.map(v=>v.comp))].map(c=>{
+      const cv=VOLS.filter(v=>v.comp===c);
+      const ci=cv.filter(v=>v.statut==='RETARD'||v.statut==='ANNULE').length;
+      return[c,{total:Math.round(cv.length*m*vary()),incidents:Math.round(ci*m*vary())}];
+    })),
+    byCause:Object.fromEntries(CAUSES.map(c=>[c,Math.round(VOLS.filter(v=>v.cause===c).length*m*vary())])),
+  };
+}
+
+function renderStats(){
+  const s=statsForPeriod(currentPeriod);
+  const periodLabel={jour:"aujourd'hui",semaine:'sur 7 jours',mois:'sur 30 jours',annee:'sur 12 mois'}[currentPeriod];
+  const topComps=Object.entries(s.byComp).sort((a,b)=>b[1].incidents-a[1].incidents).slice(0,8);
+  const totalInc=Object.values(s.byCause).reduce((a,b)=>a+b,0)||1;
+  document.getElementById('stats-body').innerHTML=
+    '<div class="stat-grid">'+
+    '<div class="stat-card"><div class="stat-card-val" style="color:var(--navy)">'+s.total.toLocaleString('fr-FR')+'</div><div class="stat-card-label">Vols surveillés '+periodLabel+'</div></div>'+
+    '<div class="stat-card"><div class="stat-card-val" style="color:var(--orange)">'+s.retardsLong.toLocaleString('fr-FR')+'</div><div class="stat-card-label">Retards ≥ 3h CE 261 '+periodLabel+'</div></div>'+
+    '<div class="stat-card"><div class="stat-card-val" style="color:var(--red)">'+s.annules.toLocaleString('fr-FR')+'</div><div class="stat-card-label">Annulations '+periodLabel+'</div></div>'+
+    '<div class="stat-card"><div class="stat-card-val" style="color:var(--gold)">'+s.eligibles.toLocaleString('fr-FR')+'</div><div class="stat-card-label">Dossiers CE 261 potentiels '+periodLabel+'</div></div>'+
+    '<div class="stat-card"><div class="stat-card-val" style="color:var(--green)">'+s.ca.toLocaleString('fr-FR')+' €</div><div class="stat-card-label">Potentiel CA (75% × '+s.eligibles+' dos.) '+periodLabel+'</div></div>'+
+    '<div class="stat-card"><div class="stat-card-val" style="color:var(--red)">'+s.taux+'%</div><div class="stat-card-label">Taux d\'incident global '+periodLabel+'</div></div>'+
+    '</div><div class="grid2" style="margin-bottom:14px"><div class="info-box"><div class="info-box-title">Compagnies — incidents '+periodLabel+'</div>'+
+    topComps.map(([comp,d])=>{
+      const pct=d.total>0?Math.round(d.incidents/d.total*100):0;
+      const col=pct>30?'var(--red)':pct>15?'var(--orange)':'var(--green)';
+      return'<div class="stat-bar-row"><div class="stat-bar-label" title="'+comp+'">'+comp+'</div><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:'+Math.min(pct*2.5,100)+'%;background:'+col+'"></div></div><div class="stat-bar-val" style="color:'+col+'">'+d.incidents+'</div></div>';
+    }).join('')+
+    '</div><div class="info-box"><div class="info-box-title">Causes d\'incident '+periodLabel+'</div>'+
+    CAUSES.map(c=>{
+      const n=s.byCause[c]||0, pct=Math.round(n/totalInc*100);
+      return'<div class="stat-bar-row"><div class="stat-bar-label"><span class="cause-pill '+CAUSE_CLS[c]+'">'+CAUSE_LBL[c]+'</span></div><div class="stat-bar-bg"><div class="stat-bar-fill" style="width:'+pct+'%;background:'+(c==='TECHNIQUE'||c==='GREVE_INTERNE'?'var(--green)':'var(--text3)')+'"></div></div><div class="stat-bar-val">'+n+'</div></div>';
+    }).join('')+
+    '<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);font-size:11px;color:var(--green)">✅ Technique + Grève interne = CE 261 applicable dans la quasi-totalité des cas</div></div></div>';
+}
+
+function switchPeriod(el,p){ document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); currentPeriod=p; renderStats(); }
+
+function openDetail(id){
+  const v=VOLS.find(x=>x.id===id);if(!v)return;
+  const meteoC=['☀️ Dégagé','⛅ Nuageux','🌧️ Pluie','🌩️ Orage','💨 Vent fort'];
+  const mDep=pick(meteoC),mArr=pick(meteoC);
+  const wDep=rnd(5,45),wArr=rnd(5,45),tDep=rnd(8,32),tArr=rnd(18,42);
+  const autresVols=VOLS.filter(x=>x.dep===v.dep&&x.id!==v.id&&x.statut==='A_LHEURE').slice(0,3);
+  let eligV='';
+  if(v.elig==='OUI') eligV='<div class="elig-verdict elig-green">✅ CE 261 applicable — 600 €/passager — Score : '+v.score+'/100</div>';
+  else if(v.elig==='PEUT_ETRE') eligV='<div class="elig-verdict elig-orange">⚠️ À vérifier — Cause : '+CAUSE_LBL[v.cause]+' — Score : '+v.score+'/100</div>';
+  else eligV='<div class="elig-verdict elig-red">✗ Non éligible — Retard insuffisant ('+v.retardMin+'min)</div>';
+
+  document.getElementById('md-title').textContent=v.vol+' — '+v.comp+' · '+v.dep+'→'+v.arr;
+  document.getElementById('md-elig-btn').onclick=()=>addElig(id);
+  document.getElementById('md-pub-btn').onclick=()=>{closeModals();openPub(id);};
+  document.getElementById('md-body').innerHTML=
+  '<div class="grid2" style="margin-bottom:12px"><div class="info-box"><div class="info-box-title">Vol</div>'+
+  '<div class="info-row"><span class="info-label">N° vol</span><span class="info-val">'+v.vol+'</span></div>'+
+  '<div class="info-row"><span class="info-label">Compagnie</span><span class="info-val">'+v.comp+'</span></div>'+
+  '<div class="info-row"><span class="info-label">Immatriculation</span><span class="info-val"><span class="immat">'+v.immat+'</span></span></div>'+
+  '<div class="info-row"><span class="info-label">Type</span><span class="info-val">'+v.type+' · ~'+v.pax+' pax</span></div>'+
+  '<div class="info-row"><span class="info-label">Phase actuelle</span><span class="info-val"><span class="phase '+PHASE_CLS[v.phase]+'">'+PHASE_LBL[v.phase]+'</span></span></div>'+
+  '<div class="info-row"><span class="info-label">Départ</span><span class="info-val">'+v.dep+' — '+v.dep_ville+'</span></div>'+
+  '<div class="info-row"><span class="info-label">Arrivée</span><span class="info-val">'+v.arr+' — '+v.arr_ville+'</span></div>'+
+  '<div class="info-row"><span class="info-label">STD (prévu départ)</span><span class="info-val">'+v.std+'</span></div>'+
+  '<div class="info-row"><span class="info-label">ETD (départ réel)</span><span class="info-val">'+(v.etd||'<span style="color:var(--red)">Annulé</span>')+'</span></div>'+
+  '<div class="info-row"><span class="info-label">STA (prévu arrivée)</span><span class="info-val">'+(v.sta||'—')+'</span></div>'+
+  '<div class="info-row"><span class="info-label">ETA (arrivée réelle)</span><span class="info-val" style="'+(v.retardMin>=180?'color:var(--red);font-weight:700':'')+'">'+(v.eta||'<span style="color:var(--red)">Annulé</span>')+'</span></div>'+
+  (v.retardMin>0?'<div class="info-row"><span class="info-label">Retard total</span><span class="info-val" style="color:var(--red);font-weight:700">'+retardH(v.retardMin)+'</span></div>':'')+
+  '<div class="info-row"><span class="info-label">Cause déclarée</span><span class="info-val">'+(v.cause?'<span class="cause-pill '+CAUSE_CLS[v.cause]+'">'+CAUSE_LBL[v.cause]+'</span>':'—')+'</span></div></div>'+
+  '<div><div class="meteo-box" style="margin-bottom:8px"><div class="meteo-box-title">Météo '+v.dep+' — ±2h du départ</div><div style="font-size:12px">'+mDep+' · '+tDep+'°C · Vent '+wDep+' kt</div></div>'+
+  '<div class="meteo-box" style="margin-bottom:8px"><div class="meteo-box-title">Météo '+v.arr+' — arrivée</div><div style="font-size:12px">'+mArr+' · '+tArr+'°C · Vent '+wArr+' kt</div></div>'+
+  '<div class="info-box"><div class="info-box-title">Score CE 261</div><div style="font-size:26px;font-weight:700;color:'+scoreColor(v.score)+';text-align:center;margin:8px 0">'+v.score+'<span style="font-size:14px">/100</span></div><div style="background:#E2E4E8;height:8px;border-radius:4px;overflow:hidden"><div style="background:'+scoreColor(v.score)+';width:'+v.score+'%;height:100%;border-radius:4px"></div></div><div style="font-size:10px;color:var(--text2);margin-top:6px;text-align:center">'+(v.score>=80?'Très solide — envoi dossier recommandé':v.score>=60?'Bon — vérifier METAR':'Risqué — analyse approfondie requise')+'</div></div></div></div>'+
+  '<div class="evidence-box"><div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:8px">🔍 Éléments de preuve collectés automatiquement</div>'+
+  '<div class="ev-item"><div class="ev-icon">'+(v.rotRetard?'⚠️':'✅')+'</div><div><strong>Rotation précédente ('+v.immat+') :</strong> '+(v.rotRetard?'Arrivée avec <strong style="color:var(--red)">'+v.rotMin+' min de retard</strong> — propagation confirmée':"À l'heure — pas de retard de rotation")+'</div></div>'+
+  (autresVols.length>0?'<div class="ev-item"><div class="ev-icon">✈️</div><div><strong>Autres vols depuis '+v.dep+' même créneau :</strong> '+autresVols.map(x=>x.vol+' ('+x.comp+") à l'heure").join(' · ')+'<br><span style="color:var(--green);font-size:11px">→ Réfute l\'argument météo si invoqué</span></div></div>':'')+
+  '<div class="ev-item"><div class="ev-icon">📋</div><div><strong>Dossier prêt :</strong> Vol '+v.vol+' · '+v.comp+' · '+v.dep+'→'+v.arr+' · Retard '+retardH(v.retardMin)+' · '+(CAUSE_LBL[v.cause]||'—')+' · '+v.immat+' · METAR archivé · Rotation documentée</div></div></div>'+
+  eligV;
+  document.getElementById('modal-detail').style.display='flex';
+}
+
+function addElig(id){ const v=VOLS.find(x=>x.id===id);if(!v)return; if(!ELIGIBLES.find(x=>x.id===id))ELIGIBLES.unshift(v); document.getElementById('elig-count-badge').textContent=ELIGIBLES.length; renderElig(); closeModals(); switchTab(document.querySelector('[onclick*="t-eligible"]'),'t-eligible'); }
+function removeElig(id){ELIGIBLES=ELIGIBLES.filter(x=>x.id!==id);document.getElementById('elig-count-badge').textContent=ELIGIBLES.length;renderElig();}
+function clearElig(){ELIGIBLES=[];document.getElementById('elig-count-badge').textContent=0;renderElig();}
+function renderElig(){
+  const el=document.getElementById('elig-list');
+  if(!ELIGIBLES.length){el.innerHTML='<div style="text-align:center;padding:3rem;color:var(--text2)">Aucun vol éligible sauvegardé</div>';return;}
+  el.innerHTML=ELIGIBLES.map(v=>'<div class="elig-card" onclick="openDetail(\''+v.id+'\')"><div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--navy)">'+v.vol+' — '+v.comp+' <span style="font-size:11px;font-weight:400;color:var(--text2)">'+v.dep_ville+' → '+v.arr_ville+'</span></div><div style="font-size:11px;color:var(--text2);margin-top:3px">'+(v.statut==='ANNULE'?'Annulé':'Retard '+retardH(v.retardMin))+' · '+(CAUSE_LBL[v.cause]||'—')+' · Score : <strong style="color:'+scoreColor(v.score)+'">'+v.score+'/100</strong> · '+v.immat+'</div></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="amount-badge">600 € / pax</span><button class="btn btn-gold btn-sm" onclick="event.stopPropagation();openPub(\''+v.id+'\')">📣 Pub</button><button class="btn btn-sm" onclick="event.stopPropagation();removeElig(\''+v.id+'\')">✕</button></div></div>').join('');
+}
+
+function openPub(id){ currentPubVol=VOLS.find(x=>x.id===id);if(!currentPubVol)return; document.getElementById('pub-info').textContent=currentPubVol.vol+' — '+currentPubVol.comp+' — '+currentPubVol.dep_ville+' → '+currentPubVol.arr_ville+' · '+(currentPubVol.statut==='ANNULE'?'Annulé':'Retard '+retardH(currentPubVol.retardMin)); updBudget(); document.getElementById('modal-pub').style.display='flex'; }
+function updBudget(){ const v=parseInt(document.getElementById('budget-sl')?.value)||10; document.getElementById('budget-disp').textContent=v+' €'; document.getElementById('pub-total').textContent=v+' €'; document.getElementById('budget-reach').textContent='~'+Math.round(v/0.05).toLocaleString('fr-FR')+' personnes · Diaspora '+(currentPubVol?.af_pays||'africaine')+' · Aéroport '+(currentPubVol?.dep||'concerné'); }
+function lancerPub(){ const v=parseInt(document.getElementById('budget-sl').value)||10; const plats=[...document.querySelectorAll('.pub-platform.selected')].map(e=>e.dataset.p).join(', '); if(!plats){alert('Sélectionne au moins une plateforme.');return;} alert('✅ Campagne lancée !\n\nVol : '+currentPubVol?.vol+' — '+currentPubVol?.comp+'\n'+currentPubVol?.dep_ville+' → '+currentPubVol?.arr_ville+'\nBudget : '+v+' €\nPlateformes : '+plats+'\n\n→ Connecter Meta Ads API + TikTok Ads dans Cursor.'); closeModals(); }
+
+function switchTab(el,id){ document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active')); if(el)el.classList.add('active'); document.querySelectorAll('.tab-pane').forEach(t=>t.classList.remove('active')); document.getElementById(id).classList.add('active'); if(id==='t-stats')renderStats(); if(id==='t-eligible')renderElig(); }
+function closeModals(){ document.getElementById('modal-detail').style.display='none'; document.getElementById('modal-pub').style.display='none'; }
+function refreshAll(){ genVols(); renderMetrics(); renderRadar(); renderCompFilter(); if(currentPeriod)renderStats(); renderElig(); countdownSec=25*60; const n=new Date(); const el=document.getElementById('last-refresh'); if(el)el.textContent='Dernière actu : '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0'); }
+setInterval(()=>{ countdownSec=Math.max(0,countdownSec-1); const m=Math.floor(countdownSec/60),s=countdownSec%60; const el=document.getElementById('countdown'); if(el)el.textContent='↻ '+m+':'+String(s).padStart(2,'0'); if(countdownSec===0)refreshAll(); },1000);
+
+refreshAll();
+</script>
+</body>
+</html>
