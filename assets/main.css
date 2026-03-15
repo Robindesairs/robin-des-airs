@@ -337,15 +337,36 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   border-left: 4px solid transparent;
   border-image: linear-gradient(180deg, #008751 0%, #FCD116 50%, #CE1126 100%) 1;
   padding-left: 10px;
+  padding-top: 6px;
+  padding-bottom: 6px;
   background: linear-gradient(90deg, rgba(0,135,81,0.06) 0%, rgba(0,200,122,0.1) 100%);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.hero-diaspora-flags-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
 }
 
 .hero-diaspora-flags {
   display: inline-block;
-  font-size: 1rem;
-  line-height: 1;
-  letter-spacing: 2px;
-  margin-right: 4px;
+  font-size: 1.4rem;
+  line-height: 1.2;
+  letter-spacing: 3px;
+  margin-right: 6px;
+}
+
+.hero-diaspora-pays {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--neon-dark);
+  opacity: 0.9;
+  line-height: 1.2;
 }
 
 .hero-diaspora-line {
