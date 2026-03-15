@@ -11,25 +11,35 @@ Back-office dossiers indemnisation : API et base alignées sur le **schéma v2.0
 
 ## Démarrage
 
+1. **Migration Supabase** (si la table `dossiers` n’existe pas encore) — voir section ci-dessous.
+2. **Variables d’environnement** : copier `.env.local.example` vers `.env.local` et renseigner la clé publishable.
+3. **Lancer l’app** :
+
 ```bash
 cd robin-dossiers
 npm install
-cp .env.local.example .env.local
-# Renseigner NEXT_PUBLIC_SUPABASE_URL et NEXT_PUBLIC_SUPABASE_ANON_KEY
 npm run dev
 ```
 
-Ouvrir [http://localhost:3000](http://localhost:3000).
+Ouvrir [http://localhost:3000](http://localhost:3000) pour le dashboard.
 
 ## Base Supabase
 
 - **Project ID** : `qrrvzvltwtfzgvfiynkv`
 - **Dashboard** : [https://supabase.com/dashboard/project/qrrvzvltwtfzgvfiynkv](https://supabase.com/dashboard/project/qrrvzvltwtfzgvfiynkv)
 
-1. Créer un projet sur [supabase.com](https://supabase.com) (ou utiliser le projet ci-dessus).
-2. Dans **SQL Editor**, exécuter le script :
-   `supabase/migrations/20260101000000_schema_dossiers_v2.sql`
-3. Copier l’URL du projet et la clé anon dans `.env.local`.
+### Faire la migration dans le SQL Editor (si la table `dossiers` n’existe pas)
+
+1. Ouvre le **Dashboard Supabase** du projet (lien ci-dessus).
+2. Dans le menu de gauche, clique sur **SQL Editor**.
+3. Clique sur **New query**.
+4. Ouvre le fichier du projet :  
+   `robin-dossiers/supabase/migrations/20260308100000_schema_dossiers_passagers_vols_calculs_evenements.sql`
+5. Copie tout son contenu et colle-le dans l’éditeur SQL.
+6. Clique sur **Run** (ou Ctrl+Enter).
+7. Tu dois voir « Success » : les tables `dossiers`, `passagers`, `vols`, `calculs`, `evenements` sont créées.
+
+Ensuite, dans le projet : `npm run dev` et tu peux tester le dashboard et les appels API.
 
 ## API Dossiers
 

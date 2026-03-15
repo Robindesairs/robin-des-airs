@@ -12,13 +12,15 @@ type Dossier = {
   lrar_reception: string | null;
   agent: string | null;
   langue: string | null;
-};
-
-type ApiResponse = {
-  dossiers: Dossier[];
-  total: number;
-  limit: number;
-  offset: number;
+  nom_complet?: string | null;
+  vol_principal?: string | null;
+  dep?: string | null;
+  arr?: string | null;
+  palier?: number | null;
+  net_client?: number | null;
+  net_robin?: number | null;
+  interets_jours?: number | null;
+  forfait_40?: number | null;
 };
 
 function formatDate(s: string | null): string {
@@ -28,7 +30,7 @@ function formatDate(s: string | null): string {
 }
 
 export default function Home() {
-  const [data, setData] = useState<ApiResponse | null>(null);
+  const [dossiers, setDossiers] = useState<Dossier[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,13 +40,12 @@ export default function Home() {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return r.json();
       })
-      .then(setData)
+      .then((json) => setDossiers(Array.isArray(json) ? json : []))
       .catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   }, []);
 
-  const dossiers = data?.dossiers ?? [];
-  const total = data?.total ?? 0;
+  const total = dossiers.length;
   const broillard = dossiers.filter((d) => d.statut === "BROUILLON").length;
   const payes = dossiers.filter((d) => d.statut === "PAYE").length;
 
@@ -89,61 +90,38 @@ export default function Home() {
           <table className="w-full border-collapse text-xs">
             <thead>
               <tr>
-                <th className="bg-[#222] text-[#888] uppercase py-3 px-2 text-left border-b border-[#333]">
-                  ID
-                </th>
-                <th className="bg-[#222] text-[#888] uppercase py-3 px-2 text-left border-b border-[#333]">
-                  Statut
-                </th>
-                <th className="bg-[#222] text-[#888] uppercase py-3 px-2 text-left border-b border-[#333]">
-                  Priorité
-                </th>
-                <th className="bg-[#222] text-[#888] uppercase py-3 px-2 text-left border-b border-[#333]">
-                  Date création
-                </th>
-                <th className="bg-[#222] text-[#888] uppercase py-3 px-2 text-left border-b border-[#333]">
-                  Date paiement
-                </th>
-                <th className="bg-[#222] text-[#888] uppercase py-3 px-2 text-left border-b border-[#333]">
-                  Source
-                </th>
-                <th className="bg-[#222] text-[#888] uppercase py-3 px-2 text-left border-b border-[#333]">
-                  LRAR réception
-                </th>
-                <th className="bg-[#222] text-[#888] uppercase py-3 px-2 text-left border-b border-[#333]">
-                  Agent
-                </th>
-                <th className="bg-[#222] text-[#888] uppercase py-3 px-2 text-left border-b border-[#333]">
-                  Langue
-                </th>
+                <th className="bg-[#222] text-[#888] uppercase py-3 px-2 text-left border-b border-[#333]">ID</th>
+                <th className="bg-[#222] text-[#888] uppercase py-3 px-2 text-left border-b border-[#333]">Nom</th>
+                <th className="bg-[#222] text-[#888] uppercase py-3 px-2 text-left border-b border-[#333]">Vol</th>
+                <th className="bg-[#222] text-[#888] uppercase py-3 px-2 text-left border-b border-[#333]">Dep → Arr</th>
+                <th className="bg-[#222] text-[#888] uppercase py-3 px-2 text-left border-b border-[#333]">Palier</th>
+                <th className="bg-[#222] text-[#888] uppercase py-3 px-2 text-left border-b border-[#333]">Net client</th>
+                <th className="bg-[#222] text-[#888] uppercase py-3 px-2 text-left border-b border-[#333]">Net Robin</th>
+                <th className="bg-[#222] text-[#888] uppercase py-3 px-2 text-left border-b border-[#333]">Statut</th>
+                <th className="bg-[#222] text-[#888] uppercase py-3 px-2 text-left border-b border-[#333]">Int. jours</th>
+                <th className="bg-[#222] text-[#888] uppercase py-3 px-2 text-left border-b border-[#333]">Forfait 40</th>
               </tr>
             </thead>
             <tbody>
               {dossiers.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="py-8 px-2 text-center text-[#666]">
-                    Aucun dossier
-                  </td>
+                  <td colSpan={10} className="py-8 px-2 text-center text-[#666]">Aucun dossier</td>
                 </tr>
               ) : (
                 dossiers.map((d) => (
-                  <tr
-                    key={d.id}
-                    className="border-b border-[#222] hover:bg-[#252525]"
-                  >
+                  <tr key={d.id} className="border-b border-[#222] hover:bg-[#252525]">
                     <td className="py-3 px-2 font-semibold">{d.id}</td>
+                    <td className="py-3 px-2">{d.nom_complet ?? "—"}</td>
+                    <td className="py-3 px-2">{d.vol_principal ?? "—"}</td>
+                    <td className="py-3 px-2">{d.dep && d.arr ? `${d.dep} → ${d.arr}` : "—"}</td>
+                    <td className="py-3 px-2">{d.palier != null ? d.palier : "—"}</td>
+                    <td className="py-3 px-2 text-[#2ecc71]">{d.net_client != null ? `${d.net_client} €` : "—"}</td>
+                    <td className="py-3 px-2">{d.net_robin != null ? `${d.net_robin} €` : "—"}</td>
                     <td className="py-3 px-2">
-                      <span className="bg-[#2c3e50] text-[#3498db] px-2 py-0.5 rounded font-bold text-[10px]">
-                        {d.statut}
-                      </span>
+                      <span className="bg-[#2c3e50] text-[#3498db] px-2 py-0.5 rounded font-bold text-[10px]">{d.statut}</span>
                     </td>
-                    <td className="py-3 px-2">{d.priorite ?? "—"}</td>
-                    <td className="py-3 px-2">{formatDate(d.date_creation)}</td>
-                    <td className="py-3 px-2">{formatDate(d.date_paiement)}</td>
-                    <td className="py-3 px-2">{d.source ?? "—"}</td>
-                    <td className="py-3 px-2">{formatDate(d.lrar_reception)}</td>
-                    <td className="py-3 px-2">{d.agent ?? "—"}</td>
-                    <td className="py-3 px-2">{d.langue ?? "—"}</td>
+                    <td className="py-3 px-2">{d.interets_jours != null ? d.interets_jours : "—"}</td>
+                    <td className="py-3 px-2">{d.forfait_40 != null ? `${d.forfait_40} €` : "—"}</td>
                   </tr>
                 ))
               )}
