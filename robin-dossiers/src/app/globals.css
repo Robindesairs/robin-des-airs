@@ -1,3 +1,41 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --crm-navy: #0B1F3A;
+  --crm-green: #007A4C;
+  --crm-green2: #005e3a;
+  --crm-gold: #C9A84C;
+  --crm-red: #A32D2D;
+  --crm-orange: #854F0B;
+  --crm-gray: #4A4A4A;
+  --crm-bg: #FFFFFF;
+  --crm-bg2: #F7F8FA;
+  --crm-bg3: #F0F2F5;
+  --crm-border: #E2E4E8;
+  --crm-text: #1A1A2E;
+  --crm-text2: #6B7280;
+  --crm-text3: #9CA3AF;
+  --crm-radius: 10px;
+  --crm-radius-sm: 6px;
+}
+
+/* CRM badges statut */
+.badge-s-BROUILLON { background: #F1EFE8; color: #5F5E5A; }
+.badge-s-ELIGIBLE { background: #DBEAFE; color: #1D4ED8; }
+.badge-s-MANDAT_SIGNE { background: #D1FAE5; color: #065F46; }
+.badge-s-LRAR_ENVOYEE { background: #FEF3C7; color: #92400E; }
+.badge-s-RELANCE_1, .badge-s-RELANCE_2 { background: #FEE2E2; color: #991B1B; }
+.badge-s-CONTENTIEUX { background: #FCE7F3; color: #9D174D; }
+.badge-s-PAYE { background: #D1FAE5; color: #064E3B; }
+.badge-s-REFUSE_DEFINITIF, .badge-s-ABANDON, .badge-s-PRESCRIT { background: #FEE2E2; color: #7F1D1D; }
+.badge-s-NON_ELIGIBLE, .badge-s-MEDIATEUR { background: #E5E7EB; color: #374151; }
+
+.moratoire-pill { background: #FEF3C7; color: #92400E; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 5px; white-space: nowrap; }
+.moratoire-soon { background: #F0FAF5; color: var(--crm-green); font-size: 11px; padding: 3px 8px; border-radius: 5px; }
+
+.prio-HAUTE { color: var(--crm-red); font-weight: 700; }
+.prio-STANDARD { color: var(--crm-navy); }
+.prio-BASSE { color: var(--crm-text3); }
+.prio-URGENTE { color: #6D28D9; font-weight: 700; }

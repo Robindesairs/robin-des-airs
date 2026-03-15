@@ -332,6 +332,37 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   margin-bottom: 16px;
 }
 
+/* Identité visuelle Diaspora : bande panafricaine + drapeaux */
+.hero-badge-diaspora {
+  border-left: 4px solid transparent;
+  border-image: linear-gradient(180deg, #008751 0%, #FCD116 50%, #CE1126 100%) 1;
+  padding-left: 10px;
+  background: linear-gradient(90deg, rgba(0,135,81,0.06) 0%, rgba(0,200,122,0.1) 100%);
+}
+
+.hero-diaspora-flags {
+  display: inline-block;
+  font-size: 1rem;
+  line-height: 1;
+  letter-spacing: 2px;
+  margin-right: 4px;
+}
+
+.hero-diaspora-line {
+  margin-top: -8px;
+  margin-bottom: 16px;
+}
+
+.hero-diaspora-route {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--gray);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .hero-badge-dot {
   width: 7px; height: 7px;
   border-radius: 50%;
@@ -344,7 +375,7 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   50% { box-shadow: 0 0 0 6px rgba(0,200,122,0); }
 }
 
-.hero-badge span {
+.hero-badge span:not(.hero-diaspora-flags) {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 1.5px;
