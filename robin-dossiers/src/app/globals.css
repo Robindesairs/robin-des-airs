@@ -21,16 +21,20 @@
   --crm-radius-sm: 6px;
 }
 
-/* CRM badges statut */
+/* CRM badges statut — playbook */
 .badge-s-BROUILLON { background: #F1EFE8; color: #5F5E5A; }
 .badge-s-ELIGIBLE { background: #DBEAFE; color: #1D4ED8; }
 .badge-s-MANDAT_SIGNE { background: #D1FAE5; color: #065F46; }
 .badge-s-LRAR_ENVOYEE { background: #FEF3C7; color: #92400E; }
 .badge-s-RELANCE_1, .badge-s-RELANCE_2 { background: #FEE2E2; color: #991B1B; }
+.badge-s-MEDIATEUR { background: #E5E7EB; color: #374151; }
+.badge-s-CESSION_ACTIVEE { background: #EDE9FE; color: #5B21B6; }
 .badge-s-CONTENTIEUX { background: #FCE7F3; color: #9D174D; }
 .badge-s-PAYE { background: #D1FAE5; color: #064E3B; }
+.badge-s-NON_ELIGIBLE { background: #E5E7EB; color: #374151; }
 .badge-s-REFUSE_DEFINITIF, .badge-s-ABANDON, .badge-s-PRESCRIT { background: #FEE2E2; color: #7F1D1D; }
-.badge-s-NON_ELIGIBLE, .badge-s-MEDIATEUR { background: #E5E7EB; color: #374151; }
+.badge-s-LEAD_FROID { background: #F3F4F6; color: #6B7280; }
+.badge-s-LITIGE_CLIENT { background: #FEF2F2; color: #B91C1C; }
 
 .moratoire-pill { background: #FEF3C7; color: #92400E; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 5px; white-space: nowrap; }
 .moratoire-soon { background: #F0FAF5; color: var(--crm-green); font-size: 11px; padding: 3px 8px; border-radius: 5px; }

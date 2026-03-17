@@ -111,8 +111,8 @@
     <div class="hero-left">
       <div class="hero-badge hero-badge-diaspora">
         <div class="hero-diaspora-flags-wrap">
-          <span class="hero-diaspora-flags" aria-hidden="true">🇸🇳 🇲🇱 🇨🇮 🇬🇳 🇨🇲 🇨🇩 🇧🇯 🇹🇬</span>
-          <span class="hero-diaspora-pays">Sénégal · Mali · Côte d'Ivoire · Guinée · Cameroun · RDC · Bénin · Togo</span>
+          <span class="hero-diaspora-flags" aria-hidden="true">🇸🇳 🇲🇱 🇨🇮 🇬🇳 🇨🇲 🇨🇩 🇧🇯 🇹🇬 🇬🇭 🇳🇬</span>
+          <span class="hero-diaspora-pays">Sénégal · Mali · Côte d'Ivoire · Guinée · Cameroun · RDC · Bénin · Togo · Ghana · Nigeria</span>
         </div>
         <div class="hero-badge-dot"></div>
         <span>Spécialiste Diaspora · Vols Europe–Afrique</span>
@@ -120,6 +120,7 @@
       <p class="hero-diaspora-line">
         <span class="hero-diaspora-route" aria-hidden="true">✈️ Europe ↔ Dakar, Abidjan, Bamako, Conakry, Douala, Kinshasa…</span>
       </p>
+      <p class="hero-diaspora-why">On connaît vos lignes, on parle votre langue — on récupère vos 600€.</p>
 
       <h1 class="hero-title">
         <span data-i18n-html="hero_title">Robin prend<br>aux compagnies,<br></span>
@@ -129,11 +130,14 @@
       <p class="hero-desc" data-i18n-html="hero_desc">Vol retardé de +3h, annulé ou surbooké ? La loi européenne vous doit <strong>jusqu'à 600€ par passager</strong>. Nous récupérons votre argent — <strong>zéro CB, zéro frais si on ne gagne pas.</strong></p>
       <p class="hero-moins-cher" style="font-size:12px;color:rgba(255,255,255,0.65);margin-top:6px;font-weight:600;">Les moins chers du marché — inutile de regarder ailleurs.</p>
 
-      <!-- Deux options d'entrée -->
+      <!-- CTA principal = WhatsApp (audit: canal principal en premier) -->
       <div class="hero-entry">
-        <a href="#funnel-box" class="hero-entry-btn primary" id="btn-calc-hero" onclick="scrollToCalcWithAnimation(event)" data-i18n="hero_btn_calc">Mon vol vaut combien ? →</a>
-        <a href="https://wa.me/15557840392?text=%5BFR%5D%20Bonjour%20Robin%20des%20Airs%20%21%0AJe%20voudrais%20parler%20%C3%A0%20un%20conseiller.%0A%0AMon%20vol%20%3A%20%0ADate%20%3A%20" target="_blank" class="hero-entry-btn secondary" data-i18n="hero_btn_wa">💬 On répond immédiatement</a>
+        <a href="https://wa.me/15557840392?text=%5BFR%5D%20Bonjour%20Robin%20%21%20Je%20vous%20envoie%20ma%20carte%20d%27embarquement%20pour%20v%C3%A9rifier%20mon%20%C3%A9ligibilit%C3%A9." target="_blank" rel="noopener" class="hero-entry-btn primary" data-i18n="hero_btn_wa">📱 Envoyer ma carte d'embarquement sur WhatsApp</a>
+        <a href="#funnel-box" class="hero-entry-btn secondary" id="btn-calc-hero" onclick="scrollToCalcWithAnimation(event)" data-i18n="hero_btn_calc">Ou vérifier mon éligibilité (2 questions)</a>
       </div>
+      <p class="hero-wa-direct">
+        <a href="https://wa.me/15557840392" target="_blank" rel="noopener" class="hero-wa-link">💬 Réponse directe : WhatsApp +1 555 784 0392</a>
+      </p>
 
       <div class="hero-stats">
         <div class="stat">
@@ -156,7 +160,7 @@
           <span class="stat-label" data-i18n="hero_stat_24h">Réponse garantie</span>
         </div>
       </div>
-      <p style="margin-top:14px;"><a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" style="font-size:13px;font-weight:700;color:var(--neon-b);text-decoration:none;">60 secondes pour savoir →</a></p>
+      <p style="margin-top:14px;"><a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" style="font-size:13px;font-weight:700;color:var(--neon-b);text-decoration:none;">Ou vérifier mon éligibilité (2 questions) →</a></p>
       <p class="hero-lang-line">
         <span class="hero-lang-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></span>
         Service disponible en : Français, Wolof, Bambara, Soninké, Pulaar, Lingala.
@@ -176,6 +180,37 @@
         <div class="funnel-crumbs" id="funnel-crumbs"></div>
       </div>
 
+      <!-- Raccourci : 1 message WhatsApp -->
+      <div class="funnel-wa-shortcut">
+        <p class="funnel-wa-shortcut-text">En 1 message : envoyez-nous votre vol sur WhatsApp, on vous dit en 2 min si vous êtes éligible.</p>
+        <a href="https://wa.me/15557840392?text=%5BFR%5D%20Bonjour%20Robin%20%21%20Mon%20vol%20a%20eu%20du%20retard%20%2F%20a%20%C3%A9t%C3%A9%20annul%C3%A9.%0ANum%C3%A9ro%20de%20vol%20%3A%20%0ADate%20%3A%20%0A%0ASuis-je%20%C3%A9ligible%20%3F" target="_blank" rel="noopener" class="funnel-wa-shortcut-btn">💬 Vérifier mon éligibilité par WhatsApp</a>
+      </div>
+      <p class="funnel-detail-link"><a href="#" id="link-diagnostic-detail">Ou calculez le montant exact → diagnostic détaillé (5 étapes)</a></p>
+
+      <!-- ══ PARCOURS RAPIDE (2 questions) — par défaut ══ -->
+      <div id="funnel-short">
+        <div class="fstep short-step" id="step-short-1">
+          <p class="fstep-q">Quel est votre vol ?</p>
+          <p class="funnel-hint">Numéro de vol + date, ou ex. « Paris-Dakar du 15/01, retardé »</p>
+          <input type="text" id="short-vol" class="calc-input" placeholder="Ex: AF718 du 15/01, retardé" maxlength="120" style="margin-bottom:14px;">
+          <button type="button" class="btn-calc" onclick="goToShortStep(2)">Suivant →</button>
+        </div>
+        <div class="fstep short-step" id="step-short-2" style="display:none;">
+          <p class="fstep-q">Votre numéro WhatsApp</p>
+          <p class="funnel-hint">Pour qu'on vous recontacte et vous dise si vous êtes éligible.</p>
+          <input type="tel" id="short-phone" class="calc-input" placeholder="Ex: +33 6 12 34 56 78" style="margin-bottom:14px;">
+          <button type="button" class="btn-calc" onclick="submitShort()">Envoyer →</button>
+          <button type="button" class="back-btn" onclick="goToShortStep(1)" style="margin-top:8px;">← Retour</button>
+        </div>
+        <div class="fstep short-step" id="step-short-done" style="display:none;">
+          <p class="fstep-q">Merci !</p>
+          <p class="funnel-hint">Pour finaliser, envoyez votre carte d'embarquement sur WhatsApp. On vérifie et on vous répond sous 24h.</p>
+          <a href="#" id="short-done-wa-btn" target="_blank" rel="noopener" class="funnel-wa-shortcut-btn" style="display:inline-flex; margin-top:10px;">📱 Envoyer ma carte d'embarquement sur WhatsApp</a>
+        </div>
+      </div>
+
+      <!-- ══ DIAGNOSTIC DÉTAILLÉ (5 étapes) — masqué par défaut ══ -->
+      <div id="funnel-long" style="display:none;">
       <!-- ══ ÉTAPE 1 — MOTIF ══ -->
       <div class="fstep" id="step-1">
         <div class="fstep-eyebrow">Étape 1 sur 5 — Ce qui s'est passé</div>
@@ -490,6 +525,7 @@
           <button class="btn-restart back-btn" onclick="restartFunnel()">↺ Recommencer le diagnostic</button>
         </div>
       </div>
+      </div><!-- /funnel-long -->
 
       <p class="calc-disclaimer">ZÉRO CB · RÉPONSE SOUS 24H · ZÉRO FRAIS SI ON PERD</p>
 
@@ -1343,6 +1379,49 @@ function goWaDirect() {
     encodeURIComponent('[FR] Bonjour Robin des Airs !\n\nJe souhaite vous parler directement.\n\nMon prénom :\nMon vol :\nCe qui s\'est passé :\n'), '_blank');
 }
 
+/* ═══ PARCOURS RAPIDE (2 questions) ═══ */
+function goToShortStep(n) {
+  [1, 2].forEach(function(i) {
+    var el = document.getElementById('step-short-' + i);
+    if (el) el.style.display = (i === n) ? 'block' : 'none';
+  });
+  var doneEl = document.getElementById('step-short-done');
+  if (doneEl) doneEl.style.display = 'none';
+  var barEl = document.getElementById('funnel-progress-bar');
+  if (barEl) barEl.style.width = (n * 50) + '%';
+  var labelEl = document.getElementById('funnel-step-label');
+  if (labelEl) labelEl.textContent = 'Étape ' + n + ' sur 2';
+}
+function submitShort() {
+  var vol = (document.getElementById('short-vol') && document.getElementById('short-vol').value) || '';
+  var phone = (document.getElementById('short-phone') && document.getElementById('short-phone').value) || '';
+  document.getElementById('step-short-1').style.display = 'none';
+  document.getElementById('step-short-2').style.display = 'none';
+  var doneEl = document.getElementById('step-short-done');
+  doneEl.style.display = 'block';
+  var msg = '[FR] Bonjour Robin ! Mon vol : ' + (vol || 'à préciser') + '. Mon tél : ' + (phone || 'à préciser') + '. Je vous envoie ma carte d\'embarquement.';
+  var waBtn = document.getElementById('short-done-wa-btn');
+  if (waBtn) waBtn.href = 'https://wa.me/15557840392?text=' + encodeURIComponent(msg);
+  var barEl = document.getElementById('funnel-progress-bar');
+  if (barEl) barEl.style.width = '100%';
+  var labelEl = document.getElementById('funnel-step-label');
+  if (labelEl) labelEl.textContent = 'Merci !';
+}
+function showLongFunnel() {
+  document.getElementById('funnel-short').style.display = 'none';
+  document.getElementById('funnel-long').style.display = 'block';
+  goTo('step-1', 12);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var linkDetail = document.getElementById('link-diagnostic-detail');
+  if (linkDetail) linkDetail.addEventListener('click', function(e) { e.preventDefault(); showLongFunnel(); });
+  var barEl = document.getElementById('funnel-progress-bar');
+  if (barEl) barEl.style.width = '50%';
+  var labelEl = document.getElementById('funnel-step-label');
+  if (labelEl) labelEl.textContent = 'Étape 1 sur 2';
+});
+
 /* ── Restart ── */
 function restartFunnel() {
   S.motif = null; S.trajet = null; S.raison = 'nesaispas'; S.crumbs = [];
@@ -1970,13 +2049,19 @@ function toggleEscaleVol3() {
 /* Villes / aéroports : gérés par Tom Select + data/airports.js (priorité CDG, ORY, DSS, LYS, MRS, CMN, BRU) */
 </script>
 
-<!-- Bouton sticky Ultra-Convertisseur (vert WhatsApp #25D366) -->
+<!-- Bouton sticky bar (mobile) -->
 <div class="sticky-cta-bar" id="sticky-cta-bar">
-  <a href="/choix-reclamation.html" class="sticky-wa-btn" id="sticky-wa-cta">
-    <span class="sticky-wa-line1">⚡ <span id="sticky-cta-amount">600€ vous attendent</span></span>
-    <span class="sticky-wa-line2">Déposer mon dossier (WhatsApp recommandé ou en ligne)</span>
+  <a href="https://wa.me/15557840392?text=%5BFR%5D%20Bonjour%20Robin%20%21%20Je%20vous%20envoie%20ma%20carte%20d%27embarquement%20pour%20v%C3%A9rifier%20mon%20%C3%A9ligibilit%C3%A9." target="_blank" rel="noopener" class="sticky-wa-btn" id="sticky-wa-cta">
+    <span class="sticky-wa-line1">📱 Envoyez votre carte d'embarquement</span>
+    <span class="sticky-wa-line2">Réponse sous 24h · 0€ si on ne gagne pas</span>
   </a>
 </div>
+
+<!-- Bouton WhatsApp flottant (desktop + mobile, toujours visible) -->
+<a href="https://wa.me/15557840392?text=%5BFR%5D%20Bonjour%20Robin%20%21%20Je%20vous%20envoie%20ma%20carte%20d%27embarquement%20pour%20v%C3%A9rifier%20mon%20%C3%A9ligibilit%C3%A9." target="_blank" rel="noopener" class="wa-float" id="wa-float" aria-label="Envoyer ma carte d'embarquement sur WhatsApp">
+  <span class="wa-float-icon">💬</span>
+  <span class="wa-float-text">Envoyez votre carte ici</span>
+</a>
 
 </body>
 </html>

@@ -1,22 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-
-const STATUT_LABELS: Record<string, string> = {
-  BROUILLON: "Brouillon",
-  ELIGIBLE: "Éligible",
-  MANDAT_SIGNE: "Mandat signé",
-  LRAR_ENVOYEE: "LRAR envoyée",
-  RELANCE_1: "Relance 1",
-  RELANCE_2: "Relance 2",
-  CONTENTIEUX: "Contentieux",
-  PAYE: "Payé",
-  REFUSE_DEFINITIF: "Refusé",
-  ABANDON: "Abandonné",
-  PRESCRIT: "Prescrit",
-  NON_ELIGIBLE: "Non éligible",
-  MEDIATEUR: "Médiateur",
-};
+import { STATUT_LABELS, STATUT_ORDER, STATUTS_CLOTURE } from "@/lib/statuts";
 
 type DossierRow = {
   id: string;
@@ -113,7 +98,7 @@ export default function CRMPage() {
     return matchQ && matchSt && matchPal;
   });
 
-  const enCours = list.filter((d) => !["PAYE", "REFUSE_DEFINITIF", "ABANDON", "PRESCRIT"].includes(d.statut)).length;
+  const enCours = list.filter((d) => !STATUTS_CLOTURE.includes(d.statut)).length;
   const payes = list.filter((d) => d.statut === "PAYE");
   const caClient = payes.reduce((s, d) => s + (d.net_client ?? 0), 0);
   const caRobin = payes.reduce((s, d) => s + (d.net_robin ?? 0), 0);
@@ -233,8 +218,8 @@ export default function CRMPage() {
             className="text-sm py-2 px-3 rounded-md border border-[var(--crm-border)] bg-white outline-none focus:border-[var(--crm-green)]"
           >
             <option value="">Tous les statuts</option>
-            {Object.entries(STATUT_LABELS).map(([k, v]) => (
-              <option key={k} value={k}>{v}</option>
+            {STATUT_ORDER.filter((k) => STATUT_LABELS[k]).map((k) => (
+              <option key={k} value={k}>{STATUT_LABELS[k]}</option>
             ))}
           </select>
           <select
@@ -433,8 +418,8 @@ function DetailUpdateForm({ dossier, onSave, saving }: { dossier: DossierDetail;
       <div>
         <label className="block text-xs font-semibold text-[var(--crm-text2)] mb-1">Statut</label>
         <select value={statut} onChange={(e) => setStatut(e.target.value)} className="w-full text-sm py-2 px-3 rounded-md border border-[var(--crm-border)] outline-none focus:border-[var(--crm-green)]">
-          {Object.entries(STATUT_LABELS).map(([k, v]) => (
-            <option key={k} value={k}>{v}</option>
+          {STATUT_ORDER.filter((k) => STATUT_LABELS[k]).map((k) => (
+            <option key={k} value={k}>{STATUT_LABELS[k]}</option>
           ))}
         </select>
       </div>

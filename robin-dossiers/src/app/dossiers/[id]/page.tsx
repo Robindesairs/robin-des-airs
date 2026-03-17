@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { STATUT_LABELS, STATUT_ORDER } from "@/lib/statuts";
 
 type DossierDetail = {
   id: string;
@@ -18,12 +19,6 @@ type DossierDetail = {
   calculs: Record<string, unknown> | null;
   evenements: Array<Record<string, unknown>>;
 };
-
-const STATUTS = [
-  "BROUILLON", "ELIGIBLE", "NON_ELIGIBLE", "MANDAT_SIGNE",
-  "LRAR_ENVOYEE", "RELANCE_1", "RELANCE_2", "MEDIATEUR",
-  "CONTENTIEUX", "PAYE", "REFUSE_DEFINITIF", "ABANDON", "PRESCRIT",
-];
 
 function formatDate(s: string | null | undefined): string {
   if (!s) return "—";
@@ -111,7 +106,7 @@ export default function FicheDossier({
       <header className="flex flex-wrap items-center gap-4 mb-6">
         <Link href="/" className="text-[#3498db] hover:underline">← Liste</Link>
         <h1 className="text-xl font-bold text-[#e74c3c]">Dossier {data.id}</h1>
-        <span className="bg-[#2c3e50] text-[#3498db] px-2 py-1 rounded text-sm font-bold">{data.statut}</span>
+        <span className="bg-[#2c3e50] text-[#3498db] px-2 py-1 rounded text-sm font-bold">{STATUT_LABELS[data.statut] ?? data.statut}</span>
       </header>
 
       {/* Bloc Dossier */}
@@ -207,8 +202,8 @@ export default function FicheDossier({
             onChange={(e) => setStatutSelect(e.target.value)}
             className="bg-[#222] border border-[#333] text-white px-3 py-2 rounded text-sm"
           >
-            {STATUTS.map((s) => (
-              <option key={s} value={s}>{s}</option>
+            {STATUT_ORDER.filter((k) => STATUT_LABELS[k]).map((k) => (
+              <option key={k} value={k}>{STATUT_LABELS[k]}</option>
             ))}
           </select>
           <button

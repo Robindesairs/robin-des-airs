@@ -419,6 +419,35 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   gap: 6px;
 }
 
+.hero-diaspora-why {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.75);
+  margin-top: 4px;
+  margin-bottom: 20px;
+  line-height: 1.35;
+}
+
+.hero-wa-direct {
+  margin-top: 12px;
+  margin-bottom: 8px;
+}
+
+.hero-wa-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--neon-b);
+  text-decoration: none;
+}
+
+.hero-wa-link:hover {
+  text-decoration: underline;
+  color: var(--neon);
+}
+
 .hero-badge-dot {
   width: 7px; height: 7px;
   border-radius: 50%;
@@ -538,6 +567,53 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 
 .calc-header {
   margin-bottom: 12px;
+}
+
+/* Raccourci : 1 message WhatsApp au lieu de 5 étapes */
+.funnel-wa-shortcut {
+  background: rgba(0,229,160,0.12);
+  border: 1px solid rgba(0,229,160,0.35);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+
+.funnel-wa-shortcut-text {
+  font-size: 12px;
+  color: rgba(255,255,255,0.9);
+  margin: 0 0 10px 0;
+  line-height: 1.4;
+}
+
+.funnel-wa-shortcut-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #25D366;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+.funnel-wa-shortcut-btn:hover {
+  background: #20BD5A;
+  color: #fff;
+}
+
+.funnel-detail-link {
+  margin: 0 0 16px 0;
+  font-size: 12px;
+}
+.funnel-detail-link a {
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+}
+.funnel-detail-link a:hover {
+  color: var(--neon-b);
+  text-decoration: underline;
 }
 
 .calc-tag {
@@ -822,6 +898,40 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   letter-spacing: 0.2px;
 }
 body:has(.sticky-cta-bar) { padding-bottom: max(78px, calc(14px + env(safe-area-inset-bottom))); }
+
+/* Bouton WhatsApp flottant (audit: visible partout) */
+.wa-float {
+  position: fixed;
+  right: 16px;
+  bottom: 90px;
+  z-index: 99;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #25D366;
+  color: #fff;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: 50px;
+  box-shadow: 0 4px 20px rgba(37,211,102,0.45);
+  transition: background 0.2s, transform 0.15s;
+}
+.wa-float:hover {
+  background: #20bd5a;
+  color: #fff;
+  transform: scale(1.03);
+}
+.wa-float-icon { font-size: 20px; }
+.wa-float-text { white-space: nowrap; }
+@media (min-width: 769px) {
+  .wa-float { bottom: 24px; right: 24px; }
+}
+@media (max-width: 480px) {
+  .wa-float-text { display: none; }
+  .wa-float { padding: 14px; border-radius: 50%; bottom: 85px; }
+}
 
 .calc-disclaimer {
   margin-top: 14px;

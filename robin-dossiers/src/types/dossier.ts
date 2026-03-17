@@ -11,10 +11,13 @@ export type StatutDossier =
   | "RELANCE_1"
   | "RELANCE_2"
   | "MEDIATEUR"
+  | "CESSION_ACTIVEE"
   | "CONTENTIEUX"
   | "PAYE"
   | "REFUSE_DEFINITIF"
   | "ABANDON"
+  | "LEAD_FROID"
+  | "LITIGE_CLIENT"
   | "PRESCRIT";
 
 export type Priorite = "BASSE" | "STANDARD" | "HAUTE" | "URGENTE";
