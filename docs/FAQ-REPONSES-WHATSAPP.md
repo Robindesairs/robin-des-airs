@@ -8,11 +8,11 @@
 
 Robin prend 25% uniquement si on gagne. Vous recevez 75% nets.
 
-• Vol court (< 1 500 km) → indemnité 250€ → vous touchez 188€  
-• Vol moyen (1 500–3 500 km) → indemnité 400€ → vous touchez 300€  
-• Vol long (> 3 500 km) → indemnité 600€ → vous touchez 450€  
+Notre spécialité : les vols long-courrier (> 3 500 km). Indemnité 600€ → vous touchez 450€ nets.
 
 Famille de 4 sur un Paris-Dakar ? 4 × 600€ = 2 400€ brut → 1 800€ nets pour vous. Cette commission ne change jamais, même si votre dossier va au tribunal.
+
+À noter : vol court (< 1 500 km) → 250€ → 188€ nets. Vol moyen (1 500–3 500 km) → 400€ → 300€ nets.
 
 ---
 
@@ -56,7 +56,13 @@ Oui. Un refus initial n'est jamais définitif — c'est souvent le début de la 
 
 ## 7. 💸 Pourquoi vous êtes moins chers que vos concurrents ?
 
-Nos concurrents facturent entre 30% et 50% de l'indemnité — et ça monte encore si le dossier va au tribunal. Sur 600€, ça fait jusqu'à 300€ prélevés. Robin prend 25%, même en cas de procès. On ne facture pas la complexité au client. Sur un Paris-Dakar en famille de 4, vous gardez 1 800€ nets. Chez les autres, vous gardez 1 200€ à 1 560€.
+Parce qu'on ne fonctionne pas comme eux. Nos concurrents ont des bureaux dans 15 pays, des centaines de salariés et des campagnes de pub massives. Pour financer tout ça, ils prennent 35% — et jusqu'à 50% si votre dossier va au tribunal.
+
+Robin est une structure légère, spécialisée sur les routes que nous connaissons par cœur. Pas de bureaux dans 30 pays, pas de chatbot à maintenir, pas de publicité télévisée. On parle directement à nos clients sur WhatsApp, on monte des dossiers techniques solides, et on ne prend que les dossiers qu'on est confiants de gagner.
+
+Résultat : nos coûts sont bas, alors notre commission l'est aussi. 25% — quoi qu'il arrive, même au tribunal.
+
+Sur un Paris-Dakar en famille de 4, vous gardez 1 800€. Chez les autres, c'est 1 200€ à 1 560€.
 
 ---
 
@@ -86,7 +92,13 @@ Non — et c'est ce qui fait notre force. On analyse chaque dossier gratuitement
 
 ## 12. ↩️ Est-ce que je peux me rétracter ?
 
-Oui. Droit de rétractation de 14 jours à compter de la signature du mandat. Annulation sans frais, sans justification.
+Oui. Vous disposez d'un droit de rétractation de 14 jours à compter de la signature du mandat — sans justification et sans frais.
+
+Concrètement : nous commençons à travailler sur votre dossier dès la signature, avec votre accord, pour ne pas perdre de temps. Si vous vous rétractez pendant les 14 jours, vous ne payez rien — le travail déjà effectué est à notre charge.
+
+Si votre dossier aboutit avant la fin des 14 jours (c'est rare mais possible), et que vous n'avez pas exercé votre rétractation, la commission s'applique normalement.
+
+C'est un droit légal (art. L221-18 du Code de la consommation). Un simple message WhatsApp ou email à expert@robindesairs.eu suffit.
 
 ---
 
