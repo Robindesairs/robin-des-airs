@@ -262,6 +262,22 @@ async function handleTunnel(phone, text, imageBase64, imageMime, origin) {
     await sendWhatsAppText(to, 'Prénom du passager 1 ?');
     return;
   }
+  // Message avec numéro de vol (ex. "Je veux vérifier... Numéro de vol : AF 712 Date : ...") → vérification éligibilité immédiate
+  if (msg && session.step === 'AWAITING_CARD') {
+    const flightNum = parseFlightNumber(msg);
+    if (flightNum) {
+      const result = await getFlightEligibility(flightNum, origin);
+      if (result.eligible && result.amount >= 600) {
+        await sendWhatsAppText(to, `Bonne nouvelle ! Votre vol ${flightNum} est éligible à 600€. Cliquez ici pour signer votre dossier : ${LIEN_DEPOT}`);
+      } else {
+        const reply = result.dep && result.arr
+          ? `Vol ${flightNum} (${result.dep} → ${result.arr}) trouvé. Pour confirmer l'éligibilité (retard ≥3h), déposez votre dossier : ${LIEN_DEPOT}`
+          : `Nous n'avons pas pu vérifier le vol ${flightNum}. Déposez votre dossier avec le numéro et la date du vol : ${LIEN_DEPOT}`;
+        await sendWhatsAppText(to, reply);
+      }
+      return;
+    }
+  }
   if (!msg && isStep1(session.step)) {
     const prompts = { PASSENGER_FIRST: 'Prénom du passager 1 ?', PASSENGER_LAST: 'Nom du passager ?', PASSENGER_ANOTHER: 'Y a-t-il un autre passager ? (Oui / Non)', PASSENGERS_CONFIRM: 'Confirmer la liste des passagers ? (Oui / Non)', CONFIRM_PHONE: 'Est-ce bien ce numéro pour vous joindre ? (Oui / Non)', ASK_CONTACT_PHONE: 'Quel numéro pour ce dossier ?', TRAJET_FLIGHT: "Numéro de vol (ex. AF123) ou photo de la carte d'embarquement.", TRAJET_DATE: 'Date du vol (JJ/MM/AAAA)', TRAJET_CONNECTION: 'Correspondance ? (Oui / Non)', TRAJET_CONFIRM: 'Confirmer le trajet ? (Oui / Non)', ASK_PNR: 'Code PNR (6 caractères)', CONFIRM_PNR: 'Confirmer le PNR ? (Oui / Non)', ASK_AIRLINE: 'Compagnie aérienne ?', ASK_ADDRESS: 'Adresse postale (ville, code postal, pays) ?', STEP1_DONE: 'Prochaine étape : envoi du mandat (Yousign).' };
     await sendWhatsAppText(to, prompts[session.step] || 'Répondez à la question ci-dessus.');
