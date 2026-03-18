@@ -6,7 +6,7 @@ import { STATUT_LABELS, STATUT_ORDER, STATUTS_CLOTURE } from "@/lib/statuts";
 const PAYS_OPTIONS = ["", "Sénégal", "Mali", "Côte d'Ivoire", "Guinée", "Cameroun", "RDC", "Bénin", "Togo", "Ghana", "Nigeria", "Autre"];
 
 const LANGUE_LABELS: Record<string, string> = {
-  fr: "Français", wo: "Wolof", bm: "Bambara", ln: "Lingala", ff: "Pulaar", snk: "Soninké", en: "English",
+  fr: "Français", wo: "Wolof", bm: "Bambara", ln: "Lingala", ff: "Pulaar", snk: "Soninké", dioula: "Dioula", sw: "Swahili", tw: "Twi", yo: "Yoruba", en: "English",
 };
 
 type DossierRow = {

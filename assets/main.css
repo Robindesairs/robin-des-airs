@@ -1559,19 +1559,23 @@ button:focus-visible,
 /* Mobile / tablette (≤ 768px) — header minimal : logo + hamburger uniquement */
 @media (max-width: 768px) {
   body { font-size: 16px; }
-  .diaspora-bar { display: none; }
+  /* Afficher aussi les drapeaux sur mobile */
+  .diaspora-bar { display: block; }
   nav {
-    top: 0;
+    /* Décale le header sous la diaspora-bar (barre fixée en haut) */
+    top: 36px;
     height: 56px;
     padding: 0 16px;
     padding-bottom: env(safe-area-inset-bottom, 0);
   }
   .nav-cta-inline,
   .lang-dropdown { display: none !important; }
-  .nav-drawer { top: 56px; }
+  /* Drawer sous le nav fixe (nav top 36px + nav height 56px) */
+  .nav-drawer { top: 92px; }
   .skip-link:focus { left: env(safe-area-inset-left, 16px); }
   #hero {
-    padding: 72px 20px 36px;
+    /* Contenu sous nav (36px + 56px) et nav/bandeau */
+    padding: 112px 20px 36px;
     min-height: auto;
     padding-left: env(safe-area-inset-left, 20px);
     padding-right: env(safe-area-inset-right, 20px);

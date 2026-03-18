@@ -54,9 +54,13 @@ Puis **bulles selon le pays du vol confirmé** (ex. Kinshasa : [Lingala] [Franç
 | **Mali** (Bamako) | Français, English, Bambara, Soninké |
 | **Guinée** (Conakry) | Français, English, Pulaar |
 | **RD Congo / Congo** (Kinshasa, Brazzaville) | Français, English, Lingala |
+| **Ghana** | Français, English, Twi |
+| **Nigeria** | Français, English, Yoruba |
 | **Cameroun** (Douala, Yaoundé) | Français, English (langues locales selon dispo) |
 | **Antilles** | Français, English |
 | **Autres** | Français, English |
+
+**Liste complète des langues (appel / vocaux)** : Français, anglais, Wolof, Bambara, Soninké, Peul (Pulaar), Dioula, Swahili, Lingala, Twi, Yoruba.
 
 ---
 
