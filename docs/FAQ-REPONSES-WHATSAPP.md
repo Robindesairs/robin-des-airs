@@ -74,7 +74,11 @@ Notifications automatiques par WhatsApp et email à chaque étape : dossier envo
 
 ## 9. 💳 Comment je suis payé ?
 
-C'est nous qui vous payons. Une fois les fonds reçus de la compagnie, on vous demande votre RIB et on vous vire votre part sous 5 jours ouvrés. On ne vous demande jamais d'argent — ni carte bancaire, ni avance.
+C'est nous qui vous payons. On ne vous demandera jamais votre RIB sur WhatsApp.
+
+Une fois votre dossier accepté, puis quand les fonds sont reçus de la compagnie, on vous demande votre RIB via email ou formulaire sécurisé et on vous vire votre part sous 5 jours ouvrés.
+
+On ne vous demande jamais d'argent — ni carte bancaire, ni avance.
 
 ---
 

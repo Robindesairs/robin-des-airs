@@ -120,11 +120,15 @@
 
       <!-- CTA principal = WhatsApp (audit: canal principal en premier) -->
       <div class="hero-entry">
-        <a href="https://wa.me/15557840392?text=%5BFR%5D%20Bonjour%20Robin%20%21%20Je%20vous%20envoie%20ma%20carte%20d%27embarquement%20pour%20v%C3%A9rifier%20mon%20%C3%A9ligibilit%C3%A9." target="_blank" rel="noopener" class="hero-entry-btn primary" data-i18n="hero_btn_wa">📱 Envoyer ma carte d'embarquement sur WhatsApp</a>
+        <a href="https://wa.me/15557840392?text=Bonjour%20Robin%20!%20Mon%20vol%20a%20eu%20un%20probl%C3%A8me%20(retard%2C%20annulation%20ou%20surbooking).%0AJ%27envoie%20ma%20carte%20%2F%20mes%20cartes%20d%27embarquement%2C%20ou%20je%20pr%C3%A9cise%20mes%20num%C3%A9ros%20de%20vol%20(ex%20%3A%20AF718%2C%20AF507)%20%E2%80%94%20une%20info%20par%20ligne.%0ADate%20du%20vol%20%3A%0ANombre%20de%20passagers%20%3A" target="_blank" rel="noopener" class="hero-entry-btn primary" data-i18n="hero_btn_wa" id="hero-wa-link">📱 Envoyer ma carte d'embarquement sur WhatsApp</a>
         <a href="#funnel-box" class="hero-entry-btn secondary" id="btn-calc-hero" onclick="scrollToCalcWithAnimation(event)" data-i18n="hero_btn_calc">Ou vérifier mon éligibilité (2 questions)</a>
       </div>
+      <p style="margin-top:10px;font-size:12px;color:rgba(255,255,255,0.75);">
+        <a href="#" onclick="openWhatsAppQrFromHero(event)" style="color:rgba(255,255,255,0.85);text-decoration:underline;" data-i18n="wa_qr_hint">Pas WhatsApp sur cet appareil ? Scanner le QR →</a>
+      </p>
       <p class="hero-wa-direct">
         <a href="https://wa.me/15557840392" target="_blank" rel="noopener" class="hero-wa-link">💬 Réponse directe : WhatsApp +1 555 784 0392</a>
+        <span style="display:block;font-size:11px;color:rgba(255,255,255,0.6);margin-top:4px;">Répondez en français, wolof ou anglais — comme vous préférez.</span>
       </p>
 
       <div class="hero-stats">
@@ -171,7 +175,7 @@
       <!-- Raccourci : 1 message WhatsApp -->
       <div class="funnel-wa-shortcut">
         <p class="funnel-wa-shortcut-text">En 1 message : envoyez-nous votre vol sur WhatsApp, on vous dit en 2 min si vous êtes éligible.</p>
-        <a href="https://wa.me/15557840392?text=%5BFR%5D%20Bonjour%20Robin%20%21%20Mon%20vol%20a%20eu%20du%20retard%20%2F%20a%20%C3%A9t%C3%A9%20annul%C3%A9.%0ANum%C3%A9ro%20de%20vol%20%3A%20%0ADate%20%3A%20%0A%0ASuis-je%20%C3%A9ligible%20%3F" target="_blank" rel="noopener" class="funnel-wa-shortcut-btn">💬 Vérifier mon éligibilité par WhatsApp</a>
+        <a href="https://wa.me/15557840392?text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="funnel-wa-shortcut-btn">💬 Vérifier mon éligibilité par WhatsApp</a>
       </div>
       <p class="funnel-detail-link"><a href="#" id="link-diagnostic-detail">Ou calculez le montant exact → diagnostic détaillé (5 étapes)</a></p>
 
@@ -532,14 +536,35 @@
       </div>
       <div>
         <p style="font-size:14px;color:var(--gray);line-height:1.85;margin-bottom:16px;">
-          Le <strong style="color:var(--navy);">Règlement (CE) n° 261/2004</strong> est une loi européenne contraignante. Dès que votre vol <strong style="color:var(--navy);">part d'un aéroport de l'UE</strong> avec plus de 3h de retard, la compagnie doit vous verser une compensation fixe. Cela s'applique quelle que soit votre nationalité.
+          Le <strong style="color:var(--navy);">Règlement (CE) n° 261/2004</strong> est une loi européenne qui protège les passagers. Voici les deux situations où elle s'applique :
         </p>
-        <div style="background:rgba(0,200,122,0.04);border:1px solid rgba(0,200,122,0.15);border-radius:8px;padding:14px 16px;margin-bottom:14px;">
-          <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--neon-dark);margin-bottom:6px;">🛬 Vols arrivant en UE</div>
-          <p style="font-size:13px;color:var(--gray);line-height:1.75;">Si votre vol <em>arrive</em> dans l'UE (depuis l'Afrique, par exemple), la règle est presque identique — <strong style="color:var(--navy);">mais la compagnie doit être européenne</strong> pour que la loi s'applique. Logique surprenante, mais c'est ainsi que la loi est rédigée. En cas de doute, <a href="https://wa.me/15557840392" target="_blank" style="color:var(--neon-dark);text-decoration:underline;">contactez-nous gratuitement</a> — nos experts étudient votre cas.</p>
+
+        <div style="background:rgba(255,255,255,0.65);border:1px solid rgba(226,230,238,0.9);border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+          <div style="font-size:10px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--navy);margin-bottom:8px;">🛫 VOUS PARTEZ D'EUROPE</div>
+          <p style="font-size:13px;color:rgba(11,31,58,0.8);line-height:1.75;margin:0;">
+            Si votre vol décolle d'un aéroport de l'Union européenne (Paris, Bruxelles, Lyon, Marseille...) avec plus de 3h de retard, la compagnie doit vous verser une indemnité fixe.
+            Peu importe votre nationalité, peu importe la compagnie — toute compagnie, qu'elle soit européenne ou non, doit payer si le vol part d'Europe.
+          </p>
         </div>
-        <p style="font-size:14px;color:var(--gray);line-height:1.85;">
-          80% des passagers éligibles ne récupèrent jamais cet argent. Pas parce qu'ils n'y ont pas droit. <strong style="color:var(--navy);">Parce que les compagnies comptent sur leur abandon.</strong>
+
+        <div style="background:rgba(0,200,122,0.04);border:1px solid rgba(0,200,122,0.15);border-radius:10px;padding:14px 16px;margin-bottom:14px;">
+          <div style="font-size:10px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--neon-dark);margin-bottom:8px;">🛬 VOUS PARTEZ D'AFRIQUE POUR REJOINDRE L'EUROPE</div>
+          <p style="font-size:13px;color:var(--gray);line-height:1.75;margin-bottom:10px;">
+            Si votre vol décolle d'un aéroport africain (Dakar, Abidjan, Kinshasa...) à destination de l'UE, la règle change : seules les compagnies européennes sont tenues de payer.
+          </p>
+          <p style="font-size:13px;color:var(--gray);line-height:1.75;margin:0;">
+            → Air France, Corsair, Brussels Airlines : <strong style="color:var(--navy);">oui</strong>, elles sont européennes.<br>
+            → Royal Air Maroc, Air Sénégal, Ethiopian Airlines : <strong style="color:var(--navy);">non</strong> sur ces vols-là — elles ne sont pas européennes.
+          </p>
+        </div>
+
+        <p style="font-size:13px;color:var(--gray);line-height:1.85;margin-bottom:10px;">
+          Pas sûr de votre cas ? <a href="https://wa.me/15557840392" target="_blank" style="color:var(--neon-dark);text-decoration:underline;font-weight:800;">Envoyez-nous votre vol sur WhatsApp</a>, on vérifie gratuitement dans la journée.
+        </p>
+
+        <p style="font-size:14px;color:var(--gray);line-height:1.85;margin:0;">
+          <strong style="color:var(--navy);">80% des passagers éligibles ne réclament jamais.</strong> Pas parce qu'ils n'y ont pas droit — parce que les compagnies comptent sur leur abandon.
+          Et vous avez <strong style="color:var(--navy);">5 ans</strong> pour réclamer : votre vol de 2021 qui avait du retard ? L'argent est toujours là.
         </p>
       </div>
     </div>
@@ -569,9 +594,6 @@
         <div class="loi-example" style="color:rgba(255,255,255,0.45);">Bordeaux → Bamako · Lyon → Douala · Bruxelles → Kinshasa · Lisbonne → Dakar</div>
       </div>
     </div>
-    <p style="margin-top:18px;font-size:13px;color:var(--gray);line-height:1.75;max-width:820px;margin-left:auto;margin-right:auto;text-align:center;" data-i18n="section_loi_prescription">
-      Votre vol date d'il y a 1 an, 2 ans, même 4 ans ? En droit français, vous avez 5 ans pour réclamer. Ce vol de 2021 qui avait 5 heures de retard ? L'argent est toujours là.
-    </p>
     <div style="margin-top:48px;text-align:center;">
       <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary">Je récupère mon argent →</a>
       <p style="font-size:11px;color:var(--gray);margin-top:10px;">Jusqu'à 600€ · 25% · Zéro frais si on perd</p>
@@ -872,7 +894,7 @@
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C87A" stroke-width="2.2" stroke-linecap="round"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
         </div>
         <h3 class="step-title">On monte le dossier</h3>
-        <p class="step-desc">Sous 24h, nos experts constituent un dossier béton : bulletins météo METAR et TAF (aéroport départ + arrivée), relevés des vols d'autres compagnies au même moment, analyse des prévisions. Si d'autres avions ont pu décoller ce jour-là — on le prouve. C'est pour ça qu'on affiche <strong>9 dossiers sur 10</strong> remportés.</p>
+        <p class="step-desc">Sous 24h, notre équipe constitue un dossier béton : bulletins météo METAR et TAF (aéroport départ + arrivée), relevés des vols d'autres compagnies au même moment, analyse des prévisions. Si d'autres avions ont pu décoller ce jour-là — on le prouve. C'est pour ça qu'on affiche <strong>9 dossiers sur 10</strong> remportés.</p>
         <span class="step-time">⏱ 24 heures</span>
       </div>
 
@@ -882,8 +904,7 @@
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C87A" stroke-width="2.2" stroke-linecap="round"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
         <h3 class="step-title">Vous encaissez</h3>
-        <p class="step-desc">Robin négocie, relance, et suit la procédure jusqu'au bout. <strong>Dans 60% des cas</strong>, la compagnie paie sous 4 à 12 semaines. Si elle résiste, on saisit le <strong>Médiateur du Tourisme et du Voyage</strong> en votre nom. Et si même le médiateur ne suffit pas, on saisit le <strong>tribunal</strong> à nos frais et à nos risques — notre commission reste 25%.</p>
-        <span class="step-time">⏱ 4 semaines à 6 mois</span>
+        <p class="step-desc">Robin négocie, relance, et suit la procédure jusqu'au bout. <strong>Dans 60% des cas</strong>, la compagnie paie sous 4 à 12 semaines. Si elle résiste, on saisit le <strong>Médiateur du Tourisme et du Voyage</strong> en votre nom. Et si même le médiateur ne suffit pas, on saisit le <strong>tribunal</strong> à nos frais et à nos risques — notre commission reste 25%. <strong>Dès que les fonds arrivent, on vous vire votre part. Vous savez exactement ce que vous touchez avant même de signer.</strong></p>
       </div>
     </div>
     <div style="margin-top:48px;text-align:center;">
@@ -942,7 +963,7 @@
     </div>
 
     <div style="margin-top:48px;text-align:center;">
-      <a href="https://wa.me/15557840392?text=%5BFR%5D%20Bonjour%20Robin%20%21%0AJ%27ai%20lu%20votre%20histoire%20et%20je%20veux%20vous%20confier%20mon%20dossier." target="_blank" style="display:inline-flex;align-items:center;gap:10px;background:var(--neon-b);color:var(--navy);padding:16px 36px;border-radius:4px;font-weight:900;font-size:12px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;" data-i18n="founder_cta">
+      <a href="https://wa.me/15557840392?text=Bonjour%20Robin%20!%20J%27ai%20lu%20votre%20histoire%20et%20je%20veux%20vous%20confier%20mon%20dossier.%0AMon%20vol%20%3A%0ADate%20%3A" target="_blank" style="display:inline-flex;align-items:center;gap:10px;background:var(--neon-b);color:var(--navy);padding:16px 36px;border-radius:4px;font-weight:900;font-size:12px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;" data-i18n="founder_cta">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
         CONFIER MON DOSSIER À ROBIN
       </a>
@@ -1478,7 +1499,7 @@ function submitShort() {
   document.getElementById('step-short-2').style.display = 'none';
   var doneEl = document.getElementById('step-short-done');
   doneEl.style.display = 'block';
-  var msg = '[FR] Bonjour Robin ! Mon vol : ' + (vol || 'à préciser') + '. Mon tél : ' + (phone || 'à préciser') + '. Je vous envoie ma carte d\'embarquement.';
+  var msg = 'Bonjour Robin ! Mon vol a eu un problème (retard, annulation ou surbooking).\nJ\'envoie ma carte / mes cartes d\'embarquement, ou je précise mes numéros de vol (ex : AF718, AF507) — une info par ligne.\nNuméro(s) de vol : ' + (vol || '') + '\nDate du vol :\nNombre de passagers :';
   var waBtn = document.getElementById('short-done-wa-btn');
   if (waBtn) waBtn.href = 'https://wa.me/15557840392?text=' + encodeURIComponent(msg);
   var barEl = document.getElementById('funnel-progress-bar');
@@ -1701,7 +1722,7 @@ function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
 
   var flightNumberInput = document.getElementById('flight_number');
   var flightNum = (flightNumberInput && flightNumberInput.value && flightNumberInput.value.trim()) ? flightNumberInput.value.trim().toUpperCase() : (volRef || '—');
-  var waMsg = 'Bonjour Robin ! Je viens de faire le diagnostic pour mon vol ' + flightNum + '. Mon indemnité estimée est de ' + totalNet + '€ nets. Voici mes documents pour lancer mon dossier.';
+  var waMsg = 'Bonjour Robin ! Je viens de faire le diagnostic sur votre site.\nMon vol : ' + flightNum + '\nDate : ' + (dateStr || '') + '\nJe suis éligible et je veux lancer mon dossier.';
   var waHref = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(waMsg);
   var stickyWa = document.getElementById('sticky-wa-cta');
   if (stickyWa) stickyWa.href = waHref;
@@ -2128,8 +2149,51 @@ function toggleEscaleVol3() {
 /* Villes / aéroports : gérés par Tom Select + data/airports.js (priorité CDG, ORY, DSS, LYS, MRS, CMN, BRU) */
 </script>
 
+<!-- Modal QR WhatsApp (fallback desktop → téléphone) -->
+<div id="wa-qr-modal" style="display:none;position:fixed;inset:0;z-index:9999;">
+  <div onclick="closeWhatsAppQr()" style="position:absolute;inset:0;background:rgba(0,0,0,0.55);"></div>
+  <div style="position:relative;max-width:420px;margin:8vh auto 0;background:#fff;border-radius:14px;padding:18px 18px 16px;box-shadow:0 24px 80px rgba(0,0,0,0.35);">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+      <div>
+        <div style="font-weight:900;color:#0B1F3A;font-size:14px;letter-spacing:1px;text-transform:uppercase;" data-i18n="wa_qr_title">Continuer sur WhatsApp</div>
+        <div style="margin-top:6px;color:#6B7A90;font-size:13px;line-height:1.6;" data-i18n="wa_qr_desc">Scannez ce QR code avec votre téléphone pour ouvrir WhatsApp.</div>
+      </div>
+      <button onclick="closeWhatsAppQr()" style="border:0;background:transparent;font-size:18px;line-height:1;color:#6B7A90;cursor:pointer;" aria-label="Close">×</button>
+    </div>
+    <div style="margin-top:14px;display:flex;flex-direction:column;align-items:center;gap:12px;">
+      <img id="wa-qr-img" alt="WhatsApp QR" width="220" height="220" style="border-radius:10px;border:1px solid #E2E6EE;background:#F7F8FA;" />
+      <a id="wa-qr-open" href="#" target="_blank" rel="noopener" style="font-weight:900;color:#009960;text-decoration:none;" data-i18n="wa_qr_open">Ouvrir WhatsApp →</a>
+      <div style="font-size:11px;color:#6B7A90;text-align:center;line-height:1.5;" data-i18n="wa_qr_note">Si rien ne s’ouvre sur votre ordinateur, c’est normal : scannez le QR et continuez sur mobile.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+function openWhatsAppQr(url) {
+  try {
+    var modal = document.getElementById('wa-qr-modal');
+    var img = document.getElementById('wa-qr-img');
+    var a = document.getElementById('wa-qr-open');
+    if (!modal || !img || !a) return;
+    a.href = url;
+    img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(url);
+    modal.style.display = 'block';
+  } catch(e) {}
+}
+function closeWhatsAppQr() {
+  var modal = document.getElementById('wa-qr-modal');
+  if (modal) modal.style.display = 'none';
+}
+function openWhatsAppQrFromHero(e) {
+  if (e) e.preventDefault();
+  var hero = document.getElementById('hero-wa-link');
+  var url = hero && hero.href ? hero.href : ('https://wa.me/' + (window.WHATSAPP_NUMBER || ''));
+  openWhatsAppQr(url);
+}
+</script>
+
 <!-- Un seul CTA persistant : bouton WhatsApp flottant -->
-<a href="https://wa.me/15557840392?text=%5BFR%5D%20Bonjour%20Robin%20%21%20Je%20vous%20envoie%20ma%20carte%20d%27embarquement%20pour%20v%C3%A9rifier%20mon%20%C3%A9ligibilit%C3%A9." target="_blank" rel="noopener" class="wa-float" id="wa-float" aria-label="Envoyer ma carte d'embarquement sur WhatsApp">
+<a href="https://wa.me/15557840392?text=Bonjour%20Robin%20!%20Mon%20vol%20a%20eu%20un%20probl%C3%A8me%20(retard%2C%20annulation%20ou%20surbooking).%0AJ%27envoie%20ma%20carte%20%2F%20mes%20cartes%20d%27embarquement%2C%20ou%20je%20pr%C3%A9cise%20mes%20num%C3%A9ros%20de%20vol%20(ex%20%3A%20AF718%2C%20AF507)%20%E2%80%94%20une%20info%20par%20ligne.%0ADate%20du%20vol%20%3A%0ANombre%20de%20passagers%20%3A" target="_blank" rel="noopener" class="wa-float" id="wa-float" aria-label="Envoyer ma carte d'embarquement sur WhatsApp">
   <span class="wa-float-icon">💬</span>
   <span class="wa-float-text" data-i18n="wa_float_text">Envoyez votre carte ici</span>
 </a>
