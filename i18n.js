@@ -75,7 +75,7 @@ window.I18N = (function() {
       section_comp_desc: "Vous savez exactement ce que vous allez toucher avant de vous engager. Pas de mauvaise surprise.",
       section_testi_tag: "Ils ont récupéré leur argent",
       section_testi_title: "Vrais passagers.\nVrai argent récupéré.",
-      section_founder_tag: "Le fondateur",
+      section_founder_tag: "LE FONDATEUR",
       section_founder_title: "20 ans dans les coulisses.<br><span style=\"color:var(--neon-b);\">J'ai vu ce qu'ils cachent.</span>",
       cta_final_note: "Chaque mois sans réclamer, c'est de l'argent que vous laissez sur la table. Le délai de prescription est de 5 ans — mais ça ne dure pas.",
       funnel_step_label: "Étape 1 sur 5",
@@ -123,15 +123,16 @@ window.I18N = (function() {
       faq_14_q: "Combien de temps faut-il pour recevoir mon indemnité ?",
       faq_14_a: "<p>Ça dépend de la réactivité de la compagnie. Voici les trois scénarios possibles :</p><p><strong>La compagnie coopère (60% des cas)</strong> — après réception de notre dossier technique (preuves du retard, bulletins météo officiels, analyse de la jurisprudence), la compagnie reconnaît votre droit et paie. Délai : 4 à 12 semaines. C'est le cas le plus fréquent — les compagnies savent que nos dossiers sont solides et préfèrent payer plutôt que d'aller plus loin.</p><p><strong>La compagnie résiste (30% des cas)</strong> — elle invoque des \"circonstances extraordinaires\" pour refuser. On contre ses arguments avec nos preuves météo et les données de trafic aérien du jour (si d'autres avions ont décollé normalement, l'excuse ne tient pas). On saisit le Médiateur du Tourisme et du Voyage en votre nom. Le médiateur rend sa recommandation sous 90 jours. Dans la grande majorité des cas, la compagnie suit et paie. Délai total : 3 à 5 mois.</p><p><strong>La compagnie persiste (moins de 10% des cas)</strong> — même après le médiateur, elle refuse. On saisit le tribunal à nos frais et à nos risques. Délai total : 5 à 8 mois.</p><p>Dans tous les cas, notre commission reste 25% — elle ne change jamais, même si votre dossier va au tribunal. Et si on ne récupère rien, vous ne payez rien. On vous tient informé à chaque étape par WhatsApp.</p>",
       founder_quote: "\"Ils vous facturent le kilo en trop. Ils vous facturent le deuxième bagage. Mais quand c'est leur tour de payer — retard, annulation, surbooking — il n'y a plus personne au bout du fil.\"",
-      founder_p1: "Vingt ans dans le secteur aérien. <strong style=\"color:white;\">J'ai vu fonctionner la machine de l'intérieur.</strong> Les délais, les process, les scripts téléphoniques conçus pour décourager. Ces règles, les compagnies les ignorent dès qu'elles coûtent de l'argent.",
-      founder_p2: "J'ai vu des familles entières se faire taxer à l'embarquement pour un kilo de trop. J'ai vu ces compagnies sortir leur manuel d'excuses quand leur avion avait 4h de retard : <strong style=\"color:white;\">« circonstances extraordinaires », « météo imprévisible ».</strong> Le tout avec un sourire de façade.",
-      founder_p3: "J'ai vu trop de voyageurs abandonner face à la complexité des formulaires et au jargon des compagnies. <strong style=\"color:white;\">Chez Robin, on simplifie tout pour nos communautés et nos familles : on gère votre dossier en français, mais aussi en Wolof, Bambara ou Lingala.</strong> Parce qu'on se comprend toujours mieux quand on parle la même langue.",
-      founder_p4: "Nos communautés font des voyages plus longs, en famille. Il y a moins l'habitude de réclamer et moins de temps à perdre. Nous prenons 25% — no win no fee — parce que notre modèle n'est pas basé sur le volume maximum. Nous aimons un tarif clair, une famille contente, et une recommandation plutôt qu'une grosse commission. <strong style=\"color:white;\">Vous savez ce que vous touchez avant de signer.</strong>",
+      founder_p1: "Vingt ans dans le secteur aérien. <strong style=\"color:white;\">J'ai vu fonctionner la machine de l'intérieur.</strong> Les scripts téléphoniques conçus pour décourager. Les formulaires pensés pour que vous abandonniez. Le mot \"circonstances extraordinaires\" sorti comme un joker dès qu'il faut ouvrir le portefeuille.",
+      founder_p2: "J'ai vu des familles entières se faire taxer à l'embarquement pour un kilo de trop — puis repartir sans rien quand leur avion avait <strong style=\"color:white;\">5 heures de retard</strong>. J'ai vu trop de voyageurs baisser les bras face au jargon juridique et aux réponses automatiques.",
+      founder_p3: "Nos communautés font des voyages plus longs, en famille, souvent pour des moments qui comptent — un baptême, des funérailles, des retrouvailles. Il y a moins l'habitude de réclamer. Moins de temps à perdre avec des formulaires en anglais. <strong style=\"color:white;\">Et c'est exactement là-dessus que les compagnies comptent.</strong>",
+      founder_p4: "Robin des Airs, c'est l'inverse. On gère votre dossier en français, en wolof, en bambara, en lingala — <strong style=\"color:white;\">parce qu'on se comprend mieux quand on parle la même langue.</strong> On monte un dossier technique que la compagnie ne peut pas ignorer. Et on prend 25%, pas un euro de plus, même si ça va au tribunal. Pas de volume maximum. Pas de frais cachés. Une famille contente et une recommandation à ses proches — c'est ça notre modèle.",
       founder_years: "Années dans le secteur",
       founder_won: "Dossiers remportés",
       founder_lost: "Si on perd",
-      founder_conviction: "Robin des Airs est né d'une conviction : <strong style=\"color:var(--neon-b);\">si une compagnie perçoit chaque euro avec une précision redoutable, nos communautés et nos familles méritent exactement le même traitement.</strong>",
-      founder_signature: "— Le fondateur · 20 ans dans le secteur aérien · Spécialiste dossiers CE 261/2004",
+      founder_stats_line: "20 années dans le secteur · 9/10 dossiers remportés · 0€ si on perd",
+      founder_conviction: "Robin des Airs est né d'une conviction simple : <strong style=\"color:var(--neon-b);\">si une compagnie perçoit chaque euro avec une précision redoutable, nos familles méritent exactement le même traitement.</strong>",
+      founder_signature: "— Le fondateur · 20 ans dans le secteur aérien · Spécialiste CE 261/2004",
       founder_cta: "CONFIER MON DOSSIER À ROBIN",
       founder_note: "Zéro frais si on perd · Réponse en moins de 2h · Droit de rétractation 14 jours",
       wa_float_text: "Envoyez votre carte ici",
@@ -256,14 +257,15 @@ window.I18N = (function() {
       faq_14_q: "How long until I receive my compensation?",
       faq_14_a: "<p>It depends on how responsive the airline is. Here are the three possible scenarios:</p><p><strong>The airline cooperates (60% of cases)</strong> — after receiving our technical file (proof of delay, official weather reports, legal analysis), the airline recognises your right and pays. Timeline: 4 to 12 weeks. This is the most common outcome — airlines know our cases are solid and prefer to pay rather than escalate.</p><p><strong>The airline resists (30% of cases)</strong> — it invokes \"extraordinary circumstances\" to refuse. We counter with our weather evidence and air traffic data for that day (if other planes took off normally, the excuse doesn't hold). We refer your case to the Tourism and Travel Ombudsman. The ombudsman issues a recommendation within 90 days. In most cases, the airline follows it and pays. Total timeline: 3 to 5 months.</p><p><strong>The airline persists (under 10% of cases)</strong> — even after the ombudsman, it still refuses. We take the case to court at our expense and risk. Total timeline: 5 to 8 months.</p><p>In all cases, our commission stays 25% — it never changes, even if your case goes to court. And if we recover nothing, you pay nothing. We keep you updated at every step via WhatsApp.</p>",
       founder_quote: "\"They charge you for the extra kilo. They charge you for the second bag. But when it's their turn to pay — delay, cancellation, overbooking — there's nobody on the line.\"",
-      founder_p1: "Twenty years in the aviation sector. <strong style=\"color:white;\">I've seen how the machine works from the inside.</strong> The delays, the processes, the phone scripts designed to put you off. When these rules cost money, airlines ignore them.",
-      founder_p2: "I've seen whole families charged at boarding for one extra kilo. I've seen those airlines pull out their book of excuses when their plane was 4 hours late: <strong style=\"color:white;\">\"extraordinary circumstances\", \"unpredictable weather\".</strong> All with a fake smile.",
-      founder_p3: "I've seen too many travellers give up faced with complicated forms and airline jargon. <strong style=\"color:white;\">At Robin we simplify everything for our communities and our families: we handle your case in French, and also in Wolof, Bambara or Lingala.</strong> Because we always understand each other better when we speak the same language.",
-      founder_p4: "Our communities travel further, with family. There's less habit of claiming and less time to waste. We take 25% — no win no fee — because our model isn't about maximum volume. We prefer a clear rate, a happy family, and word of mouth over a big commission. <strong style=\"color:white;\">You know what you get before you sign.</strong>",
+      founder_p1: "Twenty years in the aviation sector. <strong style=\"color:white;\">I've seen how the machine works from the inside.</strong> Phone scripts designed to put you off. Forms designed to make you give up. The words \"extraordinary circumstances\" pulled out like a joker whenever the wallet has to open.",
+      founder_p2: "I've seen whole families charged at boarding for one extra kilo — then leave with nothing when their plane was <strong style=\"color:white;\">5 hours late</strong>. I've seen too many travellers give up in the face of legal jargon and automated replies.",
+      founder_p3: "Our communities travel further, as families, often for moments that matter — a baptism, a funeral, a reunion. There's less habit of claiming. Less time to waste on forms in English. <strong style=\"color:white;\">And that's exactly what the airlines count on.</strong>",
+      founder_p4: "Robin des Airs is the opposite. We handle your case in French, Wolof, Bambara, Lingala — <strong style=\"color:white;\">because we understand each other better when we speak the same language.</strong> We build a technical case the airline can't ignore. We take 25%, not a euro more, even if it goes to court. No maximum volume. No hidden fees. A happy family and a recommendation to their loved ones — that's our model.",
       founder_years: "Years in the sector",
       founder_won: "Cases won",
       founder_lost: "If we lose",
-      founder_conviction: "Robin des Airs was born from one belief: <strong style=\"color:var(--neon-b);\">if an airline collects every euro with ruthless precision, our communities and our families deserve exactly the same treatment.</strong>",
+      founder_stats_line: "20 years in the sector · 9/10 cases won · €0 if we lose",
+      founder_conviction: "Robin des Airs was born from one simple belief: <strong style=\"color:var(--neon-b);\">if an airline collects every euro with ruthless precision, our families deserve exactly the same treatment.</strong>",
       founder_signature: "— The founder · 20 years in aviation · EU Regulation 261/2004 specialist",
       founder_cta: "TRUST ROBIN WITH MY CASE",
       founder_note: "No fee if we lose · Reply within 2h · 14-day right of withdrawal",
@@ -274,8 +276,6 @@ window.I18N = (function() {
 
   function get(key) {
     var lang = (currentLang === 'en' ? 'en' : 'fr');
-    return (T[lang] && T[lang][key]) || T.fr[key] || key;
-  }
     return (T[lang] && T[lang][key]) || T.fr[key] || key;
   }
 

@@ -1,5 +1,8 @@
-# Robin des Airs — site non public pour le moment
+# Robin des Airs — débloqué pour travailler (réactiver le blocage au lancement)
 User-agent: *
-Disallow: /
+Allow: /
 
-# Quand le site sera public, remplacer par: Allow: / et remettre la Sitemap
+# Sitemap (optionnel)
+# Sitemap: https://robindesairs.eu/sitemap.xml
+
+# Pour re-bloquer au lancement : remettre Disallow: / et noindex dans index.html

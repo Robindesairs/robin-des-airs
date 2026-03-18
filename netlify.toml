@@ -2,10 +2,9 @@
 # Publier la racine du dépôt (index.html, 404.html, _redirects sont ici)
 # Fonctions serverless : netlify/functions/ (ex. airport-search pour API Amadeus)
 #
-# HTTPS : Netlify sert déjà le site en https. Pour forcer la redirection
-#         http → https, active "Force TLS" dans le dashboard :
-#         Domain management → HTTPS → "Force TLS connection" (ou "Redirect HTTP to HTTPS").
-# Fonctions serverless : toutes les .js de netlify/functions/ (airport-search, flight-info, radar, send-whatsapp, telegram-notify, whatsapp-status, whatsapp-webhook).
+# HTTPS / Cadenas : redirection permanente HTTP → HTTPS pour afficher le cadenas.
+# Si le cadenas n'apparaît pas : 1) ouvrir https://robindesairs.eu (pas http)
+# 2) Netlify → Domain management → HTTPS → activer "Force TLS connection"
 [functions]
   directory = "netlify/functions"
 
@@ -16,6 +15,19 @@
 [build]
   publish = "."
   command = "npm run build:sitemap && npm run build:blog"
+
+# Forcer HTTPS (cadenas) : toute requête en http est redirigée en https
+[[redirects]]
+  from = "http://robindesairs.eu/*"
+  to = "https://robindesairs.eu/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.robindesairs.eu/*"
+  to = "https://robindesairs.eu/:splat"
+  status = 301
+  force = true
 
 # Redirections pour URLs sans .html
 [[redirects]]
