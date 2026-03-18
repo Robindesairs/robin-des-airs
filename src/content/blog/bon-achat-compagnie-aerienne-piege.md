@@ -27,7 +27,7 @@ Si vous signez le bon comme "règlement définitif", vous perdez votre droit à 
 3. Ne signez rien
 4. Laissez Robin négocier — vous toucherez vos 600€ en cash
 
-Un de nos clients avait reçu un bon de 300€ d'Air France. Il nous a contacté avant de l'accepter. Résultat : 461€ cash virés sur son compte. Voir aussi : [Réclamer seul ou passer par un service](/blog/reclamer-seul-ou-passer-par-un-service-indemnite-vol.html), [Que faire à l'aéroport quand votre vol est retardé](/blog/que-faire-aeroport-vol-retarde.html).
+Un de nos clients avait reçu un bon de 300€ d'Air France. Il nous a contacté avant de l'accepter. Résultat : 450€ cash virés sur son compte. Voir aussi : [Réclamer seul ou passer par un service](/blog/reclamer-seul-ou-passer-par-un-service-indemnite-vol.html), [Que faire à l'aéroport quand votre vol est retardé](/blog/que-faire-aeroport-vol-retarde.html).
 
 → [Vérifier mon indemnité](https://robindesairs.eu/#funnel-box)
 → [WhatsApp — j'ai reçu un bon d'achat](https://wa.me/15557840392?text=Bonjour%20Robin%2C%20la%20compagnie%20m%27a%20propos%C3%A9%20un%20bon%20d%27achat.)
