@@ -120,7 +120,7 @@
 
       <!-- CTA principal = WhatsApp (audit: canal principal en premier) -->
       <div class="hero-entry">
-        <a href="https://wa.me/15557840392?text=Bonjour%20Robin%20!%20Mon%20vol%20a%20eu%20un%20probl%C3%A8me%20(retard%2C%20annulation%20ou%20surbooking).%0AJ%27envoie%20ma%20carte%20%2F%20mes%20cartes%20d%27embarquement%2C%20ou%20je%20pr%C3%A9cise%20mes%20num%C3%A9ros%20de%20vol%20(ex%20%3A%20AF718%2C%20AF507)%20%E2%80%94%20une%20info%20par%20ligne.%0ADate%20du%20vol%20%3A%0ANombre%20de%20passagers%20%3A" target="_blank" rel="noopener" class="hero-entry-btn primary" data-i18n="hero_btn_wa" id="hero-wa-link">📱 Envoyer ma carte d'embarquement sur WhatsApp</a>
+        <a href="https://wa.me/15557840392?text=Bonjour%20Robin%20!%20%F0%9F%8F%B9%0A%F0%9F%93%8E%20Je%20joins%20ma%2Fmes%20carte(s)%20d%27embarquement%0AOu%20si%20je%20ne%20les%20ai%20plus%20%3A%0ANum%C3%A9ro(s)%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="hero-entry-btn primary" data-i18n="hero_btn_wa" id="hero-wa-link">📱 Envoyer ma carte d'embarquement sur WhatsApp</a>
         <a href="#funnel-box" class="hero-entry-btn secondary" id="btn-calc-hero" onclick="scrollToCalcWithAnimation(event)" data-i18n="hero_btn_calc">Ou vérifier mon éligibilité (2 questions)</a>
       </div>
       <p style="margin-top:10px;font-size:12px;color:rgba(255,255,255,0.75);">
@@ -1499,7 +1499,7 @@ function submitShort() {
   document.getElementById('step-short-2').style.display = 'none';
   var doneEl = document.getElementById('step-short-done');
   doneEl.style.display = 'block';
-  var msg = 'Bonjour Robin ! Mon vol a eu un problème (retard, annulation ou surbooking).\nJ\'envoie ma carte / mes cartes d\'embarquement, ou je précise mes numéros de vol (ex : AF718, AF507) — une info par ligne.\nNuméro(s) de vol : ' + (vol || '') + '\nDate du vol :\nNombre de passagers :';
+  var msg = 'Bonjour Robin ! 🏹\n📎 Je joins ma/mes carte(s) d\'embarquement\nOu si je ne les ai plus :\nNuméro(s) de vol : ' + (vol || '') + '\nDate :';
   var waBtn = document.getElementById('short-done-wa-btn');
   if (waBtn) waBtn.href = 'https://wa.me/15557840392?text=' + encodeURIComponent(msg);
   var barEl = document.getElementById('funnel-progress-bar');
@@ -2193,7 +2193,7 @@ function openWhatsAppQrFromHero(e) {
 </script>
 
 <!-- Un seul CTA persistant : bouton WhatsApp flottant -->
-<a href="https://wa.me/15557840392?text=Bonjour%20Robin%20!%20Mon%20vol%20a%20eu%20un%20probl%C3%A8me%20(retard%2C%20annulation%20ou%20surbooking).%0AJ%27envoie%20ma%20carte%20%2F%20mes%20cartes%20d%27embarquement%2C%20ou%20je%20pr%C3%A9cise%20mes%20num%C3%A9ros%20de%20vol%20(ex%20%3A%20AF718%2C%20AF507)%20%E2%80%94%20une%20info%20par%20ligne.%0ADate%20du%20vol%20%3A%0ANombre%20de%20passagers%20%3A" target="_blank" rel="noopener" class="wa-float" id="wa-float" aria-label="Envoyer ma carte d'embarquement sur WhatsApp">
+<a href="https://wa.me/15557840392?text=Bonjour%20Robin%20!%20%F0%9F%8F%B9%0A%F0%9F%93%8E%20Je%20joins%20ma%2Fmes%20carte(s)%20d%27embarquement%0AOu%20si%20je%20ne%20les%20ai%20plus%20%3A%0ANum%C3%A9ro(s)%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="wa-float" id="wa-float" aria-label="Envoyer ma carte d'embarquement sur WhatsApp">
   <span class="wa-float-icon">💬</span>
   <span class="wa-float-text" data-i18n="wa_float_text">Envoyez votre carte ici</span>
 </a>

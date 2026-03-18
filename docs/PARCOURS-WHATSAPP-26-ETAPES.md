@@ -4,14 +4,15 @@ Référence : version finale du parcours (accusé réception → type de problè
 
 ---
 
-## Message pré-rempli (bouton site)
+## Premier message que le client envoie (pré-rempli au clic sur le bouton)
 
-Quand le client clique sur le bouton WhatsApp du site, la zone de saisie s’ouvre avec :
+C’est le **premier message** que le client t’envoie. Quand il clique sur le bouton WhatsApp du site, la zone de saisie s’ouvre avec ce texte — il n’a qu’à compléter et envoyer :
 
-> Bonjour Robin ! Mon vol a eu un problème (retard, annulation ou surbooking).  
-> J'envoie ma carte / mes cartes d'embarquement, ou je précise mes numéros de vol (ex : AF718, AF507) — une info par ligne.  
-> Date du vol :  
-> Nombre de passagers :
+> Bonjour Robin ! 🏹  
+> 📎 Je joins ma/mes carte(s) d'embarquement  
+> Ou si je ne les ai plus :  
+> Numéro(s) de vol :  
+> Date :
 
 - **Calendrier (date)** : possible sur le site (champ `type="date"`) puis pré-remplir la ligne « Date du vol » dans l’URL WhatsApp. À faire si tu veux un vrai calendrier avant l’envoi.
 - **Nombre de passagers (boutons)** : possible sur le site (boutons 1, 2, 3, 4+) puis inclure la valeur dans le message ; ou en **étape 1 / 3** côté WhatsApp avec des boutons rapides (réponses pré-définies).
