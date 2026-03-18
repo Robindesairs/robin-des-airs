@@ -3,6 +3,12 @@
 import { useEffect, useState, useCallback } from "react";
 import { STATUT_LABELS, STATUT_ORDER, STATUTS_CLOTURE } from "@/lib/statuts";
 
+const PAYS_OPTIONS = ["", "Sénégal", "Mali", "Côte d'Ivoire", "Guinée", "Cameroun", "RDC", "Bénin", "Togo", "Ghana", "Nigeria", "Autre"];
+
+const LANGUE_LABELS: Record<string, string> = {
+  fr: "Français", wo: "Wolof", bm: "Bambara", ln: "Lingala", ff: "Pulaar", snk: "Soninké", en: "English",
+};
+
 type DossierRow = {
   id: string;
   statut: string;
@@ -11,6 +17,8 @@ type DossierRow = {
   date_paiement: string | null;
   source: string | null;
   lrar_reception: string | null;
+  langue?: string | null;
+  pays?: string | null;
   nom_complet?: string | null;
   vol_principal?: string | null;
   dep?: string | null;
@@ -242,6 +250,7 @@ export default function CRMPage() {
                 <tr>
                   <th className="bg-[var(--crm-bg2)] py-3 px-4 text-left font-semibold text-[var(--crm-text2)] text-[11px] uppercase tracking-wider border-b border-[var(--crm-border)]">Dossier</th>
                   <th className="bg-[var(--crm-bg2)] py-3 px-4 text-left font-semibold text-[var(--crm-text2)] text-[11px] uppercase tracking-wider border-b border-[var(--crm-border)]">Passager(s)</th>
+                  <th className="bg-[var(--crm-bg2)] py-3 px-4 text-left font-semibold text-[var(--crm-text2)] text-[11px] uppercase tracking-wider border-b border-[var(--crm-border)]">Langue / Pays</th>
                   <th className="bg-[var(--crm-bg2)] py-3 px-4 text-left font-semibold text-[var(--crm-text2)] text-[11px] uppercase tracking-wider border-b border-[var(--crm-border)]">Vol</th>
                   <th className="bg-[var(--crm-bg2)] py-3 px-4 text-left font-semibold text-[var(--crm-text2)] text-[11px] uppercase tracking-wider border-b border-[var(--crm-border)]">Palier</th>
                   <th className="bg-[var(--crm-bg2)] py-3 px-4 text-left font-semibold text-[var(--crm-text2)] text-[11px] uppercase tracking-wider border-b border-[var(--crm-border)]">Net client</th>
@@ -253,11 +262,11 @@ export default function CRMPage() {
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={9} className="py-10 text-center text-[var(--crm-text2)]">Chargement…</td></tr>
+                  <tr><td colSpan={10} className="py-10 text-center text-[var(--crm-text2)]">Chargement…</td></tr>
                 ) : error ? (
-                  <tr><td colSpan={9} className="py-10 text-center text-[var(--crm-red)]">Erreur : {error}</td></tr>
+                  <tr><td colSpan={10} className="py-10 text-center text-[var(--crm-red)]">Erreur : {error}</td></tr>
                 ) : filtered.length === 0 ? (
-                  <tr><td colSpan={9} className="py-12 text-center text-[var(--crm-text2)]">Aucun dossier trouvé</td></tr>
+                  <tr><td colSpan={10} className="py-12 text-center text-[var(--crm-text2)]">Aucun dossier trouvé</td></tr>
                 ) : (
                   filtered.map((d) => {
                     const m = calcMoratoire(d.lrar_reception ?? undefined);
@@ -275,6 +284,7 @@ export default function CRMPage() {
                       >
                         <td className="py-3 px-4"><div className="font-semibold text-[var(--crm-navy)] text-xs">{d.id}</div><div className="text-[11px] text-[var(--crm-text3)] mt-0.5">{formatDate(d.date_creation)}</div></td>
                         <td className="py-3 px-4">{d.nom_complet ?? "—"}{d.nb_passagers_indemnises && d.nb_passagers_indemnises > 1 ? ` ×${d.nb_passagers_indemnises}` : ""}</td>
+                        <td className="py-3 px-4 text-[11px]">{[d.pays ?? null, d.langue ? (LANGUE_LABELS[d.langue] ?? d.langue) : null].filter(Boolean).join(" · ") || "—"}</td>
                         <td className="py-3 px-4">{d.vol_principal ?? "—"}<div className="text-[11px] text-[var(--crm-text3)] mt-0.5">{d.dep && d.arr ? `${d.dep} → ${d.arr}` : ""}</div></td>
                         <td className="py-3 px-4 font-bold" style={{ color: d.palier === 600 ? "var(--crm-green)" : d.palier === 400 ? "#1D4ED8" : "#5F5E5A" }}>{d.palier != null ? `${d.palier} €` : "—"}</td>
                         <td className="py-3 px-4"><span className="font-bold" style={{ color: "var(--crm-green)" }}>{d.net_client != null ? `${d.net_client.toLocaleString("fr-FR")} €` : "—"}</span></td>
@@ -329,6 +339,8 @@ export default function CRMPage() {
                     <div className="space-y-4">
                       <div className="text-[11px] font-bold text-[var(--crm-text2)] uppercase tracking-wider border-b border-[var(--crm-border)] pb-2 mb-2">Passager principal</div>
                       <div className="flex justify-between py-2 border-b border-[var(--crm-border)] text-sm"><span className="text-[var(--crm-text2)]">Nom complet</span><span className="font-semibold">{detailData.nom_complet ?? "—"}</span></div>
+                      <div className="flex justify-between py-2 border-b border-[var(--crm-border)] text-sm"><span className="text-[var(--crm-text2)]">Langue</span><span className="font-semibold">{LANGUE_LABELS[(detailData as DossierRow).langue ?? ""] ?? (detailData as DossierRow).langue ?? "—"}</span></div>
+                      <div className="flex justify-between py-2 border-b border-[var(--crm-border)] text-sm"><span className="text-[var(--crm-text2)]">Pays</span><span className="font-semibold">{(detailData as DossierRow).pays ?? "—"}</span></div>
                       <div className="flex justify-between py-2 border-b border-[var(--crm-border)] text-sm"><span className="text-[var(--crm-text2)]">Source</span><span className="font-semibold">{detailData.source ?? "—"}</span></div>
                       <div className="text-[11px] font-bold text-[var(--crm-text2)] uppercase tracking-wider border-b border-[var(--crm-border)] pb-2 mt-4 mb-2">Vols ({detailData.vols?.length ?? 0})</div>
                       {(detailData.vols ?? []).map((v: Record<string, unknown>, i: number) => (
@@ -407,9 +419,13 @@ export default function CRMPage() {
   );
 }
 
+const LANGUE_OPTIONS = ["fr", "wo", "bm", "ln", "ff", "snk", "en"];
+
 function DetailUpdateForm({ dossier, onSave, saving }: { dossier: DossierDetail; onSave: (body: Record<string, unknown>) => void; saving: boolean }) {
   const [statut, setStatut] = useState(dossier.statut);
   const [priorite, setPriorite] = useState(dossier.priorite ?? "STANDARD");
+  const [langue, setLangue] = useState((dossier as DossierRow).langue ?? "fr");
+  const [pays, setPays] = useState((dossier as DossierRow).pays ?? "");
   const [lrar, setLrar] = useState(String(dossier.lrar_reception ?? "").slice(0, 10));
   const [datePaiement, setDatePaiement] = useState(String(dossier.date_paiement ?? "").slice(0, 10));
 
@@ -434,6 +450,22 @@ function DetailUpdateForm({ dossier, onSave, saving }: { dossier: DossierDetail;
         <input type="date" value={lrar} onChange={(e) => setLrar(e.target.value)} className="w-full text-sm py-2 px-3 rounded-md border border-[var(--crm-border)] outline-none focus:border-[var(--crm-green)]" />
       </div>
       <div>
+        <label className="block text-xs font-semibold text-[var(--crm-text2)] mb-1">Langue</label>
+        <select value={langue} onChange={(e) => setLangue(e.target.value)} className="w-full text-sm py-2 px-3 rounded-md border border-[var(--crm-border)] outline-none focus:border-[var(--crm-green)]">
+          {LANGUE_OPTIONS.map((l) => (
+            <option key={l} value={l}>{LANGUE_LABELS[l] ?? l}</option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label className="block text-xs font-semibold text-[var(--crm-text2)] mb-1">Pays</label>
+        <select value={pays} onChange={(e) => setPays(e.target.value)} className="w-full text-sm py-2 px-3 rounded-md border border-[var(--crm-border)] outline-none focus:border-[var(--crm-green)]">
+          {PAYS_OPTIONS.map((p) => (
+            <option key={p || "_"} value={p}>{p || "—"}</option>
+          ))}
+        </select>
+      </div>
+      <div>
         <label className="block text-xs font-semibold text-[var(--crm-text2)] mb-1">Priorité</label>
         <select value={priorite} onChange={(e) => setPriorite(e.target.value)} className="w-full text-sm py-2 px-3 rounded-md border border-[var(--crm-border)] outline-none focus:border-[var(--crm-green)]">
           {["BASSE", "STANDARD", "HAUTE", "URGENTE"].map((p) => (
@@ -442,7 +474,7 @@ function DetailUpdateForm({ dossier, onSave, saving }: { dossier: DossierDetail;
         </select>
       </div>
       <div className="flex gap-2 flex-wrap">
-        <button type="button" onClick={() => onSave({ statut, priorite, lrar_reception: lrar || null, date_paiement: statut === "PAYE" ? datePaiement || null : null })} disabled={saving} className="px-4 py-2 rounded-md text-white text-sm font-medium disabled:opacity-50" style={{ background: "var(--crm-green)" }}>Enregistrer</button>
+        <button type="button" onClick={() => onSave({ statut, priorite, langue: langue || null, pays: pays || null, lrar_reception: lrar || null, date_paiement: statut === "PAYE" ? datePaiement || null : null })} disabled={saving} className="px-4 py-2 rounded-md text-white text-sm font-medium disabled:opacity-50" style={{ background: "var(--crm-green)" }}>Enregistrer</button>
       </div>
     </div>
   );
@@ -458,6 +490,8 @@ function NewDossierModal({ onClose, onCreated }: { onClose: () => void; onCreate
   const [bebes, setBebes] = useState(0);
   const [source, setSource] = useState("autre");
   const [priorite, setPriorite] = useState("STANDARD");
+  const [langue, setLangue] = useState("fr");
+  const [pays, setPays] = useState("");
   const [palier, setPalier] = useState(600);
   const [vols, setVols] = useState([{ compagnie: "", numero_vol: "", date_vol: "", dep: "", arr: "", pnr: "", incident: "RETARD" }]);
   const [saving, setSaving] = useState(false);
@@ -490,7 +524,7 @@ function NewDossierModal({ onClose, onCreated }: { onClose: () => void; onCreate
     fetch("/api/dossiers", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ priorite, source, palier, passagers, vols: volRows }),
+      body: JSON.stringify({ priorite, source, langue, pays: pays || null, palier, passagers, vols: volRows }),
     })
       .then((r) => {
         if (!r.ok) return r.json().then((e) => { throw new Error(e.error || "Erreur"); });
@@ -520,6 +554,10 @@ function NewDossierModal({ onClose, onCreated }: { onClose: () => void; onCreate
             <div><label className="block text-xs font-semibold text-[var(--crm-text2)] mb-1">Bébés &lt; 2 ans</label><input type="number" min={0} max={9} value={bebes} onChange={(e) => setBebes(Number(e.target.value))} className="w-full text-sm py-2 px-3 rounded-md border border-[var(--crm-border)]" /></div>
           </div>
           <div><label className="block text-xs font-semibold text-[var(--crm-text2)] mb-1">Source</label><select value={source} onChange={(e) => setSource(e.target.value)} className="w-full text-sm py-2 px-3 rounded-md border border-[var(--crm-border)]"><option value="autre">Autre</option><option value="tiktok_ad">TikTok Ads</option><option value="fb_reels">Facebook / Reels</option><option value="organic_site">Site organique</option><option value="referral">Parrainage</option><option value="whatsapp">WhatsApp</option></select></div>
+          <div className="grid grid-cols-2 gap-3">
+            <div><label className="block text-xs font-semibold text-[var(--crm-text2)] mb-1">Langue</label><select value={langue} onChange={(e) => setLangue(e.target.value)} className="w-full text-sm py-2 px-3 rounded-md border border-[var(--crm-border)]">{LANGUE_OPTIONS.map((l) => <option key={l} value={l}>{LANGUE_LABELS[l] ?? l}</option>)}</select></div>
+            <div><label className="block text-xs font-semibold text-[var(--crm-text2)] mb-1">Pays</label><select value={pays} onChange={(e) => setPays(e.target.value)} className="w-full text-sm py-2 px-3 rounded-md border border-[var(--crm-border)]">{PAYS_OPTIONS.map((p) => <option key={p || "_"} value={p}>{p || "—"}</option>)}</select></div>
+          </div>
           <div className="text-[11px] font-bold text-[var(--crm-text2)] uppercase tracking-wider border-b border-[var(--crm-border)] pb-2">Vols</div>
           {vols.map((v, i) => (
             <div key={i} className="border border-[var(--crm-border)] rounded-md p-3 bg-[var(--crm-bg2)] relative">

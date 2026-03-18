@@ -85,6 +85,7 @@ export async function PATCH(
       "date_paiement",
       "agent",
       "langue",
+      "pays",
     ];
     const updates: Record<string, unknown> = {};
     for (const key of allowed) {

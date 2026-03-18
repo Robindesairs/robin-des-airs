@@ -114,7 +114,8 @@ export async function GET(request: NextRequest) {
         source: d.source,
         lrar_reception: d.lrar_reception,
         agent: d.agent,
-        langue: d.langue,
+        langue: (d as { langue?: string; langue_client?: string }).langue ?? (d as { langue_client?: string }).langue_client ?? null,
+        pays: (d as { pays?: string | null }).pays ?? null,
         nom_complet,
         telephone,
         email: p1?.email ?? null,
@@ -148,7 +149,7 @@ export async function GET(request: NextRequest) {
 
 /**
  * POST /api/dossiers — Création complète (dossier + passagers + vols + calculs + premier événement)
- * Body: { priorite?, source?, langue?, agent?, palier?, passagers[], vols[] }
+ * Body: { priorite?, source?, langue?, pays?, agent?, palier?, passagers[], vols[] }
  */
 export async function POST(request: NextRequest) {
   try {
@@ -166,6 +167,7 @@ export async function POST(request: NextRequest) {
       priorite: body.priorite ?? "STANDARD",
       source: body.source ?? "autre",
       langue: body.langue ?? "fr",
+      pays: body.pays ?? null,
       agent: body.agent ?? null,
     });
     if (errDossier)

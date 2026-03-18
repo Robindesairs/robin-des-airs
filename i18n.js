@@ -1,25 +1,35 @@
-/* Robin des Airs — Traductions multilingues (FR, EN, ES, NL, PT, DE) */
+/* Robin des Airs — Traductions FR et EN uniquement */
 window.I18N = (function() {
-  var currentLang = (localStorage.getItem('robin_lang') || 'fr').toLowerCase();
+  var stored = (localStorage.getItem('robin_lang') || 'fr').toLowerCase();
+  var currentLang = (stored === 'en' ? 'en' : 'fr');
   var T = {
     fr: {
+      skip_link: "Aller au contenu principal",
       hero_title: "Robin prend\naux compagnies,\n",
-      hero_title_neon: "rend aux voyageurs.",
+      hero_title_neon: "rend à nos familles.",
+      hero_diaspora_why: "On connaît vos lignes, on parle votre langue — on récupère les 600€ pour nos communautés et nos familles.",
       hero_desc: "Vol retardé de +3h, annulé ou surbooké ? La loi européenne vous doit <strong>jusqu'à 600€</strong>. Nous récupérons votre argent — <strong>zéro CB, zéro frais si on ne gagne pas.</strong>",
-      hero_btn_calc: "Mon vol vaut combien ? →",
-      hero_btn_wa: "💬 On répond immédiatement",
+      hero_btn_calc: "Ou vérifier mon éligibilité (2 questions)",
+      hero_btn_wa: "📱 Envoyer ma carte d'embarquement sur WhatsApp",
+      hero_moins_cher: "Les moins chers du marché — inutile de regarder ailleurs.",
+      hero_lang_line: "Service disponible en : Français, Wolof, Bambara, Soninké, Pulaar, Lingala.",
       hero_stat_max: "Indemnité max",
       hero_stat_won: "Dossiers gagnés",
       hero_stat_lost: "Si on perd",
       hero_stat_24h: "Réponse garantie",
       nav_cta: "Combien je touche ? →",
+      nav_drawer_calc: "🧮 Calculateur",
       nav_drawer_loi: "📋 La loi CE 261",
       nav_drawer_how: "⚙️ Comment ça marche",
       nav_drawer_tarifs: "💰 Nos tarifs",
       nav_drawer_testi: "⭐ Témoignages",
       nav_drawer_faq: "❓ FAQ",
+      nav_drawer_dest: "✈️ Top destinations 600€",
+      nav_drawer_blog: "📝 Blog",
+      nav_drawer_depot: "📤 Déposer mon dossier",
       calc_tag: "Diagnostic de vol",
       calc_title: "Quelle est votre\nsituation ?",
+      calc_title_1: "Quelle est votre",
       funnel_subtitle: "situation ?",
       step1_eyebrow: "Étape 1 sur 5 — Ce qui s'est passé",
       step1_retard: "Vol retardé",
@@ -38,6 +48,7 @@ window.I18N = (function() {
       raison_greve: "✊ Grève",
       raison_securite: "🛡️ Raison de sécurité",
       raison_sans: "🤷 Aucune explication donnée",
+      raison_nesaispas: "💭 Je ne sais pas / Je ne m'en souviens plus",
       section_loi_tag: "Ce que vous ne savez peut-être pas",
       section_loi_title: "D'où vient<br><span class=\"neon\">cet argent ?</span>",
       section_how_tag: "La méthode Robin",
@@ -66,26 +77,93 @@ window.I18N = (function() {
       section_testi_title: "Vrais passagers.\nVrai argent récupéré.",
       section_founder_tag: "Le fondateur",
       section_founder_title: "20 ans dans les coulisses.<br><span style=\"color:var(--neon-b);\">J'ai vu ce qu'ils cachent.</span>",
-      cta_final_note: "Chaque mois sans réclamer, c'est de l'argent que vous laissez sur la table. Le délai de prescription est de 5 ans — mais ça ne dure pas."
+      cta_final_note: "Chaque mois sans réclamer, c'est de l'argent que vous laissez sur la table. Le délai de prescription est de 5 ans — mais ça ne dure pas.",
+      funnel_step_label: "Étape 1 sur 5",
+      funnel_wa_shortcut_text: "En 1 message : envoyez-nous votre vol sur WhatsApp, on vous dit en 2 min si vous êtes éligible.",
+      funnel_wa_shortcut_btn: "💬 Vérifier mon éligibilité par WhatsApp",
+      funnel_detail_link: "Ou calculez le montant exact → diagnostic détaillé (5 étapes)",
+      short_q_vol: "Quel est votre vol ?",
+      short_hint_vol: "Numéro de vol + date, ou ex. « Paris-Dakar du 15/01, retardé »",
+      short_placeholder_vol: "Ex: AF718 du 15/01, retardé",
+      short_q_phone: "Votre numéro WhatsApp",
+      short_hint_phone: "Pour qu'on vous recontacte et vous dise si vous êtes éligible.",
+      short_placeholder_phone: "Ex: +33 6 12 34 56 78",
+      short_done_title: "Merci !",
+      short_done_hint: "Pour finaliser, envoyez votre carte d'embarquement sur WhatsApp. On vérifie et on vous répond sous 24h.",
+      short_done_wa_btn: "📱 Envoyer ma carte d'embarquement sur WhatsApp",
+      btn_suivant: "Suivant →",
+      btn_envoyer: "Envoyer →",
+      btn_retour: "← Retour",
+      faq_1_q: "💰 Combien je touche exactement sur mon compte ?",
+      faq_1_a: "<p style=\"margin-bottom:14px;\"><strong>Robin prend 25% uniquement si on gagne.</strong> Vous recevez 75% nets.</p><ul style=\"margin-bottom:14px;padding-left:18px;font-size:13px;color:var(--gray);line-height:1.8;\"><li>Vol court (&lt; 1 500 km) → indemnité 250€ → vous touchez <strong>188€</strong></li><li>Vol moyen (1 500–3 500 km) → indemnité 400€ → vous touchez <strong>300€</strong></li><li>Vol long (&gt; 3 500 km) → indemnité 600€ → vous touchez <strong>450€</strong></li></ul><p style=\"margin-bottom:10px;font-size:13px;\">Famille de 4 sur un Paris-Dakar ? 4 × 600€ = 2 400€ brut → <strong>1 800€ nets</strong> pour vous.</p><p style=\"font-size:12px;color:var(--gray);\">🏹 Zéro frais si on ne gagne pas. Commission identique même en cas de procédure judiciaire.</p>",
+      faq_2_q: "Je voyage seul, est-ce que vous pouvez m'aider ?",
+      faq_2_a: "Absolument ! Notre mission est d'aider toutes nos communautés, que vous voyagiez seul, en couple ou en famille. Le règlement européen s'applique à chaque passager individuellement. Si votre vol a eu du retard, vous avez droit à 600€, quel que soit votre nombre de voyageurs.",
+      faq_3_q: "⚠️ La compagnie m'a proposé un bon d'achat — je l'accepte ?",
+      faq_3_a: "<strong>C'est un piège.</strong> Le bon d'achat retourne dans la poche de la compagnie si vous ne l'utilisez pas — et souvent il a une date limite. Sa valeur est presque toujours inférieure aux 600€ en cash auxquels vous avez droit légalement. <strong>Ne l'acceptez pas avant de nous contacter.</strong> L'argent cash n'a pas de date d'expiration.",
+      faq_4_q: "La compagnie invoque la météo ou une \"circonstance extraordinaire\"...",
+      faq_4_a: "C'est leur excuse préférée. Notre dossier intègre les <strong>bulletins météo aéronautiques officiels (METAR, TAF)</strong> de l'aéroport de départ et d'arrivée. On compare avec tous les vols qui ont décollé dans la même fenêtre horaire. Si d'autres avions ont pu voler ce jour-là — et souvent ils l'ont fait — on a les preuves. La météo s'analyse aussi via les prévisions TAF et les cartes en route : pas d'orage, pas de vent violent, la \"météo\" ne tient plus. <a href=\"/meteo-dossier-indemnite.html\">En savoir plus : Météo et dossier (TAF, METAR…)</a>",
+      faq_5_q: "💸 Pourquoi vous êtes moins chers que vos concurrents ?",
+      faq_5_a: "Nos concurrents facturent entre 30% et 50% de l'indemnité. Sur 600€, ça fait jusqu'à 300€ prélevés. Nous prenons 25% — no win no fee — parce que notre modèle n'est pas basé sur le volume maximum. Nous aimons un tarif clair, un client heureux, et une recommandation plutôt qu'une grosse commission. Vous savez ce que vous touchez avant de signer.",
+      faq_6_q: "Comment suivre mon dossier ?",
+      faq_6_a: "Notifications automatiques par <strong>WhatsApp ET email</strong> à chaque étape : Dossier envoyé, Réponse reçue de la compagnie, Paiement validé, Virement en cours. Vous gardez l'esprit libre — pas besoin d'appeler. Les appels téléphoniques sont réservés aux nouvelles souscriptions.",
+      faq_7_q: "J'ai réclamé seul et la compagnie a refusé. Vous pouvez intervenir ?",
+      faq_7_a: "Oui. Un refus initial n'est jamais définitif. <strong>C'est souvent le début de la négociation.</strong> 80% des passagers éligibles abandonnent après ce premier refus — c'est ce que la compagnie espère (<a href=\"/pourquoi-si-peu-reclament.html\">pourquoi si peu récupèrent leur indemnité</a>). Nous reprenons le dossier, on l'enrichit avec les preuves METAR, et on relance avec un dossier argumenté (météo, autres vols au même moment). Si elle persiste, on peut lancer une procédure. Les frais sont déjà dans notre commission : vous ne payez rien de plus. Et si on perd au final : <strong>0 €</strong> facturé.",
+      faq_8_q: "Comment je suis payé ?",
+      faq_8_a: "<strong>C'est nous qui vous payons.</strong> Une fois les fonds reçus de la compagnie, nous vous demandons votre RIB et nous vous virons votre indemnité. Nous ne vous demandons de l'argent que pour vous en rendre. Jamais avant.",
+      faq_9_q: "Est-ce que je peux me rétracter si je change d'avis ?",
+      faq_9_a: "Oui. Vous disposez d'un <strong>droit de rétractation de 14 jours</strong> à compter de la signature du mandat. Vous pouvez annuler votre dossier en intégralité — sans frais, sans justification. Nous avons monté le dossier ? C'est notre investissement, pas le vôtre.",
+      faq_10_q: "Combien de temps pour être remboursé ?",
+      faq_10_a: "Votre dossier est envoyé à la compagnie sous <strong>24 heures</strong>. En moyenne, les compagnies règlent sous <strong>4 à 12 semaines</strong>. On ne les lâche pas — relances, argumentation, escalade légale si nécessaire. Le tout sans que vous ayez à faire quoi que ce soit.",
+      faq_11_q: "Mon vol avait une correspondance — je peux quand même réclamer ?",
+      faq_11_a: "Oui. C'est le <strong>dernier vol (tronçon final)</strong> qui détermine le montant : distance de ce vol et durée du retard à l'arrivée. Si vous avez raté une correspondance à cause d'un retard du premier vol, vous êtes aussi éligible. Indiquez « Avec correspondance » dans le diagnostic ou le formulaire — on s'occupe du reste.",
+      faq_12_q: "Que faire si la compagnie refuse ?",
+      faq_12_a: "Nous relançons avec un dossier argumenté (preuves METAR, autres vols au même moment). Si la compagnie persiste, nous engageons une <strong>procédure contentieuse</strong> — les frais sont inclus dans notre commission. En cas d'échec final : <strong>0 €</strong> facturé.",
+      faq_13_q: "Vous prenez tous les dossiers ?",
+      faq_13_a: "Non — et c'est ce qui fait notre force. On analyse chaque dossier gratuitement avant de l'accepter. Si vos chances sont faibles, on vous le dit honnêtement plutôt que de vous faire perdre du temps. C'est pour ça que notre taux de réussite est de 9 dossiers sur 10 : on ne s'engage que quand on est confiants de gagner. Et si on ne prend pas votre dossier, on vous explique pourquoi et on vous conseille sur les alternatives.",
+      faq_14_q: "Combien de temps faut-il pour recevoir mon indemnité ?",
+      faq_14_a: "<p>Ça dépend de la réactivité de la compagnie. Voici les trois scénarios possibles :</p><p><strong>La compagnie coopère (60% des cas)</strong> — après réception de notre dossier technique (preuves du retard, bulletins météo officiels, analyse de la jurisprudence), la compagnie reconnaît votre droit et paie. Délai : 4 à 12 semaines. C'est le cas le plus fréquent — les compagnies savent que nos dossiers sont solides et préfèrent payer plutôt que d'aller plus loin.</p><p><strong>La compagnie résiste (30% des cas)</strong> — elle invoque des \"circonstances extraordinaires\" pour refuser. On contre ses arguments avec nos preuves météo et les données de trafic aérien du jour (si d'autres avions ont décollé normalement, l'excuse ne tient pas). On saisit le Médiateur du Tourisme et du Voyage en votre nom. Le médiateur rend sa recommandation sous 90 jours. Dans la grande majorité des cas, la compagnie suit et paie. Délai total : 3 à 5 mois.</p><p><strong>La compagnie persiste (moins de 10% des cas)</strong> — même après le médiateur, elle refuse. On saisit le tribunal à nos frais et à nos risques. Délai total : 5 à 8 mois.</p><p>Dans tous les cas, notre commission reste 25% — elle ne change jamais, même si votre dossier va au tribunal. Et si on ne récupère rien, vous ne payez rien. On vous tient informé à chaque étape par WhatsApp.</p>",
+      founder_quote: "\"Ils vous facturent le kilo en trop. Ils vous facturent le deuxième bagage. Mais quand c'est leur tour de payer — retard, annulation, surbooking — il n'y a plus personne au bout du fil.\"",
+      founder_p1: "Vingt ans dans le secteur aérien. <strong style=\"color:white;\">J'ai vu fonctionner la machine de l'intérieur.</strong> Les délais, les process, les scripts téléphoniques conçus pour décourager. Ces règles, les compagnies les ignorent dès qu'elles coûtent de l'argent.",
+      founder_p2: "J'ai vu des familles entières se faire taxer à l'embarquement pour un kilo de trop. J'ai vu ces compagnies sortir leur manuel d'excuses quand leur avion avait 4h de retard : <strong style=\"color:white;\">« circonstances extraordinaires », « météo imprévisible ».</strong> Le tout avec un sourire de façade.",
+      founder_p3: "J'ai vu trop de voyageurs abandonner face à la complexité des formulaires et au jargon des compagnies. <strong style=\"color:white;\">Chez Robin, on simplifie tout pour nos communautés et nos familles : on gère votre dossier en français, mais aussi en Wolof, Bambara ou Lingala.</strong> Parce qu'on se comprend toujours mieux quand on parle la même langue.",
+      founder_p4: "Nos communautés font des voyages plus longs, en famille. Il y a moins l'habitude de réclamer et moins de temps à perdre. Nous prenons 25% — no win no fee — parce que notre modèle n'est pas basé sur le volume maximum. Nous aimons un tarif clair, une famille contente, et une recommandation plutôt qu'une grosse commission. <strong style=\"color:white;\">Vous savez ce que vous touchez avant de signer.</strong>",
+      founder_years: "Années dans le secteur",
+      founder_won: "Dossiers remportés",
+      founder_lost: "Si on perd",
+      founder_conviction: "Robin des Airs est né d'une conviction : <strong style=\"color:var(--neon-b);\">si une compagnie perçoit chaque euro avec une précision redoutable, nos communautés et nos familles méritent exactement le même traitement.</strong>",
+      founder_signature: "— Le fondateur · 20 ans dans le secteur aérien · Spécialiste dossiers CE 261/2004",
+      founder_cta: "CONFIER MON DOSSIER À ROBIN",
+      founder_note: "Zéro frais si on perd · Réponse en moins de 2h · Droit de rétractation 14 jours",
+      wa_float_text: "Envoyez votre carte ici",
+      wa_float_aria: "Envoyer ma carte d'embarquement sur WhatsApp"
     },
     en: {
+      skip_link: "Skip to main content",
       hero_title: "Robin takes from\nairlines,\n",
-      hero_title_neon: "gives back to travellers.",
+      hero_title_neon: "gives back to our families.",
+      hero_diaspora_why: "We know your routes, we speak your language — we recover the €600 for our communities and our families.",
       hero_desc: "Flight delayed +3h, cancelled or overbooked? EU law entitles you to up to <strong>€600</strong>. We get your money back — <strong>no card, no fee if we don't win.</strong>",
-      hero_btn_calc: "🧮 Calculate my compensation",
-      hero_btn_wa: "💬 Talk to an advisor",
+      hero_btn_calc: "Or check my eligibility (2 questions)",
+      hero_btn_wa: "📱 Send my boarding pass on WhatsApp",
+      hero_moins_cher: "The cheapest on the market — no need to look elsewhere.",
+      hero_lang_line: "Service available in: French, English, Wolof, Bambara, Soninké, Pulaar, Lingala.",
       hero_stat_max: "Max compensation",
       hero_stat_won: "Cases won",
       hero_stat_lost: "If we lose",
       hero_stat_24h: "Reply within 24h",
       nav_cta: "Get my compensation →",
+      nav_drawer_calc: "🧮 Calculator",
       nav_drawer_loi: "📋 EU Regulation 261",
       nav_drawer_how: "⚙️ How it works",
       nav_drawer_tarifs: "💰 Our rates",
       nav_drawer_testi: "⭐ Testimonials",
       nav_drawer_faq: "❓ FAQ",
+      nav_drawer_dest: "✈️ Top destinations €600",
+      nav_drawer_blog: "📝 Blog",
+      nav_drawer_depot: "📤 Submit my case",
       calc_tag: "Flight checker",
       calc_title: "What's your\nsituation?",
+      calc_title_1: "What's your",
       funnel_subtitle: "situation?",
       step1_eyebrow: "Step 1 of 5 — What happened",
       step1_retard: "Delayed flight",
@@ -103,6 +181,7 @@ window.I18N = (function() {
       raison_greve: "✊ Strike",
       raison_securite: "🛡️ Safety reason",
       raison_sans: "🤷 No explanation given",
+      raison_nesaispas: "💭 I don't know / I don't remember",
       section_loi_tag: "What you might not know",
       section_loi_title: "Where does<br><span class=\"neon\">this money come from?</span>",
       section_how_tag: "The Robin method",
@@ -131,277 +210,77 @@ window.I18N = (function() {
       section_testi_title: "Real passengers.\nReal money recovered.",
       section_founder_tag: "The founder",
       section_founder_title: "20 years behind the scenes.<br><span style=\"color:var(--neon-b);\">I've seen what they hide.</span>",
-      cta_final_note: "Every month without claiming is money left on the table. The limitation period is 5 years — but it doesn't last forever."
-    },
-    es: {
-      hero_title: "Robin quita a las\naerolíneas,\n",
-      hero_title_neon: "devuelve a los viajeros.",
-      hero_desc: "¿Vuelo con más de +3h de retraso, cancelado o overbooking? La ley europea te da hasta <strong>600€</strong>. Recuperamos tu dinero — <strong>sin tarjeta, sin gastos si no ganamos.</strong>",
-      hero_btn_calc: "🧮 Calcular mi indemnización",
-      hero_btn_wa: "💬 Hablar con un asesor",
-      hero_stat_max: "Indemnización máx.",
-      hero_stat_won: "Casos ganados",
-      hero_stat_lost: "Si perdemos",
-      hero_stat_24h: "Respuesta en 24h",
-      nav_cta: "Obtener mi indemnización →",
-      nav_drawer_loi: "📋 Reglamento CE 261",
-      nav_drawer_how: "⚙️ Cómo funciona",
-      nav_drawer_tarifs: "💰 Nuestros precios",
-      nav_drawer_testi: "⭐ Testimonios",
-      nav_drawer_faq: "❓ FAQ",
-      calc_tag: "Diagnóstico de vuelo",
-      calc_title: "¿Cuál es tu\nsituación?",
-      funnel_subtitle: "situación?",
-      step1_eyebrow: "Paso 1 de 5 — Qué pasó",
-      step1_retard: "Vuelo retrasado",
-      step1_retard_sub: "Llegada con +3h de retraso",
-      step1_annulation: "Vuelo cancelado",
-      step1_annulation_sub: "Cancelado por la compañía",
-      step1_surbook: "Overbooking / Denegación de embarque",
-      step1_surbook_sub: "La compañía te denegó el embarque",
-      step1_wa: "Hablar con Robin",
-      step1_wa_sub: "Caso complejo → WhatsApp",
-      step1c_eyebrow: "Paso 1c — Motivo invocado",
-      step1c_q: "¿La compañía te explicó por qué?",
-      raison_meteo: "🌩️ Meteorología",
-      raison_technique: "🔧 Problema técnico",
-      raison_greve: "✊ Huelga",
-      raison_securite: "🛡️ Seguridad",
-      raison_sans: "🤷 Sin explicación",
-      section_loi_tag: "Lo que quizá no sabes",
-      section_loi_title: "¿De dónde sale<br><span class=\"neon\">este dinero?</span>",
-      section_how_tag: "El método Robin",
-      section_how_title: "4 pasos.\nUn solo objetivo.",
-      section_faq_tag: "Preguntas frecuentes",
-      section_faq_title: "Todo lo que\nquieres saber.",
-      cta_final_tag: "Actúa ahora",
-      cta_final_title: "Tu dinero\nte espera.",
-      cta_btn_calc: "Calcular mi indemnización →",
-      cta_wa: "WhatsApp",
-      cta_recall: "Hasta 600€ · 25% · Sin gastos si perdemos",
-      footer_tagline: "Reclamación aérea · Especialista diáspora · Precio fijo",
-      footer_nav: "Navegación",
-      footer_legal: "Legal",
-      footer_contact: "Contacto",
-      footer_loi: "Reglamento CE 261/2004",
-      footer_how: "Cómo funciona",
-      footer_tarifs: "Nuestros precios",
-      footer_histoire: "Nuestra historia",
-      ready_claim: "¿Listo para reclamar?",
-      obt_indemnite: "Obtener mi indemnización →",
-      section_comp_tag: "Transparencia total",
-      section_comp_title: "Robin frente a los demás.",
-      section_comp_desc: "Sabes exactamente cuánto vas a recibir antes de comprometerte. Sin malas sorpresas.",
-      section_testi_tag: "Han recuperado su dinero",
-      section_testi_title: "Pasajeros reales.\nDinero real recuperado.",
-      section_founder_tag: "El fundador",
-      section_founder_title: "20 años entre bastidores.<br><span style=\"color:var(--neon-b);\">He visto lo que ocultan.</span>",
-      cta_final_note: "Cada mes sin reclamar es dinero que dejas sobre la mesa. El plazo de prescripción es de 5 años — pero no dura para siempre."
-    },
-    nl: {
-      hero_title: "Robin neemt van\nde luchtvaartmaatschappijen,\n",
-      hero_title_neon: "geeft terug aan reizigers.",
-      hero_desc: "Vlucht +3u vertraagd, geannuleerd of overboekt? De EU-regelgeving geeft u recht op tot <strong>600€</strong>. Wij halen uw geld op — <strong>geen kaart, geen kosten als we niet winnen.</strong>",
-      hero_btn_calc: "🧮 Mijn vergoeding berekenen",
-      hero_btn_wa: "💬 Praat met een adviseur",
-      hero_stat_max: "Max. vergoeding",
-      hero_stat_won: "Zaken gewonnen",
-      hero_stat_lost: "Als we verliezen",
-      hero_stat_24h: "Antwoord binnen 24u",
-      nav_cta: "Mijn vergoeding →",
-      nav_drawer_loi: "📋 EU Verordening 261",
-      nav_drawer_how: "⚙️ Hoe het werkt",
-      nav_drawer_tarifs: "💰 Onze tarieven",
-      nav_drawer_testi: "⭐ Getuigenissen",
-      nav_drawer_faq: "❓ FAQ",
-      calc_tag: "Vluchtcheck",
-      calc_title: "Wat is uw\nsituatie?",
-      funnel_subtitle: "situatie?",
-      step1_eyebrow: "Stap 1 van 5 — Wat is er gebeurd",
-      step1_retard: "Vertraagde vlucht",
-      step1_retard_sub: "Aankomst +3u te laat",
-      step1_annulation: "Geannuleerde vlucht",
-      step1_annulation_sub: "Geannuleerd door de maatschappij",
-      step1_surbook: "Overbooking / Weigering",
-      step1_surbook_sub: "Geen toegang tot het vliegtuig",
-      step1_wa: "Direct contact met Robin",
-      step1_wa_sub: "Complexe vraag → WhatsApp",
-      step1c_eyebrow: "Stap 1c — Opgegeven reden",
-      step1c_q: "Heeft de maatschappij uitgelegd waarom?",
-      raison_meteo: "🌩️ Weer",
-      raison_technique: "🔧 Technisch probleem",
-      raison_greve: "✊ Staking",
-      raison_securite: "🛡️ Veiligheid",
-      raison_sans: "🤷 Geen uitleg",
-      section_loi_tag: "Wat u misschien niet weet",
-      section_loi_title: "Waar komt<br><span class=\"neon\">dit geld vandaan?</span>",
-      section_how_tag: "De Robin-methode",
-      section_how_title: "4 stappen.\nEén doel.",
-      section_faq_tag: "Veelgestelde vragen",
-      section_faq_title: "Alles wat u\nwilt weten.",
-      cta_final_tag: "Nu actie ondernemen",
-      cta_final_title: "Uw geld\nwacht op u.",
-      cta_btn_calc: "Mijn vergoeding berekenen →",
-      cta_wa: "WhatsApp",
-      cta_recall: "Tot 600€ · 25% · Geen kosten bij verlies",
-      footer_tagline: "Luchtvaartclaim · Diaspora · Vast tarief",
-      footer_nav: "Navigatie",
-      footer_legal: "Legal",
-      footer_contact: "Contact",
-      footer_loi: "EU Verordening 261/2004",
-      footer_how: "Hoe het werkt",
-      footer_tarifs: "Onze tarieven",
-      footer_histoire: "Ons verhaal",
-      ready_claim: "Klaar om te claimen?",
-      obt_indemnite: "Mijn vergoeding →",
-      section_comp_tag: "Volledige transparantie",
-      section_comp_title: "Robin vs de rest.",
-      section_comp_desc: "U weet precies wat u krijgt voordat u zich verbindt. Geen vervelende verrassingen.",
-      section_testi_tag: "Zij kregen hun geld terug",
-      section_testi_title: "Echte passagiers.\nEcht geld terug.",
-      section_founder_tag: "De oprichter",
-      section_founder_title: "20 jaar achter de schermen.<br><span style=\"color:var(--neon-b);\">Ik heb gezien wat ze verbergen.</span>",
-      cta_final_note: "Elke maand zonder claim is geld dat u laat liggen. De verjaringstermijn is 5 jaar — maar die duurt niet eeuwig."
-    },
-    pt: {
-      hero_title: "Robin tira das\ncompanhias aéreas,\n",
-      hero_title_neon: "devolve aos viajantes.",
-      hero_desc: "Voo atrasado +3h, cancelado ou overbooking? A lei europeia dá-lhe até <strong>600€</strong>. Recuperamos o seu dinheiro — <strong>sem cartão, sem custos se não ganharmos.</strong>",
-      hero_btn_calc: "🧮 Calcular a minha indemnização",
-      hero_btn_wa: "💬 Falar com um consultor",
-      hero_stat_max: "Indemnização máx.",
-      hero_stat_won: "Casos ganhos",
-      hero_stat_lost: "Se perdemos",
-      hero_stat_24h: "Resposta em 24h",
-      nav_cta: "Obter a minha indemnização →",
-      nav_drawer_loi: "📋 Regulamento CE 261",
-      nav_drawer_how: "⚙️ Como funciona",
-      nav_drawer_tarifs: "💰 Os nossos preços",
-      nav_drawer_testi: "⭐ Testemunhos",
-      nav_drawer_faq: "❓ FAQ",
-      calc_tag: "Diagnóstico de voo",
-      calc_title: "Qual é a sua\nsituação?",
-      funnel_subtitle: "situação?",
-      step1_eyebrow: "Passo 1 de 5 — O que aconteceu",
-      step1_retard: "Voo atrasado",
-      step1_retard_sub: "Chegada com +3h de atraso",
-      step1_annulation: "Voo cancelado",
-      step1_annulation_sub: "Cancelado pela companhia",
-      step1_surbook: "Overbooking / Negada embarque",
-      step1_surbook_sub: "Companhia recusou embarque",
-      step1_wa: "Falar com Robin",
-      step1_wa_sub: "Caso complexo → WhatsApp",
-      step1c_eyebrow: "Passo 1c — Motivo invocado",
-      step1c_q: "A companhia explicou porquê?",
-      raison_meteo: "🌩️ Meteorologia",
-      raison_technique: "🔧 Problema técnico",
-      raison_greve: "✊ Greve",
-      raison_securite: "🛡️ Segurança",
-      raison_sans: "🤷 Sem explicação",
-      section_loi_tag: "O que talvez não saiba",
-      section_loi_title: "De onde vem<br><span class=\"neon\">este dinheiro?</span>",
-      section_how_tag: "O método Robin",
-      section_how_title: "4 passos.\nUm objetivo.",
-      section_faq_tag: "Perguntas frequentes",
-      section_faq_title: "Tudo o que\nquer saber.",
-      cta_final_tag: "Agir agora",
-      cta_final_title: "O seu dinheiro\nespera por si.",
-      cta_btn_calc: "Calcular a minha indemnização →",
-      cta_wa: "WhatsApp",
-      cta_recall: "Até 600€ · 25% · Sem custos se perdemos",
-      footer_tagline: "Reclamação aérea · Especialista diáspora · Preço fixo",
-      footer_nav: "Navegação",
-      footer_legal: "Legal",
-      footer_contact: "Contacto",
-      footer_loi: "Regulamento CE 261/2004",
-      footer_how: "Como funciona",
-      footer_tarifs: "Os nossos preços",
-      footer_histoire: "A nossa história",
-      ready_claim: "Pronto para reclamar?",
-      obt_indemnite: "Obter a minha indemnização →",
-      section_comp_tag: "Transparência total",
-      section_comp_title: "Robin vs os outros.",
-      section_comp_desc: "Sabe exatamente o que vai receber antes de se comprometer. Sem más surpresas.",
-      section_testi_tag: "Eles recuperaram o dinheiro",
-      section_testi_title: "Passageiros reais.\nDinheiro real recuperado.",
-      section_founder_tag: "O fundador",
-      section_founder_title: "20 anos nos bastidores.<br><span style=\"color:var(--neon-b);\">Vi o que eles escondem.</span>",
-      cta_final_note: "Cada mês sem reclamar é dinheiro que deixa na mesa. O prazo de prescrição é de 5 anos — mas não dura para sempre."
-    },
-    de: {
-      hero_title: "Robin nimmt den\nAirlines,\n",
-      hero_title_neon: "gibt den Reisenden zurück.",
-      hero_desc: "Flug +3h verspätet, annulliert oder überbucht? Die EU-Verordnung gibt Ihnen bis zu <strong>600€</strong>. Wir holen Ihr Geld — <strong>keine Karte, keine Gebühren bei Verlust.</strong>",
-      hero_btn_calc: "🧮 Meine Entschädigung berechnen",
-      hero_btn_wa: "💬 Mit Berater sprechen",
-      hero_stat_max: "Max. Entschädigung",
-      hero_stat_won: "Gewonnene Fälle",
-      hero_stat_lost: "Wenn wir verlieren",
-      hero_stat_24h: "Antwort in 24h",
-      nav_cta: "Entschädigung sichern →",
-      nav_drawer_loi: "📋 EU-Verordnung 261",
-      nav_drawer_how: "⚙️ So funktioniert's",
-      nav_drawer_tarifs: "💰 Unsere Tarife",
-      nav_drawer_testi: "⭐ Erfahrungsberichte",
-      nav_drawer_faq: "❓ FAQ",
-      calc_tag: "Flug-Check",
-      calc_title: "Was ist Ihre\nSituation?",
-      funnel_subtitle: "Situation?",
-      step1_eyebrow: "Schritt 1 von 5 — Was ist passiert",
-      step1_retard: "Verspäteter Flug",
-      step1_retard_sub: "Ankunft +3h Verspätung",
-      step1_annulation: "Stornierter Flug",
-      step1_annulation_sub: "Von der Airline storniert",
-      step1_surbook: "Überbuchung / Beförderungsverweigerung",
-      step1_surbook_sub: "Airline hat Sie abgewiesen",
-      step1_wa: "Direkt mit Robin sprechen",
-      step1_wa_sub: "Komplexer Fall → WhatsApp",
-      step1c_eyebrow: "Schritt 1c — Genannter Grund",
-      step1c_q: "Hat die Airline den Grund erklärt?",
-      raison_meteo: "🌩️ Wetter",
-      raison_technique: "🔧 Technisches Problem",
-      raison_greve: "✊ Streik",
-      raison_securite: "🛡️ Sicherheit",
-      raison_sans: "🤷 Keine Erklärung",
-      section_loi_tag: "Was Sie vielleicht nicht wissen",
-      section_loi_title: "Woher kommt<br><span class=\"neon\">dieses Geld?</span>",
-      section_how_tag: "Die Robin-Methode",
-      section_how_title: "4 Schritte.\nEin Ziel.",
-      section_faq_tag: "Häufige Fragen",
-      section_faq_title: "Alles, was Sie\nwissen wollen.",
-      cta_final_tag: "Jetzt handeln",
-      cta_final_title: "Ihr Geld\nwartet auf Sie.",
-      cta_btn_calc: "Entschädigung berechnen →",
-      cta_wa: "WhatsApp",
-      cta_recall: "Bis 600€ · 25% · Keine Gebühren bei Verlust",
-      footer_tagline: "Flugentschädigung · Diaspora · Festpreis",
-      footer_nav: "Navigation",
-      footer_legal: "Rechtliches",
-      footer_contact: "Kontakt",
-      footer_loi: "EU-Verordnung 261/2004",
-      footer_how: "So funktioniert's",
-      footer_tarifs: "Unsere Tarife",
-      footer_histoire: "Unsere Geschichte",
-      ready_claim: "Bereit zur Reklamation?",
-      obt_indemnite: "Entschädigung sichern →",
-      section_comp_tag: "Volle Transparenz",
-      section_comp_title: "Robin vs die anderen.",
-      section_comp_desc: "Sie wissen genau, was Sie bekommen, bevor Sie sich festlegen. Keine bösen Überraschungen.",
-      section_testi_tag: "Sie haben ihr Geld zurück",
-      section_testi_title: "Echte Passagiere.\nEchtes Geld zurück.",
-      section_founder_tag: "Der Gründer",
-      section_founder_title: "20 Jahre hinter den Kulissen.<br><span style=\"color:var(--neon-b);\">Ich habe gesehen, was sie verbergen.</span>",
-      cta_final_note: "Jeden Monat ohne Reklamation ist Geld, das Sie liegen lassen. Die Verjährungsfrist beträgt 5 Jahre — aber die dauert nicht ewig."
+      cta_final_note: "Every month without claiming is money left on the table. The limitation period is 5 years — but it doesn't last forever.",
+      funnel_step_label: "Step 1 of 5",
+      funnel_wa_shortcut_text: "In one message: send us your flight on WhatsApp, we'll tell you in 2 min if you're eligible.",
+      funnel_wa_shortcut_btn: "💬 Check my eligibility via WhatsApp",
+      funnel_detail_link: "Or calculate the exact amount → detailed check (5 steps)",
+      short_q_vol: "What is your flight?",
+      short_hint_vol: "Flight number + date, e.g. \"Paris-Dakar 15/01, delayed\"",
+      short_placeholder_vol: "E.g: AF718 15/01, delayed",
+      short_q_phone: "Your WhatsApp number",
+      short_hint_phone: "So we can get back to you and tell you if you're eligible.",
+      short_placeholder_phone: "E.g: +33 6 12 34 56 78",
+      short_done_title: "Thank you!",
+      short_done_hint: "To finish, send your boarding pass on WhatsApp. We check and reply within 24h.",
+      short_done_wa_btn: "📱 Send my boarding pass on WhatsApp",
+      btn_suivant: "Next →",
+      btn_envoyer: "Send →",
+      btn_retour: "← Back",
+      faq_1_q: "💰 How much do I get in my account?",
+      faq_1_a: "<p style=\"margin-bottom:14px;\"><strong>Robin takes 25% only when we win.</strong> You receive 75% net.</p><ul style=\"margin-bottom:14px;padding-left:18px;font-size:13px;color:var(--gray);line-height:1.8;\"><li>Short haul (&lt; 1,500 km) → €250 compensation → you get <strong>€188</strong></li><li>Medium (1,500–3,500 km) → €400 → you get <strong>€300</strong></li><li>Long haul (&gt; 3,500 km) → €600 → you get <strong>€450</strong></li></ul><p style=\"margin-bottom:10px;font-size:13px;\">Family of 4 on Paris–Dakar? 4 × €600 = €2,400 gross → <strong>€1,800 net</strong> for you.</p><p style=\"font-size:12px;color:var(--gray);\">🏹 No fee if we don't win. Same commission even in court.</p>",
+      faq_2_q: "I travel alone — can you still help me?",
+      faq_2_a: "Absolutely! Our mission is to help all our communities, whether you travel alone, as a couple or with family. EU regulation applies to each passenger individually. If your flight was delayed, you're entitled to €600, regardless of how many travellers.",
+      faq_3_q: "⚠️ The airline offered me a voucher — do I accept?",
+      faq_3_a: "<strong>It's a trap.</strong> The voucher goes back to the airline if you don't use it — and it often has an expiry date. Its value is almost always less than the €600 cash you're legally entitled to. <strong>Don't accept before contacting us.</strong> Cash doesn't expire.",
+      faq_4_q: "The airline says weather or \"extraordinary circumstances\"...",
+      faq_4_a: "That's their favourite excuse. Our case file includes <strong>official aviation weather reports (METAR, TAF)</strong> for departure and arrival airports. We compare with all flights that took off in the same time window. If other planes could fly that day — and they often did — we have the proof. Weather is also analysed via TAF forecasts and en-route charts: no storm, no severe wind, the \"weather\" excuse doesn't hold. <a href=\"/meteo-dossier-indemnite.html\">Learn more: Weather and claims (TAF, METAR…)</a>",
+      faq_5_q: "💸 Why are you cheaper than competitors?",
+      faq_5_a: "Competitors charge 30% to 50% of the compensation. On €600, that's up to €300 taken. We take 25% — no win no fee — because our model isn't about maximum volume. We prefer a clear rate, a happy client, and word of mouth over a big commission. You know what you get before you sign.",
+      faq_6_q: "How do I track my case?",
+      faq_6_a: "Automatic notifications by <strong>WhatsApp AND email</strong> at each stage: Case sent, Airline response received, Payment confirmed, Transfer in progress. You can relax — no need to call. Phone calls are for new sign-ups.",
+      faq_7_q: "I claimed myself and the airline refused. Can you step in?",
+      faq_7_a: "Yes. An initial refusal is never final. <strong>It's often the start of negotiation.</strong> 80% of eligible passengers give up after that first refusal — which is what the airline hopes (<a href=\"/pourquoi-si-peu-reclament.html\">why so few get their compensation</a>). We take over the case, add METAR evidence, and resubmit with a solid file (weather, other flights at the same time). If they persist, we can start proceedings. Fees are already in our commission: you pay nothing extra. And if we lose in the end: <strong>€0</strong> charged.",
+      faq_8_q: "How do I get paid?",
+      faq_8_a: "<strong>We pay you.</strong> Once we receive the funds from the airline, we ask for your bank details and transfer your compensation. We only ask for money to give it back to you. Never before.",
+      faq_9_q: "Can I change my mind and withdraw?",
+      faq_9_a: "Yes. You have a <strong>14-day right of withdrawal</strong> from signing the mandate. You can cancel your case entirely — no fee, no reason required. We built the case? That's our investment, not yours.",
+      faq_10_q: "How long until I'm refunded?",
+      faq_10_a: "Your case is sent to the airline within <strong>24 hours</strong>. On average airlines pay within <strong>4 to 12 weeks</strong>. We don't let go — reminders, arguments, legal escalation if needed. All without you having to do a thing.",
+      faq_11_q: "My flight had a connection — can I still claim?",
+      faq_11_a: "Yes. It's the <strong>last flight (final leg)</strong> that sets the amount: that flight's distance and delay on arrival. If you missed a connection because of a delay on your first flight, you're also eligible. Select \"With connection\" in the checker or form — we handle the rest.",
+      faq_12_q: "What if the airline refuses?",
+      faq_12_a: "We resubmit with a solid case (METAR evidence, other flights at the same time). If the airline persists, we start <strong>legal proceedings</strong> — fees are included in our commission. If we ultimately lose: <strong>€0</strong> charged.",
+      faq_13_q: "Do you take every case?",
+      faq_13_a: "No — and that's our strength. We review every case for free before accepting it. If your chances are low, we tell you honestly rather than waste your time. That's why our success rate is 9 out of 10: we only take on cases we're confident we can win. If we don't take your case, we explain why and advise you on alternatives.",
+      faq_14_q: "How long until I receive my compensation?",
+      faq_14_a: "<p>It depends on how responsive the airline is. Here are the three possible scenarios:</p><p><strong>The airline cooperates (60% of cases)</strong> — after receiving our technical file (proof of delay, official weather reports, legal analysis), the airline recognises your right and pays. Timeline: 4 to 12 weeks. This is the most common outcome — airlines know our cases are solid and prefer to pay rather than escalate.</p><p><strong>The airline resists (30% of cases)</strong> — it invokes \"extraordinary circumstances\" to refuse. We counter with our weather evidence and air traffic data for that day (if other planes took off normally, the excuse doesn't hold). We refer your case to the Tourism and Travel Ombudsman. The ombudsman issues a recommendation within 90 days. In most cases, the airline follows it and pays. Total timeline: 3 to 5 months.</p><p><strong>The airline persists (under 10% of cases)</strong> — even after the ombudsman, it still refuses. We take the case to court at our expense and risk. Total timeline: 5 to 8 months.</p><p>In all cases, our commission stays 25% — it never changes, even if your case goes to court. And if we recover nothing, you pay nothing. We keep you updated at every step via WhatsApp.</p>",
+      founder_quote: "\"They charge you for the extra kilo. They charge you for the second bag. But when it's their turn to pay — delay, cancellation, overbooking — there's nobody on the line.\"",
+      founder_p1: "Twenty years in the aviation sector. <strong style=\"color:white;\">I've seen how the machine works from the inside.</strong> The delays, the processes, the phone scripts designed to put you off. When these rules cost money, airlines ignore them.",
+      founder_p2: "I've seen whole families charged at boarding for one extra kilo. I've seen those airlines pull out their book of excuses when their plane was 4 hours late: <strong style=\"color:white;\">\"extraordinary circumstances\", \"unpredictable weather\".</strong> All with a fake smile.",
+      founder_p3: "I've seen too many travellers give up faced with complicated forms and airline jargon. <strong style=\"color:white;\">At Robin we simplify everything for our communities and our families: we handle your case in French, and also in Wolof, Bambara or Lingala.</strong> Because we always understand each other better when we speak the same language.",
+      founder_p4: "Our communities travel further, with family. There's less habit of claiming and less time to waste. We take 25% — no win no fee — because our model isn't about maximum volume. We prefer a clear rate, a happy family, and word of mouth over a big commission. <strong style=\"color:white;\">You know what you get before you sign.</strong>",
+      founder_years: "Years in the sector",
+      founder_won: "Cases won",
+      founder_lost: "If we lose",
+      founder_conviction: "Robin des Airs was born from one belief: <strong style=\"color:var(--neon-b);\">if an airline collects every euro with ruthless precision, our communities and our families deserve exactly the same treatment.</strong>",
+      founder_signature: "— The founder · 20 years in aviation · EU Regulation 261/2004 specialist",
+      founder_cta: "TRUST ROBIN WITH MY CASE",
+      founder_note: "No fee if we lose · Reply within 2h · 14-day right of withdrawal",
+      wa_float_text: "Send your boarding pass here",
+      wa_float_aria: "Send my boarding pass on WhatsApp"
     }
   };
 
   function get(key) {
-    var lang = T[currentLang] ? currentLang : 'fr';
+    var lang = (currentLang === 'en' ? 'en' : 'fr');
+    return (T[lang] && T[lang][key]) || T.fr[key] || key;
+  }
     return (T[lang] && T[lang][key]) || T.fr[key] || key;
   }
 
   function apply() {
-    document.documentElement.lang = currentLang;
+    document.documentElement.lang = currentLang === 'en' ? 'en' : 'fr';
     document.querySelectorAll('[data-i18n]').forEach(function(el) {
       var key = el.getAttribute('data-i18n');
       var val = get(key);
@@ -439,23 +318,81 @@ window.I18N = (function() {
       var q1c = step1c.querySelector('.fstep-q');
       if (q1c) q1c.textContent = get('step1c_q');
       var reasonBtns = step1c.querySelectorAll('.reason-btn');
-      if (reasonBtns.length >= 5) {
+      if (reasonBtns.length >= 6) {
         reasonBtns[0].innerHTML = get('raison_meteo');
         reasonBtns[1].innerHTML = get('raison_technique');
         reasonBtns[2].innerHTML = get('raison_greve');
         reasonBtns[3].innerHTML = get('raison_securite');
         reasonBtns[4].innerHTML = get('raison_sans');
+        reasonBtns[5].innerHTML = get('raison_nesaispas');
       }
     }
+    var labelEl = document.getElementById('funnel-step-label');
+    if (labelEl) labelEl.textContent = get('funnel_step_label');
+    var waShortcut = document.querySelector('.funnel-wa-shortcut');
+    if (waShortcut) {
+      var t = waShortcut.querySelector('.funnel-wa-shortcut-text');
+      if (t) t.textContent = get('funnel_wa_shortcut_text');
+      var b = waShortcut.querySelector('.funnel-wa-shortcut-btn');
+      if (b) b.textContent = get('funnel_wa_shortcut_btn');
+    }
+    var detailLink = document.getElementById('link-diagnostic-detail');
+    if (detailLink) detailLink.textContent = get('funnel_detail_link');
+    var waFloat = document.getElementById('wa-float');
+    if (waFloat) waFloat.setAttribute('aria-label', get('wa_float_aria'));
+    var short1 = document.getElementById('step-short-1');
+    if (short1) {
+      var q1 = short1.querySelector('.fstep-q');
+      if (q1) q1.textContent = get('short_q_vol');
+      var h1 = short1.querySelector('.funnel-hint');
+      if (h1) h1.textContent = get('short_hint_vol');
+      var inp1 = document.getElementById('short-vol');
+      if (inp1) inp1.placeholder = get('short_placeholder_vol');
+      var btn1 = short1.querySelector('.btn-calc');
+      if (btn1) btn1.textContent = get('btn_suivant');
+    }
+    var short2 = document.getElementById('step-short-2');
+    if (short2) {
+      var q2 = short2.querySelector('.fstep-q');
+      if (q2) q2.textContent = get('short_q_phone');
+      var h2 = short2.querySelector('.funnel-hint');
+      if (h2) h2.textContent = get('short_hint_phone');
+      var inp2 = document.getElementById('short-phone');
+      if (inp2) inp2.placeholder = get('short_placeholder_phone');
+      var btnSend = short2.querySelector('.btn-calc');
+      if (btnSend) btnSend.textContent = get('btn_envoyer');
+      var btnBack = short2.querySelector('.back-btn');
+      if (btnBack) btnBack.textContent = get('btn_retour');
+    }
+    var shortDone = document.getElementById('step-short-done');
+    if (shortDone) {
+      var qd = shortDone.querySelector('.fstep-q');
+      if (qd) qd.textContent = get('short_done_title');
+      var hd = shortDone.querySelector('.funnel-hint');
+      if (hd) hd.textContent = get('short_done_hint');
+      var waDone = document.getElementById('short-done-wa-btn');
+      if (waDone) waDone.textContent = get('short_done_wa_btn');
+    }
+    document.querySelectorAll('.faq-list .faq-item').forEach(function(item, i) {
+      var idx = i + 1;
+      var qEl = item.querySelector('.faq-question [data-i18n]');
+      if (qEl) qEl.textContent = get('faq_' + idx + '_q');
+      var aEl = item.querySelector('.faq-answer-inner');
+      if (aEl) aEl.innerHTML = get('faq_' + idx + '_a');
+    });
   }
 
   function setLang(code) {
     var c = (code || 'fr').toLowerCase();
-    if (T[c]) {
-      currentLang = c;
-      try { localStorage.setItem('robin_lang', c); } catch (e) {}
-      apply();
-    }
+    if (c === 'en') { currentLang = 'en'; } else { currentLang = 'fr'; }
+    try { localStorage.setItem('robin_lang', currentLang); } catch (e) {}
+    apply();
+    var flag = currentLang === 'en' ? '🇬🇧' : '🇫🇷';
+    var flagEl = document.getElementById('current-flag');
+    if (flagEl) flagEl.textContent = flag;
+    document.querySelectorAll('.lang-option').forEach(function(o) {
+      o.classList.toggle('active', o.getAttribute('data-lang') === currentLang);
+    });
   }
 
   return {

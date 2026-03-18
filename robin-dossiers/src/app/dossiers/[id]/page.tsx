@@ -14,6 +14,7 @@ type DossierDetail = {
   lrar_reception: string | null;
   agent: string | null;
   langue: string | null;
+  pays: string | null;
   passagers: Array<Record<string, unknown>>;
   vols: Array<Record<string, unknown>>;
   calculs: Record<string, unknown> | null;
@@ -120,6 +121,7 @@ export default function FicheDossier({
           <span className="text-[#888]">LRAR réception</span><span>{formatDate(data.lrar_reception)}</span>
           <span className="text-[#888]">Agent</span><span>{data.agent ?? "—"}</span>
           <span className="text-[#888]">Langue</span><span>{data.langue ?? "—"}</span>
+          <span className="text-[#888]">Pays</span><span>{data.pays ?? "—"}</span>
         </div>
       </section>
 

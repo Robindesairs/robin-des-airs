@@ -83,3 +83,7 @@ Le webhook doit être configuré **pour le bon numéro**. Si tu as plusieurs num
 Une fois tout ça en place, quand un client envoie « Bonjour » ou une photo de carte d’embarquement, le webhook reçoit le message, le code répond (menu ou tunnel), et la réponse part via 360dialog vers le client.
 
 Pour plus de détails (tunnel, Gemini, relais 20 s, etc.) : **WEBHOOK-WHATSAPP.md**.
+
+---
+
+**Texte des réponses :** quand un client pose une question de type FAQ (combien je touche, délais, bon d’achat, etc.), tu peux reprendre les mêmes infos que sur le site. Tout est regroupé dans **FAQ-REPONSES-WHATSAPP.md** — copier-coller et adapter si besoin pour WhatsApp ou email.

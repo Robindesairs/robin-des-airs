@@ -164,6 +164,7 @@ a:focus-visible, button:focus-visible, .cb:focus-visible, .reason-btn:focus-visi
   padding: 7px 20px;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   border-bottom: 1px solid rgba(255,255,255,0.08);
 }
@@ -171,6 +172,14 @@ a:focus-visible, button:focus-visible, .cb:focus-visible, .reason-btn:focus-visi
 .diaspora-bar-flags {
   font-size: 1rem;
   letter-spacing: 1px;
+}
+
+.diaspora-bar-pays {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
 }
 
 .diaspora-bar-sep {
@@ -275,6 +284,19 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   z-index: 999; padding: 12px 20px 20px;
 }
 .nav-drawer.open { display: block; animation: fstepIn 0.2s ease; }
+.nav-drawer-lang {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px 14px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.nav-drawer-lang .lang-option {
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+}
 .nav-drawer ul { list-style: none; display: flex; flex-direction: column; gap: 2px; }
 .nav-drawer a {
   display: block; padding: 12px 14px;
@@ -849,57 +871,9 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   color: #fff;
 }
 /* Bouton sticky Ultra-Convertisseur — vert WhatsApp #25D366 */
-.sticky-cta-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  padding: 10px 14px 14px;
-  padding-bottom: max(14px, env(safe-area-inset-bottom));
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.12);
-  display: flex;
-  justify-content: center;
-  align-items: stretch;
-}
-.sticky-wa-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  max-width: 420px;
-  padding: 14px 20px;
-  background: #25D366;
-  color: #fff;
-  text-decoration: none;
-  border-radius: 12px;
-  font-family: 'Montserrat', sans-serif;
-  transition: background 0.2s, transform 0.1s;
-  box-shadow: 0 2px 12px rgba(37,211,102,0.35);
-}
-.sticky-wa-btn:hover {
-  background: #20bd5a;
-  color: #fff;
-  transform: translateY(-1px);
-}
-.sticky-wa-line1 {
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  line-height: 1.3;
-}
-.sticky-wa-line2 {
-  font-size: 11px;
-  font-weight: 500;
-  opacity: 0.95;
-  margin-top: 2px;
-  letter-spacing: 0.2px;
-}
-body:has(.sticky-cta-bar) { padding-bottom: max(78px, calc(14px + env(safe-area-inset-bottom))); }
+/* Un seul CTA persistant : bouton WhatsApp flottant (sticky bar supprimé) */
 
-/* Bouton WhatsApp flottant (audit: visible partout) */
+/* Bouton WhatsApp flottant */
 .wa-float {
   position: fixed;
   right: 16px;
@@ -930,7 +904,7 @@ body:has(.sticky-cta-bar) { padding-bottom: max(78px, calc(14px + env(safe-area-
 }
 @media (max-width: 480px) {
   .wa-float-text { display: none; }
-  .wa-float { padding: 14px; border-radius: 50%; bottom: 85px; }
+  .wa-float { padding: 14px; border-radius: 50%; bottom: 24px; }
 }
 
 .calc-disclaimer {
@@ -1470,6 +1444,7 @@ footer {
 .footer-logo { font-family: 'Syne', 'Montserrat', sans-serif; font-weight: 800; font-size: 16px; color: white; margin-bottom: 12px; letter-spacing: -0.3px; }
 .footer-logo span { color: var(--neon-b); }
 .footer-tagline { font-size: 12px; color: rgba(255,255,255,0.35); line-height: 1.7; max-width: 240px; }
+.footer-address { font-size: 11px; color: rgba(255,255,255,0.45); line-height: 1.5; margin-top: 6px; }
 
 .footer-col h4 {
   font-size: 9px;
@@ -1581,13 +1556,22 @@ button:focus-visible,
   .comp-head-cell, .comp-cell { padding: 14px 16px; font-size: 12px; }
 }
 
-/* Mobile / tablette (≤ 768px) */
+/* Mobile / tablette (≤ 768px) — header minimal : logo + hamburger uniquement */
 @media (max-width: 768px) {
   body { font-size: 16px; }
-  nav { padding: 0 16px; padding-bottom: env(safe-area-inset-bottom, 0); }
+  .diaspora-bar { display: none; }
+  nav {
+    top: 0;
+    height: 56px;
+    padding: 0 16px;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  .nav-cta-inline,
+  .lang-dropdown { display: none !important; }
+  .nav-drawer { top: 56px; }
   .skip-link:focus { left: env(safe-area-inset-left, 16px); }
   #hero {
-    padding: 108px 20px 36px;
+    padding: 72px 20px 36px;
     min-height: auto;
     padding-left: env(safe-area-inset-left, 20px);
     padding-right: env(safe-area-inset-right, 20px);
