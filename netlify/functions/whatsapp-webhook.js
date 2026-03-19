@@ -25,6 +25,14 @@ const MENU_BIENVENUE = `👋 *Robin des Airs* — Récupérez jusqu'à 600€ si
 
 const ROBIN_ACCUEIL = "Bonjour ! Je suis Robin 🏹. Envoyez-moi une photo de votre carte d'embarquement, je m'occupe d'analyser vos droits en 30 secondes.";
 
+// require au top-level : le traceur Netlify (nft) inclut le paquet dans le zip ; require() dans le handler était parfois omis
+let netlifyBlobsModule = null;
+try {
+  netlifyBlobsModule = require('@netlify/blobs');
+} catch (_) {
+  /* ex. dev local sans Netlify */
+}
+
 // Étape 1 (grand 1 — collecte mandat) : démarrage au premier message ou "Bonjour"
 const STEP1_STEPS = ['PASSENGER_FIRST', 'PASSENGER_LAST', 'PASSENGER_ANOTHER', 'PASSENGERS_CONFIRM', 'CONFIRM_PHONE', 'ASK_CONTACT_PHONE', 'TRAJET_FLIGHT', 'TRAJET_DATE', 'TRAJET_CONNECTION', 'TRAJET_CONFIRM', 'ASK_PNR', 'CONFIRM_PNR', 'ASK_AIRLINE', 'ASK_ADDRESS', 'STEP1_DONE'];
 function isStep1(step) { return STEP1_STEPS.includes(step); }
@@ -653,7 +661,8 @@ exports.handler = async (event) => {
         const dedupDisabled = process.env.ROBIN_DEDUP_DISABLED === 'true';
         if (!dedupDisabled && msgId) {
           try {
-            const blobs = require('@netlify/blobs');
+            if (!netlifyBlobsModule) throw new Error("Cannot find module '@netlify/blobs'");
+            const blobs = netlifyBlobsModule;
             if (blobs.connectLambda && event) blobs.connectLambda(event);
             const store = blobs.getStore('robin-wa');
             const raw = await store.get('replied_msg_ids');
@@ -716,7 +725,8 @@ exports.handler = async (event) => {
             if (geminiDelayEnabled && msgType !== 'image') {
               let store;
               try {
-                const blobs = require('@netlify/blobs');
+                if (!netlifyBlobsModule) throw new Error("Cannot find module '@netlify/blobs'");
+                const blobs = netlifyBlobsModule;
                 if (blobs.connectLambda && event) blobs.connectLambda(event);
                 store = blobs.getStore('robin-wa');
               } catch (e) {

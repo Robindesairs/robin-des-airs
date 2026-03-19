@@ -1,0 +1,8 @@
+{
+  "name": "robin-netlify-functions",
+  "private": true,
+  "description": "Deps dédiées aux fonctions (zip Netlify) — @netlify/blobs doit être résolu ici si le bundle racine échoue",
+  "dependencies": {
+    "@netlify/blobs": "^5.0.0"
+  }
+}

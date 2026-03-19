@@ -15,6 +15,11 @@ const STORE_NAME = 'robin-wa';
 const PENDING_PREFIX = 'pending/';
 const CONVO_PREFIX = 'convo/';
 
+let netlifyBlobsModule = null;
+try {
+  netlifyBlobsModule = require('@netlify/blobs');
+} catch (_) {}
+
 function normalizeTo(waId) {
   const s = String(waId || '').replace(/\D/g, '');
   if (s.startsWith('0')) return '33' + s.slice(1);
@@ -75,7 +80,8 @@ exports.handler = async (event) => {
 
   let getStore;
   try {
-    const blobs = require('@netlify/blobs');
+    if (!netlifyBlobsModule) throw new Error("Cannot find module '@netlify/blobs'");
+    const blobs = netlifyBlobsModule;
     if (blobs.connectLambda && event) blobs.connectLambda(event);
     getStore = blobs.getStore;
   } catch (e) {

@@ -7,8 +7,8 @@
 # 2) Netlify → Domain management → HTTPS → activer "Force TLS connection"
 [functions]
   directory = "netlify/functions"
-  # Inclure explicitement @netlify/blobs dans le zip (sinon esbuild peut ne pas le tracer → "Cannot find module")
-  external_node_modules = ["@netlify/blobs"]
+  # nft trace les require au chargement du module ; esbuild omettait @netlify/blobs dans le zip
+  node_bundler = "nft"
 
 # Relais Gemini après ~20s sans réponse humaine (traitement toutes les minutes)
 [functions."whatsapp-gemini-fallback"]
@@ -16,7 +16,8 @@
 
 [build]
   publish = "."
-  command = "npm run build:sitemap && npm run build:blog"
+  # S'assurer que les deps (dont @netlify/blobs) sont présentes avant le bundle des fonctions
+  command = "npm install && npm install --prefix netlify/functions && npm run build:sitemap && npm run build:blog"
 
 # Forcer HTTPS (cadenas) : toute requête en http est redirigée en https
 [[redirects]]
