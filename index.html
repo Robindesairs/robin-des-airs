@@ -46,7 +46,7 @@
     <span class="diaspora-bar-flags" aria-hidden="true">🇸🇳 🇲🇱 🇨🇮 🇬🇳 🇨🇲 🇨🇩 🇧🇯 🇹🇬 🇬🇭 🇳🇬</span>
     <span class="diaspora-bar-pays">SÉNÉGAL · MALI · CÔTE D'IVOIRE · GUINÉE · CAMEROUN · RDC · BÉNIN · TOGO · GHANA · NIGERIA</span>
     <span class="diaspora-bar-sep" aria-hidden="true"></span>
-    <span class="diaspora-bar-text">Au service de nos communautés et de nos familles · Vols Europe–Afrique</span>
+    <span class="diaspora-bar-text" data-i18n="diaspora_bar_text">Au service de nos communautés et de nos familles · Vols Europe–Afrique</span>
   </div>
 </div>
 
@@ -128,7 +128,7 @@
       </p>
       <p class="hero-wa-direct">
         <a href="https://wa.me/15557840392" target="_blank" rel="noopener" class="hero-wa-link">💬 Réponse directe : WhatsApp +1 555 784 0392</a>
-        <span style="display:block;font-size:11px;color:rgba(255,255,255,0.6);margin-top:4px;">Répondez en français, wolof ou anglais — comme vous préférez.</span>
+        <span style="display:block;font-size:11px;color:rgba(255,255,255,0.6);margin-top:4px;" data-i18n="hero_wa_note">Répondez en français, wolof ou anglais — comme vous préférez.</span>
       </p>
 
       <div class="hero-stats">
@@ -168,7 +168,6 @@
         <div id="funnel-progress" style="width:100%;background:#eee;border-radius:4px;height:6px;margin-bottom:12px;">
           <div id="funnel-progress-bar" style="height:6px;border-radius:4px;background:#1a1a1a;width:20%;transition:width 0.3s;"></div>
         </div>
-        <p id="funnel-step-label" style="font-size:0.8em;color:#999;margin-bottom:16px;" data-i18n="funnel_step_short">2 questions</p>
         <div class="funnel-crumbs" id="funnel-crumbs"></div>
       </div>
 
@@ -205,7 +204,7 @@
       <div id="funnel-long" style="display:none;">
       <!-- ══ ÉTAPE 1 — MOTIF ══ -->
       <div class="fstep" id="step-1">
-        <div class="fstep-eyebrow">Étape 1 sur 5 — Ce qui s'est passé</div>
+        <div class="fstep-eyebrow">Ce qui s'est passé</div>
         <p class="funnel-hint">Pas de souci si vous ne vous souvenez plus des détails — on vérifie pour vous.</p>
         <div class="choice-grid one-col">
           <button class="cb" onclick="pickMotif('retard')">
@@ -535,34 +534,34 @@
         <h2 class="section-title" data-i18n-html="section_loi_title">D'où vient<br><span class="neon">cet argent ?</span></h2>
       </div>
       <div>
-        <p style="font-size:14px;color:var(--gray);line-height:1.85;margin-bottom:16px;">
+        <p style="font-size:14px;color:var(--gray);line-height:1.85;margin-bottom:16px;" data-i18n-html="loi_intro">
           Le <strong style="color:var(--navy);">Règlement (CE) n° 261/2004</strong> est une loi européenne qui protège les passagers. Voici les deux situations où elle s'applique :
         </p>
 
         <div style="background:rgba(255,255,255,0.65);border:1px solid rgba(226,230,238,0.9);border-radius:10px;padding:14px 16px;margin-bottom:12px;">
-          <div style="font-size:10px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--navy);margin-bottom:8px;">🛫 VOUS PARTEZ D'EUROPE</div>
-          <p style="font-size:13px;color:rgba(11,31,58,0.8);line-height:1.75;margin:0;">
+          <div style="font-size:10px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--navy);margin-bottom:8px;" data-i18n="loi_you_depart_eu_title">🛫 VOUS PARTEZ D'EUROPE</div>
+          <p style="font-size:13px;color:rgba(11,31,58,0.8);line-height:1.75;margin:0;" data-i18n="loi_you_depart_eu_p">
             Si votre vol décolle d'un aéroport de l'Union européenne (Paris, Bruxelles, Lyon, Marseille...) avec plus de 3h de retard, la compagnie doit vous verser une indemnité fixe.
             Peu importe votre nationalité, peu importe la compagnie — toute compagnie, qu'elle soit européenne ou non, doit payer si le vol part d'Europe.
           </p>
         </div>
 
         <div style="background:rgba(0,200,122,0.04);border:1px solid rgba(0,200,122,0.15);border-radius:10px;padding:14px 16px;margin-bottom:14px;">
-          <div style="font-size:10px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--neon-dark);margin-bottom:8px;">🛬 VOUS PARTEZ D'AFRIQUE POUR REJOINDRE L'EUROPE</div>
-          <p style="font-size:13px;color:var(--gray);line-height:1.75;margin-bottom:10px;">
+          <div style="font-size:10px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--neon-dark);margin-bottom:8px;" data-i18n="loi_you_depart_africa_title">🛬 VOUS PARTEZ D'AFRIQUE POUR REJOINDRE L'EUROPE</div>
+          <p style="font-size:13px;color:var(--gray);line-height:1.75;margin-bottom:10px;" data-i18n="loi_you_depart_africa_p1">
             Si votre vol décolle d'un aéroport africain (Dakar, Abidjan, Kinshasa...) à destination de l'UE, la règle change : seules les compagnies européennes sont tenues de payer.
           </p>
-          <p style="font-size:13px;color:var(--gray);line-height:1.75;margin:0;">
+          <p style="font-size:13px;color:var(--gray);line-height:1.75;margin:0;" data-i18n-html="loi_you_depart_africa_p2">
             → Air France, Corsair, Brussels Airlines : <strong style="color:var(--navy);">oui</strong>, elles sont européennes.<br>
             → Royal Air Maroc, Air Sénégal, Ethiopian Airlines : <strong style="color:var(--navy);">non</strong> sur ces vols-là — elles ne sont pas européennes.
           </p>
         </div>
 
-        <p style="font-size:13px;color:var(--gray);line-height:1.85;margin-bottom:10px;">
+        <p style="font-size:13px;color:var(--gray);line-height:1.85;margin-bottom:10px;" data-i18n-html="loi_contact_wa">
           Pas sûr de votre cas ? <a href="https://wa.me/15557840392" target="_blank" style="color:var(--neon-dark);text-decoration:underline;font-weight:800;">Envoyez-nous votre vol sur WhatsApp</a>, on vérifie gratuitement dans la journée.
         </p>
 
-        <p style="font-size:14px;color:var(--gray);line-height:1.85;margin:0;">
+        <p style="font-size:14px;color:var(--gray);line-height:1.85;margin:0;" data-i18n-html="loi_80percent">
           <strong style="color:var(--navy);">80% des passagers éligibles ne réclament jamais.</strong> Pas parce qu'ils n'y ont pas droit — parce que les compagnies comptent sur leur abandon.
           Et vous avez <strong style="color:var(--navy);">5 ans</strong> pour réclamer : votre vol de 2021 qui avait du retard ? L'argent est toujours là.
         </p>
@@ -571,32 +570,32 @@
 
     <div class="loi-cards">
       <div class="loi-card">
-        <div class="loi-card-badge">Vols courts</div>
+        <div class="loi-card-badge" data-i18n="loi_card_short">Vols courts</div>
         <div class="loi-amount">250<span style="font-size:28px;">€</span></div>
-        <div style="font-size:10px;color:var(--neon-dark);font-weight:700;margin:4px 0 2px;letter-spacing:1px;">→ 188€ nets (sur 250€)</div>
-        <div class="loi-distance">Moins de 1 500 km</div>
-        <div class="loi-example">Lyon → Alger · Nantes → Tunis · Marseille → Casablanca · Dakar → Lisbonne</div>
+        <div style="font-size:10px;color:var(--neon-dark);font-weight:700;margin:4px 0 2px;letter-spacing:1px;" data-i18n="loi_net_250">→ 188€ nets (sur 250€)</div>
+        <div class="loi-distance" data-i18n="loi_distance_short">Moins de 1 500 km</div>
+        <div class="loi-example" data-i18n="loi_example_short">Lyon → Alger · Nantes → Tunis · Marseille → Casablanca · Dakar → Lisbonne</div>
       </div>
 
       <div class="loi-card">
-        <div class="loi-card-badge">Vols moyens</div>
+        <div class="loi-card-badge" data-i18n="loi_card_medium">Vols moyens</div>
         <div class="loi-amount">400<span style="font-size:28px;">€</span></div>
-        <div style="font-size:10px;color:var(--neon-dark);font-weight:700;margin:4px 0 2px;letter-spacing:1px;">→ 300€ nets (sur 400€)</div>
-        <div class="loi-distance">1 500 à 3 500 km</div>
-        <div class="loi-example">Toulouse → Dakar · Amsterdam → Tunis · Madrid → Lagos · Casablanca → Berlin</div>
+        <div style="font-size:10px;color:var(--neon-dark);font-weight:700;margin:4px 0 2px;letter-spacing:1px;" data-i18n="loi_net_300">→ 300€ nets (sur 400€)</div>
+        <div class="loi-distance" data-i18n="loi_distance_medium">1 500 à 3 500 km</div>
+        <div class="loi-example" data-i18n="loi_example_medium">Toulouse → Dakar · Amsterdam → Tunis · Madrid → Lagos · Casablanca → Berlin</div>
       </div>
 
       <div class="loi-card featured">
-        <div class="loi-card-badge">Nos communautés · Nos familles</div>
+        <div class="loi-card-badge" data-i18n="loi_card_long">Nos communautés · Nos familles</div>
         <div class="loi-amount">600<span style="font-size:28px;color:var(--neon-b);">€</span></div>
-        <div style="font-size:10px;color:var(--neon-b);font-weight:700;margin:4px 0 2px;letter-spacing:1px;">→ 450€ nets (sur 600€)</div>
-        <div class="loi-distance">Plus de 3 500 km</div>
-        <div class="loi-example" style="color:rgba(255,255,255,0.45);">Bordeaux → Bamako · Lyon → Douala · Bruxelles → Kinshasa · Lisbonne → Dakar</div>
+        <div style="font-size:10px;color:var(--neon-b);font-weight:700;margin:4px 0 2px;letter-spacing:1px;" data-i18n="loi_net_450">→ 450€ nets (sur 600€)</div>
+        <div class="loi-distance" data-i18n="loi_distance_long">Plus de 3 500 km</div>
+        <div class="loi-example" style="color:rgba(255,255,255,0.45);" data-i18n="loi_example_long">Bordeaux → Bamako · Lyon → Douala · Bruxelles → Kinshasa · Lisbonne → Dakar</div>
       </div>
     </div>
     <div style="margin-top:48px;text-align:center;">
-      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary">Je récupère mon argent →</a>
-      <p style="font-size:11px;color:var(--gray);margin-top:10px;">Jusqu'à 600€ · 25% · Zéro frais si on perd</p>
+      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary" data-i18n="cta_recover">Je récupère mon argent →</a>
+      <p style="font-size:11px;color:var(--gray);margin-top:10px;" data-i18n="cta_recall">Jusqu'à 600€ · 25% · Zéro frais si on perd</p>
       <p style="font-size:12px;margin-top:14px;"><a href="/choix-reclamation.html" style="color:var(--neon-dark);font-weight:600;" data-i18n="cta_depot">Déposer mon dossier →</a></p>
       <p style="font-size:11px;color:var(--gray);margin-top:6px;"><span data-i18n="cta_or">Ou </span><a href="/depot-en-ligne.html" style="color:var(--gray);text-decoration:underline;" data-i18n="link_depot_online">formulaire en ligne</a></p>
     </div>
@@ -606,9 +605,9 @@
 <!-- ═══════ TOP DESTINATIONS 600€ ═══════ -->
 <section id="top-destinations" class="reveal">
   <div class="dest-wrap">
-    <div class="section-tag">Lignes long-courrier</div>
-    <h2 class="section-title">Top destinations · <span class="neon">Indemnité 600€</span></h2>
-    <p class="section-desc" style="margin-top:10px;">Vol retardé ou annulé vers ces villes ? Vous êtes éligible au palier maximum de la loi CE 261.</p>
+    <div class="section-tag" data-i18n="dest_tag">Lignes long-courrier</div>
+    <h2 class="section-title" data-i18n-html="dest_title">Top destinations · <span class="neon">Indemnité 600€</span></h2>
+    <p class="section-desc" style="margin-top:10px;" data-i18n="dest_desc">Vol retardé ou annulé vers ces villes ? Vous êtes éligible au palier maximum de la loi CE 261.</p>
     <div class="dest-grid">
       <a href="/destinations/dakar.html" class="dest-card">
         <div class="dest-card-city">Dakar</div>
@@ -849,13 +848,13 @@
 <!-- ═══════ PREUVE SOCIALE ═══════ -->
 <section class="social-proof-strip" aria-label="Chiffres clés">
   <div class="wrap-social-proof">
-    <span class="sp-item"><strong>9 dossiers sur 10</strong> remportés</span>
+    <span class="sp-item" data-i18n-html="sp_9sur10"><strong>9 dossiers sur 10</strong> remportés</span>
     <span class="sp-sep">·</span>
-    <span class="sp-item">Réponse sous <strong>24h</strong></span>
+    <span class="sp-item" data-i18n-html="sp_24h">Réponse sous <strong>24h</strong></span>
     <span class="sp-sep">·</span>
-    <span class="sp-item">Nos familles nous font confiance — des centaines de dossiers réglés</span>
+    <span class="sp-item" data-i18n="sp_families">Nos familles nous font confiance — des centaines de dossiers réglés</span>
     <span class="sp-sep">·</span>
-    <a href="#funnel-box" onclick="document.getElementById('funnel-box')&&document.getElementById('funnel-box').scrollIntoView({behavior:'smooth'}); return false;" class="sp-cta">C'est mon tour →</a>
+    <a href="#funnel-box" onclick="document.getElementById('funnel-box')&&document.getElementById('funnel-box').scrollIntoView({behavior:'smooth'}); return false;" class="sp-cta" data-i18n="sp_cta">C'est mon tour →</a>
   </div>
 </section>
 
@@ -908,11 +907,8 @@
       </div>
     </div>
     <div style="margin-top:48px;text-align:center;">
-      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary">3 minutes et c'est réglé →</a>
-      <p style="font-size:11px;color:var(--gray);margin-top:10px;">Réponse sous 24h · Scan rapide 3 min</p>
-      <p style="font-size:12px;margin-top:14px;"><a href="/choix-reclamation.html" style="color:var(--neon-dark);font-weight:600;" data-i18n="cta_depot">Déposer mon dossier →</a></p>
-      <p style="font-size:11px;color:var(--gray);margin-top:6px;"><span data-i18n="cta_or">Ou </span><a href="/depot-en-ligne.html" style="color:var(--gray);text-decoration:underline;" data-i18n="link_depot_online">formulaire en ligne</a></p>
-      <p style="font-size:12px;color:var(--gray);margin-top:18px;">Pour aller plus loin : <a href="/meteo-dossier-indemnite.html" style="color:var(--neon-dark);font-weight:600;">Météo et dossier (TAF, METAR…)</a> · <a href="/pourquoi-si-peu-reclament.html" style="color:var(--neon-dark);font-weight:600;">Pourquoi si peu récupèrent leur indemnité ?</a></p>
+      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary" data-i18n="cta_3min">3 minutes et c'est réglé →</a>
+      <p style="font-size:12px;color:var(--gray);margin-top:18px;" data-i18n-html="how_further">Pour aller plus loin : <a href="/meteo-dossier-indemnite.html" style="color:var(--neon-dark);font-weight:600;">Météo et dossier (TAF, METAR…)</a> · <a href="/pourquoi-si-peu-reclament.html" style="color:var(--neon-dark);font-weight:600;">Pourquoi si peu récupèrent leur indemnité ?</a></p>
     </div>
   </div>
 </section>
@@ -1510,6 +1506,10 @@ function submitShort() {
 function showLongFunnel() {
   document.getElementById('funnel-short').style.display = 'none';
   document.getElementById('funnel-long').style.display = 'block';
+  var waShortcut = document.querySelector('.funnel-wa-shortcut');
+  if (waShortcut) waShortcut.style.display = 'none';
+  var detailLink = document.querySelector('.funnel-detail-link');
+  if (detailLink) detailLink.style.display = 'none';
   goTo('step-1', 12);
 }
 
@@ -2195,7 +2195,7 @@ function openWhatsAppQrFromHero(e) {
 <!-- Un seul CTA persistant : bouton WhatsApp flottant -->
 <a href="https://wa.me/15557840392?text=Bonjour%20Robin%20!%20%F0%9F%8F%B9%0A%F0%9F%93%8E%20Je%20joins%20ma%2Fmes%20carte(s)%20d%27embarquement%0AOu%20si%20je%20ne%20les%20ai%20plus%20%3A%0ANum%C3%A9ro(s)%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="wa-float" id="wa-float" aria-label="Envoyer ma carte d'embarquement sur WhatsApp">
   <span class="wa-float-icon">💬</span>
-  <span class="wa-float-text" data-i18n="wa_float_text">Envoyez votre carte ici</span>
+  <span class="wa-float-text" data-i18n="wa_float_text">Envoyez votre carte d'embarquement ici</span>
 </a>
 
 </body>

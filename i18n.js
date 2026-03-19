@@ -4,7 +4,11 @@ window.I18N = (function() {
   var currentLang = (stored === 'en' ? 'en' : 'fr');
   var T = {
     fr: {
+      page_title: "Robin des Airs — Indemnités aériennes jusqu'à 600€ | Premium",
+      meta_description: "Vol retardé ou annulé ? Récupérez jusqu'à 600€ d'indemnité. Service premium — 25% de commission, zéro frais si on ne gagne pas. Réponse sous 24h.",
       skip_link: "Aller au contenu principal",
+      diaspora_bar_text: "Au service de nos communautés et de nos familles · Vols Europe–Afrique",
+      hero_wa_note: "Répondez en français, wolof ou anglais — comme vous préférez.",
       hero_title: "Robin prend\naux compagnies,\n",
       hero_title_neon: "rend à nos familles.",
       hero_diaspora_why: "On connaît vos lignes, on parle votre langue — on récupère les 600€ pour nos communautés et nos familles.",
@@ -38,7 +42,7 @@ window.I18N = (function() {
       funnel_subtitle: "si vous êtes éligible",
       funnel_step_short: "2 questions",
       calc_disclaimer: "Zéro CB · Réponse sous 24h · Zéro frais si on perd",
-      step1_eyebrow: "Étape 1 sur 5 — Ce qui s'est passé",
+      step1_eyebrow: "Ce qui s'est passé",
       step1_retard: "Vol retardé",
       step1_retard_sub: "Arrivée avec +3h de retard",
       step1_annulation: "Vol annulé",
@@ -71,6 +75,51 @@ window.I18N = (function() {
       cta_or: "Ou ",
       link_depot_online: "formulaire en ligne",
       cta_recall: "Jusqu'à 600€ · 25% · Zéro frais si on perd",
+      loi_intro: "Le <strong style=\"color:var(--navy);\">Règlement (CE) n° 261/2004</strong> est une loi européenne qui protège les passagers. Voici les deux situations où elle s'applique :",
+      loi_you_depart_eu_title: "🛫 VOUS PARTEZ D'EUROPE",
+      loi_you_depart_eu_p: "Si votre vol décolle d'un aéroport de l'Union européenne (Paris, Bruxelles, Lyon, Marseille...) avec plus de 3h de retard, la compagnie doit vous verser une indemnité fixe. Peu importe votre nationalité, peu importe la compagnie — toute compagnie, qu'elle soit européenne ou non, doit payer si le vol part d'Europe.",
+      loi_you_depart_africa_title: "🛬 VOUS PARTEZ D'AFRIQUE POUR REJOINDRE L'EUROPE",
+      loi_you_depart_africa_p1: "Si votre vol décolle d'un aéroport africain (Dakar, Abidjan, Kinshasa...) à destination de l'UE, la règle change : seules les compagnies européennes sont tenues de payer.",
+      loi_you_depart_africa_p2: "→ Air France, Corsair, Brussels Airlines : <strong style=\"color:var(--navy);\">oui</strong>, elles sont européennes.<br>→ Royal Air Maroc, Air Sénégal, Ethiopian Airlines : <strong style=\"color:var(--navy);\">non</strong> sur ces vols-là — elles ne sont pas européennes.",
+      loi_contact_wa: "Pas sûr de votre cas ? <a href=\"https://wa.me/15557840392\" target=\"_blank\" style=\"color:var(--neon-dark);text-decoration:underline;font-weight:800;\">Envoyez-nous votre vol sur WhatsApp</a>, on vérifie gratuitement dans la journée.",
+      loi_80percent: "<strong style=\"color:var(--navy);\">80% des passagers éligibles ne réclament jamais.</strong> Pas parce qu'ils n'y ont pas droit — parce que les compagnies comptent sur leur abandon. Et vous avez <strong style=\"color:var(--navy);\">5 ans</strong> pour réclamer : votre vol de 2021 qui avait du retard ? L'argent est toujours là.",
+      loi_card_short: "Vols courts",
+      loi_card_medium: "Vols moyens",
+      loi_card_long: "Nos communautés · Nos familles",
+      loi_distance_short: "Moins de 1 500 km",
+      loi_distance_medium: "1 500 à 3 500 km",
+      loi_distance_long: "Plus de 3 500 km",
+      loi_net_250: "→ 188€ nets (sur 250€)",
+      loi_net_300: "→ 300€ nets (sur 400€)",
+      loi_net_450: "→ 450€ nets (sur 600€)",
+      loi_example_short: "Lyon → Alger · Nantes → Tunis · Marseille → Casablanca · Dakar → Lisbonne",
+      loi_example_medium: "Toulouse → Dakar · Amsterdam → Tunis · Madrid → Lagos · Casablanca → Berlin",
+      loi_example_long: "Bordeaux → Bamako · Lyon → Douala · Bruxelles → Kinshasa · Lisbonne → Dakar",
+      cta_recover: "Je récupère mon argent →",
+      dest_tag: "Lignes long-courrier",
+      dest_title: "Top destinations · <span class=\"neon\">Indemnité 600€</span>",
+      dest_desc: "Vol retardé ou annulé vers ces villes ? Vous êtes éligible au palier maximum de la loi CE 261.",
+      dest_card_line: "Ligne surveillée par Robin",
+      dest_card_amount: "Indemnité standard : 600€",
+      sp_9sur10: "<strong>9 dossiers sur 10</strong> remportés",
+      sp_24h: "Réponse sous <strong>24h</strong>",
+      sp_families: "Nos familles nous font confiance — des centaines de dossiers réglés",
+      sp_cta: "C'est mon tour →",
+      how_step1_title: "Vous vérifiez",
+      how_step1_desc: "Entrez votre vol dans le diagnostic. En 60 secondes, vous savez si vous êtes éligible et combien vous touchez net.",
+      how_step2_title: "Vous signez",
+      how_step2_desc: "3 minutes sur WhatsApp ou en ligne. Vous signez le mandat électronique. C'est tout — on prend la main.",
+      how_step3_title: "On monte le dossier",
+      how_step3_desc: "Sous 24h, notre équipe constitue un dossier béton : bulletins météo METAR et TAF (aéroport départ + arrivée), relevés des vols d'autres compagnies au même moment, analyse des prévisions. Si d'autres avions ont pu décoller ce jour-là — on le prouve. C'est pour ça qu'on affiche 9 dossiers sur 10 remportés.",
+      how_step4_title: "Vous encaissez",
+      how_step4_desc: "Robin négocie, relance, et suit la procédure jusqu'au bout. Dans 60% des cas, la compagnie paie sous 4 à 12 semaines. Si elle résiste, on saisit le Médiateur du Tourisme et du Voyage en votre nom. Et si même le médiateur ne suffit pas, on saisit le tribunal à nos frais et à nos risques — notre commission reste 25%. Dès que les fonds arrivent, on vous vire votre part. Vous savez exactement ce que vous touchez avant même de signer.",
+      how_step1_time: "⏱ 60 secondes",
+      how_step2_time: "⏱ 3 minutes",
+      how_step3_time: "⏱ 24 heures",
+      cta_3min: "3 minutes et c'est réglé →",
+      how_further: "Pour aller plus loin : <a href=\"/meteo-dossier-indemnite.html\" style=\"color:var(--neon-dark);font-weight:600;\">Météo et dossier (TAF, METAR…)</a> · <a href=\"/pourquoi-si-peu-reclament.html\" style=\"color:var(--neon-dark);font-weight:600;\">Pourquoi si peu récupèrent leur indemnité ?</a>",
+      testi_aria_prev: "Précédent",
+      testi_aria_next: "Suivant",
       footer_tagline: "Réclamation aérienne · Spécialiste Diaspora · Prix fixe · No win no fee",
       footer_nav: "Navigation",
       footer_legal: "Légal",
@@ -179,11 +228,15 @@ window.I18N = (function() {
       founder_signature: "— Le fondateur · 20 ans dans le secteur aérien · Spécialiste CE 261/2004",
       founder_cta: "CONFIER MON DOSSIER À ROBIN",
       founder_note: "Zéro frais si on perd · Réponse en moins de 2h · Droit de rétractation 14 jours",
-      wa_float_text: "Envoyez votre carte ici",
+      wa_float_text: "Envoyez votre carte d'embarquement ici",
       wa_float_aria: "Envoyer ma carte d'embarquement sur WhatsApp"
     },
     en: {
+      page_title: "Robin des Airs — Flight compensation up to €600 | Premium",
+      meta_description: "Delayed or cancelled flight? Recover up to €600 in compensation. Premium service — 25% commission, no fee if we don't win. Reply within 24h.",
       skip_link: "Skip to main content",
+      diaspora_bar_text: "Serving our communities and families · Europe–Africa flights",
+      hero_wa_note: "Reply in French, Wolof or English — whatever you prefer.",
       hero_title: "Robin takes from\nairlines,\n",
       hero_title_neon: "gives back to our families.",
       hero_diaspora_why: "We know your routes, we speak your language — we recover the €600 for our communities and our families.",
@@ -217,7 +270,7 @@ window.I18N = (function() {
       funnel_subtitle: "if you're eligible",
       funnel_step_short: "2 questions",
       calc_disclaimer: "No card required · Reply within 24h · No fee if we lose",
-      step1_eyebrow: "Step 1 of 5 — What happened",
+      step1_eyebrow: "What happened",
       step1_retard: "Delayed flight",
       step1_retard_sub: "Arrival +3h late",
       step1_annulation: "Cancelled flight",
@@ -249,6 +302,51 @@ window.I18N = (function() {
       cta_or: "Or ",
       link_depot_online: "online form",
       cta_recall: "Up to €600 · 25% · No fee if we lose",
+      loi_intro: "EU <strong style=\"color:var(--navy);\">Regulation (EC) No 261/2004</strong> is a European law that protects passengers. Here are the two situations where it applies:",
+      loi_you_depart_eu_title: "🛫 YOU DEPART FROM EUROPE",
+      loi_you_depart_eu_p: "If your flight departs from an EU airport (Paris, Brussels, Lyon, Marseille...) with more than 3h delay, the airline must pay you a fixed compensation. Regardless of your nationality or the airline — any carrier, European or not, must pay if the flight leaves from Europe.",
+      loi_you_depart_africa_title: "🛬 YOU DEPART FROM AFRICA TO EUROPE",
+      loi_you_depart_africa_p1: "If your flight departs from an African airport (Dakar, Abidjan, Kinshasa...) to the EU, the rule changes: only European airlines are required to pay.",
+      loi_you_depart_africa_p2: "→ Air France, Corsair, Brussels Airlines: <strong style=\"color:var(--navy);\">yes</strong>, they are European.<br>→ Royal Air Maroc, Air Sénégal, Ethiopian Airlines: <strong style=\"color:var(--navy);\">no</strong> on those flights — they are not European.",
+      loi_contact_wa: "Not sure about your case? <a href=\"https://wa.me/15557840392\" target=\"_blank\" style=\"color:var(--neon-dark);text-decoration:underline;font-weight:800;\">Send us your flight on WhatsApp</a>, we'll check for free within the day.",
+      loi_80percent: "<strong style=\"color:var(--navy);\">80% of eligible passengers never claim.</strong> Not because they're not entitled — because airlines count on them giving up. And you have <strong style=\"color:var(--navy);\">5 years</strong> to claim: that 2021 flight that was delayed? The money is still there.",
+      loi_card_short: "Short haul",
+      loi_card_medium: "Medium haul",
+      loi_card_long: "Our communities · Our families",
+      loi_distance_short: "Under 1,500 km",
+      loi_distance_medium: "1,500 to 3,500 km",
+      loi_distance_long: "Over 3,500 km",
+      loi_net_250: "→ €188 net (on €250)",
+      loi_net_300: "→ €300 net (on €400)",
+      loi_net_450: "→ €450 net (on €600)",
+      loi_example_short: "Lyon → Algiers · Nantes → Tunis · Marseille → Casablanca · Dakar → Lisbon",
+      loi_example_medium: "Toulouse → Dakar · Amsterdam → Tunis · Madrid → Lagos · Casablanca → Berlin",
+      loi_example_long: "Bordeaux → Bamako · Lyon → Douala · Brussels → Kinshasa · Lisbon → Dakar",
+      cta_recover: "Get my money back →",
+      dest_tag: "Long-haul routes",
+      dest_title: "Top destinations · <span class=\"neon\">€600 compensation</span>",
+      dest_desc: "Delayed or cancelled flight to these cities? You're eligible for the maximum under EU Regulation 261.",
+      dest_card_line: "Route monitored by Robin",
+      dest_card_amount: "Standard compensation: €600",
+      sp_9sur10: "<strong>9 out of 10</strong> cases won",
+      sp_24h: "Reply within <strong>24h</strong>",
+      sp_families: "Our families trust us — hundreds of cases settled",
+      sp_cta: "My turn →",
+      how_step1_title: "You check",
+      how_step1_desc: "Enter your flight in the checker. In 60 seconds you know if you're eligible and how much you get net.",
+      how_step2_title: "You sign",
+      how_step2_desc: "3 minutes on WhatsApp or online. You sign the electronic mandate. That's it — we take over.",
+      how_step3_title: "We build your case",
+      how_step3_desc: "Within 24h our team puts together a solid file: METAR and TAF weather reports (departure + arrival airport), other airlines' flights at the same time, forecast analysis. If other planes could take off that day — we prove it. That's why we show 9 out of 10 cases won.",
+      how_step4_title: "You get paid",
+      how_step4_desc: "Robin negotiates, follows up, and sees the process through. In 60% of cases the airline pays within 4 to 12 weeks. If it resists, we refer your case to the Tourism and Travel Ombudsman. And if even the ombudsman isn't enough, we go to court at our expense and risk — our commission stays 25%. As soon as the funds arrive, we transfer your share. You know exactly what you get before you even sign.",
+      how_step1_time: "⏱ 60 seconds",
+      how_step2_time: "⏱ 3 minutes",
+      how_step3_time: "⏱ 24 hours",
+      cta_3min: "3 minutes and it's done →",
+      how_further: "Find out more: <a href=\"/meteo-dossier-indemnite.html\" style=\"color:var(--neon-dark);font-weight:600;\">Weather and claims (TAF, METAR…)</a> · <a href=\"/pourquoi-si-peu-reclament.html\" style=\"color:var(--neon-dark);font-weight:600;\">Why do so few get their compensation?</a>",
+      testi_aria_prev: "Previous",
+      testi_aria_next: "Next",
       footer_tagline: "Air claim · Diaspora specialist · Fixed price · No win no fee",
       footer_nav: "Navigation",
       footer_legal: "Legal",
@@ -369,6 +467,10 @@ window.I18N = (function() {
 
   function apply() {
     document.documentElement.lang = currentLang === 'en' ? 'en' : 'fr';
+    var title = get('page_title');
+    if (title) document.title = title;
+    var metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc && get('meta_description')) metaDesc.setAttribute('content', get('meta_description'));
     document.querySelectorAll('[data-i18n]').forEach(function(el) {
       var key = el.getAttribute('data-i18n');
       var val = get(key);
@@ -468,6 +570,21 @@ window.I18N = (function() {
       var aEl = item.querySelector('.faq-answer-inner');
       if (aEl) aEl.innerHTML = get('faq_' + idx + '_a');
     });
+    var destCards = document.querySelectorAll('#top-destinations .dest-card');
+    destCards.forEach(function(card) {
+      var line = card.querySelector('.dest-card-line');
+      var amount = card.querySelector('.dest-card-amount');
+      if (line) line.textContent = get('dest_card_line');
+      if (amount) amount.textContent = get('dest_card_amount');
+    });
+    var howTitles = document.querySelectorAll('#comment-ca-marche .step-title');
+    var howDescs = document.querySelectorAll('#comment-ca-marche .step-desc');
+    var howTimes = document.querySelectorAll('#comment-ca-marche .step-time');
+    if (howTitles.length >= 4) { howTitles[0].textContent = get('how_step1_title'); howTitles[1].textContent = get('how_step2_title'); howTitles[2].textContent = get('how_step3_title'); howTitles[3].textContent = get('how_step4_title'); }
+    if (howDescs.length >= 4) { howDescs[0].textContent = get('how_step1_desc'); howDescs[1].textContent = get('how_step2_desc'); howDescs[2].textContent = get('how_step3_desc'); howDescs[3].innerHTML = get('how_step4_desc'); }
+    if (howTimes.length >= 3) { howTimes[0].textContent = get('how_step1_time'); howTimes[1].textContent = get('how_step2_time'); howTimes[2].textContent = get('how_step3_time'); }
+    var testiArrows = document.querySelectorAll('.testi-arrow');
+    if (testiArrows.length >= 2) { testiArrows[0].setAttribute('aria-label', get('testi_aria_prev')); testiArrows[1].setAttribute('aria-label', get('testi_aria_next')); }
   }
 
   function setLang(code) {
