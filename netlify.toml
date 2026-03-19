@@ -7,6 +7,8 @@
 # 2) Netlify → Domain management → HTTPS → activer "Force TLS connection"
 [functions]
   directory = "netlify/functions"
+  # Inclure explicitement @netlify/blobs dans le zip (sinon esbuild peut ne pas le tracer → "Cannot find module")
+  external_node_modules = ["@netlify/blobs"]
 
 # Relais Gemini après ~20s sans réponse humaine (traitement toutes les minutes)
 [functions."whatsapp-gemini-fallback"]

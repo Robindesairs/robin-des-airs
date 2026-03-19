@@ -120,7 +120,7 @@
 
       <!-- CTA principal = WhatsApp (audit: canal principal en premier) -->
       <div class="hero-entry">
-        <a href="https://wa.me/15557840392?text=Bonjour%20Robin%20!%20%F0%9F%8F%B9%0A%F0%9F%93%8E%20Je%20joins%20ma%2Fmes%20carte(s)%20d%27embarquement%0AOu%20si%20je%20ne%20les%20ai%20plus%20%3A%0ANum%C3%A9ro(s)%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="hero-entry-btn primary" data-i18n="hero_btn_wa" id="hero-wa-link">📱 Envoyer ma carte d'embarquement sur WhatsApp</a>
+        <a href="https://wa.me/15557840392?text=Bonjour%20Robin%20!%0AJ%27envoie%20ma%20carte%20d%27embarquement%20pour%20v%C3%A9rifier%20mon%20%C3%A9ligibilit%C3%A9.%0A(Sans%20carte%20%3A%20Vol%20%3A%20___%20%20Date%20%3A%20___)" target="_blank" rel="noopener" class="hero-entry-btn primary" data-i18n="hero_btn_wa" id="hero-wa-link">📱 Envoyer ma carte d'embarquement sur WhatsApp</a>
         <a href="#funnel-box" class="hero-entry-btn secondary" id="btn-calc-hero" onclick="scrollToCalcWithAnimation(event)" data-i18n="hero_btn_calc">Ou vérifier mon éligibilité (2 questions)</a>
       </div>
       <p style="margin-top:10px;font-size:12px;color:rgba(255,255,255,0.75);">
@@ -330,8 +330,8 @@
         <div class="calc-field" id="da-manual-wrap">
           <label class="calc-label">Ville de départ et d'arrivée (recherche : ville ou code IATA)</label>
           <div class="calc-row">
-            <select id="da-ville-depart" class="calc-select calc-select-airport" placeholder="Départ (ex. Paris, CDG)"><option value="">Départ</option></select>
-            <select id="da-ville-arrivee" class="calc-select calc-select-airport" placeholder="Arrivée (ex. Dakar, DKR)"><option value="">Arrivée</option></select>
+            <select id="da-ville-depart" class="calc-select calc-select-airport" placeholder="Départ (ex. Paris, CDG)"><option value=""></option></select>
+            <select id="da-ville-arrivee" class="calc-select calc-select-airport" placeholder="Arrivée (ex. Dakar, DKR)"><option value=""></option></select>
           </div>
           <p id="funnel-guide-dakar" class="funnel-guide-link" style="display:none; margin-top:8px; font-size:11px;">
             Besoin d'aide ? <a href="/blog/vol-retarde-dakar-paris-indemnite.html" target="_blank" rel="noopener">Lire notre guide sur le vol Paris-Dakar</a>
@@ -378,11 +378,11 @@
           <div class="calc-row">
             <div class="calc-field">
               <label class="calc-label">Ville de départ</label>
-              <select id="eb-ville-depart-1" class="calc-select-airport" placeholder="Départ"><option value="">Départ</option></select>
+              <select id="eb-ville-depart-1" class="calc-select-airport" placeholder="Départ"><option value=""></option></select>
             </div>
             <div class="calc-field">
               <label class="calc-label">Ville de fin</label>
-              <select id="eb-ville-arrivee-1" class="calc-select-airport" placeholder="Arrivée"><option value="">Arrivée</option></select>
+              <select id="eb-ville-arrivee-1" class="calc-select-airport" placeholder="Arrivée"><option value=""></option></select>
             </div>
           </div>
           <div class="calc-field">
@@ -401,11 +401,11 @@
           <div class="calc-row">
             <div class="calc-field">
               <label class="calc-label">Ville de départ</label>
-              <select id="eb-ville-depart-2" class="calc-select-airport" placeholder="Départ"><option value="">Départ</option></select>
+              <select id="eb-ville-depart-2" class="calc-select-airport" placeholder="Départ"><option value=""></option></select>
             </div>
             <div class="calc-field">
               <label class="calc-label">Ville de fin</label>
-              <select id="eb-ville-arrivee-2" class="calc-select-airport" placeholder="Arrivée"><option value="">Arrivée</option></select>
+              <select id="eb-ville-arrivee-2" class="calc-select-airport" placeholder="Arrivée"><option value=""></option></select>
             </div>
           </div>
           <div class="calc-field">
@@ -424,11 +424,11 @@
           <div class="calc-row">
             <div class="calc-field">
               <label class="calc-label">Ville de départ</label>
-              <select id="eb-ville-depart-3" class="calc-select-airport" placeholder="Départ"><option value="">Départ</option></select>
+              <select id="eb-ville-depart-3" class="calc-select-airport" placeholder="Départ"><option value=""></option></select>
             </div>
             <div class="calc-field">
               <label class="calc-label">Ville de fin</label>
-              <select id="eb-ville-arrivee-3" class="calc-select-airport" placeholder="Arrivée"><option value="">Arrivée</option></select>
+              <select id="eb-ville-arrivee-3" class="calc-select-airport" placeholder="Arrivée"><option value=""></option></select>
             </div>
           </div>
           <div class="calc-field">
@@ -761,28 +761,28 @@
         <!-- Groupe 1 — visible par défaut -->
         <div class="testi-card" data-group="0">
           <div class="testi-stars">★★★★★</div>
-          <p class="testi-quote">J'avais presque lâché l'affaire après 6 mois à attendre Air France. Robin a tout réglé en 5 semaines. franchement je recommande à toute ma famille 👏</p>
+          <p class="testi-quote" data-i18n="testi_quote_1">J'avais presque lâché l'affaire après 6 mois à attendre Air France. Robin a tout réglé en 5 semaines. franchement je recommande à toute ma famille 👏</p>
           <div class="testi-author">
             <div class="testi-avatar">AM</div>
-            <div><div class="testi-name">Aminata M.</div><div class="testi-info">CDG → DKR · AF718 · Retard 6h</div></div>
+            <div><div class="testi-name">Aminata M.</div><div class="testi-info" data-i18n="testi_info_1">CDG → DKR · AF718 · Retard 6h</div></div>
             <div class="testi-amount">600€</div>
           </div>
         </div>
         <div class="testi-card" data-group="0">
           <div class="testi-stars">★★★★★</div>
-          <p class="testi-quote">Sur 400€ d'indemnité, j'ai reçu 300€ nets. Chez les autres c'est 35%, j'aurais touché 260€. Le 25% fixe m'a convaincu.</p>
+          <p class="testi-quote" data-i18n="testi_quote_2">Sur 400€ d'indemnité, j'ai reçu 300€ nets. Chez les autres c'est 35%, j'aurais touché 260€. Le 25% fixe m'a convaincu.</p>
           <div class="testi-author">
             <div class="testi-avatar">JB</div>
-            <div><div class="testi-name">Jean-Baptiste K.</div><div class="testi-info">BRU → ABJ · SN373 · Annulation</div></div>
+            <div><div class="testi-name">Jean-Baptiste K.</div><div class="testi-info" data-i18n="testi_info_2">BRU → ABJ · SN373 · Annulation</div></div>
             <div class="testi-amount">400€</div>
           </div>
         </div>
         <div class="testi-card" data-group="0">
           <div class="testi-stars">★★★★☆</div>
-          <p class="testi-quote">4h de retard sur Corsair Pointe-à-Pitre. En 2 min le dossier était déposé. Le whatsapp c'est pratique on sait toujours ou on en est</p>
+          <p class="testi-quote" data-i18n="testi_quote_3">4h de retard sur Corsair Pointe-à-Pitre. En 2 min le dossier était déposé. Le whatsapp c'est pratique on sait toujours ou on en est</p>
           <div class="testi-author">
             <div class="testi-avatar">SF</div>
-            <div><div class="testi-name">Sophie F.</div><div class="testi-info">ORY → PTP · DS891 · Retard 4h</div></div>
+            <div><div class="testi-name">Sophie F.</div><div class="testi-info" data-i18n="testi_info_3">ORY → PTP · DS891 · Retard 4h</div></div>
             <div class="testi-amount">600€</div>
           </div>
         </div>
@@ -790,28 +790,28 @@
         <!-- Groupe 2 — caché par défaut -->
         <div class="testi-card" data-group="1" style="display:none;">
           <div class="testi-stars">★★★★★</div>
-          <p class="testi-quote">Air France m'avait donné un bon d'achat de 300€. Robin m'a dit de ne pas l'accepter. Bonne décision, j'ai touché 450€ en cash 💶</p>
+          <p class="testi-quote" data-i18n="testi_quote_4">Air France m'avait donné un bon d'achat de 300€. Robin m'a dit de ne pas l'accepter. Bonne décision, j'ai touché 450€ en cash 💶</p>
           <div class="testi-author">
             <div class="testi-avatar">DT</div>
-            <div><div class="testi-name">David T.</div><div class="testi-info">CDG → BKO · AF732 · Annulation</div></div>
+            <div><div class="testi-name">David T.</div><div class="testi-info" data-i18n="testi_info_4">CDG → BKO · AF732 · Annulation</div></div>
             <div class="testi-amount">450€</div>
           </div>
         </div>
         <div class="testi-card" data-group="1" style="display:none;">
           <div class="testi-stars">★★★★★</div>
-          <p class="testi-quote">Vol Tunis Paris retardé de 5h pour soi-disant la meteo. Robin a prouvé que d'autres avions avaient atterri le meme jour. Ils ont pas pu refuser</p>
+          <p class="testi-quote" data-i18n="testi_quote_5">Vol Tunis Paris retardé de 5h pour soi-disant la meteo. Robin a prouvé que d'autres avions avaient atterri le meme jour. Ils ont pas pu refuser</p>
           <div class="testi-author">
             <div class="testi-avatar">RM</div>
-            <div><div class="testi-name">Rania M.</div><div class="testi-info">TUN → ORY · TU700 · Retard 5h</div></div>
+            <div><div class="testi-name">Rania M.</div><div class="testi-info" data-i18n="testi_info_5">TUN → ORY · TU700 · Retard 5h</div></div>
             <div class="testi-amount">250€</div>
           </div>
         </div>
         <div class="testi-card" data-group="1" style="display:none;">
           <div class="testi-stars">★★★★★</div>
-          <p class="testi-quote">Surbooking sur mon vol Douala, la porte fermée devant moi avec mon fils. Choquant. Robin a récupéré les 600€ pour nous deux. Merci !</p>
+          <p class="testi-quote" data-i18n="testi_quote_6">Surbooking sur mon vol Douala, la porte fermée devant moi avec mon fils. Choquant. Robin a récupéré les 600€ pour nous deux. Merci !</p>
           <div class="testi-author">
             <div class="testi-avatar">FB</div>
-            <div><div class="testi-name">Fatou B.</div><div class="testi-info">CDG → DLA · AF704 · Surbooking</div></div>
+            <div><div class="testi-name">Fatou B.</div><div class="testi-info" data-i18n="testi_info_6">CDG → DLA · AF704 · Surbooking</div></div>
             <div class="testi-amount">1 200€</div>
           </div>
         </div>
@@ -819,28 +819,28 @@
         <!-- Groupe 3 — caché par défaut -->
         <div class="testi-card" data-group="2" style="display:none;">
           <div class="testi-stars">★★★★★</div>
-          <p class="testi-quote">J'avais déjà réclamer tout seul et ils avaient refusé. Je pensais que c'était fini. Robin a repris le dossier et gagné. Respect 🙌</p>
+          <p class="testi-quote" data-i18n="testi_quote_7">J'avais déjà réclamer tout seul et ils avaient refusé. Je pensais que c'était fini. Robin a repris le dossier et gagné. Respect 🙌</p>
           <div class="testi-author">
             <div class="testi-avatar">KD</div>
-            <div><div class="testi-name">Kofi D.</div><div class="testi-info">ACC → CDG · AF · Retard 4h30</div></div>
+            <div><div class="testi-name">Kofi D.</div><div class="testi-info" data-i18n="testi_info_7">ACC → CDG · AF · Retard 4h30</div></div>
             <div class="testi-amount">600€</div>
           </div>
         </div>
         <div class="testi-card" data-group="2" style="display:none;">
           <div class="testi-stars">★★★★★</div>
-          <p class="testi-quote">Mon vol Bruxelles Kinshasa annulé 3 jours avant. Ils nous avaient rien proposé de sérieux. En quelques semaines Robin a réglé ça proprement</p>
+          <p class="testi-quote" data-i18n="testi_quote_8">Mon vol Bruxelles Kinshasa annulé 3 jours avant. Ils nous avaient rien proposé de sérieux. En quelques semaines Robin a réglé ça proprement</p>
           <div class="testi-author">
             <div class="testi-avatar">MB</div>
-            <div><div class="testi-name">Marie B.</div><div class="testi-info">BRU → FIH · SN401 · Annulation</div></div>
+            <div><div class="testi-name">Marie B.</div><div class="testi-info" data-i18n="testi_info_8">BRU → FIH · SN401 · Annulation</div></div>
             <div class="testi-amount">400€</div>
           </div>
         </div>
         <div class="testi-card" data-group="2" style="display:none;">
           <div class="testi-stars">★★★★☆</div>
-          <p class="testi-quote">Honnêtement j'avais des doutes au début sur le prix fixe. Finalement c'est la meilleure option. Transparent de A à Z et suivi régulier sur WhatsApp</p>
+          <p class="testi-quote" data-i18n="testi_quote_9">Honnêtement j'avais des doutes au début sur le prix fixe. Finalement c'est la meilleure option. Transparent de A à Z et suivi régulier sur WhatsApp</p>
           <div class="testi-author">
             <div class="testi-avatar">OA</div>
-            <div><div class="testi-name">Oumar A.</div><div class="testi-info">DKR → CDG · SS892 · Retard 3h30</div></div>
+            <div><div class="testi-name">Oumar A.</div><div class="testi-info" data-i18n="testi_info_9">DKR → CDG · SS892 · Retard 3h30</div></div>
             <div class="testi-amount">225€</div>
           </div>
         </div>
@@ -857,6 +857,7 @@
       </div>
       <button class="testi-arrow" onclick="slideTestis(1)" aria-label="Suivant">→</button>
     </div>
+    <p class="testi-translated-note" id="testi-translated-note" data-i18n="testi_translated_from" style="margin-top:14px;font-size:11px;color:rgba(255,255,255,0.5);"></p>
   </div>
 </section>
 
@@ -1510,7 +1511,7 @@ function submitShort() {
   document.getElementById('step-short-2').style.display = 'none';
   var doneEl = document.getElementById('step-short-done');
   doneEl.style.display = 'block';
-  var msg = 'Bonjour Robin ! 🏹\n📎 Je joins ma/mes carte(s) d\'embarquement\nOu si je ne les ai plus :\nNuméro(s) de vol : ' + (vol || '') + '\nDate :';
+  var msg = 'Bonjour Robin !\nJ\'envoie ma carte d\'embarquement pour vérifier mon éligibilité.\n(Sans carte : Vol : ' + (vol || '___') + '  Date : ___)';
   var waBtn = document.getElementById('short-done-wa-btn');
   if (waBtn) waBtn.href = 'https://wa.me/15557840392?text=' + encodeURIComponent(msg);
   var barEl = document.getElementById('funnel-progress-bar');
@@ -2259,7 +2260,7 @@ function openWhatsAppQrFromHero(e) {
 </script>
 
 <!-- Un seul CTA persistant : bouton WhatsApp flottant -->
-<a href="https://wa.me/15557840392?text=Bonjour%20Robin%20!%20%F0%9F%8F%B9%0A%F0%9F%93%8E%20Je%20joins%20ma%2Fmes%20carte(s)%20d%27embarquement%0AOu%20si%20je%20ne%20les%20ai%20plus%20%3A%0ANum%C3%A9ro(s)%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="wa-float" id="wa-float" aria-label="Envoyer ma carte d'embarquement sur WhatsApp">
+<a href="https://wa.me/15557840392?text=Bonjour%20Robin%20!%0AJ%27envoie%20ma%20carte%20d%27embarquement%20pour%20v%C3%A9rifier%20mon%20%C3%A9ligibilit%C3%A9.%0A(Sans%20carte%20%3A%20Vol%20%3A%20___%20%20Date%20%3A%20___)" target="_blank" rel="noopener" class="wa-float" id="wa-float" aria-label="Envoyer ma carte d'embarquement sur WhatsApp">
   <span class="wa-float-icon">💬</span>
   <span class="wa-float-text" data-i18n="wa_float_text">Envoyez votre carte d'embarquement ici</span>
 </a>
