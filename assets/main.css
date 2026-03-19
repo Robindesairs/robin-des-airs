@@ -2142,6 +2142,11 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
 .vol-chip-wrap .chip-dist { font-size: 9px; color: rgba(255,255,255,0.5); }
 .link-no-vol { display: block; margin-top: 6px; font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.7); background: none; border: none; cursor: pointer; text-decoration: underline; padding: 0; }
 .link-no-vol:hover { color: var(--neon-b); }
+.principaux-vols-wrap { margin-top: 14px; padding: 12px; background: rgba(255,255,255,0.06); border-radius: 8px; border: 1px solid rgba(255,255,255,0.12); }
+.principaux-vols-title { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.9); margin: 0 0 10px 0; }
+.principaux-vols-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.principaux-vol-chip { font-size: 11px; font-weight: 600; color: #fff; background: rgba(0,229,160,0.2); border: 1px solid rgba(0,229,160,0.4); border-radius: 6px; padding: 8px 12px; cursor: pointer; transition: background .15s, border-color .15s; }
+.principaux-vol-chip:hover { background: rgba(0,229,160,0.35); border-color: var(--neon-b); }
 .funnel-guide-link { color: rgba(255,255,255,0.7); }
 .funnel-guide-link a { color: var(--neon-b); font-weight: 600; text-decoration: underline; }
 .funnel-guide-link a:hover { color: #00E5A0; }

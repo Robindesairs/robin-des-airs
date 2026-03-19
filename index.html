@@ -310,6 +310,21 @@
           <input type="text" id="flight_number" class="calc-input" placeholder="Ex: AF718" maxlength="8" autocomplete="off">
           <div id="flight_number_status" class="flight-status" aria-live="polite"></div>
           <button type="button" class="link-no-vol" id="btn-je-ne-trouve-pas-mon-vol">Je ne trouve pas mon vol</button>
+          <div id="da-principaux-vols" class="principaux-vols-wrap" style="display:none;" aria-label="Principaux vols Air France et Air Sénégal vers l'Afrique subsaharienne">
+            <p class="principaux-vols-title">Principaux vols Air France / Air Sénégal (Afrique subsaharienne)</p>
+            <div class="principaux-vols-chips">
+              <button type="button" class="principaux-vol-chip" data-code="AF718">Paris CDG → Dakar (AF718)</button>
+              <button type="button" class="principaux-vol-chip" data-code="AF702">Paris CDG → Dakar (AF702)</button>
+              <button type="button" class="principaux-vol-chip" data-code="AF719">Dakar → Paris CDG (AF719)</button>
+              <button type="button" class="principaux-vol-chip" data-code="AF703">Dakar → Paris CDG (AF703)</button>
+              <button type="button" class="principaux-vol-chip" data-code="AF700">Paris CDG → Abidjan (AF700)</button>
+              <button type="button" class="principaux-vol-chip" data-code="AF701">Abidjan → Paris CDG (AF701)</button>
+              <button type="button" class="principaux-vol-chip" data-code="SS891">Paris CDG → Dakar (SS891)</button>
+              <button type="button" class="principaux-vol-chip" data-code="SS892">Dakar → Paris CDG (SS892)</button>
+              <button type="button" class="principaux-vol-chip" data-code="AF732">Paris CDG → Bamako (AF732)</button>
+              <button type="button" class="principaux-vol-chip" data-code="AF704">Paris CDG → Douala (AF704)</button>
+            </div>
+          </div>
         </div>
 
         <div class="calc-field" id="da-manual-wrap">
@@ -1543,6 +1558,8 @@ function restartFunnel() {
   window.lastCalculatedDistanceKm = null;
   var fn = document.getElementById('flight_number');
   if (fn) fn.value = '';
+  var pv = document.getElementById('da-principaux-vols');
+  if (pv) pv.style.display = 'none';
   var fns = document.getElementById('flight_number_status');
   if (fns) { fns.textContent = ''; fns.className = 'flight-status'; }
   if (window.tomSelectDaVilleDep) window.tomSelectDaVilleDep.clear();
@@ -1564,6 +1581,36 @@ function setDist(inputId, value, btn) {
   btn.classList.add('active');
   var line = document.getElementById('da-distance-line');
   if (line) line.textContent = DISTANCE_LINE[value] || '';
+}
+
+/** Remplit le diagnostic vol direct à partir de la base locale (DB). Utilisé pour les principaux vols AF/SS Afrique. */
+function applyFlightFromDb(code) {
+  if (typeof DB === 'undefined' || !DB[code]) return false;
+  var match = DB[code];
+  var parts = match.r.split(/\s*[\u2192\-]\s*/);
+  if (parts.length !== 2) return false;
+  var depIata = parts[0].trim();
+  var arrIata = parts[1].trim();
+  var depText = (typeof AIRPORT_CITY !== 'undefined' && AIRPORT_CITY[depIata]) ? AIRPORT_CITY[depIata] + ' \u2014 ' + depIata : depIata;
+  var arrText = (typeof AIRPORT_CITY !== 'undefined' && AIRPORT_CITY[arrIata]) ? AIRPORT_CITY[arrIata] + ' \u2014 ' + arrIata : arrIata;
+  if (window.tomSelectDaVilleDep && depIata) {
+    window.tomSelectDaVilleDep.addOption({ value: depIata, text: depText });
+    window.tomSelectDaVilleDep.addItem(depIata, true);
+  }
+  if (window.tomSelectDaVilleArr && arrIata) {
+    window.tomSelectDaVilleArr.addOption({ value: arrIata, text: arrText });
+    window.tomSelectDaVilleArr.addItem(arrIata, true);
+  }
+  updateManualDist('da');
+  var distIn = document.getElementById('da-dist');
+  var lineEl = document.getElementById('da-distance-line');
+  if (distIn) distIn.value = String(match.c);
+  if (lineEl && typeof DISTANCE_LINE !== 'undefined') lineEl.textContent = DISTANCE_LINE[match.c] || '';
+  var distWrap = document.getElementById('da-dist-wrap');
+  if (distWrap) { distWrap.style.display = 'none'; distWrap.querySelectorAll('.dist-pill').forEach(function(p) { p.classList.remove('active'); }); }
+  var st = document.getElementById('flight_number_status');
+  if (st) { st.className = 'flight-status'; st.textContent = 'Vol trouv\u00e9 \u2014 D\u00e9part et arriv\u00e9e renseign\u00e9s'; }
+  return true;
 }
 
 function updateManualDist(prefix) {
@@ -1932,13 +1979,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     var btnNoVol = document.getElementById('btn-je-ne-trouve-pas-mon-vol');
+    var principauxVolsWrap = document.getElementById('da-principaux-vols');
     if (btnNoVol) {
       btnNoVol.addEventListener('click', function() {
-        var wrap = document.getElementById('da-manual-wrap');
-        if (wrap) { wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
-        if (window.tomSelectDaVilleDep && window.tomSelectDaVilleDep.control) window.tomSelectDaVilleDep.focus();
+        if (principauxVolsWrap) {
+          principauxVolsWrap.style.display = principauxVolsWrap.style.display === 'none' ? 'block' : 'none';
+          if (principauxVolsWrap.style.display === 'block') principauxVolsWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        if (principauxVolsWrap && principauxVolsWrap.style.display === 'none') {
+          var wrap = document.getElementById('da-manual-wrap');
+          if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          if (window.tomSelectDaVilleDep && window.tomSelectDaVilleDep.control) window.tomSelectDaVilleDep.focus();
+        }
       });
     }
+    document.querySelectorAll('.principaux-vol-chip').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var code = this.getAttribute('data-code');
+        if (!code) return;
+        var fnInput = document.getElementById('flight_number');
+        if (fnInput) fnInput.value = code;
+        if (typeof applyFlightFromDb === 'function') applyFlightFromDb(code);
+      });
+    });
 
     var flightNumberInput = document.getElementById('flight_number');
     var flightStatusEl = document.getElementById('flight_number_status');
@@ -1955,6 +2018,9 @@ document.addEventListener('DOMContentLoaded', () => {
         flightStatusEl.textContent = 'Vérification des radars... ✈️';
         flightCheckTimeout = setTimeout(function() {
           raw = raw.replace(/\s/g, ''); // Diaspora : "AF 718" → "AF718" pour maximiser les retrouvailles
+          if (typeof DB !== 'undefined' && DB[raw]) {
+            if (applyFlightFromDb(raw)) return;
+          }
           var apiUrl = window.location.origin + '/.netlify/functions/flight-info?flight=' + encodeURIComponent(raw);
           fetch(apiUrl).then(function(r) { return r.json(); }).then(function(data) {
             if (data && data.error) {
