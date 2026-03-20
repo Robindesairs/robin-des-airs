@@ -43,6 +43,21 @@ En résumé : dans 360dialog vous ne saisissez que l’**URL du webhook** et le 
 | `WHATSAPP_ACCESS_TOKEN` | Non | Token d’accès Meta. Si défini avec `WHATSAPP_PHONE_NUMBER_ID`, l’envoi des réponses se fait via l’API Graph Meta (réponses bien envoyées depuis ce Phone Number ID). |
 | `WHATSAPP_CONTACT_NUMBER` | Non | Numéro de contact pour le lien wa.me dans le message d’erreur (ex. `15557840392`). Si non défini, le message d’erreur ne contient pas de lien. |
 | `ROBIN_LOG_WEBHOOK_URL` | Non | URL à laquelle le webhook envoie en POST chaque message entrant (JSON). Votre backend peut écrire dans `robin.db` (table `whatsapp_messages`) pour le Dashboard. |
+| `ROBIN_WHATSAPP_INTERACTIVE` | Non | Si **`false`** : pas de boutons ni listes WhatsApp (messages texte uniquement). Par défaut : interactif activé (menu, Oui/Non, nombre de passagers). Voir `docs/MODULE-WHATSAPP-COMMUNICATION.md`. |
+
+## Migration WABA vers 360dialog (Partner ID Meta)
+
+Lorsque Meta demande le **Partner ID** du partenaire de destination pour migrer un compte WhatsApp Business (WABA) **vers 360dialog** (gestion directe du compte), utiliser l’ID correspondant à la **devise de facturation** du compte :
+
+| Devise | Partner ID (destination 360dialog) |
+|--------|-------------------------------------|
+| **EUR** | `srMmqpPA` |
+| **USD** | `IDvOaWldPA` |
+
+- Pour une structure en **France** / zone euro, utiliser en général **EUR** (`srMmqpPA`), sauf si 360dialog vous a indiqué explicitement un compte en **USD**.
+- Après migration : suivre la doc 360dialog (**Partner Settings**, droits sur les numéros, etc.).
+
+Documentation 360dialog : [Migrate a WABA to a new Partner (with 360Dialog)](https://docs.360dialog.com/docs/hub/migrations/migrate-a-waba-to-a-new-partner-with-360dialog).
 
 ## Configuration côté 360dialog
 
