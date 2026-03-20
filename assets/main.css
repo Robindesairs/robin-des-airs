@@ -1561,21 +1561,31 @@ button:focus-visible,
   body { font-size: 16px; }
   /* Afficher aussi les drapeaux sur mobile */
   .diaspora-bar { display: block; }
+  /* Bandeau plus court : pas de liste pays ni slogan (évite header surchargé) */
+  .diaspora-bar-pays,
+  .diaspora-bar-sep,
+  .diaspora-bar-text {
+    display: none !important;
+  }
+  .diaspora-bar-inner {
+    padding: 6px 16px;
+    justify-content: center;
+  }
   nav {
-    /* Décale le header sous la diaspora-bar (barre fixée en haut) */
-    top: 36px;
+    /* Décale le header sous la diaspora-bar (hauteur ~32px avec drapeaux seuls) */
+    top: 32px;
     height: 56px;
     padding: 0 16px;
     padding-bottom: env(safe-area-inset-bottom, 0);
   }
   .nav-cta-inline,
   .lang-dropdown { display: none !important; }
-  /* Drawer sous le nav fixe (nav top 36px + nav height 56px) */
-  .nav-drawer { top: 92px; }
+  /* Drawer sous le nav fixe (32px + 56px) */
+  .nav-drawer { top: 88px; }
   .skip-link:focus { left: env(safe-area-inset-left, 16px); }
   #hero {
-    /* Contenu sous nav (36px + 56px) et nav/bandeau */
-    padding: 112px 20px 36px;
+    /* Contenu sous nav (32px + 56px + marge) */
+    padding: 108px 20px 36px;
     min-height: auto;
     padding-left: env(safe-area-inset-left, 20px);
     padding-right: env(safe-area-inset-right, 20px);
