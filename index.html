@@ -42,14 +42,38 @@
 
 <!-- En-tête fixe : hauteur mesurée → --site-header-height (évite chevauchement contenu) -->
 <header class="site-header" id="site-header">
-<!-- Bandeau diaspora (une seule fois : drapeaux + pays + spécialité) -->
+<!-- Bandeau diaspora : identité (drapeaux + titre) + piste vols (bloc arrondi) -->
 <div class="diaspora-bar">
-  <div class="diaspora-bar-inner">
-    <span class="diaspora-bar-flags" aria-hidden="true">🇸🇳 🇲🇱 🇨🇮 🇬🇳 🇨🇲 🇨🇩 🇧🇯 🇹🇬 🇬🇭 🇳🇬</span>
-    <span class="diaspora-bar-pays" data-i18n="diaspora_bar_pays">SÉNÉGAL · MALI · CÔTE D'IVOIRE · GUINÉE · CAMEROUN · RDC · BÉNIN · TOGO · GHANA · NIGERIA</span>
-    <span class="diaspora-bar-sep" aria-hidden="true"></span>
-    <span class="diaspora-bar-text diaspora-bar-text--full" data-i18n="diaspora_bar_text">Vol retardé ? Jusqu'à 600€ si le CE 261 s'applique à votre vol — toute nationalité.</span>
-    <span class="diaspora-bar-text diaspora-bar-text--short" data-i18n="diaspora_bar_text_mobile">Retard ? Jusqu'à 600€ (CE 261).</span>
+  <div class="diaspora-bar-inner diaspora-bar-inner--stack">
+    <span class="sr-only" data-i18n="diaspora_bar_flags_aria">Diaspora : Sénégal, Mali, Côte d’Ivoire, Guinée, Cameroun, RDC, Bénin, Togo, Ghana, Nigeria.</span>
+    <span id="vol-ticker-sr" class="sr-only" data-i18n="vol_ticker_sr">Vols du moment : retards et annulations. Jusqu'à 600 euros si le CE 261 s'applique. Cliquez sur une pastille pour préremplir le formulaire.</span>
+
+    <div class="diaspora-bar-head">
+      <div class="diaspora-bar-flags-pill" aria-hidden="true">
+        <span class="diaspora-bar-flags">🇸🇳 🇲🇱 🇨🇮 🇬🇳 🇨🇲 🇨🇩 🇧🇯 🇹🇬 🇬🇭 🇳🇬</span>
+      </div>
+      <div class="diaspora-bar-head-divider" aria-hidden="true"></div>
+      <div class="diaspora-bar-title">
+        <span class="vol-ticker-dot diaspora-bar-live-dot" aria-hidden="true"></span>
+        <span class="diaspora-bar-title-text">
+          <span class="vol-ticker-label vol-ticker-label--full" data-i18n="vol_ticker_label">Vols éligibles du moment</span>
+          <span class="vol-ticker-label vol-ticker-label--short" data-i18n="vol_ticker_label_short">Vols</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="diaspora-bar-track" id="vol-ticker" role="region" aria-labelledby="vol-ticker-sr">
+      <div class="vol-ticker vol-ticker--diaspora-slot">
+        <div class="vol-ticker-inner vol-ticker-inner--track">
+          <div class="vol-ticker-viewport vol-ticker-viewport--track">
+            <div class="vol-ticker-rail" id="vol-ticker-rail">
+              <div class="vol-ticker-group" id="vol-ticker-g1"></div>
+              <div class="vol-ticker-group" id="vol-ticker-g2" aria-hidden="true"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -743,7 +767,7 @@
   <div class="ccm-wrap reveal">
     <div class="ccm-header">
       <div class="section-tag" data-i18n="section_how_tag">La méthode Robin</div>
-      <h2 class="section-title" data-i18n-html="section_how_title">4 flèches.<br>Un seul objectif.</h2>
+      <h2 class="section-title" data-i18n-html="section_how_title">4 étapes.<br>Un seul objectif.</h2>
     </div>
 
     <div class="steps-grid" style="grid-template-columns:repeat(4,1fr);">
@@ -803,12 +827,12 @@
 
     <div style="border-left:3px solid var(--neon-b);padding:22px 32px;margin-bottom:48px;background:rgba(0,229,160,0.04);border-radius:0 8px 8px 0;">
       <p style="font-size:18px;line-height:1.75;color:white;font-style:italic;font-weight:500;" data-i18n="founder_quote">
-        "Ils vous facturent le kilo en trop. Le deuxième bagage. Le siège côté hublot. Mais quand c'est leur tour de payer — retard, annulation, surbooking — il n'y a plus personne au bout du fil."
+        "Ils vous facturent le kilo en trop. Le deuxième bagage. Le siège côté hublot. Mais quand c'est leur tour de payer, retard, annulation, surbooking, il n'y a plus personne au bout du fil."
       </p>
     </div>
 
-    <p style="font-size:15px;line-height:1.85;color:rgba(255,255,255,0.75);max-width:640px;margin:0 auto 28px;" data-i18n-html="founder_story_short">Vingt ans dans le secteur aérien. J'ai vu les mêmes excuses revenir à chaque vol retardé : « météo imprévisible », « circonstances extraordinaires ». J'ai vu des familles entières repartir sans rien après 6 heures d'attente — pour un baptême, des funérailles, des retrouvailles.<br><br>Robin des Airs, c'est l'inverse. Un dossier technique que la compagnie ne peut pas ignorer. Suivi en français, wolof, bambara et d'autres langues : plus facile de s'expliquer dans sa langue maternelle. On ne prend notre part (25%) qu'une fois votre argent récupéré. Vous le savez avant même de signer.</p>
-    <p style="text-align:center;font-size:12px;color:rgba(255,255,255,0.4);font-style:italic;" data-i18n="founder_signature">— Le fondateur · 20 ans dans le secteur aérien · CE 261/2004</p>
+    <p style="font-size:15px;line-height:1.85;color:rgba(255,255,255,0.75);max-width:640px;margin:0 auto 28px;" data-i18n-html="founder_story_short">Vingt ans dans le secteur aérien. J'ai vu les mêmes excuses revenir à chaque vol retardé : « météo imprévisible », « circonstances extraordinaires ». J'ai vu des familles entières repartir sans rien après 6 heures d'attente, parfois pour un baptême, des funérailles, des retrouvailles.<br><br>Robin des Airs, c'est l'inverse. Un dossier technique que la compagnie ne peut pas ignorer. Suivi en français, wolof, bambara et d'autres langues : plus facile de s'expliquer dans sa langue maternelle. On ne prend notre part (25%) qu'une fois votre argent récupéré. Vous le savez avant même de signer.</p>
+    <p style="text-align:center;font-size:12px;color:rgba(255,255,255,0.4);font-style:italic;" data-i18n="founder_signature">Le fondateur · 20 ans dans le secteur aérien · Spécialiste CE 261/2004</p>
   </div>
 </section>
 
@@ -1053,6 +1077,7 @@
 <script src="https://cdn.jsdelivr.net/npm/tom-select@2/dist/js/tom-select.complete.min.js"></script>
 <script src="i18n.js"></script>
 <script src="data/flights-db.js"></script>
+<script src="data/vol-ticker.js"></script>
 <script>
 /* ════════════════════════════════════════════════════
    ROBIN DES AIRS — Full JS (DB/PFX via flights-db.js)
@@ -1132,6 +1157,69 @@ function switchLang(code, flag) {
   if (window.I18N) window.I18N.setLang(code);
   requestAnimationFrame(function() { requestAnimationFrame(updateSiteHeaderOffset); });
 }
+
+/** Bandeau vols : texte régénéré à chaque changement de langue */
+function volTickerEscapeHtml(s) {
+  if (s == null || s === '') return '';
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+function volTickerDaySeed() {
+  var d = new Date();
+  return d.getFullYear() * 372 + d.getMonth() * 31 + d.getDate();
+}
+function volTickerShuffle(arr, seed) {
+  var a = arr.slice();
+  var s = seed >>> 0;
+  for (var i = a.length - 1; i > 0; i--) {
+    s = (Math.imul(s, 1103515245) + 12345) >>> 0;
+    var j = s % (i + 1);
+    var t = a[i];
+    a[i] = a[j];
+    a[j] = t;
+  }
+  return a;
+}
+function volTickerFormatDateISO(iso) {
+  if (!iso || typeof iso !== 'string') return '';
+  var p = iso.split('-');
+  if (p.length !== 3) return iso;
+  var y = parseInt(p[0], 10), m = parseInt(p[1], 10) - 1, d = parseInt(p[2], 10);
+  if (isNaN(y) || isNaN(m) || isNaN(d)) return iso;
+  var dt = new Date(y, m, d);
+  var en = window.I18N && window.I18N.getLang && window.I18N.getLang() === 'en';
+  return dt.toLocaleDateString(en ? 'en-GB' : 'fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+window.refreshVolTicker = function() {
+  var list = window.VOL_TICKER_FLIGHTS;
+  if (!list || !list.length || !window.I18N) return;
+  var g1 = document.getElementById('vol-ticker-g1');
+  var g2 = document.getElementById('vol-ticker-g2');
+  if (!g1 || !g2) return;
+  var get = window.I18N.get.bind(window.I18N);
+  var tR = get('vol_ticker_retard');
+  var tA = get('vol_ticker_annul');
+  var titleRaw = get('vol_ticker_chip_title');
+  var titleAttr = String(titleRaw).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+  var picked = volTickerShuffle(list, volTickerDaySeed()).slice(0, 9);
+  var sep = '<span class="vol-ticker-sep" aria-hidden="true"> · </span>';
+  var parts = picked.map(function(row) {
+    var dateDisp = volTickerFormatDateISO(row.date || '');
+    var f = volTickerEscapeHtml(row.flight);
+    var route = volTickerEscapeHtml(row.route);
+    var dIso = volTickerEscapeHtml(row.date || '');
+    var kind = row.kind === 'cancel' ? 'cancel' : 'delay';
+    var detAttr = volTickerEscapeHtml(row.detail || '');
+    return '<button type="button" class="vol-ticker-chip" title="' + titleAttr + '" data-flight="' + f + '" data-date="' + dIso + '" data-route="' + route + '" data-kind="' + kind + '" data-detail="' + detAttr + '"><strong>' + f + '</strong>' + sep +
+      '<span class="vol-ticker-route">' + route + '</span>' + sep +
+      '<span class="vol-ticker-datetime">' + volTickerEscapeHtml(dateDisp) + '</span>' + sep +
+      '<span class="vol-ticker-status">' + (row.kind === 'cancel'
+        ? volTickerEscapeHtml(tA) + (row.detail ? ' ' + volTickerEscapeHtml(row.detail) : '')
+        : volTickerEscapeHtml(tR) + ' ' + volTickerEscapeHtml(row.detail || '')) + '</span></button>';
+  });
+  var html = parts.join('');
+  g1.innerHTML = html;
+  g2.innerHTML = html;
+};
 document.addEventListener('click', (e) => {
   if (!e.target.closest('#lang-dropdown')) {
     document.getElementById('lang-menu').classList.remove('open');
@@ -1139,16 +1227,19 @@ document.addEventListener('click', (e) => {
 });
 
 /* ── Scroll vers calculateur + animation « page qui se tourne » ── */
-function scrollToCalcWithAnimation(e) {
-  e.preventDefault();
-  const box = document.getElementById('funnel-box');
+function scrollToFunnelAndHighlight() {
+  var box = document.getElementById('funnel-box');
   if (box) {
     box.scrollIntoView({ behavior: 'smooth', block: 'center' });
     box.classList.remove('calc-highlight');
     void box.offsetWidth;
     box.classList.add('calc-highlight');
-    setTimeout(() => box.classList.remove('calc-highlight'), 700);
+    setTimeout(function() { box.classList.remove('calc-highlight'); }, 700);
   }
+}
+function scrollToCalcWithAnimation(e) {
+  if (e && e.preventDefault) e.preventDefault();
+  scrollToFunnelAndHighlight();
 }
 
 /* ═══ PAX COUNTER ═══ */
@@ -1395,6 +1486,60 @@ function applyFlightFromDb(code) {
   if (st) { st.className = 'flight-status'; st.textContent = 'Vol trouv\u00e9 \u2014 D\u00e9part et arriv\u00e9e renseign\u00e9s'; }
   return true;
 }
+
+/** Clic bandeau vols : préremplit parcours rapide + diagnostic détaillé */
+function volTickerApplyFlight(chip) {
+  if (!chip) return;
+  var flight = (chip.getAttribute('data-flight') || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+  var dateIso = (chip.getAttribute('data-date') || '').trim();
+  var route = chip.getAttribute('data-route') || '';
+  var kind = chip.getAttribute('data-kind') || 'delay';
+  var detail = chip.getAttribute('data-detail') || '';
+  var get = window.I18N && window.I18N.get ? window.I18N.get.bind(window.I18N) : function(k) { return k; };
+  var statusWord = kind === 'cancel' ? get('vol_ticker_annul') : get('vol_ticker_retard');
+  var dateDisp = typeof volTickerFormatDateISO === 'function' ? volTickerFormatDateISO(dateIso) : dateIso;
+  var lineParts = [flight, route, dateDisp, statusWord + (detail ? ' ' + detail : '')];
+  var line = lineParts.filter(Boolean).join(' · ');
+
+  var shortW = document.getElementById('funnel-short');
+  if (shortW && shortW.style.display !== 'none' && typeof goToShortStep === 'function') {
+    goToShortStep(1);
+  }
+
+  var sv = document.getElementById('short-vol');
+  if (sv) sv.value = line;
+
+  var fn = document.getElementById('flight_number');
+  if (fn) {
+    fn.value = flight;
+    if (typeof applyFlightFromDb === 'function') applyFlightFromDb(flight);
+    try { fn.dispatchEvent(new Event('input', { bubbles: true })); } catch (err) {}
+  }
+
+  var da = document.getElementById('da-date');
+  if (da && dateIso) {
+    da.value = dateIso;
+    if (da._flatpickr && typeof da._flatpickr.setDate === 'function') {
+      try { da._flatpickr.setDate(dateIso, true); } catch (e2) {}
+    }
+  }
+
+  if (typeof closeMobileNav === 'function') closeMobileNav();
+  scrollToFunnelAndHighlight();
+  if (sv && shortW && shortW.style.display !== 'none') sv.focus();
+  else if (fn) fn.focus();
+}
+
+(function volTickerBindClicks() {
+  var root = document.getElementById('vol-ticker');
+  if (!root) return;
+  root.addEventListener('click', function(e) {
+    var chip = e.target.closest('.vol-ticker-chip');
+    if (!chip || !chip.getAttribute('data-flight')) return;
+    e.preventDefault();
+    volTickerApplyFlight(chip);
+  });
+})();
 
 function updateManualDist(prefix) {
   var dep = document.getElementById(prefix + '-ville-depart');

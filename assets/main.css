@@ -195,53 +195,279 @@ a:focus-visible, button:focus-visible, .cb:focus-visible, .reason-btn:focus-visi
   background: var(--navy);
 }
 
-/* ── Bandeau diaspora (drapeaux + spécialité) — dans .site-header ── */
+/* Accessibilité : texte réservé lecteurs d'écran */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Bandeau vols (défilant) ── */
+.vol-ticker {
+  position: relative;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+.vol-ticker--diaspora-slot {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+.vol-ticker-inner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px max(16px, env(safe-area-inset-right, 16px)) 7px max(16px, env(safe-area-inset-left, 16px));
+  max-width: 100%;
+  box-sizing: border-box;
+}
+.vol-ticker-inner--track {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  gap: 0;
+}
+.vol-ticker-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+.vol-ticker-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #00e5a0;
+  box-shadow: 0 0 10px rgba(0, 229, 160, 0.75);
+  animation: vol-ticker-pulse 1.8s ease-in-out infinite;
+}
+.diaspora-bar-live-dot {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+}
+.vol-ticker-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+}
+.vol-ticker-label--short { display: none; }
+.vol-ticker-viewport {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 2%, #000 98%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 2%, #000 98%, transparent 100%);
+}
+.vol-ticker-viewport--track {
+  mask-image: linear-gradient(90deg, transparent 0%, #000 4%, #000 96%, transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 4%, #000 96%, transparent 100%);
+}
+.vol-ticker-rail {
+  display: flex;
+  width: max-content;
+  animation: vol-ticker-marquee 52s linear infinite;
+}
+.vol-ticker-group {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding-right: 1.5rem;
+  flex-shrink: 0;
+}
+button.vol-ticker-chip {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0.25rem;
+  margin: 0;
+  font: inherit;
+  font-size: 11px;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.94);
+  white-space: nowrap;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  padding: 6px 14px;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+button.vol-ticker-chip:hover {
+  background: rgba(0, 229, 160, 0.12);
+  border-color: rgba(0, 229, 160, 0.35);
+  box-shadow: 0 2px 12px rgba(0, 229, 160, 0.12);
+}
+button.vol-ticker-chip:active {
+  transform: scale(0.98);
+}
+button.vol-ticker-chip:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 200, 122, 0.45);
+}
+button.vol-ticker-chip strong {
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+.vol-ticker-datetime {
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 600;
+  font-size: 10px;
+}
+.vol-ticker-status {
+  color: #7eecc4;
+  font-weight: 700;
+  font-size: 10px;
+}
+.vol-ticker-sep {
+  color: rgba(255, 255, 255, 0.25);
+  font-weight: 400;
+}
+@keyframes vol-ticker-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes vol-ticker-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(0.9); }
+}
+@media (max-width: 520px) {
+  .vol-ticker-label--full { display: none; }
+  .vol-ticker-label--short { display: inline; }
+  .vol-ticker-inner { gap: 8px; padding-left: 10px; padding-right: 10px; }
+  button.vol-ticker-chip { font-size: 10px; padding: 5px 11px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vol-ticker-rail { animation: none; }
+  .vol-ticker-dot { animation: none; }
+  #vol-ticker-g2 { display: none !important; }
+  .vol-ticker-viewport,
+  .vol-ticker-viewport--track {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+}
+
+/* ── Bandeau diaspora : tête (pilule drapeaux + titre) + piste vols ── */
 .diaspora-bar {
   position: relative;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  background: var(--navy);
+  background: linear-gradient(180deg, #0a1830 0%, #0b1f3a 55%, #0b1f3a 100%);
 }
 
-.diaspora-bar-inner {
-  padding: 7px 20px;
+.diaspora-bar-inner--stack {
+  padding: 10px max(18px, env(safe-area-inset-left, 18px)) 11px max(18px, env(safe-area-inset-right, 18px));
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.diaspora-bar-head {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 8px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
+  gap: 10px 14px;
+  width: 100%;
+}
+
+.diaspora-bar-flags-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .diaspora-bar-flags {
-  font-size: 1rem;
-  letter-spacing: 1px;
+  font-size: 1.05rem;
+  letter-spacing: 0.12em;
+  line-height: 1;
+  white-space: nowrap;
 }
 
-.diaspora-bar-pays {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.5);
+.diaspora-bar-head-divider {
+  width: 1px;
+  height: 22px;
+  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.18), transparent);
+  flex-shrink: 0;
+}
+
+.diaspora-bar-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.diaspora-bar-title-text {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.diaspora-bar-title .vol-ticker-label {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.diaspora-bar-track {
+  width: 100%;
+  min-width: 0;
+  border-radius: 12px;
+  padding: 8px 4px 8px 12px;
+  background: rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(0, 229, 160, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.diaspora-bar-track .vol-ticker--diaspora-slot {
+  background: transparent;
+}
+
+/* Anciennes classes (si ailleurs sur le site) */
+.diaspora-bar-inner:not(.diaspora-bar-inner--stack) {
+  padding: 6px max(16px, env(safe-area-inset-left, 16px)) 7px max(16px, env(safe-area-inset-right, 16px));
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .diaspora-bar-sep {
   width: 1px;
   height: 12px;
-  background: rgba(255,255,255,0.15);
-  margin: 0 4px;
+  background: rgba(255, 255, 255, 0.15);
+  margin: 0 2px;
   flex-shrink: 0;
 }
 
 .diaspora-bar-text {
-  color: rgba(255,255,255,0.62);
+  color: rgba(255, 255, 255, 0.62);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.35px;
 }
-
-/* Desktop / tablette : phrase complète ; mobile : version courte (voir @media ≤768px) */
 .diaspora-bar-text--short {
   display: none;
 }
@@ -1673,22 +1899,28 @@ button:focus-visible,
     overflow-x: clip;
     box-sizing: border-box;
   }
-  /* Afficher aussi les drapeaux sur mobile */
+  /* Bandeau diaspora : stack compact */
   .diaspora-bar { display: block; }
-  /* Bandeau plus court : pas de liste pays ; slogan ultra-court (téléphone) */
-  .diaspora-bar-pays,
-  .diaspora-bar-sep {
-    display: none !important;
+  .diaspora-bar-inner--stack {
+    padding: 8px 12px 10px;
+    gap: 8px;
   }
-  .diaspora-bar-text--full {
-    display: none !important;
+  .diaspora-bar-head-divider {
+    display: none;
   }
-  .diaspora-bar-text--short {
-    display: inline !important;
+  .diaspora-bar-head {
+    gap: 8px;
   }
-  .diaspora-bar-inner {
-    padding: 6px 16px;
-    justify-content: center;
+  .diaspora-bar-flags-pill {
+    padding: 5px 11px;
+  }
+  .diaspora-bar-flags {
+    letter-spacing: 0.08em;
+    font-size: 0.95rem;
+  }
+  .diaspora-bar-track {
+    padding: 6px 2px 6px 8px;
+    border-radius: 10px;
   }
   nav {
     height: 56px;
