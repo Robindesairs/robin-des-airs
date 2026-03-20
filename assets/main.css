@@ -107,6 +107,8 @@
   --focus-ring: 0 0 0 3px rgba(0,200,122,0.35);
   --radius: 12px;
   --radius-lg: 20px;
+  /* Hauteur réelle fixée par JS sur #site-header (diaspora + nav) */
+  --site-header-height: 112px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -118,7 +120,21 @@ html {
   scroll-behavior: smooth;
   overflow-x: hidden;
   max-width: 100%;
+  scroll-padding-top: calc(var(--site-header-height, 112px) + 8px);
   /* Évite le « glissement » gauche/droite sur iOS/Android quand un enfant dépasse */
+}
+
+/* Ancres : le titre ne part pas sous le header fixe */
+#hero,
+#funnel-box,
+#la-loi,
+#comment-ca-marche,
+#comparatif,
+#temoignages,
+#qui-suis-je,
+#faq,
+#cta-final {
+  scroll-margin-top: calc(var(--site-header-height, 112px) + 12px);
 }
 
 body {
@@ -161,19 +177,30 @@ a:focus-visible, button:focus-visible, .cb:focus-visible, .reason-btn:focus-visi
   box-shadow: var(--shadow);
 }
 .skip-link:focus {
-  top: 16px;
+  top: calc(var(--site-header-height, 112px) + 10px);
   outline: none;
   box-shadow: var(--focus-ring);
 }
 
-/* ── Bandeau diaspora (drapeaux + spécialité) ── */
-.diaspora-bar {
+/* ── Bloc header fixe (diaspora + nav empilés = hauteur variable) ── */
+.site-header {
   position: fixed;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  z-index: 1001;
+  z-index: 1000;
+  background: var(--navy);
+}
+
+/* ── Bandeau diaspora (drapeaux + spécialité) — dans .site-header ── */
+.diaspora-bar {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   background: var(--navy);
 }
 
@@ -208,18 +235,27 @@ a:focus-visible, button:focus-visible, .cb:focus-visible, .reason-btn:focus-visi
 }
 
 .diaspora-bar-text {
-  color: rgba(255,255,255,0.35);
-  font-size: 11px;
-  letter-spacing: 0.4px;
+  color: rgba(255,255,255,0.62);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.35px;
+}
+
+/* Desktop / tablette : phrase complète ; mobile : version courte (voir @media ≤768px) */
+.diaspora-bar-text--short {
+  display: none;
 }
 
 /* ═══════ NAV ═══════ */
 nav {
-  position: fixed; top: 36px; left: 0; right: 0;
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-  z-index: 1000;
+  z-index: 1;
   height: 72px; padding: 0 32px;
   display: flex; align-items: center; justify-content: space-between;
   background: rgba(255,255,255,0.98);
@@ -298,7 +334,7 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 /* ── Mobile drawer ── */
 .nav-drawer {
   display: none; position: fixed;
-  top: 64px; left: 0; right: 0;
+  top: var(--site-header-height, 112px); left: 0; right: 0;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
@@ -350,7 +386,7 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 
 /* ═══════ HERO — FOND BLANC AVEC CALCULATEUR ═══════ */
 #hero {
-  padding: 120px 60px 0;
+  padding: calc(var(--site-header-height, 112px) + 28px) 60px 0;
   background: linear-gradient(180deg, var(--white) 0%, #FAFBFD 100%);
   position: relative;
   overflow: hidden;
@@ -938,9 +974,10 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 
 .calc-disclaimer {
   margin-top: 14px;
-  font-size: 9px;
-  color: rgba(255,255,255,0.2);
-  letter-spacing: 1px;
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.72);
+  letter-spacing: 0.6px;
   text-align: center;
   line-height: 1.6;
 }
@@ -1044,6 +1081,29 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
+}
+
+/* Section loi : un seul palier mis en avant (long-courrier / 600€) */
+.loi-cards.loi-cards--focus-long {
+  grid-template-columns: 1fr;
+  justify-items: center;
+  max-width: 520px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.loi-cards.loi-cards--focus-long .loi-card.featured {
+  width: 100%;
+  max-width: 480px;
+}
+.loi-tiers-note {
+  grid-column: 1 / -1;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 0 8px;
+  font-size: 12px;
+  color: var(--gray);
+  line-height: 1.65;
+  text-align: center;
 }
 
 .loi-card {
@@ -1247,8 +1307,7 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 .comp-row:last-child { border-bottom: none; }
 .comp-row:hover { background: var(--off); }
 
-/* Top Destinations — grille cartes 600€ */
-#top-destinations { padding: 80px 24px 100px; background: linear-gradient(180deg, #FAFBFD 0%, var(--white) 100%); }
+/* Cartes destinations (pages SEO / blog — section home retirée) */
 .dest-wrap { max-width: 900px; margin: 0 auto; }
 .dest-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 28px; }
 .dest-card { background: var(--white); border: 1.5px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; cursor: pointer; text-decoration: none; color: inherit; display: block; }
@@ -1357,6 +1416,7 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   font-size: 26px;
   color: var(--neon-dark);
   letter-spacing: -0.5px;
+  white-space: nowrap; /* « 1 » et « 200 » restent sur la même ligne */
 }
 
 /* ═══════ QUI SUIS-JE ═══════ */
@@ -1539,7 +1599,7 @@ button:focus-visible,
   body { font-size: 16px; }
   nav { padding: 0 12px; height: 56px; padding-bottom: env(safe-area-inset-bottom, 0); }
   .nav-logo { font-size: 14px; }
-  #hero { padding: 100px 16px 28px; min-height: auto; padding-left: env(safe-area-inset-left, 16px); padding-right: env(safe-area-inset-right, 16px); }
+  #hero { padding: calc(var(--site-header-height, 96px) + 14px) 16px 28px; min-height: auto; padding-left: env(safe-area-inset-left, 16px); padding-right: env(safe-area-inset-right, 16px); }
   .hero-wrap { gap: 28px; padding-bottom: 40px; }
   .hero-title { font-size: clamp(32px, 10vw, 44px); margin-bottom: 20px; }
   .hero-desc { font-size: 15px; margin-bottom: 28px; }
@@ -1558,7 +1618,7 @@ button:focus-visible,
   .btn-calc, .btn-wa-hero { min-height: 50px; padding: 18px 24px; font-size: 13px; }
   .pax-btn { width: 44px; height: 48px; font-size: 20px; }
   .back-btn { min-height: 44px; padding: 12px 0; display: flex; align-items: center; }
-  #la-loi, #comment-ca-marche, #top-destinations, #comparatif, #temoignages, #qui-suis-je, #faq, #cta-final {
+  #la-loi, #comment-ca-marche, #comparatif, #temoignages, #qui-suis-je, #faq, #cta-final {
     padding: 48px 16px;
     padding-left: env(safe-area-inset-left, 16px);
     padding-right: env(safe-area-inset-right, 16px);
@@ -1603,7 +1663,6 @@ button:focus-visible,
   }
   #la-loi,
   #comment-ca-marche,
-  #top-destinations,
   #comparatif,
   #temoignages,
   #qui-suis-je,
@@ -1616,31 +1675,31 @@ button:focus-visible,
   }
   /* Afficher aussi les drapeaux sur mobile */
   .diaspora-bar { display: block; }
-  /* Bandeau plus court : pas de liste pays ni slogan (évite header surchargé) */
+  /* Bandeau plus court : pas de liste pays ; slogan ultra-court (téléphone) */
   .diaspora-bar-pays,
-  .diaspora-bar-sep,
-  .diaspora-bar-text {
+  .diaspora-bar-sep {
     display: none !important;
+  }
+  .diaspora-bar-text--full {
+    display: none !important;
+  }
+  .diaspora-bar-text--short {
+    display: inline !important;
   }
   .diaspora-bar-inner {
     padding: 6px 16px;
     justify-content: center;
   }
   nav {
-    /* Décale le header sous la diaspora-bar (hauteur ~32px avec drapeaux seuls) */
-    top: 32px;
     height: 56px;
     padding: 0 16px;
     padding-bottom: env(safe-area-inset-bottom, 0);
   }
   .nav-cta-inline,
   .lang-dropdown { display: none !important; }
-  /* Drawer sous le nav fixe (32px + 56px) */
-  .nav-drawer { top: 88px; }
   .skip-link:focus { left: env(safe-area-inset-left, 16px); }
   #hero {
-    /* Contenu sous nav (32px + 56px + marge) */
-    padding: 108px 20px 36px;
+    padding: calc(var(--site-header-height, 92px) + 18px) 20px 36px;
     min-height: auto;
     padding-left: env(safe-area-inset-left, 20px);
     padding-right: env(safe-area-inset-right, 20px);
@@ -1649,12 +1708,25 @@ button:focus-visible,
     grid-template-columns: 1fr;
     gap: 36px;
     padding-bottom: 48px;
-    /* Calculateur en premier sur mobile : les gens agissent tout de suite */
     display: flex;
     flex-direction: column;
   }
-  .hero-wrap .hero-right { order: -1; }
-  .hero-wrap .hero-left { order: 0; }
+  /* Espace pour le bouton WhatsApp flottant (bas-droite) — le sous-titre reste lisible */
+  .hero-left {
+    padding-bottom: max(5.5rem, calc(4.5rem + env(safe-area-inset-bottom, 0px)));
+    padding-right: max(0px, calc(4.5rem - env(safe-area-inset-right, 0px)));
+  }
+  /* Logo marque un peu plus lisible sous le bandeau drapeaux */
+  .nav-logo {
+    font-size: 15px;
+    letter-spacing: -0.35px;
+    gap: 8px;
+  }
+  .nav-logo svg {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+  }
   .hero-bg-shape, .hero-bg-dots { display: none; }
   .hero-title { font-size: clamp(36px, 9vw, 52px); }
   .hero-desc { font-size: 15px; }
@@ -1676,7 +1748,7 @@ button:focus-visible,
 @media (max-width: 1080px) {
   nav { padding: 0 16px; }
 
-  #hero { padding: 116px 24px 40px; min-height: auto; }
+  #hero { padding: calc(var(--site-header-height, 112px) + 24px) 24px 40px; min-height: auto; }
   .hero-bg-shape, .hero-bg-dots { display: none; }
   .hero-wrap { grid-template-columns: 1fr; gap: 40px; }
   @media (min-width: 769px) {
@@ -1686,7 +1758,7 @@ button:focus-visible,
   }
 
   .loi-header, .loi-cards, .testi-grid, .steps-grid, .footer-main { grid-template-columns: 1fr; }
-  #la-loi, #comment-ca-marche, #top-destinations, #comparatif, #temoignages, #qui-suis-je, #faq, #cta-final, footer {
+  #la-loi, #comment-ca-marche, #comparatif, #temoignages, #qui-suis-je, #faq, #cta-final, footer {
     padding: 60px 24px;
   }
 

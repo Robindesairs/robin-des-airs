@@ -591,7 +591,7 @@ SIREN [SIREN]
 |---------|------|---------|
 | ID dossier | Auto | RDA-2026-001 |
 | Nom mandant | Texte | BAL Aminata |
-| Autres passagers | Texte | BAL Okok, BAL Fatou |
+| Autres passagers | Texte | BAL Okok, BAL Ouleye |
 | Nb passagers | Nombre | 3 |
 | Vol | Texte | AF718 |
 | Date vol | Date | 15/01/2026 |

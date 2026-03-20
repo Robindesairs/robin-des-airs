@@ -16,7 +16,7 @@ Air France opère les vols AF704/AF706 vers Douala et Yaoundé. C'est une compag
 
 Sur la ligne Cameroun, le surbooking (refus d'embarquement) est régulièrement signalé. Si vous avez une réservation confirmée et qu'on vous refuse l'accès à bord, vous avez droit à l'indemnité immédiate — 600€ — plus la prise en charge (repas, hôtel, vol de remplacement).
 
-Fatou B. voyageait avec son fils sur un CDG → DLA. Porte fermée devant eux — surbooking. Robin a récupéré 1 200€ (600€ × 2 passagers), soit **900€ nets** pour la famille.
+Ouleye B. voyageait avec son fils sur un CDG → DLA. Porte fermée devant eux — surbooking. Robin a récupéré 1 200€ (600€ × 2 passagers), soit **900€ nets** pour la famille.
 
 → [Vérifier mon vol Douala/Yaoundé](https://robindesairs.eu/#funnel-box)
 → [WhatsApp direct](https://wa.me/15557840392)
