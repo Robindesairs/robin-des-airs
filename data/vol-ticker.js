@@ -1,5 +1,6 @@
 /* Lignes Europe ↔ Afrique — scénarios « du moment » (illustratifs, rotation quotidienne).
- * Champ date ISO (YYYY-MM-DD) pour préremplir le diagnostic. */
+ * Champ date ISO (YYYY-MM-DD) pour préremplir le diagnostic.
+ * `route` : codes IATA (ex. CDG → DKR) — l’affichage bandeau utilise les villes via AIRPORT_CITY dans index.html. */
 window.VOL_TICKER_FLIGHTS = [
   { flight: 'AF718', route: 'CDG → DKR', kind: 'delay', detail: '+4h20', date: '2026-03-08' },
   { flight: 'SN255', route: 'BRU → DKR', kind: 'delay', detail: '+5h05', date: '2026-03-08' },

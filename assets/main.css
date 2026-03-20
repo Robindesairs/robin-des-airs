@@ -976,6 +976,7 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 .calc-input::placeholder { color: rgba(255,255,255,0.65); font-weight: 500; }
 .calc-input:focus { border-color: rgba(0,229,160,0.6); background: rgba(255,255,255,0.12); }
 .calc-input:-webkit-autofill { -webkit-text-fill-color: #fff; }
+textarea.calc-input.calc-input--short-vol { min-height: 96px; resize: vertical; line-height: 1.45; }
 
 .flight-status { margin-top: 8px; font-size: 12px; min-height: 20px; color: rgba(255,255,255,0.7); }
 .flight-status.loading { color: rgba(0,229,160,0.9); }
@@ -1776,6 +1777,21 @@ footer {
 .footer-crisis { margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.12); font-size: 11px; line-height: 1.5; color: rgba(255,255,255,0.6); }
 .footer-crisis a { color: var(--neon-b); font-weight: 600; }
 .footer-crisis strong { color: rgba(255,255,255,0.85); font-size: 11px; }
+
+.footer-disclaimer {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 0 0;
+  border-top: 1px solid rgba(255,255,255,0.07);
+}
+.footer-disclaimer p {
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.65;
+  color: rgba(255,255,255,0.28);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
 
 .footer-bottom {
   max-width: 1100px;

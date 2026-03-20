@@ -146,10 +146,26 @@ export async function whatsappWebhookHandler(request: Request): Promise<Response
     const mode = url.searchParams.get('hub.mode') || url.searchParams.get('hub_mode');
     const token = url.searchParams.get('hub.verify_token') || url.searchParams.get('hub_verify_token');
     const challenge = url.searchParams.get('hub.challenge') || url.searchParams.get('hub_challenge');
-    if (mode === 'subscribe' && token === apiKey && challenge) {
-      return new Response(challenge, { status: 200, headers: { 'Content-Type': 'text/plain' } });
+    const tokenOk = !apiKey || token === apiKey;
+    if (mode === 'subscribe' && tokenOk && challenge) {
+      return new Response(challenge, { status: 200, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
     }
-    return new Response('Forbidden', { status: 403 });
+    if (mode === 'subscribe' && apiKey && token != null && token !== '' && token !== apiKey) {
+      return new Response('Forbidden', { status: 403, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+    }
+    const base = (process.env.URL || `${url.protocol}//${url.host}`).replace(/\/$/, '');
+    return new Response(
+      JSON.stringify({
+        ok: true,
+        service: 'Robin des Airs — WhatsApp webhook',
+        message:
+          "Cette URL reçoit les événements WhatsApp en POST. L'ouvrir dans un navigateur ne fait qu'afficher cette page : le webhook fonctionne.",
+        verification:
+          "Meta envoie un GET avec hub.mode=subscribe, hub.verify_token (= WHATSAPP_API_KEY) et hub.challenge pour valider l'abonnement.",
+        status_url: `${base}/api/whatsapp-status`,
+      }),
+      { status: 200, headers: { 'Content-Type': 'application/json; charset=utf-8' } },
+    );
   }
 
   if (request.method !== 'POST') {

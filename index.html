@@ -204,25 +204,14 @@
       </div>
       <p class="funnel-detail-link"><a href="#" id="link-diagnostic-detail">Ou calculez le montant exact → diagnostic détaillé (5 étapes)</a></p>
 
-      <!-- ══ PARCOURS RAPIDE (2 questions) — par défaut ══ -->
+      <!-- ══ PARCOURS RAPIDE — message puis WhatsApp (le numéro client apparaît à l’envoi) ══ -->
       <div id="funnel-short">
         <div class="fstep short-step" id="step-short-1">
           <p class="fstep-q">Quel est votre vol ?</p>
-          <p class="funnel-hint">Numéro de vol + date, ou ex. « Paris-Dakar du 15/01, retardé »</p>
-          <input type="text" id="short-vol" class="calc-input" placeholder="Ex: AF718 du 15/01, retardé" maxlength="120" style="margin-bottom:14px;">
-          <button type="button" class="btn-calc" onclick="goToShortStep(2)">Suivant →</button>
-        </div>
-        <div class="fstep short-step" id="step-short-2" style="display:none;">
-          <p class="fstep-q">Votre numéro WhatsApp</p>
-          <p class="funnel-hint">Pour qu'on vous recontacte et vous dise si vous êtes éligible.</p>
-          <input type="tel" id="short-phone" class="calc-input" placeholder="Ex: +33 6 12 34 56 78" style="margin-bottom:14px;">
-          <button type="button" class="btn-calc" onclick="submitShort()">Envoyer →</button>
-          <button type="button" class="back-btn" onclick="goToShortStep(1)" style="margin-top:8px;">← Retour</button>
-        </div>
-        <div class="fstep short-step" id="step-short-done" style="display:none;">
-          <p class="fstep-q">Merci !</p>
-          <p class="funnel-hint">Ouvrez WhatsApp : on reprend votre vol et votre numéro — complétez la date si besoin. Réponse sous 24h.</p>
-          <a href="#" id="short-done-wa-btn" target="_blank" rel="noopener" class="funnel-wa-shortcut-btn" style="display:inline-flex; margin-top:10px;">📱 Vérifier mon éligibilité sur WhatsApp</a>
+          <p class="funnel-hint" data-i18n="short_hint_vol">Numéro de vol + date, ou ex. « Paris-Dakar du 15/01, retardé »</p>
+          <textarea id="short-vol" class="calc-input calc-input--short-vol" rows="4" maxlength="800" style="margin-bottom:14px;" placeholder="Ex: AF718 du 15/01, retardé"></textarea>
+          <p id="short-wa-note" class="funnel-hint short-wa-note" data-i18n="short_wa_visible_phone_note" style="font-size:11px;opacity:0.9;margin-top:-6px;margin-bottom:12px;line-height:1.45;"></p>
+          <button type="button" class="btn-calc" onclick="openShortWhatsApp()">Continuer sur WhatsApp →</button>
         </div>
       </div>
 
@@ -339,16 +328,16 @@
           <div id="da-principaux-vols" class="principaux-vols-wrap" style="display:none;" aria-label="Principaux vols Air France et Air Sénégal vers l'Afrique subsaharienne">
             <p class="principaux-vols-title">Principaux vols Air France / Air Sénégal (Afrique subsaharienne)</p>
             <div class="principaux-vols-chips">
-              <button type="button" class="principaux-vol-chip" data-code="AF718">Paris CDG → Dakar (AF718)</button>
-              <button type="button" class="principaux-vol-chip" data-code="AF702">Paris CDG → Dakar (AF702)</button>
-              <button type="button" class="principaux-vol-chip" data-code="AF719">Dakar → Paris CDG (AF719)</button>
-              <button type="button" class="principaux-vol-chip" data-code="AF703">Dakar → Paris CDG (AF703)</button>
-              <button type="button" class="principaux-vol-chip" data-code="AF700">Paris CDG → Abidjan (AF700)</button>
-              <button type="button" class="principaux-vol-chip" data-code="AF701">Abidjan → Paris CDG (AF701)</button>
-              <button type="button" class="principaux-vol-chip" data-code="SS891">Paris CDG → Dakar (SS891)</button>
-              <button type="button" class="principaux-vol-chip" data-code="SS892">Dakar → Paris CDG (SS892)</button>
-              <button type="button" class="principaux-vol-chip" data-code="AF732">Paris CDG → Bamako (AF732)</button>
-              <button type="button" class="principaux-vol-chip" data-code="AF704">Paris CDG → Douala (AF704)</button>
+              <button type="button" class="principaux-vol-chip" data-code="AF718">Paris → Dakar (AF718)</button>
+              <button type="button" class="principaux-vol-chip" data-code="AF702">Paris → Dakar (AF702)</button>
+              <button type="button" class="principaux-vol-chip" data-code="AF719">Dakar → Paris (AF719)</button>
+              <button type="button" class="principaux-vol-chip" data-code="AF703">Dakar → Paris (AF703)</button>
+              <button type="button" class="principaux-vol-chip" data-code="AF700">Paris → Abidjan (AF700)</button>
+              <button type="button" class="principaux-vol-chip" data-code="AF701">Abidjan → Paris (AF701)</button>
+              <button type="button" class="principaux-vol-chip" data-code="SS891">Paris → Dakar (SS891)</button>
+              <button type="button" class="principaux-vol-chip" data-code="SS892">Dakar → Paris (SS892)</button>
+              <button type="button" class="principaux-vol-chip" data-code="AF732">Paris → Bamako (AF732)</button>
+              <button type="button" class="principaux-vol-chip" data-code="AF704">Paris → Douala (AF704)</button>
             </div>
           </div>
         </div>
@@ -1062,6 +1051,9 @@
       </ul>
     </div>
   </div>
+  <div class="footer-disclaimer" role="note" aria-label="Information sur les exemples de vols">
+    <p data-i18n="footer_vol_examples_disclaimer">Les exemples de vols indiqués sont fournis à titre informatif. L'éligibilité et le montant de l'indemnisation dépendent des conditions prévues par le règlement (CE) n°261/2004 (retard important, annulation ou surbooking, circonstances applicables), avec une indemnité pouvant aller jusqu'à 600 € par passager selon la distance du vol.</p>
+  </div>
   <div class="footer-bottom">
     <div class="footer-legal">© 2026 Robin des Airs — 66 av. des Champs-Élysées, 75008 Paris · Réclamation aérienne · Au service de nos communautés et de nos familles</div>
     <div class="footer-reg">Fondé sur le Règlement CE 261/2004<br>Données protégées · RGPD conforme</div>
@@ -1092,6 +1084,8 @@ const DISTANCE_LINE = { 600:'Vol Long-Courrier (>3 500 km) → Indemnité de
 const DESTINATIONS_600 = { ABJ:'Abidjan', ABV:'Abuja', ACC:'Accra', ADD:'Addis-Abeba', TNR:'Antananarivo', BKO:'Bamako', BGF:'Bangui', BJL:'Banjul', BZV:'Brazzaville', BJM:'Bujumbura', CKY:'Conakry', COO:'Cotonou', DSS:'Dakar', DAR:'Dar es Salaam', JIB:'Djibouti', DLA:'Douala', EBB:'Entebbe', FNA:'Freetown', JNB:'Johannesburg', KGL:'Kigali', JRO:'Arusha', FIH:'Kinshasa', LOS:'Lagos', CPT:'Le Cap', LBV:'Libreville', LFW:'Lomé', LAD:'Luanda', SSG:'Malabo', MRU:'Île Maurice', ROB:'Monrovia', NDJ:'Ndjamena', NBO:'Nairobi', NIM:'Niamey', OUA:'Ouagadougou', PHC:'Port Harcourt', RUN:'La Réunion', WDH:'Windhoek', NSI:'Yaoundé', ZNZ:'Zanzibar' };
 /* Aéroport → Ville (pour affichage Départ | Arrivée) */
 const AIRPORT_CITY = { CDG:'Paris', ORY:'Paris', LYS:'Lyon', MRS:'Marseille', NCE:'Nice', TLS:'Toulouse', BOD:'Bordeaux', NTE:'Nantes', LIS:'Lisbonne', OPO:'Porto', MAD:'Madrid', BCN:'Barcelone', FCO:'Rome', NAP:'Naples', MXP:'Milan', VIE:'Vienne', BRU:'Bruxelles', AMS:'Amsterdam', FRA:'Francfort', MUC:'Munich', LHR:'Londres', DUB:'Dublin', GVA:'Genève', ADD:'Addis-Abeba', ABJ:'Abidjan', BKO:'Bamako', DKR:'Dakar', DLA:'Douala', LBV:'Libreville', NIM:'Niamey', OUA:'Ouagadougou', LFW:'Lomé', COO:'Cotonou', DSS:'Dakar', NDJ:'Ndjamena', BGF:'Bangui', BZV:'Brazzaville', FIH:'Kinshasa', JNB:'Johannesburg', CPT:'Le Cap', CMN:'Casablanca', ALG:'Alger', TUN:'Tunis', CAI:'Le Caire', NBO:'Nairobi', LAG:'Lagos', NKC:'Nouakchott', TIP:'Tripoli', PTP:'Pointe-à-Pitre', FDF:'Fort-de-France', CAY:'Cayenne', DOH:'Doha', DXB:'Dubaï', IST:'Istanbul', NRT:'Tokyo', MIA:'Miami', CRL:'Charleroi', NSI:'Yaoundé' };
+/* Même grille — noms affichés en anglais (bandeau vols, langue EN) */
+const AIRPORT_CITY_EN = { CDG:'Paris', ORY:'Paris', LYS:'Lyon', MRS:'Marseille', NCE:'Nice', TLS:'Toulouse', BOD:'Bordeaux', NTE:'Nantes', LIS:'Lisbon', OPO:'Porto', MAD:'Madrid', BCN:'Barcelona', FCO:'Rome', NAP:'Naples', MXP:'Milan', VIE:'Vienna', BRU:'Brussels', AMS:'Amsterdam', FRA:'Frankfurt', MUC:'Munich', LHR:'London', DUB:'Dublin', GVA:'Geneva', ADD:'Addis Ababa', ABJ:'Abidjan', BKO:'Bamako', DKR:'Dakar', DLA:'Douala', LBV:'Libreville', NIM:'Niamey', OUA:'Ouagadougou', LFW:'Lomé', COO:'Cotonou', DSS:'Dakar', NDJ:'Ndjamena', BGF:'Bangui', BZV:'Brazzaville', FIH:'Kinshasa', JNB:'Johannesburg', CPT:'Cape Town', CMN:'Casablanca', ALG:'Algiers', TUN:'Tunis', CAI:'Cairo', NBO:'Nairobi', LAG:'Lagos', NKC:'Nouakchott', TIP:'Tripoli', PTP:'Pointe-à-Pitre', FDF:'Fort-de-France', CAY:'Cayenne', DOH:'Doha', DXB:'Dubai', IST:'Istanbul', NRT:'Tokyo', MIA:'Miami', CRL:'Charleroi', NSI:'Yaoundé' };
 const ROUTE_AMOUNT = {};
 (function(){ for (var k in DB) { var r = DB[k].r.replace('→','-'); ROUTE_AMOUNT[r] = DB[k].c; var rev = r.split('-').reverse().join('-'); if (!ROUTE_AMOUNT[rev]) ROUTE_AMOUNT[rev] = DB[k].c; } })();
 function distanceKmToAmount(km) { if (km < 1500) return 250; if (km <= 3500) return 400; return 600; }
@@ -1163,6 +1157,18 @@ function volTickerEscapeHtml(s) {
   if (s == null || s === '') return '';
   return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
+/** "CDG → DKR" ou "CDG - DKR" → villes (bandeau diaspora / préremplissage) */
+function volTickerRouteToDisplay(routeStr, isEn) {
+  if (!routeStr || typeof routeStr !== 'string') return routeStr || '';
+  var map = isEn ? AIRPORT_CITY_EN : AIRPORT_CITY;
+  var parts = routeStr.split(/\s*[→\-]\s*/).map(function (x) { return String(x).trim().toUpperCase(); });
+  function city(code) {
+    if (!code) return '';
+    return (map && map[code]) || code;
+  }
+  if (parts.length >= 2) return city(parts[0]) + ' → ' + city(parts[1]);
+  return routeStr;
+}
 function volTickerDaySeed() {
   var d = new Date();
   return d.getFullYear() * 372 + d.getMonth() * 31 + d.getDate();
@@ -1201,11 +1207,13 @@ window.refreshVolTicker = function() {
   var titleRaw = get('vol_ticker_chip_title');
   var titleAttr = String(titleRaw).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
   var picked = volTickerShuffle(list, volTickerDaySeed()).slice(0, 9);
+  var en = window.I18N && window.I18N.getLang && window.I18N.getLang() === 'en';
   var sep = '<span class="vol-ticker-sep" aria-hidden="true"> · </span>';
   var parts = picked.map(function(row) {
     var dateDisp = volTickerFormatDateISO(row.date || '');
     var f = volTickerEscapeHtml(row.flight);
-    var route = volTickerEscapeHtml(row.route);
+    var routePlain = volTickerRouteToDisplay(row.route || '', en);
+    var route = volTickerEscapeHtml(routePlain);
     var dIso = volTickerEscapeHtml(row.date || '');
     var kind = row.kind === 'cancel' ? 'cancel' : 'delay';
     var detAttr = volTickerEscapeHtml(row.detail || '');
@@ -1360,37 +1368,39 @@ function goWaDirect() {
     encodeURIComponent('[FR] Bonjour Robin des Airs !\n\nJe souhaite vous parler directement.\n\nMon prénom :\nMon vol :\nCe qui s\'est passé :\n'), '_blank');
 }
 
-/* ═══ PARCOURS RAPIDE (2 questions) ═══ */
-function goToShortStep(n) {
-  [1, 2].forEach(function(i) {
-    var el = document.getElementById('step-short-' + i);
-    if (el) el.style.display = (i === n) ? 'block' : 'none';
-  });
-  var doneEl = document.getElementById('step-short-done');
-  if (doneEl) doneEl.style.display = 'none';
-  var barEl = document.getElementById('funnel-progress-bar');
-  if (barEl) barEl.style.width = (n * 50) + '%';
-  var labelEl = document.getElementById('funnel-step-label');
-  if (labelEl) labelEl.textContent = 'Étape ' + n + ' sur 2';
-}
-function submitShort() {
-  var vol = (document.getElementById('short-vol') && document.getElementById('short-vol').value) || '';
-  var phone = (document.getElementById('short-phone') && document.getElementById('short-phone').value) || '';
-  document.getElementById('step-short-1').style.display = 'none';
-  document.getElementById('step-short-2').style.display = 'none';
-  var doneEl = document.getElementById('step-short-done');
-  doneEl.style.display = 'block';
-  var lang = (window.I18N && window.I18N.getLang && window.I18N.getLang() === 'en') ? 'en' : 'fr';
-  var msg = lang === 'en'
-    ? ('Hi Robin! I want to check if my flight is eligible.\nTrip details: ' + (vol || '___').trim() + '\nMy WhatsApp: ' + (phone || '___').trim())
-    : ('Bonjour Robin ! Je veux vérifier si mon vol est éligible.\nInfos voyage : ' + (vol || '___').trim() + '\nMon WhatsApp : ' + (phone || '___').trim());
-  var waBtn = document.getElementById('short-done-wa-btn');
-  var waNum = (typeof WHATSAPP_NUMBER !== 'undefined' && WHATSAPP_NUMBER) ? String(WHATSAPP_NUMBER).replace(/\D/g, '') : '15557840392';
-  if (waBtn) waBtn.href = 'https://wa.me/' + waNum + '?text=' + encodeURIComponent(msg);
+/* ═══ PARCOURS RAPIDE — ouverture WhatsApp directe (pas d’étape téléphone) ═══ */
+function goToShortStep() {
+  var el1 = document.getElementById('step-short-1');
+  if (el1) el1.style.display = 'block';
   var barEl = document.getElementById('funnel-progress-bar');
   if (barEl) barEl.style.width = '100%';
   var labelEl = document.getElementById('funnel-step-label');
-  if (labelEl) labelEl.textContent = 'Merci !';
+  if (labelEl) labelEl.textContent = 'WhatsApp';
+}
+/** Ouvre WhatsApp avec le message : le client envoie depuis son app → vous voyez son numéro et le texte. */
+function openShortWhatsApp() {
+  var volEl = document.getElementById('short-vol');
+  var vol = (volEl && volEl.value) || '';
+  var get = window.I18N && window.I18N.get ? window.I18N.get.bind(window.I18N) : function () { return ''; };
+  var body = String(vol).trim();
+  var msg;
+  if (!body) {
+    msg = get('wa_eligibility_prefill') || 'Bonjour Robin ! Je veux vérifier si mon vol est éligible.\nNuméro de vol :\nDate :';
+  } else {
+    var tpl = get('short_submit_wa_template');
+    if (tpl && String(tpl).indexOf('{vol}') !== -1) {
+      msg = String(tpl).replace(/\{vol\}/g, body);
+    } else {
+      msg = 'Bonjour Robin,\n\n' + body;
+    }
+  }
+  var waNum = (typeof WHATSAPP_NUMBER !== 'undefined' && WHATSAPP_NUMBER) ? String(WHATSAPP_NUMBER).replace(/\D/g, '') : '15557840392';
+  var url = 'https://wa.me/' + waNum + '?text=' + encodeURIComponent(msg);
+  try {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  } catch (e1) {
+    window.location.href = url;
+  }
 }
 function showLongFunnel() {
   document.getElementById('funnel-short').style.display = 'none';
@@ -1406,9 +1416,9 @@ document.addEventListener('DOMContentLoaded', function() {
   var linkDetail = document.getElementById('link-diagnostic-detail');
   if (linkDetail) linkDetail.addEventListener('click', function(e) { e.preventDefault(); showLongFunnel(); });
   var barEl = document.getElementById('funnel-progress-bar');
-  if (barEl) barEl.style.width = '50%';
+  if (barEl) barEl.style.width = '100%';
   var labelEl = document.getElementById('funnel-step-label');
-  if (labelEl) labelEl.textContent = 'Étape 1 sur 2';
+  if (labelEl) labelEl.textContent = 'WhatsApp';
 });
 
 /* ── Restart ── */
@@ -1487,23 +1497,27 @@ function applyFlightFromDb(code) {
   return true;
 }
 
-/** Clic bandeau vols : préremplit parcours rapide + diagnostic détaillé */
+/** Clic bandeau vols : message type éligibilité + parcours rapide + diagnostic détaillé */
 function volTickerApplyFlight(chip) {
   if (!chip) return;
   var flight = (chip.getAttribute('data-flight') || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
   var dateIso = (chip.getAttribute('data-date') || '').trim();
   var route = chip.getAttribute('data-route') || '';
   var kind = chip.getAttribute('data-kind') || 'delay';
-  var detail = chip.getAttribute('data-detail') || '';
-  var get = window.I18N && window.I18N.get ? window.I18N.get.bind(window.I18N) : function(k) { return k; };
-  var statusWord = kind === 'cancel' ? get('vol_ticker_annul') : get('vol_ticker_retard');
+  var get = window.I18N && window.I18N.get ? window.I18N.get.bind(window.I18N) : function (k) { return k; };
   var dateDisp = typeof volTickerFormatDateISO === 'function' ? volTickerFormatDateISO(dateIso) : dateIso;
-  var lineParts = [flight, route, dateDisp, statusWord + (detail ? ' ' + detail : '')];
-  var line = lineParts.filter(Boolean).join(' · ');
+  var incident = kind === 'cancel' ? get('vol_click_incident_cancel') : get('vol_click_incident_delay');
+  var bodyTpl = get('vol_click_eligibility_body');
+  var line = (bodyTpl && String(bodyTpl).indexOf('{flight}') !== -1)
+    ? String(bodyTpl)
+      .replace(/\{flight\}/g, flight || '___')
+      .replace(/\{date\}/g, dateDisp || '___')
+      .replace(/\{incident\}/g, incident || (kind === 'cancel' ? 'annulé' : 'retardé'))
+    : [flight, route, dateDisp, kind === 'cancel' ? get('vol_ticker_annul') : get('vol_ticker_retard')].filter(Boolean).join(' · ');
 
   var shortW = document.getElementById('funnel-short');
   if (shortW && shortW.style.display !== 'none' && typeof goToShortStep === 'function') {
-    goToShortStep(1);
+    goToShortStep();
   }
 
   var sv = document.getElementById('short-vol');

@@ -13,7 +13,11 @@ window.I18N = (function() {
       vol_ticker_label_short: "Vols",
       vol_ticker_retard: "Retard",
       vol_ticker_annul: "Annulé",
-      vol_ticker_chip_title: "Cliquer : préremplir ce vol dans le formulaire",
+      vol_ticker_chip_title: "Cliquer : message type + vol et date dans le formulaire",
+      vol_click_eligibility_body: "Bonjour, j'ai été affecté par le vol {flight} du {date}, qui a été {incident}. J'aimerais vérifier si je suis éligible à une indemnisation pouvant aller jusqu'à 600 € par passager selon la loi européenne.",
+      vol_click_incident_delay: "retardé",
+      vol_click_incident_cancel: "annulé",
+      short_submit_wa_template: "Bonjour Robin,\n\n{vol}",
       wa_eligibility_prefill: "Bonjour Robin ! Je veux vérifier si mon vol est éligible.\nNuméro de vol :\nDate :",
       hero_wa_note: "Répondez en français, wolof ou anglais — comme vous préférez.",
       hero_title: "Robin prend\naux compagnies,\n",
@@ -131,6 +135,7 @@ window.I18N = (function() {
       footer_how: "Comment ça marche",
       footer_tarifs: "Nos tarifs",
       footer_histoire: "Notre histoire",
+      footer_vol_examples_disclaimer: "Les exemples de vols indiqués sont fournis à titre informatif. L'éligibilité et le montant de l'indemnisation dépendent des conditions prévues par le règlement (CE) n°261/2004 (retard important, annulation ou surbooking, circonstances applicables), avec une indemnité pouvant aller jusqu'à 600 € par passager selon la distance du vol.",
       ready_claim: "Prêt à réclamer ?",
       obt_indemnite: "Mon argent m'attend →",
       section_comp_tag: "Transparence totale",
@@ -213,8 +218,10 @@ window.I18N = (function() {
       funnel_wa_shortcut_btn: "💬 Vérifier mon éligibilité par WhatsApp",
       funnel_detail_link: "Ou calculez le montant exact (2 min) → diagnostic détaillé",
       short_q_vol: "Quel est votre vol ?",
-      short_hint_vol: "Numéro de vol + date, ou ex. « Paris-Dakar du 15/01, retardé »",
-      short_placeholder_vol: "Ex: AF718 du 15/01, retardé",
+      short_hint_vol: "Un clic sur un vol du bandeau « Vols éligibles » remplit un message type. Sinon, décrivez votre trajet (vol, date, retard ou annulation).",
+      short_placeholder_vol: "Ex. : message prérempli depuis le bandeau, ou AF718 du 15/01/2026, retardé",
+      short_btn_whatsapp: "Continuer sur WhatsApp →",
+      short_wa_visible_phone_note: "Pas besoin de saisir votre numéro ici : en envoyant le message depuis WhatsApp, nous verrons votre contact et pourrons vous répondre.",
       short_q_phone: "Votre numéro WhatsApp",
       short_hint_phone: "Pour qu'on vous recontacte et vous dise si vous êtes éligible.",
       short_placeholder_phone: "Ex: +33 6 12 34 56 78",
@@ -269,7 +276,11 @@ window.I18N = (function() {
       vol_ticker_label_short: "Flights",
       vol_ticker_retard: "Delayed",
       vol_ticker_annul: "Cancelled",
-      vol_ticker_chip_title: "Click to pre-fill this flight in the form",
+      vol_ticker_chip_title: "Click: template message + flight and date in the form",
+      vol_click_eligibility_body: "Hello, I was affected by flight {flight} on {date}, which was {incident}. I would like to check if I am eligible for compensation of up to €600 per passenger under European law.",
+      vol_click_incident_delay: "delayed",
+      vol_click_incident_cancel: "cancelled",
+      short_submit_wa_template: "Hi Robin,\n\n{vol}",
       wa_eligibility_prefill: "Hi Robin! I want to check if my flight is eligible.\nFlight number:\nDate:",
       hero_wa_note: "Reply in French, Wolof or English — whatever you prefer.",
       hero_title: "Robin takes from\nairlines,\n",
@@ -386,6 +397,7 @@ window.I18N = (function() {
       footer_how: "How it works",
       footer_tarifs: "Our rates",
       footer_histoire: "Our story",
+      footer_vol_examples_disclaimer: "The flight examples shown are for information only. Eligibility and the amount of compensation depend on the conditions set out in Regulation (EC) No 261/2004 (substantial delay, cancellation or denied boarding, applicable circumstances), with compensation of up to €600 per passenger depending on the flight distance.",
       ready_claim: "Ready to claim?",
       obt_indemnite: "Get my compensation →",
       section_comp_tag: "Full transparency",
@@ -468,8 +480,10 @@ window.I18N = (function() {
       funnel_wa_shortcut_btn: "💬 Check my eligibility via WhatsApp",
       funnel_detail_link: "Or calculate the exact amount (2 min) → detailed check",
       short_q_vol: "What is your flight?",
-      short_hint_vol: "Flight number + date, e.g. \"Paris-Dakar 15/01, delayed\"",
-      short_placeholder_vol: "E.g: AF718 15/01, delayed",
+      short_hint_vol: "Click a flight in the “Eligible flights” strip for a ready-made message. Or describe your trip (flight, date, delay or cancellation).",
+      short_placeholder_vol: "E.g. message from the strip, or AF718 15/01/2026, delayed",
+      short_btn_whatsapp: "Continue on WhatsApp →",
+      short_wa_visible_phone_note: "You don’t need to enter your number here: when you send from WhatsApp, we’ll see your contact and can reply.",
       short_q_phone: "Your WhatsApp number",
       short_hint_phone: "So we can get back to you and tell you if you're eligible.",
       short_placeholder_phone: "E.g: +33 6 12 34 56 78",
@@ -607,29 +621,9 @@ window.I18N = (function() {
       var inp1 = document.getElementById('short-vol');
       if (inp1) inp1.placeholder = get('short_placeholder_vol');
       var btn1 = short1.querySelector('.btn-calc');
-      if (btn1) btn1.textContent = get('btn_suivant');
-    }
-    var short2 = document.getElementById('step-short-2');
-    if (short2) {
-      var q2 = short2.querySelector('.fstep-q');
-      if (q2) q2.textContent = get('short_q_phone');
-      var h2 = short2.querySelector('.funnel-hint');
-      if (h2) h2.textContent = get('short_hint_phone');
-      var inp2 = document.getElementById('short-phone');
-      if (inp2) inp2.placeholder = get('short_placeholder_phone');
-      var btnSend = short2.querySelector('.btn-calc');
-      if (btnSend) btnSend.textContent = get('btn_envoyer');
-      var btnBack = short2.querySelector('.back-btn');
-      if (btnBack) btnBack.textContent = get('btn_retour');
-    }
-    var shortDone = document.getElementById('step-short-done');
-    if (shortDone) {
-      var qd = shortDone.querySelector('.fstep-q');
-      if (qd) qd.textContent = get('short_done_title');
-      var hd = shortDone.querySelector('.funnel-hint');
-      if (hd) hd.textContent = get('short_done_hint');
-      var waDone = document.getElementById('short-done-wa-btn');
-      if (waDone) waDone.textContent = get('short_done_wa_btn');
+      if (btn1) btn1.textContent = get('short_btn_whatsapp');
+      var noteWa = document.getElementById('short-wa-note');
+      if (noteWa) noteWa.textContent = get('short_wa_visible_phone_note');
     }
     document.querySelectorAll('.faq-list .faq-item').forEach(function(item, i) {
       var idx = i + 1;

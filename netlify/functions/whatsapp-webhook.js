@@ -795,9 +795,28 @@ exports.handler = async (event) => {
     // 360dialog n'a pas de champ "verify token" dans son interface — on accepte si challenge présent
     const tokenOk = !apiKey || token === apiKey;
     if (mode === 'subscribe' && tokenOk && challenge) {
-      return { statusCode: 200, body: challenge };
+      return { statusCode: 200, headers: { 'Content-Type': 'text/plain; charset=utf-8' }, body: challenge };
     }
-    return { statusCode: 403, body: 'Forbidden' };
+    // Mauvais verify_token alors que Meta tente un subscribe : on refuse
+    if (mode === 'subscribe' && apiKey && token != null && token !== '' && token !== apiKey) {
+      return { statusCode: 403, headers: { 'Content-Type': 'text/plain; charset=utf-8' }, body: 'Forbidden' };
+    }
+    // Visite navigateur / sonde sans paramètres d'abonnement : 200 JSON explicatif (pas une erreur)
+    const statusPath = '/api/whatsapp-status';
+    const base = (process.env.URL || 'https://robindesairs.eu').replace(/\/$/, '');
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json; charset=utf-8' },
+      body: JSON.stringify({
+        ok: true,
+        service: 'Robin des Airs — WhatsApp webhook',
+        message:
+          "Cette URL reçoit les événements WhatsApp en POST. L'ouvrir dans un navigateur ne fait qu'afficher cette page : le webhook fonctionne.",
+        verification:
+          "Meta envoie un GET avec hub.mode=subscribe, hub.verify_token (= WHATSAPP_API_KEY sur Netlify) et hub.challenge pour valider l'abonnement.",
+        status_url: base + statusPath,
+      }),
+    };
   }
 
   if (event.httpMethod !== 'POST') {
