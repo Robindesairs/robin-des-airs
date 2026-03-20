@@ -114,15 +114,29 @@
   html { scroll-behavior: auto; }
 }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+  max-width: 100%;
+  /* Évite le « glissement » gauche/droite sur iOS/Android quand un enfant dépasse */
+}
 
 body {
   background: var(--white);
   font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
   color: var(--text);
   overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  position: relative;
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
+  overscroll-behavior-x: none;
+}
+
+img, video, svg {
+  max-width: 100%;
+  height: auto;
 }
 
 a { text-decoration: none; color: inherit; }
@@ -156,6 +170,9 @@ a:focus-visible, button:focus-visible, .cb:focus-visible, .reason-btn:focus-visi
 .diaspora-bar {
   position: fixed;
   top: 0; left: 0; right: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   z-index: 1001;
   background: var(--navy);
 }
@@ -199,6 +216,9 @@ a:focus-visible, button:focus-visible, .cb:focus-visible, .reason-btn:focus-visi
 /* ═══════ NAV ═══════ */
 nav {
   position: fixed; top: 36px; left: 0; right: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   z-index: 1000;
   height: 72px; padding: 0 32px;
   display: flex; align-items: center; justify-content: space-between;
@@ -279,9 +299,13 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 .nav-drawer {
   display: none; position: fixed;
   top: 64px; left: 0; right: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   background: white; border-bottom: 2px solid var(--border);
   box-shadow: 0 8px 32px rgba(11,31,58,0.10);
-  z-index: 999; padding: 12px 20px 20px;
+  z-index: 999;
+  padding: 12px max(20px, env(safe-area-inset-right, 20px)) 20px max(20px, env(safe-area-inset-left, 20px));
 }
 .nav-drawer.open { display: block; animation: fstepIn 0.2s ease; }
 .nav-drawer-lang {
@@ -904,7 +928,12 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 }
 @media (max-width: 480px) {
   .wa-float-text { display: none; }
-  .wa-float { padding: 14px; border-radius: 50%; bottom: 24px; }
+  .wa-float {
+    padding: 14px;
+    border-radius: 50%;
+    bottom: max(24px, env(safe-area-inset-bottom, 16px));
+    right: max(12px, env(safe-area-inset-right, 12px));
+  }
 }
 
 .calc-disclaimer {
@@ -1558,7 +1587,33 @@ button:focus-visible,
 
 /* Mobile / tablette (≤ 768px) — header minimal : logo + hamburger uniquement */
 @media (max-width: 768px) {
-  body { font-size: 16px; }
+  body {
+    font-size: 16px;
+    overflow-wrap: break-word;
+  }
+  /* Grilles / flex : évite qu'une colonne force la page à dépasser en largeur */
+  .hero-wrap,
+  .hero-left,
+  .hero-right {
+    min-width: 0;
+    max-width: 100%;
+  }
+  #hero {
+    overflow-x: clip;
+  }
+  #la-loi,
+  #comment-ca-marche,
+  #top-destinations,
+  #comparatif,
+  #temoignages,
+  #qui-suis-je,
+  #faq,
+  #cta-final,
+  footer {
+    max-width: 100%;
+    overflow-x: clip;
+    box-sizing: border-box;
+  }
   /* Afficher aussi les drapeaux sur mobile */
   .diaspora-bar { display: block; }
   /* Bandeau plus court : pas de liste pays ni slogan (évite header surchargé) */
