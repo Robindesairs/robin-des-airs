@@ -902,10 +902,14 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 
 .hero-lang-line {
   display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 6px 8px;
   margin-top: 20px;
+  margin-bottom: 0;
+  max-width: 100%;
   font-size: 12px;
+  line-height: 1.45;
   color: var(--gray2);
   font-weight: 600;
 }
@@ -913,6 +917,8 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px; /* aligne le picto avec la 1re ligne de texte quand le texte passe à la ligne */
   color: var(--neon-dark);
 }
 
@@ -2152,15 +2158,29 @@ button:focus-visible,
   }
   .hero-wrap {
     grid-template-columns: 1fr;
-    gap: 28px;
-    padding-bottom: 28px;
+    gap: 20px;
+    padding-bottom: 20px;
     display: flex;
     flex-direction: column;
   }
-  /* Espace pour le bouton WhatsApp flottant (bas-droite) — le sous-titre reste lisible */
+  /* Moins d’air sous la ligne « langues » : la bulle WA flotte en bas-droite, pas besoin de ~5.5rem */
   .hero-left {
-    padding-bottom: max(5.5rem, calc(4.5rem + env(safe-area-inset-bottom, 0px)));
-    padding-right: max(0px, calc(4.5rem - env(safe-area-inset-right, 0px)));
+    padding-bottom: max(2.75rem, calc(1.5rem + env(safe-area-inset-bottom, 0px)));
+    padding-right: max(0px, calc(3.25rem - env(safe-area-inset-right, 0px)));
+  }
+  .hero-lang-line {
+    margin-top: 8px;
+    font-size: 11px;
+    line-height: 1.42;
+    gap: 5px 6px;
+  }
+  .hero-wa-direct {
+    margin-top: 8px;
+    margin-bottom: 2px;
+  }
+  .hero-stats {
+    margin-top: 14px;
+    padding-top: 12px;
   }
   /* Logo marque un peu plus lisible sous le bandeau drapeaux */
   .nav-logo {
