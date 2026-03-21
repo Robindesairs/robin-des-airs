@@ -976,6 +976,23 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   text-decoration: underline;
 }
 
+/* Clic pastille « vol éligible » : masquer l’en-tête calculateur + raccourcis (seulement message + WhatsApp) */
+#funnel-box.funnel-from-vol-chip > .calc-header,
+#funnel-box.funnel-from-vol-chip > .funnel-wa-shortcut,
+#funnel-box.funnel-from-vol-chip > .funnel-detail-link {
+  display: none !important;
+}
+#funnel-box.funnel-from-vol-chip #step-short-1 > .fstep-q,
+#funnel-box.funnel-from-vol-chip #step-short-1 > .funnel-hint:not(.short-wa-note) {
+  display: none !important;
+}
+#funnel-box.funnel-from-vol-chip #short-wa-note {
+  display: none !important;
+}
+#funnel-box.funnel-from-vol-chip #funnel-short {
+  margin-top: 0;
+}
+
 .calc-tag {
   font-size: 8px;
   font-weight: 700;

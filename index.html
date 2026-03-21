@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Robin des Airs — Indemnités aériennes jusqu'à 600€ | Premium</title>
-<meta name="description" content="Vol retardé ou annulé ? Jusqu'à 600€ par passager (CE 261). On ne prend notre part (25%) qu'une fois votre argent récupéré — sinon vous ne payez rien. Réponse sous 24h.">
+<meta name="description" content="Vol retardé ou annulé ? Jusqu'à 600€ par passager (CE 261). On ne prend notre part (25%) qu'une fois votre argent récupéré — sinon vous ne payez rien. En général réponse le jour même (24h max).">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://robindesairs.eu">
 <meta property="og:title" content="Robin des Airs — Votre vol retardé vaut jusqu'à 600€">
@@ -101,7 +101,7 @@
       </div>
     </div>
     <!-- CTA visible sur desktop -->
-    <a href="#funnel-box" class="nav-cta nav-cta-inline" data-i18n="nav_cta">Combien je touche ? →</a>
+    <a href="#funnel-box" class="nav-cta nav-cta-inline" onclick="var b=document.getElementById('funnel-box');if(b)b.classList.remove('funnel-from-vol-chip');" data-i18n="nav_cta">Combien je touche ? →</a>
     <!-- Hamburger toujours visible -->
     <button class="nav-burger" id="nav-burger" onclick="toggleMobileNav()" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -116,7 +116,7 @@
         <span class="lang-option" data-lang="en" onclick="switchLang('EN','🇬🇧'); closeMobileNav();">🇬🇧 English</span>
   </div>
   <ul>
-    <li><a href="#funnel-box" onclick="closeMobileNav(); document.getElementById('funnel-box')&&document.getElementById('funnel-box').scrollIntoView({behavior:'smooth'});" data-i18n="nav_drawer_calc">🧮 Calculateur</a></li>
+    <li><a href="#funnel-box" onclick="closeMobileNav(); var b=document.getElementById('funnel-box'); if(b){ b.classList.remove('funnel-from-vol-chip'); b.scrollIntoView({behavior:'smooth'}); }" data-i18n="nav_drawer_calc">🧮 Calculateur</a></li>
     <li><a href="#la-loi" onclick="closeMobileNav()" data-i18n="nav_drawer_loi">📋 La loi CE 261</a></li>
     <li><a href="#comment-ca-marche" onclick="closeMobileNav()" data-i18n="nav_drawer_how">⚙️ Comment ça marche</a></li>
     <li><a href="/blog/" onclick="closeMobileNav()" data-i18n="nav_drawer_dest">✈️ Guides &amp; destinations (blog)</a></li>
@@ -125,7 +125,7 @@
     <li><a href="#faq" onclick="closeMobileNav()" data-i18n="nav_drawer_faq">❓ FAQ</a></li>
     <li><a href="/blog/" onclick="closeMobileNav()" data-i18n="nav_drawer_blog">📝 Blog</a></li>
     <li><a href="/choix-reclamation.html" onclick="closeMobileNav()" data-i18n="nav_drawer_depot">📤 Déposer mon dossier</a></li>
-    <li><a href="#funnel-box" onclick="closeMobileNav(); document.getElementById('funnel-box')&&document.getElementById('funnel-box').scrollIntoView({behavior:'smooth'});" class="drawer-cta" data-i18n="nav_cta">Combien je touche ? →</a></li>
+    <li><a href="#funnel-box" onclick="closeMobileNav(); var b=document.getElementById('funnel-box'); if(b){ b.classList.remove('funnel-from-vol-chip'); b.scrollIntoView({behavior:'smooth'}); }" class="drawer-cta" data-i18n="nav_cta">Combien je touche ? →</a></li>
   </ul>
 </div>
 
@@ -1501,6 +1501,8 @@ function scrollToFunnelAndHighlight() {
 }
 function scrollToCalcWithAnimation(e) {
   if (e && e.preventDefault) e.preventDefault();
+  var fb = document.getElementById('funnel-box');
+  if (fb) fb.classList.remove('funnel-from-vol-chip');
   scrollToFunnelAndHighlight();
 }
 
@@ -1661,6 +1663,8 @@ function openShortWhatsApp() {
   }
 }
 function showLongFunnel() {
+  var box = document.getElementById('funnel-box');
+  if (box) box.classList.remove('funnel-from-vol-chip');
   document.getElementById('funnel-short').style.display = 'none';
   document.getElementById('funnel-long').style.display = 'block';
   var waShortcut = document.querySelector('.funnel-wa-shortcut');
@@ -1668,6 +1672,18 @@ function showLongFunnel() {
   var detailLink = document.querySelector('.funnel-detail-link');
   if (detailLink) detailLink.style.display = 'none';
   goTo('step-1', 12);
+}
+/** Clic pastille bandeau : parcours minimal (textarea + bouton), sans en-tête ni autres raccourcis WhatsApp. */
+function showShortFunnelFromVolTicker() {
+  var box = document.getElementById('funnel-box');
+  if (box) box.classList.add('funnel-from-vol-chip');
+  var fs = document.getElementById('funnel-short');
+  var fl = document.getElementById('funnel-long');
+  if (fl) fl.style.display = 'none';
+  if (fs) fs.style.display = 'block';
+  var crumbs = document.getElementById('funnel-crumbs');
+  if (crumbs) crumbs.textContent = '';
+  if (typeof goToShortStep === 'function') goToShortStep();
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -1711,6 +1727,8 @@ function restartFunnel() {
   ['da-dist-wrap','eb-dist-wrap'].forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; });
   document.querySelectorAll('.dist-pill').forEach(p => p.classList.remove('active'));
   ['da-pax-val','eb-pax-val'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = '1'; });
+  var fbox = document.getElementById('funnel-box');
+  if (fbox) fbox.classList.remove('funnel-from-vol-chip');
   goTo('step-1', 12);
 }
 
@@ -1755,7 +1773,7 @@ function applyFlightFromDb(code) {
   return true;
 }
 
-/** Clic bandeau vols : message type éligibilité + parcours rapide + diagnostic détaillé */
+/** Clic bandeau vols : parcours rapide sur le site (textarea + Continuer sur WhatsApp), pas le diagnostic détaillé. */
 function volTickerApplyFlight(chip) {
   if (!chip) return;
   var flight = (chip.getAttribute('data-flight') || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
@@ -1773,10 +1791,7 @@ function volTickerApplyFlight(chip) {
       .replace(/\{incident\}/g, incident || (kind === 'cancel' ? 'annulé' : 'retardé'))
     : [flight, route, dateDisp, kind === 'cancel' ? get('vol_ticker_annul') : get('vol_ticker_retard')].filter(Boolean).join(' · ');
 
-  var shortW = document.getElementById('funnel-short');
-  if (shortW && shortW.style.display !== 'none' && typeof goToShortStep === 'function') {
-    goToShortStep();
-  }
+  showShortFunnelFromVolTicker();
 
   var sv = document.getElementById('short-vol');
   if (sv) sv.value = line;
@@ -1798,8 +1813,9 @@ function volTickerApplyFlight(chip) {
 
   if (typeof closeMobileNav === 'function') closeMobileNav();
   scrollToFunnelAndHighlight();
-  if (sv && shortW && shortW.style.display !== 'none') sv.focus();
-  else if (fn) fn.focus();
+  if (sv && typeof sv.focus === 'function') {
+    try { sv.focus(); sv.setSelectionRange(sv.value.length, sv.value.length); } catch (errF) {}
+  }
 }
 
 (function volTickerBindClicks() {
