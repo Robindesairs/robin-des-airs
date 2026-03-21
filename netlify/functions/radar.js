@@ -2,6 +2,10 @@
  * Radar Robin des Airs — Tous les vols au départ ou à l'arrivée en France.
  * Priorité : ANNULÉ → ROUGE (≥2h30) → ORANGE (1h–2h30) → JAUNE (~1h).
  * Variable Netlify : AVIATION_EDGE_KEY
+ *
+ * Query : mode=ticker-history → fenêtre **14 jours** via API `flightsHistory` (souvent forfait Premium
+ * Aviation Edge). Même JSON que le mode défaut ; champs optionnels dataSource, historyDateFrom/To.
+ * Si la clé n’a pas l’historique, la réponse sera vide → le site repasse sur le timetable (index.html).
  */
 
 const EU_COUNTRIES = ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO'];
@@ -140,6 +144,27 @@ function getTrackerUrl(airlineIata, flightNumber) {
   return base + (base.includes('?') ? '&' : '?') + 'flight=' + encodeURIComponent(fn);
 }
 
+/** Réponse flightsHistory (Aviation Edge) → même forme flight.iata que le timetable. */
+function normalizeHistoryFlight(f) {
+  if (!f || typeof f !== 'object') return f;
+  const fl = f.flight || {};
+  const raw = (fl.iataNumber || fl.icaoNumber || fl.iata || fl.number || '').toString().replace(/\s/g, '') || '—';
+  return { ...f, flight: { ...fl, iata: raw, number: raw } };
+}
+
+/** Filtre léger avant d’empiler l’historique (réduit volume traité). */
+function quickEligibleRow(f) {
+  const dep = f.departure || {};
+  const arr = f.arrival || {};
+  const depIata = (dep.iataCode || '').toUpperCase();
+  const arrIata = (arr.iataCode || '').toUpperCase();
+  let airlineIata = (f.airline && f.airline.iataCode ? f.airline.iataCode : '').toUpperCase();
+  const fl = f.flight || {};
+  const fn = (fl.iata || fl.number || '').toString().replace(/\s/g, '');
+  if (!airlineIata && fn.length >= 2) airlineIata = fn.slice(0, 2).toUpperCase();
+  return checkEligible(getCountry(depIata), getCountry(arrIata), airlineIata);
+}
+
 exports.handler = async (event) => {
   const apiKey = process.env.AVIATION_EDGE_KEY;
   if (!apiKey) {
@@ -150,18 +175,57 @@ exports.handler = async (event) => {
     };
   }
 
+  const mode = (event.queryStringParameters && String(event.queryStringParameters.mode || '').trim()) || '';
+  const useTickerHistory = mode === 'ticker-history';
+  /** Fenêtre historique bandeau (jours glissants, UTC). API doc : plage jusqu’à ~30 j. */
+  const TICKER_HISTORY_DAYS = 14;
+
   try {
     const allRaw = [];
     const arrivalRaw = [];
     const cacheBuster = Date.now();
-    for (const hub of HUBS) {
-      const depUrl = `https://aviation-edge.com/v2/public/timetable?key=${apiKey}&iataCode=${hub}&type=departure&_=${cacheBuster}`;
-      const arrUrl = `https://aviation-edge.com/v2/public/timetable?key=${apiKey}&iataCode=${hub}&type=arrival&_=${cacheBuster}`;
-      const [depRes, arrRes] = await Promise.all([fetch(depUrl), fetch(arrUrl)]);
-      const depData = await depRes.json();
-      const arrData = await arrRes.json();
-      if (Array.isArray(depData)) allRaw.push(...depData);
-      if (Array.isArray(arrData)) arrivalRaw.push(...arrData);
+    let historyMeta = null;
+
+    if (useTickerHistory) {
+      const to = new Date();
+      const from = new Date(to.getTime());
+      from.setUTCDate(from.getUTCDate() - TICKER_HISTORY_DAYS);
+      const dateTo = to.toISOString().slice(0, 10);
+      const dateFrom = from.toISOString().slice(0, 10);
+      historyMeta = { dateFrom, dateTo, days: TICKER_HISTORY_DAYS };
+      const histPromises = [];
+      for (const hub of HUBS) {
+        const dU = `https://aviation-edge.com/v2/public/flightsHistory?key=${apiKey}&code=${hub}&type=departure&date_from=${dateFrom}&date_to=${dateTo}&_=${cacheBuster}`;
+        const aU = `https://aviation-edge.com/v2/public/flightsHistory?key=${apiKey}&code=${hub}&type=arrival&date_from=${dateFrom}&date_to=${dateTo}&_=${cacheBuster}`;
+        histPromises.push(fetch(dU).then((r) => r.json()), fetch(aU).then((r) => r.json()));
+      }
+      const histChunks = await Promise.all(histPromises);
+      for (let i = 0; i < histChunks.length; i += 2) {
+        const depData = histChunks[i];
+        const arrData = histChunks[i + 1];
+        if (Array.isArray(depData)) {
+          for (const row of depData) {
+            const n = normalizeHistoryFlight(row);
+            if (quickEligibleRow(n)) allRaw.push(n);
+          }
+        }
+        if (Array.isArray(arrData)) {
+          for (const row of arrData) {
+            const n = normalizeHistoryFlight(row);
+            if (quickEligibleRow(n)) arrivalRaw.push(n);
+          }
+        }
+      }
+    } else {
+      for (const hub of HUBS) {
+        const depUrl = `https://aviation-edge.com/v2/public/timetable?key=${apiKey}&iataCode=${hub}&type=departure&_=${cacheBuster}`;
+        const arrUrl = `https://aviation-edge.com/v2/public/timetable?key=${apiKey}&iataCode=${hub}&type=arrival&_=${cacheBuster}`;
+        const [depRes, arrRes] = await Promise.all([fetch(depUrl), fetch(arrUrl)]);
+        const depData = await depRes.json();
+        const arrData = await arrRes.json();
+        if (Array.isArray(depData)) allRaw.push(...depData);
+        if (Array.isArray(arrData)) arrivalRaw.push(...arrData);
+      }
     }
 
     /** Map arrivées : clé normalisée -> heure d'arrivée estimée/réelle (API arrival = à jour). */
@@ -201,8 +265,18 @@ exports.handler = async (event) => {
         if (typeof arr.delay === 'number') delayMinutes = arr.delay;
         else if (typeof dep.delay === 'number') delayMinutes = dep.delay;
       }
+      if (typeof dep.delay === 'string' && dep.delay !== '' && !isNaN(Number(dep.delay))) {
+        delayMinutes = Math.max(delayMinutes || 0, Number(dep.delay));
+      }
+      if (typeof arr.delay === 'string' && arr.delay !== '' && !isNaN(Number(arr.delay))) {
+        delayMinutes = Math.max(delayMinutes || 0, Number(arr.delay));
+      }
 
       const statusRaw = (f.status || '').toLowerCase();
+      if (useTickerHistory && (statusRaw === 'landed' || statusRaw === 'arrived')) {
+        const arrDm = delayMinutesFromTimes(arr.scheduledTime, arr.actualTime || arr.estimatedTime);
+        if (arrDm != null) delayMinutes = Math.max(delayMinutes || 0, arrDm);
+      }
       const cancelled = statusRaw === 'cancelled' || statusRaw === 'canceled' || statusRaw === 'annulé';
       const hasActualDep = !!(dep.actualTime);
       const flightStatus = cancelled ? 'cancelled' : (hasActualDep ? 'departed' : 'scheduled');
@@ -282,6 +356,12 @@ exports.handler = async (event) => {
         delayMinutes = 0;
         if (typeof arr.delay === 'number') delayMinutes = arr.delay;
         else if (typeof dep.delay === 'number') delayMinutes = dep.delay;
+      }
+      if (typeof arr.delay === 'string' && arr.delay !== '' && !isNaN(Number(arr.delay))) {
+        delayMinutes = Math.max(delayMinutes || 0, Number(arr.delay));
+      }
+      if (typeof dep.delay === 'string' && dep.delay !== '' && !isNaN(Number(dep.delay))) {
+        delayMinutes = Math.max(delayMinutes || 0, Number(dep.delay));
       }
 
       const statusRaw = (f.status || '').toLowerCase();
@@ -372,14 +452,18 @@ exports.handler = async (event) => {
     const now = new Date();
     const viewDate = now.toISOString().slice(0, 10);
 
+    const payload = { flights, viewDate, updatedAt: now.toISOString() };
+    if (historyMeta) {
+      payload.dataSource = 'flightsHistory';
+      payload.historyDateFrom = historyMeta.dateFrom;
+      payload.historyDateTo = historyMeta.dateTo;
+      payload.historyDays = historyMeta.days;
+    }
+
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({
-        flights,
-        viewDate,
-        updatedAt: now.toISOString()
-      })
+      body: JSON.stringify(payload)
     };
   } catch (err) {
     console.error('radar err:', err);

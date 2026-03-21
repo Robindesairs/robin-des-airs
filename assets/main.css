@@ -111,8 +111,15 @@
   --site-header-height: 112px;
 }
 
+/* Hors bandeau vols : évite que !important casse le marquee / les règles dédiées .vol-ticker-* plus bas */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  *:not(.vol-ticker-rail):not(.vol-ticker-dot):not(.vol-ticker-group):not(.vol-ticker-chip),
+  *:not(.vol-ticker-rail):not(.vol-ticker-dot):not(.vol-ticker-group):not(.vol-ticker-chip)::before,
+  *:not(.vol-ticker-rail):not(.vol-ticker-dot):not(.vol-ticker-group):not(.vol-ticker-chip)::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
   html { scroll-behavior: auto; }
 }
 
@@ -275,6 +282,7 @@ a:focus-visible, button:focus-visible, .cb:focus-visible, .reason-btn:focus-visi
 .vol-ticker-rail {
   display: flex;
   width: max-content;
+  -webkit-animation: vol-ticker-marquee 52s linear infinite;
   animation: vol-ticker-marquee 52s linear infinite;
 }
 .vol-ticker-group {
@@ -315,10 +323,41 @@ button.vol-ticker-chip:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px rgba(0, 200, 122, 0.45);
 }
-button.vol-ticker-chip strong {
+button.vol-ticker-chip .vol-ticker-chip-flight {
   color: #fff;
   font-weight: 800;
   letter-spacing: 0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.vol-ticker-chip-dot {
+  display: inline-block;
+  margin-right: 3px;
+  font-size: 9px;
+  line-height: 1;
+  vertical-align: middle;
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.35));
+}
+/* Pastilles homogènes : même fond / bord que les retards (plus de variante annulation). */
+.vol-ticker-chip-line {
+  display: inline;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.vol-ticker-chip-muted {
+  color: rgba(255, 255, 255, 0.78);
+  font-weight: 600;
+}
+.vol-ticker-chip-status {
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: 700;
+}
+.vol-ticker-chip-elig {
+  color: #7eecc4;
+  font-weight: 800;
+  font-size: 11px;
 }
 .vol-ticker-datetime {
   color: rgba(255, 255, 255, 0.7);
@@ -333,6 +372,10 @@ button.vol-ticker-chip strong {
 .vol-ticker-sep {
   color: rgba(255, 255, 255, 0.25);
   font-weight: 400;
+}
+@-webkit-keyframes vol-ticker-marquee {
+  from { -webkit-transform: translateX(0); transform: translateX(0); }
+  to { -webkit-transform: translateX(-50%); transform: translateX(-50%); }
 }
 @keyframes vol-ticker-marquee {
   from { transform: translateX(0); }
@@ -349,8 +392,14 @@ button.vol-ticker-chip strong {
   button.vol-ticker-chip { font-size: 10px; padding: 5px 11px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .vol-ticker-rail { animation: none; }
-  .vol-ticker-dot { animation: none; }
+  .vol-ticker-rail {
+    -webkit-animation: none !important;
+    animation: none !important;
+  }
+  .vol-ticker-dot {
+    -webkit-animation: none !important;
+    animation: none !important;
+  }
   #vol-ticker-g2 { display: none !important; }
   .vol-ticker-viewport,
   .vol-ticker-viewport--track {
@@ -1792,6 +1841,9 @@ footer {
   font-weight: 500;
   letter-spacing: 0.02em;
 }
+.footer-disclaimer p + p {
+  margin-top: 8px;
+}
 
 .footer-bottom {
   max-width: 1100px;
@@ -1990,6 +2042,22 @@ button:focus-visible,
   .testi-arrow { width: 44px; height: 44px; }
   .faq-question { padding: 20px 24px; min-height: 48px; }
   .btn-primary, .btn-ghost { min-height: 48px; }
+}
+
+/* Mobile : bandeau vols — WebKit fige souvent mask + transform ; sans « réduire les mouvements », on force GPU + pas de masque */
+@media (max-width: 768px) and (prefers-reduced-motion: no-preference) {
+  .vol-ticker-viewport,
+  .vol-ticker-viewport--track {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .vol-ticker-rail {
+    -webkit-animation: vol-ticker-marquee 38s linear infinite;
+    animation: vol-ticker-marquee 38s linear infinite;
+    will-change: transform;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
 }
 
 /* Tablette / petit desktop (≤ 1080px) */
