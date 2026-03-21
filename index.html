@@ -962,6 +962,23 @@
 const COMMISSION_RATE = 0.25; /* 25% no win no fee */
 const WHATSAPP_NUMBER = '33756863630';
 window.WHATSAPP_NUMBER = WHATSAPP_NUMBER;
+/** Lien WhatsApp fiable (mobile + texte long) — api.whatsapp.com préserve mieux le message que wa.me sur certains appareils */
+function buildWhatsAppSendUrl(messageText) {
+  var num = String(typeof WHATSAPP_NUMBER !== 'undefined' ? WHATSAPP_NUMBER : '33756863630').replace(/\D/g, '');
+  var t = String(messageText || '');
+  if (t.length > 3500) t = t.slice(0, 3497) + '...';
+  return 'https://api.whatsapp.com/send?phone=' + encodeURIComponent(num) + '&text=' + encodeURIComponent(t);
+}
+function openWhatsAppSendUrl(url) {
+  var ua = typeof navigator !== 'undefined' ? navigator.userAgent || '' : '';
+  var isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+  if (isMobile) {
+    window.location.href = url;
+    return;
+  }
+  var w = window.open(url, '_blank', 'noopener,noreferrer');
+  if (!w || w.closed) window.location.href = url;
+}
 const DLABEL = { 600:'Long-courrier · +3 500 km', 400:'Moyen-courrier · 1 500–3 500 km', 250:'Court-courrier · <1 500 km' };
 const DISTANCE_LINE = { 600:'Vol Long-Courrier (>3 500 km) → Indemnité de 600€', 400:'Vol Moyen-Courrier (1 500–3 500 km) → Indemnité de 400€', 250:'Vol Court-Courrier (<1 500 km) → Indemnité de 250€' };
 /* Destinations couvertes à 600€ (long-courrier) — base site + SEO meta */
@@ -1507,8 +1524,7 @@ function pickTrajet(t) {
 
 /* ── WhatsApp direct ── */
 function goWaDirect() {
-  window.open('https://wa.me/' + WHATSAPP_NUMBER + '?text=' +
-    encodeURIComponent('[FR] Bonjour Robin des Airs !\n\nJe souhaite vous parler directement.\n\nMon prénom :\nMon vol :\nCe qui s\'est passé :\n'), '_blank');
+  openWhatsAppSendUrl(buildWhatsAppSendUrl('[FR] Bonjour Robin des Airs !\n\nJe souhaite vous parler directement.\n\nMon prénom :\nMon vol :\nCe qui s\'est passé :\n'));
 }
 
 /* ═══ PARCOURS RAPIDE — ouverture WhatsApp directe (pas d’étape téléphone) ═══ */
@@ -1536,12 +1552,8 @@ function openShortWhatsApp() {
     }
   }
   var waNum = (typeof WHATSAPP_NUMBER !== 'undefined' && WHATSAPP_NUMBER) ? String(WHATSAPP_NUMBER).replace(/\D/g, '') : '33756863630';
-  var url = 'https://wa.me/' + waNum + '?text=' + encodeURIComponent(msg);
-  try {
-    window.open(url, '_blank', 'noopener,noreferrer');
-  } catch (e1) {
-    window.location.href = url;
-  }
+  var url = buildWhatsAppSendUrl(msg);
+  openWhatsAppSendUrl(url);
 }
 function showLongFunnel() {
   var box = document.getElementById('funnel-box');
@@ -1868,7 +1880,7 @@ function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
   var flightNumberInput = document.getElementById('flight_number');
   var flightNum = (flightNumberInput && flightNumberInput.value && flightNumberInput.value.trim()) ? flightNumberInput.value.trim().toUpperCase() : (volRef || '—');
   var waMsg = 'Bonjour Robin ! Je viens de faire le diagnostic sur votre site.\nMon vol : ' + flightNum + '\nDate : ' + (dateStr || '') + '\nJe suis éligible et je veux lancer mon dossier.';
-  var waHref = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(waMsg);
+  var waHref = buildWhatsAppSendUrl(waMsg);
   var stickyWa = document.getElementById('sticky-wa-cta');
   if (stickyWa) stickyWa.href = waHref;
   var stickyAmountEl = document.getElementById('sticky-cta-amount');
@@ -1990,10 +2002,45 @@ document.addEventListener('DOMContentLoaded', () => {
     var ro = new ResizeObserver(function() { updateSiteHeaderOffset(); });
     ro.observe(siteHeader);
   }
-  // Un seul numéro WhatsApp pour tout le site (défini en haut : WHATSAPP_NUMBER)
-  document.querySelectorAll('a[href*="wa.me"]').forEach(a => {
-    a.href = a.href.replace(/wa\.me\/[0-9]+/, 'wa.me/' + WHATSAPP_NUMBER);
+  // Un seul numéro WhatsApp : remplace le numéro sans perdre ?text= (wa.me + api.whatsapp.com)
+  var phoneNorm = String(WHATSAPP_NUMBER).replace(/\D/g, '');
+  document.querySelectorAll('a[href*="wa.me"]').forEach(function (a) {
+    try {
+      var raw = a.getAttribute('href');
+      if (!raw) return;
+      var u = new URL(raw, window.location.href);
+      if (!/^wa\.me$/i.test(u.hostname.replace(/^www\./, ''))) return;
+      u.pathname = '/' + phoneNorm;
+      a.href = u.toString();
+    } catch (err) {}
   });
+  document.querySelectorAll('a[href*="api.whatsapp.com/send"]').forEach(function (a) {
+    try {
+      var raw = a.getAttribute('href');
+      if (!raw) return;
+      var u = new URL(raw, window.location.href);
+      if (!/api\.whatsapp\.com$/i.test(u.hostname.replace(/^www\./, ''))) return;
+      u.searchParams.set('phone', phoneNorm);
+      a.href = u.toString();
+    } catch (err) {}
+  });
+  function shortVolLooksLikeFlightMessage(body) {
+    if (!body) return false;
+    if (body.length >= 8) return true;
+    if (document.getElementById('funnel-box') && document.getElementById('funnel-box').classList.contains('funnel-from-vol-chip')) return true;
+    return /\b[A-Z]{2,3}\s*\d{2,4}\b/i.test(body);
+  }
+  /* Bulle flottante : si le vol du bandeau a prérempli le champ, utiliser ce texte (pas le href générique) */
+  var waFloatEl = document.getElementById('wa-float');
+  if (waFloatEl) {
+    waFloatEl.addEventListener('click', function (e) {
+      var sv = document.getElementById('short-vol');
+      var body = sv && String(sv.value || '').trim();
+      if (!shortVolLooksLikeFlightMessage(body)) return;
+      e.preventDefault();
+      openShortWhatsApp();
+    }, true);
+  }
   // Date par défaut : aujourd'hui − 10j
   const d = new Date();
   d.setDate(d.getDate() - 10);
@@ -2373,7 +2420,7 @@ function openWhatsAppQrFromHero(e) {
 </script>
 
 <!-- Un seul CTA persistant : bouton WhatsApp flottant -->
-<a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="wa-float" id="wa-float" aria-label="Vérifier mon éligibilité sur WhatsApp — Robin des Airs">
+<a href="https://api.whatsapp.com/send?phone=33756863630&amp;text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="wa-float" id="wa-float" aria-label="Vérifier mon éligibilité sur WhatsApp — Robin des Airs">
   <span class="wa-float-icon" aria-hidden="true">
     <svg class="wa-float-icon-svg" viewBox="0 0 24 24" width="28" height="28" fill="currentColor" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.881 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
   </span>

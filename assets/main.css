@@ -252,6 +252,9 @@ a:focus-visible, button:focus-visible, .cb:focus-visible, .reason-btn:focus-visi
   border-radius: 50%;
   background: #00e5a0;
   box-shadow: 0 0 10px rgba(0, 229, 160, 0.75);
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  -webkit-animation: vol-ticker-pulse 1.8s ease-in-out infinite;
   animation: vol-ticker-pulse 1.8s ease-in-out infinite;
 }
 .diaspora-bar-live-dot {
@@ -350,6 +353,9 @@ button.vol-ticker-chip .vol-ticker-chip-flight {
   box-shadow: 0 0 8px rgba(255, 90, 95, 0.7);
   vertical-align: middle;
   flex-shrink: 0;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  -webkit-animation: vol-ticker-pulse 1.8s ease-in-out infinite;
   animation: vol-ticker-pulse 1.8s ease-in-out infinite;
 }
 /* Pastilles homogènes : même fond / bord que les retards (plus de variante annulation). */
@@ -395,6 +401,10 @@ button.vol-ticker-chip .vol-ticker-chip-flight {
 @keyframes vol-ticker-marquee {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
+}
+@-webkit-keyframes vol-ticker-pulse {
+  0%, 100% { opacity: 1; -webkit-transform: scale(1); transform: scale(1); }
+  50% { opacity: 0.55; -webkit-transform: scale(0.9); transform: scale(0.9); }
 }
 @keyframes vol-ticker-pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
@@ -444,7 +454,7 @@ button.vol-ticker-chip .vol-ticker-chip-flight {
   flex-direction: column;
   align-items: stretch;
   gap: 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid rgba(0, 229, 160, 0.08);
 }
 
 .diaspora-bar-head {
@@ -472,11 +482,9 @@ button.vol-ticker-chip .vol-ticker-chip-flight {
   white-space: nowrap;
 }
 
+/* Trait discret (évite l’effet « ligne noir et blanc » entre drapeaux et titre) */
 .diaspora-bar-head-divider {
-  width: 1px;
-  height: 22px;
-  background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.18), transparent);
-  flex-shrink: 0;
+  display: none;
 }
 
 .diaspora-bar-title {
@@ -2030,8 +2038,8 @@ button:focus-visible,
   body { font-size: 16px; }
   nav { padding: 0 12px; height: 56px; padding-bottom: env(safe-area-inset-bottom, 0); }
   .nav-logo { font-size: 14px; }
-  #hero { padding: calc(var(--site-header-height, 96px) + 14px) 16px 28px; min-height: auto; padding-left: env(safe-area-inset-left, 16px); padding-right: env(safe-area-inset-right, 16px); align-items: flex-start; }
-  .hero-wrap { gap: 28px; padding-bottom: 40px; }
+  #hero { padding: calc(var(--site-header-height, 96px) + 10px) 16px 16px; min-height: auto; padding-left: env(safe-area-inset-left, 16px); padding-right: env(safe-area-inset-right, 16px); align-items: flex-start; }
+  .hero-wrap { gap: 22px; padding-bottom: 24px; }
   .hero-title { font-size: clamp(32px, 10vw, 44px); margin-bottom: 20px; }
   .hero-desc { font-size: 15px; margin-bottom: 28px; }
   .hero-entry { flex-direction: column; gap: 10px; margin-bottom: 24px; }
@@ -2107,8 +2115,8 @@ button:focus-visible,
   /* Bandeau diaspora : stack compact */
   .diaspora-bar { display: block; }
   .diaspora-bar-inner--stack {
-    padding: 8px 12px 10px;
-    gap: 8px;
+    padding: 6px 12px 8px;
+    gap: 6px;
   }
   .diaspora-bar-head-divider {
     display: none;
@@ -2136,7 +2144,7 @@ button:focus-visible,
   .lang-dropdown { display: none !important; }
   .skip-link:focus { left: env(safe-area-inset-left, 16px); }
   #hero {
-    padding: calc(var(--site-header-height, 92px) + 18px) 20px 36px;
+    padding: calc(var(--site-header-height, 92px) + 12px) 20px 20px;
     min-height: auto;
     padding-left: env(safe-area-inset-left, 20px);
     padding-right: env(safe-area-inset-right, 20px);
@@ -2144,8 +2152,8 @@ button:focus-visible,
   }
   .hero-wrap {
     grid-template-columns: 1fr;
-    gap: 36px;
-    padding-bottom: 48px;
+    gap: 28px;
+    padding-bottom: 28px;
     display: flex;
     flex-direction: column;
   }

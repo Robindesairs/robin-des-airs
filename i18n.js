@@ -627,7 +627,7 @@ window.I18N = (function() {
     if (typeof window !== 'undefined' && window.WHATSAPP_NUMBER) {
       waNum = String(window.WHATSAPP_NUMBER).replace(/\D/g, '') || waNum;
     }
-    var waEligUrl = 'https://wa.me/' + waNum + '?text=' + encodeURIComponent(get('wa_eligibility_prefill'));
+    var waEligUrl = 'https://api.whatsapp.com/send?phone=' + encodeURIComponent(waNum) + '&text=' + encodeURIComponent(get('wa_eligibility_prefill'));
     var heroWa = document.getElementById('hero-wa-link');
     if (heroWa) heroWa.href = waEligUrl;
     if (waFloat) {
