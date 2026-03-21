@@ -337,6 +337,21 @@ button.vol-ticker-chip .vol-ticker-chip-flight {
   vertical-align: middle;
   filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.35));
 }
+/* Même principe que .vol-ticker-dot (live) : signal visuel cohérent pour chaque vol du bandeau */
+.vol-ticker-chip-dot--live {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 6px;
+  font-size: 0;
+  line-height: 0;
+  filter: none;
+  background: #ff5a5f;
+  box-shadow: 0 0 8px rgba(255, 90, 95, 0.7);
+  vertical-align: middle;
+  flex-shrink: 0;
+  animation: vol-ticker-pulse 1.8s ease-in-out infinite;
+}
 /* Pastilles homogènes : même fond / bord que les retards (plus de variante annulation). */
 .vol-ticker-chip-line {
   display: inline;
@@ -396,7 +411,8 @@ button.vol-ticker-chip .vol-ticker-chip-flight {
     -webkit-animation: none !important;
     animation: none !important;
   }
-  .vol-ticker-dot {
+  .vol-ticker-dot,
+  .vol-ticker-chip-dot--live {
     -webkit-animation: none !important;
     animation: none !important;
   }

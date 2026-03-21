@@ -1291,7 +1291,7 @@ function volTickerRenderList(list) {
         : volTickerEscapeHtml(tR + ' ' + detPlain);
     /* Infobulle courte ; détail source données du bandeau → pied de page (#footer-vol-ticker-data). */
     var titleAttr = titleAttrBase;
-    var dotHtml = '<span class="vol-ticker-chip-dot" aria-hidden="true">🔴</span>';
+    var dotHtml = '<span class="vol-ticker-chip-dot vol-ticker-chip-dot--live" aria-hidden="true"></span>';
     return (
       '<button type="button" class="vol-ticker-chip" title="' +
       titleAttr +
