@@ -1356,6 +1356,24 @@ function volTickerFetchRadar(cb) {
         });
     });
 }
+/** iOS / Android : le défilement CSS du bandeau peut se figer (onglet en arrière-plan, économie d’énergie). */
+var volTickerMarqueeRestartTimer = null;
+function volTickerScheduleMarqueeRestart() {
+  clearTimeout(volTickerMarqueeRestartTimer);
+  volTickerMarqueeRestartTimer = setTimeout(function () {
+    volTickerMarqueeRestartTimer = null;
+    var rail = document.getElementById('vol-ticker-rail');
+    if (!rail) return;
+    try {
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    } catch (e0) {}
+    rail.style.webkitAnimation = 'none';
+    rail.style.animation = 'none';
+    void rail.offsetHeight;
+    rail.style.removeProperty('-webkit-animation');
+    rail.style.removeProperty('animation');
+  }, 40);
+}
 function volTickerRenderList(list) {
   if (!list || !list.length || !window.I18N) return;
   var g1 = document.getElementById('vol-ticker-g1');
@@ -1428,6 +1446,7 @@ function volTickerRenderList(list) {
   var html = parts.join('');
   g1.innerHTML = html;
   g2.innerHTML = html;
+  volTickerScheduleMarqueeRestart();
 }
 /** Bandeau : d’abord exemples statiques, puis remplacement par le radar temps réel si assez de vols. */
 window.refreshVolTicker = function () {
@@ -1438,6 +1457,31 @@ window.refreshVolTicker = function () {
     if (live && live.length >= 1) volTickerRenderList(live);
   });
 };
+document.addEventListener('visibilitychange', function () {
+  if (!document.hidden) volTickerScheduleMarqueeRestart();
+});
+window.addEventListener('pageshow', function () {
+  volTickerScheduleMarqueeRestart();
+});
+(function volTickerMarqueeWatch() {
+  if (typeof IntersectionObserver === 'undefined') return;
+  var el = document.getElementById('vol-ticker');
+  if (!el) return;
+  var lastIoRestart = 0;
+  var io = new IntersectionObserver(
+    function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting || en.intersectionRatio < 0.05) return;
+        var now = Date.now();
+        if (now - lastIoRestart < 2800) return;
+        lastIoRestart = now;
+        volTickerScheduleMarqueeRestart();
+      });
+    },
+    { threshold: [0, 0.1, 0.25] }
+  );
+  io.observe(el);
+})();
 document.addEventListener('click', (e) => {
   if (!e.target.closest('#lang-dropdown')) {
     document.getElementById('lang-menu').classList.remove('open');
@@ -1472,7 +1516,8 @@ function changePax(valId, delta) {
 
 /* ═══ FUNNEL NAVIGATION ═══ */
 var STEP_TO_NUM = { 'step-1':1, 'step-1b':1, 'step-1c':1, 'step-2':2, 'step-3a':3, 'step-3b':3, 'step-loader':4, 'step-result':5, 'step-nope':5 };
-function goTo(stepId, pct) {
+/** @param scrollIntoFunnel passer false au chargement initial pour ne pas masquer le hero (mobile). */
+function goTo(stepId, pct, scrollIntoFunnel) {
   document.querySelectorAll('.fstep').forEach(s => s.classList.remove('active'));
   document.getElementById(stepId).classList.add('active');
   var stepNum = STEP_TO_NUM[stepId] != null ? STEP_TO_NUM[stepId] : 1;
@@ -1513,9 +1558,12 @@ function goTo(stepId, pct) {
     var defaultReason = "L'annulation a été communiquée plus de 14 jours avant le départ. La loi CE 261 n'impose pas d'indemnisation dans ce cas. Vous avez cependant droit au <strong>remboursement intégral de votre billet.</strong>";
     if (reasonEl) reasonEl.innerHTML = (typeof window.nopeReason === 'string' && window.nopeReason) ? window.nopeReason : defaultReason;
   }
-  setTimeout(() => {
-    document.getElementById('funnel-box').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }, 30);
+  if (scrollIntoFunnel !== false) {
+    setTimeout(() => {
+      var fb = document.getElementById('funnel-box');
+      if (fb) fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 30);
+  }
 }
 
 function setCrumbs() {
@@ -2053,7 +2101,7 @@ document.addEventListener('DOMContentLoaded', () => {
   d.setDate(d.getDate() - 10);
   const ds = d.toISOString().split('T')[0];
   ['da-date','eb-date'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ds; });
-  goTo('step-1', 12);
+  goTo('step-1', 12, false);
 
   // Calendrier stylisé (Flatpickr) pour le diagnostic
   if (window.flatpickr) {

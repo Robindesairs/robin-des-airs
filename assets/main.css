@@ -404,9 +404,12 @@ button.vol-ticker-chip .vol-ticker-chip-flight {
   .vol-ticker-viewport,
   .vol-ticker-viewport--track {
     overflow-x: auto;
+    overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
     mask-image: none;
     -webkit-mask-image: none;
+    touch-action: pan-x pinch-zoom; /* iOS : glisser horizontalement sans bloquer la page */
+    overscroll-behavior-x: contain;
   }
 }
 
@@ -1893,7 +1896,7 @@ button:focus-visible,
   body { font-size: 16px; }
   nav { padding: 0 12px; height: 56px; padding-bottom: env(safe-area-inset-bottom, 0); }
   .nav-logo { font-size: 14px; }
-  #hero { padding: calc(var(--site-header-height, 96px) + 14px) 16px 28px; min-height: auto; padding-left: env(safe-area-inset-left, 16px); padding-right: env(safe-area-inset-right, 16px); }
+  #hero { padding: calc(var(--site-header-height, 96px) + 14px) 16px 28px; min-height: auto; padding-left: env(safe-area-inset-left, 16px); padding-right: env(safe-area-inset-right, 16px); align-items: flex-start; }
   .hero-wrap { gap: 28px; padding-bottom: 40px; }
   .hero-title { font-size: clamp(32px, 10vw, 44px); margin-bottom: 20px; }
   .hero-desc { font-size: 15px; margin-bottom: 28px; }
@@ -2003,6 +2006,7 @@ button:focus-visible,
     min-height: auto;
     padding-left: env(safe-area-inset-left, 20px);
     padding-right: env(safe-area-inset-right, 20px);
+    align-items: flex-start; /* titre visible dès l’arrivée, pas centré verticalement dans la section */
   }
   .hero-wrap {
     grid-template-columns: 1fr;
@@ -2044,19 +2048,25 @@ button:focus-visible,
   .btn-primary, .btn-ghost { min-height: 48px; }
 }
 
-/* Mobile : bandeau vols — WebKit fige souvent mask + transform ; sans « réduire les mouvements », on force GPU + pas de masque */
+/* Mobile : pas de masque (bugs WebKit) ; pas de will-change permanent (iOS peut figer l’animation après un moment) */
 @media (max-width: 768px) and (prefers-reduced-motion: no-preference) {
   .vol-ticker-viewport,
   .vol-ticker-viewport--track {
     -webkit-mask-image: none;
     mask-image: none;
+    min-height: 44px; /* évite une ligne de pastilles à hauteur 0 en flex */
   }
   .vol-ticker-rail {
     -webkit-animation: vol-ticker-marquee 38s linear infinite;
     animation: vol-ticker-marquee 38s linear infinite;
-    will-change: transform;
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+  .vol-ticker-group,
+  button.vol-ticker-chip {
+    flex-shrink: 0;
   }
 }
 
