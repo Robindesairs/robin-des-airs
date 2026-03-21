@@ -25,4 +25,4 @@ Famille de 3, correspondance manquée à CDG → arrivée à Bamako avec 7h de r
 Service disponible en français, bambara et soninké.
 
 → [Vérifier mon vol Bamako](https://robindesairs.eu/#funnel-box)
-→ [WhatsApp direct](https://wa.me/15557840392)
+→ [WhatsApp direct](https://wa.me/33756863630)

@@ -99,9 +99,9 @@ window.I18N = (function() {
       loi_you_depart_africa_title: "🛬 AFRIQUE → EUROPE",
       loi_you_depart_africa_p1: "Votre avion décolle d’<strong>Afrique</strong> à destination de l’<strong>Europe</strong> / de l’UE : la règle change — seules les compagnies européennes sont tenues de payer.",
       loi_you_depart_africa_p2: "→ Air France, Corsair, Brussels Airlines, KLM, Transavia, Lufthansa, Iberia, TAP, ITA Airways et autres compagnies européennes : <strong style=\"color:var(--navy);\">oui</strong>, elles sont européennes.<br>→ Royal Air Maroc, Air Sénégal, Ethiopian Airlines : <strong style=\"color:var(--navy);\">non</strong> sur ces vols-là — elles ne sont pas européennes.",
-      loi_contact_wa: "Pas sûr de votre cas ? <a href=\"https://wa.me/15557840392\" target=\"_blank\" style=\"color:var(--neon-dark);text-decoration:underline;font-weight:800;\">Envoyez-nous votre vol sur WhatsApp</a>, on vérifie gratuitement dans la journée.",
+      loi_contact_wa: "Pas sûr de votre cas ? <a href=\"https://wa.me/33756863630\" target=\"_blank\" style=\"color:var(--neon-dark);text-decoration:underline;font-weight:800;\">Envoyez-nous votre vol sur WhatsApp</a>, on vérifie gratuitement dans la journée.",
       loi_80percent: "<strong style=\"color:var(--navy);\">80% des passagers éligibles ne réclament jamais.</strong> Pas parce qu'ils n'y ont pas droit — parce que les compagnies comptent sur leur abandon. Et vous avez <strong style=\"color:var(--navy);\">5 ans</strong> pour réclamer : votre vol de 2021 qui avait du retard ? L'argent est toujours là.",
-      loi_closing: "Pas sûr de votre cas ? <a href=\"https://wa.me/15557840392\" target=\"_blank\" rel=\"noopener\" style=\"color:var(--neon-dark);text-decoration:underline;font-weight:800;\">Envoyez-nous votre vol sur WhatsApp</a> — vérification gratuite dans la journée. <strong style=\"color:var(--navy);\">80 % des passagers éligibles ne réclament jamais</strong> : les compagnies comptent sur l'abandon. Vous avez <strong style=\"color:var(--navy);\">5 ans</strong> pour réclamer — un vol de 2021 en retard ? L'argent peut encore être dû.",
+      loi_closing: "Pas sûr de votre cas ? <a href=\"https://wa.me/33756863630\" target=\"_blank\" rel=\"noopener\" style=\"color:var(--neon-dark);text-decoration:underline;font-weight:800;\">Envoyez-nous votre vol sur WhatsApp</a> — vérification gratuite dans la journée. <strong style=\"color:var(--navy);\">80 % des passagers éligibles ne réclament jamais</strong> : les compagnies comptent sur l'abandon. Vous avez <strong style=\"color:var(--navy);\">5 ans</strong> pour réclamer — un vol de 2021 en retard ? L'argent peut encore être dû.",
       loi_card_long: "Nos communautés · Nos familles",
       loi_per_pax: "par passager",
       loi_distance_long: "Plus de 3 500 km — notre cœur de métier · indemnités par passager",
@@ -369,9 +369,9 @@ window.I18N = (function() {
       loi_you_depart_africa_title: "🛬 AFRICA → EUROPE",
       loi_you_depart_africa_p1: "Your flight departs from <strong>Africa</strong> to <strong>Europe</strong> / the EU: the rule changes — only European airlines are required to pay.",
       loi_you_depart_africa_p2: "→ Air France, Corsair, Brussels Airlines, KLM, Transavia, Lufthansa, Iberia, TAP, ITA Airways and other European carriers: <strong style=\"color:var(--navy);\">yes</strong>, they are European.<br>→ Royal Air Maroc, Air Sénégal, Ethiopian Airlines: <strong style=\"color:var(--navy);\">no</strong> on those flights — they are not European.",
-      loi_contact_wa: "Not sure about your case? <a href=\"https://wa.me/15557840392\" target=\"_blank\" style=\"color:var(--neon-dark);text-decoration:underline;font-weight:800;\">Send us your flight on WhatsApp</a>, we'll check for free within the day.",
+      loi_contact_wa: "Not sure about your case? <a href=\"https://wa.me/33756863630\" target=\"_blank\" style=\"color:var(--neon-dark);text-decoration:underline;font-weight:800;\">Send us your flight on WhatsApp</a>, we'll check for free within the day.",
       loi_80percent: "<strong style=\"color:var(--navy);\">80% of eligible passengers never claim.</strong> Not because they're not entitled — because airlines count on them giving up. And you have <strong style=\"color:var(--navy);\">5 years</strong> to claim: that 2021 flight that was delayed? The money is still there.",
-      loi_closing: "Not sure? <a href=\"https://wa.me/15557840392\" target=\"_blank\" rel=\"noopener\" style=\"color:var(--neon-dark);text-decoration:underline;font-weight:800;\">Send us your flight on WhatsApp</a> — free check within the day. <strong style=\"color:var(--navy);\">80% of eligible passengers never claim</strong> — airlines count on people giving up. You have <strong style=\"color:var(--navy);\">5 years</strong> to claim — that delayed flight in 2021? The money may still be owed.",
+      loi_closing: "Not sure? <a href=\"https://wa.me/33756863630\" target=\"_blank\" rel=\"noopener\" style=\"color:var(--neon-dark);text-decoration:underline;font-weight:800;\">Send us your flight on WhatsApp</a> — free check within the day. <strong style=\"color:var(--navy);\">80% of eligible passengers never claim</strong> — airlines count on people giving up. You have <strong style=\"color:var(--navy);\">5 years</strong> to claim — that delayed flight in 2021? The money may still be owed.",
       loi_card_long: "Our communities · Our families",
       loi_per_pax: "per passenger",
       loi_distance_long: "Over 3,500 km — our core focus · compensation per passenger",
@@ -615,7 +615,7 @@ window.I18N = (function() {
     var detailLink = document.getElementById('link-diagnostic-detail');
     if (detailLink) detailLink.textContent = get('funnel_detail_link');
     var waFloat = document.getElementById('wa-float');
-    var waNum = '15557840392';
+    var waNum = '33756863630';
     if (typeof window !== 'undefined' && window.WHATSAPP_NUMBER) {
       waNum = String(window.WHATSAPP_NUMBER).replace(/\D/g, '') || waNum;
     }

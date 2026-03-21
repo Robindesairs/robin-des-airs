@@ -37,4 +37,4 @@ La loi ne fait pas de distinction d'âge. Chaque passager ayant un billet compte
 Service disponible en français, wolof, pulaar et soninké. Sur le même thème : [Vol Air France retardé](/blog/vol-air-france-retarde-indemnite.html), [Indemnité famille et enfants](/blog/indemnite-vol-retarde-famille-enfants.html).
 
 → [Vérifier mon vol Paris-Dakar](https://robindesairs.eu/#funnel-box)
-→ [WhatsApp direct](https://wa.me/15557840392)
+→ [WhatsApp direct](https://wa.me/33756863630)

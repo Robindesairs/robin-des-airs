@@ -25,4 +25,4 @@ Vous n'avez pas à déterminer vous-même si la grève est "interne" ou "externe
 Astuce : même pendant une grève externe, certains vols sont annulés par la compagnie pour des raisons opérationnelles propres (pas assez d'équipage disponible, décision d'annuler préventivement). Dans ces cas, l'indemnité peut être due. Voir aussi : [Vol Air France retardé](/blog/vol-air-france-retarde-indemnite.html), [Vol annulé : 600€ par passager](/blog/vol-annule-indemnite-600-euros.html).
 
 → [Mon vol a été touché par une grève](https://robindesairs.eu/#funnel-box)
-→ [WhatsApp direct](https://wa.me/15557840392)
+→ [WhatsApp direct](https://wa.me/33756863630)

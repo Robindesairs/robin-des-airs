@@ -6,19 +6,19 @@
 
 ## 1. Numéro WhatsApp (CRITIQUE)
 
-Le site utilise actuellement le numéro **+1 555 784 0392** (numéro fictif US) partout. **Remplacer par le vrai numéro français** avant le lancement.
+Numéro WhatsApp affiché et dans les liens `wa.me` : **+33 7 56 86 36 30** (format international `33756863630`). Vérifier que ce numéro est bien celui enregistré sur **WhatsApp Business** / **360dialog** / **Meta**.
 
 ### Où remplacer
 
-- **index.html** : constante `WHATSAPP_NUMBER = '15557840392'` (ligne ~1172), tous les `wa.me/15557840392`, et le texte affiché "Réponse directe : WhatsApp +1 555 784 0392" (hero).
+- **index.html** : constante `WHATSAPP_NUMBER = '33756863630'` (ligne ~1172), tous les `wa.me/33756863630`, et le texte affiché "Réponse directe : WhatsApp +33 7 56 86 36 30" (hero).
 - **JSON-LD** (index.html) : `telephone` et `sameAs` dans le bloc Organization.
 - **Footer** : lien WhatsApp.
 - **Pages** : choix-reclamation.html, guide-whatsapp.html, depot-en-ligne.html, dossier.html, suivi-dossier.html, droit-retractation.html, politique-confidentialite.html, meteo-dossier-indemnite.html, 404.html, depot-simple.html.
-- **Blog** : tous les articles (fichiers dans `blog/*.html` et `src/content/blog/*.md`). Recherche globale : `15557840392` et `wa.me/15557840392`.
+- **Blog** : tous les articles (fichiers dans `blog/*.html` et `src/content/blog/*.md`). Recherche globale : `33756863630` et `wa.me/33756863630`.
 - **Netlify** : variables d’environnement des fonctions (whatsapp-webhook.js, etc.) si le numéro y est codé en dur.
 - **Docs** : PUBS-CREATIFS-ROBIN-SPECS.md, WEBHOOK-WHATSAPP.md, ANALYSE-SITE-ROBIN-DES-AIRS.md.
 
-Conseil : une fois le numéro FR connu, faire une recherche projet sur `15557840392` et `555 784 0392` et remplacer partout.
+Pour changer le numéro plus tard : recherche globale sur `33756863630` et `wa.me/33756863630`, puis mettre à jour **Netlify** `WHATSAPP_CONTACT_NUMBER` / compte WhatsApp Business.
 
 ---
 

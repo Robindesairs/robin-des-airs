@@ -43,4 +43,4 @@ Envoyez vos cartes d'embarquement sur WhatsApp. En 3 minutes c'est fait. On s'oc
 Délai de prescription : 5 ans. Si votre vol Air France a été retardé depuis 2021, vous pouvez encore réclamer.
 
 → [Vérifier mon vol maintenant](https://robindesairs.eu/#funnel-box)
-→ [WhatsApp direct](https://wa.me/15557840392)
+→ [WhatsApp direct](https://wa.me/33756863630)

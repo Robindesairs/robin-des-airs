@@ -30,4 +30,4 @@ Couple + 2 enfants, vol SN401 BRU → FIH annulé 3 jours avant le départ. Inde
 Service disponible en français et en lingala.
 
 → [Vérifier mon vol Kinshasa](https://robindesairs.eu/#funnel-box)
-→ [WhatsApp direct](https://wa.me/15557840392)
+→ [WhatsApp direct](https://wa.me/33756863630)

@@ -62,7 +62,7 @@
 - **Skip link** : « Aller au contenu principal » (accessibilité).
 
 ### WhatsApp
-- **Numéro** : 15557840392 (wa.me/15557840392) — cohérent sur le site, blog, webhook.
+- **Numéro** : 33756863630 (wa.me/33756863630) — cohérent sur le site, blog, webhook.
 - **Webhook** : `/api/whatsapp-webhook` → `netlify/functions/whatsapp-webhook.js` (360dialog, tunnel carte d’embarquement, option relais Gemini 20 s).
 - **Statut** : `/api/whatsapp-status` pour vérifier `can_send_replies`.
 - **Doc** : `docs/WHATSAPP-REPONDRE-CLIENTS.md`, `WEBHOOK-WHATSAPP.md` — pas de verify token requis côté 360dialog.

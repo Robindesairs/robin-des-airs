@@ -14,7 +14,7 @@ export const MENU_BIENVENUE = `👋 *Robin des Airs* — Récupérez jusqu’à 
 • Envoyez-nous votre *numéro de vol* (ex: AF718, BA123) pour vérifier votre éligibilité.
 • Ou dites *Bonjour* pour ce menu.
 • Déposer un dossier : https://robindesairs.eu/depot-en-ligne.html
-• Nous contacter : https://wa.me/15557840392`;
+• Nous contacter : https://wa.me/33756863630`;
 
 /** Lien de dépôt de dossier (à personnaliser si besoin). */
 export const LIEN_DEPOT = 'https://robindesairs.eu/depot-en-ligne.html';

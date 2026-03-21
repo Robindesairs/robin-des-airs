@@ -26,4 +26,4 @@ Si vous prenez un RAM au départ de Casablanca ou Marrakech vers Paris, le CE 26
 Si vous avez le choix, privilégiez une compagnie européenne (Air France, Transavia) pour vos vols Maroc → France. En cas de retard, vous serez couvert dans les deux sens.
 
 → [Vérifier mon vol Royal Air Maroc](https://robindesairs.eu/#funnel-box)
-→ [WhatsApp direct](https://wa.me/15557840392)
+→ [WhatsApp direct](https://wa.me/33756863630)

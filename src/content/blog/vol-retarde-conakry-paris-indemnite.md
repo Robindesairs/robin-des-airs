@@ -23,4 +23,4 @@ Vous avez voyagé sur Paris-Conakry entre 2021 et aujourd'hui et votre vol a ét
 Service disponible en français et en pulaar.
 
 → [Vérifier mon vol Conakry](https://robindesairs.eu/#funnel-box)
-→ [WhatsApp direct](https://wa.me/15557840392)
+→ [WhatsApp direct](https://wa.me/33756863630)

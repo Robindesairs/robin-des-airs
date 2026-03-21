@@ -41,7 +41,7 @@ En résumé : dans 360dialog vous ne saisissez que l’**URL du webhook** et le 
 | `WHATSAPP_PHONE_NUMBER_ID` | Non | ID du numéro WhatsApp Business. Si défini avec `WHATSAPP_ACCESS_TOKEN`, les réponses partent via l’API Meta (ce numéro). Permet aussi de filtrer les messages entrants (ne traiter que ceux reçus sur ce numéro). |
 | `WHATSAPP_BUSINESS_ACCOUNT_ID` | Non | ID du compte WhatsApp Business. Si défini, seules les entrées webhook dont `entry.id` correspond sont traitées. |
 | `WHATSAPP_ACCESS_TOKEN` | Non | Token d’accès Meta. Si défini avec `WHATSAPP_PHONE_NUMBER_ID`, l’envoi des réponses se fait via l’API Graph Meta (réponses bien envoyées depuis ce Phone Number ID). |
-| `WHATSAPP_CONTACT_NUMBER` | Non | Numéro de contact pour le lien wa.me dans le message d’erreur (ex. `15557840392`). Si non défini, le message d’erreur ne contient pas de lien. |
+| `WHATSAPP_CONTACT_NUMBER` | Non | Numéro de contact pour le lien wa.me dans le message d’erreur (ex. `33756863630`). Si non défini, le message d’erreur ne contient pas de lien. |
 | `ROBIN_LOG_WEBHOOK_URL` | Non | URL à laquelle le webhook envoie en POST chaque message entrant (JSON). Votre backend peut écrire dans `robin.db` (table `whatsapp_messages`) pour le Dashboard. |
 | `ROBIN_WHATSAPP_INTERACTIVE` | Non | Si **`false`** : pas de boutons ni listes WhatsApp (messages texte uniquement). Par défaut : interactif activé (menu, Oui/Non, nombre de passagers). Voir `docs/MODULE-WHATSAPP-COMMUNICATION.md`. |
 
@@ -63,7 +63,7 @@ Documentation 360dialog : [Migrate a WABA to a new Partner (with 360Dialog)](htt
 
 **À ne pas confondre :** L’API 360dialog (`https://waba-v2.360dialog.io`) est déjà utilisée dans le code pour envoyer les réponses. L’URL du webhook à configurer ci-dessous est *votre* site (pas waba-v2.360dialog.io), pour que 360dialog envoie les messages entrants vers Robin. Si votre numéro n’est pas encore enregistré sur Meta Business, vous pouvez utiliser un autre numéro en attendant (même clé et même URL de webhook).
 
-**Utiliser un numéro précis (ex. +1 555-784-0392 — Robindesairs) :** Dans 360dialog, associez ce numéro au canal WhatsApp qui pointe vers votre webhook. Toutes les conversations auront lieu sur ce téléphone ; aucun changement de code n’est nécessaire.
+**Utiliser votre numéro WhatsApp Business (ex. +33 7 56 86 36 30) :** Dans 360dialog, associez ce numéro au canal WhatsApp qui pointe vers votre webhook. Toutes les conversations auront lieu sur ce téléphone ; aucun changement de code n’est nécessaire.
 
 1. Dans le **Partner Hub** ou la config du canal WhatsApp, définir l’URL du webhook :  
    `https://robindesairs.eu/api/whatsapp-webhook` (ou votre domaine Netlify).

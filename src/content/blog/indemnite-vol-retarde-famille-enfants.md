@@ -28,4 +28,4 @@ En droit français, le délai de prescription est de 5 ans. Si votre famille a s
 Le passager référent (un parent) signe pour toute la famille. Les mineurs sont automatiquement représentés. Envoyez simplement toutes les cartes d'embarquement sur WhatsApp. Sur le même thème : [Vol retardé Paris-Dakar](/blog/vol-retarde-dakar-paris-indemnite.html), [Combien de temps pour réclamer ?](/blog/combien-temps-reclamer-indemnite-vol.html).
 
 → [Calculer l'indemnité pour ma famille](https://robindesairs.eu/#funnel-box)
-→ [WhatsApp — j'ai voyagé en famille](https://wa.me/15557840392)
+→ [WhatsApp — j'ai voyagé en famille](https://wa.me/33756863630)

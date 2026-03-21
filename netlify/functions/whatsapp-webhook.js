@@ -22,7 +22,7 @@ const MENU_BIENVENUE = `👋 *Robin des Airs* — Récupérez jusqu'à 600€ si
 • Envoyez-nous votre *numéro de vol* (ex: AF718, BA123) pour vérifier votre éligibilité.
 • Ou dites *Bonjour* pour ce menu.
 • Déposer un dossier : https://robindesairs.eu/depot-en-ligne.html
-• Nous contacter : https://wa.me/15557840392`;
+• Nous contacter : https://wa.me/33756863630`;
 
 const ROBIN_ACCUEIL = "Bonjour ! Je suis Robin 🏹. Envoyez-moi une photo de votre carte d'embarquement, je m'occupe d'analyser vos droits en 30 secondes.";
 

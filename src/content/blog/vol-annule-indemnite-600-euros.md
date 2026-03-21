@@ -36,4 +36,4 @@ La compagnie annule votre vol et vous met sur celui du lendemain ? Si vous arriv
 Même dans ces cas, l'assistance (repas, hôtel) reste due. Lire aussi : [Bon d'achat : pourquoi ne jamais l'accepter](/blog/bon-achat-compagnie-aerienne-piege.html), [Vol Air France retardé](/blog/vol-air-france-retarde-indemnite.html).
 
 → [Mon vol a été annulé — combien je touche ?](https://robindesairs.eu/#funnel-box)
-→ [WhatsApp direct](https://wa.me/15557840392)
+→ [WhatsApp direct](https://wa.me/33756863630)

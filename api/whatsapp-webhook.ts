@@ -13,7 +13,7 @@
  *   WHATSAPP_PHONE_NUMBER_ID (ID du numéro WhatsApp Business)
  *   WHATSAPP_BUSINESS_ACCOUNT_ID (optionnel, filtre les entrées webhook)
  * Si envoi via Meta Cloud API : WHATSAPP_ACCESS_TOKEN (les réponses partent via ce Phone Number ID).
- * Sinon envoi via 360dialog (D360-API-KEY). Lien contact erreur : WHATSAPP_CONTACT_NUMBER (ex. 15557840392 pour wa.me).
+ * Sinon envoi via 360dialog (D360-API-KEY). Lien contact erreur : WHATSAPP_CONTACT_NUMBER (ex. 33756863630 pour wa.me).
  */
 
 import { handleTunnelMessage } from '../src/webhook/whatsapp-webhook';

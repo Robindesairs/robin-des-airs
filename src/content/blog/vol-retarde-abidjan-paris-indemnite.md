@@ -33,4 +33,4 @@ Famille de 3, vol AF552 CDG → ABJ retardé de 5h15. Indemnité : 3 × 600€ =
 Service disponible en français et en langues ivoiriennes.
 
 → [Vérifier mon vol Abidjan](https://robindesairs.eu/#funnel-box)
-→ [WhatsApp direct](https://wa.me/15557840392)
+→ [WhatsApp direct](https://wa.me/33756863630)

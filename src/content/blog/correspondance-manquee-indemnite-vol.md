@@ -25,4 +25,4 @@ C'est la compagnie qui opère le vol en retard (le premier vol) qui est responsa
 Robin gère les dossiers de correspondance manquée. Indiquez "correspondance" dans le diagnostic ou dites-le nous sur WhatsApp.
 
 → [J'ai manqué ma correspondance](https://robindesairs.eu/#funnel-box)
-→ [WhatsApp direct](https://wa.me/15557840392)
+→ [WhatsApp direct](https://wa.me/33756863630)

@@ -27,4 +27,4 @@ Un vol annulé peut donc donner droit à :
 Robin gère principalement l'indemnité CE 261 (point 2). Pour le remboursement du billet (point 1), vous pouvez le demander directement à la compagnie en parallèle — les deux procédures sont indépendantes.
 
 → [Vérifier mon indemnité](https://robindesairs.eu/#funnel-box)
-→ [WhatsApp direct](https://wa.me/15557840392)
+→ [WhatsApp direct](https://wa.me/33756863630)

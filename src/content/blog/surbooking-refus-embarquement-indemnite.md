@@ -31,4 +31,4 @@ Le surbooking est particulièrement fréquent sur les lignes vers l'Afrique en p
 Si vous êtes refusé à l'embarquement sur un CDG → DKR, CDG → ABJ, CDG → DLA ou tout autre vol long-courrier, c'est 600€ par passager — immédiatement.
 
 → [J'ai été victime de surbooking](https://robindesairs.eu/#funnel-box)
-→ [WhatsApp direct](https://wa.me/15557840392)
+→ [WhatsApp direct](https://wa.me/33756863630)

@@ -31,4 +31,4 @@ Cela signifie que vous avez potentiellement 5 ans de vols éligibles non réclam
 Chaque jour qui passe, un vol ancien se prescrit. Si votre vol de 2021 a eu 4h de retard et que vous n'avez jamais réclamé, c'est 600€ par passager qui vous attendent — mais pas indéfiniment.
 
 → [Vérifier mes anciens vols](https://robindesairs.eu/#funnel-box)
-→ [WhatsApp direct](https://wa.me/15557840392)
+→ [WhatsApp direct](https://wa.me/33756863630)
