@@ -191,8 +191,12 @@
       <div class="calc-header">
         <div class="calc-tag" data-i18n="calc_tag">Combien vous touchez ? · Robin des Airs</div>
         <div class="calc-title"><span data-i18n="calc_title_1">Vérifiez en 2 min</span><br><span id="funnel-subtitle">si vous êtes éligible</span></div>
-        <div id="funnel-progress" style="width:100%;background:#eee;border-radius:4px;height:6px;margin-bottom:12px;">
-          <div id="funnel-progress-bar" style="height:6px;border-radius:4px;background:#1a1a1a;width:20%;transition:width 0.3s;"></div>
+        <!-- Barre d’étapes : visible uniquement pendant le diagnostic détaillé (évite l’effet « plusieurs étapes » sur la vue WhatsApp 2 min) -->
+        <div id="funnel-progress-wrap" class="funnel-progress-wrap" aria-hidden="true">
+          <div id="funnel-progress" class="hero-funnel-progress">
+            <div id="funnel-progress-bar" class="hero-funnel-progress-bar"></div>
+          </div>
+          <p id="funnel-step-label" class="funnel-progress-step-label"></p>
         </div>
         <div class="funnel-crumbs" id="funnel-crumbs"></div>
       </div>
@@ -1511,10 +1515,8 @@ function goWaDirect() {
 function goToShortStep() {
   var el1 = document.getElementById('step-short-1');
   if (el1) el1.style.display = 'block';
-  var barEl = document.getElementById('funnel-progress-bar');
-  if (barEl) barEl.style.width = '100%';
   var labelEl = document.getElementById('funnel-step-label');
-  if (labelEl) labelEl.textContent = 'WhatsApp';
+  if (labelEl) labelEl.textContent = '';
 }
 /** Ouvre WhatsApp avec le message : le client envoie depuis son app → vous voyez son numéro et le texte. */
 function openShortWhatsApp() {
@@ -1543,7 +1545,12 @@ function openShortWhatsApp() {
 }
 function showLongFunnel() {
   var box = document.getElementById('funnel-box');
-  if (box) box.classList.remove('funnel-from-vol-chip');
+  if (box) {
+    box.classList.remove('funnel-from-vol-chip');
+    box.classList.add('funnel-box--detailed');
+  }
+  var progWrap = document.getElementById('funnel-progress-wrap');
+  if (progWrap) progWrap.setAttribute('aria-hidden', 'false');
   document.getElementById('funnel-short').style.display = 'none';
   document.getElementById('funnel-long').style.display = 'block';
   var waShortcut = document.querySelector('.funnel-wa-shortcut');
@@ -1568,10 +1575,6 @@ function showShortFunnelFromVolTicker() {
 document.addEventListener('DOMContentLoaded', function() {
   var linkDetail = document.getElementById('link-diagnostic-detail');
   if (linkDetail) linkDetail.addEventListener('click', function(e) { e.preventDefault(); showLongFunnel(); });
-  var barEl = document.getElementById('funnel-progress-bar');
-  if (barEl) barEl.style.width = '100%';
-  var labelEl = document.getElementById('funnel-step-label');
-  if (labelEl) labelEl.textContent = 'WhatsApp';
 });
 
 /* ── Restart ── */
