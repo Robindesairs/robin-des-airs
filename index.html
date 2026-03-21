@@ -120,7 +120,7 @@
     <li><a href="#la-loi" onclick="closeMobileNav()" data-i18n="nav_drawer_loi">📋 La loi CE 261</a></li>
     <li><a href="#comment-ca-marche" onclick="closeMobileNav()" data-i18n="nav_drawer_how">⚙️ Comment ça marche</a></li>
     <li><a href="/blog/" onclick="closeMobileNav()" data-i18n="nav_drawer_dest">✈️ Guides &amp; destinations (blog)</a></li>
-    <li><a href="#comparatif" onclick="closeMobileNav()" data-i18n="nav_drawer_tarifs">💰 Nos tarifs</a></li>
+    <li><a href="/nos-tarifs.html" onclick="closeMobileNav()" data-i18n="nav_drawer_tarifs">💰 Nos tarifs</a></li>
     <li><a href="#temoignages" onclick="closeMobileNav()" data-i18n="nav_drawer_testi">⭐ Témoignages</a></li>
     <li><a href="#faq" onclick="closeMobileNav()" data-i18n="nav_drawer_faq">❓ FAQ</a></li>
     <li><a href="/blog/" onclick="closeMobileNav()" data-i18n="nav_drawer_blog">📝 Blog</a></li>
@@ -296,7 +296,7 @@
       <!-- ══ ÉTAPE 2 — DIRECT ou ESCALE ══ -->
       <div class="fstep" id="step-2">
         <div class="fstep-eyebrow">Étape 2 sur 5 — Type de trajet</div>
-        <p class="funnel-hint">60 secondes et vous savez exactement ce que vous touchez.</p>
+        <p class="funnel-hint">En quelques minutes, vous savez ce que vous touchez.</p>
         <p class="fstep-q">Ce voyage était-il direct ou avec correspondance ?</p>
         <div class="choice-grid">
           <button class="cb" onclick="pickTrajet('direct')">
@@ -612,71 +612,6 @@
   </div>
 </section>
 
-<!-- ═══════ COMPARATIF ═══════ -->
-<section id="comparatif">
-  <div class="comp-wrap reveal">
-    <div class="comp-header-section">
-      <div class="section-tag" data-i18n="section_comp_tag">Transparence totale</div>
-      <h2 class="section-title" data-i18n-html="section_comp_title">Robin vs les autres.</h2>
-      <p class="section-desc" style="font-size:14px;color:var(--gray);margin-top:12px;" data-i18n="section_comp_desc">Vous savez exactement ce que vous allez toucher avant de vous engager. Pas de mauvaise surprise.</p>
-    </div>
-
-    <div class="comp-table">
-      <div class="comp-head">
-        <div class="comp-head-cell" data-i18n="comp_h_crit">Critère</div>
-        <div class="comp-head-cell hl" data-i18n="comp_h_robin">✈ Robin des Airs</div>
-        <div class="comp-head-cell" style="color:rgba(255,255,255,0.75);" data-i18n="comp_h_others">Les autres</div>
-      </div>
-      <div class="comp-row">
-        <div class="comp-cell feature" data-i18n="comp_r1_l">Commission de base</div>
-        <div class="comp-cell hl"><span class="price-green">25%</span></div>
-        <div class="comp-cell"><span class="price-red">25% à 35%</span></div>
-      </div>
-      <div class="comp-row">
-        <div class="comp-cell feature" data-i18n="comp_r2_l">Commission si procès</div>
-        <div class="comp-cell hl"><span class="price-green" data-i18n="comp_r2_robin">25% (inchangée)</span></div>
-        <div class="comp-cell"><span class="price-red">35% à 50%</span></div>
-      </div>
-      <div class="comp-row">
-        <div class="comp-cell feature" data-i18n-html="comp_r3_l">Sur <strong>600€</strong> d'indemnité — vous recevez (nets)</div>
-        <div class="comp-cell hl"><span class="price-green">450€</span></div>
-        <div class="comp-cell"><span style="color:#c0392b;font-weight:600;">300€ à 450€</span></div>
-      </div>
-      <div class="comp-row">
-        <div class="comp-cell feature" data-i18n="comp_r_method_l">Méthode</div>
-        <div class="comp-cell hl"><span class="check">✓</span> &nbsp;<span class="price-green" data-i18n="comp_r_method_robin">WhatsApp, suivi direct</span></div>
-        <div class="comp-cell"><span class="cross">✗</span> &nbsp;<span data-i18n="comp_others_wa">Email ou chatbot</span></div>
-      </div>
-      <div class="comp-row">
-        <div class="comp-cell feature" data-i18n="comp_r_eu_af_l">Europe ↔ Afrique</div>
-        <div class="comp-cell hl"><span class="check">✓</span> &nbsp;<span class="price-green" data-i18n="comp_yes_core">Notre cœur de métier</span></div>
-        <div class="comp-cell"><span class="cross">✗</span> &nbsp;<span data-i18n="comp_r_eu_af_others">Souvent axé vols intra-UE</span></div>
-      </div>
-      <div class="comp-row">
-        <div class="comp-cell feature" data-i18n="comp_r_af_eu_l">Afrique → Europe</div>
-        <div class="comp-cell hl"><span class="check">✓</span> &nbsp;<span class="price-green" data-i18n="comp_r_af_eu_robin">CE 261 si compagnie européenne</span></div>
-        <div class="comp-cell"><span class="cross">✗</span> &nbsp;<span data-i18n="comp_r_af_eu_others">Peu clair selon les sites</span></div>
-      </div>
-      <div class="comp-row">
-        <div class="comp-cell feature" data-i18n="comp_r_lang_l">Langues parlées</div>
-        <div class="comp-cell hl"><span class="price-green" style="font-weight:600;line-height:1.45;" data-i18n="comp_r_lang_robin">Français, anglais, wolof, bambara, lingala, soninké, peul/pulaar, dioula, swahili, twi, yoruba…</span></div>
-        <div class="comp-cell"><span class="cross">✗</span> &nbsp;<span data-i18n="comp_r_lang_others">Souvent limité à l'anglais</span></div>
-      </div>
-      <div class="comp-row">
-        <div class="comp-cell feature" data-i18n="comp_r9_l">Si on ne gagne pas</div>
-        <div class="comp-cell hl"><span class="price-green">0€</span></div>
-        <div class="comp-cell"><span class="price-green">0€</span></div>
-      </div>
-    </div>
-    <p class="comp-fineprint" style="font-size:13px;color:var(--gray);line-height:1.6;margin-top:20px;max-width:720px;margin-left:auto;margin-right:auto;" data-i18n="section_comp_fineprint">La différence clé : même commission si la compagnie résiste ou si le dossier va au tribunal — détail dans la FAQ.</p>
-    <p style="font-size:9px;color:var(--gray2);margin-top:10px;text-align:right;letter-spacing:0.5px;" data-i18n="section_comp_sources">Données basées sur les grilles tarifaires publiques des principaux services d'indemnisation européens, mars 2026.</p>
-    <div style="margin-top:24px;text-align:center;">
-      <a href="/choix-reclamation.html" class="btn-primary" data-i18n="cta_depot">Déposer mon dossier →</a>
-      <p style="font-size:11px;color:var(--gray);margin-top:8px;"><span data-i18n="cta_or">Ou </span><a href="/depot-en-ligne.html" style="color:var(--gray);text-decoration:underline;" data-i18n="link_depot_online">formulaire en ligne</a></p>
-    </div>
-  </div>
-</section>
-
 <!-- ═══════ TÉMOIGNAGES ═══════ -->
 <section id="temoignages">
   <div class="testi-wrap reveal">
@@ -759,15 +694,15 @@
       <h2 class="section-title" data-i18n-html="section_how_title">4 étapes.<br>Un seul objectif.</h2>
     </div>
 
-    <div class="steps-grid" style="grid-template-columns:repeat(4,1fr);">
+    <div class="steps-grid">
       <div class="step-card">
         <span class="step-num">01</span>
         <div class="step-icon-wrap">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C87A" stroke-width="2.2" stroke-linecap="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
         <h3 class="step-title">Vous vérifiez</h3>
-        <p class="step-desc">Entrez votre vol dans le diagnostic. En 60 secondes, vous savez si vous êtes éligible et combien vous touchez net.</p>
-        <span class="step-time">⏱ 60 secondes</span>
+        <p class="step-desc">WhatsApp, pastille « Vols éligibles » ou diagnostic en ligne — éligibilité et montant net en quelques minutes.</p>
+        <span class="step-time">⏱ Quelques minutes</span>
       </div>
 
       <div class="step-card">
@@ -786,7 +721,7 @@
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C87A" stroke-width="2.2" stroke-linecap="round"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
         </div>
         <h3 class="step-title">On monte le dossier</h3>
-        <p class="step-desc">Sous 24h, dossier technique : METAR/TAF, comparaison avec les autres vols au même moment — si d'autres avions ont décollé, on le documente.</p>
+        <p class="step-desc">Sous 24h, dossier technique : METAR/TAF, comparaison avec les autres vols au même moment, si d'autres avions ont décollé, on le documente.</p>
         <span class="step-time">⏱ 24 heures</span>
       </div>
 
@@ -796,7 +731,7 @@
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C87A" stroke-width="2.2" stroke-linecap="round"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
         <h3 class="step-title">Vous encaissez</h3>
-        <p class="step-desc">Robin négocie jusqu'au bout : en général la compagnie paie sous 4 à 12 semaines ; sinon médiateur puis tribunal <strong>à nos frais</strong>. Dès réception des fonds, virement de votre part — le détail des pourcentages est fixé avant signature (voir FAQ).</p>
+        <p class="step-desc">Robin négocie jusqu'au bout : en général la compagnie paie sous 4 à 12 semaines ; sinon médiateur puis tribunal <strong>à nos frais</strong>. Dès réception des fonds, virement de votre part, le détail des pourcentages est fixé avant signature (voir FAQ).</p>
       </div>
     </div>
     <div style="margin-top:48px;text-align:center;">
@@ -809,18 +744,18 @@
 <!-- ═══════ QUI SUIS-JE ═══════ -->
 <section id="qui-suis-je">
   <div class="qui-wrap reveal">
-    <div style="margin-bottom:56px;">
+    <div style="margin-bottom:32px;">
       <div class="section-tag" style="color:var(--neon-b);" data-i18n="section_founder_tag">LE FONDATEUR</div>
       <h2 class="section-title" style="color:white;" data-i18n-html="section_founder_title">20 ans dans les coulisses.<br><span style="color:var(--neon-b);">J'ai vu ce qu'ils cachent.</span></h2>
     </div>
 
-    <div style="border-left:3px solid var(--neon-b);padding:22px 32px;margin-bottom:48px;background:rgba(0,229,160,0.04);border-radius:0 8px 8px 0;">
+    <div style="border-left:3px solid var(--neon-b);padding:18px 24px;margin-bottom:28px;background:rgba(0,229,160,0.04);border-radius:0 8px 8px 0;">
       <p style="font-size:18px;line-height:1.75;color:white;font-style:italic;font-weight:500;" data-i18n="founder_quote">
         "Ils vous facturent le kilo en trop. Le deuxième bagage. Le siège côté hublot. Mais quand c'est leur tour de payer, retard, annulation, surbooking, il n'y a plus personne au bout du fil."
       </p>
     </div>
 
-    <p style="font-size:15px;line-height:1.85;color:rgba(255,255,255,0.75);max-width:640px;margin:0 auto 28px;" data-i18n-html="founder_story_short">Vingt ans dans le secteur aérien. J'ai vu les mêmes excuses revenir à chaque vol retardé : « météo imprévisible », « circonstances extraordinaires ». J'ai vu des familles entières repartir sans rien après 6 heures d'attente, parfois pour un baptême, des funérailles, des retrouvailles.<br><br>Robin des Airs, c'est l'inverse. Un dossier technique que la compagnie ne peut pas ignorer. Suivi en français, wolof, bambara et d'autres langues : plus facile de s'expliquer dans sa langue maternelle. On ne prend notre part (25%) qu'une fois votre argent récupéré. Vous le savez avant même de signer.</p>
+    <p style="font-size:15px;line-height:1.75;color:rgba(255,255,255,0.75);max-width:640px;margin:0 auto 20px;" data-i18n-html="founder_story_short">Vingt ans dans l'aviation : mêmes excuses, familles laissées sans indemnité. Robin, c'est un dossier technique solide et un suivi en français, wolof, bambara… Notre 25 % uniquement une fois votre argent récupéré.</p>
     <p style="text-align:center;font-size:12px;color:rgba(255,255,255,0.4);font-style:italic;" data-i18n="founder_signature">Le fondateur · 20 ans dans le secteur aérien · Spécialiste CE 261/2004</p>
   </div>
 </section>
@@ -932,69 +867,12 @@
   </div>
 </section>
 
-<!-- ═══════ CTA FINAL ═══════ -->
-<section id="cta-final">
-  <div style="max-width:640px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:24px;text-align:center;" class="reveal">
-    <div class="section-tag" style="justify-content:center;" data-i18n="cta_final_tag">Passez à l'action maintenant</div>
-    <h2 class="section-title" data-i18n-html="cta_final_title">Votre argent<br>vous attend.</h2>
-    <p class="cta-final-note" style="font-size:15px;color:var(--gray);line-height:1.75;max-width:480px;" data-i18n="cta_final_note">
-      Chaque mois sans réclamer, c'est de l'argent que vous laissez sur la table. Le délai de prescription est de 5 ans — mais ça ne dure pas.
-    </p>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
-      <a href="/choix-reclamation.html" class="btn-primary" data-i18n="cta_depot">Déposer mon dossier →</a>
-      <a href="https://wa.me/15557840392?text=%5BFR%5D%20Bonjour%20Robin%20des%20Airs%20%21%0AJe%20veux%20parler%20%C3%A0%20un%20conseiller." target="_blank" class="btn-ghost" data-i18n="cta_wa">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.108.549 4.086 1.508 5.8L0 24l6.335-1.483A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.817 9.817 0 01-5.002-1.368l-.36-.214-3.722.976.994-3.63-.234-.373A9.818 9.818 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182c5.43 0 9.818 4.388 9.818 9.818 0 5.43-4.388 9.818-9.818 9.818z"/></svg>
-        WhatsApp direct
-      </a>
-    </div>
-    <p style="font-size:11px;color:var(--gray);margin-top:6px;"><span data-i18n="cta_or">Ou </span><a href="/depot-en-ligne.html" style="color:var(--gray);text-decoration:underline;" data-i18n="link_depot_online">formulaire en ligne</a></p>
-    <!-- Phrase signature -->
-    <div style="margin-top:8px;padding:14px 24px;background:var(--off);border-radius:8px;border:1px solid var(--border);">
-      <p style="font-size:13px;font-weight:700;color:var(--navy);font-style:italic;letter-spacing:-0.3px;">
-        "Robin prend aux compagnies, rend à nos familles."
-      </p>
-    </div>
+<!-- ═══════ BLOG (lien compact) ═══════ -->
+<section id="confiance" class="reveal home-blog-teaser" style="padding:36px 24px 44px;background:var(--off);border-top:1px solid var(--border);">
+  <div style="max-width:640px;margin:0 auto;text-align:center;">
+    <p style="font-size:15px;color:var(--gray);line-height:1.6;margin:0 0 16px;" data-i18n="home_blog_teaser_line">Guides CE 261, bons d'achat, prescription : tout est sur le blog.</p>
+    <a href="/blog/" class="btn-ghost" style="display:inline-flex;min-height:48px;align-items:center;padding:14px 28px;" data-i18n="home_blog_teaser_btn">Voir les articles →</a>
   </div>
-</section>
-
-<!-- ═══════ RESSOURCES (BLOG) ═══════ -->
-<section id="confiance" class="reveal" style="padding:56px 0 72px;">
-  <div style="max-width:980px;margin:0 auto;padding:0 24px;">
-    <div style="margin-top:0;text-align:center;margin-bottom:22px;">
-      <div class="section-tag" style="justify-content:center;" data-i18n="blog_feat_tag">Ressources</div>
-      <h2 class="section-title" data-i18n-html="blog_feat_title">3 articles pour<br><span class="neon">comprendre</span> en 5 minutes</h2>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
-      <a href="/blog/vol-retarde-dakar-paris-indemnite.html" style="text-decoration:none;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:18px;display:block;">
-        <div style="font-size:11px;color:var(--gray);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;">Paris ↔ Dakar</div>
-        <div style="font-weight:900;color:var(--navy);margin-bottom:8px;" data-i18n="blog_feat_1_t">Vol retardé Paris–Dakar : comment récupérer 600€</div>
-        <div style="font-size:13px;color:var(--gray);line-height:1.7;" data-i18n="blog_feat_1_d">Exemples concrets, familles, et ce que la compagnie essaie de faire croire.</div>
-        <div style="margin-top:10px;font-size:13px;font-weight:800;color:var(--neon-dark);" data-i18n="blog_feat_read">Lire →</div>
-      </a>
-      <a href="/blog/bon-achat-compagnie-aerienne-piege.html" style="text-decoration:none;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:18px;display:block;">
-        <div style="font-size:11px;color:var(--gray);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;">Bon d’achat</div>
-        <div style="font-weight:900;color:var(--navy);margin-bottom:8px;" data-i18n="blog_feat_2_t">Bon d’achat : pourquoi c’est souvent un piège</div>
-        <div style="font-size:13px;color:var(--gray);line-height:1.7;" data-i18n="blog_feat_2_d">Quand refuser, quoi répondre, et comment sécuriser une indemnité cash.</div>
-        <div style="margin-top:10px;font-size:13px;font-weight:800;color:var(--neon-dark);" data-i18n="blog_feat_read">Lire →</div>
-      </a>
-      <a href="/blog/combien-temps-reclamer-indemnite-vol.html" style="text-decoration:none;background:var(--white);border:1px solid var(--border);border-radius:12px;padding:18px;display:block;">
-        <div style="font-size:11px;color:var(--gray);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:8px;">Prescription</div>
-        <div style="font-weight:900;color:var(--navy);margin-bottom:8px;" data-i18n="blog_feat_3_t">Prescription : vous avez 5 ans pour réclamer</div>
-        <div style="font-size:13px;color:var(--gray);line-height:1.7;" data-i18n="blog_feat_3_d">Votre vol de 2021/2022 ? Vous pouvez encore récupérer votre indemnité.</div>
-        <div style="margin-top:10px;font-size:13px;font-weight:800;color:var(--neon-dark);" data-i18n="blog_feat_read">Lire →</div>
-      </a>
-    </div>
-    <p style="text-align:center;margin-top:22px;font-size:14px;color:var(--gray);line-height:1.6;">
-      <span data-i18n="blog_feat_more_prefix">Plus de guides &amp; destinations :</span>
-      <a href="/blog/" style="font-weight:800;color:var(--neon-dark);text-decoration:underline;margin-left:4px;" data-i18n="blog_feat_more_link">voir ici</a>
-    </p>
-  </div>
-  <style>
-    @media (max-width: 980px) {
-      #confiance div[style*="grid-template-columns:repeat(4,1fr)"] { grid-template-columns: repeat(2, 1fr) !important; }
-      #confiance div[style*="grid-template-columns:repeat(3,1fr)"] { grid-template-columns: 1fr !important; }
-    }
-  </style>
 </section>
 
 <!-- ═══════ FOOTER ═══════ -->
@@ -1011,7 +889,7 @@
       <ul>
         <li><a href="#la-loi" data-i18n="footer_loi">La loi CE 261/2004</a></li>
         <li><a href="#comment-ca-marche" data-i18n="footer_how">Comment ça marche</a></li>
-        <li><a href="#comparatif" data-i18n="footer_tarifs">Nos tarifs</a></li>
+        <li><a href="/nos-tarifs.html" data-i18n="footer_tarifs">Nos tarifs</a></li>
         <li><a href="#qui-suis-je" data-i18n="footer_histoire">Notre histoire</a></li>
         <li><a href="#faq">FAQ</a></li>
       </ul>

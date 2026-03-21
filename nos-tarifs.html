@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <title>Nos tarifs — Robin des Airs</title>
+  <meta name="description" content="Commission 25 %, inchangée même au tribunal. WhatsApp, Europe-Afrique, langues : comparatif Robin des Airs.">
+  <link rel="stylesheet" href="/assets/main.css">
+  <style>
+    .tarifs-top{background:var(--navy);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+    .tarifs-top a{color:#fff;text-decoration:none;font-weight:800;font-size:15px}
+    .tarifs-top a span{color:#00E5A0}
+    .tarifs-top-actions{display:flex;align-items:center;gap:14px;font-size:13px;font-weight:600}
+    .tarifs-top-actions button{border:none;background:transparent;color:rgba(255,255,255,.85);cursor:pointer;font:inherit;padding:4px 8px;border-radius:6px}
+    .tarifs-top-actions button:hover{color:#fff;background:rgba(255,255,255,.08)}
+    .tarifs-top-actions .active{color:var(--neon)}
+    .tarifs-back{color:rgba(255,255,255,.8)!important;font-weight:600!important;font-size:13px!important}
+  </style>
+</head>
+<body class="page-tarifs">
+  <div class="tarifs-top">
+    <a href="/" class="top-logo">ROBIN<span> des Airs</span></a>
+    <div class="tarifs-top-actions">
+      <button type="button" id="tarifs-lang-fr" aria-pressed="true">FR</button>
+      <button type="button" id="tarifs-lang-en" aria-pressed="false">EN</button>
+      <a href="/" class="tarifs-back"><span aria-hidden="true">← </span><span data-i18n="tarifs_back_home">Accueil</span></a>
+    </div>
+  </div>
+
+  <section id="comparatif">
+    <div class="comp-wrap">
+      <div class="comp-header-section">
+        <div class="section-tag" data-i18n="section_comp_tag">Transparence totale</div>
+        <h1 class="section-title" data-i18n-html="section_comp_title" style="font-size:clamp(26px,5vw,36px);">Robin vs les autres.</h1>
+        <p class="section-desc" style="font-size:14px;color:var(--gray);margin-top:12px;" data-i18n="section_comp_desc">Vous savez exactement ce que vous allez toucher avant de vous engager. Pas de mauvaise surprise.</p>
+      </div>
+
+      <div class="comp-table">
+        <div class="comp-head">
+          <div class="comp-head-cell" data-i18n="comp_h_crit">Critère</div>
+          <div class="comp-head-cell hl" data-i18n="comp_h_robin">✈ Robin des Airs</div>
+          <div class="comp-head-cell" style="color:rgba(255,255,255,0.75);" data-i18n="comp_h_others">Les autres</div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-cell feature" data-i18n="comp_r1_l">Commission de base</div>
+          <div class="comp-cell hl"><span class="price-green">25%</span></div>
+          <div class="comp-cell"><span class="price-red">25% à 35%</span></div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-cell feature" data-i18n="comp_r2_l">Commission si procès</div>
+          <div class="comp-cell hl"><span class="price-green" data-i18n="comp_r2_robin">25% (inchangée)</span></div>
+          <div class="comp-cell"><span class="price-red">35% à 50%</span></div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-cell feature" data-i18n-html="comp_r3_l">Sur <strong>600€</strong> d'indemnité — vous recevez (nets)</div>
+          <div class="comp-cell hl"><span class="price-green">450€</span></div>
+          <div class="comp-cell"><span style="color:#c0392b;font-weight:600;">300€ à 450€</span></div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-cell feature" data-i18n="comp_r_method_l">Méthode</div>
+          <div class="comp-cell hl"><span class="check">✓</span> &nbsp;<span class="price-green" data-i18n="comp_r_method_robin">WhatsApp, suivi direct</span></div>
+          <div class="comp-cell"><span class="cross">✗</span> &nbsp;<span data-i18n="comp_others_wa">Email ou chatbot</span></div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-cell feature" data-i18n="comp_r_eu_af_l">Europe ↔ Afrique</div>
+          <div class="comp-cell hl"><span class="check">✓</span> &nbsp;<span class="price-green" data-i18n="comp_yes_core">Notre cœur de métier</span></div>
+          <div class="comp-cell"><span class="cross">✗</span> &nbsp;<span data-i18n="comp_r_eu_af_others">Souvent axé vols intra-UE</span></div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-cell feature" data-i18n="comp_r_af_eu_l">Afrique → Europe</div>
+          <div class="comp-cell hl"><span class="check">✓</span> &nbsp;<span class="price-green" data-i18n="comp_r_af_eu_robin">CE 261 si compagnie européenne</span></div>
+          <div class="comp-cell"><span class="cross">✗</span> &nbsp;<span data-i18n="comp_r_af_eu_others">Peu clair selon les sites</span></div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-cell feature" data-i18n="comp_r_lang_l">Langues parlées</div>
+          <div class="comp-cell hl"><span class="price-green" style="font-weight:600;line-height:1.45;" data-i18n="comp_r_lang_robin">Français, anglais, wolof, bambara, lingala, soninké, peul/pulaar, dioula, swahili, twi, yoruba…</span></div>
+          <div class="comp-cell"><span class="cross">✗</span> &nbsp;<span data-i18n="comp_r_lang_others">Souvent limité à l'anglais</span></div>
+        </div>
+        <div class="comp-row">
+          <div class="comp-cell feature" data-i18n="comp_r9_l">Si on ne gagne pas</div>
+          <div class="comp-cell hl"><span class="price-green">0€</span></div>
+          <div class="comp-cell"><span class="price-green">0€</span></div>
+        </div>
+      </div>
+      <p class="comp-fineprint" style="font-size:13px;color:var(--gray);line-height:1.6;margin-top:20px;max-width:720px;margin-left:auto;margin-right:auto;" data-i18n="section_comp_fineprint">La différence clé : même commission si la compagnie résiste ou si le dossier va au tribunal — détail dans la FAQ.</p>
+      <p style="font-size:9px;color:var(--gray2);margin-top:10px;text-align:right;letter-spacing:0.5px;" data-i18n="section_comp_sources">Données basées sur les grilles tarifaires publiques des principaux services d'indemnisation européens, mars 2026.</p>
+      <div style="margin-top:24px;text-align:center;">
+        <a href="/choix-reclamation.html" class="btn-primary" data-i18n="cta_depot">Déposer mon dossier →</a>
+        <p style="font-size:11px;color:var(--gray);margin-top:8px;"><span data-i18n="cta_or">Ou </span><a href="/depot-en-ligne.html" style="color:var(--gray);text-decoration:underline;" data-i18n="link_depot_online">formulaire en ligne</a></p>
+        <p style="margin-top:16px;"><a href="/#faq" style="font-size:13px;color:var(--neon-dark);font-weight:700;">FAQ</a> · <a href="/" class="tarifs-footer-home" style="font-size:13px;color:var(--gray);font-weight:600;" data-i18n="tarifs_back_home">Accueil</a></p>
+      </div>
+    </div>
+  </section>
+
+  <script src="/i18n.js"></script>
+  <script>
+    (function () {
+      function syncLangButtons() {
+        var en = (window.I18N && I18N.getLang && I18N.getLang() === 'en');
+        var bfr = document.getElementById('tarifs-lang-fr');
+        var ben = document.getElementById('tarifs-lang-en');
+        if (bfr) { bfr.classList.toggle('active', !en); bfr.setAttribute('aria-pressed', en ? 'false' : 'true'); }
+        if (ben) { ben.classList.toggle('active', en); ben.setAttribute('aria-pressed', en ? 'true' : 'false'); }
+      }
+      function init() {
+        if (!window.I18N) return;
+        I18N.apply();
+        syncLangButtons();
+        var bfr = document.getElementById('tarifs-lang-fr');
+        var ben = document.getElementById('tarifs-lang-en');
+        if (bfr) bfr.addEventListener('click', function () { I18N.setLang('fr'); syncLangButtons(); });
+        if (ben) ben.addEventListener('click', function () { I18N.setLang('en'); syncLangButtons(); });
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+      else init();
+    })();
+  </script>
+</body>
+</html>

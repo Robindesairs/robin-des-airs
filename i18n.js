@@ -6,6 +6,11 @@ window.I18N = (function() {
     fr: {
       page_title: "Robin des Airs — Indemnités aériennes jusqu'à 600€ | Premium",
       meta_description: "Vol retardé ou annulé ? Jusqu'à 600€ par passager (CE 261). On ne prend notre part (25%) qu'une fois votre argent récupéré — sinon vous ne payez rien. Montage dossier sous 24h.",
+      tarifs_page_title: "Nos tarifs — Robin des Airs",
+      tarifs_meta_description: "Commission 25 %, inchangée même au tribunal. WhatsApp, Europe-Afrique, langues : comparatif Robin des Airs.",
+      home_blog_teaser_line: "Guides CE 261, bons d'achat, prescription : tout est sur le blog.",
+      home_blog_teaser_btn: "Voir les articles →",
+      tarifs_back_home: "Accueil",
       skip_link: "Aller au contenu principal",
       diaspora_bar_flags_aria: "Diaspora : Sénégal, Mali, Côte d’Ivoire, Guinée, Cameroun, RDC, Bénin, Togo, Ghana, Nigeria (drapeaux ci-contre).",
       vol_ticker_sr: "Bandeau des vols éligibles du moment. Informations sur l’origine des données affichées : voir le texte correspondant en pied de page.",
@@ -113,14 +118,14 @@ window.I18N = (function() {
       sp_families: "Nos familles nous font confiance — des centaines de dossiers réglés",
       sp_cta: "C'est mon tour →",
       how_step1_title: "Vous vérifiez",
-      how_step1_desc: "Entrez votre vol dans le diagnostic. En 60 secondes, vous savez si vous êtes éligible et combien vous touchez net.",
+      how_step1_desc: "WhatsApp, pastille « Vols éligibles » ou diagnostic en ligne — éligibilité et montant net en quelques minutes.",
       how_step2_title: "Vous signez",
       how_step2_desc: "3 minutes sur WhatsApp ou en ligne. Vous signez le mandat électronique. C'est tout — on prend la main.",
       how_step3_title: "On monte le dossier",
-      how_step3_desc: "Sous 24h, dossier technique : METAR/TAF, comparaison avec les autres vols au même moment — si d'autres avions ont décollé, on le documente.",
+      how_step3_desc: "Sous 24h, dossier technique : METAR/TAF, comparaison avec les autres vols au même moment, si d'autres avions ont décollé, on le documente.",
       how_step4_title: "Vous encaissez",
-      how_step4_desc: "Robin négocie jusqu'au bout : en général la compagnie paie sous 4 à 12 semaines ; sinon médiateur puis tribunal à nos frais. Dès réception des fonds, virement de votre part — le détail des pourcentages est fixé avant signature (voir FAQ).",
-      how_step1_time: "⏱ 60 secondes",
+      how_step4_desc: "Robin négocie jusqu'au bout : en général la compagnie paie sous 4 à 12 semaines ; sinon médiateur puis tribunal à nos frais. Dès réception des fonds, virement de votre part, le détail des pourcentages est fixé avant signature (voir FAQ).",
+      how_step1_time: "⏱ Quelques minutes",
       how_step2_time: "⏱ 3 minutes",
       how_step3_time: "⏱ 24 heures",
       cta_3min: "3 minutes et c'est réglé →",
@@ -215,7 +220,7 @@ window.I18N = (function() {
       blog_feat_more_link: "voir ici",
       section_founder_tag: "LE FONDATEUR",
       section_founder_title: "20 ans dans les coulisses.<br><span style=\"color:var(--neon-b);\">J'ai vu ce qu'ils cachent.</span>",
-      cta_final_note: "Chaque mois sans réclamer, c'est de l'argent que vous laissez sur la table. Le délai de prescription est de 5 ans — mais ça ne dure pas.",
+      cta_final_note: "Chaque mois sans réclamer, c'est de l'argent que vous laissez sur la table. Le délai de prescription est de 5 ans, mais ça ne dure pas.",
       funnel_step_label: "Étape 1 sur 5",
       funnel_wa_shortcut_text: "Sur WhatsApp : numéro de vol + date — on vérifie votre éligibilité.",
       funnel_wa_shortcut_btn: "💬 Vérifier mon éligibilité par WhatsApp",
@@ -252,7 +257,7 @@ window.I18N = (function() {
       faq_8_a: "Non — et c'est ce qui fait notre force. On analyse chaque dossier gratuitement avant de l'accepter. Si vos chances sont faibles, on vous le dit honnêtement plutôt que de vous faire perdre du temps. C'est pour ça que notre taux de réussite est de 9 dossiers sur 10 : on ne s'engage que quand on est confiants de gagner. Et si on ne prend pas votre dossier, on vous explique pourquoi et on vous conseille sur les alternatives.",
       faq_9_q: "↩️ Est-ce que je peux me rétracter ?",
       faq_9_a: "Oui. Vous disposez d'un droit de rétractation de 14 jours à compter de la signature du mandat — sans justification et sans frais. Concrètement : nous commençons à travailler sur votre dossier dès la signature, avec votre accord, pour ne pas perdre de temps. Si vous vous rétractez pendant les 14 jours, vous ne payez rien — le travail déjà effectué est à notre charge. Si votre dossier aboutit avant la fin des 14 jours (c'est rare mais possible), et que vous n'avez pas exercé votre rétractation, la commission s'applique normalement. C'est un droit légal (art. L221-18 du Code de la consommation). Un simple message WhatsApp ou email à expert@robindesairs.eu suffit.",
-      founder_story_short: "Vingt ans dans le secteur aérien. J'ai vu les mêmes excuses revenir à chaque vol retardé : \"météo imprévisible\", \"circonstances extraordinaires\". J'ai vu des familles entières repartir sans rien après 6 heures d'attente, parfois pour un baptême, des funérailles, des retrouvailles.<br><br>Robin des Airs, c'est l'inverse. Un dossier technique que la compagnie ne peut pas ignorer. Suivi en français, wolof, bambara et d'autres langues : plus facile de s'expliquer dans sa langue maternelle. On ne prend notre part (25%) qu'une fois votre argent récupéré. Vous le savez avant même de signer.",
+      founder_story_short: "Vingt ans dans l'aviation : mêmes excuses, familles laissées sans indemnité. Robin, c'est un dossier technique solide et un suivi en français, wolof, bambara… Notre 25 % uniquement une fois votre argent récupéré.",
       founder_quote: "\"Ils vous facturent le kilo en trop. Le deuxième bagage. Le siège côté hublot. Mais quand c'est leur tour de payer, retard, annulation, surbooking, il n'y a plus personne au bout du fil.\"",
       founder_p1: "Vingt ans dans le secteur aérien. <strong style=\"color:white;\">J'ai vu fonctionner la machine de l'intérieur.</strong> Les scripts téléphoniques conçus pour décourager. Les formulaires pensés pour que vous abandonniez. Le mot \"circonstances extraordinaires\" sorti comme un joker dès qu'il faut ouvrir le portefeuille.",
       founder_p2: "J'ai vu des familles entières se faire taxer à l'embarquement pour un kilo de trop, puis repartir sans rien quand leur avion avait <strong style=\"color:white;\">5 heures de retard</strong>. J'ai vu trop de voyageurs baisser les bras face au jargon juridique et aux réponses automatiques.",
@@ -272,6 +277,11 @@ window.I18N = (function() {
     en: {
       page_title: "Robin des Airs — Flight compensation up to €600 | Premium",
       meta_description: "Delayed or cancelled flight? Up to €600 per passenger (EU 261). We only take our share (25%) once your money is recovered — otherwise you pay nothing. Case file within 24h.",
+      tarifs_page_title: "Our rates — Robin des Airs",
+      tarifs_meta_description: "25% fee, unchanged even in court. WhatsApp, Europe–Africa, languages: Robin des Airs comparison.",
+      home_blog_teaser_line: "CE 261 guides, vouchers, time limits: everything on the blog.",
+      home_blog_teaser_btn: "Browse articles →",
+      tarifs_back_home: "Home",
       skip_link: "Skip to main content",
       diaspora_bar_flags_aria: "Diaspora: Senegal, Mali, Ivory Coast, Guinea, Cameroon, DRC, Benin, Togo, Ghana, Nigeria (flags beside).",
       vol_ticker_sr: "Eligible flights strip. For details on the data shown, see the matching note in the footer.",
@@ -378,14 +388,14 @@ window.I18N = (function() {
       sp_families: "Our families trust us — hundreds of cases settled",
       sp_cta: "My turn →",
       how_step1_title: "You check",
-      how_step1_desc: "Enter your flight in the checker. In 60 seconds you know if you're eligible and how much you get net.",
+      how_step1_desc: "WhatsApp, an “Eligible flights” pill, or the online checker — eligibility and net amount in a few minutes.",
       how_step2_title: "You sign",
       how_step2_desc: "3 minutes on WhatsApp or online. You sign the electronic mandate. That's it — we take over.",
       how_step3_title: "We build your case",
-      how_step3_desc: "Within 24h we build a technical file: METAR/TAF and comparison with other flights at the same time — if other aircraft took off, we document it.",
+      how_step3_desc: "Within 24h we build a technical file: METAR/TAF and comparison with other flights at the same time, if other aircraft took off, we document it.",
       how_step4_title: "You get paid",
-      how_step4_desc: "Robin negotiates to the end: usually the airline pays within 4–12 weeks; otherwise ombudsman then court at our expense. Once funds arrive, we transfer your share — percentages are fixed before you sign (see FAQ).",
-      how_step1_time: "⏱ 60 seconds",
+      how_step4_desc: "Robin negotiates to the end: usually the airline pays within 4–12 weeks; otherwise ombudsman then court at our expense. Once funds arrive, we transfer your share, percentages are fixed before you sign (see FAQ).",
+      how_step1_time: "⏱ A few minutes",
       how_step2_time: "⏱ 3 minutes",
       how_step3_time: "⏱ 24 hours",
       cta_3min: "3 minutes and it's done →",
@@ -480,7 +490,7 @@ window.I18N = (function() {
       blog_feat_more_link: "see here",
       section_founder_tag: "The founder",
       section_founder_title: "20 years behind the scenes.<br><span style=\"color:var(--neon-b);\">I've seen what they hide.</span>",
-      cta_final_note: "Every month without claiming is money left on the table. The limitation period is 5 years — but it doesn't last forever.",
+      cta_final_note: "Every month without claiming is money left on the table. The limitation period is 5 years, but it doesn't last forever.",
       funnel_step_label: "Step 1 of 5",
       funnel_wa_shortcut_text: "On WhatsApp: flight number + date — we check your eligibility.",
       funnel_wa_shortcut_btn: "💬 Check my eligibility via WhatsApp",
@@ -517,7 +527,7 @@ window.I18N = (function() {
       faq_8_a: "No — and that's our strength. We review every case for free before accepting it. If your chances are low, we tell you honestly rather than waste your time. That's why our success rate is 9 out of 10: we only take on cases we're confident we can win. If we don't take your case, we explain why and advise you on alternatives.",
       faq_9_q: "↩️ Can I withdraw?",
       faq_9_a: "Yes. You have a 14-day right of withdrawal from signing the mandate — no reason and no fee. In practice, we start working on your case right after signature (with your agreement) so we don’t lose time. If you withdraw within 14 days, you pay nothing — any work already done is on us. If your case succeeds before the 14 days end (rare but possible) and you haven’t withdrawn, the commission applies normally. This is a legal right (French Consumer Code, art. L221-18). A simple WhatsApp message or an email to expert@robindesairs.eu is enough.",
-      founder_story_short: "Twenty years in aviation. I've heard the same excuses on every delayed flight: \"unpredictable weather\", \"extraordinary circumstances\". I've seen whole families leave with nothing after six hours of waiting, sometimes for a baptism, a funeral, a reunion.<br><br>Robin des Airs is the opposite. A technical file the airline can't ignore. Support in French, Wolof, Bambara and more: easier to explain things in your own language. We only take our share (25%) once your money has been recovered. You know that before you sign.",
+      founder_story_short: "Twenty years in aviation: same excuses, families left unpaid. Robin means a solid technical file and support in French, Wolof, Bambara… Our 25% only once your money is recovered.",
       founder_quote: "\"They charge you for the extra kilo. The second bag. The window seat. But when it's their turn to pay, delay, cancellation, overbooking, there's nobody on the line.\"",
       founder_p1: "Twenty years in the aviation sector. <strong style=\"color:white;\">I've seen how the machine works from the inside.</strong> Phone scripts designed to put you off. Forms designed to make you give up. The words \"extraordinary circumstances\" pulled out like a joker whenever the wallet has to open.",
       founder_p2: "I've seen whole families charged at boarding for one extra kilo, then leave with nothing when their plane was <strong style=\"color:white;\">5 hours late</strong>. I've seen too many travellers give up in the face of legal jargon and automated replies.",
@@ -657,6 +667,12 @@ window.I18N = (function() {
     if (testiArrows.length >= 2) { testiArrows[0].setAttribute('aria-label', get('testi_aria_prev')); testiArrows[1].setAttribute('aria-label', get('testi_aria_next')); }
     var testiTranslatedNote = document.getElementById('testi-translated-note');
     if (testiTranslatedNote) testiTranslatedNote.style.display = (currentLang === 'en' && get('testi_translated_from')) ? 'block' : 'none';
+    if (document.body && document.body.classList.contains('page-tarifs')) {
+      var tTitle = get('tarifs_page_title');
+      if (tTitle) document.title = tTitle;
+      var mdTarifs = document.querySelector('meta[name="description"]');
+      if (mdTarifs && get('tarifs_meta_description')) mdTarifs.setAttribute('content', get('tarifs_meta_description'));
+    }
     if (typeof window.refreshVolTicker === 'function') window.refreshVolTicker();
   }
 

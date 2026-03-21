@@ -1482,20 +1482,23 @@ textarea.calc-input.calc-input--short-vol { min-height: 96px; resize: vertical; 
 
 .steps-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0;
   position: relative;
 }
 
-.steps-grid::before {
-  content: '';
-  position: absolute;
-  top: 36px;
-  left: calc(16.67% + 20px);
-  right: calc(16.67% + 20px);
-  height: 1.5px;
-  background: linear-gradient(90deg, var(--neon), var(--neon), var(--neon));
-  opacity: 0.2;
+/* Ligne de liaison — desktop 4 colonnes uniquement */
+@media (min-width: 1081px) {
+  .steps-grid::before {
+    content: '';
+    position: absolute;
+    top: 36px;
+    left: 12.5%;
+    right: 12.5%;
+    height: 1.5px;
+    background: linear-gradient(90deg, var(--neon), var(--neon), var(--neon));
+    opacity: 0.2;
+  }
 }
 
 .step-card {
@@ -2103,6 +2106,43 @@ button:focus-visible,
   .loi-header, .loi-cards, .testi-grid, .steps-grid, .footer-main { grid-template-columns: 1fr; }
   #la-loi, #comment-ca-marche, #comparatif, #temoignages, #qui-suis-je, #faq, #cta-final, footer {
     padding: 60px 24px;
+  }
+
+  /* Méthode Robin : une colonne lisible (plus de 4 micro-colonnes sur téléphone) */
+  #comment-ca-marche .steps-grid {
+    gap: 0;
+  }
+  #comment-ca-marche .step-card {
+    padding: 0 0 28px 0;
+    max-width: 100%;
+  }
+  #comment-ca-marche .step-card:not(:last-child)::after {
+    content: '↓';
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    top: auto;
+    bottom: 4px;
+    font-size: 16px;
+    opacity: 0.35;
+  }
+  #comment-ca-marche .ccm-header {
+    margin-bottom: 36px;
+  }
+  #comment-ca-marche .section-title {
+    font-size: clamp(22px, 6.2vw, 30px);
+    line-height: 1.18;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  #comment-ca-marche .step-desc {
+    font-size: 14px;
+    line-height: 1.55;
+    max-width: 42rem;
+  }
+  #comment-ca-marche .step-num {
+    font-size: 44px;
+    margin-bottom: 12px;
   }
 
   .comp-head, .comp-row { grid-template-columns: 1fr 1fr; }
