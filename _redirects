@@ -1,6 +1,11 @@
 # Netlify : forcer la racine à servir index.html
 /    /index.html    200
 
+# Radar vols (page complète = radar.html, copie alignée sur radar-vols-v2.html)
+/radar                       /radar.html                       200
+/radar-choix                /radar-choix.html                 200
+/crm                        /crm.html                         200
+
 # Redirections pour URLs sans .html
 /choix-reclamation           /choix-reclamation.html           200
 /depot-simple                /depot-simple.html                200

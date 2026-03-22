@@ -142,8 +142,9 @@
         <span data-i18n-html="hero_title">Robin prend<br>aux compagnies,<br></span>
         <span class="neon" data-i18n="hero_title_neon">rend à nos familles.</span>
       </h1>
+      <p class="hero-subhead" data-i18n="hero_subhead">Vol retardé (plus de 3 h à l’arrivée), annulé ou surbooké ? Nous récupérons pour vous l’indemnité prévue par la loi européenne (CE 261), jusqu’à 600 € par passager.</p>
 
-      <p class="hero-desc" data-i18n-html="hero_desc">Vol retardé de +3h, annulé ou surbooké ?<br>La loi oblige la compagnie à vous verser <strong>jusqu'à 600€ par passager</strong>.<br>On ne prend notre part (25%) qu'une fois votre argent récupéré.<br><strong>Si on ne gagne pas, vous ne payez rien.</strong></p>
+      <p class="hero-desc" data-i18n-html="hero_desc">La loi oblige la compagnie à vous verser <strong>jusqu'à 600€ par passager</strong> lorsque les conditions sont réunies.<br>On ne prend notre part (25%) qu'une fois votre argent récupéré.<br><strong>Si on ne gagne pas, vous ne payez rien.</strong></p>
 
       <!-- CTA principal = WhatsApp (audit: canal principal en premier) -->
       <div class="hero-entry">
@@ -191,6 +192,7 @@
       <div class="calc-header">
         <div class="calc-tag" data-i18n="calc_tag">Votre montant · Robin des Airs</div>
         <div class="calc-title"><span data-i18n="calc_title_1">Vérifiez en 2 min</span><br><span id="funnel-subtitle">si vous êtes éligible</span></div>
+        <p class="funnel-explainer" data-i18n="funnel_explainer">Même aide que les boutons WhatsApp à gauche : écrivez-nous ou remplissez le champ ci-dessous — ou ouvrez le simulateur détaillé plus bas.</p>
         <!-- Barre d’étapes : visible uniquement pendant le diagnostic détaillé (évite l’effet « plusieurs étapes » sur la vue WhatsApp 2 min) -->
         <div id="funnel-progress-wrap" class="funnel-progress-wrap" aria-hidden="true">
           <div id="funnel-progress" class="hero-funnel-progress">
@@ -206,7 +208,7 @@
         <p class="funnel-wa-shortcut-text">Envoyez votre vol sur WhatsApp — on vous dit si vous êtes éligible.</p>
         <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="funnel-wa-shortcut-btn" id="funnel-wa-eligibility-link">💬 Vérifier sur WhatsApp</a>
       </div>
-      <p class="funnel-detail-link"><a href="#" id="link-diagnostic-detail">Ou calculez le montant exact → diagnostic détaillé (5 étapes)</a></p>
+      <p class="funnel-detail-link"><a href="#" id="link-diagnostic-detail">Simulateur pas à pas (5 étapes) pour le montant exact →</a></p>
 
       <!-- ══ PARCOURS RAPIDE — message puis WhatsApp (le numéro client apparaît à l’envoi) ══ -->
       <div id="funnel-short">
@@ -214,7 +216,7 @@
           <p class="fstep-q">Quel est votre vol ?</p>
           <p class="funnel-hint" data-i18n="short_hint_vol">Numéro de vol + date, ou ex. « Paris-Dakar du 15/01, retardé »</p>
           <textarea id="short-vol" class="calc-input calc-input--short-vol" rows="4" maxlength="800" style="margin-bottom:14px;" placeholder="Ex: AF718 du 15/01, retardé"></textarea>
-          <p id="short-wa-note" class="funnel-hint short-wa-note" data-i18n="short_wa_visible_phone_note" style="font-size:11px;opacity:0.9;margin-top:-6px;margin-bottom:12px;line-height:1.45;"></p>
+          <p id="short-wa-note" class="funnel-hint short-wa-note" data-i18n="short_wa_visible_phone_note" style="margin-top:-6px;margin-bottom:12px;line-height:1.45;"></p>
           <button type="button" class="btn-calc" onclick="openShortWhatsApp()">Continuer sur WhatsApp →</button>
         </div>
       </div>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Robin des Airs — Choisir un radar</title>
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <style>
+    :root {
+      --navy: #0B1F3A;
+      --neon: #00C87A;
+      --gold: #C9A84C;
+      --bg: #f0f2f5;
+      --card: #fff;
+      --border: #e2e6ee;
+      --text: #1a2436;
+      --muted: #5c6778;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      background: linear-gradient(160deg, #e8f5f0 0%, var(--bg) 40%);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px 16px 48px;
+      line-height: 1.5;
+    }
+    .wrap { max-width: 720px; margin: 0 auto; }
+    h1 {
+      font-size: clamp(1.35rem, 4vw, 1.75rem);
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+    .sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+    .grid { display: flex; flex-direction: column; gap: 14px; }
+    a.card {
+      display: block;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 8px 28px rgba(11, 31, 58, 0.06);
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+    }
+    a.card:hover, a.card:focus-visible {
+      border-color: rgba(0, 200, 122, 0.45);
+      box-shadow: 0 12px 36px rgba(0, 200, 122, 0.12);
+      transform: translateY(-2px);
+      outline: none;
+    }
+    a.card:focus-visible { box-shadow: 0 0 0 3px rgba(0, 200, 122, 0.35); }
+    .card-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--navy);
+      color: var(--neon);
+      font-weight: 800;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .card h2 { font-size: 17px; color: var(--navy); margin-bottom: 6px; }
+    .card p { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+    .links { font-size: 12px; color: var(--muted); }
+    .links strong { color: var(--navy); font-weight: 600; }
+    .links code {
+      display: block;
+      margin-top: 6px;
+      padding: 8px 10px;
+      background: #f7f8fa;
+      border-radius: 6px;
+      font-size: 11px;
+      word-break: break-all;
+      border: 1px solid var(--border);
+    }
+    .badge {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(0, 200, 122, 0.15);
+      color: #007a4c;
+      margin-left: 8px;
+    }
+    footer {
+      margin-top: 32px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    footer a { color: var(--navy); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Choisir un radar</h1>
+    <p class="sub">Trois versions différentes — clique sur la carte pour ouvrir. Les liens <strong>locaux</strong> fonctionnent avec un serveur dans le dossier du site (ex. <code style="font-size:11px">python3 -m http.server 8000</code>).</p>
+
+    <div class="grid" role="list">
+      <!-- 1 -->
+      <a class="card" href="radar.html" role="listitem">
+        <div class="card-num">1</div>
+        <h2>Radar vols <span class="badge">Recommandé</span></h2>
+        <p>Tableau Europe ↔ Afrique, métriques, onglets temps réel / éligibles / statistiques, modales détail &amp; démo pub. Fond clair, données simulées dans la page.</p>
+        <div class="links">
+          <strong>Local</strong><code id="l1"></code>
+          <strong>Production</strong><code id="p1"></code>
+        </div>
+      </a>
+
+      <!-- 2 -->
+      <a class="card" href="radar-v3.html" role="listitem">
+        <div class="card-num">2</div>
+        <h2>Radar System V3</h2>
+        <p>Interface sombre type « dashboard », style system v3 final, stats et contrôles compacts.</p>
+        <div class="links">
+          <strong>Local</strong><code id="l2"></code>
+          <strong>Production</strong><code id="p2"></code>
+        </div>
+      </a>
+
+      <!-- 3 -->
+      <a class="card" href="radar-direct.html" role="listitem">
+        <div class="card-num">3</div>
+        <h2>Command Center / Elite Africa</h2>
+        <p>Vue sombre « command center », stats colorées, outils rapides.</p>
+        <div class="links">
+          <strong>Local</strong><code id="l3"></code>
+          <strong>Production</strong><code id="p3"></code>
+        </div>
+      </a>
+    </div>
+
+    <footer>
+      <p><strong>Copie identique au (1) :</strong> <a href="radar-vols-v2.html">radar-vols-v2.html</a> (même contenu que <code>radar.html</code> pour l’instant).</p>
+      <p style="margin-top:10px"><strong>Autre variante :</strong> <a href="radar-75.html">radar-75.html</a> (Radar 75, thème sombre + auth sessionStorage).</p>
+      <p style="margin-top:14px"><a href="/">← Retour à l’accueil</a></p>
+    </footer>
+  </div>
+  <script>
+    (function () {
+      var o = window.location.origin;
+      var isFile = o === 'null' || !o || o.indexOf('file:') === 0;
+      var base = isFile ? '' : o;
+      document.getElementById('l1').textContent = (isFile ? '(Ouvre via serveur local) ' : '') + (isFile ? 'http://localhost:8000/radar.html' : base + '/radar.html');
+      document.getElementById('p1').textContent = 'https://robindesairs.eu/radar.html';
+      document.getElementById('l2').textContent = (isFile ? 'http://localhost:8000/radar-v3.html' : base + '/radar-v3.html');
+      document.getElementById('p2').textContent = 'https://robindesairs.eu/radar-v3.html';
+      document.getElementById('l3').textContent = (isFile ? 'http://localhost:8000/radar-direct.html' : base + '/radar-direct.html');
+      document.getElementById('p3').textContent = 'https://robindesairs.eu/radar-direct.html';
+    })();
+  </script>
+</body>
+</html>

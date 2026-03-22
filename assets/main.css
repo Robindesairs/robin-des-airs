@@ -109,6 +109,9 @@
   --radius-lg: 20px;
   /* Hauteur réelle fixée par JS sur #site-header (diaspora + nav) */
   --site-header-height: 112px;
+  /* Corps de texte : un peu plus lisible (moins « fin ») */
+  --body-font-size: 17px;
+  --body-font-weight: 500;
 }
 
 /* Hors bandeau vols : évite que !important casse le marquee / les règles dédiées .vol-ticker-* plus bas */
@@ -147,6 +150,8 @@ html {
 body {
   background: var(--white);
   font-family: 'Montserrat', system-ui, -apple-system, sans-serif;
+  font-size: var(--body-font-size, 17px);
+  font-weight: var(--body-font-weight, 500);
   color: var(--text);
   overflow-x: hidden;
   width: 100%;
@@ -864,8 +869,20 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 
 .hero-title .neon { color: var(--neon); }
 
+/* Phrase « ce que fait le site » — lisibilité avant le slogan détaillé */
+.hero-subhead {
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--navy);
+  font-weight: 600;
+  max-width: 34rem;
+  margin: -6px 0 14px 0;
+  opacity: 0.92;
+}
+
 .hero-desc {
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 500;
   color: var(--gray);
   line-height: 1.65;
   max-width: 480px;
@@ -1077,6 +1094,15 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 
 .calc-title span { color: var(--neon-b); }
 
+.funnel-explainer {
+  margin: 10px 0 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.78);
+  max-width: 100%;
+}
+
 /* Barre de progression : masquée sur la vue « 2 min / WhatsApp » ; visible seulement en diagnostic détaillé */
 #funnel-box .funnel-progress-wrap {
   display: none;
@@ -1085,6 +1111,10 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 }
 #funnel-box.funnel-box--detailed:not(.funnel-from-vol-chip) .funnel-progress-wrap {
   display: block;
+}
+/* En diagnostic détaillé, masquer la phrase d’orientation (évite la redondance) */
+#funnel-box.funnel-box--detailed:not(.funnel-from-vol-chip) .funnel-explainer {
+  display: none;
 }
 #funnel-box .hero-funnel-progress {
   width: 100%;
@@ -2041,7 +2071,11 @@ button:focus-visible,
 
 /* Petit mobile (< 480px) */
 @media (max-width: 480px) {
-  body { font-size: 16px; }
+  body { font-size: 17px; }
+  /* Très petit écran : une ligne de moins dans le calculateur */
+  .funnel-explainer {
+    display: none;
+  }
   nav { padding: 0 12px; height: 56px; padding-bottom: env(safe-area-inset-bottom, 0); }
   .nav-logo { font-size: 14px; }
   #hero { padding: calc(var(--site-header-height, 96px) + 10px) 16px 16px; min-height: auto; padding-left: env(safe-area-inset-left, 16px); padding-right: env(safe-area-inset-right, 16px); align-items: flex-start; }
@@ -2092,8 +2126,14 @@ button:focus-visible,
 
 /* Mobile / tablette (≤ 768px) — header minimal : logo + hamburger uniquement */
 @media (max-width: 768px) {
+  /* Lisibilité : gris plus foncés sur fond blanc (cible ~WCAG AA corps de texte) */
+  :root {
+    --gray: #4a5568;
+    --gray2: #5c6778;
+    --text: #121820;
+  }
   body {
-    font-size: 16px;
+    font-size: 17px;
     overflow-wrap: break-word;
   }
   /* Grilles / flex : évite qu'une colonne force la page à dépasser en largeur */
@@ -2170,17 +2210,25 @@ button:focus-visible,
   }
   .hero-lang-line {
     margin-top: 8px;
-    font-size: 11px;
-    line-height: 1.42;
+    font-size: 12px;
+    line-height: 1.45;
     gap: 5px 6px;
+    color: var(--gray);
+    font-weight: 600;
   }
+  /* Doublon avec le CTA WhatsApp + bulle flottante — retire un « pavé » de texte */
   .hero-wa-direct {
-    margin-top: 8px;
-    margin-bottom: 2px;
+    display: none;
   }
   .hero-stats {
     margin-top: 14px;
     padding-top: 12px;
+    gap: 12px 18px;
+    justify-content: flex-start;
+  }
+  /* Retire les traits verticaux entre les stats = grille plus légère */
+  .hero-stats > div:not(.stat) {
+    display: none !important;
   }
   /* Logo marque un peu plus lisible sous le bandeau drapeaux */
   .nav-logo {
@@ -2195,9 +2243,73 @@ button:focus-visible,
   }
   .hero-bg-shape, .hero-bg-dots { display: none; }
   .hero-title { font-size: clamp(36px, 9vw, 52px); }
-  .hero-desc { font-size: 15px; }
+  .hero-subhead { font-size: 15px; margin: -4px 0 12px 0; line-height: 1.5; font-weight: 600; }
+  .hero-desc { font-size: 16px; font-weight: 500; }
   .hero-entry-btn { min-height: 48px; padding: 16px 20px; }
-  .hero-right { padding: 28px 20px; }
+  /* Calculateur : moins « carte énorme », moins d’ombre (effet pavé) */
+  .hero-right {
+    padding: 22px 16px;
+    box-shadow: 0 14px 44px -18px rgba(11, 31, 58, 0.22);
+    border-color: rgba(255, 255, 255, 0.05);
+  }
+  .calc-header {
+    margin-bottom: 8px;
+  }
+  .funnel-explainer {
+    font-size: 12px;
+    line-height: 1.45;
+    margin-top: 6px;
+    margin-bottom: 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+  .funnel-wa-shortcut-text {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 8px;
+  }
+  .funnel-detail-link {
+    font-size: 13px;
+  }
+  .funnel-detail-link a {
+    color: rgba(255, 255, 255, 0.88);
+  }
+  #funnel-box .calc-tag {
+    font-size: 9px;
+    letter-spacing: 0.18em;
+  }
+  #funnel-box .calc-title {
+    font-size: 18px;
+  }
+  /* Champs ≥16px : lisibilité + évite le zoom automatique iOS */
+  #funnel-box .calc-input,
+  #funnel-box .calc-select,
+  #funnel-box textarea.calc-input {
+    font-size: 16px;
+  }
+  #funnel-box .calc-input::placeholder {
+    color: rgba(255, 255, 255, 0.75);
+  }
+  #funnel-box .fstep-q {
+    font-size: 15px;
+    color: #fff;
+  }
+  #funnel-box .funnel-hint {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.92);
+  }
+  /* Raccourci WhatsApp : intégré au bloc, plus de cadre vert séparé */
+  .funnel-wa-shortcut {
+    background: transparent;
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0;
+    padding: 12px 0 10px;
+    margin-bottom: 10px;
+  }
+  .diaspora-bar-track {
+    box-shadow: none;
+    border-color: rgba(0, 229, 160, 0.12);
+  }
   .calc-input, .calc-select { min-height: 48px; font-size: 16px; }
   .cb { min-height: 48px; padding: 15px 14px; -webkit-tap-highlight-color: transparent; }
   .reason-btn { min-height: 46px; padding: 12px; }
@@ -2325,6 +2437,19 @@ button:focus-visible,
   font-style: italic;
   margin-top: 4px;
   margin-bottom: 12px;
+}
+/* Texte d’aide sur fond bleu calculateur : #999 était illisible (contraste insuffisant) */
+#funnel-box .funnel-hint {
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.9);
+  font-style: normal;
+  font-weight: 500;
+}
+#funnel-box .funnel-hint.short-wa-note {
+  font-size: 13px;
+  opacity: 1;
+  color: rgba(255, 255, 255, 0.86);
 }
 .fstep-reassure {
   font-size: 11px;
