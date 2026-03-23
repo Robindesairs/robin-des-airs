@@ -68,7 +68,7 @@
   tbody tr:last-child { border-bottom: none; }
   tbody tr:hover { background: #F0FAF6; }
   tbody td { padding: 12px 14px; vertical-align: middle; }
-  .td-id { font-weight: 600; color: var(--navy); font-size: 12px; }
+  .td-id { font-weight: 600; color: var(--navy); font-size: 12px; font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; letter-spacing: 0.03em; }
   .td-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
 
   /* ── BADGES ── */
@@ -104,7 +104,18 @@
   .field textarea { resize: vertical; min-height: 60px; }
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-  .indicatif-row { display: grid; grid-template-columns: 110px 1fr; gap: 8px; }
+  .indicatif-row { display: grid; grid-template-columns: minmax(220px, 44%) 1fr; gap: 8px; align-items: start; }
+  .crm-cc { position: relative; width: 100%; }
+  .crm-cc-q { width: 100%; font-size: 13px; padding: 8px 11px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none; box-sizing: border-box; }
+  .crm-cc-q:focus { border-color: var(--green); }
+  .crm-cc-dd { position: absolute; left: 0; right: 0; top: calc(100% + 4px); max-height: min(52vh, 280px); overflow-y: auto; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: 0 14px 44px rgba(0,0,0,.14); z-index: 80; display: none; }
+  .crm-cc-dd.open { display: block; }
+  .crm-cc-opt { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; padding: 9px 11px; cursor: pointer; font-size: 13px; border-bottom: 1px solid var(--bg2); line-height: 1.35; }
+  .crm-cc-opt:last-child { border-bottom: none; }
+  .crm-cc-opt:hover, .crm-cc-opt.hl { background: var(--bg2); }
+  .crm-cc-opt .crm-flag { font-size: 20px; line-height: 1; flex-shrink: 0; }
+  .crm-cc-opt .crm-meta { color: var(--text2); font-size: 12px; flex: 1; min-width: 120px; }
+  .crm-cc-hint { font-size: 10px; color: var(--text3); margin: 6px 0 0; line-height: 1.4; }
 
   /* ── CALC BOX ── */
   .calc-box { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; margin-top: 10px; }
@@ -213,6 +224,11 @@
   .crm-jalon-row .j-meta { color: var(--text2); font-size: 11px; margin-top: 2px; }
   .btn-wa { background: #25D366 !important; color: #fff !important; border-color: #128C7E !important; }
   .btn-wa:hover { filter: brightness(0.95); }
+
+  /* ── Suppression dossier (code sécurité) ── */
+  .crm-danger-zone { margin-top: 28px; padding: 16px; border: 1px solid #FECACA; border-radius: var(--radius-sm); background: #FEF2F2; }
+  .crm-danger-zone-title { font-size: 12px; font-weight: 700; color: #991B1B; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 8px; }
+  .crm-danger-zone p { font-size: 12px; color: #7F1D1D; line-height: 1.5; margin-bottom: 12px; }
 </style>
 </head>
 <body>
@@ -253,12 +269,12 @@
 <div class="app">
   <!-- MÉTRIQUES -->
   <div class="metrics" id="metrics"></div>
-  <div class="crm-toolbar">Les dossiers sont <strong>sauvegardés dans ce navigateur</strong> (localStorage). Les fichiers joints restent en mémoire page seulement — export CSV pour archiver la liste.</div>
+  <div class="crm-toolbar">Les dossiers sont <strong>sauvegardés dans ce navigateur</strong> (localStorage). Référence au format <strong>RDA-année-XXX-XXX</strong> (2 blocs de 3 caractères, plus facile à lire et à dicter). Recherche : tapez une partie du n° ou du nom. Pas de suite 001, 002… Le <strong>total</strong> n’est pas affiché. Export CSV pour archiver.</div>
   <div class="crm-jalons" id="crm-jalons" aria-label="Prochains jalons"></div>
 
   <!-- FILTRES -->
   <div class="controls">
-    <input type="text" id="search" placeholder="🔍  Passager, vol, PNR…" oninput="render()">
+    <input type="text" id="search" placeholder="🔍  N° dossier, passager, vol, PNR…" oninput="render()">
     <select id="filterStatut" onchange="render()">
       <option value="">Tous les statuts</option>
       <option value="BROUILLON">Brouillon</option>
@@ -320,6 +336,28 @@
   </div>
 </div>
 
+<!-- MODAL SUPPRESSION DOSSIER (code direction — pas de suppression « simple » par un agent) -->
+<div class="modal-bg" id="modalDeleteDossier" style="display:none;z-index:200" onclick="if(event.target===this)crmCloseDeleteDossierModal()">
+  <div class="modal" style="max-width:440px" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2 style="margin:0;font-size:16px">Suppression définitive du dossier</h2>
+      <button type="button" class="btn btn-sm" onclick="crmCloseDeleteDossierModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:#B91C1C;margin-bottom:10px;line-height:1.45"><strong>Règle sécurité :</strong> un agent ne peut pas supprimer un dossier sans le <strong>code d’autorisation</strong> connu de la direction uniquement.</p>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.45">Saisissez le code, puis une dernière fenêtre de confirmation s’affichera. Action irréversible, tracée avec votre nom d’agent.</p>
+      <div id="crm-delete-dossier-err" style="display:none;color:var(--red);font-size:12px;margin-bottom:10px;font-weight:600"></div>
+      <div class="field"><label for="crm-delete-code">Code d’autorisation</label>
+        <input type="password" id="crm-delete-code" autocomplete="off" inputmode="numeric" placeholder="Code à 4 chiffres" onkeydown="if(event.key==='Enter'){event.preventDefault();crmSubmitDeleteDossier();}">
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">
+        <button type="button" class="btn btn-danger" onclick="crmSubmitDeleteDossier()">Valider le code</button>
+        <button type="button" class="btn btn-sm" onclick="crmCloseDeleteDossierModal()">Annuler</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL NOUVEAU -->
 <div class="modal-bg" id="modalNew" style="display:none" onclick="if(event.target===this)closeAll()">
   <div class="modal">
@@ -336,23 +374,15 @@
       <div class="field">
         <label>Téléphone</label>
         <div class="indicatif-row">
-          <select id="n_indicatif">
-            <option value="+33">🇫🇷 +33</option>
-            <option value="+32">🇧🇪 +32</option>
-            <option value="+41">🇨🇭 +41</option>
-            <option value="+31">🇳🇱 +31</option>
-            <option value="+44">🇬🇧 +44</option>
-            <option value="+221">🇸🇳 +221</option>
-            <option value="+225">🇨🇮 +225</option>
-            <option value="+243">🇨🇩 +243</option>
-            <option value="+223">🇲🇱 +223</option>
-            <option value="+237">🇨🇲 +237</option>
-            <option value="+229">🇧🇯 +229</option>
-            <option value="+212">🇲🇦 +212</option>
-            <option value="+213">🇩🇿 +213</option>
-            <option value="+216">🇹🇳 +216</option>
-          </select>
-          <input id="n_tel" placeholder="6 12 34 56 78">
+          <div>
+            <input type="hidden" id="n_indicatif" value="+33">
+            <div class="crm-cc">
+              <input type="text" id="n_indicatif_q" class="crm-cc-q" autocomplete="off" spellcheck="false" placeholder="+41, suisse, sénégal…" aria-autocomplete="list" aria-expanded="false" oninput="crmDialOnInput('n_indicatif')" onfocus="crmDialOnFocus('n_indicatif')" onblur="crmDialOnBlur('n_indicatif')">
+              <div class="crm-cc-dd" id="n_indicatif_dd" role="listbox"></div>
+            </div>
+            <p class="crm-cc-hint">Au focus : raccourcis. Dès <strong>2 caractères</strong> : tapez chiffres (+41, 221…) ou le pays — choisissez dans la liste.</p>
+          </div>
+          <input id="n_tel" placeholder="6 12 34 56 78" aria-label="Numéro national">
         </div>
       </div>
       <div class="field"><label>E-mail</label><input id="n_email" placeholder="email@…" type="email"></div>
@@ -376,6 +406,7 @@
       </div>
 
       <div class="section-title">Vols</div>
+      <p class="crm-cc-hint" style="margin-bottom:10px">Pour le trajet : indiquez plutôt le <strong>nom de la ville</strong> (Paris, Bruxelles, Abidjan…) si vous ne connaissez pas le code IATA (CDG, BRU…). Les deux sont acceptés.</p>
       <div id="vols-container"></div>
       <button class="btn btn-sm" style="width:100%;margin-bottom:4px" onclick="addVolForm()">+ Ajouter un vol (correspondance)</button>
 
@@ -412,9 +443,12 @@
 
 <div id="crm-wa-toast" class="crm-wa-toast" role="status" aria-live="polite"></div>
 
+<script src="assets/crm-dial-codes.js"></script>
 <script>
 const CRM_AUTH_URL = '/api/crm-auth';
 const CRM_AGENT_KEY = 'rda_crm_agent';
+/** Code connu de la direction uniquement — sans ce code, aucune suppression de dossier n’est possible. */
+const CRM_SUPPRESSION_DOSSIER_CODE = '1112';
 
 function getCrmAgent() {
   try { return (sessionStorage.getItem(CRM_AGENT_KEY) || '').trim(); } catch (e) { return ''; }
@@ -560,6 +594,24 @@ const STATUT_LABELS = {
 };
 /** Ordre du parcours juridique (filtres & listes) */
 const STATUT_ORDER = ['BROUILLON','ELIGIBLE','MANDAT_SIGNE','LRAR_ENVOYEE','RELANCE_1','RELANCE_2','MEDIATION','CONTENTIEUX','PAYE','REFUSE_DEFINITIF','ABANDON','PRESCRIT'];
+
+/** Sources connues — toute valeur inconnue ou vide → « autre » (défaut métier). */
+const CRM_SOURCE_KEYS = ['autre','tiktok_ad','fb_reels','instagram','youtube','whatsapp','referral','organic_site','blog'];
+const CRM_SOURCE_LABELS = {
+  autre:'Autre',
+  tiktok_ad:'TikTok Ads',
+  fb_reels:'Facebook / Reels',
+  instagram:'Instagram',
+  youtube:'YouTube',
+  whatsapp:'WhatsApp direct',
+  referral:'Parrainage',
+  organic_site:'Site organique',
+  blog:'Blog Robin des Airs'
+};
+function crmNormalizeSource(s){
+  var k = String(s == null ? '' : s).trim();
+  return CRM_SOURCE_KEYS.indexOf(k) !== -1 ? k : 'autre';
+}
 
 const TAUX = 0.0665;
 
@@ -720,9 +772,9 @@ function volCardHTML(i,label,removable){
       <div class="field"><label>N° vol</label><input id="vc${i}_vol" placeholder="AF 719"></div>
       <div class="field"><label>Date</label><input id="vc${i}_date" type="date"></div>
     </div>
-    <div class="row3">
-      <div class="field"><label>Départ (IATA)</label><input id="vc${i}_dep" maxlength="3" placeholder="CDG" style="text-transform:uppercase"></div>
-      <div class="field"><label>Arrivée (IATA)</label><input id="vc${i}_arr" maxlength="3" placeholder="DSS" style="text-transform:uppercase"></div>
+      <div class="row3">
+      <div class="field"><label>Départ (ville ou code aéroport)</label><input id="vc${i}_dep" maxlength="80" placeholder="ex. Paris ou CDG" autocomplete="off"></div>
+      <div class="field"><label>Arrivée (ville ou code aéroport)</label><input id="vc${i}_arr" maxlength="80" placeholder="ex. Dakar ou DSS" autocomplete="off"></div>
       <div class="field"><label>PNR</label><input id="vc${i}_pnr" maxlength="6" placeholder="AB4XYZ" style="text-transform:uppercase"></div>
     </div>
     <div class="field"><label>Incident</label>
@@ -763,7 +815,7 @@ function updateCalcNew(){
 }
 
 let DB=[
-  {id:'RDA-2026-001',statut:'PAYE',priorite:'STANDARD',date:'2026-01-15',date_paiement:'2026-01-28',source:'fb_reels',lrar:'2026-01-13',
+  {id:'RDA-2026-K4W-Q82',statut:'PAYE',priorite:'STANDARD',date:'2026-01-15',date_statut:'2026-01-28',date_paiement:'2026-01-28',source:'fb_reels',lrar:'2026-01-13',
    prenom:'Aminata',nom:'DIALLO',indicatif:'+33',tel:'6 12 34 56 78',email:'aminata@gmail.com',adultes:1,bebes:0,
    vols:[{comp:'Air France',vol:'AF 718',date:'2025-11-03',dep:'CDG',arr:'DSS',pnr:'AB4XYZ',inc:'RETARD'}],
    palier:600,pieces:[
@@ -771,26 +823,26 @@ let DB=[
      {id:'p2',cat:'RIB',filename:'RIB_aminata.pdf',added:'2026-01-11',sizeKb:88,dataUrl:null},
      {id:'p3',cat:'LRAR_PREUVE',filename:'AR_LRAR_1A002.pdf',added:'2026-01-12',sizeKb:210,dataUrl:null}
    ],events:[{date:'2026-01-10',action:'Mandat signé (YouSign)',meta:''},{date:'2026-01-12',action:'LRAR envoyée',meta:'Réf. AR 1A002'},{date:'2026-01-28',action:'Paiement reçu + reversé',meta:'600€ encaissés — 450€ reversés'}]},
-  {id:'RDA-2026-002',statut:'LRAR_ENVOYEE',priorite:'HAUTE',date:'2026-02-01',date_paiement:null,source:'tiktok_ad',lrar:'2026-02-03',
+  {id:'RDA-2026-M7H-XZ9',statut:'LRAR_ENVOYEE',priorite:'HAUTE',date:'2026-02-01',date_statut:'2026-02-03',date_paiement:null,source:'tiktok_ad',lrar:'2026-02-03',
    prenom:'Kofi',nom:'ASANTE',indicatif:'+33',tel:'7 98 76 54 32',email:'kofi@hotmail.fr',adultes:3,bebes:1,
    vols:[{comp:'Air France',vol:'AF 704',date:'2026-01-10',dep:'CDG',arr:'DLA',pnr:'ZK9PLM',inc:'ANNULATION'}],
    palier:600,pieces:[
      {id:'pk1',cat:'EMBARQUEMENT',filename:'Carte_embarquement_Kofi.jpg',added:'2026-02-01',sizeKb:640,dataUrl:null},
      {id:'pk2',cat:'IDENTITE',filename:'CNI_Kofi.pdf',added:'2026-02-01',sizeKb:320,dataUrl:null}
    ],events:[{date:'2026-02-01',action:'3 mandats signés (bébé exclu)',meta:''},{date:'2026-02-03',action:'LRAR envoyée',meta:'Délai 15j'}]},
-  {id:'RDA-2026-003',statut:'ELIGIBLE',priorite:'STANDARD',date:'2026-02-10',date_paiement:null,source:'organic_site',lrar:null,
+  {id:'RDA-2026-T2R-JV6',statut:'ELIGIBLE',priorite:'STANDARD',date:'2026-02-10',date_statut:'2026-02-10',date_paiement:null,source:'organic_site',lrar:null,
    prenom:'Fatou',nom:'CAMARA',indicatif:'+33',tel:'6 55 44 33 22',email:'fatou.c@yahoo.fr',adultes:2,bebes:0,
    vols:[{comp:'Transavia',vol:'TO 9612',date:'2026-01-20',dep:'ORY',arr:'BKO',pnr:'CX3NOP',inc:'RETARD'}],
    palier:600,events:[{date:'2026-02-10',action:'Dossier créé',meta:'Retard 5h confirmé'}]},
-  {id:'RDA-2026-004',statut:'CONTENTIEUX',priorite:'HAUTE',date:'2025-12-05',date_paiement:null,source:'referral',lrar:'2025-12-08',
+  {id:'RDA-2026-B9C-K6W',statut:'CONTENTIEUX',priorite:'HAUTE',date:'2025-12-05',date_statut:'2026-01-10',date_paiement:null,source:'referral',lrar:'2025-12-08',
    prenom:'Jean-Baptiste',nom:'KOUASSI',indicatif:'+32',tel:'47 123 456',email:'jb.kouassi@gmail.com',adultes:1,bebes:0,
    vols:[{comp:'Brussels Airlines',vol:'SN 401',date:'2025-10-14',dep:'BRU',arr:'FIH',pnr:'PQ7RST',inc:'ANNULATION'},{comp:'Brussels Airlines',vol:'SN 403',date:'2025-10-15',dep:'FIH',arr:'BRU',pnr:'PQ7RST',inc:'CORRESPONDANCE_MANQUEE'}],
    palier:600,events:[{date:'2025-12-05',action:'Mandat signé',meta:''},{date:'2025-12-08',action:'LRAR envoyée',meta:''},{date:'2025-12-25',action:'Refus compagnie',meta:'Circonstances extraordinaires'},{date:'2026-01-10',action:'Contentieux ouvert',meta:'Tribunal de Commerce Paris'}]},
-  {id:'RDA-2026-005',statut:'MANDAT_SIGNE',priorite:'BASSE',date:'2026-03-01',date_paiement:null,source:'whatsapp',lrar:null,
+  {id:'RDA-2026-P5G-N8Q',statut:'MANDAT_SIGNE',priorite:'BASSE',date:'2026-03-01',date_statut:'2026-03-01',date_paiement:null,source:'whatsapp',lrar:null,
    prenom:'Marie',nom:'BATUMELO',indicatif:'+33',tel:'6 77 88 99 00',email:'marie.b@outlook.com',adultes:1,bebes:1,
    vols:[{comp:'Air France',vol:'AF 732',date:'2026-02-18',dep:'CDG',arr:'BKO',pnr:'GH2IJK',inc:'RETARD'}],
    palier:600,events:[{date:'2026-03-01',action:'Mandat signé (YouSign)',meta:'Bébé présent — non indemnisé'}]},
-  {id:'RDA-2026-006',statut:'MEDIATION',priorite:'STANDARD',date:'2025-10-20',date_paiement:null,source:'whatsapp',lrar:'2025-11-07',
+  {id:'RDA-2026-F3Y-M9K',statut:'MEDIATION',priorite:'STANDARD',date:'2025-10-20',date_statut:'2026-01-08',date_paiement:null,source:'whatsapp',lrar:'2025-11-07',
    prenom:'Ibrahim',nom:'SY',indicatif:'+33',tel:'6 11 22 33 44',email:'ibrahim.sy@mail.fr',adultes:1,bebes:0,
    vols:[{comp:'Air France',vol:'AF 596',date:'2025-09-12',dep:'CDG',arr:'ABJ',pnr:'LMN45K',inc:'RETARD'}],
    palier:600,events:[{date:'2025-10-20',action:'Dossier créé',meta:''},{date:'2025-11-01',action:'Mandat signé',meta:''},{date:'2025-11-07',action:'LRAR envoyée',meta:''},{date:'2025-11-22',action:'Relance 1 (J+15)',meta:''},{date:'2025-12-07',action:'Relance 2 (J+30)',meta:''},{date:'2026-01-08',action:'Saisine médiateur (J+62)',meta:''}]},
@@ -809,11 +861,17 @@ function loadCrmDbFromStorage(){
       if(!Array.isArray(d.pieces)) d.pieces = [];
       if(!Array.isArray(d.events)) d.events = [];
       if(!Array.isArray(d.vols) || !d.vols.length) d.vols = [{comp:'—',vol:'—',date:'—',dep:'',arr:'',pnr:'',inc:'RETARD'}];
+      if(d.date_statut == null || d.date_statut === '') d.date_statut = d.date_paiement || d.date || null;
+      d.source = crmNormalizeSource(d.source);
     });
   } catch(e){ console.warn('CRM load', e); }
 }
 loadCrmDbFromStorage();
-DB.forEach(function(d){ if(!Array.isArray(d.pieces)) d.pieces = []; });
+DB.forEach(function(d){
+  if(!Array.isArray(d.pieces)) d.pieces = [];
+  if(d.date_statut == null || d.date_statut === '') d.date_statut = d.date_paiement || d.date || null;
+  d.source = crmNormalizeSource(d.source);
+});
 
 const PIECES_CAT_LABELS = {
   EMBARQUEMENT:'Carte embarquement / billet',
@@ -857,11 +915,11 @@ function csvEscape(x){
 }
 
 function exportCrmCsv(){
-  var headers = ['id','statut','priorite','prenom','nom','email','indicatif','tel','adultes','bebes','palier','lrar','date_paiement','source','vol','trajet','pnr','nb_pieces','date_creation_dossier'];
+  var headers = ['id','statut','priorite','prenom','nom','email','indicatif','tel','adultes','bebes','palier','lrar','date_statut','date_paiement','source','vol','trajet','pnr','nb_pieces','date_creation_dossier'];
   var lines = [headers.join(';')];
   DB.forEach(function(d){
     var v = d.vols&&d.vols[0]?d.vols[0]:{};
-    var row = [d.id,d.statut,d.priorite,d.prenom,d.nom,d.email,d.indicatif,d.tel,d.adultes,d.bebes,d.palier,d.lrar||'',d.date_paiement||'',d.source,v.vol||'',((v.dep||'')+'→'+(v.arr||'')),v.pnr||'',(d.pieces||[]).length,d.date||''];
+    var row = [d.id,d.statut,d.priorite,d.prenom,d.nom,d.email,d.indicatif,d.tel,d.adultes,d.bebes,d.palier,d.lrar||'',d.date_statut||'',d.date_paiement||'',d.source,v.vol||'',((v.dep||'')+'→'+(v.arr||'')),v.pnr||'',(d.pieces||[]).length,d.date||''];
     lines.push(row.map(csvEscape).join(';'));
   });
   var blob = new Blob(['\ufeff'+lines.join('\n')],{type:'text/csv;charset=utf-8;'});
@@ -950,9 +1008,170 @@ function escHtml(s){
   return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 }
 
-function crmIndicatifOptions(val){
-  var o=[['+33','🇫🇷 +33'],['+32','🇧🇪 +32'],['+41','🇨🇭 +41'],['+31','🇳🇱 +31'],['+44','🇬🇧 +44'],['+221','🇸🇳 +221'],['+225','🇨🇮 +225'],['+243','🇨🇩 +243'],['+223','🇲🇱 +223'],['+237','🇨🇲 +237'],['+229','🇧🇯 +229'],['+212','🇲🇦 +212'],['+213','🇩🇿 +213'],['+216','🇹🇳 +216']];
-  return o.map(function(x){ return '<option value="'+x[0]+'"'+(x[0]===val?' selected':'')+'>'+x[1]+'</option>'; }).join('');
+var CRM_DIAL_LIST = [];
+var CRM_DIAL_BY_D = {};
+var CRM_DIAL_READY = false;
+var CRM_TOP_DIALS = ['33','32','41','31','44','221','225','243','223','237','229','212','213','216','1','262','590','594','596','39','351','352','49','34'];
+
+function crmInitDialData(){
+  if(CRM_DIAL_READY) return;
+  var lines = window.CRM_DIAL_LINES || [];
+  if(!lines.length){
+    lines = ['33|🇫🇷|France','32|🇧🇪|Belgique','41|🇨🇭|Suisse','31|🇳🇱|Pays-Bas','44|🇬🇧|Royaume-Uni','221|🇸🇳|Sénégal','225|🇨🇮|Côte d\'Ivoire','243|🇨🇩|RD Congo'];
+  }
+  CRM_DIAL_LIST = lines.map(function(line){
+    var p = line.split('|');
+    return { d: p[0], f: p[1], n: p[2], nd: '' };
+  }).map(function(r){
+    r.nd = r.n.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    return r;
+  }).sort(function(a,b){ return a.n.localeCompare(b.n,'fr'); });
+  CRM_DIAL_BY_D = {};
+  CRM_DIAL_LIST.forEach(function(r){
+    if(!CRM_DIAL_BY_D[r.d]) CRM_DIAL_BY_D[r.d] = r;
+  });
+  CRM_DIAL_READY = true;
+}
+
+function crmDialLabel(r){
+  return r.f + ' +' + r.d + ' · ' + r.n;
+}
+
+function crmDialTop(){
+  crmInitDialData();
+  var out = [];
+  CRM_TOP_DIALS.forEach(function(code){
+    var r = CRM_DIAL_BY_D[code];
+    if(r && out.indexOf(r) === -1) out.push(r);
+  });
+  return out.length ? out : CRM_DIAL_LIST.slice(0, 24);
+}
+
+function crmDialFilter(raw){
+  crmInitDialData();
+  var t = String(raw || '').trim();
+  if(t.length < 2) return crmDialTop();
+  var q = t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  var dig = q.replace(/\D/g,'');
+  var hasLetter = /[a-zàâäéèêëïîôùûüçæœ]/.test(q);
+  var out = [];
+  var seen = {};
+  function add(r){
+    var k = r.d + '|' + r.n;
+    if(!seen[k]){ seen[k] = 1; out.push(r); }
+  }
+  for(var i = 0; i < CRM_DIAL_LIST.length; i++){
+    var r = CRM_DIAL_LIST[i];
+    if(hasLetter){
+      if(r.nd.indexOf(q) !== -1 || ('+' + r.d).indexOf(q) !== -1) add(r);
+    }
+    if(dig.length >= 2 && r.d.indexOf(dig) === 0) add(r);
+  }
+  return out.slice(0, 48);
+}
+
+function crmDialPickEl(el){
+  var d = el.getAttribute('data-d');
+  var prefix = el.getAttribute('data-prefix');
+  if(!d || !prefix) return;
+  crmDialPick(prefix, d);
+}
+
+function crmDialPick(prefix, d){
+  crmInitDialData();
+  var r = CRM_DIAL_BY_D[d];
+  var h = document.getElementById(prefix);
+  var q = document.getElementById(prefix + '_q');
+  var dd = document.getElementById(prefix + '_dd');
+  if(h) h.value = '+' + d;
+  if(q && r) q.value = crmDialLabel(r);
+  if(dd){ dd.innerHTML = ''; dd.classList.remove('open'); }
+  if(prefix === 'n_indicatif'){
+    var nt = document.getElementById('n_tel');
+    if(nt) setTimeout(function(){ nt.focus(); }, 60);
+  }
+  if(prefix === 'edit-indicatif'){
+    var et = document.getElementById('edit-tel');
+    if(et) setTimeout(function(){ et.focus(); }, 60);
+  }
+}
+
+function crmDialRenderDD(prefix, rows){
+  var dd = document.getElementById(prefix + '_dd');
+  if(!dd) return;
+  if(!rows.length){
+    dd.innerHTML = '';
+    dd.classList.remove('open');
+    return;
+  }
+  dd.innerHTML = rows.map(function(r){
+    return '<div class="crm-cc-opt" role="option" data-d="'+escAttr(r.d)+'" data-prefix="'+escAttr(prefix)+'" onclick="crmDialPickEl(this)"><span class="crm-flag">'+r.f+'</span><strong>+'+escHtml(r.d)+'</strong><span class="crm-meta">'+escHtml(r.n)+'</span></div>';
+  }).join('');
+  dd.classList.add('open');
+}
+
+function crmDialOnInput(prefix){
+  var qel = document.getElementById(prefix + '_q');
+  if(!qel) return;
+  if(qel.value.trim().length < 2){
+    var dd = document.getElementById(prefix + '_dd');
+    if(dd){ dd.innerHTML = ''; dd.classList.remove('open'); }
+    return;
+  }
+  crmDialRenderDD(prefix, crmDialFilter(qel.value));
+}
+
+function crmDialOnFocus(prefix){
+  var qel = document.getElementById(prefix + '_q');
+  if(!qel) return;
+  if(qel.value.trim().length < 2){
+    crmDialRenderDD(prefix, crmDialTop());
+  } else {
+    crmDialRenderDD(prefix, crmDialFilter(qel.value));
+  }
+}
+
+function crmDialCommitFromTyped(prefix){
+  crmInitDialData();
+  var h = document.getElementById(prefix);
+  var q = document.getElementById(prefix + '_q');
+  if(!h || !q) return;
+  var t = q.value.trim();
+  if(!t) return;
+  var dig = t.replace(/\D/g,'');
+  if(!dig.length) return;
+  for(var len = Math.min(4, dig.length); len >= 1; len--){
+    var sub = dig.slice(0, len);
+    if(CRM_DIAL_BY_D[sub]){
+      crmDialPick(prefix, sub);
+      return;
+    }
+  }
+}
+
+function crmDialOnBlur(prefix){
+  setTimeout(function(){
+    var dd = document.getElementById(prefix + '_dd');
+    if(dd) dd.classList.remove('open');
+    crmDialCommitFromTyped(prefix);
+  }, 220);
+}
+
+function crmDialSyncInput(prefix, plusVal){
+  crmInitDialData();
+  var h = document.getElementById(prefix);
+  var q = document.getElementById(prefix + '_q');
+  var d = String(plusVal || '').replace(/^\+/, '');
+  if(h) h.value = d ? ('+' + d) : '+33';
+  var r = CRM_DIAL_BY_D[d];
+  if(q) q.value = r ? crmDialLabel(r) : (d ? ('+' + d) : '');
+  var dd = document.getElementById(prefix + '_dd');
+  if(dd){ dd.innerHTML = ''; dd.classList.remove('open'); }
+}
+
+function crmDialFieldHtml(prefix, selectedPlus){
+  var v = escAttr(String(selectedPlus || '+33'));
+  return '<input type="hidden" id="'+prefix+'" value="'+v+'"><div class="crm-cc"><input type="text" id="'+prefix+'_q" class="crm-cc-q" autocomplete="off" spellcheck="false" placeholder="+41, pays, 221…" oninput="crmDialOnInput(\''+prefix+'\')" onfocus="crmDialOnFocus(\''+prefix+'\')" onblur="crmDialOnBlur(\''+prefix+'\')"><div class="crm-cc-dd" id="'+prefix+'_dd" role="listbox"></div></div>';
 }
 
 function formatPiecesRows(d,id){
@@ -968,7 +1187,7 @@ function formatPiecesRows(d,id){
 
 function buildEditVolsHtml(d){
   return d.vols.map(function(v,i){
-    return '<div style="border:1px solid #E2E4E8;border-radius:8px;padding:12px;margin-bottom:10px;background:#F7F8FA"><div style="font-size:11px;font-weight:700;color:#6B7280;margin-bottom:8px;text-transform:uppercase">Vol '+(i+1)+(i===d.vols.length-1?' — déterminant':'')+'</div><div class="row3"><div class="field"><label>Compagnie</label><input id="edit-v-'+i+'-comp" value="'+escAttr(v.comp)+'"></div><div class="field"><label>N° vol</label><input id="edit-v-'+i+'-vol" value="'+escAttr(v.vol)+'"></div><div class="field"><label>Date</label><input id="edit-v-'+i+'-date" type="date" value="'+escAttr(v.date)+'"></div></div><div class="row3"><div class="field"><label>Départ (IATA)</label><input id="edit-v-'+i+'-dep" maxlength="3" value="'+escAttr(v.dep)+'"></div><div class="field"><label>Arrivée (IATA)</label><input id="edit-v-'+i+'-arr" maxlength="3" value="'+escAttr(v.arr)+'"></div><div class="field"><label>PNR</label><input id="edit-v-'+i+'-pnr" maxlength="6" value="'+escAttr(v.pnr)+'"></div></div><div class="field"><label>Incident</label><select id="edit-v-'+i+'-inc"><option value="RETARD"'+(v.inc==='RETARD'?' selected':'')+'>Retard ≥ 3h</option><option value="ANNULATION"'+(v.inc==='ANNULATION'?' selected':'')+'>Annulation</option><option value="CORRESPONDANCE_MANQUEE"'+(v.inc==='CORRESPONDANCE_MANQUEE'?' selected':'')+'>Correspondance manquée</option><option value="REFUS_EMBARQUEMENT"'+(v.inc==='REFUS_EMBARQUEMENT'?' selected':'')+'>Refus embarquement</option></select></div></div>';
+    return '<div style="border:1px solid #E2E4E8;border-radius:8px;padding:12px;margin-bottom:10px;background:#F7F8FA"><div style="font-size:11px;font-weight:700;color:#6B7280;margin-bottom:8px;text-transform:uppercase">Vol '+(i+1)+(i===d.vols.length-1?' — déterminant':'')+'</div><div class="row3"><div class="field"><label>Compagnie</label><input id="edit-v-'+i+'-comp" value="'+escAttr(v.comp)+'"></div><div class="field"><label>N° vol</label><input id="edit-v-'+i+'-vol" value="'+escAttr(v.vol)+'"></div><div class="field"><label>Date</label><input id="edit-v-'+i+'-date" type="date" value="'+escAttr(v.date)+'"></div></div><div class="row3"><div class="field"><label>Départ (ville ou code)</label><input id="edit-v-'+i+'-dep" maxlength="80" value="'+escAttr(v.dep)+'" placeholder="Ville ou CDG"></div><div class="field"><label>Arrivée (ville ou code)</label><input id="edit-v-'+i+'-arr" maxlength="80" value="'+escAttr(v.arr)+'" placeholder="Ville ou DSS"></div><div class="field"><label>PNR</label><input id="edit-v-'+i+'-pnr" maxlength="6" value="'+escAttr(v.pnr)+'"></div></div><div class="field"><label>Incident</label><select id="edit-v-'+i+'-inc"><option value="RETARD"'+(v.inc==='RETARD'?' selected':'')+'>Retard ≥ 3h</option><option value="ANNULATION"'+(v.inc==='ANNULATION'?' selected':'')+'>Annulation</option><option value="CORRESPONDANCE_MANQUEE"'+(v.inc==='CORRESPONDANCE_MANQUEE'?' selected':'')+'>Correspondance manquée</option><option value="REFUS_EMBARQUEMENT"'+(v.inc==='REFUS_EMBARQUEMENT'?' selected':'')+'>Refus embarquement</option></select></div></div>';
   }).join('');
 }
 
@@ -982,6 +1201,9 @@ function removePiece(dossierId, pieceId){
   var d = DB.find(function(x){ return x.id===dossierId; });
   if(!d||!d.pieces) return;
   if(!requireCrmAgent()) return;
+  var p = d.pieces.find(function(x){ return x.id===pieceId; });
+  var fname = (p && p.filename) ? String(p.filename) : 'ce fichier';
+  if(!window.confirm('Retirer du dossier le fichier suivant ?\n\n« '+fname.replace(/\r|\n/g,' ')+' »\n\nCette action sera enregistrée dans l’historique (traçabilité).')) return;
   d.pieces = d.pieces.filter(function(p){ return p.id!==pieceId; });
   crmAuditEvent(d,'Pièce retirée du dossier','ID pièce : '+pieceId);
   persistCrmDb();
@@ -1033,13 +1255,13 @@ function saveEditDossier(id){
   d.adultes = Math.min(9,Math.max(1,parseInt(document.getElementById('edit-adultes').value,10)||1));
   d.bebes = Math.min(9,Math.max(0,parseInt(document.getElementById('edit-bebes').value,10)||0));
   d.palier = parseInt(document.getElementById('edit-palier').value,10)||600;
-  d.source = document.getElementById('edit-source').value;
+  d.source = crmNormalizeSource(document.getElementById('edit-source').value);
   for(var i=0;i<d.vols.length;i++){
     d.vols[i].comp = document.getElementById('edit-v-'+i+'-comp').value.trim()||'—';
     d.vols[i].vol = document.getElementById('edit-v-'+i+'-vol').value.trim()||'—';
     d.vols[i].date = document.getElementById('edit-v-'+i+'-date').value||'—';
-    d.vols[i].dep = (document.getElementById('edit-v-'+i+'-dep').value||'').toUpperCase();
-    d.vols[i].arr = (document.getElementById('edit-v-'+i+'-arr').value||'').toUpperCase();
+    d.vols[i].dep = (document.getElementById('edit-v-'+i+'-dep').value||'').trim();
+    d.vols[i].arr = (document.getElementById('edit-v-'+i+'-arr').value||'').trim();
     d.vols[i].pnr = (document.getElementById('edit-v-'+i+'-pnr').value||'').toUpperCase();
     d.vols[i].inc = document.getElementById('edit-v-'+i+'-inc').value||'RETARD';
   }
@@ -1056,19 +1278,20 @@ function filtered(){
   const pal=document.getElementById('filterPalier').value;
   return DB.filter(d=>{
     const v0=(d.vols&&d.vols[0])?d.vols[0]:{vol:'',pnr:''};
-    const txt=(d.prenom+' '+d.nom+' '+v0.vol+' '+v0.pnr).toLowerCase();
-    return(!q||txt.includes(q))&&(!st||d.statut===st)&&(!pal||d.palier===parseInt(pal));
+    const idNorm = String(d.id||'').toLowerCase().replace(/-/g,'');
+    const qNorm = q.replace(/-/g,'');
+    const txt=(d.id+' '+d.prenom+' '+d.nom+' '+v0.vol+' '+v0.pnr).toLowerCase();
+    const matchQ = !q || txt.includes(q) || (qNorm.length>=3 && idNorm.includes(qNorm));
+    return matchQ && (!st||d.statut===st) && (!pal||d.palier===parseInt(pal));
   });
 }
 
 function renderMetrics(){
-  const total=DB.length;
   const enCours=DB.filter(d=>!['PAYE','REFUSE_DEFINITIF','ABANDON','PRESCRIT'].includes(d.statut)).length;
   const payes=DB.filter(d=>d.statut==='PAYE').length;
   const caClient=DB.filter(d=>d.statut==='PAYE').reduce((s,d)=>s+calcFin(d.palier,d.adultes).net,0);
   const caRobin=DB.filter(d=>d.statut==='PAYE').reduce((s,d)=>s+calcFin(d.palier,d.adultes).comm,0);
   document.getElementById('metrics').innerHTML=`
-    <div class="metric"><div class="metric-label">Total dossiers</div><div class="metric-val">${total}</div></div>
     <div class="metric"><div class="metric-label">En cours</div><div class="metric-val orange">${enCours}</div></div>
     <div class="metric"><div class="metric-label">Payés</div><div class="metric-val green">${payes}</div></div>
     <div class="metric"><div class="metric-label">Reversé clients</div><div class="metric-val green">${caClient.toLocaleString('fr-FR')} €</div></div>
@@ -1095,7 +1318,10 @@ function render(){
     }
     const nbBadge=d.adultes+d.bebes>1?` <span style="font-size:11px;color:#9CA3AF">×${d.adultes+d.bebes}${d.bebes>0?` (${d.bebes}bb)`:''}</span>`:'';
     const volsBadge=(d.vols&&d.vols.length>1)?` <span style="font-size:10px;background:#DBEAFE;color:#1D4ED8;padding:1px 5px;border-radius:10px;font-weight:600">×${d.vols.length} vols</span>`:'';
-    const statutCell=`<span class="badge s-${d.statut}">${STATUT_LABELS[d.statut]||d.statut}</span>${d.statut==='PAYE'&&d.date_paiement?`<div style="font-size:10px;color:#9CA3AF;margin-top:3px">${d.date_paiement}</div>`:''}`;
+    const statutSub=[];
+    if(d.date_statut) statutSub.push(`<div style="font-size:10px;color:#9CA3AF;margin-top:3px">Statut : ${d.date_statut}</div>`);
+    if(d.statut==='PAYE'&&d.date_paiement) statutSub.push(`<div style="font-size:10px;color:#9CA3AF;margin-top:2px">Paiement : ${d.date_paiement}</div>`);
+    const statutCell=`<span class="badge s-${d.statut}">${STATUT_LABELS[d.statut]||d.statut}</span>${statutSub.join('')}`;
     return`<tr onclick="openDetail('${d.id}')">
       <td><div class="td-id">${d.id}</div><div class="td-sub">${d.date}</div></td>
       <td>${d.prenom} ${d.nom}${nbBadge}</td>
@@ -1139,7 +1365,8 @@ function openDetail(id){
   </div>`:'';
 
   const pieceCatSelectOpts = Object.keys(PIECES_CAT_LABELS).map(function(k){ return '<option value="'+k+'">'+PIECES_CAT_LABELS[k]+'</option>'; }).join('');
-  const editSourceOpts = [['autre','Autre'],['tiktok_ad','TikTok Ads'],['fb_reels','Facebook / Reels'],['instagram','Instagram'],['youtube','YouTube'],['whatsapp','WhatsApp direct'],['referral','Parrainage'],['organic_site','Site organique'],['blog','Blog Robin des Airs']].map(function(x){ return '<option value="'+x[0]+'"'+(d.source===x[0]?' selected':'')+'>'+x[1]+'</option>'; }).join('');
+  var effSource = crmNormalizeSource(d.source);
+  const editSourceOpts = CRM_SOURCE_KEYS.map(function(k){ return '<option value="'+k+'"'+(effSource===k?' selected':'')+'>'+CRM_SOURCE_LABELS[k]+'</option>'; }).join('');
 
   document.getElementById('detail-body').innerHTML=`
   <div class="tabs">
@@ -1163,10 +1390,11 @@ function openDetail(id){
       <div style="font-size:11px;font-weight:700;color:#6B7280;margin-bottom:8px;text-transform:uppercase">VOL ${i+1}${i===d.vols.length-1?' — déterminant CE 261':''}</div>
       <div class="detail-row"><span class="detail-label">Vol</span><span class="detail-val">${v.comp} ${v.vol}</span></div>
       <div class="detail-row"><span class="detail-label">Date</span><span class="detail-val">${v.date}</span></div>
-      <div class="detail-row"><span class="detail-label">Trajet</span><span class="detail-val">${v.dep} → ${v.arr}</span></div>
+      <div class="detail-row"><span class="detail-label">Trajet (ville ou code)</span><span class="detail-val">${escHtml(v.dep)} → ${escHtml(v.arr)}</span></div>
       <div class="detail-row" style="border:none"><span class="detail-label">PNR</span><span class="detail-val" style="font-family:monospace">${v.pnr}</span></div>
     </div>`).join('')}
-    <div class="detail-row"><span class="detail-label">Source</span><span class="detail-val">${d.source}</span></div>
+    <div class="detail-row"><span class="detail-label">Source acquisition</span><span class="detail-val">${escHtml(CRM_SOURCE_LABELS[effSource]||effSource)}</span></div>
+    <div class="detail-row"><span class="detail-label">Statut</span><span class="detail-val" style="display:flex;flex-wrap:wrap;align-items:center;gap:6px"><span class="badge s-${d.statut}">${STATUT_LABELS[d.statut]||d.statut}</span>${d.date_statut?`<span style="color:#6B7280;font-size:13px">depuis le ${d.date_statut}</span>`:''}${d.statut==='PAYE'&&d.date_paiement?`<span style="color:#007A4C;font-size:13px;font-weight:600">· paiement ${d.date_paiement}</span>`:''}</span></div>
     <div class="section-title">Pièces jointes (${(d.pieces||[]).length})</div>
     <p style="font-size:12px;color:#6B7280;margin-bottom:10px">Vue synthèse — détail et ajout dans l’onglet <strong>Pièces</strong> ou bouton <strong>Pièces du dossier</strong> en haut.</p>
     ${(d.pieces||[]).length?`<ul style="font-size:13px;line-height:1.6;margin:0;padding-left:18px;color:#1A1A2E">${d.pieces.map(p=>`<li>${escHtml(p.filename)} <span style="color:#9CA3AF">(${PIECES_CAT_LABELS[p.cat]||p.cat})</span></li>`).join('')}</ul>`:'<p style="font-size:12px;color:#9CA3AF">Aucune pièce répertoriée.</p>'}
@@ -1215,9 +1443,10 @@ function openDetail(id){
     </div>
     <div class="field"><label>Téléphone</label>
       <div class="indicatif-row">
-        <select id="edit-indicatif">${crmIndicatifOptions(d.indicatif)}</select>
-        <input id="edit-tel" value="${escAttr(d.tel)}">
+        <div>${crmDialFieldHtml('edit-indicatif', d.indicatif)}</div>
+        <input id="edit-tel" value="${escAttr(d.tel)}" aria-label="Numéro national">
       </div>
+      <p class="crm-cc-hint">Indicatif : raccourcis au focus, ou tapez au moins 2 caractères (+32, belgique…).</p>
     </div>
     <div class="field"><label>E-mail</label><input id="edit-email" type="email" value="${escAttr(d.email)}"></div>
     <div class="row2">
@@ -1235,6 +1464,7 @@ function openDetail(id){
       <div class="field"><label>Source acquisition</label><select id="edit-source">${editSourceOpts}</select></div>
     </div>
     <div class="section-title">Vols (${d.vols.length})</div>
+    <p class="crm-cc-hint" style="margin-bottom:10px">Pas besoin de maîtriser les codes IATA : saisissez le <strong>nom de la ville</strong> (Paris, Douala…) ou le code aéroport si vous l’avez.</p>
     ${buildEditVolsHtml(d)}
     <button type="button" class="btn btn-primary" onclick="saveEditDossier('${id}')">Enregistrer les modifications</button>
   </div>
@@ -1247,6 +1477,7 @@ function openDetail(id){
     <div id="paiement-field" style="${d.statut==='PAYE'?'':'display:none'}">
       <div class="field"><label>Date de paiement</label><input id="upd-date-paiement" type="date" value="${d.date_paiement||''}"></div>
     </div>
+    <div class="field"><label>Date du statut actuel (comme la date de paiement pour « Payé »)</label><input id="upd-date-statut" type="date" value="${d.date_statut||''}"></div>
     <div class="field"><label>Date réception LRAR (mise en demeure — compteur moratoire + jalons J+15 / J+30 / J+62)</label><input id="upd-lrar" type="date" value="${d.lrar||''}" onchange="refreshWaPreview('${id}')"></div>
     <div class="field"><label>Priorité</label>
       <select id="upd-prio">
@@ -1267,9 +1498,17 @@ function openDetail(id){
       <button class="btn btn-primary" onclick="updateDossier('${id}')">Enregistrer</button>
       <button class="btn btn-danger" onclick="genLettre('${id}')">Générer mise en demeure ↗</button>
     </div>
+    <div class="crm-danger-zone">
+      <div class="crm-danger-zone-title">Zone sécurisée — suppression du dossier</div>
+      <p><strong>Un agent ne peut pas supprimer un dossier</strong> sans le code d’autorisation détenu par la direction. Il n’existe aucun bouton « supprimer en un clic » : le code <strong>${CRM_SUPPRESSION_DOSSIER_CODE.length} chiffres</strong> est obligatoire, puis une confirmation finale.</p>
+      <button type="button" class="btn btn-sm btn-danger" onclick="crmOpenDeleteDossierModal()">Demander la suppression définitive de ce dossier…</button>
+    </div>
   </div>`;
   document.getElementById('modalDetail').style.display='flex';
-  setTimeout(function(){ refreshWaPreview(id); }, 0);
+  setTimeout(function(){
+    refreshWaPreview(id);
+    crmDialSyncInput('edit-indicatif', d.indicatif);
+  }, 0);
 }
 
 function togglePaiementField(val){
@@ -1299,14 +1538,22 @@ function updateDossier(id){
   const prevPrio = d.priorite;
   const prevLrar = d.lrar;
   const prevPay = d.date_paiement;
+  const prevDateStatut = d.date_statut;
   d.statut=document.getElementById('upd-statut').value;
   d.priorite=document.getElementById('upd-prio').value;
   d.lrar=document.getElementById('upd-lrar').value||null;
   if(d.statut==='PAYE') d.date_paiement=document.getElementById('upd-date-paiement').value||today();
+  var inpDateStatut = (document.getElementById('upd-date-statut') && document.getElementById('upd-date-statut').value) || '';
+  if(prev !== d.statut) {
+    d.date_statut = inpDateStatut || today();
+  } else {
+    d.date_statut = inpDateStatut || null;
+  }
   const parts = [];
   if(prev!==d.statut) parts.push('Statut : '+(STATUT_LABELS[prev]||prev)+' → '+(STATUT_LABELS[d.statut]||d.statut));
   if(prevPrio!==d.priorite) parts.push('Priorité : '+prevPrio+' → '+d.priorite);
   if(String(prevLrar||'')!==String(d.lrar||'')) parts.push('Date LRAR : '+(prevLrar||'—')+' → '+(d.lrar||'—'));
+  if(String(prevDateStatut||'')!==String(d.date_statut||'')) parts.push('Date statut : '+(prevDateStatut||'—')+' → '+(d.date_statut||'—'));
   if(d.statut==='PAYE' && String(prevPay||'')!==String(d.date_paiement||'')) parts.push('Date paiement : '+(prevPay||'—')+' → '+d.date_paiement);
   var metaDetail = parts.join(' · ');
   if(prev!==d.statut) metaDetail += (metaDetail?' · ':'')+'Penser à envoyer le message WhatsApp type si besoin';
@@ -1323,7 +1570,26 @@ function genLettre(id){
 
 function openNew(){
   initVolForm(); updateCalcNew();
+  crmDialSyncInput('n_indicatif', '+33');
+  var ns = document.getElementById('n_source');
+  if(ns) ns.value = 'autre';
   document.getElementById('modalNew').style.display='flex';
+}
+
+/** Référence non séquentielle + format lisible RDA-année-AAA-BBB (dicter / retrouver plus facilement). */
+function crmRandomRefSeg(len){
+  var alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  var s = '';
+  for(var i = 0; i < len; i++){
+    s += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+  }
+  return s;
+}
+function crmGenerateDossierId(){
+  var y = new Date().getFullYear();
+  var id = 'RDA-' + y + '-' + crmRandomRefSeg(3) + '-' + crmRandomRefSeg(3);
+  if(DB.some(function(d){ return d.id === id; })) return crmGenerateDossierId();
+  return id;
 }
 
 function saveNew(){
@@ -1337,19 +1603,78 @@ function saveNew(){
   const vols=[];
   for(let i=1;i<=volIdx;i++){
     const el=document.getElementById('vc'+i); if(!el)continue;
-    vols.push({comp:document.getElementById('vc'+i+'_comp')?.value||'—',vol:document.getElementById('vc'+i+'_vol')?.value||'—',date:document.getElementById('vc'+i+'_date')?.value||'—',dep:(document.getElementById('vc'+i+'_dep')?.value||'').toUpperCase(),arr:(document.getElementById('vc'+i+'_arr')?.value||'').toUpperCase(),pnr:(document.getElementById('vc'+i+'_pnr')?.value||'').toUpperCase(),inc:document.getElementById('vc'+i+'_inc')?.value||'RETARD'});
+    vols.push({comp:document.getElementById('vc'+i+'_comp')?.value||'—',vol:document.getElementById('vc'+i+'_vol')?.value||'—',date:document.getElementById('vc'+i+'_date')?.value||'—',dep:(document.getElementById('vc'+i+'_dep')?.value||'').trim(),arr:(document.getElementById('vc'+i+'_arr')?.value||'').trim(),pnr:(document.getElementById('vc'+i+'_pnr')?.value||'').toUpperCase(),inc:document.getElementById('vc'+i+'_inc')?.value||'RETARD'});
   }
-  const id='RDA-2026-0'+String(DB.length+1).padStart(2,'0');
+  const id = crmGenerateDossierId();
   const ag = getCrmAgent() || 'Agent non renseigné';
   const ts = new Date().toISOString();
-  DB.unshift({id,statut:'ELIGIBLE',priorite:document.getElementById('n_priorite').value,date:today(),date_paiement:null,source:document.getElementById('n_source').value,lrar:null,prenom,nom,indicatif:document.getElementById('n_indicatif').value,tel:document.getElementById('n_tel').value,email:document.getElementById('n_email').value,adultes,bebes,vols,palier,pieces:[],events:[{date:today(),when:ts,action:'Dossier créé — Éligible',meta:'Création dans le CRM',by:ag}]});
+  DB.unshift({id,statut:'ELIGIBLE',priorite:document.getElementById('n_priorite').value,date:today(),date_statut:today(),date_paiement:null,source:crmNormalizeSource(document.getElementById('n_source').value),lrar:null,prenom,nom,indicatif:document.getElementById('n_indicatif').value,tel:document.getElementById('n_tel').value,email:document.getElementById('n_email').value,adultes,bebes,vols,palier,pieces:[],events:[{date:today(),when:ts,action:'Dossier créé — Éligible',meta:'Création dans le CRM',by:ag}]});
   persistCrmDb();
   closeAll(); render();
+}
+
+window._crmDeleteTargetId = null;
+
+function crmOpenDeleteDossierModal(){
+  if(!requireCrmAgent()) return;
+  var id = window._crmOpenId;
+  if(!id) return;
+  window._crmDeleteTargetId = id;
+  var el = document.getElementById('modalDeleteDossier');
+  var inp = document.getElementById('crm-delete-code');
+  var err = document.getElementById('crm-delete-dossier-err');
+  if(err){ err.style.display = 'none'; err.textContent = ''; }
+  if(inp) inp.value = '';
+  if(el) el.style.display = 'flex';
+  setTimeout(function(){ if(inp) inp.focus(); }, 80);
+}
+
+function crmCloseDeleteDossierModal(){
+  var el = document.getElementById('modalDeleteDossier');
+  if(el) el.style.display = 'none';
+  window._crmDeleteTargetId = null;
+  var inp = document.getElementById('crm-delete-code');
+  if(inp) inp.value = '';
+  var err = document.getElementById('crm-delete-dossier-err');
+  if(err){ err.style.display = 'none'; err.textContent = ''; }
+}
+
+function crmSubmitDeleteDossier(){
+  if(!requireCrmAgent()) return;
+  var id = window._crmDeleteTargetId;
+  var inp = document.getElementById('crm-delete-code');
+  var err = document.getElementById('crm-delete-dossier-err');
+  if(!id || !inp) return;
+  var code = String(inp.value || '').trim();
+  if(code !== CRM_SUPPRESSION_DOSSIER_CODE){
+    if(err){
+      err.textContent = 'Code incorrect. Sans le code direction, la suppression est impossible.';
+      err.style.display = 'block';
+    }
+    return;
+  }
+  var d = DB.find(function(x){ return x.id === id; });
+  if(!d) return;
+  var ag = getCrmAgent() || '—';
+  if(!window.confirm('DERNIÈRE CONFIRMATION\n\nSupprimer définitivement le dossier '+id+' ('+d.prenom+' '+d.nom+') ?\n\nIrréversible. Traçabilité : '+ag+'.')){
+    return;
+  }
+  DB = DB.filter(function(x){ return x.id !== id; });
+  persistCrmDb();
+  crmCloseDeleteDossierModal();
+  closeAll();
+  render();
+  showCrmToast('Dossier supprimé (code + double confirmation) — '+id);
 }
 
 function closeAll(){
   document.getElementById('modalNew').style.display='none';
   document.getElementById('modalDetail').style.display='none';
+  var md = document.getElementById('modalDeleteDossier');
+  if(md) md.style.display = 'none';
+  window._crmDeleteTargetId = null;
+  var delInp = document.getElementById('crm-delete-code');
+  if(delInp) delInp.value = '';
   window._crmOpenId = null;
 }
 
@@ -1359,6 +1684,8 @@ function closeAll(){
   el.addEventListener('change', setCrmAgentFromInput);
   el.addEventListener('blur', setCrmAgentFromInput);
 })();
+
+crmDialSyncInput('n_indicatif','+33');
 
 </script>
 </body>

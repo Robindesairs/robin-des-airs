@@ -2771,6 +2771,42 @@ button:focus-visible,
 .non-eligible-link:hover { color: var(--neon); }
 
 /* ── Hero entry, témoignages slider, date picker, loader, raison, reveal, pax, form ── */
+/* Mention RGPD / WhatsApp (Meta) près des CTA */
+.wa-rgpd-hint {
+  font-size: 11px;
+  line-height: 1.45;
+  margin: 0 0 14px;
+  max-width: 540px;
+}
+.hero-left .wa-rgpd-hint {
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: -4px;
+}
+.hero-left .wa-rgpd-hint a {
+  color: rgba(255, 255, 255, 0.95);
+  text-decoration: underline;
+  font-weight: 600;
+}
+.hero-right .wa-rgpd-hint,
+#funnel-box .wa-rgpd-hint {
+  color: var(--gray, #6B7A90);
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+.hero-right .wa-rgpd-hint a,
+#funnel-box .wa-rgpd-hint a {
+  color: var(--neon-dark, #009960);
+  font-weight: 600;
+}
+.wa-rgpd-hint--compact {
+  font-size: 10px;
+  margin-top: 8px !important;
+  line-height: 1.4;
+}
+.funnel-short-wa-rgpd {
+  margin-top: 12px !important;
+}
+
 .hero-entry { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
 .hero-entry-btn {
   flex: 1; min-width: 140px; display: flex; align-items: center; justify-content: center; gap: 6px;
