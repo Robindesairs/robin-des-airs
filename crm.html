@@ -117,6 +117,16 @@
   .crm-cc-opt .crm-meta { color: var(--text2); font-size: 12px; flex: 1; min-width: 120px; }
   .crm-cc-hint { font-size: 10px; color: var(--text3); margin: 6px 0 0; line-height: 1.4; }
 
+  /* ── Adresse : autocomplétion BAN (France) ── */
+  .crm-addr-wrap { position: relative; width: 100%; margin-bottom: 8px; }
+  .crm-addr-q { width: 100%; font-size: 13px; padding: 8px 11px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: #F0F9FF; color: var(--text); outline: none; box-sizing: border-box; }
+  .crm-addr-q:focus { border-color: var(--green); }
+  .crm-addr-dd { position: absolute; left: 0; right: 0; top: calc(100% + 4px); max-height: 220px; overflow-y: auto; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); box-shadow: 0 14px 44px rgba(0,0,0,.14); z-index: 85; display: none; }
+  .crm-addr-dd.open { display: block; }
+  .crm-addr-opt { padding: 9px 11px; cursor: pointer; font-size: 13px; border-bottom: 1px solid var(--bg2); line-height: 1.35; }
+  .crm-addr-opt:last-child { border-bottom: none; }
+  .crm-addr-opt:hover, .crm-addr-opt.hl { background: var(--bg2); }
+
   /* ── CALC BOX ── */
   .calc-box { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px 16px; margin-top: 10px; }
   .calc-row { display: flex; justify-content: space-between; font-size: 13px; color: var(--text2); margin-bottom: 6px; }
@@ -386,8 +396,18 @@
         </div>
       </div>
       <div class="field"><label>E-mail</label><input id="n_email" placeholder="email@…" type="email"></div>
+      <div class="field">
+        <label data-crm-str="lbl_address">Adresse postale complète</label>
+        <p class="crm-cc-hint" data-crm-str="addr_search_hint"></p>
+        <div class="crm-addr-wrap">
+          <input type="search" id="n_adresse_search" class="crm-addr-q" autocomplete="off" spellcheck="false" data-crm-placeholder="addr_autocomplete_ph" placeholder="" aria-autocomplete="list" aria-expanded="false">
+          <div id="n_adresse_dd" class="crm-addr-dd" role="listbox"></div>
+        </div>
+        <textarea id="n_adresse" rows="3" data-crm-placeholder="ph_address" placeholder=""></textarea>
+      </div>
+      <div id="n-copassengers-wrap"></div>
       <div class="row2">
-        <div class="field"><label>Adultes (indemnisés CE 261)</label><input id="n_adultes" type="number" min="1" max="9" value="1" oninput="updateCalcNew()"></div>
+        <div class="field"><label>Adultes (indemnisés CE 261)</label><input id="n_adultes" type="number" min="1" max="9" value="1" oninput="updateCalcNew(); crmRefreshNewCoPassengers();"></div>
         <div class="field"><label>Bébés &lt; 2 ans (non indemnisés)</label><input id="n_bebes" type="number" min="0" max="9" value="0" oninput="updateCalcNew()"></div>
       </div>
       <div class="field">
@@ -444,11 +464,36 @@
 <div id="crm-wa-toast" class="crm-wa-toast" role="status" aria-live="polite"></div>
 
 <script src="assets/crm-dial-codes.js"></script>
+<script src="assets/crm-i18n.js"></script>
 <script>
 const CRM_AUTH_URL = '/api/crm-auth';
 const CRM_AGENT_KEY = 'rda_crm_agent';
 /** Code connu de la direction uniquement — sans ce code, aucune suppression de dossier n’est possible. */
 const CRM_SUPPRESSION_DOSSIER_CODE = '1112';
+
+function getCrmUiLang() {
+  try {
+    return localStorage.getItem(window.CRM_UI_LANG_KEY || 'rda_crm_ui_lang') === 'en' ? 'en' : 'fr';
+  } catch (e) {
+    return 'fr';
+  }
+}
+function crmT(key, rep) {
+  var B = window.CRM_UI_BUNDLE;
+  if (!B || !B.fr) return key;
+  var lang = getCrmUiLang();
+  var b = B[lang] || B.fr;
+  var s = (b.str && b.str[key]) || (B.fr.str && B.fr.str[key]) || key;
+  if (rep) {
+    Object.keys(rep).forEach(function (k) {
+      s = s.split('{{' + k + '}}').join(String(rep[k] == null ? '' : rep[k]));
+    });
+  }
+  return s;
+}
+function crmLocale() {
+  return getCrmUiLang() === 'en' ? 'en-GB' : 'fr-FR';
+}
 
 function getCrmAgent() {
   try { return (sessionStorage.getItem(CRM_AGENT_KEY) || '').trim(); } catch (e) { return ''; }
@@ -493,7 +538,7 @@ async function crmUnlock() {
     syncCrmAgentInput();
     render();
   } else {
-    err.textContent = j.error || 'Code incorrect.';
+    err.textContent = j.error || crmT('gate_wrong_code');
     err.classList.add('show');
   }
 }
@@ -532,7 +577,7 @@ async function initCrmAuth() {
   /* Fichier ouvert depuis le disque : pas de fetch possible vers /api */
   if (location.protocol === 'file:') {
     crmOpenMain();
-    showCrmToast('Fichier local : pas de code d’accès (l’API Netlify n’existe pas en file://).');
+    showCrmToast(crmT('toast_file_local'));
     return;
   }
 
@@ -543,10 +588,10 @@ async function initCrmAuth() {
     if (data.status === 503 || data.configured === false) {
       if (localNoApi) {
         crmOpenMain();
-        showCrmToast('Local : API CRM indisponible — accès sans code.');
+        showCrmToast(crmT('toast_local_no_api'));
         return;
       }
-      err.textContent = data.error || 'Variable CRM_ACCESS_CODE non définie sur Netlify.';
+      err.textContent = data.error || crmT('err_netlify_var');
       err.classList.add('show');
       return;
     }
@@ -557,16 +602,16 @@ async function initCrmAuth() {
     /* Serveur statique sur localhost : /api/crm-auth → 404 */
     if (localNoApi && (data.status === 404 || data.status === 502)) {
       crmOpenMain();
-      showCrmToast('Serveur local sans Netlify : CRM ouvert sans code. Pour l’auth, utilisez « netlify dev ».');
+      showCrmToast(crmT('toast_local_netlify'));
       return;
     }
   } catch (e) {
     if (localNoApi) {
       crmOpenMain();
-      showCrmToast('Pas de réponse de l’API — CRM ouvert en local sans code.');
+      showCrmToast(crmT('toast_no_api_response'));
       return;
     }
-    err.textContent = 'Connexion impossible. Ouvrez cette page sur le site en ligne (Netlify) ou via « netlify dev ».';
+    err.textContent = crmT('err_connection');
     err.classList.add('show');
   }
 }
@@ -576,38 +621,13 @@ document.getElementById('crm-gate-form').addEventListener('submit', function (e)
   crmUnlock();
 });
 
-initCrmAuth();
-
-const STATUT_LABELS = {
-  BROUILLON:'Brouillon',
-  ELIGIBLE:'Éligible',
-  MANDAT_SIGNE:'Mandat signé',
-  LRAR_ENVOYEE:'LRAR envoyée',
-  RELANCE_1:'Relance 1',
-  RELANCE_2:'Relance 2',
-  MEDIATION:'Médiation',
-  CONTENTIEUX:'Contentieux',
-  PAYE:'Payé',
-  REFUSE_DEFINITIF:'Refusé définitif',
-  ABANDON:'Abandonné',
-  PRESCRIT:'Prescrit'
-};
+var STATUT_LABELS = {};
 /** Ordre du parcours juridique (filtres & listes) */
 const STATUT_ORDER = ['BROUILLON','ELIGIBLE','MANDAT_SIGNE','LRAR_ENVOYEE','RELANCE_1','RELANCE_2','MEDIATION','CONTENTIEUX','PAYE','REFUSE_DEFINITIF','ABANDON','PRESCRIT'];
 
 /** Sources connues — toute valeur inconnue ou vide → « autre » (défaut métier). */
 const CRM_SOURCE_KEYS = ['autre','tiktok_ad','fb_reels','instagram','youtube','whatsapp','referral','organic_site','blog'];
-const CRM_SOURCE_LABELS = {
-  autre:'Autre',
-  tiktok_ad:'TikTok Ads',
-  fb_reels:'Facebook / Reels',
-  instagram:'Instagram',
-  youtube:'YouTube',
-  whatsapp:'WhatsApp direct',
-  referral:'Parrainage',
-  organic_site:'Site organique',
-  blog:'Blog Robin des Airs'
-};
+var CRM_SOURCE_LABELS = {};
 function crmNormalizeSource(s){
   var k = String(s == null ? '' : s).trim();
   return CRM_SOURCE_KEYS.indexOf(k) !== -1 ? k : 'autre';
@@ -631,41 +651,13 @@ function fmtFr(d){ return d || '—'; }
 /** Message WhatsApp type selon l’étape affichée (à copier-coller, personnalisable avant envoi) */
 function buildWaMessage(d, statut){
   const prenom = d.prenom || '';
-  const vol = d.vols && d.vols[0] ? `${d.vols[0].vol} (${d.vols[0].dep}→${d.vols[0].arr})` : 'votre vol';
+  const vol = d.vols && d.vols[0] ? `${d.vols[0].vol} (${d.vols[0].dep}→${d.vols[0].arr})` : (getCrmUiLang() === 'en' ? 'your flight' : 'votre vol');
   const j = crmJalonsLrar(d.lrar);
   const rel1 = j.ok ? j.rel1 : null;
   const rel2 = j.ok ? j.rel2 : null;
   const med = j.ok ? j.med : null;
-  const L = (arr)=>arr.filter(Boolean).join('\n');
-
-  switch(statut){
-    case 'BROUILLON':
-      return L([`Bonjour${prenom?' '+prenom:''},`,`Votre dossier ${d.id} (${vol}) est en préparation côté Robin des Airs.`,`Nous revenons vers vous pour finaliser les prochaines étapes.`]);
-    case 'ELIGIBLE':
-      return L([`Bonjour ${prenom},`,`Bonne nouvelle : votre situation sur ${vol} entre dans le cadre d’une réclamation CE 261.`,`Prochaine étape : vous recevrez le mandat à signer (YouSign).`,`Des questions ? Répondez à ce message.`]);
-    case 'MANDAT_SIGNE':
-      return L([`Bonjour ${prenom},`,`Merci, votre mandat est bien signé.`,`Nous préparons la mise en demeure (LRAR) adressée à la compagnie.`,`Nous vous tiendrons informé(e) dès l’envoi.`]);
-    case 'LRAR_ENVOYEE':
-      return L([`Bonjour ${prenom},`,`La mise en demeure (LRAR) pour ${vol} a été envoyée à la compagnie.`,``,`Délais indicatifs (depuis réception de la LRAR par la compagnie${d.lrar?', réf. accusé '+d.lrar:''}) :`,`• 1re relance : J+15 → ${fmtFr(rel1)}`,`• 2e relance : J+30 → ${fmtFr(rel2)}`,`• Saisine médiateur : J+62 → ${fmtFr(med)}`,``,`En cas de silence d’environ un mois sans réponse exploitable, nous enchaînons selon ce calendrier.`,`Robin des Airs`]);
-    case 'RELANCE_1':
-      return L([`Bonjour ${prenom},`,`Nous avons effectué la 1re relance auprès de la compagnie concernant ${vol} (après la mise en demeure).`,``,`Prochaine étape si silence : 2e relance à J+30 après réception LRAR → ${fmtFr(rel2)}.`,`Puis, si nécessaire : médiation (saisine vers J+62) → ${fmtFr(med)}.`,``,`Nous restons sur le dossier et vous tenons informé(e).`,`Robin des Airs`]);
-    case 'RELANCE_2':
-      return L([`Bonjour ${prenom},`,`La 2e relance vient d’être envoyée pour ${vol}. Dernière relance amiable avant les étapes formalisées.`,``,`Si la compagnie ne réagit toujours pas, nous préparerons la saisine du médiateur de la consommation vers J+62 après la LRAR → ${fmtFr(med)} (date indicative).`,``,`Merci pour votre confiance.`,`Robin des Airs`]);
-    case 'MEDIATION':
-      return L([`Bonjour ${prenom},`,`Votre dossier ${vol} est porté devant le médiateur de la consommation (saisine visée à J+62 après mise en demeure / LRAR ; date indicative : ${fmtFr(med)}).`,``,`Nous vous informerons de chaque retour (proposition, accord, ou suite éventuelle vers le contentieux).`,``,`Robin des Airs`]);
-    case 'CONTENTIEUX':
-      return L([`Bonjour ${prenom},`,`Sans solution amiable ou après la médiation, nous engageons la phase contentieuse pour ${vol}.`,``,`Nous vous expliquons la suite (instance, délais, pièces). Dites-nous si vous préférez un appel ou des messages ici.`,`Robin des Airs`]);
-    case 'PAYE':
-      return L([`Bonjour ${prenom},`,`Bonne nouvelle : les fonds ont été reçus pour votre dossier ${vol}.`,`Nous procédons au virement de votre part nette (délai habituel ~5 jours ouvrés après RIB si nécessaire).`,`Merci pour votre confiance !`,`Robin des Airs`]);
-    case 'REFUSE_DEFINITIF':
-      return L([`Bonjour ${prenom},`,`Nous faisons le point sur ${vol} : au stade actuel, la compagnie maintient un refus que nous ne pouvons pas dépasser dans ce dossier (ou le cadre légal ne permet pas d’aller plus loin).`,``,`Nous restons disponibles pour toute question.`,`Robin des Airs`]);
-    case 'ABANDON':
-      return L([`Bonjour ${prenom},`,`Comme convenu / faute de suite de votre part, nous clôturons le dossier ${vol} côté Robin des Airs.`,`Pour une nouvelle démarche, vous pouvez nous réécrire.`,`Robin des Airs`]);
-    case 'PRESCRIT':
-      return L([`Bonjour ${prenom},`,`Concernant ${vol}, le dossier est clos pour prescription ou délai légal dépassé.`,`Nous pouvons détailler par message si besoin.`,`Robin des Airs`]);
-    default:
-      return L([`Bonjour ${prenom},`,`Mise à jour dossier ${d.id} (${vol}).`,`Robin des Airs`]);
-  }
+  const ctx = { prenom: prenom, vol: vol, d: d, rel1: rel1, rel2: rel2, med: med, fmt: fmtFr };
+  return window.crmPickWaMessage ? crmPickWaMessage(getCrmUiLang(), statut, ctx) : '';
 }
 
 function refreshWaPreview(id){
@@ -680,8 +672,8 @@ function refreshWaPreview(id){
   if(delaysEl){
     const j = crmJalonsLrar(draft.lrar);
     delaysEl.innerHTML = j.ok
-      ? `<strong>Depuis LRAR (accusé) ${draft.lrar}</strong> — 1re relance J+15 : ${j.rel1} — 2e relance J+30 : ${j.rel2} — saisine médiateur J+62 : ${j.med}. Indicatif : ~1 mois sans réponse exploitable de la compagnie → enchaînement des relances puis médiation.`
-      : `Renseignez la <strong>date réception LRAR</strong> pour calculer automatiquement J+15, J+30 et J+62 dans les messages.`;
+      ? crmT('wa_delay_ok', { lrar: draft.lrar, j15: j.rel1, j30: j.rel2, j62: j.med })
+      : crmT('wa_delay_missing');
   }
   ta.value = buildWaMessage(draft, sel.value);
 }
@@ -690,11 +682,11 @@ function copyWaMsg(){
   const ta = document.getElementById('crm-wa-msg');
   if(!ta||!ta.value) return;
   if(navigator.clipboard&&navigator.clipboard.writeText){
-    navigator.clipboard.writeText(ta.value).then(function(){ showCrmToast('Message copié — collez-le dans WhatsApp'); });
+    navigator.clipboard.writeText(ta.value).then(function(){ showCrmToast(crmT('wa_copy_ok')); });
   } else {
     ta.select();
     document.execCommand('copy');
-    showCrmToast('Message copié — collez-le dans WhatsApp');
+    showCrmToast(crmT('wa_copy_ok'));
   }
 }
 
@@ -712,7 +704,7 @@ function today(){ return new Date().toISOString().slice(0,10); }
 function formatEventWhen(e){
   if(e.when){
     try {
-      return new Date(e.when).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'});
+      return new Date(e.when).toLocaleString(crmLocale(),{dateStyle:'short',timeStyle:'short'});
     } catch(x){}
   }
   return e.date || '—';
@@ -721,7 +713,7 @@ function formatEventWhen(e){
 /** Obligatoire avant toute écriture sur un dossier. */
 function requireCrmAgent(){
   if(getCrmAgent()) return true;
-  showCrmToast('Renseignez votre nom dans « Votre nom (traçabilité) » en haut');
+  showCrmToast(crmT('require_agent'));
   var el = document.getElementById('crm-agent-input');
   if(el){
     el.focus();
@@ -738,7 +730,7 @@ function crmAuditEvent(d, action, meta){
     when: new Date().toISOString(),
     action: action,
     meta: typeof meta === 'string' ? meta : '',
-    by: getCrmAgent() || 'Agent non renseigné'
+    by: getCrmAgent() || crmT('agent_unknown')
   });
 }
 
@@ -816,7 +808,7 @@ function updateCalcNew(){
 
 let DB=[
   {id:'RDA-2026-K4W-Q82',statut:'PAYE',priorite:'STANDARD',date:'2026-01-15',date_statut:'2026-01-28',date_paiement:'2026-01-28',source:'fb_reels',lrar:'2026-01-13',
-   prenom:'Aminata',nom:'DIALLO',indicatif:'+33',tel:'6 12 34 56 78',email:'aminata@gmail.com',adultes:1,bebes:0,
+   prenom:'Aminata',nom:'DIALLO',indicatif:'+33',tel:'6 12 34 56 78',email:'aminata@gmail.com',adresse:'42 rue de la République, 69002 Lyon',adultes:1,bebes:0,coPassagers:[],
    vols:[{comp:'Air France',vol:'AF 718',date:'2025-11-03',dep:'CDG',arr:'DSS',pnr:'AB4XYZ',inc:'RETARD'}],
    palier:600,pieces:[
      {id:'p1',cat:'MANDAT',filename:'Mandat_Yousign.pdf',added:'2026-01-10',sizeKb:142,dataUrl:null},
@@ -824,26 +816,26 @@ let DB=[
      {id:'p3',cat:'LRAR_PREUVE',filename:'AR_LRAR_1A002.pdf',added:'2026-01-12',sizeKb:210,dataUrl:null}
    ],events:[{date:'2026-01-10',action:'Mandat signé (YouSign)',meta:''},{date:'2026-01-12',action:'LRAR envoyée',meta:'Réf. AR 1A002'},{date:'2026-01-28',action:'Paiement reçu + reversé',meta:'600€ encaissés — 450€ reversés'}]},
   {id:'RDA-2026-M7H-XZ9',statut:'LRAR_ENVOYEE',priorite:'HAUTE',date:'2026-02-01',date_statut:'2026-02-03',date_paiement:null,source:'tiktok_ad',lrar:'2026-02-03',
-   prenom:'Kofi',nom:'ASANTE',indicatif:'+33',tel:'7 98 76 54 32',email:'kofi@hotmail.fr',adultes:3,bebes:1,
+   prenom:'Kofi',nom:'ASANTE',indicatif:'+33',tel:'7 98 76 54 32',email:'kofi@hotmail.fr',adresse:'18 avenue Kléber, 75116 Paris',adultes:3,bebes:1,coPassagers:[{prenom:'Ama',nom:'ASANTE'},{prenom:'Kwame',nom:'ASANTE'}],
    vols:[{comp:'Air France',vol:'AF 704',date:'2026-01-10',dep:'CDG',arr:'DLA',pnr:'ZK9PLM',inc:'ANNULATION'}],
    palier:600,pieces:[
      {id:'pk1',cat:'EMBARQUEMENT',filename:'Carte_embarquement_Kofi.jpg',added:'2026-02-01',sizeKb:640,dataUrl:null},
      {id:'pk2',cat:'IDENTITE',filename:'CNI_Kofi.pdf',added:'2026-02-01',sizeKb:320,dataUrl:null}
    ],events:[{date:'2026-02-01',action:'3 mandats signés (bébé exclu)',meta:''},{date:'2026-02-03',action:'LRAR envoyée',meta:'Délai 15j'}]},
   {id:'RDA-2026-T2R-JV6',statut:'ELIGIBLE',priorite:'STANDARD',date:'2026-02-10',date_statut:'2026-02-10',date_paiement:null,source:'organic_site',lrar:null,
-   prenom:'Fatou',nom:'CAMARA',indicatif:'+33',tel:'6 55 44 33 22',email:'fatou.c@yahoo.fr',adultes:2,bebes:0,
+   prenom:'Fatou',nom:'CAMARA',indicatif:'+33',tel:'6 55 44 33 22',email:'fatou.c@yahoo.fr',adresse:'5 impasse des Lilas, 93100 Montreuil',adultes:2,bebes:0,coPassagers:[{prenom:'Ibrahim',nom:'CAMARA'}],
    vols:[{comp:'Transavia',vol:'TO 9612',date:'2026-01-20',dep:'ORY',arr:'BKO',pnr:'CX3NOP',inc:'RETARD'}],
    palier:600,events:[{date:'2026-02-10',action:'Dossier créé',meta:'Retard 5h confirmé'}]},
   {id:'RDA-2026-B9C-K6W',statut:'CONTENTIEUX',priorite:'HAUTE',date:'2025-12-05',date_statut:'2026-01-10',date_paiement:null,source:'referral',lrar:'2025-12-08',
-   prenom:'Jean-Baptiste',nom:'KOUASSI',indicatif:'+32',tel:'47 123 456',email:'jb.kouassi@gmail.com',adultes:1,bebes:0,
+   prenom:'Jean-Baptiste',nom:'KOUASSI',indicatif:'+32',tel:'47 123 456',email:'jb.kouassi@gmail.com',adresse:'Rue de la Loi 100, 1040 Bruxelles',adultes:1,bebes:0,coPassagers:[],
    vols:[{comp:'Brussels Airlines',vol:'SN 401',date:'2025-10-14',dep:'BRU',arr:'FIH',pnr:'PQ7RST',inc:'ANNULATION'},{comp:'Brussels Airlines',vol:'SN 403',date:'2025-10-15',dep:'FIH',arr:'BRU',pnr:'PQ7RST',inc:'CORRESPONDANCE_MANQUEE'}],
    palier:600,events:[{date:'2025-12-05',action:'Mandat signé',meta:''},{date:'2025-12-08',action:'LRAR envoyée',meta:''},{date:'2025-12-25',action:'Refus compagnie',meta:'Circonstances extraordinaires'},{date:'2026-01-10',action:'Contentieux ouvert',meta:'Tribunal de Commerce Paris'}]},
   {id:'RDA-2026-P5G-N8Q',statut:'MANDAT_SIGNE',priorite:'BASSE',date:'2026-03-01',date_statut:'2026-03-01',date_paiement:null,source:'whatsapp',lrar:null,
-   prenom:'Marie',nom:'BATUMELO',indicatif:'+33',tel:'6 77 88 99 00',email:'marie.b@outlook.com',adultes:1,bebes:1,
+   prenom:'Marie',nom:'BATUMELO',indicatif:'+33',tel:'6 77 88 99 00',email:'marie.b@outlook.com',adresse:'12 cours Gambetta, 33000 Bordeaux',adultes:1,bebes:1,coPassagers:[],
    vols:[{comp:'Air France',vol:'AF 732',date:'2026-02-18',dep:'CDG',arr:'BKO',pnr:'GH2IJK',inc:'RETARD'}],
    palier:600,events:[{date:'2026-03-01',action:'Mandat signé (YouSign)',meta:'Bébé présent — non indemnisé'}]},
   {id:'RDA-2026-F3Y-M9K',statut:'MEDIATION',priorite:'STANDARD',date:'2025-10-20',date_statut:'2026-01-08',date_paiement:null,source:'whatsapp',lrar:'2025-11-07',
-   prenom:'Ibrahim',nom:'SY',indicatif:'+33',tel:'6 11 22 33 44',email:'ibrahim.sy@mail.fr',adultes:1,bebes:0,
+   prenom:'Ibrahim',nom:'SY',indicatif:'+33',tel:'6 11 22 33 44',email:'ibrahim.sy@mail.fr',adresse:'8 rue des Peupliers, 94200 Ivry-sur-Seine',adultes:1,bebes:0,coPassagers:[],
    vols:[{comp:'Air France',vol:'AF 596',date:'2025-09-12',dep:'CDG',arr:'ABJ',pnr:'LMN45K',inc:'RETARD'}],
    palier:600,events:[{date:'2025-10-20',action:'Dossier créé',meta:''},{date:'2025-11-01',action:'Mandat signé',meta:''},{date:'2025-11-07',action:'LRAR envoyée',meta:''},{date:'2025-11-22',action:'Relance 1 (J+15)',meta:''},{date:'2025-12-07',action:'Relance 2 (J+30)',meta:''},{date:'2026-01-08',action:'Saisine médiateur (J+62)',meta:''}]},
 ];
@@ -863,6 +855,7 @@ function loadCrmDbFromStorage(){
       if(!Array.isArray(d.vols) || !d.vols.length) d.vols = [{comp:'—',vol:'—',date:'—',dep:'',arr:'',pnr:'',inc:'RETARD'}];
       if(d.date_statut == null || d.date_statut === '') d.date_statut = d.date_paiement || d.date || null;
       d.source = crmNormalizeSource(d.source);
+      crmNormalizeDossierContact(d);
     });
   } catch(e){ console.warn('CRM load', e); }
 }
@@ -871,17 +864,28 @@ DB.forEach(function(d){
   if(!Array.isArray(d.pieces)) d.pieces = [];
   if(d.date_statut == null || d.date_statut === '') d.date_statut = d.date_paiement || d.date || null;
   d.source = crmNormalizeSource(d.source);
+  crmNormalizeDossierContact(d);
 });
 
-const PIECES_CAT_LABELS = {
-  EMBARQUEMENT:'Carte embarquement / billet',
-  IDENTITE:'CNI / passeport',
-  MANDAT:'Mandat signé',
-  RIB:'RIB',
-  LRAR_PREUVE:'Preuve envoi LRAR / AR',
-  ECHANGE_COMPAGNIE:'Échanges compagnie',
-  AUTRE:'Autre'
-};
+var PIECES_CAT_LABELS = {};
+
+function crmSyncLabelObjects() {
+  if (!window.CRM_UI_BUNDLE) return;
+  var b = CRM_UI_BUNDLE[getCrmUiLang()] || CRM_UI_BUNDLE.fr;
+  Object.keys(STATUT_LABELS).forEach(function (k) {
+    delete STATUT_LABELS[k];
+  });
+  Object.keys(PIECES_CAT_LABELS).forEach(function (k) {
+    delete PIECES_CAT_LABELS[k];
+  });
+  Object.keys(CRM_SOURCE_LABELS).forEach(function (k) {
+    delete CRM_SOURCE_LABELS[k];
+  });
+  Object.assign(STATUT_LABELS, b.statutLabels);
+  Object.assign(PIECES_CAT_LABELS, b.piecesCat);
+  Object.assign(CRM_SOURCE_LABELS, b.sourceLabels);
+}
+crmSyncLabelObjects();
 
 function ensurePieces(d){ if(!Array.isArray(d.pieces)) d.pieces = []; }
 
@@ -915,11 +919,11 @@ function csvEscape(x){
 }
 
 function exportCrmCsv(){
-  var headers = ['id','statut','priorite','prenom','nom','email','indicatif','tel','adultes','bebes','palier','lrar','date_statut','date_paiement','source','vol','trajet','pnr','nb_pieces','date_creation_dossier'];
+  var headers = ['id','statut','priorite','prenom','nom','email','adresse','autres_passagers','indicatif','tel','adultes','bebes','palier','lrar','date_statut','date_paiement','source','vol','trajet','pnr','nb_pieces','date_creation_dossier'];
   var lines = [headers.join(';')];
   DB.forEach(function(d){
     var v = d.vols&&d.vols[0]?d.vols[0]:{};
-    var row = [d.id,d.statut,d.priorite,d.prenom,d.nom,d.email,d.indicatif,d.tel,d.adultes,d.bebes,d.palier,d.lrar||'',d.date_statut||'',d.date_paiement||'',d.source,v.vol||'',((v.dep||'')+'→'+(v.arr||'')),v.pnr||'',(d.pieces||[]).length,d.date||''];
+    var row = [d.id,d.statut,d.priorite,d.prenom,d.nom,d.email,d.adresse||'',crmFormatCoPassagersCsv(d),d.indicatif,d.tel,d.adultes,d.bebes,d.palier,d.lrar||'',d.date_statut||'',d.date_paiement||'',d.source,v.vol||'',((v.dep||'')+'→'+(v.arr||'')),v.pnr||'',(d.pieces||[]).length,d.date||''];
     lines.push(row.map(csvEscape).join(';'));
   });
   var blob = new Blob(['\ufeff'+lines.join('\n')],{type:'text/csv;charset=utf-8;'});
@@ -1006,6 +1010,361 @@ function escAttr(s){
 
 function escHtml(s){
   return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+}
+
+function crmCoPaxNeeded(ad) {
+  var a = parseInt(ad, 10) || 1;
+  return Math.max(0, Math.min(8, a - 1));
+}
+function crmNormalizeDossierContact(d) {
+  if (!d) return;
+  if (typeof d.adresse !== 'string') d.adresse = '';
+  if (!Array.isArray(d.coPassagers)) d.coPassagers = [];
+  var need = crmCoPaxNeeded(d.adultes);
+  d.coPassagers = d.coPassagers.map(function (x) {
+    return { prenom: String((x && x.prenom) || '').trim(), nom: String((x && x.nom) || '').trim() };
+  });
+  while (d.coPassagers.length < need) d.coPassagers.push({ prenom: '', nom: '' });
+  if (d.coPassagers.length > need) d.coPassagers = d.coPassagers.slice(0, need);
+}
+function crmCoPassengersFieldsHtml(prefix, adultes, arr) {
+  var need = crmCoPaxNeeded(adultes);
+  if (need === 0) return '';
+  var parts = [
+    '<div class="section-title" style="margin-top:4px">' + escHtml(crmT('co_pax_section')) + '</div>',
+    '<p class="crm-cc-hint" style="margin-bottom:10px">' + crmT('co_pax_hint') + '</p>'
+  ];
+  for (var i = 0; i < need; i++) {
+    var p = arr && arr[i] ? arr[i] : { prenom: '', nom: '' };
+    parts.push(
+      '<div style="border:1px solid #E2E4E8;border-radius:8px;padding:10px;margin-bottom:8px;background:#FAFAFA"><div style="font-size:11px;font-weight:700;color:#6B7280;margin-bottom:8px">' +
+        escHtml(crmT('co_pax_n', { n: String(i + 2) })) +
+        '</div><div class="row2"><div class="field"><label>' +
+        escHtml(crmT('lbl_firstname')) +
+        '</label><input id="' +
+        prefix +
+        i +
+        '_prenom" value="' +
+        escAttr(p.prenom) +
+        '"></div><div class="field"><label>' +
+        escHtml(crmT('lbl_lastname')) +
+        '</label><input id="' +
+        prefix +
+        i +
+        '_nom" value="' +
+        escAttr(p.nom) +
+        '"></div></div></div>'
+    );
+  }
+  return parts.join('');
+}
+function crmParseCoPassengers(prefix, need) {
+  var out = [];
+  for (var i = 0; i < need; i++) {
+    var elp = document.getElementById(prefix + i + '_prenom');
+    var eln = document.getElementById(prefix + i + '_nom');
+    out.push({
+      prenom: (elp && elp.value ? elp.value : '').trim(),
+      nom: (eln && eln.value ? eln.value : '').trim()
+    });
+  }
+  return out;
+}
+function crmRefreshNewCoPassengers() {
+  var wrap = document.getElementById('n-copassengers-wrap');
+  if (!wrap) return;
+  var inp = document.getElementById('n_adultes');
+  var adultes = parseInt(inp.value, 10) || 1;
+  var prev = parseInt(inp.getAttribute('data-prev-copax') || String(adultes), 10) || 1;
+  var merged = crmParseCoPassengers('n_copax_', crmCoPaxNeeded(prev));
+  var need = crmCoPaxNeeded(adultes);
+  var arr = [];
+  for (var i = 0; i < need; i++) {
+    arr[i] = merged[i] || { prenom: '', nom: '' };
+  }
+  inp.setAttribute('data-prev-copax', String(adultes));
+  wrap.innerHTML = crmCoPassengersFieldsHtml('n_copax_', adultes, arr);
+}
+function crmRefreshEditCoPassengers() {
+  var wrap = document.getElementById('edit-copassagers-wrap');
+  if (!wrap || !window._crmOpenId) return;
+  var d = DB.find(function (x) {
+    return x.id === window._crmOpenId;
+  });
+  if (!d) return;
+  var inp = document.getElementById('edit-adultes');
+  var adultes = Math.min(9, Math.max(1, parseInt(inp.value, 10) || 1));
+  var prev = parseInt(inp.getAttribute('data-prev-copax') || String(adultes), 10) || 1;
+  var merged = crmParseCoPassengers('edit_copax_', crmCoPaxNeeded(prev));
+  var base = Array.isArray(d.coPassagers) ? d.coPassagers.slice() : [];
+  var need = crmCoPaxNeeded(adultes);
+  var arr = [];
+  for (var i = 0; i < need; i++) {
+    arr[i] = merged[i] || base[i] || { prenom: '', nom: '' };
+  }
+  inp.setAttribute('data-prev-copax', String(adultes));
+  wrap.innerHTML = crmCoPassengersFieldsHtml('edit_copax_', adultes, arr);
+}
+function crmValidateCoPassengersComplete(list) {
+  for (var i = 0; i < list.length; i++) {
+    if (!list[i].prenom || !list[i].nom) return false;
+  }
+  return true;
+}
+function crmFormatCoPassagersCsv(d) {
+  return (d.coPassagers || [])
+    .map(function (x) {
+      return ((x.prenom || '') + ' ' + (x.nom || '')).trim();
+    })
+    .filter(Boolean)
+    .join(' | ');
+}
+function crmAllPassengerNames(d) {
+  var names = [(d.prenom || '') + ' ' + (d.nom || '')].concat(
+    (d.coPassagers || []).map(function (x) {
+      return ((x.prenom || '') + ' ' + (x.nom || '')).trim();
+    })
+  );
+  return names
+    .map(function (s) {
+      return s.trim();
+    })
+    .filter(Boolean);
+}
+
+/** Autocomplétion adresse France (api-adresse.data.gouv.fr — Base Adresse Nationale). */
+function crmInitAddressAutocomplete(searchId, ddId, taId) {
+  var qEl = document.getElementById(searchId);
+  var dd = document.getElementById(ddId);
+  var ta = document.getElementById(taId);
+  if (!qEl || !dd || !ta) return;
+  var timer = null;
+  function closeDd() {
+    dd.classList.remove('open');
+    dd.innerHTML = '';
+    qEl.setAttribute('aria-expanded', 'false');
+  }
+  function openDd() {
+    dd.classList.add('open');
+    qEl.setAttribute('aria-expanded', 'true');
+  }
+  qEl.oninput = function () {
+    var v = qEl.value.trim();
+    clearTimeout(timer);
+    if (v.length < 3) {
+      closeDd();
+      return;
+    }
+    timer = setTimeout(function () {
+      fetch('https://api-adresse.data.gouv.fr/search/?q=' + encodeURIComponent(v) + '&limit=8')
+        .then(function (r) {
+          return r.json();
+        })
+        .then(function (data) {
+          var feats = (data && data.features) || [];
+          if (!feats.length) {
+            closeDd();
+            return;
+          }
+          dd.innerHTML = feats
+            .map(function (f) {
+              var lbl = String((f.properties && f.properties.label) || '');
+              return (
+                '<div class="crm-addr-opt" role="option" data-lbl="' +
+                escAttr(lbl) +
+                '">' +
+                escHtml(lbl) +
+                '</div>'
+              );
+            })
+            .join('');
+          openDd();
+          dd.querySelectorAll('.crm-addr-opt').forEach(function (el) {
+            el.onmousedown = function (e) {
+              e.preventDefault();
+              var L = el.getAttribute('data-lbl');
+              if (L) ta.value = L;
+              qEl.value = '';
+              closeDd();
+              ta.focus();
+            };
+          });
+        })
+        .catch(function () {
+          closeDd();
+        });
+    }, 280);
+  };
+  qEl.onblur = function () {
+    setTimeout(closeDd, 200);
+  };
+}
+
+function crmFillFilterStatut() {
+  var sel = document.getElementById('filterStatut');
+  if (!sel) return;
+  var v = sel.value;
+  var opts = '<option value="">' + escHtml(crmT('fil_all_status')) + '</option>';
+  STATUT_ORDER.forEach(function (k) {
+    if (!STATUT_LABELS[k]) return;
+    opts += '<option value="' + k + '">' + escHtml(STATUT_LABELS[k]) + '</option>';
+  });
+  sel.innerHTML = opts;
+  if (v && STATUT_ORDER.indexOf(v) !== -1) sel.value = v;
+}
+function crmFillFilterPalier() {
+  var sel = document.getElementById('filterPalier');
+  if (!sel) return;
+  var v = sel.value;
+  sel.innerHTML =
+    '<option value="">' +
+    escHtml(crmT('fil_all_tier')) +
+    '</option><option value="600">600 €</option><option value="400">400 €</option><option value="250">250 €</option>';
+  if (v) sel.value = v;
+}
+function crmFillNewSourceOptions(selected) {
+  var ns = document.getElementById('n_source');
+  if (!ns) return;
+  var v = selected != null ? selected : ns.value;
+  ns.innerHTML = CRM_SOURCE_KEYS.map(function (k) {
+    return (
+      '<option value="' +
+      k +
+      '"' +
+      (v === k ? ' selected' : '') +
+      '>' +
+      escHtml(CRM_SOURCE_LABELS[k] || k) +
+      '</option>'
+    );
+  }).join('');
+}
+function crmSetUiLang(lang) {
+  try {
+    localStorage.setItem(window.CRM_UI_LANG_KEY || 'rda_crm_ui_lang', lang === 'en' ? 'en' : 'fr');
+  } catch (e) {}
+  crmOnLangChange();
+}
+function crmUpdateLangButtons() {
+  var L = getCrmUiLang();
+  ['crm-lang-fr', 'crm-lang-en', 'crm-lang-gate-fr', 'crm-lang-gate-en'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var isFr = id.indexOf('-fr') !== -1;
+    var active = (isFr && L === 'fr') || (!isFr && L === 'en');
+    el.style.opacity = active ? '1' : '0.55';
+    el.style.fontWeight = active ? '700' : '500';
+  });
+}
+function crmApplyUiLang() {
+  if (!window.CRM_UI_BUNDLE) return;
+  document.documentElement.lang = crmT('html_lang');
+  document.title = crmT('doc_title');
+  var gt = document.getElementById('crm-gate-title');
+  if (gt) gt.textContent = crmT('gate_title');
+  var gl = document.querySelector('.crm-gate-lead');
+  if (gl) gl.innerHTML = crmT('gate_lead');
+  var gcl = document.getElementById('crm-code');
+  if (gcl) {
+    gcl.placeholder = crmT('gate_code_ph');
+    var glab = document.querySelector('label[for="crm-code"]');
+    if (glab) glab.textContent = crmT('gate_code_lbl');
+  }
+  var gsub = document.querySelector('#crm-gate-form button[type="submit"]');
+  if (gsub) gsub.textContent = crmT('gate_submit');
+  var bs = document.querySelector('.brand-sub');
+  if (bs) bs.textContent = crmT('brand_sub');
+  var al = document.querySelector('.crm-agent-strip label');
+  if (al) al.textContent = crmT('agent_lbl');
+  var ai = document.getElementById('crm-agent-input');
+  if (ai) ai.placeholder = crmT('agent_ph');
+  var tb = document.getElementById('crm-toolbar');
+  if (tb) tb.innerHTML = crmT('toolbar_html');
+  var jl = document.getElementById('crm-jalons');
+  if (jl) jl.setAttribute('aria-label', crmT('jalons_aria'));
+  var sh = document.getElementById('search');
+  if (sh) sh.placeholder = crmT('search_ph');
+  crmFillFilterStatut();
+  crmFillFilterPalier();
+  var ths = [
+    'th_dossier',
+    'th_pax',
+    'th_vol',
+    'th_tier',
+    'th_netcli',
+    'th_netrobin',
+    'th_mora',
+    'th_statut',
+    'th_prio',
+    'th_pieces'
+  ];
+  ths.forEach(function (k, i) {
+    var el = document.getElementById('crm-th-' + i);
+    if (el) el.textContent = crmT(k);
+  });
+  document.querySelectorAll('[data-crm-str]').forEach(function (el) {
+    var k = el.getAttribute('data-crm-str');
+    if (!k) return;
+    if (el.getAttribute('data-crm-html') === '1') el.innerHTML = crmT(k);
+    else el.textContent = crmT(k);
+  });
+  document.querySelectorAll('[data-crm-placeholder]').forEach(function (el) {
+    var k = el.getAttribute('data-crm-placeholder');
+    if (k) el.placeholder = crmT(k);
+  });
+  crmFillNewSourceOptions(document.getElementById('n_source') ? document.getElementById('n_source').value : 'autre');
+  var np = document.getElementById('n_palier');
+  if (np) {
+    var pv = np.value;
+    np.innerHTML =
+      '<option value="600">' +
+      escHtml(crmT('tier_600')) +
+      '</option><option value="400">' +
+      escHtml(crmT('tier_400')) +
+      '</option><option value="250">' +
+      escHtml(crmT('tier_250')) +
+      '</option>';
+    if (pv) np.value = pv;
+  }
+  var npr = document.getElementById('n_priorite');
+  if (npr) {
+    var pr = npr.value;
+    npr.innerHTML = ['STANDARD', 'HAUTE', 'BASSE', 'URGENTE']
+      .map(function (p) {
+        return (
+          '<option value="' +
+          p +
+          '"' +
+          (p === pr ? ' selected' : '') +
+          '>' +
+          escHtml(crmT('prio_' + p)) +
+          '</option>'
+        );
+      })
+      .join('');
+  }
+  var delp1 = document.getElementById('crm-del-p1');
+  if (delp1) delp1.innerHTML = crmT('del_p1');
+  var delp2 = document.getElementById('crm-del-p2');
+  if (delp2) delp2.innerHTML = crmT('del_p2');
+  var dcl = document.querySelector('label[for="crm-delete-code"]');
+  if (dcl) dcl.textContent = crmT('del_code_lbl');
+  var dci = document.getElementById('crm-delete-code');
+  if (dci) dci.placeholder = crmT('del_code_ph');
+  crmUpdateLangButtons();
+}
+function crmOnLangChange() {
+  crmSyncLabelObjects();
+  crmApplyUiLang();
+  var main = document.getElementById('crm-main');
+  if (main && main.classList.contains('visible')) render();
+  var oid = window._crmOpenId;
+  if (oid) openDetail(oid);
+  var mn = document.getElementById('modalNew');
+  if (mn && mn.style.display === 'flex') {
+    initVolForm();
+    updateCalcNew();
+    crmRefreshNewCoPassengers();
+  }
 }
 
 var CRM_DIAL_LIST = [];
@@ -1253,6 +1612,11 @@ function saveEditDossier(id){
   d.tel = document.getElementById('edit-tel').value.trim();
   d.email = document.getElementById('edit-email').value.trim();
   d.adultes = Math.min(9,Math.max(1,parseInt(document.getElementById('edit-adultes').value,10)||1));
+  d.adresse = (document.getElementById('edit-adresse') && document.getElementById('edit-adresse').value || '').trim();
+  if(!d.adresse){ alert(crmT('alert_address_required')); return; }
+  d.coPassagers = crmParseCoPassengers('edit_copax_', crmCoPaxNeeded(d.adultes));
+  if(crmCoPaxNeeded(d.adultes) > 0 && !crmValidateCoPassengersComplete(d.coPassagers)){ alert(crmT('alert_co_pax_incomplete')); return; }
+  crmNormalizeDossierContact(d);
   d.bebes = Math.min(9,Math.max(0,parseInt(document.getElementById('edit-bebes').value,10)||0));
   d.palier = parseInt(document.getElementById('edit-palier').value,10)||600;
   d.source = crmNormalizeSource(document.getElementById('edit-source').value);
@@ -1280,7 +1644,8 @@ function filtered(){
     const v0=(d.vols&&d.vols[0])?d.vols[0]:{vol:'',pnr:''};
     const idNorm = String(d.id||'').toLowerCase().replace(/-/g,'');
     const qNorm = q.replace(/-/g,'');
-    const txt=(d.id+' '+d.prenom+' '+d.nom+' '+v0.vol+' '+v0.pnr).toLowerCase();
+    const coTxt = (d.coPassagers||[]).map(x=>((x.prenom||'')+' '+(x.nom||'')).toLowerCase().trim()).filter(Boolean).join(' ');
+    const txt=(d.id+' '+d.prenom+' '+d.nom+' '+String(d.adresse||'').toLowerCase()+' '+coTxt+' '+v0.vol+' '+v0.pnr).toLowerCase();
     const matchQ = !q || txt.includes(q) || (qNorm.length>=3 && idNorm.includes(qNorm));
     return matchQ && (!st||d.statut===st) && (!pal||d.palier===parseInt(pal));
   });
@@ -1317,6 +1682,8 @@ function render(){
       else morCell=`<span class="moratoire-pill">${m.jours}j · ${m.total} €</span>`;
     }
     const nbBadge=d.adultes+d.bebes>1?` <span style="font-size:11px;color:#9CA3AF">×${d.adultes+d.bebes}${d.bebes>0?` (${d.bebes}bb)`:''}</span>`:'';
+    const coLine=(d.adultes>1&&(d.coPassagers||[]).some(x=>x.prenom||x.nom))
+      ?`<div class="td-sub">${(d.coPassagers||[]).filter(x=>x.prenom||x.nom).map(x=>escHtml((x.prenom+' '+x.nom).trim())).join(' · ')}</div>`:'';
     const volsBadge=(d.vols&&d.vols.length>1)?` <span style="font-size:10px;background:#DBEAFE;color:#1D4ED8;padding:1px 5px;border-radius:10px;font-weight:600">×${d.vols.length} vols</span>`:'';
     const statutSub=[];
     if(d.date_statut) statutSub.push(`<div style="font-size:10px;color:#9CA3AF;margin-top:3px">Statut : ${d.date_statut}</div>`);
@@ -1324,7 +1691,7 @@ function render(){
     const statutCell=`<span class="badge s-${d.statut}">${STATUT_LABELS[d.statut]||d.statut}</span>${statutSub.join('')}`;
     return`<tr onclick="openDetail('${d.id}')">
       <td><div class="td-id">${d.id}</div><div class="td-sub">${d.date}</div></td>
-      <td>${d.prenom} ${d.nom}${nbBadge}</td>
+      <td>${d.prenom} ${d.nom}${nbBadge}${coLine}</td>
       <td>${v0.vol}${volsBadge}<div class="td-sub">${v0.dep} → ${v0.arr}</div></td>
       <td style="font-weight:700;color:${d.palier===600?'#007A4C':d.palier===400?'#1D4ED8':'#5F5E5A'}">${d.palier} €</td>
       <td><span style="font-weight:700;color:#007A4C">${f.net.toLocaleString('fr-FR')} €</span><div class="td-sub">${f.parPax.toLocaleString('fr-FR')} €/pers</div></td>
@@ -1340,6 +1707,7 @@ function render(){
 function openDetail(id){
   const d=DB.find(x=>x.id===id);
   if(!d)return;
+  crmNormalizeDossierContact(d);
   ensurePieces(d);
   if(!Array.isArray(d.vols) || !d.vols.length) d.vols = [{comp:'—',vol:'—',date:'—',dep:'',arr:'',pnr:'',inc:'RETARD'}];
   window._crmOpenId = id;
@@ -1383,8 +1751,13 @@ function openDetail(id){
     <div class="detail-row"><span class="detail-label">Téléphone</span><span class="detail-val">${d.indicatif} ${d.tel}</span></div>
     <div class="detail-row"><span class="detail-label">WhatsApp</span><span class="detail-val">${waUrl?`<a class="btn btn-sm btn-wa" href="${escAttr(waUrl)}" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex">Contacter le client</a>`:'<span style="color:#9CA3AF;font-size:13px">Renseigner indicatif + téléphone</span>'}</span></div>
     <div class="detail-row"><span class="detail-label">E-mail</span><span class="detail-val">${d.email}</span></div>
+    <div class="detail-row"><span class="detail-label">${crmT('lbl_address')}</span><span class="detail-val" style="white-space:pre-wrap;max-width:68%;text-align:right">${d.adresse?escHtml(d.adresse):'<span style="color:#c2410c;font-size:13px">'+escHtml(crmT('address_missing_detail'))+'</span>'}</span></div>
     <div class="detail-row"><span class="detail-label">Adultes (indemnisés)</span><span class="detail-val">${d.adultes}</span></div>
     <div class="detail-row"><span class="detail-label">Bébés &lt; 2 ans (non indemnisés)</span><span class="detail-val">${d.bebes}</span></div>
+    ${d.adultes>1?`<div class="section-title">${crmT('co_pax_section')}</div>`+
+      ((d.coPassagers||[]).some(x=>x.prenom&&x.nom)
+        ?`<ul style="font-size:13px;margin:0 0 12px;padding-left:18px;line-height:1.6;color:#1A1A2E">${(d.coPassagers||[]).filter(x=>x.prenom||x.nom).map(x=>`<li>${escHtml(x.prenom)} ${escHtml(x.nom)}</li>`).join('')}</ul>`
+        :`<p style="font-size:12px;color:#c2410c;font-weight:500;margin-bottom:12px">${crmT('co_pax_missing_detail')}</p>`):''}
     <div class="section-title">Vols (${d.vols.length})</div>
     ${d.vols.map((v,i)=>`<div style="border:1px solid #E2E4E8;border-radius:6px;padding:12px;margin-bottom:8px;background:#F7F8FA">
       <div style="font-size:11px;font-weight:700;color:#6B7280;margin-bottom:8px;text-transform:uppercase">VOL ${i+1}${i===d.vols.length-1?' — déterminant CE 261':''}</div>
@@ -1449,8 +1822,15 @@ function openDetail(id){
       <p class="crm-cc-hint">Indicatif : raccourcis au focus, ou tapez au moins 2 caractères (+32, belgique…).</p>
     </div>
     <div class="field"><label>E-mail</label><input id="edit-email" type="email" value="${escAttr(d.email)}"></div>
+    <div class="field"><label>${crmT('lbl_address')}</label>
+    <p class="crm-cc-hint">${crmT('addr_search_hint')}</p>
+    <div class="crm-addr-wrap">
+      <input type="search" id="edit-adresse-search" class="crm-addr-q" autocomplete="off" spellcheck="false" placeholder="${escAttr(crmT('addr_autocomplete_ph'))}">
+      <div id="edit-adresse-dd" class="crm-addr-dd" role="listbox"></div>
+    </div>
+    <textarea id="edit-adresse" rows="3">${escHtml(d.adresse||'')}</textarea></div>
     <div class="row2">
-      <div class="field"><label>Adultes indemnisés</label><input id="edit-adultes" type="number" min="1" max="9" value="${d.adultes}"></div>
+      <div class="field"><label>Adultes indemnisés</label><input id="edit-adultes" type="number" min="1" max="9" value="${d.adultes}" oninput="crmRefreshEditCoPassengers()"></div>
       <div class="field"><label>Bébés (&lt; 2 ans)</label><input id="edit-bebes" type="number" min="0" max="9" value="${d.bebes}"></div>
     </div>
     <div class="row2">
@@ -1463,6 +1843,7 @@ function openDetail(id){
       </div>
       <div class="field"><label>Source acquisition</label><select id="edit-source">${editSourceOpts}</select></div>
     </div>
+    <div id="edit-copassagers-wrap">${crmCoPassengersFieldsHtml('edit_copax_', d.adultes, d.coPassagers)}</div>
     <div class="section-title">Vols (${d.vols.length})</div>
     <p class="crm-cc-hint" style="margin-bottom:10px">Pas besoin de maîtriser les codes IATA : saisissez le <strong>nom de la ville</strong> (Paris, Douala…) ou le code aéroport si vous l’avez.</p>
     ${buildEditVolsHtml(d)}
@@ -1508,6 +1889,9 @@ function openDetail(id){
   setTimeout(function(){
     refreshWaPreview(id);
     crmDialSyncInput('edit-indicatif', d.indicatif);
+    var ea = document.getElementById('edit-adultes');
+    if(ea) ea.setAttribute('data-prev-copax', String(d.adultes));
+    crmInitAddressAutocomplete('edit-adresse-search', 'edit-adresse-dd', 'edit-adresse');
   }, 0);
 }
 
@@ -1565,7 +1949,17 @@ function updateDossier(id){
 
 function genLettre(id){
   const d=DB.find(x=>x.id===id), f=calcFin(d.palier,d.adultes);
-  alert(`Mise en demeure pour ${d.prenom} ${d.nom}\nVol ${d.vols[0].vol} — ${d.vols[0].dep}→${d.vols[0].arr}\n${d.adultes} passager(s) × ${d.palier}€ = ${f.brut}€ brut\nNet client : ${f.net}€ — Net Robin : ${f.comm}€\n\n→ Copier dans la mise en demeure Word.`);
+  if(!d) return;
+  crmNormalizeDossierContact(d);
+  var v0 = d.vols && d.vols[0] ? d.vols[0] : {vol:'—',dep:'',arr:''};
+  alert(crmT('gen_letter_alert',{
+    prenom:d.prenom,nom:d.nom,
+    adresse:d.adresse||'—',
+    pax_list:crmAllPassengerNames(d).join(', '),
+    vol:v0.vol,dep:v0.dep,arr:v0.arr,
+    adultes:d.adultes,palier:d.palier,
+    brut:f.brut,net:f.net,comm:f.comm
+  }));
 }
 
 function openNew(){
@@ -1573,6 +1967,15 @@ function openNew(){
   crmDialSyncInput('n_indicatif', '+33');
   var ns = document.getElementById('n_source');
   if(ns) ns.value = 'autre';
+  var na = document.getElementById('n_adresse');
+  if(na) na.value = '';
+  var nas = document.getElementById('n_adresse_search');
+  if(nas) nas.value = '';
+  var nadd = document.getElementById('n_adresse_dd');
+  if(nadd){ nadd.innerHTML=''; nadd.classList.remove('open'); }
+  var nad = document.getElementById('n_adultes');
+  if(nad) nad.removeAttribute('data-prev-copax');
+  crmRefreshNewCoPassengers();
   document.getElementById('modalNew').style.display='flex';
 }
 
@@ -1597,7 +2000,12 @@ function saveNew(){
   const prenom=document.getElementById('n_prenom').value.trim();
   const nom=document.getElementById('n_nom').value.trim();
   if(!prenom||!nom){alert('Prénom et nom obligatoires');return;}
+  const adresse=(document.getElementById('n_adresse')&&document.getElementById('n_adresse').value||'').trim();
+  if(!adresse){ alert(crmT('alert_address_required')); return; }
   const adultes=parseInt(document.getElementById('n_adultes').value)||1;
+  const coNeed=crmCoPaxNeeded(adultes);
+  const coPassagers=crmParseCoPassengers('n_copax_', coNeed);
+  if(coNeed>0 && !crmValidateCoPassengersComplete(coPassagers)){ alert(crmT('alert_co_pax_incomplete')); return; }
   const bebes=parseInt(document.getElementById('n_bebes').value)||0;
   const palier=parseInt(document.getElementById('n_palier').value)||600;
   const vols=[];
@@ -1608,7 +2016,7 @@ function saveNew(){
   const id = crmGenerateDossierId();
   const ag = getCrmAgent() || 'Agent non renseigné';
   const ts = new Date().toISOString();
-  DB.unshift({id,statut:'ELIGIBLE',priorite:document.getElementById('n_priorite').value,date:today(),date_statut:today(),date_paiement:null,source:crmNormalizeSource(document.getElementById('n_source').value),lrar:null,prenom,nom,indicatif:document.getElementById('n_indicatif').value,tel:document.getElementById('n_tel').value,email:document.getElementById('n_email').value,adultes,bebes,vols,palier,pieces:[],events:[{date:today(),when:ts,action:'Dossier créé — Éligible',meta:'Création dans le CRM',by:ag}]});
+  DB.unshift({id,statut:'ELIGIBLE',priorite:document.getElementById('n_priorite').value,date:today(),date_statut:today(),date_paiement:null,source:crmNormalizeSource(document.getElementById('n_source').value),lrar:null,prenom,nom,indicatif:document.getElementById('n_indicatif').value,tel:document.getElementById('n_tel').value,email:document.getElementById('n_email').value,adresse,coPassagers,adultes,bebes,vols,palier,pieces:[],events:[{date:today(),when:ts,action:'Dossier créé — Éligible',meta:'Création dans le CRM',by:ag}]});
   persistCrmDb();
   closeAll(); render();
 }
