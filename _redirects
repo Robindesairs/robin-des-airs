@@ -5,6 +5,7 @@
 /radar                       /radar.html                       200
 /radar-choix                /radar-choix.html                 200
 /crm                        /crm.html                         200
+/api/crm-auth               /.netlify/functions/crm-auth      200
 
 # Redirections pour URLs sans .html
 /choix-reclamation           /choix-reclamation.html           200

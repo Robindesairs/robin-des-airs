@@ -954,13 +954,21 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   border: 1px solid rgba(255,255,255,0.06);
 }
 .hero-right.calc-highlight {
-  animation: calcTurn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  /* Même si la carte est déjà visible (hero 2 colonnes), l’effet + halo vert signalent le clic */
+  animation: calcTurn 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+    funnelGlow 1.15s ease-out forwards;
 }
 @keyframes calcTurn {
-  0% { transform: perspective(800px) rotateY(0deg) scale(1); box-shadow: var(--shadow-premium); }
-  25% { transform: perspective(800px) rotateY(-8deg) scale(1.02); box-shadow: 0 32px 80px rgba(0,229,160,0.2); }
-  50% { transform: perspective(800px) rotateY(4deg) scale(1.02); box-shadow: 0 32px 80px rgba(0,229,160,0.25); }
-  100% { transform: perspective(800px) rotateY(0deg) scale(1); box-shadow: var(--shadow-premium); }
+  0% { transform: perspective(800px) rotateY(0deg) scale(1); }
+  22% { transform: perspective(800px) rotateY(-10deg) scale(1.035); }
+  48% { transform: perspective(800px) rotateY(6deg) scale(1.03); }
+  100% { transform: perspective(800px) rotateY(0deg) scale(1); }
+}
+@keyframes funnelGlow {
+  0% { box-shadow: var(--shadow-premium); }
+  20% { box-shadow: 0 0 0 3px rgba(0, 229, 160, 0.55), 0 28px 72px rgba(0, 229, 160, 0.22); }
+  45% { box-shadow: 0 0 0 10px rgba(0, 229, 160, 0.12), 0 32px 80px rgba(0, 200, 122, 0.18); }
+  100% { box-shadow: var(--shadow-premium); }
 }
 
 .hero-right::before {

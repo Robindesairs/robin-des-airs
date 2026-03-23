@@ -26,6 +26,7 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg2); color: var(--text); font-size: 14px; min-height: 100vh; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
   /* ── TOPBAR ── */
   .topbar { background: var(--navy); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
@@ -61,7 +62,7 @@
   /* ── TABLE ── */
   .table-card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
   .table-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 960px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 1040px; }
   thead th { background: var(--bg2); padding: 11px 14px; text-align: left; font-weight: 600; color: var(--text2); font-size: 11px; text-transform: uppercase; letter-spacing: .4px; border-bottom: 1px solid var(--border); white-space: nowrap; }
   tbody tr { border-bottom: 1px solid var(--border); cursor: pointer; transition: background .12s; }
   tbody tr:last-child { border-bottom: none; }
@@ -77,6 +78,7 @@
   .s-MANDAT_SIGNE { background: #D1FAE5; color: #065F46; }
   .s-LRAR_ENVOYEE { background: #FEF3C7; color: #92400E; }
   .s-RELANCE_1, .s-RELANCE_2 { background: #FEE2E2; color: #991B1B; }
+  .s-MEDIATION { background: #E0E7FF; color: #3730A3; }
   .s-CONTENTIEUX { background: #FCE7F3; color: #9D174D; }
   .s-PAYE { background: #D1FAE5; color: #064E3B; }
   .s-REFUSE_DEFINITIF, .s-ABANDON, .s-PRESCRIT { background: #FEE2E2; color: #7F1D1D; }
@@ -86,7 +88,9 @@
   /* ── MODAL ── */
   .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
   .modal { background: var(--bg); border-radius: var(--radius); border: 1px solid var(--border); width: 100%; max-width: 620px; max-height: 92vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.18); }
-  .modal-header { padding: 18px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: var(--bg); z-index: 1; }
+  .modal.modal--wide { max-width: 760px; }
+  .modal-header { padding: 18px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; position: sticky; top: 0; background: var(--bg); z-index: 1; }
+  .modal-header-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end; }
   .modal-header h2 { font-size: 16px; font-weight: 700; color: var(--navy); }
   .modal-body { padding: 20px; }
   .modal-footer { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; position: sticky; bottom: 0; background: var(--bg); }
@@ -115,7 +119,7 @@
   .moratoire-box-title { font-size: 12px; font-weight: 700; color: #92400E; margin-bottom: 8px; }
 
   /* ── TABS ── */
-  .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
   .tab { padding: 10px 16px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text2); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color .15s; }
   .tab:hover { color: var(--navy); }
   .tab.active { color: var(--green); border-bottom-color: var(--green); font-weight: 600; }
@@ -155,9 +159,78 @@
     .row2, .row3 { grid-template-columns: 1fr; }
     .app { padding: 12px; }
   }
+
+  /* ── ACCÈS CRM (code) ── */
+  .crm-gate { position: fixed; inset: 0; z-index: 9999; background: var(--navy); display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .crm-gate.hidden { display: none !important; }
+  .crm-gate-card { background: var(--bg); border-radius: var(--radius); padding: 28px 24px; max-width: 400px; width: 100%; box-shadow: 0 24px 80px rgba(0,0,0,.35); border: 1px solid var(--border); }
+  .crm-gate-card h1 { font-size: 18px; color: var(--navy); margin-bottom: 8px; }
+  .crm-gate-card .crm-gate-lead { font-size: 13px; color: var(--text2); margin-bottom: 16px; line-height: 1.45; }
+  .crm-gate-card input[type="password"] { width: 100%; font-size: 15px; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-bottom: 12px; box-sizing: border-box; }
+  .crm-gate-card .crm-gate-err { color: var(--red); font-size: 12px; margin-bottom: 10px; display: none; }
+  .crm-gate-card .crm-gate-err.show { display: block; }
+  .crm-main-wrap { display: none; }
+  .crm-main-wrap.visible { display: block; }
+  .topbar-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .btn-ghost-light { background: rgba(255,255,255,.12); color: #fff; border-color: rgba(255,255,255,.35); }
+  .btn-ghost-light:hover { background: rgba(255,255,255,.2); }
+
+  /* ── WhatsApp modèle ── */
+  .crm-wa-box { background: #F0FDF4; border: 1px solid #86EFAC; border-radius: var(--radius-sm); padding: 14px 16px; margin-top: 14px; }
+  .crm-wa-box-title { font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+  .crm-wa-delays { font-size: 11px; color: var(--text2); line-height: 1.5; margin-bottom: 10px; padding: 10px 12px; background: var(--bg); border-radius: var(--radius-sm); border: 1px solid var(--border); }
+  .crm-wa-delays strong { color: var(--navy); }
+  .crm-wa-textarea { width: 100%; min-height: 140px; font-size: 13px; line-height: 1.45; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); font-family: inherit; resize: vertical; }
+  .crm-wa-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .crm-wa-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--navy); color: #fff; padding: 10px 18px; border-radius: 8px; font-size: 13px; z-index: 100000; opacity: 0; pointer-events: none; transition: opacity .2s; max-width: 90vw; text-align: center; }
+  .crm-wa-toast.show { opacity: 1; }
+
+  /* ── Pièces / documents ── */
+  .crm-doc-empty { font-size: 13px; color: var(--text2); padding: 16px; text-align: center; background: var(--bg2); border-radius: var(--radius-sm); border: 1px dashed var(--border); }
+  .crm-doc-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .crm-doc-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 12px 14px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); }
+  .crm-doc-name { font-weight: 600; font-size: 13px; color: var(--navy); word-break: break-word; }
+  .crm-doc-meta { font-size: 11px; color: var(--text2); margin-top: 4px; }
+  .crm-doc-actions { display: flex; flex-wrap: wrap; gap: 6px; flex-shrink: 0; }
+  .crm-piece-add { background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: var(--radius-sm); padding: 14px; margin-top: 8px; }
+  .crm-piece-add-title { font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
+  .doc-count-pill { display: inline-block; min-width: 22px; text-align: center; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 10px; background: #E0E7FF; color: #3730A3; }
+
+  /* ── Agent (traçabilité) ── */
+  .crm-agent-strip label { font-size: 10px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: rgba(255,255,255,.65); display: block; margin-bottom: 4px; }
+  .crm-agent-strip input { min-width: 150px; max-width: 220px; padding: 7px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,.4); background: rgba(255,255,255,.96); color: var(--text); font-size: 13px; }
+  .crm-agent-strip input::placeholder { color: #9CA3AF; }
+  .event-trace { font-size: 11px; color: var(--text2); margin-top: 4px; line-height: 1.4; }
+  .event-trace strong { color: var(--navy); font-weight: 600; }
+
+  /* ── Jalons & outils ── */
+  .crm-toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; padding: 10px 12px; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); font-size: 12px; color: var(--text2); }
+  .crm-jalons { background: linear-gradient(135deg, #F8FAFC 0%, #EEF2FF 100%); border: 1px solid #C7D2FE; border-radius: var(--radius); padding: 14px 16px; margin-bottom: 16px; }
+  .crm-jalons-title { font-size: 12px; font-weight: 700; color: var(--navy); text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px; }
+  .crm-jalons-list { display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; }
+  .crm-jalon-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; padding: 8px 10px; background: #fff; border: 1px solid var(--border); border-radius: 8px; font-size: 12px; }
+  .crm-jalon-row.overdue { border-color: #FCA5A5; background: #FEF2F2; }
+  .crm-jalon-row .j-meta { color: var(--text2); font-size: 11px; margin-top: 2px; }
+  .btn-wa { background: #25D366 !important; color: #fff !important; border-color: #128C7E !important; }
+  .btn-wa:hover { filter: brightness(0.95); }
 </style>
 </head>
 <body>
+
+<div id="crm-gate" class="crm-gate" role="dialog" aria-labelledby="crm-gate-title">
+  <div class="crm-gate-card">
+    <h1 id="crm-gate-title">Accès CRM</h1>
+    <p class="crm-gate-lead">Espace réservé à l’équipe Robin des Airs. Saisissez le code d’accès. Ensuite, indiquez <strong>votre nom</strong> en haut de page : chaque modification sera tracée (agent + date/heure).</p>
+    <div id="crm-gate-err" class="crm-gate-err" role="alert"></div>
+    <form id="crm-gate-form" autocomplete="on">
+      <label class="sr-only" for="crm-code">Code d’accès</label>
+      <input type="password" id="crm-code" name="crm-code" placeholder="Code d’accès" autocomplete="current-password" required autofocus>
+      <button type="submit" class="btn btn-primary" style="width:100%">Entrer</button>
+    </form>
+  </div>
+</div>
+
+<div id="crm-main" class="crm-main-wrap">
 
 <!-- TOPBAR -->
 <div class="topbar">
@@ -165,12 +238,23 @@
     <div class="brand">ROBIN <span>des Airs</span></div>
     <div class="brand-sub">Gestion des dossiers d'indemnisation</div>
   </div>
-  <button class="btn btn-primary" onclick="openNew()">+ Nouveau dossier</button>
+  <div class="topbar-actions" style="align-items:flex-end">
+    <div class="crm-agent-strip">
+      <label for="crm-agent-input">Votre nom (traçabilité)</label>
+      <input type="text" id="crm-agent-input" maxlength="80" placeholder="Ex. Marie D. — obligatoire pour modifier" autocomplete="name">
+    </div>
+    <button type="button" class="btn btn-ghost-light" onclick="exportCrmCsv()" title="Télécharger la liste des dossiers">Export CSV</button>
+    <button type="button" class="btn btn-ghost-light" onclick="resetCrmData()" title="Effacer la sauvegarde locale et recharger les exemples">Réinit. démo</button>
+    <button type="button" class="btn btn-ghost-light" onclick="crmLogout()">Déconnexion</button>
+    <button type="button" class="btn btn-primary" onclick="openNew()">+ Nouveau dossier</button>
+  </div>
 </div>
 
 <div class="app">
   <!-- MÉTRIQUES -->
   <div class="metrics" id="metrics"></div>
+  <div class="crm-toolbar">Les dossiers sont <strong>sauvegardés dans ce navigateur</strong> (localStorage). Les fichiers joints restent en mémoire page seulement — export CSV pour archiver la liste.</div>
+  <div class="crm-jalons" id="crm-jalons" aria-label="Prochains jalons"></div>
 
   <!-- FILTRES -->
   <div class="controls">
@@ -182,6 +266,8 @@
       <option value="MANDAT_SIGNE">Mandat signé</option>
       <option value="LRAR_ENVOYEE">LRAR envoyée</option>
       <option value="RELANCE_1">Relance 1</option>
+      <option value="RELANCE_2">Relance 2</option>
+      <option value="MEDIATION">Médiation</option>
       <option value="CONTENTIEUX">Contentieux</option>
       <option value="PAYE">Payé</option>
       <option value="REFUSE_DEFINITIF">Refusé</option>
@@ -209,6 +295,7 @@
             <th>Indemnité moratoire</th>
             <th>Statut</th>
             <th>Priorité</th>
+            <th>Pièces</th>
           </tr>
         </thead>
         <tbody id="tbody"></tbody>
@@ -219,10 +306,15 @@
 
 <!-- MODAL DÉTAIL -->
 <div class="modal-bg" id="modalDetail" style="display:none" onclick="if(event.target===this)closeAll()">
-  <div class="modal">
+  <div class="modal modal--wide">
     <div class="modal-header">
-      <h2 id="detail-title">Dossier</h2>
-      <button class="btn btn-sm" onclick="closeAll()">✕ Fermer</button>
+      <h2 id="detail-title" style="flex:1;min-width:140px;margin:0">Dossier</h2>
+      <div class="modal-header-actions">
+        <a id="crm-detail-wa-btn" class="btn btn-sm btn-wa" href="#" target="_blank" rel="noopener" style="display:none;text-decoration:none">WhatsApp client</a>
+        <button type="button" class="btn btn-sm btn-primary" onclick="crmFocusTabFromHeader('t-pieces')">Pièces du dossier</button>
+        <button type="button" class="btn btn-sm" onclick="crmFocusTabFromHeader('t-edit')">Modifier</button>
+        <button type="button" class="btn btn-sm" onclick="closeAll()">✕ Fermer</button>
+      </div>
     </div>
     <div class="modal-body" id="detail-body"></div>
   </div>
@@ -316,11 +408,288 @@
   </div>
 </div>
 
+</div><!-- /#crm-main -->
+
+<div id="crm-wa-toast" class="crm-wa-toast" role="status" aria-live="polite"></div>
+
 <script>
-const STATUT_LABELS = {BROUILLON:'Brouillon',ELIGIBLE:'Éligible',MANDAT_SIGNE:'Mandat signé',LRAR_ENVOYEE:'LRAR envoyée',RELANCE_1:'Relance 1',RELANCE_2:'Relance 2',CONTENTIEUX:'Contentieux',PAYE:'Payé',REFUSE_DEFINITIF:'Refusé',ABANDON:'Abandonné',PRESCRIT:'Prescrit'};
+const CRM_AUTH_URL = '/api/crm-auth';
+const CRM_AGENT_KEY = 'rda_crm_agent';
+
+function getCrmAgent() {
+  try { return (sessionStorage.getItem(CRM_AGENT_KEY) || '').trim(); } catch (e) { return ''; }
+}
+
+function setCrmAgentFromInput() {
+  var el = document.getElementById('crm-agent-input');
+  if (!el) return;
+  var v = el.value.trim();
+  try {
+    if (v) sessionStorage.setItem(CRM_AGENT_KEY, v);
+    else sessionStorage.removeItem(CRM_AGENT_KEY);
+  } catch (e) {}
+}
+
+function syncCrmAgentInput() {
+  var el = document.getElementById('crm-agent-input');
+  if (el) el.value = getCrmAgent();
+}
+
+async function crmAuthStatus() {
+  const r = await fetch(CRM_AUTH_URL, { credentials: 'same-origin' });
+  const j = await r.json().catch(() => ({}));
+  return { status: r.status, ...j };
+}
+
+async function crmUnlock() {
+  const input = document.getElementById('crm-code');
+  const err = document.getElementById('crm-gate-err');
+  err.classList.remove('show');
+  const code = (input && input.value) ? input.value.trim() : '';
+  const r = await fetch(CRM_AUTH_URL, {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code }),
+  });
+  const j = await r.json().catch(() => ({}));
+  if (j.ok) {
+    document.getElementById('crm-gate').classList.add('hidden');
+    document.getElementById('crm-main').classList.add('visible');
+    syncCrmAgentInput();
+    render();
+  } else {
+    err.textContent = j.error || 'Code incorrect.';
+    err.classList.add('show');
+  }
+}
+
+async function crmLogout() {
+  try {
+    await fetch(CRM_AUTH_URL, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ logout: true }),
+    });
+  } catch (_) {}
+  try { sessionStorage.removeItem(CRM_AGENT_KEY); } catch (e) {}
+  location.reload();
+}
+
+function crmOpenMain() {
+  document.getElementById('crm-gate').classList.add('hidden');
+  document.getElementById('crm-main').classList.add('visible');
+  syncCrmAgentInput();
+  render();
+}
+
+/** true = ouvrir sans API (fichier direct ou serveur statique sans Netlify) */
+function crmIsLocalNoApi() {
+  if (location.protocol === 'file:') return true;
+  var h = location.hostname;
+  return h === 'localhost' || h === '127.0.0.1';
+}
+
+async function initCrmAuth() {
+  const err = document.getElementById('crm-gate-err');
+  err.classList.remove('show');
+
+  /* Fichier ouvert depuis le disque : pas de fetch possible vers /api */
+  if (location.protocol === 'file:') {
+    crmOpenMain();
+    showCrmToast('Fichier local : pas de code d’accès (l’API Netlify n’existe pas en file://).');
+    return;
+  }
+
+  const localNoApi = crmIsLocalNoApi();
+
+  try {
+    const data = await crmAuthStatus();
+    if (data.status === 503 || data.configured === false) {
+      if (localNoApi) {
+        crmOpenMain();
+        showCrmToast('Local : API CRM indisponible — accès sans code.');
+        return;
+      }
+      err.textContent = data.error || 'Variable CRM_ACCESS_CODE non définie sur Netlify.';
+      err.classList.add('show');
+      return;
+    }
+    if (data.ok) {
+      crmOpenMain();
+      return;
+    }
+    /* Serveur statique sur localhost : /api/crm-auth → 404 */
+    if (localNoApi && (data.status === 404 || data.status === 502)) {
+      crmOpenMain();
+      showCrmToast('Serveur local sans Netlify : CRM ouvert sans code. Pour l’auth, utilisez « netlify dev ».');
+      return;
+    }
+  } catch (e) {
+    if (localNoApi) {
+      crmOpenMain();
+      showCrmToast('Pas de réponse de l’API — CRM ouvert en local sans code.');
+      return;
+    }
+    err.textContent = 'Connexion impossible. Ouvrez cette page sur le site en ligne (Netlify) ou via « netlify dev ».';
+    err.classList.add('show');
+  }
+}
+
+document.getElementById('crm-gate-form').addEventListener('submit', function (e) {
+  e.preventDefault();
+  crmUnlock();
+});
+
+initCrmAuth();
+
+const STATUT_LABELS = {
+  BROUILLON:'Brouillon',
+  ELIGIBLE:'Éligible',
+  MANDAT_SIGNE:'Mandat signé',
+  LRAR_ENVOYEE:'LRAR envoyée',
+  RELANCE_1:'Relance 1',
+  RELANCE_2:'Relance 2',
+  MEDIATION:'Médiation',
+  CONTENTIEUX:'Contentieux',
+  PAYE:'Payé',
+  REFUSE_DEFINITIF:'Refusé définitif',
+  ABANDON:'Abandonné',
+  PRESCRIT:'Prescrit'
+};
+/** Ordre du parcours juridique (filtres & listes) */
+const STATUT_ORDER = ['BROUILLON','ELIGIBLE','MANDAT_SIGNE','LRAR_ENVOYEE','RELANCE_1','RELANCE_2','MEDIATION','CONTENTIEUX','PAYE','REFUSE_DEFINITIF','ABANDON','PRESCRIT'];
+
 const TAUX = 0.0665;
 
+/** Jalons après date de réception LRAR (mise en demeure) : relance 1 J+15, relance 2 J+30, saisine médiateur J+62 */
+function crmJalonsLrar(lrarDate){
+  if(!lrarDate) return { rel1:null, rel2:null, med:null, ok:false };
+  return {
+    rel1:addDays(lrarDate,15),
+    rel2:addDays(lrarDate,30),
+    med:addDays(lrarDate,62),
+    ok:true
+  };
+}
+
+function fmtFr(d){ return d || '—'; }
+
+/** Message WhatsApp type selon l’étape affichée (à copier-coller, personnalisable avant envoi) */
+function buildWaMessage(d, statut){
+  const prenom = d.prenom || '';
+  const vol = d.vols && d.vols[0] ? `${d.vols[0].vol} (${d.vols[0].dep}→${d.vols[0].arr})` : 'votre vol';
+  const j = crmJalonsLrar(d.lrar);
+  const rel1 = j.ok ? j.rel1 : null;
+  const rel2 = j.ok ? j.rel2 : null;
+  const med = j.ok ? j.med : null;
+  const L = (arr)=>arr.filter(Boolean).join('\n');
+
+  switch(statut){
+    case 'BROUILLON':
+      return L([`Bonjour${prenom?' '+prenom:''},`,`Votre dossier ${d.id} (${vol}) est en préparation côté Robin des Airs.`,`Nous revenons vers vous pour finaliser les prochaines étapes.`]);
+    case 'ELIGIBLE':
+      return L([`Bonjour ${prenom},`,`Bonne nouvelle : votre situation sur ${vol} entre dans le cadre d’une réclamation CE 261.`,`Prochaine étape : vous recevrez le mandat à signer (YouSign).`,`Des questions ? Répondez à ce message.`]);
+    case 'MANDAT_SIGNE':
+      return L([`Bonjour ${prenom},`,`Merci, votre mandat est bien signé.`,`Nous préparons la mise en demeure (LRAR) adressée à la compagnie.`,`Nous vous tiendrons informé(e) dès l’envoi.`]);
+    case 'LRAR_ENVOYEE':
+      return L([`Bonjour ${prenom},`,`La mise en demeure (LRAR) pour ${vol} a été envoyée à la compagnie.`,``,`Délais indicatifs (depuis réception de la LRAR par la compagnie${d.lrar?', réf. accusé '+d.lrar:''}) :`,`• 1re relance : J+15 → ${fmtFr(rel1)}`,`• 2e relance : J+30 → ${fmtFr(rel2)}`,`• Saisine médiateur : J+62 → ${fmtFr(med)}`,``,`En cas de silence d’environ un mois sans réponse exploitable, nous enchaînons selon ce calendrier.`,`Robin des Airs`]);
+    case 'RELANCE_1':
+      return L([`Bonjour ${prenom},`,`Nous avons effectué la 1re relance auprès de la compagnie concernant ${vol} (après la mise en demeure).`,``,`Prochaine étape si silence : 2e relance à J+30 après réception LRAR → ${fmtFr(rel2)}.`,`Puis, si nécessaire : médiation (saisine vers J+62) → ${fmtFr(med)}.`,``,`Nous restons sur le dossier et vous tenons informé(e).`,`Robin des Airs`]);
+    case 'RELANCE_2':
+      return L([`Bonjour ${prenom},`,`La 2e relance vient d’être envoyée pour ${vol}. Dernière relance amiable avant les étapes formalisées.`,``,`Si la compagnie ne réagit toujours pas, nous préparerons la saisine du médiateur de la consommation vers J+62 après la LRAR → ${fmtFr(med)} (date indicative).`,``,`Merci pour votre confiance.`,`Robin des Airs`]);
+    case 'MEDIATION':
+      return L([`Bonjour ${prenom},`,`Votre dossier ${vol} est porté devant le médiateur de la consommation (saisine visée à J+62 après mise en demeure / LRAR ; date indicative : ${fmtFr(med)}).`,``,`Nous vous informerons de chaque retour (proposition, accord, ou suite éventuelle vers le contentieux).`,``,`Robin des Airs`]);
+    case 'CONTENTIEUX':
+      return L([`Bonjour ${prenom},`,`Sans solution amiable ou après la médiation, nous engageons la phase contentieuse pour ${vol}.`,``,`Nous vous expliquons la suite (instance, délais, pièces). Dites-nous si vous préférez un appel ou des messages ici.`,`Robin des Airs`]);
+    case 'PAYE':
+      return L([`Bonjour ${prenom},`,`Bonne nouvelle : les fonds ont été reçus pour votre dossier ${vol}.`,`Nous procédons au virement de votre part nette (délai habituel ~5 jours ouvrés après RIB si nécessaire).`,`Merci pour votre confiance !`,`Robin des Airs`]);
+    case 'REFUSE_DEFINITIF':
+      return L([`Bonjour ${prenom},`,`Nous faisons le point sur ${vol} : au stade actuel, la compagnie maintient un refus que nous ne pouvons pas dépasser dans ce dossier (ou le cadre légal ne permet pas d’aller plus loin).`,``,`Nous restons disponibles pour toute question.`,`Robin des Airs`]);
+    case 'ABANDON':
+      return L([`Bonjour ${prenom},`,`Comme convenu / faute de suite de votre part, nous clôturons le dossier ${vol} côté Robin des Airs.`,`Pour une nouvelle démarche, vous pouvez nous réécrire.`,`Robin des Airs`]);
+    case 'PRESCRIT':
+      return L([`Bonjour ${prenom},`,`Concernant ${vol}, le dossier est clos pour prescription ou délai légal dépassé.`,`Nous pouvons détailler par message si besoin.`,`Robin des Airs`]);
+    default:
+      return L([`Bonjour ${prenom},`,`Mise à jour dossier ${d.id} (${vol}).`,`Robin des Airs`]);
+  }
+}
+
+function refreshWaPreview(id){
+  const d = DB.find(x=>x.id===id);
+  const sel = document.getElementById('upd-statut');
+  const ta = document.getElementById('crm-wa-msg');
+  const delaysEl = document.getElementById('crm-wa-delays');
+  if(!d||!sel||!ta) return;
+  const lrarIn = document.getElementById('upd-lrar');
+  const lrarVal = lrarIn && lrarIn.value ? lrarIn.value : d.lrar;
+  const draft = Object.assign({}, d, { lrar: lrarVal || null });
+  if(delaysEl){
+    const j = crmJalonsLrar(draft.lrar);
+    delaysEl.innerHTML = j.ok
+      ? `<strong>Depuis LRAR (accusé) ${draft.lrar}</strong> — 1re relance J+15 : ${j.rel1} — 2e relance J+30 : ${j.rel2} — saisine médiateur J+62 : ${j.med}. Indicatif : ~1 mois sans réponse exploitable de la compagnie → enchaînement des relances puis médiation.`
+      : `Renseignez la <strong>date réception LRAR</strong> pour calculer automatiquement J+15, J+30 et J+62 dans les messages.`;
+  }
+  ta.value = buildWaMessage(draft, sel.value);
+}
+
+function copyWaMsg(){
+  const ta = document.getElementById('crm-wa-msg');
+  if(!ta||!ta.value) return;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(ta.value).then(function(){ showCrmToast('Message copié — collez-le dans WhatsApp'); });
+  } else {
+    ta.select();
+    document.execCommand('copy');
+    showCrmToast('Message copié — collez-le dans WhatsApp');
+  }
+}
+
+function showCrmToast(msg){
+  var el = document.getElementById('crm-wa-toast');
+  if(!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(function(){ el.classList.remove('show'); }, 2400);
+}
+
 function today(){ return new Date().toISOString().slice(0,10); }
+
+/** Affichage date/heure d’audit (nouvelles entrées avec `when` ISO, anciennes = date seule). */
+function formatEventWhen(e){
+  if(e.when){
+    try {
+      return new Date(e.when).toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'});
+    } catch(x){}
+  }
+  return e.date || '—';
+}
+
+/** Obligatoire avant toute écriture sur un dossier. */
+function requireCrmAgent(){
+  if(getCrmAgent()) return true;
+  showCrmToast('Renseignez votre nom dans « Votre nom (traçabilité) » en haut');
+  var el = document.getElementById('crm-agent-input');
+  if(el){
+    el.focus();
+    el.style.boxShadow='0 0 0 2px #fbbf24';
+    setTimeout(function(){ el.style.boxShadow=''; }, 2800);
+  }
+  return false;
+}
+
+/** Ligne d’historique avec agent + horodatage. */
+function crmAuditEvent(d, action, meta){
+  d.events.push({
+    date: today(),
+    when: new Date().toISOString(),
+    action: action,
+    meta: typeof meta === 'string' ? meta : '',
+    by: getCrmAgent() || 'Agent non renseigné'
+  });
+}
+
 function addDays(d,n){ const x=new Date(d); x.setDate(x.getDate()+n); return x.toISOString().slice(0,10); }
 function diffDays(a,b){ return Math.floor((new Date(b)-new Date(a))/(86400000)); }
 
@@ -397,11 +766,18 @@ let DB=[
   {id:'RDA-2026-001',statut:'PAYE',priorite:'STANDARD',date:'2026-01-15',date_paiement:'2026-01-28',source:'fb_reels',lrar:'2026-01-13',
    prenom:'Aminata',nom:'DIALLO',indicatif:'+33',tel:'6 12 34 56 78',email:'aminata@gmail.com',adultes:1,bebes:0,
    vols:[{comp:'Air France',vol:'AF 718',date:'2025-11-03',dep:'CDG',arr:'DSS',pnr:'AB4XYZ',inc:'RETARD'}],
-   palier:600,events:[{date:'2026-01-10',action:'Mandat signé (YouSign)',meta:''},{date:'2026-01-12',action:'LRAR envoyée',meta:'Réf. AR 1A002'},{date:'2026-01-28',action:'Paiement reçu + reversé',meta:'600€ encaissés — 450€ reversés'}]},
+   palier:600,pieces:[
+     {id:'p1',cat:'MANDAT',filename:'Mandat_Yousign.pdf',added:'2026-01-10',sizeKb:142,dataUrl:null},
+     {id:'p2',cat:'RIB',filename:'RIB_aminata.pdf',added:'2026-01-11',sizeKb:88,dataUrl:null},
+     {id:'p3',cat:'LRAR_PREUVE',filename:'AR_LRAR_1A002.pdf',added:'2026-01-12',sizeKb:210,dataUrl:null}
+   ],events:[{date:'2026-01-10',action:'Mandat signé (YouSign)',meta:''},{date:'2026-01-12',action:'LRAR envoyée',meta:'Réf. AR 1A002'},{date:'2026-01-28',action:'Paiement reçu + reversé',meta:'600€ encaissés — 450€ reversés'}]},
   {id:'RDA-2026-002',statut:'LRAR_ENVOYEE',priorite:'HAUTE',date:'2026-02-01',date_paiement:null,source:'tiktok_ad',lrar:'2026-02-03',
    prenom:'Kofi',nom:'ASANTE',indicatif:'+33',tel:'7 98 76 54 32',email:'kofi@hotmail.fr',adultes:3,bebes:1,
    vols:[{comp:'Air France',vol:'AF 704',date:'2026-01-10',dep:'CDG',arr:'DLA',pnr:'ZK9PLM',inc:'ANNULATION'}],
-   palier:600,events:[{date:'2026-02-01',action:'3 mandats signés (bébé exclu)',meta:''},{date:'2026-02-03',action:'LRAR envoyée',meta:'Délai 15j'}]},
+   palier:600,pieces:[
+     {id:'pk1',cat:'EMBARQUEMENT',filename:'Carte_embarquement_Kofi.jpg',added:'2026-02-01',sizeKb:640,dataUrl:null},
+     {id:'pk2',cat:'IDENTITE',filename:'CNI_Kofi.pdf',added:'2026-02-01',sizeKb:320,dataUrl:null}
+   ],events:[{date:'2026-02-01',action:'3 mandats signés (bébé exclu)',meta:''},{date:'2026-02-03',action:'LRAR envoyée',meta:'Délai 15j'}]},
   {id:'RDA-2026-003',statut:'ELIGIBLE',priorite:'STANDARD',date:'2026-02-10',date_paiement:null,source:'organic_site',lrar:null,
    prenom:'Fatou',nom:'CAMARA',indicatif:'+33',tel:'6 55 44 33 22',email:'fatou.c@yahoo.fr',adultes:2,bebes:0,
    vols:[{comp:'Transavia',vol:'TO 9612',date:'2026-01-20',dep:'ORY',arr:'BKO',pnr:'CX3NOP',inc:'RETARD'}],
@@ -414,14 +790,273 @@ let DB=[
    prenom:'Marie',nom:'BATUMELO',indicatif:'+33',tel:'6 77 88 99 00',email:'marie.b@outlook.com',adultes:1,bebes:1,
    vols:[{comp:'Air France',vol:'AF 732',date:'2026-02-18',dep:'CDG',arr:'BKO',pnr:'GH2IJK',inc:'RETARD'}],
    palier:600,events:[{date:'2026-03-01',action:'Mandat signé (YouSign)',meta:'Bébé présent — non indemnisé'}]},
+  {id:'RDA-2026-006',statut:'MEDIATION',priorite:'STANDARD',date:'2025-10-20',date_paiement:null,source:'whatsapp',lrar:'2025-11-07',
+   prenom:'Ibrahim',nom:'SY',indicatif:'+33',tel:'6 11 22 33 44',email:'ibrahim.sy@mail.fr',adultes:1,bebes:0,
+   vols:[{comp:'Air France',vol:'AF 596',date:'2025-09-12',dep:'CDG',arr:'ABJ',pnr:'LMN45K',inc:'RETARD'}],
+   palier:600,events:[{date:'2025-10-20',action:'Dossier créé',meta:''},{date:'2025-11-01',action:'Mandat signé',meta:''},{date:'2025-11-07',action:'LRAR envoyée',meta:''},{date:'2025-11-22',action:'Relance 1 (J+15)',meta:''},{date:'2025-12-07',action:'Relance 2 (J+30)',meta:''},{date:'2026-01-08',action:'Saisine médiateur (J+62)',meta:''}]},
 ];
+var CRM_LS_KEY = 'rda_crm_db_v1';
+
+function loadCrmDbFromStorage(){
+  try{
+    var raw = localStorage.getItem(CRM_LS_KEY);
+    if(!raw) return;
+    var j = JSON.parse(raw);
+    if(!Array.isArray(j) || j.length<1) return;
+    DB.length = 0;
+    j.forEach(function(d){ DB.push(d); });
+    DB.forEach(function(d){
+      if(!Array.isArray(d.pieces)) d.pieces = [];
+      if(!Array.isArray(d.events)) d.events = [];
+      if(!Array.isArray(d.vols) || !d.vols.length) d.vols = [{comp:'—',vol:'—',date:'—',dep:'',arr:'',pnr:'',inc:'RETARD'}];
+    });
+  } catch(e){ console.warn('CRM load', e); }
+}
+loadCrmDbFromStorage();
+DB.forEach(function(d){ if(!Array.isArray(d.pieces)) d.pieces = []; });
+
+const PIECES_CAT_LABELS = {
+  EMBARQUEMENT:'Carte embarquement / billet',
+  IDENTITE:'CNI / passeport',
+  MANDAT:'Mandat signé',
+  RIB:'RIB',
+  LRAR_PREUVE:'Preuve envoi LRAR / AR',
+  ECHANGE_COMPAGNIE:'Échanges compagnie',
+  AUTRE:'Autre'
+};
+
+function ensurePieces(d){ if(!Array.isArray(d.pieces)) d.pieces = []; }
+
+function persistCrmDb(){
+  try{
+    var slim = DB.map(function(d){
+      var copy = JSON.parse(JSON.stringify(d));
+      if(copy.pieces) copy.pieces = copy.pieces.map(function(p){
+        var x = Object.assign({}, p);
+        delete x.dataUrl;
+        return x;
+      });
+      return copy;
+    });
+    localStorage.setItem(CRM_LS_KEY, JSON.stringify(slim));
+  } catch(e){
+    showCrmToast('Sauvegarde impossible (stockage plein ?)');
+  }
+}
+
+function resetCrmData(){
+  if(!confirm('Rétablir les dossiers de démonstration ? Toutes les modifications et la sauvegarde locale seront effacées.')) return;
+  try{ localStorage.removeItem(CRM_LS_KEY); }catch(e){}
+  location.reload();
+}
+
+function csvEscape(x){
+  var s = String(x==null?'':x);
+  if(/[;"\n\r]/.test(s)) return '"'+s.replace(/"/g,'""')+'"';
+  return s;
+}
+
+function exportCrmCsv(){
+  var headers = ['id','statut','priorite','prenom','nom','email','indicatif','tel','adultes','bebes','palier','lrar','date_paiement','source','vol','trajet','pnr','nb_pieces','date_creation_dossier'];
+  var lines = [headers.join(';')];
+  DB.forEach(function(d){
+    var v = d.vols&&d.vols[0]?d.vols[0]:{};
+    var row = [d.id,d.statut,d.priorite,d.prenom,d.nom,d.email,d.indicatif,d.tel,d.adultes,d.bebes,d.palier,d.lrar||'',d.date_paiement||'',d.source,v.vol||'',((v.dep||'')+'→'+(v.arr||'')),v.pnr||'',(d.pieces||[]).length,d.date||''];
+    lines.push(row.map(csvEscape).join(';'));
+  });
+  var blob = new Blob(['\ufeff'+lines.join('\n')],{type:'text/csv;charset=utf-8;'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'robin-crm-'+today()+'.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showCrmToast('Export CSV téléchargé');
+}
+
+function crmE164Digits(d){
+  var ind = String(d.indicatif||'').replace(/\D/g,'');
+  var num = String(d.tel||'').replace(/\D/g,'');
+  if(!num) return '';
+  if(ind==='33' && num.length===9) return '33'+num;
+  if(ind==='32'){
+    if(num.length===9) return '32'+num.replace(/^0+/,'');
+    if(num.length===10 && num[0]==='0') return '32'+num.slice(1);
+  }
+  if(ind) return ind+num;
+  return num;
+}
+
+function crmWhatsAppUrl(d){
+  var digits = crmE164Digits(d);
+  if(digits.length<10) return '';
+  var prenom = String(d.prenom||'client').trim();
+  var id = String(d.id||'');
+  var body = 'Bonjour '+prenom+", c'est Robin des Airs concernant le dossier "+id+". ";
+  return 'https://wa.me/'+digits+'?text='+encodeURIComponent(body);
+}
+
+function parseCRMDate(iso){
+  if(!iso||typeof iso!=='string') return null;
+  var p = iso.slice(0,10).split('-');
+  if(p.length!==3) return null;
+  var dt = new Date(parseInt(p[0],10), parseInt(p[1],10)-1, parseInt(p[2],10));
+  return isNaN(dt.getTime())?null:dt;
+}
+
+function addDaysToISO(iso,n){
+  var d = parseCRMDate(iso);
+  if(!d) return null;
+  d.setDate(d.getDate()+n);
+  return d.toISOString().slice(0,10);
+}
+
+function renderJalons(){
+  var el = document.getElementById('crm-jalons');
+  if(!el) return;
+  var rows = [];
+  DB.forEach(function(d){
+    if(!d.lrar) return;
+    var j15 = addDaysToISO(d.lrar, 15);
+    var j30 = addDaysToISO(d.lrar, 30);
+    var j62 = addDaysToISO(d.lrar, 62);
+    var label = '', due = '';
+    if(d.statut==='LRAR_ENVOYEE'){ label = 'Relance 1 (J+15)'; due = j15; }
+    else if(d.statut==='RELANCE_1'){ label = 'Relance 2 (J+30)'; due = j30; }
+    else if(d.statut==='RELANCE_2'){ label = 'Médiation / saisine (J+62)'; due = j62; }
+    else if(d.statut==='MEDIATION'){ label = 'Suivi médiation (réf. J+62)'; due = j62; }
+    else return;
+    if(!due) return;
+    rows.push({d:d, label:label, due:due, lrar:d.lrar});
+  });
+  rows.sort(function(a,b){ return a.due < b.due ? -1 : (a.due > b.due ? 1 : 0); });
+  rows = rows.slice(0, 15);
+  if(!rows.length){
+    el.innerHTML = '<div class="crm-jalons-title">Prochains jalons (LRAR)</div><p style="font-size:13px;color:#6B7280;margin:0">Aucun dossier avec LRAR et statut relances / médiation.</p>';
+    return;
+  }
+  var todayIso = today();
+  el.innerHTML = '<div class="crm-jalons-title">Prochains jalons (à partir de la date LRAR)</div><div class="crm-jalons-list">'+
+    rows.map(function(r){
+      var overdue = r.due < todayIso;
+      return '<div class="crm-jalon-row'+(overdue?' overdue':'')+'" onclick="openDetail(\''+r.d.id+'\')" style="cursor:pointer"><div><strong>'+escHtml(r.label)+'</strong><div class="j-meta">'+escHtml(r.d.id)+' — '+escHtml(r.d.prenom+' '+r.d.nom)+' · LRAR '+escHtml(r.lrar)+'</div></div><div style="text-align:right;white-space:nowrap"><span style="font-weight:700;color:'+(overdue?'#B91C1C':'#1D4ED8')+'">'+escHtml(r.due)+'</span>'+(overdue?'<div style="font-size:11px;color:#B91C1C">En retard</div>':'')+'</div></div>';
+    }).join('')+'</div>';
+}
+
+function escAttr(s){
+  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+}
+
+function escHtml(s){
+  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+}
+
+function crmIndicatifOptions(val){
+  var o=[['+33','🇫🇷 +33'],['+32','🇧🇪 +32'],['+41','🇨🇭 +41'],['+31','🇳🇱 +31'],['+44','🇬🇧 +44'],['+221','🇸🇳 +221'],['+225','🇨🇮 +225'],['+243','🇨🇩 +243'],['+223','🇲🇱 +223'],['+237','🇨🇲 +237'],['+229','🇧🇯 +229'],['+212','🇲🇦 +212'],['+213','🇩🇿 +213'],['+216','🇹🇳 +216']];
+  return o.map(function(x){ return '<option value="'+x[0]+'"'+(x[0]===val?' selected':'')+'>'+x[1]+'</option>'; }).join('');
+}
+
+function formatPiecesRows(d,id){
+  ensurePieces(d);
+  if(!d.pieces.length) return '<p class="crm-doc-empty">Aucune pièce. Ajoutez des fichiers ci-dessous — ils restent dans <strong>ce navigateur</strong> uniquement (pas de serveur). Pour un classeur partagé, branchez un drive ou une base.</p>';
+  return '<div class="crm-doc-list">'+d.pieces.map(function(p){
+    var openBtn = p.dataUrl
+      ? '<a class="btn btn-sm btn-primary" href="'+p.dataUrl+'" download="'+escAttr(String(p.filename).replace(/[^a-zA-Z0-9._-]/g,'_'))+'" target="_blank" rel="noopener">Ouvrir</a>'
+      : '<span style="font-size:11px;color:#9CA3AF;max-width:110px;text-align:right">Réf. seule<br>(pas de fichier)</span>';
+    return '<div class="crm-doc-row"><div><div class="crm-doc-name">'+escHtml(p.filename)+'</div><div class="crm-doc-meta">'+(PIECES_CAT_LABELS[p.cat]||p.cat)+' · '+escHtml(p.added)+(p.sizeKb!=null?' · '+p.sizeKb+' Ko':'')+'</div></div><div class="crm-doc-actions">'+openBtn+'<button type="button" class="btn btn-sm btn-danger" onclick="removePiece(\''+id+'\',\''+p.id+'\')">Retirer</button></div></div>';
+  }).join('')+'</div>';
+}
+
+function buildEditVolsHtml(d){
+  return d.vols.map(function(v,i){
+    return '<div style="border:1px solid #E2E4E8;border-radius:8px;padding:12px;margin-bottom:10px;background:#F7F8FA"><div style="font-size:11px;font-weight:700;color:#6B7280;margin-bottom:8px;text-transform:uppercase">Vol '+(i+1)+(i===d.vols.length-1?' — déterminant':'')+'</div><div class="row3"><div class="field"><label>Compagnie</label><input id="edit-v-'+i+'-comp" value="'+escAttr(v.comp)+'"></div><div class="field"><label>N° vol</label><input id="edit-v-'+i+'-vol" value="'+escAttr(v.vol)+'"></div><div class="field"><label>Date</label><input id="edit-v-'+i+'-date" type="date" value="'+escAttr(v.date)+'"></div></div><div class="row3"><div class="field"><label>Départ (IATA)</label><input id="edit-v-'+i+'-dep" maxlength="3" value="'+escAttr(v.dep)+'"></div><div class="field"><label>Arrivée (IATA)</label><input id="edit-v-'+i+'-arr" maxlength="3" value="'+escAttr(v.arr)+'"></div><div class="field"><label>PNR</label><input id="edit-v-'+i+'-pnr" maxlength="6" value="'+escAttr(v.pnr)+'"></div></div><div class="field"><label>Incident</label><select id="edit-v-'+i+'-inc"><option value="RETARD"'+(v.inc==='RETARD'?' selected':'')+'>Retard ≥ 3h</option><option value="ANNULATION"'+(v.inc==='ANNULATION'?' selected':'')+'>Annulation</option><option value="CORRESPONDANCE_MANQUEE"'+(v.inc==='CORRESPONDANCE_MANQUEE'?' selected':'')+'>Correspondance manquée</option><option value="REFUS_EMBARQUEMENT"'+(v.inc==='REFUS_EMBARQUEMENT'?' selected':'')+'>Refus embarquement</option></select></div></div>';
+  }).join('');
+}
+
+function crmFocusTabFromHeader(tabId){
+  if(!window._crmOpenId) return;
+  var el = document.querySelector('#detail-body .tab[data-tab="'+tabId+'"]');
+  if(el) switchTab(el, tabId);
+}
+
+function removePiece(dossierId, pieceId){
+  var d = DB.find(function(x){ return x.id===dossierId; });
+  if(!d||!d.pieces) return;
+  if(!requireCrmAgent()) return;
+  d.pieces = d.pieces.filter(function(p){ return p.id!==pieceId; });
+  crmAuditEvent(d,'Pièce retirée du dossier','ID pièce : '+pieceId);
+  persistCrmDb();
+  openDetail(dossierId); render();
+  showCrmToast('Pièce retirée');
+}
+
+function addPieceFile(dossierId){
+  if(!requireCrmAgent()) return;
+  var d = DB.find(function(x){ return x.id===dossierId; });
+  if(!d) return;
+  ensurePieces(d);
+  var cat = document.getElementById('piece-new-cat').value;
+  var input = document.getElementById('piece-file-input');
+  var file = input.files && input.files[0];
+  if(!file){ alert('Choisissez un fichier.'); return; }
+  var max = 4*1024*1024;
+  if(file.size>max){ alert('Fichier trop volumineux (max 4 Mo dans ce CRM navigateur).'); return; }
+  var reader = new FileReader();
+  reader.onload = function(){
+    d.pieces.push({
+      id:'p'+Date.now(),
+      cat:cat,
+      filename:file.name,
+      added:today(),
+      sizeKb:Math.round(file.size/1024),
+      dataUrl:reader.result
+    });
+    crmAuditEvent(d,'Pièce ajoutée : '+file.name,(PIECES_CAT_LABELS[cat]||cat));
+    input.value='';
+    persistCrmDb();
+    openDetail(dossierId); render();
+    showCrmToast('Pièce enregistrée (mémoire navigateur)');
+  };
+  reader.onerror = function(){ alert('Lecture du fichier impossible.'); };
+  reader.readAsDataURL(file);
+}
+
+function saveEditDossier(id){
+  if(!requireCrmAgent()) return;
+  var d = DB.find(function(x){ return x.id===id; });
+  if(!d) return;
+  d.prenom = document.getElementById('edit-prenom').value.trim();
+  d.nom = document.getElementById('edit-nom').value.trim();
+  if(!d.prenom||!d.nom){ alert('Prénom et nom obligatoires.'); return; }
+  d.indicatif = document.getElementById('edit-indicatif').value;
+  d.tel = document.getElementById('edit-tel').value.trim();
+  d.email = document.getElementById('edit-email').value.trim();
+  d.adultes = Math.min(9,Math.max(1,parseInt(document.getElementById('edit-adultes').value,10)||1));
+  d.bebes = Math.min(9,Math.max(0,parseInt(document.getElementById('edit-bebes').value,10)||0));
+  d.palier = parseInt(document.getElementById('edit-palier').value,10)||600;
+  d.source = document.getElementById('edit-source').value;
+  for(var i=0;i<d.vols.length;i++){
+    d.vols[i].comp = document.getElementById('edit-v-'+i+'-comp').value.trim()||'—';
+    d.vols[i].vol = document.getElementById('edit-v-'+i+'-vol').value.trim()||'—';
+    d.vols[i].date = document.getElementById('edit-v-'+i+'-date').value||'—';
+    d.vols[i].dep = (document.getElementById('edit-v-'+i+'-dep').value||'').toUpperCase();
+    d.vols[i].arr = (document.getElementById('edit-v-'+i+'-arr').value||'').toUpperCase();
+    d.vols[i].pnr = (document.getElementById('edit-v-'+i+'-pnr').value||'').toUpperCase();
+    d.vols[i].inc = document.getElementById('edit-v-'+i+'-inc').value||'RETARD';
+  }
+  crmAuditEvent(d,'Fiche client modifiée','Identité, contact, palier, source ou vol(s) mis à jour');
+  document.getElementById('detail-title').textContent = d.id+' — '+d.prenom+' '+d.nom;
+  persistCrmDb();
+  showCrmToast('Modifications enregistrées');
+  render(); openDetail(id);
+}
 
 function filtered(){
   const q=(document.getElementById('search').value||'').toLowerCase();
   const st=document.getElementById('filterStatut').value;
   const pal=document.getElementById('filterPalier').value;
   return DB.filter(d=>{
-    const txt=(d.prenom+' '+d.nom+' '+d.vols[0].vol+' '+d.vols[0].pnr).toLowerCase();
+    const v0=(d.vols&&d.vols[0])?d.vols[0]:{vol:'',pnr:''};
+    const txt=(d.prenom+' '+d.nom+' '+v0.vol+' '+v0.pnr).toLowerCase();
     return(!q||txt.includes(q))&&(!st||d.statut===st)&&(!pal||d.palier===parseInt(pal));
   });
 }
@@ -442,13 +1077,15 @@ function renderMetrics(){
 
 function render(){
   renderMetrics();
+  renderJalons();
   const rows=filtered();
   const tbody=document.getElementById('tbody');
   if(!rows.length){
-    tbody.innerHTML='<tr><td colspan="9"><div class="empty-state"><p>Aucun dossier trouvé</p></div></td></tr>';
+    tbody.innerHTML='<tr><td colspan="10"><div class="empty-state"><p>Aucun dossier trouvé</p></div></td></tr>';
     return;
   }
   tbody.innerHTML=rows.map(d=>{
+    const v0=(d.vols&&d.vols[0])?d.vols[0]:{vol:'—',dep:'',arr:'',pnr:''};
     const f=calcFin(d.palier,d.adultes);
     const m=calcMoratoire(d.lrar);
     let morCell='<span style="color:#9CA3AF;font-size:12px">—</span>';
@@ -457,18 +1094,19 @@ function render(){
       else morCell=`<span class="moratoire-pill">${m.jours}j · ${m.total} €</span>`;
     }
     const nbBadge=d.adultes+d.bebes>1?` <span style="font-size:11px;color:#9CA3AF">×${d.adultes+d.bebes}${d.bebes>0?` (${d.bebes}bb)`:''}</span>`:'';
-    const volsBadge=d.vols.length>1?` <span style="font-size:10px;background:#DBEAFE;color:#1D4ED8;padding:1px 5px;border-radius:10px;font-weight:600">×${d.vols.length} vols</span>`:'';
+    const volsBadge=(d.vols&&d.vols.length>1)?` <span style="font-size:10px;background:#DBEAFE;color:#1D4ED8;padding:1px 5px;border-radius:10px;font-weight:600">×${d.vols.length} vols</span>`:'';
     const statutCell=`<span class="badge s-${d.statut}">${STATUT_LABELS[d.statut]||d.statut}</span>${d.statut==='PAYE'&&d.date_paiement?`<div style="font-size:10px;color:#9CA3AF;margin-top:3px">${d.date_paiement}</div>`:''}`;
     return`<tr onclick="openDetail('${d.id}')">
       <td><div class="td-id">${d.id}</div><div class="td-sub">${d.date}</div></td>
       <td>${d.prenom} ${d.nom}${nbBadge}</td>
-      <td>${d.vols[0].vol}${volsBadge}<div class="td-sub">${d.vols[0].dep} → ${d.vols[0].arr}</div></td>
+      <td>${v0.vol}${volsBadge}<div class="td-sub">${v0.dep} → ${v0.arr}</div></td>
       <td style="font-weight:700;color:${d.palier===600?'#007A4C':d.palier===400?'#1D4ED8':'#5F5E5A'}">${d.palier} €</td>
       <td><span style="font-weight:700;color:#007A4C">${f.net.toLocaleString('fr-FR')} €</span><div class="td-sub">${f.parPax.toLocaleString('fr-FR')} €/pers</div></td>
       <td style="font-weight:700;color:#0B1F3A">${f.comm.toLocaleString('fr-FR')} €</td>
       <td>${morCell}</td>
       <td>${statutCell}</td>
       <td class="prio-${d.priorite}">${d.priorite}</td>
+      <td><span class="doc-count-pill" title="Pièces jointes">${(d.pieces||[]).length}</span></td>
     </tr>`;
   }).join('');
 }
@@ -476,6 +1114,15 @@ function render(){
 function openDetail(id){
   const d=DB.find(x=>x.id===id);
   if(!d)return;
+  ensurePieces(d);
+  if(!Array.isArray(d.vols) || !d.vols.length) d.vols = [{comp:'—',vol:'—',date:'—',dep:'',arr:'',pnr:'',inc:'RETARD'}];
+  window._crmOpenId = id;
+  const waUrl = crmWhatsAppUrl(d);
+  var wab = document.getElementById('crm-detail-wa-btn');
+  if(wab){
+    if(waUrl){ wab.href = waUrl; wab.style.display = 'inline-flex'; }
+    else { wab.style.display = 'none'; wab.removeAttribute('href'); }
+  }
   const f=calcFin(d.palier,d.adultes);
   const m=calcMoratoire(d.lrar);
   document.getElementById('detail-title').textContent=`${d.id} — ${d.prenom} ${d.nom}`;
@@ -491,17 +1138,23 @@ function openDetail(id){
     <div class="calc-total" style="color:#92400E"><span>Total moratoire exigible</span><span>${m.total.toFixed(2)} €</span></div>`}
   </div>`:'';
 
+  const pieceCatSelectOpts = Object.keys(PIECES_CAT_LABELS).map(function(k){ return '<option value="'+k+'">'+PIECES_CAT_LABELS[k]+'</option>'; }).join('');
+  const editSourceOpts = [['autre','Autre'],['tiktok_ad','TikTok Ads'],['fb_reels','Facebook / Reels'],['instagram','Instagram'],['youtube','YouTube'],['whatsapp','WhatsApp direct'],['referral','Parrainage'],['organic_site','Site organique'],['blog','Blog Robin des Airs']].map(function(x){ return '<option value="'+x[0]+'"'+(d.source===x[0]?' selected':'')+'>'+x[1]+'</option>'; }).join('');
+
   document.getElementById('detail-body').innerHTML=`
   <div class="tabs">
-    <div class="tab active" onclick="switchTab(this,'t-info')">Dossier</div>
-    <div class="tab" onclick="switchTab(this,'t-calc')">Calculs</div>
-    <div class="tab" onclick="switchTab(this,'t-hist')">Historique</div>
-    <div class="tab" onclick="switchTab(this,'t-upd')">Mettre à jour</div>
+    <div class="tab active" data-tab="t-info" onclick="switchTab(this,'t-info')">Dossier</div>
+    <div class="tab" data-tab="t-calc" onclick="switchTab(this,'t-calc')">Calculs</div>
+    <div class="tab" data-tab="t-hist" onclick="switchTab(this,'t-hist')">Historique</div>
+    <div class="tab" data-tab="t-pieces" onclick="switchTab(this,'t-pieces')">Pièces</div>
+    <div class="tab" data-tab="t-edit" onclick="switchTab(this,'t-edit')">Modifier</div>
+    <div class="tab" data-tab="t-upd" onclick="switchTab(this,'t-upd')">Mettre à jour</div>
   </div>
   <div class="tab-content active" id="t-info">
     <div class="section-title">Passager principal</div>
     <div class="detail-row"><span class="detail-label">Nom complet</span><span class="detail-val">${d.prenom} ${d.nom}</span></div>
     <div class="detail-row"><span class="detail-label">Téléphone</span><span class="detail-val">${d.indicatif} ${d.tel}</span></div>
+    <div class="detail-row"><span class="detail-label">WhatsApp</span><span class="detail-val">${waUrl?`<a class="btn btn-sm btn-wa" href="${escAttr(waUrl)}" target="_blank" rel="noopener" style="text-decoration:none;display:inline-flex">Contacter le client</a>`:'<span style="color:#9CA3AF;font-size:13px">Renseigner indicatif + téléphone</span>'}</span></div>
     <div class="detail-row"><span class="detail-label">E-mail</span><span class="detail-val">${d.email}</span></div>
     <div class="detail-row"><span class="detail-label">Adultes (indemnisés)</span><span class="detail-val">${d.adultes}</span></div>
     <div class="detail-row"><span class="detail-label">Bébés &lt; 2 ans (non indemnisés)</span><span class="detail-val">${d.bebes}</span></div>
@@ -514,6 +1167,9 @@ function openDetail(id){
       <div class="detail-row" style="border:none"><span class="detail-label">PNR</span><span class="detail-val" style="font-family:monospace">${v.pnr}</span></div>
     </div>`).join('')}
     <div class="detail-row"><span class="detail-label">Source</span><span class="detail-val">${d.source}</span></div>
+    <div class="section-title">Pièces jointes (${(d.pieces||[]).length})</div>
+    <p style="font-size:12px;color:#6B7280;margin-bottom:10px">Vue synthèse — détail et ajout dans l’onglet <strong>Pièces</strong> ou bouton <strong>Pièces du dossier</strong> en haut.</p>
+    ${(d.pieces||[]).length?`<ul style="font-size:13px;line-height:1.6;margin:0;padding-left:18px;color:#1A1A2E">${d.pieces.map(p=>`<li>${escHtml(p.filename)} <span style="color:#9CA3AF">(${PIECES_CAT_LABELS[p.cat]||p.cat})</span></li>`).join('')}</ul>`:'<p style="font-size:12px;color:#9CA3AF">Aucune pièce répertoriée.</p>'}
   </div>
   <div class="tab-content" id="t-calc">
     <div class="calc-box">
@@ -531,33 +1187,89 @@ function openDetail(id){
     ${moratoireHTML}
   </div>
   <div class="tab-content" id="t-hist">
-    ${d.events.map(e=>`<div class="event-item"><div class="event-dot"></div><div><div class="event-text">${e.action}</div><div class="event-meta">${e.meta?e.meta+' · ':''}${e.date}</div></div></div>`).join('')}
+    ${d.events.map(e=>`<div class="event-item"><div class="event-dot"></div><div><div class="event-text">${escHtml(e.action)}</div>${e.meta?'<div class="event-meta">'+escHtml(e.meta)+'</div>':''}<div class="event-trace"><strong>Modifié par</strong> ${escHtml(e.by||'— (historique non tracé)')} · <strong>Le</strong> ${escHtml(formatEventWhen(e))}</div></div></div>`).join('')}
     <div style="display:flex;gap:8px;margin-top:14px">
       <input id="ev-txt" style="flex:1;font-size:13px;padding:8px 11px;border-radius:6px;border:1px solid #E2E4E8;background:#fff;color:#1A1A2E;outline:none" placeholder="Ajouter un événement…" onkeydown="if(event.key==='Enter')addEvent('${id}')">
       <button class="btn btn-primary btn-sm" onclick="addEvent('${id}')">Ajouter</button>
     </div>
   </div>
+  <div class="tab-content" id="t-pieces">
+    <p style="font-size:12px;color:#6B7280;margin-bottom:12px;line-height:1.5"><strong>${(d.pieces||[]).length}</strong> pièce(s) sur ce dossier. Les fichiers ajoutés ici sont stockés dans la mémoire du navigateur (rechargement = perte si pas d’export futur).</p>
+    <div id="crm-pieces-list-wrap">${formatPiecesRows(d,id)}</div>
+    <div class="crm-piece-add">
+      <div class="crm-piece-add-title">Ajouter une pièce</div>
+      <div class="field"><label>Type de document</label>
+        <select id="piece-new-cat">${pieceCatSelectOpts}</select>
+      </div>
+      <div class="field"><label>Fichier (PDF, image… max 4 Mo)</label>
+        <input type="file" id="piece-file-input" accept=".pdf,.jpg,.jpeg,.png,.webp,.heic,image/*,application/pdf">
+      </div>
+      <button type="button" class="btn btn-primary btn-sm" onclick="addPieceFile('${id}')">Enregistrer la pièce</button>
+    </div>
+  </div>
+  <div class="tab-content" id="t-edit">
+    <div class="section-title">Identité & contact</div>
+    <div class="row2">
+      <div class="field"><label>Prénom</label><input id="edit-prenom" value="${escAttr(d.prenom)}"></div>
+      <div class="field"><label>Nom</label><input id="edit-nom" value="${escAttr(d.nom)}"></div>
+    </div>
+    <div class="field"><label>Téléphone</label>
+      <div class="indicatif-row">
+        <select id="edit-indicatif">${crmIndicatifOptions(d.indicatif)}</select>
+        <input id="edit-tel" value="${escAttr(d.tel)}">
+      </div>
+    </div>
+    <div class="field"><label>E-mail</label><input id="edit-email" type="email" value="${escAttr(d.email)}"></div>
+    <div class="row2">
+      <div class="field"><label>Adultes indemnisés</label><input id="edit-adultes" type="number" min="1" max="9" value="${d.adultes}"></div>
+      <div class="field"><label>Bébés (&lt; 2 ans)</label><input id="edit-bebes" type="number" min="0" max="9" value="${d.bebes}"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Palier CE 261 (€)</label>
+        <select id="edit-palier">
+          <option value="600"${d.palier===600?' selected':''}>600 €</option>
+          <option value="400"${d.palier===400?' selected':''}>400 €</option>
+          <option value="250"${d.palier===250?' selected':''}>250 €</option>
+        </select>
+      </div>
+      <div class="field"><label>Source acquisition</label><select id="edit-source">${editSourceOpts}</select></div>
+    </div>
+    <div class="section-title">Vols (${d.vols.length})</div>
+    ${buildEditVolsHtml(d)}
+    <button type="button" class="btn btn-primary" onclick="saveEditDossier('${id}')">Enregistrer les modifications</button>
+  </div>
   <div class="tab-content" id="t-upd">
     <div class="field"><label>Statut</label>
-      <select id="upd-statut" onchange="togglePaiementField(this.value)">
-        ${Object.entries(STATUT_LABELS).map(([k,v])=>`<option value="${k}"${k===d.statut?' selected':''}>${v}</option>`).join('')}
+      <select id="upd-statut" onchange="togglePaiementField(this.value); refreshWaPreview('${id}')">
+        ${STATUT_ORDER.filter(k=>STATUT_LABELS[k]).map(k=>`<option value="${k}"${k===d.statut?' selected':''}>${STATUT_LABELS[k]}</option>`).join('')}
       </select>
     </div>
     <div id="paiement-field" style="${d.statut==='PAYE'?'':'display:none'}">
       <div class="field"><label>Date de paiement</label><input id="upd-date-paiement" type="date" value="${d.date_paiement||''}"></div>
     </div>
-    <div class="field"><label>Date réception LRAR (démarre le compteur moratoire)</label><input id="upd-lrar" type="date" value="${d.lrar||''}"></div>
+    <div class="field"><label>Date réception LRAR (mise en demeure — compteur moratoire + jalons J+15 / J+30 / J+62)</label><input id="upd-lrar" type="date" value="${d.lrar||''}" onchange="refreshWaPreview('${id}')"></div>
     <div class="field"><label>Priorité</label>
       <select id="upd-prio">
         ${['BASSE','STANDARD','HAUTE','URGENTE'].map(p=>`<option value="${p}"${p===d.priorite?' selected':''}>${p}</option>`).join('')}
       </select>
     </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <div class="crm-wa-box">
+      <div class="crm-wa-box-title">Message WhatsApp — modèle pour l’étape sélectionnée</div>
+      <div id="crm-wa-delays" class="crm-wa-delays"></div>
+      <textarea id="crm-wa-msg" class="crm-wa-textarea" aria-label="Modèle message WhatsApp"></textarea>
+      <div class="crm-wa-actions">
+        <button type="button" class="btn btn-primary btn-sm" onclick="copyWaMsg()">Copier le message</button>
+        <button type="button" class="btn btn-sm" onclick="refreshWaPreview('${id}')">Rafraîchir</button>
+      </div>
+      <p style="font-size:11px;color:#6B7280;margin-top:10px;line-height:1.45">À personnaliser avant envoi. Après « Enregistrer », copiez le message adapté au nouveau statut pour tenir le client informé.</p>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
       <button class="btn btn-primary" onclick="updateDossier('${id}')">Enregistrer</button>
       <button class="btn btn-danger" onclick="genLettre('${id}')">Générer mise en demeure ↗</button>
     </div>
   </div>`;
   document.getElementById('modalDetail').style.display='flex';
+  setTimeout(function(){ refreshWaPreview(id); }, 0);
 }
 
 function togglePaiementField(val){
@@ -572,20 +1284,36 @@ function switchTab(el,id){
 }
 
 function addEvent(id){
+  if(!requireCrmAgent()) return;
   const d=DB.find(x=>x.id===id), txt=document.getElementById('ev-txt').value.trim();
   if(!d||!txt)return;
-  d.events.push({date:today(),action:txt,meta:''});
+  crmAuditEvent(d, txt, 'Note / événement manuel');
+  persistCrmDb();
   openDetail(id); render();
 }
 
 function updateDossier(id){
+  if(!requireCrmAgent()) return;
   const d=DB.find(x=>x.id===id); if(!d)return;
+  const prev = d.statut;
+  const prevPrio = d.priorite;
+  const prevLrar = d.lrar;
+  const prevPay = d.date_paiement;
   d.statut=document.getElementById('upd-statut').value;
   d.priorite=document.getElementById('upd-prio').value;
   d.lrar=document.getElementById('upd-lrar').value||null;
   if(d.statut==='PAYE') d.date_paiement=document.getElementById('upd-date-paiement').value||today();
-  d.events.push({date:today(),action:`Statut mis à jour → ${STATUT_LABELS[d.statut]}`,meta:''});
+  const parts = [];
+  if(prev!==d.statut) parts.push('Statut : '+(STATUT_LABELS[prev]||prev)+' → '+(STATUT_LABELS[d.statut]||d.statut));
+  if(prevPrio!==d.priorite) parts.push('Priorité : '+prevPrio+' → '+d.priorite);
+  if(String(prevLrar||'')!==String(d.lrar||'')) parts.push('Date LRAR : '+(prevLrar||'—')+' → '+(d.lrar||'—'));
+  if(d.statut==='PAYE' && String(prevPay||'')!==String(d.date_paiement||'')) parts.push('Date paiement : '+(prevPay||'—')+' → '+d.date_paiement);
+  var metaDetail = parts.join(' · ');
+  if(prev!==d.statut) metaDetail += (metaDetail?' · ':'')+'Penser à envoyer le message WhatsApp type si besoin';
+  crmAuditEvent(d, 'Modification suivi dossier (statut / LRAR / priorité)', metaDetail || 'Enregistrement (aucun changement détecté sur les champs suivis)');
+  persistCrmDb();
   render(); openDetail(id);
+  if(prev!==d.statut) showCrmToast('Statut enregistré — copiez le message WhatsApp pour le client');
 }
 
 function genLettre(id){
@@ -599,6 +1327,7 @@ function openNew(){
 }
 
 function saveNew(){
+  if(!requireCrmAgent()) return;
   const prenom=document.getElementById('n_prenom').value.trim();
   const nom=document.getElementById('n_nom').value.trim();
   if(!prenom||!nom){alert('Prénom et nom obligatoires');return;}
@@ -611,16 +1340,26 @@ function saveNew(){
     vols.push({comp:document.getElementById('vc'+i+'_comp')?.value||'—',vol:document.getElementById('vc'+i+'_vol')?.value||'—',date:document.getElementById('vc'+i+'_date')?.value||'—',dep:(document.getElementById('vc'+i+'_dep')?.value||'').toUpperCase(),arr:(document.getElementById('vc'+i+'_arr')?.value||'').toUpperCase(),pnr:(document.getElementById('vc'+i+'_pnr')?.value||'').toUpperCase(),inc:document.getElementById('vc'+i+'_inc')?.value||'RETARD'});
   }
   const id='RDA-2026-0'+String(DB.length+1).padStart(2,'0');
-  DB.unshift({id,statut:'ELIGIBLE',priorite:document.getElementById('n_priorite').value,date:today(),date_paiement:null,source:document.getElementById('n_source').value,lrar:null,prenom,nom,indicatif:document.getElementById('n_indicatif').value,tel:document.getElementById('n_tel').value,email:document.getElementById('n_email').value,adultes,bebes,vols,palier,events:[{date:today(),action:'Dossier créé — Éligible',meta:''}]});
+  const ag = getCrmAgent() || 'Agent non renseigné';
+  const ts = new Date().toISOString();
+  DB.unshift({id,statut:'ELIGIBLE',priorite:document.getElementById('n_priorite').value,date:today(),date_paiement:null,source:document.getElementById('n_source').value,lrar:null,prenom,nom,indicatif:document.getElementById('n_indicatif').value,tel:document.getElementById('n_tel').value,email:document.getElementById('n_email').value,adultes,bebes,vols,palier,pieces:[],events:[{date:today(),when:ts,action:'Dossier créé — Éligible',meta:'Création dans le CRM',by:ag}]});
+  persistCrmDb();
   closeAll(); render();
 }
 
 function closeAll(){
   document.getElementById('modalNew').style.display='none';
   document.getElementById('modalDetail').style.display='none';
+  window._crmOpenId = null;
 }
 
-render();
+(function bindCrmAgentField(){
+  var el = document.getElementById('crm-agent-input');
+  if(!el) return;
+  el.addEventListener('change', setCrmAgentFromInput);
+  el.addEventListener('blur', setCrmAgentFromInput);
+})();
+
 </script>
 </body>
 </html>
