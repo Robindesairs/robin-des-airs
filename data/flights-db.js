@@ -134,9 +134,18 @@ var DB = {
   'VY6120':{ r:'CDG→BCN', a:'Vueling', c:400 }, 'VY6121':{ r:'BCN→CDG', a:'Vueling', c:400 },
   'IB3440':{ r:'CDG→MAD', a:'Iberia', c:400 }, 'IB3441':{ r:'MAD→CDG', a:'Iberia', c:400 },
   'IB3442':{ r:'ORY→BCN', a:'Iberia', c:400 }, 'IB3443':{ r:'BCN→ORY', a:'Iberia', c:400 },
-  /* TAP / Swiss / Austrian / KLM */
-  'TP440':{ r:'CDG→LIS', a:'TAP Portugal', c:400 }, 'TP441':{ r:'LIS→CDG', a:'TAP Portugal', c:400 },
-  'TP442':{ r:'ORY→OPO', a:'TAP Portugal', c:400 }, 'TP443':{ r:'OPO→ORY', a:'TAP Portugal', c:400 },
+  /* TAP Portugal — hub Lisbonne ↔ Afrique uniquement (vols long-courrier Europe–Afrique ; pas CDG–LIS / ORY–OPO) */
+  'TP1927':{ r:'LIS→DKR', a:'TAP Portugal', c:600 }, 'TP1928':{ r:'DKR→LIS', a:'TAP Portugal', c:600 },
+  'TP1931':{ r:'LIS→BKO', a:'TAP Portugal', c:600 }, 'TP1932':{ r:'BKO→LIS', a:'TAP Portugal', c:600 },
+  'TP1935':{ r:'LIS→OXB', a:'TAP Portugal', c:600 }, 'TP1936':{ r:'OXB→LIS', a:'TAP Portugal', c:600 },
+  'TP1941':{ r:'LIS→BJL', a:'TAP Portugal', c:600 }, 'TP1942':{ r:'BJL→LIS', a:'TAP Portugal', c:600 },
+  'TP1947':{ r:'LIS→SID', a:'TAP Portugal', c:600 }, 'TP1948':{ r:'SID→LIS', a:'TAP Portugal', c:600 },
+  'TP1951':{ r:'LIS→RAI', a:'TAP Portugal', c:600 }, 'TP1952':{ r:'RAI→LIS', a:'TAP Portugal', c:600 },
+  'TP1957':{ r:'LIS→MPM', a:'TAP Portugal', c:600 }, 'TP1958':{ r:'MPM→LIS', a:'TAP Portugal', c:600 },
+  'TP1961':{ r:'LIS→LAD', a:'TAP Portugal', c:600 }, 'TP1962':{ r:'LAD→LIS', a:'TAP Portugal', c:600 },
+  'TP1965':{ r:'LIS→ACC', a:'TAP Portugal', c:600 }, 'TP1966':{ r:'ACC→LIS', a:'TAP Portugal', c:600 },
+  'TP1971':{ r:'LIS→TMS', a:'TAP Portugal', c:600 }, 'TP1972':{ r:'TMS→LIS', a:'TAP Portugal', c:600 },
+  /* Swiss / Austrian / KLM */
   'LX636':{ r:'GVA→CDG', a:'Swiss', c:250 }, 'LX637':{ r:'CDG→GVA', a:'Swiss', c:250 },
   'OS502':{ r:'VIE→CDG', a:'Austrian', c:400 }, 'OS503':{ r:'CDG→VIE', a:'Austrian', c:400 },
   'KL1224':{ r:'AMS→CDG', a:'KLM', c:250 }, 'KL1225':{ r:'CDG→AMS', a:'KLM', c:250 },

@@ -432,6 +432,12 @@
       'L’adresse postale complète est obligatoire (courrier recommandé, LRAR, dossier).',
     alert_co_pax_incomplete:
       'Renseignez le prénom et le nom de chaque autre passager indemnisé (autant que d’adultes − 1).',
+    dup_warn_intro:
+      'Attention : dossier(s) créé(s) dans les {{days}} derniers jours avec le même téléphone et/ou une adresse très proche :',
+    dup_tag_phone: 'tél. identique',
+    dup_tag_address: 'adresse proche',
+    dup_warn_create: 'Créer ce dossier quand même ? (Annuler = rester sur le formulaire)',
+    dup_warn_save: 'Enregistrer quand même ? (Annuler = rester sur la fiche)',
     lbl_adults: 'Adultes (indemnisés CE 261)',
     lbl_babies: 'Bébés < 2 ans (non indemnisés)',
     lbl_source: 'Source acquisition',
@@ -719,6 +725,12 @@
     alert_address_required: 'Full postal address is required (registered mail, formal notice, file).',
     alert_co_pax_incomplete:
       'Enter first and last name for each other compensated adult (as many as adults minus one).',
+    dup_warn_intro:
+      'Warning: case(s) created in the last {{days}} day(s) with the same phone and/or a very similar address:',
+    dup_tag_phone: 'same phone',
+    dup_tag_address: 'similar address',
+    dup_warn_create: 'Create this case anyway? (Cancel = stay on the form)',
+    dup_warn_save: 'Save anyway? (Cancel = stay on the record)',
     lbl_adults: 'Adults (compensated under EU261)',
     lbl_babies: 'Babies under 2 (not compensated)',
     lbl_source: 'Acquisition source',

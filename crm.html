@@ -972,6 +972,82 @@ function addDaysToISO(iso,n){
   return d.toISOString().slice(0,10);
 }
 
+/** Fenêtre « récent » pour doublon client (téléphone / adresse). */
+var CRM_DEDUP_RECENT_DAYS = 120;
+
+function crmIsDossierRecent(d, days) {
+  var dt = parseCRMDate(d.date);
+  if (!dt) return false;
+  var limit = new Date();
+  limit.setHours(0, 0, 0, 0);
+  limit.setDate(limit.getDate() - (days != null ? days : CRM_DEDUP_RECENT_DAYS));
+  return dt >= limit;
+}
+
+function crmNormalizeAddrKey(s) {
+  try {
+    return String(s || '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9\s]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  } catch (e) {
+    return String(s || '')
+      .toLowerCase()
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+}
+
+function crmFrenchPostalCode(s) {
+  var m = String(s || '').match(/\b(\d{5})\b/);
+  return m ? m[1] : '';
+}
+
+function crmAddressesMatch(a, b) {
+  var na = crmNormalizeAddrKey(a);
+  var nb = crmNormalizeAddrKey(b);
+  if (!na || !nb) return false;
+  if (na === nb) return true;
+  if (na.length >= 22 && nb.length >= 22 && (na.indexOf(nb) !== -1 || nb.indexOf(na) !== -1)) return true;
+  var ca = crmFrenchPostalCode(a);
+  var cb = crmFrenchPostalCode(b);
+  if (ca && ca === cb && na.length > 10 && nb.length > 10) return true;
+  return false;
+}
+
+function crmDupReasonLabel(reasons) {
+  var parts = [];
+  if (reasons.indexOf('phone') !== -1) parts.push(crmT('dup_tag_phone'));
+  if (reasons.indexOf('address') !== -1) parts.push(crmT('dup_tag_address'));
+  return parts.join(' + ');
+}
+
+/**
+ * Dossiers récents avec même n° (E.164 simplifié CRM) et/ou adresse proche.
+ * @param {{ excludeId?: string, indicatif: string, tel: string, adresse: string, days?: number }} opts
+ */
+function crmFindDuplicateDossiers(opts) {
+  var excludeId = opts.excludeId;
+  var days = opts.days != null ? opts.days : CRM_DEDUP_RECENT_DAYS;
+  var probe = { indicatif: opts.indicatif, tel: opts.tel };
+  var myDigits = crmE164Digits(probe);
+  var adresse = opts.adresse || '';
+  var out = [];
+  DB.forEach(function (d) {
+    if (excludeId && d.id === excludeId) return;
+    if (!crmIsDossierRecent(d, days)) return;
+    var reasons = [];
+    var their = crmE164Digits(d);
+    if (myDigits && their && myDigits.length >= 8 && myDigits === their) reasons.push('phone');
+    if (adresse && d.adresse && crmAddressesMatch(adresse, d.adresse)) reasons.push('address');
+    if (reasons.length) out.push({ dossier: d, reasons: reasons });
+  });
+  return out;
+}
+
 function renderJalons(){
   var el = document.getElementById('crm-jalons');
   if(!el) return;
@@ -1605,17 +1681,32 @@ function saveEditDossier(id){
   if(!requireCrmAgent()) return;
   var d = DB.find(function(x){ return x.id===id; });
   if(!d) return;
-  d.prenom = document.getElementById('edit-prenom').value.trim();
-  d.nom = document.getElementById('edit-nom').value.trim();
-  if(!d.prenom||!d.nom){ alert('Prénom et nom obligatoires.'); return; }
-  d.indicatif = document.getElementById('edit-indicatif').value;
-  d.tel = document.getElementById('edit-tel').value.trim();
-  d.email = document.getElementById('edit-email').value.trim();
-  d.adultes = Math.min(9,Math.max(1,parseInt(document.getElementById('edit-adultes').value,10)||1));
-  d.adresse = (document.getElementById('edit-adresse') && document.getElementById('edit-adresse').value || '').trim();
-  if(!d.adresse){ alert(crmT('alert_address_required')); return; }
-  d.coPassagers = crmParseCoPassengers('edit_copax_', crmCoPaxNeeded(d.adultes));
-  if(crmCoPaxNeeded(d.adultes) > 0 && !crmValidateCoPassengersComplete(d.coPassagers)){ alert(crmT('alert_co_pax_incomplete')); return; }
+  var prenom = document.getElementById('edit-prenom').value.trim();
+  var nom = document.getElementById('edit-nom').value.trim();
+  if(!prenom||!nom){ alert('Prénom et nom obligatoires.'); return; }
+  var indicatif = document.getElementById('edit-indicatif').value;
+  var tel = document.getElementById('edit-tel').value.trim();
+  var email = document.getElementById('edit-email').value.trim();
+  var adultes = Math.min(9,Math.max(1,parseInt(document.getElementById('edit-adultes').value,10)||1));
+  var adresse = (document.getElementById('edit-adresse') && document.getElementById('edit-adresse').value || '').trim();
+  if(!adresse){ alert(crmT('alert_address_required')); return; }
+  var coPassagers = crmParseCoPassengers('edit_copax_', crmCoPaxNeeded(adultes));
+  if(crmCoPaxNeeded(adultes) > 0 && !crmValidateCoPassengersComplete(coPassagers)){ alert(crmT('alert_co_pax_incomplete')); return; }
+  var dupEd = crmFindDuplicateDossiers({ excludeId: id, indicatif: indicatif, tel: tel, adresse: adresse });
+  if(dupEd.length){
+    var msgEd = crmT('dup_warn_intro', { days: String(CRM_DEDUP_RECENT_DAYS) }) + '\n\n' + dupEd.map(function(x){
+      return '• ' + x.dossier.id + ' — ' + x.dossier.prenom + ' ' + x.dossier.nom + ' (' + x.dossier.date + ') · ' + crmDupReasonLabel(x.reasons);
+    }).join('\n') + '\n\n' + crmT('dup_warn_save');
+    if(!confirm(msgEd)) return;
+  }
+  d.prenom = prenom;
+  d.nom = nom;
+  d.indicatif = indicatif;
+  d.tel = tel;
+  d.email = email;
+  d.adultes = adultes;
+  d.adresse = adresse;
+  d.coPassagers = coPassagers;
   crmNormalizeDossierContact(d);
   d.bebes = Math.min(9,Math.max(0,parseInt(document.getElementById('edit-bebes').value,10)||0));
   d.palier = parseInt(document.getElementById('edit-palier').value,10)||600;
@@ -2013,10 +2104,19 @@ function saveNew(){
     const el=document.getElementById('vc'+i); if(!el)continue;
     vols.push({comp:document.getElementById('vc'+i+'_comp')?.value||'—',vol:document.getElementById('vc'+i+'_vol')?.value||'—',date:document.getElementById('vc'+i+'_date')?.value||'—',dep:(document.getElementById('vc'+i+'_dep')?.value||'').trim(),arr:(document.getElementById('vc'+i+'_arr')?.value||'').trim(),pnr:(document.getElementById('vc'+i+'_pnr')?.value||'').toUpperCase(),inc:document.getElementById('vc'+i+'_inc')?.value||'RETARD'});
   }
+  const indicatifNew = document.getElementById('n_indicatif').value;
+  const telNew = document.getElementById('n_tel').value;
+  const dup = crmFindDuplicateDossiers({ indicatif: indicatifNew, tel: telNew, adresse: adresse });
+  if(dup.length){
+    var msgDup = crmT('dup_warn_intro', { days: String(CRM_DEDUP_RECENT_DAYS) }) + '\n\n' + dup.map(function(x){
+      return '• ' + x.dossier.id + ' — ' + x.dossier.prenom + ' ' + x.dossier.nom + ' (' + x.dossier.date + ') · ' + crmDupReasonLabel(x.reasons);
+    }).join('\n') + '\n\n' + crmT('dup_warn_create');
+    if(!confirm(msgDup)) return;
+  }
   const id = crmGenerateDossierId();
   const ag = getCrmAgent() || 'Agent non renseigné';
   const ts = new Date().toISOString();
-  DB.unshift({id,statut:'ELIGIBLE',priorite:document.getElementById('n_priorite').value,date:today(),date_statut:today(),date_paiement:null,source:crmNormalizeSource(document.getElementById('n_source').value),lrar:null,prenom,nom,indicatif:document.getElementById('n_indicatif').value,tel:document.getElementById('n_tel').value,email:document.getElementById('n_email').value,adresse,coPassagers,adultes,bebes,vols,palier,pieces:[],events:[{date:today(),when:ts,action:'Dossier créé — Éligible',meta:'Création dans le CRM',by:ag}]});
+  DB.unshift({id,statut:'ELIGIBLE',priorite:document.getElementById('n_priorite').value,date:today(),date_statut:today(),date_paiement:null,source:crmNormalizeSource(document.getElementById('n_source').value),lrar:null,prenom,nom,indicatif:indicatifNew,tel:telNew,email:document.getElementById('n_email').value,adresse,coPassagers,adultes,bebes,vols,palier,pieces:[],events:[{date:today(),when:ts,action:'Dossier créé — Éligible',meta:'Création dans le CRM',by:ag}]});
   persistCrmDb();
   closeAll(); render();
 }
@@ -2094,6 +2194,7 @@ function closeAll(){
 })();
 
 crmDialSyncInput('n_indicatif','+33');
+crmInitAddressAutocomplete('n_adresse_search', 'n_adresse_dd', 'n_adresse');
 
 </script>
 </body>
