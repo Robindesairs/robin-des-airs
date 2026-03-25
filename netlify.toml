@@ -93,6 +93,11 @@
   to = "/crm.html"
   status = 200
 
+[[redirects]]
+  from = "/generateur-pub"
+  to = "/generateur-pub.html"
+  status = 200
+
 # Auth CRM (code dans CRM_ACCESS_CODE)
 [[redirects]]
   from = "/api/crm-auth"

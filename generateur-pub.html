@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Générateur de pub — Robin des Airs (Meta 1:1)</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #0B1F3A;
+      --panel: #0f2744;
+      --border: rgba(255,255,255,0.12);
+      --text: #e8edf5;
+      --muted: #94a3b8;
+      --accent: #f5d547;
+      --neon: #00e5a0;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Montserrat, system-ui, sans-serif;
+      background: linear-gradient(160deg, #0a1628 0%, #0B1F3A 50%, #0d2138 100%);
+      color: var(--text);
+      font-size: 14px;
+    }
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 20px 48px;
+    }
+    h1 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin: 0 0 6px;
+    }
+    .sub {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+    .sub strong { color: var(--accent); }
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(280px, 340px) 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+    }
+    .panel h2 {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin: 0 0 14px;
+    }
+    label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      margin: 12px 0 6px;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.25);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 14px;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: rgba(0,229,160,0.5);
+    }
+    .row2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .radios {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .radios label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .radios input { width: auto; }
+    .preview-box {
+      background: #111;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      padding: 16px;
+      text-align: center;
+    }
+    .preview-box p {
+      margin: 0 0 12px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    #canvas-export {
+      max-width: min(100%, 420px);
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+      vertical-align: middle;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+    button {
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 12px 22px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    button:active { transform: scale(0.98); }
+    .btn-primary {
+      background: linear-gradient(135deg, #00c87a, #00e5a0);
+      color: #042;
+      box-shadow: 0 4px 20px rgba(0,229,160,0.35);
+    }
+    .btn-primary:hover { box-shadow: 0 6px 28px rgba(0,229,160,0.45); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .hint {
+      margin-top: 14px;
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    a { color: var(--neon); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Générateur de pub Meta</h1>
+    <p class="sub"><strong>Feed 1:1 · 1080×1080 px</strong> — Modèles inspirés de vos créas AF718 (simple bleu / famille vert).</p>
+
+    <div class="grid">
+      <div class="panel">
+        <h2>Modèle</h2>
+        <div class="radios">
+          <label><input type="radio" name="tpl" value="simple" checked> Bleu — 1 personne (450&nbsp;€ nets)</label>
+          <label><input type="radio" name="tpl" value="famille"> Vert — famille (calcul détaillé)</label>
+        </div>
+
+        <h2 style="margin-top:20px">Contenu</h2>
+        <label for="airline">Compagnie</label>
+        <input type="text" id="airline" value="Air France" autocomplete="off">
+
+        <div class="row2">
+          <div>
+            <label for="flight">N° vol</label>
+            <input type="text" id="flight" value="AF 718" autocomplete="off">
+          </div>
+          <div>
+            <label for="flag">Drapeau (emoji)</label>
+            <input type="text" id="flag" value="🇸🇳" maxlength="8" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="row2">
+          <div>
+            <label for="from">Départ</label>
+            <input type="text" id="from" value="Paris" autocomplete="off">
+          </div>
+          <div>
+            <label for="to">Arrivée</label>
+            <input type="text" id="to" value="Dakar" autocomplete="off">
+          </div>
+        </div>
+
+        <label for="legal">Indemnité légale / pers. (€)</label>
+        <input type="number" id="legal" value="600" min="0" step="1">
+
+        <div class="row2" id="pax-row">
+          <div>
+            <label for="pax">Personnes</label>
+            <input type="number" id="pax" value="1" min="1" max="20" step="1">
+          </div>
+          <div>
+            <label for="commission">Commission Robin (%)</label>
+            <input type="number" id="commission" value="25" min="0" max="50" step="1">
+          </div>
+        </div>
+
+        <label for="status">Badge statut</label>
+        <input type="text" id="status" value="VOL RETARDÉ" autocomplete="off">
+
+        <label for="domain">Site (coin bas droite)</label>
+        <input type="text" id="domain" value="robindesairs.eu" autocomplete="off">
+
+        <p class="hint">Calcul : <strong>nets / pers. = indemnité × (100&nbsp;% − commission)</strong> · Total famille = nets × personnes. Export PNG prêt pour Meta (une fois le texte validé).</p>
+      </div>
+
+      <div class="preview-box">
+        <p>Aperçu (mise à l’échelle — fichier = 1080 px)</p>
+        <canvas id="canvas-export" width="1080" height="1080" aria-label="Aperçu créa pub"></canvas>
+        <div class="actions">
+          <button type="button" class="btn-primary" id="btn-dl">Télécharger PNG</button>
+          <button type="button" class="btn-ghost" id="btn-refresh">Rafraîchir</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+(function () {
+  var W = 1080;
+  var H = 1080;
+  var canvas = document.getElementById('canvas-export');
+  var ctx = canvas.getContext('2d');
+
+  function fmtEuro(n) {
+    var x = Math.round(n);
+    return String(x).replace(/\B(?=(\d{3})+(?!\d))/g, '\u202f') + '\u00a0€';
+  }
+
+  function getData() {
+    var legal = parseFloat(document.getElementById('legal').value, 10) || 0;
+    var pax = parseInt(document.getElementById('pax').value, 10) || 1;
+    var comm = parseFloat(document.getElementById('commission').value, 10) || 25;
+    var netPer = legal * (100 - comm) / 100;
+    var total = netPer * pax;
+    return {
+      tpl: document.querySelector('input[name="tpl"]:checked').value,
+      airline: document.getElementById('airline').value.trim() || 'Compagnie',
+      flight: document.getElementById('flight').value.trim() || '—',
+      flag: document.getElementById('flag').value.trim() || '✈️',
+      from: document.getElementById('from').value.trim() || '—',
+      to: document.getElementById('to').value.trim() || '—',
+      legal: legal,
+      pax: pax,
+      commission: comm,
+      netPer: netPer,
+      total: total,
+      status: document.getElementById('status').value.trim() || 'VOL RETARDÉ',
+      domain: document.getElementById('domain').value.trim() || 'robindesairs.eu'
+    };
+  }
+
+  function drawGrid(ctx, color, step) {
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1;
+    for (var x = 0; x <= W; x += step) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, H);
+      ctx.stroke();
+    }
+    for (var y = 0; y <= H; y += step) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(W, y);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawSimpleBlue(d) {
+    var navy = '#0B1F3A';
+    var navy2 = '#0e2844';
+    ctx.fillStyle = navy;
+    ctx.fillRect(0, 0, W, H);
+    var g = ctx.createLinearGradient(0, 0, W, H);
+    g.addColorStop(0, navy);
+    g.addColorStop(1, navy2);
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.fillStyle = '#f5d547';
+    ctx.fillRect(0, 0, 22, H);
+
+    drawGrid(ctx, 'rgba(255,255,255,0.055)', 48);
+
+    var pad = 56;
+    ctx.textBaseline = 'top';
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '800 26px Montserrat, sans-serif';
+    ctx.letterSpacing = '0.25em';
+    ctx.fillText('ROBIN DES AIRS', pad + 8, 52);
+    ctx.letterSpacing = '0';
+
+    ctx.fillStyle = 'rgba(255,255,255,0.72)';
+    ctx.font = '500 22px Montserrat, sans-serif';
+    ctx.fillText(d.airline, pad + 8, 92);
+
+    var pillY = 138;
+    ctx.fillStyle = 'rgba(255,255,255,0.12)';
+    roundRect(ctx, pad + 8, pillY, 200, 44, 22);
+    ctx.fill();
+    ctx.fillStyle = '#f5d547';
+    ctx.beginPath();
+    ctx.arc(pad + 28, pillY + 22, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#fff';
+    ctx.font = '700 13px Montserrat, sans-serif';
+    ctx.fillText(d.status, pad + 44, pillY + 14);
+
+    ctx.font = '64px Montserrat, sans-serif';
+    ctx.fillText(d.flag, pad + 8, 210);
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '900 118px "Playfair Display", Georgia, serif';
+    ctx.fillText(d.flight, pad + 8, 300);
+
+    ctx.font = '600 36px Montserrat, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.fillText(d.from + '  \u2192  ' + d.to, pad + 8, 440);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.65)';
+    ctx.font = '500 24px Montserrat, sans-serif';
+    ctx.fillText('Indemnité légale ' + fmtEuro(d.legal) + ' \u00d7 ' + d.commission + '% comm.', pad + 8, 520);
+
+    ctx.fillStyle = '#00e5a0';
+    ctx.font = '900 132px "Playfair Display", Georgia, serif';
+    ctx.fillText(fmtEuro(d.netPer), pad + 8, 580);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.font = '700 22px Montserrat, sans-serif';
+    ctx.fillText('NETS · PAR PERSONNE', pad + 8, 740);
+    ctx.font = '600 20px Montserrat, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    ctx.fillText('0 € si on perd', pad + 8, 776);
+
+    ctx.fillStyle = '#f5d547';
+    ctx.font = '700 26px Montserrat, sans-serif';
+    var dw = ctx.measureText(d.domain).width;
+    ctx.fillText(d.domain, W - pad - dw, H - pad - 8);
+  }
+
+  function drawDetailedGreen(d) {
+    var g0 = ctx.createLinearGradient(0, 0, W, H);
+    g0.addColorStop(0, '#0d5c48');
+    g0.addColorStop(0.5, '#0a7a5c');
+    g0.addColorStop(1, '#086b52');
+    ctx.fillStyle = g0;
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.save();
+    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    ctx.beginPath();
+    ctx.moveTo(W * 0.55, H);
+    ctx.bezierCurveTo(W * 0.9, H * 0.75, W, H * 0.5, W, H * 0.2);
+    ctx.lineTo(W, H);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+
+    var pad = 56;
+    ctx.textBaseline = 'top';
+
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '800 26px Montserrat, sans-serif';
+    ctx.letterSpacing = '0.25em';
+    ctx.fillText('ROBIN DES AIRS', pad, 48);
+    ctx.letterSpacing = '0';
+
+    ctx.fillStyle = 'rgba(255,255,255,0.75)';
+    ctx.font = '500 22px Montserrat, sans-serif';
+    ctx.fillText(d.airline, pad, 88);
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.45)';
+    ctx.lineWidth = 2;
+    roundRect(ctx, pad, 132, 210, 44, 22);
+    ctx.stroke();
+    ctx.fillStyle = '#fff';
+    ctx.font = '700 13px Montserrat, sans-serif';
+    ctx.fillText(d.status, pad + 22, 145);
+
+    ctx.font = '56px Montserrat, sans-serif';
+    ctx.fillText(d.flag, pad, 200);
+
+    ctx.font = '900 108px "Playfair Display", Georgia, serif';
+    ctx.fillText(d.flight, pad, 270);
+
+    ctx.font = '600 34px Montserrat, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.92)';
+    ctx.fillText(d.from + '  \u2192  ' + d.to, pad, 400);
+
+    var boxX = pad;
+    var boxY = 480;
+    var boxW = W - pad * 2;
+    var boxH = 380;
+    ctx.fillStyle = 'rgba(0,0,0,0.28)';
+    roundRect(ctx, boxX, boxY, boxW, boxH, 20);
+    ctx.fill();
+
+    var lx = boxX + 36;
+    var rx = boxX + boxW - 36;
+    var y = boxY + 40;
+    ctx.font = '600 26px Montserrat, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.88)';
+    ctx.textAlign = 'left';
+    ctx.fillText('Indemnité légale / pers.', lx, y);
+    ctx.textAlign = 'right';
+    ctx.fillText(fmtEuro(d.legal), rx, y);
+    y += 52;
+    ctx.textAlign = 'left';
+    ctx.fillText('Votre part (' + (100 - d.commission) + '%)', lx, y);
+    ctx.textAlign = 'right';
+    ctx.fillText(fmtEuro(d.netPer) + ' / pers.', rx, y);
+    y += 52;
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(255,255,255,0.7)';
+    ctx.fillText('\u00d7 ' + d.pax + ' personne' + (d.pax > 1 ? 's' : ''), lx, y);
+    ctx.textAlign = 'right';
+    ctx.fillText('\u2014', rx, y);
+
+    y += 36;
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.beginPath();
+    ctx.moveTo(lx, y);
+    ctx.lineTo(rx, y);
+    ctx.stroke();
+    y += 36;
+
+    ctx.textAlign = 'left';
+    ctx.fillStyle = '#fff';
+    ctx.font = '800 28px Montserrat, sans-serif';
+    ctx.fillText('Famille reçoit', lx, y);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#f5d547';
+    ctx.font = '900 72px "Playfair Display", Georgia, serif';
+    ctx.fillText(fmtEuro(d.total), rx, y - 4);
+
+    ctx.textAlign = 'left';
+    y = boxY + boxH - 56;
+    ctx.font = '600 20px Montserrat, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.65)';
+    ctx.fillText('nets · 0 € si on perd', lx, y);
+
+    ctx.textAlign = 'right';
+    ctx.fillStyle = '#f5e08a';
+    ctx.font = '700 26px Montserrat, sans-serif';
+    ctx.fillText(d.domain, rx, H - pad - 12);
+    ctx.textAlign = 'left';
+  }
+
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+  }
+
+  function render() {
+    var d = getData();
+    ctx.clearRect(0, 0, W, H);
+    if (d.tpl === 'famille') {
+      drawDetailedGreen(d);
+    } else {
+      drawSimpleBlue(d);
+    }
+  }
+
+  function waitFonts() {
+    if (document.fonts && document.fonts.ready) {
+      return document.fonts.ready;
+    }
+    return Promise.resolve();
+  }
+
+  function syncPaxRow() {
+    var fam = document.querySelector('input[name="tpl"]:checked').value === 'famille';
+    var el = document.getElementById('pax');
+    var n = parseInt(el.value, 10) || 1;
+    if (fam) {
+      if (n < 2) el.value = '4';
+    } else if (n < 1) {
+      el.value = '1';
+    }
+  }
+
+  document.querySelectorAll('input, select').forEach(function (el) {
+    el.addEventListener('input', function () {
+      waitFonts().then(render);
+    });
+    el.addEventListener('change', function () {
+      waitFonts().then(render);
+    });
+  });
+  document.querySelectorAll('input[name="tpl"]').forEach(function (r) {
+    r.addEventListener('change', function () {
+      syncPaxRow();
+      waitFonts().then(render);
+    });
+  });
+
+  document.getElementById('btn-dl').addEventListener('click', function () {
+    waitFonts().then(function () {
+      render();
+      var a = document.createElement('a');
+      a.download = 'robin-meta-1x1-' + Date.now() + '.png';
+      a.href = canvas.toDataURL('image/png');
+      a.click();
+    });
+  });
+  document.getElementById('btn-refresh').addEventListener('click', function () {
+    waitFonts().then(render);
+  });
+
+  syncPaxRow();
+  waitFonts().then(render);
+})();
+  </script>
+</body>
+</html>
