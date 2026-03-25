@@ -128,4 +128,10 @@
   to = "/.netlify/functions/crm-backup"
   status = 200
 
+# Signature électronique du mandat (preuve côté serveur — art. 1366 C. civ. + eIDAS)
+[[redirects]]
+  from = "/api/sign-mandate"
+  to = "/.netlify/functions/sign-mandate"
+  status = 200
+
 # Page 404 personnalisée (créer 404.html si vous en voulez une)

@@ -46,7 +46,7 @@
   </div>
   <div class="wrap">
     <div class="doc-box mandat-bilingue">
-      <p class="mandat-company">SAS Robin des Airs — SIREN 932 847 561 — RCS Paris — TVA FR 71 932847561<br>Siège social : 66 avenue des Champs-Élysées, 75008 Paris</p>
+      <p class="mandat-company">SASU Robin des Airs — SIREN 932 847 561 — RCS Paris — TVA FR 71 932847561<br>Siège social : 66 avenue des Champs-Élysées, 75008 Paris</p>
       <h4>MANDAT DE REPRÉSENTATION & CESSION DE CRÉANCE</h4>
       <h4 class="en">POWER OF ATTORNEY & ASSIGNMENT OF CLAIM</h4>
 
@@ -90,12 +90,12 @@
       <p><strong>Démarrage immédiat & rétractation :</strong> En signant ce mandat, le Mandant autorise Robin des Airs à commencer immédiatement le traitement du dossier et renonce expressément à son droit de rétractation de 14 jours (art. L221-18 C. cons.). Formulaire de rétractation sur demande à expert@robindesairs.eu.<br><span class="en"><strong>Immediate start & withdrawal:</strong> By signing this mandate, the Principal authorizes Robin des Airs to start processing the case immediately and expressly waives the 14-day right of withdrawal (Art. L221-18 Consumer Code). Withdrawal form on request at expert@robindesairs.eu.</span></p>
 
       <p><strong>RGPD — Protection des données personnelles :</strong><br>
-      Responsable de traitement : SAS Robin des Airs, 66 av. des Champs-Élysées, 75008 Paris — expert@robindesairs.eu.<br>
+      Responsable de traitement : SASU Robin des Airs, 66 av. des Champs-Élysées, 75008 Paris — expert@robindesairs.eu.<br>
       Finalité : gestion et recouvrement de l'indemnisation CE 261/2004. Base légale : exécution du contrat (art. 6.1.b RGPD).<br>
       Conservation : durée du dossier + 5 ans à compter de sa clôture (prescription art. 2224 C. civ.).<br>
       <strong>Vos droits (art. 15 à 22 RGPD) :</strong> accès · rectification · effacement · limitation · portabilité · opposition · retrait du consentement à tout moment · réclamation auprès de la CNIL (www.cnil.fr).<br>
       Pour exercer vos droits : expert@robindesairs.eu — réponse sous 30 jours.<br><span class="en">
-      <strong>GDPR — Data protection:</strong> Controller: SAS Robin des Airs, 66 av. des Champs-Élysées, 75008 Paris. Purpose: handling EU 261/2004 compensation claim. Legal basis: performance of contract (Art. 6.1.b GDPR). Retention: case duration + 5 years. Your rights (Arts. 15–22 GDPR): access, rectification, erasure, restriction, portability, objection, withdrawal of consent, complaint to supervisory authority. Contact: expert@robindesairs.eu.</span></p>
+      <strong>GDPR — Data protection:</strong> Controller: SASU Robin des Airs, 66 av. des Champs-Élysées, 75008 Paris. Purpose: handling EU 261/2004 compensation claim. Legal basis: performance of contract (Art. 6.1.b GDPR). Retention: case duration + 5 years. Your rights (Arts. 15–22 GDPR): access, rectification, erasure, restriction, portability, objection, withdrawal of consent, complaint to supervisory authority. Contact: expert@robindesairs.eu.</span></p>
 
       <p><strong>Transfert de données hors Union Européenne (Sénégal · Côte d'Ivoire · pays tiers) :</strong><br>
       Si le Mandant réside au Sénégal, en Côte d'Ivoire ou dans tout autre pays ne disposant pas d'une décision d'adéquation de la Commission européenne, le transfert de ses données personnelles vers la France est effectué sur la base du <strong>consentement explicite du Mandant</strong> (art. 49.1.a RGPD), recueilli lors de la signature du présent mandat. Les données sont traitées exclusivement aux fins de recouvrement et ne sont pas revendues à des tiers. Les passagers sénégalais bénéficient également des protections prévues par la loi sénégalaise n° 2008-12 du 25 janvier 2008 sur la protection des données personnelles (Commission de Protection des Données Personnelles — CDP Sénégal).<br>
@@ -107,12 +107,65 @@
 
       <p><strong>Médiateur :</strong> MTV, 15 rue Maréchal Foch, 93601 Aulnay-sous-Bois — www.mtv.travel.<br>
       <strong>Langue prévalante :</strong> version française. <strong>Loi applicable :</strong> droit français — Tribunaux de Paris.</p>
-      <p class="mandat-signed">Document signé électroniquement via le formulaire Robin des Airs. Lu et approuvé — Bon pour mandat et cession de créance.<br><span class="en">Document electronically signed via Robin des Airs form. Read and approved — Valid as power of attorney and assignment of claim.</span></p>
+      <!-- ═══ ZONE DE SIGNATURE ═══ -->
+      <div id="sign-zone" style="margin-top:36px;border-top:2px solid var(--border);padding-top:28px;">
+        <p style="font-size:13.5px;font-weight:700;color:var(--navy);margin-bottom:16px;">✍️ Signature électronique — Étape obligatoire / <em style="font-weight:600;font-size:12px;color:var(--gray);">Electronic signature — Required step</em></p>
+
+        <!-- Checkbox rétractation (directive 2011/83/UE — obligatoire séparé) -->
+        <label id="lbl-retractation" style="display:flex;align-items:flex-start;gap:12px;background:#FFF8E1;border:2px solid #F59E0B;border-radius:10px;padding:14px 16px;margin-bottom:14px;cursor:pointer;font-size:13px;line-height:1.6;">
+          <input type="checkbox" id="cb-retractation" style="margin-top:3px;width:18px;height:18px;accent-color:var(--neon-dark);flex-shrink:0;">
+          <span><strong>Je renonce expressément à mon droit de rétractation de 14 jours</strong> (art. L221-18 C. cons.) afin que Robin des Airs commence immédiatement à traiter mon dossier. Je comprends que si je me rétracte après démarrage des démarches, les frais engagés pourront m'être imputés.<br>
+          <em style="font-size:11.5px;color:var(--gray);">I expressly waive my 14-day right of withdrawal (Art. L221-18 Consumer Code) so Robin des Airs may start processing my case immediately.</em></span>
+        </label>
+
+        <!-- Checkbox lecture et accord mandat -->
+        <label id="lbl-lu" style="display:flex;align-items:flex-start;gap:12px;background:var(--neon-light);border:2px solid var(--neon-dark);border-radius:10px;padding:14px 16px;margin-bottom:20px;cursor:pointer;font-size:13px;line-height:1.6;">
+          <input type="checkbox" id="cb-lu" style="margin-top:3px;width:18px;height:18px;accent-color:var(--neon-dark);flex-shrink:0;">
+          <span><strong>J'ai lu et j'accepte l'intégralité du mandat de représentation et de la cession de créance</strong> ci-dessus, ainsi que la <a href="/politique-confidentialite.html" target="_blank" style="color:var(--neon-dark);">politique de confidentialité</a>. Bon pour mandat — Lu et approuvé.<br>
+          <em style="font-size:11.5px;color:var(--gray);">I have read and accept the mandate and assignment of claim above, and the privacy policy. Approved.</em></span>
+        </label>
+
+        <button id="btn-sign" onclick="signerMandat()" disabled
+          style="width:100%;padding:18px;background:var(--gray-light);color:white;border:none;border-radius:12px;font-size:16px;font-weight:800;letter-spacing:0.03em;cursor:not-allowed;transition:all .3s;font-family:'Montserrat',sans-serif;">
+          ✅ SIGNER LE MANDAT / SIGN THE MANDATE
+        </button>
+
+        <!-- Zone certificat (affichée après signature) -->
+        <div id="cert-zone" style="display:none;margin-top:20px;background:#F0FDF4;border:2px solid var(--neon-dark);border-radius:12px;padding:20px 24px;text-align:center;">
+          <p style="font-size:18px;font-weight:900;color:var(--neon-dark);margin-bottom:8px;">✅ Mandat signé / Mandate signed</p>
+          <p style="font-size:13px;color:var(--navy);margin-bottom:4px;"><strong>Certificat de signature / Signature certificate :</strong></p>
+          <p id="cert-id" style="font-size:14px;font-weight:700;color:var(--navy);font-family:monospace;background:white;padding:10px 16px;border-radius:8px;display:inline-block;margin:6px 0;border:1px solid var(--border);"></p>
+          <p id="cert-ts" style="font-size:12px;color:var(--gray);margin-top:6px;"></p>
+          <p style="font-size:11.5px;color:var(--gray);margin-top:10px;font-style:italic;">Conservez ce numéro de certificat comme preuve de votre accord.<br>Keep this certificate number as proof of your agreement.</p>
+        </div>
+
+        <!-- Erreur -->
+        <div id="sign-error" style="display:none;margin-top:14px;background:#FEF2F2;border:1px solid #FCA5A5;border-radius:10px;padding:14px 16px;font-size:13px;color:#991B1B;"></div>
+      </div>
+      <!-- ═══ FIN ZONE SIGNATURE ═══ -->
+
+      <p class="mandat-signed" id="mandat-signed-footer" style="display:none;">Document signé électroniquement — Robin des Airs. Lu et approuvé — Bon pour mandat et cession de créance.<br><span class="en">Document electronically signed — Robin des Airs. Read and approved — Valid as power of attorney and assignment of claim.</span></p>
     </div>
   </div>
 <script>
 (function() {
   var q = new URLSearchParams(window.location.search);
+  // Stocker les params avant nettoyage URL
+  window._mandatData = {
+    name: q.get("name") || "",
+    phone: q.get("phone") || "",
+    address: q.get("address") || "",
+    email: q.get("email") || "",
+    vol: q.get("vol") || "",
+    date: q.get("date") || "",
+    route: q.get("route") || "",
+    motif: q.get("motif") || "",
+    pnr: q.get("pnr") || "",
+    compagnie: q.get("compagnie") || "",
+    nbpax: q.get("nbpax") || "1",
+    indemnite: q.get("indemnite") || "600"
+  };
+
   function set(id, val) { var el = document.getElementById(id); if (el && val !== undefined && val !== null) el.textContent = val; }
   set("m-name", q.get("name"));
   set("m-phone", q.get("phone"));
@@ -150,14 +203,85 @@
   }
   set("m-total-demandé", total + " €");
 
-  // ── RGPD : effacement des PII de l'URL après lecture ──────────────────
-  // Les paramètres (nom, téléphone, adresse, email) ne doivent pas rester
-  // visibles dans la barre d'adresse ni dans l'historique du navigateur.
+  // ── RGPD : effacement des PII de l'URL immédiatement après lecture ─────
   if (window.history && window.history.replaceState) {
     window.history.replaceState({}, document.title, window.location.pathname);
   }
-  // ──────────────────────────────────────────────────────────────────────
+  // ────────────────────────────────────────────────────────────────────────
+
+  // Activation du bouton de signature quand les 2 cases sont cochées
+  function updateBtn() {
+    var ok = document.getElementById("cb-retractation").checked && document.getElementById("cb-lu").checked;
+    var btn = document.getElementById("btn-sign");
+    if (ok) {
+      btn.disabled = false;
+      btn.style.background = "var(--neon-dark)";
+      btn.style.cursor = "pointer";
+      btn.style.transform = "none";
+    } else {
+      btn.disabled = true;
+      btn.style.background = "var(--gray-light)";
+      btn.style.cursor = "not-allowed";
+    }
+  }
+  document.getElementById("cb-retractation").addEventListener("change", updateBtn);
+  document.getElementById("cb-lu").addEventListener("change", updateBtn);
 })();
+
+// Appelée au clic sur "Signer le mandat"
+async function signerMandat() {
+  var btn = document.getElementById("btn-sign");
+  var errDiv = document.getElementById("sign-error");
+  btn.disabled = true;
+  btn.textContent = "⏳ Enregistrement en cours…";
+  errDiv.style.display = "none";
+
+  try {
+    var d = window._mandatData || {};
+    var ts = new Date().toISOString();
+    // Hash SHA-256 léger du contenu du mandat pour empreinte documentaire
+    var docStr = [d.name, d.phone, d.vol, d.date, d.route, d.pnr, ts].join("|");
+    var docHash = "";
+    if (window.crypto && window.crypto.subtle) {
+      var buf = await window.crypto.subtle.digest("SHA-256", new TextEncoder().encode(docStr));
+      docHash = Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,"0"); }).join("").substring(0,16).toUpperCase();
+    } else {
+      // Fallback simple
+      docHash = Math.abs(docStr.split("").reduce(function(a,c){ return ((a<<5)-a)+c.charCodeAt(0)|0; }, 0)).toString(16).toUpperCase().padStart(8,"0");
+    }
+
+    // Appel Netlify function pour enregistrement côté serveur
+    var resp = await fetch("/api/sign-mandate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: d.name, phone: d.phone, email: d.email,
+        vol: d.vol, date: d.date, route: d.route, pnr: d.pnr,
+        compagnie: d.compagnie, nbpax: d.nbpax, indemnite: d.indemnite,
+        doc_hash: docHash, signed_at: ts,
+        retractation_waived: true, lu_accepte: true
+      })
+    });
+    var result = await resp.json();
+    if (!resp.ok) throw new Error(result.error || "Erreur serveur");
+
+    var certId = result.cert_id || ("RDA-" + ts.replace(/[^0-9]/g,"").substring(0,12) + "-" + docHash.substring(0,6));
+    document.getElementById("cert-id").textContent = certId;
+    document.getElementById("cert-ts").textContent = "Signé le " + new Date(ts).toLocaleString("fr-FR") + " — Hash doc : " + docHash;
+    document.getElementById("cert-zone").style.display = "block";
+    document.getElementById("mandat-signed-footer").style.display = "block";
+    document.getElementById("sign-zone").querySelector("p").textContent = "✅ Mandat signé — Certificat : " + certId;
+    btn.style.display = "none";
+    document.getElementById("cb-retractation").disabled = true;
+    document.getElementById("cb-lu").disabled = true;
+
+  } catch(e) {
+    errDiv.textContent = "Erreur lors de l'enregistrement : " + e.message + ". Veuillez réessayer ou contacter expert@robindesairs.eu";
+    errDiv.style.display = "block";
+    btn.disabled = false;
+    btn.textContent = "✅ SIGNER LE MANDAT / SIGN THE MANDATE";
+  }
+}
 </script>
 </body>
 </html>

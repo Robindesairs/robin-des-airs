@@ -37,7 +37,7 @@ try {
 // Étape 1 (grand 1 — collecte mandat) : démarrage au premier message ou "Bonjour"
 const STEP1_STEPS = ['PASSENGER_FIRST', 'PASSENGER_LAST', 'PASSENGER_ANOTHER', 'PASSENGERS_CONFIRM', 'CONFIRM_PHONE', 'ASK_CONTACT_PHONE', 'TRAJET_FLIGHT', 'TRAJET_DATE', 'TRAJET_CONNECTION', 'TRAJET_CONFIRM', 'ASK_PNR', 'CONFIRM_PNR', 'ASK_AIRLINE', 'ASK_ADDRESS', 'STEP1_DONE'];
 function isStep1(step) { return STEP1_STEPS.includes(step); }
-function isBonjourLike(t) { return /^(bonjour|bonsoir|salut|hello|coucou)\s*[!.]?$/i.test((t || '').trim()); }
+// NOTE: isBonjourLike définie plus bas (ligne ~62) — version complète utilisée partout
 function step1Form(session) {
   const fd = session.flightData || {};
   return {
