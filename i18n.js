@@ -28,6 +28,8 @@ window.I18N = (function() {
       hero_wa_note: "Répondez en français, wolof ou anglais — comme vous préférez.",
       hero_title: "Robin prend\naux compagnies,\n",
       hero_title_neon: "rend à nos familles.",
+      hero_img_alt: "Mère et enfant souriants — visuel de campagne Robin des Airs.",
+      hero_img_caption: "Visuel de campagne — Lisa Marie Theck / Unsplash",
       hero_subhead: "Vol retardé (plus de 3 h à l’arrivée), annulé ou surbooké ? Nous récupérons pour vous l’indemnité prévue par la loi européenne (CE 261), jusqu’à 600 € par passager.",
       hero_diaspora_why: "On connaît vos lignes, on parle votre langue — on récupère les 600€ pour nos communautés et nos familles.",
       hero_desc: "La loi oblige la compagnie à vous verser <strong>jusqu'à 600€ par passager</strong> lorsque les conditions sont réunies.\nOn ne prend notre part (25%) qu'une fois votre argent récupéré.\n<strong>Si on ne gagne pas, vous ne payez rien.</strong>",
@@ -307,6 +309,8 @@ window.I18N = (function() {
       hero_wa_note: "Reply in French, Wolof or English — whatever you prefer.",
       hero_title: "Robin takes from\nairlines,\n",
       hero_title_neon: "gives back to our families.",
+      hero_img_alt: "Smiling mother and child — Robin des Airs campaign visual.",
+      hero_img_caption: "Campaign visual — Lisa Marie Theck / Unsplash",
       hero_subhead: "Flight delayed 3h+ at arrival, cancelled or denied boarding? We recover your EU261 compensation — up to €600 per passenger.",
       hero_diaspora_why: "We know your routes, we speak your language — we recover the €600 for our communities and our families.",
       hero_desc: "The law requires the airline to pay up to <strong>€600 per passenger</strong> when the conditions are met.\nWe only take our share (25%) once your money has been recovered.\n<strong>If we don't win, you pay nothing.</strong>",
@@ -582,6 +586,16 @@ window.I18N = (function() {
       var key = el.getAttribute('data-i18n-html');
       var val = get(key);
       if (val) el.innerHTML = val.replace(/\n/g, '<br>');
+    });
+    document.querySelectorAll('[data-i18n-attr]').forEach(function(el) {
+      var spec = el.getAttribute('data-i18n-attr');
+      if (!spec) return;
+      var colon = spec.indexOf(':');
+      if (colon < 1) return;
+      var attr = spec.slice(0, colon).trim();
+      var key = spec.slice(colon + 1).trim();
+      var val = get(key);
+      if (val && attr) el.setAttribute(attr, val);
     });
     var funnelSub = document.getElementById('funnel-subtitle');
     if (funnelSub) funnelSub.textContent = get('funnel_subtitle');

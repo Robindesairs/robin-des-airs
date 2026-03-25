@@ -20,16 +20,22 @@
 <link rel="apple-touch-icon" href="/favicon.png">
 <link rel="canonical" href="https://robindesairs.eu">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com" crossorigin>
 <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fontsource/syne@5.2.6/files/syne-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fontsource/montserrat@5.0.0/files/montserrat-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fontsource/montserrat@5.0.0/files/montserrat-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fontsource/bebas-neue@5.0.0/files/bebas-neue-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fontsource/archivo-black@5.0.0/files/archivo-black-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2/dist/css/tom-select.css">
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1741940365437-e55b919a89d3?auto=format&amp;fit=crop&amp;w=640&amp;h=400&amp;q=80&amp;fm=webp" imagesrcset="https://images.unsplash.com/photo-1741940365437-e55b919a89d3?auto=format&amp;fit=crop&amp;w=400&amp;h=250&amp;q=80&amp;fm=webp 400w, https://images.unsplash.com/photo-1741940365437-e55b919a89d3?auto=format&amp;fit=crop&amp;w=640&amp;h=400&amp;q=80&amp;fm=webp 640w, https://images.unsplash.com/photo-1741940365437-e55b919a89d3?auto=format&amp;fit=crop&amp;w=960&amp;h=600&amp;q=80&amp;fm=webp 960w" imagesizes="(max-width: 768px) 100vw, min(520px, 42vw)">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"></noscript>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2/dist/css/tom-select.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2/dist/css/tom-select.css"></noscript>
 
 <link rel="stylesheet" href="/assets/main.css">
 <style id="inline-critical">/* critical above-the-fold kept minimal — full CSS in main.css */</style>
+
+<!-- Plausible Analytics — RGPD compliant, sans cookie, vue temps réel -->
+<script defer data-domain="robindesairs.eu" src="https://plausible.io/js/script.tagged-events.js"></script>
+<script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Robin des Airs","url":"https://robindesairs.eu","logo":"https://robindesairs.eu/logo.png","description":"Service de récupération d'indemnités aériennes CE 261/2004, spécialiste diaspora africaine.","address":{"@type":"PostalAddress","streetAddress":"66 avenue des Champs-Élysées","addressLocality":"Paris","postalCode":"75008","addressCountry":"FR"},"contactPoint":{"@type":"ContactPoint","telephone":"+33756863630","contactType":"customer service","availableLanguage":["French","English","Wolof","Bambara","Lingala","Soninké","Pulaar","Dioula","Swahili","Twi","Yoruba"]},"sameAs":["https://wa.me/33756863630"]}
 </script>
@@ -124,7 +130,7 @@
     <li><a href="#temoignages" onclick="closeMobileNav()" data-i18n="nav_drawer_testi">⭐ Témoignages</a></li>
     <li><a href="#faq" onclick="closeMobileNav()" data-i18n="nav_drawer_faq">❓ FAQ</a></li>
     <li><a href="/blog/" onclick="closeMobileNav()" data-i18n="nav_drawer_blog">📝 Blog</a></li>
-    <li><a href="/choix-reclamation.html" onclick="closeMobileNav()" data-i18n="nav_drawer_depot">📤 Déposer mon dossier</a></li>
+    <li><a href="/choix-reclamation.html" onclick="closeMobileNav(); plausible('Depot-Dossier', {props: {source: 'nav'}})" data-i18n="nav_drawer_depot">📤 Déposer mon dossier</a></li>
     <li><a href="#funnel-box" onclick="closeMobileNav(); setTimeout(function(){ scrollToCalcWithAnimation(); }, 220); return false;" class="drawer-cta" data-i18n="nav_cta">Combien je touche ? →</a></li>
   </ul>
 </div>
@@ -142,13 +148,32 @@
         <span data-i18n-html="hero_title">Robin prend<br>aux compagnies,<br></span>
         <span class="neon" data-i18n="hero_title_neon">rend à nos familles.</span>
       </h1>
+      <figure class="hero-human">
+        <div class="hero-human-frame">
+          <img
+            class="hero-human-img"
+            src="https://images.unsplash.com/photo-1741940365437-e55b919a89d3?auto=format&amp;fit=crop&amp;w=640&amp;h=400&amp;q=80&amp;fm=webp"
+            srcset="https://images.unsplash.com/photo-1741940365437-e55b919a89d3?auto=format&amp;fit=crop&amp;w=400&amp;h=250&amp;q=80&amp;fm=webp 400w,
+                    https://images.unsplash.com/photo-1741940365437-e55b919a89d3?auto=format&amp;fit=crop&amp;w=640&amp;h=400&amp;q=80&amp;fm=webp 640w,
+                    https://images.unsplash.com/photo-1741940365437-e55b919a89d3?auto=format&amp;fit=crop&amp;w=960&amp;h=600&amp;q=80&amp;fm=webp 960w"
+            sizes="(max-width: 768px) 100vw, min(520px, 42vw)"
+            width="640"
+            height="400"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+            alt="Mère et enfant souriants — visuel de campagne Robin des Airs."
+            data-i18n-attr="alt:hero_img_alt">
+        </div>
+        <figcaption class="hero-human-caption" data-i18n="hero_img_caption">Visuel de campagne — Lisa Marie Theck / Unsplash</figcaption>
+      </figure>
       <p class="hero-subhead" data-i18n="hero_subhead">Vol retardé (plus de 3 h à l’arrivée), annulé ou surbooké ? Nous récupérons pour vous l’indemnité prévue par la loi européenne (CE 261), jusqu’à 600 € par passager.</p>
 
       <p class="hero-desc" data-i18n-html="hero_desc">La loi oblige la compagnie à vous verser <strong>jusqu'à 600€ par passager</strong> lorsque les conditions sont réunies.<br>On ne prend notre part (25%) qu'une fois votre argent récupéré.<br><strong>Si on ne gagne pas, vous ne payez rien.</strong></p>
 
       <!-- CTA principal = WhatsApp (audit: canal principal en premier) -->
       <div class="hero-entry">
-        <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="hero-entry-btn primary" data-i18n="hero_btn_wa" id="hero-wa-link">📱 Vérifier sur WhatsApp</a>
+        <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="hero-entry-btn primary" data-i18n="hero_btn_wa" id="hero-wa-link" onclick="plausible('WhatsApp-CTA', {props: {source: 'hero'}})">📱 Vérifier sur WhatsApp</a>
         <a href="#funnel-box" class="hero-entry-btn secondary" id="btn-calc-hero" onclick="scrollToCalcWithAnimation(event)" data-i18n="hero_btn_calc">Ou calculez le montant exact (2 min) →</a>
       </div>
       <p class="wa-rgpd-hint" data-i18n-html="wa_rgpd_hint">WhatsApp est un service <strong>Meta</strong> : des données peuvent être traitées hors UE. <a href="/politique-confidentialite.html#whatsapp-meta">Confidentialité &amp; alternatives</a> (email, site).</p>
@@ -207,7 +232,7 @@
       <!-- Raccourci : 1 message WhatsApp -->
       <div class="funnel-wa-shortcut">
         <p class="funnel-wa-shortcut-text">Envoyez votre vol sur WhatsApp — on vous dit si vous êtes éligible.</p>
-        <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="funnel-wa-shortcut-btn" id="funnel-wa-eligibility-link">💬 Vérifier sur WhatsApp</a>
+        <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="funnel-wa-shortcut-btn" id="funnel-wa-eligibility-link" onclick="plausible('WhatsApp-CTA', {props: {source: 'funnel'}})">💬 Vérifier sur WhatsApp</a>
         <p class="wa-rgpd-hint wa-rgpd-hint--compact" data-i18n-html="wa_rgpd_hint_short">Service Meta — <a href="/politique-confidentialite.html#whatsapp-meta">données &amp; alternatives</a></p>
       </div>
       <p class="funnel-detail-link"><a href="#" id="link-diagnostic-detail">Simulateur pas à pas (5 étapes) pour le montant exact →</a></p>
@@ -2439,6 +2464,102 @@ function openWhatsAppQrFromHero(e) {
   var url = hero && hero.href ? hero.href : ('https://wa.me/' + (window.WHATSAPP_NUMBER || ''));
   openWhatsAppQr(url);
 }
+</script>
+
+<!-- ===== MODALE PRÉ-CAPTURE LEAD WHATSAPP ===== -->
+<div id="wa-capture-modal" role="dialog" aria-modal="true" aria-labelledby="wa-capture-title" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(11,31,58,.72);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px">
+  <div style="background:#fff;border-radius:18px;max-width:380px;width:100%;padding:28px 24px 24px;box-shadow:0 20px 60px rgba(0,0,0,.25);position:relative">
+    <button onclick="waCaptureSkip()" aria-label="Fermer" style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:22px;color:#888;cursor:pointer;line-height:1">×</button>
+    <div style="font-size:32px;text-align:center;margin-bottom:8px">📱</div>
+    <h2 id="wa-capture-title" style="margin:0 0 6px;font-size:18px;font-weight:800;color:#0B1F3A;text-align:center">Avant d'aller sur WhatsApp</h2>
+    <p style="margin:0 0 20px;font-size:14px;color:#555;text-align:center;line-height:1.5">Laissez votre numéro — on vous relance gratuitement si vous oubliez de revenir.</p>
+    <div style="position:relative;margin-bottom:14px">
+      <input id="wa-capture-phone" type="tel" placeholder="+33 6 XX XX XX XX" autocomplete="tel"
+        style="width:100%;padding:14px 16px;border:2px solid #e0e0e0;border-radius:10px;font-size:16px;outline:none;box-sizing:border-box;transition:border-color .2s"
+        onfocus="this.style.borderColor='#0B1F3A'"
+        onblur="this.style.borderColor='#e0e0e0'"
+        onkeydown="if(event.key==='Enter')waCaptureSubmit()"
+      />
+    </div>
+    <button onclick="waCaptureSubmit()" id="wa-capture-btn"
+      style="width:100%;padding:14px;background:#25D366;border:none;border-radius:10px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.881 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+      Continuer sur WhatsApp
+    </button>
+    <button onclick="waCaptureSkip()" style="width:100%;padding:10px;background:none;border:none;color:#999;font-size:13px;cursor:pointer;text-decoration:underline">
+      Continuer sans laisser mon numéro
+    </button>
+  </div>
+</div>
+
+<script>
+(function() {
+  var _waTargetUrl = '';
+  var LEAD_HOOK = 'https://hook.eu1.make.com/fkshwt9ac7v8ld5dw66ltnr5nimx8ppq';
+
+  function showWaModal(targetUrl) {
+    _waTargetUrl = targetUrl;
+    var modal = document.getElementById('wa-capture-modal');
+    modal.style.display = 'flex';
+    setTimeout(function() { document.getElementById('wa-capture-phone').focus(); }, 100);
+    if (typeof plausible !== 'undefined') plausible('WA-Modal-Shown');
+  }
+
+  window.waCaptureSkip = function() {
+    document.getElementById('wa-capture-modal').style.display = 'none';
+    if (_waTargetUrl) { window.open(_waTargetUrl, '_blank', 'noopener,noreferrer'); _waTargetUrl = ''; }
+    if (typeof plausible !== 'undefined') plausible('WA-Skip');
+  };
+
+  window.waCaptureSubmit = function() {
+    var phone = document.getElementById('wa-capture-phone').value.trim();
+    var btn = document.getElementById('wa-capture-btn');
+    if (!phone) {
+      document.getElementById('wa-capture-phone').style.borderColor = '#e53935';
+      document.getElementById('wa-capture-phone').placeholder = 'Entrez votre numéro';
+      return;
+    }
+    btn.textContent = '⏳ Enregistrement...';
+    btn.disabled = true;
+    fetch(LEAD_HOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        telephone: phone,
+        source: 'wa_clic_site',
+        page: window.location.pathname,
+        date: new Date().toISOString()
+      })
+    }).catch(function(){}).finally(function() {
+      if (typeof plausible !== 'undefined') plausible('WA-Lead-Capturé');
+      document.getElementById('wa-capture-modal').style.display = 'none';
+      var url = _waTargetUrl; _waTargetUrl = '';
+      window.open(url, '_blank', 'noopener,noreferrer');
+    });
+  };
+
+  // Intercepter tous les liens WhatsApp sur la page
+  document.addEventListener('click', function(e) {
+    var el = e.target.closest('a[href]');
+    if (!el) return;
+    var href = el.href || '';
+    if (href.indexOf('wa.me') === -1 && href.indexOf('api.whatsapp.com') === -1) return;
+    // Ne pas intercepter le bouton flottant bas de page (déjà visible, moins prioritaire)
+    if (el.id === 'wa-float') return;
+    e.preventDefault();
+    showWaModal(href);
+  });
+
+  // Fermer sur clic extérieur
+  document.getElementById('wa-capture-modal').addEventListener('click', function(e) {
+    if (e.target === this) waCaptureSkip();
+  });
+
+  // Fermer sur Escape
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') waCaptureSkip();
+  });
+})();
 </script>
 
 <!-- Un seul CTA persistant : bouton WhatsApp flottant -->
