@@ -116,4 +116,16 @@
   to = "/.netlify/functions/whatsapp-status"
   status = 200
 
+# Historique messages WhatsApp par numéro (CRM)
+[[redirects]]
+  from = "/api/wa-messages"
+  to = "/.netlify/functions/wa-messages"
+  status = 200
+
+# Points de restauration CRM
+[[redirects]]
+  from = "/api/crm-backup"
+  to = "/.netlify/functions/crm-backup"
+  status = 200
+
 # Page 404 personnalisée (créer 404.html si vous en voulez une)

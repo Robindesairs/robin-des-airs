@@ -882,33 +882,6 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 
 .hero-title .neon { color: var(--neon); }
 
-.hero-human {
-  margin: 0 0 18px 0;
-  max-width: min(100%, 520px);
-}
-.hero-human-frame {
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 14px 44px -16px rgba(11, 31, 58, 0.32);
-  border: 1px solid rgba(11, 31, 58, 0.08);
-  background: #e8ecf2;
-  aspect-ratio: 640 / 400;
-}
-.hero-human-img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  vertical-align: middle;
-}
-.hero-human-caption {
-  margin: 8px 0 0 0;
-  font-size: 11px;
-  line-height: 1.4;
-  color: var(--gray2);
-  font-weight: 500;
-}
-
 /* Phrase « ce que fait le site » — lisibilité avant le slogan détaillé */
 .hero-subhead {
   font-size: 15px;

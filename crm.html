@@ -270,6 +270,7 @@
       <input type="text" id="crm-agent-input" maxlength="80" placeholder="Ex. Marie D. — obligatoire pour modifier" autocomplete="name">
     </div>
     <button type="button" class="btn btn-ghost-light" onclick="exportCrmCsv()" title="Télécharger la liste des dossiers">Export CSV</button>
+    <button type="button" class="btn btn-ghost-light" onclick="openBackupModal()" title="Sauvegardes cloud et points de restauration" id="btn-backup">☁️ Sauvegardes</button>
     <button type="button" class="btn btn-ghost-light" onclick="resetCrmData()" title="Effacer la sauvegarde locale et recharger les exemples">Réinit. démo</button>
     <button type="button" class="btn btn-ghost-light" onclick="crmLogout()">Déconnexion</button>
     <button type="button" class="btn btn-primary" onclick="openNew()">+ Nouveau dossier</button>
@@ -1802,6 +1803,8 @@ function openDetail(id){
   ensurePieces(d);
   if(!Array.isArray(d.vols) || !d.vols.length) d.vols = [{comp:'—',vol:'—',date:'—',dep:'',arr:'',pnr:'',inc:'RETARD'}];
   window._crmOpenId = id;
+  // Exposer le téléphone du dossier pour l'onglet WhatsApp
+  window._currentDossierTel = (d.indicatif||'') + (d.tel||'');
   const waUrl = crmWhatsAppUrl(d);
   var wab = document.getElementById('crm-detail-wa-btn');
   if(wab){
@@ -1832,6 +1835,7 @@ function openDetail(id){
     <div class="tab active" data-tab="t-info" onclick="switchTab(this,'t-info')">Dossier</div>
     <div class="tab" data-tab="t-calc" onclick="switchTab(this,'t-calc')">Calculs</div>
     <div class="tab" data-tab="t-hist" onclick="switchTab(this,'t-hist')">Historique</div>
+    <div class="tab" data-tab="t-wa" onclick="switchTab(this,'t-wa');loadWaMessages()">💬 WhatsApp</div>
     <div class="tab" data-tab="t-pieces" onclick="switchTab(this,'t-pieces')">Pièces</div>
     <div class="tab" data-tab="t-edit" onclick="switchTab(this,'t-edit')">Modifier</div>
     <div class="tab" data-tab="t-upd" onclick="switchTab(this,'t-upd')">Mettre à jour</div>
@@ -1883,6 +1887,17 @@ function openDetail(id){
     <div style="display:flex;gap:8px;margin-top:14px">
       <input id="ev-txt" style="flex:1;font-size:13px;padding:8px 11px;border-radius:6px;border:1px solid #E2E4E8;background:#fff;color:#1A1A2E;outline:none" placeholder="Ajouter un événement…" onkeydown="if(event.key==='Enter')addEvent('${id}')">
       <button class="btn btn-primary btn-sm" onclick="addEvent('${id}')">Ajouter</button>
+    </div>
+  </div>
+  <div class="tab-content" id="t-wa">
+    <div id="wa-chat-header" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <span style="font-size:13px;color:#6B7280" id="wa-chat-subtitle">Chargement…</span>
+      <button class="btn btn-sm btn-ghost" onclick="loadWaMessages(true)" style="font-size:12px">↺ Actualiser</button>
+    </div>
+    <div id="wa-chat-box" style="background:#ECE5DD;border-radius:12px;padding:14px;min-height:200px;max-height:520px;overflow-y:auto;display:flex;flex-direction:column;gap:8px">
+      <div id="wa-chat-empty" style="text-align:center;color:#999;font-size:13px;padding:40px 0">
+        Cliquez sur "Actualiser" pour charger les messages
+      </div>
     </div>
   </div>
   <div class="tab-content" id="t-pieces">
@@ -1995,6 +2010,68 @@ function switchTab(el,id){
   el.classList.add('active');
   el.closest('.modal-body').querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+}
+
+/* ── Onglet WhatsApp : chargement des messages depuis /api/wa-messages ── */
+async function loadWaMessages(force) {
+  const box = document.getElementById('wa-chat-box');
+  const subtitle = document.getElementById('wa-chat-subtitle');
+  if (!box) return;
+
+  // Récupérer le numéro du dossier ouvert
+  const openModal = document.querySelector('.modal.open, .modal[style*="flex"], .modal[style*="block"]');
+  const phoneEl = openModal ? openModal.querySelector('[data-phone], .detail-val[data-field="tel"]') : null;
+
+  // Chercher le numéro dans le dossier courant (variable globale _currentDossier si disponible)
+  let phone = (typeof _currentDossierTel !== 'undefined' && _currentDossierTel) || '';
+  if (!phone && openModal) {
+    const rows = openModal.querySelectorAll('.detail-row');
+    rows.forEach(r => {
+      const lbl = r.querySelector('.detail-label');
+      if (lbl && (lbl.textContent.includes('Tél') || lbl.textContent.includes('téléphone'))) {
+        const val = r.querySelector('.detail-val');
+        if (val) phone = val.textContent.trim();
+      }
+    });
+  }
+
+  if (!phone) {
+    subtitle.textContent = 'Numéro de téléphone introuvable dans ce dossier.';
+    box.innerHTML = '<div style="text-align:center;color:#999;font-size:13px;padding:40px 0">Aucun numéro associé à ce dossier.</div>';
+    return;
+  }
+
+  subtitle.textContent = 'Chargement…';
+  box.innerHTML = '<div style="text-align:center;color:#999;font-size:13px;padding:40px 0">⏳ Chargement des messages…</div>';
+
+  try {
+    const crmCode = window._crmCode || '';
+    const resp = await fetch('/api/wa-messages?phone=' + encodeURIComponent(phone) + (crmCode ? '&code=' + encodeURIComponent(crmCode) : ''));
+    const data = await resp.json();
+
+    if (!data.messages || data.messages.length === 0) {
+      subtitle.textContent = 'Aucun message enregistré pour ' + phone;
+      box.innerHTML = '<div style="text-align:center;color:#999;font-size:13px;padding:40px 0">💬 Aucun message WhatsApp enregistré pour ce numéro.</div>';
+      return;
+    }
+
+    subtitle.textContent = data.count + ' message(s) · ' + phone;
+    box.innerHTML = data.messages.map(m => {
+      const isRobin = m.role === 'assistant';
+      const bubbleStyle = isRobin
+        ? 'background:#fff;border-radius:12px 12px 12px 2px;padding:10px 14px;max-width:80%;align-self:flex-start;font-size:13px;line-height:1.5;box-shadow:0 1px 2px rgba(0,0,0,.1)'
+        : 'background:#DCF8C6;border-radius:12px 12px 2px 12px;padding:10px 14px;max-width:80%;align-self:flex-end;font-size:13px;line-height:1.5;box-shadow:0 1px 2px rgba(0,0,0,.1)';
+      const sender = isRobin ? '<div style="font-size:10px;font-weight:700;color:#075E54;margin-bottom:3px">🤖 Robin</div>' : '<div style="font-size:10px;font-weight:700;color:#128C7E;margin-bottom:3px;text-align:right">👤 Client</div>';
+      const text = (m.text || '').replace(/\n/g, '<br>');
+      return '<div style="' + bubbleStyle + '">' + sender + text + '</div>';
+    }).join('');
+
+    // Scroll vers le bas
+    box.scrollTop = box.scrollHeight;
+  } catch (e) {
+    subtitle.textContent = 'Erreur de chargement';
+    box.innerHTML = '<div style="text-align:center;color:#e53935;font-size:13px;padding:40px 0">❌ Impossible de charger les messages : ' + e.message + '</div>';
+  }
 }
 
 function addEvent(id){
@@ -2195,6 +2272,134 @@ function closeAll(){
 
 crmDialSyncInput('n_indicatif','+33');
 crmInitAddressAutocomplete('n_adresse_search', 'n_adresse_dd', 'n_adresse');
+
+/* ═══════════════════════════════════════════════════════════
+   SAUVEGARDE CLOUD & POINTS DE RESTAURATION — Robin des Airs
+   ═══════════════════════════════════════════════════════════ */
+const CRM_BACKUP_URL = '/api/crm-backup';
+let _backupTimer = null;
+
+/** Sauvegarde auto déclenchée 3s après la dernière modification */
+function scheduleAutoBackup() {
+  clearTimeout(_backupTimer);
+  _backupTimer = setTimeout(function() { createBackup('Auto'); }, 3000);
+}
+
+/** Hook dans persistCrmDb pour déclencher la sauvegarde cloud */
+const _origPersist = persistCrmDb;
+window.persistCrmDb = function() {
+  _origPersist();
+  scheduleAutoBackup();
+};
+
+/** Crée un point de restauration */
+async function createBackup(label) {
+  try {
+    const code = window._crmCode || '';
+    const slim = DB.map(function(d) {
+      var copy = JSON.parse(JSON.stringify(d));
+      if (copy.pieces) copy.pieces = copy.pieces.map(function(p) { var x = Object.assign({}, p); delete x.dataUrl; return x; });
+      return copy;
+    });
+    const resp = await fetch(CRM_BACKUP_URL + (code ? '?code=' + encodeURIComponent(code) : ''), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ db: slim, label: label || 'Manuel' })
+    });
+    const data = await resp.json();
+    if (data.success) {
+      const btn = document.getElementById('btn-backup');
+      if (btn) { btn.textContent = '☁️ Sauvegardé ✓'; setTimeout(() => { btn.textContent = '☁️ Sauvegardes'; }, 2000); }
+    }
+    return data;
+  } catch (e) { console.warn('Backup failed', e.message); }
+}
+
+/** Ouvre la modale de gestion des sauvegardes */
+async function openBackupModal() {
+  let modal = document.getElementById('crm-backup-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'crm-backup-modal';
+    modal.style.cssText = 'display:none;position:fixed;inset:0;z-index:9998;background:rgba(11,31,58,.7);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px';
+    modal.innerHTML = `
+      <div style="background:#fff;border-radius:16px;max-width:520px;width:100%;padding:28px 24px 24px;box-shadow:0 20px 60px rgba(0,0,0,.25);max-height:85vh;display:flex;flex-direction:column">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+          <h2 style="margin:0;font-size:18px;font-weight:800;color:#0B1F3A">☁️ Points de restauration</h2>
+          <button onclick="document.getElementById('crm-backup-modal').style.display='none'" style="background:none;border:none;font-size:22px;color:#888;cursor:pointer">×</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:16px">
+          <button onclick="createBackup('Manuel');loadBackupList()" style="flex:1;padding:10px;background:#0B1F3A;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">+ Créer une sauvegarde maintenant</button>
+        </div>
+        <div id="backup-list" style="flex:1;overflow-y:auto">
+          <p style="text-align:center;color:#999;font-size:13px;padding:20px">Chargement…</p>
+        </div>
+        <p style="margin:12px 0 0;font-size:11px;color:#9CA3AF;text-align:center">10 derniers points de restauration conservés · Sauvegarde auto après chaque modification</p>
+      </div>`;
+    document.body.appendChild(modal);
+  }
+  modal.style.display = 'flex';
+  modal.onclick = function(e) { if (e.target === modal) modal.style.display = 'none'; };
+  loadBackupList();
+}
+
+async function loadBackupList() {
+  const list = document.getElementById('backup-list');
+  if (!list) return;
+  list.innerHTML = '<p style="text-align:center;color:#999;font-size:13px;padding:20px">⏳ Chargement…</p>';
+  try {
+    const code = window._crmCode || '';
+    const resp = await fetch(CRM_BACKUP_URL + (code ? '?code=' + encodeURIComponent(code) : ''));
+    const data = await resp.json();
+    const backups = data.backups || [];
+    if (!backups.length) {
+      list.innerHTML = '<p style="text-align:center;color:#999;font-size:13px;padding:20px">Aucune sauvegarde cloud.<br>Cliquez sur "+ Créer" pour démarrer.</p>';
+      return;
+    }
+    list.innerHTML = backups.map(function(b) {
+      const d = new Date(b.ts);
+      const dateStr = d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      const timeStr = d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+      return `<div style="display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border:1px solid #E5E7EB;border-radius:10px;margin-bottom:8px">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:#1A1A2E">${b.label}</div>
+          <div style="font-size:12px;color:#6B7280;margin-top:2px">${dateStr} à ${timeStr} · ${b.count} dossier(s)</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button onclick="restoreBackup('${b.key}')" style="padding:6px 12px;background:#0B1F3A;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer">↩ Restaurer</button>
+          <button onclick="deleteBackup('${b.key}')" style="padding:6px 10px;background:none;border:1px solid #E5E7EB;border-radius:6px;font-size:12px;color:#6B7280;cursor:pointer">🗑</button>
+        </div>
+      </div>`;
+    }).join('');
+  } catch (e) {
+    list.innerHTML = '<p style="text-align:center;color:#e53935;font-size:13px;padding:20px">❌ Impossible de charger les sauvegardes : ' + e.message + '</p>';
+  }
+}
+
+async function restoreBackup(key) {
+  if (!confirm('Restaurer ce point ? Les dossiers actuels seront remplacés par cette sauvegarde.')) return;
+  try {
+    const code = window._crmCode || '';
+    const resp = await fetch(CRM_BACKUP_URL + '?key=' + encodeURIComponent(key) + (code ? '&code=' + encodeURIComponent(code) : ''));
+    const snapshot = await resp.json();
+    if (!snapshot.db || !Array.isArray(snapshot.db)) throw new Error('Format invalide');
+    localStorage.setItem(CRM_LS_KEY, JSON.stringify(snapshot.db));
+    document.getElementById('crm-backup-modal').style.display = 'none';
+    showCrmToast('✅ Restauration effectuée — rechargement…');
+    setTimeout(function() { window.location.reload(); }, 1500);
+  } catch (e) {
+    alert('Erreur lors de la restauration : ' + e.message);
+  }
+}
+
+async function deleteBackup(key) {
+  if (!confirm('Supprimer cette sauvegarde ?')) return;
+  try {
+    const code = window._crmCode || '';
+    await fetch(CRM_BACKUP_URL + '?key=' + encodeURIComponent(key) + (code ? '&code=' + encodeURIComponent(code) : ''), { method: 'DELETE' });
+    loadBackupList();
+  } catch (e) { alert('Erreur : ' + e.message); }
+}
 
 </script>
 </body>
