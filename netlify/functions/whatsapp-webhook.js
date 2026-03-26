@@ -35,7 +35,7 @@ try {
 }
 
 // Étape 1 (grand 1 — collecte mandat) : démarrage au premier message ou "Bonjour"
-const STEP1_STEPS = ['PASSENGER_FIRST', 'PASSENGER_LAST', 'PASSENGER_ANOTHER', 'PASSENGERS_CONFIRM', 'CONFIRM_PHONE', 'ASK_CONTACT_PHONE', 'TRAJET_FLIGHT', 'TRAJET_DATE', 'TRAJET_CONNECTION', 'TRAJET_CONFIRM', 'ASK_PNR', 'CONFIRM_PNR', 'ASK_AIRLINE', 'ASK_ADDRESS', 'STEP1_DONE'];
+const STEP1_STEPS = ['ASK_PROBLEM_TYPE', 'ASK_YEAR', 'ASK_PAX_COUNT_STEP1', 'ASK_PAX_MANUAL_STEP1', 'PASSENGER_FIRST', 'PASSENGER_LAST', 'PASSENGER_ANOTHER', 'PASSENGERS_CONFIRM', 'CONFIRM_PHONE', 'ASK_CONTACT_PHONE', 'TRAJET_FLIGHT', 'TRAJET_DATE', 'TRAJET_CONNECTION', 'TRAJET_CONFIRM', 'ASK_PNR', 'CONFIRM_PNR', 'ASK_AIRLINE', 'ASK_ADDRESS', 'STEP1_DONE'];
 function isStep1(step) { return STEP1_STEPS.includes(step); }
 // NOTE: isBonjourLike définie plus bas (ligne ~62) — version complète utilisée partout
 function step1Form(session) {
@@ -267,6 +267,92 @@ async function sendMainMenu(to) {
   ]);
 }
 
+/** Boutons type de problème — étape 2 playbook */
+async function sendProblemTypeButtons(to) {
+  return sendInteractiveButtons(to,
+    'Quel type de problème avez-vous rencontré ?',
+    [
+      { id: 'prob_retard',    title: '⏱️ Retard' },
+      { id: 'prob_annul',     title: '❌ Annulation' },
+      { id: 'prob_refus',     title: '🚫 Refus embarquement' }
+    ]
+  );
+}
+
+/** Liste année du vol — étape 3 playbook */
+async function sendYearList(to) {
+  const rows = [
+    { id: 'year_2026', title: '2026' },
+    { id: 'year_2025', title: '2025' },
+    { id: 'year_2024', title: '2024' },
+    { id: 'year_2023', title: '2023' },
+    { id: 'year_avant', title: '2022 ou avant' }
+  ];
+  return sendInteractiveList(to,
+    'En quelle année a eu lieu votre vol ?',
+    'Choisir l\'année',
+    'Année du vol',
+    rows
+  );
+}
+
+/** Langue préférée pour les appels — adapté selon le pays de destination */
+async function sendLanguageButtons(to, iataArrival) {
+  const langMap = {
+    DKR: ['🇫🇷 Français', 'wolof_', '🇬🇧 English'],  // Dakar
+    ABJ: ['🇫🇷 Français', 'dioula_', '🇬🇧 English'],  // Abidjan
+    CON: ['🇫🇷 Français', 'lingala_', '🇬🇧 English'], // Brazzaville
+    FIH: ['🇫🇷 Français', 'lingala_', '🇬🇧 English'], // Kinshasa
+    BKO: ['🇫🇷 Français', 'bambara_', '🇬🇧 English'], // Bamako
+    LOS: ['🇬🇧 English', '🇫🇷 Français', 'yoruba_'],  // Lagos
+    ACC: ['🇬🇧 English', '🇫🇷 Français', 'twi_'],     // Accra
+    DLA: ['🇫🇷 Français', '🇬🇧 English'],             // Douala
+    CMN: ['🇫🇷 Français', 'darija_', '🇬🇧 English'],  // Casablanca
+    ALG: ['🇫🇷 Français', 'arabe_',  '🇬🇧 English'],  // Alger
+  };
+  const langs = langMap[iataArrival] || ['🇫🇷 Français', '🇬🇧 English'];
+  const buttons = langs.slice(0, 3).map((l, i) => ({ id: `lang_${i}`, title: l.slice(0, 20) }));
+  return sendInteractiveButtons(to,
+    'Pour les appels et messages vocaux, quelle langue préférez-vous ?',
+    buttons
+  );
+}
+
+/** Construction URL mandat depuis les données de session */
+function buildMandatUrlFromSession(sessionData, phone) {
+  const BASE = 'https://robindesairs.eu/mandat.html';
+  const p = new URLSearchParams();
+  const passengers = sessionData.passengers || [];
+  const flights    = sessionData.flights    || [];
+  const main = passengers[0] || {};
+
+  if (main.firstName || main.lastName) p.set('name', `${main.firstName || ''} ${main.lastName || ''}`.trim());
+  if (phone)                   p.set('phone',     phone.startsWith('+') ? phone : `+${phone}`);
+  if (sessionData.address)     p.set('address',   sessionData.address);
+  if (sessionData.contactPhone) p.set('phone',    sessionData.contactPhone);
+  if (flights[0]?.flightNumber) p.set('vol',      flights[0].flightNumber);
+  if (flights[0]?.date)         p.set('date',     flights[0].date);
+  if (sessionData.pnr)          p.set('pnr',      sessionData.pnr);
+  if (sessionData.airline)      p.set('compagnie',sessionData.airline);
+
+  const nbpax = passengers.length || 1;
+  p.set('nbpax', String(nbpax));
+  if (nbpax > 1) {
+    p.set('paxlist', passengers.slice(1).map(pp => `${pp.firstName} ${pp.lastName}`).join(', '));
+  }
+
+  // Motif basé sur problem_type
+  const pt = sessionData.problemType;
+  if (pt === 'retard')  { p.set('motif', sessionData.delayLabel || 'Retard de vol');  p.set('motif_en', 'Flight delay'); }
+  if (pt === 'annul')   { p.set('motif', 'Annulation de vol');    p.set('motif_en', 'Flight cancellation'); }
+  if (pt === 'refus')   { p.set('motif', "Refus d'embarquement"); p.set('motif_en', 'Denied boarding'); }
+
+  // Indemnité : 600€ par défaut (routes diaspora africaine > 3500km)
+  p.set('indemnite', '600');
+
+  return `${BASE}?${p.toString()}`;
+}
+
 async function sendPassengerCountList(to) {
   const rows = [
     { id: 'robin_pax_1', title: '1 passager' },
@@ -401,11 +487,11 @@ async function handleTunnel(phone, text, imageBase64, imageMime, origin) {
     }
     if (mid === 'menu_full') {
       setTunnelSession(phone, {
-        step: 'PASSENGER_FIRST',
+        step: 'ASK_PROBLEM_TYPE',
         flightData: { passengers: [], passengerIndex: 0, flights: [], segmentIndex: 0 },
         menuVolOnly: false
       });
-      await sendWhatsAppText(to, 'Prénom du passager 1 ?');
+      await sendProblemTypeButtons(to);
       return;
     }
     await sendMainMenu(to);
@@ -630,18 +716,97 @@ async function handleTunnel(phone, text, imageBase64, imageMime, origin) {
       await sendWhatsAppText(to, "Quelle est votre adresse postale ? (ville, code postal, pays)");
       return;
     case 'ASK_ADDRESS': {
-      const form = step1Form(session);
-      const recap = [
-        `Passagers : ${(form.passengers || []).map(p => `${p.firstName} ${p.lastName}`).join(', ')}`,
-        `Vol(s) : ${(form.flights || []).map(f => `${f.flightNumber} (${f.date})`).join(', ')}`,
-        `PNR : ${form.pnr || '—'}`,
-        `Compagnie : ${form.airline || '—'}`,
-        `Adresse : ${msg}`,
-      ].join('\n');
-      setTunnelSession(phone, { step: 'STEP1_DONE', flightData: { ...session.flightData, address: msg } });
-      await sendWhatsAppText(to, `Nous avons bien enregistré toutes les informations pour votre dossier.\n\n${recap}\n\nProchaine étape : nous vous enverrons le mandat à signer (Yousign).`);
+      const updatedFlightData = { ...session.flightData, address: msg };
+      const form = step1Form({ ...session, flightData: updatedFlightData });
+      setTunnelSession(phone, { step: 'STEP1_DONE', flightData: updatedFlightData });
+
+      // Construire l'URL mandat pré-rempli
+      const mandatUrl = buildMandatUrlFromSession(updatedFlightData, phone);
+      const nbPax = (form.passengers || []).length || 1;
+      const montant = nbPax * 600;
+      const passengerNames = (form.passengers || []).map(p => `${p.firstName} ${p.lastName}`).join(', ');
+      const volsStr = (form.flights || []).map(f => `${f.flightNumber} (${f.date})`).join(', ');
+
+      const recap =
+        `👤 Passager(s) : ${passengerNames || '—'}\n` +
+        `✈️ Vol(s) : ${volsStr || '—'}\n` +
+        `🏷️ PNR : ${form.pnr || '—'}\n` +
+        `🏢 Compagnie : ${updatedFlightData.airline || '—'}\n` +
+        `📍 Adresse : ${msg}`;
+
+      const msgMandat =
+        `✅ *Dossier enregistré !*\n\n${recap}\n\n` +
+        `💰 Indemnité potentielle : *${montant} €* (${nbPax} passager${nbPax > 1 ? 's' : ''})\n\n` +
+        `📝 *Signez votre mandat en 2 min pour que nous agissions en votre nom :*\n${mandatUrl}\n\n` +
+        `— L'équipe Robin des Airs 🏹`;
+
+      await sendWhatsAppText(to, msgMandat);
       return;
     }
+    case 'ASK_PROBLEM_TYPE': {
+      const probMap = {
+        'prob_retard': 'retard',
+        'prob_annul':  'annul',
+        'prob_refus':  'refus'
+      };
+      const probType = probMap[mid] || (
+        /retard|delay/i.test(msg) ? 'retard' :
+        /annul|cancel/i.test(msg) ? 'annul' :
+        /refus|denied|embarquement/i.test(msg) ? 'refus' : null
+      );
+      if (!probType) {
+        await sendProblemTypeButtons(to);
+        return;
+      }
+      setTunnelSession(phone, { step: 'ASK_YEAR', flightData: { ...session.flightData, problemType: probType } });
+      await sendYearList(to);
+      return;
+    }
+
+    case 'ASK_YEAR': {
+      const yearMap = {
+        'year_2026': '2026', 'year_2025': '2025', 'year_2024': '2024',
+        'year_2023': '2023', 'year_avant': '2022 ou avant'
+      };
+      const year = yearMap[mid] || (msg && /^20\d{2}$/.test(msg.trim()) ? msg.trim() : null);
+      if (!year) {
+        await sendYearList(to);
+        return;
+      }
+      setTunnelSession(phone, { step: 'ASK_PAX_COUNT_STEP1', flightData: { ...session.flightData, flightYear: year } });
+      await sendPassengerCountList(to);
+      return;
+    }
+
+    case 'ASK_PAX_COUNT_STEP1': {
+      if (msg === '7+') {
+        setTunnelSession(phone, { step: 'ASK_PAX_MANUAL_STEP1' });
+        await sendWhatsAppText(to, 'Combien de passagers exactement ? (indiquez un chiffre entre 7 et 20)');
+        return;
+      }
+      if (isNum) {
+        const nPax = Math.min(20, Math.max(1, parseInt(msg, 10)));
+        const flightData = { ...session.flightData, totalPax: nPax, passengers: [], passengerIndex: 0, flights: [], segmentIndex: 0 };
+        setTunnelSession(phone, { step: 'PASSENGER_FIRST', flightData });
+        await sendWhatsAppText(to, `Parfait, ${nPax} passager(s). Prénom du passager 1 ?`);
+      } else {
+        await sendPassengerCountList(to);
+      }
+      return;
+    }
+
+    case 'ASK_PAX_MANUAL_STEP1': {
+      const nM = parseInt(msg, 10);
+      if (/^\d+$/.test(msg) && nM >= 7 && nM <= 20) {
+        const flightData = { ...session.flightData, totalPax: nM, passengers: [], passengerIndex: 0, flights: [], segmentIndex: 0 };
+        setTunnelSession(phone, { step: 'PASSENGER_FIRST', flightData });
+        await sendWhatsAppText(to, `Parfait, ${nM} passagers. Prénom du passager 1 ?`);
+      } else {
+        await sendWhatsAppText(to, 'Indiquez un nombre entre 7 et 20.');
+      }
+      return;
+    }
+
     case 'STEP1_DONE':
       await sendWhatsAppText(to, "Pour toute question, répondez ici. Pour recommencer un nouveau dossier, tapez NOUVEAU.");
       return;

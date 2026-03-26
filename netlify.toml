@@ -134,4 +134,9 @@
   to = "/.netlify/functions/sign-mandate"
   status = 200
 
+[[redirects]]
+  from = "/api/analyze-flight"
+  to = "/.netlify/functions/analyze-flight"
+  status = 200
+
 # Page 404 personnalisée (créer 404.html si vous en voulez une)
