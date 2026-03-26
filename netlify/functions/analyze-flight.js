@@ -71,72 +71,80 @@ function calcIndemnite(distKm, delayHours) {
   return 600;
 }
 
-// ─── Extraction via Gemini ───────────────────────────────────────────────────
-async function extractWithGemini(conversation, geminiKey) {
-  const prompt = `Tu es un assistant spécialisé en droits des passagers aériens (CE 261/2004).
-Analyse cette conversation WhatsApp et extrais les informations de vol.
+// ─── Extraction via Claude Haiku (Anthropic API) ─────────────────────────────
+async function extractWithClaude(conversation, anthropicKey) {
+  const systemPrompt = `Tu es un expert en droits des passagers aériens (CE 261/2004).
+Ton rôle : extraire les informations de vol depuis une conversation WhatsApp.
+Tu réponds UNIQUEMENT avec un objet JSON valide, sans markdown, sans texte avant ou après.`;
+
+  const userPrompt = `Analyse cette conversation et extrais les informations de vol :
 
 CONVERSATION:
 ${conversation}
 
-Réponds UNIQUEMENT avec un objet JSON valide (pas de markdown, pas de texte avant/après) avec ces champs:
+Réponds avec exactement cet objet JSON (champs vides = chaîne vide "") :
 {
-  "name": "Nom complet du passager principal (ou vide)",
-  "phone": "Numéro de téléphone avec indicatif (ou vide)",
-  "email": "Email (ou vide)",
-  "address": "Adresse (ou vide)",
-  "vol": "Numéro de vol ex: AF123 (ou vide)",
-  "date": "Date du vol format DD/MM/YYYY (ou vide)",
-  "iata_from": "Code IATA aéroport départ ex: CDG (ou vide)",
-  "iata_to": "Code IATA aéroport arrivée ex: ABJ (ou vide)",
-  "route": "Route lisible ex: Paris CDG → Abidjan ABJ (ou vide)",
-  "compagnie": "Nom complet de la compagnie ex: Air France (ou vide)",
-  "iata_carrier": "Code IATA compagnie ex: AF (ou vide)",
-  "pnr": "Numéro de réservation/PNR (ou vide)",
-  "motif": "Motif du problème en français: retard de X heures / annulation / refus d'embarquement (ou vide)",
-  "motif_en": "Motif en anglais (ou vide)",
-  "delay_hours": "Nombre d'heures de retard (chiffre, ou 0 si annulation/refus)",
-  "problem_type": "delay | cancellation | denied_boarding | unknown",
-  "nbpax": "Nombre de passagers concernés (chiffre, défaut 1)",
-  "paxlist": "Autres passagers séparés par virgule (ou vide)",
-  "confidence": "high | medium | low"
-}`;
+  "name": "Nom complet passager principal",
+  "phone": "Téléphone avec indicatif ex: +33612345678",
+  "email": "Email",
+  "address": "Adresse postale",
+  "vol": "Numéro de vol ex: AF712",
+  "date": "Date vol JJ/MM/AAAA",
+  "iata_from": "Code IATA départ ex: CDG",
+  "iata_to": "Code IATA arrivée ex: ABJ",
+  "route": "Route lisible ex: Paris CDG → Abidjan ABJ",
+  "compagnie": "Nom complet compagnie ex: Air France",
+  "iata_carrier": "Code IATA compagnie ex: AF",
+  "pnr": "Code PNR réservation",
+  "motif": "Motif en français ex: Retard de 5 heures",
+  "motif_en": "Motif en anglais ex: 5-hour delay",
+  "delay_hours": 0,
+  "problem_type": "delay",
+  "nbpax": 1,
+  "paxlist": "Autres passagers séparés par virgule",
+  "confidence": "high"
+}
 
-  const resp = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { temperature: 0.1, maxOutputTokens: 1024 }
-      })
-    }
-  );
+Valeurs pour problem_type : delay | cancellation | denied_boarding | unknown
+Valeurs pour confidence : high | medium | low`;
+
+  const resp = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "x-api-key": anthropicKey,
+      "anthropic-version": "2023-06-01",
+      "content-type": "application/json"
+    },
+    body: JSON.stringify({
+      model: "claude-haiku-4-5",
+      max_tokens: 1024,
+      temperature: 0,
+      system: systemPrompt,
+      messages: [{ role: "user", content: userPrompt }]
+    })
+  });
 
   const data = await resp.json();
 
-  // Log l'erreur API Gemini si présente
-  if (data.error) throw new Error(`Gemini API error: ${data.error.message || JSON.stringify(data.error)}`);
-  if (!data.candidates || data.candidates.length === 0) throw new Error("Gemini: pas de candidats dans la réponse");
+  if (data.error) throw new Error(`Claude API error: ${data.error.message || JSON.stringify(data.error)}`);
+  if (!data.content || data.content.length === 0) throw new Error("Claude: réponse vide");
 
-  const raw = data.candidates[0]?.content?.parts?.[0]?.text || "";
-  if (!raw) throw new Error("Gemini: texte de réponse vide");
+  const raw = data.content[0]?.text || "";
+  if (!raw) throw new Error("Claude: texte vide");
 
-  // Nettoyer le JSON : enlever ```json ... ``` et tout texte avant/après le premier { }
+  // Extraire le JSON (Claude respecte généralement le format, mais on sécurise)
   const jsonMatch = raw.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) throw new Error(`Gemini: pas de JSON trouvé dans: ${raw.substring(0, 200)}`);
+  if (!jsonMatch) throw new Error(`Claude: pas de JSON dans: ${raw.substring(0, 200)}`);
 
   let parsed;
   try {
     parsed = JSON.parse(jsonMatch[0]);
   } catch (e) {
-    throw new Error(`Gemini: JSON invalide: ${e.message} — raw: ${raw.substring(0, 200)}`);
+    throw new Error(`Claude: JSON invalide: ${e.message}`);
   }
 
-  // Si l'objet est vide ou presque, lever une erreur pour déclencher le fallback regex
-  const filledFields = Object.values(parsed).filter(v => v && v !== "" && v !== "unknown").length;
-  if (filledFields < 2) throw new Error(`Gemini: extraction insuffisante (${filledFields} champs remplis)`);
+  const filledFields = Object.values(parsed).filter(v => v && v !== "" && v !== "unknown" && v !== 0).length;
+  if (filledFields < 2) throw new Error(`Claude: extraction insuffisante (${filledFields} champs)`);
 
   return parsed;
 }
@@ -316,24 +324,24 @@ export async function handler(event) {
     return { statusCode: 400, headers, body: JSON.stringify({ error: "conversation trop courte ou vide" }) };
   }
 
-  const geminiKey = process.env.GEMINI_API_KEY;
+  const anthropicKey = process.env.ANTHROPIC_API_KEY;
 
   let extracted;
   let method_used;
 
-  // Tentative extraction Gemini, fallback regex
-  if (geminiKey) {
+  // Tentative extraction Claude, fallback regex
+  if (anthropicKey) {
     try {
-      extracted = await extractWithGemini(conversation, geminiKey);
-      method_used = "gemini";
+      extracted = await extractWithClaude(conversation, anthropicKey);
+      method_used = "claude";
     } catch (err) {
-      console.warn("Gemini extraction failed:", err.message);
+      console.warn("Claude extraction failed:", err.message);
       extracted = extractWithRegex(conversation);
       method_used = "regex_fallback";
     }
   } else {
     extracted = extractWithRegex(conversation);
-    method_used = "regex_no_gemini_key";
+    method_used = "regex_no_claude_key";
   }
 
   // Éligibilité CE 261/2004
