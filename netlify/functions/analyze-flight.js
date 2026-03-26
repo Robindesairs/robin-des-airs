@@ -319,7 +319,10 @@ export async function handler(event) {
     return { statusCode: 400, headers, body: JSON.stringify({ error: "Invalid JSON" }) };
   }
 
+  // Support full payload {phone, conversation} OR legacy {conversation} only
   const conversation = (body.conversation || "").trim();
+  const incomingPhone = (body.phone || "").trim();
+
   if (!conversation || conversation.length < 20) {
     return { statusCode: 400, headers, body: JSON.stringify({ error: "conversation trop courte ou vide" }) };
   }
@@ -362,6 +365,9 @@ export async function handler(event) {
     whatsapp_message = `Après analyse, ce dossier ne remplit pas les critères d'indemnisation CE 261/2004 : ${raison}.\n\nSi vous pensez qu'il y a une erreur, répondez avec plus de détails sur votre vol.`;
   }
 
+  // Include phone in response — used by Make.com downstream modules ({{2.body.phone}})
+  const responsePhone = incomingPhone || extracted.phone || "";
+
   return {
     statusCode: 200,
     headers,
@@ -370,9 +376,8 @@ export async function handler(event) {
       eligibilite,
       mandat_url,
       whatsapp_message,
-      method_used
+      method_used,
+      phone: responsePhone
     })
   };
 }
-# updated Thu Mar 26 05:16:36 GMT 2026
-
