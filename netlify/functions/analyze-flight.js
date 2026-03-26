@@ -115,41 +115,87 @@ Réponds UNIQUEMENT avec un objet JSON valide (pas de markdown, pas de texte ava
   );
 
   const data = await resp.json();
-  const raw = data?.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
-  // Nettoyer le JSON (enlever éventuels ```json ... ```)
-  const clean = raw.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-  return JSON.parse(clean);
+
+  // Log l'erreur API Gemini si présente
+  if (data.error) throw new Error(`Gemini API error: ${data.error.message || JSON.stringify(data.error)}`);
+  if (!data.candidates || data.candidates.length === 0) throw new Error("Gemini: pas de candidats dans la réponse");
+
+  const raw = data.candidates[0]?.content?.parts?.[0]?.text || "";
+  if (!raw) throw new Error("Gemini: texte de réponse vide");
+
+  // Nettoyer le JSON : enlever ```json ... ``` et tout texte avant/après le premier { }
+  const jsonMatch = raw.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) throw new Error(`Gemini: pas de JSON trouvé dans: ${raw.substring(0, 200)}`);
+
+  let parsed;
+  try {
+    parsed = JSON.parse(jsonMatch[0]);
+  } catch (e) {
+    throw new Error(`Gemini: JSON invalide: ${e.message} — raw: ${raw.substring(0, 200)}`);
+  }
+
+  // Si l'objet est vide ou presque, lever une erreur pour déclencher le fallback regex
+  const filledFields = Object.values(parsed).filter(v => v && v !== "" && v !== "unknown").length;
+  if (filledFields < 2) throw new Error(`Gemini: extraction insuffisante (${filledFields} champs remplis)`);
+
+  return parsed;
 }
 
 // ─── Fallback extraction par regex ──────────────────────────────────────────
 function extractWithRegex(conversation) {
   const result = {};
+  const text = conversation;
 
-  // Numéro de vol: AF123, DL4500, etc.
-  const volMatch = conversation.match(/\b([A-Z]{2}\d{3,4})\b/);
+  // Numéro de vol: AF712, DL4500, EK234, etc.
+  const volMatch = text.match(/\b([A-Z]{2}\d{3,4})\b/);
   if (volMatch) result.vol = volMatch[1];
 
+  // Code IATA compagnie depuis le numéro de vol
+  if (result.vol) result.iata_carrier = result.vol.substring(0, 2);
+
+  // Codes IATA aéroports (3 lettres majuscules connues)
+  const iataPattern = /\b(CDG|ORY|LHR|LGW|AMS|BRU|FRA|MUC|MAD|BCN|FCO|ZRH|GVA|LIS|ATH|DUB|HEL|ARN|CPH|WAW|PRG|VIE|ABJ|DKR|LOS|ACC|CMN|ALG|TUN|DLA|BKO|OUA|CON|FIH|TNR|JNB|NIM|LFW)\b/g;
+  const iataCodes = [...text.matchAll(iataPattern)].map(m => m[1]);
+  if (iataCodes.length >= 2) {
+    result.iata_from = iataCodes[0];
+    result.iata_to   = iataCodes[1];
+    result.route = `${iataCodes[0]} → ${iataCodes[1]}`;
+  } else if (iataCodes.length === 1) {
+    // Chercher le contexte : "depuis CDG" ou "vers ABJ"
+    const fromMatch = text.match(/(?:depuis|from|départ)\s+([A-Z]{3})/i);
+    const toMatch   = text.match(/(?:vers|to|arrivée|destination)\s+([A-Z]{3})/i);
+    if (fromMatch) result.iata_from = fromMatch[1];
+    if (toMatch)   result.iata_to   = toMatch[1];
+    if (!result.iata_from) result.iata_from = iataCodes[0];
+  }
+
+  // Nom du passager
+  const nameMatch = text.match(/(?:je suis|m'appelle|nom[:\s]+|passager[:\s]+)([A-ZÀÂÉÈÊËÎÏÔÙÛÜÇ][a-zàâéèêëîïôùûüç]+(?:\s+[A-ZÀÂÉÈÊËÎÏÔÙÛÜÇ][a-zàâéèêëîïôùûüç]+)+)/i);
+  if (nameMatch) result.name = nameMatch[1];
+
   // Date: DD/MM/YYYY ou YYYY-MM-DD
-  const dateMatch = conversation.match(/\b(\d{2}\/\d{2}\/\d{4}|\d{4}-\d{2}-\d{2})\b/);
+  const dateMatch = text.match(/\b(\d{2}\/\d{2}\/\d{4}|\d{4}-\d{2}-\d{2})\b/);
   if (dateMatch) {
     let d = dateMatch[1];
-    if (d.includes("-")) {
-      const [y, m, dd] = d.split("-");
-      d = `${dd}/${m}/${y}`;
-    }
+    if (d.includes("-")) { const [y, m, dd] = d.split("-"); d = `${dd}/${m}/${y}`; }
     result.date = d;
   }
 
   // Téléphone: +33..., +225..., etc.
-  const phoneMatch = conversation.match(/(\+\d{10,15})/);
+  const phoneMatch = text.match(/(\+\d{10,15})/);
   if (phoneMatch) result.phone = phoneMatch[1];
 
-  // PNR: 6 caractères alphanumériques majuscules
-  const pnrMatch = conversation.match(/\b([A-Z0-9]{6})\b/);
+  // PNR: exactement 6 caractères alphanum majuscules (pas un code IATA, pas un numéro de vol)
+  const pnrMatch = text.match(/\bPNR[:\s]*([A-Z0-9]{6})\b/i) || text.match(/\b(?:réservation|booking)[:\s]*([A-Z0-9]{6})\b/i);
   if (pnrMatch) result.pnr = pnrMatch[1];
 
+  // Compagnie
+  const compMatch = text.match(/(?:Air France|Corsair|Transavia|Air Algérie|Royal Air Maroc|Tunisair|Ethiopian|Kenya Airways|Brussels Airlines|KLM|Lufthansa|Iberia|British Airways|Emirates|Turkish Airlines)/i);
+  if (compMatch) { result.compagnie = compMatch[0]; }
+
   // Retard en heures
-  const delayMatch = conversation.match(/(\d+)\s*h(?:eure|our)?s?\s+(?:de\s+)?(?:retard|delay)/i);
+  const delayMatch = text.match(/(\d+)\s*h(?:eure|our)?s?\s+(?:de\s+)?(?:retard|delay)/i)
+    || text.match(/retard\s+(?:de\s+)?(\d+)\s*h/i);
   if (delayMatch) {
     result.delay_hours = parseInt(delayMatch[1]);
     result.problem_type = "delay";
@@ -158,15 +204,18 @@ function extractWithRegex(conversation) {
   }
 
   // Annulation
-  if (/annul[eé]|cancel/i.test(conversation)) {
-    result.problem_type = "cancellation";
+  if (/annul[eé]|cancel/i.test(text)) {
+    result.problem_type = result.problem_type || "cancellation";
     result.motif = result.motif || "Annulation de vol";
     result.motif_en = result.motif_en || "Flight cancellation";
-    result.delay_hours = 0;
+    result.delay_hours = result.delay_hours || 0;
   }
 
+  // Nombre de passagers
+  const paxMatch = text.match(/(\d+)\s+passager/i) || text.match(/(?:nous étions|we were)\s+(\d+)/i);
+  result.nbpax = paxMatch ? parseInt(paxMatch[1]) : 1;
+
   result.confidence = "low";
-  result.nbpax = 1;
   return result;
 }
 
