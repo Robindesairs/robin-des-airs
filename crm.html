@@ -271,6 +271,7 @@
     </div>
     <button type="button" class="btn btn-ghost-light" onclick="exportCrmCsv()" title="Télécharger la liste des dossiers">Export CSV</button>
     <button type="button" class="btn btn-ghost-light" onclick="openBackupModal()" title="Sauvegardes cloud et points de restauration" id="btn-backup">☁️ Sauvegardes</button>
+    <button type="button" class="btn btn-ghost-light" onclick="syncCrmNow(false)" title="Pousser les changements locaux vers le CRM cloud" id="btn-sync">↻ Synchroniser</button>
     <button type="button" class="btn btn-ghost-light" onclick="resetCrmData()" title="Effacer la sauvegarde locale et recharger les exemples">Réinit. démo</button>
     <button type="button" class="btn btn-ghost-light" onclick="crmLogout()">Déconnexion</button>
     <button type="button" class="btn btn-primary" onclick="openNew()">+ Nouveau dossier</button>
@@ -471,6 +472,8 @@ const CRM_AUTH_URL = '/api/crm-auth';
 const CRM_AGENT_KEY = 'rda_crm_agent';
 /** Code connu de la direction uniquement — sans ce code, aucune suppression de dossier n’est possible. */
 const CRM_SUPPRESSION_DOSSIER_CODE = '1112';
+const CRM_OFFLINE_CODE_KEY = 'rda_crm_offline_code_v1';
+const CRM_OFFLINE_DEFAULT_CODE = 'robin-dakar';
 
 function getCrmUiLang() {
   try {
@@ -526,20 +529,56 @@ async function crmUnlock() {
   const err = document.getElementById('crm-gate-err');
   err.classList.remove('show');
   const code = (input && input.value) ? input.value.trim() : '';
-  const r = await fetch(CRM_AUTH_URL, {
-    method: 'POST',
-    credentials: 'same-origin',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ code }),
-  });
-  const j = await r.json().catch(() => ({}));
-  if (j.ok) {
-    document.getElementById('crm-gate').classList.add('hidden');
-    document.getElementById('crm-main').classList.add('visible');
-    syncCrmAgentInput();
-    render();
-  } else {
+  if (!code) {
+    err.textContent = crmT('gate_wrong_code');
+    err.classList.add('show');
+    return;
+  }
+  function allowOfflineAccess() {
+    try {
+      var cached = localStorage.getItem(CRM_OFFLINE_CODE_KEY) || '';
+      return code === cached || code === CRM_OFFLINE_DEFAULT_CODE;
+    } catch (_) {
+      return code === CRM_OFFLINE_DEFAULT_CODE;
+    }
+  }
+  function openAndRemember() {
+    try { localStorage.setItem(CRM_OFFLINE_CODE_KEY, code); } catch (_) {}
+    crmOpenMain();
+  }
+
+  if (!navigator.onLine && allowOfflineAccess()) {
+    openAndRemember();
+    showCrmToast('Mode hors ligne : accès local activé');
+    return;
+  }
+
+  try {
+    const r = await fetch(CRM_AUTH_URL, {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code }),
+    });
+    const j = await r.json().catch(() => ({}));
+    if (j.ok) {
+      openAndRemember();
+      return;
+    }
+    if (!navigator.onLine && allowOfflineAccess()) {
+      openAndRemember();
+      showCrmToast('Mode hors ligne : accès local activé');
+      return;
+    }
     err.textContent = j.error || crmT('gate_wrong_code');
+    err.classList.add('show');
+  } catch (_) {
+    if (allowOfflineAccess()) {
+      openAndRemember();
+      showCrmToast('API indisponible : ouverture locale');
+      return;
+    }
+    err.textContent = 'Connexion API impossible. En hors ligne, utilisez le code local.';
     err.classList.add('show');
   }
 }
@@ -607,6 +646,11 @@ async function initCrmAuth() {
       return;
     }
   } catch (e) {
+    if (!navigator.onLine) {
+      err.textContent = 'Mode hors ligne : saisissez le code pour ouvrir le CRM local.';
+      err.classList.add('show');
+      return;
+    }
     if (localNoApi) {
       crmOpenMain();
       showCrmToast(crmT('toast_no_api_response'));
@@ -726,12 +770,14 @@ function requireCrmAgent(){
 
 /** Ligne d’historique avec agent + horodatage. */
 function crmAuditEvent(d, action, meta){
+  d.updated_at = new Date().toISOString();
+  d.updated_by = getCrmAgent() || crmT('agent_unknown');
   d.events.push({
     date: today(),
-    when: new Date().toISOString(),
+    when: d.updated_at,
     action: action,
     meta: typeof meta === 'string' ? meta : '',
-    by: getCrmAgent() || crmT('agent_unknown')
+    by: d.updated_by
   });
 }
 
@@ -841,6 +887,52 @@ let DB=[
    palier:600,events:[{date:'2025-10-20',action:'Dossier créé',meta:''},{date:'2025-11-01',action:'Mandat signé',meta:''},{date:'2025-11-07',action:'LRAR envoyée',meta:''},{date:'2025-11-22',action:'Relance 1 (J+15)',meta:''},{date:'2025-12-07',action:'Relance 2 (J+30)',meta:''},{date:'2026-01-08',action:'Saisine médiateur (J+62)',meta:''}]},
 ];
 var CRM_LS_KEY = 'rda_crm_db_v1';
+var CRM_SYNC_QUEUE_KEY = 'rda_crm_sync_queue_v1';
+var CRM_SYNC_LAST_KEY = 'rda_crm_sync_last_v1';
+
+function crmSlimDbSnapshot() {
+  return DB.map(function(d){
+    var copy = JSON.parse(JSON.stringify(d));
+    if(copy.pieces) copy.pieces = copy.pieces.map(function(p){
+      var x = Object.assign({}, p);
+      delete x.dataUrl;
+      return x;
+    });
+    return copy;
+  });
+}
+
+function readCrmSyncQueue() {
+  try {
+    var raw = localStorage.getItem(CRM_SYNC_QUEUE_KEY);
+    if (!raw) return [];
+    var q = JSON.parse(raw);
+    return Array.isArray(q) ? q : [];
+  } catch (e) { return []; }
+}
+
+function writeCrmSyncQueue(q) {
+  try { localStorage.setItem(CRM_SYNC_QUEUE_KEY, JSON.stringify(q || [])); } catch (e) {}
+}
+
+function updateSyncButton() {
+  var btn = document.getElementById('btn-sync');
+  if (!btn) return;
+  var pending = readCrmSyncQueue().length;
+  btn.textContent = pending > 0 ? ('↻ Synchroniser (' + pending + ')') : '↻ Synchroniser';
+}
+
+function enqueueCrmSync(reason) {
+  var q = readCrmSyncQueue();
+  q.push({
+    ts: new Date().toISOString(),
+    reason: reason || 'local_change',
+    count: DB.length
+  });
+  if (q.length > 100) q = q.slice(-100);
+  writeCrmSyncQueue(q);
+  updateSyncButton();
+}
 
 function loadCrmDbFromStorage(){
   try{
@@ -857,6 +949,8 @@ function loadCrmDbFromStorage(){
       if(d.date_statut == null || d.date_statut === '') d.date_statut = d.date_paiement || d.date || null;
       d.source = crmNormalizeSource(d.source);
       crmNormalizeDossierContact(d);
+      if(!d.updated_at) d.updated_at = new Date((d.date || today()) + 'T12:00:00Z').toISOString();
+      if(!d.updated_by) d.updated_by = crmT('agent_unknown');
     });
   } catch(e){ console.warn('CRM load', e); }
 }
@@ -866,6 +960,8 @@ DB.forEach(function(d){
   if(d.date_statut == null || d.date_statut === '') d.date_statut = d.date_paiement || d.date || null;
   d.source = crmNormalizeSource(d.source);
   crmNormalizeDossierContact(d);
+  if(!d.updated_at) d.updated_at = new Date((d.date || today()) + 'T12:00:00Z').toISOString();
+  if(!d.updated_by) d.updated_by = crmT('agent_unknown');
 });
 
 var PIECES_CAT_LABELS = {};
@@ -892,16 +988,9 @@ function ensurePieces(d){ if(!Array.isArray(d.pieces)) d.pieces = []; }
 
 function persistCrmDb(){
   try{
-    var slim = DB.map(function(d){
-      var copy = JSON.parse(JSON.stringify(d));
-      if(copy.pieces) copy.pieces = copy.pieces.map(function(p){
-        var x = Object.assign({}, p);
-        delete x.dataUrl;
-        return x;
-      });
-      return copy;
-    });
+    var slim = crmSlimDbSnapshot();
     localStorage.setItem(CRM_LS_KEY, JSON.stringify(slim));
+    enqueueCrmSync('persist');
   } catch(e){
     showCrmToast('Sauvegarde impossible (stockage plein ?)');
   }
@@ -2158,7 +2247,18 @@ function crmRandomRefSeg(len){
 }
 function crmGenerateDossierId(){
   var y = new Date().getFullYear();
-  var id = 'RDA-' + y + '-' + crmRandomRefSeg(3) + '-' + crmRandomRefSeg(3);
+  var now = Date.now().toString(36).toUpperCase().slice(-5);
+  var devKey = '';
+  try {
+    devKey = localStorage.getItem('rda_crm_device_key') || '';
+    if(!devKey){
+      devKey = crmRandomRefSeg(3);
+      localStorage.setItem('rda_crm_device_key', devKey);
+    }
+  } catch(_) {
+    devKey = crmRandomRefSeg(3);
+  }
+  var id = 'RDA-' + y + '-' + devKey + '-' + now + '-' + crmRandomRefSeg(3);
   if(DB.some(function(d){ return d.id === id; })) return crmGenerateDossierId();
   return id;
 }
@@ -2193,7 +2293,7 @@ function saveNew(){
   const id = crmGenerateDossierId();
   const ag = getCrmAgent() || 'Agent non renseigné';
   const ts = new Date().toISOString();
-  DB.unshift({id,statut:'ELIGIBLE',priorite:document.getElementById('n_priorite').value,date:today(),date_statut:today(),date_paiement:null,source:crmNormalizeSource(document.getElementById('n_source').value),lrar:null,prenom,nom,indicatif:indicatifNew,tel:telNew,email:document.getElementById('n_email').value,adresse,coPassagers,adultes,bebes,vols,palier,pieces:[],events:[{date:today(),when:ts,action:'Dossier créé — Éligible',meta:'Création dans le CRM',by:ag}]});
+  DB.unshift({id,statut:'ELIGIBLE',priorite:document.getElementById('n_priorite').value,date:today(),date_statut:today(),date_paiement:null,source:crmNormalizeSource(document.getElementById('n_source').value),lrar:null,prenom,nom,indicatif:indicatifNew,tel:telNew,email:document.getElementById('n_email').value,adresse,coPassagers,adultes,bebes,vols,palier,updated_at:ts,updated_by:ag,pieces:[],events:[{date:today(),when:ts,action:'Dossier créé — Éligible',meta:'Création dans le CRM',by:ag}]});
   persistCrmDb();
   closeAll(); render();
 }
@@ -2278,6 +2378,7 @@ crmInitAddressAutocomplete('n_adresse_search', 'n_adresse_dd', 'n_adresse');
    ═══════════════════════════════════════════════════════════ */
 const CRM_BACKUP_URL = '/api/crm-backup';
 let _backupTimer = null;
+let _syncInFlight = false;
 
 /** Sauvegarde auto déclenchée 3s après la dernière modification */
 function scheduleAutoBackup() {
@@ -2296,11 +2397,7 @@ window.persistCrmDb = function() {
 async function createBackup(label) {
   try {
     const code = window._crmCode || '';
-    const slim = DB.map(function(d) {
-      var copy = JSON.parse(JSON.stringify(d));
-      if (copy.pieces) copy.pieces = copy.pieces.map(function(p) { var x = Object.assign({}, p); delete x.dataUrl; return x; });
-      return copy;
-    });
+    const slim = crmSlimDbSnapshot();
     const resp = await fetch(CRM_BACKUP_URL + (code ? '?code=' + encodeURIComponent(code) : ''), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -2314,6 +2411,175 @@ async function createBackup(label) {
     return data;
   } catch (e) { console.warn('Backup failed', e.message); }
 }
+
+function crmIndexById(arr) {
+  var m = {};
+  (arr || []).forEach(function (d) { if (d && d.id) m[d.id] = d; });
+  return m;
+}
+
+function crmTs(v) {
+  var t = Date.parse(v || '');
+  return isNaN(t) ? 0 : t;
+}
+
+function crmDossierSignature(d) {
+  if (!d) return '';
+  var copy = JSON.parse(JSON.stringify(d));
+  delete copy.updated_at;
+  delete copy.updated_by;
+  return JSON.stringify(copy);
+}
+
+async function fetchLatestCloudDb() {
+  const code = window._crmCode || '';
+  const listResp = await fetch(CRM_BACKUP_URL + (code ? '?code=' + encodeURIComponent(code) : ''));
+  const listData = await listResp.json();
+  const backups = (listData && listData.backups) || [];
+  if (!backups.length || !backups[0].key) return null;
+  const snapResp = await fetch(CRM_BACKUP_URL + '?key=' + encodeURIComponent(backups[0].key) + (code ? '&code=' + encodeURIComponent(code) : ''));
+  const snapshot = await snapResp.json();
+  return Array.isArray(snapshot && snapshot.db) ? snapshot.db : null;
+}
+
+function computeMergeResult(localDb, remoteDb, lastSyncIso) {
+  var lastSyncTs = crmTs(lastSyncIso);
+  var localById = crmIndexById(localDb);
+  var remoteById = crmIndexById(remoteDb);
+  var idsObj = {};
+  Object.keys(localById).forEach(function(id){ idsObj[id] = true; });
+  Object.keys(remoteById).forEach(function(id){ idsObj[id] = true; });
+  var ids = Object.keys(idsObj);
+  var merged = [];
+  var conflicts = [];
+
+  ids.forEach(function(id) {
+    var l = localById[id];
+    var r = remoteById[id];
+    if (!l && r) { merged.push(r); return; }
+    if (l && !r) { merged.push(l); return; }
+    var lTs = crmTs(l.updated_at);
+    var rTs = crmTs(r.updated_at);
+    var lChanged = lTs > lastSyncTs;
+    var rChanged = rTs > lastSyncTs;
+    var same = crmDossierSignature(l) === crmDossierSignature(r);
+    if (same) {
+      merged.push(lTs >= rTs ? l : r);
+      return;
+    }
+    if (lChanged && rChanged) {
+      conflicts.push({ id: id, local: l, remote: r });
+      return;
+    }
+    merged.push(lTs >= rTs ? l : r);
+  });
+
+  return { merged: merged, conflicts: conflicts };
+}
+
+function ensureConflictModal() {
+  var modal = document.getElementById('crm-conflict-modal');
+  if (modal) return modal;
+  modal = document.createElement('div');
+  modal.id = 'crm-conflict-modal';
+  modal.style.cssText = 'display:none;position:fixed;inset:0;z-index:9999;background:rgba(11,31,58,.72);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px';
+  modal.innerHTML = '<div style="background:#fff;border-radius:16px;max-width:840px;width:100%;max-height:88vh;overflow:auto;padding:20px 18px"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px"><h3 style="margin:0;font-size:18px;color:#0B1F3A">Conflits de synchronisation</h3><button onclick="closeConflictModal()" style="border:none;background:none;font-size:22px;cursor:pointer;color:#6B7280">×</button></div><p style="font-size:13px;color:#6B7280;margin:0 0 12px">Choisissez Local ou Cloud pour chaque dossier en conflit.</p><div id="crm-conflict-list"></div><div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn btn-ghost-light" onclick="closeConflictModal()">Annuler</button><button class="btn btn-primary" onclick="applyConflictChoices()">Appliquer et synchroniser</button></div></div>';
+  document.body.appendChild(modal);
+  modal.onclick = function(e){ if (e.target === modal) closeConflictModal(); };
+  return modal;
+}
+
+window._crmConflicts = [];
+window._crmMergedCandidate = null;
+
+function closeConflictModal() {
+  var m = document.getElementById('crm-conflict-modal');
+  if (m) m.style.display = 'none';
+}
+
+function openConflictModal(conflicts, mergedCandidate) {
+  window._crmConflicts = conflicts || [];
+  window._crmMergedCandidate = mergedCandidate || [];
+  var modal = ensureConflictModal();
+  var list = document.getElementById('crm-conflict-list');
+  list.innerHTML = window._crmConflicts.map(function(c, idx){
+    var lName = ((c.local.prenom || '') + ' ' + (c.local.nom || '')).trim();
+    var rName = ((c.remote.prenom || '') + ' ' + (c.remote.nom || '')).trim();
+    return '<div style="border:1px solid #E5E7EB;border-radius:10px;padding:10px;margin-bottom:10px"><div style="font-size:13px;font-weight:700;color:#0B1F3A;margin-bottom:8px">' + c.id + '</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><label style="border:1px solid #D1D5DB;border-radius:8px;padding:8px;cursor:pointer"><input type="radio" name="conflict-' + idx + '" value="local" checked> <strong>Local</strong><div style="font-size:12px;color:#6B7280">Statut: ' + (c.local.statut || '—') + ' · MAJ: ' + (c.local.updated_at || '—') + '<br>Nom: ' + escHtml(lName || '—') + '</div></label><label style="border:1px solid #D1D5DB;border-radius:8px;padding:8px;cursor:pointer"><input type="radio" name="conflict-' + idx + '" value="remote"> <strong>Cloud</strong><div style="font-size:12px;color:#6B7280">Statut: ' + (c.remote.statut || '—') + ' · MAJ: ' + (c.remote.updated_at || '—') + '<br>Nom: ' + escHtml(rName || '—') + '</div></label></div></div>';
+  }).join('');
+  modal.style.display = 'flex';
+}
+
+function applyConflictChoices() {
+  var resolved = (window._crmMergedCandidate || []).slice();
+  (window._crmConflicts || []).forEach(function(c, idx){
+    var el = document.querySelector('input[name="conflict-' + idx + '"]:checked');
+    var choice = el ? el.value : 'local';
+    resolved.push(choice === 'remote' ? c.remote : c.local);
+  });
+  DB = resolved;
+  persistCrmDb();
+  closeConflictModal();
+  render();
+  syncCrmNow(false);
+}
+
+async function syncCrmNow(auto) {
+  if (_syncInFlight) return;
+  var pending = readCrmSyncQueue();
+  if (!pending.length) {
+    if (!auto) showCrmToast('Aucune modification locale en attente');
+    updateSyncButton();
+    return;
+  }
+  if (!navigator.onLine) {
+    if (!auto) showCrmToast('Hors ligne — synchronisation reportée');
+    updateSyncButton();
+    return;
+  }
+  _syncInFlight = true;
+  var btn = document.getElementById('btn-sync');
+  if (btn) btn.textContent = '⏳ Sync...';
+  try {
+    const lastSync = localStorage.getItem(CRM_SYNC_LAST_KEY) || '';
+    const cloudDb = await fetchLatestCloudDb();
+    if (Array.isArray(cloudDb)) {
+      const merge = computeMergeResult(DB, cloudDb, lastSync);
+      if (merge.conflicts.length) {
+        openConflictModal(merge.conflicts, merge.merged);
+        if (!auto) showCrmToast('Conflits détectés: choisissez Local/Cloud');
+        return;
+      }
+      DB = merge.merged;
+      render();
+    }
+    const code = window._crmCode || '';
+    const slim = crmSlimDbSnapshot();
+    const label = 'Sync offline (' + pending.length + ')';
+    const resp = await fetch(CRM_BACKUP_URL + (code ? '?code=' + encodeURIComponent(code) : ''), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ db: slim, label: label })
+    });
+    const data = await resp.json().catch(function(){ return {}; });
+    if (!resp.ok || data.success === false) throw new Error((data && data.error) || ('HTTP ' + resp.status));
+    writeCrmSyncQueue([]);
+    try { localStorage.setItem(CRM_SYNC_LAST_KEY, new Date().toISOString()); } catch (e) {}
+    showCrmToast('Synchronisation cloud effectuée ✓');
+  } catch (e) {
+    if (!auto) showCrmToast('Échec sync : ' + (e && e.message ? e.message : 'réessayez'));
+    console.warn('Sync failed', e && e.message ? e.message : e);
+  } finally {
+    _syncInFlight = false;
+    updateSyncButton();
+  }
+}
+
+window.addEventListener('online', function() { syncCrmNow(true); });
+window.addEventListener('DOMContentLoaded', function() {
+  updateSyncButton();
+  setTimeout(function() { syncCrmNow(true); }, 1200);
+});
 
 /** Ouvre la modale de gestion des sauvegardes */
 async function openBackupModal() {
