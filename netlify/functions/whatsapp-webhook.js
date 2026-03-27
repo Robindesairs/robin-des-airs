@@ -1069,6 +1069,9 @@ exports.handler = async (event) => {
         console.log('whatsapp-webhook: will process and reply', 'from=' + (fromId || '').slice(-4) + '****', 'msgId=' + (msgId || 'none'));
 
         const logPayload = {
+          event_type: 'whatsapp_message_in',
+          statut: 'prospect_wa_identifie',
+          lead_stage: 'prospect_wa_identifie',
           wa_id: fromId,
           from_phone: fromId,
           message_id: msgId,

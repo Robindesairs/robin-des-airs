@@ -31,7 +31,8 @@ exports.handler = async (event) => {
 
   const logPayload = {
     event_type: 'whatsapp_click',
-    statut: 'prospect',
+    statut: 'prospect_anonyme',
+    lead_stage: 'prospect_anonyme',
     source: payload.source || 'site',
     page: payload.page || '/',
     href: payload.href || '',
