@@ -6,7 +6,7 @@
 <title>Déposer mon dossier — Robin des Airs</title>
 <link rel="icon" href="/favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="/favicon.png">
-<meta name="description" content="Déposez votre dossier de réclamation aérienne en ligne. Carte d'embarquement, passeport, signature du mandat et SEPA en quelques minutes.">
+<meta name="description" content="Déposez votre dossier de réclamation aérienne en ligne. Carte d'embarquement, passeport, signature du mandat en quelques minutes.">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -475,7 +475,7 @@ body{background:var(--off);font-family:'Montserrat',sans-serif;color:var(--text)
   <div class="page-intro">
     <p class="intro-smile">👋 On est là pour vous</p>
     <h1 class="page-title-form">Déposer mon dossier</h1>
-    <p class="page-sub-form">Rien de compliqué : 5 étapes, et vous pouvez fournir certaines pièces plus tard si besoin. On traite votre dossier sous 24h.</p>
+    <p class="page-sub-form">Rien de compliqué : 4 étapes, et vous pouvez fournir certaines pièces plus tard si besoin. On traite votre dossier sous 24h.</p>
   </div>
 
   <!-- Bandeau Nos avantages (reste visible) -->
@@ -489,14 +489,16 @@ body{background:var(--off);font-family:'Montserrat',sans-serif;color:var(--text)
     <span>·</span>
     <span>RGPD conforme</span>
     <span>·</span>
+    <span>Société en cours d’immatriculation — vos fonds sont sécurisés sur un compte dédié</span>
+    <span>·</span>
     <span>Votre brouillon est enregistré automatiquement</span>
   </div>
 
   <!-- Progress bar -->
   <div class="progress-bar-wrap">
-    <div class="progress-bar" id="progress-bar" style="width:20%"></div>
+    <div class="progress-bar" id="progress-bar" style="width:25%"></div>
   </div>
-  <p class="dossier-steps-remaining" id="steps-remaining" aria-live="polite">Plus que 5 étapes</p>
+  <p class="dossier-steps-remaining" id="steps-remaining" aria-live="polite">Plus que 3 étapes</p>
   <div class="dossier-brouillon-msg" id="brouillon-msg" style="display:none;">✓ Brouillon restauré — vous pouvez reprendre où vous en étiez.</div>
 
   <!-- Stepper -->
@@ -517,17 +519,14 @@ body{background:var(--off);font-family:'Montserrat',sans-serif;color:var(--text)
       <div class="step-num">4</div>
       <div class="step-label">Mandat</div>
     </div>
-    <div class="step-item" data-s="5">
-      <div class="step-num">5</div>
-      <div class="step-label">SEPA</div>
-    </div>
+    <!-- SEPA retiré : le dernier step est le mandat signé -->
   </div>
 
   <!-- ═══ ÉTAPE 1 — INFORMATIONS VOL + CONTACT ═══ -->
   <div class="form-step active" id="fs-1">
     <div class="card">
       <div class="card-header">
-        <div class="card-step-tag">Étape 1 sur 5</div>
+        <div class="card-step-tag">Étape 1 sur 4</div>
         <div class="card-title">Votre vol et vos coordonnées</div>
         <div class="card-sub">Comme sur le diagnostic : on commence par le vol, puis on vous contacte.</div>
       </div>
@@ -657,7 +656,7 @@ body{background:var(--off);font-family:'Montserrat',sans-serif;color:var(--text)
   <div class="form-step" id="fs-2">
     <div class="card">
       <div class="card-header">
-        <div class="card-step-tag">Étape 2 sur 5</div>
+        <div class="card-step-tag">Étape 2 sur 4</div>
         <div class="card-title">Carte d'embarquement</div>
         <div class="card-sub">Déposez votre carte d'embarquement ou tout document prouvant votre présence à bord. Sur ordinateur : glissez-déposez. Sur téléphone : prenez une photo ou scannez.</div>
       </div>
@@ -704,7 +703,7 @@ body{background:var(--off);font-family:'Montserrat',sans-serif;color:var(--text)
   <div class="form-step" id="fs-3">
     <div class="card">
       <div class="card-header">
-        <div class="card-step-tag">Étape 3 sur 5</div>
+        <div class="card-step-tag">Étape 3 sur 4</div>
         <div class="card-title">Pièce d'identité</div>
         <div class="card-sub">Nécessaire pour établir le mandat. Sur ordinateur : glissez-déposez. Sur téléphone : prenez une photo de votre passeport ou carte d'identité.</div>
       </div>
@@ -751,7 +750,7 @@ body{background:var(--off);font-family:'Montserrat',sans-serif;color:var(--text)
   <div class="form-step" id="fs-4">
     <div class="card">
       <div class="card-header">
-        <div class="card-step-tag">Étape 4 sur 5</div>
+        <div class="card-step-tag">Étape 4 sur 4</div>
         <div class="card-title">Mandat de représentation</div>
         <div class="card-sub">Ce mandat nous autorise à réclamer en votre nom auprès de la compagnie aérienne. Lisez-le et signez ci-dessous.</div>
       </div>
@@ -796,75 +795,17 @@ body{background:var(--off);font-family:'Montserrat',sans-serif;color:var(--text)
         <span><label for="chk-mandat">Je confirme avoir lu le mandat ci-dessus et accepte ses conditions. <strong>Robin des Airs agit uniquement en mon nom.</strong></label></span>
       </div>
 
-      <div style="margin-top:12px;">
-        <button class="btn-next" onclick="nextStep(4)">Continuer →</button>
-        <button class="btn-back" onclick="prevStep(4)">← Retour</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══ ÉTAPE 5 — SEPA ═══ -->
-  <div class="form-step" id="fs-5">
-    <div class="card">
-      <div class="card-header">
-        <div class="card-step-tag">Étape 5 sur 5</div>
-        <div class="card-title">Virement SEPA</div>
-        <div class="card-sub">Indiquez votre RIB pour recevoir votre indemnité par virement. Vous pouvez le saisir, déposer un fichier, ou le fournir au moment du paiement.</div>
-      </div>
-
-      <div class="info-box">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--neon-dark)" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-        <span><strong>Nous ne vous prélevons rien.</strong> Ces coordonnées servent uniquement à vous <strong>virer votre indemnité</strong> une fois les fonds reçus de la compagnie.</span>
-      </div>
-
-      <div class="sepa-later-box">
-        <div class="check-field">
-          <input type="checkbox" id="sepa-later" onchange="toggleSepaFields()">
-          <span><label for="sepa-later">Je préfère fournir mon RIB plus tard, au moment du paiement</label></span>
-        </div>
-      </div>
-
-      <div class="sepa-fields-wrap" id="sepa-fields-wrap">
-        <p style="font-size:12px;color:var(--gray);margin-bottom:14px;">Indiquez votre RIB pour que nous puissions vous virer votre indemnité. Aucun prélèvement — uniquement un virement entrant.</p>
-        <p style="font-size:11px;font-weight:700;color:var(--gray);margin-bottom:10px;">Saisie à la main ou dépôt d'un fichier RIB</p>
-        <div class="field">
-          <label for="sepa-titulaire">Titulaire du compte *</label>
-          <input type="text" id="sepa-titulaire" placeholder="Aminata Mbaye">
-        </div>
-        <div class="field">
-          <label for="sepa-iban">IBAN *</label>
-          <input type="text" id="sepa-iban" placeholder="FR76 XXXX XXXX XXXX XXXX XXXX XXX"
-            oninput="formatIBAN(this)" maxlength="34" aria-describedby="iban-help">
-          <p id="iban-help" class="field-hint">Format : 2 lettres + 25 chiffres (ex. FR76…). Les espaces sont ajoutés automatiquement.</p>
-        </div>
-        <div class="field-row">
-          <div class="field">
-            <label for="sepa-bic">BIC / SWIFT</label>
-            <input type="text" id="sepa-bic" placeholder="BNPAFRPP" maxlength="11" oninput="this.value=this.value.toUpperCase()">
-          </div>
-          <div class="field">
-            <label for="sepa-banque">Banque</label>
-            <input type="text" id="sepa-banque" placeholder="BNP Paribas">
-          </div>
-        </div>
-        <div class="sepa-upload-zone" id="dz-rib" onclick="document.getElementById('file-rib').click()" ondragover="dzOver(event,'dz-rib')" ondragleave="dzOut('dz-rib')" ondrop="dzDropRib(event)">
-          <input type="file" id="file-rib" accept=".pdf,image/*" style="position:absolute;opacity:0;width:0;height:0" onchange="var f=this.files[0];if(f){window.dossierFiles['file-rib']=f;document.getElementById('dz-rib').querySelector('.zone-text').textContent='✓ '+f.name;}">
-          <span class="zone-text">Ou glissez-déposez un fichier RIB (relevé, capture, PDF)</span>
-          <span class="zone-sub">optionnel si vous avez déjà saisi l'IBAN ci-dessus</span>
-        </div>
-      </div>
-
       <div class="check-field">
         <input type="checkbox" id="chk-rgpd">
         <span><label for="chk-rgpd">J'accepte la <a href="/politique-confidentialite.html" target="_blank" rel="noopener" style="color:var(--neon-dark);">politique de confidentialité</a> et le traitement de mes données personnelles conformément au RGPD.</label></span>
       </div>
 
-      <div style="margin-top:16px;">
+      <div style="margin-top:12px;">
         <button class="btn-next" onclick="submitDossier()" id="btn-submit">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
           Soumettre mon dossier
         </button>
-        <button class="btn-back" onclick="prevStep(5)">← Retour</button>
+        <button class="btn-back" onclick="prevStep(4)">← Retour</button>
       </div>
     </div>
   </div>
@@ -921,7 +862,7 @@ body{background:var(--off);font-family:'Montserrat',sans-serif;color:var(--text)
 <script>
 /* ══ STEP NAVIGATION ══ */
 let currentStep = 1;
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 4;
 const BROUILLON_KEY = 'robin_dossier_brouillon';
 
 function saveDossierBrouillon() {
@@ -942,10 +883,7 @@ function saveDossierBrouillon() {
       nom: document.getElementById('f-nom')?.value,
       email: document.getElementById('f-email')?.value,
       tel: document.getElementById('f-tel')?.value,
-      sepaLater: document.getElementById('sepa-later')?.checked,
-      sepaIban: document.getElementById('sepa-iban')?.value,
-      sepaTitulaire: document.getElementById('sepa-titulaire')?.value,
-      sepaBanque: document.getElementById('sepa-banque')?.value
+      // RIB/IBAN demandé plus tard (après réception des fonds), pas dans le formulaire de dépôt.
     };
     localStorage.setItem(BROUILLON_KEY, JSON.stringify(data));
   } catch (e) {}
@@ -974,10 +912,6 @@ function restoreDossierBrouillon() {
       set('f-nom', data.nom);
       set('f-email', data.email);
       set('f-tel', data.tel);
-      set('sepa-iban', data.sepaIban);
-      set('sepa-titulaire', data.sepaTitulaire);
-      set('sepa-banque', data.sepaBanque);
-      if (data.sepaLater) document.getElementById('sepa-later').checked = true; toggleSepaFields();
       currentStep = Math.min(Math.max(1, data.step), TOTAL_STEPS);
       setStep(currentStep);
       if (data.vol) { const el = document.getElementById('f-vol'); if (el) el.dispatchEvent(new Event('input', { bubbles: true })); }
@@ -1116,7 +1050,6 @@ function validateStep(n) {
     document.getElementById('m-fullname').textContent = fullname || '[Prénom Nom]';
     document.getElementById('m-flight').textContent   = volNum.toUpperCase() || '[numéro]';
     document.getElementById('m-date').textContent     = date ? new Date(date).toLocaleDateString('fr-FR') : '[date]';
-    document.getElementById('sepa-titulaire').value = fullname;
   }
 
   if (n === 2) { /* Boarding: file optional, or "plus tard" */ }
@@ -1124,21 +1057,7 @@ function validateStep(n) {
   if (n === 4) {
     if (sigEmpty('sig-mandat')) { alert('Veuillez signer le mandat de représentation.'); return false; }
     if (!document.getElementById('chk-mandat').checked) { alert('Veuillez cocher la case de confirmation du mandat.'); return false; }
-  }
-
-  if (n === 5) {
-    const sepaLater = document.getElementById('sepa-later').checked;
-    if (!sepaLater) {
-      const iban = document.getElementById('sepa-iban').value.replace(/\s/g,'');
-      if (!iban || iban.length < 14) {
-        document.getElementById('sepa-iban').classList.add('err');
-        alert('Veuillez saisir un IBAN valide ou cocher « Je fournirai mon RIB plus tard ».');
-        return false;
-      }
-    }
-    if (!document.getElementById('chk-rgpd').checked) {
-      alert('Veuillez accepter la politique de confidentialité.'); return false;
-    }
+    if (!document.getElementById('chk-rgpd')?.checked) { alert('Veuillez accepter la politique de confidentialité.'); return false; }
   }
 
   return true;
@@ -1358,7 +1277,7 @@ function generateNumeroDossier() {
 }
 
 function submitDossier() {
-  if (!validateStep(5)) return;
+  if (!validateStep(4)) return;
   const btn = document.getElementById('btn-submit');
   btn.textContent = '⏳ Envoi en cours...';
   btn.disabled = true;
@@ -1406,11 +1325,12 @@ function submitDossier() {
     dateVol: document.getElementById('f-date-vol')?.value,
     pax: document.getElementById('f-pax-val')?.textContent,
     motif: document.getElementById('f-motif')?.value,
-    sepaLater: document.getElementById('sepa-later')?.checked,
-    sepaTitulaire: document.getElementById('sepa-titulaire')?.value,
-    sepaIban: document.getElementById('sepa-iban')?.value?.replace(/\s/g, '') || '',
-    sepaBic: document.getElementById('sepa-bic')?.value || '',
-    sepaBanque: document.getElementById('sepa-banque')?.value || ''
+    // RIB/IBAN : demandé plus tard, après réception des fonds (on ne saisit rien ici)
+    sepaLater: true,
+    sepaTitulaire: '',
+    sepaIban: '',
+    sepaBic: '',
+    sepaBanque: ''
   };
 
   if (DOSSIER_WEBHOOK_URL) {
@@ -1441,7 +1361,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Sauvegarde brouillon sur changement des champs texte
-  ['f-vol','f-vol1','f-vol2','f-compagnie','f-destination','f-date-vol','f-motif','f-pnr','f-prenom','f-nom','f-email','f-tel','sepa-iban','sepa-titulaire','sepa-banque'].forEach(id => {
+  ['f-vol','f-vol1','f-vol2','f-compagnie','f-destination','f-date-vol','f-motif','f-pnr','f-prenom','f-nom','f-email','f-tel'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.addEventListener('change', saveDossierBrouillon);
   });
