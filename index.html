@@ -2453,5 +2453,38 @@ function openWhatsAppQrFromHero(e) {
   <span class="wa-float-text" data-i18n="wa_float_text">WhatsApp Robin</span>
 </a>
 
+<script>
+(function () {
+  function isWhatsAppHref(href) {
+    return href.indexOf('wa.me') !== -1 || href.indexOf('api.whatsapp.com') !== -1;
+  }
+
+  function sendProspectLog(anchor) {
+    try {
+      var payload = {
+        source: anchor.id === 'wa-float' ? 'wa-float' : (anchor.id || anchor.className || 'site'),
+        page: window.location.pathname + window.location.search,
+        href: anchor.href || '',
+        referrer: document.referrer || ''
+      };
+      fetch('/api/wa-click-prospect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        keepalive: true
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
+  document.addEventListener('click', function (e) {
+    var anchor = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (!anchor) return;
+    var href = String(anchor.href || '');
+    if (!isWhatsAppHref(href)) return;
+    sendProspectLog(anchor);
+  });
+})();
+</script>
+
 </body>
 </html>

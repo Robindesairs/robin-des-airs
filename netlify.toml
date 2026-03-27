@@ -122,6 +122,12 @@
   to = "/.netlify/functions/wa-messages"
   status = 200
 
+# Clic WhatsApp => log prospect CRM
+[[redirects]]
+  from = "/api/wa-click-prospect"
+  to = "/.netlify/functions/wa-click-prospect"
+  status = 200
+
 # Points de restauration CRM
 [[redirects]]
   from = "/api/crm-backup"
