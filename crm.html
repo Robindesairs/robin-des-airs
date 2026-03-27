@@ -526,6 +526,7 @@ async function crmAuthStatus() {
 
 async function crmUnlock() {
   const input = document.getElementById('crm-code');
+  const submitBtn = document.querySelector('#crm-gate-form button[type="submit"]');
   const err = document.getElementById('crm-gate-err');
   err.classList.remove('show');
   const code = (input && input.value) ? input.value.trim() : '';
@@ -547,6 +548,13 @@ async function crmUnlock() {
     crmOpenMain();
   }
 
+  // Fallback local immédiat si code offline reconnu (évite blocage UI).
+  if (allowOfflineAccess()) {
+    openAndRemember();
+    showCrmToast('Accès local activé');
+    return;
+  }
+
   if (!navigator.onLine && allowOfflineAccess()) {
     openAndRemember();
     showCrmToast('Mode hors ligne : accès local activé');
@@ -554,12 +562,20 @@ async function crmUnlock() {
   }
 
   try {
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Vérification...';
+    }
+    const ctrl = new AbortController();
+    const t = setTimeout(function(){ ctrl.abort(); }, 8000);
     const r = await fetch(CRM_AUTH_URL, {
       method: 'POST',
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ code }),
+      signal: ctrl.signal
     });
+    clearTimeout(t);
     const j = await r.json().catch(() => ({}));
     if (j.ok) {
       openAndRemember();
@@ -580,6 +596,11 @@ async function crmUnlock() {
     }
     err.textContent = 'Connexion API impossible. En hors ligne, utilisez le code local.';
     err.classList.add('show');
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Entrer';
+    }
   }
 }
 
