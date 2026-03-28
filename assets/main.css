@@ -892,6 +892,8 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   max-width: 34rem;
   margin: -6px 0 14px 0;
   opacity: 0.92;
+  /* CLS : réserve ~2 lignes avant i18n / polices */
+  min-height: 3.1em;
 }
 
 .hero-desc {
@@ -901,9 +903,20 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   line-height: 1.65;
   max-width: 480px;
   margin-bottom: 22px;
+  /* CLS : bloc signalé par Lighthouse (hero_desc) — hauteur stable FR/EN */
+  min-height: 7.5em;
 }
 
 .hero-desc strong { color: var(--navy); }
+
+@media (min-width: 769px) {
+  .hero-subhead {
+    min-height: 2.75em;
+  }
+  .hero-desc {
+    min-height: 5.25em;
+  }
+}
 
 .hero-stats {
   display: flex;

@@ -27,6 +27,20 @@ const AIRPORT_COUNTRY = {
 /** Tous les départs France : principaux aéroports métropole + La Réunion. */
 const HUBS = ['CDG', 'ORY', 'MRS', 'LYS', 'NCE', 'BOD', 'TLS', 'NTE', 'LIL', 'SXB', 'RUN'];
 
+/** Réponse JSON succès : cache court CDN + navigateur (bandeau vols, pas besoin de seconde-fraîcheur). */
+const RADAR_CACHE_CONTROL = 'public, max-age=120, s-maxage=120, stale-while-revalidate=300';
+
+function jsonHeaders(extra) {
+  return Object.assign(
+    {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Cache-Control': RADAR_CACHE_CONTROL
+    },
+    extra || {}
+  );
+}
+
 function getCountry(iata) {
   return AIRPORT_COUNTRY[(iata || '').toUpperCase()] || null;
 }
@@ -170,7 +184,7 @@ exports.handler = async (event) => {
   if (!apiKey) {
     return {
       statusCode: 500,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      headers: jsonHeaders({ 'Cache-Control': 'no-store' }),
       body: JSON.stringify({ error: 'Configuration radar manquante' })
     };
   }
@@ -462,14 +476,14 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      headers: jsonHeaders(),
       body: JSON.stringify(payload)
     };
   } catch (err) {
     console.error('radar err:', err);
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      headers: jsonHeaders({ 'Cache-Control': 'public, max-age=30, s-maxage=30' }),
       body: JSON.stringify({
         flights: [],
         updatedAt: new Date().toISOString(),
