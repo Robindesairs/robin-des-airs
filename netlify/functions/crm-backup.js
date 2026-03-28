@@ -45,8 +45,20 @@ exports.handler = async (event) => {
   }
 
   const blobs = netlifyBlobsModule;
-  if (blobs.connectLambda && event) blobs.connectLambda(event);
-  const store = blobs.getStore(STORE_NAME);
+  let store;
+  try {
+    if (blobs.connectLambda && event) blobs.connectLambda(event);
+    store = blobs.getStore(STORE_NAME);
+  } catch (e) {
+    return {
+      statusCode: 503,
+      headers: HEADERS,
+      body: JSON.stringify({
+        error: 'Blobs non configurés côté environnement Netlify',
+        details: e && e.message ? e.message : 'getStore failed'
+      })
+    };
+  }
 
   // ── GET : liste ou restore ──────────────────────────────────────────────
   if (event.httpMethod === 'GET') {
