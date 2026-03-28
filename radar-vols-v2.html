@@ -31,6 +31,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .metric-val{font-size:22px;font-weight:700;line-height:1}
 .metric-val.green{color:var(--green)}.metric-val.red{color:var(--red)}.metric-val.orange{color:var(--orange)}.metric-val.gold{color:var(--gold)}.metric-val.navy{color:var(--navy)}.metric-val.purple{color:var(--purple)}
 .metric-sub{font-size:10px;color:var(--text3);margin-top:2px}
+.metric-clickable{cursor:pointer;transition:border-color .15s,box-shadow .15s,background .15s}
+.metric-clickable:hover{border-color:var(--green);background:#FAFCFB}
+.metric-active{border-color:var(--green);box-shadow:0 0 0 2px rgba(0,122,76,.22);background:#F0FAF6}
 /* MAIN TABS */
 .main-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--card);border-radius:var(--r) var(--r) 0 0;padding:0 16px;overflow-x:auto}
 .tab-btn{padding:10px 16px;font-size:12px;font-weight:500;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s}
@@ -170,7 +173,7 @@ tbody td{padding:9px 11px;vertical-align:middle}
           <option value="EU_AF">Europe → Afrique</option>
           <option value="AF_EU">Afrique → Europe</option>
         </select>
-        <select id="r-statut" onchange="renderRadar()">
+        <select id="r-statut" onchange="onRadarStatutEligPrioChange()">
           <option value="">Tous statuts</option>
           <option value="A_LHEURE">À l'heure</option>
           <option value="RETARD">Retard</option>
@@ -185,12 +188,12 @@ tbody td{padding:9px 11px;vertical-align:middle}
           <option value="ATTERRI">Atterri</option>
         </select>
         <select id="r-comp" onchange="renderRadar()"><option value="">Toutes compagnies</option></select>
-        <select id="r-elig" onchange="renderRadar()">
+        <select id="r-elig" onchange="onRadarStatutEligPrioChange()">
           <option value="">Tous</option>
           <option value="OUI">CE 261 ✓</option>
           <option value="PEUT_ETRE">À vérifier</option>
         </select>
-        <select id="r-prio" onchange="renderRadar()">
+        <select id="r-prio" onchange="onRadarStatutEligPrioChange()">
           <option value="">Toutes priorités</option>
           <option value="URGENT">🔴 Urgent</option>
           <option value="HIGH">🟠 Haute</option>
@@ -337,6 +340,38 @@ let ELIGIBLES=[];
 let currentPeriod='jour';
 let countdownSec=25*60;
 let currentPubVol=null;
+/** Filtre rapide depuis les cartes métriques (null = tout le monde, sauf recherche/sens/phase/comp). */
+let metricQuickFilter=null;
+
+function onRadarStatutEligPrioChange(){
+  metricQuickFilter=null;
+  renderMetrics();
+  renderRadar();
+}
+
+function metricKey(ev,key){
+  if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); applyMetricFilter(key); }
+}
+
+function applyMetricFilter(key){
+  const map={all:null,a_lheure:'a_lheure',retard_3h:'retard_3h',annule:'annule',elig:'elig',urgent:'urgent'};
+  const target=key==='all'?null:map[key];
+  if(key==='all') metricQuickFilter=null;
+  else metricQuickFilter=(metricQuickFilter===target)?null:target;
+  if(metricQuickFilter){
+    const st=document.getElementById('r-statut'), el=document.getElementById('r-elig'), pr=document.getElementById('r-prio');
+    if(st) st.value='';
+    if(el) el.value='';
+    if(pr) pr.value='';
+  }
+  renderMetrics();
+  renderRadar();
+}
+
+function metricCardClass(key){
+  const on=(key==='all'&&!metricQuickFilter)||(key==='a_lheure'&&metricQuickFilter==='a_lheure')||(key==='retard_3h'&&metricQuickFilter==='retard_3h')||(key==='annule'&&metricQuickFilter==='annule')||(key==='elig'&&metricQuickFilter==='elig')||(key==='urgent'&&metricQuickFilter==='urgent');
+  return 'metric metric-clickable'+(on?' metric-active':'');
+}
 
 function scoreColor(s){return s>=80?'var(--green)':s>=55?'var(--orange)':'var(--red)';}
 function priorityFromVol(v){
@@ -396,6 +431,11 @@ function filteredVols(){
   const elig=document.getElementById('r-elig')?.value||'';
   const prio=document.getElementById('r-prio')?.value||'';
   return VOLS.filter(v=>{
+    if(metricQuickFilter==='a_lheure'&&v.statut!=='A_LHEURE') return false;
+    if(metricQuickFilter==='retard_3h'&&!(v.statut==='RETARD'&&v.retardMin>=180)) return false;
+    if(metricQuickFilter==='annule'&&v.statut!=='ANNULE') return false;
+    if(metricQuickFilter==='elig'&&v.elig!=='OUI') return false;
+    if(metricQuickFilter==='urgent'&&v.prio!=='URGENT') return false;
     const txt=(v.vol+' '+v.comp+' '+v.dep+' '+v.arr+' '+v.dep_ville+' '+v.arr_ville).toLowerCase();
     return(!q||txt.includes(q))&&(!sens||v.sens===sens)&&(!st||v.statut===st)&&(!ph||v.phase===ph)&&(!comp||v.comp===comp)&&(!elig||v.elig===elig)&&(!prio||v.prio===prio);
   }).sort((a,b)=>{const O={URGENT:0,HIGH:1,NORMAL:2,LOW:3};return(O[a.prio]||3)-(O[b.prio]||3);});
@@ -406,13 +446,14 @@ function renderMetrics(){
   const annules=VOLS.filter(v=>v.statut==='ANNULE').length;
   const eligOui=VOLS.filter(v=>v.elig==='OUI').length;
   const urgents=VOLS.filter(v=>v.prio==='URGENT').length;
+  const pctHeure=VOLS.length?Math.round(VOLS.filter(v=>v.statut==='A_LHEURE').length/VOLS.length*100):0;
   document.getElementById('metrics').innerHTML=`
-    <div class="metric"><div class="metric-label">Vols surveillés</div><div class="metric-val navy">${VOLS.length}</div><div class="metric-sub">Europe ↔ Afrique</div></div>
-    <div class="metric"><div class="metric-label">À l'heure</div><div class="metric-val green">${VOLS.filter(v=>v.statut==='A_LHEURE').length}</div><div class="metric-sub">${Math.round(VOLS.filter(v=>v.statut==='A_LHEURE').length/VOLS.length*100)}%</div></div>
-    <div class="metric"><div class="metric-label">Retards ≥ 3h</div><div class="metric-val orange">${retardsLong}</div><div class="metric-sub">CE 261 potentiel</div></div>
-    <div class="metric"><div class="metric-label">Annulés</div><div class="metric-val red">${annules}</div><div class="metric-sub">—</div></div>
-    <div class="metric"><div class="metric-label">CE 261 éligibles</div><div class="metric-val gold">${eligOui}</div><div class="metric-sub">score ≥ 60</div></div>
-    <div class="metric"><div class="metric-label">🔴 Urgents</div><div class="metric-val purple">${urgents}</div><div class="metric-sub">Action immédiate</div></div>`;
+    <div class="${metricCardClass('all')}" role="button" tabindex="0" title="Afficher tous les vols (filtre métrique)" onclick="applyMetricFilter('all')" onkeydown="metricKey(event,'all')"><div class="metric-label">Vols surveillés</div><div class="metric-val navy">${VOLS.length}</div><div class="metric-sub">Europe ↔ Afrique · clic = tout</div></div>
+    <div class="${metricCardClass('a_lheure')}" role="button" tabindex="0" title="Filtrer : vols à l'heure" onclick="applyMetricFilter('a_lheure')" onkeydown="metricKey(event,'a_lheure')"><div class="metric-label">À l'heure</div><div class="metric-val green">${VOLS.filter(v=>v.statut==='A_LHEURE').length}</div><div class="metric-sub">${pctHeure}%</div></div>
+    <div class="${metricCardClass('retard_3h')}" role="button" tabindex="0" title="Filtrer : retards ≥ 3 h" onclick="applyMetricFilter('retard_3h')" onkeydown="metricKey(event,'retard_3h')"><div class="metric-label">Retards ≥ 3h</div><div class="metric-val orange">${retardsLong}</div><div class="metric-sub">CE 261 potentiel</div></div>
+    <div class="${metricCardClass('annule')}" role="button" tabindex="0" title="Filtrer : vols annulés" onclick="applyMetricFilter('annule')" onkeydown="metricKey(event,'annule')"><div class="metric-label">Annulés</div><div class="metric-val red">${annules}</div><div class="metric-sub">—</div></div>
+    <div class="${metricCardClass('elig')}" role="button" tabindex="0" title="Filtrer : CE 261 oui (score ≥ 60)" onclick="applyMetricFilter('elig')" onkeydown="metricKey(event,'elig')"><div class="metric-label">CE 261 éligibles</div><div class="metric-val gold">${eligOui}</div><div class="metric-sub">score ≥ 60</div></div>
+    <div class="${metricCardClass('urgent')}" role="button" tabindex="0" title="Filtrer : priorité urgente" onclick="applyMetricFilter('urgent')" onkeydown="metricKey(event,'urgent')"><div class="metric-label">🔴 Urgents</div><div class="metric-val purple">${urgents}</div><div class="metric-sub">Action immédiate</div></div>`;
 }
 
 function renderRadar(){
@@ -550,7 +591,7 @@ function lancerPub(){ const v=parseInt(document.getElementById('budget-sl').valu
 
 function switchTab(el,id){ document.querySelectorAll('.tab-btn').forEach(t=>t.classList.remove('active')); if(el)el.classList.add('active'); document.querySelectorAll('.tab-pane').forEach(t=>t.classList.remove('active')); document.getElementById(id).classList.add('active'); if(id==='t-stats')renderStats(); if(id==='t-eligible')renderElig(); }
 function closeModals(){ document.getElementById('modal-detail').style.display='none'; document.getElementById('modal-pub').style.display='none'; }
-function refreshAll(){ genVols(); renderMetrics(); renderRadar(); renderCompFilter(); if(currentPeriod)renderStats(); renderElig(); countdownSec=25*60; const n=new Date(); const el=document.getElementById('last-refresh'); if(el)el.textContent='Dernière actu : '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0'); }
+function refreshAll(){ metricQuickFilter=null; genVols(); renderMetrics(); renderRadar(); renderCompFilter(); if(currentPeriod)renderStats(); renderElig(); countdownSec=25*60; const n=new Date(); const el=document.getElementById('last-refresh'); if(el)el.textContent='Dernière actu : '+String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0'); }
 setInterval(()=>{ countdownSec=Math.max(0,countdownSec-1); const m=Math.floor(countdownSec/60),s=countdownSec%60; const el=document.getElementById('countdown'); if(el)el.textContent='↻ '+m+':'+String(s).padStart(2,'0'); if(countdownSec===0)refreshAll(); },1000);
 
 refreshAll();
