@@ -408,6 +408,10 @@ function volTickerRenderList(list) {
   var html = parts.join('');
   g1.innerHTML = html;
   g2.innerHTML = html;
+  /* g2 est décoratif (marquee) + aria-hidden : pas de focus clavier sur le clone (a11y). */
+  g2.querySelectorAll('button.vol-ticker-chip').forEach(function (btn) {
+    btn.setAttribute('tabindex', '-1');
+  });
   volTickerScheduleMarqueeRestart();
 }
 /** Bandeau : d’abord exemples statiques, puis remplacement par le radar temps réel si assez de vols. */

@@ -42,7 +42,7 @@
 </script>
 </head>
 <body>
-<a href="#hero" class="skip-link" data-i18n="skip_link">Aller au contenu principal</a>
+<a href="#main-content" class="skip-link" data-i18n="skip_link">Aller au contenu principal</a>
 
 <!-- En-tête fixe : hauteur mesurée → --site-header-height (évite chevauchement contenu) -->
 <header class="site-header" id="site-header">
@@ -82,7 +82,7 @@
 </div>
 
 <!-- ═══════ NAV ═══════ -->
-<nav id="navbar">
+<nav id="navbar" aria-label="Navigation principale">
   <a href="/" class="nav-logo">
     <svg width="26" height="26" viewBox="0 0 60 60" fill="none">
       <path d="M8 8 Q-2 30 8 52" fill="none" stroke="#00C87A" stroke-width="4" stroke-linecap="round"/>
@@ -133,6 +133,7 @@
   </ul>
 </div>
 
+<main id="main-content">
 <!-- ═══════ HERO ═══════ -->
 <section id="hero">
   <div class="hero-bg-shape"></div>
@@ -544,14 +545,14 @@
           <p class="nope-body" id="step-nope-reason">L'annulation a été communiquée plus de 14 jours avant le départ. La loi CE 261 n'impose pas d'indemnisation dans ce cas. Vous avez cependant droit au <strong>remboursement intégral de votre billet.</strong></p>
 
           <div class="exit-capture">
-            <h4>📩 Vous avez un prochain vol prévu ?</h4>
+            <h4 class="exit-capture-title">📩 Vous avez un prochain vol prévu ?</h4>
             <p>Laissez votre email — on vous alerte automatiquement si un retard ouvre un droit.</p>
             <input type="email" class="non-eligible-input" placeholder="votre@email.com" />
             <button type="button" class="non-eligible-btn">M'alerter gratuitement</button>
           </div>
 
           <div class="exit-referral">
-            <h4>👥 Vous connaissez quelqu'un dont le vol a été retardé ?</h4>
+            <h4 class="exit-referral-title">👥 Vous connaissez quelqu'un dont le vol a été retardé ?</h4>
             <p>Partagez Robin — chaque passager peut toucher jusqu'à 600€.</p>
             <a href="https://wa.me/?text=Mon%20ami%20Robin%20des%20Airs%20récupère%20les%20indemnités%20aériennes.%20Si%20ton%20vol%20a%20été%20retardé%20tu%20as%20droit%20à%20600€%20%3A%20https%3A%2F%2Frobindesairs.eu" class="btn-whatsapp non-eligible-link" target="_blank" rel="noopener">💬 Partager sur WhatsApp</a>
           </div>
@@ -888,8 +889,11 @@
   </div>
 </section>
 
+</main>
+
 <!-- ═══════ FOOTER ═══════ -->
 <footer>
+  <h2 class="sr-only" data-i18n="footer_landmark_title">Liens et informations du site</h2>
   <div class="footer-main">
     <div>
       <div class="footer-logo">ROBIN <span>des Airs</span></div>
@@ -898,7 +902,7 @@
       <p style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:10px;font-style:italic;">"Robin prend aux compagnies,<br>rend à nos familles."</p>
     </div>
     <div class="footer-col">
-      <h4 data-i18n="footer_nav">Navigation</h4>
+      <h3 class="footer-col-heading" data-i18n="footer_nav">Navigation</h3>
       <ul>
         <li><a href="#la-loi" data-i18n="footer_loi">La loi CE 261/2004</a></li>
         <li><a href="#comment-ca-marche" data-i18n="footer_how">Comment ça marche</a></li>
@@ -908,13 +912,13 @@
       </ul>
     </div>
     <div class="footer-col">
-      <h4>Guide du Voyageur</h4>
+      <h3 class="footer-col-heading">Guide du Voyageur</h3>
       <ul>
         <li><a href="/blog/">Blog — guides et articles</a></li>
       </ul>
     </div>
     <div class="footer-col">
-      <h4>Ressources</h4>
+      <h3 class="footer-col-heading">Ressources</h3>
       <ul>
         <li><a href="/meteo-dossier-indemnite.html">Météo et dossier (TAF, METAR…)</a></li>
         <li><a href="/pourquoi-si-peu-reclament.html">Pourquoi si peu récupèrent leur indemnité ?</a></li>
@@ -923,7 +927,7 @@
       </ul>
     </div>
     <div class="footer-col">
-      <h4 data-i18n="footer_legal">Légal</h4>
+      <h3 class="footer-col-heading" data-i18n="footer_legal">Légal</h3>
       <ul>
         <li><a href="/cgv.html">CGV</a></li>
         <li><a href="/politique-confidentialite.html">Politique de confidentialité</a></li>
@@ -932,7 +936,7 @@
       </ul>
     </div>
     <div class="footer-col">
-      <h4 data-i18n="footer_contact">Contact</h4>
+      <h3 class="footer-col-heading" data-i18n="footer_contact">Contact</h3>
       <ul>
         <li><a href="https://wa.me/33756863630" target="_blank">💬 WhatsApp</a></li>
         <li><a href="/suivi-dossier.html">📋 Où en est mon dossier ?</a></li>
