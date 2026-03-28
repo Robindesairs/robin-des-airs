@@ -180,6 +180,28 @@
           <label><input type="radio" name="tpl" value="famille"> Vert — famille (calcul détaillé)</label>
         </div>
 
+        <h2 style="margin-top:20px">Type de pub</h2>
+        <div class="radios">
+          <label><input type="radio" name="admode" value="generic" checked> Générique (pas de date ni pays sur la créa)</label>
+          <label><input type="radio" name="admode" value="targeted"> Ciblée — vol précis (date + pays)</label>
+        </div>
+
+        <div id="targeted-block" style="display:none;margin-top:4px">
+          <label for="flight-date">Date du vol</label>
+          <input type="date" id="flight-date" autocomplete="off">
+
+          <div class="row2">
+            <div>
+              <label for="country-from">Pays départ</label>
+              <input type="text" id="country-from" placeholder="ex. France" autocomplete="off">
+            </div>
+            <div>
+              <label for="country-to">Pays arrivée</label>
+              <input type="text" id="country-to" placeholder="ex. Sénégal" autocomplete="off">
+            </div>
+          </div>
+        </div>
+
         <h2 style="margin-top:20px">Contenu</h2>
         <label for="airline">Compagnie</label>
         <input type="text" id="airline" value="Air France" autocomplete="off">
@@ -226,7 +248,7 @@
         <label for="domain">Site (coin bas droite)</label>
         <input type="text" id="domain" value="robindesairs.eu" autocomplete="off">
 
-        <p class="hint">Calcul : <strong>nets / pers. = indemnité × (100&nbsp;% − commission)</strong> · Total famille = nets × personnes. Export PNG prêt pour Meta (une fois le texte validé).</p>
+        <p class="hint">Calcul : <strong>nets / pers. = indemnité × (100&nbsp;% − commission)</strong> · Total famille = nets × personnes. En mode <strong>ciblée</strong>, la date et la ligne pays apparaissent sous l’itinéraire ville (ex. pour une pub AF718 du jour). Export PNG prêt pour Meta (une fois le texte validé).</p>
       </div>
 
       <div class="preview-box">
@@ -252,14 +274,41 @@
     return String(x).replace(/\B(?=(\d{3})+(?!\d))/g, '\u202f') + '\u00a0€';
   }
 
+  function fmtDateFR(iso) {
+    if (!iso || typeof iso !== 'string') return '';
+    var p = iso.split('-');
+    if (p.length !== 3) return iso;
+    var d = parseInt(p[2], 10);
+    var m = parseInt(p[1], 10) - 1;
+    var y = parseInt(p[0], 10);
+    if (isNaN(d) || isNaN(m) || isNaN(y)) return iso;
+    var months = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+    return d + ' ' + months[m] + ' ' + y;
+  }
+
   function getData() {
     var legal = parseFloat(document.getElementById('legal').value, 10) || 0;
     var pax = parseInt(document.getElementById('pax').value, 10) || 1;
     var comm = parseFloat(document.getElementById('commission').value, 10) || 25;
     var netPer = legal * (100 - comm) / 100;
     var total = netPer * pax;
+    var admode = document.querySelector('input[name="admode"]:checked');
+    admode = admode ? admode.value : 'generic';
+    var dateRaw = (document.getElementById('flight-date') && document.getElementById('flight-date').value) || '';
+    var cFrom = (document.getElementById('country-from') && document.getElementById('country-from').value.trim()) || '';
+    var cTo = (document.getElementById('country-to') && document.getElementById('country-to').value.trim()) || '';
+    var flightDateFmt = admode === 'targeted' ? fmtDateFR(dateRaw) : '';
+    var countryLine = '';
+    if (admode === 'targeted') {
+      if (cFrom && cTo) countryLine = cFrom + '  \u2192  ' + cTo;
+      else if (cFrom) countryLine = cFrom;
+      else if (cTo) countryLine = cTo;
+    }
     return {
       tpl: document.querySelector('input[name="tpl"]:checked').value,
+      admode: admode,
+      flightDateFmt: flightDateFmt,
+      countryLine: countryLine,
       airline: document.getElementById('airline').value.trim() || 'Compagnie',
       flight: document.getElementById('flight').value.trim() || '—',
       flag: document.getElementById('flag').value.trim() || '✈️',
@@ -344,22 +393,37 @@
 
     ctx.font = '600 36px Montserrat, sans-serif';
     ctx.fillStyle = 'rgba(255,255,255,0.9)';
-    ctx.fillText(d.from + '  \u2192  ' + d.to, pad + 8, 440);
+    var yLine = 440;
+    ctx.fillText(d.from + '  \u2192  ' + d.to, pad + 8, yLine);
+    yLine += 50;
+    if (d.admode === 'targeted' && (d.flightDateFmt || d.countryLine)) {
+      ctx.font = '500 24px Montserrat, sans-serif';
+      ctx.fillStyle = 'rgba(255,255,255,0.72)';
+      if (d.flightDateFmt) {
+        ctx.fillText('Vol du ' + d.flightDateFmt, pad + 8, yLine);
+        yLine += 40;
+      }
+      if (d.countryLine) {
+        ctx.fillText(d.countryLine, pad + 8, yLine);
+        yLine += 40;
+      }
+    }
+    yLine += 18;
 
     ctx.fillStyle = 'rgba(255,255,255,0.65)';
     ctx.font = '500 24px Montserrat, sans-serif';
-    ctx.fillText('Indemnité légale ' + fmtEuro(d.legal) + ' \u00d7 ' + d.commission + '% comm.', pad + 8, 520);
+    ctx.fillText('Indemnité légale ' + fmtEuro(d.legal) + ' \u00d7 ' + d.commission + '% comm.', pad + 8, yLine);
 
     ctx.fillStyle = '#00e5a0';
     ctx.font = '900 132px "Playfair Display", Georgia, serif';
-    ctx.fillText(fmtEuro(d.netPer), pad + 8, 580);
+    ctx.fillText(fmtEuro(d.netPer), pad + 8, yLine + 72);
 
     ctx.fillStyle = 'rgba(255,255,255,0.85)';
     ctx.font = '700 22px Montserrat, sans-serif';
-    ctx.fillText('NETS · PAR PERSONNE', pad + 8, 740);
+    ctx.fillText('NETS · PAR PERSONNE', pad + 8, yLine + 232);
     ctx.font = '600 20px Montserrat, sans-serif';
     ctx.fillStyle = 'rgba(255,255,255,0.55)';
-    ctx.fillText('0 € si on perd', pad + 8, 776);
+    ctx.fillText('0 € si on perd', pad + 8, yLine + 268);
 
     ctx.fillStyle = '#f5d547';
     ctx.font = '700 26px Montserrat, sans-serif';
@@ -414,12 +478,27 @@
 
     ctx.font = '600 34px Montserrat, sans-serif';
     ctx.fillStyle = 'rgba(255,255,255,0.92)';
-    ctx.fillText(d.from + '  \u2192  ' + d.to, pad, 400);
+    var yRoute = 400;
+    ctx.fillText(d.from + '  \u2192  ' + d.to, pad, yRoute);
+    var yAfter = yRoute + 46;
+    if (d.admode === 'targeted' && (d.flightDateFmt || d.countryLine)) {
+      ctx.font = '500 22px Montserrat, sans-serif';
+      ctx.fillStyle = 'rgba(255,255,255,0.78)';
+      if (d.flightDateFmt) {
+        ctx.fillText('Vol du ' + d.flightDateFmt, pad, yAfter);
+        yAfter += 34;
+      }
+      if (d.countryLine) {
+        ctx.fillText(d.countryLine, pad, yAfter);
+        yAfter += 34;
+      }
+    }
 
     var boxX = pad;
-    var boxY = 480;
+    var boxY = Math.max(480, yAfter + 16);
     var boxW = W - pad * 2;
-    var boxH = 380;
+    var maxBottom = H - pad - 52;
+    var boxH = Math.max(260, Math.min(380, maxBottom - boxY));
     ctx.fillStyle = 'rgba(0,0,0,0.28)';
     roundRect(ctx, boxX, boxY, boxW, boxH, 20);
     ctx.fill();
@@ -517,6 +596,20 @@
     }
   }
 
+  function updateTargetedVisibility() {
+    var r = document.querySelector('input[name="admode"]:checked');
+    var targeted = r && r.value === 'targeted';
+    var b = document.getElementById('targeted-block');
+    if (b) b.style.display = targeted ? 'block' : 'none';
+  }
+
+  document.querySelectorAll('input[name="admode"]').forEach(function (r) {
+    r.addEventListener('change', function () {
+      updateTargetedVisibility();
+      waitFonts().then(render);
+    });
+  });
+
   document.querySelectorAll('input, select').forEach(function (el) {
     el.addEventListener('input', function () {
       waitFonts().then(render);
@@ -546,6 +639,7 @@
   });
 
   syncPaxRow();
+  updateTargetedVisibility();
   waitFonts().then(render);
 })();
   </script>
