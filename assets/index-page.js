@@ -2,6 +2,12 @@
    ROBIN DES AIRS — Full JS (DB/PFX via flights-db.js)
 ════════════════════════════════════════════════════ */
 
+function robinWhenDomReady(fn) {
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
+  else fn();
+}
+window.robinWhenDomReady = robinWhenDomReady;
+
 const COMMISSION_RATE = 0.25; /* 25% no win no fee */
 const WHATSAPP_NUMBER = '33756863630';
 window.WHATSAPP_NUMBER = WHATSAPP_NUMBER;
@@ -32,7 +38,18 @@ const AIRPORT_CITY = { CDG:'Paris', ORY:'Paris', LYS:'Lyon', MRS:'Marseille', NC
 /* Même grille — noms affichés en anglais (bandeau vols, langue EN) */
 const AIRPORT_CITY_EN = { CDG:'Paris', ORY:'Paris', LYS:'Lyon', MRS:'Marseille', NCE:'Nice', TLS:'Toulouse', BOD:'Bordeaux', NTE:'Nantes', LIS:'Lisbon', OPO:'Porto', MAD:'Madrid', BCN:'Barcelona', FCO:'Rome', NAP:'Naples', MXP:'Milan', VIE:'Vienna', BRU:'Brussels', AMS:'Amsterdam', FRA:'Frankfurt', MUC:'Munich', LHR:'London', DUB:'Dublin', GVA:'Geneva', ADD:'Addis Ababa', ABJ:'Abidjan', BKO:'Bamako', DKR:'Dakar', DLA:'Douala', LBV:'Libreville', NIM:'Niamey', OUA:'Ouagadougou', LFW:'Lomé', COO:'Cotonou', DSS:'Dakar', NDJ:'Ndjamena', BGF:'Bangui', BZV:'Brazzaville', FIH:'Kinshasa', JNB:'Johannesburg', CPT:'Cape Town', CMN:'Casablanca', ALG:'Algiers', TUN:'Tunis', CAI:'Cairo', NBO:'Nairobi', LAG:'Lagos', NKC:'Nouakchott', TIP:'Tripoli', PTP:'Pointe-à-Pitre', FDF:'Fort-de-France', CAY:'Cayenne', DOH:'Doha', DXB:'Dubai', IST:'Istanbul', NRT:'Tokyo', MIA:'Miami', CRL:'Charleroi', NSI:'Yaoundé' };
 const ROUTE_AMOUNT = {};
-(function(){ for (var k in DB) { var r = DB[k].r.replace('→','-'); ROUTE_AMOUNT[r] = DB[k].c; var rev = r.split('-').reverse().join('-'); if (!ROUTE_AMOUNT[rev]) ROUTE_AMOUNT[rev] = DB[k].c; } })();
+var _routeAmountBuilt = false;
+function ensureRouteAmountBuilt() {
+  if (_routeAmountBuilt) return;
+  if (typeof DB === 'undefined' || !DB) return;
+  _routeAmountBuilt = true;
+  for (var k in DB) {
+    var r = DB[k].r.replace('→', '-');
+    ROUTE_AMOUNT[r] = DB[k].c;
+    var rev = r.split('-').reverse().join('-');
+    if (!ROUTE_AMOUNT[rev]) ROUTE_AMOUNT[rev] = DB[k].c;
+  }
+}
 function distanceKmToAmount(km) { if (km < 1500) return 250; if (km <= 3500) return 400; return 600; }
 function haversineKm(lat1, lon1, lat2, lon2) {
   var R = 6371, dLat = (lat2 - lat1) * Math.PI / 180, dLon = (lon2 - lon1) * Math.PI / 180;
@@ -160,6 +177,7 @@ function volTickerFormatDateDayMonth(iso, en) {
 }
 /** Montant palier pour pastille (DB routes ou 600 par défaut). */
 function volTickerEligibleAmountForRow(row) {
+  ensureRouteAmountBuilt();
   if (row && row.amountEur != null && !isNaN(Number(row.amountEur))) return Number(row.amountEur);
   var parts = String((row && row.route) || '').split(/\s*[→\-]\s*/);
   if (parts.length >= 2 && typeof ROUTE_AMOUNT !== 'undefined') {
@@ -206,6 +224,7 @@ function volTickerFormatDelayMinutes(m) {
  * Les données peuvent couvrir les **14 derniers jours** (mode ticker-history / flightsHistory) ou le **timetable** du jour.
  */
 function volTickerRowsFromRadar(data) {
+  ensureRouteAmountBuilt();
   if (!data || !Array.isArray(data.flights) || !data.flights.length) return null;
   var viewDate = data.viewDate || new Date().toISOString().slice(0, 10);
   var minDelayCe261 = 180; /* 3 h — retard important (indicatif : données = horaires API, pas jugement juridique) */
@@ -395,10 +414,15 @@ function volTickerRenderList(list) {
 window.refreshVolTicker = function () {
   var fallback = window.VOL_TICKER_FLIGHTS || [];
   if (fallback.length && window.I18N) volTickerRenderList(fallback);
-  volTickerFetchRadar(function (data) {
-    var live = volTickerRowsFromRadar(data);
-    if (live && live.length >= 1) volTickerRenderList(live);
-  });
+  function fetchRadar() {
+    volTickerFetchRadar(function (data) {
+      var live = volTickerRowsFromRadar(data);
+      if (live && live.length >= 1) volTickerRenderList(live);
+    });
+  }
+  /* Mobile : le radar Netlify peut monopoliser la file (Lighthouse ~9s) ; le fallback statique suffit au LCP. */
+  if (window.__ROBIN_DEFER_FUNNEL__) setTimeout(fetchRadar, 2600);
+  else fetchRadar();
 };
 document.addEventListener('visibilitychange', function () {
   if (!document.hidden) volTickerScheduleMarqueeRestart();
@@ -459,10 +483,17 @@ function scrollToFunnelAndHighlight() {
   }, 520);
 }
 function scrollToCalcWithAnimation(e) {
-  if (e && e.preventDefault) e.preventDefault();
-  var fb = document.getElementById('funnel-box');
-  if (fb) fb.classList.remove('funnel-from-vol-chip');
-  scrollToFunnelAndHighlight();
+  function go() {
+    if (e && e.preventDefault) e.preventDefault();
+    var fb = document.getElementById('funnel-box');
+    if (fb) fb.classList.remove('funnel-from-vol-chip');
+    scrollToFunnelAndHighlight();
+  }
+  if (window.__ROBIN_DEFER_FUNNEL__ && !window.__ROBIN_FUNNEL_READY__ && typeof window.robinEnsureFunnelAssets === 'function') {
+    window.robinEnsureFunnelAssets(go);
+    return;
+  }
+  go();
 }
 
 /* ═══ PAX COUNTER ═══ */
@@ -479,6 +510,17 @@ function changePax(valId, delta) {
 var STEP_TO_NUM = { 'step-1':1, 'step-1b':1, 'step-1c':1, 'step-2':2, 'step-3a':3, 'step-3b':3, 'step-loader':4, 'step-result':5, 'step-nope':5 };
 /** @param scrollIntoFunnel passer false au chargement initial pour ne pas masquer le hero (mobile). */
 function goTo(stepId, pct, scrollIntoFunnel) {
+  if (
+    (stepId === 'step-3a' || stepId === 'step-3b') &&
+    window.__ROBIN_DEFER_FUNNEL__ &&
+    !window.__ROBIN_FUNNEL_READY__ &&
+    typeof window.robinEnsureFunnelAssets === 'function'
+  ) {
+    window.robinEnsureFunnelAssets(function () {
+      goTo(stepId, pct, scrollIntoFunnel);
+    });
+    return;
+  }
   document.querySelectorAll('.fstep').forEach(s => s.classList.remove('active'));
   document.getElementById(stepId).classList.add('active');
   var stepNum = STEP_TO_NUM[stepId] != null ? STEP_TO_NUM[stepId] : 1;
@@ -643,9 +685,17 @@ function showShortFunnelFromVolTicker() {
   if (typeof goToShortStep === 'function') goToShortStep();
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+robinWhenDomReady(function () {
   var linkDetail = document.getElementById('link-diagnostic-detail');
-  if (linkDetail) linkDetail.addEventListener('click', function(e) { e.preventDefault(); showLongFunnel(); });
+  if (linkDetail)
+    linkDetail.addEventListener('click', function (e) {
+      e.preventDefault();
+      function open() {
+        showLongFunnel();
+      }
+      if (typeof window.robinEnsureFunnelAssets === 'function') window.robinEnsureFunnelAssets(open);
+      else open();
+    });
 });
 
 /* ── Restart ── */
@@ -729,6 +779,7 @@ function applyFlightFromDb(code) {
 /** Clic bandeau vols : parcours rapide sur le site (textarea + Continuer sur WhatsApp), pas le diagnostic détaillé. */
 function volTickerApplyFlight(chip) {
   if (!chip) return;
+  function doApply() {
   var flight = (chip.getAttribute('data-flight') || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
   var dateIso = (chip.getAttribute('data-date') || '').trim();
   var route = chip.getAttribute('data-route') || '';
@@ -769,6 +820,12 @@ function volTickerApplyFlight(chip) {
   if (sv && typeof sv.focus === 'function') {
     try { sv.focus(); sv.setSelectionRange(sv.value.length, sv.value.length); } catch (errF) {}
   }
+  }
+  if (window.__ROBIN_DEFER_FUNNEL__ && !window.__ROBIN_FUNNEL_READY__ && typeof window.robinEnsureFunnelAssets === 'function') {
+    window.robinEnsureFunnelAssets(doApply);
+    return;
+  }
+  doApply();
 }
 
 (function volTickerBindClicks() {
@@ -783,6 +840,7 @@ function volTickerApplyFlight(chip) {
 })();
 
 function updateManualDist(prefix) {
+  ensureRouteAmountBuilt();
   var dep = document.getElementById(prefix + '-ville-depart');
   var arr = document.getElementById(prefix + '-ville-arrivee');
   var distIn = document.getElementById(prefix + '-dist');
@@ -823,6 +881,7 @@ function volLookup(input, chipId, distWrapId, distId) {
   const distanceLine = document.getElementById('da-distance-line');
   const manualWrap = document.getElementById('da-manual-wrap');
 
+  if (typeof DB === 'undefined' || !DB) return;
   const match = DB[raw];
   const prefix = raw.slice(0, 2);
 
@@ -1043,7 +1102,7 @@ function updateSiteHeaderOffset() {
 window.addEventListener('resize', updateSiteHeaderOffset);
 window.addEventListener('load', function() { updateSiteHeaderOffset(); });
 
-document.addEventListener('DOMContentLoaded', () => {
+robinWhenDomReady(() => {
   // Appliquer la langue sauvegardée (ou FR) et mettre à jour le drapeau
   if (window.I18N) {
     var lang = window.I18N.getLang();
@@ -1107,294 +1166,301 @@ document.addEventListener('DOMContentLoaded', () => {
   ['da-date','eb-date'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ds; });
   goTo('step-1', 12, false);
 
-  // Calendrier stylisé (Flatpickr) pour le diagnostic
-  if (window.flatpickr) {
-    var fpOpt = {
-      locale: 'fr',
-      dateFormat: 'd.m.Y',
-      defaultDate: ds,
-      maxDate: 'today',
-      allowInput: true
-    };
-    var da = document.getElementById('da-date');
-    var eb = document.getElementById('eb-date');
-    if (da) window.flatpickr(da, fpOpt);
-    if (eb) window.flatpickr(eb, Object.assign({}, fpOpt));
-  }
-
-  // Tom Select — Aéroports Départ / Arrivée : liste complète au chargement + recherche API à 2 caractères
-  if (typeof TomSelect !== 'undefined') {
-    var airportSearchApi = (typeof window.AIRPORT_SEARCH_API !== 'undefined' && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : (window.location.origin + '/.netlify/functions/airport-search');
-    var airportsRaw = window.AIRPORTS_DATA && window.AIRPORTS_DATA.length ? window.AIRPORTS_DATA : [
-      { value: 'CDG', text: 'Paris — CDG', city: 'Paris' }, { value: 'ORY', text: 'Paris — ORY', city: 'Paris' },
-      { value: 'DSS', text: 'Dakar — DSS', city: 'Dakar' }, { value: 'LYS', text: 'Lyon — LYS', city: 'Lyon' },
-      { value: 'MRS', text: 'Marseille — MRS', city: 'Marseille' }, { value: 'CMN', text: 'Casablanca — CMN', city: 'Casablanca' },
-      { value: 'BRU', text: 'Bruxelles — BRU', city: 'Bruxelles' }
-    ];
-    var allAirportsOptions = airportsRaw.map(function(a) { return { value: a.value, text: a.text || (a.city + ' — ' + a.value) }; });
-    var aopts = {
-      options: allAirportsOptions,
-      valueField: 'value',
-      labelField: 'text',
-      searchField: ['text', 'value'],
-      maxItems: 1,
-      placeholder: 'Choisir ou taper (ville ou code IATA)…',
-      create: false,
-      allowEmptyOption: true,
-      openOnFocus: false,
-      load: function(query, callback) {
-        var qLower = (query || '').toLowerCase().trim();
-        if (qLower.length < 1) {
-          callback([]);
-          return;
-        }
-        if (qLower.length < 2) {
-          callback(allAirportsOptions.filter(function(o) {
-            var s = (o.text + ' ' + o.value).toLowerCase();
-            return s.indexOf(qLower) !== -1;
-          }));
-          return;
-        }
-        var q = encodeURIComponent(query);
-        var staticList = airportsRaw.map(function(a) { return { value: a.value, text: a.text || (a.city + ' — ' + a.value) }; }).filter(function(a) {
-          var s = (a.text + ' ' + a.value).toLowerCase();
-          return s.indexOf(query.toLowerCase()) !== -1;
-        });
-        fetch(airportSearchApi + '?keyword=' + q).then(function(r) { return r.ok ? r.json() : Promise.reject(r); }).then(function(data) {
-          var api = data || [];
-          var seen = {};
-          api.forEach(function(o) { seen[o.value] = true; });
-          staticList.forEach(function(o) { if (!seen[o.value]) { seen[o.value] = true; api.push(o); } });
-          callback(api);
-        }).catch(function() {
-          callback(staticList.length ? staticList : allAirportsOptions);
-        });
-      }
-    };
-    var saveVilleStorage = function(key, value, text) {
-      try {
-        if (value) { localStorage.setItem('robin_' + key, value); localStorage.setItem('robin_' + key + '_text', text || value); }
-        else { localStorage.removeItem('robin_' + key); localStorage.removeItem('robin_' + key + '_text'); }
-      } catch (e) {}
-    };
-    var daDep = document.getElementById('da-ville-depart');
-    var daArr = document.getElementById('da-ville-arrivee');
-    if (daDep && !daDep.tomselect) {
-      window.tomSelectDaVilleDep = new TomSelect('#da-ville-depart', aopts);
-      window.tomSelectDaVilleDep.on('change', function(v) {
-        updateManualDist('da');
-        var t = (window.tomSelectDaVilleDep.options && window.tomSelectDaVilleDep.options[v]) ? window.tomSelectDaVilleDep.options[v].text : v;
-        saveVilleStorage('ville_depart', v, t);
-      });
-    }
-    if (daArr && !daArr.tomselect) {
-      window.tomSelectDaVilleArr = new TomSelect('#da-ville-arrivee', aopts);
-      window.tomSelectDaVilleArr.on('change', function(v) {
-        updateManualDist('da');
-        var t = (window.tomSelectDaVilleArr.options && window.tomSelectDaVilleArr.options[v]) ? window.tomSelectDaVilleArr.options[v].text : v;
-        saveVilleStorage('ville_arrivee', v, t);
-        var guideDakar = document.getElementById('funnel-guide-dakar');
-        if (guideDakar) guideDakar.style.display = (v === 'DSS' || v === 'DKR') ? 'block' : 'none';
-      });
+  window.robinInitFunnelHeavy = function robinInitFunnelHeavy() {
+    if (window.robinInitFunnelHeavyDone) return;
+    window.robinInitFunnelHeavyDone = true;
+    var dInit = new Date();
+    dInit.setDate(dInit.getDate() - 10);
+    var dsHeavy = dInit.toISOString().split('T')[0];
+    if (window.flatpickr) {
+      var fpOpt = {
+        locale: 'fr',
+        dateFormat: 'd.m.Y',
+        defaultDate: dsHeavy,
+        maxDate: 'today',
+        allowInput: true
+      };
+      var da = document.getElementById('da-date');
+      var eb = document.getElementById('eb-date');
+      if (da) window.flatpickr(da, fpOpt);
+      if (eb) window.flatpickr(eb, Object.assign({}, fpOpt));
     }
 
-    var btnNoVol = document.getElementById('btn-je-ne-trouve-pas-mon-vol');
-    var principauxVolsWrap = document.getElementById('da-principaux-vols');
-    if (btnNoVol) {
-      btnNoVol.addEventListener('click', function() {
-        if (principauxVolsWrap) {
-          principauxVolsWrap.style.display = principauxVolsWrap.style.display === 'none' ? 'block' : 'none';
-          if (principauxVolsWrap.style.display === 'block') principauxVolsWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-        if (principauxVolsWrap && principauxVolsWrap.style.display === 'none') {
-          var wrap = document.getElementById('da-manual-wrap');
-          if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          if (window.tomSelectDaVilleDep && window.tomSelectDaVilleDep.control) window.tomSelectDaVilleDep.focus();
-        }
-      });
-    }
-    document.querySelectorAll('.principaux-vol-chip').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        var code = this.getAttribute('data-code');
-        if (!code) return;
-        var fnInput = document.getElementById('flight_number');
-        if (fnInput) fnInput.value = code;
-        if (typeof applyFlightFromDb === 'function') applyFlightFromDb(code);
-      });
-    });
-
-    var flightNumberInput = document.getElementById('flight_number');
-    var flightStatusEl = document.getElementById('flight_number_status');
-    var flightCheckTimeout = null;
-    if (flightNumberInput && flightStatusEl) {
-      flightNumberInput.addEventListener('input', function() {
-        var raw = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
-        this.value = raw;
-        if (flightCheckTimeout) clearTimeout(flightCheckTimeout);
-        flightStatusEl.textContent = '';
-        flightStatusEl.className = 'flight-status';
-        if (raw.length < 5) return;
-        flightStatusEl.className = 'flight-status loading';
-        flightStatusEl.textContent = 'Vérification des radars... ✈️';
-        flightCheckTimeout = setTimeout(function() {
-          raw = raw.replace(/\s/g, ''); // Diaspora : "AF 718" → "AF718" pour maximiser les retrouvailles
-          if (typeof DB !== 'undefined' && DB[raw]) {
-            if (applyFlightFromDb(raw)) return;
+    // Tom Select — Aéroports Départ / Arrivée : liste complète au chargement + recherche API à 2 caractères
+    if (typeof TomSelect !== 'undefined') {
+      var airportSearchApi = (typeof window.AIRPORT_SEARCH_API !== 'undefined' && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : (window.location.origin + '/.netlify/functions/airport-search');
+      var airportsRaw = window.AIRPORTS_DATA && window.AIRPORTS_DATA.length ? window.AIRPORTS_DATA : [
+        { value: 'CDG', text: 'Paris — CDG', city: 'Paris' }, { value: 'ORY', text: 'Paris — ORY', city: 'Paris' },
+        { value: 'DSS', text: 'Dakar — DSS', city: 'Dakar' }, { value: 'LYS', text: 'Lyon — LYS', city: 'Lyon' },
+        { value: 'MRS', text: 'Marseille — MRS', city: 'Marseille' }, { value: 'CMN', text: 'Casablanca — CMN', city: 'Casablanca' },
+        { value: 'BRU', text: 'Bruxelles — BRU', city: 'Bruxelles' }
+      ];
+      var allAirportsOptions = airportsRaw.map(function(a) { return { value: a.value, text: a.text || (a.city + ' — ' + a.value) }; });
+      var aopts = {
+        options: allAirportsOptions,
+        valueField: 'value',
+        labelField: 'text',
+        searchField: ['text', 'value'],
+        maxItems: 1,
+        placeholder: 'Choisir ou taper (ville ou code IATA)…',
+        create: false,
+        allowEmptyOption: true,
+        openOnFocus: false,
+        load: function(query, callback) {
+          var qLower = (query || '').toLowerCase().trim();
+          if (qLower.length < 1) {
+            callback([]);
+            return;
           }
-          var apiUrl = window.location.origin + '/.netlify/functions/flight-info?flight=' + encodeURIComponent(raw);
-          fetch(apiUrl).then(function(r) { return r.json(); }).then(function(data) {
-            if (data && data.error) {
-              console.error('flight-info API error:', data.error);
-              flightStatusEl.className = 'flight-status';
-              flightStatusEl.textContent = 'Vol non trouvé. Indiquez les villes ci-dessous.';
-              return;
-            }
-            var list = Array.isArray(data) ? data : [];
-            if (list.length === 0) {
-              console.error('flight-info: données vides', data);
-              flightStatusEl.className = 'flight-status';
-              flightStatusEl.textContent = 'Vol non trouvé. Indiquez les villes ci-dessous.';
-              return;
-            }
-            var f = list[0];
-            var dep = f.departure || {};
-            var arr = f.arrival || {};
-            var depIata = String(dep.iataCode || (dep.airport && dep.airport.iataCode) || '').toUpperCase();
-            var arrIata = String(arr.iataCode || (arr.airport && arr.airport.iataCode) || '').toUpperCase();
-            if (!depIata || !arrIata) {
-              console.error('flight-info: departure/arrival.iataCode manquants', f);
-              flightStatusEl.className = 'flight-status';
-              flightStatusEl.textContent = 'Vol non trouvé. Indiquez les villes ci-dessous.';
-              return;
-            }
-            var depName = (dep.airport && dep.airport.name) || dep.city || depIata;
-            var arrName = (arr.airport && arr.airport.name) || arr.city || arrIata;
-            var depText = depName + ' (' + depIata + ') - ' + ((dep.airport && dep.airport.name) || depName);
-            var arrText = arrName + ' (' + arrIata + ') - ' + ((arr.airport && arr.airport.name) || arrName);
-            if (window.tomSelectDaVilleDep && depIata) {
-              window.tomSelectDaVilleDep.addOption({ value: depIata, text: depText });
-              window.tomSelectDaVilleDep.addItem(depIata, true);
-            }
-            if (window.tomSelectDaVilleArr && arrIata) {
-              window.tomSelectDaVilleArr.addOption({ value: arrIata, text: arrText });
-              window.tomSelectDaVilleArr.addItem(arrIata, true);
-            }
-            updateManualDist('da');
-            var distIn = document.getElementById('da-dist');
-            var distWrap = document.getElementById('da-dist-wrap');
-            var lineEl = document.getElementById('da-distance-line');
-            if (distIn && (!distIn.value || distIn.value === '')) {
-              var km = null;
-              if (f.geography && typeof f.geography.distance === 'number') km = f.geography.distance;
-              else if (typeof f.distance === 'number') km = f.distance;
-              else if (f.distance && typeof f.distance === 'string') km = parseInt(f.distance.replace(/\D/g, ''), 10);
-              if (km == null && dep && arr) {
-                var lat1 = dep.latitude != null ? Number(dep.latitude) : (dep.airport && dep.airport.latitude != null) ? Number(dep.airport.latitude) : NaN;
-                var lon1 = dep.longitude != null ? Number(dep.longitude) : (dep.airport && dep.airport.longitude != null) ? Number(dep.airport.longitude) : NaN;
-                var lat2 = arr.latitude != null ? Number(arr.latitude) : (arr.airport && arr.airport.latitude != null) ? Number(arr.airport.latitude) : NaN;
-                var lon2 = arr.longitude != null ? Number(arr.longitude) : (arr.airport && arr.airport.longitude != null) ? Number(arr.airport.longitude) : NaN;
-                if (!isNaN(lat1) && !isNaN(lon1) && !isNaN(lat2) && !isNaN(lon2)) km = haversineKm(lat1, lon1, lat2, lon2);
-              }
-              if (km != null && !isNaN(km)) {
-                var amount = distanceKmToAmount(km);
-                distIn.value = String(amount);
-                if (lineEl) lineEl.textContent = (typeof DISTANCE_LINE !== 'undefined' && DISTANCE_LINE[amount]) || '';
-                if (distWrap) { distWrap.style.display = 'none'; distWrap.querySelectorAll('.dist-pill').forEach(function(p) { p.classList.remove('active'); }); }
-                window.lastCalculatedDistanceKm = km;
-              }
-            }
-            var delayMin = arr.delay != null ? Number(arr.delay) : (arr.duration ? parseInt(String(arr.duration).replace(/\D/g, ''), 10) : 0);
-            if (delayMin > 180) {
-              flightStatusEl.className = 'flight-status success';
-              flightStatusEl.textContent = 'Indemnité potentielle confirmée';
-            } else {
-              flightStatusEl.className = 'flight-status';
-              flightStatusEl.textContent = 'Vol trouvé — Départ et arrivée renseignés';
-            }
-          }).catch(function(err) {
-            console.error('flight-info fetch error:', err);
-            flightStatusEl.className = 'flight-status';
-            flightStatusEl.textContent = 'Vol non trouvé. Indiquez les villes ci-dessous.';
+          if (qLower.length < 2) {
+            callback(allAirportsOptions.filter(function(o) {
+              var s = (o.text + ' ' + o.value).toLowerCase();
+              return s.indexOf(qLower) !== -1;
+            }));
+            return;
+          }
+          var q = encodeURIComponent(query);
+          var staticList = airportsRaw.map(function(a) { return { value: a.value, text: a.text || (a.city + ' — ' + a.value) }; }).filter(function(a) {
+            var s = (a.text + ' ' + a.value).toLowerCase();
+            return s.indexOf(query.toLowerCase()) !== -1;
           });
-        }, 400);
+          fetch(airportSearchApi + '?keyword=' + q).then(function(r) { return r.ok ? r.json() : Promise.reject(r); }).then(function(data) {
+            var api = data || [];
+            var seen = {};
+            api.forEach(function(o) { seen[o.value] = true; });
+            staticList.forEach(function(o) { if (!seen[o.value]) { seen[o.value] = true; api.push(o); } });
+            callback(api);
+          }).catch(function() {
+            callback(staticList.length ? staticList : allAirportsOptions);
+          });
+        }
+      };
+      var saveVilleStorage = function(key, value, text) {
+        try {
+          if (value) { localStorage.setItem('robin_' + key, value); localStorage.setItem('robin_' + key + '_text', text || value); }
+          else { localStorage.removeItem('robin_' + key); localStorage.removeItem('robin_' + key + '_text'); }
+        } catch (e) {}
+      };
+      var daDep = document.getElementById('da-ville-depart');
+      var daArr = document.getElementById('da-ville-arrivee');
+      if (daDep && !daDep.tomselect) {
+        window.tomSelectDaVilleDep = new TomSelect('#da-ville-depart', aopts);
+        window.tomSelectDaVilleDep.on('change', function(v) {
+          updateManualDist('da');
+          var t = (window.tomSelectDaVilleDep.options && window.tomSelectDaVilleDep.options[v]) ? window.tomSelectDaVilleDep.options[v].text : v;
+          saveVilleStorage('ville_depart', v, t);
+        });
+      }
+      if (daArr && !daArr.tomselect) {
+        window.tomSelectDaVilleArr = new TomSelect('#da-ville-arrivee', aopts);
+        window.tomSelectDaVilleArr.on('change', function(v) {
+          updateManualDist('da');
+          var t = (window.tomSelectDaVilleArr.options && window.tomSelectDaVilleArr.options[v]) ? window.tomSelectDaVilleArr.options[v].text : v;
+          saveVilleStorage('ville_arrivee', v, t);
+          var guideDakar = document.getElementById('funnel-guide-dakar');
+          if (guideDakar) guideDakar.style.display = (v === 'DSS' || v === 'DKR') ? 'block' : 'none';
+        });
+      }
+
+      var btnNoVol = document.getElementById('btn-je-ne-trouve-pas-mon-vol');
+      var principauxVolsWrap = document.getElementById('da-principaux-vols');
+      if (btnNoVol) {
+        btnNoVol.addEventListener('click', function() {
+          if (principauxVolsWrap) {
+            principauxVolsWrap.style.display = principauxVolsWrap.style.display === 'none' ? 'block' : 'none';
+            if (principauxVolsWrap.style.display === 'block') principauxVolsWrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+          if (principauxVolsWrap && principauxVolsWrap.style.display === 'none') {
+            var wrap = document.getElementById('da-manual-wrap');
+            if (wrap) wrap.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            if (window.tomSelectDaVilleDep && window.tomSelectDaVilleDep.control) window.tomSelectDaVilleDep.focus();
+          }
+        });
+      }
+      document.querySelectorAll('.principaux-vol-chip').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var code = this.getAttribute('data-code');
+          if (!code) return;
+          var fnInput = document.getElementById('flight_number');
+          if (fnInput) fnInput.value = code;
+          if (typeof applyFlightFromDb === 'function') applyFlightFromDb(code);
+        });
+      });
+
+      var flightNumberInput = document.getElementById('flight_number');
+      var flightStatusEl = document.getElementById('flight_number_status');
+      var flightCheckTimeout = null;
+      if (flightNumberInput && flightStatusEl) {
+        flightNumberInput.addEventListener('input', function() {
+          var raw = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+          this.value = raw;
+          if (flightCheckTimeout) clearTimeout(flightCheckTimeout);
+          flightStatusEl.textContent = '';
+          flightStatusEl.className = 'flight-status';
+          if (raw.length < 5) return;
+          flightStatusEl.className = 'flight-status loading';
+          flightStatusEl.textContent = 'Vérification des radars... ✈️';
+          flightCheckTimeout = setTimeout(function() {
+            raw = raw.replace(/\s/g, ''); // Diaspora : "AF 718" → "AF718" pour maximiser les retrouvailles
+            if (typeof DB !== 'undefined' && DB[raw]) {
+              if (applyFlightFromDb(raw)) return;
+            }
+            var apiUrl = window.location.origin + '/.netlify/functions/flight-info?flight=' + encodeURIComponent(raw);
+            fetch(apiUrl).then(function(r) { return r.json(); }).then(function(data) {
+              if (data && data.error) {
+                console.error('flight-info API error:', data.error);
+                flightStatusEl.className = 'flight-status';
+                flightStatusEl.textContent = 'Vol non trouvé. Indiquez les villes ci-dessous.';
+                return;
+              }
+              var list = Array.isArray(data) ? data : [];
+              if (list.length === 0) {
+                console.error('flight-info: données vides', data);
+                flightStatusEl.className = 'flight-status';
+                flightStatusEl.textContent = 'Vol non trouvé. Indiquez les villes ci-dessous.';
+                return;
+              }
+              var f = list[0];
+              var dep = f.departure || {};
+              var arr = f.arrival || {};
+              var depIata = String(dep.iataCode || (dep.airport && dep.airport.iataCode) || '').toUpperCase();
+              var arrIata = String(arr.iataCode || (arr.airport && arr.airport.iataCode) || '').toUpperCase();
+              if (!depIata || !arrIata) {
+                console.error('flight-info: departure/arrival.iataCode manquants', f);
+                flightStatusEl.className = 'flight-status';
+                flightStatusEl.textContent = 'Vol non trouvé. Indiquez les villes ci-dessous.';
+                return;
+              }
+              var depName = (dep.airport && dep.airport.name) || dep.city || depIata;
+              var arrName = (arr.airport && arr.airport.name) || arr.city || arrIata;
+              var depText = depName + ' (' + depIata + ') - ' + ((dep.airport && dep.airport.name) || depName);
+              var arrText = arrName + ' (' + arrIata + ') - ' + ((arr.airport && arr.airport.name) || arrName);
+              if (window.tomSelectDaVilleDep && depIata) {
+                window.tomSelectDaVilleDep.addOption({ value: depIata, text: depText });
+                window.tomSelectDaVilleDep.addItem(depIata, true);
+              }
+              if (window.tomSelectDaVilleArr && arrIata) {
+                window.tomSelectDaVilleArr.addOption({ value: arrIata, text: arrText });
+                window.tomSelectDaVilleArr.addItem(arrIata, true);
+              }
+              updateManualDist('da');
+              var distIn = document.getElementById('da-dist');
+              var distWrap = document.getElementById('da-dist-wrap');
+              var lineEl = document.getElementById('da-distance-line');
+              if (distIn && (!distIn.value || distIn.value === '')) {
+                var km = null;
+                if (f.geography && typeof f.geography.distance === 'number') km = f.geography.distance;
+                else if (typeof f.distance === 'number') km = f.distance;
+                else if (f.distance && typeof f.distance === 'string') km = parseInt(f.distance.replace(/\D/g, ''), 10);
+                if (km == null && dep && arr) {
+                  var lat1 = dep.latitude != null ? Number(dep.latitude) : (dep.airport && dep.airport.latitude != null) ? Number(dep.airport.latitude) : NaN;
+                  var lon1 = dep.longitude != null ? Number(dep.longitude) : (dep.airport && dep.airport.longitude != null) ? Number(dep.airport.longitude) : NaN;
+                  var lat2 = arr.latitude != null ? Number(arr.latitude) : (arr.airport && arr.airport.latitude != null) ? Number(arr.airport.latitude) : NaN;
+                  var lon2 = arr.longitude != null ? Number(arr.longitude) : (arr.airport && arr.airport.longitude != null) ? Number(arr.airport.longitude) : NaN;
+                  if (!isNaN(lat1) && !isNaN(lon1) && !isNaN(lat2) && !isNaN(lon2)) km = haversineKm(lat1, lon1, lat2, lon2);
+                }
+                if (km != null && !isNaN(km)) {
+                  var amount = distanceKmToAmount(km);
+                  distIn.value = String(amount);
+                  if (lineEl) lineEl.textContent = (typeof DISTANCE_LINE !== 'undefined' && DISTANCE_LINE[amount]) || '';
+                  if (distWrap) { distWrap.style.display = 'none'; distWrap.querySelectorAll('.dist-pill').forEach(function(p) { p.classList.remove('active'); }); }
+                  window.lastCalculatedDistanceKm = km;
+                }
+              }
+              var delayMin = arr.delay != null ? Number(arr.delay) : (arr.duration ? parseInt(String(arr.duration).replace(/\D/g, ''), 10) : 0);
+              if (delayMin > 180) {
+                flightStatusEl.className = 'flight-status success';
+                flightStatusEl.textContent = 'Indemnité potentielle confirmée';
+              } else {
+                flightStatusEl.className = 'flight-status';
+                flightStatusEl.textContent = 'Vol trouvé — Départ et arrivée renseignés';
+              }
+            }).catch(function(err) {
+              console.error('flight-info fetch error:', err);
+              flightStatusEl.className = 'flight-status';
+              flightStatusEl.textContent = 'Vol non trouvé. Indiquez les villes ci-dessous.';
+            });
+          }, 400);
+        });
+      }
+    }
+
+    // Tom Select — Escale : Vol 1, 2, 3 (villes départ/arrivée — liste complète comme vol direct)
+    if (typeof TomSelect !== 'undefined') {
+      var airportSearchApiEscale = (typeof window.AIRPORT_SEARCH_API !== 'undefined' && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : (window.location.origin + '/.netlify/functions/airport-search');
+      var airportsRawEscale = window.AIRPORTS_DATA && window.AIRPORTS_DATA.length ? window.AIRPORTS_DATA : [
+        { value: 'CDG', text: 'Paris — CDG', city: 'Paris' }, { value: 'ORY', text: 'Paris — ORY', city: 'Paris' },
+        { value: 'DSS', text: 'Dakar — DSS', city: 'Dakar' }, { value: 'LYS', text: 'Lyon — LYS', city: 'Lyon' },
+        { value: 'MRS', text: 'Marseille — MRS', city: 'Marseille' }, { value: 'CMN', text: 'Casablanca — CMN', city: 'Casablanca' },
+        { value: 'BRU', text: 'Bruxelles — BRU', city: 'Bruxelles' }
+      ];
+      var allAirportsOptionsEscale = airportsRawEscale.map(function(a) { return { value: a.value, text: a.text || (a.city + ' — ' + a.value) }; });
+      var tsVilleOpts = {
+        options: allAirportsOptionsEscale,
+        valueField: 'value',
+        labelField: 'text',
+        searchField: ['text', 'value'],
+        maxItems: 1,
+        placeholder: 'Choisir ou taper (ville ou IATA)…',
+        create: false,
+        allowEmptyOption: true,
+        openOnFocus: false,
+        load: function(query, callback) {
+          var qLower = (query || '').toLowerCase().trim();
+          if (qLower.length < 1) {
+            callback([]);
+            return;
+          }
+          if (qLower.length < 2) {
+            callback(allAirportsOptionsEscale.filter(function(o) {
+              var s = (o.text + ' ' + o.value).toLowerCase();
+              return s.indexOf(qLower) !== -1;
+            }));
+            return;
+          }
+          var q = encodeURIComponent(query);
+          var staticList = airportsRawEscale.map(function(a) { return { value: a.value, text: a.text || (a.city + ' — ' + a.value) }; }).filter(function(a) {
+            var s = (a.text + ' ' + a.value).toLowerCase();
+            return s.indexOf(qLower) !== -1;
+          });
+          fetch(airportSearchApiEscale + '?keyword=' + q).then(function(r) { return r.ok ? r.json() : Promise.reject(r); }).then(function(data) {
+            var api = data || [];
+            var seen = {};
+            api.forEach(function(o) { seen[o.value] = true; });
+            staticList.forEach(function(o) { if (!seen[o.value]) { seen[o.value] = true; api.push(o); } });
+            callback(api);
+          }).catch(function() {
+            callback(staticList.length ? staticList : allAirportsOptionsEscale);
+          });
+        }
+      };
+      var saveEscaleVille = function(prefix, value, text) {
+        try {
+          if (value) { localStorage.setItem('robin_' + prefix, value); localStorage.setItem('robin_' + prefix + '_text', text || value); }
+          else { localStorage.removeItem('robin_' + prefix); localStorage.removeItem('robin_' + prefix + '_text'); }
+        } catch (e) {}
+      };
+      [1, 2, 3].forEach(function(i) {
+        var d = document.getElementById('eb-ville-depart-' + i);
+        if (d && !d.tomselect) {
+          var tsDep = new TomSelect('#eb-ville-depart-' + i, tsVilleOpts);
+          tsDep.on('change', function() {
+            updateEscaleDist();
+            var v = tsDep.getValue(); var o = tsDep.options && tsDep.options[v]; saveEscaleVille('eb_ville_depart_' + i, v, o ? o.text : v);
+          });
+        }
+        var a = document.getElementById('eb-ville-arrivee-' + i);
+        if (a && !a.tomselect) {
+          var tsArr = new TomSelect('#eb-ville-arrivee-' + i, tsVilleOpts);
+          tsArr.on('change', function() {
+            updateEscaleDist();
+            var v = tsArr.getValue(); var o = tsArr.options && tsArr.options[v]; saveEscaleVille('eb_ville_arrivee_' + i, v, o ? o.text : v);
+          });
+        }
       });
     }
-  }
-
-  // Tom Select — Escale : Vol 1, 2, 3 (villes départ/arrivée — liste complète comme vol direct)
-  if (typeof TomSelect !== 'undefined') {
-    var airportSearchApiEscale = (typeof window.AIRPORT_SEARCH_API !== 'undefined' && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : (window.location.origin + '/.netlify/functions/airport-search');
-    var airportsRawEscale = window.AIRPORTS_DATA && window.AIRPORTS_DATA.length ? window.AIRPORTS_DATA : [
-      { value: 'CDG', text: 'Paris — CDG', city: 'Paris' }, { value: 'ORY', text: 'Paris — ORY', city: 'Paris' },
-      { value: 'DSS', text: 'Dakar — DSS', city: 'Dakar' }, { value: 'LYS', text: 'Lyon — LYS', city: 'Lyon' },
-      { value: 'MRS', text: 'Marseille — MRS', city: 'Marseille' }, { value: 'CMN', text: 'Casablanca — CMN', city: 'Casablanca' },
-      { value: 'BRU', text: 'Bruxelles — BRU', city: 'Bruxelles' }
-    ];
-    var allAirportsOptionsEscale = airportsRawEscale.map(function(a) { return { value: a.value, text: a.text || (a.city + ' — ' + a.value) }; });
-    var tsVilleOpts = {
-      options: allAirportsOptionsEscale,
-      valueField: 'value',
-      labelField: 'text',
-      searchField: ['text', 'value'],
-      maxItems: 1,
-      placeholder: 'Choisir ou taper (ville ou IATA)…',
-      create: false,
-      allowEmptyOption: true,
-      openOnFocus: false,
-      load: function(query, callback) {
-        var qLower = (query || '').toLowerCase().trim();
-        if (qLower.length < 1) {
-          callback([]);
-          return;
-        }
-        if (qLower.length < 2) {
-          callback(allAirportsOptionsEscale.filter(function(o) {
-            var s = (o.text + ' ' + o.value).toLowerCase();
-            return s.indexOf(qLower) !== -1;
-          }));
-          return;
-        }
-        var q = encodeURIComponent(query);
-        var staticList = airportsRawEscale.map(function(a) { return { value: a.value, text: a.text || (a.city + ' — ' + a.value) }; }).filter(function(a) {
-          var s = (a.text + ' ' + a.value).toLowerCase();
-          return s.indexOf(qLower) !== -1;
-        });
-        fetch(airportSearchApiEscale + '?keyword=' + q).then(function(r) { return r.ok ? r.json() : Promise.reject(r); }).then(function(data) {
-          var api = data || [];
-          var seen = {};
-          api.forEach(function(o) { seen[o.value] = true; });
-          staticList.forEach(function(o) { if (!seen[o.value]) { seen[o.value] = true; api.push(o); } });
-          callback(api);
-        }).catch(function() {
-          callback(staticList.length ? staticList : allAirportsOptionsEscale);
-        });
-      }
-    };
-    var saveEscaleVille = function(prefix, value, text) {
-      try {
-        if (value) { localStorage.setItem('robin_' + prefix, value); localStorage.setItem('robin_' + prefix + '_text', text || value); }
-        else { localStorage.removeItem('robin_' + prefix); localStorage.removeItem('robin_' + prefix + '_text'); }
-      } catch (e) {}
-    };
-    [1, 2, 3].forEach(function(i) {
-      var d = document.getElementById('eb-ville-depart-' + i);
-      if (d && !d.tomselect) {
-        var tsDep = new TomSelect('#eb-ville-depart-' + i, tsVilleOpts);
-        tsDep.on('change', function() {
-          updateEscaleDist();
-          var v = tsDep.getValue(); var o = tsDep.options && tsDep.options[v]; saveEscaleVille('eb_ville_depart_' + i, v, o ? o.text : v);
-        });
-      }
-      var a = document.getElementById('eb-ville-arrivee-' + i);
-      if (a && !a.tomselect) {
-        var tsArr = new TomSelect('#eb-ville-arrivee-' + i, tsVilleOpts);
-        tsArr.on('change', function() {
-          updateEscaleDist();
-          var v = tsArr.getValue(); var o = tsArr.options && tsArr.options[v]; saveEscaleVille('eb_ville_arrivee_' + i, v, o ? o.text : v);
-        });
-      }
-    });
-  }
+  };
+  if (!window.__ROBIN_DEFER_FUNNEL__) window.robinInitFunnelHeavy();
 });
 
 function getEscaleSelectValue(id) {
@@ -1404,6 +1470,7 @@ function getEscaleSelectValue(id) {
   return el.value || '';
 }
 function updateEscaleDist() {
+  ensureRouteAmountBuilt();
   var block3 = document.getElementById('eb-vol-block-3');
   var dep1 = getEscaleSelectValue('eb-ville-depart-1');
   var arrLast = '';

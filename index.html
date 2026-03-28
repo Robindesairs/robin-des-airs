@@ -955,16 +955,9 @@
 </footer>
 
 
-<script data-cfasync="false" defer src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js"></script>
-<script defer src="data/airlines.js"></script>
-<script defer src="data/airports.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/tom-select@2/dist/js/tom-select.complete.min.js"></script>
-<script defer src="i18n.js"></script>
-<script defer src="data/flights-db.js"></script>
-<script defer src="data/vol-ticker.js"></script>
-<script defer src="assets/index-page.js"></script>
+<!-- Pas de script Cloudflare ici : sur Netlify /cdn-cgi/... renvoie 404 et alourdit Lighthouse. -->
+<!-- Chaîne JS : assets/home-loader.js (mobile ≤768px → diagnostic chargé à la demande) -->
+<script defer src="/assets/home-loader.js"></script>
 
 <!-- Modal QR WhatsApp (fallback desktop → téléphone) -->
 <div id="wa-qr-modal" style="display:none;position:fixed;inset:0;z-index:9999;">
