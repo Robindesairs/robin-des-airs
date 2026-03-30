@@ -25,7 +25,7 @@ Remplacez l’URL **dans ces 3 fichiers** par **votre** URL Make.com.
 | Fichier | Variable / constante | Ligne (approx.) |
 |--------|----------------------|------------------|
 | **depot-en-ligne.html** | `WEBHOOK_URL` | ~567 |
-| **depot-simple.html** | `WEBHOOK` | ~509 |
+| **depot-express.html** | `WEBHOOK` | ~509 |
 | **dossier.html** | `DOSSIER_WEBHOOK_URL` | ~1348 |
 
 - **Même URL pour tout** : si vous voulez que formulaire en ligne, dépôt simple et formulaire « dossier » arrivent au même endroit, mettez **la même URL** dans les 3 fichiers.
@@ -38,7 +38,7 @@ Exemple pour **depot-en-ligne.html** :
 const WEBHOOK_URL = "https://hook.eu1.make.com/VOTRE_ID_ICI";
 ```
 
-Faites pareil pour `WEBHOOK` dans **depot-simple.html** et `DOSSIER_WEBHOOK_URL` dans **dossier.html** si vous utilisez ce formulaire.
+Faites pareil pour `WEBHOOK` dans **depot-express.html** et `DOSSIER_WEBHOOK_URL` dans **dossier.html** si vous utilisez ce formulaire.
 
 ---
 
@@ -47,7 +47,7 @@ Faites pareil pour `WEBHOOK` dans **depot-simple.html** et `DOSSIER_WEBHOOK_URL`
 1. Scénario Make **activé** (interrupteur vert).
 2. Ouvrez sur votre site :  
    - [Votre site]/depot-en-ligne.html ou  
-   - [Votre site]/depot-simple.html  
+   - [Votre site]/depot-express.html  
 3. Remplissez le formulaire au minimum et soumettez.
 4. Dans Make.com : **Scénario** → onglet **Executions** (ou **Historique**). Vous devez voir une exécution avec les données reçues.
 
@@ -78,7 +78,7 @@ Pour que chaque envoi crée **un dossier** dans Google Drive avec les pièces du
 | Source | Reçu par l’URL Make ? | Fichiers (carte d’embarquement, passeport) ? |
 |--------|------------------------|---------------------------------------------|
 | **Dépôt en ligne** (formulaire 7 étapes) | ✅ Oui | ✅ Oui (file_boarding, file_id, signatures) |
-| **Dépôt simple** (3 clics) | ✅ Oui | ✅ Oui (file_longest_flight) |
+| **Dépôt express** (3 clics) | ✅ Oui | ✅ Oui (file_longest_flight) |
 | **Formulaire dossier** (dossier.html) | ✅ Oui | ❌ Non (données JSON uniquement) |
 | **WhatsApp** (messages / photos des clients) | ❌ Non par défaut | — |
 

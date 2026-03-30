@@ -67,9 +67,16 @@ a{text-decoration:none;color:inherit}
 .field input:focus,.field select:focus{border-color:var(--neon);background:white;box-shadow:0 0 0 3px rgba(0,200,122,.09)}
 .field input.err,.field select.err{border-color:var(--red);box-shadow:0 0 0 3px rgba(231,76,60,.09)}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:11px}
-.phone-row{display:flex;gap:8px;align-items:stretch}
+.phone-row{display:flex;gap:8px;align-items:stretch;overflow:hidden}
 .phone-prefix{width:72px;max-width:72px;flex-shrink:0;padding:11px 6px;font-size:12px}
 .phone-input{flex:1;min-width:0;font-size:15px}
+.phone-input::-webkit-contacts-auto-fill-button,
+.phone-input::-webkit-credentials-auto-fill-button,
+.phone-input::-webkit-textfield-decoration-container{
+  display:none !important;
+  visibility:hidden !important;
+  pointer-events:none !important;
+}
 .phone-recap{font-size:11px;color:var(--gray);margin-top:6px;min-height:18px}
 .phone-recap strong{color:var(--navy)}
 

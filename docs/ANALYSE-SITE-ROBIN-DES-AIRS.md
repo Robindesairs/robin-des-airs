@@ -12,7 +12,7 @@
 |------|------|
 | **index.html** | Accueil, hero, calculateur (funnel), loi CE 261, témoignages, FAQ, CTA WhatsApp |
 | **depot-en-ligne.html** | Formulaire dépôt dossier (multi-étapes, pièces jointes) |
-| **depot-simple.html** | Dépôt simplifié |
+| **depot-express.html** | Dépôt simplifié |
 | **dossier.html** | Suivi / formulaire dossier |
 | **suivi-dossier.html** | Où en est mon dossier |
 | **guide-whatsapp.html** | Guide envoi par WhatsApp |

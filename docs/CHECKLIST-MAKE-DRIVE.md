@@ -8,12 +8,12 @@ Si vous avez créé le **webhook** Make.com mais qu’**aucun dossier** n’appa
 
 1. Dans Make.com, ouvrez votre scénario (celui avec votre webhook).
 2. **Activez-le** (interrupteur **On** en haut à droite) si ce n’est pas déjà fait.
-3. Sur votre site : allez sur **Dépôt simple** (plus rapide pour tester) :  
-   `https://robindesairs.eu/depot-simple.html`
+3. Sur votre site : allez sur **Dépôt express** (plus rapide pour tester) :  
+   `https://robindesairs.eu/depot-express.html`
 4. Remplissez au minimum : **prénom**, **numéro WhatsApp**, **départ** (ex. Paris), **arrivée** (ex. Dakar), et envoyez (avec ou sans photo).
 5. Dans Make.com : onglet **Executions** (ou **Historique**). Vous devez voir **une nouvelle exécution** (il y a quelques secondes ou minutes).
 
-- **Si vous ne voyez aucune exécution** : le formulaire n’envoie pas vers la bonne URL, ou le scénario est inactif. Vérifiez que l’URL dans `depot-simple.html` / `depot-en-ligne.html` est bien la vôtre et que le scénario est **On**.
+- **Si vous ne voyez aucune exécution** : le formulaire n’envoie pas vers la bonne URL, ou le scénario est inactif. Vérifiez que l’URL dans `depot-express.html` / `depot-en-ligne.html` est bien la vôtre et que le scénario est **On**.
 - **Si vous voyez des exécutions** : les données arrivent. Passez à l’étape 2.
 
 ---

@@ -11,7 +11,7 @@ Quand un client envoie le formulaire :
 | Page | Ce qui est envoyé | Destination |
 |------|-------------------|-------------|
 | **Dépôt en ligne** (`depot-en-ligne.html`) | Formulaire + **fichiers** (carte d’embarquement, pièce d’identité, signatures mandat/SEPA) en `multipart/form-data` | Webhook Make.com |
-| **Dépôt simple** (`depot-simple.html`) | Prénom, WhatsApp, trajet, **1 fichier** (photo vol) | Webhook Make.com |
+| **Dépôt express** (`depot-express.html`) | Prénom, WhatsApp, trajet, **1 fichier** (photo vol) | Webhook Make.com |
 | **Formulaire dossier** (`dossier.html`) | Données en **JSON uniquement** (pas de fichiers envoyés au webhook) | Webhook Make.com |
 
 Donc **les vrais fichiers** (carte d’embarquement, passeport, etc.) sont envoyés uniquement par **depot-en-ligne** et **depot-simple**. Sans scénario Make.com, ils ne sont **stockés nulle part** : Make reçoit la requête mais il faut ajouter des modules (Google Drive, etc.) pour créer un dossier par client et y mettre les fichiers.
@@ -31,7 +31,7 @@ Donc **les vrais fichiers** (carte d’embarquement, passeport, etc.) sont envoy
 - `mandat_signature_file` — **fichier** image de la signature du mandat (PNG, signé sur le formulaire) — à utiliser dans Make comme les autres fichiers (`.data`)
 - `sepa_signature_file` — **fichier** image de la signature SEPA (PNG), si fournie
 
-### Dépôt simple (`depot-simple.html`)
+### Dépôt express (`depot-express.html`)
 
 **Champs**  
 `mode`, `prenom`, `whatsapp`, `nb_passagers`, `depart`, `arrivee`, `numero_vol` (ou vide).
@@ -49,7 +49,7 @@ Idée : à chaque envoi du formulaire, Make.com **crée un dossier** dans Google
 
 - Module **Webhooks** → **Custom webhook**.
 - Créez le webhook, **copiez l’URL**.
-- Collez cette URL dans le site : `WEBHOOK_URL` dans **depot-en-ligne.html** et `WEBHOOK` dans **depot-simple.html** (voir `docs/CONFIGURER-WEBHOOK-MAKE.md`).
+- Collez cette URL dans le site : `WEBHOOK_URL` dans **depot-en-ligne.html** et `WEBHOOK` dans **depot-express.html** (voir `docs/CONFIGURER-WEBHOOK-MAKE.md`).
 - **Important** : dans les paramètres du webhook, autorisez la réception de **fichiers** (multipart/form-data). Sur Make.com, le webhook « Custom webhook » reçoit normalement les fichiers ; ils apparaissent dans la sortie du module (souvent en binaire ou « attachment »).
 
 ### Étape 2 — Numéro de dossier (optionnel mais utile)
