@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Depot express - Robin des Airs</title>
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@18/build/css/intlTelInput.css">
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: Arial, sans-serif; background: #f5f7fb; color: #10203a; }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 20px; }
+    .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .brand { font-weight: 700; }
+    .lang { display: flex; gap: 8px; }
+    .lang button { border: 1px solid #d7deea; background: #fff; padding: 6px 10px; border-radius: 8px; cursor: pointer; }
+    .lang button.active { border-color: #00c87a; }
+    .card { background: #fff; border: 1px solid #e2e8f2; border-radius: 12px; padding: 18px; }
+    h1 { margin: 0 0 8px; font-size: 24px; }
+    p.sub { margin: 0 0 14px; color: #5d6c86; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field { margin-bottom: 12px; }
+    label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; color: #51607a; text-transform: uppercase; }
+    input, select { width: 100%; border: 1px solid #d7deea; border-radius: 8px; padding: 11px; font-size: 14px; }
+    input:focus, select:focus { outline: none; border-color: #00c87a; }
+    .iti { width: 100%; }
+    .hint { font-size: 12px; color: #5d6c86; }
+    .pill { background: #ebfff5; border: 1px solid #b9f2d8; border-radius: 10px; padding: 12px; margin: 12px 0; }
+    .pill strong { color: #007a4c; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    .btn { border: 0; border-radius: 10px; padding: 12px 16px; cursor: pointer; font-weight: 700; }
+    .btn-primary { background: #00c87a; color: #082132; }
+    .btn-secondary { background: #0b1f3a; color: #fff; }
+    .ok { margin-top: 12px; background: #ebfff5; border: 1px solid #b9f2d8; border-radius: 10px; padding: 12px; display: none; }
+    .err { color: #d93025; font-size: 12px; margin-top: 6px; display: none; }
+    @media (max-width: 740px) { .grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">Robin des Airs - Depot express</div>
+      <div class="lang">
+        <button id="lang-fr" class="active" type="button">🇫🇷 FR</button>
+        <button id="lang-en" type="button">🇬🇧 EN</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h1 id="t-title">Deposer mon dossier en 2 minutes</h1>
+      <p class="sub" id="t-sub">Formulaire express avec contact WhatsApp.</p>
+
+      <div class="pill">
+        <div id="t-commission"><strong>Commission Robin : 25%</strong> uniquement si on gagne. Si on perd, vous payez 0 EUR.</div>
+      </div>
+
+      <div class="grid">
+        <div class="field">
+          <label id="l-firstname" for="firstname">Prenom</label>
+          <input id="firstname" placeholder="Aminata">
+        </div>
+        <div class="field">
+          <label id="l-lastname" for="lastname">Nom</label>
+          <input id="lastname" placeholder="Diallo">
+        </div>
+      </div>
+
+      <div class="field">
+        <label id="l-country" for="country-input">Pays</label>
+        <input id="country-input" list="country-list" autocomplete="country-name" placeholder="Commencez a taper: Sen...">
+        <datalist id="country-list"></datalist>
+        <input type="hidden" id="country-code" value="">
+        <div class="hint" id="t-country-hint">Tapez les premieres lettres du pays pour filtrer.</div>
+      </div>
+
+      <div class="field">
+        <label id="l-wa" for="whatsapp">WhatsApp</label>
+        <input id="whatsapp" type="tel" autocomplete="tel">
+        <div id="wa-err" class="err">Numero WhatsApp invalide.</div>
+      </div>
+
+      <div class="actions">
+        <button id="btn-submit" class="btn btn-primary" type="button">Envoyer</button>
+        <a class="btn btn-secondary" href="/depot-simple.html">Version simple</a>
+      </div>
+
+      <div id="ok-msg" class="ok"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18/build/js/intlTelInput.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@18/build/js/utils.js"></script>
+  <script>
+    (function () {
+      var WEBHOOK = "https://hook.eu1.make.com/ws1orot1jnhysq1amavv9ypj4wyiqmwz";
+
+      var countries = [
+        { code: "DZ", name_fr: "Algerie", name_en: "Algeria" }, { code: "AO", name_fr: "Angola", name_en: "Angola" },
+        { code: "BJ", name_fr: "Benin", name_en: "Benin" }, { code: "BW", name_fr: "Botswana", name_en: "Botswana" },
+        { code: "BF", name_fr: "Burkina Faso", name_en: "Burkina Faso" }, { code: "BI", name_fr: "Burundi", name_en: "Burundi" },
+        { code: "CM", name_fr: "Cameroun", name_en: "Cameroon" }, { code: "CV", name_fr: "Cap-Vert", name_en: "Cape Verde" },
+        { code: "CF", name_fr: "Centrafrique", name_en: "Central African Republic" }, { code: "TD", name_fr: "Tchad", name_en: "Chad" },
+        { code: "KM", name_fr: "Comores", name_en: "Comoros" }, { code: "CG", name_fr: "Congo", name_en: "Congo" },
+        { code: "CD", name_fr: "Congo (RDC)", name_en: "DR Congo" }, { code: "CI", name_fr: "Cote d'Ivoire", name_en: "Ivory Coast" },
+        { code: "DJ", name_fr: "Djibouti", name_en: "Djibouti" }, { code: "EG", name_fr: "Egypte", name_en: "Egypt" },
+        { code: "GQ", name_fr: "Guinee equatoriale", name_en: "Equatorial Guinea" }, { code: "ER", name_fr: "Erythree", name_en: "Eritrea" },
+        { code: "ET", name_fr: "Ethiopie", name_en: "Ethiopia" }, { code: "GA", name_fr: "Gabon", name_en: "Gabon" },
+        { code: "GM", name_fr: "Gambie", name_en: "Gambia" }, { code: "GH", name_fr: "Ghana", name_en: "Ghana" },
+        { code: "GN", name_fr: "Guinee", name_en: "Guinea" }, { code: "GW", name_fr: "Guinee-Bissau", name_en: "Guinea-Bissau" },
+        { code: "KE", name_fr: "Kenya", name_en: "Kenya" }, { code: "LS", name_fr: "Lesotho", name_en: "Lesotho" },
+        { code: "LR", name_fr: "Liberia", name_en: "Liberia" }, { code: "LY", name_fr: "Libye", name_en: "Libya" },
+        { code: "MG", name_fr: "Madagascar", name_en: "Madagascar" }, { code: "MW", name_fr: "Malawi", name_en: "Malawi" },
+        { code: "ML", name_fr: "Mali", name_en: "Mali" }, { code: "MR", name_fr: "Mauritanie", name_en: "Mauritania" },
+        { code: "MU", name_fr: "Maurice", name_en: "Mauritius" }, { code: "MA", name_fr: "Maroc", name_en: "Morocco" },
+        { code: "MZ", name_fr: "Mozambique", name_en: "Mozambique" }, { code: "NA", name_fr: "Namibie", name_en: "Namibia" },
+        { code: "NE", name_fr: "Niger", name_en: "Niger" }, { code: "NG", name_fr: "Nigeria", name_en: "Nigeria" },
+        { code: "RW", name_fr: "Rwanda", name_en: "Rwanda" }, { code: "ST", name_fr: "Sao Tome-et-Principe", name_en: "Sao Tome and Principe" },
+        { code: "SN", name_fr: "Senegal", name_en: "Senegal" }, { code: "SC", name_fr: "Seychelles", name_en: "Seychelles" },
+        { code: "SL", name_fr: "Sierra Leone", name_en: "Sierra Leone" }, { code: "SO", name_fr: "Somalie", name_en: "Somalia" },
+        { code: "ZA", name_fr: "Afrique du Sud", name_en: "South Africa" }, { code: "SS", name_fr: "Soudan du Sud", name_en: "South Sudan" },
+        { code: "SD", name_fr: "Soudan", name_en: "Sudan" }, { code: "TZ", name_fr: "Tanzanie", name_en: "Tanzania" },
+        { code: "TG", name_fr: "Togo", name_en: "Togo" }, { code: "TN", name_fr: "Tunisie", name_en: "Tunisia" },
+        { code: "UG", name_fr: "Ouganda", name_en: "Uganda" }, { code: "ZM", name_fr: "Zambie", name_en: "Zambia" },
+        { code: "ZW", name_fr: "Zimbabwe", name_en: "Zimbabwe" }, { code: "FR", name_fr: "France", name_en: "France" },
+        { code: "BE", name_fr: "Belgique", name_en: "Belgium" }, { code: "CH", name_fr: "Suisse", name_en: "Switzerland" },
+        { code: "GB", name_fr: "Royaume-Uni", name_en: "United Kingdom" }, { code: "US", name_fr: "Etats-Unis", name_en: "United States" },
+        { code: "CA", name_fr: "Canada", name_en: "Canada" }, { code: "AE", name_fr: "Emirats arabes unis", name_en: "United Arab Emirates" },
+        { code: "QA", name_fr: "Qatar", name_en: "Qatar" }, { code: "TR", name_fr: "Turquie", name_en: "Turkey" },
+        { code: "IN", name_fr: "Inde", name_en: "India" }, { code: "CN", name_fr: "Chine", name_en: "China" }
+      ];
+
+      var t = {
+        fr: {
+          title: "Deposer mon dossier en 2 minutes",
+          sub: "Formulaire express avec contact WhatsApp.",
+          commission: "<strong>Commission Robin : 25%</strong> uniquement si on gagne. Si on perd, vous payez 0 EUR.",
+          firstname: "Prenom",
+          lastname: "Nom",
+          country: "Pays",
+          countryHint: "Tapez les premieres lettres du pays pour filtrer.",
+          wa: "WhatsApp",
+          invalidWa: "Numero WhatsApp invalide.",
+          submit: "Envoyer",
+          sent: "Dossier envoye. Nous vous recontactons rapidement sur WhatsApp."
+        },
+        en: {
+          title: "Submit your case in 2 minutes",
+          sub: "Express form with WhatsApp contact.",
+          commission: "<strong>Robin fee: 25%</strong> only if we win. If we lose, you pay EUR 0.",
+          firstname: "First name",
+          lastname: "Last name",
+          country: "Country",
+          countryHint: "Type the beginning of your country name to filter.",
+          wa: "WhatsApp",
+          invalidWa: "Invalid WhatsApp number.",
+          submit: "Send",
+          sent: "Case submitted. We will contact you soon on WhatsApp."
+        }
+      };
+
+      var currentLang = "fr";
+      var countryInput = document.getElementById("country-input");
+      var countryCode = document.getElementById("country-code");
+      var countryList = document.getElementById("country-list");
+      var waInput = document.getElementById("whatsapp");
+      var waErr = document.getElementById("wa-err");
+      var okMsg = document.getElementById("ok-msg");
+      var btnSubmit = document.getElementById("btn-submit");
+
+      var iti = window.intlTelInput(waInput, {
+        initialCountry: "fr",
+        separateDialCode: true,
+        nationalMode: false,
+        autoPlaceholder: "aggressive",
+        preferredCountries: ["fr", "sn", "ci", "ml", "cm", "cd", "tg", "gh", "ng", "be", "ch", "gb", "us"]
+      });
+
+      function renderCountries() {
+        countryList.innerHTML = countries
+          .map(function (c) {
+            var label = currentLang === "fr" ? c.name_fr : c.name_en;
+            return '<option value="' + label + '" data-code="' + c.code + '"></option>';
+          })
+          .join("");
+      }
+
+      function normalize(s) {
+        return String(s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      }
+
+      function updateCountryCode() {
+        var typed = normalize(countryInput.value);
+        var found = countries.find(function (c) {
+          return normalize(currentLang === "fr" ? c.name_fr : c.name_en) === typed;
+        });
+        countryCode.value = found ? found.code : "";
+      }
+
+      function applyLang(lang) {
+        currentLang = lang;
+        document.documentElement.lang = lang;
+        document.getElementById("lang-fr").classList.toggle("active", lang === "fr");
+        document.getElementById("lang-en").classList.toggle("active", lang === "en");
+        document.getElementById("t-title").textContent = t[lang].title;
+        document.getElementById("t-sub").textContent = t[lang].sub;
+        document.getElementById("t-commission").innerHTML = t[lang].commission;
+        document.getElementById("l-firstname").textContent = t[lang].firstname;
+        document.getElementById("l-lastname").textContent = t[lang].lastname;
+        document.getElementById("l-country").textContent = t[lang].country;
+        document.getElementById("t-country-hint").textContent = t[lang].countryHint;
+        document.getElementById("l-wa").textContent = t[lang].wa;
+        document.getElementById("wa-err").textContent = t[lang].invalidWa;
+        btnSubmit.textContent = t[lang].submit;
+        renderCountries();
+      }
+
+      document.getElementById("lang-fr").addEventListener("click", function () { applyLang("fr"); });
+      document.getElementById("lang-en").addEventListener("click", function () { applyLang("en"); });
+
+      countryInput.addEventListener("input", updateCountryCode);
+      countryInput.addEventListener("change", updateCountryCode);
+
+      btnSubmit.addEventListener("click", function () {
+        waErr.style.display = "none";
+        okMsg.style.display = "none";
+        updateCountryCode();
+        if (!iti.isValidNumber()) {
+          waErr.style.display = "block";
+          return;
+        }
+        var payload = new FormData();
+        payload.append("source", "depot-express");
+        payload.append("firstname", document.getElementById("firstname").value.trim());
+        payload.append("lastname", document.getElementById("lastname").value.trim());
+        payload.append("country", countryInput.value.trim());
+        payload.append("country_code", countryCode.value);
+        payload.append("whatsapp", iti.getNumber());
+        payload.append("commission_model", "client_75_robin_25");
+        payload.append("submitted_at", new Date().toISOString());
+
+        btnSubmit.disabled = true;
+        fetch(WEBHOOK, { method: "POST", body: payload })
+          .then(function () {
+            okMsg.textContent = t[currentLang].sent;
+            okMsg.style.display = "block";
+          })
+          .catch(function () {
+            waErr.textContent = currentLang === "fr"
+              ? "Envoi impossible pour le moment. Essayez a nouveau."
+              : "Could not send now. Please try again.";
+            waErr.style.display = "block";
+          })
+          .finally(function () { btnSubmit.disabled = false; });
+      });
+
+      applyLang("fr");
+    })();
+  </script>
+</body>
+</html>

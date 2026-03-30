@@ -15,13 +15,13 @@
 const D360_BASE = 'https://waba-v2.360dialog.io';
 const META_GRAPH_BASE = 'https://graph.facebook.com/v18.0';
 const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
-const LIEN_DEPOT = 'https://robindesairs.eu/depot-en-ligne.html';
-const LIEN_SIGNATURE = 'https://robindesairs.eu/depot-en-ligne.html';
+const LIEN_DEPOT = 'https://robindesairs.eu/depot-express.html';
+const LIEN_SIGNATURE = 'https://robindesairs.eu/depot-express.html';
 const MENU_BIENVENUE = `👋 *Robin des Airs* — Récupérez jusqu'à 600€ si votre vol a été retardé ou annulé.
 
 • Envoyez-nous votre *numéro de vol* (ex: AF718, BA123) pour vérifier votre éligibilité.
 • Ou dites *Bonjour* pour ce menu.
-• Déposer un dossier : https://robindesairs.eu/depot-en-ligne.html
+• Déposer un dossier : https://robindesairs.eu/depot-express.html
 • Nous contacter : https://wa.me/33756863630`;
 
 const ROBIN_ACCUEIL = "Bonjour ! Je suis Robin 🏹. Envoyez-moi une photo de votre carte d'embarquement, je m'occupe d'analyser vos droits en 30 secondes.";

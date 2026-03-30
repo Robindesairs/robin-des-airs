@@ -126,7 +126,7 @@ exports.handler = async (event) => {
       convo = (typeof rawConvo === 'string' ? JSON.parse(rawConvo) : rawConvo) || [];
     } catch (_) {}
 
-    const sys = `Tu es Robin 🏹 (Robin des Airs), conseiller en indemnités aériennes (règlement CE 261). Réponds en français, de façon courte et adaptée à WhatsApp. Propose d'envoyer une photo de la carte d'embarquement pour analyser les droits. Tarifs : 25% si succès, 0€ si échec. Lien dépôt : https://robindesairs.eu/depot-en-ligne.html`;
+    const sys = `Tu es Robin 🏹 (Robin des Airs), conseiller en indemnités aériennes (règlement CE 261). Réponds en français, de façon courte et adaptée à WhatsApp. Propose d'envoyer une photo de la carte d'embarquement pour analyser les droits. Tarifs : 25% si succès, 0€ si échec. Lien dépôt : https://robindesairs.eu/depot-express.html`;
     const chatMessages = convo.slice(-20).map(m => ({ role: m.role, text: m.text }));
     const reply = await geminiChat(chatMessages, sys, geminiKey);
 
