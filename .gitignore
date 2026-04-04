@@ -5,3 +5,10 @@ dist/
 
 # Local Netlify folder
 .netlify
+
+# Rapports locaux SNIPER (AeroDataBox CLI)
+SNIPER_EU261_*.txt
+SNIPER_raw_*.json
+
+# Dépendances pip locales (tests / dev)
+.pip-local/

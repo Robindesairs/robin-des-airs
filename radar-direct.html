@@ -95,7 +95,7 @@
         return fetch(url, { cache: 'no-store' }).then(function(r) {
             return r.text().then(function(text) {
                 if (!r.ok || !text.trim().startsWith('{'))
-                    return { flights: [], error: 'Serveur a renvoyé du HTML. Vérifiez Netlify et AVIATION_EDGE_KEY. URL : ' + url };
+                    return { flights: [], error: 'Réponse invalide. Vérifiez Netlify et RAPIDAPI_KEY (AeroDataBox). URL : ' + url };
                 try { return JSON.parse(text); } catch (e) { return { flights: [], error: 'JSON invalide' }; }
             });
         });

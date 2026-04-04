@@ -98,6 +98,16 @@
   to = "/generateur-pub.html"
   status = 200
 
+[[redirects]]
+  from = "/partenaires-agences"
+  to = "/partenaires-agences.html"
+  status = 200
+
+[[redirects]]
+  from = "/partenaires-agences-fcfa"
+  to = "/partenaires-agences-fcfa.html"
+  status = 200
+
 # Auth CRM (code dans CRM_ACCESS_CODE)
 [[redirects]]
   from = "/api/crm-auth"
@@ -143,6 +153,12 @@
 [[redirects]]
   from = "/api/analyze-flight"
   to = "/.netlify/functions/analyze-flight"
+  status = 200
+
+# Webhook AeroDataBox (souscriptions FlightByNumber — URL à mettre dans le POST RapidAPI)
+[[redirects]]
+  from = "/api/aerodatabox-webhook"
+  to = "/.netlify/functions/aerodatabox-webhook"
   status = 200
 
 # Page 404 personnalisée (créer 404.html si vous en voulez une)

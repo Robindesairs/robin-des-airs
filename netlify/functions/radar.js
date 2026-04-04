@@ -1,11 +1,13 @@
 /**
  * Radar Robin des Airs — Tous les vols au départ ou à l'arrivée en France.
  * Priorité : ANNULÉ → ROUGE (≥2h30) → ORANGE (1h–2h30) → JAUNE (~1h).
- * Variable Netlify : AVIATION_EDGE_KEY
  *
- * Query : mode=ticker-history → fenêtre **14 jours** via API `flightsHistory` (souvent forfait Premium
- * Aviation Edge). Même JSON que le mode défaut ; champs optionnels dataSource, historyDateFrom/To.
- * Si la clé n’a pas l’historique, la réponse sera vide → le site repasse sur le timetable (index.html).
+ * Fournisseur unique : **AeroDataBox** (RapidAPI). Variables Netlify :
+ *   - RAPIDAPI_KEY ou AERODATABOX_RAPIDAPI_KEY (obligatoire)
+ *   - AERODATABOX_RAPIDAPI_HOST (optionnel, défaut aerodatabox.p.rapidapi.com)
+ *
+ * Query `mode=ticker-history` : même jeu de données **jour civil Europe/Paris** que le mode live
+ * (pas d’historique multi-jours sans autre API — le bandeau utilise la 1ʳᵉ réponse si elle contient des vols).
  */
 
 const EU_COUNTRIES = ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO'];
@@ -26,6 +28,165 @@ const AIRPORT_COUNTRY = {
 
 /** Tous les départs France : principaux aéroports métropole + La Réunion. */
 const HUBS = ['CDG', 'ORY', 'MRS', 'LYS', 'NCE', 'BOD', 'TLS', 'NTE', 'LIL', 'SXB', 'RUN'];
+
+/** ICAO pour l’endpoint AeroDataBox `/flights/airports/icao/...`. */
+const HUB_ICAO = {
+  CDG: 'LFPG',
+  ORY: 'LFPO',
+  MRS: 'LFML',
+  LYS: 'LFLL',
+  NCE: 'LFMN',
+  BOD: 'LFBD',
+  TLS: 'LFBO',
+  NTE: 'LFRS',
+  LIL: 'LFQQ',
+  SXB: 'LFST',
+  RUN: 'FMEE'
+};
+
+function parisDateYmd() {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/Paris',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).formatToParts(new Date());
+  const y = parts.find((p) => p.type === 'year').value;
+  const m = parts.find((p) => p.type === 'month').value;
+  const d = parts.find((p) => p.type === 'day').value;
+  return `${y}-${m}-${d}`;
+}
+
+/** Extrait une datetime ISO depuis les champs AeroDataBox (string ou { utc, local }). */
+function adbTimeIso(section, keys) {
+  if (!section) return null;
+  for (const k of keys) {
+    const v = section[k];
+    if (v == null) continue;
+    if (typeof v === 'string' && v.length >= 10) return v.includes('T') ? v : null;
+    if (typeof v === 'object' && (v.utc || v.local)) return v.utc || v.local;
+  }
+  const nested = section.scheduledTime || section.actualTime || section.estimatedTime || section.revisedTime;
+  if (nested && typeof nested === 'object' && (nested.utc || nested.local)) return nested.utc || nested.local;
+  if (typeof nested === 'string') return nested;
+  return null;
+}
+
+function adbStatusToAe(statusRaw) {
+  const s = String(statusRaw || '').toLowerCase();
+  if (s.includes('cancel')) return 'cancelled';
+  if (s.includes('land') || s.includes('arriv')) return 'landed';
+  if (s.includes('depart') || s.includes('en route') || s.includes('active')) return 'departed';
+  if (s.includes('delay')) return 'delayed';
+  return 'scheduled';
+}
+
+/** Vol brut AeroDataBox → même forme que Aviation Edge pour le reste du pipeline. */
+function normalizeAdbFlight(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const dep = raw.departure || {};
+  const arr = raw.arrival || {};
+  const depAp = dep.airport || {};
+  const arrAp = arr.airport || {};
+  const depIata = String(depAp.iata || dep.iataCode || '').toUpperCase().slice(0, 3);
+  const arrIata = String(arrAp.iata || arr.iataCode || '').toUpperCase().slice(0, 3);
+
+  const schedDep = adbTimeIso(dep, ['scheduledTimeUtc', 'scheduledTimeLocal']);
+  const actDep = adbTimeIso(dep, ['actualTimeUtc', 'actualTimeLocal', 'runwayTimeUtc', 'runwayTimeLocal']);
+  const estDep =
+    adbTimeIso(dep, ['estimatedTimeUtc', 'estimatedTimeLocal', 'revisedTimeUtc', 'revisedTimeLocal']) || actDep;
+
+  const schedArr = adbTimeIso(arr, ['scheduledTimeUtc', 'scheduledTimeLocal']);
+  const actArr = adbTimeIso(arr, ['actualTimeUtc', 'actualTimeLocal', 'runwayTimeUtc', 'runwayTimeLocal']);
+  const estArr =
+    adbTimeIso(arr, ['estimatedTimeUtc', 'estimatedTimeLocal', 'revisedTimeUtc', 'revisedTimeLocal']) || actArr;
+
+  const airline = raw.airline || {};
+  let iataAirline = String(airline.iata || '').toUpperCase().slice(0, 2);
+  let num = String(raw.number || raw.flightNumber || '').replace(/\s/g, '');
+  if (/^\d+$/.test(num) && iataAirline) num = iataAirline + num;
+  if (!iataAirline && num.length >= 2 && /^[A-Za-z]{2}/.test(num)) iataAirline = num.slice(0, 2).toUpperCase();
+  const flightIata = num.toUpperCase() || '—';
+
+  let depDelay = delayMinutesFromTimes(schedDep, actDep || estDep);
+  let arrDelay = delayMinutesFromTimes(schedArr, actArr || estArr);
+  if (typeof dep.delay === 'number') depDelay = dep.delay;
+  if (typeof arr.delay === 'number') arrDelay = arr.delay;
+
+  return {
+    departure: {
+      iataCode: depIata,
+      scheduledTime: schedDep,
+      actualTime: actDep,
+      estimatedTime: estDep,
+      delay: depDelay != null ? depDelay : undefined
+    },
+    arrival: {
+      iataCode: arrIata,
+      scheduledTime: schedArr,
+      actualTime: actArr,
+      estimatedTime: estArr,
+      delay: arrDelay != null ? arrDelay : undefined
+    },
+    flight: { iata: flightIata, number: flightIata, icao: raw.callSign },
+    airline: { iataCode: iataAirline || flightIata.slice(0, 2) },
+    status: adbStatusToAe(raw.status)
+  };
+}
+
+async function fetchAdbWindow(icao, from, to, direction, rapidKey) {
+  const host = process.env.AERODATABOX_RAPIDAPI_HOST || 'aerodatabox.p.rapidapi.com';
+  const params = new URLSearchParams({
+    withLeg: 'true',
+    direction,
+    withCancelled: 'true',
+    withCodeshared: 'false',
+    withCargo: 'false',
+    withPrivate: 'false',
+    withLocation: 'false'
+  });
+  const url = `https://${host}/flights/airports/icao/${icao}/${from}/${to}?${params}`;
+  const res = await fetch(url, {
+    headers: {
+      'x-rapidapi-host': host,
+      'x-rapidapi-key': rapidKey,
+      Accept: 'application/json'
+    }
+  });
+  if (!res.ok) {
+    console.warn('radar AerodataBox HTTP', res.status, icao, direction, from);
+    return [];
+  }
+  const j = await res.json().catch(() => ({}));
+  const key = direction === 'Arrival' ? 'arrivals' : 'departures';
+  return Array.isArray(j[key]) ? j[key] : [];
+}
+
+async function fillFromAerodatabox(allRaw, arrivalRaw, rapidKey) {
+  const dateStr = parisDateYmd();
+  const windows = [
+    [`${dateStr}T00:00`, `${dateStr}T11:59`],
+    [`${dateStr}T12:00`, `${dateStr}T23:59`]
+  ];
+  for (const hub of HUBS) {
+    const icao = HUB_ICAO[hub];
+    if (!icao) continue;
+    for (const [a, b] of windows) {
+      const [deps, arrs] = await Promise.all([
+        fetchAdbWindow(icao, a, b, 'Departure', rapidKey),
+        fetchAdbWindow(icao, a, b, 'Arrival', rapidKey)
+      ]);
+      for (const r of deps) {
+        const n = normalizeAdbFlight(r);
+        if (n) allRaw.push(n);
+      }
+      for (const r of arrs) {
+        const n = normalizeAdbFlight(r);
+        if (n) arrivalRaw.push(n);
+      }
+    }
+  }
+}
 
 /** Réponse JSON succès : cache court CDN + navigateur (bandeau vols, pas besoin de seconde-fraîcheur). */
 const RADAR_CACHE_CONTROL = 'public, max-age=120, s-maxage=120, stale-while-revalidate=300';
@@ -158,89 +319,22 @@ function getTrackerUrl(airlineIata, flightNumber) {
   return base + (base.includes('?') ? '&' : '?') + 'flight=' + encodeURIComponent(fn);
 }
 
-/** Réponse flightsHistory (Aviation Edge) → même forme flight.iata que le timetable. */
-function normalizeHistoryFlight(f) {
-  if (!f || typeof f !== 'object') return f;
-  const fl = f.flight || {};
-  const raw = (fl.iataNumber || fl.icaoNumber || fl.iata || fl.number || '').toString().replace(/\s/g, '') || '—';
-  return { ...f, flight: { ...fl, iata: raw, number: raw } };
-}
-
-/** Filtre léger avant d’empiler l’historique (réduit volume traité). */
-function quickEligibleRow(f) {
-  const dep = f.departure || {};
-  const arr = f.arrival || {};
-  const depIata = (dep.iataCode || '').toUpperCase();
-  const arrIata = (arr.iataCode || '').toUpperCase();
-  let airlineIata = (f.airline && f.airline.iataCode ? f.airline.iataCode : '').toUpperCase();
-  const fl = f.flight || {};
-  const fn = (fl.iata || fl.number || '').toString().replace(/\s/g, '');
-  if (!airlineIata && fn.length >= 2) airlineIata = fn.slice(0, 2).toUpperCase();
-  return checkEligible(getCountry(depIata), getCountry(arrIata), airlineIata);
-}
-
 exports.handler = async (event) => {
-  const apiKey = process.env.AVIATION_EDGE_KEY;
-  if (!apiKey) {
+  const rapidKey = process.env.RAPIDAPI_KEY || process.env.AERODATABOX_RAPIDAPI_KEY;
+  if (!rapidKey) {
     return {
       statusCode: 500,
       headers: jsonHeaders({ 'Cache-Control': 'no-store' }),
-      body: JSON.stringify({ error: 'Configuration radar manquante' })
+      body: JSON.stringify({
+        error: 'Configuration radar manquante : définir RAPIDAPI_KEY (AeroDataBox / RapidAPI)'
+      })
     };
   }
-
-  const mode = (event.queryStringParameters && String(event.queryStringParameters.mode || '').trim()) || '';
-  const useTickerHistory = mode === 'ticker-history';
-  /** Fenêtre historique bandeau (jours glissants, UTC). API doc : plage jusqu’à ~30 j. */
-  const TICKER_HISTORY_DAYS = 14;
 
   try {
     const allRaw = [];
     const arrivalRaw = [];
-    const cacheBuster = Date.now();
-    let historyMeta = null;
-
-    if (useTickerHistory) {
-      const to = new Date();
-      const from = new Date(to.getTime());
-      from.setUTCDate(from.getUTCDate() - TICKER_HISTORY_DAYS);
-      const dateTo = to.toISOString().slice(0, 10);
-      const dateFrom = from.toISOString().slice(0, 10);
-      historyMeta = { dateFrom, dateTo, days: TICKER_HISTORY_DAYS };
-      const histPromises = [];
-      for (const hub of HUBS) {
-        const dU = `https://aviation-edge.com/v2/public/flightsHistory?key=${apiKey}&code=${hub}&type=departure&date_from=${dateFrom}&date_to=${dateTo}&_=${cacheBuster}`;
-        const aU = `https://aviation-edge.com/v2/public/flightsHistory?key=${apiKey}&code=${hub}&type=arrival&date_from=${dateFrom}&date_to=${dateTo}&_=${cacheBuster}`;
-        histPromises.push(fetch(dU).then((r) => r.json()), fetch(aU).then((r) => r.json()));
-      }
-      const histChunks = await Promise.all(histPromises);
-      for (let i = 0; i < histChunks.length; i += 2) {
-        const depData = histChunks[i];
-        const arrData = histChunks[i + 1];
-        if (Array.isArray(depData)) {
-          for (const row of depData) {
-            const n = normalizeHistoryFlight(row);
-            if (quickEligibleRow(n)) allRaw.push(n);
-          }
-        }
-        if (Array.isArray(arrData)) {
-          for (const row of arrData) {
-            const n = normalizeHistoryFlight(row);
-            if (quickEligibleRow(n)) arrivalRaw.push(n);
-          }
-        }
-      }
-    } else {
-      for (const hub of HUBS) {
-        const depUrl = `https://aviation-edge.com/v2/public/timetable?key=${apiKey}&iataCode=${hub}&type=departure&_=${cacheBuster}`;
-        const arrUrl = `https://aviation-edge.com/v2/public/timetable?key=${apiKey}&iataCode=${hub}&type=arrival&_=${cacheBuster}`;
-        const [depRes, arrRes] = await Promise.all([fetch(depUrl), fetch(arrUrl)]);
-        const depData = await depRes.json();
-        const arrData = await arrRes.json();
-        if (Array.isArray(depData)) allRaw.push(...depData);
-        if (Array.isArray(arrData)) arrivalRaw.push(...arrData);
-      }
-    }
+    await fillFromAerodatabox(allRaw, arrivalRaw, rapidKey);
 
     /** Map arrivées : clé normalisée -> heure d'arrivée estimée/réelle (API arrival = à jour). */
     const arrivalMap = new Map();
@@ -287,7 +381,7 @@ exports.handler = async (event) => {
       }
 
       const statusRaw = (f.status || '').toLowerCase();
-      if (useTickerHistory && (statusRaw === 'landed' || statusRaw === 'arrived')) {
+      if (statusRaw === 'landed' || statusRaw === 'arrived') {
         const arrDm = delayMinutesFromTimes(arr.scheduledTime, arr.actualTime || arr.estimatedTime);
         if (arrDm != null) delayMinutes = Math.max(delayMinutes || 0, arrDm);
       }
@@ -466,13 +560,12 @@ exports.handler = async (event) => {
     const now = new Date();
     const viewDate = now.toISOString().slice(0, 10);
 
-    const payload = { flights, viewDate, updatedAt: now.toISOString() };
-    if (historyMeta) {
-      payload.dataSource = 'flightsHistory';
-      payload.historyDateFrom = historyMeta.dateFrom;
-      payload.historyDateTo = historyMeta.dateTo;
-      payload.historyDays = historyMeta.days;
-    }
+    const payload = {
+      flights,
+      viewDate,
+      updatedAt: now.toISOString(),
+      dataSource: 'aerodatabox'
+    };
 
     return {
       statusCode: 200,

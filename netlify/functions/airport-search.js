@@ -1,11 +1,54 @@
 /**
- * Proxy recherche aéroports/villes — Aviation Edge (prioritaire) ou Amadeus.
- * Variable Netlify : AVIATION_EDGE_KEY
- * Doc : https://aviation-edge.com/airport-autocomplete
+ * Proxy recherche aéroports/villes — AeroDataBox (RapidAPI, prioritaire), puis Aviation Edge ou Amadeus.
+ *
+ * Variables Netlify :
+ *   RAPIDAPI_KEY ou AERODATABOX_RAPIDAPI_KEY (AeroDataBox)
+ *   AERODATABOX_RAPIDAPI_HOST (optionnel, défaut aerodatabox.p.rapidapi.com)
+ *   AVIATION_EDGE_KEY (repli)
+ *   AMADEUS_CLIENT_ID / AMADEUS_CLIENT_SECRET (repli)
+ *
+ * Doc AeroDataBox : https://doc.aerodatabox.com/ — GET /airports/search/term
  */
 
+const ADB_HOST = process.env.AERODATABOX_RAPIDAPI_HOST || 'aerodatabox.p.rapidapi.com';
 const AMADEUS_HOST = process.env.AMADEUS_HOST || 'test.api.amadeus.com';
 const TOKEN_CACHE = { token: null, expires: 0 };
+
+function adbQueryCharCount(keyword) {
+  return (keyword.match(/\S/g) || []).length;
+}
+
+/** Tom Select : value = code IATA (ou ICAO si pas d’IATA), text = libellé */
+function formatAdbAirport(ap) {
+  const iata = (ap.iata || '').trim();
+  const icao = (ap.icao || '').trim();
+  const code = iata || icao;
+  if (!code) return null;
+  const name = ap.name || ap.shortName || ap.municipalityName || '';
+  const text = (name || '') + ' (' + code + ')';
+  return { value: code, text };
+}
+
+async function searchAeroDataBox(keyword) {
+  const rapidKey = process.env.RAPIDAPI_KEY || process.env.AERODATABOX_RAPIDAPI_KEY;
+  if (!rapidKey || adbQueryCharCount(keyword) < 3) return null;
+
+  const url =
+    `https://${ADB_HOST}/airports/search/term?` +
+    new URLSearchParams({ q: keyword, limit: '30' }).toString();
+
+  const res = await fetch(url, {
+    headers: {
+      'x-rapidapi-host': ADB_HOST,
+      'x-rapidapi-key': rapidKey,
+      Accept: 'application/json'
+    }
+  });
+  if (!res.ok) return null;
+  const data = await res.json();
+  const raw = Array.isArray(data?.items) ? data.items : [];
+  return raw.map(formatAdbAirport).filter(Boolean).slice(0, 30);
+}
 
 /** Mapping Aviation Edge : nameCity/nameAirport, codeIataCity/codeIataAirport → value, text pour Tom Select */
 function formatAviationEdge(data) {
@@ -107,7 +150,8 @@ exports.handler = async (event) => {
   }
 
   try {
-    let items = await searchAviationEdge(keyword);
+    let items = await searchAeroDataBox(keyword);
+    if (!items || items.length === 0) items = await searchAviationEdge(keyword);
     if (!items || items.length === 0) items = await searchAmadeus(keyword);
 
     return {

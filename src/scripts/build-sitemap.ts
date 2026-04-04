@@ -22,6 +22,8 @@ function main(): void {
     { loc: SITE_URL + '/suivi-dossier.html', changefreq: 'monthly', priority: '0.8' },
     { loc: SITE_URL + '/guide-whatsapp.html', changefreq: 'monthly', priority: '0.7' },
     { loc: SITE_URL + '/choix-reclamation.html', changefreq: 'monthly', priority: '0.8' },
+    { loc: SITE_URL + '/partenaires-agences.html', changefreq: 'monthly', priority: '0.75' },
+    { loc: SITE_URL + '/partenaires-agences-fcfa.html', changefreq: 'monthly', priority: '0.75' },
     { loc: SITE_URL + '/cgv.html', changefreq: 'yearly', priority: '0.4' },
     { loc: SITE_URL + '/politique-confidentialite.html', changefreq: 'yearly', priority: '0.4' },
     { loc: SITE_URL + '/mandat-representation.html', changefreq: 'yearly', priority: '0.4' },

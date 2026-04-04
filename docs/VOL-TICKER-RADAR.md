@@ -3,13 +3,13 @@
 ## Comportement
 
 1. **Au chargement** : le bandeau affiche d’abord la liste **statique** (`data/vol-ticker.js`) pour ne pas laisser la zone vide.
-2. **Ensuite** : `index.html` appelle d’abord **`GET /.netlify/functions/radar?mode=ticker-history`** : fenêtre **14 jours** via l’endpoint Aviation Edge **`flightsHistory`** (départs + arrivées sur les mêmes hubs que le radar, vols **déjà filtrés** côté serveur sur les trajets éligibles Robin pour limiter le volume).
-3. **Si** cette réponse ne contient **aucun** vol utile (clé sans accès historique, erreur API, etc.) → **repli** sur **`GET /.netlify/functions/radar`** (timetable **jour courant**).
+2. **Ensuite** : `index.html` appelle d’abord **`GET /.netlify/functions/radar?mode=ticker-history`**. Le radar utilise **uniquement AeroDataBox (RapidAPI)** : **même jour** (Europe/Paris) que l’appel « live » — il n’y a plus d’historique 14 j. via Aviation Edge.
+3. **Si** cette réponse ne contient **aucun** vol utile (erreur API, filtre bandeau vide, etc.) → **repli** sur **`GET /.netlify/functions/radar`** (même source, données du jour).
 4. **Filtre bandeau** (côté page) : **éligible** + (**annulé** ou **retard ≥ 3 h**). Jusqu’à **9** pastilles tirées au sort (graine journalière).
 
-### Accès API historique
+### Accès API
 
-- L’historique est documenté par Aviation Edge comme une offre **Premium** ; sans droit `flightsHistory`, les tableaux reçus ne sont pas des `array` → le mode historique renvoie peu ou pas de lignes → **repli automatique** sur le timetable.
+- **RapidAPI / AeroDataBox** : variable `RAPIDAPI_KEY` sur Netlify. Coût = crédits selon ton plan RapidAPI (plusieurs requêtes aéroport par chargement du radar).
 
 ## Cache
 
@@ -22,8 +22,7 @@
 ## Périmètre des « vrais » vols
 
 - Mêmes **hubs** que le radar (France métropole + La Réunion : CDG, ORY, MRS, LYS, NCE, BOD, TLS, NTE, LIL, SXB, RUN) — départs **et** arrivées.
-- **Mode historique** : plage **glissante 14 jours** (UTC) sur ces aéroports via `flightsHistory`.
-- **Mode live** (repli) : **timetable** du jour courant.
+- **Modes `ticker-history` et live** : données **du jour** (Paris) via AeroDataBox sur les mêmes hubs.
 - Ce ne sont **pas** tous les retards mondiaux ; uniquement ce qui traverse ce périmètre et le filtre éligibilité Robin.
 
 ## Légal / produit
