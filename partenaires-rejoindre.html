@@ -68,7 +68,7 @@
         <label>Nom<input type="text" name="nom" required autocomplete="name"></label>
         <label>Agence<input type="text" name="agence" required autocomplete="organization"></label>
         <label>Pays (si&egrave;ge)<input type="text" name="pays" required autocomplete="country-name"></label>
-        <label>E-mail<input type="email" name="email" required autocomplete="email"></label>
+        <label>E-mail <span class="field-optional">(facultatif)</span><input type="email" name="email" autocomplete="email"></label>
 
         <div class="wa-phone-field">
           <span class="wa-phone-label-text">WhatsApp / t&eacute;l&eacute;phone <span class="wa-field-hint">indicatif puis num&eacute;ro local</span></span>
@@ -146,6 +146,8 @@
     </div>
   </footer>
 
+  <script src="/i18n.js" defer></script>
+  <script src="/assets/robin-locale-toolbar.js" defer></script>
   <script src="/assets/partenaires-rejoindre.js" defer></script>
 </body>
 </html>

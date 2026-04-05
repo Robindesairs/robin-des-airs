@@ -15,6 +15,8 @@
     .tarifs-top-actions button{border:none;background:transparent;color:rgba(255,255,255,.85);cursor:pointer;font:inherit;padding:4px 8px;border-radius:6px}
     .tarifs-top-actions button:hover{color:#fff;background:rgba(255,255,255,.08)}
     .tarifs-top-actions .active{color:var(--neon)}
+    .tarifs-top-sep{color:rgba(255,255,255,.35);padding:0 2px;user-select:none}
+    .tarifs-curr-btn{font:inherit}
     .tarifs-back{color:rgba(255,255,255,.8)!important;font-weight:600!important;font-size:13px!important}
     .comp-fineprint-note{font-size:13px;color:var(--gray);line-height:1.65;margin-top:20px;max-width:720px;margin-left:auto;margin-right:auto;font-style:italic}
     .comp-fineprint-sources{font-size:11px;color:var(--gray2);margin-top:12px;text-align:right;letter-spacing:0.3px;font-style:italic;max-width:720px;margin-left:auto;margin-right:auto}
@@ -26,6 +28,10 @@
     <div class="tarifs-top-actions">
       <button type="button" id="tarifs-lang-fr" aria-pressed="true">FR</button>
       <button type="button" id="tarifs-lang-en" aria-pressed="false">EN</button>
+      <span class="tarifs-top-sep" aria-hidden="true">|</span>
+      <button type="button" id="tarifs-curr-eur" class="tarifs-curr-btn active" aria-pressed="true">EUR</button>
+      <button type="button" id="tarifs-curr-fcfa" class="tarifs-curr-btn" aria-pressed="false">FCFA</button>
+      <button type="button" id="tarifs-curr-usd" class="tarifs-curr-btn" aria-pressed="false">USD</button>
       <a href="/" class="tarifs-back"><span aria-hidden="true">← </span><span data-i18n="tarifs_back_home">Accueil</span></a>
     </div>
   </div>
@@ -99,14 +105,32 @@
         if (bfr) { bfr.classList.toggle('active', !en); bfr.setAttribute('aria-pressed', en ? 'false' : 'true'); }
         if (ben) { ben.classList.toggle('active', en); ben.setAttribute('aria-pressed', en ? 'true' : 'false'); }
       }
+      function syncCurrButtons() {
+        var c = (window.I18N && I18N.getCurrency) ? I18N.getCurrency() : 'eur';
+        [['eur','tarifs-curr-eur'],['fcfa','tarifs-curr-fcfa'],['usd','tarifs-curr-usd']].forEach(function (pair) {
+          var btn = document.getElementById(pair[1]);
+          if (!btn) return;
+          var on = c === pair[0];
+          btn.classList.toggle('active', on);
+          btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+      }
       function init() {
         if (!window.I18N) return;
         I18N.apply();
         syncLangButtons();
+        syncCurrButtons();
         var bfr = document.getElementById('tarifs-lang-fr');
         var ben = document.getElementById('tarifs-lang-en');
         if (bfr) bfr.addEventListener('click', function () { I18N.setLang('fr'); syncLangButtons(); });
         if (ben) ben.addEventListener('click', function () { I18N.setLang('en'); syncLangButtons(); });
+        var be = document.getElementById('tarifs-curr-eur');
+        var bf = document.getElementById('tarifs-curr-fcfa');
+        var bu = document.getElementById('tarifs-curr-usd');
+        if (be) be.addEventListener('click', function () { I18N.setCurrency('eur'); syncCurrButtons(); });
+        if (bf) bf.addEventListener('click', function () { I18N.setCurrency('fcfa'); syncCurrButtons(); });
+        if (bu) bu.addEventListener('click', function () { I18N.setCurrency('usd'); syncCurrButtons(); });
+        document.addEventListener('robin-locale-change', function () { syncLangButtons(); syncCurrButtons(); });
       }
       if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
       else init();

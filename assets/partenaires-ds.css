@@ -225,6 +225,31 @@
   border-bottom: 1px solid var(--border);
 }
 
+.ds-why-built {
+  background: var(--white);
+  border-block: 1px solid rgba(11, 31, 58, 0.08);
+}
+.ds-why-inner {
+  max-width: 48rem;
+}
+.ds-why-built h2 {
+  margin: 10px 0 18px;
+}
+.ds-why-lead {
+  margin: 0 0 14px;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--navy);
+}
+.ds-why-close {
+  margin: 20px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--gray);
+}
+
 .section-tag {
   font-size: 10px;
   font-weight: 800;
@@ -997,4 +1022,62 @@
   .wa-float:hover {
     transform: none;
   }
+}
+
+/* ── Témoignages partenaires (grille, FCFA page) ── */
+.ds-testimonials-kicker {
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin: 0 0 1.5rem;
+  color: var(--navy);
+}
+
+.ds-testimonials-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 900px) {
+  .ds-testimonials-grid {
+    grid-template-columns: repeat(3, 1fr);
+    align-items: stretch;
+  }
+}
+
+.ds-testimonial-quote {
+  margin: 0;
+  padding: 1.25rem 1.35rem;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  border-left: 4px solid var(--neon);
+  box-shadow: 0 2px 14px rgba(15, 23, 42, 0.06);
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.ds-testimonial-quote p {
+  margin: 0 0 0.75rem;
+  font-style: italic;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--navy);
+}
+
+.ds-testimonial-quote footer {
+  font-size: 0.85rem;
+  color: var(--gray);
+  font-style: normal;
+}
+
+.ds-testimonials-disclaimer {
+  margin-top: 1.25rem;
+  font-size: 0.8rem;
+  color: var(--gray);
+  text-align: center;
+  max-width: 42rem;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
 }

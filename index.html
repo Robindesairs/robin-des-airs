@@ -41,7 +41,7 @@
 {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Combien je touche exactement sur mon compte ?","acceptedAnswer":{"@type":"Answer","text":"Commission de succès : 25% uniquement si une indemnité est récupérée ; sinon vous ne payez rien. Vous recevez 75% nets. Vol long (> 3 500 km) : 600€ → vous touchez 450€. Famille de 4 Paris-Dakar : 1 800€ nets. Commission inchangée même au tribunal."}},{"@type":"Question","name":"Combien de temps faut-il pour recevoir mon indemnité ?","acceptedAnswer":{"@type":"Answer","text":"Trois scénarios : compagnie coopère (60%) — 4 à 12 semaines ; résiste puis médiateur (30%) — 3 à 5 mois ; persiste (moins de 10%) — tribunal, 5 à 8 mois. Commission 25% dans tous les cas. Mise à jour par WhatsApp."}},{"@type":"Question","name":"La compagnie m'a proposé un bon d'achat — je l'accepte ?","acceptedAnswer":{"@type":"Answer","text":"Non. Le bon d'achat retourne à la compagnie si non utilisé, valeur souvent inférieure aux 600€ cash. Ne signez rien, contactez-nous d'abord."}},{"@type":"Question","name":"La compagnie invoque la météo ou une circonstance extraordinaire","acceptedAnswer":{"@type":"Answer","text":"Notre dossier intègre METAR, TAF et comparaison avec les vols ayant décollé dans la même fenêtre. Si d'autres avions ont volé ce jour-là, on a les preuves."}},{"@type":"Question","name":"J'ai réclamé seul et la compagnie a refusé. Vous pouvez intervenir ?","acceptedAnswer":{"@type":"Answer","text":"Oui. On reprend le dossier, on l'enrichit avec nos preuves techniques, médiateur puis tribunal si besoin. Frais inclus dans notre commission."}},{"@type":"Question","name":"Comment je suis payé ?","acceptedAnswer":{"@type":"Answer","text":"C'est nous qui vous payons. Après réception des fonds, on demande votre RIB et on vous vire votre part sous 5 jours ouvrés. Jamais de CB ni avance."}},{"@type":"Question","name":"Mon vol avait une correspondance — je peux réclamer ?","acceptedAnswer":{"@type":"Answer","text":"Oui. Le dernier vol détermine le montant (distance et retard à l'arrivée finale). Correspondance manquée = éligible. Indiquez « avec correspondance » au diagnostic."}},{"@type":"Question","name":"Vous prenez tous les dossiers ?","acceptedAnswer":{"@type":"Answer","text":"Non. Analyse gratuite avant acceptation. Taux de réussite 9/10. Si on ne prend pas votre dossier, on explique pourquoi et on conseille les alternatives."}},{"@type":"Question","name":"Est-ce que je peux me rétracter ?","acceptedAnswer":{"@type":"Answer","text":"Oui. Droit de rétractation 14 jours après signature du mandat. Annulation sans frais, sans justification. Art. L221-18 du Code de la consommation."}}]}
 </script>
 </head>
-<body>
+<body data-i18n-page="home">
 <a href="#main-content" class="skip-link" data-i18n="skip_link">Aller au contenu principal</a>
 
 <!-- En-tête fixe : hauteur mesurée → --site-header-height (évite chevauchement contenu) -->
@@ -92,7 +92,7 @@
     ROBIN<span class="nav-logo-accent"> des Airs</span>
   </a>
 
-  <div style="display:flex;align-items:center;gap:10px;">
+  <div style="display:flex;align-items:center;gap:8px;">
     <!-- Lang: toujours visible -->
     <div class="lang-dropdown" id="lang-dropdown" style="position:relative;">
       <div class="lang-btn-wrap" onclick="toggleLangMenu()">
@@ -102,6 +102,17 @@
       <div class="lang-menu" id="lang-menu">
         <div class="lang-option active" data-lang="fr" onclick="switchLang('FR','🇫🇷')">🇫🇷 &nbsp;Français</div>
         <div class="lang-option" data-lang="en" onclick="switchLang('EN','🇬🇧')">🇬🇧 &nbsp;English</div>
+      </div>
+    </div>
+    <div class="currency-dropdown" id="currency-dropdown" style="position:relative;">
+      <div class="currency-btn-wrap" onclick="toggleCurrencyMenu()" title="Devise d’affichage">
+        <span class="currency-label" id="current-currency-label">EUR</span>
+        <svg width="8" height="5" viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="currency-menu" id="currency-menu">
+        <div class="currency-option active" data-currency="eur" onclick="switchCurrency('eur')">EUR (€)</div>
+        <div class="currency-option" data-currency="fcfa" onclick="switchCurrency('fcfa')">FCFA</div>
+        <div class="currency-option" data-currency="usd" onclick="switchCurrency('usd')">USD ($)</div>
       </div>
     </div>
     <!-- CTA visible sur desktop -->
@@ -118,6 +129,10 @@
   <div class="nav-drawer-lang" id="nav-drawer-lang">
         <span class="lang-option active" data-lang="fr" onclick="switchLang('FR','🇫🇷'); closeMobileNav();">🇫🇷 Français</span>
         <span class="lang-option" data-lang="en" onclick="switchLang('EN','🇬🇧'); closeMobileNav();">🇬🇧 English</span>
+        <span class="nav-drawer-curr-label" aria-hidden="true">·</span>
+        <span class="currency-option active" data-currency="eur" onclick="switchCurrency('eur'); closeMobileNav();">EUR</span>
+        <span class="currency-option" data-currency="fcfa" onclick="switchCurrency('fcfa'); closeMobileNav();">FCFA</span>
+        <span class="currency-option" data-currency="usd" onclick="switchCurrency('usd'); closeMobileNav();">USD</span>
   </div>
   <ul>
     <li><a href="#funnel-box" onclick="closeMobileNav(); setTimeout(function(){ scrollToCalcWithAnimation(); }, 220); return false;" data-i18n="nav_drawer_calc">🧮 Calculateur</a></li>
@@ -160,7 +175,7 @@
 
       <div class="hero-stats">
         <div class="stat">
-          <span class="stat-num">600€</span>
+          <span class="stat-num" data-stat-eur="600">600€</span>
           <span class="stat-label" data-i18n="hero_stat_max">Indemnité max</span>
         </div>
         <div style="width:1px;background:var(--border);height:40px;"></div>
@@ -170,7 +185,7 @@
         </div>
         <div style="width:1px;background:var(--border);height:40px;"></div>
         <div class="stat">
-          <span class="stat-num">0€</span>
+          <span class="stat-num" data-stat-eur="0">0€</span>
           <span class="stat-label" data-i18n="hero_stat_lost">Si on perd</span>
         </div>
         <div style="width:1px;background:var(--border);height:40px;"></div>
@@ -951,6 +966,7 @@
     <p data-i18n="footer_vol_examples_disclaimer">Les exemples de vols indiqués sont fournis à titre informatif. L'éligibilité et le montant de l'indemnisation dépendent des conditions prévues par le règlement (CE) n°261/2004 (retard important, annulation ou surbooking, circonstances applicables), avec une indemnité pouvant aller jusqu'à 600 € par passager selon la distance du vol.</p>
     <p id="footer-vol-ticker-data" data-i18n="footer_vol_ticker_data_note">Bandeau des vols : lorsque l’API le permet, pastilles issues des vols réels sur environ 14 jours (historique) ou à la journée (timetable), hubs France, source Aviation Edge — annulations ou retards d’au moins 3 heures sur lignes éligibles Europe–Afrique. Sinon exemples illustratifs. Jusqu'à 600 € si le CE 261 s'applique. Un clic sur une pastille préremplit le formulaire.</p>
     <p data-i18n="footer_no_legal_advice">Rien sur ce site ne constitue un conseil juridique ni une garantie de résultat ; l’éligibilité et les montants ne peuvent être affirmés qu’après examen individuel du dossier.</p>
+    <p id="footer-currency-hint" class="footer-currency-hint" style="display:none;margin-top:12px;font-size:11px;color:rgba(255,255,255,0.45);line-height:1.5;"></p>
   </div>
   <div class="footer-bottom">
     <div class="footer-legal">© 2026 Robin des Airs — 66 av. des Champs-Élysées, 75008 Paris · Réclamation aérienne · Au service de nos communautés et de nos familles</div>

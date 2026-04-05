@@ -99,3 +99,8 @@
 .contact-form label select[name="programme"] {
   margin-top: 8px;
 }
+
+.field-optional {
+  font-weight: 500;
+  opacity: 0.72;
+}

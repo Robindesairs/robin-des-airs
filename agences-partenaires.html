@@ -285,6 +285,30 @@
     }
     .stripe strong { font-size: clamp(1.3rem, 3.5vw, 1.85rem); font-weight: 900; }
 
+    /* ===== POURQUOI CE SERVICE ===== */
+    .why-built {
+      padding: 52px 28px 56px;
+      background: var(--bg-alt);
+      border-block: 1px solid var(--line);
+    }
+    .why-built .container {
+      max-width: 720px;
+    }
+    .why-built-lead {
+      margin: 0 0 14px;
+      font-size: 1rem;
+      line-height: 1.65;
+      color: var(--text);
+    }
+    .why-built-close {
+      margin: 20px 0 0;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+      font-size: 1rem;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
     /* ===== GENERIC SECTION ===== */
     .section { padding: 76px 28px; background: var(--bg); }
     .section-alt { background: var(--bg-alt); }
@@ -640,6 +664,11 @@
       color: var(--text);
     }
 
+    .field-optional {
+      font-weight: 500;
+      opacity: 0.7;
+    }
+
     input, select, textarea {
       width: 100%;
       padding: 12px 15px;
@@ -968,6 +997,81 @@
       margin: 0 0 14px;
     }
 
+    /* ===== Témoignages partenaires ===== */
+    .agp-testimonials {
+      background: linear-gradient(180deg, rgba(0, 200, 122, 0.07), transparent);
+      border-top: 1px solid var(--line-soft);
+    }
+
+    .agp-testimonials .container {
+      max-width: 1100px;
+    }
+
+    .agp-testimonials-title {
+      font-size: clamp(1.2rem, 2.8vw, 1.55rem);
+      font-weight: 800;
+      margin: 0 0 8px;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+
+    .agp-testimonials-kicker {
+      font-weight: 700;
+      font-size: 1.02rem;
+      text-align: center;
+      margin: 0 0 22px;
+      color: var(--text);
+    }
+
+    .agp-testimonials-grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    @media (min-width: 900px) {
+      .agp-testimonials-grid {
+        grid-template-columns: repeat(3, 1fr);
+        align-items: stretch;
+      }
+    }
+
+    .agp-testimonial-card {
+      margin: 0;
+      padding: 20px 20px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      border-left: 4px solid var(--teal);
+      box-shadow: 0 2px 16px rgba(6, 19, 38, 0.08);
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    .agp-testimonial-card p {
+      margin: 0 0 12px;
+      font-style: italic;
+      font-size: 0.97rem;
+      line-height: 1.55;
+      color: var(--text);
+    }
+
+    .agp-testimonial-card footer {
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-style: normal;
+    }
+
+    .agp-testimonials-disclaimer {
+      margin-top: 18px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.5;
+      max-width: 42rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
     /* ===== RESPONSIVE ===== */
     @media (max-width: 600px) {
       .section { padding: 54px 18px; }
@@ -1034,6 +1138,17 @@
 <div class="stripe">
   Jusqu&rsquo;&agrave; <strong>600 &euro;</strong> / voyageur (EU261) &nbsp;&middot;&nbsp; <strong>Commission agence</strong> : <strong>30 000 FCFA</strong> / passager indemnis&eacute; &nbsp;&middot;&nbsp; Z&eacute;ro risque &nbsp;&middot;&nbsp; Z&eacute;ro gestion
 </div>
+
+<!-- POURQUOI CE SERVICE -->
+<section class="section why-built" id="pourquoi-ce-service" aria-labelledby="why-built-title">
+  <div class="container">
+    <p class="eyebrow">Notre constat</p>
+    <h2 id="why-built-title">Pourquoi ce service a &eacute;t&eacute; cr&eacute;&eacute;</h2>
+    <p class="why-built-lead">Sur le corridor Afrique&ndash;Europe, de nombreux voyageurs n&rsquo;activent jamais leurs droits en cas de retard, annulation ou refus d&rsquo;embarquement : barri&egrave;re de langue, d&eacute;marches jug&eacute;es complexes, manque d&rsquo;information ou d&rsquo;un interlocuteur de confiance.</p>
+    <p class="why-built-lead">Parall&egrave;lement, les partenariats entre agences de voyage et des acteurs capables de monter les dossiers (r&egrave;glement europ&eacute;en CE&nbsp;261) restent souvent faibles ou peu visibles sur ce march&eacute;.</p>
+    <p class="why-built-close">Robin des Airs comble ce double &eacute;cart : rendre l&rsquo;indemnisation accessible aux passagers et proposer aux agences un partenariat simple, sans friction.</p>
+  </div>
+</section>
 
 <!-- STATS -->
 <section class="section">
@@ -1264,6 +1379,30 @@
   </div>
 </section>
 
+<!-- TÉMOIGNAGES PARTENAIRES -->
+<section class="section agp-testimonials" aria-labelledby="agp-temoignages-title">
+  <div class="container">
+    <div class="eyebrow">T&eacute;moignages partenaires</div>
+    <h2 class="agp-testimonials-title" id="agp-temoignages-title">Ce que disent les agences</h2>
+    <p class="agp-testimonials-kicker">Rejoint par 15 agences en Afrique et en Europe.</p>
+    <div class="agp-testimonials-grid">
+      <blockquote class="agp-testimonial-card">
+        <p>&laquo; On a re&ccedil;u notre premi&egrave;re commission 48h apr&egrave;s l&rsquo;indemnisation du client. Z&eacute;ro paperasse, z&eacute;ro relance. Nos clients sont contents, et nous aussi. &raquo;</p>
+        <footer>&mdash; M. Diop, Agence Voyages Dakar</footer>
+      </blockquote>
+      <blockquote class="agp-testimonial-card">
+        <p>&laquo; On ne connaissait pas bien l&rsquo;EU261. Robin g&egrave;re tout, on touche 30 000 FCFA par dossier sans rien faire. &Ccedil;a nous a rapport&eacute; 450 000 FCFA ce trimestre. &raquo;</p>
+        <footer>&mdash; Mme Kon&eacute;, Agence Afrique Voyages (Abidjan)</footer>
+      </blockquote>
+      <blockquote class="agp-testimonial-card">
+        <p>&laquo; On a des clients qui voyagent r&eacute;guli&egrave;rement sur le corridor Afrique-Europe. Depuis qu&rsquo;on leur propose Robin, ils sont plus fid&egrave;les. Et la commission est arriv&eacute;e en 48h, comme promis. &raquo;</p>
+        <footer>&mdash; M. Lef&egrave;vre, Agence Global Travel (Paris)</footer>
+      </blockquote>
+    </div>
+    <p class="agp-testimonials-disclaimer">Sc&eacute;narios illustratifs, pour donner une id&eacute;e des b&eacute;n&eacute;fices types ; pas des retours clients identifi&eacute;s. Montants et d&eacute;lais r&eacute;els selon chaque dossier.</p>
+  </div>
+</section>
+
 <!-- FAQ -->
 <section class="section">
   <div class="container">
@@ -1395,29 +1534,6 @@
           </div>
 
           <div class="field">
-            <label for="pays">Pays d'activité *</label>
-            <select id="pays" name="pays" required>
-              <option value="">— Sélectionnez votre pays —</option>
-              <option>🇸🇳 Sénégal</option>
-              <option>🇨🇮 Côte d'Ivoire</option>
-              <option>🇨🇲 Cameroun</option>
-              <option>🇬🇦 Gabon</option>
-              <option>🇧🇯 Bénin</option>
-              <option>🇹🇬 Togo</option>
-              <option>🇬🇭 Ghana</option>
-              <option>🇳🇬 Nigeria</option>
-              <option>🇬🇳 Guinée</option>
-              <option>🇲🇱 Mali</option>
-              <option>🇧🇫 Burkina Faso</option>
-              <option>🇳🇪 Niger</option>
-              <option>🇰🇪 Kenya</option>
-              <option>🇨🇩 RDC Congo</option>
-              <option>🇲🇬 Madagascar</option>
-              <option>Autre pays africain</option>
-            </select>
-          </div>
-
-          <div class="field">
             <label>WhatsApp / Téléphone *</label>
             <div class="phone-row">
               <select name="indicatif">
@@ -1443,8 +1559,8 @@
           </div>
 
           <div class="field">
-            <label for="email">E-mail professionnel *</label>
-            <input type="email" id="email" name="email" placeholder="vous@votreagence.com" required />
+            <label for="email">E-mail professionnel <span class="field-optional">(facultatif)</span></label>
+            <input type="email" id="email" name="email" placeholder="vous@votreagence.com" />
           </div>
 
           <div class="field">
@@ -1521,5 +1637,7 @@
   <p>Robin des Airs — 66 av. des Champs-Élysées, 75008 Paris &nbsp;·&nbsp; © 2025–2026 Robin des Airs. Tous droits réservés.</p>
 </footer>
 
+<script src="/i18n.js" defer></script>
+<script src="/assets/robin-locale-toolbar.js" defer></script>
 </body>
 </html>

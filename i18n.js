@@ -2,6 +2,11 @@
 window.I18N = (function() {
   var stored = (localStorage.getItem('robin_lang') || 'fr').toLowerCase();
   var currentLang = (stored === 'en' ? 'en' : 'fr');
+  var storedCur = (localStorage.getItem('robin_currency') || 'eur').toLowerCase();
+  var currentCurrency = storedCur === 'fcfa' || storedCur === 'usd' ? storedCur : 'eur';
+  /** Taux indicatifs pour l’affichage uniquement (indemnités légales en EUR). */
+  var EUR_TO_FCFA = 655.957;
+  var EUR_TO_USD = 1.085;
   var T = {
     fr: {
       page_title: "Robin des Airs — Indemnités aériennes jusqu'à 600€ | Premium",
@@ -18,7 +23,7 @@ window.I18N = (function() {
       vol_ticker_label_short: "Vols",
       vol_ticker_retard: "Retard",
       vol_ticker_annul: "Annulé",
-      vol_ticker_eligible_pax: "Éligible {amount}€/pax",
+      vol_ticker_eligible_pax: "Éligible {amount}/pass.",
       vol_ticker_chip_title: "Cliquer : message type + vol et date dans le formulaire",
       vol_click_eligibility_body: "Bonjour, j'ai été affecté par le vol {flight} du {date}, qui a été {incident}. J'aimerais vérifier si je suis éligible à une indemnisation pouvant aller jusqu'à 600 € par passager selon la loi européenne.",
       vol_click_incident_delay: "retardé",
@@ -149,6 +154,7 @@ window.I18N = (function() {
       footer_vol_examples_disclaimer: "Les exemples de vols indiqués sont fournis à titre informatif. L'éligibilité et le montant de l'indemnisation dépendent des conditions prévues par le règlement (CE) n°261/2004 (retard important, annulation ou surbooking, circonstances applicables), avec une indemnité pouvant aller jusqu'à 600 € par passager selon la distance du vol.",
       footer_vol_ticker_data_note: "Bandeau des vols : lorsque l’API le permet, pastilles issues des vols réels sur environ 14 jours (historique) ou à la journée (timetable), hubs France, source Aviation Edge — annulations ou retards d’au moins 3 heures sur lignes éligibles Europe–Afrique. Sinon exemples illustratifs. Jusqu'à 600 € si le CE 261 s'applique. Un clic sur une pastille préremplit le formulaire.",
       footer_no_legal_advice: "Rien sur ce site ne constitue un conseil juridique ni une garantie de résultat ; l’éligibilité et les montants ne peuvent être affirmés qu’après examen individuel du dossier.",
+      footer_currency_hint: "Montants convertis en FCFA ou USD à titre indicatif (taux fixes). Les indemnités CE&nbsp;261 sont fixées en euros.",
       ready_claim: "Prêt à réclamer ?",
       obt_indemnite: "Mon argent m'attend →",
       section_comp_tag: "Transparence totale",
@@ -298,7 +304,7 @@ window.I18N = (function() {
       vol_ticker_label_short: "Flights",
       vol_ticker_retard: "Delayed",
       vol_ticker_annul: "Cancelled",
-      vol_ticker_eligible_pax: "Eligible €{amount}/pax",
+      vol_ticker_eligible_pax: "Eligible {amount}/pax",
       vol_ticker_chip_title: "Click: template message + flight and date in the form",
       vol_click_eligibility_body: "Hello, I was affected by flight {flight} on {date}, which was {incident}. I would like to check if I am eligible for compensation of up to €600 per passenger under European law.",
       vol_click_incident_delay: "delayed",
@@ -428,6 +434,7 @@ window.I18N = (function() {
       footer_vol_examples_disclaimer: "The flight examples shown are for information only. Eligibility and the amount of compensation depend on the conditions set out in Regulation (EC) No 261/2004 (substantial delay, cancellation or denied boarding, applicable circumstances), with compensation of up to €600 per passenger depending on the flight distance.",
       footer_vol_ticker_data_note: "Flight strip: when the API allows, pills reflect real flights over about 14 days (history) or same-day (timetable), French hubs, Aviation Edge source — cancellations or delays of at least 3 hours on eligible Europe–Africa routes. Otherwise illustrative examples. Up to €600 if EU 261 applies. Click a pill to pre-fill the form.",
       footer_no_legal_advice: "Nothing on this site is legal advice or a guarantee of outcome; eligibility and amounts can only be confirmed after an individual review of your case.",
+      footer_currency_hint: "Amounts shown in FCFA or USD are indicative (fixed rates). EU261 compensation is set in euros.",
       ready_claim: "Ready to claim?",
       obt_indemnite: "Get my compensation →",
       section_comp_tag: "Full transparency",
@@ -564,6 +571,117 @@ window.I18N = (function() {
     }
   };
 
+  function getCurrency() {
+    return currentCurrency;
+  }
+
+  function formatIntFr(n) {
+    return Math.round(n).toLocaleString('fr-FR');
+  }
+
+  function formatIntEn(n) {
+    return Math.round(n).toLocaleString('en-US');
+  }
+
+  function formatFromEur(amount) {
+    var n = Number(amount);
+    if (isNaN(n)) return '';
+    var lang = currentLang === 'en' ? 'en' : 'fr';
+    if (currentCurrency === 'eur') {
+      if (lang === 'en') return '€' + formatIntEn(n);
+      return formatIntFr(n) + '\u00A0€';
+    }
+    if (currentCurrency === 'fcfa') {
+      var f = Math.round(n * EUR_TO_FCFA);
+      return formatIntFr(f) + '\u00A0FCFA';
+    }
+    if (currentCurrency === 'usd') {
+      var u = Math.round(n * EUR_TO_USD * 100) / 100;
+      if (lang === 'en') return '$' + u.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      return u.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '\u00A0$';
+    }
+    return formatIntFr(n) + '\u00A0€';
+  }
+
+  function parseNumericFragment(s) {
+    if (!s) return NaN;
+    var t = String(s).replace(/\u00A0/g, '').replace(/\s/g, '').replace(/\./g, '').replace(',', '.');
+    var v = parseFloat(t);
+    return isNaN(v) ? NaN : v;
+  }
+
+  function replaceEuroAmountsInString(text) {
+    if (!text || currentCurrency === 'eur') return text;
+    var out = text;
+    out = out.replace(/(\d[\d\s\u00A0,.]*)\s*EUROS?\b/gi, function (match, g1) {
+      var v = parseNumericFragment(g1);
+      if (isNaN(v)) return match;
+      return formatFromEur(v);
+    });
+    out = out.replace(
+      /(\d[\d\s\u00A0,.]*)\s*(?:€|&euro;|EUR|euros?)\b|(?:€|EUR)\s*(\d[\d\s\u00A0,.]*)/gi,
+      function (match, g1, g2) {
+        var raw = g1 != null ? g1 : g2;
+        var v = parseNumericFragment(raw);
+        if (isNaN(v)) return match;
+        return formatFromEur(v);
+      }
+    );
+    return out;
+  }
+
+  function applyCurrencyWalk(root) {
+    if (!root || currentCurrency === 'eur') return;
+    var skip = { SCRIPT: 1, STYLE: 1, NOSCRIPT: 1, IFRAME: 1, TEXTAREA: 1 };
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+    var node;
+    var toPatch = [];
+    while ((node = walker.nextNode())) {
+      var p = node.parentElement;
+      if (!p || skip[p.tagName] || p.closest('[data-no-currency]')) continue;
+      var v = node.nodeValue;
+      if (!v || (!/[€\u20AC]/.test(v) && !/\d\s*(?:€|EUR|euros?)/i.test(v) && !/\d\s*EUROS?/i.test(v))) continue;
+      toPatch.push(node);
+    }
+    toPatch.forEach(function (tn) {
+      var nv = replaceEuroAmountsInString(tn.nodeValue);
+      if (nv !== tn.nodeValue) tn.nodeValue = nv;
+    });
+  }
+
+  function applyDataStatEur() {
+    document.querySelectorAll('[data-stat-eur]').forEach(function (el) {
+      var raw = el.getAttribute('data-stat-eur');
+      var n = parseFloat(String(raw).replace(',', '.'), 10);
+      if (isNaN(n)) return;
+      el.textContent = formatFromEur(n);
+    });
+  }
+
+  function updateFooterCurrencyHint() {
+    var el = document.getElementById('footer-currency-hint');
+    if (!el) return;
+    if (currentCurrency === 'eur') {
+      el.style.display = 'none';
+      return;
+    }
+    el.style.display = 'block';
+    var h = get('footer_currency_hint');
+    el.innerHTML = h && h !== 'footer_currency_hint' ? h : '';
+  }
+
+  function syncCurrencyOptionsUi() {
+    var label = document.getElementById('current-currency-label');
+    if (label) {
+      label.textContent = currentCurrency === 'fcfa' ? 'FCFA' : currentCurrency === 'usd' ? 'USD' : 'EUR';
+    }
+    document.querySelectorAll('.currency-option').forEach(function (o) {
+      o.classList.toggle('active', o.getAttribute('data-currency') === currentCurrency);
+    });
+    var sel = document.getElementById('robin-currency-select');
+    if (sel) sel.value = currentCurrency;
+  }
+
   function get(key) {
     var lang = (currentLang === 'en' ? 'en' : 'fr');
     return (T[lang] && T[lang][key]) || T.fr[key] || key;
@@ -571,10 +689,41 @@ window.I18N = (function() {
 
   function apply() {
     document.documentElement.lang = currentLang === 'en' ? 'en' : 'fr';
-    var title = get('page_title');
-    if (title) document.title = title;
-    var metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc && get('meta_description')) metaDesc.setAttribute('content', get('meta_description'));
+    var body = document.body;
+    var isHome = body && body.getAttribute('data-i18n-page') === 'home';
+    var isTarifs = body && body.classList.contains('page-tarifs');
+    var hasI18nMarkers = document.querySelector('[data-i18n],[data-i18n-html]');
+
+    if (isHome) {
+      var ht = get('page_title');
+      if (ht && ht !== 'page_title') document.title = ht;
+      var metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) {
+        var md = get('meta_description');
+        if (md && md !== 'meta_description') metaDesc.setAttribute('content', md);
+      }
+    } else if (isTarifs) {
+      var tt = get('tarifs_page_title');
+      if (tt && tt !== 'tarifs_page_title') document.title = tt;
+      var mdTarifs = document.querySelector('meta[name="description"]');
+      if (mdTarifs) {
+        var mdt = get('tarifs_meta_description');
+        if (mdt && mdt !== 'tarifs_meta_description') mdTarifs.setAttribute('content', mdt);
+      }
+    }
+
+    if (!hasI18nMarkers) {
+      applyDataStatEur();
+      if (currentCurrency !== 'eur') applyCurrencyWalk(document.body);
+      updateFooterCurrencyHint();
+      syncCurrencyOptionsUi();
+      if (typeof window.refreshVolTicker === 'function') window.refreshVolTicker();
+      try {
+        document.dispatchEvent(new CustomEvent('robin-locale-change', { detail: { lang: currentLang, currency: currentCurrency } }));
+      } catch (e1) {}
+      return;
+    }
+
     document.querySelectorAll('[data-i18n]').forEach(function(el) {
       var key = el.getAttribute('data-i18n');
       var val = get(key);
@@ -685,13 +834,14 @@ window.I18N = (function() {
     if (testiArrows.length >= 2) { testiArrows[0].setAttribute('aria-label', get('testi_aria_prev')); testiArrows[1].setAttribute('aria-label', get('testi_aria_next')); }
     var testiTranslatedNote = document.getElementById('testi-translated-note');
     if (testiTranslatedNote) testiTranslatedNote.style.display = (currentLang === 'en' && get('testi_translated_from')) ? 'block' : 'none';
-    if (document.body && document.body.classList.contains('page-tarifs')) {
-      var tTitle = get('tarifs_page_title');
-      if (tTitle) document.title = tTitle;
-      var mdTarifs = document.querySelector('meta[name="description"]');
-      if (mdTarifs && get('tarifs_meta_description')) mdTarifs.setAttribute('content', get('tarifs_meta_description'));
-    }
+    applyDataStatEur();
+    if (currentCurrency !== 'eur') applyCurrencyWalk(document.body);
+    updateFooterCurrencyHint();
+    syncCurrencyOptionsUi();
     if (typeof window.refreshVolTicker === 'function') window.refreshVolTicker();
+    try {
+      document.dispatchEvent(new CustomEvent('robin-locale-change', { detail: { lang: currentLang, currency: currentCurrency } }));
+    } catch (e2) {}
   }
 
   function setLang(code) {
@@ -707,10 +857,24 @@ window.I18N = (function() {
     });
   }
 
+  function setCurrency(code) {
+    var c = (code || 'eur').toLowerCase();
+    if (c !== 'fcfa' && c !== 'usd') c = 'eur';
+    currentCurrency = c;
+    try {
+      localStorage.setItem('robin_currency', currentCurrency);
+    } catch (e3) {}
+    apply();
+  }
+
   return {
     get: get,
     apply: apply,
     setLang: setLang,
-    getLang: function() { return currentLang; }
+    setCurrency: setCurrency,
+    getLang: function() { return currentLang; },
+    getCurrency: getCurrency,
+    formatFromEur: formatFromEur,
+    applyCurrencyWalk: applyCurrencyWalk
   };
 })();

@@ -197,6 +197,28 @@ body.partners-landing-page .pl-container {
   background: var(--pl-bg-warm);
 }
 
+.pl-section--why {
+  background: var(--pl-surface);
+  border-block: 1px solid var(--pl-line-soft);
+}
+.pl-container--narrow {
+  max-width: 42rem;
+}
+.pl-why-lead {
+  margin: 0 0 14px;
+  font-size: clamp(0.94rem, 2.5vw, 1.05rem);
+  line-height: 1.65;
+  color: var(--pl-text);
+}
+.pl-why-close {
+  margin: 20px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--pl-line-soft);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--pl-muted);
+}
+
 .pl-section--sand {
   background: var(--pl-sand-deep);
 }
@@ -654,6 +676,11 @@ body.partners-landing-page .pl-container {
   font-size: 0.84rem;
   margin-bottom: 6px;
   color: var(--pl-text);
+}
+
+.pl-optional {
+  font-weight: 600;
+  opacity: 0.72;
 }
 
 .pl-input,

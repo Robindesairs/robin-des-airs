@@ -30,6 +30,10 @@ function openWhatsAppSendUrl(url) {
 }
 const DLABEL = { 600:'Long-courrier · +3 500 km', 400:'Moyen-courrier · 1 500–3 500 km', 250:'Court-courrier · <1 500 km' };
 const DISTANCE_LINE = { 600:'Vol Long-Courrier (>3 500 km) → Indemnité de 600€', 400:'Vol Moyen-Courrier (1 500–3 500 km) → Indemnité de 400€', 250:'Vol Court-Courrier (<1 500 km) → Indemnité de 250€' };
+function applyDistanceLineCurrency(el) {
+  if (!el || !window.I18N || typeof I18N.applyCurrencyWalk !== 'function' || !I18N.getCurrency) return;
+  if (I18N.getCurrency() !== 'eur') I18N.applyCurrencyWalk(el);
+}
 /* Destinations couvertes à 600€ (long-courrier) — base site + SEO meta */
 /* Destinations 600€ (long-courrier) — base site + SEO meta */
 const DESTINATIONS_600 = { ABJ:'Abidjan', ABV:'Abuja', ACC:'Accra', ADD:'Addis-Abeba', TNR:'Antananarivo', BKO:'Bamako', BGF:'Bangui', BJL:'Banjul', BZV:'Brazzaville', BJM:'Bujumbura', CKY:'Conakry', COO:'Cotonou', DSS:'Dakar', DAR:'Dar es Salaam', JIB:'Djibouti', DLA:'Douala', EBB:'Entebbe', FNA:'Freetown', JNB:'Johannesburg', KGL:'Kigali', JRO:'Arusha', FIH:'Kinshasa', LOS:'Lagos', CPT:'Le Cap', LBV:'Libreville', LFW:'Lomé', LAD:'Luanda', SSG:'Malabo', MRU:'Île Maurice', ROB:'Monrovia', NDJ:'Ndjamena', NBO:'Nairobi', NIM:'Niamey', OUA:'Ouagadougou', PHC:'Port Harcourt', RUN:'La Réunion', WDH:'Windhoek', NSI:'Yaoundé', ZNZ:'Zanzibar' };
@@ -111,6 +115,18 @@ function switchLang(code, flag) {
   if (opt) opt.classList.add('active');
   document.getElementById('lang-menu').classList.remove('open');
   if (window.I18N) window.I18N.setLang(code);
+  requestAnimationFrame(function() { requestAnimationFrame(updateSiteHeaderOffset); });
+}
+
+function toggleCurrencyMenu() {
+  var m = document.getElementById('currency-menu');
+  if (m) m.classList.toggle('open');
+}
+
+function switchCurrency(code) {
+  if (window.I18N) window.I18N.setCurrency(code);
+  var cm = document.getElementById('currency-menu');
+  if (cm) cm.classList.remove('open');
   requestAnimationFrame(function() { requestAnimationFrame(updateSiteHeaderOffset); });
 }
 
@@ -362,7 +378,9 @@ function volTickerRenderList(list) {
     var dateBand = volTickerFormatDateDayMonth(row.date || '', en);
     var dateBandEsc = volTickerEscapeHtml(dateBand);
     var amount = volTickerEligibleAmountForRow(row);
-    var eligStr = get('vol_ticker_eligible_pax').replace(/\{amount\}/g, String(amount));
+    var amtDisp =
+      window.I18N && typeof I18N.formatFromEur === 'function' ? I18N.formatFromEur(amount) : String(amount) + '€';
+    var eligStr = get('vol_ticker_eligible_pax').replace(/\{amount\}/g, amtDisp);
     var eligEsc = volTickerEscapeHtml(eligStr);
     var statusPartEsc =
       kind === 'cancel'
@@ -455,7 +473,12 @@ window.addEventListener('pageshow', function () {
 })();
 document.addEventListener('click', (e) => {
   if (!e.target.closest('#lang-dropdown')) {
-    document.getElementById('lang-menu').classList.remove('open');
+    var lm = document.getElementById('lang-menu');
+    if (lm) lm.classList.remove('open');
+  }
+  if (!e.target.closest('#currency-dropdown')) {
+    var cm = document.getElementById('currency-menu');
+    if (cm) cm.classList.remove('open');
   }
 });
 
@@ -543,7 +566,10 @@ function goTo(stepId, pct, scrollIntoFunnel) {
     var daLine = document.getElementById('da-distance-line');
     if (daDist && (!daDist.value || daDist.value === '')) {
       daDist.value = '600';
-      if (daLine && typeof DISTANCE_LINE !== 'undefined') daLine.textContent = DISTANCE_LINE[600] || '';
+      if (daLine && typeof DISTANCE_LINE !== 'undefined') {
+        daLine.textContent = DISTANCE_LINE[600] || '';
+        applyDistanceLineCurrency(daLine);
+      }
     }
     // Rafraîchir les Tom Select aéroports une fois l’étape visible (sinon le dropdown peut rester vide)
     setTimeout(function() {
@@ -747,7 +773,10 @@ function setDist(inputId, value, btn) {
   if (wrap) wrap.querySelectorAll('.dist-pill').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
   var line = document.getElementById('da-distance-line');
-  if (line) line.textContent = DISTANCE_LINE[value] || '';
+  if (line) {
+    line.textContent = DISTANCE_LINE[value] || '';
+    applyDistanceLineCurrency(line);
+  }
 }
 
 /** Remplit le diagnostic vol direct à partir de la base locale (DB). Utilisé pour les principaux vols AF/SS Afrique. */
@@ -772,7 +801,10 @@ function applyFlightFromDb(code) {
   var distIn = document.getElementById('da-dist');
   var lineEl = document.getElementById('da-distance-line');
   if (distIn) distIn.value = String(match.c);
-  if (lineEl && typeof DISTANCE_LINE !== 'undefined') lineEl.textContent = DISTANCE_LINE[match.c] || '';
+  if (lineEl && typeof DISTANCE_LINE !== 'undefined') {
+    lineEl.textContent = DISTANCE_LINE[match.c] || '';
+    applyDistanceLineCurrency(lineEl);
+  }
   var distWrap = document.getElementById('da-dist-wrap');
   if (distWrap) { distWrap.style.display = 'none'; distWrap.querySelectorAll('.dist-pill').forEach(function(p) { p.classList.remove('active'); }); }
   var st = document.getElementById('flight_number_status');
@@ -863,12 +895,18 @@ function updateManualDist(prefix) {
   var amount = ROUTE_AMOUNT[key] || ROUTE_AMOUNT[keyRev];
   if (amount) {
     distIn.value = String(amount);
-    if (line) line.textContent = DISTANCE_LINE[amount] || '';
+    if (line) {
+      line.textContent = DISTANCE_LINE[amount] || '';
+      applyDistanceLineCurrency(line);
+    }
     if (distWrap) distWrap.style.display = 'none';
     window.lastCalculatedDistanceKm = null;
   } else {
     distIn.value = '600';
-    if (line) line.textContent = (typeof DISTANCE_LINE !== 'undefined' && DISTANCE_LINE[600]) || '';
+    if (line) {
+      line.textContent = (typeof DISTANCE_LINE !== 'undefined' && DISTANCE_LINE[600]) || '';
+      applyDistanceLineCurrency(line);
+    }
     if (distWrap) distWrap.style.display = 'none';
   }
 }
@@ -898,10 +936,15 @@ function volLookup(input, chipId, distWrapId, distId) {
       document.getElementById(chipId + '-route').textContent = match.a + ' · ' + match.r;
       document.getElementById(chipId + '-dist').textContent = DLABEL[match.c];
       var badge = document.getElementById(chipId + '-badge');
-      badge.textContent = match.c + '€'; badge.className = 'chip-badge ' + ({ 600:'badge-long', 400:'badge-mid', 250:'badge-short' }[match.c]);
+      badge.textContent =
+        window.I18N && typeof I18N.formatFromEur === 'function' ? I18N.formatFromEur(match.c) : match.c + '€';
+      badge.className = 'chip-badge ' + ({ 600:'badge-long', 400:'badge-mid', 250:'badge-short' }[match.c]);
       chipEl.style.display = 'flex';
     }
-    if (distanceLine) distanceLine.textContent = DISTANCE_LINE[match.c] || '';
+    if (distanceLine) {
+      distanceLine.textContent = DISTANCE_LINE[match.c] || '';
+      applyDistanceLineCurrency(distanceLine);
+    }
     if (distSel) distSel.value = String(match.c);
     if (distWrap) distWrap.style.display = 'none';
     if (manualWrap) manualWrap.style.display = 'none';
@@ -942,7 +985,7 @@ function showLoader(callback) {
 }
 
 /* ═══ Count-up montant net (requestAnimationFrame, 1.5s) ═══ */
-function animateValue(id, start, end, duration) {
+function animateValue(id, start, end, duration, onDone) {
   var el = document.getElementById(id);
   if (!el) return;
   var startTime = null;
@@ -953,9 +996,71 @@ function animateValue(id, start, end, duration) {
     var current = Math.round(start + (end - start) * progress);
     el.textContent = current;
     if (progress < 1) requestAnimationFrame(step);
+    else if (typeof onDone === 'function') onDone();
   }
   requestAnimationFrame(step);
 }
+
+function buildCalcDetailText(totals) {
+  if (!totals) return '';
+  var pax = totals.pax;
+  var brut = totals.brut;
+  var totalBrut = totals.totalBrut;
+  var totalFee = totals.totalFee;
+  var totalNet = totals.totalNet;
+  if (!window.I18N || typeof I18N.formatFromEur !== 'function') {
+    return (
+      totalBrut +
+      '€ (indemnité légale' +
+      (pax > 1 ? ' · ' + brut + '€ × ' + pax + ' pass.' : '') +
+      ') − 25% Robin (' +
+      totalFee +
+      '€) = ' +
+      totalNet +
+      '€ net'
+    );
+  }
+  var f = function (n) {
+    return I18N.formatFromEur(n);
+  };
+  return (
+    f(totalBrut) +
+    ' (indemnité légale' +
+    (pax > 1 ? ' · ' + f(brut) + ' × ' + pax + ' pass.' : '') +
+    ') − 25% Robin (' +
+    f(totalFee) +
+    ') = ' +
+    f(totalNet) +
+    ' net'
+  );
+}
+
+function refreshCalcResultView() {
+  var t = window.__lastCalcTotals;
+  if (!t || !window.I18N) return;
+  var step = document.getElementById('step-result');
+  if (!step || !step.classList.contains('active')) return;
+  var cur = I18N.getCurrency ? I18N.getCurrency() : 'eur';
+  var big = document.getElementById('res-net-big');
+  if (big) {
+    if (cur === 'eur') {
+      big.innerHTML = '<span id="res-net-value">' + t.totalNet + '</span><span>€</span>';
+    } else {
+      big.innerHTML = '<span id="res-net-value">' + I18N.formatFromEur(t.totalNet) + '</span>';
+    }
+  }
+  var calcDetailEl = document.getElementById('res-calc-detail');
+  if (calcDetailEl) calcDetailEl.textContent = buildCalcDetailText(t);
+  var stickyAmountEl = document.getElementById('sticky-cta-amount');
+  if (stickyAmountEl && typeof I18N.formatFromEur === 'function') {
+    stickyAmountEl.textContent =
+      (I18N.getLang && I18N.getLang() === 'en' ? 'RECOVER ' : 'RÉCUPÉRER ') + I18N.formatFromEur(t.totalNet);
+  }
+}
+
+document.addEventListener('robin-locale-change', function () {
+  refreshCalcResultView();
+});
 
 /* ═══ CALCUL ═══ */
 function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
@@ -981,7 +1086,19 @@ function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
   } else if (volRef) {
     routeStr = volRef.replace(' → ', ' ➔ ') + ' • ' + pax + (pax > 1 ? ' Passagers' : ' Passager');
   }
-  document.getElementById('res-net-big').innerHTML = '<span id="res-net-value">0</span><span>€</span>';
+  window.__lastCalcTotals = { totalBrut: totalBrut, totalFee: totalFee, totalNet: totalNet, brut: brut, pax: pax };
+  var cur0 = window.I18N && I18N.getCurrency ? I18N.getCurrency() : 'eur';
+  var bigEl = document.getElementById('res-net-big');
+  if (bigEl) {
+    if (cur0 === 'eur') {
+      bigEl.innerHTML = '<span id="res-net-value">0</span><span>€</span>';
+    } else {
+      bigEl.innerHTML =
+        '<span id="res-net-value">' +
+        (window.I18N && I18N.formatFromEur ? I18N.formatFromEur(0) : '0') +
+        '</span>';
+    }
+  }
   document.getElementById('res-route').textContent = routeStr;
   var badgeEl = document.getElementById('res-motif-badge');
   if (badgeEl) {
@@ -990,8 +1107,7 @@ function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
   }
   var calcDetailEl = document.getElementById('res-calc-detail');
   if (calcDetailEl) {
-    var detailTxt = totalBrut + '€ (indemnité légale' + (pax > 1 ? ' · ' + brut + '€ × ' + pax + ' pass.' : '') + ') − 25% Robin (' + totalFee + '€) = ' + totalNet + '€ net';
-    calcDetailEl.textContent = detailTxt;
+    calcDetailEl.textContent = buildCalcDetailText(window.__lastCalcTotals);
     calcDetailEl.style.display = 'block';
   }
 
@@ -1006,7 +1122,14 @@ function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
   var stickyWa = document.getElementById('sticky-wa-cta');
   if (stickyWa) stickyWa.href = waHref;
   var stickyAmountEl = document.getElementById('sticky-cta-amount');
-  if (stickyAmountEl) stickyAmountEl.textContent = 'RÉCUPÉRER MES ' + totalNet + ' EUROS';
+  if (stickyAmountEl) {
+    if (window.I18N && typeof I18N.formatFromEur === 'function') {
+      stickyAmountEl.textContent =
+        (I18N.getLang && I18N.getLang() === 'en' ? 'RECOVER ' : 'RÉCUPÉRER ') + I18N.formatFromEur(totalNet);
+    } else {
+      stickyAmountEl.textContent = 'RÉCUPÉRER MES ' + totalNet + ' EUROS';
+    }
+  }
 
   return totalNet;
 }
@@ -1023,7 +1146,17 @@ function calcDirect() {
   showLoader(() => {
     var totalNet = doCalc(dist, pax, routeRef, date, null);
     goTo('step-result', 100);
-    if (totalNet) requestAnimationFrame(function() { animateValue('res-net-value', 0, totalNet, 1500); });
+    if (totalNet) {
+      var curA = window.I18N && I18N.getCurrency ? I18N.getCurrency() : 'eur';
+      if (curA === 'eur') {
+        requestAnimationFrame(function () {
+          animateValue('res-net-value', 0, totalNet, 1500);
+        });
+      } else {
+        var elN = document.getElementById('res-net-value');
+        if (elN && window.I18N && I18N.formatFromEur) elN.textContent = I18N.formatFromEur(totalNet);
+      }
+    }
   });
 }
 
@@ -1042,7 +1175,17 @@ function calcEscale() {
   showLoader(() => {
     var totalNet = doCalc(dist, pax, lastVol || vol1, date, vol1);
     goTo('step-result', 100);
-    if (totalNet) requestAnimationFrame(function() { animateValue('res-net-value', 0, totalNet, 1500); });
+    if (totalNet) {
+      var curB = window.I18N && I18N.getCurrency ? I18N.getCurrency() : 'eur';
+      if (curB === 'eur') {
+        requestAnimationFrame(function () {
+          animateValue('res-net-value', 0, totalNet, 1500);
+        });
+      } else {
+        var elN2 = document.getElementById('res-net-value');
+        if (elN2 && window.I18N && I18N.formatFromEur) elN2.textContent = I18N.formatFromEur(totalNet);
+      }
+    }
   });
 }
 
@@ -1366,7 +1509,10 @@ robinWhenDomReady(() => {
                 if (km != null && !isNaN(km)) {
                   var amount = distanceKmToAmount(km);
                   distIn.value = String(amount);
-                  if (lineEl) lineEl.textContent = (typeof DISTANCE_LINE !== 'undefined' && DISTANCE_LINE[amount]) || '';
+                  if (lineEl) {
+                    lineEl.textContent = (typeof DISTANCE_LINE !== 'undefined' && DISTANCE_LINE[amount]) || '';
+                    applyDistanceLineCurrency(lineEl);
+                  }
                   if (distWrap) { distWrap.style.display = 'none'; distWrap.querySelectorAll('.dist-pill').forEach(function(p) { p.classList.remove('active'); }); }
                   window.lastCalculatedDistanceKm = km;
                 }

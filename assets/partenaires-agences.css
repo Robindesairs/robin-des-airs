@@ -603,6 +603,35 @@ html {
   padding-bottom: 64px;
 }
 
+.partner-why-built {
+  padding: 56px 0;
+  background: linear-gradient(180deg, rgba(0, 200, 122, 0.06), transparent 55%);
+  border-top: 1px solid var(--line-soft);
+}
+.partner-why-built .container {
+  max-width: 48rem;
+}
+.partner-why-built h2 {
+  font-family: "Archivo Black", "Syne", "Montserrat", sans-serif;
+  font-size: clamp(1.45rem, 3vw, 1.85rem);
+  margin: 0 0 18px;
+  color: var(--navy);
+}
+.partner-why-lead {
+  margin: 0 0 14px;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--text);
+}
+.partner-why-close {
+  margin: 20px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--line-soft);
+  font-size: 1rem;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
 .partner-badge-row {
   display: flex;
   align-items: center;
@@ -781,6 +810,53 @@ html {
   font-size: 0.8rem;
   font-style: normal;
   opacity: 0.9;
+}
+
+.social-proof-title {
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+  font-weight: 800;
+  margin: 0 0 8px;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.social-proof-headline {
+  text-align: center;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text);
+  margin: 0 0 22px;
+  letter-spacing: 0.02em;
+}
+
+.social-proof-grid {
+  display: grid;
+  gap: 22px;
+}
+
+@media (min-width: 920px) {
+  .social-proof-grid {
+    grid-template-columns: repeat(3, 1fr);
+    align-items: stretch;
+  }
+}
+
+.social-proof-grid .social-quote {
+  max-width: none;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.social-proof-disclaimer {
+  margin-top: 20px;
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-align: center;
+  max-width: 48rem;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.5;
 }
 
 .contact-rdv {
