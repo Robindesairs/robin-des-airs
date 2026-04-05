@@ -575,12 +575,17 @@ window.I18N = (function() {
     return currentCurrency;
   }
 
+  /** Milliers séparés par un point (ex. 100.000) — plus lisible sur le site. */
+  function formatThousandsDots(n) {
+    return String(Math.round(Math.abs(Number(n)))).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
   function formatIntFr(n) {
-    return Math.round(n).toLocaleString('fr-FR');
+    return formatThousandsDots(n);
   }
 
   function formatIntEn(n) {
-    return Math.round(n).toLocaleString('en-US');
+    return formatThousandsDots(n);
   }
 
   function formatFromEur(amount) {
