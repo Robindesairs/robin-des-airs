@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Robin des Airs | Rejoindre le programme partenaire agences</title>
+  <meta name="description" content="Formulaire rapide pour intégrer le programme partenaire Robin des Airs (commission agence en EUR ou FCFA). Indicatif pays, WhatsApp, corridor Europe-Afrique.">
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/@fontsource/montserrat@5.0.0/files/montserrat-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="stylesheet" href="/assets/partenaires-agences.css">
+  <link rel="stylesheet" href="/assets/partenaires-rejoindre.css">
+</head>
+<body class="partners-eur-page partners-join-page">
+  <header class="partners-sticky-head" id="partners-site-header">
+    <div class="diaspora-bar partners-diaspora-strip" role="region" aria-label="Diaspora et corridor Europe-Afrique">
+      <div class="diaspora-bar-inner diaspora-bar-inner--stack">
+        <span class="sr-only">Diaspora : Sénégal, Mali, Côte d&rsquo;Ivoire, Guinée, Cameroun, RDC, Bénin, Togo, Ghana, Nigeria.</span>
+        <div class="diaspora-bar-head">
+          <div class="diaspora-bar-flags-pill" aria-hidden="true">
+            <span class="diaspora-bar-flags">🇸🇳 🇲🇱 🇨🇮 🇬🇳 🇨🇲 🇨🇩 🇧🇯 🇹🇬 🇬🇭 🇳🇬</span>
+          </div>
+          <div class="diaspora-bar-title">
+            <span class="vol-ticker-dot diaspora-bar-live-dot" aria-hidden="true"></span>
+            <span class="diaspora-bar-title-text">
+              <span class="vol-ticker-label vol-ticker-label--full">Rejoindre le programme &middot; corridor Europe &amp; Afrique</span>
+              <span class="vol-ticker-label vol-ticker-label--short">Rejoindre</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="topbar">
+      <div class="container topbar-inner">
+        <a href="/" class="brand">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span>ROBIN <em>des Airs</em></span>
+        </a>
+        <button class="menu-btn" id="menu-btn" aria-expanded="false" aria-controls="menu">Menu</button>
+        <div id="menu" class="menu" role="navigation" aria-label="Navigation">
+          <a href="/partenaires-agences.html">Pr&eacute;sentation &middot; EUR</a>
+          <a href="/partenaires-agences-fcfa.html">Pr&eacute;sentation &middot; FCFA</a>
+          <a href="/partenaires-agences.html#faq">FAQ (EUR)</a>
+          <a href="/">Site particuliers</a>
+          <a href="/partenaires-rejoindre.html" class="menu-cta" aria-current="page">Rejoindre</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="formulaire-rejoindre" class="container" style="padding-top: 28px; padding-bottom: 48px;">
+    <p class="eyebrow">Programme partenaire</p>
+    <h1>Rejoindre le programme</h1>
+    <div class="partners-join-intro">
+      <p>Quelques champs suffisent : nous revenons vers vous rapidement. Choisissez votre <strong>indicatif pays</strong> puis saisissez votre num&eacute;ro <strong>sans</strong> le r&eacute;p&eacute;ter.</p>
+      <p>Besoin d&rsquo;abord de lire l&rsquo;offre ? <a href="/partenaires-agences.html">Pr&eacute;sentation en euros</a> &middot; <a href="/partenaires-agences-fcfa.html">Pr&eacute;sentation en FCFA</a></p>
+    </div>
+
+    <div class="partners-join-grid">
+      <form class="contact-form partner-join-form" action="#" method="post" autocomplete="on">
+        <label>Convention souhait&eacute;e
+          <select name="programme" id="field-programme" required>
+            <option value="euros">49 EUR / passager indemnis&eacute;</option>
+            <option value="fcfa">30 000 FCFA / passager indemnis&eacute;</option>
+          </select>
+        </label>
+        <label>Nom<input type="text" name="nom" required autocomplete="name"></label>
+        <label>Agence<input type="text" name="agence" required autocomplete="organization"></label>
+        <label>Pays (si&egrave;ge)<input type="text" name="pays" required autocomplete="country-name"></label>
+        <label>E-mail<input type="email" name="email" required autocomplete="email"></label>
+
+        <div class="wa-phone-field">
+          <span class="wa-phone-label-text">WhatsApp / t&eacute;l&eacute;phone <span class="wa-field-hint">indicatif puis num&eacute;ro local</span></span>
+          <div class="wa-phone-row">
+            <label class="sr-only" for="whatsapp-indicatif">Indicatif pays</label>
+            <select name="whatsapp_indicatif" id="whatsapp-indicatif" class="wa-indicatif-select" required aria-label="Indicatif pays">
+              <optgroup label="Afrique de l&rsquo;Ouest &amp; centrale">
+                <option value="221" selected>🇸🇳 +221 S&eacute;n&eacute;gal</option>
+                <option value="223">🇲🇱 +223 Mali</option>
+                <option value="226">🇧🇫 +226 Burkina Faso</option>
+                <option value="227">🇳🇪 +227 Niger</option>
+                <option value="228">🇹🇬 +228 Togo</option>
+                <option value="229">🇧🇯 +229 B&eacute;nin</option>
+                <option value="225">🇨🇮 +225 C&ocirc;te d&rsquo;Ivoire</option>
+                <option value="224">🇬🇳 +224 Guin&eacute;e</option>
+                <option value="233">🇬🇭 +233 Ghana</option>
+                <option value="234">🇳🇬 +234 Nigeria</option>
+                <option value="237">🇨🇲 +237 Cameroun</option>
+                <option value="241">🇬🇦 +241 Gabon</option>
+                <option value="242">🇨🇬 +242 Congo</option>
+                <option value="243">🇨🇩 +243 RDC</option>
+              </optgroup>
+              <optgroup label="Afrique &mdash; autres">
+                <option value="212">🇲🇦 +212 Maroc</option>
+                <option value="213">🇩🇿 +213 Alg&eacute;rie</option>
+                <option value="216">🇹🇳 +216 Tunisie</option>
+                <option value="20">🇪🇬 +20 &Eacute;gypte</option>
+                <option value="254">🇰🇪 +254 Kenya</option>
+                <option value="27">🇿🇦 +27 Afrique du Sud</option>
+              </optgroup>
+              <optgroup label="Europe &amp; autres">
+                <option value="33">🇫🇷 +33 France</option>
+                <option value="32">🇧🇪 +32 Belgique</option>
+                <option value="41">🇨🇭 +41 Suisse</option>
+                <option value="44">🇬🇧 +44 Royaume-Uni</option>
+                <option value="351">🇵🇹 +351 Portugal</option>
+                <option value="34">🇪🇸 +34 Espagne</option>
+                <option value="49">🇩🇪 +49 Allemagne</option>
+                <option value="31">🇳🇱 +31 Pays-Bas</option>
+                <option value="1">🇺🇸 +1 &Eacute;tats-Unis / Canada</option>
+              </optgroup>
+            </select>
+            <label class="sr-only" for="whatsapp-national">Num&eacute;ro (sans indicatif)</label>
+            <input type="tel" name="whatsapp_national" id="whatsapp-national" class="wa-national-input" autocomplete="tel-national" inputmode="numeric" placeholder="Ex. 7 00 00 00 00" required>
+          </div>
+        </div>
+
+        <label>Volume estim&eacute; de voyageurs / mois<input type="text" name="volume_voyageurs_mois" placeholder="Ex. 200 billets / mois" autocomplete="off"></label>
+        <label>Destinations ou routes principales<input type="text" name="destinations_principales" placeholder="Ex. CDG-ABJ, BRU-CKY" autocomplete="off"></label>
+        <label>Compagnies repr&eacute;sent&eacute;es (optionnel)<input type="text" name="compagnies_routes" placeholder="Ex. AF, TAP, repr&eacute;sentation GSA&hellip;" autocomplete="off"></label>
+        <label>Message<textarea name="message" rows="4" placeholder="Contexte, besoin, fuseau pr&eacute;f&eacute;r&eacute;&hellip;"></textarea></label>
+        <label class="checkbox-line"><input type="checkbox" name="flux_reservations_anticipees" value="oui"> Int&eacute;ress&eacute;(e) par le flux <strong>r&eacute;servations anticip&eacute;es</strong> (veille avant vol)</label>
+        <button type="submit" class="btn-primary">Envoyer ma demande</button>
+      </form>
+
+      <aside class="contact-rdv" aria-labelledby="join-rdv-title">
+        <h3 id="join-rdv-title">Autres canaux</h3>
+        <p><strong>E-mail</strong> : <a href="mailto:expert@robindesairs.eu">expert@robindesairs.eu</a></p>
+        <p><strong>WhatsApp</strong> : <a href="https://wa.me/33756863630" target="_blank" rel="noopener noreferrer"><strong>+33</strong> 7&nbsp;56&nbsp;86&nbsp;36&nbsp;30</a></p>
+        <a href="https://calendly.com/robindesairs" class="btn-primary btn-calendly" target="_blank" rel="noopener noreferrer">Calendly 15 min</a>
+        <a href="https://wa.me/33756863630?text=Bonjour%2C%20je%20souhaite%20rejoindre%20le%20programme%20partenaire%20Robin%20des%20Airs." class="btn-ghost" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-inner">
+      <p><strong>Robin des Airs</strong> &mdash; Partenariats agences</p>
+      <p>
+        <a href="/partenaires-agences.html">Programme EUR</a> &middot;
+        <a href="/partenaires-agences-fcfa.html">Programme FCFA</a> &middot;
+        <a href="/cgv.html">Mentions l&eacute;gales</a>
+      </p>
+      <p class="footer-rgpd">Donn&eacute;es trait&eacute;es conform&eacute;ment au RGPD.</p>
+    </div>
+  </footer>
+
+  <script src="/assets/partenaires-rejoindre.js" defer></script>
+</body>
+</html>

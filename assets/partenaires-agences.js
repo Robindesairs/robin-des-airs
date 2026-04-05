@@ -15,14 +15,3 @@ if (menuBtn && menu) {
   });
 }
 
-const form = document.querySelector(".contact-form");
-if (form) {
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const submitButton = form.querySelector("button[type='submit']");
-    if (submitButton) {
-      submitButton.textContent = "Merci, votre demande a bien ete envoyee";
-      submitButton.disabled = true;
-    }
-  });
-}

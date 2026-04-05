@@ -108,6 +108,21 @@
   to = "/partenaires-agences-fcfa.html"
   status = 200
 
+[[redirects]]
+  from = "/partenaires-rejoindre"
+  to = "/partenaires-rejoindre.html"
+  status = 200
+
+[[redirects]]
+  from = "/partenaires-landing"
+  to = "/partenaires-landing.html"
+  status = 200
+
+[[redirects]]
+  from = "/merci-partenaire"
+  to = "/merci-partenaire.html"
+  status = 200
+
 # Auth CRM (code dans CRM_ACCESS_CODE)
 [[redirects]]
   from = "/api/crm-auth"

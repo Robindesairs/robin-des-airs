@@ -4,36 +4,27 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Programme Partenaire Agences — Robin des Airs</title>
-  <meta name="description" content="Rejoignez le programme partenaire Robin des Airs. Référez vos clients victimes de retards ou annulations de vols et percevez 30 000 FCFA par passager indemnisé. Zéro risque, zéro gestion." />
+  <meta name="description" content="Programme agences Robin des Airs : référez vos clients victimes de retards ou annulations. EU261 — jusqu'à 600 € d'indemnité par voyageur ; Robin gère le dossier. Commission agence : 30 000 FCFA par passager indemnisé. Zéro risque, zéro gestion." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
     :root {
-      /* Couleurs officielles Robin des Airs */
       --navy:          #061326;
       --navy-mid:      #0c1c38;
       --text:          #122032;
-      --muted:         #5c6b7f;
-      --line:          #e2e8f0;
-      --line-soft:     rgba(226, 232, 240, 0.65);
-      --bg:            #faf8f3;
-      --bg-warm:       #f2ebe0;
+      --muted:         #3d4d63;
+      --line:          #e8ecf1;
+      --line-soft:     rgba(232, 236, 241, 0.9);
+      --bg:            #ffffff;
+      --bg-alt:        #f4faf8;
       --surface:       #ffffff;
-      --surface-glass: rgba(255, 255, 255, 0.72);
 
-      /* Accents */
       --teal:          #00c87a;
       --teal-bright:   #00e5a0;
       --teal-dark:     #009960;
-      --teal-glow:     rgba(0, 200, 122, 0.22);
-      --gold:          #b8956c;
-      --gold-soft:     rgba(184, 149, 108, 0.35);
-      --ochre:         #c17a3a;
-      --terracotta:    #a85c3c;
-      --earth:         #6b4c3b;
-      --savanna:       #2d6b4e;
-      --savanna-soft:  rgba(45, 107, 78, 0.12);
-      --sand-deep:     #e8dcc8;
+      --teal-glow:     rgba(0, 200, 122, 0.18);
+      --eyebrow-bg:    rgba(0, 200, 122, 0.1);
+      --eyebrow-fg:    #047857;
 
       --radius: 14px;
       --shadow: 0 4px 24px rgba(6, 19, 38, 0.10);
@@ -50,6 +41,97 @@
     }
 
     a { color: inherit; text-decoration: none; }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* ===== BANDEAU DIASPORA (comme pages partenaires du site) ===== */
+    .agp-diaspora {
+      background: #071018;
+      border-bottom: 1px solid rgba(0, 200, 122, 0.22);
+      padding: 12px 28px;
+    }
+
+    .agp-diaspora-inner {
+      max-width: 1040px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .agp-flags-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 14px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      font-size: 1.08rem;
+      line-height: 1;
+      letter-spacing: 0.12em;
+    }
+
+    .agp-diaspora-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--teal);
+      box-shadow: 0 0 0 3px rgba(0, 200, 122, 0.28);
+      flex-shrink: 0;
+      animation: agp-pulse 2.2s ease-in-out infinite;
+    }
+
+    @keyframes agp-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .agp-diaspora-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .agp-diaspora-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.88);
+      line-height: 1.35;
+    }
+
+    .agp-diaspora-label-short {
+      display: none;
+    }
+
+    @media (max-width: 640px) {
+      .agp-diaspora-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .agp-diaspora-label-full {
+        display: none;
+      }
+
+      .agp-diaspora-label-short {
+        display: inline;
+      }
+    }
 
     /* ===== HEADER ===== */
     header {
@@ -110,14 +192,11 @@
       overflow: hidden;
     }
 
-    /* Texture africaine subtile */
     .hero::before {
       content: '';
       position: absolute;
       inset: 0;
-      background:
-        radial-gradient(ellipse 60% 50% at 80% 20%, rgba(0,200,122,0.12) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 60% at 10% 80%, rgba(184,149,108,0.10) 0%, transparent 60%);
+      background: radial-gradient(ellipse 65% 55% at 85% 15%, rgba(0,200,122,0.14) 0%, transparent 55%);
       pointer-events: none;
     }
 
@@ -148,11 +227,10 @@
     }
 
     .hero h1 .accent { color: var(--teal); }
-    .hero h1 .gold-word { color: var(--gold); }
 
     .hero-sub {
       font-size: clamp(1rem, 2.5vw, 1.18rem);
-      color: rgba(255,255,255,0.72);
+      color: rgba(255,255,255,0.82);
       max-width: 560px;
       margin: 0 auto 38px;
       line-height: 1.7;
@@ -208,10 +286,9 @@
     .stripe strong { font-size: clamp(1.3rem, 3.5vw, 1.85rem); font-weight: 900; }
 
     /* ===== GENERIC SECTION ===== */
-    .section { padding: 76px 28px; }
-    .section-warm { background: var(--bg-warm); }
+    .section { padding: 76px 28px; background: var(--bg); }
+    .section-alt { background: var(--bg-alt); }
     .section-dark { background: var(--navy); color: var(--surface); }
-    .section-sand { background: var(--sand-deep); }
     .container { max-width: 1040px; margin: 0 auto; }
 
     .eyebrow {
@@ -223,16 +300,12 @@
       padding: 4px 12px;
       border-radius: 20px;
       margin-bottom: 12px;
-      background: var(--savanna-soft);
-      color: var(--savanna);
+      background: var(--eyebrow-bg);
+      color: var(--eyebrow-fg);
     }
     .section-dark .eyebrow {
       background: rgba(0,200,122,0.15);
       color: var(--teal-bright);
-    }
-    .section-sand .eyebrow {
-      background: rgba(161,100,67,0.12);
-      color: var(--ochre);
     }
 
     h2 {
@@ -244,19 +317,21 @@
     }
 
     .lead {
-      color: var(--muted);
+      color: var(--text);
       font-size: 1.05rem;
+      font-weight: 500;
       max-width: 580px;
-      margin-bottom: 52px;
+      margin-bottom: 40px;
+      opacity: 0.92;
     }
-    .section-dark .lead { color: rgba(255,255,255,0.6); }
+    .section-dark .lead { color: rgba(255,255,255,0.88); opacity: 1; }
 
     /* ===== STATS ===== */
     .stats-row {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 2px;
-      background: var(--line);
+      gap: 0;
+      border: 1px solid var(--line);
       border-radius: var(--radius);
       overflow: hidden;
     }
@@ -265,7 +340,9 @@
       background: var(--surface);
       padding: 34px 28px;
       text-align: center;
+      border-right: 1px solid var(--line);
     }
+    .stat-item:last-child { border-right: none; }
 
     .stat-num {
       font-size: 2.4rem;
@@ -278,7 +355,9 @@
 
     .stat-label {
       font-size: 0.87rem;
-      color: var(--muted);
+      font-weight: 600;
+      color: var(--text);
+      opacity: 0.78;
       line-height: 1.4;
     }
 
@@ -286,8 +365,8 @@
     .steps {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1px;
-      background: var(--line);
+      gap: 0;
+      border: 1px solid var(--line);
       border-radius: var(--radius);
       overflow: hidden;
     }
@@ -296,7 +375,9 @@
       background: var(--surface);
       padding: 34px 26px;
       position: relative;
+      border-right: 1px solid var(--line);
     }
+    .step:last-child { border-right: none; }
 
     .step-num {
       width: 40px; height: 40px;
@@ -318,7 +399,7 @@
       color: var(--text);
     }
 
-    .step p { font-size: 0.9rem; color: var(--muted); }
+    .step p { font-size: 0.9rem; color: var(--text); opacity: 0.82; font-weight: 500; }
 
     /* ===== AVANTAGES ===== */
     .grid-2 {
@@ -351,7 +432,7 @@
       margin-bottom: 5px;
     }
 
-    .card p { font-size: 0.88rem; color: var(--muted); }
+    .card p { font-size: 0.88rem; color: var(--text); opacity: 0.85; font-weight: 500; }
 
     /* ===== COMMISSIONS ===== */
     .comm-grid {
@@ -436,7 +517,8 @@
     .comm-card:not(.featured) .comm-list li::before { color: var(--teal-bright); }
 
     /* ===== AÉROPORTS ===== */
-    .airports-wrap { background: var(--surface); border-radius: var(--radius); padding: 28px; }
+    .airports-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; }
+    .airports-title { font-size: 0.88rem; color: var(--text); margin: 0 0 16px; font-weight: 700; letter-spacing: 0.02em; }
 
     .airport-tags {
       display: flex;
@@ -445,8 +527,8 @@
     }
 
     .airport-tag {
-      background: var(--bg-warm);
-      border: 1px solid var(--sand-deep);
+      background: var(--surface);
+      border: 1px solid var(--line);
       color: var(--text);
       font-size: 0.82rem;
       font-weight: 600;
@@ -455,11 +537,18 @@
     }
 
     .airport-tag code {
-      font-family: 'Inter', monospace;
+      font-family: ui-monospace, monospace;
       color: var(--teal-dark);
       font-size: 0.78rem;
       font-weight: 700;
       margin-right: 4px;
+    }
+
+    .airport-tag-more {
+      background: var(--eyebrow-bg);
+      border-color: rgba(0, 200, 122, 0.25);
+      color: var(--eyebrow-fg);
+      font-weight: 700;
     }
 
     /* ===== FAQ ===== */
@@ -505,7 +594,9 @@
     .faq-body {
       padding: 0 24px 22px;
       font-size: 0.93rem;
-      color: var(--muted);
+      font-weight: 500;
+      color: var(--text);
+      opacity: 0.88;
       border-top: 1px solid var(--line-soft);
       line-height: 1.72;
     }
@@ -532,8 +623,10 @@
     }
 
     .form-sub {
-      color: var(--muted);
+      color: var(--text);
+      opacity: 0.85;
       font-size: 0.9rem;
+      font-weight: 500;
       margin-bottom: 30px;
     }
 
@@ -555,7 +648,7 @@
       font-size: 0.93rem;
       font-family: inherit;
       color: var(--text);
-      background: var(--bg);
+      background: var(--surface);
       transition: border-color 0.2s, box-shadow 0.2s;
       appearance: none;
     }
@@ -583,7 +676,7 @@
       border: 2px solid var(--line);
       border-radius: 11px;
       cursor: pointer;
-      background: var(--bg);
+      background: var(--surface);
       transition: all 0.2s;
       text-align: center;
     }
@@ -634,9 +727,11 @@
 
     .form-note {
       font-size: 0.78rem;
-      color: var(--muted);
+      color: var(--text);
+      opacity: 0.72;
       text-align: center;
       margin-top: 14px;
+      font-weight: 500;
     }
 
     /* ===== CONTACT STRIP ===== */
@@ -699,6 +794,180 @@
     footer a { color: rgba(255,255,255,0.4); transition: color 0.2s; }
     footer a:hover { color: var(--teal); }
 
+    /* ===== Exemple famille + frais de dossier ===== */
+    .agp-family-example {
+      margin-top: 28px;
+      padding: 22px 24px;
+      background: var(--bg-alt);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      border-left: 4px solid var(--teal);
+    }
+
+    .agp-family-example h3 {
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: var(--text);
+      margin: 0 0 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .agp-family-example .agp-family-lead-amount {
+      font-size: clamp(1.18rem, 2.6vw, 1.52rem);
+      font-weight: 800;
+      color: var(--teal-dark);
+      margin: 0 0 14px;
+      line-height: 1.3;
+      letter-spacing: -0.02em;
+      opacity: 1;
+    }
+
+    .agp-family-lead-money {
+      display: inline-block;
+      margin-right: 0.35em;
+      font-size: 1.08em;
+      line-height: 1;
+      vertical-align: 0.06em;
+    }
+
+    .agp-family-example p {
+      font-size: 0.93rem;
+      font-weight: 500;
+      line-height: 1.65;
+      color: var(--text);
+      margin: 0 0 10px;
+      opacity: 0.92;
+    }
+
+    .agp-family-example p:last-child {
+      margin-bottom: 0;
+    }
+
+    .agp-family-strong {
+      color: var(--teal-dark);
+      font-weight: 800;
+    }
+
+    .agp-family-note {
+      margin-top: 14px !important;
+      padding-top: 14px;
+      border-top: 1px solid var(--line-soft);
+      font-size: 0.88rem !important;
+      opacity: 0.88 !important;
+    }
+
+    .agp-decompte-caption {
+      font-size: 0.84rem;
+      font-weight: 500;
+      line-height: 1.55;
+      color: var(--text);
+      opacity: 0.88;
+      margin: 18px 0 12px;
+    }
+
+    .agp-decompte-wrap {
+      overflow-x: auto;
+      margin: 0 0 12px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .agp-decompte-table {
+      width: 100%;
+      min-width: 280px;
+      border-collapse: collapse;
+      font-size: 0.87rem;
+      font-weight: 500;
+    }
+
+    .agp-decompte-table caption {
+      caption-side: top;
+      text-align: left;
+      padding: 12px 14px 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .agp-decompte-table th,
+    .agp-decompte-table td {
+      padding: 11px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--line-soft);
+      vertical-align: top;
+    }
+
+    .agp-decompte-table th {
+      font-weight: 800;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text);
+      opacity: 0.75;
+      background: var(--bg-alt);
+    }
+
+    .agp-decompte-table td:last-child {
+      text-align: right;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .agp-decompte-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .agp-decompte-row-minus td:last-child {
+      color: var(--teal-dark);
+    }
+
+    .agp-decompte-row-subhead td {
+      font-weight: 800;
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: var(--bg-alt);
+      padding-top: 12px;
+      padding-bottom: 8px;
+    }
+
+    .agp-decompte-row-sub td:first-child {
+      padding-left: 22px;
+      font-size: 0.84rem;
+      font-weight: 500;
+    }
+
+    .agp-decompte-row-subtotal td {
+      font-weight: 800;
+      background: rgba(0, 200, 122, 0.07);
+      border-top: 1px solid var(--line);
+    }
+
+    .agp-decompte-row-total td {
+      font-weight: 800;
+      padding-top: 14px;
+      padding-bottom: 14px;
+      border-top: 2px solid var(--teal);
+      background: rgba(0, 200, 122, 0.12);
+      font-size: 0.95rem;
+    }
+
+    .agp-decompte-row-total td:first-child {
+      color: var(--teal-dark);
+    }
+
+    .agp-decompte-after {
+      font-size: 0.84rem;
+      font-weight: 500;
+      line-height: 1.55;
+      color: var(--text);
+      opacity: 0.88;
+      margin: 0 0 14px;
+    }
+
     /* ===== RESPONSIVE ===== */
     @media (max-width: 600px) {
       .section { padding: 54px 18px; }
@@ -707,6 +976,10 @@
       .phone-row select { flex: none; }
       .conv-grid { grid-template-columns: 1fr; }
       .comm-grid { grid-template-columns: 1fr; }
+      .stat-item { border-right: none; border-bottom: 1px solid var(--line); }
+      .stat-item:last-child { border-bottom: none; }
+      .step { border-right: none; border-bottom: 1px solid var(--line); }
+      .step:last-child { border-bottom: none; }
     }
   </style>
 </head>
@@ -721,16 +994,30 @@
   <a href="#rejoindre" class="nav-cta">Rejoindre le programme</a>
 </header>
 
+<div class="agp-diaspora" role="region" aria-label="Corridor Europe-Afrique et diaspora">
+  <div class="agp-diaspora-inner">
+    <span class="sr-only">Diaspora et corridor : S&eacute;n&eacute;gal, Mali, C&ocirc;te d&rsquo;Ivoire, Guin&eacute;e, Cameroun, RDC, B&eacute;nin, Togo, Ghana, Nigeria.</span>
+    <div class="agp-flags-pill" aria-hidden="true">&#x1F1F8;&#x1F1F3; &#x1F1F2;&#x1F1F1; &#x1F1E8;&#x1F1EE; &#x1F1EC;&#x1F1F3; &#x1F1E8;&#x1F1F2; &#x1F1E8;&#x1F1E9; &#x1F1E7;&#x1F1EF; &#x1F1F9;&#x1F1EC; &#x1F1EC;&#x1F1ED; &#x1F1F3;&#x1F1EC;</div>
+    <div class="agp-diaspora-title">
+      <span class="agp-diaspora-dot" aria-hidden="true"></span>
+      <p class="agp-diaspora-label">
+        <span class="agp-diaspora-label-full">Programme partenaire agences &middot; Europe &amp; Afrique</span>
+        <span class="agp-diaspora-label-short">Partenaires &middot; Afrique</span>
+      </p>
+    </div>
+  </div>
+</div>
+
 <!-- HERO -->
 <section class="hero">
   <div class="hero-inner">
     <div class="hero-badge">✦ Programme Partenaire · Agences de Voyages</div>
     <h1>
-      Chaque vol perturbé peut devenir<br/>
+      Chaque vol perturb&eacute; peut devenir<br/>
       <span class="accent">un revenu pour votre agence</span>
     </h1>
     <p class="hero-sub">
-      Référez vos clients victimes de retards ou annulations — Robin des Airs gère tout le dossier EU261 et vous verse <strong style="color:#fff">30 000 FCFA</strong> par passager indemnisé. Zéro risque. Zéro gestion.
+      R&eacute;f&eacute;rez retards et annulations &mdash; Robin g&egrave;re l&rsquo;EU261. Vos clients : jusqu&rsquo;&agrave; <strong style="color:#fff">600 &euro;</strong> chacun ; <strong style="color:#fff">commission agence : 30 000 FCFA</strong> / passager indemnis&eacute;. Z&eacute;ro risque. Z&eacute;ro gestion.
     </p>
     <div class="hero-btns">
       <a href="#rejoindre" class="btn-teal">
@@ -745,7 +1032,7 @@
 
 <!-- STRIPE -->
 <div class="stripe">
-  Votre commission : <strong>30 000 FCFA</strong> par passager indemnisé &nbsp;·&nbsp; Zéro risque &nbsp;·&nbsp; Zéro gestion
+  Jusqu&rsquo;&agrave; <strong>600 &euro;</strong> / voyageur (EU261) &nbsp;&middot;&nbsp; <strong>Commission agence</strong> : <strong>30 000 FCFA</strong> / passager indemnis&eacute; &nbsp;&middot;&nbsp; Z&eacute;ro risque &nbsp;&middot;&nbsp; Z&eacute;ro gestion
 </div>
 
 <!-- STATS -->
@@ -769,15 +1056,69 @@
         <div class="stat-label">Aucun frais pour votre<br/>agence, aucun risque</div>
       </div>
     </div>
+
+    <div class="agp-family-example" role="region" aria-labelledby="agp-family-title">
+      <h3 id="agp-family-title">Exemple : la famille Diallo, Paris &rarr; Dakar</h3>
+      <p class="agp-family-lead-amount" aria-label="Part nette famille Diallo dans cet exemple">
+        <span class="agp-family-lead-money" aria-hidden="true">&#x1F4B0;</span><strong>1&nbsp;100&nbsp;400 FCFA</strong> &mdash; indemnit&eacute; nette pour la famille Diallo.
+      </p>
+      <p>
+        <strong>4 passagers</strong>, vol <strong>Paris &ndash; Dakar</strong>, <strong>4 h 05 de retard</strong> &agrave; l&rsquo;arriv&eacute;e.<br />
+        Robin g&egrave;re le dossier EU261.
+      </p>
+      <p>
+        Ici, l&rsquo;indemnit&eacute; est <strong>pay&eacute;e par Air France</strong> (exemple de compagnie).
+      </p>
+      <p>
+        <strong>Commission agence</strong> : <strong class="agp-family-strong">120 000 FCFA</strong> (4 &times; 30 000) une fois les passagers indemnis&eacute;s.
+      </p>
+
+      <p class="agp-decompte-caption">
+        <strong>D&eacute;compte</strong> : comment on arrive au montant ci-dessus.<br />
+        D&rsquo;abord ce que <strong>Air France</strong> paie dans cet exemple, puis les pr&eacute;l&egrave;vements, puis le rappel de la part famille.
+      </p>
+      <div class="agp-decompte-wrap">
+        <table class="agp-decompte-table">
+          <caption>D&eacute;compte indicatif &mdash; famille Diallo, 4 passagers, retard important</caption>
+          <thead>
+            <tr>
+              <th scope="col">Poste</th>
+              <th scope="col">Montant</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Indemnit&eacute; pay&eacute;e par <strong>Air France</strong> dans cet exemple &mdash; <strong>montant total pour les 4 passagers</strong>, &agrave; <strong>partager entre eux</strong> (selon mandat). Indicatif : &eacute;quivalent <strong>4 &times; 600&nbsp;&euro;</strong> (long-courrier), converti en FCFA</td>
+              <td>1&nbsp;572&nbsp;000 FCFA</td>
+            </tr>
+            <tr class="agp-decompte-row-minus">
+              <td>Honoraires Robin des Airs et partenaires : analyse EU261, constitution du dossier, pilotage jusqu&rsquo;&agrave; l&rsquo;indemnisation, m&eacute;diation, appui juridique / avocat si n&eacute;cessaire, donn&eacute;es vol &amp; veille &mdash; <strong>&asymp; 22,4&nbsp;%</strong> de l&rsquo;indemnit&eacute; vers&eacute;e par <strong>Air France</strong> dans cet exemple</td>
+              <td>&minus; 351&nbsp;600 FCFA</td>
+            </tr>
+            <tr class="agp-decompte-row-minus">
+              <td><strong>Apporteur d&rsquo;affaires</strong> (votre agence &mdash; 4 &times; 30&nbsp;000 FCFA) &mdash; <strong>&asymp; 7,6&nbsp;%</strong> de l&rsquo;indemnit&eacute; dans cet exemple</td>
+              <td>&minus; 120&nbsp;000 FCFA</td>
+            </tr>
+            <tr class="agp-decompte-row-total">
+              <td><strong>Famille Diallo : part nette</strong> (rappel &mdash; mandat passagers, comme en t&ecirc;te d&rsquo;exemple)</td>
+              <td><strong>1&nbsp;100&nbsp;400 FCFA</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="agp-family-note">
+        <strong>Client satisfait = forte chance de recommandation</strong> pour votre agence. Exemple p&eacute;dagogique : compagnie, montants, change et pourcentages varient selon le dossier (1&nbsp;&euro; &asymp; 655&nbsp;FCFA ici). Au total, les pr&eacute;l&egrave;vements illustr&eacute;s = <strong>30&nbsp;%</strong> de l&rsquo;indemnit&eacute; compagnie dans ce cas (<strong>&asymp; 22,4&nbsp;%</strong> Robin + <strong>&asymp; 7,6&nbsp;%</strong> apporteur). La convention et le mandat passagers font foi.
+      </p>
+    </div>
   </div>
 </section>
 
 <!-- COMMENT ÇA MARCHE -->
-<section class="section section-warm">
+<section class="section section-alt">
   <div class="container">
     <div class="eyebrow">Fonctionnement</div>
     <h2>Simple, rapide, sans friction</h2>
-    <p class="lead">Votre rôle s'arrête au référencement. Robin des Airs gère l'intégralité du dossier juridique.</p>
+    <p class="lead">Vous orientez le client ; nous transformons la situation bloquante en parcours menant &agrave; l&rsquo;indemnisation. Robin des Airs porte tout le dossier EU261.</p>
     <div class="steps">
       <div class="step">
         <div class="step-num">1</div>
@@ -786,8 +1127,8 @@
       </div>
       <div class="step">
         <div class="step-num">2</div>
-        <h3>Vous nous le signalez</h3>
-        <p>Formulaire partenaire, e-mail ou WhatsApp. Transmission en moins de 2 minutes, depuis votre téléphone.</p>
+        <h3>C&rsquo;est nous qui signalons</h3>
+        <p>Robin suit les vols &eacute;ligibles du corridor : en cas de retard, annulation ou surbooking ouvrant un droit EU261, <strong>nous vous alertons</strong>. Vous pouvez aussi nous orienter un client &agrave; tout moment (WhatsApp, e-mail ou formulaire) en moins de 2 minutes.</p>
       </div>
       <div class="step">
         <div class="step-num">3</div>
@@ -796,8 +1137,8 @@
       </div>
       <div class="step">
         <div class="step-num">4</div>
-        <h3>Vous touchez votre commission</h3>
-        <p>Dès indemnisation du passager, votre commission est déclenchée sous 48h — virement ou Mobile Money.</p>
+        <h3>Vous touchez votre commission agence</h3>
+        <p>Le passager a &eacute;t&eacute; indemnis&eacute; : une fin de parcours qu&rsquo;il n&rsquo;esp&eacute;rait plus. Sous 48h, votre commission agence suit &mdash; virement ou Mobile Money.</p>
       </div>
     </div>
   </div>
@@ -808,7 +1149,7 @@
   <div class="container">
     <div class="eyebrow">Pourquoi nous rejoindre</div>
     <h2>Tout bénéfice, aucun risque</h2>
-    <p class="lead">Conçu pour s'intégrer naturellement dans votre activité, sans charge supplémentaire.</p>
+    <p class="lead">Une r&eacute;ponse concr&egrave;te aux incidents de vol, sans alourdir vos &eacute;quipes.</p>
     <div class="grid-2">
       <div class="card">
         <div class="card-icon">💰</div>
@@ -827,8 +1168,8 @@
       <div class="card">
         <div class="card-icon">🤝</div>
         <div>
-          <h3>Fidélisez vos clients</h3>
-          <p>Offrir un service de réclamation renforce la confiance et l'attachement de vos voyageurs à votre agence.</p>
+          <h3>Fid&eacute;lisez vos clients</h3>
+          <p>Transformer un coup dur en d&eacute;nouement positif : votre agence reste celle qui propose une vraie solution, pas un mur.</p>
         </div>
       </div>
       <div class="card">
@@ -856,10 +1197,10 @@
   </div>
 </section>
 
-<!-- COMMISSIONS -->
+<!-- COMMISSION AGENCE -->
 <section class="section section-dark">
   <div class="container">
-    <div class="eyebrow">Votre commission</div>
+    <div class="eyebrow">Commission agence</div>
     <h2>Deux conventions disponibles</h2>
     <p class="lead">Choisissez la devise adaptée à votre marché à la signature de la convention partenaire.</p>
     <div class="comm-grid">
@@ -893,13 +1234,13 @@
 </section>
 
 <!-- VOLS ÉLIGIBLES -->
-<section class="section section-sand">
+<section class="section">
   <div class="container">
-    <div class="eyebrow" style="background:rgba(161,100,67,0.12);color:var(--ochre)">Couverture</div>
+    <div class="eyebrow">Couverture</div>
     <h2>Quels vols sont concernés ?</h2>
     <p class="lead">Spécialiste des routes Afrique sub-saharienne ↔ Europe, les plus impactées par les perturbations.</p>
     <div class="airports-wrap">
-      <p style="font-size:0.88rem;color:var(--muted);margin-bottom:16px;font-weight:600">Aéroports africains couverts</p>
+      <p class="airports-title">A&eacute;roports africains couverts</p>
       <div class="airport-tags">
         <div class="airport-tag"><code>DSS</code> Dakar</div>
         <div class="airport-tag"><code>ABJ</code> Abidjan</div>
@@ -917,7 +1258,7 @@
         <div class="airport-tag"><code>OUA</code> Ouagadougou</div>
         <div class="airport-tag"><code>NIM</code> Niamey</div>
         <div class="airport-tag"><code>TNR</code> Antananarivo</div>
-        <div class="airport-tag" style="background:var(--savanna-soft);border-color:rgba(45,107,78,0.3);color:var(--savanna)">+ autres destinations</div>
+        <div class="airport-tag airport-tag-more">+ autres destinations</div>
       </div>
     </div>
   </div>
@@ -934,56 +1275,91 @@
       <details>
         <summary>Mon agence paie-t-elle quelque chose pour rejoindre le programme ?</summary>
         <div class="faq-body">
-          Non. Les 30 000 FCFA sont versés par Robin des Airs à l'agence sur les dossiers indemnisés. Votre agence ne paie rien. Aucun risque financier si le dossier n'aboutit pas.
+          Non. L&rsquo;adh&eacute;sion est gratuite. Les 30 000 FCFA (ou 45 &euro;) sont vers&eacute;s par Robin des Airs &agrave; l&rsquo;agence sur les dossiers effectivement indemnis&eacute;s. Votre agence ne paie rien, ni frais d&rsquo;entr&eacute;e, ni abonnement. Aucun risque financier si un dossier n&rsquo;aboutit pas.
         </div>
       </details>
 
       <details>
-        <summary>Quand suis-je payé ?</summary>
+        <summary>Quand suis-je pay&eacute; ?</summary>
         <div class="faq-body">
-          Dès que le passager a effectivement reçu l'indemnité du transporteur, Robin des Airs déclenche votre commission : en général sous 48h, sur le moyen convenu (virement bancaire, Mobile Money, etc.).
+          D&egrave;s que le passager a effectivement re&ccedil;u l&rsquo;indemnit&eacute; du transporteur, Robin des Airs d&eacute;clenche votre commission agence sous 48 heures, sur le moyen convenu &agrave; la signature (virement bancaire ou Mobile Money).
         </div>
       </details>
 
       <details>
-        <summary>Mes clients peuvent-ils toucher jusqu'à 600 € ?</summary>
+        <summary>Mes clients peuvent-ils toucher jusqu&rsquo;&agrave; 600 &euro; ?</summary>
         <div class="faq-body">
-          Le règlement européen CE 261/2004 (EU261) prévoit des indemnités selon la distance du vol et le type d'incident ; le plafond peut atteindre 600 € par passager pour les cas les plus longs. Le montant effectif dépend du dossier.
+          Le r&egrave;glement europ&eacute;en CE 261/2004 pr&eacute;voit des indemnit&eacute;s selon la distance et le type d&rsquo;incident ; le plafond est de 600 &euro; par passager pour les vols longue distance (&gt; 3&nbsp;500 km) retard&eacute;s de plus de 3 heures. Le montant effectif d&eacute;pend du dossier.
         </div>
       </details>
 
       <details>
-        <summary>Proposez-vous une version en euros pour la commission ?</summary>
+        <summary>Proposez-vous une version en euros pour la commission agence ?</summary>
         <div class="faq-body">
-          Oui. Si votre convention est en euros, la commission est de 45 € par passager indemnisé. Il suffit de sélectionner cette option dans le formulaire d'adhésion ou d'en convenir à l'intégration.
+          Oui. La commission agence est de <strong>30 000 FCFA</strong> ou <strong>45 &euro;</strong> par passager indemnis&eacute;, au choix. Vous s&eacute;lectionnez votre devise &agrave; la signature de la convention partenaire.
         </div>
       </details>
 
       <details>
         <summary>Comment envoyer un dossier ?</summary>
         <div class="faq-body">
-          Via le formulaire partenaire ci-dessous, par e-mail à <strong>expert@robindesairs.eu</strong>, ou par WhatsApp au <strong>+33 7 56 86 36 30</strong>. Nous définissons ensemble le canal préféré lors de votre intégration.
+          Via le formulaire partenaire ci-dessous, par e-mail &agrave; <strong>expert@robindesairs.eu</strong>, ou par WhatsApp au <strong>+33 7 56 86 36 30</strong>. Nous d&eacute;finissons ensemble le canal pr&eacute;f&eacute;r&eacute; &agrave; votre int&eacute;gration &mdash; la plupart des agences utilisent WhatsApp.
         </div>
       </details>
 
       <details>
-        <summary>Les données de mes voyageurs sont-elles protégées ?</summary>
+        <summary>Les donn&eacute;es de mes voyageurs sont-elles prot&eacute;g&eacute;es ?</summary>
         <div class="faq-body">
-          Oui. Les données sont hébergées en Europe et le traitement est conforme au RGPD. La confidentialité de vos clients est une priorité absolue pour Robin des Airs.
+          Oui. Donn&eacute;es h&eacute;berg&eacute;es en Europe, traitement conforme au RGPD. Les informations de vos clients ne sont utilis&eacute;es que pour la r&eacute;clamation, jamais revendues ni partag&eacute;es &agrave; des tiers.
         </div>
       </details>
 
       <details>
-        <summary>Quels vols sont éligibles ?</summary>
+        <summary>Quels vols sont &eacute;ligibles ?</summary>
         <div class="faq-body">
-          Les vols relevant du cadre EU261/2004 : retard à l'arrivée significatif, annulation ou surbooking, sur des routes Afrique sub-saharienne ↔ Europe opérées par une compagnie européenne ou au départ d'un aéroport européen.
+          Les vols relevant du cadre EU261/2004 : retard &agrave; l&rsquo;arriv&eacute;e de plus de 3 heures, annulation sans pr&eacute;avis suffisant, ou refus d&rsquo;embarquement. La compagnie doit &ecirc;tre europ&eacute;enne, ou le d&eacute;part doit se faire depuis un a&eacute;roport europ&eacute;en.
         </div>
       </details>
 
       <details>
-        <summary>Puis-je être contacté directement sur WhatsApp ?</summary>
+        <summary>Puis-je &ecirc;tre contact&eacute; directement sur WhatsApp ?</summary>
         <div class="faq-body">
-          Oui. Écrivez-nous au <strong>+33 7 56 86 36 30</strong> (composez l'indicatif de votre pays d'abord). C'est le canal idéal pour un premier échange rapide ou pour nous transmettre un dossier urgent.
+          Oui. <strong>+33 7 56 86 36 30</strong> (composez l&rsquo;indicatif de votre pays d&rsquo;abord). C&rsquo;est le canal le plus rapide pour un premier &eacute;change ou pour nous transmettre un dossier.
+        </div>
+      </details>
+
+      <details>
+        <summary>Mes voyageurs sont-ils oblig&eacute;s de passer par Robin des Airs ?</summary>
+        <div class="faq-body">
+          Non. Le recours est un droit du passager, pas une obligation. Nous intervenons uniquement si le client signe le mandat de repr&eacute;sentation. Votre r&ocirc;le s&rsquo;arr&ecirc;te &agrave; la recommandation &mdash; le client d&eacute;cide librement.
+        </div>
+      </details>
+
+      <details>
+        <summary>Y a-t-il une exclusivit&eacute; ou un engagement de volume ?</summary>
+        <div class="faq-body">
+          Aucune exclusivit&eacute;, aucun minimum de dossiers. Vous envoyez les dossiers quand vous en avez, au rythme qui vous convient. Certaines agences nous envoient un dossier par trimestre, d&rsquo;autres plusieurs par semaine.
+        </div>
+      </details>
+
+      <details>
+        <summary>Combien de temps prend un dossier ?</summary>
+        <div class="faq-body">
+          En moyenne 60 &agrave; 150 jours, de la mise en demeure &agrave; l&rsquo;indemnisation. Certains dossiers simples aboutissent en 30 jours, les dossiers contentieux peuvent d&eacute;passer 6 mois. Nous vous tenons inform&eacute; &agrave; chaque &eacute;tape.
+        </div>
+      </details>
+
+      <details>
+        <summary>Comment suis-je inform&eacute; de l&rsquo;avancement du dossier de mon client ?</summary>
+        <div class="faq-body">
+          Vous recevez les notifications cl&eacute;s sur WhatsApp ou par e-mail : mise en demeure envoy&eacute;e, r&eacute;ponse de la compagnie, indemnisation re&ccedil;ue, commission vers&eacute;e. Pas de suivi &agrave; faire de votre c&ocirc;t&eacute;.
+        </div>
+      </details>
+
+      <details>
+        <summary>Mon &eacute;quipe doit-elle &ecirc;tre form&eacute;e au droit europ&eacute;en ?</summary>
+        <div class="faq-body">
+          Pas du tout. Votre seul r&ocirc;le est de signaler les dossiers (vol, date, nature de l&rsquo;incident). Robin des Airs s&rsquo;occupe de toute l&rsquo;analyse juridique, des proc&eacute;dures et de la m&eacute;diation.
         </div>
       </details>
 
@@ -992,10 +1368,10 @@
 </section>
 
 <!-- FORMULAIRE -->
-<section class="section section-warm" id="rejoindre">
+<section class="section section-alt" id="rejoindre">
   <div class="container">
     <div style="text-align:center;margin-bottom:44px">
-      <div class="eyebrow" style="background:var(--savanna-soft);color:var(--savanna)">Inscription</div>
+      <div class="eyebrow">Inscription</div>
       <h2>Rejoindre le programme partenaire</h2>
       <p class="lead" style="margin:8px auto 0">Inscription gratuite — Convention signée en 24h</p>
     </div>
