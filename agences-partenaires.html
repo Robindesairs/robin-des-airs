@@ -275,16 +275,17 @@
     .stats-row {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 2px;
-      background: var(--line);
-      border-radius: var(--radius);
-      overflow: hidden;
+      gap: 14px;
+      background: transparent;
     }
 
     .stat-item {
       background: var(--surface);
+      border: 1.5px solid var(--line-soft);
+      border-radius: var(--radius);
       padding: 34px 28px;
       text-align: center;
+      box-shadow: var(--shadow);
     }
 
     .stat-num {
@@ -306,16 +307,17 @@
     .steps {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1px;
-      background: var(--line);
-      border-radius: var(--radius);
-      overflow: hidden;
+      gap: 14px;
+      background: transparent;
     }
 
     .step {
       background: var(--surface);
+      border: 1.5px solid var(--line-soft);
+      border-radius: var(--radius);
       padding: 34px 26px;
       position: relative;
+      box-shadow: var(--shadow);
     }
 
     .step-num {
@@ -803,6 +805,7 @@
     .proof-avatars span:nth-child(3) { background: var(--gold); color: #fff; }
 
     /* ===== SIMULATEUR ===== */
+    .lead.sim-intro { margin-bottom: 14px; max-width: 720px; }
     .sim-box {
       background: var(--navy);
       color: var(--surface);
@@ -1047,7 +1050,7 @@
       <span class="accent">un revenu pour votre agence</span>
     </h1>
     <p class="hero-sub">
-      Référez vos clients victimes de retards ou annulations — Robin des Airs gère tout le dossier EU261 et vous verse <strong style="color:#fff">30.000 FCFA</strong> par passager indemnisé. Zéro risque. Zéro gestion.
+      Référez vos clients victimes de retards, annulations, surbooking ou correspondances manquées (EU261) — Robin des Airs gère tout le dossier et vous verse <strong style="color:#fff">30.000 FCFA</strong> par passager indemnisé. Zéro risque. Zéro gestion.
     </p>
     <div class="hero-btns">
       <a href="#rejoindre" class="btn-teal">
@@ -1100,7 +1103,7 @@
       <div class="step">
         <div class="step-num">1</div>
         <h3>Votre client est perturbé</h3>
-        <p>Retard important, annulation ou surbooking sur un vol Afrique sub-saharienne ↔ Europe relevant du règlement EU261.</p>
+        <p>Retard important à l’arrivée, annulation, surbooking ou correspondance manquée liée à la perturbation, sur un vol Afrique sub-saharienne ↔ Europe relevant du règlement EU261.</p>
       </div>
       <div class="step">
         <div class="step-num">2</div>
@@ -1131,7 +1134,7 @@
       </div>
       <div class="stat-item">
         <div class="stat-num">30.000</div>
-        <div class="stat-label">FCFA versés à votre agence<br/>par dossier gagné</div>
+        <div class="stat-label">FCFA versés à votre agence<br/>par passager indemnisé</div>
       </div>
       <div class="stat-item">
         <div class="stat-num">48h</div>
@@ -1150,13 +1153,20 @@
   <div class="container">
     <div class="eyebrow">Pourquoi nous rejoindre</div>
     <h2>Tout bénéfice, aucun risque</h2>
-    <p class="lead">Conçu pour s'intégrer naturellement dans votre activité, sans charge supplémentaire.</p>
+    <p class="lead">Conçu pour s'intégrer dans votre activité tout en préservant la confiance de vos voyageurs : commission pour vous, indemnité et sérénité pour eux.</p>
     <div class="grid-2">
       <div class="card">
         <div class="card-icon">💰</div>
         <div>
           <h3>Revenu passif immédiat</h3>
-          <p>30.000 FCFA par dossier gagné, versés en 48h. Aucun plafond — chaque client référé compte.</p>
+          <p>30.000 FCFA par passager indemnisé, versés en 48h. Aucun plafond — chaque client référé compte.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-icon">⭐</div>
+        <div>
+          <h3>Satisfaction &amp; image client</h3>
+          <p>Vos voyageurs sont pris en charge de A à Z sur leur dossier EU261 : moins de frustration, plus de reconnaissance envers <strong>votre agence</strong> qui leur a ouvert ce service.</p>
         </div>
       </div>
       <div class="card">
@@ -1170,7 +1180,7 @@
         <div class="card-icon">🤝</div>
         <div>
           <h3>Fidélisez vos clients</h3>
-          <p>Offrir un service de réclamation renforce la confiance et l'attachement de vos voyageurs à votre agence.</p>
+          <p>Leur proposer une vraie suite en cas de retard ou d'annulation, c'est renforcer la confiance et les inciter à repasser par vous pour leurs prochains voyages.</p>
         </div>
       </div>
       <div class="card">
@@ -1203,23 +1213,22 @@
   <div class="container">
     <div class="eyebrow">Simulateur de revenus</div>
     <h2>Combien pouvez-vous gagner ?</h2>
-    <p class="lead">Ajustez le curseur selon votre volume mensuel de voyageurs Afrique ↔ Europe. Estimation basée sur un taux de perturbation EU261 de 8 %.</p>
-
+    <p class="lead sim-intro">Ajustez le curseur selon votre volume mensuel de voyageurs Afrique ↔ Europe. Le simulateur utilise environ <strong>8&nbsp;%</strong> de vos voyageurs comme base : il s’agit d’estimer la part de personnes qui pourraient être <strong>concernées par un incident potentiellement ouvrant droit</strong> à une réclamation EU261 — retards importants à l’arrivée, annulations, surbooking (refus d’embarquement), correspondances manquées lorsque l’itinéraire reste couvert et la perturbation imputable au transporteur.</p>
     <div class="sim-box">
       <div class="sim-grid">
         <div>
           <div class="sim-label">Vos voyageurs par mois</div>
-          <div><span class="sim-clients" id="simClients">100</span><span class="sim-unit">voyageurs/mois</span></div>
+          <div><span class="sim-clients" id="simClients">50</span><span class="sim-unit">voyageurs/mois</span></div>
           <div class="sim-slider-wrap" style="margin-top:14px">
-            <input type="range" id="simSlider" class="sim-slider" min="10" max="500" step="10" value="100" />
+            <input type="range" id="simSlider" class="sim-slider" min="10" max="500" step="10" value="50" />
           </div>
-          <div class="sim-rate" id="simRate">≈ 8 dossiers éligibles/mois</div>
+          <div class="sim-rate" id="simRate">≈ 4 dossiers éligibles/mois</div>
         </div>
         <div class="sim-result">
           <div class="sim-result-label">Revenu mensuel estimé</div>
-          <div class="sim-amount" id="simMonthly">240.000 FCFA</div>
+          <div class="sim-amount" id="simMonthly">120.000 FCFA</div>
           <div class="sim-period">par mois · versé en 48h</div>
-          <div class="sim-year">Sur 12 mois : <strong id="simYearly">2.880.000 FCFA</strong></div>
+          <div class="sim-year">Sur 12 mois : <strong id="simYearly">1.440.000 FCFA</strong></div>
         </div>
       </div>
     </div>
@@ -1245,9 +1254,9 @@
           <div style="font-size:12px;color:var(--earth);margin-top:2px">4 × 30.000 FCFA · versée en 48 h</div>
         </div>
         <div style="background:#fff;border-radius:12px;padding:16px 18px;border-left:4px solid var(--savanna)">
-          <div style="font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--earth);font-weight:600">Effort de votre part</div>
-          <div style="font-size:24px;font-weight:800;color:var(--navy);margin-top:4px">Veille assurée</div>
-          <div style="font-size:12px;color:var(--earth);margin-top:2px">notification en amont · rien à déclarer côté agence</div>
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--earth);font-weight:600">De votre côté</div>
+          <div style="font-size:22px;font-weight:800;color:var(--navy);margin-top:4px;line-height:1.2">Vous orientez le client</div>
+          <div style="font-size:12px;color:var(--earth);margin-top:6px;line-height:1.45">Robin des Airs monte et suit tout le dossier auprès de la compagnie. Vous n'avez pas à remplir des formulaires à chaque retard ni à gérer les relances juridiques.</div>
         </div>
       </div>
       <p style="margin:18px 0 0;font-size:13.5px;color:var(--earth);font-style:italic">Un seul dossier famille = plus de commission qu'une semaine de billetterie classique.</p>
@@ -1323,7 +1332,7 @@
         </ul>
       </div>
       <div class="comm-card">
-        <div class="comm-tag" style="background:rgba(0,200,122,0.15);color:var(--teal-bright)">Zone euro</div>
+        <div class="comm-tag" style="background:rgba(0,200,122,0.15);color:var(--teal-bright)">Recommandé Europe</div>
         <div class="comm-currency" style="color:rgba(255,255,255,0.6)">Convention EUR</div>
         <div class="comm-amount" style="color:#fff">45 €</div>
         <div class="comm-per">EUR par passager indemnisé</div>
@@ -1444,7 +1453,7 @@
       <details>
         <summary>Quels vols sont éligibles ?</summary>
         <div class="faq-body">
-          Les vols relevant du cadre EU261/2004 : retard à l'arrivée significatif, annulation ou surbooking, sur des routes Afrique sub-saharienne ↔ Europe opérées par une compagnie européenne ou au départ d'un aéroport européen.
+          Les vols relevant du cadre EU261/2004 : retard à l'arrivée significatif, annulation, surbooking ou conséquences sur une correspondance lorsque l’itinéraire reste couvert par le règlement, sur des routes Afrique sub-saharienne ↔ Europe opérées par une compagnie européenne ou au départ d'un aéroport européen.
         </div>
       </details>
 
@@ -1528,8 +1537,8 @@
           </div>
 
           <div class="field">
-            <label for="email">E-mail (facultatif)</label>
-            <input type="email" id="email" name="email" placeholder="vous@votreagence.com" />
+            <label for="email">E-mail *</label>
+            <input type="email" id="email" name="email" placeholder="vous@votreagence.com" required autocomplete="email" />
           </div>
 
           <div class="field">
@@ -1548,6 +1557,7 @@
                 <label for="cv-eur" class="conv-label">
                   <div class="conv-amount">45 €</div>
                   <div class="conv-ccy">EUR / passager</div>
+                  <div class="conv-badge">Recommandé Europe</div>
                 </label>
               </div>
             </div>
@@ -1573,7 +1583,7 @@
             ✦ Envoyer ma demande de partenariat
           </button>
           <a href="#" id="wa-prefill-link" class="btn-wa-prefill is-disabled" target="_blank" rel="noopener noreferrer" aria-disabled="true">💬 Ouvrir WhatsApp avec ce message</a>
-          <p class="wa-prefill-hint" id="wa-prefill-hint">Renseignez les champs obligatoires (agence, nom, indicatif, numéro) pour générer le message prérempli vers Robin des Airs.</p>
+          <p class="wa-prefill-hint" id="wa-prefill-hint">Renseignez les champs obligatoires (agence, nom, indicatif, numéro, e-mail) pour générer le message prérempli vers Robin des Airs.</p>
           <p class="form-note">🔒 Données protégées · Réponse sous 24h · Aucun engagement</p>
         </form>
       </div>
@@ -1715,10 +1725,10 @@
   }
 
   function formReady() {
-    if (!agence || !nom || !indicatif || !tel) return false;
-    if (!agence.value.trim() || !nom.value.trim() || !tel.value.trim()) return false;
+    if (!agence || !nom || !indicatif || !tel || !email) return false;
+    if (!agence.value.trim() || !nom.value.trim() || !tel.value.trim() || !email.value.trim()) return false;
     if (!indicatifOk(indicatif.value)) return false;
-    if (!agence.validity.valid || !nom.validity.valid || !tel.validity.valid || !indicatif.validity.valid) return false;
+    if (!agence.validity.valid || !nom.validity.valid || !tel.validity.valid || !indicatif.validity.valid || !email.validity.valid) return false;
     return true;
   }
 
@@ -1731,10 +1741,7 @@
     var pays = code ? CODE_NAME[code] : 'pays (indicatif à préciser)';
     var phoneLine = '— Téléphone / WhatsApp : ' + phoneFull + ' (' + pays + ' ' + flag + ')';
 
-    var emailLine =
-      email && email.value.trim() && email.validity.valid
-        ? '— E-mail : ' + email.value.trim()
-        : '— E-mail : (non communiqué)';
+    var emailLine = '— E-mail : ' + email.value.trim();
 
     var convRadio = form.querySelector('input[name="convention"]:checked');
     var isEur = convRadio && convRadio.value.indexOf('EUR') !== -1;
@@ -1780,7 +1787,7 @@
       link.setAttribute('href', '#');
       link.setAttribute('aria-disabled', 'true');
       if (hint) {
-        hint.textContent = 'Renseignez les champs obligatoires (agence, nom, indicatif avec +, numéro) pour activer WhatsApp.';
+        hint.textContent = 'Renseignez les champs obligatoires (agence, nom, indicatif avec +, numéro, e-mail valide) pour activer WhatsApp.';
       }
       return;
     }
@@ -1789,7 +1796,7 @@
     link.setAttribute('href', url);
     link.removeAttribute('aria-disabled');
     if (hint) {
-      hint.textContent = 'Message prêt : les champs optionnels remplis (et e-mail valide) sont inclus. Vous pouvez encore le modifier dans WhatsApp avant envoi.';
+      hint.textContent = 'Message prêt : volume et message (si remplis) sont inclus. Vous pouvez encore le modifier dans WhatsApp avant envoi.';
     }
   }
 
