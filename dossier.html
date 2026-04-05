@@ -1,1378 +1,573 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Déposer mon dossier — Robin des Airs</title>
-<link rel="icon" href="/favicon.png" type="image/png">
-<link rel="apple-touch-icon" href="/favicon.png">
-<meta name="description" content="Déposez votre dossier de réclamation aérienne en ligne. Carte d'embarquement, passeport, signature du mandat en quelques minutes.">
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet">
+<link rel="icon" href="/favicon.png" type="image/png" />
+<meta name="description" content="Déposez votre dossier d'indemnisation EU261 en 5 minutes. Jusqu'à 600€ par passager. Aucun frais sauf succès." />
 <style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --navy:#0B1F3A;--navy2:#0d2445;
-  --neon:#00C87A;--neon-b:#00E5A0;--neon-dark:#009960;
-  --white:#FFFFFF;--off:#F7F8FA;--off2:#EEF0F4;
-  --text:#1a2436;--gray:#6B7A90;--gray2:#8C9AB0;
-  --border:#E2E6EE;--red:#e74c3c;
-}
-html{scroll-behavior:smooth}
-body{background:var(--off);font-family:'Montserrat',sans-serif;color:var(--text);min-height:100vh;line-height:1.6}
+  :root{
+    --navy:#061326; --navy-mid:#0c1c38;
+    --teal:#00c87a; --teal-bright:#00e5a0; --teal-dark:#009960;
+    --gold:#b8956c; --ochre:#c17a3a; --terracotta:#a85c3c;
+    --savanna:#2d6b4e; --earth:#6b4c3b;
+    --bg:#faf8f3; --bg-warm:#f2ebe0; --sand-deep:#e8dcc8;
+    --danger:#c0392b; --ok:#00c87a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--navy);background:var(--bg);line-height:1.55}
+  a{color:var(--teal-dark);text-decoration:none}
+  a:hover{text-decoration:underline}
 
-/* ── TOP BAR ── */
-.top-bar{
-  background:var(--navy);
-  padding:14px 32px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-.top-logo{
-  font-family:'Montserrat',sans-serif;
-  font-weight:900;
-  font-size:15px;
-  color:white;
-  text-decoration:none;
-  letter-spacing:-0.3px;
-}
-.top-logo span{color:var(--neon-b)}
-.top-secure{
-  font-size:10px;
-  color:rgba(255,255,255,0.4);
-  letter-spacing:1.5px;
-  text-transform:uppercase;
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
+  /* HEADER */
+  header{background:var(--navy);color:#fff;padding:18px 24px;position:sticky;top:0;z-index:50;border-bottom:3px solid var(--teal)}
+  .hdr-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .logo{font-weight:800;font-size:18px;letter-spacing:.02em;display:flex;align-items:center;gap:10px}
+  .logo-mark{width:32px;height:32px;background:var(--teal);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--navy);font-weight:900;font-size:18px}
+  .hdr-trust{font-size:13px;color:#a9c7d9;display:flex;gap:18px;align-items:center}
+  .hdr-trust span{display:flex;align-items:center;gap:6px}
 
-/* ── LAYOUT ── */
-.page-wrap{
-  max-width:660px;
-  margin:0 auto;
-  padding:40px 20px 80px;
-}
+  /* HERO */
+  .hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);color:#fff;padding:44px 24px 36px;text-align:center}
+  .hero h1{margin:0 0 10px;font-size:34px;line-height:1.2;letter-spacing:-.01em}
+  .hero p{margin:0 auto;max-width:640px;font-size:16px;color:#c3d6e4}
+  .hero-trust{display:flex;justify-content:center;gap:22px;margin-top:20px;flex-wrap:wrap;font-size:13.5px;color:#a9c7d9}
+  .hero-trust b{color:var(--teal-bright)}
 
-/* ── STEPPER ── */
-.stepper{
-  display:flex;
-  align-items:center;
-  gap:0;
-  margin-bottom:36px;
-}
-.step-item{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  flex:1;
-  position:relative;
-}
-.step-item:not(:last-child)::after{
-  content:'';
-  position:absolute;
-  top:17px;
-  left:50%;
-  right:-50%;
-  height:2px;
-  background:var(--border);
-  z-index:0;
-}
-.step-item.done:not(:last-child)::after{background:var(--neon)}
-.step-num{
-  width:34px;height:34px;
-  border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:700;
-  border:2px solid var(--border);
-  background:white;
-  color:var(--gray);
-  position:relative;z-index:1;
-  transition:all 0.3s;
-}
-.step-item.active .step-num{border-color:var(--neon);background:var(--neon);color:var(--navy)}
-.step-item.done .step-num{border-color:var(--neon);background:var(--neon);color:var(--navy)}
-.step-label{font-size:9px;font-weight:600;color:var(--gray2);letter-spacing:1px;text-transform:uppercase;margin-top:6px;text-align:center}
-.step-item.active .step-label{color:var(--neon-dark)}
+  /* CONTAINER */
+  .container{max-width:820px;margin:0 auto;padding:0 20px}
 
-/* ── CARD ── */
-.card{
-  background:white;
-  border:1.5px solid var(--border);
-  border-radius:14px;
-  padding:36px 40px;
-  margin-bottom:20px;
-  box-shadow:0 2px 16px rgba(11,31,58,0.04);
-}
-.card-header{
-  margin-bottom:28px;
-}
-.card-step-tag{
-  font-size:9px;font-weight:700;letter-spacing:2.5px;
-  text-transform:uppercase;color:var(--neon-dark);
-  margin-bottom:6px;
-}
-.card-title{font-size:20px;font-weight:900;color:var(--navy);line-height:1.2}
-.card-sub{font-size:13px;color:var(--gray);margin-top:6px;line-height:1.6}
+  /* STEPPER */
+  .stepper{display:flex;align-items:center;gap:8px;padding:28px 0 8px;margin-top:-18px;position:relative;z-index:1}
+  .step-pill{flex:1;background:#fff;border:1px solid var(--sand-deep);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--earth);text-align:center;font-weight:600;position:relative}
+  .step-pill.done{background:var(--teal);color:#fff;border-color:var(--teal)}
+  .step-pill.active{background:var(--navy);color:#fff;border-color:var(--navy);box-shadow:0 6px 18px rgba(6,19,38,.2)}
+  .step-pill .num{display:inline-block;margin-right:4px;font-weight:800}
 
-/* ── FORM FIELDS ── */
-.field{margin-bottom:18px}
-.field label{
-  display:block;font-size:10px;font-weight:700;
-  letter-spacing:2px;text-transform:uppercase;
-  color:var(--gray);margin-bottom:7px;
-}
-.field input,.field select{
-  width:100%;padding:13px 16px;
-  border:1.5px solid var(--border);border-radius:8px;
-  font-family:'Montserrat',sans-serif;font-size:13px;font-weight:500;
-  color:var(--text);background:var(--off);
-  outline:none;transition:border-color 0.2s,background 0.2s;
-}
-.field input:focus,.field select:focus{
-  border-color:var(--neon);background:white;
-}
-.field input.err,.field select.err{border-color:var(--red)}
-.field-hint{font-size:11px;color:var(--gray2);margin-top:6px;margin-bottom:0;}
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  /* CARD */
+  .card{background:#fff;border-radius:16px;padding:28px 28px 24px;margin:16px 0 24px;box-shadow:0 8px 32px rgba(6,19,38,.07);border:1px solid rgba(184,149,108,.15)}
+  .card h2{margin:0 0 6px;font-size:22px;color:var(--navy)}
+  .card .sub{color:var(--earth);font-size:14px;margin-bottom:18px}
 
-/* ── BANDEAU NOS AVANTAGES (visible tout le long) ── */
-.avantages-band{
-  display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
-  margin-bottom:28px;padding:12px 16px;
-  background:linear-gradient(135deg, rgba(11,31,58,0.04), rgba(0,200,122,0.06));
-  border:1px solid rgba(0,200,122,0.2);border-radius:14px;
-}
-.avantage-pill{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:10px 18px;border-radius:999px;
-  background:rgba(0,200,122,0.12);
-  border:1px solid rgba(0,200,122,0.25);
-  font-size:12px;font-weight:700;color:var(--navy);
-}
-.avantage-pill span:first-child{font-size:16px}
+  /* FORM */
+  label{display:block;font-size:13px;font-weight:600;color:var(--navy-mid);margin:0 0 6px;letter-spacing:.01em}
+  .opt{color:var(--earth);font-weight:500;font-size:12px;margin-left:4px}
+  input[type=text],input[type=email],input[type=tel],input[type=number],input[type=date],select,textarea{
+    width:100%;padding:12px 14px;border:1.5px solid var(--sand-deep);border-radius:10px;font-size:15px;font-family:inherit;background:#fff;color:var(--navy);transition:border-color .15s,box-shadow .15s
+  }
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,200,122,.15)}
+  .field{margin-bottom:16px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  @media (max-width:640px){.row,.row-3{grid-template-columns:1fr}}
 
-.trust-band{
-  display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px 12px;
-  font-size:11px;color:var(--gray2);margin-bottom:20px;letter-spacing:0.3px;
-}
-.trust-band span:nth-child(odd){font-weight:600;color:var(--gray);}
-.dossier-steps-remaining{font-size:12px;font-weight:700;color:var(--neon-dark);margin-bottom:8px;text-align:center;}
-.dossier-brouillon-msg{padding:10px 16px;background:rgba(0,200,122,0.1);border:1px solid rgba(0,200,122,0.25);border-radius:8px;font-size:12px;color:var(--neon-dark);margin-bottom:16px;text-align:center;}
+  /* RADIO TILES */
+  .tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .tile{position:relative}
+  .tile input{position:absolute;opacity:0;pointer-events:none}
+  .tile label{display:block;background:#fff;border:1.5px solid var(--sand-deep);border-radius:10px;padding:14px;cursor:pointer;font-weight:600;font-size:14px;text-align:center;transition:all .15s;margin:0}
+  .tile input:checked + label{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .tile .tile-sub{font-weight:400;font-size:12px;color:var(--earth);margin-top:3px}
+  .tile input:checked + label .tile-sub{color:#a9c7d9}
 
-/* ── CHOIX VOL DIRECT / CORRESPONDANCE (comme diagnostic) ── */
-.trajet-choice{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
-.trajet-btn{
-  display:flex;flex-direction:column;align-items:flex-start;gap:6px;
-  padding:18px 20px;border:2px solid var(--border);border-radius:12px;
-  background:var(--off);cursor:pointer;transition:all 0.2s;
-  font-family:'Montserrat',sans-serif;text-align:left
-}
-.trajet-btn:hover{border-color:var(--neon);background:rgba(0,200,122,0.05)}
-.trajet-btn.selected{border-color:var(--neon);background:rgba(0,200,122,0.1);box-shadow:0 0 0 1px var(--neon)}
-.trajet-btn .t-main{font-size:15px;font-weight:800;color:var(--navy)}
-.trajet-btn .t-sub{font-size:11px;color:var(--gray)}
+  /* PASSAGERS */
+  .passenger-block{background:var(--bg-warm);border:1px solid var(--sand-deep);border-radius:12px;padding:16px;margin-bottom:12px;position:relative}
+  .passenger-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .passenger-head strong{color:var(--navy);font-size:14px}
+  .btn-remove{background:transparent;border:none;color:var(--danger);cursor:pointer;font-size:13px;font-weight:600;padding:4px 8px}
+  .btn-remove:hover{text-decoration:underline}
+  .btn-add{background:#fff;border:2px dashed var(--teal);color:var(--teal-dark);width:100%;padding:14px;border-radius:10px;cursor:pointer;font-weight:700;font-size:14px;transition:all .15s}
+  .btn-add:hover{background:var(--teal);color:#fff}
 
-/* ── PASSAGERS + / - ── */
-.pax-control{
-  display:flex;align-items:center;background:var(--off);
-  border:1.5px solid var(--border);border-radius:8px;overflow:hidden;
-}
-.pax-btn{
-  width:44px;height:46px;display:flex;align-items:center;justify-content:center;
-  background:none;border:none;color:var(--neon-dark);font-size:20px;font-weight:700;
-  cursor:pointer;transition:background 0.15s;font-family:'Montserrat',sans-serif;
-}
-.pax-btn:hover{background:rgba(0,200,122,0.1)}
-.pax-val{flex:1;text-align:center;font-size:16px;font-weight:700;color:var(--navy)}
+  /* DROPZONE */
+  .dropzone{border:2px dashed var(--gold);background:var(--bg-warm);border-radius:14px;padding:30px 20px;text-align:center;cursor:pointer;transition:all .2s}
+  .dropzone:hover,.dropzone.drag{border-color:var(--teal);background:#fff}
+  .dropzone-icon{font-size:36px;margin-bottom:8px}
+  .dropzone strong{display:block;color:var(--navy);font-size:16px;margin-bottom:4px}
+  .dropzone span{color:var(--earth);font-size:13px}
+  .dropzone input[type=file]{display:none}
+  .file-list{margin-top:12px}
+  .file-item{background:#fff;border:1px solid var(--sand-deep);border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;font-size:13.5px}
+  .file-item .fsize{color:var(--earth);font-size:12px}
 
-/* ── DATE STYLISÉE (ouverture calendrier) ── */
-.date-picker-wrap{
-  position:relative;display:block;
-}
-.date-picker-wrap input[type=date]{
-  width:100%;padding:14px 44px 14px 16px;
-  border:1.5px solid var(--border);border-radius:10px;
-  font-family:'Montserrat',sans-serif;font-size:14px;font-weight:600;color:var(--text);
-  background:var(--off);cursor:pointer;
-  appearance:none;-webkit-appearance:none;
-}
-.date-picker-wrap input[type=date]:focus{border-color:var(--neon);background:white;outline:none}
-.date-picker-wrap .date-icon{
-  position:absolute;right:14px;top:50%;transform:translateY(-50%);
-  pointer-events:none;font-size:20px;opacity:0.6;
-}
-.date-picker-wrap input[type=date]::-webkit-calendar-picker-indicator{
-  position:absolute;right:0;width:100%;height:100%;opacity:0;cursor:pointer;
-}
+  .later-box{margin-top:14px;padding:14px;background:#fff;border-left:4px solid var(--gold);border-radius:0 10px 10px 0}
+  .later-box label{display:flex;align-items:center;gap:10px;cursor:pointer;margin:0;font-weight:600;color:var(--navy)}
+  .later-box input[type=checkbox]{width:18px;height:18px;accent-color:var(--teal);cursor:pointer}
+  .later-box p{margin:6px 0 0 28px;font-size:12.5px;color:var(--earth)}
 
-/* ── VOL CHIP (après saisie numéro) ── */
-.vol-chip{
-  margin-top:8px;padding:10px 14px;background:rgba(0,200,122,0.08);
-  border:1px solid rgba(0,200,122,0.2);border-radius:8px;
-  display:none;align-items:center;gap:10px;font-size:12px;
-}
-.vol-chip.show{display:flex}
-.vol-chip .chip-route{font-weight:700;color:var(--navy)}
-.vol-chip .chip-dist{font-size:11px;color:var(--gray);margin-top:2px}
-.vol-chip .chip-badge{
-  margin-left:auto;padding:4px 10px;border-radius:20px;
-  font-size:11px;font-weight:700;background:rgba(0,200,122,0.2);color:var(--neon-dark);
-}
+  /* MANDAT */
+  .mandate-text{background:var(--bg-warm);border:1px solid var(--sand-deep);border-radius:12px;padding:20px;font-size:13.5px;line-height:1.65;color:var(--navy-mid);max-height:280px;overflow-y:auto;margin-bottom:16px}
+  .mandate-text h3{margin:0 0 8px;font-size:15px;color:var(--navy)}
+  .mandate-text p{margin:0 0 10px}
+  .sig-wrap{background:#fff;border:1.5px solid var(--sand-deep);border-radius:12px;padding:12px}
+  .sig-label{font-size:12px;color:var(--earth);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+  .sig-canvas{width:100%;height:160px;background:#faf8f3;border:1.5px dashed var(--gold);border-radius:8px;cursor:crosshair;touch-action:none;display:block}
+  .sig-actions{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:12.5px}
+  .sig-clear{background:transparent;border:none;color:var(--danger);cursor:pointer;font-weight:600;font-size:13px}
+  .checks{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+  .check{display:flex;align-items:flex-start;gap:10px;padding:12px;background:var(--bg-warm);border-radius:10px;cursor:pointer}
+  .check input[type=checkbox]{margin-top:2px;width:18px;height:18px;accent-color:var(--teal);cursor:pointer;flex-shrink:0}
+  .check span{font-size:13.5px;color:var(--navy-mid);line-height:1.5}
 
-/* ── DROP ZONES ── */
-.drop-zone{
-  border:2px dashed var(--border);
-  border-radius:10px;
-  padding:28px 20px;
-  text-align:center;
-  cursor:pointer;
-  transition:all 0.2s;
-  background:var(--off);
-  position:relative;
-}
-.drop-zone:hover,.drop-zone.over{
-  border-color:var(--neon);background:rgba(0,200,122,0.04);
-}
-.drop-zone input[type="file"]{
-  position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;
-}
-.drop-icon{font-size:32px;margin-bottom:8px}
-.drop-title{font-size:13px;font-weight:700;color:var(--navy)}
-.drop-sub{font-size:11px;color:var(--gray);margin-top:4px}
-.drop-accepted{font-size:9px;color:var(--gray2);letter-spacing:1px;text-transform:uppercase;margin-top:6px}
-.drop-actions{
-  display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:14px;
-}
-.drop-actions .btn-drop{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:10px 16px;border-radius:8px;font-size:12px;font-weight:700;
-  font-family:'Montserrat',sans-serif;cursor:pointer;transition:all 0.2s;
-  border:1.5px solid var(--border);background:white;color:var(--navy);
-}
-.drop-actions .btn-drop:hover{border-color:var(--neon);background:rgba(0,200,122,0.06);color:var(--neon-dark)}
-.drop-actions .btn-drop.primary{border-color:var(--neon);background:var(--neon);color:var(--navy)}
-.drop-actions .btn-drop.primary:hover{background:#00d685}
-.drop-preview{
-  margin-top:12px;
-  display:none;
-  align-items:center;
-  gap:10px;
-  background:rgba(0,200,122,0.06);
-  border:1px solid rgba(0,200,122,0.2);
-  border-radius:6px;
-  padding:10px 14px;
-  text-align:left;
-}
-.drop-preview.show{display:flex}
-.preview-icon{font-size:20px}
-.preview-name{font-size:12px;font-weight:600;color:var(--navy)}
-.preview-size{font-size:10px;color:var(--gray)}
-.preview-rm{
-  margin-left:auto;font-size:11px;font-weight:700;
-  color:var(--red);cursor:pointer;padding:2px 6px;
-  border-radius:4px;border:1px solid rgba(231,76,60,0.2);
-  background:none;transition:background 0.15s;
-}
-.preview-rm:hover{background:rgba(231,76,60,0.06)}
+  /* ACTIONS */
+  .actions{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:24px}
+  .btn{padding:14px 28px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;border:none;transition:all .15s;font-family:inherit}
+  .btn-primary{background:var(--teal);color:#fff;box-shadow:0 4px 14px rgba(0,200,122,.28)}
+  .btn-primary:hover{background:var(--teal-dark);transform:translateY(-1px)}
+  .btn-secondary{background:#fff;color:var(--navy);border:1.5px solid var(--sand-deep)}
+  .btn-secondary:hover{border-color:var(--navy)}
+  .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
 
-/* ── SIGNATURE ── */
-.sig-wrap{
-  border:1.5px solid var(--border);
-  border-radius:10px;
-  overflow:hidden;
-  background:var(--off);
-}
-.sig-canvas{
-  display:block;
-  width:100%;
-  height:160px;
-  cursor:crosshair;
-  touch-action:none;
-}
-.sig-toolbar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:8px 14px;
-  border-top:1px solid var(--border);
-  background:white;
-}
-.sig-hint{font-size:10px;color:var(--gray);letter-spacing:0.5px}
-.sig-clear{
-  font-size:11px;font-weight:700;color:var(--gray);
-  background:none;border:1px solid var(--border);
-  border-radius:4px;padding:4px 10px;cursor:pointer;
-  transition:all 0.15s;
-}
-.sig-clear:hover{color:var(--red);border-color:rgba(231,76,60,0.3)}
-.sig-status{
-  font-size:10px;color:var(--gray2);letter-spacing:0.5px;
-  margin-top:6px;display:flex;align-items:center;gap:5px;
-}
-.sig-dot{
-  width:7px;height:7px;border-radius:50%;
-  background:var(--border);display:inline-block;
-  transition:background 0.2s;
-}
-.sig-dot.signed{background:var(--neon)}
+  /* RECAP */
+  .recap{background:var(--bg-warm);border-radius:12px;padding:18px;margin-bottom:14px}
+  .recap h3{margin:0 0 8px;font-size:14px;color:var(--navy);text-transform:uppercase;letter-spacing:.06em}
+  .recap dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px}
+  .recap dt{color:var(--earth);font-weight:600}
+  .recap dd{margin:0;color:var(--navy)}
 
-/* ── MANDAT / SEPA TEXT ── */
-.mandat-box{
-  background:var(--off);border:1px solid var(--border);
-  border-radius:8px;padding:16px 18px;
-  font-size:11px;color:var(--gray);line-height:1.8;
-  max-height:200px;overflow-y:auto;
-  margin-bottom:16px;
-}
-.mandat-box strong{color:var(--navy)}
-.mandat-box h4{font-size:12px;font-weight:700;color:var(--navy);margin-bottom:8px}
-.iban-field{
-  margin-top:12px;
-  display:grid;grid-template-columns:1fr 1fr;gap:12px;
-}
+  /* INFO BANNER */
+  .info{background:linear-gradient(135deg,rgba(0,200,122,.08),rgba(184,149,108,.05));border-left:4px solid var(--teal);padding:14px 16px;border-radius:0 10px 10px 0;font-size:13.5px;color:var(--navy-mid);margin-bottom:18px}
+  .info strong{color:var(--navy)}
 
-/* ── CHECKBOX ── */
-.check-field{
-  display:flex;align-items:flex-start;gap:10px;
-  margin-bottom:12px;cursor:pointer;
-}
-.check-field input[type="checkbox"]{
-  width:16px;height:16px;margin-top:2px;
-  accent-color:var(--neon-dark);cursor:pointer;flex-shrink:0;
-}
-.check-field span{font-size:12px;color:var(--gray);line-height:1.6}
-.check-field strong{color:var(--navy)}
+  /* FOOTER */
+  footer{background:var(--navy);color:#a9c7d9;padding:26px 20px;margin-top:50px;text-align:center;font-size:13px}
+  footer a{color:var(--teal-bright)}
 
-/* ── BUTTONS ── */
-.btn-next{
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  width:100%;padding:16px;
-  background:var(--neon);color:var(--navy);
-  font-family:'Montserrat',sans-serif;
-  font-weight:900;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;
-  border:none;border-radius:8px;cursor:pointer;
-  transition:background 0.2s,transform 0.1s;margin-top:8px;
-}
-.btn-next:hover{background:#00d685}
-.btn-next:active{transform:scale(0.98)}
-.btn-back{
-  background:none;border:none;
-  font-family:'Montserrat',sans-serif;
-  font-size:11px;font-weight:600;color:var(--gray);
-  cursor:pointer;padding:8px 0;
-  display:block;text-align:center;
-  width:100%;transition:color 0.2s;
-}
-.btn-back:hover{color:var(--navy)}
-
-/* ── PROGRESS BAR ── */
-.progress-bar-wrap{height:3px;background:var(--border);border-radius:2px;margin-bottom:28px}
-.progress-bar{height:100%;background:linear-gradient(90deg,var(--neon),var(--neon-b));border-radius:2px;transition:width 0.4s ease}
-
-/* ── SUCCESS ── */
-.success-card{
-  text-align:center;padding:48px 32px;
-  background:white;border:1.5px solid var(--border);
-  border-radius:14px;
-}
-.success-icon{font-size:56px;margin-bottom:16px}
-.success-title{font-size:24px;font-weight:900;color:var(--navy);margin-bottom:10px}
-.success-sub{font-size:14px;color:var(--gray);line-height:1.75;margin-bottom:24px}
-.success-steps{
-  display:flex;flex-direction:column;gap:10px;
-  text-align:left;background:var(--off);
-  border-radius:8px;padding:20px;margin-bottom:24px;
-}
-.success-step{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--gray)}
-.ss-num{
-  width:22px;height:22px;flex-shrink:0;
-  border-radius:50%;background:var(--neon);
-  color:var(--navy);font-size:10px;font-weight:700;
-  display:flex;align-items:center;justify-content:center;
-}
-
-/* ── INFO BOX ── */
-.info-box{
-  display:flex;align-items:flex-start;gap:10px;
-  background:rgba(0,200,122,0.05);
-  border:1px solid rgba(0,200,122,0.2);
-  border-radius:8px;padding:14px 16px;
-  margin-bottom:16px;
-  font-size:12px;color:var(--gray);line-height:1.6;
-}
-.info-box svg{flex-shrink:0;margin-top:1px}
-.info-box strong{color:var(--navy)}
-
-/* ── HIDDEN STEPS ── */
-.form-step{display:none}
-.form-step.active{display:block;animation:stepFadeIn 0.35s cubic-bezier(0.22,1,0.36,1) forwards}
-@keyframes stepFadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-
-/* ── PAGE INTRO (ton chaleureux) ── */
-.page-intro{text-align:center;margin-bottom:36px;padding:0 8px}
-.intro-smile{font-size:14px;font-weight:700;color:var(--neon-dark);margin-bottom:8px;letter-spacing:0.5px}
-.page-title-form{font-size:26px;font-weight:900;color:var(--navy);margin-bottom:8px;line-height:1.2}
-.page-sub-form{font-size:14px;color:var(--gray);line-height:1.65;max-width:520px;margin:0 auto}
-.card-header .card-sub{color:var(--gray);line-height:1.65}
-
-/* ── Option « Je fournirai plus tard » ── */
-.later-option{margin-top:16px;text-align:center}
-.later-option .btn-later{
-  background:none;border:none;font-family:'Montserrat',sans-serif;
-  font-size:12px;font-weight:600;color:var(--gray);cursor:pointer;
-  text-decoration:underline;text-decoration-color:rgba(0,200,122,0.4);
-  padding:6px 0;transition:color 0.2s
-}
-.later-option .btn-later:hover{color:var(--neon-dark)}
-.later-option .later-confirm{font-size:12px;color:var(--neon-dark);font-weight:600;margin-top:6px;display:none}
-.later-option .later-confirm.show{display:block}
-
-/* ── RIB : bloc option plus tard + upload ── */
-.sepa-later-box{margin-bottom:18px;padding:14px 18px;background:rgba(0,200,122,0.06);border:1px solid rgba(0,200,122,0.2);border-radius:8px}
-.sepa-later-box .check-field{margin-bottom:0}
-.sepa-upload-zone{margin-top:14px;padding:16px;border:2px dashed var(--border);border-radius:8px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--off)}
-.sepa-upload-zone:hover,.sepa-upload-zone.over{border-color:var(--neon);background:rgba(0,200,122,0.04)}
-.sepa-upload-zone input[type=file]{position:absolute;opacity:0;width:0;height:0}
-.sepa-upload-zone .zone-text{font-size:12px;font-weight:600;color:var(--navy)}
-.sepa-upload-zone .zone-sub{font-size:11px;color:var(--gray);margin-top:4px}
-.sepa-fields-wrap{display:block}
-.sepa-fields-wrap.hidden,.hidden{display:none}
-
-/* ── Modal webcam (desktop) ── */
-.webcam-overlay{position:fixed;inset:0;background:rgba(11,31,58,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;visibility:hidden;transition:opacity 0.25s,visibility 0.25s}
-.webcam-overlay.open{opacity:1;visibility:visible}
-.webcam-modal{background:white;border-radius:16px;padding:24px;max-width:480px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,0.3)}
-.webcam-modal h3{font-size:18px;font-weight:900;color:var(--navy);margin-bottom:16px}
-.webcam-video{width:100%;border-radius:8px;background:#111;display:block;margin-bottom:16px}
-.webcam-actions{display:flex;gap:10px;justify-content:flex-end}
-.webcam-actions button{padding:10px 20px;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;cursor:pointer;border:none}
-.webcam-actions .btn-capture{background:var(--neon);color:var(--navy)}
-.webcam-actions .btn-cancel{background:var(--off);color:var(--gray);border:1px solid var(--border)}
-
-/* ── RESPONSIVE ── */
-@media(max-width:600px){
-  .card{padding:24px 20px}
-  .field-row,.iban-field{grid-template-columns:1fr}
-  .stepper .step-label{display:none}
-}
+  /* HIDE */
+  .hidden{display:none !important}
 </style>
 </head>
 <body>
 
-<!-- Top bar -->
-<div class="top-bar">
-  <a href="/" class="top-logo">ROBIN<span> des Airs</span></a>
-  <div class="top-secure">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-    Formulaire sécurisé
+<header>
+  <div class="hdr-inner">
+    <a href="/" class="logo" style="color:inherit;text-decoration:none"><div class="logo-mark">R</div>Robin des Airs</a>
+    <div class="hdr-trust">
+      <span>🔒 Données chiffrées</span>
+      <span>✓ 0€ sauf succès</span>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <h1>Déposer mon dossier d'indemnisation</h1>
+  <p>Formulaire rapide (5 min). Nous prenons en charge votre dossier EU261 de bout en bout. <strong>Aucun frais si aucune indemnité obtenue.</strong></p>
+  <div class="hero-trust">
+    <span>✦ Jusqu'à <b>600€</b> par passager</span>
+    <span>✦ <b>25%</b> de commission au succès</span>
+    <span>✦ Réponse sous <b>48h</b></span>
   </div>
 </div>
 
-<div class="page-wrap">
-
-  <!-- Titre page -->
-  <div class="page-intro">
-    <p class="intro-smile">👋 On est là pour vous</p>
-    <h1 class="page-title-form">Déposer mon dossier</h1>
-    <p class="page-sub-form">Rien de compliqué : 4 étapes, et vous pouvez fournir certaines pièces plus tard si besoin. On traite votre dossier sous 24h.</p>
-  </div>
-
-  <!-- Bandeau Nos avantages (reste visible) -->
-  <div class="avantages-band">
-    <span class="avantage-pill"><span>🛡️</span> Zéro frais si on perd</span>
-    <span class="avantage-pill"><span>💰</span> 25% — commission la moins chère</span>
-    <span class="avantage-pill"><span>⚡</span> Montage dossier sous 24h</span>
-  </div>
-  <div class="trust-band" role="status">
-    <span>🔒 Données sécurisées</span>
-    <span>·</span>
-    <span>RGPD conforme</span>
-    <span>·</span>
-    <span>Société en cours d’immatriculation — vos fonds sont sécurisés sur un compte dédié</span>
-    <span>·</span>
-    <span>Votre brouillon est enregistré automatiquement</span>
-  </div>
-
-  <!-- Progress bar -->
-  <div class="progress-bar-wrap">
-    <div class="progress-bar" id="progress-bar" style="width:25%"></div>
-  </div>
-  <p class="dossier-steps-remaining" id="steps-remaining" aria-live="polite">Plus que 3 étapes</p>
-  <div class="dossier-brouillon-msg" id="brouillon-msg" style="display:none;">✓ Brouillon restauré — vous pouvez reprendre où vous en étiez.</div>
-
-  <!-- Stepper -->
+<main class="container">
   <div class="stepper" id="stepper">
-    <div class="step-item active" data-s="1">
-      <div class="step-num">1</div>
-      <div class="step-label">Infos</div>
-    </div>
-    <div class="step-item" data-s="2">
-      <div class="step-num">2</div>
-      <div class="step-label">Embarquement</div>
-    </div>
-    <div class="step-item" data-s="3">
-      <div class="step-num">3</div>
-      <div class="step-label">Identité</div>
-    </div>
-    <div class="step-item" data-s="4">
-      <div class="step-num">4</div>
-      <div class="step-label">Mandat</div>
-    </div>
-    <!-- SEPA retiré : le dernier step est le mandat signé -->
+    <div class="step-pill active" data-step="1"><span class="num">1.</span>Vol</div>
+    <div class="step-pill" data-step="2"><span class="num">2.</span>Embarquement</div>
+    <div class="step-pill" data-step="3"><span class="num">3.</span>Mandat</div>
+    <div class="step-pill" data-step="4"><span class="num">4.</span>Identité</div>
+    <div class="step-pill" data-step="5"><span class="num">5.</span>Envoi</div>
   </div>
 
-  <!-- ═══ ÉTAPE 1 — INFORMATIONS VOL + CONTACT ═══ -->
-  <div class="form-step active" id="fs-1">
-    <div class="card">
-      <div class="card-header">
-        <div class="card-step-tag">Étape 1 sur 4</div>
-        <div class="card-title">Votre vol et vos coordonnées</div>
-        <div class="card-sub">Comme sur le diagnostic : on commence par le vol, puis on vous contacte.</div>
+  <form id="dossierForm" method="POST" data-netlify="true" action="/merci-dossier" enctype="multipart/form-data" name="dossier">
+    <input type="hidden" name="form-name" value="dossier" />
+
+    <!-- ÉTAPE 1 : VOL + CONTACT + PASSAGERS -->
+    <section class="card" data-step="1">
+      <h2>Votre vol & vos passagers</h2>
+      <p class="sub">Informations sur le vol concerné et les personnes indemnisables.</p>
+
+      <label>Type de trajet</label>
+      <div class="tiles">
+        <div class="tile"><input type="radio" name="trajet" id="t-direct" value="direct" checked><label for="t-direct">Vol direct<div class="tile-sub">Un seul segment</div></label></div>
+        <div class="tile"><input type="radio" name="trajet" id="t-escale" value="escale"><label for="t-escale">Avec escale(s)<div class="tile-sub">Correspondance</div></label></div>
       </div>
 
-      <p style="font-size:11px;font-weight:700;color:var(--gray);margin-bottom:12px;letter-spacing:1px;">Type de trajet</p>
-      <div class="trajet-choice">
-        <button type="button" class="trajet-btn" id="btn-direct" onclick="setTrajetDossier('direct')">
-          <span class="t-main">✈️ Vol direct</span>
-          <span class="t-sub">Sans escale</span>
-        </button>
-        <button type="button" class="trajet-btn" id="btn-escale" onclick="setTrajetDossier('escale')">
-          <span class="t-main">🔄 Avec correspondance</span>
-          <span class="t-sub">1 escale ou plus</span>
-        </button>
-      </div>
-      <input type="hidden" id="f-trajet" value="direct">
-
-      <!-- Vol direct -->
-      <div id="dossier-block-direct">
+      <div class="row">
         <div class="field">
-          <label for="f-vol">Numéro de vol *</label>
-          <input type="text" id="f-vol" placeholder="Ex: AF718, BA123, LH456…" maxlength="8" autocomplete="off"
-            oninput="this.value=this.value.toUpperCase();volLookupDossier(this,'chip-vol','f-compagnie','f-destination')">
-          <div class="vol-chip" id="chip-vol">
-            <span class="chip-ico">✈️</span>
-            <div><div class="chip-route" id="chip-vol-route"></div><div class="chip-dist" id="chip-vol-dist"></div></div>
-            <span class="chip-badge" id="chip-vol-badge"></span>
+          <label for="vol">Numéro(s) de vol *</label>
+          <input type="text" id="vol" name="vol" placeholder="AF 718, AF 6246" required />
+        </div>
+        <div class="field">
+          <label for="compagnie">Compagnie aérienne *</label>
+          <input type="text" id="compagnie" name="compagnie" placeholder="Air France, Brussels Airlines…" required />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="depart">Aéroport de départ *</label>
+          <input type="text" id="depart" name="depart" placeholder="Dakar (DSS), Abidjan (ABJ)…" required />
+        </div>
+        <div class="field">
+          <label for="arrivee">Aéroport d'arrivée *</label>
+          <input type="text" id="arrivee" name="arrivee" placeholder="Paris (CDG), Bruxelles (BRU)…" required />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="date">Date du vol *</label>
+          <input type="date" id="date" name="date" required />
+        </div>
+        <div class="field">
+          <label for="pnr">Code réservation / PNR <span class="opt">(facultatif)</span></label>
+          <input type="text" id="pnr" name="pnr" placeholder="6 caractères (ex. ABCD12)" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Motif de la réclamation *</label>
+        <div class="tiles" style="grid-template-columns:1fr 1fr 1fr">
+          <div class="tile"><input type="radio" name="motif" id="m-retard" value="retard" checked required><label for="m-retard">Retard<div class="tile-sub">&gt; 3 heures</div></label></div>
+          <div class="tile"><input type="radio" name="motif" id="m-annul" value="annulation" required><label for="m-annul">Annulation<div class="tile-sub">&lt; 14 jours</div></label></div>
+          <div class="tile"><input type="radio" name="motif" id="m-surb" value="surbooking" required><label for="m-surb">Surbooking<div class="tile-sub">Refus d'embarquement</div></label></div>
+        </div>
+      </div>
+
+      <div id="retardField" class="field">
+        <label for="retard">Durée du retard à l'arrivée *</label>
+        <input type="text" id="retard" name="retard" placeholder="Ex. : 4 h 05" />
+      </div>
+
+      <hr style="border:none;border-top:1px solid var(--sand-deep);margin:22px 0">
+      <h3 style="margin:0 0 4px;font-size:17px;color:var(--navy)">Passagers concernés</h3>
+      <p class="sub">Ajoutez chaque passager éligible. <strong>Un seul mandat groupé couvrira toute la famille.</strong></p>
+
+      <div id="passengers">
+        <div class="passenger-block" data-idx="0">
+          <div class="passenger-head"><strong>Passager 1</strong></div>
+          <div class="row">
+            <div class="field"><label>Prénom *</label><input type="text" name="passagers[0][prenom]" required></div>
+            <div class="field"><label>Nom *</label><input type="text" name="passagers[0][nom]" required></div>
+          </div>
+          <div class="row">
+            <div class="field"><label>Date de naissance <span class="opt">(facultatif)</span></label><input type="date" name="passagers[0][naissance]"></div>
+            <div class="field"><label>Nationalité <span class="opt">(facultatif)</span></label><input type="text" name="passagers[0][nationalite]"></div>
           </div>
         </div>
       </div>
+      <button type="button" class="btn-add" id="addPassenger">+ Ajouter un passager</button>
 
-      <!-- Vol avec correspondance -->
-      <div id="dossier-block-escale" style="display:none;">
-        <div class="field">
-          <label for="f-vol1">Vol 1 — Premier tronçon <span style="color:var(--gray);font-weight:400;">(optionnel)</span></label>
-          <input type="text" id="f-vol1" placeholder="Ex: AF1234" maxlength="8" autocomplete="off" oninput="this.value=this.value.toUpperCase();volLookupDossier(this,'chip-vol1',null,null)">
-          <div class="vol-chip" id="chip-vol1"><span class="chip-ico">✈️</span><div><div class="chip-route" id="chip-vol1-route"></div><div class="chip-dist" id="chip-vol1-dist"></div></div><span class="chip-badge" id="chip-vol1-badge"></span></div>
-        </div>
-        <div class="field">
-          <label for="f-vol2">Vol 2 — Dernier tronçon * <span style="font-size:10px;color:var(--neon-dark);">(c'est ce vol qui compte)</span></label>
-          <input type="text" id="f-vol2" placeholder="Ex: AF718, BA123…" maxlength="8" autocomplete="off"
-            oninput="this.value=this.value.toUpperCase();volLookupDossier(this,'chip-vol2','f-compagnie','f-destination')">
-          <div class="vol-chip" id="chip-vol2">
-            <span class="chip-ico">✈️</span>
-            <div><div class="chip-route" id="chip-vol2-route"></div><div class="chip-dist" id="chip-vol2-dist"></div></div>
-            <span class="chip-badge" id="chip-vol2-badge"></span>
-          </div>
-        </div>
-      </div>
+      <hr style="border:none;border-top:1px solid var(--sand-deep);margin:22px 0">
+      <h3 style="margin:0 0 4px;font-size:17px;color:var(--navy)">Contact principal</h3>
+      <p class="sub">Personne qui recevra les nouvelles du dossier et l'indemnité.</p>
 
-      <div class="field">
-        <label for="f-compagnie">Compagnie aérienne</label>
-        <input type="text" id="f-compagnie" placeholder="Rempli automatiquement ou saisissez (ex: Air France)">
+      <div class="row">
+        <div class="field"><label for="ct-prenom">Prénom *</label><input type="text" id="ct-prenom" name="contact_prenom" required></div>
+        <div class="field"><label for="ct-nom">Nom *</label><input type="text" id="ct-nom" name="contact_nom" required></div>
       </div>
       <div class="field">
-        <label for="f-destination">Destination ou trajet</label>
-        <input type="text" id="f-destination" list="airports-list" placeholder="Ex: Paris CDG → Dakar (ou rempli par le numéro de vol)">
-        <datalist id="airports-list">
-          <option value="Paris CDG → Dakar"><option value="Paris CDG → Abidjan"><option value="Paris CDG → Bamako">
-          <option value="Paris CDG → Casablanca"><option value="Paris CDG → Tunis"><option value="Paris CDG → Alger">
-          <option value="Paris ORY → Dakar"><option value="Paris ORY → Tunis"><option value="Paris ORY → Alger">
-          <option value="Lyon → Alger"><option value="Lyon → Casablanca"><option value="Marseille → Dakar">
-          <option value="Bruxelles → Dakar"><option value="Bruxelles → Abidjan"><option value="Autre">
-        </datalist>
-      </div>
-
-      <div class="field-row">
-        <div class="field">
-          <label>Date du vol *</label>
-          <div class="date-picker-wrap">
-            <input type="date" id="f-date-vol">
-            <span class="date-icon">📅</span>
-          </div>
-        </div>
-        <div class="field">
-          <label>Nombre de passagers *</label>
-          <div class="pax-control">
-            <button type="button" class="pax-btn" onclick="changePaxDossier(-1)">−</button>
-            <span class="pax-val" id="f-pax-val">1</span>
-            <button type="button" class="pax-btn" onclick="changePaxDossier(1)">+</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="f-motif">Motif de réclamation *</label>
-        <select id="f-motif">
-          <option value="">— Sélectionnez —</option>
-          <option value="retard">Vol retardé (+3h)</option>
-          <option value="annulation">Vol annulé</option>
-          <option value="surbook">Surbooking / Refus d'embarquement</option>
-        </select>
+        <label for="ct-email">E-mail *</label>
+        <input type="email" id="ct-email" name="contact_email" placeholder="vous@email.com" required />
       </div>
       <div class="field">
-        <label for="f-pnr">Code PNR (réservation) <span style="color:var(--gray);font-weight:400;">optionnel</span></label>
-        <input type="text" id="f-pnr" placeholder="Ex: AB12CD (6 caractères, sur votre billet ou carte d'embarquement)" maxlength="10" autocomplete="off" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
+        <label for="ct-tel">Téléphone / WhatsApp *</label>
+        <input type="tel" id="ct-tel" name="contact_tel" placeholder="+221 77 123 45 67" required />
       </div>
 
-      <p style="font-size:11px;font-weight:700;color:var(--gray);margin:24px 0 12px;letter-spacing:1px;">Vos coordonnées</p>
-      <div class="field-row">
-        <div class="field">
-          <label for="f-prenom">Prénom *</label>
-          <input type="text" id="f-prenom" placeholder="Aminata">
-        </div>
-        <div class="field">
-          <label for="f-nom">Nom *</label>
-          <input type="text" id="f-nom" placeholder="Mbaye">
-        </div>
+      <div class="actions">
+        <span></span>
+        <button type="button" class="btn btn-primary" data-next>Continuer →</button>
       </div>
-      <div class="field">
-        <label for="f-email">Email *</label>
-        <input type="email" id="f-email" placeholder="aminata@email.com">
-      </div>
-      <div class="field">
-        <label for="f-tel">Téléphone (WhatsApp de préférence)</label>
-        <input type="tel" id="f-tel" placeholder="+33 6 XX XX XX XX">
+    </section>
+
+    <!-- ÉTAPE 2 : CARTE D'EMBARQUEMENT -->
+    <section class="card hidden" data-step="2">
+      <h2>Carte d'embarquement ou preuve de vol</h2>
+      <p class="sub">Glissez votre carte d'embarquement, billet électronique, ou capture d'écran de l'e-mail de la compagnie.</p>
+
+      <div class="info">📎 <strong>Formats acceptés :</strong> PDF, JPG, PNG, WEBP, HEIC · <strong>Max 15 Mo</strong> par fichier · Plusieurs fichiers possibles.</div>
+
+      <label class="dropzone" id="dz-embarq">
+        <input type="file" name="embarquement[]" multiple accept=".pdf,.jpg,.jpeg,.png,.webp,.heic">
+        <div class="dropzone-icon">📄</div>
+        <strong>Déposer vos fichiers ici</strong>
+        <span>ou cliquer pour parcourir</span>
+      </label>
+      <div class="file-list" id="fl-embarq"></div>
+
+      <div class="later-box">
+        <label><input type="checkbox" name="embarq_later" id="embarq-later"> Je fournirai ce document plus tard par WhatsApp ou e-mail</label>
+        <p>Votre dossier sera ouvert immédiatement. Notre équipe vous contactera pour récupérer le document.</p>
       </div>
 
-      <button class="btn-next" onclick="nextStep(1)">
-        Continuer
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </button>
-    </div>
-  </div>
+      <div class="actions">
+        <button type="button" class="btn btn-secondary" data-prev>← Retour</button>
+        <button type="button" class="btn btn-primary" data-next>Continuer →</button>
+      </div>
+    </section>
 
-  <!-- ═══ ÉTAPE 2 — CARTE D'EMBARQUEMENT ═══ -->
-  <div class="form-step" id="fs-2">
-    <div class="card">
-      <div class="card-header">
-        <div class="card-step-tag">Étape 2 sur 4</div>
-        <div class="card-title">Carte d'embarquement</div>
-        <div class="card-sub">Déposez votre carte d'embarquement ou tout document prouvant votre présence à bord. Sur ordinateur : glissez-déposez. Sur téléphone : prenez une photo ou scannez.</div>
+    <!-- ÉTAPE 3 : MANDAT + SIGNATURE -->
+    <section class="card hidden" data-step="3">
+      <h2>Mandat de représentation</h2>
+      <p class="sub">Vous autorisez Robin des Airs à agir en votre nom auprès de la compagnie aérienne. Signature électronique ci-dessous.</p>
+
+      <div class="mandate-text">
+        <h3>Mandat de représentation — Règlement (CE) n° 261/2004</h3>
+        <p>Je soussigné(e), <strong id="mandate-name">[votre nom]</strong>, autorise la société <strong>Robin des Airs</strong> (SAS, siège social : 66 av. des Champs-Élysées, 75008 Paris) à me représenter — ainsi que l'ensemble des passagers listés à l'étape 1 — dans toutes démarches amiables et judiciaires visant à obtenir l'indemnisation prévue par le Règlement (CE) n° 261/2004 concernant le vol référencé.</p>
+        <p>Ce mandat comprend le pouvoir d'adresser toute mise en demeure, de négocier et percevoir les indemnités auprès de la compagnie, de saisir les médiateurs et juridictions compétentes, et de transmettre les fonds recouvrés sur un compte bancaire que je communiquerai ultérieurement (SEPA ou équivalent).</p>
+        <p><strong>Honoraires au succès : 25% TTC</strong> du montant effectivement recouvré. Aucuns frais à ma charge si aucune indemnité n'est obtenue.</p>
+        <p>Je dispose d'un <strong>droit de rétractation de 14 jours</strong> à compter de la signature du présent mandat, sans avoir à motiver ma décision.</p>
+        <p>Fait pour valoir ce que de droit.</p>
       </div>
 
-      <div class="info-box">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--neon-dark)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span><strong>Accepté :</strong> carte d'embarquement (photo ou scan), PDF, e-ticket, capture d'écran appli compagnie. Scannez la carte pour que nous ayons toutes les infos du vol.</span>
-      </div>
-
-      <div class="drop-zone" id="dz-boarding" ondragover="dzOver(event,'dz-boarding')" ondragleave="dzOut('dz-boarding')" ondrop="dzDrop(event,'dz-boarding','prev-boarding','file-boarding')">
-        <input type="file" id="file-boarding" accept=".pdf,image/*" onchange="fileSelected('file-boarding','prev-boarding','dz-boarding')">
-        <input type="file" id="file-boarding-cam" accept="image/*" capture="environment" style="position:absolute;width:0;height:0;opacity:0;pointer-events:none;" onchange="fileFromCamera(event,'prev-boarding','dz-boarding','file-boarding')">
-        <div class="drop-icon">🎫</div>
-        <div class="drop-title">Glissez votre carte d'embarquement ici</div>
-        <div class="drop-sub">ou cliquez pour parcourir · Sur téléphone : prenez une photo ou scannez</div>
-        <div class="drop-accepted">PDF · JPG · PNG · WEBP</div>
-        <div class="drop-actions">
-          <button type="button" class="btn-drop primary" onclick="document.getElementById('file-boarding').click()">📁 Parcourir</button>
-          <button type="button" class="btn-drop" onclick="openPhotoInput('boarding')">📷 Prendre une photo / Scanner</button>
-        </div>
-      </div>
-
-      <div class="drop-preview" id="prev-boarding">
-        <span class="preview-icon">📄</span>
-        <div>
-          <div class="preview-name" id="prev-boarding-name"></div>
-          <div class="preview-size" id="prev-boarding-size"></div>
-        </div>
-        <button class="preview-rm" onclick="removeFile('file-boarding','prev-boarding','dz-boarding')">Supprimer</button>
-      </div>
-      <div class="later-option">
-        <button type="button" class="btn-later" id="btn-later-boarding" onclick="setLater('boarding')">Je n'ai pas le document sous la main — je le fournirai plus tard</button>
-        <p class="later-confirm" id="later-confirm-boarding">✓ Vous pourrez l'envoyer par WhatsApp ou par email</p>
-      </div>
-
-      <div style="margin-top:20px;">
-        <button class="btn-next" onclick="nextStep(2)">Continuer →</button>
-        <button class="btn-back" onclick="prevStep(2)">← Retour</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ═══ ÉTAPE 3 — PIÈCE D'IDENTITÉ ═══ -->
-  <div class="form-step" id="fs-3">
-    <div class="card">
-      <div class="card-header">
-        <div class="card-step-tag">Étape 3 sur 4</div>
-        <div class="card-title">Pièce d'identité</div>
-        <div class="card-sub">Nécessaire pour établir le mandat. Sur ordinateur : glissez-déposez. Sur téléphone : prenez une photo de votre passeport ou carte d'identité.</div>
-      </div>
-
-      <div class="info-box">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--neon-dark)" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-        <span><strong>Accepté :</strong> passeport (page photo), carte d'identité (recto), carte de séjour. Doit correspondre au nom du billet. Traitement sécurisé et confidentiel.</span>
-      </div>
-
-      <div class="drop-zone" id="dz-id" ondragover="dzOver(event,'dz-id')" ondragleave="dzOut('dz-id')" ondrop="dzDrop(event,'dz-id','prev-id','file-id')">
-        <input type="file" id="file-id" accept=".pdf,image/*" onchange="fileSelected('file-id','prev-id','dz-id')">
-        <input type="file" id="file-id-cam" accept="image/*" capture="environment" style="position:absolute;width:0;height:0;opacity:0;pointer-events:none;" onchange="fileFromCamera(event,'prev-id','dz-id','file-id')">
-        <div class="drop-icon">🪪</div>
-        <div class="drop-title">Glissez votre pièce d'identité ici</div>
-        <div class="drop-sub">ou cliquez pour parcourir · Prenez une photo (passeport, CNI)</div>
-        <div class="drop-accepted">PDF · JPG · PNG · WEBP · Max 10 Mo</div>
-        <div class="drop-actions">
-          <button type="button" class="btn-drop primary" onclick="document.getElementById('file-id').click()">📁 Parcourir</button>
-          <button type="button" class="btn-drop" onclick="openPhotoInput('id')">📷 Prendre une photo / Scanner</button>
+      <div class="sig-wrap">
+        <div class="sig-label">✍️ Signature du mandataire</div>
+        <canvas class="sig-canvas" id="sigCanvas" width="760" height="160"></canvas>
+        <input type="hidden" name="signature" id="signature-data">
+        <div class="sig-actions">
+          <span style="color:var(--earth)">Dessinez votre signature avec la souris ou le doigt</span>
+          <button type="button" class="sig-clear" id="sigClear">Effacer</button>
         </div>
       </div>
 
-      <div class="drop-preview" id="prev-id">
-        <span class="preview-icon">📄</span>
-        <div>
-          <div class="preview-name" id="prev-id-name"></div>
-          <div class="preview-size" id="prev-id-size"></div>
-        </div>
-        <button class="preview-rm" onclick="removeFile('file-id','prev-id','dz-id')">Supprimer</button>
-      </div>
-      <div class="later-option">
-        <button type="button" class="btn-later" id="btn-later-id" onclick="setLater('id')">Je le fournirai plus tard</button>
-        <p class="later-confirm" id="later-confirm-id">✓ Pas de souci, vous pourrez l'envoyer ensuite</p>
+      <div class="checks">
+        <label class="check"><input type="checkbox" name="accept_mandat" required><span>J'accepte les termes du mandat de représentation et les honoraires au succès de 25% TTC.</span></label>
+        <label class="check"><input type="checkbox" name="accept_rgpd" required><span>J'accepte que mes données soient traitées conformément à la <a href="/politique-confidentialite" target="_blank" rel="noopener">politique de confidentialité</a> (RGPD).</span></label>
       </div>
 
-      <div style="margin-top:20px;">
-        <button class="btn-next" onclick="nextStep(3)">Continuer →</button>
-        <button class="btn-back" onclick="prevStep(3)">← Retour</button>
+      <div class="actions">
+        <button type="button" class="btn btn-secondary" data-prev>← Retour</button>
+        <button type="button" class="btn btn-primary" data-next>Signer & continuer →</button>
       </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- ═══ ÉTAPE 4 — MANDAT DE REPRÉSENTATION ═══ -->
-  <div class="form-step" id="fs-4">
-    <div class="card">
-      <div class="card-header">
-        <div class="card-step-tag">Étape 4 sur 4</div>
-        <div class="card-title">Mandat de représentation</div>
-        <div class="card-sub">Ce mandat nous autorise à réclamer en votre nom auprès de la compagnie aérienne. Lisez-le et signez ci-dessous.</div>
-      </div>
+    <!-- ÉTAPE 4 : PASSEPORT / IDENTITÉ -->
+    <section class="card hidden" data-step="4">
+      <h2>Pièce d'identité</h2>
+      <p class="sub">Passeport ou carte d'identité de <strong>chaque passager</strong> listé à l'étape 1. Requis par la compagnie aérienne pour vérifier l'identité.</p>
 
-      <div class="mandat-box">
-        <h4>MANDAT DE REPRÉSENTATION — CE 261/2004</h4>
-        <p>Je soussigné(e) <strong id="m-fullname">[Prénom Nom]</strong>, donne mandat à la société <strong>Robin des Airs</strong> de me représenter auprès de <strong id="m-airline">la compagnie aérienne concernée</strong> dans le cadre de la réclamation relative au vol <strong id="m-flight">[numéro de vol]</strong> du <strong id="m-date">[date]</strong>.</p>
-        <p>Je déclare exiger que l'indemnité due soit versée <strong>exclusivement par virement bancaire</strong> conformément à l'article 7.3 du règlement CE n° 261/2004 ; je refuse par avance tout paiement sous forme de bon de voyage ou d'avoir. Je donne mandat spécial à la société Robin des Airs pour percevoir en mon nom et pour mon compte l'intégralité des sommes versées par la compagnie aérienne et l'autorise à déduire sa commission de succès de 25 % TTC avant de me reverser le solde par le moyen de mon choix.</p>
-        <br>
-        <p>Ce mandat autorise Robin des Airs à :</p>
-        <ul style="margin:8px 0 8px 16px;">
-          <li>Contacter la compagnie aérienne en mon nom</li>
-          <li>Réclamer l'indemnisation prévue par le Règlement (CE) n° 261/2004</li>
-          <li>Engager toute procédure amiable ou judiciaire si nécessaire</li>
-          <li>Percevoir les fonds et me reverser le montant net convenu</li>
-        </ul>
-        <p><strong>Rémunération :</strong> Robin des Airs perçoit une commission de <strong>25% du montant brut</strong> récupéré, décomptée uniquement en cas de succès. En cas d'échec : 0€ facturé.</p>
-        <p>Le Mandant (le client) confirme avoir déjà sollicité le Transporteur ou mandate expressément Robin des Airs pour effectuer cette première démarche en son nom afin de faciliter la résolution amiable du litige.</p>
-        <br>
-        <p><strong>Droit de rétractation :</strong> Vous disposez d'un délai de 14 jours à compter de la signature pour annuler ce mandat sans frais ni justification.</p>
-        <br>
-        <p style="font-size:10px;color:var(--gray2);">Robin des Airs · En cours d'immatriculation · Fondé sur le Règlement CE 261/2004</p>
+      <div class="info">🔒 <strong>Sécurité :</strong> vos documents sont chiffrés, utilisés uniquement pour ce dossier, et supprimés dès clôture. Hébergement UE.</div>
+
+      <label class="dropzone" id="dz-id">
+        <input type="file" name="identite[]" multiple accept=".pdf,.jpg,.jpeg,.png,.webp,.heic">
+        <div class="dropzone-icon">🪪</div>
+        <strong>Déposer passeport(s) ou CNI ici</strong>
+        <span>Page avec la photo · PDF, JPG, PNG, WEBP, HEIC · Max 15 Mo</span>
+      </label>
+      <div class="file-list" id="fl-id"></div>
+
+      <div class="later-box">
+        <label><input type="checkbox" name="id_later" id="id-later"> Je fournirai les pièces d'identité plus tard par WhatsApp</label>
+        <p>Votre mandat est déjà signé, votre dossier est sécurisé. Nous vous enverrons un lien WhatsApp sécurisé.</p>
       </div>
 
-      <div style="margin-bottom:16px;">
-        <label style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray);display:block;margin-bottom:8px;">Votre signature *</label>
-        <div class="sig-wrap">
-          <canvas class="sig-canvas" id="sig-mandat" width="580" height="160"></canvas>
-          <div class="sig-toolbar">
-            <span class="sig-hint">Signez dans la zone ci-dessus avec votre souris ou doigt</span>
-            <button class="sig-clear" onclick="clearSig('sig-mandat','sig-mandat-status')">Effacer</button>
-          </div>
-        </div>
-        <div class="sig-status">
-          <span class="sig-dot" id="sig-mandat-status"></span>
-          <span id="sig-mandat-txt">Non signé</span>
-        </div>
+      <div class="actions">
+        <button type="button" class="btn btn-secondary" data-prev>← Retour</button>
+        <button type="button" class="btn btn-primary" data-next>Voir le récapitulatif →</button>
+      </div>
+    </section>
+
+    <!-- ÉTAPE 5 : RÉCAP + ENVOI -->
+    <section class="card hidden" data-step="5">
+      <h2>Récapitulatif & envoi</h2>
+      <p class="sub">Vérifiez votre dossier avant envoi. Notre équipe vous répondra sous 48h.</p>
+
+      <div class="recap">
+        <h3>Vol</h3>
+        <dl id="recap-vol"></dl>
+      </div>
+      <div class="recap">
+        <h3>Passagers</h3>
+        <dl id="recap-pax"></dl>
+      </div>
+      <div class="recap">
+        <h3>Contact</h3>
+        <dl id="recap-contact"></dl>
+      </div>
+      <div class="recap">
+        <h3>Documents</h3>
+        <dl id="recap-docs"></dl>
       </div>
 
-      <div class="check-field">
-        <input type="checkbox" id="chk-mandat">
-        <span><label for="chk-mandat">Je confirme avoir lu le mandat ci-dessus et accepte ses conditions. <strong>Robin des Airs agit uniquement en mon nom.</strong></label></span>
+      <div class="info" style="margin-top:14px">
+        💰 <strong>Estimation potentielle :</strong> <span id="recap-montant">—</span> · <strong>Commission RDA (25%)</strong> uniquement si indemnité obtenue.
       </div>
 
-      <div class="check-field">
-        <input type="checkbox" id="chk-rgpd">
-        <span><label for="chk-rgpd">J'accepte la <a href="/politique-confidentialite.html" target="_blank" rel="noopener" style="color:var(--neon-dark);">politique de confidentialité</a> et le traitement de mes données personnelles conformément au RGPD.</label></span>
+      <div class="field" style="margin-top:16px">
+        <label for="notes">Message complémentaire <span class="opt">(facultatif)</span></label>
+        <textarea id="notes" name="notes" rows="3" placeholder="Contexte, éléments utiles, questions…"></textarea>
       </div>
 
-      <div style="margin-top:12px;">
-        <button class="btn-next" onclick="submitDossier()" id="btn-submit">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-          Soumettre mon dossier
-        </button>
-        <button class="btn-back" onclick="prevStep(4)">← Retour</button>
+      <div class="actions">
+        <button type="button" class="btn btn-secondary" data-prev>← Retour</button>
+        <button type="submit" class="btn btn-primary" id="submitBtn">✦ Envoyer mon dossier</button>
       </div>
-    </div>
-  </div>
+    </section>
+  </form>
+</main>
 
-  <!-- ═══ SUCCÈS ═══ -->
-  <div class="form-step" id="fs-success">
-    <div class="success-card">
-      <div class="success-icon">🎉</div>
-      <div class="success-title">Dossier reçu !</div>
-      <p class="success-sub" style="font-size:16px;font-weight:700;color:var(--navy);margin-bottom:8px;">Robin des Airs vous contacte sur WhatsApp.</p>
-      <p id="success-numero-dossier" class="success-numero" style="display:none; margin-bottom:12px; font-size:13px; color:var(--navy); font-weight:700;">Votre numéro de dossier : <strong id="success-numero-value"></strong></p>
-      <div class="success-sub">
-        Votre dossier a bien été transmis. Consultez WhatsApp pour la suite.
-      </div>
-      <div class="success-steps">
-        <div class="success-step">
-          <div class="ss-num">1</div>
-          <span><strong>Sous 24h :</strong> Nos experts analysent votre dossier et rédigent la réclamation.</span>
-        </div>
-        <div class="success-step">
-          <div class="ss-num">2</div>
-          <span><strong>Sous 48h :</strong> La réclamation est envoyée à la compagnie avec les preuves METAR.</span>
-        </div>
-        <div class="success-step">
-          <div class="ss-num">3</div>
-          <span><strong>4 à 12 semaines :</strong> Dès réception des fonds, nous vous virons votre indemnité.</span>
-        </div>
-      </div>
-      <a href="https://wa.me/33756863630?text=%5BFR%5D%20Bonjour%20Robin%20des%20Airs%20%21%0AJe%20viens%20de%20d%C3%A9poser%20mon%20dossier%20en%20ligne.%20Y%20a-t-il%20des%20informations%20compl%C3%A9mentaires%20%3F"
-         target="_blank"
-         style="display:inline-flex;align-items:center;gap:8px;background:#25D366;color:white;padding:14px 28px;border-radius:8px;font-weight:700;font-size:12px;letter-spacing:1px;text-decoration:none;text-transform:uppercase;">
-        💬 Suivre sur WhatsApp
-      </a>
-      <p style="margin-top:14px;font-size:12px;color:var(--gray);"><a href="/suivi-dossier.html" style="color:var(--neon-dark);font-weight:600;">Où en est mon dossier ?</a> — page dédiée au suivi</p>
-    </div>
-  </div>
+<footer>
+  <p>Robin des Airs — 66 av. des Champs-Élysées, 75008 Paris · <a href="/politique-confidentialite">Confidentialité</a> · <a href="/cgv">CGV</a> · <a href="mailto:expert@robindesairs.eu">expert@robindesairs.eu</a></p>
+  <p>© 2025–2026 Robin des Airs. Indemnisation EU261 — Aucun frais sauf succès.</p>
+</footer>
 
-</div><!-- /page-wrap -->
-
-<!-- Modal webcam (ordinateur) -->
-<div class="webcam-overlay" id="webcam-overlay">
-  <div class="webcam-modal">
-    <h3>Prendre une photo</h3>
-    <video class="webcam-video" id="webcam-video" autoplay playsinline muted></video>
-    <div class="webcam-actions">
-      <button type="button" class="btn-cancel" onclick="closeWebcam()">Annuler</button>
-      <button type="button" class="btn-capture" onclick="captureWebcam()">Capturer</button>
-    </div>
-  </div>
-</div>
-<canvas id="webcam-canvas" style="display:none"></canvas>
-
-<script src="assets/feedback-modal.js"></script>
 <script>
-/* ══ STEP NAVIGATION ══ */
-let currentStep = 1;
-const TOTAL_STEPS = 4;
-const BROUILLON_KEY = 'robin_dossier_brouillon';
-
-function saveDossierBrouillon() {
-  try {
-    const data = {
-      step: currentStep,
-      trajet: document.getElementById('f-trajet')?.value,
-      vol: document.getElementById('f-vol')?.value,
-      vol1: document.getElementById('f-vol1')?.value,
-      vol2: document.getElementById('f-vol2')?.value,
-      compagnie: document.getElementById('f-compagnie')?.value,
-      destination: document.getElementById('f-destination')?.value,
-      dateVol: document.getElementById('f-date-vol')?.value,
-      pax: document.getElementById('f-pax-val')?.textContent,
-      motif: document.getElementById('f-motif')?.value,
-      pnr: document.getElementById('f-pnr')?.value,
-      prenom: document.getElementById('f-prenom')?.value,
-      nom: document.getElementById('f-nom')?.value,
-      email: document.getElementById('f-email')?.value,
-      tel: document.getElementById('f-tel')?.value,
-      // RIB/IBAN demandé plus tard (après réception des fonds), pas dans le formulaire de dépôt.
-    };
-    localStorage.setItem(BROUILLON_KEY, JSON.stringify(data));
-  } catch (e) {}
-}
-
-function restoreDossierBrouillon() {
-  try {
-    const raw = localStorage.getItem(BROUILLON_KEY);
-    if (!raw) return false;
-    const data = JSON.parse(raw);
-    if (data.step && data.step > 1) {
-      const set = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.value = val; };
-      const setPax = (v) => { const el = document.getElementById('f-pax-val'); if (el) el.textContent = v || '1'; };
-      set('f-trajet', data.trajet);
-      if (data.trajet && typeof setTrajetDossier === 'function') setTrajetDossier(data.trajet);
-      set('f-vol', data.vol);
-      set('f-vol1', data.vol1);
-      set('f-vol2', data.vol2);
-      set('f-compagnie', data.compagnie);
-      set('f-destination', data.destination);
-      set('f-date-vol', data.dateVol);
-      setPax(data.pax);
-      set('f-motif', data.motif);
-      set('f-pnr', data.pnr);
-      set('f-prenom', data.prenom);
-      set('f-nom', data.nom);
-      set('f-email', data.email);
-      set('f-tel', data.tel);
-      currentStep = Math.min(Math.max(1, data.step), TOTAL_STEPS);
-      setStep(currentStep);
-      if (data.vol) { const el = document.getElementById('f-vol'); if (el) el.dispatchEvent(new Event('input', { bubbles: true })); }
-      if (data.vol2) { const el = document.getElementById('f-vol2'); if (el) el.dispatchEvent(new Event('input', { bubbles: true })); }
-      document.getElementById('brouillon-msg').style.display = 'block';
-      setTimeout(function(){ document.getElementById('brouillon-msg').style.display = 'none'; }, 6000);
-      return true;
-    }
-  } catch (e) {}
-  return false;
-}
-
-function clearDossierBrouillon() {
-  try { localStorage.removeItem(BROUILLON_KEY); } catch (e) {}
-}
-
-/* ══ ÉTAPE 1 — VOL & TRAJET (comme diagnostic) ══ */
-const VOL_DB = {
-  'AF700':{ r:'CDG→ABJ', a:'Air France', c:600 },'AF701':{ r:'ABJ→CDG', a:'Air France', c:600 },
-  'AF702':{ r:'CDG→DKR', a:'Air France', c:600 },'AF703':{ r:'DKR→CDG', a:'Air France', c:600 },
-  'AF718':{ r:'CDG→DKR', a:'Air France', c:600 },'AF719':{ r:'DKR→CDG', a:'Air France', c:600 },
-  'AF950':{ r:'CDG→CMN', a:'Air France', c:400 },'AF560':{ r:'CDG→TUN', a:'Air France', c:400 },
-  'AF490':{ r:'CDG→ALG', a:'Air France', c:400 },'SS891':{ r:'CDG→DKR', a:'Air Sénégal', c:600 },
-  'SS892':{ r:'DKR→CDG', a:'Air Sénégal', c:600 },'TO755':{ r:'ORY→TUN', a:'Transavia', c:400 },
-  'TO760':{ r:'ORY→ALG', a:'Transavia', c:400 },'TO770':{ r:'ORY→CMN', a:'Transavia', c:400 },
-  'DS255':{ r:'ORY→ABJ', a:'Corsair', c:600 },'DS256':{ r:'ABJ→ORY', a:'Corsair', c:600 },
-  'SN373':{ r:'BRU→ABJ', a:'Brussels Airlines', c:600 },'SN255':{ r:'BRU→DKR', a:'Brussels Airlines', c:600 },
-  'ET704':{ r:'CDG→ADD', a:'Ethiopian Airlines', c:600 },'AT200':{ r:'CDG→CMN', a:'Royal Air Maroc', c:400 },
-  'TU700':{ r:'ORY→TUN', a:'Tunisair', c:400 }
-};
-const VOL_PFX = { AF:'Air France', SS:'Air Sénégal', TO:'Transavia', DS:'Corsair', SN:'Brussels Airlines', ET:'Ethiopian Airlines', AT:'Royal Air Maroc', TU:'Tunisair', FR:'Ryanair', BA:'British Airways', LH:'Lufthansa' };
-const DLABEL = { 600:'Long-courrier (+3 500 km)', 400:'Moyen-courrier (1 500–3 500 km)', 250:'Court-courrier (<1 500 km)' };
-
-function setTrajetDossier(t) {
-  document.getElementById('f-trajet').value = t;
-  document.getElementById('btn-direct').classList.toggle('selected', t === 'direct');
-  document.getElementById('btn-escale').classList.toggle('selected', t === 'escale');
-  document.getElementById('dossier-block-direct').style.display = t === 'direct' ? 'block' : 'none';
-  document.getElementById('dossier-block-escale').style.display = t === 'escale' ? 'block' : 'none';
-}
-
-function changePaxDossier(delta) {
-  const el = document.getElementById('f-pax-val');
-  const n = Math.max(1, Math.min(9, (parseInt(el.textContent) || 1) + delta));
-  el.textContent = n;
-}
-
-function volLookupDossier(inputEl, chipId, compagnieId, destinationId) {
-  const raw = inputEl.value.toUpperCase().replace(/[^A-Z0-9]/g,'');
-  inputEl.value = raw;
-  const chip = document.getElementById(chipId);
-  if (!chip) return;
-  const match = VOL_DB[raw];
-  const prefix = raw.slice(0,2);
-  if (match) {
-    document.getElementById(chipId + '-route').textContent = match.a + ' · ' + match.r;
-    const distEl = document.getElementById(chipId + '-dist');
-    if (distEl) distEl.textContent = DLABEL[match.c] || '';
-    const badge = document.getElementById(chipId + '-badge');
-    if (badge) { badge.textContent = match.c + '€'; badge.className = 'chip-badge'; }
-    chip.classList.add('show');
-    if (compagnieId) { const c = document.getElementById(compagnieId); if (c) c.value = match.a; }
-    if (destinationId) { const d = document.getElementById(destinationId); if (d) d.value = match.r; }
-  } else {
-    chip.classList.remove('show');
-    if (raw.length >= 2 && VOL_PFX[prefix]) {
-      document.getElementById(chipId + '-route').textContent = VOL_PFX[prefix] + ' · Numéro non en base';
-      const distEl = document.getElementById(chipId + '-dist');
-      if (distEl) distEl.textContent = 'Saisissez la destination ci-dessous';
-      const badge = document.getElementById(chipId + '-badge');
-      if (badge) { badge.textContent = '?'; badge.className = 'chip-badge'; }
-      chip.classList.add('show');
-      if (compagnieId) { const c = document.getElementById(compagnieId); if (c && !c.value) c.value = VOL_PFX[prefix]; }
-    }
-  }
-}
-
-function setStep(n) {
-  document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
-  document.getElementById('fs-' + n).classList.add('active');
-
-  // Stepper
-  document.querySelectorAll('.step-item').forEach((el, i) => {
-    const s = i + 1;
-    el.classList.toggle('active', s === n);
-    el.classList.toggle('done', s < n);
-  });
-
-  // Progress bar
-  document.getElementById('progress-bar').style.width = ((n / TOTAL_STEPS) * 100) + '%';
-
-  // Plus que X étapes
-  const remaining = TOTAL_STEPS - n;
-  const remEl = document.getElementById('steps-remaining');
-  if (remEl) remEl.textContent = remaining > 0 ? 'Plus que ' + remaining + ' étape' + (remaining > 1 ? 's' : '') : 'Dernière étape !';
-
-  currentStep = n;
-  saveDossierBrouillon();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function nextStep(from) {
-  if (!validateStep(from)) return;
-  setStep(from + 1);
-}
-
-function prevStep(from) {
-  setStep(from - 1);
-}
-
-/* ══ VALIDATION ══ */
-function validateStep(n) {
-  let ok = true;
-
-  if (n === 1) {
-    const trajet = document.getElementById('f-trajet').value;
-    const volNum = trajet === 'direct' ? (document.getElementById('f-vol').value || '').trim() : (document.getElementById('f-vol2').value || '').trim();
-    const required = ['f-prenom','f-nom','f-email','f-date-vol','f-motif'];
-    ['f-vol','f-vol2'].forEach(id => { const e = document.getElementById(id); if (e) e.classList.remove('err'); });
-    if (!volNum) {
-      document.getElementById(trajet === 'direct' ? 'f-vol' : 'f-vol2').classList.add('err');
-      alert('Veuillez renseigner le numéro de vol (ex. AF718, BA123).');
-      ok = false;
-    }
-    required.forEach(id => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      const val = el.value !== undefined ? el.value : el.textContent;
-      if (!val || !String(val).trim()) { el.classList.add('err'); ok = false; }
-      else el.classList.remove('err');
+  // ============ STEP NAVIGATION ============
+  const steps = document.querySelectorAll('[data-step]');
+  const pills = document.querySelectorAll('.step-pill');
+  let current = 1;
+  function show(n){
+    document.querySelectorAll('.card[data-step]').forEach(s=>s.classList.add('hidden'));
+    document.querySelector('.card[data-step="'+n+'"]').classList.remove('hidden');
+    pills.forEach(p=>{
+      const s = parseInt(p.dataset.step);
+      p.classList.toggle('active', s===n);
+      p.classList.toggle('done', s<n);
     });
-    if (!ok) { shakeFirst(); return false; }
+    current = n;
+    window.scrollTo({top:0,behavior:'smooth'});
+    if(n===5) buildRecap();
+  }
+  document.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click',()=>{
+    if(validateStep(current)) show(current+1);
+  }));
+  document.querySelectorAll('[data-prev]').forEach(b=>b.addEventListener('click',()=>show(current-1)));
 
-    const fullname = (document.getElementById('f-prenom').value + ' ' + document.getElementById('f-nom').value).trim();
-    const date = document.getElementById('f-date-vol').value;
-    document.getElementById('m-fullname').textContent = fullname || '[Prénom Nom]';
-    document.getElementById('m-flight').textContent   = volNum.toUpperCase() || '[numéro]';
-    document.getElementById('m-date').textContent     = date ? new Date(date).toLocaleDateString('fr-FR') : '[date]';
+  function validateStep(n){
+    const card = document.querySelector('.card[data-step="'+n+'"]');
+    const reqs = card.querySelectorAll('[required]');
+    for(const r of reqs){
+      if(!r.checkValidity()){ r.reportValidity(); return false; }
+    }
+    if(n===3 && !sigHasStroke){ alert('Merci de signer le mandat.'); return false; }
+    return true;
   }
 
-  if (n === 2) { /* Boarding: file optional, or "plus tard" */ }
-
-  if (n === 4) {
-    if (sigEmpty('sig-mandat')) { alert('Veuillez signer le mandat de représentation.'); return false; }
-    if (!document.getElementById('chk-mandat').checked) { alert('Veuillez cocher la case de confirmation du mandat.'); return false; }
-    if (!document.getElementById('chk-rgpd')?.checked) { alert('Veuillez accepter la politique de confidentialité.'); return false; }
+  // ============ MOTIF -> TOGGLE RETARD ============
+  const retardField = document.getElementById('retardField');
+  const retardInput = document.getElementById('retard');
+  function syncRetardRequired(){
+    const isRetard = document.querySelector('input[name=motif]:checked')?.value === 'retard';
+    retardField.style.display = isRetard ? 'block' : 'none';
+    if (retardInput) retardInput.required = isRetard;
   }
-
-  return true;
-}
-
-function shakeFirst() {
-  const firstErr = document.querySelector('.err');
-  if (firstErr) { firstErr.focus(); firstErr.scrollIntoView({ behavior:'smooth', block:'nearest' }); }
-}
-
-/* ══ OPTION « PLUS TARD » ── */
-window.dossierLater = { boarding: false, id: false };
-function setLater(which) {
-  window.dossierLater[which] = true;
-  document.getElementById('btn-later-' + which).style.display = 'none';
-  document.getElementById('later-confirm-' + which).classList.add('show');
-}
-
-/* ══ RIB : fournir plus tard ── */
-function toggleSepaFields() {
-  const later = document.getElementById('sepa-later').checked;
-  document.getElementById('sepa-fields-wrap').classList.toggle('hidden', later);
-}
-
-/* ══ RIB FILE ── */
-function dzDropRib(e) {
-  e.preventDefault();
-  document.getElementById('dz-rib').classList.remove('over');
-  const file = e.dataTransfer.files[0];
-  if (file) { window.dossierFiles['file-rib'] = file; document.getElementById('dz-rib').querySelector('.zone-text').textContent = '✓ ' + file.name; }
-}
-
-/* ══ WEBCAM (desktop) ── */
-let webcamStream = null;
-let webcamTarget = null; // { prevId, dzId, storeKey }
-function openPhotoInput(which) {
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
-  if (isMobile) {
-    const id = which === 'boarding' ? 'file-boarding-cam' : 'file-id-cam';
-    document.getElementById(id).click();
-    return;
-  }
-  webcamTarget = which === 'boarding' ? { prevId: 'prev-boarding', dzId: 'dz-boarding', storeKey: 'file-boarding' } : { prevId: 'prev-id', dzId: 'dz-id', storeKey: 'file-id' };
-  openWebcamModal();
-}
-function openWebcamModal() {
-  const video = document.getElementById('webcam-video');
-  const overlay = document.getElementById('webcam-overlay');
-  overlay.classList.add('open');
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }).then(function(stream) {
-    webcamStream = stream;
-    video.srcObject = stream;
-  }).catch(function() {
-    navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) {
-      webcamStream = stream;
-      video.srcObject = stream;
-    }).catch(function() { alert('Impossible d\'accéder à la caméra.'); closeWebcam(); });
+  document.querySelectorAll('input[name=motif]').forEach(r=>{
+    r.addEventListener('change', syncRetardRequired);
   });
-}
-function closeWebcam() {
-  if (webcamStream) { webcamStream.getTracks().forEach(function(t){ t.stop(); }); webcamStream = null; }
-  document.getElementById('webcam-video').srcObject = null;
-  document.getElementById('webcam-overlay').classList.remove('open');
-  webcamTarget = null;
-}
-function captureWebcam() {
-  if (!webcamTarget) return;
-  const video = document.getElementById('webcam-video');
-  const canvas = document.getElementById('webcam-canvas');
-  const ctx = canvas.getContext('2d');
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  ctx.drawImage(video, 0, 0);
-  canvas.toBlob(function(blob) {
-    const file = new File([blob], 'capture-' + Date.now() + '.jpg', { type: 'image/jpeg' });
-    showPreview(file, webcamTarget.prevId, webcamTarget.storeKey);
-    dzOut(webcamTarget.dzId);
-    closeWebcam();
-  }, 'image/jpeg', 0.92);
-}
+  syncRetardRequired();
 
-/* ══ FILE DROP ZONES ══ */
-window.dossierFiles = { 'file-boarding': null, 'file-id': null, 'file-rib': null };
+  // ============ PASSAGERS DYNAMIQUES ============
+  let paxCount = 1;
+  document.getElementById('addPassenger').addEventListener('click',()=>{
+    const idx = paxCount++;
+    const block = document.createElement('div');
+    block.className = 'passenger-block';
+    block.dataset.idx = idx;
+    block.innerHTML = `
+      <div class="passenger-head">
+        <strong>Passager ${idx+1}</strong>
+        <button type="button" class="btn-remove">Retirer</button>
+      </div>
+      <div class="row">
+        <div class="field"><label>Prénom *</label><input type="text" name="passagers[${idx}][prenom]" required></div>
+        <div class="field"><label>Nom *</label><input type="text" name="passagers[${idx}][nom]" required></div>
+      </div>
+      <div class="row">
+        <div class="field"><label>Date de naissance <span class="opt">(facultatif)</span></label><input type="date" name="passagers[${idx}][naissance]"></div>
+        <div class="field"><label>Nationalité <span class="opt">(facultatif)</span></label><input type="text" name="passagers[${idx}][nationalite]"></div>
+      </div>`;
+    document.getElementById('passengers').appendChild(block);
+    block.querySelector('.btn-remove').addEventListener('click',()=>block.remove());
+  });
 
-function dzOver(e, dzId) { e.preventDefault(); e.dataTransfer.dropEffect = 'copy'; document.getElementById(dzId).classList.add('over'); }
-function dzOut(dzId) { document.getElementById(dzId).classList.remove('over'); }
-
-function dzDrop(e, dzId, prevId, inputId) {
-  e.preventDefault();
-  dzOut(dzId);
-  const file = e.dataTransfer.files[0];
-  if (!file) return;
-  showPreview(file, prevId, inputId || (dzId === 'dz-boarding' ? 'file-boarding' : 'file-id'));
-}
-
-function fileSelected(inputId, prevId, dzId) {
-  const input = document.getElementById(inputId);
-  const file  = input.files[0];
-  if (!file) return;
-  showPreview(file, prevId, inputId);
-  dzOut(dzId);
-}
-
-function fileFromCamera(e, prevId, dzId, storeKey) {
-  const input = e.target;
-  const file  = input.files[0];
-  if (!file) return;
-  showPreview(file, prevId, storeKey);
-  dzOut(dzId);
-  input.value = '';
-}
-
-function showPreview(file, prevId, inputId) {
-  if (inputId) window.dossierFiles[inputId] = file;
-  document.getElementById(prevId + '-name').textContent = file.name;
-  document.getElementById(prevId + '-size').textContent = formatSize(file.size);
-  document.getElementById(prevId).classList.add('show');
-}
-
-function removeFile(inputId, prevId, dzId) {
-  document.getElementById(inputId).value = '';
-  if (window.dossierFiles) window.dossierFiles[inputId] = null;
-  document.getElementById(prevId).classList.remove('show');
-}
-
-function formatSize(bytes) {
-  if (bytes < 1024) return bytes + ' o';
-  if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' Ko';
-  return (bytes/(1024*1024)).toFixed(1) + ' Mo';
-}
-
-/* ══ SIGNATURE CANVAS ══ */
-const sigState = {};
-
-function initSig(canvasId, statusId) {
-  const canvas = document.getElementById(canvasId);
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  // Resize
-  canvas.width  = canvas.offsetWidth  || 580;
-  canvas.height = 160;
-  ctx.strokeStyle = '#0B1F3A';
-  ctx.lineWidth   = 2.2;
-  ctx.lineCap     = 'round';
-  ctx.lineJoin    = 'round';
-
-  sigState[canvasId] = { drawing: false, hasData: false };
-
-  function getPos(e, c) {
-    const r = c.getBoundingClientRect();
-    const touch = e.touches ? e.touches[0] : e;
-    return { x: (touch.clientX - r.left) * (c.width / r.width), y: (touch.clientY - r.top) * (c.height / r.height) };
-  }
-
-  function start(e) {
-    e.preventDefault();
-    sigState[canvasId].drawing = true;
-    const p = getPos(e, canvas);
-    ctx.beginPath(); ctx.moveTo(p.x, p.y);
-  }
-  function move(e) {
-    e.preventDefault();
-    if (!sigState[canvasId].drawing) return;
-    const p = getPos(e, canvas);
-    ctx.lineTo(p.x, p.y); ctx.stroke();
-    sigState[canvasId].hasData = true;
-    updateSigStatus(canvasId, statusId, true);
-  }
-  function end(e) { e.preventDefault(); sigState[canvasId].drawing = false; }
-
-  canvas.addEventListener('mousedown', start);
-  canvas.addEventListener('mousemove', move);
-  canvas.addEventListener('mouseup',   end);
-  canvas.addEventListener('touchstart', start, { passive:false });
-  canvas.addEventListener('touchmove',  move,  { passive:false });
-  canvas.addEventListener('touchend',   end,   { passive:false });
-}
-
-function updateSigStatus(canvasId, statusId, signed) {
-  const dot = document.getElementById(statusId);
-  const txt = document.getElementById(statusId.replace('-status','-txt'));
-  if (dot) dot.classList.toggle('signed', signed);
-  if (txt) txt.textContent = signed ? 'Signé ✓' : 'Non signé';
-}
-
-function clearSig(canvasId, statusId) {
-  const canvas = document.getElementById(canvasId);
-  if (!canvas) return;
-  canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-  sigState[canvasId].hasData = false;
-  updateSigStatus(canvasId, statusId, false);
-}
-
-function sigEmpty(canvasId) {
-  return !sigState[canvasId] || !sigState[canvasId].hasData;
-}
-
-/* ══ IBAN FORMAT ══ */
-function formatIBAN(input) {
-  let v = input.value.replace(/\s/g,'').toUpperCase();
-  v = v.replace(/(.{4})/g, '$1 ').trim();
-  input.value = v;
-}
-
-/* ══ SUBMIT ══ */
-// Webhook Make.com — toutes les données sont envoyées en JSON au clic sur "Soumettre mon dossier"
-const DOSSIER_WEBHOOK_URL = 'https://hook.eu1.make.com/dpdckubaeu9xlwh6c7xh85yffckbsrs0';
-
-/** Génère un numéro de dossier RDA : RDA-YYMMDD-XXXX (donne l'impression d'un volume élevé de dossiers) */
-function generateNumeroDossier() {
-  const d = new Date();
-  const yy = String(d.getFullYear()).slice(-2);
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  const seq = String(Math.floor(1000 + Math.random() * 9000)); // 1000–9999
-  return 'RDA-' + yy + mm + dd + '-' + seq;
-}
-
-function submitDossier() {
-  if (!validateStep(4)) return;
-  const btn = document.getElementById('btn-submit');
-  btn.textContent = '⏳ Envoi en cours...';
-  btn.disabled = true;
-
-  const numeroDossier = generateNumeroDossier();
-
-  function showSuccess() {
-    clearDossierBrouillon();
-    document.querySelectorAll('.form-step').forEach(s => s.classList.remove('active'));
-    document.getElementById('fs-success').classList.add('active');
-    const numEl = document.getElementById('success-numero-dossier');
-    const valEl = document.getElementById('success-numero-value');
-    if (numEl && valEl) { numEl.style.display = 'block'; valEl.textContent = numeroDossier; }
-    document.getElementById('progress-bar').style.width = '100%';
-    document.querySelectorAll('.step-item').forEach(el => el.classList.add('done'));
-    const remEl = document.getElementById('steps-remaining'); if (remEl) remEl.textContent = 'Dossier envoyé !';
-    window.scrollTo({ top:0, behavior:'smooth' });
-    setTimeout(function() {
-      if (window.FeedbackModal) {
-        window.FeedbackModal.show({
-          webhookUrl: DOSSIER_WEBHOOK_URL,
-          googleReviewUrl: 'https://search.google.com/local/writereview?placeid=TON_LIEN_GOOGLE_BUSINESS',
-          source: 'dossier'
-        });
-      }
-    }, 800);
-  }
-
-  const payload = {
-    dossier_id: numeroDossier,
-    numero_dossier: numeroDossier,
-    mode: 'en_ligne',
-    timestamp: new Date().toISOString(),
-    nom: document.getElementById('f-nom')?.value,
-    prenom: document.getElementById('f-prenom')?.value,
-    email: document.getElementById('f-email')?.value,
-    tel: document.getElementById('f-tel')?.value,
-    pnr: (document.getElementById('f-pnr')?.value || '').trim(),
-    compagnie: document.getElementById('f-compagnie')?.value,
-    trajet: document.getElementById('f-trajet')?.value,
-    vol: document.getElementById('f-vol')?.value,
-    vol1: document.getElementById('f-vol1')?.value,
-    vol2: document.getElementById('f-vol2')?.value,
-    destination: document.getElementById('f-destination')?.value,
-    dateVol: document.getElementById('f-date-vol')?.value,
-    pax: document.getElementById('f-pax-val')?.textContent,
-    motif: document.getElementById('f-motif')?.value,
-    // RIB/IBAN : demandé plus tard, après réception des fonds (on ne saisit rien ici)
-    sepaLater: true,
-    sepaTitulaire: '',
-    sepaIban: '',
-    sepaBic: '',
-    sepaBanque: ''
-  };
-
-  if (DOSSIER_WEBHOOK_URL) {
-    fetch(DOSSIER_WEBHOOK_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    }).then(function() { showSuccess(); }).catch(function() {
-      alert('L\'envoi a échoué. Vous pouvez nous envoyer votre dossier par WhatsApp.');
-      btn.textContent = 'Soumettre mon dossier';
-      btn.disabled = false;
+  // ============ DROPZONES ============
+  function wireDropzone(dzId, listId){
+    const dz = document.getElementById(dzId);
+    const input = dz.querySelector('input[type=file]');
+    const list = document.getElementById(listId);
+    function render(){
+      list.innerHTML = '';
+      Array.from(input.files).forEach(f=>{
+        const div = document.createElement('div');
+        div.className='file-item';
+        const kb = (f.size/1024).toFixed(0);
+        const size = kb>1024 ? (kb/1024).toFixed(1)+' Mo' : kb+' Ko';
+        div.innerHTML = `<span>📎 ${f.name}</span><span class="fsize">${size}</span>`;
+        list.appendChild(div);
+      });
+    }
+    input.addEventListener('change',render);
+    dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag')});
+    dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
+    dz.addEventListener('drop',e=>{
+      e.preventDefault();dz.classList.remove('drag');
+      input.files = e.dataTransfer.files;
+      render();
     });
-  } else {
-    setTimeout(showSuccess, 1200);
   }
-}
+  wireDropzone('dz-embarq','fl-embarq');
+  wireDropzone('dz-id','fl-id');
 
-/* ══ INIT ══ */
-document.addEventListener('DOMContentLoaded', () => {
-  initSig('sig-mandat', 'sig-mandat-status');
-
-  // Default date (only if no brouillon)
-  const restored = restoreDossierBrouillon();
-  if (!restored) {
-    const d = new Date(); d.setDate(d.getDate() - 10);
-    const el = document.getElementById('f-date-vol');
-    if (el) el.value = d.toISOString().split('T')[0];
+  // ============ SIGNATURE CANVAS ============
+  const canvas = document.getElementById('sigCanvas');
+  const ctx = canvas.getContext('2d');
+  let drawing=false, sigHasStroke=false;
+  function resize(){
+    const rect = canvas.getBoundingClientRect();
+    const scale = window.devicePixelRatio || 1;
+    canvas.width = rect.width*scale; canvas.height = 160*scale;
+    ctx.setTransform(1,0,0,1,0,0);
+    ctx.scale(scale,scale);
+    ctx.strokeStyle = '#061326'; ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.lineJoin='round';
   }
-
-  // Sauvegarde brouillon sur changement des champs texte
-  ['f-vol','f-vol1','f-vol2','f-compagnie','f-destination','f-date-vol','f-motif','f-pnr','f-prenom','f-nom','f-email','f-tel'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('change', saveDossierBrouillon);
+  resize(); window.addEventListener('resize',resize);
+  function pos(e){
+    const r = canvas.getBoundingClientRect();
+    const t = e.touches ? e.touches[0] : e;
+    return {x: t.clientX-r.left, y: t.clientY-r.top};
+  }
+  function start(e){drawing=true;sigHasStroke=true;const p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);e.preventDefault()}
+  function move(e){if(!drawing)return;const p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();e.preventDefault()}
+  function end(){drawing=false;document.getElementById('signature-data').value=canvas.toDataURL('image/png')}
+  canvas.addEventListener('mousedown',start);canvas.addEventListener('mousemove',move);canvas.addEventListener('mouseup',end);canvas.addEventListener('mouseleave',end);
+  canvas.addEventListener('touchstart',start);canvas.addEventListener('touchmove',move);canvas.addEventListener('touchend',end);
+  document.getElementById('sigClear').addEventListener('click',()=>{
+    sigHasStroke=false;
+    document.getElementById('signature-data').value='';
+    resize();
   });
-});
 
-window.addEventListener('resize', () => {
-  ['sig-mandat'].forEach(id => {
-    const c = document.getElementById(id);
-    if (c) { c.width = c.offsetWidth || 580; }
+  // Update mandate name live
+  ['ct-prenom','ct-nom'].forEach(id=>{
+    document.getElementById(id).addEventListener('input',()=>{
+      const p = document.getElementById('ct-prenom').value.trim();
+      const n = document.getElementById('ct-nom').value.trim();
+      document.getElementById('mandate-name').textContent = (p||n) ? (p+' '+n).trim() : '[votre nom]';
+    });
   });
-});
+
+  // ============ RECAP ============
+  function buildRecap(){
+    const g = id => document.getElementById(id).value || '—';
+    const motif = document.querySelector('input[name=motif]:checked')?.value || '—';
+    document.getElementById('recap-vol').innerHTML = `
+      <dt>Vol</dt><dd>${g('vol')}</dd>
+      <dt>Compagnie</dt><dd>${g('compagnie')}</dd>
+      <dt>Trajet</dt><dd>${g('depart')} → ${g('arrivee')}</dd>
+      <dt>Date</dt><dd>${g('date')}</dd>
+      <dt>Motif</dt><dd>${motif}${motif==='retard' ? ' · '+g('retard') : ''}</dd>`;
+    const paxBlocks = document.querySelectorAll('.passenger-block');
+    let paxHtml='';
+    paxBlocks.forEach((b,i)=>{
+      const p = b.querySelector('input[name*="[prenom]"]').value;
+      const n = b.querySelector('input[name*="[nom]"]').value;
+      paxHtml += `<dt>#${i+1}</dt><dd>${p} ${n}</dd>`;
+    });
+    document.getElementById('recap-pax').innerHTML = paxHtml || '<dt>—</dt><dd>Aucun</dd>';
+    document.getElementById('recap-contact').innerHTML = `
+      <dt>Nom</dt><dd>${g('ct-prenom')} ${g('ct-nom')}</dd>
+      <dt>E-mail</dt><dd>${g('ct-email')}</dd>
+      <dt>Téléphone</dt><dd>${g('ct-tel')}</dd>`;
+    const emb = document.getElementById('embarq-later').checked ? 'Fourni plus tard' : (document.querySelector('#dz-embarq input').files.length+' fichier(s)');
+    const id = document.getElementById('id-later').checked ? 'Fourni plus tard' : (document.querySelector('#dz-id input').files.length+' fichier(s)');
+    document.getElementById('recap-docs').innerHTML = `<dt>Embarquement</dt><dd>${emb}</dd><dt>Identité</dt><dd>${id}</dd><dt>Signature</dt><dd>${sigHasStroke?'✓ Mandat signé':'— non signée'}</dd>`;
+    const nbPax = paxBlocks.length;
+    const montant = nbPax*600;
+    document.getElementById('recap-montant').textContent = nbPax+' passager(s) × 600€ = '+montant.toLocaleString('fr-FR')+' €';
+  }
 </script>
+
 </body>
 </html>
