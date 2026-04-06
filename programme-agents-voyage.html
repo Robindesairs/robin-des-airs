@@ -1086,6 +1086,49 @@
       border: 1px solid var(--line);
       color: var(--navy-mid);
     }
+
+    /* ===== MESSAGE ACCOMPAGNEMENT AGENCE ===== */
+    .agency-accompagnement {
+      background: linear-gradient(135deg, rgba(0, 200, 122, 0.08), rgba(184, 149, 108, 0.06));
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 26px 28px;
+    }
+    .agency-accompagnement-inner {
+      max-width: 820px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .agency-accompagnement-inner p {
+      margin: 0;
+      font-size: 1.05rem;
+      color: var(--text);
+      line-height: 1.65;
+    }
+    .agency-accompagnement-inner strong { color: var(--navy); }
+
+    /* ===== TRANSPARENCE ===== */
+    .transparence-list {
+      margin: 20px 0 0;
+      padding: 0;
+      list-style: none;
+      max-width: 720px;
+    }
+    .transparence-list li {
+      position: relative;
+      padding-left: 28px;
+      margin-bottom: 14px;
+      font-size: 0.98rem;
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .transparence-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--teal-dark);
+      font-weight: 900;
+    }
   </style>
 </head>
 <body>
@@ -1152,6 +1195,13 @@
   </div>
 </div>
 
+<!-- Message d'accompagnement agence -->
+<div class="agency-accompagnement" id="accompagnement-agence">
+  <div class="agency-accompagnement-inner">
+    <p>Vous portez vos clients sur le long terme — nous portons avec vous la partie indemnisation EU261. <strong>Pas de petites lignes cachées :</strong> vous savez ce qui est versé à votre agence, quand l'indemnité est obtenue, et comment vos clients sont informés. On avance ensemble, étape par étape.</p>
+  </div>
+</div>
+
 <!-- 1. Pourquoi ce créneau — problème & positionnement -->
 <section class="section section-sand why-niche" id="pourquoi-ce-creneau" aria-labelledby="why-creneau-title">
   <div class="container">
@@ -1215,6 +1265,22 @@
         <div class="stat-label">Aucun frais pour votre<br/>agence, aucun risque</div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- Transparence -->
+<section class="section section-warm" id="transparence" aria-labelledby="transparence-title">
+  <div class="container">
+    <div class="eyebrow">Transparence</div>
+    <h2 id="transparence-title">Ce que votre agence voit, noir sur blanc</h2>
+    <p class="lead">Les mêmes règles pour tout le monde : pas de surprise au moment du versement.</p>
+    <ul class="transparence-list">
+      <li><strong>Commission agence :</strong> 30.000 FCFA par passager indemnisé, versés sous 48h après réception des fonds côté passager — pas avant, pas après.</li>
+      <li><strong>Frais de succès passager :</strong> 25 % sur l'indemnité seulement si l'argent est récupéré ; sinon le passager ne paie rien à Robin des Airs — cohérent avec votre discours « zéro risque ».</li>
+      <li><strong>Aucun frais côté agence.</strong> Pas d'abonnement, pas de frais d'entrée, pas de minimum de dossiers.</li>
+      <li><strong>Suivi :</strong> vous pouvez demander où en est un dossier référé ; vous restez le point de contact relationnel de votre client.</li>
+      <li><strong>Cadre légal :</strong> mandat, CGV et politique de confidentialité accessibles avant signature — droit de rétractation pour le passager, comme prévu par la loi.</li>
+    </ul>
   </div>
 </section>
 
