@@ -128,6 +128,21 @@
   to = "/merci-dossier.html"
   status = 200
 
+[[redirects]]
+  from = "/programme-agents-voyage"
+  to = "/programme-agents-voyage.html"
+  status = 200
+
+[[redirects]]
+  from = "/agences-partenaires"
+  to = "/programme-agents-voyage.html"
+  status = 301
+
+[[redirects]]
+  from = "/agences-partenaires.html"
+  to = "/programme-agents-voyage.html"
+  status = 301
+
 # Auth CRM (code dans CRM_ACCESS_CODE)
 [[redirects]]
   from = "/api/crm-auth"

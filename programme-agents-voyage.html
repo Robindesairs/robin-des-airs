@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Programme Partenaire Agences — Robin des Airs</title>
-  <meta name="description" content="Rejoignez le programme partenaire Robin des Airs. Référez vos clients victimes de retards ou annulations de vols et percevez 30.000 FCFA par passager indemnisé. Zéro risque, zéro gestion." />
+  <title>Programme agents &amp; agences de voyage — Robin des Airs</title>
+  <meta name="description" content="Page dédiée agents et agences de voyage : programme partenaire Robin des Airs, 30.000 FCFA par passager indemnisé (EU261). Lien à partager avec vos équipes." />
+  <link rel="canonical" href="https://robindesairs.eu/programme-agents-voyage.html" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
@@ -1028,6 +1029,63 @@
       body { padding-bottom: 72px; }
       .proof-inner { gap: 14px; font-size: 0.8rem; }
     }
+
+    /* ===== LIEN PARTAGEABLE AGENTS ===== */
+    .agent-link-bar {
+      background: var(--bg-warm);
+      border-bottom: 1px solid var(--line);
+      padding: 14px 28px;
+    }
+    .agent-link-bar-inner { max-width: 1100px; margin: 0 auto; }
+    .agent-link-bar .al-title {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--earth);
+      margin: 0 0 10px;
+    }
+    .agent-link-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .agent-link-row input {
+      flex: 1;
+      min-width: min(100%, 240px);
+      font-family: ui-monospace, monospace;
+      font-size: 13px;
+      padding: 11px 14px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--surface);
+      color: var(--text);
+    }
+    .agent-link-row button {
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      padding: 11px 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-family: inherit;
+    }
+    .agent-link-row button:hover { background: var(--navy-mid); }
+    .agent-link-html {
+      margin: 12px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .agent-link-html code {
+      font-size: 11px;
+      word-break: break-all;
+      background: var(--surface);
+      padding: 10px 12px;
+      border-radius: 8px;
+      display: block;
+      margin-top: 8px;
+      border: 1px solid var(--line);
+      color: var(--navy-mid);
+    }
   </style>
 </head>
 <body>
@@ -1040,6 +1098,18 @@
   </div>
   <a href="#rejoindre" class="nav-cta">Rejoindre le programme</a>
 </header>
+
+<!-- Lien à partager avec vos agents (même contenu que la page) -->
+<div class="agent-link-bar" id="lien-agents">
+  <div class="agent-link-bar-inner">
+    <p class="al-title">Lien pour vos agents &amp; équipes</p>
+    <div class="agent-link-row">
+      <input type="text" id="agent-share-url" readonly value="https://robindesairs.eu/programme-agents-voyage.html" aria-label="Adresse à copier pour vos agents" />
+      <button type="button" id="agent-share-copy">Copier le lien</button>
+    </div>
+    <p class="agent-link-html">Code HTML (site, newsletter, intranet) :<code id="agent-share-code">&lt;a href="https://robindesairs.eu/programme-agents-voyage.html"&gt;Programme partenaire Robin des Airs — agents &amp; agences&lt;/a&gt;</code></p>
+  </div>
+</div>
 
 <!-- Accueil — accroche & CTA -->
 <section class="hero">
@@ -1056,7 +1126,7 @@
       <a href="#rejoindre" class="btn-teal">
         ✦ Devenir partenaire — Gratuit
       </a>
-      <a href="https://api.whatsapp.com/send?phone=33756863630&amp;text=Bonjour%20Robin%20des%20Airs%2C%0A%0AJe%20viens%20de%20la%20page%20Programme%20partenaire%20agences.%20Je%20repr%C3%A9sente%20une%20agence%20de%20voyages%20et%20souhaite%20des%20informations%20sur%20le%20partenariat%20(convention%2C%20commission%2030%20000%20FCFA).%0A%0AMerci%20%21" class="btn-wa" target="_blank" rel="noopener noreferrer">
+      <a href="https://api.whatsapp.com/send?phone=33756863630&amp;text=Bonjour%20Robin%20des%20Airs%2C%0A%0AJe%20viens%20de%20la%20page%20Programme%20agents%20voyage.%20Je%20repr%C3%A9sente%20une%20agence%20de%20voyages%20et%20souhaite%20des%20informations%20sur%20le%20partenariat%20(convention%2C%20commission%2030%20000%20FCFA).%0A%0AMerci%20%21" class="btn-wa" target="_blank" rel="noopener noreferrer">
         💬 WhatsApp
       </a>
     </div>
@@ -1595,7 +1665,7 @@
 <div class="contact-strip">
   <h3>Une question ? Contactez-nous directement</h3>
   <div class="contact-btns">
-    <a href="https://api.whatsapp.com/send?phone=33756863630&amp;text=Bonjour%20Robin%20des%20Airs%2C%0A%0AJe%20viens%20de%20la%20page%20Programme%20partenaire%20agences.%20Je%20repr%C3%A9sente%20une%20agence%20de%20voyages%20et%20souhaite%20des%20informations%20sur%20le%20partenariat%20(convention%2C%20commission%2030%20000%20FCFA).%0A%0AMerci%20%21" class="c-btn teal" target="_blank" rel="noopener noreferrer">
+    <a href="https://api.whatsapp.com/send?phone=33756863630&amp;text=Bonjour%20Robin%20des%20Airs%2C%0A%0AJe%20viens%20de%20la%20page%20Programme%20agents%20voyage.%20Je%20repr%C3%A9sente%20une%20agence%20de%20voyages%20et%20souhaite%20des%20informations%20sur%20le%20partenariat%20(convention%2C%20commission%2030%20000%20FCFA).%0A%0AMerci%20%21" class="c-btn teal" target="_blank" rel="noopener noreferrer">
       💬 WhatsApp +33 7 56 86 36 30
     </a>
     <a href="mailto:expert@robindesairs.eu" class="c-btn">
@@ -1814,6 +1884,29 @@
   });
   updateIndicatifFlag();
   updateWaLink();
+})();
+</script>
+<script>
+(function () {
+  var btn = document.getElementById('agent-share-copy');
+  var inp = document.getElementById('agent-share-url');
+  if (!btn || !inp) return;
+  btn.addEventListener('click', function () {
+    inp.focus();
+    inp.select();
+    inp.setSelectionRange(0, 99999);
+    function done() {
+      btn.textContent = 'Copié ✓';
+      setTimeout(function () { btn.textContent = 'Copier le lien'; }, 2000);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(inp.value).then(done).catch(function () {
+        try { document.execCommand('copy'); done(); } catch (e) {}
+      });
+    } else {
+      try { document.execCommand('copy'); done(); } catch (e) {}
+    }
+  });
 })();
 </script>
 
