@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Robin des Airs — Parrainez, gagnez 20 €</title>
+<meta name="description" content="Parrainez un proche dont le vol a été retardé ou annulé. Recevez 20 € par filleul indemnisé. Programme de parrainage Robin des Airs.">
+<meta property="og:title" content="Gagnez 20 € en parrainant un proche — Robin des Airs">
+<meta property="og:description" content="Votre vol a été retardé ? Celui d'un proche aussi ? Parrainez-le et touchez 20 € quand son dossier est gagné.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0D1E38;
+  --green: #3DDFA8;
+  --green-dark: #00C27A;
+  --green-glow: rgba(61,223,168,0.12);
+  --white: #FFFFFF;
+  --gray: #8896A7;
+  --bg: #F4F6F8;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--navy); }
+
+/* ===== HEADER ===== */
+header {
+  background:var(--navy); padding:18px 32px; display:flex; align-items:center; justify-content:space-between;
+}
+.logo svg { height:36px; }
+.header-cta {
+  padding:10px 22px; border-radius:10px; background:var(--green); color:var(--navy);
+  font-weight:700; font-size:14px; text-decoration:none; transition:all 0.2s;
+}
+.header-cta:hover { background:var(--green-dark); }
+
+/* ===== HERO ===== */
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, #0A1628 100%);
+  padding:80px 32px 60px; text-align:center; position:relative; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; top:-100px; right:-100px; width:400px; height:400px;
+  background:radial-gradient(circle, rgba(61,223,168,0.08) 0%, transparent 70%);
+  border-radius:50%;
+}
+.hero-badge {
+  display:inline-block; background:var(--green-glow); border:1px solid rgba(61,223,168,0.25);
+  padding:6px 18px; border-radius:20px; font-size:13px; font-weight:600; color:var(--green);
+  margin-bottom:20px;
+}
+.hero h1 { font-size:42px; font-weight:900; color:var(--white); line-height:1.2; max-width:700px; margin:0 auto 16px; }
+.hero h1 span { color:var(--green); }
+.hero p { font-size:18px; color:rgba(255,255,255,0.6); max-width:540px; margin:0 auto 32px; line-height:1.6; }
+.hero-amount {
+  display:inline-flex; align-items:baseline; gap:8px; background:rgba(61,223,168,0.1);
+  border:2px solid var(--green); border-radius:16px; padding:16px 36px; margin-bottom:32px;
+}
+.hero-amount .num { font-size:56px; font-weight:900; color:var(--green); }
+.hero-amount .unit { font-size:22px; font-weight:700; color:var(--green); }
+.hero-amount .per { font-size:16px; color:rgba(255,255,255,0.5); margin-left:4px; }
+
+/* ===== HOW IT WORKS ===== */
+.section { padding:64px 32px; max-width:960px; margin:0 auto; }
+.section-title { text-align:center; font-size:28px; font-weight:800; margin-bottom:8px; }
+.section-sub { text-align:center; color:var(--gray); font-size:15px; margin-bottom:48px; }
+
+.steps { display:grid; grid-template-columns:repeat(3,1fr); gap:32px; }
+.step {
+  text-align:center; padding:32px 24px; background:var(--white); border-radius:20px;
+  box-shadow:0 4px 24px rgba(0,0,0,0.06); position:relative;
+}
+.step-num {
+  width:48px; height:48px; border-radius:50%; background:var(--green); color:var(--navy);
+  font-size:20px; font-weight:900; display:flex; align-items:center; justify-content:center;
+  margin:0 auto 16px;
+}
+.step h3 { font-size:16px; font-weight:700; margin-bottom:8px; }
+.step p { font-size:14px; color:var(--gray); line-height:1.6; }
+.step-arrow {
+  position:absolute; right:-24px; top:50%; transform:translateY(-50%); font-size:24px; color:var(--green);
+}
+
+/* ===== WHY ===== */
+.why-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.why-card {
+  padding:24px; background:var(--white); border-radius:16px; box-shadow:0 2px 16px rgba(0,0,0,0.04);
+  display:flex; gap:16px; align-items:flex-start;
+}
+.why-icon { font-size:28px; flex-shrink:0; margin-top:2px; }
+.why-card h4 { font-size:15px; font-weight:700; margin-bottom:4px; }
+.why-card p { font-size:13px; color:var(--gray); line-height:1.5; }
+
+/* ===== FORM ===== */
+.form-section {
+  background:var(--navy); padding:64px 32px; text-align:center;
+}
+.form-section .section-title { color:var(--white); }
+.form-section .section-sub { color:rgba(255,255,255,0.5); }
+.form-card {
+  max-width:560px; margin:0 auto; background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1); border-radius:20px; padding:36px; text-align:left;
+}
+.form-card .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+.form-card .form-row.full { grid-template-columns:1fr; }
+.form-card label { display:block; font-size:12px; font-weight:600; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+.form-card input, .form-card select {
+  width:100%; padding:13px 14px; border:2px solid rgba(255,255,255,0.1); border-radius:10px;
+  background:rgba(255,255,255,0.04); color:var(--white); font-family:inherit; font-size:14px; outline:none;
+  transition:border-color 0.2s;
+}
+.form-card input::placeholder { color:rgba(255,255,255,0.25); }
+.form-card input:focus { border-color:var(--green); }
+.form-card select { appearance:none; }
+.form-card select option { background:var(--navy); color:var(--white); }
+.form-divider {
+  border:none; border-top:1px solid rgba(255,255,255,0.08); margin:20px 0;
+}
+.form-card h4 { color:var(--green); font-size:13px; font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:14px; }
+.form-btn {
+  width:100%; padding:16px; border:none; border-radius:12px;
+  background:var(--green); color:var(--navy); font-family:inherit; font-size:16px; font-weight:800;
+  cursor:pointer; transition:all 0.2s; margin-top:8px;
+}
+.form-btn:hover { background:var(--green-dark); transform:translateY(-1px); }
+.form-legal { font-size:11px; color:rgba(255,255,255,0.3); text-align:center; margin-top:16px; line-height:1.5; }
+
+/* ===== FAQ ===== */
+.faq-list { max-width:640px; margin:0 auto; }
+.faq-item {
+  background:var(--white); border-radius:14px; padding:20px 24px; margin-bottom:12px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.04); cursor:pointer;
+}
+.faq-q { font-weight:700; font-size:15px; display:flex; justify-content:space-between; align-items:center; }
+.faq-a { font-size:14px; color:var(--gray); line-height:1.6; max-height:0; overflow:hidden; transition:all 0.3s; padding-top:0; }
+.faq-item.open .faq-a { max-height:200px; padding-top:12px; }
+.faq-item.open .faq-arrow { transform:rotate(180deg); }
+.faq-arrow { transition:transform 0.3s; color:var(--green); font-size:18px; }
+
+/* ===== FOOTER ===== */
+footer {
+  background:var(--navy); padding:32px; text-align:center;
+  color:rgba(255,255,255,0.3); font-size:13px;
+}
+footer a { color:var(--green); text-decoration:none; }
+
+/* ===== SUCCESS MODAL ===== */
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,0.6); display:none;
+  align-items:center; justify-content:center; z-index:999;
+}
+.modal-overlay.show { display:flex; }
+.modal {
+  background:var(--white); border-radius:24px; padding:48px 40px; text-align:center;
+  max-width:440px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.3);
+}
+.modal .check { font-size:56px; margin-bottom:16px; }
+.modal h3 { font-size:22px; font-weight:800; margin-bottom:8px; }
+.modal p { font-size:14px; color:var(--gray); line-height:1.6; margin-bottom:20px; }
+.modal .code-box {
+  background:var(--navy); color:var(--green); font-size:22px; font-weight:900;
+  letter-spacing:6px; padding:16px 24px; border-radius:12px; margin-bottom:20px;
+}
+.modal button {
+  padding:14px 32px; border:none; border-radius:10px;
+  background:var(--green); color:var(--navy); font-family:inherit; font-size:15px; font-weight:700;
+  cursor:pointer;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width:768px) {
+  .hero h1 { font-size:28px; }
+  .hero-amount .num { font-size:40px; }
+  .steps { grid-template-columns:1fr; }
+  .step-arrow { display:none; }
+  .why-grid { grid-template-columns:1fr; }
+  .form-card .form-row { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="logo">
+    <svg viewBox="0 0 280 50" xmlns="http://www.w3.org/2000/svg">
+      <g transform="translate(0,2)">
+        <path d="M 20,6 C 34,6 34,42 20,42" fill="none" stroke="#3DDFA8" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="11" cy="22" r="2.2" fill="#3DDFA8"/>
+      </g>
+      <text x="44" y="32" font-family="'Inter',sans-serif" font-weight="900" font-size="22" fill="#FFFFFF" letter-spacing="1">ROBIN</text>
+      <text x="130" y="32" font-family="'Inter',sans-serif" font-weight="700" font-style="italic" font-size="19" fill="#3DDFA8">des Airs</text>
+    </svg>
+  </div>
+  <a href="#form" class="header-cta">Parrainer maintenant</a>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-badge">Programme de parrainage</div>
+  <h1>Parrainez un proche,<br>gagnez <span>20 €</span></h1>
+  <p>Un ami ou un membre de votre famille a eu un vol retardé ou annulé ? Recommandez Robin des Airs et recevez 20 € quand son dossier est gagné.</p>
+  <div class="hero-amount">
+    <span class="num">20</span>
+    <span class="unit">€</span>
+    <span class="per">par filleul indemnisé</span>
+  </div>
+</section>
+
+<!-- How it works -->
+<section class="section">
+  <h2 class="section-title">Comment ça marche ?</h2>
+  <p class="section-sub">3 étapes simples, zéro paperasse pour vous</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Remplissez le formulaire</h3>
+      <p>Indiquez vos coordonnées et celles de votre filleul dont le vol a été perturbé.</p>
+      <span class="step-arrow">&#8594;</span>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Robin s'occupe de tout</h3>
+      <p>Nous contactons votre filleul, vérifions son éligibilité et lançons la réclamation EU 261.</p>
+      <span class="step-arrow">&#8594;</span>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Vous recevez 20 €</h3>
+      <p>Dès que le dossier est gagné, vous recevez 20 € par virement, Wave ou Orange Money.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Why -->
+<section class="section" style="padding-top:0">
+  <h2 class="section-title">Pourquoi parrainer ?</h2>
+  <p class="section-sub">C'est gagnant-gagnant pour tout le monde</p>
+
+  <div class="why-grid">
+    <div class="why-card">
+      <span class="why-icon">💶</span>
+      <div>
+        <h4>20 € par filleul, sans limite</h4>
+        <p>10 filleuls = 200 €. Aucun plafond. Chaque dossier gagné vous rapporte.</p>
+      </div>
+    </div>
+    <div class="why-card">
+      <span class="why-icon">⚡</span>
+      <div>
+        <h4>Paiement sous 48h</h4>
+        <p>Dès que l'indemnité est versée au filleul, votre prime suit dans les 48 heures.</p>
+      </div>
+    </div>
+    <div class="why-card">
+      <span class="why-icon">🛡️</span>
+      <div>
+        <h4>Zéro risque pour votre filleul</h4>
+        <p>Si le dossier n'aboutit pas, ni vous ni votre filleul ne payez quoi que ce soit.</p>
+      </div>
+    </div>
+    <div class="why-card">
+      <span class="why-icon">✈️</span>
+      <div>
+        <h4>Jusqu'à 600 € pour le filleul</h4>
+        <p>Votre proche récupère son indemnité EU 261 — retard, annulation ou surbooking.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Form -->
+<section class="form-section" id="form">
+  <h2 class="section-title">Parrainer un proche</h2>
+  <p class="section-sub">Remplissez ce formulaire, on s'occupe du reste</p>
+
+  <div class="form-card">
+    <h4>Vos informations (parrain)</h4>
+    <div class="form-row">
+      <div><label>Nom</label><input type="text" id="p-nom" placeholder="KODJO"></div>
+      <div><label>Prénom</label><input type="text" id="p-prenom" placeholder="Climbie"></div>
+    </div>
+    <div class="form-row">
+      <div><label>WhatsApp / Téléphone</label><input type="tel" id="p-tel" placeholder="+33 7 56 86 36 30"></div>
+      <div><label>Mode de paiement</label>
+        <select id="p-paiement">
+          <option value="wave">Wave</option>
+          <option value="om">Orange Money</option>
+          <option value="virement">Virement bancaire (€)</option>
+        </select>
+      </div>
+    </div>
+
+    <hr class="form-divider">
+
+    <h4>Informations du filleul</h4>
+    <div class="form-row">
+      <div><label>Nom</label><input type="text" id="f-nom2" placeholder="Nom du filleul"></div>
+      <div><label>Prénom</label><input type="text" id="f-prenom2" placeholder="Prénom du filleul"></div>
+    </div>
+    <div class="form-row">
+      <div><label>WhatsApp / Téléphone</label><input type="tel" id="f-tel2" placeholder="+221 77 ..."></div>
+      <div><label>Email (optionnel)</label><input type="email" id="f-email2" placeholder="filleul@email.com"></div>
+    </div>
+
+    <hr class="form-divider">
+
+    <h4>Le vol perturbé</h4>
+    <div class="form-row">
+      <div><label>Numéro de vol (si connu)</label><input type="text" id="f-vol2" placeholder="AF718, SN255..."></div>
+      <div><label>Date approximative</label><input type="date" id="f-date2"></div>
+    </div>
+    <div class="form-row full">
+      <div><label>Que s'est-il passé ?</label>
+        <select id="f-prob2">
+          <option value="">Sélectionner...</option>
+          <option>Retard de plus de 3 heures</option>
+          <option>Vol annulé</option>
+          <option>Refus d'embarquement / Surbooking</option>
+          <option>Je ne suis pas sûr(e)</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="form-btn" onclick="submitParrainage()">Envoyer le parrainage</button>
+    <p class="form-legal">En soumettant ce formulaire, vous acceptez que Robin des Airs contacte votre filleul pour vérifier son éligibilité. Vos données sont traitées conformément au RGPD. Commission de 25 % uniquement en cas de succès.</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section">
+  <h2 class="section-title">Questions fréquentes</h2>
+  <p class="section-sub">Tout ce qu'il faut savoir sur le parrainage</p>
+
+  <div class="faq-list">
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Combien de personnes puis-je parrainer ? <span class="faq-arrow">&#9662;</span></div>
+      <div class="faq-a">Il n'y a aucune limite. Chaque filleul dont le dossier est gagné vous rapporte 20 €. Parrainez autant de proches que vous souhaitez.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Quand est-ce que je reçois mes 20 € ? <span class="faq-arrow">&#9662;</span></div>
+      <div class="faq-a">Votre prime est versée dans les 48 heures suivant le paiement de l'indemnité à votre filleul par la compagnie aérienne. Le délai moyen d'un dossier est de 6 à 12 semaines.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Mon filleul doit-il payer quelque chose ? <span class="faq-arrow">&#9662;</span></div>
+      <div class="faq-a">Non. Robin des Airs ne prélève sa commission (25 %) que si le dossier est gagné. Si le dossier n'aboutit pas, personne ne paie rien — ni vous, ni votre filleul.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Quels vols sont éligibles ? <span class="faq-arrow">&#9662;</span></div>
+      <div class="faq-a">Tous les vols au départ de l'UE ou opérés par une compagnie européenne, avec un retard de plus de 3 heures, une annulation ou un refus d'embarquement. Les vols de la diaspora (Paris-Dakar, Bruxelles-Abidjan, etc.) sont notre spécialité.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Jusqu'à quand peut-on réclamer ? <span class="faq-arrow">&#9662;</span></div>
+      <div class="faq-a">Vous avez jusqu'à 5 ans après le vol pour déposer une réclamation. Un vol de 2021 retardé ? L'argent peut encore être dû.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Comment est versé l'argent ? <span class="faq-arrow">&#9662;</span></div>
+      <div class="faq-a">Vous choisissez : Wave, Orange Money ou virement bancaire. Le paiement est envoyé dans les 48h après la validation du dossier.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>Robin des Airs — <a href="https://robindesairs.eu">robindesairs.eu</a> — Indemnités aériennes EU 261</p>
+  <p style="margin-top:8px">WhatsApp : <a href="https://wa.me/33756863630">+33 7 56 86 36 30</a></p>
+</footer>
+
+<!-- Success Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="check">&#10003;</div>
+    <h3>Parrainage envoyé !</h3>
+    <p>Nous allons contacter votre filleul dans les prochaines heures. Vous recevrez 20 € dès que son dossier sera gagné.</p>
+    <div class="code-box" id="refCode">PAR-0000</div>
+    <p style="font-size:12px; color:var(--gray);">Votre code de suivi — conservez-le</p>
+    <button onclick="document.getElementById('modal').classList.remove('show')">Fermer</button>
+  </div>
+</div>
+
+<script>
+let parCount = 1;
+
+function submitParrainage() {
+  const required = ['p-nom','p-prenom','p-tel','f-nom2','f-prenom2','f-tel2'];
+  let ok = true;
+
+  required.forEach(id => {
+    const el = document.getElementById(id);
+    if (!el.value.trim()) {
+      el.style.borderColor = '#FF5A5A';
+      ok = false;
+    } else {
+      el.style.borderColor = 'rgba(255,255,255,0.1)';
+    }
+  });
+
+  if (!ok) return;
+
+  const ref = 'PAR-' + String(1000 + parCount++).padStart(4, '0');
+  document.getElementById('refCode').textContent = ref;
+
+  const data = {
+    ref,
+    parrain: {
+      nom: document.getElementById('p-nom').value,
+      prenom: document.getElementById('p-prenom').value,
+      tel: document.getElementById('p-tel').value,
+      paiement: document.getElementById('p-paiement').value,
+    },
+    filleul: {
+      nom: document.getElementById('f-nom2').value,
+      prenom: document.getElementById('f-prenom2').value,
+      tel: document.getElementById('f-tel2').value,
+      email: document.getElementById('f-email2').value,
+    },
+    vol: {
+      numero: document.getElementById('f-vol2').value,
+      date: document.getElementById('f-date2').value,
+      probleme: document.getElementById('f-prob2').value,
+    },
+    date: new Date().toISOString(),
+  };
+
+  // In production: POST to Make.com webhook → Airtable
+  console.log('Parrainage soumis:', JSON.stringify(data, null, 2));
+
+  document.getElementById('modal').classList.add('show');
+
+  // Reset form
+  required.forEach(id => document.getElementById(id).value = '');
+  ['f-email2','f-vol2','f-date2'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-prob2').selectedIndex = 0;
+}
+</script>
+
+</body>
+</html>

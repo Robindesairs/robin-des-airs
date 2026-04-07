@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Robin des Airs — Espace Partenaire</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0D1E38;
+  --navy-light: #142844;
+  --navy-mid: #1A3355;
+  --green: #3DDFA8;
+  --green-dark: #00C27A;
+  --green-glow: rgba(61,223,168,0.15);
+  --red: #FF5A5A;
+  --orange: #FFB347;
+  --white: #FFFFFF;
+  --gray-100: #F4F6F8;
+  --gray-200: #E8ECF1;
+  --gray-300: #C5CDD8;
+  --gray-400: #8896A7;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.08);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Inter',sans-serif; background:var(--gray-100); color:var(--navy); min-height:100vh; }
+
+/* ========== LOGIN SCREEN ========== */
+.login-screen {
+  min-height:100vh; display:flex; align-items:center; justify-content:center;
+  background: linear-gradient(135deg, var(--navy) 0%, #0A1628 100%);
+}
+.login-card {
+  background:var(--navy-light); border-radius:24px; padding:48px 40px; width:400px; max-width:92vw;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+}
+.login-logo { text-align:center; margin-bottom:32px; }
+.login-logo svg { width:200px; }
+.login-card h2 { color:var(--white); font-size:18px; font-weight:700; text-align:center; margin-bottom:24px; }
+.login-card input {
+  width:100%; padding:14px 16px; border:2px solid var(--navy-mid); border-radius:var(--radius-sm);
+  background:var(--navy); color:var(--white); font-family:inherit; font-size:14px; margin-bottom:14px;
+  outline:none; transition:border-color 0.2s;
+}
+.login-card input::placeholder { color:var(--gray-400); }
+.login-card input:focus { border-color:var(--green); }
+.login-card button {
+  width:100%; padding:14px; border:none; border-radius:var(--radius-sm);
+  background:var(--green); color:var(--navy); font-family:inherit; font-size:15px; font-weight:700;
+  cursor:pointer; transition:all 0.2s; margin-top:8px;
+}
+.login-card button:hover { background:var(--green-dark); transform:translateY(-1px); }
+.login-error { color:var(--red); font-size:13px; text-align:center; margin-top:12px; display:none; }
+
+/* ========== MAIN APP ========== */
+.app { display:none; }
+.app.active { display:flex; min-height:100vh; }
+
+/* Sidebar */
+.sidebar {
+  width:240px; background:var(--navy); padding:24px 0; display:flex; flex-direction:column;
+  position:fixed; top:0; left:0; bottom:0; z-index:100;
+}
+.sidebar-logo { padding:0 24px 28px; border-bottom:1px solid rgba(255,255,255,0.06); }
+.sidebar-logo svg { width:150px; }
+.sidebar-agency {
+  padding:16px 24px; border-bottom:1px solid rgba(255,255,255,0.06);
+  color:var(--gray-400); font-size:12px;
+}
+.sidebar-agency strong { color:var(--white); font-size:14px; display:block; margin-bottom:2px; }
+.sidebar nav { flex:1; padding:16px 12px; }
+.sidebar nav a {
+  display:flex; align-items:center; gap:12px; padding:12px 16px; border-radius:var(--radius-sm);
+  color:var(--gray-400); font-size:14px; font-weight:500; text-decoration:none; transition:all 0.15s;
+  margin-bottom:4px;
+}
+.sidebar nav a:hover { color:var(--white); background:var(--navy-light); }
+.sidebar nav a.active { color:var(--green); background:var(--green-glow); font-weight:600; }
+.sidebar nav a .icon { width:20px; text-align:center; font-size:16px; }
+.sidebar-logout {
+  margin:12px; padding:12px 16px; border:1px solid rgba(255,255,255,0.1); border-radius:var(--radius-sm);
+  color:var(--gray-400); font-size:13px; cursor:pointer; text-align:center; transition:all 0.15s;
+  background:none;
+}
+.sidebar-logout:hover { color:var(--red); border-color:var(--red); }
+
+/* Main content */
+.main { margin-left:240px; flex:1; padding:32px; min-height:100vh; }
+.page { display:none; }
+.page.active { display:block; }
+
+/* Header */
+.page-header { margin-bottom:28px; }
+.page-header h1 { font-size:26px; font-weight:800; color:var(--navy); }
+.page-header p { color:var(--gray-400); font-size:14px; margin-top:4px; }
+
+/* KPI Cards */
+.kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
+.kpi-card {
+  background:var(--white); border-radius:var(--radius); padding:24px; box-shadow:var(--shadow);
+}
+.kpi-card .kpi-label { font-size:12px; font-weight:600; color:var(--gray-400); text-transform:uppercase; letter-spacing:1px; }
+.kpi-card .kpi-value { font-size:32px; font-weight:900; color:var(--navy); margin-top:8px; }
+.kpi-card .kpi-value.green { color:var(--green-dark); }
+.kpi-card .kpi-sub { font-size:12px; color:var(--gray-400); margin-top:4px; }
+
+/* Tables */
+.table-card { background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; margin-bottom:24px; }
+.table-header { padding:20px 24px; border-bottom:1px solid var(--gray-200); display:flex; justify-content:space-between; align-items:center; }
+.table-header h3 { font-size:16px; font-weight:700; }
+.table-header .filter-group { display:flex; gap:8px; }
+.table-header select, .table-header input {
+  padding:8px 12px; border:1px solid var(--gray-200); border-radius:8px; font-family:inherit;
+  font-size:13px; outline:none; background:var(--gray-100);
+}
+table { width:100%; border-collapse:collapse; }
+thead th {
+  text-align:left; padding:12px 16px; font-size:12px; font-weight:600; color:var(--gray-400);
+  text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--gray-200); background:var(--gray-100);
+}
+tbody td { padding:14px 16px; font-size:13px; border-bottom:1px solid var(--gray-200); }
+tbody tr:hover { background:rgba(61,223,168,0.04); }
+.badge {
+  display:inline-block; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; letter-spacing:0.3px;
+}
+.badge.en-cours { background:rgba(61,223,168,0.12); color:var(--green-dark); }
+.badge.gagne { background:rgba(0,194,122,0.15); color:#008a57; }
+.badge.paye { background:var(--green-dark); color:var(--white); }
+.badge.rejete { background:rgba(255,90,90,0.1); color:var(--red); }
+.badge.nouveau { background:rgba(255,179,71,0.15); color:#c87800; }
+
+/* Form */
+.form-card { background:var(--white); border-radius:var(--radius); padding:32px; box-shadow:var(--shadow); max-width:720px; }
+.form-card h3 { font-size:18px; font-weight:700; margin-bottom:24px; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+.form-row.full { grid-template-columns:1fr; }
+.form-group { display:flex; flex-direction:column; }
+.form-group label { font-size:12px; font-weight:600; color:var(--gray-400); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+.form-group input, .form-group select, .form-group textarea {
+  padding:12px 14px; border:2px solid var(--gray-200); border-radius:var(--radius-sm);
+  font-family:inherit; font-size:14px; outline:none; transition:border-color 0.2s;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--green); }
+.form-group textarea { resize:vertical; min-height:80px; }
+.form-submit {
+  margin-top:24px; display:flex; gap:12px; align-items:center;
+}
+.btn-primary {
+  padding:14px 32px; border:none; border-radius:var(--radius-sm);
+  background:var(--green); color:var(--navy); font-family:inherit; font-size:15px; font-weight:700;
+  cursor:pointer; transition:all 0.2s;
+}
+.btn-primary:hover { background:var(--green-dark); transform:translateY(-1px); }
+.btn-secondary {
+  padding:14px 24px; border:2px solid var(--gray-200); border-radius:var(--radius-sm);
+  background:transparent; color:var(--gray-400); font-family:inherit; font-size:14px; font-weight:600;
+  cursor:pointer; transition:all 0.2s;
+}
+.btn-secondary:hover { border-color:var(--navy); color:var(--navy); }
+
+/* Commission */
+.commission-summary {
+  display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:28px;
+}
+.commission-box {
+  background:var(--white); border-radius:var(--radius); padding:28px; box-shadow:var(--shadow);
+}
+.commission-box.highlight {
+  background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
+  color:var(--navy);
+}
+.commission-box .cb-label { font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:1px; opacity:0.6; }
+.commission-box .cb-value { font-size:36px; font-weight:900; margin-top:8px; }
+.commission-box.highlight .cb-label { opacity:0.7; }
+
+/* Toast */
+.toast {
+  position:fixed; bottom:32px; right:32px; background:var(--navy); color:var(--white);
+  padding:16px 24px; border-radius:var(--radius-sm); font-size:14px; font-weight:500;
+  box-shadow:0 8px 32px rgba(0,0,0,0.2); transform:translateY(100px); opacity:0;
+  transition:all 0.3s ease; z-index:999;
+}
+.toast.show { transform:translateY(0); opacity:1; }
+.toast .toast-icon { color:var(--green); margin-right:8px; }
+
+/* Responsive */
+@media (max-width:900px) {
+  .sidebar { width:64px; }
+  .sidebar-logo, .sidebar-agency, .sidebar nav a span { display:none; }
+  .sidebar nav a { justify-content:center; }
+  .main { margin-left:64px; }
+  .kpi-row { grid-template-columns:1fr 1fr; }
+  .form-row { grid-template-columns:1fr; }
+  .commission-summary { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ========== LOGIN ========== -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">
+      <svg viewBox="0 0 500 110" xmlns="http://www.w3.org/2000/svg">
+        <g transform="translate(60,7)">
+          <rect x="0" y="0" width="92" height="92" rx="18" fill="rgba(255,255,255,0.08)"/>
+          <path d="M 46,14 C 72,14 72,78 46,78" fill="none" stroke="#3DDFA8" stroke-width="13" stroke-linecap="round"/>
+          <circle cx="30" cy="44" r="4" fill="#3DDFA8"/>
+        </g>
+        <text x="168" y="66" font-family="'Inter',sans-serif" font-weight="900" font-size="50" fill="#FFFFFF" letter-spacing="2">ROBIN</text>
+        <text x="383" y="66" font-family="'Inter',sans-serif" font-weight="700" font-style="italic" font-size="43" fill="#3DDFA8" letter-spacing="0.5">des Airs</text>
+      </svg>
+    </div>
+    <h2>Espace Partenaire</h2>
+    <input type="text" id="loginCode" placeholder="Code agence (ex: GSA-DKR-001)">
+    <input type="password" id="loginPass" placeholder="Mot de passe">
+    <button onclick="doLogin()">Se connecter</button>
+    <div class="login-error" id="loginError">Code agence ou mot de passe incorrect</div>
+  </div>
+</div>
+
+<!-- ========== APP ========== -->
+<div class="app" id="app">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <svg viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+        <g transform="translate(0,4)">
+          <path d="M 22,6 C 36,6 36,48 22,48" fill="none" stroke="#3DDFA8" stroke-width="7" stroke-linecap="round"/>
+          <circle cx="13" cy="26" r="2.5" fill="#3DDFA8"/>
+        </g>
+        <text x="48" y="34" font-family="'Inter',sans-serif" font-weight="900" font-size="22" fill="#FFFFFF" letter-spacing="1">ROBIN</text>
+        <text x="137" y="34" font-family="'Inter',sans-serif" font-weight="700" font-style="italic" font-size="19" fill="#3DDFA8">des Airs</text>
+      </svg>
+    </div>
+    <div class="sidebar-agency">
+      <strong id="agencyName">GSA Dakar</strong>
+      <span id="agencyCode">GSA-DKR-001</span>
+    </div>
+    <nav>
+      <a href="#" class="active" data-page="dashboard" onclick="switchPage('dashboard')">
+        <span class="icon">📊</span> <span>Tableau de bord</span>
+      </a>
+      <a href="#" data-page="nouveau" onclick="switchPage('nouveau')">
+        <span class="icon">✈️</span> <span>Nouveau dossier</span>
+      </a>
+      <a href="#" data-page="dossiers" onclick="switchPage('dossiers')">
+        <span class="icon">📁</span> <span>Mes dossiers</span>
+      </a>
+      <a href="#" data-page="commissions" onclick="switchPage('commissions')">
+        <span class="icon">💰</span> <span>Commissions</span>
+      </a>
+    </nav>
+    <button class="sidebar-logout" onclick="doLogout()">Déconnexion</button>
+  </aside>
+
+  <!-- Main content -->
+  <div class="main">
+
+    <!-- ===== DASHBOARD ===== -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-header">
+        <h1>Tableau de bord</h1>
+        <p>Vue d'ensemble de vos dossiers et commissions</p>
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi-card">
+          <div class="kpi-label">Dossiers soumis</div>
+          <div class="kpi-value" id="kpi-total">0</div>
+          <div class="kpi-sub">Depuis votre inscription</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">En cours</div>
+          <div class="kpi-value" id="kpi-encours">0</div>
+          <div class="kpi-sub">Réclamations actives</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Gagnés</div>
+          <div class="kpi-value green" id="kpi-gagnes">0</div>
+          <div class="kpi-sub">Indemnisations obtenues</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Commissions gagnées</div>
+          <div class="kpi-value green" id="kpi-commissions">0 FCFA</div>
+          <div class="kpi-sub">30 000 FCFA / passager</div>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-header">
+          <h3>Derniers dossiers</h3>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Référence</th>
+              <th>Passager</th>
+              <th>Vol</th>
+              <th>Date vol</th>
+              <th>Statut</th>
+              <th>Commission</th>
+            </tr>
+          </thead>
+          <tbody id="dashboard-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== NOUVEAU DOSSIER ===== -->
+    <div class="page" id="page-nouveau">
+      <div class="page-header">
+        <h1>Nouveau dossier</h1>
+        <p>Soumettez un PNR pour ouvrir une réclamation EU 261</p>
+      </div>
+
+      <div class="form-card">
+        <h3>Informations du passager</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nom</label>
+            <input type="text" id="f-nom" placeholder="KODJO">
+          </div>
+          <div class="form-group">
+            <label>Prénom</label>
+            <input type="text" id="f-prenom" placeholder="Climbie">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="f-email" placeholder="passager@email.com">
+          </div>
+          <div class="form-group">
+            <label>Téléphone (WhatsApp)</label>
+            <input type="tel" id="f-tel" placeholder="+221 77 123 45 67">
+          </div>
+        </div>
+
+        <h3 style="margin-top:28px;">Informations du vol</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Code PNR (6 caractères)</label>
+            <input type="text" id="f-pnr" placeholder="AB1C2D" maxlength="6" style="text-transform:uppercase; letter-spacing:4px; font-weight:700;">
+          </div>
+          <div class="form-group">
+            <label>Numéro de vol</label>
+            <input type="text" id="f-vol" placeholder="AF718">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Compagnie aérienne</label>
+            <select id="f-compagnie">
+              <option value="">Sélectionner...</option>
+              <option>Air France</option>
+              <option>Brussels Airlines</option>
+              <option>Turkish Airlines</option>
+              <option>Air Sénégal</option>
+              <option>Transavia</option>
+              <option>Corsair</option>
+              <option>TAP Portugal</option>
+              <option>Vueling</option>
+              <option>Iberia</option>
+              <option>Autre</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Date du vol</label>
+            <input type="date" id="f-date">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Départ</label>
+            <input type="text" id="f-depart" placeholder="Paris CDG">
+          </div>
+          <div class="form-group">
+            <label>Arrivée</label>
+            <input type="text" id="f-arrivee" placeholder="Dakar DSS">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Type de problème</label>
+            <select id="f-probleme">
+              <option value="">Sélectionner...</option>
+              <option>Retard +3h à l'arrivée</option>
+              <option>Vol annulé</option>
+              <option>Surbooking / Refus d'embarquement</option>
+              <option>Correspondance manquée</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Retard estimé (heures)</label>
+            <input type="number" id="f-retard" placeholder="4" min="0" step="0.5">
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="form-group">
+            <label>Nombre de passagers sur le même PNR</label>
+            <input type="number" id="f-nb-passagers" value="1" min="1" max="9">
+          </div>
+        </div>
+        <div class="form-row full">
+          <div class="form-group">
+            <label>Notes / détails supplémentaires</label>
+            <textarea id="f-notes" placeholder="Tout détail utile : retard exact, raison donnée par la compagnie, etc."></textarea>
+          </div>
+        </div>
+
+        <div class="form-submit">
+          <button class="btn-primary" onclick="submitDossier()">Soumettre le dossier</button>
+          <button class="btn-secondary" onclick="resetForm()">Effacer</button>
+        </div>
+
+        <div style="margin-top:20px; padding:16px; background:var(--green-glow); border-radius:var(--radius-sm); font-size:13px; color:var(--navy);">
+          <strong>Rappel :</strong> Vous recevez <strong>30 000 FCFA par passager</strong> pour chaque dossier gagné, versé sous 48h via Wave ou Orange Money.
+          Indemnité EU 261 = <strong>600 € par passager</strong> pour les vols &gt;3 500 km.
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DOSSIERS ===== -->
+    <div class="page" id="page-dossiers">
+      <div class="page-header">
+        <h1>Mes dossiers</h1>
+        <p>Suivi de toutes vos réclamations</p>
+      </div>
+
+      <div class="table-card">
+        <div class="table-header">
+          <h3>Tous les dossiers</h3>
+          <div class="filter-group">
+            <select id="filter-statut" onchange="renderDossiers()">
+              <option value="">Tous les statuts</option>
+              <option value="nouveau">Nouveau</option>
+              <option value="en-cours">En cours</option>
+              <option value="gagne">Gagné</option>
+              <option value="paye">Payé</option>
+              <option value="rejete">Rejeté</option>
+            </select>
+            <input type="text" id="filter-search" placeholder="Rechercher..." oninput="renderDossiers()">
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Réf</th>
+              <th>Passager</th>
+              <th>Vol</th>
+              <th>Compagnie</th>
+              <th>Route</th>
+              <th>Date vol</th>
+              <th>Problème</th>
+              <th>Passagers</th>
+              <th>Statut</th>
+              <th>Commission</th>
+            </tr>
+          </thead>
+          <tbody id="dossiers-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== COMMISSIONS ===== -->
+    <div class="page" id="page-commissions">
+      <div class="page-header">
+        <h1>Commissions</h1>
+        <p>Suivi de vos paiements — 30 000 FCFA par passager</p>
+      </div>
+
+      <div class="commission-summary">
+        <div class="commission-box highlight">
+          <div class="cb-label">Total gagné</div>
+          <div class="cb-value" id="comm-total">0 FCFA</div>
+        </div>
+        <div class="commission-box">
+          <div class="cb-label">En attente de paiement</div>
+          <div class="cb-value" id="comm-pending" style="color:var(--orange)">0 FCFA</div>
+        </div>
+        <div class="commission-box">
+          <div class="cb-label">Déjà versé</div>
+          <div class="cb-value" style="color:var(--green-dark)" id="comm-paid">0 FCFA</div>
+        </div>
+        <div class="commission-box">
+          <div class="cb-label">Mode de paiement</div>
+          <div class="cb-value" style="font-size:22px;" id="comm-method">Wave · Orange Money</div>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-header">
+          <h3>Historique des paiements</h3>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Référence dossier</th>
+              <th>Passager</th>
+              <th>Nb passagers</th>
+              <th>Montant</th>
+              <th>Mode</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody id="commissions-table"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ========== DATA STORE ==========
+// Demo agencies (in production, this connects to Airtable)
+const AGENCIES = {
+  'GSA-DKR-001': { name: 'GSA Dakar — Agence Teranga', pass: 'robin2024', phone: '+221 77 000 00 00' },
+  'GSA-ABJ-002': { name: 'GSA Abidjan — Voyages Ivoire', pass: 'robin2024', phone: '+225 07 000 00 00' },
+  'GSA-BKO-003': { name: 'GSA Bamako — Mali Tours', pass: 'robin2024', phone: '+223 70 000 00 00' },
+  'DEMO': { name: 'Agence Démo', pass: 'demo', phone: '+33 7 00 00 00 00' },
+};
+
+let currentAgency = null;
+let dossiers = [];
+let nextRef = 1001;
+
+// Demo data
+function loadDemoData() {
+  const demo = [
+    { ref:'RDA-0994', nom:'Diallo', prenom:'Mamadou', email:'m.diallo@email.com', tel:'+221 77 123 45 67', pnr:'XK3M7P', vol:'AF718', compagnie:'Air France', depart:'Paris CDG', arrivee:'Dakar DSS', date:'2026-03-28', probleme:'Retard +3h à l\'arrivée', retard:4.5, nbPassagers:2, statut:'paye', notes:'Retard confirmé 4h20', dateCreation:'2026-03-29' },
+    { ref:'RDA-0995', nom:'Ndiaye', prenom:'Fatou', email:'f.ndiaye@email.com', tel:'+221 78 234 56 78', pnr:'BH2N9K', vol:'SN255', compagnie:'Brussels Airlines', depart:'Bruxelles BRU', arrivee:'Dakar DSS', date:'2026-04-01', probleme:'Vol annulé', retard:24, nbPassagers:1, statut:'gagne', notes:'Vol annulé, pas de réacheminement sous 24h', dateCreation:'2026-04-02' },
+    { ref:'RDA-0996', nom:'Touré', prenom:'Ibrahim', email:'i.toure@email.com', tel:'+221 76 345 67 89', pnr:'JT4L2W', vol:'AF742', compagnie:'Air France', depart:'Paris CDG', arrivee:'Dakar DSS', date:'2026-04-03', probleme:'Retard +3h à l\'arrivée', retard:3.5, nbPassagers:3, statut:'en-cours', notes:'Retard 3h50 à l\'arrivée', dateCreation:'2026-04-04' },
+    { ref:'RDA-0997', nom:'Ba', prenom:'Aissatou', email:'a.ba@email.com', tel:'+221 77 456 78 90', pnr:'QR8P5M', vol:'TO850', compagnie:'Transavia', depart:'Paris ORY', arrivee:'Dakar DSS', date:'2026-04-05', probleme:'Surbooking / Refus d\'embarquement', retard:0, nbPassagers:1, statut:'en-cours', notes:'Refusée à l\'embarquement, vol complet', dateCreation:'2026-04-06' },
+    { ref:'RDA-0998', nom:'Sow', prenom:'Ousmane', email:'o.sow@email.com', tel:'+221 78 567 89 01', pnr:'NM6K3J', vol:'SS892', compagnie:'Air Sénégal', depart:'Dakar DSS', arrivee:'Paris CDG', date:'2026-04-06', probleme:'Retard +3h à l\'arrivée', retard:6, nbPassagers:1, statut:'nouveau', notes:'Retard 6h10 confirmé par FlightAware', dateCreation:'2026-04-07' },
+    { ref:'RDA-0999', nom:'Camara', prenom:'Mariama', email:'m.camara@email.com', tel:'+221 76 678 90 12', pnr:'FW1D8X', vol:'AT700', compagnie:'Turkish Airlines', depart:'Paris CDG', arrivee:'Dakar DSS', date:'2026-04-07', probleme:'Vol annulé', retard:48, nbPassagers:2, statut:'nouveau', notes:'Vol annulé sans notification', dateCreation:'2026-04-07' },
+  ];
+  dossiers = demo;
+  nextRef = 1000 + demo.length + 1;
+}
+
+// ========== AUTH ==========
+function doLogin() {
+  const code = document.getElementById('loginCode').value.trim().toUpperCase();
+  const pass = document.getElementById('loginPass').value;
+  const agency = AGENCIES[code];
+
+  if (agency && agency.pass === pass) {
+    currentAgency = { code, ...agency };
+    document.getElementById('agencyName').textContent = agency.name;
+    document.getElementById('agencyCode').textContent = code;
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').classList.add('active');
+    loadDemoData();
+    updateDashboard();
+    renderDossiers();
+    renderCommissions();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+    document.getElementById('loginPass').value = '';
+  }
+}
+
+function doLogout() {
+  currentAgency = null;
+  document.getElementById('app').classList.remove('active');
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginCode').value = '';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginError').style.display = 'none';
+}
+
+// Allow Enter key login
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !currentAgency) doLogin();
+});
+
+// ========== NAVIGATION ==========
+function switchPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.sidebar nav a').forEach(a => {
+    a.classList.toggle('active', a.dataset.page === page);
+  });
+  if (page === 'dossiers') renderDossiers();
+  if (page === 'commissions') renderCommissions();
+  if (page === 'dashboard') updateDashboard();
+}
+
+// ========== DASHBOARD ==========
+function updateDashboard() {
+  const total = dossiers.length;
+  const encours = dossiers.filter(d => d.statut === 'en-cours' || d.statut === 'nouveau').length;
+  const gagnes = dossiers.filter(d => d.statut === 'gagne' || d.statut === 'paye').length;
+  const paxGagnes = dossiers.filter(d => d.statut === 'gagne' || d.statut === 'paye').reduce((s, d) => s + d.nbPassagers, 0);
+
+  document.getElementById('kpi-total').textContent = total;
+  document.getElementById('kpi-encours').textContent = encours;
+  document.getElementById('kpi-gagnes').textContent = gagnes;
+  document.getElementById('kpi-commissions').textContent = formatFCFA(paxGagnes * 30000);
+
+  // Last 5 dossiers
+  const tbody = document.getElementById('dashboard-table');
+  tbody.innerHTML = dossiers.slice(-5).reverse().map(d => `
+    <tr>
+      <td><strong>${d.ref}</strong></td>
+      <td>${d.prenom} ${d.nom}</td>
+      <td>${d.vol}</td>
+      <td>${formatDate(d.date)}</td>
+      <td>${badgeHTML(d.statut)}</td>
+      <td>${(d.statut === 'gagne' || d.statut === 'paye') ? formatFCFA(d.nbPassagers * 30000) : '—'}</td>
+    </tr>
+  `).join('');
+}
+
+// ========== DOSSIERS TABLE ==========
+function renderDossiers() {
+  const statutFilter = document.getElementById('filter-statut').value;
+  const search = (document.getElementById('filter-search').value || '').toLowerCase();
+
+  let filtered = dossiers;
+  if (statutFilter) filtered = filtered.filter(d => d.statut === statutFilter);
+  if (search) filtered = filtered.filter(d =>
+    d.nom.toLowerCase().includes(search) ||
+    d.prenom.toLowerCase().includes(search) ||
+    d.vol.toLowerCase().includes(search) ||
+    d.pnr.toLowerCase().includes(search) ||
+    d.ref.toLowerCase().includes(search)
+  );
+
+  const tbody = document.getElementById('dossiers-table');
+  tbody.innerHTML = filtered.reverse().map(d => `
+    <tr>
+      <td><strong>${d.ref}</strong></td>
+      <td>${d.prenom} ${d.nom}</td>
+      <td>${d.vol}</td>
+      <td>${d.compagnie}</td>
+      <td>${d.depart} → ${d.arrivee}</td>
+      <td>${formatDate(d.date)}</td>
+      <td style="font-size:12px">${d.probleme}</td>
+      <td style="text-align:center">${d.nbPassagers}</td>
+      <td>${badgeHTML(d.statut)}</td>
+      <td>${(d.statut === 'gagne' || d.statut === 'paye') ? formatFCFA(d.nbPassagers * 30000) : '—'}</td>
+    </tr>
+  `).join('');
+}
+
+// ========== COMMISSIONS ==========
+function renderCommissions() {
+  const won = dossiers.filter(d => d.statut === 'gagne' || d.statut === 'paye');
+  const totalPax = won.reduce((s, d) => s + d.nbPassagers, 0);
+  const paidPax = dossiers.filter(d => d.statut === 'paye').reduce((s, d) => s + d.nbPassagers, 0);
+  const pendingPax = dossiers.filter(d => d.statut === 'gagne').reduce((s, d) => s + d.nbPassagers, 0);
+
+  document.getElementById('comm-total').textContent = formatFCFA(totalPax * 30000);
+  document.getElementById('comm-paid').textContent = formatFCFA(paidPax * 30000);
+  document.getElementById('comm-pending').textContent = formatFCFA(pendingPax * 30000);
+
+  const tbody = document.getElementById('commissions-table');
+  tbody.innerHTML = won.map(d => `
+    <tr>
+      <td>${formatDate(d.dateCreation)}</td>
+      <td><strong>${d.ref}</strong></td>
+      <td>${d.prenom} ${d.nom}</td>
+      <td style="text-align:center">${d.nbPassagers}</td>
+      <td><strong>${formatFCFA(d.nbPassagers * 30000)}</strong></td>
+      <td>${d.statut === 'paye' ? 'Wave' : '—'}</td>
+      <td>${d.statut === 'paye' ? '<span class="badge paye">Versé</span>' : '<span class="badge nouveau">En attente</span>'}</td>
+    </tr>
+  `).join('');
+}
+
+// ========== SUBMIT DOSSIER ==========
+function submitDossier() {
+  const fields = ['nom','prenom','email','tel','pnr','vol','compagnie','date','depart','arrivee','probleme'];
+  const vals = {};
+  let missing = false;
+
+  fields.forEach(f => {
+    const el = document.getElementById('f-' + f);
+    vals[f] = el.value.trim();
+    if (!vals[f]) { el.style.borderColor = 'var(--red)'; missing = true; }
+    else { el.style.borderColor = 'var(--gray-200)'; }
+  });
+
+  if (missing) { showToast('Veuillez remplir tous les champs obligatoires', true); return; }
+
+  const pnr = vals.pnr.toUpperCase();
+  if (pnr.length !== 6) { showToast('Le code PNR doit faire 6 caractères', true); return; }
+
+  const dossier = {
+    ref: 'RDA-' + String(nextRef++).padStart(4, '0'),
+    nom: vals.nom.toUpperCase(),
+    prenom: vals.prenom,
+    email: vals.email,
+    tel: vals.tel,
+    pnr: pnr,
+    vol: vals.vol.toUpperCase(),
+    compagnie: vals.compagnie,
+    depart: vals.depart,
+    arrivee: vals.arrivee,
+    date: vals.date,
+    probleme: vals.probleme,
+    retard: parseFloat(document.getElementById('f-retard').value) || 0,
+    nbPassagers: parseInt(document.getElementById('f-nb-passagers').value) || 1,
+    notes: document.getElementById('f-notes').value,
+    statut: 'nouveau',
+    dateCreation: new Date().toISOString().split('T')[0],
+    agence: currentAgency?.code
+  };
+
+  dossiers.push(dossier);
+  showToast(`Dossier ${dossier.ref} soumis avec succès — ${dossier.nbPassagers} passager(s)`);
+  resetForm();
+  updateDashboard();
+
+  // In production: POST to Airtable via Make.com webhook
+  console.log('📤 Dossier à envoyer vers Airtable:', JSON.stringify(dossier, null, 2));
+}
+
+function resetForm() {
+  ['nom','prenom','email','tel','pnr','vol','date','depart','arrivee','retard','notes'].forEach(f => {
+    document.getElementById('f-' + f).value = '';
+    document.getElementById('f-' + f).style.borderColor = 'var(--gray-200)';
+  });
+  document.getElementById('f-compagnie').selectedIndex = 0;
+  document.getElementById('f-probleme').selectedIndex = 0;
+  document.getElementById('f-nb-passagers').value = '1';
+}
+
+// ========== UTILS ==========
+function formatFCFA(n) {
+  return n.toLocaleString('fr-FR') + ' FCFA';
+}
+function formatDate(d) {
+  if (!d) return '—';
+  const parts = d.split('-');
+  return parts[2] + '/' + parts[1] + '/' + parts[0];
+}
+function badgeHTML(statut) {
+  const labels = { 'nouveau':'Nouveau', 'en-cours':'En cours', 'gagne':'Gagné', 'paye':'Payé', 'rejete':'Rejeté' };
+  return `<span class="badge ${statut}">${labels[statut] || statut}</span>`;
+}
+function showToast(msg, isError) {
+  const toast = document.getElementById('toast');
+  toast.innerHTML = `<span class="toast-icon">${isError ? '⚠️' : '✅'}</span> ${msg}`;
+  toast.style.background = isError ? 'var(--red)' : 'var(--navy)';
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3500);
+}
+</script>
+
+</body>
+</html>
