@@ -89,18 +89,6 @@
 
     .logo span { color: var(--teal); }
 
-    .nav-cta {
-      background: var(--teal);
-      color: var(--navy);
-      font-weight: 700;
-      font-size: 0.88rem;
-      padding: 10px 20px;
-      border-radius: 9px;
-      transition: background 0.2s, transform 0.2s;
-      white-space: nowrap;
-    }
-    .nav-cta:hover { background: var(--teal-bright); transform: translateY(-1px); }
-
     /* ===== HERO ===== */
     .hero {
       background: var(--navy);
@@ -158,12 +146,33 @@
       margin: 0 auto 38px;
       line-height: 1.7;
     }
+    .hero-fast-proof {
+      margin: 14px auto 0;
+      max-width: 680px;
+      font-size: 0.92rem;
+      color: rgba(255,255,255,0.85);
+      background: rgba(61, 223, 168, 0.12);
+      border: 1px solid rgba(61, 223, 168, 0.35);
+      border-radius: 10px;
+      padding: 10px 14px;
+      line-height: 1.5;
+    }
 
     .hero-btns {
       display: flex;
       gap: 12px;
       justify-content: center;
       flex-wrap: wrap;
+    }
+    .hero-btns .btn-teal.is-secondary {
+      background: rgba(255,255,255,0.08);
+      color: var(--surface);
+      border: 1.5px solid rgba(255,255,255,0.22);
+      box-shadow: none;
+    }
+    .hero-btns .btn-teal.is-secondary:hover {
+      background: rgba(255,255,255,0.14);
+      transform: translateY(-1px);
     }
 
     .btn-teal {
@@ -207,6 +216,24 @@
       font-size: clamp(0.92rem, 2.2vw, 1.1rem);
     }
     .stripe strong { font-size: clamp(1.3rem, 3.5vw, 1.85rem); font-weight: 900; }
+    .desktop-scan-strip {
+      display: none;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+    }
+    .desktop-scan-inner {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 12px 28px;
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      justify-content: center;
+      color: var(--navy-mid);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .desktop-scan-inner span strong { color: var(--teal-dark); }
 
     /* ===== GENERIC SECTION ===== */
     .section { padding: 76px 28px; }
@@ -1028,63 +1055,111 @@
       .sticky-cta { display: block; }
       body { padding-bottom: 72px; }
       .proof-inner { gap: 14px; font-size: 0.8rem; }
+      .aida-compare { grid-template-columns: 1fr; }
+      .aida-mini-form { grid-template-columns: 1fr; }
+    }
+    @media (min-width: 1024px) {
+      .desktop-scan-strip { display: block; }
+      .hero { padding-top: 68px; padding-bottom: 72px; }
+      .hero-sub { max-width: 760px; }
+      .aida-close-head { font-size: 2rem; }
+      .aida-close-sub { font-size: 1.03rem; max-width: 860px; }
+      .aida-whatsapp { font-size: 1.02rem; padding: 14px 20px; }
+      .steps article p, .card p { font-size: 0.95rem; }
     }
 
-    /* ===== LIEN PARTAGEABLE AGENTS ===== */
-    .agent-link-bar {
-      background: var(--bg-warm);
-      border-bottom: 1px solid var(--line);
-      padding: 14px 28px;
-    }
-    .agent-link-bar-inner { max-width: 1100px; margin: 0 auto; }
-    .agent-link-bar .al-title {
-      font-size: 0.72rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
-      color: var(--earth);
-      margin: 0 0 10px;
-    }
-    .agent-link-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-    .agent-link-row input {
-      flex: 1;
-      min-width: min(100%, 240px);
-      font-family: ui-monospace, monospace;
-      font-size: 13px;
-      padding: 11px 14px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
+    /* ===== BLOC AIDA CLOSER ===== */
+    .aida-close {
       background: var(--surface);
-      color: var(--text);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 34px 28px;
     }
-    .agent-link-row button {
+    .aida-close-inner { max-width: 1040px; margin: 0 auto; }
+    .aida-close-head {
+      margin: 0 0 14px;
+      font-size: 1.7rem;
+      line-height: 1.2;
+      color: var(--navy);
+      letter-spacing: -0.01em;
+    }
+    .aida-close-sub {
+      margin: 0 0 18px;
+      color: var(--muted);
+      max-width: 760px;
+    }
+    .aida-compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .aida-box {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px 16px;
+      background: #fff;
+    }
+    .aida-box h3 { margin: 0 0 8px; font-size: 1rem; }
+    .aida-box ul { margin: 0; padding-left: 18px; color: var(--muted); }
+    .aida-box--bad { border-left: 4px solid #d26b6b; }
+    .aida-box--good { border-left: 4px solid var(--teal); }
+    .aida-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .aida-whatsapp {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--teal);
+      color: var(--navy);
+      border-radius: 10px;
+      padding: 13px 18px;
+      font-weight: 800;
+      font-size: 0.97rem;
+    }
+    .aida-whatsapp:hover { background: var(--teal-bright); }
+    .aida-legal { margin: 0; font-size: 0.9rem; color: var(--earth); }
+    .aida-mini-form {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+    .aida-mini-form .field { margin: 0; }
+    .aida-mini-form label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--earth);
+    }
+    .aida-mini-form input {
+      background: #fff;
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      padding: 11px 12px;
+      font-size: 0.92rem;
+      font-family: inherit;
+    }
+    .aida-mini-form button {
       background: var(--navy);
       color: #fff;
       border: none;
-      padding: 11px 20px;
       border-radius: 10px;
+      padding: 12px 16px;
       font-weight: 700;
       cursor: pointer;
-      font-size: 0.88rem;
       font-family: inherit;
     }
-    .agent-link-row button:hover { background: var(--navy-mid); }
-    .agent-link-html {
-      margin: 12px 0 0;
-      font-size: 12px;
+    .aida-mini-note {
+      margin: 8px 0 0;
+      font-size: 0.8rem;
       color: var(--muted);
-      line-height: 1.5;
-    }
-    .agent-link-html code {
-      font-size: 11px;
-      word-break: break-all;
-      background: var(--surface);
-      padding: 10px 12px;
-      border-radius: 8px;
-      display: block;
-      margin-top: 8px;
-      border: 1px solid var(--line);
-      color: var(--navy-mid);
     }
 
     /* ===== MESSAGE ACCOMPAGNEMENT AGENCE ===== */
@@ -1139,46 +1214,48 @@
     <div class="logo-mark">✈</div>
     Robin<span>&nbsp;des Airs</span>
   </div>
-  <a href="#rejoindre" class="nav-cta">Rejoindre le programme</a>
 </header>
-
-<!-- Lien à partager avec vos agents (même contenu que la page) -->
-<div class="agent-link-bar" id="lien-agents">
-  <div class="agent-link-bar-inner">
-    <p class="al-title">Lien pour vos agents &amp; équipes</p>
-    <div class="agent-link-row">
-      <input type="text" id="agent-share-url" readonly value="https://robindesairs.eu/programme-agents-voyage.html" aria-label="Adresse à copier pour vos agents" />
-      <button type="button" id="agent-share-copy">Copier le lien</button>
-    </div>
-    <p class="agent-link-html">Code HTML (site, newsletter, intranet) :<code id="agent-share-code">&lt;a href="https://robindesairs.eu/programme-agents-voyage.html"&gt;Programme partenaire Robin des Airs — agents &amp; agences&lt;/a&gt;</code></p>
-  </div>
-</div>
+<!--
+  Partage agents (hors page) — production :
+  https://robindesairs.eu/programme-agents-voyage.html
+  <a href="https://robindesairs.eu/programme-agents-voyage.html">Programme partenaire Robin des Airs — agents & agences</a>
+  En local : ouvrir /programme-agents-voyage.html via serveur (ex. python3 -m http.server).
+-->
 
 <!-- Accueil — accroche & CTA -->
 <section class="hero">
   <div class="hero-inner">
     <div class="hero-badge">✦ Programme Partenaire · Agences de Voyages</div>
     <h1>
-      Chaque vol perturbé peut devenir<br/>
-      <span class="accent">un revenu pour votre agence</span>
+      Agents de voyage :
+      <span class="accent">30 000 FCFA</span> par passager indemnisé
     </h1>
     <p class="hero-sub">
-      Référez vos clients victimes de retards, annulations, surbooking ou correspondances manquées (EU261) — Robin des Airs gère tout le dossier et vous verse <strong style="color:#fff">30.000 FCFA</strong> par passager indemnisé. Zéro risque. Zéro gestion.
+      Vos clients subissent des retards ou annulations ? Robin des Airs gère la réclamation <strong>EU261/2004</strong> de bout en bout. Votre agence est commissionnée, sans charge juridique.
     </p>
     <div class="hero-btns">
-      <a href="#rejoindre" class="btn-teal">
-        ✦ Devenir partenaire — Gratuit
-      </a>
       <a href="https://api.whatsapp.com/send?phone=33756863630&amp;text=Bonjour%20Robin%20des%20Airs%2C%0A%0AJe%20viens%20de%20la%20page%20Programme%20agents%20voyage.%20Je%20repr%C3%A9sente%20une%20agence%20de%20voyages%20et%20souhaite%20des%20informations%20sur%20le%20partenariat%20(convention%2C%20commission%2030%20000%20FCFA).%0A%0AMerci%20%21" class="btn-wa" target="_blank" rel="noopener noreferrer">
-        💬 WhatsApp
+        💬 Devenir partenaire en 1 minute
+      </a>
+      <a href="#rejoindre" class="btn-teal is-secondary">
+        Ouvrir le formulaire partenaire
       </a>
     </div>
+    <p class="hero-fast-proof">Paiement immédiat de votre commission via <strong>Wave</strong> ou <strong>Orange Money</strong> dès réception des fonds côté passager.</p>
   </div>
 </section>
 
 <!-- Bandeau — promesse commission -->
 <div class="stripe">
   Votre commission : <strong>30.000 FCFA</strong> par passager indemnisé &nbsp;·&nbsp; Zéro risque &nbsp;·&nbsp; Zéro gestion
+</div>
+<div class="desktop-scan-strip" aria-hidden="true">
+  <div class="desktop-scan-inner">
+    <span><strong>EU261/2004</strong> : base légale solide</span>
+    <span>Commission : <strong>30 000 FCFA</strong> / passager</span>
+    <span>Paiement : <strong>Wave / Orange Money</strong></span>
+    <span>Délai : <strong>48h</strong> après réception des fonds</span>
+  </div>
 </div>
 
 <!-- Preuve sociale rapide -->
@@ -1195,10 +1272,56 @@
   </div>
 </div>
 
+<section class="aida-close" aria-labelledby="aida-title">
+  <div class="aida-close-inner">
+    <h2 id="aida-title" class="aida-close-head">Agents de voyage : gagnez 30 000 FCFA par passager sans effort supplémentaire.</h2>
+    <p class="aida-close-sub">Vos clients subissent des retards ? Ne faites plus de SAV gratuit. Robin des Airs s'occupe de la réclamation (EU261/2004), vous commissionne et vous suit sur WhatsApp.</p>
+    <div class="aida-compare">
+      <article class="aida-box aida-box--bad">
+        <h3>Sans Robin des Airs</h3>
+        <ul>
+          <li>Client frustré, litige non traité.</li>
+          <li>Temps SAV non facturé pour votre équipe.</li>
+          <li>0 FCFA de revenu additionnel.</li>
+        </ul>
+      </article>
+      <article class="aida-box aida-box--good">
+        <h3>Avec Robin des Airs</h3>
+        <ul>
+          <li>Client remboursé et mieux accompagné.</li>
+          <li>Image agence plus professionnelle.</li>
+          <li>30 000 FCFA par passager indemnisé.</li>
+        </ul>
+      </article>
+    </div>
+    <div class="aida-actions">
+      <a class="aida-whatsapp" href="https://api.whatsapp.com/send?phone=33756863630&amp;text=Bonjour%20Robin%20des%20Airs%2C%20je%20veux%20devenir%20partenaire%20agence%20en%201%20minute." target="_blank" rel="noopener noreferrer">💬 Devenir partenaire en 1 minute</a>
+      <p class="aida-legal"><strong>Cadre légal :</strong> Règlement européen <strong>EU261/2004</strong>.</p>
+    </div>
+    <form class="aida-mini-form" name="agence-express" method="POST" data-netlify="true">
+      <input type="hidden" name="form-name" value="agence-express">
+      <div class="field">
+        <label for="aida-agence">Nom de l'agence</label>
+        <input id="aida-agence" name="agence" type="text" required>
+      </div>
+      <div class="field">
+        <label for="aida-ville">Ville</label>
+        <input id="aida-ville" name="ville" type="text" required>
+      </div>
+      <div class="field">
+        <label for="aida-whatsapp">WhatsApp</label>
+        <input id="aida-whatsapp" name="whatsapp" type="tel" required>
+      </div>
+      <button type="submit">Envoyer</button>
+    </form>
+    <p class="aida-mini-note">Formulaire express : nom de l'agence, ville, WhatsApp. On vous rappelle ensuite pour le reste.</p>
+  </div>
+</section>
+
 <!-- Message d'accompagnement agence -->
 <div class="agency-accompagnement" id="accompagnement-agence">
   <div class="agency-accompagnement-inner">
-    <p>Vous portez vos clients sur le long terme — nous portons avec vous la partie indemnisation EU261. <strong>Pas de petites lignes cachées :</strong> vous savez ce qui est versé à votre agence, quand l'indemnité est obtenue, et comment vos clients sont informés. On avance ensemble, étape par étape.</p>
+    <p>Vous portez vos clients sur le long terme, nous portons avec vous la partie indemnisation EU261. <strong>Pas de petites lignes cachées :</strong> vous savez ce qui est versé à votre agence, quand l'indemnité est obtenue, et comment vos clients sont informés. On avance ensemble, étape par étape.</p>
   </div>
 </div>
 
@@ -1228,7 +1351,7 @@
       <div class="step">
         <div class="step-num">2</div>
         <h3>Nous vous informons en amont</h3>
-        <p>Les dossiers liés à votre agence font l'objet d'une veille : nous vous notifions lorsqu'une situation peut ouvrir droit à indemnisation. Vous n'avez pas à nous signaler chaque incident à la main — nous portons le suivi opérationnel ; vous restez concentré sur <strong>votre commission</strong> et sur votre client.</p>
+        <p>Les dossiers liés à votre agence font l'objet d'une veille : dès qu'un client a réservé et vous partage le vol, nous le mettons sous surveillance. Vous êtes notifié dès qu'une situation peut ouvrir droit à indemnisation. Vous n'avez pas à signaler chaque incident à la main, nous portons le suivi opérationnel, vous restez concentré sur <strong>votre commission</strong> et sur votre client.</p>
       </div>
       <div class="step">
         <div class="step-num">3</div>
@@ -1238,7 +1361,7 @@
       <div class="step">
         <div class="step-num">4</div>
         <h3>Vous touchez votre commission</h3>
-        <p>Dès indemnisation du passager, votre commission est déclenchée sous 48h — virement ou Mobile Money.</p>
+        <p>Dès indemnisation du passager, votre commission est déclenchée sous 48h, par virement ou Mobile Money.</p>
       </div>
     </div>
   </div>
@@ -1275,11 +1398,11 @@
     <h2 id="transparence-title">Ce que votre agence voit, noir sur blanc</h2>
     <p class="lead">Les mêmes règles pour tout le monde : pas de surprise au moment du versement.</p>
     <ul class="transparence-list">
-      <li><strong>Commission agence :</strong> 30.000 FCFA par passager indemnisé, versés sous 48h après réception des fonds côté passager — pas avant, pas après.</li>
-      <li><strong>Frais de succès passager :</strong> 25 % sur l'indemnité seulement si l'argent est récupéré ; sinon le passager ne paie rien à Robin des Airs — cohérent avec votre discours « zéro risque ».</li>
+      <li><strong>Commission agence :</strong> 30.000 FCFA par passager indemnisé, versés sous 48h après réception des fonds côté passager, pas avant, pas après.</li>
+      <li><strong>Frais de succès passager :</strong> 25 % sur l'indemnité seulement si l'argent est récupéré ; sinon le passager ne paie rien à Robin des Airs, cohérent avec votre discours « zéro risque ».</li>
       <li><strong>Aucun frais côté agence.</strong> Pas d'abonnement, pas de frais d'entrée, pas de minimum de dossiers.</li>
       <li><strong>Suivi :</strong> vous pouvez demander où en est un dossier référé ; vous restez le point de contact relationnel de votre client.</li>
-      <li><strong>Cadre légal :</strong> mandat, CGV et politique de confidentialité accessibles avant signature — droit de rétractation pour le passager, comme prévu par la loi.</li>
+      <li><strong>Cadre légal :</strong> mandat, CGV et politique de confidentialité accessibles avant signature, avec droit de rétractation pour le passager comme prévu par la loi.</li>
     </ul>
   </div>
 </section>
@@ -1295,7 +1418,7 @@
         <div class="card-icon">💰</div>
         <div>
           <h3>Revenu passif immédiat</h3>
-          <p>30.000 FCFA par passager indemnisé, versés en 48h. Aucun plafond — chaque client référé compte.</p>
+          <p>30.000 FCFA par passager indemnisé, versés en 48h. Aucun plafond, chaque client référé compte.</p>
         </div>
       </div>
       <div class="card">
@@ -1330,7 +1453,7 @@
         <div class="card-icon">📱</div>
         <div>
           <h3>Communication flexible</h3>
-          <p>WhatsApp, e-mail ou formulaire pour l'onboarding et vos questions — le suivi des dossiers et les alertes utiles pour <strong>votre commission</strong> vous parviennent en amont, sans charge quotidienne.</p>
+          <p>WhatsApp, e-mail ou formulaire pour l'onboarding et vos questions. Le suivi des dossiers et les alertes utiles pour <strong>votre commission</strong> vous parviennent en amont, sans charge quotidienne.</p>
         </div>
       </div>
       <div class="card">
@@ -1435,14 +1558,14 @@
     <div class="loss-box">
       <div class="loss-pill">⚠ Ce que vous perdez chaque mois</div>
       <h3>Vos clients voyageurs subissent déjà des retards. Sans partenaire, ils renoncent.</h3>
-      <p>Selon l'EU, moins de 5 % des passagers éligibles réclament réellement leur indemnité. Chaque mois, vos clients laissent sur la table des sommes importantes en FCFA qui leur reviennent de droit — et vous, une commission que vous pourriez toucher.</p>
+      <p>Selon l'EU, moins de 5 % des passagers éligibles réclament réellement leur indemnité. Chaque mois, vos clients laissent sur la table des sommes importantes en FCFA qui leur reviennent de droit, et vous une commission que vous pourriez toucher.</p>
       <div class="loss-numbers">
         <div class="loss-num"><strong>95 %</strong><span>des passagers éligibles abandonnent</span></div>
         <div class="loss-num"><strong>395.000 FCFA</strong><span>non réclamés au maximum par passager concerné</span></div>
         <div class="loss-num"><strong>0 FCFA</strong><span>pour votre agence</span></div>
       </div>
       <a href="#rejoindre" class="btn-teal" style="background:var(--navy);color:#fff">
-        ✦ Arrêter de perdre — Rejoindre en 90 secondes
+        ✦ Arrêter de perdre, rejoindre en 90 secondes
       </a>
     </div>
   </div>
@@ -1456,7 +1579,7 @@
     <p class="lead">FCFA pour les agences en zone franc CFA ; euros pour celles qui préfèrent un versement SEPA. Vous sélectionnez l'option dans le formulaire d'inscription.</p>
     <div class="comm-grid">
       <div class="comm-card featured">
-        <div class="comm-tag">Recommandé — Afrique</div>
+        <div class="comm-tag">Recommandé Afrique</div>
         <div class="comm-currency">Convention FCFA</div>
         <div class="comm-amount">30.000</div>
         <div class="comm-per">FCFA par passager indemnisé</div>
@@ -1523,7 +1646,7 @@
     </div>
     <div class="quote-box">
       <div class="quote-mark">"</div>
-      <p class="quote-text">Nos clients viennent nous voir pour leurs vols Dakar–Paris. Quand un vol est concerné, Robin nous prévient en amont sur les dossiers éligibles — on touche <strong>notre commission</strong> sans monter les démarches nous-mêmes. En 4 mois, on a ajouté 180.000 FCFA de revenu sur des clients qu'on avait déjà.</p>
+      <p class="quote-text">Nos clients viennent nous voir pour leurs vols Dakar-Paris. Quand un vol est concerné, Robin nous prévient en amont sur les dossiers éligibles, on touche <strong>notre commission</strong> sans monter les démarches nous-mêmes. En 4 mois, on a ajouté 180.000 FCFA de revenu sur des clients qu'on avait déjà.</p>
       <div class="quote-author">
         <div class="quote-avatar">M.D.</div>
         <div>
@@ -1575,7 +1698,7 @@
       <details>
         <summary>Comment envoyer un dossier ?</summary>
         <div class="faq-body">
-          Une fois partenaire, la <strong>veille</strong> est assurée par Robin des Airs : les situations pertinentes vous sont <strong>notifiées en amont</strong> — vous n'avez pas à signaler chaque retard à la main. Pour l'intégration ou un cas particulier, vous pouvez aussi écrire à <strong>expert@robindesairs.eu</strong>, utiliser le formulaire ci-dessous, ou WhatsApp au <strong>+33 7 56 86 36 30</strong>.
+          Une fois partenaire, la <strong>veille</strong> est assurée par Robin des Airs : les situations pertinentes vous sont <strong>notifiées en amont</strong>, vous n'avez pas à signaler chaque retard à la main. Dès qu'un client a réservé et que vous nous donnez le vol, nous lançons la surveillance. Pour l'intégration ou un cas particulier, vous pouvez aussi écrire à <strong>expert@robindesairs.eu</strong>, utiliser le formulaire ci-dessous, ou WhatsApp au <strong>+33 7 56 86 36 30</strong>.
         </div>
       </details>
 
@@ -1626,7 +1749,7 @@
     <div id="formulaire" style="text-align:center;margin-bottom:36px">
       <div class="eyebrow" style="background:var(--savanna-soft);color:var(--savanna)">Inscription</div>
       <h2>Rejoindre le programme partenaire</h2>
-      <p class="lead" style="margin:8px auto 0">Inscription gratuite — Convention signée en 24h</p>
+      <p class="lead" style="margin:8px auto 0">Inscription gratuite, convention signée en 24h</p>
     </div>
 
     <div class="form-outer">
@@ -1681,7 +1804,7 @@
             <label>Convention préférée *</label>
             <div class="conv-grid">
               <div class="conv-opt">
-                <input type="radio" id="cv-fcfa" name="convention" value="FCFA — 30.000 FCFA" checked />
+                <input type="radio" id="cv-fcfa" name="convention" value="FCFA 30.000 FCFA" checked />
                 <label for="cv-fcfa" class="conv-label">
                   <div class="conv-amount">30.000</div>
                   <div class="conv-ccy">FCFA / passager</div>
@@ -1689,7 +1812,7 @@
                 </label>
               </div>
               <div class="conv-opt">
-                <input type="radio" id="cv-eur" name="convention" value="EUR — 45 EUR" />
+                <input type="radio" id="cv-eur" name="convention" value="EUR 45 EUR" />
                 <label for="cv-eur" class="conv-label">
                   <div class="conv-amount">45 €</div>
                   <div class="conv-ccy">EUR / passager</div>
@@ -1745,7 +1868,7 @@
 
 <!-- STICKY CTA MOBILE -->
 <div class="sticky-cta">
-  <a href="#rejoindre">✦ Rejoindre — 90 secondes</a>
+  <a href="#rejoindre">✦ Rejoindre en 90 secondes</a>
 </div>
 
 <!-- FOOTER -->
@@ -1757,6 +1880,7 @@
     <a href="#">RGPD</a>
   </div>
   <p>Robin des Airs — 66 av. des Champs-Élysées, 75008 Paris &nbsp;·&nbsp; © 2025–2026 Robin des Airs. Tous droits réservés.</p>
+  <p><strong>L'Expert Robin des Airs</strong></p>
 </footer>
 
 <script>
@@ -1950,29 +2074,6 @@
   });
   updateIndicatifFlag();
   updateWaLink();
-})();
-</script>
-<script>
-(function () {
-  var btn = document.getElementById('agent-share-copy');
-  var inp = document.getElementById('agent-share-url');
-  if (!btn || !inp) return;
-  btn.addEventListener('click', function () {
-    inp.focus();
-    inp.select();
-    inp.setSelectionRange(0, 99999);
-    function done() {
-      btn.textContent = 'Copié ✓';
-      setTimeout(function () { btn.textContent = 'Copier le lien'; }, 2000);
-    }
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(inp.value).then(done).catch(function () {
-        try { document.execCommand('copy'); done(); } catch (e) {}
-      });
-    } else {
-      try { document.execCommand('copy'); done(); } catch (e) {}
-    }
-  });
 })();
 </script>
 

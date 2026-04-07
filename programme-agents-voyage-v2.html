@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agents de voyage : 30 000 FCFA par passager - Robin des Airs</title>
+  <meta name="description" content="Programme partenaires agences Robin des Airs : 30 000 FCFA par passager indemnise (EU261), paiement Wave/Orange Money, process simple et rapide." />
+  <link rel="canonical" href="https://robindesairs.eu/programme-agents-voyage-v2.html" />
+  <style>
+    :root {
+      --navy: #061326;
+      --navy-mid: #0d2140;
+      --teal: #00c87a;
+      --teal-dark: #00a466;
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --text: #122032;
+      --muted: #5f6f84;
+      --line: #dde5ef;
+      --ok: #1f9b66;
+      --warn: #c17a3a;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(1080px, 92vw); margin: 0 auto; }
+
+    header {
+      background: var(--navy);
+      color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      gap: 12px;
+    }
+    .brand { font-weight: 800; letter-spacing: -0.01em; }
+    .brand em { color: var(--teal); font-style: normal; }
+    .top-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn {
+      border: 0;
+      border-radius: 10px;
+      padding: 11px 16px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s ease;
+    }
+    .btn-primary { background: var(--teal); color: #062217; }
+    .btn-primary:hover { background: #23d791; transform: translateY(-1px); }
+    .btn-ghost { background: transparent; color: #d2ddeb; border: 1px solid rgba(210, 221, 235, 0.35); }
+    .btn-ghost:hover { border-color: #d2ddeb; color: #fff; }
+
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+      color: #fff;
+      padding: 64px 0 54px;
+    }
+    .eyebrow {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #89f1c9;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+    h1 {
+      font-size: clamp(30px, 5vw, 52px);
+      line-height: 1.08;
+      margin: 0 0 12px;
+      max-width: 820px;
+    }
+    .hero-sub {
+      max-width: 780px;
+      color: #bfd0e2;
+      font-size: 18px;
+      margin: 0 0 24px;
+    }
+    .hero-kpis {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(170px, 1fr));
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    .kpi {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .kpi strong { display: block; font-size: 24px; color: #fff; line-height: 1.1; }
+    .kpi span { font-size: 13px; color: #cae0f1; }
+
+    section { padding: 52px 0; }
+    h2 { font-size: clamp(24px, 3vw, 36px); line-height: 1.15; margin: 0 0 10px; }
+    .lead { color: var(--muted); margin: 0 0 24px; max-width: 760px; }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .step {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px;
+    }
+    .step b {
+      display: inline-flex;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      align-items: center;
+      justify-content: center;
+      background: var(--navy);
+      color: var(--teal);
+      margin-bottom: 10px;
+    }
+    .step h3 { margin: 0 0 6px; font-size: 16px; }
+    .step p { margin: 0; color: var(--muted); font-size: 14px; }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px;
+    }
+    .card h3 { margin: 0 0 8px; font-size: 18px; }
+    .card p { margin: 0; color: var(--muted); }
+
+    .revenues {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .rev {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px;
+      text-align: center;
+    }
+    .rev .tier { color: var(--muted); font-size: 13px; }
+    .rev strong { display: block; font-size: 31px; margin: 8px 0 3px; color: var(--ok); }
+    .rev .small { font-size: 12px; color: var(--muted); }
+
+    .proof {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--warn);
+      border-radius: 12px;
+      padding: 14px 16px;
+      color: #2d4058;
+      font-size: 14px;
+      margin-top: 16px;
+    }
+    .compare {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 12px;
+    }
+    .compare .box {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .compare .box h3 { margin: 0 0 8px; font-size: 16px; }
+    .compare .box ul { margin: 0; padding-left: 18px; color: var(--muted); }
+    .compare .bad { border-left: 4px solid #cc4f4f; }
+    .compare .good { border-left: 4px solid var(--ok); }
+
+    .mini-form {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .mini-form .field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .mini-form label {
+      font-size: 12px;
+      color: #c8d9ea;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .mini-form input {
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 11px 12px;
+      color: #fff;
+      font-size: 14px;
+    }
+    .mini-form input::placeholder { color: #9fb3c9; }
+    .cta .note { font-size: 12px; color: #9fb3c9; margin-top: 2px; }
+
+    .faq {
+      display: grid;
+      gap: 10px;
+    }
+    details {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+    summary { cursor: pointer; font-weight: 700; }
+    details p { margin: 8px 0 0; color: var(--muted); }
+
+    .cta {
+      background: var(--navy);
+      color: #fff;
+      border-radius: 16px;
+      padding: 32px;
+      display: grid;
+      gap: 14px;
+    }
+    .cta h2 { margin: 0; color: #fff; }
+    .cta p { margin: 0; color: #c8d9ea; }
+    .cta-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    footer {
+      padding: 28px 0 40px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 920px) {
+      .hero-kpis, .grid-4, .grid-2, .revenues, .compare, .mini-form { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container topbar">
+      <div class="brand">ROBIN <em>des Airs</em> - Partenaires agences</div>
+      <div class="top-actions">
+        <a class="btn btn-ghost" href="https://wa.me/33756863630" target="_blank" rel="noopener">WhatsApp</a>
+        <a class="btn btn-primary" href="#integration">Demarrer l'integration</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <p class="eyebrow">Version 2 - Page commerciale agences</p>
+      <h1>Agents de voyage : gagnez 30 000 FCFA par passager, sans effort supplementaire.</h1>
+      <p class="hero-sub">
+        Vos clients ont des retards et annulations ? Ne faites plus de SAV gratuit. Robin des Airs gere la reclamation <strong>EU261/2004</strong> et votre agence recoit <strong>30 000 FCFA par passager indemnise</strong>.
+      </p>
+      <div class="hero-kpis">
+        <div class="kpi"><strong>30 000 FCFA</strong><span>commission par passager indemnise</span></div>
+        <div class="kpi"><strong>0 frais</strong><span>aucun cout fixe pour l'agence</span></div>
+        <div class="kpi"><strong>Wave / Orange Money</strong><span>paiement rapide apres reception des fonds</span></div>
+      </div>
+      <div class="top-actions">
+        <a class="btn btn-primary" href="#integration">Devenir partenaire en 1 minute</a>
+        <a class="btn btn-ghost" href="https://wa.me/33756863630" target="_blank" rel="noopener">WhatsApp direct</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <h2>Comment ca marche</h2>
+      <p class="lead">4 etapes simples. Votre equipe reste concentree sur la vente, Robin des Airs prend en charge le reste.</p>
+      <div class="grid-4">
+        <article class="step">
+          <b>1</b>
+          <h3>Vous orientez le client</h3>
+          <p>En cas de retard, annulation ou surbooking, vous transferez le client vers Robin.</p>
+        </article>
+        <article class="step">
+          <b>2</b>
+          <h3>Nous validons l'eligibilite</h3>
+          <p>Controle EU261, pieces, strategie de reclamation : tout est gere par notre equipe.</p>
+        </article>
+        <article class="step">
+          <b>3</b>
+          <h3>Nous pilotons le dossier</h3>
+          <p>Suivi compagnie, relances, mediation, contentieux si besoin.</p>
+        </article>
+        <article class="step">
+          <b>4</b>
+          <h3>Vous etes commissionne</h3>
+          <p>Des que le passager est indemnise, votre agence recoit sa commission.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <h2>Ce que votre agence gagne</h2>
+      <p class="lead">Un service premium de plus pour vos clients, sans surcharge interne.</p>
+      <div class="grid-2">
+        <article class="card">
+          <h3>Revenu additionnel clair</h3>
+          <p>Commission fixe par passager indemnise. Model simple, lisible, previsible.</p>
+        </article>
+        <article class="card">
+          <h3>Aucune complexite juridique</h3>
+          <p>Robin des Airs gere l'entiere procedure. Votre equipe n'a pas besoin d'expertise EU261.</p>
+        </article>
+        <article class="card">
+          <h3>Meilleure satisfaction client</h3>
+          <p>Vous apportez une solution concrete apres incident de vol, ce qui renforce la fidelite.</p>
+        </article>
+        <article class="card">
+          <h3>Positionnement Europe-Afrique</h3>
+          <p>Parcours adapte aux voyageurs du corridor Europe-Afrique et de la diaspora.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <h2>Exemples de revenus mensuels</h2>
+      <p class="lead">Projection simple basee sur la commission 30 000 FCFA par passager indemnise.</p>
+      <div class="revenues">
+        <article class="rev">
+          <div class="tier">Agence locale</div>
+          <strong>150 000 FCFA</strong>
+          <div class="small">5 passagers indemnises / mois</div>
+        </article>
+        <article class="rev">
+          <div class="tier">Agence active</div>
+          <strong>450 000 FCFA</strong>
+          <div class="small">15 passagers indemnises / mois</div>
+        </article>
+        <article class="rev">
+          <div class="tier">Reseau dynamique</div>
+          <strong>900 000 FCFA</strong>
+          <div class="small">30 passagers indemnises / mois</div>
+        </article>
+      </div>
+      <div class="proof">
+        <strong>Rappel legal :</strong> l'indemnisation repose sur le reglement europeen <strong>EU261/2004</strong>. Ce n'est pas une promesse marketing sans base legale.
+      </div>
+      <div class="compare">
+        <article class="box bad">
+          <h3>Sans Robin des Airs</h3>
+          <ul>
+            <li>Client frustre apres incident</li>
+            <li>Temps SAV non facture</li>
+            <li>0 FCFA de revenu additionnel</li>
+          </ul>
+        </article>
+        <article class="box good">
+          <h3>Avec Robin des Airs</h3>
+          <ul>
+            <li>Client accompagne et rembourse</li>
+            <li>Image agence plus professionnelle</li>
+            <li>30 000 FCFA par passager indemnise</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <h2>Pourquoi Robin des Airs</h2>
+      <p class="lead">Un partenaire specialise, reactif et oriente resultat.</p>
+      <div class="grid-2">
+        <article class="card">
+          <h3>Expertise operationnelle</h3>
+          <p>Process structure, suivi de dossier rigoureux, communication claire.</p>
+        </article>
+        <article class="card">
+          <h3>Execution de bout en bout</h3>
+          <p>De la verification initiale a la recuperation effective des fonds.</p>
+        </article>
+        <article class="card">
+          <h3>Partenariat transparent</h3>
+          <p>Regles de commission explicites, sans zones grises.</p>
+        </article>
+        <article class="card">
+          <h3>Approche humaine</h3>
+          <p>Relation directe via WhatsApp et email, utile pour vos equipes terrain.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <h2>FAQ courte</h2>
+      <div class="faq">
+        <details>
+          <summary>Est-ce legal ?</summary>
+          <p>Oui. Le process repose sur le reglement europeen EU261/2004 et des dossiers verifiables (retard, annulation, refus d'embarquement).</p>
+        </details>
+        <details>
+          <summary>Combien de temps ca prend ?</summary>
+          <p>En moyenne quelques semaines selon la compagnie. Votre agence est informee sur WhatsApp pendant le suivi.</p>
+        </details>
+        <details>
+          <summary>Comment suis-je paye ?</summary>
+          <p>Par Wave, Orange Money ou virement, apres reception des fonds cote passager.</p>
+        </details>
+        <details>
+          <summary>Mon equipe doit-elle gerer la partie juridique ?</summary>
+          <p>Non. Robin des Airs prend en charge la reclamation de A a Z.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section id="integration">
+    <div class="container">
+      <div class="cta">
+        <h2>Demarrez l'integration partenaire</h2>
+        <p>Formulaire ultra-court : nom de l'agence, ville, WhatsApp. On fait le reste avec vous.</p>
+        <form class="mini-form" name="agence-express-v2" method="POST" data-netlify="true">
+          <input type="hidden" name="form-name" value="agence-express-v2" />
+          <div class="field">
+            <label for="agence">Nom de l'agence</label>
+            <input id="agence" name="agence" type="text" placeholder="Ex. Teranga Voyages" required />
+          </div>
+          <div class="field">
+            <label for="ville">Ville</label>
+            <input id="ville" name="ville" type="text" placeholder="Dakar" required />
+          </div>
+          <div class="field">
+            <label for="whatsapp">WhatsApp</label>
+            <input id="whatsapp" name="whatsapp" type="tel" placeholder="+221..." required />
+          </div>
+          <button class="btn btn-primary" type="submit">Envoyer ma demande</button>
+          <a class="btn btn-primary" href="https://wa.me/33756863630?text=Bonjour%20Robin%20des%20Airs%2C%20je%20veux%20devenir%20partenaire%20agence%20(30%20000%20FCFA)." target="_blank" rel="noopener">Devenir partenaire sur WhatsApp</a>
+          <span class="note">Reponse rapide pour onboarding.</span>
+        </form>
+        <div class="cta-actions">
+          <a class="btn btn-ghost" href="/partenaires-rejoindre.html">Formulaire complet</a>
+          <a class="btn btn-ghost" href="https://wa.me/33756863630" target="_blank" rel="noopener">WhatsApp partenaire</a>
+          <a class="btn btn-ghost" href="mailto:expert@robindesairs.eu">expert@robindesairs.eu</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Robin des Airs - Programme partenaires agences - Europe Afrique - Donnees hebergees en Europe.<br />
+    <strong>L'Expert Robin des Airs</strong>
+  </footer>
+</body>
+</html>
