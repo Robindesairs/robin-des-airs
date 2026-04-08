@@ -26,11 +26,17 @@
 
   /* HEADER */
   header{background:var(--navy);color:#fff;padding:18px 24px;position:sticky;top:0;z-index:50;border-bottom:3px solid var(--teal)}
-  .hdr-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .hdr-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
   .logo{font-weight:800;font-size:18px;letter-spacing:.02em;display:flex;align-items:center;gap:10px}
   .logo-mark{width:32px;height:32px;background:var(--teal);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--navy);font-weight:900;font-size:18px}
+  .hdr-right{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px}
+  .hdr-nav{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:13px;font-weight:600}
+  .hdr-nav a{color:#c3d6e4;text-decoration:underline;text-underline-offset:3px}
+  .hdr-nav a:hover{color:#fff}
+  .hdr-nav .sep{opacity:.45;user-select:none}
   .hdr-trust{font-size:13px;color:#a9c7d9;display:flex;gap:18px;align-items:center}
   .hdr-trust span{display:flex;align-items:center;gap:6px}
+  .check a{text-decoration:underline;text-underline-offset:2px}
 
   /* HERO */
   .hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);color:#fff;padding:44px 24px 36px;text-align:center}
@@ -194,9 +200,18 @@
 <header>
   <div class="hdr-inner">
     <a href="/index.html" class="logo" style="color:inherit;text-decoration:none"><div class="logo-mark">R</div>Robin des Airs</a>
-    <div class="hdr-trust">
-      <span>🔒 Données chiffrées</span>
-      <span>✓ 0€ sauf succès</span>
+    <div class="hdr-right">
+      <nav class="hdr-nav" aria-label="Liens utiles">
+        <a href="/politique-confidentialite.html">Confidentialité</a>
+        <span class="sep">·</span>
+        <a href="/cgv.html">CGV</a>
+        <span class="sep">·</span>
+        <a href="mailto:expert@robindesairs.eu">expert@robindesairs.eu</a>
+      </nav>
+      <div class="hdr-trust">
+        <span>🔒 Données chiffrées</span>
+        <span>✓ 0€ sauf succès</span>
+      </div>
     </div>
   </div>
 </header>
@@ -421,7 +436,7 @@
 
       <div class="checks">
         <label class="check"><input type="checkbox" name="accept_mandat" required><span>J'accepte le mandat-cadre, l'affectation du vol saisi à ce mandat, et les honoraires de 25% TTC au succès.</span></label>
-        <label class="check"><input type="checkbox" name="accept_data_contract" required><span>J'accepte le traitement de mes données pour l'exécution de mon dossier, conformément à la <a href="/politique-confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a>.</span></label>
+        <label class="check"><input type="checkbox" name="accept_data_contract" required><span>J'accepte le traitement de mes données pour l'exécution de mon dossier, conformément à la <a href="/politique-confidentialite.html" target="_blank" rel="noopener noreferrer" class="check-keep-link">politique de confidentialité</a>.</span></label>
       </div>
 
       <div class="actions">
@@ -1124,6 +1139,11 @@
       const inp = dz && dz.querySelector('input[type=file]');
       if (inp) inp.click();
     });
+  });
+
+  /* Liens dans les cases à cocher : garder le clic pour le <a>, pas pour cocher la case */
+  document.querySelectorAll('.check a[href]').forEach((a) => {
+    a.addEventListener('click', (e) => { e.stopPropagation(); });
   });
 
   // ============ SIGNATURE CANVAS ============
