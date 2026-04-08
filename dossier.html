@@ -131,6 +131,8 @@
   .dropzone span{color:var(--earth);font-size:13px}
   .dropzone input[type=file]{display:none}
   .file-list{margin-top:12px}
+  .btn-add-more-files{margin-top:10px;width:100%;padding:10px 14px;border-radius:10px;border:1.5px dashed var(--sand-deep);background:#fff;color:var(--teal-dark);font-weight:700;font-size:13px;cursor:pointer;font-family:inherit}
+  .btn-add-more-files:hover{border-color:var(--teal);background:var(--bg-warm)}
   .file-item{background:#fff;border:1px solid var(--sand-deep);border-radius:8px;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;font-size:13.5px}
   .file-item .fsize{color:var(--earth);font-size:12px}
 
@@ -371,7 +373,7 @@
       <h2>Carte d'embarquement ou preuve de vol</h2>
       <p class="sub">Glissez votre carte d'embarquement, billet électronique, ou capture d'écran de l'e-mail de la compagnie.</p>
 
-      <div class="info">📎 <strong>Formats acceptés :</strong> PDF, JPG, PNG, WEBP, HEIC · <strong>Max 15 Mo</strong> par fichier · Plusieurs fichiers possibles.</div>
+      <div class="info">📎 <strong>Formats acceptés :</strong> PDF, JPG, PNG, WEBP, HEIC · <strong>Max 15 Mo</strong> par fichier. <strong>Plusieurs fichiers :</strong> sélectionnez-en plusieurs d’un coup dans la fenêtre, ou recliquez / redéposez pour en ajouter d’autres.</div>
 
       <label class="dropzone" id="dz-embarq">
         <input type="file" name="embarquement[]" multiple accept=".pdf,.jpg,.jpeg,.png,.webp,.heic">
@@ -380,6 +382,7 @@
         <span>ou cliquer pour parcourir</span>
       </label>
       <div class="file-list" id="fl-embarq"></div>
+      <button type="button" class="btn-add-more-files" data-open-files="dz-embarq">+ Ajouter d'autres fichiers</button>
 
       <div class="later-box">
         <label><input type="checkbox" name="embarq_later" id="embarq-later"> Je fournirai ce document plus tard par WhatsApp ou e-mail</label>
@@ -432,15 +435,16 @@
       <h2>Pièce d'identité</h2>
       <p class="sub">Passeport ou carte d'identité de <strong>chaque passager</strong> listé à l'étape 1. Requis par la compagnie aérienne pour vérifier l'identité.</p>
 
-      <div class="info">🔒 <strong>Sécurité :</strong> vos documents sont chiffrés, utilisés uniquement pour ce dossier, et supprimés dès clôture. Hébergement UE.</div>
+      <div class="info">🔒 <strong>Sécurité :</strong> vos documents sont chiffrés, utilisés uniquement pour ce dossier, et supprimés dès clôture. Hébergement UE. &nbsp;|&nbsp; 📎 <strong>Formats :</strong> PDF, JPG, PNG, WEBP, HEIC · <strong>Max 15 Mo</strong> par fichier. <strong>Plusieurs fichiers :</strong> sélection groupée ou <strong>plusieurs ajouts</strong> (recliquer, redéposer ou bouton ci-dessous).</div>
 
       <label class="dropzone" id="dz-id">
         <input type="file" name="identite[]" multiple accept=".pdf,.jpg,.jpeg,.png,.webp,.heic">
         <div class="dropzone-icon">🪪</div>
         <strong>Déposer passeport(s) ou CNI ici</strong>
-        <span>Page avec la photo · PDF, JPG, PNG, WEBP, HEIC · Max 15 Mo</span>
+        <span>Page avec la photo · ou cliquer pour parcourir · plusieurs fois possibles</span>
       </label>
       <div class="file-list" id="fl-id"></div>
+      <button type="button" class="btn-add-more-files" data-open-files="dz-id">+ Ajouter d'autres fichiers</button>
 
       <div class="later-box">
         <label><input type="checkbox" name="id_later" id="id-later"> Je fournirai les pièces d'identité plus tard par WhatsApp</label>
@@ -1067,11 +1071,26 @@
     block.querySelector('.btn-remove').addEventListener('click',()=>block.remove());
   });
 
-  // ============ DROPZONES ============
+  // ============ DROPZONES (cumul multi-fichiers : chaque choix / dépôt s’ajoute) ============
   function wireDropzone(dzId, listId){
     const dz = document.getElementById(dzId);
-    const input = dz.querySelector('input[type=file]');
+    const input = dz && dz.querySelector('input[type=file]');
     const list = document.getElementById(listId);
+    if (!dz || !input || !list) return;
+    const merged = new DataTransfer();
+    function fileKey(f){
+      return `${f.name}\0${f.size}\0${f.lastModified}`;
+    }
+    function addToMerged(fileList){
+      const seen = new Set(Array.from(merged.files).map(fileKey));
+      Array.from(fileList).forEach((f) => {
+        const k = fileKey(f);
+        if (seen.has(k)) return;
+        seen.add(k);
+        merged.items.add(f);
+      });
+      input.files = merged.files;
+    }
     function render(){
       list.innerHTML = '';
       Array.from(input.files).forEach(f=>{
@@ -1083,17 +1102,29 @@
         list.appendChild(div);
       });
     }
-    input.addEventListener('change',render);
+    input.addEventListener('change', () => {
+      if (input.files && input.files.length) addToMerged(input.files);
+      input.value = '';
+      input.files = merged.files;
+      render();
+    });
     dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag')});
     dz.addEventListener('dragleave',()=>dz.classList.remove('drag'));
     dz.addEventListener('drop',e=>{
       e.preventDefault();dz.classList.remove('drag');
-      input.files = e.dataTransfer.files;
+      if (e.dataTransfer.files && e.dataTransfer.files.length) addToMerged(e.dataTransfer.files);
       render();
     });
   }
   wireDropzone('dz-embarq','fl-embarq');
   wireDropzone('dz-id','fl-id');
+  document.querySelectorAll('[data-open-files]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const dz = document.getElementById(btn.getAttribute('data-open-files') || '');
+      const inp = dz && dz.querySelector('input[type=file]');
+      if (inp) inp.click();
+    });
+  });
 
   // ============ SIGNATURE CANVAS ============
   const canvas = document.getElementById('sigCanvas');
