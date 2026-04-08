@@ -294,9 +294,12 @@ export default function ComptaPage() {
                           <div className="text-[11px] text-[var(--crm-text3)]">{r.statut_dossier} · {r.source ?? "—"}</div>
                         </td>
                         <td className="py-3 px-4">
-                          <Link href={`/dossiers/${encodeURIComponent(r.dossier_id)}`} className="text-[var(--crm-navy)] font-semibold underline">
+                          <a
+                            href={`/dossiers/${encodeURIComponent(r.dossier_id)}`}
+                            className="text-[var(--crm-navy)] font-semibold underline"
+                          >
                             {r.client_nom}
-                          </Link>
+                          </a>
                         </td>
                         <td className="py-3 px-4 font-bold" style={{ color: "var(--crm-green)" }}>{fmtEuro(r.client_montant)}</td>
                         <td className="py-3 px-4 text-[11px]">
@@ -369,29 +372,11 @@ export default function ComptaPage() {
                             </button>
                             <button
                               type="button"
-                              disabled={savingKey === `${r.dossier_id}:client:correction`}
-                              onClick={() => requestCorrection(r, "client")}
-                              className="px-3 py-1.5 text-xs rounded-md text-white disabled:opacity-50"
-                              style={{ background: "#b45309" }}
-                            >
-                              Correction client
-                            </button>
-                            <button
-                              type="button"
-                              disabled={r.partenaire_montant <= 0 || savingKey === `${r.dossier_id}:partenaire:correction`}
-                              onClick={() => requestCorrection(r, "partenaire")}
-                              className="px-3 py-1.5 text-xs rounded-md text-white disabled:opacity-50"
-                              style={{ background: "#9a3412" }}
-                            >
-                              Correction partenaire
-                            </button>
-                            <button
-                              type="button"
                               onClick={() => sendPaymentLink(r, "client", "whatsapp")}
                               className="px-3 py-1.5 text-xs rounded-md text-white"
                               style={{ background: "#16a34a" }}
                             >
-                              WhatsApp client
+                              Lien client
                             </button>
                             <button
                               type="button"
@@ -400,15 +385,7 @@ export default function ComptaPage() {
                               className="px-3 py-1.5 text-xs rounded-md text-white disabled:opacity-50"
                               style={{ background: "#15803d" }}
                             >
-                              WhatsApp partenaire
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => sendPaymentLink(r, "client", "email")}
-                              className="px-3 py-1.5 text-xs rounded-md text-white"
-                              style={{ background: "#2563eb" }}
-                            >
-                              Email client
+                              Lien partenaire
                             </button>
                           </div>
                         </td>

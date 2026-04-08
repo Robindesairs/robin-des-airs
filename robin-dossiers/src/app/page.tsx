@@ -10,15 +10,28 @@ const LANGUE_LABELS: Record<string, string> = {
   fr: "Français", wo: "Wolof", bm: "Bambara", ln: "Lingala", ff: "Pulaar", snk: "Soninké", dioula: "Dioula", sw: "Swahili", tw: "Twi", yo: "Yoruba", en: "English",
 };
 
-function getApporteurLabel(source: string | null | undefined): string {
+function getApporteurLabel(source: string | null | undefined, palier: number | null | undefined): string {
   const s = String(source ?? "").trim().toLowerCase();
   if (s === "partenariat_agence" || s === "agence" || s === "agence_partner") {
     return "Partenariat agence · 45 €";
   }
   if (s === "parrainage_particulier" || s === "referral" || s === "parrainage") {
-    return "Parrainage particulier · 20 €";
+    if (Number(palier ?? 0) < 600) return "Parrainage non applicable (<600€)";
+    return "Parrainage particulier · 25%";
   }
   return "—";
+}
+
+function getApporteurRate(source: string | null | undefined): number {
+  const s = String(source ?? "").trim().toLowerCase();
+  if (s === "partenariat_agence" || s === "agence" || s === "agence_partner") return 0;
+  if (s === "parrainage_particulier" || s === "referral" || s === "parrainage") return 0.25;
+  return 0;
+}
+
+function isAgenceSource(source: string | null | undefined): boolean {
+  const s = String(source ?? "").trim().toLowerCase();
+  return s === "partenariat_agence" || s === "agence" || s === "agence_partner";
 }
 
 type DossierRow = {
@@ -274,8 +287,8 @@ export default function CRMPage() {
                   <th className="bg-[var(--crm-bg2)] py-3 px-4 text-left font-semibold text-[var(--crm-text2)] text-[11px] uppercase tracking-wider border-b border-[var(--crm-border)]">Vol</th>
                   <th className="bg-[var(--crm-bg2)] py-3 px-4 text-left font-semibold text-[var(--crm-text2)] text-[11px] uppercase tracking-wider border-b border-[var(--crm-border)]">Palier</th>
                   <th className="bg-[var(--crm-bg2)] py-3 px-4 text-left font-semibold text-[var(--crm-text2)] text-[11px] uppercase tracking-wider border-b border-[var(--crm-border)]">Net client</th>
-                  <th className="bg-[var(--crm-bg2)] py-3 px-4 text-left font-semibold text-[var(--crm-text2)] text-[11px] uppercase tracking-wider border-b border-[var(--crm-border)]">Net Robin</th>
                   <th className="bg-[var(--crm-bg2)] py-3 px-4 text-left font-semibold text-[var(--crm-text2)] text-[11px] uppercase tracking-wider border-b border-[var(--crm-border)]">Apporteur</th>
+                  <th className="bg-[var(--crm-bg2)] py-3 px-4 text-left font-semibold text-[var(--crm-text2)] text-[11px] uppercase tracking-wider border-b border-[var(--crm-border)]">Net Robin</th>
                   <th className="bg-[var(--crm-bg2)] py-3 px-4 text-left font-semibold text-[var(--crm-text2)] text-[11px] uppercase tracking-wider border-b border-[var(--crm-border)]">Indemnité moratoire</th>
                   <th className="bg-[var(--crm-bg2)] py-3 px-4 text-left font-semibold text-[var(--crm-text2)] text-[11px] uppercase tracking-wider border-b border-[var(--crm-border)]">Statut</th>
                   <th className="bg-[var(--crm-bg2)] py-3 px-4 text-left font-semibold text-[var(--crm-text2)] text-[11px] uppercase tracking-wider border-b border-[var(--crm-border)]">Priorité</th>
@@ -291,6 +304,20 @@ export default function CRMPage() {
                 ) : (
                   filtered.map((d) => {
                     const m = calcMoratoire(d.lrar_reception ?? undefined);
+                    const grossAmount = (d.palier ?? 0) * (d.nb_passagers_indemnises ?? 1);
+                    const isAgence = isAgenceSource(d.source);
+                    const isParrainage = ["parrainage_particulier", "referral", "parrainage"].includes(String(d.source ?? "").toLowerCase());
+                    const displayNetClient = isAgence
+                      ? Math.round((grossAmount * 0.7) * 100) / 100
+                      : (d.net_client ?? 0);
+                    const apporteurAmount = isAgence
+                      ? 45
+                      : isParrainage && Number(d.palier ?? 0) < 600
+                        ? 0
+                        : Math.round(((d.net_robin ?? 0) * getApporteurRate(d.source)) * 100) / 100;
+                    const netRobinAfterDeductions = isAgence
+                      ? Math.round((grossAmount - displayNetClient - apporteurAmount) * 100) / 100
+                      : (d.net_robin ?? 0) - apporteurAmount;
                     let morCell = <span className="text-[var(--crm-text3)] text-xs">—</span>;
                     if (m) {
                       if (!m.actif) morCell = <span className="moratoire-soon">J+16 le {m.j16}</span>;
@@ -304,13 +331,24 @@ export default function CRMPage() {
                         className="border-b border-[var(--crm-border)] cursor-pointer hover:bg-[#F0FAF6] transition-colors"
                       >
                         <td className="py-3 px-4"><div className="font-semibold text-[var(--crm-navy)] text-xs">{d.id}</div><div className="text-[11px] text-[var(--crm-text3)] mt-0.5">{formatDate(d.date_creation)}</div></td>
-                        <td className="py-3 px-4">{d.nom_complet ?? "—"}{d.nb_passagers_indemnises && d.nb_passagers_indemnises > 1 ? ` ×${d.nb_passagers_indemnises}` : ""}</td>
+                        <td className="py-3 px-4">
+                          <a
+                            href={`/dossiers/${encodeURIComponent(d.id)}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="underline font-medium text-[var(--crm-navy)]"
+                          >
+                            {d.nom_complet ?? "—"}
+                          </a>
+                          {d.nb_passagers_indemnises && d.nb_passagers_indemnises > 1 ? ` ×${d.nb_passagers_indemnises}` : ""}
+                        </td>
                         <td className="py-3 px-4 text-[11px]">{[d.pays ?? null, d.langue ? (LANGUE_LABELS[d.langue] ?? d.langue) : null].filter(Boolean).join(" · ") || "—"}</td>
                         <td className="py-3 px-4">{d.vol_principal ?? "—"}<div className="text-[11px] text-[var(--crm-text3)] mt-0.5">{d.dep && d.arr ? `${d.dep} → ${d.arr}` : ""}</div></td>
                         <td className="py-3 px-4 font-bold" style={{ color: d.palier === 600 ? "var(--crm-green)" : d.palier === 400 ? "#1D4ED8" : "#5F5E5A" }}>{d.palier != null ? `${d.palier} €` : "—"}</td>
-                        <td className="py-3 px-4"><span className="font-bold" style={{ color: "var(--crm-green)" }}>{d.net_client != null ? `${d.net_client.toLocaleString("fr-FR")} €` : "—"}</span></td>
-                        <td className="py-3 px-4 font-bold" style={{ color: "var(--crm-navy)" }}>{d.net_robin != null ? `${d.net_robin.toLocaleString("fr-FR")} €` : "—"}</td>
-                        <td className="py-3 px-4 text-[11px]">{getApporteurLabel(d.source)}</td>
+                        <td className="py-3 px-4"><span className="font-bold" style={{ color: "var(--crm-green)" }}>{d.net_client != null ? `${displayNetClient.toLocaleString("fr-FR")} €` : "—"}</span></td>
+                        <td className="py-3 px-4 text-[11px]">{getApporteurLabel(d.source, d.palier)}</td>
+                        <td className="py-3 px-4 font-bold" style={{ color: "var(--crm-navy)" }}>
+                          {d.net_robin != null ? `${netRobinAfterDeductions.toLocaleString("fr-FR")} €` : "—"}
+                        </td>
                         <td className="py-3 px-4">{morCell}</td>
                         <td className="py-3 px-4"><span className={`badge text-[11px] font-semibold px-2 py-0.5 rounded-full ${badgeClass}`}>{STATUT_LABELS[d.statut] ?? d.statut}</span>{d.statut === "PAYE" && d.date_paiement && <div className="text-[10px] text-[var(--crm-text3)] mt-1">{d.date_paiement}</div>}</td>
                         <td className={`py-3 px-4 prio-${d.priorite ?? "STANDARD"}`}>{d.priorite ?? "—"}</td>
@@ -575,7 +613,7 @@ function NewDossierModal({ onClose, onCreated }: { onClose: () => void; onCreate
             <div><label className="block text-xs font-semibold text-[var(--crm-text2)] mb-1">Adultes (indemnisés)</label><input type="number" min={1} max={9} value={adultes} onChange={(e) => setAdultes(Number(e.target.value))} className="w-full text-sm py-2 px-3 rounded-md border border-[var(--crm-border)]" /></div>
             <div><label className="block text-xs font-semibold text-[var(--crm-text2)] mb-1">Bébés &lt; 2 ans</label><input type="number" min={0} max={9} value={bebes} onChange={(e) => setBebes(Number(e.target.value))} className="w-full text-sm py-2 px-3 rounded-md border border-[var(--crm-border)]" /></div>
           </div>
-          <div><label className="block text-xs font-semibold text-[var(--crm-text2)] mb-1">Source</label><select value={source} onChange={(e) => setSource(e.target.value)} className="w-full text-sm py-2 px-3 rounded-md border border-[var(--crm-border)]"><option value="autre">Autre</option><option value="partenariat_agence">Partenariat agence (45 €)</option><option value="parrainage_particulier">Parrainage particulier (20 €)</option><option value="tiktok_ad">TikTok Ads</option><option value="fb_reels">Facebook / Reels</option><option value="organic_site">Site organique</option><option value="referral">Parrainage</option><option value="whatsapp">WhatsApp</option></select></div>
+          <div><label className="block text-xs font-semibold text-[var(--crm-text2)] mb-1">Source</label><select value={source} onChange={(e) => setSource(e.target.value)} className="w-full text-sm py-2 px-3 rounded-md border border-[var(--crm-border)]"><option value="autre">Autre</option><option value="partenariat_agence">Partenariat agence (client 70% + agence 45€)</option><option value="parrainage_particulier">Parrainage particulier (25%)</option><option value="tiktok_ad">TikTok Ads</option><option value="fb_reels">Facebook / Reels</option><option value="organic_site">Site organique</option><option value="referral">Parrainage</option><option value="whatsapp">WhatsApp</option></select></div>
           <div className="grid grid-cols-2 gap-3">
             <div><label className="block text-xs font-semibold text-[var(--crm-text2)] mb-1">Langue</label><select value={langue} onChange={(e) => setLangue(e.target.value)} className="w-full text-sm py-2 px-3 rounded-md border border-[var(--crm-border)]">{LANGUE_OPTIONS.map((l) => <option key={l} value={l}>{LANGUE_LABELS[l] ?? l}</option>)}</select></div>
             <div><label className="block text-xs font-semibold text-[var(--crm-text2)] mb-1">Pays</label><select value={pays} onChange={(e) => setPays(e.target.value)} className="w-full text-sm py-2 px-3 rounded-md border border-[var(--crm-border)]">{PAYS_OPTIONS.map((p) => <option key={p || "_"} value={p}>{p || "—"}</option>)}</select></div>

@@ -1464,7 +1464,7 @@
     <!-- CAS CONCRET -->
     <div class="case-concrete" style="margin-top:36px;background:linear-gradient(135deg,var(--bg-warm) 0%,var(--sand-deep) 100%);border:1px solid var(--gold);border-radius:16px;padding:28px 30px;">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-        <span style="background:var(--gold);color:var(--navy);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:5px 12px;border-radius:999px">Cas concret · Janvier 2026</span>
+        <span id="cas-concret-mois-badge" style="background:var(--gold);color:var(--navy);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:5px 12px;border-radius:999px">Cas concret</span>
       </div>
       <h3 style="margin:0 0 14px;color:var(--navy);font-size:22px">Famille de 4 personnes · Vol Air France Paris → Abidjan</h3>
       <p style="margin:0 0 18px;color:var(--navy-mid);font-size:15.5px;line-height:1.6">
@@ -2043,6 +2043,15 @@
   });
   updateIndicatifFlag();
   updateWaLink();
+})();
+</script>
+<script>
+(function () {
+  var el = document.getElementById('cas-concret-mois-badge');
+  if (!el) return;
+  var mois = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+  var d = new Date();
+  el.textContent = 'Cas concret · ' + mois[d.getMonth()] + ' ' + d.getFullYear();
 })();
 </script>
 

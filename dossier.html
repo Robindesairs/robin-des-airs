@@ -6,6 +6,10 @@
 <title>Déposer mon dossier — Robin des Airs</title>
 <link rel="icon" href="/favicon.png" type="image/png" />
 <meta name="description" content="Déposez votre dossier d'indemnisation EU261 en 5 minutes. Jusqu'à 600€ par passager. Aucun frais sauf succès." />
+<script src="/data/airlines.js"></script>
+<script src="/data/airports.js"></script>
+<script src="/data/flights-db.js"></script>
+<script src="/data/country-codes.js"></script>
 <style>
   :root{
     --navy:#061326; --navy-mid:#0c1c38;
@@ -58,9 +62,48 @@
   }
   input:focus,select:focus,textarea:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,200,122,.15)}
   .field{margin-bottom:16px}
+  .date-wrap{position:relative}
+  .date-wrap input[type=date]{
+    padding-right:42px;
+    font-weight:600;
+    background:linear-gradient(180deg,#ffffff 0%,#fdfcf9 100%);
+  }
+  .date-wrap::after{
+    content:"📅";
+    position:absolute;
+    right:12px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:16px;
+    pointer-events:none;
+    opacity:.85;
+  }
+  input[type="date"]::-webkit-calendar-picker-indicator{
+    opacity:1;
+    cursor:pointer;
+    width:24px;
+    height:24px;
+  }
+  input[type="date"]::-webkit-datetime-edit{color:var(--navy)}
+  input[type="date"]:invalid::-webkit-datetime-edit{color:#8c8c8c}
+  .field.autocomplete{position:relative}
+  .ac-list{
+    position:absolute;left:0;right:0;top:calc(100% + 4px);
+    background:#fff;border:1px solid var(--sand-deep);border-radius:10px;
+    box-shadow:0 8px 24px rgba(6,19,38,.12);z-index:40;max-height:min(50vh,280px);overflow:auto;
+    -webkit-overflow-scrolling:touch;overscroll-behavior:contain
+  }
+  .phone-grid .field.autocomplete{margin-bottom:0}
+  .phone-grid .field.autocomplete .ac-list{z-index:50}
+  .ac-item{padding:10px 12px;font-size:14px;cursor:pointer;border-bottom:1px solid #f2f2f2}
+  .ac-item:last-child{border-bottom:none}
+  .ac-item:hover{background:#f4fbf8}
+  .ac-item.fallback{color:var(--earth);font-style:italic}
   .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+  .phone-grid{display:grid;grid-template-columns:100px 120px 1fr;gap:10px}
   @media (max-width:640px){.row,.row-3{grid-template-columns:1fr}}
+  @media (max-width:640px){.phone-grid{grid-template-columns:1fr}}
 
   /* RADIO TILES */
   .tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
@@ -129,6 +172,12 @@
   /* INFO BANNER */
   .info{background:linear-gradient(135deg,rgba(0,200,122,.08),rgba(184,149,108,.05));border-left:4px solid var(--teal);padding:14px 16px;border-radius:0 10px 10px 0;font-size:13.5px;color:var(--navy-mid);margin-bottom:18px}
   .info strong{color:var(--navy)}
+  .ticker{overflow:hidden;white-space:nowrap;position:relative}
+  .ticker-text{display:inline-block;padding-left:100%;animation:tickerMove 14s linear infinite}
+  @keyframes tickerMove{
+    0%{transform:translateX(0)}
+    100%{transform:translateX(-100%)}
+  }
 
   /* FOOTER */
   footer{background:var(--navy);color:#a9c7d9;padding:26px 20px;margin-top:50px;text-align:center;font-size:13px}
@@ -162,7 +211,7 @@
 
 <main class="container">
   <div class="stepper" id="stepper">
-    <div class="step-pill active" data-step="1"><span class="num">1.</span>Vol</div>
+    <div class="step-pill active" data-step="1"><span class="num">1.</span>Dossier</div>
     <div class="step-pill" data-step="2"><span class="num">2.</span>Embarquement</div>
     <div class="step-pill" data-step="3"><span class="num">3.</span>Mandat</div>
     <div class="step-pill" data-step="4"><span class="num">4.</span>Identité</div>
@@ -171,68 +220,134 @@
 
   <form id="dossierForm" method="POST" data-netlify="true" action="/merci-dossier.html" enctype="multipart/form-data" name="dossier">
     <input type="hidden" name="form-name" value="dossier" />
+    <input type="hidden" name="preuve_signature_datetime" id="proof-datetime" />
+    <input type="hidden" name="preuve_user_agent" id="proof-ua" />
+    <input type="hidden" name="preuve_timezone" id="proof-tz" />
+    <input type="hidden" name="preuve_signature_hash" id="proof-sig-hash" />
 
-    <!-- ÉTAPE 1 : VOL + CONTACT + PASSAGERS -->
+    <!-- ÉTAPE 1 : ordre vol → motif → coordonnées → passagers (moins de friction) -->
     <section class="card" data-step="1">
-      <h2>Votre vol & vos passagers</h2>
-      <p class="sub">Informations sur le vol concerné et les personnes indemnisables.</p>
+      <h2>Informations du dossier</h2>
+      <p class="sub">Dans l’ordre : le vol, ce qu’il s’est passé, vos coordonnées, puis les passagers éligibles.</p>
+
+      <h3 style="margin:20px 0 4px;font-size:17px;color:var(--navy)">1. Votre vol</h3>
+      <p class="sub" style="margin-bottom:12px">Commencez par le billet ou la confirmation : numéro de vol et date, le reste peut se préremplir.</p>
 
       <label>Type de trajet</label>
       <div class="tiles">
-        <div class="tile"><input type="radio" name="trajet" id="t-direct" value="direct" checked><label for="t-direct">Vol direct<div class="tile-sub">Un seul segment</div></label></div>
+        <div class="tile"><input type="radio" name="trajet" id="t-direct" value="direct" checked><label for="t-direct">Vol direct</label></div>
         <div class="tile"><input type="radio" name="trajet" id="t-escale" value="escale"><label for="t-escale">Avec escale(s)<div class="tile-sub">Correspondance</div></label></div>
       </div>
 
-      <div class="row">
-        <div class="field">
-          <label for="vol">Numéro(s) de vol *</label>
-          <input type="text" id="vol" name="vol" placeholder="AF 718, AF 6246" required />
-        </div>
-        <div class="field">
-          <label for="compagnie">Compagnie aérienne *</label>
-          <input type="text" id="compagnie" name="compagnie" placeholder="Air France, Brussels Airlines…" required />
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="field">
-          <label for="depart">Aéroport de départ *</label>
-          <input type="text" id="depart" name="depart" placeholder="Dakar (DSS), Abidjan (ABJ)…" required />
-        </div>
-        <div class="field">
-          <label for="arrivee">Aéroport d'arrivée *</label>
-          <input type="text" id="arrivee" name="arrivee" placeholder="Paris (CDG), Bruxelles (BRU)…" required />
+      <div id="escaleFields" class="hidden">
+        <div class="row">
+          <div class="field">
+            <label for="escale_airport">Aéroport de correspondance *</label>
+            <input type="text" id="escale_airport" name="escale_airport" placeholder="Ex: Casablanca (CMN)" />
+          </div>
+          <div class="field">
+            <label for="vol_correspondance">N° vol de correspondance *</label>
+            <input type="text" id="vol_correspondance" name="vol_correspondance" placeholder="Ex: AT 770" />
+          </div>
         </div>
       </div>
 
       <div class="row">
+        <div class="field">
+          <label for="vol" id="vol-label">Numéro de vol *</label>
+          <input type="text" id="vol" name="vol" placeholder="Ex: AF 718" required />
+        </div>
         <div class="field">
           <label for="date">Date du vol *</label>
-          <input type="date" id="date" name="date" required />
+          <div class="date-wrap">
+            <input type="date" id="date" name="date" required />
+          </div>
         </div>
-        <div class="field">
-          <label for="pnr">Code réservation / PNR <span class="opt">(facultatif)</span></label>
-          <input type="text" id="pnr" name="pnr" placeholder="6 caractères (ex. ABCD12)" />
+      </div>
+
+      <div class="field autocomplete">
+        <label for="compagnie">Compagnie aérienne *</label>
+        <input type="text" id="compagnie" name="compagnie" placeholder="Se remplit souvent depuis le n° de vol" required readonly />
+        <div id="compagnie-list" class="ac-list hidden"></div>
+      </div>
+
+      <div class="row">
+        <div class="field autocomplete">
+          <label for="depart">Aéroport de départ *</label>
+          <input type="text" id="depart" name="depart" placeholder="Dakar (DSS), Abidjan (ABJ)…" required />
+          <div id="depart-list" class="ac-list hidden"></div>
+        </div>
+        <div class="field autocomplete">
+          <label for="arrivee">Aéroport d'arrivée *</label>
+          <input type="text" id="arrivee" name="arrivee" placeholder="Paris (CDG), Bruxelles (BRU)…" required />
+          <div id="arrivee-list" class="ac-list hidden"></div>
         </div>
       </div>
 
       <div class="field">
-        <label>Motif de la réclamation *</label>
-        <div class="tiles" style="grid-template-columns:1fr 1fr 1fr">
-          <div class="tile"><input type="radio" name="motif" id="m-retard" value="retard" checked required><label for="m-retard">Retard<div class="tile-sub">&gt; 3 heures</div></label></div>
-          <div class="tile"><input type="radio" name="motif" id="m-annul" value="annulation" required><label for="m-annul">Annulation<div class="tile-sub">&lt; 14 jours</div></label></div>
-          <div class="tile"><input type="radio" name="motif" id="m-surb" value="surbooking" required><label for="m-surb">Surbooking<div class="tile-sub">Refus d'embarquement</div></label></div>
-        </div>
-      </div>
-
-      <div id="retardField" class="field">
-        <label for="retard">Durée du retard à l'arrivée *</label>
-        <input type="text" id="retard" name="retard" placeholder="Ex. : 4 h 05" />
+        <label for="pnr">Code réservation / PNR <span class="opt">(facultatif)</span></label>
+        <input type="text" id="pnr" name="pnr" placeholder="6 caractères (ex. ABCD12)" />
       </div>
 
       <hr style="border:none;border-top:1px solid var(--sand-deep);margin:22px 0">
-      <h3 style="margin:0 0 4px;font-size:17px;color:var(--navy)">Passagers concernés</h3>
-      <p class="sub">Ajoutez chaque passager éligible. <strong>Un seul mandat groupé couvrira toute la famille.</strong></p>
+      <h3 style="margin:0 0 4px;font-size:17px;color:var(--navy)">2. Que s’est-il passé ?</h3>
+      <p class="sub" style="margin-bottom:12px">Choisissez le motif principal — une précision sur l’éligibilité s’affiche en dessous.</p>
+
+      <div class="field">
+        <label>Motif de la réclamation *</label>
+        <div class="tiles" style="grid-template-columns:1fr 1fr 1fr">
+          <div class="tile"><input type="radio" name="motif" id="m-retard" value="retard" checked required><label for="m-retard">⏱️ Retard<div class="tile-sub">&gt; 3 heures</div></label></div>
+          <div class="tile"><input type="radio" name="motif" id="m-annul" value="annulation" required><label for="m-annul">❌ Annulation<div class="tile-sub">&lt; 14 jours</div></label></div>
+          <div class="tile"><input type="radio" name="motif" id="m-surb" value="surbooking" required><label for="m-surb">🚫 Surbooking<div class="tile-sub">Refus d'embarquement</div></label></div>
+        </div>
+        <div id="motif-help" class="info" style="margin-top:8px;margin-bottom:0"></div>
+      </div>
+
+      <hr style="border:none;border-top:1px solid var(--sand-deep);margin:22px 0">
+      <h3 style="margin:0 0 4px;font-size:17px;color:var(--navy)">3. Vos coordonnées</h3>
+      <p class="sub">Personne qui reçoit les messages du dossier et l’indemnité. <strong>Indiquez le pays avant l’adresse</strong> : France (base officielle), autres pays monde entier (OpenStreetMap). Si le pays est rare, tapez-le tel qu’il apparaît sur vos papiers.</p>
+
+      <div class="row">
+        <div class="field"><label for="ct-prenom">Prénom *</label><input type="text" id="ct-prenom" name="contact_prenom" required></div>
+        <div class="field"><label for="ct-nom">Nom *</label><input type="text" id="ct-nom" name="contact_nom" required></div>
+      </div>
+
+      <div class="field autocomplete">
+        <label for="ct-pays">Pays *</label>
+        <input type="text" id="ct-pays" name="contact_pays" value="France" placeholder="Tapez les premières lettres…" autocomplete="off" required />
+        <div id="ct-pays-list" class="ac-list hidden"></div>
+      </div>
+
+      <div class="field autocomplete">
+        <label for="ct-adresse">Adresse *</label>
+        <input type="text" id="ct-adresse" name="contact_adresse" placeholder="N° et rue" autocomplete="street-address" required />
+        <div id="ct-adresse-list" class="ac-list hidden"></div>
+      </div>
+      <div class="row">
+        <div class="field"><label for="ct-cp">Code postal (si applicable)</label><input type="text" id="ct-cp" name="contact_cp" inputmode="numeric" autocomplete="postal-code" /></div>
+        <div class="field"><label for="ct-ville">Ville *</label><input type="text" id="ct-ville" name="contact_ville" autocomplete="address-level2" required /></div>
+      </div>
+
+      <div class="field">
+        <label for="ct-email">E-mail <span class="opt">(facultatif mais recommandé)</span></label>
+        <input type="email" id="ct-email" name="contact_email" placeholder="vous@email.com" />
+      </div>
+      <div class="field">
+        <label for="ct-tel-num">Téléphone / WhatsApp *</label>
+        <div class="phone-grid">
+          <input type="text" id="ct-flag" value="🌍" aria-label="Drapeau détecté" readonly />
+          <div class="field autocomplete">
+            <input type="text" id="ct-indicatif" name="contact_indicatif" placeholder="Indicatif (+221…)" autocomplete="off" required />
+            <div id="ct-indicatif-list" class="ac-list hidden"></div>
+          </div>
+          <input type="tel" id="ct-tel-num" name="contact_tel_local" placeholder="77 123 45 67" required />
+        </div>
+        <input type="hidden" id="ct-tel" name="contact_tel" />
+      </div>
+
+      <hr style="border:none;border-top:1px solid var(--sand-deep);margin:22px 0">
+      <h3 style="margin:0 0 4px;font-size:17px;color:var(--navy)">4. Passagers concernés</h3>
+      <p class="sub">Les prénoms et noms seront repris dans le mandat. Le passager 1 reprend vos nom / prénom ; les autres partagent votre nom de famille si vous l’avez saisi plus haut.</p>
 
       <div id="passengers">
         <div class="passenger-block" data-idx="0">
@@ -241,30 +356,9 @@
             <div class="field"><label>Prénom *</label><input type="text" name="passagers[0][prenom]" required></div>
             <div class="field"><label>Nom *</label><input type="text" name="passagers[0][nom]" required></div>
           </div>
-          <div class="row">
-            <div class="field"><label>Date de naissance <span class="opt">(facultatif)</span></label><input type="date" name="passagers[0][naissance]"></div>
-            <div class="field"><label>Nationalité <span class="opt">(facultatif)</span></label><input type="text" name="passagers[0][nationalite]"></div>
-          </div>
         </div>
       </div>
       <button type="button" class="btn-add" id="addPassenger">+ Ajouter un passager</button>
-
-      <hr style="border:none;border-top:1px solid var(--sand-deep);margin:22px 0">
-      <h3 style="margin:0 0 4px;font-size:17px;color:var(--navy)">Contact principal</h3>
-      <p class="sub">Personne qui recevra les nouvelles du dossier et l'indemnité.</p>
-
-      <div class="row">
-        <div class="field"><label for="ct-prenom">Prénom *</label><input type="text" id="ct-prenom" name="contact_prenom" required></div>
-        <div class="field"><label for="ct-nom">Nom *</label><input type="text" id="ct-nom" name="contact_nom" required></div>
-      </div>
-      <div class="field">
-        <label for="ct-email">E-mail *</label>
-        <input type="email" id="ct-email" name="contact_email" placeholder="vous@email.com" required />
-      </div>
-      <div class="field">
-        <label for="ct-tel">Téléphone / WhatsApp *</label>
-        <input type="tel" id="ct-tel" name="contact_tel" placeholder="+221 77 123 45 67" required />
-      </div>
 
       <div class="actions">
         <span></span>
@@ -300,16 +394,16 @@
 
     <!-- ÉTAPE 3 : MANDAT + SIGNATURE -->
     <section class="card hidden" data-step="3">
-      <h2>Mandat de représentation</h2>
-      <p class="sub">Vous autorisez Robin des Airs à agir en votre nom auprès de la compagnie aérienne. Signature électronique ci-dessous.</p>
+      <h2>Mandat-cadre de représentation</h2>
+      <p class="sub">Une signature unique: Robin des Airs agit en votre nom, et le vol saisi ci-dessous est automatiquement affecté au mandat.</p>
 
       <div class="mandate-text">
-        <h3>Mandat de représentation — Règlement (CE) n° 261/2004</h3>
-        <p>Je soussigné(e), <strong id="mandate-name">[votre nom]</strong>, autorise la société <strong>Robin des Airs</strong> (SAS, siège social : 66 av. des Champs-Élysées, 75008 Paris) à me représenter — ainsi que l'ensemble des passagers listés à l'étape 1 — dans toutes démarches amiables et judiciaires visant à obtenir l'indemnisation prévue par le Règlement (CE) n° 261/2004 concernant le vol référencé.</p>
-        <p>Ce mandat comprend le pouvoir d'adresser toute mise en demeure, de négocier et percevoir les indemnités auprès de la compagnie, de saisir les médiateurs et juridictions compétentes, et de transmettre les fonds recouvrés sur un compte bancaire que je communiquerai ultérieurement (SEPA ou équivalent).</p>
-        <p><strong>Honoraires au succès : 25% TTC</strong> du montant effectivement recouvré. Aucuns frais à ma charge si aucune indemnité n'est obtenue.</p>
-        <p>Je dispose d'un <strong>droit de rétractation de 14 jours</strong> à compter de la signature du présent mandat, sans avoir à motiver ma décision.</p>
-        <p>Fait pour valoir ce que de droit.</p>
+        <h3>Mandat-cadre — Règlement (CE) n° 261/2004</h3>
+        <p>Je soussigné(e), <strong id="mandate-name">[votre nom]</strong>, donne mandat à <strong>Robin des Airs</strong> (SAS, 66 av. des Champs-Élysées, 75008 Paris) pour me représenter, ainsi que les passagers listés, afin d'obtenir toute indemnisation due au titre du règlement CE261.</p>
+        <p>Ce mandat autorise Robin des Airs à: adresser des mises en demeure, négocier avec la compagnie, saisir les médiateurs/juridictions compétentes, percevoir les sommes recouvrées et les reverser après déduction de la commission convenue.</p>
+        <p><strong>Affectation au dossier en cours:</strong> le vol, la date, le trajet et les passagers renseignés dans ce formulaire constituent l'annexe d'affectation au mandat-cadre signé.</p>
+        <p><strong>Honoraires au succès:</strong> 25% TTC du montant effectivement recouvré. <strong>0€ si échec.</strong></p>
+        <p><strong>Rétractation:</strong> 14 jours à compter de la signature (Code de la consommation), par notification écrite.</p>
       </div>
 
       <div class="sig-wrap">
@@ -323,8 +417,8 @@
       </div>
 
       <div class="checks">
-        <label class="check"><input type="checkbox" name="accept_mandat" required><span>J'accepte les termes du mandat de représentation et les honoraires au succès de 25% TTC.</span></label>
-        <label class="check"><input type="checkbox" name="accept_rgpd" required><span>J'accepte que mes données soient traitées conformément à la <a href="/politique-confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a> (RGPD).</span></label>
+        <label class="check"><input type="checkbox" name="accept_mandat" required><span>J'accepte le mandat-cadre, l'affectation du vol saisi à ce mandat, et les honoraires de 25% TTC au succès.</span></label>
+        <label class="check"><input type="checkbox" name="accept_data_contract" required><span>J'accepte le traitement de mes données pour l'exécution de mon dossier, conformément à la <a href="/politique-confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a>.</span></label>
       </div>
 
       <div class="actions">
@@ -404,6 +498,415 @@
 </footer>
 
 <script>
+  // ============ AUTOCOMPLETE (3 caractères + fallback libre) ============
+  const AIRLINES = Array.isArray(window.AIRLINES_DATA)
+    ? window.AIRLINES_DATA
+        .map((x) => x && (x.text || x.value))
+        .filter(Boolean)
+    : [
+        'Air France','Brussels Airlines','Royal Air Maroc','Air Sénégal','Corsair','Transavia','Vueling','TAP Portugal','Turkish Airlines',
+        'Ethiopian Airlines','Kenya Airways','ASKY Airlines','Iberia','Lufthansa','KLM'
+      ];
+  const CITIES_AIRPORTS = Array.isArray(window.AIRPORTS_DATA)
+    ? window.AIRPORTS_DATA
+        .map((x) => x && (x.text || x.value))
+        .filter(Boolean)
+    : [
+        'Paris CDG','Paris Orly','Dakar DSS','Abidjan ABJ','Bamako BKO','Douala DLA','Yaoundé NSI'
+      ];
+
+  function wireAutocomplete(inputId, listId, data) {
+    const input = document.getElementById(inputId);
+    const list = document.getElementById(listId);
+    if (!input || !list) return;
+
+    const closeList = () => list.classList.add('hidden');
+    const openList = () => list.classList.remove('hidden');
+
+    function render(items, query) {
+      const q = (query || '').trim();
+      if (q.length < 3) {
+        closeList();
+        list.innerHTML = '';
+        return;
+      }
+
+      const qLower = q.toLowerCase();
+      const ranked = data
+        .filter((x) => x.toLowerCase().includes(qLower))
+        .sort((a, b) => {
+          const as = a.toLowerCase().startsWith(qLower) ? 0 : 1;
+          const bs = b.toLowerCase().startsWith(qLower) ? 0 : 1;
+          return as - bs || a.localeCompare(b);
+        })
+        .slice(0, 8);
+
+      const lines = [];
+      if (ranked.length > 0) {
+        ranked.forEach((item) => {
+          lines.push(`<div class="ac-item" data-value="${item.replace(/"/g, '&quot;')}">${item}</div>`);
+        });
+      } else {
+        lines.push(`<div class="ac-item fallback" data-value="${q.replace(/"/g, '&quot;')}">Aucune correspondance — garder "${q}"</div>`);
+      }
+      lines.push(`<div class="ac-item fallback" data-value="${q.replace(/"/g, '&quot;')}">Utiliser "${q}"</div>`);
+      list.innerHTML = lines.join('');
+      openList();
+    }
+
+    input.addEventListener('input', () => render(data, input.value));
+    input.addEventListener('focus', () => render(data, input.value));
+    list.addEventListener('mousedown', (e) => {
+      const target = e.target.closest('.ac-item');
+      if (!target) return;
+      const value = target.getAttribute('data-value') || '';
+      input.value = value;
+      closeList();
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!list.contains(e.target) && e.target !== input) closeList();
+    });
+  }
+
+  // Compagnie: remplie automatiquement depuis numéro de vol (pas de saisie manuelle)
+  wireAutocomplete('depart', 'depart-list', CITIES_AIRPORTS);
+  wireAutocomplete('arrivee', 'arrivee-list', CITIES_AIRPORTS);
+
+  function normFold(s) {
+    return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+  }
+
+  function buildPaysListFr() {
+    try {
+      const dn = new Intl.DisplayNames(['fr'], { type: 'region' });
+      const codes = Intl.supportedValuesOf('region');
+      const set = new Set();
+      codes.forEach((c) => {
+        try {
+          const n = dn.of(c);
+          if (n) set.add(n);
+        } catch {}
+      });
+      return Array.from(set).sort((a, b) => a.localeCompare(b, 'fr'));
+    } catch {
+      return ['France', 'Belgique', 'Suisse', 'Sénégal', "Côte d'Ivoire", 'Canada', 'Maroc', 'Algérie', 'Allemagne', 'Espagne', 'Italie', 'Royaume-Uni', 'États-Unis', 'Mali', 'Tunisie'];
+    }
+  }
+
+  function wirePaysAutocomplete() {
+    const input = document.getElementById('ct-pays');
+    const list = document.getElementById('ct-pays-list');
+    if (!input || !list) return;
+    const data = buildPaysListFr();
+    const minChars = 2;
+    const maxItems = 16;
+    const closeList = () => list.classList.add('hidden');
+    const openList = () => list.classList.remove('hidden');
+    function render(query) {
+      const q = (query || '').trim();
+      if (q.length < minChars) {
+        closeList();
+        list.innerHTML = '';
+        return;
+      }
+      const qn = normFold(q);
+      const ranked = data
+        .filter((x) => normFold(x).includes(qn))
+        .sort((a, b) => {
+          const an = normFold(a);
+          const bn = normFold(b);
+          const as = an.startsWith(qn) ? 0 : 1;
+          const bs = bn.startsWith(qn) ? 0 : 1;
+          return as - bs || a.localeCompare(b, 'fr');
+        })
+        .slice(0, maxItems);
+      const lines = [];
+      if (ranked.length) {
+        ranked.forEach((item) => {
+          lines.push(`<div class="ac-item" data-value="${item.replace(/"/g, '&quot;')}">${item}</div>`);
+        });
+      } else {
+        lines.push(`<div class="ac-item fallback" data-value="${q.replace(/"/g, '&quot;')}">Aucun pays listé — garder « ${q.replace(/</g, '')} »</div>`);
+      }
+      lines.push(`<div class="ac-item fallback" data-value="${q.replace(/"/g, '&quot;')}">Utiliser « ${q.replace(/</g, '')} » tel quel</div>`);
+      list.innerHTML = lines.join('');
+      openList();
+    }
+    input.addEventListener('input', () => render(input.value));
+    input.addEventListener('focus', () => render(input.value));
+    list.addEventListener('mousedown', (e) => {
+      const target = e.target.closest('.ac-item');
+      if (!target) return;
+      input.value = target.getAttribute('data-value') || '';
+      closeList();
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+    document.addEventListener('click', (e) => {
+      if (!list.contains(e.target) && e.target !== input) closeList();
+    });
+  }
+
+  function flagEmojiFromIso2(iso2) {
+    const s = String(iso2 || '').toUpperCase();
+    if (s.length !== 2 || /[^A-Z]/.test(s)) return '🌍';
+    const A = 0x1f1e6;
+    return String.fromCodePoint(A + s.charCodeAt(0) - 65, A + s.charCodeAt(1) - 65);
+  }
+
+  function buildDialRows() {
+    const rawSrc = Array.isArray(window.COUNTRY_DIAL_CODES) ? window.COUNTRY_DIAL_CODES.slice() : [];
+    rawSrc.push({ code: '1', iso: 'US' });
+    let dn;
+    try {
+      dn = new Intl.DisplayNames(['fr'], { type: 'region' });
+    } catch {
+      dn = null;
+    }
+    const seen = new Set();
+    const rows = [];
+    rawSrc.forEach(({ code, iso }) => {
+      const dial = `+${String(code).replace(/^\++/, '')}`;
+      const k = `${iso}|${dial}`;
+      if (seen.has(k)) return;
+      seen.add(k);
+      let name;
+      try {
+        name = dn ? dn.of(iso) : iso;
+      } catch {
+        name = iso;
+      }
+      rows.push({ flag: flagEmojiFromIso2(iso), name: name || iso, dial });
+    });
+    rows.sort((a, b) => a.name.localeCompare(b.name, 'fr'));
+    return rows;
+  }
+
+  function wireDialAutocomplete() {
+    const input = document.getElementById('ct-indicatif');
+    const list = document.getElementById('ct-indicatif-list');
+    if (!input || !list) return;
+    const allRows = buildDialRows();
+    let lastFiltered = [];
+    const closeList = () => list.classList.add('hidden');
+    const openList = () => list.classList.remove('hidden');
+    function rowMatches(row, q) {
+      const t = String(q || '').trim();
+      if (!t) return false;
+      if (t.startsWith('+') || /^\d/.test(t)) {
+        const d = t.replace(/\D/g, '');
+        if (!d) return false;
+        return row.dial.replace(/\D/g, '').startsWith(d);
+      }
+      return normFold(row.name).includes(normFold(t));
+    }
+    function normalizeDialInput(v) {
+      const d = String(v || '').replace(/\D/g, '');
+      return d ? `+${d}` : '';
+    }
+    function render(q) {
+      const t = String(q || '').trim();
+      if (t.length < 1) {
+        closeList();
+        list.innerHTML = '';
+        return;
+      }
+      const ranked = allRows.filter((r) => rowMatches(r, t));
+      lastFiltered = ranked.slice(0, 26);
+      const safeQ = q.replace(/</g, '');
+      if (!lastFiltered.length) {
+        list.innerHTML = `<div class="ac-item fallback" data-free="1">Utiliser ${safeQ.replace(/"/g, '')} (saisie libre)</div>`;
+        openList();
+        return;
+      }
+      list.innerHTML = lastFiltered.map((r, idx) => {
+        const lab = `${r.flag} ${r.name} (${r.dial})`;
+        return `<div class="ac-item" data-idx="${idx}">${lab}</div>`;
+      }).join('');
+      openList();
+    }
+    input.addEventListener('input', () => render(input.value));
+    input.addEventListener('focus', () => render(input.value));
+    list.addEventListener('mousedown', (e) => {
+      const target = e.target.closest('.ac-item');
+      if (!target) return;
+      const idx = target.getAttribute('data-idx');
+      if (idx !== null && idx !== '' && lastFiltered[Number(idx)]) {
+        input.value = lastFiltered[Number(idx)].dial;
+      } else if (target.hasAttribute('data-free')) {
+        input.value = normalizeDialInput(input.value) || input.value.trim();
+      }
+      closeList();
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    document.addEventListener('click', (e) => {
+      if (!list.contains(e.target) && e.target !== input) closeList();
+    });
+  }
+
+  // Adresse : France (BAN) + monde entier via Nominatim / OpenStreetMap
+  function wireAddressAutocomplete() {
+    const input = document.getElementById('ct-adresse');
+    const list = document.getElementById('ct-adresse-list');
+    const cpInput = document.getElementById('ct-cp');
+    const villeInput = document.getElementById('ct-ville');
+    const paysInput = document.getElementById('ct-pays');
+    if (!input || !list) return;
+
+    const COUNTRY_FR_TO_ISO = {
+      'france': 'fr', 'belgique': 'be', 'suisse': 'ch', 'allemagne': 'de', 'luxembourg': 'lu',
+      'monaco': 'mc', 'italie': 'it', 'espagne': 'es', 'portugal': 'pt', 'pays-bas': 'nl',
+      'royaume-uni': 'gb', 'royaume uni': 'gb', 'irlande': 'ie', 'autriche': 'at', 'pologne': 'pl',
+      'republique tcheque': 'cz', 'tchequie': 'cz', 'slovaquie': 'sk', 'hongrie': 'hu', 'roumanie': 'ro',
+      'bulgarie': 'bg', 'grece': 'gr', 'chypre': 'cy', 'malte': 'mt', 'croatie': 'hr', 'slovenie': 'si',
+      'serbie': 'rs', 'bosnie': 'ba', 'bosnie-herzegovine': 'ba', 'montenegro': 'me', 'macedoine du nord': 'mk',
+      'albanie': 'al', 'islande': 'is', 'norvege': 'no', 'suede': 'se', 'finlande': 'fi', 'danemark': 'dk',
+      'estonie': 'ee', 'lettonie': 'lv', 'lituanie': 'lt', 'ukraine': 'ua', 'moldavie': 'md',
+      'bielorussie': 'by', 'russie': 'ru', 'turquie': 'tr', 'andorre': 'ad', 'liechtenstein': 'li',
+      'vatican': 'va', 'kosovo': 'xk', 'canada': 'ca', 'usa': 'us', 'etats-unis': 'us', 'etats unis': 'us',
+      'mexique': 'mx', 'bresil': 'br', 'argentine': 'ar', 'chili': 'cl', 'colombie': 'co', 'perou': 'pe',
+      'venezuela': 've', 'equateur': 'ec', 'bolivie': 'bo', 'paraguay': 'py', 'uruguay': 'uy',
+      'maroc': 'ma', 'algerie': 'dz', 'tunisie': 'tn', 'egypte': 'eg', 'libye': 'ly', 'senegal': 'sn',
+      'cote divoire': 'ci', 'mali': 'ml', 'burkina faso': 'bf', 'niger': 'ne', 'togo': 'tg', 'benin': 'bj',
+      'ghana': 'gh', 'nigeria': 'ng', 'cameroun': 'cm', 'gabon': 'ga', 'congo': 'cg', 'rdc': 'cd',
+      'republique democratique du congo': 'cd', 'madagascar': 'mg', 'maurice': 'mu', 'seychelles': 'sc',
+      'kenya': 'ke', 'tanzanie': 'tz', 'ouganda': 'ug', 'rwanda': 'rw', 'ethiopie': 'et', 'somalie': 'so',
+      'afrique du sud': 'za', 'chine': 'cn', 'japon': 'jp', 'coree du sud': 'kr', 'coree du nord': 'kp',
+      'inde': 'in', 'pakistan': 'pk', 'bangladesh': 'bd', 'vietnam': 'vn', 'thailande': 'th', 'singapour': 'sg',
+      'malaisie': 'my', 'indonesie': 'id', 'philippines': 'ph', 'australie': 'au', 'nouvelle-zelande': 'nz',
+      'arabie saoudite': 'sa', 'emirats arabes unis': 'ae', 'qatar': 'qa', 'koweit': 'kw', 'bahrain': 'bh',
+      'bahrein': 'bh', 'israel': 'il', 'liban': 'lb', 'jordanie': 'jo', 'syrie': 'sy', 'irak': 'iq', 'iran': 'ir',
+      'afghanistan': 'af', 'nepal': 'np', 'sri lanka': 'lk',
+    };
+
+    function normalizePays() {
+      return (paysInput?.value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/['']/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toLowerCase();
+    }
+
+    function countryCodesForSearch() {
+      const key = normalizePays();
+      if (!key || key === 'france') return { mode: 'fr' };
+      const iso = COUNTRY_FR_TO_ISO[key];
+      if (iso) return { mode: 'nom', iso };
+      return { mode: 'nom', iso: null };
+    }
+
+    function nominatimItem(d) {
+      const a = d.address || {};
+      const road = [a.house_number, a.road || a.pedestrian || a.residential || a.neighbourhood].filter(Boolean).join(' ').trim();
+      const line = road || (String(d.display_name || '').split(',')[0] || '').trim();
+      const postcode = String(a.postcode || '').split(';')[0].trim();
+      const city = a.city || a.town || a.village || a.municipality || a.city_district || a.county || '';
+      return {
+        label: d.display_name || line || postcode,
+        address: line || d.display_name || '',
+        postcode,
+        city,
+      };
+    }
+
+    let timer = null;
+    let lastItems = [];
+    const closeList = () => { list.classList.add('hidden'); list.innerHTML = ''; };
+    const openList = () => list.classList.remove('hidden');
+
+    function render(items, q) {
+      const safeQ = (q || '').replace(/"/g, '&quot;');
+      if (!items.length) {
+        list.innerHTML = `<div class="ac-item fallback" data-value="${safeQ}">Utiliser "${q}"</div>`;
+        openList();
+        return;
+      }
+      list.innerHTML = items.map((it, idx) => (
+        `<div class="ac-item" data-idx="${idx}">${it.label}</div>`
+      )).join('');
+      openList();
+    }
+
+    async function searchAddress(query) {
+      const q = (query || '').trim();
+      if (q.length < 3) {
+        closeList();
+        return;
+      }
+      const conf = countryCodesForSearch();
+      try {
+        if (conf.mode === 'fr') {
+          const url = `https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(q)}&limit=8`;
+          const res = await fetch(url);
+          const json = res.ok ? await res.json() : {};
+          const features = Array.isArray(json?.features) ? json.features : [];
+          lastItems = features.map((f) => {
+            const p = f?.properties || {};
+            return {
+              label: p.label || q,
+              address: p.name || p.label || q,
+              postcode: p.postcode || '',
+              city: p.city || '',
+            };
+          });
+          render(lastItems, q);
+          return;
+        }
+        const paysHint = (paysInput?.value || '').trim();
+        let nq = q;
+        if (!conf.iso && paysHint) nq = `${q}, ${paysHint}`;
+        let url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=8&q=${encodeURIComponent(nq)}`;
+        if (conf.iso) url += `&countrycodes=${encodeURIComponent(conf.iso)}`;
+        const res = await fetch(url, { headers: { Accept: 'application/json' } });
+        const raw = await res.json();
+        const arr = Array.isArray(raw) ? raw : [];
+        lastItems = arr.map(nominatimItem).filter((it) => it.label);
+        render(lastItems, q);
+      } catch {
+        lastItems = [];
+        render([], q);
+      }
+    }
+
+    input.addEventListener('input', () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => searchAddress(input.value), 220);
+    });
+    input.addEventListener('focus', () => {
+      if ((input.value || '').trim().length >= 3) searchAddress(input.value);
+    });
+    paysInput?.addEventListener('change', () => {
+      if ((input.value || '').trim().length >= 3) searchAddress(input.value);
+    });
+    paysInput?.addEventListener('input', () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => { if ((input.value || '').trim().length >= 3) searchAddress(input.value); }, 300);
+    });
+    list.addEventListener('mousedown', (e) => {
+      const target = e.target.closest('.ac-item');
+      if (!target) return;
+      const idx = target.getAttribute('data-idx');
+      if (idx !== null && idx !== '' && lastItems[Number(idx)]) {
+        const picked = lastItems[Number(idx)];
+        input.value = picked.address;
+        if (cpInput && picked.postcode) cpInput.value = picked.postcode;
+        if (villeInput && picked.city) villeInput.value = picked.city;
+      } else {
+        input.value = target.getAttribute('data-value') || input.value;
+      }
+      closeList();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!list.contains(e.target) && e.target !== input) closeList();
+    });
+  }
+  wireAddressAutocomplete();
+  wirePaysAutocomplete();
+
   // ============ STEP NAVIGATION ============
   const steps = document.querySelectorAll('[data-step]');
   const pills = document.querySelectorAll('.step-pill');
@@ -418,6 +921,8 @@
     });
     current = n;
     window.scrollTo({top:0,behavior:'smooth'});
+    // Le canvas de signature est caché au chargement: on recalcule sa taille à l'ouverture de l'étape 3.
+    if(n===3) setTimeout(() => resize(), 0);
     if(n===5) buildRecap();
   }
   document.querySelectorAll('[data-next]').forEach(b=>b.addEventListener('click',()=>{
@@ -431,22 +936,114 @@
     for(const r of reqs){
       if(!r.checkValidity()){ r.reportValidity(); return false; }
     }
+    if(n===1){
+      const trajet = document.querySelector('input[name=trajet]:checked')?.value;
+      const volVal = (document.getElementById('vol').value || '').trim();
+      if (trajet === 'direct' && /[,;]/.test(volVal)) {
+        alert('En vol direct, renseignez un seul numéro de vol.');
+        document.getElementById('vol').focus();
+        return false;
+      }
+    }
     if(n===3 && !sigHasStroke){ alert('Merci de signer le mandat.'); return false; }
     return true;
   }
 
   // ============ MOTIF -> TOGGLE RETARD ============
-  const retardField = document.getElementById('retardField');
-  const retardInput = document.getElementById('retard');
-  function syncRetardRequired(){
-    const isRetard = document.querySelector('input[name=motif]:checked')?.value === 'retard';
-    retardField.style.display = isRetard ? 'block' : 'none';
-    if (retardInput) retardInput.required = isRetard;
+  const motifHelp = document.getElementById('motif-help');
+  const escaleFields = document.getElementById('escaleFields');
+  const escaleAirportInput = document.getElementById('escale_airport');
+  const volCorrespondanceInput = document.getElementById('vol_correspondance');
+  const volInput = document.getElementById('vol');
+  const volLabel = document.getElementById('vol-label');
+  function syncMotifHelp(){
+    const motif = document.querySelector('input[name=motif]:checked')?.value;
+    if (motifHelp) {
+      if (motif === 'retard') {
+        motifHelp.classList.add('ticker');
+        motifHelp.innerHTML = "<span class='ticker-text'>✅ <strong>Retard :</strong> pour être éligible, il faut en général <strong>au moins 3 heures de retard à l’arrivée (heure d’ouverture des portes)</strong>.</span>";
+      } else if (motif === 'annulation') {
+        motifHelp.classList.add('ticker');
+        motifHelp.innerHTML = "<span class='ticker-text'>✅ <strong>Annulation :</strong> en général éligible si vous avez été informé <strong>moins de 14 jours avant le départ</strong> et qu’aucun réacheminement équivalent n’a été proposé.</span>";
+      } else {
+        motifHelp.classList.add('ticker');
+        motifHelp.innerHTML = "<span class='ticker-text'>✅ <strong>Surbooking / refus d’embarquement :</strong> généralement éligible si vous aviez une réservation confirmée et vous êtes présenté à l’embarquement à l’heure.</span>";
+      }
+    }
   }
   document.querySelectorAll('input[name=motif]').forEach(r=>{
-    r.addEventListener('change', syncRetardRequired);
+    r.addEventListener('change', syncMotifHelp);
   });
-  syncRetardRequired();
+  syncMotifHelp();
+
+  function syncTrajetFields(){
+    const trajet = document.querySelector('input[name=trajet]:checked')?.value;
+    const isEscale = trajet === 'escale';
+    escaleFields.classList.toggle('hidden', !isEscale);
+    escaleAirportInput.required = isEscale;
+    volCorrespondanceInput.required = isEscale;
+    volLabel.textContent = isEscale ? 'Numéro du 1er vol *' : 'Numéro de vol *';
+    volInput.placeholder = isEscale ? 'Ex: AF 718' : 'Ex: AF 718';
+  }
+  document.querySelectorAll('input[name=trajet]').forEach(r=>{
+    r.addEventListener('change', syncTrajetFields);
+  });
+  syncTrajetFields();
+
+  // Vol direct: un seul numéro de vol
+  volInput.addEventListener('input', () => {
+    const trajet = document.querySelector('input[name=trajet]:checked')?.value;
+    if (trajet === 'direct') {
+      volInput.value = volInput.value.replace(/[;,]+/g, ' ');
+    }
+  });
+
+  // Auto-remplissage compagnie + trajet via numéro de vol (si trouvé en base locale)
+  function fillFromFlightNumber() {
+    const raw = (volInput.value || '').replace(/\s+/g, '').toUpperCase();
+    if (!raw || raw.length < 4) return;
+    const record = (window.DB && window.DB[raw]) ? window.DB[raw] : null;
+    const compInput = document.getElementById('compagnie');
+
+    // Pré-remplissage par préfixe compagnie (AF, SN, AT, TO, etc.)
+    if (compInput && !compInput.value.trim() && window.PFX) {
+      const alphaPrefix = (raw.match(/^[A-Z]{2,3}/) || [])[0];
+      if (alphaPrefix && window.PFX[alphaPrefix]) {
+        compInput.value = window.PFX[alphaPrefix];
+      } else {
+        const mixedPrefix = (raw.match(/^[A-Z0-9]{2}/) || [])[0];
+        if (mixedPrefix && window.PFX[mixedPrefix]) {
+          compInput.value = window.PFX[mixedPrefix];
+        }
+      }
+    }
+
+    if (!record) return;
+
+    // Compagnie
+    if (compInput && !compInput.value.trim()) {
+      compInput.value = record.a || '';
+    }
+
+    // Trajet "CDG→DKR"
+    const route = String(record.r || '');
+    const parts = route.split('→');
+    if (parts.length === 2) {
+      const depCode = parts[0].trim();
+      const arrCode = parts[1].trim();
+
+      const airportData = Array.isArray(window.AIRPORTS_DATA) ? window.AIRPORTS_DATA : [];
+      const depObj = airportData.find((x) => String(x.value || '').toUpperCase() === depCode);
+      const arrObj = airportData.find((x) => String(x.value || '').toUpperCase() === arrCode);
+
+      const depInput = document.getElementById('depart');
+      const arrInput = document.getElementById('arrivee');
+      if (depInput && !depInput.value.trim()) depInput.value = depObj?.text || depCode;
+      if (arrInput && !arrInput.value.trim()) arrInput.value = arrObj?.text || arrCode;
+    }
+  }
+  volInput.addEventListener('blur', fillFromFlightNumber);
+  volInput.addEventListener('change', fillFromFlightNumber);
 
   // ============ PASSAGERS DYNAMIQUES ============
   let paxCount = 1;
@@ -463,12 +1060,10 @@
       <div class="row">
         <div class="field"><label>Prénom *</label><input type="text" name="passagers[${idx}][prenom]" required></div>
         <div class="field"><label>Nom *</label><input type="text" name="passagers[${idx}][nom]" required></div>
-      </div>
-      <div class="row">
-        <div class="field"><label>Date de naissance <span class="opt">(facultatif)</span></label><input type="date" name="passagers[${idx}][naissance]"></div>
-        <div class="field"><label>Nationalité <span class="opt">(facultatif)</span></label><input type="text" name="passagers[${idx}][nationalite]"></div>
       </div>`;
     document.getElementById('passengers').appendChild(block);
+    const extraNom = block.querySelector('input[name*="[nom]"]');
+    if (extraNom) extraNom.value = (document.getElementById('ct-nom').value || '').trim();
     block.querySelector('.btn-remove').addEventListener('click',()=>block.remove());
   });
 
@@ -529,14 +1124,100 @@
     resize();
   });
 
-  // Update mandate name live
-  ['ct-prenom','ct-nom'].forEach(id=>{
-    document.getElementById(id).addEventListener('input',()=>{
-      const p = document.getElementById('ct-prenom').value.trim();
-      const n = document.getElementById('ct-nom').value.trim();
-      document.getElementById('mandate-name').textContent = (p||n) ? (p+' '+n).trim() : '[votre nom]';
+  // ============ PREUVES SIGNATURE ============
+  function setProofFields(){
+    document.getElementById('proof-datetime').value = new Date().toISOString();
+    document.getElementById('proof-ua').value = navigator.userAgent || '';
+    try {
+      document.getElementById('proof-tz').value = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+    } catch {
+      document.getElementById('proof-tz').value = '';
+    }
+  }
+  setProofFields();
+
+  async function sha256Base64Url(text){
+    const data = new TextEncoder().encode(text);
+    const digest = await crypto.subtle.digest('SHA-256', data);
+    const bytes = Array.from(new Uint8Array(digest));
+    const bin = bytes.map(b=>String.fromCharCode(b)).join('');
+    return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  }
+
+  function syncPax1FromContact(){
+    const p = document.getElementById('ct-prenom').value.trim();
+    const n = document.getElementById('ct-nom').value.trim();
+    document.getElementById('mandate-name').textContent = (p || n) ? (p + ' ' + n).trim() : '[votre nom]';
+    const p1Prenom = document.querySelector('input[name="passagers[0][prenom]"]');
+    const p1Nom = document.querySelector('input[name="passagers[0][nom]"]');
+    if (p1Prenom) p1Prenom.value = p;
+    if (p1Nom) p1Nom.value = n;
+    document.querySelectorAll('.passenger-block').forEach((blk) => {
+      const idx = parseInt(blk.dataset.idx || '0', 10);
+      if (idx > 0) {
+        const nomEl = blk.querySelector('input[name*="[nom]"]');
+        if (nomEl) nomEl.value = n;
+      }
     });
+  }
+  ['ct-prenom','ct-nom'].forEach(id=>{
+    document.getElementById(id).addEventListener('input', syncPax1FromContact);
   });
+  // Sync initial pour éviter tout cas où les champs sont déjà remplis.
+  syncPax1FromContact();
+
+  // Téléphone normalisé (indicatif + numéro local) pour soumission
+  const INDICATIF_TO_FLAG = {
+    '1':'🇺🇸','20':'🇪🇬','27':'🇿🇦','30':'🇬🇷','31':'🇳🇱','32':'🇧🇪','33':'🇫🇷','34':'🇪🇸','36':'🇭🇺','39':'🇮🇹','40':'🇷🇴','41':'🇨🇭','43':'🇦🇹','44':'🇬🇧',
+    '45':'🇩🇰','46':'🇸🇪','47':'🇳🇴','48':'🇵🇱','49':'🇩🇪','52':'🇲🇽','54':'🇦🇷','55':'🇧🇷','56':'🇨🇱','57':'🇨🇴','58':'🇻🇪','60':'🇲🇾','61':'🇦🇺','62':'🇮🇩',
+    '63':'🇵🇭','64':'🇳🇿','65':'🇸🇬','66':'🇹🇭','81':'🇯🇵','82':'🇰🇷','84':'🇻🇳','86':'🇨🇳','90':'🇹🇷','91':'🇮🇳','92':'🇵🇰','93':'🇦🇫','94':'🇱🇰','95':'🇲🇲',
+    '98':'🇮🇷','211':'🇸🇸','212':'🇲🇦','213':'🇩🇿','216':'🇹🇳','218':'🇱🇾','220':'🇬🇲','221':'🇸🇳','222':'🇲🇷','223':'🇲🇱','224':'🇬🇳','225':'🇨🇮','226':'🇧🇫',
+    '227':'🇳🇪','228':'🇹🇬','229':'🇧🇯','230':'🇲🇺','231':'🇱🇷','232':'🇸🇱','233':'🇬🇭','234':'🇳🇬','235':'🇹🇩','236':'🇨🇫','237':'🇨🇲','238':'🇨🇻','239':'🇸🇹',
+    '240':'🇬🇶','241':'🇬🇦','242':'🇨🇬','243':'🇨🇩','244':'🇦🇴','245':'🇬🇼','248':'🇸🇨','249':'🇸🇩','250':'🇷🇼','251':'🇪🇹','252':'🇸🇴','253':'🇩🇯','254':'🇰🇪',
+    '255':'🇹🇿','256':'🇺🇬','257':'🇧🇮','258':'🇲🇿','260':'🇿🇲','261':'🇲🇬','262':'🇷🇪','263':'🇿🇼','264':'🇳🇦','265':'🇲🇼','266':'🇱🇸','267':'🇧🇼','268':'🇸🇿',
+    '269':'🇰🇲','297':'🇦🇼','298':'🇫🇴','299':'🇬🇱','350':'🇬🇮','351':'🇵🇹','352':'🇱🇺','353':'🇮🇪','354':'🇮🇸','355':'🇦🇱','356':'🇲🇹','357':'🇨🇾','358':'🇫🇮',
+    '359':'🇧🇬','370':'🇱🇹','371':'🇱🇻','372':'🇪🇪','373':'🇲🇩','374':'🇦🇲','375':'🇧🇾','376':'🇦🇩','377':'🇲🇨','378':'🇸🇲','380':'🇺🇦','381':'🇷🇸','382':'🇲🇪',
+    '383':'🇽🇰','385':'🇭🇷','386':'🇸🇮','387':'🇧🇦','389':'🇲🇰','420':'🇨🇿','421':'🇸🇰','423':'🇱🇮','500':'🇫🇰','501':'🇧🇿','502':'🇬🇹','503':'🇸🇻','504':'🇭🇳',
+    '505':'🇳🇮','506':'🇨🇷','507':'🇵🇦','509':'🇭🇹','590':'🇬🇵','591':'🇧🇴','592':'🇬🇾','593':'🇪🇨','594':'🇬🇫','595':'🇵🇾','596':'🇲🇶','597':'🇸🇷','598':'🇺🇾',
+    '599':'🇨🇼','670':'🇹🇱','673':'🇧🇳','674':'🇳🇷','675':'🇵🇬','676':'🇹🇴','677':'🇸🇧','678':'🇻🇺','679':'🇫🇯','680':'🇵🇼','681':'🇼🇫','682':'🇨🇰','685':'🇼🇸',
+    '686':'🇰🇮','687':'🇳🇨','688':'🇹🇻','689':'🇵🇫','691':'🇫🇲','692':'🇲🇭','850':'🇰🇵','852':'🇭🇰','853':'🇲🇴','855':'🇰🇭','856':'🇱🇦','880':'🇧🇩','886':'🇹🇼',
+    '960':'🇲🇻','961':'🇱🇧','962':'🇯🇴','963':'🇸🇾','964':'🇮🇶','965':'🇰🇼','966':'🇸🇦','967':'🇾🇪','968':'🇴🇲','970':'🇵🇸','971':'🇦🇪','972':'🇮🇱','973':'🇧🇭',
+    '974':'🇶🇦','975':'🇧🇹','976':'🇲🇳','977':'🇳🇵','992':'🇹🇯','993':'🇹🇲','994':'🇦🇿','995':'🇬🇪','996':'🇰🇬','998':'🇺🇿'
+  };
+  function getFlagFromIndicatif(digits) {
+    if (!digits) return '🌍';
+    const keys = Object.keys(INDICATIF_TO_FLAG).sort((a, b) => b.length - a.length);
+    const match = keys.find((k) => digits.startsWith(k));
+    return match ? INDICATIF_TO_FLAG[match] : '🌍';
+  }
+  function syncContactPhone(){
+    const indicatifRaw = (document.getElementById('ct-indicatif')?.value || '').trim();
+    const localRaw = (document.getElementById('ct-tel-num')?.value || '').trim();
+    const indicatifDigits = indicatifRaw.replace(/[^\d]/g, '');
+    const flag = getFlagFromIndicatif(indicatifDigits);
+    const flagEl = document.getElementById('ct-flag');
+    if (flagEl) flagEl.value = flag;
+    const indicatif = indicatifDigits ? `+${indicatifDigits}` : '';
+    const localDigits = localRaw.replace(/[^\d]/g, '');
+    const finalVal = indicatif && localDigits ? `${flag} ${indicatif} ${localDigits}`.trim() : '';
+    document.getElementById('ct-tel').value = finalVal;
+  }
+  document.getElementById('ct-indicatif')?.addEventListener('change', syncContactPhone);
+  document.getElementById('ct-indicatif')?.addEventListener('input', syncContactPhone);
+  document.getElementById('ct-tel-num')?.addEventListener('input', syncContactPhone);
+  syncContactPhone();
+  wireDialAutocomplete();
+
+  // Date picker: fallback pour navigateurs où l'ouverture est capricieuse
+  const flightDateInput = document.getElementById('date');
+  if (flightDateInput && typeof flightDateInput.showPicker === 'function') {
+    flightDateInput.addEventListener('click', () => {
+      try { flightDateInput.showPicker(); } catch {}
+    });
+    flightDateInput.addEventListener('focus', () => {
+      try { flightDateInput.showPicker(); } catch {}
+    });
+  }
 
   // ============ RECAP ============
   function buildRecap(){
@@ -546,8 +1227,10 @@
       <dt>Vol</dt><dd>${g('vol')}</dd>
       <dt>Compagnie</dt><dd>${g('compagnie')}</dd>
       <dt>Trajet</dt><dd>${g('depart')} → ${g('arrivee')}</dd>
+      <dt>Type</dt><dd>${document.querySelector('input[name=trajet]:checked')?.value === 'escale' ? 'Avec correspondance' : 'Vol direct'}</dd>
+      ${document.querySelector('input[name=trajet]:checked')?.value === 'escale' ? `<dt>Correspondance</dt><dd>${g('escale_airport')} · ${g('vol_correspondance')}</dd>` : ''}
       <dt>Date</dt><dd>${g('date')}</dd>
-      <dt>Motif</dt><dd>${motif}${motif==='retard' ? ' · '+g('retard') : ''}</dd>`;
+      <dt>Motif</dt><dd>${motif}</dd>`;
     const paxBlocks = document.querySelectorAll('.passenger-block');
     let paxHtml='';
     paxBlocks.forEach((b,i)=>{
@@ -556,10 +1239,12 @@
       paxHtml += `<dt>#${i+1}</dt><dd>${p} ${n}</dd>`;
     });
     document.getElementById('recap-pax').innerHTML = paxHtml || '<dt>—</dt><dd>Aucun</dd>';
+    const addrLine = [g('ct-adresse'), [g('ct-cp'), g('ct-ville')].filter(x => x && x !== '—').join(' '), g('ct-pays')].filter(x => x && x !== '—').join(', ');
     document.getElementById('recap-contact').innerHTML = `
       <dt>Nom</dt><dd>${g('ct-prenom')} ${g('ct-nom')}</dd>
       <dt>E-mail</dt><dd>${g('ct-email')}</dd>
-      <dt>Téléphone</dt><dd>${g('ct-tel')}</dd>`;
+      <dt>Téléphone</dt><dd>${g('ct-tel')}</dd>
+      <dt>Adresse</dt><dd>${addrLine || '—'}</dd>`;
     const emb = document.getElementById('embarq-later').checked ? 'Fourni plus tard' : (document.querySelector('#dz-embarq input').files.length+' fichier(s)');
     const id = document.getElementById('id-later').checked ? 'Fourni plus tard' : (document.querySelector('#dz-id input').files.length+' fichier(s)');
     document.getElementById('recap-docs').innerHTML = `<dt>Embarquement</dt><dd>${emb}</dd><dt>Identité</dt><dd>${id}</dd><dt>Signature</dt><dd>${sigHasStroke?'✓ Mandat signé':'— non signée'}</dd>`;
@@ -567,6 +1252,25 @@
     const montant = nbPax*600;
     document.getElementById('recap-montant').textContent = nbPax+' passager(s) × 600€ = '+montant.toLocaleString('fr-FR')+' €';
   }
+
+  // Hash signature just before submit (proof of integrity)
+  document.getElementById('dossierForm').addEventListener('submit', async (e) => {
+    if (!sigHasStroke) {
+      e.preventDefault();
+      alert('Merci de signer le mandat.');
+      return;
+    }
+    setProofFields();
+    const sig = document.getElementById('signature-data').value || '';
+    if (sig) {
+      try {
+        const hash = await sha256Base64Url(sig);
+        document.getElementById('proof-sig-hash').value = hash;
+      } catch {
+        document.getElementById('proof-sig-hash').value = '';
+      }
+    }
+  });
 </script>
 
 </body>

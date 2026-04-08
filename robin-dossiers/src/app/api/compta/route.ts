@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
-import { getPartnerCommissionFromSource, getPartnerLabelFromSource } from "@/lib/compta";
+import { getAgencyClientAmount, getPartnerCommissionFromSource, getPartnerLabelFromSource, isAgenceSource } from "@/lib/compta";
 import { DEMO_DOSSIERS } from "@/lib/demoData";
 
 type BeneficiaireType = "client" | "partenaire";
@@ -20,7 +20,9 @@ const DEMO_VERSEMENTS = new Map<string, DemoVersement>();
 
 function buildDemoRows() {
   const rows = DEMO_DOSSIERS.map((d) => {
-    const partnerAmount = getPartnerCommissionFromSource(d.source);
+    const grossAmount = Number(d.palier ?? 0) * Number(d.nb_passagers_indemnises ?? 1);
+    const clientAmount = isAgenceSource(d.source) ? getAgencyClientAmount(grossAmount) : Number(d.net_client ?? 0);
+    const partnerAmount = getPartnerCommissionFromSource(d.source, d.net_robin, d.palier);
     const baseClient: DemoVersement = {
       statut: d.statut === "PAYE" ? "PAYE" : "A_PAYER",
       mode_paiement: "RIB",
@@ -47,7 +49,7 @@ function buildDemoRows() {
       source: d.source,
       date_creation: d.date_creation,
       client_nom: d.nom_complet,
-      client_montant: d.net_client,
+      client_montant: clientAmount,
       partenaire_nom: getPartnerLabelFromSource(d.source),
       partenaire_montant: partnerAmount,
       versement_client: { ...baseClient, ...overrideClient },
@@ -85,7 +87,7 @@ export async function GET() {
     const dossierIds = (dossiers ?? []).map((d) => d.id);
     const { data: calculs, error: calculsErr } = await supabase
       .from("calculs")
-      .select("dossier_id, net_client")
+      .select("dossier_id, net_client, commission_robin, palier, nb_passagers_indemnises")
       .in("dossier_id", dossierIds);
     if (calculsErr) {
       if (process.env.NODE_ENV !== "production") {
@@ -99,9 +101,14 @@ export async function GET() {
       .select("dossier_id, rang, prenom, nom")
       .in("dossier_id", dossierIds);
 
-    const calcByDossier = new Map<string, number>();
+    const calcByDossier = new Map<string, { netClient: number; netRobin: number; gross: number; palier: number }>();
     (calculs ?? []).forEach((c) => {
-      calcByDossier.set(c.dossier_id, Number(c.net_client ?? 0));
+      calcByDossier.set(c.dossier_id, {
+        netClient: Number(c.net_client ?? 0),
+        netRobin: Number(c.commission_robin ?? 0),
+        gross: Number(c.palier ?? 0) * Number(c.nb_passagers_indemnises ?? 1),
+        palier: Number(c.palier ?? 0),
+      });
     });
     const paxByDossier = new Map<string, string>();
     (passagers ?? []).forEach((p) => {
@@ -115,8 +122,9 @@ export async function GET() {
 
     const rows: Record<string, unknown>[] = [];
     for (const d of dossiers ?? []) {
-      const clientMontant = calcByDossier.get(d.id) ?? 0;
-      const partnerMontant = getPartnerCommissionFromSource(d.source);
+      const calc = calcByDossier.get(d.id) ?? { netClient: 0, netRobin: 0, gross: 0, palier: 0 };
+      const clientMontant = isAgenceSource(d.source) ? getAgencyClientAmount(calc.gross) : calc.netClient;
+      const partnerMontant = getPartnerCommissionFromSource(d.source, calc.netRobin, calc.palier);
       const clientVersement = versementByKey.get(`${d.id}:client`) ?? null;
       const partnerVersement = versementByKey.get(`${d.id}:partenaire`) ?? null;
 

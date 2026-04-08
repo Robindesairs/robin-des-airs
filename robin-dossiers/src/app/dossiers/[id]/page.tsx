@@ -43,6 +43,7 @@ export default function FicheDossier({
   const [error, setError] = useState<string | null>(null);
   const [statutSelect, setStatutSelect] = useState("");
   const [saving, setSaving] = useState(false);
+  const [tab, setTab] = useState<"info" | "calculs" | "historique" | "notifications">("info");
 
   useEffect(() => {
     params.then((p) => setId(p.id));
@@ -101,6 +102,11 @@ export default function FicheDossier({
   }
 
   const calc = data.calculs as Record<string, unknown> | null;
+  const notifications: string[] = [];
+  if (data.statut !== "PAYE") notifications.push("Paiement client en attente.");
+  if (!data.lrar_reception) notifications.push("Date de réception LRAR non renseignée.");
+  if ((data.passagers?.length ?? 0) === 0) notifications.push("Aucun passager enregistré.");
+  if ((data.vols?.length ?? 0) === 0) notifications.push("Aucun vol enregistré.");
 
   return (
     <main className="min-h-screen bg-[#0f0f0f] text-white p-5 font-[Segoe_UI,Arial,sans-serif]">
@@ -110,8 +116,17 @@ export default function FicheDossier({
         <span className="bg-[#2c3e50] text-[#3498db] px-2 py-1 rounded text-sm font-bold">{STATUT_LABELS[data.statut] ?? data.statut}</span>
       </header>
 
+      <section className="flex gap-2 mb-4 flex-wrap">
+        <button type="button" onClick={() => setTab("info")} className={`px-3 py-1.5 rounded text-sm ${tab === "info" ? "bg-[#3498db] text-white" : "bg-[#1a1a1a] border border-[#333]"}`}>Dossier</button>
+        <button type="button" onClick={() => setTab("calculs")} className={`px-3 py-1.5 rounded text-sm ${tab === "calculs" ? "bg-[#3498db] text-white" : "bg-[#1a1a1a] border border-[#333]"}`}>Calculs</button>
+        <button type="button" onClick={() => setTab("historique")} className={`px-3 py-1.5 rounded text-sm ${tab === "historique" ? "bg-[#3498db] text-white" : "bg-[#1a1a1a] border border-[#333]"}`}>Historique</button>
+        <button type="button" onClick={() => setTab("notifications")} className={`px-3 py-1.5 rounded text-sm ${tab === "notifications" ? "bg-[#3498db] text-white" : "bg-[#1a1a1a] border border-[#333]"}`}>
+          Notifications {notifications.length > 0 ? `(${notifications.length})` : ""}
+        </button>
+      </section>
+
       {/* Bloc Dossier */}
-      <section className="bg-[#1a1a1a] rounded-lg border border-[#333] p-4 mb-4">
+      {tab === "info" && <section className="bg-[#1a1a1a] rounded-lg border border-[#333] p-4 mb-4">
         <h2 className="text-sm font-bold text-[#888] uppercase mb-3">Dossier</h2>
         <div className="grid grid-cols-2 gap-2 text-sm">
           <span className="text-[#888]">Priorité</span><span>{data.priorite ?? "—"}</span>
@@ -123,10 +138,10 @@ export default function FicheDossier({
           <span className="text-[#888]">Langue</span><span>{data.langue ?? "—"}</span>
           <span className="text-[#888]">Pays</span><span>{data.pays ?? "—"}</span>
         </div>
-      </section>
+      </section>}
 
       {/* Passagers */}
-      <section className="bg-[#1a1a1a] rounded-lg border border-[#333] p-4 mb-4">
+      {tab === "info" && <section className="bg-[#1a1a1a] rounded-lg border border-[#333] p-4 mb-4">
         <h2 className="text-sm font-bold text-[#888] uppercase mb-3">Passagers</h2>
         {data.passagers.length === 0 ? (
           <p className="text-[#666] text-sm">Aucun passager</p>
@@ -141,10 +156,10 @@ export default function FicheDossier({
             ))}
           </ul>
         )}
-      </section>
+      </section>}
 
       {/* Vols */}
-      <section className="bg-[#1a1a1a] rounded-lg border border-[#333] p-4 mb-4">
+      {tab === "info" && <section className="bg-[#1a1a1a] rounded-lg border border-[#333] p-4 mb-4">
         <h2 className="text-sm font-bold text-[#888] uppercase mb-3">Vols</h2>
         {data.vols.length === 0 ? (
           <p className="text-[#666] text-sm">Aucun vol</p>
@@ -157,10 +172,10 @@ export default function FicheDossier({
             ))}
           </ul>
         )}
-      </section>
+      </section>}
 
       {/* Calculs */}
-      <section className="bg-[#1a1a1a] rounded-lg border border-[#333] p-4 mb-4">
+      {tab === "calculs" && <section className="bg-[#1a1a1a] rounded-lg border border-[#333] p-4 mb-4">
         <h2 className="text-sm font-bold text-[#888] uppercase mb-3">Calculs</h2>
         {!calc ? (
           <p className="text-[#666] text-sm">Aucun calcul</p>
@@ -175,10 +190,10 @@ export default function FicheDossier({
             <span className="text-[#888]">Frais recouvrement</span><span>{calc.frais_recouvrement != null ? `${calc.frais_recouvrement} €` : "—"}</span>
           </div>
         )}
-      </section>
+      </section>}
 
       {/* Historique */}
-      <section className="bg-[#1a1a1a] rounded-lg border border-[#333] p-4 mb-4">
+      {tab === "historique" && <section className="bg-[#1a1a1a] rounded-lg border border-[#333] p-4 mb-4">
         <h2 className="text-sm font-bold text-[#888] uppercase mb-3">Historique</h2>
         {data.evenements.length === 0 ? (
           <p className="text-[#666] text-sm">Aucun événement</p>
@@ -192,7 +207,22 @@ export default function FicheDossier({
             ))}
           </ul>
         )}
-      </section>
+      </section>}
+
+      {tab === "notifications" && (
+        <section className="bg-[#1a1a1a] rounded-lg border border-[#333] p-4 mb-4">
+          <h2 className="text-sm font-bold text-[#888] uppercase mb-3">Notifications</h2>
+          {notifications.length === 0 ? (
+            <p className="text-sm text-[#2ecc71]">Aucune alerte, dossier complet ✅</p>
+          ) : (
+            <ul className="space-y-2 text-sm">
+              {notifications.map((n, i) => (
+                <li key={i} className="text-[#f39c12]">• {n}</li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
 
       {/* Mettre à jour statut */}
       <section className="bg-[#1a1a1a] rounded-lg border border-[#333] p-4">
