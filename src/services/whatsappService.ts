@@ -139,9 +139,14 @@ export async function sendTextMessage(to: string, text: string): Promise<{ succe
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
     });
-    const data = await res.json().catch(() => ({}));
+    const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
     if (!res.ok) {
-      return { success: false, error: data.error || data.details || String(res.status) };
+      const error = typeof data.error === 'string'
+        ? data.error
+        : typeof data.details === 'string'
+          ? data.details
+          : String(res.status);
+      return { success: false, error };
     }
     return { success: true };
   } catch (e) {

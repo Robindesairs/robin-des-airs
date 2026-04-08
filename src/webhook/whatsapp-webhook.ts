@@ -85,7 +85,9 @@ export async function handleTunnelMessage(input: TunnelHandleInput): Promise<Tun
       startStep1Collect(phoneNumber);
       return { reply: getStep1WelcomeMessage(), sessionStep: 'PASSENGER_FIRST' };
     }
-    const msg = isStep1(state.current_step) ? getStepPrompt(state) : (state.current_step === 'AWAITING_CARD' ? getWelcomeMessage() : "Répondez à la question ci-dessus pour continuer.");
+    const msg = isStep1(state.current_step)
+      ? getStepPrompt(state)
+      : "Répondez à la question ci-dessus pour continuer.";
     return { reply: msg, sessionStep: state.current_step };
   }
 

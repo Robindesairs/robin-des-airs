@@ -1,0 +1,37 @@
+name: Quality
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  root-quality:
+    name: Root - typecheck and tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+
+  robin-dossiers-quality:
+    name: Robin Dossiers - lint and build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: robin-dossiers
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: robin-dossiers/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build

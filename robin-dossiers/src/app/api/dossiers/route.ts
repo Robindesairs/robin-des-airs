@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabase } from "@/lib/supabase";
 import { calcFinancier, genererIdDossier } from "@/lib/calculs";
+import { DEMO_DOSSIERS } from "@/lib/demoData";
 
 /**
  * GET /api/dossiers — Liste type vue_dossiers (nom_complet, vol_principal, dep→arr, palier, net_client, net_robin, statut, interets_jours, forfait_40)
@@ -22,11 +23,15 @@ export async function GET(request: NextRequest) {
     if (statut) query = query.eq("statut", statut);
 
     const { data: dossiers, error: errD } = await query;
-    if (errD)
+    if (errD) {
+      if (process.env.NODE_ENV !== "production") {
+        return NextResponse.json(DEMO_DOSSIERS);
+      }
       return NextResponse.json(
         { error: errD.message, code: errD.code },
         { status: 500 }
       );
+    }
     if (!dossiers?.length) return NextResponse.json([]);
 
     const ids = dossiers.map((d) => d.id);
@@ -140,6 +145,10 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(list);
   } catch (e) {
+    // Fallback dev: permet de travailler en local si Supabase est indisponible.
+    if (process.env.NODE_ENV !== "production") {
+      return NextResponse.json(DEMO_DOSSIERS);
+    }
     return NextResponse.json(
       { error: e instanceof Error ? e.message : "Erreur serveur" },
       { status: 500 }
