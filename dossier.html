@@ -20,27 +20,13 @@
     --danger:#c0392b; --ok:#00c87a;
   }
   *{box-sizing:border-box}
-  html,body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--navy);background:var(--bg);line-height:1.55}
+  html,body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--navy);background:linear-gradient(180deg,rgba(0,200,122,.06) 0%,var(--bg) 140px);line-height:1.55}
   a{color:var(--teal-dark);text-decoration:none}
   a:hover{text-decoration:underline}
 
-  /* HEADER */
-  header{background:var(--navy);color:#fff;padding:18px 24px;position:sticky;top:0;z-index:50;border-bottom:3px solid var(--teal)}
-  .hdr-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-  .logo{font-weight:800;font-size:18px;letter-spacing:.02em;display:flex;align-items:center;gap:10px}
-  .logo-mark{width:32px;height:32px;background:var(--teal);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--navy);font-weight:900;font-size:18px}
-  .hdr-right{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px}
-  .hdr-nav{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-size:13px;font-weight:600}
-  .hdr-nav a{color:#c3d6e4;text-decoration:underline;text-underline-offset:3px}
-  .hdr-nav a:hover{color:#fff}
-  .hdr-nav .sep{opacity:.45;user-select:none}
-  .hdr-trust{font-size:13px;color:#a9c7d9;display:flex;gap:18px;align-items:center}
-  .hdr-trust span{display:flex;align-items:center;gap:6px}
-  .check a{text-decoration:underline;text-underline-offset:2px}
-
   /* HERO */
   .hero{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%);color:#fff;padding:44px 24px 36px;text-align:center}
-  .hero h1{margin:0 0 10px;font-size:34px;line-height:1.2;letter-spacing:-.01em}
+  .hero h1{margin:0 0 10px;font-size:34px;line-height:1.2;letter-spacing:-.01em;color:var(--teal-bright)}
   .hero p{margin:0 auto;max-width:640px;font-size:16px;color:#c3d6e4}
   .hero-trust{display:flex;justify-content:center;gap:22px;margin-top:20px;flex-wrap:wrap;font-size:13.5px;color:#a9c7d9}
   .hero-trust b{color:var(--teal-bright)}
@@ -51,14 +37,17 @@
   /* STEPPER */
   .stepper{display:flex;align-items:center;gap:8px;padding:28px 0 8px;margin-top:-18px;position:relative;z-index:1}
   .step-pill{flex:1;background:#fff;border:1px solid var(--sand-deep);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--earth);text-align:center;font-weight:600;position:relative}
-  .step-pill.done{background:var(--teal);color:#fff;border-color:var(--teal)}
-  .step-pill.active{background:var(--navy);color:#fff;border-color:var(--navy);box-shadow:0 6px 18px rgba(6,19,38,.2)}
+  .step-pill.done{background:var(--teal);color:#fff;border-color:var(--teal-dark)}
+  .step-pill.active{background:linear-gradient(145deg,var(--teal) 0%,var(--teal-dark) 100%);color:#fff;border-color:var(--teal-dark);box-shadow:0 6px 20px rgba(0,200,122,.35)}
   .step-pill .num{display:inline-block;margin-right:4px;font-weight:800}
 
   /* CARD */
-  .card{background:#fff;border-radius:16px;padding:28px 28px 24px;margin:16px 0 24px;box-shadow:0 8px 32px rgba(6,19,38,.07);border:1px solid rgba(184,149,108,.15)}
-  .card h2{margin:0 0 6px;font-size:22px;color:var(--navy)}
+  .card{background:#fff;border-radius:16px;padding:28px 28px 24px;margin:16px 0 24px;box-shadow:0 8px 32px rgba(6,19,38,.07);border:1px solid rgba(0,200,122,.14);border-top:3px solid var(--teal)}
+  .card h2{margin:0 0 6px;font-size:22px;color:var(--navy);position:relative;padding-bottom:10px}
+  .card h2::after{content:"";position:absolute;left:0;bottom:0;width:56px;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--teal),var(--teal-bright))}
   .card .sub{color:var(--earth);font-size:14px;margin-bottom:18px}
+  .card > h3{border-left:4px solid var(--teal);padding-left:12px;font-size:17px;color:var(--navy)}
+  .card hr{border:none;height:2px;margin:22px 0;background:linear-gradient(90deg,rgba(0,200,122,.45),rgba(0,200,122,.12) 35%,var(--sand-deep));border-radius:1px}
 
   /* FORM */
   label{display:block;font-size:13px;font-weight:600;color:var(--navy-mid);margin:0 0 6px;letter-spacing:.01em}
@@ -72,7 +61,7 @@
   .date-wrap input[type=date]{
     padding-right:42px;
     font-weight:600;
-    background:linear-gradient(180deg,#ffffff 0%,#fdfcf9 100%);
+    background:linear-gradient(180deg,#ffffff 0%,rgba(0,229,160,.06) 100%);
   }
   .date-wrap::after{
     content:"📅";
@@ -103,25 +92,31 @@
   .phone-grid .field.autocomplete .ac-list{z-index:50}
   .ac-item{padding:10px 12px;font-size:14px;cursor:pointer;border-bottom:1px solid #f2f2f2}
   .ac-item:last-child{border-bottom:none}
-  .ac-item:hover{background:#f4fbf8}
+  .ac-item:hover{background:rgba(0,200,122,.09)}
   .ac-item.fallback{color:var(--earth);font-style:italic}
   .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
   .phone-grid{display:grid;grid-template-columns:100px 120px 1fr;gap:10px}
+  .pax-quick{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end;margin-bottom:12px}
+  .money-motivation{background:linear-gradient(135deg,rgba(0,200,122,.14),rgba(0,229,160,.08));border:1px solid rgba(0,200,122,.25);border-left:4px solid var(--teal);border-radius:12px;padding:10px 14px;min-width:220px}
+  .money-motivation .k{font-size:12px;color:var(--teal-dark);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+  .money-motivation .v{font-size:24px;line-height:1.15;color:var(--navy);font-weight:900}
+  .money-motivation .s{font-size:12px;color:var(--earth)}
   @media (max-width:640px){.row,.row-3{grid-template-columns:1fr}}
   @media (max-width:640px){.phone-grid{grid-template-columns:1fr}}
+  @media (max-width:640px){.pax-quick{grid-template-columns:1fr}}
 
   /* RADIO TILES */
   .tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
   .tile{position:relative}
   .tile input{position:absolute;opacity:0;pointer-events:none}
   .tile label{display:block;background:#fff;border:1.5px solid var(--sand-deep);border-radius:10px;padding:14px;cursor:pointer;font-weight:600;font-size:14px;text-align:center;transition:all .15s;margin:0}
-  .tile input:checked + label{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .tile input:checked + label{background:linear-gradient(145deg,var(--teal) 0%,var(--teal-dark) 100%);color:#fff;border-color:var(--teal-dark);box-shadow:0 4px 14px rgba(0,200,122,.22)}
   .tile .tile-sub{font-weight:400;font-size:12px;color:var(--earth);margin-top:3px}
-  .tile input:checked + label .tile-sub{color:#a9c7d9}
+  .tile input:checked + label .tile-sub{color:rgba(255,255,255,.92)}
 
   /* PASSAGERS */
-  .passenger-block{background:var(--bg-warm);border:1px solid var(--sand-deep);border-radius:12px;padding:16px;margin-bottom:12px;position:relative}
+  .passenger-block{background:linear-gradient(135deg,rgba(0,200,122,.06),var(--bg-warm));border:1px solid rgba(0,200,122,.15);border-left:4px solid var(--teal);border-radius:12px;padding:16px;margin-bottom:12px;position:relative}
   .passenger-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
   .passenger-head strong{color:var(--navy);font-size:14px}
   .btn-remove{background:transparent;border:none;color:var(--danger);cursor:pointer;font-size:13px;font-weight:600;padding:4px 8px}
@@ -153,32 +148,33 @@
   .mandate-text p{margin:0 0 10px}
   .sig-wrap{background:#fff;border:1.5px solid var(--sand-deep);border-radius:12px;padding:12px}
   .sig-label{font-size:12px;color:var(--earth);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
-  .sig-canvas{width:100%;height:160px;background:#faf8f3;border:1.5px dashed var(--gold);border-radius:8px;cursor:crosshair;touch-action:none;display:block}
+  .sig-canvas{width:100%;height:160px;background:linear-gradient(180deg,#faf8f3,rgba(0,200,122,.06));border:1.5px dashed rgba(0,200,122,.45);border-radius:8px;cursor:crosshair;touch-action:none;display:block}
   .sig-actions{display:flex;justify-content:space-between;align-items:center;margin-top:8px;font-size:12.5px}
   .sig-clear{background:transparent;border:none;color:var(--danger);cursor:pointer;font-weight:600;font-size:13px}
   .checks{margin-top:16px;display:flex;flex-direction:column;gap:10px}
   .check{display:flex;align-items:flex-start;gap:10px;padding:12px;background:var(--bg-warm);border-radius:10px;cursor:pointer}
   .check input[type=checkbox]{margin-top:2px;width:18px;height:18px;accent-color:var(--teal);cursor:pointer;flex-shrink:0}
   .check span{font-size:13.5px;color:var(--navy-mid);line-height:1.5}
+  .check a{text-decoration:underline;text-underline-offset:2px}
 
   /* ACTIONS */
   .actions{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:24px}
   .btn{padding:14px 28px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;border:none;transition:all .15s;font-family:inherit}
   .btn-primary{background:var(--teal);color:#fff;box-shadow:0 4px 14px rgba(0,200,122,.28)}
   .btn-primary:hover{background:var(--teal-dark);transform:translateY(-1px)}
-  .btn-secondary{background:#fff;color:var(--navy);border:1.5px solid var(--sand-deep)}
-  .btn-secondary:hover{border-color:var(--navy)}
+  .btn-secondary{background:#fff;color:var(--navy);border:1.5px solid rgba(0,200,122,.35)}
+  .btn-secondary:hover{border-color:var(--teal);color:var(--teal-dark)}
   .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
 
   /* RECAP */
-  .recap{background:var(--bg-warm);border-radius:12px;padding:18px;margin-bottom:14px}
-  .recap h3{margin:0 0 8px;font-size:14px;color:var(--navy);text-transform:uppercase;letter-spacing:.06em}
+  .recap{background:linear-gradient(135deg,rgba(0,200,122,.07),var(--bg-warm));border-radius:12px;padding:18px;margin-bottom:14px;border:1px solid rgba(0,200,122,.12);border-left:4px solid var(--teal)}
+  .recap h3{margin:0 0 8px;font-size:14px;color:var(--teal-dark);text-transform:uppercase;letter-spacing:.06em}
   .recap dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px}
   .recap dt{color:var(--earth);font-weight:600}
   .recap dd{margin:0;color:var(--navy)}
 
   /* INFO BANNER */
-  .info{background:linear-gradient(135deg,rgba(0,200,122,.08),rgba(184,149,108,.05));border-left:4px solid var(--teal);padding:14px 16px;border-radius:0 10px 10px 0;font-size:13.5px;color:var(--navy-mid);margin-bottom:18px}
+  .info{background:linear-gradient(135deg,rgba(0,200,122,.12),rgba(0,229,160,.06),rgba(184,149,108,.04));border-left:4px solid var(--teal);padding:14px 16px;border-radius:0 10px 10px 0;font-size:13.5px;color:var(--navy-mid);margin-bottom:18px}
   .info strong{color:var(--navy)}
   .ticker{overflow:hidden;white-space:nowrap;position:relative}
   .ticker-text{display:inline-block;padding-left:100%;animation:tickerMove 14s linear infinite}
@@ -188,7 +184,7 @@
   }
 
   /* FOOTER */
-  footer{background:var(--navy);color:#a9c7d9;padding:26px 20px;margin-top:50px;text-align:center;font-size:13px}
+  footer{background:var(--navy);color:#a9c7d9;padding:26px 20px;margin-top:50px;text-align:center;font-size:13px;border-top:3px solid var(--teal)}
   footer a{color:var(--teal-bright)}
 
   /* HIDE */
@@ -196,25 +192,6 @@
 </style>
 </head>
 <body>
-
-<header>
-  <div class="hdr-inner">
-    <a href="/index.html" class="logo" style="color:inherit;text-decoration:none"><div class="logo-mark">R</div>Robin des Airs</a>
-    <div class="hdr-right">
-      <nav class="hdr-nav" aria-label="Liens utiles">
-        <a href="/politique-confidentialite.html">Confidentialité</a>
-        <span class="sep">·</span>
-        <a href="/cgv.html">CGV</a>
-        <span class="sep">·</span>
-        <a href="mailto:expert@robindesairs.eu">expert@robindesairs.eu</a>
-      </nav>
-      <div class="hdr-trust">
-        <span>🔒 Données chiffrées</span>
-        <span>✓ 0€ sauf succès</span>
-      </div>
-    </div>
-  </div>
-</header>
 
 <div class="hero">
   <h1>Déposer mon dossier d'indemnisation</h1>
@@ -246,6 +223,20 @@
     <section class="card" data-step="1">
       <h2>Informations du dossier</h2>
       <p class="sub">Dans l’ordre : le vol, ce qu’il s’est passé, vos coordonnées, puis les passagers éligibles.</p>
+
+      <h3 style="margin:0 0 4px;font-size:17px;color:var(--navy)">0. Nombre de passagers</h3>
+      <p class="sub" style="margin-bottom:12px">Dites-nous combien de passagers sont concernés pour voir tout de suite le montant potentiel.</p>
+      <div class="pax-quick">
+        <div class="field" style="margin-bottom:0">
+          <label for="pax-count-input">Passagers concernés *</label>
+          <input type="number" id="pax-count-input" min="1" max="20" step="1" value="1" inputmode="numeric" />
+        </div>
+        <div class="money-motivation" aria-live="polite">
+          <div class="k">Montant potentiel</div>
+          <div class="v" id="pax-money-value">600 €</div>
+          <div class="s" id="pax-money-sub">1 passager × jusqu'à 600 €</div>
+        </div>
+      </div>
 
       <h3 style="margin:20px 0 4px;font-size:17px;color:var(--navy)">1. Votre vol</h3>
       <p class="sub" style="margin-bottom:12px">Commencez par le billet ou la confirmation : numéro de vol et date, le reste peut se préremplir.</p>
@@ -306,7 +297,7 @@
         <input type="text" id="pnr" name="pnr" placeholder="6 caractères (ex. ABCD12)" />
       </div>
 
-      <hr style="border:none;border-top:1px solid var(--sand-deep);margin:22px 0">
+      <hr>
       <h3 style="margin:0 0 4px;font-size:17px;color:var(--navy)">2. Que s’est-il passé ?</h3>
       <p class="sub" style="margin-bottom:12px">Choisissez le motif principal — une précision sur l’éligibilité s’affiche en dessous.</p>
 
@@ -320,7 +311,7 @@
         <div id="motif-help" class="info" style="margin-top:8px;margin-bottom:0"></div>
       </div>
 
-      <hr style="border:none;border-top:1px solid var(--sand-deep);margin:22px 0">
+      <hr>
       <h3 style="margin:0 0 4px;font-size:17px;color:var(--navy)">3. Vos coordonnées</h3>
       <p class="sub">Personne qui reçoit les messages du dossier et l’indemnité. <strong>Indiquez le pays avant l’adresse</strong> : France (base officielle), autres pays monde entier (OpenStreetMap). Si le pays est rare, tapez-le tel qu’il apparaît sur vos papiers.</p>
 
@@ -362,7 +353,7 @@
         <input type="hidden" id="ct-tel" name="contact_tel" />
       </div>
 
-      <hr style="border:none;border-top:1px solid var(--sand-deep);margin:22px 0">
+      <hr>
       <h3 style="margin:0 0 4px;font-size:17px;color:var(--navy)">4. Passagers concernés</h3>
       <p class="sub">Les prénoms et noms seront repris dans le mandat. Le passager 1 reprend vos nom / prénom ; les autres partagent votre nom de famille si vous l’avez saisi plus haut.</p>
 
@@ -512,8 +503,8 @@
 </main>
 
 <footer>
-  <p>Robin des Airs — 66 av. des Champs-Élysées, 75008 Paris · <a href="/politique-confidentialite.html">Confidentialité</a> · <a href="/cgv.html">CGV</a> · <a href="mailto:expert@robindesairs.eu">expert@robindesairs.eu</a></p>
-  <p>© 2025–2026 Robin des Airs. Indemnisation EU261 — Aucun frais sauf succès.</p>
+  <p>Robin des Airs — 66 av. des Champs-Élysées, 75008 Paris</p>
+  <p>© 2025–2026 Robin des Airs. Indemnisation EU261.</p>
 </footer>
 
 <script>
@@ -1066,8 +1057,18 @@
 
   // ============ PASSAGERS DYNAMIQUES ============
   let paxCount = 1;
-  document.getElementById('addPassenger').addEventListener('click',()=>{
-    const idx = paxCount++;
+  const passengersWrap = document.getElementById('passengers');
+  const paxCountInput = document.getElementById('pax-count-input');
+  function updatePaxMotivation(){
+    const n = Math.max(1, document.querySelectorAll('.passenger-block').length || 1);
+    const amount = n * 600;
+    document.getElementById('pax-money-value').textContent = `${amount.toLocaleString('fr-FR')} €`;
+    document.getElementById('pax-money-sub').textContent = `${n} passager${n > 1 ? 's' : ''} × jusqu'à 600 €`;
+    if (paxCountInput) paxCountInput.value = String(n);
+  }
+  function addPassengerBlock(){
+    const idx = paxCount;
+    paxCount += 1;
     const block = document.createElement('div');
     block.className = 'passenger-block';
     block.dataset.idx = idx;
@@ -1080,11 +1081,31 @@
         <div class="field"><label>Prénom *</label><input type="text" name="passagers[${idx}][prenom]" required></div>
         <div class="field"><label>Nom *</label><input type="text" name="passagers[${idx}][nom]" required></div>
       </div>`;
-    document.getElementById('passengers').appendChild(block);
+    passengersWrap.appendChild(block);
     const extraNom = block.querySelector('input[name*="[nom]"]');
     if (extraNom) extraNom.value = (document.getElementById('ct-nom').value || '').trim();
-    block.querySelector('.btn-remove').addEventListener('click',()=>block.remove());
+    block.querySelector('.btn-remove').addEventListener('click',()=>{
+      block.remove();
+      updatePaxMotivation();
+    });
+  }
+  function syncPassengerBlocksToCount(nextCountRaw){
+    const nextCount = Math.max(1, Math.min(20, parseInt(String(nextCountRaw || '1'), 10) || 1));
+    while (document.querySelectorAll('.passenger-block').length < nextCount) addPassengerBlock();
+    while (document.querySelectorAll('.passenger-block').length > nextCount) {
+      const blocks = document.querySelectorAll('.passenger-block');
+      const last = blocks[blocks.length - 1];
+      if (last) last.remove();
+    }
+    updatePaxMotivation();
+  }
+  document.getElementById('addPassenger').addEventListener('click',()=>{
+    addPassengerBlock();
+    updatePaxMotivation();
   });
+  paxCountInput?.addEventListener('input', () => syncPassengerBlocksToCount(paxCountInput.value));
+  paxCountInput?.addEventListener('change', () => syncPassengerBlocksToCount(paxCountInput.value));
+  updatePaxMotivation();
 
   // ============ DROPZONES (cumul multi-fichiers : chaque choix / dépôt s’ajoute) ============
   function wireDropzone(dzId, listId){
