@@ -304,6 +304,18 @@
           <div class="mini-fill" id="mini-progress-fill"></div>
         </div>
       </div>
+      <p class="sub" style="margin-bottom:12px">Indiquez dès maintenant le nombre de passagers pour voir le montant potentiel maximum.</p>
+      <div class="pax-quick">
+        <div class="field" style="margin-bottom:0">
+          <label for="pax-count-input">Passagers concernés *</label>
+          <input type="number" id="pax-count-input" min="1" max="20" step="1" value="1" inputmode="numeric" />
+        </div>
+        <div class="money-motivation" aria-live="polite">
+          <div class="k">Montant potentiel</div>
+          <div class="v" id="pax-money-value">600 €</div>
+          <div class="s" id="pax-money-sub">1 passager × jusqu'à 600 €</div>
+        </div>
+      </div>
 
       <div class="mini-step" data-mini-step="1">
         <h3 style="margin:0 0 4px;font-size:17px;color:var(--navy)">1. Votre vol (30 sec)</h3>
@@ -427,18 +439,6 @@
 
       <div class="mini-step hidden" data-mini-step="4">
         <h3 style="margin:0 0 4px;font-size:17px;color:var(--navy)">4. Passagers concernés (25 sec)</h3>
-        <p class="sub" style="margin-bottom:12px">Dites-nous combien de passagers sont concernés pour voir tout de suite le montant potentiel.</p>
-        <div class="pax-quick">
-          <div class="field" style="margin-bottom:0">
-            <label for="pax-count-input">Passagers concernés *</label>
-            <input type="number" id="pax-count-input" min="1" max="20" step="1" value="1" inputmode="numeric" />
-          </div>
-          <div class="money-motivation" aria-live="polite">
-            <div class="k">Montant potentiel</div>
-            <div class="v" id="pax-money-value">600 €</div>
-            <div class="s" id="pax-money-sub">1 passager × jusqu'à 600 €</div>
-          </div>
-        </div>
         <p class="sub">Les prénoms et noms seront repris dans le mandat. Le passager 1 reprend vos nom / prénom ; les autres partagent votre nom de famille si vous l’avez saisi plus haut.</p>
         <div id="passengers">
           <div class="passenger-block" data-idx="0">
@@ -468,6 +468,11 @@
     <section class="card hidden" data-step="2">
       <h2>Carte d'embarquement ou preuve de vol</h2>
       <p class="sub">Glissez votre carte d'embarquement, billet électronique, ou capture d'écran de l'e-mail de la compagnie.</p>
+      <div class="money-motivation" aria-live="polite" style="margin-bottom:14px">
+        <div class="k">Montant potentiel</div>
+        <div class="v" id="pax-money-value-s2">600 €</div>
+        <div class="s" id="pax-money-sub-s2">1 passager × jusqu'à 600 €</div>
+      </div>
 
       <div class="info">📎 <strong>Formats acceptés :</strong> PDF, JPG, PNG, WEBP, HEIC · <strong>Max 15 Mo</strong> par fichier. <strong>Plusieurs fichiers :</strong> sélectionnez-en plusieurs d’un coup dans la fenêtre, ou recliquez / redéposez pour en ajouter d’autres.</div>
 
@@ -497,6 +502,11 @@
     <section class="card hidden" data-step="3">
       <h2>Mandat-cadre de représentation</h2>
       <p class="sub">Une signature unique: Robin des Airs agit en votre nom, et le vol saisi ci-dessous est automatiquement affecté au mandat.</p>
+      <div class="money-motivation" aria-live="polite" style="margin-bottom:14px">
+        <div class="k">Montant potentiel</div>
+        <div class="v" id="pax-money-value-s3">600 €</div>
+        <div class="s" id="pax-money-sub-s3">1 passager × jusqu'à 600 €</div>
+      </div>
 
       <div class="mandate-text">
         <h3>Mandat-cadre — Règlement (CE) n° 261/2004</h3>
@@ -532,6 +542,11 @@
     <section class="card hidden" data-step="4">
       <h2>Pièce d'identité</h2>
       <p class="sub">Passeport ou carte d'identité de <strong>chaque passager</strong> listé à l'étape 1. Requis par la compagnie aérienne pour vérifier l'identité.</p>
+      <div class="money-motivation" aria-live="polite" style="margin-bottom:14px">
+        <div class="k">Montant potentiel</div>
+        <div class="v" id="pax-money-value-s4">600 €</div>
+        <div class="s" id="pax-money-sub-s4">1 passager × jusqu'à 600 €</div>
+      </div>
 
       <div class="info">🔒 <strong>Sécurité :</strong> vos documents sont chiffrés, utilisés uniquement pour ce dossier, et supprimés dès clôture. Hébergement UE. &nbsp;|&nbsp; 📎 <strong>Formats :</strong> PDF, JPG, PNG, WEBP, HEIC · <strong>Max 15 Mo</strong> par fichier. <strong>Plusieurs fichiers :</strong> sélection groupée ou <strong>plusieurs ajouts</strong> (recliquer, redéposer ou bouton ci-dessous).</div>
 
@@ -561,6 +576,11 @@
     <section class="card hidden" data-step="5">
       <h2>Récapitulatif & envoi</h2>
       <p class="sub">Vérifiez votre dossier avant envoi. Notre équipe vous répondra sous 48h.</p>
+      <div class="money-motivation" aria-live="polite" style="margin-bottom:14px">
+        <div class="k">Montant potentiel</div>
+        <div class="v" id="pax-money-value-s5">600 €</div>
+        <div class="s" id="pax-money-sub-s5">1 passager × jusqu'à 600 €</div>
+      </div>
 
       <div class="recap">
         <div class="recap-head">
@@ -615,6 +635,43 @@
 
 <script>
   // ============ AUTOCOMPLETE (3 caractères + fallback libre) ============
+  function escapeHtml(s) {
+    return String(s || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+  function normCountryKey(s) {
+    return String(s || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/['']/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .toLowerCase();
+  }
+  function buildCountryNameToIsoMapFr() {
+    const map = {};
+    try {
+      const dn = new Intl.DisplayNames(['fr'], { type: 'region' });
+      const codes = Intl.supportedValuesOf('region');
+      codes.forEach((code) => {
+        try {
+          const name = dn.of(code);
+          if (name) map[normCountryKey(name)] = code;
+        } catch {}
+      });
+    } catch {}
+    map["cote d'ivoire"] = 'CI';
+    map['cote divoire'] = 'CI';
+    map['royaume-uni'] = 'GB';
+    map['etats-unis'] = 'US';
+    return map;
+  }
+  const COUNTRY_NAME_TO_ISO_FR = buildCountryNameToIsoMapFr();
+  const AIRPORT_DISPLAY_BY_TEXT = {};
   const AIRLINES = Array.isArray(window.AIRLINES_DATA)
     ? window.AIRLINES_DATA
         .map((x) => x && (x.text || x.value))
@@ -625,13 +682,20 @@
       ];
   const CITIES_AIRPORTS = Array.isArray(window.AIRPORTS_DATA)
     ? window.AIRPORTS_DATA
-        .map((x) => x && (x.text || x.value))
+        .map((x) => {
+          const text = x && (x.text || x.value);
+          if (!text) return null;
+          const country = x && x.country;
+          const iso2 = country ? COUNTRY_NAME_TO_ISO_FR[normCountryKey(country)] : null;
+          AIRPORT_DISPLAY_BY_TEXT[text] = iso2 ? `${flagEmojiFromIso2(iso2)} ${text}` : text;
+          return text;
+        })
         .filter(Boolean)
     : [
         'Paris CDG','Paris Orly','Dakar DSS','Abidjan ABJ','Bamako BKO','Douala DLA','Yaoundé NSI'
       ];
 
-  function wireAutocomplete(inputId, listId, data) {
+  function wireAutocomplete(inputId, listId, data, displayResolver) {
     const input = document.getElementById(inputId);
     const list = document.getElementById(listId);
     if (!input || !list) return;
@@ -660,12 +724,13 @@
       const lines = [];
       if (ranked.length > 0) {
         ranked.forEach((item) => {
-          lines.push(`<div class="ac-item" data-value="${item.replace(/"/g, '&quot;')}">${item}</div>`);
+          const display = typeof displayResolver === 'function' ? displayResolver(item) : item;
+          lines.push(`<div class="ac-item" data-value="${escapeHtml(item)}">${escapeHtml(display)}</div>`);
         });
       } else {
-        lines.push(`<div class="ac-item fallback" data-value="${q.replace(/"/g, '&quot;')}">Aucune correspondance — garder "${q}"</div>`);
+        lines.push(`<div class="ac-item fallback" data-value="${escapeHtml(q)}">Aucune correspondance — garder "${escapeHtml(q)}"</div>`);
       }
-      lines.push(`<div class="ac-item fallback" data-value="${q.replace(/"/g, '&quot;')}">Utiliser "${q}"</div>`);
+      lines.push(`<div class="ac-item fallback" data-value="${escapeHtml(q)}">Utiliser "${escapeHtml(q)}"</div>`);
       list.innerHTML = lines.join('');
       openList();
     }
@@ -687,8 +752,8 @@
   }
 
   // Compagnie: remplie automatiquement depuis numéro de vol (pas de saisie manuelle)
-  wireAutocomplete('depart', 'depart-list', CITIES_AIRPORTS);
-  wireAutocomplete('arrivee', 'arrivee-list', CITIES_AIRPORTS);
+  wireAutocomplete('depart', 'depart-list', CITIES_AIRPORTS, (item) => AIRPORT_DISPLAY_BY_TEXT[item] || item);
+  wireAutocomplete('arrivee', 'arrivee-list', CITIES_AIRPORTS, (item) => AIRPORT_DISPLAY_BY_TEXT[item] || item);
 
   function normFold(s) {
     return String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
@@ -1389,23 +1454,53 @@
   volInput.addEventListener('change', fillFromFlightNumber);
 
   // ============ PASSAGERS DYNAMIQUES ============
-  let paxCount = 1;
   const passengersWrap = document.getElementById('passengers');
   const paxCountInput = document.getElementById('pax-count-input');
+  function renumberPassengerBlocks(){
+    const blocks = Array.from(document.querySelectorAll('.passenger-block'));
+    blocks.forEach((block, idx) => {
+      block.dataset.idx = String(idx);
+      const title = block.querySelector('.passenger-head strong');
+      if (title) title.textContent = `Passager ${idx + 1}`;
+      const prenom = block.querySelector('input[name*="[prenom]"]');
+      const nom = block.querySelector('input[name*="[nom]"]');
+      const statutMaj = block.querySelector('input[value="majeur"]');
+      const statutMin = block.querySelector('input[value="mineur"]');
+      if (prenom) prenom.name = `passagers[${idx}][prenom]`;
+      if (nom) nom.name = `passagers[${idx}][nom]`;
+      if (statutMaj) {
+        statutMaj.name = `passagers[${idx}][statut]`;
+        statutMaj.id = `p${idx}-majeur`;
+        const lab = block.querySelector(`label[for="${statutMaj.id}"]`) || block.querySelector('label[for$="-majeur"]');
+        if (lab) lab.setAttribute('for', statutMaj.id);
+      }
+      if (statutMin) {
+        statutMin.name = `passagers[${idx}][statut]`;
+        statutMin.id = `p${idx}-mineur`;
+        const lab = block.querySelector(`label[for="${statutMin.id}"]`) || block.querySelector('label[for$="-mineur"]');
+        if (lab) lab.setAttribute('for', statutMin.id);
+      }
+    });
+  }
   function updatePaxMotivation(){
     const n = Math.max(1, document.querySelectorAll('.passenger-block').length || 1);
     const amount = n * 600;
-    document.getElementById('pax-money-value').textContent = `${amount.toLocaleString('fr-FR')} €`;
-    document.getElementById('pax-money-sub').textContent = `${n} passager${n > 1 ? 's' : ''} × jusqu'à 600 €`;
-    const globalValue = document.getElementById('pax-money-value-global');
-    const globalSub = document.getElementById('pax-money-sub-global');
-    if (globalValue) globalValue.textContent = `${amount.toLocaleString('fr-FR')} €`;
-    if (globalSub) globalSub.textContent = `${n} passager${n > 1 ? 's' : ''} × jusqu'à 600 €`;
+    const amountText = `${amount.toLocaleString('fr-FR')} €`;
+    const subText = `${n} passager${n > 1 ? 's' : ''} × jusqu'à 600 €`;
+    const valueIds = ['pax-money-value', 'pax-money-value-s2', 'pax-money-value-s3', 'pax-money-value-s4', 'pax-money-value-s5'];
+    const subIds = ['pax-money-sub', 'pax-money-sub-s2', 'pax-money-sub-s3', 'pax-money-sub-s4', 'pax-money-sub-s5'];
+    valueIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = amountText;
+    });
+    subIds.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = subText;
+    });
     if (paxCountInput) paxCountInput.value = String(n);
   }
   function addPassengerBlock(){
-    const idx = paxCount;
-    paxCount += 1;
+    const idx = document.querySelectorAll('.passenger-block').length;
     const block = document.createElement('div');
     block.className = 'passenger-block';
     block.dataset.idx = idx;
@@ -1430,8 +1525,10 @@
     if (extraNom) extraNom.value = (document.getElementById('ct-nom').value || '').trim();
     block.querySelector('.btn-remove').addEventListener('click',()=>{
       block.remove();
+      renumberPassengerBlocks();
       updatePaxMotivation();
     });
+    renumberPassengerBlocks();
   }
   function syncPassengerBlocksToCount(nextCountRaw){
     const nextCount = Math.max(1, Math.min(20, parseInt(String(nextCountRaw || '1'), 10) || 1));
@@ -1441,14 +1538,17 @@
       const last = blocks[blocks.length - 1];
       if (last) last.remove();
     }
+    renumberPassengerBlocks();
     updatePaxMotivation();
   }
   document.getElementById('addPassenger').addEventListener('click',()=>{
     addPassengerBlock();
+    renumberPassengerBlocks();
     updatePaxMotivation();
   });
   paxCountInput?.addEventListener('input', () => syncPassengerBlocksToCount(paxCountInput.value));
   paxCountInput?.addEventListener('change', () => syncPassengerBlocksToCount(paxCountInput.value));
+  renumberPassengerBlocks();
   updatePaxMotivation();
 
   // ============ DROPZONES (cumul multi-fichiers : chaque choix / dépôt s’ajoute) ============
@@ -1712,7 +1812,7 @@
       const n = b.querySelector('input[name*="[nom]"]').value;
       const statut = b.querySelector('input[name*="[statut]"]:checked')?.value || 'majeur';
       const statutLabel = statut === 'mineur' ? '🧒 Mineur' : '👤 Majeur';
-      paxHtml += `<dt>#${i+1}</dt><dd>${p} ${n} · ${statutLabel}</dd>`;
+      paxHtml += `<dt>#${i+1}</dt><dd>${p} ${n}<br><span style="color:var(--earth);font-size:13px">${statutLabel}</span></dd>`;
     });
     document.getElementById('recap-pax').innerHTML = paxHtml || '<dt>—</dt><dd>Aucun</dd>';
     const addrLine = [g('ct-adresse'), [g('ct-cp'), g('ct-ville')].filter(x => x && x !== '—').join(' '), g('ct-pays')].filter(x => x && x !== '—').join(', ');
