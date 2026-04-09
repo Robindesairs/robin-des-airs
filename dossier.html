@@ -446,8 +446,8 @@
             <div class="field">
               <label>Statut du passager *</label>
               <div class="tiles" style="grid-template-columns:1fr 1fr;margin-bottom:0">
-                <div class="tile"><input type="radio" name="passagers[0][statut]" id="p0-majeur" value="majeur" required><label for="p0-majeur">Majeur</label></div>
-                <div class="tile"><input type="radio" name="passagers[0][statut]" id="p0-mineur" value="mineur" required><label for="p0-mineur">Mineur</label></div>
+                <div class="tile"><input type="radio" name="passagers[0][statut]" id="p0-majeur" value="majeur" required><label for="p0-majeur">👤 Majeur</label></div>
+                <div class="tile"><input type="radio" name="passagers[0][statut]" id="p0-mineur" value="mineur" required><label for="p0-mineur">🧒 Mineur</label></div>
               </div>
             </div>
             <div class="row">
@@ -476,7 +476,7 @@
         <input class="camera-file-input" type="file" accept="image/*" capture="environment" style="display:none">
         <div class="dropzone-icon">📄</div>
         <strong>Déposer vos fichiers ici</strong>
-        <span>ou cliquer pour parcourir</span>
+        <span>ou prendre une photo</span>
       </label>
       <div class="file-list" id="fl-embarq"></div>
       <button type="button" class="btn-add-more-files" data-open-camera="dz-embarq">📷 Prendre une photo</button>
@@ -540,7 +540,7 @@
         <input class="camera-file-input" type="file" accept="image/*" capture="environment" style="display:none">
         <div class="dropzone-icon">🪪</div>
         <strong>Déposer passeport(s) ou CNI ici</strong>
-        <span>Page avec la photo · ou cliquer pour parcourir · plusieurs fois possibles</span>
+        <span>Page avec la photo · ou prendre une photo · ou cliquer pour parcourir</span>
       </label>
       <div class="file-list" id="fl-id"></div>
       <button type="button" class="btn-add-more-files" data-open-camera="dz-id">📷 Prendre une photo</button>
@@ -866,7 +866,9 @@
       }
       shouldClearOnPointer = true;
       closeList();
-      input.dispatchEvent(new Event('input', { bubbles: true }));
+      // Keep the selected indicatif and close suggestions.
+      // Trigger phone sync without reopening the autocomplete list.
+      input.dispatchEvent(new Event('change', { bubbles: true }));
     });
     document.addEventListener('click', (e) => {
       if (!list.contains(e.target) && e.target !== input) closeList();
@@ -1415,8 +1417,8 @@
       <div class="field">
         <label>Statut du passager *</label>
         <div class="tiles" style="grid-template-columns:1fr 1fr;margin-bottom:0">
-          <div class="tile"><input type="radio" name="passagers[${idx}][statut]" id="p${idx}-majeur" value="majeur" required><label for="p${idx}-majeur">Majeur</label></div>
-          <div class="tile"><input type="radio" name="passagers[${idx}][statut]" id="p${idx}-mineur" value="mineur" required><label for="p${idx}-mineur">Mineur</label></div>
+          <div class="tile"><input type="radio" name="passagers[${idx}][statut]" id="p${idx}-majeur" value="majeur" required><label for="p${idx}-majeur">👤 Majeur</label></div>
+          <div class="tile"><input type="radio" name="passagers[${idx}][statut]" id="p${idx}-mineur" value="mineur" required><label for="p${idx}-mineur">🧒 Mineur</label></div>
         </div>
       </div>
       <div class="row">
@@ -1709,7 +1711,7 @@
       const p = b.querySelector('input[name*="[prenom]"]').value;
       const n = b.querySelector('input[name*="[nom]"]').value;
       const statut = b.querySelector('input[name*="[statut]"]:checked')?.value || 'majeur';
-      const statutLabel = statut === 'mineur' ? 'Mineur' : 'Majeur';
+      const statutLabel = statut === 'mineur' ? '🧒 Mineur' : '👤 Majeur';
       paxHtml += `<dt>#${i+1}</dt><dd>${p} ${n} · ${statutLabel}</dd>`;
     });
     document.getElementById('recap-pax').innerHTML = paxHtml || '<dt>—</dt><dd>Aucun</dd>';
