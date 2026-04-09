@@ -40,11 +40,14 @@ var DB = {
   'AF2340':{ r:'ORY→MRS', a:'Air France', c:250 }, 'AF2341':{ r:'MRS→ORY', a:'Air France', c:250 },
   'AF2440':{ r:'CDG→TLS', a:'Air France', c:250 }, 'AF2441':{ r:'TLS→CDG', a:'Air France', c:250 },
   'AF2540':{ r:'CDG→NCE', a:'Air France', c:250 }, 'AF2541':{ r:'NCE→CDG', a:'Air France', c:250 },
-  /* Air Sénégal */
-  'SS891':{ r:'CDG→DKR', a:'Air Sénégal', c:600 }, 'SS892':{ r:'DKR→CDG', a:'Air Sénégal', c:600 },
-  'SS101':{ r:'ORY→DKR', a:'Air Sénégal', c:600 }, 'SS102':{ r:'DKR→ORY', a:'Air Sénégal', c:600 },
-  'SS103':{ r:'MRS→DKR', a:'Air Sénégal', c:600 }, 'SS104':{ r:'DKR→MRS', a:'Air Sénégal', c:600 },
-  'SS105':{ r:'CDG→BKO', a:'Air Sénégal', c:600 }, 'SS106':{ r:'BKO→CDG', a:'Air Sénégal', c:600 },
+  /* Corsair (préfixe IATA SS — ne pas confondre avec Air Sénégal, code HC) */
+  'SS891':{ r:'CDG→DKR', a:'Corsair', c:600 }, 'SS892':{ r:'DKR→CDG', a:'Corsair', c:600 },
+  'SS101':{ r:'ORY→DKR', a:'Corsair', c:600 }, 'SS102':{ r:'DKR→ORY', a:'Corsair', c:600 },
+  'SS103':{ r:'MRS→DKR', a:'Corsair', c:600 }, 'SS104':{ r:'DKR→MRS', a:'Corsair', c:600 },
+  'SS105':{ r:'CDG→BKO', a:'Corsair', c:600 }, 'SS106':{ r:'BKO→CDG', a:'Corsair', c:600 },
+  /* Air Sénégal (préfixe IATA HC) */
+  'HC400':{ r:'CDG→DSS', a:'Air Sénégal', c:600 }, 'HC401':{ r:'DSS→CDG', a:'Air Sénégal', c:600 },
+  'HC421':{ r:'LYS→DSS', a:'Air Sénégal', c:600 }, 'HC422':{ r:'DSS→LYS', a:'Air Sénégal', c:600 },
   /* Transavia */
   'TO755':{ r:'ORY→TUN', a:'Transavia', c:400 }, 'TO756':{ r:'TUN→ORY', a:'Transavia', c:400 },
   'TO760':{ r:'ORY→ALG', a:'Transavia', c:400 }, 'TO761':{ r:'ALG→ORY', a:'Transavia', c:400 },
@@ -161,7 +164,7 @@ var DB = {
 };
 
 var PFX = {
-  AF:'Air France', SS:'Air Sénégal', TO:'Transavia', DS:'Corsair',
+  AF:'Air France', SS:'Corsair', HC:'Air Sénégal', TO:'Transavia', DS:'Corsair',
   SN:'Brussels Airlines', ET:'Ethiopian Airlines', AT:'Royal Air Maroc',
   TU:'Tunisair', FR:'Ryanair', LH:'Lufthansa', BA:'British Airways',
   TK:'Turkish Airlines', EK:'Emirates', QR:'Qatar Airways', MS:'EgyptAir', KQ:'Kenya Airways',
