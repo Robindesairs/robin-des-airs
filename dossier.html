@@ -40,6 +40,25 @@
   .step-pill.done{background:var(--teal);color:#fff;border-color:var(--teal-dark)}
   .step-pill.active{background:linear-gradient(145deg,var(--teal) 0%,var(--teal-dark) 100%);color:#fff;border-color:var(--teal-dark);box-shadow:0 6px 20px rgba(0,200,122,.35)}
   .step-pill .num{display:inline-block;margin-right:4px;font-weight:800}
+  .step-pill .time{display:block;margin-top:3px;font-size:11px;font-weight:700;opacity:.9}
+  .progress-wrap{margin:8px 0 14px}
+  .progress-label{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--earth);margin-bottom:6px}
+  .progress-bar{height:8px;background:#e8dcc8;border-radius:999px;overflow:hidden}
+  .progress-bar-fill{height:100%;width:20%;background:linear-gradient(90deg,var(--teal),var(--teal-bright));transition:width .25s ease}
+
+  /* Montant potentiel (non sticky) */
+  .sticky-motivation-wrap{
+    margin:6px 0 12px;display:flex;justify-content:flex-end
+  }
+  .money-motivation.global{
+    min-width:250px;
+    box-shadow:0 10px 24px rgba(6,19,38,.12);
+    background:linear-gradient(135deg,rgba(0,200,122,.2),rgba(0,229,160,.12));
+  }
+  @media (max-width:640px){
+    .sticky-motivation-wrap{justify-content:stretch}
+    .money-motivation.global{width:100%}
+  }
 
   /* CARD */
   .card{background:#fff;border-radius:16px;padding:28px 28px 24px;margin:16px 0 24px;box-shadow:0 8px 32px rgba(6,19,38,.07);border:1px solid rgba(0,200,122,.14);border-top:3px solid var(--teal)}
@@ -48,6 +67,10 @@
   .card .sub{color:var(--earth);font-size:14px;margin-bottom:18px}
   .card > h3{border-left:4px solid var(--teal);padding-left:12px;font-size:17px;color:var(--navy)}
   .card hr{border:none;height:2px;margin:22px 0;background:linear-gradient(90deg,rgba(0,200,122,.45),rgba(0,200,122,.12) 35%,var(--sand-deep));border-radius:1px}
+  .mini-progress{margin:8px 0 16px}
+  .mini-progress .mini-text{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--earth);margin-bottom:6px}
+  .mini-progress .mini-bar{height:8px;background:#e8dcc8;border-radius:999px;overflow:hidden}
+  .mini-progress .mini-fill{height:100%;width:25%;background:linear-gradient(90deg,var(--teal),var(--teal-bright));transition:width .25s ease}
 
   /* FORM */
   label{display:block;font-size:13px;font-weight:600;color:var(--navy-mid);margin:0 0 6px;letter-spacing:.01em}
@@ -167,8 +190,25 @@
   .btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
 
   /* RECAP */
-  .recap{background:linear-gradient(135deg,rgba(0,200,122,.07),var(--bg-warm));border-radius:12px;padding:18px;margin-bottom:14px;border:1px solid rgba(0,200,122,.12);border-left:4px solid var(--teal)}
-  .recap h3{margin:0 0 8px;font-size:14px;color:var(--teal-dark);text-transform:uppercase;letter-spacing:.06em}
+  .recap{position:relative;background:linear-gradient(135deg,rgba(0,200,122,.07),var(--bg-warm));border-radius:12px;padding:18px;margin-bottom:14px;border:1px solid rgba(0,200,122,.12);border-left:4px solid var(--teal)}
+  .recap h3{margin:0;font-size:14px;color:var(--teal-dark);text-transform:uppercase;letter-spacing:.06em}
+  .recap-head{display:flex;align-items:center;justify-content:space-between;margin:0 0 8px}
+  .recap-edit{
+    border:1px solid rgba(0,200,122,.35);
+    background:#fff;
+    color:var(--teal-dark);
+    width:32px;
+    height:32px;
+    border-radius:999px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    font-size:14px;
+    font-weight:700;
+    line-height:1;
+  }
+  .recap-edit:hover{background:var(--bg-warm);border-color:var(--teal)}
   .recap dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px}
   .recap dt{color:var(--earth);font-weight:600}
   .recap dd{margin:0;color:var(--navy)}
@@ -228,11 +268,20 @@
 
 <main class="container">
   <div class="stepper" id="stepper">
-    <div class="step-pill active" data-step="1"><span class="num">1.</span>Dossier</div>
-    <div class="step-pill" data-step="2"><span class="num">2.</span>Embarquement</div>
-    <div class="step-pill" data-step="3"><span class="num">3.</span>Mandat</div>
-    <div class="step-pill" data-step="4"><span class="num">4.</span>Identité</div>
-    <div class="step-pill" data-step="5"><span class="num">5.</span>Envoi</div>
+    <div class="step-pill active" data-step="1"><span class="num">1.</span>Dossier<span class="time">~2 min</span></div>
+    <div class="step-pill" data-step="2"><span class="num">2.</span>Embarquement<span class="time">~30 sec</span></div>
+    <div class="step-pill" data-step="3"><span class="num">3.</span>Mandat<span class="time">~1 min</span></div>
+    <div class="step-pill" data-step="4"><span class="num">4.</span>Identité<span class="time">~30 sec</span></div>
+    <div class="step-pill" data-step="5"><span class="num">5.</span>Envoi<span class="time">~30 sec</span></div>
+  </div>
+  <div class="progress-wrap" aria-live="polite">
+    <div class="progress-label">
+      <span id="progress-text">Étape 1 sur 5</span>
+      <span id="progress-percent">20%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-bar-fill" id="progress-fill"></div>
+    </div>
   </div>
 
   <form id="dossierForm" method="POST" data-netlify="true" action="/merci-dossier.html" enctype="multipart/form-data" name="dossier" novalidate>
@@ -246,154 +295,172 @@
     <section class="card" data-step="1">
       <h2>Informations du dossier</h2>
       <p class="sub">Dans l’ordre : le vol, ce qu’il s’est passé, vos coordonnées, puis les passagers éligibles.</p>
-
-      <h3 style="margin:0 0 4px;font-size:17px;color:var(--navy)">0. Nombre de passagers</h3>
-      <p class="sub" style="margin-bottom:12px">Dites-nous combien de passagers sont concernés pour voir tout de suite le montant potentiel.</p>
-      <div class="pax-quick">
-        <div class="field" style="margin-bottom:0">
-          <label for="pax-count-input">Passagers concernés *</label>
-          <input type="number" id="pax-count-input" min="1" max="20" step="1" value="1" inputmode="numeric" />
+      <div class="mini-progress" aria-live="polite">
+        <div class="mini-text">
+          <span id="mini-progress-text">Dossier : étape 1 sur 4</span>
+          <span id="mini-progress-percent">25%</span>
         </div>
-        <div class="money-motivation" aria-live="polite">
-          <div class="k">Montant potentiel</div>
-          <div class="v" id="pax-money-value">600 €</div>
-          <div class="s" id="pax-money-sub">1 passager × jusqu'à 600 €</div>
+        <div class="mini-bar">
+          <div class="mini-fill" id="mini-progress-fill"></div>
         </div>
       </div>
 
-      <h3 style="margin:20px 0 4px;font-size:17px;color:var(--navy)">1. Votre vol</h3>
-      <p class="sub" style="margin-bottom:12px">Commencez par le billet ou la confirmation : numéro de vol et date, le reste peut se préremplir.</p>
-
-      <label>Type de trajet</label>
-      <div class="tiles">
-        <div class="tile"><input type="radio" name="trajet" id="t-direct" value="direct" checked><label for="t-direct">Vol direct</label></div>
-        <div class="tile"><input type="radio" name="trajet" id="t-escale" value="escale"><label for="t-escale">Avec escale(s)<div class="tile-sub">Correspondance</div></label></div>
-      </div>
-
-      <div id="escaleFields" class="hidden">
+      <div class="mini-step" data-mini-step="1">
+        <h3 style="margin:0 0 4px;font-size:17px;color:var(--navy)">1. Votre vol (30 sec)</h3>
+        <p class="sub" style="margin-bottom:12px">Commencez par le billet ou la confirmation : numéro de vol et date, le reste peut se préremplir.</p>
+        <label>Type de trajet</label>
+        <div class="tiles">
+          <div class="tile"><input type="radio" name="trajet" id="t-direct" value="direct" checked><label for="t-direct">Vol direct</label></div>
+          <div class="tile"><input type="radio" name="trajet" id="t-escale" value="escale"><label for="t-escale">Avec escale(s)<div class="tile-sub">Correspondance</div></label></div>
+        </div>
+        <div id="escaleFields" class="hidden">
+          <div class="row">
+            <div class="field">
+              <label for="escale_airport">Aéroport de correspondance *</label>
+              <input type="text" id="escale_airport" name="escale_airport" placeholder="Ex: Casablanca (CMN)" />
+            </div>
+            <div class="field">
+              <label for="vol_correspondance">N° vol de correspondance *</label>
+              <input type="text" id="vol_correspondance" name="vol_correspondance" placeholder="Ex: AT 770" />
+            </div>
+          </div>
+        </div>
         <div class="row">
           <div class="field">
-            <label for="escale_airport">Aéroport de correspondance *</label>
-            <input type="text" id="escale_airport" name="escale_airport" placeholder="Ex: Casablanca (CMN)" />
+            <label for="vol" id="vol-label">Numéro de vol *</label>
+            <input type="text" id="vol" name="vol" placeholder="Ex: AF 718" required />
           </div>
           <div class="field">
-            <label for="vol_correspondance">N° vol de correspondance *</label>
-            <input type="text" id="vol_correspondance" name="vol_correspondance" placeholder="Ex: AT 770" />
+            <label for="date">Date du vol *</label>
+            <div class="date-wrap">
+              <input type="date" id="date" name="date" required />
+            </div>
           </div>
         </div>
-      </div>
-
-      <div class="row">
-        <div class="field">
-          <label for="vol" id="vol-label">Numéro de vol *</label>
-          <input type="text" id="vol" name="vol" placeholder="Ex: AF 718" required />
-        </div>
-        <div class="field">
-          <label for="date">Date du vol *</label>
-          <div class="date-wrap">
-            <input type="date" id="date" name="date" required />
-          </div>
-        </div>
-      </div>
-
-      <div class="field autocomplete">
-        <label for="compagnie">Compagnie aérienne *</label>
-        <input type="text" id="compagnie" name="compagnie" placeholder="Se remplit souvent depuis le n° de vol" required readonly />
-        <div id="compagnie-list" class="ac-list hidden"></div>
-      </div>
-
-      <div class="row">
         <div class="field autocomplete">
-          <label for="depart">Aéroport de départ *</label>
-          <input type="text" id="depart" name="depart" placeholder="Dakar (DSS), Abidjan (ABJ)…" required />
-          <div id="depart-list" class="ac-list hidden"></div>
+          <label for="compagnie">Compagnie aérienne *</label>
+          <input type="text" id="compagnie" name="compagnie" placeholder="Se remplit souvent depuis le n° de vol" required readonly />
+          <div id="compagnie-list" class="ac-list hidden"></div>
         </div>
-        <div class="field autocomplete">
-          <label for="arrivee">Aéroport d'arrivée *</label>
-          <input type="text" id="arrivee" name="arrivee" placeholder="Paris (CDG), Bruxelles (BRU)…" required />
-          <div id="arrivee-list" class="ac-list hidden"></div>
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="pnr">Code réservation / PNR <span class="opt">(facultatif)</span></label>
-        <input type="text" id="pnr" name="pnr" placeholder="6 caractères (ex. ABCD12)" />
-      </div>
-
-      <hr>
-      <h3 style="margin:0 0 4px;font-size:17px;color:var(--navy)">2. Que s’est-il passé ?</h3>
-      <p class="sub" style="margin-bottom:12px">Choisissez le motif principal — une précision sur l’éligibilité s’affiche en dessous.</p>
-
-      <div class="field">
-        <label>Motif de la réclamation *</label>
-        <div class="tiles" style="grid-template-columns:1fr 1fr 1fr">
-          <div class="tile"><input type="radio" name="motif" id="m-retard" value="retard" checked required><label for="m-retard">⏱️ Retard<div class="tile-sub">&gt; 3 heures</div></label></div>
-          <div class="tile"><input type="radio" name="motif" id="m-annul" value="annulation" required><label for="m-annul">❌ Annulation<div class="tile-sub">&lt; 14 jours</div></label></div>
-          <div class="tile"><input type="radio" name="motif" id="m-surb" value="surbooking" required><label for="m-surb">🚫 Surbooking<div class="tile-sub">Refus d'embarquement</div></label></div>
-        </div>
-        <div id="motif-help" class="info" style="margin-top:8px;margin-bottom:0"></div>
-      </div>
-
-      <hr>
-      <h3 style="margin:0 0 4px;font-size:17px;color:var(--navy)">3. Vos coordonnées</h3>
-      <p class="sub">Personne qui reçoit les messages du dossier et l’indemnité. <strong>Indiquez le pays avant l’adresse</strong> : France (base officielle), autres pays monde entier (OpenStreetMap). Si le pays est rare, tapez-le tel qu’il apparaît sur vos papiers.</p>
-
-      <div class="row">
-        <div class="field"><label for="ct-prenom">Prénom *</label><input type="text" id="ct-prenom" name="contact_prenom" required></div>
-        <div class="field"><label for="ct-nom">Nom *</label><input type="text" id="ct-nom" name="contact_nom" required></div>
-      </div>
-
-      <div class="field autocomplete">
-        <label for="ct-pays">Pays *</label>
-        <input type="text" id="ct-pays" name="contact_pays" value="France" placeholder="Tapez les premières lettres…" autocomplete="off" required />
-        <div id="ct-pays-list" class="ac-list hidden"></div>
-      </div>
-
-      <div class="field autocomplete">
-        <label for="ct-adresse">Adresse *</label>
-        <input type="text" id="ct-adresse" name="contact_adresse" placeholder="N° et rue" autocomplete="street-address" required />
-        <div id="ct-adresse-list" class="ac-list hidden"></div>
-      </div>
-      <div class="row">
-        <div class="field"><label for="ct-cp">Code postal (si applicable)</label><input type="text" id="ct-cp" name="contact_cp" inputmode="numeric" autocomplete="postal-code" /></div>
-        <div class="field"><label for="ct-ville">Ville *</label><input type="text" id="ct-ville" name="contact_ville" autocomplete="address-level2" required /></div>
-      </div>
-
-      <div class="field">
-        <label for="ct-email">E-mail <span class="opt">(facultatif mais recommandé)</span></label>
-        <input type="email" id="ct-email" name="contact_email" placeholder="vous@email.com" />
-      </div>
-      <div class="field">
-        <label for="ct-tel-num">Téléphone / WhatsApp *</label>
-        <div class="phone-grid">
-          <input type="text" id="ct-flag" value="🌍" aria-label="Drapeau détecté" readonly />
+        <div class="row">
           <div class="field autocomplete">
-            <input type="text" id="ct-indicatif" name="contact_indicatif" placeholder="Indicatif (+221…)" autocomplete="off" required />
-            <div id="ct-indicatif-list" class="ac-list hidden"></div>
+            <label for="depart">Aéroport de départ *</label>
+            <input type="text" id="depart" name="depart" placeholder="Dakar (DSS), Abidjan (ABJ)…" required />
+            <div id="depart-list" class="ac-list hidden"></div>
           </div>
-          <input type="tel" id="ct-tel-num" name="contact_tel_local" placeholder="77 123 45 67" required />
-        </div>
-        <input type="hidden" id="ct-tel" name="contact_tel" />
-      </div>
-
-      <hr>
-      <h3 style="margin:0 0 4px;font-size:17px;color:var(--navy)">4. Passagers concernés</h3>
-      <p class="sub">Les prénoms et noms seront repris dans le mandat. Le passager 1 reprend vos nom / prénom ; les autres partagent votre nom de famille si vous l’avez saisi plus haut.</p>
-
-      <div id="passengers">
-        <div class="passenger-block" data-idx="0">
-          <div class="passenger-head"><strong>Passager 1</strong></div>
-          <div class="row">
-            <div class="field"><label>Prénom *</label><input type="text" name="passagers[0][prenom]" required></div>
-            <div class="field"><label>Nom *</label><input type="text" name="passagers[0][nom]" required></div>
+          <div class="field autocomplete">
+            <label for="arrivee">Aéroport d'arrivée *</label>
+            <input type="text" id="arrivee" name="arrivee" placeholder="Paris (CDG), Bruxelles (BRU)…" required />
+            <div id="arrivee-list" class="ac-list hidden"></div>
           </div>
         </div>
+        <div class="field">
+          <label for="pnr">Code réservation / PNR <span class="opt">(facultatif)</span></label>
+          <input type="text" id="pnr" name="pnr" placeholder="6 caractères (ex. ABCD12)" />
+        </div>
+        <div class="actions">
+          <span></span>
+          <button type="button" class="btn btn-primary mini-next">Continuer →</button>
+        </div>
       </div>
-      <button type="button" class="btn-add" id="addPassenger">+ Ajouter un passager</button>
 
-      <div class="actions">
-        <span></span>
-        <button type="button" class="btn btn-primary" data-next>Continuer →</button>
+      <div class="mini-step hidden" data-mini-step="2">
+        <h3 style="margin:0 0 4px;font-size:17px;color:var(--navy)">2. Ce qu’il s’est passé (20 sec)</h3>
+        <p class="sub" style="margin-bottom:12px">Choisissez le motif principal — une précision sur l’éligibilité s’affiche en dessous.</p>
+        <div class="field">
+          <label>Motif de la réclamation *</label>
+          <div class="tiles" style="grid-template-columns:1fr 1fr 1fr">
+            <div class="tile"><input type="radio" name="motif" id="m-retard" value="retard" checked required><label for="m-retard">⏱️ Retard<div class="tile-sub">&gt; 3 heures</div></label></div>
+            <div class="tile"><input type="radio" name="motif" id="m-annul" value="annulation" required><label for="m-annul">❌ Annulation<div class="tile-sub">&lt; 14 jours</div></label></div>
+            <div class="tile"><input type="radio" name="motif" id="m-surb" value="surbooking" required><label for="m-surb">🚫 Surbooking<div class="tile-sub">Refus d'embarquement</div></label></div>
+          </div>
+          <div id="motif-help" class="info" style="margin-top:8px;margin-bottom:0"></div>
+        </div>
+        <div class="actions">
+          <button type="button" class="btn btn-secondary mini-prev">← Retour</button>
+          <button type="button" class="btn btn-primary mini-next">Continuer →</button>
+        </div>
+      </div>
+
+      <div class="mini-step hidden" data-mini-step="3">
+        <h3 style="margin:0 0 4px;font-size:17px;color:var(--navy)">3. Vos coordonnées (45 sec)</h3>
+        <p class="sub">Personne qui reçoit les messages du dossier et l’indemnité. <strong>Indiquez le pays avant l’adresse</strong> : France (base officielle), autres pays monde entier (OpenStreetMap). Si le pays est rare, tapez-le tel qu’il apparaît sur vos papiers.</p>
+        <div class="row">
+          <div class="field"><label for="ct-prenom">Prénom *</label><input type="text" id="ct-prenom" name="contact_prenom" required></div>
+          <div class="field"><label for="ct-nom">Nom *</label><input type="text" id="ct-nom" name="contact_nom" required></div>
+        </div>
+        <div class="field autocomplete">
+          <label for="ct-pays">Pays *</label>
+          <input type="text" id="ct-pays" name="contact_pays" value="France" placeholder="Tapez les premières lettres…" autocomplete="off" required />
+          <div id="ct-pays-list" class="ac-list hidden"></div>
+        </div>
+        <div class="field autocomplete">
+          <label for="ct-adresse">Adresse *</label>
+          <input type="text" id="ct-adresse" name="contact_adresse" placeholder="N° et rue" autocomplete="street-address" required />
+          <div id="ct-adresse-list" class="ac-list hidden"></div>
+        </div>
+        <div class="row">
+          <div class="field"><label for="ct-cp">Code postal (si applicable)</label><input type="text" id="ct-cp" name="contact_cp" inputmode="numeric" autocomplete="postal-code" /></div>
+          <div class="field"><label for="ct-ville">Ville *</label><input type="text" id="ct-ville" name="contact_ville" autocomplete="address-level2" required /></div>
+        </div>
+        <div class="field">
+          <label for="ct-email">E-mail <span class="opt">(facultatif mais recommandé)</span></label>
+          <input type="email" id="ct-email" name="contact_email" placeholder="vous@email.com" />
+        </div>
+        <div class="field">
+          <label for="ct-tel-num">Téléphone / WhatsApp *</label>
+          <div class="phone-grid">
+            <input type="text" id="ct-flag" value="🌍" aria-label="Drapeau détecté" readonly />
+            <div class="field autocomplete">
+              <input type="text" id="ct-indicatif" name="contact_indicatif" placeholder="Indicatif (+221…)" autocomplete="off" required />
+              <div id="ct-indicatif-list" class="ac-list hidden"></div>
+            </div>
+            <input type="tel" id="ct-tel-num" name="contact_tel_local" placeholder="77 123 45 67" required />
+          </div>
+          <input type="hidden" id="ct-tel" name="contact_tel" />
+        </div>
+        <div class="actions">
+          <button type="button" class="btn btn-secondary mini-prev">← Retour</button>
+          <button type="button" class="btn btn-primary mini-next">Continuer →</button>
+        </div>
+      </div>
+
+      <div class="mini-step hidden" data-mini-step="4">
+        <h3 style="margin:0 0 4px;font-size:17px;color:var(--navy)">4. Passagers concernés (25 sec)</h3>
+        <p class="sub" style="margin-bottom:12px">Dites-nous combien de passagers sont concernés pour voir tout de suite le montant potentiel.</p>
+        <div class="pax-quick">
+          <div class="field" style="margin-bottom:0">
+            <label for="pax-count-input">Passagers concernés *</label>
+            <input type="number" id="pax-count-input" min="1" max="20" step="1" value="1" inputmode="numeric" />
+          </div>
+          <div class="money-motivation" aria-live="polite">
+            <div class="k">Montant potentiel</div>
+            <div class="v" id="pax-money-value">600 €</div>
+            <div class="s" id="pax-money-sub">1 passager × jusqu'à 600 €</div>
+          </div>
+        </div>
+        <p class="sub">Les prénoms et noms seront repris dans le mandat. Le passager 1 reprend vos nom / prénom ; les autres partagent votre nom de famille si vous l’avez saisi plus haut.</p>
+        <div id="passengers">
+          <div class="passenger-block" data-idx="0">
+            <div class="passenger-head"><strong>Passager 1</strong></div>
+            <div class="field">
+              <label>Statut du passager *</label>
+              <div class="tiles" style="grid-template-columns:1fr 1fr;margin-bottom:0">
+                <div class="tile"><input type="radio" name="passagers[0][statut]" id="p0-majeur" value="majeur" required><label for="p0-majeur">Majeur</label></div>
+                <div class="tile"><input type="radio" name="passagers[0][statut]" id="p0-mineur" value="mineur" required><label for="p0-mineur">Mineur</label></div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="field"><label>Prénom *</label><input type="text" name="passagers[0][prenom]" required></div>
+              <div class="field"><label>Nom *</label><input type="text" name="passagers[0][nom]" required></div>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="btn-add" id="addPassenger">+ Ajouter un passager</button>
+        <div class="actions">
+          <button type="button" class="btn btn-secondary mini-prev">← Retour</button>
+          <button type="button" class="btn btn-primary" data-next>Continuer →</button>
+        </div>
       </div>
     </section>
 
@@ -412,8 +479,8 @@
         <span>ou cliquer pour parcourir</span>
       </label>
       <div class="file-list" id="fl-embarq"></div>
-      <button type="button" class="btn-add-more-files" data-open-files="dz-embarq">+ Ajouter d'autres fichiers</button>
       <button type="button" class="btn-add-more-files" data-open-camera="dz-embarq">📷 Prendre une photo</button>
+      <button type="button" class="btn-add-more-files" data-open-files="dz-embarq">+ Ajouter d'autres fichiers</button>
 
       <div class="later-box">
         <label><input type="checkbox" name="embarq_later" id="embarq-later"> Je fournirai ce document plus tard par WhatsApp ou e-mail</label>
@@ -476,8 +543,8 @@
         <span>Page avec la photo · ou cliquer pour parcourir · plusieurs fois possibles</span>
       </label>
       <div class="file-list" id="fl-id"></div>
-      <button type="button" class="btn-add-more-files" data-open-files="dz-id">+ Ajouter d'autres fichiers</button>
       <button type="button" class="btn-add-more-files" data-open-camera="dz-id">📷 Prendre une photo</button>
+      <button type="button" class="btn-add-more-files" data-open-files="dz-id">+ Ajouter d'autres fichiers</button>
 
       <div class="later-box">
         <label><input type="checkbox" name="id_later" id="id-later"> Je fournirai les pièces d'identité plus tard par WhatsApp</label>
@@ -496,24 +563,36 @@
       <p class="sub">Vérifiez votre dossier avant envoi. Notre équipe vous répondra sous 48h.</p>
 
       <div class="recap">
-        <h3>Vol</h3>
+        <div class="recap-head">
+          <h3>Vol</h3>
+          <button type="button" class="recap-edit" data-go-step="1" aria-label="Modifier le vol">✏️</button>
+        </div>
         <dl id="recap-vol"></dl>
       </div>
       <div class="recap">
-        <h3>Passagers</h3>
+        <div class="recap-head">
+          <h3>Passagers</h3>
+          <button type="button" class="recap-edit" data-go-step="1" aria-label="Modifier les passagers">✏️</button>
+        </div>
         <dl id="recap-pax"></dl>
       </div>
       <div class="recap">
-        <h3>Contact</h3>
+        <div class="recap-head">
+          <h3>Contact</h3>
+          <button type="button" class="recap-edit" data-go-step="1" aria-label="Modifier le contact">✏️</button>
+        </div>
         <dl id="recap-contact"></dl>
       </div>
       <div class="recap">
-        <h3>Documents</h3>
+        <div class="recap-head">
+          <h3>Documents</h3>
+          <button type="button" class="recap-edit" data-go-step="2" aria-label="Modifier les documents">✏️</button>
+        </div>
         <dl id="recap-docs"></dl>
       </div>
 
       <div class="info" style="margin-top:14px">
-        💰 <strong>Estimation potentielle :</strong> <span id="recap-montant">—</span> · <strong>Commission RDA (25%)</strong> uniquement si indemnité obtenue.
+        💰 <strong>Estimation potentielle :</strong> <span id="recap-montant">—</span> · <strong>Honoraires RDA (25%)</strong> uniquement si indemnité obtenue.
       </div>
 
       <div class="field" style="margin-top:16px">
@@ -726,6 +805,7 @@
     if (!input || !list) return;
     const allRows = buildDialRows();
     let lastFiltered = [];
+    let shouldClearOnPointer = true;
     const closeList = () => list.classList.add('hidden');
     const openList = () => list.classList.remove('hidden');
     function rowMatches(row, q) {
@@ -763,8 +843,18 @@
       }).join('');
       openList();
     }
-    input.addEventListener('input', () => render(input.value));
+    input.addEventListener('input', () => {
+      shouldClearOnPointer = false;
+      render(input.value);
+    });
     input.addEventListener('focus', () => render(input.value));
+    input.addEventListener('blur', () => { shouldClearOnPointer = true; });
+    input.addEventListener('pointerdown', () => {
+      if (!shouldClearOnPointer) return;
+      if (!String(input.value || '').trim()) return;
+      input.value = '';
+      render('');
+    });
     list.addEventListener('mousedown', (e) => {
       const target = e.target.closest('.ac-item');
       if (!target) return;
@@ -774,6 +864,7 @@
       } else if (target.hasAttribute('data-free')) {
         input.value = normalizeDialInput(input.value) || input.value.trim();
       }
+      shouldClearOnPointer = true;
       closeList();
       input.dispatchEvent(new Event('input', { bubbles: true }));
     });
@@ -1069,6 +1160,13 @@
       p.classList.toggle('done', s<n);
     });
     current = n;
+    const progressFill = document.getElementById('progress-fill');
+    const progressText = document.getElementById('progress-text');
+    const progressPercent = document.getElementById('progress-percent');
+    const pct = Math.round((n / 5) * 100);
+    if (progressFill) progressFill.style.width = pct + '%';
+    if (progressText) progressText.textContent = `Étape ${n} sur 5`;
+    if (progressPercent) progressPercent.textContent = `${pct}%`;
     if (opts.scrollTop !== false) window.scrollTo({top:0,behavior:'smooth'});
     // Le canvas de signature est caché au chargement: on recalcule sa taille à l'ouverture de l'étape 3.
     if(n===3) setTimeout(() => resize(), 0);
@@ -1078,12 +1176,77 @@
     if(validateStep(current)) show(current+1);
   }));
   document.querySelectorAll('[data-prev]').forEach(b=>b.addEventListener('click',()=>show(current-1)));
+  document.querySelectorAll('.recap-edit[data-go-step]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const n = parseInt(btn.getAttribute('data-go-step') || '', 10);
+      if (!Number.isNaN(n) && n >= 1 && n <= 5) show(n);
+    });
+  });
+
+  // Mini-étapes internes à l'étape 1 (Dossier)
+  const miniSteps = Array.from(document.querySelectorAll('.card[data-step="1"] .mini-step'));
+  let currentMini = 1;
+  function showMiniStep(n){
+    const bounded = Math.max(1, Math.min(4, n));
+    miniSteps.forEach((s, idx) => s.classList.toggle('hidden', idx !== (bounded - 1)));
+    currentMini = bounded;
+    const fill = document.getElementById('mini-progress-fill');
+    const text = document.getElementById('mini-progress-text');
+    const pctEl = document.getElementById('mini-progress-percent');
+    const pct = Math.round((bounded / 4) * 100);
+    if (fill) fill.style.width = `${pct}%`;
+    if (text) text.textContent = `Dossier : étape ${bounded} sur 4`;
+    if (pctEl) pctEl.textContent = `${pct}%`;
+  }
+  function revealMiniStepForElement(el){
+    if (!el) return;
+    const parentMini = el.closest('.mini-step[data-mini-step]');
+    if (!parentMini) return;
+    const n = parseInt(parentMini.getAttribute('data-mini-step') || '', 10);
+    if (!Number.isNaN(n)) showMiniStep(n);
+  }
+  function validateCurrentMiniStep(){
+    const activeMini = document.querySelector(`.card[data-step="1"] .mini-step[data-mini-step="${currentMini}"]`);
+    if (!activeMini) return true;
+    for (const r of activeMini.querySelectorAll('[required]')) {
+      if (!r.checkValidity()) { showValidationError(r, r.validationMessage); return false; }
+    }
+    if (currentMini === 1) {
+      const trajet = document.querySelector('input[name=trajet]:checked')?.value;
+      const volVal = (document.getElementById('vol').value || '').trim();
+      if (trajet === 'direct' && /[,;]/.test(volVal)) {
+        showValidationError(document.getElementById('vol'), 'En vol direct, renseignez un seul numéro de vol.');
+        return false;
+      }
+    }
+    if (currentMini === 3) {
+      const em = document.getElementById('ct-email');
+      if (em && (em.value || '').trim() && !em.checkValidity()) {
+        showValidationError(em, em.validationMessage);
+        return false;
+      }
+    }
+    return true;
+  }
+  document.querySelectorAll('.mini-next').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      clearFormInvalidUI();
+      if (validateCurrentMiniStep()) showMiniStep(currentMini + 1);
+    });
+  });
+  document.querySelectorAll('.mini-prev').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      clearFormInvalidUI();
+      showMiniStep(currentMini - 1);
+    });
+  });
+  showMiniStep(1);
 
   function validateStep(n){
     clearFormInvalidUI();
     if (n === 1) {
       const bad = checkStep1Validity();
-      if (bad) { showValidationError(bad.el, bad.msg); return false; }
+      if (bad) { revealMiniStepForElement(bad.el); showValidationError(bad.el, bad.msg); return false; }
       return true;
     }
     if (n === 2) {
@@ -1232,6 +1395,10 @@
     const amount = n * 600;
     document.getElementById('pax-money-value').textContent = `${amount.toLocaleString('fr-FR')} €`;
     document.getElementById('pax-money-sub').textContent = `${n} passager${n > 1 ? 's' : ''} × jusqu'à 600 €`;
+    const globalValue = document.getElementById('pax-money-value-global');
+    const globalSub = document.getElementById('pax-money-sub-global');
+    if (globalValue) globalValue.textContent = `${amount.toLocaleString('fr-FR')} €`;
+    if (globalSub) globalSub.textContent = `${n} passager${n > 1 ? 's' : ''} × jusqu'à 600 €`;
     if (paxCountInput) paxCountInput.value = String(n);
   }
   function addPassengerBlock(){
@@ -1244,6 +1411,13 @@
       <div class="passenger-head">
         <strong>Passager ${idx+1}</strong>
         <button type="button" class="btn-remove">Retirer</button>
+      </div>
+      <div class="field">
+        <label>Statut du passager *</label>
+        <div class="tiles" style="grid-template-columns:1fr 1fr;margin-bottom:0">
+          <div class="tile"><input type="radio" name="passagers[${idx}][statut]" id="p${idx}-majeur" value="majeur" required><label for="p${idx}-majeur">Majeur</label></div>
+          <div class="tile"><input type="radio" name="passagers[${idx}][statut]" id="p${idx}-mineur" value="mineur" required><label for="p${idx}-mineur">Mineur</label></div>
+        </div>
       </div>
       <div class="row">
         <div class="field"><label>Prénom *</label><input type="text" name="passagers[${idx}][prenom]" required></div>
@@ -1534,7 +1708,9 @@
     paxBlocks.forEach((b,i)=>{
       const p = b.querySelector('input[name*="[prenom]"]').value;
       const n = b.querySelector('input[name*="[nom]"]').value;
-      paxHtml += `<dt>#${i+1}</dt><dd>${p} ${n}</dd>`;
+      const statut = b.querySelector('input[name*="[statut]"]:checked')?.value || 'majeur';
+      const statutLabel = statut === 'mineur' ? 'Mineur' : 'Majeur';
+      paxHtml += `<dt>#${i+1}</dt><dd>${p} ${n} · ${statutLabel}</dd>`;
     });
     document.getElementById('recap-pax').innerHTML = paxHtml || '<dt>—</dt><dd>Aucun</dd>';
     const addrLine = [g('ct-adresse'), [g('ct-cp'), g('ct-ville')].filter(x => x && x !== '—').join(' '), g('ct-pays')].filter(x => x && x !== '—').join(', ');
@@ -1559,7 +1735,10 @@
     const bad = findFirstFormInvalid();
     if (bad) {
       show(bad.step, { scrollTop: false });
-      requestAnimationFrame(() => showValidationError(bad.el, bad.msg));
+      requestAnimationFrame(() => {
+        if (bad.step === 1) revealMiniStepForElement(bad.el);
+        showValidationError(bad.el, bad.msg);
+      });
       return;
     }
     setProofFields();
