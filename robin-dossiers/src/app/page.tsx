@@ -3,6 +3,8 @@
 import { useEffect, useState, useCallback } from "react";
 import { STATUT_LABELS, STATUT_ORDER, STATUTS_CLOTURE } from "@/lib/statuts";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { getSupabaseBrowserClient } from "@/lib/supabase-client";
 
 const PAYS_OPTIONS = ["", "Sénégal", "Mali", "Côte d'Ivoire", "Guinée", "Cameroun", "RDC", "Bénin", "Togo", "Ghana", "Nigeria", "Autre"];
 
@@ -91,6 +93,7 @@ function calcMoratoire(lrar: string | null | undefined): { actif: boolean; j16: 
 }
 
 export default function CRMPage() {
+  const router = useRouter();
   const [list, setList] = useState<DossierRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -104,6 +107,14 @@ export default function CRMPage() {
   const [newOpen, setNewOpen] = useState(false);
   const [evTxt, setEvTxt] = useState("");
   const [saving, setSaving] = useState(false);
+  const [userEmail, setUserEmail] = useState<string>("");
+
+  useEffect(() => {
+    const supabase = getSupabaseBrowserClient();
+    supabase.auth.getUser().then(({ data }) => {
+      setUserEmail(data.user?.email ?? "");
+    });
+  }, []);
 
   const fetchList = useCallback(() => {
     setLoading(true);
@@ -193,6 +204,12 @@ export default function CRMPage() {
       .finally(() => setSaving(false));
   };
 
+  const handleSignOut = async () => {
+    const supabase = getSupabaseBrowserClient();
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
+
   return (
     <div className="min-h-screen" style={{ background: "var(--crm-bg2)", color: "var(--crm-text)", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif", fontSize: 14 }}>
       {/* TOPBAR */}
@@ -202,12 +219,24 @@ export default function CRMPage() {
           <div className="text-white/60 text-xs mt-0.5">Gestion des dossiers d&apos;indemnisation</div>
         </div>
         <div className="flex items-center gap-2">
+          {userEmail && (
+            <span className="text-white/80 text-xs hidden sm:inline">
+              {userEmail}
+            </span>
+          )}
           <Link
             href="/compta"
             className="px-4 py-2 rounded-md text-white font-medium text-sm border border-white/30"
           >
             Comptabilité
           </Link>
+          <button
+            type="button"
+            onClick={handleSignOut}
+            className="px-4 py-2 rounded-md text-white font-medium text-sm border border-white/30"
+          >
+            Deconnexion
+          </button>
           <button
             type="button"
             onClick={() => setNewOpen(true)}

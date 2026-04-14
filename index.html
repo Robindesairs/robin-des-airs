@@ -9,11 +9,13 @@
 <meta property="og:url" content="https://robindesairs.eu">
 <meta property="og:title" content="Robin des Airs — Votre vol retardé vaut jusqu'à 600€">
 <meta property="og:description" content="Retard ou annulation ? Jusqu'à 600 € (CE 261). 25 % après succès seulement — sinon vous ne payez rien. WhatsApp en 2 min.">
-<meta property="og:image" content="https://robindesairs.eu/og-blog.png">
+<meta property="og:image" content="https://robindesairs.eu/robin-des-airs-logo-texte-profil.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://robindesairs.eu/og-blog.png">
+<meta name="twitter:title" content="Robin des Airs — Indemnités CE 261 Europe–Afrique">
+<meta name="twitter:description" content="Justice aérienne pour l’Afrique. Jusqu’à 600 € par passager, 25 % seulement après succès.">
+<meta name="twitter:image" content="https://robindesairs.eu/robin-des-airs-logo-texte-profil.png">
 <meta name="theme-color" content="#0B1F3A">
 <meta name="robots" content="index, follow">
 <link rel="icon" href="/favicon.png" type="image/png">
@@ -111,8 +113,6 @@
       </div>
       <div class="currency-menu" id="currency-menu">
         <div class="currency-option active" data-currency="eur" onclick="switchCurrency('eur')">EUR (€)</div>
-        <div class="currency-option" data-currency="fcfa" onclick="switchCurrency('fcfa')">FCFA</div>
-        <div class="currency-option" data-currency="usd" onclick="switchCurrency('usd')">USD ($)</div>
       </div>
     </div>
     <!-- CTA visible sur desktop -->
@@ -131,8 +131,6 @@
         <span class="lang-option" data-lang="en" onclick="switchLang('EN','🇬🇧'); closeMobileNav();">🇬🇧 English</span>
         <span class="nav-drawer-curr-label" aria-hidden="true">·</span>
         <span class="currency-option active" data-currency="eur" onclick="switchCurrency('eur'); closeMobileNav();">EUR</span>
-        <span class="currency-option" data-currency="fcfa" onclick="switchCurrency('fcfa'); closeMobileNav();">FCFA</span>
-        <span class="currency-option" data-currency="usd" onclick="switchCurrency('usd'); closeMobileNav();">USD</span>
   </div>
   <ul>
     <li><a href="#funnel-box" onclick="closeMobileNav(); setTimeout(function(){ scrollToCalcWithAnimation(); }, 220); return false;" data-i18n="nav_drawer_calc">🧮 Calculateur</a></li>
@@ -160,18 +158,21 @@
 
     <!-- LEFT -->
     <div class="hero-left">
+      <p id="hero-ab-label" style="display:inline-block;margin-bottom:10px;padding:4px 10px;border:1px solid rgba(0,229,160,0.35);border-radius:999px;font-size:11px;font-weight:700;letter-spacing:0.8px;color:var(--neon-b);text-transform:uppercase;">
+        Justice aérienne pour l’Afrique
+      </p>
       <h1 class="hero-title">
         <span data-i18n-html="hero_title">Robin prend<br>aux compagnies,<br></span>
-        <span class="neon" data-i18n="hero_title_neon">rend à nos familles.</span>
+        <span class="neon" data-i18n="hero_title_neon" id="hero-ab-headline">rend à nos familles.</span>
       </h1>
-      <p class="hero-subhead" data-i18n="hero_subhead">Retard important à l’arrivée (+3 h), annulation ou surbooking : nous récupérons votre indemnité CE 261 — jusqu’à 600 € par passager.</p>
+      <p class="hero-subhead" data-i18n="hero_subhead" id="hero-ab-subhead">Retard important à l’arrivée (+3 h), annulation ou surbooking : nous récupérons votre indemnité CE 261 — jusqu’à 600 € par passager.</p>
 
       <p class="hero-desc" data-i18n-html="hero_desc"><strong>Zéro frais si nous n’obtenons rien pour vous.</strong> Notre commission (25 %) uniquement une fois l’indemnité versée sur votre compte.<br>Quand le CE 261 s’applique, la compagnie peut devoir jusqu’à <strong>600 € par passager</strong>.</p>
 
       <!-- CTA principal = WhatsApp (audit: canal principal en premier) -->
       <div class="hero-entry">
-        <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="hero-entry-btn primary" data-i18n="hero_btn_wa" id="hero-wa-link" onclick="plausible('WhatsApp-CTA', {props: {source: 'hero'}})">📱 Vérifier sur WhatsApp</a>
-        <a href="#funnel-box" class="hero-entry-btn secondary" id="btn-calc-hero" onclick="scrollToCalcWithAnimation(event)" data-i18n="hero_btn_calc">Ou calculez le montant exact (2 min) →</a>
+        <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="hero-entry-btn primary" data-i18n="hero_btn_wa" id="hero-wa-link" onclick="plausible('WhatsApp-CTA', {props: {source: 'hero'}})">📱 Vérifier mon vol sur WhatsApp</a>
+        <a href="#funnel-box" class="hero-entry-btn secondary" id="btn-calc-hero" onclick="scrollToCalcWithAnimation(event)" data-i18n="hero_btn_calc">Simuler mon indemnité (2 min) →</a>
       </div>
       <p class="wa-rgpd-hint" data-i18n-html="wa_rgpd_hint">WhatsApp est un service <strong>Meta</strong> : des données peuvent être traitées hors UE. <a href="/politique-confidentialite.html#whatsapp-meta">Confidentialité &amp; alternatives</a> (email, site).</p>
 
@@ -982,6 +983,14 @@
 <!-- Pas de script Cloudflare ici : sur Netlify /cdn-cgi/... renvoie 404 et alourdit Lighthouse. -->
 <!-- Chaîne JS : assets/home-loader.js (mobile ≤768px → diagnostic chargé à la demande) -->
 <script defer src="/assets/home-loader.js"></script>
+<script>
+try {
+  localStorage.setItem('robin_currency', 'eur');
+  if (window.I18N && typeof window.I18N.setCurrency === 'function') {
+    window.I18N.setCurrency('eur');
+  }
+} catch (e) {}
+</script>
 
 <!-- Modal QR WhatsApp (fallback desktop → téléphone) -->
 <div id="wa-qr-modal" style="display:none;position:fixed;inset:0;z-index:9999;">
@@ -1024,6 +1033,36 @@ function openWhatsAppQrFromHero(e) {
   var url = hero && hero.href ? hero.href : ('https://wa.me/' + (window.WHATSAPP_NUMBER || ''));
   openWhatsAppQr(url);
 }
+</script>
+
+<script>
+(function () {
+  var AB_KEY = "hero-copy-ab-v1";
+  var assigned = localStorage.getItem(AB_KEY);
+  if (!assigned) {
+    assigned = Math.random() < 0.5 ? "A" : "B";
+    localStorage.setItem(AB_KEY, assigned);
+  }
+
+  var label = document.getElementById("hero-ab-label");
+  var headline = document.getElementById("hero-ab-headline");
+  var subhead = document.getElementById("hero-ab-subhead");
+  var waBtn = document.getElementById("hero-wa-link");
+  var calcBtn = document.getElementById("btn-calc-hero");
+  if (!label || !headline || !subhead || !waBtn || !calcBtn) return;
+
+  if (assigned === "B") {
+    label.textContent = "Expert CE 261 Europe–Afrique";
+    headline.textContent = "vos droits, sans frontière.";
+    subhead.textContent = "Retard, annulation ou surbooking : on récupère votre indemnité CE 261, jusqu'à 600 € par passager, entre l'Europe et l'Afrique.";
+    waBtn.textContent = "📱 Vérifier mon éligibilité";
+    calcBtn.textContent = "Voir mon montant exact (2 min) →";
+  }
+
+  try {
+    plausible("AB-Hero-Variant", { props: { variant: assigned } });
+  } catch (e) {}
+})();
 </script>
 
 <!-- Un seul CTA persistant : bouton WhatsApp flottant -->

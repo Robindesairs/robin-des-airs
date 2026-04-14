@@ -10,14 +10,14 @@ import { getAllSlugs } from '../services/blogService';
 
 const SITE_URL = 'https://robindesairs.eu';
 const OUT_PATH = path.join(process.cwd(), 'sitemap.xml');
-const LASTMOD = '2026-03-08';
+const LASTMOD = new Date().toISOString().slice(0, 10);
 
 function main(): void {
   const slugs = getAllSlugs();
   const staticPages: Array<{ loc: string; changefreq: string; priority: string }> = [
     { loc: SITE_URL + '/', changefreq: 'weekly', priority: '1.0' },
     { loc: SITE_URL + '/depot-en-ligne.html', changefreq: 'monthly', priority: '0.9' },
-    { loc: SITE_URL + '/depot-simple.html', changefreq: 'monthly', priority: '0.9' },
+    { loc: SITE_URL + '/depot-express.html', changefreq: 'monthly', priority: '0.9' },
     { loc: SITE_URL + '/dossier.html', changefreq: 'monthly', priority: '0.9' },
     { loc: SITE_URL + '/suivi-dossier.html', changefreq: 'monthly', priority: '0.8' },
     { loc: SITE_URL + '/guide-whatsapp.html', changefreq: 'monthly', priority: '0.7' },
@@ -29,7 +29,7 @@ function main(): void {
     { loc: SITE_URL + '/politique-confidentialite.html', changefreq: 'yearly', priority: '0.4' },
     { loc: SITE_URL + '/mandat-representation.html', changefreq: 'yearly', priority: '0.4' },
     { loc: SITE_URL + '/droit-retractation.html', changefreq: 'yearly', priority: '0.4' },
-    { loc: SITE_URL + '/blog/index.html', changefreq: 'weekly', priority: '0.9' },
+    { loc: SITE_URL + '/blog/', changefreq: 'weekly', priority: '0.9' },
     { loc: SITE_URL + '/destinations/dakar.html', changefreq: 'monthly', priority: '0.7' },
     { loc: SITE_URL + '/destinations/abidjan.html', changefreq: 'monthly', priority: '0.7' },
     { loc: SITE_URL + '/destinations/bamako.html', changefreq: 'monthly', priority: '0.7' },

@@ -23,6 +23,18 @@ npm run dev
 
 Ouvrir [http://localhost:3000](http://localhost:3000) pour le dashboard.
 
+## Connexion Google (espace client)
+
+L'application utilise Supabase Auth avec Google OAuth.
+
+1. Dans Supabase Dashboard -> **Authentication** -> **Providers** -> **Google**, activer le provider et renseigner le Client ID/Secret Google.
+2. Ajouter les URLs de redirection Google:
+   - `http://localhost:3000/auth/callback`
+   - URL production equivalente (`https://.../auth/callback`)
+3. Dans Supabase -> **Authentication** -> **URL Configuration**, verifier la Site URL et les Redirect URLs autorisees.
+
+Ensuite, les utilisateurs se connectent via `/login` et accedent aux routes protegees (`/`, `/compta`, `/dossiers/...`).
+
 ## Base Supabase
 
 - **Project ID** : `qrrvzvltwtfzgvfiynkv`

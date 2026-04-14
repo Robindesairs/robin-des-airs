@@ -25,6 +25,7 @@ function escapeHtml(s: string): string {
 function renderArticlePage(post: Awaited<ReturnType<typeof getBySlug>>): string {
   if (!post) return '';
   const canonical = `${SITE_URL}/blog/${post.slug}.html`;
+  const ogImage = `${SITE_URL}${post.image_url.startsWith('/') ? post.image_url : '/' + post.image_url}`;
   return `<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -38,7 +39,11 @@ function renderArticlePage(post: Awaited<ReturnType<typeof getBySlug>>): string 
   <meta property="og:description" content="${escapeHtml(post.meta_description)}">
   <meta property="og:url" content="${canonical}">
   <meta property="og:type" content="article">
-  <meta property="og:image" content="${SITE_URL}${post.image_url.startsWith('/') ? post.image_url : '/' + post.image_url}">
+  <meta property="og:image" content="${ogImage}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="${escapeHtml(post.meta_title)}">
+  <meta name="twitter:description" content="${escapeHtml(post.meta_description)}">
+  <meta name="twitter:image" content="${ogImage}">
   <link href="${TAILWIND_CDN}" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
   <style>body{font-family:'Montserrat',sans-serif}
@@ -71,6 +76,14 @@ function renderArticlePage(post: Awaited<ReturnType<typeof getBySlug>>): string 
         <a href="https://wa.me/33756863630" class="text-[#00E5A0] font-bold mx-2">WhatsApp direct</a>
       </p>
     </div>
+    <section class="mt-6 rounded-xl border border-gray-200 bg-white p-5">
+      <h2 class="text-base font-bold text-[#0B1F3A] mb-3">Articles liés</h2>
+      <ul class="list-disc pl-5 text-sm text-gray-700 space-y-1">
+        <li><a href="/blog/reglementation-ce261-resume.html">Résumé du règlement CE 261/2004</a></li>
+        <li><a href="/blog/indemnite-vol-montants-250-400-600.html">Montants 250 €, 400 €, 600 €</a></li>
+        <li><a href="/blog/reclamer-seul-ou-passer-par-un-service-indemnite-vol.html">Réclamer seul ou se faire accompagner</a></li>
+      </ul>
+    </section>
   </main>
 </body>
 </html>`;
@@ -101,6 +114,12 @@ function renderIndexPage(posts: ReturnType<typeof getAllPosts>): string {
   <meta property="og:title" content="Blog Robin des Airs — Indemnités aériennes CE 261">
   <meta property="og:description" content="${desc}">
   <meta property="og:url" content="${canonical}">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="${SITE_URL}/robin-des-airs-logo-texte-profil.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Blog Robin des Airs — CE 261">
+  <meta name="twitter:description" content="${desc}">
+  <meta name="twitter:image" content="${SITE_URL}/robin-des-airs-logo-texte-profil.png">
   <link href="${TAILWIND_CDN}" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
   <style>body{font-family:'Montserrat',sans-serif}</style>
