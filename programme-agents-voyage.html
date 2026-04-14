@@ -1224,6 +1224,25 @@
 </head>
 <body>
 
+<!-- Netlify form detection fallback (hidden forms) -->
+<form name="agence-express" method="POST" data-netlify="true" action="/merci-partenaire.html" hidden>
+  <input type="hidden" name="form-name" value="agence-express" />
+  <input type="text" name="agence" />
+  <input type="text" name="ville" />
+  <input type="tel" name="whatsapp" />
+</form>
+<form name="partenaire" method="POST" data-netlify="true" action="/merci-partenaire.html" hidden>
+  <input type="hidden" name="form-name" value="partenaire" />
+  <input type="text" name="agence" />
+  <input type="text" name="nom" />
+  <input type="text" name="indicatif" />
+  <input type="tel" name="telephone" />
+  <input type="email" name="email" />
+  <input type="text" name="convention" />
+  <input type="text" name="volume" />
+  <textarea name="message"></textarea>
+</form>
+
 <!-- HEADER -->
 <header>
   <div class="logo">
@@ -1291,7 +1310,7 @@
       <a class="aida-whatsapp" href="https://api.whatsapp.com/send?phone=33756863630&amp;text=Bonjour%20Robin%20des%20Airs%2C%20je%20veux%20devenir%20partenaire%20agence%20en%201%20minute." target="_blank" rel="noopener noreferrer">💬 Devenir partenaire en 1 minute</a>
       <p class="aida-legal"><strong>Cadre légal :</strong> Règlement européen <strong>EU261/2004</strong>.</p>
     </div>
-    <form class="aida-mini-form" name="agence-express" method="POST" data-netlify="true">
+    <form class="aida-mini-form" name="agence-express" method="POST" data-netlify="true" action="/merci-partenaire.html">
       <input type="hidden" name="form-name" value="agence-express">
       <div class="field">
         <label for="aida-agence">Nom de l'agence</label>
@@ -1744,7 +1763,7 @@
         <div class="form-heading">Vos informations</div>
         <div class="form-sub">Remplissez le formulaire, nous vous recontactons sous 24h pour finaliser votre convention.</div>
 
-        <form name="partenaire" method="POST" data-netlify="true" action="/merci-partenaire">
+        <form name="partenaire" method="POST" data-netlify="true" action="/merci-partenaire.html">
           <input type="hidden" name="form-name" value="partenaire" />
 
           <div class="field">

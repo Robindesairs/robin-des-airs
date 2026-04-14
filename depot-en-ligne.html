@@ -284,6 +284,18 @@ a{text-decoration:none;color:inherit}
 </style>
 </head>
 <body>
+<!-- Netlify form detection fallback (particuliers) -->
+<form name="dossier-particulier" method="POST" data-netlify="true" action="/merci-dossier.html" hidden>
+  <input type="hidden" name="form-name" value="dossier-particulier">
+  <input type="text" name="prenom">
+  <input type="text" name="nom">
+  <input type="email" name="email">
+  <input type="text" name="whatsapp">
+  <input type="text" name="motif">
+  <input type="text" name="vol">
+  <input type="text" name="nb_passagers">
+  <input type="text" name="pnr">
+</form>
 
 <div class="topbar">
   <a href="/" class="top-logo">
@@ -1334,6 +1346,26 @@ function submitDossier() {
 
   fetch(WEBHOOK_URL, { method: "POST", body: fd })
     .then(() => {
+      /* Miroir Netlify Forms (sans PJ) pour suivi leads particuliers */
+      try {
+        const netlifyPayload = new URLSearchParams({
+          "form-name": "dossier-particulier",
+          prenom: String(fd.get("prenom") || ""),
+          nom: String(fd.get("nom") || ""),
+          email: String(fd.get("email") || ""),
+          whatsapp: String(fd.get("whatsapp") || ""),
+          motif: String(fd.get("motif") || ""),
+          vol: String(fd.get("leg1_vol") || ""),
+          nb_passagers: String(fd.get("nb_passagers") || ""),
+          pnr: String(fd.get("pnr") || "")
+        });
+        fetch("/merci-dossier.html", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: netlifyPayload.toString()
+        }).catch(function () {});
+      } catch (e) {}
+
       const fn = document.getElementById("p0-prenom")?.value.trim() || "";
       const ln = document.getElementById("p0-nom")?.value.trim() || "";
       const vol = document.getElementById("leg1-vol")?.value || "—";
