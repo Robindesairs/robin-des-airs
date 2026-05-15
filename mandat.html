@@ -431,6 +431,7 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
 // ── URL PARAMS ───────────────────────────────────────────────────
 const P = new URLSearchParams(window.location.search);
 let REF   = P.get('ref')       || ('RDA-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + Math.random().toString(36).substring(2,6).toUpperCase());
+const WA_PREFILL = P.get('phone') || P.get('wa') || P.get('waId') || '';
 const PAXN  = parseInt(P.get('pax')) || 1;
 const VOL   = P.get('vol')       || '';
 const DATE  = P.get('date')      || '';
@@ -448,6 +449,7 @@ window.addEventListener('DOMContentLoaded', () => {
   if (VOL)  document.getElementById('fnum').value = VOL;
   if (CIE)  document.getElementById('cie').value  = CIE;
   if (PNR)  document.getElementById('pnr').value  = PNR;
+  if (WA_PREFILL) document.getElementById('wa').value = decodeURIComponent(WA_PREFILL);
   if (DATE) {
     const p = DATE.split('/');
     if (p.length===3) document.getElementById('fdate').value = `${p[2]}-${p[1]}-${p[0]}`;
@@ -468,6 +470,11 @@ window.addEventListener('DOMContentLoaded', () => {
 
 function applyLegacyUrlParams() {
   const P = new URLSearchParams(window.location.search);
+  if (P.get('ref')) {
+    REF = P.get('ref');
+    const dr = document.getElementById('dRef');
+    if (dr) dr.textContent = REF;
+  }
   const setIfEmpty = (id, val) => {
     if (!val) return;
     const el = document.getElementById(id);
@@ -479,8 +486,8 @@ function applyLegacyUrlParams() {
     setIfEmpty('fn', parts[0] || '');
     setIfEmpty('ln', parts.slice(1).join(' '));
   }
-  const phone = P.get('phone') || P.get('wa');
-  if (phone) setIfEmpty('wa', phone);
+  const phone = P.get('phone') || P.get('wa') || P.get('waId');
+  if (phone) setIfEmpty('wa', decodeURIComponent(phone));
   setIfEmpty('addr', P.get('address') || '');
   setIfEmpty('em', P.get('email') || '');
   const cieEl = document.getElementById('cie');
