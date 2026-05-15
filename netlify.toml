@@ -79,8 +79,25 @@
   status = 200
 
 [[redirects]]
+  from = "/mandat"
+  to = "/mandat.html"
+  status = 200
+
+[[redirects]]
   from = "/mandat-representation"
-  to = "/mandat-representation.html"
+  to = "/mandat.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/mandat-representation.html"
+  to = "/mandat.html"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/api/submit-mandat"
+  to = "/.netlify/functions/submit-mandat"
   status = 200
 
 [[redirects]]
@@ -93,62 +110,6 @@
   to = "/crm.html"
   status = 200
 
-[[redirects]]
-  from = "/generateur-pub"
-  to = "/generateur-pub.html"
-  status = 200
-
-[[redirects]]
-  from = "/partenaires-agences"
-  to = "/partenaires-agences.html"
-  status = 200
-
-[[redirects]]
-  from = "/partenaires-agences-fcfa"
-  to = "/partenaires-agences-fcfa.html"
-  status = 200
-
-[[redirects]]
-  from = "/partenaires-rejoindre"
-  to = "/partenaires-rejoindre.html"
-  status = 200
-
-[[redirects]]
-  from = "/partenaires-landing"
-  to = "/partenaires-landing.html"
-  status = 200
-
-[[redirects]]
-  from = "/merci-partenaire"
-  to = "/merci-partenaire.html"
-  status = 200
-
-[[redirects]]
-  from = "/merci-dossier"
-  to = "/merci-dossier.html"
-  status = 200
-
-[[redirects]]
-  from = "/programme-agents-voyage"
-  to = "/programme-agents-voyage.html"
-  status = 200
-
-[[redirects]]
-  from = "/agences-partenaires"
-  to = "/programme-agents-voyage.html"
-  status = 301
-
-[[redirects]]
-  from = "/agences-partenaires.html"
-  to = "/programme-agents-voyage.html"
-  status = 301
-
-# Auth CRM (code dans CRM_ACCESS_CODE)
-[[redirects]]
-  from = "/api/crm-auth"
-  to = "/.netlify/functions/crm-auth"
-  status = 200
-
 # Webhook WhatsApp 360dialog
 [[redirects]]
   from = "/api/whatsapp-webhook"
@@ -159,41 +120,6 @@
 [[redirects]]
   from = "/api/whatsapp-status"
   to = "/.netlify/functions/whatsapp-status"
-  status = 200
-
-# Historique messages WhatsApp par numéro (CRM)
-[[redirects]]
-  from = "/api/wa-messages"
-  to = "/.netlify/functions/wa-messages"
-  status = 200
-
-# Clic WhatsApp => log prospect CRM
-[[redirects]]
-  from = "/api/wa-click-prospect"
-  to = "/.netlify/functions/wa-click-prospect"
-  status = 200
-
-# Points de restauration CRM
-[[redirects]]
-  from = "/api/crm-backup"
-  to = "/.netlify/functions/crm-backup"
-  status = 200
-
-# Signature électronique du mandat (preuve côté serveur — art. 1366 C. civ. + eIDAS)
-[[redirects]]
-  from = "/api/sign-mandate"
-  to = "/.netlify/functions/sign-mandate"
-  status = 200
-
-[[redirects]]
-  from = "/api/analyze-flight"
-  to = "/.netlify/functions/analyze-flight"
-  status = 200
-
-# Webhook AeroDataBox (souscriptions FlightByNumber — URL à mettre dans le POST RapidAPI)
-[[redirects]]
-  from = "/api/aerodatabox-webhook"
-  to = "/.netlify/functions/aerodatabox-webhook"
   status = 200
 
 # Page 404 personnalisée (créer 404.html si vous en voulez une)

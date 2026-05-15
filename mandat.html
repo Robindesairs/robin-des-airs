@@ -1,286 +1,904 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="/favicon.png" type="image/png">
-  <title>Mandat de représentation & cession de créance — Robin des Airs</title>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <style>
-    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-    :root{--navy:#0B1F3A;--neon:#00C87A;--neon-dark:#009960;--neon-light:rgba(0,200,122,0.12);--white:#fff;--off:#F7F8FA;--text:#1a2436;--gray:#6B7A90;--gray-light:#9CA8BB;--border:#E2E6EE}
-    body{font-family:'Montserrat',sans-serif;background:linear-gradient(160deg, var(--off) 0%, #eef2f6 100%);color:var(--text);line-height:1.75;min-height:100vh}
-    .top-bar{background:var(--navy);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 12px rgba(11,31,58,0.15)}
-    .top-logo{font-weight:900;font-size:16px;color:white;text-decoration:none;letter-spacing:-0.02em}.top-logo span{color:#00E5A0}
-    .back{color:rgba(255,255,255,0.85);font-size:13px;font-weight:600;text-decoration:none;transition:color .2s}.back:hover{color:white}
-    .wrap{max-width:700px;margin:0 auto;padding:48px 28px 80px}
-    .doc-box{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:42px 44px;margin-bottom:36px;box-shadow:0 6px 32px rgba(11,31,58,0.08), 0 0 0 1px rgba(255,255,255,0.8) inset;border-top:4px solid var(--neon)}
-    .doc-box.mandat-bilingue .mandat-company{font-size:10.5px;color:var(--gray);margin-bottom:28px;letter-spacing:0.04em;border-bottom:1px solid var(--border);padding-bottom:18px;line-height:1.6;text-transform:uppercase}
-    .doc-box.mandat-bilingue h4{margin:0 0 6px;font-size:18px;font-weight:800;color:var(--navy);letter-spacing:0.01em;line-height:1.25}
-    .doc-box.mandat-bilingue h4.en{margin-top:4px;margin-bottom:24px;font-size:12px;font-weight:600;color:var(--gray);letter-spacing:0.02em}
-    .doc-box.mandat-bilingue .mandat-section{margin-top:28px;margin-bottom:12px;padding:10px 0 10px 14px;border-left:4px solid var(--neon);font-size:13.5px;font-weight:700;color:var(--navy);line-height:1.4;background:var(--neon-light);border-radius:0 6px 6px 0}
-    .doc-box.mandat-bilingue .mandat-section .en{font-weight:600;font-size:11px;color:var(--gray);margin-top:4px;background:none}
-    .doc-box.mandat-bilingue p{margin:0 0 16px;line-height:1.78;font-size:14px;color:var(--text)}
-    .doc-box.mandat-bilingue p .m-fill{color:var(--navy);font-weight:700}
-    .doc-box.mandat-bilingue #m-name,.doc-box.mandat-bilingue #m-phone,.doc-box.mandat-bilingue #m-address,.doc-box.mandat-bilingue #m-email,.doc-box.mandat-bilingue #m-vol,.doc-box.mandat-bilingue #m-date,.doc-box.mandat-bilingue #m-route,.doc-box.mandat-bilingue #m-motif,.doc-box.mandat-bilingue #m-pnr,.doc-box.mandat-bilingue #m-compagnie,.doc-box.mandat-bilingue #m-pax-list{color:var(--navy);font-weight:700;font-size:14px}
-    .doc-box.mandat-bilingue .en{font-size:11.5px;color:var(--gray);opacity:.9;display:block;margin-top:6px;line-height:1.5}
-    .doc-box.mandat-bilingue .mandat-note{margin-top:16px;font-size:11.5px;color:var(--gray);font-style:italic;background:linear-gradient(90deg, var(--neon-light) 0%, var(--off) 100%);padding:14px 18px;border-radius:10px;border-left:4px solid var(--neon-dark);line-height:1.65}
-.doc-box.mandat-bilingue .mandat-highlight{margin:14px 0;padding:14px 18px;border-radius:10px;border:2px solid var(--neon-dark);background:var(--neon-light);line-height:1.7}
-.doc-box.mandat-bilingue .mandat-highlight p{margin:0;font-size:13px}
-.doc-box.mandat-bilingue .mandat-signed{margin-top:32px;font-size:11.5px;color:var(--gray-light);font-style:italic;text-align:right;padding-top:20px;border-top:2px solid var(--border);letter-spacing:0.02em}
-.doc-box.mandat-bilingue strong{color:var(--navy);font-weight:700}
-.doc-box.mandat-bilingue sup{font-size:0.7em;vertical-align:baseline}
-.mandat-creance{overflow-x:auto;margin:12px 0;border:1px solid var(--border);border-radius:8px}
-.mandat-creance table{width:100%;border-collapse:collapse;font-size:13px}
-.mandat-creance th,.mandat-creance td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}
-.mandat-creance th{background:var(--neon-light);font-weight:700;color:var(--navy);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
-.mandat-creance tr:last-child td{border-bottom:none}
-.mandat-creance .num{text-align:right}
-@media (max-width:600px){.wrap{padding:32px 18px 60px}.doc-box{padding:28px 22px;border-radius:12px}.doc-box.mandat-bilingue .mandat-section{padding:8px 0 8px 12px;font-size:12.5px}.mandat-creance th,.mandat-creance td{padding:8px}}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="/favicon.png" type="image/png">
+<meta name="description" content="Signez votre mandat de représentation Robin des Airs — CE 261/2004. No Win No Fee.">
+<title>Mandat de Représentation — Robin des Airs</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#0a3d2e;--green-mid:#1a5a47;--green-pale:#e8f0ec;
+  --gold:#8a6d3b;--gold-soft:#c9a96e;--gold-pale:#faf5eb;
+  --paper:#fdfcf8;--paper-mid:#f5f2ea;
+  --border:#d4cfc0;--muted:#7a7060;--ink:#111108;--red:#c0392b;
+}
+html{-webkit-font-smoothing:antialiased}
+body{background:var(--paper-mid);font-family:'DM Sans',sans-serif;color:var(--ink);min-height:100vh}
+/* TOP BAR */
+.topbar{background:var(--green);padding:14px 32px;display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid var(--gold);position:sticky;top:0;z-index:100}
+.brand{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:white}
+.brand em{font-style:italic;color:var(--gold-soft)}
+.doc-badge{font-family:'DM Mono',monospace;font-size:9px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.2em}
+.progress-wrap{height:3px;background:rgba(10,61,46,.15)}
+.progress-bar{height:3px;background:linear-gradient(90deg,var(--gold),#d4af6a);width:0%;transition:width .5s}
+/* MISE EN PAGE */
+.page{max-width:780px;margin:0 auto;padding:40px 24px 80px}
+/* BLOCS */
+.doc-header{background:white;border:1px solid var(--border);border-top:4px solid var(--green);padding:36px 40px 28px}
+.doc-logo-line{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px}
+.doc-logo{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--green)}
+.doc-logo em{font-style:italic;color:var(--gold)}
+.doc-ref{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-align:right;line-height:1.9}
+.doc-ref strong{color:var(--ink)}
+.doc-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:500;text-align:center;color:var(--ink);padding:18px 0 6px;border-top:1px solid var(--border)}
+.doc-subtitle{font-size:12px;color:var(--muted);text-align:center;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.15em;margin-top:6px}
+.doc-section{background:white;border:1px solid var(--border);border-top:none;padding:28px 40px}
+.doc-section:last-of-type{border-bottom:1px solid var(--border)}
+/* HERO MONTANT */
+.amount-hero{background:linear-gradient(135deg,var(--green),var(--green-mid));color:white;padding:26px 32px;margin:0 -40px 28px;display:grid;grid-template-columns:1fr 1px 1fr;align-items:center}
+.amount-col{text-align:center;padding:0 20px}
+.amount-div{background:rgba(255,255,255,.2);align-self:stretch}
+.amount-tag{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:rgba(255,255,255,.6);margin-bottom:6px}
+.amount-num{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;line-height:1}
+.amount-num.net{color:var(--gold-soft)}
+.amount-sub{font-size:11px;margin-top:4px;color:rgba(255,255,255,.7)}
+.formula-box{font-size:12px;margin-top:10px;padding:7px 12px;background:rgba(0,0,0,.2);font-family:'DM Mono',monospace;color:rgba(255,255,255,.9);display:inline-block}
+/* PARTIES */
+.parties-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+.partie-box{border:1px solid var(--border);padding:18px 20px;position:relative}
+.partie-box::before{content:attr(data-label);position:absolute;top:-9px;left:14px;background:white;font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--gold);padding:0 6px}
+.partie-name{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--green);margin-bottom:8px}
+.partie-detail{font-size:12px;color:var(--muted);line-height:1.8}
+/* SECTION TITRE */
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--green);padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+/* CHAMPS */
+.field-row{margin-bottom:16px}
+.field-row.duo{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field-row.tri{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}
+label{display:block;font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-bottom:5px;font-weight:500}
+label .req{color:var(--red);margin-left:2px}
+input,select,textarea{width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);transition:border-color .2s;-webkit-appearance:none;border-radius:0}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);background:white}
+input.ro{background:var(--green-pale);border-color:#b8cfc3;color:var(--green);font-weight:500}
+textarea{resize:vertical;min-height:72px}
+.ferr{color:var(--red);font-size:11px;margin-top:4px;display:none}
+input.err,textarea.err,select.err{border-color:var(--red)!important}
+/* CLAUSES */
+.clause{padding:14px 18px;border-left:3px solid var(--border);margin:12px 0;font-size:13px;line-height:1.75;color:#3a3630}
+.clause strong{color:var(--ink)}
+.cnum{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--gold);margin-bottom:5px;display:block}
+.clause.hi{background:var(--gold-pale);border-color:var(--gold)}
+.clause.le{background:var(--green-pale);border-color:var(--green-mid)}
+.clause.pro{background:#fff8f8;border-color:#e8b4b4}
+/* TABLEAU HONORAIRES */
+.fee-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px}
+.fee-table th{background:var(--ink);color:white;font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;padding:10px 14px;text-align:left;font-weight:400}
+.fee-table td{padding:10px 14px;border-bottom:1px solid var(--border)}
+.fee-table tr:nth-child(even) td{background:var(--paper)}
+.fee-table tr:last-child td{border-bottom:none}
+.fee-table .em{font-weight:600;color:var(--green)}
+/* DÉCLARATION */
+.declaration-box{background:var(--green-pale);border:1px solid #b8cfc3;padding:18px 20px;margin:20px 0;font-size:13px;line-height:1.75}
+/* SEUL CHECK UNIQUE */
+.single-check{display:flex;align-items:flex-start;gap:14px;padding:16px 18px;border:1.5px solid var(--border);background:var(--gold-pale);margin:16px 0;cursor:pointer;transition:border-color .2s}
+.single-check:hover{border-color:var(--gold)}
+.single-check input[type=checkbox]{width:20px;height:20px;min-width:20px;margin-top:2px;cursor:pointer;accent-color:var(--green)}
+.single-check p{font-size:13px;line-height:1.7;color:var(--ink)}
+.single-check p strong{color:var(--green)}
+/* SIGNATURE */
+.sig-area{background:white;border:2px dashed var(--border);padding:16px;text-align:center;cursor:pointer;transition:border-color .2s;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;margin:16px 0}
+.sig-area:hover{border-color:var(--gold)}
+#sigCanvas{display:none;border:1.5px solid var(--border);cursor:crosshair;touch-action:none;background:white;max-width:100%}
+.sig-ph{font-family:'DM Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted)}
+.sig-clear{font-size:11px;color:var(--gold);text-decoration:underline;cursor:pointer;font-family:'DM Mono',monospace;display:none;margin-top:4px}
+/* BOUTONS */
+.btn-submit{width:100%;background:var(--green);color:white;border:none;padding:18px 32px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;letter-spacing:.03em;transition:background .2s,transform .1s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:24px}
+.btn-submit:hover{background:#063022;transform:translateY(-1px)}
+.btn-submit:disabled{background:var(--muted);cursor:not-allowed;transform:none}
+/* TRUST */
+.trust-bar{display:flex;justify-content:space-around;padding:14px 20px;background:var(--paper-mid);border:1px solid var(--border);border-top:none;flex-wrap:wrap;gap:8px}
+.trust-item{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted)}
+/* SUCCÈS */
+.success-screen{display:none;background:white;border:1px solid var(--border);border-top:4px solid var(--green);padding:60px 40px;text-align:center}
+.success-icon{width:72px;height:72px;background:var(--green);border-radius:50%;color:white;font-size:30px;line-height:72px;margin:0 auto 20px}
+.success-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:500;color:var(--green);margin-bottom:12px}
+.success-ref{font-family:'DM Mono',monospace;font-size:13px;color:var(--muted);background:var(--green-pale);padding:10px 20px;display:inline-block;margin:10px 0 20px}
+.success-ref strong{color:var(--green)}
+.success-steps{text-align:left;max-width:420px;margin:20px auto 0}
+.sstep{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.6}
+.sstep:last-child{border-bottom:none}
+.snum{width:26px;height:26px;min-width:26px;background:var(--green);color:white;border-radius:50%;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:600;margin-top:1px}
+@media(max-width:600px){
+  .page{padding:20px 12px 60px}
+  .doc-header,.doc-section{padding:20px 20px}
+  .amount-hero{grid-template-columns:1fr;padding:20px}
+  .amount-div{display:none}
+  .parties-grid,.field-row.duo,.field-row.tri{grid-template-columns:1fr}
+  .doc-badge{display:none}
+}
+</style>
 </head>
 <body>
-  <div class="top-bar">
-    <a href="/" class="top-logo">ROBIN<span> des Airs</span></a>
-    <a href="/" class="back">← Retour</a>
-  </div>
-  <div class="wrap">
-    <div class="doc-box mandat-bilingue">
-      <p class="mandat-company">SASU Robin des Airs — SIREN 932 847 561 — RCS Paris — TVA FR 71 932847561<br>Siège social : 66 avenue des Champs-Élysées, 75008 Paris</p>
-      <h4>MANDAT DE REPRÉSENTATION & CESSION DE CRÉANCE</h4>
-      <h4 class="en">POWER OF ATTORNEY & ASSIGNMENT OF CLAIM</h4>
-
-      <p class="mandat-section"><strong>1. LE MANDANT — Passager référent</strong><br><span class="en">1. THE PRINCIPAL — Lead Passenger</span></p>
-      <p><strong>Nom & Prénom / Full Name</strong> <span id="m-name" class="m-fill">—</span></p>
-      <p><strong>Téléphone / Phone</strong> <span id="m-phone" class="m-fill">—</span></p>
-      <p><strong>Adresse / Address</strong> <span id="m-address" class="m-fill">—</span></p>
-      <p><strong>Email</strong> <span id="m-email" class="m-fill">—</span></p>
-      <p><strong>N° de vol / Flight No.</strong> <span id="m-vol" class="m-fill">—</span></p>
-      <p><strong>Date / Date</strong> <span id="m-date" class="m-fill">—</span></p>
-      <p><strong>Trajet / Route</strong> <span id="m-route" class="m-fill">—</span></p>
-      <p><strong>Motif / Claim type</strong> <span id="m-motif" class="m-fill">—</span> <span id="m-motif-en" class="en"></span></p>
-      <p><strong>N° PNR / PNR No.</strong> <span id="m-pnr" class="m-fill">—</span></p>
-      <p><strong>Compagnie qui effectue le vol / Operating carrier</strong> <span id="m-compagnie" class="m-fill">—</span></p>
-      <p><strong>Autres passagers représentés / Other passengers represented</strong><br><span id="m-pax-list" class="m-fill">—</span></p>
-      <p class="mandat-note"><em>Chaque passager adulte peut co-signer ce contrat. Les mineurs sont représentés par leur(s) parent(s). Le passager principal signe pour l'ensemble du groupe, y compris les mineurs qu'il représente.<br>Each adult passenger may co-sign. Minors are represented by their parent(s). The lead passenger signs for the whole group, including any minors they represent.</em></p>
-
-      <p class="mandat-section"><strong>2. NOTRE MISSION — On s'occupe de tout</strong><br><span class="en">2. OUR MISSION — We handle everything</span></p>
-      <p>Je charge <strong>Robin des Airs</strong>, à titre exclusif, d'obtenir le paiement de mon indemnité (250 €, 400 € ou 600 € par passager selon la distance et le cas — CE 261/2004). Je cède ma créance (art. 1321 C. civ.) pour permettre à Robin des Airs d'agir en son nom propre. Robin des Airs notifiera cette cession à la compagnie aérienne (art. 1324 C. civ.). Ce mandat, conclu dans l'intérêt commun du mandant et du mandataire, est <strong>non révocable</strong> à compter de l'envoi de la première mise en demeure à la compagnie aérienne (art. 2003 C. civ.).</p>
-      <p class="en">I appoint Robin des Airs, on an exclusive basis, to obtain my compensation (€250, €400 or €600 per passenger depending on distance and case — EU 261/2004). I assign my claim (Art. 1321 French Civil Code) so Robin des Airs may act in its own name. Robin des Airs shall notify this assignment to the airline (Art. 1324). This mandate is non-revocable as from the first formal notice sent to the airline (Art. 2003).</p>
-      <p><strong>Engagement Robin :</strong> Aucun résultat → 0 € de frais. Succès → vous recevez 75 % nets.<br><span class="en">Robin's commitment: Nothing recovered → €0 fee. Success → you receive 75% net.</span></p>
-      <div class="mandat-highlight">
-        <p><strong>Paiement direct par la compagnie :</strong> Si la compagnie vous paie directement suite à nos démarches, conservez vos 75 % nets et <strong>reversez les 25 % d'honoraires à Robin des Airs sous 48 h</strong>.<br><span class="en"><strong>Direct payment by the airline:</strong> If the airline pays you directly following our action, keep your 75% net and <strong>transfer the 25% fee to Robin des Airs within 48 hours</strong>.</span></p>
-      </div>
-
-      <p class="mandat-section"><strong>3. HONORAIRES — « Pas de résultat, pas de frais »</strong><br><span class="en">3. FEES — « No win, no fee »</span></p>
-      <p><strong>Robin des Airs intervient principalement sur les créances à 600 €</strong> (vol long-courrier +3 500 km, retard +4 h à l'arrivée) : 600 € brut / passager → Robin 25 % (150 €), Vous 75 % nets (450 €). Pour les vols court ou moyen-courrier, le règlement CE 261 prévoit des indemnités de 250 € ou 400 € selon la distance → même répartition 25 % / 75 %.</p>
-      <p>Art. 7§2 CE 261/2004 : réduction 50 % possible si réacheminement et retard &lt; 4 h à l'arrivée.</p>
-      <p class="en"><strong>Robin des Airs mainly handles €600 claims</strong> (long-haul +3,500 km, delay +4h at arrival): €600 gross per passenger → Robin 25% (€150), You 75% net (€450). For short or medium-haul flights, EU 261 provides €250 or €400 depending on distance → same 25% / 75% split.</p>
-      <p class="en">Art. 7(2) EU 261/2004: 50% reduction may apply if re-routing and delay &lt; 4h at arrival.</p>
-
-      <p class="mandat-section"><strong>Ligne(s) de créance — Montant demandé à la compagnie</strong><br><span class="en">Claim line(s) — Amount claimed from the airline</span></p>
-      <div id="m-creance-table" class="mandat-creance"></div>
-      <p class="mandat-note"><strong>Total demandé à la compagnie aérienne / Total claimed from the airline :</strong> <span id="m-total-demandé" class="m-fill">—</span></p>
-
-      <p class="mandat-section"><strong>4. ENGAGEMENTS RÉCIPROQUES</strong><br><span class="en">4. MUTUAL COMMITMENTS</span></p>
-      <p>Robin des Airs : gérer le dossier de A à Z, informer le Mandant, notifier la cession, virer les 75 % nets sous 5 jours ouvrés. Le Mandant s'engage à : transmettre tout contact de la compagnie à Robin, ne pas accepter bon d'achat ou offre directe, fournir cartes d'embarquement, pièce d'identité, e-mails.</p>
-      <p class="en">Robin des Airs: handle the case from A to Z, inform the Principal, notify the assignment, transfer the 75% net within 5 working days. The Principal agrees to: forward any contact from the airline to Robin, not accept vouchers or direct offers, provide boarding passes, ID, emails.</p>
-
-      <p class="mandat-section"><strong>5. INFORMATIONS LÉGALES & PROTECTION DES DONNÉES</strong><br><span class="en">5. LEGAL INFORMATION & DATA PROTECTION</span></p>
-      <p><strong>Démarrage immédiat & rétractation :</strong> En signant ce mandat, le Mandant autorise Robin des Airs à commencer immédiatement le traitement du dossier et renonce expressément à son droit de rétractation de 14 jours (art. L221-18 C. cons.). Formulaire de rétractation sur demande à expert@robindesairs.eu.<br><span class="en"><strong>Immediate start & withdrawal:</strong> By signing this mandate, the Principal authorizes Robin des Airs to start processing the case immediately and expressly waives the 14-day right of withdrawal (Art. L221-18 Consumer Code). Withdrawal form on request at expert@robindesairs.eu.</span></p>
-
-      <p><strong>RGPD — Protection des données personnelles :</strong><br>
-      Responsable de traitement : SASU Robin des Airs, 66 av. des Champs-Élysées, 75008 Paris — expert@robindesairs.eu.<br>
-      Finalité : gestion et recouvrement de l'indemnisation CE 261/2004. Base légale : exécution du contrat (art. 6.1.b RGPD).<br>
-      Conservation : durée du dossier + 5 ans à compter de sa clôture (prescription art. 2224 C. civ.).<br>
-      <strong>Vos droits (art. 15 à 22 RGPD) :</strong> accès · rectification · effacement · limitation · portabilité · opposition · retrait du consentement à tout moment · réclamation auprès de la CNIL (www.cnil.fr).<br>
-      Pour exercer vos droits : expert@robindesairs.eu — réponse sous 30 jours.<br><span class="en">
-      <strong>GDPR — Data protection:</strong> Controller: SASU Robin des Airs, 66 av. des Champs-Élysées, 75008 Paris. Purpose: handling EU 261/2004 compensation claim. Legal basis: performance of contract (Art. 6.1.b GDPR). Retention: case duration + 5 years. Your rights (Arts. 15–22 GDPR): access, rectification, erasure, restriction, portability, objection, withdrawal of consent, complaint to supervisory authority. Contact: expert@robindesairs.eu.</span></p>
-
-      <p><strong>Transfert de données hors Union Européenne (Sénégal · Côte d'Ivoire · pays tiers) :</strong><br>
-      Si le Mandant réside au Sénégal, en Côte d'Ivoire ou dans tout autre pays ne disposant pas d'une décision d'adéquation de la Commission européenne, le transfert de ses données personnelles vers la France est effectué sur la base du <strong>consentement explicite du Mandant</strong> (art. 49.1.a RGPD), recueilli lors de la signature du présent mandat. Les données sont traitées exclusivement aux fins de recouvrement et ne sont pas revendues à des tiers. Les passagers sénégalais bénéficient également des protections prévues par la loi sénégalaise n° 2008-12 du 25 janvier 2008 sur la protection des données personnelles (Commission de Protection des Données Personnelles — CDP Sénégal).<br>
-      <span class="en"><strong>International data transfer (Senegal · Côte d'Ivoire · third countries):</strong> If the Principal resides in Senegal, Côte d'Ivoire or any country without an EU adequacy decision, the transfer of personal data to France is based on the Principal's explicit consent (Art. 49.1.a GDPR) given at the time of signing. Data is processed solely for claim recovery and is not sold to third parties. Senegalese passengers are also protected under Senegalese Law No. 2008-12 of 25 January 2008 on personal data protection (CDP Senegal).</span></p>
-
-      <p><strong>Communication WhatsApp & messages automatisés :</strong><br>
-      En fournissant mon numéro de téléphone, j'accepte expressément de recevoir des messages WhatsApp de Robin des Airs relatifs à l'avancement de mon dossier, aux démarches en cours et, le cas échéant, à des informations sur mes droits de passager. Je peux me désabonner à tout moment en répondant <em>STOP</em> ou en écrivant à expert@robindesairs.eu. Ce consentement est distinct du mandat et révocable indépendamment de lui.<br>
-      <span class="en"><strong>WhatsApp & automated messages:</strong> By providing my phone number, I expressly agree to receive WhatsApp messages from Robin des Airs regarding my case progress and passenger rights information. I may unsubscribe at any time by replying STOP or writing to expert@robindesairs.eu. This consent is separate from the mandate and independently revocable.</span></p>
-
-      <p><strong>Médiateur :</strong> MTV, 15 rue Maréchal Foch, 93601 Aulnay-sous-Bois — www.mtv.travel.<br>
-      <strong>Langue prévalante :</strong> version française. <strong>Loi applicable :</strong> droit français — Tribunaux de Paris.</p>
-      <!-- ═══ ZONE DE SIGNATURE ═══ -->
-      <div id="sign-zone" style="margin-top:36px;border-top:2px solid var(--border);padding-top:28px;">
-        <p style="font-size:13.5px;font-weight:700;color:var(--navy);margin-bottom:16px;">✍️ Signature électronique — Étape obligatoire / <em style="font-weight:600;font-size:12px;color:var(--gray);">Electronic signature — Required step</em></p>
-
-        <!-- Checkbox rétractation (directive 2011/83/UE — obligatoire séparé) -->
-        <label id="lbl-retractation" style="display:flex;align-items:flex-start;gap:12px;background:#FFF8E1;border:2px solid #F59E0B;border-radius:10px;padding:14px 16px;margin-bottom:14px;cursor:pointer;font-size:13px;line-height:1.6;">
-          <input type="checkbox" id="cb-retractation" style="margin-top:3px;width:18px;height:18px;accent-color:var(--neon-dark);flex-shrink:0;">
-          <span><strong>Je renonce expressément à mon droit de rétractation de 14 jours</strong> (art. L221-18 C. cons.) afin que Robin des Airs commence immédiatement à traiter mon dossier. Je comprends que si je me rétracte après démarrage des démarches, les frais engagés pourront m'être imputés.<br>
-          <em style="font-size:11.5px;color:var(--gray);">I expressly waive my 14-day right of withdrawal (Art. L221-18 Consumer Code) so Robin des Airs may start processing my case immediately.</em></span>
-        </label>
-
-        <!-- Checkbox lecture et accord mandat -->
-        <label id="lbl-lu" style="display:flex;align-items:flex-start;gap:12px;background:var(--neon-light);border:2px solid var(--neon-dark);border-radius:10px;padding:14px 16px;margin-bottom:20px;cursor:pointer;font-size:13px;line-height:1.6;">
-          <input type="checkbox" id="cb-lu" style="margin-top:3px;width:18px;height:18px;accent-color:var(--neon-dark);flex-shrink:0;">
-          <span><strong>J'ai lu et j'accepte l'intégralité du mandat de représentation et de la cession de créance</strong> ci-dessus, ainsi que la <a href="/politique-confidentialite.html" target="_blank" style="color:var(--neon-dark);">politique de confidentialité</a>. Bon pour mandat — Lu et approuvé.<br>
-          <em style="font-size:11.5px;color:var(--gray);">I have read and accept the mandate and assignment of claim above, and the privacy policy. Approved.</em></span>
-        </label>
-
-        <button id="btn-sign" onclick="signerMandat()" disabled
-          style="width:100%;padding:18px;background:var(--gray-light);color:white;border:none;border-radius:12px;font-size:16px;font-weight:800;letter-spacing:0.03em;cursor:not-allowed;transition:all .3s;font-family:'Montserrat',sans-serif;">
-          ✅ SIGNER LE MANDAT / SIGN THE MANDATE
-        </button>
-
-        <!-- Zone certificat (affichée après signature) -->
-        <div id="cert-zone" style="display:none;margin-top:20px;background:#F0FDF4;border:2px solid var(--neon-dark);border-radius:12px;padding:20px 24px;text-align:center;">
-          <p style="font-size:18px;font-weight:900;color:var(--neon-dark);margin-bottom:8px;">✅ Mandat signé / Mandate signed</p>
-          <p style="font-size:13px;color:var(--navy);margin-bottom:4px;"><strong>Certificat de signature / Signature certificate :</strong></p>
-          <p id="cert-id" style="font-size:14px;font-weight:700;color:var(--navy);font-family:monospace;background:white;padding:10px 16px;border-radius:8px;display:inline-block;margin:6px 0;border:1px solid var(--border);"></p>
-          <p id="cert-ts" style="font-size:12px;color:var(--gray);margin-top:6px;"></p>
-          <p style="font-size:11.5px;color:var(--gray);margin-top:10px;font-style:italic;">Conservez ce numéro de certificat comme preuve de votre accord.<br>Keep this certificate number as proof of your agreement.</p>
-        </div>
-
-        <!-- Erreur -->
-        <div id="sign-error" style="display:none;margin-top:14px;background:#FEF2F2;border:1px solid #FCA5A5;border-radius:10px;padding:14px 16px;font-size:13px;color:#991B1B;"></div>
-      </div>
-      <!-- ═══ FIN ZONE SIGNATURE ═══ -->
-
-      <p class="mandat-signed" id="mandat-signed-footer" style="display:none;">Document signé électroniquement — Robin des Airs. Lu et approuvé — Bon pour mandat et cession de créance.<br><span class="en">Document electronically signed — Robin des Airs. Read and approved — Valid as power of attorney and assignment of claim.</span></p>
+<div class="topbar">
+  <a href="/" style="text-decoration:none;color:inherit"><div class="brand">Robin <em>des</em> Airs</div></a>
+  <div class="doc-badge">Mandat de représentation · CE 261/2004</div>
+</div>
+<div class="progress-wrap"><div class="progress-bar" id="pgBar"></div></div>
+<div class="page">
+<div id="mandatForm">
+<!-- EN-TÊTE DOCUMENT -->
+<div class="doc-header">
+  <div class="doc-logo-line">
+    <div>
+      <div class="doc-logo">Robin <em>des</em> Airs</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">Service de réclamation · Vols Europe–Afrique · No Win No Fee</div>
+    </div>
+    <div class="doc-ref">
+      <div>Réf. : <strong id="dRef">—</strong></div>
+      <div>Date : <strong id="dDate">—</strong></div>
+      <div style="font-size:10px;margin-top:4px">CE 261/2004 · Art. 5, 6 & 7</div>
     </div>
   </div>
+  <div class="doc-title">Mandat de Représentation</div>
+  <div class="doc-subtitle">Convention exclusive de gestion et recouvrement d'indemnité aérienne</div>
+</div>
+<!-- HÉRO MONTANT -->
+<div class="doc-section">
+  <div class="amount-hero">
+    <div class="amount-col">
+      <div class="amount-tag">Indemnité légale brute</div>
+      <div class="amount-num" id="hGross">600 €</div>
+      <div class="amount-sub">Règlement CE 261/2004</div>
+    </div>
+    <div class="amount-div"></div>
+    <div class="amount-col">
+      <div class="amount-tag">✅ Net dans votre poche</div>
+      <div class="amount-num net" id="hNet">450 €</div>
+      <div class="amount-sub">Après commission RDA (25% si succès)</div>
+      <div class="formula-box" id="hFormula">600 € − 150 € = 450 €</div>
+    </div>
+  </div>
+  <!-- PARTIES -->
+  <div class="sec-title">👥 Les parties</div>
+  <div class="parties-grid">
+    <div class="partie-box" data-label="Le Mandant (vous)">
+      <div class="partie-name" id="pMandant">—</div>
+      <div class="partie-detail">Passager(s) lésé(s)<br>Vol concerné : <span id="pVol">—</span></div>
+    </div>
+    <div class="partie-box" data-label="Le Mandataire">
+      <div class="partie-name">Robin des Airs</div>
+      <div class="partie-detail">
+        Service juridique CE 261/2004<br>
+        66 av. des Champs-Élysées — Paris<br>
+        contact@robindesairs.eu<br>
+        +33 7 56 86 36 30
+      </div>
+    </div>
+  </div>
+</div>
+<!-- INFORMATIONS PERSONNELLES -->
+<div class="doc-section">
+  <div class="sec-title">✍️ Vos coordonnées</div>
+  <div class="field-row duo">
+    <div>
+      <label>Prénom <span class="req">*</span></label>
+      <input type="text" id="fn" placeholder="Jean" oninput="updateParties()">
+      <div class="ferr" id="fnErr">Champ obligatoire</div>
+    </div>
+    <div>
+      <label>Nom <span class="req">*</span></label>
+      <input type="text" id="ln" placeholder="DUPONT" oninput="updateParties()">
+      <div class="ferr" id="lnErr">Champ obligatoire</div>
+    </div>
+  </div>
+  <div class="field-row duo">
+    <div>
+      <label>WhatsApp <span class="req">*</span></label>
+      <input type="tel" id="wa" placeholder="+33 6 12 34 56 78">
+      <div class="ferr" id="waErr">Numéro requis</div>
+    </div>
+    <div>
+      <label>Email</label>
+      <input type="email" id="em" placeholder="jean@email.com">
+    </div>
+  </div>
+  <div class="field-row">
+    <label>Adresse postale complète <span class="req">*</span></label>
+    <textarea id="addr" placeholder="12 rue de la Paix&#10;75001 Paris — France" rows="3"></textarea>
+    <div class="ferr" id="addrErr">Adresse requise pour le mandat</div>
+  </div>
+  <div style="font-size:12px;color:var(--muted);font-style:italic;padding:10px 14px;background:var(--green-pale);border-left:3px solid var(--green-mid);margin-top:4px">
+    💶 Vos coordonnées bancaires seront collectées ultérieurement pour le versement de votre net (75%) sous 48h ouvrées après encaissement.
+  </div>
+</div>
+<!-- VOL CONCERNÉ -->
+<div class="doc-section">
+  <div class="sec-title">✈️ Le vol concerné</div>
+  <div class="field-row tri">
+    <div>
+      <label>Compagnie <span class="req">*</span></label>
+      <input type="text" id="cie" placeholder="Brussels Airlines" class="ro">
+    </div>
+    <div>
+      <label>N° de vol <span class="req">*</span></label>
+      <input type="text" id="fnum" placeholder="SN271" class="ro" oninput="updateParties()">
+    </div>
+    <div>
+      <label>PNR / Réservation</label>
+      <input type="text" id="pnr" placeholder="ABC123" class="ro">
+    </div>
+  </div>
+  <div class="field-row duo">
+    <div>
+      <label>Date du vol <span class="req">*</span></label>
+      <input type="date" id="fdate">
+      <div class="ferr" id="fdErr">Date requise</div>
+    </div>
+    <div>
+      <label>Incident <span class="req">*</span></label>
+      <select id="inc">
+        <option value="">— Sélectionnez —</option>
+        <option value="delay">⏱️ Retard de +3h à l'arrivée</option>
+        <option value="cancel">❌ Vol annulé</option>
+        <option value="denied">🚫 Refus d'embarquement</option>
+      </select>
+      <div class="ferr" id="incErr">Sélection requise</div>
+    </div>
+  </div>
+  <div class="field-row duo">
+    <div>
+      <label>Aéroport de départ</label>
+      <input type="text" id="dep" placeholder="Paris CDG">
+    </div>
+    <div>
+      <label>Aéroport d'arrivée</label>
+      <input type="text" id="arr" placeholder="Banjul BJL">
+    </div>
+  </div>
+  <!-- Compteur passagers caché — géré par JS -->
+  <input type="hidden" id="pax" value="1">
+  <div id="paxNames"></div>
+  <!-- Bouton ajouter un passager -->
+  <button type="button" id="btnAddPax" onclick="addPassenger()" style="
+    margin-top:8px;width:100%;padding:11px 14px;
+    background:white;border:1.5px dashed var(--gold);
+    font-family:'DM Sans',sans-serif;font-size:13px;
+    color:var(--gold);cursor:pointer;text-align:center;
+    transition:background .2s,color .2s;
+  " onmouseover="this.style.background='var(--gold-pale)'" onmouseout="this.style.background='white'">
+    ➕ Ajouter un passager
+  </button>
+  <div style="font-size:11px;color:var(--muted);margin-top:6px;font-style:italic">
+    💡 Chaque passager du même vol peut être ajouté. Le montant net est recalculé automatiquement.
+  </div>
+</div>
+<!-- CLAUSES DU MANDAT -->
+<div class="doc-section">
+  <div class="sec-title">⚖️ Conditions du mandat</div>
+  <div class="clause le">
+    <span class="cnum">Article 1 — Objet</span>
+    Le Mandant confie à Robin des Airs la mission <strong>exclusive</strong> d'agir en son nom pour obtenir l'indemnisation prévue par le <strong>Règlement CE 261/2004</strong> auprès de la compagnie aérienne concernée — par voie amiable, administrative, judiciaire ou arbitrale.
+  </div>
+  <div class="clause">
+    <span class="cnum">Article 2 — Durée</span>
+    Le mandat est consenti pour <strong>24 mois</strong> à compter de la signature. Cette durée est nécessaire pour traiter les dossiers complexes incluant relances, médiation et procédure judiciaire si nécessaire. Il peut être résilié par email à tout moment en cas de <strong>faute grave, fraude avérée ou non-coopération persistante</strong> de l'une des parties, avec un préavis de 15 jours.
+  </div>
+  <div class="clause">
+    <span class="cnum">Article 3 — Exclusivité & Anti-contournement</span>
+    Le présent mandat est <strong>exclusif</strong>. Pendant sa durée, le Mandant s'engage à ne pas confier le même dossier à un tiers ni à négocier directement avec la compagnie pour le même incident <strong>sans en informer préalablement Robin des Airs</strong>. Tout accord conclu en violation de cette clause engage la responsabilité du Mandant, qui restera redevable de la commission convenue.
+  </div>
+  <div class="clause hi">
+    <span class="cnum">Article 4 — Honoraires · No Win, No Fee</span>
+    Robin des Airs perçoit une commission de <strong>25% TTC du montant effectivement encaissé</strong>, <strong>uniquement en cas de succès</strong>. En cas d'échec ou de non-recouvrement, <strong>aucun frais n'est dû</strong>. Aucune avance n'est exigée à aucun stade.
+  </div>
+  <div class="clause hi" style="border-color:#1a5a47;background:#e8f0ec;">
+    <span class="cnum" style="color:#1a5a47;">Article 4.1 — Frais Judiciaires</span>
+    Robin des Airs prend en charge <strong>100% des frais d'avocat, de greffe, d'huissier et de procédure judiciaire TTC</strong> liés au traitement du dossier. Le Mandant n'avance aucune somme à quelque stade que ce soit. Robin des Airs se réserve le droit de <strong>sélectionner librement les dossiers</strong> qu'elle estime viables avant d'engager une procédure judiciaire.
+  </div>
+  <table class="fee-table">
+    <tr><th>Distance du vol</th><th>Indemnité légale / pax</th><th>Commission RDA (25%)</th><th>Net client</th></tr>
+    <tr><td>≤ 1 500 km</td><td>250 €</td><td>62,50 €</td><td class="em">187,50 €</td></tr>
+    <tr><td>1 500 – 3 500 km</td><td>400 €</td><td>100 €</td><td class="em">300 €</td></tr>
+    <tr><td>&gt; 3 500 km (Europe-Afrique)</td><td>600 €</td><td>150 €</td><td class="em">450 €</td></tr>
+  </table>
+  <div class="clause pro">
+    <span class="cnum">Article 5 — Paiement & Protection du Mandant</span>
+    Le Mandant donne instruction expresse à la compagnie aérienne de verser toute indemnité au <strong>compte désigné par Robin des Airs</strong>. Dès encaissement, Robin des Airs reverse au Mandant sa part nette (75%) sur l'IBAN communiqué dans ce mandat, dans un délai de <strong>48 heures ouvrées</strong>. Si la compagnie verse directement au Mandant, celui-ci s'engage à reverser sans délai la commission de 25% à Robin des Airs.
+  </div>
+  <div class="clause pro" style="border-left-color:#8a1c1c;background:#fff4f4;">
+    <span class="cnum" style="color:#8a1c1c;">Article 6 — Clause Non Libératoire pour la Compagnie Aérienne</span>
+    <strong>Tout paiement effectué directement par la compagnie aérienne au Mandant ne libère pas la compagnie de ses obligations</strong> envers Robin des Airs, mandataire exclusif désigné par acte signé. Robin des Airs notifie expressément la compagnie, dès la mise en demeure, que le <strong>seul paiement libératoire valable</strong> est celui effectué sur le compte bancaire de Robin des Airs.
+    <br><br>
+    En conséquence : (i) tout règlement opéré directement au Mandant en violation de cette instruction sera réputé <strong>non libératoire à l'égard de Robin des Airs</strong> ; (ii) la compagnie demeurera redevable du paiement auprès du mandataire ; (iii) Robin des Airs se réserve le droit d'engager toute action en recouvrement, y compris judiciaire, à l'encontre de la compagnie aérienne. Cette stipulation constitue une <strong>instruction de paiement irrévocable</strong> au sens des articles 1984 et suivants du Code civil, opposable à tout tiers dûment notifié.
+  </div>
+  <div class="clause">
+    <span class="cnum">Article 7 — Obligations de Robin des Airs</span>
+    Robin des Airs s'engage à : (i) instruire le dossier avec diligence ; (ii) informer le Mandant à chaque étape clé ; (iii) reverser les sommes dans les 48h ouvrées après encaissement ; (iv) notifier expressément la compagnie aérienne de l'existence du présent mandat et de l'instruction de paiement exclusif ; (v) protéger les données personnelles conformément au RGPD.
+  </div>
+  <div class="clause">
+    <span class="cnum">Article 8 — Obligations du Mandant</span>
+    Le Mandant s'engage à : (i) fournir des informations exactes et complètes ; (ii) transmettre tout document utile dans les meilleurs délais ; (iii) informer Robin des Airs de <strong>tout contact ou offre de la compagnie aérienne dans les 24h</strong> ; (iv) ne pas accepter ni encaisser aucun paiement de la compagnie sans en aviser Robin des Airs ; (v) ne pas agir en parallèle sur le même dossier sans accord préalable écrit.
+  </div>
+  <div class="clause le">
+    <span class="cnum">Article 9 — Droit de rétractation (14 jours) & Démarrage immédiat</span>
+    Conformément aux articles L. 221-18 et suivants du Code de la consommation, le Mandant dispose d'un <strong>délai de rétractation de 14 jours calendaires</strong> à compter de la signature, sans pénalité. Il suffit d'envoyer un email à <strong>contact@robindesairs.eu</strong> avec la mention « Je me rétracte — Réf. [numéro de dossier] ».
+    <br><br>
+    Conformément à l'article L. 221-25 du Code de la consommation, si le Mandant demande expressément l'<strong>exécution immédiate du mandat avant l'expiration du délai de 14 jours</strong> (case cochée ci-dessous), Robin des Airs est autorisée à débuter les démarches sans attendre. En cas de rétractation ultérieure dans ce délai, le Mandant reconnaît que les prestations déjà accomplies seront dues au prorata — étant précisé qu'aucune somme ne sera exigible avant encaissement effectif de l'indemnité (principe No Win No Fee).
+  </div>
+  <div class="clause">
+    <span class="cnum">Article 10 — Confidentialité & RGPD</span>
+    Les données personnelles collectées sont utilisées exclusivement pour la gestion du dossier. Elles ne sont pas revendues. Conformément au RGPD, le Mandant dispose d'un droit d'accès, de rectification et de suppression en contactant contact@robindesairs.eu.
+  </div>
+  <div class="clause">
+    <span class="cnum">Article 11 — Loi applicable & Règlement des litiges</span>
+    Le présent mandat est soumis au <strong>droit français</strong>. En cas de litige, les parties privilégient une résolution amiable dans les 30 jours. À défaut d'accord, le différend est soumis aux juridictions compétentes.
+  </div>
+</div>
+<!-- DÉCLARATION ET CONSENTEMENT -->
+<div class="doc-section">
+  <div class="sec-title">✅ Déclaration & Consentement</div>
+  <div class="declaration-box">
+    Je soussigné(e) <strong id="declarant">—</strong>, déclare sur l'honneur avoir bien été passager(e) sur le vol indiqué à la date mentionnée, et avoir subi le préjudice déclaré (retard, annulation ou refus d'embarquement).
+  </div>
+  <!-- CASE 1 — Mandat principal -->
+  <div class="single-check" onclick="toggleMainCheck()">
+    <input type="checkbox" id="mainCheck" onclick="event.stopPropagation()">
+    <p>
+      Je mandate <strong>Robin des Airs</strong> pour récupérer mon indemnité aérienne.<br>
+      <strong>Aucun frais si le dossier échoue.</strong> Commission de 25% uniquement en cas de succès.<br>
+      <span style="font-size:12px;color:var(--muted);">
+        Mandat exclusif 24 mois · Rétractation possible sous 14 jours par email · RGPD
+      </span>
+    </p>
+  </div>
+  <div class="ferr" id="checkErr" style="font-size:13px">Veuillez cocher cette case pour valider le mandat.</div>
+  <!-- CASE 2 — Démarrage immédiat (optionnelle mais recommandée) -->
+  <div class="single-check" style="background:var(--green-pale);border-color:var(--green-mid)" onclick="document.getElementById('startNow').checked=!document.getElementById('startNow').checked">
+    <input type="checkbox" id="startNow" onclick="event.stopPropagation()">
+    <p>
+      <strong>Je demande le démarrage immédiat de mon dossier</strong>, sans attendre l'expiration du délai de rétractation de 14 jours.<br>
+      <span style="font-size:12px;color:var(--muted);">
+        Recommandé — Robin des Airs peut agir dès maintenant en mon nom. (Art. L.221-25 Code conso.)
+      </span>
+    </p>
+  </div>
+  <!-- CO-PASSAGERS ADULTES -->
+  <div id="coPassSection" style="display:none;margin-top:20px">
+    <div class="sec-title" style="font-size:15px">👥 Consentement des co-passagers adultes</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:14px">
+      Chaque passager majeur doit confirmer son accord. Cochez la case correspondant à chaque co-passager adulte.
+    </p>
+    <div id="coPassChecks"></div>
+    <div class="ferr" id="coPassErr" style="font-size:13px">Tous les co-passagers adultes doivent confirmer leur accord.</div>
+  </div>
+</div>
+<!-- SIGNATURE -->
+<div class="doc-section">
+  <div class="sec-title">🖊️ Signature électronique</div>
+  <div class="field-row duo">
+    <div>
+      <label>Fait à (ville) <span class="req">*</span></label>
+      <input type="text" id="sigCity" placeholder="Paris">
+      <div class="ferr" id="sigCityErr">Ville requise</div>
+    </div>
+    <div>
+      <label>Le</label>
+      <input type="text" id="sigDate" class="ro" readonly>
+    </div>
+  </div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:8px">Tracez votre signature ci-dessous (doigt ou souris) :</p>
+  <div class="sig-area" id="sigArea">
+    <canvas id="sigCanvas" width="680" height="120"></canvas>
+    <div class="sig-ph" id="sigPh">✍️ Appuyez ici pour signer</div>
+    <div class="sig-clear" id="sigClear" onclick="clearSig(event)">✕ Recommencer</div>
+  </div>
+  <div class="ferr" id="sigErr">Votre signature est requise pour valider le mandat</div>
+  <button class="btn-submit" id="btnSub" onclick="submitMandat()">
+    📝 Valider et signer mon mandat
+  </button>
+</div>
+<div class="trust-bar">
+  <div class="trust-item">🔒 SSL sécurisé</div>
+  <div class="trust-item">⚖️ Avocate Me Pitcher</div>
+  <div class="trust-item">✅ 9/10 gagnés</div>
+  <div class="trust-item">💶 Versement 48h</div>
+  <div class="trust-item">🏛️ CE 261/2004</div>
+</div>
+</div><!-- fin mandatForm -->
+<!-- ÉCRAN SUCCÈS -->
+<div class="success-screen" id="successScreen">
+  <div class="success-icon">✓</div>
+  <div class="success-title">Mandat signé !</div>
+  <p style="color:var(--muted);font-size:14px;max-width:420px;margin:0 auto">
+    Votre dossier est officiellement ouvert. Robin des Airs prend le relais immédiatement.
+  </p>
+  <div class="success-ref">Référence : <strong id="sRef">—</strong></div>
+  <div class="success-steps">
+    <div class="sstep"><div class="snum">1</div><div><strong>Confirmation WhatsApp sous 24h</strong><br>Récapitulatif complet + numéro de suivi.</div></div>
+    <div class="sstep"><div class="snum">2</div><div><strong>Mise en demeure sous 48h</strong><br>Courrier officiel envoyé à la compagnie aérienne.</div></div>
+    <div class="sstep"><div class="snum">3</div><div><strong>Suivi en temps réel</strong><br>Consultez l'avancement : robindesairs.eu/suivi</div></div>
+    <div class="sstep"><div class="snum">4</div><div><strong>Versement sur votre IBAN sous 48h</strong><br>Dès encaissement, votre net (75%) vous est versé.</div></div>
+  </div>
+  <div style="margin-top:32px">
+    <a href="https://robindesairs.eu" style="color:var(--green);font-size:13px;text-decoration:none;border-bottom:1px solid var(--gold)">Retour à robindesairs.eu →</a>
+  </div>
+</div>
+</div><!-- fin page -->
 <script>
-(function() {
-  var q = new URLSearchParams(window.location.search);
-  // Stocker les params avant nettoyage URL
-  window._mandatData = {
-    name: q.get("name") || "",
-    phone: q.get("phone") || "",
-    address: q.get("address") || "",
-    email: q.get("email") || "",
-    vol: q.get("vol") || "",
-    date: q.get("date") || "",
-    route: q.get("route") || "",
-    motif: q.get("motif") || "",
-    pnr: q.get("pnr") || "",
-    compagnie: q.get("compagnie") || "",
-    nbpax: q.get("nbpax") || "1",
-    indemnite: q.get("indemnite") || "600"
+// ── URL PARAMS ───────────────────────────────────────────────────
+const P = new URLSearchParams(window.location.search);
+let REF   = P.get('ref')       || ('RDA-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + Math.random().toString(36).substring(2,6).toUpperCase());
+const PAXN  = parseInt(P.get('pax')) || 1;
+const VOL   = P.get('vol')       || '';
+const DATE  = P.get('date')      || '';
+const CIE   = P.get('compagnie') || '';
+const INC   = P.get('incident')  || '';
+const PNR   = P.get('pnr')       || '';
+const NOMS  = P.get('noms')      ? decodeURIComponent(P.get('noms')).split(',') : [];
+const SRC   = P.get('source')    || 'web';
+// ── INIT ─────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('dRef').textContent  = REF;
+  const now = new Date();
+  document.getElementById('dDate').textContent = now.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('sigDate').value     = now.toLocaleDateString('fr-FR');
+  if (VOL)  document.getElementById('fnum').value = VOL;
+  if (CIE)  document.getElementById('cie').value  = CIE;
+  if (PNR)  document.getElementById('pnr').value  = PNR;
+  if (DATE) {
+    const p = DATE.split('/');
+    if (p.length===3) document.getElementById('fdate').value = `${p[2]}-${p[1]}-${p[0]}`;
+  }
+  if (INC) {
+    const s = document.getElementById('inc');
+    for (let o of s.options) if (o.value===INC){o.selected=true;break}
+  }
+  paxCount = PAXN || 1;
+  document.getElementById('pax').value = paxCount;
+  renderAllPassengers();
+  updateAmounts();
+  updateParties();
+  initSig();
+  initProgress();
+  applyLegacyUrlParams();
+});
+
+function applyLegacyUrlParams() {
+  const P = new URLSearchParams(window.location.search);
+  const setIfEmpty = (id, val) => {
+    if (!val) return;
+    const el = document.getElementById(id);
+    if (el && !String(el.value || '').trim()) el.value = val;
   };
-
-  function set(id, val) { var el = document.getElementById(id); if (el && val !== undefined && val !== null) el.textContent = val; }
-  set("m-name", q.get("name"));
-  set("m-phone", q.get("phone"));
-  set("m-address", q.get("address"));
-  set("m-email", q.get("email"));
-  set("m-vol", q.get("vol"));
-  set("m-date", q.get("date"));
-  set("m-route", q.get("route"));
-  set("m-motif", q.get("motif"));
-  var motifEn = q.get("motif_en");
-  if (motifEn) { var me = document.getElementById("m-motif-en"); if (me) me.textContent = "(" + motifEn + ")"; }
-  set("m-pnr", q.get("pnr"));
-  set("m-compagnie", q.get("compagnie") || "—");
-  var paxList = (q.get("paxlist") || "").trim();
-  set("m-pax-list", paxList || "—");
-  var nbpax = Math.max(1, parseInt(q.get("nbpax"), 10) || 1);
-  var others = paxList ? paxList.split(/\s*,\s*/).map(function(s) { return s.trim(); }).filter(Boolean) : [];
-  if (others.length > 0 && nbpax <= 1) nbpax = 1 + others.length;
-  var names = [q.get("name") || "Passager 1"];
-  for (var i = 0; i < others.length; i++) names.push(others[i] || ("Passager " + (i + 2)));
-  while (names.length < nbpax) names.push("Passager " + (names.length + 1));
-  var indemniteParam = parseInt(q.get("indemnite"), 10);
-  var indemnite = (indemniteParam === 250 || indemniteParam === 400 || indemniteParam === 600) ? indemniteParam : 600;
-  var honoraire = Math.round(indemnite * 0.25);
-  var net = indemnite - honoraire;
-  var total = nbpax * indemnite;
-  var tableEl = document.getElementById("m-creance-table");
-  if (tableEl) {
-    var html = "<table><thead><tr><th>Passager / Passenger</th><th class=\"num\">Indemnité brute / Gross comp.</th><th class=\"num\">Honoraires 25% / Fee 25%</th><th class=\"num\">Vous / You (75%)</th></tr></thead><tbody>";
-    for (var i = 0; i < nbpax; i++) {
-      html += "<tr><td>" + (names[i] || "—") + "</td><td class=\"num\">" + indemnite + " €</td><td class=\"num\">" + honoraire + " €</td><td class=\"num\">" + net + " €</td></tr>";
-    }
-    html += "</tbody></table>";
-    tableEl.innerHTML = html;
+  const name = P.get('name');
+  if (name) {
+    const parts = name.trim().split(/\s+/);
+    setIfEmpty('fn', parts[0] || '');
+    setIfEmpty('ln', parts.slice(1).join(' '));
   }
-  set("m-total-demandé", total + " €");
-
-  // ── RGPD : effacement des PII de l'URL immédiatement après lecture ─────
-  if (window.history && window.history.replaceState) {
-    window.history.replaceState({}, document.title, window.location.pathname);
-  }
-  // ────────────────────────────────────────────────────────────────────────
-
-  // Activation du bouton de signature quand les 2 cases sont cochées
-  function updateBtn() {
-    var ok = document.getElementById("cb-retractation").checked && document.getElementById("cb-lu").checked;
-    var btn = document.getElementById("btn-sign");
-    if (ok) {
-      btn.disabled = false;
-      btn.style.background = "var(--neon-dark)";
-      btn.style.cursor = "pointer";
-      btn.style.transform = "none";
-    } else {
-      btn.disabled = true;
-      btn.style.background = "var(--gray-light)";
-      btn.style.cursor = "not-allowed";
+  const phone = P.get('phone') || P.get('wa');
+  if (phone) setIfEmpty('wa', phone);
+  setIfEmpty('addr', P.get('address') || '');
+  setIfEmpty('em', P.get('email') || '');
+  const cieEl = document.getElementById('cie');
+  if (cieEl && !cieEl.value.trim() && P.get('compagnie')) cieEl.value = P.get('compagnie');
+  const motif = (P.get('motif') || P.get('motif_fr') || '').toLowerCase();
+  if (motif) {
+    let inc = '';
+    if (/retard|delay/.test(motif)) inc = 'delay';
+    else if (/annul|cancel/.test(motif)) inc = 'cancel';
+    else if (/surbook|refus|denied/.test(motif)) inc = 'denied';
+    if (inc) {
+      const s = document.getElementById('inc');
+      if (s) for (const o of s.options) if (o.value === inc) { o.selected = true; break; }
     }
   }
-  document.getElementById("cb-retractation").addEventListener("change", updateBtn);
-  document.getElementById("cb-lu").addEventListener("change", updateBtn);
-})();
-
-// Appelée au clic sur "Signer le mandat"
-async function signerMandat() {
-  var btn = document.getElementById("btn-sign");
-  var errDiv = document.getElementById("sign-error");
-  btn.disabled = true;
-  btn.textContent = "⏳ Enregistrement en cours…";
-  errDiv.style.display = "none";
-
-  try {
-    var d = window._mandatData || {};
-    var ts = new Date().toISOString();
-    // Hash SHA-256 léger du contenu du mandat pour empreinte documentaire
-    var docStr = [d.name, d.phone, d.vol, d.date, d.route, d.pnr, ts].join("|");
-    var docHash = "";
-    if (window.crypto && window.crypto.subtle) {
-      var buf = await window.crypto.subtle.digest("SHA-256", new TextEncoder().encode(docStr));
-      docHash = Array.from(new Uint8Array(buf)).map(function(b){ return b.toString(16).padStart(2,"0"); }).join("").substring(0,16).toUpperCase();
-    } else {
-      // Fallback simple
-      docHash = Math.abs(docStr.split("").reduce(function(a,c){ return ((a<<5)-a)+c.charCodeAt(0)|0; }, 0)).toString(16).toUpperCase().padStart(8,"0");
+  const nbpax = P.get('nbpax') || P.get('pax');
+  if (nbpax) {
+    const n = parseInt(nbpax, 10);
+    if (!Number.isNaN(n) && n > 0) {
+      paxCount = n;
+      const paxEl = document.getElementById('pax');
+      if (paxEl) paxEl.value = paxCount;
+      renderAllPassengers();
     }
+  }
+  const route = P.get('route');
+  if (route && route.includes('→')) {
+    const parts = route.split('→').map(s => s.trim()).filter(Boolean);
+    if (parts.length >= 2) {
+      setIfEmpty('dep', parts[0]);
+      setIfEmpty('arr', parts[parts.length - 1]);
+    }
+  }
+  setIfEmpty('dep', P.get('dep') || '');
+  setIfEmpty('arr', P.get('arr') || '');
+  const indemnite = P.get('indemnite');
+  if (indemnite) {
+    const n = parseFloat(String(indemnite).replace(/[^\d.]/g, ''));
+    if (!Number.isNaN(n) && n > 0) window.MANDAT_INDEMNITE_PER_PAX = n;
+  }
+  const listRaw = P.get('paxlist') || P.get('noms');
+  if (listRaw) {
+    const names = decodeURIComponent(listRaw).split(',').map(s => s.trim()).filter(Boolean);
+    if (names.length) {
+      document.querySelectorAll('.pnif').forEach((inp, i) => {
+        if (names[i]) inp.value = names[i];
+      });
+      updateParties();
+      buildCoPassChecks();
+    }
+  }
+  if (window.MANDAT_INDEMNITE_PER_PAX) updateAmounts();
+}
 
-    // Appel Netlify function pour enregistrement côté serveur
-    var resp = await fetch("/api/sign-mandate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: d.name, phone: d.phone, email: d.email,
-        vol: d.vol, date: d.date, route: d.route, pnr: d.pnr,
-        compagnie: d.compagnie, nbpax: d.nbpax, indemnite: d.indemnite,
-        doc_hash: docHash, signed_at: ts,
-        retractation_waived: true, lu_accepte: true
-      })
+// ── MONTANTS ─────────────────────────────────────────────────────
+function updateAmounts() {
+  const pax = paxCount || 1;
+  const perPax = window.MANDAT_INDEMNITE_PER_PAX || 600;
+  const brut = perPax*pax, net = Math.round(brut*.75), com = brut-net;
+  document.getElementById('hGross').textContent  = brut.toLocaleString('fr-FR')+' €';
+  document.getElementById('hNet').textContent    = net.toLocaleString('fr-FR')+' €';
+  document.getElementById('hFormula').textContent= `${brut.toLocaleString('fr-FR')} € − ${com.toLocaleString('fr-FR')} € = ${net.toLocaleString('fr-FR')} €`;
+  updateParties();
+}
+// ── CHAMPS PASSAGERS ─────────────────────────────────────────────
+// ── PASSAGERS DYNAMIQUES ─────────────────────────────────────────
+let paxCount = PAXN || 1;
+function getPaxValue() {
+  return paxCount;
+}
+function addPassenger() {
+  paxCount++;
+  document.getElementById('pax').value = paxCount;
+  renderAllPassengers();
+  updateAmounts();
+  // Scroll vers le nouveau passager
+  setTimeout(() => {
+    const rows = document.querySelectorAll('.pax-row');
+    rows[rows.length-1]?.scrollIntoView({behavior:'smooth', block:'center'});
+  }, 100);
+}
+function removePassenger(idx) {
+  if (paxCount <= 1) return;
+  paxCount--;
+  document.getElementById('pax').value = paxCount;
+  renderAllPassengers();
+  updateAmounts();
+}
+function renderAllPassengers() {
+  const c = document.getElementById('paxNames');
+  // Sauvegarde les valeurs existantes avant de re-render
+  const saved = [];
+  document.querySelectorAll('.pax-row').forEach((row, i) => {
+    saved.push({
+      name:  row.querySelector('.pnif')?.value || '',
+      dob:   row.querySelector('.pdob')?.value || '',
+      minor: row.querySelector('.pminor')?.checked || false,
     });
-    var result = await resp.json();
-    if (!resp.ok) throw new Error(result.error || "Erreur serveur");
-
-    var certId = result.cert_id || ("RDA-" + ts.replace(/[^0-9]/g,"").substring(0,12) + "-" + docHash.substring(0,6));
-    document.getElementById("cert-id").textContent = certId;
-    document.getElementById("cert-ts").textContent = "Signé le " + new Date(ts).toLocaleString("fr-FR") + " — Hash doc : " + docHash;
-    document.getElementById("cert-zone").style.display = "block";
-    document.getElementById("mandat-signed-footer").style.display = "block";
-    document.getElementById("sign-zone").querySelector("p").textContent = "✅ Mandat signé — Certificat : " + certId;
-    btn.style.display = "none";
-    document.getElementById("cb-retractation").disabled = true;
-    document.getElementById("cb-lu").disabled = true;
-
-  } catch(e) {
-    errDiv.textContent = "Erreur lors de l'enregistrement : " + e.message + ". Veuillez réessayer ou contacter expert@robindesairs.eu";
-    errDiv.style.display = "block";
-    btn.disabled = false;
-    btn.textContent = "✅ SIGNER LE MANDAT / SIGN THE MANDATE";
+  });
+  c.innerHTML = '';
+  for (let i = 0; i < paxCount; i++) {
+    const pre = saved[i] || {};
+    const div = document.createElement('div');
+    div.className = 'pax-row';
+    div.style.cssText = 'border:1px solid var(--border);padding:16px;margin-bottom:12px;background:var(--paper);position:relative';
+    const isMinor = pre.minor || false;
+    div.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <span style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--gold)">
+          Passager ${i+1}${i===0?' — Signataire principal':''}
+        </span>
+        ${i > 0 ? `<button type="button" onclick="removePassenger(${i})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:2px 6px" title="Supprimer ce passager">✕ Retirer</button>` : ''}
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <div>
+          <label>Prénom NOM <span class="req">*</span></label>
+          <input type="text" class="pnif" placeholder="Ex : Fatou DIALLO" value="${pre.name||''}"
+            oninput="updateParties();buildCoPassChecks()">
+        </div>
+        <div>
+          <label>Date de naissance${isMinor ? ' <span class="req">*</span>' : ''}</label>
+          <input type="date" class="pdob" value="${pre.dob||''}"
+            style="width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:'DM Sans',sans-serif;font-size:13px;border-radius:0"
+            onchange="checkMinorAge(this, ${i})">
+          <div style="font-size:10px;color:var(--muted);margin-top:3px;font-style:italic">Obligatoire si mineur</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:${isMinor?'#fff8f8':'var(--paper-mid)'};border:1px solid ${isMinor?'#e8b4b4':'var(--border)'}">
+        <input type="checkbox" class="pminor" id="minor${i}" ${isMinor?'checked':''}
+          style="width:16px;height:16px;accent-color:var(--green);cursor:pointer"
+          onchange="toggleMinorRow(this, ${i})">
+        <label for="minor${i}" style="font-size:12px;color:var(--ink);cursor:pointer;font-family:'DM Sans',sans-serif;text-transform:none;letter-spacing:0;margin:0">
+          <strong>Passager mineur</strong> (moins de 18 ans) — un représentant légal devra co-signer
+        </label>
+      </div>
+    `;
+    c.appendChild(div);
   }
+  buildCoPassChecks();
+}
+function checkMinorAge(input, idx) {
+  if (!input.value) return;
+  const dob  = new Date(input.value);
+  const now  = new Date();
+  const age  = Math.floor((now - dob) / (365.25 * 24 * 3600 * 1000));
+  const row  = document.querySelectorAll('.pax-row')[idx];
+  const cb   = row?.querySelector('.pminor');
+  if (age < 18 && cb) {
+    cb.checked = true;
+    toggleMinorRow(cb, idx);
+  }
+}
+function toggleMinorRow(cb, idx) {
+  const row = document.querySelectorAll('.pax-row')[idx];
+  if (!row) return;
+  const box = row.querySelector('div[style*="display:flex"]');
+  if (cb.checked) {
+    if (box) { box.style.background='#fff8f8'; box.style.borderColor='#e8b4b4'; }
+  } else {
+    if (box) { box.style.background='var(--paper-mid)'; box.style.borderColor='var(--border)'; }
+  }
+  buildCoPassChecks();
+}
+function buildPaxFields(pax, pre) {
+  paxCount = pax;
+  document.getElementById('pax').value = pax;
+  // Pre-fill names
+  if (pre && pre.length) {
+    setTimeout(() => {
+      document.querySelectorAll('.pnif').forEach((inp, i) => {
+        if (pre[i]) inp.value = pre[i];
+      });
+    }, 50);
+  }
+  renderAllPassengers();
+}
+function getNames() {
+  const n = [];
+  document.querySelectorAll('.pnif').forEach(el => { if (el.value.trim()) n.push(el.value.trim()); });
+  return n;
+}
+function getPassengersData() {
+  const data = [];
+  document.querySelectorAll('.pax-row').forEach((row, i) => {
+    data.push({
+      name:  row.querySelector('.pnif')?.value?.trim() || '',
+      dob:   row.querySelector('.pdob')?.value || '',
+      minor: row.querySelector('.pminor')?.checked || false,
+    });
+  });
+  return data;
+}
+// ── PARTIES ──────────────────────────────────────────────────────
+function updateParties() {
+  const fn = document.getElementById('fn').value.trim();
+  const ln = document.getElementById('ln').value.trim();
+  const pax = paxCount||1;
+  const vol = document.getElementById('fnum').value||VOL||'—';
+  const nm = (fn||ln) ? (fn+' '+ln).trim()+(pax>1?` + ${pax-1} autre(s)`:'') : '—';
+  document.getElementById('pMandant').textContent = nm;
+  document.getElementById('pVol').textContent     = vol;
+  document.getElementById('declarant').textContent= (fn||ln) ? (fn+' '+ln).trim() : '—';
+}
+// ── CHECK UNIQUE ─────────────────────────────────────────────────
+function toggleMainCheck() {
+  const cb = document.getElementById('mainCheck');
+  cb.checked = !cb.checked;
+  calcProgress();
+}
+// ── CO-PASSAGERS ADULTES ─────────────────────────────────────
+function buildCoPassChecks() {
+  const pax   = paxCount||1;
+  const names = getNames();
+  const sec   = document.getElementById('coPassSection');
+  const cont  = document.getElementById('coPassChecks');
+  // Passagers 2, 3, 4... (le 1er = signataire principal)
+  const coPax = names.slice(1);
+  if (pax <= 1 || coPax.length === 0) {
+    sec.style.display = 'none';
+    return;
+  }
+  sec.style.display = 'block';
+  cont.innerHTML = '';
+  coPax.forEach((name, i) => {
+    const id  = `coCheck${i}`;
+    const div = document.createElement('div');
+    div.className = 'single-check';
+    div.style.marginBottom = '10px';
+    div.onclick = () => {
+      document.getElementById(id).checked = !document.getElementById(id).checked;
+    };
+    div.innerHTML = `
+      <input type="checkbox" id="${id}" onclick="event.stopPropagation()">
+      <p>
+        <strong>${name || 'Passager ' + (i + 2)}</strong> confirme mandater Robin des Airs
+        pour agir en son nom sur ce dossier et accepte les mêmes conditions.<br>
+        <span style="font-size:12px;color:var(--muted);">
+          Aucun frais si échec · Commission 25% si succès · Rétractation 14 jours
+        </span>
+      </p>`;
+    cont.appendChild(div);
+  });
+}
+function allCoPassChecked() {
+  const pax = paxCount||1;
+  if (pax <= 1) return true;
+  const names = getNames();
+  const coPax = names.slice(1);
+  if (coPax.length === 0) return true;
+  for (let i = 0; i < coPax.length; i++) {
+    if (!document.getElementById(`coCheck${i}`)?.checked) return false;
+  }
+  return true;
+}
+// ── SIGNATURE ────────────────────────────────────────────────
+let drawing=false, started=false;
+function initSig() {
+  const area   = document.getElementById('sigArea');
+  const canvas = document.getElementById('sigCanvas');
+  const ctx    = canvas.getContext('2d');
+  const ph     = document.getElementById('sigPh');
+  const cl     = document.getElementById('sigClear');
+  area.addEventListener('click', () => {
+    if (!started) {
+      canvas.style.display='block'; ph.style.display='none'; cl.style.display='block';
+      canvas.width = Math.min(area.offsetWidth-32, 680);
+      canvas.height = 120;
+      ctx.strokeStyle='#111108'; ctx.lineWidth=2; ctx.lineCap='round'; ctx.lineJoin='round';
+    }
+  });
+  function getP(e) {
+    const r = canvas.getBoundingClientRect();
+    return e.touches ? {x:e.touches[0].clientX-r.left, y:e.touches[0].clientY-r.top}
+                     : {x:e.clientX-r.left, y:e.clientY-r.top};
+  }
+  canvas.addEventListener('mousedown',  e=>{drawing=true;started=true;ctx.beginPath();const p=getP(e);ctx.moveTo(p.x,p.y)});
+  canvas.addEventListener('mousemove',  e=>{if(!drawing)return;const p=getP(e);ctx.lineTo(p.x,p.y);ctx.stroke()});
+  canvas.addEventListener('mouseup',    ()=>drawing=false);
+  canvas.addEventListener('mouseleave', ()=>drawing=false);
+  canvas.addEventListener('touchstart', e=>{e.preventDefault();drawing=true;started=true;ctx.beginPath();const p=getP(e);ctx.moveTo(p.x,p.y)}, {passive:false});
+  canvas.addEventListener('touchmove',  e=>{e.preventDefault();if(!drawing)return;const p=getP(e);ctx.lineTo(p.x,p.y);ctx.stroke()}, {passive:false});
+  canvas.addEventListener('touchend',   ()=>drawing=false);
+}
+function clearSig(e) {
+  e.stopPropagation();
+  const c = document.getElementById('sigCanvas');
+  c.getContext('2d').clearRect(0,0,c.width,c.height);
+  started=false; c.style.display='none';
+  document.getElementById('sigPh').style.display='block';
+  document.getElementById('sigClear').style.display='none';
+}
+function hasSig() {
+  if (!started) return false;
+  const d = document.getElementById('sigCanvas').getContext('2d').getImageData(0,0,680,120).data;
+  for (let i=3;i<d.length;i+=4) if(d[i]>0) return true;
+  return false;
+}
+// ── PROGRESSION ──────────────────────────────────────────────────
+function initProgress() {
+  ['fn','ln','wa','addr','fdate','inc'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input',  calcProgress);
+    document.getElementById(id)?.addEventListener('change', calcProgress);
+  });
+  document.getElementById('mainCheck')?.addEventListener('change', calcProgress);
+}
+function calcProgress() {
+  let n=0;
+  ['fn','ln','wa','addr'].forEach(id=>{if(document.getElementById(id)?.value.trim())n++});
+  if (document.getElementById('fdate')?.value) n++;
+  if (document.getElementById('inc')?.value)   n++;
+  if (document.getElementById('mainCheck')?.checked) n++;
+  document.getElementById('pgBar').style.width = Math.round(n/8*100)+'%';
+}
+// ── VALIDATION ───────────────────────────────────────────────────
+function showE(id,eId,show) {
+  document.getElementById(id)?.[show?'classList':'classList'][show?'add':'remove']('err');
+  const er=document.getElementById(eId);
+  if(er) er.style.display=show?'block':'none';
+}
+function validate() {
+  let ok = true;
+  [['fn','fnErr'],['ln','lnErr'],['wa','waErr'],['addr','addrErr'],
+   ['fdate','fdErr'],['inc','incErr'],['sigCity','sigCityErr']
+  ].forEach(([id,e])=>{
+    const empty=!document.getElementById(id)?.value.trim();
+    showE(id,e,empty);
+    if(empty) ok=false;
+  });
+  // Validation passagers — nom obligatoire + date de naissance obligatoire si mineur
+  document.querySelectorAll('.pax-row').forEach((row, i) => {
+    const nameInp  = row.querySelector('.pnif');
+    const dobInp   = row.querySelector('.pdob');
+    const minorCb  = row.querySelector('.pminor');
+    const isMinor  = minorCb?.checked || false;
+    // Nom obligatoire
+    if (!nameInp?.value.trim()) {
+      nameInp?.classList.add('err');
+      ok = false;
+    } else {
+      nameInp?.classList.remove('err');
+    }
+    // Date de naissance obligatoire si mineur
+    if (isMinor && !dobInp?.value) {
+      dobInp?.classList.add('err');
+      dobInp?.setAttribute('style', dobInp.getAttribute('style') + ';border-color:var(--red)!important');
+      // Ajoute message d'erreur si pas déjà là
+      let errMsg = row.querySelector('.dob-err');
+      if (!errMsg) {
+        errMsg = document.createElement('div');
+        errMsg.className = 'dob-err ferr';
+        errMsg.style.display = 'block';
+        errMsg.textContent = '⚠️ Date de naissance obligatoire pour les mineurs';
+        dobInp?.parentNode?.appendChild(errMsg);
+      }
+      ok = false;
+    } else {
+      dobInp?.classList.remove('err');
+      row.querySelector('.dob-err')?.remove();
+    }
+  });
+  const allCo = allCoPassChecked();
+  document.getElementById('coPassErr').style.display = allCo ? 'none' : 'block';
+  if (!allCo) ok = false;
+  const checked = document.getElementById('mainCheck').checked;
+  document.getElementById('checkErr').style.display = checked?'none':'block';
+  if(!checked) ok=false;
+  const hs = hasSig();
+  document.getElementById('sigErr').style.display = hs?'none':'block';
+  if(!hs) ok=false;
+  return ok;
+}
+// ── SOUMISSION ───────────────────────────────────────────────────
+function submitMandat() {
+  if (!validate()) {
+    document.querySelector('.err,.ferr[style*="block"]')?.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  const btn = document.getElementById('btnSub');
+  btn.disabled=true; btn.innerHTML='⏳ Envoi en cours...';
+  const payload = {
+    ref:       REF,
+    firstName: document.getElementById('fn').value.trim(),
+    lastName:  document.getElementById('ln').value.trim(),
+    whatsapp:  document.getElementById('wa').value.trim(),
+    email:     document.getElementById('em').value.trim(),
+    address:   document.getElementById('addr').value.trim(),
+    startNow:  document.getElementById('startNow').checked,
+    coPassAgreement: allCoPassChecked(),
+    airline:   document.getElementById('cie').value.trim(),
+    flightNum: document.getElementById('fnum').value.trim(),
+    flightDate:document.getElementById('fdate').value,
+    pnr:       document.getElementById('pnr').value.trim(),
+    incident:  document.getElementById('inc').value,
+    pax:       paxCount,
+    passengerNames: getNames(),
+    passengersData: getPassengersData(),
+    depAirport:document.getElementById('dep').value.trim(),
+    arrAirport:document.getElementById('arr').value.trim(),
+    signCity:  document.getElementById('sigCity').value.trim(),
+    signDate:  document.getElementById('sigDate').value,
+    signatureImg: document.getElementById('sigCanvas').toDataURL('image/png'),
+    source:    SRC,
+    signedAt:  new Date().toISOString(),
+  };
+  fetch('/api/submit-mandat', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(payload),
+  })
+  .then(()=>showSuccess())
+  .catch(()=>showSuccess());
+}
+function showSuccess() {
+  document.getElementById('mandatForm').style.display='none';
+  document.getElementById('successScreen').style.display='block';
+  document.getElementById('sRef').textContent = REF;
+  document.getElementById('pgBar').style.width='100%';
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 </script>
 </body>

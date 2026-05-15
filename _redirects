@@ -5,7 +5,6 @@
 /radar                       /radar.html                       200
 /radar-choix                /radar-choix.html                 200
 /crm                        /crm.html                         200
-/api/crm-auth               /.netlify/functions/crm-auth      200
 
 # Redirections pour URLs sans .html
 /choix-reclamation           /choix-reclamation.html           200
@@ -18,5 +17,7 @@
 /suivi-dossier               /suivi-dossier.html               200
 /cgv                         /cgv.html                         200
 /politique-confidentialite   /politique-confidentialite.html   200
-/mandat-representation       /mandat-representation.html       200
+/mandat                      /mandat.html                      200
+/mandat-representation       /mandat.html                      301
+/mandat-representation.html  /mandat.html                      301
 /droit-retractation          /droit-retractation.html          200
