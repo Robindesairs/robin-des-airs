@@ -318,22 +318,43 @@ async function sendLanguageButtons(to, iataArrival) {
   );
 }
 
-/** Construction URL mandat depuis les données de session */
+/**
+ * URL mandat prérempli (mêmes clés query que mandat.html).
+ * Pour Wati / Make : inclure `ref` = valeur du champ « Réf. dossier » Airtable (exactement la même chaîne).
+ * Doc opérateur : docs/WATI-LIEN-MANDAT.md
+ */
 function buildMandatUrlFromSession(sessionData, phone) {
-  const BASE = 'https://robindesairs.eu/mandat.html';
+  const site = (process.env.URL || 'https://robindesairs.eu').replace(/\/$/, '');
+  const BASE = `${site}/mandat.html`;
   const p = new URLSearchParams();
   const passengers = sessionData.passengers || [];
   const flights    = sessionData.flights    || [];
   const main = passengers[0] || {};
 
+  const ref = (sessionData.ref || sessionData.dossierRef || '').toString().trim();
+  if (ref) p.set('ref', ref);
+
+  p.set('source', 'whatsapp');
+
   if (main.firstName || main.lastName) p.set('name', `${main.firstName || ''} ${main.lastName || ''}`.trim());
-  if (phone)                   p.set('phone',     phone.startsWith('+') ? phone : `+${phone}`);
+  let pphone = (sessionData.contactPhone || phone || '').toString().trim().replace(/\s/g, '');
+  if (pphone) {
+    if (!pphone.startsWith('+')) pphone = `+${pphone}`;
+    p.set('phone', pphone);
+  }
   if (sessionData.address)     p.set('address',   sessionData.address);
-  if (sessionData.contactPhone) p.set('phone',    sessionData.contactPhone);
+  if (sessionData.email)       p.set('email',     sessionData.email);
   if (flights[0]?.flightNumber) p.set('vol',      flights[0].flightNumber);
   if (flights[0]?.date)         p.set('date',     flights[0].date);
   if (sessionData.pnr)          p.set('pnr',      sessionData.pnr);
   if (sessionData.airline)      p.set('compagnie',sessionData.airline);
+
+  const f0 = flights[0] || {};
+  if (f0.depIata && f0.arrIata) {
+    p.set('route', `${f0.depIata} → ${f0.arrIata}`);
+    p.set('dep', f0.depIata);
+    p.set('arr', f0.arrIata);
+  }
 
   const nbpax = passengers.length || 1;
   p.set('nbpax', String(nbpax));
@@ -347,8 +368,9 @@ function buildMandatUrlFromSession(sessionData, phone) {
   if (pt === 'annul')   { p.set('motif', 'Annulation de vol');    p.set('motif_en', 'Flight cancellation'); }
   if (pt === 'refus')   { p.set('motif', "Refus d'embarquement"); p.set('motif_en', 'Denied boarding'); }
 
-  // Indemnité : 600€ par défaut (routes diaspora africaine > 3500km)
-  p.set('indemnite', '600');
+  const ind = sessionData.indemniteMandat || sessionData.eligibleAmount;
+  if (ind != null && !Number.isNaN(Number(ind))) p.set('indemnite', String(ind));
+  else p.set('indemnite', '600');
 
   return `${BASE}?${p.toString()}`;
 }

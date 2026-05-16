@@ -3,7 +3,9 @@
 // Body: { conversation: "texte brut de la conversation" }
 // Retourne: données passager + éligibilité CE 261/2004 + URL mandat pré-rempli
 
-const BASE_URL = "https://robin-des-airs.netlify.app";
+function siteUrl() {
+  return (process.env.URL || "https://robindesairs.eu").replace(/\/$/, "");
+}
 
 // ─── CE 261/2004 — Règles d'éligibilité ──────────────────────────────────────
 // Distance IATA approximée pour les routes fréquentes diaspora africaine
@@ -276,8 +278,13 @@ function checkEligibility(extracted) {
 }
 
 // ─── Génération URL mandat ───────────────────────────────────────────────────
-function buildMandatUrl(extracted, elig) {
+/** opts.ref = réf. dossier Airtable (même valeur que le champ filtré par submit-mandat). opts.source = traçabilité (ex. make). */
+function buildMandatUrl(extracted, elig, opts = {}) {
   const p = new URLSearchParams();
+  const ref = String(opts.ref || "").trim();
+  if (ref) p.set("ref", ref);
+  const src = String(opts.source || "").trim();
+  if (src) p.set("source", src);
   if (extracted.name)      p.set("name",      extracted.name);
   if (extracted.phone)     p.set("phone",     extracted.phone);
   if (extracted.email)     p.set("email",     extracted.email);
@@ -293,7 +300,7 @@ function buildMandatUrl(extracted, elig) {
   if (extracted.paxlist)   p.set("paxlist",   extracted.paxlist);
   if (elig.indemnite)      p.set("indemnite", String(elig.indemnite));
 
-  return `${BASE_URL}/mandat.html?${p.toString()}`;
+  return `${siteUrl()}/mandat.html?${p.toString()}`;
 }
 
 // ─── Handler principal ───────────────────────────────────────────────────────
@@ -319,9 +326,10 @@ export async function handler(event) {
     return { statusCode: 400, headers, body: JSON.stringify({ error: "Invalid JSON" }) };
   }
 
-  // Support full payload {phone, conversation} OR legacy {conversation} only
+  // Support full payload {phone, conversation, ref} OR legacy {conversation} only
   const conversation = (body.conversation || "").trim();
   const incomingPhone = (body.phone || "").trim();
+  const dossierRef = String(body.ref || body.reference_dossier || body.reference || "").trim();
 
   if (!conversation || conversation.length < 20) {
     return { statusCode: 400, headers, body: JSON.stringify({ error: "conversation trop courte ou vide" }) };
@@ -350,8 +358,10 @@ export async function handler(event) {
   // Éligibilité CE 261/2004
   const eligibilite = checkEligibility(extracted);
 
-  // URL mandat pré-rempli
-  const mandat_url = eligibilite.eligible ? buildMandatUrl(extracted, eligibilite) : null;
+  // URL mandat pré-rempli (ref Airtable optionnelle — même chaîne que le champ « Réf. dossier »)
+  const mandat_url = eligibilite.eligible
+    ? buildMandatUrl(extracted, eligibilite, { ref: dossierRef, source: dossierRef ? "make" : "" })
+    : null;
 
   // Message WhatsApp à renvoyer au client
   let whatsapp_message;

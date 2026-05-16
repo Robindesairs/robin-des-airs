@@ -1,0 +1,159 @@
+{
+  "name": "Robin des Airs — Envoi lien mandat WhatsApp",
+  "flow": [
+    {
+      "id": 1,
+      "module": "airtable:TriggerWatchRecords",
+      "version": 3,
+      "parameters": {
+        "__IMTCONN__": {
+          "label": "Votre connexion Airtable",
+          "data": {}
+        },
+        "base": "VOTRE_BASE_ID",
+        "table": "VOTRE_TABLE_ID",
+        "triggerField": "Statut du Dossier Suivi",
+        "maxRecords": 1,
+        "fields": [
+          "Nom Passager",
+          "Prénom Passager",
+          "Référence Dossier",
+          "Date Dossier",
+          "Montant Client",
+          "Email",
+          "Numéro WhatsApp",
+          "Compagnie Aérienne",
+          "Numéro de vol",
+          "Date du vol",
+          "Itinéraire",
+          "Trajet",
+          "PNR (Référence réservation)",
+          "Type d'incident",
+          "Montant de l'indemnité",
+          "Statut du Dossier Suivi",
+          "Adresse domicile"
+        ]
+      },
+      "mapper": {},
+      "metadata": {
+        "designer": { "x": 0, "y": 0 }
+      }
+    },
+    {
+      "id": 2,
+      "module": "builtin:BasicRouter",
+      "version": 1,
+      "parameters": {},
+      "mapper": {},
+      "metadata": {
+        "designer": { "x": 300, "y": 0 }
+      },
+      "routes": [
+        {
+          "flow": [
+            {
+              "id": 3,
+              "module": "builtin:SetVariable",
+              "version": 1,
+              "parameters": {},
+              "mapper": {
+                "name": "mandat_url",
+                "value": "https://robindesairs.eu/mandat.html?ref={{encodeURL(1.`Référence Dossier`)}}&phone={{encodeURL(1.`Numéro WhatsApp`)}}&name={{encodeURL(concat(1.`Prénom Passager`; \" \"; 1.`Nom Passager`))}}&email={{encodeURL(1.Email)}}&address={{encodeURL(1.`Adresse domicile`)}}&vol={{encodeURL(1.`Numéro de vol`)}}&date={{formatDate(1.`Date du vol`; \"DD/MM/YYYY\")}}&route={{encodeURL(if(1.Itinéraire; 1.Itinéraire; 1.Trajet))}}&pnr={{encodeURL(1.`PNR (Référence réservation)`)}}&compagnie={{encodeURL(1.`Compagnie Aérienne`)}}&motif={{encodeURL(1.`Type d'incident`)}}&indemnite={{1.`Montant de l'indemnité`}}&source=wati"
+              },
+              "metadata": {
+                "designer": { "x": 600, "y": 0 }
+              }
+            },
+            {
+              "id": 4,
+              "module": "http:ActionSendData",
+              "version": 3,
+              "parameters": {
+                "handleErrors": true,
+                "useNewZLibDeCompress": true
+              },
+              "mapper": {
+                "url": "https://eu-api.wati.io/1116453/api/v1/sendSessionMessage/{{encodeURL(1.`Numéro WhatsApp`)}}",
+                "method": "POST",
+                "headers": [
+                  {
+                    "name": "Authorization",
+                    "value": "Bearer VOTRE_TOKEN_WATI"
+                  },
+                  {
+                    "name": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "bodyType": "raw",
+                "contentType": "application/json",
+                "body": "{\n  \"messageText\": \"Bonjour {{1.`Prénom Passager`}},\\n\\nVoici votre lien pour signer votre mandat Robin des Airs (2 min) :\\n\\n{{3.mandat_url}}\\n\\nUne fois signé, nous traitons votre dossier immédiatement. 🏹\"\n}",
+                "timeout": 30
+              },
+              "metadata": {
+                "designer": { "x": 900, "y": 0 }
+              }
+            },
+            {
+              "id": 5,
+              "module": "airtable:ActionUpdateRecord",
+              "version": 3,
+              "parameters": {
+                "__IMTCONN__": {
+                  "label": "Votre connexion Airtable",
+                  "data": {}
+                }
+              },
+              "mapper": {
+                "id": "{{1.id}}",
+                "base": "VOTRE_BASE_ID",
+                "table": "VOTRE_TABLE_ID",
+                "record": {
+                  "Statut du Dossier Suivi": "Signature en attente",
+                  "Remarques": "{{if(1.Remarques; concat(1.Remarques; \" | Lien mandat envoyé le \"; formatDate(now; \"DD/MM/YYYY HH:mm\")); concat(\"Lien mandat envoyé le \"; formatDate(now; \"DD/MM/YYYY HH:mm\")))}}"
+                },
+                "typecast": true,
+                "useColumnId": false
+              },
+              "metadata": {
+                "designer": { "x": 1200, "y": 0 }
+              }
+            }
+          ],
+          "label": "Mandat à envoyer",
+          "filter": {
+            "name": "Statut = Mandat à envoyer",
+            "conditions": [
+              [
+                {
+                  "a": "{{1.`Statut du Dossier Suivi`}}",
+                  "b": "Mandat à envoyer",
+                  "o": "text:equal"
+                }
+              ]
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "instant": false,
+    "version": 1,
+    "scenario": {
+      "roundtrips": 1,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "autoCommitTriggerLast": true,
+      "sequential": false,
+      "confidential": false,
+      "dataloss": false,
+      "dlq": false,
+      "freshVariables": false
+    },
+    "designer": {
+      "orphans": []
+    },
+    "zone": "eu2.make.com"
+  }
+}

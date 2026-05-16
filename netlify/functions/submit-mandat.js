@@ -1,6 +1,6 @@
 /**
  * submit-mandat — Robin des Airs
- * Signature mandat.html → Blobs + Airtable + webhook bot Wati (POST /mandat_signed).
+ * Signature mandat.html → Blobs + Airtable + email équipe (Resend) + webhook Make/Wati.
  *
  * POST /api/submit-mandat
  */
@@ -160,6 +160,193 @@ async function patchAirtableSigned(record) {
   return { updated: updates.length };
 }
 
+function signatureBase64(record) {
+  const raw = record.signatureImg || '';
+  const m = String(raw).match(/^data:image\/\w+;base64,(.+)$/);
+  return m ? m[1] : (raw.startsWith('iVBOR') || /^[A-Za-z0-9+/=]+$/.test(raw.slice(0, 80)) ? raw : '');
+}
+
+function escapeHtml(s) {
+  return String(s || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function clientDisplayName(record) {
+  const first = (record.firstName || '').trim();
+  return first || [record.firstName, record.lastName].filter(Boolean).join(' ') || 'Madame, Monsieur';
+}
+
+function isValidClientEmail(email) {
+  const e = (email || '').trim();
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) && e.length <= 254;
+}
+
+function buildTeamMandatEmailContent(record) {
+  const name = [record.firstName, record.lastName].filter(Boolean).join(' ') || '—';
+  const itin = [record.depAirport, record.arrAirport].filter(Boolean).join(' → ') || '—';
+  const incident = INCIDENT_AT[record.incident] || record.incident || '—';
+  const pax = (record.passengerNames && record.passengerNames.length)
+    ? record.passengerNames.join(', ')
+    : (record.pax > 1 ? `${record.pax} passager(s)` : name);
+  const lines = [
+    ['Référence dossier', record.ref || '—'],
+    ['Certificat', record.cert_id || '—'],
+    ['Signé le', record.signed_at || '—'],
+    ['Passager', name],
+    ['WhatsApp', record.whatsapp || '—'],
+    ['Email client', record.email || '—'],
+    ['Adresse', record.address || '—'],
+    ['Vol', record.flightNum || '—'],
+    ['Date vol', record.flightDate || '—'],
+    ['Compagnie', record.airline || '—'],
+    ['PNR', record.pnr || '—'],
+    ['Itinéraire', itin],
+    ['Incident', incident],
+    ['Passagers', pax],
+    ['Source', record.source || 'mandat.html'],
+  ];
+  const text = lines.map(([k, v]) => `${k} : ${v}`).join('\n');
+  const htmlRows = lines.map(([k, v]) =>
+    `<tr><td style="padding:6px 12px 6px 0;color:#666;font-size:13px;vertical-align:top">${k}</td><td style="padding:6px 0;font-size:13px"><strong>${escapeHtml(v)}</strong></td></tr>`
+  ).join('');
+  const html = `<!DOCTYPE html><html><body style="font-family:system-ui,sans-serif;color:#111;max-width:560px">
+<p style="margin:0 0 16px">Un mandat de représentation vient d’être <strong>signé</strong> sur robindesairs.eu.</p>
+<table style="border-collapse:collapse">${htmlRows}</table>
+<p style="margin:20px 0 0;font-size:12px;color:#888">Robin des Airs — notification automatique</p>
+</body></html>`;
+  return { subject: `Mandat signé — ${record.ref || record.cert_id || 'dossier'} — ${name}`, text, html };
+}
+
+function buildClientMandatEmailContent(record) {
+  const hello = clientDisplayName(record);
+  const ref = record.ref || '—';
+  const vol = record.flightNum || '—';
+  const date = record.flightDate || '—';
+  const cie = record.airline || '—';
+  const pnr = record.pnr || '—';
+  const signed = record.signed_at
+    ? new Date(record.signed_at).toLocaleString('fr-FR', { dateStyle: 'long', timeStyle: 'short', timeZone: 'Europe/Paris' })
+    : '—';
+
+  const text = [
+    `Bonjour ${hello},`,
+    '',
+    'Nous avons bien enregistré la signature de votre mandat de représentation Robin des Airs.',
+    '',
+    `Référence dossier : ${ref}`,
+    `Vol : ${vol} — ${date}`,
+    `Compagnie : ${cie}`,
+    pnr !== '—' ? `PNR : ${pnr}` : '',
+    `Signé le : ${signed}`,
+    '',
+    'Prochaines étapes :',
+    '• Confirmation de votre dossier sous 24 h (WhatsApp ou email)',
+    '• Mise en demeure à la compagnie sous 48 h',
+    '• Suivi : https://robindesairs.eu/suivi-dossier.html',
+    '',
+    'Droit de rétractation : 14 jours — contact@robindesairs.eu (objet : Je me rétracte — Réf. ' + ref + ')',
+    '',
+    'Questions : expert@robindesairs.eu — WhatsApp +33 7 56 86 36 30',
+    'https://wa.me/33756863630',
+    '',
+    'Robin des Airs — Votre droit, notre mission.',
+  ].filter(Boolean).join('\n');
+
+  const html = `<!DOCTYPE html><html><body style="font-family:system-ui,sans-serif;color:#111;max-width:560px;line-height:1.55">
+<p>Bonjour <strong>${escapeHtml(hello)}</strong>,</p>
+<p>Nous avons bien enregistré la <strong>signature de votre mandat</strong> de représentation Robin des Airs.</p>
+<table style="border-collapse:collapse;margin:16px 0;background:#f8f6f0;border:1px solid #e0dcc8">
+<tr><td style="padding:8px 12px;color:#666;font-size:13px">Référence</td><td style="padding:8px 12px;font-size:13px"><strong>${escapeHtml(ref)}</strong></td></tr>
+<tr><td style="padding:8px 12px;color:#666;font-size:13px">Vol</td><td style="padding:8px 12px;font-size:13px"><strong>${escapeHtml(vol)}</strong> — ${escapeHtml(date)}</td></tr>
+<tr><td style="padding:8px 12px;color:#666;font-size:13px">Compagnie</td><td style="padding:8px 12px;font-size:13px">${escapeHtml(cie)}</td></tr>
+${pnr !== '—' ? `<tr><td style="padding:8px 12px;color:#666;font-size:13px">PNR</td><td style="padding:8px 12px;font-size:13px">${escapeHtml(pnr)}</td></tr>` : ''}
+<tr><td style="padding:8px 12px;color:#666;font-size:13px">Signé le</td><td style="padding:8px 12px;font-size:13px">${escapeHtml(signed)}</td></tr>
+</table>
+<p><strong>Prochaines étapes</strong></p>
+<ul style="margin:0 0 16px;padding-left:20px;font-size:14px">
+<li>Confirmation de votre dossier sous 24 h</li>
+<li>Mise en demeure à la compagnie sous 48 h</li>
+<li><a href="https://robindesairs.eu/suivi-dossier.html">Suivre mon dossier</a></li>
+</ul>
+<p style="font-size:13px;color:#555">Rétractation possible sous 14 jours : <a href="mailto:contact@robindesairs.eu?subject=${encodeURIComponent('Rétractation — Réf. ' + ref)}">contact@robindesairs.eu</a></p>
+<p style="font-size:13px">Questions : <a href="mailto:expert@robindesairs.eu">expert@robindesairs.eu</a> — <a href="https://wa.me/33756863630">WhatsApp</a></p>
+<p style="margin-top:24px;font-size:12px;color:#888">Robin des Airs — Votre droit, notre mission.</p>
+</body></html>`;
+
+  return {
+    subject: `Confirmation — mandat signé — ${ref}`,
+    text,
+    html,
+  };
+}
+
+async function sendResendEmail(apiKey, payload) {
+  const r = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) {
+    console.error('submit-mandat: Resend', r.status, JSON.stringify(data).slice(0, 300));
+    return { ok: false, error: data.message || String(r.status) };
+  }
+  return { ok: true, id: data.id };
+}
+
+/** Emails équipe + client (si email valide). Resend : RESEND_API_KEY, MANDAT_NOTIFY_EMAIL, MANDAT_EMAIL_FROM */
+async function notifyMandatSignedByEmail(record) {
+  const apiKey = (process.env.RESEND_API_KEY || '').trim();
+  if (!apiKey) {
+    return { skipped: true, reason: 'no RESEND_API_KEY' };
+  }
+  const from = (process.env.MANDAT_EMAIL_FROM || 'Robin des Airs <notifications@robindesairs.eu>').trim();
+  const result = { team: null, client: null };
+
+  const toTeamRaw = (process.env.MANDAT_NOTIFY_EMAIL || 'expert@robindesairs.eu').trim();
+  if (toTeamRaw) {
+    const teamContent = buildTeamMandatEmailContent(record);
+    const teamPayload = {
+      from,
+      to: toTeamRaw.split(/[,;]/).map((s) => s.trim()).filter(Boolean),
+      subject: teamContent.subject,
+      text: teamContent.text,
+      html: teamContent.html,
+    };
+    const sigB64 = signatureBase64(record);
+    if (sigB64) {
+      teamPayload.attachments = [{
+        filename: `signature-${(record.ref || 'mandat').replace(/[^a-zA-Z0-9_-]/g, '_')}.png`,
+        content: sigB64,
+      }];
+    }
+    result.team = await sendResendEmail(apiKey, teamPayload);
+  } else {
+    result.team = { skipped: true, reason: 'no MANDAT_NOTIFY_EMAIL' };
+  }
+
+  const clientEmail = (record.email || '').trim();
+  if (isValidClientEmail(clientEmail)) {
+    const replyTo = (process.env.MANDAT_EMAIL_REPLY_TO || 'expert@robindesairs.eu').trim();
+    const clientContent = buildClientMandatEmailContent(record);
+    const clientPayload = {
+      from,
+      to: [clientEmail],
+      subject: clientContent.subject,
+      text: clientContent.text,
+      html: clientContent.html,
+      ...(replyTo ? { reply_to: replyTo } : {}),
+    };
+    result.client = await sendResendEmail(apiKey, clientPayload);
+  } else {
+    result.client = { skipped: true, reason: clientEmail ? 'invalid email' : 'no client email' };
+  }
+
+  return result;
+}
+
 async function forwardBotWebhook(record) {
   const url = (process.env.MANDAT_SIGNED_WEBHOOK_URL || '').trim();
   if (!url) return;
@@ -172,6 +359,15 @@ async function forwardBotWebhook(record) {
     cert_id: record.cert_id,
     signed_at: record.signed_at,
     source: record.source || 'mandat.html',
+    firstName: record.firstName,
+    lastName: record.lastName,
+    email: record.email,
+    flightNum: record.flightNum,
+    flightDate: record.flightDate,
+    airline: record.airline,
+    pnr: record.pnr,
+    incident: record.incident,
+    has_signature_attachment: !!signatureBase64(record),
   };
   try {
     const r = await fetch(url, {
@@ -283,7 +479,10 @@ exports.handler = async (event) => {
     airtableResult = { error: e.message };
   }
 
-  await forwardBotWebhook(record);
+  const [webhookResult, emailResult] = await Promise.all([
+    forwardBotWebhook(record).then(() => ({ ok: true })).catch((e) => ({ ok: false, error: e.message })),
+    notifyMandatSignedByEmail(record),
+  ]);
 
   return {
     statusCode: 200,
@@ -293,6 +492,8 @@ exports.handler = async (event) => {
       cert_id: certId,
       ref,
       airtable: airtableResult,
+      email: emailResult,
+      webhook: webhookResult,
     }),
   };
 };
