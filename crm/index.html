@@ -204,7 +204,7 @@
   .crm-wa-delays strong { color: var(--navy); }
   .crm-wa-textarea { width: 100%; min-height: 140px; font-size: 13px; line-height: 1.45; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); font-family: inherit; resize: vertical; }
   .crm-wa-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
-  .crm-wa-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--navy); color: #fff; padding: 10px 18px; border-radius: 8px; font-size: 13px; z-index: 100000; opacity: 0; pointer-events: none; transition: opacity .2s; max-width: 90vw; text-align: center; }
+  .crm-wa-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--navy); color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; z-index: 100000; opacity: 0; pointer-events: none; transition: opacity .25s; max-width: min(92vw, 520px); text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,.35); }
   .crm-wa-toast.show { opacity: 1; }
 
   /* ── Pièces / documents ── */
@@ -776,7 +776,8 @@ function showCrmToast(msg){
   if(!el) return;
   el.textContent = msg;
   el.classList.add('show');
-  setTimeout(function(){ el.classList.remove('show'); }, 2400);
+  clearTimeout(window._crmToastTimer);
+  window._crmToastTimer = setTimeout(function(){ el.classList.remove('show'); }, 6000);
 }
 
 function today(){ return new Date().toISOString().slice(0,10); }
@@ -925,6 +926,46 @@ let DB=[
 var CRM_LS_KEY = 'rda_crm_db_v1';
 var CRM_SYNC_QUEUE_KEY = 'rda_crm_sync_queue_v1';
 var CRM_SYNC_LAST_KEY = 'rda_crm_sync_last_v1';
+/** Format Airtable / Make : RDA-YYMMDD-XXXX (ex. RDA-260516-3847). */
+var CRM_REF_PATTERN = /^RDA-\d{6}-\d{4}$/;
+var _syncInFlight = false;
+
+function crmCoPaxNeeded(ad) {
+  var a = parseInt(ad, 10) || 1;
+  return Math.max(0, Math.min(8, a - 1));
+}
+
+function crmRefDateSegment(d) {
+  var dt = d || new Date();
+  var yy = String(dt.getFullYear()).slice(-2);
+  var mm = String(dt.getMonth() + 1).padStart(2, '0');
+  var dd = String(dt.getDate()).padStart(2, '0');
+  return yy + mm + dd;
+}
+
+function crmClientEmailForRef(ref) {
+  if (!ref) return '';
+  return String(ref).trim().toLowerCase() + '@robindesairs.eu';
+}
+
+function crmDbHasRef(id) {
+  return DB.some(function (x) {
+    return x.id === id;
+  });
+}
+
+function crmNormalizeDossierContact(d) {
+  if (!d) return;
+  if (d.id && CRM_REF_PATTERN.test(d.id)) d.email = crmClientEmailForRef(d.id);
+  if (typeof d.adresse !== 'string') d.adresse = '';
+  if (!Array.isArray(d.coPassagers)) d.coPassagers = [];
+  var need = crmCoPaxNeeded(d.adultes);
+  d.coPassagers = d.coPassagers.map(function (x) {
+    return { prenom: String((x && x.prenom) || '').trim(), nom: String((x && x.nom) || '').trim() };
+  });
+  while (d.coPassagers.length < need) d.coPassagers.push({ prenom: '', nom: '' });
+  if (d.coPassagers.length > need) d.coPassagers = d.coPassagers.slice(0, need);
+}
 
 function crmSlimDbSnapshot() {
   return DB.map(function(d){
@@ -1215,44 +1256,6 @@ function escHtml(s){
   return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 }
 
-function crmCoPaxNeeded(ad) {
-  var a = parseInt(ad, 10) || 1;
-  return Math.max(0, Math.min(8, a - 1));
-}
-/** Format Airtable / Make : RDA-YYMMDD-XXXX (ex. RDA-260516-3847). */
-var CRM_REF_PATTERN = /^RDA-\d{6}-\d{4}$/;
-
-function crmRefDateSegment(d) {
-  var dt = d || new Date();
-  var yy = String(dt.getFullYear()).slice(-2);
-  var mm = String(dt.getMonth() + 1).padStart(2, '0');
-  var dd = String(dt.getDate()).padStart(2, '0');
-  return yy + mm + dd;
-}
-
-function crmClientEmailForRef(ref) {
-  if (!ref) return '';
-  return String(ref).trim().toLowerCase() + '@robindesairs.eu';
-}
-
-function crmDbHasRef(id) {
-  return DB.some(function (x) {
-    return x.id === id;
-  });
-}
-
-function crmNormalizeDossierContact(d) {
-  if (!d) return;
-  if (d.id && CRM_REF_PATTERN.test(d.id)) d.email = crmClientEmailForRef(d.id);
-  if (typeof d.adresse !== 'string') d.adresse = '';
-  if (!Array.isArray(d.coPassagers)) d.coPassagers = [];
-  var need = crmCoPaxNeeded(d.adultes);
-  d.coPassagers = d.coPassagers.map(function (x) {
-    return { prenom: String((x && x.prenom) || '').trim(), nom: String((x && x.nom) || '').trim() };
-  });
-  while (d.coPassagers.length < need) d.coPassagers.push({ prenom: '', nom: '' });
-  if (d.coPassagers.length > need) d.coPassagers = d.coPassagers.slice(0, need);
-}
 function crmCoPassengersFieldsHtml(prefix, adultes, arr) {
   var need = crmCoPaxNeeded(adultes);
   if (need === 0) return '';
@@ -2428,7 +2431,6 @@ crmInitAddressAutocomplete('n_adresse_search', 'n_adresse_dd', 'n_adresse');
 const CRM_BACKUP_URL = '/api/crm-backup';
 const CRM_AIRTABLE_URL = '/api/crm-airtable-sync';
 let _backupTimer = null;
-let _syncInFlight = false;
 
 /** Appels API CRM : cookie de session + ?code= si mémorisé. */
 function crmApiFetch(url, options) {
@@ -2629,6 +2631,7 @@ async function syncCrmNow(auto) {
     if (!auto) showCrmToast('Synchronisation déjà en cours…');
     return;
   }
+  if (!auto) showCrmToast('Synchronisation en cours…');
   loadCrmAccessCodeFromStorage();
   var pending = readCrmSyncQueue();
   /* Clic manuel : toujours pousser cloud + Airtable (pas seulement si file d’attente). */
