@@ -31,6 +31,14 @@ exports.handler = async (event) => {
 
   const token = process.env.TELEGRAM_BOT_TOKEN;
   let chatId = process.env.TELEGRAM_CHAT_ID;
+
+  let payload;
+  try {
+    payload = JSON.parse(event.body || '{}');
+  } catch (e) {
+    return { statusCode: 400, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ error: 'Invalid JSON' }) };
+  }
+
   if (payload.chat_id != null) chatId = String(payload.chat_id);
   if (!token || !chatId) {
     return {
@@ -38,13 +46,6 @@ exports.handler = async (event) => {
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       body: JSON.stringify({ ok: false, reason: 'Telegram non configuré (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID)' })
     };
-  }
-
-  let payload;
-  try {
-    payload = JSON.parse(event.body || '{}');
-  } catch (e) {
-    return { statusCode: 400, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ error: 'Invalid JSON' }) };
   }
 
   const list = Array.isArray(payload.flights) && payload.flights.length > 0

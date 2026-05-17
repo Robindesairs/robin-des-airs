@@ -1,23 +1,16 @@
 /**
  * Auth espace agence partenaire
- * GET  /api/agency-auth  → session active ?
- * POST /api/agency-auth  { "code", "pass" } | { "logout": true }
  */
 
-const { findAgencyAccount } = require('./lib/agency-accounts');
+const { findAgencyAccount, loadAgencyAccounts } = require('./lib/agency-accounts');
 const {
   makeAgencyToken,
   getAgencySession,
   agencyCookieHeader,
 } = require('./lib/agency-access');
+const { corsHeaders, getAgencyAuthSecret } = require('./lib/auth-config');
 
-const HEADERS = {
-  'Content-Type': 'application/json; charset=utf-8',
-  'Cache-Control': 'no-store',
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Credentials': 'true',
-};
+const HEADERS = corsHeaders('agency');
 
 function json(statusCode, body, extra = {}) {
   return { statusCode, headers: { ...HEADERS, ...extra }, body: JSON.stringify(body) };
@@ -26,6 +19,20 @@ function json(statusCode, body, extra = {}) {
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers: HEADERS, body: '' };
+  }
+
+  if (!getAgencyAuthSecret()) {
+    return json(503, {
+      ok: false,
+      error: 'AGENCY_AUTH_SECRET requis sur Netlify (production)',
+    });
+  }
+
+  if (loadAgencyAccounts().length === 0) {
+    return json(503, {
+      ok: false,
+      error: 'AGENCY_ACCOUNTS non configuré (aucun compte agence)',
+    });
   }
 
   if (event.httpMethod === 'GET') {
@@ -45,10 +52,16 @@ exports.handler = async (event) => {
     }
 
     if (body.logout === true) {
+      const proto = String(
+        event.headers['x-forwarded-proto'] || event.headers['X-Forwarded-Proto'] || ''
+      )
+        .split(',')[0]
+        .trim();
+      const secure = proto === 'https' ? '; Secure' : '';
       return json(
         200,
         { ok: true },
-        { 'Set-Cookie': 'rda_agency=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0' }
+        { 'Set-Cookie': `rda_agency=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0${secure}` }
       );
     }
 
@@ -57,15 +70,19 @@ exports.handler = async (event) => {
       return json(401, { ok: false, error: 'Code agence ou mot de passe incorrect' });
     }
 
-    const token = makeAgencyToken(account.code);
-    return json(
-      200,
-      {
-        ok: true,
-        agency: { code: account.code, name: account.name },
-      },
-      { 'Set-Cookie': agencyCookieHeader(token, event) }
-    );
+    try {
+      const token = makeAgencyToken(account.code);
+      return json(
+        200,
+        {
+          ok: true,
+          agency: { code: account.code, name: account.name },
+        },
+        { 'Set-Cookie': agencyCookieHeader(token, event) }
+      );
+    } catch (e) {
+      return json(503, { ok: false, error: e.message });
+    }
   }
 
   return json(405, { ok: false, error: 'GET ou POST' });

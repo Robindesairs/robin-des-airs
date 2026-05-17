@@ -3,6 +3,7 @@
  */
 
 const SITE_URL = (process.env.URL || 'https://robindesairs.eu').replace(/\/$/, '');
+const { signMandatQuery } = require('./mandat-sign');
 
 function col(nameEnv, defaultLabel) {
   return (process.env[nameEnv] || defaultLabel).trim();
@@ -125,6 +126,11 @@ function buildMandatUrl(data, source) {
   if (data.motif) p.set('motif', data.motif);
   if (data.indemnite) p.set('indemnite', String(data.indemnite).replace(/[^\d.]/g, '') || data.indemnite);
   p.set('source', source || 'airtable');
+  const signed = signMandatQuery(p);
+  if (signed) {
+    p.set('exp', signed.exp);
+    p.set('sig', signed.sig);
+  }
   return `${SITE_URL}/mandat.html?${p.toString()}`;
 }
 
@@ -191,21 +197,102 @@ async function airtablePatch(cfg, recordId, fieldsPatch) {
 }
 
 async function airtableCreate(cfg, fieldsPatch) {
+  const created = await airtableBatchCreate(cfg, [fieldsPatch]);
+  return created[0] || null;
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/** PATCH jusqu’à 10 enregistrements (id + fields). */
+async function airtableBatchPatch(cfg, records) {
+  if (!records.length) return [];
+  const url = `https://api.airtable.com/v0/${cfg.base}/${cfg.table}`;
+  const r = await fetch(url, {
+    method: 'PATCH',
+    headers: atHeaders(cfg.key),
+    body: JSON.stringify({ typecast: true, records }),
+  });
+  if (!r.ok) {
+    const t = await r.text();
+    throw new Error(`Airtable batch patch ${r.status}: ${t.slice(0, 300)}`);
+  }
+  const data = await r.json();
+  return data.records || [];
+}
+
+/** POST jusqu’à 10 enregistrements. */
+async function airtableBatchCreate(cfg, fieldsList) {
+  if (!fieldsList.length) return [];
   const url = `https://api.airtable.com/v0/${cfg.base}/${cfg.table}`;
   const r = await fetch(url, {
     method: 'POST',
     headers: atHeaders(cfg.key),
     body: JSON.stringify({
       typecast: true,
-      records: [{ fields: fieldsPatch }],
+      records: fieldsList.map((fields) => ({ fields })),
     }),
   });
   if (!r.ok) {
     const t = await r.text();
-    throw new Error(`Airtable create ${r.status}: ${t.slice(0, 300)}`);
+    throw new Error(`Airtable batch create ${r.status}: ${t.slice(0, 300)}`);
   }
   const data = await r.json();
-  return data.records && data.records[0];
+  return data.records || [];
+}
+
+/** Upsert CRM : patch par recordId connu, sinon find+patch/create. items: { ref, recordId?, fields }[] */
+async function airtableUpsertDossiers(cfg, items, opts = {}) {
+  const throttleMs = opts.throttleMs ?? 220;
+  const results = [];
+  const withId = items.filter((i) => i.recordId);
+  const withoutId = items.filter((i) => !i.recordId);
+
+  for (let i = 0; i < withId.length; i += 10) {
+    const slice = withId.slice(i, i + 10);
+    const chunk = slice.map((item) => ({ id: item.recordId, fields: item.fields }));
+    try {
+      const patched = await airtableBatchPatch(cfg, chunk);
+      patched.forEach((rec, idx) => {
+        results.push({
+          ref: slice[idx].ref,
+          ok: true,
+          action: 'updated',
+          recordId: rec.id,
+        });
+      });
+    } catch (e) {
+      slice.forEach((item) => {
+        results.push({ ref: item.ref, ok: false, error: e.message });
+      });
+    }
+    if (i + 10 < withId.length) await sleep(throttleMs);
+  }
+
+  for (const item of withoutId) {
+    try {
+      const existing = await airtableFindByRef(cfg, item.ref);
+      if (existing.length) {
+        const id = existing[0].id;
+        await airtablePatch(cfg, id, item.fields);
+        results.push({ ref: item.ref, ok: true, action: 'updated', recordId: id });
+      } else {
+        const created = await airtableCreate(cfg, item.fields);
+        results.push({
+          ref: item.ref,
+          ok: true,
+          action: 'created',
+          recordId: created && created.id,
+        });
+      }
+    } catch (e) {
+      results.push({ ref: item.ref, ok: false, error: e.message });
+    }
+    await sleep(throttleMs);
+  }
+
+  return results;
 }
 
 function clientEmailForRef(ref) {
@@ -255,6 +342,9 @@ module.exports = {
   airtableGetRecord,
   airtablePatch,
   airtableCreate,
+  airtableBatchPatch,
+  airtableBatchCreate,
+  airtableUpsertDossiers,
   dossierToAirtableFields,
   clientEmailForRef,
   verifySecret,

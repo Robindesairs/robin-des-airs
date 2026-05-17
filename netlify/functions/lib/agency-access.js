@@ -4,17 +4,13 @@
 
 const crypto = require('crypto');
 const { getAgencyByCode } = require('./agency-accounts');
+const { getAgencyAuthSecret } = require('./auth-config');
 
 const COOKIE_NAME = 'rda_agency';
 const MAX_AGE_SEC = 60 * 60 * 24 * 7;
 
 function hmacSecret() {
-  return (
-    process.env.AGENCY_AUTH_SECRET ||
-    process.env.CRM_AUTH_SECRET ||
-    process.env.CRM_ACCESS_CODE ||
-    'robin-dakar-agency'
-  ).trim();
+  return getAgencyAuthSecret();
 }
 
 function signPayload(payloadB64) {
@@ -22,6 +18,8 @@ function signPayload(payloadB64) {
 }
 
 function makeAgencyToken(agencyCode) {
+  const secret = hmacSecret();
+  if (!secret) throw new Error('AGENCY_AUTH_SECRET non configuré');
   const payload = Buffer.from(
     JSON.stringify({
       exp: Date.now() + MAX_AGE_SEC * 1000,
@@ -67,7 +65,7 @@ function agencyCookieHeader(token, event) {
     .split(',')[0]
     .trim();
   const secure = proto === 'https' ? '; Secure' : '';
-  return `${COOKIE_NAME}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${MAX_AGE_SEC}${secure}`;
+  return `${COOKIE_NAME}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Strict; Max-Age=${MAX_AGE_SEC}${secure}`;
 }
 
 module.exports = {

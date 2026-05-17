@@ -20,7 +20,7 @@ const INCIDENT_ATTENTE_LABEL =
 function isAttenteIncidentInput(body) {
   if (body && body.attenteIncident === true) return true;
   const p = String((body && body.probleme) || '').trim();
-  return /^attente/i.test(p) || /billet vendu/i.test(p);
+  return /attente/i.test(p) || /billet vendu/i.test(p);
 }
 
 const AT_STATUT_TO_AGENCY = {
@@ -44,6 +44,10 @@ function agencyCol(cfg) {
   return (process.env.AIRTABLE_COL_AGENCE || 'Agence Partenaire').trim();
 }
 
+function agencyCodeCol(cfg) {
+  return (process.env.AIRTABLE_COL_AGENCE_CODE || '').trim();
+}
+
 function agencyStatutToUi(statutSuivi) {
   const s = String(statutSuivi || '').trim();
   if (AT_STATUT_TO_AGENCY[s]) return AT_STATUT_TO_AGENCY[s];
@@ -52,7 +56,7 @@ function agencyStatutToUi(statutSuivi) {
 }
 
 function agencyStatutFromRecord(data) {
-  const inc = String((data && data.incident) || '');
+  const inc = String((data && (data.motif || data.incident)) || '');
   if (/attente d'incident|billet vendu/i.test(inc)) {
     const base = agencyStatutToUi(data.statutSuivi);
     if (base === 'paye' || base === 'rejete') return base;
@@ -95,7 +99,7 @@ function recordToAgencyDossier(cfg, rec, agencyAccount) {
     depart: parts[0] || '',
     arrivee: parts[1] || '',
     date: data.date ? data.date.slice(0, 10) : '',
-    probleme: data.incident || '',
+    probleme: data.motif || data.incident || '',
     nbPassagers,
     statut,
     statutLabel: data.statutSuivi || '',
@@ -107,8 +111,13 @@ function recordToAgencyDossier(cfg, rec, agencyAccount) {
 
 async function listAgencyDossiers(cfg, agencyAccount) {
   const match = escapeFormulaValue(agencyAccount.airtableMatch || agencyAccount.code);
-  const col = agencyCol(cfg);
-  const formula = `FIND('${match}', {${col}}) > 0`;
+  const codeCol = agencyCodeCol(cfg);
+  const formula = codeCol
+    ? `{${codeCol}} = '${match}'`
+    : (() => {
+        const col = agencyCol(cfg);
+        return `FIND('${match}', {${col}}) > 0`;
+      })();
   const records = [];
   let offset = '';
 
@@ -169,6 +178,8 @@ function dossierPayloadToAirtable(cfg, agencyAccount, body) {
   } else {
     fields[L.statutSuivi] = 'Nouveau';
   }
+  const codeCol = agencyCodeCol(cfg);
+  if (codeCol) fields[codeCol] = agencyAccount.airtableMatch || agencyAccount.code;
   fields[agencyCol(cfg)] = `${agencyAccount.code} — ${agencyAccount.name}`;
   fields[L.remarques] = remarques;
   const palier = 600;

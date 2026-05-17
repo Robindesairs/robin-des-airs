@@ -26,6 +26,9 @@ const {
   airtablePatch,
   verifySecret,
 } = require('./lib/airtable-robin');
+const { sendWhatsAppTextMessage } = require('./lib/whatsapp-send-core');
+const { notifyAttenteIncidentConfirmed } = require('./lib/robin-notify');
+const { INCIDENT_ATTENTE_LABEL } = require('./lib/agency-airtable');
 
 const JSON_HEADERS = {
   'Content-Type': 'application/json',
@@ -34,19 +37,7 @@ const JSON_HEADERS = {
 };
 
 async function sendMandatWhatsApp(phone, text) {
-  const origin = (process.env.URL || 'https://robindesairs.eu').replace(/\/$/, '');
-  const url = `${origin}/.netlify/functions/send-whatsapp`;
-  const secret = (process.env.WHATSAPP_WEBHOOK_SECRET || '').trim();
-  const body = { to: phone.replace(/\D/g, ''), text };
-  if (secret) body.secret = secret;
-
-  const r = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
-  const data = await r.json().catch(() => ({}));
-  return { ok: r.ok, status: r.status, data };
+  return sendWhatsAppTextMessage(phone, text);
 }
 
 exports.handler = async (event) => {
@@ -102,6 +93,23 @@ exports.handler = async (event) => {
       mandat_url,
       statut_avant: statut,
     };
+    const prevIncident = String(body.previousIncident || body.incident_avant || '').trim();
+    const nowIncident = String(data.motif || '').trim();
+    const wasAttente =
+      /attente d'incident|billet vendu/i.test(prevIncident) ||
+      prevIncident === INCIDENT_ATTENTE_LABEL;
+    const isNowReal =
+      nowIncident && !/attente d'incident|billet vendu/i.test(nowIncident);
+
+    if (action === 'incident_confirmed' || (wasAttente && isNowReal)) {
+      result.attente_incident_confirmed = true;
+      notifyAttenteIncidentConfirmed({
+        ref: data.ref,
+        name: data.name,
+        incident: nowIncident,
+        statutSuivi: statut,
+      }).catch((e) => console.warn('airtable-webhook: notify attente', e.message));
+    }
 
     if (isMandatAEnvoyer) {
       if (data.whatsapp && (body.sendWhatsApp !== false)) {

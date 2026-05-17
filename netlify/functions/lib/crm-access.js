@@ -1,18 +1,15 @@
 /**
- * Auth CRM partagée : ?code= / X-CRM-Code ou cookie de session rda_crm (crm-auth).
+ * Auth CRM : cookie rda_crm (crm-auth) ou header X-CRM-Code (pas de ?code= en query).
  */
 
 const crypto = require('crypto');
+const { getCrmAuthConfig } = require('./auth-config');
 
 const COOKIE_NAME = 'rda_crm';
-const DEFAULT_CRM_CODE = 'robin-dakar';
 
 function hmacSecret() {
-  return (
-    process.env.CRM_AUTH_SECRET ||
-    process.env.CRM_ACCESS_CODE ||
-    DEFAULT_CRM_CODE
-  ).trim();
+  const cfg = getCrmAuthConfig();
+  return cfg ? cfg.authSecret : '';
 }
 
 function signPayload(payloadB64) {
@@ -47,23 +44,29 @@ function verifyCrmSessionCookie(event) {
   return verifyToken(token);
 }
 
-/** @returns {{ ok: boolean, error?: string }} */
+/** @returns {{ ok: boolean, error?: string, configured?: boolean }} */
 function checkCrmAccess(event) {
-  const crmCode = (process.env.CRM_ACCESS_CODE || '').trim();
-  if (!crmCode) return { ok: true };
+  const cfg = getCrmAuthConfig();
+  if (!cfg) {
+    return {
+      ok: false,
+      error: 'CRM non configuré : définissez CRM_ACCESS_CODE et CRM_AUTH_SECRET sur Netlify',
+      configured: false,
+    };
+  }
 
   const provided =
-    event.queryStringParameters?.code ||
     event.headers?.['x-crm-code'] ||
     event.headers?.['X-CRM-Code'];
 
-  if (provided === crmCode) return { ok: true };
-  if (verifyCrmSessionCookie(event)) return { ok: true };
+  if (provided && provided === cfg.accessCode) return { ok: true, configured: true };
+  if (verifyCrmSessionCookie(event)) return { ok: true, configured: true };
 
-  return { ok: false, error: 'Non autorisé' };
+  return { ok: false, error: 'Non autorisé', configured: true };
 }
 
 module.exports = {
   checkCrmAccess,
   verifyCrmSessionCookie,
+  COOKIE_NAME,
 };

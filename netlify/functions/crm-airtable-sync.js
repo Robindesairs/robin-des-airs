@@ -1,19 +1,15 @@
 /**
- * CRM → Airtable (proxy sécurisé, clé API côté serveur Netlify)
- *
- * POST /api/crm-airtable-sync?code=…  { "db": [ …dossiers CRM… ] }
- * GET  /api/crm-airtable-sync?code=…&ref=RDA-…  → import d’une ligne Airtable
- * GET  /api/crm-airtable-sync?code=…&pull=all   → import de toute la table
- *
- * Auth : même code que /api/crm-backup (CRM_ACCESS_CODE ou ?code=).
+ * CRM ↔ Airtable (proxy sécurisé)
+ * POST { "db": [ …dossiers… ] }
+ * GET ?ref=RDA-… | ?pull=all
+ * Auth : cookie rda_crm ou header X-CRM-Code
  */
 
 const {
   airtableCfg,
   airtableListRecords,
   airtableFindByRef,
-  airtablePatch,
-  airtableCreate,
+  airtableUpsertDossiers,
   dossierToAirtableFields,
   recordFromAirtableFields,
   buildMandatUrl,
@@ -22,16 +18,10 @@ const {
   crmDossierToAirtableDossier,
   airtableRecordToCrmDossier,
 } = require('./lib/crm-airtable-map');
-
 const { checkCrmAccess } = require('./lib/crm-access');
+const { corsHeaders } = require('./lib/auth-config');
 
-const HEADERS = {
-  'Content-Type': 'application/json',
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type, X-CRM-Code',
-  'Access-Control-Allow-Credentials': 'true',
-  'Cache-Control': 'no-store',
-};
+const HEADERS = corsHeaders('crm');
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -40,7 +30,11 @@ exports.handler = async (event) => {
 
   const auth = checkCrmAccess(event);
   if (!auth.ok) {
-    return { statusCode: 401, headers: HEADERS, body: JSON.stringify({ error: auth.error || 'Non autorisé' }) };
+    return {
+      statusCode: auth.configured === false ? 503 : 401,
+      headers: HEADERS,
+      body: JSON.stringify({ error: auth.error || 'Non autorisé' }),
+    };
   }
 
   const cfg = airtableCfg();
@@ -153,36 +147,31 @@ exports.handler = async (event) => {
     return { statusCode: 400, headers: HEADERS, body: JSON.stringify({ error: 'Champ db[] ou dossiers[] obligatoire' }) };
   }
 
-  const results = [];
-  let pushed = 0;
+  const upsertItems = [];
+  const preErrors = [];
 
   for (const raw of list) {
     const mapped = crmDossierToAirtableDossier(raw);
     if (!mapped || !mapped.ref) {
-      results.push({ ref: raw && raw.id, ok: false, error: 'ref manquante' });
+      preErrors.push({ ref: raw && raw.id, ok: false, error: 'ref manquante' });
       continue;
     }
-    const fieldsPatch = dossierToAirtableFields(cfg, mapped);
-    try {
-      const existing = await airtableFindByRef(cfg, mapped.ref);
-      if (existing.length) {
-        const id = existing[0].id;
-        await airtablePatch(cfg, id, fieldsPatch);
-        results.push({ ref: mapped.ref, ok: true, action: 'updated', recordId: id });
-      } else {
-        const created = await airtableCreate(cfg, fieldsPatch);
-        results.push({
-          ref: mapped.ref,
-          ok: true,
-          action: 'created',
-          recordId: created && created.id,
-        });
-      }
-      pushed += 1;
-    } catch (e) {
-      results.push({ ref: mapped.ref, ok: false, error: e.message });
-    }
+    upsertItems.push({
+      ref: mapped.ref,
+      recordId: raw.airtable_record_id || raw.airtableRecordId || null,
+      fields: dossierToAirtableFields(cfg, mapped),
+    });
   }
+
+  let results = preErrors;
+  try {
+    const synced = await airtableUpsertDossiers(cfg, upsertItems);
+    results = results.concat(synced);
+  } catch (e) {
+    return { statusCode: 500, headers: HEADERS, body: JSON.stringify({ error: e.message }) };
+  }
+
+  const pushed = results.filter((r) => r.ok).length;
 
   return {
     statusCode: 200,

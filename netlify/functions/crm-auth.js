@@ -1,24 +1,18 @@
 /**
- * Accès CRM — mot de passe par défaut : robin-dakar (surcharge : CRM_ACCESS_CODE sur Netlify).
- * GET  /api/crm-auth  → { ok: true|false } selon cookie valide
- * POST /api/crm-auth  body { "code": "…" } → définit le cookie si correct
- * POST { "logout": true } → supprime le cookie
+ * Accès CRM
+ * GET  /api/crm-auth  → session active ?
+ * POST { "code": "…" } | { "logout": true }
  */
 
 const crypto = require('crypto');
+const { getCrmAuthConfig, corsHeaders } = require('./lib/auth-config');
 
 const COOKIE_NAME = 'rda_crm';
-const MAX_AGE_SEC = 60 * 60 * 24 * 7; // 7 jours
-
-/** Si CRM_ACCESS_CODE n’est pas défini, ce code est utilisé (et pour signer les cookies). */
-const DEFAULT_CRM_CODE = 'robin-dakar';
+const MAX_AGE_SEC = 60 * 60 * 24 * 7;
 
 function hmacSecret() {
-  return (
-    process.env.CRM_AUTH_SECRET ||
-    process.env.CRM_ACCESS_CODE ||
-    DEFAULT_CRM_CODE
-  ).trim();
+  const cfg = getCrmAuthConfig();
+  return cfg ? cfg.authSecret : '';
 }
 
 function signPayload(payloadB64) {
@@ -30,8 +24,7 @@ function makeToken() {
     JSON.stringify({ exp: Date.now() + MAX_AGE_SEC * 1000 }),
     'utf8'
   ).toString('base64url');
-  const sig = signPayload(payload);
-  return `${payload}.${sig}`;
+  return `${payload}.${signPayload(payload)}`;
 }
 
 function verifyToken(raw) {
@@ -68,33 +61,32 @@ function secureCookiePart(event) {
 function json(statusCode, body, extraHeaders = {}) {
   return {
     statusCode,
-    headers: {
-      'Content-Type': 'application/json; charset=utf-8',
-      'Cache-Control': 'no-store',
-      ...extraHeaders,
-    },
+    headers: { ...corsHeaders('crm'), ...extraHeaders },
     body: JSON.stringify(body),
   };
 }
 
 exports.handler = async (event) => {
   const method = event.httpMethod || 'GET';
-  const accessCode = (
-    process.env.CRM_ACCESS_CODE ||
-    DEFAULT_CRM_CODE
-  ).trim();
+  const cfg = getCrmAuthConfig();
   const secure = secureCookiePart(event);
 
   if (method === 'OPTIONS') {
-    return { statusCode: 204, headers: { 'Cache-Control': 'no-store' }, body: '' };
+    return { statusCode: 204, headers: corsHeaders('crm'), body: '' };
+  }
+
+  if (!cfg) {
+    return json(503, {
+      ok: false,
+      configured: false,
+      error: 'CRM_ACCESS_CODE et CRM_AUTH_SECRET requis sur Netlify (production)',
+    });
   }
 
   if (method === 'GET') {
-    const cookieHeader =
-      event.headers.cookie || event.headers.Cookie || '';
+    const cookieHeader = event.headers.cookie || event.headers.Cookie || '';
     const token = parseCookie(cookieHeader, COOKIE_NAME);
-    const ok = verifyToken(token);
-    return json(200, { ok, configured: true });
+    return json(200, { ok: verifyToken(token), configured: true, insecure: !!cfg.insecure });
   }
 
   if (method === 'POST') {
@@ -116,7 +108,7 @@ exports.handler = async (event) => {
     }
 
     const code = typeof body.code === 'string' ? body.code.trim() : '';
-    if (code === accessCode) {
+    if (code === cfg.accessCode) {
       const token = makeToken();
       return json(
         200,

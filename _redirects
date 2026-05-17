@@ -16,6 +16,9 @@
 /api/wati-webhook           /.netlify/functions/wati-webhook           200
 /api/agency-auth            /.netlify/functions/agency-auth            200
 /api/agency-dossiers        /.netlify/functions/agency-dossiers        200
+/api/crm-delete-dossier     /.netlify/functions/crm-delete-dossier     200
+/api/mandat-verify          /.netlify/functions/mandat-verify          200
+/api/airtable-health        /.netlify/functions/airtable-health          200
 
 # Redirections pour URLs sans .html
 /choix-reclamation           /choix-reclamation.html           200

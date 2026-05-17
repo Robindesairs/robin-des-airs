@@ -6,15 +6,16 @@
 
 const { airtableCfg } = require('./lib/airtable-robin');
 const { getAgencySession } = require('./lib/agency-access');
-const { listAgencyDossiers, createAgencyDossier, COMMISSION_FCFA } = require('./lib/agency-airtable');
+const {
+  listAgencyDossiers,
+  createAgencyDossier,
+  isAttenteIncidentInput,
+  COMMISSION_FCFA,
+} = require('./lib/agency-airtable');
+const { corsHeaders } = require('./lib/auth-config');
+const { notifyAgencyDossierCreated } = require('./lib/robin-notify');
 
-const HEADERS = {
-  'Content-Type': 'application/json',
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Credentials': 'true',
-  'Cache-Control': 'no-store',
-};
+const HEADERS = corsHeaders('agency');
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
@@ -88,6 +89,10 @@ exports.handler = async (event) => {
 
     try {
       const created = await createAgencyDossier(cfg, agency, body);
+      const attente = isAttenteIncidentInput(body);
+      notifyAgencyDossierCreated(agency, created.dossier, { attenteIncident: attente }).catch((err) => {
+        console.warn('agency-dossiers: notify', err.message);
+      });
       return {
         statusCode: 201,
         headers: HEADERS,
@@ -96,7 +101,10 @@ exports.handler = async (event) => {
           ref: created.ref,
           recordId: created.recordId,
           dossier: created.dossier,
-          message: 'Dossier enregistré dans Airtable — visible par Robin des Airs après sync CRM.',
+          attenteIncident: attente,
+          message: attente
+            ? "Billet pré-enregistré — en attente d'incident (visible dans Airtable)."
+            : 'Dossier enregistré dans Airtable — visible par Robin des Airs.',
         }),
       };
     } catch (e) {

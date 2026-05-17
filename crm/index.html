@@ -489,8 +489,7 @@
 <script>
 const CRM_AUTH_URL = '/api/crm-auth';
 const CRM_AGENT_KEY = 'rda_crm_agent';
-/** Code connu de la direction uniquement — sans ce code, aucune suppression de dossier n’est possible. */
-const CRM_SUPPRESSION_DOSSIER_CODE = '1112';
+/** Suppression : code direction vérifié côté serveur (CRM_SUPPRESSION_CODE sur Netlify). */
 const CRM_OFFLINE_CODE_KEY = 'rda_crm_offline_code_v1';
 const CRM_OFFLINE_DEFAULT_CODE = 'robin-dakar';
 
@@ -537,7 +536,7 @@ function syncCrmAgentInput() {
   if (el) el.value = getCrmAgent();
 }
 
-/** Code CRM pour ?code= sur backup / Airtable (doit = CRM_ACCESS_CODE Netlify). */
+/** Code CRM mémorisé localement → header X-CRM-Code (doit = CRM_ACCESS_CODE Netlify). */
 function setCrmAccessCode(code) {
   var c = String(code || '').trim();
   window._crmCode = c;
@@ -916,7 +915,7 @@ function updateCalcNew(){
   </div>`;
 }
 
-let DB=[
+const CRM_DEMO_DOSSIERS = [
   {id:'RDA-260115-1001',statut:'PAYE',priorite:'STANDARD',date:'2026-01-15',date_statut:'2026-01-28',date_paiement:'2026-01-28',source:'fb_reels',lrar:'2026-01-13',
    prenom:'Aminata',nom:'DIALLO',indicatif:'+33',tel:'6 12 34 56 78',email:'rda-260115-1001@robindesairs.eu',adresse:'42 rue de la République, 69002 Lyon',adultes:1,bebes:0,coPassagers:[],
    vols:[{comp:'Air France',vol:'AF 718',date:'2025-11-03',dep:'CDG',arr:'DSS',pnr:'AB4XYZ',inc:'RETARD'}],
@@ -949,6 +948,10 @@ let DB=[
    vols:[{comp:'Air France',vol:'AF 596',date:'2025-09-12',dep:'CDG',arr:'ABJ',pnr:'LMN45K',inc:'RETARD'}],
    palier:600,events:[{date:'2025-10-20',action:'Dossier créé',meta:''},{date:'2025-11-01',action:'Mandat signé',meta:''},{date:'2025-11-07',action:'LRAR envoyée',meta:''},{date:'2025-11-22',action:'Relance 1 (J+15)',meta:''},{date:'2025-12-07',action:'Relance 2 (J+30)',meta:''},{date:'2026-01-08',action:'Saisine médiateur (J+62)',meta:''}]},
 ];
+let DB = [];
+if (/\bdemo=1\b/.test(location.search) || (function(){ try { return localStorage.getItem('rda_crm_demo')==='1'; } catch(e){ return false; } })()) {
+  DB = JSON.parse(JSON.stringify(CRM_DEMO_DOSSIERS));
+}
 var CRM_LS_KEY = 'rda_crm_db_v1';
 var CRM_SYNC_QUEUE_KEY = 'rda_crm_sync_queue_v1';
 var CRM_SYNC_LAST_KEY = 'rda_crm_sync_last_v1';
@@ -2173,7 +2176,7 @@ function openDetail(id){
     </div>
     <div class="crm-danger-zone">
       <div class="crm-danger-zone-title">Zone sécurisée — suppression du dossier</div>
-      <p><strong>Un agent ne peut pas supprimer un dossier</strong> sans le code d’autorisation détenu par la direction. Il n’existe aucun bouton « supprimer en un clic » : le code <strong>${CRM_SUPPRESSION_DOSSIER_CODE.length} chiffres</strong> est obligatoire, puis une confirmation finale.</p>
+      <p><strong>Un agent ne peut pas supprimer un dossier</strong> sans le code d’autorisation détenu par la direction. Il n’existe aucun bouton « supprimer en un clic » : le <strong>code direction</strong> (configuré sur Netlify) est obligatoire, puis une confirmation finale.</p>
       <button type="button" class="btn btn-sm btn-danger" onclick="crmOpenDeleteDossierModal()">Demander la suppression définitive de ce dossier…</button>
     </div>
   </div>`;
@@ -2562,24 +2565,39 @@ function crmCloseDeleteDossierModal(){
   if(err){ err.style.display = 'none'; err.textContent = ''; }
 }
 
-function crmSubmitDeleteDossier(){
+async function crmSubmitDeleteDossier(){
   if(!requireCrmAgent()) return;
   var id = window._crmDeleteTargetId;
   var inp = document.getElementById('crm-delete-code');
   var err = document.getElementById('crm-delete-dossier-err');
   if(!id || !inp) return;
   var code = String(inp.value || '').trim();
-  if(code !== CRM_SUPPRESSION_DOSSIER_CODE){
-    if(err){
-      err.textContent = 'Code incorrect. Sans le code direction, la suppression est impossible.';
-      err.style.display = 'block';
-    }
+  if(!code){
+    if(err){ err.textContent = 'Saisissez le code direction.'; err.style.display = 'block'; }
     return;
   }
   var d = DB.find(function(x){ return x.id === id; });
   if(!d) return;
   var ag = getCrmAgent() || '—';
   if(!window.confirm('DERNIÈRE CONFIRMATION\n\nSupprimer définitivement le dossier '+id+' ('+d.prenom+' '+d.nom+') ?\n\nIrréversible. Traçabilité : '+ag+'.')){
+    return;
+  }
+  try {
+    var resp = await crmApiFetch(CRM_DELETE_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ref: id, code: code })
+    });
+    var data = await resp.json().catch(function(){ return {}; });
+    if(!resp.ok){
+      if(err){
+        err.textContent = (data && data.error) || 'Code incorrect ou serveur indisponible.';
+        err.style.display = 'block';
+      }
+      return;
+    }
+  } catch(e) {
+    if(err){ err.textContent = 'Erreur réseau : ' + (e.message || 'échec'); err.style.display = 'block'; }
     return;
   }
   DB = DB.filter(function(x){ return x.id !== id; });
@@ -2618,16 +2636,18 @@ const CRM_BACKUP_URL = '/api/crm-backup';
 const CRM_AIRTABLE_URL = '/api/crm-airtable-sync';
 const CRM_WA_MESSAGES_URL = '/api/wa-messages';
 const CRM_WA_SEND_URL = '/api/crm-wa-send';
+const CRM_DELETE_URL = '/api/crm-delete-dossier';
 let _backupTimer = null;
 
-/** Appels API CRM : cookie de session + ?code= si mémorisé. */
+/** Appels API CRM : cookie session + header X-CRM-Code (jamais en query string). */
 function crmApiFetch(url, options) {
   options = options || {};
   if (!options.credentials) options.credentials = 'same-origin';
   loadCrmAccessCodeFromStorage();
   var code = (window._crmCode || '').trim();
-  if (code && url.indexOf('code=') === -1) {
-    url += (url.indexOf('?') >= 0 ? '&' : '?') + 'code=' + encodeURIComponent(code);
+  options.headers = options.headers || {};
+  if (code && !options.headers['X-CRM-Code'] && !options.headers['x-crm-code']) {
+    options.headers['X-CRM-Code'] = code;
   }
   return fetch(url, options);
 }
@@ -2806,6 +2826,13 @@ function crmDossierSignature(d) {
   var copy = JSON.parse(JSON.stringify(d));
   delete copy.updated_at;
   delete copy.updated_by;
+  if (Array.isArray(copy.events)) {
+    copy.events = copy.events.map(function (ev) {
+      var e = Object.assign({}, ev);
+      delete e.when;
+      return e;
+    });
+  }
   return JSON.stringify(copy);
 }
 
