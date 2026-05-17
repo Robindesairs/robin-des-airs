@@ -272,7 +272,7 @@
     </div>
     <button type="button" class="btn btn-ghost-light" onclick="exportCrmCsv()" title="Télécharger la liste des dossiers">Export CSV</button>
     <button type="button" class="btn btn-ghost-light" onclick="openBackupModal()" title="Sauvegardes cloud et points de restauration" id="btn-backup">☁️ Sauvegardes</button>
-    <button type="button" class="btn btn-ghost-light" onclick="syncCrmNow(false)" title="Pousser les changements locaux vers le CRM cloud" id="btn-sync">↻ Synchroniser</button>
+    <button type="button" class="btn btn-ghost-light" onclick="syncCrmNow(false)" title="Sauvegarde cloud + envoi des dossiers vers Airtable" id="btn-sync">↻ Sync cloud + Airtable</button>
     <button type="button" class="btn btn-ghost-light" onclick="resetCrmData()" title="Effacer la sauvegarde locale et recharger les exemples">Réinit. démo</button>
     <button type="button" class="btn btn-ghost-light" onclick="crmLogout()">Déconnexion</button>
     <button type="button" class="btn btn-primary" onclick="openNew()">+ Nouveau dossier</button>
@@ -945,7 +945,8 @@ function updateSyncButton() {
   var btn = document.getElementById('btn-sync');
   if (!btn) return;
   var pending = readCrmSyncQueue().length;
-  btn.textContent = pending > 0 ? ('↻ Synchroniser (' + pending + ')') : '↻ Synchroniser';
+  btn.textContent =
+    pending > 0 ? ('↻ Sync Airtable (' + pending + ')') : '↻ Sync cloud + Airtable';
 }
 
 function enqueueCrmSync(reason) {
@@ -2415,8 +2416,57 @@ crmInitAddressAutocomplete('n_adresse_search', 'n_adresse_dd', 'n_adresse');
    SAUVEGARDE CLOUD & POINTS DE RESTAURATION — Robin des Airs
    ═══════════════════════════════════════════════════════════ */
 const CRM_BACKUP_URL = '/api/crm-backup';
+const CRM_AIRTABLE_URL = '/api/crm-airtable-sync';
 let _backupTimer = null;
 let _syncInFlight = false;
+
+/** Envoie les dossiers CRM vers Airtable (clé API côté Netlify, auth = code CRM). */
+async function syncCrmToAirtable(db) {
+  const code = window._crmCode || '';
+  const payload = Array.isArray(db) ? db : crmSlimDbSnapshot();
+  const resp = await fetch(
+    CRM_AIRTABLE_URL + (code ? '?code=' + encodeURIComponent(code) : ''),
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ db: payload }),
+    }
+  );
+  const data = await resp.json().catch(function () {
+    return {};
+  });
+  if (!resp.ok) {
+    throw new Error((data && data.error) || 'Airtable HTTP ' + resp.status);
+  }
+  return data;
+}
+
+/** Importe une ligne Airtable dans le CRM local (création ou écrasement par ref). */
+async function importDossierFromAirtable(ref) {
+  const code = window._crmCode || '';
+  const resp = await fetch(
+    CRM_AIRTABLE_URL +
+      '?ref=' +
+      encodeURIComponent(ref) +
+      (code ? '&code=' + encodeURIComponent(code) : '')
+  );
+  const data = await resp.json().catch(function () {
+    return {};
+  });
+  if (!resp.ok) {
+    throw new Error((data && data.error) || 'Import HTTP ' + resp.status);
+  }
+  const d = data.dossier;
+  if (!d || !d.id) throw new Error('Réponse import invalide');
+  const idx = DB.findIndex(function (x) {
+    return x.id === d.id;
+  });
+  if (idx >= 0) DB[idx] = Object.assign({}, DB[idx], d);
+  else DB.unshift(d);
+  persistCrmDb();
+  render();
+  return data;
+}
 
 /** Sauvegarde auto déclenchée 3s après la dernière modification */
 function scheduleAutoBackup() {
@@ -2603,7 +2653,20 @@ async function syncCrmNow(auto) {
     if (!resp.ok || data.success === false) throw new Error((data && data.error) || ('HTTP ' + resp.status));
     writeCrmSyncQueue([]);
     try { localStorage.setItem(CRM_SYNC_LAST_KEY, new Date().toISOString()); } catch (e) {}
-    showCrmToast('Synchronisation cloud effectuée ✓');
+    var atSummary = '';
+    try {
+      const atData = await syncCrmToAirtable(slim);
+      const n = (atData && atData.pushed) || 0;
+      const errs = ((atData && atData.results) || []).filter(function (r) {
+        return !r.ok;
+      });
+      atSummary =
+        n + ' dossier(s) Airtable';
+      if (errs.length) atSummary += ' (' + errs.length + ' erreur(s))';
+    } catch (atErr) {
+      atSummary = 'Airtable : ' + (atErr && atErr.message ? atErr.message : 'échec');
+    }
+    showCrmToast('Sync cloud ✓ · ' + atSummary);
   } catch (e) {
     if (!auto) showCrmToast('Échec sync : ' + (e && e.message ? e.message : 'réessayez'));
     console.warn('Sync failed', e && e.message ? e.message : e);

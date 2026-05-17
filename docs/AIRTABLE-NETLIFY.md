@@ -6,7 +6,9 @@
 Airtable (automation)  ──POST──►  /api/airtable-webhook  ──►  mandat_url, WhatsApp, MAJ statut
                                         ▲
 Site / mandat signé    ──POST──►  /api/submit-mandat     ──►  MAJ Airtable « Mandat signé »
-CRM / scripts          ──POST──►  /api/airtable-sync    ──►  créer / mettre à jour ligne
+CRM (navigateur)       ──POST──►  /api/crm-airtable-sync ──►  upsert toutes les lignes (auth code CRM)
+Bot WhatsApp           ──POST──►  (Flask at_save)        ──►  création progressive des lignes
+Scripts externes       ──POST──►  /api/airtable-sync    ──►  créer / mettre à jour (secret)
                          ◄──GET──  /api/airtable-sync?ref=…  ◄──  lire une ligne
 ```
 
@@ -29,7 +31,25 @@ Redéployer le site après toute modification.
 
 ---
 
-## 2. Netlify → Airtable (déjà en place + sync)
+## 2. CRM → Airtable (`/crm/`)
+
+Le CRM web appelle **`POST /api/crm-airtable-sync`** avec le même **code d’accès** que les sauvegardes cloud (`CRM_ACCESS_CODE`). La clé `AIRTABLE_API_KEY` reste **uniquement sur Netlify** (jamais dans le navigateur).
+
+1. Ouvrir **`https://robindesairs.eu/crm/`** (ou `/crm.html` → redirection).
+2. Après chaque modification, cliquer **« Sync cloud + Airtable »** (ou attendre la sync auto si en ligne).
+3. Chaque dossier est créé ou mis à jour dans Airtable par **Référence Dossier** (`RDA-YYMMDD-XXXX`).
+
+**Import depuis Airtable** (console ou script) :
+
+```http
+GET https://robindesairs.eu/api/crm-airtable-sync?ref=RDA-260517-1234&code=VOTRE_CODE_CRM
+```
+
+Mapping statuts CRM → colonne **Statut du Dossier Suivi** : voir `netlify/functions/lib/crm-airtable-map.js`.
+
+---
+
+## 3. Netlify → Airtable (mandat, scripts)
 
 ### Signature mandat (`submit-mandat`)
 
@@ -68,7 +88,7 @@ Réponse : champs Airtable + `mandat_url` prérempli.
 
 ---
 
-## 3. Airtable → Netlify (automation)
+## 4. Airtable → Netlify (automation)
 
 ### Dans Airtable
 
@@ -102,7 +122,7 @@ Réponse JSON (exemple) : `{ "ok": true, "mandat_url": "https://robindesairs.eu/
 
 ---
 
-## 4. Colonnes Airtable (noms par défaut)
+## 5. Colonnes Airtable (noms par défaut)
 
 Le code utilise les **noms de colonnes** de votre base :
 
@@ -112,13 +132,13 @@ Si vos noms diffèrent, définir `AIRTABLE_COL_REF`, `AIRTABLE_COL_PRENOM`, etc.
 
 ---
 
-## 5. Make.com
+## 6. Make.com
 
 Vous pouvez **soit** utiliser l’automation Airtable native (ci-dessus), **soit** garder Make (Watch records) — évitez les **deux** sur le même statut pour ne pas envoyer le lien en double.
 
 ---
 
-## 6. Test rapide
+## 7. Test rapide
 
 ```bash
 curl -X POST "https://robindesairs.eu/api/airtable-webhook" \
