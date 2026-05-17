@@ -20,6 +20,10 @@ Dev local : `ALLOW_INSECURE_AUTH=true` autorise les fallbacks de dev.
 |----------|-------------|
 | `AGENCY_AUTH_SECRET` | Secret HMAC sessions agence |
 | `AGENCY_ACCOUNTS` | JSON tableau de comptes |
+| `AGENCY_COMMISSION_EUR` | Commission agence / passager gagné (défaut `45`) |
+| `AGENCY_CLIENT_NET_EUR` | Net passager indicatif (défaut `420`) |
+| `AGENCY_INDEMNITY_REF_EUR` | Indemnité CE 261 réf. long-courrier (défaut `600`) |
+| `AGENCY_XOF_PER_EUR` | Taux FCFA / euro (défaut `655.957`) |
 
 Exemple `AGENCY_ACCOUNTS` :
 
@@ -30,6 +34,12 @@ Exemple `AGENCY_ACCOUNTS` :
     "passHash": "scrypt:…",
     "name": "GSA Dakar",
     "airtableMatch": "GSA-DKR-001"
+  },
+  {
+    "code": "GSA-KMS-001",
+    "passHash": "scrypt:…",
+    "name": "Kombo Travel Services",
+    "airtableMatch": "GSA-KMS-001"
   }
 ]
 ```
