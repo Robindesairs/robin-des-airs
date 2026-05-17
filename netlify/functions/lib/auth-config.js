@@ -18,6 +18,11 @@ function allowInsecureAuth() {
   return (process.env.ALLOW_INSECURE_AUTH || '').trim() === 'true';
 }
 
+/** Démo Claude / preview : connexion par code agence seul (retirer après). */
+function allowAgencyCodeOnly() {
+  return (process.env.ALLOW_AGENCY_CODE_ONLY || '').trim() === 'true';
+}
+
 function getCrmAuthConfig() {
   const accessCode = (process.env.CRM_ACCESS_CODE || '').trim();
   const authSecret = (process.env.CRM_AUTH_SECRET || '').trim();
@@ -67,6 +72,7 @@ module.exports = {
   SITE_ORIGIN,
   isProduction,
   allowInsecureAuth,
+  allowAgencyCodeOnly,
   getCrmAuthConfig,
   getAgencyAuthSecret,
   getMandatLinkSecret,

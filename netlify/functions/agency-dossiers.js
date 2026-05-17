@@ -10,7 +10,7 @@ const {
   listAgencyDossiers,
   createAgencyDossier,
   isAttenteIncidentInput,
-  COMMISSION_FCFA,
+  PRICING,
 } = require('./lib/agency-airtable');
 const { corsHeaders } = require('./lib/auth-config');
 const { notifyAgencyDossierCreated } = require('./lib/robin-notify');
@@ -47,7 +47,9 @@ exports.handler = async (event) => {
         body: JSON.stringify({
           ok: true,
           agency: { code: agency.code, name: agency.name },
-          commissionPerPax: COMMISSION_FCFA,
+          pricing: PRICING,
+          commissionPerPax: PRICING.commissionFcfa,
+          commissionPerPaxEur: PRICING.commissionEur,
           count: dossiers.length,
           dossiers,
         }),
@@ -69,7 +71,7 @@ exports.handler = async (event) => {
       return { statusCode: 400, headers: HEADERS, body: JSON.stringify({ error: 'JSON invalide' }) };
     }
 
-    const required = ['nom', 'prenom', 'email', 'tel', 'pnr', 'vol', 'compagnie', 'date', 'depart', 'arrivee', 'probleme'];
+    const required = ['nom', 'prenom', 'tel', 'pnr', 'vol', 'compagnie', 'date', 'depart', 'arrivee', 'probleme'];
     const missing = required.filter((k) => !String(body[k] || '').trim());
     if (missing.length) {
       return {

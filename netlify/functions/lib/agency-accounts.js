@@ -10,7 +10,7 @@
  * Générer passHash : node -e "const {hashPassword}=require('./netlify/functions/lib/password-hash'); console.log(hashPassword('votre-mot-de-passe'))"
  */
 
-const { isProduction, allowInsecureAuth } = require('./auth-config');
+const { isProduction, allowInsecureAuth, allowAgencyCodeOnly } = require('./auth-config');
 const { verifyPassword, hashPassword } = require('./password-hash');
 
 /** Dev local uniquement si ALLOW_INSECURE_AUTH=true */
@@ -20,6 +20,12 @@ const DEV_FALLBACK = [
     pass: 'demo',
     name: 'Agence Démo',
     airtableMatch: 'DEMO',
+  },
+  {
+    code: 'GSA-KMS-001',
+    pass: 'kombo2026',
+    name: 'Kombo Travel Services',
+    airtableMatch: 'GSA-KMS-001',
   },
 ];
 
@@ -68,9 +74,12 @@ function accountPasswordOk(account, pass) {
 function findAgencyAccount(code, pass) {
   const c = String(code || '').trim().toUpperCase();
   const p = String(pass || '');
-  if (!c || !p) return null;
+  if (!c) return null;
   const hit = loadAgencyAccounts().find((a) => a.code === c);
-  if (!hit || !accountPasswordOk(hit, p)) return null;
+  if (!hit) return null;
+  if (allowAgencyCodeOnly() && !p) return hit;
+  if (!p) return null;
+  if (!accountPasswordOk(hit, p)) return null;
   return hit;
 }
 

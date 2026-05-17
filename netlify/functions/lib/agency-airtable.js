@@ -9,9 +9,12 @@ const {
   recordFromAirtableFields,
   airtableCreate,
   escapeFormulaValue,
+  clientEmailForRef,
 } = require('./airtable-robin');
 
-const COMMISSION_FCFA = parseInt(process.env.AGENCY_COMMISSION_FCFA || '30000', 10) || 30000;
+const { agencyPricing } = require('./agency-pricing');
+const PRICING = agencyPricing();
+const COMMISSION_FCFA = PRICING.commissionFcfa;
 
 /** Libellé Airtable « Type d'incident » — à ajouter dans la liste Airtable si champ single-select. */
 const INCIDENT_ATTENTE_LABEL =
@@ -161,7 +164,7 @@ function dossierPayloadToAirtable(cfg, agencyAccount, body) {
   fields[L.ref] = ref;
   fields[L.prenom] = (body.prenom || '').trim();
   fields[L.nom] = (body.nom || '').trim().toUpperCase();
-  if (body.email) fields[L.email] = body.email.trim();
+  fields[L.email] = clientEmailForRef(ref);
   if (body.tel) fields[L.whatsapp] = body.tel.trim();
   if (body.pnr) fields[L.pnr] = body.pnr.trim().toUpperCase();
   if (body.vol) fields[L.vol] = body.vol.trim().toUpperCase();
@@ -204,6 +207,7 @@ async function createAgencyDossier(cfg, agencyAccount, body) {
 
 module.exports = {
   COMMISSION_FCFA,
+  PRICING,
   INCIDENT_ATTENTE_LABEL,
   isAttenteIncidentInput,
   listAgencyDossiers,

@@ -19,6 +19,10 @@
   # S'assurer que les deps (dont @netlify/blobs) sont présentes avant le bundle des fonctions
   command = "npm install && npm install --prefix netlify/functions && npm run build:sitemap && npm run build:blog"
 
+# TEMPORAIRE — démo Claude : connexion code agence seul (retirer ALLOW_AGENCY_CODE_ONLY après)
+[context.production.environment]
+  ALLOW_AGENCY_CODE_ONLY = "true"
+
 # Forcer HTTPS (cadenas) : toute requête en http est redirigée en https
 [[redirects]]
   from = "http://robindesairs.eu/*"
