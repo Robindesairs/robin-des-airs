@@ -2442,18 +2442,26 @@ const CRM_AIRTABLE_URL = '/api/crm-airtable-sync';
 let _backupTimer = null;
 let _syncInFlight = false;
 
+/** Appels API CRM : cookie de session + ?code= si mémorisé. */
+function crmApiFetch(url, options) {
+  options = options || {};
+  if (!options.credentials) options.credentials = 'same-origin';
+  loadCrmAccessCodeFromStorage();
+  var code = (window._crmCode || '').trim();
+  if (code && url.indexOf('code=') === -1) {
+    url += (url.indexOf('?') >= 0 ? '&' : '?') + 'code=' + encodeURIComponent(code);
+  }
+  return fetch(url, options);
+}
+
 /** Envoie les dossiers CRM vers Airtable (clé API côté Netlify, auth = code CRM). */
 async function syncCrmToAirtable(db) {
-  const code = window._crmCode || '';
   const payload = Array.isArray(db) ? db : crmSlimDbSnapshot();
-  const resp = await fetch(
-    CRM_AIRTABLE_URL + (code ? '?code=' + encodeURIComponent(code) : ''),
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ db: payload }),
-    }
-  );
+  const resp = await crmApiFetch(CRM_AIRTABLE_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ db: payload }),
+  });
   const data = await resp.json().catch(function () {
     return {};
   });
@@ -2465,12 +2473,8 @@ async function syncCrmToAirtable(db) {
 
 /** Importe une ligne Airtable dans le CRM local (création ou écrasement par ref). */
 async function importDossierFromAirtable(ref) {
-  const code = window._crmCode || '';
-  const resp = await fetch(
-    CRM_AIRTABLE_URL +
-      '?ref=' +
-      encodeURIComponent(ref) +
-      (code ? '&code=' + encodeURIComponent(code) : '')
+  const resp = await crmApiFetch(
+    CRM_AIRTABLE_URL + '?ref=' + encodeURIComponent(ref)
   );
   const data = await resp.json().catch(function () {
     return {};
@@ -2506,9 +2510,8 @@ window.persistCrmDb = function() {
 /** Crée un point de restauration */
 async function createBackup(label) {
   try {
-    const code = window._crmCode || '';
     const slim = crmSlimDbSnapshot();
-    const resp = await fetch(CRM_BACKUP_URL + (code ? '?code=' + encodeURIComponent(code) : ''), {
+    const resp = await crmApiFetch(CRM_BACKUP_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ db: slim, label: label || 'Manuel' })
@@ -2542,12 +2545,11 @@ function crmDossierSignature(d) {
 }
 
 async function fetchLatestCloudDb() {
-  const code = window._crmCode || '';
-  const listResp = await fetch(CRM_BACKUP_URL + (code ? '?code=' + encodeURIComponent(code) : ''));
+  const listResp = await crmApiFetch(CRM_BACKUP_URL);
   const listData = await listResp.json();
   const backups = (listData && listData.backups) || [];
   if (!backups.length || !backups[0].key) return null;
-  const snapResp = await fetch(CRM_BACKUP_URL + '?key=' + encodeURIComponent(backups[0].key) + (code ? '&code=' + encodeURIComponent(code) : ''));
+  const snapResp = await crmApiFetch(CRM_BACKUP_URL + '?key=' + encodeURIComponent(backups[0].key));
   const snapshot = await snapResp.json();
   return Array.isArray(snapshot && snapshot.db) ? snapshot.db : null;
 }
@@ -2654,10 +2656,6 @@ async function syncCrmNow(auto) {
     updateSyncButton();
     return;
   }
-  if (!auto && !(window._crmCode || '').trim()) {
-    showCrmToast('Code CRM manquant — déconnectez-vous et reconnectez-vous avec le code Netlify');
-    return;
-  }
   _syncInFlight = true;
   var btn = document.getElementById('btn-sync');
   if (btn) btn.textContent = '⏳ Sync...';
@@ -2676,10 +2674,9 @@ async function syncCrmNow(auto) {
       DB = merge.merged;
       render();
     }
-    const code = window._crmCode || '';
     const slim = crmSlimDbSnapshot();
     const label = auto ? 'Sync offline (' + pending.length + ')' : 'Sync manuelle (' + DB.length + ' dossiers)';
-    const resp = await fetch(CRM_BACKUP_URL + (code ? '?code=' + encodeURIComponent(code) : ''), {
+    const resp = await crmApiFetch(CRM_BACKUP_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ db: slim, label: label })
@@ -2703,7 +2700,11 @@ async function syncCrmNow(auto) {
     }
     showCrmToast('Sync cloud ✓ · ' + atSummary);
   } catch (e) {
-    if (!auto) showCrmToast('Échec sync : ' + (e && e.message ? e.message : 'réessayez'));
+    var msg = e && e.message ? e.message : 'réessayez';
+    if (msg.indexOf('Non autorisé') !== -1) {
+      msg = 'Non autorisé — déconnectez-vous, reconnectez-vous avec le code Netlify (CRM_ACCESS_CODE)';
+    }
+    if (!auto) showCrmToast('Échec sync : ' + msg);
     console.warn('Sync failed', e && e.message ? e.message : e);
   } finally {
     _syncInFlight = false;
@@ -2750,8 +2751,7 @@ async function loadBackupList() {
   if (!list) return;
   list.innerHTML = '<p style="text-align:center;color:#999;font-size:13px;padding:20px">⏳ Chargement…</p>';
   try {
-    const code = window._crmCode || '';
-    const resp = await fetch(CRM_BACKUP_URL + (code ? '?code=' + encodeURIComponent(code) : ''));
+    const resp = await crmApiFetch(CRM_BACKUP_URL);
     const data = await resp.json();
     const backups = data.backups || [];
     if (!backups.length) {
@@ -2781,8 +2781,7 @@ async function loadBackupList() {
 async function restoreBackup(key) {
   if (!confirm('Restaurer ce point ? Les dossiers actuels seront remplacés par cette sauvegarde.')) return;
   try {
-    const code = window._crmCode || '';
-    const resp = await fetch(CRM_BACKUP_URL + '?key=' + encodeURIComponent(key) + (code ? '&code=' + encodeURIComponent(code) : ''));
+    const resp = await crmApiFetch(CRM_BACKUP_URL + '?key=' + encodeURIComponent(key));
     const snapshot = await resp.json();
     if (!snapshot.db || !Array.isArray(snapshot.db)) throw new Error('Format invalide');
     localStorage.setItem(CRM_LS_KEY, JSON.stringify(snapshot.db));
@@ -2797,8 +2796,7 @@ async function restoreBackup(key) {
 async function deleteBackup(key) {
   if (!confirm('Supprimer cette sauvegarde ?')) return;
   try {
-    const code = window._crmCode || '';
-    await fetch(CRM_BACKUP_URL + '?key=' + encodeURIComponent(key) + (code ? '&code=' + encodeURIComponent(code) : ''), { method: 'DELETE' });
+    await crmApiFetch(CRM_BACKUP_URL + '?key=' + encodeURIComponent(key), { method: 'DELETE' });
     loadBackupList();
   } catch (e) { alert('Erreur : ' + e.message); }
 }

@@ -21,30 +21,24 @@ const {
   airtableRecordToCrmDossier,
 } = require('./lib/crm-airtable-map');
 
+const { checkCrmAccess } = require('./lib/crm-access');
+
 const HEADERS = {
   'Content-Type': 'application/json',
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'Content-Type, X-CRM-Code',
+  'Access-Control-Allow-Credentials': 'true',
   'Cache-Control': 'no-store',
 };
-
-function checkAuth(event) {
-  const crmCode = process.env.CRM_ACCESS_CODE;
-  if (!crmCode) return true;
-  const provided =
-    event.queryStringParameters?.code ||
-    event.headers?.['x-crm-code'] ||
-    event.headers?.['X-CRM-Code'];
-  return provided === crmCode;
-}
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers: HEADERS, body: '' };
   }
 
-  if (!checkAuth(event)) {
-    return { statusCode: 401, headers: HEADERS, body: JSON.stringify({ error: 'Non autorisé' }) };
+  const auth = checkCrmAccess(event);
+  if (!auth.ok) {
+    return { statusCode: 401, headers: HEADERS, body: JSON.stringify({ error: auth.error || 'Non autorisé' }) };
   }
 
   const cfg = airtableCfg();
