@@ -106,8 +106,28 @@
   status = 200
 
 [[redirects]]
-  from = "/crm"
-  to = "/crm.html"
+  from = "/crm.html"
+  to = "/crm/"
+  status = 301
+
+[[redirects]]
+  from = "/api/crm-auth"
+  to = "/.netlify/functions/crm-auth"
+  status = 200
+
+[[redirects]]
+  from = "/api/crm-backup"
+  to = "/.netlify/functions/crm-backup"
+  status = 200
+
+[[redirects]]
+  from = "/api/airtable-webhook"
+  to = "/.netlify/functions/airtable-webhook"
+  status = 200
+
+[[redirects]]
+  from = "/api/airtable-sync"
+  to = "/.netlify/functions/airtable-sync"
   status = 200
 
 # Webhook WhatsApp 360dialog

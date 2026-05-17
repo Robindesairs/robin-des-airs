@@ -116,6 +116,7 @@
   .crm-cc-opt .crm-flag { font-size: 20px; line-height: 1; flex-shrink: 0; }
   .crm-cc-opt .crm-meta { color: var(--text2); font-size: 12px; flex: 1; min-width: 120px; }
   .crm-cc-hint { font-size: 10px; color: var(--text3); margin: 6px 0 0; line-height: 1.4; }
+  .crm-readonly { background: #F3F4F6; color: #374151; cursor: default; }
 
   /* ── Adresse : autocomplétion BAN (France) ── */
   .crm-addr-wrap { position: relative; width: 100%; margin-bottom: 8px; }
@@ -281,7 +282,7 @@
 <div class="app">
   <!-- MÉTRIQUES -->
   <div class="metrics" id="metrics"></div>
-  <div class="crm-toolbar">Les dossiers sont <strong>sauvegardés dans ce navigateur</strong> (localStorage). Référence au format <strong>RDA-année-XXX-XXX</strong> (2 blocs de 3 caractères, plus facile à lire et à dicter). Recherche : tapez une partie du n° ou du nom. Pas de suite 001, 002… Le <strong>total</strong> n’est pas affiché. Export CSV pour archiver.</div>
+  <div class="crm-toolbar" id="crm-toolbar"></div>
   <div class="crm-jalons" id="crm-jalons" aria-label="Prochains jalons"></div>
 
   <!-- FILTRES -->
@@ -397,7 +398,11 @@
           <input id="n_tel" placeholder="6 12 34 56 78" aria-label="Numéro national">
         </div>
       </div>
-      <div class="field"><label>E-mail</label><input id="n_email" placeholder="email@…" type="email"></div>
+      <div class="field">
+        <label data-crm-str="lbl_client_email">E-mail dossier (client)</label>
+        <input id="n_email" type="text" readonly class="crm-readonly" tabindex="-1" data-crm-placeholder="ph_client_email_auto" value="">
+        <p class="crm-cc-hint" data-crm-str="client_email_hint"></p>
+      </div>
       <div class="field">
         <label data-crm-str="lbl_address">Adresse postale complète</label>
         <p class="crm-cc-hint" data-crm-str="addr_search_hint"></p>
@@ -465,8 +470,8 @@
 
 <div id="crm-wa-toast" class="crm-wa-toast" role="status" aria-live="polite"></div>
 
-<script src="assets/crm-dial-codes.js"></script>
-<script src="assets/crm-i18n.js"></script>
+<script src="/assets/crm-dial-codes.js"></script>
+<script src="/assets/crm-i18n.js"></script>
 <script>
 const CRM_AUTH_URL = '/api/crm-auth';
 const CRM_AGENT_KEY = 'rda_crm_agent';
@@ -875,35 +880,35 @@ function updateCalcNew(){
 }
 
 let DB=[
-  {id:'RDA-2026-K4W-Q82',statut:'PAYE',priorite:'STANDARD',date:'2026-01-15',date_statut:'2026-01-28',date_paiement:'2026-01-28',source:'fb_reels',lrar:'2026-01-13',
-   prenom:'Aminata',nom:'DIALLO',indicatif:'+33',tel:'6 12 34 56 78',email:'aminata@gmail.com',adresse:'42 rue de la République, 69002 Lyon',adultes:1,bebes:0,coPassagers:[],
+  {id:'RDA-260115-1001',statut:'PAYE',priorite:'STANDARD',date:'2026-01-15',date_statut:'2026-01-28',date_paiement:'2026-01-28',source:'fb_reels',lrar:'2026-01-13',
+   prenom:'Aminata',nom:'DIALLO',indicatif:'+33',tel:'6 12 34 56 78',email:'rda-260115-1001@robindesairs.eu',adresse:'42 rue de la République, 69002 Lyon',adultes:1,bebes:0,coPassagers:[],
    vols:[{comp:'Air France',vol:'AF 718',date:'2025-11-03',dep:'CDG',arr:'DSS',pnr:'AB4XYZ',inc:'RETARD'}],
    palier:600,pieces:[
      {id:'p1',cat:'MANDAT',filename:'Mandat_Yousign.pdf',added:'2026-01-10',sizeKb:142,dataUrl:null},
      {id:'p2',cat:'RIB',filename:'RIB_aminata.pdf',added:'2026-01-11',sizeKb:88,dataUrl:null},
      {id:'p3',cat:'LRAR_PREUVE',filename:'AR_LRAR_1A002.pdf',added:'2026-01-12',sizeKb:210,dataUrl:null}
    ],events:[{date:'2026-01-10',action:'Mandat signé (YouSign)',meta:''},{date:'2026-01-12',action:'LRAR envoyée',meta:'Réf. AR 1A002'},{date:'2026-01-28',action:'Paiement reçu + reversé',meta:'600€ encaissés — 450€ reversés'}]},
-  {id:'RDA-2026-M7H-XZ9',statut:'LRAR_ENVOYEE',priorite:'HAUTE',date:'2026-02-01',date_statut:'2026-02-03',date_paiement:null,source:'tiktok_ad',lrar:'2026-02-03',
-   prenom:'Kofi',nom:'ASANTE',indicatif:'+33',tel:'7 98 76 54 32',email:'kofi@hotmail.fr',adresse:'18 avenue Kléber, 75116 Paris',adultes:3,bebes:1,coPassagers:[{prenom:'Ama',nom:'ASANTE'},{prenom:'Kwame',nom:'ASANTE'}],
+  {id:'RDA-260201-1002',statut:'LRAR_ENVOYEE',priorite:'HAUTE',date:'2026-02-01',date_statut:'2026-02-03',date_paiement:null,source:'tiktok_ad',lrar:'2026-02-03',
+   prenom:'Kofi',nom:'ASANTE',indicatif:'+33',tel:'7 98 76 54 32',email:'rda-260201-1002@robindesairs.eu',adresse:'18 avenue Kléber, 75116 Paris',adultes:3,bebes:1,coPassagers:[{prenom:'Ama',nom:'ASANTE'},{prenom:'Kwame',nom:'ASANTE'}],
    vols:[{comp:'Air France',vol:'AF 704',date:'2026-01-10',dep:'CDG',arr:'DLA',pnr:'ZK9PLM',inc:'ANNULATION'}],
    palier:600,pieces:[
      {id:'pk1',cat:'EMBARQUEMENT',filename:'Carte_embarquement_Kofi.jpg',added:'2026-02-01',sizeKb:640,dataUrl:null},
      {id:'pk2',cat:'IDENTITE',filename:'CNI_Kofi.pdf',added:'2026-02-01',sizeKb:320,dataUrl:null}
    ],events:[{date:'2026-02-01',action:'3 mandats signés (bébé exclu)',meta:''},{date:'2026-02-03',action:'LRAR envoyée',meta:'Délai 15j'}]},
-  {id:'RDA-2026-T2R-JV6',statut:'ELIGIBLE',priorite:'STANDARD',date:'2026-02-10',date_statut:'2026-02-10',date_paiement:null,source:'organic_site',lrar:null,
-   prenom:'Fatou',nom:'CAMARA',indicatif:'+33',tel:'6 55 44 33 22',email:'fatou.c@yahoo.fr',adresse:'5 impasse des Lilas, 93100 Montreuil',adultes:2,bebes:0,coPassagers:[{prenom:'Ibrahim',nom:'CAMARA'}],
+  {id:'RDA-260210-1003',statut:'ELIGIBLE',priorite:'STANDARD',date:'2026-02-10',date_statut:'2026-02-10',date_paiement:null,source:'organic_site',lrar:null,
+   prenom:'Fatou',nom:'CAMARA',indicatif:'+33',tel:'6 55 44 33 22',email:'rda-260210-1003@robindesairs.eu',adresse:'5 impasse des Lilas, 93100 Montreuil',adultes:2,bebes:0,coPassagers:[{prenom:'Ibrahim',nom:'CAMARA'}],
    vols:[{comp:'Transavia',vol:'TO 9612',date:'2026-01-20',dep:'ORY',arr:'BKO',pnr:'CX3NOP',inc:'RETARD'}],
    palier:600,events:[{date:'2026-02-10',action:'Dossier créé',meta:'Retard 5h confirmé'}]},
-  {id:'RDA-2026-B9C-K6W',statut:'CONTENTIEUX',priorite:'HAUTE',date:'2025-12-05',date_statut:'2026-01-10',date_paiement:null,source:'referral',lrar:'2025-12-08',
-   prenom:'Jean-Baptiste',nom:'KOUASSI',indicatif:'+32',tel:'47 123 456',email:'jb.kouassi@gmail.com',adresse:'Rue de la Loi 100, 1040 Bruxelles',adultes:1,bebes:0,coPassagers:[],
+  {id:'RDA-251205-1004',statut:'CONTENTIEUX',priorite:'HAUTE',date:'2025-12-05',date_statut:'2026-01-10',date_paiement:null,source:'referral',lrar:'2025-12-08',
+   prenom:'Jean-Baptiste',nom:'KOUASSI',indicatif:'+32',tel:'47 123 456',email:'rda-251205-1004@robindesairs.eu',adresse:'Rue de la Loi 100, 1040 Bruxelles',adultes:1,bebes:0,coPassagers:[],
    vols:[{comp:'Brussels Airlines',vol:'SN 401',date:'2025-10-14',dep:'BRU',arr:'FIH',pnr:'PQ7RST',inc:'ANNULATION'},{comp:'Brussels Airlines',vol:'SN 403',date:'2025-10-15',dep:'FIH',arr:'BRU',pnr:'PQ7RST',inc:'CORRESPONDANCE_MANQUEE'}],
    palier:600,events:[{date:'2025-12-05',action:'Mandat signé',meta:''},{date:'2025-12-08',action:'LRAR envoyée',meta:''},{date:'2025-12-25',action:'Refus compagnie',meta:'Circonstances extraordinaires'},{date:'2026-01-10',action:'Contentieux ouvert',meta:'Tribunal de Commerce Paris'}]},
-  {id:'RDA-2026-P5G-N8Q',statut:'MANDAT_SIGNE',priorite:'BASSE',date:'2026-03-01',date_statut:'2026-03-01',date_paiement:null,source:'whatsapp',lrar:null,
-   prenom:'Marie',nom:'BATUMELO',indicatif:'+33',tel:'6 77 88 99 00',email:'marie.b@outlook.com',adresse:'12 cours Gambetta, 33000 Bordeaux',adultes:1,bebes:1,coPassagers:[],
+  {id:'RDA-260301-1005',statut:'MANDAT_SIGNE',priorite:'BASSE',date:'2026-03-01',date_statut:'2026-03-01',date_paiement:null,source:'whatsapp',lrar:null,
+   prenom:'Marie',nom:'BATUMELO',indicatif:'+33',tel:'6 77 88 99 00',email:'rda-260301-1005@robindesairs.eu',adresse:'12 cours Gambetta, 33000 Bordeaux',adultes:1,bebes:1,coPassagers:[],
    vols:[{comp:'Air France',vol:'AF 732',date:'2026-02-18',dep:'CDG',arr:'BKO',pnr:'GH2IJK',inc:'RETARD'}],
    palier:600,events:[{date:'2026-03-01',action:'Mandat signé (YouSign)',meta:'Bébé présent — non indemnisé'}]},
-  {id:'RDA-2026-F3Y-M9K',statut:'MEDIATION',priorite:'STANDARD',date:'2025-10-20',date_statut:'2026-01-08',date_paiement:null,source:'whatsapp',lrar:'2025-11-07',
-   prenom:'Ibrahim',nom:'SY',indicatif:'+33',tel:'6 11 22 33 44',email:'ibrahim.sy@mail.fr',adresse:'8 rue des Peupliers, 94200 Ivry-sur-Seine',adultes:1,bebes:0,coPassagers:[],
+  {id:'RDA-251020-1006',statut:'MEDIATION',priorite:'STANDARD',date:'2025-10-20',date_statut:'2026-01-08',date_paiement:null,source:'whatsapp',lrar:'2025-11-07',
+   prenom:'Ibrahim',nom:'SY',indicatif:'+33',tel:'6 11 22 33 44',email:'rda-251020-1006@robindesairs.eu',adresse:'8 rue des Peupliers, 94200 Ivry-sur-Seine',adultes:1,bebes:0,coPassagers:[],
    vols:[{comp:'Air France',vol:'AF 596',date:'2025-09-12',dep:'CDG',arr:'ABJ',pnr:'LMN45K',inc:'RETARD'}],
    palier:600,events:[{date:'2025-10-20',action:'Dossier créé',meta:''},{date:'2025-11-01',action:'Mandat signé',meta:''},{date:'2025-11-07',action:'LRAR envoyée',meta:''},{date:'2025-11-22',action:'Relance 1 (J+15)',meta:''},{date:'2025-12-07',action:'Relance 2 (J+30)',meta:''},{date:'2026-01-08',action:'Saisine médiateur (J+62)',meta:''}]},
 ];
@@ -1203,8 +1208,31 @@ function crmCoPaxNeeded(ad) {
   var a = parseInt(ad, 10) || 1;
   return Math.max(0, Math.min(8, a - 1));
 }
+/** Format Airtable / Make : RDA-YYMMDD-XXXX (ex. RDA-260516-3847). */
+var CRM_REF_PATTERN = /^RDA-\d{6}-\d{4}$/;
+
+function crmRefDateSegment(d) {
+  var dt = d || new Date();
+  var yy = String(dt.getFullYear()).slice(-2);
+  var mm = String(dt.getMonth() + 1).padStart(2, '0');
+  var dd = String(dt.getDate()).padStart(2, '0');
+  return yy + mm + dd;
+}
+
+function crmClientEmailForRef(ref) {
+  if (!ref) return '';
+  return String(ref).trim().toLowerCase() + '@robindesairs.eu';
+}
+
+function crmDbHasRef(id) {
+  return DB.some(function (x) {
+    return x.id === id;
+  });
+}
+
 function crmNormalizeDossierContact(d) {
   if (!d) return;
+  if (d.id && CRM_REF_PATTERN.test(d.id)) d.email = crmClientEmailForRef(d.id);
   if (typeof d.adresse !== 'string') d.adresse = '';
   if (!Array.isArray(d.coPassagers)) d.coPassagers = [];
   var need = crmCoPaxNeeded(d.adultes);
@@ -1797,7 +1825,6 @@ function saveEditDossier(id){
   if(!prenom||!nom){ alert('Prénom et nom obligatoires.'); return; }
   var indicatif = document.getElementById('edit-indicatif').value;
   var tel = document.getElementById('edit-tel').value.trim();
-  var email = document.getElementById('edit-email').value.trim();
   var adultes = Math.min(9,Math.max(1,parseInt(document.getElementById('edit-adultes').value,10)||1));
   var adresse = (document.getElementById('edit-adresse') && document.getElementById('edit-adresse').value || '').trim();
   if(!adresse){ alert(crmT('alert_address_required')); return; }
@@ -1814,7 +1841,7 @@ function saveEditDossier(id){
   d.nom = nom;
   d.indicatif = indicatif;
   d.tel = tel;
-  d.email = email;
+  d.email = crmClientEmailForRef(d.id);
   d.adultes = adultes;
   d.adresse = adresse;
   d.coPassagers = coPassagers;
@@ -2037,7 +2064,7 @@ function openDetail(id){
       </div>
       <p class="crm-cc-hint">Indicatif : raccourcis au focus, ou tapez au moins 2 caractères (+32, belgique…).</p>
     </div>
-    <div class="field"><label>E-mail</label><input id="edit-email" type="email" value="${escAttr(d.email)}"></div>
+    <div class="field"><label>${crmT('lbl_client_email')}</label><input id="edit-email" type="text" readonly class="crm-readonly" value="${escAttr(crmClientEmailForRef(d.id))}"><p class="crm-cc-hint">${crmT('client_email_hint')}</p></div>
     <div class="field"><label>${crmT('lbl_address')}</label>
     <p class="crm-cc-hint">${crmT('addr_search_hint')}</p>
     <div class="crm-addr-wrap">
@@ -2254,34 +2281,22 @@ function openNew(){
   var nad = document.getElementById('n_adultes');
   if(nad) nad.removeAttribute('data-prev-copax');
   crmRefreshNewCoPassengers();
+  var nel = document.getElementById('n_email');
+  if(nel) nel.value = crmT('ph_client_email_auto');
   document.getElementById('modalNew').style.display='flex';
 }
 
-/** Référence non séquentielle + format lisible RDA-année-AAA-BBB (dicter / retrouver plus facilement). */
-function crmRandomRefSeg(len){
-  var alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  var s = '';
-  for(var i = 0; i < len; i++){
-    s += alphabet.charAt(Math.floor(Math.random() * alphabet.length));
-  }
-  return s;
-}
+/** Numéro dossier aligné Airtable / Make : RDA-YYMMDD-XXXX (XXXX aléatoire 1000–9999). */
 function crmGenerateDossierId(){
-  var y = new Date().getFullYear();
-  var now = Date.now().toString(36).toUpperCase().slice(-5);
-  var devKey = '';
-  try {
-    devKey = localStorage.getItem('rda_crm_device_key') || '';
-    if(!devKey){
-      devKey = crmRandomRefSeg(3);
-      localStorage.setItem('rda_crm_device_key', devKey);
-    }
-  } catch(_) {
-    devKey = crmRandomRefSeg(3);
+  var day = crmRefDateSegment();
+  for(var attempt = 0; attempt < 80; attempt++){
+    var seq = String(1000 + Math.floor(Math.random() * 9000));
+    var id = 'RDA-' + day + '-' + seq;
+    if(!crmDbHasRef(id)) return id;
   }
-  var id = 'RDA-' + y + '-' + devKey + '-' + now + '-' + crmRandomRefSeg(3);
-  if(DB.some(function(d){ return d.id === id; })) return crmGenerateDossierId();
-  return id;
+  var fallback = 'RDA-' + day + '-' + Date.now().toString(36).toUpperCase().slice(-4);
+  if(!crmDbHasRef(fallback)) return fallback;
+  return 'RDA-' + day + '-' + String(Math.floor(Math.random() * 9000) + 1000);
 }
 
 function saveNew(){
@@ -2314,9 +2329,11 @@ function saveNew(){
   const id = crmGenerateDossierId();
   const ag = getCrmAgent() || 'Agent non renseigné';
   const ts = new Date().toISOString();
-  DB.unshift({id,statut:'ELIGIBLE',priorite:document.getElementById('n_priorite').value,date:today(),date_statut:today(),date_paiement:null,source:crmNormalizeSource(document.getElementById('n_source').value),lrar:null,prenom,nom,indicatif:indicatifNew,tel:telNew,email:document.getElementById('n_email').value,adresse,coPassagers,adultes,bebes,vols,palier,updated_at:ts,updated_by:ag,pieces:[],events:[{date:today(),when:ts,action:'Dossier créé — Éligible',meta:'Création dans le CRM',by:ag}]});
+  var clientEmail = crmClientEmailForRef(id);
+  DB.unshift({id,statut:'ELIGIBLE',priorite:document.getElementById('n_priorite').value,date:today(),date_statut:today(),date_paiement:null,source:crmNormalizeSource(document.getElementById('n_source').value),lrar:null,prenom,nom,indicatif:indicatifNew,tel:telNew,email:clientEmail,adresse,coPassagers,adultes,bebes,vols,palier,updated_at:ts,updated_by:ag,pieces:[],events:[{date:today(),when:ts,action:'Dossier créé — Éligible',meta:'Création dans le CRM',by:ag}]});
   persistCrmDb();
   closeAll(); render();
+  showCrmToast(crmT('toast_created', { id: id, email: clientEmail }));
 }
 
 window._crmDeleteTargetId = null;

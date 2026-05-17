@@ -354,7 +354,7 @@
     btn_logout: 'Déconnexion',
     btn_new: '+ Nouveau dossier',
     toolbar_html:
-      'Les dossiers sont <strong>sauvegardés dans ce navigateur</strong> (localStorage). Référence au format <strong>RDA-année-XXX-XXX</strong> (2 blocs de 3 caractères, plus facile à lire et à dicter). Recherche : tapez une partie du n° ou du nom. Pas de suite 001, 002… Le <strong>total</strong> n’est pas affiché. Export CSV pour archiver.',
+      'Les dossiers sont <strong>sauvegardés dans ce navigateur</strong> (localStorage). Numéro au format <strong>RDA-YYMMDD-XXXX</strong> (identique à Airtable / Make, ex. RDA-260516-3847). E-mail client dédié : <strong>numéro@robindesairs.eu</strong>. Collision de numéro : très rare (4 chiffres aléatoires + contrôle local) ; dans Airtable, gardez <strong>Référence Dossier</strong> en champ unique.',
     jalons_aria: 'Prochains jalons',
     search_ph: '🔍  N°, nom, adresse, vol, PNR…',
     fil_all_status: 'Tous les statuts',
@@ -419,7 +419,12 @@
     national_ph: '6 12 34 56 78',
     aria_national: 'Numéro national',
     lbl_email: 'E-mail',
+    lbl_client_email: 'E-mail dossier (client)',
     ph_email: 'email@…',
+    ph_client_email_auto: 'Attribué à la création (ref@robindesairs.eu)',
+    client_email_hint:
+      'Adresse dédiée communiquée au client pour filtrer les échanges compagnie (format : numéro de dossier en minuscules @robindesairs.eu).',
+    toast_created: 'Dossier {{id}} créé — e-mail client : {{email}}',
     lbl_address: 'Adresse postale complète',
     ph_address: 'N°, rue, code postal, ville, pays',
     co_pax_section: 'Autres passagers indemnisés (CE 261)',
@@ -654,7 +659,7 @@
     btn_logout: 'Log out',
     btn_new: '+ New case',
     toolbar_html:
-      'Cases are <strong>saved in this browser</strong> (localStorage). Reference format <strong>RDA-YEAR-XXX-XXX</strong> (two blocks of 3 characters, easier to read and dictate). Search: type part of the ref or name. No sequential 001, 002… <strong>Total</strong> count is not shown. Export CSV to archive.',
+      'Cases are <strong>saved in this browser</strong> (localStorage). Reference format <strong>RDA-YYMMDD-XXXX</strong> (same as Airtable / Make, e.g. RDA-260516-3847). Client e-mail: <strong>ref@robindesairs.eu</strong>. Duplicate refs are very rare (random 4 digits + local check); keep <strong>Case reference</strong> unique in Airtable.',
     jalons_aria: 'Upcoming milestones',
     search_ph: '🔍  Ref., name, address, flight, PNR…',
     fil_all_status: 'All statuses',
@@ -711,6 +716,11 @@
       'On focus: shortcuts. From <strong>2 characters</strong>: type digits (+41, 221…) or country — pick from the list.',
     national_ph: '6 12 34 56 78',
     lbl_email: 'E-mail',
+    lbl_client_email: 'Case e-mail (client)',
+    ph_client_email_auto: 'Assigned on create (ref@robindesairs.eu)',
+    client_email_hint:
+      'Dedicated address given to the client to filter airline mail (lowercase case ref @robindesairs.eu).',
+    toast_created: 'Case {{id}} created — client e-mail: {{email}}',
     lbl_address: 'Full postal address',
     ph_address: 'Final address (from search above or free text, e.g. abroad)',
     addr_autocomplete_ph: 'Type street, postcode or city — French address suggestions (national BAN)',
