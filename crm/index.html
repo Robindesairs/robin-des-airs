@@ -2635,16 +2635,27 @@ function applyConflictChoices() {
 }
 
 async function syncCrmNow(auto) {
-  if (_syncInFlight) return;
+  if (_syncInFlight) {
+    if (!auto) showCrmToast('Synchronisation déjà en cours…');
+    return;
+  }
+  loadCrmAccessCodeFromStorage();
   var pending = readCrmSyncQueue();
-  if (!pending.length) {
-    if (!auto) showCrmToast('Aucune modification locale en attente');
+  /* Clic manuel : toujours pousser cloud + Airtable (pas seulement si file d’attente). */
+  if (!pending.length && auto) {
     updateSyncButton();
     return;
+  }
+  if (!pending.length && !auto) {
+    pending = [{ ts: new Date().toISOString(), reason: 'manual_full', count: DB.length }];
   }
   if (!navigator.onLine) {
     if (!auto) showCrmToast('Hors ligne — synchronisation reportée');
     updateSyncButton();
+    return;
+  }
+  if (!auto && !(window._crmCode || '').trim()) {
+    showCrmToast('Code CRM manquant — déconnectez-vous et reconnectez-vous avec le code Netlify');
     return;
   }
   _syncInFlight = true;
@@ -2657,7 +2668,9 @@ async function syncCrmNow(auto) {
       const merge = computeMergeResult(DB, cloudDb, lastSync);
       if (merge.conflicts.length) {
         openConflictModal(merge.conflicts, merge.merged);
-        if (!auto) showCrmToast('Conflits détectés: choisissez Local/Cloud');
+        if (!auto) showCrmToast('Conflits détectés — choisissez Local ou Cloud');
+        _syncInFlight = false;
+        if (btn) updateSyncButton();
         return;
       }
       DB = merge.merged;
@@ -2665,7 +2678,7 @@ async function syncCrmNow(auto) {
     }
     const code = window._crmCode || '';
     const slim = crmSlimDbSnapshot();
-    const label = 'Sync offline (' + pending.length + ')';
+    const label = auto ? 'Sync offline (' + pending.length + ')' : 'Sync manuelle (' + DB.length + ' dossiers)';
     const resp = await fetch(CRM_BACKUP_URL + (code ? '?code=' + encodeURIComponent(code) : ''), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
