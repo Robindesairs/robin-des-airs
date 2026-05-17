@@ -131,6 +131,8 @@ tbody tr:hover { background:rgba(61,223,168,0.04); }
 .badge.paye { background:var(--green-dark); color:var(--white); }
 .badge.rejete { background:rgba(255,90,90,0.1); color:var(--red); }
 .badge.nouveau { background:rgba(255,179,71,0.15); color:#c87800; }
+.badge.attente-incident { background:rgba(147,197,253,0.22); color:#1d4ed8; }
+.form-hint { font-size:12px;color:var(--gray-400);margin-top:6px;line-height:1.45; }
 
 /* Form */
 .form-card { background:var(--white); border-radius:var(--radius); padding:32px; box-shadow:var(--shadow); max-width:720px; }
@@ -317,7 +319,7 @@ tbody tr:hover { background:rgba(61,223,168,0.04); }
     <div class="page" id="page-nouveau">
       <div class="page-header">
         <h1>Nouveau dossier</h1>
-        <p>Soumettez un PNR pour ouvrir une réclamation EU 261</p>
+        <p>Soumettez un PNR — réclamation immédiate ou billet vendu en attente d'incident (retard/annulation à venir).</p>
       </div>
 
       <div class="form-card">
@@ -388,17 +390,19 @@ tbody tr:hover { background:rgba(61,223,168,0.04); }
         </div>
         <div class="form-row">
           <div class="form-group">
-            <label>Type de problème</label>
-            <select id="f-probleme">
+            <label>Type de situation</label>
+            <select id="f-probleme" onchange="onAgencyProblemeChange()">
               <option value="">Sélectionner...</option>
+              <option value="__ATTENTE__">⏳ Billet vendu — en attente d'incident</option>
               <option>Retard +3h à l'arrivée</option>
               <option>Vol annulé</option>
               <option>Surbooking / Refus d'embarquement</option>
               <option>Correspondance manquée</option>
             </select>
+            <p class="form-hint" id="f-probleme-hint">Si le vol n'a pas encore eu de retard ou d'annulation, choisissez « en attente d'incident ».</p>
           </div>
           <div class="form-group">
-            <label>Retard estimé (heures)</label>
+            <label id="f-retard-label">Retard estimé (heures)</label>
             <input type="number" id="f-retard" placeholder="4" min="0" step="0.5">
           </div>
         </div>
@@ -441,6 +445,7 @@ tbody tr:hover { background:rgba(61,223,168,0.04); }
             <select id="filter-statut" onchange="renderDossiers()">
               <option value="">Tous les statuts</option>
               <option value="nouveau">Nouveau</option>
+              <option value="attente-incident">En attente d'incident</option>
               <option value="en-cours">En cours</option>
               <option value="gagne">Gagné</option>
               <option value="paye">Payé</option>
@@ -639,7 +644,7 @@ function switchPage(page) {
 
 function updateDashboard() {
   const total = dossiers.length;
-  const encours = dossiers.filter(function (d) { return d.statut === 'en-cours' || d.statut === 'nouveau'; }).length;
+  const encours = dossiers.filter(function (d) { return d.statut === 'en-cours' || d.statut === 'nouveau' || d.statut === 'attente-incident'; }).length;
   const gagnes = dossiers.filter(function (d) { return d.statut === 'gagne' || d.statut === 'paye'; }).length;
   const paxGagnes = dossiers.filter(function (d) { return d.statut === 'gagne' || d.statut === 'paye'; }).reduce(function (s, d) { return s + (d.nbPassagers || 1); }, 0);
 
@@ -686,13 +691,39 @@ function renderCommissions() {
   }).join('');
 }
 
+function isAttenteIncidentForm() {
+  const sel = document.getElementById('f-probleme');
+  return sel && sel.value === '__ATTENTE__';
+}
+
+function onAgencyProblemeChange() {
+  const attente = isAttenteIncidentForm();
+  const retardEl = document.getElementById('f-retard');
+  const retardLbl = document.getElementById('f-retard-label');
+  const hint = document.getElementById('f-probleme-hint');
+  if (retardEl) {
+    retardEl.disabled = attente;
+    if (attente) retardEl.value = '';
+  }
+  if (retardLbl) {
+    retardLbl.textContent = attente ? 'Retard (optionnel — après incident)' : 'Retard estimé (heures)';
+  }
+  if (hint) {
+    hint.textContent = attente
+      ? 'Dossier pré-enregistré : signalez le retard ou l\'annulation dans les notes quand vous l\'avez.'
+      : 'Si le vol n\'a pas encore eu de retard ou d\'annulation, choisissez « en attente d\'incident ».';
+  }
+}
+
 async function submitDossier() {
   const fields = ['nom','prenom','email','tel','pnr','vol','compagnie','date','depart','arrivee','probleme'];
   const vals = {};
   let missing = false;
+  const attente = isAttenteIncidentForm();
   fields.forEach(function (f) {
     const el = document.getElementById('f-' + f);
     vals[f] = el.value.trim();
+    if (f === 'probleme' && vals[f] === '__ATTENTE__') vals[f] = "En attente d'incident (billet vendu)";
     if (!vals[f]) { el.style.borderColor = 'var(--red)'; missing = true; }
     else { el.style.borderColor = 'var(--gray-200)'; }
   });
@@ -700,7 +731,8 @@ async function submitDossier() {
   vals.pnr = vals.pnr.toUpperCase();
   if (vals.pnr.length !== 6) { showToast('Le code PNR doit faire 6 caractères', true); return; }
   vals.vol = vals.vol.toUpperCase();
-  vals.retard = parseFloat(document.getElementById('f-retard').value) || 0;
+  vals.retard = attente ? 0 : parseFloat(document.getElementById('f-retard').value) || 0;
+  vals.attenteIncident = attente;
   vals.nbPassagers = parseInt(document.getElementById('f-nb-passagers').value, 10) || 1;
   vals.notes = document.getElementById('f-notes').value.trim();
 
@@ -712,7 +744,7 @@ async function submitDossier() {
     });
     const data = await r.json().catch(function () { return {}; });
     if (!r.ok) throw new Error(data.error || 'HTTP ' + r.status);
-    showToast('Dossier ' + data.ref + ' enregistré dans Airtable');
+    showToast(attente ? 'Billet ' + data.ref + " enregistré — en attente d'incident" : 'Dossier ' + data.ref + ' enregistré dans Airtable');
     resetForm();
     await refreshFromAirtable();
     switchPage('dossiers');
@@ -743,7 +775,7 @@ function formatDate(d) {
   return parts[2] + '/' + parts[1] + '/' + parts[0];
 }
 function badgeHTML(statut) {
-  const labels = { 'nouveau':'Nouveau', 'en-cours':'En cours', 'gagne':'Gagné', 'paye':'Payé', 'rejete':'Rejeté' };
+  const labels = { 'nouveau':'Nouveau', 'attente-incident':"En attente d'incident", 'en-cours':'En cours', 'gagne':'Gagné', 'paye':'Payé', 'rejete':'Rejeté' };
   return '<span class="badge ' + statut + '">' + (labels[statut] || statut) + '</span>';
 }
 function showToast(msg, isError) {

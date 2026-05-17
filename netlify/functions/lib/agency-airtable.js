@@ -13,6 +13,16 @@ const {
 
 const COMMISSION_FCFA = parseInt(process.env.AGENCY_COMMISSION_FCFA || '30000', 10) || 30000;
 
+/** Libellé Airtable « Type d'incident » — à ajouter dans la liste Airtable si champ single-select. */
+const INCIDENT_ATTENTE_LABEL =
+  (process.env.AIRTABLE_INCIDENT_ATTENTE || "En attente d'incident (billet vendu)").trim();
+
+function isAttenteIncidentInput(body) {
+  if (body && body.attenteIncident === true) return true;
+  const p = String((body && body.probleme) || '').trim();
+  return /^attente/i.test(p) || /billet vendu/i.test(p);
+}
+
 const AT_STATUT_TO_AGENCY = {
   Nouveau: 'nouveau',
   'Documents en cours': 'en-cours',
@@ -41,6 +51,16 @@ function agencyStatutToUi(statutSuivi) {
   return key ? AT_STATUT_TO_AGENCY[key] : 'en-cours';
 }
 
+function agencyStatutFromRecord(data) {
+  const inc = String((data && data.incident) || '');
+  if (/attente d'incident|billet vendu/i.test(inc)) {
+    const base = agencyStatutToUi(data.statutSuivi);
+    if (base === 'paye' || base === 'rejete') return base;
+    return 'attente-incident';
+  }
+  return agencyStatutToUi(data.statutSuivi);
+}
+
 function generateAgencyRef() {
   const d = new Date();
   const y = String(d.getFullYear()).slice(2);
@@ -58,7 +78,7 @@ function recordToAgencyDossier(cfg, rec, agencyAccount) {
     1,
     parseInt(fieldVal(rec.fields, process.env.AIRTABLE_COL_NB_PAX || ''), 10) || 1
   );
-  const statut = agencyStatutToUi(data.statutSuivi);
+  const statut = agencyStatutFromRecord(data);
   const route = data.route || '';
   const parts = route.split('→').map((x) => x.trim());
 
@@ -117,10 +137,12 @@ function dossierPayloadToAirtable(cfg, agencyAccount, body) {
       ? `${(body.depart || '').trim()}→${(body.arrivee || '').trim()}`.replace(/^→|→$/g, '')
       : '';
   const nb = Math.max(1, parseInt(body.nbPassagers, 10) || 1);
+  const attente = isAttenteIncidentInput(body);
   const remarques = [
     `Soumis par agence ${agencyAccount.code} (${agencyAccount.name})`,
+    attente ? 'Pré-enregistrement billet vendu — incident pas encore constaté (retard/annulation à confirmer)' : '',
     body.notes ? String(body.notes).trim() : '',
-    body.retard ? `Retard déclaré: ${body.retard}h` : '',
+    !attente && body.retard ? `Retard déclaré: ${body.retard}h` : '',
   ]
     .filter(Boolean)
     .join(' | ')
@@ -137,8 +159,16 @@ function dossierPayloadToAirtable(cfg, agencyAccount, body) {
   if (body.compagnie) fields[L.compagnie] = body.compagnie.trim();
   if (body.date) fields[L.dateVol] = body.date;
   if (route) fields[L.itineraire] = route;
-  if (body.probleme) fields[L.incident] = body.probleme.trim();
-  fields[L.statutSuivi] = 'Nouveau';
+  if (attente) {
+    fields[L.incident] = INCIDENT_ATTENTE_LABEL;
+    fields[L.statutSuivi] =
+      (process.env.AIRTABLE_STATUT_ATTENTE_INCIDENT || 'Nouveau').trim();
+  } else if (body.probleme) {
+    fields[L.incident] = body.probleme.trim();
+    fields[L.statutSuivi] = 'Nouveau';
+  } else {
+    fields[L.statutSuivi] = 'Nouveau';
+  }
   fields[agencyCol(cfg)] = `${agencyAccount.code} — ${agencyAccount.name}`;
   fields[L.remarques] = remarques;
   const palier = 600;
@@ -163,8 +193,11 @@ async function createAgencyDossier(cfg, agencyAccount, body) {
 
 module.exports = {
   COMMISSION_FCFA,
+  INCIDENT_ATTENTE_LABEL,
+  isAttenteIncidentInput,
   listAgencyDossiers,
   createAgencyDossier,
   generateAgencyRef,
   agencyStatutToUi,
+  agencyStatutFromRecord,
 };
