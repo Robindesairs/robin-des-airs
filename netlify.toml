@@ -155,6 +155,16 @@
   to = "/.netlify/functions/wati-webhook"
   status = 200
 
+[[redirects]]
+  from = "/api/agency-auth"
+  to = "/.netlify/functions/agency-auth"
+  status = 200
+
+[[redirects]]
+  from = "/api/agency-dossiers"
+  to = "/.netlify/functions/agency-dossiers"
+  status = 200
+
 # Webhook WhatsApp 360dialog
 [[redirects]]
   from = "/api/whatsapp-webhook"

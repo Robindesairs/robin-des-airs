@@ -215,6 +215,7 @@ tbody tr:hover { background:rgba(61,223,168,0.04); }
       </svg>
     </div>
     <h2>Espace Partenaire</h2>
+    <p style="color:var(--gray-400);font-size:12px;text-align:center;margin-bottom:16px;line-height:1.45">Dossiers synchronisés avec Airtable — Robin des Airs traite vos réclamations.</p>
     <input type="text" id="loginCode" placeholder="Code agence (ex: GSA-DKR-001)">
     <input type="password" id="loginPass" placeholder="Mot de passe">
     <button onclick="doLogin()">Se connecter</button>
@@ -521,57 +522,90 @@ tbody tr:hover { background:rgba(61,223,168,0.04); }
 <div class="toast" id="toast"></div>
 
 <script>
-// ========== DATA STORE ==========
-// Demo agencies (in production, this connects to Airtable)
-const AGENCIES = {
-  'GSA-DKR-001': { name: 'GSA Dakar — Agence Teranga', pass: 'robin2024', phone: '+221 77 000 00 00' },
-  'GSA-ABJ-002': { name: 'GSA Abidjan — Voyages Ivoire', pass: 'robin2024', phone: '+225 07 000 00 00' },
-  'GSA-BKO-003': { name: 'GSA Bamako — Mali Tours', pass: 'robin2024', phone: '+223 70 000 00 00' },
-  'DEMO': { name: 'Agence Démo', pass: 'demo', phone: '+33 7 00 00 00 00' },
-};
+const AGENCY_AUTH_URL = '/api/agency-auth';
+const AGENCY_DOSSIERS_URL = '/api/agency-dossiers';
 
 let currentAgency = null;
 let dossiers = [];
-let nextRef = 1001;
+let commissionPerPax = 30000;
+let _agencyLoading = false;
 
-// Demo data
-function loadDemoData() {
-  const demo = [
-    { ref:'RDA-0994', nom:'Diallo', prenom:'Mamadou', email:'m.diallo@email.com', tel:'+221 77 123 45 67', pnr:'XK3M7P', vol:'AF718', compagnie:'Air France', depart:'Paris CDG', arrivee:'Dakar DSS', date:'2026-03-28', probleme:'Retard +3h à l\'arrivée', retard:4.5, nbPassagers:2, statut:'paye', notes:'Retard confirmé 4h20', dateCreation:'2026-03-29' },
-    { ref:'RDA-0995', nom:'Ndiaye', prenom:'Fatou', email:'f.ndiaye@email.com', tel:'+221 78 234 56 78', pnr:'BH2N9K', vol:'SN255', compagnie:'Brussels Airlines', depart:'Bruxelles BRU', arrivee:'Dakar DSS', date:'2026-04-01', probleme:'Vol annulé', retard:24, nbPassagers:1, statut:'gagne', notes:'Vol annulé, pas de réacheminement sous 24h', dateCreation:'2026-04-02' },
-    { ref:'RDA-0996', nom:'Touré', prenom:'Ibrahim', email:'i.toure@email.com', tel:'+221 76 345 67 89', pnr:'JT4L2W', vol:'AF742', compagnie:'Air France', depart:'Paris CDG', arrivee:'Dakar DSS', date:'2026-04-03', probleme:'Retard +3h à l\'arrivée', retard:3.5, nbPassagers:3, statut:'en-cours', notes:'Retard 3h50 à l\'arrivée', dateCreation:'2026-04-04' },
-    { ref:'RDA-0997', nom:'Ba', prenom:'Aissatou', email:'a.ba@email.com', tel:'+221 77 456 78 90', pnr:'QR8P5M', vol:'TO850', compagnie:'Transavia', depart:'Paris ORY', arrivee:'Dakar DSS', date:'2026-04-05', probleme:'Surbooking / Refus d\'embarquement', retard:0, nbPassagers:1, statut:'en-cours', notes:'Refusée à l\'embarquement, vol complet', dateCreation:'2026-04-06' },
-    { ref:'RDA-0998', nom:'Sow', prenom:'Ousmane', email:'o.sow@email.com', tel:'+221 78 567 89 01', pnr:'NM6K3J', vol:'SS892', compagnie:'Corsair', depart:'Dakar DSS', arrivee:'Paris CDG', date:'2026-04-06', probleme:'Retard +3h à l\'arrivée', retard:6, nbPassagers:1, statut:'nouveau', notes:'Retard 6h10 confirmé par FlightAware', dateCreation:'2026-04-07' },
-    { ref:'RDA-0999', nom:'Camara', prenom:'Mariama', email:'m.camara@email.com', tel:'+221 76 678 90 12', pnr:'FW1D8X', vol:'AT700', compagnie:'Turkish Airlines', depart:'Paris CDG', arrivee:'Dakar DSS', date:'2026-04-07', probleme:'Vol annulé', retard:48, nbPassagers:2, statut:'nouveau', notes:'Vol annulé sans notification', dateCreation:'2026-04-07' },
-  ];
-  dossiers = demo;
-  nextRef = 1000 + demo.length + 1;
+function agencyFetch(url, options) {
+  options = options || {};
+  options.credentials = 'same-origin';
+  return fetch(url, options);
 }
 
-// ========== AUTH ==========
-function doLogin() {
-  const code = document.getElementById('loginCode').value.trim().toUpperCase();
-  const pass = document.getElementById('loginPass').value;
-  const agency = AGENCIES[code];
+function setAgencySyncStatus(msg, isErr) {
+  const el = document.getElementById('agency-sync-status');
+  if (!el) return;
+  el.textContent = msg || '';
+  el.style.color = isErr ? 'var(--red)' : 'var(--gray-400)';
+}
 
-  if (agency && agency.pass === pass) {
-    currentAgency = { code, ...agency };
-    document.getElementById('agencyName').textContent = agency.name;
-    document.getElementById('agencyCode').textContent = code;
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('app').classList.add('active');
-    loadDemoData();
+async function refreshFromAirtable() {
+  if (!currentAgency || _agencyLoading) return;
+  _agencyLoading = true;
+  setAgencySyncStatus('Synchronisation Airtable…');
+  try {
+    const r = await agencyFetch(AGENCY_DOSSIERS_URL);
+    const data = await r.json().catch(function () { return {}; });
+    if (!r.ok) throw new Error(data.error || 'HTTP ' + r.status);
+    dossiers = data.dossiers || [];
+    if (data.commissionPerPax) commissionPerPax = data.commissionPerPax;
+    setAgencySyncStatus(dossiers.length + ' dossier(s) — dernière MAJ ' + new Date().toLocaleTimeString('fr-FR'));
     updateDashboard();
     renderDossiers();
     renderCommissions();
-  } else {
-    document.getElementById('loginError').style.display = 'block';
-    document.getElementById('loginPass').value = '';
+  } catch (e) {
+    setAgencySyncStatus('Erreur sync : ' + (e.message || 'échec'), true);
+    showToast('Impossible de charger les dossiers : ' + e.message, true);
+  } finally {
+    _agencyLoading = false;
   }
 }
 
-function doLogout() {
+function showAgencyApp(agency) {
+  currentAgency = agency;
+  document.getElementById('agencyName').textContent = agency.name;
+  document.getElementById('agencyCode').textContent = agency.code;
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('app').classList.add('active');
+  refreshFromAirtable();
+}
+
+async function doLogin() {
+  const code = document.getElementById('loginCode').value.trim().toUpperCase();
+  const pass = document.getElementById('loginPass').value;
+  document.getElementById('loginError').style.display = 'none';
+  try {
+    const r = await agencyFetch(AGENCY_AUTH_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: code, pass: pass }),
+    });
+    const data = await r.json().catch(function () { return {}; });
+    if (!r.ok || !data.ok) {
+      document.getElementById('loginError').style.display = 'block';
+      document.getElementById('loginPass').value = '';
+      return;
+    }
+    showAgencyApp(data.agency);
+  } catch (e) {
+    showToast('Connexion impossible : ' + e.message, true);
+  }
+}
+
+async function doLogout() {
+  try {
+    await agencyFetch(AGENCY_AUTH_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ logout: true }),
+    });
+  } catch (_) {}
   currentAgency = null;
+  dossiers = [];
   document.getElementById('app').classList.remove('active');
   document.getElementById('loginScreen').style.display = 'flex';
   document.getElementById('loginCode').value = '';
@@ -579,16 +613,22 @@ function doLogout() {
   document.getElementById('loginError').style.display = 'none';
 }
 
-// Allow Enter key login
-document.addEventListener('keydown', (e) => {
+document.addEventListener('keydown', function (e) {
   if (e.key === 'Enter' && !currentAgency) doLogin();
 });
 
-// ========== NAVIGATION ==========
+document.addEventListener('DOMContentLoaded', async function () {
+  try {
+    const r = await agencyFetch(AGENCY_AUTH_URL);
+    const data = await r.json().catch(function () { return {}; });
+    if (data.ok && data.agency) showAgencyApp(data.agency);
+  } catch (_) {}
+});
+
 function switchPage(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(function (p) { p.classList.remove('active'); });
   document.getElementById('page-' + page).classList.add('active');
-  document.querySelectorAll('.sidebar nav a').forEach(a => {
+  document.querySelectorAll('.sidebar nav a').forEach(function (a) {
     a.classList.toggle('active', a.dataset.page === page);
   });
   if (page === 'dossiers') renderDossiers();
@@ -596,166 +636,121 @@ function switchPage(page) {
   if (page === 'dashboard') updateDashboard();
 }
 
-// ========== DASHBOARD ==========
 function updateDashboard() {
   const total = dossiers.length;
-  const encours = dossiers.filter(d => d.statut === 'en-cours' || d.statut === 'nouveau').length;
-  const gagnes = dossiers.filter(d => d.statut === 'gagne' || d.statut === 'paye').length;
-  const paxGagnes = dossiers.filter(d => d.statut === 'gagne' || d.statut === 'paye').reduce((s, d) => s + d.nbPassagers, 0);
+  const encours = dossiers.filter(function (d) { return d.statut === 'en-cours' || d.statut === 'nouveau'; }).length;
+  const gagnes = dossiers.filter(function (d) { return d.statut === 'gagne' || d.statut === 'paye'; }).length;
+  const paxGagnes = dossiers.filter(function (d) { return d.statut === 'gagne' || d.statut === 'paye'; }).reduce(function (s, d) { return s + (d.nbPassagers || 1); }, 0);
 
   document.getElementById('kpi-total').textContent = total;
   document.getElementById('kpi-encours').textContent = encours;
   document.getElementById('kpi-gagnes').textContent = gagnes;
-  document.getElementById('kpi-commissions').textContent = formatFCFA(paxGagnes * 30000);
+  document.getElementById('kpi-commissions').textContent = formatFCFA(paxGagnes * commissionPerPax);
 
-  // Last 5 dossiers
   const tbody = document.getElementById('dashboard-table');
-  tbody.innerHTML = dossiers.slice(-5).reverse().map(d => `
-    <tr>
-      <td><strong>${d.ref}</strong></td>
-      <td>${d.prenom} ${d.nom}</td>
-      <td>${d.vol}</td>
-      <td>${formatDate(d.date)}</td>
-      <td>${badgeHTML(d.statut)}</td>
-      <td>${(d.statut === 'gagne' || d.statut === 'paye') ? formatFCFA(d.nbPassagers * 30000) : '—'}</td>
-    </tr>
-  `).join('');
+  tbody.innerHTML = dossiers.slice(0, 5).map(function (d) {
+    return '<tr><td><strong>' + d.ref + '</strong></td><td>' + d.prenom + ' ' + d.nom + '</td><td>' + d.vol + '</td><td>' + formatDate(d.date) + '</td><td>' + badgeHTML(d.statut) + '</td><td>' + ((d.statut === 'gagne' || d.statut === 'paye') ? formatFCFA((d.nbPassagers || 1) * commissionPerPax) : '—') + '</td></tr>';
+  }).join('');
 }
 
-// ========== DOSSIERS TABLE ==========
 function renderDossiers() {
   const statutFilter = document.getElementById('filter-statut').value;
   const search = (document.getElementById('filter-search').value || '').toLowerCase();
-
   let filtered = dossiers;
-  if (statutFilter) filtered = filtered.filter(d => d.statut === statutFilter);
-  if (search) filtered = filtered.filter(d =>
-    d.nom.toLowerCase().includes(search) ||
-    d.prenom.toLowerCase().includes(search) ||
-    d.vol.toLowerCase().includes(search) ||
-    d.pnr.toLowerCase().includes(search) ||
-    d.ref.toLowerCase().includes(search)
-  );
-
+  if (statutFilter) filtered = filtered.filter(function (d) { return d.statut === statutFilter; });
+  if (search) {
+    filtered = filtered.filter(function (d) {
+      return (d.nom || '').toLowerCase().includes(search) || (d.prenom || '').toLowerCase().includes(search) || (d.vol || '').toLowerCase().includes(search) || (d.pnr || '').toLowerCase().includes(search) || (d.ref || '').toLowerCase().includes(search);
+    });
+  }
   const tbody = document.getElementById('dossiers-table');
-  tbody.innerHTML = filtered.reverse().map(d => `
-    <tr>
-      <td><strong>${d.ref}</strong></td>
-      <td>${d.prenom} ${d.nom}</td>
-      <td>${d.vol}</td>
-      <td>${d.compagnie}</td>
-      <td>${d.depart} → ${d.arrivee}</td>
-      <td>${formatDate(d.date)}</td>
-      <td style="font-size:12px">${d.probleme}</td>
-      <td style="text-align:center">${d.nbPassagers}</td>
-      <td>${badgeHTML(d.statut)}</td>
-      <td>${(d.statut === 'gagne' || d.statut === 'paye') ? formatFCFA(d.nbPassagers * 30000) : '—'}</td>
-    </tr>
-  `).join('');
+  tbody.innerHTML = filtered.map(function (d) {
+    return '<tr><td><strong>' + d.ref + '</strong></td><td>' + d.prenom + ' ' + d.nom + '</td><td>' + d.vol + '</td><td>' + d.compagnie + '</td><td>' + (d.depart || '') + ' → ' + (d.arrivee || '') + '</td><td>' + formatDate(d.date) + '</td><td style="font-size:12px">' + (d.probleme || '') + '</td><td style="text-align:center">' + (d.nbPassagers || 1) + '</td><td>' + badgeHTML(d.statut) + '</td><td>' + ((d.statut === 'gagne' || d.statut === 'paye') ? formatFCFA((d.nbPassagers || 1) * commissionPerPax) : '—') + '</td></tr>';
+  }).join('');
 }
 
-// ========== COMMISSIONS ==========
 function renderCommissions() {
-  const won = dossiers.filter(d => d.statut === 'gagne' || d.statut === 'paye');
-  const totalPax = won.reduce((s, d) => s + d.nbPassagers, 0);
-  const paidPax = dossiers.filter(d => d.statut === 'paye').reduce((s, d) => s + d.nbPassagers, 0);
-  const pendingPax = dossiers.filter(d => d.statut === 'gagne').reduce((s, d) => s + d.nbPassagers, 0);
+  const won = dossiers.filter(function (d) { return d.statut === 'gagne' || d.statut === 'paye'; });
+  const totalPax = won.reduce(function (s, d) { return s + (d.nbPassagers || 1); }, 0);
+  const paidPax = dossiers.filter(function (d) { return d.statut === 'paye'; }).reduce(function (s, d) { return s + (d.nbPassagers || 1); }, 0);
+  const pendingPax = dossiers.filter(function (d) { return d.statut === 'gagne'; }).reduce(function (s, d) { return s + (d.nbPassagers || 1); }, 0);
 
-  document.getElementById('comm-total').textContent = formatFCFA(totalPax * 30000);
-  document.getElementById('comm-paid').textContent = formatFCFA(paidPax * 30000);
-  document.getElementById('comm-pending').textContent = formatFCFA(pendingPax * 30000);
+  document.getElementById('comm-total').textContent = formatFCFA(totalPax * commissionPerPax);
+  document.getElementById('comm-paid').textContent = formatFCFA(paidPax * commissionPerPax);
+  document.getElementById('comm-pending').textContent = formatFCFA(pendingPax * commissionPerPax);
 
   const tbody = document.getElementById('commissions-table');
-  tbody.innerHTML = won.map(d => `
-    <tr>
-      <td>${formatDate(d.dateCreation)}</td>
-      <td><strong>${d.ref}</strong></td>
-      <td>${d.prenom} ${d.nom}</td>
-      <td style="text-align:center">${d.nbPassagers}</td>
-      <td><strong>${formatFCFA(d.nbPassagers * 30000)}</strong></td>
-      <td>${d.statut === 'paye' ? 'Wave' : '—'}</td>
-      <td>${d.statut === 'paye' ? '<span class="badge paye">Versé</span>' : '<span class="badge nouveau">En attente</span>'}</td>
-    </tr>
-  `).join('');
+  tbody.innerHTML = won.map(function (d) {
+    return '<tr><td>' + formatDate(d.dateCreation || d.date) + '</td><td><strong>' + d.ref + '</strong></td><td>' + d.prenom + ' ' + d.nom + '</td><td style="text-align:center">' + (d.nbPassagers || 1) + '</td><td><strong>' + formatFCFA((d.nbPassagers || 1) * commissionPerPax) + '</strong></td><td>' + (d.statut === 'paye' ? 'Wave' : '—') + '</td><td>' + (d.statut === 'paye' ? '<span class="badge paye">Versé</span>' : '<span class="badge nouveau">En attente</span>') + '</td></tr>';
+  }).join('');
 }
 
-// ========== SUBMIT DOSSIER ==========
-function submitDossier() {
+async function submitDossier() {
   const fields = ['nom','prenom','email','tel','pnr','vol','compagnie','date','depart','arrivee','probleme'];
   const vals = {};
   let missing = false;
-
-  fields.forEach(f => {
+  fields.forEach(function (f) {
     const el = document.getElementById('f-' + f);
     vals[f] = el.value.trim();
     if (!vals[f]) { el.style.borderColor = 'var(--red)'; missing = true; }
     else { el.style.borderColor = 'var(--gray-200)'; }
   });
-
   if (missing) { showToast('Veuillez remplir tous les champs obligatoires', true); return; }
+  vals.pnr = vals.pnr.toUpperCase();
+  if (vals.pnr.length !== 6) { showToast('Le code PNR doit faire 6 caractères', true); return; }
+  vals.vol = vals.vol.toUpperCase();
+  vals.retard = parseFloat(document.getElementById('f-retard').value) || 0;
+  vals.nbPassagers = parseInt(document.getElementById('f-nb-passagers').value, 10) || 1;
+  vals.notes = document.getElementById('f-notes').value.trim();
 
-  const pnr = vals.pnr.toUpperCase();
-  if (pnr.length !== 6) { showToast('Le code PNR doit faire 6 caractères', true); return; }
-
-  const dossier = {
-    ref: 'RDA-' + String(nextRef++).padStart(4, '0'),
-    nom: vals.nom.toUpperCase(),
-    prenom: vals.prenom,
-    email: vals.email,
-    tel: vals.tel,
-    pnr: pnr,
-    vol: vals.vol.toUpperCase(),
-    compagnie: vals.compagnie,
-    depart: vals.depart,
-    arrivee: vals.arrivee,
-    date: vals.date,
-    probleme: vals.probleme,
-    retard: parseFloat(document.getElementById('f-retard').value) || 0,
-    nbPassagers: parseInt(document.getElementById('f-nb-passagers').value) || 1,
-    notes: document.getElementById('f-notes').value,
-    statut: 'nouveau',
-    dateCreation: new Date().toISOString().split('T')[0],
-    agence: currentAgency?.code
-  };
-
-  dossiers.push(dossier);
-  showToast(`Dossier ${dossier.ref} soumis avec succès — ${dossier.nbPassagers} passager(s)`);
-  resetForm();
-  updateDashboard();
-
-  // In production: POST to Airtable via Make.com webhook
-  console.log('📤 Dossier à envoyer vers Airtable:', JSON.stringify(dossier, null, 2));
+  try {
+    const r = await agencyFetch(AGENCY_DOSSIERS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(vals),
+    });
+    const data = await r.json().catch(function () { return {}; });
+    if (!r.ok) throw new Error(data.error || 'HTTP ' + r.status);
+    showToast('Dossier ' + data.ref + ' enregistré dans Airtable');
+    resetForm();
+    await refreshFromAirtable();
+    switchPage('dossiers');
+  } catch (e) {
+    showToast('Échec envoi : ' + (e.message || 'erreur'), true);
+  }
 }
 
 function resetForm() {
-  ['nom','prenom','email','tel','pnr','vol','date','depart','arrivee','retard','notes'].forEach(f => {
-    document.getElementById('f-' + f).value = '';
-    document.getElementById('f-' + f).style.borderColor = 'var(--gray-200)';
+  ['nom','prenom','email','tel','pnr','vol','date','depart','arrivee','retard','notes'].forEach(function (f) {
+    const el = document.getElementById('f-' + f);
+    if (el) { el.value = ''; el.style.borderColor = 'var(--gray-200)'; }
   });
-  document.getElementById('f-compagnie').selectedIndex = 0;
-  document.getElementById('f-probleme').selectedIndex = 0;
-  document.getElementById('f-nb-passagers').value = '1';
+  const c = document.getElementById('f-compagnie');
+  if (c) c.selectedIndex = 0;
+  const p = document.getElementById('f-probleme');
+  if (p) p.selectedIndex = 0;
+  const n = document.getElementById('f-nb-passagers');
+  if (n) n.value = '1';
 }
 
-// ========== UTILS ==========
-function formatFCFA(n) {
-  return n.toLocaleString('fr-FR') + ' FCFA';
-}
+function formatFCFA(n) { return Number(n).toLocaleString('fr-FR') + ' FCFA'; }
 function formatDate(d) {
   if (!d) return '—';
+  if (d.indexOf('/') >= 0) return d;
   const parts = d.split('-');
+  if (parts.length !== 3) return d;
   return parts[2] + '/' + parts[1] + '/' + parts[0];
 }
 function badgeHTML(statut) {
   const labels = { 'nouveau':'Nouveau', 'en-cours':'En cours', 'gagne':'Gagné', 'paye':'Payé', 'rejete':'Rejeté' };
-  return `<span class="badge ${statut}">${labels[statut] || statut}</span>`;
+  return '<span class="badge ' + statut + '">' + (labels[statut] || statut) + '</span>';
 }
 function showToast(msg, isError) {
   const toast = document.getElementById('toast');
-  toast.innerHTML = `<span class="toast-icon">${isError ? '⚠️' : '✅'}</span> ${msg}`;
+  toast.innerHTML = '<span class="toast-icon">' + (isError ? '⚠️' : '✅') + '</span> ' + msg;
   toast.style.background = isError ? 'var(--red)' : 'var(--navy)';
   toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 3500);
+  setTimeout(function () { toast.classList.remove('show'); }, 4000);
 }
 </script>
 

@@ -259,4 +259,6 @@ module.exports = {
   clientEmailForRef,
   verifySecret,
   fieldVal,
+  escapeFormulaValue,
+  atHeaders,
 };
