@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { detectBankFromIban } from "@/lib/bankDetection";
 
@@ -12,7 +12,7 @@ function formatIbanForDisplay(value: string): string {
   return clean.replace(/(.{4})/g, "$1 ").trim();
 }
 
-export default function SaisiePaiementPage() {
+function SaisiePaiementPageContent() {
   const searchParams = useSearchParams();
   const [dossierId, setDossierId] = useState("");
   const [type, setType] = useState<BeneficiaireType>("client");
@@ -335,5 +335,19 @@ export default function SaisiePaiementPage() {
         {message && <p className="mt-4 text-sm">{message}</p>}
       </div>
     </main>
+  );
+}
+
+export default function SaisiePaiementPage() {
+  return (
+    <Suspense
+      fallback={
+        <main className="min-h-screen flex items-center justify-center bg-slate-50 px-6">
+          <p className="text-sm text-slate-600">Chargement…</p>
+        </main>
+      }
+    >
+      <SaisiePaiementPageContent />
+    </Suspense>
   );
 }

@@ -142,7 +142,8 @@ export async function GET() {
       });
     }
 
-    const totals = rows.reduce(
+    type ComptaTotals = { client_a_payer: number; partenaire_a_payer: number };
+    const totals = rows.reduce<ComptaTotals>(
       (acc, r) => {
         const clientMontant = Number(r.client_montant ?? 0);
         const partnerMontant = Number(r.partenaire_montant ?? 0);
