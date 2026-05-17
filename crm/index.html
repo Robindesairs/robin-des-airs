@@ -523,6 +523,27 @@ function syncCrmAgentInput() {
   if (el) el.value = getCrmAgent();
 }
 
+/** Code CRM pour ?code= sur backup / Airtable (doit = CRM_ACCESS_CODE Netlify). */
+function setCrmAccessCode(code) {
+  var c = String(code || '').trim();
+  window._crmCode = c;
+  try {
+    if (c) localStorage.setItem(CRM_OFFLINE_CODE_KEY, c);
+    else localStorage.removeItem(CRM_OFFLINE_CODE_KEY);
+  } catch (_) {}
+}
+
+function loadCrmAccessCodeFromStorage() {
+  if (window._crmCode) return window._crmCode;
+  try {
+    var c = (localStorage.getItem(CRM_OFFLINE_CODE_KEY) || '').trim();
+    if (c) window._crmCode = c;
+    return c;
+  } catch (_) {
+    return '';
+  }
+}
+
 async function crmAuthStatus() {
   const r = await fetch(CRM_AUTH_URL, { credentials: 'same-origin' });
   const j = await r.json().catch(() => ({}));
@@ -549,7 +570,7 @@ async function crmUnlock() {
     }
   }
   function openAndRemember() {
-    try { localStorage.setItem(CRM_OFFLINE_CODE_KEY, code); } catch (_) {}
+    setCrmAccessCode(code);
     crmOpenMain();
   }
 
@@ -623,6 +644,7 @@ async function crmLogout() {
 }
 
 function crmOpenMain() {
+  loadCrmAccessCodeFromStorage();
   document.getElementById('crm-gate').classList.add('hidden');
   document.getElementById('crm-main').classList.add('visible');
   syncCrmAgentInput();
