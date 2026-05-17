@@ -574,16 +574,9 @@ async function crmUnlock() {
     crmOpenMain();
   }
 
-  // Fallback local immédiat si code offline reconnu (évite blocage UI).
-  if (allowOfflineAccess()) {
-    openAndRemember();
-    showCrmToast('Accès local activé');
-    return;
-  }
-
   if (!navigator.onLine && allowOfflineAccess()) {
     openAndRemember();
-    showCrmToast('Mode hors ligne : accès local activé');
+    showCrmToast('Mode hors ligne : accès local (sync serveur impossible)');
     return;
   }
 
@@ -607,17 +600,12 @@ async function crmUnlock() {
       openAndRemember();
       return;
     }
-    if (!navigator.onLine && allowOfflineAccess()) {
-      openAndRemember();
-      showCrmToast('Mode hors ligne : accès local activé');
-      return;
-    }
     err.textContent = j.error || crmT('gate_wrong_code');
     err.classList.add('show');
   } catch (_) {
     if (allowOfflineAccess()) {
       openAndRemember();
-      showCrmToast('API indisponible : ouverture locale');
+      showCrmToast('API indisponible — accès local (sync Airtable nécessite le bon code Netlify)');
       return;
     }
     err.textContent = 'Connexion API impossible. En hors ligne, utilisez le code local.';
@@ -2659,46 +2647,67 @@ async function syncCrmNow(auto) {
   _syncInFlight = true;
   var btn = document.getElementById('btn-sync');
   if (btn) btn.textContent = '⏳ Sync...';
+  var slim = crmSlimDbSnapshot();
+  var cloudSummary = '';
+  var atSummary = '';
   try {
-    const lastSync = localStorage.getItem(CRM_SYNC_LAST_KEY) || '';
-    const cloudDb = await fetchLatestCloudDb();
-    if (Array.isArray(cloudDb)) {
-      const merge = computeMergeResult(DB, cloudDb, lastSync);
-      if (merge.conflicts.length) {
-        openConflictModal(merge.conflicts, merge.merged);
-        if (!auto) showCrmToast('Conflits détectés — choisissez Local ou Cloud');
-        _syncInFlight = false;
-        if (btn) updateSyncButton();
-        return;
+    try {
+      const lastSync = localStorage.getItem(CRM_SYNC_LAST_KEY) || '';
+      const cloudDb = await fetchLatestCloudDb();
+      if (Array.isArray(cloudDb)) {
+        const merge = computeMergeResult(DB, cloudDb, lastSync);
+        if (merge.conflicts.length) {
+          openConflictModal(merge.conflicts, merge.merged);
+          if (!auto) showCrmToast('Conflits détectés — choisissez Local ou Cloud');
+          _syncInFlight = false;
+          if (btn) updateSyncButton();
+          return;
+        }
+        DB = merge.merged;
+        slim = crmSlimDbSnapshot();
+        render();
       }
-      DB = merge.merged;
-      render();
+    } catch (mergeErr) {
+      cloudSummary = 'cloud (lecture) : ' + (mergeErr.message || 'échec');
     }
-    const slim = crmSlimDbSnapshot();
-    const label = auto ? 'Sync offline (' + pending.length + ')' : 'Sync manuelle (' + DB.length + ' dossiers)';
-    const resp = await crmApiFetch(CRM_BACKUP_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ db: slim, label: label })
-    });
-    const data = await resp.json().catch(function(){ return {}; });
-    if (!resp.ok || data.success === false) throw new Error((data && data.error) || ('HTTP ' + resp.status));
-    writeCrmSyncQueue([]);
-    try { localStorage.setItem(CRM_SYNC_LAST_KEY, new Date().toISOString()); } catch (e) {}
-    var atSummary = '';
+
+    try {
+      const label = auto ? 'Sync offline (' + pending.length + ')' : 'Sync manuelle (' + DB.length + ' dossiers)';
+      const resp = await crmApiFetch(CRM_BACKUP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ db: slim, label: label })
+      });
+      const data = await resp.json().catch(function(){ return {}; });
+      if (!resp.ok || data.success === false) {
+        throw new Error((data && (data.error || data.details)) || ('HTTP ' + resp.status));
+      }
+      cloudSummary = 'cloud ✓';
+      try { localStorage.setItem(CRM_SYNC_LAST_KEY, new Date().toISOString()); } catch (e) {}
+    } catch (cloudErr) {
+      cloudSummary = 'cloud : ' + (cloudErr.message || 'indisponible');
+      if (cloudSummary.indexOf('Blobs') !== -1) {
+        cloudSummary = 'cloud : sauvegarde Netlify Blobs non activée (Airtable continue)';
+      }
+    }
+
     try {
       const atData = await syncCrmToAirtable(slim);
       const n = (atData && atData.pushed) || 0;
       const errs = ((atData && atData.results) || []).filter(function (r) {
         return !r.ok;
       });
-      atSummary =
-        n + ' dossier(s) Airtable';
-      if (errs.length) atSummary += ' (' + errs.length + ' erreur(s))';
+      atSummary = n + ' dossier(s) Airtable ✓';
+      if (errs.length) atSummary = n + ' Airtable (' + errs.length + ' erreur(s))';
     } catch (atErr) {
-      atSummary = 'Airtable : ' + (atErr && atErr.message ? atErr.message : 'échec');
+      atSummary = 'Airtable : ' + (atErr.message || 'échec');
     }
-    showCrmToast('Sync cloud ✓ · ' + atSummary);
+
+    if (atSummary.indexOf('✓') !== -1 || cloudSummary.indexOf('cloud ✓') !== -1) {
+      writeCrmSyncQueue([]);
+    }
+    if (!auto) showCrmToast(atSummary + ' · ' + cloudSummary);
+    else if (atSummary.indexOf('✓') !== -1) showCrmToast(atSummary);
   } catch (e) {
     var msg = e && e.message ? e.message : 'réessayez';
     if (msg.indexOf('Non autorisé') !== -1) {
