@@ -204,6 +204,12 @@
   .crm-wa-delays strong { color: var(--navy); }
   .crm-wa-textarea { width: 100%; min-height: 140px; font-size: 13px; line-height: 1.45; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); font-family: inherit; resize: vertical; }
   .crm-wa-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .crm-wa-reply-wrap { margin-top: 14px; padding-top: 14px; border-top: 1px solid #D1D5DB; }
+  .crm-wa-reply-title { font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+  .crm-wa-24h-warn { font-size: 12px; line-height: 1.45; padding: 10px 12px; background: #FEF3C7; color: #92400E; border: 1px solid #FCD34D; border-radius: var(--radius-sm); margin-bottom: 10px; }
+  .crm-wa-24h-warn.ok { background: #ECFDF5; color: #065F46; border-color: #6EE7B7; }
+  .crm-wa-reply-input { width: 100%; min-height: 72px; font-size: 13px; line-height: 1.45; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border); font-family: inherit; resize: vertical; }
+  .crm-wa-msg-time { font-size: 10px; color: #6B7280; margin-top: 4px; }
   .crm-wa-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--navy); color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; z-index: 100000; opacity: 0; pointer-events: none; transition: opacity .25s; max-width: min(92vw, 520px); text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,.35); }
   .crm-wa-toast.show { opacity: 1; }
   .crm-sync-banner { display: none; margin: 0 24px 12px; padding: 12px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; line-height: 1.45; }
@@ -277,7 +283,8 @@
     </div>
     <button type="button" class="btn btn-ghost-light" onclick="exportCrmCsv()" title="Télécharger la liste des dossiers">Export CSV</button>
     <button type="button" class="btn btn-ghost-light" onclick="openBackupModal()" title="Sauvegardes cloud et points de restauration" id="btn-backup">☁️ Sauvegardes</button>
-    <button type="button" class="btn btn-ghost-light" onclick="syncCrmNow(false)" title="Sauvegarde cloud + envoi des dossiers vers Airtable" id="btn-sync">↻ Sync cloud + Airtable</button>
+    <button type="button" class="btn btn-ghost-light" onclick="pullFromAirtableNow()" title="Récupérer les dossiers depuis Airtable vers ce navigateur" id="btn-pull-at">↓ Importer Airtable</button>
+    <button type="button" class="btn btn-ghost-light" onclick="syncCrmNow(false)" title="Import Airtable + sauvegarde cloud + envoi vers Airtable" id="btn-sync">↻ Sync cloud + Airtable</button>
     <button type="button" class="btn btn-ghost-light" onclick="resetCrmData()" title="Effacer la sauvegarde locale et recharger les exemples">Réinit. démo</button>
     <button type="button" class="btn btn-ghost-light" onclick="crmLogout()">Déconnexion</button>
     <button type="button" class="btn btn-primary" onclick="openNew()">+ Nouveau dossier</button>
@@ -1973,8 +1980,8 @@ function openDetail(id){
   ensurePieces(d);
   if(!Array.isArray(d.vols) || !d.vols.length) d.vols = [{comp:'—',vol:'—',date:'—',dep:'',arr:'',pnr:'',inc:'RETARD'}];
   window._crmOpenId = id;
-  // Exposer le téléphone du dossier pour l'onglet WhatsApp
-  window._currentDossierTel = (d.indicatif||'') + (d.tel||'');
+  window._currentDossierId = id;
+  window._currentDossierTel = crmE164Digits(d);
   const waUrl = crmWhatsAppUrl(d);
   var wab = document.getElementById('crm-detail-wa-btn');
   if(wab){
@@ -2066,7 +2073,16 @@ function openDetail(id){
     </div>
     <div id="wa-chat-box" style="background:#ECE5DD;border-radius:12px;padding:14px;min-height:200px;max-height:520px;overflow-y:auto;display:flex;flex-direction:column;gap:8px">
       <div id="wa-chat-empty" style="text-align:center;color:#999;font-size:13px;padding:40px 0">
-        Cliquez sur "Actualiser" pour charger les messages
+        Chargement à l’ouverture de l’onglet…
+      </div>
+    </div>
+    <div id="wa-reply-wrap" class="crm-wa-reply-wrap">
+      <div class="crm-wa-reply-title">Répondre au client (numéro Robin des Airs)</div>
+      <div id="wa-24h-banner" class="crm-wa-24h-warn" style="display:none" role="status"></div>
+      <textarea id="wa-reply-input" class="crm-wa-reply-input" maxlength="4096" placeholder="Votre message…"></textarea>
+      <div class="crm-wa-actions">
+        <button type="button" class="btn btn-primary btn-sm" id="btn-wa-send" onclick="sendWaReplyFromCrm()">Envoyer sur WhatsApp</button>
+        <button type="button" class="btn btn-sm btn-ghost-light" onclick="copyWaReplyToClipboard()">Copier le texte</button>
       </div>
     </div>
   </div>
@@ -2180,67 +2196,218 @@ function switchTab(el,id){
   el.classList.add('active');
   el.closest('.modal-body').querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  if (id === 't-wa') loadWaMessages(true);
 }
 
-/* ── Onglet WhatsApp : chargement des messages depuis /api/wa-messages ── */
+function formatWaMessageTime(iso) {
+  if (!iso) return '';
+  var d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
+  return d.toLocaleString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+}
+
+function updateWaReplyUi(data) {
+  var banner = document.getElementById('wa-24h-banner');
+  var input = document.getElementById('wa-reply-input');
+  var sendBtn = document.getElementById('btn-wa-send');
+  if (!banner) return;
+  banner.style.display = 'block';
+  window._waCanSend = !!(data && data.canSend);
+  if (!data || !data.whatsappConfigured) {
+    banner.className = 'crm-wa-24h-warn';
+    banner.textContent =
+      'Envoi WhatsApp non configuré sur Netlify (WATI_API_BASE + WATI_API_TOKEN). Copiez le message et utilisez l’app WhatsApp.';
+    if (sendBtn) sendBtn.disabled = true;
+    return;
+  }
+  if (data.error && String(data.error).indexOf('Blobs') !== -1) {
+    banner.className = 'crm-wa-24h-warn';
+    banner.textContent =
+      data.error + ' — Activez Netlify Blobs (Storage) puis redéployez. En attendant : « WhatsApp client ».';
+    if (sendBtn) sendBtn.disabled = true;
+    return;
+  }
+  if (data.canSend) {
+    banner.className = 'crm-wa-24h-warn ok';
+    banner.textContent = data.noHistoryYet
+      ? 'Aucun historique enregistré — vous pouvez tenter un envoi (WhatsApp peut refuser si le client n’a pas écrit récemment).'
+      : 'Vous pouvez répondre en texte libre (client actif dans les 24 dernières heures).';
+    if (sendBtn) sendBtn.disabled = false;
+    if (input) input.disabled = false;
+    return;
+  }
+  banner.className = 'crm-wa-24h-warn';
+  var hint = data.lastUserAt
+    ? 'Dernier message client : ' + formatWaMessageTime(data.lastUserAt) + '. '
+    : 'Aucun message client enregistré. ';
+  banner.textContent =
+    hint +
+    'Fenêtre 24 h expirée : modèle Wati/Make ou bouton « WhatsApp client » sur votre téléphone.';
+  if (sendBtn) sendBtn.disabled = true;
+  if (input) input.disabled = false;
+}
+
+/* ── Onglet WhatsApp : historique + réponse agent ── */
 async function loadWaMessages(force) {
-  const box = document.getElementById('wa-chat-box');
-  const subtitle = document.getElementById('wa-chat-subtitle');
+  var box = document.getElementById('wa-chat-box');
+  var subtitle = document.getElementById('wa-chat-subtitle');
   if (!box) return;
 
-  // Récupérer le numéro du dossier ouvert
-  const openModal = document.querySelector('.modal.open, .modal[style*="flex"], .modal[style*="block"]');
-  const phoneEl = openModal ? openModal.querySelector('[data-phone], .detail-val[data-field="tel"]') : null;
-
-  // Chercher le numéro dans le dossier courant (variable globale _currentDossier si disponible)
-  let phone = (typeof _currentDossierTel !== 'undefined' && _currentDossierTel) || '';
-  if (!phone && openModal) {
-    const rows = openModal.querySelectorAll('.detail-row');
-    rows.forEach(r => {
-      const lbl = r.querySelector('.detail-label');
-      if (lbl && (lbl.textContent.includes('Tél') || lbl.textContent.includes('téléphone'))) {
-        const val = r.querySelector('.detail-val');
-        if (val) phone = val.textContent.trim();
-      }
-    });
-  }
-
+  var phone = (typeof _currentDossierTel !== 'undefined' && _currentDossierTel) || '';
   if (!phone) {
-    subtitle.textContent = 'Numéro de téléphone introuvable dans ce dossier.';
-    box.innerHTML = '<div style="text-align:center;color:#999;font-size:13px;padding:40px 0">Aucun numéro associé à ce dossier.</div>';
+    if (subtitle) subtitle.textContent = 'Numéro introuvable';
+    box.innerHTML =
+      '<div style="text-align:center;color:#999;font-size:13px;padding:40px 0">Renseignez indicatif + téléphone (onglet Modifier).</div>';
+    updateWaReplyUi({ canSend: false, whatsappConfigured: true });
     return;
   }
 
-  subtitle.textContent = 'Chargement…';
-  box.innerHTML = '<div style="text-align:center;color:#999;font-size:13px;padding:40px 0">⏳ Chargement des messages…</div>';
+  if (subtitle) subtitle.textContent = 'Chargement…';
+  box.innerHTML =
+    '<div style="text-align:center;color:#999;font-size:13px;padding:40px 0">⏳ Chargement des messages…</div>';
 
   try {
-    const crmCode = window._crmCode || '';
-    const resp = await fetch('/api/wa-messages?phone=' + encodeURIComponent(phone) + (crmCode ? '&code=' + encodeURIComponent(crmCode) : ''));
-    const data = await resp.json();
+    var resp = await crmApiFetch(CRM_WA_MESSAGES_URL + '?phone=' + encodeURIComponent(phone));
+    var data = await resp.json().catch(function () {
+      return {};
+    });
 
-    if (!data.messages || data.messages.length === 0) {
-      subtitle.textContent = 'Aucun message enregistré pour ' + phone;
-      box.innerHTML = '<div style="text-align:center;color:#999;font-size:13px;padding:40px 0">💬 Aucun message WhatsApp enregistré pour ce numéro.</div>';
+    if (!resp.ok) {
+      if (subtitle) subtitle.textContent = 'Erreur';
+      box.innerHTML =
+        '<div style="text-align:center;color:#e53935;font-size:13px;padding:40px 0">❌ ' +
+        escHtml((data && data.error) || 'HTTP ' + resp.status) +
+        '</div>';
+      updateWaReplyUi(data);
       return;
     }
 
-    subtitle.textContent = data.count + ' message(s) · ' + phone;
-    box.innerHTML = data.messages.map(m => {
-      const isRobin = m.role === 'assistant';
-      const bubbleStyle = isRobin
-        ? 'background:#fff;border-radius:12px 12px 12px 2px;padding:10px 14px;max-width:80%;align-self:flex-start;font-size:13px;line-height:1.5;box-shadow:0 1px 2px rgba(0,0,0,.1)'
-        : 'background:#DCF8C6;border-radius:12px 12px 2px 12px;padding:10px 14px;max-width:80%;align-self:flex-end;font-size:13px;line-height:1.5;box-shadow:0 1px 2px rgba(0,0,0,.1)';
-      const sender = isRobin ? '<div style="font-size:10px;font-weight:700;color:#075E54;margin-bottom:3px">🤖 Robin</div>' : '<div style="font-size:10px;font-weight:700;color:#128C7E;margin-bottom:3px;text-align:right">👤 Client</div>';
-      const text = (m.text || '').replace(/\n/g, '<br>');
-      return '<div style="' + bubbleStyle + '">' + sender + text + '</div>';
-    }).join('');
+    updateWaReplyUi(data);
 
-    // Scroll vers le bas
+    if (!data.messages || !data.messages.length) {
+      if (subtitle) subtitle.textContent = 'Aucun historique · +' + (data.phone || phone);
+      box.innerHTML =
+        '<div style="text-align:center;color:#999;font-size:13px;padding:40px 0">💬 Aucun message enregistré. Les échanges bot ou agent apparaîtront ici.</div>';
+      return;
+    }
+
+    if (subtitle) {
+      subtitle.textContent =
+        data.count +
+        ' message(s) · +' +
+        (data.phone || phone) +
+        (data.within24h ? ' · fenêtre 24 h OK' : '');
+    }
+
+    box.innerHTML = data.messages
+      .map(function (m) {
+        var isOut = m.role === 'assistant';
+        var bubbleStyle = isOut
+          ? 'background:#fff;border-radius:12px 12px 12px 2px;padding:10px 14px;max-width:85%;align-self:flex-start;font-size:13px;line-height:1.5;box-shadow:0 1px 2px rgba(0,0,0,.1)'
+          : 'background:#DCF8C6;border-radius:12px 12px 2px 12px;padding:10px 14px;max-width:85%;align-self:flex-end;font-size:13px;line-height:1.5;box-shadow:0 1px 2px rgba(0,0,0,.1)';
+        var label = '👤 Client';
+        if (isOut) {
+          if (m.source === 'crm' && m.by) label = '🧑‍💼 ' + escHtml(m.by);
+          else if (m.source === 'bot-gemini') label = '🤖 Robin (IA)';
+          else label = '🤖 Robin';
+        }
+        var when = formatWaMessageTime(m.timestamp);
+        var text = escHtml(m.text || '').replace(/\n/g, '<br>');
+        return (
+          '<div style="' +
+          bubbleStyle +
+          '"><div style="font-size:10px;font-weight:700;color:#075E54;margin-bottom:3px">' +
+          label +
+          (when ? ' · ' + when : '') +
+          '</div><div>' +
+          text +
+          '</div></div>'
+        );
+      })
+      .join('');
+
     box.scrollTop = box.scrollHeight;
   } catch (e) {
-    subtitle.textContent = 'Erreur de chargement';
-    box.innerHTML = '<div style="text-align:center;color:#e53935;font-size:13px;padding:40px 0">❌ Impossible de charger les messages : ' + e.message + '</div>';
+    if (subtitle) subtitle.textContent = 'Erreur';
+    box.innerHTML =
+      '<div style="text-align:center;color:#e53935;font-size:13px;padding:40px 0">❌ ' +
+      escHtml(e.message || 'échec') +
+      '</div>';
+  }
+}
+
+async function sendWaReplyFromCrm() {
+  if (!requireCrmAgent()) return;
+  var phone = window._currentDossierTel || '';
+  var input = document.getElementById('wa-reply-input');
+  var text = input ? String(input.value || '').trim() : '';
+  if (!phone) {
+    showCrmToast('Numéro manquant sur ce dossier');
+    return;
+  }
+  if (!text) {
+    showCrmToast('Saisissez un message');
+    return;
+  }
+  var btn = document.getElementById('btn-wa-send');
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Envoi…';
+  }
+  try {
+    var resp = await crmApiFetch(CRM_WA_SEND_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        phone: phone,
+        text: text,
+        agent: getCrmAgent(),
+        dossierRef: window._currentDossierId || window._crmOpenId || '',
+      }),
+    });
+    var data = await resp.json().catch(function () {
+      return {};
+    });
+    if (!resp.ok) {
+      throw new Error((data && data.error) || 'HTTP ' + resp.status);
+    }
+    if (input) input.value = '';
+    showCrmToast('Message WhatsApp envoyé');
+    var openId = window._crmOpenId;
+    if (openId) {
+      var d = DB.find(function (x) {
+        return x.id === openId;
+      });
+      if (d) crmAuditEvent(d, 'WhatsApp agent', text.slice(0, 120));
+      persistCrmDb();
+    }
+    await loadWaMessages(true);
+  } catch (e) {
+    showCrmToast('WhatsApp : ' + (e.message || 'échec'));
+    updateWaReplyUi({ canSend: false, whatsappConfigured: true, error: e.message });
+  } finally {
+    if (btn) {
+      btn.textContent = 'Envoyer sur WhatsApp';
+      btn.disabled = !window._waCanSend;
+    }
+  }
+}
+
+function copyWaReplyToClipboard() {
+  var input = document.getElementById('wa-reply-input');
+  var t = input ? input.value : '';
+  if (!t) {
+    showCrmToast('Rien à copier');
+    return;
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(t).then(function () {
+      showCrmToast('Message copié');
+    });
+  } else {
+    input.select();
+    document.execCommand('copy');
+    showCrmToast('Message copié');
   }
 }
 
@@ -2449,6 +2616,8 @@ crmInitAddressAutocomplete('n_adresse_search', 'n_adresse_dd', 'n_adresse');
    ═══════════════════════════════════════════════════════════ */
 const CRM_BACKUP_URL = '/api/crm-backup';
 const CRM_AIRTABLE_URL = '/api/crm-airtable-sync';
+const CRM_WA_MESSAGES_URL = '/api/wa-messages';
+const CRM_WA_SEND_URL = '/api/crm-wa-send';
 let _backupTimer = null;
 
 /** Appels API CRM : cookie de session + ?code= si mémorisé. */
@@ -2480,7 +2649,42 @@ async function syncCrmToAirtable(db) {
   return data;
 }
 
-/** Importe une ligne Airtable dans le CRM local (création ou écrasement par ref). */
+/** Fusionne un dossier importé Airtable sans effacer pièces / historique local. */
+function mergeCrmDossierFromAirtable(prev, incoming) {
+  if (!prev) return incoming;
+  if (!incoming) return prev;
+  var merged = Object.assign({}, prev, incoming);
+  if (prev) {
+    if (prev.pieces && prev.pieces.length) merged.pieces = prev.pieces;
+    if (prev.coPassagers && prev.coPassagers.length) merged.coPassagers = prev.coPassagers;
+    if (prev.lrar) merged.lrar = prev.lrar;
+    if (prev.events && prev.events.length) {
+      merged.events = prev.events.slice();
+      var impEv = (incoming && incoming.events && incoming.events[0]) || null;
+      if (impEv && impEv.action === 'Import Airtable') merged.events.push(impEv);
+    }
+    if (prev.date && (!incoming || !incoming.date)) merged.date = prev.date;
+    if (prev.source && incoming && incoming.source === 'airtable') merged.source = prev.source;
+  }
+  return merged;
+}
+
+function applyImportedDossierToDb(d, opts) {
+  opts = opts || {};
+  if (!d || !d.id) return false;
+  var idx = DB.findIndex(function (x) {
+    return x.id === d.id;
+  });
+  if (idx >= 0) DB[idx] = mergeCrmDossierFromAirtable(DB[idx], d);
+  else DB.unshift(d);
+  if (!opts.deferPersist) {
+    persistCrmDb();
+    render();
+  }
+  return true;
+}
+
+/** Importe une ligne Airtable dans le CRM local (création ou fusion par ref). */
 async function importDossierFromAirtable(ref) {
   const resp = await crmApiFetch(
     CRM_AIRTABLE_URL + '?ref=' + encodeURIComponent(ref)
@@ -2493,14 +2697,66 @@ async function importDossierFromAirtable(ref) {
   }
   const d = data.dossier;
   if (!d || !d.id) throw new Error('Réponse import invalide');
-  const idx = DB.findIndex(function (x) {
-    return x.id === d.id;
-  });
-  if (idx >= 0) DB[idx] = Object.assign({}, DB[idx], d);
-  else DB.unshift(d);
-  persistCrmDb();
-  render();
+  applyImportedDossierToDb(d);
   return data;
+}
+
+/** Importe toute la table Airtable (refs avec « Référence Dossier »). */
+async function pullAllFromAirtable(opts) {
+  opts = opts || {};
+  const resp = await crmApiFetch(CRM_AIRTABLE_URL + '?pull=all');
+  const data = await resp.json().catch(function () {
+    return {};
+  });
+  if (!resp.ok) {
+    throw new Error((data && data.error) || 'Import Airtable HTTP ' + resp.status);
+  }
+  var imported = 0;
+  (data.dossiers || []).forEach(function (item) {
+    if (item && item.dossier && applyImportedDossierToDb(item.dossier, { deferPersist: true })) {
+      imported += 1;
+    }
+  });
+  if (imported && !opts.deferPersist) {
+    persistCrmDb();
+    render();
+  }
+  return {
+    imported: imported,
+    pulled: (data && data.pulled) || imported,
+    total: (data && data.total) || 0,
+    skipped: (data && data.skipped) || [],
+  };
+}
+
+async function pullFromAirtableNow() {
+  if (_syncInFlight) {
+    showCrmToast('Synchronisation déjà en cours…');
+    return;
+  }
+  if (!navigator.onLine) {
+    showCrmToast('Hors ligne — import impossible');
+    return;
+  }
+  _syncInFlight = true;
+  var btn = document.getElementById('btn-pull-at');
+  if (btn) btn.textContent = '⏳ Import...';
+  try {
+    var r = await pullAllFromAirtable();
+    var msg =
+      r.imported +
+      ' dossier(s) importé(s) depuis Airtable' +
+      (r.skipped && r.skipped.length ? ' (' + r.skipped.length + ' ignoré(s))' : '');
+    setCrmSyncBanner(msg, r.imported ? 'ok' : 'warn');
+    showCrmToast(msg);
+  } catch (e) {
+    var err = (e && e.message) || 'échec';
+    setCrmSyncBanner('Import Airtable : ' + err, 'err');
+    showCrmToast('Import Airtable : ' + err);
+  } finally {
+    _syncInFlight = false;
+    if (btn) btn.textContent = '↓ Importer Airtable';
+  }
 }
 
 /** Sauvegarde auto déclenchée 3s après la dernière modification */
@@ -2672,7 +2928,23 @@ async function syncCrmNow(auto) {
   var slim = crmSlimDbSnapshot();
   var cloudSummary = '';
   var atSummary = '';
+  var pullSummary = '';
   try {
+    if (!auto) {
+      try {
+        var pullRes = await pullAllFromAirtable({ deferPersist: true });
+        pullSummary =
+          pullRes.imported > 0
+            ? pullRes.imported + ' importé(s) Airtable'
+            : 'Airtable : rien à importer';
+        if (pullRes.imported) persistCrmDb();
+        slim = crmSlimDbSnapshot();
+        render();
+      } catch (pullErr) {
+        pullSummary = 'import Airtable : ' + (pullErr.message || 'échec');
+      }
+    }
+
     try {
       const lastSync = localStorage.getItem(CRM_SYNC_LAST_KEY) || '';
       const cloudDb = await fetchLatestCloudDb();
@@ -2729,7 +3001,9 @@ async function syncCrmNow(auto) {
       writeCrmSyncQueue([]);
     }
     var fullMsg = atSummary + ' · ' + cloudSummary;
+    if (pullSummary) fullMsg = pullSummary + ' · ' + fullMsg;
     var lvl = atSummary.indexOf('✓') !== -1 ? (cloudSummary.indexOf('Blobs') !== -1 ? 'warn' : 'ok') : 'err';
+    if (pullSummary && pullSummary.indexOf('importé') !== -1 && lvl === 'err') lvl = 'warn';
     setCrmSyncBanner(fullMsg, lvl);
     if (!auto) showCrmToast(fullMsg);
     else if (atSummary.indexOf('✓') !== -1) showCrmToast(atSummary);

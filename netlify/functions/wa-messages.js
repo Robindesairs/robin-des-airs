@@ -1,75 +1,81 @@
 /**
  * wa-messages — Robin des Airs
  * GET /api/wa-messages?phone=33612345678
- * Retourne l'historique de conversation WhatsApp stocké dans Netlify Blobs.
- * Protégé par CRM_ACCESS_CODE (même code que le CRM).
+ * Historique WhatsApp (Netlify Blobs) — auth CRM.
  */
 
-let netlifyBlobsModule = null;
-try { netlifyBlobsModule = require('@netlify/blobs'); } catch (e) {}
+const { checkCrmAccess } = require('./lib/crm-access');
+const { listWaMessages, normalizeWaPhone } = require('./lib/wa-convo-store');
+const { canSendWhatsApp } = require('./lib/whatsapp-send-core');
 
-function normalizePhone(phone) {
-  if (!phone) return '';
-  const d = String(phone).replace(/\D/g, '');
-  if (d.startsWith('0')) return '33' + d.slice(1);
-  return d;
-}
+const HEADERS = {
+  'Content-Type': 'application/json',
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'Content-Type, X-CRM-Code',
+  'Access-Control-Allow-Credentials': 'true',
+  'Cache-Control': 'no-store',
+};
 
 exports.handler = async (event) => {
-  const headers = {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
-    'Cache-Control': 'no-store',
-  };
-
   if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 204, headers, body: '' };
+    return { statusCode: 204, headers: HEADERS, body: '' };
   }
 
-  // Vérification du code d'accès CRM
-  const crmCode = process.env.CRM_ACCESS_CODE;
-  const providedCode = event.queryStringParameters?.code || event.headers?.['x-crm-code'];
-  if (crmCode && providedCode !== crmCode) {
-    return { statusCode: 401, headers, body: JSON.stringify({ error: 'Non autorisé' }) };
+  const auth = checkCrmAccess(event);
+  if (!auth.ok) {
+    return { statusCode: 401, headers: HEADERS, body: JSON.stringify({ error: auth.error || 'Non autorisé' }) };
+  }
+
+  if (event.httpMethod !== 'GET') {
+    return { statusCode: 405, headers: HEADERS, body: JSON.stringify({ error: 'GET uniquement' }) };
   }
 
   const rawPhone = event.queryStringParameters?.phone || '';
   if (!rawPhone) {
-    return { statusCode: 400, headers, body: JSON.stringify({ error: 'Paramètre phone manquant' }) };
-  }
-
-  const phone = normalizePhone(rawPhone);
-
-  if (!netlifyBlobsModule) {
-    return { statusCode: 503, headers, body: JSON.stringify({ error: 'Blobs non disponibles', messages: [] }) };
+    return { statusCode: 400, headers: HEADERS, body: JSON.stringify({ error: 'Paramètre phone manquant' }) };
   }
 
   try {
-    const blobs = netlifyBlobsModule;
-    if (blobs.connectLambda && event) blobs.connectLambda(event);
-    const store = blobs.getStore('robin-wa');
-    const convoKey = 'convo/' + phone;
-    const raw = await store.get(convoKey);
-    const messages = raw ? (typeof raw === 'string' ? JSON.parse(raw) : raw) : [];
+    const info = await listWaMessages(event, rawPhone);
+    if (!info.blobsAvailable) {
+      return {
+        statusCode: 503,
+        headers: HEADERS,
+        body: JSON.stringify({
+          error: info.error,
+          phone: normalizeWaPhone(rawPhone),
+          messages: [],
+          canSend: false,
+          whatsappConfigured: canSendWhatsApp(),
+        }),
+      };
+    }
 
     return {
       statusCode: 200,
-      headers,
+      headers: HEADERS,
       body: JSON.stringify({
-        phone,
-        count: messages.length,
-        messages: messages.map((m, i) => ({
+        phone: info.phone,
+        count: info.count,
+        messages: info.messages.map((m, i) => ({
           index: i,
           role: m.role || 'user',
           text: m.text || '',
           timestamp: m.timestamp || null,
+          source: m.source || null,
+          by: m.by || null,
         })),
+        lastUserAt: info.lastUserAt,
+        within24h: info.within24h,
+        noHistoryYet: info.noHistoryYet,
+        canSend: info.canSendFreeText && canSendWhatsApp(),
+        whatsappConfigured: canSendWhatsApp(),
       }),
     };
   } catch (e) {
     return {
       statusCode: 500,
-      headers,
+      headers: HEADERS,
       body: JSON.stringify({ error: e.message, messages: [] }),
     };
   }

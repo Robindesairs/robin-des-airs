@@ -135,6 +135,26 @@
   to = "/.netlify/functions/crm-airtable-sync"
   status = 200
 
+[[redirects]]
+  from = "/api/wa-messages"
+  to = "/.netlify/functions/wa-messages"
+  status = 200
+
+[[redirects]]
+  from = "/api/crm-wa-send"
+  to = "/.netlify/functions/crm-wa-send"
+  status = 200
+
+[[redirects]]
+  from = "/api/send-whatsapp"
+  to = "/.netlify/functions/send-whatsapp"
+  status = 200
+
+[[redirects]]
+  from = "/api/wati-webhook"
+  to = "/.netlify/functions/wati-webhook"
+  status = 200
+
 # Webhook WhatsApp 360dialog
 [[redirects]]
   from = "/api/whatsapp-webhook"

@@ -13,7 +13,7 @@ const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/models/gem
 const DEFAULT_DELAY_MS = (parseInt(process.env.ROBIN_GEMINI_DELAY_SECONDS || '20', 10) || 20) * 1000;
 const STORE_NAME = 'robin-wa';
 const PENDING_PREFIX = 'pending/';
-const CONVO_PREFIX = 'convo/';
+const { appendWaMessage } = require('./lib/wa-convo-store');
 
 let netlifyBlobsModule = null;
 try {
@@ -133,9 +133,11 @@ exports.handler = async (event) => {
     if (reply) {
       const sent = await sendWhatsAppText(to, reply, d360Key);
       if (sent) {
-        convo.push({ role: 'assistant', text: reply });
-        const keep = convo.slice(-30);
-        await store.set(convoKey, JSON.stringify(keep));
+        try {
+          await appendWaMessage(event, phone, { role: 'assistant', text: reply, source: 'bot-gemini' });
+        } catch (logErr) {
+          console.log('whatsapp-gemini-fallback: convo log failed', logErr.message);
+        }
         processed++;
       }
     }

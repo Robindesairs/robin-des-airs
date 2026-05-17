@@ -3,12 +3,14 @@
  *
  * POST /api/crm-airtable-sync?code=…  { "db": [ …dossiers CRM… ] }
  * GET  /api/crm-airtable-sync?code=…&ref=RDA-…  → import d’une ligne Airtable
+ * GET  /api/crm-airtable-sync?code=…&pull=all   → import de toute la table
  *
  * Auth : même code que /api/crm-backup (CRM_ACCESS_CODE ou ?code=).
  */
 
 const {
   airtableCfg,
+  airtableListRecords,
   airtableFindByRef,
   airtablePatch,
   airtableCreate,
@@ -53,12 +55,54 @@ exports.handler = async (event) => {
   }
 
   if (event.httpMethod === 'GET') {
+    const pull = (event.queryStringParameters?.pull || '').trim().toLowerCase();
     const ref = (event.queryStringParameters?.ref || '').trim();
+
+    if (pull === 'all') {
+      try {
+        const recs = await airtableListRecords(cfg);
+        const dossiers = [];
+        const skipped = [];
+        for (const rec of recs) {
+          const data = recordFromAirtableFields(cfg, rec.fields || {});
+          data.recordId = rec.id;
+          if (!data.ref) {
+            skipped.push({ recordId: rec.id, reason: 'ref_manquante' });
+            continue;
+          }
+          const dossier = airtableRecordToCrmDossier(data);
+          if (!dossier) {
+            skipped.push({ recordId: rec.id, ref: data.ref, reason: 'mapping_invalide' });
+            continue;
+          }
+          dossiers.push({
+            ref: data.ref,
+            recordId: rec.id,
+            dossier,
+            mandat_url: buildMandatUrl(data, 'crm-import'),
+          });
+        }
+        return {
+          statusCode: 200,
+          headers: HEADERS,
+          body: JSON.stringify({
+            ok: true,
+            pulled: dossiers.length,
+            total: recs.length,
+            dossiers,
+            skipped,
+          }),
+        };
+      } catch (e) {
+        return { statusCode: 500, headers: HEADERS, body: JSON.stringify({ error: e.message }) };
+      }
+    }
+
     if (!ref) {
       return {
         statusCode: 400,
         headers: HEADERS,
-        body: JSON.stringify({ error: 'Paramètre ref obligatoire' }),
+        body: JSON.stringify({ error: 'Paramètre ref ou pull=all obligatoire' }),
       };
     }
     try {

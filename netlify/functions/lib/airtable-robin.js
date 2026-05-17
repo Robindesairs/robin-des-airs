@@ -128,6 +128,28 @@ function buildMandatUrl(data, source) {
   return `${SITE_URL}/mandat.html?${p.toString()}`;
 }
 
+/** Liste paginée des enregistrements (CRM ← Airtable). */
+async function airtableListRecords(cfg, opts = {}) {
+  const maxRecords = Math.min(Math.max(parseInt(opts.maxRecords, 10) || 500, 1), 1000);
+  const records = [];
+  let offset = '';
+  while (records.length < maxRecords) {
+    let url = `https://api.airtable.com/v0/${cfg.base}/${cfg.table}?pageSize=100`;
+    if (offset) url += `&offset=${encodeURIComponent(offset)}`;
+    const r = await fetch(url, { headers: atHeaders(cfg.key) });
+    if (!r.ok) {
+      const t = await r.text();
+      throw new Error(`Airtable list ${r.status}: ${t.slice(0, 200)}`);
+    }
+    const data = await r.json();
+    const batch = data.records || [];
+    records.push(...batch);
+    offset = data.offset || '';
+    if (!offset || !batch.length) break;
+  }
+  return records.slice(0, maxRecords);
+}
+
 async function airtableFindByRef(cfg, ref) {
   const refCol = cfg.labels.ref;
   const formula = `{${refCol}}='${escapeFormulaValue(ref)}'`;
@@ -228,6 +250,7 @@ module.exports = {
   airtableCfg,
   recordFromAirtableFields,
   buildMandatUrl,
+  airtableListRecords,
   airtableFindByRef,
   airtableGetRecord,
   airtablePatch,

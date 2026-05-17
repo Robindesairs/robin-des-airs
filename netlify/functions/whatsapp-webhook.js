@@ -34,6 +34,11 @@ try {
   /* ex. dev local sans Netlify */
 }
 
+const { appendWaMessage } = require('./lib/wa-convo-store');
+
+/** Event Lambda courant (archivage conversations CRM). */
+let _waLambdaEvent = null;
+
 // Étape 1 (grand 1 — collecte mandat) : démarrage au premier message ou "Bonjour"
 const STEP1_STEPS = ['ASK_PROBLEM_TYPE', 'ASK_YEAR', 'ASK_PAX_COUNT_STEP1', 'ASK_PAX_MANUAL_STEP1', 'PASSENGER_FIRST', 'PASSENGER_LAST', 'PASSENGER_ANOTHER', 'PASSENGERS_CONFIRM', 'CONFIRM_PHONE', 'ASK_CONTACT_PHONE', 'TRAJET_FLIGHT', 'TRAJET_DATE', 'TRAJET_CONNECTION', 'TRAJET_CONFIRM', 'ASK_PNR', 'CONFIRM_PNR', 'ASK_AIRLINE', 'ASK_ADDRESS', 'STEP1_DONE'];
 function isStep1(step) { return STEP1_STEPS.includes(step); }
@@ -142,6 +147,17 @@ async function sendWhatsAppText(to, text) {
       console.error('whatsapp-webhook: send error (Meta)', res.status, data);
       return false;
     }
+    if (_waLambdaEvent && text) {
+      try {
+        await appendWaMessage(_waLambdaEvent, normalizeTo(to), {
+          role: 'assistant',
+          text,
+          source: 'bot',
+        });
+      } catch (logErr) {
+        console.log('whatsapp-webhook: convo log (out) failed', logErr.message);
+      }
+    }
     return true;
   }
 
@@ -155,6 +171,17 @@ async function sendWhatsAppText(to, text) {
     if (!res.ok) {
       console.error('whatsapp-webhook: send error (360dialog)', res.status, data);
       return false;
+    }
+    if (_waLambdaEvent && text) {
+      try {
+        await appendWaMessage(_waLambdaEvent, normalizeTo(to), {
+          role: 'assistant',
+          text,
+          source: 'bot',
+        });
+      } catch (logErr) {
+        console.log('whatsapp-webhook: convo log (out) failed', logErr.message);
+      }
     }
     return true;
   }
@@ -970,6 +997,7 @@ async function getImageBase64FromMessage(msg, d360Key) {
 }
 
 exports.handler = async (event) => {
+  _waLambdaEvent = event;
   const apiKey = process.env.WHATSAPP_API_KEY;
   const logWebhookUrl = process.env.ROBIN_LOG_WEBHOOK_URL;
   const origin = event.headers?.origin || event.headers?.['x-forwarded-host'] ? `https://${event.headers['x-forwarded-host']}` : (process.env.URL || 'https://robindesairs.eu');
@@ -1117,6 +1145,14 @@ exports.handler = async (event) => {
           continue;
         }
 
+        if (userText) {
+          try {
+            await appendWaMessage(event, to, { role: 'user', text: userText, source: 'whatsapp' });
+          } catch (logInErr) {
+            console.log('whatsapp-webhook: convo log (in) failed', logInErr.message);
+          }
+        }
+
         try {
           const tunnelEnabled = process.env.ROBIN_TUNNEL_ENABLED === 'true' || (process.env.GEMINI_API_KEY && process.env.ROBIN_TUNNEL_ENABLED !== 'false');
           const geminiDelayEnabled = process.env.ROBIN_GEMINI_DELAY_ENABLED === 'true';
@@ -1147,16 +1183,8 @@ exports.handler = async (event) => {
               }
               if (store) {
                 const phone = normalizeTo(fromId);
-                const convoKey = 'convo/' + phone;
                 const pendingKey = 'pending/' + phone;
                 try {
-                  let convo = [];
-                  try {
-                    const raw = await store.get(convoKey);
-                    convo = (typeof raw === 'string' ? JSON.parse(raw) : raw) || [];
-                  } catch (_) {}
-                  convo.push({ role: 'user', text: userText });
-                  await store.set(convoKey, JSON.stringify(convo.slice(-30)));
                   await store.set(pendingKey, JSON.stringify({ at: Date.now(), lastText: userText }));
                   await sendWhatsAppText(to, "Un instant, je vous réponds dans quelques secondes…");
                   continue;

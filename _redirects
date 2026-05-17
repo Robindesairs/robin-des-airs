@@ -10,6 +10,10 @@
 /api/airtable-webhook       /.netlify/functions/airtable-webhook  200
 /api/airtable-sync          /.netlify/functions/airtable-sync     200
 /api/crm-airtable-sync      /.netlify/functions/crm-airtable-sync 200
+/api/wa-messages            /.netlify/functions/wa-messages            200
+/api/crm-wa-send            /.netlify/functions/crm-wa-send            200
+/api/send-whatsapp          /.netlify/functions/send-whatsapp          200
+/api/wati-webhook           /.netlify/functions/wati-webhook           200
 
 # Redirections pour URLs sans .html
 /choix-reclamation           /choix-reclamation.html           200

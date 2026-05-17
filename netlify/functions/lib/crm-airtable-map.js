@@ -25,6 +25,41 @@ const CRM_INC_TO_AT = {
   CORRESPONDANCE_MANQUEE: 'Correspondance manquée',
 };
 
+const AT_STATUT_TO_CRM = Object.fromEntries(
+  Object.entries(CRM_STATUT_TO_AT).map(([crm, at]) => [at, crm])
+);
+
+const AT_INC_TO_CRM = Object.fromEntries(
+  Object.entries(CRM_INC_TO_AT).map(([crm, at]) => [at, crm])
+);
+
+function airtableStatutToCrm(statutSuivi) {
+  const s = String(statutSuivi || '').trim();
+  if (!s) return 'ELIGIBLE';
+  if (AT_STATUT_TO_CRM[s]) return AT_STATUT_TO_CRM[s];
+  const key = Object.keys(CRM_STATUT_TO_AT).find(
+    (k) => CRM_STATUT_TO_AT[k].toLowerCase() === s.toLowerCase()
+  );
+  return key || 'ELIGIBLE';
+}
+
+function parseWhatsAppForCrm(whatsapp) {
+  const raw = String(whatsapp || '').replace(/\s/g, '');
+  if (!raw) return { indicatif: '+33', tel: '' };
+  if (raw.startsWith('+33')) {
+    return { indicatif: '+33', tel: raw.slice(3).replace(/\D/g, '') };
+  }
+  if (raw.startsWith('+32') || raw.startsWith('32')) {
+    const n = raw.replace(/^\+?32/, '').replace(/\D/g, '');
+    return { indicatif: '+32', tel: n };
+  }
+  if (raw.startsWith('+')) {
+    const m = raw.match(/^\+(\d{1,3})(\d+)$/);
+    if (m) return { indicatif: '+' + m[1], tel: m[2] };
+  }
+  return { indicatif: '+33', tel: raw.replace(/\D/g, '') };
+}
+
 function formatWhatsApp(indicatif, tel) {
   const ind = String(indicatif || '').replace(/\D/g, '');
   const num = String(tel || '').replace(/\D/g, '');
@@ -102,9 +137,11 @@ function airtableRecordToCrmDossier(data) {
   const dep = route[0] ? route[0].trim() : '';
   const arr = route[1] ? route[1].trim() : '';
 
-  const statutKey =
-    Object.keys(CRM_STATUT_TO_AT).find((k) => CRM_STATUT_TO_AT[k] === data.statutSuivi) ||
-  'ELIGIBLE';
+  const statutKey = airtableStatutToCrm(data.statutSuivi);
+  const wa = parseWhatsAppForCrm(data.whatsapp);
+  const indemniteNum = parseInt(String(data.indemnite || '').replace(/[^\d]/g, ''), 10);
+  const palier = indemniteNum > 0 ? indemniteNum : 600;
+  const incKey = AT_INC_TO_CRM[data.incident] || 'RETARD';
 
   return {
     id: data.ref,
@@ -112,13 +149,13 @@ function airtableRecordToCrmDossier(data) {
     priorite: 'STANDARD',
     date: new Date().toISOString().slice(0, 10),
     date_statut: new Date().toISOString().slice(0, 10),
-    date_paiement: null,
+    date_paiement: statutKey === 'PAYE' ? new Date().toISOString().slice(0, 10) : null,
     source: 'airtable',
     lrar: null,
     prenom,
     nom,
-    indicatif: '+33',
-    tel: (data.whatsapp || '').replace(/^\+\d{1,3}/, '').trim(),
+    indicatif: wa.indicatif,
+    tel: wa.tel,
     email: data.email || `${String(data.ref).toLowerCase()}@robindesairs.eu`,
     adresse: data.address || '',
     adultes: 1,
@@ -132,10 +169,10 @@ function airtableRecordToCrmDossier(data) {
         dep,
         arr,
         pnr: data.pnr || '',
-        inc: 'RETARD',
+        inc: incKey,
       },
     ],
-    palier: 600,
+    palier,
     pieces: [],
     events: [
       {
@@ -153,7 +190,9 @@ function airtableRecordToCrmDossier(data) {
 module.exports = {
   CRM_STATUT_TO_AT,
   CRM_INC_TO_AT,
+  AT_STATUT_TO_CRM,
   crmDossierToAirtableDossier,
   airtableRecordToCrmDossier,
+  airtableStatutToCrm,
   formatWhatsApp,
 };
