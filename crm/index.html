@@ -206,6 +206,11 @@
   .crm-wa-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
   .crm-wa-toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--navy); color: #fff; padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; z-index: 100000; opacity: 0; pointer-events: none; transition: opacity .25s; max-width: min(92vw, 520px); text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,.35); }
   .crm-wa-toast.show { opacity: 1; }
+  .crm-sync-banner { display: none; margin: 0 24px 12px; padding: 12px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; line-height: 1.45; }
+  .crm-sync-banner.visible { display: block; }
+  .crm-sync-banner.ok { background: #D1FAE5; color: #065F46; border: 1px solid #6EE7B7; }
+  .crm-sync-banner.warn { background: #FEF3C7; color: #92400E; border: 1px solid #FCD34D; }
+  .crm-sync-banner.err { background: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; }
 
   /* ── Pièces / documents ── */
   .crm-doc-empty { font-size: 13px; color: var(--text2); padding: 16px; text-align: center; background: var(--bg2); border-radius: var(--radius-sm); border: 1px dashed var(--border); }
@@ -278,6 +283,8 @@
     <button type="button" class="btn btn-primary" onclick="openNew()">+ Nouveau dossier</button>
   </div>
 </div>
+
+<div id="crm-sync-banner" class="crm-sync-banner" role="status" aria-live="polite"></div>
 
 <div class="app">
   <!-- MÉTRIQUES -->
@@ -600,7 +607,7 @@ async function crmUnlock() {
       openAndRemember();
       return;
     }
-    err.textContent = j.error || crmT('gate_wrong_code');
+    err.textContent = (j.error || crmT('gate_wrong_code')) + ' — Sur Netlify, vérifiez la variable CRM_ACCESS_CODE (souvent robin-dakar).';
     err.classList.add('show');
   } catch (_) {
     if (allowOfflineAccess()) {
@@ -636,6 +643,7 @@ function crmOpenMain() {
   document.getElementById('crm-gate').classList.add('hidden');
   document.getElementById('crm-main').classList.add('visible');
   syncCrmAgentInput();
+  setCrmSyncBanner('Connecté au CRM. Cliquez sur « Sync cloud + Airtable » pour envoyer les dossiers vers Airtable.', 'ok');
   render();
 }
 
@@ -771,6 +779,13 @@ function copyWaMsg(){
   }
 }
 
+function setCrmSyncBanner(msg, level) {
+  var el = document.getElementById('crm-sync-banner');
+  if (!el) return;
+  el.textContent = msg || '';
+  el.className = 'crm-sync-banner visible ' + (level || 'ok');
+}
+
 function showCrmToast(msg){
   var el = document.getElementById('crm-wa-toast');
   if(!el) return;
@@ -778,6 +793,10 @@ function showCrmToast(msg){
   el.classList.add('show');
   clearTimeout(window._crmToastTimer);
   window._crmToastTimer = setTimeout(function(){ el.classList.remove('show'); }, 6000);
+  if (msg && msg.indexOf('Sync') !== -1) {
+    var lvl = msg.indexOf('échec') !== -1 || msg.indexOf('Non autorisé') !== -1 ? 'err' : (msg.indexOf('Blobs') !== -1 ? 'warn' : 'ok');
+    setCrmSyncBanner(msg, lvl);
+  }
 }
 
 function today(){ return new Date().toISOString().slice(0,10); }
@@ -2709,7 +2728,10 @@ async function syncCrmNow(auto) {
     if (atSummary.indexOf('✓') !== -1 || cloudSummary.indexOf('cloud ✓') !== -1) {
       writeCrmSyncQueue([]);
     }
-    if (!auto) showCrmToast(atSummary + ' · ' + cloudSummary);
+    var fullMsg = atSummary + ' · ' + cloudSummary;
+    var lvl = atSummary.indexOf('✓') !== -1 ? (cloudSummary.indexOf('Blobs') !== -1 ? 'warn' : 'ok') : 'err';
+    setCrmSyncBanner(fullMsg, lvl);
+    if (!auto) showCrmToast(fullMsg);
     else if (atSummary.indexOf('✓') !== -1) showCrmToast(atSummary);
   } catch (e) {
     var msg = e && e.message ? e.message : 'réessayez';
