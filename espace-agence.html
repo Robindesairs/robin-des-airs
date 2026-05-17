@@ -98,7 +98,7 @@ body { font-family:'Inter',sans-serif; background:var(--gray-100); color:var(--n
 .page-header p { color:var(--gray-400); font-size:14px; margin-top:4px; }
 
 /* KPI Cards */
-.kpi-row { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
+.kpi-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:16px; margin-bottom:28px; }
 .kpi-card {
   background:var(--white); border-radius:var(--radius); padding:24px; box-shadow:var(--shadow);
 }
@@ -133,6 +133,15 @@ tbody tr:hover { background:rgba(61,223,168,0.04); }
 .badge.nouveau { background:rgba(255,179,71,0.15); color:#c87800; }
 .badge.attente-incident { background:rgba(147,197,253,0.22); color:#1d4ed8; }
 .form-hint { font-size:12px;color:var(--gray-400);margin-top:6px;line-height:1.45; }
+.page-header-row { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; }
+.btn-refresh { padding:10px 16px; border:2px solid var(--gray-200); border-radius:var(--radius-sm); background:var(--white); color:var(--navy); font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; }
+.btn-refresh:hover { border-color:var(--green); color:var(--green-dark); }
+.btn-refresh:disabled { opacity:0.5; cursor:not-allowed; }
+.btn-primary:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+.empty-row td { text-align:center; padding:32px; color:var(--gray-400); font-size:14px; }
+.help-card { background:var(--white); border-radius:var(--radius); padding:28px 32px; box-shadow:var(--shadow); max-width:720px; line-height:1.65; font-size:14px; }
+.help-card h3 { margin:20px 0 8px; font-size:16px; color:var(--navy); }
+.help-card ul { margin:8px 0 8px 20px; }
 
 /* Form */
 .form-card { background:var(--white); border-radius:var(--radius); padding:32px; box-shadow:var(--shadow); max-width:720px; }
@@ -257,6 +266,9 @@ tbody tr:hover { background:rgba(61,223,168,0.04); }
       <a href="#" data-page="commissions" onclick="switchPage('commissions')">
         <span class="icon">💰</span> <span>Commissions</span>
       </a>
+      <a href="#" data-page="aide" onclick="switchPage('aide')">
+        <span class="icon">❓</span> <span>Aide</span>
+      </a>
     </nav>
     <button class="sidebar-logout" onclick="doLogout()">Déconnexion</button>
   </aside>
@@ -266,10 +278,13 @@ tbody tr:hover { background:rgba(61,223,168,0.04); }
 
     <!-- ===== DASHBOARD ===== -->
     <div class="page active" id="page-dashboard">
-      <div class="page-header">
-        <h1>Tableau de bord</h1>
-        <p>Vue d'ensemble de vos dossiers et commissions (source Airtable)</p>
-        <p id="agency-sync-status" style="font-size:12px;color:var(--gray-400);margin-top:6px"></p>
+      <div class="page-header page-header-row">
+        <div>
+          <h1>Tableau de bord</h1>
+          <p>Vue d'ensemble de vos dossiers et commissions (source Airtable)</p>
+          <p id="agency-sync-status" style="font-size:12px;color:var(--gray-400);margin-top:6px"></p>
+        </div>
+        <button type="button" class="btn-refresh" onclick="refreshFromAirtable()">↻ Actualiser</button>
       </div>
 
       <div class="kpi-row">
@@ -281,7 +296,12 @@ tbody tr:hover { background:rgba(61,223,168,0.04); }
         <div class="kpi-card">
           <div class="kpi-label">En cours</div>
           <div class="kpi-value" id="kpi-encours">0</div>
-          <div class="kpi-sub">Réclamations actives</div>
+          <div class="kpi-sub">Actifs + attente</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Attente incident</div>
+          <div class="kpi-value" id="kpi-attente">0</div>
+          <div class="kpi-sub">Billets vendus</div>
         </div>
         <div class="kpi-card">
           <div class="kpi-label">Gagnés</div>
@@ -420,7 +440,7 @@ tbody tr:hover { background:rgba(61,223,168,0.04); }
         </div>
 
         <div class="form-submit">
-          <button class="btn-primary" onclick="submitDossier()">Soumettre le dossier</button>
+          <button class="btn-primary" id="btn-submit-dossier" onclick="submitDossier()">Soumettre le dossier</button>
           <button class="btn-secondary" onclick="resetForm()">Effacer</button>
         </div>
 
@@ -433,9 +453,12 @@ tbody tr:hover { background:rgba(61,223,168,0.04); }
 
     <!-- ===== DOSSIERS ===== -->
     <div class="page" id="page-dossiers">
-      <div class="page-header">
-        <h1>Mes dossiers</h1>
-        <p>Suivi de toutes vos réclamations</p>
+      <div class="page-header page-header-row">
+        <div>
+          <h1>Mes dossiers</h1>
+          <p>Suivi de toutes vos réclamations (Airtable)</p>
+        </div>
+        <button type="button" class="btn-refresh" onclick="refreshFromAirtable()">↻ Actualiser</button>
       </div>
 
       <div class="table-card">
@@ -471,6 +494,26 @@ tbody tr:hover { background:rgba(61,223,168,0.04); }
           </thead>
           <tbody id="dossiers-table"></tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- ===== AIDE ===== -->
+    <div class="page" id="page-aide">
+      <div class="page-header">
+        <h1>Aide</h1>
+        <p>Utiliser l'espace partenaire</p>
+      </div>
+      <div class="help-card">
+        <p>Les dossiers créés ici sont enregistrés <strong>directement dans Airtable</strong>. L'équipe Robin des Airs les traite comme un dépôt au guichet.</p>
+        <h3>Nouveau dossier</h3>
+        <ul>
+          <li><strong>Réclamation</strong> : incident déjà survenu (retard, annulation…).</li>
+          <li><strong>En attente d'incident</strong> : billet vendu, pas encore de problème sur le vol.</li>
+        </ul>
+        <h3>Actualiser</h3>
+        <p>Utilisez le bouton <strong>↻ Actualiser</strong> pour voir les statuts mis à jour par Robin (mandat, paiement, etc.).</p>
+        <h3>Support</h3>
+        <p>Code ou mot de passe : contactez Robin des Airs. Ne communiquez pas votre mot de passe par SMS non sécurisé.</p>
       </div>
     </div>
 
@@ -527,265 +570,7 @@ tbody tr:hover { background:rgba(61,223,168,0.04); }
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
-<script>
-const AGENCY_AUTH_URL = '/api/agency-auth';
-const AGENCY_DOSSIERS_URL = '/api/agency-dossiers';
-
-let currentAgency = null;
-let dossiers = [];
-let commissionPerPax = 30000;
-let _agencyLoading = false;
-
-function agencyFetch(url, options) {
-  options = options || {};
-  options.credentials = 'same-origin';
-  return fetch(url, options);
-}
-
-function setAgencySyncStatus(msg, isErr) {
-  const el = document.getElementById('agency-sync-status');
-  if (!el) return;
-  el.textContent = msg || '';
-  el.style.color = isErr ? 'var(--red)' : 'var(--gray-400)';
-}
-
-async function refreshFromAirtable() {
-  if (!currentAgency || _agencyLoading) return;
-  _agencyLoading = true;
-  setAgencySyncStatus('Synchronisation Airtable…');
-  try {
-    const r = await agencyFetch(AGENCY_DOSSIERS_URL);
-    const data = await r.json().catch(function () { return {}; });
-    if (!r.ok) throw new Error(data.error || 'HTTP ' + r.status);
-    dossiers = data.dossiers || [];
-    if (data.commissionPerPax) commissionPerPax = data.commissionPerPax;
-    setAgencySyncStatus(dossiers.length + ' dossier(s) — dernière MAJ ' + new Date().toLocaleTimeString('fr-FR'));
-    updateDashboard();
-    renderDossiers();
-    renderCommissions();
-  } catch (e) {
-    setAgencySyncStatus('Erreur sync : ' + (e.message || 'échec'), true);
-    showToast('Impossible de charger les dossiers : ' + e.message, true);
-  } finally {
-    _agencyLoading = false;
-  }
-}
-
-function showAgencyApp(agency) {
-  currentAgency = agency;
-  document.getElementById('agencyName').textContent = agency.name;
-  document.getElementById('agencyCode').textContent = agency.code;
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('app').classList.add('active');
-  refreshFromAirtable();
-}
-
-async function doLogin() {
-  const code = document.getElementById('loginCode').value.trim().toUpperCase();
-  const pass = document.getElementById('loginPass').value;
-  document.getElementById('loginError').style.display = 'none';
-  try {
-    const r = await agencyFetch(AGENCY_AUTH_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: code, pass: pass }),
-    });
-    const data = await r.json().catch(function () { return {}; });
-    if (!r.ok || !data.ok) {
-      document.getElementById('loginError').style.display = 'block';
-      document.getElementById('loginPass').value = '';
-      return;
-    }
-    showAgencyApp(data.agency);
-  } catch (e) {
-    showToast('Connexion impossible : ' + e.message, true);
-  }
-}
-
-async function doLogout() {
-  try {
-    await agencyFetch(AGENCY_AUTH_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ logout: true }),
-    });
-  } catch (_) {}
-  currentAgency = null;
-  dossiers = [];
-  document.getElementById('app').classList.remove('active');
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('loginCode').value = '';
-  document.getElementById('loginPass').value = '';
-  document.getElementById('loginError').style.display = 'none';
-}
-
-document.addEventListener('keydown', function (e) {
-  if (e.key === 'Enter' && !currentAgency) doLogin();
-});
-
-document.addEventListener('DOMContentLoaded', async function () {
-  try {
-    const r = await agencyFetch(AGENCY_AUTH_URL);
-    const data = await r.json().catch(function () { return {}; });
-    if (data.ok && data.agency) showAgencyApp(data.agency);
-  } catch (_) {}
-});
-
-function switchPage(page) {
-  document.querySelectorAll('.page').forEach(function (p) { p.classList.remove('active'); });
-  document.getElementById('page-' + page).classList.add('active');
-  document.querySelectorAll('.sidebar nav a').forEach(function (a) {
-    a.classList.toggle('active', a.dataset.page === page);
-  });
-  if (page === 'dossiers') renderDossiers();
-  if (page === 'commissions') renderCommissions();
-  if (page === 'dashboard') updateDashboard();
-}
-
-function updateDashboard() {
-  const total = dossiers.length;
-  const encours = dossiers.filter(function (d) { return d.statut === 'en-cours' || d.statut === 'nouveau' || d.statut === 'attente-incident'; }).length;
-  const gagnes = dossiers.filter(function (d) { return d.statut === 'gagne' || d.statut === 'paye'; }).length;
-  const paxGagnes = dossiers.filter(function (d) { return d.statut === 'gagne' || d.statut === 'paye'; }).reduce(function (s, d) { return s + (d.nbPassagers || 1); }, 0);
-
-  document.getElementById('kpi-total').textContent = total;
-  document.getElementById('kpi-encours').textContent = encours;
-  document.getElementById('kpi-gagnes').textContent = gagnes;
-  document.getElementById('kpi-commissions').textContent = formatFCFA(paxGagnes * commissionPerPax);
-
-  const tbody = document.getElementById('dashboard-table');
-  tbody.innerHTML = dossiers.slice(0, 5).map(function (d) {
-    return '<tr><td><strong>' + d.ref + '</strong></td><td>' + d.prenom + ' ' + d.nom + '</td><td>' + d.vol + '</td><td>' + formatDate(d.date) + '</td><td>' + badgeHTML(d.statut) + '</td><td>' + ((d.statut === 'gagne' || d.statut === 'paye') ? formatFCFA((d.nbPassagers || 1) * commissionPerPax) : '—') + '</td></tr>';
-  }).join('');
-}
-
-function renderDossiers() {
-  const statutFilter = document.getElementById('filter-statut').value;
-  const search = (document.getElementById('filter-search').value || '').toLowerCase();
-  let filtered = dossiers;
-  if (statutFilter) filtered = filtered.filter(function (d) { return d.statut === statutFilter; });
-  if (search) {
-    filtered = filtered.filter(function (d) {
-      return (d.nom || '').toLowerCase().includes(search) || (d.prenom || '').toLowerCase().includes(search) || (d.vol || '').toLowerCase().includes(search) || (d.pnr || '').toLowerCase().includes(search) || (d.ref || '').toLowerCase().includes(search);
-    });
-  }
-  const tbody = document.getElementById('dossiers-table');
-  tbody.innerHTML = filtered.map(function (d) {
-    return '<tr><td><strong>' + d.ref + '</strong></td><td>' + d.prenom + ' ' + d.nom + '</td><td>' + d.vol + '</td><td>' + d.compagnie + '</td><td>' + (d.depart || '') + ' → ' + (d.arrivee || '') + '</td><td>' + formatDate(d.date) + '</td><td style="font-size:12px">' + (d.probleme || '') + '</td><td style="text-align:center">' + (d.nbPassagers || 1) + '</td><td>' + badgeHTML(d.statut) + '</td><td>' + ((d.statut === 'gagne' || d.statut === 'paye') ? formatFCFA((d.nbPassagers || 1) * commissionPerPax) : '—') + '</td></tr>';
-  }).join('');
-}
-
-function renderCommissions() {
-  const won = dossiers.filter(function (d) { return d.statut === 'gagne' || d.statut === 'paye'; });
-  const totalPax = won.reduce(function (s, d) { return s + (d.nbPassagers || 1); }, 0);
-  const paidPax = dossiers.filter(function (d) { return d.statut === 'paye'; }).reduce(function (s, d) { return s + (d.nbPassagers || 1); }, 0);
-  const pendingPax = dossiers.filter(function (d) { return d.statut === 'gagne'; }).reduce(function (s, d) { return s + (d.nbPassagers || 1); }, 0);
-
-  document.getElementById('comm-total').textContent = formatFCFA(totalPax * commissionPerPax);
-  document.getElementById('comm-paid').textContent = formatFCFA(paidPax * commissionPerPax);
-  document.getElementById('comm-pending').textContent = formatFCFA(pendingPax * commissionPerPax);
-
-  const tbody = document.getElementById('commissions-table');
-  tbody.innerHTML = won.map(function (d) {
-    return '<tr><td>' + formatDate(d.dateCreation || d.date) + '</td><td><strong>' + d.ref + '</strong></td><td>' + d.prenom + ' ' + d.nom + '</td><td style="text-align:center">' + (d.nbPassagers || 1) + '</td><td><strong>' + formatFCFA((d.nbPassagers || 1) * commissionPerPax) + '</strong></td><td>' + (d.statut === 'paye' ? 'Wave' : '—') + '</td><td>' + (d.statut === 'paye' ? '<span class="badge paye">Versé</span>' : '<span class="badge nouveau">En attente</span>') + '</td></tr>';
-  }).join('');
-}
-
-function isAttenteIncidentForm() {
-  const sel = document.getElementById('f-probleme');
-  return sel && sel.value === '__ATTENTE__';
-}
-
-function onAgencyProblemeChange() {
-  const attente = isAttenteIncidentForm();
-  const retardEl = document.getElementById('f-retard');
-  const retardLbl = document.getElementById('f-retard-label');
-  const hint = document.getElementById('f-probleme-hint');
-  if (retardEl) {
-    retardEl.disabled = attente;
-    if (attente) retardEl.value = '';
-  }
-  if (retardLbl) {
-    retardLbl.textContent = attente ? 'Retard (optionnel — après incident)' : 'Retard estimé (heures)';
-  }
-  if (hint) {
-    hint.textContent = attente
-      ? 'Dossier pré-enregistré : signalez le retard ou l\'annulation dans les notes quand vous l\'avez.'
-      : 'Si le vol n\'a pas encore eu de retard ou d\'annulation, choisissez « en attente d\'incident ».';
-  }
-}
-
-async function submitDossier() {
-  const fields = ['nom','prenom','email','tel','pnr','vol','compagnie','date','depart','arrivee','probleme'];
-  const vals = {};
-  let missing = false;
-  const attente = isAttenteIncidentForm();
-  fields.forEach(function (f) {
-    const el = document.getElementById('f-' + f);
-    vals[f] = el.value.trim();
-    if (f === 'probleme' && vals[f] === '__ATTENTE__') vals[f] = "En attente d'incident (billet vendu)";
-    if (!vals[f]) { el.style.borderColor = 'var(--red)'; missing = true; }
-    else { el.style.borderColor = 'var(--gray-200)'; }
-  });
-  if (missing) { showToast('Veuillez remplir tous les champs obligatoires', true); return; }
-  vals.pnr = vals.pnr.toUpperCase();
-  if (vals.pnr.length !== 6) { showToast('Le code PNR doit faire 6 caractères', true); return; }
-  vals.vol = vals.vol.toUpperCase();
-  vals.retard = attente ? 0 : parseFloat(document.getElementById('f-retard').value) || 0;
-  vals.attenteIncident = attente;
-  vals.nbPassagers = parseInt(document.getElementById('f-nb-passagers').value, 10) || 1;
-  vals.notes = document.getElementById('f-notes').value.trim();
-
-  try {
-    const r = await agencyFetch(AGENCY_DOSSIERS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(vals),
-    });
-    const data = await r.json().catch(function () { return {}; });
-    if (!r.ok) throw new Error(data.error || 'HTTP ' + r.status);
-    showToast(attente ? 'Billet ' + data.ref + " enregistré — en attente d'incident" : 'Dossier ' + data.ref + ' enregistré dans Airtable');
-    resetForm();
-    await refreshFromAirtable();
-    switchPage('dossiers');
-  } catch (e) {
-    showToast('Échec envoi : ' + (e.message || 'erreur'), true);
-  }
-}
-
-function resetForm() {
-  ['nom','prenom','email','tel','pnr','vol','date','depart','arrivee','retard','notes'].forEach(function (f) {
-    const el = document.getElementById('f-' + f);
-    if (el) { el.value = ''; el.style.borderColor = 'var(--gray-200)'; }
-  });
-  const c = document.getElementById('f-compagnie');
-  if (c) c.selectedIndex = 0;
-  const p = document.getElementById('f-probleme');
-  if (p) p.selectedIndex = 0;
-  const n = document.getElementById('f-nb-passagers');
-  if (n) n.value = '1';
-}
-
-function formatFCFA(n) { return Number(n).toLocaleString('fr-FR') + ' FCFA'; }
-function formatDate(d) {
-  if (!d) return '—';
-  if (d.indexOf('/') >= 0) return d;
-  const parts = d.split('-');
-  if (parts.length !== 3) return d;
-  return parts[2] + '/' + parts[1] + '/' + parts[0];
-}
-function badgeHTML(statut) {
-  const labels = { 'nouveau':'Nouveau', 'attente-incident':"En attente d'incident", 'en-cours':'En cours', 'gagne':'Gagné', 'paye':'Payé', 'rejete':'Rejeté' };
-  return '<span class="badge ' + statut + '">' + (labels[statut] || statut) + '</span>';
-}
-function showToast(msg, isError) {
-  const toast = document.getElementById('toast');
-  toast.innerHTML = '<span class="toast-icon">' + (isError ? '⚠️' : '✅') + '</span> ' + msg;
-  toast.style.background = isError ? 'var(--red)' : 'var(--navy)';
-  toast.classList.add('show');
-  setTimeout(function () { toast.classList.remove('show'); }, 4000);
-}
-</script>
+<script src="/assets/agence-portal.js"></script>
 
 </body>
 </html>
