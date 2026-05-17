@@ -3,8 +3,9 @@
  * GET /api/whatsapp-status
  */
 
-const { watiCfg } = require('./lib/wati-api');
+const { watiCfg, watiAgencyCfg } = require('./lib/wati-api');
 const { getProvider, canSendWhatsApp } = require('./lib/whatsapp-send-core');
+const { blobsAvailable: agencyBlobs } = require('./lib/agency-wa-store');
 
 exports.handler = async () => {
   const wati = watiCfg();
@@ -56,6 +57,13 @@ exports.handler = async () => {
       crm_inbox: blobsHint,
       tunnel_available: hasGemini,
       tunnel_enabled: tunnelEnabled,
+      agency: {
+        wati_configured: !!watiAgencyCfg(),
+        channel_phone: (process.env.WATI_AGENCY_CHANNEL_PHONE || '').replace(/\D/g, '') || null,
+        webhook: 'https://robindesairs.eu/api/wati-agency-webhook',
+        blobs_required: true,
+        blobs_available: agencyBlobs(),
+      },
     }),
   };
 };

@@ -23,6 +23,15 @@ const DEV_FALLBACK = [
   },
 ];
 
+function normalizeWaList(a) {
+  const raw = a.whatsappPhones || a.whatsapp || a.phones || [];
+  const list = Array.isArray(raw) ? raw : [raw];
+  const { normalizeWatiPhone } = require('./wati-api');
+  return list
+    .map((p) => normalizeWatiPhone(String(p || '')))
+    .filter((p) => p && p.length >= 10);
+}
+
 function normalizeAccount(a) {
   return {
     code: String(a.code || '').trim().toUpperCase(),
@@ -30,6 +39,7 @@ function normalizeAccount(a) {
     passHash: String(a.passHash || a.pass_hash || ''),
     name: String(a.name || a.code || '').trim(),
     airtableMatch: String(a.airtableMatch || a.code || '').trim(),
+    whatsappPhones: normalizeWaList(a),
   };
 }
 
@@ -69,9 +79,21 @@ function getAgencyByCode(code) {
   return loadAgencyAccounts().find((a) => a.code === c) || null;
 }
 
+function findAgencyByWhatsAppPhone(phone) {
+  const { normalizeWatiPhone } = require('./wati-api');
+  const p = normalizeWatiPhone(phone);
+  if (!p) return null;
+  return (
+    loadAgencyAccounts().find(
+      (a) => a.whatsappPhones && a.whatsappPhones.some((w) => w === p)
+    ) || null
+  );
+}
+
 module.exports = {
   loadAgencyAccounts,
   findAgencyAccount,
   getAgencyByCode,
+  findAgencyByWhatsAppPhone,
   hashPassword,
 };

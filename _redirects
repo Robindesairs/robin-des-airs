@@ -14,6 +14,7 @@
 /api/crm-wa-send            /.netlify/functions/crm-wa-send            200
 /api/send-whatsapp          /.netlify/functions/send-whatsapp          200
 /api/wati-webhook           /.netlify/functions/wati-webhook           200
+/api/wati-agency-webhook    /.netlify/functions/wati-agency-webhook    200
 /api/agency-auth            /.netlify/functions/agency-auth            200
 /api/agency-dossiers        /.netlify/functions/agency-dossiers        200
 /api/crm-delete-dossier     /.netlify/functions/crm-delete-dossier     200

@@ -53,9 +53,16 @@ Option incident : dans le single-select **Type d'incident**, ajouter
 | `WHATSAPP_PROVIDER` | `wati` |
 | `WATI_API_BASE` | URL API Wati |
 | `WATI_API_TOKEN` | Token |
-| `WATI_CHANNEL_PHONE` | `33756863630` |
+| `WATI_CHANNEL_PHONE` | `33756863630` (clients / passagers) |
 
-Activer **Netlify Blobs** (Storage) pour l’historique CRM WhatsApp.
+**Robot agences** (2ᵉ numéro) — voir [`docs/WATI-ROBOT-AGENCE.md`](WATI-ROBOT-AGENCE.md) :
+
+| Variable | Valeur |
+|----------|--------|
+| `WATI_AGENCY_CHANNEL_PHONE` | Numéro WhatsApp partenaires |
+| `WATI_AGENCY_API_BASE` / `WATI_AGENCY_API_TOKEN` | API (ou mêmes que ci-dessus) |
+
+Activer **Netlify Blobs** (Storage) pour l’historique CRM WhatsApp **et** le robot agence.
 
 ## 4. Mandats signés
 

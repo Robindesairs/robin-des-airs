@@ -78,9 +78,80 @@ async function watiSendSessionMessage(to, text) {
   }
 }
 
+/** Config canal Wati *agences* (2ᵉ numéro / 2ᵉ canal). */
+function watiAgencyCfg() {
+  const token = (
+    process.env.WATI_AGENCY_API_TOKEN ||
+    process.env.WATI_API_TOKEN ||
+    process.env.WATI_BEARER_TOKEN ||
+    ''
+  ).trim();
+  const base = (
+    process.env.WATI_AGENCY_API_BASE ||
+    process.env.WATI_API_BASE ||
+    process.env.WATI_API_ENDPOINT ||
+    ''
+  )
+    .trim()
+    .replace(/\/$/, '');
+  const channel = (process.env.WATI_AGENCY_CHANNEL_PHONE || '').replace(/\D/g, '');
+  if (!token || !base || !channel) return null;
+  return { token, base, channel };
+}
+
+async function watiAgencySendSessionMessage(to, text) {
+  const cfg = watiAgencyCfg();
+  if (!cfg) {
+    return {
+      ok: false,
+      error: 'Wati agence non configuré (WATI_AGENCY_CHANNEL_PHONE + token/base)',
+    };
+  }
+
+  const wa = normalizeWatiPhone(to);
+  const body = String(text || '').trim().slice(0, 4096);
+  if (!wa || wa.length < 10) return { ok: false, error: 'Numéro invalide' };
+  if (!body) return { ok: false, error: 'Message vide' };
+
+  const params = new URLSearchParams({
+    messageText: body,
+    channelPhoneNumber: cfg.channel,
+  });
+
+  const url = `${cfg.base}/api/v1/sendSessionMessage/${encodeURIComponent(wa)}?${params.toString()}`;
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${cfg.token}`,
+        'Content-Type': 'application/json',
+      },
+    });
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok || data.ok === false) {
+      const errMsg =
+        (data && data.message) ||
+        (data && data.error) ||
+        (typeof data === 'string' ? data : null) ||
+        `HTTP ${res.status}`;
+      return { ok: false, error: String(errMsg).slice(0, 300), details: data };
+    }
+
+    const messageId =
+      (data.message && data.message.whatsappMessageId) || data.whatsappMessageId || data.id;
+    return { ok: true, messageId, provider: 'wati-agency' };
+  } catch (e) {
+    return { ok: false, error: e.message || 'Erreur Wati agence' };
+  }
+}
+
 module.exports = {
   watiCfg,
+  watiAgencyCfg,
   normalizeWatiPhone,
   watiSendSessionMessage,
+  watiAgencySendSessionMessage,
   DEFAULT_ROBIN_WA,
 };
