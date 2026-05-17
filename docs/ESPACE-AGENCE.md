@@ -38,7 +38,7 @@ En production Netlify, ajouter dans `AGENCY_ACCOUNTS` :
 - **Nouveau dossier** : formulaire → enregistrement immédiat dans Airtable.
 - **En attente d'incident** : billet vendu sans retard/annulation encore constaté.
 - **Mes dossiers** : liste filtrée depuis Airtable ; bouton **Actualiser** pour les statuts à jour.
-- **Commissions** : **45 € / passager gagné** (≈ 29 500 FCFA) — voir répartition ci-dessous.
+- **Commissions** : **3 800 GMD / passager gagné** (≈ 45 € à 84 GMD/€) — voir répartition ci-dessous.
 - **Langue** : barre fixe FR / EN.
 - **Devise** : EUR, USD, GBP, FCFA, dalasi (GMD) + équivalents.
 
@@ -47,10 +47,10 @@ En production Netlify, ajouter dans `AGENCY_ACCOUNTS` :
 | Part | Montant |
 |------|---------|
 | Net passager (client de l'agence) | 420 € |
-| Commission agence | **45 €** |
+| Commission agence | **3 800 GMD** (≈ 45 €) |
 | Honoraires Robin des Airs | 135 € |
 
-Les **45 €** remplacent l'ancien affichage « 30 000 FCFA » : au taux 1 € = 655,957 FCFA, 45 € ≈ **29 518 FCFA** (et non 30 000).
+La commission agence affichée est **3 800 dalasis par passager indemnisé** (référence terrain Gambie). L’équivalent EUR/FCFA est indicatif selon le taux du jour.
 
 Variables Netlify : `AGENCY_COMMISSION_EUR`, `AGENCY_CLIENT_NET_EUR`, `AGENCY_INDEMNITY_REF_EUR`, `AGENCY_XOF_PER_EUR`.
 

@@ -50,6 +50,7 @@ exports.handler = async (event) => {
           pricing: PRICING,
           commissionPerPax: PRICING.commissionFcfa,
           commissionPerPaxEur: PRICING.commissionEur,
+          commissionPerPaxGmd: PRICING.commissionGmd,
           count: dossiers.length,
           dossiers,
         }),

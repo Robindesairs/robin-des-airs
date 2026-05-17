@@ -3,681 +3,560 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Robin des Airs — Espace Partenaire</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
+<title data-i18n="page.title">Espace partenaire — Robin des Airs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --navy: #0D1E38;
-  --navy-light: #142844;
-  --navy-mid: #1A3355;
-  --green: #3DDFA8;
-  --green-dark: #00C27A;
-  --green-glow: rgba(61,223,168,0.15);
-  --red: #FF5A5A;
-  --orange: #FFB347;
-  --white: #FFFFFF;
-  --gray-100: #F4F6F8;
-  --gray-200: #E8ECF1;
-  --gray-300: #C5CDD8;
-  --gray-400: #8896A7;
-  --radius: 16px;
-  --radius-sm: 10px;
-  --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  --sky: #0A1628; --sky-mid: #0D2240; --sky-card: #112850;
+  --sky-border: rgba(255,255,255,0.08);
+  --gold: #C8A85A; --gold-light: #E8C97A; --gold-pale: rgba(200,168,90,0.12);
+  --white: #FFFFFF; --white-70: rgba(255,255,255,0.7); --white-40: rgba(255,255,255,0.4); --white-15: rgba(255,255,255,0.07);
+  --green: #22C884; --green-pale: rgba(34,200,132,0.12);
+  --amber: #F5A623; --amber-pale: rgba(245,166,35,0.12);
+  --red: #E8445A;
+  --blue-tag: rgba(99,179,237,0.15); --blue-tag-text: #7EC8F0;
+}
+html { font-size: 16px; }
+body { font-family: 'DM Sans', sans-serif; background: var(--sky); color: var(--white); min-height: 100vh; background-image: radial-gradient(ellipse 60% 50% at 70% -10%, rgba(200,168,90,0.07) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 10% 80%, rgba(10,50,100,0.5) 0%, transparent 70%); padding-top: 52px; }
+.locale-toolbar { position: fixed; top: 0; left: 0; right: 0; z-index: 250; background: rgba(10,22,40,0.96); border-bottom: 1px solid var(--sky-border); backdrop-filter: blur(10px); }
+.locale-toolbar-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 10px 16px; padding: 8px 20px; max-width: 1100px; margin: 0 auto; }
+.locale-toolbar-title { font-size: 11px; font-weight: 600; color: var(--gold); letter-spacing: 0.06em; text-transform: uppercase; margin-right: auto; }
+.locale-group { display: flex; align-items: center; gap: 8px; }
+.locale-group-label { font-size: 10px; color: var(--white-40); text-transform: uppercase; letter-spacing: 0.08em; }
+.lang-pills { display: flex; gap: 4px; }
+.lang-pill { border: 1px solid var(--sky-border); background: transparent; color: var(--white-70); padding: 5px 12px; border-radius: 6px; font-family: inherit; font-size: 11px; font-weight: 600; cursor: pointer; }
+.lang-pill.active { background: var(--gold-pale); border-color: rgba(200,168,90,0.4); color: var(--gold); }
+.locale-currency-select { background: rgba(255,255,255,0.05); border: 1px solid var(--sky-border); color: var(--white); padding: 5px 10px; border-radius: 6px; font-family: inherit; font-size: 12px; }
+.equiv-toggle { font-size: 11px; color: var(--white-40); display: flex; align-items: center; gap: 6px; cursor: pointer; }
+.equiv-toggle input { accent-color: var(--gold); }
+#agencyApp[hidden] { display: none !important; }
+nav { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 2.5rem; border-bottom: 1px solid var(--sky-border); position: sticky; top: 52px; background: rgba(10,22,40,0.92); backdrop-filter: blur(12px); z-index: 100; }
+.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.nav-logo .plane-icon { width: 32px; height: 32px; background: var(--gold); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.nav-logo span { font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: var(--white); }
+.nav-logo span em { color: var(--gold); font-style: normal; }
+.nav-right { display: flex; align-items: center; gap: 1rem; }
+.badge-agence { background: var(--gold-pale); border: 1px solid rgba(200,168,90,0.3); color: var(--gold); font-size: 0.75rem; font-weight: 500; padding: 4px 12px; border-radius: 20px; letter-spacing: 0.04em; }
+.btn-nav { background: transparent; border: 1px solid var(--sky-border); color: var(--white-70); font-family: 'DM Sans', sans-serif; font-size: 0.8rem; padding: 6px 14px; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
+.btn-nav:hover { border-color: rgba(255,255,255,0.25); color: var(--white); }
+.hero { padding: 4rem 2.5rem 3rem; max-width: 1100px; margin: 0 auto; }
+.hero-label { display: inline-flex; align-items: center; gap: 8px; background: var(--gold-pale); border: 1px solid rgba(200,168,90,0.2); color: var(--gold); font-size: 0.75rem; font-weight: 500; padding: 6px 14px; border-radius: 20px; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 2rem; }
+.hero-label::before { content: ''; width: 6px; height: 6px; background: var(--gold); border-radius: 50%; }
+.hero h1 { font-family: 'DM Serif Display', serif; font-size: clamp(2.4rem, 5vw, 3.8rem); line-height: 1.1; font-weight: 400; margin-bottom: 1.25rem; }
+.hero h1 em { color: var(--gold); font-style: italic; }
+.hero p.lead { font-size: 1.1rem; color: var(--white-70); max-width: 600px; line-height: 1.7; margin-bottom: 2.5rem; }
+.stats-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--sky-border); border: 1px solid var(--sky-border); border-radius: 14px; overflow: hidden; margin-bottom: 2rem; }
+.stat-cell { background: var(--sky-card); padding: 1.5rem 1.75rem; transition: background 0.2s; }
+.stat-cell:hover { background: #163060; }
+.stat-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--white-40); margin-bottom: 8px; }
+.stat-value { font-family: 'DM Serif Display', serif; font-size: 1.9rem; font-weight: 400; color: var(--white); line-height: 1; }
+.stat-value.gold { color: var(--gold); }
+.stat-value.green { color: var(--green); }
+.stat-sub { font-size: 0.72rem; color: var(--white-40); margin-top: 4px; }
+.tabs-nav { max-width: 1100px; margin: 0 auto 2rem; padding: 0 2.5rem; display: flex; gap: 4px; border-bottom: 1px solid var(--sky-border); flex-wrap: wrap; }
+.tab-btn { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--white-40); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500; padding: 0.75rem 1.25rem; cursor: pointer; transition: all 0.18s; margin-bottom: -1px; display: flex; align-items: center; gap: 7px; }
+.tab-btn:hover { color: var(--white-70); }
+.tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+.tab-count { background: rgba(200,168,90,0.15); color: var(--gold); font-size: 0.65rem; padding: 2px 7px; border-radius: 10px; font-weight: 600; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+.main-layout { max-width: 1100px; margin: 0 auto; padding: 0 2.5rem 4rem; display: grid; grid-template-columns: 1fr 360px; gap: 1.5rem; align-items: start; }
+.card { background: var(--sky-card); border: 1px solid var(--sky-border); border-radius: 16px; overflow: hidden; }
+.card-header { padding: 1.5rem 1.75rem 1.25rem; border-bottom: 1px solid var(--sky-border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+.card-title { font-family: 'DM Serif Display', serif; font-size: 1.25rem; font-weight: 400; }
+.card-subtitle { font-size: 0.78rem; color: var(--white-40); margin-top: 2px; }
+.sync-badge { display: flex; align-items: center; gap: 6px; background: var(--green-pale); border: 1px solid rgba(34,200,132,0.2); border-radius: 20px; padding: 5px 12px; font-size: 0.7rem; color: var(--green); font-weight: 500; white-space: nowrap; }
+.sync-dot { width: 6px; height: 6px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.card-body { padding: 1.75rem; }
+.form-section { margin-bottom: 2rem; }
+.section-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--gold-pale); }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+.form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.form-group label { font-size: 0.75rem; color: var(--white-70); font-weight: 500; letter-spacing: 0.02em; }
+.form-group input, .form-group select, .form-group textarea { background: rgba(255,255,255,0.05); border: 1px solid var(--sky-border); border-radius: 8px; color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 0.88rem; padding: 10px 14px; transition: border-color 0.2s, background 0.2s; outline: none; -webkit-appearance: none; width: 100%; }
+.form-group input::placeholder, .form-group textarea::placeholder { color: rgba(255,255,255,0.2); }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: rgba(200,168,90,0.5); background: rgba(200,168,90,0.04); }
+.form-group select { cursor: pointer; }
+.form-group select option { background: #0D2240; }
+.phone-row { display: flex; gap: 8px; }
+.phone-indicator-select { background: rgba(255,255,255,0.05); border: 1px solid var(--sky-border); border-radius: 8px; color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 0.88rem; padding: 10px 8px; cursor: pointer; outline: none; width: 115px; flex-shrink: 0; }
+.phone-num-input { flex: 1; }
+.airline-wrap { position: relative; }
+.airline-input { background: rgba(255,255,255,0.05); border: 1px solid var(--sky-border); border-radius: 8px; color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 0.88rem; padding: 10px 14px; width: 100%; outline: none; }
+.airline-dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #0D2240; border: 1px solid rgba(200,168,90,0.3); border-radius: 10px; z-index: 50; max-height: 240px; overflow-y: auto; display: none; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+.airline-dropdown.open { display: block; }
+.airline-option { display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; font-size: 0.85rem; color: var(--white-70); border-bottom: 1px solid rgba(255,255,255,0.04); }
+.airline-option:hover { background: rgba(200,168,90,0.08); color: var(--white); }
+.airline-code { background: rgba(255,255,255,0.06); border-radius: 4px; padding: 2px 6px; font-size: 0.68rem; font-family: monospace; color: var(--white-40); }
+.airline-region { margin-left: auto; font-size: 0.68rem; color: var(--white-40); }
+.airline-selected-display { display: none; align-items: center; gap: 8px; background: var(--gold-pale); border: 1px solid rgba(200,168,90,0.3); border-radius: 8px; padding: 9px 14px; font-size: 0.85rem; color: var(--gold); }
+.airline-selected-display.show { display: flex; }
+.airline-clear { margin-left: auto; color: var(--gold); font-size: 0.78rem; cursor: pointer; opacity: 0.6; }
+.routes-group-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--white-40); font-weight: 600; margin: 10px 0 6px; }
+.routes-row { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
+.route-chip { background: var(--blue-tag); border: 1px solid rgba(99,179,237,0.2); color: var(--blue-tag-text); font-size: 0.72rem; font-weight: 500; padding: 5px 10px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.18s; }
+.route-chip:hover { background: rgba(99,179,237,0.25); border-color: rgba(99,179,237,0.4); }
+.route-chip .swap-ico { font-size: 0.65rem; opacity: 0.6; }
+.upload-zone { border: 1.5px dashed rgba(200,168,90,0.3); border-radius: 10px; padding: 24px 16px; text-align: center; cursor: pointer; transition: all 0.2s; background: rgba(200,168,90,0.03); position: relative; }
+.upload-zone:hover { border-color: rgba(200,168,90,0.6); background: var(--gold-pale); }
+.upload-zone.dragover { border-color: var(--gold); background: rgba(200,168,90,0.1); }
+.upload-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.upload-icon { font-size: 1.6rem; margin-bottom: 8px; }
+.upload-title { font-size: 0.85rem; font-weight: 500; color: var(--white-70); margin-bottom: 4px; }
+.upload-sub { font-size: 0.72rem; color: var(--white-40); }
+.upload-sub span { color: var(--gold); }
+.uploaded-file { display: none; align-items: center; gap: 10px; background: var(--gold-pale); border: 1px solid rgba(200,168,90,0.3); border-radius: 10px; padding: 12px 14px; margin-top: 8px; }
+.uploaded-file.show { display: flex; }
+.file-icon { font-size: 1.2rem; flex-shrink: 0; }
+.file-info { flex: 1; min-width: 0; }
+.file-name { font-size: 0.82rem; color: var(--gold); font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.file-size { font-size: 0.7rem; color: var(--white-40); margin-top: 1px; }
+.file-remove { color: var(--white-40); font-size: 0.78rem; cursor: pointer; flex-shrink: 0; }
+.file-remove:hover { color: var(--red); }
+.payout-modes { display: flex; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
+.payout-mode { background: rgba(255,255,255,0.06); border: 1px solid var(--sky-border); border-radius: 8px; padding: 6px 12px; font-size: 0.75rem; font-weight: 500; color: var(--white-70); }
+.check-icon { width: 20px; height: 20px; border-radius: 50%; background: var(--green-pale); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--green); flex-shrink: 0; }
+.eligibility-item:last-child { border-bottom: none; }
+.card,.steps-card,.commission-card,.eligibility-card { animation: fadeIn 0.4s ease both; }
+.hero { animation: fadeIn 0.5s ease both; }
+.incident-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px; }
+.incident-option { background: rgba(255,255,255,0.04); border: 1px solid var(--sky-border); border-radius: 10px; padding: 12px 14px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.82rem; color: var(--white-70); }
+.incident-option:hover { border-color: rgba(200,168,90,0.3); background: var(--gold-pale); color: var(--white); }
+.incident-option.selected { border-color: var(--gold); background: var(--gold-pale); color: var(--gold); }
+.incident-icon { width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.auto-note { background: rgba(34,200,132,0.07); border: 1px solid rgba(34,200,132,0.2); border-radius: 8px; padding: 10px 14px; font-size: 0.78rem; color: rgba(34,200,132,0.9); margin-bottom: 1rem; line-height: 1.5; }
+.panel-escale { margin-top: 12px; padding: 14px; background: rgba(255,255,255,0.03); border-radius: 10px; border-left: 3px solid var(--gold); }
+.panel-escale[hidden] { display: none; }
+.upload-zone { border: 1.5px dashed rgba(200,168,90,0.3); border-radius: 10px; padding: 24px 16px; text-align: center; cursor: pointer; background: rgba(200,168,90,0.03); position: relative; }
+.upload-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.uploaded-file { display: none; align-items: center; gap: 10px; background: var(--gold-pale); border: 1px solid rgba(200,168,90,0.3); border-radius: 10px; padding: 12px 14px; margin-top: 8px; }
+.uploaded-file.show { display: flex; }
+.btn-submit { width: 100%; background: var(--gold); color: var(--sky); border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 600; padding: 14px 24px; cursor: pointer; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.btn-submit:hover { background: var(--gold-light); }
+.btn-submit:disabled { opacity: 0.7; cursor: wait; }
+.sidebar { display: flex; flex-direction: column; gap: 1rem; }
+.commission-card { background: linear-gradient(135deg, #1A3A6E 0%, #0F2248 100%); border: 1px solid rgba(200,168,90,0.25); border-radius: 16px; padding: 1.5rem; position: relative; overflow: hidden; }
+.commission-card::before { content: ''; position: absolute; top: -40px; right: -40px; width: 160px; height: 160px; background: radial-gradient(circle, rgba(200,168,90,0.12) 0%, transparent 70%); }
+.commission-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); font-weight: 600; margin-bottom: 1.25rem; }
+.commission-amount { font-family: 'DM Serif Display', serif; font-size: 2.5rem; font-weight: 400; color: var(--white); line-height: 1; margin-bottom: 4px; }
+.commission-sub { font-size: 0.78rem; color: var(--white-40); margin-bottom: 1.5rem; }
+.commission-row { display: flex; justify-content: space-between; padding: 8px 0; border-top: 1px solid var(--sky-border); font-size: 0.8rem; }
+.commission-row .label { color: var(--white-40); }
+.commission-row .value { color: var(--white); font-weight: 500; }
+.commission-row .value.gold { color: var(--gold); }
+.steps-card, .eligibility-card { background: var(--sky-card); border: 1px solid var(--sky-border); border-radius: 16px; padding: 1.5rem; }
+.steps-title { font-family: 'DM Serif Display', serif; font-size: 1rem; margin-bottom: 1.25rem; }
+.step-item { display: flex; gap: 14px; margin-bottom: 1rem; position: relative; }
+.step-dot { width: 27px; height: 27px; border-radius: 50%; background: var(--gold-pale); border: 1px solid rgba(200,168,90,0.3); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 600; color: var(--gold); flex-shrink: 0; }
+.step-name { font-size: 0.83rem; font-weight: 500; margin-bottom: 2px; }
+.step-desc { font-size: 0.75rem; color: var(--white-40); line-height: 1.5; }
+.eligibility-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--white-40); font-weight: 600; margin-bottom: 1rem; }
+.eligibility-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--sky-border); font-size: 0.8rem; color: var(--white-70); }
+.check-icon { width: 20px; height: 20px; border-radius: 50%; background: var(--green-pale); display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--green); flex-shrink: 0; }
+.dossiers-section { max-width: 1100px; margin: 0 auto 4rem; padding: 0 2.5rem; }
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px; }
+.section-heading { font-family: 'DM Serif Display', serif; font-size: 1.4rem; font-weight: 400; }
+.btn-refresh { background: transparent; border: 1px solid var(--sky-border); color: var(--white-40); font-family: 'DM Sans', sans-serif; font-size: 0.78rem; padding: 7px 14px; border-radius: 8px; cursor: pointer; }
+.filter-row { display: flex; gap: 6px; margin-bottom: 1rem; flex-wrap: wrap; }
+.filter-btn { background: transparent; border: 1px solid var(--sky-border); color: var(--white-40); font-family: 'DM Sans', sans-serif; font-size: 0.72rem; font-weight: 500; padding: 5px 12px; border-radius: 6px; cursor: pointer; }
+.filter-btn.active { background: var(--gold-pale); border-color: rgba(200,168,90,0.4); color: var(--gold); }
+.table-wrap { background: var(--sky-card); border: 1px solid var(--sky-border); border-radius: 14px; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 700px; }
+thead th { background: rgba(255,255,255,0.03); padding: 12px 16px; text-align: left; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--white-40); font-weight: 600; border-bottom: 1px solid var(--sky-border); }
+tbody tr { border-bottom: 1px solid var(--sky-border); }
+tbody td { padding: 13px 16px; color: var(--white-70); vertical-align: middle; }
+td .ref { font-family: 'DM Serif Display', serif; font-size: 0.9rem; color: var(--white); }
+td .passager-name { font-weight: 500; color: var(--white); font-size: 0.85rem; }
+td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
+.status-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 0.7rem; font-weight: 500; padding: 3px 10px; border-radius: 20px; }
+.status-pill::before { content: ''; width: 5px; height: 5px; border-radius: 50%; }
+.status-new { background: var(--blue-tag); color: var(--blue-tag-text); }
+.status-new::before { background: var(--blue-tag-text); }
+.status-ongoing { background: var(--amber-pale); color: var(--amber); }
+.status-ongoing::before { background: var(--amber); }
+.status-won { background: var(--green-pale); color: var(--green); }
+.status-won::before { background: var(--green); }
+.status-pending { background: rgba(255,255,255,0.05); color: var(--white-40); }
+.status-pending::before { background: var(--white-40); }
+.commission-cell { font-family: 'DM Serif Display', serif; font-size: 1rem; color: var(--gold); }
+.commission-cell.pending { color: var(--white-40); font-family: 'DM Sans', sans-serif; font-size: 0.8rem; }
+.payout-banner { max-width: 1100px; margin: 0 auto 2rem; padding: 0 2.5rem; }
+.payout-inner { background: linear-gradient(135deg, #1A3A6E 0%, #0F2248 100%); border: 1px solid rgba(200,168,90,0.2); border-radius: 14px; padding: 1.25rem 1.75rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.login-overlay { position: fixed; inset: 0; background: rgba(10,22,40,0.97); z-index: 200; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+.login-card { background: var(--sky-card); border: 1px solid rgba(200,168,90,0.2); border-radius: 20px; padding: 2.5rem; width: 100%; max-width: 420px; }
+.login-logo { font-family: 'DM Serif Display', serif; font-size: 1.5rem; text-align: center; margin-bottom: 0.25rem; }
+.login-logo em { color: var(--gold); font-style: normal; }
+.login-sub { font-size: 0.78rem; color: var(--white-40); text-align: center; margin-bottom: 2rem; }
+.login-label { font-size: 0.75rem; color: var(--white-70); font-weight: 500; margin-bottom: 6px; display: block; }
+.login-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--sky-border); border-radius: 10px; color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 0.95rem; padding: 12px 16px; outline: none; margin-bottom: 1rem; }
+.btn-login { width: 100%; background: var(--gold); color: var(--sky); border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 600; padding: 13px 24px; cursor: pointer; }
+.login-demo-note { background: var(--green-pale); border: 1px solid rgba(34,200,132,0.2); border-radius: 8px; padding: 10px 14px; font-size: 0.75rem; color: rgba(34,200,132,0.9); margin-bottom: 1.5rem; }
+.login-error { display: none; background: rgba(232,68,90,0.12); border: 1px solid rgba(232,68,90,0.3); color: var(--red); padding: 10px 14px; border-radius: 8px; font-size: 0.8rem; margin-bottom: 1rem; }
+#toast { position: fixed; bottom: 24px; right: 24px; z-index: 400; padding: 14px 20px; border-radius: 10px; color: #fff; font-size: 0.88rem; opacity: 0; transform: translateY(8px); transition: all 0.25s; pointer-events: none; max-width: 360px; }
+#toast.show { opacity: 1; transform: translateY(0); }
+.sync-status { font-size: 0.72rem; color: var(--white-40); margin-top: 4px; }
+
+.agent-quickbar { max-width: 1100px; margin: -1rem auto 1.5rem; padding: 0 2.5rem; display: flex; flex-wrap: wrap; gap: 8px; }
+.agent-quickbar button, .agent-quickbar a { border: 1px solid var(--sky-border); background: var(--sky-card); color: var(--white-70); font-family: inherit; font-size: 0.78rem; font-weight: 500; padding: 8px 14px; border-radius: 8px; cursor: pointer; text-decoration: none; transition: all 0.15s; }
+.agent-quickbar button:hover, .agent-quickbar a:hover { border-color: rgba(200,168,90,0.4); color: var(--gold); }
+.agent-quickbar .qa-primary { background: var(--gold-pale); border-color: rgba(200,168,90,0.35); color: var(--gold); }
+.agent-coach { max-width: 1100px; margin: 0 auto 1.5rem; padding: 0 2.5rem; }
+.agent-coach-inner { background: linear-gradient(90deg, rgba(200,168,90,0.12), transparent); border: 1px solid rgba(200,168,90,0.25); border-radius: 12px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start; }
+.agent-coach ul { list-style: none; font-size: 0.8rem; color: var(--white-70); line-height: 1.6; flex: 1; }
+.agent-coach li::before { content: '→ '; color: var(--gold); }
+.agent-coach-close { background: none; border: none; color: var(--white-40); cursor: pointer; font-size: 1rem; padding: 4px; }
+.form-progress { display: flex; gap: 6px; margin-bottom: 1.25rem; }
+.form-progress-step { flex: 1; text-align: center; font-size: 0.65rem; color: var(--white-40); padding: 8px 4px; border-radius: 8px; background: rgba(255,255,255,0.03); border: 1px solid var(--sky-border); }
+.form-progress-step.done { border-color: rgba(34,200,132,0.35); color: var(--green); background: var(--green-pale); }
+.form-progress-step.current { border-color: rgba(200,168,90,0.5); color: var(--gold); }
+.commission-preview { background: var(--gold-pale); border: 1px solid rgba(200,168,90,0.3); border-radius: 10px; padding: 12px 14px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.commission-preview strong { color: var(--gold); font-family: 'DM Serif Display', serif; font-size: 1.15rem; }
+.search-dossiers { width: 100%; max-width: 320px; background: rgba(255,255,255,0.05); border: 1px solid var(--sky-border); border-radius: 8px; color: var(--white); padding: 9px 14px; font-family: inherit; font-size: 0.85rem; margin-bottom: 1rem; }
+.search-dossiers:focus { outline: none; border-color: rgba(200,168,90,0.5); }
+.form-group input.field-invalid, .form-group textarea.field-invalid, .incident-grid.field-invalid { border-color: var(--red) !important; outline: 1px solid rgba(232,68,90,0.35); }
+.dossiers-toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
+.empty-state { text-align: center; padding: 2.5rem 1rem; color: var(--white-40); font-size: 0.88rem; }
+.empty-state button { margin-top: 12px; background: var(--gold); color: var(--sky); border: none; padding: 10px 18px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+.submit-sticky { display: none; }
+@media(max-width:900px){
+  .agent-quickbar, .agent-coach, .tabs-nav, .hero, .main-layout, .dossiers-section, .payout-banner { padding-inline: 1.25rem; }
+  .incident-grid { grid-template-columns: 1fr; }
+  .submit-sticky { display: flex; position: fixed; bottom: 0; left: 0; right: 0; padding: 12px 16px; background: rgba(10,22,40,0.96); border-top: 1px solid var(--sky-border); z-index: 90; backdrop-filter: blur(10px); }
+  .submit-sticky .btn-submit { margin: 0; }
+  .tab-panel#tab-nouveau .card-body { padding-bottom: 5rem; }
+  .search-dossiers { max-width: 100%; }
 }
 
-* { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Inter',sans-serif; background:var(--gray-100); color:var(--navy); min-height:100vh; }
-
-/* ========== LOGIN SCREEN ========== */
-.login-screen {
-  min-height:100vh; display:flex; align-items:center; justify-content:center;
-  background: linear-gradient(135deg, var(--navy) 0%, #0A1628 100%);
-}
-.login-card {
-  background:var(--navy-light); border-radius:24px; padding:48px 40px; width:400px; max-width:92vw;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
-}
-.login-logo { text-align:center; margin-bottom:32px; }
-.login-logo svg { width:200px; }
-.login-card h2 { color:var(--white); font-size:18px; font-weight:700; text-align:center; margin-bottom:24px; }
-.login-card input {
-  width:100%; padding:14px 16px; border:2px solid var(--navy-mid); border-radius:var(--radius-sm);
-  background:var(--navy); color:var(--white); font-family:inherit; font-size:14px; margin-bottom:14px;
-  outline:none; transition:border-color 0.2s;
-}
-.login-card input::placeholder { color:var(--gray-400); }
-.login-card input:focus { border-color:var(--green); }
-.login-card button {
-  width:100%; padding:14px; border:none; border-radius:var(--radius-sm);
-  background:var(--green); color:var(--navy); font-family:inherit; font-size:15px; font-weight:700;
-  cursor:pointer; transition:all 0.2s; margin-top:8px;
-}
-.login-card button:hover { background:var(--green-dark); transform:translateY(-1px); }
-.login-error { color:var(--red); font-size:13px; text-align:center; margin-top:12px; display:none; }
-
-/* ========== MAIN APP ========== */
-.app { display:none; }
-.app.active { display:flex; min-height:100vh; }
-
-/* Sidebar */
-.sidebar {
-  width:240px; background:var(--navy); padding:24px 0; display:flex; flex-direction:column;
-  position:fixed; top:0; left:0; bottom:0; z-index:100;
-}
-.sidebar-logo { padding:0 24px 28px; border-bottom:1px solid rgba(255,255,255,0.06); }
-.sidebar-logo svg { width:150px; }
-.sidebar-agency {
-  padding:16px 24px; border-bottom:1px solid rgba(255,255,255,0.06);
-  color:var(--gray-400); font-size:12px;
-}
-.sidebar-agency strong { color:var(--white); font-size:14px; display:block; margin-bottom:2px; }
-.sidebar nav { flex:1; padding:16px 12px; }
-.sidebar nav a {
-  display:flex; align-items:center; gap:12px; padding:12px 16px; border-radius:var(--radius-sm);
-  color:var(--gray-400); font-size:14px; font-weight:500; text-decoration:none; transition:all 0.15s;
-  margin-bottom:4px;
-}
-.sidebar nav a:hover { color:var(--white); background:var(--navy-light); }
-.sidebar nav a.active { color:var(--green); background:var(--green-glow); font-weight:600; }
-.sidebar nav a .icon { width:20px; text-align:center; font-size:16px; }
-.sidebar-logout {
-  margin:12px; padding:12px 16px; border:1px solid rgba(255,255,255,0.1); border-radius:var(--radius-sm);
-  color:var(--gray-400); font-size:13px; cursor:pointer; text-align:center; transition:all 0.15s;
-  background:none;
-}
-.sidebar-logout:hover { color:var(--red); border-color:var(--red); }
-
-/* Main content */
-.main { margin-left:240px; flex:1; padding:32px; min-height:100vh; }
-.page { display:none; }
-.page.active { display:block; }
-
-/* Header */
-.page-header { margin-bottom:28px; }
-.page-header h1 { font-size:26px; font-weight:800; color:var(--navy); }
-.page-header p { color:var(--gray-400); font-size:14px; margin-top:4px; }
-
-/* KPI Cards */
-.kpi-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(140px, 1fr)); gap:16px; margin-bottom:28px; }
-.kpi-card {
-  background:var(--white); border-radius:var(--radius); padding:24px; box-shadow:var(--shadow);
-}
-.kpi-card .kpi-label { font-size:12px; font-weight:600; color:var(--gray-400); text-transform:uppercase; letter-spacing:1px; }
-.kpi-card .kpi-value { font-size:32px; font-weight:900; color:var(--navy); margin-top:8px; }
-.kpi-card .kpi-value.green { color:var(--green-dark); }
-.kpi-card .kpi-sub { font-size:12px; color:var(--gray-400); margin-top:4px; }
-
-/* Tables */
-.table-card { background:var(--white); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; margin-bottom:24px; }
-.table-header { padding:20px 24px; border-bottom:1px solid var(--gray-200); display:flex; justify-content:space-between; align-items:center; }
-.table-header h3 { font-size:16px; font-weight:700; }
-.table-header .filter-group { display:flex; gap:8px; }
-.table-header select, .table-header input {
-  padding:8px 12px; border:1px solid var(--gray-200); border-radius:8px; font-family:inherit;
-  font-size:13px; outline:none; background:var(--gray-100);
-}
-table { width:100%; border-collapse:collapse; }
-thead th {
-  text-align:left; padding:12px 16px; font-size:12px; font-weight:600; color:var(--gray-400);
-  text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--gray-200); background:var(--gray-100);
-}
-tbody td { padding:14px 16px; font-size:13px; border-bottom:1px solid var(--gray-200); }
-tbody tr:hover { background:rgba(61,223,168,0.04); }
-.badge {
-  display:inline-block; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; letter-spacing:0.3px;
-}
-.badge.en-cours { background:rgba(61,223,168,0.12); color:var(--green-dark); }
-.badge.gagne { background:rgba(0,194,122,0.15); color:#008a57; }
-.badge.paye { background:var(--green-dark); color:var(--white); }
-.badge.rejete { background:rgba(255,90,90,0.1); color:var(--red); }
-.badge.nouveau { background:rgba(255,179,71,0.15); color:#c87800; }
-.badge.attente-incident { background:rgba(147,197,253,0.22); color:#1d4ed8; }
-.form-hint { font-size:12px;color:var(--gray-400);margin-top:6px;line-height:1.45; }
-.page-header-row { display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; }
-.btn-refresh { padding:10px 16px; border:2px solid var(--gray-200); border-radius:var(--radius-sm); background:var(--white); color:var(--navy); font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; }
-.btn-refresh:hover { border-color:var(--green); color:var(--green-dark); }
-.btn-refresh:disabled { opacity:0.5; cursor:not-allowed; }
-.btn-primary:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
-.empty-row td { text-align:center; padding:32px; color:var(--gray-400); font-size:14px; }
-.help-card { background:var(--white); border-radius:var(--radius); padding:28px 32px; box-shadow:var(--shadow); max-width:720px; line-height:1.65; font-size:14px; }
-.help-card h3 { margin:20px 0 8px; font-size:16px; color:var(--navy); }
-.help-card ul { margin:8px 0 8px 20px; }
-
-/* Form */
-.form-card { background:var(--white); border-radius:var(--radius); padding:32px; box-shadow:var(--shadow); max-width:720px; }
-.form-card h3 { font-size:18px; font-weight:700; margin-bottom:24px; }
-.form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
-.form-row.full { grid-template-columns:1fr; }
-.form-group { display:flex; flex-direction:column; }
-.form-group label { font-size:12px; font-weight:600; color:var(--gray-400); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
-.form-group input, .form-group select, .form-group textarea {
-  padding:12px 14px; border:2px solid var(--gray-200); border-radius:var(--radius-sm);
-  font-family:inherit; font-size:14px; outline:none; transition:border-color 0.2s;
-}
-.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--green); }
-.form-group textarea { resize:vertical; min-height:80px; }
-.form-submit {
-  margin-top:24px; display:flex; gap:12px; align-items:center;
-}
-.btn-primary {
-  padding:14px 32px; border:none; border-radius:var(--radius-sm);
-  background:var(--green); color:var(--navy); font-family:inherit; font-size:15px; font-weight:700;
-  cursor:pointer; transition:all 0.2s;
-}
-.btn-primary:hover { background:var(--green-dark); transform:translateY(-1px); }
-.btn-secondary {
-  padding:14px 24px; border:2px solid var(--gray-200); border-radius:var(--radius-sm);
-  background:transparent; color:var(--gray-400); font-family:inherit; font-size:14px; font-weight:600;
-  cursor:pointer; transition:all 0.2s;
-}
-.btn-secondary:hover { border-color:var(--navy); color:var(--navy); }
-
-/* Commission */
-.commission-summary {
-  display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:28px;
-}
-.commission-box {
-  background:var(--white); border-radius:var(--radius); padding:28px; box-shadow:var(--shadow);
-}
-.commission-box.highlight {
-  background: linear-gradient(135deg, var(--green) 0%, var(--green-dark) 100%);
-  color:var(--navy);
-}
-.commission-box .cb-label { font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:1px; opacity:0.6; }
-.commission-box .cb-value { font-size:36px; font-weight:900; margin-top:8px; }
-.commission-box.highlight .cb-label { opacity:0.7; }
-
-/* Toast */
-.toast {
-  position:fixed; bottom:32px; right:32px; background:var(--navy); color:var(--white);
-  padding:16px 24px; border-radius:var(--radius-sm); font-size:14px; font-weight:500;
-  box-shadow:0 8px 32px rgba(0,0,0,0.2); transform:translateY(100px); opacity:0;
-  transition:all 0.3s ease; z-index:999;
-}
-.toast.show { transform:translateY(0); opacity:1; }
-.toast .toast-icon { color:var(--green); margin-right:8px; }
-
-
-.locale-toolbar {
-  position:fixed; top:0; left:0; right:0; z-index:300;
-  background:var(--navy); border-bottom:2px solid var(--green);
-  box-shadow:0 4px 20px rgba(0,0,0,0.15); min-height:56px;
-}
-.locale-toolbar-inner {
-  display:flex; flex-wrap:wrap; align-items:center; justify-content:flex-end; gap:12px 20px;
-  padding:10px 20px 10px 240px;
-}
-.locale-toolbar-title { font-size:13px; font-weight:700; color:var(--green); margin-right:auto; }
-.locale-group { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.06); padding:6px 12px; border-radius:10px; }
-.locale-group-label { color:var(--green); font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
-.lang-pills { display:flex; gap:4px; }
-.lang-pill { border:none; padding:8px 14px; border-radius:8px; font-family:inherit; font-size:12px; font-weight:700; cursor:pointer; background:transparent; color:rgba(255,255,255,.75); }
-.lang-pill.active { background:var(--green); color:var(--navy); }
-.lang-pill:hover:not(.active) { background:rgba(255,255,255,.12); color:#fff; }
-.locale-currency-select { min-width:140px; padding:8px 12px; border-radius:8px; border:1px solid var(--navy-mid); background:var(--navy-light); color:#fff; font-family:inherit; font-size:13px; font-weight:600; }
-.locale-toolbar .equiv-toggle { color:var(--gray-300); font-size:12px; font-weight:500; cursor:pointer; display:flex; align-items:center; gap:6px; }
-.locale-toolbar .equiv-toggle input { accent-color:var(--green); }
-body { padding-top:56px; }
-.login-screen { min-height:calc(100vh - 56px); }
-.login-locale { display:flex; flex-wrap:wrap; align-items:center; justify-content:center; gap:10px 14px; margin-bottom:18px; padding:12px 14px; background:var(--navy); border-radius:10px; border:1px solid rgba(61,223,168,.35); }
-.login-locale-label { font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; color:var(--green); }
-.lang-pills--login .lang-pill { padding:6px 12px; font-size:11px; background:rgba(255,255,255,.08); color:#fff; border-radius:6px; }
-.lang-pills--login .lang-pill.active { background:var(--green); color:var(--navy); }
-.login-currency-select { padding:6px 10px; border-radius:8px; border:1px solid var(--navy-mid); background:var(--navy-light); color:#fff; font-size:12px; font-family:inherit; min-width:120px; }
-.sidebar-locale-hint { padding:10px 14px; margin:0 12px 10px; background:rgba(61,223,168,.12); border-radius:8px; font-size:11px; color:var(--green); line-height:1.4; }
-.form-card--fast { max-width:800px; }
-.form-step { margin-bottom:28px; padding-bottom:24px; border-bottom:1px solid var(--gray-200); }
-.form-step:last-of-type { border-bottom:none; }
-.form-step-label { font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--green-dark); margin-bottom:14px; }
-.form-group--wide { grid-column:1 / -1; }
-.input-pnr { text-transform:uppercase; letter-spacing:4px; font-weight:700; font-size:16px; }
-.issue-chips, .route-chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
-.issue-chip, .route-chip { border:2px solid var(--gray-200); background:var(--white); padding:10px 14px; border-radius:10px; font-family:inherit; font-size:12px; font-weight:600; color:var(--navy); cursor:pointer; transition:all .15s; }
-.issue-chip:hover, .route-chip:hover { border-color:var(--green); }
-.issue-chip.active, .route-chip.active { border-color:var(--green); background:var(--green-glow); box-shadow:0 0 0 1px var(--green); }
-.panel-escale { margin-top:12px; padding:14px; background:var(--gray-100); border-radius:var(--radius-sm); border-left:3px solid var(--green); }
-.btn-primary--lg { padding:16px 28px; font-size:16px; max-width:360px; }
-.pricing-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
-.pg-item { background:rgba(255,255,255,.5); padding:12px; border-radius:8px; }
-.pg-item.agency { background:rgba(61,223,168,.25); }
-.pg-label { display:block; font-size:11px; color:var(--gray-400); margin-bottom:4px; }
-@media (max-width:900px) {
-  .locale-toolbar-inner { padding:10px 16px; }
-  .locale-toolbar-title { display:none; }
-}
-
-/* Responsive */
-@media (max-width:900px) {
-  .sidebar { width:64px; }
-  .sidebar-logo, .sidebar-agency, .sidebar nav a span { display:none; }
-  .sidebar nav a { justify-content:center; }
-  .main { margin-left:64px; }
-  .kpi-row { grid-template-columns:1fr 1fr; }
-  .form-row { grid-template-columns:1fr; }
-  .commission-summary { grid-template-columns:1fr; }
-}
+@media(max-width:900px){ .main-layout{grid-template-columns:1fr} .stats-bar{grid-template-columns:repeat(2,1fr)} nav,.hero,.main-layout,.dossiers-section,.payout-banner,.tabs-nav{padding-inline:1.25rem} nav{top:52px} }
 </style>
 </head>
 <body>
 
-<header class="locale-toolbar" id="localeToolbar" aria-label="Langue et devise">
+<div class="locale-toolbar">
   <div class="locale-toolbar-inner">
-    <span class="locale-toolbar-title" data-i18n="toolbar.portal">Portail agence</span>
+    <span class="locale-toolbar-title" data-i18n="toolbar.portal">Espace agence</span>
     <div class="locale-group">
       <span class="locale-group-label" data-i18n="toolbar.lang">Langue</span>
-      <div class="lang-pills" role="group" aria-label="Langue">
-        <button type="button" class="lang-pill active" data-lang="fr">Français</button>
-        <button type="button" class="lang-pill" data-lang="en">English</button>
+      <div class="lang-pills" data-lang-pills>
+        <button type="button" class="lang-pill" data-lang="fr">FR</button>
+        <button type="button" class="lang-pill" data-lang="en">EN</button>
       </div>
     </div>
     <div class="locale-group">
       <span class="locale-group-label" data-i18n="toolbar.currency">Devise</span>
-      <select id="currencySelect" class="locale-currency-select" aria-label="Devise"></select>
+      <select id="currencySelect" class="locale-currency-select" aria-label="Currency"></select>
     </div>
-    <label class="equiv-toggle">
-      <input type="checkbox" id="equivCheck" checked>
-      <span data-i18n="toolbar.equiv">Équivalents</span>
-    </label>
+    <label class="equiv-toggle"><input type="checkbox" id="equivCheck" /><span data-i18n="toolbar.equiv">Équivalents</span></label>
   </div>
-</header>
+</div>
 
-<!-- ========== LOGIN ========== -->
-<div class="login-screen" id="loginScreen">
+<div class="login-overlay" id="loginOverlay">
   <div class="login-card">
-    <div class="login-logo">
-      <svg viewBox="0 0 500 110" xmlns="http://www.w3.org/2000/svg">
-        <g transform="translate(60,7)">
-          <rect x="0" y="0" width="92" height="92" rx="18" fill="rgba(255,255,255,0.08)"/>
-          <path d="M 46,14 C 72,14 72,78 46,78" fill="none" stroke="#3DDFA8" stroke-width="13" stroke-linecap="round"/>
-          <circle cx="30" cy="44" r="4" fill="#3DDFA8"/>
-        </g>
-        <text x="168" y="66" font-family="'Inter',sans-serif" font-weight="900" font-size="50" fill="#FFFFFF" letter-spacing="2">ROBIN</text>
-        <text x="383" y="66" font-family="'Inter',sans-serif" font-weight="700" font-style="italic" font-size="43" fill="#3DDFA8" letter-spacing="0.5">des Airs</text>
-      </svg>
+    <div class="login-logo">ROBIN <em>des Airs</em></div>
+    <div class="login-sub" data-i18n="login.title">Espace Partenaire</div>
+    <div class="login-demo-note" id="login-demo-banner" hidden data-i18n="login.demo">Mode démo — code agence uniquement</div>
+    <div class="login-error" id="loginError" data-i18n="login.err">Code ou mot de passe incorrect</div>
+    <label class="login-label" for="loginCode" data-i18n="login.code">Code agence</label>
+    <input class="login-input" id="loginCode" type="text" placeholder="GSA-KMS-001" autocomplete="off" />
+    <div id="login-pass-row">
+      <label class="login-label" for="loginPass" data-i18n="login.pass">Mot de passe</label>
+      <input class="login-input" id="loginPass" type="password" autocomplete="current-password" />
     </div>
-        <div class="login-locale" aria-label="Langue et devise">
-      <span class="login-locale-label" data-i18n="toolbar.lang">Langue</span>
-      <div class="lang-pills lang-pills--login" role="group">
-        <button type="button" class="lang-pill" data-lang="fr">FR</button>
-        <button type="button" class="lang-pill" data-lang="en">EN</button>
-      </div>
-      <select id="currencySelectLogin" class="login-currency-select" aria-label="Devise"></select>
-    </div>
-    <h2 data-i18n="login.title">Espace Partenaire</h2>
-    <p style="color:var(--gray-400);font-size:12px;text-align:center;margin-bottom:16px;line-height:1.45">Dossiers synchronisés avec Airtable — Robin des Airs traite vos réclamations.</p>
-    <p id="login-demo-banner" style="color:var(--green);font-size:12px;text-align:center;margin-bottom:12px;">Mode démo : code agence seul (mot de passe désactivé).</p>
-    <input type="text" id="loginCode" data-i18n-placeholder="login.code" placeholder="Code agence (ex: GSA-KMS-001)" value="GSA-KMS-001">
-    <input type="password" id="loginPass" data-i18n-placeholder="login.pass" placeholder="Mot de passe" hidden aria-hidden="true">
-    <button type="button" onclick="doLogin()" data-i18n="login.btn">Se connecter →</button>
-    <div class="login-error" id="loginError">Code agence ou mot de passe incorrect</div>
+    <button type="button" class="btn-login" onclick="doLogin()" data-i18n="login.btn">Accéder →</button>
+    <p style="font-size:0.72rem;color:var(--white-40);text-align:center;margin-top:1rem"><a href="mailto:partners@robindesairs.eu" style="color:var(--gold)">partners@robindesairs.eu</a></p>
   </div>
 </div>
 
-<!-- ========== APP ========== -->
-<div class="app" id="app">
+<div id="agencyApp" class="agency-app" hidden>
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-logo">
-      <svg viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
-        <g transform="translate(0,4)">
-          <path d="M 22,6 C 36,6 36,48 22,48" fill="none" stroke="#3DDFA8" stroke-width="7" stroke-linecap="round"/>
-          <circle cx="13" cy="26" r="2.5" fill="#3DDFA8"/>
-        </g>
-        <text x="48" y="34" font-family="'Inter',sans-serif" font-weight="900" font-size="22" fill="#FFFFFF" letter-spacing="1">ROBIN</text>
-        <text x="137" y="34" font-family="'Inter',sans-serif" font-weight="700" font-style="italic" font-size="19" fill="#3DDFA8">des Airs</text>
-      </svg>
-    </div>
-    <p class="sidebar-locale-hint" data-i18n="toolbar.hint">Langue &amp; devise : barre en haut ↑</p>
-    <div class="sidebar-agency">
-      <strong id="agencyName">GSA Dakar</strong>
-      <span id="agencyCode">GSA-DKR-001</span>
-    </div>
-    <nav>
-      <a href="#" class="active" data-page="dashboard" onclick="switchPage('dashboard')">
-        <span class="icon">📊</span> <span data-i18n="nav.dashboard">Tableau de bord</span>
-      </a>
-      <a href="#" data-page="nouveau" onclick="switchPage('nouveau')">
-        <span class="icon">✈️</span> <span data-i18n="nav.new">Nouveau dossier</span>
-      </a>
-      <a href="#" data-page="dossiers" onclick="switchPage('dossiers')">
-        <span class="icon">📁</span> <span data-i18n="nav.files">Mes dossiers</span>
-      </a>
-      <a href="#" data-page="commissions" onclick="switchPage('commissions')">
-        <span class="icon">💰</span> <span data-i18n="nav.commissions">Commissions</span>
-      </a>
-      <a href="#" data-page="aide" onclick="switchPage('aide')">
-        <span class="icon">❓</span> <span data-i18n="nav.help">Aide</span>
-      </a>
-    </nav>
-    <button class="sidebar-logout" onclick="doLogout()" data-i18n="nav.logout">Déconnexion</button>
-  </aside>
+<nav>
+  <a href="/espace-agence.html" class="nav-logo"><div class="plane-icon">✈</div><span>ROBIN <em>des Airs</em></span></a>
+  <div class="nav-right">
+    <span class="badge-agence" id="agencyBadge">—</span>
+    <button type="button" class="btn-nav" onclick="doLogout()" data-i18n="nav.logout">Déconnexion</button>
+  </div>
+</nav>
 
-  <!-- Main content -->
-  <div class="main">
+<div class="hero">
+  <div class="hero-label" data-i18n="hero.partner">Partenaire certifié</div>
+  <h1 data-i18n="hero.h1">Transformez chaque perturbation<br>en <em>revenus pour votre agence</em></h1>
+  <p class="lead" data-i18n="hero.lead">Déposez un dossier en moins d'une minute. Robin des Airs gère tout le processus et verse votre commission automatiquement.</p>
+  <div class="stats-bar">
+    <div class="stat-cell"><div class="stat-label" data-i18n="kpi.submitted">Dossiers soumis</div><div class="stat-value" id="kpi-total">0</div><div class="stat-sub" data-i18n="kpi.submitted.sub">Depuis inscription</div></div>
+    <div class="stat-cell"><div class="stat-label" data-i18n="kpi.active">En cours</div><div class="stat-value" id="kpi-encours">0</div><div class="stat-sub" data-i18n="kpi.active.sub">Actifs + attente</div></div>
+    <div class="stat-cell"><div class="stat-label" data-i18n="kpi.won">Gagnés</div><div class="stat-value green" id="kpi-gagnes">0</div><div class="stat-sub" data-i18n="kpi.won.sub">Indemnisations</div></div>
+    <div class="stat-cell"><div class="stat-label" data-i18n="kpi.comm">Commissions</div><div class="stat-value gold" id="kpi-commissions">—</div><div class="stat-sub" id="kpi-comm-sub" data-i18n="kpi.comm.sub">par passager gagné</div></div>
+  </div>
+  <p class="sync-status" id="agency-sync-status"></p>
+</div>
 
-    <!-- ===== DASHBOARD ===== -->
-    <div class="page active" id="page-dashboard">
-      <div class="page-header page-header-row">
+<div class="agent-quickbar" id="agent-quickbar">
+  <button type="button" class="qa-primary" onclick="switchTab('nouveau', document.querySelector('.tab-btn[data-page=nouveau]'))" data-i18n="agent.qa.new">+ Nouveau dossier</button>
+  <button type="button" onclick="switchTab('dossiers', document.querySelector('.tab-btn[data-page=dossiers]'))" data-i18n="agent.qa.files">Mes dossiers</button>
+  <button type="button" onclick="switchTab('commissions', document.querySelector('.tab-btn[data-page=commissions]'))" data-i18n="agent.qa.comm">Commissions</button>
+  <a href="https://wa.me/33652893858" target="_blank" rel="noopener" data-i18n="agent.qa.whatsapp">💬 Support WhatsApp</a>
+</div>
+<div class="agent-coach" id="agent-coach" hidden>
+  <div class="agent-coach-inner">
+    <ul>
+      <li data-i18n="agent.tip1">Pas d'email client — Robin crée ref@robindesairs.eu</li>
+      <li data-i18n="agent.tip2">Billet vendu = pré-enregistrement avant le vol</li>
+      <li data-i18n="agent.tip3">Joignez l'e-billet pour un traitement plus rapide</li>
+    </ul>
+    <button type="button" class="agent-coach-close" onclick="dismissAgentCoach()" aria-label="Fermer">✕</button>
+  </div>
+</div>
+<div class="tabs-nav">
+  <button type="button" class="tab-btn active" data-page="nouveau" onclick="switchTab('nouveau',this)" data-i18n="nav.new">✦ Nouveau dossier</button>
+  <button type="button" class="tab-btn" data-page="dossiers" onclick="switchTab('dossiers',this)"><span data-i18n="nav.files">Mes dossiers</span> <span class="tab-count" id="dossiers-count">0</span></button>
+  <button type="button" class="tab-btn" data-page="commissions" onclick="switchTab('commissions',this)" data-i18n="nav.commissions">Commissions</button>
+  <button type="button" class="tab-btn" data-page="aide" onclick="switchTab('aide',this)" data-i18n="nav.help">Aide</button>
+</div>
+
+<div class="tab-panel active" id="tab-nouveau">
+  <div class="main-layout">
+    <div class="card">
+      <div class="card-header">
         <div>
-          <h1>Tableau de bord</h1>
-          <p>Vue d'ensemble de vos dossiers et commissions (source Airtable)</p>
-          <p id="agency-sync-status" style="font-size:12px;color:var(--gray-400);margin-top:6px"></p>
+          <div class="card-title" data-i18n="new.title">Soumettre un dossier</div>
+          <div class="card-subtitle" data-i18n="new.sub">Synchronisé Airtable · traitement sous 48h</div>
         </div>
-        <button type="button" class="btn-refresh" onclick="refreshFromAirtable()">↻ Actualiser</button>
+        <div class="sync-badge"><div class="sync-dot"></div><span data-i18n="new.live">Sync live</span></div>
       </div>
+      <div class="card-body">
+        <div class="form-progress" id="form-progress">
+  <div class="form-progress-step" data-step="1">1 · Passager</div>
+  <div class="form-progress-step" data-step="2">2 · Vol</div>
+  <div class="form-progress-step" data-step="3">3 · Perturbation</div>
+</div>
+<div class="commission-preview" id="commission-preview">
+  <span data-i18n="agent.preview.label">Commission estimée (si gagné)</span>
+  <strong id="form-commission-preview">—</strong>
+</div>
+        <input type="hidden" id="f-probleme" value="" />
+        <input type="hidden" id="f-compagnie" value="" />
 
-      <div class="kpi-row">
-        <div class="kpi-card">
-          <div class="kpi-label">Dossiers soumis</div>
-          <div class="kpi-value" id="kpi-total">0</div>
-          <div class="kpi-sub">Depuis votre inscription</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">En cours</div>
-          <div class="kpi-value" id="kpi-encours">0</div>
-          <div class="kpi-sub">Actifs + attente</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Attente incident</div>
-          <div class="kpi-value" id="kpi-attente">0</div>
-          <div class="kpi-sub">Billets vendus</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Gagnés</div>
-          <div class="kpi-value green" id="kpi-gagnes">0</div>
-          <div class="kpi-sub">Indemnisations obtenues</div>
-        </div>
-        <div class="kpi-card">
-          <div class="kpi-label">Commissions gagnées</div>
-          <div class="kpi-value green" id="kpi-commissions">0 FCFA</div>
-          <div class="kpi-sub">30 000 FCFA / passager</div>
-        </div>
-      </div>
-
-      <div class="table-card">
-        <div class="table-header">
-          <h3>Derniers dossiers</h3>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Référence</th>
-              <th>Passager</th>
-              <th>Vol</th>
-              <th>Date vol</th>
-              <th>Statut</th>
-              <th>Commission</th>
-            </tr>
-          </thead>
-          <tbody id="dashboard-table"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ===== NOUVEAU DOSSIER ===== -->
-    <div class="page" id="page-nouveau">
-      <div class="page-header">
-        <h1 data-i18n="new.title">Nouveau dossier</h1>
-        <p data-i18n="new.sub">Déposez un dossier en 1 minute — Robin attribue l'email client automatiquement.</p>
-      </div>
-
-      <div class="form-card form-card--fast">
-        <div class="form-step">
-          <div class="form-step-label" data-i18n="form.step1">1 — Passager</div>
+        <div class="form-section">
+          <div class="section-label" data-i18n="form.step1">Passager</div>
+          <div class="auto-note" data-i18n="form.email_auto">✓ Pas d'email — Robin crée <strong>ref@robindesairs.eu</strong> automatiquement</div>
           <div class="form-row">
-            <div class="form-group">
-              <label data-i18n="form.lastname">Nom</label>
-              <input type="text" id="f-nom" placeholder="KODJO" autocomplete="family-name">
-            </div>
-            <div class="form-group">
-              <label data-i18n="form.firstname">Prénom</label>
-              <input type="text" id="f-prenom" placeholder="Amadou" autocomplete="given-name">
-            </div>
+            <div class="form-group"><label data-i18n="form.lastname">Nom</label><input type="text" id="f-nom" autocomplete="family-name" /></div>
+            <div class="form-group"><label data-i18n="form.firstname">Prénom</label><input type="text" id="f-prenom" autocomplete="given-name" /></div>
           </div>
-          <div class="form-row">
-            <div class="form-group form-group--wide">
-              <label data-i18n="form.phone">Téléphone (WhatsApp)</label>
-              <input type="tel" id="f-tel" placeholder="+220 700 00 00" autocomplete="tel">
-              <p class="form-hint" data-i18n="form.email_auto">Pas d'email à saisir : Robin crée ref@robindesairs.eu.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-step">
-          <div class="form-step-label" data-i18n="form.step2">2 — Vol</div>
-          <div class="form-row">
-            <div class="form-group">
-              <label data-i18n="form.pnr">Code PNR</label>
-              <input type="text" id="f-pnr" placeholder="AB1C2D" maxlength="6" class="input-pnr" autocomplete="off">
-            </div>
-            <div class="form-group">
-              <label data-i18n="form.flightno">Numéro de vol</label>
-              <input type="text" id="f-vol" placeholder="AF718" style="text-transform:uppercase">
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label data-i18n="form.airline">Compagnie</label>
-              <select id="f-compagnie">
-                <option value="" data-i18n="form.select">Sélectionner...</option>
-                <option>Air France</option>
-                <option>Brussels Airlines</option>
-                <option>Turkish Airlines</option>
-                <option>Royal Air Maroc</option>
-                <option>Transavia</option>
-                <option>Vueling</option>
-                <option>Iberia</option>
-                <option>Autre</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label data-i18n="form.fdate">Date du vol</label>
-              <input type="date" id="f-date">
-            </div>
-          </div>
-          <p class="form-hint" data-i18n="form.route_quick">Trajet fréquent (1 clic) :</p>
-          <div class="route-chips" id="route-chips">
-            <button type="button" class="route-chip" data-depart="Paris CDG" data-arrivee="Banjul BJL">CDG → Banjul</button>
-            <button type="button" class="route-chip" data-depart="Bruxelles BRU" data-arrivee="Banjul BJL">BRU → Banjul</button>
-            <button type="button" class="route-chip" data-depart="Istanbul IST" data-arrivee="Banjul BJL">IST → Banjul</button>
-            <button type="button" class="route-chip" data-depart="Dakar DSS" data-arrivee="Banjul BJL">DSS → Banjul</button>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label data-i18n="form.from">Départ</label>
-              <input type="text" id="f-depart" placeholder="Paris CDG">
-            </div>
-            <div class="form-group">
-              <label data-i18n="form.to">Arrivée</label>
-              <input type="text" id="f-arrivee" placeholder="Banjul BJL">
-            </div>
-          </div>
-        </div>
-
-        <div class="form-step">
-          <div class="form-step-label" data-i18n="form.step3">3 — Situation</div>
-          <div class="issue-chips" id="issue-chips" role="group">
-            <button type="button" class="issue-chip" data-value="__ATTENTE__" data-i18n="issue.wait">⏳ Billet vendu</button>
-            <button type="button" class="issue-chip" data-value="Retard +3h à l'arrivée" data-i18n="issue.delay">Retard +3h</button>
-            <button type="button" class="issue-chip" data-value="Vol annulé" data-i18n="issue.cancel">Vol annulé</button>
-            <button type="button" class="issue-chip" data-value="Surbooking / Refus d'embarquement" data-i18n="issue.denied">Refus embarquement</button>
-            <button type="button" class="issue-chip" data-value="Correspondance manquée" data-i18n="issue.missed">Correspondance / escale</button>
-          </div>
-          <input type="hidden" id="f-probleme" value="">
-          <p class="form-hint" id="f-probleme-hint" data-i18n="form.issue_hint">Choisissez la situation la plus proche.</p>
-          <div id="panel-escale" class="panel-escale" hidden>
-            <p class="form-hint" data-i18n="form.escale_hint">Précisez l'escale ou la correspondance :</p>
-            <div class="form-row">
-              <div class="form-group">
-                <label data-i18n="form.escale_via">Ville d'escale</label>
-                <input type="text" id="f-escale-ville" placeholder="Paris CDG, Bruxelles…">
-              </div>
-              <div class="form-group">
-                <label data-i18n="form.escale_vol2">2ᵉ vol (optionnel)</label>
-                <input type="text" id="f-vol2" placeholder="SN203" style="text-transform:uppercase">
-              </div>
-            </div>
-          </div>
-          <div class="form-row" id="row-retard">
-            <div class="form-group">
-              <label id="f-retard-label" data-i18n="form.delay">Retard à l'arrivée (h)</label>
-              <input type="number" id="f-retard" placeholder="4" min="0" step="0.5">
-            </div>
-            <div class="form-group">
-              <label data-i18n="form.pax">Passagers (même PNR)</label>
-              <input type="number" id="f-nb-passagers" value="1" min="1" max="9">
-            </div>
-          </div>
-        </div>
-
-        <div class="form-row full">
           <div class="form-group">
-            <label data-i18n="form.notes">Notes (optionnel)</label>
-            <textarea id="f-notes" rows="2" data-i18n-placeholder="form.notes_ph" placeholder="Détail pour Robin…"></textarea>
+            <label data-i18n="form.phone">WhatsApp</label>
+            <div class="phone-row">
+              <select class="phone-indicator-select" id="phoneIndicator">
+                <option value="+220" selected>🇬🇲 +220</option>
+                <option value="+221">🇸🇳 +221</option>
+                <option value="+222">🇲🇷 +222</option>
+                <option value="+223">🇲🇱 +223</option>
+                <option value="+224">🇬🇳 +224</option>
+                <option value="+225">🇨🇮 +225</option>
+                <option value="+226">🇧🇫 +226</option>
+                <option value="+227">🇳🇪 +227</option>
+                <option value="+228">🇹🇬 +228</option>
+                <option value="+229">🇧🇯 +229</option>
+                <option value="+233">🇬🇭 +233</option>
+                <option value="+234">🇳🇬 +234</option>
+                <option value="+237">🇨🇲 +237</option>
+                <option value="+245">🇬🇼 +245</option>
+                <option value="+33">🇫🇷 +33</option>
+                <option value="+32">🇧🇪 +32</option>
+                <option value="+34">🇪🇸 +34</option>
+                <option value="+39">🇮🇹 +39</option>
+                <option value="+44">🇬🇧 +44</option>
+                <option value="+49">🇩🇪 +49</option>
+                <option value="+90">🇹🇷 +90</option>
+                <option value="+1">🇺🇸 +1</option>
+              </select>
+              <div class="phone-num-input"><input type="tel" id="phoneNumber" placeholder="7XX XX XX XX" /></div>
+            </div>
           </div>
         </div>
 
-        <div class="form-submit">
-          <button type="button" class="btn-primary btn-primary--lg" id="btn-submit-dossier" onclick="submitDossier()" data-i18n="form.submit">Envoyer le dossier →</button>
-          <button type="button" class="btn-secondary" onclick="resetForm()" data-i18n="form.clear">Effacer</button>
-        </div>
-
-        <div class="pricing-box" style="margin-top:20px;padding:16px;background:var(--green-glow);border-radius:var(--radius-sm);font-size:13px;color:var(--navy);">
-          <strong data-i18n="pricing.title">Tarif partenaire (long-courrier)</strong>
-          <div class="pricing-grid">
-            <div class="pg-item"><span class="pg-label" data-i18n="pricing.client">Net client</span><strong id="pricing-client">420 €</strong></div>
-            <div class="pg-item agency"><span class="pg-label" data-i18n="pricing.agency">Votre commission</span><strong id="pricing-agency">45 €</strong></div>
+        <div class="form-section">
+          <div class="section-label" data-i18n="form.step2">Vol</div>
+          <div class="form-row">
+            <div class="form-group"><label data-i18n="form.pnr">PNR</label><input type="text" id="f-pnr" maxlength="6" style="text-transform:uppercase;letter-spacing:0.1em" /></div>
+            <div class="form-group"><label data-i18n="form.flightno">N° vol</label><input type="text" id="f-vol" /></div>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== DOSSIERS ===== -->
-    <div class="page" id="page-dossiers">
-      <div class="page-header page-header-row">
-        <div>
-          <h1>Mes dossiers</h1>
-          <p>Suivi de toutes vos réclamations (Airtable)</p>
-        </div>
-        <button type="button" class="btn-refresh" onclick="refreshFromAirtable()">↻ Actualiser</button>
-      </div>
-
-      <div class="table-card">
-        <div class="table-header">
-          <h3>Tous les dossiers</h3>
-          <div class="filter-group">
-            <select id="filter-statut" onchange="renderDossiers()">
-              <option value="">Tous les statuts</option>
-              <option value="nouveau">Nouveau</option>
-              <option value="attente-incident">En attente d'incident</option>
-              <option value="en-cours">En cours</option>
-              <option value="gagne">Gagné</option>
-              <option value="paye">Payé</option>
-              <option value="rejete">Rejeté</option>
-            </select>
-            <input type="text" id="filter-search" placeholder="Rechercher..." oninput="renderDossiers()">
+          <div class="form-group">
+            <label data-i18n="form.airline">Compagnie opérante</label>
+            <div class="airline-wrap">
+              <input class="airline-input" id="airlineInput" type="text" autocomplete="off" />
+              <div class="airline-dropdown" id="airlineDropdown"></div>
+              <div class="airline-selected-display" id="airlineSelected"><span id="airlineSelectedText"></span><span class="airline-clear" onclick="clearAirline()">✕</span></div>
+            </div>
           </div>
+          <div class="form-group">
+            <label data-i18n="form.route_quick">Routes rapides</label>
+            <div class="routes-group-label">↗ BJL</div>
+            <div class="routes-row">
+              <span class="route-chip" onclick="fillRoute('BJL','CDG')">BJL → CDG</span>
+              <span class="route-chip" onclick="fillRoute('BJL','BRU')">BJL → BRU</span>
+              <span class="route-chip" onclick="fillRoute('BJL','IST')">BJL → IST</span>
+              <span class="route-chip" onclick="fillRoute('BJL','LIS')">BJL → LIS</span>
+            </div>
+            <div class="routes-group-label">↙ BJL</div>
+            <div class="routes-row">
+              <span class="route-chip" onclick="fillRoute('CDG','BJL')">CDG → BJL</span>
+              <span class="route-chip" onclick="fillRoute('BRU','BJL')">BRU → BJL</span>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label data-i18n="form.from">Départ</label><input type="text" id="f-depart" style="text-transform:uppercase" maxlength="3" /></div>
+            <div class="form-group"><label data-i18n="form.to">Arrivée</label><input type="text" id="f-arrivee" style="text-transform:uppercase" maxlength="3" /></div>
+          </div>
+          <div class="form-group"><label data-i18n="form.fdate">Date vol</label><input type="date" id="f-date" /></div>
         </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Réf</th>
-              <th>Passager</th>
-              <th>Vol</th>
-              <th>Compagnie</th>
-              <th>Route</th>
-              <th>Date vol</th>
-              <th>Problème</th>
-              <th>Passagers</th>
-              <th>Statut</th>
-              <th>Commission</th>
-            </tr>
-          </thead>
-          <tbody id="dossiers-table"></tbody>
-        </table>
+
+        <div class="form-section">
+          <div class="section-label" data-i18n="form.step3">Perturbation</div>
+          <div class="incident-grid">
+            <div class="incident-option" data-value="__ATTENTE__"><div class="incident-icon">🎫</div><span data-i18n="issue.wait_short">Billet vendu</span></div>
+            <div class="incident-option" data-value="Retard +3h à l'arrivée"><div class="incident-icon">⏱</div><span data-i18n="issue.delay">Retard +3h</span></div>
+            <div class="incident-option" data-value="Vol annulé"><div class="incident-icon">✕</div><span data-i18n="issue.cancel">Annulé</span></div>
+            <div class="incident-option" data-value="Surbooking / Refus d'embarquement"><div class="incident-icon">🚫</div><span data-i18n="issue.denied">Refus embarquement</span></div>
+            <div class="incident-option" data-value="Correspondance manquée"><div class="incident-icon">↪</div><span data-i18n="issue.missed">Correspondance</span></div>
+                    <p id="f-probleme-hint" style="font-size:0.75rem;color:var(--white-40);margin-bottom:10px;line-height:1.5"></p>
+          <div class="panel-escale" id="panel-escale" hidden>
+            <div class="form-row">
+              <div class="form-group"><label data-i18n="form.escale_via">Escale</label><input type="text" id="f-escale-ville" /></div>
+              <div class="form-group"><label data-i18n="form.escale_vol2">Vol 2</label><input type="text" id="f-vol2" /></div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label id="f-retard-label" data-i18n="form.delay">Retard (h)</label><input type="number" id="f-retard" min="0" max="72" /></div>
+            <div class="form-group"><label data-i18n="form.pax">Passagers (PNR)</label><input type="number" id="f-nb-passagers" min="1" max="20" value="1" /></div>
+          </div>
+          <div class="form-group"><label data-i18n="form.notes">Notes</label><textarea id="f-notes" rows="3"></textarea></div>
+        </div>
+
+        <div class="form-section">
+          <div class="section-label" data-i18n="form.doc">Document</div>
+          <div class="upload-zone" id="uploadZone"><input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png,.webp" /><div>📎 <span data-i18n="form.doc_hint">E-billet ou confirmation</span></div></div>
+          <div class="uploaded-file" id="uploadedFile"><span id="fileName"></span><span onclick="removeFile()" style="cursor:pointer;margin-left:auto">✕</span></div>
+        </div>
+
+        <button type="button" class="btn-submit" id="btn-submit-dossier" onclick="submitDossier()" data-i18n="form.submit">Soumettre le dossier →</button>
       </div>
     </div>
 
-    <!-- ===== AIDE ===== -->
-    <div class="page" id="page-aide">
-      <div class="page-header">
-        <h1>Aide</h1>
-        <p>Utiliser l'espace partenaire</p>
+    <div class="sidebar">
+      <div class="commission-card">
+        <div class="commission-title" data-i18n="pricing.agency">Votre commission</div>
+        <div class="commission-amount" id="commission-sidebar-amount">3 800 GMD</div>
+        <div class="commission-sub" id="commission-sidebar-sub" data-i18n="pricing.per_pax">par passager indemnisé</div>
+        <div class="commission-row"><span class="label" data-i18n="pricing.client">Net client</span><span class="value" id="pricing-client">—</span></div>
+        <div class="commission-row"><span class="label" data-i18n="pricing.indemnity">Indemnité</span><span class="value gold" id="pricing-indemnity">—</span></div>
       </div>
-      <div class="help-card">
-        <p>Les dossiers créés ici sont enregistrés <strong>directement dans Airtable</strong>. L'équipe Robin des Airs les traite comme un dépôt au guichet.</p>
-        <h3>Nouveau dossier</h3>
-        <ul>
-          <li><strong>Réclamation</strong> : incident déjà survenu (retard, annulation…).</li>
-          <li><strong>En attente d'incident</strong> : billet vendu, pas encore de problème sur le vol.</li>
-        </ul>
-        <h3>Actualiser</h3>
-        <p>Utilisez le bouton <strong>↻ Actualiser</strong> pour voir les statuts mis à jour par Robin (mandat, paiement, etc.).</p>
-        <h3>Support</h3>
-        <p>Code ou mot de passe : contactez Robin des Airs. Ne communiquez pas votre mot de passe par SMS non sécurisé.</p>
+      <div class="steps-card">
+        <div class="steps-title" data-i18n="steps.title">Comment ça marche</div>
+        <div class="step-item"><div class="step-dot">1</div><div><div class="step-name" data-i18n="steps.1">Vous déposez</div><div class="step-desc" data-i18n="steps.1d">Formulaire + billet</div></div></div>
+        <div class="step-item"><div class="step-dot">2</div><div><div class="step-name" data-i18n="steps.2">Robin traite</div><div class="step-desc" data-i18n="steps.2d">Mandat + réclamation</div></div></div>
+        <div class="step-item"><div class="step-dot">3</div><div><div class="step-name" data-i18n="steps.3">Commission versée</div><div class="step-desc" data-i18n="steps.3d">Wave · Afrimoney · QMoney</div></div></div>
       </div>
     </div>
-
-    <!-- ===== COMMISSIONS ===== -->
-    <div class="page" id="page-commissions">
-      <div class="page-header">
-        <h1>Commissions</h1>
-        <p>Suivi de vos paiements — 45 € / passager (≈ 29 500 FCFA)</p>
-      </div>
-
-      <div class="commission-summary">
-        <div class="commission-box highlight">
-          <div class="cb-label">Total gagné</div>
-          <div class="cb-value" id="comm-total">0 FCFA</div>
-        </div>
-        <div class="commission-box">
-          <div class="cb-label">En attente de paiement</div>
-          <div class="cb-value" id="comm-pending" style="color:var(--orange)">0 FCFA</div>
-        </div>
-        <div class="commission-box">
-          <div class="cb-label">Déjà versé</div>
-          <div class="cb-value" style="color:var(--green-dark)" id="comm-paid">0 FCFA</div>
-        </div>
-        <div class="commission-box">
-          <div class="cb-label">Mode de paiement</div>
-          <div class="cb-value" style="font-size:22px;" id="comm-method">Wave · Orange Money</div>
-        </div>
-      </div>
-
-      <div class="table-card">
-        <div class="table-header">
-          <h3>Historique des paiements</h3>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Référence dossier</th>
-              <th>Passager</th>
-              <th>Nb passagers</th>
-              <th>Montant</th>
-              <th>Mode</th>
-              <th>Statut</th>
-            </tr>
-          </thead>
-          <tbody id="commissions-table"></tbody>
-        </table>
-      </div>
-    </div>
-
   </div>
 </div>
 
-<!-- Toast -->
-<div class="toast" id="toast"></div>
+<div class="tab-panel" id="tab-dossiers">
+  <div class="payout-banner"><div class="payout-inner"><div><h3 style="font-family:'DM Serif Display',serif;font-weight:400" data-i18n="payout.title">Paiement automatique</h3><p style="font-size:0.78rem;color:var(--white-40);margin-top:4px" data-i18n="payout.sub">Commission sous 48h · Wave, Afrimoney, QMoney</p></div></div></div>
+  <div class="dossiers-section">
+    <div class="section-header">
+      <div class="section-heading" data-i18n="files.title">Mes dossiers</div>
+      <button type="button" class="btn-refresh" data-i18n="btn.refresh">↻ Actualiser</button>
+    </div>
+    <div class="dossiers-toolbar">
+      <input type="search" class="search-dossiers" id="filter-search" placeholder="Rechercher nom, PNR, réf…" data-i18n-placeholder="filter.search" />
+    </div>
+    <input type="hidden" id="filter-statut" value="" />
+    <div class="filter-row">
+      <button type="button" class="filter-btn active" data-value="" onclick="setAgencyFilter('',this)" data-i18n="filter.all">Tous</button>
+      <button type="button" class="filter-btn" data-value="gagne" onclick="setAgencyFilter('gagne',this)" data-i18n="status.gagne">Gagnés</button>
+      <button type="button" class="filter-btn" data-value="en-cours" onclick="setAgencyFilter('en-cours',this)" data-i18n="status.encours">En cours</button>
+      <button type="button" class="filter-btn" data-value="nouveau" onclick="setAgencyFilter('nouveau',this)" data-i18n="status.nouveau">Nouveaux</button>
+      <button type="button" class="filter-btn" data-value="attente-incident" onclick="setAgencyFilter('attente-incident',this)" data-i18n="status.attente">Attente</button>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th data-i18n="col.ref">Réf.</th><th data-i18n="col.passenger">Passager</th><th data-i18n="col.flight">Vol</th>
+          <th data-i18n="col.route">Route</th><th data-i18n="col.date">Date</th><th data-i18n="col.issue">Problème</th>
+          <th data-i18n="col.status">Statut</th><th data-i18n="col.commission">Commission</th>
+        </tr></thead>
+        <tbody id="dossiers-table" data-format="partner"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
 
-<!-- Toast -->
-<div class="toast" id="toast"></div>
+<div class="tab-panel" id="tab-commissions">
+  <div class="dossiers-section">
+    <div class="section-heading" style="margin-bottom:1.5rem" data-i18n="comm.title">Commissions</div>
+    <div class="stats-bar" style="margin-bottom:2rem">
+      <div class="stat-cell"><div class="stat-label" data-i18n="comm.total">Total gagné</div><div class="stat-value gold" id="comm-total">—</div></div>
+      <div class="stat-cell"><div class="stat-label" data-i18n="comm.pending">En attente</div><div class="stat-value" id="comm-pending">—</div></div>
+      <div class="stat-cell"><div class="stat-label" data-i18n="comm.paid">Versé</div><div class="stat-value green" id="comm-paid">—</div></div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th data-i18n="col.paydate">Date</th><th data-i18n="col.ref">Réf.</th><th data-i18n="col.passenger">Passager</th>
+          <th data-i18n="col.pax">Pax</th><th data-i18n="col.amount">Montant</th><th data-i18n="col.mode">Mode</th><th data-i18n="col.status">Statut</th>
+        </tr></thead>
+        <tbody id="commissions-table"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="tab-panel" id="tab-aide">
+  <div class="main-layout" style="grid-template-columns:1fr 1fr">
+    <div class="card">
+      <div class="card-header"><div class="card-title" data-i18n="help.title">Aide</div></div>
+      <div class="card-body" style="font-size:0.88rem;line-height:1.8;color:var(--white-70)">
+        <p data-i18n="help.body">Les dossiers sont enregistrés dans Airtable. Robin traite comme un dépôt bureau.</p>
+      </div>
+    </div>
+    <div class="steps-card">
+      <div class="steps-title" data-i18n="help.support">Support partenaire</div>
+      <p style="font-size:0.85rem;color:var(--white-70);line-height:1.8;margin-bottom:1.25rem" data-i18n="help.support_intro">Une question sur un dossier ? L'équipe Robin est disponible 7j/7.</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a href="mailto:partners@robindesairs.eu" style="display:flex;align-items:center;gap:10px;text-decoration:none;background:rgba(255,255,255,0.04);border:1px solid var(--sky-border);border-radius:10px;padding:12px 14px;color:var(--white-70)">
+          <span style="font-size:1.2rem">✉</span>
+          <div><div style="font-weight:500;color:var(--white);font-size:0.82rem" data-i18n="help.email_label">Email partenaires</div><div style="font-size:0.72rem;color:var(--gold)">partners@robindesairs.eu</div></div>
+        </a>
+        <a href="https://wa.me/33652893858" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;text-decoration:none;background:rgba(255,255,255,0.04);border:1px solid var(--sky-border);border-radius:10px;padding:12px 14px;color:var(--white-70)">
+          <span style="font-size:1.2rem">💬</span>
+          <div><div style="font-weight:500;color:var(--white);font-size:0.82rem">WhatsApp</div><div style="font-size:0.72rem;color:var(--green)">+33 6 52 89 38 58</div><div style="font-size:0.72rem;color:var(--green);margin-top:2px" data-i18n="help.whatsapp_sub">Réponse sous 2h en semaine</div></div>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="submit-sticky" id="submit-sticky"><button type="button" class="btn-submit" onclick="submitDossier()" data-i18n="form.submit">Soumettre →</button></div>
+</div><!-- #agencyApp -->
+
+<div id="toast"></div>
 
 <script src="/assets/agence-i18n.js"></script>
 <script src="/assets/agence-currency.js"></script>
 <script src="/assets/agence-portal.js"></script>
-
+<script>
+(function uploadUI(){
+  var zone=document.getElementById('uploadZone'), fi=document.getElementById('fileInput'), uf=document.getElementById('uploadedFile');
+  if(!fi||!zone)return;
+  function show(f){ if(!f)return; zone.style.display='none'; document.getElementById('fileName').textContent=f.name; uf.classList.add('show'); }
+  fi.onchange=function(){ show(fi.files[0]); };
+  window.removeFile=function(){ uf.classList.remove('show'); zone.style.display=''; fi.value=''; };
+})();
+</script>
 </body>
 </html>

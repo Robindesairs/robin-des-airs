@@ -5,20 +5,21 @@
   const LS_CURRENCY = 'rda_agence_currency';
   const LS_EQUIV = 'rda_agence_show_equiv';
 
+  /** Gambie : dalasi par défaut, euro en équivalent (pas USD / FCFA). */
   const CURRENCIES = {
+    GMD: { label: 'Dalasi (GMD)', symbol: 'GMD', rate: 84, position: 'after', decimals: 0, space: true },
     EUR: { label: 'Euro (€)', symbol: '€', rate: 1, position: 'after', decimals: 0 },
-    USD: { label: 'Dollar ($)', symbol: '$', rate: 1.08, position: 'before', decimals: 0 },
-    GBP: { label: 'Livre (£)', symbol: '£', rate: 0.86, position: 'before', decimals: 0 },
-    XOF: { label: 'FCFA BCEAO', symbol: 'FCFA', rate: 655.957, position: 'after', decimals: 0, space: true },
-    XAF: { label: 'FCFA BEAC', symbol: 'FCFA', rate: 655.957, position: 'after', decimals: 0, space: true },
-    GMD: { label: 'Dalasi (GMD)', symbol: 'D', rate: 72, position: 'after', decimals: 0, space: true },
   };
 
-  const EQUIV_ORDER = ['EUR', 'USD', 'XOF', 'GMD', 'GBP'];
+  const EQUIV_ORDER = ['GMD', 'EUR'];
 
   function getCurrency() {
-    const c = (localStorage.getItem(LS_CURRENCY) || 'XOF').toUpperCase();
-    return CURRENCIES[c] ? c : 'XOF';
+    const c = (localStorage.getItem(LS_CURRENCY) || 'GMD').toUpperCase();
+    if (!CURRENCIES[c]) {
+      setCurrency('GMD');
+      return 'GMD';
+    }
+    return c;
   }
 
   function setCurrency(code) {

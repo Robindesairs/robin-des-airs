@@ -7,11 +7,12 @@ const AGENCY_DOSSIERS_URL = '/api/agency-dossiers';
 let currentAgency = null;
 let dossiers = [];
 let pricing = {
-  commissionEur: 45,
+  commissionGmd: 3800,
+  commissionEur: 45.24,
   clientNetEur: 420,
   indemnityEur: 600,
   robinEur: 135,
-  commissionFcfa: 29518,
+  commissionFcfa: 29675,
 };
 let _agencyLoading = false;
 
@@ -50,6 +51,35 @@ function commissionEurTotal(d) {
   return (d.nbPassagers || 1) * pricing.commissionEur;
 }
 
+function commissionGmdTotal(d) {
+  const per = pricing.commissionGmd || Math.round(pricing.commissionEur * 84);
+  return (d.nbPassagers || 1) * per;
+}
+
+/** Montant commission pour affichage (GMD prioritaire si devise GMD). */
+function formatCommissionHtml(d) {
+  if (typeof AgenceCurrency !== 'undefined' && AgenceCurrency.getCurrency() === 'GMD' && pricing.commissionGmd) {
+    const n = commissionGmdTotal(d);
+    return (
+      '<span class="money-main">' +
+      escHtml(n.toLocaleString('fr-FR', { maximumFractionDigits: 0 })) +
+      ' GMD</span>'
+    );
+  }
+  return formatMoneyHtml(commissionEurTotal(d));
+}
+
+function formatCommissionPerPaxHtml() {
+  if (typeof AgenceCurrency !== 'undefined' && AgenceCurrency.getCurrency() === 'GMD' && pricing.commissionGmd) {
+    return (
+      '<span class="money-main">' +
+      escHtml(pricing.commissionGmd.toLocaleString('fr-FR', { maximumFractionDigits: 0 })) +
+      ' GMD</span>'
+    );
+  }
+  return formatMoneyHtml(pricing.commissionEur);
+}
+
 function setRefreshButtonsDisabled(disabled) {
   document.querySelectorAll('.btn-refresh').forEach(function (btn) {
     btn.disabled = !!disabled;
@@ -64,7 +94,159 @@ function setAgencySyncStatus(msg, isErr) {
   const el = document.getElementById('agency-sync-status');
   if (!el) return;
   el.textContent = msg || '';
-  el.style.color = isErr ? 'var(--red)' : 'var(--gray-400)';
+  el.style.color = isErr ? 'var(--red)' : 'var(--white-40)';
+}
+
+function getLoginEl() {
+  return document.getElementById('loginOverlay') || document.getElementById('loginScreen');
+}
+
+function getAppEl() {
+  return document.getElementById('agencyApp') || document.getElementById('app');
+}
+
+function getLoginCodeEl() {
+  return document.getElementById('loginCode') || document.getElementById('agencyCode');
+}
+
+function getFormTel() {
+  const ind = document.getElementById('phoneIndicator');
+  const num = document.getElementById('phoneNumber');
+  if (ind && num) return (ind.value || '') + String(num.value || '').replace(/\s/g, '');
+  const tel = document.getElementById('f-tel');
+  return tel ? tel.value.trim() : '';
+}
+
+function getDossiersFilterStatut() {
+  const sel = document.getElementById('filter-statut');
+  if (sel) return sel.value;
+  const active = document.querySelector('.filter-btn.active');
+  return active ? active.getAttribute('data-value') || '' : '';
+}
+
+function updateDossiersCount() {
+  const c = document.getElementById('dossiers-count');
+  if (c) c.textContent = String(dossiers.length);
+}
+
+const AGENT_COACH_KEY = 'rda_agence_coach_dismissed';
+
+function markFieldInvalid(id, invalid) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.toggle('field-invalid', !!invalid);
+  if (el.style && !el.classList.contains('field-invalid')) {
+    el.style.borderColor = '';
+  }
+}
+
+function clearFormInvalidState() {
+  document.querySelectorAll('.field-invalid').forEach(function (el) {
+    el.classList.remove('field-invalid');
+  });
+  const grid = document.querySelector('.incident-grid');
+  if (grid) grid.classList.remove('field-invalid');
+}
+
+function updateFormCommissionPreview() {
+  const el = document.getElementById('form-commission-preview');
+  if (!el) return;
+  const n = parseInt(document.getElementById('f-nb-passagers')?.value, 10) || 1;
+  const fake = { nbPassagers: n };
+  el.innerHTML = formatCommissionHtml(fake);
+  const side = document.getElementById('commission-sidebar-amount');
+  if (side) side.innerHTML = formatCommissionPerPaxHtml();
+}
+
+function updateFormProgress() {
+  const root = document.getElementById('form-progress');
+  if (!root) return;
+  const nom = (document.getElementById('f-nom')?.value || '').trim();
+  const prenom = (document.getElementById('f-prenom')?.value || '').trim();
+  const tel = getFormTel();
+  const step1 = nom && prenom && tel.length >= 8;
+  const pnr = (document.getElementById('f-pnr')?.value || '').trim();
+  const vol = (document.getElementById('f-vol')?.value || '').trim();
+  const dep = (document.getElementById('f-depart')?.value || '').trim();
+  const arr = (document.getElementById('f-arrivee')?.value || '').trim();
+  const date = (document.getElementById('f-date')?.value || '').trim();
+  const comp =
+    (document.getElementById('f-compagnie')?.value || '').trim() ||
+    (document.getElementById('airlineInput')?.value || '').trim();
+  const step2 = pnr.length === 6 && vol && dep.length === 3 && arr.length === 3 && date && comp;
+  const prob = (document.getElementById('f-probleme')?.value || '').trim();
+  const step3 = !!prob;
+  const steps = [
+    { done: step1, current: !step1 },
+    { done: step2, current: step1 && !step2 },
+    { done: step3, current: step1 && step2 && !step3 },
+  ];
+  root.querySelectorAll('.form-progress-step').forEach(function (node, i) {
+    const s = steps[i] || { done: false, current: false };
+    node.classList.toggle('done', s.done);
+    node.classList.toggle('current', s.current);
+  });
+}
+
+function showAgentCoach() {
+  if (localStorage.getItem(AGENT_COACH_KEY)) return;
+  const coach = document.getElementById('agent-coach');
+  if (coach) coach.hidden = false;
+}
+
+function dismissAgentCoach() {
+  localStorage.setItem(AGENT_COACH_KEY, '1');
+  const coach = document.getElementById('agent-coach');
+  if (coach) coach.hidden = true;
+}
+
+function initAgentUX() {
+  const search = document.getElementById('filter-search');
+  if (search) {
+    if (typeof AgenceI18n !== 'undefined') {
+      search.placeholder = t('filter.search');
+    }
+    let timer;
+    search.addEventListener('input', function () {
+      clearTimeout(timer);
+      timer = setTimeout(renderDossiers, 200);
+    });
+  }
+
+  ['f-nb-passagers', 'f-nom', 'f-prenom', 'phoneNumber', 'f-pnr', 'f-vol', 'f-depart', 'f-arrivee', 'f-date', 'airlineInput'].forEach(
+    function (id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('input', function () {
+        updateFormProgress();
+        if (id === 'f-nb-passagers') updateFormCommissionPreview();
+        if (id === 'f-pnr' || id === 'f-depart' || id === 'f-arrivee' || id === 'f-vol') {
+          el.value = el.value.toUpperCase();
+        }
+        markFieldInvalid(id, false);
+      });
+    }
+  );
+
+  const phoneInd = document.getElementById('phoneIndicator');
+  if (phoneInd) phoneInd.addEventListener('change', updateFormProgress);
+
+  document.querySelectorAll('.incident-option[data-value]').forEach(function (opt) {
+    opt.addEventListener('click', function () {
+      setTimeout(updateFormProgress, 0);
+    });
+  });
+
+  updateFormCommissionPreview();
+  updateFormProgress();
+}
+
+window.dismissAgentCoach = dismissAgentCoach;
+
+function setCommissionTotalEl(id, nbPax) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = formatCommissionHtml({ nbPassagers: nbPax || 1 });
 }
 
 function updatePricingDisplay() {
@@ -72,11 +254,14 @@ function updatePricingDisplay() {
   setMoneyEl('pricing-client', pricing.clientNetEur);
   setMoneyEl('pricing-agency', pricing.commissionEur);
   setMoneyEl('pricing-robin', pricing.robinEur);
+  const side = document.getElementById('commission-sidebar-amount');
+  if (side) side.innerHTML = formatCommissionPerPaxHtml();
   const sub = document.getElementById('kpi-comm-sub');
   if (sub) {
-    const per = formatMoneyHtml(pricing.commissionEur);
-    sub.innerHTML = t('kpi.comm.sub') + ' — ' + per;
+    sub.textContent = t('kpi.comm.sub');
   }
+  const commSub = document.getElementById('commission-sidebar-sub');
+  if (commSub) commSub.textContent = t('pricing.per_pax');
 }
 
 function translateFilterOptions() {
@@ -157,6 +342,104 @@ function initLocaleControls() {
   updatePricingDisplay();
 }
 
+const AIRLINES = [
+  { name: 'Air Sénégal', code: 'HC', region: 'Africa' },
+  { name: 'Transair Sénégal', code: '8T', region: 'Africa' },
+  { name: 'Air Gambia', code: 'GX', region: 'Africa' },
+  { name: 'Royal Air Maroc', code: 'AT', region: 'Africa' },
+  { name: 'Ethiopian Airlines', code: 'ET', region: 'Africa' },
+  { name: 'Air France', code: 'AF', region: 'Europe' },
+  { name: 'Brussels Airlines', code: 'SN', region: 'Europe' },
+  { name: 'Turkish Airlines', code: 'TK', region: 'Europe' },
+  { name: 'TAP Air Portugal', code: 'TP', region: 'Europe' },
+  { name: 'British Airways', code: 'BA', region: 'Europe' },
+  { name: 'KLM', code: 'KL', region: 'Europe' },
+  { name: 'Lufthansa', code: 'LH', region: 'Europe' },
+  { name: 'Emirates', code: 'EK', region: 'Middle East' },
+  { name: 'Qatar Airways', code: 'QR', region: 'Middle East' },
+];
+
+let selectedAirline = null;
+
+function initAirlineAutocomplete() {
+  const inp = document.getElementById('airlineInput');
+  const dd = document.getElementById('airlineDropdown');
+  const hidden = document.getElementById('f-compagnie');
+  if (!inp || !dd) return;
+
+  function renderDropdown(query) {
+    const q = String(query || '').toLowerCase().trim();
+    if (!q) {
+      dd.classList.remove('open');
+      return;
+    }
+    const results = AIRLINES.filter(function (a) {
+      return a.name.toLowerCase().includes(q) || a.code.toLowerCase().includes(q);
+    }).slice(0, 8);
+    if (!results.length) {
+      dd.innerHTML =
+        '<div class="airline-option" style="color:var(--white-40);cursor:default;pointer-events:none">—</div>';
+    } else {
+      dd.innerHTML = results
+        .map(function (a) {
+          return (
+            '<div class="airline-option" data-name="' +
+            escHtml(a.name) +
+            '" data-code="' +
+            escHtml(a.code) +
+            '"><span>' +
+            escHtml(a.name) +
+            '</span><span class="airline-code">' +
+            escHtml(a.code) +
+            '</span><span class="airline-region">' +
+            escHtml(a.region) +
+            '</span></div>'
+          );
+        })
+        .join('');
+      dd.querySelectorAll('.airline-option[data-code]').forEach(function (el) {
+        el.addEventListener('mousedown', function (e) {
+          e.preventDefault();
+          pickAirline(el.dataset.name, el.dataset.code);
+        });
+      });
+    }
+    dd.classList.add('open');
+  }
+
+  function pickAirline(name, code) {
+    selectedAirline = { name: name, code: code };
+    if (hidden) hidden.value = name;
+    inp.style.display = 'none';
+    dd.classList.remove('open');
+    const sel = document.getElementById('airlineSelected');
+    const txt = document.getElementById('airlineSelectedText');
+    if (txt) txt.textContent = name + '  ' + code;
+    if (sel) sel.classList.add('show');
+    const fn = document.getElementById('f-vol');
+    if (fn && !fn.value) fn.placeholder = code + ' 000';
+  }
+
+  window.clearAirline = function () {
+    selectedAirline = null;
+    if (hidden) hidden.value = '';
+    const sel = document.getElementById('airlineSelected');
+    if (sel) sel.classList.remove('show');
+    inp.style.display = '';
+    inp.value = '';
+    inp.focus();
+  };
+
+  inp.addEventListener('input', function () {
+    renderDropdown(inp.value);
+  });
+  inp.addEventListener('blur', function () {
+    setTimeout(function () {
+      dd.classList.remove('open');
+    }, 200);
+  });
+}
+
 function initAgencyFormUX() {
   const issueRoot = document.getElementById('issue-chips');
   const hiddenProb = document.getElementById('f-probleme');
@@ -172,22 +455,44 @@ function initAgencyFormUX() {
       onAgencyProblemeChange();
     });
   }
-  const routeRoot = document.getElementById('route-chips');
-  if (routeRoot) {
-    routeRoot.addEventListener('click', function (e) {
-      const chip = e.target.closest('.route-chip');
-      if (!chip) return;
-      const dep = document.getElementById('f-depart');
-      const arr = document.getElementById('f-arrivee');
-      if (dep) dep.value = chip.getAttribute('data-depart') || '';
-      if (arr) arr.value = chip.getAttribute('data-arrivee') || '';
-      routeRoot.querySelectorAll('.route-chip').forEach(function (c) {
-        c.classList.remove('active');
+  document.querySelectorAll('.incident-option[data-value]').forEach(function (opt) {
+    opt.addEventListener('click', function () {
+      document.querySelectorAll('.incident-option').forEach(function (o) {
+        o.classList.remove('selected');
       });
-      chip.classList.add('active');
+      opt.classList.add('selected');
+      if (hiddenProb) hiddenProb.value = opt.getAttribute('data-value') || '';
+      onAgencyProblemeChange();
     });
-  }
+  });
+  initAirlineAutocomplete();
+  document.querySelectorAll('.btn-refresh').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      refreshFromAirtable();
+    });
+  });
+  initAgentUX();
 }
+
+window.setAgencyFilter = function (status, btn) {
+  document.querySelectorAll('.filter-btn').forEach(function (b) {
+    b.classList.remove('active');
+  });
+  if (btn) btn.classList.add('active');
+  const sel = document.getElementById('filter-statut');
+  if (sel) sel.value = status;
+  renderDossiers();
+};
+
+window.switchTab = function (name, btn) {
+  switchPage(name);
+  if (btn) {
+    document.querySelectorAll('.tab-btn').forEach(function (b) {
+      b.classList.remove('active');
+    });
+    btn.classList.add('active');
+  }
+};
 
 async function refreshFromAirtable() {
   if (!currentAgency || _agencyLoading) return;
@@ -203,8 +508,9 @@ async function refreshFromAirtable() {
     dossiers = data.dossiers || [];
     if (data.pricing) {
       pricing = Object.assign(pricing, data.pricing);
-    } else if (data.commissionPerPaxEur) {
-      pricing.commissionEur = data.commissionPerPaxEur;
+    } else if (data.commissionPerPaxEur || data.commissionPerPaxGmd) {
+      if (data.commissionPerPaxGmd) pricing.commissionGmd = data.commissionPerPaxGmd;
+      if (data.commissionPerPaxEur) pricing.commissionEur = data.commissionPerPaxEur;
       pricing.commissionFcfa = data.commissionPerPax || Math.round(pricing.commissionEur * 655.957);
       pricing.robinEur = Math.max(
         0,
@@ -222,6 +528,7 @@ async function refreshFromAirtable() {
     updateDashboard();
     renderDossiers();
     renderCommissions();
+    updateDossiersCount();
   } catch (e) {
     setAgencySyncStatus(t('toast.err') + ' : ' + (e.message || ''), true);
     showToast(t('toast.err') + ' : ' + e.message, true);
@@ -233,11 +540,22 @@ async function refreshFromAirtable() {
 
 function showAgencyApp(agency) {
   currentAgency = agency;
-  document.getElementById('agencyName').textContent = agency.name;
-  document.getElementById('agencyCode').textContent = agency.code;
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('app').classList.add('active');
+  const badge = document.getElementById('agencyBadge');
+  const nameEl = document.getElementById('agencyName');
+  const codeEl = document.getElementById('agencyCode');
+  if (badge) badge.textContent = agency.name + ' · ' + agency.code;
+  if (nameEl) nameEl.textContent = agency.name;
+  if (codeEl) codeEl.textContent = agency.code;
+  const login = getLoginEl();
+  if (login) login.style.display = 'none';
+  const app = getAppEl();
+  if (app) {
+    app.hidden = false;
+    app.classList.add('active');
+  }
   refreshFromAirtable();
+  showAgentCoach();
+  if (typeof AgenceI18n !== 'undefined') AgenceI18n.apply();
 }
 
 function isAgencyCodeOnlyMode() {
@@ -264,10 +582,12 @@ function applyAgencyLoginMode() {
 }
 
 async function doLogin() {
-  const code = document.getElementById('loginCode').value.trim().toUpperCase();
-  const passEl = document.getElementById('loginPass');
+  const codeEl = getLoginCodeEl();
+  const code = codeEl ? codeEl.value.trim().toUpperCase() : '';
+  const passEl = document.getElementById('loginPass') || document.getElementById('agencyPwd');
   const pass = passEl && !passEl.hidden && passEl.style.display !== 'none' ? passEl.value : '';
-  document.getElementById('loginError').style.display = 'none';
+  const errEl = document.getElementById('loginError');
+  if (errEl) errEl.style.display = 'none';
   try {
     const r = await agencyFetch(AGENCY_AUTH_URL, {
       method: 'POST',
@@ -278,8 +598,8 @@ async function doLogin() {
       return {};
     });
     if (!r.ok || !data.ok) {
-      document.getElementById('loginError').style.display = 'block';
-      document.getElementById('loginPass').value = '';
+      if (errEl) errEl.style.display = 'block';
+      if (passEl) passEl.value = '';
       return;
     }
     showToast(t('toast.login'));
@@ -299,11 +619,19 @@ async function doLogout() {
   } catch (_) {}
   currentAgency = null;
   dossiers = [];
-  document.getElementById('app').classList.remove('active');
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('loginCode').value = '';
-  document.getElementById('loginPass').value = '';
-  document.getElementById('loginError').style.display = 'none';
+  const app = getAppEl();
+  if (app) {
+    app.classList.remove('active');
+    app.hidden = true;
+  }
+  const login = getLoginEl();
+  if (login) login.style.display = 'flex';
+  const codeEl = getLoginCodeEl();
+  if (codeEl) codeEl.value = '';
+  const passEl = document.getElementById('loginPass') || document.getElementById('agencyPwd');
+  if (passEl) passEl.value = '';
+  const errEl = document.getElementById('loginError');
+  if (errEl) errEl.style.display = 'none';
   showToast(t('toast.logout'));
 }
 
@@ -312,16 +640,24 @@ document.addEventListener('keydown', function (e) {
 });
 
 function switchPage(page) {
-  document.querySelectorAll('.page').forEach(function (p) {
-    p.classList.remove('active');
+  const tab = page === 'dashboard' ? 'nouveau' : page;
+  document.querySelectorAll('.tab-panel').forEach(function (p) {
+    p.classList.toggle('active', p.id === 'tab-' + tab);
   });
-  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(function (b) {
+    b.classList.toggle('active', b.dataset.page === tab);
+  });
+  document.querySelectorAll('.page').forEach(function (p) {
+    p.classList.toggle('active', p.id === 'page-' + page);
+  });
+  const pageEl = document.getElementById('page-' + page);
+  if (pageEl) pageEl.classList.add('active');
   document.querySelectorAll('.sidebar nav a').forEach(function (a) {
     a.classList.toggle('active', a.dataset.page === page);
   });
   if (page === 'dossiers') renderDossiers();
   if (page === 'commissions') renderCommissions();
-  if (page === 'dashboard') updateDashboard();
+  if (page === 'dashboard' || page === 'nouveau') updateDashboard();
 }
 
 function updateDashboard() {
@@ -348,16 +684,17 @@ function updateDashboard() {
   var elAtt = document.getElementById('kpi-attente');
   if (elAtt) elAtt.textContent = attente;
   document.getElementById('kpi-gagnes').textContent = gagnes;
-  setMoneyEl('kpi-commissions', paxGagnes * pricing.commissionEur);
+  setCommissionTotalEl('kpi-commissions', paxGagnes);
 
   const tbody = document.getElementById('dashboard-table');
+  if (!tbody) return;
   tbody.innerHTML = dossiers.length
     ? dossiers
         .slice(0, 5)
         .map(function (d) {
           const comm =
             d.statut === 'gagne' || d.statut === 'paye'
-              ? formatMoneyHtml(commissionEurTotal(d))
+              ? formatCommissionHtml(d)
               : '—';
           return (
             '<tr><td><strong>' +
@@ -382,8 +719,9 @@ function updateDashboard() {
 }
 
 function renderDossiers() {
-  const statutFilter = document.getElementById('filter-statut').value;
-  const search = (document.getElementById('filter-search').value || '').toLowerCase();
+  const statutFilter = getDossiersFilterStatut();
+  const searchEl = document.getElementById('filter-search');
+  const search = searchEl ? (searchEl.value || '').toLowerCase() : '';
 
   let filtered = dossiers.slice();
   if (statutFilter)
@@ -403,6 +741,10 @@ function renderDossiers() {
   }
 
   const tbody = document.getElementById('dossiers-table');
+  if (!tbody) return;
+  const partnerFmt = tbody.getAttribute('data-format') === 'partner';
+  const cols = partnerFmt ? 8 : 10;
+
   tbody.innerHTML = filtered.length
     ? filtered
         .map(function (d) {
@@ -412,8 +754,39 @@ function renderDossiers() {
               : '—';
           const comm =
             d.statut === 'gagne' || d.statut === 'paye'
-              ? formatMoneyHtml(commissionEurTotal(d))
-              : '—';
+              ? formatCommissionHtml(d)
+              : '<span class="commission-cell pending">—</span>';
+          if (partnerFmt) {
+            return (
+              '<tr data-status="' +
+              escHtml(d.statut) +
+              '"><td><span class="ref">' +
+              escHtml(d.ref) +
+              '</span></td><td><motion class="passager-name">' +
+              escHtml(d.nom) +
+              ', ' +
+              escHtml(d.prenom) +
+              '</motion><motion class="passager-sub">' +
+              (d.nbPassagers || 1) +
+              ' ' +
+              t('col.pax_short') +
+              '</motion></td><td>' +
+              escHtml(d.vol) +
+              '</td><td>' +
+              route +
+              '</td><td>' +
+              formatDate(d.date) +
+              '</td><td>' +
+              escHtml(d.probleme || '—') +
+              '</td><td>' +
+              badgeHTML(d.statut) +
+              '</td><td class="commission-cell">' +
+              (d.statut === 'gagne' || d.statut === 'paye'
+                ? formatCommissionHtml(d)
+                : '<span class="pending">—</span>') +
+              '</td></tr>'
+            );
+          }
           return (
             '<tr><td><strong>' +
             escHtml(d.ref) +
@@ -441,7 +814,7 @@ function renderDossiers() {
           );
         })
         .join('')
-    : emptyTableRow(10, '—');
+    : emptyTableRow(cols, t('table.empty'));
 }
 
 function renderCommissions() {
@@ -466,9 +839,9 @@ function renderCommissions() {
       return s + (d.nbPassagers || 1);
     }, 0);
 
-  setMoneyEl('comm-total', totalPax * pricing.commissionEur);
-  setMoneyEl('comm-paid', paidPax * pricing.commissionEur);
-  setMoneyEl('comm-pending', pendingPax * pricing.commissionEur);
+  setCommissionTotalEl('comm-total', totalPax);
+  setCommissionTotalEl('comm-paid', paidPax);
+  setCommissionTotalEl('comm-pending', pendingPax);
 
   const tbody = document.getElementById('commissions-table');
   tbody.innerHTML = won.length
@@ -486,7 +859,7 @@ function renderCommissions() {
             '</td><td style="text-align:center">' +
             (d.nbPassagers || 1) +
             '</td><td class="money-cell"><strong>' +
-            formatMoneyHtml(commissionEurTotal(d)) +
+            formatCommissionHtml(d) +
             '</strong></td><td>' +
             (d.statut === 'paye' ? 'Wave' : '—') +
             '</td><td>' +
@@ -512,65 +885,77 @@ function onAgencyProblemeChange() {
   const escale = /correspondance/i.test(val);
   const panel = document.getElementById('panel-escale');
   if (panel) panel.hidden = !escale;
-  const retardEl = document.getElementById('f-retard');
-  const retardLbl = document.getElementById('f-retard-label');
   const hint = document.getElementById('f-probleme-hint');
-  if (retardEl) {
-    retardEl.disabled = attente;
-    if (attente) retardEl.value = '';
-  }
-  if (retardLbl) {
-    retardLbl.textContent = attente ? t('form.delay') + ' (opt.)' : t('form.delay');
-  }
   if (hint) {
-    hint.textContent = attente
-      ? "Dossier pré-enregistré : signalez le retard ou l'annulation dans les notes quand vous l'avez."
-      : t('form.issue_hint');
+    hint.textContent = attente ? t('agent.ticket_sold_hint') : t('form.issue_hint');
   }
+  updateFormProgress();
 }
 
 async function submitDossier() {
   const btnSubmit = document.getElementById('btn-submit-dossier');
+  clearFormInvalidState();
   const fields = ['nom', 'prenom', 'tel', 'pnr', 'vol', 'compagnie', 'date', 'depart', 'arrivee', 'probleme'];
   const vals = {};
   let missing = false;
   const attente = isAttenteIncidentForm();
 
+  const compHidden = document.getElementById('f-compagnie');
+  const airlineInp = document.getElementById('airlineInput');
+  if (compHidden && airlineInp && !compHidden.value.trim() && airlineInp.value.trim()) {
+    compHidden.value = airlineInp.value.trim();
+  }
+
   fields.forEach(function (f) {
     const el = document.getElementById('f-' + f);
     if (!el) return;
-    vals[f] = el.value.trim();
+    vals[f] = f === 'tel' ? getFormTel() : el.value.trim();
     if (f === 'probleme' && vals[f] === '__ATTENTE__') {
       vals[f] = "En attente d'incident (billet vendu)";
     }
     if (!vals[f]) {
-      if (el.style) el.style.borderColor = 'var(--red)';
+      markFieldInvalid('f-' + f, true);
+      if (f === 'tel') markFieldInvalid('phoneNumber', true);
       missing = true;
-    } else if (el.style) {
-      el.style.borderColor = 'var(--gray-200)';
     }
   });
 
   const issueRoot = document.getElementById('issue-chips');
+  const incidentRoot = document.querySelector('.incident-grid');
   if (!vals.probleme) {
     if (issueRoot) issueRoot.style.outline = '2px solid var(--red)';
+    if (incidentRoot) incidentRoot.classList.add('field-invalid');
     missing = true;
-  } else if (issueRoot) {
-    issueRoot.style.outline = '';
+  } else {
+    if (issueRoot) issueRoot.style.outline = '';
+    if (incidentRoot) incidentRoot.classList.remove('field-invalid');
   }
 
   if (missing) {
-    showToast(t('toast.err'), true);
+    showToast(t('toast.form_incomplete'), true);
+    updateFormProgress();
+    const firstBad = document.querySelector('.field-invalid');
+    if (firstBad && firstBad.scrollIntoView) {
+      firstBad.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
     return;
   }
 
   const pnr = vals.pnr.toUpperCase();
   if (pnr.length !== 6) {
-    showToast('PNR 6', true);
+    markFieldInvalid('f-pnr', true);
+    showToast(t('toast.pnr_invalid'), true);
     return;
   }
 
-  vals.retard = attente ? 0 : parseFloat(document.getElementById('f-retard').value) || 0;
+  if (vals.depart.length !== 3 || vals.arrivee.length !== 3) {
+    if (vals.depart.length !== 3) markFieldInvalid('f-depart', true);
+    if (vals.arrivee.length !== 3) markFieldInvalid('f-arrivee', true);
+    showToast(t('toast.airport_invalid'), true);
+    return;
+  }
+
+  vals.retard = 0;
   vals.attenteIncident = attente;
   vals.nbPassagers = parseInt(document.getElementById('f-nb-passagers').value, 10) || 1;
   const notesParts = [];
@@ -597,7 +982,8 @@ async function submitDossier() {
       return {};
     });
     if (!r.ok) throw new Error(data.error || 'HTTP ' + r.status);
-    showToast(t('toast.saved'));
+    const ref = data.ref || (data.dossier && data.dossier.ref);
+    showToast(ref ? t('toast.saved_ref') + ' ' + ref : t('toast.saved'));
     resetForm();
     await refreshFromAirtable();
     switchPage('dossiers');
@@ -609,7 +995,7 @@ async function submitDossier() {
 }
 
 function resetForm() {
-  ['nom', 'prenom', 'tel', 'pnr', 'vol', 'date', 'depart', 'arrivee', 'retard', 'notes', 'escale-ville', 'vol2'].forEach(
+  ['nom', 'prenom', 'tel', 'pnr', 'vol', 'date', 'depart', 'arrivee', 'notes', 'escale-ville', 'vol2'].forEach(
     function (f) {
       const el = document.getElementById('f-' + f);
       if (!el) return;
@@ -619,15 +1005,25 @@ function resetForm() {
   );
   const comp = document.getElementById('f-compagnie');
   const prob = document.getElementById('f-probleme');
-  if (comp) comp.selectedIndex = 0;
+  if (comp) {
+    if (comp.tagName === 'SELECT') comp.selectedIndex = 0;
+    else comp.value = '';
+  }
   if (prob) prob.value = '';
-  document.querySelectorAll('.issue-chip, .route-chip').forEach(function (c) {
+  if (typeof clearAirline === 'function') clearAirline();
+  document.querySelectorAll('.issue-chip').forEach(function (c) {
     c.classList.remove('active');
+  });
+  document.querySelectorAll('.incident-option').forEach(function (c) {
+    c.classList.remove('selected');
   });
   const issueRoot = document.getElementById('issue-chips');
   if (issueRoot) issueRoot.style.outline = '';
   document.getElementById('f-nb-passagers').value = '1';
   onAgencyProblemeChange();
+  clearFormInvalidState();
+  updateFormCommissionPreview();
+  updateFormProgress();
 }
 
 function formatDate(d) {
@@ -647,7 +1043,17 @@ function badgeHTML(statut) {
     paye: 'status.paye',
     rejete: 'status.rejete',
   };
+  const pills = {
+    nouveau: 'status-new',
+    'attente-incident': 'status-pending',
+    'en-cours': 'status-ongoing',
+    gagne: 'status-won',
+    paye: 'status-won',
+    rejete: 'status-pending',
+  };
   const label = keys[statut] ? t(keys[statut]) : statut;
+  const pill = pills[statut];
+  if (pill) return '<span class="status-pill ' + pill + '">' + escHtml(label) + '</span>';
   return '<span class="badge ' + statut + '">' + escHtml(label) + '</span>';
 }
 
@@ -655,7 +1061,7 @@ function showToast(msg, isError) {
   const toast = document.getElementById('toast');
   toast.innerHTML =
     '<span class="toast-icon">' + (isError ? '⚠️' : '✅') + '</span> ' + escHtml(msg);
-  toast.style.background = isError ? 'var(--red)' : 'var(--navy)';
+  toast.style.background = isError ? 'var(--red)' : 'var(--sky-card, var(--navy))';
   toast.classList.add('show');
   setTimeout(function () {
     toast.classList.remove('show');
@@ -670,12 +1076,19 @@ applyAgencyLoginMode();
   const params = new URLSearchParams(location.search);
   const preview = params.get('preview');
   if (!preview) return;
-  const login = document.getElementById('loginScreen');
-  const app = document.getElementById('app');
+  const login = getLoginEl();
+  const app = getAppEl();
   if (login) login.style.display = 'none';
-  if (app) app.classList.add('active');
+  if (app) {
+    app.hidden = false;
+    app.classList.add('active');
+  }
   switchPage(preview === '1' ? 'nouveau' : preview);
 })();
+
+window.doLogin = doLogin;
+window.doLogout = doLogout;
+window.submitDossier = submitDossier;
 
 (async function initAgencyPortal() {
   try {
