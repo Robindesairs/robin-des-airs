@@ -54,6 +54,22 @@ node -e "const {hashPassword}=require('./netlify/functions/lib/password-hash'); 
 
 Recommandé dans Airtable : colonne **`Agence Partenaire Code`** (texte) + variable `AIRTABLE_COL_AGENCE_CODE=Agence Partenaire Code`.
 
+À la création d’un dossier (espace agence / WhatsApp agence), le backend renseigne aussi (noms par défaut, surchargeables) :
+
+| Colonne Airtable | Valeur |
+|------------------|--------|
+| `Dossier via agence` | `Oui` (ou `AIRTABLE_VAL_DOSSIER_VIA_AGENCE=true` si case à cocher) |
+| `Adresse domicile` | Texte fixe « À compléter (mandat) — dépôt agence CODE » (`AGENCY_AIRTABLE_ADDRESS_PLACEHOLDER`) |
+| `Commission Agence` | `nb passagers × 45 €` (ou `× 3800` si `AIRTABLE_COMMISSION_AGENCE_GMD=1`) |
+| `Montant Client` | `nb × 420 €` |
+| `Commission RDA (30%)` | `nb × honoraires Robin` |
+| `Date Dossier` | date du jour (AAAA-MM-JJ) |
+| `Date` | idem si colonne séparée |
+| `Date du vol` | date saisie dans le formulaire agence |
+| `Statut Dossier` | `Nouveau` |
+
+Variables optionnelles : `AIRTABLE_COL_DOSSIER_VIA_AGENCE`, `AIRTABLE_COL_COMMISSION_AGENCE`, `AIRTABLE_COL_MONTANT_CLIENT`, `AIRTABLE_COL_COMMISSION_RDA`, `AIRTABLE_COL_STATUT_DOSSIER`, `AIRTABLE_COL_DATE_DOSSIER`, `AIRTABLE_COL_DATE`, `AIRTABLE_COL_NB_PAX`, `AIRTABLE_COL_TRAJET`.
+
 Option incident : dans le single-select **Type d'incident**, ajouter  
 `En attente d'incident (billet vendu)`  
 (ou `AIRTABLE_INCIDENT_ATTENTE`).

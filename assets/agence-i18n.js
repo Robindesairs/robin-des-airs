@@ -57,7 +57,8 @@
       'form.step1': '1 — Passager',
       'form.step2': '2 — Vol',
       'form.step3': '3 — Situation',
-      'form.email_auto': 'Pas d\'email à saisir : Robin crée l\'adresse dossier automatiquement.',
+      'form.email_auto':
+        '✓ Pas d\'email — Robin crée <strong>ref@robindesairs.eu</strong> automatiquement',
       'form.route_quick': 'Trajet fréquent (1 clic) :',
       'form.issue_hint': 'Choisissez la situation la plus proche.',
       'form.escale_hint': 'Précisez l\'escale ou la correspondance manquée :',
@@ -243,7 +244,8 @@
       'form.step1': '1 — Passenger',
       'form.step2': '2 — Flight',
       'form.step3': '3 — Situation',
-      'form.email_auto': 'No email needed — Robin creates the case address automatically.',
+      'form.email_auto':
+        '✓ No email needed — Robin creates <strong>ref@robindesairs.eu</strong> automatically',
       'form.route_quick': 'Frequent route (one click):',
       'form.issue_hint': 'Pick the closest situation.',
       'form.escale_hint': 'Specify the layover or missed connection:',
@@ -395,7 +397,11 @@
 
   function apply(root) {
     const el = root || document;
+    el.querySelectorAll('[data-i18n-html]').forEach(function (node) {
+      node.innerHTML = t(node.getAttribute('data-i18n-html'));
+    });
     el.querySelectorAll('[data-i18n]').forEach(function (node) {
+      if (node.hasAttribute('data-i18n-html')) return;
       const key = node.getAttribute('data-i18n');
       const val = t(key);
       if (node.tagName === 'INPUT' || node.tagName === 'TEXTAREA') {

@@ -51,6 +51,92 @@ function agencyCodeCol(cfg) {
   return (process.env.AIRTABLE_COL_AGENCE_CODE || '').trim();
 }
 
+/** Colonne Airtable optionnelle (nom exact). */
+function partnerCol(envKey, defaultLabel) {
+  const v = (process.env[envKey] || defaultLabel || '').trim();
+  return v || '';
+}
+
+function parseAirtableCellValue(envKey, fallback) {
+  const raw = process.env[envKey];
+  const s = raw !== undefined && String(raw).trim() !== '' ? String(raw).trim() : String(fallback);
+  if (s === 'true') return true;
+  if (s === 'false') return false;
+  if (/^-?\d+(\.\d+)?$/.test(s)) return parseFloat(s);
+  return s;
+}
+
+/** Date Airtable : privilégier YYYY-MM-DD (champs type Date). */
+function normalizeDateForAirtable(raw) {
+  const s = String(raw || '').trim();
+  if (!s) return '';
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+  const dm = s.match(/^(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})$/);
+  if (dm) {
+    return `${dm[3]}-${dm[2].padStart(2, '0')}-${dm[1].padStart(2, '0')}`;
+  }
+  return s;
+}
+
+/** Champs financiers + canal agence (noms colonnes Make / Airtable Robin). */
+function applyAgencyPartnerFields(fields, cfg, agencyAccount, body) {
+  const nb = Math.max(1, parseInt(body.nbPassagers, 10) || 1);
+  const today = new Date().toISOString().slice(0, 10);
+
+  const viaCol = partnerCol('AIRTABLE_COL_DOSSIER_VIA_AGENCE', 'Dossier via agence');
+  if (viaCol) {
+    fields[viaCol] = parseAirtableCellValue('AIRTABLE_VAL_DOSSIER_VIA_AGENCE', 'Oui');
+  }
+
+  const statutDossierCol = partnerCol('AIRTABLE_COL_STATUT_DOSSIER', 'Statut Dossier');
+  if (statutDossierCol) {
+    fields[statutDossierCol] = (
+      process.env.AIRTABLE_VAL_STATUT_DOSSIER_AGENCE || 'Nouveau'
+    ).trim();
+  }
+
+  const dateDossierCol = partnerCol('AIRTABLE_COL_DATE_DOSSIER', 'Date Dossier');
+  if (dateDossierCol) fields[dateDossierCol] = today;
+
+  const dateCol = partnerCol('AIRTABLE_COL_DATE', 'Date');
+  if (dateCol && dateCol !== dateDossierCol) fields[dateCol] = today;
+
+  const L = cfg.labels;
+  const flightDate = normalizeDateForAirtable(body.date);
+  if (flightDate && L.dateVol) fields[L.dateVol] = flightDate;
+
+  const nbCol = partnerCol('AIRTABLE_COL_NB_PAX', '');
+  if (nbCol) fields[nbCol] = nb;
+
+  const montantClientCol = partnerCol('AIRTABLE_COL_MONTANT_CLIENT', 'Montant Client');
+  if (montantClientCol) fields[montantClientCol] = Math.round(PRICING.clientNetEur * nb);
+
+  const commissionAgenceCol = partnerCol('AIRTABLE_COL_COMMISSION_AGENCE', 'Commission Agence');
+  if (commissionAgenceCol) {
+    const useGmd = /^1|true|gmd$/i.test(String(process.env.AIRTABLE_COMMISSION_AGENCE_GMD || '').trim());
+    fields[commissionAgenceCol] = useGmd
+      ? PRICING.commissionGmd * nb
+      : Math.round(PRICING.commissionEur * nb * 100) / 100;
+  }
+
+  const commissionRdaCol = partnerCol('AIRTABLE_COL_COMMISSION_RDA', 'Commission RDA (30%)');
+  if (commissionRdaCol) fields[commissionRdaCol] = Math.round(PRICING.robinEur * nb * 100) / 100;
+
+  const trajetCol = partnerCol('AIRTABLE_COL_TRAJET', 'Trajet');
+  const route =
+    body.depart || body.arrivee
+      ? `${(body.depart || '').trim()}→${(body.arrivee || '').trim()}`.replace(/^→|→$/g, '')
+      : '';
+  if (trajetCol && route) fields[trajetCol] = route;
+
+  if (L.adresse) {
+    fields[L.adresse] = (
+      process.env.AGENCY_AIRTABLE_ADDRESS_PLACEHOLDER ||
+      `À compléter (mandat) — dépôt agence ${agencyAccount.code}`
+    ).trim();
+  }
+}
+
 function agencyStatutToUi(statutSuivi) {
   const s = String(statutSuivi || '').trim();
   if (AT_STATUT_TO_AGENCY[s]) return AT_STATUT_TO_AGENCY[s];
@@ -169,7 +255,7 @@ function dossierPayloadToAirtable(cfg, agencyAccount, body) {
   if (body.pnr) fields[L.pnr] = body.pnr.trim().toUpperCase();
   if (body.vol) fields[L.vol] = body.vol.trim().toUpperCase();
   if (body.compagnie) fields[L.compagnie] = body.compagnie.trim();
-  if (body.date) fields[L.dateVol] = body.date;
+  if (body.date) fields[L.dateVol] = normalizeDateForAirtable(body.date);
   if (route) fields[L.itineraire] = route;
   if (attente) {
     fields[L.incident] = INCIDENT_ATTENTE_LABEL;
@@ -187,6 +273,8 @@ function dossierPayloadToAirtable(cfg, agencyAccount, body) {
   fields[L.remarques] = remarques;
   const palier = 600;
   fields[L.indemnite] = nb * palier;
+
+  applyAgencyPartnerFields(fields, cfg, agencyAccount, body);
 
   return { ref, fields };
 }
@@ -212,6 +300,7 @@ module.exports = {
   isAttenteIncidentInput,
   listAgencyDossiers,
   createAgencyDossier,
+  dossierPayloadToAirtable,
   generateAgencyRef,
   agencyStatutToUi,
   agencyStatutFromRecord,

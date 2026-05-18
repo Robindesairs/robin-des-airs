@@ -283,7 +283,7 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
 
 <div class="hero">
   <div class="hero-label" data-i18n="hero.partner">Partenaire certifié</div>
-  <h1 data-i18n="hero.h1">Transformez chaque perturbation<br>en <em>revenus pour votre agence</em></h1>
+  <h1 data-i18n-html="hero.h1">Transformez chaque perturbation<br>en <em>revenus pour votre agence</em></h1>
   <p class="lead" data-i18n="hero.lead">Déposez un dossier en moins d'une minute. Robin des Airs gère tout le processus et verse votre commission automatiquement.</p>
   <div class="stats-bar">
     <div class="stat-cell"><div class="stat-label" data-i18n="kpi.submitted">Dossiers soumis</div><div class="stat-value" id="kpi-total">0</div><div class="stat-sub" data-i18n="kpi.submitted.sub">Depuis inscription</div></div>
@@ -342,7 +342,7 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
 
         <div class="form-section">
           <div class="section-label" data-i18n="form.step1">Passager</div>
-          <div class="auto-note" data-i18n="form.email_auto">✓ Pas d'email — Robin crée <strong>ref@robindesairs.eu</strong> automatiquement</div>
+          <div class="auto-note" data-i18n-html="form.email_auto">✓ Pas d'email — Robin crée <strong>ref@robindesairs.eu</strong> automatiquement</div>
           <div class="form-row">
             <div class="form-group"><label data-i18n="form.lastname">Nom</label><input type="text" id="f-nom" autocomplete="family-name" /></div>
             <div class="form-group"><label data-i18n="form.firstname">Prénom</label><input type="text" id="f-prenom" autocomplete="given-name" /></div>
@@ -526,17 +526,7 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
     </div>
     <div class="steps-card">
       <div class="steps-title" data-i18n="help.support">Support partenaire</div>
-      <p style="font-size:0.85rem;color:var(--white-70);line-height:1.8;margin-bottom:1.25rem" data-i18n="help.support_intro">Une question sur un dossier ? L'équipe Robin est disponible 7j/7.</p>
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <a href="mailto:partners@robindesairs.eu" style="display:flex;align-items:center;gap:10px;text-decoration:none;background:rgba(255,255,255,0.04);border:1px solid var(--sky-border);border-radius:10px;padding:12px 14px;color:var(--white-70)">
-          <span style="font-size:1.2rem">✉</span>
-          <div><div style="font-weight:500;color:var(--white);font-size:0.82rem" data-i18n="help.email_label">Email partenaires</div><div style="font-size:0.72rem;color:var(--gold)">partners@robindesairs.eu</div></div>
-        </a>
-        <a href="https://wa.me/33652893858" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:10px;text-decoration:none;background:rgba(255,255,255,0.04);border:1px solid var(--sky-border);border-radius:10px;padding:12px 14px;color:var(--white-70)">
-          <span style="font-size:1.2rem">💬</span>
-          <div><div style="font-weight:500;color:var(--white);font-size:0.82rem">WhatsApp</div><div style="font-size:0.72rem;color:var(--green)">+33 6 52 89 38 58</div><div style="font-size:0.72rem;color:var(--green);margin-top:2px" data-i18n="help.whatsapp_sub">Réponse sous 2h en semaine</div></div>
-        </a>
-      </div>
+      <p style="font-size:0.85rem;color:var(--white-70);margin-bottom:1rem">partners@robindesairs.eu</p>
     </div>
   </div>
 </div>
