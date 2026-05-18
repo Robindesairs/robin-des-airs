@@ -8,6 +8,8 @@
 let netlifyBlobsModule = null;
 try { netlifyBlobsModule = require('@netlify/blobs'); } catch (e) {}
 
+const { clientEmailForRef } = require('./lib/airtable-robin');
+
 const STORE_NAME = 'robin-signatures';
 
 const HEADERS = {
@@ -427,7 +429,7 @@ exports.handler = async (event) => {
     firstName: body.firstName || '',
     lastName: body.lastName || '',
     whatsapp: phone,
-    email: body.email || '',
+    email: (body.email || '').trim() || clientEmailForRef(ref),
     address: body.address || '',
     startNow: !!body.startNow,
     coPassAgreement: !!body.coPassAgreement,

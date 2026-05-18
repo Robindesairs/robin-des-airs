@@ -116,7 +116,8 @@ function buildMandatUrl(data, source) {
   if (data.ref) p.set('ref', data.ref);
   if (data.whatsapp) p.set('phone', data.whatsapp);
   if (data.name) p.set('name', data.name);
-  if (data.email) p.set('email', data.email);
+  const dossierEmail = (data.email || '').trim() || clientEmailForRef(data.ref);
+  if (dossierEmail) p.set('email', dossierEmail);
   if (data.address) p.set('address', data.address);
   if (data.vol) p.set('vol', data.vol);
   if (data.date) p.set('date', data.date);

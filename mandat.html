@@ -100,6 +100,10 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
 .single-check input[type=checkbox]{width:20px;height:20px;min-width:20px;margin-top:2px;cursor:pointer;accent-color:var(--green)}
 .single-check p{font-size:13px;line-height:1.7;color:var(--ink)}
 .single-check p strong{color:var(--green)}
+/* EMAIL DOSSIER TECHNIQUE */
+.email-tech-note{font-size:12px;line-height:1.75;color:#3a3630;padding:14px 18px;background:var(--green-pale);border:1px solid #b8cfc3;border-left:3px solid var(--green-mid);margin:10px 0 0}
+.email-tech-note strong{color:var(--green)}
+.email-tech-ref{font-family:'DM Mono',monospace;font-size:12px;color:var(--green);word-break:break-all}
 /* SIGNATURE */
 .sig-area{background:white;border:2px dashed var(--border);padding:16px;text-align:center;cursor:pointer;transition:border-color .2s;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;margin:16px 0}
 .sig-area:hover{border-color:var(--gold)}
@@ -213,8 +217,16 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
       <div class="ferr" id="waErr">Numéro requis</div>
     </div>
     <div>
-      <label>Email</label>
-      <input type="email" id="em" placeholder="jean@email.com">
+      <label>Adresse email du dossier</label>
+      <input type="email" id="em" class="ro" readonly aria-readonly="true" autocomplete="off">
+      <div class="email-tech-note" id="emailTechNote">
+        <strong>Adresse de référence du dossier :</strong>
+        <span class="email-tech-ref" id="emailTechExample">ref@robindesairs.eu</span>
+        <span style="display:block;margin-top:6px">
+          Création et gestion exclusive par Robin des Airs — cadre juridique : <strong>Article 1</strong>.
+          Suivi avec vous : <strong>WhatsApp</strong> ou autre canal convenu (complémentaire).
+        </span>
+      </div>
     </div>
   </div>
   <div class="field-row">
@@ -291,8 +303,21 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
 <div class="doc-section">
   <div class="sec-title">⚖️ Conditions du mandat</div>
   <div class="clause le">
-    <span class="cnum">Article 1 — Objet</span>
-    Le Mandant confie à Robin des Airs la mission <strong>exclusive</strong> d'agir en son nom pour obtenir l'indemnisation prévue par le <strong>Règlement CE 261/2004</strong> auprès de la compagnie aérienne concernée — par voie amiable, administrative, judiciaire ou arbitrale.
+    <span class="cnum">Article 1 — Objet du mandat et adresse email du dossier</span>
+    Le Mandant confie à Robin des Airs une mission <strong>exclusive</strong> d'agir en son nom et pour son compte afin d'obtenir l'indemnisation due au titre du <strong>Règlement (CE) n° 261/2004</strong>, par toute voie amiable, administrative, judiciaire ou arbitrale.
+    <br><br>
+    Pour les besoins du traitement du dossier, Robin des Airs crée une <strong>adresse email technique</strong> unique, composée de la référence du mandat en minuscules suivie de «&nbsp;@robindesairs.eu&nbsp;»
+    (ex.&nbsp;: <strong id="clauseEmailExample">ref@robindesairs.eu</strong>).
+    Cette adresse constitue l'<strong>adresse de référence du dossier</strong> pour l'ensemble des échanges avec la compagnie aérienne, ses représentants, ses conseils, ses intermédiaires et, plus généralement, tout tiers intervenant dans le cadre du recouvrement.
+    <strong>Robin des Airs en assure seul l'administration et la gestion exclusive.</strong>
+    <br><br>
+    Le Mandant <strong>autorise expressément</strong> Robin des Airs à créer et exploiter, pour la durée du mandat, cette adresse et à l'utiliser pour toute correspondance utile au traitement du dossier, y compris les mises en demeure et actes de procédure.
+    Robin des Airs <strong>conserve les accès, copies et pièces</strong> issus de ces échanges afin d'assurer la traçabilité du dossier.
+    <br><br>
+    Le Mandant reconnaît que Robin des Airs pourra également utiliser, <strong>si la procédure l'exige</strong>, l'adresse email personnelle du Mandant communiquée dans le présent mandat ou ultérieurement.
+    <br><br>
+    Le <strong>suivi opérationnel avec le Mandant</strong> peut notamment être assuré via <strong>WhatsApp</strong> ou tout autre canal de communication convenu entre les parties,
+    <strong>sans caractère exclusif</strong> de ces canaux pour la notification d'informations importantes.
   </div>
   <div class="clause">
     <span class="cnum">Article 2 — Durée</span>
@@ -428,6 +453,7 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
     Votre dossier est officiellement ouvert. Robin des Airs prend le relais immédiatement.
   </p>
   <div class="success-ref">Référence : <strong id="sRef">—</strong></div>
+  <div class="success-ref" style="margin-top:8px">Email dossier : <strong id="sEmail">—</strong></div>
   <div class="success-steps">
     <div class="sstep"><div class="snum">1</div><div><strong>Confirmation WhatsApp sous 24h</strong><br>Récapitulatif complet + numéro de suivi.</div></div>
     <div class="sstep"><div class="snum">2</div><div><strong>Mise en demeure sous 48h</strong><br>Courrier officiel envoyé à la compagnie aérienne.</div></div>
@@ -440,6 +466,20 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
 </div>
 </div><!-- fin page -->
 <script>
+// ── EMAIL DOSSIER (aligné serveur : clientEmailForRef) ─────────────
+function clientEmailForRef(ref) {
+  if (!ref) return '';
+  return String(ref).trim().toLowerCase() + '@robindesairs.eu';
+}
+function applyDossierEmailUI() {
+  const addr = clientEmailForRef(REF);
+  const em = document.getElementById('em');
+  if (em) em.value = addr;
+  const ex = document.getElementById('emailTechExample');
+  if (ex) ex.textContent = addr || 'ref@robindesairs.eu';
+  const cl = document.getElementById('clauseEmailExample');
+  if (cl) cl.textContent = addr || 'ref@robindesairs.eu';
+}
 // ── URL PARAMS ───────────────────────────────────────────────────
 const P = new URLSearchParams(window.location.search);
 let REF   = P.get('ref')       || ('RDA-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + Math.random().toString(36).substring(2,6).toUpperCase());
@@ -474,6 +514,7 @@ window.addEventListener('DOMContentLoaded', () => {
     } catch (_) {}
   })();
   document.getElementById('dRef').textContent  = REF;
+  applyDossierEmailUI();
   const now = new Date();
   document.getElementById('dDate').textContent = now.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
   document.getElementById('sigDate').value     = now.toLocaleDateString('fr-FR');
@@ -505,6 +546,7 @@ function applyLegacyUrlParams() {
     REF = P.get('ref');
     const dr = document.getElementById('dRef');
     if (dr) dr.textContent = REF;
+    applyDossierEmailUI();
   }
   const setIfEmpty = (id, val) => {
     if (!val) return;
@@ -520,7 +562,22 @@ function applyLegacyUrlParams() {
   const phone = P.get('phone') || P.get('whatsapp') || P.get('wa') || P.get('waId');
   if (phone) setIfEmpty('wa', decodeURIComponent(phone));
   setIfEmpty('addr', P.get('address') || '');
-  setIfEmpty('em', P.get('email') || '');
+  const urlEmail = (P.get('email') || '').trim();
+  const techEmail = clientEmailForRef(REF);
+  const emEl = document.getElementById('em');
+  if (emEl && techEmail) {
+    emEl.value = techEmail;
+    if (urlEmail && urlEmail.toLowerCase() !== techEmail.toLowerCase()) {
+      const note = document.getElementById('emailTechNote');
+      if (note) {
+        note.innerHTML +=
+          ' <span style="display:block;margin-top:8px;font-size:11px;color:var(--muted)">Email Airtable enregistré : ' +
+          urlEmail.replace(/</g, '&lt;') +
+          ' (identique au format technique attendu pour ce dossier).</span>';
+      }
+    }
+  }
+  applyDossierEmailUI();
   const cieEl = document.getElementById('cie');
   if (cieEl && !cieEl.value.trim() && P.get('compagnie')) cieEl.value = P.get('compagnie');
   const motif = (P.get('motif') || P.get('motif_fr') || '').toLowerCase();
@@ -903,7 +960,7 @@ function submitMandat() {
     firstName: document.getElementById('fn').value.trim(),
     lastName:  document.getElementById('ln').value.trim(),
     whatsapp:  document.getElementById('wa').value.trim(),
-    email:     document.getElementById('em').value.trim(),
+    email:     clientEmailForRef(REF) || document.getElementById('em').value.trim(),
     address:   document.getElementById('addr').value.trim(),
     startNow:  document.getElementById('startNow').checked,
     coPassAgreement: allCoPassChecked(),
@@ -935,6 +992,8 @@ function showSuccess() {
   document.getElementById('mandatForm').style.display='none';
   document.getElementById('successScreen').style.display='block';
   document.getElementById('sRef').textContent = REF;
+  const se = document.getElementById('sEmail');
+  if (se) se.textContent = clientEmailForRef(REF) || '—';
   document.getElementById('pgBar').style.width='100%';
   window.scrollTo({top:0,behavior:'smooth'});
 }

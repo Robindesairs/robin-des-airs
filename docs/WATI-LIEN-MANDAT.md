@@ -13,7 +13,7 @@ Ajoutez des **paramètres de requête** (query string). Dans **Make**, encodez c
 | **`ref`** | **Référence dossier identique** au champ Airtable utilisé par `submit-mandat` (ex. `RDA-20260515-1234-ABC12D`). Sans elle, la mise à jour Airtable peut s’appuyer sur le **numéro WhatsApp** si une seule ligne correspond. |
 | **`phone`** ou **`whatsapp`** ou **`wa`** | Préremplit le champ WhatsApp (indicatif inclus, ex. `+33612345678`). |
 | **`name`** | Nom complet ; la page sépare prénom / nom. |
-| **`email`** | Email. |
+| **`email`** | Adresse **technique du dossier** : en pratique `référence_en_minuscules@robindesairs.eu` (colonne Airtable **Email**, créée par `clientEmailForRef`). Le mandat l’affiche et l’explique ; le client n’a pas à la saisir. |
 | **`address`** | Adresse postale. |
 | **`vol`** | Numéro de vol (ex. `AF718`). |
 | **`date`** | Date au format **`JJ/MM/AAAA`**. |
