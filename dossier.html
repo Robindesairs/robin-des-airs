@@ -45,6 +45,33 @@
   .progress-label{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--earth);margin-bottom:6px}
   .progress-bar{height:8px;background:#e8dcc8;border-radius:999px;overflow:hidden}
   .progress-bar-fill{height:100%;width:20%;background:linear-gradient(90deg,var(--teal),var(--teal-bright));transition:width .25s ease}
+  .draft-toolbar{
+    margin:0 0 12px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    background:#fff;
+    border:1px solid var(--sand-deep);
+    border-left:4px solid var(--teal);
+    border-radius:10px;
+    padding:10px 12px;
+    font-size:12.5px;
+    color:var(--earth);
+  }
+  .draft-status strong{color:var(--navy)}
+  .draft-clear{
+    border:1px solid rgba(0,200,122,.35);
+    background:#fff;
+    color:var(--teal-dark);
+    border-radius:999px;
+    padding:6px 12px;
+    font-size:12px;
+    font-weight:700;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .draft-clear:hover{background:var(--bg-warm);border-color:var(--teal)}
 
   /* Montant potentiel (non sticky) */
   .sticky-motivation-wrap{
@@ -282,6 +309,10 @@
     <div class="progress-bar">
       <div class="progress-bar-fill" id="progress-fill"></div>
     </div>
+  </div>
+  <div class="draft-toolbar" role="status" aria-live="polite">
+    <span class="draft-status" id="draftStatus"><strong>Brouillon local :</strong> sauvegarde automatique active.</span>
+    <button type="button" class="draft-clear" id="clearDraftBtn">Effacer le brouillon</button>
   </div>
 
   <form id="dossierForm" method="POST" data-netlify="true" action="/merci-dossier.html" enctype="multipart/form-data" name="dossier" novalidate>
@@ -1334,6 +1365,115 @@
     return true;
   }
 
+  // ============ BROUILLON AUTO (LOCAL) ============
+  const AUTOSAVE_KEY = 'rda_dossier_autosave_v1';
+  const AUTOSAVE_EXCLUDE_IDS = new Set([
+    'signature-data','proof-datetime','proof-ua','proof-tz','proof-sig-hash'
+  ]);
+  function setDraftStatus(text){
+    const el = document.getElementById('draftStatus');
+    if (el) el.innerHTML = `<strong>Brouillon local :</strong> ${escapeHtml(text)}`;
+  }
+  function collectDraftData(){
+    const data = {
+      ts: Date.now(),
+      currentStep: current,
+      currentMiniStep: currentMini,
+      fields: {},
+      sigHasStroke: Boolean(sigHasStroke)
+    };
+    document.querySelectorAll('#dossierForm input, #dossierForm select, #dossierForm textarea').forEach((el) => {
+      const id = el.id || '';
+      const name = el.name || '';
+      if (!name || AUTOSAVE_EXCLUDE_IDS.has(id)) return;
+      const type = (el.type || '').toLowerCase();
+      if (type === 'file') return;
+      if (type === 'radio') {
+        if (!data.fields[name]) data.fields[name] = { type: 'radio', value: '' };
+        if (el.checked) data.fields[name].value = el.value;
+        return;
+      }
+      if (type === 'checkbox') {
+        data.fields[name] = { type: 'checkbox', checked: !!el.checked };
+        return;
+      }
+      data.fields[name] = { type: 'value', value: el.value || '' };
+    });
+    return data;
+  }
+  function persistDraft(){
+    try {
+      const payload = collectDraftData();
+      localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(payload));
+      setDraftStatus('sauvegardé automatiquement sur cet appareil.');
+    } catch {
+      setDraftStatus('impossible de sauvegarder automatiquement (mode privé ou stockage bloqué).');
+    }
+  }
+  function restoreDraft(){
+    try {
+      const raw = localStorage.getItem(AUTOSAVE_KEY);
+      if (!raw) return false;
+      const parsed = JSON.parse(raw);
+      const fields = parsed && parsed.fields ? parsed.fields : {};
+      const paxField = fields['pax-count-input'] || fields['pax_count'] || fields['nb_passagers'];
+      if (paxField && paxField.type === 'value') syncPassengerBlocksToCount(paxField.value);
+      Object.keys(fields).forEach((name) => {
+        const payload = fields[name] || {};
+        const all = document.getElementsByName(name);
+        if (!all || !all.length) return;
+        const type = payload.type;
+        if (type === 'radio') {
+          Array.from(all).forEach((el) => { el.checked = (String(el.value) === String(payload.value)); });
+          return;
+        }
+        if (type === 'checkbox') {
+          Array.from(all).forEach((el) => { el.checked = !!payload.checked; });
+          return;
+        }
+        const first = all[0];
+        if (first && typeof payload.value === 'string') first.value = payload.value;
+      });
+      syncTrajetFields();
+      syncMotifHelp();
+      syncPax1FromContact();
+      syncContactPhone();
+      updatePaxMotivation();
+      const restoredStep = Math.max(1, Math.min(5, parseInt(parsed.currentStep, 10) || 1));
+      const restoredMini = Math.max(1, Math.min(4, parseInt(parsed.currentMiniStep, 10) || 1));
+      show(restoredStep, { scrollTop: false });
+      if (restoredStep === 1) showMiniStep(restoredMini);
+      const ts = parsed.ts ? new Date(parsed.ts) : null;
+      if (ts && !Number.isNaN(ts.getTime())) {
+        setDraftStatus(`repris depuis le ${ts.toLocaleDateString('fr-FR')} a ${ts.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'})}.`);
+      } else {
+        setDraftStatus('ancien brouillon restaure.');
+      }
+      return true;
+    } catch {
+      return false;
+    }
+  }
+  let draftTimer = null;
+  function scheduleDraftSave(){
+    if (draftTimer) clearTimeout(draftTimer);
+    draftTimer = setTimeout(() => {
+      persistDraft();
+      draftTimer = null;
+    }, 300);
+  }
+  document.getElementById('dossierForm').addEventListener('input', scheduleDraftSave, true);
+  document.getElementById('dossierForm').addEventListener('change', scheduleDraftSave, true);
+  document.getElementById('clearDraftBtn')?.addEventListener('click', () => {
+    try {
+      localStorage.removeItem(AUTOSAVE_KEY);
+      setDraftStatus('brouillon efface. Vous repartez de zero.');
+    } catch {
+      setDraftStatus('impossible d effacer le brouillon local.');
+    }
+  });
+  restoreDraft();
+
   document.getElementById('dossierForm').addEventListener('input', (e)=>{
     const t = e.target;
     if (!(t instanceof HTMLElement)) return;
@@ -1782,6 +1922,69 @@
   syncContactPhone();
   wireDialAutocomplete();
 
+  // ============ PREFILL DEPUIS LIEN WHATSAPP (QUERYSTRING) ============
+  function applyWhatsappPrefillFromQuery() {
+    const q = new URLSearchParams(window.location.search || '');
+    if (!q.toString()) return;
+    const setIf = (id, val) => {
+      const el = document.getElementById(id);
+      if (!el || val == null) return;
+      const v = String(val).trim();
+      if (!v) return;
+      el.value = v;
+    };
+    setIf('ct-prenom', q.get('prenom') || q.get('first_name'));
+    setIf('ct-nom', q.get('nom') || q.get('last_name'));
+    setIf('ct-email', q.get('email'));
+    setIf('ct-pays', q.get('pays') || q.get('country'));
+    setIf('ct-adresse', q.get('adresse') || q.get('address'));
+    setIf('ct-cp', q.get('cp') || q.get('postal_code'));
+    setIf('ct-ville', q.get('ville') || q.get('city'));
+    setIf('vol', q.get('vol') || q.get('flight'));
+    setIf('date', q.get('date') || q.get('flight_date'));
+    setIf('compagnie', q.get('compagnie') || q.get('airline'));
+    setIf('depart', q.get('depart') || q.get('from'));
+    setIf('arrivee', q.get('arrivee') || q.get('to'));
+    setIf('pnr', q.get('pnr') || q.get('booking'));
+
+    const motif = (q.get('motif') || '').trim().toLowerCase();
+    const motifMap = { retard: 'm-retard', annulation: 'm-annul', surbooking: 'm-surb' };
+    const motifId = motifMap[motif];
+    if (motifId) {
+      const radio = document.getElementById(motifId);
+      if (radio) radio.checked = true;
+    }
+
+    const indicatifRaw = (q.get('indicatif') || q.get('dial') || '').replace(/[^\d]/g, '');
+    const telRaw = (q.get('whatsapp') || q.get('wa_phone') || q.get('waid') || q.get('msisdn') || q.get('telephone') || q.get('tel') || q.get('phone') || '').trim();
+    const telDigits = telRaw.replace(/[^\d]/g, '');
+    const dialKeys = Object.keys(INDICATIF_TO_FLAG).sort((a, b) => b.length - a.length);
+    let dialDigits = indicatifRaw;
+    let localDigits = telDigits;
+    if (!dialDigits && telDigits) {
+      const detectedDial = dialKeys.find((k) => telDigits.startsWith(k));
+      if (detectedDial) {
+        dialDigits = detectedDial;
+        localDigits = telDigits.slice(detectedDial.length);
+      }
+    }
+    if (dialDigits) setIf('ct-indicatif', `+${dialDigits}`);
+    if (localDigits) setIf('ct-tel-num', localDigits);
+
+    const nbPaxRaw = q.get('nbpax') || q.get('nb_passagers') || q.get('passagers');
+    if (nbPaxRaw) {
+      syncPassengerBlocksToCount(nbPaxRaw);
+    }
+
+    syncTrajetFields();
+    syncMotifHelp();
+    syncPax1FromContact();
+    syncContactPhone();
+    fillFromFlightNumber();
+    updatePaxMotivation();
+  }
+  applyWhatsappPrefillFromQuery();
+
   // Date picker: fallback pour navigateurs où l'ouverture est capricieuse
   const flightDateInput = document.getElementById('date');
   if (flightDateInput && typeof flightDateInput.showPicker === 'function') {
@@ -1830,6 +2033,38 @@
   }
 
   // Hash signature just before submit (proof of integrity)
+  async function initYouSignForDossier() {
+    const firstName = (document.getElementById('ct-prenom')?.value || '').trim();
+    const lastName = (document.getElementById('ct-nom')?.value || '').trim();
+    const email = (document.getElementById('ct-email')?.value || '').trim();
+    const phone = (document.getElementById('ct-tel')?.value || '').trim();
+    const vol = (document.getElementById('vol')?.value || '').trim();
+    const date = (document.getElementById('date')?.value || '').trim();
+    const route = `${(document.getElementById('depart')?.value || '').trim()} -> ${(document.getElementById('arrivee')?.value || '').trim()}`.trim();
+    const nbPax = document.querySelectorAll('.passenger-block').length || 1;
+
+    const labelParts = ['Dossier Robin des Airs', vol || 'Vol', date || 'Date'];
+    const label = labelParts.filter(Boolean).join(' - ');
+
+    const res = await fetch('/api/yousign-init', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        first_name: firstName || 'Client',
+        last_name: lastName || 'Robin',
+        email,
+        phone,
+        label,
+        metadata: { vol, date, route, nb_pax: nbPax }
+      })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data?.signing_url) {
+      throw new Error(data?.error || 'YouSign indisponible');
+    }
+    return data;
+  }
+
   const dossierFormEl = document.getElementById('dossierForm');
   dossierFormEl.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -1853,7 +2088,25 @@
         document.getElementById('proof-sig-hash').value = '';
       }
     }
-    dossierFormEl.submit();
+    const submitBtn = document.getElementById('submitBtn');
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Connexion YouSign...';
+    }
+    try {
+      const ys = await initYouSignForDossier();
+      try { localStorage.removeItem(AUTOSAVE_KEY); } catch {}
+      window.location.href = ys.signing_url;
+      return;
+    } catch (err) {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '✦ Envoyer mon dossier';
+      }
+      const msg = (err && err.message) ? err.message : 'Impossible de lancer YouSign pour le moment.';
+      alert(`YouSign indisponible: ${msg}\n\nLe dossier peut etre envoye via le parcours standard.`);
+      dossierFormEl.submit();
+    }
   });
 </script>
 

@@ -1,6 +1,330 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRM Dossiers | Robin des Airs</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <style>
+    :root {
+      --navy: #061326;
+      --teal: #00c87a;
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --text: #1e2b3c;
+      --muted: #6a7890;
+      --line: #e4e9f2;
+      --warn: #ffb020;
+      --ok: #22c55e;
+      --danger: #ef4444;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .topbar {
+      background: var(--navy);
+      color: #fff;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .brand {
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      font-size: 15px;
+    }
+
+    .brand span { color: var(--teal); }
+
+    .top-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 8px;
+      padding: 9px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-primary { background: var(--teal); color: #fff; }
+    .btn-light { background: rgba(255,255,255,0.14); color: #fff; }
+
+    .container {
+      max-width: 1180px;
+      margin: 24px auto 36px;
+      padding: 0 18px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(150px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .kpi-label {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .kpi-value {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--navy);
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    input, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+      min-height: 40px;
+      padding: 0 12px;
+      font-size: 14px;
+      color: var(--text);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+      vertical-align: middle;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      background: #fbfcff;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+    }
+
+    .b-ok { background: rgba(34, 197, 94, 0.12); color: #11813d; }
+    .b-warn { background: rgba(255, 176, 32, 0.18); color: #8d5c00; }
+    .b-danger { background: rgba(239, 68, 68, 0.14); color: #a91b1b; }
+
+    .row-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .btn-mini {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      border-radius: 8px;
+      padding: 6px 9px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .btn-mini:hover { background: #f4f7fb; }
+
+    .muted { color: var(--muted); }
+
+    @media (max-width: 980px) {
+      .stats { grid-template-columns: repeat(2, minmax(140px, 1fr)); }
+      .filters { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      .stats { grid-template-columns: 1fr; }
+      .filters { grid-template-columns: 1fr; }
+      .topbar { flex-direction: column; align-items: flex-start; }
+      table, thead, tbody, th, td, tr { display: block; }
+      thead { display: none; }
+      tr { border-bottom: 1px solid var(--line); padding: 8px 0; }
+      td { border: 0; padding: 6px 0; }
+      td::before {
+        content: attr(data-label) " : ";
+        font-weight: 700;
+        color: var(--muted);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">ROBIN<span> CRM</span> — Gestion des dossiers</div>
+    <div class="top-actions">
+      <a class="btn btn-light" href="/">Retour site</a>
+      <button class="btn btn-primary" type="button">+ Nouveau dossier</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="stats">
+      <article class="card">
+        <div class="kpi-label">Dossiers totaux</div>
+        <div class="kpi-value">128</div>
+      </article>
+      <article class="card">
+        <div class="kpi-label">En attente de pièces</div>
+        <div class="kpi-value">24</div>
+      </article>
+      <article class="card">
+        <div class="kpi-label">En procédure</div>
+        <div class="kpi-value">53</div>
+      </article>
+      <article class="card">
+        <div class="kpi-label">Payés ce mois</div>
+        <div class="kpi-value">31</div>
+      </article>
+    </section>
+
+    <section class="filters">
+      <input type="text" placeholder="Rechercher: nom, numéro de vol, e-mail...">
+      <select>
+        <option>Tous les statuts</option>
+        <option>En attente</option>
+        <option>En procédure</option>
+        <option>Indemnisé</option>
+      </select>
+      <select>
+        <option>Toutes les compagnies</option>
+        <option>Air France</option>
+        <option>Transavia</option>
+        <option>Ryanair</option>
+      </select>
+      <select>
+        <option>Toutes périodes</option>
+        <option>7 derniers jours</option>
+        <option>30 derniers jours</option>
+        <option>Ce trimestre</option>
+      </select>
+    </section>
+
+    <section class="card" style="padding:0;">
+      <table>
+        <thead>
+          <tr>
+            <th>Dossier</th>
+            <th>Client</th>
+            <th>Vol</th>
+            <th>Compagnie</th>
+            <th>Montant</th>
+            <th>Statut</th>
+            <th>Dernière activité</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="Dossier"><strong>#RDA-24091</strong></td>
+            <td data-label="Client">Amina B.<br><span class="muted">amina@email.com</span></td>
+            <td data-label="Vol">AF718<br><span class="muted">CDG → DKR</span></td>
+            <td data-label="Compagnie">Air France</td>
+            <td data-label="Montant"><strong>600 EUR</strong></td>
+            <td data-label="Statut"><span class="badge b-warn">En attente</span></td>
+            <td data-label="Dernière activité">Aujourd'hui, 11:42</td>
+            <td data-label="Actions">
+              <div class="row-actions">
+                <a class="btn-mini" href="#">Voir</a>
+                <a class="btn-mini" href="#">Relancer</a>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td data-label="Dossier"><strong>#RDA-24087</strong></td>
+            <td data-label="Client">Jean M.<br><span class="muted">jean@email.com</span></td>
+            <td data-label="Vol">TO3120<br><span class="muted">ORY → OPO</span></td>
+            <td data-label="Compagnie">Transavia</td>
+            <td data-label="Montant"><strong>400 EUR</strong></td>
+            <td data-label="Statut"><span class="badge b-ok">Indemnisé</span></td>
+            <td data-label="Dernière activité">Hier, 16:05</td>
+            <td data-label="Actions">
+              <div class="row-actions">
+                <a class="btn-mini" href="#">Voir</a>
+                <a class="btn-mini" href="#">Facture</a>
+              </div>
+            </td>
+          </tr>
+
+          <tr>
+            <td data-label="Dossier"><strong>#RDA-24084</strong></td>
+            <td data-label="Client">Sarah K.<br><span class="muted">sarah@email.com</span></td>
+            <td data-label="Vol">FR9386<br><span class="muted">MRS → BCN</span></td>
+            <td data-label="Compagnie">Ryanair</td>
+            <td data-label="Montant"><strong>250 EUR</strong></td>
+            <td data-label="Statut"><span class="badge b-danger">À relancer</span></td>
+            <td data-label="Dernière activité">22/04/2026</td>
+            <td data-label="Actions">
+              <div class="row-actions">
+                <a class="btn-mini" href="#">Voir</a>
+                <a class="btn-mini" href="#">WhatsApp</a>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Robin des Airs — CRM</title>
