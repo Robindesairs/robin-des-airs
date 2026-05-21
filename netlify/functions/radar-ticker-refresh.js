@@ -3,10 +3,7 @@
  * Planifié via netlify.toml (cron). Stocke le résultat dans Netlify Blobs.
  */
 
-let netlifyBlobsModule = null;
-try {
-  netlifyBlobsModule = require('@netlify/blobs');
-} catch (e) {}
+const { getBlobStore } = require('./lib/netlify-blobs-store');
 
 const STORE_NAME = 'robin-radar-ticker';
 const CACHE_KEY = 'banner/latest.json';
@@ -82,14 +79,20 @@ exports.handler = async (event) => {
   try {
     const cache = await buildTickerCache();
 
-    if (netlifyBlobsModule) {
-      const blobs = netlifyBlobsModule;
-      if (blobs.connectLambda && event) blobs.connectLambda(event);
-      const store = blobs.getStore(STORE_NAME);
-      await store.setJSON(CACHE_KEY, cache);
-      console.log('radar-ticker-refresh: saved', cache.count, 'vols bandeau');
+    let blobSaved = false;
+    let blobError = null;
+    const store = getBlobStore(event, STORE_NAME);
+    if (store) {
+      try {
+        await store.setJSON(CACHE_KEY, cache);
+        blobSaved = true;
+        console.log('radar-ticker-refresh: saved', cache.count, 'vols bandeau');
+      } catch (e) {
+        blobError = e.message;
+        console.warn('radar-ticker-refresh: blob write', e.message);
+      }
     } else {
-      console.warn('radar-ticker-refresh: @netlify/blobs absent — cache non écrit');
+      blobError = 'Netlify Blobs indisponible';
     }
 
     return {
@@ -97,6 +100,8 @@ exports.handler = async (event) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         ok: true,
+        blobSaved,
+        blobError,
         count: cache.count,
         updatedAt: cache.updatedAt,
         flights: cache.flights.map((f) => ({

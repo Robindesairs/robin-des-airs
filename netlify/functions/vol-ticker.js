@@ -3,10 +3,7 @@
  * GET /api/vol-ticker
  */
 
-let netlifyBlobsModule = null;
-try {
-  netlifyBlobsModule = require('@netlify/blobs');
-} catch (e) {}
+const { getBlobStore } = require('./lib/netlify-blobs-store');
 
 const STORE_NAME = 'robin-radar-ticker';
 const CACHE_KEY = 'banner/latest.json';
@@ -25,11 +22,9 @@ const {
 } = require('./radar');
 
 async function readBlobCache(event) {
-  if (!netlifyBlobsModule) return null;
+  const store = getBlobStore(event, STORE_NAME);
+  if (!store) return null;
   try {
-    const blobs = netlifyBlobsModule;
-    if (blobs.connectLambda && event) blobs.connectLambda(event);
-    const store = blobs.getStore(STORE_NAME);
     return await store.get(CACHE_KEY, { type: 'json' });
   } catch {
     return null;
