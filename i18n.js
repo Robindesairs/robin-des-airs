@@ -1,7 +1,32 @@
 /* Robin des Airs — Traductions FR et EN uniquement */
 window.I18N = (function() {
+  function isEnPath() {
+    try {
+      return /^\/en\/?$/i.test(location.pathname || '');
+    } catch (e) {
+      return false;
+    }
+  }
+
   var stored = (localStorage.getItem('robin_lang') || 'fr').toLowerCase();
-  var currentLang = (stored === 'en' ? 'en' : 'fr');
+  var urlLang = '';
+  try {
+    urlLang = (new URLSearchParams(location.search).get('lang') || '').toLowerCase();
+  } catch (e2) {}
+  var currentLang = 'fr';
+  if (isEnPath() || urlLang === 'en') {
+    currentLang = 'en';
+    try {
+      localStorage.setItem('robin_lang', 'en');
+    } catch (e3) {}
+  } else if (urlLang === 'fr') {
+    currentLang = 'fr';
+    try {
+      localStorage.setItem('robin_lang', 'fr');
+    } catch (e4) {}
+  } else {
+    currentLang = stored === 'en' ? 'en' : 'fr';
+  }
   var storedCur = (localStorage.getItem('robin_currency') || 'eur').toLowerCase();
   var currentCurrency = storedCur === 'fcfa' || storedCur === 'usd' ? storedCur : 'eur';
   /** Taux indicatifs pour l’affichage uniquement (indemnités légales en EUR). */
@@ -52,6 +77,10 @@ window.I18N = (function() {
       hero_stat_lost: "Si on perd",
       hero_stat_24h: "Dossier sous 24h",
       nav_cta: "Combien je touche ? →",
+      nav_english_version: "🇬🇧 English",
+      nav_french_version: "🇫🇷 Français",
+      nav_drawer_english: "🇬🇧 Version anglaise",
+      nav_drawer_french: "🇫🇷 Version française",
       nav_drawer_calc: "🧮 Calculateur",
       nav_drawer_loi: "📋 La loi CE 261",
       nav_drawer_how: "⚙️ Comment ça marche",
@@ -333,6 +362,10 @@ window.I18N = (function() {
       hero_stat_lost: "If we lose",
       hero_stat_24h: "File within 24h",
       nav_cta: "Get my compensation →",
+      nav_english_version: "🇬🇧 English",
+      nav_french_version: "🇫🇷 French",
+      nav_drawer_english: "🇬🇧 English version",
+      nav_drawer_french: "🇫🇷 French version",
       nav_drawer_calc: "🧮 Calculator",
       nav_drawer_loi: "📋 EU Regulation 261",
       nav_drawer_how: "⚙️ How it works",
@@ -707,6 +740,15 @@ window.I18N = (function() {
         var md = get('meta_description');
         if (md && md !== 'meta_description') metaDesc.setAttribute('content', md);
       }
+      var canonical = document.querySelector('link[rel="canonical"]');
+      if (canonical) {
+        canonical.setAttribute('href', currentLang === 'en' ? 'https://robindesairs.eu/en' : 'https://robindesairs.eu/');
+      }
+      var ogUrl = document.querySelector('meta[property="og:url"]');
+      if (ogUrl) {
+        ogUrl.setAttribute('content', currentLang === 'en' ? 'https://robindesairs.eu/en' : 'https://robindesairs.eu/');
+      }
+      updateLangDirectNav();
     } else if (isTarifs) {
       var tt = get('tarifs_page_title');
       if (tt && tt !== 'tarifs_page_title') document.title = tt;
@@ -849,8 +891,30 @@ window.I18N = (function() {
     } catch (e2) {}
   }
 
+  function updateLangDirectNav() {
+    var navLink = document.getElementById('nav-lang-direct');
+    var drawerLink = document.getElementById('nav-drawer-lang-direct');
+    var onEn = isEnPath() || currentLang === 'en';
+    var href = onEn ? '/' : '/en';
+    var label = onEn ? get('nav_french_version') : get('nav_english_version');
+    var drawerLabel = onEn ? get('nav_drawer_french') : get('nav_drawer_english');
+    if (navLink) {
+      navLink.href = href;
+      navLink.textContent = label;
+      navLink.setAttribute('aria-label', label);
+    }
+    if (drawerLink) {
+      drawerLink.href = href;
+      drawerLink.textContent = drawerLabel;
+    }
+    var logo = document.getElementById('nav-logo-home');
+    if (logo) logo.href = onEn ? '/en' : '/';
+  }
+
   function setLang(code) {
     var c = (code || 'fr').toLowerCase();
+    if (c === 'en' || c === 'en-us' || c === 'en-gb') c = 'en';
+    else c = 'fr';
     if (c === 'en') { currentLang = 'en'; } else { currentLang = 'fr'; }
     try { localStorage.setItem('robin_lang', currentLang); } catch (e) {}
     apply();
@@ -877,6 +941,8 @@ window.I18N = (function() {
     apply: apply,
     setLang: setLang,
     setCurrency: setCurrency,
+    isEnPath: isEnPath,
+    updateLangDirectNav: updateLangDirectNav,
     getLang: function() { return currentLang; },
     getCurrency: getCurrency,
     formatFromEur: formatFromEur,

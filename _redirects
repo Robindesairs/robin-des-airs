@@ -1,3 +1,6 @@
+# Accueil anglais (URL /en — même page, langue EN via i18n.js)
+/en    /index.html    200
+
 # Netlify : forcer la racine à servir index.html
 /    /index.html    200
 

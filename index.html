@@ -1,548 +1,1117 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TikTok Agency Finder</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --bg: #0a0a0f;
-      --surface: #13131a;
-      --border: #1e1e2e;
-      --accent: #00e5a0;
-      --accent2: #ff6b35;
-      --text: #e8e8f0;
-      --muted: #6b6b8a;
-      --card: #16161f;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Robin des Airs — Indemnités aériennes jusqu'à 600€ | Premium</title>
+<meta name="description" content="Retard, annulation ou surbooking ? Jusqu'à 600 € par passager (CE 261). 25 % seulement après encaissement — sinon 0 €. Dossier sous 24 h.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://robindesairs.eu">
+<meta property="og:title" content="Robin des Airs — Votre vol retardé vaut jusqu'à 600€">
+<meta property="og:description" content="Retard ou annulation ? Jusqu'à 600 € (CE 261). 25 % après succès seulement — sinon vous ne payez rien. WhatsApp en 2 min.">
+<meta property="og:image" content="https://robindesairs.eu/robin-des-airs-logo-texte-profil.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Robin des Airs — Indemnités CE 261 Europe–Afrique">
+<meta name="twitter:description" content="Justice aérienne pour l’Afrique. Jusqu’à 600 € par passager, 25 % seulement après succès.">
+<meta name="twitter:image" content="https://robindesairs.eu/robin-des-airs-logo-texte-profil.png">
+<meta name="theme-color" content="#0B1F3A">
+<meta name="robots" content="index, follow">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="/favicon.png">
+<link rel="canonical" href="https://robindesairs.eu">
+<link rel="alternate" hreflang="fr" href="https://robindesairs.eu/">
+<link rel="alternate" hreflang="en" href="https://robindesairs.eu/en">
+<link rel="alternate" hreflang="x-default" href="https://robindesairs.eu/">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://plausible.io" crossorigin>
+<!-- Une seule police en preload : sur réseaux lents (ex. aéroport), plusieurs preloads concurrencent HTML/CSS ; le reste charge via main.css (font-display: swap). -->
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fontsource/montserrat@5.0.0/files/montserrat-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"></noscript>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2/dist/css/tom-select.css" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2/dist/css/tom-select.css"></noscript>
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+<link rel="stylesheet" href="/assets/main.css">
+<style id="inline-critical">/* critical above-the-fold kept minimal — full CSS in main.css */</style>
 
-    body {
-      font-family: 'Syne', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      padding: 2rem 1rem;
-    }
-
-    .noise {
-      position: fixed; inset: 0; pointer-events: none; z-index: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-      opacity: 0.4;
-    }
-
-    .container { max-width: 860px; margin: 0 auto; position: relative; z-index: 1; }
-
-    header { text-align: center; margin-bottom: 3rem; }
-
-    .badge {
-      display: inline-block;
-      background: rgba(0,229,160,0.1);
-      border: 1px solid rgba(0,229,160,0.3);
-      color: var(--accent);
-      font-family: 'DM Mono', monospace;
-      font-size: 0.7rem;
-      letter-spacing: 0.15em;
-      padding: 0.3rem 0.8rem;
-      border-radius: 2px;
-      margin-bottom: 1rem;
-      text-transform: uppercase;
-    }
-
-    h1 {
-      font-size: clamp(2rem, 6vw, 3.5rem);
-      font-weight: 800;
-      line-height: 1.05;
-      letter-spacing: -0.03em;
-      background: linear-gradient(135deg, #fff 30%, var(--accent));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .subtitle { color: var(--muted); font-size: 0.95rem; margin-top: 0.75rem; font-weight: 400; }
-
-    .panel {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.75rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .panel-title {
-      font-size: 0.7rem;
-      font-family: 'DM Mono', monospace;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 1rem;
-    }
-
-    .keywords-grid { display: flex; flex-direction: column; gap: 0.5rem; }
-
-    .keyword-row {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.6rem 1rem;
-      transition: border-color 0.2s;
-    }
-
-    .keyword-row:focus-within { border-color: var(--accent); }
-
-    .kw-icon { font-size: 1rem; flex-shrink: 0; }
-
-    .keyword-row input {
-      flex: 1;
-      background: none;
-      border: none;
-      outline: none;
-      color: var(--text);
-      font-family: 'DM Mono', monospace;
-      font-size: 0.9rem;
-    }
-
-    .keyword-row input::placeholder { color: var(--muted); }
-
-    .btn-remove {
-      background: none;
-      border: none;
-      color: var(--muted);
-      cursor: pointer;
-      font-size: 1.1rem;
-      padding: 0;
-      line-height: 1;
-      transition: color 0.2s;
-    }
-
-    .btn-remove:hover { color: var(--accent2); }
-
-    .btn-add {
-      width: 100%;
-      margin-top: 0.5rem;
-      background: none;
-      border: 1px dashed var(--border);
-      color: var(--muted);
-      font-family: 'Syne', sans-serif;
-      font-size: 0.85rem;
-      padding: 0.6rem;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .btn-add:hover { border-color: var(--accent); color: var(--accent); }
-
-    .btn-run {
-      width: 100%;
-      background: var(--accent);
-      color: #000;
-      border: none;
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 1rem;
-      letter-spacing: 0.05em;
-      padding: 1rem;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-    }
-
-    .btn-run:hover { background: #00ffc3; transform: translateY(-1px); }
-    .btn-run:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; transform: none; }
-
-    .spinner {
-      width: 18px; height: 18px;
-      border: 2px solid rgba(0,0,0,0.3);
-      border-top-color: #000;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      display: none;
-    }
-
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.2rem;
-      text-align: center;
-    }
-
-    .stat-num {
-      font-size: 2rem;
-      font-weight: 800;
-      line-height: 1;
-    }
-
-    .stat-num.green { color: var(--accent); }
-    .stat-num.orange { color: var(--accent2); }
-    .stat-num.white { color: var(--text); }
-
-    .stat-label { font-size: 0.72rem; color: var(--muted); margin-top: 0.3rem; font-family: 'DM Mono', monospace; }
-
-    .filters {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .filter-btn {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-family: 'DM Mono', monospace;
-      font-size: 0.75rem;
-      padding: 0.4rem 0.8rem;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .filter-btn.active { background: rgba(0,229,160,0.1); border-color: var(--accent); color: var(--accent); }
-
-    .results-list { display: flex; flex-direction: column; gap: 0.75rem; }
-
-    .result-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.25rem;
-      transition: border-color 0.2s;
-      animation: fadeIn 0.3s ease both;
-    }
-
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-    .result-card:hover { border-color: rgba(0,229,160,0.3); }
-    .result-card.has-contact { border-left: 3px solid var(--accent); }
-
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 0.75rem;
-      gap: 1rem;
-    }
-
-    .username {
-      font-weight: 600;
-      font-size: 1rem;
-      color: var(--text);
-    }
-
-    .username a { color: inherit; text-decoration: none; }
-    .username a:hover { color: var(--accent); }
-
-    .nickname { font-size: 0.8rem; color: var(--muted); margin-top: 0.1rem; font-family: 'DM Mono', monospace; }
-
-    .followers {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.75rem;
-      color: var(--muted);
-      white-space: nowrap;
-    }
-
-    .bio {
-      font-size: 0.875rem;
-      color: #b0b0c8;
-      line-height: 1.5;
-      margin-bottom: 0.75rem;
-      font-family: 'DM Mono', monospace;
-    }
-
-    .card-footer { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
-
-    .tag {
-      font-family: 'DM Mono', monospace;
-      font-size: 0.7rem;
-      padding: 0.25rem 0.6rem;
-      border-radius: 4px;
-    }
-
-    .tag-keyword { background: rgba(255,107,53,0.1); color: var(--accent2); border: 1px solid rgba(255,107,53,0.2); }
-    .tag-wa { background: rgba(0,229,160,0.1); color: var(--accent); border: 1px solid rgba(0,229,160,0.3); }
-
-    .btn-copy {
-      margin-left: auto;
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-family: 'DM Mono', monospace;
-      font-size: 0.7rem;
-      padding: 0.25rem 0.6rem;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .btn-copy:hover { border-color: var(--accent); color: var(--accent); }
-
-    .btn-export {
-      background: none;
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-family: 'Syne', sans-serif;
-      font-size: 0.85rem;
-      padding: 0.6rem 1.2rem;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.2s;
-      margin-top: 1rem;
-    }
-
-    .btn-export:hover { border-color: var(--accent); color: var(--accent); }
-
-    .empty {
-      text-align: center;
-      padding: 3rem;
-      color: var(--muted);
-      font-family: 'DM Mono', monospace;
-      font-size: 0.85rem;
-    }
-
-    .error-msg {
-      background: rgba(255,107,53,0.1);
-      border: 1px solid rgba(255,107,53,0.3);
-      color: var(--accent2);
-      padding: 1rem 1.25rem;
-      border-radius: 8px;
-      font-family: 'DM Mono', monospace;
-      font-size: 0.85rem;
-      margin-bottom: 1rem;
-    }
-
-    #results-section { display: none; }
-  </style>
+<!-- Plausible Analytics — RGPD compliant, sans cookie, vue temps réel -->
+<script defer data-domain="robindesairs.eu" src="https://plausible.io/js/script.tagged-events.js"></script>
+<script>window.plausible = window.plausible || function() { (window.plausible.q = window.plausible.q || []).push(arguments) }</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Organization","name":"Robin des Airs","url":"https://robindesairs.eu","logo":"https://robindesairs.eu/logo.png","description":"Service de récupération d'indemnités aériennes CE 261/2004, spécialiste diaspora africaine.","address":{"@type":"PostalAddress","streetAddress":"66 avenue des Champs-Élysées","addressLocality":"Paris","postalCode":"75008","addressCountry":"FR"},"contactPoint":{"@type":"ContactPoint","telephone":"+33756863630","contactType":"customer service","availableLanguage":["French","English","Wolof","Bambara","Lingala","Soninké","Pulaar","Dioula","Swahili","Twi","Yoruba"]},"sameAs":["https://wa.me/33756863630"]}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Combien je touche exactement sur mon compte ?","acceptedAnswer":{"@type":"Answer","text":"Commission de succès : 25% uniquement si une indemnité est récupérée ; sinon vous ne payez rien. Vous recevez 75% nets. Vol long (> 3 500 km) : 600€ → vous touchez 450€. Famille de 4 Paris-Dakar : 1 800€ nets. Commission inchangée même au tribunal."}},{"@type":"Question","name":"Combien de temps faut-il pour recevoir mon indemnité ?","acceptedAnswer":{"@type":"Answer","text":"Trois scénarios : compagnie coopère (60%) — 4 à 12 semaines ; résiste puis médiateur (30%) — 3 à 5 mois ; persiste (moins de 10%) — tribunal, 5 à 8 mois. Commission 25% dans tous les cas. Mise à jour par WhatsApp."}},{"@type":"Question","name":"La compagnie m'a proposé un bon d'achat — je l'accepte ?","acceptedAnswer":{"@type":"Answer","text":"Non. Le bon d'achat retourne à la compagnie si non utilisé, valeur souvent inférieure aux 600€ cash. Ne signez rien, contactez-nous d'abord."}},{"@type":"Question","name":"La compagnie invoque la météo ou une circonstance extraordinaire","acceptedAnswer":{"@type":"Answer","text":"Notre dossier intègre METAR, TAF et comparaison avec les vols ayant décollé dans la même fenêtre. Si d'autres avions ont volé ce jour-là, on a les preuves."}},{"@type":"Question","name":"J'ai réclamé seul et la compagnie a refusé. Vous pouvez intervenir ?","acceptedAnswer":{"@type":"Answer","text":"Oui. On reprend le dossier, on l'enrichit avec nos preuves techniques, médiateur puis tribunal si besoin. Frais inclus dans notre commission."}},{"@type":"Question","name":"Comment je suis payé ?","acceptedAnswer":{"@type":"Answer","text":"C'est nous qui vous payons. Après réception des fonds, on demande votre RIB et on vous vire votre part sous 5 jours ouvrés. Jamais de CB ni avance."}},{"@type":"Question","name":"Mon vol avait une correspondance — je peux réclamer ?","acceptedAnswer":{"@type":"Answer","text":"Oui. Le dernier vol détermine le montant (distance et retard à l'arrivée finale). Correspondance manquée = éligible. Indiquez « avec correspondance » au diagnostic."}},{"@type":"Question","name":"Vous prenez tous les dossiers ?","acceptedAnswer":{"@type":"Answer","text":"Non. Analyse gratuite avant acceptation. Taux de réussite 9/10. Si on ne prend pas votre dossier, on explique pourquoi et on conseille les alternatives."}},{"@type":"Question","name":"Est-ce que je peux me rétracter ?","acceptedAnswer":{"@type":"Answer","text":"Oui. Droit de rétractation 14 jours après signature du mandat. Annulation sans frais, sans justification. Art. L221-18 du Code de la consommation."}}]}
+</script>
 </head>
-<body>
-  <div class="noise"></div>
-  <div class="container">
+<body data-i18n-page="home">
+<a href="#main-content" class="skip-link" data-i18n="skip_link">Aller au contenu principal</a>
 
-    <header>
-      <div class="badge">🎵 TikTok Intelligence</div>
-      <h1>Agency Finder<br/>West Africa</h1>
-      <p class="subtitle">Extrait les bios & contacts WhatsApp des agences de voyage sur TikTok</p>
-    </header>
+<!-- En-tête fixe : hauteur mesurée → --site-header-height (évite chevauchement contenu) -->
+<header class="site-header" id="site-header">
+<!-- Bandeau diaspora : identité (drapeaux + titre) + piste vols (bloc arrondi) -->
+<div class="diaspora-bar">
+  <div class="diaspora-bar-inner diaspora-bar-inner--stack">
+    <span class="sr-only" data-i18n="diaspora_bar_flags_aria">Diaspora : Sénégal, Mali, Côte d’Ivoire, Guinée, Cameroun, RDC, Bénin, Togo, Ghana, Nigeria.</span>
+    <span id="vol-ticker-sr" class="sr-only" data-i18n="vol_ticker_sr">Les 10 derniers vols impactés Europe–Afrique et Afrique–Europe. Jusqu'à 600 euros si le CE 261 s'applique. Cliquez sur une pastille pour préremplir le formulaire.</span>
 
-    <!-- Config panel -->
-    <div class="panel">
-      <div class="panel-title">🔍 Mots-clés de recherche</div>
-      <div class="keywords-grid" id="keywords-grid">
-        <div class="keyword-row">
-          <span class="kw-icon">✈️</span>
-          <input type="text" value="Travel Agency Gambia" placeholder="Mot-clé..." />
-          <button class="btn-remove" onclick="removeKeyword(this)">×</button>
-        </div>
-        <div class="keyword-row">
-          <span class="kw-icon">🌍</span>
-          <input type="text" value="Voyage Sénégal Dakar" placeholder="Mot-clé..." />
-          <button class="btn-remove" onclick="removeKeyword(this)">×</button>
-        </div>
-        <div class="keyword-row">
-          <span class="kw-icon">🎫</span>
-          <input type="text" value="Billetterie Serekunda" placeholder="Mot-clé..." />
-          <button class="btn-remove" onclick="removeKeyword(this)">×</button>
-        </div>
+    <div class="diaspora-bar-head">
+      <div class="diaspora-bar-flags-pill" aria-hidden="true">
+        <span class="diaspora-bar-flags">🇸🇳 🇲🇱 🇨🇮 🇬🇳 🇨🇲 🇨🇩 🇧🇯 🇹🇬 🇬🇭 🇳🇬</span>
       </div>
-      <button class="btn-add" onclick="addKeyword()">+ Ajouter un mot-clé</button>
+      <div class="diaspora-bar-head-divider" aria-hidden="true"></div>
+      <div class="diaspora-bar-title">
+        <span class="vol-ticker-dot diaspora-bar-live-dot" aria-hidden="true"></span>
+        <span class="diaspora-bar-title-text">
+          <span class="vol-ticker-label vol-ticker-label--full" data-i18n="vol_ticker_label">10 derniers vols impactés EU ↔ Afrique</span>
+          <span class="vol-ticker-label vol-ticker-label--short" data-i18n="vol_ticker_label_short">10 vols</span>
+        </span>
+      </div>
     </div>
 
-    <button class="btn-run" id="btn-run" onclick="runScraper()">
-      <div class="spinner" id="spinner"></div>
-      <span id="btn-text">🚀 Lancer la recherche</span>
+    <div class="diaspora-bar-track" id="vol-ticker" role="region" aria-labelledby="vol-ticker-sr" aria-describedby="footer-vol-ticker-data">
+      <div class="vol-ticker vol-ticker--diaspora-slot">
+        <div class="vol-ticker-inner vol-ticker-inner--track">
+          <div class="vol-ticker-viewport vol-ticker-viewport--track">
+            <div class="vol-ticker-rail" id="vol-ticker-rail">
+              <div class="vol-ticker-group" id="vol-ticker-g1"></div>
+              <div class="vol-ticker-group" id="vol-ticker-g2" aria-hidden="true"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ NAV ═══════ -->
+<nav id="navbar" aria-label="Navigation principale">
+  <a href="/" class="nav-logo" id="nav-logo-home">
+    <svg width="26" height="26" viewBox="0 0 60 60" fill="none">
+      <path d="M8 8 Q-2 30 8 52" fill="none" stroke="#00C87A" stroke-width="4" stroke-linecap="round"/>
+      <line x1="12" y1="30" x2="42" y2="30" stroke="#0B1F3A" stroke-width="2.5"/>
+      <path d="M40 30 L52 27 L49 30 L52 33 Z" fill="#0B1F3A"/>
+    </svg>
+    ROBIN<span class="nav-logo-accent"> des Airs</span>
+  </a>
+
+  <div style="display:flex;align-items:center;gap:8px;">
+    <a href="/en" class="nav-lang-direct" id="nav-lang-direct" data-i18n="nav_english_version">🇬🇧 English</a>
+    <!-- Lang: toujours visible -->
+    <div class="lang-dropdown" id="lang-dropdown" style="position:relative;">
+      <div class="lang-btn-wrap" onclick="toggleLangMenu()">
+        <span class="lang-flag" id="current-flag">🇫🇷</span>
+        <svg width="8" height="5" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="lang-menu" id="lang-menu">
+        <div class="lang-option active" data-lang="fr" onclick="switchLang('FR','🇫🇷')">🇫🇷 &nbsp;Français</div>
+        <div class="lang-option" data-lang="en" onclick="switchLang('EN','🇬🇧')">🇬🇧 &nbsp;English</div>
+      </div>
+    </div>
+    <div class="currency-dropdown" id="currency-dropdown" style="position:relative;">
+      <div class="currency-btn-wrap" onclick="toggleCurrencyMenu()" title="Devise d’affichage">
+        <span class="currency-label" id="current-currency-label">EUR</span>
+        <svg width="8" height="5" viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="currency-menu" id="currency-menu">
+        <div class="currency-option active" data-currency="eur" onclick="switchCurrency('eur')">EUR (€)</div>
+      </div>
+    </div>
+    <!-- CTA visible sur desktop -->
+    <a href="#funnel-box" class="nav-cta nav-cta-inline" onclick="scrollToCalcWithAnimation(event); return false;" data-i18n="nav_cta">Combien je touche ? →</a>
+    <!-- Hamburger toujours visible -->
+    <button class="nav-burger" id="nav-burger" onclick="toggleMobileNav()" aria-label="Menu">
+      <span></span><span></span><span></span>
     </button>
+  </div>
+</nav>
+</header>
 
-    <div id="error-box" class="error-msg" style="display:none;margin-top:1rem;"></div>
+<div class="nav-drawer" id="nav-drawer">
+  <div class="nav-drawer-lang" id="nav-drawer-lang">
+        <a href="/en" class="nav-drawer-lang-direct" id="nav-drawer-lang-direct" data-i18n="nav_drawer_english">🇬🇧 Version anglaise</a>
+        <span class="nav-drawer-lang-sep" aria-hidden="true">·</span>
+        <span class="lang-option active" data-lang="fr" onclick="switchLang('FR','🇫🇷'); closeMobileNav();">🇫🇷 Français</span>
+        <span class="lang-option" data-lang="en" onclick="switchLang('EN','🇬🇧'); closeMobileNav();">🇬🇧 English</span>
+        <span class="nav-drawer-curr-label" aria-hidden="true">·</span>
+        <span class="currency-option active" data-currency="eur" onclick="switchCurrency('eur'); closeMobileNav();">EUR</span>
+  </div>
+  <ul>
+    <li><a href="#funnel-box" onclick="closeMobileNav(); setTimeout(function(){ scrollToCalcWithAnimation(); }, 220); return false;" data-i18n="nav_drawer_calc">🧮 Calculateur</a></li>
+    <li><a href="#la-loi" onclick="closeMobileNav()" data-i18n="nav_drawer_loi">📋 La loi CE 261</a></li>
+    <li><a href="#comment-ca-marche" onclick="closeMobileNav()" data-i18n="nav_drawer_how">⚙️ Comment ça marche</a></li>
+    <li><a href="/blog/" onclick="closeMobileNav()" data-i18n="nav_drawer_dest">✈️ Guides &amp; destinations (blog)</a></li>
+    <li><a href="/nos-tarifs.html" onclick="closeMobileNav()" data-i18n="nav_drawer_tarifs">💰 Nos tarifs</a></li>
+    <li><a href="#temoignages" onclick="closeMobileNav()" data-i18n="nav_drawer_testi">⭐ Témoignages</a></li>
+    <li><a href="#faq" onclick="closeMobileNav()" data-i18n="nav_drawer_faq">❓ FAQ</a></li>
+    <li><a href="/blog/" onclick="closeMobileNav()" data-i18n="nav_drawer_blog">📝 Blog</a></li>
+    <li><a href="/depot-express.html" onclick="closeMobileNav(); plausible('Depot-Dossier', {props: {source: 'nav'}})" data-i18n="nav_drawer_depot">📤 Déposer mon dossier</a></li>
+    <li><a href="/parrainage" onclick="closeMobileNav()">🎁 Parrainage — Gagnez 20 €</a></li>
+    <li><a href="/espace-agence" onclick="closeMobileNav()">🤝 Espace Agence Partenaire</a></li>
+    <li><a href="#funnel-box" onclick="closeMobileNav(); setTimeout(function(){ scrollToCalcWithAnimation(); }, 220); return false;" class="drawer-cta" data-i18n="nav_cta">Combien je touche ? →</a></li>
+  </ul>
+</div>
 
-    <!-- Results -->
-    <div id="results-section">
-      <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-num white" id="stat-total">0</div>
-          <div class="stat-label">profils trouvés</div>
+<main id="main-content">
+<!-- ═══════ HERO ═══════ -->
+<section id="hero">
+  <div class="hero-bg-shape"></div>
+  <div class="hero-bg-dots"></div>
+
+  <div class="hero-wrap">
+
+    <!-- LEFT -->
+    <div class="hero-left">
+      <p id="hero-ab-label" style="display:inline-block;margin-bottom:10px;padding:4px 10px;border:1px solid rgba(0,229,160,0.35);border-radius:999px;font-size:11px;font-weight:700;letter-spacing:0.8px;color:var(--neon-b);text-transform:uppercase;">
+        Justice aérienne pour l’Afrique
+      </p>
+      <h1 class="hero-title">
+        <span data-i18n-html="hero_title">Robin prend<br>aux compagnies,<br></span>
+        <span class="neon" data-i18n="hero_title_neon" id="hero-ab-headline">rend à nos familles.</span>
+      </h1>
+      <p class="hero-subhead" data-i18n="hero_subhead" id="hero-ab-subhead">Retard important à l’arrivée (+3 h), annulation ou surbooking : nous récupérons votre indemnité CE 261 — jusqu’à 600 € par passager.</p>
+
+      <p class="hero-desc" data-i18n-html="hero_desc"><strong>Zéro frais si nous n’obtenons rien pour vous.</strong> Notre commission (25 %) uniquement une fois l’indemnité versée sur votre compte.<br>Quand le CE 261 s’applique, la compagnie peut devoir jusqu’à <strong>600 € par passager</strong>.</p>
+
+      <!-- CTA principal = WhatsApp (audit: canal principal en premier) -->
+      <div class="hero-entry">
+        <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="hero-entry-btn primary" data-i18n="hero_btn_wa" id="hero-wa-link" onclick="plausible('WhatsApp-CTA', {props: {source: 'hero'}})">📱 Vérifier mon vol sur WhatsApp</a>
+        <a href="#funnel-box" class="hero-entry-btn secondary" id="btn-calc-hero" onclick="scrollToCalcWithAnimation(event)" data-i18n="hero_btn_calc">Simuler mon indemnité (2 min) →</a>
+      </div>
+      <p class="wa-rgpd-hint" data-i18n-html="wa_rgpd_hint">WhatsApp est un service <strong>Meta</strong> : des données peuvent être traitées hors UE. <a href="/politique-confidentialite.html#whatsapp-meta">Confidentialité &amp; alternatives</a> (email, site).</p>
+
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-num" data-stat-eur="600">600€</span>
+          <span class="stat-label" data-i18n="hero_stat_max">Indemnité max</span>
         </div>
-        <div class="stat-card">
-          <div class="stat-num green" id="stat-contacts">0</div>
-          <div class="stat-label">avec WhatsApp</div>
+        <div style="width:1px;background:var(--border);height:40px;"></div>
+        <div class="stat">
+          <span class="stat-num">9/10</span>
+          <span class="stat-label" data-i18n="hero_stat_won">Dossiers gagnés</span>
         </div>
-        <div class="stat-card">
-          <div class="stat-num orange" id="stat-no-contact">0</div>
-          <div class="stat-label">sans contact</div>
+        <div style="width:1px;background:var(--border);height:40px;"></div>
+        <div class="stat">
+          <span class="stat-num" data-stat-eur="0">0€</span>
+          <span class="stat-label" data-i18n="hero_stat_lost">Si on perd</span>
+        </div>
+        <div style="width:1px;background:var(--border);height:40px;"></div>
+        <div class="stat">
+          <span class="stat-num">24h</span>
+          <span class="stat-label" data-i18n="hero_stat_24h">Dossier sous 24h</span>
         </div>
       </div>
-
-      <div class="filters">
-        <button class="filter-btn active" onclick="setFilter('all', this)">Tous</button>
-        <button class="filter-btn" onclick="setFilter('contact', this)">Avec WhatsApp</button>
-        <button class="filter-btn" onclick="setFilter('no-contact', this)">Sans contact</button>
-      </div>
-
-      <div class="results-list" id="results-list"></div>
-
-      <button class="btn-export" onclick="exportCSV()">⬇️ Exporter CSV</button>
+      <p style="margin-top:10px;font-size:12px;color:rgba(255,255,255,0.75);">
+        <a href="#" onclick="openWhatsAppQrFromHero(event)" style="color:rgba(255,255,255,0.85);text-decoration:underline;" data-i18n="wa_qr_hint">Pas WhatsApp sur cet appareil ? Scanner le QR →</a>
+      </p>
+      <p class="hero-wa-direct">
+        <a href="https://wa.me/33756863630" target="_blank" rel="noopener" class="hero-wa-link">💬 Réponse directe : WhatsApp <strong>+33</strong> 7&nbsp;56&nbsp;86&nbsp;36&nbsp;30 <span class="wa-hint">(indicatif pays d&rsquo;abord)</span></a>
+        <span style="display:block;font-size:11px;color:rgba(255,255,255,0.6);margin-top:4px;" data-i18n="hero_wa_note">Répondez en français, wolof ou anglais — comme vous préférez.</span>
+      </p>
+      <p class="hero-lang-line">
+        <span class="hero-lang-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></span>
+        <span data-i18n="hero_lang_line">Service disponible en : Français, Wolof, Bambara, Soninké, Peul (Pulaar), Dioula, Swahili, Lingala, Twi, Yoruba.</span>
+      </p>
     </div>
+
+    <!-- RIGHT — CALCULATEUR ENTONNOIR -->
+    <div class="hero-right" id="funnel-box">
+
+      <div class="calc-header">
+        <div class="calc-tag" data-i18n="calc_tag">Votre montant · Robin des Airs</div>
+        <div class="calc-title"><span data-i18n="calc_title_1">Vérifiez en 2 min</span><br><span id="funnel-subtitle">si vous êtes éligible</span></div>
+        <p class="funnel-explainer" data-i18n="funnel_explainer">Même aide que les boutons WhatsApp à gauche : écrivez-nous ou remplissez le champ ci-dessous — ou ouvrez le simulateur détaillé plus bas.</p>
+        <!-- Barre d’étapes : visible uniquement pendant le diagnostic détaillé (évite l’effet « plusieurs étapes » sur la vue WhatsApp 2 min) -->
+        <div id="funnel-progress-wrap" class="funnel-progress-wrap" aria-hidden="true">
+          <div id="funnel-progress" class="hero-funnel-progress">
+            <div id="funnel-progress-bar" class="hero-funnel-progress-bar"></div>
+          </div>
+          <p id="funnel-step-label" class="funnel-progress-step-label"></p>
+        </div>
+        <div class="funnel-crumbs" id="funnel-crumbs"></div>
+      </div>
+
+      <!-- Raccourci : 1 message WhatsApp -->
+      <div class="funnel-wa-shortcut">
+        <p class="funnel-wa-shortcut-text">Envoyez votre vol sur WhatsApp — on vous dit si vous êtes éligible.</p>
+        <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="funnel-wa-shortcut-btn" id="funnel-wa-eligibility-link" onclick="plausible('WhatsApp-CTA', {props: {source: 'funnel'}})">💬 Vérifier sur WhatsApp</a>
+        <p class="wa-rgpd-hint wa-rgpd-hint--compact" data-i18n-html="wa_rgpd_hint_short">Service Meta — <a href="/politique-confidentialite.html#whatsapp-meta">données &amp; alternatives</a></p>
+      </div>
+      <p class="funnel-detail-link"><a href="#" id="link-diagnostic-detail">Simulateur pas à pas (5 étapes) pour le montant exact →</a></p>
+
+      <!-- ══ PARCOURS RAPIDE — message puis WhatsApp (le numéro client apparaît à l’envoi) ══ -->
+      <div id="funnel-short">
+        <div class="fstep short-step" id="step-short-1">
+          <p class="fstep-q">Quel est votre vol ?</p>
+          <p class="funnel-hint" data-i18n="short_hint_vol">Numéro de vol + date, ou ex. « Paris-Dakar du 15/01, retardé »</p>
+          <textarea id="short-vol" class="calc-input calc-input--short-vol" rows="4" maxlength="800" style="margin-bottom:14px;" placeholder="Ex: AF718 du 15/01, retardé"></textarea>
+          <p id="short-wa-note" class="funnel-hint short-wa-note" data-i18n="short_wa_visible_phone_note" style="margin-top:-6px;margin-bottom:12px;line-height:1.45;"></p>
+          <button type="button" class="btn-calc" onclick="openShortWhatsApp()">Continuer sur WhatsApp →</button>
+          <p class="wa-rgpd-hint wa-rgpd-hint--compact funnel-short-wa-rgpd" data-i18n-html="wa_rgpd_hint_short">Service Meta — <a href="/politique-confidentialite.html#whatsapp-meta">données &amp; alternatives</a></p>
+        </div>
+      </div>
+
+      <!-- ══ DIAGNOSTIC DÉTAILLÉ (5 étapes) — masqué par défaut ══ -->
+      <div id="funnel-long" style="display:none;">
+      <!-- ══ ÉTAPE 1 — MOTIF ══ -->
+      <div class="fstep" id="step-1">
+        <div class="fstep-eyebrow">Ce qui s'est passé</div>
+        <p class="funnel-hint">Pas de souci si vous ne vous souvenez plus des détails — on vérifie pour vous.</p>
+        <div class="choice-grid one-col">
+          <button class="cb" onclick="pickMotif('retard')">
+            <span class="cb-icon">⏱️</span>
+            <span class="cb-main">Vol retardé</span>
+            <span class="cb-sub">Arrivée avec +3h de retard</span>
+          </button>
+          <button class="cb" onclick="pickMotif('annulation')">
+            <span class="cb-icon">❌</span>
+            <span class="cb-main">Vol annulé</span>
+            <span class="cb-sub">Annulation par la compagnie</span>
+          </button>
+          <button class="cb" onclick="pickMotif('surbook')">
+            <span class="cb-icon">🚫</span>
+            <span class="cb-main">Surbooking / Refus d'embarquement</span>
+            <span class="cb-sub">La compagnie vous a refusé l'accès à bord</span>
+          </button>
+          <button class="cb" onclick="pickMotif('correspondance')">
+            <span class="cb-icon">🔄</span>
+            <span class="cb-main">Correspondance manquée</span>
+            <span class="cb-sub">J'ai raté ma correspondance à cause d'un retard</span>
+            <span class="cb-note" style="display:block;font-size:0.8em;color:#999;margin-top:4px;">Le retard de votre 1er vol vous a empêché de prendre la suite — vous êtes éligible.</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- ══ ÉTAPE 1c — RAISON DU RETARD/ANNULATION ══ -->
+      <div class="fstep" id="step-1c">
+        <div class="fstep-eyebrow">Étape 1c — Raison invoquée</div>
+        <p class="fstep-q">La compagnie vous a expliqué pourquoi ?</p>
+        <div class="reason-grid">
+          <button class="reason-btn" onclick="pickRaison('meteo')">
+            <span class="reason-icon">🌩️</span> Météo / Conditions climatiques
+          </button>
+          <button class="reason-btn" onclick="pickRaison('technique')">
+            <span class="reason-icon">🔧</span> Problème technique / Panne
+          </button>
+          <button class="reason-btn" onclick="pickRaison('greve')">
+            <span class="reason-icon">✊</span> Grève
+          </button>
+          <button class="reason-btn" onclick="pickRaison('securite')">
+            <span class="reason-icon">🛡️</span> Raison de sécurité
+          </button>
+          <button class="reason-btn" onclick="pickRaison('sansraison')">
+            <span class="reason-icon">🤷</span> Aucune explication donnée
+          </button>
+          <button class="reason-btn" onclick="pickRaison('nesaispas')">
+            <span class="reason-icon">💭</span> Je ne sais pas / Je ne m'en souviens plus
+          </button>
+        </div>
+        <p class="reason-nesaispas-msg" id="step1c-nesaispas-msg" style="display:none; font-size:11px; color:var(--neon-b); margin-top:10px; font-weight:600;">Pas de souci, on vérifiera les registres météo pour vous.</p>
+        <button class="back-btn" id="back1c" onclick="">← Retour</button>
+      </div>
+
+      <!-- ══ ÉTAPE 1b annulation — PRÉAVIS ══ -->
+      <div class="fstep" id="step-1b">
+        <div class="fstep-eyebrow">Étape 1b — Délai de prévenance</div>
+        <p class="fstep-q">Quand avez-vous appris l'annulation ?</p>
+        <div class="choice-grid one-col">
+          <button class="cb" onclick="pickAnnDelai('late')">
+            <span class="cb-icon">🔔</span>
+            <span class="cb-main">Moins de 14 jours avant le départ</span>
+            <span class="cb-sub">Annulation tardive → indemnisation pleine ✅</span>
+          </button>
+          <button class="cb warn-cb" onclick="pickAnnDelai('early')">
+            <span class="cb-icon">📅</span>
+            <span class="cb-main">Plus de 14 jours avant le départ</span>
+            <span class="cb-sub">Préavis suffisant — indemnisation probablement non due</span>
+          </button>
+        </div>
+        <button class="back-btn" onclick="goTo('step-1', 12)">← Retour</button>
+      </div>
+
+      <!-- ══ ÉTAPE 2 — DIRECT ou ESCALE ══ -->
+      <div class="fstep" id="step-2">
+        <div class="fstep-eyebrow">Étape 2 sur 5 — Type de trajet</div>
+        <p class="funnel-hint">En quelques minutes, vous savez ce que vous touchez.</p>
+        <p class="fstep-q">Ce voyage était-il direct ou avec correspondance ?</p>
+        <div class="choice-grid">
+          <button class="cb" onclick="pickTrajet('direct')">
+            <span class="cb-icon">✈️</span>
+            <span class="cb-main">Vol direct</span>
+            <span class="cb-sub">Sans escale</span>
+            <small class="block text-sm text-gray-500 mt-1">Sans escale — calcul simplifié</small>
+          </button>
+          <button class="cb" onclick="pickTrajet('escale')">
+            <span class="cb-icon">🔄</span>
+            <span class="cb-main">Avec correspondance</span>
+            <span class="cb-sub">1 escale ou plus</span>
+            <small class="block text-sm text-gray-500 mt-1">C'est le dernier vol qui compte — on explique</small>
+          </button>
+        </div>
+        <button class="back-btn" id="back2">← Retour</button>
+      </div>
+
+      <!-- ══ ÉTAPE 3a — VOL DIRECT (Robin des Airs) ══ -->
+      <div class="fstep" id="step-3a">
+        <div class="fstep-eyebrow">Étape 3 sur 5 — Détails du vol</div>
+        <p class="calc-robin-hint">Indiquez votre numéro de vol, ou les villes de départ et d'arrivée.</p>
+
+        <div class="calc-field" style="margin-bottom:12px">
+          <label class="calc-label" for="flight_number">Numéro de vol</label>
+          <input type="text" id="flight_number" class="calc-input" placeholder="Ex: AF718" maxlength="8" autocomplete="off">
+          <div id="flight_number_status" class="flight-status" aria-live="polite"></div>
+          <button type="button" class="link-no-vol" id="btn-je-ne-trouve-pas-mon-vol">Je ne trouve pas mon vol</button>
+          <div id="da-principaux-vols" class="principaux-vols-wrap" style="display:none;" aria-label="Principaux vols Air France, Corsair et Air Sénégal vers l'Afrique subsaharienne">
+            <p class="principaux-vols-title">Principaux vols Air France / Corsair / Air Sénégal (Afrique subsaharienne)</p>
+            <div class="principaux-vols-chips">
+              <button type="button" class="principaux-vol-chip" data-code="AF718">Paris → Dakar (AF718)</button>
+              <button type="button" class="principaux-vol-chip" data-code="AF702">Paris → Dakar (AF702)</button>
+              <button type="button" class="principaux-vol-chip" data-code="AF719">Dakar → Paris (AF719)</button>
+              <button type="button" class="principaux-vol-chip" data-code="AF703">Dakar → Paris (AF703)</button>
+              <button type="button" class="principaux-vol-chip" data-code="AF700">Paris → Abidjan (AF700)</button>
+              <button type="button" class="principaux-vol-chip" data-code="AF701">Abidjan → Paris (AF701)</button>
+              <button type="button" class="principaux-vol-chip" data-code="HC400">Paris → Dakar (HC400 · Air Sénégal)</button>
+              <button type="button" class="principaux-vol-chip" data-code="HC401">Dakar → Paris (HC401 · Air Sénégal)</button>
+              <button type="button" class="principaux-vol-chip" data-code="SS891">Paris → Dakar (SS891 · Corsair)</button>
+              <button type="button" class="principaux-vol-chip" data-code="SS892">Dakar → Paris (SS892 · Corsair)</button>
+              <button type="button" class="principaux-vol-chip" data-code="AF732">Paris → Bamako (AF732)</button>
+              <button type="button" class="principaux-vol-chip" data-code="AF704">Paris → Douala (AF704)</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="calc-field" id="da-manual-wrap">
+          <label class="calc-label">Ville de départ et d'arrivée (recherche : ville ou code IATA)</label>
+          <div class="calc-row">
+            <select id="da-ville-depart" class="calc-select calc-select-airport" placeholder="Départ (ex. Paris, CDG)"><option value=""></option></select>
+            <select id="da-ville-arrivee" class="calc-select calc-select-airport" placeholder="Arrivée (ex. Dakar, DKR)"><option value=""></option></select>
+          </div>
+          <p id="funnel-guide-dakar" class="funnel-guide-link" style="display:none; margin-top:8px; font-size:11px;">
+            Besoin d'aide ? <a href="/blog/vol-retarde-dakar-paris-indemnite.html" target="_blank" rel="noopener">Lire notre guide sur le vol Paris-Dakar</a>
+          </p>
+        </div>
+
+        <div class="distance-result" id="da-distance-line"></div>
+        <input type="hidden" id="da-dist" value="">
+
+        <div class="calc-row">
+          <div class="calc-field">
+            <label class="calc-label" for="da-date">Date du vol</label>
+            <div class="custom-date-wrap">
+              <input type="date" id="da-date" class="calc-input" style="padding-right:44px;">
+              <span class="date-display">📅</span>
+            </div>
+          </div>
+          <div class="calc-field">
+            <label class="calc-label">Passagers</label>
+            <div class="pax-control" id="da-pax-ctrl">
+              <button class="pax-btn" type="button" onclick="changePax('da-pax-val',-1)">−</button>
+              <span class="pax-val" id="da-pax-val">1</span>
+              <button class="pax-btn" type="button" onclick="changePax('da-pax-val',1)">+</button>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-calc" onclick="calcDirect()">Voir mon indemnité →</button>
+        <button class="back-btn" onclick="goTo('step-2', 50)">← Retour</button>
+      </div>
+
+      <!-- ══ ÉTAPE 3b — AVEC ESCALE ══ -->
+      <div class="fstep" id="step-3b">
+        <div class="fstep-eyebrow">Étape 3 sur 5 — Vos deux vols</div>
+        <p class="calc-robin-hint">Robin des Airs : c’est le dernier vol qui détermine l’indemnité.</p>
+
+        <div class="escale-info">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--neon-b)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>La loi CE 261 prend la <strong>distance totale</strong> départ (1er vol) → arrivée finale (dernier vol). Le <strong>dernier vol</strong> détermine l'indemnité.</span>
+        </div>
+
+        <div class="eb-vol-block" id="eb-vol-block-1">
+          <div class="calc-field-label-vol">Vol 1 — Premier tronçon</div>
+          <div class="calc-row">
+            <div class="calc-field">
+              <label class="calc-label">Ville de départ</label>
+              <select id="eb-ville-depart-1" class="calc-select-airport" placeholder="Départ"><option value=""></option></select>
+            </div>
+            <div class="calc-field">
+              <label class="calc-label">Ville de fin</label>
+              <select id="eb-ville-arrivee-1" class="calc-select-airport" placeholder="Arrivée"><option value=""></option></select>
+            </div>
+          </div>
+          <div class="calc-field">
+            <label class="calc-label" for="eb-vol1">Numéro de vol <span style="color:rgba(255,255,255,0.35);font-size:9px;">optionnel</span></label>
+            <input type="text" id="eb-vol1" class="calc-input" placeholder="Ex: AF1234" maxlength="8" autocomplete="off" oninput="volLookup(this,'eb-chip1',null,null)">
+          </div>
+          <div class="vol-chip" id="eb-chip1" style="display:none;">
+            <span class="chip-ico">✈️</span>
+            <div><div class="chip-route" id="eb-chip1-route"></div><div class="chip-dist" id="eb-chip1-dist"></div></div>
+            <span class="chip-badge" id="eb-chip1-badge"></span>
+          </div>
+        </div>
+
+        <div class="eb-vol-block" id="eb-vol-block-2">
+          <div class="calc-field-label-vol">Vol 2 — Dernier tronçon <span style="color:var(--neon-b);font-size:9px;">CE VOL COMPTE</span></div>
+          <div class="calc-row">
+            <div class="calc-field">
+              <label class="calc-label">Ville de départ</label>
+              <select id="eb-ville-depart-2" class="calc-select-airport" placeholder="Départ"><option value=""></option></select>
+            </div>
+            <div class="calc-field">
+              <label class="calc-label">Ville de fin</label>
+              <select id="eb-ville-arrivee-2" class="calc-select-airport" placeholder="Arrivée"><option value=""></option></select>
+            </div>
+          </div>
+          <div class="calc-field">
+            <label class="calc-label" for="eb-vol2">Numéro de vol</label>
+            <input type="text" id="eb-vol2" class="calc-input" placeholder="Ex: AF718" maxlength="8" autocomplete="off" oninput="volLookup(this,'eb-chip2',null,null); updateEscaleDist();">
+          </div>
+          <div class="vol-chip" id="eb-chip2" style="display:none;">
+            <span class="chip-ico">✈️</span>
+            <div><div class="chip-route" id="eb-chip2-route"></div><div class="chip-dist" id="eb-chip2-dist"></div></div>
+            <span class="chip-badge" id="eb-chip2-badge"></span>
+          </div>
+        </div>
+
+        <div class="eb-vol-block" id="eb-vol-block-3" style="display:none;">
+          <div class="calc-field-label-vol">Vol 3</div>
+          <div class="calc-row">
+            <div class="calc-field">
+              <label class="calc-label">Ville de départ</label>
+              <select id="eb-ville-depart-3" class="calc-select-airport" placeholder="Départ"><option value=""></option></select>
+            </div>
+            <div class="calc-field">
+              <label class="calc-label">Ville de fin</label>
+              <select id="eb-ville-arrivee-3" class="calc-select-airport" placeholder="Arrivée"><option value=""></option></select>
+            </div>
+          </div>
+          <div class="calc-field">
+            <label class="calc-label" for="eb-vol3">Numéro de vol</label>
+            <input type="text" id="eb-vol3" class="calc-input" placeholder="Ex: BA456" maxlength="8" autocomplete="off" oninput="updateEscaleDist()">
+          </div>
+        </div>
+
+        <button type="button" class="eb-add-vol-btn" id="eb-add-vol-btn" onclick="toggleEscaleVol3()">+ Ajouter un 3e vol</button>
+        <input type="hidden" id="eb-dist" value="">
+
+        <div class="calc-row">
+          <div class="calc-field">
+            <label class="calc-label" for="eb-date">Date de départ</label>
+            <div class="custom-date-wrap">
+              <input type="date" id="eb-date" class="calc-input" style="padding-right:44px;">
+              <span class="date-display">📅</span>
+            </div>
+          </div>
+          <div class="calc-field">
+            <label class="calc-label">Passagers</label>
+            <div class="pax-control">
+              <button class="pax-btn" type="button" onclick="changePax('eb-pax-val',-1)">−</button>
+              <span class="pax-val" id="eb-pax-val">1</span>
+              <button class="pax-btn" type="button" onclick="changePax('eb-pax-val',1)">+</button>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-calc" onclick="calcEscale()">Voir mon indemnité →</button>
+        <button class="back-btn" onclick="goTo('step-2', 50)">← Retour</button>
+      </div>
+
+      <!-- ══ LOADER SUSPENSE ══ -->
+      <div class="fstep" id="step-loader">
+        <p class="funnel-hint">Plus qu'une étape. Votre résultat arrive.</p>
+        <div class="result-loader">
+          <div class="loader-dots">
+            <div class="loader-dot"></div>
+            <div class="loader-dot"></div>
+            <div class="loader-dot"></div>
+          </div>
+          <div class="loader-text" id="loader-text">Consultation des données de vol...</div>
+          <div class="loader-steps" id="loader-steps">Vérification Eurocontrol · Analyse distance · CE 261/2004</div>
+        </div>
+      </div>
+
+      <!-- ══ ÉTAPE 4 — RÉSULTAT ══ -->
+      <div class="fstep" id="step-result">
+        <div class="res-box">
+          <div class="res-tag" style="text-align:center;margin-bottom:8px;">✈ Votre indemnité CE 261/2004</div>
+          <!-- Montant NET — affiché en GRAND pour l'impact psychologique -->
+          <div style="text-align:center;margin-bottom:8px;">
+            <div class="res-amount" id="res-net-big"><span id="res-net-value">0</span><span>€</span></div>
+            <div style="font-size:12px;color:var(--neon-b);font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-top:2px;">dans votre poche</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:6px;">Net pour vous</div>
+          </div>
+          <div class="res-route-wrap" style="text-align:center;margin-top:10px;">
+            <span class="res-route" id="res-route">—</span>
+            <span class="res-motif-badge" id="res-motif-badge"></span>
+          </div>
+          <div class="res-calc-detail" id="res-calc-detail" style="display:none;">—</div>
+          <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(0,229,160,0.13);">
+            <div style="font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Raison invoquée par la compagnie :</div>
+            <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.7);" id="res-raison-txt">—</div>
+            <div style="font-size:10px;color:var(--neon-b);margin-top:3px;" id="res-raison-note"></div>
+          </div>
+          <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(0,229,160,0.13);">
+            <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">La Promesse Robin</div>
+            <ul style="font-size:11px;color:rgba(255,255,255,0.7);line-height:1.6;margin:0;padding-left:18px;">
+              <li style="margin-bottom:6px;"><strong style="color:rgba(255,255,255,0.9);">Transparence :</strong> on ne prend notre part (25%) qu'une fois votre argent récupéré — cela finance les preuves techniques (Aviation Edge) et le suivi. Les autres services affichent souvent 35% à 50%.</li>
+              <li style="margin-bottom:6px;"><strong style="color:rgba(255,255,255,0.9);">Zéro risque :</strong> aucune avance, aucun frais de dossier. <strong>Si on ne gagne pas, vous ne payez rien.</strong></li>
+              <li><strong style="color:rgba(255,255,255,0.9);">Accompagnement WhatsApp :</strong> Un suivi humain et direct sans attente téléphonique.</li>
+            </ul>
+          </div>
+        </div>
+
+        <button class="back-btn" onclick="restartFunnel()">↺ Recommencer le diagnostic</button>
+      </div>
+
+      <!-- ══ NON-ÉLIGIBLE (sortie douce pour tous les cas) ══ -->
+      <div class="fstep" id="step-nope">
+        <div class="non-eligible-exit">
+          <h3 class="nope-title">⚠️ Ce vol ne semble pas éligible à l'indemnisation</h3>
+          <p class="nope-body" id="step-nope-reason">L'annulation a été communiquée plus de 14 jours avant le départ. La loi CE 261 n'impose pas d'indemnisation dans ce cas. Vous avez cependant droit au <strong>remboursement intégral de votre billet.</strong></p>
+
+          <div class="exit-capture">
+            <h4 class="exit-capture-title">📩 Vous avez un prochain vol prévu ?</h4>
+            <p>Laissez votre email — on vous alerte automatiquement si un retard ouvre un droit.</p>
+            <input type="email" class="non-eligible-input" placeholder="votre@email.com" />
+            <button type="button" class="non-eligible-btn">M'alerter gratuitement</button>
+          </div>
+
+          <div class="exit-referral">
+            <h4 class="exit-referral-title">👥 Vous connaissez quelqu'un dont le vol a été retardé ?</h4>
+            <p>Partagez Robin — chaque passager peut toucher jusqu'à 600€.</p>
+            <a href="https://wa.me/?text=Mon%20ami%20Robin%20des%20Airs%20récupère%20les%20indemnités%20aériennes.%20Si%20ton%20vol%20a%20été%20retardé%20tu%20as%20droit%20à%20600€%20%3A%20https%3A%2F%2Frobindesairs.eu" class="btn-whatsapp non-eligible-link" target="_blank" rel="noopener">💬 Partager sur WhatsApp</a>
+          </div>
+
+          <button class="btn-restart back-btn" onclick="restartFunnel()">↺ Recommencer le diagnostic</button>
+        </div>
+      </div>
+      </div><!-- /funnel-long -->
+
+      <p class="calc-disclaimer" data-i18n="calc_disclaimer">Notre part (25%) une fois l'argent récupéré · Si on ne gagne pas, vous ne payez rien · Montage dossier sous 24h</p>
+
+    </div><!-- /funnel-box -->
 
   </div>
+</section>
 
-  <script>
-    let allResults = [];
-    let currentFilter = 'all';
+<!-- ═══════ LA LOI ═══════ -->
+<section id="la-loi">
+  <div class="loi-wrap reveal">
+    <div class="loi-header">
+      <div>
+        <div class="section-tag" data-i18n="section_loi_tag">Ce que vous ne savez peut-être pas</div>
+        <h2 class="section-title" data-i18n-html="section_loi_title">D'où vient<br><span class="neon">cet argent ?</span></h2>
+      </div>
+      <div>
+        <p style="font-size:14px;color:var(--gray);line-height:1.85;margin-bottom:16px;" data-i18n-html="loi_intro">
+          Le <strong style="color:var(--navy);">Règlement (CE) n° 261/2004</strong> protège les passagers sur les trajets entre l’Europe et l’Afrique. Selon le sens du vol — <strong style="color:var(--navy);">Europe → Afrique</strong> ou <strong style="color:var(--navy);">Afrique → Europe</strong> — les règles ne sont pas les mêmes :
+        </p>
 
-    const ICONS = ['✈️','🌍','🎫','🗺️','🏖️','🚢','🌐','📍'];
+        <div style="background:rgba(255,255,255,0.65);border:1px solid rgba(226,230,238,0.9);border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+          <div style="font-size:10px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--navy);margin-bottom:8px;" data-i18n="loi_you_depart_eu_title">🛫 EUROPE → AFRIQUE</div>
+          <p style="font-size:13px;color:rgba(11,31,58,0.8);line-height:1.75;margin:0;" data-i18n-html="loi_you_depart_eu_p">
+            Votre avion décolle d’<strong>Europe</strong> (Union européenne) vers l’<strong>Afrique</strong> ou ailleurs. En cas d’annulation ou de surbooking, le CE 261 prévoit également une indemnité forfaitaire selon les conditions. Peu importe votre nationalité — toute compagnie, européenne ou non, doit payer si le vol part de l’UE.
+          </p>
+        </div>
 
-    function addKeyword() {
-      const grid = document.getElementById('keywords-grid');
-      const row = document.createElement('div');
-      row.className = 'keyword-row';
-      const icon = ICONS[grid.children.length % ICONS.length];
-      row.innerHTML = `
-        <span class="kw-icon">${icon}</span>
-        <input type="text" placeholder="Nouveau mot-clé..." />
-        <button class="btn-remove" onclick="removeKeyword(this)">×</button>
-      `;
-      grid.appendChild(row);
-      row.querySelector('input').focus();
-    }
+        <div style="background:rgba(0,200,122,0.04);border:1px solid rgba(0,200,122,0.15);border-radius:10px;padding:14px 16px;margin-bottom:14px;">
+          <div style="font-size:10px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--neon-dark);margin-bottom:8px;" data-i18n="loi_you_depart_africa_title">🛬 AFRIQUE → EUROPE</div>
+          <p style="font-size:13px;color:var(--gray);line-height:1.75;margin-bottom:10px;" data-i18n-html="loi_you_depart_africa_p1">
+            Votre avion décolle d’<strong>Afrique</strong> à destination de l’<strong>Europe</strong> / de l’UE : la règle change — seules les compagnies européennes sont tenues de payer.
+          </p>
+          <p style="font-size:13px;color:var(--gray);line-height:1.75;margin:0;" data-i18n-html="loi_you_depart_africa_p2">
+            → Air France, Corsair, Brussels Airlines, KLM, Transavia, Lufthansa, Iberia, TAP, ITA Airways et autres compagnies européennes : <strong style="color:var(--navy);">oui</strong>, elles sont européennes.<br>
+            → Royal Air Maroc, Air Sénégal, Ethiopian Airlines : <strong style="color:var(--navy);">non</strong> sur ces vols-là — elles ne sont pas européennes.
+          </p>
+        </div>
 
-    function removeKeyword(btn) {
-      const grid = document.getElementById('keywords-grid');
-      if (grid.children.length > 1) btn.closest('.keyword-row').remove();
-    }
+        <p style="font-size:13px;color:var(--gray);line-height:1.75;margin:0 0 14px;" data-i18n-html="loi_delay_arrival_note">
+          En cas de <strong>retard</strong>, lorsque le CE 261 s’applique à votre trajet : c’est un retard d’au moins <strong>3 heures à l’arrivée à destination</strong>, et non le retard au décollage seul, qui ouvre droit à indemnité.
+        </p>
 
-    function getKeywords() {
-      return [...document.querySelectorAll('#keywords-grid input')]
-        .map(i => i.value.trim()).filter(Boolean);
-    }
+        <p style="font-size:13px;color:var(--gray);line-height:1.75;margin:0;" data-i18n-html="loi_closing">
+          <strong style="color:var(--navy);">80% des passagers éligibles ne réclament jamais</strong> — les compagnies comptent sur l’abandon. Vous avez <strong style="color:var(--navy);">5 ans</strong> pour agir. Pas sûr de votre cas ? <a href="https://wa.me/33756863630" target="_blank" style="color:var(--neon-dark);text-decoration:underline;font-weight:800;">WhatsApp</a>, vérification gratuite.
+        </p>
+      </div>
+    </div>
 
-    async function runScraper() {
-      const keywords = getKeywords();
-      if (!keywords.length) return;
+    <div class="loi-cards loi-cards--focus-long">
+      <div class="loi-card featured">
+        <div class="loi-card-badge" data-i18n="loi_card_long">Nos communautés · Nos familles</div>
+        <div class="loi-amount">600<span style="font-size:28px;color:var(--neon-b);">€</span></div>
+        <div style="font-size:11px;color:var(--neon-b);font-weight:700;margin:2px 0 0;letter-spacing:0.5px;" data-i18n="loi_per_pax">par passager</div>
+        <div style="font-size:10px;color:var(--neon-b);font-weight:700;margin:4px 0 2px;letter-spacing:1px;" data-i18n="loi_net_450">→ 450€ nets par passager (sur 600€)</div>
+        <div class="loi-distance" data-i18n="loi_distance_long">Plus de 3 500 km — notre cœur de métier · indemnités par passager</div>
+      </div>
+      <p class="loi-tiers-note" data-i18n="loi_tiers_note">La loi prévoit aussi 250€ ou 400€ pour les distances plus courtes — après analyse de votre vol, on vous dit exactement le montant qui s’applique.</p>
+    </div>
+    <div style="margin-top:40px;text-align:center;">
+      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary" data-i18n="cta_recover">Je récupère mon argent →</a>
+    </div>
+  </div>
+</section>
 
-      const btn = document.getElementById('btn-run');
-      const spinner = document.getElementById('spinner');
-      const btnText = document.getElementById('btn-text');
-      const errorBox = document.getElementById('error-box');
+<!-- ═══════ TÉMOIGNAGES ═══════ -->
+<section id="temoignages">
+  <div class="testi-wrap reveal">
+    <div class="testi-header">
+      <div class="section-tag" data-i18n="section_testi_tag">Ils ont récupéré leur argent</div>
+      <h2 class="section-title" data-i18n-html="section_testi_title">Nos familles témoignent.<br>Vrai argent récupéré.</h2>
+    </div>
 
-      btn.disabled = true;
-      spinner.style.display = 'block';
-      btnText.textContent = 'Recherche en cours...';
-      errorBox.style.display = 'none';
+    <!-- Viewport: montre exactement 3 cartes, les autres masquées -->
+    <div class="testi-viewport">
+      <div class="testi-track" id="testi-track">
 
-      try {
-        const res = await fetch('/.netlify/functions/scrape', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ keywords }),
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) throw new Error(data.error || 'Erreur serveur');
-
-        allResults = data.results;
-        renderResults();
-
-      } catch (err) {
-        errorBox.textContent = '❌ ' + err.message;
-        errorBox.style.display = 'block';
-      } finally {
-        btn.disabled = false;
-        spinner.style.display = 'none';
-        btnText.textContent = '🚀 Lancer la recherche';
-      }
-    }
-
-    function renderResults() {
-      const section = document.getElementById('results-section');
-      const list = document.getElementById('results-list');
-      section.style.display = 'block';
-
-      const filtered = allResults.filter(r => {
-        if (currentFilter === 'contact') return !!r.whatsapp;
-        if (currentFilter === 'no-contact') return !r.whatsapp;
-        return true;
-      });
-
-      document.getElementById('stat-total').textContent = allResults.length;
-      document.getElementById('stat-contacts').textContent = allResults.filter(r => r.whatsapp).length;
-      document.getElementById('stat-no-contact').textContent = allResults.filter(r => !r.whatsapp).length;
-
-      if (!filtered.length) {
-        list.innerHTML = '<div class="empty">🔍 Aucun résultat pour ce filtre</div>';
-        return;
-      }
-
-      list.innerHTML = filtered.map((r, i) => `
-        <div class="result-card ${r.whatsapp ? 'has-contact' : ''}" style="animation-delay:${i*40}ms">
-          <div class="card-top">
-            <div>
-              <div class="username">
-                <a href="${r.profileUrl}" target="_blank">@${r.username}</a>
-              </div>
-              ${r.nickname ? `<div class="nickname">${r.nickname}</div>` : ''}
-            </div>
-            <div class="followers">👥 ${r.followers.toLocaleString('fr')}</div>
-          </div>
-          <div class="bio">${escHtml(r.bio)}</div>
-          <div class="card-footer">
-            <span class="tag tag-keyword">${escHtml(r.keyword)}</span>
-            ${r.whatsapp ? `<span class="tag tag-wa">📱 ${escHtml(r.whatsapp)}</span>` : ''}
-            <button class="btn-copy" onclick="copyContact('${escHtml(r.whatsapp || r.username)}')">
-              ${r.whatsapp ? '📋 Copier WA' : '📋 Copier @'}
-            </button>
+        <div class="testi-card" data-group="0">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-quote" data-i18n="testi_quote_1">Six mois que je me battais avec Air France, j'y croyais plus. On était trois sur le billet. Réglé en cinq semaines, sans nouvelle galère. Franchement je les recommande à toute la famille 👏</p>
+          <div class="testi-author">
+            <div class="testi-avatar">AM</div>
+            <div><div class="testi-name">Aminata M.</div><div class="testi-info" data-i18n="testi_info_1">CDG → DKR · Famille (3) · Retard 6h</div></div>
+            <div class="testi-amount" title="Indemnité légale au brut (long-courrier)">1&nbsp;800€</div>
           </div>
         </div>
-      `).join('');
-    }
+        <div class="testi-card" data-group="0">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-quote" data-i18n="testi_quote_2">Notre Bruxelles–Abidjan annulé, on ne savait plus où donner de la tête. Robin nous a sortis de là, et on n'a payé qu'une fois l'argent arrivé. Ailleurs à 35&nbsp;% on aurait gardé moins, c'est sûr.</p>
+          <div class="testi-author">
+            <div class="testi-avatar">JB</div>
+            <div><div class="testi-name">Jean-Baptiste K.</div><div class="testi-info" data-i18n="testi_info_2">BRU → ABJ · Couple · Annulation</div></div>
+            <div class="testi-amount" title="Indemnité légale au brut (long-courrier)">1&nbsp;200€</div>
+          </div>
+        </div>
+        <div class="testi-card" data-group="0">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-quote" data-i18n="testi_quote_4">Air France me proposait un bon d'achat à 300€. Robin m'a dit de ne pas signer. J'ai attendu : le virement a été bien au-delà de leur offre. Bonne pioche 💶</p>
+          <div class="testi-author">
+            <div class="testi-avatar">DT</div>
+            <div><div class="testi-name">David T.</div><div class="testi-info" data-i18n="testi_info_4">CDG → BKO · Solo · Annulation</div></div>
+            <div class="testi-amount" title="Indemnité légale au brut (long-courrier)">600€</div>
+          </div>
+        </div>
 
-    function setFilter(filter, btn) {
-      currentFilter = filter;
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      if (allResults.length) renderResults();
-    }
+        <div class="testi-card" data-group="1" style="display:none;">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-quote" data-i18n="testi_quote_6">Surbooking à Douala, la porte qui se referme sous notre nez. Vraiment violent ce jour-là. Robin a remis les choses d'aplomb pour mon fils et moi, on a enfin pu tourner la page. Merci !</p>
+          <div class="testi-author">
+            <div class="testi-avatar">OB</div>
+            <div><div class="testi-name">Ouleye B.</div><div class="testi-info" data-i18n="testi_info_6">CDG → DLA · Mère + enfant · Surbooking</div></div>
+            <div class="testi-amount" title="Indemnité légale au brut (long-courrier)">1&nbsp;200€</div>
+          </div>
+        </div>
+        <div class="testi-card" data-group="1" style="display:none;">
+          <div class="testi-stars">★★★★★</div>
+          <p class="testi-quote" data-i18n="testi_quote_8">Bruxelles–Kinshasa à quatre, vol annulé, la compagnie nous baladait depuis des semaines. Robin a tout géré de A à Z pour la famille, sans prise de tête. On respire.</p>
+          <div class="testi-author">
+            <div class="testi-avatar">MB</div>
+            <div><div class="testi-name">Marie B.</div><div class="testi-info" data-i18n="testi_info_8">BRU → FIH · Famille (4) · Annulation</div></div>
+            <div class="testi-amount" title="Indemnité légale au brut (long-courrier)">2&nbsp;400€</div>
+          </div>
+        </div>
 
-    function copyContact(text) {
-      navigator.clipboard.writeText(text).then(() => {
-        // brief feedback via button text handled inline
-      });
-    }
+      </div>
+    </div>
 
-    function escHtml(str) {
-      return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
+    <div class="testi-nav">
+      <button class="testi-arrow" onclick="slideTestis(-1)" aria-label="Précédent">←</button>
+      <div class="testi-dots" id="testi-dots">
+        <div class="testi-dot active" onclick="goSlide(0)"></div>
+        <div class="testi-dot" onclick="goSlide(1)"></div>
+      </div>
+      <button class="testi-arrow" onclick="slideTestis(1)" aria-label="Suivant">→</button>
+    </div>
+    <p class="testi-translated-note" id="testi-translated-note" data-i18n="testi_translated_from" style="margin-top:14px;font-size:11px;color:rgba(255,255,255,0.5);"></p>
+  </div>
+</section>
 
-    function exportCSV() {
-      if (!allResults.length) return;
-      const headers = ['username','nickname','bio','whatsapp','followers','profileUrl','keyword'];
-      const rows = allResults.map(r => headers.map(h => `"${String(r[h]||'').replace(/"/g,'""')}"`).join(','));
-      const csv = [headers.join(','), ...rows].join('\n');
-      const blob = new Blob(['\uFEFF'+csv], { type: 'text/csv;charset=utf-8;' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `agences_tiktok_${new Date().toISOString().slice(0,10)}.csv`;
-      a.click();
-    }
-  </script>
+<!-- ═══════ COMMENT CA MARCHE — La méthode Robin ═══════ -->
+<section id="comment-ca-marche">
+  <div class="ccm-wrap reveal">
+    <div class="ccm-header">
+      <div class="section-tag" data-i18n="section_how_tag">La méthode Robin</div>
+      <h2 class="section-title" data-i18n-html="section_how_title">4 étapes.<br>Un seul objectif.</h2>
+    </div>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <span class="step-num">01</span>
+        <div class="step-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C87A" stroke-width="2.2" stroke-linecap="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h3 class="step-title">Vous vérifiez</h3>
+        <p class="step-desc">WhatsApp, pastille « Vols éligibles » ou diagnostic en ligne — éligibilité et montant net en quelques minutes.</p>
+        <span class="step-time">⏱ Quelques minutes</span>
+      </div>
+
+      <div class="step-card">
+        <span class="step-num">02</span>
+        <div class="step-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C87A" stroke-width="2.2" stroke-linecap="round"><path d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+        </div>
+        <h3 class="step-title">Vous signez</h3>
+        <p class="step-desc">3 minutes sur WhatsApp ou en ligne. Vous signez le mandat électronique. C'est tout — on prend la main.</p>
+        <span class="step-time">⏱ 3 minutes</span>
+      </div>
+
+      <div class="step-card">
+        <span class="step-num">03</span>
+        <div class="step-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C87A" stroke-width="2.2" stroke-linecap="round"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        </div>
+        <h3 class="step-title">On monte le dossier</h3>
+        <p class="step-desc">Sous 24h, dossier technique : METAR/TAF, comparaison avec les autres vols au même moment, si d'autres avions ont décollé, on le documente.</p>
+        <span class="step-time">⏱ 24 heures</span>
+      </div>
+
+      <div class="step-card" style="padding-right:0;">
+        <span class="step-num">04</span>
+        <div class="step-icon-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C87A" stroke-width="2.2" stroke-linecap="round"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h3 class="step-title">Vous encaissez</h3>
+        <p class="step-desc">Robin négocie jusqu'au bout : en général la compagnie paie sous 4 à 12 semaines ; sinon médiateur puis tribunal <strong>à nos frais</strong>. Dès réception des fonds, virement de votre part, le détail des pourcentages est fixé avant signature (voir FAQ).</p>
+      </div>
+    </div>
+    <div style="margin-top:48px;text-align:center;">
+      <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary" data-i18n="cta_3min">3 minutes et c'est réglé →</a>
+      <p style="font-size:12px;color:var(--gray);margin-top:18px;" data-i18n-html="how_further">Pour aller plus loin : <a href="/meteo-dossier-indemnite.html" style="color:var(--neon-dark);font-weight:600;">Météo et dossier (TAF, METAR…)</a> · <a href="/pourquoi-si-peu-reclament.html" style="color:var(--neon-dark);font-weight:600;">Pourquoi si peu récupèrent leur indemnité ?</a></p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ QUI SUIS-JE ═══════ -->
+<section id="qui-suis-je">
+  <div class="qui-wrap reveal">
+    <div style="margin-bottom:32px;">
+      <div class="section-tag" style="color:var(--neon-b);" data-i18n="section_founder_tag">LE FONDATEUR</div>
+      <h2 class="section-title" style="color:white;" data-i18n-html="section_founder_title">20 ans dans les coulisses.<br><span style="color:var(--neon-b);">J'ai vu ce qu'ils cachent.</span></h2>
+    </div>
+
+    <div style="border-left:3px solid var(--neon-b);padding:18px 24px;margin-bottom:28px;background:rgba(0,229,160,0.04);border-radius:0 8px 8px 0;">
+      <p style="font-size:18px;line-height:1.75;color:white;font-style:italic;font-weight:500;" data-i18n="founder_quote">
+        "Ils vous facturent le kilo en trop. Le deuxième bagage. Le siège côté hublot. Mais quand c'est leur tour de payer, retard, annulation, surbooking, il n'y a plus personne au bout du fil."
+      </p>
+    </div>
+
+    <p style="font-size:15px;line-height:1.75;color:rgba(255,255,255,0.75);max-width:640px;margin:0 auto 20px;" data-i18n-html="founder_story_short">Vingt ans dans l'aviation : mêmes excuses, familles laissées sans indemnité. Robin, c'est un dossier technique solide et un suivi en français, wolof, bambara… Notre 25 % uniquement une fois votre argent récupéré.</p>
+    <p style="text-align:center;font-size:12px;color:rgba(255,255,255,0.4);font-style:italic;" data-i18n="founder_signature">Le fondateur · 20 ans dans le secteur aérien · Spécialiste CE 261/2004</p>
+  </div>
+</section>
+
+<!-- ═══════ FAQ ═══════ -->
+<section id="faq">
+  <div class="faq-wrap reveal">
+    <div class="faq-header">
+      <div class="section-tag" data-i18n="section_faq_tag">Questions fréquentes</div>
+      <h2 class="section-title" data-i18n-html="section_faq_title">Tout ce que vous<br>voulez savoir.</h2>
+    </div>
+    <div class="faq-list">
+
+      <div class="faq-item special">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span data-i18n="faq_1_q">💰 Combien je touche exactement sur mon compte ?</span>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner"></div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span data-i18n="faq_2_q">⏱️ Combien de temps faut-il pour recevoir mon indemnité ?</span>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner"></div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span data-i18n="faq_3_q">⚠️ La compagnie m'a proposé un bon d'achat — je l'accepte ?</span>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner"></div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span data-i18n="faq_4_q">🌩️ La compagnie invoque la météo ou une "circonstance extraordinaire"...</span>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner"></div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span data-i18n="faq_5_q">❌ J'ai réclamé seul et la compagnie a refusé. Vous pouvez intervenir ?</span>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner"></div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span data-i18n="faq_6_q">💳 Comment je suis payé ?</span>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner"></div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span data-i18n="faq_7_q">🔄 Mon vol avait une correspondance — je peux réclamer ?</span>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner"></div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span data-i18n="faq_8_q">✅ Vous prenez tous les dossiers ?</span>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner"></div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <span data-i18n="faq_9_q">↩️ Est-ce que je peux me rétracter ?</span>
+          <div class="faq-toggle">+</div>
+        </div>
+        <div class="faq-answer">
+          <div class="faq-answer-inner"></div>
+        </div>
+      </div>
+
+      <div style="margin-top:40px;padding:28px 24px;background:linear-gradient(135deg,rgba(0,200,122,0.08),rgba(11,31,58,0.04));border:1px solid rgba(0,200,122,0.25);border-radius:12px;text-align:center;">
+        <p style="font-size:15px;font-weight:700;color:var(--navy);margin-bottom:16px;" data-i18n="ready_claim">Prêt à réclamer ?</p>
+        <a href="#funnel-box" onclick="scrollToCalcWithAnimation(event); return false;" class="btn-primary" data-i18n="obt_indemnite">Mon argent m'attend →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ BLOG (lien compact) ═══════ -->
+<section id="confiance" class="reveal home-blog-teaser" style="padding:36px 24px 44px;background:var(--off);border-top:1px solid var(--border);">
+  <div style="max-width:640px;margin:0 auto;text-align:center;">
+    <p style="font-size:15px;color:var(--gray);line-height:1.6;margin:0 0 16px;" data-i18n="home_blog_teaser_line">Guides CE 261, bons d'achat, prescription : tout est sur le blog.</p>
+    <a href="/blog/" class="btn-ghost" style="display:inline-flex;min-height:48px;align-items:center;padding:14px 28px;" data-i18n="home_blog_teaser_btn">Voir les articles →</a>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer>
+  <h2 class="sr-only" data-i18n="footer_landmark_title">Liens et informations du site</h2>
+  <div class="footer-main">
+    <div>
+      <div class="footer-logo">ROBIN <span>des Airs</span></div>
+      <p class="footer-tagline" data-i18n="footer_tagline">Réclamation aérienne · Spécialiste Diaspora · Prix fixe · No win no fee</p>
+      <p class="footer-address">Robin des Airs · 66 avenue des Champs-Élysées, Paris 🇫🇷</p>
+      <p style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:10px;font-style:italic;">"Robin prend aux compagnies,<br>rend à nos familles."</p>
+    </div>
+    <div class="footer-col">
+      <h3 class="footer-col-heading" data-i18n="footer_nav">Navigation</h3>
+      <ul>
+        <li><a href="#la-loi" data-i18n="footer_loi">La loi CE 261/2004</a></li>
+        <li><a href="#comment-ca-marche" data-i18n="footer_how">Comment ça marche</a></li>
+        <li><a href="/nos-tarifs.html" data-i18n="footer_tarifs">Nos tarifs</a></li>
+        <li><a href="#qui-suis-je" data-i18n="footer_histoire">Notre histoire</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3 class="footer-col-heading">Guide du Voyageur</h3>
+      <ul>
+        <li><a href="/blog/">Blog — guides et articles</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3 class="footer-col-heading">Ressources</h3>
+      <ul>
+        <li><a href="/meteo-dossier-indemnite.html">Météo et dossier (TAF, METAR…)</a></li>
+        <li><a href="/pourquoi-si-peu-reclament.html">Pourquoi si peu récupèrent leur indemnité ?</a></li>
+        <li><a href="/depot-express.html" data-i18n="footer_depot_online">Dépôt en ligne</a></li>
+        <li><a href="/crm" rel="nofollow">CRM — accès équipe</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3 class="footer-col-heading" data-i18n="footer_legal">Légal</h3>
+      <ul>
+        <li><a href="/cgv.html">CGV</a></li>
+        <li><a href="/politique-confidentialite.html">Politique de confidentialité</a></li>
+        <li><a href="/mandat.html">Mandat de représentation (signer en ligne)</a></li>
+        <li><a href="/documents/mandat-fr.html?print=1" target="_blank" rel="noopener">Mandat PDF (FR)</a></li>
+        <li><a href="/droit-retractation.html">Droit de rétractation</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h3 class="footer-col-heading" data-i18n="footer_contact">Contact</h3>
+      <ul>
+        <li><a href="https://wa.me/33756863630" target="_blank">💬 WhatsApp</a></li>
+        <li><a href="/suivi-dossier.html">📋 Où en est mon dossier ?</a></li>
+        <li><a href="mailto:expert@robindesairs.eu">expert@robindesairs.eu</a></li>
+        <li>66 avenue des Champs-Élysées, Paris 🇫🇷</li>
+        <li><a href="#faq">FAQ</a></li>
+        <li class="footer-crisis"><!-- Vérifier que le numéro est actif avant lancement, sinon supprimer --><strong>Ligne crise (plusieurs vols annulés)</strong> — ouverte uniquement en période de crise : <a href="tel:+33189628969">01 89 62 89 69</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-disclaimer" role="note" aria-label="Informations et limites de responsabilité">
+    <p data-i18n="footer_vol_examples_disclaimer">Les exemples de vols indiqués sont fournis à titre informatif. L'éligibilité et le montant de l'indemnisation dépendent des conditions prévues par le règlement (CE) n°261/2004 (retard important, annulation ou surbooking, circonstances applicables), avec une indemnité pouvant aller jusqu'à 600 € par passager selon la distance du vol.</p>
+    <p id="footer-vol-ticker-data" data-i18n="footer_vol_ticker_data_note">Bandeau : 10 derniers vols impactés (annulation ou retard à l’arrivée ≥ 3 h) sur lignes Europe ↔ Afrique, mis à jour chaque jour (AeroDataBox). Sinon exemples illustratifs. Jusqu'à 600 € si le CE 261 s'applique. Un clic préremplit le formulaire.</p>
+    <p data-i18n="footer_no_legal_advice">Rien sur ce site ne constitue un conseil juridique ni une garantie de résultat ; l’éligibilité et les montants ne peuvent être affirmés qu’après examen individuel du dossier.</p>
+    <p id="footer-currency-hint" class="footer-currency-hint" style="display:none;margin-top:12px;font-size:11px;color:rgba(255,255,255,0.45);line-height:1.5;"></p>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-legal">© 2026 Robin des Airs — 66 av. des Champs-Élysées, 75008 Paris · Réclamation aérienne · Au service de nos communautés et de nos familles</div>
+    <div class="footer-reg">Fondé sur le Règlement CE 261/2004<br>Données protégées · RGPD conforme</div>
+  </div>
+</footer>
+
+
+<!-- Pas de script Cloudflare ici : sur Netlify /cdn-cgi/... renvoie 404 et alourdit Lighthouse. -->
+<!-- Chaîne JS : assets/home-loader.js (mobile ≤768px → diagnostic chargé à la demande) -->
+<script defer src="/assets/home-loader.js"></script>
+<script>
+try {
+  localStorage.setItem('robin_currency', 'eur');
+  if (window.I18N && typeof window.I18N.setCurrency === 'function') {
+    window.I18N.setCurrency('eur');
+  }
+} catch (e) {}
+</script>
+
+<!-- Modal QR WhatsApp (fallback desktop → téléphone) -->
+<div id="wa-qr-modal" style="display:none;position:fixed;inset:0;z-index:9999;">
+  <div onclick="closeWhatsAppQr()" style="position:absolute;inset:0;background:rgba(0,0,0,0.55);"></div>
+  <div style="position:relative;max-width:420px;margin:8vh auto 0;background:#fff;border-radius:14px;padding:18px 18px 16px;box-shadow:0 24px 80px rgba(0,0,0,0.35);">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;">
+      <div>
+        <div style="font-weight:900;color:#0B1F3A;font-size:14px;letter-spacing:1px;text-transform:uppercase;" data-i18n="wa_qr_title">Continuer sur WhatsApp</div>
+        <div style="margin-top:6px;color:#6B7A90;font-size:13px;line-height:1.6;" data-i18n="wa_qr_desc">Scannez ce QR code avec votre téléphone pour ouvrir WhatsApp.</div>
+      </div>
+      <button onclick="closeWhatsAppQr()" style="border:0;background:transparent;font-size:18px;line-height:1;color:#6B7A90;cursor:pointer;" aria-label="Close">×</button>
+    </div>
+    <div style="margin-top:14px;display:flex;flex-direction:column;align-items:center;gap:12px;">
+      <img id="wa-qr-img" alt="WhatsApp QR" width="220" height="220" loading="lazy" decoding="async" style="border-radius:10px;border:1px solid #E2E6EE;background:#F7F8FA;" />
+      <a id="wa-qr-open" href="#" target="_blank" rel="noopener" style="font-weight:900;color:#009960;text-decoration:none;" data-i18n="wa_qr_open">Ouvrir WhatsApp →</a>
+      <div style="font-size:11px;color:#6B7A90;text-align:center;line-height:1.5;" data-i18n="wa_qr_note">Si rien ne s’ouvre sur votre ordinateur, c’est normal : scannez le QR et continuez sur mobile.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+function openWhatsAppQr(url) {
+  try {
+    var modal = document.getElementById('wa-qr-modal');
+    var img = document.getElementById('wa-qr-img');
+    var a = document.getElementById('wa-qr-open');
+    if (!modal || !img || !a) return;
+    a.href = url;
+    img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(url);
+    modal.style.display = 'block';
+  } catch(e) {}
+}
+function closeWhatsAppQr() {
+  var modal = document.getElementById('wa-qr-modal');
+  if (modal) modal.style.display = 'none';
+}
+function openWhatsAppQrFromHero(e) {
+  if (e) e.preventDefault();
+  var hero = document.getElementById('hero-wa-link');
+  var url = hero && hero.href ? hero.href : ('https://wa.me/' + (window.WHATSAPP_NUMBER || ''));
+  openWhatsAppQr(url);
+}
+</script>
+
+<script>
+(function () {
+  var AB_KEY = "hero-copy-ab-v1";
+  var assigned = localStorage.getItem(AB_KEY);
+  if (!assigned) {
+    assigned = Math.random() < 0.5 ? "A" : "B";
+    localStorage.setItem(AB_KEY, assigned);
+  }
+
+  var label = document.getElementById("hero-ab-label");
+  var headline = document.getElementById("hero-ab-headline");
+  var subhead = document.getElementById("hero-ab-subhead");
+  var waBtn = document.getElementById("hero-wa-link");
+  var calcBtn = document.getElementById("btn-calc-hero");
+  if (!label || !headline || !subhead || !waBtn || !calcBtn) return;
+
+  if (assigned === "B") {
+    label.textContent = "Expert CE 261 Europe–Afrique";
+    headline.textContent = "vos droits, sans frontière.";
+    subhead.textContent = "Retard, annulation ou surbooking : on récupère votre indemnité CE 261, jusqu'à 600 € par passager, entre l'Europe et l'Afrique.";
+    waBtn.textContent = "📱 Vérifier mon éligibilité";
+    calcBtn.textContent = "Voir mon montant exact (2 min) →";
+  }
+
+  try {
+    plausible("AB-Hero-Variant", { props: { variant: assigned } });
+  } catch (e) {}
+})();
+</script>
+
+<!-- Un seul CTA persistant : bouton WhatsApp flottant -->
+<a href="https://api.whatsapp.com/send?phone=33756863630&amp;text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="wa-float" id="wa-float" aria-label="Vérifier mon éligibilité sur WhatsApp — Robin des Airs">
+  <span class="wa-float-icon" aria-hidden="true">
+    <svg class="wa-float-icon-svg" viewBox="0 0 24 24" width="28" height="28" fill="currentColor" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.881 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+  </span>
+  <span class="wa-float-text" data-i18n="wa_float_text">WhatsApp Robin</span>
+</a>
+
+<script>
+(function () {
+  function isWhatsAppHref(href) {
+    return href.indexOf('wa.me') !== -1 || href.indexOf('api.whatsapp.com') !== -1;
+  }
+
+  function sendProspectLog(anchor) {
+    try {
+      var payload = {
+        source: anchor.id === 'wa-float' ? 'wa-float' : (anchor.id || anchor.className || 'site'),
+        page: window.location.pathname + window.location.search,
+        href: anchor.href || '',
+        referrer: document.referrer || ''
+      };
+      fetch('/api/wa-click-prospect', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        keepalive: true
+      }).catch(function () {});
+    } catch (e) {}
+  }
+
+  document.addEventListener('click', function (e) {
+    var anchor = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (!anchor) return;
+    var href = String(anchor.href || '');
+    if (!isWhatsAppHref(href)) return;
+    sendProspectLog(anchor);
+  });
+})();
+</script>
+
 </body>
 </html>

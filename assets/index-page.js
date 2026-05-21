@@ -109,11 +109,24 @@ function toggleLangMenu() {
   document.getElementById('lang-menu').classList.toggle('open');
 }
 function switchLang(code, flag) {
+  var lang = String(code || 'fr').toLowerCase();
+  if (lang === 'en' || lang === 'en-us' || lang === 'en-gb') lang = 'en';
+  else lang = 'fr';
+  var onEnPath = /^\/en\/?$/i.test(location.pathname || '');
+  if (lang === 'en' && !onEnPath) {
+    location.href = '/en' + (location.hash || '');
+    return;
+  }
+  if (lang === 'fr' && onEnPath) {
+    location.href = '/' + (location.hash || '');
+    return;
+  }
   document.getElementById('current-flag').textContent = flag;
   document.querySelectorAll('.lang-option').forEach(o => o.classList.remove('active'));
-  var opt = document.querySelector('.lang-option[data-lang="' + (code || 'fr').toLowerCase() + '"]');
+  var opt = document.querySelector('.lang-option[data-lang="' + lang + '"]');
   if (opt) opt.classList.add('active');
-  document.getElementById('lang-menu').classList.remove('open');
+  var langMenu = document.getElementById('lang-menu');
+  if (langMenu) langMenu.classList.remove('open');
   if (window.I18N) window.I18N.setLang(code);
   requestAnimationFrame(function() { requestAnimationFrame(updateSiteHeaderOffset); });
 }
