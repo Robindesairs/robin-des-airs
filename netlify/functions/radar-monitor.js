@@ -51,12 +51,28 @@ async function buildMorningBanner() {
 }
 
 async function runSlotScan({ slot, hubs, filterFn, parisHour, dateYmd, windows }) {
-  const payload = await fetchRadarSlot({
-    dateYmd,
-    hubs,
-    windows,
-    directions: ['Departure'],
-  });
+  let payload = { flights: [], apiRequests: 0 };
+  try {
+    payload = await fetchRadarSlot({
+      dateYmd,
+      hubs,
+      windows,
+      directions: ['Departure'],
+    });
+  } catch (e) {
+    console.warn('runSlotScan fetch:', e.message);
+    return {
+      slot,
+      parisHour,
+      dateYmd,
+      at: new Date().toISOString(),
+      apiRequests: 0,
+      impactedCount: 0,
+      alerts: [],
+      flights: [],
+      fetchError: e.message,
+    };
+  }
   const filtered = filterFn(payload.flights || []);
   const sorted = sortImpactedForTicker(filtered);
   const alerts = sorted.slice(0, 15).map(summarizeFlight);
@@ -73,7 +89,20 @@ async function runSlotScan({ slot, hubs, filterFn, parisHour, dateYmd, windows }
 }
 
 async function runMorning(event, parisHour, dateYmd) {
-  const cache = await buildMorningBanner();
+  let cache;
+  try {
+    cache = await buildMorningBanner();
+  } catch (e) {
+    console.error('runMorning buildBanner:', e.message);
+    cache = {
+      flights: [],
+      count: 0,
+      viewDate: dateYmd,
+      updatedAt: new Date().toISOString(),
+      dataSource: 'error',
+      buildError: e.message,
+    };
+  }
   const blob = await saveBanner(event, cache);
 
   const yesterday = parisDateAddDays(-1);
@@ -195,8 +224,17 @@ exports.handler = async (event) => {
   } catch (e) {
     console.error('radar-monitor:', e);
     return {
-      statusCode: 500,
-      body: JSON.stringify({ ok: false, error: e.message, slot, parisHour }),
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ok: false,
+        error: e.message,
+        errorType: e.name,
+        slot,
+        parisHour,
+        hint:
+          'fetch failed = réseau Netlify→RapidAPI ou clé/abonnement AeroDataBox. Tester scripts/test-rapidapi-key.mjs',
+      }),
     };
   }
 };

@@ -150,13 +150,15 @@ async function fetchAdbWindow(icao, from, to, direction, rapidKey) {
     withLocation: 'false'
   });
   const url = `https://${host}/flights/airports/icao/${icao}/${from}/${to}?${params}`;
+  const timeoutMs = Math.min(28000, parseInt(process.env.RADAR_FETCH_TIMEOUT_MS || '20000', 10) || 20000);
   try {
     const res = await fetch(url, {
       headers: {
         'x-rapidapi-host': host,
         'x-rapidapi-key': rapidKey,
         Accept: 'application/json'
-      }
+      },
+      signal: AbortSignal.timeout(timeoutMs)
     });
     if (!res.ok) {
       console.warn('radar AerodataBox HTTP', res.status, icao, direction, from);
