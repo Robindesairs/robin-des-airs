@@ -157,19 +157,28 @@ async function fetchHub(icao, from, to, dir, key) {
   const host = process.env.AERODATABOX_RAPIDAPI_HOST || 'aerodatabox.p.rapidapi.com';
   const params = new URLSearchParams({ withLeg:'true', direction:dir, withCancelled:'true', withCodeshared:'false', withCargo:'false', withPrivate:'false', withLocation:'false' });
   const url = `https://${host}/flights/airports/icao/${icao}/${from}/${to}?${params}`;
-  try {
-    const r = await fetch(url, { headers:{ 'x-rapidapi-host':host, 'x-rapidapi-key':key, Accept:'application/json' } });
-    if (!r.ok) {
-      console.error(`fetchHub ${icao} ${dir} HTTP ${r.status}: ${await r.text().catch(()=>'')}`);
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const r = await fetch(url, { headers:{ 'x-rapidapi-host':host, 'x-rapidapi-key':key, Accept:'application/json' } });
+      if (r.status === 429) {
+        const wait = (attempt + 1) * 3000;
+        console.warn(`fetchHub ${icao} ${dir} 429 — retry dans ${wait}ms`);
+        await new Promise(res => setTimeout(res, wait));
+        continue;
+      }
+      if (!r.ok) {
+        console.error(`fetchHub ${icao} ${dir} HTTP ${r.status}: ${await r.text().catch(()=>'')}`);
+        return [];
+      }
+      const j = await r.json().catch(()=>({}));
+      const k = dir==='Arrival'?'arrivals':'departures';
+      return Array.isArray(j[k]) ? j[k] : [];
+    } catch (err) {
+      console.error(`fetchHub ${icao} ${dir} NETWORK ERROR: ${err.message}`);
       return [];
     }
-    const j = await r.json().catch(()=>({}));
-    const k = dir==='Arrival'?'arrivals':'departures';
-    return Array.isArray(j[k]) ? j[k] : [];
-  } catch (err) {
-    console.error(`fetchHub ${icao} ${dir} NETWORK ERROR: ${err.message}`);
-    return [];
   }
+  return [];
 }
 
 function delayMin(sched, actual) {
@@ -232,15 +241,15 @@ exports.handler = async (event) => {
     [`${dateStr}T12:00`, `${dateStr}T23:59`],
   ];
 
-  // Rate limit RapidAPI Pro = 1 req/sec → appels séquentiels espacés de 1.1s
+  // Rate limit RapidAPI Pro = 1 req/sec → appels séquentiels espacés de 2s
   const sleep = ms => new Promise(r => setTimeout(r, ms));
   const rawFlights = [];
   for (const hub of HUBS) {
     for (const [a, b] of windows) {
       const deps = await fetchHub(hub.icao, a, b, 'Departure', rapidKey);
-      await sleep(1100);
+      await sleep(2000);
       const arrs = await fetchHub(hub.icao, a, b, 'Arrival', rapidKey);
-      await sleep(1100);
+      await sleep(2000);
       for (const r of [...deps, ...arrs]) {
         const n = normalise(r);
         if (n) rawFlights.push(n);
