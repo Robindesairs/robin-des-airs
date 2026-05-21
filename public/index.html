@@ -1,1 +1,548 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TikTok Agency Finder</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --surface: #13131a;
+      --border: #1e1e2e;
+      --accent: #00e5a0;
+      --accent2: #ff6b35;
+      --text: #e8e8f0;
+      --muted: #6b6b8a;
+      --card: #16161f;
+    }
 
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Syne', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+
+    .noise {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      opacity: 0.4;
+    }
+
+    .container { max-width: 860px; margin: 0 auto; position: relative; z-index: 1; }
+
+    header { text-align: center; margin-bottom: 3rem; }
+
+    .badge {
+      display: inline-block;
+      background: rgba(0,229,160,0.1);
+      border: 1px solid rgba(0,229,160,0.3);
+      color: var(--accent);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      padding: 0.3rem 0.8rem;
+      border-radius: 2px;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 30%, var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle { color: var(--muted); font-size: 0.95rem; margin-top: 0.75rem; font-weight: 400; }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .panel-title {
+      font-size: 0.7rem;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .keywords-grid { display: flex; flex-direction: column; gap: 0.5rem; }
+
+    .keyword-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.6rem 1rem;
+      transition: border-color 0.2s;
+    }
+
+    .keyword-row:focus-within { border-color: var(--accent); }
+
+    .kw-icon { font-size: 1rem; flex-shrink: 0; }
+
+    .keyword-row input {
+      flex: 1;
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.9rem;
+    }
+
+    .keyword-row input::placeholder { color: var(--muted); }
+
+    .btn-remove {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 1.1rem;
+      padding: 0;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+
+    .btn-remove:hover { color: var(--accent2); }
+
+    .btn-add {
+      width: 100%;
+      margin-top: 0.5rem;
+      background: none;
+      border: 1px dashed var(--border);
+      color: var(--muted);
+      font-family: 'Syne', sans-serif;
+      font-size: 0.85rem;
+      padding: 0.6rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-add:hover { border-color: var(--accent); color: var(--accent); }
+
+    .btn-run {
+      width: 100%;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      padding: 1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-run:hover { background: #00ffc3; transform: translateY(-1px); }
+    .btn-run:disabled { background: var(--border); color: var(--muted); cursor: not-allowed; transform: none; }
+
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(0,0,0,0.3);
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem;
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .stat-num.green { color: var(--accent); }
+    .stat-num.orange { color: var(--accent2); }
+    .stat-num.white { color: var(--text); }
+
+    .stat-label { font-size: 0.72rem; color: var(--muted); margin-top: 0.3rem; font-family: 'DM Mono', monospace; }
+
+    .filters {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-btn.active { background: rgba(0,229,160,0.1); border-color: var(--accent); color: var(--accent); }
+
+    .results-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+    .result-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      transition: border-color 0.2s;
+      animation: fadeIn 0.3s ease both;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .result-card:hover { border-color: rgba(0,229,160,0.3); }
+    .result-card.has-contact { border-left: 3px solid var(--accent); }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+      gap: 1rem;
+    }
+
+    .username {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--text);
+    }
+
+    .username a { color: inherit; text-decoration: none; }
+    .username a:hover { color: var(--accent); }
+
+    .nickname { font-size: 0.8rem; color: var(--muted); margin-top: 0.1rem; font-family: 'DM Mono', monospace; }
+
+    .followers {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .bio {
+      font-size: 0.875rem;
+      color: #b0b0c8;
+      line-height: 1.5;
+      margin-bottom: 0.75rem;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .card-footer { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+
+    .tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+    }
+
+    .tag-keyword { background: rgba(255,107,53,0.1); color: var(--accent2); border: 1px solid rgba(255,107,53,0.2); }
+    .tag-wa { background: rgba(0,229,160,0.1); color: var(--accent); border: 1px solid rgba(0,229,160,0.3); }
+
+    .btn-copy {
+      margin-left: auto;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-copy:hover { border-color: var(--accent); color: var(--accent); }
+
+    .btn-export {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      font-size: 0.85rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 1rem;
+    }
+
+    .btn-export:hover { border-color: var(--accent); color: var(--accent); }
+
+    .empty {
+      text-align: center;
+      padding: 3rem;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.85rem;
+    }
+
+    .error-msg {
+      background: rgba(255,107,53,0.1);
+      border: 1px solid rgba(255,107,53,0.3);
+      color: var(--accent2);
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+    }
+
+    #results-section { display: none; }
+  </style>
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="container">
+
+    <header>
+      <div class="badge">🎵 TikTok Intelligence</div>
+      <h1>Agency Finder<br/>West Africa</h1>
+      <p class="subtitle">Extrait les bios & contacts WhatsApp des agences de voyage sur TikTok</p>
+    </header>
+
+    <!-- Config panel -->
+    <div class="panel">
+      <div class="panel-title">🔍 Mots-clés de recherche</div>
+      <div class="keywords-grid" id="keywords-grid">
+        <div class="keyword-row">
+          <span class="kw-icon">✈️</span>
+          <input type="text" value="Travel Agency Gambia" placeholder="Mot-clé..." />
+          <button class="btn-remove" onclick="removeKeyword(this)">×</button>
+        </div>
+        <div class="keyword-row">
+          <span class="kw-icon">🌍</span>
+          <input type="text" value="Voyage Sénégal Dakar" placeholder="Mot-clé..." />
+          <button class="btn-remove" onclick="removeKeyword(this)">×</button>
+        </div>
+        <div class="keyword-row">
+          <span class="kw-icon">🎫</span>
+          <input type="text" value="Billetterie Serekunda" placeholder="Mot-clé..." />
+          <button class="btn-remove" onclick="removeKeyword(this)">×</button>
+        </div>
+      </div>
+      <button class="btn-add" onclick="addKeyword()">+ Ajouter un mot-clé</button>
+    </div>
+
+    <button class="btn-run" id="btn-run" onclick="runScraper()">
+      <div class="spinner" id="spinner"></div>
+      <span id="btn-text">🚀 Lancer la recherche</span>
+    </button>
+
+    <div id="error-box" class="error-msg" style="display:none;margin-top:1rem;"></div>
+
+    <!-- Results -->
+    <div id="results-section">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-num white" id="stat-total">0</div>
+          <div class="stat-label">profils trouvés</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num green" id="stat-contacts">0</div>
+          <div class="stat-label">avec WhatsApp</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num orange" id="stat-no-contact">0</div>
+          <div class="stat-label">sans contact</div>
+        </div>
+      </div>
+
+      <div class="filters">
+        <button class="filter-btn active" onclick="setFilter('all', this)">Tous</button>
+        <button class="filter-btn" onclick="setFilter('contact', this)">Avec WhatsApp</button>
+        <button class="filter-btn" onclick="setFilter('no-contact', this)">Sans contact</button>
+      </div>
+
+      <div class="results-list" id="results-list"></div>
+
+      <button class="btn-export" onclick="exportCSV()">⬇️ Exporter CSV</button>
+    </div>
+
+  </div>
+
+  <script>
+    let allResults = [];
+    let currentFilter = 'all';
+
+    const ICONS = ['✈️','🌍','🎫','🗺️','🏖️','🚢','🌐','📍'];
+
+    function addKeyword() {
+      const grid = document.getElementById('keywords-grid');
+      const row = document.createElement('div');
+      row.className = 'keyword-row';
+      const icon = ICONS[grid.children.length % ICONS.length];
+      row.innerHTML = `
+        <span class="kw-icon">${icon}</span>
+        <input type="text" placeholder="Nouveau mot-clé..." />
+        <button class="btn-remove" onclick="removeKeyword(this)">×</button>
+      `;
+      grid.appendChild(row);
+      row.querySelector('input').focus();
+    }
+
+    function removeKeyword(btn) {
+      const grid = document.getElementById('keywords-grid');
+      if (grid.children.length > 1) btn.closest('.keyword-row').remove();
+    }
+
+    function getKeywords() {
+      return [...document.querySelectorAll('#keywords-grid input')]
+        .map(i => i.value.trim()).filter(Boolean);
+    }
+
+    async function runScraper() {
+      const keywords = getKeywords();
+      if (!keywords.length) return;
+
+      const btn = document.getElementById('btn-run');
+      const spinner = document.getElementById('spinner');
+      const btnText = document.getElementById('btn-text');
+      const errorBox = document.getElementById('error-box');
+
+      btn.disabled = true;
+      spinner.style.display = 'block';
+      btnText.textContent = 'Recherche en cours...';
+      errorBox.style.display = 'none';
+
+      try {
+        const res = await fetch('/.netlify/functions/scrape', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ keywords }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || 'Erreur serveur');
+
+        allResults = data.results;
+        renderResults();
+
+      } catch (err) {
+        errorBox.textContent = '❌ ' + err.message;
+        errorBox.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        spinner.style.display = 'none';
+        btnText.textContent = '🚀 Lancer la recherche';
+      }
+    }
+
+    function renderResults() {
+      const section = document.getElementById('results-section');
+      const list = document.getElementById('results-list');
+      section.style.display = 'block';
+
+      const filtered = allResults.filter(r => {
+        if (currentFilter === 'contact') return !!r.whatsapp;
+        if (currentFilter === 'no-contact') return !r.whatsapp;
+        return true;
+      });
+
+      document.getElementById('stat-total').textContent = allResults.length;
+      document.getElementById('stat-contacts').textContent = allResults.filter(r => r.whatsapp).length;
+      document.getElementById('stat-no-contact').textContent = allResults.filter(r => !r.whatsapp).length;
+
+      if (!filtered.length) {
+        list.innerHTML = '<div class="empty">🔍 Aucun résultat pour ce filtre</div>';
+        return;
+      }
+
+      list.innerHTML = filtered.map((r, i) => `
+        <div class="result-card ${r.whatsapp ? 'has-contact' : ''}" style="animation-delay:${i*40}ms">
+          <div class="card-top">
+            <div>
+              <div class="username">
+                <a href="${r.profileUrl}" target="_blank">@${r.username}</a>
+              </div>
+              ${r.nickname ? `<div class="nickname">${r.nickname}</div>` : ''}
+            </div>
+            <div class="followers">👥 ${r.followers.toLocaleString('fr')}</div>
+          </div>
+          <div class="bio">${escHtml(r.bio)}</div>
+          <div class="card-footer">
+            <span class="tag tag-keyword">${escHtml(r.keyword)}</span>
+            ${r.whatsapp ? `<span class="tag tag-wa">📱 ${escHtml(r.whatsapp)}</span>` : ''}
+            <button class="btn-copy" onclick="copyContact('${escHtml(r.whatsapp || r.username)}')">
+              ${r.whatsapp ? '📋 Copier WA' : '📋 Copier @'}
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function setFilter(filter, btn) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if (allResults.length) renderResults();
+    }
+
+    function copyContact(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        // brief feedback via button text handled inline
+      });
+    }
+
+    function escHtml(str) {
+      return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function exportCSV() {
+      if (!allResults.length) return;
+      const headers = ['username','nickname','bio','whatsapp','followers','profileUrl','keyword'];
+      const rows = allResults.map(r => headers.map(h => `"${String(r[h]||'').replace(/"/g,'""')}"`).join(','));
+      const csv = [headers.join(','), ...rows].join('\n');
+      const blob = new Blob(['\uFEFF'+csv], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `agences_tiktok_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+    }
+  </script>
+</body>
+</html>
