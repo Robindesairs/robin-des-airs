@@ -1,54 +1,11 @@
 {
-  "name": "files",
+  "name": "tiktok-agency-finder",
   "version": "1.0.0",
-  "description": "",
-  "main": "i18n.js",
-  "directories": {
-    "doc": "docs"
-  },
+  "description": "TikTok Agency Scraper — Gambia & Senegal",
   "scripts": {
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "typecheck": "tsc --noEmit",
-    "certify": "node -r ts-node/register src/runCertification.ts",
-    "certify:server": "node -r ts-node/register src/server.ts",
-    "seed:hubs": "node -r ts-node/register src/seedAfricanHubs.ts",
-    "build:blog": "node -r ts-node/register src/scripts/build-blog.ts",
-    "build:sitemap": "node -r ts-node/register src/scripts/build-sitemap.ts",
-    "mandat:pdf": "node scripts/generate-mandat-pdf.mjs",
-    "mandat:print": "python3 scripts/generate-mandat-pdf-fpdf.py",
-    "proofs:capture": "node scripts/agent-meteo-radar.js",
-    "proofs:install-browser": "playwright install chromium"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Robindesairs/robin-des-airs.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
-  "bugs": {
-    "url": "https://github.com/Robindesairs/robin-des-airs/issues"
-  },
-  "homepage": "https://github.com/Robindesairs/robin-des-airs#readme",
-  "dependencies": {
-    "@netlify/blobs": "^5.0.0",
-    "amadeus": "^11.0.0",
-    "better-sqlite3": "^12.6.2",
-    "dotenv": "^17.3.1",
-    "gray-matter": "^4.0.3",
-    "marked": "^15.0.12",
-    "pdfkit": "^0.18.0"
+    "dev": "netlify dev"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^7.6.13",
-    "@types/node": "^25.3.5",
-    "netlify-cli": "^24.0.1",
-    "playwright": "^1.49.0",
-    "puppeteer": "^23.11.1",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.9.3",
-    "vitest": "^3.2.4"
+    "netlify-cli": "^17.0.0"
   }
 }
