@@ -134,6 +134,10 @@ function normalizeAdbFlight(raw) {
   };
 }
 
+function sleepMs(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
+
 async function fetchAdbWindow(icao, from, to, direction, rapidKey) {
   const host = process.env.AERODATABOX_RAPIDAPI_HOST || 'aerodatabox.p.rapidapi.com';
   const params = new URLSearchParams({
@@ -146,20 +150,69 @@ async function fetchAdbWindow(icao, from, to, direction, rapidKey) {
     withLocation: 'false'
   });
   const url = `https://${host}/flights/airports/icao/${icao}/${from}/${to}?${params}`;
-  const res = await fetch(url, {
-    headers: {
-      'x-rapidapi-host': host,
-      'x-rapidapi-key': rapidKey,
-      Accept: 'application/json'
+  try {
+    const res = await fetch(url, {
+      headers: {
+        'x-rapidapi-host': host,
+        'x-rapidapi-key': rapidKey,
+        Accept: 'application/json'
+      }
+    });
+    if (!res.ok) {
+      console.warn('radar AerodataBox HTTP', res.status, icao, direction, from);
+      return [];
     }
-  });
-  if (!res.ok) {
-    console.warn('radar AerodataBox HTTP', res.status, icao, direction, from);
+    const j = await res.json().catch(() => ({}));
+    const key = direction === 'Arrival' ? 'arrivals' : 'departures';
+    return Array.isArray(j[key]) ? j[key] : [];
+  } catch (e) {
+    console.warn('radar AerodataBox fetch', icao, e.message);
     return [];
   }
-  const j = await res.json().catch(() => ({}));
-  const key = direction === 'Arrival' ? 'arrivals' : 'departures';
-  return Array.isArray(j[key]) ? j[key] : [];
+}
+
+/**
+ * Scan ciblé (créneau horaire) — hubs + fenêtres + sens, throttle 1 req/s.
+ */
+async function fetchRadarSlot({ dateYmd, hubs, windows, directions }) {
+  const rapidKey = process.env.RAPIDAPI_KEY || process.env.AERODATABOX_RAPIDAPI_KEY;
+  if (!rapidKey) throw new Error('RAPIDAPI_KEY manquant');
+  const day = dateYmd || parisDateYmd();
+  const hubList = hubs && hubs.length ? hubs : HUBS;
+  const wins =
+    windows && windows.length
+      ? windows
+      : [
+          [`${day}T00:00`, `${day}T11:59`],
+          [`${day}T12:00`, `${day}T23:59`]
+        ];
+  const dirs = directions && directions.length ? directions : ['Departure', 'Arrival'];
+  const delayMs = Math.max(900, parseInt(process.env.RADAR_API_DELAY_MS || '1100', 10) || 1100);
+
+  const allRaw = [];
+  const arrivalRaw = [];
+  let apiRequests = 0;
+
+  for (const hub of hubList) {
+    const icao = TICKER_HUB_ICAO[hub] || HUB_ICAO[hub];
+    if (!icao) continue;
+    for (const [a, b] of wins) {
+      for (const dir of dirs) {
+        await sleepMs(delayMs);
+        apiRequests += 1;
+        const rows = await fetchAdbWindow(icao, a, b, dir, rapidKey);
+        for (const r of rows) {
+          const n = normalizeAdbFlight(r);
+          if (!n) continue;
+          if (dir === 'Arrival') arrivalRaw.push(n);
+          else allRaw.push(n);
+        }
+      }
+    }
+  }
+
+  const payload = await assembleFlightsFromRaw(allRaw, arrivalRaw);
+  return Object.assign(payload, { apiRequests });
 }
 
 /** Hubs Afrique pour départs Afrique → Europe (bandeau quotidien). */
@@ -306,16 +359,35 @@ function sortImpactedForTicker(flights) {
   });
 }
 
+/** Hubs bandeau matin (conso réduite, timeout Netlify). */
+const BANNER_HUBS = ['CDG', 'ORY', 'RUN', 'DSS', 'DKR', 'ABJ', 'ACC', 'LOS', 'CMN', 'BJL'];
+
 async function fetchRadarFlightsForDate(dateYmd) {
-  const rapidKey = process.env.RAPIDAPI_KEY || process.env.AERODATABOX_RAPIDAPI_KEY;
-  if (!rapidKey) throw new Error('RAPIDAPI_KEY manquant');
-  const allRaw = [];
-  const arrivalRaw = [];
-  const frHubs = HUBS;
-  const afHubs = TICKER_AFRICA_HUBS;
-  await fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, dateYmd, frHubs);
-  await fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, dateYmd, afHubs);
-  return assembleFlightsFromRaw(allRaw, arrivalRaw);
+  const day = dateYmd || parisDateYmd();
+  const daysBack = Math.min(2, Math.max(1, parseInt(process.env.TICKER_HISTORY_DAYS || '1', 10) || 1));
+  const byKey = new Map();
+
+  for (let offset = 0; offset < daysBack; offset++) {
+    const d = parisDateAddDays(-offset);
+    const payload = await fetchRadarSlot({
+      dateYmd: d,
+      hubs: BANNER_HUBS,
+      windows: [[`${d}T00:00`, `${d}T23:59`]],
+      directions: ['Departure', 'Arrival'],
+    });
+    const impacted = filterImpactedEuAfricaFlights(payload.flights || []);
+    for (const f of impacted) {
+      const k = flightDedupeKey(f);
+      if (!byKey.has(k)) byKey.set(k, f);
+    }
+  }
+
+  return {
+    flights: Array.from(byKey.values()),
+    viewDate: day,
+    updatedAt: new Date().toISOString(),
+    dataSource: 'aerodatabox',
+  };
 }
 
 /** Extrait HH:mm d'une chaîne ISO (ex. 2024-01-15T10:30:00) ou "HH:mm" */
@@ -703,9 +775,16 @@ exports.handler = async (event) => {
 };
 
 exports.fetchRadarFlightsForDate = fetchRadarFlightsForDate;
+exports.fetchRadarSlot = fetchRadarSlot;
 exports.filterImpactedEuAfricaFlights = filterImpactedEuAfricaFlights;
 exports.sortImpactedForTicker = sortImpactedForTicker;
 exports.flightDedupeKey = flightDedupeKey;
 exports.parisDateYmd = parisDateYmd;
 exports.parisDateAddDays = parisDateAddDays;
 exports.isEuAfricaRoute = isEuAfricaRoute;
+exports.getCountry = getCountry;
+exports.isEurope = isEurope;
+exports.isAfrica = isAfrica;
+exports.BANNER_HUBS = BANNER_HUBS;
+exports.TICKER_AFRICA_HUBS = TICKER_AFRICA_HUBS;
+exports.HUBS = HUBS;

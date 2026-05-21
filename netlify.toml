@@ -14,9 +14,9 @@
 [functions."whatsapp-gemini-fallback"]
   schedule = "* * * * *"
 
-# Bandeau accueil : 10 derniers vols impactés Europe ↔ Afrique (cache Blobs)
-[functions."radar-ticker-refresh"]
-  schedule = "20 5 * * *"
+# Radar : 8h bandeau+email, 16-17h EU→AF, 18h-2h AF→EU (heure Paris, cron chaque heure :05 UTC)
+[functions."radar-monitor"]
+  schedule = "5 * * * *"
 
 [build]
   publish = "."
@@ -196,6 +196,11 @@
 [[redirects]]
   from = "/api/daily-radar-snapshot"
   to = "/.netlify/functions/daily-radar-snapshot"
+  status = 200
+
+[[redirects]]
+  from = "/api/radar-monitor"
+  to = "/.netlify/functions/radar-monitor"
   status = 200
 
 # Webhook WhatsApp 360dialog

@@ -12,9 +12,7 @@ const {
   fetchRadarFlightsForDate,
   filterImpactedEuAfricaFlights,
   sortImpactedForTicker,
-  flightDedupeKey,
   parisDateYmd,
-  parisDateAddDays,
 } = require('./radar');
 
 async function loadCached(store) {
@@ -26,43 +24,19 @@ async function loadCached(store) {
 }
 
 async function buildTickerCache() {
-  const daysBack = Math.min(
-    14,
-    Math.max(3, parseInt(process.env.TICKER_HISTORY_DAYS || '7', 10) || 7)
-  );
-  const byKey = new Map();
-
-  for (let offset = 0; offset < daysBack; offset++) {
-    const dateYmd = parisDateAddDays(-offset);
-    try {
-      const payload = await fetchRadarFlightsForDate(dateYmd);
-      const impacted = filterImpactedEuAfricaFlights(payload.flights || []);
-      for (const f of impacted) {
-        const k = flightDedupeKey(f);
-        if (!byKey.has(k)) byKey.set(k, f);
-      }
-      console.log('radar-ticker-refresh:', dateYmd, impacted.length, 'impactés');
-    } catch (e) {
-      console.warn('radar-ticker-refresh:', dateYmd, e.message);
-    }
-  }
-
-  let merged = sortImpactedForTicker(Array.from(byKey.values()));
-  const maxStore = Math.min(50, Math.max(10, parseInt(process.env.TICKER_STORE_MAX || '30', 10) || 30));
-  merged = merged.slice(0, maxStore);
-
+  const payload = await fetchRadarFlightsForDate(parisDateYmd());
+  const merged = sortImpactedForTicker(filterImpactedEuAfricaFlights(payload.flights || []));
   const bannerFlights = merged.slice(0, 10);
   const now = new Date();
 
   return {
     flights: bannerFlights,
-    allImpacted: merged,
-    viewDate: parisDateYmd(),
+    allImpacted: merged.slice(0, 30),
+    viewDate: payload.viewDate || parisDateYmd(),
     updatedAt: now.toISOString(),
     refreshedAt: now.toISOString(),
     dataSource: 'aerodatabox',
     tickerMode: 'eu-africa-impacted',
-    historyDays: daysBack,
     count: bannerFlights.length,
   };
 }

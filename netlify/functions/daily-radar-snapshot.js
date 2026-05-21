@@ -4,7 +4,18 @@
  * GET  /.netlify/functions/daily-radar-snapshot  (idem)
  */
 
-const { handler } = require('./radar-ticker-refresh');
+/** Alias manuel → créneau matin (bandeau + email). */
+const { handler } = require('./radar-monitor');
+const inner = handler;
+
+exports.handler = async (event) => {
+  const ev = Object.assign({}, event, {
+    queryStringParameters: Object.assign({}, event.queryStringParameters || {}, {
+      force: 'morning',
+    }),
+  });
+  return inner(ev);
+};
 
 exports.handler = async (event) => {
   const method = (event.httpMethod || 'GET').toUpperCase();
