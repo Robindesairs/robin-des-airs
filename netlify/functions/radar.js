@@ -138,8 +138,10 @@ function sleepMs(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
+const { aerodataboxHost } = require('./lib/adb-host');
+
 async function fetchAdbWindow(icao, from, to, direction, rapidKey) {
-  const host = process.env.AERODATABOX_RAPIDAPI_HOST || 'aerodatabox.p.rapidapi.com';
+  const host = aerodataboxHost();
   const params = new URLSearchParams({
     withLeg: 'true',
     direction,
