@@ -69,6 +69,51 @@ function formatCommissionHtml(d) {
   return formatMoneyHtml(commissionEurTotal(d));
 }
 
+function formatAirlineTransparency(d) {
+  if (!d) return '';
+  const dec = d.airlineDecision;
+  const ref = d.indemniteReferenceEur;
+  const col = d.indemniteCollectedEur;
+  const pct = d.airlinePercent;
+  const just = (d.airlineJustification || '').trim();
+  const en = typeof AgenceI18n !== 'undefined' && AgenceI18n.getLang && AgenceI18n.getLang() === 'en';
+  if (dec === 'accepted') {
+    if (col != null && pct != null && ref) {
+      return en
+        ? 'Airline: accepted — ' + col + ' € collected (' + pct + '% of indicative ' + ref + ' € bracket).'
+        : 'Compagnie : acceptation — ' + col + ' € encaissés (' + pct + ' % du barème indicatif ' + ref + ' €).';
+    }
+    return en
+      ? 'Airline: acceptance recorded. Indicative bracket: ' + (ref || '—') + ' €.'
+      : 'Compagnie : acceptation enregistrée. Barème indicatif : ' + (ref || '—') + ' €.';
+  }
+  if (dec === 'refused') {
+    let s = en ? 'Airline: refusal — ' : 'Compagnie : refus — ';
+    s += just || (en ? 'reason documented by Robin des Airs in file notes.' : 'motif documenté par Robin des Airs dans le dossier.');
+    return s;
+  }
+  if (d.airlineTransparency) return d.airlineTransparency;
+  return en
+    ? 'Airline decision pending — Robin des Airs will publish acceptance or refusal with justification.'
+    : 'Décision compagnie en attente — Robin des Airs publiera acceptation ou refus motivé.';
+}
+
+function transparencyDetailRow(d, colspan) {
+  const text = formatAirlineTransparency(d);
+  if (!text) return '';
+  return (
+    '<tr class="dossier-transparency-row"><td colspan="' +
+    colspan +
+    '"><div class="transparency-box" title="' +
+    escHtml(text) +
+    '"><span class="transparency-label">' +
+    escHtml(t('transparency.label')) +
+    '</span> ' +
+    escHtml(text) +
+    '</div></td></tr>'
+  );
+}
+
 function formatCommissionPerPaxHtml() {
   if (typeof AgenceCurrency !== 'undefined' && AgenceCurrency.getCurrency() === 'GMD' && pricing.commissionGmd) {
     return (
@@ -78,6 +123,31 @@ function formatCommissionPerPaxHtml() {
     );
   }
   return formatMoneyHtml(pricing.commissionEur);
+}
+
+function commissionPerPaxGmd() {
+  return pricing.commissionGmd || Math.round(pricing.commissionEur * 84);
+}
+
+/** Ligne sous le passager (dossiers soumis) : pax · GMD/pax · total estimé. */
+function formatPaxCommissionSubline(d) {
+  const n = d.nbPassagers || 1;
+  const per = commissionPerPaxGmd();
+  const total = n * per;
+  const lang =
+    typeof AgenceI18n !== 'undefined' && AgenceI18n.getLang && AgenceI18n.getLang() === 'en' ? 'en' : 'fr-FR';
+  return (
+    escHtml(String(n)) +
+    ' ' +
+    escHtml(t('col.pax_short')) +
+    ' · ' +
+    escHtml(per.toLocaleString(lang, { maximumFractionDigits: 0 })) +
+    ' ' +
+    escHtml(t('col.comm_per_pax')) +
+    ' · ' +
+    escHtml(total.toLocaleString(lang, { maximumFractionDigits: 0 })) +
+    ' GMD'
+  );
 }
 
 function setRefreshButtonsDisabled(disabled) {
@@ -149,13 +219,64 @@ function clearFormInvalidState() {
 }
 
 function updateFormCommissionPreview() {
-  const el = document.getElementById('form-commission-preview');
-  if (!el) return;
-  const n = parseInt(document.getElementById('f-nb-passagers')?.value, 10) || 1;
-  const fake = { nbPassagers: n };
-  el.innerHTML = formatCommissionHtml(fake);
   const side = document.getElementById('commission-sidebar-amount');
   if (side) side.innerHTML = formatCommissionPerPaxHtml();
+}
+
+const AGENCY_LAST_REF_KEY = 'agency_last_ref';
+
+function clientEmailForRef(ref) {
+  if (!ref) return '';
+  return String(ref).trim().toLowerCase() + '@robindesairs.eu';
+}
+
+/** URL mandat passager préremplie depuis le formulaire agence (aperçu). */
+function buildMandatPreviewUrl(opts) {
+  const prenom = (document.getElementById('f-prenom')?.value || '').trim();
+  const nom = (document.getElementById('f-nom')?.value || '').trim();
+  const phone = getFormTel();
+  const ref =
+    (opts && opts.ref) ||
+    sessionStorage.getItem(AGENCY_LAST_REF_KEY) ||
+    'RDA-PREVIEW-' + new Date().toISOString().slice(2, 10).replace(/-/g, '');
+  const pnr = (document.getElementById('f-pnr')?.value || '').trim().toUpperCase();
+  const vol = (document.getElementById('f-vol')?.value || '').trim().toUpperCase();
+  const dep = (document.getElementById('f-depart')?.value || '').trim().toUpperCase();
+  const arr = (document.getElementById('f-arrivee')?.value || '').trim().toUpperCase();
+  const comp = (
+    (document.getElementById('f-compagnie')?.value || '').trim() ||
+    (document.getElementById('airlineInput')?.value || '').trim()
+  );
+  const dateRaw = (document.getElementById('f-date')?.value || '').trim();
+  let date = '';
+  if (/^\d{4}-\d{2}-\d{2}/.test(dateRaw)) {
+    const parts = dateRaw.slice(0, 10).split('-');
+    date = parts[2] + '/' + parts[1] + '/' + parts[0];
+  }
+  const motif = (document.getElementById('f-probleme')?.value || '').trim();
+  const route = dep && arr ? dep + ' \u2192 ' + arr : '';
+  const p = new URLSearchParams();
+  p.set('ref', ref);
+  if (phone) p.set('phone', phone);
+  if (prenom || nom) p.set('name', [prenom, nom].filter(Boolean).join(' '));
+  const email = clientEmailForRef(ref);
+  if (email) p.set('email', email);
+  if (vol) p.set('vol', vol);
+  if (date) p.set('date', date);
+  if (comp) p.set('compagnie', comp);
+  if (pnr) p.set('pnr', pnr);
+  if (route) p.set('route', route);
+  if (motif) p.set('motif', motif);
+  p.set('indemnite', String(pricing.indemnityEur || 600));
+  p.set('source', 'agency-preview');
+  return '/mandat.html?' + p.toString();
+}
+
+function updateMandatPreviewLinks() {
+  const href = buildMandatPreviewUrl();
+  document.querySelectorAll('.mandat-preview-link').forEach(function (a) {
+    a.href = href;
+  });
 }
 
 function updateFormProgress() {
@@ -219,6 +340,7 @@ function initAgentUX() {
       if (!el) return;
       el.addEventListener('input', function () {
         updateFormProgress();
+        updateMandatPreviewLinks();
         if (id === 'f-nb-passagers') updateFormCommissionPreview();
         if (id === 'f-pnr' || id === 'f-depart' || id === 'f-arrivee' || id === 'f-vol') {
           el.value = el.value.toUpperCase();
@@ -229,16 +351,31 @@ function initAgentUX() {
   );
 
   const phoneInd = document.getElementById('phoneIndicator');
-  if (phoneInd) phoneInd.addEventListener('change', updateFormProgress);
+  if (phoneInd) {
+    phoneInd.addEventListener('change', function () {
+      updateFormProgress();
+      updateMandatPreviewLinks();
+    });
+  }
 
   document.querySelectorAll('.incident-option[data-value]').forEach(function (opt) {
     opt.addEventListener('click', function () {
-      setTimeout(updateFormProgress, 0);
+      setTimeout(function () {
+        updateFormProgress();
+        updateMandatPreviewLinks();
+      }, 0);
+    });
+  });
+
+  document.querySelectorAll('.mandat-preview-link').forEach(function (a) {
+    a.addEventListener('click', function () {
+      updateMandatPreviewLinks();
     });
   });
 
   updateFormCommissionPreview();
   updateFormProgress();
+  updateMandatPreviewLinks();
 }
 
 window.dismissAgentCoach = dismissAgentCoach;
@@ -247,6 +384,57 @@ function setCommissionTotalEl(id, nbPax) {
   const el = document.getElementById(id);
   if (!el) return;
   el.innerHTML = formatCommissionHtml({ nbPassagers: nbPax || 1 });
+}
+
+function updateCommissionTierBanner() {
+  const el = document.getElementById('commission-tier-banner');
+  if (!el) return;
+  const lang = typeof AgenceI18n !== 'undefined' && AgenceI18n.getLang ? AgenceI18n.getLang() : 'fr';
+  if (pricing.commissionLocked || pricing.commissionLifetime) {
+    const founding =
+      pricing.commissionTier === 'founding'
+        ? lang === 'en'
+          ? ' ★ Founding partner'
+          : ' ★ Fondateur'
+        : '';
+    el.textContent =
+      t('tier.locked') +
+      ' ' +
+      (pricing.commissionGmd || 0).toLocaleString(lang === 'en' ? 'en' : 'fr-FR') +
+      ' GMD' +
+      founding;
+    return;
+  }
+  const fmt = function (ymd) {
+    if (!ymd) return '';
+    return new Date(ymd + 'T12:00:00').toLocaleDateString(lang === 'en' ? 'en-GB' : 'fr-FR', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  };
+  const ends = pricing.tierEndsYmd;
+  const next = pricing.nextTierGmd;
+  const tier =
+    typeof AgenceCommissionTiers !== 'undefined'
+      ? AgenceCommissionTiers.resolve(new Date(), lang)
+      : null;
+  const endYmd = ends || (tier && tier.tierEndsYmd);
+  const nextGmd = next || (tier && tier.nextTierGmd);
+  if (endYmd && nextGmd) {
+    el.textContent =
+      t('tier.until') +
+      ' ' +
+      fmt(endYmd) +
+      ' ' +
+      t('tier.then') +
+      ' ' +
+      nextGmd.toLocaleString(lang === 'en' ? 'en' : 'fr-FR') +
+      ' GMD. ' +
+      t('tier.prospect');
+    return;
+  }
+  el.textContent = t('tier.prospect');
 }
 
 function updatePricingDisplay() {
@@ -262,6 +450,7 @@ function updatePricingDisplay() {
   }
   const commSub = document.getElementById('commission-sidebar-sub');
   if (commSub) commSub.textContent = t('pricing.per_pax');
+  updateCommissionTierBanner();
 }
 
 function translateFilterOptions() {
@@ -300,6 +489,11 @@ function applyLocaleRefresh() {
   if (typeof AgenceI18n !== 'undefined') AgenceI18n.apply();
   translateFilterOptions();
   translateProblemeOptions();
+  if (typeof AgenceCommissionTiers !== 'undefined' && !pricing.commissionGmd) {
+    const tier = AgenceCommissionTiers.resolve(new Date(), AgenceI18n ? AgenceI18n.getLang() : 'fr');
+    pricing.commissionGmd = tier.commissionGmd;
+    pricing.commissionEur = tier.commissionEur;
+  }
   updatePricingDisplay();
   if (currentAgency) {
     updateDashboard();
@@ -711,7 +905,8 @@ function updateDashboard() {
             badgeHTML(d.statut) +
             '</td><td class="money-cell">' +
             comm +
-            '</td></tr>'
+              '</td></tr>' +
+            transparencyDetailRow(d, 6)
           );
         })
         .join('')
@@ -762,15 +957,13 @@ function renderDossiers() {
               escHtml(d.statut) +
               '"><td><span class="ref">' +
               escHtml(d.ref) +
-              '</span></td><td><motion class="passager-name">' +
+              '</span></td><td><span class="passager-name">' +
               escHtml(d.nom) +
               ', ' +
               escHtml(d.prenom) +
-              '</motion><motion class="passager-sub">' +
-              (d.nbPassagers || 1) +
-              ' ' +
-              t('col.pax_short') +
-              '</motion></td><td>' +
+              '</span><span class="passager-sub">' +
+              formatPaxCommissionSubline(d) +
+              '</span></td><td>' +
               escHtml(d.vol) +
               '</td><td>' +
               route +
@@ -784,7 +977,8 @@ function renderDossiers() {
               (d.statut === 'gagne' || d.statut === 'paye'
                 ? formatCommissionHtml(d)
                 : '<span class="pending">—</span>') +
-              '</td></tr>'
+              '</td></tr>' +
+              transparencyDetailRow(d, 8)
             );
           }
           return (
@@ -804,13 +998,14 @@ function renderDossiers() {
             formatDate(d.date) +
             '</td><td style="font-size:12px">' +
             escHtml(d.probleme) +
-            '</td><td style="text-align:center">' +
-            (d.nbPassagers || 1) +
+            '</td><td style="text-align:center;font-size:0.8rem;line-height:1.45">' +
+            formatPaxCommissionSubline(d) +
             '</td><td>' +
             badgeHTML(d.statut) +
             '</td><td class="money-cell">' +
             comm +
-            '</td></tr>'
+            '</td></tr>' +
+            transparencyDetailRow(d, cols)
           );
         })
         .join('')
@@ -983,6 +1178,12 @@ async function submitDossier() {
     });
     if (!r.ok) throw new Error(data.error || 'HTTP ' + r.status);
     const ref = data.ref || (data.dossier && data.dossier.ref);
+    if (ref) {
+      try {
+        sessionStorage.setItem(AGENCY_LAST_REF_KEY, ref);
+      } catch (_) {}
+      updateMandatPreviewLinks();
+    }
     showToast(ref ? t('toast.saved_ref') + ' ' + ref : t('toast.saved'));
     resetForm();
     await refreshFromAirtable();

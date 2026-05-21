@@ -1,6 +1,5 @@
-/* Fallback si le radar Netlify (Aviation Edge) est indisponible ou ne renvoie aucun vol filtré.
- * Sur robindesairs.eu, index.html appelle /.netlify/functions/radar puis remplace ce bandeau par des vols réels
- * (éligibles Robin, retard ≥ 3 h ou annulé). Rotation quotidienne pour ce fallback uniquement.
+/* Fallback si /api/vol-ticker est indisponible.
+ * En production : 10 derniers vols impactés Europe ↔ Afrique (cache quotidien AeroDataBox).
  * Dates recalculées au chargement : aujourd’hui, hier, avant-hier uniquement (affichage « proche » du réel).
  * `route` : codes IATA — villes affichées via AIRPORT_CITY dans index.html. */
 (function () {

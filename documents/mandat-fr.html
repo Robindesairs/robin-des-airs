@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Mandat de représentation (FR) — Robin des Airs</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#0a3d2e;--green-mid:#1a5a47;--green-pale:#e8f0ec;
+  --gold:#8a6d3b;--gold-soft:#c9a96e;--gold-pale:#faf5eb;
+  --paper:#fdfcf8;--paper-mid:#f5f2ea;
+  --border:#d4cfc0;--muted:#7a7060;--ink:#111108;--red:#c0392b;
+}
+html{-webkit-font-smoothing:antialiased}
+body{background:var(--paper-mid);font-family:'DM Sans',sans-serif;color:var(--ink);min-height:100vh}
+/* TOP BAR */
+.topbar{background:var(--green);padding:14px 32px;display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid var(--gold);position:sticky;top:0;z-index:100}
+.brand{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:white}
+.brand em{font-style:italic;color:var(--gold-soft)}
+.doc-badge{font-family:'DM Mono',monospace;font-size:9px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.2em}
+.progress-wrap{height:3px;background:rgba(10,61,46,.15)}
+.progress-bar{height:3px;background:linear-gradient(90deg,var(--gold),#d4af6a);width:0%;transition:width .5s}
+/* MISE EN PAGE */
+.page{max-width:780px;margin:0 auto;padding:40px 24px 80px}
+/* BLOCS */
+.doc-header{background:white;border:1px solid var(--border);border-top:4px solid var(--green);padding:36px 40px 28px}
+.doc-logo-line{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px}
+.doc-logo{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--green)}
+.doc-logo em{font-style:italic;color:var(--gold)}
+.doc-ref{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-align:right;line-height:1.9}
+.doc-ref strong{color:var(--ink)}
+.doc-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:500;text-align:center;color:var(--ink);padding:18px 0 6px;border-top:1px solid var(--border)}
+.doc-subtitle{font-size:12px;color:var(--muted);text-align:center;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.15em;margin-top:6px}
+.doc-section{background:white;border:1px solid var(--border);border-top:none;padding:28px 40px}
+.doc-section:last-of-type{border-bottom:1px solid var(--border)}
+/* HERO MONTANT */
+.amount-hero{background:linear-gradient(135deg,var(--green),var(--green-mid));color:white;padding:26px 32px;margin:0 -40px 28px;display:grid;grid-template-columns:1fr 1px 1fr;align-items:center}
+.amount-col{text-align:center;padding:0 20px}
+.amount-div{background:rgba(255,255,255,.2);align-self:stretch}
+.amount-tag{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:rgba(255,255,255,.6);margin-bottom:6px}
+.amount-num{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;line-height:1}
+.amount-num.net{color:var(--gold-soft)}
+.amount-sub{font-size:11px;margin-top:4px;color:rgba(255,255,255,.7)}
+.formula-box{font-size:12px;margin-top:10px;padding:7px 12px;background:rgba(0,0,0,.2);font-family:'DM Mono',monospace;color:rgba(255,255,255,.9);display:inline-block}
+/* PARTIES */
+.parties-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
+.partie-box{border:1px solid var(--border);padding:18px 20px;position:relative}
+.partie-box::before{content:attr(data-label);position:absolute;top:-9px;left:14px;background:white;font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--gold);padding:0 6px}
+.partie-name{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--green);margin-bottom:8px}
+.partie-detail{font-size:12px;color:var(--muted);line-height:1.8}
+/* SECTION TITRE */
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--green);padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+/* CHAMPS */
+.field-row{margin-bottom:16px}
+.field-row.duo{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field-row.tri{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}
+label{display:block;font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-bottom:5px;font-weight:500}
+label .req{color:var(--red);margin-left:2px}
+input,select,textarea{width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);transition:border-color .2s;-webkit-appearance:none;border-radius:0}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);background:white}
+input.ro{background:var(--green-pale);border-color:#b8cfc3;color:var(--green);font-weight:500}
+textarea{resize:vertical;min-height:72px}
+.ferr{color:var(--red);font-size:11px;margin-top:4px;display:none}
+input.err,textarea.err,select.err{border-color:var(--red)!important}
+/* CLAUSES */
+.clause{padding:14px 18px;border-left:3px solid var(--border);margin:12px 0;font-size:13px;line-height:1.75;color:#3a3630}
+.clause strong{color:var(--ink)}
+.cnum{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--gold);margin-bottom:5px;display:block}
+.clause.hi{background:var(--gold-pale);border-color:var(--gold)}
+.clause.le{background:var(--green-pale);border-color:var(--green-mid)}
+.clause.pro{background:#fff8f8;border-color:#e8b4b4}
+/* TABLEAU HONORAIRES */
+.fee-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px}
+.fee-table th{background:var(--ink);color:white;font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;padding:10px 14px;text-align:left;font-weight:400}
+.fee-table td{padding:10px 14px;border-bottom:1px solid var(--border)}
+.fee-table tr:nth-child(even) td{background:var(--paper)}
+.fee-table tr:last-child td{border-bottom:none}
+.fee-table .em{font-weight:600;color:var(--green)}
+/* DÉCLARATION */
+.declaration-box{background:var(--green-pale);border:1px solid #b8cfc3;padding:18px 20px;margin:20px 0;font-size:13px;line-height:1.75}
+/* SEUL CHECK UNIQUE */
+.single-check{display:flex;align-items:flex-start;gap:14px;padding:16px 18px;border:1.5px solid var(--border);background:var(--gold-pale);margin:16px 0;cursor:pointer;transition:border-color .2s}
+.single-check:hover{border-color:var(--gold)}
+.single-check input[type=checkbox]{width:20px;height:20px;min-width:20px;margin-top:2px;cursor:pointer;accent-color:var(--green)}
+.single-check p{font-size:13px;line-height:1.7;color:var(--ink)}
+.single-check p strong{color:var(--green)}
+/* EMAIL DOSSIER TECHNIQUE */
+.email-tech-note{font-size:12px;line-height:1.75;color:#3a3630;padding:14px 18px;background:var(--green-pale);border:1px solid #b8cfc3;border-left:3px solid var(--green-mid);margin:10px 0 0}
+.email-tech-note strong{color:var(--green)}
+.email-tech-ref{font-family:'DM Mono',monospace;font-size:12px;color:var(--green);word-break:break-all}
+/* SIGNATURE */
+.sig-area{background:white;border:2px dashed var(--border);padding:16px;text-align:center;cursor:pointer;transition:border-color .2s;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;margin:16px 0}
+.sig-area:hover{border-color:var(--gold)}
+#sigCanvas{display:none;border:1.5px solid var(--border);cursor:crosshair;touch-action:none;background:white;max-width:100%}
+.sig-ph{font-family:'DM Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted)}
+.sig-clear{font-size:11px;color:var(--gold);text-decoration:underline;cursor:pointer;font-family:'DM Mono',monospace;display:none;margin-top:4px}
+/* BOUTONS */
+.btn-submit{width:100%;background:var(--green);color:white;border:none;padding:18px 32px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;letter-spacing:.03em;transition:background .2s,transform .1s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:24px}
+.btn-submit:hover{background:#063022;transform:translateY(-1px)}
+.btn-submit:disabled{background:var(--muted);cursor:not-allowed;transform:none}
+/* TRUST */
+.trust-bar{display:flex;justify-content:space-around;padding:14px 20px;background:var(--paper-mid);border:1px solid var(--border);border-top:none;flex-wrap:wrap;gap:8px}
+.trust-item{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted)}
+/* SUCCÈS */
+.success-screen{display:none;background:white;border:1px solid var(--border);border-top:4px solid var(--green);padding:60px 40px;text-align:center}
+.success-icon{width:72px;height:72px;background:var(--green);border-radius:50%;color:white;font-size:30px;line-height:72px;margin:0 auto 20px}
+.success-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:500;color:var(--green);margin-bottom:12px}
+.success-ref{font-family:'DM Mono',monospace;font-size:13px;color:var(--muted);background:var(--green-pale);padding:10px 20px;display:inline-block;margin:10px 0 20px}
+.success-ref strong{color:var(--green)}
+.success-steps{text-align:left;max-width:420px;margin:20px auto 0}
+.sstep{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.6}
+.sstep:last-child{border-bottom:none}
+.snum{width:26px;height:26px;min-width:26px;background:var(--green);color:white;border-radius:50%;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:600;margin-top:1px}
+@media(max-width:600px){
+  .page{padding:20px 12px 60px}
+  .doc-header,.doc-section{padding:20px 20px}
+  .amount-hero{grid-template-columns:1fr;padding:20px}
+  .amount-div{display:none}
+  .parties-grid,.field-row.duo,.field-row.tri{grid-template-columns:1fr}
+  .doc-badge{display:none}
+}
+
+@media print { .topbar-nav, .no-print { display: none !important; } }
+.print-banner { background: var(--gold-pale); border: 1px solid rgba(138,109,59,.35); padding: 12px 16px; margin-bottom: 1rem; font-size: 13px; line-height: 1.6; }
+.field-blank { display: inline-block; min-width: 120px; border-bottom: 1px solid #888; min-height: 1.1em; vertical-align: bottom; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="/" style="text-decoration:none;color:inherit"><div class="brand">Robin <em>des</em> Airs</div></a>
+  <div class="topbar-nav" style="display:flex;gap:8px;align-items:center">
+    <a href="/mandat.html" style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.85);text-decoration:none;border:1px solid rgba(201,169,110,.4);padding:4px 10px">Signer en ligne →</a>
+    <a href="/documents/mandat-fr.html?print=1" style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.85);text-decoration:none;border:1px solid rgba(201,169,110,.4);padding:4px 10px">Imprimer / PDF</a>
+  </div>
+</div>
+<div class="page">
+<div class="print-banner no-print">
+  <strong>Version imprimable / PDF.</strong> Signature électronique : <a href="/mandat.html">mandat en ligne</a>.
+  Enregistrer en PDF : Fichier → Imprimer → Enregistrer en PDF.
+</div>
+<div id="mandatForm">
+<!-- EN-TÊTE DOCUMENT -->
+<div class="doc-header">
+  <div class="doc-logo-line">
+    <div>
+      <div class="doc-logo">Robin <em>des</em> Airs</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">Service de réclamation · Vols Europe–Afrique · No Win No Fee</div>
+    </div>
+    <div class="doc-ref">
+      <div>Réf. : <strong id="dRef">RDA-PRINT</strong></div>
+      <div>Date : <strong id="dDate">20/05/2026</strong></div>
+      <div style="font-size:10px;margin-top:4px">CE 261/2004 · Art. 5, 6 & 7</div>
+    </div>
+  </div>
+  <div class="doc-title">Mandat de Représentation</div>
+  <div class="doc-subtitle">Convention exclusive de gestion et recouvrement d'indemnité aérienne</div>
+</div>
+<!-- HÉRO MONTANT -->
+<div class="doc-section">
+  <div class="amount-hero">
+    <div class="amount-col">
+      <div class="amount-tag">Indemnité légale brute</div>
+      <div class="amount-num" id="hGross">600 €</div>
+      <div class="amount-sub">Règlement CE 261/2004</div>
+    </div>
+    <div class="amount-div"></div>
+    <div class="amount-col">
+      <div class="amount-tag">✅ Net dans votre poche</div>
+      <div class="amount-num net" id="hNet">450 €</div>
+      <div class="amount-sub">Après commission RDA (25% si succès)</div>
+      <div class="formula-box" id="hFormula">600 € − 150 € = 450 €</div>
+    </div>
+  </div>
+  <!-- PARTIES -->
+  <div class="sec-title">👥 Les parties</div>
+  <div class="parties-grid">
+    <div class="partie-box" data-label="Le Mandant (vous)">
+      <div class="partie-name" id="pMandant">—</div>
+      <div class="partie-detail">Passager(s) lésé(s)<br>Vol concerné : <span id="pVol">—</span></div>
+    </div>
+    <div class="partie-box" data-label="Le Mandataire">
+      <div class="partie-name">Robin des Airs</div>
+      <div class="partie-detail">
+        Service juridique CE 261/2004<br>
+        66 av. des Champs-Élysées — Paris<br>
+        contact@robindesairs.eu<br>
+        +33 7 56 86 36 30
+      </div>
+    </div>
+  </div>
+</div>
+<!-- INFORMATIONS PERSONNELLES -->
+<div class="doc-section">
+  <div class="sec-title">✍️ Vos coordonnées</div>
+  <div class="field-row duo">
+    <div>
+      <label>Prénom <span class="req">*</span></label>
+      <span class="field-blank"></span>
+      
+    </div>
+    <div>
+      <label>Nom <span class="req">*</span></label>
+      <span class="field-blank"></span>
+      
+    </div>
+  </div>
+  <div class="field-row duo">
+    <div>
+      <label>WhatsApp <span class="req">*</span></label>
+      <span class="field-blank"></span>
+      
+    </div>
+    <div>
+      <label>Adresse email du dossier</label>
+      <span class="field-blank"></span>
+      <div class="email-tech-note" id="emailTechNote">
+        <strong>Adresse de référence du dossier :</strong>
+        <span class="email-tech-ref" id="emailTechExample">ref@robindesairs.eu</span>
+        <span style="display:block;margin-top:6px">
+          Création et gestion exclusive par Robin des Airs — cadre juridique : <strong>Article 1</strong>.
+          Suivi avec vous : <strong>WhatsApp</strong> ou autre canal convenu (complémentaire).
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="field-row">
+    <label>Adresse postale complète <span class="req">*</span></label>
+    <span class="field-blank" style="min-width:90%;display:block;min-height:2.5em"></span>
+    
+  </div>
+  <div style="font-size:12px;color:var(--muted);font-style:italic;padding:10px 14px;background:var(--green-pale);border-left:3px solid var(--green-mid);margin-top:4px">
+    💶 Vos coordonnées bancaires seront collectées ultérieurement pour le versement de votre net (75%) sous 48h ouvrées après encaissement.
+  </div>
+</div>
+<!-- VOL CONCERNÉ -->
+<div class="doc-section">
+  <div class="sec-title">✈️ Le vol concerné</div>
+  <div class="field-row tri">
+    <div>
+      <label>Compagnie <span class="req">*</span></label>
+      <span class="field-blank"></span>
+    </div>
+    <div>
+      <label>N° de vol <span class="req">*</span></label>
+      <span class="field-blank"></span>
+    </div>
+    <div>
+      <label>PNR / Réservation</label>
+      <span class="field-blank"></span>
+    </div>
+  </div>
+  <div class="field-row duo">
+    <div>
+      <label>Date du vol <span class="req">*</span></label>
+      <span class="field-blank"></span>
+      
+    </div>
+    <div>
+      <label>Incident <span class="req">*</span></label>
+      <span class="field-blank"></span>
+      
+    </div>
+  </div>
+  <div class="field-row duo">
+    <div>
+      <label>Aéroport de départ</label>
+      <span class="field-blank"></span>
+    </div>
+    <div>
+      <label>Aéroport d'arrivée</label>
+      <span class="field-blank"></span>
+    </div>
+  </div>
+  <!-- Compteur passagers caché — géré par JS -->
+  <span class="field-blank"></span>
+  <div id="paxNames"></div>
+  <!-- Bouton ajouter un passager -->
+  
+  <div style="font-size:11px;color:var(--muted);margin-top:6px;font-style:italic">
+    💡 Chaque passager du même vol peut être ajouté. Le montant net est recalculé automatiquement.
+  </div>
+</div>
+<!-- CLAUSES DU MANDAT -->
+<div class="doc-section">
+  <div class="sec-title">⚖️ Conditions du mandat</div>
+  <div class="clause le">
+    <span class="cnum">Article 1 — Objet du mandat et adresse email du dossier</span>
+    Le Mandant confie à Robin des Airs une mission <strong>exclusive</strong> d'agir en son nom et pour son compte afin d'obtenir l'indemnisation due au titre du <strong>Règlement (CE) n° 261/2004</strong>, par toute voie amiable, administrative, judiciaire ou arbitrale.
+    <br><br>
+    Pour les besoins du traitement du dossier, Robin des Airs crée une <strong>adresse email technique</strong> unique, composée de la référence du mandat en minuscules suivie de «&nbsp;@robindesairs.eu&nbsp;»
+    (ex.&nbsp;: <strong id="clauseEmailExample">ref@robindesairs.eu</strong>).
+    Cette adresse constitue l'<strong>adresse de référence du dossier</strong> pour l'ensemble des échanges avec la compagnie aérienne, ses représentants, ses conseils, ses intermédiaires et, plus généralement, tout tiers intervenant dans le cadre du recouvrement.
+    <strong>Robin des Airs en assure seul l'administration et la gestion exclusive.</strong>
+    <br><br>
+    Le Mandant <strong>autorise expressément</strong> Robin des Airs à créer et exploiter, pour la durée du mandat, cette adresse et à l'utiliser pour toute correspondance utile au traitement du dossier, y compris les mises en demeure et actes de procédure.
+    Robin des Airs <strong>conserve les accès, copies et pièces</strong> issus de ces échanges afin d'assurer la traçabilité du dossier.
+    <br><br>
+    Le Mandant reconnaît que Robin des Airs pourra également utiliser, <strong>si la procédure l'exige</strong>, l'adresse email personnelle du Mandant communiquée dans le présent mandat ou ultérieurement.
+    <br><br>
+    Le <strong>suivi opérationnel avec le Mandant</strong> peut notamment être assuré via <strong>WhatsApp</strong> ou tout autre canal de communication convenu entre les parties,
+    <strong>sans caractère exclusif</strong> de ces canaux pour la notification d'informations importantes.
+  </div>
+  <div class="clause">
+    <span class="cnum">Article 2 — Durée</span>
+    Le mandat est consenti pour <strong>24 mois</strong> à compter de la signature. Cette durée est nécessaire pour traiter les dossiers complexes incluant relances, médiation et procédure judiciaire si nécessaire. Il peut être résilié par email à tout moment en cas de <strong>faute grave, fraude avérée ou non-coopération persistante</strong> de l'une des parties, avec un préavis de 15 jours.
+  </div>
+  <div class="clause">
+    <span class="cnum">Article 3 — Exclusivité & Anti-contournement</span>
+    Le présent mandat est <strong>exclusif</strong>. Pendant sa durée, le Mandant s'engage à ne pas confier le même dossier à un tiers ni à négocier directement avec la compagnie pour le même incident <strong>sans en informer préalablement Robin des Airs</strong>. Tout accord conclu en violation de cette clause engage la responsabilité du Mandant, qui restera redevable de la commission convenue.
+  </div>
+  <div class="clause hi">
+    <span class="cnum">Article 4 — Honoraires · No Win, No Fee</span>
+    Robin des Airs perçoit une commission de <strong>25% TTC du montant effectivement encaissé</strong>, <strong>uniquement en cas de succès</strong>. En cas d'échec ou de non-recouvrement, <strong>aucun frais n'est dû</strong>. Aucune avance n'est exigée à aucun stade.
+  </div>
+  <div class="clause hi" style="border-color:#1a5a47;background:#e8f0ec;">
+    <span class="cnum" style="color:#1a5a47;">Article 4.1 — Frais Judiciaires</span>
+    Robin des Airs prend en charge <strong>100% des frais d'avocat, de greffe, d'huissier et de procédure judiciaire TTC</strong> liés au traitement du dossier. Le Mandant n'avance aucune somme à quelque stade que ce soit. Robin des Airs se réserve le droit de <strong>sélectionner librement les dossiers</strong> qu'elle estime viables avant d'engager une procédure judiciaire.
+  </div>
+  <table class="fee-table">
+    <tr><th>Distance du vol</th><th>Indemnité légale / pax</th><th>Commission RDA (25%)</th><th>Net client</th></tr>
+    <tr><td>≤ 1 500 km</td><td>250 €</td><td>62,50 €</td><td class="em">187,50 €</td></tr>
+    <tr><td>1 500 – 3 500 km</td><td>400 €</td><td>100 €</td><td class="em">300 €</td></tr>
+    <tr><td>&gt; 3 500 km (Europe-Afrique)</td><td>600 €</td><td>150 €</td><td class="em">450 €</td></tr>
+  </table>
+  <div class="clause pro">
+    <span class="cnum">Article 5 — Paiement & Protection du Mandant</span>
+    Le Mandant donne instruction expresse à la compagnie aérienne de verser toute indemnité au <strong>compte désigné par Robin des Airs</strong>. Dès encaissement, Robin des Airs reverse au Mandant sa part nette (75%) sur l'IBAN communiqué dans ce mandat, dans un délai de <strong>48 heures ouvrées</strong>. Si la compagnie verse directement au Mandant, celui-ci s'engage à reverser sans délai la commission de 25% à Robin des Airs.
+  </div>
+  <div class="clause pro" style="border-left-color:#8a1c1c;background:#fff4f4;">
+    <span class="cnum" style="color:#8a1c1c;">Article 6 — Clause Non Libératoire pour la Compagnie Aérienne</span>
+    <strong>Tout paiement effectué directement par la compagnie aérienne au Mandant ne libère pas la compagnie de ses obligations</strong> envers Robin des Airs, mandataire exclusif désigné par acte signé. Robin des Airs notifie expressément la compagnie, dès la mise en demeure, que le <strong>seul paiement libératoire valable</strong> est celui effectué sur le compte bancaire de Robin des Airs.
+    <br><br>
+    En conséquence : (i) tout règlement opéré directement au Mandant en violation de cette instruction sera réputé <strong>non libératoire à l'égard de Robin des Airs</strong> ; (ii) la compagnie demeurera redevable du paiement auprès du mandataire ; (iii) Robin des Airs se réserve le droit d'engager toute action en recouvrement, y compris judiciaire, à l'encontre de la compagnie aérienne. Cette stipulation constitue une <strong>instruction de paiement irrévocable</strong> au sens des articles 1984 et suivants du Code civil, opposable à tout tiers dûment notifié.
+  </div>
+  <div class="clause">
+    <span class="cnum">Article 7 — Obligations de Robin des Airs</span>
+    Robin des Airs s'engage à : (i) instruire le dossier avec diligence ; (ii) informer le Mandant à chaque étape clé ; (iii) reverser les sommes dans les 48h ouvrées après encaissement ; (iv) notifier expressément la compagnie aérienne de l'existence du présent mandat et de l'instruction de paiement exclusif ; (v) protéger les données personnelles conformément au RGPD.
+  </div>
+  <div class="clause">
+    <span class="cnum">Article 8 — Obligations du Mandant</span>
+    Le Mandant s'engage à : (i) fournir des informations exactes et complètes ; (ii) transmettre tout document utile dans les meilleurs délais ; (iii) informer Robin des Airs de <strong>tout contact ou offre de la compagnie aérienne dans les 24h</strong> ; (iv) ne pas accepter ni encaisser aucun paiement de la compagnie sans en aviser Robin des Airs ; (v) ne pas agir en parallèle sur le même dossier sans accord préalable écrit.
+  </div>
+  <div class="clause le">
+    <span class="cnum">Article 9 — Droit de rétractation (14 jours) & Démarrage immédiat</span>
+    Conformément aux articles L. 221-18 et suivants du Code de la consommation, le Mandant dispose d'un <strong>délai de rétractation de 14 jours calendaires</strong> à compter de la signature, sans pénalité. Il suffit d'envoyer un email à <strong>contact@robindesairs.eu</strong> avec la mention « Je me rétracte — Réf. [numéro de dossier] ».
+    <br><br>
+    Conformément à l'article L. 221-25 du Code de la consommation, si le Mandant demande expressément l'<strong>exécution immédiate du mandat avant l'expiration du délai de 14 jours</strong> (case cochée ci-dessous), Robin des Airs est autorisée à débuter les démarches sans attendre. En cas de rétractation ultérieure dans ce délai, le Mandant reconnaît que les prestations déjà accomplies seront dues au prorata — étant précisé qu'aucune somme ne sera exigible avant encaissement effectif de l'indemnité (principe No Win No Fee).
+  </div>
+  <div class="clause">
+    <span class="cnum">Article 10 — Confidentialité & RGPD</span>
+    Les données personnelles collectées sont utilisées exclusivement pour la gestion du dossier. Elles ne sont pas revendues. Conformément au RGPD, le Mandant dispose d'un droit d'accès, de rectification et de suppression en contactant contact@robindesairs.eu.
+  </div>
+  <div class="clause">
+    <span class="cnum">Article 11 — Loi applicable & Règlement des litiges</span>
+    Le présent mandat est soumis au <strong>droit français</strong>. En cas de litige, les parties privilégient une résolution amiable dans les 30 jours. À défaut d'accord, le différend est soumis aux juridictions compétentes.
+  </div>
+</div>
+<!-- DÉCLARATION ET CONSENTEMENT -->
+<div class="doc-section">
+  <div class="sec-title">✅ Déclaration & Consentement</div>
+  <div class="declaration-box">
+    Je soussigné(e) <strong id="declarant">—</strong>, déclare sur l'honneur avoir bien été passager(e) sur le vol indiqué à la date mentionnée, et avoir subi le préjudice déclaré (retard, annulation ou refus d'embarquement).
+  </div>
+  <!-- CASE 1 — Mandat principal -->
+  <div class="single-check" >
+    <span class="field-blank"></span>
+    <p>
+      Je mandate <strong>Robin des Airs</strong> pour récupérer mon indemnité aérienne.<br>
+      <strong>Aucun frais si le dossier échoue.</strong> Commission de 25% uniquement en cas de succès.<br>
+      <span style="font-size:12px;color:var(--muted);">
+        Mandat exclusif 24 mois · Rétractation possible sous 14 jours par email · RGPD
+      </span>
+    </p>
+  </div>
+  
+  <!-- CASE 2 — Démarrage immédiat (optionnelle mais recommandée) -->
+  <div class="single-check" style="background:var(--green-pale);border-color:var(--green-mid)" >
+    <span class="field-blank"></span>
+    <p>
+      <strong>Je demande le démarrage immédiat de mon dossier</strong>, sans attendre l'expiration du délai de rétractation de 14 jours.<br>
+      <span style="font-size:12px;color:var(--muted);">
+        Recommandé — Robin des Airs peut agir dès maintenant en mon nom. (Art. L.221-25 Code conso.)
+      </span>
+    </p>
+  </div>
+  <!-- CO-PASSAGERS ADULTES -->
+  <div id="coPassSection" style="display:none;margin-top:20px">
+    <div class="sec-title" style="font-size:15px">👥 Consentement des co-passagers adultes</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:14px">
+      Chaque passager majeur doit confirmer son accord. Cochez la case correspondant à chaque co-passager adulte.
+    </p>
+    <div id="coPassChecks"></div>
+    
+  </div>
+</div>
+<!-- SIGNATURE -->
+<div class="doc-section">
+  <div class="sec-title">🖊️ Signature électronique</div>
+  <div class="field-row duo">
+    <div>
+      <label>Fait à (ville) <span class="req">*</span></label>
+      <span class="field-blank"></span>
+      
+    </div>
+    <div>
+      <label>Le</label>
+      <span class="field-blank"></span>
+    </div>
+  </div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:8px">Tracez votre signature ci-dessous (doigt ou souris) :</p>
+  <div class="sig-area" id="sigArea">
+    <div style="border:1px dashed #888;height:80px;margin:12px 0"></div>
+    
+    
+  </div>
+  
+  
+</div>
+<div class="trust-bar">
+  <div class="trust-item">🔒 SSL sécurisé</div>
+  <div class="trust-item">⚖️ Avocate Me Pitcher</div>
+  <div class="trust-item">✅ 9/10 gagnés</div>
+  <div class="trust-item">💶 Versement 48h</div>
+  <div class="trust-item">🏛️ CE 261/2004</div>
+</div>
+</div>
+</div>
+<script>
+(function () {
+  if (/[?&]print=1/.test(location.search)) {
+    window.addEventListener('load', function () {
+      setTimeout(function () { window.print(); }, 400);
+    });
+  }
+})();
+</script>
+</body>
+</html>

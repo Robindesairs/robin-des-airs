@@ -20,9 +20,11 @@ Dev local : `ALLOW_INSECURE_AUTH=true` autorise les fallbacks de dev.
 |----------|-------------|
 | `AGENCY_AUTH_SECRET` | Secret HMAC sessions agence |
 | `AGENCY_ACCOUNTS` | JSON tableau de comptes |
-| `AGENCY_COMMISSION_GMD` | Commission agence / passager gagné en dalasis (défaut `3800`) |
+| `AGENCY_TIER1_GMD` / `AGENCY_TIER1_END` | Palier 1 — été (défaut `3800` jusqu’au `2026-08-31`). **Acquis à vie** à la signature ; les échéances ne concernent que les **nouveaux** contrats. |
+| *(manuel)* | **3 premières agences**, signature **avant le 31/08/2026** : `commissionGmd: 4000`, `commissionTier: "founding"` dans `AGENCY_ACCOUNTS`. |
+| `AGENCY_TIER2_GMD` / `AGENCY_TIER2_END` | Palier 2 — fin d’année (défaut `3400` jusqu’au `2026-12-31`) |
+| `AGENCY_TIER3_GMD` | Palier 3 — à partir du 1er janvier (défaut `3000`) |
 | `AGENCY_GMD_PER_EUR` | Taux indicatif GMD→EUR pour conversion interne (défaut `84`) |
-| `AGENCY_COMMISSION_EUR` | Optionnel — sinon dérivé de `COMMISSION_GMD / GMD_PER_EUR` (≈ `45.24`) |
 | `AGENCY_CLIENT_NET_EUR` | Net passager indicatif (défaut `420`) |
 | `AGENCY_INDEMNITY_REF_EUR` | Indemnité CE 261 réf. long-courrier (défaut `600`) |
 | `AGENCY_XOF_PER_EUR` | Taux FCFA / euro (défaut `655.957`) |
@@ -35,6 +37,9 @@ Exemple `AGENCY_ACCOUNTS` :
     "code": "GSA-DKR-001",
     "passHash": "scrypt:…",
     "name": "GSA Dakar",
+    "commissionGmd": 3800,
+    "commissionTier": "ete",
+    "partnerSignedAt": "2026-05-19T12:00:00.000Z",
     "airtableMatch": "GSA-DKR-001"
   },
   {
@@ -66,6 +71,8 @@ Recommandé dans Airtable : colonne **`Agence Partenaire Code`** (texte) + varia
 | `Date Dossier` | date du jour (AAAA-MM-JJ) |
 | `Date` | idem si colonne séparée |
 | `Date du vol` | date saisie dans le formulaire agence |
+| `Raison compagnie` | motif acceptation/refus (affiché partenaire) |
+| `Montant Client` / `Montant de l'indemnité` | transparence : % du barème si montant différent |
 | `Statut Dossier` | `Nouveau` |
 
 Variables optionnelles : `AIRTABLE_COL_DOSSIER_VIA_AGENCE`, `AIRTABLE_COL_COMMISSION_AGENCE`, `AIRTABLE_COL_MONTANT_CLIENT`, `AIRTABLE_COL_COMMISSION_RDA`, `AIRTABLE_COL_STATUT_DOSSIER`, `AIRTABLE_COL_DATE_DOSSIER`, `AIRTABLE_COL_DATE`, `AIRTABLE_COL_NB_PAX`, `AIRTABLE_COL_TRAJET`.

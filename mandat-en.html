@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="/favicon.png" type="image/png">
-<meta name="description" content="Signez votre mandat de représentation Robin des Airs — CE 261/2004. No Win No Fee.">
-<title>Mandat de Représentation — Robin des Airs</title>
+<meta name="description" content="Sign your Robin des Airs representation mandate — EU 261/2004. No win, no fee.">
+<title>Representation Mandate — Robin des Airs</title>
 <!-- Aperçu lien WhatsApp / Wati : sans og:image absolu, la carte affiche souvent « image introuvable ». -->
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://robindesairs.eu/mandat.html">
-<meta property="og:title" content="Mandat de représentation — Robin des Airs">
-<meta property="og:description" content="Signez votre mandat CE 261 en 2 minutes — sécurisé, honoraires uniquement après succès.">
+<meta property="og:url" content="https://robindesairs.eu/mandat-en.html">
+<meta property="og:title" content="Representation mandate — Robin des Airs">
+<meta property="og:description" content="Sign your EU 261 mandate in 2 minutes — secure, fees only on success.">
 <meta property="og:image" content="https://robindesairs.eu/robin-des-airs-logo-texte-profil.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Mandat de représentation — Robin des Airs">
-<meta name="twitter:description" content="Signez votre mandat CE 261 en 2 minutes — sécurisé.">
+<meta name="twitter:title" content="Representation mandate — Robin des Airs">
+<meta name="twitter:description" content="Sign your EU 261 mandate in 2 minutes — secure.">
 <meta name="twitter:image" content="https://robindesairs.eu/robin-des-airs-logo-texte-profil.png">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -135,17 +135,16 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   .parties-grid,.field-row.duo,.field-row.tri{grid-template-columns:1fr}
   .doc-badge{display:none}
 }
+.lang-pill-top{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.7);text-decoration:none;border:1px solid rgba(201,169,110,.4);padding:4px 10px;margin-right:6px}
 </style>
 </head>
 <body>
 <div class="topbar">
   <a href="/" style="text-decoration:none;color:inherit"><div class="brand">Robin <em>des</em> Airs</div></a>
   <div style="display:flex;align-items:center;gap:8px">
-    <a href="/documents/mandat-fr.html?print=1" target="_blank" rel="noopener" style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.85);text-decoration:none;border:1px solid rgba(201,169,110,.5);padding:4px 10px">Mandat PDF ↓</a>
-    <a href="/mandat-en.html" style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.7);text-decoration:none;border:1px solid rgba(201,169,110,.4);padding:4px 10px">EN</a>
-    <a href="/delais-dates-ce261-fr.html" style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.7);text-decoration:none;border:1px solid rgba(201,169,110,.4);padding:4px 10px">Délais</a>
-    <a href="/bareme-ce261-fr.html" style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.7);text-decoration:none;border:1px solid rgba(201,169,110,.4);padding:4px 10px">Barème CE 261</a>
-    <div class="doc-badge">Mandat de représentation · CE 261/2004</div>
+    <a href="/mandat.html" class="lang-pill-top">FR</a>
+    <a href="/ce261-brackets-en.html" class="lang-pill-top">EU 261 brackets</a>
+    <div class="doc-badge">Representation mandate · EU 261/2004</div>
   </div>
 </div>
 <div class="progress-wrap"><div class="progress-bar" id="pgBar"></div></div>
@@ -156,44 +155,44 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   <div class="doc-logo-line">
     <div>
       <div class="doc-logo">Robin <em>des</em> Airs</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:4px">Service de réclamation · Vols Europe–Afrique · No Win No Fee</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">Claims service · Europe–Africa flights · No win no fee</div>
     </div>
     <div class="doc-ref">
-      <div>Réf. : <strong id="dRef">—</strong></div>
-      <div>Date : <strong id="dDate">—</strong></div>
+      <div>Ref.: <strong id="dRef">—</strong></div>
+      <div>Date: <strong id="dDate">—</strong></div>
       <div style="font-size:10px;margin-top:4px">CE 261/2004 · Art. 5, 6 & 7</div>
     </div>
   </div>
-  <div class="doc-title">Mandat de Représentation</div>
-  <div class="doc-subtitle">Convention exclusive de gestion et recouvrement d'indemnité aérienne</div>
+  <div class="doc-title">Representation Mandate</div>
+  <div class="doc-subtitle">Exclusive mandate for EU 261 compensation recovery</div>
 </div>
 <!-- HÉRO MONTANT -->
 <div class="doc-section">
   <div class="amount-hero">
     <div class="amount-col">
-      <div class="amount-tag">Indemnité légale brute</div>
+      <div class="amount-tag">Statutory compensation (gross)</div>
       <div class="amount-num" id="hGross">600 €</div>
-      <div class="amount-sub">Règlement CE 261/2004</div>
+      <div class="amount-sub">Regulation (EC) No 261/2004</div>
     </div>
     <div class="amount-div"></div>
     <div class="amount-col">
-      <div class="amount-tag">✅ Net dans votre poche</div>
+      <div class="amount-tag">✅ Net to you</div>
       <div class="amount-num net" id="hNet">450 €</div>
-      <div class="amount-sub">Après commission RDA (25% si succès)</div>
+      <div class="amount-sub">After RDA fee (25% on success only)</div>
       <div class="formula-box" id="hFormula">600 € − 150 € = 450 €</div>
     </div>
   </div>
   <!-- PARTIES -->
-  <div class="sec-title">👥 Les parties</div>
+  <div class="sec-title">👥 The parties</div>
   <div class="parties-grid">
-    <div class="partie-box" data-label="Le Mandant (vous)">
+    <div class="partie-box" data-label="Client (you)">
       <div class="partie-name" id="pMandant">—</div>
-      <div class="partie-detail">Passager(s) lésé(s)<br>Vol concerné : <span id="pVol">—</span></div>
+      <div class="partie-detail">Affected passenger(s)<br>Flight: <span id="pVol">—</span></div>
     </div>
-    <div class="partie-box" data-label="Le Mandataire">
+    <div class="partie-box" data-label="Representative">
       <div class="partie-name">Robin des Airs</div>
       <div class="partie-detail">
-        Service juridique CE 261/2004<br>
+        EU 261/2004 claims service<br>
         66 av. des Champs-Élysées — Paris<br>
         contact@robindesairs.eu<br>
         +33 7 56 86 36 30
@@ -203,17 +202,17 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
 </div>
 <!-- INFORMATIONS PERSONNELLES -->
 <div class="doc-section">
-  <div class="sec-title">✍️ Vos coordonnées</div>
+  <div class="sec-title">✍️ Your details</div>
   <div class="field-row duo">
     <div>
-      <label>Prénom <span class="req">*</span></label>
+      <label>First name <span class="req">*</span></label>
       <input type="text" id="fn" placeholder="Jean" oninput="updateParties()">
-      <div class="ferr" id="fnErr">Champ obligatoire</div>
+      <div class="ferr" id="fnErr">Required</div>
     </div>
     <div>
-      <label>Nom <span class="req">*</span></label>
+      <label>Last name <span class="req">*</span></label>
       <input type="text" id="ln" placeholder="DUPONT" oninput="updateParties()">
-      <div class="ferr" id="lnErr">Champ obligatoire</div>
+      <div class="ferr" id="lnErr">Required</div>
     </div>
   </div>
   <div class="field-row duo">
@@ -226,19 +225,19 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
       <label>Adresse email du dossier</label>
       <input type="email" id="em" class="ro" readonly aria-readonly="true" autocomplete="off">
       <div class="email-tech-note" id="emailTechNote">
-        <strong>Adresse de référence du dossier :</strong>
+        <strong>Case reference email:</strong>
         <span class="email-tech-ref" id="emailTechExample">ref@robindesairs.eu</span>
         <span style="display:block;margin-top:6px">
-          Création et gestion exclusive par Robin des Airs — cadre juridique : <strong>Article 1</strong>.
+          Created and managed by Robin des Airs — see <strong>Article 1</strong>.
           Suivi avec vous : <strong>WhatsApp</strong> ou autre canal convenu (complémentaire).
         </span>
       </div>
     </div>
   </div>
   <div class="field-row">
-    <label>Adresse postale complète <span class="req">*</span></label>
+    <label>Full postal address <span class="req">*</span></label>
     <textarea id="addr" placeholder="12 rue de la Paix&#10;75001 Paris — France" rows="3"></textarea>
-    <div class="ferr" id="addrErr">Adresse requise pour le mandat</div>
+    <div class="ferr" id="addrErr">Address required for the mandate</div>
   </div>
   <div style="font-size:12px;color:var(--muted);font-style:italic;padding:10px 14px;background:var(--green-pale);border-left:3px solid var(--green-mid);margin-top:4px">
     💶 Vos coordonnées bancaires seront collectées ultérieurement pour le versement de votre net (75%) sous 48h ouvrées après encaissement.
@@ -263,7 +262,7 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   </div>
   <div class="field-row duo">
     <div>
-      <label>Date du vol <span class="req">*</span></label>
+      <label>Flight date <span class="req">*</span></label>
       <input type="date" id="fdate">
       <div class="ferr" id="fdErr">Date requise</div>
     </div>
@@ -280,11 +279,11 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   </div>
   <div class="field-row duo">
     <div>
-      <label>Aéroport de départ</label>
+      <label>Departure airport</label>
       <input type="text" id="dep" placeholder="Paris CDG">
     </div>
     <div>
-      <label>Aéroport d'arrivée</label>
+      <label>Arrival airport</label>
       <input type="text" id="arr" placeholder="Banjul BJL">
     </div>
   </div>
@@ -299,110 +298,110 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
     color:var(--gold);cursor:pointer;text-align:center;
     transition:background .2s,color .2s;
   " onmouseover="this.style.background='var(--gold-pale)'" onmouseout="this.style.background='white'">
-    ➕ Ajouter un passager
+    ➕ Add a passenger
   </button>
   <div style="font-size:11px;color:var(--muted);margin-top:6px;font-style:italic">
-    💡 Chaque passager du même vol peut être ajouté. Le montant net est recalculé automatiquement.
+    💡 Each passenger on the same flight can be added. Net amount is recalculated automatically.
   </div>
 </div>
 <!-- CLAUSES DU MANDAT -->
 <div class="doc-section">
-  <div class="sec-title">⚖️ Conditions du mandat</div>
+  <div class="sec-title">⚖️ Mandate terms</div>
   <div class="clause le">
-    <span class="cnum">Article 1 — Objet du mandat et adresse email du dossier</span>
-    Le Mandant confie à Robin des Airs une mission <strong>exclusive</strong> d'agir en son nom et pour son compte afin d'obtenir l'indemnisation due au titre du <strong>Règlement (CE) n° 261/2004</strong>, par toute voie amiable, administrative, judiciaire ou arbitrale.
+    <span class="cnum">Article 1 — Purpose and case email address</span>
+    The Client grants Robin des Airs an <strong>exclusive</strong> mandate to obtain compensation under <strong>Regulation (EC) No 261/2004</strong>, by amicable, administrative, judicial or arbitral means.
     <br><br>
-    Pour les besoins du traitement du dossier, Robin des Airs crée une <strong>adresse email technique</strong> unique, composée de la référence du mandat en minuscules suivie de «&nbsp;@robindesairs.eu&nbsp;»
+    Robin des Airs creates a unique <strong>technical email address</strong>: lowercase mandate reference + <strong>@robindesairs.eu</strong>
     (ex.&nbsp;: <strong id="clauseEmailExample">ref@robindesairs.eu</strong>).
-    Cette adresse constitue l'<strong>adresse de référence du dossier</strong> pour l'ensemble des échanges avec la compagnie aérienne, ses représentants, ses conseils, ses intermédiaires et, plus généralement, tout tiers intervenant dans le cadre du recouvrement.
-    <strong>Robin des Airs en assure seul l'administration et la gestion exclusive.</strong>
+    This is the <strong>reference address for the file</strong> for exchanges with the airline and any third party involved in recovery.
+    <strong>Robin des Airs alone administers and manages it.</strong>
     <br><br>
-    Le Mandant <strong>autorise expressément</strong> Robin des Airs à créer et exploiter, pour la durée du mandat, cette adresse et à l'utiliser pour toute correspondance utile au traitement du dossier, y compris les mises en demeure et actes de procédure.
-    Robin des Airs <strong>conserve les accès, copies et pièces</strong> issus de ces échanges afin d'assurer la traçabilité du dossier.
+    The Client <strong>expressly authorises</strong> Robin des Airs to create and use this address for the mandate term, including formal notices and procedural steps.
+    Robin des Airs <strong>keeps access, copies and documents</strong> for file traceability.
     <br><br>
-    Le Mandant reconnaît que Robin des Airs pourra également utiliser, <strong>si la procédure l'exige</strong>, l'adresse email personnelle du Mandant communiquée dans le présent mandat ou ultérieurement.
+    The Client acknowledges Robin des Airs may use the Client's <strong>personal email if required</strong>, as stated in this mandate or later.
     <br><br>
-    Le <strong>suivi opérationnel avec le Mandant</strong> peut notamment être assuré via <strong>WhatsApp</strong> ou tout autre canal de communication convenu entre les parties,
-    <strong>sans caractère exclusif</strong> de ces canaux pour la notification d'informations importantes.
+    Operational <strong>updates to the Client</strong> may use <strong>WhatsApp</strong> or any other agreed channel,
+    <strong>without these channels being exclusive</strong> for important notices.
   </div>
   <div class="clause">
-    <span class="cnum">Article 2 — Durée</span>
-    Le mandat est consenti pour <strong>24 mois</strong> à compter de la signature. Cette durée est nécessaire pour traiter les dossiers complexes incluant relances, médiation et procédure judiciaire si nécessaire. Il peut être résilié par email à tout moment en cas de <strong>faute grave, fraude avérée ou non-coopération persistante</strong> de l'une des parties, avec un préavis de 15 jours.
+    <span class="cnum">Article 2 — Term</span>
+    The mandate runs <strong>24 months</strong> from signature. It may be terminated by email for <strong>serious breach, fraud or persistent non-cooperation</strong>, with 15 days' notice.
   </div>
   <div class="clause">
-    <span class="cnum">Article 3 — Exclusivité & Anti-contournement</span>
-    Le présent mandat est <strong>exclusif</strong>. Pendant sa durée, le Mandant s'engage à ne pas confier le même dossier à un tiers ni à négocier directement avec la compagnie pour le même incident <strong>sans en informer préalablement Robin des Airs</strong>. Tout accord conclu en violation de cette clause engage la responsabilité du Mandant, qui restera redevable de la commission convenue.
+    <span class="cnum">Article 3 — Exclusivity & anti-circumvention</span>
+    This mandate is <strong>exclusive</strong>. The Client shall not assign the same case elsewhere nor negotiate with the airline for the same incident <strong>without prior notice to Robin des Airs</strong>.
   </div>
   <div class="clause hi">
-    <span class="cnum">Article 4 — Honoraires · No Win, No Fee</span>
-    Robin des Airs perçoit une commission de <strong>25% TTC du montant effectivement encaissé</strong>, <strong>uniquement en cas de succès</strong>. En cas d'échec ou de non-recouvrement, <strong>aucun frais n'est dû</strong>. Aucune avance n'est exigée à aucun stade.
+    <span class="cnum">Article 4 — Fees · No win, no fee</span>
+    Robin des Airs charges <strong>25% incl. VAT of amounts collected</strong>, <strong>success fee only</strong>. If the case fails, <strong>no fee is due</strong>. No upfront payment.
   </div>
   <div class="clause hi" style="border-color:#1a5a47;background:#e8f0ec;">
-    <span class="cnum" style="color:#1a5a47;">Article 4.1 — Frais Judiciaires</span>
-    Robin des Airs prend en charge <strong>100% des frais d'avocat, de greffe, d'huissier et de procédure judiciaire TTC</strong> liés au traitement du dossier. Le Mandant n'avance aucune somme à quelque stade que ce soit. Robin des Airs se réserve le droit de <strong>sélectionner librement les dossiers</strong> qu'elle estime viables avant d'engager une procédure judiciaire.
+    <span class="cnum" style="color:#1a5a47;">Article 4.1 — Legal costs</span>
+    Robin des Airs covers <strong>100% of legal and court costs</strong>. The Client pays nothing upfront. Robin des Airs may <strong>select viable cases</strong> before court action.
   </div>
   <table class="fee-table">
-    <tr><th>Distance du vol</th><th>Indemnité légale / pax</th><th>Commission RDA (25%)</th><th>Net client</th></tr>
+    <tr><th>Flight distance</th><th>Statutory amount / pax</th><th>RDA fee (25%)</th><th>Client net</th></tr>
     <tr><td>≤ 1 500 km</td><td>250 €</td><td>62,50 €</td><td class="em">187,50 €</td></tr>
     <tr><td>1 500 – 3 500 km</td><td>400 €</td><td>100 €</td><td class="em">300 €</td></tr>
     <tr><td>&gt; 3 500 km (Europe-Afrique)</td><td>600 €</td><td>150 €</td><td class="em">450 €</td></tr>
   </table>
   <div class="clause pro">
-    <span class="cnum">Article 5 — Paiement & Protection du Mandant</span>
-    Le Mandant donne instruction expresse à la compagnie aérienne de verser toute indemnité au <strong>compte désigné par Robin des Airs</strong>. Dès encaissement, Robin des Airs reverse au Mandant sa part nette (75%) sur l'IBAN communiqué dans ce mandat, dans un délai de <strong>48 heures ouvrées</strong>. Si la compagnie verse directement au Mandant, celui-ci s'engage à reverser sans délai la commission de 25% à Robin des Airs.
+    <span class="cnum">Article 5 — Payment & client protection</span>
+    The Client instructs the airline to pay to the <strong>account designated by Robin des Airs</strong>. Within <strong>48 business hours</strong>, Robin pays the Client's net share (75%). Direct payment to the Client requires immediate remittance of the 25% fee.
   </div>
   <div class="clause pro" style="border-left-color:#8a1c1c;background:#fff4f4;">
-    <span class="cnum" style="color:#8a1c1c;">Article 6 — Clause Non Libératoire pour la Compagnie Aérienne</span>
-    <strong>Tout paiement effectué directement par la compagnie aérienne au Mandant ne libère pas la compagnie de ses obligations</strong> envers Robin des Airs, mandataire exclusif désigné par acte signé. Robin des Airs notifie expressément la compagnie, dès la mise en demeure, que le <strong>seul paiement libératoire valable</strong> est celui effectué sur le compte bancaire de Robin des Airs.
+    <span class="cnum" style="color:#8a1c1c;">Article 6 — Non-release clause (airline)</span>
+    <strong>Payment by the airline directly to the Client does not release the airline</strong> towards Robin des Airs as exclusive representative. Robin des Airs notifie expressément la compagnie, dès la mise en demeure, que le <strong>seul paiement libératoire valable</strong> est celui effectué sur le compte bancaire de Robin des Airs.
     <br><br>
-    En conséquence : (i) tout règlement opéré directement au Mandant en violation de cette instruction sera réputé <strong>non libératoire à l'égard de Robin des Airs</strong> ; (ii) la compagnie demeurera redevable du paiement auprès du mandataire ; (iii) Robin des Airs se réserve le droit d'engager toute action en recouvrement, y compris judiciaire, à l'encontre de la compagnie aérienne. Cette stipulation constitue une <strong>instruction de paiement irrévocable</strong> au sens des articles 1984 et suivants du Code civil, opposable à tout tiers dûment notifié.
+    Accordingly: (i) direct payment to the Client in breach of this instruction is <strong>not release towards Robin des Airs</strong>; (ii) the airline remains liable to the representative; (iii) Robin des Airs may pursue recovery including court action.
   </div>
   <div class="clause">
-    <span class="cnum">Article 7 — Obligations de Robin des Airs</span>
-    Robin des Airs s'engage à : (i) instruire le dossier avec diligence ; (ii) informer le Mandant à chaque étape clé ; (iii) reverser les sommes dans les 48h ouvrées après encaissement ; (iv) notifier expressément la compagnie aérienne de l'existence du présent mandat et de l'instruction de paiement exclusif ; (v) protéger les données personnelles conformément au RGPD.
+    <span class="cnum">Article 7 — Robin des Airs obligations</span>
+    Robin des Airs shall: (i) process diligently; (ii) inform at key stages; (iii) pay within 48 business hours after collection; (iv) notify the airline of this mandate; (v) protect data under GDPR.
   </div>
   <div class="clause">
-    <span class="cnum">Article 8 — Obligations du Mandant</span>
-    Le Mandant s'engage à : (i) fournir des informations exactes et complètes ; (ii) transmettre tout document utile dans les meilleurs délais ; (iii) informer Robin des Airs de <strong>tout contact ou offre de la compagnie aérienne dans les 24h</strong> ; (iv) ne pas accepter ni encaisser aucun paiement de la compagnie sans en aviser Robin des Airs ; (v) ne pas agir en parallèle sur le même dossier sans accord préalable écrit.
+    <span class="cnum">Article 8 — Client obligations</span>
+    The Client shall: (i) provide accurate information; (ii) send documents promptly; (iii) notify Robin des Airs within <strong>24h of airline contact</strong>; (iv) not accept airline payment without notice; (v) not act in parallel without written consent.
   </div>
   <div class="clause le">
-    <span class="cnum">Article 9 — Droit de rétractation (14 jours) & Démarrage immédiat</span>
-    Conformément aux articles L. 221-18 et suivants du Code de la consommation, le Mandant dispose d'un <strong>délai de rétractation de 14 jours calendaires</strong> à compter de la signature, sans pénalité. Il suffit d'envoyer un email à <strong>contact@robindesairs.eu</strong> avec la mention « Je me rétracte — Réf. [numéro de dossier] ».
+    <span class="cnum">Article 9 — 14-day withdrawal & immediate start</span>
+    Under French consumer law, the Client has <strong>14 calendar days to withdraw</strong> by email to <strong>contact@robindesairs.eu</strong> with « I withdraw — Ref. [case number] ».
     <br><br>
-    Conformément à l'article L. 221-25 du Code de la consommation, si le Mandant demande expressément l'<strong>exécution immédiate du mandat avant l'expiration du délai de 14 jours</strong> (case cochée ci-dessous), Robin des Airs est autorisée à débuter les démarches sans attendre. En cas de rétractation ultérieure dans ce délai, le Mandant reconnaît que les prestations déjà accomplies seront dues au prorata — étant précisé qu'aucune somme ne sera exigible avant encaissement effectif de l'indemnité (principe No Win No Fee).
+    If the Client requests <strong>immediate performance before 14 days end</strong> (box below), Robin des Airs may start without waiting. Withdrawal within that period may make completed services due pro rata — no amount before compensation is collected.
   </div>
   <div class="clause">
-    <span class="cnum">Article 10 — Confidentialité & RGPD</span>
-    Les données personnelles collectées sont utilisées exclusivement pour la gestion du dossier. Elles ne sont pas revendues. Conformément au RGPD, le Mandant dispose d'un droit d'accès, de rectification et de suppression en contactant contact@robindesairs.eu.
+    <span class="cnum">Article 10 — Confidentiality & GDPR</span>
+    Personal data is used only for case management, not sold. GDPR rights: contact@robindesairs.eu.
   </div>
   <div class="clause">
-    <span class="cnum">Article 11 — Loi applicable & Règlement des litiges</span>
-    Le présent mandat est soumis au <strong>droit français</strong>. En cas de litige, les parties privilégient une résolution amiable dans les 30 jours. À défaut d'accord, le différend est soumis aux juridictions compétentes.
+    <span class="cnum">Article 11 — Governing law & disputes</span>
+    This mandate is governed by <strong>French law</strong>. Disputes shall be resolved amicably within 30 days; failing agreement, competent courts apply.
   </div>
 </div>
 <!-- DÉCLARATION ET CONSENTEMENT -->
 <div class="doc-section">
-  <div class="sec-title">✅ Déclaration & Consentement</div>
+  <div class="sec-title">✅ Declaration & consent</div>
   <div class="declaration-box">
-    Je soussigné(e) <strong id="declarant">—</strong>, déclare sur l'honneur avoir bien été passager(e) sur le vol indiqué à la date mentionnée, et avoir subi le préjudice déclaré (retard, annulation ou refus d'embarquement).
+    I, the undersigned <strong id="declarant">—</strong>, declare that I was a passenger on the stated flight and suffered the declared harm (delay, cancellation or denied boarding).
   </div>
   <!-- CASE 1 — Mandat principal -->
   <div class="single-check" onclick="toggleMainCheck()">
     <input type="checkbox" id="mainCheck" onclick="event.stopPropagation()">
     <p>
-      Je mandate <strong>Robin des Airs</strong> pour récupérer mon indemnité aérienne.<br>
-      <strong>Aucun frais si le dossier échoue.</strong> Commission de 25% uniquement en cas de succès.<br>
+      I appoint <strong>Robin des Airs</strong> to recover my flight compensation.<br>
+      <strong>No fee if the case fails.</strong> 25% commission on success only.<br>
       <span style="font-size:12px;color:var(--muted);">
-        Mandat exclusif 24 mois · Rétractation possible sous 14 jours par email · RGPD
+        Exclusive 24-month mandate · 14-day withdrawal by email · GDPR
       </span>
     </p>
   </div>
-  <div class="ferr" id="checkErr" style="font-size:13px">Veuillez cocher cette case pour valider le mandat.</div>
+  <div class="ferr" id="checkErr" style="font-size:13px">Please tick this box to sign the mandate.</div>
   <!-- CASE 2 — Démarrage immédiat (optionnelle mais recommandée) -->
   <div class="single-check" style="background:var(--green-pale);border-color:var(--green-mid)" onclick="document.getElementById('startNow').checked=!document.getElementById('startNow').checked">
     <input type="checkbox" id="startNow" onclick="event.stopPropagation()">
     <p>
-      <strong>Je demande le démarrage immédiat de mon dossier</strong>, sans attendre l'expiration du délai de rétractation de 14 jours.<br>
+      <strong>I request immediate processing</strong> without waiting for the 14-day withdrawal period.<br>
       <span style="font-size:12px;color:var(--muted);">
         Recommandé — Robin des Airs peut agir dès maintenant en mon nom. (Art. L.221-25 Code conso.)
       </span>
@@ -412,7 +411,7 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   <div id="coPassSection" style="display:none;margin-top:20px">
     <div class="sec-title" style="font-size:15px">👥 Consentement des co-passagers adultes</div>
     <p style="font-size:13px;color:var(--muted);margin-bottom:14px">
-      Chaque passager majeur doit confirmer son accord. Cochez la case correspondant à chaque co-passager adulte.
+      Each adult passenger must confirm. Tick the box for each adult co-passenger.
     </p>
     <div id="coPassChecks"></div>
     <div class="ferr" id="coPassErr" style="font-size:13px">Tous les co-passagers adultes doivent confirmer leur accord.</div>
@@ -420,10 +419,10 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
 </div>
 <!-- SIGNATURE -->
 <div class="doc-section">
-  <div class="sec-title">🖊️ Signature électronique</div>
+  <div class="sec-title">🖊️ Electronic signature</div>
   <div class="field-row duo">
     <div>
-      <label>Fait à (ville) <span class="req">*</span></label>
+      <label>Signed at (city) <span class="req">*</span></label>
       <input type="text" id="sigCity" placeholder="Paris">
       <div class="ferr" id="sigCityErr">Ville requise</div>
     </div>
@@ -435,7 +434,7 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   <p style="font-size:13px;color:var(--muted);margin-bottom:8px">Tracez votre signature ci-dessous (doigt ou souris) :</p>
   <div class="sig-area" id="sigArea">
     <canvas id="sigCanvas" width="680" height="120"></canvas>
-    <div class="sig-ph" id="sigPh">✍️ Appuyez ici pour signer</div>
+    <div class="sig-ph" id="sigPh">✍️ Tap here to sign</div>
     <div class="sig-clear" id="sigClear" onclick="clearSig(event)">✕ Recommencer</div>
   </div>
   <div class="ferr" id="sigErr">Votre signature est requise pour valider le mandat</div>
@@ -454,7 +453,7 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
 <!-- ÉCRAN SUCCÈS -->
 <div class="success-screen" id="successScreen">
   <div class="success-icon">✓</div>
-  <div class="success-title">Mandat signé !</div>
+  <div class="success-title">Mandate signed!</div>
   <p style="color:var(--muted);font-size:14px;max-width:420px;margin:0 auto">
     Votre dossier est officiellement ouvert. Robin des Airs prend le relais immédiatement.
   </p>
@@ -467,7 +466,7 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
     <div class="sstep"><div class="snum">4</div><div><strong>Versement sur votre IBAN sous 48h</strong><br>Dès encaissement, votre net (75%) vous est versé.</div></div>
   </div>
   <div style="margin-top:32px">
-    <a href="https://robindesairs.eu" style="color:var(--green);font-size:13px;text-decoration:none;border-bottom:1px solid var(--gold)">Retour à robindesairs.eu →</a>
+    <a href="https://robindesairs.eu" style="color:var(--green);font-size:13px;text-decoration:none;border-bottom:1px solid var(--gold)">Back to robindesairs.eu →</a>
   </div>
 </div>
 </div><!-- fin page -->
@@ -522,8 +521,8 @@ window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('dRef').textContent  = REF;
   applyDossierEmailUI();
   const now = new Date();
-  document.getElementById('dDate').textContent = now.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('sigDate').value     = now.toLocaleDateString('fr-FR');
+  document.getElementById('dDate').textContent = now.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('sigDate').value     = now.toLocaleDateString('en-GB');
   if (VOL)  document.getElementById('fnum').value = VOL;
   if (CIE)  document.getElementById('cie').value  = CIE;
   if (PNR)  document.getElementById('pnr').value  = PNR;
@@ -691,13 +690,13 @@ function renderAllPassengers() {
     div.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <span style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--gold)">
-          Passager ${i+1}${i===0?' — Signataire principal':''}
+          Passenger ${i+1}${i===0?' — Main signatory':''}
         </span>
         ${i > 0 ? `<button type="button" onclick="removePassenger(${i})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:2px 6px" title="Supprimer ce passager">✕ Retirer</button>` : ''}
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
         <div>
-          <label>Prénom NOM <span class="req">*</span></label>
+          <label>First name NOM <span class="req">*</span></label>
           <input type="text" class="pnif" placeholder="Ex : Fatou DIALLO" value="${pre.name||''}"
             oninput="updateParties();buildCoPassChecks()">
         </div>
@@ -714,7 +713,7 @@ function renderAllPassengers() {
           style="width:16px;height:16px;accent-color:var(--green);cursor:pointer"
           onchange="toggleMinorRow(this, ${i})">
         <label for="minor${i}" style="font-size:12px;color:var(--ink);cursor:pointer;font-family:'DM Sans',sans-serif;text-transform:none;letter-spacing:0;margin:0">
-          <strong>Passager mineur</strong> (moins de 18 ans) — un représentant légal devra co-signer
+          <strong>Minor passenger</strong> (under 18) — a legal guardian must co-sign
         </label>
       </div>
     `;
@@ -816,7 +815,7 @@ function buildCoPassChecks() {
     div.innerHTML = `
       <input type="checkbox" id="${id}" onclick="event.stopPropagation()">
       <p>
-        <strong>${name || 'Passager ' + (i + 2)}</strong> confirme mandater Robin des Airs
+        <strong>${name || 'Passenger ' + (i + 2)}</strong> confirms appointing Robin des Airs
         pour agir en son nom sur ce dossier et accepte les mêmes conditions.<br>
         <span style="font-size:12px;color:var(--muted);">
           Aucun frais si échec · Commission 25% si succès · Rétractation 14 jours
@@ -933,7 +932,7 @@ function validate() {
         errMsg = document.createElement('div');
         errMsg.className = 'dob-err ferr';
         errMsg.style.display = 'block';
-        errMsg.textContent = '⚠️ Date de naissance obligatoire pour les mineurs';
+        errMsg.textContent = '⚠️ Date of birth required for minors';
         dobInp?.parentNode?.appendChild(errMsg);
       }
       ok = false;
@@ -960,7 +959,7 @@ function submitMandat() {
     return;
   }
   const btn = document.getElementById('btnSub');
-  btn.disabled=true; btn.innerHTML='⏳ Envoi en cours...';
+  btn.disabled=true; btn.innerHTML='⏳ Sending…';
   const payload = {
     ref:       REF,
     firstName: document.getElementById('fn').value.trim(),

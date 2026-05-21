@@ -132,13 +132,21 @@ Si vos noms diffèrent, définir `AIRTABLE_COL_REF`, `AIRTABLE_COL_PRENOM`, etc.
 
 ---
 
-## 6. Make.com
+## 6. Preuves automatiques (dossiers agence)
+
+À la création d’un dossier via **espace agence** ou **bot WhatsApp partenaire**, Netlify collecte METAR/TAF + données vol (API) et met à jour Airtable (**Remarques** + lien rapport HTML).
+
+Voir `docs/PREUVES-CAPTURE.md` et `POST /api/collect-proofs` pour relancer.
+
+---
+
+## 7. Make.com
 
 Vous pouvez **soit** utiliser l’automation Airtable native (ci-dessus), **soit** garder Make (Watch records) — évitez les **deux** sur le même statut pour ne pas envoyer le lien en double.
 
 ---
 
-## 7. Test rapide
+## 8. Test rapide
 
 ```bash
 curl -X POST "https://robindesairs.eu/api/airtable-webhook" \

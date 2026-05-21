@@ -1,0 +1,40 @@
+ROBIN DES AIRS — OFFLINE DOWNLOAD CHECKLIST (EN · Gambia & agencies)
+================================================================
+
+FASTEST (one command, from project root):
+  cd /Users/climbie/Documents/GitHub/robin-des-airs
+  bash docs/offline-en/build-offline-pack.sh
+
+Then copy to USB / phone / cloud:
+  docs/offline-en/robin-gambia-agency-offline-en.zip
+
+OR copy these files manually:
+
+MASTER DOC (read first)
+  docs/offline-en/OFFLINE-GAMBIA-AGENCY-EN.md
+
+ENGLISH HTML (open in browser offline)
+  paliers-commission-agence-en.html
+  partner-agreement-en.html
+  ce261-brackets-en.html
+  ce261-date-deadlines-en.html
+  mandat-en.html
+  espace-agence.html
+
+PORTAL ASSETS (needed if espace-agence offline)
+  assets/agence-i18n.js
+  assets/agence-portal.js
+  assets/agence-currency.js
+  assets/agence-commission-tiers.js
+
+OPTIONAL EN DOCS (French originals, technical)
+  docs/ESPACE-AGENCE.md
+  docs/WATI-ROBOT-AGENCE.md
+  docs/NETLIFY-PROD.md (section 2 = agencies)
+
+OPTIONAL MARKETING
+  programme-agents-voyage.html
+  partenaires-landing.html
+
+NOT INCLUDED (needs internet)
+  Google Fonts, API calls, Airtable live data, contract submit API

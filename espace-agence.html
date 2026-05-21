@@ -129,6 +129,11 @@ nav { display: flex; align-items: center; justify-content: space-between; paddin
 .incident-option.selected { border-color: var(--gold); background: var(--gold-pale); color: var(--gold); }
 .incident-icon { width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
 .auto-note { background: rgba(34,200,132,0.07); border: 1px solid rgba(34,200,132,0.2); border-radius: 8px; padding: 10px 14px; font-size: 0.78rem; color: rgba(34,200,132,0.9); margin-bottom: 1rem; line-height: 1.5; }
+.mandat-preview-link { font-size: 0.78rem; color: var(--gold); text-decoration: none; border: 1px solid rgba(200,168,90,0.35); padding: 8px 12px; border-radius: 8px; white-space: nowrap; transition: background .2s, color .2s; }
+.mandat-preview-link:hover { background: var(--gold-pale); color: var(--white); }
+.transparency-box { font-size: 0.72rem; line-height: 1.55; color: var(--white-70); padding: 8px 12px 10px; background: rgba(255,255,255,0.04); border-left: 3px solid var(--gold); }
+.transparency-label { font-weight: 600; color: var(--gold); text-transform: uppercase; font-size: 0.62rem; letter-spacing: 0.06em; margin-right: 6px; }
+.dossier-transparency-row td { padding-top: 0 !important; border-top: none !important; padding-bottom: 12px !important; }
 .panel-escale { margin-top: 12px; padding: 14px; background: rgba(255,255,255,0.03); border-radius: 10px; border-left: 3px solid var(--gold); }
 .panel-escale[hidden] { display: none; }
 .upload-zone { border: 1.5px dashed rgba(200,168,90,0.3); border-radius: 10px; padding: 24px 16px; text-align: center; cursor: pointer; background: rgba(200,168,90,0.03); position: relative; }
@@ -333,7 +338,7 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
   <div class="form-progress-step" data-step="2">2 · Vol</div>
   <div class="form-progress-step" data-step="3">3 · Perturbation</div>
 </div>
-<div class="commission-preview" id="commission-preview">
+<div class="commission-preview" id="commission-preview" hidden aria-hidden="true">
   <span data-i18n="agent.preview.label">Commission estimée (si gagné)</span>
   <strong id="form-commission-preview">—</strong>
 </div>
@@ -452,6 +457,7 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
         <div class="commission-title" data-i18n="pricing.agency">Votre commission</div>
         <div class="commission-amount" id="commission-sidebar-amount">3 800 GMD</div>
         <div class="commission-sub" id="commission-sidebar-sub" data-i18n="pricing.per_pax">par passager indemnisé</div>
+        <p id="commission-tier-banner" style="font-size:0.68rem;line-height:1.45;color:var(--gold-soft);margin:8px 0 0;padding-top:8px;border-top:1px solid rgba(255,255,255,.08)"></p>
         <div class="commission-row"><span class="label" data-i18n="pricing.client">Net client</span><span class="value" id="pricing-client">—</span></div>
         <div class="commission-row"><span class="label" data-i18n="pricing.indemnity">Indemnité</span><span class="value gold" id="pricing-indemnity">—</span></div>
       </div>
@@ -522,6 +528,28 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
       <div class="card-header"><div class="card-title" data-i18n="help.title">Aide</div></div>
       <div class="card-body" style="font-size:0.88rem;line-height:1.8;color:var(--white-70)">
         <p data-i18n="help.body">Les dossiers sont enregistrés dans Airtable. Robin traite comme un dépôt bureau.</p>
+        <p style="margin-top:0.75rem;font-size:0.8rem;color:var(--gold)" data-i18n="transparency.policy">Transparence compagnie par dossier.</p>
+        <p style="margin-top:1rem">
+          <a href="/mandat.html?source=agency-preview" class="mandat-preview-link" target="_blank" rel="noopener noreferrer" data-i18n="mandat.preview">Aperçu du mandat passager ↗</a>
+          <a href="/documents/mandat-fr.html?print=1" class="mandat-preview-link" target="_blank" rel="noopener" data-i18n="mandat.pdf_fr">Mandat PDF (FR) ↓</a>
+        </p>
+        <p style="margin-top:0.65rem;font-size:0.78rem" data-i18n="mandat.preview_hint">Ouvre le mandat CE 261 dans un nouvel onglet, prérempli avec le formulaire en cours.</p>
+        <p style="margin-top:1rem;font-size:0.8rem;font-weight:600;color:var(--gold)" data-i18n="bareme.title">Barème CE 261 — 3 paliers</p>
+        <p style="margin-top:0.5rem;display:flex;flex-wrap:wrap;gap:8px">
+          <a href="/bareme-ce261-fr.html" class="mandat-preview-link" target="_blank" rel="noopener" data-i18n="bareme.link_fr">250 / 400 / 600 € ↗</a>
+          <a href="/ce261-brackets-en.html" class="mandat-preview-link" target="_blank" rel="noopener" data-i18n="bareme.link_en">Brackets (EN) ↗</a>
+          <a href="/partner-agreement-fr.html" class="mandat-preview-link" target="_blank" rel="noopener" data-i18n="legal.partner_fr">Contrat agence ↗</a>
+        </p>
+        <p style="margin-top:1rem;font-size:0.8rem;font-weight:600;color:var(--gold)" data-i18n="comm.tiers.title">Commission agence — 3 paliers</p>
+        <p style="margin-top:0.5rem;display:flex;flex-wrap:wrap;gap:8px">
+          <a href="/paliers-commission-agence-fr.html" class="mandat-preview-link" target="_blank" rel="noopener" data-i18n="comm.tiers.link_fr">3 800 → 3 400 → 3 000 GMD ↗</a>
+          <a href="/paliers-commission-agence-en.html" class="mandat-preview-link" target="_blank" rel="noopener" data-i18n="comm.tiers.link_en">Brochure (EN) ↗</a>
+        </p>
+        <p style="margin-top:1rem;font-size:0.8rem;font-weight:600;color:var(--gold)" data-i18n="delais.title">Délais &amp; limites de dates</p>
+        <p style="margin-top:0.5rem;display:flex;flex-wrap:wrap;gap:8px">
+          <a href="/delais-dates-ce261-fr.html" class="mandat-preview-link" target="_blank" rel="noopener" data-i18n="delais.link_fr">Prescription, 14 j, LRAR… ↗</a>
+          <a href="/ce261-date-deadlines-en.html" class="mandat-preview-link" target="_blank" rel="noopener" data-i18n="delais.link_en">Deadlines (EN) ↗</a>
+        </p>
       </div>
     </div>
     <div class="steps-card">
@@ -538,6 +566,7 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
 
 <script src="/assets/agence-i18n.js"></script>
 <script src="/assets/agence-currency.js"></script>
+<script src="/assets/agence-commission-tiers.js"></script>
 <script src="/assets/agence-portal.js"></script>
 <script>
 (function uploadUI(){

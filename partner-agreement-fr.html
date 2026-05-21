@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="/favicon.png" type="image/png">
-<meta name="description" content="Robin des Airs — Partner travel agency agreement (EU Regulation 261/2004).">
-<title>Partner Agency Agreement — Robin des Airs</title>
+<meta name="description" content="Robin des Airs — Contrat agence partenaire Robin des Airs (EU Regulation 261/2004).">
+<title>Contrat agence partenaire — Robin des Airs</title>
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://robindesairs.eu/partner-agreement-en.html">
-<meta property="og:title" content="Partner Agency Agreement — Robin des Airs">
-<meta property="og:description" content="Partner agency agreement — referral, commission, EU 261 claims.">
+<meta property="og:url" content="https://robindesairs.eu/partner-agreement-fr.html">
+<meta property="og:title" content="Contrat agence partenaire — Robin des Airs">
+<meta property="og:description" content="Contrat agence partenaire — apport de dossiers, commission, CE 261.">
 <meta property="og:image" content="https://robindesairs.eu/robin-des-airs-logo-texte-profil.png">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -108,10 +108,10 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
 <div class="topbar">
   <a href="/" style="text-decoration:none;color:inherit"><div class="brand">Robin <em>des</em> Airs</div></a>
   <div style="display:flex;align-items:center;gap:12px">
-    <a class="lang-pill" href="/partner-agreement-fr.html">Français</a>
-    <a class="lang-pill" href="/ce261-brackets-en.html">CE 261 brackets</a>
-    <a class="lang-pill" href="/espace-agence.html">Partner portal</a>
-    <div class="doc-badge">Partner agreement · EU 261/2004</div>
+    <a class="lang-pill" href="/partner-agreement-en.html">English</a>
+    <a class="lang-pill" href="/bareme-ce261-fr.html">Barème CE 261</a>
+    <a class="lang-pill" href="/espace-agence.html">Espace agence</a>
+    <div class="doc-badge">Contrat partenaire · CE 261/2004</div>
   </div>
 </div>
 <div class="progress-wrap"><div class="progress-bar" id="pgBar"></div></div>
@@ -121,46 +121,52 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   <div class="doc-logo-line">
     <div>
       <div class="doc-logo">Robin <em>des</em> Airs</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:4px">Partner agency programme · Europe–Africa corridor</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">Programme agences partenaires · Corridor Europe–Afrique</div>
     </div>
     <div class="doc-ref">
-      <div>Ref.: <strong id="dRef">—</strong></div>
-      <div>Date: <strong id="dDate">—</strong></div>
-      <div style="font-size:10px;margin-top:4px">Partner code: <strong id="dCode">—</strong></div>
+      <div>Réf. : <strong id="dRef">—</strong></div>
+      <div>Date : <strong id="dDate">—</strong></div>
+      <div style="font-size:10px;margin-top:4px">Code partenaire: <strong id="dCode">—</strong></div>
     </div>
   </div>
-  <div class="doc-title">Partner Agency Agreement</div>
-  <div class="doc-subtitle">Non-exclusive referral &amp; commission framework — EU Regulation 261/2004</div>
+  <div class="doc-title">Contrat agence partenaire</div>
+  <div class="doc-subtitle">Cadre d'apport de dossiers non exclusif — Règlement (CE) n° 261/2004</div>
+</div>
+<div class="doc-section" style="padding-top:18px;padding-bottom:18px">
+  <div class="declaration-box" style="margin:0">
+    <strong>Contrat B2B d'apport</strong> — vous orientez des passagers ; chacun signe un mandat distinct ; Robin gère le dossier auprès de la compagnie.
+    Vous conservez vos prestations agence habituelles ; la commission est due lorsque Robin encaisse l'indemnité sur votre recommandation.
+  </div>
 </div>
 <div class="doc-section">
   <div class="amount-hero">
     <div class="amount-col">
-      <div class="amount-tag">Reference airline compensation</div>
+      <div class="amount-tag">Indemnité indicative (exemple)</div>
       <div class="amount-num">600 €</div>
-      <div class="amount-sub">EU 261/2004 (long-haul &gt;3,500 km)</div>
+      <div class="amount-sub">Non garantie — CE 261 long-courrier &gt;3 500 km</div>
     </div>
     <div class="amount-div"></div>
     <div class="amount-col">
-      <div class="amount-tag">✅ Your agency commission</div>
+      <div class="amount-tag">✅ Votre commission agence</div>
       <div class="amount-num net" id="hCommGmd">3,800 GMD</div>
-      <div class="amount-sub" id="hCommSub">Per winning passenger · ≈ €45 at 84 GMD/€</div>
-      <div class="formula-box" id="hFormula">Within 48 business hours after cleared client payout received by Robin des Airs</div>
+      <div class="amount-sub" id="hCommSub">Par passager indemnisé · ≈ 45 € à 84 GMD/€</div>
+      <div class="formula-box" id="hFormula">Sous 48 h ouvrées après encaissement effectif par Robin des Airs</div>
     </div>
   </div>
-  <div class="sec-title">👥 The parties</div>
+  <div class="sec-title">👥 Les parties</div>
   <div class="parties-grid">
-    <div class="partie-box" data-label="Partner agency">
+    <div class="partie-box" data-label="Agence partenaire">
       <div class="partie-name" id="pAgency">—</div>
       <div class="partie-detail">
-        Partner agency member<br>
-        Code: <span id="pCode">—</span><br>
-        Country: <span id="pCountry">—</span>
+        Membre du réseau partenaire<br>
+        Code : <span id="pCode">—</span><br>
+        Pays : <span id="pCountry">—</span>
       </div>
     </div>
     <div class="partie-box" data-label="Robin des Airs">
       <div class="partie-name">Robin des Airs</div>
       <div class="partie-detail">
-        EU 261 claims &amp; recovery<br>
+        Recours CE 261 / recouvrement<br>
         66 Avenue des Champs-Élysées — Paris<br>
         partners@robindesairs.eu<br>
         WhatsApp: +33 6 52 89 38 58
@@ -169,225 +175,225 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   </div>
 </div>
 <div class="doc-section">
-  <div class="sec-title">✍️ Agency details</div>
+  <div class="sec-title">✍️ Identité de l'agence</div>
   <div class="field-row duo">
     <div>
-      <label>Legal name of agency <span class="req">*</span></label>
+      <label>Raison sociale <span class="req">*</span></label>
       <input type="text" id="agencyName" placeholder="Kombo Travel &amp; Tours" oninput="updateParties()">
-      <div class="ferr" id="agencyNameErr">Required</div>
+      <div class="ferr" id="agencyNameErr">Obligatoire</div>
     </div>
     <div>
-      <label>Partner code <span class="req">*</span></label>
+      <label>Code partenaire <span class="req">*</span></label>
       <input type="text" id="agencyCode" placeholder="GSA-KMS-001" class="ro" oninput="updateParties()">
-      <div class="ferr" id="agencyCodeErr">Required</div>
+      <div class="ferr" id="agencyCodeErr">Obligatoire</div>
     </div>
   </div>
   <div class="field-row duo">
     <div>
-      <label>Signatory (full name) <span class="req">*</span></label>
+      <label>Signataire (nom complet) <span class="req">*</span></label>
       <input type="text" id="signName" placeholder="John Doe">
-      <div class="ferr" id="signNameErr">Required</div>
+      <div class="ferr" id="signNameErr">Obligatoire</div>
     </div>
     <div>
-      <label>Role / title <span class="req">*</span></label>
+      <label>Fonction <span class="req">*</span></label>
       <input type="text" id="signRole" placeholder="Director">
-      <div class="ferr" id="signRoleErr">Required</div>
+      <div class="ferr" id="signRoleErr">Obligatoire</div>
     </div>
   </div>
   <div class="field-row duo">
     <div>
       <label>WhatsApp <span class="req">*</span></label>
       <input type="tel" id="wa" placeholder="+220 712 3456">
-      <div class="ferr" id="waErr">Required</div>
+      <div class="ferr" id="waErr">Obligatoire</div>
     </div>
     <div>
-      <label>Business email <span class="req">*</span></label>
+      <label>Email professionnel <span class="req">*</span></label>
       <input type="email" id="bizEmail" placeholder="agency@example.com">
-      <div class="ferr" id="bizEmailErr">Required</div>
+      <div class="ferr" id="bizEmailErr">Obligatoire</div>
     </div>
   </div>
   <div class="field-row duo">
     <div>
-      <label>Country <span class="req">*</span></label>
+      <label>Pays <span class="req">*</span></label>
       <input type="text" id="country" placeholder="The Gambia" oninput="updateParties()">
-      <div class="ferr" id="countryErr">Required</div>
+      <div class="ferr" id="countryErr">Obligatoire</div>
     </div>
     <div>
-      <label>Preferred commission payout</label>
+      <label>Paiement de la commission</label>
       <select id="payout">
-        <option value="">— Select —</option>
+        <option value="">— Choisir —</option>
         <option value="wave">Wave</option>
         <option value="afrimoney">Afrimoney</option>
         <option value="qmoney">QMoney</option>
-        <option value="bank">Bank transfer (SEPA / local)</option>
+        <option value="bank">Virement bancaire (SEPA / local)</option>
       </select>
     </div>
   </div>
   <div class="field-row">
-    <label>Registered address <span class="req">*</span></label>
+    <label>Adresse du siège <span class="req">*</span></label>
     <textarea id="addr" rows="3" placeholder="Street, city, country"></textarea>
-    <div class="ferr" id="addrErr">Required</div>
+    <div class="ferr" id="addrErr">Obligatoire</div>
   </div>
 </div>
 <div class="doc-section" id="foundingOffer">
   <div class="declaration-box" style="margin:0;border-color:var(--gold);background:#faf5eb">
-    <strong>★ Founding partner</strong> — The <strong>first 3</strong> agencies that <strong>sign before 31 August 2026</strong> lock in
-    <strong>4,000 GMD per pax</strong>, <strong>for life</strong>.
+    <strong>★ Partenaire fondateur</strong> — Les <strong>3 premières</strong> agences qui signent <strong>avant le 31 août 2026</strong> :
+    <strong>4 000 GMD</strong> / passager gagné, <strong>acquis à vie</strong>.
   </div>
 </div>
 <div class="doc-section">
-  <div class="sec-title">📅 Agency commission — tiers (signing date)</div>
+  <div class="sec-title">📅 Commission agence — paliers (date de signature)</div>
   <p style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.65">
-    The amount per winning passenger is the <strong>tier in force on the day you sign</strong>.
-    That rate is <strong>yours for life</strong>: later step-downs apply only to <em>new</em> partners
-    (once a deadline passes, that tier is no longer offered — see Article 2).
-    <a href="/paliers-commission-agence-en.html" target="_blank" rel="noopener">Commission brochure ↗</a>
+    Le montant par passager indemnisé est celui du <strong>palier en vigueur le jour où vous signez</strong>.
+    Ce montant est <strong>acquis à vie</strong> pour votre agence : les baisses ultérieures ne s'appliquent qu'aux <em>nouveaux</em> partenaires
+    (après l'échéance, ce palier n'est plus proposé — voir article 2).
+    <a href="/paliers-commission-agence-fr.html" target="_blank" rel="noopener">Détail des paliers ↗</a>
   </p>
   <table class="fee-table" id="tierCommTable">
-    <tr><th>Tier</th><th>Condition</th><th>Commission / pax</th></tr>
-    <tr data-tier="founding" id="foundingRow"><td>★ Founding</td><td>Sign before 31 August 2026 · 3 slots</td><td class="em" id="tier0Gmd">4,000 GMD/pax</td></tr>
-    <tr data-tier="ete"><td>1 — Summer</td><td>31 August 2026</td><td class="em" id="tier1Gmd">3,800 GMD/pax</td></tr>
-    <tr data-tier="fin_annee"><td>2 — Autumn</td><td>31 December 2026</td><td class="em" id="tier2Gmd">3,400 GMD/pax</td></tr>
-    <tr data-tier="2027"><td>3 — 2027</td><td>From 1 January 2027</td><td class="em" id="tier3Gmd">3,000 GMD/pax</td></tr>
+    <tr><th>Palier</th><th>Condition</th><th>Commission / pax</th></tr>
+    <tr data-tier="founding" id="foundingRow"><td>★ Fondateur</td><td>Signature avant le 31 août 2026 · 3 places</td><td class="em" id="tier0Gmd">4 000 GMD/pax</td></tr>
+    <tr data-tier="ete"><td>1 — Été</td><td>31 août 2026</td><td class="em" id="tier1Gmd">3 800 GMD/pax</td></tr>
+    <tr data-tier="fin_annee"><td>2 — Automne</td><td>31 décembre 2026</td><td class="em" id="tier2Gmd">3 400 GMD/pax</td></tr>
+    <tr data-tier="2027"><td>3 — 2027</td><td>À partir du 1<sup>er</sup> janvier 2027</td><td class="em" id="tier3Gmd">3 000 GMD/pax</td></tr>
   </table>
   <div class="email-tech-note" id="tierActiveNote" style="margin-top:12px">
-    Tier applicable if you sign today: <strong id="tierActiveLabel">—</strong>
+    Palier applicable à la signature d'aujourd'hui : <strong id="tierActiveLabel">—</strong>
   </div>
 </div>
 <div class="doc-section">
-  <div class="sec-title">💶 Commercial framework (per winning passenger)</div>
+  <div class="sec-title">💶 Cadre commercial (par passager indemnisé)</div>
   <table class="fee-table">
-    <tr><th>Distance (indicative)</th><th>Airline bracket / pax</th><th>Passenger net (75%)</th><th>Notes</th></tr>
-    <tr><td>≤ 1,500 km</td><td class="em">250 €</td><td>187,50 €</td><td>CE 261 tier 1</td></tr>
-    <tr><td>1,500 – 3,500 km</td><td class="em">400 €</td><td>300 €</td><td>CE 261 tier 2</td></tr>
-    <tr><td>&gt; 3,500 km</td><td class="em">600 €</td><td>450 €</td><td>Europe–Africa example</td></tr>
-    <tr><td colspan="4" style="font-size:12px;color:var(--muted)">Actual amount may differ — see <a href="/ce261-brackets-en.html" target="_blank" rel="noopener">full brackets</a> and portal transparency (%).</td></tr>
-    <tr><td><strong>Your agency commission</strong></td><td class="em" id="tblComm" colspan="2">3,800 GMD</td><td>Tier in force on signing date (table above)</td></tr>
+    <tr><th>Distance (indicative)</th><th>Indemnité / pax</th><th>Net passager (75 %)</th><th>Notes</th></tr>
+    <tr><td>≤ 1 500 km</td><td class="em">250 €</td><td>187,50 €</td><td>Palier CE 261 — palier 1</td></tr>
+    <tr><td>1 500 – 3 500 km</td><td class="em">400 €</td><td>300 €</td><td>Palier CE 261 — palier 2</td></tr>
+    <tr><td>&gt; 3 500 km</td><td class="em">600 €</td><td>450 €</td><td>Ex. Europe–Afrique</td></tr>
+    <tr><td colspan="4" style="font-size:12px;color:var(--muted)">Montant réel variable — voir <a href="/bareme-ce261-fr.html" target="_blank" rel="noopener">barème complet</a> et transparence (% du palier) dans le portail.</td></tr>
+    <tr><td><strong>Votre commission agence</strong></td><td class="em" id="tblComm" colspan="2">3 800 GMD</td><td>Palier en vigueur à la date de signature (tableau ci-dessus)</td></tr>
   </table>
   <div class="email-tech-note">
-    <strong>Practical note:</strong> no passenger personal email is required in the portal — Robin creates the case address automatically.
-    You may help the passenger complete the <a href="/mandat.html" target="_blank" rel="noopener">passenger mandate</a>; Robin then handles the airline claim.
+    <strong>Note pratique :</strong> aucun email personnel du passager n'est requis dans le portail — Robin crée l'adresse dossier automatiquement.
+    Vous pouvez aider le passager à remplir le <a href="/mandat.html" target="_blank" rel="noopener">mandat passager</a> ; Robin gère ensuite le dossier compagnie.
   </div>
 </div>
 <div class="doc-section">
-  <div class="sec-title">⚖️ Terms of the agreement</div>
+  <div class="sec-title">⚖️ Conditions du contrat</div>
   <div class="clause le">
-    <span class="cnum">Article 1 — Purpose</span>
-    This agreement is a <strong>non-exclusive</strong> referral and commission framework under <strong>Regulation (EC) No 261/2004</strong>.
-    The Partner refers passengers who may be eligible; Robin des Airs handles claims on a <strong>no win, no fee</strong> basis for the passenger after mandate signature.
-    The Partner uses the <strong>partner portal</strong> (<a href="/espace-agence.html">partner space</a>) and may support clients with travel services as usual.
+    <span class="cnum">Article 1 — Objet</span>
+    Le présent contrat est un <strong>cadre non exclusif</strong> d'apport de dossiers et de commission au titre du <strong>Règlement (CE) n° 261/2004</strong>.
+    L'agence oriente des passagers potentiellement éligibles ; Robin des Airs traite le recours en <strong>no win, no fee</strong> pour le passager après signature du mandat.
+    L'agence utilise l'<strong>espace agence</strong> (<a href="/espace-agence.html">portail partenaire</a>) et peut continuer ses prestations voyage habituelles.
   </div>
   <div class="clause hi">
-    <span class="cnum">Article 2 — Agency commission</span>
-    Upon successful recovery and actual payment of compensation to the passenger, Robin des Airs pays the Partner
-    <strong id="clauseComm">3,800 GMD</strong> per winning passenger — <strong>tier in force on the signing date</strong> (table above),
-    <strong>locked for life</strong> for your agency (not reduced when later tiers apply to new sign-ups; indicative ≈ <strong id="clauseCommEur">€45</strong> at 84 GMD/€).
-    Payment is made within <strong>48 business hours after Robin receives cleared compensation</strong>, via the method selected above, subject to valid payout details.
-    No commission is due if the case fails or no compensation is collected.
+    <span class="cnum">Article 2 — Commission agence</span>
+    En cas de succès et de paiement effectif de l'indemnité au passager, Robin des Airs verse à l'agence
+    <strong id="clauseComm">3 800 GMD</strong> par passager indemnisé — montant du <strong>palier en vigueur le jour de la signature</strong> (tableau ci-dessus),
+    <strong>acquis à vie</strong> pour votre agence (non révisable à la baisse lors des paliers suivants ; indicatif ≈ <strong id="clauseCommEur">45 €</strong> à 84 GMD/€).
+    Paiement sous <strong>48 h ouvrées après encaissement effectif par Robin</strong>, selon le mode choisi ci-dessus et des coordonnées valides.
+    Aucune commission si le dossier échoue ou aucune indemnité n'est encaissée.
   </div>
   <div class="clause le">
-    <span class="cnum">Article 3 — Files &amp; passenger mandate</span>
-    The Partner submits passenger and flight data via the <strong>partner portal</strong> and may <strong>assist the passenger</strong>
-    (information, WhatsApp, signing support) with the <a href="/mandat.html" target="_blank" rel="noopener">passenger mandate</a>.
-    Once the mandate is signed, <strong>Robin des Airs leads</strong> correspondence with the airline and recovery.
-    Technical case email and legal representation of the passenger are described in that mandate.
+    <span class="cnum">Article 3 — Dossiers &amp; mandat passager</span>
+    L'agence dépose les données passager/vol via l'<strong>espace agence</strong> et peut <strong>accompagner le passager</strong>
+    (information, WhatsApp, aide à la signature) pour le <a href="/mandat.html" target="_blank" rel="noopener">mandat passager</a>.
+    Une fois le mandat signé, <strong>Robin des Airs pilote</strong> les échanges avec la compagnie et le recouvrement.
+    L'email technique du dossier et la représentation du passager sont définis dans ce mandat.
   </div>
   <div class="clause">
-    <span class="cnum">Article 4 — Partner obligations</span>
-    The Partner agrees to: (i) provide booking and contact details in good faith; (ii) inform the passenger about Robin des Airs and facilitate access to the mandate when useful;
-    (iii) notify Robin des Airs <strong>without undue delay</strong> if the passenger or the airline contacts the Partner about the <strong>same incident</strong>;
-    (iv) use the partner portal for submissions and tracking when possible.
-    The Partner may continue its <strong>usual travel-agency services and fees</strong> (tickets, advice, rebooking, etc.).
-    Only fees presented specifically as the <strong>EU 261 recovery fee for the same referred incident</strong> need prior written agreement with Robin des Airs.
+    <span class="cnum">Article 4 — Obligations de l'agence</span>
+    L'agence s'engage à : (i) fournir des informations de réservation et de contact de bonne foi ; (ii) informer le passager de Robin des Airs et faciliter l'accès au mandat si utile ;
+    (iii) prévenir Robin des Airs <strong>sans retard injustifié</strong> si le passager ou la compagnie la contacte pour le <strong>même incident</strong> ;
+    (iv) utiliser l'espace agence pour les dépôts et le suivi lorsque possible.
+    L'agence peut poursuivre ses <strong>prestations et honoraires d'agence habituels</strong> (billets, conseil, réacheminement, etc.).
+    Seuls les honoraires présentés comme <strong>frais de recours CE 261 pour le même incident apporté</strong> nécessitent un accord écrit préalable avec Robin des Airs.
   </div>
   <div class="clause">
-    <span class="cnum">Article 5 — Robin des Airs obligations</span>
-    Robin des Airs shall process referred cases diligently, keep the Partner informed of material status changes,
-    maintain file traceability (emails, documents), and pay agreed commissions when due.
-    Operational updates to the Partner may be sent via <strong>WhatsApp</strong> or other agreed channels, without exclusive reliance on a single channel for critical notices.
+    <span class="cnum">Article 5 — Obligations de Robin des Airs</span>
+    Robin des Airs traite les dossiers apportés avec diligence, informe l'agence des changements importants,
+    conserve la traçabilité (emails, pièces) et paie les commissions convenues à échéance.
+    Les mises à jour opérationnelles peuvent être envoyées par <strong>WhatsApp</strong> ou autre canal convenu, sans exclusivité d'un seul canal pour les notifications essentielles.
   </div>
   <div class="clause hi">
-    <span class="cnum">Article 5.1 — Airline decision transparency</span>
-    For <strong>each open file</strong>, Robin des Airs undertakes to communicate to the Partner, in the partner portal,
-    the airline’s <strong>acceptance or refusal</strong> with a <strong>reasoned justification</strong> (including the substance of the airline’s response when available).
-    If the amount actually collected differs from the <strong>indicative CE 261 bracket</strong> shown for the file,
-    Robin des Airs will also state the outcome as a <strong>percentage of that indicative bracket</strong>, so the Partner can follow the case in full transparency.
+    <span class="cnum">Article 5.1 — Transparence décision compagnie</span>
+    Pour <strong>chaque dossier ouvert</strong>, Robin des Airs s'engage à communiquer à l'agence, dans l'espace agence,
+    l'<strong>acceptation ou le refus</strong> de la compagnie avec une <strong>justification motivée</strong> (substance de la réponse compagnie si disponible).
+    Si le montant effectivement obtenu diffère du <strong>barème indicatif CE 261</strong> affiché,
+    Robin indiquera aussi le résultat en <strong>pourcentage de ce barème indicatif</strong>, pour un suivi transparent.
   </div>
   <div class="clause">
-    <span class="cnum">Article 6 — Term &amp; termination</span>
-    This agreement runs for <strong>24 months</strong> from signature and renews tacitly unless either party gives <strong>30 days’</strong> written notice.
-    Either party may terminate immediately for material breach, fraud, or persistent non-cooperation.
+    <span class="cnum">Article 6 — Durée &amp; résiliation</span>
+    Durée de <strong>24 mois</strong> à compter de la signature, reconduction tacite sauf dénonciation écrite avec <strong>30 jours</strong> de préavis.
+    Résiliation immédiate possible en cas de manquement grave, fraude ou non-coopération persistante.
   </div>
   <div class="clause">
-    <span class="cnum">Article 7 — Confidentiality &amp; GDPR</span>
-    Each party shall protect personal data and use it only for claim management. Passengers are informed via the mandate and privacy policy.
-    Data subject requests: <strong>partners@robindesairs.eu</strong>.
+    <span class="cnum">Article 7 — Confidentialité &amp; RGPD</span>
+    Chaque partie protège les données personnelles et les utilise uniquement pour la gestion des dossiers. Les passagers sont informés via le mandat et la politique de confidentialité.
+    Demandes RGPD : <strong>partners@robindesairs.eu</strong>.
   </div>
   <div class="clause">
-    <span class="cnum">Article 8 — Fair referral</span>
-    For a case the Partner referred to Robin des Airs, the Partner agrees not to settle that <strong>same incident</strong> directly with the airline
-    without informing Robin, in order to avoid circumventing the agreed commission.
-    This does not limit the Partner’s ordinary sales activity or unrelated services.
+    <span class="cnum">Article 8 — Apport loyal</span>
+    Pour un dossier apporté à Robin des Airs, l'agence s'engage à ne pas régler le <strong>même incident</strong> directement avec la compagnie
+    sans en informer Robin, afin d'éviter un contournement de la commission convenue.
+    Cela ne limite pas l'activité commerciale ordinaire de l'agence ni les prestations sans lien.
   </div>
   <div class="clause">
-    <span class="cnum">Article 9 — Independent parties</span>
-    The Partner acts as an independent business. Nothing herein creates an employment, franchise, or joint venture relationship.
+    <span class="cnum">Article 9 — Indépendance des parties</span>
+    L'agence agit en entreprise indépendante. Rien dans le présent contrat ne crée de lien de salariat, franchise ou coentreprise.
   </div>
   <div class="clause">
-    <span class="cnum">Article 10 — Governing law</span>
-    This agreement is governed by <strong>French law</strong>. Disputes shall first be addressed amicably; failing agreement, competent courts in France.
+    <span class="cnum">Article 10 — Droit applicable</span>
+    Le contrat est régi par le <strong>droit français</strong>. Les litiges seront d'abord traités à l'amiable ; à défaut, tribunaux compétents en France.
   </div>
 </div>
 <div class="doc-section">
-  <div class="sec-title">✅ Declaration &amp; acceptance</div>
+  <div class="sec-title">✅ Déclaration &amp; acceptation</div>
   <div class="declaration-box">
-    I, <strong id="declarant">—</strong>, acting for <strong id="declAgency">—</strong>, confirm that I have authority to bind the agency and accept the terms above.
+    Je soussigné(e), <strong id="declarant">—</strong>, agissant pour <strong id="declAgency">—</strong>, déclare avoir le pouvoir d'engager l'agence et accepte les conditions ci-dessus.
   </div>
   <div class="single-check" onclick="document.getElementById('mainCheck').checked=!document.getElementById('mainCheck').checked">
     <input type="checkbox" id="mainCheck" onclick="event.stopPropagation()">
     <p>
-      I accept the <strong>Partner Agency Agreement</strong> and the commercial framework (commission per winning passenger, portal rules, GDPR).
+      I accept the <strong>Contrat agence partenaire</strong> and the commercial framework (commission per winning passenger, portal rules, GDPR).
       I understand that Robin leads the airline claim after the passenger signs the mandate; I may still help my client with travel services as usual.
     </p>
   </div>
-  <div class="ferr" id="checkErr">Please tick the box to continue.</div>
-  <div class="sec-title" style="margin-top:24px">🖊️ Electronic signature</div>
+  <div class="ferr" id="checkErr">Veuillez cocher la case pour continuer.</div>
+  <div class="sec-title" style="margin-top:24px">🖊️ Signature électronique</div>
   <div class="field-row duo">
     <div>
-      <label>Signed at (city) <span class="req">*</span></label>
+      <label>Fait à (ville) <span class="req">*</span></label>
       <input type="text" id="sigCity" placeholder="Banjul">
-      <div class="ferr" id="sigCityErr">Required</div>
+      <div class="ferr" id="sigCityErr">Obligatoire</div>
     </div>
     <div>
       <label>Date</label>
       <input type="text" id="sigDate" class="ro" readonly>
     </div>
   </div>
-  <p style="font-size:13px;color:var(--muted);margin-bottom:8px">Sign below (finger or mouse):</p>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:8px">Signez ci-dessous (doigt ou souris) :</p>
   <div class="sig-area" id="sigArea">
     <canvas id="sigCanvas" width="680" height="120"></canvas>
-    <div class="sig-ph" id="sigPh">✍️ Tap here to sign</div>
-    <div class="sig-clear" id="sigClear" onclick="clearSig(event)">✕ Clear</div>
+    <div class="sig-ph" id="sigPh">✍️ Appuyez pour signer</div>
+    <div class="sig-clear" id="sigClear" onclick="clearSig(event)">✕ Effacer</div>
   </div>
-  <div class="ferr" id="sigErr">Signature required</div>
-  <button type="button" class="btn-submit" id="btnSub" onclick="submitContract()">📝 Sign partner agreement</button>
+  <div class="ferr" id="sigErr">Signature obligatoire</div>
+  <button type="button" class="btn-submit" id="btnSub" onclick="submitContract()">📝 Signer le contrat partenaire</button>
 </div>
 <div class="trust-bar">
-  <div class="trust-item">🔒 Secure</div>
-  <div class="trust-item">⚖️ EU 261/2004</div>
-  <div class="trust-item">💶 3,800 GMD / win</div>
-  <div class="trust-item">✈ Partner portal</div>
+  <div class="trust-item">🔒 Sécurisé</div>
+  <div class="trust-item">⚖️ CE 261/2004</div>
+  <div class="trust-item">💶 3 800 GMD / succès</div>
+  <div class="trust-item">✈ Espace agence</div>
 </div>
 </div>
 <div class="success-screen" id="successScreen">
   <div class="success-icon">✓</div>
-  <div class="success-title">Agreement signed</div>
+  <div class="success-title">Contrat signé</div>
   <p style="color:var(--muted);font-size:14px;max-width:440px;margin:0 auto">
-    Thank you. Our team will activate your partner portal access within 24–48h.
+    Merci. Notre équipe activera votre accès espace agence sous 24 à 48 h.
   </p>
   <p style="color:var(--green);font-size:13px;max-width:440px;margin:12px auto 0" id="sCommNote"></p>
-  <div class="success-ref">Reference: <strong id="sRef">—</strong></div>
-  <p style="margin-top:20px"><a href="/espace-agence.html" style="color:var(--green)">Open partner portal →</a></p>
+  <div class="success-ref">Référence : <strong id="sRef">—</strong></div>
+  <p style="margin-top:20px"><a href="/espace-agence.html" style="color:var(--green)">Ouvrir l'espace agence →</a></p>
 </div>
 </div>
 <script src="/assets/agence-commission-tiers.js"></script>
@@ -398,6 +404,17 @@ const GMD_PER_EUR = parseFloat(P.get('gmd_per_eur') || '84') || 84;
 let COMM_TIER = null;
 let COMM_GMD = 3800;
 let commEur = 45;
+
+function resolveCommTier() {
+  if (typeof AgenceCommissionTiers !== 'undefined') {
+    COMM_TIER = AgenceCommissionTiers.resolve(new Date(), 'fr');
+    COMM_GMD = COMM_TIER.commissionGmd;
+  } else {
+    COMM_GMD = parseInt(P.get('commission_gmd') || '3800', 10) || 3800;
+    COMM_TIER = { tierId: 'ete', tierLabel: 'Palier été', commissionGmd: COMM_GMD };
+  }
+  commEur = Math.round((COMM_GMD / GMD_PER_EUR) * 100) / 100;
+}
 
 function updateParties() {
   const name = document.getElementById('agencyName')?.value.trim() || P.get('name') || '—';
@@ -410,24 +427,13 @@ function updateParties() {
   const d = document.getElementById('declarant'); if (d) d.textContent = sign;
 }
 
-function resolveCommTier() {
-  if (typeof AgenceCommissionTiers !== 'undefined') {
-    COMM_TIER = AgenceCommissionTiers.resolve(new Date(), 'en');
-    COMM_GMD = COMM_TIER.commissionGmd;
-  } else {
-    COMM_GMD = parseInt(P.get('commission_gmd') || '3800', 10) || 3800;
-    COMM_TIER = { tierId: 'ete', tierLabel: 'Summer tier', commissionGmd: COMM_GMD };
-  }
-  commEur = Math.round((COMM_GMD / GMD_PER_EUR) * 100) / 100;
-}
-
 function setCommLabels() {
   resolveCommTier();
-  const gmd = COMM_GMD.toLocaleString('en') + ' GMD';
-  const eur = '≈ €' + commEur;
+  const gmd = COMM_GMD.toLocaleString('fr-FR') + ' GMD';
+  const eur = '≈ ' + commEur.toLocaleString('fr-FR') + ' €';
   ['hCommGmd','clauseComm','tblComm'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = gmd; });
-  const ce = document.getElementById('clauseCommEur'); if (ce) ce.textContent = '€' + commEur;
-  const sub = document.getElementById('hCommSub'); if (sub) sub.textContent = 'Per winning passenger · ' + eur + ' at ' + GMD_PER_EUR + ' GMD/€';
+  const ce = document.getElementById('clauseCommEur'); if (ce) ce.textContent = commEur.toLocaleString('fr-FR') + ' €';
+  const sub = document.getElementById('hCommSub'); if (sub) sub.textContent = 'Par passager indemnisé · ' + eur + ' à ' + GMD_PER_EUR + ' GMD/€';
   document.querySelectorAll('#tierCommTable tr[data-tier]').forEach(function (row) {
     row.style.background = row.getAttribute('data-tier') === COMM_TIER.tierId ? '#e8f0ec' : '';
     row.style.fontWeight = row.getAttribute('data-tier') === COMM_TIER.tierId ? '600' : '';
@@ -435,8 +441,8 @@ function setCommLabels() {
   const lab = document.getElementById('tierActiveLabel');
   if (lab) {
     lab.textContent =
-      COMM_GMD.toLocaleString('en') +
-      ' GMD per pax (date tier) — founding 4,000 GMD per pax if you sign before 31 Aug 2026 (first 3 agencies).';
+      COMM_GMD.toLocaleString('fr-FR') +
+      ' GMD (palier date) — fondateur 4 000 GMD si signature avant le 31/08/2026 (3 premières agences).';
   }
 }
 
@@ -547,11 +553,11 @@ function submitContract() {
   }
   const btn = document.getElementById('btnSub');
   btn.disabled = true;
-  btn.textContent = '⏳ Sending…';
+  btn.textContent = '⏳ Envoi…';
   const payload = {
     ref: REF,
     agencyName: document.getElementById('agencyName').value.trim(),
-    agencyCode: document.getElementById('agencyCode').value.trim(),
+    agencyCode : document.getElementById('agencyCode').value.trim(),
     signName: document.getElementById('signName').value.trim(),
     signRole: document.getElementById('signRole').value.trim(),
     whatsapp: document.getElementById('wa').value.trim(),
@@ -564,11 +570,11 @@ function submitContract() {
     sigCity: document.getElementById('sigCity').value.trim(),
     signatureImg: document.getElementById('sigCanvas').toDataURL('image/png'),
     signedAt: new Date().toISOString(),
-    lang: 'en',
+    lang: 'fr',
     commissionGmd: COMM_GMD,
     commissionTier: COMM_TIER && COMM_TIER.tierId,
     commissionTierLabel: COMM_TIER && COMM_TIER.tierLabel,
-    source: P.get('source') || 'partner-agreement-en',
+    source: P.get('source') || 'partner-agreement-fr',
   };
   fetch('/api/submit-partner-agreement', {
     method: 'POST',
@@ -577,18 +583,18 @@ function submitContract() {
   }).catch(() => {}).finally(showSuccess);
 }
 
-function showSuccess() {
-  resolveCommTier();
+async function showSuccess() {
+  await resolveCommTier();
   document.getElementById('contractForm').style.display = 'none';
   document.getElementById('successScreen').style.display = 'block';
   document.getElementById('sRef').textContent = REF;
   const note = document.getElementById('sCommNote');
   if (note) {
     note.textContent =
-      'Lifetime commission: ' +
-      COMM_GMD.toLocaleString('en') +
-      ' GMD per pax (date tier on signing).' +
-      (COMM_TIER && COMM_TIER.founding ? ' (founding partner ★ — 4,000 per pax).' : ' Founding: 4,000 GMD per pax if among first 3 and signed before 31 Aug 2026.');
+      'Commission acquise à vie : ' +
+      COMM_GMD.toLocaleString('fr-FR') +
+      ' GMD par passager indemnisé' +
+      (COMM_TIER && COMM_TIER.founding ? ' (partenaire fondateur ★).' : ' (palier du jour de signature).');
   }
   document.getElementById('pgBar').style.width = '100%';
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -596,14 +602,14 @@ function showSuccess() {
 
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('dRef').textContent = REF;
-  document.getElementById('dDate').textContent = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-  document.getElementById('sigDate').value = new Date().toLocaleDateString('en-GB');
+  document.getElementById('dDate').textContent = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+  document.getElementById('sigDate').value = new Date().toLocaleDateString('fr-FR');
   if (P.get('code')) document.getElementById('agencyCode').value = P.get('code');
   if (P.get('name')) document.getElementById('agencyName').value = P.get('name');
   if (P.get('country')) document.getElementById('country').value = P.get('country');
   if (P.get('phone') || P.get('whatsapp')) document.getElementById('wa').value = decodeURIComponent(P.get('phone') || P.get('whatsapp') || '');
   if (P.get('email')) document.getElementById('bizEmail').value = P.get('email');
-  setCommLabels().then(function () {});
+  setCommLabels().then(updateParties);
   updateParties();
   initSig();
   document.querySelectorAll('input,textarea,select').forEach(el => el.addEventListener('input', () => { updateParties(); calcProgress(); }));

@@ -33,6 +33,9 @@
 /cgv                         /cgv.html                         200
 /politique-confidentialite   /politique-confidentialite.html   200
 /mandat                      /mandat.html                      200
+/mandat-fr.pdf               /documents/mandat-fr.html?print=1  302
+/documents/mandat-fr.pdf     /documents/mandat-fr.html?print=1    302
+/documents/mandat-fr         /documents/mandat-fr.html            200
 /mandat-representation       /mandat.html                      301
 /mandat-representation.html  /mandat.html                      301
 /droit-retractation          /droit-retractation.html          200

@@ -12,5 +12,9 @@ dist/
 SNIPER_EU261_*.txt
 SNIPER_raw_*.json
 
+# Captures preuves locales (Playwright)
+proofs/*
+!proofs/.gitkeep
+
 # Dépendances pip locales (tests / dev)
 .pip-local/

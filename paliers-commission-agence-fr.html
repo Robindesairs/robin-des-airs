@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="/favicon.png" type="image/png">
+<title>3 paliers commission agence — Robin des Airs</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--green:#0a3d2e;--gold:#8a6d3b;--gold-soft:#c9a96e;--border:#d4cfc0;--muted:#7a7060;--ink:#111108;--paper:#fdfcf8}
+body{font-family:'DM Sans',sans-serif;background:#f5f2ea;color:var(--ink)}
+.topbar{background:var(--green);padding:14px 32px;display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid var(--gold)}
+.brand{font-family:'Cormorant Garamond',serif;font-size:20px;color:#fff;text-decoration:none}
+.brand em{font-style:italic;color:var(--gold-soft)}
+.page{max-width:780px;margin:0 auto;padding:40px 20px 80px}
+.doc{background:white;border:1px solid var(--border);border-top:4px solid var(--green);padding:36px 40px}
+h1{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--green);margin-bottom:6px}
+.sub{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);margin-bottom:20px}
+.lead{font-size:14px;line-height:1.75;margin-bottom:24px;color:#3a3630}
+.fee-table{width:100%;border-collapse:collapse;margin:12px 0 20px;font-size:13px}
+.fee-table th{background:var(--ink);color:white;font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;padding:10px 14px;text-align:left}
+.fee-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+.fee-table tr:nth-child(even) td{background:var(--paper)}
+.fee-table .em{font-weight:600;color:var(--green);white-space:nowrap}
+.fee-table tr.tier-active td{background:#e8f0ec;font-weight:600}
+.note{font-size:12px;line-height:1.7;padding:14px 18px;background:#e8f0ec;border-left:3px solid var(--green);margin:16px 0}
+.warn{font-size:12px;line-height:1.7;padding:14px 18px;background:#faf5eb;border-left:3px solid var(--gold);margin:16px 0}
+.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
+.links a{font-size:12px;color:var(--green);text-decoration:none;border:1px solid var(--border);padding:8px 12px}
+.links a:hover{background:#e8f0ec}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <a href="/" class="brand">Robin <em>des</em> Airs</a>
+  <div style="display:flex;gap:8px">
+    <a href="/paliers-commission-agence-en.html" style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.7);text-decoration:none;border:1px solid rgba(201,169,110,.4);padding:4px 10px">EN</a>
+    <a href="/partner-agreement-fr.html" style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.7);text-decoration:none;border:1px solid rgba(201,169,110,.4);padding:4px 10px">Contrat agence</a>
+    <a href="/espace-agence.html" style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.7);text-decoration:none;border:1px solid rgba(201,169,110,.4);padding:4px 10px">Espace agence</a>
+  </div>
+</div>
+<div class="page">
+  <div class="doc">
+    <h1>Commission agence — 3 paliers</h1>
+    <p class="sub">Date de signature du contrat partenaire · GMD / pax</p>
+    <p class="lead">
+      Les <strong>3 premières agences</strong> qui signent <strong>avant le 31 août 2026</strong> : <strong>4 000 GMD</strong> / passager gagné, acquis à vie.
+      Les autres paliers par date : 3 800 (été) → 3 400 (fin d'année) → 3 000 (2027). <em>Après l'heure, ce n'est plus l'heure.</em>
+    </p>
+    <table class="fee-table" id="tierTable">
+      <tr><th>Palier</th><th>Signature avant le</th><th>Commission / pax</th><th>Notes</th></tr>
+      <tr data-tier="founding"><td>★ Fondateur</td><td class="em">31 août 2026</td><td class="em">4 000 GMD/pax</td><td>3 premières agences</td></tr>
+      <tr data-tier="ete"><td>1 — Été</td><td>31 août 2026</td><td class="em" id="c1">3 800 GMD/pax</td><td>Sinon, palier été</td></tr>
+      <tr data-tier="fin_annee"><td>2 — Automne</td><td>31 décembre 2026</td><td class="em" id="c2">3 400 GMD/pax</td><td>Tarif intermédiaire</td></tr>
+      <tr data-tier="2027"><td>3 — 2027</td><td>À partir du 1<sup>er</sup> janvier 2027</td><td class="em" id="c3">3 000 GMD/pax</td><td>Tarif standard</td></tr>
+    </table>
+    <div class="note" id="todayNote">Palier en vigueur aujourd'hui : —</div>
+    <div class="warn" style="margin-top:16px">
+      <strong>Déjà partenaire ?</strong> Votre commission signée ne baisse jamais. Les dates ci-dessus concernent uniquement les <strong>nouvelles signatures</strong>.
+    </div>
+    <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-top:12px">
+      Paiement sous <strong>48 h ouvrées</strong> après encaissement effectif par Robin des Airs (Wave, Afrimoney, QMoney).
+      Les montants CE 261 (250 / 400 / 600 €) sont indépendants — voir le <a href="/bareme-ce261-fr.html">barème indemnités</a>.
+    </p>
+    <div class="links">
+      <a href="/partner-agreement-fr.html">Signer le contrat partenaire</a>
+      <a href="/bareme-ce261-fr.html">Barème CE 261 (€)</a>
+      <a href="/delais-dates-ce261-fr.html">Délais &amp; dates</a>
+    </div>
+  </div>
+</div>
+<script src="/assets/agence-commission-tiers.js"></script>
+<script>
+(function () {
+  if (typeof AgenceCommissionTiers === 'undefined') return;
+  const t = AgenceCommissionTiers.resolve(new Date(), 'fr');
+  const ids = { ete: 'c1', fin_annee: 'c2', '2027': 'c3' };
+  t.allTiers.forEach(function (row) {
+    const el = document.getElementById(ids[row.id]);
+    if (el) el.textContent = row.commissionGmd.toLocaleString('fr-FR') + ' GMD/pax';
+  });
+  document.querySelectorAll('#tierTable tr[data-tier]').forEach(function (tr) {
+    if (tr.getAttribute('data-tier') === t.tierId) tr.classList.add('tier-active');
+  });
+  const note = document.getElementById('todayNote');
+  if (note) {
+    note.innerHTML =
+      'Palier en vigueur aujourd\'hui : <strong>' +
+      t.commissionGmd.toLocaleString('fr-FR') +
+      ' GMD/pax</strong> — ' +
+      esc(t.tierLabel) +
+      (t.tierEndsYmd
+        ? '. Prochain palier (nouveaux contrats) : <strong>' +
+          t.nextTierGmd.toLocaleString('fr-FR') +
+          ' GMD/pax</strong> à partir du ' +
+          formatFr(t.nextTierStartsYmd) +
+          '.'
+        : '.') +
+      ' <em>Fondateur : sign. avant le 31/08/2026 (3 premières agences) → 4 000 GMD/pax.</em>';
+  }
+  function esc(s) {
+    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  }
+  function formatFr(ymd) {
+    if (!ymd) return '';
+    const d = new Date(ymd + 'T12:00:00');
+    return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+  }
+})();
+</script>
+</body>
+</html>
