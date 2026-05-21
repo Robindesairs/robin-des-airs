@@ -8,6 +8,9 @@ dist/
 # Local Netlify folder
 .netlify
 
+# Preuves de vol générées localement (données sensibles passagers)
+proofs/
+
 # Rapports locaux SNIPER (AeroDataBox CLI)
 SNIPER_EU261_*.txt
 SNIPER_raw_*.json

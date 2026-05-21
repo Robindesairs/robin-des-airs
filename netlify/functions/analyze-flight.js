@@ -30,9 +30,12 @@ function getDistanceKm(iataFrom, iataTo) {
 }
 
 // Compagnies aériennes UE (liste principale)
+// Compagnies UE / EEE — CE 261/2004 s'applique à leurs vols arrivant en UE depuis hors-UE.
+// TK (Turkish Airlines) et PC (Pegasus) EXCLUS : compagnies turques, Turquie ≠ UE.
+// Pour les vols DÉCOLLANT d'un aéroport UE, la compagnie importe peu (cf. eligible_geo).
 const EU_CARRIERS = [
   "AF","TO","VY","FR","U2","LH","KL","IB","AZ","SK","LX","OS","SN","TP",
-  "TK","EI","DY","W6","HV","PC","BT","OU","OK","LO","RO","A3","OA","PS"
+  "EI","DY","W6","HV","BT","OU","OK","LO","RO","A3","OA","PS","DS","SS",
 ];
 
 function isEuCarrier(iataCode) {

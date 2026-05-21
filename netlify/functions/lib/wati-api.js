@@ -147,11 +147,52 @@ async function watiAgencySendSessionMessage(to, text) {
   }
 }
 
+/**
+ * Envoie un fichier (PDF, image…) via Wati session.
+ * @param {string} to - Numéro destinataire
+ * @param {Buffer} fileBuffer - Contenu du fichier
+ * @param {string} fileName - Nom du fichier (ex: preuve-AF1234.pdf)
+ * @param {string} caption - Légende affichée sous le document
+ * @param {string} [mimeType] - défaut: application/pdf
+ */
+async function watiSendFile(to, fileBuffer, fileName, caption, mimeType = 'application/pdf') {
+  const cfg = watiCfg();
+  if (!cfg) return { ok: false, error: 'Wati non configuré (WATI_API_BASE + WATI_API_TOKEN)' };
+
+  const wa = normalizeWatiPhone(to);
+  if (!wa || wa.length < 10) return { ok: false, error: 'Numéro invalide' };
+
+  const params = new URLSearchParams({ caption: caption || '' });
+  const url = `${cfg.base}/api/v1/sendSessionFile/${encodeURIComponent(wa)}?${params}`;
+
+  // FormData natif Node 18+
+  const form = new FormData();
+  form.append('file', new Blob([fileBuffer], { type: mimeType }), fileName);
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${cfg.token}` },
+      body: form,
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.ok === false) {
+      const errMsg = data?.message || data?.error || `HTTP ${res.status}`;
+      return { ok: false, error: String(errMsg).slice(0, 300), details: data };
+    }
+    const messageId = data?.message?.whatsappMessageId || data?.whatsappMessageId || data?.id;
+    return { ok: true, messageId, provider: 'wati' };
+  } catch (e) {
+    return { ok: false, error: e.message || 'Erreur Wati sendFile' };
+  }
+}
+
 module.exports = {
   watiCfg,
   watiAgencyCfg,
   normalizeWatiPhone,
   watiSendSessionMessage,
   watiAgencySendSessionMessage,
+  watiSendFile,
   DEFAULT_ROBIN_WA,
 };

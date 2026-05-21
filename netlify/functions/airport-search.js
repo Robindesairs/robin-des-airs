@@ -11,7 +11,7 @@
  */
 
 const ADB_HOST = process.env.AERODATABOX_RAPIDAPI_HOST || 'aerodatabox.p.rapidapi.com';
-const AMADEUS_HOST = process.env.AMADEUS_HOST || 'test.api.amadeus.com';
+const AMADEUS_HOST = process.env.AMADEUS_HOST || 'api.amadeus.com';
 const TOKEN_CACHE = { token: null, expires: 0 };
 
 function adbQueryCharCount(keyword) {
@@ -67,11 +67,6 @@ async function searchAviationEdge(keyword) {
   if (!apiKey) return null;
   const url = `https://aviation-edge.com/v2/public/autocomplete?key=${apiKey}&query=${encodeURIComponent(keyword)}`;
 
-  console.log("--- NOUVELLE RECHERCHE ---");
-  console.log("Mot-clé tapé :", keyword);
-  console.log("Clé API détectée :", apiKey ? "OUI (finit par " + apiKey.slice(-4) + ")" : "NON (VIDE)");
-  console.log("Appel URL :", url.replace(apiKey, "SECRET_KEY"));
-
   const res = await fetch(url);
   if (!res.ok) return null;
   const data = await res.json();
@@ -81,7 +76,6 @@ async function searchAviationEdge(keyword) {
         text: (item.nameAirport || item.nameCity || '') + ' (' + (item.codeIataAirport || item.codeIataCity) + ')'
       })).filter(x => x.value && x.text && !x.text.includes('undefined')).slice(0, 30)
     : formatAviationEdge(data);
-  console.log("Réponse API reçue ! Nombre de résultats :", items.length);
   return items;
 }
 

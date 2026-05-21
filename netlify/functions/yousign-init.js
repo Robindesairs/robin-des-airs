@@ -3,8 +3,8 @@
  * Initialise une demande de signature YouSign pour un dossier Robin des Airs.
  *
  * Variables d'environnement attendues:
- * - YOUSIGN_API_KEY
- * - YOUSIGN_BASE_URL (optionnel, défaut sandbox v3)
+ * - YOUSIGN_API_KEY  (obligatoire — clé API Yousign production)
+ * - YOUSIGN_BASE_URL (optionnel — défaut : production v3)
  */
 
 const HEADERS = {
@@ -37,7 +37,7 @@ exports.handler = async (event) => {
   }
 
   const apiKey = process.env.YOUSIGN_API_KEY || "";
-  const baseUrl = process.env.YOUSIGN_BASE_URL || "https://api-sandbox.yousign.app/v3";
+  const baseUrl = process.env.YOUSIGN_BASE_URL || "https://api.yousign.app/v3";
   if (!apiKey) {
     return json(503, {
       error: "YOUSIGN_API_KEY manquant",
