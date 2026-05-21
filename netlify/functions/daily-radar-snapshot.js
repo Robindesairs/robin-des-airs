@@ -157,11 +157,19 @@ async function fetchHub(icao, from, to, dir, key) {
   const host = process.env.AERODATABOX_RAPIDAPI_HOST || 'aerodatabox.p.rapidapi.com';
   const params = new URLSearchParams({ withLeg:'true', direction:dir, withCancelled:'true', withCodeshared:'false', withCargo:'false', withPrivate:'false', withLocation:'false' });
   const url = `https://${host}/flights/airports/icao/${icao}/${from}/${to}?${params}`;
-  const r = await fetch(url, { headers:{ 'x-rapidapi-host':host, 'x-rapidapi-key':key, Accept:'application/json' } });
-  if (!r.ok) return [];
-  const j = await r.json().catch(()=>({}));
-  const k = dir==='Arrival'?'arrivals':'departures';
-  return Array.isArray(j[k]) ? j[k] : [];
+  try {
+    const r = await fetch(url, { headers:{ 'x-rapidapi-host':host, 'x-rapidapi-key':key, Accept:'application/json' } });
+    if (!r.ok) {
+      console.error(`fetchHub ${icao} ${dir} HTTP ${r.status}: ${await r.text().catch(()=>'')}`);
+      return [];
+    }
+    const j = await r.json().catch(()=>({}));
+    const k = dir==='Arrival'?'arrivals':'departures';
+    return Array.isArray(j[k]) ? j[k] : [];
+  } catch (err) {
+    console.error(`fetchHub ${icao} ${dir} NETWORK ERROR: ${err.message}`);
+    return [];
+  }
 }
 
 function delayMin(sched, actual) {
@@ -216,6 +224,7 @@ exports.handler = async (event) => {
     console.error('daily-radar-snapshot: RAPIDAPI_KEY manquant');
     return { statusCode: 500, body: 'RAPIDAPI_KEY manquant' };
   }
+  console.log(`daily-radar-snapshot: clé détectée (finit par ...${rapidKey.slice(-4)}), host=${process.env.AERODATABOX_RAPIDAPI_HOST || 'aerodatabox.p.rapidapi.com'}, hubs=${HUBS.length}`);
 
   const dateStr = parisYmd();
   const windows = [
