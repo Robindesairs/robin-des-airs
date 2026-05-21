@@ -40,7 +40,26 @@ const { appendWaMessage } = require('./lib/wa-convo-store');
 let _waLambdaEvent = null;
 
 // Étape 1 (grand 1 — collecte mandat) : démarrage au premier message ou "Bonjour"
-const STEP1_STEPS = ['ASK_PROBLEM_TYPE', 'ASK_YEAR', 'ASK_PAX_COUNT_STEP1', 'ASK_PAX_MANUAL_STEP1', 'PASSENGER_FIRST', 'PASSENGER_LAST', 'PASSENGER_ANOTHER', 'PASSENGERS_CONFIRM', 'CONFIRM_PHONE', 'ASK_CONTACT_PHONE', 'TRAJET_FLIGHT', 'TRAJET_DATE', 'TRAJET_CONNECTION', 'TRAJET_CONFIRM', 'ASK_PNR', 'CONFIRM_PNR', 'ASK_AIRLINE', 'ASK_ADDRESS', 'STEP1_DONE'];
+const STEP1_STEPS = ['ASK_PROBLEM_TYPE', 'ASK_YEAR', 'ASK_PAX_COUNT_STEP1', 'ASK_PAX_MANUAL_STEP1', 'PASSENGER_FIRST', 'PASSENGER_LAST', 'PASSENGER_ANOTHER', 'PASSENGERS_CONFIRM', 'CONFIRM_PHONE', 'ASK_CONTACT_PHONE', 'TRAJET_FLIGHT', 'ASK_EU_ORIGIN', 'TRAJET_DATE', 'TRAJET_CONNECTION', 'TRAJET_CONFIRM', 'ASK_PNR', 'CONFIRM_PNR', 'ASK_AIRLINE', 'ASK_ADDRESS', 'STEP1_DONE'];
+
+// Aéroports hors-UE souvent utilisés comme hub de correspondance vers l'Afrique.
+// Si le vol détecté part de l'un de ces aéroports, on demande si le voyage
+// commençait dans un pays européen (sur le même billet = éligible CE 261).
+const NON_EU_TRANSIT_HUBS = new Set([
+  'IST','SAW',             // Turquie (Turkish Airlines, Pegasus)
+  'DXB','DWC',             // Dubaï (Emirates)
+  'DOH',                   // Qatar (Qatar Airways)
+  'AUH',                   // Abu Dhabi (Etihad)
+  'CAI','HBE',             // Égypte (EgyptAir)
+  'CMN','RAK',             // Maroc (Royal Air Maroc) — hors UE
+  'ALG','ORN',             // Algérie (Air Algérie) — hors UE
+  'TUN',                   // Tunisie (Tunisair) — hors UE
+  'ADD',                   // Éthiopie (Ethiopian Airlines)
+  'NBO',                   // Kenya (Kenya Airways)
+  'JNB','CPT',             // Afrique du Sud (South African Airways)
+  'ACC',                   // Ghana (Africa World Airlines)
+  'LOS','ABV',             // Nigeria (Air Peace, Arik)
+]);
 function isStep1(step) { return STEP1_STEPS.includes(step); }
 // NOTE: isBonjourLike définie plus bas (ligne ~62) — version complète utilisée partout
 function step1Form(session) {
@@ -91,21 +110,67 @@ async function getFlightEligibility(flightNumber, origin) {
   try {
     const res = await fetch(flightInfoUrl, { cache: 'no-store' });
     const data = await res.json().catch(() => null);
-    if (!res.ok || !Array.isArray(data) || data.length === 0) return { eligible: false, amount: null };
+
+    // Vol non trouvé dans la base
+    if (!res.ok || !Array.isArray(data) || data.length === 0) {
+      return { found: false, eligible: false, amount: null };
+    }
+
     const first = data[0];
     const dep = (first.departure?.iataCode || first.departure?.airport?.iataCode || '').toUpperCase();
-    const arr = (first.arrival?.iataCode || first.arrival?.airport?.iataCode || '').toUpperCase();
-    if (!dep || !arr) return { eligible: false, amount: null, dep, arr };
-    const delayMinutes = first.arrival?.delay != null ? Number(first.arrival.delay) : (first.departure?.delay != null ? Number(first.departure.delay) : undefined);
-    const km = getApproxKm(dep, arr);
-    const amount = km != null ? distanceKmToAmount(km) : (dep && arr ? 4500 : null);
-    const amt = amount != null ? amount : 600;
-    const eligible = amt >= 600 && delayMinutes != null && !isNaN(delayMinutes) && delayMinutes >= 180;
-    return { eligible: !!eligible, amount: amt, dep, arr, delayMinutes };
+    const arr = (first.arrival?.iataCode  || first.arrival?.airport?.iataCode  || '').toUpperCase();
+    if (!dep || !arr) return { found: false, eligible: false, amount: null };
+
+    const cancelled    = /cancel/i.test(String(first.status || ''));
+    const delayMinutes = first.arrival?.delay    != null ? Number(first.arrival.delay)
+                       : first.departure?.delay  != null ? Number(first.departure.delay)
+                       : undefined;
+
+    const km     = getApproxKm(dep, arr);
+    const amount = km != null ? distanceKmToAmount(km) : 600;
+
+    // Éligible si annulé OU retard ≥ 3h
+    const eligible = cancelled || (delayMinutes != null && !isNaN(delayMinutes) && delayMinutes >= 180);
+
+    return { found: true, eligible, cancelled, amount, dep, arr, delayMinutes };
   } catch (e) {
     console.error('whatsapp-webhook: getFlightEligibility', e);
-    return { eligible: false, amount: null };
+    return { found: false, eligible: false, amount: null };
   }
+}
+
+/**
+ * Formule le message de réponse selon ce qu'on a trouvé.
+ * found=true  + éligible  → "Effectivement, retard X min / annulé — 600€"
+ * found=true  + non elig  → "Vol trouvé mais retard insuffisant (Xmin)"
+ * found=false             → "Selon votre déclaration, vol éligible"
+ */
+function eligibilityReply(flightNum, result, lienDepot) {
+  const vol = String(flightNum).toUpperCase();
+  if (!result.found) {
+    return (
+      `Selon votre déclaration, le vol *${vol}* semble éligible à une indemnisation CE 261/2004.\n\n` +
+      `Déposez votre dossier et nous vérifierons les données auprès des compagnies :\n${lienDepot}`
+    );
+  }
+  const route = result.dep && result.arr ? ` (${result.dep} → ${result.arr})` : '';
+  if (result.eligible) {
+    const motif = result.cancelled
+      ? `ce vol a été *annulé*`
+      : `ce vol a eu *${result.delayMinutes} min de retard*`;
+    return (
+      `✅ Effectivement, ${motif}${route}.\n\n` +
+      `*Vol éligible* — indemnisation jusqu'à *${result.amount || 600} €/passager*.\n\n` +
+      `Déposez votre dossier maintenant :\n${lienDepot}`
+    );
+  }
+  // Trouvé mais pas éligible
+  const retardInfo = result.delayMinutes != null ? ` (retard : ${result.delayMinutes} min)` : '';
+  return (
+    `Nous avons trouvé le vol *${vol}*${route}${retardInfo}.\n\n` +
+    `Ce vol ne semble pas éligible à CE 261/2004 (retard insuffisant ou hors critères).\n` +
+    `Si vous pensez que c'est une erreur, envoyez votre carte d'embarquement et nous vérifierons manuellement.`
+  );
 }
 
 function getSendConfig() {
@@ -585,14 +650,7 @@ async function handleTunnel(phone, text, imageBase64, imageMime, origin) {
     const flightNum = parseFlightNumber(msg);
     if (flightNum) {
       const result = await getFlightEligibility(flightNum, origin);
-      if (result.eligible && result.amount >= 600) {
-        await sendWhatsAppText(to, `Bonne nouvelle ! Votre vol ${flightNum} est éligible à 600€. Cliquez ici pour signer votre dossier : ${LIEN_DEPOT}`);
-      } else {
-        const reply = result.dep && result.arr
-          ? `Vol ${flightNum} (${result.dep} → ${result.arr}) trouvé. Pour confirmer l'éligibilité (retard ≥3h), déposez votre dossier : ${LIEN_DEPOT}`
-          : `Nous n'avons pas pu vérifier le vol ${flightNum}. Déposez votre dossier avec le numéro et la date du vol : ${LIEN_DEPOT}`;
-        await sendWhatsAppText(to, reply);
-      }
+      await sendWhatsAppText(to, eligibilityReply(flightNum, result, LIEN_DEPOT));
       return;
     }
   }
@@ -691,11 +749,59 @@ async function handleTunnel(phone, text, imageBase64, imageMime, origin) {
         const segIdx = form.segmentIndex ?? 0;
         while (flights.length <= segIdx) flights.push({ flightNumber: '', date: '' });
         flights[segIdx] = { flightNumber, date: '' };
-        setTunnelSession(phone, { step: 'TRAJET_DATE', flightData: { ...session.flightData, flights, segmentIndex: segIdx } });
-        await sendWhatsAppText(to, 'Quelle est la date du vol ? (format JJ/MM/AAAA)');
+        const newFlightData = { ...session.flightData, flights, segmentIndex: segIdx };
+
+        // Vérifier si le départ est un hub hors-UE → demander l'origine réelle
+        const eligCheck = await getFlightEligibility(flightNumber, origin);
+        const depAirport = (eligCheck.dep || '').toUpperCase();
+        if (depAirport && NON_EU_TRANSIT_HUBS.has(depAirport)) {
+          setTunnelSession(phone, { step: 'ASK_EU_ORIGIN', flightData: newFlightData });
+          await sendWhatsAppText(to,
+            `Je vois que le vol *${flightNumber}* part de *${depAirport}*.\n\n` +
+            `Votre voyage commençait-il dans un pays européen (France, Belgique, Espagne…) ` +
+            `sur le *même billet* ? (OUI / NON)`
+          );
+        } else {
+          setTunnelSession(phone, { step: 'TRAJET_DATE', flightData: newFlightData });
+          await sendWhatsAppText(to, 'Quelle est la date du vol ? (format JJ/MM/AAAA)');
+        }
       } else {
         await sendWhatsAppText(to, "Indiquez un numéro de vol (ex. AF123) ou envoyez une photo de la carte d'embarquement.");
       }
+      return;
+    }
+
+    case 'ASK_EU_ORIGIN': {
+      if (isOuiNon && upper === 'OUI') {
+        // Le voyage partait d'Europe → éligible CE 261, on note le flag et on continue
+        setTunnelSession(phone, { step: 'ASK_EU_ORIGIN_CITY', flightData: { ...session.flightData, departureIsEU: true } });
+        await sendWhatsAppText(to,
+          `Parfait — votre vol est éligible CE 261/2004 car votre voyage commençait en Europe. ✅\n\n` +
+          `De quelle ville européenne partiez-vous ? (ex : Paris, Bruxelles, Rome…)`
+        );
+      } else if (isOuiNon && upper === 'NON') {
+        // Voyage commençant hors-UE → pas éligible CE 261
+        setTunnelSession(phone, { step: 'AWAITING_CARD', flightData: null });
+        await sendWhatsAppText(to,
+          `Malheureusement, si votre voyage commençait hors d'Europe sur une compagnie non-européenne, ` +
+          `le CE 261/2004 ne s'applique pas à ce vol.\n\n` +
+          `Avez-vous un *autre vol* (départ ou arrivée en Europe) à vérifier ? ` +
+          `Envoyez le numéro ou la carte d'embarquement.`
+        );
+      } else {
+        await sendWhatsAppText(to, 'Répondez *OUI* si votre voyage commençait en Europe, *NON* sinon.');
+      }
+      return;
+    }
+
+    case 'ASK_EU_ORIGIN_CITY': {
+      // On enregistre la ville de départ EU et on continue le tunnel normalement
+      const euCity = (msg || '').trim();
+      setTunnelSession(phone, {
+        step: 'TRAJET_DATE',
+        flightData: { ...session.flightData, euOriginCity: euCity }
+      });
+      await sendWhatsAppText(to, `Noté — départ depuis *${euCity || 'Europe'}*. Quelle est la date du vol ? (JJ/MM/AAAA)`);
       return;
     }
     case 'TRAJET_DATE':
@@ -928,12 +1034,11 @@ async function handleTunnel(phone, text, imageBase64, imageMime, origin) {
         const count = session.passengerCount || 1;
         const flightNum = fd.flightNumber || '';
         const elig = await getFlightEligibility(flightNum, origin);
-        const eligible = elig.eligible && (elig.amount || 0) >= 600;
         setTunnelSession(phone, { step: 'VERDICT' });
-        const total = count * 600;
-        const reply = eligible
-          ? `🎯 EXCELLENTE NOUVELLE ! Pour ${count} passager(s), vous pouvez récupérer *${total}€*. Cliquez ici pour signer le mandat : ${LIEN_SIGNATURE}`
-          : `Après analyse, ce vol n'est pas éligible (${elig.eligible ? '' : 'retard insuffisant ou conditions non remplies'}). Voulez-vous vérifier un autre vol ? Envoyez une nouvelle photo.`;
+        const base = eligibilityReply(flightNum, elig, LIEN_SIGNATURE);
+        const reply = elig.eligible
+          ? `🎯 *${count > 1 ? count + ' passagers' : 'Bonne nouvelle'}* !\n\n` + base
+          : base;
         await sendWhatsAppText(to, reply);
         return;
       }
@@ -943,12 +1048,11 @@ async function handleTunnel(phone, text, imageBase64, imageMime, origin) {
         setTunnelSession(phone, { flightData: { ...session.flightData, date: dateStr } });
         const count = session.passengerCount || 1;
         const elig = await getFlightEligibility(session.flightData?.flightNumber || '', origin);
-        const eligible = elig.eligible && (elig.amount || 0) >= 600;
         setTunnelSession(phone, { step: 'VERDICT' });
-        const total = count * 600;
-        const reply = eligible
-          ? `🎯 EXCELLENTE NOUVELLE ! Pour ${count} passager(s), vous pouvez récupérer *${total}€*. Cliquez ici : ${LIEN_SIGNATURE}`
-          : `Après analyse, ce vol n'est pas éligible. Voulez-vous vérifier un autre vol ? Envoyez une nouvelle photo.`;
+        const base = eligibilityReply(session.flightData?.flightNumber || '', elig, LIEN_SIGNATURE);
+        const reply = elig.eligible
+          ? `🎯 *${count > 1 ? count + ' passagers' : 'Bonne nouvelle'}* !\n\n` + base
+          : base;
         await sendWhatsAppText(to, reply);
         return;
       }
@@ -1228,15 +1332,7 @@ exports.handler = async (event) => {
           const flightNum = parseFlightNumber(userText);
           if (flightNum) {
             const result = await getFlightEligibility(flightNum, origin);
-            if (result.eligible && result.amount >= 600) {
-              const reply = `Bonne nouvelle ! Votre vol ${flightNum} est éligible à 600€. Cliquez ici pour signer votre dossier : ${LIEN_DEPOT}`;
-              await sendWhatsAppText(to, reply);
-            } else {
-              const reply = result.dep && result.arr
-                ? `Vol ${flightNum} (${result.dep} → ${result.arr}) trouvé. Pour confirmer l'éligibilité (retard ≥3h), déposez votre dossier : ${LIEN_DEPOT}`
-                : `Nous n'avons pas pu vérifier le vol ${flightNum}. Déposez votre dossier avec le numéro et la date du vol : ${LIEN_DEPOT}`;
-              await sendWhatsAppText(to, reply);
-            }
+            await sendWhatsAppText(to, eligibilityReply(flightNum, result, LIEN_DEPOT));
             continue;
           }
 

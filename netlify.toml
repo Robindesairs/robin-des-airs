@@ -14,6 +14,10 @@
 [functions."whatsapp-gemini-fallback"]
   schedule = "* * * * *"
 
+# Snapshot quotidien des 10 vols impactés Europe↔Afrique — 8h heure de Paris (6h UTC été / 7h UTC hiver)
+[functions."daily-radar-snapshot"]
+  schedule = "0 6 * * *"
+
 [build]
   publish = "."
   # S'assurer que les deps (dont @netlify/blobs) sont présentes avant le bundle des fonctions
@@ -184,6 +188,16 @@
 [[redirects]]
   from = "/api/yousign-init"
   to = "/.netlify/functions/yousign-init"
+  status = 200
+
+[[redirects]]
+  from = "/api/radar-snapshot"
+  to = "/.netlify/functions/radar-snapshot"
+  status = 200
+
+[[redirects]]
+  from = "/api/send-preuve-pdf"
+  to = "/.netlify/functions/send-preuve-pdf"
   status = 200
 
 

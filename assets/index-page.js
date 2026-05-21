@@ -276,6 +276,31 @@ function volTickerRowsFromRadar(data) {
   });
 }
 var VOL_TICKER_RADAR_TTL_MS = 8 * 60 * 1000;
+
+/**
+ * Convertit les vols du snapshot quotidien (daily-radar-snapshot)
+ * dans le format attendu par volTickerRowsFromRadar :
+ * f.flight (string), f.dep, f.arr, f.cancelled, f.delayMinutes, f.eligible, f.scheduledDate
+ */
+function volTickerDataFromSnapshot(snapshot) {
+  if (!snapshot || !Array.isArray(snapshot.flights) || !snapshot.flights.length) return null;
+  var flights = snapshot.flights.map(function(f) {
+    return {
+      flight:       String(f.flight || ''),
+      airline:      String(f.airline || ''),
+      dep:          String(f.dep || ''),
+      arr:          String(f.arr || ''),
+      cancelled:    !!f.cancelled,
+      delayMinutes: f.retardMin != null ? Number(f.retardMin) : 0,
+      eligible:     true,   // snapshot ne contient que des vols Europe↔Afrique impactés
+      color:        f.cancelled ? 'CANCELLED' : (f.retardMin >= 180 ? 'RED' : f.retardMin >= 60 ? 'ORANGE' : 'YELLOW'),
+      statusFr:     f.cancelled ? 'Annulé' : 'Retardé',
+      scheduledDate: f.date || snapshot.date,
+    };
+  });
+  return { flights: flights, viewDate: snapshot.date, updatedAt: snapshot.updatedAt, dataSource: 'snapshot' };
+}
+
 function volTickerFetchRadar(cb) {
   try {
     var raw = sessionStorage.getItem('robin_radar_ticker');
@@ -299,39 +324,46 @@ function volTickerFetchRadar(cb) {
     } catch (e2) {}
     cb(data);
   }
-  var histUrl = origin + '/.netlify/functions/radar?mode=ticker-history&_=' + Date.now();
-  var liveUrl = origin + '/.netlify/functions/radar?_=' + Date.now();
-  fetch(histUrl)
-    .then(function (r) {
-      return r.json();
+
+  // 1. Essayer le snapshot quotidien (généré à 8h, données stables)
+  var snapshotUrl = origin + '/api/radar-snapshot';
+  var histUrl     = origin + '/.netlify/functions/radar?mode=ticker-history&_=' + Date.now();
+  var liveUrl     = origin + '/.netlify/functions/radar?_=' + Date.now();
+
+  fetch(snapshotUrl)
+    .then(function(r) { return r.json(); })
+    .then(function(snap) {
+      var snapData = volTickerDataFromSnapshot(snap);
+      if (snapData && snapData.flights.length >= 1) {
+        cacheAndCb(snapData);
+        return null; // court-circuit : snapshot trouvé
+      }
+      // Fallback 1 : ticker-history
+      return fetch(histUrl).then(function(r2) { return r2.json(); });
     })
-    .then(function (histData) {
+    .then(function(histData) {
+      if (histData === null) return null; // déjà résolu via snapshot
       var rowsH = volTickerRowsFromRadar(histData);
       if (rowsH && rowsH.length >= 1) {
         cacheAndCb(histData);
         return null;
       }
-      return fetch(liveUrl).then(function (r2) {
-        return r2.json();
-      });
+      // Fallback 2 : live
+      return fetch(liveUrl).then(function(r3) { return r3.json(); });
     })
-    .then(function (liveData) {
+    .then(function(liveData) {
       if (liveData === null) return;
       if (liveData && Array.isArray(liveData.flights)) cacheAndCb(liveData);
       else cb(null);
     })
     .catch(function () {
       fetch(liveUrl)
-        .then(function (r) {
-          return r.json();
-        })
+        .then(function (r) { return r.json(); })
         .then(function (liveData) {
           if (liveData && liveData.flights) cacheAndCb(liveData);
           else cb(null);
         })
-        .catch(function () {
-          cb(null);
-        });
+        .catch(function () { cb(null); });
     });
 }
 /** iOS / Android : le défilement CSS du bandeau peut se figer (onglet en arrière-plan, économie d’énergie). */
