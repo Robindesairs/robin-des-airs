@@ -232,13 +232,15 @@ exports.handler = async (event) => {
     [`${dateStr}T12:00`, `${dateStr}T23:59`],
   ];
 
+  // Rate limit RapidAPI Pro = 1 req/sec → appels séquentiels espacés de 1.1s
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
   const rawFlights = [];
   for (const hub of HUBS) {
     for (const [a, b] of windows) {
-      const [deps, arrs] = await Promise.all([
-        fetchHub(hub.icao, a, b, 'Departure', rapidKey),
-        fetchHub(hub.icao, a, b, 'Arrival',   rapidKey),
-      ]);
+      const deps = await fetchHub(hub.icao, a, b, 'Departure', rapidKey);
+      await sleep(1100);
+      const arrs = await fetchHub(hub.icao, a, b, 'Arrival', rapidKey);
+      await sleep(1100);
       for (const r of [...deps, ...arrs]) {
         const n = normalise(r);
         if (n) rawFlights.push(n);
