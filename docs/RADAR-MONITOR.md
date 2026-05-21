@@ -15,7 +15,7 @@ Planification Netlify : `radar-monitor` — cron `5 * * * *` (vérifie l’heure
 | Variable | Défaut | Rôle |
 |----------|--------|------|
 | `RAPIDAPI_KEY` | — | Obligatoire (AeroDataBox) |
-| `RADAR_REPORT_EMAIL` | `MANDAT_NOTIFY_EMAIL` | Destinataire rapport 8h |
+| `RADAR_REPORT_EMAIL` | `expert@robindesairs.eu` | Destinataire rapport 8h |
 | `RESEND_API_KEY` | — | Envoi email |
 | `MANDAT_NOTIFY_FROM` | Robin contact | Expéditeur |
 | `RADAR_MORNING_HOUR` | `8` | Heure Paris du job matin |

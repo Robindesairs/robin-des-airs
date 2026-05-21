@@ -26,6 +26,7 @@
 # TEMPORAIRE — démo Claude : connexion code agence seul (retirer ALLOW_AGENCY_CODE_ONLY après)
 [context.production.environment]
   ALLOW_AGENCY_CODE_ONLY = "true"
+  RADAR_REPORT_EMAIL = "expert@robindesairs.eu"
 
 # Forcer HTTPS (cadenas) : toute requête en http est redirigée en https
 [[redirects]]

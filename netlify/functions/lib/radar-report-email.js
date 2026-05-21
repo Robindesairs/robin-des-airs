@@ -3,13 +3,14 @@
  */
 
 const SITE_URL = (process.env.URL || 'https://robindesairs.eu').replace(/\/$/, '');
+const DEFAULT_RADAR_REPORT_EMAIL = 'expert@robindesairs.eu';
 
 async function sendRadarMorningReport({ banner, dayLog, slotSummary, parisDate, parisHour }) {
   const to = (
     process.env.RADAR_REPORT_EMAIL ||
     process.env.MANDAT_NOTIFY_EMAIL ||
     process.env.PARTNER_AGREEMENT_NOTIFY_EMAIL ||
-    ''
+    DEFAULT_RADAR_REPORT_EMAIL
   ).trim();
   const key = (process.env.RESEND_API_KEY || '').trim();
   if (!to || !key) {
