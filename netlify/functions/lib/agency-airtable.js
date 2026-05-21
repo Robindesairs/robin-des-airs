@@ -13,6 +13,18 @@ const {
 } = require('./airtable-robin');
 
 const { agencyPricing } = require('./agency-pricing');
+const { buildAgencyTransparency } = require('./agency-transparency');
+
+function getAgencyPricing(agencyAccount) {
+  const locked =
+    agencyAccount && agencyAccount.commissionGmd != null ? Number(agencyAccount.commissionGmd) : null;
+  const pricing = agencyPricing({ lockedCommissionGmd: locked });
+  if (pricing.commissionLocked && agencyAccount && agencyAccount.commissionTier) {
+    pricing.commissionTier = agencyAccount.commissionTier;
+  }
+  return pricing;
+}
+
 const PRICING = agencyPricing();
 const COMMISSION_FCFA = PRICING.commissionFcfa;
 
@@ -80,6 +92,7 @@ function normalizeDateForAirtable(raw) {
 
 /** Champs financiers + canal agence (noms colonnes Make / Airtable Robin). */
 function applyAgencyPartnerFields(fields, cfg, agencyAccount, body) {
+  const pricing = getAgencyPricing(agencyAccount);
   const nb = Math.max(1, parseInt(body.nbPassagers, 10) || 1);
   const today = new Date().toISOString().slice(0, 10);
 
@@ -109,18 +122,18 @@ function applyAgencyPartnerFields(fields, cfg, agencyAccount, body) {
   if (nbCol) fields[nbCol] = nb;
 
   const montantClientCol = partnerCol('AIRTABLE_COL_MONTANT_CLIENT', 'Montant Client');
-  if (montantClientCol) fields[montantClientCol] = Math.round(PRICING.clientNetEur * nb);
+  if (montantClientCol) fields[montantClientCol] = Math.round(pricing.clientNetEur * nb);
 
   const commissionAgenceCol = partnerCol('AIRTABLE_COL_COMMISSION_AGENCE', 'Commission Agence');
   if (commissionAgenceCol) {
     const useGmd = /^1|true|gmd$/i.test(String(process.env.AIRTABLE_COMMISSION_AGENCE_GMD || '').trim());
     fields[commissionAgenceCol] = useGmd
-      ? PRICING.commissionGmd * nb
-      : Math.round(PRICING.commissionEur * nb * 100) / 100;
+      ? pricing.commissionGmd * nb
+      : Math.round(pricing.commissionEur * nb * 100) / 100;
   }
 
   const commissionRdaCol = partnerCol('AIRTABLE_COL_COMMISSION_RDA', 'Commission RDA (30%)');
-  if (commissionRdaCol) fields[commissionRdaCol] = Math.round(PRICING.robinEur * nb * 100) / 100;
+  if (commissionRdaCol) fields[commissionRdaCol] = Math.round(pricing.robinEur * nb * 100) / 100;
 
   const trajetCol = partnerCol('AIRTABLE_COL_TRAJET', 'Trajet');
   const route =
@@ -174,6 +187,18 @@ function recordToAgencyDossier(cfg, rec, agencyAccount) {
   const statut = agencyStatutFromRecord(data);
   const route = data.route || '';
   const parts = route.split('→').map((x) => x.trim());
+  const indemniteBrute = parseFloat(String(data.indemnite || '').replace(/[^\d.]/g, '')) || null;
+  const transparency = buildAgencyTransparency(
+    {
+      indemnite: data.indemnite,
+      indemniteReference: indemniteBrute,
+      montantClient: data.montantClient,
+      raisonCompagnie: data.raisonCompagnie,
+      remarques: data.remarques,
+    },
+    statut,
+    process.env.AGENCY_PORTAL_LANG || 'fr'
+  );
 
   return {
     ref: data.ref || rec.id,
@@ -195,6 +220,12 @@ function recordToAgencyDossier(cfg, rec, agencyAccount) {
     agence: agenceField || agencyAccount.airtableMatch,
     dateCreation: fieldVal(rec.fields, process.env.AIRTABLE_COL_DATE_DOSSIER || 'Date Dossier') || '',
     commissionFcfa: (statut === 'gagne' || statut === 'paye') ? nbPassagers * COMMISSION_FCFA : 0,
+    airlineDecision: transparency.decision,
+    airlineTransparency: transparency.summary,
+    airlinePercent: transparency.percentOfReference,
+    airlineJustification: transparency.justification,
+    indemniteReferenceEur: transparency.referenceEur,
+    indemniteCollectedEur: transparency.collectedEur,
   };
 }
 
@@ -296,6 +327,7 @@ async function createAgencyDossier(cfg, agencyAccount, body) {
 module.exports = {
   COMMISSION_FCFA,
   PRICING,
+  getAgencyPricing,
   INCIDENT_ATTENTE_LABEL,
   isAttenteIncidentInput,
   listAgencyDossiers,

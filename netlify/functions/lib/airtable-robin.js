@@ -32,6 +32,8 @@ function airtableCfg() {
     trajet: col('AIRTABLE_COL_TRAJET', 'Trajet'),
     statutSuivi: col('AIRTABLE_COL_STATUT_SUIVI', 'Statut du Dossier Suivi'),
     remarques: col('AIRTABLE_COL_REMARQUES', 'Remarques'),
+    montantClient: col('AIRTABLE_COL_MONTANT_CLIENT', 'Montant Client'),
+    raisonCompagnie: col('AIRTABLE_COL_RAISON_COMPAGNIE', 'Raison compagnie'),
   };
 
   return {
@@ -108,6 +110,8 @@ function recordFromAirtableFields(cfg, fields) {
     route,
     statutSuivi: get(L.statutSuivi, cfg.fStatutSuivi),
     remarques: get(L.remarques, cfg.fRemarques),
+    montantClient: get(L.montantClient),
+    raisonCompagnie: get(L.raisonCompagnie),
   };
 }
 

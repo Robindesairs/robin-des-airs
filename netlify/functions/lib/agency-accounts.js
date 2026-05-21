@@ -39,6 +39,11 @@ function normalizeWaList(a) {
 }
 
 function normalizeAccount(a) {
+  const commissionRaw = a.commissionGmd ?? a.commission_gmd;
+  const commissionGmd =
+    commissionRaw != null && String(commissionRaw).trim() !== ''
+      ? Math.round(Number(commissionRaw))
+      : null;
   return {
     code: String(a.code || '').trim().toUpperCase(),
     pass: String(a.pass || ''),
@@ -46,6 +51,9 @@ function normalizeAccount(a) {
     name: String(a.name || a.code || '').trim(),
     airtableMatch: String(a.airtableMatch || a.code || '').trim(),
     whatsappPhones: normalizeWaList(a),
+    commissionGmd: Number.isFinite(commissionGmd) && commissionGmd > 0 ? commissionGmd : null,
+    commissionTier: String(a.commissionTier || a.commission_tier || '').trim(),
+    partnerSignedAt: String(a.partnerSignedAt || a.partner_signed_at || '').trim(),
   };
 }
 

@@ -14,6 +14,10 @@
 [functions."whatsapp-gemini-fallback"]
   schedule = "* * * * *"
 
+# Bandeau accueil : 10 derniers vols impactés Europe ↔ Afrique (cache Blobs)
+[functions."radar-ticker-refresh"]
+  schedule = "20 5 * * *"
+
 [build]
   publish = "."
   # S'assurer que les deps (dont @netlify/blobs) sont présentes avant le bundle des fonctions
@@ -105,6 +109,11 @@
   status = 200
 
 [[redirects]]
+  from = "/api/submit-partner-agreement"
+  to = "/.netlify/functions/submit-partner-agreement"
+  status = 200
+
+[[redirects]]
   from = "/droit-retractation"
   to = "/droit-retractation.html"
   status = 200
@@ -167,6 +176,21 @@
 [[redirects]]
   from = "/api/agency-dossiers"
   to = "/.netlify/functions/agency-dossiers"
+  status = 200
+
+[[redirects]]
+  from = "/api/collect-proofs"
+  to = "/.netlify/functions/collect-proofs"
+  status = 200
+
+[[redirects]]
+  from = "/api/proof-report"
+  to = "/.netlify/functions/proof-report"
+  status = 200
+
+[[redirects]]
+  from = "/api/vol-ticker"
+  to = "/.netlify/functions/vol-ticker"
   status = 200
 
 # Webhook WhatsApp 360dialog

@@ -15,6 +15,7 @@ const {
   generateAgencyRef,
 } = require('./agency-airtable');
 const { notifyAgencyDossierCreated } = require('./robin-notify');
+const { scheduleProofsAfterDossier } = require('./proofs-collect');
 const {
   getAgencyLink,
   saveAgencyLink,
@@ -280,6 +281,7 @@ async function handleAgencyWhatsAppMessage(event, phone, text) {
       notifyAgencyDossierCreated(agency, created.dossier, { attenteIncident: attente }).catch(
         () => {}
       );
+      scheduleProofsAfterDossier(event, cfg, created, body);
       await clearAgencySession(event, phone);
       const msg = attente
         ? `✅ Billet enregistré — *${created.ref}*\nStatut : en attente d'incident.\nRobin sera notifié.`

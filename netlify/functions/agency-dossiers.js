@@ -10,10 +10,11 @@ const {
   listAgencyDossiers,
   createAgencyDossier,
   isAttenteIncidentInput,
-  PRICING,
+  getAgencyPricing,
 } = require('./lib/agency-airtable');
 const { corsHeaders } = require('./lib/auth-config');
 const { notifyAgencyDossierCreated } = require('./lib/robin-notify');
+const { scheduleProofsAfterDossier } = require('./lib/proofs-collect');
 
 const HEADERS = corsHeaders('agency');
 
@@ -41,16 +42,22 @@ exports.handler = async (event) => {
   if (event.httpMethod === 'GET') {
     try {
       const dossiers = await listAgencyDossiers(cfg, agency);
+      const pricing = getAgencyPricing(agency);
       return {
         statusCode: 200,
         headers: HEADERS,
         body: JSON.stringify({
           ok: true,
-          agency: { code: agency.code, name: agency.name },
-          pricing: PRICING,
-          commissionPerPax: PRICING.commissionFcfa,
-          commissionPerPaxEur: PRICING.commissionEur,
-          commissionPerPaxGmd: PRICING.commissionGmd,
+          agency: {
+            code: agency.code,
+            name: agency.name,
+            commissionLocked: pricing.commissionLocked,
+            partnerSignedAt: agency.partnerSignedAt || null,
+          },
+          pricing,
+          commissionPerPax: pricing.commissionFcfa,
+          commissionPerPaxEur: pricing.commissionEur,
+          commissionPerPaxGmd: pricing.commissionGmd,
           count: dossiers.length,
           dossiers,
         }),
@@ -96,6 +103,7 @@ exports.handler = async (event) => {
       notifyAgencyDossierCreated(agency, created.dossier, { attenteIncident: attente }).catch((err) => {
         console.warn('agency-dossiers: notify', err.message);
       });
+      scheduleProofsAfterDossier(event, cfg, created, body);
       return {
         statusCode: 201,
         headers: HEADERS,

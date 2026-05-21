@@ -1,28 +1,33 @@
 /**
  * Tarification partenaire agence.
- * Référence terrain Gambie : 3 800 GMD / passager gagné (converti en EUR pour Airtable).
+ * Commission par palier de date de signature — voir agency-commission-tiers.js
  *
  * Netlify :
- *   AGENCY_COMMISSION_GMD = 3800  (commission agence / passager gagné)
- *   AGENCY_GMD_PER_EUR = 84       (taux indicatif dalasi → euro)
- *   AGENCY_COMMISSION_EUR         (optionnel, sinon dérivé de GMD)
+ *   AGENCY_TIER1_GMD / AGENCY_TIER1_END (été, défaut 3800 / 2026-08-31)
+ *   AGENCY_TIER2_GMD / AGENCY_TIER2_END (fin année, défaut 3400 / 2026-12-31)
+ *   AGENCY_TIER3_GMD (2027+, défaut 3000)
+ *   AGENCY_GMD_PER_EUR = 84
  *   AGENCY_CLIENT_NET_EUR = 420
  *   AGENCY_INDEMNITY_REF_EUR = 600
  */
 
-const XOF_PER_EUR = parseFloat(process.env.AGENCY_XOF_PER_EUR || '655.957') || 655.957;
-const GMD_PER_EUR = parseFloat(process.env.AGENCY_GMD_PER_EUR || '84') || 84;
+const { resolvePartnerCommissionTier, GMD_PER_EUR } = require('./agency-commission-tiers');
 
-function agencyPricing() {
-  const commissionGmd = parseFloat(process.env.AGENCY_COMMISSION_GMD || '3800', 10) || 3800;
-  const commissionEurFromEnv = process.env.AGENCY_COMMISSION_EUR;
-  const commissionEur = commissionEurFromEnv
-    ? parseFloat(commissionEurFromEnv, 10) || commissionGmd / GMD_PER_EUR
-    : Math.round((commissionGmd / GMD_PER_EUR) * 100) / 100;
+const XOF_PER_EUR = parseFloat(process.env.AGENCY_XOF_PER_EUR || '655.957') || 655.957;
+
+/** @param {{ at?: Date|string, lockedCommissionGmd?: number, lang?: string }} [opts] */
+function agencyPricing(opts) {
+  const locked = opts && opts.lockedCommissionGmd != null ? Number(opts.lockedCommissionGmd) : null;
+  const tier = resolvePartnerCommissionTier(opts && opts.at ? opts.at : new Date(), opts && opts.lang);
+  const commissionGmd =
+    locked != null && Number.isFinite(locked) && locked > 0 ? Math.round(locked) : tier.commissionGmd;
+  const commissionEur = Math.round((commissionGmd / GMD_PER_EUR) * 100) / 100;
   const clientNetEur = parseFloat(process.env.AGENCY_CLIENT_NET_EUR || '420', 10) || 420;
   const indemnityEur = parseFloat(process.env.AGENCY_INDEMNITY_REF_EUR || '600', 10) || 600;
   const robinEur = Math.max(0, Math.round((indemnityEur - clientNetEur - commissionEur) * 100) / 100);
   const commissionFcfa = Math.round(commissionEur * XOF_PER_EUR);
+
+  const isLocked = locked != null && Number.isFinite(locked) && locked > 0;
 
   return {
     commissionGmd,
@@ -32,6 +37,14 @@ function agencyPricing() {
     robinEur,
     commissionFcfa,
     gmdPerEur: GMD_PER_EUR,
+    commissionTier: tier.tierId,
+    commissionTierLabel: tier.tierLabel,
+    commissionTiers: tier.allTiers,
+    /** Échéances = nouvelles signatures uniquement ; ignorées si palier déjà acquis */
+    tierEndsYmd: isLocked ? null : tier.tierEndsYmd,
+    nextTierGmd: isLocked ? null : tier.nextTierGmd,
+    commissionLocked: isLocked,
+    commissionLifetime: isLocked,
     /** @deprecated utilisez commissionEur — conservé pour compat */
     commissionPerPax: commissionFcfa,
     commissionPerPaxEur: commissionEur,
@@ -39,4 +52,4 @@ function agencyPricing() {
   };
 }
 
-module.exports = { agencyPricing, XOF_PER_EUR };
+module.exports = { agencyPricing, XOF_PER_EUR, resolvePartnerCommissionTier };
