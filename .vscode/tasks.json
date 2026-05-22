@@ -1,0 +1,22 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Robin: serveur local (preview)",
+      "type": "shell",
+      "command": "npm run preview",
+      "options": { "cwd": "${workspaceFolder}" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      "label": "Robin: navigation interne",
+      "type": "shell",
+      "command": "open http://127.0.0.1:8787/navigation-interne.html",
+      "options": { "cwd": "${workspaceFolder}" },
+      "dependsOn": ["Robin: serveur local (preview)"],
+      "problemMatcher": []
+    }
+  ]
+}

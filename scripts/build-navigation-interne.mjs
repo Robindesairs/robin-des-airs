@@ -96,7 +96,11 @@ const SECTIONS = [
       { url: '/generateur-pub.html', label: 'Générateur pub' },
       { url: '/verification-fonctions.html', label: 'Test fonctions Netlify' },
       { url: '/navigation-interne', label: 'Cette page' },
-      { url: '/docs/PAGES-SITE.md', label: 'Inventaire markdown (GitHub)', external: true },
+      {
+        url: 'https://github.com/Robindesairs/robin-des-airs/blob/main/docs/PAGES-SITE.md',
+        label: 'Inventaire markdown (GitHub)',
+        external: true,
+      },
     ],
   },
 ];
@@ -191,7 +195,8 @@ const html = `<!DOCTYPE html>
 
 <div class="ni-toolbar">
   <input type="search" id="ni-search" placeholder="Filtrer une page (vol, mandat, blog…)" autocomplete="off" aria-label="Filtrer">
-  <label class="ni-open"><input type="checkbox" id="ni-newtab"> Ouvrir dans un nouvel onglet</label>
+  <label class="ni-open"><input type="checkbox" id="ni-newtab"> Nouvel onglet</label>
+  <label class="ni-open"><input type="checkbox" id="ni-local" checked> Mode local (ajoute .html pour serve)</label>
 </div>
 
 <nav class="ni-jump" id="ni-jump" aria-label="Sections"></nav>
@@ -222,6 +227,7 @@ function esc(s) {
 function render() {
   var q = (document.getElementById('ni-search').value || '').toLowerCase().trim();
   var newTab = document.getElementById('ni-newtab').checked;
+  var localMode = document.getElementById('ni-local').checked;
   var main = document.getElementById('ni-main');
   var jump = document.getElementById('ni-jump');
   var html = '';
@@ -235,7 +241,7 @@ function render() {
     jumps += '<a href="#' + sec.id + '">' + esc(sec.title) + ' (' + links.length + ')</a>';
     html += '<section class="ni-section" id="' + sec.id + '"><h2>' + esc(sec.title) + '</h2><ul class="ni-list">';
     links.forEach(function(l) {
-      var href = l.external ? l.url : (l.url.indexOf('http') === 0 ? l.url : origin() + l.url);
+      var href = l.external ? l.url : toHref(l.url, localMode);
       var target = newTab ? ' target="_blank" rel="noopener"' : '';
       var tag = l.tag ? '<span class="ni-tag">' + esc(l.tag) + '</span>' : '';
       html += '<li><a href="' + esc(href) + '"' + target + '><span class="ni-label">' + esc(l.label) + '</span><code class="ni-url">' + esc(l.url) + '</code></a>' + tag + '</li>';
@@ -271,6 +277,8 @@ function render() {
 
 document.getElementById('ni-search').addEventListener('input', render);
 document.getElementById('ni-newtab').addEventListener('change', render);
+document.getElementById('ni-local').addEventListener('change', render);
+if (isLocalHost()) document.getElementById('ni-local').checked = true;
 render();
 </script>
 </body>

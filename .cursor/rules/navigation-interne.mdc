@@ -1,0 +1,19 @@
+---
+description: Prévisualiser le site Robin des Airs en local dans Cursor
+globs:
+alwaysApply: false
+---
+
+# Navigation interne en local
+
+Pour parcourir **toutes les pages HTML** depuis Cursor :
+
+1. Terminal : `cd` vers la racine du dépôt puis `npm run preview` (port **8787**).
+2. Ouvrir dans le navigateur intégré ou Simple Browser :
+   - **http://127.0.0.1:8787/navigation-interne.html**
+   - alias : **http://127.0.0.1:8787/interne** (si `_redirects` actif — avec `serve` pur, utiliser `.html` ou le chemin fichier).
+3. Utiliser la recherche sur la page hub pour filtrer les liens.
+
+Les **API Netlify** (`/api/*`, `/.netlify/functions/*`) ne fonctionnent qu’avec `netlify dev` (pas avec `serve` seul).
+
+Régénérer le hub après nouvelles pages : `npm run build:nav-interne`.
