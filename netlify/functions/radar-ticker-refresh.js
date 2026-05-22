@@ -8,7 +8,12 @@ const { getBlobStore } = require('./lib/netlify-blobs-store');
 const STORE_NAME = 'robin-radar-ticker';
 const CACHE_KEY = 'banner/latest.json';
 
-const { mergeTickerBannerFlights, parisDateYmd } = require('./radar');
+const {
+  mergeTickerBannerFlights,
+  fetchBannerImpactedFlights,
+  getTickerAfricaHubs,
+  parisDateYmd,
+} = require('./radar');
 
 async function loadCached(store) {
   try {
@@ -20,35 +25,30 @@ async function loadCached(store) {
 
 async function buildTickerCache(store) {
   const cached = store ? await loadCached(store) : null;
-  const maxDays = Math.min(14, Math.max(1, parseInt(process.env.TICKER_HISTORY_DAYS || '7', 10) || 7));
-  let offset = cached && typeof cached.scanDayOffset === 'number' ? cached.scanDayOffset : 0;
-  if (offset >= maxDays) offset = 0;
+  const hubRunIndex = cached && typeof cached.hubRunIndex === 'number' ? cached.hubRunIndex : 0;
+  const perRun = Math.max(8, parseInt(process.env.TICKER_AFRICA_HUBS_PER_RUN || '12', 10) || 12);
+  const africaTotal = getTickerAfricaHubs().length;
+  const hubRunsNeeded = Math.max(1, Math.ceil(africaTotal / perRun));
 
-  const { fetchBannerDayScan, filterImpactedEuAfricaFlights, parisDateAddDays } = require('./radar');
-  const dayYmd = parisDateAddDays(-offset);
-  let incoming = [];
-  try {
-    const dayPayload = await fetchBannerDayScan(dayYmd);
-    incoming = filterImpactedEuAfricaFlights(dayPayload.flights || []);
-  } catch (e) {
-    console.warn('radar-ticker-refresh day', dayYmd, e.message);
-  }
-
-  const bannerFlights = mergeTickerBannerFlights(cached && cached.flights, incoming);
+  const payload = await fetchBannerImpactedFlights({
+    maxDaysThisRun: 1,
+    hubRunIndex,
+  });
+  const bannerFlights = mergeTickerBannerFlights(cached && cached.flights, payload.flights);
   const now = new Date();
-  const nextOffset = bannerFlights.length >= 9 ? 0 : offset + 1;
+  const nextHubRun = (hubRunIndex + 1) % hubRunsNeeded;
 
   return {
     flights: bannerFlights,
-    viewDate: parisDateYmd(),
-    scanDayOffset: nextOffset,
-    lastScanDate: dayYmd,
-    maxDays,
+    viewDate: payload.viewDate || parisDateYmd(),
+    hubRunIndex: nextHubRun,
+    hubsScanned: payload.hubsScanned,
+    africaHubsTotal: africaTotal,
     targetCount: 9,
     updatedAt: now.toISOString(),
     refreshedAt: now.toISOString(),
     dataSource: 'aerodatabox',
-    tickerMode: 'eu-africa-impacted',
+    tickerMode: 'eu-africa-subsaharan-impacted',
     count: bannerFlights.length,
   };
 }

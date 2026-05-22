@@ -23,7 +23,9 @@ const AIRPORT_COUNTRY = {
   BJL:'GM', CMN:'MA', RAK:'MA', ALG:'DZ', TUN:'TN', CAI:'EG', ADD:'ET', NBO:'KE', DAR:'TZ', JNB:'ZA',
   CPT:'ZA', DLA:'CM', NSI:'CM', LBV:'GA', BZV:'CG', FIH:'CD', RUN:'RE', PTP:'GP', FDF:'MQ', MRU:'MU',
   TNR:'MG', MPM:'MZ', ACC:'GH', LOS:'NG', ABV:'NG',
-  NKC:'MR', FNA:'SL', ROB:'LR', PNR:'CG', LAD:'AO', SSG:'GQ', BGF:'CF', KGL:'RW', JIB:'DJ', ZNZ:'TZ', DZA:'FR'
+  NKC:'MR', FNA:'SL', ROB:'LR', PNR:'CG', LAD:'AO', SSG:'GQ', BGF:'CF', KGL:'RW', JIB:'DJ', ZNZ:'TZ', DZA:'FR',
+  OXB:'GW', KAN:'NG', PHC:'NG', FKI:'CD', FBM:'CD', GOM:'CD', MBA:'KE', EBB:'UG', JRO:'TZ', LUN:'ZM',
+  HRE:'ZW', DUR:'ZA', WDH:'NA', OUA:'BF', NIM:'NE', COO:'BJ', LFW:'TG', CKY:'GN',
 };
 
 /** Tous les départs France : principaux aéroports métropole + La Réunion. */
@@ -262,19 +264,16 @@ async function fetchRadarSlot({ dateYmd, hubs, windows, directions }) {
   return Object.assign(payload, { apiRequests });
 }
 
-/** Hubs Afrique pour départs Afrique → Europe (bandeau quotidien). */
-const TICKER_AFRICA_HUBS = ['DSS', 'DKR', 'ABJ', 'ACC', 'LOS', 'CMN', 'BKO', 'BJL', 'ADD', 'NBO'];
-const TICKER_HUB_ICAO = Object.assign({}, HUB_ICAO, {
-  DSS: 'GOBD',
-  DKR: 'GOOY',
-  ABJ: 'DIAP',
-  ACC: 'DGAA',
-  LOS: 'DNMM',
-  CMN: 'GMMN',
-  BKO: 'GABS',
-  BJL: 'GBYD',
-  ADD: 'HAAB',
-  NBO: 'HKJK',
+const {
+  isSubSaharanAfricaCountry,
+  AFRICA_HUB_ICAO,
+  getTickerAfricaHubs,
+  getBannerHubsForRun,
+  getBannerHubsFull,
+  BANNER_EU_HUBS,
+} = require('./lib/ticker-africa-hubs');
+
+const TICKER_HUB_ICAO = Object.assign({}, HUB_ICAO, AFRICA_HUB_ICAO, {
   BRU: 'EBBR',
   LIS: 'LPPT',
   MAD: 'LEMD',
@@ -361,12 +360,23 @@ function isEuAfricaRoute(depIata, arrIata) {
   return (isEurope(dc) && isAfrica(ac)) || (isAfrica(dc) && isEurope(ac));
 }
 
-/** Vols impactés bandeau : éligibles CE 261, EU↔AF, annulé ou retard arrivée ≥ 3 h. */
+/** Bandeau diaspora : Europe ↔ Afrique subsaharienne (hors Maghreb / Égypte). */
+function isEuSubSaharanAfricaRoute(depIata, arrIata) {
+  const dc = getCountry(depIata);
+  const ac = getCountry(arrIata);
+  if (!dc || !ac) return false;
+  return (
+    (isEurope(dc) && isSubSaharanAfricaCountry(ac)) ||
+    (isSubSaharanAfricaCountry(dc) && isEurope(ac))
+  );
+}
+
+/** Vols impactés bandeau : éligibles CE 261, EU↔Afrique subsaharienne, annulé ou retard arrivée ≥ 3 h. */
 function filterImpactedEuAfricaFlights(flights, minDelayMinutes) {
   const minD = minDelayMinutes != null ? minDelayMinutes : 180;
   return (flights || []).filter((f) => {
     if (!f || !f.eligible) return false;
-    if (!isEuAfricaRoute(f.dep, f.arr)) return false;
+    if (!isEuSubSaharanAfricaRoute(f.dep, f.arr)) return false;
     if (f.cancelled) return true;
     return f.delayMinutes != null && f.delayMinutes >= minD;
   });
@@ -428,15 +438,16 @@ function mergeTickerBannerFlights(existingList, incomingList, targetCount) {
   return sortImpactedForTicker(Array.from(byKey.values())).slice(0, target);
 }
 
-/** Scan bandeau pour un jour — hubs par lots parallèles (évite timeout Netlify 26 s). */
-async function fetchBannerDayScan(dateYmd) {
+/** Scan bandeau pour un jour — hubs par lots parallèles (évite timeout Netlify). */
+async function fetchBannerDayScan(dateYmd, hubList) {
   const rapidKey = process.env.RAPIDAPI_KEY || process.env.AERODATABOX_RAPIDAPI_KEY;
   if (!rapidKey) throw new Error('RAPIDAPI_KEY manquant');
   const d = dateYmd || parisDateYmd();
+  const hubs = hubList && hubList.length ? hubList : getBannerHubsForRun(0);
   const from = `${d}T00:00`;
   const to = `${d}T23:59`;
   const delayMs = Math.max(400, parseInt(process.env.RADAR_API_DELAY_MS || '600', 10) || 600);
-  const batchSize = Math.min(5, Math.max(2, parseInt(process.env.TICKER_HUB_BATCH || '4', 10) || 4));
+  const batchSize = Math.min(6, Math.max(2, parseInt(process.env.TICKER_HUB_BATCH || '5', 10) || 5));
   const allRaw = [];
   const arrivalRaw = [];
 
@@ -457,10 +468,10 @@ async function fetchBannerDayScan(dateYmd) {
     }
   }
 
-  for (let i = 0; i < BANNER_HUBS.length; i += batchSize) {
-    const chunk = BANNER_HUBS.slice(i, i + batchSize);
+  for (let i = 0; i < hubs.length; i += batchSize) {
+    const chunk = hubs.slice(i, i + batchSize);
     await Promise.all(chunk.map(scanHub));
-    if (i + batchSize < BANNER_HUBS.length) await sleepMs(delayMs);
+    if (i + batchSize < hubs.length) await sleepMs(delayMs);
   }
 
   return assembleFlightsFromRaw(allRaw, arrivalRaw);
@@ -479,6 +490,11 @@ async function fetchBannerImpactedFlights(opts) {
     opts && opts.maxDaysThisRun != null
       ? Math.min(maxDays, opts.maxDaysThisRun)
       : maxDays;
+  const hubRunIndex = opts && opts.hubRunIndex != null ? opts.hubRunIndex : 0;
+  const hubs =
+    opts && opts.hubList && opts.hubList.length
+      ? opts.hubList
+      : getBannerHubsForRun(hubRunIndex);
   const byKey = new Map();
   let daysScanned = 0;
 
@@ -487,7 +503,7 @@ async function fetchBannerImpactedFlights(opts) {
     daysScanned = offset + 1;
     const d = parisDateAddDays(-offset);
     try {
-      const payload = await fetchBannerDayScan(d);
+      const payload = await fetchBannerDayScan(d, hubs);
       const impacted = filterImpactedEuAfricaFlights(payload.flights || []);
       for (const f of impacted) {
         const k = flightDedupeKey(f);
@@ -507,10 +523,12 @@ async function fetchBannerImpactedFlights(opts) {
     viewDate: parisDateYmd(),
     daysScanned,
     maxDays,
+    hubsScanned: hubs.length,
+    hubRunIndex,
     targetCount: target,
     updatedAt: new Date().toISOString(),
     dataSource: 'aerodatabox',
-    tickerMode: 'eu-africa-impacted',
+    tickerMode: 'eu-africa-subsaharan-impacted',
     count: banner.length,
   };
 }
@@ -928,6 +946,9 @@ exports.isEuAfricaRoute = isEuAfricaRoute;
 exports.getCountry = getCountry;
 exports.isEurope = isEurope;
 exports.isAfrica = isAfrica;
-exports.BANNER_HUBS = BANNER_HUBS;
-exports.TICKER_AFRICA_HUBS = TICKER_AFRICA_HUBS;
+exports.getBannerHubsForRun = getBannerHubsForRun;
+exports.getBannerHubsFull = getBannerHubsFull;
+exports.getTickerAfricaHubs = getTickerAfricaHubs;
+exports.BANNER_EU_HUBS = BANNER_EU_HUBS;
+exports.isEuSubSaharanAfricaRoute = isEuSubSaharanAfricaRoute;
 exports.HUBS = HUBS;

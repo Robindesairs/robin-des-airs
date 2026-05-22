@@ -18,6 +18,7 @@ const HEADERS = {
 const {
   fetchBannerImpactedFlights,
   mergeTickerBannerFlights,
+  getTickerAfricaHubs,
   BANNER_TARGET_COUNT,
   parisDateYmd,
 } = require('./radar');
@@ -89,19 +90,31 @@ exports.handler = async (event) => {
 
     let merged = cachedFlights;
     let scanMeta = {};
+    let nextHubRun = (cached && typeof cached.hubRunIndex === 'number' ? cached.hubRunIndex : 0);
 
     try {
       const liveScanDays = Math.min(
         3,
         Math.max(1, parseInt(process.env.TICKER_LIVE_SCAN_DAYS || '2', 10) || 2)
       );
-      const payload = await fetchBannerImpactedFlights({ maxDaysThisRun: liveScanDays });
+      const hubRunIndex = cached && typeof cached.hubRunIndex === 'number' ? cached.hubRunIndex : 0;
+      const perRun = Math.max(8, parseInt(process.env.TICKER_AFRICA_HUBS_PER_RUN || '12', 10) || 12);
+      const africaTotal = getTickerAfricaHubs().length;
+      const hubRunsNeeded = Math.max(1, Math.ceil(africaTotal / perRun));
+
+      const payload = await fetchBannerImpactedFlights({
+        maxDaysThisRun: liveScanDays,
+        hubRunIndex,
+      });
       merged = mergeTickerBannerFlights(cachedFlights, payload.flights);
+      nextHubRun = (hubRunIndex + 1) % hubRunsNeeded;
       scanMeta = {
         viewDate: payload.viewDate || parisDateYmd(),
         daysScanned: payload.daysScanned,
         maxDays: payload.maxDays,
+        hubsScanned: payload.hubsScanned,
         dataSource: 'aerodatabox-live',
+        hubRunIndex: nextHubRun,
       };
     } catch (e) {
       console.warn('vol-ticker live scan:', e.message);
@@ -131,7 +144,8 @@ exports.handler = async (event) => {
       merged
     );
 
-    if (merged.length > 0) await writeBlobCache(event, out);
+    out.hubRunIndex = nextHubRun;
+    await writeBlobCache(event, out);
 
     return {
       statusCode: 200,

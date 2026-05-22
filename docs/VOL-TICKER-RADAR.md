@@ -30,8 +30,11 @@ Fonctions radar / bandeau : **60 s** max (`netlify.toml`). Au-delà, le scan est
 
 ## Périmètre
 
-- Hubs bandeau : CDG, ORY, RUN, DSS, DKR, ABJ, ACC, LOS, CMN, BJL.
-- Filtre : trajet **Europe ↔ Afrique** + éligibilité CE 261 + impact (≥ 3 h ou annulé).
+- **Europe** (toujours) : CDG, ORY, RUN.
+- **Afrique subsaharienne** : ~46 hubs (capitales + diaspora) — **hors Maghreb** (pas CMN, ALG, TUN, CAI…).
+- Chaque exécution scanne EU + **12 hubs Afrique** en rotation (~4 runs pour tout couvrir).
+- Filtre : trajet **Europe ↔ Afrique subsaharienne** + CE 261 + retard ≥ 3 h ou annulé.
+- Variable optionnelle : `TICKER_EXTRA_AFRICA_HUBS=XXX,YYY` pour ajouter des IATA.
 
 ## Légal
 
