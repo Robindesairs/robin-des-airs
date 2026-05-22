@@ -313,6 +313,30 @@ a:focus-visible, button:focus-visible, .cb:focus-visible, .reason-btn:focus-visi
   padding-right: 1.5rem;
   flex-shrink: 0;
 }
+.vol-ticker--empty .vol-ticker-rail,
+.vol-ticker--loading .vol-ticker-rail {
+  -webkit-animation: none;
+  animation: none;
+  width: 100%;
+}
+.vol-ticker-empty {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.35rem 0.5rem;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.82);
+  white-space: normal;
+  max-width: 100%;
+}
+@media (min-width: 768px) {
+  .vol-ticker-empty {
+    white-space: nowrap;
+  }
+}
 button.vol-ticker-chip {
   display: inline-flex;
   align-items: center;

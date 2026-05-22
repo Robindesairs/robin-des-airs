@@ -425,23 +425,72 @@ function volTickerRenderList(list) {
   });
   volTickerScheduleMarqueeRestart();
 }
-/** Bandeau : d’abord exemples statiques, puis remplacement par données live /api/vol-ticker si disponibles. */
+function volTickerSetSrKey(i18nKey) {
+  var sr = document.getElementById('vol-ticker-sr');
+  if (sr && window.I18N) sr.textContent = window.I18N.get(i18nKey);
+}
+function volTickerSetBarMode(mode) {
+  var bar = document.getElementById('vol-ticker');
+  if (!bar) return;
+  bar.classList.toggle('vol-ticker--live', mode === 'live');
+  bar.classList.toggle('vol-ticker--empty', mode === 'empty');
+  bar.classList.toggle('vol-ticker--loading', mode === 'loading');
+}
+function volTickerRenderLoading() {
+  if (!window.I18N) return;
+  var g1 = document.getElementById('vol-ticker-g1');
+  var g2 = document.getElementById('vol-ticker-g2');
+  if (!g1 || !g2) return;
+  var msg = volTickerEscapeHtml(window.I18N.get('vol_ticker_loading'));
+  var html =
+    '<p class="vol-ticker-empty" role="status" aria-live="polite">' +
+    '<span class="vol-ticker-dot diaspora-bar-live-dot" aria-hidden="true"></span>' +
+    msg +
+    '</p>';
+  g1.innerHTML = html;
+  g2.innerHTML = '';
+  volTickerSetSrKey('vol_ticker_sr');
+  volTickerSetBarMode('loading');
+  var rail = document.getElementById('vol-ticker-rail');
+  if (rail) {
+    rail.style.webkitAnimation = 'none';
+    rail.style.animation = 'none';
+  }
+}
+function volTickerRenderEmpty() {
+  if (!window.I18N) return;
+  var g1 = document.getElementById('vol-ticker-g1');
+  var g2 = document.getElementById('vol-ticker-g2');
+  if (!g1 || !g2) return;
+  var msg = volTickerEscapeHtml(window.I18N.get('vol_ticker_empty'));
+  var html =
+    '<p class="vol-ticker-empty" role="status" aria-live="polite">' +
+    '<span class="vol-ticker-dot diaspora-bar-live-dot" aria-hidden="true"></span>' +
+    msg +
+    '</p>';
+  g1.innerHTML = html;
+  g2.innerHTML = '';
+  volTickerSetSrKey('vol_ticker_empty_sr');
+  volTickerSetBarMode('empty');
+  var rail = document.getElementById('vol-ticker-rail');
+  if (rail) {
+    rail.style.webkitAnimation = 'none';
+    rail.style.animation = 'none';
+  }
+}
+/** Bandeau : données live /api/vol-ticker uniquement ; message honnête si aucun vol éligible. */
 window.refreshVolTicker = function () {
-  var fallback = window.VOL_TICKER_FLIGHTS || [];
-  var usingFallback = true;
-  if (fallback.length && window.I18N) volTickerRenderList(fallback);
+  volTickerRenderLoading();
   function fetchRadar() {
     volTickerFetchRadar(function (data) {
       var live = volTickerRowsFromRadar(data);
       if (live && live.length >= 1) {
-        usingFallback = false;
         volTickerRenderList(live);
+        volTickerSetSrKey('vol_ticker_sr');
+        volTickerSetBarMode('live');
+        return;
       }
-      var bar = document.getElementById('vol-ticker');
-      if (bar) {
-        bar.classList.toggle('vol-ticker--live', !usingFallback);
-        bar.classList.toggle('vol-ticker--demo', usingFallback);
-      }
+      volTickerRenderEmpty();
     });
   }
   /* Mobile : le radar Netlify peut monopoliser la file (Lighthouse ~9s) ; le fallback statique suffit au LCP. */
