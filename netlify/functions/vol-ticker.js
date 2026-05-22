@@ -1,5 +1,5 @@
 /**
- * Bandeau accueil — jusqu’à 9 vols impactés Europe ↔ Afrique (scan multi-jours + cache).
+ * Bandeau accueil — jusqu’à 9 vols impactés Europe ↔ Afrique (cache Blobs + scan rapide).
  * GET /api/vol-ticker
  */
 
@@ -7,6 +7,7 @@ const { getBlobStore } = require('./lib/netlify-blobs-store');
 
 const STORE_NAME = 'robin-radar-ticker';
 const CACHE_KEY = 'banner/latest.json';
+const TARGET = 9;
 
 const HEADERS = {
   'Content-Type': 'application/json',
@@ -17,6 +18,7 @@ const HEADERS = {
 const {
   fetchBannerImpactedFlights,
   mergeTickerBannerFlights,
+  BANNER_TARGET_COUNT,
   parisDateYmd,
 } = require('./radar');
 
@@ -30,25 +32,27 @@ async function readBlobCache(event) {
   }
 }
 
-async function buildLiveFallback(event) {
-  const cached = await readBlobCache(event);
-  const liveScanDays = Math.min(
-    7,
-    Math.max(1, parseInt(process.env.TICKER_LIVE_SCAN_DAYS || '4', 10) || 4)
-  );
-  const payload = await fetchBannerImpactedFlights({ maxDaysThisRun: liveScanDays });
-  const merged = mergeTickerBannerFlights(cached && cached.flights, payload.flights);
-  return {
-    flights: merged,
-    viewDate: payload.viewDate || parisDateYmd(),
-    daysScanned: payload.daysScanned,
-    maxDays: payload.maxDays,
-    targetCount: payload.targetCount,
+async function writeBlobCache(event, data) {
+  const store = getBlobStore(event, STORE_NAME);
+  if (!store || !data) return false;
+  try {
+    await store.setJSON(CACHE_KEY, data);
+    return true;
+  } catch (e) {
+    console.warn('vol-ticker blob write:', e.message);
+    return false;
+  }
+}
+
+function buildResponse(base, flights) {
+  const list = flights || [];
+  return Object.assign({}, base, {
+    flights: list,
+    count: list.length,
+    targetCount: BANNER_TARGET_COUNT || TARGET,
     updatedAt: new Date().toISOString(),
-    dataSource: 'aerodatabox-live',
     tickerMode: 'eu-africa-impacted',
-    count: merged.length,
-  };
+  });
 }
 
 exports.handler = async (event) => {
@@ -66,37 +70,73 @@ exports.handler = async (event) => {
   }
 
   try {
-    let data = await readBlobCache(event);
+    const cached = await readBlobCache(event);
+    const cachedFlights = (cached && cached.flights) || [];
     const staleHours = parseInt(process.env.TICKER_STALE_HOURS || '30', 10) || 30;
     const staleMs = staleHours * 3600000;
-    const updated = data && data.updatedAt ? Date.parse(data.updatedAt) : 0;
+    const updated = cached && cached.updatedAt ? Date.parse(cached.updatedAt) : 0;
     const isStale = !updated || Date.now() - updated > staleMs;
-    const needsMore =
-      !data || !Array.isArray(data.flights) || data.flights.length < 1 || isStale;
+    const cacheComplete = cachedFlights.length >= (BANNER_TARGET_COUNT || TARGET);
 
-    if (needsMore) {
-      try {
-        data = await buildLiveFallback(event);
-      } catch (e) {
-        console.warn('vol-ticker live fallback:', e.message);
-        if (!data) {
-          return {
-            statusCode: 200,
-            headers: HEADERS,
-            body: JSON.stringify({
-              flights: [],
-              updatedAt: new Date().toISOString(),
-              error: e.message,
-            }),
-          };
-        }
+    /* Cache récent et déjà 9 vols → réponse immédiate (pas de scan lourd). */
+    if (cacheComplete && !isStale) {
+      return {
+        statusCode: 200,
+        headers: HEADERS,
+        body: JSON.stringify(cached),
+      };
+    }
+
+    let merged = cachedFlights;
+    let scanMeta = {};
+
+    try {
+      const liveScanDays = Math.min(
+        3,
+        Math.max(1, parseInt(process.env.TICKER_LIVE_SCAN_DAYS || '2', 10) || 2)
+      );
+      const payload = await fetchBannerImpactedFlights({ maxDaysThisRun: liveScanDays });
+      merged = mergeTickerBannerFlights(cachedFlights, payload.flights);
+      scanMeta = {
+        viewDate: payload.viewDate || parisDateYmd(),
+        daysScanned: payload.daysScanned,
+        maxDays: payload.maxDays,
+        dataSource: 'aerodatabox-live',
+      };
+    } catch (e) {
+      console.warn('vol-ticker live scan:', e.message);
+      if (cachedFlights.length) {
+        scanMeta = { dataSource: 'cache-fallback', error: e.message };
+      } else {
+        return {
+          statusCode: 200,
+          headers: HEADERS,
+          body: JSON.stringify({
+            flights: [],
+            count: 0,
+            updatedAt: new Date().toISOString(),
+            error: e.message,
+          }),
+        };
       }
     }
+
+    const out = buildResponse(
+      Object.assign(
+        {
+          viewDate: parisDateYmd(),
+        },
+        scanMeta
+      ),
+      merged
+    );
+
+    if (merged.length > 0) await writeBlobCache(event, out);
 
     return {
       statusCode: 200,
       headers: HEADERS,
-      body: JSON.stringify(data),
+      body: JSON.stringify(out),
     };
   } catch (e) {
     console.error('vol-ticker:', e);

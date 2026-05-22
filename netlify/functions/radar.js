@@ -428,20 +428,21 @@ function mergeTickerBannerFlights(existingList, incomingList, targetCount) {
   return sortImpactedForTicker(Array.from(byKey.values())).slice(0, target);
 }
 
-/** Scan bandeau pour un jour (départs + arrivées en parallèle par hub, plus rapide que fetchRadarSlot). */
+/** Scan bandeau pour un jour — hubs par lots parallèles (évite timeout Netlify 26 s). */
 async function fetchBannerDayScan(dateYmd) {
   const rapidKey = process.env.RAPIDAPI_KEY || process.env.AERODATABOX_RAPIDAPI_KEY;
   if (!rapidKey) throw new Error('RAPIDAPI_KEY manquant');
   const d = dateYmd || parisDateYmd();
   const from = `${d}T00:00`;
   const to = `${d}T23:59`;
-  const delayMs = Math.max(500, parseInt(process.env.RADAR_API_DELAY_MS || '800', 10) || 800);
+  const delayMs = Math.max(400, parseInt(process.env.RADAR_API_DELAY_MS || '600', 10) || 600);
+  const batchSize = Math.min(5, Math.max(2, parseInt(process.env.TICKER_HUB_BATCH || '4', 10) || 4));
   const allRaw = [];
   const arrivalRaw = [];
 
-  for (const hub of BANNER_HUBS) {
+  async function scanHub(hub) {
     const icao = TICKER_HUB_ICAO[hub] || HUB_ICAO[hub];
-    if (!icao) continue;
+    if (!icao) return;
     const [deps, arrs] = await Promise.all([
       fetchAdbWindow(icao, from, to, 'Departure', rapidKey, hub),
       fetchAdbWindow(icao, from, to, 'Arrival', rapidKey, hub),
@@ -454,7 +455,12 @@ async function fetchBannerDayScan(dateYmd) {
       const n = normalizeAdbFlight(r, { direction: 'Arrival', hubIata: hub });
       if (n) arrivalRaw.push(n);
     }
-    await sleepMs(delayMs);
+  }
+
+  for (let i = 0; i < BANNER_HUBS.length; i += batchSize) {
+    const chunk = BANNER_HUBS.slice(i, i + batchSize);
+    await Promise.all(chunk.map(scanHub));
+    if (i + batchSize < BANNER_HUBS.length) await sleepMs(delayMs);
   }
 
   return assembleFlightsFromRaw(allRaw, arrivalRaw);
@@ -917,6 +923,7 @@ exports.sortImpactedForTicker = sortImpactedForTicker;
 exports.flightDedupeKey = flightDedupeKey;
 exports.parisDateYmd = parisDateYmd;
 exports.parisDateAddDays = parisDateAddDays;
+exports.fetchBannerDayScan = fetchBannerDayScan;
 exports.isEuAfricaRoute = isEuAfricaRoute;
 exports.getCountry = getCountry;
 exports.isEurope = isEurope;

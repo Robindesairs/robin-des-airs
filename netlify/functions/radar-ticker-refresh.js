@@ -8,11 +8,7 @@ const { getBlobStore } = require('./lib/netlify-blobs-store');
 const STORE_NAME = 'robin-radar-ticker';
 const CACHE_KEY = 'banner/latest.json';
 
-const {
-  fetchBannerImpactedFlights,
-  mergeTickerBannerFlights,
-  parisDateYmd,
-} = require('./radar');
+const { mergeTickerBannerFlights, parisDateYmd } = require('./radar');
 
 async function loadCached(store) {
   try {
@@ -24,17 +20,31 @@ async function loadCached(store) {
 
 async function buildTickerCache(store) {
   const cached = store ? await loadCached(store) : null;
-  const payload = await fetchBannerImpactedFlights();
-  const bannerFlights = mergeTickerBannerFlights(cached && cached.flights, payload.flights);
+  const maxDays = Math.min(14, Math.max(1, parseInt(process.env.TICKER_HISTORY_DAYS || '7', 10) || 7));
+  let offset = cached && typeof cached.scanDayOffset === 'number' ? cached.scanDayOffset : 0;
+  if (offset >= maxDays) offset = 0;
+
+  const { fetchBannerDayScan, filterImpactedEuAfricaFlights, parisDateAddDays } = require('./radar');
+  const dayYmd = parisDateAddDays(-offset);
+  let incoming = [];
+  try {
+    const dayPayload = await fetchBannerDayScan(dayYmd);
+    incoming = filterImpactedEuAfricaFlights(dayPayload.flights || []);
+  } catch (e) {
+    console.warn('radar-ticker-refresh day', dayYmd, e.message);
+  }
+
+  const bannerFlights = mergeTickerBannerFlights(cached && cached.flights, incoming);
   const now = new Date();
+  const nextOffset = bannerFlights.length >= 9 ? 0 : offset + 1;
 
   return {
     flights: bannerFlights,
-    allImpacted: payload.allImpacted || bannerFlights,
-    viewDate: payload.viewDate || parisDateYmd(),
-    daysScanned: payload.daysScanned,
-    maxDays: payload.maxDays,
-    targetCount: payload.targetCount,
+    viewDate: parisDateYmd(),
+    scanDayOffset: nextOffset,
+    lastScanDate: dayYmd,
+    maxDays,
+    targetCount: 9,
     updatedAt: now.toISOString(),
     refreshedAt: now.toISOString(),
     dataSource: 'aerodatabox',
