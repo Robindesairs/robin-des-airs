@@ -220,6 +220,23 @@ function origin() {
   return window.location.origin || 'https://robindesairs.eu';
 }
 
+function isLocalHost() {
+  var h = window.location.hostname || '';
+  return h === 'localhost' || h === '127.0.0.1' || h === '0.0.0.0';
+}
+
+function toHref(url, localMode) {
+  if (!url || url.indexOf('http') === 0) return url;
+  if (!localMode) return origin() + url;
+  var u = url;
+  if (u === '/' || u === '/en') return origin() + '/index.html';
+  if (u.endsWith('/')) return origin() + u + 'index.html';
+  var slash = u.lastIndexOf('/');
+  if (slash > 0 && u.indexOf('.', slash) === -1) return origin() + u + '.html';
+  if (u.indexOf('.') === -1 && slash <= 0) return origin() + u + '.html';
+  return origin() + u;
+}
+
 function esc(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 }
