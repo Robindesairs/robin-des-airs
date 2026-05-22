@@ -9,7 +9,7 @@
 
 ## Timeout Netlify
 
-Fonctions radar / bandeau : **60 s** max (`netlify.toml`). Au-delà, le scan est découpé (cron 1 jour + cache Blobs) pour ne pas bloquer le visiteur.
+Fonctions radar / bandeau : **26 s** max Netlify (`netlify.toml` ; 60 s uniquement sur offre Pro). Le scan est découpé (cron 1 jour + cache Blobs) pour ne pas dépasser le timeout.
 
 ## Variables Netlify (optionnel)
 

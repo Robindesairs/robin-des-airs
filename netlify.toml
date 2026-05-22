@@ -9,29 +9,24 @@
   directory = "netlify/functions"
   # nft trace les require au chargement du module ; esbuild omettait @netlify/blobs dans le zip
   node_bundler = "nft"
-  # Max exécution synchrone Netlify (doc 2025 : jusqu’à 60 s). Au-delà → cron / background.
-  timeout = 60
+  # Timeout synchrone : max 26 s (tous plans). 60 s = Pro + réglage UI — ne pas mettre timeout=60 ici (échec parse deploy).
 
 # Relais Gemini après ~20s sans réponse humaine (traitement toutes les minutes)
 [functions."whatsapp-gemini-fallback"]
   schedule = "* * * * *"
 
 # Radar : 8h bandeau+email, 16-17h EU→AF, 18h-2h AF→EU (heure Paris, cron chaque heure :05 UTC)
-[functions."radar"]
-  timeout = 60
-
 [functions."radar-monitor"]
   schedule = "5 * * * *"
-  timeout = 60
 
 [functions."daily-radar-snapshot"]
-  timeout = 60
+  timeout = 26
 
 [functions."radar-ticker-refresh"]
-  timeout = 60
+  timeout = 26
 
 [functions."vol-ticker"]
-  timeout = 60
+  timeout = 26
 
 [build]
   publish = "."
