@@ -104,6 +104,7 @@ Dernière mise à jour : mai 2026. URLs publiques sans `.html` quand une règle 
 | `/crm.html` | → `/crm/` | Redirection 301. |
 | `/generateur-pub.html` | `generateur-pub.html` | Générateur visuels pub (marketing). |
 | `/verification-fonctions.html` | `verification-fonctions.html` | Checklist fonctions Netlify (dev). |
+| `/navigation-interne` ou `/interne` | `navigation-interne.html` | **Hub navigation** : tous les liens du site + filtre + tests API. |
 | `/src/views/dashboard.html` | `src/views/dashboard.html` | Vue dashboard (source / hors prod directe). |
 
 ---

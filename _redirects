@@ -1,3 +1,7 @@
+# Hub navigation interne (équipe — noindex)
+/navigation-interne    /navigation-interne.html    200
+/interne               /navigation-interne.html    200
+
 # Accueil anglais (URL /en — même page, langue EN via i18n.js)
 /en    /index.html    200
 
