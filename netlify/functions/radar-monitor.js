@@ -26,26 +26,22 @@ const {
   summarizeFlight,
 } = require('./lib/radar-fetch-slot');
 
-const {
-  parisDateYmd,
-  parisDateAddDays,
-  fetchRadarFlightsForDate,
-} = require('./radar');
+const { parisDateYmd, parisDateAddDays, fetchBannerImpactedFlights } = require('./radar');
 
 const { saveBanner, appendSlotLog, loadDayLogs } = require('./lib/radar-monitor-store');
 const { sendRadarMorningReport } = require('./lib/radar-report-email');
+const { recordMorningBanner, recordSlotScan, loadStatsReport } = require('./lib/radar-stats-store');
 
 async function buildMorningBanner() {
-  const payload = await fetchRadarFlightsForDate(parisDateYmd());
-  const impacted = sortImpactedForTicker(filterImpactedEuAfricaFlights(payload.flights || []));
-  const bannerFlights = impacted.slice(0, 10);
+  const payload = await fetchBannerImpactedFlights({ maxDaysThisRun: 2, hubRunIndex: 0 });
+  const bannerFlights = payload.flights || [];
   return {
     flights: bannerFlights,
-    allImpacted: impacted.slice(0, 30),
+    allImpacted: payload.allImpacted || bannerFlights,
     viewDate: payload.viewDate || parisDateYmd(),
     updatedAt: new Date().toISOString(),
     dataSource: 'aerodatabox',
-    tickerMode: 'eu-africa-impacted',
+    tickerMode: 'eu-africa-subsaharan-impacted',
     count: bannerFlights.length,
   };
 }
@@ -116,10 +112,15 @@ async function runMorning(event, parisHour, dateYmd) {
     top: (s.alerts || []).slice(0, 3),
   }));
 
+  const statsDays = parseInt(process.env.RADAR_STATS_DAYS || '14', 10) || 14;
+  await recordMorningBanner(event, { dateYmd, banner: cache });
+  const statsReport = await loadStatsReport(event, statsDays);
+
   const email = await sendRadarMorningReport({
     banner: cache,
     dayLog,
     slotSummary,
+    statsReport,
     parisDate: dateYmd,
     parisHour,
   });
@@ -196,6 +197,7 @@ exports.handler = async (event) => {
         windows,
       });
       await appendSlotLog(event, entry);
+      await recordSlotScan(event, entry);
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
@@ -213,6 +215,7 @@ exports.handler = async (event) => {
         windows,
       });
       await appendSlotLog(event, entry);
+      await recordSlotScan(event, entry);
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },

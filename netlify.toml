@@ -17,17 +17,21 @@
   schedule = "* * * * *"
 
 # Radar : 8h bandeau+email, 16-17h EU→AF, 18h-2h AF→EU (heure Paris, cron chaque heure :05 UTC)
+[functions."radar"]
+  timeout = 60
+
 [functions."radar-monitor"]
   schedule = "5 * * * *"
+  timeout = 60
 
 [functions."daily-radar-snapshot"]
-  timeout = 26
+  timeout = 60
 
 [functions."radar-ticker-refresh"]
-  timeout = 26
+  timeout = 60
 
 [functions."vol-ticker"]
-  timeout = 26
+  timeout = 60
 
 [build]
   publish = "."
@@ -213,6 +217,11 @@
 [[redirects]]
   from = "/api/radar-monitor"
   to = "/.netlify/functions/radar-monitor"
+  status = 200
+
+[[redirects]]
+  from = "/api/radar-stats"
+  to = "/.netlify/functions/radar-stats"
   status = 200
 
 # Webhook WhatsApp 360dialog
