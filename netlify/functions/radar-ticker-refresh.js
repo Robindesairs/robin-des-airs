@@ -1,5 +1,5 @@
 /**
- * Mise à jour quotidienne du bandeau « 10 derniers vols impactés » Europe ↔ Afrique.
+ * Mise à jour quotidienne du bandeau — jusqu’à 9 vols EU↔AF impactés (scan multi-jours).
  * Planifié via netlify.toml (cron). Stocke le résultat dans Netlify Blobs.
  */
 
@@ -9,9 +9,8 @@ const STORE_NAME = 'robin-radar-ticker';
 const CACHE_KEY = 'banner/latest.json';
 
 const {
-  fetchRadarFlightsForDate,
-  filterImpactedEuAfricaFlights,
-  sortImpactedForTicker,
+  fetchBannerImpactedFlights,
+  mergeTickerBannerFlights,
   parisDateYmd,
 } = require('./radar');
 
@@ -23,16 +22,19 @@ async function loadCached(store) {
   }
 }
 
-async function buildTickerCache() {
-  const payload = await fetchRadarFlightsForDate(parisDateYmd());
-  const merged = sortImpactedForTicker(filterImpactedEuAfricaFlights(payload.flights || []));
-  const bannerFlights = merged.slice(0, 10);
+async function buildTickerCache(store) {
+  const cached = store ? await loadCached(store) : null;
+  const payload = await fetchBannerImpactedFlights();
+  const bannerFlights = mergeTickerBannerFlights(cached && cached.flights, payload.flights);
   const now = new Date();
 
   return {
     flights: bannerFlights,
-    allImpacted: merged.slice(0, 30),
+    allImpacted: payload.allImpacted || bannerFlights,
     viewDate: payload.viewDate || parisDateYmd(),
+    daysScanned: payload.daysScanned,
+    maxDays: payload.maxDays,
+    targetCount: payload.targetCount,
     updatedAt: now.toISOString(),
     refreshedAt: now.toISOString(),
     dataSource: 'aerodatabox',
@@ -51,11 +53,11 @@ exports.handler = async (event) => {
   }
 
   try {
-    const cache = await buildTickerCache();
+    const store = getBlobStore(event, STORE_NAME);
+    const cache = await buildTickerCache(store);
 
     let blobSaved = false;
     let blobError = null;
-    const store = getBlobStore(event, STORE_NAME);
     if (store) {
       try {
         await store.setJSON(CACHE_KEY, cache);
@@ -77,6 +79,7 @@ exports.handler = async (event) => {
         blobSaved,
         blobError,
         count: cache.count,
+        daysScanned: cache.daysScanned,
         updatedAt: cache.updatedAt,
         flights: cache.flights.map((f) => ({
           flight: f.flight,

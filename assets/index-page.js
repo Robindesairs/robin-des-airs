@@ -250,25 +250,16 @@ function volTickerFormatDelayMinutes(m) {
 /**
  * Transforme la réponse JSON de /.netlify/functions/radar en lignes bandeau.
  * Filtre : trajets éligibles Robin (EU↔Afrique selon radar) + annulation ou retard ≥ 3 h (seuil type CE 261 retard important ; basé sur les retards exposés par l’API radar).
- * Source : GET /api/vol-ticker (cache quotidien 7 j, 10 vols EU↔Afrique impactés).
+ * Source : GET /api/vol-ticker (jusqu’à 9 vols EU↔Afrique impactés, scan multi-jours côté serveur).
  */
+var VOL_TICKER_MAX_CHIPS = 9;
 function volTickerRowsFromRadar(data) {
   ensureRouteAmountBuilt();
   if (!data || !Array.isArray(data.flights) || !data.flights.length) return null;
   var viewDate = data.viewDate || new Date().toISOString().slice(0, 10);
-  var minDelayCe261 = 180; /* 3 h — retard important (indicatif : données = horaires API, pas jugement juridique) */
-  var rows = data.flights.filter(function (f) {
-    if (!f || !f.eligible) return false;
-    if (f.cancelled) return true;
-    var d = f.delayMinutes;
-    return d != null && d >= minDelayCe261;
-  });
+  var rows = data.flights.slice();
   if (!rows.length) return null;
-  rows.sort(function (a, b) {
-    if (!!a.cancelled !== !!b.cancelled) return a.cancelled ? -1 : 1;
-    return (b.delayMinutes || 0) - (a.delayMinutes || 0);
-  });
-  return rows.slice(0, 10).map(function (f) {
+  return rows.slice(0, VOL_TICKER_MAX_CHIPS).map(function (f) {
     var fn = String(f.flight || '').replace(/\s/g, '');
     var dep = (f.dep || '').toUpperCase();
     var arr = (f.arr || '').toUpperCase();
@@ -356,8 +347,8 @@ function volTickerRenderList(list) {
   var tA = get('vol_ticker_annul');
   var titleRaw = get('vol_ticker_chip_title');
   var titleAttrBase = String(titleRaw).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
-  /* 10 derniers vols impactés (tri date décroissante, pas de mélange aléatoire). */
-  var picked = volTickerSortRowsByDateDesc(list).slice(0, 10);
+  /* Jusqu’à 9 vols impactés (tri date décroissante — les plus récents remplacent les anciens côté API). */
+  var picked = volTickerSortRowsByDateDesc(list).slice(0, VOL_TICKER_MAX_CHIPS);
   var en = window.I18N && window.I18N.getLang && window.I18N.getLang() === 'en';
   var sepDot = ' · ';
   var parts = picked.map(function (row) {

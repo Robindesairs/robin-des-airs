@@ -1,5 +1,5 @@
 /**
- * Bandeau accueil — 10 derniers vols impactés Europe ↔ Afrique (cache quotidien).
+ * Bandeau accueil — jusqu’à 9 vols impactés Europe ↔ Afrique (scan multi-jours + cache).
  * GET /api/vol-ticker
  */
 
@@ -15,9 +15,8 @@ const HEADERS = {
 };
 
 const {
-  fetchRadarFlightsForDate,
-  filterImpactedEuAfricaFlights,
-  sortImpactedForTicker,
+  fetchBannerImpactedFlights,
+  mergeTickerBannerFlights,
   parisDateYmd,
 } = require('./radar');
 
@@ -31,17 +30,24 @@ async function readBlobCache(event) {
   }
 }
 
-async function buildLiveFallback() {
-  const payload = await fetchRadarFlightsForDate(parisDateYmd());
-  const impacted = filterImpactedEuAfricaFlights(payload.flights || []);
-  const sorted = sortImpactedForTicker(impacted).slice(0, 10);
+async function buildLiveFallback(event) {
+  const cached = await readBlobCache(event);
+  const liveScanDays = Math.min(
+    7,
+    Math.max(1, parseInt(process.env.TICKER_LIVE_SCAN_DAYS || '4', 10) || 4)
+  );
+  const payload = await fetchBannerImpactedFlights({ maxDaysThisRun: liveScanDays });
+  const merged = mergeTickerBannerFlights(cached && cached.flights, payload.flights);
   return {
-    flights: sorted,
+    flights: merged,
     viewDate: payload.viewDate || parisDateYmd(),
+    daysScanned: payload.daysScanned,
+    maxDays: payload.maxDays,
+    targetCount: payload.targetCount,
     updatedAt: new Date().toISOString(),
     dataSource: 'aerodatabox-live',
     tickerMode: 'eu-africa-impacted',
-    count: sorted.length,
+    count: merged.length,
   };
 }
 
@@ -65,10 +71,12 @@ exports.handler = async (event) => {
     const staleMs = staleHours * 3600000;
     const updated = data && data.updatedAt ? Date.parse(data.updatedAt) : 0;
     const isStale = !updated || Date.now() - updated > staleMs;
+    const needsMore =
+      !data || !Array.isArray(data.flights) || data.flights.length < 1 || isStale;
 
-    if (!data || !Array.isArray(data.flights) || !data.flights.length || isStale) {
+    if (needsMore) {
       try {
-        data = await buildLiveFallback();
+        data = await buildLiveFallback(event);
       } catch (e) {
         console.warn('vol-ticker live fallback:', e.message);
         if (!data) {

@@ -24,6 +24,9 @@
 [functions."radar-ticker-refresh"]
   timeout = 26
 
+[functions."vol-ticker"]
+  timeout = 26
+
 [build]
   publish = "."
   # S'assurer que les deps (dont @netlify/blobs) sont présentes avant le bundle des fonctions

@@ -409,33 +409,109 @@ function sortImpactedForTicker(flights) {
 
 /** Hubs bandeau matin (conso réduite, timeout Netlify). */
 const BANNER_HUBS = ['CDG', 'ORY', 'RUN', 'DSS', 'DKR', 'ABJ', 'ACC', 'LOS', 'CMN', 'BJL'];
+const BANNER_TARGET_COUNT = Math.min(9, Math.max(1, parseInt(process.env.TICKER_BANNER_COUNT || '9', 10) || 9));
 
-async function fetchRadarFlightsForDate(dateYmd) {
-  const day = dateYmd || parisDateYmd();
-  const daysBack = Math.min(2, Math.max(1, parseInt(process.env.TICKER_HISTORY_DAYS || '1', 10) || 1));
+/** Fusionne cache + scan : les vols les plus récents remplacent les plus anciens (max 9). */
+function mergeTickerBannerFlights(existingList, incomingList, targetCount) {
+  const target = targetCount != null ? targetCount : BANNER_TARGET_COUNT;
   const byKey = new Map();
+  const add = (f) => {
+    if (!f) return;
+    const k = flightDedupeKey(f);
+    const prev = byKey.get(k);
+    if (!prev || String(f.scheduledDate || '').localeCompare(String(prev.scheduledDate || '')) > 0) {
+      byKey.set(k, f);
+    }
+  };
+  (incomingList || []).forEach(add);
+  (existingList || []).forEach(add);
+  return sortImpactedForTicker(Array.from(byKey.values())).slice(0, target);
+}
 
-  for (let offset = 0; offset < daysBack; offset++) {
+/** Scan bandeau pour un jour (départs + arrivées en parallèle par hub, plus rapide que fetchRadarSlot). */
+async function fetchBannerDayScan(dateYmd) {
+  const rapidKey = process.env.RAPIDAPI_KEY || process.env.AERODATABOX_RAPIDAPI_KEY;
+  if (!rapidKey) throw new Error('RAPIDAPI_KEY manquant');
+  const d = dateYmd || parisDateYmd();
+  const from = `${d}T00:00`;
+  const to = `${d}T23:59`;
+  const delayMs = Math.max(500, parseInt(process.env.RADAR_API_DELAY_MS || '800', 10) || 800);
+  const allRaw = [];
+  const arrivalRaw = [];
+
+  for (const hub of BANNER_HUBS) {
+    const icao = TICKER_HUB_ICAO[hub] || HUB_ICAO[hub];
+    if (!icao) continue;
+    const [deps, arrs] = await Promise.all([
+      fetchAdbWindow(icao, from, to, 'Departure', rapidKey, hub),
+      fetchAdbWindow(icao, from, to, 'Arrival', rapidKey, hub),
+    ]);
+    for (const r of deps) {
+      const n = normalizeAdbFlight(r, { direction: 'Departure', hubIata: hub });
+      if (n) allRaw.push(n);
+    }
+    for (const r of arrs) {
+      const n = normalizeAdbFlight(r, { direction: 'Arrival', hubIata: hub });
+      if (n) arrivalRaw.push(n);
+    }
+    await sleepMs(delayMs);
+  }
+
+  return assembleFlightsFromRaw(allRaw, arrivalRaw);
+}
+
+/**
+ * Bandeau : remonte les jours passés (Paris) jusqu’à trouver target vols EU↔AF impactés (≥ 3 h ou annulé).
+ */
+async function fetchBannerImpactedFlights(opts) {
+  const target = opts && opts.targetCount != null ? opts.targetCount : BANNER_TARGET_COUNT;
+  const maxDays = Math.min(
+    14,
+    Math.max(1, parseInt(process.env.TICKER_HISTORY_DAYS || '7', 10) || 7)
+  );
+  const maxDaysThisRun =
+    opts && opts.maxDaysThisRun != null
+      ? Math.min(maxDays, opts.maxDaysThisRun)
+      : maxDays;
+  const byKey = new Map();
+  let daysScanned = 0;
+
+  for (let offset = 0; offset < maxDaysThisRun; offset++) {
+    if (byKey.size >= target) break;
+    daysScanned = offset + 1;
     const d = parisDateAddDays(-offset);
-    const payload = await fetchRadarSlot({
-      dateYmd: d,
-      hubs: BANNER_HUBS,
-      windows: [[`${d}T00:00`, `${d}T23:59`]],
-      directions: ['Departure', 'Arrival'],
-    });
-    const impacted = filterImpactedEuAfricaFlights(payload.flights || []);
-    for (const f of impacted) {
-      const k = flightDedupeKey(f);
-      if (!byKey.has(k)) byKey.set(k, f);
+    try {
+      const payload = await fetchBannerDayScan(d);
+      const impacted = filterImpactedEuAfricaFlights(payload.flights || []);
+      for (const f of impacted) {
+        const k = flightDedupeKey(f);
+        if (!byKey.has(k)) byKey.set(k, f);
+        if (byKey.size >= target) break;
+      }
+    } catch (e) {
+      console.warn('fetchBannerImpactedFlights', d, e.message);
     }
   }
 
+  const all = sortImpactedForTicker(Array.from(byKey.values()));
+  const banner = all.slice(0, target);
   return {
-    flights: Array.from(byKey.values()),
-    viewDate: day,
+    flights: banner,
+    allImpacted: all,
+    viewDate: parisDateYmd(),
+    daysScanned,
+    maxDays,
+    targetCount: target,
     updatedAt: new Date().toISOString(),
     dataSource: 'aerodatabox',
+    tickerMode: 'eu-africa-impacted',
+    count: banner.length,
   };
+}
+
+/** @deprecated alias — utilise fetchBannerImpactedFlights (multi-jours, 9 vols). */
+async function fetchRadarFlightsForDate(_dateYmd) {
+  return fetchBannerImpactedFlights();
 }
 
 /** Extrait HH:mm d'une chaîne ISO (ex. 2024-01-15T10:30:00) ou "HH:mm" */
@@ -832,6 +908,9 @@ exports.handler = async (event) => {
 };
 
 exports.fetchRadarFlightsForDate = fetchRadarFlightsForDate;
+exports.fetchBannerImpactedFlights = fetchBannerImpactedFlights;
+exports.mergeTickerBannerFlights = mergeTickerBannerFlights;
+exports.BANNER_TARGET_COUNT = BANNER_TARGET_COUNT;
 exports.fetchRadarSlot = fetchRadarSlot;
 exports.filterImpactedEuAfricaFlights = filterImpactedEuAfricaFlights;
 exports.sortImpactedForTicker = sortImpactedForTicker;
