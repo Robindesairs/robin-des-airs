@@ -9,6 +9,8 @@
   directory = "netlify/functions"
   # nft trace les require au chargement du module ; esbuild omettait @netlify/blobs dans le zip
   node_bundler = "nft"
+  # Max exécution synchrone Netlify (doc 2025 : jusqu’à 60 s). Au-delà → cron / background.
+  timeout = 60
 
 # Relais Gemini après ~20s sans réponse humaine (traitement toutes les minutes)
 [functions."whatsapp-gemini-fallback"]

@@ -7,6 +7,10 @@
 3. **Cache Blobs** : fusion avec l’historique — les **vols les plus récents** remplacent les plus anciens (max 9).
 4. **Si 0 vol** après scan : message *« Aucun vol EU–Afrique ≥ 3 h détecté aujourd’hui »* (plus d’exemples fictifs).
 
+## Timeout Netlify
+
+Fonctions radar / bandeau : **60 s** max (`netlify.toml`). Au-delà, le scan est découpé (cron 1 jour + cache Blobs) pour ne pas bloquer le visiteur.
+
 ## Variables Netlify (optionnel)
 
 | Variable | Défaut | Rôle |
