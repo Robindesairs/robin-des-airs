@@ -44,6 +44,13 @@ const HUB_ICAO = {
   RUN: 'FMEE'
 };
 
+/** ICAO → IATA (AeroDataBox renvoie souvent icaoV2 sans iata sur departure/arrival). */
+const ICAO_TO_IATA = {};
+function registerIcaoMap(iata, icao) {
+  if (!iata || !icao) return;
+  ICAO_TO_IATA[String(icao).toUpperCase()] = String(iata).toUpperCase().slice(0, 3);
+}
+
 function parisDateYmd() {
   const parts = new Intl.DateTimeFormat('en-CA', {
     timeZone: 'Europe/Paris',
@@ -57,19 +64,48 @@ function parisDateYmd() {
   return `${y}-${m}-${d}`;
 }
 
+const ADB_TIME_KEYS = [
+  'scheduledTime',
+  'actualTime',
+  'estimatedTime',
+  'revisedTime',
+  'runwayTime',
+  'scheduledTimeUtc',
+  'scheduledTimeLocal',
+  'actualTimeUtc',
+  'actualTimeLocal',
+  'estimatedTimeUtc',
+  'estimatedTimeLocal',
+  'revisedTimeUtc',
+  'revisedTimeLocal',
+  'runwayTimeUtc',
+  'runwayTimeLocal'
+];
+
 /** Extrait une datetime ISO depuis les champs AeroDataBox (string ou { utc, local }). */
 function adbTimeIso(section, keys) {
   if (!section) return null;
-  for (const k of keys) {
+  const keyList = keys && keys.length ? keys : ADB_TIME_KEYS;
+  for (const k of keyList) {
     const v = section[k];
     if (v == null) continue;
     if (typeof v === 'string' && v.length >= 10) return v.includes('T') ? v : null;
     if (typeof v === 'object' && (v.utc || v.local)) return v.utc || v.local;
   }
-  const nested = section.scheduledTime || section.actualTime || section.estimatedTime || section.revisedTime;
-  if (nested && typeof nested === 'object' && (nested.utc || nested.local)) return nested.utc || nested.local;
-  if (typeof nested === 'string') return nested;
   return null;
+}
+
+function airportIataFromAp(ap, section) {
+  if (!ap || typeof ap !== 'object') ap = {};
+  let iata = String(ap.iata || ap.code || ap.iataCode || '').replace(/\s/g, '').toUpperCase();
+  if (iata.length >= 3) return iata.slice(0, 3);
+  if (section && typeof section === 'object') {
+    const s = String(section.iataCode || section.iata || '').replace(/\s/g, '').toUpperCase();
+    if (s.length >= 3) return s.slice(0, 3);
+  }
+  const icao = String(ap.icaoV2 || ap.icao || '').toUpperCase();
+  if (icao && ICAO_TO_IATA[icao]) return ICAO_TO_IATA[icao];
+  return '';
 }
 
 function adbStatusToAe(statusRaw) {
@@ -82,24 +118,31 @@ function adbStatusToAe(statusRaw) {
 }
 
 /** Vol brut AeroDataBox → même forme que Aviation Edge pour le reste du pipeline. */
-function normalizeAdbFlight(raw) {
+function normalizeAdbFlight(raw, ctx) {
   if (!raw || typeof raw !== 'object') return null;
   const dep = raw.departure || {};
   const arr = raw.arrival || {};
   const depAp = dep.airport || {};
   const arrAp = arr.airport || {};
-  const depIata = String(depAp.iata || dep.iataCode || '').toUpperCase().slice(0, 3);
-  const arrIata = String(arrAp.iata || arr.iataCode || '').toUpperCase().slice(0, 3);
+  let depIata = airportIataFromAp(depAp, dep);
+  let arrIata = airportIataFromAp(arrAp, arr);
+  const hub = ctx && ctx.hubIata ? String(ctx.hubIata).toUpperCase().slice(0, 3) : '';
+  const direction = ctx && ctx.direction;
+  if (!depIata && direction === 'Departure' && hub) depIata = hub;
+  if (!arrIata && direction === 'Arrival' && hub) arrIata = hub;
+  if (!depIata && !arrIata) return null;
 
-  const schedDep = adbTimeIso(dep, ['scheduledTimeUtc', 'scheduledTimeLocal']);
-  const actDep = adbTimeIso(dep, ['actualTimeUtc', 'actualTimeLocal', 'runwayTimeUtc', 'runwayTimeLocal']);
+  const schedDep = adbTimeIso(dep, ADB_TIME_KEYS);
+  const actDep = adbTimeIso(dep, ['actualTime', 'runwayTime', 'actualTimeUtc', 'actualTimeLocal', 'runwayTimeUtc', 'runwayTimeLocal']);
   const estDep =
-    adbTimeIso(dep, ['estimatedTimeUtc', 'estimatedTimeLocal', 'revisedTimeUtc', 'revisedTimeLocal']) || actDep;
+    adbTimeIso(dep, ['estimatedTime', 'revisedTime', 'estimatedTimeUtc', 'estimatedTimeLocal', 'revisedTimeUtc', 'revisedTimeLocal']) ||
+    actDep;
 
-  const schedArr = adbTimeIso(arr, ['scheduledTimeUtc', 'scheduledTimeLocal']);
-  const actArr = adbTimeIso(arr, ['actualTimeUtc', 'actualTimeLocal', 'runwayTimeUtc', 'runwayTimeLocal']);
+  const schedArr = adbTimeIso(arr, ADB_TIME_KEYS);
+  const actArr = adbTimeIso(arr, ['actualTime', 'runwayTime', 'actualTimeUtc', 'actualTimeLocal', 'runwayTimeUtc', 'runwayTimeLocal']);
   const estArr =
-    adbTimeIso(arr, ['estimatedTimeUtc', 'estimatedTimeLocal', 'revisedTimeUtc', 'revisedTimeLocal']) || actArr;
+    adbTimeIso(arr, ['estimatedTime', 'revisedTime', 'estimatedTimeUtc', 'estimatedTimeLocal', 'revisedTimeUtc', 'revisedTimeLocal']) ||
+    actArr;
 
   const airline = raw.airline || {};
   let iataAirline = String(airline.iata || '').toUpperCase().slice(0, 2);
@@ -140,7 +183,7 @@ function sleepMs(ms) {
 
 const { aerodataboxHost } = require('./lib/adb-host');
 
-async function fetchAdbWindow(icao, from, to, direction, rapidKey) {
+async function fetchAdbWindow(icao, from, to, direction, rapidKey, hubIata) {
   const host = aerodataboxHost();
   const params = new URLSearchParams({
     withLeg: 'true',
@@ -204,9 +247,9 @@ async function fetchRadarSlot({ dateYmd, hubs, windows, directions }) {
       for (const dir of dirs) {
         await sleepMs(delayMs);
         apiRequests += 1;
-        const rows = await fetchAdbWindow(icao, a, b, dir, rapidKey);
+        const rows = await fetchAdbWindow(icao, a, b, dir, rapidKey, hub);
         for (const r of rows) {
-          const n = normalizeAdbFlight(r);
+          const n = normalizeAdbFlight(r, { direction: dir, hubIata: hub });
           if (!n) continue;
           if (dir === 'Arrival') arrivalRaw.push(n);
           else allRaw.push(n);
@@ -237,6 +280,7 @@ const TICKER_HUB_ICAO = Object.assign({}, HUB_ICAO, {
   MAD: 'LEMD',
   FCO: 'LIRF',
 });
+for (const [iata, icao] of Object.entries(TICKER_HUB_ICAO)) registerIcaoMap(iata, icao);
 
 async function fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, dateStr, hubList) {
   const day = dateStr || parisDateYmd();
@@ -250,15 +294,15 @@ async function fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, dateStr, hubLis
     if (!icao) continue;
     for (const [a, b] of windows) {
       const [deps, arrs] = await Promise.all([
-        fetchAdbWindow(icao, a, b, 'Departure', rapidKey),
-        fetchAdbWindow(icao, a, b, 'Arrival', rapidKey)
+        fetchAdbWindow(icao, a, b, 'Departure', rapidKey, hub),
+        fetchAdbWindow(icao, a, b, 'Arrival', rapidKey, hub)
       ]);
       for (const r of deps) {
-        const n = normalizeAdbFlight(r);
+        const n = normalizeAdbFlight(r, { direction: 'Departure', hubIata: hub });
         if (n) allRaw.push(n);
       }
       for (const r of arrs) {
-        const n = normalizeAdbFlight(r);
+        const n = normalizeAdbFlight(r, { direction: 'Arrival', hubIata: hub });
         if (n) arrivalRaw.push(n);
       }
     }
@@ -513,12 +557,17 @@ async function assembleFlightsFromRaw(allRaw, arrivalRaw) {
       const routeKey = depIata + arrIata + (dep.scheduledTime || '');
 
       const effectiveTime = dep.actualTime || dep.estimatedTime;
-      let delayMinutes = delayMinutesFromTimes(dep.scheduledTime, effectiveTime);
+      let delayMinutes = delayMinutesFromTimes(arr.scheduledTime, arr.actualTime || arr.estimatedTime);
+      if (delayMinutes == null) {
+        delayMinutes = delayMinutesFromTimes(dep.scheduledTime, effectiveTime);
+      }
       if (delayMinutes == null) {
         delayMinutes = 0;
         if (typeof arr.delay === 'number') delayMinutes = arr.delay;
         else if (typeof dep.delay === 'number') delayMinutes = dep.delay;
       }
+      if (typeof arr.delay === 'number') delayMinutes = Math.max(delayMinutes || 0, arr.delay);
+      if (typeof dep.delay === 'number') delayMinutes = Math.max(delayMinutes || 0, dep.delay);
       if (typeof dep.delay === 'string' && dep.delay !== '' && !isNaN(Number(dep.delay))) {
         delayMinutes = Math.max(delayMinutes || 0, Number(dep.delay));
       }
@@ -527,10 +576,6 @@ async function assembleFlightsFromRaw(allRaw, arrivalRaw) {
       }
 
       const statusRaw = (f.status || '').toLowerCase();
-      if (statusRaw === 'landed' || statusRaw === 'arrived') {
-        const arrDm = delayMinutesFromTimes(arr.scheduledTime, arr.actualTime || arr.estimatedTime);
-        if (arrDm != null) delayMinutes = Math.max(delayMinutes || 0, arrDm);
-      }
       const cancelled = statusRaw === 'cancelled' || statusRaw === 'canceled' || statusRaw === 'annulé';
       const hasActualDep = !!(dep.actualTime);
       const flightStatus = cancelled ? 'cancelled' : (hasActualDep ? 'departed' : 'scheduled');
@@ -607,10 +652,18 @@ async function assembleFlightsFromRaw(allRaw, arrivalRaw) {
       const effectiveArr = arr.actualTime || arr.estimatedTime;
       let delayMinutes = delayMinutesFromTimes(arr.scheduledTime, effectiveArr);
       if (delayMinutes == null) {
+        delayMinutes = delayMinutesFromTimes(
+          dep.scheduledTime,
+          dep.actualTime || dep.estimatedTime
+        );
+      }
+      if (delayMinutes == null) {
         delayMinutes = 0;
         if (typeof arr.delay === 'number') delayMinutes = arr.delay;
         else if (typeof dep.delay === 'number') delayMinutes = dep.delay;
       }
+      if (typeof arr.delay === 'number') delayMinutes = Math.max(delayMinutes || 0, arr.delay);
+      if (typeof dep.delay === 'number') delayMinutes = Math.max(delayMinutes || 0, dep.delay);
       if (typeof arr.delay === 'string' && arr.delay !== '' && !isNaN(Number(arr.delay))) {
         delayMinutes = Math.max(delayMinutes || 0, Number(arr.delay));
       }
