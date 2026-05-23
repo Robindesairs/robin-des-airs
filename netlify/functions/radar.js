@@ -266,6 +266,7 @@ async function fetchRadarSlot({ dateYmd, hubs, windows, directions }) {
 
 const {
   isSubSaharanAfricaCountry,
+  TICKER_AFRICA_HUBS,
   AFRICA_HUB_ICAO,
   getTickerAfricaHubs,
   getBannerHubsForRun,
