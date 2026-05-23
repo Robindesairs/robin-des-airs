@@ -305,6 +305,25 @@ exports.handler = async (event) => {
   }
 
   const force = (event.queryStringParameters?.force || '').trim().toLowerCase();
+
+  // ── Test CallMeBot : GET /api/radar-monitor?force=test-whatsapp ──────
+  if (force === 'test-whatsapp') {
+    const heureParis = new Date().toLocaleString('fr-FR', {
+      timeZone: 'Europe/Paris',
+      dateStyle: 'short',
+      timeStyle: 'short',
+    });
+    const result = await sendCallMeBot(
+      `✅ Test Robin des Airs\n\nCallMeBot fonctionne !\nHeure Paris : ${heureParis}\n\nLes alertes retard et annulation sont actives.`
+    );
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ok: true, test: 'whatsapp', callmebot: result }),
+    };
+  }
+  // ─────────────────────────────────────────────────────────────────────
+
   const { dateYmd, hour: parisHour } = getParisParts();
   let slot = detectSlot(parisHour);
   if (force === 'morning') slot = 'morning';
