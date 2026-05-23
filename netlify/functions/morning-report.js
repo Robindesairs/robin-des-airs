@@ -178,34 +178,42 @@ async function fetchMandateStats(yesterdayYmd) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 async function fetchWhatsAppStats() {
+  // Reuse wa-convo-store's store name but access via @netlify/blobs v5 directly.
+  // Si le store n'existe pas encore (aucun message reçu), on retourne 0.
   try {
     const store  = getStore('robin-wa');
-    const listed = await store.list({ prefix: 'convo/' });
-    const total  = (listed.blobs || []).length;
+    let total = 0;
+    let newYesterday = 0;
 
-    // Nouveaux contacts hier : on lit les 50 derniers blobs pour estimer
-    // (lecture complète trop coûteuse si >1000 contacts)
-    let newYesterday = null;
     try {
-      const yesterdayYmd = getYesterdayParisYmd();
-      const sample = (listed.blobs || []).slice(-100);
-      let count = 0;
-      await Promise.all(
-        sample.map(async (b) => {
-          const raw = await store.get(b.key).catch(() => null);
-          if (!raw) return;
-          const msgs = JSON.parse(raw);
-          const first = msgs && msgs[0] && msgs[0].timestamp;
-          if (first && String(first).slice(0, 10) === yesterdayYmd) count++;
-        })
-      );
-      newYesterday = count;
-    } catch (_) { /* skip */ }
+      const listed = await store.list({ prefix: 'convo/' });
+      total = (listed.blobs || []).length;
+
+      // Nouveaux contacts hier : échantillon des 100 derniers blobs
+      if (total > 0) {
+        const yesterdayYmd = getYesterdayParisYmd();
+        const sample = (listed.blobs || []).slice(-100);
+        await Promise.all(
+          sample.map(async (b) => {
+            try {
+              const raw = await store.get(b.key);
+              if (!raw) return;
+              const msgs = JSON.parse(raw);
+              const first = msgs && msgs[0] && msgs[0].timestamp;
+              if (first && String(first).slice(0, 10) === yesterdayYmd) newYesterday++;
+            } catch (_) { /* skip blob individuel */ }
+          })
+        );
+      }
+    } catch (listErr) {
+      // Store vide ou inaccessible → on affiche 0 plutôt que de planter
+      console.warn('[morning-report] WhatsApp list error:', listErr.message);
+    }
 
     return { totalContacts: total, newYesterday };
   } catch (e) {
-    console.warn('[morning-report] WhatsApp stats error:', e.message);
-    return null;
+    console.warn('[morning-report] WhatsApp stats fatal:', e.message);
+    return { totalContacts: 0, newYesterday: 0 };
   }
 }
 
@@ -276,13 +284,10 @@ function buildMessage({ today, yesterday, plausible, mandates, whatsapp, radar }
 
   // ── WhatsApp ──
   lines.push(`📱 WHATSAPP`);
-  if (whatsapp) {
-    lines.push(`• Contacts totaux : ${fmt(whatsapp.totalContacts)}`);
-    if (whatsapp.newYesterday != null) {
-      lines.push(`• Nouveaux hier   : ~${whatsapp.newYesterday}`);
-    }
-  } else {
-    lines.push(`• Données indisponibles`);
+  const wa = whatsapp || { totalContacts: 0, newYesterday: 0 };
+  lines.push(`• Contacts totaux : ${fmt(wa.totalContacts)}`);
+  if (wa.newYesterday != null) {
+    lines.push(`• Nouveaux hier   : ~${wa.newYesterday}`);
   }
   lines.push('');
 
