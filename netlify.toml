@@ -20,6 +20,11 @@
 [functions."radar-monitor"]
   schedule = "*/10 * * * *"
 
+# Rapport matinal WhatsApp 9h15 Paris (= 7h15 UTC en été CEST).
+# Données : Plausible visiteurs, Airtable mandats, contacts WA, stats radar.
+[functions."morning-report"]
+  schedule = "15 7 * * *"
+
 [functions."daily-radar-snapshot"]
   timeout = 26
 
@@ -213,6 +218,11 @@
 [[redirects]]
   from = "/api/radar-monitor"
   to = "/.netlify/functions/radar-monitor"
+  status = 200
+
+[[redirects]]
+  from = "/api/morning-report"
+  to = "/.netlify/functions/morning-report"
   status = 200
 
 [[redirects]]
