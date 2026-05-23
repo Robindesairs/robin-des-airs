@@ -1,3 +1,4 @@
+# Pages internes — jamais dans Google (tour de contrôle, CRM, hub équipe)
 /radar
   X-Robots-Tag: noindex, nofollow
   X-Frame-Options: DENY
@@ -25,3 +26,19 @@
 
 /interne
   X-Robots-Tag: noindex, nofollow
+
+/crm
+  X-Robots-Tag: noindex, nofollow
+
+/crm/*
+  X-Robots-Tag: noindex, nofollow
+
+/generateur-pub
+  X-Robots-Tag: noindex, nofollow
+
+/generateur-pub.html
+  X-Robots-Tag: noindex, nofollow
+
+# Sitemap — accessible aux crawlers
+/sitemap.xml
+  Content-Type: application/xml; charset=utf-8

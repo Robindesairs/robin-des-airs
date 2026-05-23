@@ -1,19 +1,33 @@
-# Rendre le site visible (grand public)
+# Visibilité Google — Robin des Airs
 
-Quand tu voudras que le site soit de nouveau indexable par Google et visible du grand public :
+## État actuel (site public débloqué)
 
-1. **`index.html`** — Dans le `<head>`, **supprimer** la ligne :
-   ```html
-   <meta name="robots" content="noindex, nofollow">
-   ```
+- **`index.html`** : `meta robots` = `index, follow`
+- **`robots.txt`** : `Allow: /` + **Sitemap** actif
+- **`sitemap.xml`** : généré au build (`npm run build:sitemap`)
 
-2. **`robots.txt`** — Remplacer le contenu par :
-   ```
-   # Robin des Airs — indemnités aériennes CE 261/2004
-   User-agent: *
-   Allow: /
+Les pages **marketing** (accueil, blog, dépôts, destinations, mandats, etc.) peuvent être indexées.
 
-   Sitemap: https://robindesairs.eu/sitemap.xml
-   ```
+## Toujours bloquées (volontairement)
 
-3. (Optionnel) Vérifier dans Google Search Console que la demande de réindexation est bien prise en compte après la mise en ligne.
+| Zone | Pourquoi |
+|------|----------|
+| `/radar`, `/radar-vols-v2` | Tour de contrôle interne (+ auth CRM) |
+| `/crm` | Dossiers équipe |
+| `/navigation-interne`, `/interne` | Hub liens internes |
+| `/generateur-pub` | Outil pub équipe |
+| `merci-dossier`, `merci-partenaire` | Pages de confirmation (pas utiles en SEO) |
+
+## Après deploy — Google Search Console
+
+1. [Google Search Console](https://search.google.com/search-console) → propriété `robindesairs.eu`
+2. **Sitemaps** → ajouter `https://robindesairs.eu/sitemap.xml`
+3. **Inspection d’URL** → `https://robindesairs.eu/` → **Demander une indexation**
+4. Si le site avait été **désindexé** manuellement dans GSC : **Suppressions** → lever la demande si encore active
+
+Délai habituel : quelques jours à 2 semaines pour réapparaître sur des requêtes ciblées.
+
+## Re-bloquer temporairement (pré-lancement)
+
+1. `index.html` : `<meta name="robots" content="noindex, nofollow">`
+2. `robots.txt` : `Disallow: /` (et retirer la ligne Sitemap)
