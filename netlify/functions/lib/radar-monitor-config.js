@@ -26,6 +26,21 @@ const AFRICA_EVENING_HUBS = [
   'TUN',
 ];
 
+/**
+ * Hubs à scanner pour le monitor temps-réel.
+ * Priorité env var MONITOR_HUBS (ex: "DSS,ABJ") → fallback AFRICA_EVENING_HUBS.
+ */
+function getMonitorHubs() {
+  const raw = process.env.MONITOR_HUBS || '';
+  if (raw.trim()) {
+    return raw
+      .split(/[\s,;]+/)
+      .map((h) => h.trim().toUpperCase().slice(0, 3))
+      .filter((h) => h.length === 3);
+  }
+  return AFRICA_EVENING_HUBS;
+}
+
 /** Bandeau matin — hubs prioritaires (conso API maîtrisée). */
 const BANNER_HUBS = ['CDG', 'ORY', 'RUN', 'DSS', 'DKR', 'ABJ', 'ACC', 'LOS', 'CMN', 'BJL'];
 
@@ -60,15 +75,23 @@ function getParisHour(date = new Date()) {
   return getParisParts(date).hour;
 }
 
-/** Fenêtre API pour le créneau horaire courant (départs). */
+/**
+ * Fenêtre API pour le créneau horaire courant.
+ *
+ * Créneau africa-evening (18h–02h) : on scanne la JOURNÉE COMPLÈTE en deux
+ * fenêtres de 12h pour ne jamais rater un vol dont le retard est annoncé
+ * avant ou après l'heure courante (ex: vol à 23h, retard annoncé à 19h).
+ *
+ * Les autres créneaux (morning, EU afternoon) gardent une fenêtre ciblée.
+ */
 function slotTimeWindows(parisHour, dateYmd) {
   const h = String(parisHour).padStart(2, '0');
-  const nextH = String((parisHour + 1) % 24).padStart(2, '0');
-  if (parisHour === 23) {
-    return [[`${dateYmd}T23:00`, `${dateYmd}T23:59`]];
-  }
   if (parisHour >= 18 || parisHour <= 2) {
-    return [[`${dateYmd}T${h}:00`, `${dateYmd}T${h}:59`]];
+    // Scan jour entier = 2 fenêtres de 12h (limite API AeroDataBox)
+    return [
+      [`${dateYmd}T00:00`, `${dateYmd}T11:59`],
+      [`${dateYmd}T12:00`, `${dateYmd}T23:59`],
+    ];
   }
   if (EU_CHECK_HOURS.includes(parisHour)) {
     return [[`${dateYmd}T12:00`, `${dateYmd}T20:59`]];
@@ -94,4 +117,5 @@ module.exports = {
   slotTimeWindows,
   detectSlot,
   isAfricaEveningHour,
+  getMonitorHubs,
 };

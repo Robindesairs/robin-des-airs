@@ -15,9 +15,10 @@
 [functions."whatsapp-gemini-fallback"]
   schedule = "* * * * *"
 
-# Radar : 8h bandeau+email, 16-17h EU→AF, 18h-2h AF→EU (heure Paris, cron chaque heure :05 UTC)
+# Radar : 8h bandeau+email, 16-17h EU→AF, 18h-2h AF→EU — scan toutes les 10 min.
+# Porte horaire 18h–02h Paris dans la function (hors créneau = no-op immédiat).
 [functions."radar-monitor"]
-  schedule = "5 * * * *"
+  schedule = "*/10 * * * *"
 
 [functions."daily-radar-snapshot"]
   timeout = 26
