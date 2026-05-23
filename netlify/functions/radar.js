@@ -1,13 +1,13 @@
 /**
- * Radar Robin des Airs — Tous les vols au départ ou à l'arrivée en France.
+ * Radar Robin des Airs — Vols Afrique subsaharienne ↔ Europe uniquement.
  * Priorité : ANNULÉ → ROUGE (≥2h30) → ORANGE (1h–2h30) → JAUNE (~1h).
+ *
+ * Scan : 17 hubs EU (France + BRU/AMS/LIS/LGW/LHR/MAD) en parallèle (batch 10).
+ * Filtre sortie : isEuSubSaharanAfricaRoute — exclut domestique, EU-EU, EU-Maghreb.
  *
  * Fournisseur unique : **AeroDataBox** (RapidAPI). Variables Netlify :
  *   - RAPIDAPI_KEY ou AERODATABOX_RAPIDAPI_KEY (obligatoire)
  *   - AERODATABOX_RAPIDAPI_HOST (optionnel, défaut aerodatabox.p.rapidapi.com)
- *
- * Query `mode=ticker-history` : même jeu de données **jour civil Europe/Paris** que le mode live
- * (pas d’historique multi-jours sans autre API — le bandeau utilise la 1ʳᵉ réponse si elle contient des vols).
  */
 
 const EU_COUNTRIES = ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SK','SI','ES','SE','IS','LI','NO','GB','CH'];
@@ -28,8 +28,16 @@ const AIRPORT_COUNTRY = {
   HRE:'ZW', DUR:'ZA', WDH:'NA', OUA:'BF', NIM:'NE', COO:'BJ', LFW:'TG', CKY:'GN',
 };
 
-/** Tous les départs France : principaux aéroports métropole + La Réunion. */
+/** Aéroports France + principales portes EU vers Afrique subsaharienne. */
 const HUBS = ['CDG', 'ORY', 'MRS', 'LYS', 'NCE', 'BOD', 'TLS', 'NTE', 'LIL', 'SXB', 'RUN'];
+
+/** Hubs EU étendus : France + BRU (Brussels Airlines) + AMS (KLM) + LIS (TAP)
+ *  + LGW/LHR (British Airways) + MAD (Iberia/Air Europa).
+ *  Utilisés pour le scan principal radar afin de couvrir tous les vols EU↔Afrique subsaharienne. */
+const RADAR_EU_HUBS = [
+  ...HUBS,
+  'BRU', 'AMS', 'LIS', 'LGW', 'LHR', 'MAD',
+];
 
 /** ICAO pour l’endpoint AeroDataBox `/flights/airports/icao/...`. */
 const HUB_ICAO = {
@@ -276,23 +284,40 @@ const {
 
 const TICKER_HUB_ICAO = Object.assign({}, HUB_ICAO, AFRICA_HUB_ICAO, {
   BRU: 'EBBR',
+  AMS: 'EHAM',
   LIS: 'LPPT',
+  LGW: 'EGKK',
+  LHR: 'EGLL',
   MAD: 'LEMD',
+  FRA: 'EDDF',
   FCO: 'LIRF',
+  ZRH: 'LSZH',
+  MUC: 'EDDM',
 });
 for (const [iata, icao] of Object.entries(TICKER_HUB_ICAO)) registerIcaoMap(iata, icao);
 
 async function fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, dateStr, hubList) {
   const day = dateStr || parisDateYmd();
-  const hubs = hubList && hubList.length ? hubList : HUBS;
+  const hubs = hubList && hubList.length ? hubList : RADAR_EU_HUBS;
   const windows = [
     [`${day}T00:00`, `${day}T11:59`],
     [`${day}T12:00`, `${day}T23:59`]
   ];
+
+  // Construire toutes les tâches hub×fenêtre
+  const tasks = [];
   for (const hub of hubs) {
     const icao = TICKER_HUB_ICAO[hub] || HUB_ICAO[hub];
     if (!icao) continue;
     for (const [a, b] of windows) {
+      tasks.push({ hub, icao, a, b });
+    }
+  }
+
+  // Exécution en batches parallèles de 10 (équilibre vitesse / rate-limit RapidAPI)
+  const BATCH = 10;
+  for (let i = 0; i < tasks.length; i += BATCH) {
+    await Promise.all(tasks.slice(i, i + BATCH).map(async ({ hub, icao, a, b }) => {
       const [deps, arrs] = await Promise.all([
         fetchAdbWindow(icao, a, b, 'Departure', rapidKey, hub),
         fetchAdbWindow(icao, a, b, 'Arrival', rapidKey, hub)
@@ -305,7 +330,7 @@ async function fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, dateStr, hubLis
         const n = normalizeAdbFlight(r, { direction: 'Arrival', hubIata: hub });
         if (n) arrivalRaw.push(n);
       }
-    }
+    }));
   }
 }
 
@@ -822,6 +847,9 @@ async function assembleFlightsFromRaw(allRaw, arrivalRaw) {
 
     let flights = Array.from(routeMap.values()).map((v) => v.data);
 
+    // ── Filtre principal : uniquement Afrique subsaharienne ↔ Europe ──────
+    flights = flights.filter((f) => isEuSubSaharanAfricaRoute(f.dep, f.arr));
+
     // Croisement Amadeus (optionnel) : si CERTIFICATION_API_URL est défini, récupérer is_certified_amadeus
     const certificationApiUrl = process.env.CERTIFICATION_API_URL;
     if (certificationApiUrl && flights.length > 0) {
@@ -909,7 +937,7 @@ exports.handler = async (event) => {
   try {
     const allRaw = [];
     const arrivalRaw = [];
-    await fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, parisDateYmd(), HUBS);
+    await fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, parisDateYmd(), RADAR_EU_HUBS);
 
     const payload = await assembleFlightsFromRaw(allRaw, arrivalRaw);
 
