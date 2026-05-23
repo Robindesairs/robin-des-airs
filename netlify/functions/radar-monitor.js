@@ -148,8 +148,22 @@ async function runMorning(event, parisHour, dateYmd) {
  * @param {Array}  flights   Vols filtrés par filterAfricaEveningDepartures.
  * @param {string} dateYmd   Date Paris courante (YYYY-MM-DD).
  */
+/**
+ * Envoie une alerte WhatsApp pour chaque vol annulé ou retardé ≥ seuil.
+ *
+ * Logique de dédup progressive :
+ * - Annulation : une seule alerte (jamais répétée même si toujours annulé).
+ * - Retard     : alerte à la 1ʳᵉ détection, puis à chaque palier de +30 min
+ *                (configurable via MONITOR_ALERT_STEP, défaut 30).
+ *   Ex : détecté à +3h → alerte. Scan suivant +3h40 → alerte "en hausse". +3h45 → ignoré.
+ *
+ * Chaque message inclut un lien FlightRadar24 pour suivi en direct.
+ */
 async function sendDelayAlerts(flights, dateYmd) {
   const minDelay = parseInt(process.env.MONITOR_ALERT_MIN_DELAY || '180', 10) || 180;
+  // Palier de ré-alerte en minutes (défaut 30 min)
+  const stepDelay = parseInt(process.env.MONITOR_ALERT_STEP || '30', 10) || 30;
+
   const toAlert = (flights || []).filter(
     (f) => f.cancelled || (f.delayMinutes != null && f.delayMinutes >= minDelay)
   );
@@ -165,38 +179,56 @@ async function sendDelayAlerts(flights, dateYmd) {
 
   for (const f of toAlert) {
     const key = `${f.flight || 'UNK'}-${dateYmd}`;
-    try {
-      const existing = await store.get(key);
-      if (existing) continue; // déjà alerté aujourd'hui
 
-      // Marquer comme alerté (TTL 30h pour couvrir la nuit)
+    // ── Récupérer l'état précédent ──────────────────────────────────────
+    let prevState = null;
+    try {
+      const raw = await store.get(key);
+      if (raw) prevState = JSON.parse(raw);
+    } catch (e) {
+      console.warn(`[alerts] blob get error pour ${key}:`, e.message);
+    }
+
+    // ── Décision d'alerte ───────────────────────────────────────────────
+    if (f.cancelled) {
+      // Annulation : une seule alerte par vol par jour
+      if (prevState && prevState.cancelled) continue;
+    } else {
+      const prevDelay = prevState ? (prevState.delayMinutes || 0) : null;
+      // Pas encore alerté → OK. Déjà alerté → re-alerter seulement si +stepDelay min
+      if (prevDelay !== null && f.delayMinutes - prevDelay < stepDelay) continue;
+    }
+
+    // ── Sauvegarder le nouvel état (TTL 30h) ────────────────────────────
+    try {
       await store.set(
         key,
-        JSON.stringify({ alertedAt: new Date().toISOString(), delayMinutes: f.delayMinutes }),
+        JSON.stringify({
+          alertedAt: new Date().toISOString(),
+          delayMinutes: f.delayMinutes,
+          cancelled: f.cancelled || false,
+        }),
         { ttl: 30 * 3600 }
       );
     } catch (e) {
-      console.warn(`[alerts] blob error pour ${key}:`, e.message);
-      // On continue quand même pour ne pas bloquer les autres alertes
+      console.warn(`[alerts] blob set error pour ${key}:`, e.message);
     }
 
+    // ── Construire le message ────────────────────────────────────────────
+    const fr24 = `https://www.flightradar24.com/${(f.flight || '').toLowerCase()}`;
+    const ce261 = f.eligible ? '✅ CE261 éligible' : '⚠️ Vérifier éligibilité';
     const schedHour = f.scheduledDeparture
       ? new Date(f.scheduledDeparture).toLocaleTimeString('fr-FR', {
-          hour: '2-digit',
-          minute: '2-digit',
-          timeZone: 'UTC',
+          hour: '2-digit', minute: '2-digit', timeZone: 'UTC',
         })
       : '?';
 
-    const ce261 = f.eligible ? '✅ CE261 éligible' : '⚠️ Vérifier éligibilité';
-
     let msg;
+
     if (f.cancelled) {
       const cancelHour = f.cancelledAt
         ? new Date(f.cancelledAt).toLocaleTimeString('fr-FR', {
-            hour: '2-digit',
-            minute: '2-digit',
-            timeZone: 'UTC',
+            hour: '2-digit', minute: '2-digit', timeZone: 'UTC',
           })
         : '?';
       msg = [
@@ -209,6 +241,7 @@ async function sendDelayAlerts(flights, dateYmd) {
         ``,
         ce261,
         ``,
+        `🔍 Suivi : ${fr24}`,
         `👉 Lancer le dossier CE261 maintenant`,
       ].join('\n');
     } else {
@@ -217,29 +250,44 @@ async function sendDelayAlerts(flights, dateYmd) {
       const delayStr = delayM > 0 ? `+${delayH}h${delayM}min` : `+${delayH}h`;
       const estHour = f.estimatedDeparture
         ? new Date(f.estimatedDeparture).toLocaleTimeString('fr-FR', {
-            hour: '2-digit',
-            minute: '2-digit',
-            timeZone: 'UTC',
+            hour: '2-digit', minute: '2-digit', timeZone: 'UTC',
           })
         : '?';
+
+      // 1ʳᵉ alerte vs mise à jour
+      const isUpdate = prevState && !prevState.cancelled;
+      const header = isUpdate
+        ? `⏰ RETARD EN HAUSSE — Robin des Airs`
+        : `✈️ RETARD DÉTECTÉ — Robin des Airs`;
+
+      // Ligne "avant" uniquement sur mise à jour
+      const prevDelayLine = isUpdate && prevState.delayMinutes != null
+        ? (() => {
+            const ph = Math.floor(prevState.delayMinutes / 60);
+            const pm = prevState.delayMinutes % 60;
+            return `Avant  : +${ph}h${pm > 0 ? pm + 'min' : ''}`;
+          })()
+        : null;
+
       msg = [
-        `✈️ RETARD DÉTECTÉ — Robin des Airs`,
+        header,
         ``,
         `Vol    : ${f.flight || '—'}`,
         `Trajet : ${f.dep || '?'} → ${f.arr || '?'}`,
         `Prévu  : ${schedHour} UTC`,
         `Nouveau: ${estHour} UTC`,
+        prevDelayLine,
         `Retard : ${delayStr}`,
         ``,
         ce261,
         ``,
+        `🔍 Suivi : ${fr24}`,
         `👉 Lancer le dossier CE261 maintenant`,
-      ].join('\n');
+      ].filter(Boolean).join('\n');
     }
 
     try {
       await sendCallMeBot(msg);
-      // Pause de 2s entre messages pour éviter le spam CallMeBot
       await new Promise((r) => setTimeout(r, 2000));
     } catch (e) {
       console.error('[alerts] sendCallMeBot error:', e.message);
