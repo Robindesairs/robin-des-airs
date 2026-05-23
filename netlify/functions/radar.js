@@ -304,31 +304,26 @@ async function fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, dateStr, hubLis
     [`${day}T12:00`, `${day}T23:59`]
   ];
 
-  // Construire toutes les tâches hub×fenêtre
-  const tasks = [];
-  for (const hub of hubs) {
-    const icao = TICKER_HUB_ICAO[hub] || HUB_ICAO[hub];
-    if (!icao) continue;
-    for (const [a, b] of windows) {
-      tasks.push({ hub, icao, a, b });
-    }
-  }
-
-  // Exécution en batches parallèles de 10 (équilibre vitesse / rate-limit RapidAPI)
-  const BATCH = 10;
-  for (let i = 0; i < tasks.length; i += BATCH) {
-    await Promise.all(tasks.slice(i, i + BATCH).map(async ({ hub, icao, a, b }) => {
-      const [deps, arrs] = await Promise.all([
-        fetchAdbWindow(icao, a, b, 'Departure', rapidKey, hub),
-        fetchAdbWindow(icao, a, b, 'Arrival', rapidKey, hub)
-      ]);
-      for (const r of deps) {
-        const n = normalizeAdbFlight(r, { direction: 'Departure', hubIata: hub });
-        if (n) allRaw.push(n);
-      }
-      for (const r of arrs) {
-        const n = normalizeAdbFlight(r, { direction: 'Arrival', hubIata: hub });
-        if (n) arrivalRaw.push(n);
+  // Parallélisation par hub (3 hubs à la fois = 6 req/s max — respecte le rate-limit RapidAPI).
+  // Chaque hub traite ses 2 fenêtres séquentiellement avec dep+arr en parallèle.
+  const BATCH = 3;
+  for (let i = 0; i < hubs.length; i += BATCH) {
+    await Promise.all(hubs.slice(i, i + BATCH).map(async (hub) => {
+      const icao = TICKER_HUB_ICAO[hub] || HUB_ICAO[hub];
+      if (!icao) return;
+      for (const [a, b] of windows) {
+        const [deps, arrs] = await Promise.all([
+          fetchAdbWindow(icao, a, b, 'Departure', rapidKey, hub),
+          fetchAdbWindow(icao, a, b, 'Arrival', rapidKey, hub)
+        ]);
+        for (const r of deps) {
+          const n = normalizeAdbFlight(r, { direction: 'Departure', hubIata: hub });
+          if (n) allRaw.push(n);
+        }
+        for (const r of arrs) {
+          const n = normalizeAdbFlight(r, { direction: 'Arrival', hubIata: hub });
+          if (n) arrivalRaw.push(n);
+        }
       }
     }));
   }
