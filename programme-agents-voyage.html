@@ -2092,5 +2092,303 @@
 })();
 </script>
 
+<!-- ═══ PREMIUM LAYER — agence de voyages ═══ -->
+<style>
+:root {
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --shimmer-teal: linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.22) 50%, transparent 65%);
+}
+
+/* ── NAV glassmorphism au scroll ── */
+header { transition: background 0.35s, box-shadow 0.35s, backdrop-filter 0.35s; }
+header.prem-scrolled {
+  background: rgba(6, 19, 38, 0.88) !important;
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 8px 40px rgba(0,0,0,0.32);
+}
+
+/* ── HERO — enrichissement ── */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(0,229,160,0.06) 1px, transparent 1px);
+  background-size: 30px 30px;
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 100%);
+  z-index: 0;
+}
+.hero-inner { position: relative; z-index: 1; }
+
+/* ── BOUTON TEAL — gradient + shimmer ── */
+.btn-teal {
+  background: linear-gradient(135deg, #00E5A0 0%, #00C87A 100%);
+  box-shadow: 0 4px 22px rgba(0,200,122,0.35), inset 0 1px 0 rgba(255,255,255,0.18);
+  position: relative;
+  overflow: hidden;
+}
+.btn-teal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--shimmer-teal);
+  background-size: 220% 100%;
+  background-position: -110% 0;
+  transition: background-position 0.6s var(--ease-expo);
+}
+.btn-teal:hover {
+  background: linear-gradient(135deg, #00E5A0 0%, #00A060 100%);
+  box-shadow: 0 8px 36px rgba(0,200,122,0.48), inset 0 1px 0 rgba(255,255,255,0.22);
+  transform: translateY(-2px);
+}
+.btn-teal:hover::after { background-position: 200% 0; }
+
+/* ── CARDS — glow au hover + top border animé ── */
+.card {
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s, box-shadow 0.35s var(--ease-expo), transform 0.3s var(--ease-expo);
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--teal-bright), var(--teal-dark));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s var(--ease-expo);
+}
+.card:hover {
+  border-color: var(--teal);
+  box-shadow: 0 12px 40px rgba(0,200,122,0.14), 0 2px 8px rgba(6,19,38,0.06);
+  transform: translateY(-3px);
+}
+.card:hover::before { transform: scaleX(1); }
+
+/* ── COMM-CARD featured ── */
+.comm-card.featured {
+  box-shadow: 0 24px 64px rgba(0,200,122,0.22), 0 0 0 1px rgba(0,229,160,0.15);
+}
+.comm-card:not(.featured) {
+  transition: background 0.25s, border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+}
+.comm-card:not(.featured):hover {
+  background: rgba(255,255,255,0.09);
+  border-color: rgba(0,229,160,0.3);
+  box-shadow: 0 8px 32px rgba(0,200,122,0.10);
+  transform: translateY(-2px);
+}
+
+/* ── STEP CARDS ── */
+.step {
+  transition: box-shadow 0.3s var(--ease-expo), border-color 0.3s, transform 0.3s var(--ease-expo);
+}
+.step:hover {
+  box-shadow: 0 16px 48px rgba(0,200,122,0.10), 0 2px 8px rgba(6,19,38,0.05);
+  border-color: rgba(0,200,122,0.3);
+  transform: translateY(-3px);
+}
+.step-num {
+  transition: background 0.25s, box-shadow 0.25s;
+}
+.step:hover .step-num {
+  background: var(--teal-dark);
+  box-shadow: 0 0 0 5px rgba(0,200,122,0.12);
+}
+
+/* ── STAT ITEMS — nombres en gradient ── */
+.stat-item {
+  transition: box-shadow 0.3s, border-color 0.3s, transform 0.3s var(--ease-expo);
+}
+.stat-item:hover {
+  box-shadow: 0 12px 40px rgba(0,200,122,0.12);
+  border-color: rgba(0,200,122,0.3);
+  transform: translateY(-3px);
+}
+.stat-num {
+  background: linear-gradient(135deg, #009960 0%, #00C87A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── EYEBROW — ligne accent ── */
+.eyebrow {
+  position: relative;
+  padding-left: 18px;
+}
+.eyebrow::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 8px; height: 2.5px;
+  background: linear-gradient(90deg, var(--teal-bright), var(--teal-dark));
+  border-radius: 2px;
+}
+
+/* ── H2 — underline sur le premier mot fort ── */
+h2 { letter-spacing: -0.025em; }
+
+/* ── FOOTER ACCENT LINE ── */
+footer {
+  position: relative;
+}
+footer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,229,160,0.45), transparent);
+}
+footer a { transition: color 0.2s, padding-left 0.2s; }
+footer a:hover { padding-left: 3px; }
+
+/* ── SCROLL REVEAL ── */
+.prem-rv {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s var(--ease-expo), transform 0.65s var(--ease-expo);
+  will-change: opacity, transform;
+}
+.prem-rv.prem-on { opacity: 1; transform: none; }
+.prem-rv:nth-child(2) { transition-delay: 0.09s; }
+.prem-rv:nth-child(3) { transition-delay: 0.18s; }
+.prem-rv:nth-child(4) { transition-delay: 0.26s; }
+.prem-rv:nth-child(5) { transition-delay: 0.32s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .prem-rv { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
+
+</style>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+ * premium-agence.js — interactions premium (inline)
+ * Nav glassmorphism · Scroll reveal · Counters · Tilt cards
+ * ═══════════════════════════════════════════════════════════ */
+;(function () {
+  'use strict';
+
+  var rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ── 1. NAV — glassmorphisme au scroll ─────────────────── */
+  var hdr = document.querySelector('header');
+  if (hdr) {
+    function onScroll() {
+      hdr.classList.toggle('prem-scrolled', window.scrollY > 48);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  if (rm) return;
+
+  /* ── 2. AUTO-TAG — éléments à révéler ─────────────────── */
+  function tag(sel, cls) {
+    document.querySelectorAll(sel).forEach(function (el) {
+      el.classList.add(cls);
+    });
+  }
+
+  /* Titres et eyebrows */
+  tag('.eyebrow',    'prem-rv');
+  tag('h2',          'prem-rv');
+  tag('.lead',       'prem-rv');
+
+  /* Cards grilles */
+  tag('.card',       'prem-rv');
+  tag('.step',       'prem-rv');
+  tag('.comm-card',  'prem-rv');
+  tag('.airport-tag','prem-rv');
+
+  /* Blocs isolés */
+  tag('.quote-box',  'prem-rv');
+  tag('.mini-cta',   'prem-rv');
+  tag('.stats-row',  'prem-rv');
+  tag('.faq details','prem-rv');
+  tag('#rejoindre .form-wrap', 'prem-rv');
+
+  /* ── 3. SCROLL REVEAL — IntersectionObserver ───────────── */
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('prem-on');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.10, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.prem-rv').forEach(function (el) {
+    io.observe(el);
+  });
+
+  /* ── 4. COUNTER ANIMATION — .stat-num ─────────────────── */
+  var statsObs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      statsObs.unobserve(entry.target);
+
+      entry.target.querySelectorAll('.stat-num').forEach(function (el) {
+        /* Ne compte que le premier nœud texte (avant le <span class="money-sub">) */
+        var firstText = null;
+        el.childNodes.forEach(function (n) {
+          if (!firstText && n.nodeType === 3 && n.textContent.trim()) firstText = n;
+        });
+        if (!firstText) return;
+
+        var raw   = firstText.textContent.trim().replace(/\s/g, '');
+        var match = raw.match(/^([+]?)(\d+(?:[.,]\d+)?)(.*?)$/);
+        if (!match) return;
+
+        var prefix   = match[1];
+        var target   = parseFloat(match[2].replace(',', '.'));
+        var suffix   = match[3];
+        var duration = 1400;
+        var startTs  = null;
+
+        function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+
+        function step(ts) {
+          if (!startTs) startTs = ts;
+          var p   = Math.min((ts - startTs) / duration, 1);
+          var val = target * easeOut(p);
+          var fmt = target % 1 !== 0
+            ? val.toFixed(1).replace('.', ',')
+            : Math.round(val).toString();
+          firstText.textContent = prefix + fmt + suffix + ' ';
+          if (p < 1) requestAnimationFrame(step);
+        }
+
+        requestAnimationFrame(step);
+      });
+    });
+  }, { threshold: 0.5 });
+
+  var statsRow = document.querySelector('.stats-row');
+  if (statsRow) statsObs.observe(statsRow);
+
+  /* ── 5. TILT 3D — cards sur desktop ───────────────────── */
+  if (window.innerWidth >= 1024) {
+    document.querySelectorAll('.card, .comm-card, .quote-box').forEach(function (card) {
+      card.addEventListener('mousemove', function (e) {
+        var r = card.getBoundingClientRect();
+        var x = (e.clientX - r.left) / r.width  - 0.5;
+        var y = (e.clientY - r.top)  / r.height - 0.5;
+        card.style.transform =
+          'translateY(-4px) perspective(600px) rotateX(' + (-y * 5) + 'deg) rotateY(' + (x * 5) + 'deg)';
+      });
+      card.addEventListener('mouseleave', function () {
+        card.style.transform = '';
+      });
+    });
+  }
+
+})();
+</script>
 </body>
 </html>

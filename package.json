@@ -16,7 +16,7 @@
     "build:blog": "node -r ts-node/register src/scripts/build-blog.ts",
     "build:sitemap": "node -r ts-node/register src/scripts/build-sitemap.ts",
     "build:nav-interne": "node scripts/build-navigation-interne.mjs",
-    "preview": "npx --yes serve . -l 8787",
+    "preview": "python3 -m http.server 8787",
     "mandat:pdf": "node scripts/generate-mandat-pdf.mjs",
     "mandat:print": "python3 scripts/generate-mandat-pdf-fpdf.py",
     "proofs:capture": "node scripts/agent-meteo-radar.js",

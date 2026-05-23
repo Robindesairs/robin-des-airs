@@ -5,7 +5,9 @@ import json
 import base64
 import re
 import hashlib
+import time
 from datetime import datetime, timedelta
+from urllib.parse import urlencode
 
 app = Flask(__name__)
 
@@ -451,13 +453,49 @@ def ask_flight_type(phone, conv):
     if lang == "en":
         body = "✈️ Was it a direct flight or with connection?"
     else:
-        body = "✈️ Etait-ce un vol direct ou avec correspondance ?"
+        body = "✈️ Etait-ce un vol direct ou avec escale ?"
     
     buttons = [
         {"id": "type_direct", "title": "✈️ Vol direct" if lang == "fr" else "✈️ Direct flight"},
-        {"id": "type_connection", "title": "🔄 Avec correspondance" if lang == "fr" else "🔄 With connection"}
+        {"id": "type_connection", "title": "🔄 Avec escale" if lang == "fr" else "🔄 With connection"}
     ]
     send_whatsapp_buttons(phone, body, buttons)
+
+def ask_delay_duration(phone, conv):
+    """Qualification retard CE 261 — seuil 3h a l'arrivee."""
+    lang = conv["data"]["language"]
+    if lang == "en":
+        body = "⏱️ Approximately how many hours late at arrival?"
+        buttons = [
+            {"id": "delay_3plus", "title": "More than 3 hours"},
+            {"id": "delay_lt3", "title": "Less than 3 hours"},
+            {"id": "delay_unknown", "title": "I don't remember"},
+        ]
+    else:
+        body = "⏱️ Environ combien d'heures de retard a l'arrivee ?"
+        buttons = [
+            {"id": "delay_3plus", "title": "Plus de 3 heures"},
+            {"id": "delay_lt3", "title": "Moins de 3 heures"},
+            {"id": "delay_unknown", "title": "Je ne me souviens plus"},
+        ]
+    send_whatsapp_buttons(phone, body, buttons)
+
+def send_delay_ineligible(phone, lang="fr"):
+    if lang == "en":
+        msg = (
+            "Thanks. For a delay *under 3 hours* at arrival, EU law does not provide a flat compensation.\n\n"
+            "If you think it was longer, or have another flight, type *menu* to restart.\n\n"
+            "_Robin des Airs team_"
+        )
+    else:
+        msg = (
+            "Merci. Pour un retard *inferieur a 3 heures* a l'arrivee,\n"
+            "la loi europeenne ne prevoit pas d'indemnite forfaitaire.\n\n"
+            "Si vous pensez que le retard etait plus long,\n"
+            "ou pour un autre vol, tapez *menu* pour recommencer.\n\n"
+            "_L'equipe Robin_"
+        )
+    send_whatsapp_text(phone, msg)
 
 def ask_airline(phone, conv):
     """ETAPE 4 : Compagnie aerienne (liste avec option Autre)"""
@@ -610,58 +648,65 @@ def show_summary_and_mandat(phone, conv):
     conv["ref_dossier"] = ref
     names_joined = ",".join(d.get("passenger_names", []) or [])
     fn0, ln0 = _mandat_fn_ln_from_names(d.get("passenger_names") or [])
+    name = f"{fn0} {ln0}".strip() or (d.get("passenger_names") or ["—"])[0]
     wa_disp = _mandat_wa_display(phone)
+    motif_map = {"delay": "Retard de vol", "cancel": "Annulation de vol", "denied": "Refus d'embarquement"}
     params = {
         "ref": ref,
-        "pax": pax,
+        "phone": wa_disp,
+        "name": name,
         "vol": (d.get("flight_number") or "").strip(),
         "date": (d.get("flight_date") or "").strip(),
         "compagnie": (d.get("airline") or "").strip(),
-        "incident": (d.get("incident_type") or "").strip(),
-        "noms": names_joined,
-        "fn": fn0,
-        "ln": ln0,
-        "wa": wa_disp,
+        "motif": motif_map.get(d.get("incident_type"), "Retard de vol"),
+        "nbpax": str(pax),
         "source": "whatsapp",
     }
-    query = "&".join([f"{k}={requests.utils.quote(str(v))}" for k, v in params.items() if str(v) != ""])
-    base = MANDAT_BASE_URL.split("?")[0].rstrip("&")
-    mandat_url = f"{base}?{query}"
+    if names_joined and pax > 1:
+        params["paxlist"] = names_joined
+    mandat_url = f"{MANDAT_BASE_URL.split('?')[0]}?{urlencode({k: v for k, v in params.items() if v})}"
     
     names_str = "\n".join([f"  - {n}" for n in d.get("passenger_names", [])]) if d.get("passenger_names") else "  - A completer"
     
+    main_name = (d.get("passenger_names") or ["—"])[0]
     if lang == "en":
-        body = f"""🎉 PERFECT! Here's your file:
-
-✈️ Flight: {d.get('flight_number', '?')} ({d.get('airline', '?')})
-📅 Date: {d.get('flight_date', '?')}
-👥 Passengers: {pax}
-{names_str}
-👶 Minors: {d.get('minors_count', 0)}
-⚠️ Incident: {incident}
-
-💰 TOTAL: {total} EUR
-✅ NET FOR YOU: {net} EUR
-
-👇 Sign your mandate (3 min, all info pre-filled):
-{mandat_url}"""
+        msg_a = (
+            f"🎉 *File registered!*\nRef. *{ref}*\n\n"
+            f"👤 {main_name}\n"
+            f"✈️ {d.get('flight_number', '?')} — {d.get('airline', '?')}\n"
+            f"📅 {d.get('flight_date', '?')} — {incident}\n"
+            f"💵 *Target: {net} EUR net*\n\n"
+            f"Next step: *2 minutes* to activate your file."
+        )
+        msg_b = (
+            f"✅ *File {ref}*\n\n"
+            f"Sign your *representation mandate* (readable before signing).\n"
+            f"*No bank details* asked at this step.\n\n"
+            f"👉 Sign on robindesairs.eu (2 min):\n{mandat_url}\n\n"
+            f"Without signature we cannot act on your behalf.\n\n"
+            f"_Robin des Airs team_"
+        )
     else:
-        body = f"""🎉 PARFAIT ! Voici votre dossier :
+        msg_a = (
+            f"🎉 *Dossier enregistre !*\nRef. *{ref}*\n\n"
+            f"👤 {main_name}\n"
+            f"✈️ {d.get('flight_number', '?')} — {d.get('airline', '?')}\n"
+            f"📅 {d.get('flight_date', '?')} — {incident}\n"
+            f"💵 *Objectif : {net} € net*\n\n"
+            f"Prochaine etape : *2 minutes* pour activer votre dossier."
+        )
+        msg_b = (
+            f"✅ *Dossier {ref}*\n\n"
+            f"Signez votre *mandat de representation* (lisible avant signature).\n"
+            f"*Aucune information bancaire* demandee a cette etape.\n\n"
+            f"👉 Signez sur robindesairs.eu (2 min) :\n{mandat_url}\n\n"
+            f"Sans signature, nous ne pouvons pas agir en votre nom.\n\n"
+            f"_L'equipe Robin_"
+        )
 
-✈️ Vol : {d.get('flight_number', '?')} ({d.get('airline', '?')})
-📅 Date : {d.get('flight_date', '?')}
-👥 Passagers : {pax}
-{names_str}
-👶 Mineurs : {d.get('minors_count', 0)}
-⚠️ Incident : {incident}
-
-💰 TOTAL : {total} EUR
-✅ NET POUR VOUS : {net} EUR
-
-👇 Signez votre mandat (3 min, infos pre-remplies) :
-{mandat_url}"""
-    
-    send_whatsapp_text(phone, body)
+    send_whatsapp_text(phone, msg_a)
+    time.sleep(4)
+    send_whatsapp_text(phone, msg_b)
     
     # Reset apres envoi
     conv["current_step"] = "completed"
@@ -706,6 +751,22 @@ def process_button_reply(phone, button_id, button_title, conv):
     if button_id.startswith("inc_"):
         mapping = {"inc_delay": "delay", "inc_cancel": "cancel", "inc_denied": "denied"}
         conv["data"]["incident_type"] = mapping.get(button_id, "delay")
+        if button_id == "inc_delay":
+            conv["current_step"] = "delay_duration"
+            ask_delay_duration(phone, conv)
+        else:
+            conv["current_step"] = "flight_type"
+            ask_flight_type(phone, conv)
+        return
+
+    if button_id.startswith("delay_"):
+        lang = conv["data"].get("language", "fr")
+        if button_id == "delay_lt3":
+            send_delay_ineligible(phone, lang)
+            conv["current_step"] = None
+            return
+        if button_id == "delay_unknown":
+            conv["data"]["delay_to_confirm"] = True
         conv["current_step"] = "flight_type"
         ask_flight_type(phone, conv)
         return

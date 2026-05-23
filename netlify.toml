@@ -230,6 +230,13 @@
   to = "/.netlify/functions/radar-stats"
   status = 200
 
+# Ancien lien bot WATI /sign/xxx → 404 ; filet vers mandat (params perdus — corriger dans Make)
+[[redirects]]
+  from = "/sign/*"
+  to = "/mandat.html"
+  status = 302
+  force = true
+
 # Webhook WhatsApp 360dialog
 [[redirects]]
   from = "/api/whatsapp-webhook"
