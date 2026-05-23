@@ -1173,6 +1173,32 @@ function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
     }
   }
 
+  // ── Urgence prescription ──────────────────────────────────────────────────
+  var prescWarn = document.getElementById('res-prescription-warn');
+  if (prescWarn && dateStr) {
+    try {
+      var flightDate = new Date(dateStr);
+      var now = new Date();
+      var diffMs = now - flightDate;
+      if (diffMs > 0) {
+        var diffMonths = diffMs / (1000 * 60 * 60 * 24 * 30.44);
+        var remainMonths = Math.round(36 - diffMonths); // 3 ans = 36 mois
+        if (remainMonths <= 6 && remainMonths > 0) {
+          prescWarn.style.display = 'block';
+          prescWarn.textContent = '⏳ Attention : il vous reste environ ' + remainMonths + ' mois pour agir avant prescription (délai légal 3 ans).';
+        } else if (remainMonths <= 0) {
+          prescWarn.style.display = 'block';
+          prescWarn.textContent = '⚠️ Ce vol pourrait être prescrit (3 ans). Contactez-nous pour vérification — des exceptions existent.';
+        } else {
+          prescWarn.style.display = 'none';
+        }
+      } else {
+        prescWarn.style.display = 'none';
+      }
+    } catch (_) { prescWarn.style.display = 'none'; }
+  }
+  // ─────────────────────────────────────────────────────────────────────────
+
   return totalNet;
 }
 
