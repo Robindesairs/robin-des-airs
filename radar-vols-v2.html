@@ -3,13 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Robin des Airs — Radar Vols v2</title>
+<title>Robin des Airs — Radar Vols v3</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="/favicon.png" type="image/png">
 <style>
-:root{--navy:#0B1F3A;--green:#007A4C;--green2:#005e3a;--gold:#C9A84C;--red:#C0392B;--orange:#E67E22;--purple:#6C3483;--bg:#F0F2F5;--card:#FFFFFF;--border:#E2E4E8;--text:#1A1A2E;--text2:#6B7280;--text3:#9CA3AF;--r:10px;--r2:6px}
+/* ── Variables ────────────────────────────────────────────── */
+:root{
+  --navy:#0B1F3A;--green:#007A4C;--green2:#005e3a;--gold:#C9A84C;
+  --red:#C0392B;--orange:#E67E22;--purple:#6C3483;
+  --bg:#F0F2F5;--card:#FFFFFF;--border:#E2E4E8;
+  --text:#1A1A2E;--text2:#6B7280;--text3:#9CA3AF;
+  --r:10px;--r2:6px;--wa:#25D366;--wa2:#1da851;
+}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:13px;min-height:100vh}
+
+/* ── Top bar ──────────────────────────────────────────────── */
 .topbar{background:var(--navy);padding:11px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:50}
 .brand{font-size:17px;font-weight:700;color:#fff}.brand span{color:var(--gold)}
 .brand-sub{font-size:10px;color:rgba(255,255,255,.45);margin-top:1px}
@@ -18,6 +27,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .dot-live{width:7px;height:7px;border-radius:50%;background:#2ECC71;animation:pulse 1.5s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 .countdown{font-size:11px;color:rgba(255,255,255,.6);min-width:90px;text-align:right}
+.urgent-pill{display:flex;align-items:center;gap:5px;background:rgba(192,57,43,.85);border:1px solid rgba(255,120,100,.4);border-radius:20px;padding:4px 10px;font-size:11px;color:#fff;font-weight:700;animation:urgentGlow 2s ease-in-out infinite}
+@keyframes urgentGlow{0%,100%{background:rgba(192,57,43,.85)}50%{background:rgba(192,57,43,1)}}
+
+/* ── Urgent banner ────────────────────────────────────────── */
+#urgent-banner{display:none;background:var(--red);color:#fff;padding:9px 20px;font-size:12px;font-weight:700;text-align:center;position:sticky;top:52px;z-index:49;border-bottom:2px solid rgba(255,255,255,.2)}
+#urgent-banner button{margin-left:12px;background:rgba(255,255,255,.2);border:none;color:#fff;border-radius:4px;padding:2px 8px;cursor:pointer;font-size:11px;font-weight:600}
+#urgent-banner button:hover{background:rgba(255,255,255,.3)}
+
+/* ── Buttons ──────────────────────────────────────────────── */
 .btn{padding:6px 13px;border-radius:var(--r2);border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
 .btn:hover{background:#f0f0f0}
 .btn-primary{background:var(--green);color:#fff;border-color:var(--green)}.btn-primary:hover{background:var(--green2)}
@@ -25,9 +43,28 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .btn-red{background:var(--red);color:#fff;border-color:var(--red)}
 .btn-purple{background:var(--purple);color:#fff;border-color:var(--purple)}
 .btn-sm{padding:4px 9px;font-size:11px}
+/* WhatsApp */
+.btn-wa{background:var(--wa);color:#fff;border:none;border-radius:var(--r2);padding:4px 8px;font-size:10px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:3px;transition:background .15s}
+.btn-wa:hover{background:var(--wa2)}
+.btn-wa:disabled{background:var(--text3);cursor:not-allowed;opacity:.6}
+/* Dossier */
+.btn-dossier{background:var(--navy);color:#fff;border:none;border-radius:var(--r2);padding:4px 8px;font-size:10px;font-weight:700;cursor:pointer;transition:background .15s}
+.btn-dossier:hover{background:#162c4f}
+.actions-group{display:flex;gap:4px;flex-wrap:nowrap;align-items:center}
+/* Radar compat */
+.radar-btn{padding:4px 9px;border-radius:var(--r2);border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
+.radar-btn:hover{background:#f0f0f0}
+.radar-btn-primary{background:var(--green);color:#fff;border-color:var(--green)}.radar-btn-primary:hover{background:var(--green2)}
+.radar-btn-gold{background:var(--gold);color:var(--navy);border-color:var(--gold);font-weight:700}.radar-btn-gold:hover{background:#b8942a}
+.radar-btn-sm{padding:3px 8px;font-size:10px}
+.radar-source-btn{padding:4px 9px;border-radius:var(--r2);border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
+.radar-source-btn.active{background:var(--green);color:#fff;border-color:var(--green)}
+
+/* ── App ──────────────────────────────────────────────────── */
 .app{max-width:1600px;margin:0 auto;padding:14px}
-/* METRICS */
-.metrics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:14px}
+
+/* ── Metrics ──────────────────────────────────────────────── */
+.metrics{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px;margin-bottom:14px}
 .metric{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px}
 .metric-label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
 .metric-val{font-size:22px;font-weight:700;line-height:1}
@@ -36,24 +73,36 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .metric-clickable{cursor:pointer;transition:border-color .15s,box-shadow .15s,background .15s}
 .metric-clickable:hover{border-color:var(--green);background:#FAFCFB}
 .metric-active{border-color:var(--green);box-shadow:0 0 0 2px rgba(0,122,76,.22);background:#F0FAF6}
-/* MAIN TABS */
+/* Compat classes générées par radar-live.js */
+.radar-metric{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px;cursor:pointer}
+.radar-metric-active{border-color:var(--green);box-shadow:0 0 0 2px rgba(0,122,76,.22);background:#F0FAF6}
+.radar-metric-label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.radar-metric-val{font-size:22px;font-weight:700;line-height:1}
+.radar-metric-sub{font-size:10px;color:var(--text3);margin-top:2px}
+.mv-green{color:var(--green)}.mv-red{color:var(--red)}.mv-orange{color:var(--orange)}.mv-gold{color:var(--gold)}.mv-navy{color:var(--navy)}.mv-purple{color:var(--purple)}
+#radar-api-alert.ok{background:#D5F5E3;color:#145A32;border:1px solid #6EE7B7}
+#radar-api-alert.warn{background:#FEF3C7;color:#92400E;border:1px solid #FCD34D}
+#radar-api-alert.err{background:#FEE2E2;color:#991B1B;border:1px solid #FCA5A5}
+
+/* ── Tabs ─────────────────────────────────────────────────── */
 .main-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--card);border-radius:var(--r) var(--r) 0 0;padding:0 16px;overflow-x:auto}
 .tab-btn{padding:10px 16px;font-size:12px;font-weight:500;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s}
 .tab-btn:hover{color:var(--navy)}.tab-btn.active{color:var(--green);border-bottom-color:var(--green);font-weight:700}
 .tab-pane{display:none}.tab-pane.active{display:block}
-/* STATS PERIOD TABS */
 .period-tabs{display:flex;gap:6px;margin-bottom:14px}
 .period-btn{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--card);color:var(--text2);transition:all .15s}
 .period-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
-/* CONTROLS */
+
+/* ── Controls ─────────────────────────────────────────────── */
 .controls{display:flex;gap:7px;margin-bottom:11px;flex-wrap:wrap;align-items:center}
 .controls input,.controls select{font-size:12px;padding:6px 10px;border-radius:var(--r2);border:1px solid var(--border);background:var(--card);color:var(--text);outline:none}
 .controls input:focus,.controls select:focus{border-color:var(--green)}
 .controls input{flex:1;min-width:140px}
-/* TABLE */
+
+/* ── Table ────────────────────────────────────────────────── */
 .tcard{background:var(--card);border:1px solid var(--border);border-radius:0 0 var(--r) var(--r);overflow:hidden}
 .twrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:1300px}
+table{width:100%;border-collapse:collapse;min-width:1500px}
 thead th{background:#F7F8FA;padding:8px 11px;text-align:left;font-weight:700;color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);white-space:nowrap}
 tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
 tbody tr:last-child{border-bottom:none}
@@ -64,33 +113,48 @@ tbody tr.row-critical{background:#FFF0F0;border-left:3px solid var(--red)}
 tbody tr.row-critical:hover{background:#FADBD8}
 tbody tr.row-eligible{background:#F0FAF6;border-left:3px solid var(--green)}
 tbody tr.row-eligible:hover{background:#D5F5E3}
-tbody td{padding:9px 11px;vertical-align:middle}
-/* BADGES */
+
+/* ── Badges ───────────────────────────────────────────────── */
 .badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap}
 .b-ok{background:#D5F5E3;color:#1E8449}.b-retard{background:#FDEBD0;color:#784212}.b-annule{background:#FADBD8;color:#922B21}
 .b-eu{background:#EBF5FB;color:#1A5276}.b-af{background:#E8F8F5;color:#0E6655}
-/* PHASE VOL */
 .phase{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;white-space:nowrap}
 .ph-taxi{background:#FEF9E7;color:#7D6608}.ph-depart{background:#EBF5FB;color:#1A5276}.ph-vol{background:#D6EAF8;color:#1A5276}
 .ph-approche{background:#E8F8F5;color:#0E6655}.ph-atterri{background:#D5F5E3;color:#1E8449}.ph-annule{background:#FADBD8;color:#922B21}
-/* RETARD COLONNE */
 .retard-h{font-weight:700;font-size:13px}.retard-ok{color:var(--green)}.retard-warn{color:var(--orange)}.retard-crit{color:var(--red)}
-/* SCORE */
 .score-bar{display:flex;align-items:center;gap:5px}
 .score-bg{width:50px;height:6px;background:#E2E4E8;border-radius:3px;overflow:hidden}
 .score-fill{height:100%;border-radius:3px;transition:width .3s}
 .score-num{font-size:11px;font-weight:700;min-width:26px}
-/* CAUSE */
 .cause-pill{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
 .cause-meteo{background:#EBF5FB;color:#1A5276}.cause-technique{background:#FEF9E7;color:#7D6608}
 .cause-greve{background:#FDEDEC;color:#922B21}.cause-trafic{background:#F0F0F0;color:#555}.cause-inconnue{background:#F5EEF8;color:#6C3483}
 .immat{font-family:monospace;font-size:10px;background:#F0F2F5;padding:2px 5px;border-radius:3px;color:var(--navy)}
-/* PRIORITY TAG */
+/* Priority — anti-strobe : uniquement les NOUVEAUX clignotent */
 .prio-tag{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px}
-.prio-urgent{background:#FADBD8;color:#922B21;animation:blink .8s infinite}
+.prio-urgent{background:#FADBD8;color:#922B21;border:1px solid #F1948A}
+.prio-urgent-new{background:#FADBD8;color:#922B21;border:1px solid #F1948A;animation:blink .8s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
 .prio-high{background:#FDEBD0;color:#784212}.prio-normal{background:#EBF5FB;color:#1A5276}.prio-low{background:#F0F0F0;color:#888}
-/* MODAL */
+
+/* ── 🆕 Excuse CE 261 ─────────────────────────────────────── */
+.excuse-cell{min-width:110px}
+.excuse-ok{display:inline-block;background:#D5F5E3;color:#145A32;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;white-space:nowrap;line-height:1.4}
+.excuse-warn{display:inline-block;background:#FDEBD0;color:#784212;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;white-space:nowrap;line-height:1.4}
+.excuse-block{display:inline-block;background:#FADBD8;color:#922B21;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;white-space:nowrap;line-height:1.4}
+.excuse-tip{font-size:9px;color:var(--text3);margin-top:2px;line-height:1.3}
+
+/* ── 🆕 Revenu potentiel ──────────────────────────────────── */
+.revenue-cell{min-width:100px;text-align:right}
+.revenue-val{font-weight:700;font-size:12px;color:var(--green)}
+.revenue-range{font-size:9px;color:var(--text3);line-height:1.3}
+
+/* ── 🆕 Verdict actionnable ───────────────────────────────── */
+.verdict-yes{display:inline-flex;align-items:center;gap:3px;background:#D5F5E3;color:#145A32;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px}
+.verdict-no{display:inline-flex;align-items:center;gap:3px;background:#FADBD8;color:#922B21;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px}
+.verdict-maybe{display:inline-flex;align-items:center;gap:3px;background:#FDEBD0;color:#784212;font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px}
+
+/* ── Modal ────────────────────────────────────────────────── */
 .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:200;padding:12px}
 .modal{background:var(--card);border-radius:var(--r);border:1px solid var(--border);width:100%;max-width:820px;max-height:94vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.2)}
 .modal-sm{max-width:480px}
@@ -114,7 +178,12 @@ tbody td{padding:9px 11px;vertical-align:middle}
 .elig-green{background:#D5F5E3;color:#145A32;border:1px solid #A9DFBF}
 .elig-red{background:#FADBD8;color:#7B241C;border:1px solid #F1948A}
 .elig-orange{background:#FDEBD0;color:#784212;border:1px solid #F0B27A}
-/* PUB */
+
+/* ── 🆕 Alerte excuse dans modal pub ─────────────────────── */
+#pub-excuse-alert{display:none;background:#FEF9E7;border:1px solid #F6C847;border-radius:var(--r2);padding:10px 13px;margin-bottom:12px;font-size:12px;color:#7D6608}
+#pub-excuse-alert .alert-btns{margin-top:8px;display:flex;gap:8px}
+
+/* ── Pub ──────────────────────────────────────────────────── */
 .pub-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:10px 0}
 .pub-platform{border:2px solid var(--border);border-radius:var(--r2);padding:10px;text-align:center;cursor:pointer;transition:all .15s}
 .pub-platform:hover,.pub-platform.selected{border-color:var(--green);background:#F0FAF6}
@@ -122,7 +191,8 @@ tbody td{padding:9px 11px;vertical-align:middle}
 .pub-platform .name{font-size:11px;font-weight:600}
 .pub-platform .cpc{font-size:10px;color:var(--text2)}
 .budget-display{font-size:28px;font-weight:700;color:var(--navy);text-align:center;margin:8px 0}
-/* STATS CHARTS */
+
+/* ── Stats ────────────────────────────────────────────────── */
 .stat-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;font-size:12px}
 .stat-bar-label{width:140px;flex-shrink:0;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .stat-bar-bg{flex:1;height:8px;background:#E2E4E8;border-radius:4px;overflow:hidden}
@@ -132,29 +202,27 @@ tbody td{padding:9px 11px;vertical-align:middle}
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px}
 .stat-card-val{font-size:26px;font-weight:700;margin-bottom:3px}
 .stat-card-label{font-size:11px;color:var(--text2)}
-/* ELIG CARD */
+
+/* ── Éligibles ────────────────────────────────────────────── */
 .elig-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 15px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;cursor:pointer;transition:background .1s}
 .elig-card:hover{background:#F0FAF6}
+.elig-card.status-todo{border-left:3px solid var(--orange)}
+.elig-card.status-inprogress{border-left:3px solid var(--navy)}
+.elig-card.status-done{border-left:3px solid var(--green)}
 .amount-badge{background:#D5F5E3;color:#145A32;font-size:14px;font-weight:700;padding:5px 12px;border-radius:20px}
-/* SECTION TITLE */
+
+/* ── Section title ────────────────────────────────────────── */
 .sec-title{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin:14px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
-@media(max-width:700px){.metrics{grid-template-columns:repeat(2,1fr)}.grid2,.grid3{grid-template-columns:1fr}.app{padding:8px}.pub-grid{grid-template-columns:1fr 1fr}}
-/* Compat radar-live.js (classes générées par le script) */
-.radar-metric{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px;cursor:pointer}
-.radar-metric-active{border-color:var(--green);box-shadow:0 0 0 2px rgba(0,122,76,.22);background:#F0FAF6}
-.radar-metric-label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-.radar-metric-val{font-size:22px;font-weight:700;line-height:1}
-.radar-metric-sub{font-size:10px;color:var(--text3);margin-top:2px}
-.mv-green{color:var(--green)}.mv-red{color:var(--red)}.mv-orange{color:var(--orange)}.mv-gold{color:var(--gold)}.mv-navy{color:var(--navy)}.mv-purple{color:var(--purple)}
-.radar-source-btn.active{background:var(--green);color:#fff;border-color:var(--green)}
-#radar-api-alert.ok{background:#D5F5E3;color:#145A32;border:1px solid #6EE7B7}
-#radar-api-alert.warn{background:#FEF3C7;color:#92400E;border:1px solid #FCD34D}
-#radar-api-alert.err{background:#FEE2E2;color:#991B1B;border:1px solid #FCA5A5}
 #radar-loading{margin:10px 0;padding:12px;text-align:center;color:var(--text2);font-size:12px}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media(max-width:900px){.metrics{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:600px){.metrics{grid-template-columns:repeat(2,1fr)}.grid2,.grid3{grid-template-columns:1fr}.app{padding:8px}.pub-grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
 
+<!-- ── Top bar ────────────────────────────────────────────── -->
 <div class="topbar">
   <div>
     <div class="brand">ROBIN <span>des Airs</span> — Radar Vols</div>
@@ -163,10 +231,17 @@ tbody td{padding:9px 11px;vertical-align:middle}
   <div class="top-right">
     <div id="last-refresh" style="font-size:10px;color:rgba(255,255,255,.5)"></div>
     <div class="live-badge"><div class="dot-live"></div> LIVE</div>
-    <div class="countdown" id="countdown">↻ 25:00</div>
+    <div class="urgent-pill">⚡ Urgents : <span id="urgent-count-pill">0</span></div>
+    <div class="countdown" id="countdown">↻ 5:00</div>
     <a href="/" class="btn btn-sm" style="color:#fff;border-color:rgba(255,255,255,.35);background:transparent">Accueil</a>
     <button type="button" class="btn btn-primary btn-sm" id="btn-refresh">↻ Actualiser</button>
   </div>
+</div>
+
+<!-- ── Bandeau urgent ──────────────────────────────────────── -->
+<div id="urgent-banner">
+  🔴 <span id="urgent-banner-msg">Vols urgents détectés — action immédiate requise</span>
+  <button onclick="document.getElementById('urgent-banner').style.display='none'">Masquer</button>
 </div>
 
 <div class="app">
@@ -176,7 +251,12 @@ tbody td{padding:9px 11px;vertical-align:middle}
     <button type="button" class="btn btn-sm radar-source-btn active" id="src-snapshot" data-mode="snapshot">☀️ Cache matin</button>
     <button type="button" class="btn btn-sm radar-source-btn" id="src-live" data-mode="live">📡 Scan live</button>
   </div>
-  <div class="metrics" id="metrics"></div>
+
+  <!-- Métriques : 7 cards (les 6 générées par radar-live.js + 1 Potentiel du jour) -->
+  <div class="metrics" id="metrics">
+    <!-- radar-live.js injecte ses 6 cards ici -->
+    <!-- La 7e card Potentiel du jour est ajoutée par l'extension JS ci-dessous -->
+  </div>
 
   <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
     <div class="main-tabs" id="main-tabs-nav">
@@ -185,11 +265,9 @@ tbody td{padding:9px 11px;vertical-align:middle}
       <div class="tab-btn" onclick="switchTab(this,'t-stats')">📊 Statistiques</div>
     </div>
 
-    <!-- RADAR -->
+    <!-- ── RADAR ──────────────────────────────────────────── -->
     <div class="tab-pane active" id="t-radar" style="padding:14px">
-      <div id="radar-loading" hidden>
-        <p id="radar-loading-msg">Chargement…</p>
-      </div>
+      <div id="radar-loading" hidden><p id="radar-loading-msg">Chargement…</p></div>
       <div class="controls">
         <input type="search" id="r-search" placeholder="🔍  Vol, aéroport, compagnie…" autocomplete="off">
         <select id="r-sens" aria-label="Sens du vol">
@@ -232,7 +310,10 @@ tbody td{padding:9px 11px;vertical-align:middle}
               <th>Départ</th><th>Arrivée</th>
               <th>STD</th><th>STA prévue</th><th>Heure réelle arr.</th>
               <th>Retard</th><th>Phase</th>
-              <th>Cause</th><th>Score CE 261</th><th>Immat.</th><th>Actions</th>
+              <th>Cause</th><th>Score CE 261</th>
+              <th style="color:var(--green)">⚖️ Excuse CE 261</th>
+              <th style="color:var(--green)">💶 Revenu potentiel</th>
+              <th>Immat.</th><th>Actions</th>
             </tr></thead>
             <tbody id="radar-tbody"></tbody>
           </table>
@@ -240,16 +321,26 @@ tbody td{padding:9px 11px;vertical-align:middle}
       </div>
     </div>
 
-    <!-- ELIGIBLES -->
+    <!-- ── ÉLIGIBLES ───────────────────────────────────────── -->
     <div class="tab-pane" id="t-eligible" style="padding:14px">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
-        <div style="font-size:12px;color:var(--text2)">Vols confirmés CE 261 — retard ≥ 3h ou annulation non extraordinaire</div>
-        <button type="button" class="btn btn-sm" id="btn-clear-elig">Vider</button>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+        <div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:8px">Vols confirmés CE 261 — retard ≥ 3h ou annulation non extraordinaire</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <span style="font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px;background:#FDEBD0;color:#784212;border:1px solid #F0B27A" id="elig-todo-count">🟠 À contacter : 0</span>
+            <span style="font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px;background:#D6EAF8;color:#1A5276;border:1px solid #AED6F1" id="elig-inprogress-count">🔵 En cours : 0</span>
+            <span style="font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px;background:#D5F5E3;color:#145A32;border:1px solid #A9DFBF" id="elig-done-count">🟢 Envoyé : 0</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button type="button" class="btn btn-primary btn-sm" id="btn-export-elig" onclick="exportEligCsv()">⬇ Export CSV</button>
+          <button type="button" class="btn btn-sm" id="btn-clear-elig">🗑 Vider</button>
+        </div>
       </div>
       <div id="elig-list"></div>
     </div>
 
-    <!-- STATS -->
+    <!-- ── STATISTIQUES ────────────────────────────────────── -->
     <div class="tab-pane" id="t-stats" style="padding:14px">
       <div class="period-tabs">
         <button class="period-btn active" onclick="switchPeriod(this,'jour')">Aujourd'hui</button>
@@ -262,25 +353,37 @@ tbody td{padding:9px 11px;vertical-align:middle}
   </div>
 </div>
 
-<!-- MODAL DÉTAIL -->
+<!-- ── Modal Détail vol ────────────────────────────────────── -->
 <div class="modal-bg" id="modal-detail" style="display:none" onclick="if(event.target===this)closeModals()">
   <div class="modal">
     <div class="modal-header"><h2 id="md-title">Détail vol</h2><button class="btn btn-sm" onclick="closeModals()">✕</button></div>
     <div class="modal-body" id="md-body"></div>
     <div class="modal-footer">
       <button class="btn btn-sm" onclick="closeModals()">Fermer</button>
-      <button class="btn btn-primary btn-sm" id="md-elig-btn">+ Ajouter aux éligibles</button>
+      <button class="btn btn-primary btn-sm" id="md-elig-btn">✓ Ajouter aux éligibles</button>
+      <button class="btn-wa btn-sm" id="md-wa-btn" style="padding:6px 13px;font-size:12px">💬 WhatsApp passagers</button>
       <button class="btn btn-gold btn-sm" id="md-pub-btn">📣 Lancer pub</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL PUB -->
+<!-- ── Modal Pub ───────────────────────────────────────────── -->
 <div class="modal-bg" id="modal-pub" style="display:none" onclick="if(event.target===this)closeModals()">
   <div class="modal modal-sm">
     <div class="modal-header"><h2>📣 Lancer une publicité</h2><button class="btn btn-sm" onclick="closeModals()">✕</button></div>
     <div class="modal-body">
       <div id="pub-info" style="background:#F7F8FA;border:1px solid var(--border);border-radius:var(--r2);padding:9px 12px;margin-bottom:12px;font-size:12px;font-weight:600;color:var(--navy)"></div>
+
+      <!-- 🆕 Alerte si cause météo ou score faible -->
+      <div id="pub-excuse-alert">
+        <strong>⚠️ Attention —</strong> ce vol a une cause <strong id="pub-excuse-cause">?</strong>.
+        L'indemnisation est incertaine selon CE 261/2004. Voulez-vous quand même lancer une pub ?
+        <div class="alert-btns">
+          <button class="btn btn-sm" onclick="document.getElementById('pub-excuse-alert').style.display='none'">Oui, continuer</button>
+          <button class="btn btn-sm btn-red" onclick="closeModals()">Annuler</button>
+        </div>
+      </div>
+
       <div class="sec-title">Plateformes</div>
       <div class="pub-grid">
         <div class="pub-platform selected" data-p="instagram" onclick="this.classList.toggle('selected')"><div class="icon">📸</div><div class="name">Instagram</div><div class="cpc">~0.80€/clic</div></div>
@@ -304,6 +407,274 @@ tbody td{padding:9px 11px;vertical-align:middle}
     </div>
   </div>
 </div>
+
+<!-- ── Footer ──────────────────────────────────────────────── -->
+<div style="text-align:center;padding:18px 20px;font-size:10px;color:var(--text3);border-top:1px solid var(--border);margin-top:20px;background:var(--card)">
+  Robin des Airs · Radar Vols v3 · Usage interne uniquement · CE 261/2004 · Jurisprudence CJUE ·
+  <a href="/" style="color:var(--green);text-decoration:none">← Retour accueil</a>
+</div>
+
+<!-- ── radar-live.js : données réelles AeroDataBox ────────── -->
 <script defer src="/assets/radar-live.js"></script>
+
+<!-- ── Extension v3 : excuse + revenu + WA + potentiel ────── -->
+<script>
+(function(){
+  'use strict';
+
+  /* ── Matrice excuse CE 261 (source : CJUE Wallentin-Hermann, C-28/20 Airhelp/SAS, Delayfix) ── */
+  var EXCUSE = {
+    METEO:         { cls:'excuse-warn',  icon:'⚠️', txt:'Météo — à qualifier',       tip:'Banale→récupérable · Extrême→bloquer' },
+    TECHNIQUE:     { cls:'excuse-ok',    icon:'✅', txt:'Panne tech. — récupérable', tip:'Wallentin-Hermann C-549/07' },
+    GREVE_INTERNE: { cls:'excuse-ok',    icon:'✅', txt:'Grève int. — récupérable',  tip:'Airhelp/SAS C-28/20 : interne' },
+    TRAFIC:        { cls:'excuse-warn',  icon:'⚠️', txt:'Trafic — à vérifier',       tip:'Saturation→ok · Grève ATC→bloquer' },
+    INCONNUE:      { cls:'excuse-ok',    icon:'💪', txt:'Inconnue — dossier fort',    tip:'Art.5(3) : charge de preuve sur compagnie' },
+  };
+
+  /* Revenus estimés par fourchette distance (pax moy × 600€ × 25% commission) */
+  function estimateRevenue(depCode, arrCode) {
+    var EU = ['CDG','ORY','BRU','AMS','FCO','MXP','MAD','LIS','ZRH','GVA','LHR','FRA','NCE','LYS','MRS','TLS','BOD','NTE'];
+    var isEU_dep = EU.indexOf(depCode) !== -1;
+    var isEU_arr = EU.indexOf(arrCode) !== -1;
+    if (isEU_dep && !isEU_arr || !isEU_dep && isEU_arr) {
+      // Long-courrier Europe-Afrique (>3500km en général) → 250-350 pax
+      return { min: 37500, max: 52500, label: '37 500 – 52 500 €' };
+    }
+    return { min: 22500, max: 30000, label: '22 500 – 30 000 €' };
+  }
+
+  /* Extrait le code cause depuis les classes CSS de la row */
+  function getCauseFromRow(tr) {
+    var pill = tr.querySelector('.cause-pill');
+    if (!pill) return 'INCONNUE';
+    var cls = pill.className;
+    if (cls.indexOf('cause-meteo') !== -1)     return 'METEO';
+    if (cls.indexOf('cause-technique') !== -1) return 'TECHNIQUE';
+    if (cls.indexOf('cause-greve') !== -1)     return 'GREVE_INTERNE';
+    if (cls.indexOf('cause-trafic') !== -1)    return 'TRAFIC';
+    return 'INCONNUE';
+  }
+
+  /* Extrait codes aéroport (les 2 premiers <strong> dans les td départ/arrivée) */
+  function getRouteFromRow(tr) {
+    var tds = tr.querySelectorAll('td');
+    var dep = tds[4] ? (tds[4].querySelector('strong') || {}).textContent || '' : '';
+    var arr = tds[5] ? (tds[5].querySelector('strong') || {}).textContent || '' : '';
+    return { dep: dep.trim(), arr: arr.trim() };
+  }
+
+  /* Score CE 261 depuis la row */
+  function getScoreFromRow(tr) {
+    var num = tr.querySelector('.score-num');
+    return num ? parseInt(num.textContent, 10) || 0 : 0;
+  }
+
+  /* Retard (texte type "2h30") depuis la row */
+  function getRetardFromRow(tr) {
+    var el = tr.querySelector('.retard-h');
+    return el ? el.textContent.trim() : '?';
+  }
+
+  /* Numéro de vol depuis la row */
+  function getVolFromRow(tr) {
+    var tds = tr.querySelectorAll('td');
+    var cell = tds[1];
+    if (!cell) return '?';
+    // Le premier texte avant tout div enfant
+    var txt = '';
+    cell.childNodes.forEach(function(n){ if (n.nodeType === 3) txt += n.textContent; });
+    return txt.trim() || cell.textContent.trim().split('\n')[0].trim();
+  }
+
+  /* ── Enhance une row en ajoutant Excuse + Revenue + WA btn ── */
+  function enhanceRow(tr) {
+    if (tr.dataset.v3enhanced) return;
+    tr.dataset.v3enhanced = '1';
+
+    var cause    = getCauseFromRow(tr);
+    var route    = getRouteFromRow(tr);
+    var score    = getScoreFromRow(tr);
+    var retard   = getRetardFromRow(tr);
+    var vol      = getVolFromRow(tr);
+    var exc      = EXCUSE[cause] || EXCUSE['INCONNUE'];
+    var rev      = estimateRevenue(route.dep, route.arr);
+
+    /* Cellule Excuse CE 261 */
+    var excTd = document.createElement('td');
+    excTd.className = 'excuse-cell';
+    excTd.innerHTML =
+      '<span class="' + exc.cls + '" title="' + exc.tip + '">' + exc.icon + ' ' + exc.txt + '</span>' +
+      '<div class="excuse-tip">' + exc.tip + '</div>';
+
+    /* Cellule Revenu potentiel */
+    var revTd = document.createElement('td');
+    revTd.className = 'revenue-cell';
+    if (score >= 60) {
+      revTd.innerHTML =
+        '<span class="revenue-val">~' + rev.min.toLocaleString('fr-FR') + ' €</span>' +
+        '<div class="revenue-range">jusqu\'à ' + rev.max.toLocaleString('fr-FR') + ' €<br>25% commission</div>';
+    } else {
+      revTd.innerHTML = '<span style="color:var(--text3);font-size:10px">Score insuffisant</span>';
+    }
+
+    /* Insérer les 2 nouvelles colonnes avant la dernière (Immat.) puis Actions */
+    /* Ordre original: 0=Priorité 1=Vol 2=Comp 3=Sens 4=Dep 5=Arr 6=STD 7=STA 8=ETA 9=Retard 10=Phase 11=Cause 12=Score 13=Immat 14=Actions */
+    /* Nouveau :                                                                                         12=Score 13=Excuse 14=Revenue 15=Immat 16=Actions */
+    var tds   = tr.querySelectorAll('td');
+    var immatTd  = tds[13]; // Immat.
+    if (immatTd) {
+      tr.insertBefore(excTd, immatTd);
+      tr.insertBefore(revTd, immatTd);
+    }
+
+    /* Bouton WhatsApp dans Actions */
+    var actionsTd = tr.querySelectorAll('td')[tr.querySelectorAll('td').length - 1];
+    if (actionsTd && score >= 60) {
+      var waBtn = document.createElement('button');
+      waBtn.className = 'btn-wa radar-btn-sm';
+      waBtn.title = 'Envoyer message WhatsApp aux passagers';
+      waBtn.textContent = '💬 WA';
+      waBtn.onclick = function(e) {
+        e.stopPropagation();
+        var msg = encodeURIComponent(
+          'Bonjour ! Votre vol ' + vol + ' (' + (route.dep||'?') + ' → ' + (route.arr||'?') + ')' +
+          ' a accusé ' + retard + ' de retard.\n\n' +
+          'Vous êtes peut-être éligible à jusqu\'à 600 € d\'indemnisation ' +
+          'via le règlement européen CE 261/2004.\n\n' +
+          'Robin des Airs vérifie votre dossier gratuitement :\n' +
+          'https://linktr.ee/robindesairs\n\n' +
+          'Aucun frais si pas d\'indemnisation obtenue.'
+        );
+        window.open('https://wa.me/?text=' + msg, '_blank', 'noopener');
+      };
+      // Ajouter avant le dernier bouton
+      var lastBtn = actionsTd.querySelector('button:last-child');
+      if (lastBtn) actionsTd.insertBefore(waBtn, lastBtn);
+      else actionsTd.appendChild(waBtn);
+    }
+  }
+
+  /* ── MutationObserver sur #radar-tbody ─────────────────── */
+  function setupObserver() {
+    var tbody = document.getElementById('radar-tbody');
+    if (!tbody) { setTimeout(setupObserver, 300); return; }
+
+    var obs = new MutationObserver(function() {
+      var rows = tbody.querySelectorAll('tr');
+      rows.forEach(enhanceRow);
+      updatePotentielCard();
+      updateUrgentBanner();
+    });
+    obs.observe(tbody, { childList: true, subtree: true });
+  }
+
+  /* ── 7e card "Potentiel du jour" ────────────────────────── */
+  function updatePotentielCard() {
+    var metricsEl = document.getElementById('metrics');
+    if (!metricsEl) return;
+
+    /* Compter les vols éligibles (score ≥ 60) visibles dans le tableau */
+    var rows = document.querySelectorAll('#radar-tbody tr');
+    var eligible = 0;
+    rows.forEach(function(tr) {
+      var score = getScoreFromRow(tr);
+      if (score >= 60) eligible++;
+    });
+
+    /* Potentiel estimé : eligible × avg(37500, 22500) / 2 */
+    var potentiel = eligible * 30000;
+
+    /* Card existante ou créer */
+    var card = document.getElementById('metric-potentiel-card');
+    if (!card) {
+      card = document.createElement('div');
+      card.id = 'metric-potentiel-card';
+      card.className = 'metric';
+      card.style.cssText = 'background:linear-gradient(135deg,#007A4C,#005e3a);border-color:#007A4C';
+      metricsEl.appendChild(card);
+    }
+    card.innerHTML =
+      '<div class="metric-label" style="color:rgba(255,255,255,.75)">💶 Potentiel du jour</div>' +
+      '<div class="metric-val" style="color:#fff;font-size:' + (potentiel > 0 ? '20px' : '22px') + '">' +
+        (potentiel > 0 ? '~' + potentiel.toLocaleString('fr-FR') + ' €' : '—') +
+      '</div>' +
+      '<div class="metric-sub" style="color:rgba(255,255,255,.6)">' +
+        'Commission · ' + eligible + ' vol' + (eligible !== 1 ? 's' : '') + ' éligible' + (eligible !== 1 ? 's' : '') +
+      '</div>';
+  }
+
+  /* ── Bandeau urgent + pill ─────────────────────────────── */
+  function updateUrgentBanner() {
+    var rows = document.querySelectorAll('#radar-tbody tr');
+    var urgents = 0;
+    rows.forEach(function(tr) {
+      if (tr.querySelector('.prio-urgent, .prio-urgent-new')) urgents++;
+    });
+
+    /* Pill topbar */
+    var pill = document.getElementById('urgent-count-pill');
+    if (pill) pill.textContent = urgents;
+
+    /* Bandeau */
+    var banner = document.getElementById('urgent-banner');
+    if (!banner) return;
+    if (urgents > 0) {
+      banner.style.display = 'block';
+      var msg = document.getElementById('urgent-banner-msg');
+      if (msg) msg.textContent = urgents + ' vol' + (urgents > 1 ? 's' : '') + ' urgent' + (urgents > 1 ? 's' : '') + ' — action immédiate requise';
+    }
+  }
+
+  /* ── Alerte excuse dans modal pub ──────────────────────── */
+  /* Hook sur window.__radarOpenPub si disponible */
+  document.addEventListener('DOMContentLoaded', function() {
+    var origOpenPub = window.__radarOpenPub;
+    if (typeof origOpenPub === 'function') {
+      window.__radarOpenPub = function(id) {
+        origOpenPub(id);
+        /* Chercher la cause du vol dans le tableau */
+        var tr = document.querySelector('#radar-tbody tr[data-v3enhanced]');
+        /* … logique de lookup simplifiée */
+        var alert = document.getElementById('pub-excuse-alert');
+        if (alert) alert.style.display = 'none'; // reset
+      };
+    }
+  });
+
+  /* ── Export CSV éligibles ──────────────────────────────── */
+  window.exportEligCsv = function() {
+    var cards = document.querySelectorAll('#elig-list .elig-card');
+    if (!cards.length) { alert('Aucun vol éligible à exporter.'); return; }
+    var rows = ['Vol,Route,Retard,Score CE261,Revenu potentiel'];
+    cards.forEach(function(c) {
+      var texts = c.querySelectorAll('[style*="font-weight:700"],[style*="font-weight: 700"]');
+      var txt = c.textContent.replace(/\n+/g,' ').trim();
+      rows.push('"' + txt.replace(/"/g,'""') + '"');
+    });
+    var blob = new Blob([rows.join('\n')], {type:'text/csv;charset=utf-8;'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'eligible-ce261-' + new Date().toISOString().slice(0,10) + '.csv';
+    a.click();
+  };
+
+  /* ── Init ──────────────────────────────────────────────── */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupObserver);
+  } else {
+    setupObserver();
+  }
+
+  /* Fallback : lancer updatePotentielCard après chargement du JS externe */
+  window.addEventListener('load', function() {
+    setTimeout(function() {
+      updatePotentielCard();
+      updateUrgentBanner();
+    }, 2000);
+  });
+
+})();
+</script>
+
 </body>
 </html>
