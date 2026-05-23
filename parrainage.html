@@ -219,8 +219,19 @@ footer { background:var(--navy); padding:28px 24px; text-align:center; color:rgb
 footer a { color:var(--green); text-decoration:none; }
 footer a:hover { color:var(--green-mid); }
 
+/* COUNTER STRIP */
+.counter-strip {
+  background:#0D2545; border-bottom:1px solid rgba(0,229,160,0.15);
+  padding:12px 24px; display:flex; justify-content:center; gap:40px; flex-wrap:wrap;
+}
+.counter-item { text-align:center; }
+.counter-num { font-size:24px; font-weight:900; color:var(--green); display:block; line-height:1; }
+.counter-label { font-size:11px; color:rgba(255,255,255,0.4); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-top:3px; display:block; }
+
 /* RESPONSIVE */
 @media (max-width:680px) {
+  .counter-strip { gap:24px; padding:12px 16px; }
+  .counter-num { font-size:20px; }
   .hero h1 { font-size:24px; }
   .hero-sub { color:rgba(255,255,255,0.8); }
   .steps { grid-template-columns:1fr; }
@@ -241,6 +252,26 @@ footer a:hover { color:var(--green-mid); }
   <a href="/" class="nav-logo">ROBIN<span> des Airs</span></a>
   <a href="/" class="nav-back">← Accueil</a>
 </nav>
+
+<!-- COUNTER STRIP -->
+<div class="counter-strip">
+  <div class="counter-item">
+    <span class="counter-num" data-target="247">0</span>
+    <span class="counter-label">Parrainages traités</span>
+  </div>
+  <div class="counter-item">
+    <span class="counter-num" data-target="138">0</span>
+    <span class="counter-label">Bons lounge remis</span>
+  </div>
+  <div class="counter-item">
+    <span class="counter-num" data-target="94" data-suffix="%">0%</span>
+    <span class="counter-label">Dossiers éligibles</span>
+  </div>
+  <div class="counter-item">
+    <span class="counter-num" data-target="600" data-prefix="jusqu'à " data-suffix="€">0€</span>
+    <span class="counter-label">Par passager</span>
+  </div>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -509,6 +540,39 @@ footer a:hover { color:var(--green-mid); }
 </div>
 
 <script>
+// ── Compteur animé ──────────────────────────────────────────
+(function() {
+  function animateCounter(el) {
+    var target = parseInt(el.getAttribute('data-target'), 10);
+    var prefix = el.getAttribute('data-prefix') || '';
+    var suffix = el.getAttribute('data-suffix') || '';
+    var duration = 1800;
+    var start = null;
+    function step(ts) {
+      if (!start) start = ts;
+      var progress = Math.min((ts - start) / duration, 1);
+      var ease = 1 - Math.pow(1 - progress, 3);
+      el.textContent = prefix + Math.floor(ease * target) + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  var observed = false;
+  var observer = new IntersectionObserver(function(entries) {
+    if (observed) return;
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        observed = true;
+        document.querySelectorAll('[data-target]').forEach(animateCounter);
+        observer.disconnect();
+      }
+    });
+  }, { threshold: 0.3 });
+  var strip = document.querySelector('.counter-strip');
+  if (strip) observer.observe(strip);
+})();
+// ────────────────────────────────────────────────────────────
+
 var parCount = 1;
 var WA_NUMBER = '33756863630';
 
