@@ -304,28 +304,28 @@ async function fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, dateStr, hubLis
     [`${day}T12:00`, `${day}T23:59`]
   ];
 
-  // Parallélisation par hub (3 hubs à la fois = 6 req/s max — respecte le rate-limit RapidAPI).
-  // Chaque hub traite ses 2 fenêtres séquentiellement avec dep+arr en parallèle.
-  const BATCH = 3;
-  for (let i = 0; i < hubs.length; i += BATCH) {
-    await Promise.all(hubs.slice(i, i + BATCH).map(async (hub) => {
-      const icao = TICKER_HUB_ICAO[hub] || HUB_ICAO[hub];
-      if (!icao) return;
-      for (const [a, b] of windows) {
-        const [deps, arrs] = await Promise.all([
-          fetchAdbWindow(icao, a, b, 'Departure', rapidKey, hub),
-          fetchAdbWindow(icao, a, b, 'Arrival', rapidKey, hub)
-        ]);
-        for (const r of deps) {
-          const n = normalizeAdbFlight(r, { direction: 'Departure', hubIata: hub });
-          if (n) allRaw.push(n);
-        }
-        for (const r of arrs) {
-          const n = normalizeAdbFlight(r, { direction: 'Arrival', hubIata: hub });
-          if (n) arrivalRaw.push(n);
-        }
+  // Séquentiel par hub, dep+arr en parallèle par fenêtre (2 req simultanées max).
+  // Évite les 429 RapidAPI. Délai 300ms entre hubs pour respecter le rate-limit.
+  const delayMs = parseInt(process.env.RADAR_API_DELAY_MS || '300', 10) || 300;
+  for (let hi = 0; hi < hubs.length; hi++) {
+    const hub = hubs[hi];
+    const icao = TICKER_HUB_ICAO[hub] || HUB_ICAO[hub];
+    if (!icao) continue;
+    if (hi > 0) await new Promise(r => setTimeout(r, delayMs));
+    for (const [a, b] of windows) {
+      const [deps, arrs] = await Promise.all([
+        fetchAdbWindow(icao, a, b, 'Departure', rapidKey, hub),
+        fetchAdbWindow(icao, a, b, 'Arrival', rapidKey, hub)
+      ]);
+      for (const r of deps) {
+        const n = normalizeAdbFlight(r, { direction: 'Departure', hubIata: hub });
+        if (n) allRaw.push(n);
       }
-    }));
+      for (const r of arrs) {
+        const n = normalizeAdbFlight(r, { direction: 'Arrival', hubIata: hub });
+        if (n) arrivalRaw.push(n);
+      }
+    }
   }
 }
 
@@ -932,7 +932,11 @@ exports.handler = async (event) => {
   try {
     const allRaw = [];
     const arrivalRaw = [];
-    await fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, parisDateYmd(), RADAR_EU_HUBS);
+    // HUBS = France uniquement (CDG/ORY/MRS/LYS/NCE/BOD/TLS/NTE/LIL/SXB/RUN).
+    // Passer RADAR_EU_HUBS pour activer les hubs EU non-français (BRU/AMS/LIS/LGW/LHR/MAD)
+    // uniquement si le plan RapidAPI dispose d'un quota suffisant (>= 200 req/jour).
+    const scanHubs = process.env.RADAR_USE_EU_HUBS === '1' ? RADAR_EU_HUBS : HUBS;
+    await fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, parisDateYmd(), scanHubs);
 
     const payload = await assembleFlightsFromRaw(allRaw, arrivalRaw);
 
