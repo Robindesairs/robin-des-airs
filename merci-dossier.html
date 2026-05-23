@@ -17,6 +17,28 @@
     a.btn:hover { filter: brightness(0.95); }
     .foot { margin-top: 28px; font-size: 13px; color: var(--earth); }
     .foot a { color: #009960; }
+    .parrainage-block {
+      margin-top: 28px; background: var(--navy); border-radius: 12px;
+      padding: 22px 20px; text-align: center;
+    }
+    .parrainage-block .tag {
+      display: inline-block; background: rgba(0,200,122,.15); color: #00e5a0;
+      font-size: 11px; font-weight: 700; letter-spacing: .8px; text-transform: uppercase;
+      padding: 3px 12px; border-radius: 20px; margin-bottom: 10px;
+    }
+    .parrainage-block h2 {
+      margin: 0 0 8px; font-size: 1rem; color: #fff; font-weight: 800; line-height: 1.3;
+    }
+    .parrainage-block p {
+      margin: 0 0 16px; font-size: 13px; color: rgba(255,255,255,.6); line-height: 1.5;
+    }
+    .parrainage-block a.btn-lounge {
+      display: inline-block; background: #00e5a0; color: var(--navy);
+      font-weight: 900; font-size: 14px; padding: 12px 22px;
+      border-radius: 10px; text-decoration: none;
+      box-shadow: 0 4px 16px rgba(0,229,160,.3);
+    }
+    .parrainage-block a.btn-lounge:hover { filter: brightness(.95); }
   </style>
 </head>
 <body>
@@ -24,6 +46,14 @@
     <h1>Dossier bien reçu</h1>
     <p>Merci pour votre envoi. Notre équipe traite les dossiers sous <strong>48&nbsp;h</strong> ouvrées et vous recontacte à l’adresse ou le numéro indiqués.</p>
     <a class="btn" href="/">Retour à l’accueil</a>
+
+    <div class="parrainage-block">
+      <div class="tag">🎁 Programme parrainage</div>
+      <h2>Connaissez-vous quelqu’un dont un vol<br>Europe&nbsp;↔&nbsp;Afrique a été retardé&nbsp;?</h2>
+      <p>Parrainez-le — s’il est indemnisé, vous recevez<br><strong style="color:#00e5a0;">1 accès lounge VIP</strong> offert (valeur ~60–80&nbsp;€, valable 1&nbsp;an).</p>
+      <a class="btn-lounge" href="/parrainage">Parrainer quelqu’un →</a>
+    </div>
+
     <p class="foot"><a href="mailto:expert@robindesairs.eu">expert@robindesairs.eu</a> · <a href="/dossier">Nouveau dossier</a></p>
   </main>
 </body>
