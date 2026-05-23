@@ -76,7 +76,8 @@ const SECTIONS = [
     id: 'radar',
     title: 'Radar & vols',
     links: [
-      { url: '/radar', label: 'Radar (prod)' },
+      { url: '/radar-vols-v2', label: 'Radar ops v2 (prod)' },
+      { url: '/radar', label: 'Radar (alias → v2)' },
       { url: '/radar-choix', label: 'Radar choix' },
       { url: '/radar-direct.html', label: 'Radar direct' },
       { url: '/radar-v3.html', label: 'Radar v3', tag: 'legacy' },
@@ -96,6 +97,7 @@ const SECTIONS = [
       { url: '/generateur-pub.html', label: 'Générateur pub' },
       { url: '/verification-fonctions.html', label: 'Test fonctions Netlify' },
       { url: '/navigation-interne', label: 'Cette page' },
+      { url: '/index.html?palette=robin', label: 'Accueil — aperçu palette sapin/or' },
       {
         url: 'https://github.com/Robindesairs/robin-des-airs/blob/main/docs/PAGES-SITE.md',
         label: 'Inventaire markdown (GitHub)',
