@@ -151,7 +151,7 @@ async function runMorning(event, parisHour, dateYmd) {
 async function sendDelayAlerts(flights, dateYmd) {
   const minDelay = parseInt(process.env.MONITOR_ALERT_MIN_DELAY || '180', 10) || 180;
   const toAlert = (flights || []).filter(
-    (f) => !f.cancelled && f.delayMinutes != null && f.delayMinutes >= minDelay
+    (f) => f.cancelled || (f.delayMinutes != null && f.delayMinutes >= minDelay)
   );
   if (!toAlert.length) return;
 
@@ -180,18 +180,8 @@ async function sendDelayAlerts(flights, dateYmd) {
       // On continue quand même pour ne pas bloquer les autres alertes
     }
 
-    const delayH = Math.floor(f.delayMinutes / 60);
-    const delayM = f.delayMinutes % 60;
-    const delayStr = delayM > 0 ? `+${delayH}h${delayM}min` : `+${delayH}h`;
     const schedHour = f.scheduledDeparture
       ? new Date(f.scheduledDeparture).toLocaleTimeString('fr-FR', {
-          hour: '2-digit',
-          minute: '2-digit',
-          timeZone: 'UTC',
-        })
-      : '?';
-    const estHour = f.estimatedDeparture
-      ? new Date(f.estimatedDeparture).toLocaleTimeString('fr-FR', {
           hour: '2-digit',
           minute: '2-digit',
           timeZone: 'UTC',
@@ -200,19 +190,52 @@ async function sendDelayAlerts(flights, dateYmd) {
 
     const ce261 = f.eligible ? '✅ CE261 éligible' : '⚠️ Vérifier éligibilité';
 
-    const msg = [
-      `✈️ RETARD DÉTECTÉ — Robin des Airs`,
-      ``,
-      `Vol    : ${f.flight || '—'}`,
-      `Trajet : ${f.dep || '?'} → ${f.arr || '?'}`,
-      `Prévu  : ${schedHour} UTC`,
-      `Nouveau: ${estHour} UTC`,
-      `Retard : ${delayStr}`,
-      ``,
-      ce261,
-      ``,
-      `👉 Lancer le dossier CE261 maintenant`,
-    ].join('\n');
+    let msg;
+    if (f.cancelled) {
+      const cancelHour = f.cancelledAt
+        ? new Date(f.cancelledAt).toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'UTC',
+          })
+        : '?';
+      msg = [
+        `🚫 VOL ANNULÉ — Robin des Airs`,
+        ``,
+        `Vol    : ${f.flight || '—'}`,
+        `Trajet : ${f.dep || '?'} → ${f.arr || '?'}`,
+        `Prévu  : ${schedHour} UTC`,
+        `Annulé : ${cancelHour} UTC`,
+        ``,
+        ce261,
+        ``,
+        `👉 Lancer le dossier CE261 maintenant`,
+      ].join('\n');
+    } else {
+      const delayH = Math.floor(f.delayMinutes / 60);
+      const delayM = f.delayMinutes % 60;
+      const delayStr = delayM > 0 ? `+${delayH}h${delayM}min` : `+${delayH}h`;
+      const estHour = f.estimatedDeparture
+        ? new Date(f.estimatedDeparture).toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZone: 'UTC',
+          })
+        : '?';
+      msg = [
+        `✈️ RETARD DÉTECTÉ — Robin des Airs`,
+        ``,
+        `Vol    : ${f.flight || '—'}`,
+        `Trajet : ${f.dep || '?'} → ${f.arr || '?'}`,
+        `Prévu  : ${schedHour} UTC`,
+        `Nouveau: ${estHour} UTC`,
+        `Retard : ${delayStr}`,
+        ``,
+        ce261,
+        ``,
+        `👉 Lancer le dossier CE261 maintenant`,
+      ].join('\n');
+    }
 
     try {
       await sendCallMeBot(msg);
