@@ -1,6 +1,9 @@
 # Netlify : forcer la racine à servir index.html
 /    /index.html    200
 
+# Redirect mandat → autorisation (renommage SEO)
+/mandat.html    /autorisation.html    301
+
 # Radar vols (page complète = radar.html, copie alignée sur radar-vols-v2.html)
 /radar                       /radar.html                       200
 /radar-choix                /radar-choix.html                 200

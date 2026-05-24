@@ -2,7 +2,7 @@
 User-agent: *
 Allow: /
 
-# Sitemap (optionnel)
-# Sitemap: https://robindesairs.eu/sitemap.xml
+# Sitemap
+Sitemap: https://robindesairs.eu/sitemap.xml
 
 # Pour re-bloquer au lancement : remettre Disallow: / et noindex dans index.html
