@@ -1,6 +1,10 @@
 node_modules/
 .claude/
 
+# Backups de conversion (rollback local uniquement)
+*.green.bak
+blog/*.bak
+
 .env
 data/robin.db
 dist/
