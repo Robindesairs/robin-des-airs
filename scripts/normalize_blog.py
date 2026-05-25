@@ -329,6 +329,85 @@ def transform_body_html(body: str) -> str:
     return body
 
 
+def _strip_html_tags(s: str) -> str:
+    return re.sub(r"<[^>]+>", "", s or "").strip()
+
+
+def _truncate(s: str, n: int = 220) -> str:
+    s = re.sub(r"\s+", " ", s or "").strip()
+    if len(s) <= n:
+        return s
+    cut = s[: n - 1].rsplit(" ", 1)[0]
+    return cut.rstrip(",.;:") + "…"
+
+
+def build_tldr_section(
+    *,
+    faq_jsonld: dict | None,
+    description: str,
+    body_html: str,
+    lang: str,
+) -> str:
+    """
+    AEO-friendly TL;DR block placed at the top of the article.
+    Priority order:
+      1) FAQ JSON-LD : first 3 Q/A
+      2) First sentence of each of the first 3 H2 in #blog-body
+      3) meta description (fallback)
+    """
+    title = "En bref" if lang == "fr" else "Key takeaways"
+    items: list[str] = []
+
+    # 1) FAQ first 3
+    if faq_jsonld:
+        main = faq_jsonld.get("mainEntity") or []
+        for q in main[:3]:
+            if not isinstance(q, dict):
+                continue
+            question = _strip_html_tags(q.get("name") or "")
+            accepted = q.get("acceptedAnswer") or {}
+            answer = ""
+            if isinstance(accepted, dict):
+                answer = _strip_html_tags(accepted.get("text") or "")
+            if question and answer:
+                items.append(
+                    f'        <li><strong>{text_escape(question)}</strong> — {text_escape(_truncate(answer, 200))}</li>'
+                )
+
+    # 2) Fallback : first 3 H2 first sentence
+    if not items:
+        h2_matches = re.findall(
+            r"<h2[^>]*>(.*?)</h2>\s*((?:<p[^>]*>(?:[^<]|<(?!h2))*?</p>\s*){0,2})",
+            body_html or "",
+            flags=re.DOTALL | re.IGNORECASE,
+        )
+        for h2_raw, p_chunk in h2_matches[:3]:
+            h2_text = _strip_html_tags(h2_raw)
+            p_text = _strip_html_tags(p_chunk)
+            sentence = re.split(r"(?<=[.!?])\s", p_text, maxsplit=1)
+            first = sentence[0] if sentence else ""
+            if h2_text and first:
+                items.append(
+                    f'        <li><strong>{text_escape(h2_text)}</strong> — {text_escape(_truncate(first, 200))}</li>'
+                )
+
+    # 3) Last fallback : meta description
+    if not items and description:
+        items.append(f'        <li>{text_escape(_truncate(description, 220))}</li>')
+
+    if not items:
+        return ""
+
+    return (
+        '    <aside class="tldr" role="complementary" aria-label="' + title + '">\n'
+        f'      <h2>{title}</h2>\n'
+        '      <ul>\n'
+        + "\n".join(items)
+        + "\n      </ul>\n"
+        '    </aside>\n'
+    )
+
+
 def build_faq_section(faq_jsonld: dict | None, lang: str) -> str:
     if not faq_jsonld:
         return ""
@@ -377,6 +456,12 @@ nav a.lang-switch:hover{background:rgba(0,229,160,.12)}
 h1.title{font-size:1.5rem;line-height:2rem;font-weight:900;color:#0B1F3A;margin:0 0 .5rem;padding-bottom:.75rem;border-bottom:2px solid #00C87A}
 .byline{font-size:.8125rem;color:#6B7280;margin:0 0 1.5rem;font-weight:600}
 .byline strong{color:#0B1F3A;font-weight:700}
+.tldr{margin:0 0 1.75rem;padding:1rem 1.25rem;border-radius:.625rem;background:linear-gradient(135deg,#EFF9F4 0%,#F0F9FF 100%);border-left:4px solid #00C87A}
+.tldr h2{margin:0 0 .5rem;font-size:.8125rem;font-weight:800;color:#0B1F3A;text-transform:uppercase;letter-spacing:.06em}
+.tldr ul{margin:0;padding-left:1.1rem;font-size:.875rem;line-height:1.5;color:#1f2937}
+.tldr li{margin-bottom:.35rem}
+.tldr li::marker{color:#00C87A}
+.tldr strong{color:#0B1F3A}
 .cta-box{margin-top:2.5rem;border-radius:.75rem;background:#0B1F3A;color:#fff;text-align:center;padding:2rem 1.5rem}
 .cta-box p{margin:0 0 .75rem;color:rgba(255,255,255,.9)}
 .cta-box a{color:#00E5A0;font-weight:700;margin:0 .5rem;text-decoration:none}
@@ -435,6 +520,7 @@ def build_html(
     date_published: date,
     date_modified: date,
     lang: str = "fr",
+    tldr_section: str = "",
 ) -> str:
     cfg = LANG_CONFIG[lang]
     in_language = "fr-FR" if lang == "fr" else "en"
@@ -576,7 +662,7 @@ def build_html(
   <main class="wrap">
     <h1 class="title">{text_escape(h1)}</h1>
     {byline}
-    <div id="blog-body">{body_html.strip()}</div>
+{tldr_section}    <div id="blog-body">{body_html.strip()}</div>
 {faq_section}    <div class="cta-box">
       <p>{cfg['cta_lead']}</p>
       <p>
@@ -658,6 +744,12 @@ def process_one(path: str, *, dry_run: bool, backup: bool, verbose: bool) -> dic
     jsonld_blocks = extract_jsonld_blocks(src)
     faq = find_jsonld(jsonld_blocks, "FAQPage")
     faq_section = build_faq_section(faq, lang)
+    tldr_section = build_tldr_section(
+        faq_jsonld=faq,
+        description=description,
+        body_html=body,
+        lang=lang,
+    )
 
     related = extract_related_links(src) or default_related_for(lang)
 
@@ -678,6 +770,7 @@ def process_one(path: str, *, dry_run: bool, backup: bool, verbose: bool) -> dic
         date_published=dp,
         date_modified=dm,
         lang=lang,
+        tldr_section=tldr_section,
     )
 
     if dry_run:
