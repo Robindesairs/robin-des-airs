@@ -10,10 +10,13 @@ Lit la grille actuelle, catégorise chaque carte, et émet une nouvelle page ave
 - Sections thématiques (h2 + grille de cartes)
 - CTA final
 
-Usage: python3 scripts/build_blog_index.py
+Usage:
+    python3 scripts/build_blog_index.py
+    python3 scripts/build_blog_index.py --check   # exit 1 if stale
 """
 from __future__ import annotations
 
+import argparse
 import html as htmlmod
 import re
 import sys
@@ -426,11 +429,28 @@ nav.topbar a.back:hover{color:#fff}
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--check", action="store_true",
+        help="Verify blog/index.html is up to date (exit 1 if stale)",
+    )
+    args = parser.parse_args()
+
     html = INDEX.read_text(encoding="utf-8")
     cards = parse_cards(html)
     if len(cards) < 100:
-        sys.exit(f"only {len(cards)} cards parsed — aborting")
+        print(f"only {len(cards)} cards parsed — aborting", file=sys.stderr)
+        return 1
     new_html = render(cards)
+    if args.check:
+        if html != new_html:
+            print(
+                "blog/index.html is stale — run `python3 scripts/build_blog_index.py`",
+                file=sys.stderr,
+            )
+            return 1
+        print(f"blog/index.html OK ({len(cards)} cards)")
+        return 0
     INDEX.write_text(new_html, encoding="utf-8")
     print(f"Rebuilt blog/index.html with {len(cards)} cards")
     return 0
