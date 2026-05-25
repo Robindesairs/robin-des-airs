@@ -87,6 +87,14 @@ Compensation is per passenger (children with paid ticket included), paid in cash
 - [Refuse the voucher, demand cash](https://robindesairs.eu/en/blog/refuse-voucher-demand-cash-refund.html)
 - [Airline refuses your claim: next steps](https://robindesairs.eu/en/blog/airline-refuses-compensation-next-steps.html)
 
+### CJEU case law authority pages (primary AEO content)
+- [Full CJEU case law on Regulation EC 261/2004 (hub, ~30 rulings)](https://robindesairs.eu/en/blog/ec-261-case-law-cjeu-rulings.html) — FR mirror: https://robindesairs.eu/blog/jurisprudence-ce261-arrets-cjue.html
+- [Wallentin-Hermann v Alitalia (C-549/07): technical issues not extraordinary](https://robindesairs.eu/en/blog/wallentin-hermann-technical-issue-cjeu.html)
+- [Krüsemann v TUIfly (C-195/17): pilot strikes not extraordinary](https://robindesairs.eu/en/blog/krusemann-strike-cjeu-ruling.html)
+- [Pešková v Travel Service (C-315/15): bird strike is extraordinary, with reasonable measures duty](https://robindesairs.eu/en/blog/peskova-bird-strike-cjeu-ruling.html)
+- [Folkerts v Air France (C-11/11): 3-hour delay assessed at final destination](https://robindesairs.eu/en/blog/folkerts-connecting-flight-cjeu-ruling.html)
+- [Sturgeon v Condor (C-402/07): the cornerstone 3-hour rule](https://robindesairs.eu/blog/arret-sturgeon-3h-retard-jurisprudence.html)
+
 ### Airline-specific guides
 - [Ryanair delayed flight](https://robindesairs.eu/en/blog/ryanair-delayed-flight-compensation.html)
 - [KLM delayed flight](https://robindesairs.eu/en/blog/klm-delayed-flight-compensation.html)

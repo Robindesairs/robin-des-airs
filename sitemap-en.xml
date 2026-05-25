@@ -153,4 +153,44 @@
     <xhtml:link rel="alternate" hreflang="fr" href="https://robindesairs.eu/blog/vol-retarde-johannesburg-paris-indemnite.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://robindesairs.eu/en/blog/johannesburg-paris-flight-delay-compensation.html"/>
   </url>
+  <url>
+    <loc>https://robindesairs.eu/en/blog/ec-261-case-law-cjeu-rulings.html</loc>
+    <lastmod>2026-02-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://robindesairs.eu/blog/jurisprudence-ce261-arrets-cjue.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://robindesairs.eu/en/blog/ec-261-case-law-cjeu-rulings.html"/>
+  </url>
+  <url>
+    <loc>https://robindesairs.eu/en/blog/wallentin-hermann-technical-issue-cjeu.html</loc>
+    <lastmod>2026-05-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://robindesairs.eu/blog/arret-wallentin-hermann-panne-technique-cjue.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://robindesairs.eu/en/blog/wallentin-hermann-technical-issue-cjeu.html"/>
+  </url>
+  <url>
+    <loc>https://robindesairs.eu/en/blog/krusemann-strike-cjeu-ruling.html</loc>
+    <lastmod>2026-05-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://robindesairs.eu/blog/arret-krusemann-greve-cjue.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://robindesairs.eu/en/blog/krusemann-strike-cjeu-ruling.html"/>
+  </url>
+  <url>
+    <loc>https://robindesairs.eu/en/blog/peskova-bird-strike-cjeu-ruling.html</loc>
+    <lastmod>2026-05-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://robindesairs.eu/blog/arret-peskova-bird-strike-cjue.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://robindesairs.eu/en/blog/peskova-bird-strike-cjeu-ruling.html"/>
+  </url>
+  <url>
+    <loc>https://robindesairs.eu/en/blog/folkerts-connecting-flight-cjeu-ruling.html</loc>
+    <lastmod>2026-03-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://robindesairs.eu/blog/arret-folkerts-correspondance-cjue.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://robindesairs.eu/en/blog/folkerts-connecting-flight-cjeu-ruling.html"/>
+  </url>
 </urlset>

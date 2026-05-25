@@ -25,7 +25,12 @@
     "correspondance-manquee-indemnite-vol": "missed-connection-flight-compensation",
     "reglementation-ce261-resume": "ec-261-regulation-summary",
     "business-class-premium-vol-retarde-droits": "business-class-delayed-flight-rights",
-    "compagnie-refuse-payer-indemnite-que-faire": "airline-refuses-compensation-next-steps"
+    "compagnie-refuse-payer-indemnite-que-faire": "airline-refuses-compensation-next-steps",
+    "jurisprudence-ce261-arrets-cjue": "ec-261-case-law-cjeu-rulings",
+    "arret-wallentin-hermann-panne-technique-cjue": "wallentin-hermann-technical-issue-cjeu",
+    "arret-krusemann-greve-cjue": "krusemann-strike-cjeu-ruling",
+    "arret-peskova-bird-strike-cjue": "peskova-bird-strike-cjeu-ruling",
+    "arret-folkerts-correspondance-cjue": "folkerts-connecting-flight-cjeu-ruling"
   },
   "en_to_fr": {
     "ryanair-cabin-baggage-paid-2026": "bagage-cabine-ryanair-payant-2026",
@@ -52,6 +57,11 @@
     "missed-connection-flight-compensation": "correspondance-manquee-indemnite-vol",
     "ec-261-regulation-summary": "reglementation-ce261-resume",
     "business-class-delayed-flight-rights": "business-class-premium-vol-retarde-droits",
-    "airline-refuses-compensation-next-steps": "compagnie-refuse-payer-indemnite-que-faire"
+    "airline-refuses-compensation-next-steps": "compagnie-refuse-payer-indemnite-que-faire",
+    "ec-261-case-law-cjeu-rulings": "jurisprudence-ce261-arrets-cjue",
+    "wallentin-hermann-technical-issue-cjeu": "arret-wallentin-hermann-panne-technique-cjue",
+    "krusemann-strike-cjeu-ruling": "arret-krusemann-greve-cjue",
+    "peskova-bird-strike-cjeu-ruling": "arret-peskova-bird-strike-cjue",
+    "folkerts-connecting-flight-cjeu-ruling": "arret-folkerts-correspondance-cjue"
   }
 }
