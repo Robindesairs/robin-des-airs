@@ -16,485 +16,527 @@
   <meta name="twitter:title" content="Blog Robin des Airs — CE 261">
   <meta name="twitter:description" content="Guides et articles sur vos droits : vol retardé, annulé, correspondance manquée, surbooking. Jusqu'à 600€ par passager.">
   <meta name="twitter:image" content="https://robindesairs.eu/robin-des-airs-logo-texte-profil.png">
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
-  <style>body{font-family:'Montserrat',sans-serif}</style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap"></noscript>
+  <style>*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:#F9FAFB;color:#111827;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-family:'Montserrat',sans-serif}
+nav{background:#0B1F3A;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between}
+nav a{color:#fff;font-size:.875rem;text-decoration:none;font-weight:700}
+nav a.back{color:rgba(255,255,255,.8);font-weight:600}nav a.back:hover{color:#fff}
+.wrap{max-width:48rem;margin-left:auto;margin-right:auto;padding:2.5rem 1.5rem 5rem}
+h1.title{font-size:1.5rem;line-height:2rem;font-weight:900;color:#0B1F3A;margin:0 0 .5rem;padding-bottom:.75rem;border-bottom:2px solid #00C87A}
+.cta-box{margin-top:2.5rem;border-radius:.75rem;background:#0B1F3A;color:#fff;text-align:center;padding:2rem 1.5rem}
+.cta-box p{margin:0 0 .75rem;color:rgba(255,255,255,.9)}
+.cta-box a{color:#00E5A0;font-weight:700;margin:0 .5rem;text-decoration:none}
+.cta-box span.sep{color:rgba(255,255,255,.5)}
+.related{margin-top:1.5rem;border:1px solid #E5E7EB;background:#fff;border-radius:.75rem;padding:1.25rem}
+.related h2{font-size:1rem;font-weight:700;color:#0B1F3A;margin:0 0 .75rem}
+.related ul{list-style:disc;padding-left:1.25rem;margin:0;font-size:.875rem;color:#374151}
+.related li{margin-bottom:.25rem}
+.related a{color:#009960;font-weight:600;text-decoration:none}
+.related a:hover{color:#00C87A;text-decoration:underline}
+#blog-body{margin-top:1.5rem;color:#374151;line-height:1.625}
+#blog-body h2{font-size:1.125rem;font-weight:700;color:#0B1F3A;margin:1.75rem 0 .5rem;padding-left:12px;border-left:4px solid #00C87A}
+#blog-body h3{font-size:1rem;font-weight:700;color:#0B1F3A;margin:1.25rem 0 .4rem}
+#blog-body p{margin-bottom:.875rem;font-size:14px;color:#374151}
+#blog-body ul,#blog-body ol{margin:.5rem 0 .875rem 1.25rem}
+#blog-body li{margin-bottom:.25rem;font-size:14px}
+#blog-body li::marker{color:#00C87A}
+#blog-body strong{color:#0B1F3A}
+#blog-body a{color:#009960;font-weight:600}
+#blog-body a:hover{color:#00C87A;text-decoration:underline}
+#blog-body table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:14px}
+#blog-body th,#blog-body td{border:1px solid #E2E6EE;padding:10px 12px;text-align:left}
+#blog-body th{background:#0B1F3A;color:white;font-weight:700}
+#blog-body tr:nth-child(even){background:#F7F8FA}
+#blog-body blockquote{border-left:4px solid #00C87A;background:#EFF9F4;padding:12px 16px;border-radius:0 8px 8px 0;margin:1rem 0;color:#0B1F3A}
+.wrap{max-width:64rem}
+h1.title{font-size:1.5rem;border-bottom:none;padding-bottom:0;margin-bottom:.5rem}
+.lead{color:#6B7280;margin:0 0 2.5rem}
+.grid{display:grid;gap:1rem;grid-template-columns:1fr}
+@media(min-width:640px){.grid{grid-template-columns:1fr 1fr}}
+.card{display:block;padding:1.25rem;border-radius:.75rem;border:1px solid #E5E7EB;background:#fff;text-decoration:none;transition:all .15s ease}
+.card:hover{border-color:#00C87A;box-shadow:0 4px 6px -1px rgba(0,0,0,.1)}
+.card h2{font-size:1rem;font-weight:700;color:#0B1F3A;margin:0}
+.card p{font-size:.875rem;color:#6B7280;margin:.25rem 0 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}</style>
 </head>
-<body class="bg-gray-50 text-gray-900 antialiased">
-  <nav class="bg-[#0B1F3A] px-6 py-4 flex items-center justify-between">
-    <a href="/" class="font-black text-white text-sm">ROBIN<span class="text-[#00E5A0]"> des Airs</span></a>
-    <a href="/" class="text-white/80 text-sm font-semibold hover:text-white">← Retour à l'accueil</a>
+<body>
+  <nav>
+    <a href="/">ROBIN<span style="color:#00E5A0"> des Airs</span></a>
+    <a href="/" class="back">← Retour à l'accueil</a>
   </nav>
-  <main class="max-w-4xl mx-auto px-6 py-10 pb-20">
-    <h1 class="text-2xl font-black text-[#0B1F3A] mb-2">Blog</h1>
-    <p class="text-gray-600 mb-10">Vos droits en cas de vol retardé, annulé ou surbooké. Chaque article vous redirige vers le diagnostic ou WhatsApp.</p>
-    <div class="grid gap-4 sm:grid-cols-2">
-    <a href="/blog/arret-sturgeon-3h-retard-jurisprudence.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Arrêt Sturgeon : pourquoi 3h de retard = 600€</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Comment l'arrêt Sturgeon de 2009 a étendu l'indemnité CE 261 aux retards de 3h+ à l'arrivée. Tout sur cette jurisprudence qui change vos droits.</p>
-    </a>
-    <a href="/blog/assurance-voyage-vs-indemnite-ce261-difference.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Assurance voyage vs indemnité CE 261 : quelle différence ?</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Assurance voyage et indemnité CE 261 sont DIFFÉRENTES et CUMULABLES. Vous pouvez toucher les deux pour un vol retardé. On vous explique.</p>
-    </a>
-    <a href="/blog/bagage-perdu-retard-vol-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Bagage perdu ou retardé : vos droits (différents du CE 261)</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Bagage perdu, abîmé, retardé après votre vol ? La Convention de Montréal prévoit jusqu'à 1 600€. Différent du CE 261, on vous explique.</p>
-    </a>
-    <a href="/blog/bon-achat-compagnie-aerienne-piege.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Bon d'achat de la compagnie : pourquoi ne jamais l'accepter</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">La compagnie vous propose un bon d'achat après un retard ? C'est un piège. Vous avez droit à 600€ en cash. On vous explique.</p>
-    </a>
-    <a href="/blog/business-class-premium-vol-retarde-droits.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol business / premium retardé : votre indemnité (600€ aussi)</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol en classe business, premium ou première retardé ? Indemnité CE 261 identique : 600€ par passager. Vos droits sont les mêmes qu'en éco — on vous explique.</p>
-    </a>
-    <a href="/blog/carte-embarquement-perdue-recuperer-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Carte d'embarquement perdue : récupérer son indemnité quand même</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vous avez perdu votre carte d'embarquement ? L'indemnité CE 261 reste due. Voici comment prouver votre voyage et récupérer 600€ par passager.</p>
-    </a>
-    <a href="/blog/code-share-air-france-klm-quelle-compagnie-recours.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Code-share Air France / KLM : quelle compagnie vous indemnise ?</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol Air France opéré par KLM (ou inverse) retardé ? La compagnie responsable du CE 261 est celle qui opère vraiment, pas celle du billet. On vous explique.</p>
-    </a>
-    <a href="/blog/combien-temps-reclamer-indemnite-vol.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Combien de temps pour réclamer ? 5 ans en France</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Le délai pour réclamer une indemnité aérienne est de 5 ans en France. Votre vol de 2021 était en retard ? Vous pouvez encore réclamer.</p>
-    </a>
-    <a href="/blog/compagnie-refuse-payer-indemnite-que-faire.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">La compagnie refuse de payer mon indemnité : que faire ?</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">La compagnie refuse votre indemnité CE 261 ? Voici les 5 étapes pour récupérer 600€ : lettre, médiateur, tribunal. Ou laissez Robin des Airs s'en charger.</p>
-    </a>
-    <a href="/blog/correspondance-manquee-indemnite-vol.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Correspondance manquée : vos droits à l'indemnité</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vous avez raté votre correspondance à cause d'un retard ? Vous avez droit à une indemnité basée sur votre retard à l'arrivée finale. Voici comment.</p>
-    </a>
-    <a href="/blog/corsair-vol-retarde-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Corsair vol retardé : vos droits à l'indemnité</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol Corsair retardé ou annulé ? La compagnie européenne vous doit jusqu'à 600€ par passager. Robin des Airs récupère votre argent.</p>
-    </a>
-    <a href="/blog/dossiers-types-robin-cas-reels-anonymises.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Dossiers types Robin des Airs : 8 cas réels (anonymisés)</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">8 dossiers anonymisés traités par Robin des Airs : famille Paris-Dakar, étudiant Abidjan, pèlerin Hadj. Montants récupérés et délais réels.</p>
-    </a>
-    <a href="/blog/enfant-non-accompagne-um-vol-retarde-droits.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Enfant non accompagné (UM) : vol retardé, vos droits</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Votre enfant voyage seul (service UM) et son vol est retardé ? Indemnité CE 261 jusqu'à 600€ + responsabilité renforcée de la compagnie. On vous explique.</p>
-    </a>
-    <a href="/blog/formulaire-petite-creance-europeenne-vol-retarde.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Petite créance européenne : récupérer son indemnité au tribunal</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">La compagnie refuse vos 600€ ? La procédure européenne de petite créance permet d'obtenir un jugement contraignant pour &lt;50€ de frais. Mode d'emploi.</p>
-    </a>
-    <a href="/blog/greve-air-france-indemnite-vol-retarde.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Grève Air France : vos droits à l'indemnité</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Grève chez Air France et vol retardé ou annulé ? Selon la jurisprudence européenne, vous avez droit à une indemnité. Voici pourquoi.</p>
-    </a>
-    <a href="/blog/greve-controleurs-aeriens-ete-2026-retards.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Grève contrôleurs aériens été 2026 : vos droits</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Grève DGAC, Eurocontrol, contrôleurs étrangers : votre vol retardé/annulé donne-t-il droit à 600€ ? Réponses précises selon le type de grève.</p>
-    </a>
-    <a href="/blog/harmattan-vol-afrique-retard-saison.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Harmattan et vols Afrique : retards en janvier-mars</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">L'harmattan (vents de sable) provoque retards et annulations en Afrique de l'Ouest janvier-mars. L'indemnité CE 261 reste-t-elle due ? On vous explique.</p>
-    </a>
-    <a href="/blog/indemnite-vol-montants-250-400-600.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Indemnité vol retardé ou annulé : montants 250€, 400€, 600€</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Les montants de l'indemnité pour vol retardé ou annulé dépendent de la distance : 250€, 400€ ou 600€ par passager. Tableau et explications.</p>
-    </a>
-    <a href="/blog/indemnite-vol-retarde-famille-enfants.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Les enfants et bébés comptent aussi pour l'indemnité</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vous voyagez en famille ? Chaque passager ayant un billet — enfants et bébés compris — a droit à l'indemnité. Jusqu'à 600€ PAR personne.</p>
-    </a>
-    <a href="/blog/justificatif-retard-vol-attestation-compagnie-demander.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Justificatif de retard de vol : comment l'obtenir de la compagnie</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Comment obtenir un justificatif officiel de retard ou un voyage alternatif auprès de la compagnie aérienne. Modèle de demande + recours si refus.</p>
-    </a>
-    <a href="/blog/klm-vol-retarde-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">KLM vol retardé : vos droits à l'indemnité</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol KLM retardé ou annulé ? La compagnie néerlandaise vous doit jusqu'à 600€ par passager selon le CE 261. Robin des Airs récupère votre indemnité.</p>
-    </a>
-    <a href="/blog/pmr-handicap-mobilite-reduite-vol-retarde-droits.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Personnes à mobilité réduite (PMR) : droits en cas de vol retardé</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Personne handicapée ou à mobilité réduite (PMR) : vos droits en cas de vol retardé. Assistance obligatoire + indemnité CE 261 jusqu'à 600€.</p>
-    </a>
-    <a href="/blog/pourquoi-choisir-robin-des-airs-difference.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Pourquoi choisir Robin des Airs : ce qui nous différencie</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Ce qui rend Robin des Airs différent : suivi téléphonique humain, WhatsApp 7j/7, 8 langues dont wolof/bambara/lingala, commission unique 25 %, spécialiste diaspora.</p>
-    </a>
-    <a href="/blog/que-faire-aeroport-vol-retarde.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Que faire à l'aéroport quand votre vol est retardé</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Votre vol est retardé ? Voici les 6 réflexes à avoir immédiatement à l'aéroport pour protéger vos droits et récupérer jusqu'à 600€.</p>
-    </a>
-    <a href="/blog/reclamer-seul-ou-passer-par-un-service-indemnite-vol.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Réclamer seul ou passer par un service ?</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Faut-il réclamer seul son indemnité aérienne ou passer par un service ? Comparaison honnête des deux options.</p>
-    </a>
-    <a href="/blog/reglementation-ce261-resume.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Réglementation CE 261 : résumé de vos droits en vol</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">CE 261 en bref : droits des passagers en cas de vol retardé, annulé, correspondance manquée ou refus d'embarquement. Applicable depuis la France et l'UE.</p>
-    </a>
-    <a href="/blog/remboursement-billet-vs-indemnite-ce261.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Remboursement du billet vs indemnité CE 261 : deux droits différents</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Remboursement du billet et indemnité CE 261 sont deux droits différents qui se cumulent. Voici comment obtenir les deux.</p>
-    </a>
-    <a href="/blog/rentree-universitaire-etudiants-vol-retarde.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Étudiants en rentrée universitaire : vol retardé, vos droits</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Étudiant Africa-Europe en rentrée universitaire avec vol retardé ? Indemnité CE 261 de 600€ + frais réels remboursables (cours manqués, logement).</p>
-    </a>
-    <a href="/blog/retards-vol-noel-decembre-droits.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Retards vols de Noël : indemnité CE 261 pendant les fêtes</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol retardé ou annulé pendant les fêtes (Noël, Nouvel An) ? Vos droits CE 261 ne changent pas — jusqu'à 600€ d'indemnité par passager. On vous explique.</p>
-    </a>
-    <a href="/blog/robin-des-airs-vs-airhelp-comparatif.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Robin des Airs vs AirHelp : quel service choisir ?</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Robin des Airs vs AirHelp : commission, langues parlées, suivi par WhatsApp et téléphone, spécificité diaspora Afrique. Comparatif honnête.</p>
-    </a>
-    <a href="/blog/robin-des-airs-vs-flightright-comparatif.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Robin des Airs vs Flightright : quel service choisir ?</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Robin des Airs vs Flightright : commission, langues, expertise diaspora Afrique, suivi WhatsApp. Le bon choix pour les vols Europe-Afrique.</p>
-    </a>
-    <a href="/blog/robin-des-airs-vs-skycop-comparatif.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Robin des Airs vs Skycop : quel service choisir ?</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Robin des Airs vs Skycop : commission, langues parlées, expertise diaspora Afrique, suivi WhatsApp et téléphone. Comparatif honnête.</p>
-    </a>
-    <a href="/blog/royal-air-maroc-vol-retarde-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Royal Air Maroc vol retardé : vos droits</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol Royal Air Maroc retardé ? Attention : vos droits dépendent du sens du vol. Compagnie non-UE = règles spécifiques. On vous explique.</p>
-    </a>
-    <a href="/blog/saisir-mediateur-mtv-tourisme-voyage.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Saisir le Médiateur Tourisme et Voyage (MTV) : mode d'emploi</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Procédure complète pour saisir le Médiateur Tourisme et Voyage (MTV) après le refus d'une compagnie. Délais, formulaire, taux de succès.</p>
-    </a>
-    <a href="/blog/surbooking-refus-embarquement-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Surbooking : vos droits quand on vous refuse l'embarquement</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Refus d'embarquement pour surbooking ? La compagnie vous doit immédiatement 250€ à 600€ par passager. Voici comment réclamer.</p>
-    </a>
-    <a href="/blog/transavia-vol-retarde-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Transavia vol retardé — vos droits à l'indemnité</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol Transavia en retard ? Même low-cost, vous avez droit à une indemnité CE 261. Guide pour réclamer à Transavia France ou Transavia Holland.</p>
-    </a>
-    <a href="/blog/vol-air-france-retarde-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Air France retardé : comment obtenir votre indemnité</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Votre vol Air France a été retardé de plus de 3h ? La loi CE 261/2004 vous donne droit à 250€ à 600€ par passager. Robin des Airs récupère votre argent.</p>
-    </a>
-    <a href="/blog/vol-annule-indemnite-600-euros.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol annulé : comment obtenir votre indemnité de 600€</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol annulé moins de 14 jours avant le départ ? Vous avez droit à 250€ à 600€ par passager. Voici comment récupérer votre argent.</p>
-    </a>
-    <a href="/blog/vol-annule-meteo-circonstances-extraordinaires-recours.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol annulé pour météo : la compagnie peut-elle refuser l'indemnité ?</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol annulé ou retardé pour cause de météo ? La compagnie n'est pas automatiquement exonérée. Voici comment contester et récupérer vos 600€.</p>
-    </a>
-    <a href="/blog/vol-charter-tour-operateur-retard-droits.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol charter retardé : droits CE 261 + responsabilité tour-opérateur</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol charter (TUI, Marmara, FRAM, Look Voyages) retardé ? Vous avez deux recours cumulables : CE 261 de 600€ et Code du tourisme. On vous explique.</p>
-    </a>
-    <a href="/blog/vol-deces-famille-retard-funerailles.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol pour funérailles familiales retardé : vos droits</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol pour funérailles ou décès dans la famille retardé ou annulé ? Indemnité CE 261 de 600€ + recours pour préjudice moral. Robin vous accompagne.</p>
-    </a>
-    <a href="/blog/vol-deroutement-aeroport-secondaire-droits.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol dérouté vers un autre aéroport : vos droits</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Votre avion a été dérouté vers un autre aéroport (météo, technique, fermeture) ? Indemnité CE 261 possible + transport sol obligatoire jusqu'à destination.</p>
-    </a>
-    <a href="/blog/vol-mariage-traditionnel-retour-pays-retard.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol pour mariage traditionnel retardé : récupérer 600€ par passager</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol pour mariage au pays retardé ou annulé ? Indemnité CE 261 jusqu'à 600€ par passager — multipliée par toute la famille élargie. On vous explique.</p>
-    </a>
-    <a href="/blog/vol-pelerinage-omra-hadj-retard.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol pèlerinage Omra ou Hadj retardé : vos droits</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol pour l'Omra ou le Hadj retardé ou annulé ? Indemnité CE 261 de 600€ par pèlerin possible. Spécificités, compagnies, recours — votre guide.</p>
-    </a>
-    <a href="/blog/vol-ramadan-aid-tabaski-retard-droits.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Ramadan, Aïd, Tabaski retardé : vos droits</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol pour Ramadan, Aïd el-Fitr ou Tabaski (Aïd el-Kebir) retardé ou annulé ? Indemnité CE 261 de 600€ par passager — droits inchangés. On vous explique.</p>
-    </a>
-    <a href="/blog/vol-retarde-abidjan-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol retardé Paris-Abidjan ou Abidjan-Paris : vos droits</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Retard sur votre vol Paris-Abidjan ? La loi CE 261/2004 vous donne droit à 600€ par passager. Robin des Airs récupère votre argent.</p>
-    </a>
-    <a href="/blog/vol-retarde-antilles-guadeloupe-martinique-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol retardé vers les Antilles : vos droits à 600€</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Retard sur votre vol vers la Guadeloupe ou la Martinique ? Vous avez droit à 600€ par passager. Robin des Airs récupère votre indemnité.</p>
-    </a>
-    <a href="/blog/vol-retarde-bamako-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol retardé Paris-Bamako : vos droits à 600€</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Votre vol Paris-Bamako ou Bamako-Paris a été retardé ? Vous avez droit à 600€. Robin des Airs gère votre dossier en français et en bambara.</p>
-    </a>
-    <a href="/blog/vol-retarde-banjul-bruxelles-barcelone-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol retardé Banjul (Gambie) depuis Bruxelles, Barcelone ou Londres</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Retard ou annulation sur votre vol Banjul (Gambie) depuis Bruxelles, Barcelone, Lisbonne ou Londres ? Indemnité CE 261 jusqu'à 600€ par passager.</p>
-    </a>
-    <a href="/blog/vol-retarde-conakry-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol retardé Paris-Conakry : vos droits</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Retard sur votre vol Paris-Conakry ? Air France vous doit jusqu'à 600€ par passager. Robin des Airs récupère votre argent.</p>
-    </a>
-    <a href="/blog/vol-retarde-dakar-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol retardé Paris-Dakar ou Dakar-Paris : vos droits</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Retard sur votre vol Paris-Dakar ou Dakar-Paris ? Vous pouvez toucher 600€ par passager selon le CE 261/2004. Voici comment.</p>
-    </a>
-    <a href="/blog/vol-retarde-douala-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol retardé Paris-Douala ou Paris-Yaoundé : vos droits</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Retard sur votre vol Paris-Douala ou Yaoundé ? Air France vous doit jusqu'à 600€. Robin des Airs gère votre dossier gratuitement.</p>
-    </a>
-    <a href="/blog/vol-retarde-kinshasa-bruxelles-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol retardé Bruxelles-Kinshasa ou Kinshasa-Bruxelles : vos droits</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Retard ou annulation sur votre vol Bruxelles-Kinshasa ? La loi européenne vous donne droit à 600€ par passager. Robin des Airs s'en occupe.</p>
-    </a>
-    <a href="/blog/vol-retarde-lyon-marseille-nice-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol retardé depuis Lyon, Marseille ou Nice — mêmes droits qu'à Paris</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Votre vol part de Lyon-Saint-Exupéry, Marseille ou Nice ? Les droits à l'indemnité sont les mêmes qu'au départ de Paris. Guide et calculateur.</p>
-    </a>
-    <a href="/blog/vol-retarde-niamey-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol retardé Paris-Niamey ou Niamey-Paris : vos droits</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Retard ou annulation sur votre vol Paris-Niamey (Niger) ? Indemnité jusqu'à 600€ possible par passager. Air France, Royal Air Maroc — on vous explique.</p>
-    </a>
-    <a href="/blog/vol-retarde-nouakchott-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol retardé Paris-Nouakchott : vos droits</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Retard ou annulation sur votre vol Paris-Nouakchott (Mauritanie) ? 600€ d'indemnité possible. Air France, Mauritania Airlines, Royal Air Maroc — votre guide.</p>
-    </a>
-    <a href="/blog/vol-retarde-ryanair-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol retardé Ryanair — vos droits à l'indemnité</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Low-cost ne veut pas dire sans droits. Vol Ryanair en retard ? Indemnité jusqu'à 600€ par passager. Comment réclamer.</p>
-    </a>
-    <a href="/blog/voyage-organise-package-vol-retarde-droits.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Voyage organisé (package) avec vol retardé : doubles droits</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Package voyage organisé avec vol retardé ou annulé ? Indemnité CE 261 jusqu'à 600€ + remboursement perte de jouissance via Code du tourisme. On vous explique.</p>
-    </a>
-    <a href="/blog/air-cote-divoire-vol-retarde-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Air Côte d'Ivoire vol retardé : indemnité CE 261 jusqu'à 600€</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol Air Côte d'Ivoire retardé sur Paris-Abidjan ? Le CE 261 s'applique au départ de France. Jusqu'à 600€ par passager. Dossier gratuit si non-éligible.</p>
-    </a>
-    <a href="/blog/air-peace-nigeria-vol-retarde-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Air Peace (Nigeria) vol retardé : CE 261, UK261 et vos droits</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Air Peace non-UE. Vols London-Lagos : UK261 (pas CE 261). Vols depuis UE : CE 261 départ seulement. Paris-Lagos both ways : Air France ou Brussels.</p>
-    </a>
-    <a href="/blog/air-senegal-vol-retarde-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Air Sénégal vol retardé : vos droits à l'indemnité CE 261 (jusqu'à 600€)</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol Air Sénégal retardé sur Paris-Dakar ? Le CE 261 s'applique au départ de l'UE. Jusqu'à 600€ par passager. Robin des Airs récupère votre indemnité à 25% de commission.</p>
-    </a>
-    <a href="/blog/asky-airlines-vol-retarde-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">ASKY Airlines vol retardé : quand le CE 261 s'applique (Lomé, Cotonou, Accra…)</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">ASKY Airlines n'est pas une compagnie européenne. Le CE 261 ne s'applique qu'à certaines conditions. On vous explique vos droits sur les vols ASKY depuis l'Europe.</p>
-    </a>
-    <a href="/blog/brussels-airlines-vol-retarde-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Brussels Airlines vol retardé : indemnité CE 261 dans les deux sens (jusqu'à 600€)</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Brussels Airlines est une compagnie européenne : le CE 261 s'applique dans les deux sens sur toutes ses routes africaines. Kinshasa, Douala, Abidjan — jusqu'à 600€ par passager.</p>
-    </a>
-    <a href="/blog/ce261-bebe-nourrisson-enfant-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">CE 261 et enfants : bébés, nourrissons, familles — droits</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Enfant avec siège = droits CE 261 complets. Nourrisson sur les genoux = pas d'indemnité propre. Famille de 4 = jusqu'à 2 400€. Guide complet.</p>
-    </a>
-    <a href="/blog/ce261-nationalite-residence-qui-peut-reclamer.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">CE 261 : qui peut réclamer ? Nationalité, résidence, âge</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">CE 261 s'applique à TOUS les passagers sans condition de nationalité, résidence ou titre de séjour. Diaspora africaine, touriste, visiteur : mêmes droits.</p>
-    </a>
-    <a href="/blog/ce261-vs-convention-montreal.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">CE 261 vs Convention de Montréal : droits cumulables</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Retard de vol = CE 261 (jusqu'à 600€). Bagage perdu = Convention de Montréal (1 600 DTS). Deux régimes différents qui se cumulent. Tableau et guide.</p>
-    </a>
-    <a href="/blog/chiffres-choc-indemnisation-vol-retarde.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol retardé : 5 chiffres que les compagnies aériennes préfèrent que vous ignoriez</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">98% des passagers éligibles ne réclament jamais leur indemnité. Les compagnies le savent. Voici les 5 chiffres qu'elles préfèrent cacher.</p>
-    </a>
-    <a href="/blog/circonstances-extraordinaires-ce261.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Circonstances extraordinaires CE 261 : ce que les compagnies peuvent et ne peuvent pas invoquer</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Panne technique, météo, grève... La compagnie invoque des circonstances extraordinaires pour refuser votre indemnité ? Voici ce qui est légalement accepté — et ce qui ne l'est pas.</p>
-    </a>
-    <a href="/blog/compagnies-eu-non-eu-ce261-tableau.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Compagnies UE vs non-UE : vos droits CE 261 (tableau)</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Quelle compagnie couvre vos droits CE 261 dans les deux sens ? Tableau complet EU/non-EU : Air France, Ethiopian, Turkish, Lufthansa, Brussels, TAP et plus.</p>
-    </a>
-    <a href="/blog/ethiopian-airlines-vol-retarde-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Ethiopian Airlines vol retardé depuis Paris : vos droits CE 261</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vous volez Ethiopian Airlines via Addis-Abeba vers l'Afrique ? Le CE 261 s'applique sur le segment Paris-Addis. Guide complet + jusqu'à 600€ d'indemnité.</p>
-    </a>
-    <a href="/blog/indemnite-billet-miles-points.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Billet miles ou points : avez-vous droit à l'indemnité CE 261 ?</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vous avez utilisé des miles Flying Blue, Avios ou des points carte bancaire ? Oui, le CE 261 s'applique quand même. Voici tout ce qu'il faut savoir.</p>
-    </a>
-    <a href="/blog/kenya-airways-vol-retarde-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Kenya Airways vol retardé depuis Paris : vos droits CE 261</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Kenya Airways (KQ) sur un vol au départ de Paris ? Le CE 261 s'applique. Guide complet : distances, montants, codeshares Air France, et démarches de réclamation.</p>
-    </a>
-    <a href="/blog/lufthansa-vol-retarde-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Lufthansa vol retardé : CE 261 dans les deux sens — Afrique</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Lufthansa (EU) via Francfort : CE 261 dans les deux sens. Nairobi, Lagos, Johannesburg, Accra. Billet unique CDG→FRA→Afrique = distance totale = 600€.</p>
-    </a>
-    <a href="/blog/mediation-aerienne-obligatoire-2026.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Médiation aérienne obligatoire 2026 : ce qui change pour votre indemnité CE 261</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Depuis février 2026, la médiation est obligatoire avant tout recours au tribunal pour un litige aérien. Ce que ça change pour réclamer vos 600€ CE 261 — explications simples.</p>
-    </a>
-    <a href="/blog/mediation-compagnie-aerienne-refus-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Médiation compagnie aérienne : que faire si elle refuse votre indemnité ?</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">La compagnie refuse votre indemnité CE 261 ? Médiateur du Tourisme (MTV), DGAC, tribunal : le guide complet des recours en France, étape par étape.</p>
-    </a>
-    <a href="/blog/mise-en-demeure-compagnie-aerienne-ce261.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Mise en demeure compagnie aérienne : modèle et guide CE 261</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">La compagnie ignore votre réclamation ? Téléchargez notre modèle de mise en demeure CE 261 et suivez notre guide en 4 étapes avant MTV ou tribunal.</p>
-    </a>
-    <a href="/blog/operating-vs-marketing-carrier-ce261.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Opérateur vs vendeur : qui vous doit l'indemnité CE 261 ?</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Acheté chez Air France, opéré par Ethiopian ? L'opérateur réel est responsable CE 261. Guide pratique : identifier la compagnie responsable en 4 étapes.</p>
-    </a>
-    <a href="/blog/preuve-retard-vol-documents-conserver.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Preuves de retard vol : quels documents conserver pour réclamer votre indemnité</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Carte d'embarquement, SMS compagnie, reçus... Voici exactement quels documents garder pour réclamer 250€, 400€ ou 600€ en cas de vol retardé ou annulé.</p>
-    </a>
-    <a href="/blog/refus-embarquement-surbooking-ce261.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Refus d'embarquement / surbooking CE 261 : vos droits</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Refus d'embarquement involontaire = indemnité immédiate 250/400/600€ sans attendre 3h. Choix entre remboursement et réacheminement. Guide complet.</p>
-    </a>
-    <a href="/blog/remboursement-frais-annexes-retard.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Repas, hôtel, taxi : remboursez vos frais EN PLUS de l'indemnité CE 261</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">L'indemnité 250-600€ et le remboursement des frais sont deux droits distincts. Vous pouvez toucher les deux. Guide complet article 9 CE 261.</p>
-    </a>
-    <a href="/blog/rwandair-vol-retarde-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">RwandAir vol retardé depuis Paris ou Bruxelles : vos droits CE 261</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">RwandAir (WB) au départ de l'Europe ? Le CE 261 s'applique pour le segment EU. Guide : Kigali, distances, montants et démarches de réclamation.</p>
-    </a>
-    <a href="/blog/south-african-airways-vol-retarde-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">South African Airways vol retardé depuis Paris : vos droits CE 261</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">South African Airways (SAA) au départ de Paris vers Johannesburg ? Le CE 261 s'applique sur le segment EU. Montants, démarches et particularités post-restructuration.</p>
-    </a>
-    <a href="/blog/taag-angola-airlines-vol-retarde-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">TAAG Angola Airlines vol retardé : vos droits CE 261 (Luanda)</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">TAAG non-UE : CE 261 uniquement départ UE (Lisbonne ou Paris si vol direct). Luanda 6 891 km = 600€. TAP Air Portugal couvert dans les deux sens.</p>
-    </a>
-    <a href="/blog/tap-air-portugal-vol-retarde-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">TAP Air Portugal vol retardé : vos droits CE 261 (Angola, Mozambique, Cap-Vert)</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">TAP Air Portugal compagnie UE : CE 261 dans les deux sens. Luanda, Maputo, Praia, Bissau, São Tomé via Lisbonne. 600€ par passager.</p>
-    </a>
-    <a href="/blog/turkish-airlines-vol-retarde-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Turkish Airlines vol retardé depuis Paris : vos droits CE 261 via Istanbul</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vous transitez par Istanbul (IST) avec Turkish Airlines vers l'Afrique ? Le CE 261 s'applique sur le départ de Paris. Billet unique = distance totale = 600€.</p>
-    </a>
-    <a href="/blog/uganda-airlines-vol-retarde-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Uganda Airlines vol retardé : CE 261 et droits Paris-Entebbe</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Uganda Airlines non-UE sans vols UE directs. Pour Paris-Entebbe : Brussels Airlines (EU both ways) ou Ethiopian (départ Paris). CDG-EBB 6 322 km = 600€.</p>
-    </a>
-    <a href="/blog/vol-annule-ce261-droits-remboursement.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol annulé CE 261 : remboursement et indemnité complète</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol annulé = remboursement ou réacheminement. Indemnité 250-600€ si prévenu moins de 14 jours avant. Circonstances extraordinaires : ce qui change.</p>
-    </a>
-    <a href="/blog/vol-depart-usa-escale-europe-ce261.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol USA → Europe → Afrique : CE 261 s'applique-t-il ?</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">JFK→CDG→DKR sur Air France : CE 261 couvre les deux segments. Sur Ethiopian : CDG→DKR couvert, JFK→CDG non. Art. 3.1(b) expliqué.</p>
-    </a>
-    <a href="/blog/vol-direct-vs-correspondance-droits-ce261.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol direct vs correspondance : droits CE 261 (tableau)</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Billet unique ou billets séparés ? Le choix change tout pour votre indemnité CE 261. Tableau des distances et règle de la correspondance manquée.</p>
-    </a>
-    <a href="/blog/vol-retarde-abidjan-dakar-comparatif.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Paris-Abidjan vs Paris-Dakar : vos droits CE 261 comparés</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Abidjan (4 710 km) vs Dakar (4 208 km) : deux routes phares, mêmes 600€. Air France, Corsair, Brussels, Air Sénégal, Air Côte d'Ivoire. CE 261 comparé.</p>
-    </a>
-    <a href="/blog/vol-retarde-abuja-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → Abuja retardé : 600€ d'indemnité CE 261 (Nigeria)</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol retardé ou annulé sur Paris-Abuja (ABV) ? Distance 4 733 km = 600€ par passager. Air France (vol direct CDG)  Ethiopian Airlines (via Addis-Abeba) : vos droits expliqués.</p>
-    </a>
-    <a href="/blog/vol-retarde-accra-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → Accra (Ghana) retardé : 600€ d'indemnité CE 261</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">CDG → ACC = 4 748 km → palier 600€. Air France et Brussels Airlines couverts dans les deux sens. Ethiopian et Kenya Airways départ UE seulement.</p>
-    </a>
-    <a href="/blog/vol-retarde-antananarivo-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → Antananarivo retardé : 600€ d'indemnité CE 261 (Madagascar)</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol retardé ou annulé sur Paris-Antananarivo (TNR) ? Distance 9 199 km = 600€ par passager. Air France (vol direct CDG)  Air Madagascar  Ethiopian Airlines (via Addis-Abeba) : vos droits expliqués.</p>
-    </a>
-    <a href="/blog/vol-retarde-brazzaville-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → Brazzaville retardé : 600€ d'indemnité CE 261 (République du Congo)</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol retardé ou annulé sur Paris-Brazzaville (BZV) ? Distance 5 665 km = 600€ par passager. Air France (vol direct CDG)  Ethiopian Airlines (via Addis-Abeba) : vos droits expliqués.</p>
-    </a>
-    <a href="/blog/vol-retarde-bujumbura-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → Bujumbura retardé : 600€ d'indemnité CE 261 (Burundi)</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol retardé ou annulé sur Paris-Bujumbura (BJM) ? Distance 6 440 km = 600€ par passager. Brussels Airlines (vol direct BRU)  Ethiopian Airlines (via Addis-Abeba) : vos droits expliqués.</p>
-    </a>
-    <a href="/blog/vol-retarde-cap-vert-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → Cap-Vert retardé : 600€ d'indemnité CE 261</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">CDG → Praia (RAI) = 3 844 km, Sal (SID) = 3 785 km → palier 600€. TAP, Corsair, Transavia couverts dans les deux sens.</p>
-    </a>
-    <a href="/blog/vol-retarde-cayenne-guyane-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → Cayenne (Guyane) retardé : 600€ CE 261</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">CDG → CAY = 7 085 km = palier 600€. Air France et Corsair couverts dans les deux sens. La Guyane est un DOM — CE 261 s'applique pleinement.</p>
-    </a>
-    <a href="/blog/vol-retarde-cotonou-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → Cotonou (Bénin) retardé : 600€ CE 261</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">CDG → COO = 4 715 km → palier 600€. Air France couvert deux sens. Ethiopian et Royal Air Maroc départ UE seulement. Guide CE 261 complet.</p>
-    </a>
-    <a href="/blog/vol-retarde-dar-es-salaam-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → Dar es Salaam (Tanzanie) retardé : 600€ d'indemnité CE 261</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">CDG → DAR = 7 088 km → palier 600€. Lufthansa couvert dans les deux sens. Ethiopian et Kenya Airways uniquement départ EU.</p>
-    </a>
-    <a href="/blog/vol-retarde-djibouti-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → Djibouti retardé : 600€ d'indemnité CE 261</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">CDG → DJI = 5 310 km = palier 600€. Air France vols directs couverts dans les deux sens. Ethiopian uniquement départ Paris. Guide CE 261.</p>
-    </a>
-    <a href="/blog/vol-retarde-freetown-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → Freetown retardé : 600€ d'indemnité CE 261 (Sierra Leone)</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol retardé ou annulé sur Paris-Freetown (FNA) ? Distance 4 506 km = 600€ par passager. Brussels Airlines (vol direct BRU)  Air Senegal (via Dakar)  Ethiopian Airlines (via Addis-Abeba) : vos droits expliqués.</p>
-    </a>
-    <a href="/blog/vol-retarde-ile-maurice-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → Île Maurice retardé : 600€ d'indemnité CE 261</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">CDG → MRU = 9 756 km → palier 600€. Air France couvert dans les deux sens. Air Mauritius : uniquement départ Paris. Guide complet.</p>
-    </a>
-    <a href="/blog/vol-retarde-johannesburg-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → Johannesburg retardé : 600€ d'indemnité CE 261 (Afrique du Sud)</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol retardé ou annulé sur Paris-Johannesburg (JNB) ? Distance 9 033 km = 600€ par passager. Air France (vol direct CDG)  South African Airways  Ethiopian Airlines (via Addis-Abeba) : vos droits expliqués.</p>
-    </a>
-    <a href="/blog/vol-retarde-kampala-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → Entebbe / Kampala retardé : 600€ d'indemnité CE 261 (Ouganda)</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol retardé ou annulé sur Paris-Entebbe / Kampala (EBB) ? Distance 6 322 km = 600€ par passager. Brussels Airlines (vol direct BRU)  Ethiopian Airlines (via Addis-Abeba)  Kenya Airways (via Nairobi) : vos droits expliqués.</p>
-    </a>
-    <a href="/blog/vol-retarde-kigali-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → Kigali retardé : 600€ d'indemnité CE 261 (Rwanda)</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol retardé ou annulé sur Paris-Kigali (KGL) ? Distance 6 353 km = 600€ par passager. Brussels Airlines (vol direct BRU)  RwandAir  Ethiopian Airlines (via Addis-Abeba) : vos droits expliqués.</p>
-    </a>
-    <a href="/blog/vol-retarde-lagos-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → Lagos (Nigeria) retardé : 600€ CE 261</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">CDG → LOS = 4 869 km → palier 600€. Air France couvert deux sens. Ethiopian et Turkish départ UE seulement. Air Peace = UK261 (pas CE 261).</p>
-    </a>
-    <a href="/blog/vol-retarde-libreville-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → Libreville retardé : 600€ d'indemnité CE 261 (Gabon)</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol retardé ou annulé Paris-Libreville (LBV) ? Distance 5 600 km = palier 600€. Air France, Ethiopian Airlines, Corsair : droits et démarches expliqués.</p>
-    </a>
-    <a href="/blog/vol-retarde-lome-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → Lomé (Togo) retardé : 600€ d'indemnité CE 261</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">CDG → LFW = 4 613 km → palier 600€. Air France couvert deux sens. ASKY Airlines (Togo, non-UE) départ UE seulement. Ethiopian identique.</p>
-    </a>
-    <a href="/blog/vol-retarde-luanda-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → Luanda retardé : 600€ d'indemnité CE 261 (Angola)</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol retardé ou annulé sur Paris-Luanda (LAD) ? Distance 6 162 km = 600€ par passager. Brussels Airlines (vol direct BRU)  TAAG Angola Airlines  Ethiopian Airlines (via Addis-Abeba) : vos droits expliqués.</p>
-    </a>
-    <a href="/blog/vol-retarde-maputo-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → Maputo (Mozambique) retardé : 600€ d'indemnité CE 261</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">CDG → MPM &gt; 9 000 km → palier 600€. TAP Air Portugal couvert dans les deux sens. Ethiopian : départ EU uniquement.</p>
-    </a>
-    <a href="/blog/vol-retarde-n-djamena-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → N'Djamena (Tchad) retardé : 600€ d'indemnité CE 261</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">CDG → NDJ = 4 281 km = palier 600€. Air France vols directs couverts dans les deux sens. Harmattan non exonératoire.</p>
-    </a>
-    <a href="/blog/vol-retarde-nairobi-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → Nairobi retardé : 600€ d'indemnité CE 261 (Kenya)</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol retardé ou annulé sur Paris-Nairobi (NBO) ? Distance 6 340 km = 600€ par passager. Air France (vol direct CDG)  Brussels Airlines (vol direct BRU)  Kenya Airways  Ethiopian Airlines (via Addis-Abeba) : vos droits expliqués.</p>
-    </a>
-    <a href="/blog/vol-retarde-ouagadougou-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → Ouagadougou retardé : 600€ d'indemnité CE 261 (Burkina Faso)</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol retardé ou annulé sur Paris-Ouagadougou (OUA) ? Distance 4 232 km = 600€ par passager. Air France (vol direct CDG)  Ethiopian Airlines (via Addis-Abeba)  Turkish Airlines (via Istanbul) : vos droits expliqués.</p>
-    </a>
-    <a href="/blog/vol-retarde-reunion-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → La Réunion retardé : 600€ d'indemnité CE 261</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">CDG → RUN = 9 387 km. Air France et Corsair couverts dans les deux sens. 600€ par passager pour tout retard ≥ 3h.</p>
-    </a>
-    <a href="/blog/vol-retarde-yaounde-paris-indemnite.html" class="block p-5 rounded-xl border border-gray-200 bg-white hover:border-[#00C87A] hover:shadow-md transition">
-      <h2 class="font-bold text-[#0B1F3A] text-base">Vol Paris → Yaoundé retardé : 600€ d'indemnité CE 261 (Cameroun)</h2>
-      <p class="text-sm text-gray-500 mt-1 line-clamp-2">Vol retardé ou annulé sur Paris-Yaoundé (YAO) ? Distance 5 125 km = 600€ par passager. Air France (vol direct CDG)  Brussels Airlines (vol direct BRU)  Ethiopian Airlines (via Addis-Abeba)  Camair-Co : vos droits expliqués.</p>
+  <main class="wrap">
+    <h1 class="title">Blog</h1>
+    <p class="lead">Vos droits en cas de vol retardé, annulé ou surbooké. Chaque article vous redirige vers le diagnostic ou WhatsApp.</p>
+    <div class="grid">
+    <a class="card" href="/blog/arret-sturgeon-3h-retard-jurisprudence.html">
+      <h2>Arrêt Sturgeon : pourquoi 3h de retard = 600€</h2>
+      <p>Comment l'arrêt Sturgeon de 2009 a étendu l'indemnité CE 261 aux retards de 3h+ à l'arrivée. Tout sur cette jurisprudence qui change vos droits.</p>
+    </a>
+    <a class="card" href="/blog/assurance-voyage-vs-indemnite-ce261-difference.html">
+      <h2>Assurance voyage vs indemnité CE 261 : quelle différence ?</h2>
+      <p>Assurance voyage et indemnité CE 261 sont DIFFÉRENTES et CUMULABLES. Vous pouvez toucher les deux pour un vol retardé. On vous explique.</p>
+    </a>
+    <a class="card" href="/blog/bagage-perdu-retard-vol-indemnite.html">
+      <h2>Bagage perdu ou retardé : vos droits (différents du CE 261)</h2>
+      <p>Bagage perdu, abîmé, retardé après votre vol ? La Convention de Montréal prévoit jusqu'à 1 600€. Différent du CE 261, on vous explique.</p>
+    </a>
+    <a class="card" href="/blog/bon-achat-compagnie-aerienne-piege.html">
+      <h2>Bon d'achat de la compagnie : pourquoi ne jamais l'accepter</h2>
+      <p>La compagnie vous propose un bon d'achat après un retard ? C'est un piège. Vous avez droit à 600€ en cash. On vous explique.</p>
+    </a>
+    <a class="card" href="/blog/business-class-premium-vol-retarde-droits.html">
+      <h2>Vol business / premium retardé : votre indemnité (600€ aussi)</h2>
+      <p>Vol en classe business, premium ou première retardé ? Indemnité CE 261 identique : 600€ par passager. Vos droits sont les mêmes qu'en éco — on vous explique.</p>
+    </a>
+    <a class="card" href="/blog/carte-embarquement-perdue-recuperer-indemnite.html">
+      <h2>Carte d'embarquement perdue : récupérer son indemnité quand même</h2>
+      <p>Vous avez perdu votre carte d'embarquement ? L'indemnité CE 261 reste due. Voici comment prouver votre voyage et récupérer 600€ par passager.</p>
+    </a>
+    <a class="card" href="/blog/code-share-air-france-klm-quelle-compagnie-recours.html">
+      <h2>Code-share Air France / KLM : quelle compagnie vous indemnise ?</h2>
+      <p>Vol Air France opéré par KLM (ou inverse) retardé ? La compagnie responsable du CE 261 est celle qui opère vraiment, pas celle du billet. On vous explique.</p>
+    </a>
+    <a class="card" href="/blog/combien-temps-reclamer-indemnite-vol.html">
+      <h2>Combien de temps pour réclamer ? 5 ans en France</h2>
+      <p>Le délai pour réclamer une indemnité aérienne est de 5 ans en France. Votre vol de 2021 était en retard ? Vous pouvez encore réclamer.</p>
+    </a>
+    <a class="card" href="/blog/compagnie-refuse-payer-indemnite-que-faire.html">
+      <h2>La compagnie refuse de payer mon indemnité : que faire ?</h2>
+      <p>La compagnie refuse votre indemnité CE 261 ? Voici les 5 étapes pour récupérer 600€ : lettre, médiateur, tribunal. Ou laissez Robin des Airs s'en charger.</p>
+    </a>
+    <a class="card" href="/blog/correspondance-manquee-indemnite-vol.html">
+      <h2>Correspondance manquée : vos droits à l'indemnité</h2>
+      <p>Vous avez raté votre correspondance à cause d'un retard ? Vous avez droit à une indemnité basée sur votre retard à l'arrivée finale. Voici comment.</p>
+    </a>
+    <a class="card" href="/blog/corsair-vol-retarde-indemnite.html">
+      <h2>Corsair vol retardé : vos droits à l'indemnité</h2>
+      <p>Vol Corsair retardé ou annulé ? La compagnie européenne vous doit jusqu'à 600€ par passager. Robin des Airs récupère votre argent.</p>
+    </a>
+    <a class="card" href="/blog/dossiers-types-robin-cas-reels-anonymises.html">
+      <h2>Dossiers types Robin des Airs : 8 cas réels (anonymisés)</h2>
+      <p>8 dossiers anonymisés traités par Robin des Airs : famille Paris-Dakar, étudiant Abidjan, pèlerin Hadj. Montants récupérés et délais réels.</p>
+    </a>
+    <a class="card" href="/blog/enfant-non-accompagne-um-vol-retarde-droits.html">
+      <h2>Enfant non accompagné (UM) : vol retardé, vos droits</h2>
+      <p>Votre enfant voyage seul (service UM) et son vol est retardé ? Indemnité CE 261 jusqu'à 600€ + responsabilité renforcée de la compagnie. On vous explique.</p>
+    </a>
+    <a class="card" href="/blog/formulaire-petite-creance-europeenne-vol-retarde.html">
+      <h2>Petite créance européenne : récupérer son indemnité au tribunal</h2>
+      <p>La compagnie refuse vos 600€ ? La procédure européenne de petite créance permet d'obtenir un jugement contraignant pour &lt;50€ de frais. Mode d'emploi.</p>
+    </a>
+    <a class="card" href="/blog/greve-air-france-indemnite-vol-retarde.html">
+      <h2>Grève Air France : vos droits à l'indemnité</h2>
+      <p>Grève chez Air France et vol retardé ou annulé ? Selon la jurisprudence européenne, vous avez droit à une indemnité. Voici pourquoi.</p>
+    </a>
+    <a class="card" href="/blog/greve-controleurs-aeriens-ete-2026-retards.html">
+      <h2>Grève contrôleurs aériens été 2026 : vos droits</h2>
+      <p>Grève DGAC, Eurocontrol, contrôleurs étrangers : votre vol retardé/annulé donne-t-il droit à 600€ ? Réponses précises selon le type de grève.</p>
+    </a>
+    <a class="card" href="/blog/harmattan-vol-afrique-retard-saison.html">
+      <h2>Harmattan et vols Afrique : retards en janvier-mars</h2>
+      <p>L'harmattan (vents de sable) provoque retards et annulations en Afrique de l'Ouest janvier-mars. L'indemnité CE 261 reste-t-elle due ? On vous explique.</p>
+    </a>
+    <a class="card" href="/blog/indemnite-vol-montants-250-400-600.html">
+      <h2>Indemnité vol retardé ou annulé : montants 250€, 400€, 600€</h2>
+      <p>Les montants de l'indemnité pour vol retardé ou annulé dépendent de la distance : 250€, 400€ ou 600€ par passager. Tableau et explications.</p>
+    </a>
+    <a class="card" href="/blog/indemnite-vol-retarde-famille-enfants.html">
+      <h2>Les enfants et bébés comptent aussi pour l'indemnité</h2>
+      <p>Vous voyagez en famille ? Chaque passager ayant un billet — enfants et bébés compris — a droit à l'indemnité. Jusqu'à 600€ PAR personne.</p>
+    </a>
+    <a class="card" href="/blog/justificatif-retard-vol-attestation-compagnie-demander.html">
+      <h2>Justificatif de retard de vol : comment l'obtenir de la compagnie</h2>
+      <p>Comment obtenir un justificatif officiel de retard ou un voyage alternatif auprès de la compagnie aérienne. Modèle de demande + recours si refus.</p>
+    </a>
+    <a class="card" href="/blog/klm-vol-retarde-indemnite.html">
+      <h2>KLM vol retardé : vos droits à l'indemnité</h2>
+      <p>Vol KLM retardé ou annulé ? La compagnie néerlandaise vous doit jusqu'à 600€ par passager selon le CE 261. Robin des Airs récupère votre indemnité.</p>
+    </a>
+    <a class="card" href="/blog/pmr-handicap-mobilite-reduite-vol-retarde-droits.html">
+      <h2>Personnes à mobilité réduite (PMR) : droits en cas de vol retardé</h2>
+      <p>Personne handicapée ou à mobilité réduite (PMR) : vos droits en cas de vol retardé. Assistance obligatoire + indemnité CE 261 jusqu'à 600€.</p>
+    </a>
+    <a class="card" href="/blog/pourquoi-choisir-robin-des-airs-difference.html">
+      <h2>Pourquoi choisir Robin des Airs : ce qui nous différencie</h2>
+      <p>Ce qui rend Robin des Airs différent : suivi téléphonique humain, WhatsApp 7j/7, 8 langues dont wolof/bambara/lingala, commission unique 25 %, spécialiste diaspora.</p>
+    </a>
+    <a class="card" href="/blog/que-faire-aeroport-vol-retarde.html">
+      <h2>Que faire à l'aéroport quand votre vol est retardé</h2>
+      <p>Votre vol est retardé ? Voici les 6 réflexes à avoir immédiatement à l'aéroport pour protéger vos droits et récupérer jusqu'à 600€.</p>
+    </a>
+    <a class="card" href="/blog/reclamer-seul-ou-passer-par-un-service-indemnite-vol.html">
+      <h2>Réclamer seul ou passer par un service ?</h2>
+      <p>Faut-il réclamer seul son indemnité aérienne ou passer par un service ? Comparaison honnête des deux options.</p>
+    </a>
+    <a class="card" href="/blog/reglementation-ce261-resume.html">
+      <h2>Réglementation CE 261 : résumé de vos droits en vol</h2>
+      <p>CE 261 en bref : droits des passagers en cas de vol retardé, annulé, correspondance manquée ou refus d'embarquement. Applicable depuis la France et l'UE.</p>
+    </a>
+    <a class="card" href="/blog/remboursement-billet-vs-indemnite-ce261.html">
+      <h2>Remboursement du billet vs indemnité CE 261 : deux droits différents</h2>
+      <p>Remboursement du billet et indemnité CE 261 sont deux droits différents qui se cumulent. Voici comment obtenir les deux.</p>
+    </a>
+    <a class="card" href="/blog/rentree-universitaire-etudiants-vol-retarde.html">
+      <h2>Étudiants en rentrée universitaire : vol retardé, vos droits</h2>
+      <p>Étudiant Africa-Europe en rentrée universitaire avec vol retardé ? Indemnité CE 261 de 600€ + frais réels remboursables (cours manqués, logement).</p>
+    </a>
+    <a class="card" href="/blog/retards-vol-noel-decembre-droits.html">
+      <h2>Retards vols de Noël : indemnité CE 261 pendant les fêtes</h2>
+      <p>Vol retardé ou annulé pendant les fêtes (Noël, Nouvel An) ? Vos droits CE 261 ne changent pas — jusqu'à 600€ d'indemnité par passager. On vous explique.</p>
+    </a>
+    <a class="card" href="/blog/robin-des-airs-vs-airhelp-comparatif.html">
+      <h2>Robin des Airs vs AirHelp : quel service choisir ?</h2>
+      <p>Robin des Airs vs AirHelp : commission, langues parlées, suivi par WhatsApp et téléphone, spécificité diaspora Afrique. Comparatif honnête.</p>
+    </a>
+    <a class="card" href="/blog/robin-des-airs-vs-flightright-comparatif.html">
+      <h2>Robin des Airs vs Flightright : quel service choisir ?</h2>
+      <p>Robin des Airs vs Flightright : commission, langues, expertise diaspora Afrique, suivi WhatsApp. Le bon choix pour les vols Europe-Afrique.</p>
+    </a>
+    <a class="card" href="/blog/robin-des-airs-vs-skycop-comparatif.html">
+      <h2>Robin des Airs vs Skycop : quel service choisir ?</h2>
+      <p>Robin des Airs vs Skycop : commission, langues parlées, expertise diaspora Afrique, suivi WhatsApp et téléphone. Comparatif honnête.</p>
+    </a>
+    <a class="card" href="/blog/royal-air-maroc-vol-retarde-indemnite.html">
+      <h2>Royal Air Maroc vol retardé : vos droits</h2>
+      <p>Vol Royal Air Maroc retardé ? Attention : vos droits dépendent du sens du vol. Compagnie non-UE = règles spécifiques. On vous explique.</p>
+    </a>
+    <a class="card" href="/blog/saisir-mediateur-mtv-tourisme-voyage.html">
+      <h2>Saisir le Médiateur Tourisme et Voyage (MTV) : mode d'emploi</h2>
+      <p>Procédure complète pour saisir le Médiateur Tourisme et Voyage (MTV) après le refus d'une compagnie. Délais, formulaire, taux de succès.</p>
+    </a>
+    <a class="card" href="/blog/surbooking-refus-embarquement-indemnite.html">
+      <h2>Surbooking : vos droits quand on vous refuse l'embarquement</h2>
+      <p>Refus d'embarquement pour surbooking ? La compagnie vous doit immédiatement 250€ à 600€ par passager. Voici comment réclamer.</p>
+    </a>
+    <a class="card" href="/blog/transavia-vol-retarde-indemnite.html">
+      <h2>Transavia vol retardé — vos droits à l'indemnité</h2>
+      <p>Vol Transavia en retard ? Même low-cost, vous avez droit à une indemnité CE 261. Guide pour réclamer à Transavia France ou Transavia Holland.</p>
+    </a>
+    <a class="card" href="/blog/vol-air-france-retarde-indemnite.html">
+      <h2>Vol Air France retardé : comment obtenir votre indemnité</h2>
+      <p>Votre vol Air France a été retardé de plus de 3h ? La loi CE 261/2004 vous donne droit à 250€ à 600€ par passager. Robin des Airs récupère votre argent.</p>
+    </a>
+    <a class="card" href="/blog/vol-annule-indemnite-600-euros.html">
+      <h2>Vol annulé : comment obtenir votre indemnité de 600€</h2>
+      <p>Vol annulé moins de 14 jours avant le départ ? Vous avez droit à 250€ à 600€ par passager. Voici comment récupérer votre argent.</p>
+    </a>
+    <a class="card" href="/blog/vol-annule-meteo-circonstances-extraordinaires-recours.html">
+      <h2>Vol annulé pour météo : la compagnie peut-elle refuser l'indemnité ?</h2>
+      <p>Vol annulé ou retardé pour cause de météo ? La compagnie n'est pas automatiquement exonérée. Voici comment contester et récupérer vos 600€.</p>
+    </a>
+    <a class="card" href="/blog/vol-charter-tour-operateur-retard-droits.html">
+      <h2>Vol charter retardé : droits CE 261 + responsabilité tour-opérateur</h2>
+      <p>Vol charter (TUI, Marmara, FRAM, Look Voyages) retardé ? Vous avez deux recours cumulables : CE 261 de 600€ et Code du tourisme. On vous explique.</p>
+    </a>
+    <a class="card" href="/blog/vol-deces-famille-retard-funerailles.html">
+      <h2>Vol pour funérailles familiales retardé : vos droits</h2>
+      <p>Vol pour funérailles ou décès dans la famille retardé ou annulé ? Indemnité CE 261 de 600€ + recours pour préjudice moral. Robin vous accompagne.</p>
+    </a>
+    <a class="card" href="/blog/vol-deroutement-aeroport-secondaire-droits.html">
+      <h2>Vol dérouté vers un autre aéroport : vos droits</h2>
+      <p>Votre avion a été dérouté vers un autre aéroport (météo, technique, fermeture) ? Indemnité CE 261 possible + transport sol obligatoire jusqu'à destination.</p>
+    </a>
+    <a class="card" href="/blog/vol-mariage-traditionnel-retour-pays-retard.html">
+      <h2>Vol pour mariage traditionnel retardé : récupérer 600€ par passager</h2>
+      <p>Vol pour mariage au pays retardé ou annulé ? Indemnité CE 261 jusqu'à 600€ par passager — multipliée par toute la famille élargie. On vous explique.</p>
+    </a>
+    <a class="card" href="/blog/vol-pelerinage-omra-hadj-retard.html">
+      <h2>Vol pèlerinage Omra ou Hadj retardé : vos droits</h2>
+      <p>Vol pour l'Omra ou le Hadj retardé ou annulé ? Indemnité CE 261 de 600€ par pèlerin possible. Spécificités, compagnies, recours — votre guide.</p>
+    </a>
+    <a class="card" href="/blog/vol-ramadan-aid-tabaski-retard-droits.html">
+      <h2>Vol Ramadan, Aïd, Tabaski retardé : vos droits</h2>
+      <p>Vol pour Ramadan, Aïd el-Fitr ou Tabaski (Aïd el-Kebir) retardé ou annulé ? Indemnité CE 261 de 600€ par passager — droits inchangés. On vous explique.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-abidjan-paris-indemnite.html">
+      <h2>Vol retardé Paris-Abidjan ou Abidjan-Paris : vos droits</h2>
+      <p>Retard sur votre vol Paris-Abidjan ? La loi CE 261/2004 vous donne droit à 600€ par passager. Robin des Airs récupère votre argent.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-antilles-guadeloupe-martinique-indemnite.html">
+      <h2>Vol retardé vers les Antilles : vos droits à 600€</h2>
+      <p>Retard sur votre vol vers la Guadeloupe ou la Martinique ? Vous avez droit à 600€ par passager. Robin des Airs récupère votre indemnité.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-bamako-paris-indemnite.html">
+      <h2>Vol retardé Paris-Bamako : vos droits à 600€</h2>
+      <p>Votre vol Paris-Bamako ou Bamako-Paris a été retardé ? Vous avez droit à 600€. Robin des Airs gère votre dossier en français et en bambara.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-banjul-bruxelles-barcelone-indemnite.html">
+      <h2>Vol retardé Banjul (Gambie) depuis Bruxelles, Barcelone ou Londres</h2>
+      <p>Retard ou annulation sur votre vol Banjul (Gambie) depuis Bruxelles, Barcelone, Lisbonne ou Londres ? Indemnité CE 261 jusqu'à 600€ par passager.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-conakry-paris-indemnite.html">
+      <h2>Vol retardé Paris-Conakry : vos droits</h2>
+      <p>Retard sur votre vol Paris-Conakry ? Air France vous doit jusqu'à 600€ par passager. Robin des Airs récupère votre argent.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-dakar-paris-indemnite.html">
+      <h2>Vol retardé Paris-Dakar ou Dakar-Paris : vos droits</h2>
+      <p>Retard sur votre vol Paris-Dakar ou Dakar-Paris ? Vous pouvez toucher 600€ par passager selon le CE 261/2004. Voici comment.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-douala-paris-indemnite.html">
+      <h2>Vol retardé Paris-Douala ou Paris-Yaoundé : vos droits</h2>
+      <p>Retard sur votre vol Paris-Douala ou Yaoundé ? Air France vous doit jusqu'à 600€. Robin des Airs gère votre dossier gratuitement.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-kinshasa-bruxelles-indemnite.html">
+      <h2>Vol retardé Bruxelles-Kinshasa ou Kinshasa-Bruxelles : vos droits</h2>
+      <p>Retard ou annulation sur votre vol Bruxelles-Kinshasa ? La loi européenne vous donne droit à 600€ par passager. Robin des Airs s'en occupe.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-lyon-marseille-nice-indemnite.html">
+      <h2>Vol retardé depuis Lyon, Marseille ou Nice — mêmes droits qu'à Paris</h2>
+      <p>Votre vol part de Lyon-Saint-Exupéry, Marseille ou Nice ? Les droits à l'indemnité sont les mêmes qu'au départ de Paris. Guide et calculateur.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-niamey-paris-indemnite.html">
+      <h2>Vol retardé Paris-Niamey ou Niamey-Paris : vos droits</h2>
+      <p>Retard ou annulation sur votre vol Paris-Niamey (Niger) ? Indemnité jusqu'à 600€ possible par passager. Air France, Royal Air Maroc — on vous explique.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-nouakchott-paris-indemnite.html">
+      <h2>Vol retardé Paris-Nouakchott : vos droits</h2>
+      <p>Retard ou annulation sur votre vol Paris-Nouakchott (Mauritanie) ? 600€ d'indemnité possible. Air France, Mauritania Airlines, Royal Air Maroc — votre guide.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-ryanair-indemnite.html">
+      <h2>Vol retardé Ryanair — vos droits à l'indemnité</h2>
+      <p>Low-cost ne veut pas dire sans droits. Vol Ryanair en retard ? Indemnité jusqu'à 600€ par passager. Comment réclamer.</p>
+    </a>
+    <a class="card" href="/blog/voyage-organise-package-vol-retarde-droits.html">
+      <h2>Voyage organisé (package) avec vol retardé : doubles droits</h2>
+      <p>Package voyage organisé avec vol retardé ou annulé ? Indemnité CE 261 jusqu'à 600€ + remboursement perte de jouissance via Code du tourisme. On vous explique.</p>
+    </a>
+    <a class="card" href="/blog/air-cote-divoire-vol-retarde-indemnite.html">
+      <h2>Air Côte d'Ivoire vol retardé : indemnité CE 261 jusqu'à 600€</h2>
+      <p>Vol Air Côte d'Ivoire retardé sur Paris-Abidjan ? Le CE 261 s'applique au départ de France. Jusqu'à 600€ par passager. Dossier gratuit si non-éligible.</p>
+    </a>
+    <a class="card" href="/blog/air-peace-nigeria-vol-retarde-indemnite.html">
+      <h2>Air Peace (Nigeria) vol retardé : CE 261, UK261 et vos droits</h2>
+      <p>Air Peace non-UE. Vols London-Lagos : UK261 (pas CE 261). Vols depuis UE : CE 261 départ seulement. Paris-Lagos both ways : Air France ou Brussels.</p>
+    </a>
+    <a class="card" href="/blog/air-senegal-vol-retarde-indemnite.html">
+      <h2>Air Sénégal vol retardé : vos droits à l'indemnité CE 261 (jusqu'à 600€)</h2>
+      <p>Vol Air Sénégal retardé sur Paris-Dakar ? Le CE 261 s'applique au départ de l'UE. Jusqu'à 600€ par passager. Robin des Airs récupère votre indemnité à 25% de commission.</p>
+    </a>
+    <a class="card" href="/blog/asky-airlines-vol-retarde-indemnite.html">
+      <h2>ASKY Airlines vol retardé : quand le CE 261 s'applique (Lomé, Cotonou, Accra…)</h2>
+      <p>ASKY Airlines n'est pas une compagnie européenne. Le CE 261 ne s'applique qu'à certaines conditions. On vous explique vos droits sur les vols ASKY depuis l'Europe.</p>
+    </a>
+    <a class="card" href="/blog/brussels-airlines-vol-retarde-indemnite.html">
+      <h2>Brussels Airlines vol retardé : indemnité CE 261 dans les deux sens (jusqu'à 600€)</h2>
+      <p>Brussels Airlines est une compagnie européenne : le CE 261 s'applique dans les deux sens sur toutes ses routes africaines. Kinshasa, Douala, Abidjan — jusqu'à 600€ par passager.</p>
+    </a>
+    <a class="card" href="/blog/ce261-bebe-nourrisson-enfant-indemnite.html">
+      <h2>CE 261 et enfants : bébés, nourrissons, familles — droits</h2>
+      <p>Enfant avec siège = droits CE 261 complets. Nourrisson sur les genoux = pas d'indemnité propre. Famille de 4 = jusqu'à 2 400€. Guide complet.</p>
+    </a>
+    <a class="card" href="/blog/ce261-nationalite-residence-qui-peut-reclamer.html">
+      <h2>CE 261 : qui peut réclamer ? Nationalité, résidence, âge</h2>
+      <p>CE 261 s'applique à TOUS les passagers sans condition de nationalité, résidence ou titre de séjour. Diaspora africaine, touriste, visiteur : mêmes droits.</p>
+    </a>
+    <a class="card" href="/blog/ce261-vs-convention-montreal.html">
+      <h2>CE 261 vs Convention de Montréal : droits cumulables</h2>
+      <p>Retard de vol = CE 261 (jusqu'à 600€). Bagage perdu = Convention de Montréal (1 600 DTS). Deux régimes différents qui se cumulent. Tableau et guide.</p>
+    </a>
+    <a class="card" href="/blog/chiffres-choc-indemnisation-vol-retarde.html">
+      <h2>Vol retardé : 5 chiffres que les compagnies aériennes préfèrent que vous ignoriez</h2>
+      <p>98% des passagers éligibles ne réclament jamais leur indemnité. Les compagnies le savent. Voici les 5 chiffres qu'elles préfèrent cacher.</p>
+    </a>
+    <a class="card" href="/blog/circonstances-extraordinaires-ce261.html">
+      <h2>Circonstances extraordinaires CE 261 : ce que les compagnies peuvent et ne peuvent pas invoquer</h2>
+      <p>Panne technique, météo, grève... La compagnie invoque des circonstances extraordinaires pour refuser votre indemnité ? Voici ce qui est légalement accepté — et ce qui ne l'est pas.</p>
+    </a>
+    <a class="card" href="/blog/compagnies-eu-non-eu-ce261-tableau.html">
+      <h2>Compagnies UE vs non-UE : vos droits CE 261 (tableau)</h2>
+      <p>Quelle compagnie couvre vos droits CE 261 dans les deux sens ? Tableau complet EU/non-EU : Air France, Ethiopian, Turkish, Lufthansa, Brussels, TAP et plus.</p>
+    </a>
+    <a class="card" href="/blog/ethiopian-airlines-vol-retarde-indemnite.html">
+      <h2>Ethiopian Airlines vol retardé depuis Paris : vos droits CE 261</h2>
+      <p>Vous volez Ethiopian Airlines via Addis-Abeba vers l'Afrique ? Le CE 261 s'applique sur le segment Paris-Addis. Guide complet + jusqu'à 600€ d'indemnité.</p>
+    </a>
+    <a class="card" href="/blog/indemnite-billet-miles-points.html">
+      <h2>Billet miles ou points : avez-vous droit à l'indemnité CE 261 ?</h2>
+      <p>Vous avez utilisé des miles Flying Blue, Avios ou des points carte bancaire ? Oui, le CE 261 s'applique quand même. Voici tout ce qu'il faut savoir.</p>
+    </a>
+    <a class="card" href="/blog/kenya-airways-vol-retarde-indemnite.html">
+      <h2>Kenya Airways vol retardé depuis Paris : vos droits CE 261</h2>
+      <p>Kenya Airways (KQ) sur un vol au départ de Paris ? Le CE 261 s'applique. Guide complet : distances, montants, codeshares Air France, et démarches de réclamation.</p>
+    </a>
+    <a class="card" href="/blog/lufthansa-vol-retarde-indemnite.html">
+      <h2>Lufthansa vol retardé : CE 261 dans les deux sens — Afrique</h2>
+      <p>Lufthansa (EU) via Francfort : CE 261 dans les deux sens. Nairobi, Lagos, Johannesburg, Accra. Billet unique CDG→FRA→Afrique = distance totale = 600€.</p>
+    </a>
+    <a class="card" href="/blog/mediation-aerienne-obligatoire-2026.html">
+      <h2>Médiation aérienne obligatoire 2026 : ce qui change pour votre indemnité CE 261</h2>
+      <p>Depuis février 2026, la médiation est obligatoire avant tout recours au tribunal pour un litige aérien. Ce que ça change pour réclamer vos 600€ CE 261 — explications simples.</p>
+    </a>
+    <a class="card" href="/blog/mediation-compagnie-aerienne-refus-indemnite.html">
+      <h2>Médiation compagnie aérienne : que faire si elle refuse votre indemnité ?</h2>
+      <p>La compagnie refuse votre indemnité CE 261 ? Médiateur du Tourisme (MTV), DGAC, tribunal : le guide complet des recours en France, étape par étape.</p>
+    </a>
+    <a class="card" href="/blog/mise-en-demeure-compagnie-aerienne-ce261.html">
+      <h2>Mise en demeure compagnie aérienne : modèle et guide CE 261</h2>
+      <p>La compagnie ignore votre réclamation ? Téléchargez notre modèle de mise en demeure CE 261 et suivez notre guide en 4 étapes avant MTV ou tribunal.</p>
+    </a>
+    <a class="card" href="/blog/operating-vs-marketing-carrier-ce261.html">
+      <h2>Opérateur vs vendeur : qui vous doit l'indemnité CE 261 ?</h2>
+      <p>Acheté chez Air France, opéré par Ethiopian ? L'opérateur réel est responsable CE 261. Guide pratique : identifier la compagnie responsable en 4 étapes.</p>
+    </a>
+    <a class="card" href="/blog/preuve-retard-vol-documents-conserver.html">
+      <h2>Preuves de retard vol : quels documents conserver pour réclamer votre indemnité</h2>
+      <p>Carte d'embarquement, SMS compagnie, reçus... Voici exactement quels documents garder pour réclamer 250€, 400€ ou 600€ en cas de vol retardé ou annulé.</p>
+    </a>
+    <a class="card" href="/blog/refus-embarquement-surbooking-ce261.html">
+      <h2>Refus d'embarquement / surbooking CE 261 : vos droits</h2>
+      <p>Refus d'embarquement involontaire = indemnité immédiate 250/400/600€ sans attendre 3h. Choix entre remboursement et réacheminement. Guide complet.</p>
+    </a>
+    <a class="card" href="/blog/remboursement-frais-annexes-retard.html">
+      <h2>Repas, hôtel, taxi : remboursez vos frais EN PLUS de l'indemnité CE 261</h2>
+      <p>L'indemnité 250-600€ et le remboursement des frais sont deux droits distincts. Vous pouvez toucher les deux. Guide complet article 9 CE 261.</p>
+    </a>
+    <a class="card" href="/blog/rwandair-vol-retarde-indemnite.html">
+      <h2>RwandAir vol retardé depuis Paris ou Bruxelles : vos droits CE 261</h2>
+      <p>RwandAir (WB) au départ de l'Europe ? Le CE 261 s'applique pour le segment EU. Guide : Kigali, distances, montants et démarches de réclamation.</p>
+    </a>
+    <a class="card" href="/blog/south-african-airways-vol-retarde-indemnite.html">
+      <h2>South African Airways vol retardé depuis Paris : vos droits CE 261</h2>
+      <p>South African Airways (SAA) au départ de Paris vers Johannesburg ? Le CE 261 s'applique sur le segment EU. Montants, démarches et particularités post-restructuration.</p>
+    </a>
+    <a class="card" href="/blog/taag-angola-airlines-vol-retarde-indemnite.html">
+      <h2>TAAG Angola Airlines vol retardé : vos droits CE 261 (Luanda)</h2>
+      <p>TAAG non-UE : CE 261 uniquement départ UE (Lisbonne ou Paris si vol direct). Luanda 6 891 km = 600€. TAP Air Portugal couvert dans les deux sens.</p>
+    </a>
+    <a class="card" href="/blog/tap-air-portugal-vol-retarde-indemnite.html">
+      <h2>TAP Air Portugal vol retardé : vos droits CE 261 (Angola, Mozambique, Cap-Vert)</h2>
+      <p>TAP Air Portugal compagnie UE : CE 261 dans les deux sens. Luanda, Maputo, Praia, Bissau, São Tomé via Lisbonne. 600€ par passager.</p>
+    </a>
+    <a class="card" href="/blog/turkish-airlines-vol-retarde-indemnite.html">
+      <h2>Turkish Airlines vol retardé depuis Paris : vos droits CE 261 via Istanbul</h2>
+      <p>Vous transitez par Istanbul (IST) avec Turkish Airlines vers l'Afrique ? Le CE 261 s'applique sur le départ de Paris. Billet unique = distance totale = 600€.</p>
+    </a>
+    <a class="card" href="/blog/uganda-airlines-vol-retarde-indemnite.html">
+      <h2>Uganda Airlines vol retardé : CE 261 et droits Paris-Entebbe</h2>
+      <p>Uganda Airlines non-UE sans vols UE directs. Pour Paris-Entebbe : Brussels Airlines (EU both ways) ou Ethiopian (départ Paris). CDG-EBB 6 322 km = 600€.</p>
+    </a>
+    <a class="card" href="/blog/vol-annule-ce261-droits-remboursement.html">
+      <h2>Vol annulé CE 261 : remboursement et indemnité complète</h2>
+      <p>Vol annulé = remboursement ou réacheminement. Indemnité 250-600€ si prévenu moins de 14 jours avant. Circonstances extraordinaires : ce qui change.</p>
+    </a>
+    <a class="card" href="/blog/vol-depart-usa-escale-europe-ce261.html">
+      <h2>Vol USA → Europe → Afrique : CE 261 s'applique-t-il ?</h2>
+      <p>JFK→CDG→DKR sur Air France : CE 261 couvre les deux segments. Sur Ethiopian : CDG→DKR couvert, JFK→CDG non. Art. 3.1(b) expliqué.</p>
+    </a>
+    <a class="card" href="/blog/vol-direct-vs-correspondance-droits-ce261.html">
+      <h2>Vol direct vs correspondance : droits CE 261 (tableau)</h2>
+      <p>Billet unique ou billets séparés ? Le choix change tout pour votre indemnité CE 261. Tableau des distances et règle de la correspondance manquée.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-abidjan-dakar-comparatif.html">
+      <h2>Paris-Abidjan vs Paris-Dakar : vos droits CE 261 comparés</h2>
+      <p>Abidjan (4 710 km) vs Dakar (4 208 km) : deux routes phares, mêmes 600€. Air France, Corsair, Brussels, Air Sénégal, Air Côte d'Ivoire. CE 261 comparé.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-abuja-paris-indemnite.html">
+      <h2>Vol Paris → Abuja retardé : 600€ d'indemnité CE 261 (Nigeria)</h2>
+      <p>Vol retardé ou annulé sur Paris-Abuja (ABV) ? Distance 4 733 km = 600€ par passager. Air France (vol direct CDG)  Ethiopian Airlines (via Addis-Abeba) : vos droits expliqués.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-accra-paris-indemnite.html">
+      <h2>Vol Paris → Accra (Ghana) retardé : 600€ d'indemnité CE 261</h2>
+      <p>CDG → ACC = 4 748 km → palier 600€. Air France et Brussels Airlines couverts dans les deux sens. Ethiopian et Kenya Airways départ UE seulement.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-antananarivo-paris-indemnite.html">
+      <h2>Vol Paris → Antananarivo retardé : 600€ d'indemnité CE 261 (Madagascar)</h2>
+      <p>Vol retardé ou annulé sur Paris-Antananarivo (TNR) ? Distance 9 199 km = 600€ par passager. Air France (vol direct CDG)  Air Madagascar  Ethiopian Airlines (via Addis-Abeba) : vos droits expliqués.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-brazzaville-paris-indemnite.html">
+      <h2>Vol Paris → Brazzaville retardé : 600€ d'indemnité CE 261 (République du Congo)</h2>
+      <p>Vol retardé ou annulé sur Paris-Brazzaville (BZV) ? Distance 5 665 km = 600€ par passager. Air France (vol direct CDG)  Ethiopian Airlines (via Addis-Abeba) : vos droits expliqués.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-bujumbura-paris-indemnite.html">
+      <h2>Vol Paris → Bujumbura retardé : 600€ d'indemnité CE 261 (Burundi)</h2>
+      <p>Vol retardé ou annulé sur Paris-Bujumbura (BJM) ? Distance 6 440 km = 600€ par passager. Brussels Airlines (vol direct BRU)  Ethiopian Airlines (via Addis-Abeba) : vos droits expliqués.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-cap-vert-paris-indemnite.html">
+      <h2>Vol Paris → Cap-Vert retardé : 600€ d'indemnité CE 261</h2>
+      <p>CDG → Praia (RAI) = 3 844 km, Sal (SID) = 3 785 km → palier 600€. TAP, Corsair, Transavia couverts dans les deux sens.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-cayenne-guyane-paris-indemnite.html">
+      <h2>Vol Paris → Cayenne (Guyane) retardé : 600€ CE 261</h2>
+      <p>CDG → CAY = 7 085 km = palier 600€. Air France et Corsair couverts dans les deux sens. La Guyane est un DOM — CE 261 s'applique pleinement.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-cotonou-paris-indemnite.html">
+      <h2>Vol Paris → Cotonou (Bénin) retardé : 600€ CE 261</h2>
+      <p>CDG → COO = 4 715 km → palier 600€. Air France couvert deux sens. Ethiopian et Royal Air Maroc départ UE seulement. Guide CE 261 complet.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-dar-es-salaam-paris-indemnite.html">
+      <h2>Vol Paris → Dar es Salaam (Tanzanie) retardé : 600€ d'indemnité CE 261</h2>
+      <p>CDG → DAR = 7 088 km → palier 600€. Lufthansa couvert dans les deux sens. Ethiopian et Kenya Airways uniquement départ EU.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-djibouti-paris-indemnite.html">
+      <h2>Vol Paris → Djibouti retardé : 600€ d'indemnité CE 261</h2>
+      <p>CDG → DJI = 5 310 km = palier 600€. Air France vols directs couverts dans les deux sens. Ethiopian uniquement départ Paris. Guide CE 261.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-freetown-paris-indemnite.html">
+      <h2>Vol Paris → Freetown retardé : 600€ d'indemnité CE 261 (Sierra Leone)</h2>
+      <p>Vol retardé ou annulé sur Paris-Freetown (FNA) ? Distance 4 506 km = 600€ par passager. Brussels Airlines (vol direct BRU)  Air Senegal (via Dakar)  Ethiopian Airlines (via Addis-Abeba) : vos droits expliqués.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-ile-maurice-paris-indemnite.html">
+      <h2>Vol Paris → Île Maurice retardé : 600€ d'indemnité CE 261</h2>
+      <p>CDG → MRU = 9 756 km → palier 600€. Air France couvert dans les deux sens. Air Mauritius : uniquement départ Paris. Guide complet.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-johannesburg-paris-indemnite.html">
+      <h2>Vol Paris → Johannesburg retardé : 600€ d'indemnité CE 261 (Afrique du Sud)</h2>
+      <p>Vol retardé ou annulé sur Paris-Johannesburg (JNB) ? Distance 9 033 km = 600€ par passager. Air France (vol direct CDG)  South African Airways  Ethiopian Airlines (via Addis-Abeba) : vos droits expliqués.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-kampala-paris-indemnite.html">
+      <h2>Vol Paris → Entebbe / Kampala retardé : 600€ d'indemnité CE 261 (Ouganda)</h2>
+      <p>Vol retardé ou annulé sur Paris-Entebbe / Kampala (EBB) ? Distance 6 322 km = 600€ par passager. Brussels Airlines (vol direct BRU)  Ethiopian Airlines (via Addis-Abeba)  Kenya Airways (via Nairobi) : vos droits expliqués.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-kigali-paris-indemnite.html">
+      <h2>Vol Paris → Kigali retardé : 600€ d'indemnité CE 261 (Rwanda)</h2>
+      <p>Vol retardé ou annulé sur Paris-Kigali (KGL) ? Distance 6 353 km = 600€ par passager. Brussels Airlines (vol direct BRU)  RwandAir  Ethiopian Airlines (via Addis-Abeba) : vos droits expliqués.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-lagos-paris-indemnite.html">
+      <h2>Vol Paris → Lagos (Nigeria) retardé : 600€ CE 261</h2>
+      <p>CDG → LOS = 4 869 km → palier 600€. Air France couvert deux sens. Ethiopian et Turkish départ UE seulement. Air Peace = UK261 (pas CE 261).</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-libreville-paris-indemnite.html">
+      <h2>Vol Paris → Libreville retardé : 600€ d'indemnité CE 261 (Gabon)</h2>
+      <p>Vol retardé ou annulé Paris-Libreville (LBV) ? Distance 5 600 km = palier 600€. Air France, Ethiopian Airlines, Corsair : droits et démarches expliqués.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-lome-paris-indemnite.html">
+      <h2>Vol Paris → Lomé (Togo) retardé : 600€ d'indemnité CE 261</h2>
+      <p>CDG → LFW = 4 613 km → palier 600€. Air France couvert deux sens. ASKY Airlines (Togo, non-UE) départ UE seulement. Ethiopian identique.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-luanda-paris-indemnite.html">
+      <h2>Vol Paris → Luanda retardé : 600€ d'indemnité CE 261 (Angola)</h2>
+      <p>Vol retardé ou annulé sur Paris-Luanda (LAD) ? Distance 6 162 km = 600€ par passager. Brussels Airlines (vol direct BRU)  TAAG Angola Airlines  Ethiopian Airlines (via Addis-Abeba) : vos droits expliqués.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-maputo-paris-indemnite.html">
+      <h2>Vol Paris → Maputo (Mozambique) retardé : 600€ d'indemnité CE 261</h2>
+      <p>CDG → MPM &gt; 9 000 km → palier 600€. TAP Air Portugal couvert dans les deux sens. Ethiopian : départ EU uniquement.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-n-djamena-paris-indemnite.html">
+      <h2>Vol Paris → N'Djamena (Tchad) retardé : 600€ d'indemnité CE 261</h2>
+      <p>CDG → NDJ = 4 281 km = palier 600€. Air France vols directs couverts dans les deux sens. Harmattan non exonératoire.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-nairobi-paris-indemnite.html">
+      <h2>Vol Paris → Nairobi retardé : 600€ d'indemnité CE 261 (Kenya)</h2>
+      <p>Vol retardé ou annulé sur Paris-Nairobi (NBO) ? Distance 6 340 km = 600€ par passager. Air France (vol direct CDG)  Brussels Airlines (vol direct BRU)  Kenya Airways  Ethiopian Airlines (via Addis-Abeba) : vos droits expliqués.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-ouagadougou-paris-indemnite.html">
+      <h2>Vol Paris → Ouagadougou retardé : 600€ d'indemnité CE 261 (Burkina Faso)</h2>
+      <p>Vol retardé ou annulé sur Paris-Ouagadougou (OUA) ? Distance 4 232 km = 600€ par passager. Air France (vol direct CDG)  Ethiopian Airlines (via Addis-Abeba)  Turkish Airlines (via Istanbul) : vos droits expliqués.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-reunion-paris-indemnite.html">
+      <h2>Vol Paris → La Réunion retardé : 600€ d'indemnité CE 261</h2>
+      <p>CDG → RUN = 9 387 km. Air France et Corsair couverts dans les deux sens. 600€ par passager pour tout retard ≥ 3h.</p>
+    </a>
+    <a class="card" href="/blog/vol-retarde-yaounde-paris-indemnite.html">
+      <h2>Vol Paris → Yaoundé retardé : 600€ d'indemnité CE 261 (Cameroun)</h2>
+      <p>Vol retardé ou annulé sur Paris-Yaoundé (YAO) ? Distance 5 125 km = 600€ par passager. Air France (vol direct CDG)  Brussels Airlines (vol direct BRU)  Ethiopian Airlines (via Addis-Abeba)  Camair-Co : vos droits expliqués.</p>
     </a></div>
-    <div class="mt-12 rounded-xl bg-[#0B1F3A] text-center py-8 px-6 text-white">
-      <p class="mb-3 text-white/90">Prêt à récupérer votre indemnité ?</p>
+    <div class="cta-box">
+      <p>Prêt à récupérer votre indemnité ?</p>
       <p>
-        <a href="https://robindesairs.eu/#funnel-box" class="text-[#00E5A0] font-bold mx-2">Diagnostic gratuit</a>
-        <span class="text-white/50">·</span>
-        <a href="https://wa.me/33756863630" class="text-[#00E5A0] font-bold mx-2">WhatsApp direct</a>
+        <a href="https://robindesairs.eu/#funnel-box">Diagnostic gratuit</a>
+        <span class="sep">·</span>
+        <a href="https://wa.me/33756863630">WhatsApp direct</a>
       </p>
     </div>
   </main>
