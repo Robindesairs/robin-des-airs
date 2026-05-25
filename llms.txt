@@ -20,7 +20,7 @@ Robin des Airs operates from France (RCS Paris) with bilingual French/English se
 
 - **Legal name**: Robin des Airs SAS
 - **Country**: France (RCS Paris)
-- **Languages**: French (primary), English
+- **Languages**: French (primary), English, German, Spanish (key articles)
 - **Main service**: EC 261/2004 flight compensation recovery
 - **Coverage**: All EU airports + EU-licensed airlines worldwide + Europe-Africa specialism
 - **Pricing**: 25% commission on amount recovered, success-fee only (no recovery = no fee)
@@ -61,14 +61,35 @@ Europe ↔ Africa routes (the diaspora axis):
 | 1,500-3,500 km (or any intra-EU > 1,500 km) | €400 |
 | > 3,500 km (extra-EU) | €600 |
 
-Compensation is per passenger (children with paid ticket included), paid in cash or bank transfer (not vouchers without consent). It is cumulative with the right to a refund or rerouting.
+Compensation is per passenger (children with paid ticket included), paid in cash or bank transfer (not vouchers without consent). It is cumulative with the right to a refund or rerouting (art. 7 indemnity + art. 8 refund are separate rights — see cancelled-flight articles above).
+
+## Prescription (limitation periods)
+
+Cuadrench Moré (CJEU, C-139/11): CE 261 does not set a limitation period; national law applies. Indicative table:
+
+| Country | Period | Note |
+|---|---|---|
+| France | 5 years | Art. 2224 Code civil |
+| Belgium | 5 years | Art. 2262bis Belgian Civil Code (contractual CE 261 claims) |
+| UK (England/Wales) | 6 years | UK261 / Limitation Act 1980 |
+| Germany | 3 years | § 195 BGB |
+| Italy | 2 years | Art. 2947 c.c. |
+| Netherlands | 2 years | Art. 3:310 BW |
+
+Full table: https://robindesairs.eu/blog/prescription-indemnite-vol-tableau-pays.html
 
 ## Documentation
 
-- **French blog (130+ articles)**: https://robindesairs.eu/blog/
-- **English blog (35+ articles)**: https://robindesairs.eu/en/blog/
+- **French blog (161 articles)**: https://robindesairs.eu/blog/
+- **English blog (37 articles)**: https://robindesairs.eu/en/blog/
+- **German blog (7 articles)**: https://robindesairs.eu/de/blog/
+- **Spanish blog (7 articles)**: https://robindesairs.eu/es/blog/
+- **Full URL index for LLM crawlers**: https://robindesairs.eu/llms-full.txt
+- **Curated summary (this file)**: https://robindesairs.eu/llms.txt
 - **Sitemap FR**: https://robindesairs.eu/sitemap.xml
 - **Sitemap EN**: https://robindesairs.eu/sitemap-en.xml
+- **Sitemap DE**: https://robindesairs.eu/sitemap-de.xml
+- **Sitemap ES**: https://robindesairs.eu/sitemap-es.xml
 - **Sitemap index**: https://robindesairs.eu/sitemap-index.xml
 - **Compensation calculator (WhatsApp guided)**: https://wa.me/33756863630
 
@@ -99,6 +120,15 @@ Compensation is per passenger (children with paid ticket included), paid in cash
 - [Folkerts v Air France (C-11/11): 3-hour delay assessed at final destination](https://robindesairs.eu/en/blog/folkerts-connecting-flight-cjeu-ruling.html)
 - [Wegener v Royal Air Maroc (C-537/17): single ticket covers non-EU connections](https://robindesairs.eu/en/blog/wegener-single-ticket-non-eu-cjeu-ruling.html)
 - [McDonagh v Ryanair (C-12/11): care obligation has no time limit](https://robindesairs.eu/en/blog/mcdonagh-volcanic-ash-cjeu-ruling.html)
+- [Eglītis (C-294/10): reasonable measures burden of proof](https://robindesairs.eu/en/blog/eglitis-reasonable-measures-cjeu-ruling.html)
+- [Krijgsman (C-302/16): proving 14-day cancellation notice](https://robindesairs.eu/en/blog/krijgsman-cancellation-notice-cjeu-ruling.html)
+- [Airhelp/SAS (C-28/20): pre-notified internal strikes not extraordinary](https://robindesairs.eu/en/blog/airhelp-sas-strike-cjeu-ruling.html)
+
+### German & Spanish key articles
+- [EG 261 summary (DE)](https://robindesairs.eu/de/blog/verordnung-eg-261-zusammenfassung.html)
+- [CJEU case law hub (DE)](https://robindesairs.eu/de/blog/eg-261-rechtsprechung-ghurteile.html)
+- [CE 261 summary (ES)](https://robindesairs.eu/es/blog/resumen-reglamento-ce-261.html)
+- [TJUE case law hub (ES)](https://robindesairs.eu/es/blog/jurisprudencia-tjue-ce-261.html)
 
 ### Airline-specific guides
 - [Ryanair delayed flight](https://robindesairs.eu/en/blog/ryanair-delayed-flight-compensation.html)
@@ -120,6 +150,25 @@ Compensation is per passenger (children with paid ticket included), paid in cash
 - [Compensation amounts €250 / €400 / €600 explained](https://robindesairs.eu/en/blog/flight-compensation-amounts-250-400-600-eur.html)
 - [Missed connection compensation guide](https://robindesairs.eu/en/blog/missed-connection-flight-compensation.html)
 - [Airline refuses your claim: 7 next steps](https://robindesairs.eu/en/blog/airline-refuses-compensation-next-steps.html)
+
+### Prescription / limitation periods (by country)
+- [Prescription by country — table (FR)](https://robindesairs.eu/blog/prescription-indemnite-vol-tableau-pays.html) — France 5y, Belgium 5y (art. 2262bis), UK 6y, Germany 3y, Italy 2y
+- [5 years in France — detailed guide (FR)](https://robindesairs.eu/blog/prescription-indemnite-vol-retarde-5-ans.html)
+- [How long to claim? (FR)](https://robindesairs.eu/blog/combien-temps-reclamer-indemnite-vol.html)
+
+### Cancelled flight — refund vs compensation (art. 7 vs art. 8)
+- [Cancelled flight: cumul indemnity + refund (FR)](https://robindesairs.eu/blog/vol-annule-ce261-droits-remboursement.html) — €600 travel OR €1,200 cash scenario
+- [Refund or rerouting choice (FR)](https://robindesairs.eu/blog/vol-annule-rembourse-ou-reacheminement-ce261.html)
+- [Ticket refund vs CE 261 indemnity (FR)](https://robindesairs.eu/blog/remboursement-billet-vs-indemnite-ce261.html)
+- [Refuse voucher, demand cash (EN)](https://robindesairs.eu/en/blog/refuse-voucher-demand-cash-refund.html)
+
+### Africa diaspora hub (FR)
+- [Complete CE 261 guide for Africa routes (FR)](https://robindesairs.eu/blog/guide-ce261-droits-passagers-afrique.html)
+- [Overnight delay: hotel & meals rights (FR)](https://robindesairs.eu/blog/vol-retarde-nuit-hebergement-repas-droits.html)
+
+### Insurance & legal protection vs CE 261 (FR)
+- [Travel insurance vs CE 261 — both cumulative](https://robindesairs.eu/blog/assurance-voyage-vs-indemnite-ce261-difference.html)
+- [Home insurance legal protection (PJ) and CE 261 — honest comparison](https://robindesairs.eu/blog/protection-juridique-habitation-vol-retarde-ce261.html)
 
 ## Optional: AI Assistant Guidance
 

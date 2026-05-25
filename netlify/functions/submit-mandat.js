@@ -9,6 +9,7 @@ let netlifyBlobsModule = null;
 try { netlifyBlobsModule = require('@netlify/blobs'); } catch (e) {}
 
 const { clientEmailForRef } = require('./lib/airtable-robin');
+const { checkRateLimit: rateLimitCheck } = require('./lib/rate-limit');
 
 const STORE_NAME = 'robin-signatures';
 
@@ -394,6 +395,9 @@ exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, headers: HEADERS, body: JSON.stringify({ error: 'Méthode non autorisée' }) };
   }
+
+  const rl = await rateLimitCheck(event, { key: 'submit-mandat', max: 5, windowSec: 60 });
+  if (!rl.ok) return rl.response;
 
   let body;
   try {

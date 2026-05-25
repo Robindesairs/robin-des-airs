@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+# Pre-commit hook for robin-des-airs.
+#
+# Enable once per clone:
+#   git config core.hooksPath .githooks
+#
+# Verrouille la cohérence de :
+#   - blog/index.html  (régénéré depuis les cartes existantes)
+#   - llms-full.txt    (régénéré depuis sitemap-index.xml)
+#
+# Si un nouvel article blog est créé/modifié, ce hook régénère les deux
+# fichiers et les rajoute au commit en cours. Si rien ne bouge → no-op.
+
+set -euo pipefail
+
+# Saute les commits qui ne touchent ni le blog ni les sitemaps
+changed="$(git diff --cached --name-only --diff-filter=ACMRTUX)"
+
+needs_blog=false
+needs_llms=false
+
+while IFS= read -r f; do
+  case "$f" in
+    blog/*.html|en/blog/*.html|de/blog/*.html|es/blog/*.html)
+      needs_blog=true
+      needs_llms=true ;;
+    sitemap*.xml)
+      needs_llms=true ;;
+    scripts/build_blog_index.py)
+      needs_blog=true ;;
+    scripts/generate_llms_full.py)
+      needs_llms=true ;;
+  esac
+done <<< "$changed"
+
+if ! $needs_blog && ! $needs_llms; then
+  exit 0
+fi
+
+if ! command -v python3 >/dev/null 2>&1; then
+  echo "pre-commit: python3 introuvable — installe Python 3.9+ et réessaie" >&2
+  exit 1
+fi
+
+if $needs_blog; then
+  echo "pre-commit: rebuild blog/index.html"
+  python3 scripts/build_blog_index.py
+  git add blog/index.html
+fi
+
+if $needs_llms; then
+  echo "pre-commit: rebuild llms-full.txt"
+  python3 scripts/generate_llms_full.py
+  git add llms-full.txt
+fi

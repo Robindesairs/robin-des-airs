@@ -17,6 +17,7 @@
 
 let netlifyBlobsModule = null;
 try { netlifyBlobsModule = require('@netlify/blobs'); } catch (e) {}
+const { checkRateLimit } = require('./lib/rate-limit');
 
 const STORE_NAME = 'robin-signatures';
 
@@ -51,6 +52,9 @@ exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, headers: HEADERS, body: JSON.stringify({ error: 'Méthode non autorisée' }) };
   }
+
+  const rl = await checkRateLimit(event, { key: 'sign-mandate', max: 5, windowSec: 60 });
+  if (!rl.ok) return rl.response;
 
   let body;
   try {

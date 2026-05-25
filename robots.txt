@@ -133,3 +133,5 @@ Disallow: /generateur-pub.html
 Sitemap: https://robindesairs.eu/sitemap-index.xml
 Sitemap: https://robindesairs.eu/sitemap.xml
 Sitemap: https://robindesairs.eu/sitemap-en.xml
+Sitemap: https://robindesairs.eu/sitemap-de.xml
+Sitemap: https://robindesairs.eu/sitemap-es.xml

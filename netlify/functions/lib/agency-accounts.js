@@ -12,6 +12,7 @@
 
 const { isProduction, allowInsecureAuth, allowAgencyCodeOnly } = require('./auth-config');
 const { verifyPassword, hashPassword } = require('./password-hash');
+const { safeEqualString } = require('./safe-compare');
 
 /** Dev local uniquement si ALLOW_INSECURE_AUTH=true */
 const DEV_FALLBACK = [
@@ -75,7 +76,7 @@ function loadAgencyAccounts() {
 
 function accountPasswordOk(account, pass) {
   if (account.passHash) return verifyPassword(pass, account.passHash);
-  if (account.pass) return account.pass === pass;
+  if (account.pass) return safeEqualString(account.pass, pass);
   return false;
 }
 

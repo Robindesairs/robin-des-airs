@@ -1,5 +1,5 @@
 {
-  "_comment": "Mapping bidirectionnel FR <-> EN pour le blog. Utilisé par normalize_blog.py pour générer les balises hreflang. Une entrée doit être présente dans les DEUX sens (fr_to_en et en_to_fr).",
+  "_comment": "Mapping bidirectionnel FR <-> EN (+ FR <-> DE/ES pour articles clés). Utilisé par normalize_blog.py pour hreflang.",
   "fr_to_en": {
     "bagage-cabine-ryanair-payant-2026": "ryanair-cabin-baggage-paid-2026",
     "vol-annule-indemnite-600-euros": "cancelled-flight-compensation-600-eur",
@@ -35,7 +35,10 @@
     "arret-mcdonagh-cendres-volcaniques-cjue": "mcdonagh-volcanic-ash-cjeu-ruling",
     "arret-wegener-billet-unique-non-ue-cjue": "wegener-single-ticket-non-eu-cjeu-ruling",
     "arret-van-der-lans-defaut-cache-cjue": "van-der-lans-hidden-defect-cjeu-ruling",
-    "arret-iata-elfaa-validite-ce261-cjue": "iata-elfaa-ec261-validity-cjeu-ruling"
+    "arret-iata-elfaa-validite-ce261-cjue": "iata-elfaa-ec261-validity-cjeu-ruling",
+    "arret-eglititis-mesures-raisonnables-cjue": "eglitis-reasonable-measures-cjeu-ruling",
+    "arret-krijgsman-information-annulation-cjue": "krijgsman-cancellation-notice-cjeu-ruling",
+    "arret-airhelp-sas-greve-preavisée-cjue": "airhelp-sas-strike-cjeu-ruling"
   },
   "en_to_fr": {
     "ryanair-cabin-baggage-paid-2026": "bagage-cabine-ryanair-payant-2026",
@@ -72,6 +75,43 @@
     "mcdonagh-volcanic-ash-cjeu-ruling": "arret-mcdonagh-cendres-volcaniques-cjue",
     "wegener-single-ticket-non-eu-cjeu-ruling": "arret-wegener-billet-unique-non-ue-cjue",
     "van-der-lans-hidden-defect-cjeu-ruling": "arret-van-der-lans-defaut-cache-cjue",
-    "iata-elfaa-ec261-validity-cjeu-ruling": "arret-iata-elfaa-validite-ce261-cjue"
+    "iata-elfaa-ec261-validity-cjeu-ruling": "arret-iata-elfaa-validite-ce261-cjue",
+    "eglitis-reasonable-measures-cjeu-ruling": "arret-eglititis-mesures-raisonnables-cjue",
+    "krijgsman-cancellation-notice-cjeu-ruling": "arret-krijgsman-information-annulation-cjue",
+    "airhelp-sas-strike-cjeu-ruling": "arret-airhelp-sas-greve-preavisée-cjue"
+  },
+  "fr_to_de": {
+    "reglementation-ce261-resume": "verordnung-eg-261-zusammenfassung",
+    "indemnite-vol-montants-250-400-600": "flugentschaedigung-betraege-250-400-600",
+    "vol-annule-indemnite-600-euros": "flug-annulliert-entschaedigung-600",
+    "circonstances-extraordinaires-ce261": "aussergewoehnliche-umstaende-eg-261",
+    "lufthansa-vol-retarde-indemnite": "lufthansa-verspaeteter-flug-entschaedigung",
+    "jurisprudence-ce261-arrets-cjue": "eg-261-rechtsprechung-ghurteile",
+    "compagnie-refuse-payer-indemnite-que-faire": "fluggesellschaft-lehnt-ab-was-tun"
+  },
+  "de_to_fr": {
+    "verordnung-eg-261-zusammenfassung": "reglementation-ce261-resume",
+    "flugentschaedigung-betraege-250-400-600": "indemnite-vol-montants-250-400-600",
+    "flug-annulliert-entschaedigung-600": "vol-annule-indemnite-600-euros",
+    "aussergewoehnliche-umstaende-eg-261": "circonstances-extraordinaires-ce261",
+    "lufthansa-verspaeteter-flug-entschaedigung": "lufthansa-vol-retarde-indemnite",
+    "eg-261-rechtsprechung-ghurteile": "jurisprudence-ce261-arrets-cjue",
+    "fluggesellschaft-lehnt-ab-was-tun": "compagnie-refuse-payer-indemnite-que-faire"
+  },
+  "fr_to_es": {
+    "reglementation-ce261-resume": "resumen-reglamento-ce-261",
+    "indemnite-vol-montants-250-400-600": "indemnizacion-vuelo-importes-250-400-600",
+    "vol-annule-indemnite-600-euros": "vuelo-cancelado-indemnizacion-600",
+    "circonstances-extraordinaires-ce261": "circunstancias-extraordinarias-ce-261",
+    "jurisprudence-ce261-arrets-cjue": "jurisprudencia-tjue-ce-261",
+    "compagnie-refuse-payer-indemnite-que-faire": "aerolinea-rechaza-indemnizacion"
+  },
+  "es_to_fr": {
+    "resumen-reglamento-ce-261": "reglementation-ce261-resume",
+    "indemnizacion-vuelo-importes-250-400-600": "indemnite-vol-montants-250-400-600",
+    "vuelo-cancelado-indemnizacion-600": "vol-annule-indemnite-600-euros",
+    "circunstancias-extraordinarias-ce-261": "circonstances-extraordinaires-ce261",
+    "jurisprudencia-tjue-ce-261": "jurisprudence-ce261-arrets-cjue",
+    "aerolinea-rechaza-indemnizacion": "compagnie-refuse-payer-indemnite-que-faire"
   }
 }

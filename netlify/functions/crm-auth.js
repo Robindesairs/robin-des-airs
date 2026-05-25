@@ -6,6 +6,8 @@
 
 const crypto = require('crypto');
 const { getCrmAuthConfig, corsHeaders } = require('./lib/auth-config');
+const { checkRateLimit } = require('./lib/rate-limit');
+const { safeEqualString } = require('./lib/safe-compare');
 
 const COOKIE_NAME = 'rda_crm';
 const MAX_AGE_SEC = 60 * 60 * 24 * 7;
@@ -33,7 +35,7 @@ function verifyToken(raw) {
   if (last <= 0) return false;
   const payloadB64 = raw.slice(0, last);
   const sig = raw.slice(last + 1);
-  if (signPayload(payloadB64) !== sig) return false;
+  if (!safeEqualString(signPayload(payloadB64), sig)) return false;
   try {
     const data = JSON.parse(Buffer.from(payloadB64, 'base64url').toString('utf8'));
     return typeof data.exp === 'number' && data.exp > Date.now();
@@ -107,8 +109,11 @@ exports.handler = async (event) => {
       );
     }
 
+    const rl = await checkRateLimit(event, { key: 'crm-auth-login', max: 10, windowSec: 60 });
+    if (!rl.ok) return rl.response;
+
     const code = typeof body.code === 'string' ? body.code.trim() : '';
-    if (code === cfg.accessCode) {
+    if (safeEqualString(code, cfg.accessCode)) {
       const token = makeToken();
       return json(
         200,

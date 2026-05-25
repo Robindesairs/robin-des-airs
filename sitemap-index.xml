@@ -8,4 +8,12 @@
     <loc>https://robindesairs.eu/sitemap-en.xml</loc>
     <lastmod>2026-05-25</lastmod>
   </sitemap>
+  <sitemap>
+    <loc>https://robindesairs.eu/sitemap-de.xml</loc>
+    <lastmod>2026-05-25</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>https://robindesairs.eu/sitemap-es.xml</loc>
+    <lastmod>2026-05-25</lastmod>
+  </sitemap>
 </sitemapindex>

@@ -10,6 +10,7 @@ try {
 
 const STORE_NAME = 'robin-partner-agreements';
 const { resolvePartnerCommissionTier } = require('./lib/agency-commission-tiers');
+const { checkRateLimit } = require('./lib/rate-limit');
 
 const HEADERS = {
   'Content-Type': 'application/json',
@@ -25,6 +26,9 @@ exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, headers: HEADERS, body: JSON.stringify({ error: 'POST only' }) };
   }
+
+  const rl = await checkRateLimit(event, { key: 'submit-partner', max: 3, windowSec: 60 });
+  if (!rl.ok) return rl.response;
 
   let body;
   try {
