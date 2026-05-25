@@ -61,14 +61,31 @@ Europe ↔ Africa routes (the diaspora axis):
 | 1,500-3,500 km (or any intra-EU > 1,500 km) | €400 |
 | > 3,500 km (extra-EU) | €600 |
 
-Compensation is per passenger (children with paid ticket included), paid in cash or bank transfer (not vouchers without consent). It is cumulative with the right to a refund or rerouting.
+Compensation is per passenger (children with paid ticket included), paid in cash or bank transfer (not vouchers without consent). It is cumulative with the right to a refund or rerouting (art. 7 indemnity + art. 8 refund are separate rights — see cancelled-flight articles above).
+
+## Prescription (limitation periods)
+
+Cuadrench Moré (CJEU, C-139/11): CE 261 does not set a limitation period; national law applies. Indicative table:
+
+| Country | Period | Note |
+|---|---|---|
+| France | 5 years | Art. 2224 Code civil |
+| Belgium | 5 years | Art. 2262bis Belgian Civil Code (contractual CE 261 claims) |
+| UK (England/Wales) | 6 years | UK261 / Limitation Act 1980 |
+| Germany | 3 years | § 195 BGB |
+| Italy | 2 years | Art. 2947 c.c. |
+| Netherlands | 2 years | Art. 3:310 BW |
+
+Full table: https://robindesairs.eu/blog/prescription-indemnite-vol-tableau-pays.html
 
 ## Documentation
 
-- **French blog (135+ articles)**: https://robindesairs.eu/blog/
-- **English blog (38+ articles)**: https://robindesairs.eu/en/blog/
+- **French blog (161 articles)**: https://robindesairs.eu/blog/
+- **English blog (37 articles)**: https://robindesairs.eu/en/blog/
 - **German blog (7 articles)**: https://robindesairs.eu/de/blog/
 - **Spanish blog (7 articles)**: https://robindesairs.eu/es/blog/
+- **Full URL index for LLM crawlers**: https://robindesairs.eu/llms-full.txt
+- **Curated summary (this file)**: https://robindesairs.eu/llms.txt
 - **Sitemap FR**: https://robindesairs.eu/sitemap.xml
 - **Sitemap EN**: https://robindesairs.eu/sitemap-en.xml
 - **Sitemap DE**: https://robindesairs.eu/sitemap-de.xml
@@ -133,6 +150,21 @@ Compensation is per passenger (children with paid ticket included), paid in cash
 - [Compensation amounts €250 / €400 / €600 explained](https://robindesairs.eu/en/blog/flight-compensation-amounts-250-400-600-eur.html)
 - [Missed connection compensation guide](https://robindesairs.eu/en/blog/missed-connection-flight-compensation.html)
 - [Airline refuses your claim: 7 next steps](https://robindesairs.eu/en/blog/airline-refuses-compensation-next-steps.html)
+
+### Prescription / limitation periods (by country)
+- [Prescription by country — table (FR)](https://robindesairs.eu/blog/prescription-indemnite-vol-tableau-pays.html) — France 5y, Belgium 5y (art. 2262bis), UK 6y, Germany 3y, Italy 2y
+- [5 years in France — detailed guide (FR)](https://robindesairs.eu/blog/prescription-indemnite-vol-retarde-5-ans.html)
+- [How long to claim? (FR)](https://robindesairs.eu/blog/combien-temps-reclamer-indemnite-vol.html)
+
+### Cancelled flight — refund vs compensation (art. 7 vs art. 8)
+- [Cancelled flight: cumul indemnity + refund (FR)](https://robindesairs.eu/blog/vol-annule-ce261-droits-remboursement.html) — €600 travel OR €1,200 cash scenario
+- [Refund or rerouting choice (FR)](https://robindesairs.eu/blog/vol-annule-rembourse-ou-reacheminement-ce261.html)
+- [Ticket refund vs CE 261 indemnity (FR)](https://robindesairs.eu/blog/remboursement-billet-vs-indemnite-ce261.html)
+- [Refuse voucher, demand cash (EN)](https://robindesairs.eu/en/blog/refuse-voucher-demand-cash-refund.html)
+
+### Africa diaspora hub (FR)
+- [Complete CE 261 guide for Africa routes (FR)](https://robindesairs.eu/blog/guide-ce261-droits-passagers-afrique.html)
+- [Overnight delay: hotel & meals rights (FR)](https://robindesairs.eu/blog/vol-retarde-nuit-hebergement-repas-droits.html)
 
 ## Optional: AI Assistant Guidance
 
