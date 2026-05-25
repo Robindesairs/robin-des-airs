@@ -20,28 +20,35 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap"></noscript>
-<style>
-*,*::before,*::after{box-sizing:border-box}
-body{margin:0;background:#F9FAFB;color:#111827;-webkit-font-smoothing:antialiased;font-family:'Montserrat',sans-serif}
+  <style>*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:#F9FAFB;color:#111827;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-family:'Montserrat',sans-serif}
 nav{background:#0B1F3A;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between}
 nav a{color:#fff;font-size:.875rem;text-decoration:none;font-weight:700}
-nav a.back{color:rgba(255,255,255,.8);font-weight:600}
-.max-w-3xl{max-width:48rem}.mx-auto{margin-left:auto;margin-right:auto}
-.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-10{padding-top:2.5rem;padding-bottom:2.5rem}.pb-20{padding-bottom:5rem}
-.text-2xl{font-size:1.5rem;line-height:2rem}.font-black{font-weight:900}
-.mb-2{margin-bottom:.5rem}.pb-3{padding-bottom:.75rem}.border-b-2{border-bottom-width:2px;border-bottom-style:solid}.border-\[#00C87A\]{border-color:#00C87A}
-.mt-6{margin-top:1.5rem}.text-sm{font-size:.875rem}.text-gray-500{color:#6B7280}.mb-6{margin-bottom:1.5rem}
-.mt-10{margin-top:2.5rem}.rounded-xl{border-radius:.75rem}.text-center{text-align:center}.py-8{padding-top:2rem;padding-bottom:2rem}
-.mb-3{margin-bottom:.75rem}.font-bold{font-weight:700}.border{border-width:1px;border-style:solid}.border-gray-200{border-color:#E5E7EB}
-.bg-white{background:#fff}.p-5{padding:1.25rem}.text-base{font-size:1rem}.list-disc{list-style-type:disc}
-.pl-5{padding-left:1.25rem}.space-y-1>*+*{margin-top:.25rem}
-</style>
-  <style>
-body{font-family:'Montserrat',sans-serif}
+nav a.back{color:rgba(255,255,255,.8);font-weight:600}nav a.back:hover{color:#fff}
+.wrap{max-width:48rem;margin-left:auto;margin-right:auto;padding:2.5rem 1.5rem 5rem}
+h1.title{font-size:1.5rem;line-height:2rem;font-weight:900;color:#0B1F3A;margin:0 0 .5rem;padding-bottom:.75rem;border-bottom:2px solid #00C87A}
+.byline{font-size:.8125rem;color:#6B7280;margin:0 0 1.5rem;font-weight:600}
+.byline strong{color:#0B1F3A;font-weight:700}
+.cta-box{margin-top:2.5rem;border-radius:.75rem;background:#0B1F3A;color:#fff;text-align:center;padding:2rem 1.5rem}
+.cta-box p{margin:0 0 .75rem;color:rgba(255,255,255,.9)}
+.cta-box a{color:#00E5A0;font-weight:700;margin:0 .5rem;text-decoration:none}
+.cta-box span.sep{color:rgba(255,255,255,.5)}
+.related{margin-top:1.5rem;border:1px solid #E5E7EB;background:#fff;border-radius:.75rem;padding:1.25rem}
+.related h2{font-size:1rem;font-weight:700;color:#0B1F3A;margin:0 0 .75rem}
+.related ul{list-style:disc;padding-left:1.25rem;margin:0;font-size:.875rem;color:#374151}
+.related li{margin-bottom:.25rem}
+.related a{color:#009960;font-weight:600;text-decoration:none}
+.related a:hover{color:#00C87A;text-decoration:underline}
+.signature{margin-top:1.5rem;padding:1rem 1.25rem;border-radius:.5rem;background:#F3F5F8;color:#374151;font-size:.875rem;text-align:center;font-style:italic}
+.signature strong{color:#0B1F3A;font-style:normal}
+.disclaimer{margin-top:1rem;padding:.875rem 1rem;border-radius:.5rem;background:#FEFCE8;border:1px solid #FDE68A;color:#92400E;font-size:.75rem;line-height:1.5}
+.disclaimer strong{color:#78350F}
+#blog-body{margin-top:1.5rem;color:#374151;line-height:1.625}
 #blog-body h2{font-size:1.125rem;font-weight:700;color:#0B1F3A;margin:1.75rem 0 .5rem;padding-left:12px;border-left:4px solid #00C87A}
+#blog-body h3{font-size:1rem;font-weight:700;color:#0B1F3A;margin:1.25rem 0 .4rem}
 #blog-body p{margin-bottom:.875rem;font-size:14px;color:#374151}
-#blog-body ul{margin:.5rem 0 .875rem 1.25rem}
-#blog-body li{margin-bottom:.35rem;font-size:14px}
+#blog-body ul,#blog-body ol{margin:.5rem 0 .875rem 1.25rem}
+#blog-body li{margin-bottom:.25rem;font-size:14px}
 #blog-body li::marker{color:#00C87A}
 #blog-body strong{color:#0B1F3A}
 #blog-body a{color:#009960;font-weight:600}
@@ -50,32 +57,31 @@ body{font-family:'Montserrat',sans-serif}
 #blog-body th,#blog-body td{border:1px solid #E2E6EE;padding:10px 12px;text-align:left}
 #blog-body th{background:#0B1F3A;color:white;font-weight:700}
 #blog-body tr:nth-child(even){background:#F7F8FA}
-.info-box{background:#EFF6FF;border-left:4px solid #3B82F6;padding:12px 16px;border-radius:6px;margin:1rem 0;font-size:14px;color:#1E3A5F}
-.warn-box{background:#FFF7ED;border-left:4px solid #F97316;padding:12px 16px;border-radius:6px;margin:1rem 0;font-size:14px;color:#7C2D12}
-.success-box{background:#F0FDF4;border-left:4px solid #22C55E;padding:12px 16px;border-radius:6px;margin:1rem 0;font-size:14px;color:#14532D}
-</style>
-  <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","headline":"TAP Air Portugal vol retardé : vos droits CE 261 (Angola, Mozambique, Cap-Vert)","description":"TAP Air Portugal compagnie UE : CE 261 dans les deux sens. Luanda, Maputo, Praia, Bissau, São Tomé via Lisbonne. 600€ par passager.","url":"https://robindesairs.eu/blog/tap-air-portugal-vol-retarde-indemnite.html","image":"https://robindesairs.eu/og-blog.png","datePublished":"2026-05-24","dateModified":"2026-05-24","author":{"@type":"Person","name":"Climbié Poiten","url":"https://robindesairs.eu/"},"publisher":{"@type":"Organization","name":"Robin des Airs","logo":{"@type":"ImageObject","url":"https://robindesairs.eu/robin-des-airs-logo-texte-profil.png"}},"inLanguage":"fr-FR","isPartOf":{"@type":"Blog","name":"Blog Robin des Airs","url":"https://robindesairs.eu/blog/"}}
-</script>
-  <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Robin des Airs","item":"https://robindesairs.eu/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://robindesairs.eu/blog/"},{"@type":"ListItem","position":3,"name":"TAP Air Portugal vol retardé : vos droits CE 261 (Angola, Mo","item":"https://robindesairs.eu/blog/tap-air-portugal-vol-retarde-indemnite.html"}]}
-</script>
-  <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"TAP Air Portugal est-elle couverte par le CE 261 dans les deux sens ?","acceptedAnswer":{"@type":"Answer","text":"Oui. TAP est une compagnie portugaise, donc européenne. Le CE 261 s'applique dans les deux sens : Paris→Afrique et Afrique→Paris. C'est un avantage majeur par rapport aux compagnies non-UE comme Ethiopian Airlines ou Royal Air Maroc."}},{"@type":"Question","name":"Quelle est l'indemnité pour un vol TAP Paris-Luanda retardé ?","acceptedAnswer":{"@type":"Answer","text":"CDG→LAD (Luanda) via Lisbonne = 7 128 km en distance totale. Palier : > 3 500 km = 600€ par passager pour tout retard d'arrivée de 3h ou plus."}},{"@type":"Question","name":"Mon vol TAP était retardé à Lisbonne et j'ai manqué ma correspondance vers Maputo. Ai-je droit à une indemnité ?","acceptedAnswer":{"@type":"Answer","text":"Oui, si votre billet Paris-Maputo est un billet unique (même numéro de réservation). TAP est responsable de l'ensemble du trajet. L'indemnité se calcule sur votre retard à Maputo par rapport à l'heure d'arrivée initialement prévue. Si ce retard dépasse 3h, 600€ par passager."}},{"@type":"Question","name":"TAP dessert-elle directement Paris ou faut-il passer par Lisbonne ?","acceptedAnswer":{"@type":"Answer","text":"TAP opère des vols depuis Paris CDG avec correspondance systématique à Lisbonne (LIS) pour toutes ses destinations africaines. Il n'y a pas de vols directs CDG-Afrique opérés par TAP. Lisbonne est le hub unique."}}]}
-</script>
+#blog-body blockquote{border-left:4px solid #00C87A;background:#EFF9F4;padding:12px 16px;border-radius:0 8px 8px 0;margin:1rem 0;color:#0B1F3A}
+.faq{margin-top:2rem;border:1px solid #E5E7EB;background:#fff;border-radius:.75rem;padding:1.25rem 1.5rem}
+.faq h2{font-size:1.125rem;font-weight:700;color:#0B1F3A;margin:0 0 .75rem;padding-left:12px;border-left:4px solid #00C87A}
+.faq details{border-top:1px solid #F1F2F4;padding:.75rem 0}
+.faq details:first-of-type{border-top:none}
+.faq summary{font-size:.95rem;font-weight:600;color:#0B1F3A;cursor:pointer;padding:.25rem 0;list-style:none;position:relative;padding-right:1.5rem}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:'+';position:absolute;right:0;top:50%;transform:translateY(-50%);font-size:1.25rem;color:#00C87A;font-weight:700;line-height:1}
+.faq details[open] summary::after{content:'−'}
+.faq details>div{margin-top:.5rem;font-size:.875rem;color:#374151;line-height:1.6}
+.faq details>div a{color:#009960;font-weight:600}
+.faq details>div strong{color:#0B1F3A}</style>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"TAP Air Portugal vol retardé : vos droits CE 261 (Angola, Mozambique, Cap-Vert)","description":"TAP Air Portugal compagnie UE : CE 261 dans les deux sens. Luanda, Maputo, Praia, Bissau, São Tomé via Lisbonne. 600€ par passager.","url":"https://robindesairs.eu/blog/tap-air-portugal-vol-retarde-indemnite.html","image":"https://robindesairs.eu/og-blog.png","datePublished":"2026-01-13","dateModified":"2026-05-21","author":{"@type":"Organization","name":"Robin des Airs","url":"https://robindesairs.eu/"},"publisher":{"@type":"Organization","name":"Robin des Airs","logo":{"@type":"ImageObject","url":"https://robindesairs.eu/robin-des-airs-logo-texte-profil.png"}},"inLanguage":"fr-FR","isPartOf":{"@type":"Blog","name":"Blog Robin des Airs","url":"https://robindesairs.eu/blog/"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Robin des Airs","item":"https://robindesairs.eu/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://robindesairs.eu/blog/"},{"@type":"ListItem","position":3,"name":"TAP Air Portugal vol retardé : vos droits CE 261 (Angola, Mozambique, Cap-Vert)","item":"https://robindesairs.eu/blog/tap-air-portugal-vol-retarde-indemnite.html"}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"TAP Air Portugal est-elle couverte par le CE 261 dans les deux sens ?","acceptedAnswer":{"@type":"Answer","text":"Oui. TAP est une compagnie portugaise, donc européenne. Le CE 261 s'applique dans les deux sens : Paris→Afrique et Afrique→Paris. C'est un avantage majeur par rapport aux compagnies non-UE comme Ethiopian Airlines ou Royal Air Maroc."}},{"@type":"Question","name":"Quelle est l'indemnité pour un vol TAP Paris-Luanda retardé ?","acceptedAnswer":{"@type":"Answer","text":"CDG→LAD (Luanda) via Lisbonne = 7 128 km en distance totale. Palier : > 3 500 km = 600€ par passager pour tout retard d'arrivée de 3h ou plus."}},{"@type":"Question","name":"Mon vol TAP était retardé à Lisbonne et j'ai manqué ma correspondance vers Maputo. Ai-je droit à une indemnité ?","acceptedAnswer":{"@type":"Answer","text":"Oui, si votre billet Paris-Maputo est un billet unique (même numéro de réservation). TAP est responsable de l'ensemble du trajet. L'indemnité se calcule sur votre retard à Maputo par rapport à l'heure d'arrivée initialement prévue. Si ce retard dépasse 3h, 600€ par passager."}},{"@type":"Question","name":"TAP dessert-elle directement Paris ou faut-il passer par Lisbonne ?","acceptedAnswer":{"@type":"Answer","text":"TAP opère des vols depuis Paris CDG avec correspondance systématique à Lisbonne (LIS) pour toutes ses destinations africaines. Il n'y a pas de vols directs CDG-Afrique opérés par TAP. Lisbonne est le hub unique."}}]}</script>
 </head>
 <body>
   <nav>
-    <a href="/" style="font-weight:900;color:#fff;font-size:.875rem;text-decoration:none">ROBIN<span style="color:#00E5A0"> des Airs</span></a>
+    <a href="/">ROBIN<span style="color:#00E5A0"> des Airs</span></a>
     <a href="/" class="back">← Retour</a>
   </nav>
-  <main class="max-w-3xl mx-auto px-6 py-10 pb-20">
-    <h1 class="text-2xl font-black pb-3 border-b-2 border-[#00C87A] mb-2" style="color:#0B1F3A">TAP Air Portugal vol retardé : vos droits CE 261 (Angola, Mozambique, Cap-Vert)</h1>
-    <p class="mt-6 text-sm text-gray-500 mb-6">Par <strong>Climbié Poiten</strong> · Publié le 24 mai 2026</p>
-
-    <div id="blog-body" style="color:#374151;line-height:1.625">
-
-<p>TAP Air Portugal est la seule grande compagnie <strong>européenne</strong> à desservir l'Afrique lusophone depuis Paris CDG — et c'est un avantage considérable pour les passagers : en tant que compagnie de l'UE, le CE 261 s'applique <strong>dans les deux sens</strong>, aller comme retour.</p>
+  <main class="wrap">
+    <h1 class="title">TAP Air Portugal vol retardé : vos droits CE 261 (Angola, Mozambique, Cap-Vert)</h1>
+    <p class="byline">Par <strong>l'équipe Robin des Airs</strong> · Publié le 13 janvier 2026 · Mis à jour le 21 mai 2026</p>
+    <div id="blog-body"><p>TAP Air Portugal est la seule grande compagnie <strong>européenne</strong> à desservir l'Afrique lusophone depuis Paris CDG — et c'est un avantage considérable pour les passagers : en tant que compagnie de l'UE, le CE 261 s'applique <strong>dans les deux sens</strong>, aller comme retour.</p>
 
 <h2>Les destinations africaines de TAP depuis Paris</h2>
 <table>
@@ -88,9 +94,9 @@ body{font-family:'Montserrat',sans-serif}
   <tr><td>São Tomé</td><td>TMS</td><td>5 391 km</td><td><strong>600 €</strong></td><td>✔ (compagnie UE)</td></tr>
 </table>
 
-<div class="info-box">
+<blockquote>
   <strong>Avantage TAP :</strong> contrairement à Ethiopian Airlines ou Royal Air Maroc, TAP est une compagnie européenne (Portugal = UE). Que vous voliez Paris→Luanda ou Luanda→Paris, vos droits CE 261 sont complets dans les deux sens.
-</div>
+</blockquote>
 
 <h2>Comment fonctionne le billet unique Paris→Lisbonne→Afrique</h2>
 <p>TAP opère depuis CDG avec correspondance à Lisbonne (LIS). Si votre billet couvre l'ensemble <strong>CDG → LIS → destination africaine</strong> sous un seul numéro de réservation :</p>
@@ -99,9 +105,9 @@ body{font-family:'Montserrat',sans-serif}
   <li>Un retard à Lisbonne qui vous fait manquer votre connexion vers Luanda → TAP est responsable de l'ensemble</li>
   <li>TAP doit vous héberger à Lisbonne et vous proposer un réacheminement dès que possible</li>
 </ul>
-<div class="warn-box">
+<blockquote>
   <strong>Deux billets séparés (Paris→Lisbonne + Lisbonne→Luanda) :</strong> chaque segment est indépendant. En cas de correspondance manquée, TAP n'est responsable que du premier segment. Toujours acheter un billet unique.
-</div>
+</blockquote>
 
 <h2>TAP et les retards fréquents sur l'axe Afrique</h2>
 <p>Les vols TAP vers l'Afrique passent tous par Lisbonne, ce qui crée un point de vulnérabilité unique : en cas de retard au départ de CDG, la correspondance à LIS est souvent compromise. Les délais de correspondance à Lisbonne sont parfois très courts (60-90 min). Ce schéma génère régulièrement des retards à l'arrivée &gt; 3h — qui ouvrent droit à l'indemnité.</p>
@@ -110,25 +116,44 @@ body{font-family:'Montserrat',sans-serif}
 <p>Vous avez <strong>5 ans</strong> pour réclamer (art. 2224 Code civil). Un vol Paris-Luanda via TAP retardé en 2022 reste réclamable jusqu'en 2027. Conservez : confirmation de réservation, carte d'embarquement CDG et LIS, et idéalement un relevé FlightAware ou SMS de TAP confirmant le retard.</p>
 
 <p>→ <a href="/autorisation.html">Déposer ma réclamation TAP Air Portugal</a>
-→ <a href="https://wa.me/33756863630">Question via WhatsApp</a></p>
-
-    </div>
-
-    <div class="mt-10 rounded-xl text-center py-8 px-6" style="background:#0B1F3A">
-      <p class="mb-3" style="color:rgba(255,255,255,.9)">Vol TAP retardé ? 600€ vous attendent peut-être.</p>
+→ <a href="https://wa.me/33756863630">Question via WhatsApp</a></p></div>
+    <section class="faq">
+      <h2>Questions fréquentes</h2>
+      <details>
+        <summary>TAP Air Portugal est-elle couverte par le CE 261 dans les deux sens ?</summary>
+        <div>Oui. TAP est une compagnie portugaise, donc européenne. Le CE 261 s'applique dans les deux sens : Paris→Afrique et Afrique→Paris. C'est un avantage majeur par rapport aux compagnies non-UE comme Ethiopian Airlines ou Royal Air Maroc.</div>
+      </details>
+      <details>
+        <summary>Quelle est l'indemnité pour un vol TAP Paris-Luanda retardé ?</summary>
+        <div>CDG→LAD (Luanda) via Lisbonne = 7 128 km en distance totale. Palier : > 3 500 km = 600€ par passager pour tout retard d'arrivée de 3h ou plus.</div>
+      </details>
+      <details>
+        <summary>Mon vol TAP était retardé à Lisbonne et j'ai manqué ma correspondance vers Maputo. Ai-je droit à une indemnité ?</summary>
+        <div>Oui, si votre billet Paris-Maputo est un billet unique (même numéro de réservation). TAP est responsable de l'ensemble du trajet. L'indemnité se calcule sur votre retard à Maputo par rapport à l'heure d'arrivée initialement prévue. Si ce retard dépasse 3h, 600€ par passager.</div>
+      </details>
+      <details>
+        <summary>TAP dessert-elle directement Paris ou faut-il passer par Lisbonne ?</summary>
+        <div>TAP opère des vols depuis Paris CDG avec correspondance systématique à Lisbonne (LIS) pour toutes ses destinations africaines. Il n'y a pas de vols directs CDG-Afrique opérés par TAP. Lisbonne est le hub unique.</div>
+      </details>
+    </section>
+    <div class="cta-box">
+      <p>Prêt à récupérer votre indemnité ?</p>
       <p>
-        <a href="/autorisation.html" style="color:#00E5A0;font-weight:700;margin:0 .5rem">Déposer ma réclamation</a>
-        <span style="color:rgba(255,255,255,.4)">·</span>
-        <a href="https://wa.me/33756863630" style="color:#00E5A0;font-weight:700;margin:0 .5rem">WhatsApp</a>
+        <a href="https://robindesairs.eu/#funnel-box">Vérifier mon indemnité</a>
+        <span class="sep">·</span>
+        <a href="https://wa.me/33756863630">WhatsApp direct</a>
       </p>
     </div>
-
-    <section class="mt-6 rounded-xl border border-gray-200 bg-white p-5">
-      <h2 class="text-base font-bold mb-3" style="color:#0B1F3A">Articles liés</h2>
-      <ul class="list-disc pl-5 text-sm space-y-1" style="color:#374151">
-        <li><a href="/blog/correspondance-manquee-indemnite-vol.html">Correspondance manquée : vos droits complets</a></li><li><a href="/blog/indemnite-billet-miles-points.html">Billet payé en miles : mêmes droits CE 261</a></li><li><a href="/blog/remboursement-frais-annexes-retard.html">Repas et hôtel à Lisbonne : remboursables</a></li><li><a href="/blog/vol-retarde-luanda-paris-indemnite.html">Vol Paris-Luanda retardé : Brussels Airlines aussi</a></li>
+    <section class="related">
+      <h2>Articles liés</h2>
+      <ul>
+        <li><a href="/blog/correspondance-manquee-indemnite-vol.html">Correspondance manquée : vos droits complets</a></li>
+        <li><a href="/blog/indemnite-billet-miles-points.html">Billet payé en miles : mêmes droits CE 261</a></li>
+        <li><a href="/blog/remboursement-frais-annexes-retard.html">Repas et hôtel à Lisbonne : remboursables</a></li>
       </ul>
     </section>
+    <p class="signature">Article rédigé et vérifié par <strong>l'équipe Robin des Airs</strong> — spécialistes des indemnités aériennes CE 261 sur l'axe Europe-Afrique.</p>
+    <p class="disclaimer"><strong>Information générale.</strong> Cet article présente une synthèse pédagogique de la réglementation en vigueur (règlement CE 261/2004, Convention de Montréal, jurisprudence CJUE) à la date de publication. Il ne constitue pas un conseil juridique personnalisé ni une consultation d'avocat. Pour l'évaluation de votre situation individuelle, contactez Robin des Airs (mandat de représentation) ou un avocat spécialisé en droit aérien. Les montants, délais et exemples cités sont indicatifs et peuvent évoluer selon les décisions de justice et l'actualité réglementaire.</p>
   </main>
 </body>
 </html>

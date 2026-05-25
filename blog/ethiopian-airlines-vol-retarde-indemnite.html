@@ -20,32 +20,35 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap"></noscript>
-<style>
-*,*::before,*::after{box-sizing:border-box}
-body{margin:0;background:#F9FAFB;color:#111827;-webkit-font-smoothing:antialiased;font-family:'Montserrat',sans-serif}
+  <style>*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:#F9FAFB;color:#111827;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-family:'Montserrat',sans-serif}
 nav{background:#0B1F3A;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between}
 nav a{color:#fff;font-size:.875rem;text-decoration:none;font-weight:700}
-nav a.back{color:rgba(255,255,255,.8);font-weight:600}
-nav a.back:hover{color:#fff}
-.max-w-3xl{max-width:48rem}.mx-auto{margin-left:auto;margin-right:auto}
-.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-10{padding-top:2.5rem;padding-bottom:2.5rem}.pb-20{padding-bottom:5rem}
-.text-2xl{font-size:1.5rem;line-height:2rem}.font-black{font-weight:900}
-.mb-2{margin-bottom:.5rem}.pb-3{padding-bottom:.75rem}.border-b-2{border-bottom-width:2px;border-bottom-style:solid}.border-\[#00C87A\]{border-color:#00C87A}
-.mt-6{margin-top:1.5rem}.text-sm{font-size:.875rem}.text-gray-500{color:#6B7280}.mb-6{margin-bottom:1.5rem}
-.mt-10{margin-top:2.5rem}.rounded-xl{border-radius:.75rem}
-.text-center{text-align:center}.py-8{padding-top:2rem;padding-bottom:2rem}
-.mb-3{margin-bottom:.75rem}.font-bold{font-weight:700}
-.mt-6{margin-top:1.5rem}.border{border-width:1px;border-style:solid}.border-gray-200{border-color:#E5E7EB}
-.bg-white{background:#fff}.p-5{padding:1.25rem}.text-base{font-size:1rem}.list-disc{list-style-type:disc}
-.pl-5{padding-left:1.25rem}.space-y-1>*+*{margin-top:.25rem}.font-semibold{font-weight:600}
-.flex{display:flex}.items-center{align-items:center}.justify-between{justify-content:space-between}
-</style>
-  <style>
-body{font-family:'Montserrat',sans-serif}
+nav a.back{color:rgba(255,255,255,.8);font-weight:600}nav a.back:hover{color:#fff}
+.wrap{max-width:48rem;margin-left:auto;margin-right:auto;padding:2.5rem 1.5rem 5rem}
+h1.title{font-size:1.5rem;line-height:2rem;font-weight:900;color:#0B1F3A;margin:0 0 .5rem;padding-bottom:.75rem;border-bottom:2px solid #00C87A}
+.byline{font-size:.8125rem;color:#6B7280;margin:0 0 1.5rem;font-weight:600}
+.byline strong{color:#0B1F3A;font-weight:700}
+.cta-box{margin-top:2.5rem;border-radius:.75rem;background:#0B1F3A;color:#fff;text-align:center;padding:2rem 1.5rem}
+.cta-box p{margin:0 0 .75rem;color:rgba(255,255,255,.9)}
+.cta-box a{color:#00E5A0;font-weight:700;margin:0 .5rem;text-decoration:none}
+.cta-box span.sep{color:rgba(255,255,255,.5)}
+.related{margin-top:1.5rem;border:1px solid #E5E7EB;background:#fff;border-radius:.75rem;padding:1.25rem}
+.related h2{font-size:1rem;font-weight:700;color:#0B1F3A;margin:0 0 .75rem}
+.related ul{list-style:disc;padding-left:1.25rem;margin:0;font-size:.875rem;color:#374151}
+.related li{margin-bottom:.25rem}
+.related a{color:#009960;font-weight:600;text-decoration:none}
+.related a:hover{color:#00C87A;text-decoration:underline}
+.signature{margin-top:1.5rem;padding:1rem 1.25rem;border-radius:.5rem;background:#F3F5F8;color:#374151;font-size:.875rem;text-align:center;font-style:italic}
+.signature strong{color:#0B1F3A;font-style:normal}
+.disclaimer{margin-top:1rem;padding:.875rem 1rem;border-radius:.5rem;background:#FEFCE8;border:1px solid #FDE68A;color:#92400E;font-size:.75rem;line-height:1.5}
+.disclaimer strong{color:#78350F}
+#blog-body{margin-top:1.5rem;color:#374151;line-height:1.625}
 #blog-body h2{font-size:1.125rem;font-weight:700;color:#0B1F3A;margin:1.75rem 0 .5rem;padding-left:12px;border-left:4px solid #00C87A}
+#blog-body h3{font-size:1rem;font-weight:700;color:#0B1F3A;margin:1.25rem 0 .4rem}
 #blog-body p{margin-bottom:.875rem;font-size:14px;color:#374151}
 #blog-body ul,#blog-body ol{margin:.5rem 0 .875rem 1.25rem}
-#blog-body li{margin-bottom:.35rem;font-size:14px}
+#blog-body li{margin-bottom:.25rem;font-size:14px}
 #blog-body li::marker{color:#00C87A}
 #blog-body strong{color:#0B1F3A}
 #blog-body a{color:#009960;font-weight:600}
@@ -54,32 +57,31 @@ body{font-family:'Montserrat',sans-serif}
 #blog-body th,#blog-body td{border:1px solid #E2E6EE;padding:10px 12px;text-align:left}
 #blog-body th{background:#0B1F3A;color:white;font-weight:700}
 #blog-body tr:nth-child(even){background:#F7F8FA}
-.info-box{background:#EFF6FF;border-left:4px solid #3B82F6;padding:12px 16px;border-radius:6px;margin:1rem 0;font-size:14px;color:#1E3A5F}
-.warn-box{background:#FFF7ED;border-left:4px solid #F97316;padding:12px 16px;border-radius:6px;margin:1rem 0;font-size:14px;color:#7C2D12}
-.ok-box{background:#F0FDF4;border-left:4px solid #22C55E;padding:12px 16px;border-radius:6px;margin:1rem 0;font-size:14px;color:#166534}
-</style>
-  <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BlogPosting","headline":"Ethiopian Airlines vol retardé depuis Paris : vos droits CE 261","description":"Vous volez Ethiopian Airlines via Addis-Abeba vers l'Afrique ? Le CE 261 s'applique sur le segment Paris-Addis. Guide complet + jusqu'à 600€ d'indemnité.","url":"https://robindesairs.eu/blog/ethiopian-airlines-vol-retarde-indemnite.html","image":"https://robindesairs.eu/og-blog.png","datePublished":"2026-05-24","dateModified":"2026-05-24","author":{"@type":"Person","name":"Climbié Poiten","url":"https://robindesairs.eu/"},"publisher":{"@type":"Organization","name":"Robin des Airs","logo":{"@type":"ImageObject","url":"https://robindesairs.eu/robin-des-airs-logo-texte-profil.png"}},"inLanguage":"fr-FR","isPartOf":{"@type":"Blog","name":"Blog Robin des Airs","url":"https://robindesairs.eu/blog/"}}
-</script>
-  <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Robin des Airs","item":"https://robindesairs.eu/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://robindesairs.eu/blog/"},{"@type":"ListItem","position":3,"name":"Ethiopian Airlines vol retardé depuis Paris : vos droits CE 261","item":"https://robindesairs.eu/blog/ethiopian-airlines-vol-retarde-indemnite.html"}]}
-</script>
-  <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Ethiopian Airlines est-elle couverte par le CE 261 ?","acceptedAnswer":{"@type":"Answer","text":"Ethiopian Airlines est une compagnie éthiopienne (non-UE). Le CE 261 s'applique uniquement pour les vols au départ d'un aéroport européen. Donc Paris CDG → Addis-Abeba : couvert. Addis-Abeba → Dakar → Paris : non couvert (départ hors UE)."}},{"@type":"Question","name":"Si mon vol Paris-Addis est retardé et que je rate ma correspondance vers Dakar, suis-je indemnisé ?","acceptedAnswer":{"@type":"Answer","text":"Oui, si les deux segments sont sur un seul et même billet. Ethiopian Airlines est alors responsable de l'ensemble du trajet. L'indemnité se calcule sur la distance totale Paris → destination finale, et non Paris → Addis seulement. CDG→ADD→DKR = 9 259 km → 600€."}},{"@type":"Question","name":"Quel est le montant de l'indemnité Paris-Addis-Abeba ?","acceptedAnswer":{"@type":"Answer","text":"CDG → ADD = 5 251 km → palier 600€ (distance > 3 500 km). Si vous avez raté une correspondance vers une destination africaine, la distance totale est encore plus grande — toujours 600€."}},{"@type":"Question","name":"Ethiopian Airlines répond-elle aux réclamations CE 261 ?","acceptedAnswer":{"@type":"Answer","text":"Ethiopian Airlines reconnaît formellement le CE 261 pour les vols au départ de l'UE. En pratique, les délais de traitement sont longs (2-4 mois). Un service spécialisé avec relances systématiques est souvent nécessaire pour aboutir."}}]}
-</script>
+#blog-body blockquote{border-left:4px solid #00C87A;background:#EFF9F4;padding:12px 16px;border-radius:0 8px 8px 0;margin:1rem 0;color:#0B1F3A}
+.faq{margin-top:2rem;border:1px solid #E5E7EB;background:#fff;border-radius:.75rem;padding:1.25rem 1.5rem}
+.faq h2{font-size:1.125rem;font-weight:700;color:#0B1F3A;margin:0 0 .75rem;padding-left:12px;border-left:4px solid #00C87A}
+.faq details{border-top:1px solid #F1F2F4;padding:.75rem 0}
+.faq details:first-of-type{border-top:none}
+.faq summary{font-size:.95rem;font-weight:600;color:#0B1F3A;cursor:pointer;padding:.25rem 0;list-style:none;position:relative;padding-right:1.5rem}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:'+';position:absolute;right:0;top:50%;transform:translateY(-50%);font-size:1.25rem;color:#00C87A;font-weight:700;line-height:1}
+.faq details[open] summary::after{content:'−'}
+.faq details>div{margin-top:.5rem;font-size:.875rem;color:#374151;line-height:1.6}
+.faq details>div a{color:#009960;font-weight:600}
+.faq details>div strong{color:#0B1F3A}</style>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Ethiopian Airlines vol retardé depuis Paris : vos droits CE 261","description":"Vous volez Ethiopian Airlines via Addis-Abeba vers l'Afrique ? Le CE 261 s'applique sur le segment Paris-Addis. Guide complet + jusqu'à 600€ d'indemnité.","url":"https://robindesairs.eu/blog/ethiopian-airlines-vol-retarde-indemnite.html","image":"https://robindesairs.eu/og-blog.png","datePublished":"2026-02-02","dateModified":"2026-05-14","author":{"@type":"Organization","name":"Robin des Airs","url":"https://robindesairs.eu/"},"publisher":{"@type":"Organization","name":"Robin des Airs","logo":{"@type":"ImageObject","url":"https://robindesairs.eu/robin-des-airs-logo-texte-profil.png"}},"inLanguage":"fr-FR","isPartOf":{"@type":"Blog","name":"Blog Robin des Airs","url":"https://robindesairs.eu/blog/"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Robin des Airs","item":"https://robindesairs.eu/"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://robindesairs.eu/blog/"},{"@type":"ListItem","position":3,"name":"Ethiopian Airlines vol retardé depuis Paris : vos droits CE 261","item":"https://robindesairs.eu/blog/ethiopian-airlines-vol-retarde-indemnite.html"}]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Ethiopian Airlines est-elle couverte par le CE 261 ?","acceptedAnswer":{"@type":"Answer","text":"Ethiopian Airlines est une compagnie éthiopienne (non-UE). Le CE 261 s'applique uniquement pour les vols au départ d'un aéroport européen. Donc Paris CDG → Addis-Abeba : couvert. Addis-Abeba → Dakar → Paris : non couvert (départ hors UE)."}},{"@type":"Question","name":"Si mon vol Paris-Addis est retardé et que je rate ma correspondance vers Dakar, suis-je indemnisé ?","acceptedAnswer":{"@type":"Answer","text":"Oui, si les deux segments sont sur un seul et même billet. Ethiopian Airlines est alors responsable de l'ensemble du trajet. L'indemnité se calcule sur la distance totale Paris → destination finale, et non Paris → Addis seulement. CDG→ADD→DKR = 9 259 km → 600€."}},{"@type":"Question","name":"Quel est le montant de l'indemnité Paris-Addis-Abeba ?","acceptedAnswer":{"@type":"Answer","text":"CDG → ADD = 5 251 km → palier 600€ (distance > 3 500 km). Si vous avez raté une correspondance vers une destination africaine, la distance totale est encore plus grande — toujours 600€."}},{"@type":"Question","name":"Ethiopian Airlines répond-elle aux réclamations CE 261 ?","acceptedAnswer":{"@type":"Answer","text":"Ethiopian Airlines reconnaît formellement le CE 261 pour les vols au départ de l'UE. En pratique, les délais de traitement sont longs (2-4 mois). Un service spécialisé avec relances systématiques est souvent nécessaire pour aboutir."}}]}</script>
 </head>
 <body>
   <nav>
-    <a href="/" style="font-weight:900;color:#fff;font-size:.875rem;text-decoration:none">ROBIN<span style="color:#00E5A0"> des Airs</span></a>
+    <a href="/">ROBIN<span style="color:#00E5A0"> des Airs</span></a>
     <a href="/" class="back">← Retour</a>
   </nav>
-  <main class="max-w-3xl mx-auto px-6 py-10 pb-20">
-    <h1 class="text-2xl font-black pb-3 border-b-2 border-[#00C87A] mb-2" style="color:#0B1F3A">Ethiopian Airlines vol retardé depuis Paris : vos droits CE 261</h1>
-    <p class="mt-6 text-sm text-gray-500 mb-6">Par <strong>Climbié Poiten</strong> · Publié le 24 mai 2026</p>
-
-    <div id="blog-body" style="color:#374151;line-height:1.625">
-
-<p>Ethiopian Airlines est la première compagnie aérienne africaine par taille de flotte et nombre de destinations. Elle dessert plus de 35 villes africaines depuis son hub d'Addis-Abeba (ADD) — ce qui en fait le principal connecteur pour les passagers d'Afrique subsaharienne voyageant via l'Europe. Des dizaines de milliers de passagers prennent chaque année un vol <strong>Paris CDG → Addis-Abeba</strong> pour ensuite rejoindre Dakar, Abidjan, Douala, Libreville, Lomé, Cotonou, Nairobi ou Johannesburg.</p>
+  <main class="wrap">
+    <h1 class="title">Ethiopian Airlines vol retardé depuis Paris : vos droits CE 261</h1>
+    <p class="byline">Par <strong>l'équipe Robin des Airs</strong> · Publié le 2 février 2026 · Mis à jour le 14 mai 2026</p>
+    <div id="blog-body"><p>Ethiopian Airlines est la première compagnie aérienne africaine par taille de flotte et nombre de destinations. Elle dessert plus de 35 villes africaines depuis son hub d'Addis-Abeba (ADD) — ce qui en fait le principal connecteur pour les passagers d'Afrique subsaharienne voyageant via l'Europe. Des dizaines de milliers de passagers prennent chaque année un vol <strong>Paris CDG → Addis-Abeba</strong> pour ensuite rejoindre Dakar, Abidjan, Douala, Libreville, Lomé, Cotonou, Nairobi ou Johannesburg.</p>
 
 <h2>Ethiopian Airlines et le CE 261 : la règle fondamentale</h2>
 <p>Ethiopian Airlines est une compagnie <strong>non-européenne</strong> (éthiopienne). Le CE 261/2004 s'applique selon une règle simple :</p>
@@ -87,9 +89,9 @@ body{font-family:'Montserrat',sans-serif}
   <li><strong>Vol au départ de l'UE</strong> (Paris CDG → Addis-Abeba) : <strong>couvert</strong> — peu importe la nationalité de la compagnie</li>
   <li><strong>Vol au départ hors UE</strong> (Addis-Abeba → Paris) : <strong>non couvert</strong> — Ethiopian n'est pas européenne</li>
 </ul>
-<div class="ok-box">
+<blockquote>
   <strong>Bonne nouvelle :</strong> la majorité des passagers de la diaspora africaine résident en France et partent de CDG. C'est exactement le sens couvert par le CE 261.
-</div>
+</blockquote>
 
 <h2>La règle du billet unique : le cas de la correspondance manquée</h2>
 <p>C'est là que ça devient crucial. Si vous achetez un seul billet <strong>Paris → Addis → [ville africaine]</strong>, Ethiopian Airlines est responsable de l'intégralité du voyage. En cas de retard sur le segment Paris-Addis entraînant une correspondance manquée :</p>
@@ -110,9 +112,9 @@ body{font-family:'Montserrat',sans-serif}
   <tr><td>CDG → ADD seul</td><td>5 251 km</td><td><strong>600 €</strong></td></tr>
 </table>
 
-<div class="warn-box">
+<blockquote>
   <strong>Attention billet séparé :</strong> si vous avez acheté Paris→Addis et Addis→Dakar sur deux réservations distinctes, Ethiopian n'est responsable que du premier segment. En cas de correspondance manquée, vous n'avez droit qu'à l'indemnité Paris→Addis (600€ tout de même) mais Ethiopian n'est pas tenue de vous reloger pour le second vol.
-</div>
+</blockquote>
 
 <h2>Retard à Addis-Abeba : ce que doit faire Ethiopian</h2>
 <p>Si vous êtes bloqué à ADD pendant plus de 2h en attente d'un vol de remplacement, Ethiopian est légalement tenue de vous fournir :</p>
@@ -130,9 +132,9 @@ body{font-family:'Montserrat',sans-serif}
   <li>Saisir la DGAC (signalement.transport.gouv.fr)</li>
   <li>Saisir le tribunal de proximité du lieu de départ (tribunal de Roissy-en-France pour CDG)</li>
 </ol>
-<div class="info-box">
+<blockquote>
   <strong>Note :</strong> Ethiopian Airlines n'est pas membre du Médiateur du Tourisme et du Voyage (MTV). La voie amiable officielle passe par la DGAC ou directement le tribunal.
-</div>
+</blockquote>
 
 <h2>Ethiopian Airlines via codeshare Air France</h2>
 <p>Certains vols Paris–Addis sont commercialisés sous numéro <strong>Air France (AF)</strong> mais opérés par Ethiopian. Dans ce cas :</p>
@@ -143,28 +145,44 @@ body{font-family:'Montserrat',sans-serif}
 <p>Vérifiez toujours le numéro de vol <strong>opérant</strong> (Operating carrier) sur votre carte d'embarquement — pas seulement le numéro de réservation.</p>
 
 <p>→ <a href="/autorisation.html">Vérifier mon éligibilité Ethiopian Airlines</a>
-→ <a href="https://wa.me/33756863630">Question via WhatsApp</a></p>
-
-    </div>
-
-    <div class="mt-10 rounded-xl text-center py-8 px-6" style="background:#0B1F3A">
-      <p class="mb-3" style="color:rgba(255,255,255,.9)">Vol Ethiopian retardé depuis Paris ? On réclame à votre place.</p>
+→ <a href="https://wa.me/33756863630">Question via WhatsApp</a></p></div>
+    <section class="faq">
+      <h2>Questions fréquentes</h2>
+      <details>
+        <summary>Ethiopian Airlines est-elle couverte par le CE 261 ?</summary>
+        <div>Ethiopian Airlines est une compagnie éthiopienne (non-UE). Le CE 261 s'applique uniquement pour les vols au départ d'un aéroport européen. Donc Paris CDG → Addis-Abeba : couvert. Addis-Abeba → Dakar → Paris : non couvert (départ hors UE).</div>
+      </details>
+      <details>
+        <summary>Si mon vol Paris-Addis est retardé et que je rate ma correspondance vers Dakar, suis-je indemnisé ?</summary>
+        <div>Oui, si les deux segments sont sur un seul et même billet. Ethiopian Airlines est alors responsable de l'ensemble du trajet. L'indemnité se calcule sur la distance totale Paris → destination finale, et non Paris → Addis seulement. CDG→ADD→DKR = 9 259 km → 600€.</div>
+      </details>
+      <details>
+        <summary>Quel est le montant de l'indemnité Paris-Addis-Abeba ?</summary>
+        <div>CDG → ADD = 5 251 km → palier 600€ (distance > 3 500 km). Si vous avez raté une correspondance vers une destination africaine, la distance totale est encore plus grande — toujours 600€.</div>
+      </details>
+      <details>
+        <summary>Ethiopian Airlines répond-elle aux réclamations CE 261 ?</summary>
+        <div>Ethiopian Airlines reconnaît formellement le CE 261 pour les vols au départ de l'UE. En pratique, les délais de traitement sont longs (2-4 mois). Un service spécialisé avec relances systématiques est souvent nécessaire pour aboutir.</div>
+      </details>
+    </section>
+    <div class="cta-box">
+      <p>Prêt à récupérer votre indemnité ?</p>
       <p>
-        <a href="/autorisation.html" style="color:#00E5A0;font-weight:700;margin:0 .5rem">Déposer mon dossier</a>
-        <span style="color:rgba(255,255,255,.4)">·</span>
-        <a href="https://wa.me/33756863630" style="color:#00E5A0;font-weight:700;margin:0 .5rem">WhatsApp</a>
+        <a href="https://robindesairs.eu/#funnel-box">Vérifier mon indemnité</a>
+        <span class="sep">·</span>
+        <a href="https://wa.me/33756863630">WhatsApp direct</a>
       </p>
     </div>
-
-    <section class="mt-6 rounded-xl border border-gray-200 bg-white p-5">
-      <h2 class="text-base font-bold mb-3" style="color:#0B1F3A">Articles liés</h2>
-      <ul class="list-disc pl-5 text-sm space-y-1" style="color:#374151">
+    <section class="related">
+      <h2>Articles liés</h2>
+      <ul>
         <li><a href="/blog/asky-airlines-vol-retarde-indemnite.html">ASKY Airlines : quand le CE 261 s'applique</a></li>
         <li><a href="/blog/correspondance-manquee-indemnite-vol.html">Correspondance manquée : vos droits</a></li>
         <li><a href="/blog/vol-retarde-dakar-paris-indemnite.html">Vol Paris → Dakar retardé</a></li>
-        <li><a href="/blog/mediation-compagnie-aerienne-refus-indemnite.html">Que faire si la compagnie refuse de payer ?</a></li>
       </ul>
     </section>
+    <p class="signature">Article rédigé et vérifié par <strong>l'équipe Robin des Airs</strong> — spécialistes des indemnités aériennes CE 261 sur l'axe Europe-Afrique.</p>
+    <p class="disclaimer"><strong>Information générale.</strong> Cet article présente une synthèse pédagogique de la réglementation en vigueur (règlement CE 261/2004, Convention de Montréal, jurisprudence CJUE) à la date de publication. Il ne constitue pas un conseil juridique personnalisé ni une consultation d'avocat. Pour l'évaluation de votre situation individuelle, contactez Robin des Airs (mandat de représentation) ou un avocat spécialisé en droit aérien. Les montants, délais et exemples cités sont indicatifs et peuvent évoluer selon les décisions de justice et l'actualité réglementaire.</p>
   </main>
 </body>
 </html>

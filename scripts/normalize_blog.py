@@ -1,0 +1,557 @@
+#!/usr/bin/env python3
+"""
+normalize_blog.py — Normalise les articles HTML du blog Robin des Airs vers
+le template "récent / propre" (sans Tailwind résiduel) :
+
+- CSS unifié (.wrap, .cta-box, .related, #blog-body, .faq, .byline)
+- JSON-LD : author = Organization "Robin des Airs"
+- Byline visible "Par l'équipe Robin des Airs · {date FR}"
+- CTA principal -> https://robindesairs.eu/#funnel-box (+ WhatsApp)
+- Section FAQ rendue visible si présente dans le JSON-LD FAQPage
+- info-box / warn-box transformés en <blockquote>
+- datePublished / dateModified étalés sur les 5 derniers mois (hash du slug)
+
+Usage :
+    python3 scripts/normalize_blog.py --dry-run blog/air-cote-divoire-vol-retarde-indemnite.html
+    python3 scripts/normalize_blog.py --apply blog/*.html
+
+En mode --dry-run : écrit le résultat dans <fichier>.preview.html à côté.
+En mode --apply  : écrase chaque fichier en place (un backup .bak est créé si --backup).
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import html
+import json
+import os
+import re
+import sys
+from datetime import date, timedelta
+
+TODAY = date(2026, 5, 25)
+SPREAD_DAYS = 152  # ~5 mois pour les articles
+
+
+def hash_int(slug: str, salt: str = "") -> int:
+    h = hashlib.md5(f"{slug}|{salt}".encode("utf-8")).hexdigest()
+    return int(h[:8], 16)
+
+
+def pick_date_published(slug: str) -> date:
+    # On part au minimum 5 jours en arrière pour éviter "publié aujourd'hui"
+    span = SPREAD_DAYS - 5
+    offset = 5 + (hash_int(slug, "datePublished") % span)
+    return TODAY - timedelta(days=offset)
+
+
+def pick_date_modified(slug: str, dp: date) -> date:
+    span = max(1, (TODAY - dp).days)
+    offset = hash_int(slug, "dateModified") % span
+    return dp + timedelta(days=offset)
+
+
+def text_escape(s: str) -> str:
+    """Pour le texte visible : on n'échappe pas les apostrophes (la source reste lisible)."""
+    return (
+        s.replace("&", "&amp;")
+         .replace("<", "&lt;")
+         .replace(">", "&gt;")
+    )
+
+
+def attr_escape(s: str) -> str:
+    """Pour les attributs HTML en double-quote : pas besoin d'échapper les ' (laid en source)."""
+    return (
+        s.replace("&", "&amp;")
+         .replace("<", "&lt;")
+         .replace(">", "&gt;")
+         .replace('"', "&quot;")
+    )
+
+
+MOIS_FR = [
+    "janvier", "février", "mars", "avril", "mai", "juin",
+    "juillet", "août", "septembre", "octobre", "novembre", "décembre",
+]
+
+
+def date_fr(d: date) -> str:
+    return f"{d.day} {MOIS_FR[d.month - 1]} {d.year}"
+
+
+# ------------------------------- extraction -----------------------------------
+
+RE_META = re.compile(
+    r'<meta\s+([^>]*?)>',
+    re.IGNORECASE | re.DOTALL,
+)
+
+
+def parse_attrs(tag_inner: str) -> dict:
+    out = {}
+    for m in re.finditer(r'(\w[\w:-]*)\s*=\s*"([^"]*)"', tag_inner):
+        out[m.group(1).lower()] = m.group(2)
+    return out
+
+
+def first(pattern: str, src: str, flags=re.IGNORECASE | re.DOTALL):
+    m = re.search(pattern, src, flags)
+    return m.group(1).strip() if m else None
+
+
+def extract_meta(src: str, name: str, prop: bool = False) -> str | None:
+    key = "property" if prop else "name"
+    for m in RE_META.finditer(src):
+        attrs = parse_attrs(m.group(1))
+        if attrs.get(key) == name:
+            return attrs.get("content")
+    return None
+
+
+def extract_jsonld_blocks(src: str) -> list[dict]:
+    out: list[dict] = []
+    for m in re.finditer(
+        r'<script[^>]*type="application/ld\+json"[^>]*>(.*?)</script>',
+        src,
+        re.IGNORECASE | re.DOTALL,
+    ):
+        try:
+            out.append(json.loads(m.group(1).strip()))
+        except Exception:
+            pass
+    return out
+
+
+def find_jsonld(blocks: list[dict], type_name: str) -> dict | None:
+    for b in blocks:
+        if isinstance(b, dict) and b.get("@type") == type_name:
+            return b
+    return None
+
+
+def extract_body_div(src: str) -> str | None:
+    """
+    Extrait l'intérieur du conteneur d'article.
+    Trois templates connus :
+      - <div id="blog-body">...</div>  (nouveau template)
+      - <div id="bd">...</div>          (template mw/bd compact)
+      - <article>...</article>          (fallback hypothétique)
+    Le contenu peut contenir des div imbriqués : on compte les niveaux.
+    """
+    m = re.search(r'<div[^>]*\bid="blog-body"[^>]*>', src, re.IGNORECASE)
+    if not m:
+        m = re.search(r'<div[^>]*\bid="bd"[^>]*>', src, re.IGNORECASE)
+    if not m:
+        return None
+    start = m.end()
+    depth = 1
+    i = start
+    open_re = re.compile(r'<div\b', re.IGNORECASE)
+    close_re = re.compile(r'</div>', re.IGNORECASE)
+    while i < len(src):
+        open_m = open_re.search(src, i)
+        close_m = close_re.search(src, i)
+        if not close_m:
+            return src[start:]
+        if open_m and open_m.start() < close_m.start():
+            depth += 1
+            i = open_m.end()
+        else:
+            depth -= 1
+            if depth == 0:
+                return src[start:close_m.start()]
+            i = close_m.end()
+    return src[start:]
+
+
+def extract_related_links(src: str) -> list[tuple[str, str]]:
+    """
+    Cherche la section "Articles liés" et retourne [(href, label), ...].
+    """
+    m = re.search(
+        r'(?:<section[^>]*class="[^"]*related[^"]*"[^>]*>|<h2[^>]*>\s*Articles\s+li[eé]s)',
+        src,
+        re.IGNORECASE,
+    )
+    if not m:
+        return []
+    chunk = src[m.start():m.start() + 4000]
+    out: list[tuple[str, str]] = []
+    for lm in re.finditer(
+        r'<a[^>]*href="([^"]+)"[^>]*>(.*?)</a>',
+        chunk,
+        re.IGNORECASE | re.DOTALL,
+    ):
+        href = lm.group(1)
+        label = re.sub(r'<[^>]+>', '', lm.group(2)).strip()
+        if href.startswith("/blog/") or "robindesairs.eu/blog/" in href:
+            out.append((href, label))
+        if len(out) >= 3:
+            break
+    return out
+
+
+DEFAULT_RELATED = [
+    ("/blog/reglementation-ce261-resume.html", "Résumé du règlement CE 261/2004"),
+    ("/blog/indemnite-vol-montants-250-400-600.html", "Montants 250 €, 400 €, 600 €"),
+    ("/blog/reclamer-seul-ou-passer-par-un-service-indemnite-vol.html", "Réclamer seul ou se faire accompagner"),
+]
+
+
+# ------------------------------- transformation -------------------------------
+
+
+def transform_body_html(body: str) -> str:
+    """
+    Convertit les blocs .info-box / .warn-box (ancien template) en <blockquote>
+    (nouveau template), sans casser les autres div imbriqués éventuels.
+    """
+    def repl_box(match: re.Match) -> str:
+        inner = match.group(1)
+        return f"<blockquote>{inner}</blockquote>"
+
+    body = re.sub(
+        r'<div\s+class="(?:info-box|warn-box|ib|wb|ok-box|success-box|step-box)"[^>]*>(.*?)</div>',
+        repl_box,
+        body,
+        flags=re.IGNORECASE | re.DOTALL,
+    )
+    return body
+
+
+def build_faq_section(faq_jsonld: dict | None) -> str:
+    if not faq_jsonld:
+        return ""
+    main = faq_jsonld.get("mainEntity") or []
+    if not main:
+        return ""
+    items: list[str] = []
+    for q in main:
+        if not isinstance(q, dict):
+            continue
+        question = q.get("name") or ""
+        accepted = q.get("acceptedAnswer") or {}
+        answer = ""
+        if isinstance(accepted, dict):
+            answer = accepted.get("text") or ""
+        if not question or not answer:
+            continue
+        items.append(
+            f"      <details>\n"
+            f"        <summary>{text_escape(question)}</summary>\n"
+            f"        <div>{answer}</div>\n"
+            f"      </details>"
+        )
+    if not items:
+        return ""
+    return (
+        '    <section class="faq">\n'
+        '      <h2>Questions fréquentes</h2>\n'
+        + "\n".join(items)
+        + "\n    </section>\n"
+    )
+
+
+# ------------------------------- template -------------------------------------
+
+CSS_BLOCK = """*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:#F9FAFB;color:#111827;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-family:'Montserrat',sans-serif}
+nav{background:#0B1F3A;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between}
+nav a{color:#fff;font-size:.875rem;text-decoration:none;font-weight:700}
+nav a.back{color:rgba(255,255,255,.8);font-weight:600}nav a.back:hover{color:#fff}
+.wrap{max-width:48rem;margin-left:auto;margin-right:auto;padding:2.5rem 1.5rem 5rem}
+h1.title{font-size:1.5rem;line-height:2rem;font-weight:900;color:#0B1F3A;margin:0 0 .5rem;padding-bottom:.75rem;border-bottom:2px solid #00C87A}
+.byline{font-size:.8125rem;color:#6B7280;margin:0 0 1.5rem;font-weight:600}
+.byline strong{color:#0B1F3A;font-weight:700}
+.cta-box{margin-top:2.5rem;border-radius:.75rem;background:#0B1F3A;color:#fff;text-align:center;padding:2rem 1.5rem}
+.cta-box p{margin:0 0 .75rem;color:rgba(255,255,255,.9)}
+.cta-box a{color:#00E5A0;font-weight:700;margin:0 .5rem;text-decoration:none}
+.cta-box span.sep{color:rgba(255,255,255,.5)}
+.related{margin-top:1.5rem;border:1px solid #E5E7EB;background:#fff;border-radius:.75rem;padding:1.25rem}
+.related h2{font-size:1rem;font-weight:700;color:#0B1F3A;margin:0 0 .75rem}
+.related ul{list-style:disc;padding-left:1.25rem;margin:0;font-size:.875rem;color:#374151}
+.related li{margin-bottom:.25rem}
+.related a{color:#009960;font-weight:600;text-decoration:none}
+.related a:hover{color:#00C87A;text-decoration:underline}
+.signature{margin-top:1.5rem;padding:1rem 1.25rem;border-radius:.5rem;background:#F3F5F8;color:#374151;font-size:.875rem;text-align:center;font-style:italic}
+.signature strong{color:#0B1F3A;font-style:normal}
+.disclaimer{margin-top:1rem;padding:.875rem 1rem;border-radius:.5rem;background:#FEFCE8;border:1px solid #FDE68A;color:#92400E;font-size:.75rem;line-height:1.5}
+.disclaimer strong{color:#78350F}
+#blog-body{margin-top:1.5rem;color:#374151;line-height:1.625}
+#blog-body h2{font-size:1.125rem;font-weight:700;color:#0B1F3A;margin:1.75rem 0 .5rem;padding-left:12px;border-left:4px solid #00C87A}
+#blog-body h3{font-size:1rem;font-weight:700;color:#0B1F3A;margin:1.25rem 0 .4rem}
+#blog-body p{margin-bottom:.875rem;font-size:14px;color:#374151}
+#blog-body ul,#blog-body ol{margin:.5rem 0 .875rem 1.25rem}
+#blog-body li{margin-bottom:.25rem;font-size:14px}
+#blog-body li::marker{color:#00C87A}
+#blog-body strong{color:#0B1F3A}
+#blog-body a{color:#009960;font-weight:600}
+#blog-body a:hover{color:#00C87A;text-decoration:underline}
+#blog-body table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:14px}
+#blog-body th,#blog-body td{border:1px solid #E2E6EE;padding:10px 12px;text-align:left}
+#blog-body th{background:#0B1F3A;color:white;font-weight:700}
+#blog-body tr:nth-child(even){background:#F7F8FA}
+#blog-body blockquote{border-left:4px solid #00C87A;background:#EFF9F4;padding:12px 16px;border-radius:0 8px 8px 0;margin:1rem 0;color:#0B1F3A}
+.faq{margin-top:2rem;border:1px solid #E5E7EB;background:#fff;border-radius:.75rem;padding:1.25rem 1.5rem}
+.faq h2{font-size:1.125rem;font-weight:700;color:#0B1F3A;margin:0 0 .75rem;padding-left:12px;border-left:4px solid #00C87A}
+.faq details{border-top:1px solid #F1F2F4;padding:.75rem 0}
+.faq details:first-of-type{border-top:none}
+.faq summary{font-size:.95rem;font-weight:600;color:#0B1F3A;cursor:pointer;padding:.25rem 0;list-style:none;position:relative;padding-right:1.5rem}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:'+';position:absolute;right:0;top:50%;transform:translateY(-50%);font-size:1.25rem;color:#00C87A;font-weight:700;line-height:1}
+.faq details[open] summary::after{content:'−'}
+.faq details>div{margin-top:.5rem;font-size:.875rem;color:#374151;line-height:1.6}
+.faq details>div a{color:#009960;font-weight:600}
+.faq details>div strong{color:#0B1F3A}"""
+
+
+def build_html(
+    *,
+    slug: str,
+    title: str,
+    description: str,
+    canonical: str,
+    og_image: str,
+    h1: str,
+    body_html: str,
+    faq_section: str,
+    faq_jsonld: dict | None,
+    related: list[tuple[str, str]],
+    date_published: date,
+    date_modified: date,
+) -> str:
+    blog_posting = {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "headline": title,
+        "description": description,
+        "url": canonical,
+        "image": og_image,
+        "datePublished": date_published.isoformat(),
+        "dateModified": date_modified.isoformat(),
+        "author": {
+            "@type": "Organization",
+            "name": "Robin des Airs",
+            "url": "https://robindesairs.eu/",
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "Robin des Airs",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://robindesairs.eu/robin-des-airs-logo-texte-profil.png",
+            },
+        },
+        "inLanguage": "fr-FR",
+        "isPartOf": {
+            "@type": "Blog",
+            "name": "Blog Robin des Airs",
+            "url": "https://robindesairs.eu/blog/",
+        },
+    }
+    breadcrumb = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Robin des Airs", "item": "https://robindesairs.eu/"},
+            {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://robindesairs.eu/blog/"},
+            {"@type": "ListItem", "position": 3, "name": title, "item": canonical},
+        ],
+    }
+
+    json_blocks = [
+        '<script type="application/ld+json">' + json.dumps(blog_posting, ensure_ascii=False, separators=(",", ":")) + "</script>",
+        '<script type="application/ld+json">' + json.dumps(breadcrumb, ensure_ascii=False, separators=(",", ":")) + "</script>",
+    ]
+    if faq_jsonld:
+        clean_faq = {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": faq_jsonld.get("mainEntity", []),
+        }
+        json_blocks.append(
+            '<script type="application/ld+json">'
+            + json.dumps(clean_faq, ensure_ascii=False, separators=(",", ":"))
+            + "</script>"
+        )
+
+    related_lis = "\n".join(
+        f'        <li><a href="{attr_escape(href)}">{text_escape(label)}</a></li>'
+        for href, label in (related or DEFAULT_RELATED)
+    )
+
+    byline = (
+        f'<p class="byline">Par <strong>l\'équipe Robin des Airs</strong> · '
+        f'Publié le {date_fr(date_published)}'
+        + (f' · Mis à jour le {date_fr(date_modified)}' if date_modified != date_published else '')
+        + '</p>'
+    )
+
+    signature = (
+        '    <p class="signature">Article rédigé et vérifié par <strong>l\'équipe Robin des Airs</strong> '
+        '— spécialistes des indemnités aériennes CE 261 sur l\'axe Europe-Afrique.</p>\n'
+        '    <p class="disclaimer"><strong>Information générale.</strong> '
+        'Cet article présente une synthèse pédagogique de la réglementation en vigueur (règlement CE 261/2004, '
+        'Convention de Montréal, jurisprudence CJUE) à la date de publication. Il ne constitue pas un conseil '
+        'juridique personnalisé ni une consultation d\'avocat. Pour l\'évaluation de votre situation individuelle, '
+        'contactez Robin des Airs (mandat de représentation) ou un avocat spécialisé en droit aérien. '
+        'Les montants, délais et exemples cités sont indicatifs et peuvent évoluer selon les décisions '
+        'de justice et l\'actualité réglementaire.</p>'
+    )
+
+    return f"""<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <title>{text_escape(title)}</title>
+  <meta name="description" content="{attr_escape(description)}">
+  <link rel="canonical" href="{attr_escape(canonical)}">
+  <meta property="og:title" content="{attr_escape(title)}">
+  <meta property="og:description" content="{attr_escape(description)}">
+  <meta property="og:url" content="{attr_escape(canonical)}">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="{attr_escape(og_image)}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{attr_escape(title)}">
+  <meta name="twitter:description" content="{attr_escape(description)}">
+  <meta name="twitter:image" content="{attr_escape(og_image)}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap"></noscript>
+  <style>{CSS_BLOCK}</style>
+  {chr(10).join('  ' + b for b in json_blocks)}
+</head>
+<body>
+  <nav>
+    <a href="/">ROBIN<span style="color:#00E5A0"> des Airs</span></a>
+    <a href="/" class="back">← Retour</a>
+  </nav>
+  <main class="wrap">
+    <h1 class="title">{text_escape(h1)}</h1>
+    {byline}
+    <div id="blog-body">{body_html.strip()}</div>
+{faq_section}    <div class="cta-box">
+      <p>Prêt à récupérer votre indemnité ?</p>
+      <p>
+        <a href="https://robindesairs.eu/#funnel-box">Vérifier mon indemnité</a>
+        <span class="sep">·</span>
+        <a href="https://wa.me/33756863630">WhatsApp direct</a>
+      </p>
+    </div>
+    <section class="related">
+      <h2>Articles liés</h2>
+      <ul>
+{related_lis}
+      </ul>
+    </section>
+{signature}
+  </main>
+</body>
+</html>
+"""
+
+
+# ------------------------------- main -----------------------------------------
+
+
+def process_one(path: str, *, dry_run: bool, backup: bool, verbose: bool) -> dict:
+    with open(path, "r", encoding="utf-8") as f:
+        src = f.read()
+
+    slug = os.path.splitext(os.path.basename(path))[0]
+
+    title = first(r'<title[^>]*>(.*?)</title>', src) or ""
+    title = html.unescape(title)
+    description = extract_meta(src, "description") or ""
+    canonical = first(r'<link[^>]*rel="canonical"[^>]*href="([^"]+)"', src) or (
+        f"https://robindesairs.eu/blog/{slug}.html"
+    )
+    og_image = extract_meta(src, "og:image", prop=True) or "https://robindesairs.eu/og-blog.png"
+    h1_raw = first(r'<h1[^>]*>(.*?)</h1>', src) or title
+    h1 = html.unescape(re.sub(r'<[^>]+>', '', h1_raw)).strip()
+    if not h1:
+        h1 = title
+
+    body = extract_body_div(src)
+    if body is None:
+        return {"path": path, "status": "skip", "reason": "no #blog-body"}
+
+    body = transform_body_html(body)
+
+    jsonld_blocks = extract_jsonld_blocks(src)
+    faq = find_jsonld(jsonld_blocks, "FAQPage")
+    faq_section = build_faq_section(faq)
+
+    related = extract_related_links(src) or DEFAULT_RELATED
+
+    dp = pick_date_published(slug)
+    dm = pick_date_modified(slug, dp)
+
+    out = build_html(
+        slug=slug,
+        title=title,
+        description=description,
+        canonical=canonical,
+        og_image=og_image,
+        h1=h1,
+        body_html=body,
+        faq_section=faq_section,
+        faq_jsonld=faq,
+        related=related,
+        date_published=dp,
+        date_modified=dm,
+    )
+
+    if dry_run:
+        preview = path + ".preview.html"
+        with open(preview, "w", encoding="utf-8") as f:
+            f.write(out)
+        if verbose:
+            print(f"[dry-run] {path} -> {preview}")
+        return {"path": path, "status": "preview", "out": preview, "datePublished": dp.isoformat(), "dateModified": dm.isoformat()}
+
+    if backup:
+        with open(path + ".bak", "w", encoding="utf-8") as f:
+            f.write(src)
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(out)
+    if verbose:
+        print(f"[apply] {path}  ({dp} -> {dm})")
+    return {"path": path, "status": "ok", "datePublished": dp.isoformat(), "dateModified": dm.isoformat()}
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    g = ap.add_mutually_exclusive_group(required=True)
+    g.add_argument("--dry-run", action="store_true", help="Écrit .preview.html à côté de chaque fichier")
+    g.add_argument("--apply", action="store_true", help="Écrase les fichiers en place")
+    ap.add_argument("--backup", action="store_true", help="Crée .bak en mode --apply")
+    ap.add_argument("-q", "--quiet", action="store_true")
+    ap.add_argument("files", nargs="+")
+    args = ap.parse_args()
+
+    results = []
+    for path in args.files:
+        if not os.path.isfile(path):
+            print(f"SKIP {path} (introuvable)", file=sys.stderr)
+            continue
+        try:
+            r = process_one(path, dry_run=args.dry_run, backup=args.backup, verbose=not args.quiet)
+            results.append(r)
+        except Exception as e:
+            print(f"ERROR {path}: {e}", file=sys.stderr)
+            results.append({"path": path, "status": "error", "error": str(e)})
+
+    ok = sum(1 for r in results if r["status"] in ("ok", "preview"))
+    skipped = sum(1 for r in results if r["status"] == "skip")
+    errors = sum(1 for r in results if r["status"] == "error")
+    print(f"\nTotal: {len(results)}  ok/preview: {ok}  skipped: {skipped}  errors: {errors}")
+    return 0 if errors == 0 else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
