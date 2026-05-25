@@ -10,10 +10,27 @@ import { getAllSlugs } from '../services/blogService';
 
 const SITE_URL = 'https://robindesairs.eu';
 const OUT_PATH = path.join(process.cwd(), 'sitemap.xml');
+const BLOG_DIR = path.join(process.cwd(), 'blog');
 const LASTMOD = new Date().toISOString().slice(0, 10);
 
+/**
+ * Liste tous les articles publiés dans /blog/ — qu'ils aient un .md source
+ * (pipeline normal) ou qu'ils soient des HTML autonomes (legacy).
+ */
+function getAllBlogSlugs(): string[] {
+  const mdSlugs = new Set(getAllSlugs());
+  if (fs.existsSync(BLOG_DIR)) {
+    for (const f of fs.readdirSync(BLOG_DIR)) {
+      if (!f.endsWith('.html')) continue;
+      if (f === 'index.html') continue;
+      mdSlugs.add(f.replace(/\.html$/, ''));
+    }
+  }
+  return Array.from(mdSlugs).sort();
+}
+
 function main(): void {
-  const slugs = getAllSlugs();
+  const slugs = getAllBlogSlugs();
   const staticPages: Array<{ loc: string; changefreq: string; priority: string }> = [
     { loc: SITE_URL + '/', changefreq: 'weekly', priority: '1.0' },
     { loc: SITE_URL + '/depot-en-ligne.html', changefreq: 'monthly', priority: '0.9' },

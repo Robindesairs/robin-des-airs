@@ -89,6 +89,35 @@ function renderArticlePage(post: Awaited<ReturnType<typeof getBySlug>>): string 
 </html>`;
 }
 
+/**
+ * Scanne les .html dans /blog/ qui n'ont pas de .md source (articles legacy
+ * créés directement en HTML). Extrait title + meta_description pour les
+ * inclure dans l'index. Évite que des articles publiés soient invisibles.
+ */
+function getOrphanHtmlPosts(slugsWithMd: Set<string>): Array<{
+  slug: string;
+  title: string;
+  meta_description: string;
+}> {
+  if (!fs.existsSync(BLOG_OUT_DIR)) return [];
+  const orphans: Array<{ slug: string; title: string; meta_description: string }> = [];
+  for (const f of fs.readdirSync(BLOG_OUT_DIR)) {
+    if (!f.endsWith('.html')) continue;
+    if (f === 'index.html') continue;
+    const slug = f.replace(/\.html$/, '');
+    if (slugsWithMd.has(slug)) continue;
+    const html = fs.readFileSync(path.join(BLOG_OUT_DIR, f), 'utf-8');
+    const titleMatch = html.match(/<title>([^<]*)<\/title>/);
+    const descMatch = html.match(/<meta name="description" content="([^"]*)"/);
+    orphans.push({
+      slug,
+      title: titleMatch ? titleMatch[1].trim() : slug,
+      meta_description: descMatch ? descMatch[1].trim() : '',
+    });
+  }
+  return orphans;
+}
+
 function renderIndexPage(posts: ReturnType<typeof getAllPosts>): string {
   const canonical = `${SITE_URL}/blog/`;
   const titles = escapeHtml('Blog — Robin des Airs | Indemnités vol retardé, annulé, surbooking');
@@ -150,9 +179,26 @@ function main(): void {
   if (!fs.existsSync(BLOG_OUT_DIR)) fs.mkdirSync(BLOG_OUT_DIR, { recursive: true });
 
   const posts = getAllPosts();
-  console.log(`[build-blog] ${posts.length} articles trouvés.`);
+  const mdSlugs = new Set(posts.map((p) => p.slug));
+  const orphans = getOrphanHtmlPosts(mdSlugs);
+  const merged: Array<{ slug: string; title: string; meta_description: string; image_url?: string }> = [
+    ...posts.map((p) => ({
+      slug: p.slug,
+      title: p.title,
+      meta_description: p.meta_description,
+      image_url: p.image_url,
+    })),
+    ...orphans,
+  ];
+  console.log(
+    `[build-blog] ${posts.length} articles .md + ${orphans.length} orphelins HTML = ${merged.length} total.`
+  );
 
-  fs.writeFileSync(path.join(BLOG_OUT_DIR, 'index.html'), renderIndexPage(posts), 'utf-8');
+  fs.writeFileSync(
+    path.join(BLOG_OUT_DIR, 'index.html'),
+    renderIndexPage(merged as ReturnType<typeof getAllPosts>),
+    'utf-8'
+  );
   console.log('[build-blog] blog/index.html écrit.');
 
   for (const p of posts) {
