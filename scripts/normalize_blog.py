@@ -32,6 +32,121 @@ from datetime import date, timedelta
 TODAY = date(2026, 5, 25)
 SPREAD_DAYS = 152  # ~5 mois pour les articles
 
+SITE_URL = "https://robindesairs.eu"
+
+# ----------------------------- i18n config ------------------------------------
+
+LANG_CONFIG: dict[str, dict] = {
+    "fr": {
+        "html_lang": "fr",
+        "blog_dir": "blog",
+        "url_blog_prefix": f"{SITE_URL}/blog",
+        "nav_back": "← Retour",
+        "byline_prefix": "Par",
+        "byline_team": "l'équipe Robin des Airs",
+        "byline_published": "Publié le",
+        "byline_updated": "Mis à jour le",
+        "cta_lead": "Prêt à récupérer votre indemnité ?",
+        "cta_check": "Vérifier mon indemnité",
+        "cta_check_url": f"{SITE_URL}/#funnel-box",
+        "cta_whatsapp": "WhatsApp direct",
+        "related_title": "Articles liés",
+        "faq_title": "Questions fréquentes",
+        "signature": (
+            "Article rédigé et vérifié par <strong>l'équipe Robin des Airs</strong> "
+            "(robindesairs.eu) — spécialistes des indemnités aériennes CE 261 sur l'axe Europe-Afrique. "
+            "<span class=\"disambig\">À ne pas confondre avec d'autres entités utilisant un nom similaire "
+            "dans le secteur environnemental.</span>"
+        ),
+        "disclaimer": (
+            "<strong>Information générale.</strong> "
+            "Cet article présente une synthèse pédagogique de la réglementation en vigueur (règlement CE 261/2004, "
+            "Convention de Montréal, jurisprudence CJUE) à la date de publication. Il ne constitue pas un conseil "
+            "juridique personnalisé ni une consultation d'avocat. Pour l'évaluation de votre situation individuelle, "
+            "contactez Robin des Airs (mandat de représentation) ou un avocat spécialisé en droit aérien. "
+            "Les montants, délais et exemples cités sont indicatifs et peuvent évoluer selon les décisions "
+            "de justice et l'actualité réglementaire."
+        ),
+        "language_switcher_label": "EN",
+        "language_switcher_alt": "Read this article in English",
+        "default_related": [
+            ("/blog/reglementation-ce261-resume.html", "Résumé du règlement CE 261/2004"),
+            ("/blog/indemnite-vol-montants-250-400-600.html", "Montants 250 €, 400 €, 600 €"),
+            ("/blog/reclamer-seul-ou-passer-par-un-service-indemnite-vol.html", "Réclamer seul ou se faire accompagner"),
+        ],
+        "breadcrumb_root": ("Robin des Airs", f"{SITE_URL}/"),
+        "breadcrumb_blog": ("Blog", f"{SITE_URL}/blog/"),
+        "mois_fr": [
+            "janvier", "février", "mars", "avril", "mai", "juin",
+            "juillet", "août", "septembre", "octobre", "novembre", "décembre",
+        ],
+    },
+    "en": {
+        "html_lang": "en",
+        "blog_dir": "en/blog",
+        "url_blog_prefix": f"{SITE_URL}/en/blog",
+        "nav_back": "← Back",
+        "byline_prefix": "By",
+        "byline_team": "the Robin des Airs team",
+        "byline_published": "Published on",
+        "byline_updated": "Updated on",
+        "cta_lead": "Ready to claim your compensation?",
+        "cta_check": "Check my compensation",
+        "cta_check_url": f"{SITE_URL}/#funnel-box",
+        "cta_whatsapp": "WhatsApp direct",
+        "related_title": "Related articles",
+        "faq_title": "Frequently Asked Questions",
+        "signature": (
+            "Article written and verified by <strong>the Robin des Airs team</strong> "
+            "(robindesairs.eu) — specialists in EC 261 flight compensation on the Europe-Africa axis. "
+            "<span class=\"disambig\">Not to be confused with other entities using a similar name "
+            "in the environmental sector.</span>"
+        ),
+        "disclaimer": (
+            "<strong>General information.</strong> "
+            "This article provides an educational summary of the regulations in force (Regulation (EC) No 261/2004, "
+            "Montreal Convention, CJEU case law) at the date of publication. It does not constitute personalized "
+            "legal advice or an attorney consultation. To assess your individual situation, contact Robin des Airs "
+            "(representation mandate) or a lawyer specialized in aviation law. The amounts, deadlines and examples "
+            "mentioned are indicative and may evolve according to court decisions and regulatory updates."
+        ),
+        "language_switcher_label": "FR",
+        "language_switcher_alt": "Lire cet article en français",
+        "default_related": [
+            ("/en/blog/ec-261-regulation-summary.html", "EC 261/2004 regulation summary"),
+            ("/en/blog/flight-compensation-amounts-250-400-600-eur.html", "Compensation amounts: €250, €400, €600"),
+            ("/en/blog/airline-refuses-compensation-next-steps.html", "Airline refuses your claim: next steps"),
+        ],
+        "breadcrumb_root": ("Robin des Airs", f"{SITE_URL}/"),
+        "breadcrumb_blog": ("Blog", f"{SITE_URL}/en/blog/"),
+        "mois_fr": [  # mois EN
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December",
+        ],
+    },
+}
+
+
+def detect_lang(path: str) -> str:
+    """Détecte la langue depuis le chemin du fichier."""
+    norm = os.path.normpath(path).replace("\\", "/")
+    if "/en/blog/" in norm or norm.startswith("en/blog/"):
+        return "en"
+    return "fr"
+
+
+SLUG_MAPPING_PATH = os.path.join(os.path.dirname(__file__), "blog_slug_mapping.json")
+
+
+def load_slug_mapping() -> dict:
+    if os.path.isfile(SLUG_MAPPING_PATH):
+        with open(SLUG_MAPPING_PATH, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {"fr_to_en": {}, "en_to_fr": {}}
+
+
+SLUG_MAPPING = load_slug_mapping()
+
 
 def hash_int(slug: str, salt: str = "") -> int:
     h = hashlib.md5(f"{slug}|{salt}".encode("utf-8")).hexdigest()
@@ -70,14 +185,11 @@ def attr_escape(s: str) -> str:
     )
 
 
-MOIS_FR = [
-    "janvier", "février", "mars", "avril", "mai", "juin",
-    "juillet", "août", "septembre", "octobre", "novembre", "décembre",
-]
-
-
-def date_fr(d: date) -> str:
-    return f"{d.day} {MOIS_FR[d.month - 1]} {d.year}"
+def format_date(d: date, lang: str) -> str:
+    months = LANG_CONFIG[lang]["mois_fr"]
+    if lang == "en":
+        return f"{months[d.month - 1]} {d.day}, {d.year}"
+    return f"{d.day} {months[d.month - 1]} {d.year}"
 
 
 # ------------------------------- extraction -----------------------------------
@@ -192,11 +304,8 @@ def extract_related_links(src: str) -> list[tuple[str, str]]:
     return out
 
 
-DEFAULT_RELATED = [
-    ("/blog/reglementation-ce261-resume.html", "Résumé du règlement CE 261/2004"),
-    ("/blog/indemnite-vol-montants-250-400-600.html", "Montants 250 €, 400 €, 600 €"),
-    ("/blog/reclamer-seul-ou-passer-par-un-service-indemnite-vol.html", "Réclamer seul ou se faire accompagner"),
-]
+def default_related_for(lang: str) -> list[tuple[str, str]]:
+    return list(LANG_CONFIG[lang]["default_related"])
 
 
 # ------------------------------- transformation -------------------------------
@@ -220,7 +329,7 @@ def transform_body_html(body: str) -> str:
     return body
 
 
-def build_faq_section(faq_jsonld: dict | None) -> str:
+def build_faq_section(faq_jsonld: dict | None, lang: str) -> str:
     if not faq_jsonld:
         return ""
     main = faq_jsonld.get("mainEntity") or []
@@ -245,9 +354,10 @@ def build_faq_section(faq_jsonld: dict | None) -> str:
         )
     if not items:
         return ""
+    faq_title = LANG_CONFIG[lang]["faq_title"]
     return (
         '    <section class="faq">\n'
-        '      <h2>Questions fréquentes</h2>\n'
+        f'      <h2>{faq_title}</h2>\n'
         + "\n".join(items)
         + "\n    </section>\n"
     )
@@ -259,7 +369,10 @@ CSS_BLOCK = """*,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:#F9FAFB;color:#111827;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-family:'Montserrat',sans-serif}
 nav{background:#0B1F3A;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between}
 nav a{color:#fff;font-size:.875rem;text-decoration:none;font-weight:700}
+nav>div{display:flex;align-items:center;gap:1rem}
 nav a.back{color:rgba(255,255,255,.8);font-weight:600}nav a.back:hover{color:#fff}
+nav a.lang-switch{color:#00E5A0;border:1px solid rgba(0,229,160,.4);padding:.2rem .55rem;border-radius:.375rem;font-size:.75rem;font-weight:700;letter-spacing:.04em}
+nav a.lang-switch:hover{background:rgba(0,229,160,.12)}
 .wrap{max-width:48rem;margin-left:auto;margin-right:auto;padding:2.5rem 1.5rem 5rem}
 h1.title{font-size:1.5rem;line-height:2rem;font-weight:900;color:#0B1F3A;margin:0 0 .5rem;padding-bottom:.75rem;border-bottom:2px solid #00C87A}
 .byline{font-size:.8125rem;color:#6B7280;margin:0 0 1.5rem;font-weight:600}
@@ -276,6 +389,7 @@ h1.title{font-size:1.5rem;line-height:2rem;font-weight:900;color:#0B1F3A;margin:
 .related a:hover{color:#00C87A;text-decoration:underline}
 .signature{margin-top:1.5rem;padding:1rem 1.25rem;border-radius:.5rem;background:#F3F5F8;color:#374151;font-size:.875rem;text-align:center;font-style:italic}
 .signature strong{color:#0B1F3A;font-style:normal}
+.signature .disambig{display:block;margin-top:.4rem;font-size:.7rem;color:#6B7280;font-style:normal}
 .disclaimer{margin-top:1rem;padding:.875rem 1rem;border-radius:.5rem;background:#FEFCE8;border:1px solid #FDE68A;color:#92400E;font-size:.75rem;line-height:1.5}
 .disclaimer strong{color:#78350F}
 #blog-body{margin-top:1.5rem;color:#374151;line-height:1.625}
@@ -320,7 +434,24 @@ def build_html(
     related: list[tuple[str, str]],
     date_published: date,
     date_modified: date,
+    lang: str = "fr",
 ) -> str:
+    cfg = LANG_CONFIG[lang]
+    in_language = "fr-FR" if lang == "fr" else "en"
+    blog_name = "Blog Robin des Airs" if lang == "fr" else "Robin des Airs Blog"
+    blog_url = f"{SITE_URL}/blog/" if lang == "fr" else f"{SITE_URL}/en/blog/"
+
+    publisher_description = (
+        "Service de récupération d'indemnités aériennes (règlement CE 261/2004, "
+        "Convention de Montréal), spécialiste de l'axe Europe-Afrique. "
+        "À ne pas confondre avec des entités homonymes opérant dans d'autres secteurs."
+        if lang == "fr"
+        else (
+            "Flight compensation recovery service (Regulation EC 261/2004, Montreal Convention), "
+            "specialised on the Europe-Africa axis. Not to be confused with namesake entities "
+            "operating in other sectors."
+        )
+    )
     blog_posting = {
         "@context": "https://schema.org",
         "@type": "BlogPosting",
@@ -330,32 +461,40 @@ def build_html(
         "image": og_image,
         "datePublished": date_published.isoformat(),
         "dateModified": date_modified.isoformat(),
+        "mainEntityOfPage": {"@type": "WebPage", "@id": canonical},
         "author": {
             "@type": "Organization",
+            "@id": f"{SITE_URL}/#organization",
             "name": "Robin des Airs",
-            "url": "https://robindesairs.eu/",
+            "url": f"{SITE_URL}/",
         },
         "publisher": {
             "@type": "Organization",
+            "@id": f"{SITE_URL}/#organization",
             "name": "Robin des Airs",
+            "alternateName": "Robin des Airs Compensation Aérienne",
+            "url": f"{SITE_URL}/",
             "logo": {
                 "@type": "ImageObject",
-                "url": "https://robindesairs.eu/robin-des-airs-logo-texte-profil.png",
+                "url": f"{SITE_URL}/robin-des-airs-logo-texte-profil.png",
             },
+            "disambiguatingDescription": publisher_description,
         },
-        "inLanguage": "fr-FR",
+        "inLanguage": in_language,
         "isPartOf": {
             "@type": "Blog",
-            "name": "Blog Robin des Airs",
-            "url": "https://robindesairs.eu/blog/",
+            "name": blog_name,
+            "url": blog_url,
         },
     }
+    breadcrumb_root_name, breadcrumb_root_url = cfg["breadcrumb_root"]
+    breadcrumb_blog_name, breadcrumb_blog_url = cfg["breadcrumb_blog"]
     breadcrumb = {
         "@context": "https://schema.org",
         "@type": "BreadcrumbList",
         "itemListElement": [
-            {"@type": "ListItem", "position": 1, "name": "Robin des Airs", "item": "https://robindesairs.eu/"},
-            {"@type": "ListItem", "position": 2, "name": "Blog", "item": "https://robindesairs.eu/blog/"},
+            {"@type": "ListItem", "position": 1, "name": breadcrumb_root_name, "item": breadcrumb_root_url},
+            {"@type": "ListItem", "position": 2, "name": breadcrumb_blog_name, "item": breadcrumb_blog_url},
             {"@type": "ListItem", "position": 3, "name": title, "item": canonical},
         ],
     }
@@ -378,37 +517,41 @@ def build_html(
 
     related_lis = "\n".join(
         f'        <li><a href="{attr_escape(href)}">{text_escape(label)}</a></li>'
-        for href, label in (related or DEFAULT_RELATED)
+        for href, label in (related or default_related_for(lang))
     )
 
-    byline = (
-        f'<p class="byline">Par <strong>l\'équipe Robin des Airs</strong> · '
-        f'Publié le {date_fr(date_published)}'
-        + (f' · Mis à jour le {date_fr(date_modified)}' if date_modified != date_published else '')
-        + '</p>'
-    )
+    if date_modified != date_published:
+        byline = (
+            f'<p class="byline">{cfg["byline_prefix"]} <strong>{cfg["byline_team"]}</strong> · '
+            f'{cfg["byline_published"]} {format_date(date_published, lang)} · '
+            f'{cfg["byline_updated"]} {format_date(date_modified, lang)}</p>'
+        )
+    else:
+        byline = (
+            f'<p class="byline">{cfg["byline_prefix"]} <strong>{cfg["byline_team"]}</strong> · '
+            f'{cfg["byline_published"]} {format_date(date_published, lang)}</p>'
+        )
 
     signature = (
-        '    <p class="signature">Article rédigé et vérifié par <strong>l\'équipe Robin des Airs</strong> '
-        '— spécialistes des indemnités aériennes CE 261 sur l\'axe Europe-Afrique.</p>\n'
-        '    <p class="disclaimer"><strong>Information générale.</strong> '
-        'Cet article présente une synthèse pédagogique de la réglementation en vigueur (règlement CE 261/2004, '
-        'Convention de Montréal, jurisprudence CJUE) à la date de publication. Il ne constitue pas un conseil '
-        'juridique personnalisé ni une consultation d\'avocat. Pour l\'évaluation de votre situation individuelle, '
-        'contactez Robin des Airs (mandat de représentation) ou un avocat spécialisé en droit aérien. '
-        'Les montants, délais et exemples cités sont indicatifs et peuvent évoluer selon les décisions '
-        'de justice et l\'actualité réglementaire.</p>'
+        f'    <p class="signature">{cfg["signature"]}</p>\n'
+        f'    <p class="disclaimer">{cfg["disclaimer"]}</p>'
     )
 
+    # hreflang : pointe vers la version alternative si elle existe dans le mapping
+    hreflang_block = build_hreflang(slug, lang)
+
+    # Sélecteur de langue (lien vers l'alternative) si elle existe
+    lang_switcher = build_language_switcher(slug, lang)
+
     return f"""<!DOCTYPE html>
-<html lang="fr">
+<html lang="{cfg['html_lang']}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="/favicon.png" type="image/png">
   <title>{text_escape(title)}</title>
   <meta name="description" content="{attr_escape(description)}">
-  <link rel="canonical" href="{attr_escape(canonical)}">
+  <link rel="canonical" href="{attr_escape(canonical)}">{hreflang_block}
   <meta property="og:title" content="{attr_escape(title)}">
   <meta property="og:description" content="{attr_escape(description)}">
   <meta property="og:url" content="{attr_escape(canonical)}">
@@ -428,22 +571,22 @@ def build_html(
 <body>
   <nav>
     <a href="/">ROBIN<span style="color:#00E5A0"> des Airs</span></a>
-    <a href="/" class="back">← Retour</a>
+    <div>{lang_switcher}<a href="/" class="back">{cfg['nav_back']}</a></div>
   </nav>
   <main class="wrap">
     <h1 class="title">{text_escape(h1)}</h1>
     {byline}
     <div id="blog-body">{body_html.strip()}</div>
 {faq_section}    <div class="cta-box">
-      <p>Prêt à récupérer votre indemnité ?</p>
+      <p>{cfg['cta_lead']}</p>
       <p>
-        <a href="https://robindesairs.eu/#funnel-box">Vérifier mon indemnité</a>
+        <a href="{cfg['cta_check_url']}">{cfg['cta_check']}</a>
         <span class="sep">·</span>
-        <a href="https://wa.me/33756863630">WhatsApp direct</a>
+        <a href="https://wa.me/33756863630">{cfg['cta_whatsapp']}</a>
       </p>
     </div>
     <section class="related">
-      <h2>Articles liés</h2>
+      <h2>{cfg['related_title']}</h2>
       <ul>
 {related_lis}
       </ul>
@@ -455,6 +598,34 @@ def build_html(
 """
 
 
+def build_hreflang(slug: str, lang: str) -> str:
+    """Construit les <link rel='alternate' hreflang='...'> pour pointer vers la version FR ↔ EN."""
+    fr_slug = slug if lang == "fr" else SLUG_MAPPING.get("en_to_fr", {}).get(slug)
+    en_slug = slug if lang == "en" else SLUG_MAPPING.get("fr_to_en", {}).get(slug)
+    lines = ["", f'  <link rel="alternate" hreflang="{lang}" href="{SITE_URL}/{LANG_CONFIG[lang]["blog_dir"]}/{slug}.html">']
+    if lang == "fr" and en_slug:
+        lines.append(f'  <link rel="alternate" hreflang="en" href="{SITE_URL}/en/blog/{en_slug}.html">')
+        lines.append(f'  <link rel="alternate" hreflang="x-default" href="{SITE_URL}/blog/{fr_slug}.html">')
+    elif lang == "en" and fr_slug:
+        lines.append(f'  <link rel="alternate" hreflang="fr" href="{SITE_URL}/blog/{fr_slug}.html">')
+        lines.append(f'  <link rel="alternate" hreflang="x-default" href="{SITE_URL}/blog/{fr_slug}.html">')
+    return "\n".join(lines) if len(lines) > 1 else ""
+
+
+def build_language_switcher(slug: str, lang: str) -> str:
+    """Petit sélecteur de langue dans la nav (lien vers la version alternative si dispo)."""
+    if lang == "fr":
+        en_slug = SLUG_MAPPING.get("fr_to_en", {}).get(slug)
+        if not en_slug:
+            return ""
+        return f'<a href="/en/blog/{en_slug}.html" class="lang-switch" title="Read in English">EN</a>'
+    else:
+        fr_slug = SLUG_MAPPING.get("en_to_fr", {}).get(slug)
+        if not fr_slug:
+            return ""
+        return f'<a href="/blog/{fr_slug}.html" class="lang-switch" title="Lire en français">FR</a>'
+
+
 # ------------------------------- main -----------------------------------------
 
 
@@ -463,14 +634,16 @@ def process_one(path: str, *, dry_run: bool, backup: bool, verbose: bool) -> dic
         src = f.read()
 
     slug = os.path.splitext(os.path.basename(path))[0]
+    lang = detect_lang(path)
+    cfg = LANG_CONFIG[lang]
 
     title = first(r'<title[^>]*>(.*?)</title>', src) or ""
     title = html.unescape(title)
     description = extract_meta(src, "description") or ""
     canonical = first(r'<link[^>]*rel="canonical"[^>]*href="([^"]+)"', src) or (
-        f"https://robindesairs.eu/blog/{slug}.html"
+        f"{cfg['url_blog_prefix']}/{slug}.html"
     )
-    og_image = extract_meta(src, "og:image", prop=True) or "https://robindesairs.eu/og-blog.png"
+    og_image = extract_meta(src, "og:image", prop=True) or f"{SITE_URL}/og-blog.png"
     h1_raw = first(r'<h1[^>]*>(.*?)</h1>', src) or title
     h1 = html.unescape(re.sub(r'<[^>]+>', '', h1_raw)).strip()
     if not h1:
@@ -484,9 +657,9 @@ def process_one(path: str, *, dry_run: bool, backup: bool, verbose: bool) -> dic
 
     jsonld_blocks = extract_jsonld_blocks(src)
     faq = find_jsonld(jsonld_blocks, "FAQPage")
-    faq_section = build_faq_section(faq)
+    faq_section = build_faq_section(faq, lang)
 
-    related = extract_related_links(src) or DEFAULT_RELATED
+    related = extract_related_links(src) or default_related_for(lang)
 
     dp = pick_date_published(slug)
     dm = pick_date_modified(slug, dp)
@@ -504,6 +677,7 @@ def process_one(path: str, *, dry_run: bool, backup: bool, verbose: bool) -> dic
         related=related,
         date_published=dp,
         date_modified=dm,
+        lang=lang,
     )
 
     if dry_run:
