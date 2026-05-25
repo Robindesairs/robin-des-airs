@@ -9,6 +9,7 @@ const {
   agencyCookieHeader,
 } = require('./lib/agency-access');
 const { corsHeaders, getAgencyAuthSecret } = require('./lib/auth-config');
+const { checkRateLimit } = require('./lib/rate-limit');
 
 const HEADERS = corsHeaders('agency');
 
@@ -64,6 +65,15 @@ exports.handler = async (event) => {
         { 'Set-Cookie': `rda_agency=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0${secure}` }
       );
     }
+
+    const subjectCode = String(body.code || '').trim().toUpperCase().slice(0, 32);
+    const rl = await checkRateLimit(event, {
+      key: 'agency-auth-login',
+      max: 8,
+      windowSec: 60,
+      subject: subjectCode,
+    });
+    if (!rl.ok) return rl.response;
 
     const account = findAgencyAccount(body.code, body.pass);
     if (!account) {

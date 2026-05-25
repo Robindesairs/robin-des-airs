@@ -7,6 +7,8 @@
  * - YOUSIGN_BASE_URL (optionnel — défaut : production v3)
  */
 
+const { checkRateLimit } = require("./lib/rate-limit");
+
 const HEADERS = {
   "Content-Type": "application/json",
   "Access-Control-Allow-Origin": "https://robindesairs.eu",
@@ -28,6 +30,10 @@ function normalizePhone(raw) {
 exports.handler = async (event) => {
   if (event.httpMethod === "OPTIONS") return { statusCode: 204, headers: HEADERS, body: "" };
   if (event.httpMethod !== "POST") return json(405, { error: "Méthode non autorisée" });
+
+  // Anti-abus du crédit YouSign (chaque init = appel API payant)
+  const rl = await checkRateLimit(event, { key: "yousign-init", max: 3, windowSec: 60 });
+  if (!rl.ok) return rl.response;
 
   let payload = {};
   try {
