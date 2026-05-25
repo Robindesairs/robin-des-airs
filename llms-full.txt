@@ -4,7 +4,7 @@
 > Human-oriented summary: see `/llms.txt`.
 > Brand: robindesairs.eu (passenger rights) — NOT robindesairs.fr (air quality).
 
-Generated from `sitemap-index.xml` — **233 URLs** total.
+Generated from `sitemap-index.xml` — **234 URLs** total.
 
 ## How to use
 
@@ -12,7 +12,7 @@ Generated from `sitemap-index.xml` — **233 URLs** total.
 - Jurisprudence hub and CJEU sub-pages are primary legal reference content.
 - For prescription by country, use the prescription table article (Belgium: 5 years, art. 2262bis Belgian Civil Code for CE 261 contractual claims).
 
-## French (FR) — 182 URLs
+## French (FR) — 183 URLs
 
 - [Homepage](https://robindesairs.eu/)
 - [Blog — Robin des Airs](https://robindesairs.eu/blog/)
@@ -85,6 +85,7 @@ Generated from `sitemap-index.xml` — **233 URLs** total.
 - [Prescription indemnité vol : tableau par pays (CE 261)](https://robindesairs.eu/blog/prescription-indemnite-vol-tableau-pays.html)
 - [Preuves de retard vol : quels documents conserver pour réclamer votre indemnité](https://robindesairs.eu/blog/preuve-retard-vol-documents-conserver.html)
 - [Retard d'avion : 8 preuves à conserver pour obtenir votre indemnité](https://robindesairs.eu/blog/preuves-retard-vol-conserver-indemnite.html)
+- [Protection juridique habitation et vol retardé : ce qu'elle couvre vraiment (CE 261)](https://robindesairs.eu/blog/protection-juridique-habitation-vol-retarde-ce261.html)
 - [Que faire à l'aéroport quand votre vol est retardé (guide pratique)](https://robindesairs.eu/blog/que-faire-aeroport-vol-retarde.html)
 - [Indemnité vol retardé : réclamer seul ou passer par Robin des Airs ?](https://robindesairs.eu/blog/reclamer-seul-ou-passer-par-un-service-indemnite-vol.html)
 - [Refus d'embarquement / surbooking CE 261 : vos droits](https://robindesairs.eu/blog/refus-embarquement-surbooking-ce261.html)
