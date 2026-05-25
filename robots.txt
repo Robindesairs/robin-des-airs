@@ -1,8 +1,15 @@
-# Robin des Airs — site public indexable (CE 261, diaspora Europe ↔ Afrique)
+# Robin des Airs (robindesairs.eu) — Flight compensation service (EC 261/2004)
+# Site public indexable, axe diaspora Europe ↔ Afrique
+# IMPORTANT: This is robindesairs.eu (flight passenger compensation), NOT to be confused
+# with robindesairs.fr (air quality monitoring — different entity, different sector).
+
+# ============================================================
+# Default rules (all crawlers)
+# ============================================================
 User-agent: *
 Allow: /
 
-# Outils internes (ne pas indexer)
+# Internal tools (do not index)
 Disallow: /crm/
 Disallow: /crm
 Disallow: /radar-vols-v2
@@ -15,4 +22,114 @@ Disallow: /interne
 Disallow: /generateur-pub
 Disallow: /generateur-pub.html
 
+# ============================================================
+# AI / LLM crawlers — explicitly allowed for AEO / GEO visibility
+# (Answer Engine Optimization)
+# ============================================================
+
+# OpenAI (ChatGPT, ChatGPT Search, GPT-4o web browsing)
+User-agent: GPTBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: OAI-SearchBot
+Allow: /
+
+# Anthropic (Claude, Claude.ai web search, Claude in Cursor/IDEs)
+User-agent: ClaudeBot
+Allow: /
+User-agent: anthropic-ai
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: Claude-SearchBot
+Allow: /
+
+# Perplexity AI
+User-agent: PerplexityBot
+Allow: /
+User-agent: Perplexity-User
+Allow: /
+
+# Google AI (Bard, Gemini, AI Overviews) — separate from Googlebot
+User-agent: Google-Extended
+Allow: /
+
+# Apple (Siri, Apple Intelligence, Apple Search)
+User-agent: Applebot
+Allow: /
+User-agent: Applebot-Extended
+Allow: /
+
+# Common Crawl (training set used by most LLMs)
+User-agent: CCBot
+Allow: /
+
+# You.com
+User-agent: YouBot
+Allow: /
+
+# Bing AI (Copilot)
+User-agent: bingbot
+Allow: /
+
+# Meta (Llama, Meta AI in WhatsApp/Instagram)
+User-agent: meta-externalagent
+Allow: /
+User-agent: FacebookBot
+Allow: /
+
+# Mistral AI (Le Chat)
+User-agent: MistralAI-User
+Allow: /
+
+# DuckDuckGo AI
+User-agent: DuckAssistBot
+Allow: /
+
+# Brave AI (Brave Search Leo)
+User-agent: Bravebot
+Allow: /
+
+# Cohere
+User-agent: cohere-ai
+Allow: /
+User-agent: cohere-training-data-crawler
+Allow: /
+
+# xAI (Grok)
+User-agent: xAI
+Allow: /
+
+# Diffbot (used by many AI products)
+User-agent: Diffbot
+Allow: /
+
+# Amazon (Alexa, Rufus)
+User-agent: Amazonbot
+Allow: /
+
+# Internal tools blocked for AI crawlers too
+User-agent: GPTBot
+User-agent: ClaudeBot
+User-agent: PerplexityBot
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+Disallow: /crm/
+Disallow: /crm
+Disallow: /radar
+Disallow: /radar.html
+Disallow: /radar-vols-v2
+Disallow: /radar-vols-v2.html
+Disallow: /radar-choix
+Disallow: /navigation-interne
+Disallow: /interne
+Disallow: /generateur-pub
+Disallow: /generateur-pub.html
+
+# ============================================================
+# Sitemaps
+# ============================================================
+Sitemap: https://robindesairs.eu/sitemap-index.xml
 Sitemap: https://robindesairs.eu/sitemap.xml
+Sitemap: https://robindesairs.eu/sitemap-en.xml

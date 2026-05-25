@@ -10,12 +10,18 @@ import matter from 'gray-matter';
 
 const CONTENT_DIR = path.join(process.cwd(), 'src', 'content', 'blog');
 
+export interface FaqItem {
+  q: string;
+  a: string;
+}
+
 export interface BlogPostFrontmatter {
   title: string;
   meta_title: string;
   meta_description: string;
   slug: string;
   image_url?: string;
+  faq?: FaqItem[];
 }
 
 export interface BlogPost {
@@ -25,6 +31,7 @@ export interface BlogPost {
   meta_description: string;
   image_url: string;
   html: string;
+  faq: FaqItem[];
 }
 
 /**
@@ -55,6 +62,7 @@ export function getBySlug(slug: string): BlogPost | null {
     meta_description: meta.meta_description || '',
     image_url: meta.image_url || '/og-blog.png',
     html,
+    faq: Array.isArray(meta.faq) ? meta.faq : [],
   };
 }
 
@@ -75,6 +83,7 @@ export function getAllPosts(): Omit<BlogPost, 'html'>[] {
         meta_title: meta.meta_title || meta.title || '',
         meta_description: meta.meta_description || '',
         image_url: meta.image_url || '/og-blog.png',
+        faq: Array.isArray(meta.faq) ? meta.faq : [],
       };
     })
     .filter((p) => p.slug && p.title);

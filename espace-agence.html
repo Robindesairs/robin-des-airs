@@ -283,8 +283,8 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
   <div class="nav-right">
     <span class="badge-agence" id="agencyBadge">—</span>
     <button type="button" class="btn-nav" onclick="doLogout()" data-i18n="nav.logout">Déconnexion</button>
-  </div>
-</nav>
+    </div>
+    </nav>
 
 <div class="hero">
   <div class="hero-label" data-i18n="hero.partner">Partenaire certifié</div>
@@ -297,14 +297,14 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
     <div class="stat-cell"><div class="stat-label" data-i18n="kpi.comm">Commissions</div><div class="stat-value gold" id="kpi-commissions">—</div><div class="stat-sub" id="kpi-comm-sub" data-i18n="kpi.comm.sub">par passager gagné</div></div>
   </div>
   <p class="sync-status" id="agency-sync-status"></p>
-</div>
+      </div>
 
 <div class="agent-quickbar" id="agent-quickbar">
   <button type="button" class="qa-primary" onclick="switchTab('nouveau', document.querySelector('.tab-btn[data-page=nouveau]'))" data-i18n="agent.qa.new">+ Nouveau dossier</button>
   <button type="button" onclick="switchTab('dossiers', document.querySelector('.tab-btn[data-page=dossiers]'))" data-i18n="agent.qa.files">Mes dossiers</button>
   <button type="button" onclick="switchTab('commissions', document.querySelector('.tab-btn[data-page=commissions]'))" data-i18n="agent.qa.comm">Commissions</button>
   <a href="https://wa.me/33652893858" target="_blank" rel="noopener" data-i18n="agent.qa.whatsapp">💬 Support WhatsApp</a>
-</div>
+        </div>
 <div class="agent-coach" id="agent-coach" hidden>
   <div class="agent-coach-inner">
     <ul>
@@ -313,8 +313,8 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
       <li data-i18n="agent.tip3">Joignez l'e-billet pour un traitement plus rapide</li>
     </ul>
     <button type="button" class="agent-coach-close" onclick="dismissAgentCoach()" aria-label="Fermer">✕</button>
-  </div>
-</div>
+        </div>
+      </div>
 <div class="tabs-nav">
   <button type="button" class="tab-btn active" data-page="nouveau" onclick="switchTab('nouveau',this)" data-i18n="nav.new">✦ Nouveau dossier</button>
   <button type="button" class="tab-btn" data-page="dossiers" onclick="switchTab('dossiers',this)"><span data-i18n="nav.files">Mes dossiers</span> <span class="tab-count" id="dossiers-count">0</span></button>
@@ -337,18 +337,18 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
   <div class="form-progress-step" data-step="1">1 · Passager</div>
   <div class="form-progress-step" data-step="2">2 · Vol</div>
   <div class="form-progress-step" data-step="3">3 · Perturbation</div>
-</div>
+    </div>
 <div class="commission-preview" id="commission-preview" hidden aria-hidden="true">
   <span data-i18n="agent.preview.label">Commission estimée (si gagné)</span>
   <strong id="form-commission-preview">—</strong>
-</div>
+      </div>
         <input type="hidden" id="f-probleme" value="" />
         <input type="hidden" id="f-compagnie" value="" />
 
         <div class="form-section">
           <div class="section-label" data-i18n="form.step1">Passager</div>
           <div class="auto-note" data-i18n-html="form.email_auto">✓ Pas d'email — Robin crée <strong>ref@robindesairs.eu</strong> automatiquement</div>
-          <div class="form-row">
+        <div class="form-row">
             <div class="form-group"><label data-i18n="form.lastname">Nom</label><input type="text" id="f-nom" autocomplete="family-name" /></div>
             <div class="form-group"><label data-i18n="form.firstname">Prénom</label><input type="text" id="f-prenom" autocomplete="given-name" /></div>
           </div>
@@ -380,13 +380,13 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
                 <option value="+1">🇺🇸 +1</option>
               </select>
               <div class="phone-num-input"><input type="tel" id="phoneNumber" placeholder="7XX XX XX XX" /></div>
-            </div>
+          </div>
           </div>
         </div>
 
         <div class="form-section">
           <div class="section-label" data-i18n="form.step2">Vol</div>
-          <div class="form-row">
+        <div class="form-row">
             <div class="form-group"><label data-i18n="form.pnr">PNR</label><input type="text" id="f-pnr" maxlength="6" style="text-transform:uppercase;letter-spacing:0.1em" /></div>
             <div class="form-group"><label data-i18n="form.flightno">N° vol</label><input type="text" id="f-vol" /></div>
           </div>
@@ -396,7 +396,7 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
               <input class="airline-input" id="airlineInput" type="text" autocomplete="off" />
               <div class="airline-dropdown" id="airlineDropdown"></div>
               <div class="airline-selected-display" id="airlineSelected"><span id="airlineSelectedText"></span><span class="airline-clear" onclick="clearAirline()">✕</span></div>
-            </div>
+        </div>
           </div>
           <div class="form-group">
             <label data-i18n="form.route_quick">Routes rapides</label>
@@ -406,12 +406,12 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
               <span class="route-chip" onclick="fillRoute('BJL','BRU')">BJL → BRU</span>
               <span class="route-chip" onclick="fillRoute('BJL','IST')">BJL → IST</span>
               <span class="route-chip" onclick="fillRoute('BJL','LIS')">BJL → LIS</span>
-            </div>
+          </div>
             <div class="routes-group-label">↙ BJL</div>
             <div class="routes-row">
               <span class="route-chip" onclick="fillRoute('CDG','BJL')">CDG → BJL</span>
               <span class="route-chip" onclick="fillRoute('BRU','BJL')">BRU → BJL</span>
-            </div>
+        </div>
           </div>
           <div class="form-row">
             <div class="form-group"><label data-i18n="form.from">Départ</label><input type="text" id="f-depart" style="text-transform:uppercase" maxlength="3" /></div>
@@ -430,10 +430,10 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
             <div class="incident-option" data-value="Correspondance manquée"><div class="incident-icon">↪</div><span data-i18n="issue.missed">Correspondance</span></div>
                     <p id="f-probleme-hint" style="font-size:0.75rem;color:var(--white-40);margin-bottom:10px;line-height:1.5"></p>
           <div class="panel-escale" id="panel-escale" hidden>
-            <div class="form-row">
+        <div class="form-row">
               <div class="form-group"><label data-i18n="form.escale_via">Escale</label><input type="text" id="f-escale-ville" /></div>
               <div class="form-group"><label data-i18n="form.escale_vol2">Vol 2</label><input type="text" id="f-vol2" /></div>
-            </div>
+          </div>
           </div>
           <div class="form-row">
             <div class="form-group"><label id="f-retard-label" data-i18n="form.delay">Retard (h)</label><input type="number" id="f-retard" min="0" max="72" /></div>
@@ -469,7 +469,7 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
       </div>
     </div>
   </div>
-</div>
+      </div>
 
 <div class="tab-panel" id="tab-dossiers">
   <div class="payout-banner"><div class="payout-inner"><div><h3 style="font-family:'DM Serif Display',serif;font-weight:400" data-i18n="payout.title">Paiement automatique</h3><p style="font-size:0.78rem;color:var(--white-40);margin-top:4px" data-i18n="payout.sub">Commission sous 48h · Wave, Afrimoney, QMoney</p></div></div></div>
@@ -480,7 +480,7 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
     </div>
     <div class="dossiers-toolbar">
       <input type="search" class="search-dossiers" id="filter-search" placeholder="Rechercher nom, PNR, réf…" data-i18n-placeholder="filter.search" />
-    </div>
+        </div>
     <input type="hidden" id="filter-statut" value="" />
     <div class="filter-row">
       <button type="button" class="filter-btn active" data-value="" onclick="setAgencyFilter('',this)" data-i18n="filter.all">Tous</button>
@@ -488,7 +488,7 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
       <button type="button" class="filter-btn" data-value="en-cours" onclick="setAgencyFilter('en-cours',this)" data-i18n="status.encours">En cours</button>
       <button type="button" class="filter-btn" data-value="nouveau" onclick="setAgencyFilter('nouveau',this)" data-i18n="status.nouveau">Nouveaux</button>
       <button type="button" class="filter-btn" data-value="attente-incident" onclick="setAgencyFilter('attente-incident',this)" data-i18n="status.attente">Attente</button>
-    </div>
+        </div>
     <div class="table-wrap">
       <table>
         <thead><tr>
@@ -498,9 +498,9 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
         </tr></thead>
         <tbody id="dossiers-table" data-format="partner"></tbody>
       </table>
-    </div>
-  </div>
-</div>
+        </div>
+        </div>
+      </div>
 
 <div class="tab-panel" id="tab-commissions">
   <div class="dossiers-section">
@@ -509,15 +509,15 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
       <div class="stat-cell"><div class="stat-label" data-i18n="comm.total">Total gagné</div><div class="stat-value gold" id="comm-total">—</div></div>
       <div class="stat-cell"><div class="stat-label" data-i18n="comm.pending">En attente</div><div class="stat-value" id="comm-pending">—</div></div>
       <div class="stat-cell"><div class="stat-label" data-i18n="comm.paid">Versé</div><div class="stat-value green" id="comm-paid">—</div></div>
-    </div>
+        </div>
     <div class="table-wrap">
-      <table>
+        <table>
         <thead><tr>
           <th data-i18n="col.paydate">Date</th><th data-i18n="col.ref">Réf.</th><th data-i18n="col.passenger">Passager</th>
           <th data-i18n="col.pax">Pax</th><th data-i18n="col.amount">Montant</th><th data-i18n="col.mode">Mode</th><th data-i18n="col.status">Statut</th>
         </tr></thead>
-        <tbody id="commissions-table"></tbody>
-      </table>
+          <tbody id="commissions-table"></tbody>
+        </table>
     </div>
   </div>
 </div>
