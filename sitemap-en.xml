@@ -193,4 +193,84 @@
     <xhtml:link rel="alternate" hreflang="fr" href="https://robindesairs.eu/blog/arret-folkerts-correspondance-cjue.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://robindesairs.eu/en/blog/folkerts-connecting-flight-cjeu-ruling.html"/>
   </url>
+  <url>
+    <loc>https://robindesairs.eu/en/blog/kampala-paris-flight-delay-compensation.html</loc>
+    <lastmod>2026-05-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://robindesairs.eu/blog/vol-retarde-kampala-paris-indemnite.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://robindesairs.eu/en/blog/kampala-paris-flight-delay-compensation.html"/>
+  </url>
+  <url>
+    <loc>https://robindesairs.eu/en/blog/ec-261-regulation-summary.html</loc>
+    <lastmod>2026-02-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://robindesairs.eu/blog/reglementation-ce261-resume.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://robindesairs.eu/en/blog/ec-261-regulation-summary.html"/>
+  </url>
+  <url>
+    <loc>https://robindesairs.eu/en/blog/flight-compensation-amounts-250-400-600-eur.html</loc>
+    <lastmod>2026-03-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://robindesairs.eu/blog/indemnite-vol-montants-250-400-600.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://robindesairs.eu/en/blog/flight-compensation-amounts-250-400-600-eur.html"/>
+  </url>
+  <url>
+    <loc>https://robindesairs.eu/en/blog/missed-connection-flight-compensation.html</loc>
+    <lastmod>2026-04-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://robindesairs.eu/blog/correspondance-manquee-indemnite-vol.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://robindesairs.eu/en/blog/missed-connection-flight-compensation.html"/>
+  </url>
+  <url>
+    <loc>https://robindesairs.eu/en/blog/airline-refuses-compensation-next-steps.html</loc>
+    <lastmod>2026-04-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://robindesairs.eu/blog/compagnie-refuse-payer-indemnite-que-faire.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://robindesairs.eu/en/blog/airline-refuses-compensation-next-steps.html"/>
+  </url>
+  <url>
+    <loc>https://robindesairs.eu/en/blog/nelson-lufthansa-cjeu-ruling.html</loc>
+    <lastmod>2026-04-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://robindesairs.eu/blog/arret-nelson-lufthansa-cjue.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://robindesairs.eu/en/blog/nelson-lufthansa-cjeu-ruling.html"/>
+  </url>
+  <url>
+    <loc>https://robindesairs.eu/en/blog/mcdonagh-volcanic-ash-cjeu-ruling.html</loc>
+    <lastmod>2026-04-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://robindesairs.eu/blog/arret-mcdonagh-cendres-volcaniques-cjue.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://robindesairs.eu/en/blog/mcdonagh-volcanic-ash-cjeu-ruling.html"/>
+  </url>
+  <url>
+    <loc>https://robindesairs.eu/en/blog/wegener-single-ticket-non-eu-cjeu-ruling.html</loc>
+    <lastmod>2026-05-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.85</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://robindesairs.eu/blog/arret-wegener-billet-unique-non-ue-cjue.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://robindesairs.eu/en/blog/wegener-single-ticket-non-eu-cjeu-ruling.html"/>
+  </url>
+  <url>
+    <loc>https://robindesairs.eu/en/blog/van-der-lans-hidden-defect-cjeu-ruling.html</loc>
+    <lastmod>2026-04-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://robindesairs.eu/blog/arret-van-der-lans-defaut-cache-cjue.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://robindesairs.eu/en/blog/van-der-lans-hidden-defect-cjeu-ruling.html"/>
+  </url>
+  <url>
+    <loc>https://robindesairs.eu/en/blog/iata-elfaa-ec261-validity-cjeu-ruling.html</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://robindesairs.eu/blog/arret-iata-elfaa-validite-ce261-cjue.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://robindesairs.eu/en/blog/iata-elfaa-ec261-validity-cjeu-ruling.html"/>
+  </url>
 </urlset>

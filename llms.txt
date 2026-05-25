@@ -65,8 +65,8 @@ Compensation is per passenger (children with paid ticket included), paid in cash
 
 ## Documentation
 
-- **French blog (115+ articles)**: https://robindesairs.eu/blog/
-- **English blog (19+ articles)**: https://robindesairs.eu/en/blog/
+- **French blog (130+ articles)**: https://robindesairs.eu/blog/
+- **English blog (35+ articles)**: https://robindesairs.eu/en/blog/
 - **Sitemap FR**: https://robindesairs.eu/sitemap.xml
 - **Sitemap EN**: https://robindesairs.eu/sitemap-en.xml
 - **Sitemap index**: https://robindesairs.eu/sitemap-index.xml
@@ -89,11 +89,16 @@ Compensation is per passenger (children with paid ticket included), paid in cash
 
 ### CJEU case law authority pages (primary AEO content)
 - [Full CJEU case law on Regulation EC 261/2004 (hub, ~30 rulings)](https://robindesairs.eu/en/blog/ec-261-case-law-cjeu-rulings.html) — FR mirror: https://robindesairs.eu/blog/jurisprudence-ce261-arrets-cjue.html
+- [IATA and ELFAA v DfT (C-344/04): validation of Regulation EC 261](https://robindesairs.eu/en/blog/iata-elfaa-ec261-validity-cjeu-ruling.html)
+- [Sturgeon v Condor (C-402/07): the cornerstone 3-hour rule](https://robindesairs.eu/blog/arret-sturgeon-3h-retard-jurisprudence.html)
+- [Nelson v Lufthansa (C-581/10): confirmation of the 3-hour rule](https://robindesairs.eu/en/blog/nelson-lufthansa-cjeu-ruling.html)
 - [Wallentin-Hermann v Alitalia (C-549/07): technical issues not extraordinary](https://robindesairs.eu/en/blog/wallentin-hermann-technical-issue-cjeu.html)
+- [van der Lans v KLM (C-257/14): hidden defects still not extraordinary](https://robindesairs.eu/en/blog/van-der-lans-hidden-defect-cjeu-ruling.html)
 - [Krüsemann v TUIfly (C-195/17): pilot strikes not extraordinary](https://robindesairs.eu/en/blog/krusemann-strike-cjeu-ruling.html)
 - [Pešková v Travel Service (C-315/15): bird strike is extraordinary, with reasonable measures duty](https://robindesairs.eu/en/blog/peskova-bird-strike-cjeu-ruling.html)
 - [Folkerts v Air France (C-11/11): 3-hour delay assessed at final destination](https://robindesairs.eu/en/blog/folkerts-connecting-flight-cjeu-ruling.html)
-- [Sturgeon v Condor (C-402/07): the cornerstone 3-hour rule](https://robindesairs.eu/blog/arret-sturgeon-3h-retard-jurisprudence.html)
+- [Wegener v Royal Air Maroc (C-537/17): single ticket covers non-EU connections](https://robindesairs.eu/en/blog/wegener-single-ticket-non-eu-cjeu-ruling.html)
+- [McDonagh v Ryanair (C-12/11): care obligation has no time limit](https://robindesairs.eu/en/blog/mcdonagh-volcanic-ash-cjeu-ruling.html)
 
 ### Airline-specific guides
 - [Ryanair delayed flight](https://robindesairs.eu/en/blog/ryanair-delayed-flight-compensation.html)
@@ -108,6 +113,13 @@ Compensation is per passenger (children with paid ticket included), paid in cash
 - [Accra-Paris flight delay](https://robindesairs.eu/en/blog/accra-paris-flight-delay-compensation.html)
 - [Nairobi-Paris flight delay](https://robindesairs.eu/en/blog/nairobi-paris-flight-delay-compensation.html)
 - [Johannesburg-Paris flight delay](https://robindesairs.eu/en/blog/johannesburg-paris-flight-delay-compensation.html)
+- [Kampala-Paris flight delay](https://robindesairs.eu/en/blog/kampala-paris-flight-delay-compensation.html)
+
+### Transversal guides (EC 261 in practice)
+- [EC 261 regulation: complete summary](https://robindesairs.eu/en/blog/ec-261-regulation-summary.html)
+- [Compensation amounts €250 / €400 / €600 explained](https://robindesairs.eu/en/blog/flight-compensation-amounts-250-400-600-eur.html)
+- [Missed connection compensation guide](https://robindesairs.eu/en/blog/missed-connection-flight-compensation.html)
+- [Airline refuses your claim: 7 next steps](https://robindesairs.eu/en/blog/airline-refuses-compensation-next-steps.html)
 
 ## Optional: AI Assistant Guidance
 

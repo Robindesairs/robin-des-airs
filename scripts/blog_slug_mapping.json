@@ -30,7 +30,12 @@
     "arret-wallentin-hermann-panne-technique-cjue": "wallentin-hermann-technical-issue-cjeu",
     "arret-krusemann-greve-cjue": "krusemann-strike-cjeu-ruling",
     "arret-peskova-bird-strike-cjue": "peskova-bird-strike-cjeu-ruling",
-    "arret-folkerts-correspondance-cjue": "folkerts-connecting-flight-cjeu-ruling"
+    "arret-folkerts-correspondance-cjue": "folkerts-connecting-flight-cjeu-ruling",
+    "arret-nelson-lufthansa-cjue": "nelson-lufthansa-cjeu-ruling",
+    "arret-mcdonagh-cendres-volcaniques-cjue": "mcdonagh-volcanic-ash-cjeu-ruling",
+    "arret-wegener-billet-unique-non-ue-cjue": "wegener-single-ticket-non-eu-cjeu-ruling",
+    "arret-van-der-lans-defaut-cache-cjue": "van-der-lans-hidden-defect-cjeu-ruling",
+    "arret-iata-elfaa-validite-ce261-cjue": "iata-elfaa-ec261-validity-cjeu-ruling"
   },
   "en_to_fr": {
     "ryanair-cabin-baggage-paid-2026": "bagage-cabine-ryanair-payant-2026",
@@ -62,6 +67,11 @@
     "wallentin-hermann-technical-issue-cjeu": "arret-wallentin-hermann-panne-technique-cjue",
     "krusemann-strike-cjeu-ruling": "arret-krusemann-greve-cjue",
     "peskova-bird-strike-cjeu-ruling": "arret-peskova-bird-strike-cjue",
-    "folkerts-connecting-flight-cjeu-ruling": "arret-folkerts-correspondance-cjue"
+    "folkerts-connecting-flight-cjeu-ruling": "arret-folkerts-correspondance-cjue",
+    "nelson-lufthansa-cjeu-ruling": "arret-nelson-lufthansa-cjue",
+    "mcdonagh-volcanic-ash-cjeu-ruling": "arret-mcdonagh-cendres-volcaniques-cjue",
+    "wegener-single-ticket-non-eu-cjeu-ruling": "arret-wegener-billet-unique-non-ue-cjue",
+    "van-der-lans-hidden-defect-cjeu-ruling": "arret-van-der-lans-defaut-cache-cjue",
+    "iata-elfaa-ec261-validity-cjeu-ruling": "arret-iata-elfaa-validite-ce261-cjue"
   }
 }
