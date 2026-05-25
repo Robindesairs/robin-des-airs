@@ -2,186 +2,75 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Robin des Airs — Radar vols</title>
-<style>
-:root{--navy:#0B1F3A;--green:#007A4C;--green2:#005e3a;--gold:#C9A84C;--red:#C0392B;--orange:#E67E22;--purple:#6C3483;--bg:#F0F2F5;--card:#FFFFFF;--border:#E2E4E8;--text:#1A1A2E;--text2:#6B7280;--text3:#9CA3AF;--r:10px;--r2:6px}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);font-size:13px;min-height:100vh}
-.topbar{background:var(--navy);padding:11px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;position:sticky;top:0;z-index:50}
-.brand{font-size:17px;font-weight:700;color:#fff}.brand span{color:var(--gold)}
-.brand-sub{font-size:10px;color:rgba(255,255,255,.45);margin-top:1px}
-.top-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.live-badge{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 10px;font-size:11px;color:#fff}
-.dot-live{width:7px;height:7px;border-radius:50%;background:#2ECC71;animation:pulse 1.5s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.countdown{font-size:11px;color:rgba(255,255,255,.6);min-width:90px;text-align:right}
-.btn{padding:6px 13px;border-radius:var(--r2);border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s}
-.btn:hover{background:#f0f0f0}
-.btn-primary{background:var(--green);color:#fff;border-color:var(--green)}.btn-primary:hover{background:var(--green2)}
-.btn-gold{background:var(--gold);color:var(--navy);border-color:var(--gold);font-weight:700}.btn-gold:hover{background:#b8942a}
-.btn-red{background:var(--red);color:#fff;border-color:var(--red)}
-.btn-purple{background:var(--purple);color:#fff;border-color:var(--purple)}
-.btn-sm{padding:4px 9px;font-size:11px}
-.app{max-width:1600px;margin:0 auto;padding:14px}
-/* METRICS */
-.metrics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin-bottom:14px}
-.metric{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px}
-.metric-label{font-size:10px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-.metric-val{font-size:22px;font-weight:700;line-height:1}
-.metric-val.green{color:var(--green)}.metric-val.red{color:var(--red)}.metric-val.orange{color:var(--orange)}.metric-val.gold{color:var(--gold)}.metric-val.navy{color:var(--navy)}.metric-val.purple{color:var(--purple)}
-.metric-sub{font-size:10px;color:var(--text3);margin-top:2px}
-.metric-clickable{cursor:pointer;transition:border-color .15s,box-shadow .15s,background .15s}
-.metric-clickable:hover{border-color:var(--green);background:#FAFCFB}
-.metric-active{border-color:var(--green);box-shadow:0 0 0 2px rgba(0,122,76,.22);background:#F0FAF6}
-/* MAIN TABS */
-.main-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--card);border-radius:var(--r) var(--r) 0 0;padding:0 16px;overflow-x:auto}
-.tab-btn{padding:10px 16px;font-size:12px;font-weight:500;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;white-space:nowrap;transition:color .15s}
-.tab-btn:hover{color:var(--navy)}.tab-btn.active{color:var(--green);border-bottom-color:var(--green);font-weight:700}
-.tab-pane{display:none}.tab-pane.active{display:block}
-/* STATS PERIOD TABS */
-.period-tabs{display:flex;gap:6px;margin-bottom:14px}
-.period-btn{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--card);color:var(--text2);transition:all .15s}
-.period-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
-/* CONTROLS */
-.controls{display:flex;gap:7px;margin-bottom:11px;flex-wrap:wrap;align-items:center}
-.controls input,.controls select{font-size:12px;padding:6px 10px;border-radius:var(--r2);border:1px solid var(--border);background:var(--card);color:var(--text);outline:none}
-.controls input:focus,.controls select:focus{border-color:var(--green)}
-.controls input{flex:1;min-width:140px}
-/* TABLE */
-.tcard{background:var(--card);border:1px solid var(--border);border-radius:0 0 var(--r) var(--r);overflow:hidden}
-.twrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:1300px}
-thead th{background:#F7F8FA;padding:8px 11px;text-align:left;font-weight:700;color:var(--text2);font-size:10px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);white-space:nowrap}
-tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}
-tbody tr:last-child{border-bottom:none}
-tbody tr:hover{background:#F0FAF6}
-tbody tr.row-hot{background:#FFF0E0;border-left:3px solid var(--orange)}
-tbody tr.row-hot:hover{background:#FDEBD0}
-tbody tr.row-critical{background:#FFF0F0;border-left:3px solid var(--red)}
-tbody tr.row-critical:hover{background:#FADBD8}
-tbody tr.row-eligible{background:#F0FAF6;border-left:3px solid var(--green)}
-tbody tr.row-eligible:hover{background:#D5F5E3}
-tbody td{padding:9px 11px;vertical-align:middle}
-/* BADGES */
-.badge{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap}
-.b-ok{background:#D5F5E3;color:#1E8449}.b-retard{background:#FDEBD0;color:#784212}.b-annule{background:#FADBD8;color:#922B21}
-.b-eu{background:#EBF5FB;color:#1A5276}.b-af{background:#E8F8F5;color:#0E6655}
-/* PHASE VOL */
-.phase{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;white-space:nowrap}
-.ph-taxi{background:#FEF9E7;color:#7D6608}.ph-depart{background:#EBF5FB;color:#1A5276}.ph-vol{background:#D6EAF8;color:#1A5276}
-.ph-approche{background:#E8F8F5;color:#0E6655}.ph-atterri{background:#D5F5E3;color:#1E8449}.ph-annule{background:#FADBD8;color:#922B21}
-/* RETARD COLONNE */
-.retard-h{font-weight:700;font-size:13px}.retard-ok{color:var(--green)}.retard-warn{color:var(--orange)}.retard-crit{color:var(--red)}
-/* SCORE */
-.score-bar{display:flex;align-items:center;gap:5px}
-.score-bg{width:50px;height:6px;background:#E2E4E8;border-radius:3px;overflow:hidden}
-.score-fill{height:100%;border-radius:3px;transition:width .3s}
-.score-num{font-size:11px;font-weight:700;min-width:26px}
-/* CAUSE */
-.cause-pill{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600}
-.cause-meteo{background:#EBF5FB;color:#1A5276}.cause-technique{background:#FEF9E7;color:#7D6608}
-.cause-greve{background:#FDEDEC;color:#922B21}.cause-trafic{background:#F0F0F0;color:#555}.cause-inconnue{background:#F5EEF8;color:#6C3483}
-.immat{font-family:monospace;font-size:10px;background:#F0F2F5;padding:2px 5px;border-radius:3px;color:var(--navy)}
-/* PRIORITY TAG */
-.prio-tag{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px}
-.prio-urgent{background:#FADBD8;color:#922B21;animation:blink .8s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.5}}
-.prio-high{background:#FDEBD0;color:#784212}.prio-normal{background:#EBF5FB;color:#1A5276}.prio-low{background:#F0F0F0;color:#888}
-/* MODAL */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;z-index:200;padding:12px}
-.modal{background:var(--card);border-radius:var(--r);border:1px solid var(--border);width:100%;max-width:820px;max-height:94vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,.2)}
-.modal-sm{max-width:480px}
-.modal-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--card);z-index:1}
-.modal-header h2{font-size:15px;font-weight:700;color:var(--navy)}
-.modal-body{padding:18px}
-.modal-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;position:sticky;bottom:0;background:var(--card)}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-.info-box{background:#F7F8FA;border:1px solid var(--border);border-radius:var(--r2);padding:11px 13px}
-.info-box-title{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
-.info-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px solid #EAECEE}
-.info-row:last-child{border-bottom:none}
-.info-label{color:var(--text2)}.info-val{font-weight:600;text-align:right;max-width:60%}
-.meteo-box{background:linear-gradient(135deg,#EBF5FB,#D6EAF8);border:1px solid #AED6F1;border-radius:var(--r2);padding:11px 13px}
-.meteo-box-title{font-size:10px;font-weight:700;color:#1A5276;text-transform:uppercase;letter-spacing:.5px;margin-bottom:7px}
-.evidence-box{background:#FDFEFE;border:1px solid var(--border);border-radius:var(--r2);padding:11px 13px;margin-top:10px}
-.ev-item{display:flex;align-items:flex-start;gap:8px;font-size:12px;margin-bottom:7px;padding:7px;background:#F7F8FA;border-radius:4px}
-.ev-icon{font-size:15px;flex-shrink:0}
-.elig-verdict{border-radius:var(--r2);padding:11px 14px;margin-top:10px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px}
-.elig-green{background:#D5F5E3;color:#145A32;border:1px solid #A9DFBF}
-.elig-red{background:#FADBD8;color:#7B241C;border:1px solid #F1948A}
-.elig-orange{background:#FDEBD0;color:#784212;border:1px solid #F0B27A}
-/* PUB */
-.pub-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:10px 0}
-.pub-platform{border:2px solid var(--border);border-radius:var(--r2);padding:10px;text-align:center;cursor:pointer;transition:all .15s}
-.pub-platform:hover,.pub-platform.selected{border-color:var(--green);background:#F0FAF6}
-.pub-platform .icon{font-size:20px;margin-bottom:3px}
-.pub-platform .name{font-size:11px;font-weight:600}
-.pub-platform .cpc{font-size:10px;color:var(--text2)}
-.budget-display{font-size:28px;font-weight:700;color:var(--navy);text-align:center;margin:8px 0}
-/* STATS CHARTS */
-.stat-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;font-size:12px}
-.stat-bar-label{width:140px;flex-shrink:0;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.stat-bar-bg{flex:1;height:8px;background:#E2E4E8;border-radius:4px;overflow:hidden}
-.stat-bar-fill{height:100%;border-radius:4px;transition:width .4s}
-.stat-bar-val{width:50px;text-align:right;font-weight:600;flex-shrink:0}
-.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:16px}
-.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px}
-.stat-card-val{font-size:26px;font-weight:700;margin-bottom:3px}
-.stat-card-label{font-size:11px;color:var(--text2)}
-/* ELIG CARD */
-.elig-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:12px 15px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;cursor:pointer;transition:background .1s}
-.elig-card:hover{background:#F0FAF6}
-.amount-badge{background:#D5F5E3;color:#145A32;font-size:14px;font-weight:700;padding:5px 12px;border-radius:20px}
-/* SECTION TITLE */
-.sec-title{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin:14px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
-@media(max-width:700px){.metrics{grid-template-columns:repeat(2,1fr)}.grid2,.grid3{grid-template-columns:1fr}.app{padding:8px}.pub-grid{grid-template-columns:1fr 1fr}}
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Radar vols — Robin des Airs</title>
+<meta name="description" content="Radar temps réel des vols impactés Europe ↔ Afrique. Annulations et retards, filtre CE 261 indicatif.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0B1F3A">
+<link rel="icon" href="/favicon.png" type="image/png">
+<link rel="stylesheet" href="/assets/main.css">
+<link rel="stylesheet" href="/assets/radar-page.css">
 </head>
-<body>
+<body class="radar-page">
+<script src="/assets/radar-gate.js"></script>
 
-<div class="topbar">
-  <div>
-    <div class="brand">ROBIN <span>des Airs</span> — Radar Vols</div>
-    <div class="brand-sub">Données réelles AeroDataBox · hubs France · filtres CE 261 (estim.) · rafraîchissement automatique</div>
-  </div>
-  <div class="top-right">
-    <div id="last-refresh" style="font-size:10px;color:rgba(255,255,255,.5)"></div>
-    <div class="live-badge"><div class="dot-live"></div> LIVE</div>
-    <div class="countdown" id="countdown">↻ 25:00</div>
-    <button class="btn btn-primary btn-sm" onclick="refreshAll()">↻ Actualiser</button>
-  </div>
-</div>
-
-<div class="app">
-  <div id="radar-api-alert" role="alert" style="display:none;margin-bottom:10px;padding:12px 14px;background:#FADBD8;border:1px solid #F1948A;border-radius:var(--r);color:#7B241C;font-size:12px;line-height:1.5;"></div>
-  <div class="metrics" id="metrics"></div>
-
-  <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
-    <div class="main-tabs" id="main-tabs-nav">
-      <div class="tab-btn active" onclick="switchTab(this,'t-radar')">📡 Radar temps réel</div>
-      <div class="tab-btn" onclick="switchTab(this,'t-eligible')">✅ Éligibles <span id="elig-count-badge" style="background:#D5F5E3;color:#145A32;border-radius:20px;padding:1px 6px;font-size:10px;margin-left:4px">0</span></div>
-      <div class="tab-btn" onclick="switchTab(this,'t-stats')">📊 Statistiques</div>
+<header class="radar-top">
+  <div class="radar-top-inner">
+    <div class="radar-brand">
+      <a href="/">ROBIN <span>des Airs</span></a>
+      <span class="radar-brand-sub">Radar vols · routes Europe ↔ Afrique · AeroDataBox · indicatif CE 261</span>
     </div>
+    <div class="radar-top-actions">
+      <div class="radar-pill radar-pill-live"><span class="dot" aria-hidden="true"></span> LIVE</div>
+      <span class="radar-countdown" id="countdown" aria-live="polite">↻ 25:00</span>
+      <a href="/" class="radar-btn radar-btn-ghost radar-btn-sm">Accueil</a>
+      <a href="/depot-en-ligne.html" class="radar-btn radar-btn-ghost radar-btn-sm">Déposer un dossier</a>
+      <button type="button" class="radar-btn radar-btn-primary radar-btn-sm" id="btn-refresh">↻ Actualiser</button>
+    </div>
+    <div id="last-refresh"></div>
+  </div>
+</header>
 
-    <!-- RADAR -->
-    <div class="tab-pane active" id="t-radar" style="padding:14px">
-      <div class="controls">
-        <input type="text" id="r-search" placeholder="🔍  Vol, aéroport, compagnie…">
-        <select id="r-sens">
+<main class="radar-shell">
+  <section class="radar-intro" aria-label="Source des données">
+    <p class="radar-intro-text">
+      <strong>10 vols impactés</strong> (cache matin, rapide) ou <strong>scan complet</strong> des hubs France (plus lent, ~1 min).
+      Les montants et scores sont indicatifs — qualification juridique au dossier.
+    </p>
+    <div class="radar-source-toggle" role="group" aria-label="Mode de chargement">
+      <button type="button" class="radar-source-btn active" id="src-snapshot" data-mode="snapshot">☀️ Cache matin</button>
+      <button type="button" class="radar-source-btn" id="src-live" data-mode="live">📡 Scan live</button>
+    </div>
+  </section>
+
+  <div id="radar-api-alert" role="alert"></div>
+  <div id="data-source-badge" class="radar-pill" style="display:none;margin-bottom:10px;width:fit-content;background:#eef0f4;border-color:var(--radar-border);color:var(--radar-muted)"></div>
+
+  <div class="radar-metrics" id="metrics" aria-label="Indicateurs"></div>
+
+  <div class="radar-panel">
+    <nav class="radar-tabs" id="main-tabs-nav" aria-label="Sections radar">
+      <button type="button" class="radar-tab active" data-tab="t-radar">📡 Vols</button>
+      <button type="button" class="radar-tab" data-tab="t-eligible">✅ Éligibles <span class="radar-tab-badge" id="elig-count-badge">0</span></button>
+      <button type="button" class="radar-tab" data-tab="t-stats">📊 Stats</button>
+    </nav>
+
+    <div class="radar-pane active" id="t-radar">
+      <div class="radar-controls">
+        <input type="search" id="r-search" placeholder="Vol, aéroport, compagnie…" autocomplete="off">
+        <select id="r-sens" aria-label="Sens du vol">
           <option value="">Tous sens</option>
           <option value="EU_AF">Europe → Afrique</option>
           <option value="AF_EU">Afrique → Europe</option>
-          <option value="OTHER">Autres trajets</option>
+          <option value="OTHER">Autres</option>
         </select>
-        <select id="r-statut">
+        <select id="r-statut" aria-label="Statut">
           <option value="">Tous statuts</option>
           <option value="A_LHEURE">À l'heure</option>
           <option value="RETARD">Retard</option>
           <option value="ANNULE">Annulé</option>
         </select>
-        <select id="r-phase">
+        <select id="r-phase" aria-label="Phase">
           <option value="">Toutes phases</option>
           <option value="TAXI">Taxi</option>
           <option value="DEPART">Décollage</option>
@@ -189,100 +78,105 @@ tbody td{padding:9px 11px;vertical-align:middle}
           <option value="APPROCHE">Approche</option>
           <option value="ATTERRI">Atterri</option>
         </select>
-        <select id="r-comp"><option value="">Toutes compagnies</option></select>
-        <select id="r-elig">
+        <select id="r-comp" aria-label="Compagnie"><option value="">Toutes compagnies</option></select>
+        <select id="r-elig" aria-label="Éligibilité">
           <option value="">Tous</option>
           <option value="OUI">CE 261 ✓</option>
           <option value="PEUT_ETRE">À vérifier</option>
         </select>
-        <select id="r-prio">
+        <select id="r-prio" aria-label="Priorité">
           <option value="">Toutes priorités</option>
           <option value="URGENT">🔴 Urgent</option>
           <option value="HIGH">🟠 Haute</option>
           <option value="NORMAL">🔵 Normale</option>
         </select>
       </div>
-      <div class="tcard">
-        <div class="twrap">
-          <table>
-            <thead><tr>
-              <th>Priorité</th><th>Vol</th><th>Compagnie</th><th>Sens</th>
-              <th>Départ</th><th>Arrivée</th>
-              <th>STD</th><th>STA prévue</th><th>Heure réelle arr.</th>
-              <th>Retard</th><th>Phase</th>
-              <th>Cause</th><th>Score CE 261</th><th>Immat.</th><th>Actions</th>
-            </tr></thead>
-            <tbody id="radar-tbody"></tbody>
-          </table>
-        </div>
+
+      <div id="radar-loading" class="radar-loading" hidden>
+        <div class="radar-loading-spinner" aria-hidden="true"></div>
+        <p id="radar-loading-msg">Chargement…</p>
       </div>
+
+      <div class="radar-table-wrap">
+        <table class="radar-table">
+          <thead>
+            <tr>
+              <th>Priorité</th><th>Vol</th><th>Cie</th><th>Sens</th>
+              <th>Départ</th><th>Arrivée</th>
+              <th>STD</th><th>STA</th><th>Arr. réelle</th>
+              <th>Retard</th><th>Phase</th>
+              <th>Cause</th><th>Score</th><th>Immat.</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="radar-tbody"></tbody>
+        </table>
+      </div>
+      <div class="radar-cards" id="radar-cards" aria-label="Liste mobile"></div>
     </div>
 
-    <!-- ELIGIBLES -->
-    <div class="tab-pane" id="t-eligible" style="padding:14px">
+    <div class="radar-pane" id="t-eligible">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
-        <div style="font-size:12px;color:var(--text2)">Sélection manuelle : vols à qualifier (retard long ou annulation selon le scan — analyse CE 261 au dossier)</div>
-        <button class="btn btn-sm" onclick="clearElig()">Vider</button>
+        <p style="font-size:0.78rem;color:var(--radar-muted)">Sélection pour qualification dossier (retard long ou annulation).</p>
+        <button type="button" class="radar-btn radar-btn-sm" id="btn-clear-elig">Vider</button>
       </div>
       <div id="elig-list"></div>
     </div>
 
-    <!-- STATS -->
-    <div class="tab-pane" id="t-stats" style="padding:14px">
+    <div class="radar-pane" id="t-stats">
       <div class="period-tabs">
-        <button class="period-btn active" onclick="switchPeriod(this,'jour')">Aujourd'hui</button>
-        <button class="period-btn" onclick="switchPeriod(this,'semaine')">7 jours</button>
-        <button class="period-btn" onclick="switchPeriod(this,'mois')">30 jours</button>
-        <button class="period-btn" onclick="switchPeriod(this,'annee')">12 mois</button>
+        <button type="button" class="period-btn active" data-period="jour">Aujourd'hui</button>
+        <button type="button" class="period-btn" data-period="semaine">7 jours</button>
+        <button type="button" class="period-btn" data-period="mois">30 jours</button>
+        <button type="button" class="period-btn" data-period="annee">12 mois</button>
       </div>
       <div id="stats-body"></div>
     </div>
   </div>
-</div>
+</main>
 
-<!-- MODAL DÉTAIL -->
-<div class="modal-bg" id="modal-detail" style="display:none" onclick="if(event.target===this)closeModals()">
-  <div class="modal">
-    <div class="modal-header"><h2 id="md-title">Détail vol</h2><button class="btn btn-sm" onclick="closeModals()">✕</button></div>
+<div class="modal-bg" id="modal-detail" style="display:none" hidden>
+  <div class="modal" role="dialog" aria-labelledby="md-title">
+    <div class="modal-header">
+      <h2 id="md-title">Détail vol</h2>
+      <button type="button" class="radar-btn radar-btn-sm" data-close-modal>✕</button>
+    </div>
     <div class="modal-body" id="md-body"></div>
     <div class="modal-footer">
-      <button class="btn btn-sm" onclick="closeModals()">Fermer</button>
-      <button class="btn btn-primary btn-sm" id="md-elig-btn">+ Ajouter aux éligibles</button>
-      <button class="btn btn-gold btn-sm" id="md-pub-btn">📣 Lancer pub</button>
+      <button type="button" class="radar-btn radar-btn-sm" data-close-modal>Fermer</button>
+      <button type="button" class="radar-btn radar-btn-primary radar-btn-sm" id="md-elig-btn">+ Éligibles</button>
+      <button type="button" class="radar-btn radar-btn-gold radar-btn-sm" id="md-pub-btn">📣 Pub</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL PUB -->
-<div class="modal-bg" id="modal-pub" style="display:none" onclick="if(event.target===this)closeModals()">
-  <div class="modal modal-sm">
-    <div class="modal-header"><h2>📣 Lancer une publicité</h2><button class="btn btn-sm" onclick="closeModals()">✕</button></div>
+<div class="modal-bg" id="modal-pub" style="display:none" hidden>
+  <div class="modal modal-sm" role="dialog">
+    <div class="modal-header">
+      <h2>📣 Campagne pub</h2>
+      <button type="button" class="radar-btn radar-btn-sm" data-close-modal>✕</button>
+    </div>
     <div class="modal-body">
-      <div id="pub-info" style="background:#F7F8FA;border:1px solid var(--border);border-radius:var(--r2);padding:9px 12px;margin-bottom:12px;font-size:12px;font-weight:600;color:var(--navy)"></div>
+      <div id="pub-info" class="info-box" style="margin-bottom:12px;font-weight:600"></div>
       <div class="sec-title">Plateformes</div>
       <div class="pub-grid">
-        <div class="pub-platform selected" data-p="instagram" onclick="this.classList.toggle('selected')"><div class="icon">📸</div><div class="name">Instagram</div><div class="cpc">~0.80€/clic</div></div>
-        <div class="pub-platform selected" data-p="facebook" onclick="this.classList.toggle('selected')"><div class="icon">👥</div><div class="name">Facebook</div><div class="cpc">~0.60€/clic</div></div>
-        <div class="pub-platform selected" data-p="tiktok" onclick="this.classList.toggle('selected')"><div class="icon">🎵</div><div class="name">TikTok</div><div class="cpc">~0.50€/clic</div></div>
-        <div class="pub-platform" data-p="snapchat" onclick="this.classList.toggle('selected')"><div class="icon">👻</div><div class="name">Snapchat</div><div class="cpc">~0.40€/clic</div></div>
-        <div class="pub-platform" data-p="youtube" onclick="this.classList.toggle('selected')"><div class="icon">▶️</div><div class="name">YouTube</div><div class="cpc">~0.10€/vue</div></div>
-        <div class="pub-platform" data-p="whatsapp" onclick="this.classList.toggle('selected')"><div class="icon">💬</div><div class="name">WhatsApp</div><div class="cpc">~0.30€/clic</div></div>
+        <div class="pub-platform selected" data-p="instagram">📸 Instagram</div>
+        <div class="pub-platform selected" data-p="facebook">👥 Facebook</div>
+        <div class="pub-platform selected" data-p="tiktok">🎵 TikTok</div>
+        <div class="pub-platform" data-p="snapchat">👻 Snapchat</div>
+        <div class="pub-platform" data-p="youtube">▶️ YouTube</div>
+        <div class="pub-platform selected" data-p="whatsapp">💬 WhatsApp</div>
       </div>
       <div class="sec-title">Budget</div>
-      <div class="budget-display" id="budget-disp">10 €</div>
-      <input type="range" style="width:100%" min="5" max="500" step="5" value="10" id="budget-sl" oninput="updBudget()">
-      <div style="font-size:11px;color:var(--text2);text-align:center;margin-top:4px" id="budget-reach">~200 personnes · Diaspora africaine · Aéroport concerné</div>
-      <div style="background:#FEF9E7;border:1px solid #F6C847;border-radius:var(--r2);padding:9px 12px;margin-top:10px;font-size:11px;color:#7D6608">
-        <strong>Ciblage auto :</strong> Diaspora africaine FR/BE/CH · Intérêts voyage · Langue FR + langue locale selon destination
-      </div>
+      <div style="font-size:1.75rem;font-weight:800;text-align:center;color:var(--radar-navy)" id="budget-disp">10 €</div>
+      <input type="range" style="width:100%" min="5" max="500" step="5" value="10" id="budget-sl">
+      <p style="font-size:0.72rem;color:var(--radar-muted);text-align:center;margin-top:6px" id="budget-reach"></p>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModals()">Annuler</button>
-      <button class="btn btn-gold" onclick="lancerPub()">🚀 Lancer — <span id="pub-total">10 €</span></button>
+      <button type="button" class="radar-btn" data-close-modal>Annuler</button>
+      <button type="button" class="radar-btn radar-btn-gold" id="btn-lancer-pub">🚀 Lancer — <span id="pub-total">10 €</span></button>
     </div>
   </div>
 </div>
 
-<script defer src="/assets/radar-live.js"></script>
 </body>
 </html>

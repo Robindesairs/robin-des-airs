@@ -15,6 +15,8 @@
     "seed:hubs": "node -r ts-node/register src/seedAfricanHubs.ts",
     "build:blog": "node -r ts-node/register src/scripts/build-blog.ts",
     "build:sitemap": "node -r ts-node/register src/scripts/build-sitemap.ts",
+    "build:nav-interne": "node scripts/build-navigation-interne.mjs",
+    "preview": "python3 -m http.server 8787",
     "mandat:pdf": "node scripts/generate-mandat-pdf.mjs",
     "mandat:print": "python3 scripts/generate-mandat-pdf-fpdf.py",
     "proofs:capture": "node scripts/agent-meteo-radar.js",
@@ -38,14 +40,13 @@
     "better-sqlite3": "^12.6.2",
     "dotenv": "^17.3.1",
     "gray-matter": "^4.0.3",
-    "marked": "^15.0.12",
-    "pdfkit": "^0.18.0"
+    "marked": "^15.0.12"
   },
   "devDependencies": {
+    "playwright": "^1.49.0",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^25.3.5",
     "netlify-cli": "^24.0.1",
-    "playwright": "^1.49.0",
     "puppeteer": "^23.11.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",

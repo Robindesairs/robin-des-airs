@@ -1,0 +1,92 @@
+/**
+ * Aperçu palette v2 minimaliste — sapin sur ROBIN, or discret, navy inchangé
+ * /index.html?palette=robin
+ */
+:root {
+  --sapin: #0a3d2e;
+  --gold: #c9a96e;
+  --gold-soft: #dfc18f;
+}
+
+/* ROBIN (logo) = sapin */
+.palette-robin-preview .nav-logo {
+  color: var(--sapin) !important;
+}
+
+.palette-robin-preview .nav-logo-accent {
+  color: var(--neon-b) !important;
+}
+
+.palette-robin-preview .nav-logo svg path[stroke='#00C87A'] {
+  stroke: var(--neon);
+}
+.palette-robin-preview .nav-logo svg path[stroke='#0B1F3A'],
+.palette-robin-preview .nav-logo svg path[fill='#0B1F3A'] {
+  stroke: var(--sapin);
+  fill: var(--sapin);
+}
+
+/* Mot « Robin » dans le hero */
+.palette-robin-preview .brand-sapin {
+  color: var(--sapin);
+  font-weight: 800;
+}
+
+/* Or discret — montants & badge expert (pas les CTA) */
+.palette-robin-preview .hero-stats .stat-num {
+  color: var(--gold) !important;
+}
+
+.palette-robin-preview #hero-ab-label {
+  color: var(--gold-soft) !important;
+  border-color: rgba(201, 169, 110, 0.4) !important;
+  background: rgba(201, 169, 110, 0.08);
+}
+
+.palette-robin-preview .calc-result-amount span {
+  color: var(--gold-soft) !important;
+}
+
+/* Une ligne premium footer / citation */
+.palette-robin-preview .footer-tagline strong,
+.palette-robin-preview .founder-quote .neon {
+  color: var(--gold-soft);
+}
+
+#palette-robin-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: var(--navy);
+  color: #fff;
+  padding: 10px 16px;
+  font-size: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  border-top: 2px solid var(--gold);
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.15);
+}
+
+#palette-robin-banner a {
+  color: var(--neon-b);
+  font-weight: 700;
+}
+
+#palette-robin-banner .swatch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 4px;
+}
+
+#palette-robin-banner .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}

@@ -107,9 +107,9 @@
 
     <div class="grid" role="list">
       <!-- 1 -->
-      <a class="card" href="radar.html" role="listitem">
+      <a class="card" href="radar-vols-v2.html" role="listitem">
         <div class="card-num">1</div>
-        <h2>Radar vols <span class="badge">Recommandé</span></h2>
+        <h2>Radar vols v2 <span class="badge">Recommandé · ops</span></h2>
         <p>Tableau Europe ↔ Afrique, métriques, onglets temps réel / éligibles / statistiques, modales détail &amp; démo pub. Fond clair, données simulées dans la page.</p>
         <div class="links">
           <strong>Local</strong><code id="l1"></code>
@@ -150,8 +150,8 @@
       var o = window.location.origin;
       var isFile = o === 'null' || !o || o.indexOf('file:') === 0;
       var base = isFile ? '' : o;
-      document.getElementById('l1').textContent = (isFile ? '(Ouvre via serveur local) ' : '') + (isFile ? 'http://localhost:8000/radar.html' : base + '/radar.html');
-      document.getElementById('p1').textContent = 'https://robindesairs.eu/radar.html';
+      document.getElementById('l1').textContent = (isFile ? '(Ouvre via serveur local) ' : '') + (isFile ? 'http://localhost:8000/radar-vols-v2.html' : base + '/radar-vols-v2');
+      document.getElementById('p1').textContent = 'https://robindesairs.eu/radar-vols-v2';
       document.getElementById('l2').textContent = (isFile ? 'http://localhost:8000/radar-v3.html' : base + '/radar-v3.html');
       document.getElementById('p2').textContent = 'https://robindesairs.eu/radar-v3.html';
       document.getElementById('l3').textContent = (isFile ? 'http://localhost:8000/radar-direct.html' : base + '/radar-direct.html');

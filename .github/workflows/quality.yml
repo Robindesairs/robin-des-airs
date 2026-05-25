@@ -7,7 +7,7 @@ on:
 
 jobs:
   root-quality:
-    name: Root - typecheck and tests
+    name: Root - typecheck and test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: "20"
           cache: "npm"
-      - run: npm ci
+      - run: npm install
       - run: npm run typecheck
       - run: npm test
 

@@ -109,11 +109,24 @@ function toggleLangMenu() {
   document.getElementById('lang-menu').classList.toggle('open');
 }
 function switchLang(code, flag) {
+  var lang = String(code || 'fr').toLowerCase();
+  if (lang === 'en' || lang === 'en-us' || lang === 'en-gb') lang = 'en';
+  else lang = 'fr';
+  var onEnPath = /^\/en\/?$/i.test(location.pathname || '');
+  if (lang === 'en' && !onEnPath) {
+    location.href = '/en' + (location.hash || '');
+    return;
+  }
+  if (lang === 'fr' && onEnPath) {
+    location.href = '/' + (location.hash || '');
+    return;
+  }
   document.getElementById('current-flag').textContent = flag;
   document.querySelectorAll('.lang-option').forEach(o => o.classList.remove('active'));
-  var opt = document.querySelector('.lang-option[data-lang="' + (code || 'fr').toLowerCase() + '"]');
+  var opt = document.querySelector('.lang-option[data-lang="' + lang + '"]');
   if (opt) opt.classList.add('active');
-  document.getElementById('lang-menu').classList.remove('open');
+  var langMenu = document.getElementById('lang-menu');
+  if (langMenu) langMenu.classList.remove('open');
   if (window.I18N) window.I18N.setLang(code);
   requestAnimationFrame(function() { requestAnimationFrame(updateSiteHeaderOffset); });
 }
@@ -237,25 +250,16 @@ function volTickerFormatDelayMinutes(m) {
 /**
  * Transforme la réponse JSON de /.netlify/functions/radar en lignes bandeau.
  * Filtre : trajets éligibles Robin (EU↔Afrique selon radar) + annulation ou retard ≥ 3 h (seuil type CE 261 retard important ; basé sur les retards exposés par l’API radar).
- * Les données peuvent couvrir les **14 derniers jours** (mode ticker-history / flightsHistory) ou le **timetable** du jour.
+ * Source : GET /api/vol-ticker (jusqu’à 9 vols EU↔Afrique impactés, scan multi-jours côté serveur).
  */
+var VOL_TICKER_MAX_CHIPS = 9;
 function volTickerRowsFromRadar(data) {
   ensureRouteAmountBuilt();
   if (!data || !Array.isArray(data.flights) || !data.flights.length) return null;
   var viewDate = data.viewDate || new Date().toISOString().slice(0, 10);
-  var minDelayCe261 = 180; /* 3 h — retard important (indicatif : données = horaires API, pas jugement juridique) */
-  var rows = data.flights.filter(function (f) {
-    if (!f || !f.eligible) return false;
-    if (f.cancelled) return true;
-    var d = f.delayMinutes;
-    return d != null && d >= minDelayCe261;
-  });
+  var rows = data.flights.slice();
   if (!rows.length) return null;
-  rows.sort(function (a, b) {
-    if (!!a.cancelled !== !!b.cancelled) return a.cancelled ? -1 : 1;
-    return (b.delayMinutes || 0) - (a.delayMinutes || 0);
-  });
-  return rows.slice(0, 48).map(function (f) {
+  return rows.slice(0, VOL_TICKER_MAX_CHIPS).map(function (f) {
     var fn = String(f.flight || '').replace(/\s/g, '');
     var dep = (f.dep || '').toUpperCase();
     var arr = (f.arr || '').toUpperCase();
@@ -275,36 +279,11 @@ function volTickerRowsFromRadar(data) {
     };
   });
 }
-var VOL_TICKER_RADAR_TTL_MS = 8 * 60 * 1000;
-
-/**
- * Convertit les vols du snapshot quotidien (daily-radar-snapshot)
- * dans le format attendu par volTickerRowsFromRadar :
- * f.flight (string), f.dep, f.arr, f.cancelled, f.delayMinutes, f.eligible, f.scheduledDate
- */
-function volTickerDataFromSnapshot(snapshot) {
-  if (!snapshot || !Array.isArray(snapshot.flights) || !snapshot.flights.length) return null;
-  var flights = snapshot.flights.map(function(f) {
-    return {
-      flight:       String(f.flight || ''),
-      airline:      String(f.airline || ''),
-      dep:          String(f.dep || ''),
-      arr:          String(f.arr || ''),
-      cancelled:    !!f.cancelled,
-      delayMinutes: f.retardMin != null ? Number(f.retardMin) : 0,
-      eligible:     true,   // snapshot ne contient que des vols Europe↔Afrique impactés
-      color:        f.cancelled ? 'CANCELLED' : (f.retardMin >= 180 ? 'RED' : f.retardMin >= 60 ? 'ORANGE' : 'YELLOW'),
-      statusFr:     f.cancelled ? 'Annulé' : 'Retardé',
-      scheduledDate: f.date || snapshot.date,
-    };
-  });
-  return { flights: flights, viewDate: snapshot.date, updatedAt: snapshot.updatedAt, dataSource: 'snapshot' };
-}
-
+var VOL_TICKER_RADAR_TTL_MS = 60 * 60 * 1000;
 function volTickerFetchRadar(cb) {
   try {
-    var raw = sessionStorage.getItem('robin_radar_ticker');
-    var ts = parseInt(sessionStorage.getItem('robin_radar_ticker_ts'), 10);
+    var raw = sessionStorage.getItem('robin_vol_ticker');
+    var ts = parseInt(sessionStorage.getItem('robin_vol_ticker_ts'), 10);
     if (raw && !isNaN(ts) && Date.now() - ts < VOL_TICKER_RADAR_TTL_MS) {
       try {
         cb(JSON.parse(raw));
@@ -319,51 +298,25 @@ function volTickerFetchRadar(cb) {
   }
   function cacheAndCb(data) {
     try {
-      sessionStorage.setItem('robin_radar_ticker', JSON.stringify(data));
-      sessionStorage.setItem('robin_radar_ticker_ts', String(Date.now()));
+      sessionStorage.setItem('robin_vol_ticker', JSON.stringify(data));
+      sessionStorage.setItem('robin_vol_ticker_ts', String(Date.now()));
     } catch (e2) {}
     cb(data);
   }
-
-  // 1. Essayer le snapshot quotidien (généré à 8h, données stables)
-  var snapshotUrl = origin + '/api/radar-snapshot';
-  var histUrl     = origin + '/.netlify/functions/radar?mode=ticker-history&_=' + Date.now();
-  var liveUrl     = origin + '/.netlify/functions/radar?_=' + Date.now();
-
-  fetch(snapshotUrl)
-    .then(function(r) { return r.json(); })
-    .then(function(snap) {
-      var snapData = volTickerDataFromSnapshot(snap);
-      if (snapData && snapData.flights.length >= 1) {
-        cacheAndCb(snapData);
-        return null; // court-circuit : snapshot trouvé
-      }
-      // Fallback 1 : ticker-history
-      return fetch(histUrl).then(function(r2) { return r2.json(); });
+  var url =
+    origin +
+    '/.netlify/functions/vol-ticker?_=' +
+    Date.now();
+  fetch(url)
+    .then(function (r) {
+      return r.json();
     })
-    .then(function(histData) {
-      if (histData === null) return null; // déjà résolu via snapshot
-      var rowsH = volTickerRowsFromRadar(histData);
-      if (rowsH && rowsH.length >= 1) {
-        cacheAndCb(histData);
-        return null;
-      }
-      // Fallback 2 : live
-      return fetch(liveUrl).then(function(r3) { return r3.json(); });
-    })
-    .then(function(liveData) {
-      if (liveData === null) return;
-      if (liveData && Array.isArray(liveData.flights)) cacheAndCb(liveData);
+    .then(function (data) {
+      if (data && Array.isArray(data.flights) && data.flights.length) cacheAndCb(data);
       else cb(null);
     })
     .catch(function () {
-      fetch(liveUrl)
-        .then(function (r) { return r.json(); })
-        .then(function (liveData) {
-          if (liveData && liveData.flights) cacheAndCb(liveData);
-          else cb(null);
-        })
-        .catch(function () { cb(null); });
+      cb(null);
     });
 }
 /** iOS / Android : le défilement CSS du bandeau peut se figer (onglet en arrière-plan, économie d’énergie). */
@@ -394,9 +347,8 @@ function volTickerRenderList(list) {
   var tA = get('vol_ticker_annul');
   var titleRaw = get('vol_ticker_chip_title');
   var titleAttrBase = String(titleRaw).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
-  /* Prioriser les dates les plus récentes avant rotation (pool élargi puis 9 pastilles). */
-  var recentPool = volTickerSortRowsByDateDesc(list).slice(0, Math.min(28, list.length));
-  var picked = volTickerShuffle(recentPool, volTickerDaySeed()).slice(0, 9);
+  /* Jusqu’à 9 vols impactés (tri date décroissante — les plus récents remplacent les anciens côté API). */
+  var picked = volTickerSortRowsByDateDesc(list).slice(0, VOL_TICKER_MAX_CHIPS);
   var en = window.I18N && window.I18N.getLang && window.I18N.getLang() === 'en';
   var sepDot = ' · ';
   var parts = picked.map(function (row) {
@@ -464,14 +416,72 @@ function volTickerRenderList(list) {
   });
   volTickerScheduleMarqueeRestart();
 }
-/** Bandeau : d’abord exemples statiques, puis remplacement par le radar temps réel si assez de vols. */
+function volTickerSetSrKey(i18nKey) {
+  var sr = document.getElementById('vol-ticker-sr');
+  if (sr && window.I18N) sr.textContent = window.I18N.get(i18nKey);
+}
+function volTickerSetBarMode(mode) {
+  var bar = document.getElementById('vol-ticker');
+  if (!bar) return;
+  bar.classList.toggle('vol-ticker--live', mode === 'live');
+  bar.classList.toggle('vol-ticker--empty', mode === 'empty');
+  bar.classList.toggle('vol-ticker--loading', mode === 'loading');
+}
+function volTickerRenderLoading() {
+  if (!window.I18N) return;
+  var g1 = document.getElementById('vol-ticker-g1');
+  var g2 = document.getElementById('vol-ticker-g2');
+  if (!g1 || !g2) return;
+  var msg = volTickerEscapeHtml(window.I18N.get('vol_ticker_loading'));
+  var html =
+    '<p class="vol-ticker-empty" role="status" aria-live="polite">' +
+    '<span class="vol-ticker-dot diaspora-bar-live-dot" aria-hidden="true"></span>' +
+    msg +
+    '</p>';
+  g1.innerHTML = html;
+  g2.innerHTML = '';
+  volTickerSetSrKey('vol_ticker_sr');
+  volTickerSetBarMode('loading');
+  var rail = document.getElementById('vol-ticker-rail');
+  if (rail) {
+    rail.style.webkitAnimation = 'none';
+    rail.style.animation = 'none';
+  }
+}
+function volTickerRenderEmpty() {
+  if (!window.I18N) return;
+  var g1 = document.getElementById('vol-ticker-g1');
+  var g2 = document.getElementById('vol-ticker-g2');
+  if (!g1 || !g2) return;
+  var msg = volTickerEscapeHtml(window.I18N.get('vol_ticker_empty'));
+  var html =
+    '<p class="vol-ticker-empty" role="status" aria-live="polite">' +
+    '<span class="vol-ticker-dot diaspora-bar-live-dot" aria-hidden="true"></span>' +
+    msg +
+    '</p>';
+  g1.innerHTML = html;
+  g2.innerHTML = '';
+  volTickerSetSrKey('vol_ticker_empty_sr');
+  volTickerSetBarMode('empty');
+  var rail = document.getElementById('vol-ticker-rail');
+  if (rail) {
+    rail.style.webkitAnimation = 'none';
+    rail.style.animation = 'none';
+  }
+}
+/** Bandeau : données live /api/vol-ticker uniquement ; message honnête si aucun vol éligible. */
 window.refreshVolTicker = function () {
-  var fallback = window.VOL_TICKER_FLIGHTS || [];
-  if (fallback.length && window.I18N) volTickerRenderList(fallback);
+  volTickerRenderLoading();
   function fetchRadar() {
     volTickerFetchRadar(function (data) {
       var live = volTickerRowsFromRadar(data);
-      if (live && live.length >= 1) volTickerRenderList(live);
+      if (live && live.length >= 1) {
+        volTickerRenderList(live);
+        volTickerSetSrKey('vol_ticker_sr');
+        volTickerSetBarMode('live');
+        return;
+      }
+      volTickerRenderEmpty();
     });
   }
   /* Mobile : le radar Netlify peut monopoliser la file (Lighthouse ~9s) ; le fallback statique suffit au LCP. */
@@ -1162,6 +1172,32 @@ function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
       stickyAmountEl.textContent = 'RÉCUPÉRER MES ' + totalNet + ' EUROS';
     }
   }
+
+  // ── Urgence prescription ──────────────────────────────────────────────────
+  var prescWarn = document.getElementById('res-prescription-warn');
+  if (prescWarn && dateStr) {
+    try {
+      var flightDate = new Date(dateStr);
+      var now = new Date();
+      var diffMs = now - flightDate;
+      if (diffMs > 0) {
+        var diffMonths = diffMs / (1000 * 60 * 60 * 24 * 30.44);
+        var remainMonths = Math.round(36 - diffMonths); // 3 ans = 36 mois
+        if (remainMonths <= 6 && remainMonths > 0) {
+          prescWarn.style.display = 'block';
+          prescWarn.textContent = '⏳ Attention : il vous reste environ ' + remainMonths + ' mois pour agir avant prescription (délai légal 3 ans).';
+        } else if (remainMonths <= 0) {
+          prescWarn.style.display = 'block';
+          prescWarn.textContent = '⚠️ Ce vol pourrait être prescrit (3 ans). Contactez-nous pour vérification — des exceptions existent.';
+        } else {
+          prescWarn.style.display = 'none';
+        }
+      } else {
+        prescWarn.style.display = 'none';
+      }
+    } catch (_) { prescWarn.style.display = 'none'; }
+  }
+  // ─────────────────────────────────────────────────────────────────────────
 
   return totalNet;
 }

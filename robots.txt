@@ -1,8 +1,18 @@
-# Robin des Airs — débloqué pour travailler (réactiver le blocage au lancement)
+# Robin des Airs — site public indexable (CE 261, diaspora Europe ↔ Afrique)
 User-agent: *
 Allow: /
 
-# Sitemap
-Sitemap: https://robindesairs.eu/sitemap.xml
+# Outils internes (ne pas indexer)
+Disallow: /crm/
+Disallow: /crm
+Disallow: /radar-vols-v2
+Disallow: /radar-vols-v2.html
+Disallow: /radar
+Disallow: /radar.html
+Disallow: /radar-choix
+Disallow: /navigation-interne
+Disallow: /interne
+Disallow: /generateur-pub
+Disallow: /generateur-pub.html
 
-# Pour re-bloquer au lancement : remettre Disallow: / et noindex dans index.html
+Sitemap: https://robindesairs.eu/sitemap.xml

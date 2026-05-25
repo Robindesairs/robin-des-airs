@@ -129,6 +129,8 @@
   /** @type {{ updatedAt?: string, viewDate?: string, dataSource?: string }|null} */
   let RADAR_META = null;
   let RADAR_ERROR = null;
+  let RADAR_LOAD_MODE = 'snapshot';
+  let RADAR_DATA_LABEL = '';
 
   function apiRadarOrigin() {
     var o = window.location.origin || '';
@@ -205,7 +207,25 @@
     return 'TAXI';
   }
 
+  function normalizeApiFlight(f) {
+    if (!f || f.delayMinutes != null || f.scheduledDeparture) return f;
+    return {
+      flight: f.flight,
+      airline: f.airline,
+      dep: f.dep,
+      arr: f.arr,
+      cancelled: !!f.cancelled,
+      delayMinutes: f.cancelled ? null : Number(f.retardMin || 0),
+      scheduledDeparture: f.schedDep,
+      scheduledArrival: f.schedArr,
+      scheduledDate: f.date,
+      statusFr: f.status,
+      eligible: f.eligible !== false,
+    };
+  }
+
   function mapApiFlightToVol(f, idx) {
+    f = normalizeApiFlight(f);
     var cancelled = !!f.cancelled;
     var dm = f.delayMinutes != null ? Number(f.delayMinutes) : 0;
     var statut = 'A_LHEURE';
@@ -257,6 +277,17 @@
     return vol;
   }
 
+  function hostFixHint(errMsg) {
+    var m = String(errMsg || '');
+    if (m.indexOf('fetch failed') >= 0) {
+      return (
+        ' <br><br><strong>Cause fréquente :</strong> variable Netlify <code>AERODATABOX_RAPIDAPI_HOST</code> incorrecte ' +
+        '(doit être <code>aerodatabox.p.rapidapi.com</code>, pas un fragment de clé). Supprimez-la ou corrigez-la, puis redéployez.'
+      );
+    }
+    return '';
+  }
+
   function updateApiAlert() {
     var el = document.getElementById('radar-api-alert');
     if (!el) return;
@@ -265,45 +296,112 @@
       el.innerHTML =
         '<strong>Radar indisponible ou incomplet.</strong> ' +
         String(RADAR_ERROR) +
-        ' — Vérifiez sur Netlify la variable <code style="font-size:11px">RAPIDAPI_KEY</code> ou <code style="font-size:11px">AERODATABOX_RAPIDAPI_KEY</code>, puis redéployez.';
+        hostFixHint(RADAR_ERROR) +
+        ' — Vérifiez <code>RAPIDAPI_KEY</code> et l’abonnement AeroDataBox sur RapidAPI.';
+    } else if (!VOLS.length && RADAR_LOAD_MODE === 'snapshot') {
+      el.style.display = 'block';
+      el.innerHTML =
+        '<strong>Cache matin vide.</strong> Le snapshot de 8h n’a pas encore été généré (Blobs + cron). ' +
+        'Cliquez sur <strong>Scan live</strong> pour un chargement direct, ou lancez <code>POST /api/daily-radar-snapshot</code> depuis Netlify.';
+      el.style.background = '#fef9e7';
+      el.style.borderColor = '#f6c847';
+      el.style.color = '#7d6608';
     } else {
       el.style.display = 'none';
       el.innerHTML = '';
     }
+    var badge = document.getElementById('data-source-badge');
+    if (badge) {
+      if (RADAR_DATA_LABEL) {
+        badge.style.display = 'inline-flex';
+        badge.textContent = RADAR_DATA_LABEL;
+      } else {
+        badge.style.display = 'none';
+      }
+    }
   }
 
-  function fetchRadarFromNetlify() {
+  function applyRadarPayload(data, label) {
+    if (!data) {
+      RADAR_ERROR = 'Réponse vide';
+      VOLS = [];
+      return;
+    }
+    if (data.error && (!data.flights || !data.flights.length)) {
+      RADAR_ERROR = data.error;
+      RADAR_META = { updatedAt: data.updatedAt, dataSource: data.dataSource, viewDate: data.viewDate || data.date };
+      VOLS = [];
+      return;
+    }
+    RADAR_ERROR = data.error || null;
+    RADAR_META = {
+      updatedAt: data.updatedAt,
+      dataSource: data.dataSource,
+      viewDate: data.viewDate || data.date,
+    };
+    VOLS = (data.flights || []).map(mapApiFlightToVol);
+    RADAR_DATA_LABEL = label || '';
+  }
+
+  function parseRadarResponse(r, text) {
+    var data = {};
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      throw new Error(r.ok ? 'Réponse JSON invalide' : 'HTTP ' + r.status);
+    }
+    return data;
+  }
+
+  function fetchRadarSnapshot() {
+    var url = apiRadarOrigin() + '/api/radar-snapshot?_=' + Date.now();
+    return fetch(url, { cache: 'no-store' })
+      .then(function (r) {
+        return r.text().then(function (text) {
+          var data = parseRadarResponse(r, text);
+          applyRadarPayload(data, 'Cache matin · ' + (data.flights ? data.flights.length : 0) + ' vols');
+        });
+      })
+      .catch(function (e) {
+        RADAR_ERROR = e.message || 'Snapshot inaccessible';
+        VOLS = [];
+      });
+  }
+
+  function fetchRadarLive() {
     var url = apiRadarOrigin() + '/.netlify/functions/radar?_=' + Date.now();
     return fetch(url, { cache: 'no-store' })
       .then(function (r) {
         return r.text().then(function (text) {
-          var data = {};
-          try {
-            data = JSON.parse(text);
-          } catch (e) {
-            throw new Error(r.ok ? 'Réponse JSON invalide du serveur' : 'Erreur HTTP ' + r.status + ' (réponse non JSON)');
-          }
-          if (!r.ok && data.error) {
-            RADAR_ERROR = data.error;
-            RADAR_META = { updatedAt: data.updatedAt, dataSource: data.dataSource, viewDate: data.viewDate };
-            VOLS = [];
-            return;
-          }
-          if (data.error && (!data.flights || !data.flights.length)) {
-            RADAR_ERROR = data.error;
-            RADAR_META = { updatedAt: data.updatedAt, dataSource: data.dataSource, viewDate: data.viewDate };
-            VOLS = [];
-            return;
-          }
-          RADAR_ERROR = data.error || null;
-          RADAR_META = { updatedAt: data.updatedAt, dataSource: data.dataSource, viewDate: data.viewDate };
-          VOLS = (data.flights || []).map(mapApiFlightToVol);
+          var data = parseRadarResponse(r, text);
+          applyRadarPayload(data, 'Scan live · ' + (data.flights ? data.flights.length : 0) + ' vols');
         });
       })
       .catch(function (e) {
         RADAR_ERROR = e.message || 'Erreur réseau';
         VOLS = [];
       });
+  }
+
+  function fetchRadarFromNetlify() {
+    if (RADAR_LOAD_MODE === 'live') return fetchRadarLive();
+    return fetchRadarSnapshot().then(function () {
+      if (!VOLS.length && !RADAR_ERROR) return fetchRadarLive().then(function () {
+        if (VOLS.length) RADAR_DATA_LABEL = 'Scan live (cache vide)';
+      });
+    });
+  }
+
+  function setLoading(on, msg) {
+    var el = document.getElementById('radar-loading');
+    var msgEl = document.getElementById('radar-loading-msg');
+    if (el) el.hidden = !on;
+    if (msgEl && msg) msgEl.textContent = msg;
+    document.querySelectorAll('.radar-source-btn').forEach(function (b) {
+      b.disabled = on;
+    });
+    var refreshBtn = document.getElementById('btn-refresh');
+    if (refreshBtn) refreshBtn.disabled = on;
   }
 
   function filteredVols() {
@@ -368,45 +466,92 @@
         (key === 'annule' && metricQuickFilter === 'annule') ||
         (key === 'elig' && metricQuickFilter === 'elig') ||
         (key === 'urgent' && metricQuickFilter === 'urgent');
-      return 'metric metric-clickable' + (on ? ' metric-active' : '');
+      return 'radar-metric' + (on ? ' radar-metric-active' : '');
     }
     var h = document.getElementById('metrics');
     if (!h) return;
     h.innerHTML =
       '<div class="' +
       mcc('all') +
-      '" role="button" tabindex="0" title="Afficher tous les vols" onclick="window.__radarApplyMetric(&quot;all&quot;)" onkeydown="window.__radarMetricKey(event,&quot;all&quot;)"><div class="metric-label">Vols listés</div><div class="metric-val navy">' +
+      '" role="button" tabindex="0" title="Afficher tous les vols" onclick="window.__radarApplyMetric(&quot;all&quot;)" onkeydown="window.__radarMetricKey(event,&quot;all&quot;)"><div class="radar-metric-label">Vols listés</div><div class="radar-metric-val mv-navy">' +
       VOLS.length +
-      '</div><div class="metric-sub">' +
+      '</div><div class="radar-metric-sub">' +
       subAll +
       '</div></div>' +
       '<div class="' +
       mcc('a_lheure') +
-      '" role="button" tabindex="0" onclick="window.__radarApplyMetric(&quot;a_lheure&quot;)" onkeydown="window.__radarMetricKey(event,&quot;a_lheure&quot;)"><div class="metric-label">À l\'heure</div><div class="metric-val green">' +
+      '" role="button" tabindex="0" onclick="window.__radarApplyMetric(&quot;a_lheure&quot;)" onkeydown="window.__radarMetricKey(event,&quot;a_lheure&quot;)"><div class="radar-metric-label">À l\'heure</div><div class="radar-metric-val mv-green">' +
       VOLS.filter(function (v) { return v.statut === 'A_LHEURE'; }).length +
-      '</div><div class="metric-sub">' +
+      '</div><div class="radar-metric-sub">' +
       pctHeure +
       '%</div></div>' +
       '<div class="' +
       mcc('retard_3h') +
-      '" role="button" tabindex="0" onclick="window.__radarApplyMetric(&quot;retard_3h&quot;)" onkeydown="window.__radarMetricKey(event,&quot;retard_3h&quot;)"><div class="metric-label">Retards ≥ 3h</div><div class="metric-val orange">' +
+      '" role="button" tabindex="0" onclick="window.__radarApplyMetric(&quot;retard_3h&quot;)" onkeydown="window.__radarMetricKey(event,&quot;retard_3h&quot;)"><div class="radar-metric-label">Retards ≥ 3h</div><div class="radar-metric-val mv-orange">' +
       retardsLong +
-      '</div><div class="metric-sub">CE 261 potentiel</div></div>' +
+      '</div><div class="radar-metric-sub">CE 261 potentiel</div></div>' +
       '<div class="' +
       mcc('annule') +
-      '" role="button" tabindex="0" onclick="window.__radarApplyMetric(&quot;annule&quot;)" onkeydown="window.__radarMetricKey(event,&quot;annule&quot;)"><div class="metric-label">Annulés</div><div class="metric-val red">' +
+      '" role="button" tabindex="0" onclick="window.__radarApplyMetric(&quot;annule&quot;)" onkeydown="window.__radarMetricKey(event,&quot;annule&quot;)"><div class="radar-metric-label">Annulés</div><div class="radar-metric-val mv-red">' +
       annules +
-      '</div><div class="metric-sub">—</div></div>' +
+      '</div><div class="radar-metric-sub">—</div></div>' +
       '<div class="' +
       mcc('elig') +
-      '" role="button" tabindex="0" onclick="window.__radarApplyMetric(&quot;elig&quot;)" onkeydown="window.__radarMetricKey(event,&quot;elig&quot;)"><div class="metric-label">Indemnisation (estim.)</div><div class="metric-val gold">' +
+      '" role="button" tabindex="0" onclick="window.__radarApplyMetric(&quot;elig&quot;)" onkeydown="window.__radarMetricKey(event,&quot;elig&quot;)"><div class="radar-metric-label">Indemnisation (estim.)</div><div class="radar-metric-val mv-gold">' +
       eligOui +
-      '</div><div class="metric-sub">retard 3h+ ou annul.</div></div>' +
+      '</div><div class="radar-metric-sub">retard 3h+ ou annul.</div></div>' +
       '<div class="' +
       mcc('urgent') +
-      '" role="button" tabindex="0" onclick="window.__radarApplyMetric(&quot;urgent&quot;)" onkeydown="window.__radarMetricKey(event,&quot;urgent&quot;)"><div class="metric-label">🔴 Urgents</div><div class="metric-val purple">' +
+      '" role="button" tabindex="0" onclick="window.__radarApplyMetric(&quot;urgent&quot;)" onkeydown="window.__radarMetricKey(event,&quot;urgent&quot;)"><div class="radar-metric-label">🔴 Urgents</div><div class="radar-metric-val mv-purple">' +
       urgents +
-      '</div><div class="metric-sub">annul. ou 3h+ élig.</div></div>';
+      '</div><div class="radar-metric-sub">annul. ou 3h+ élig.</div></div>';
+  }
+
+  function renderRadarCards(rows) {
+    var cards = document.getElementById('radar-cards');
+    if (!cards) return;
+    if (!rows.length) {
+      cards.innerHTML = '';
+      return;
+    }
+    cards.innerHTML = rows
+      .map(function (v) {
+        var rowCls = v.prio === 'URGENT' ? (v.statut === 'ANNULE' ? 'row-critical' : 'row-hot') : v.elig === 'OUI' ? 'row-eligible' : '';
+        var stat =
+          v.statut === 'ANNULE' ? 'Annulé' : v.statut === 'RETARD' ? 'Retard ' + retardH(v.retardMin) : "À l'heure";
+        return (
+          '<article class="radar-card-item ' +
+          rowCls +
+          '" data-id="' +
+          v.id +
+          '"><div class="radar-card-head"><div><strong>' +
+          v.vol +
+          '</strong> · ' +
+          v.comp +
+          '<div class="radar-card-route">' +
+          v.dep +
+          ' ' +
+          v.dep_ville +
+          ' → ' +
+          v.arr +
+          ' ' +
+          v.arr_ville +
+          '</div></div><span class="prio-tag ' +
+          PRIO_CLS[v.prio] +
+          '">' +
+          PRIO_LBL[v.prio] +
+          '</span></div><div style="font-size:0.72rem;color:var(--radar-muted)">' +
+          stat +
+          (v.elig === 'OUI' ? ' · CE 261 à qualifier' : '') +
+          '</div></article>'
+        );
+      })
+      .join('');
+    cards.querySelectorAll('.radar-card-item').forEach(function (card) {
+      card.addEventListener('click', function () {
+        window.__radarOpenDetail(card.getAttribute('data-id'));
+      });
+    });
   }
 
   function renderRadar() {
@@ -414,10 +559,14 @@
     var tbody = document.getElementById('radar-tbody');
     if (!tbody) return;
     if (!rows.length) {
+      var emptyMsg = RADAR_ERROR
+        ? 'Aucun vol (erreur API).'
+        : RADAR_LOAD_MODE === 'snapshot' && !metricQuickFilter
+          ? 'Cache vide — essayez Scan live.'
+          : 'Aucun vol ne correspond aux filtres.';
       tbody.innerHTML =
-        '<tr><td colspan="15" style="text-align:center;padding:2rem;color:#9CA3AF">' +
-        (RADAR_ERROR ? 'Aucun vol (erreur API). Corrigez la configuration Netlify.' : 'Aucun vol ne correspond aux filtres.') +
-        '</td></tr>';
+        '<tr><td colspan="15" style="text-align:center;padding:2rem;color:#9CA3AF">' + emptyMsg + '</td></tr>';
+      renderRadarCards([]);
       return;
     }
     tbody.innerHTML = rows
@@ -502,18 +651,19 @@
           (v.surveillanceRetour ? 'Surv. retour' : v.type) +
           '</div></td><td style="white-space:nowrap">' +
           track +
-          '<button class="btn btn-sm" onclick="event.stopPropagation();window.__radarOpenDetail(&quot;' +
+          '<button class="radar-btn radar-btn-sm" onclick="event.stopPropagation();window.__radarOpenDetail(&quot;' +
           v.id +
           '&quot;)" title="Détail">🔍</button>' +
           (v.elig === 'OUI' || v.elig === 'PEUT_ETRE'
-            ? '<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();window.__radarAddElig(&quot;' + v.id + '&quot;)" title="Éligible">✓</button>'
+            ? '<button class="radar-btn radar-btn-primary radar-btn-sm" onclick="event.stopPropagation();window.__radarAddElig(&quot;' + v.id + '&quot;)" title="Éligible">✓</button>'
             : '') +
-          '<button class="btn btn-gold btn-sm" onclick="event.stopPropagation();window.__radarOpenPub(&quot;' +
+          '<button class="radar-btn radar-btn-gold radar-btn-sm" onclick="event.stopPropagation();window.__radarOpenPub(&quot;' +
           v.id +
           '&quot;)" title="Pub">📣</button></td></tr>'
         );
       })
       .join('');
+    renderRadarCards(rows);
   }
 
   function renderCompFilter() {
@@ -732,7 +882,7 @@
           '</div></div>'
         : '') +
       eligV;
-    document.getElementById('modal-detail').style.display = 'flex';
+    openModal('modal-detail');
   }
 
   function addElig(id) {
@@ -742,7 +892,7 @@
     document.getElementById('elig-count-badge').textContent = String(ELIGIBLES.length);
     renderElig();
     closeModals();
-    switchTab(document.querySelector('[onclick*="t-eligible"]'), 't-eligible');
+    switchTab(document.querySelector('[data-tab="t-eligible"]'), 't-eligible');
   }
 
   function removeElig(id) {
@@ -784,9 +934,9 @@
         v.dep +
         '→' +
         v.arr +
-        '</div></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="amount-badge" style="flex-direction:column;line-height:1.2;padding:6px 14px"><span style="font-size:10px;font-weight:600;opacity:.7">à dossier</span><span style="font-size:16px">CE 261</span></span><button class="btn btn-gold btn-sm" onclick="event.stopPropagation();window.__radarOpenPub(&quot;' +
+        '</div></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="amount-badge" style="flex-direction:column;line-height:1.2;padding:6px 14px"><span style="font-size:10px;font-weight:600;opacity:.7">à dossier</span><span style="font-size:16px">CE 261</span></span><button class="radar-btn radar-btn-gold radar-btn-sm" onclick="event.stopPropagation();window.__radarOpenPub(&quot;' +
         v.id +
-        '&quot;)">📣 Pub</button><button class="btn btn-sm" onclick="event.stopPropagation();window.__radarRemoveElig(&quot;' +
+        '&quot;)">📣 Pub</button><button class="radar-btn radar-btn-sm" onclick="event.stopPropagation();window.__radarRemoveElig(&quot;' +
         v.id +
         '&quot;)">✕</button></div></div>'
       );
@@ -807,7 +957,7 @@
       ' · ' +
       (currentPubVol.statut === 'ANNULE' ? 'Annulé' : 'Retard ' + retardH(currentPubVol.retardMin));
     updBudget();
-    document.getElementById('modal-pub').style.display = 'flex';
+    openModal('modal-pub');
   }
 
   function updBudget() {
@@ -843,17 +993,32 @@
   }
 
   function switchTab(el, id) {
-    document.querySelectorAll('.tab-btn').forEach(function (t) { t.classList.remove('active'); });
+    document.querySelectorAll('.radar-tab, .tab-btn').forEach(function (t) { t.classList.remove('active'); });
     if (el) el.classList.add('active');
-    document.querySelectorAll('.tab-pane').forEach(function (t) { t.classList.remove('active'); });
-    document.getElementById(id).classList.add('active');
+    document.querySelectorAll('.radar-pane, .tab-pane').forEach(function (t) { t.classList.remove('active'); });
+    var pane = document.getElementById(id);
+    if (pane) pane.classList.add('active');
     if (id === 't-stats') renderStats();
     if (id === 't-eligible') renderElig();
   }
 
   function closeModals() {
-    document.getElementById('modal-detail').style.display = 'none';
-    document.getElementById('modal-pub').style.display = 'none';
+    var d = document.getElementById('modal-detail');
+    var p = document.getElementById('modal-pub');
+    if (d) { d.style.display = 'none'; d.hidden = true; }
+    if (p) { p.style.display = 'none'; p.hidden = true; }
+  }
+
+  function openModal(id) {
+    var m = document.getElementById(id);
+    if (m) { m.hidden = false; m.style.display = 'flex'; }
+  }
+
+  function setSourceMode(mode) {
+    RADAR_LOAD_MODE = mode === 'live' ? 'live' : 'snapshot';
+    document.querySelectorAll('.radar-source-btn').forEach(function (b) {
+      b.classList.toggle('active', b.getAttribute('data-mode') === RADAR_LOAD_MODE);
+    });
   }
 
   function onRadarStatutEligPrioChange() {
@@ -891,23 +1056,31 @@
     var tbody = document.getElementById('radar-tbody');
     if (tbody) {
       tbody.innerHTML =
-        '<tr><td colspan="15" style="text-align:center;padding:2rem;color:#9CA3AF">Chargement des vols depuis le serveur…</td></tr>';
+        '<tr><td colspan="15" style="text-align:center;padding:2rem;color:#9CA3AF">Chargement…</td></tr>';
     }
-    fetchRadarFromNetlify().then(function () {
-      updateApiAlert();
-      renderMetrics();
-      renderRadar();
-      renderCompFilter();
-      if (currentPeriod) renderStats();
-      renderElig();
-      countdownSec = 25 * 60;
-      var n = new Date();
-      var el = document.getElementById('last-refresh');
-      if (el) {
-        var extra = RADAR_META && RADAR_META.updatedAt ? ' · API ' + new Date(RADAR_META.updatedAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '';
-        el.textContent = 'Dernière actu : ' + String(n.getHours()).padStart(2, '0') + ':' + String(n.getMinutes()).padStart(2, '0') + extra;
-      }
-    });
+    var loadMsg = RADAR_LOAD_MODE === 'live' ? 'Scan live AeroDataBox (peut prendre ~1 min)…' : 'Lecture cache matin…';
+    setLoading(true, loadMsg);
+    fetchRadarFromNetlify()
+      .then(function () {
+        updateApiAlert();
+        renderMetrics();
+        renderRadar();
+        renderCompFilter();
+        if (currentPeriod) renderStats();
+        renderElig();
+        countdownSec = 25 * 60;
+        var n = new Date();
+        var el = document.getElementById('last-refresh');
+        if (el) {
+          var extra = RADAR_META && RADAR_META.updatedAt
+            ? ' · ' + new Date(RADAR_META.updatedAt).toLocaleString('fr-FR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })
+            : '';
+          el.textContent = 'Maj ' + String(n.getHours()).padStart(2, '0') + ':' + String(n.getMinutes()).padStart(2, '0') + extra;
+        }
+      })
+      .finally(function () {
+        setLoading(false);
+      });
   }
 
   window.__radarOpenDetail = openDetail;
@@ -916,6 +1089,46 @@
   window.__radarOpenPub = openPub;
   window.__radarApplyMetric = applyMetricFilter;
   window.__radarMetricKey = metricKey;
+
+  document.querySelectorAll('.radar-tab').forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      switchTab(tab, tab.getAttribute('data-tab'));
+    });
+  });
+  document.querySelectorAll('.period-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.period-btn').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      currentPeriod = btn.getAttribute('data-period') || 'jour';
+      renderStats();
+    });
+  });
+  document.querySelectorAll('[data-close-modal]').forEach(function (btn) {
+    btn.addEventListener('click', closeModals);
+  });
+  document.getElementById('modal-detail') &&
+    document.getElementById('modal-detail').addEventListener('click', function (e) {
+      if (e.target === e.currentTarget) closeModals();
+    });
+  document.getElementById('modal-pub') &&
+    document.getElementById('modal-pub').addEventListener('click', function (e) {
+      if (e.target === e.currentTarget) closeModals();
+    });
+  document.getElementById('btn-refresh') && document.getElementById('btn-refresh').addEventListener('click', refreshAll);
+  document.getElementById('btn-clear-elig') && document.getElementById('btn-clear-elig').addEventListener('click', clearElig);
+  document.getElementById('btn-lancer-pub') && document.getElementById('btn-lancer-pub').addEventListener('click', lancerPub);
+  document.getElementById('budget-sl') && document.getElementById('budget-sl').addEventListener('input', updBudget);
+  document.querySelectorAll('.pub-platform').forEach(function (p) {
+    p.addEventListener('click', function () { p.classList.toggle('selected'); });
+  });
+  document.querySelectorAll('.radar-source-btn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var mode = btn.getAttribute('data-mode');
+      if (mode === RADAR_LOAD_MODE) return;
+      setSourceMode(mode);
+      refreshAll();
+    });
+  });
 
   document.getElementById('r-search') && (document.getElementById('r-search').oninput = renderRadar);
   document.getElementById('r-sens') && (document.getElementById('r-sens').onchange = renderRadar);

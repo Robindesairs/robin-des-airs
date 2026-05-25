@@ -9,6 +9,7 @@
   directory = "netlify/functions"
   # nft trace les require au chargement du module ; esbuild omettait @netlify/blobs dans le zip
   node_bundler = "nft"
+  # Timeout synchrone max 26 s (plan standard). Valeur 60 dans ce fichier fait echouer le deploy.
 
 # Relais Gemini après ~20s sans réponse humaine (traitement toutes les minutes)
 [functions."whatsapp-gemini-fallback"]
@@ -18,6 +19,23 @@
 [functions."daily-radar-snapshot-background"]
   schedule = "0 6 * * *"
 
+# Radar : 8h bandeau+email, 16-17h EU→AF, 18h-2h AF→EU — scan toutes les 10 min.
+[functions."radar-monitor"]
+  schedule = "*/10 * * * *"
+
+# Rapport matinal WhatsApp 9h15 Paris (= 7h15 UTC en été CEST).
+[functions."morning-report"]
+  schedule = "15 7 * * *"
+
+[functions."daily-radar-snapshot"]
+  timeout = 26
+
+[functions."radar-ticker-refresh"]
+  timeout = 26
+
+[functions."vol-ticker"]
+  timeout = 26
+
 # Publication Instagram — chaque jour à 7h UTC (9h Paris été / 8h hiver)
 [functions."instagram-publisher"]
   schedule = "0 7 * * *"
@@ -25,11 +43,12 @@
 [build]
   publish = "."
   # S'assurer que les deps (dont @netlify/blobs) sont présentes avant le bundle des fonctions
-  command = "npm install && npm install --prefix netlify/functions && npm run build:sitemap && npm run build:blog"
+  command = "npm install && npm install --prefix netlify/functions && npm run build:sitemap && npm run build:blog && npm run build:nav-interne"
 
 # TEMPORAIRE — démo Claude : connexion code agence seul (retirer ALLOW_AGENCY_CODE_ONLY après)
 [context.production.environment]
   ALLOW_AGENCY_CODE_ONLY = "true"
+  RADAR_REPORT_EMAIL = "expert@robindesairs.eu"
 
 # Forcer HTTPS (cadenas) : toute requête en http est redirigée en https
 [[redirects]]
@@ -113,6 +132,11 @@
   status = 200
 
 [[redirects]]
+  from = "/api/submit-partner-agreement"
+  to = "/.netlify/functions/submit-partner-agreement"
+  status = 200
+
+[[redirects]]
   from = "/droit-retractation"
   to = "/droit-retractation.html"
   status = 200
@@ -177,6 +201,48 @@
   to = "/.netlify/functions/agency-dossiers"
   status = 200
 
+[[redirects]]
+  from = "/api/collect-proofs"
+  to = "/.netlify/functions/collect-proofs"
+  status = 200
+
+[[redirects]]
+  from = "/api/proof-report"
+  to = "/.netlify/functions/proof-report"
+  status = 200
+
+[[redirects]]
+  from = "/api/vol-ticker"
+  to = "/.netlify/functions/vol-ticker"
+  status = 200
+
+[[redirects]]
+  from = "/api/daily-radar-snapshot"
+  to = "/.netlify/functions/daily-radar-snapshot"
+  status = 200
+
+[[redirects]]
+  from = "/api/radar-monitor"
+  to = "/.netlify/functions/radar-monitor"
+  status = 200
+
+[[redirects]]
+  from = "/api/morning-report"
+  to = "/.netlify/functions/morning-report"
+  status = 200
+
+[[redirects]]
+  from = "/api/radar-stats"
+  to = "/.netlify/functions/radar-stats"
+  status = 200
+
+# Ancien lien bot WATI /sign/xxx → 404 ; filet vers mandat (params perdus — corriger dans Make)
+[[redirects]]
+  from = "/sign/*"
+  to = "/mandat.html"
+  status = 302
+  force = true
+
 # Webhook WhatsApp 360dialog
 [[redirects]]
   from = "/api/whatsapp-webhook"
@@ -194,21 +260,5 @@
   from = "/api/whatsapp-status"
   to = "/.netlify/functions/whatsapp-status"
   status = 200
-
-[[redirects]]
-  from = "/api/yousign-init"
-  to = "/.netlify/functions/yousign-init"
-  status = 200
-
-[[redirects]]
-  from = "/api/radar-snapshot"
-  to = "/.netlify/functions/radar-snapshot"
-  status = 200
-
-[[redirects]]
-  from = "/api/send-preuve-pdf"
-  to = "/.netlify/functions/send-preuve-pdf"
-  status = 200
-
 
 # Page 404 personnalisée (créer 404.html si vous en voulez une)

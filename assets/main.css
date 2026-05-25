@@ -313,6 +313,30 @@ a:focus-visible, button:focus-visible, .cb:focus-visible, .reason-btn:focus-visi
   padding-right: 1.5rem;
   flex-shrink: 0;
 }
+.vol-ticker--empty .vol-ticker-rail,
+.vol-ticker--loading .vol-ticker-rail {
+  -webkit-animation: none;
+  animation: none;
+  width: 100%;
+}
+.vol-ticker-empty {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.35rem 0.5rem;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.82);
+  white-space: normal;
+  max-width: 100%;
+}
+@media (min-width: 768px) {
+  .vol-ticker-empty {
+    white-space: nowrap;
+  }
+}
 button.vol-ticker-chip {
   display: inline-flex;
   align-items: center;
@@ -512,6 +536,19 @@ button.vol-ticker-chip .vol-ticker-chip-flight {
   min-width: 0;
 }
 
+.vol-ticker-ops-link {
+  margin-left: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gold, #c9a84c);
+  text-decoration: none;
+  white-space: nowrap;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.45);
+}
+.vol-ticker-ops-link:hover {
+  color: #fff;
+  border-bottom-color: #fff;
+}
 .diaspora-bar-title-text {
   display: flex;
   align-items: center;
@@ -641,6 +678,33 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 
 /* ── Lang dropdown — compact flag button ── */
 .lang-dropdown { position: relative; }
+.nav-lang-direct,
+.nav-drawer-lang-direct {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--navy);
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  white-space: nowrap;
+  transition: border-color 0.15s, color 0.15s;
+}
+.nav-lang-direct:hover,
+.nav-drawer-lang-direct:hover {
+  border-color: var(--neon);
+  color: var(--neon-dark);
+}
+.nav-drawer-lang-direct {
+  display: inline-flex;
+  align-items: center;
+}
+.nav-drawer-lang-sep {
+  color: var(--gray2);
+  margin: 0 4px;
+}
+
 .lang-btn-wrap {
   display: flex; align-items: center; gap: 3px;
   background: transparent; border: 1.5px solid var(--border);

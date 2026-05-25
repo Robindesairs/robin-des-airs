@@ -1,11 +1,19 @@
+# Hub navigation interne (équipe — noindex)
+/navigation-interne    /navigation-interne.html    200
+/interne               /navigation-interne.html    200
+
+# Accueil anglais (URL /en — même page, langue EN via i18n.js)
+/en    /index.html    200
+
 # Netlify : forcer la racine à servir index.html
 /    /index.html    200
 
 # Redirect mandat → autorisation (renommage SEO)
 /mandat.html    /autorisation.html    301
 
-# Radar vols (page complète = radar.html, copie alignée sur radar-vols-v2.html)
-/radar                       /radar.html                       200
+# Radar vols — tour de contrôle ops (données live AeroDataBox)
+/radar                       /radar-vols-v2.html               200
+/radar-vols-v2               /radar-vols-v2.html               200
 /radar-choix                /radar-choix.html                 200
 /crm.html                   /crm/                             301
 /api/crm-auth               /.netlify/functions/crm-auth      200

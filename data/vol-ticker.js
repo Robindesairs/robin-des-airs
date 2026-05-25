@@ -1,4 +1,4 @@
-/* Fallback si /api/vol-ticker est indisponible.
+/* Ancien fallback illustratif — le bandeau n’utilise plus cette liste (message vide si /api/vol-ticker sans vol).
  * En production : 10 derniers vols impactés Europe ↔ Afrique (cache quotidien AeroDataBox).
  * Dates recalculées au chargement : aujourd’hui, hier, avant-hier uniquement (affichage « proche » du réel).
  * `route` : codes IATA — villes affichées via AIRPORT_CITY dans index.html. */

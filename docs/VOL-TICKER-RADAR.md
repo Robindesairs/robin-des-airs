@@ -2,29 +2,40 @@
 
 ## Comportement
 
-1. **Au chargement** : le bandeau affiche d’abord la liste **statique** (`data/vol-ticker.js`) pour ne pas laisser la zone vide.
-2. **Ensuite** : `index.html` appelle d’abord **`GET /.netlify/functions/radar?mode=ticker-history`**. Le radar utilise **uniquement AeroDataBox (RapidAPI)** : **même jour** (Europe/Paris) que l’appel « live » — il n’y a plus d’historique 14 j. via Aviation Edge.
-3. **Si** cette réponse ne contient **aucun** vol utile (erreur API, filtre bandeau vide, etc.) → **repli** sur **`GET /.netlify/functions/radar`** (même source, données du jour).
-4. **Filtre bandeau** (côté page) : **éligible** + (**annulé** ou **retard ≥ 3 h**). Jusqu’à **9** pastilles tirées au sort (graine journalière).
+1. **Au chargement** : message « Mise à jour… », puis appel `GET /api/vol-ticker`.
+2. **Serveur** : remonte les **derniers jours** (défaut **7**, variable `TICKER_HISTORY_DAYS`) jusqu’à **9** vols EU↔Afrique impactés (annulé ou retard arrivée ≥ 3 h).
+3. **Cache Blobs** : fusion avec l’historique — les **vols les plus récents** remplacent les plus anciens (max 9).
+4. **Si 0 vol** après scan : message *« Aucun vol EU–Afrique ≥ 3 h détecté aujourd’hui »* (plus d’exemples fictifs).
 
-### Accès API
+## Timeout Netlify
 
-- **RapidAPI / AeroDataBox** : variable `RAPIDAPI_KEY` sur Netlify. Coût = crédits selon ton plan RapidAPI (plusieurs requêtes aéroport par chargement du radar).
+Fonctions radar / bandeau : **26 s** max Netlify (`netlify.toml` ; 60 s uniquement sur offre Pro). Le scan est découpé (cron 1 jour + cache Blobs) pour ne pas dépasser le timeout.
 
-## Cache
+## Variables Netlify (optionnel)
 
-- **sessionStorage** ~ **8 minutes** (`robin_radar_ticker`) pour limiter les appels (l’historique est plus lourd que le seul timetable).
+| Variable | Défaut | Rôle |
+|----------|--------|------|
+| `TICKER_HISTORY_DAYS` | `7` | Jours max à parcourir (cron / refresh complet) |
+| `TICKER_LIVE_SCAN_DAYS` | `4` | Jours max par appel live `vol-ticker` (timeout) |
+| `TICKER_BANNER_COUNT` | `9` | Nombre de pastilles |
+| `RAPIDAPI_KEY` | — | AeroDataBox |
 
-## Fallback
+## Accès API
 
-- Pas de clé API, erreur réseau, ou aucun vol ne correspond au filtre → le bandeau reste sur les **exemples** de `vol-ticker.js`.
+- **RapidAPI / AeroDataBox** : `RAPIDAPI_KEY` obligatoire. Host : `aerodatabox.p.rapidapi.com`.
 
-## Périmètre des « vrais » vols
+## Cache navigateur
 
-- Mêmes **hubs** que le radar (France métropole + La Réunion : CDG, ORY, MRS, LYS, NCE, BOD, TLS, NTE, LIL, SXB, RUN) — départs **et** arrivées.
-- **Modes `ticker-history` et live** : données **du jour** (Paris) via AeroDataBox sur les mêmes hubs.
-- Ce ne sont **pas** tous les retards mondiaux ; uniquement ce qui traverse ce périmètre et le filtre éligibilité Robin.
+- **sessionStorage** ~ **60 minutes** (`robin_vol_ticker`).
 
-## Légal / produit
+## Périmètre
 
-- Le **disclaimer** pied de page (exemples informatifs, CE 261) reste pertinent : les pastilles radar sont des **indicateurs temps réel sous réserve** de fiabilité fournisseur, **sans** garantie d’indemnisation.
+- **Europe** (toujours) : CDG, ORY, RUN.
+- **Afrique subsaharienne** : ~46 hubs (capitales + diaspora) — **hors Maghreb** (pas CMN, ALG, TUN, CAI…).
+- Chaque exécution scanne EU + **12 hubs Afrique** en rotation (~4 runs pour tout couvrir).
+- Filtre : trajet **Europe ↔ Afrique subsaharienne** + CE 261 + retard ≥ 3 h ou annulé.
+- Variable optionnelle : `TICKER_EXTRA_AFRICA_HUBS=XXX,YYY` pour ajouter des IATA.
+
+## Légal
+
+- Indicateurs temps réel sous réserve du fournisseur — **sans** garantie d’indemnisation (disclaimer pied de page).

@@ -30,6 +30,8 @@ function main(): void {
     { loc: SITE_URL + '/mandat-representation.html', changefreq: 'yearly', priority: '0.4' },
     { loc: SITE_URL + '/droit-retractation.html', changefreq: 'yearly', priority: '0.4' },
     { loc: SITE_URL + '/blog/', changefreq: 'weekly', priority: '0.9' },
+    { loc: SITE_URL + '/nos-tarifs.html', changefreq: 'monthly', priority: '0.7' },
+    { loc: SITE_URL + '/parrainage.html', changefreq: 'monthly', priority: '0.6' },
     { loc: SITE_URL + '/destinations/dakar.html', changefreq: 'monthly', priority: '0.7' },
     { loc: SITE_URL + '/destinations/abidjan.html', changefreq: 'monthly', priority: '0.7' },
     { loc: SITE_URL + '/destinations/bamako.html', changefreq: 'monthly', priority: '0.7' },

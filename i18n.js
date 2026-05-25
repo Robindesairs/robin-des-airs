@@ -1,7 +1,32 @@
 /* Robin des Airs — Traductions FR et EN uniquement */
 window.I18N = (function() {
+  function isEnPath() {
+    try {
+      return /^\/en\/?$/i.test(location.pathname || '');
+    } catch (e) {
+      return false;
+    }
+  }
+
   var stored = (localStorage.getItem('robin_lang') || 'fr').toLowerCase();
-  var currentLang = (stored === 'en' ? 'en' : 'fr');
+  var urlLang = '';
+  try {
+    urlLang = (new URLSearchParams(location.search).get('lang') || '').toLowerCase();
+  } catch (e2) {}
+  var currentLang = 'fr';
+  if (isEnPath() || urlLang === 'en') {
+    currentLang = 'en';
+    try {
+      localStorage.setItem('robin_lang', 'en');
+    } catch (e3) {}
+  } else if (urlLang === 'fr') {
+    currentLang = 'fr';
+    try {
+      localStorage.setItem('robin_lang', 'fr');
+    } catch (e4) {}
+  } else {
+    currentLang = stored === 'en' ? 'en' : 'fr';
+  }
   var storedCur = (localStorage.getItem('robin_currency') || 'eur').toLowerCase();
   var currentCurrency = storedCur === 'fcfa' || storedCur === 'usd' ? storedCur : 'eur';
   /** Taux indicatifs pour l’affichage uniquement (indemnités légales en EUR). */
@@ -18,13 +43,17 @@ window.I18N = (function() {
       tarifs_back_home: "Accueil",
       skip_link: "Aller au contenu principal",
       diaspora_bar_flags_aria: "Diaspora : Sénégal, Mali, Côte d’Ivoire, Guinée, Cameroun, RDC, Bénin, Togo, Ghana, Nigeria (drapeaux ci-contre).",
-      vol_ticker_sr: "Les 10 derniers vols impactés Europe–Afrique et Afrique–Europe (retard d’au moins 3 h ou annulation). Jusqu’à 600 € si le CE 261 s’applique. Cliquez sur une pastille pour préremplir le formulaire.",
-      vol_ticker_label: "10 derniers vols impactés EU ↔ Afrique",
-      vol_ticker_label_short: "10 vols",
+      vol_ticker_sr: "Bandeau des vols Europe–Afrique et Afrique–Europe récemment en retard d’au moins 3 h à l’arrivée ou annulés. Jusqu’à 600 € si le CE 261 s’applique. Cliquez sur une pastille pour préremplir le formulaire.",
+      vol_ticker_label: "Retards et annulations — vols Europe ↔ Afrique",
+      vol_ticker_label_short: "Europe ↔ Afrique",
+      vol_ticker_ops_link: "Tour de contrôle",
       vol_ticker_retard: "Retard",
       vol_ticker_annul: "Annulé",
       vol_ticker_eligible_pax: "Éligible {amount}/pass.",
       vol_ticker_chip_title: "Cliquer : message type + vol et date dans le formulaire",
+      vol_ticker_empty: "Aucun vol EU–Afrique ≥ 3 h détecté sur les derniers jours suivis.",
+      vol_ticker_empty_sr: "Aucun vol impacté Europe–Afrique (retard à l’arrivée d’au moins 3 h ou annulation) sur les hubs suivis, après recherche sur les derniers jours.",
+      vol_ticker_loading: "Mise à jour des vols impactés…",
       vol_click_eligibility_body: "Bonjour, j'ai été affecté par le vol {flight} du {date}, qui a été {incident}. J'aimerais vérifier si je suis éligible à une indemnisation pouvant aller jusqu'à 600 € par passager selon la loi européenne.",
       vol_click_incident_delay: "retardé",
       vol_click_incident_cancel: "annulé",
@@ -52,6 +81,10 @@ window.I18N = (function() {
       hero_stat_lost: "Si on perd",
       hero_stat_24h: "Dossier sous 24h",
       nav_cta: "Combien je touche ? →",
+      nav_english_version: "🇬🇧 English",
+      nav_french_version: "🇫🇷 Français",
+      nav_drawer_english: "🇬🇧 Version anglaise",
+      nav_drawer_french: "🇫🇷 Version française",
       nav_drawer_calc: "🧮 Calculateur",
       nav_drawer_loi: "📋 La loi CE 261",
       nav_drawer_how: "⚙️ Comment ça marche",
@@ -152,7 +185,7 @@ window.I18N = (function() {
       footer_tarifs: "Nos tarifs",
       footer_histoire: "Notre histoire",
       footer_vol_examples_disclaimer: "Les exemples de vols indiqués sont fournis à titre informatif. L'éligibilité et le montant de l'indemnisation dépendent des conditions prévues par le règlement (CE) n°261/2004 (retard important, annulation ou surbooking, circonstances applicables), avec une indemnité pouvant aller jusqu'à 600 € par passager selon la distance du vol.",
-      footer_vol_ticker_data_note: "Bandeau : 10 derniers vols impactés (annulation ou retard à l’arrivée ≥ 3 h) sur lignes Europe ↔ Afrique, mis à jour chaque jour (AeroDataBox, hubs France + principales villes africaines). Sinon exemples illustratifs. Jusqu’à 600 € si le CE 261 s’applique. Un clic préremplit le formulaire.",
+      footer_vol_ticker_data_note: "Bandeau : jusqu’à 9 vols impactés (annulation ou retard à l’arrivée ≥ 3 h) sur lignes Europe ↔ Afrique, recherche sur les derniers jours si besoin (AeroDataBox). Les vols les plus récents remplacent les plus anciens. Si aucun vol ne correspond, message explicite — pas d’exemples fictifs. Jusqu’à 600 € si le CE 261 s’applique.",
       footer_no_legal_advice: "Rien sur ce site ne constitue un conseil juridique ni une garantie de résultat ; l’éligibilité et les montants ne peuvent être affirmés qu’après examen individuel du dossier.",
       footer_currency_hint: "Montants convertis en FCFA ou USD à titre indicatif (taux fixes). Les indemnités CE&nbsp;261 sont fixées en euros.",
       ready_claim: "Prêt à réclamer ?",
@@ -299,13 +332,17 @@ window.I18N = (function() {
       tarifs_back_home: "Home",
       skip_link: "Skip to main content",
       diaspora_bar_flags_aria: "Diaspora: Senegal, Mali, Ivory Coast, Guinea, Cameroon, DRC, Benin, Togo, Ghana, Nigeria (flags beside).",
-      vol_ticker_sr: "Latest 10 impacted Europe–Africa and Africa–Europe flights (3h+ delay or cancellation). Up to €600 if EU 261 applies. Click a pill to pre-fill the form.",
-      vol_ticker_label: "Latest 10 impacted EU ↔ Africa flights",
-      vol_ticker_label_short: "10 flights",
+      vol_ticker_sr: "Strip of Europe–Africa and Africa–Europe flights with 3h+ arrival delay or cancellation. Up to €600 if EU 261 applies. Click a pill to pre-fill the form.",
+      vol_ticker_label: "Delays & cancellations — Europe ↔ Africa flights",
+      vol_ticker_label_short: "Europe ↔ Africa",
+      vol_ticker_ops_link: "Control tower",
       vol_ticker_retard: "Delayed",
       vol_ticker_annul: "Cancelled",
       vol_ticker_eligible_pax: "Eligible {amount}/pax",
       vol_ticker_chip_title: "Click: template message + flight and date in the form",
+      vol_ticker_empty: "No EU–Africa flight with 3h+ delay found on recent monitored days.",
+      vol_ticker_empty_sr: "No impacted Europe–Africa flights (3h+ arrival delay or cancellation) on monitored hubs after scanning recent days.",
+      vol_ticker_loading: "Updating impacted flights…",
       vol_click_eligibility_body: "Hello, I was affected by flight {flight} on {date}, which was {incident}. I would like to check if I am eligible for compensation of up to €600 per passenger under European law.",
       vol_click_incident_delay: "delayed",
       vol_click_incident_cancel: "cancelled",
@@ -333,6 +370,10 @@ window.I18N = (function() {
       hero_stat_lost: "If we lose",
       hero_stat_24h: "File within 24h",
       nav_cta: "Get my compensation →",
+      nav_english_version: "🇬🇧 English",
+      nav_french_version: "🇫🇷 French",
+      nav_drawer_english: "🇬🇧 English version",
+      nav_drawer_french: "🇫🇷 French version",
       nav_drawer_calc: "🧮 Calculator",
       nav_drawer_loi: "📋 EU Regulation 261",
       nav_drawer_how: "⚙️ How it works",
@@ -432,7 +473,7 @@ window.I18N = (function() {
       footer_tarifs: "Our rates",
       footer_histoire: "Our story",
       footer_vol_examples_disclaimer: "The flight examples shown are for information only. Eligibility and the amount of compensation depend on the conditions set out in Regulation (EC) No 261/2004 (substantial delay, cancellation or denied boarding, applicable circumstances), with compensation of up to €600 per passenger depending on the flight distance.",
-      footer_vol_ticker_data_note: "Strip: latest 10 impacted flights (cancellation or 3h+ arrival delay) on Europe ↔ Africa routes, refreshed daily (AeroDataBox, French hubs + key African airports). Otherwise illustrative examples. Up to €600 if EU 261 applies. Click a pill to pre-fill the form.",
+      footer_vol_ticker_data_note: "Strip: up to 10 latest impacted flights (cancellation or 3h+ arrival delay) on Europe ↔ Africa routes, refreshed via AeroDataBox (French hubs + key African airports). If none qualify today, a message is shown — no fictional examples. Up to €600 if EU 261 applies. Click a pill to pre-fill the form.",
       footer_no_legal_advice: "Nothing on this site is legal advice or a guarantee of outcome; eligibility and amounts can only be confirmed after an individual review of your case.",
       footer_currency_hint: "Amounts shown in FCFA or USD are indicative (fixed rates). EU261 compensation is set in euros.",
       ready_claim: "Ready to claim?",
@@ -707,6 +748,15 @@ window.I18N = (function() {
         var md = get('meta_description');
         if (md && md !== 'meta_description') metaDesc.setAttribute('content', md);
       }
+      var canonical = document.querySelector('link[rel="canonical"]');
+      if (canonical) {
+        canonical.setAttribute('href', currentLang === 'en' ? 'https://robindesairs.eu/en' : 'https://robindesairs.eu/');
+      }
+      var ogUrl = document.querySelector('meta[property="og:url"]');
+      if (ogUrl) {
+        ogUrl.setAttribute('content', currentLang === 'en' ? 'https://robindesairs.eu/en' : 'https://robindesairs.eu/');
+      }
+      updateLangDirectNav();
     } else if (isTarifs) {
       var tt = get('tarifs_page_title');
       if (tt && tt !== 'tarifs_page_title') document.title = tt;
@@ -849,8 +899,30 @@ window.I18N = (function() {
     } catch (e2) {}
   }
 
+  function updateLangDirectNav() {
+    var navLink = document.getElementById('nav-lang-direct');
+    var drawerLink = document.getElementById('nav-drawer-lang-direct');
+    var onEn = isEnPath() || currentLang === 'en';
+    var href = onEn ? '/' : '/en';
+    var label = onEn ? get('nav_french_version') : get('nav_english_version');
+    var drawerLabel = onEn ? get('nav_drawer_french') : get('nav_drawer_english');
+    if (navLink) {
+      navLink.href = href;
+      navLink.textContent = label;
+      navLink.setAttribute('aria-label', label);
+    }
+    if (drawerLink) {
+      drawerLink.href = href;
+      drawerLink.textContent = drawerLabel;
+    }
+    var logo = document.getElementById('nav-logo-home');
+    if (logo) logo.href = onEn ? '/en' : '/';
+  }
+
   function setLang(code) {
     var c = (code || 'fr').toLowerCase();
+    if (c === 'en' || c === 'en-us' || c === 'en-gb') c = 'en';
+    else c = 'fr';
     if (c === 'en') { currentLang = 'en'; } else { currentLang = 'fr'; }
     try { localStorage.setItem('robin_lang', currentLang); } catch (e) {}
     apply();
@@ -877,6 +949,8 @@ window.I18N = (function() {
     apply: apply,
     setLang: setLang,
     setCurrency: setCurrency,
+    isEnPath: isEnPath,
+    updateLangDirectNav: updateLangDirectNav,
     getLang: function() { return currentLang; },
     getCurrency: getCurrency,
     formatFromEur: formatFromEur,

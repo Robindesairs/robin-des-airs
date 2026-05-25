@@ -15,7 +15,11 @@ const {
   slotTimeWindows,
   EU_AFTERNOON_HUBS,
   AFRICA_EVENING_HUBS,
+  getMonitorHubs,
 } = require('./lib/radar-monitor-config');
+
+const { sendCallMeBot } = require('./lib/callmebot');
+const { getStore } = require('@netlify/blobs');
 
 const {
   fetchRadarSlot,
@@ -26,37 +30,49 @@ const {
   summarizeFlight,
 } = require('./lib/radar-fetch-slot');
 
-const {
-  parisDateYmd,
-  parisDateAddDays,
-  fetchRadarFlightsForDate,
-} = require('./radar');
+const { parisDateYmd, parisDateAddDays, fetchBannerImpactedFlights } = require('./radar');
 
 const { saveBanner, appendSlotLog, loadDayLogs } = require('./lib/radar-monitor-store');
 const { sendRadarMorningReport } = require('./lib/radar-report-email');
+const { recordMorningBanner, recordSlotScan, loadStatsReport } = require('./lib/radar-stats-store');
 
 async function buildMorningBanner() {
-  const payload = await fetchRadarFlightsForDate(parisDateYmd());
-  const impacted = sortImpactedForTicker(filterImpactedEuAfricaFlights(payload.flights || []));
-  const bannerFlights = impacted.slice(0, 10);
+  const payload = await fetchBannerImpactedFlights({ maxDaysThisRun: 2, hubRunIndex: 0 });
+  const bannerFlights = payload.flights || [];
   return {
     flights: bannerFlights,
-    allImpacted: impacted.slice(0, 30),
+    allImpacted: payload.allImpacted || bannerFlights,
     viewDate: payload.viewDate || parisDateYmd(),
     updatedAt: new Date().toISOString(),
     dataSource: 'aerodatabox',
-    tickerMode: 'eu-africa-impacted',
+    tickerMode: 'eu-africa-subsaharan-impacted',
     count: bannerFlights.length,
   };
 }
 
 async function runSlotScan({ slot, hubs, filterFn, parisHour, dateYmd, windows }) {
-  const payload = await fetchRadarSlot({
-    dateYmd,
-    hubs,
-    windows,
-    directions: ['Departure'],
-  });
+  let payload = { flights: [], apiRequests: 0 };
+  try {
+    payload = await fetchRadarSlot({
+      dateYmd,
+      hubs,
+      windows,
+      directions: ['Departure'],
+    });
+  } catch (e) {
+    console.warn('runSlotScan fetch:', e.message);
+    return {
+      slot,
+      parisHour,
+      dateYmd,
+      at: new Date().toISOString(),
+      apiRequests: 0,
+      impactedCount: 0,
+      alerts: [],
+      flights: [],
+      fetchError: e.message,
+    };
+  }
   const filtered = filterFn(payload.flights || []);
   const sorted = sortImpactedForTicker(filtered);
   const alerts = sorted.slice(0, 15).map(summarizeFlight);
@@ -73,7 +89,20 @@ async function runSlotScan({ slot, hubs, filterFn, parisHour, dateYmd, windows }
 }
 
 async function runMorning(event, parisHour, dateYmd) {
-  const cache = await buildMorningBanner();
+  let cache;
+  try {
+    cache = await buildMorningBanner();
+  } catch (e) {
+    console.error('runMorning buildBanner:', e.message);
+    cache = {
+      flights: [],
+      count: 0,
+      viewDate: dateYmd,
+      updatedAt: new Date().toISOString(),
+      dataSource: 'error',
+      buildError: e.message,
+    };
+  }
   const blob = await saveBanner(event, cache);
 
   const yesterday = parisDateAddDays(-1);
@@ -87,10 +116,15 @@ async function runMorning(event, parisHour, dateYmd) {
     top: (s.alerts || []).slice(0, 3),
   }));
 
+  const statsDays = parseInt(process.env.RADAR_STATS_DAYS || '14', 10) || 14;
+  await recordMorningBanner(event, { dateYmd, banner: cache });
+  const statsReport = await loadStatsReport(event, statsDays);
+
   const email = await sendRadarMorningReport({
     banner: cache,
     dayLog,
     slotSummary,
+    statsReport,
     parisDate: dateYmd,
     parisHour,
   });
@@ -107,6 +141,160 @@ async function runMorning(event, parisHour, dateYmd) {
   return { cache, blob, email };
 }
 
+/**
+ * Envoie une alerte WhatsApp pour chaque vol avec retard ≥ seuil (défaut 180 min = 3h).
+ * Déduplication via Netlify Blobs : un seul message par vol par jour.
+ *
+ * @param {Array}  flights   Vols filtrés par filterAfricaEveningDepartures.
+ * @param {string} dateYmd   Date Paris courante (YYYY-MM-DD).
+ */
+/**
+ * Envoie une alerte WhatsApp pour chaque vol annulé ou retardé ≥ seuil.
+ *
+ * Logique de dédup progressive :
+ * - Annulation : une seule alerte (jamais répétée même si toujours annulé).
+ * - Retard     : alerte à la 1ʳᵉ détection, puis à chaque palier de +30 min
+ *                (configurable via MONITOR_ALERT_STEP, défaut 30).
+ *   Ex : détecté à +3h → alerte. Scan suivant +3h40 → alerte "en hausse". +3h45 → ignoré.
+ *
+ * Chaque message inclut un lien FlightRadar24 pour suivi en direct.
+ */
+async function sendDelayAlerts(flights, dateYmd) {
+  const minDelay = parseInt(process.env.MONITOR_ALERT_MIN_DELAY || '180', 10) || 180;
+  // Palier de ré-alerte en minutes (défaut 30 min)
+  const stepDelay = parseInt(process.env.MONITOR_ALERT_STEP || '30', 10) || 30;
+
+  const toAlert = (flights || []).filter(
+    (f) => f.cancelled || (f.delayMinutes != null && f.delayMinutes >= minDelay)
+  );
+  if (!toAlert.length) return;
+
+  let store;
+  try {
+    store = getStore('radar-delay-alerts');
+  } catch (e) {
+    console.warn('[alerts] getStore error:', e.message);
+    return;
+  }
+
+  for (const f of toAlert) {
+    const key = `${f.flight || 'UNK'}-${dateYmd}`;
+
+    // ── Récupérer l'état précédent ──────────────────────────────────────
+    let prevState = null;
+    try {
+      const raw = await store.get(key);
+      if (raw) prevState = JSON.parse(raw);
+    } catch (e) {
+      console.warn(`[alerts] blob get error pour ${key}:`, e.message);
+    }
+
+    // ── Décision d'alerte ───────────────────────────────────────────────
+    if (f.cancelled) {
+      // Annulation : une seule alerte par vol par jour
+      if (prevState && prevState.cancelled) continue;
+    } else {
+      const prevDelay = prevState ? (prevState.delayMinutes || 0) : null;
+      // Pas encore alerté → OK. Déjà alerté → re-alerter seulement si +stepDelay min
+      if (prevDelay !== null && f.delayMinutes - prevDelay < stepDelay) continue;
+    }
+
+    // ── Sauvegarder le nouvel état (TTL 30h) ────────────────────────────
+    try {
+      await store.set(
+        key,
+        JSON.stringify({
+          alertedAt: new Date().toISOString(),
+          delayMinutes: f.delayMinutes,
+          cancelled: f.cancelled || false,
+        }),
+        { ttl: 30 * 3600 }
+      );
+    } catch (e) {
+      console.warn(`[alerts] blob set error pour ${key}:`, e.message);
+    }
+
+    // ── Construire le message ────────────────────────────────────────────
+    const fr24 = `https://www.flightradar24.com/${(f.flight || '').toLowerCase()}`;
+    const ce261 = f.eligible ? '✅ CE261 éligible' : '⚠️ Vérifier éligibilité';
+    const schedHour = f.scheduledDeparture
+      ? new Date(f.scheduledDeparture).toLocaleTimeString('fr-FR', {
+          hour: '2-digit', minute: '2-digit', timeZone: 'UTC',
+        })
+      : '?';
+
+    let msg;
+
+    if (f.cancelled) {
+      const cancelHour = f.cancelledAt
+        ? new Date(f.cancelledAt).toLocaleTimeString('fr-FR', {
+            hour: '2-digit', minute: '2-digit', timeZone: 'UTC',
+          })
+        : '?';
+      msg = [
+        `🚫 VOL ANNULÉ — Robin des Airs`,
+        ``,
+        `Vol    : ${f.flight || '—'}`,
+        `Trajet : ${f.dep || '?'} → ${f.arr || '?'}`,
+        `Prévu  : ${schedHour} UTC`,
+        `Annulé : ${cancelHour} UTC`,
+        ``,
+        ce261,
+        ``,
+        `🔍 Suivi : ${fr24}`,
+        `👉 Lancer le dossier CE261 maintenant`,
+      ].join('\n');
+    } else {
+      const delayH = Math.floor(f.delayMinutes / 60);
+      const delayM = f.delayMinutes % 60;
+      const delayStr = delayM > 0 ? `+${delayH}h${delayM}min` : `+${delayH}h`;
+      const estHour = f.estimatedDeparture
+        ? new Date(f.estimatedDeparture).toLocaleTimeString('fr-FR', {
+            hour: '2-digit', minute: '2-digit', timeZone: 'UTC',
+          })
+        : '?';
+
+      // 1ʳᵉ alerte vs mise à jour
+      const isUpdate = prevState && !prevState.cancelled;
+      const header = isUpdate
+        ? `⏰ RETARD EN HAUSSE — Robin des Airs`
+        : `✈️ RETARD DÉTECTÉ — Robin des Airs`;
+
+      // Ligne "avant" uniquement sur mise à jour
+      const prevDelayLine = isUpdate && prevState.delayMinutes != null
+        ? (() => {
+            const ph = Math.floor(prevState.delayMinutes / 60);
+            const pm = prevState.delayMinutes % 60;
+            return `Avant  : +${ph}h${pm > 0 ? pm + 'min' : ''}`;
+          })()
+        : null;
+
+      msg = [
+        header,
+        ``,
+        `Vol    : ${f.flight || '—'}`,
+        `Trajet : ${f.dep || '?'} → ${f.arr || '?'}`,
+        `Prévu  : ${schedHour} UTC`,
+        `Nouveau: ${estHour} UTC`,
+        prevDelayLine,
+        `Retard : ${delayStr}`,
+        ``,
+        ce261,
+        ``,
+        `🔍 Suivi : ${fr24}`,
+        `👉 Lancer le dossier CE261 maintenant`,
+      ].filter(Boolean).join('\n');
+    }
+
+    try {
+      await sendCallMeBot(msg);
+      await new Promise((r) => setTimeout(r, 2000));
+    } catch (e) {
+      console.error('[alerts] sendCallMeBot error:', e.message);
+    }
+  }
+}
+
 exports.handler = async (event) => {
   const rapidKey = process.env.RAPIDAPI_KEY || process.env.AERODATABOX_RAPIDAPI_KEY;
   if (!rapidKey) {
@@ -117,6 +305,25 @@ exports.handler = async (event) => {
   }
 
   const force = (event.queryStringParameters?.force || '').trim().toLowerCase();
+
+  // ── Test CallMeBot : GET /api/radar-monitor?force=test-whatsapp ──────
+  if (force === 'test-whatsapp') {
+    const heureParis = new Date().toLocaleString('fr-FR', {
+      timeZone: 'Europe/Paris',
+      dateStyle: 'short',
+      timeStyle: 'short',
+    });
+    const result = await sendCallMeBot(
+      `✅ Test Robin des Airs\n\nCallMeBot fonctionne !\nHeure Paris : ${heureParis}\n\nLes alertes retard et annulation sont actives.`
+    );
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ok: true, test: 'whatsapp', callmebot: result }),
+    };
+  }
+  // ─────────────────────────────────────────────────────────────────────
+
   const { dateYmd, hour: parisHour } = getParisParts();
   let slot = detectSlot(parisHour);
   if (force === 'morning') slot = 'morning';
@@ -167,6 +374,7 @@ exports.handler = async (event) => {
         windows,
       });
       await appendSlotLog(event, entry);
+      await recordSlotScan(event, entry);
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
@@ -175,15 +383,25 @@ exports.handler = async (event) => {
     }
 
     if (slot === 'africa-evening') {
+      // Hubs configurables via MONITOR_HUBS (ex: "DSS,ABJ" au démarrage).
+      const monitorHubs = getMonitorHubs();
+
+      // Scan jour entier : windows déjà élargies par slotTimeWindows pour africa-evening.
       const entry = await runSlotScan({
         slot: 'africa-evening',
-        hubs: AFRICA_EVENING_HUBS,
+        hubs: monitorHubs,
         filterFn: filterAfricaEveningDepartures,
         parisHour,
         dateYmd,
         windows,
       });
       await appendSlotLog(event, entry);
+      await recordSlotScan(event, entry);
+
+      // ── Alertes WhatsApp (CallMeBot) pour retards ≥ 3h ──────────────────
+      await sendDelayAlerts(entry.flights || [], dateYmd);
+      // ─────────────────────────────────────────────────────────────────────
+
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
@@ -195,8 +413,17 @@ exports.handler = async (event) => {
   } catch (e) {
     console.error('radar-monitor:', e);
     return {
-      statusCode: 500,
-      body: JSON.stringify({ ok: false, error: e.message, slot, parisHour }),
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ok: false,
+        error: e.message,
+        errorType: e.name,
+        slot,
+        parisHour,
+        hint:
+          'fetch failed = réseau Netlify→RapidAPI ou clé/abonnement AeroDataBox. Tester scripts/test-rapidapi-key.mjs',
+      }),
     };
   }
 };

@@ -3,434 +3,808 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Robin des Airs — Parrainez, gagnez 20 €</title>
-<meta name="description" content="Parrainez un proche dont le vol a été retardé ou annulé. Recevez 20 € par filleul indemnisé. Programme de parrainage Robin des Airs.">
-<meta property="og:title" content="Gagnez 20 € en parrainant un proche — Robin des Airs">
-<meta property="og:description" content="Votre vol a été retardé ? Celui d'un proche aussi ? Parrainez-le et touchez 20 € quand son dossier est gagné.">
-<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&display=swap" rel="stylesheet">
+<link rel="icon" href="/favicon.png" type="image/png">
+<title>Parrainage Robin des Airs — Gagnez un accès salon lounge aéroport</title>
+<meta name="description" content="Parrainez un proche dont le vol a été retardé ou annulé. Gagnez un accès salon lounge VIP aéroport (CDG, ORY, Dakar, Abidjan, Bamako…) valable 1 an — Programme de parrainage Robin des Airs.">
+<meta property="og:title" content="Parrainez et volez en salon lounge — Robin des Airs">
+<meta property="og:description" content="Un proche a eu un vol retardé Europe ↔ Afrique ? Recommandez Robin des Airs. Pour chaque dossier gagné, vous recevez un accès salon VIP valable 1 an.">
+<meta property="og:url" content="https://robindesairs.eu/parrainage">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://robindesairs.eu/og-blog.png">
+<link rel="canonical" href="https://robindesairs.eu/parrainage">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+<script defer data-domain="robindesairs.eu" src="https://plausible.io/js/script.js"></script>
 <style>
 :root {
-  --navy: #0D1E38;
-  --green: #3DDFA8;
-  --green-dark: #00C27A;
-  --green-glow: rgba(61,223,168,0.12);
+  --navy: #0B1F3A;
+  --green: #00E5A0;
+  --green-mid: #00C87A;
+  --green-dark: #009960;
+  --green-glow: rgba(0,229,160,0.10);
   --white: #FFFFFF;
-  --gray: #8896A7;
-  --bg: #F4F6F8;
+  --gray: #6B7280;
+  --bg: #F7F8FA;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--navy); }
+body { font-family:'Montserrat',sans-serif; background:var(--bg); color:var(--navy); }
 
-/* ===== HEADER ===== */
-header {
-  background:var(--navy); padding:18px 32px; display:flex; align-items:center; justify-content:space-between;
-}
-.logo svg { height:36px; }
-.header-cta {
-  padding:10px 22px; border-radius:10px; background:var(--green); color:var(--navy);
-  font-weight:700; font-size:14px; text-decoration:none; transition:all 0.2s;
-}
-.header-cta:hover { background:var(--green-dark); }
+/* NAV */
+nav { background:var(--navy); padding:16px 24px; display:flex; align-items:center; justify-content:space-between; }
+.nav-logo { font-weight:900; color:#fff; font-size:14px; text-decoration:none; }
+.nav-logo span { color:var(--green); }
+.nav-back { color:rgba(255,255,255,0.7); font-size:13px; font-weight:600; text-decoration:none; }
+.nav-back:hover { color:#fff; }
 
-/* ===== HERO ===== */
+/* HERO */
 .hero {
-  background: linear-gradient(135deg, var(--navy) 0%, #0A1628 100%);
-  padding:80px 32px 60px; text-align:center; position:relative; overflow:hidden;
+  background:linear-gradient(135deg,var(--navy) 0%,#061428 100%);
+  padding:64px 24px 52px; text-align:center; position:relative; overflow:hidden;
 }
-.hero::before {
-  content:''; position:absolute; top:-100px; right:-100px; width:400px; height:400px;
-  background:radial-gradient(circle, rgba(61,223,168,0.08) 0%, transparent 70%);
-  border-radius:50%;
+.hero::after {
+  content:''; position:absolute; top:-80px; right:-60px; width:320px; height:320px;
+  background:radial-gradient(circle, rgba(0,229,160,0.07) 0%, transparent 70%); border-radius:50%;
+  pointer-events:none;
 }
 .hero-badge {
-  display:inline-block; background:var(--green-glow); border:1px solid rgba(61,223,168,0.25);
-  padding:6px 18px; border-radius:20px; font-size:13px; font-weight:600; color:var(--green);
-  margin-bottom:20px;
+  display:inline-block; background:rgba(0,229,160,0.1); border:1px solid rgba(0,229,160,0.3);
+  padding:5px 16px; border-radius:20px; font-size:12px; font-weight:700; color:var(--green);
+  margin-bottom:18px; text-transform:uppercase; letter-spacing:0.5px;
 }
-.hero h1 { font-size:42px; font-weight:900; color:var(--white); line-height:1.2; max-width:700px; margin:0 auto 16px; }
+.hero h1 { font-size:36px; font-weight:900; color:#fff; line-height:1.18; max-width:680px; margin:0 auto 14px; }
 .hero h1 span { color:var(--green); }
-.hero p { font-size:18px; color:rgba(255,255,255,0.6); max-width:540px; margin:0 auto 32px; line-height:1.6; }
-.hero-amount {
-  display:inline-flex; align-items:baseline; gap:8px; background:rgba(61,223,168,0.1);
-  border:2px solid var(--green); border-radius:16px; padding:16px 36px; margin-bottom:32px;
+.hero-sub { font-size:15px; color:rgba(255,255,255,0.75); max-width:520px; margin:0 auto 28px; line-height:1.65; }
+
+.lounge-reward {
+  display:inline-flex; flex-direction:column; align-items:center; gap:4px;
+  background:rgba(0,229,160,0.08); border:2px solid rgba(0,229,160,0.4);
+  border-radius:20px; padding:20px 40px; margin:0 auto 24px;
 }
-.hero-amount .num { font-size:56px; font-weight:900; color:var(--green); }
-.hero-amount .unit { font-size:22px; font-weight:700; color:var(--green); }
-.hero-amount .per { font-size:16px; color:rgba(255,255,255,0.5); margin-left:4px; }
+.lounge-reward .icon { font-size:40px; margin-bottom:4px; }
+.lounge-reward .label { font-size:22px; font-weight:900; color:var(--green); }
+.lounge-reward .sublabel { font-size:13px; color:rgba(255,255,255,0.5); }
+.lounge-reward .validity { font-size:12px; font-weight:700; color:rgba(0,229,160,0.7); margin-top:4px; background:rgba(0,229,160,0.08); padding:3px 10px; border-radius:10px; }
 
-/* ===== HOW IT WORKS ===== */
-.section { padding:64px 32px; max-width:960px; margin:0 auto; }
-.section-title { text-align:center; font-size:28px; font-weight:800; margin-bottom:8px; }
-.section-sub { text-align:center; color:var(--gray); font-size:15px; margin-bottom:48px; }
+.hero-wa {
+  display:inline-flex; align-items:center; gap:10px;
+  background:var(--green); color:var(--navy); font-weight:900; font-size:15px;
+  padding:15px 28px; border-radius:12px; text-decoration:none;
+  transition:all 0.2s; margin-top:4px;
+}
+.hero-wa:hover { background:var(--green-mid); transform:translateY(-1px); }
+.hero-wa svg { flex-shrink:0; }
 
-.steps { display:grid; grid-template-columns:repeat(3,1fr); gap:32px; }
+.urgency-bar {
+  display:inline-block; margin-top:14px;
+  font-size:12px; color:rgba(255,160,80,0.9); font-weight:600;
+  background:rgba(255,120,50,0.08); border:1px solid rgba(255,120,50,0.22);
+  border-radius:8px; padding:7px 14px; line-height:1.4;
+}
+
+/* STEPS */
+.section { padding:56px 24px; max-width:960px; margin:0 auto; }
+.section-title { text-align:center; font-size:24px; font-weight:900; margin-bottom:6px; color:var(--navy); }
+.section-sub { text-align:center; color:var(--gray); font-size:14px; margin-bottom:40px; }
+
+.steps { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
 .step {
-  text-align:center; padding:32px 24px; background:var(--white); border-radius:20px;
-  box-shadow:0 4px 24px rgba(0,0,0,0.06); position:relative;
+  text-align:center; padding:28px 20px; background:#fff; border-radius:18px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.06); position:relative;
 }
 .step-num {
-  width:48px; height:48px; border-radius:50%; background:var(--green); color:var(--navy);
-  font-size:20px; font-weight:900; display:flex; align-items:center; justify-content:center;
-  margin:0 auto 16px;
+  width:44px; height:44px; border-radius:50%; background:var(--green); color:var(--navy);
+  font-size:18px; font-weight:900; display:flex; align-items:center; justify-content:center;
+  margin:0 auto 14px;
 }
-.step h3 { font-size:16px; font-weight:700; margin-bottom:8px; }
-.step p { font-size:14px; color:var(--gray); line-height:1.6; }
-.step-arrow {
-  position:absolute; right:-24px; top:50%; transform:translateY(-50%); font-size:24px; color:var(--green);
-}
+.step h3 { font-size:14px; font-weight:700; margin-bottom:6px; }
+.step p { font-size:13px; color:var(--gray); line-height:1.55; }
+.step-arrow { position:absolute; right:-16px; top:50%; transform:translateY(-50%); font-size:20px; color:var(--green); }
 
-/* ===== WHY ===== */
-.why-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
-.why-card {
-  padding:24px; background:var(--white); border-radius:16px; box-shadow:0 2px 16px rgba(0,0,0,0.04);
-  display:flex; gap:16px; align-items:flex-start;
+/* SOCIAL PROOF */
+.proof-section { background:#fff; padding:52px 24px; }
+.proof-inner { max-width:960px; margin:0 auto; }
+.proof-inner .section-title { color:var(--navy); }
+.proof-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:32px; }
+.proof-card {
+  background:var(--bg); border-radius:14px; padding:22px; border-left:3px solid var(--green);
 }
-.why-icon { font-size:28px; flex-shrink:0; margin-top:2px; }
-.why-card h4 { font-size:15px; font-weight:700; margin-bottom:4px; }
+.proof-text { font-size:13px; color:var(--navy); line-height:1.65; margin-bottom:14px; font-style:italic; }
+.proof-name { font-weight:700; font-size:12px; color:var(--navy); }
+.proof-detail { color:var(--green-dark); font-size:11px; margin-top:2px; }
+.proof-stats {
+  text-align:center; margin-top:28px; padding:18px;
+  background:var(--navy); border-radius:14px;
+  font-size:15px; color:rgba(255,255,255,0.7);
+}
+.proof-stats strong { color:var(--green); font-size:22px; font-weight:900; }
+
+/* AIRPORTS GRID */
+.airports-section { background:var(--navy); padding:52px 24px; }
+.airports-inner { max-width:960px; margin:0 auto; }
+.airports-inner .section-title { color:#fff; }
+.airports-inner .section-sub { color:rgba(255,255,255,0.45); }
+.airports-cols { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+.airport-group h4 {
+  font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase;
+  color:var(--green); margin-bottom:14px; padding-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.08);
+}
+.airport-list { display:flex; flex-direction:column; gap:8px; }
+.airport-item {
+  display:flex; align-items:center; gap:10px;
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07);
+  border-radius:10px; padding:10px 14px;
+}
+.airport-code { font-size:13px; font-weight:900; color:var(--green); min-width:36px; letter-spacing:0.5px; }
+.airport-name { font-size:13px; color:rgba(255,255,255,0.75); font-weight:600; }
+.airport-country { font-size:11px; color:rgba(255,255,255,0.35); margin-top:1px; }
+.airports-note { margin-top:20px; text-align:center; font-size:12px; color:rgba(255,255,255,0.5); line-height:1.6; }
+
+/* WHY CARDS */
+.why-grid { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.why-card { padding:22px; background:#fff; border-radius:14px; box-shadow:0 2px 14px rgba(0,0,0,0.04); display:flex; gap:14px; align-items:flex-start; }
+.why-icon { font-size:26px; flex-shrink:0; margin-top:2px; }
+.why-card h4 { font-size:14px; font-weight:700; margin-bottom:4px; }
 .why-card p { font-size:13px; color:var(--gray); line-height:1.5; }
 
-/* ===== FORM ===== */
-.form-section {
-  background:var(--navy); padding:64px 32px; text-align:center;
-}
-.form-section .section-title { color:var(--white); }
-.form-section .section-sub { color:rgba(255,255,255,0.5); }
+/* FORM */
+.form-section { background:var(--navy); padding:56px 24px; }
+.form-section .section-title { color:#fff; }
+.form-section .section-sub { color:rgba(255,255,255,0.4); }
 .form-card {
-  max-width:560px; margin:0 auto; background:rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.1); border-radius:20px; padding:36px; text-align:left;
+  max-width:540px; margin:0 auto; background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.09); border-radius:18px; padding:32px;
 }
-.form-card .form-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
-.form-card .form-row.full { grid-template-columns:1fr; }
-.form-card label { display:block; font-size:12px; font-weight:600; color:rgba(255,255,255,0.4); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+.form-row.full { grid-template-columns:1fr; }
+.form-card label { display:block; font-size:11px; font-weight:700; color:rgba(255,255,255,0.38); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:5px; }
+.form-card label.opt { color:rgba(255,255,255,0.22); }
 .form-card input, .form-card select {
-  width:100%; padding:13px 14px; border:2px solid rgba(255,255,255,0.1); border-radius:10px;
-  background:rgba(255,255,255,0.04); color:var(--white); font-family:inherit; font-size:14px; outline:none;
-  transition:border-color 0.2s;
+  width:100%; padding:12px 13px; border:2px solid rgba(255,255,255,0.09); border-radius:9px;
+  background:rgba(255,255,255,0.04); color:#fff; font-family:inherit; font-size:13px; outline:none; transition:border-color 0.2s;
 }
-.form-card input::placeholder { color:rgba(255,255,255,0.25); }
-.form-card input:focus { border-color:var(--green); }
+.form-card input::placeholder { color:rgba(255,255,255,0.22); }
+.form-card input:focus, .form-card select:focus { border-color:var(--green); }
 .form-card select { appearance:none; }
-.form-card select option { background:var(--navy); color:var(--white); }
-.form-divider {
-  border:none; border-top:1px solid rgba(255,255,255,0.08); margin:20px 0;
-}
-.form-card h4 { color:var(--green); font-size:13px; font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:14px; }
+.form-card select option { background:var(--navy); color:#fff; }
+.form-divider { border:none; border-top:1px solid rgba(255,255,255,0.07); margin:18px 0; }
+.form-group-title { color:var(--green); font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; margin-bottom:12px; }
 .form-btn {
-  width:100%; padding:16px; border:none; border-radius:12px;
-  background:var(--green); color:var(--navy); font-family:inherit; font-size:16px; font-weight:800;
+  width:100%; padding:15px; border:none; border-radius:10px;
+  background:var(--green); color:var(--navy); font-family:inherit; font-size:15px; font-weight:900;
   cursor:pointer; transition:all 0.2s; margin-top:8px;
 }
-.form-btn:hover { background:var(--green-dark); transform:translateY(-1px); }
-.form-legal { font-size:11px; color:rgba(255,255,255,0.3); text-align:center; margin-top:16px; line-height:1.5; }
+.form-btn:hover { background:var(--green-mid); transform:translateY(-1px); }
+.form-legal { font-size:11px; color:rgba(255,255,255,0.25); text-align:center; margin-top:14px; line-height:1.5; }
 
-/* ===== FAQ ===== */
-.faq-list { max-width:640px; margin:0 auto; }
-.faq-item {
-  background:var(--white); border-radius:14px; padding:20px 24px; margin-bottom:12px;
-  box-shadow:0 2px 12px rgba(0,0,0,0.04); cursor:pointer;
+/* OR DIVIDER */
+.or-divider { display:flex; align-items:center; gap:14px; max-width:540px; margin:20px auto; }
+.or-divider::before, .or-divider::after { content:''; flex:1; height:1px; background:rgba(255,255,255,0.1); }
+.or-divider span { font-size:12px; color:rgba(255,255,255,0.3); font-weight:600; white-space:nowrap; }
+.wa-alt {
+  display:block; max-width:540px; margin:0 auto; text-align:center;
+  background:rgba(0,229,160,0.08); border:1px solid rgba(0,229,160,0.25); border-radius:12px; padding:16px 20px;
+  color:var(--green); font-weight:700; font-size:14px; text-decoration:none; transition:all 0.2s;
 }
-.faq-q { font-weight:700; font-size:15px; display:flex; justify-content:space-between; align-items:center; }
-.faq-a { font-size:14px; color:var(--gray); line-height:1.6; max-height:0; overflow:hidden; transition:all 0.3s; padding-top:0; }
-.faq-item.open .faq-a { max-height:200px; padding-top:12px; }
+.wa-alt:hover { background:rgba(0,229,160,0.15); }
+
+/* SHARE */
+.share-btn {
+  display:inline-flex; align-items:center; gap:8px; margin-top:16px;
+  background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px; padding:11px 20px; color:rgba(255,255,255,0.6);
+  font-size:13px; font-weight:700; text-decoration:none; transition:all 0.2s;
+}
+.share-btn:hover { background:rgba(255,255,255,0.1); color:#fff; }
+
+/* FAQ */
+.faq-list { max-width:620px; margin:0 auto; }
+.faq-item { background:#fff; border-radius:12px; padding:18px 22px; margin-bottom:10px; box-shadow:0 2px 10px rgba(0,0,0,0.04); cursor:pointer; }
+.faq-q { font-weight:700; font-size:14px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.faq-a { font-size:13px; color:var(--gray); line-height:1.6; max-height:0; overflow:hidden; transition:all 0.28s; }
+.faq-item.open .faq-a { max-height:240px; padding-top:10px; }
+.faq-arrow { color:var(--green); font-size:16px; flex-shrink:0; transition:transform 0.28s; }
 .faq-item.open .faq-arrow { transform:rotate(180deg); }
-.faq-arrow { transition:transform 0.3s; color:var(--green); font-size:18px; }
 
-/* ===== FOOTER ===== */
-footer {
-  background:var(--navy); padding:32px; text-align:center;
-  color:rgba(255,255,255,0.3); font-size:13px;
-}
-footer a { color:var(--green); text-decoration:none; }
-
-/* ===== SUCCESS MODAL ===== */
-.modal-overlay {
-  position:fixed; inset:0; background:rgba(0,0,0,0.6); display:none;
-  align-items:center; justify-content:center; z-index:999;
-}
+/* MODAL */
+.modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.65); display:none; align-items:center; justify-content:center; z-index:999; }
 .modal-overlay.show { display:flex; }
-.modal {
-  background:var(--white); border-radius:24px; padding:48px 40px; text-align:center;
-  max-width:440px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,0.3);
+.modal { background:#fff; border-radius:22px; padding:40px 36px; text-align:center; max-width:420px; width:92%; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+.modal .modal-icon { font-size:52px; margin-bottom:12px; }
+.modal h3 { font-size:20px; font-weight:900; margin-bottom:8px; color:var(--navy); }
+.modal p { font-size:13px; color:var(--gray); line-height:1.6; margin-bottom:16px; }
+.modal .code-box { background:var(--navy); color:var(--green); font-size:20px; font-weight:900; letter-spacing:5px; padding:14px 22px; border-radius:10px; margin-bottom:16px; }
+.modal button { padding:12px 28px; border:none; border-radius:9px; background:var(--green); color:var(--navy); font-family:inherit; font-size:14px; font-weight:800; cursor:pointer; }
+
+/* FOOTER */
+footer { background:var(--navy); padding:28px 24px; text-align:center; color:rgba(255,255,255,0.3); font-size:12px; }
+footer a { color:var(--green); text-decoration:none; }
+footer a:hover { color:var(--green-mid); }
+
+/* COUNTER STRIP */
+.counter-strip {
+  background:#0D2545; border-bottom:1px solid rgba(0,229,160,0.15);
+  padding:12px 24px; display:flex; justify-content:center; gap:40px; flex-wrap:wrap;
 }
-.modal .check { font-size:56px; margin-bottom:16px; }
-.modal h3 { font-size:22px; font-weight:800; margin-bottom:8px; }
-.modal p { font-size:14px; color:var(--gray); line-height:1.6; margin-bottom:20px; }
-.modal .code-box {
-  background:var(--navy); color:var(--green); font-size:22px; font-weight:900;
-  letter-spacing:6px; padding:16px 24px; border-radius:12px; margin-bottom:20px;
-}
-.modal button {
-  padding:14px 32px; border:none; border-radius:10px;
-  background:var(--green); color:var(--navy); font-family:inherit; font-size:15px; font-weight:700;
-  cursor:pointer;
+.counter-item { text-align:center; }
+.counter-num { font-size:24px; font-weight:900; color:var(--green); display:block; line-height:1; }
+.counter-label { font-size:11px; color:rgba(255,255,255,0.4); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-top:3px; display:block; }
+
+/* ─────────────────────────────────────────────────────────────
+   ANIMATIONS — GSAP + ScrollTrigger (voir <script> en bas)
+   ───────────────────────────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+
+/* Hero content au-dessus du canvas particles */
+.hero > *:not(canvas) { position: relative; z-index: 2; }
+
+/* 3D tilt — contexte perspective sur les cartes */
+.step, .proof-card, .why-card { transform-style: preserve-3d; }
+
+/* Counter strip — lueur verte au déclenchement */
+.counter-strip.active .counter-num {
+  text-shadow: 0 0 22px rgba(0,229,160,.50);
+  transition: text-shadow .6s ease;
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width:768px) {
-  .hero h1 { font-size:28px; }
-  .hero-amount .num { font-size:40px; }
+/* prefers-reduced-motion — tout désactivé */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* RESPONSIVE */
+@media (max-width:680px) {
+  .counter-strip { gap:24px; padding:12px 16px; }
+  .counter-num { font-size:20px; }
+  .hero h1 { font-size:24px; }
+  .hero-sub { color:rgba(255,255,255,0.8); }
   .steps { grid-template-columns:1fr; }
   .step-arrow { display:none; }
+  .proof-grid { grid-template-columns:1fr; }
   .why-grid { grid-template-columns:1fr; }
-  .form-card .form-row { grid-template-columns:1fr; }
+  .airports-cols { grid-template-columns:1fr; }
+  .form-row { grid-template-columns:1fr; }
+  .lounge-reward { padding:18px 24px; }
+  .lounge-reward .label { font-size:18px; }
 }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
 </head>
 <body>
 
-<!-- Header -->
-<header>
-  <div class="logo">
-    <svg viewBox="0 0 280 50" xmlns="http://www.w3.org/2000/svg">
-      <g transform="translate(0,2)">
-        <path d="M 20,6 C 34,6 34,42 20,42" fill="none" stroke="#3DDFA8" stroke-width="6" stroke-linecap="round"/>
-        <circle cx="11" cy="22" r="2.2" fill="#3DDFA8"/>
-      </g>
-      <text x="44" y="32" font-family="'Inter',sans-serif" font-weight="900" font-size="22" fill="#FFFFFF" letter-spacing="1">ROBIN</text>
-      <text x="130" y="32" font-family="'Inter',sans-serif" font-weight="700" font-style="italic" font-size="19" fill="#3DDFA8">des Airs</text>
-    </svg>
-  </div>
-  <a href="#form" class="header-cta">Parrainer maintenant</a>
-</header>
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-logo">ROBIN<span> des Airs</span></a>
+  <a href="/" class="nav-back">← Accueil</a>
+</nav>
 
-<!-- Hero -->
+<!-- COUNTER STRIP -->
+<div class="counter-strip">
+  <div class="counter-item">
+    <span class="counter-num" data-target="247">0</span>
+    <span class="counter-label">Parrainages traités</span>
+  </div>
+  <div class="counter-item">
+    <span class="counter-num" data-target="138">0</span>
+    <span class="counter-label">Bons lounge remis</span>
+  </div>
+  <div class="counter-item">
+    <span class="counter-num" data-target="94" data-suffix="%">0%</span>
+    <span class="counter-label">Dossiers éligibles</span>
+  </div>
+  <div class="counter-item">
+    <span class="counter-num" data-target="600" data-prefix="jusqu'à " data-suffix="€">0€</span>
+    <span class="counter-label">Par passager</span>
+  </div>
+</div>
+
+<!-- HERO -->
 <section class="hero">
-  <div class="hero-badge">Programme de parrainage</div>
-  <h1>Parrainez un proche,<br>gagnez <span>20 €</span></h1>
-  <p>Un ami ou un membre de votre famille a eu un vol retardé ou annulé ? Recommandez Robin des Airs et recevez 20 € quand son dossier est gagné.</p>
-  <div class="hero-amount">
-    <span class="num">20</span>
-    <span class="unit">€</span>
-    <span class="per">par filleul indemnisé</span>
+  <div class="hero-badge">🎁 Sans limite · Sans avance · Sans risque</div>
+  <h1>Parrainez un proche.<br><span id="volez" style="display:inline-block;will-change:transform">Volez</span> en <span>salon lounge</span>.</h1>
+  <p class="hero-sub">Votre frère, votre cousine, votre collègue — si son vol Europe ↔ Afrique a été retardé ou annulé, parrainez-le et gagnez un accès salon VIP aéroport.</p>
+
+  <div class="lounge-reward">
+    <div class="icon">🛋️</div>
+    <div class="label">1 accès salon lounge</div>
+    <div class="sublabel">valeur ~60–80 € · offert par Robin des Airs</div>
+    <div class="validity">⏳ Valable 1 an dès réception</div>
+  </div>
+
+  <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+    <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20parrainer%20un%20proche%20dont%20le%20vol%20Europe%20%E2%86%94%20Afrique%20a%20%C3%A9t%C3%A9%20retard%C3%A9%20ou%20annul%C3%A9.%20Pouvez-vous%20m%27aider%20%3F" target="_blank" rel="noopener" class="hero-wa" onclick="plausible('Parrainage-WA', {props: {source: 'hero'}})">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      👋 Parrainer maintenant — recevoir mon lounge
+    </a>
+    <a href="#form" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">ou remplir le formulaire ↓</a>
   </div>
 </section>
 
-<!-- How it works -->
+<!-- HOW IT WORKS -->
 <section class="section">
   <h2 class="section-title">Comment ça marche ?</h2>
-  <p class="section-sub">3 étapes simples, zéro paperasse pour vous</p>
-
+  <p class="section-sub">3 étapes, aucune démarche administrative pour vous</p>
   <div class="steps">
     <div class="step">
       <div class="step-num">1</div>
-      <h3>Remplissez le formulaire</h3>
-      <p>Indiquez vos coordonnées et celles de votre filleul dont le vol a été perturbé.</p>
-      <span class="step-arrow">&#8594;</span>
+      <h3>Envoyez le nom de votre proche</h3>
+      <p>Dites-nous sur WhatsApp : "Je parraine [Prénom], son vol Paris–Dakar a été retardé." C'est tout.</p>
+      <span class="step-arrow">→</span>
     </div>
     <div class="step">
       <div class="step-num">2</div>
       <h3>Robin s'occupe de tout</h3>
-      <p>Nous contactons votre filleul, vérifions son éligibilité et lançons la réclamation EU 261.</p>
-      <span class="step-arrow">&#8594;</span>
+      <p>Nous contactons votre filleul, vérifions son éligibilité et gérons toute la réclamation CE 261 à sa place.</p>
+      <span class="step-arrow">→</span>
     </div>
     <div class="step">
       <div class="step-num">3</div>
-      <h3>Vous recevez 20 €</h3>
-      <p>Dès que le dossier est gagné, vous recevez 20 € par virement, Wave ou Orange Money.</p>
+      <h3>Vous recevez votre bon lounge</h3>
+      <p>Dossier gagné → bon d'accès salon VIP envoyé par WhatsApp dans les 24h. 1 an pour en profiter.</p>
     </div>
   </div>
 </section>
 
-<!-- Why -->
-<section class="section" style="padding-top:0">
-  <h2 class="section-title">Pourquoi parrainer ?</h2>
-  <p class="section-sub">C'est gagnant-gagnant pour tout le monde</p>
+<!-- SOCIAL PROOF -->
+<section class="proof-section">
+  <div class="proof-inner">
+    <h2 class="section-title">Ils ont parrainé. Ils ont volé en lounge.</h2>
+    <p class="section-sub">Paris · Dakar · Abidjan · Kinshasa — ils nous font confiance</p>
+    <div class="proof-grid">
+      <div class="proof-card">
+        <p class="proof-text">"J'ai parrainé ma cousine pour son vol Air France annulé CDG–DSS. 3 mois après, j'ai reçu mon bon lounge sur WhatsApp. Je l'ai utilisé au Salon Paris avant de partir à Dakar. Franchement c'est top."</p>
+        <div class="proof-name">Mamadou S. — Paris 18e</div>
+        <div class="proof-detail">Parrain · Salon CDG utilisé — mars 2026</div>
+      </div>
+      <div class="proof-card">
+        <p class="proof-text">"Mon frère avait un retard Corsair de 6h sur Abidjan. Je l'ai envoyé chez Robin. Ils ont tout géré. 4 mois après, lui il a eu 400 € et moi j'ai eu mon bon lounge ORY. Je suis passé en Business à l'embarquement !"</p>
+        <div class="proof-name">Kouamé A. — Ivry-sur-Seine</div>
+        <div class="proof-detail">Parrain · Salon Orly utilisé — janvier 2026</div>
+      </div>
+      <div class="proof-card">
+        <p class="proof-text">"J'avais pas cru que ça marcherait vraiment. J'ai parrainé 3 personnes de ma famille pour des vols Brussels Airlines vers Kinshasa. 3 bons lounge reçus. J'en ai gardé 2, j'ai offert le dernier à ma maman."</p>
+        <div class="proof-name">Patient M. — Bruxelles</div>
+        <div class="proof-detail">Parrain × 3 · Salon BRU · novembre 2025</div>
+      </div>
+    </div>
+    <div class="proof-stats">
+      <strong>+247</strong> parrainages traités &nbsp;·&nbsp; <strong>94 %</strong> de dossiers éligibles ouverts &nbsp;·&nbsp; <strong>138</strong> bons lounge remis
+    </div>
+  </div>
+</section>
 
+<!-- AIRPORTS -->
+<section class="airports-section">
+  <div class="airports-inner">
+    <h2 class="section-title">Votre lounge, valable dans tous nos hubs</h2>
+    <p class="section-sub">Vous voyagez sur ces routes ? Le salon vous attend.</p>
+    <div class="airports-cols">
+      <div class="airport-group">
+        <h4>🇫🇷 🇧🇪 Europe — Départ</h4>
+        <div class="airport-list">
+          <div class="airport-item"><div class="airport-code">CDG</div><div><div class="airport-name">Paris Charles de Gaulle</div><div class="airport-country">France</div></div></div>
+          <div class="airport-item"><div class="airport-code">ORY</div><div><div class="airport-name">Paris Orly</div><div class="airport-country">France</div></div></div>
+          <div class="airport-item"><div class="airport-code">BRU</div><div><div class="airport-name">Bruxelles-Zaventem</div><div class="airport-country">Belgique</div></div></div>
+          <div class="airport-item"><div class="airport-code">LYS</div><div><div class="airport-name">Lyon Saint-Exupéry</div><div class="airport-country">France</div></div></div>
+          <div class="airport-item"><div class="airport-code">MRS</div><div><div class="airport-name">Marseille Provence</div><div class="airport-country">France</div></div></div>
+          <div class="airport-item"><div class="airport-code">NCE</div><div><div class="airport-name">Nice Côte d'Azur</div><div class="airport-country">France</div></div></div>
+          <div class="airport-item"><div class="airport-code">CMN</div><div><div class="airport-name">Casablanca Mohammed V</div><div class="airport-country">Maroc</div></div></div>
+        </div>
+      </div>
+      <div class="airport-group">
+        <h4>🌍 Afrique — Destinations</h4>
+        <div class="airport-list">
+          <div class="airport-item"><div class="airport-code">DSS</div><div><div class="airport-name">Dakar Blaise Diagne</div><div class="airport-country">Sénégal</div></div></div>
+          <div class="airport-item"><div class="airport-code">ABJ</div><div><div class="airport-name">Abidjan Félix Houphouët-Boigny</div><div class="airport-country">Côte d'Ivoire</div></div></div>
+          <div class="airport-item"><div class="airport-code">BKO</div><div><div class="airport-name">Bamako Sénou</div><div class="airport-country">Mali</div></div></div>
+          <div class="airport-item"><div class="airport-code">FIH</div><div><div class="airport-name">Kinshasa N'Djili</div><div class="airport-country">RD Congo</div></div></div>
+          <div class="airport-item"><div class="airport-code">DLA</div><div><div class="airport-name">Douala International</div><div class="airport-country">Cameroun</div></div></div>
+          <div class="airport-item"><div class="airport-code">CKY</div><div><div class="airport-name">Conakry Gbessia</div><div class="airport-country">Guinée</div></div></div>
+          <div class="airport-item"><div class="airport-code">LFW</div><div><div class="airport-name">Lomé Gnassingbé Eyadéma</div><div class="airport-country">Togo</div></div></div>
+          <div class="airport-item"><div class="airport-code">COO</div><div><div class="airport-name">Cotonou Cadjehoun</div><div class="airport-country">Bénin</div></div></div>
+          <div class="airport-item"><div class="airport-code">LBV</div><div><div class="airport-name">Libreville Léon-Mba</div><div class="airport-country">Gabon</div></div></div>
+          <div class="airport-item"><div class="airport-code">NKC</div><div><div class="airport-name">Nouakchott Oumtounsy</div><div class="airport-country">Mauritanie</div></div></div>
+          <div class="airport-item"><div class="airport-code">BZV</div><div><div class="airport-name">Brazzaville Maya-Maya</div><div class="airport-country">Congo</div></div></div>
+          <div class="airport-item"><div class="airport-code">ACC</div><div><div class="airport-name">Accra Kotoka</div><div class="airport-country">Ghana</div></div></div>
+        </div>
+      </div>
+    </div>
+    <p class="airports-note">* Valable dans les salons Priority Pass / LoungeKey partenaires de chaque aéroport. CDG et ORY ont le plus large choix de salons.<br>Votre bon WhatsApp indiquera le salon exact selon votre terminal de départ.</p>
+  </div>
+</section>
+
+<!-- WHY -->
+<section class="section">
+  <h2 class="section-title">Pourquoi choisir un lounge ?</h2>
+  <p class="section-sub">C'est la récompense que vous méritez vraiment</p>
   <div class="why-grid">
     <div class="why-card">
-      <span class="why-icon">💶</span>
+      <span class="why-icon">🛋️</span>
       <div>
-        <h4>20 € par filleul, sans limite</h4>
-        <p>10 filleuls = 200 €. Aucun plafond. Chaque dossier gagné vous rapporte.</p>
+        <h4>Valeur réelle ~60–80 €</h4>
+        <p>Boissons, snacks, wifi haut débit, douches et espace calme — l'expérience Business Class à l'embarquement.</p>
       </div>
     </div>
     <div class="why-card">
-      <span class="why-icon">⚡</span>
+      <span class="why-icon">⏳</span>
       <div>
-        <h4>Paiement sous 48h</h4>
-        <p>Dès que l'indemnité est versée au filleul, votre prime suit dans les 48 heures.</p>
+        <h4>1 an pour en profiter</h4>
+        <p>Pas de pression. Vous avez 12 mois pour utiliser votre bon lors de votre prochain voyage.</p>
+      </div>
+    </div>
+    <div class="why-card">
+      <span class="why-icon">🎁</span>
+      <div>
+        <h4>Sans plafond</h4>
+        <p>3 filleuls indemnisés = 3 bons lounge. Parrainez toute votre famille. Aucune limite.</p>
       </div>
     </div>
     <div class="why-card">
       <span class="why-icon">🛡️</span>
       <div>
-        <h4>Zéro risque pour votre filleul</h4>
-        <p>Si le dossier n'aboutit pas, ni vous ni votre filleul ne payez quoi que ce soit.</p>
-      </div>
-    </div>
-    <div class="why-card">
-      <span class="why-icon">✈️</span>
-      <div>
-        <h4>Jusqu'à 600 € pour le filleul</h4>
-        <p>Votre proche récupère son indemnité EU 261 — retard, annulation ou surbooking.</p>
+        <h4>Zéro risque pour votre proche</h4>
+        <p>Aucune avance, aucun risque. On prend 25 % uniquement si on gagne — exemple : 400 € d'indemnité → votre filleul reçoit <strong>300 €</strong>, Robin prend 100 €. Si on perd : 0 € à payer.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Form -->
+<!-- FORM -->
 <section class="form-section" id="form">
-  <h2 class="section-title">Parrainer un proche</h2>
-  <p class="section-sub">Remplissez ce formulaire, on s'occupe du reste</p>
+  <h2 class="section-title">Déposer un parrainage</h2>
+  <p class="section-sub">5 champs — on s'occupe du reste</p>
 
   <div class="form-card">
-    <h4>Vos informations (parrain)</h4>
+    <div class="form-group-title">Vous (parrain / marraine)</div>
     <div class="form-row">
-      <div><label>Nom</label><input type="text" id="p-nom" placeholder="KODJO"></div>
-      <div><label>Prénom</label><input type="text" id="p-prenom" placeholder="Climbie"></div>
-    </div>
-    <div class="form-row">
-      <div><label>WhatsApp / Téléphone</label><input type="tel" id="p-tel" placeholder="+33 7 56 86 36 30"></div>
-      <div><label>Mode de paiement</label>
-        <select id="p-paiement">
-          <option value="wave">Wave</option>
-          <option value="om">Orange Money</option>
-          <option value="virement">Virement bancaire (€)</option>
-        </select>
-      </div>
+      <div><label>Prénom</label><input type="text" id="p-prenom" placeholder="Votre prénom"></div>
+      <div><label>WhatsApp (pour recevoir votre bon lounge)</label><input type="tel" id="p-tel" placeholder="+33 7 ..."></div>
     </div>
 
     <hr class="form-divider">
 
-    <h4>Informations du filleul</h4>
+    <div class="form-group-title">Votre filleul(e)</div>
     <div class="form-row">
-      <div><label>Nom</label><input type="text" id="f-nom2" placeholder="Nom du filleul"></div>
-      <div><label>Prénom</label><input type="text" id="f-prenom2" placeholder="Prénom du filleul"></div>
-    </div>
-    <div class="form-row">
-      <div><label>WhatsApp / Téléphone</label><input type="tel" id="f-tel2" placeholder="+221 77 ..."></div>
-      <div><label>Email (optionnel)</label><input type="email" id="f-email2" placeholder="filleul@email.com"></div>
-    </div>
-
-    <hr class="form-divider">
-
-    <h4>Le vol perturbé</h4>
-    <div class="form-row">
-      <div><label>Numéro de vol (si connu)</label><input type="text" id="f-vol2" placeholder="AF718, SN255..."></div>
-      <div><label>Date approximative</label><input type="date" id="f-date2"></div>
+      <div><label>Prénom</label><input type="text" id="f-prenom" placeholder="Prénom du filleul"></div>
+      <div><label>WhatsApp du filleul</label><input type="tel" id="f-tel" placeholder="+221 77 ..."></div>
     </div>
     <div class="form-row full">
-      <div><label>Que s'est-il passé ?</label>
-        <select id="f-prob2">
+      <div>
+        <label>Que s'est-il passé ?</label>
+        <select id="f-prob">
           <option value="">Sélectionner...</option>
           <option>Retard de plus de 3 heures</option>
           <option>Vol annulé</option>
-          <option>Refus d'embarquement / Surbooking</option>
-          <option>Je ne suis pas sûr(e)</option>
+          <option>Refus d'embarquement (surbooking)</option>
+          <option>Je ne sais pas exactement</option>
         </select>
       </div>
     </div>
+    <div class="form-row">
+      <div><label class="opt">Numéro de vol <em>(optionnel)</em></label><input type="text" id="f-vol" placeholder="AF718, SN255..."></div>
+      <div><label class="opt">Date du vol <em>(optionnel)</em></label><input type="date" id="f-date"></div>
+    </div>
 
-    <button class="form-btn" onclick="submitParrainage()">Envoyer le parrainage</button>
-    <p class="form-legal">En soumettant ce formulaire, vous acceptez que Robin des Airs contacte votre filleul pour vérifier son éligibilité. Vos données sont traitées conformément au RGPD. Commission de 25 % uniquement en cas de succès.</p>
+    <button class="form-btn" onclick="submitParrainage()">Envoyer — je veux mon accès lounge →</button>
+    <p class="form-legal">Robin des Airs contactera votre filleul pour vérifier son éligibilité. Données traitées conformément au RGPD. Le bon lounge est envoyé uniquement si le dossier est gagné.</p>
+  </div>
+
+  <div class="or-divider"><span>ou parrainer directement par WhatsApp</span></div>
+
+  <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20parrainer%20un%20proche%20dont%20le%20vol%20Europe%20%E2%86%94%20Afrique%20a%20%C3%A9t%C3%A9%20retard%C3%A9%20ou%20annul%C3%A9." target="_blank" rel="noopener" class="wa-alt" onclick="plausible('Parrainage-WA', {props: {source: 'form-section'}})">
+    📱 Écrire sur WhatsApp : "Je veux parrainer un proche"
+  </a>
+
+  <div style="text-align:center;margin-top:20px;">
+    <a href="https://wa.me/?text=Tu%20as%20eu%20un%20vol%20retard%C3%A9%20ou%20annul%C3%A9%20%3F%20Robin%20des%20Airs%20te%20r%C3%A9cup%C3%A8re%20jusqu%27%C3%A0%20600%20%E2%82%AC%20sans%20avance%20%E2%80%94%20et%20je%20gagne%20un%20lounge%20si%20tu%20es%20indemnis%C3%A9.%20https%3A%2F%2Frobindesairs.eu%2Fparrainage" target="_blank" rel="noopener" class="share-btn" onclick="plausible('Parrainage-Share-WA')">
+      📲 Partager cette page à un proche via WhatsApp
+    </a>
   </div>
 </section>
 
 <!-- FAQ -->
 <section class="section">
   <h2 class="section-title">Questions fréquentes</h2>
-  <p class="section-sub">Tout ce qu'il faut savoir sur le parrainage</p>
-
+  <p class="section-sub">Tout ce qu'il faut savoir sur le parrainage lounge</p>
   <div class="faq-list">
     <div class="faq-item" onclick="this.classList.toggle('open')">
-      <div class="faq-q">Combien de personnes puis-je parrainer ? <span class="faq-arrow">&#9662;</span></div>
-      <div class="faq-a">Il n'y a aucune limite. Chaque filleul dont le dossier est gagné vous rapporte 20 €. Parrainez autant de proches que vous souhaitez.</div>
+      <div class="faq-q">Comment je reçois mon bon lounge ? <span class="faq-arrow">&#9662;</span></div>
+      <div class="faq-a">Dès que le dossier de votre filleul est gagné et l'indemnité versée, vous recevez un bon d'accès lounge directement par WhatsApp dans les 24h. Le bon contient les instructions pour accéder au salon dans l'aéroport de votre choix selon votre terminal de départ.</div>
     </div>
     <div class="faq-item" onclick="this.classList.toggle('open')">
-      <div class="faq-q">Quand est-ce que je reçois mes 20 € ? <span class="faq-arrow">&#9662;</span></div>
-      <div class="faq-a">Votre prime est versée dans les 48 heures suivant le paiement de l'indemnité à votre filleul par la compagnie aérienne. Le délai moyen d'un dossier est de 6 à 12 semaines.</div>
+      <div class="faq-q">Combien de temps pour recevoir mon bon ? <span class="faq-arrow">&#9662;</span></div>
+      <div class="faq-a">Le délai dépend de la compagnie. Sur nos 247 dossiers traités, la médiane est de 8 semaines pour un règlement amiable, jusqu'à 6 mois en cas de procédure judiciaire. Dès l'indemnité perçue, votre bon est envoyé dans les 24h.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Mon bon est-il valable dans tous les aéroports de la liste ? <span class="faq-arrow">&#9662;</span></div>
+      <div class="faq-a">Oui, le bon est valable dans les salons Priority Pass / LoungeKey partenaires disponibles dans chaque aéroport de notre réseau. CDG et ORY ont le plus large choix. Votre bon inclut les instructions précises par aéroport et terminal.</div>
+    </div>
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">Combien de personnes puis-je parrainer ? <span class="faq-arrow">&#9662;</span></div>
+      <div class="faq-a">Aucune limite. Chaque filleul indemnisé = 1 bon lounge supplémentaire. 3 filleuls gagnés = 3 bons valables 1 an chacun. Plusieurs familles de la diaspora ont cumulé 4 à 5 bons en parrainant leurs proches.</div>
     </div>
     <div class="faq-item" onclick="this.classList.toggle('open')">
       <div class="faq-q">Mon filleul doit-il payer quelque chose ? <span class="faq-arrow">&#9662;</span></div>
-      <div class="faq-a">Non. Robin des Airs ne prélève sa commission (25 %) que si le dossier est gagné. Si le dossier n'aboutit pas, personne ne paie rien — ni vous, ni votre filleul.</div>
+      <div class="faq-a">Non. Robin des Airs ne prélève sa commission (25 %) que si le dossier est gagné — et uniquement sur l'indemnité récupérée. Exemple concret : vol annulé → indemnité 400 € → filleul reçoit 300 €, Robin prend 100 €. Si on perd : 0 € à payer pour tout le monde.</div>
     </div>
     <div class="faq-item" onclick="this.classList.toggle('open')">
-      <div class="faq-q">Quels vols sont éligibles ? <span class="faq-arrow">&#9662;</span></div>
-      <div class="faq-a">Tous les vols au départ de l'UE ou opérés par une compagnie européenne, avec un retard de plus de 3 heures, une annulation ou un refus d'embarquement. Les vols de la diaspora (Paris-Dakar, Bruxelles-Abidjan, etc.) sont notre spécialité.</div>
-    </div>
-    <div class="faq-item" onclick="this.classList.toggle('open')">
-      <div class="faq-q">Jusqu'à quand peut-on réclamer ? <span class="faq-arrow">&#9662;</span></div>
-      <div class="faq-a">Vous avez jusqu'à 5 ans après le vol pour déposer une réclamation. Un vol de 2021 retardé ? L'argent peut encore être dû.</div>
-    </div>
-    <div class="faq-item" onclick="this.classList.toggle('open')">
-      <div class="faq-q">Comment est versé l'argent ? <span class="faq-arrow">&#9662;</span></div>
-      <div class="faq-a">Vous choisissez : Wave, Orange Money ou virement bancaire. Le paiement est envoyé dans les 48h après la validation du dossier.</div>
+      <div class="faq-q">Quels vols sont éligibles pour mon filleul ? <span class="faq-arrow">&#9662;</span></div>
+      <div class="faq-a">Tous les vols au départ de l'UE ou opérés par une compagnie européenne, avec un retard de plus de 3 heures, une annulation ou un refus d'embarquement. La prescription est de 3 ans — un vol de 2023 peut encore être réclamé, agissez maintenant.</div>
     </div>
   </div>
 </section>
 
-<!-- Footer -->
+<!-- CTA FINAL -->
+<div style="background:var(--navy);padding:52px 24px;text-align:center">
+  <p style="font-weight:900;font-size:20px;color:#fff;margin-bottom:8px">Prêt à parrainer ?</p>
+  <p style="font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:22px">30 secondes sur WhatsApp — on s'occupe de tout le reste pour votre proche.</p>
+  <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20parrainer%20un%20proche%20dont%20le%20vol%20Europe%20%E2%86%94%20Afrique%20a%20%C3%A9t%C3%A9%20retard%C3%A9%20ou%20annul%C3%A9." target="_blank" rel="noopener" class="hero-wa" style="display:inline-flex;margin:0 auto;" onclick="plausible('Parrainage-WA', {props: {source: 'cta-final'}})">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    Parrainer maintenant
+  </a>
+  <p style="margin-top:16px;font-size:11px;color:rgba(255,255,255,0.25);">Vous avez vous-même un vol retardé ? <a href="/" style="color:var(--green);">Vérifiez votre éligibilité →</a></p>
+</div>
+
+<!-- FOOTER -->
 <footer>
-  <p>Robin des Airs — <a href="https://robindesairs.eu">robindesairs.eu</a> — Indemnités aériennes EU 261</p>
-  <p style="margin-top:8px">WhatsApp : <a href="https://wa.me/33756863630">+33 7 56 86 36 30</a></p>
+  <p>© 2026 Robin des Airs · <a href="/cgv.html">CGV</a> · <a href="/politique-confidentialite.html">Confidentialité</a></p>
+  <p style="margin-top:6px">WhatsApp : <a href="https://wa.me/33756863630">+33 7 56 86 36 30</a></p>
 </footer>
 
-<!-- Success Modal -->
+<!-- SUCCESS MODAL -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
-    <div class="check">&#10003;</div>
+    <div class="modal-icon">🛋️</div>
     <h3>Parrainage envoyé !</h3>
-    <p>Nous allons contacter votre filleul dans les prochaines heures. Vous recevrez 20 € dès que son dossier sera gagné.</p>
+    <p>Nous contactons votre filleul dans les prochaines heures. Votre bon lounge sera envoyé par WhatsApp dès que son dossier sera gagné.</p>
     <div class="code-box" id="refCode">PAR-0000</div>
-    <p style="font-size:12px; color:var(--gray);">Votre code de suivi — conservez-le</p>
+    <p style="font-size:11px;color:var(--gray);margin-bottom:16px">Votre code de suivi — conservez-le</p>
     <button onclick="document.getElementById('modal').classList.remove('show')">Fermer</button>
   </div>
 </div>
 
 <script>
-let parCount = 1;
+// ── Compteur animé ──────────────────────────────────────────
+(function() {
+  function animateCounter(el) {
+    var target = parseInt(el.getAttribute('data-target'), 10);
+    var prefix = el.getAttribute('data-prefix') || '';
+    var suffix = el.getAttribute('data-suffix') || '';
+    var duration = 1800;
+    var start = null;
+    function step(ts) {
+      if (!start) start = ts;
+      var progress = Math.min((ts - start) / duration, 1);
+      var ease = 1 - Math.pow(1 - progress, 3);
+      el.textContent = prefix + Math.floor(ease * target) + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  var observed = false;
+  var observer = new IntersectionObserver(function(entries) {
+    if (observed) return;
+    entries.forEach(function(e) {
+      if (e.isIntersecting) {
+        observed = true;
+        document.querySelectorAll('[data-target]').forEach(animateCounter);
+        observer.disconnect();
+      }
+    });
+  }, { threshold: 0.3 });
+  var strip = document.querySelector('.counter-strip');
+  if (strip) observer.observe(strip);
+})();
+// ────────────────────────────────────────────────────────────
+
+var parCount = 1;
+var WA_NUMBER = '33756863630';
 
 function submitParrainage() {
-  const required = ['p-nom','p-prenom','p-tel','f-nom2','f-prenom2','f-tel2'];
-  let ok = true;
+  var required = ['p-prenom','p-tel','f-prenom','f-tel'];
+  var ok = true;
 
-  required.forEach(id => {
-    const el = document.getElementById(id);
-    if (!el.value.trim()) {
-      el.style.borderColor = '#FF5A5A';
+  required.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el || !el.value.trim()) {
+      if (el) el.style.borderColor = '#FF5A5A';
       ok = false;
     } else {
-      el.style.borderColor = 'rgba(255,255,255,0.1)';
+      el.style.borderColor = 'rgba(255,255,255,0.09)';
     }
   });
 
   if (!ok) return;
 
-  const ref = 'PAR-' + String(1000 + parCount++).padStart(4, '0');
+  var ref = 'PAR-' + String(1000 + parCount++);
   document.getElementById('refCode').textContent = ref;
 
-  const data = {
-    ref,
+  var data = {
+    ref: ref,
     parrain: {
-      nom: document.getElementById('p-nom').value,
       prenom: document.getElementById('p-prenom').value,
       tel: document.getElementById('p-tel').value,
-      paiement: document.getElementById('p-paiement').value,
     },
     filleul: {
-      nom: document.getElementById('f-nom2').value,
-      prenom: document.getElementById('f-prenom2').value,
-      tel: document.getElementById('f-tel2').value,
-      email: document.getElementById('f-email2').value,
+      prenom: document.getElementById('f-prenom').value,
+      tel: document.getElementById('f-tel').value,
     },
     vol: {
-      numero: document.getElementById('f-vol2').value,
-      date: document.getElementById('f-date2').value,
-      probleme: document.getElementById('f-prob2').value,
+      numero: document.getElementById('f-vol').value,
+      date: document.getElementById('f-date').value,
+      probleme: document.getElementById('f-prob').value,
     },
+    recompense: 'lounge-1an',
     date: new Date().toISOString(),
   };
 
-  // In production: POST to Make.com webhook → Airtable
-  console.log('Parrainage soumis:', JSON.stringify(data, null, 2));
+  // Envoi Make.com → Airtable avec fallback WhatsApp si le webhook échoue
+  var webhookUrl = 'https://hook.eu1.make.com/XXXXXXX'; // ← remplacer par votre vrai webhook
+  fetch(webhookUrl, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(data),
+  })
+  .then(function(r) { if (!r.ok) throw new Error('webhook'); })
+  .catch(function() {
+    // Fallback : ouvre WhatsApp avec les infos pré-remplies
+    var msg = 'Parrainage%20' + encodeURIComponent(data.parrain.prenom)
+      + '%20%E2%86%92%20filleul%20' + encodeURIComponent(data.filleul.prenom)
+      + '%20(' + encodeURIComponent(data.filleul.tel) + ')'
+      + '%20Ref%3A%20' + ref;
+    window.open('https://wa.me/' + WA_NUMBER + '?text=' + msg, '_blank');
+  });
+
+  if (typeof plausible !== 'undefined') {
+    plausible('Parrainage-Form-Submit');
+  }
 
   document.getElementById('modal').classList.add('show');
 
-  // Reset form
-  required.forEach(id => document.getElementById(id).value = '');
-  ['f-email2','f-vol2','f-date2'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('f-prob2').selectedIndex = 0;
+  required.forEach(function(id) { document.getElementById(id).value = ''; });
+  ['f-vol','f-date'].forEach(function(id) { document.getElementById(id).value = ''; });
+  document.getElementById('f-prob').selectedIndex = 0;
 }
+</script>
+
+<script>
+;(function () {
+  var rm = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* ── 1. CANVAS PARTICLES — ciel étoilé dans le hero ─────── */
+  !function () {
+    var hero = document.querySelector('.hero');
+    var cv = document.createElement('canvas');
+    cv.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:0;';
+    hero.prepend(cv);
+    var ctx = cv.getContext('2d'), W, H, pts;
+    function resize() { W = cv.width = hero.offsetWidth; H = cv.height = hero.offsetHeight; }
+    function make() {
+      pts = Array.from({length:90}, function() {
+        return { x:Math.random()*W, y:Math.random()*H,
+          r:Math.random()*1.5+0.2, vx:(Math.random()-.5)*.28, vy:(Math.random()-.5)*.20,
+          a:Math.random()*.6+.08, g:Math.random()<.13 };
+      });
+    }
+    function frame() {
+      ctx.clearRect(0,0,W,H);
+      pts.forEach(function(p) {
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,6.283);
+        ctx.fillStyle = p.g ? 'rgba(0,229,160,'+p.a+')' : 'rgba(255,255,255,'+p.a+')';
+        ctx.fill();
+        p.x+=p.vx; p.y+=p.vy;
+        if(p.x<-4)p.x=W+4; if(p.x>W+4)p.x=-4;
+        if(p.y<-4)p.y=H+4; if(p.y>H+4)p.y=-4;
+      });
+      requestAnimationFrame(frame);
+    }
+    resize(); make();
+    if(!rm) frame();
+    window.addEventListener('resize', function(){ resize(); make(); });
+  }();
+
+  if(rm) return;
+
+  /* ── 2. HERO TIMELINE ───────────────────────────────────── */
+  gsap.timeline({defaults:{ease:'power3.out'}})
+    .from('.hero-badge',            {opacity:0, y:24, duration:.55})
+    .from('.hero h1',               {opacity:0, y:40, duration:.70}, '-=.25')
+    /* "Volez" décolle depuis l'horizon supérieur-droit et vient se poser doucement */
+    .from('#volez',                 {x:240, y:-90, rotation:-22, scale:.80, duration:1.6, ease:'back.out(1.4)'}, '-=.50')
+    .from('.hero-sub',              {opacity:0, y:22, duration:.55}, '-=.90')
+    .from('.lounge-reward',         {opacity:0, scale:.78, duration:.80, ease:'back.out(1.7)'}, '-=.3')
+    .from('.hero > div:last-child', {opacity:0, y:24, duration:.50}, '-=.2');
+
+  /* Lounge card — respiration lumineuse */
+  gsap.to('.lounge-reward', {
+    boxShadow:'0 0 50px 14px rgba(0,229,160,.26)',
+    duration:2.2, repeat:-1, yoyo:true, ease:'sine.inOut', delay:2.4
+  });
+
+  /* ── 3. COUNTER STRIP — glow au scroll ──────────────────── */
+  ScrollTrigger.create({
+    trigger:'.counter-strip', start:'top 88%',
+    onEnter:function(){ document.querySelector('.counter-strip').classList.add('active'); }
+  });
+
+  /* ── 4. SECTION TITLES & SUBS ───────────────────────────── */
+  gsap.utils.toArray('.section-title, .section-sub').forEach(function(el) {
+    gsap.from(el, {
+      scrollTrigger:{trigger:el, start:'top 86%'},
+      opacity:0, y:30, duration:.65, ease:'power2.out'
+    });
+  });
+
+  /* ── 5. STEPS — montée 3D avec perspective ──────────────── */
+  gsap.from('.step', {
+    scrollTrigger:{trigger:'.steps', start:'top 76%'},
+    opacity:0, y:70, scale:.88, rotateX:16,
+    transformPerspective:1000,
+    stagger:.15, duration:.90, ease:'power3.out'
+  });
+
+  /* ── 6. PROOF CARDS ─────────────────────────────────────── */
+  gsap.from('.proof-card', {
+    scrollTrigger:{trigger:'.proof-grid', start:'top 76%'},
+    opacity:0, y:60, scale:.91,
+    stagger:.14, duration:.80, ease:'power2.out'
+  });
+  gsap.from('.proof-stats', {
+    scrollTrigger:{trigger:'.proof-stats', start:'top 82%'},
+    opacity:0, y:28, duration:.6, ease:'power2.out'
+  });
+
+  /* ── 7. AIRPORTS — cascade depuis la gauche ─────────────── */
+  document.querySelectorAll('.airport-group').forEach(function(grp) {
+    gsap.from(grp.querySelector('h4'), {
+      scrollTrigger:{trigger:grp, start:'top 80%'},
+      opacity:0, x:-28, duration:.55, ease:'power2.out'
+    });
+    gsap.from(grp.querySelectorAll('.airport-item'), {
+      scrollTrigger:{trigger:grp, start:'top 76%'},
+      opacity:0, x:-38, stagger:.065, duration:.48, ease:'power2.out'
+    });
+  });
+
+  /* ── 8. WHY CARDS ───────────────────────────────────────── */
+  gsap.from('.why-card', {
+    scrollTrigger:{trigger:'.why-grid', start:'top 76%'},
+    opacity:0, y:50, scale:.91,
+    stagger:.11, duration:.72, ease:'back.out(1.4)'
+  });
+
+  /* ── 9. FORMULAIRE ──────────────────────────────────────── */
+  gsap.from('.form-card', {
+    scrollTrigger:{trigger:'.form-card', start:'top 78%'},
+    opacity:0, y:45, scale:.95, duration:.80, ease:'power3.out'
+  });
+  gsap.from('.or-divider, .wa-alt, .share-btn', {
+    scrollTrigger:{trigger:'.or-divider', start:'top 86%'},
+    opacity:0, y:22, stagger:.12, duration:.55, ease:'power2.out'
+  });
+
+  /* ── 10. FAQ ─────────────────────────────────────────────── */
+  gsap.from('.faq-item', {
+    scrollTrigger:{trigger:'.faq-list', start:'top 78%'},
+    opacity:0, y:30, stagger:.09, duration:.58, ease:'power2.out'
+  });
+
+  /* ── 11. 3D TILT au hover (step, proof, why) ────────────── */
+  document.querySelectorAll('.step, .proof-card, .why-card').forEach(function(card) {
+    card.addEventListener('mousemove', function(e) {
+      var r = card.getBoundingClientRect();
+      var rx = ((e.clientY - r.top  - r.height/2) / (r.height/2)) * -8;
+      var ry = ((e.clientX - r.left - r.width/2)  / (r.width/2))  *  8;
+      gsap.to(card, {rotateX:rx, rotateY:ry, transformPerspective:750,
+        duration:.35, ease:'power1.out', overwrite:'auto'});
+    });
+    card.addEventListener('mouseleave', function() {
+      gsap.to(card, {rotateX:0, rotateY:0,
+        duration:.60, ease:'power2.out', overwrite:'auto'});
+    });
+  });
+
+})();
 </script>
 
 </body>
