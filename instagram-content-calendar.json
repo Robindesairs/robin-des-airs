@@ -1,0 +1,124 @@
+{
+  "_info": "Calendrier éditorial Instagram Robin des Airs. Mettre published:true manuellement ou laisser le scheduler le faire. Les images doivent être des URLs publiques accessibles.",
+  "account": {
+    "username": "robindesairs",
+    "whatsapp_link": "https://wa.me/33756863630"
+  },
+  "posts": [
+    {
+      "id": "post-01",
+      "type": "carousel",
+      "scheduled_at": "2026-05-26T09:00:00Z",
+      "published": false,
+      "caption": "Les compagnies aériennes le savent. Elles comptent sur le fait que toi, tu ne le sais pas.\n\nDepuis 2004, le règlement européen CE 261/2004 oblige les compagnies à t'indemniser en cas de retard de plus de 3h, d'annulation ou de refus d'embarquement.\n\n250€, 400€ ou 600€ par passager — selon la distance.\n\nTu as eu un problème sur un vol ces 3 dernières années ? Envoie ta carte d'embarquement sur notre WhatsApp. On vérifie pour toi, gratuitement.\n\nLien dans la bio. 👆\n\n#droitsdespassagers #volretardé #volannulé #indemnisation #CE261 #droiteuropeen #robindesairs #passagersaeriens",
+      "images": [
+        "https://robindesairs.eu/instagram-assets/post-01-slide-1.jpg",
+        "https://robindesairs.eu/instagram-assets/post-01-slide-2.jpg",
+        "https://robindesairs.eu/instagram-assets/post-01-slide-3.jpg",
+        "https://robindesairs.eu/instagram-assets/post-01-slide-4.jpg",
+        "https://robindesairs.eu/instagram-assets/post-01-slide-5.jpg"
+      ],
+      "notes": "Pilier Éducation — Règlement CE 261/2004 en langage simple. Slide 1 : accroche choc. Slides 2-4 : les 3 cas éligibles. Slide 5 : CTA WhatsApp."
+    },
+    {
+      "id": "post-02",
+      "type": "photo",
+      "scheduled_at": "2026-05-28T17:00:00Z",
+      "published": false,
+      "caption": "\"Honnêtement, je pensais que c'était une démarche pour rien. J'avais déjà essayé de contacter la compagnie moi-même... rien.\"\n\n\"J'ai envoyé ma carte d'embarquement à Robin des Airs. En quelques secondes, ils m'ont dit que j'étais éligible à 400€.\"\n\n\"Trois semaines plus tard, l'argent était sur mon compte.\"\n\nCe n'est pas de la chance. C'est ton droit. 💪\n\nTon dernier vol t'a causé des problèmes ? Dis-le-nous en commentaire.\n\n#témoignage #indemnisationvol #clientsatisfait #droitspassagers #robindesairs #vérifiemonvol",
+      "images": [
+        "https://robindesairs.eu/instagram-assets/post-02-temoignage.jpg"
+      ],
+      "notes": "Pilier Preuve sociale — Témoignage client anonymisé. Fond coloré, citation en bold, ville + initiale prénom."
+    },
+    {
+      "id": "post-03",
+      "type": "reel",
+      "scheduled_at": "2026-05-30T10:00:00Z",
+      "published": false,
+      "caption": "3 étapes. 1 WhatsApp. Jusqu'à 600€. 🎬\n\n1️⃣ Envoie ta carte d'embarquement\n2️⃣ Notre bot analyse ton vol\n3️⃣ Tu reçois ton verdict en quelques secondes\n\nPas de formulaire. Pas d'avocat. Gratuit si non éligible.\n\nLien dans la bio. 👆\n\n#comment #whatsapp #indemnisation #facile #volretardé #cartedembarquement #robindesairs #tuto",
+      "video_url": "https://robindesairs.eu/instagram-assets/post-03-reel.mp4",
+      "images": [
+        "https://robindesairs.eu/instagram-assets/post-03-cover.jpg"
+      ],
+      "notes": "Pilier Processus — Demo chatbot 30s. Screen recording stylisé + voix off. Musique dynamique."
+    },
+    {
+      "id": "post-04",
+      "type": "carousel",
+      "scheduled_at": "2026-06-02T09:00:00Z",
+      "published": false,
+      "caption": "Ces 5 excuses que les compagnies utilisent pour ne pas te payer — et pourquoi elles sont (souvent) fausses. 🧵\n\nSwipe pour les découvrir →\n\nTu as déjà reçu une de ces réponses ? Dis-nous laquelle en commentaire ⬇️\n\n#compagniesaeriennes #droitspassagers #mythesverité #indemnisation #airfrance #ryanair #easyjet",
+      "images": [
+        "https://robindesairs.eu/instagram-assets/post-04-slide-1.jpg",
+        "https://robindesairs.eu/instagram-assets/post-04-slide-2.jpg",
+        "https://robindesairs.eu/instagram-assets/post-04-slide-3.jpg",
+        "https://robindesairs.eu/instagram-assets/post-04-slide-4.jpg",
+        "https://robindesairs.eu/instagram-assets/post-04-slide-5.jpg",
+        "https://robindesairs.eu/instagram-assets/post-04-slide-6.jpg"
+      ],
+      "notes": "Pilier Éducation — Démontage des 5 excuses classiques des compagnies. Ton combatif mais pédagogique."
+    },
+    {
+      "id": "post-05",
+      "type": "photo",
+      "scheduled_at": "2026-06-04T17:00:00Z",
+      "published": false,
+      "caption": "1 passager sur 4 est potentiellement éligible à une indemnisation après un vol perturbé.\n\nPourtant, plus de 85% des passagers concernés ne réclament jamais rien.\n\nPourquoi ? Parce qu'on ne sait pas. Parce que ça semble compliqué. Parce qu'on pense que ça ne marchera pas.\n\nC'est exactement pour ça qu'on a créé Robin des Airs. 🏹\n\nTu connais quelqu'un qui a eu un vol annulé ou retardé récemment ? Tague-le en commentaire — il mérite de savoir.\n\n#statistique #saviezvous #droitspassagers #indemnisation #volannulé #europe #robindesairs",
+      "images": [
+        "https://robindesairs.eu/instagram-assets/post-05-stat.jpg"
+      ],
+      "notes": "Pilier Preuve sociale — Infographie chiffre impact. Statistique 1/4 en grand, fond couleur marque."
+    },
+    {
+      "id": "post-06",
+      "type": "carousel",
+      "scheduled_at": "2026-06-06T10:00:00Z",
+      "published": false,
+      "caption": "Ta carte d'embarquement vaut peut-être 600€. On t'explique comment en 5 étapes. 🎫\n\nSwipe → →\n\nPas besoin de connaître le droit européen. Juste une photo, et on s'occupe du reste.\n\nLien dans la bio pour démarrer. 👆\n\n#tutoriel #cartedembarquement #whatsapp #indemnisation #simple #robindesairs #tuto",
+      "images": [
+        "https://robindesairs.eu/instagram-assets/post-06-slide-1.jpg",
+        "https://robindesairs.eu/instagram-assets/post-06-slide-2.jpg",
+        "https://robindesairs.eu/instagram-assets/post-06-slide-3.jpg",
+        "https://robindesairs.eu/instagram-assets/post-06-slide-4.jpg",
+        "https://robindesairs.eu/instagram-assets/post-06-slide-5.jpg"
+      ],
+      "notes": "Pilier Processus — Tutoriel visuel pas à pas. Carte → WhatsApp → analyse → résultat → paiement."
+    },
+    {
+      "id": "post-07",
+      "type": "reel",
+      "scheduled_at": "2026-06-09T09:00:00Z",
+      "published": false,
+      "caption": "Sais-tu vraiment ce à quoi tu as droit quand ton vol est annulé ? 🤔\n\nVRAI ou FAUX — à toi de jouer !\n\nLes compagnies comptent sur ton ignorance. Nous, on te donne les clés.\n\nSauve ce post pour la prochaine fois que tu voyages ✈️\n\n#vraiouFaux #droitsvoyageurs #volannulé #quiz #savoirs #passagersinformes #europe",
+      "video_url": "https://robindesairs.eu/instagram-assets/post-07-reel.mp4",
+      "images": [
+        "https://robindesairs.eu/instagram-assets/post-07-cover.jpg"
+      ],
+      "notes": "Pilier Éducation — Reels 45s format vrai/faux. 4 affirmations, réponses révélées avec explication courte."
+    },
+    {
+      "id": "post-08",
+      "type": "photo",
+      "scheduled_at": "2026-06-11T17:00:00Z",
+      "published": false,
+      "caption": "Derrière Robin des Airs, une équipe qui a elle-même raté des vols. ✈️❤️\n\nOn a créé ce service parce qu'on a trouvé injuste que les droits existent mais que les passagers ne les connaissent pas.\n\nChaque semaine, on aide des passagers à récupérer des centaines d'euros qui leur appartiennent vraiment.\n\nC'est notre mission. Et on n'est pas près de s'arrêter. 🏹\n\n#startup #fondateurs #histoire #humanderrière #robin #entrepreneuriat #aviationdroit",
+      "images": [
+        "https://robindesairs.eu/instagram-assets/post-08-equipe.jpg"
+      ],
+      "notes": "Pilier Marque — Coulisses / human touch. Photo équipe ou lifestyle aéroport. Authentique."
+    },
+    {
+      "id": "post-09",
+      "type": "reel",
+      "scheduled_at": "2026-06-13T10:00:00Z",
+      "published": false,
+      "caption": "J'ai testé Robin des Airs pour vous — voilà ce qui s'est passé 👀\n\nHonnête. Sans filtre. En temps réel.\n\nTu veux vérifier ton vol ? C'est dans la bio. 👆\n\n#test #avis #ugc #robindesairs #whatsappbot #indemnisation #honnête",
+      "video_url": "https://robindesairs.eu/instagram-assets/post-09-reel.mp4",
+      "images": [
+        "https://robindesairs.eu/instagram-assets/post-09-cover.jpg"
+      ],
+      "notes": "Pilier Processus — Format UGC. Personne filme son écran en utilisant le chatbot pour la première fois."
+    }
+  ]
+}

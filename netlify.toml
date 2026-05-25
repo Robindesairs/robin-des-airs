@@ -14,9 +14,13 @@
 [functions."whatsapp-gemini-fallback"]
   schedule = "* * * * *"
 
-# Snapshot quotidien des 10 vols impactés Europe↔Afrique — 8h heure de Paris (6h UTC été / 7h UTC hiver)
-[functions."daily-radar-snapshot"]
+# Snapshot quotidien — background function (15 min timeout) — 8h Paris (6h UTC été / 7h UTC hiver)
+[functions."daily-radar-snapshot-background"]
   schedule = "0 6 * * *"
+
+# Publication Instagram — chaque jour à 7h UTC (9h Paris été / 8h hiver)
+[functions."instagram-publisher"]
+  schedule = "0 7 * * *"
 
 [build]
   publish = "."
@@ -177,6 +181,12 @@
 [[redirects]]
   from = "/api/whatsapp-webhook"
   to = "/.netlify/functions/whatsapp-webhook"
+  status = 200
+
+# Webhook Instagram DMs (Meta Graph API)
+[[redirects]]
+  from = "/api/instagram-dm-webhook"
+  to = "/.netlify/functions/instagram-dm-webhook"
   status = 200
 
 # Statut connexion WhatsApp (vérification rapide)
