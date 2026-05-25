@@ -4,6 +4,13 @@ meta_title: "Vol retardé Paris-Niamey : jusqu'à 600€ par passager (CE 261)"
 meta_description: "Retard ou annulation sur votre vol Paris-Niamey (Niger) ? Indemnité jusqu'à 600€ possible par passager. Air France, Royal Air Maroc — on vous explique."
 slug: vol-retarde-niamey-paris-indemnite
 image_url: /og-blog.png
+faq:
+  - q: "Combien je touche pour un Paris-Niamey retardé de 4h ?"
+    a: "Distance CDG-NIM ~4 100 km > 3 500 km → **600€ par passager** si retard ≥ 3h à l'arrivée. Famille de 3 : 1 800€ brut, 1 350€ nets."
+  - q: "Mon vol Niamey-Paris sur Turkish Airlines via Istanbul est-il éligible ?"
+    a: "Non sur la portion IST→CDG (Turkish = compagnie non-UE et départ hors UE). Si retard depuis NIM ou pendant la correspondance IST, le CE 261 ne s'applique pas."
+  - q: "Vol retardé en saison des pluies à Niamey : indemnité due ?"
+    a: "Très souvent oui. La saison des pluies est **prévisible** chaque année — pas une circonstance extraordinaire. La compagnie doit prouver l'impact direct sur votre vol précis."
 ---
 
 Niamey (NIM) n'a plus de vol direct quotidien depuis Paris depuis la suspension d'Air France à certaines périodes. La plupart des voyageurs passent par Casablanca (Royal Air Maroc), Bruxelles (Brussels Airlines) ou Istanbul (Turkish Airlines).

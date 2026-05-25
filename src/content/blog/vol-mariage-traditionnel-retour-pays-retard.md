@@ -4,6 +4,13 @@ meta_title: "Vol mariage au pays retardé : indemnité CE 261 (famille élargie)
 meta_description: "Vol pour mariage au pays retardé ou annulé ? Indemnité CE 261 jusqu'à 600€ par passager — multipliée par toute la famille élargie. On vous explique."
 slug: vol-mariage-traditionnel-retour-pays-retard
 image_url: /og-blog.png
+faq:
+  - q: "Combien on récupère pour une famille de 15 sur un vol retardé ?"
+    a: "15 × 600€ = **9 000€ brut**, **6 750€ nets** après commission Robin de 25 %. Un seul dossier groupé pour toute la famille."
+  - q: "Le vol a été annulé 5 jours avant le mariage. Quels droits ?"
+    a: "Annulation < 14 jours = indemnité **600€ par passager** automatique + réacheminement gratuit OBLIGATOIRE OU remboursement intégral du billet."
+  - q: "Qui réclame pour les enfants et les personnes âgées du groupe ?"
+    a: "Un membre de la famille majeur peut centraliser via un **mandat de représentation**. Robin gère cette centralisation pour vous — un seul interlocuteur pour 20 personnes."
 ---
 
 Les mariages traditionnels sont des événements majeurs dans la diaspora africaine — toute la famille voyage, souvent à 10, 15 ou 20 personnes. Quand le vol est retardé ou annulé, c'est tout le groupe qui est impacté. Mais c'est aussi **toute la famille qui peut toucher l'indemnité**.

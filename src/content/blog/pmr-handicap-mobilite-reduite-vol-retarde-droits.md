@@ -4,6 +4,13 @@ meta_title: "PMR vol retardé : assistance + indemnité CE 261 (jusqu'à 600€)
 meta_description: "Personne handicapée ou à mobilité réduite (PMR) : vos droits en cas de vol retardé. Assistance obligatoire + indemnité CE 261 jusqu'à 600€."
 slug: pmr-handicap-mobilite-reduite-vol-retarde-droits
 image_url: /og-blog.png
+faq:
+  - q: "Une personne âgée non handicapée peut-elle se déclarer PMR ?"
+    a: "Oui. Le règlement CE 1107/2006 définit le PMR comme \"toute personne dont la mobilité est réduite par un handicap, l'âge, ou tout autre facteur\". Aucun justificatif médical n'est requis."
+  - q: "L'assistance PMR a-t-elle un coût ?"
+    a: "**Non**, c'est gratuit et obligatoire. À demander idéalement 48h avant le vol via la compagnie ou l'aéroport."
+  - q: "Si l'assistance n'a pas été fournie, que faire ?"
+    a: "Documenter (photos, témoignages), demander une attestation écrite, saisir l'aéroport (prestataire d'assistance) + DGAC. Préjudice cumulable avec l'indemnité CE 261 via Convention de Montréal."
 ---
 
 Les passagers à mobilité réduite (PMR), handicapés, malades chroniques ou âgés bénéficient de **droits renforcés** à l'aéroport. En cas de retard ou d'annulation, deux protections se cumulent : le **règlement CE 1107/2006** (assistance) et le **règlement CE 261/2004** (indemnité).

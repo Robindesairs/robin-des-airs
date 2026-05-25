@@ -4,6 +4,13 @@ meta_title: "Arrêt Sturgeon CJUE 2009 : indemnité retard 3h - jurisprudence cl
 meta_description: "Comment l'arrêt Sturgeon de 2009 a étendu l'indemnité CE 261 aux retards de 3h+ à l'arrivée. Tout sur cette jurisprudence qui change vos droits."
 slug: arret-sturgeon-3h-retard-jurisprudence
 image_url: /og-blog.png
+faq:
+  - q: "Pourquoi le seuil est-il fixé à 3h précisément ?"
+    a: "Par l'**arrêt Sturgeon (CJUE 2009)**. La Cour a estimé que 3h+ de retard cause un préjudice **comparable à une annulation** → mêmes 250/400/600€."
+  - q: "Le retard se calcule à quel moment exactement ?"
+    a: "À l'**ouverture des portes de l'avion à destination**, comparée à l'heure prévue au billet. Pas à l'atterrissage ni au décollage. C'est la jurisprudence Sturgeon."
+  - q: "Si l'avion vole plus vite et rattrape le retard, ai-je quand même droit ?"
+    a: "Non. Si le retard à l'arrivée finale est < 3h, pas d'indemnité — même si le décollage était en retard. Seul l'arrivée compte."
 ---
 
 Le **règlement CE 261/2004** prévoit explicitement l'indemnité en cas d'annulation. Mais pour les retards, le texte est ambigu. Sans la jurisprudence européenne, des millions de passagers retardés de 4, 6 ou 10h n'auraient jamais touché un centime. L'arrêt **Sturgeon de 2009** a tout changé.

@@ -4,6 +4,13 @@ meta_title: "Assurance voyage vs CE 261 : les deux sont cumulables (vol retardé
 meta_description: "Assurance voyage et indemnité CE 261 sont DIFFÉRENTES et CUMULABLES. Vous pouvez toucher les deux pour un vol retardé. On vous explique."
 slug: assurance-voyage-vs-indemnite-ce261-difference
 image_url: /og-blog.png
+faq:
+  - q: "J'ai une assurance voyage : ça remplace l'indemnité CE 261 ?"
+    a: "Non, ce sont deux choses **différentes et cumulables**. L'assurance vous indemnise selon votre contrat ; le CE 261 oblige la compagnie aérienne à vous verser 250/400/600€ par passager."
+  - q: "Mon assurance prévoit une subrogation. Qu'est-ce que ça change ?"
+    a: "Si vous activez l'assurance, elle peut récupérer votre indemnité CE 261 à votre place et garder le montant. **Réclamez d'abord les 600€ CE 261 via Robin**, puis voyez avec l'assurance ce qu'elle ajoute en plus."
+  - q: "Ma carte bancaire premium couvre les retards : je touche les deux ?"
+    a: "Oui en théorie, **sauf clause de subrogation** explicite dans le contrat de la carte. À vérifier dans les conditions générales. Souvent la carte ne couvre que les frais réels (taxi, hôtel) en cas de retard prolongé."
 ---
 
 "J'ai une assurance voyage, donc je n'ai pas droit à l'indemnité CE 261." **Faux.** Ce sont deux choses totalement différentes, qui se **cumulent**. Voici la clarification.

@@ -4,6 +4,13 @@ meta_title: "Code-share Air France / KLM vol retardé : qui paie les 600€ ?"
 meta_description: "Vol Air France opéré par KLM (ou inverse) retardé ? La compagnie responsable du CE 261 est celle qui opère vraiment, pas celle du billet. On vous explique."
 slug: code-share-air-france-klm-quelle-compagnie-recours
 image_url: /og-blog.png
+faq:
+  - q: "Mon billet Air France, mais avion KLM. Qui paie ?"
+    a: "C'est la compagnie **opératrice** (KLM) qui doit payer, pas Air France qui a vendu le billet. Article 2(b) du CE 261. Robin identifie l'opérateur et adresse au bon interlocuteur."
+  - q: "Comment savoir quelle compagnie opère réellement ?"
+    a: "1) Sur la **carte d'embarquement** (logo souvent visible). 2) Mention \"opéré par...\" sur la réservation. 3) Flightradar24 avec le numéro de vol. 4) App de la compagnie marketing."
+  - q: "Air France me renvoie vers KLM et vice-versa. Que faire ?"
+    a: "Ce ping-pong est fréquent. Adressez-vous **directement à la compagnie opératrice** (celle de l'avion). Robin tranche et pousse le dossier au bon endroit sans aller-retour."
 ---
 
 Air France et KLM appartiennent au même groupe et font régulièrement des **vols en code-share** : vous achetez un billet "Air France AF8000" mais l'avion est en réalité opéré par KLM. Ou inversement. Si le vol est retardé, qui vous doit l'indemnité ?

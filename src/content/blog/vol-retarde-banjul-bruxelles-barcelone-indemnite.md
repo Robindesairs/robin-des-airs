@@ -4,6 +4,13 @@ meta_title: "Vol retardé Banjul Gambie : indemnité CE 261 jusqu'à 600€"
 meta_description: "Retard ou annulation sur votre vol Banjul (Gambie) depuis Bruxelles, Barcelone, Lisbonne ou Londres ? Indemnité CE 261 jusqu'à 600€ par passager."
 slug: vol-retarde-banjul-bruxelles-barcelone-indemnite
 image_url: /og-blog.png
+faq:
+  - q: "Pourquoi pas de vol direct Paris-Banjul ?"
+    a: "Air France ne dessert plus Banjul depuis plusieurs années. La diaspora gambienne passe par **Bruxelles** (Brussels Airlines), **Lisbonne** (TAP), **Barcelone** (Vueling, saisonnier) ou **Londres** (British Airways)."
+  - q: "Mon billet CDG → BRU → BJL est en deux compagnies. Qui paie ?"
+    a: "Si c'est un **billet unique** (un seul code de réservation), la compagnie qui opère le tronçon retardé est responsable. Si ce sont **deux billets séparés** (low-cost + Brussels Airlines), pas de correspondance protégée — risque à éviter."
+  - q: "Brussels Airlines BJL-BRU retardé : indemnité due ?"
+    a: "Oui. Brussels Airlines est compagnie **UE** → CE 261 éligible **dans les deux sens**. Distance ~4 700 km > 3 500 km → **600€ par passager**."
 ---
 
 Banjul (BJL) est la capitale de la Gambie et n'a **aucun vol direct depuis Paris**. La diaspora gambienne en Europe rejoint le pays principalement par **Bruxelles**, **Barcelone**, **Lisbonne** ou **Londres**. Voici les routes et vos droits CE 261 selon votre point de départ européen.

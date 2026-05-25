@@ -4,6 +4,13 @@ meta_title: "Petite créance européenne : récupérer 600€ d'indemnité vol (
 meta_description: "La compagnie refuse vos 600€ ? La procédure européenne de petite créance permet d'obtenir un jugement contraignant pour <50€ de frais. Mode d'emploi."
 slug: formulaire-petite-creance-europeenne-vol-retarde
 image_url: /og-blog.png
+faq:
+  - q: "Quel est le plafond de la procédure européenne de petite créance ?"
+    a: "**5 000€**. C'est largement suffisant pour les indemnités CE 261 (600€ × passagers) y compris pour une famille de 8 (4 800€)."
+  - q: "Faut-il un avocat ?"
+    a: "**Non**. Procédure 100 % écrite, sans audience obligatoire. Frais de greffe ~35€, remboursés si vous gagnez. Robin gère tout pour vous sans frais à votre charge."
+  - q: "Combien de temps prend la procédure ?"
+    a: "Décision moyenne sous **90 jours** après la réponse de la compagnie. Plus rapide qu'un tribunal classique. Décision exécutoire dans toute l'UE."
 ---
 
 Quand la médiation échoue et que la compagnie persiste à refuser, vous pouvez saisir directement un tribunal. Pour les litiges inférieurs à 5 000€ et transfrontaliers (compagnie basée dans un autre pays UE que le vôtre), la **procédure européenne de petite créance** est faite pour ça : rapide, écrite, peu coûteuse.

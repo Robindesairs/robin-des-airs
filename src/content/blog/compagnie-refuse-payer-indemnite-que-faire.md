@@ -4,6 +4,13 @@ meta_title: "Compagnie refuse indemnité vol : 5 étapes pour récupérer vos 60
 meta_description: "La compagnie refuse votre indemnité CE 261 ? Voici les 5 étapes pour récupérer 600€ : lettre, médiateur, tribunal. Ou laissez Robin des Airs s'en charger."
 slug: compagnie-refuse-payer-indemnite-que-faire
 image_url: /og-blog.png
+faq:
+  - q: "La compagnie a refusé ma demande. Je peux quand même obtenir les 600€ ?"
+    a: "Oui, dans 70-90 % des cas. Beaucoup de refus sont fondés sur des motifs **vagues** (météo, circonstances extraordinaires) que la compagnie ne peut pas prouver précisément. Robin reprend les dossiers refusés à la même commission de 25 %."
+  - q: "Combien de temps pour récupérer après un refus initial ?"
+    a: "En moyenne 4-6 mois supplémentaires : mise en demeure (1 mois), médiation MTV (3 mois), tribunal si nécessaire (3-6 mois). Robin gère tout sans frais à votre charge."
+  - q: "J'ai 3 ans pour réclamer, même après un refus ?"
+    a: "Oui. Le délai de prescription en France est de **3 ans** après le vol. Un refus ne réduit pas ce délai. Vous pouvez nous confier un dossier refusé même 2 ans plus tard."
 ---
 
 Vous avez réclamé votre indemnité CE 261, et la compagnie a répondu : "Désolé, circonstances extraordinaires", "Votre demande a été examinée et rejetée", ou pire — **pas de réponse depuis 3 mois**. Voici exactement quoi faire.

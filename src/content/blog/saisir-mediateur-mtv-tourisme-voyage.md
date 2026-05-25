@@ -4,6 +4,13 @@ meta_title: "Médiateur Tourisme et Voyage (MTV) : saisine pas à pas — vol re
 meta_description: "Procédure complète pour saisir le Médiateur Tourisme et Voyage (MTV) après le refus d'une compagnie. Délais, formulaire, taux de succès."
 slug: saisir-mediateur-mtv-tourisme-voyage
 image_url: /og-blog.png
+faq:
+  - q: "La médiation MTV est-elle obligatoire avant le tribunal ?"
+    a: "Oui, depuis 2026. Vous devez avoir tenté la médiation (ou prouvé une demande préalable directe à la compagnie sans réponse > 60 jours) avant de saisir le tribunal."
+  - q: "Combien coûte la saisine du MTV ?"
+    a: "**Gratuit** pour vous. La compagnie paie via les cotisations annuelles. Délai moyen : 3-5 mois."
+  - q: "Toutes les compagnies sont-elles concernées par le MTV ?"
+    a: "Seules les compagnies **adhérentes** au dispositif. La plupart le sont (Air France, KLM, Brussels Airlines, Royal Air Maroc, etc.). Liste à jour sur mtv.travel."
 ---
 
 Depuis 2026, la **médiation est obligatoire** avant tout recours au tribunal pour un litige aérien. L'organisme principal en France est le **Médiateur Tourisme et Voyage (MTV)**. Voici comment le saisir efficacement.

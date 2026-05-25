@@ -4,6 +4,13 @@ meta_title: "Justificatif retard de vol : attestation officielle compagnie - mod
 meta_description: "Comment obtenir un justificatif officiel de retard ou un voyage alternatif auprès de la compagnie aérienne. Modèle de demande + recours si refus."
 slug: justificatif-retard-vol-attestation-compagnie-demander
 image_url: /og-blog.png
+faq:
+  - q: "La compagnie a-t-elle l'obligation de me donner une attestation de retard ?"
+    a: "Oui, sur demande écrite. C'est même prévu à l'**article 14 du règlement CE 261**. Délai de réponse moyen : 30 jours."
+  - q: "Pour quoi sert l'attestation de retard ?"
+    a: "Activer une **assurance voyage**, justifier une absence professionnelle ou scolaire, monter un dossier d'**indemnisation CE 261**, réclamer un préjudice professionnel via Convention de Montréal."
+  - q: "La compagnie ne répond pas. Que faire ?"
+    a: "1) Relancer par mail à J+30. 2) Mise en demeure recommandé AR. 3) Saisir le médiateur MTV. Robin gère ces étapes à votre place et utilise des **preuves indépendantes** (Flightradar24, METAR) en parallèle."
 ---
 
 Un **justificatif de retard** est une attestation écrite par la compagnie aérienne qui confirme officiellement le retard de votre vol — son ampleur, sa cause éventuelle, l'heure réelle d'arrivée. Indispensable pour :

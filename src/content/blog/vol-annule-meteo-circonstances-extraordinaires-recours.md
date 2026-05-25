@@ -4,6 +4,13 @@ meta_title: "Vol annulé météo : recours et preuves pour obtenir 600€ d'inde
 meta_description: "Vol annulé ou retardé pour cause de météo ? La compagnie n'est pas automatiquement exonérée. Voici comment contester et récupérer vos 600€."
 slug: vol-annule-meteo-circonstances-extraordinaires-recours
 image_url: /og-blog.png
+faq:
+  - q: "La compagnie a invoqué la météo. C'est automatiquement valable ?"
+    a: "Non. La compagnie doit prouver que **votre vol précis** ne pouvait pas opérer ET qu'elle a pris toutes les mesures raisonnables. Si d'autres vols ont décollé/atterri le même jour, l'argument tombe dans 80 % des cas."
+  - q: "Quelles preuves vérifier ?"
+    a: "1) METAR/TAF officiels (bulletins météo aéroport). 2) Flightradar24 : autres vols du jour. 3) Tweets officiels de l'aéroport. 4) Présence d'autres avions de la même compagnie ce jour-là."
+  - q: "L'harmattan ou la mousson sont-ils des circonstances extraordinaires ?"
+    a: "**Non**. Ce sont des phénomènes **récurrents et prévisibles** — les compagnies doivent les anticiper (équipement, planning). Voir [Harmattan vol Afrique](/blog/harmattan-vol-afrique-retard-saison.html)."
 ---
 
 "Désolé, votre vol est annulé en raison de mauvaises conditions météorologiques. Circonstance extraordinaire — aucune indemnité due." C'est la réponse type des compagnies. Elle est **vraie dans 20 % des cas** seulement. Voici comment vérifier et contester.

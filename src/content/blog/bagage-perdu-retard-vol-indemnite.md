@@ -4,6 +4,13 @@ meta_title: "Bagage perdu ou retardé : Convention Montréal - jusqu'à 1600€"
 meta_description: "Bagage perdu, abîmé, retardé après votre vol ? La Convention de Montréal prévoit jusqu'à 1 600€. Différent du CE 261, on vous explique."
 slug: bagage-perdu-retard-vol-indemnite
 image_url: /og-blog.png
+faq:
+  - q: "Combien je touche pour un bagage perdu ?"
+    a: "Jusqu'à **environ 1 600€ par passager** (1 288 DTS) selon la Convention de Montréal. Cumulable avec les **600€ CE 261** si le vol était aussi retardé."
+  - q: "Mon bagage est arrivé 2 jours plus tard. Quels remboursements ?"
+    a: "Tous les achats raisonnables effectués pendant l'attente : vêtements, hygiène. Conservez les **factures**. Remboursement moyen : 100-400€ par passager."
+  - q: "Que faire si la compagnie refuse l'indemnisation bagage ?"
+    a: "Saisissez le Médiateur Tourisme et Voyage ([MTV](/blog/saisir-mediateur-mtv-tourisme-voyage.html)) ou un avocat. Robin gère le volet CE 261 (600€ vol retardé) ; pour le bagage seul, vous devez réclamer vous-même ou via un avocat spécialisé."
 ---
 
 Votre vol a été retardé ou annulé — c'est le CE 261. Mais si en plus votre bagage est **perdu, abîmé ou arrivé en retard**, c'est une **autre indemnisation**, sous un autre texte juridique : la **Convention de Montréal de 1999**.

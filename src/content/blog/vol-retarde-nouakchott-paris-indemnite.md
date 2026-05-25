@@ -4,6 +4,13 @@ meta_title: "Vol retardé Paris-Nouakchott : jusqu'à 600€ par passager (CE 26
 meta_description: "Retard ou annulation sur votre vol Paris-Nouakchott (Mauritanie) ? 600€ d'indemnité possible. Air France, Mauritania Airlines, Royal Air Maroc — votre guide."
 slug: vol-retarde-nouakchott-paris-indemnite
 image_url: /og-blog.png
+faq:
+  - q: "Vol Paris-Nouakchott retardé de 5h : combien je touche ?"
+    a: "Distance CDG-NKC ~4 050 km > 3 500 km, retard ≥ 3h → **600€ par passager**. Toute la famille en bénéficie individuellement."
+  - q: "La compagnie invoque l'harmattan : c'est une excuse valable ?"
+    a: "Pas automatiquement. L'harmattan est **prévisible** chaque hiver. Voir [Harmattan vol Afrique](/blog/harmattan-vol-afrique-retard-saison.html). La compagnie doit prouver que **votre vol précis** ne pouvait pas opérer (visibilité, autres vols du jour, etc.)."
+  - q: "Vol Nouakchott-Paris sur Mauritania Airlines retardé : éligible ?"
+    a: "Non. Mauritania Airlines est non-UE, départ hors UE → CE 261 ne s'applique pas. Seuls Air France et Brussels Airlines au retour ouvrent les droits."
 ---
 
 Nouakchott (NKC) accueille principalement Air France, Royal Air Maroc et Mauritania Airlines en provenance d'Europe. La ligne est sensible aux vents de sable (harmattan) qui peuvent retarder voire annuler les vols.

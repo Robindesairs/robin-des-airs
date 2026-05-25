@@ -4,6 +4,15 @@ meta_title: "Pourquoi Robin des Airs : appel direct, WhatsApp, 8 langues, 25 %"
 meta_description: "Ce qui rend Robin des Airs différent : suivi téléphonique humain, WhatsApp 7j/7, 8 langues dont wolof/bambara/lingala, commission unique 25 %, spécialiste diaspora."
 slug: pourquoi-choisir-robin-des-airs-difference
 image_url: /og-blog.png
+faq:
+  - q: "Quelle est la commission de Robin des Airs ?"
+    a: "**25 % unique** sur succès. Sur 600€ d'indemnité, vous gardez 450€ nets. AirHelp prend 35-50 %, Flightright 30 % + TVA, Skycop 30-40 % → Robin laisse le plus dans votre poche."
+  - q: "En quelles langues puis-je échanger ?"
+    a: "**8 langues** : français, anglais, wolof, bambara, soninké, peul, lingala, créole. C'est unique parmi les services d'indemnisation européens."
+  - q: "Puis-je appeler directement ?"
+    a: "Oui : **+33 7 56 86 36 30** (France, lundi-samedi). Vous parlez à une vraie personne — pas un robot. Et WhatsApp est ouvert 7j/7 au même numéro."
+  - q: "Et si on échoue à récupérer l'indemnité ?"
+    a: "Vous payez **0€**. La commission de 25 % est prise uniquement sur le montant récupéré. Pas de frais cachés, pas de TVA en plus, pas de \"supplément contentieux\" comme chez certains concurrents."
 ---
 
 Il existe une dizaine de services d'indemnisation aérienne sur le marché européen. Robin des Airs n'est pas le plus connu — mais c'est le seul **conçu pour la diaspora africaine** vivant en Europe. Voici les 4 différences concrètes.

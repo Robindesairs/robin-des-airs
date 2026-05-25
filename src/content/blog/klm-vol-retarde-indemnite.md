@@ -4,6 +4,13 @@ meta_title: "KLM vol retardé ou annulé : jusqu'à 600€ par passager (CE 261)
 meta_description: "Vol KLM retardé ou annulé ? La compagnie néerlandaise vous doit jusqu'à 600€ par passager selon le CE 261. Robin des Airs récupère votre indemnité."
 slug: klm-vol-retarde-indemnite
 image_url: /og-blog.png
+faq:
+  - q: "Mon vol KLM Amsterdam-Nairobi a eu 4h de retard. Combien je touche ?"
+    a: "Distance AMS-NBO ~6 700 km > 3 500 km, retard ≥ 3h → **600€ par passager**. KLM étant compagnie UE, c'est éligible aller comme retour."
+  - q: "J'ai un billet Air France opéré par KLM. Qui paie l'indemnité ?"
+    a: "C'est la compagnie qui **opère réellement** le vol (KLM) qui doit payer, pas celle qui a vendu le billet (Air France). Voir [Code-share Air France/KLM](/blog/code-share-air-france-klm-quelle-compagnie-recours.html)."
+  - q: "Vol Nairobi-Amsterdam sur KLM, retour avec retard : éligible ?"
+    a: "Oui. KLM est compagnie européenne, donc **éligible dans les deux sens** — contrairement à Kenya Airways qui ne couvre que les vols départ UE."
 ---
 
 KLM Royal Dutch Airlines opère un large réseau Afrique depuis Amsterdam (AMS) : Lagos, Accra, Kigali, Entebbe, Nairobi, Le Cap, Johannesburg, etc. Beaucoup de voyageurs francophones passent par AMS pour rejoindre l'Afrique, surtout depuis Lille, Bruxelles ou Lyon.

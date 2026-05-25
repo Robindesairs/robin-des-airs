@@ -55,12 +55,38 @@ h1.title{font-size:1.5rem;line-height:2rem;font-weight:900;color:#0B1F3A;margin:
 #blog-body th,#blog-body td{border:1px solid #E2E6EE;padding:10px 12px;text-align:left}
 #blog-body th{background:#0B1F3A;color:white;font-weight:700}
 #blog-body tr:nth-child(even){background:#F7F8FA}
-#blog-body blockquote{border-left:4px solid #00C87A;background:#EFF9F4;padding:12px 16px;border-radius:0 8px 8px 0;margin:1rem 0;color:#0B1F3A}`;
+#blog-body blockquote{border-left:4px solid #00C87A;background:#EFF9F4;padding:12px 16px;border-radius:0 8px 8px 0;margin:1rem 0;color:#0B1F3A}
+.faq{margin-top:2rem;border:1px solid #E5E7EB;background:#fff;border-radius:.75rem;padding:1.25rem 1.5rem}
+.faq h2{font-size:1.125rem;font-weight:700;color:#0B1F3A;margin:0 0 .75rem;padding-left:12px;border-left:4px solid #00C87A}
+.faq details{border-top:1px solid #F1F2F4;padding:.75rem 0}
+.faq details:first-of-type{border-top:none}
+.faq summary{font-size:.95rem;font-weight:600;color:#0B1F3A;cursor:pointer;padding:.25rem 0;list-style:none;position:relative;padding-right:1.5rem}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:'+';position:absolute;right:0;top:50%;transform:translateY(-50%);font-size:1.25rem;color:#00C87A;font-weight:700;line-height:1}
+.faq details[open] summary::after{content:'−'}
+.faq details>div{margin-top:.5rem;font-size:.875rem;color:#374151;line-height:1.6}
+.faq details>div a{color:#009960;font-weight:600}
+.faq details>div strong{color:#0B1F3A}`;
+
+/**
+ * Convertit du Markdown inline minimal en HTML pour les réponses FAQ
+ * (gras `**`, italique `*`, liens `[txt](url)`). Évite d'embarquer un parseur
+ * complet juste pour les réponses courtes.
+ */
+function inlineMd(s: string): string {
+  return escapeHtml(s)
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/(^|[^*])\*([^*]+)\*/g, '$1<em>$2</em>')
+    .replace(/\n/g, '<br>');
+}
 
 function renderArticlePage(post: Awaited<ReturnType<typeof getBySlug>>): string {
   if (!post) return '';
   const canonical = `${SITE_URL}/blog/${post.slug}.html`;
   const ogImage = `${SITE_URL}${post.image_url.startsWith('/') ? post.image_url : '/' + post.image_url}`;
+  const faq = post.faq || [];
+  const hasFaq = faq.length > 0;
   const blogPostingJson = JSON.stringify({
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -95,6 +121,30 @@ function renderArticlePage(post: Awaited<ReturnType<typeof getBySlug>>): string 
       { '@type': 'ListItem', position: 3, name: post.meta_title, item: canonical },
     ],
   });
+  const faqJson = hasFaq
+    ? JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faq.map((f) => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a },
+        })),
+      })
+    : '';
+  const faqHtml = hasFaq
+    ? `<section class="faq">
+      <h2>Questions fréquentes</h2>
+      ${faq
+        .map(
+          (f) => `<details>
+        <summary>${escapeHtml(f.q)}</summary>
+        <div>${inlineMd(f.a)}</div>
+      </details>`
+        )
+        .join('\n      ')}
+    </section>`
+    : '';
   return `<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -120,6 +170,7 @@ function renderArticlePage(post: Awaited<ReturnType<typeof getBySlug>>): string 
   <style>${INLINE_CSS}</style>
   <script type="application/ld+json">${blogPostingJson}</script>
   <script type="application/ld+json">${breadcrumbJson}</script>
+  ${faqJson ? `<script type="application/ld+json">${faqJson}</script>` : ''}
 </head>
 <body>
   <nav>
@@ -129,6 +180,7 @@ function renderArticlePage(post: Awaited<ReturnType<typeof getBySlug>>): string 
   <main class="wrap">
     <h1 class="title">${escapeHtml(post.title)}</h1>
     <div id="blog-body">${post.html}</div>
+    ${faqHtml}
     <div class="cta-box">
       <p>Prêt à récupérer votre indemnité ?</p>
       <p>
