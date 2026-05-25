@@ -124,12 +124,102 @@ LANG_CONFIG: dict[str, dict] = {
             "July", "August", "September", "October", "November", "December",
         ],
     },
+    "de": {
+        "html_lang": "de",
+        "blog_dir": "de/blog",
+        "url_blog_prefix": f"{SITE_URL}/de/blog",
+        "nav_back": "← Zurück",
+        "byline_prefix": "Von",
+        "byline_team": "dem Team Robin des Airs",
+        "byline_published": "Veröffentlicht am",
+        "byline_updated": "Aktualisiert am",
+        "cta_lead": "Bereit, Ihre Entschädigung einzufordern?",
+        "cta_check": "Entschädigung prüfen",
+        "cta_check_url": f"{SITE_URL}/#funnel-box",
+        "cta_whatsapp": "WhatsApp direkt",
+        "related_title": "Verwandte Artikel",
+        "faq_title": "Häufige Fragen",
+        "signature": (
+            "Artikel verfasst und geprüft von <strong>dem Team Robin des Airs</strong> "
+            "(robindesairs.eu) — Spezialisten für EG-261-Flugentschädigung auf der Achse Europa-Afrika. "
+            "<span class=\"disambig\">Nicht zu verwechseln mit anderen Organisationen mit ähnlichem Namen "
+            "im Umweltsektor.</span>"
+        ),
+        "disclaimer": (
+            "<strong>Allgemeine Information.</strong> "
+            "Dieser Artikel bietet eine didaktische Zusammenfassung der geltenden Vorschriften "
+            "(Verordnung (EG) Nr. 261/2004, Montrealer Übereinkommen, EuGH-Rechtsprechung) zum Zeitpunkt "
+            "der Veröffentlichung. Er stellt keine individuelle Rechtsberatung dar. Für Ihre konkrete "
+            "Situation wenden Sie sich an Robin des Airs (Vertretungsmandat) oder einen Fachanwalt für "
+            "Luftrecht."
+        ),
+        "language_switcher_label": "FR",
+        "language_switcher_alt": "Artikel auf Französisch lesen",
+        "default_related": [
+            ("/de/blog/verordnung-eg-261-zusammenfassung.html", "EG-261-Verordnung — Zusammenfassung"),
+            ("/de/blog/flugentschaedigung-betraege-250-400-600.html", "Entschädigung: 250 €, 400 €, 600 €"),
+            ("/de/blog/fluggesellschaft-lehnt-ab-was-tun.html", "Airline lehnt ab — was tun?"),
+        ],
+        "breadcrumb_root": ("Robin des Airs", f"{SITE_URL}/"),
+        "breadcrumb_blog": ("Blog", f"{SITE_URL}/de/blog/"),
+        "mois_fr": [
+            "Januar", "Februar", "März", "April", "Mai", "Juni",
+            "Juli", "August", "September", "Oktober", "November", "Dezember",
+        ],
+    },
+    "es": {
+        "html_lang": "es",
+        "blog_dir": "es/blog",
+        "url_blog_prefix": f"{SITE_URL}/es/blog",
+        "nav_back": "← Volver",
+        "byline_prefix": "Por",
+        "byline_team": "el equipo Robin des Airs",
+        "byline_published": "Publicado el",
+        "byline_updated": "Actualizado el",
+        "cta_lead": "¿Listo para reclamar su indemnización?",
+        "cta_check": "Comprobar mi indemnización",
+        "cta_check_url": f"{SITE_URL}/#funnel-box",
+        "cta_whatsapp": "WhatsApp directo",
+        "related_title": "Artículos relacionados",
+        "faq_title": "Preguntas frecuentes",
+        "signature": (
+            "Artículo redactado y verificado por <strong>el equipo Robin des Airs</strong> "
+            "(robindesairs.eu) — especialistas en indemnización aérea CE 261 en el eje Europa-África. "
+            "<span class=\"disambig\">No confundir con otras entidades de nombre similar "
+            "en el sector ambiental.</span>"
+        ),
+        "disclaimer": (
+            "<strong>Información general.</strong> "
+            "Este artículo ofrece un resumen didáctico de la normativa vigente "
+            "(Reglamento (CE) nº 261/2004, Convenio de Montreal, jurisprudencia TJUE) en la fecha "
+            "de publicación. No constituye asesoramiento jurídico personalizado. Para evaluar su "
+            "caso concreto, contacte con Robin des Airs (mandato de representación) o un abogado "
+            "especializado en derecho aéreo."
+        ),
+        "language_switcher_label": "FR",
+        "language_switcher_alt": "Leer este artículo en francés",
+        "default_related": [
+            ("/es/blog/resumen-reglamento-ce-261.html", "Resumen del Reglamento CE 261/2004"),
+            ("/es/blog/indemnizacion-vuelo-importes-250-400-600.html", "Importes 250 €, 400 €, 600 €"),
+            ("/es/blog/aerolinea-rechaza-indemnizacion.html", "La aerolínea rechaza — qué hacer"),
+        ],
+        "breadcrumb_root": ("Robin des Airs", f"{SITE_URL}/"),
+        "breadcrumb_blog": ("Blog", f"{SITE_URL}/es/blog/"),
+        "mois_fr": [
+            "enero", "febrero", "marzo", "abril", "mayo", "junio",
+            "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
+        ],
+    },
 }
 
 
 def detect_lang(path: str) -> str:
     """Détecte la langue depuis le chemin du fichier."""
     norm = os.path.normpath(path).replace("\\", "/")
+    if "/de/blog/" in norm or norm.startswith("de/blog/"):
+        return "de"
+    if "/es/blog/" in norm or norm.startswith("es/blog/"):
+        return "es"
     if "/en/blog/" in norm or norm.startswith("en/blog/"):
         return "en"
     return "fr"
@@ -142,7 +232,7 @@ def load_slug_mapping() -> dict:
     if os.path.isfile(SLUG_MAPPING_PATH):
         with open(SLUG_MAPPING_PATH, "r", encoding="utf-8") as f:
             return json.load(f)
-    return {"fr_to_en": {}, "en_to_fr": {}}
+    return {"fr_to_en": {}, "en_to_fr": {}, "fr_to_de": {}, "de_to_fr": {}, "fr_to_es": {}, "es_to_fr": {}}
 
 
 SLUG_MAPPING = load_slug_mapping()
@@ -355,7 +445,13 @@ def build_tldr_section(
       2) First sentence of each of the first 3 H2 in #blog-body
       3) meta description (fallback)
     """
-    title = "En bref" if lang == "fr" else "Key takeaways"
+    tldr_titles = {
+        "fr": "En bref",
+        "en": "Key takeaways",
+        "de": "Auf einen Blick",
+        "es": "En resumen",
+    }
+    title = tldr_titles.get(lang, "Key takeaways")
     items: list[str] = []
 
     # 1) FAQ first 3
@@ -523,21 +619,44 @@ def build_html(
     tldr_section: str = "",
 ) -> str:
     cfg = LANG_CONFIG[lang]
-    in_language = "fr-FR" if lang == "fr" else "en"
-    blog_name = "Blog Robin des Airs" if lang == "fr" else "Robin des Airs Blog"
-    blog_url = f"{SITE_URL}/blog/" if lang == "fr" else f"{SITE_URL}/en/blog/"
+    in_language_map = {"fr": "fr-FR", "en": "en", "de": "de", "es": "es"}
+    in_language = in_language_map.get(lang, "en")
+    blog_name_map = {
+        "fr": "Blog Robin des Airs",
+        "en": "Robin des Airs Blog",
+        "de": "Robin des Airs Blog (DE)",
+        "es": "Blog Robin des Airs (ES)",
+    }
+    blog_name = blog_name_map.get(lang, "Robin des Airs Blog")
+    blog_url_map = {
+        "fr": f"{SITE_URL}/blog/",
+        "en": f"{SITE_URL}/en/blog/",
+        "de": f"{SITE_URL}/de/blog/",
+        "es": f"{SITE_URL}/es/blog/",
+    }
+    blog_url = blog_url_map.get(lang, f"{SITE_URL}/en/blog/")
 
-    publisher_description = (
-        "Service de récupération d'indemnités aériennes (règlement CE 261/2004, "
-        "Convention de Montréal), spécialiste de l'axe Europe-Afrique. "
-        "À ne pas confondre avec des entités homonymes opérant dans d'autres secteurs."
-        if lang == "fr"
-        else (
+    publisher_descriptions = {
+        "fr": (
+            "Service de récupération d'indemnités aériennes (règlement CE 261/2004, "
+            "Convention de Montréal), spécialiste de l'axe Europe-Afrique. "
+            "À ne pas confondre avec des entités homonymes opérant dans d'autres secteurs."
+        ),
+        "en": (
             "Flight compensation recovery service (Regulation EC 261/2004, Montreal Convention), "
             "specialised on the Europe-Africa axis. Not to be confused with namesake entities "
             "operating in other sectors."
-        )
-    )
+        ),
+        "de": (
+            "Service zur Durchsetzung von Flugentschädigungen (Verordnung (EG) Nr. 261/2004, "
+            "Montrealer Übereinkommen), spezialisiert auf die Achse Europa-Afrika."
+        ),
+        "es": (
+            "Servicio de recuperación de indemnizaciones aéreas (Reglamento CE 261/2004, "
+            "Convenio de Montreal), especializado en el eje Europa-África."
+        ),
+    }
+    publisher_description = publisher_descriptions.get(lang, publisher_descriptions["en"])
     blog_posting = {
         "@context": "https://schema.org",
         "@type": "BlogPosting",
@@ -684,32 +803,54 @@ def build_html(
 """
 
 
+def _resolve_fr_slug(slug: str, lang: str) -> str | None:
+    if lang == "fr":
+        return slug
+    return (
+        SLUG_MAPPING.get("en_to_fr", {}).get(slug)
+        or SLUG_MAPPING.get("de_to_fr", {}).get(slug)
+        or SLUG_MAPPING.get("es_to_fr", {}).get(slug)
+    )
+
+
 def build_hreflang(slug: str, lang: str) -> str:
-    """Construit les <link rel='alternate' hreflang='...'> pour pointer vers la version FR ↔ EN."""
-    fr_slug = slug if lang == "fr" else SLUG_MAPPING.get("en_to_fr", {}).get(slug)
-    en_slug = slug if lang == "en" else SLUG_MAPPING.get("fr_to_en", {}).get(slug)
-    lines = ["", f'  <link rel="alternate" hreflang="{lang}" href="{SITE_URL}/{LANG_CONFIG[lang]["blog_dir"]}/{slug}.html">']
-    if lang == "fr" and en_slug:
-        lines.append(f'  <link rel="alternate" hreflang="en" href="{SITE_URL}/en/blog/{en_slug}.html">')
-        lines.append(f'  <link rel="alternate" hreflang="x-default" href="{SITE_URL}/blog/{fr_slug}.html">')
-    elif lang == "en" and fr_slug:
-        lines.append(f'  <link rel="alternate" hreflang="fr" href="{SITE_URL}/blog/{fr_slug}.html">')
-        lines.append(f'  <link rel="alternate" hreflang="x-default" href="{SITE_URL}/blog/{fr_slug}.html">')
-    return "\n".join(lines) if len(lines) > 1 else ""
+    """Construit les balises hreflang FR ↔ EN ↔ DE ↔ ES (si mapping disponible)."""
+    fr_slug = _resolve_fr_slug(slug, lang) or (slug if lang == "fr" else None)
+    if not fr_slug:
+        return ""
+
+    lines = [
+        "",
+        f'  <link rel="alternate" hreflang="{lang}" href="{SITE_URL}/{LANG_CONFIG[lang]["blog_dir"]}/{slug}.html">',
+    ]
+    pairs = [
+        ("fr", fr_slug, "blog"),
+        ("en", SLUG_MAPPING.get("fr_to_en", {}).get(fr_slug), "en/blog"),
+        ("de", SLUG_MAPPING.get("fr_to_de", {}).get(fr_slug), "de/blog"),
+        ("es", SLUG_MAPPING.get("fr_to_es", {}).get(fr_slug), "es/blog"),
+    ]
+    for hreflang, alt_slug, prefix in pairs:
+        if hreflang == lang or not alt_slug:
+            continue
+        lines.append(
+            f'  <link rel="alternate" hreflang="{hreflang}" href="{SITE_URL}/{prefix}/{alt_slug}.html">'
+        )
+    lines.append(f'  <link rel="alternate" hreflang="x-default" href="{SITE_URL}/blog/{fr_slug}.html">')
+    return "\n".join(lines)
 
 
 def build_language_switcher(slug: str, lang: str) -> str:
-    """Petit sélecteur de langue dans la nav (lien vers la version alternative si dispo)."""
-    if lang == "fr":
-        en_slug = SLUG_MAPPING.get("fr_to_en", {}).get(slug)
-        if not en_slug:
-            return ""
-        return f'<a href="/en/blog/{en_slug}.html" class="lang-switch" title="Read in English">EN</a>'
-    else:
-        fr_slug = SLUG_MAPPING.get("en_to_fr", {}).get(slug)
-        if not fr_slug:
-            return ""
-        return f'<a href="/blog/{fr_slug}.html" class="lang-switch" title="Lire en français">FR</a>'
+    """Liens vers FR / EN dans la nav (DE/ES pointent vers FR)."""
+    fr_slug = _resolve_fr_slug(slug, lang)
+    if not fr_slug:
+        return ""
+    parts: list[str] = []
+    if lang != "fr":
+        parts.append(f'<a href="/blog/{fr_slug}.html" class="lang-switch" title="Lire en français">FR</a>')
+    en_slug = SLUG_MAPPING.get("fr_to_en", {}).get(fr_slug)
+    if en_slug and lang != "en":
+        parts.append(f'<a href="/en/blog/{en_slug}.html" class="lang-switch" title="Read in English">EN</a>')
+    return " ".join(parts)
 
 
 # ------------------------------- main -----------------------------------------
@@ -726,9 +867,8 @@ def process_one(path: str, *, dry_run: bool, backup: bool, verbose: bool) -> dic
     title = first(r'<title[^>]*>(.*?)</title>', src) or ""
     title = html.unescape(title)
     description = extract_meta(src, "description") or ""
-    canonical = first(r'<link[^>]*rel="canonical"[^>]*href="([^"]+)"', src) or (
-        f"{cfg['url_blog_prefix']}/{slug}.html"
-    )
+    # Toujours reconstruire depuis slug — évite les canonicals corrompus (.html.html)
+    canonical = f"{cfg['url_blog_prefix']}/{slug}.html"
     og_image = extract_meta(src, "og:image", prop=True) or f"{SITE_URL}/og-blog.png"
     h1_raw = first(r'<h1[^>]*>(.*?)</h1>', src) or title
     h1 = html.unescape(re.sub(r'<[^>]+>', '', h1_raw)).strip()
