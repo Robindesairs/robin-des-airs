@@ -4,6 +4,7 @@
  */
 
 const { getBlobStore } = require('./lib/netlify-blobs-store');
+const { getPinnedFlights } = require('./lib/pinned-flights');
 
 const STORE_NAME = 'robin-radar-ticker';
 const CACHE_KEY = 'banner/latest.json';
@@ -22,6 +23,24 @@ const {
   BANNER_TARGET_COUNT,
   parisDateYmd,
 } = require('./radar');
+
+/**
+ * Préfixe la liste finale avec les vols "pinned" (priorité absolue) tant que
+ * la fenêtre d'activité est ouverte. Les pinned occupent les premiers slots,
+ * les vols live remplissent le reste jusqu'à BANNER_TARGET_COUNT.
+ */
+function applyPinnedFlights(flights, viewDate) {
+  const pinned = getPinnedFlights(viewDate);
+  if (!pinned.length) return flights || [];
+  const target = BANNER_TARGET_COUNT || TARGET;
+  const pinnedKeys = new Set(
+    pinned.map((p) => `${p.flight}|${p.dep}|${p.arr}|${p.scheduledDate}`)
+  );
+  const live = (flights || []).filter(
+    (f) => !pinnedKeys.has(`${f.flight}|${f.dep}|${f.arr}|${f.scheduledDate}`)
+  );
+  return pinned.concat(live).slice(0, target);
+}
 
 async function readBlobCache(event) {
   const store = getBlobStore(event, STORE_NAME);
@@ -79,12 +98,17 @@ exports.handler = async (event) => {
     const isStale = !updated || Date.now() - updated > staleMs;
     const cacheComplete = cachedFlights.length >= (BANNER_TARGET_COUNT || TARGET);
 
-    /* Cache récent et déjà 9 vols → réponse immédiate (pas de scan lourd). */
+    /* Cache récent et déjà 9 vols → réponse immédiate (pas de scan lourd).
+     * On réinjecte les pinned au cas où la fenêtre d'activité a changé depuis
+     * la dernière écriture du cache. */
     if (cacheComplete && !isStale) {
+      const out = Object.assign({}, cached, {
+        flights: applyPinnedFlights(cached.flights, cached.viewDate),
+      });
       return {
         statusCode: 200,
         headers: HEADERS,
-        body: JSON.stringify(cached),
+        body: JSON.stringify(out),
       };
     }
 
@@ -134,18 +158,24 @@ exports.handler = async (event) => {
       }
     }
 
+    const viewDate = parisDateYmd();
+    const finalFlights = applyPinnedFlights(merged, viewDate);
+
     const out = buildResponse(
       Object.assign(
         {
-          viewDate: parisDateYmd(),
+          viewDate,
         },
         scanMeta
       ),
-      merged
+      finalFlights
     );
 
     out.hubRunIndex = nextHubRun;
-    await writeBlobCache(event, out);
+    /* On écrit le cache avec la liste mergée brute (sans pinned) pour pouvoir
+     * activer/désactiver dynamiquement les pinned sans avoir à invalider. */
+    const cachePayload = Object.assign({}, out, { flights: merged });
+    await writeBlobCache(event, cachePayload);
 
     return {
       statusCode: 200,
