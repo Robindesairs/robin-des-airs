@@ -17,21 +17,22 @@ const PINNED_ACTIVE_FROM = '2026-05-24'; // début de la suspension RAM
 const PINNED_ACTIVE_UNTIL = '2026-07-31'; // limite de visibilité (à reculer si la crise s'étend)
 
 /**
- * 6 vols RAM Casa → Afrique centrale suspendus mai-juin 2026.
+ * 6 routes RAM UE → Casa → Afrique centrale suspendues mai-juin 2026.
  * Source : communiqué Royal Air Maroc du 23 mai 2026, repris par RFI/ACMRCI/Le212News.
  *
- * Note : les numéros de vol sont des numéros plausibles RAM sur ces routes,
- * non confirmés par la compagnie dans le communiqué. Ils servent d'identifiant
- * visuel — l'éligibilité juridique du dossier est appréciée au cas par cas
- * sur le PNR du passager.
+ * Format Wegener : on affiche la route complète UE → CMN → destination car
+ * c'est cette route (sur PNR unique) qui ouvre l'éligibilité CE 261 via
+ * l'arrêt CJUE Wegener (C-537/17). Le `dep` est un hub UE (Paris-CDG) pour
+ * passer le filtre bandeau EU↔Afrique. Le `via` (CMN) est affiché dans le
+ * chip pour montrer la correspondance.
  */
 const PINNED_ROUTES = [
-  { flight: 'AT540', dep: 'CMN', arr: 'LBV' }, // Libreville (Gabon)
-  { flight: 'AT568', dep: 'CMN', arr: 'DLA' }, // Douala (Cameroun)
-  { flight: 'AT553', dep: 'CMN', arr: 'NSI' }, // Yaoundé (Cameroun)
-  { flight: 'AT586', dep: 'CMN', arr: 'BGF' }, // Bangui (Centrafrique)
-  { flight: 'AT564', dep: 'CMN', arr: 'FIH' }, // Kinshasa (RDC)
-  { flight: 'AT566', dep: 'CMN', arr: 'BZV' }, // Brazzaville (Congo)
+  { flight: 'RAM', depEu: 'CDG', via: 'CMN', arr: 'LBV' }, // Libreville (Gabon)
+  { flight: 'RAM', depEu: 'CDG', via: 'CMN', arr: 'DLA' }, // Douala (Cameroun)
+  { flight: 'RAM', depEu: 'CDG', via: 'CMN', arr: 'NSI' }, // Yaoundé (Cameroun)
+  { flight: 'RAM', depEu: 'CDG', via: 'CMN', arr: 'BGF' }, // Bangui (Centrafrique)
+  { flight: 'RAM', depEu: 'CDG', via: 'CMN', arr: 'FIH' }, // Kinshasa (RDC)
+  { flight: 'RAM', depEu: 'CDG', via: 'CMN', arr: 'BZV' }, // Brazzaville (Congo)
 ];
 
 function parisDateAddDays(offsetDays) {
@@ -74,24 +75,55 @@ function getPinnedFlights(todayYmd) {
     const scheduledDate = offset === 0 ? today : parisDateAddDays(offset);
     return {
       flight: route.flight,
-      dep: route.dep,
+      dep: route.depEu,
       arr: route.arr,
+      via: route.via,
       scheduledDate,
       cancelled: true,
       delayMinutes: null,
       eligible: true,
       airline: 'AT',
       direction: 'Departure',
-      hubIata: route.dep,
-      pinned: true, // marqueur pour debug / éventuel rendu spécifique
+      hubIata: route.depEu,
+      pinned: true,
       pinnedReason: 'ram-afrique-centrale-suspension-2026',
     };
   });
 }
 
+/**
+ * Indique si la route (dep, arr) est un segment de correspondance pinné
+ * (CMN → 6 destinations Afrique centrale RAM). Utilisé par radar.js pour
+ * élargir le filtre du bandeau et auto-détecter ces vols si AeroDataBox
+ * les rapporte annulés/retardés sur le segment Casa→destination.
+ */
+function isPinnedCorrespondanceRoute(depIata, arrIata) {
+  if (!isPinnedActive()) return false;
+  const dep = String(depIata || '').toUpperCase();
+  const arr = String(arrIata || '').toUpperCase();
+  return PINNED_ROUTES.some((r) => r.via === dep && r.arr === arr);
+}
+
+/** Liste des aéroports de correspondance à scanner en plus (hub Casa).
+ * Exposée pour permettre à ticker-africa-hubs.js d'injecter le hub dans le scan. */
+function getPinnedCorrespondanceHubs() {
+  if (!isPinnedActive()) return [];
+  const seen = new Set();
+  const out = [];
+  PINNED_ROUTES.forEach((r) => {
+    if (r.via && !seen.has(r.via)) {
+      seen.add(r.via);
+      out.push(r.via);
+    }
+  });
+  return out;
+}
+
 module.exports = {
   getPinnedFlights,
   isPinnedActive,
+  isPinnedCorrespondanceRoute,
+  getPinnedCorrespondanceHubs,
   PINNED_ACTIVE_FROM,
   PINNED_ACTIVE_UNTIL,
 };

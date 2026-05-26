@@ -879,7 +879,10 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 36px;
-  align-items: center;
+  /* Aligner par le haut : le sommet du funnel droite reste au niveau du H1 gauche
+   * même quand le funnel droite est nettement plus long que la colonne gauche.
+   * Sur mobile, la grille passe en 1 colonne donc l'alignement est neutre. */
+  align-items: start;
   position: relative;
   z-index: 2;
   padding-bottom: 40px;

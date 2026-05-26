@@ -3,6 +3,8 @@
  * IATA + ICAO pour AeroDataBox /flights/airports/icao/{icao}/...
  */
 
+const { getPinnedCorrespondanceHubs } = require('./pinned-flights');
+
 /** Pays Afrique du Nord exclus du bandeau diaspora. */
 const AFRICA_NORTH_COUNTRY = new Set(['MA', 'DZ', 'TN', 'EG', 'LY']);
 
@@ -75,6 +77,8 @@ const AFRICA_HUB_ICAO = {
   DUR: 'FALE',
   WDH: 'FYWH',
   JIB: 'HDAM',
+  /* Hub correspondance (RAM) — scanné quand des routes pinnées sont actives. */
+  CMN: 'GMMN',
 };
 
 /** Hubs Europe (départs diaspora) — toujours scannés. */
@@ -102,7 +106,7 @@ function getTickerAfricaHubs() {
   return out;
 }
 
-/** Rotation : chaque run scanne EU + un lot d’aéroports africains (évite timeout). */
+/** Rotation : chaque run scanne EU + hubs correspondance pinnés + un lot d’aéroports africains. */
 function getBannerHubsForRun(runIndex) {
   const africa = getTickerAfricaHubs();
   const perRun = Math.min(
@@ -114,11 +118,19 @@ function getBannerHubsForRun(runIndex) {
   for (let i = 0; i < perRun && i < africa.length; i++) {
     slice.push(africa[(idx + i) % africa.length]);
   }
-  return [...BANNER_EU_HUBS, ...slice];
+  /* Hubs correspondance (ex: CMN tant que la suspension RAM Afrique centrale dure) :
+   * toujours scannés en plus du lot tournant, pour détecter d'autres annulations
+   * sur ces routes au-delà des vols pinnés statiques. */
+  const correspondance = getPinnedCorrespondanceHubs();
+  return [...BANNER_EU_HUBS, ...correspondance, ...slice];
 }
 
 function getBannerHubsFull() {
-  return [...BANNER_EU_HUBS, ...getTickerAfricaHubs()];
+  return [
+    ...BANNER_EU_HUBS,
+    ...getPinnedCorrespondanceHubs(),
+    ...getTickerAfricaHubs(),
+  ];
 }
 
 module.exports = {

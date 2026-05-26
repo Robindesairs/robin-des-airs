@@ -282,6 +282,8 @@ const {
   BANNER_EU_HUBS,
 } = require('./lib/ticker-africa-hubs');
 
+const { isPinnedCorrespondanceRoute } = require('./lib/pinned-flights');
+
 const TICKER_HUB_ICAO = Object.assign({}, HUB_ICAO, AFRICA_HUB_ICAO, {
   BRU: 'EBBR',
   AMS: 'EHAM',
@@ -392,12 +394,21 @@ function isEuSubSaharanAfricaRoute(depIata, arrIata) {
   );
 }
 
-/** Vols impactés bandeau : éligibles CE 261, EU↔Afrique subsaharienne, annulé ou retard arrivée ≥ 3 h. */
+/** Routes acceptées par le filtre bandeau : EU↔Afrique sub OU routes pinnées (correspondance). */
+function isBannerEligibleRoute(depIata, arrIata) {
+  if (isEuSubSaharanAfricaRoute(depIata, arrIata)) return true;
+  /* Routes de correspondance pinnées (ex: CMN→Afrique centrale RAM 2026) :
+   * autorisées car éligibles CE 261 via arrêt Wegener (C-537/17) quand
+   * le passager voyage UE → Casa → destination sur PNR unique. */
+  return isPinnedCorrespondanceRoute(depIata, arrIata);
+}
+
+/** Vols impactés bandeau : éligibles CE 261, route bandeau, annulé ou retard arrivée ≥ 3 h. */
 function filterImpactedEuAfricaFlights(flights, minDelayMinutes) {
   const minD = minDelayMinutes != null ? minDelayMinutes : 180;
   return (flights || []).filter((f) => {
     if (!f || !f.eligible) return false;
-    if (!isEuSubSaharanAfricaRoute(f.dep, f.arr)) return false;
+    if (!isBannerEligibleRoute(f.dep, f.arr)) return false;
     if (f.cancelled) return true;
     return f.delayMinutes != null && f.delayMinutes >= minD;
   });

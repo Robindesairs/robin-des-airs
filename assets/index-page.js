@@ -157,6 +157,7 @@ function volTickerRouteToDisplay(routeStr, isEn) {
     if (!code) return '';
     return (map && map[code]) || code;
   }
+  if (parts.length >= 3) return city(parts[0]) + ' → ' + city(parts[1]) + ' → ' + city(parts[2]);
   if (parts.length >= 2) return city(parts[0]) + ' → ' + city(parts[1]);
   return routeStr;
 }
@@ -263,15 +264,17 @@ function volTickerRowsFromRadar(data) {
     var fn = String(f.flight || '').replace(/\s/g, '');
     var dep = (f.dep || '').toUpperCase();
     var arr = (f.arr || '').toUpperCase();
+    var via = (f.via || '').toUpperCase();
     var key = dep + '-' + arr;
     var keyRev = arr + '-' + dep;
     var amountEur =
       typeof ROUTE_AMOUNT !== 'undefined' && (ROUTE_AMOUNT[key] || ROUTE_AMOUNT[keyRev])
         ? ROUTE_AMOUNT[key] || ROUTE_AMOUNT[keyRev]
         : 600;
+    var route = via ? dep + ' → ' + via + ' → ' + arr : dep + ' → ' + arr;
     return {
       flight: fn,
-      route: dep + ' → ' + arr,
+      route: route,
       kind: f.cancelled ? 'cancel' : 'delay',
       detail: f.cancelled ? '' : volTickerFormatDelayMinutes(f.delayMinutes),
       date: f.scheduledDate || viewDate,
