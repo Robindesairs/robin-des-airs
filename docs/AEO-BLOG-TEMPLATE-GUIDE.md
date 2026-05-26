@@ -34,6 +34,13 @@ Quand tu crées (ou refactores) un article de blog, vérifie que chaque case ci-
 - [ ] **CTA en question** dans le bloc final
 - [ ] **PAS de duplication "En bref" ↔ FAQ** (supprimer le bloc "En bref" s'il duplique la FAQ du bas)
 
+### Conversion WhatsApp prérempli (OBLIGATOIRE, x2 minimum)
+- [ ] **Preset WhatsApp dans le verdict du test rapide** (point d'engagement le plus chaud)
+- [ ] **Preset WhatsApp dans le CTA box final** (bouton "WhatsApp direct")
+- [ ] **Texte prérempli unique et spécifique** à l'article (permet le tracking par phrase d'entrée)
+- [ ] **URL correctement encodée** (espace = %20, é = %C3%A9, ' = %27, etc.)
+- [ ] **Numéro de référence cohérent** : `33756863630` (sans +, sans espaces)
+
 ### Précision juridique
 - [ ] **Pas de formulations absolues** : nuancer ("ne l'est pas avec X, mais l'est avec Y")
 - [ ] **Sourcing des affirmations juridiques** : article + texte + jurisprudence + lien Eur-Lex/Legifrance/Curia
@@ -172,6 +179,88 @@ Sur un sujet juridique sensible (indemnisation, droit aérien, recours), une **f
 - **Section circonstances extraordinaires** : « La qualification finale appartient toutefois au juge saisi du dossier, qui apprécie souverainement les faits et la jurisprudence applicable. »
 
 - **Disclaimer méthodologie** : « Information générale, ne constitue pas un avis juridique personnalisé. L'éligibilité de chaque dossier dépend du PNR, de la date de notification et des circonstances exactes — appréciation au cas par cas. »
+
+---
+
+## Stratégie WhatsApp prérempli (conversion + tracking)
+
+Chaque article DOIT contenir au minimum **deux liens WhatsApp préremplis avec un texte spécifique à l'article**. C'est à la fois un levier de conversion ET un levier de tracking : chaque message WhatsApp commençant par cette phrase précise est attribuable à l'article — sans cookie, sans analytics, sans tag complexe.
+
+### Format de l'URL WhatsApp
+
+```
+https://wa.me/33756863630?text=[TEXTE_PREREMPLI_URL_ENCODE]
+```
+
+- **Numéro** : `33756863630` (sans `+`, sans espaces — format wa.me)
+- **Paramètre** : `?text=` suivi du message **URL-encodé**
+
+### Tableau d'encodage rapide
+
+| Caractère | Encodage URL |
+|---|---|
+| espace | `%20` |
+| `,` | `%2C` |
+| `'` | `%27` |
+| `é` | `%C3%A9` |
+| `è` | `%C3%A8` |
+| `à` | `%C3%A0` |
+| `ô` | `%C3%B4` |
+| `ç` | `%C3%A7` |
+| `?` | `%3F` |
+| `&` | `%26` |
+
+### Modèle universel du texte prérempli
+
+```
+Bonjour Robin, [contexte spécifique à l'article], j'aimerais vérifier mon indemnité.
+```
+
+Le `[contexte spécifique]` doit être **distinctif** (pas générique) pour permettre le tracking. Exemples :
+
+| Article | Contexte spécifique | Phrase complète |
+|---|---|---|
+| RAM annulations Casa-Afrique centrale | « mon vol RAM via Casablanca a été annulé » | Bonjour Robin, mon vol RAM via Casablanca a été annulé, j'aimerais vérifier mon indemnité. |
+| Air Côte d'Ivoire vol retardé | « j'ai eu un retard sur un vol Air Côte d'Ivoire » | Bonjour Robin, j'ai eu un retard sur un vol Air Côte d'Ivoire, j'aimerais vérifier mon indemnité. |
+| Arrêt Sturgeon 3h retard | « mon vol a eu 3 heures de retard à l'arrivée » | Bonjour Robin, mon vol a eu 3 heures de retard à l'arrivée, j'aimerais vérifier mon indemnité. |
+| Que faire à l'aéroport | « je suis bloqué à l'aéroport avec un vol retardé » | Bonjour Robin, je suis bloqué à l'aéroport avec un vol retardé, j'aimerais vérifier mes droits. |
+
+### Emplacements obligatoires (× 2 minimum)
+
+1. **Dans le verdict du test rapide** (lien texte « Vérifier en 2 minutes sur WhatsApp ») — c'est le point d'engagement le plus chaud, juste après que le visiteur ait répondu Oui à 3 questions
+2. **Dans le CTA box final** (bouton « WhatsApp direct ») — c'est le filet de sécurité pour les visiteurs qui n'ont pas répondu au test
+
+### Emplacements optionnels (boost conversion)
+
+3. **Dans le bloc Méthodologie & sources** sous la ligne « Analyse » — pour les sujets juridiquement sensibles, où le visiteur cherche une expertise immédiate
+4. **Dans le H2 « Comment Robin des Airs prend-il en charge mon dossier ? »** — un lien WhatsApp en fin de section
+
+### Comment générer rapidement un preset WhatsApp
+
+**En ligne** : https://wa.link/preset/ ou https://api.whatsapp.com/send?phone=33756863630&text=Votre%20texte
+
+**En console** (à exécuter dans le navigateur ou Node.js) :
+
+```javascript
+const phone = '33756863630';
+const text = "Bonjour Robin, mon vol RAM via Casablanca a été annulé, j'aimerais vérifier mon indemnité.";
+const url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+console.log(url);
+```
+
+`encodeURIComponent()` gère tous les caractères spéciaux (accents, apostrophes, espaces) en une ligne.
+
+### Pourquoi cette stratégie est puissante
+
+1. **Tracking 100% fiable sans cookies** : chaque message WhatsApp commençant par la phrase spécifique est attribuable à l'article. Pas besoin d'UTM, pas de cookies, pas de RGPD.
+
+2. **Friction réduite à 1 clic** : le visiteur n'a pas à taper son contexte, c'est déjà rédigé. Le taux de complétion est × 3-5 vs un formulaire.
+
+3. **Qualifie le contact en amont** : la phrase prérenseignée filtre les visiteurs sérieux des curieux, et te donne immédiatement le contexte du dossier sans avoir à poser la question.
+
+4. **Brand signal pour les LLM** : si beaucoup de gens cherchent « Robin des Airs WhatsApp », c'est un signal de **branded query** que les LLM utilisent pour évaluer ton autorité dans le domaine.
+
+5. **Mesure du ROI par article** : tu peux dire **exactement** combien de dossiers chaque article génère, ce qui te permet de prioriser tes prochains contenus.
 
 ---
 
@@ -383,3 +472,4 @@ Après création/modification d'un article, valider sur :
 
 - **v1.0** (2026-05-26) : Méthode initiale validée sur 3 articles pilotes (air-cote-divoire, arret-sturgeon, que-faire-aeroport).
 - **v1.1** (2026-05-26) : Ajout des garde-fous juridiques anti-promesse + bloc "Méthodologie & sources" + table de conversion de wording. Validé sur le 4ᵉ pilote (ram-vols-annules-afrique-centrale-via-casa).
+- **v1.2** (2026-05-26) : Stratégie WhatsApp prérempli formalisée (× 2 emplacements minimum, texte spécifique par article pour tracking 100% fiable sans cookies, tableau d'encodage URL, modèle universel + exemples). Permet la mesure du ROI par article et la qualification automatique des contacts.
