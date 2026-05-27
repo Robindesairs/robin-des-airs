@@ -964,6 +964,22 @@
       <p class="footer-tagline" data-i18n="footer_tagline">Réclamation aérienne · Spécialiste Diaspora · Prix fixe · No win no fee</p>
       <p class="footer-address">Robin des Airs · 66 avenue des Champs-Élysées, Paris 🇫🇷</p>
       <p style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:10px;font-style:italic;">"Robin prend aux compagnies,<br>rend à nos familles."</p>
+      <div class="footer-newsletter" id="footer-newsletter">
+        <h3 class="footer-col-heading" data-i18n="footer_newsletter_heading">Newsletter</h3>
+        <p class="footer-newsletter-desc" data-i18n="footer_newsletter_desc">Conseils CE 261, réforme européenne et actualités diaspora — 1 e-mail utile de temps en temps.</p>
+        <form id="newsletter-form" class="footer-newsletter-form" action="/api/newsletter-subscribe" method="post" novalidate>
+          <label class="footer-newsletter-hp" for="newsletter-hp">Ne pas remplir</label>
+          <input type="text" id="newsletter-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+          <label class="sr-only" for="newsletter-email" data-i18n="footer_newsletter_email_label">Votre e-mail</label>
+          <input type="email" id="newsletter-email" name="email" required autocomplete="email" placeholder="votre@email.com">
+          <button type="submit" data-i18n="footer_newsletter_submit">S'inscrire</button>
+        </form>
+        <label class="footer-newsletter-consent" for="newsletter-consent">
+          <input type="checkbox" id="newsletter-consent" name="consent" value="1" required>
+          <span data-i18n-html="footer_newsletter_consent">J'accepte de recevoir la newsletter Robin des Airs. <a href="/politique-confidentialite.html">Politique de confidentialité</a> — désinscription à tout moment.</span>
+        </label>
+        <p class="footer-newsletter-msg" id="newsletter-msg" role="status" aria-live="polite" hidden></p>
+      </div>
     </div>
     <div class="footer-col">
       <h3 class="footer-col-heading" data-i18n="footer_nav">Navigation</h3>

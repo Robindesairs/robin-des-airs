@@ -110,6 +110,7 @@
         window.__ROBIN_FUNNEL_READY__ = true;
       }
       await loadScript('/assets/index-page.js');
+      await loadScript('/assets/newsletter-form.js');
       if (window.__ROBIN_FUNNEL_READY__ && typeof ensureRouteAmountBuilt === 'function') ensureRouteAmountBuilt();
       if (typeof window.refreshVolTicker === 'function') window.refreshVolTicker();
       if (window.__ROBIN_DEFER_FUNNEL__) {

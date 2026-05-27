@@ -2175,6 +2175,77 @@ footer {
 .footer-tagline { font-size: 12px; color: rgba(255,255,255,0.35); line-height: 1.7; max-width: 240px; }
 .footer-address { font-size: 11px; color: rgba(255,255,255,0.45); line-height: 1.5; margin-top: 6px; }
 
+.footer-newsletter { margin-top: 20px; max-width: 280px; }
+.footer-newsletter-desc {
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+  line-height: 1.55;
+  margin: 0 0 10px;
+}
+.footer-newsletter-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.footer-newsletter-form input[type="email"] {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  font-size: 12px;
+  font-family: inherit;
+}
+.footer-newsletter-form input[type="email"]::placeholder { color: rgba(255,255,255,0.35); }
+.footer-newsletter-form input[type="email"]:focus {
+  outline: 2px solid var(--neon-b);
+  outline-offset: 1px;
+  border-color: transparent;
+}
+.footer-newsletter-form button {
+  flex-shrink: 0;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--neon);
+  color: var(--navy);
+  font-size: 11px;
+  font-weight: 800;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+}
+.footer-newsletter-form button:hover { background: var(--neon-b); }
+.footer-newsletter-form button:disabled { opacity: 0.6; cursor: not-allowed; }
+.footer-newsletter-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 10px;
+  line-height: 1.45;
+  color: rgba(255,255,255,0.38);
+  cursor: pointer;
+}
+.footer-newsletter-consent input { margin-top: 2px; flex-shrink: 0; accent-color: var(--neon); }
+.footer-newsletter-consent a { color: var(--neon-b); font-weight: 600; }
+.footer-newsletter-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.footer-newsletter-msg {
+  margin: 8px 0 0;
+  font-size: 11px;
+  line-height: 1.45;
+  color: rgba(255,255,255,0.55);
+}
+.footer-newsletter-msg--ok { color: var(--neon-b); }
+.footer-newsletter-msg--err { color: #fca5a5; }
+
 .footer-col h3.footer-col-heading {
   font-size: 9px;
   font-weight: 700;
