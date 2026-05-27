@@ -28,7 +28,7 @@ Planification Netlify : `radar-monitor` — cron `5 * * * *` (vérifie l’heure
 ```bash
 # Matin (bandeau + email)
 curl -X POST "https://robindesairs.eu/api/daily-radar-snapshot"
-curl -X POST "https://robindesairs.eu/api/radar-monitor?force=morning"
+curl -X POST "https://robindesairs.eu/api/radar-monitor?force=morning&secret=VOTRE_SECRET_NETLIFY"
 
 # Contrôle EU après-midi
 curl -X POST "https://robindesairs.eu/api/radar-monitor?force=eu"
