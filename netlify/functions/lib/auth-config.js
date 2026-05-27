@@ -18,8 +18,9 @@ function allowInsecureAuth() {
   return (process.env.ALLOW_INSECURE_AUTH || '').trim() === 'true';
 }
 
-/** Démo Claude / preview : connexion par code agence seul (retirer après). */
+/** Preview uniquement — jamais en production (fail-closed). */
 function allowAgencyCodeOnly() {
+  if (isProduction()) return false;
   return (process.env.ALLOW_AGENCY_CODE_ONLY || '').trim() === 'true';
 }
 

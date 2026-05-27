@@ -34,7 +34,7 @@
       { name: 'whatsapp-status', url: base() + '/api/whatsapp-status', check: function(r, d) { return r.ok && d && (d.whatsapp === 'ok' || d.can_send_replies !== undefined); } },
       { name: 'flight-info', url: base() + '/.netlify/functions/flight-info?flight=AF718', check: function(r) { return r.ok; } },
       { name: 'airport-search', url: base() + '/.netlify/functions/airport-search?query=paris', check: function(r) { return r.ok; } },
-      { name: 'radar', url: base() + '/.netlify/functions/radar', check: function(r) { return r.ok; } }
+      { name: 'radar (protégé)', url: base() + '/.netlify/functions/radar', check: function(r) { return r.status === 401; } }
     ];
 
     document.getElementById('run').onclick = async function() {

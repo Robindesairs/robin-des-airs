@@ -33,6 +33,7 @@
     </style>
 </head>
 <body>
+<script src="/assets/radar-gate.js"></script>
 
     <div class="header">
         <div class="logo">🏹 ROBIN DES AIRS : SUIVI EN DIRECT</div>
@@ -92,7 +93,7 @@
     }
     function api() {
         var url = apiOrigin() + '/.netlify/functions/radar?_=' + Date.now();
-        return fetch(url, { cache: 'no-store' }).then(function(r) {
+        return fetch(url, { cache: 'no-store', credentials: 'include' }).then(function(r) {
             return r.text().then(function(text) {
                 if (!r.ok || !text.trim().startsWith('{'))
                     return { flights: [], error: 'Réponse invalide. Vérifiez Netlify et RAPIDAPI_KEY (AeroDataBox). URL : ' + url };

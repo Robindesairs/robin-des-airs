@@ -370,7 +370,7 @@
 
   function fetchRadarLive() {
     var url = apiRadarOrigin() + '/.netlify/functions/radar?_=' + Date.now();
-    return fetch(url, { cache: 'no-store' })
+    return fetch(url, { cache: 'no-store', credentials: 'include' })
       .then(function (r) {
         return r.text().then(function (text) {
           var data = parseRadarResponse(r, text);

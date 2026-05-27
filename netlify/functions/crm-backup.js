@@ -14,14 +14,13 @@ let netlifyBlobsModule = null;
 try { netlifyBlobsModule = require('@netlify/blobs'); } catch (e) {}
 
 const { checkCrmAccess } = require('./lib/crm-access');
+const { corsHeaders } = require('./lib/auth-config');
 
 const STORE_NAME = 'robin-crm-backups';
 const MAX_BACKUPS = 10;
 
 const HEADERS = {
-  'Content-Type': 'application/json',
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type, X-CRM-Code',
+  ...corsHeaders(),
   'Cache-Control': 'no-store',
 };
 

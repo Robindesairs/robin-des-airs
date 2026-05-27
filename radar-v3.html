@@ -42,6 +42,7 @@
     </style>
 </head>
 <body>
+<script src="/assets/radar-gate.js"></script>
 
     <div class="header">
         <div class="logo">🏹 Robin des Airs — System V3 Final</div>
@@ -133,7 +134,7 @@
         list.innerHTML = '';
 
         var url = apiOrigin() + '/.netlify/functions/radar?_=' + Date.now();
-        fetch(url, { cache: 'no-store' }).then(function(r) { return r.text(); }).then(function(text) {
+        fetch(url, { cache: 'no-store', credentials: 'include' }).then(function(r) { return r.text(); }).then(function(text) {
             var data = {};
             try { data = JSON.parse(text); } catch (e) { data = { flights: [], error: 'JSON invalide' }; }
             if (!data.flights) data.flights = [];

@@ -17,6 +17,7 @@
     </style>
 </head>
 <body>
+<script src="/assets/radar-gate.js"></script>
 
     <h1>🔍 Test connexion radar</h1>
     <p>Appelle la fonction Netlify <code>/.netlify/functions/radar</code> (clé API côté serveur). Aucun filtre : on vérifie juste que la data arrive.</p>
@@ -45,7 +46,7 @@
         var url = apiOrigin() + '/.netlify/functions/radar?_=' + Date.now();
 
         try {
-            var response = await fetch(url);
+            var response = await fetch(url, { credentials: 'include' });
             var text = await response.text();
 
             if (!response.ok || !text.trim().startsWith('{')) {

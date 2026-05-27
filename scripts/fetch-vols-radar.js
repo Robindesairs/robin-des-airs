@@ -2,14 +2,15 @@
  * Récupère les vols du radar (Dakar par défaut) et écrit le résultat dans docs/vols-radar.txt
  * Pour voir les vols dans Cursor : exécute ce script puis ouvre docs/vols-radar.txt
  *
- * Usage : node scripts/fetch-vols-radar.js
- * (Optionnel) SITE_URL=https://robindesairs.eu node scripts/fetch-vols-radar.js
+ * Usage : CRM_ACCESS_CODE=xxx node scripts/fetch-vols-radar.js
+ * (Optionnel) SITE_URL=https://robindesairs.eu
  */
 
 const fs = require('fs');
 const path = require('path');
 
 const SITE_URL = process.env.SITE_URL || 'https://robindesairs.eu';
+const CRM_CODE = (process.env.CRM_ACCESS_CODE || '').trim();
 const AIRPORT = process.env.AIRPORT || 'DSS';
 const TYPE = process.env.TYPE || 'departure';
 
@@ -19,7 +20,8 @@ async function main() {
   console.log('Récupération des vols', AIRPORT, TYPE, '...');
   let data;
   try {
-    const res = await fetch(url);
+    const headers = CRM_CODE ? { 'X-CRM-Code': CRM_CODE } : {};
+    const res = await fetch(url, { headers });
     data = await res.json();
   } catch (e) {
     const out = `Erreur réseau : ${e.message}\n\nVérifiez que le site est déployé sur Netlify et que l'URL est correcte (SITE_URL=${SITE_URL}).`;

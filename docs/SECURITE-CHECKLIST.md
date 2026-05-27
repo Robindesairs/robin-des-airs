@@ -1,6 +1,8 @@
 # Sécurité Robin des Airs — Checklist & procédures
 
-Dernière mise à jour : 2026-05-25
+Dernière mise à jour : 2026-05-27
+
+**Audit détaillé :** [`AUDIT-SECURITE-2026-05-27.md`](./AUDIT-SECURITE-2026-05-27.md) (note 8,5/10 après correctifs + config Netlify du 27/05).
 
 ---
 
@@ -34,6 +36,10 @@ Dernière mise à jour : 2026-05-25
 - ✅ Anonymisation IP RGPD (hash quotidien dans `sign-mandate`)
 - ✅ Pages internes (`/radar*`, `/crm*`, `/interne`, `/generateur-pub`) en `noindex,nofollow`
 - ✅ Sitemap propre (aucune route interne exposée à Google)
+- ✅ **2026-05-27** : `ALLOW_AGENCY_CODE_ONLY` retiré de `netlify.toml` + désactivé en prod dans `auth-config.js`
+- ✅ **2026-05-27** : API `radar` (scan live) et `radar-stats` protégées par session CRM (`checkCrmAccess`)
+- ✅ **2026-05-27** : `send-whatsapp` fail-closed en production si `WHATSAPP_WEBHOOK_SECRET` absent
+- ✅ **2026-05-27** : `crm-backup` CORS limité à `SITE_ORIGIN` (plus `*`)
 
 ### Backup local
 - Branche `backup-YYYYMMDD-HHMM` (rollback en 1 commande)
@@ -62,10 +68,12 @@ Dernière mise à jour : 2026-05-25
   - `WHATSAPP_TOKEN`, `WATI_API_KEY`
   - `GEMINI_API_KEY`
   - `CRM_ACCESS_CODE`, `CRM_AUTH_SECRET`
+  - `WHATSAPP_WEBHOOK_SECRET` — **obligatoire en prod** pour `/api/send-whatsapp` (même valeur dans Make : `"secret": "…"`)
   - `AGENCY_AUTH_SECRET`, `AGENCY_ACCOUNTS`
   - `MANDAT_LINK_SECRET`
   - `RESEND_API_KEY`
-- ⚠️ S'assurer que `ALLOW_INSECURE_AUTH` et `ALLOW_AGENCY_CODE_ONLY` ne sont **PAS** définis en prod
+- ✅ **27/05/2026** : config revue (fondateur) — `WHATSAPP_WEBHOOK_SECRET` OK, pas de `ALLOW_AGENCY_CODE_ONLY`
+- ⚠️ Ne **jamais** définir `ALLOW_INSECURE_AUTH` ni `ALLOW_AGENCY_CODE_ONLY` en prod
 
 ### 4. Notifications de déploiement
 - **Netlify → Site settings → Build & deploy → Deploy notifications**

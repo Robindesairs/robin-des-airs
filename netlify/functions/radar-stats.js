@@ -4,16 +4,26 @@
  */
 
 const { loadStatsReport } = require('./lib/radar-stats-store');
+const { checkCrmAccess } = require('./lib/crm-access');
+const { corsHeaders } = require('./lib/auth-config');
 
 const HEADERS = {
-  'Content-Type': 'application/json',
-  'Access-Control-Allow-Origin': '*',
+  ...corsHeaders(),
   'Cache-Control': 'private, max-age=300',
 };
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers: HEADERS, body: '' };
+  }
+
+  const auth = checkCrmAccess(event);
+  if (!auth.ok) {
+    return {
+      statusCode: 401,
+      headers: HEADERS,
+      body: JSON.stringify({ error: auth.error || 'Non autorisé' }),
+    };
   }
 
   const days = Math.min(

@@ -3,6 +3,8 @@
  */
 
 const { sendWhatsAppTextMessage, getProvider } = require('./lib/whatsapp-send-core');
+const { isProduction, corsHeaders } = require('./lib/auth-config');
+const { safeEqualString } = require('./lib/safe-compare');
 
 function normalizePhone(phone) {
   if (!phone || typeof phone !== 'string') return '';
@@ -13,10 +15,7 @@ function normalizePhone(phone) {
 }
 
 exports.handler = async (event) => {
-  const headers = {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
-  };
+  const headers = corsHeaders();
 
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, headers, body: JSON.stringify({ error: 'Méthode non autorisée' }) };
@@ -29,8 +28,18 @@ exports.handler = async (event) => {
     return { statusCode: 400, headers, body: JSON.stringify({ error: 'Body JSON invalide' }) };
   }
 
-  const webhookSecret = process.env.WHATSAPP_WEBHOOK_SECRET;
-  if (webhookSecret && body.secret !== webhookSecret) {
+  const webhookSecret = (process.env.WHATSAPP_WEBHOOK_SECRET || '').trim();
+  if (!webhookSecret) {
+    if (isProduction()) {
+      return {
+        statusCode: 503,
+        headers,
+        body: JSON.stringify({
+          error: 'WHATSAPP_WEBHOOK_SECRET requis en production (Netlify → Environment variables)',
+        }),
+      };
+    }
+  } else if (!safeEqualString(String(body.secret || ''), webhookSecret)) {
     return { statusCode: 403, headers, body: JSON.stringify({ error: 'Secret invalide' }) };
   }
 

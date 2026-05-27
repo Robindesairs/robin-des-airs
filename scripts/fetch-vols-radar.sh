@@ -4,6 +4,11 @@
 # Usage : bash scripts/fetch-vols-radar.sh
 
 SITE_URL="${SITE_URL:-https://robindesairs.eu}"
+# Auth CRM requise depuis 2026-05-27 : export CRM_ACCESS_CODE="votre-code"
+CRM_HDR=()
+if [ -n "${CRM_ACCESS_CODE:-}" ]; then
+  CRM_HDR=(-H "X-CRM-Code: ${CRM_ACCESS_CODE}")
+fi
 OUT="docs/vols-radar.txt"
 DIR="$(cd "$(dirname "$0")/.." && pwd)"
 
@@ -55,7 +60,7 @@ except Exception as e:
     echo "  DÉPARTS $AIRPORT"
     echo "=============================================="
     echo ""
-    JSON_DEP=$(curl -s "${SITE_URL}/.netlify/functions/radar?airport=${AIRPORT}&type=departure")
+    JSON_DEP=$(curl -s "${CRM_HDR[@]}" "${SITE_URL}/.netlify/functions/radar?airport=${AIRPORT}&type=departure")
     if echo "$JSON_DEP" | grep -q '"flights"'; then
       print_flights "$JSON_DEP"
     else
@@ -67,7 +72,7 @@ except Exception as e:
     echo "  ARRIVÉES $AIRPORT"
     echo "=============================================="
     echo ""
-    JSON_ARR=$(curl -s "${SITE_URL}/.netlify/functions/radar?airport=${AIRPORT}&type=arrival")
+    JSON_ARR=$(curl -s "${CRM_HDR[@]}" "${SITE_URL}/.netlify/functions/radar?airport=${AIRPORT}&type=arrival")
     if echo "$JSON_ARR" | grep -q '"flights"'; then
       print_flights "$JSON_ARR"
     else

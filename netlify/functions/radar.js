@@ -902,6 +902,8 @@ async function assembleFlightsFromRaw(allRaw, arrivalRaw) {
     };
 }
 
+const { checkCrmAccess } = require('./lib/crm-access');
+
 exports.handler = async (event) => {
   const rapidKey = process.env.RAPIDAPI_KEY || process.env.AERODATABOX_RAPIDAPI_KEY;
   if (!rapidKey) {
@@ -938,6 +940,15 @@ exports.handler = async (event) => {
     } catch (e) {
       console.warn('radar ticker-banner cache:', e.message);
     }
+  }
+
+  const auth = checkCrmAccess(event);
+  if (!auth.ok) {
+    return {
+      statusCode: 401,
+      headers: jsonHeaders({ 'Cache-Control': 'no-store' }),
+      body: JSON.stringify({ error: auth.error || 'Non autorisé' }),
+    };
   }
 
   try {
