@@ -11,16 +11,21 @@
  */
 
 const { fetchAerodatabox, parisYmd, rapidApiKey } = require('./lib/aerodatabox-flight');
+const { publicCorsHeaders } = require('./lib/auth-config');
+const { checkRateLimit } = require('./lib/rate-limit');
 
-function corsJson(statusCode, body) {
+function corsJson(statusCode, body, extraHeaders) {
   return {
     statusCode,
-    headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-    body: typeof body === 'string' ? body : JSON.stringify(body)
+    headers: publicCorsHeaders(extraHeaders || {}),
+    body: typeof body === 'string' ? body : JSON.stringify(body),
   };
 }
 
 exports.handler = async (event) => {
+  const rl = await checkRateLimit(event, { key: 'flight-info', max: 25, windowSec: 60 });
+  if (!rl.ok) return rl.response;
+
   const flightNumber = (event.queryStringParameters?.flight || '').trim().toUpperCase().replace(/\s/g, '');
   const dateParam = (event.queryStringParameters?.date || '').trim();
 

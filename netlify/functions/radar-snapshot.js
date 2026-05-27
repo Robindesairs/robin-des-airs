@@ -12,16 +12,20 @@
 let blobs = null;
 try { blobs = require('@netlify/blobs'); } catch (_) {}
 
+const { publicCorsHeaders } = require('./lib/auth-config');
+const { checkRateLimit } = require('./lib/rate-limit');
+
 const STORE_NAME = 'robin-radar';
 
-const HEADERS = {
-  'Content-Type': 'application/json',
-  'Access-Control-Allow-Origin': '*',
+const HEADERS = publicCorsHeaders({
   'Cache-Control': 'public, max-age=300, s-maxage=300, stale-while-revalidate=3600',
-};
+});
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: HEADERS, body: '' };
+
+  const rl = await checkRateLimit(event, { key: 'radar-snapshot', max: 60, windowSec: 60 });
+  if (!rl.ok) return rl.response;
 
   if (!blobs) {
     return {

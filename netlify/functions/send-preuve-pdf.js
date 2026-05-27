@@ -22,7 +22,9 @@
  */
 
 const PDFDocument = require('pdfkit');
-const { watiSendFile, watiCfg }  = require('./lib/wati-api');
+const { watiSendFile, watiCfg } = require('./lib/wati-api');
+const { corsHeaders, isProduction } = require('./lib/auth-config');
+const { safeEqualString } = require('./lib/safe-compare');
 
 // ─── Branding Robin des Airs (tokens officiels de /assets/main.css) ──────────
 const NAVY      = '#0B1F3A';   // --navy    : fond header, textes forts
@@ -37,10 +39,7 @@ const GRAY      = '#6B7A90';   // --gray
 const ORANGE    = '#d97706';   // retard modéré
 const ROUGE     = '#dc2626';   // annulation / retard majeur
 
-const CORS_HEADERS = {
-  'Content-Type': 'application/json',
-  'Access-Control-Allow-Origin': '*',
-};
+const CORS_HEADERS = corsHeaders();
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -258,9 +257,16 @@ exports.handler = async (event) => {
   try { body = JSON.parse(event.body || '{}'); }
   catch { return json(400, { error: 'Corps JSON invalide' }); }
 
-  // Auth optionnelle
-  const secret = process.env.WHATSAPP_WEBHOOK_SECRET;
-  if (secret && body.secret !== secret) return json(403, { error: 'Secret invalide' });
+  const webhookSecret = (process.env.WHATSAPP_WEBHOOK_SECRET || '').trim();
+  if (!webhookSecret) {
+    if (isProduction()) {
+      return json(503, {
+        error: 'WHATSAPP_WEBHOOK_SECRET requis en production (Netlify → Environment variables)',
+      });
+    }
+  } else if (!safeEqualString(String(body.secret || ''), webhookSecret)) {
+    return json(403, { error: 'Secret invalide' });
+  }
 
   const { phone, numVol } = body;
   if (!phone) return json(400, { error: '"phone" obligatoire' });

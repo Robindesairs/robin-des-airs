@@ -10,6 +10,9 @@
  * Doc AeroDataBox : https://doc.aerodatabox.com/ — GET /airports/search/term
  */
 
+const { publicCorsHeaders } = require('./lib/auth-config');
+const { checkRateLimit } = require('./lib/rate-limit');
+
 const ADB_HOST = process.env.AERODATABOX_RAPIDAPI_HOST || 'aerodatabox.p.rapidapi.com';
 const AMADEUS_HOST = process.env.AMADEUS_HOST || 'api.amadeus.com';
 const TOKEN_CACHE = { token: null, expires: 0 };
@@ -118,47 +121,32 @@ async function searchAmadeus(keyword) {
   return (data.data || []).map(formatAmadeusItem).filter((i) => i.value && i.text);
 }
 
+function jsonRes(statusCode, body) {
+  return {
+    statusCode,
+    headers: publicCorsHeaders(),
+    body: JSON.stringify(body),
+  };
+}
+
 exports.handler = async (event) => {
+  const rl = await checkRateLimit(event, { key: 'airport-search', max: 35, windowSec: 60 });
+  if (!rl.ok) return rl.response;
+
   const keyword = (event.queryStringParameters?.query || event.queryStringParameters?.keyword || event.queryStringParameters?.q || '').trim();
 
-  if (!keyword) {
-    return {
-      statusCode: 400,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ error: "Keyword manquant" })
-    };
-  }
-  if (keyword.length < 2) {
-    return {
-      statusCode: 400,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ error: "Au moins 2 caractères" })
-    };
-  }
-  if (keyword.length > 50) {
-    return {
-      statusCode: 400,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ error: "Recherche trop longue" })
-    };
-  }
+  if (!keyword) return jsonRes(400, { error: 'Keyword manquant' });
+  if (keyword.length < 2) return jsonRes(400, { error: 'Au moins 2 caractères' });
+  if (keyword.length > 50) return jsonRes(400, { error: 'Recherche trop longue' });
 
   try {
     let items = await searchAeroDataBox(keyword);
     if (!items || items.length === 0) items = await searchAviationEdge(keyword);
     if (!items || items.length === 0) items = await searchAmadeus(keyword);
 
-    return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify(items || [])
-    };
+    return jsonRes(200, items || []);
   } catch (error) {
-    console.error("ERREUR API :", error.message || error);
-    return {
-      statusCode: 500,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ error: "Erreur lors de la recherche" })
-    };
+    console.error('ERREUR API :', error.message || error);
+    return jsonRes(500, { error: 'Erreur lors de la recherche' });
   }
 };

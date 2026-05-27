@@ -14,7 +14,9 @@ function isProduction() {
   return url.includes('robindesairs.eu') && !url.includes('deploy-preview');
 }
 
+/** Preview / local uniquement — jamais en production. */
 function allowInsecureAuth() {
+  if (isProduction()) return false;
   return (process.env.ALLOW_INSECURE_AUTH || '').trim() === 'true';
 }
 
@@ -48,6 +50,16 @@ function getMandatLinkSecret() {
   return (process.env.MANDAT_LINK_SECRET || process.env.CRM_AUTH_SECRET || '').trim();
 }
 
+/** APIs publiques du site (bandeau, dépôt) — origine fixe, pas de wildcard. */
+function publicCorsHeaders(extra = {}) {
+  return {
+    'Content-Type': 'application/json; charset=utf-8',
+    'Access-Control-Allow-Origin': SITE_ORIGIN,
+    'Access-Control-Allow-Headers': 'Content-Type',
+    ...extra,
+  };
+}
+
 function corsHeaders(kind) {
   const base = {
     'Content-Type': 'application/json; charset=utf-8',
@@ -78,4 +90,5 @@ module.exports = {
   getAgencyAuthSecret,
   getMandatLinkSecret,
   corsHeaders,
+  publicCorsHeaders,
 };

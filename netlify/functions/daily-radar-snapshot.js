@@ -4,8 +4,22 @@
  */
 
 const { handler: monitorHandler } = require('./radar-monitor');
+const { verifyInternalSecret, publicCorsHeaders } = require('./lib/internal-auth');
 
 exports.handler = async (event) => {
+  let body = {};
+  try {
+    body = JSON.parse(event.body || '{}');
+  } catch (_) {}
+  const auth = verifyInternalSecret(event, body);
+  if (!auth.ok) {
+    return {
+      statusCode: 401,
+      headers: publicCorsHeaders(),
+      body: JSON.stringify({ ok: false, error: auth.error }),
+    };
+  }
+
   const ev = {
     ...event,
     httpMethod: event.httpMethod || 'POST',

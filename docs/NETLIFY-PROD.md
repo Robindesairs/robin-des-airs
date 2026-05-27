@@ -12,7 +12,17 @@ Checklist après déploiement sur **robindesairs.eu**.
 
 Sans `CRM_ACCESS_CODE` + `CRM_AUTH_SECRET`, le CRM renvoie **503** en production.
 
-Dev local : `ALLOW_INSECURE_AUTH=true` autorise les fallbacks de dev.
+Dev local : `ALLOW_INSECURE_AUTH=true` autorise les fallbacks de dev (jamais en production).
+
+## 1b. Secrets webhooks & jobs internes
+
+| Variable | Description |
+|----------|-------------|
+| `WHATSAPP_WEBHOOK_SECRET` | **Obligatoire prod** — `send-whatsapp`, `send-preuve-pdf`, `analyze-flight` (body `"secret"`) |
+| `RADAR_MONITOR_SECRET` | Optionnel — déclenchements manuels `?force=morning` sur `/api/radar-monitor` (sinon réutilise un secret ci-dessous) |
+| `AIRTABLE_WEBHOOK_SECRET` | Webhooks Airtable ; sert aussi de secret interne si les autres sont définis |
+
+Pour un appel manuel (curl, Make) : `?secret=VOTRE_SECRET` ou header `X-Rda-Secret`, ou `"secret"` dans le JSON. La valeur peut être **n’importe lequel** des secrets listés ci-dessus (même chaîne que sur Netlify).
 
 ## 2. Agences partenaires
 

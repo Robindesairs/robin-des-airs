@@ -21,6 +21,11 @@ Disallow: /navigation-interne
 Disallow: /interne
 Disallow: /generateur-pub
 Disallow: /generateur-pub.html
+Disallow: /test-radar.html
+Disallow: /radar-direct.html
+Disallow: /radar-v3.html
+Disallow: /verification-fonctions.html
+Disallow: /api/
 
 # ============================================================
 # AI / LLM crawlers — explicitly allowed for AEO / GEO visibility
@@ -126,6 +131,11 @@ Disallow: /navigation-interne
 Disallow: /interne
 Disallow: /generateur-pub
 Disallow: /generateur-pub.html
+Disallow: /test-radar.html
+Disallow: /radar-direct.html
+Disallow: /radar-v3.html
+Disallow: /verification-fonctions.html
+Disallow: /api/
 
 # ============================================================
 # Sitemaps

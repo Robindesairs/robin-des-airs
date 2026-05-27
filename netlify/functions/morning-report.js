@@ -346,16 +346,25 @@ function buildMessage({ today, yesterday, plausible, mandates, whatsapp, radar }
 // Handler
 // ─────────────────────────────────────────────────────────────────────────────
 
-exports.handler = async (event) => {
-  const force = (event.queryStringParameters?.force || '').trim();
+const { isNetlifyScheduled, verifyInternalSecret } = require('./lib/internal-auth');
 
-  // Sécurité : hors cron, exiger ?force=1
-  const isCron = event.headers?.['x-netlify-event'] === 'schedule';
-  if (!isCron && !force) {
-    return {
-      statusCode: 403,
-      body: JSON.stringify({ ok: false, error: 'Ajouter ?force=1 pour tester manuellement' }),
-    };
+exports.handler = async (event) => {
+  if (!isNetlifyScheduled(event)) {
+    let body = {};
+    try {
+      body = JSON.parse(event.body || '{}');
+    } catch (_) {}
+    const auth = verifyInternalSecret(event, body);
+    if (!auth.ok) {
+      return {
+        statusCode: 401,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ok: false,
+          error: auth.error || 'Secret requis (?secret= ou body.secret)',
+        }),
+      };
+    }
   }
 
   const yesterdayYmd = getYesterdayParisYmd();

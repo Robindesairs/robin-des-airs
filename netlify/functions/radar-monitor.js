@@ -35,6 +35,11 @@ const { parisDateYmd, parisDateAddDays, fetchBannerImpactedFlights } = require('
 const { saveBanner, appendSlotLog, loadDayLogs } = require('./lib/radar-monitor-store');
 const { sendRadarMorningReport } = require('./lib/radar-report-email');
 const { recordMorningBanner, recordSlotScan, loadStatsReport } = require('./lib/radar-stats-store');
+const {
+  isNetlifyScheduled,
+  verifyInternalSecret,
+  publicCorsHeaders,
+} = require('./lib/internal-auth');
 
 async function buildMorningBanner() {
   const payload = await fetchBannerImpactedFlights({ maxDaysThisRun: 2, hubRunIndex: 0 });
@@ -306,7 +311,23 @@ exports.handler = async (event) => {
 
   const force = (event.queryStringParameters?.force || '').trim().toLowerCase();
 
-  // ── Test CallMeBot : GET /api/radar-monitor?force=test-whatsapp ──────
+  let body = {};
+  try {
+    body = JSON.parse(event.body || '{}');
+  } catch (_) {}
+
+  if (force && !isNetlifyScheduled(event)) {
+    const auth = verifyInternalSecret(event, body);
+    if (!auth.ok) {
+      return {
+        statusCode: 401,
+        headers: publicCorsHeaders({ 'Cache-Control': 'no-store' }),
+        body: JSON.stringify({ ok: false, error: auth.error }),
+      };
+    }
+  }
+
+  // ── Test CallMeBot : GET /api/radar-monitor?force=test-whatsapp&secret=… ──────
   if (force === 'test-whatsapp') {
     const heureParis = new Date().toLocaleString('fr-FR', {
       timeZone: 'Europe/Paris',

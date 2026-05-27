@@ -1,7 +1,9 @@
 // Robin des Airs — Analyse de conversation WhatsApp
 // POST /api/analyze-flight
-// Body: { conversation: "texte brut de la conversation" }
-// Retourne: données passager + éligibilité CE 261/2004 + URL mandat pré-rempli
+// Body: { conversation: "…", secret: "WHATSAPP_WEBHOOK_SECRET", phone?, ref? }
+
+const { requireWhatsAppWebhookSecret, publicCorsHeaders } = require('./lib/internal-auth');
+const { checkRateLimit } = require('./lib/rate-limit');
 
 function siteUrl() {
   return (process.env.URL || "https://robindesairs.eu").replace(/\/$/, "");
@@ -308,25 +310,29 @@ function buildMandatUrl(extracted, elig, opts = {}) {
 
 // ─── Handler principal ───────────────────────────────────────────────────────
 export async function handler(event) {
-  const headers = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type",
-    "Content-Type": "application/json"
-  };
+  const headers = publicCorsHeaders({ "Cache-Control": "no-store" });
 
   if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 200, headers, body: "" };
+    return { statusCode: 204, headers, body: "" };
   }
 
   if (event.httpMethod !== "POST") {
     return { statusCode: 405, headers, body: JSON.stringify({ error: "Method not allowed" }) };
   }
 
+  const rl = await checkRateLimit(event, { key: "analyze-flight", max: 8, windowSec: 60 });
+  if (!rl.ok) return rl.response;
+
   let body;
   try {
     body = JSON.parse(event.body || "{}");
   } catch {
     return { statusCode: 400, headers, body: JSON.stringify({ error: "Invalid JSON" }) };
+  }
+
+  const auth = requireWhatsAppWebhookSecret(event, body);
+  if (!auth.ok) {
+    return { statusCode: 401, headers, body: JSON.stringify({ error: auth.error }) };
   }
 
   // Support full payload {phone, conversation, ref} OR legacy {conversation} only

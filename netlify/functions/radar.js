@@ -334,12 +334,16 @@ async function fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, dateStr, hubLis
 /** Réponse JSON succès : cache court CDN + navigateur (bandeau vols, pas besoin de seconde-fraîcheur). */
 const RADAR_CACHE_CONTROL = 'public, max-age=120, s-maxage=120, stale-while-revalidate=300';
 
+const { SITE_ORIGIN } = require('./lib/auth-config');
+
 function jsonHeaders(extra) {
   return Object.assign(
     {
       'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': '*',
-      'Cache-Control': RADAR_CACHE_CONTROL
+      'Access-Control-Allow-Origin': SITE_ORIGIN,
+      'Access-Control-Allow-Headers': 'Content-Type, X-CRM-Code',
+      'Access-Control-Allow-Credentials': 'true',
+      'Cache-Control': RADAR_CACHE_CONTROL,
     },
     extra || {}
   );

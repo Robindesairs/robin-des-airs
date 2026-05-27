@@ -8,11 +8,10 @@ const { checkCrmAccess } = require('./lib/crm-access');
 const { listWaMessages, normalizeWaPhone } = require('./lib/wa-convo-store');
 const { canSendWhatsApp } = require('./lib/whatsapp-send-core');
 
+const { corsHeaders } = require('./lib/auth-config');
+
 const HEADERS = {
-  'Content-Type': 'application/json',
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type, X-CRM-Code',
-  'Access-Control-Allow-Credentials': 'true',
+  ...corsHeaders(),
   'Cache-Control': 'no-store',
 };
 

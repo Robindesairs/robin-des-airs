@@ -6,15 +6,16 @@
 const { getBlobStore } = require('./lib/netlify-blobs-store');
 const { getPinnedFlights } = require('./lib/pinned-flights');
 
+const { publicCorsHeaders } = require('./lib/auth-config');
+const { checkRateLimit } = require('./lib/rate-limit');
+
 const STORE_NAME = 'robin-radar-ticker';
 const CACHE_KEY = 'banner/latest.json';
 const TARGET = 9;
 
-const HEADERS = {
-  'Content-Type': 'application/json',
-  'Access-Control-Allow-Origin': '*',
+const HEADERS = publicCorsHeaders({
   'Cache-Control': 'public, max-age=1800, s-maxage=3600, stale-while-revalidate=86400',
-};
+});
 
 const {
   fetchBannerImpactedFlights,
@@ -79,6 +80,9 @@ exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers: HEADERS, body: '' };
   }
+
+  const rl = await checkRateLimit(event, { key: 'vol-ticker', max: 40, windowSec: 60 });
+  if (!rl.ok) return rl.response;
 
   const rapidKey = process.env.RAPIDAPI_KEY || process.env.AERODATABOX_RAPIDAPI_KEY;
   if (!rapidKey) {

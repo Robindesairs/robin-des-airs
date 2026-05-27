@@ -1,9 +1,10 @@
 /**
  * Envoie une notification Telegram : un seul message qui empile tous les vols critiques.
  * Variables Netlify : TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
- * POST body : { flights: [ { flight, dep, arr, cancelled, delayMinutes, airline, scheduledDeparture, scheduledArrival, statusFr }, ... ] }
- * (Un seul vol en backward compat : { flight, dep, arr, ... } sans tableau.)
+ * POST body : { flights: [...], secret?: "…" } — secret = un des secrets internes Netlify.
  */
+
+const { verifyInternalSecret, publicCorsHeaders } = require('./lib/internal-auth');
 
 function formatOneFlight(f, index) {
   const flight = f.flight || '—';
@@ -25,25 +26,32 @@ function formatOneFlight(f, index) {
 }
 
 exports.handler = async (event) => {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ error: 'Method not allowed' }) };
-  }
+  const headers = publicCorsHeaders({ 'Cache-Control': 'no-store' });
 
-  const token = process.env.TELEGRAM_BOT_TOKEN;
-  let chatId = process.env.TELEGRAM_CHAT_ID;
+  if (event.httpMethod !== 'POST') {
+    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method not allowed' }) };
+  }
 
   let payload;
   try {
     payload = JSON.parse(event.body || '{}');
   } catch (e) {
-    return { statusCode: 400, headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }, body: JSON.stringify({ error: 'Invalid JSON' }) };
+    return { statusCode: 400, headers, body: JSON.stringify({ error: 'Invalid JSON' }) };
   }
+
+  const auth = verifyInternalSecret(event, payload);
+  if (!auth.ok) {
+    return { statusCode: 401, headers, body: JSON.stringify({ error: auth.error }) };
+  }
+
+  const token = process.env.TELEGRAM_BOT_TOKEN;
+  let chatId = process.env.TELEGRAM_CHAT_ID;
 
   if (payload.chat_id != null) chatId = String(payload.chat_id);
   if (!token || !chatId) {
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      headers,
       body: JSON.stringify({ ok: false, reason: 'Telegram non configuré (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID)' })
     };
   }
@@ -77,20 +85,20 @@ exports.handler = async (event) => {
       console.error('Telegram sendMessage error:', data);
       return {
         statusCode: 200,
-        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        headers,
         body: JSON.stringify({ ok: false, error: data.description })
       };
     }
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      headers,
       body: JSON.stringify({ ok: true })
     };
   } catch (err) {
     console.error('telegram-notify err:', err);
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+      headers,
       body: JSON.stringify({ ok: false, error: err.message })
     };
   }

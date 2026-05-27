@@ -79,6 +79,31 @@
 /generateur-pub.html
   X-Robots-Tag: noindex, nofollow
 
+/radar-direct.html
+  X-Robots-Tag: noindex, nofollow
+  X-Frame-Options: DENY
+
+/radar-v3.html
+  X-Robots-Tag: noindex, nofollow
+  X-Frame-Options: DENY
+
+/test-radar.html
+  X-Robots-Tag: noindex, nofollow
+
+/verification-fonctions.html
+  X-Robots-Tag: noindex, nofollow
+
+/navigation-interne.html
+  X-Robots-Tag: noindex, nofollow
+
+# APIs — pas d’indexation
+/api/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+
+/.netlify/functions/*
+  X-Robots-Tag: noindex, nofollow
+
 # Sitemap — accessible aux crawlers
 /sitemap.xml
   Content-Type: application/xml; charset=utf-8

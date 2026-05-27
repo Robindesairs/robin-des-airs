@@ -2,7 +2,7 @@
 
 Dernière mise à jour : 2026-05-27
 
-**Audit détaillé :** [`AUDIT-SECURITE-2026-05-27.md`](./AUDIT-SECURITE-2026-05-27.md) (note 8,5/10 après correctifs + config Netlify du 27/05).
+**Audit détaillé :** [`AUDIT-SECURITE-2026-05-27.md`](./AUDIT-SECURITE-2026-05-27.md) (note **9,5/10** — 10/10 avec Cloudflare + password Netlify interne).
 
 ---
 
@@ -40,6 +40,10 @@ Dernière mise à jour : 2026-05-27
 - ✅ **2026-05-27** : API `radar` (scan live) et `radar-stats` protégées par session CRM (`checkCrmAccess`)
 - ✅ **2026-05-27** : `send-whatsapp` fail-closed en production si `WHATSAPP_WEBHOOK_SECRET` absent
 - ✅ **2026-05-27** : `crm-backup` CORS limité à `SITE_ORIGIN` (plus `*`)
+- ✅ **2026-05-27** : `lib/internal-auth.js` — jobs radar/morning/snapshot/telegram protégés par secret
+- ✅ **2026-05-27** : Rate-limit APIs publiques (vol-ticker, flight-info, airport-search, analyze-flight)
+- ✅ **2026-05-27** : `allowInsecureAuth` fail-closed en production
+- ✅ **2026-05-27** : `_headers` + `robots.txt` — pages radar legacy et `/api/` non indexables
 
 ### Backup local
 - Branche `backup-YYYYMMDD-HHMM` (rollback en 1 commande)
