@@ -15,7 +15,11 @@ import * as path from 'path';
 const SITE_HOST = 'robindesairs.eu';
 const KEY = '444128df0aa6b3382537b67069c2883b';
 const KEY_LOCATION = `https://${SITE_HOST}/${KEY}.txt`;
-const INDEXNOW_ENDPOINT = 'https://api.indexnow.org/indexnow';
+/** Bing en premier (site déjà vérifié dans BWT) ; api.indexnow.org propage aux autres moteurs. */
+const INDEXNOW_ENDPOINTS = [
+  'https://www.bing.com/indexnow',
+  'https://api.indexnow.org/indexnow',
+];
 const SITEMAP_PATH = path.join(process.cwd(), 'sitemap.xml');
 const TODAY = new Date().toISOString().slice(0, 10);
 
@@ -55,23 +59,24 @@ async function postIndexNow(urls: string[]): Promise<void> {
     keyLocation: KEY_LOCATION,
     urlList: urls,
   };
-  console.log(`[indexnow] POST → ${INDEXNOW_ENDPOINT} (${urls.length} URLs)`);
-  try {
-    const res = await fetch(INDEXNOW_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json; charset=utf-8' },
-      body: JSON.stringify(body),
-    });
-    const text = await res.text();
-    console.log(`[indexnow] HTTP ${res.status} ${res.statusText}`);
-    if (text) console.log(`[indexnow] body: ${text.slice(0, 500)}`);
-    // 200 = accepté, 202 = accepté en file, 422 = certaines URLs invalides
-    // (souvent OK quand mix avec /blog/ qui n'existent pas encore en HTML).
-    if (![200, 202, 422].includes(res.status)) {
-      console.warn(`[indexnow] Réponse inhabituelle (${res.status}) — non bloquant.`);
+  for (const endpoint of INDEXNOW_ENDPOINTS) {
+    console.log(`[indexnow] POST → ${endpoint} (${urls.length} URLs)`);
+    try {
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json; charset=utf-8' },
+        body: JSON.stringify(body),
+      });
+      const text = await res.text();
+      console.log(`[indexnow] ${endpoint} → HTTP ${res.status} ${res.statusText}`);
+      if (text) console.log(`[indexnow] body: ${text.slice(0, 300)}`);
+      // 200/202 = accepté ; 422 = partiel (souvent OK)
+      if (![200, 202, 422].includes(res.status)) {
+        console.warn(`[indexnow] Réponse inhabituelle (${res.status}) — non bloquant.`);
+      }
+    } catch (err) {
+      console.warn(`[indexnow] Erreur réseau (${endpoint}) : ${(err as Error).message}`);
     }
-  } catch (err) {
-    console.warn(`[indexnow] Erreur réseau : ${(err as Error).message} — non bloquant.`);
   }
 }
 
