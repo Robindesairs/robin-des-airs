@@ -16,6 +16,8 @@
     "build:blog": "node -r ts-node/register src/scripts/build-blog.ts",
     "build:sitemap": "node -r ts-node/register src/scripts/build-sitemap.ts",
     "build:nav-interne": "node scripts/build-navigation-interne.mjs",
+    "notify:indexnow": "node -r ts-node/register src/scripts/notify-indexnow.ts",
+    "notify:indexnow:all": "node -r ts-node/register src/scripts/notify-indexnow.ts -- --all",
     "preview": "python3 -m http.server 8787",
     "mandat:pdf": "node scripts/generate-mandat-pdf.mjs",
     "mandat:print": "python3 scripts/generate-mandat-pdf-fpdf.py",

@@ -43,7 +43,9 @@
 [build]
   publish = "."
   # S'assurer que les deps (dont @netlify/blobs) sont présentes avant le bundle des fonctions
-  command = "npm install && npm install --prefix netlify/functions && npm run build:sitemap && npm run build:blog && npm run build:nav-interne"
+  # notify:indexnow en dernier : push les URLs modifiées du jour à Bing/Yandex/Naver
+  # (non bloquant — exit 0 même si l'API IndexNow renvoie une erreur)
+  command = "npm install && npm install --prefix netlify/functions && npm run build:sitemap && npm run build:blog && npm run build:nav-interne && npm run notify:indexnow"
 
 # TEMPORAIRE — démo Claude : connexion code agence seul (retirer ALLOW_AGENCY_CODE_ONLY après)
 [context.production.environment]
