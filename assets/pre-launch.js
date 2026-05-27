@@ -13,12 +13,12 @@
   // ============ CONFIG ============
   var BANNER_HEIGHT = 44;
   var STORAGE_KEY = 'rda_prelaunch_dismissed_v1';
-  var BANNER_TEXT = '🚀 Robin des Airs ouvre bientôt — service en pré-lancement, finalisation administrative en cours.';
-  var MODAL_TITLE = 'Service en pré-lancement';
+  var BANNER_TEXT = '🛠️ Robin des Airs est en maintenance jusqu’au jeudi 28 mai. Merci pour votre patience.';
+  var MODAL_TITLE = 'Maintenance en cours';
   var MODAL_BODY =
-    "Robin des Airs n'a pas encore terminé son immatriculation officielle. " +
-    "Pour ta sécurité juridique, aucun mandat ne peut être enregistré pour le moment. " +
-    "Laisse ton e-mail pour être prévenu·e dès l'ouverture (sous 1-2 semaines).";
+    "Le site Robin des Airs est temporairement en maintenance jusqu’au jeudi 28 mai. " +
+    "Pour votre sécurité, aucun mandat ne peut être enregistré pendant cette période. " +
+    "Laissez votre e-mail pour être prévenu·e dès la réouverture.";
 
   // ============ STYLES (auto-injectés) ============
   var css =
