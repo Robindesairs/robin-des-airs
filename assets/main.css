@@ -895,11 +895,11 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   position: absolute;
   top: 0;
   right: 0;
-  width: 58%;
+  width: 64%;
   height: 100%;
   z-index: 1;
   pointer-events: none;
-  clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%);
+  clip-path: polygon(12% 0, 100% 0, 100% 100%, 0% 100%);
   overflow: hidden;
 }
 .hero-bg-visual::after {
@@ -910,9 +910,9 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   background: linear-gradient(
     102deg,
     var(--navy) 0%,
-    rgba(11, 31, 58, 0.82) 22%,
-    rgba(11, 31, 58, 0.45) 52%,
-    rgba(11, 31, 58, 0.28) 100%
+    rgba(11, 31, 58, 0.78) 18%,
+    rgba(11, 31, 58, 0.38) 48%,
+    rgba(11, 31, 58, 0.18) 100%
   );
 }
 .hero-bg-visual img {
@@ -921,9 +921,11 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 55% 28%;
+  object-position: 48% 32%;
+  transform: scale(1.1);
+  transform-origin: 72% 38%;
   opacity: 1;
-  filter: saturate(1.05) contrast(1.02);
+  filter: saturate(1.08) contrast(1.04) brightness(1.02);
 }
 
 .hero-wrap {
@@ -2596,8 +2598,8 @@ button:focus-visible,
     order: 1;
     width: 100%;
     max-width: 100%;
-    height: min(42vw, 220px);
-    min-height: 180px;
+    height: min(52vw, 280px);
+    min-height: 200px;
     margin: 0 0 20px;
     clip-path: none;
     border-radius: 16px;
@@ -2611,7 +2613,9 @@ button:focus-visible,
     );
   }
   .hero-bg-visual img {
-    object-position: 50% 22%;
+    object-position: 50% 28%;
+    transform: scale(1.06);
+    transform-origin: 50% 35%;
   }
   #hero {
     flex-direction: column;
