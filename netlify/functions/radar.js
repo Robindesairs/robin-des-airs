@@ -109,9 +109,10 @@ const HUB_GROUPS = {
 function getReturnEveningWindows(dayYmd) {
   const today = dayYmd || parisDateYmd();
   const tomorrow = parisDateAddDays(1);
+  // 14h–23h59 + 00h–05h59 (heure locale hub) : retours Afrique→EU souvent l'après-midi / soirée.
   return [
-    [`${today}T18:00`, `${today}T23:59`],
-    [`${tomorrow}T00:00`, `${tomorrow}T03:59`],
+    [`${today}T14:00`, `${today}T23:59`],
+    [`${tomorrow}T00:00`, `${tomorrow}T05:59`],
   ];
 }
 
@@ -271,18 +272,21 @@ function sleepMs(ms) {
 
 const { aerodataboxHost } = require('./lib/adb-host');
 
-async function fetchAdbWindow(icao, from, to, direction, rapidKey, hubIata, timeoutOverride) {
+async function fetchAdbWindow(icao, from, to, direction, rapidKey, hubIata, timeoutOverride, adbOpts = {}) {
   const host = aerodataboxHost();
+  const withCodeshared = adbOpts.withCodeshared === true ? 'true' : 'false';
   const params = new URLSearchParams({
     withLeg: 'true',
     direction,
     withCancelled: 'true',
-    withCodeshared: 'false',
+    withCodeshared,
     withCargo: 'false',
     withPrivate: 'false',
     withLocation: 'false'
   });
-  const url = `https://${host}/flights/airports/icao/${icao}/${from}/${to}?${params}`;
+  const fromSeg = encodeURIComponent(from);
+  const toSeg = encodeURIComponent(to);
+  const url = `https://${host}/flights/airports/icao/${icao}/${fromSeg}/${toSeg}?${params}`;
   const timeoutMs =
     timeoutOverride ||
     Math.min(28000, parseInt(process.env.RADAR_FETCH_TIMEOUT_MS || '20000', 10) || 20000);
@@ -296,15 +300,16 @@ async function fetchAdbWindow(icao, from, to, direction, rapidKey, hubIata, time
       signal: AbortSignal.timeout(timeoutMs)
     });
     if (!res.ok) {
-      console.warn('radar AerodataBox HTTP', res.status, icao, direction, from);
-      return [];
+      console.warn('radar AerodataBox HTTP', res.status, icao, direction, from, to);
+      return { rows: [], httpStatus: res.status };
     }
     const j = await res.json().catch(() => ({}));
     const key = direction === 'Arrival' ? 'arrivals' : 'departures';
-    return Array.isArray(j[key]) ? j[key] : [];
+    const rows = Array.isArray(j[key]) ? j[key] : [];
+    return { rows, httpStatus: res.status };
   } catch (e) {
     console.warn('radar AerodataBox fetch', icao, e.message);
-    return [];
+    return { rows: [], httpStatus: 0, error: e.message };
   }
 }
 
@@ -337,7 +342,8 @@ async function fetchRadarSlot({ dateYmd, hubs, windows, directions }) {
       for (const dir of dirs) {
         await sleepMs(delayMs);
         apiRequests += 1;
-        const rows = await fetchAdbWindow(icao, a, b, dir, rapidKey, hub);
+        const fetched = await fetchAdbWindow(icao, a, b, dir, rapidKey, hub);
+        const rows = Array.isArray(fetched) ? fetched : (fetched && fetched.rows) || [];
         for (const r of rows) {
           const n = normalizeAdbFlight(r, { direction: dir, hubIata: hub });
           if (!n) continue;
@@ -387,6 +393,21 @@ async function fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, dateStr, hubLis
   ];
   const directions = opts.directions || ['Departure', 'Arrival'];
   const arrivalsToAllRaw = !!opts.arrivalsToAllRaw;
+  const adbFetchOpts = opts.adbFetchOpts || {};
+  const stats = opts.stats || null;
+
+  async function adbFetch(icao, a, b, direction, hub, timeout) {
+    const out = await fetchAdbWindow(icao, a, b, direction, rapidKey, hub, timeout, adbFetchOpts);
+    const rows = Array.isArray(out) ? out : (out && out.rows) || [];
+    if (stats) {
+      stats.apiRowsFetched = (stats.apiRowsFetched || 0) + rows.length;
+      if (out && out.httpStatus && out.httpStatus >= 400) {
+        stats.httpErrors = stats.httpErrors || [];
+        stats.httpErrors.push({ hub, direction, status: out.httpStatus, from: a, to: b });
+      }
+    }
+    return rows;
+  }
 
   // Séquentiel par hub, dep+arr en parallèle par fenêtre (2 req simultanées max).
   // Évite les 429 RapidAPI. Délai 300ms entre hubs pour respecter le rate-limit.
@@ -403,7 +424,7 @@ async function fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, dateStr, hubLis
 
     if (arrivalOnly) {
       const arrsList = await Promise.all(
-        windows.map(([a, b]) => fetchAdbWindow(icao, a, b, 'Arrival', rapidKey, hub, perCallTimeout))
+        windows.map(([a, b]) => adbFetch(icao, a, b, 'Arrival', hub, perCallTimeout))
       );
       for (const arrs of arrsList) {
         for (const r of arrs) {
@@ -415,8 +436,8 @@ async function fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, dateStr, hubLis
       }
     } else {
       for (const [a, b] of windows) {
-        const deps = wantDep ? await fetchAdbWindow(icao, a, b, 'Departure', rapidKey, hub, perCallTimeout) : [];
-        const arrs = wantArr ? await fetchAdbWindow(icao, a, b, 'Arrival', rapidKey, hub, perCallTimeout) : [];
+        const deps = wantDep ? await adbFetch(icao, a, b, 'Departure', hub, perCallTimeout) : [];
+        const arrs = wantArr ? await adbFetch(icao, a, b, 'Arrival', hub, perCallTimeout) : [];
         for (const r of deps) {
           const n = normalizeAdbFlight(r, { direction: 'Departure', hubIata: hub });
           if (n) allRaw.push(n);
@@ -595,8 +616,8 @@ async function fetchBannerDayScan(dateYmd, hubList) {
     const icao = TICKER_HUB_ICAO[hub] || HUB_ICAO[hub];
     if (!icao) return;
     const [deps, arrs] = await Promise.all([
-      fetchAdbWindow(icao, from, to, 'Departure', rapidKey, hub),
-      fetchAdbWindow(icao, from, to, 'Arrival', rapidKey, hub),
+      (async () => { const f = await fetchAdbWindow(icao, from, to, 'Departure', rapidKey, hub); return Array.isArray(f) ? f : (f && f.rows) || []; })(),
+      (async () => { const f = await fetchAdbWindow(icao, from, to, 'Arrival', rapidKey, hub); return Array.isArray(f) ? f : (f && f.rows) || []; })(),
     ]);
     for (const r of deps) {
       const n = normalizeAdbFlight(r, { direction: 'Departure', hubIata: hub });
@@ -1047,9 +1068,12 @@ async function runGroupScan(rapidKey, { group, scanMode, hub, returnSlot }) {
           directions: ['Arrival'],
           windows: resolveReturnWindows(parisDateYmd(), returnSlot),
           arrivalsToAllRaw: true,
+          adbFetchOpts: { withCodeshared: true },
           fetchTimeoutMs: parseInt(process.env.RADAR_RETURN_FETCH_TIMEOUT_MS || '18000', 10) || 18000,
         }
       : {};
+  const adbStats = { apiRowsFetched: 0, windows: fillOpts.windows || [] };
+  fillOpts.stats = adbStats;
   await fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, parisDateYmd(), scanHubs, fillOpts);
   const payload = await assembleFlightsFromRaw(allRaw, arrivalRaw, {
     skipCertification: mode === 'return',
@@ -1068,6 +1092,8 @@ async function runGroupScan(rapidKey, { group, scanMode, hub, returnSlot }) {
         hub: returnHub || scanHubs[0],
         group: groupKey,
         hubs: scanHubs,
+        apiRowsFetched: adbStats.apiRowsFetched || 0,
+        windows: adbStats.windows,
       },
       buildScanStats(allRaw, arrivalRaw, true),
       { matchedCount: (payload.flights || []).length }
@@ -1152,9 +1178,12 @@ exports.handler = async (event) => {
             directions: ['Arrival'],
             windows: resolveReturnWindows(parisDateYmd(), returnSlot),
             arrivalsToAllRaw: true,
+            adbFetchOpts: { withCodeshared: true },
             fetchTimeoutMs: parseInt(process.env.RADAR_RETURN_FETCH_TIMEOUT_MS || '18000', 10) || 18000,
           }
         : {};
+    const adbStats = { apiRowsFetched: 0, windows: fillOpts.windows || [] };
+    fillOpts.stats = adbStats;
     await fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, parisDateYmd(), scanHubs, fillOpts);
 
     const payload = await assembleFlightsFromRaw(allRaw, arrivalRaw, {
@@ -1163,6 +1192,8 @@ exports.handler = async (event) => {
     const scanStats = buildScanStats(allRaw, arrivalRaw, scanMode === 'return');
     payload.scan = Object.assign(payload.scan || {}, scanStats, {
       matchedCount: (payload.flights || []).length,
+      apiRowsFetched: adbStats.apiRowsFetched || 0,
+      windows: adbStats.windows,
     });
     if (scanMode === 'return') {
       payload.flights = (payload.flights || []).filter((f) => {

@@ -157,16 +157,23 @@
     if (!scan) return '';
     var mode = String(scan.mode || '');
     var parts = [];
+    var apiRows = scan.apiRowsFetched != null ? scan.apiRowsFetched : null;
     if (mode === 'return') {
+      if (apiRows != null) parts.push(String(apiRows) + ' lignes API (brut)');
       var arrN = scan.rawArrivalCount != null ? scan.rawArrivalCount : scan.rawDepartureCount;
-      if (arrN != null) parts.push(String(arrN) + ' arrivées API');
+      if (arrN != null) parts.push(String(arrN) + ' parsées');
     } else {
       if (scan.rawDepartureCount != null) parts.push(String(scan.rawDepartureCount) + ' départs API');
       if (scan.rawArrivalCount != null) parts.push(String(scan.rawArrivalCount) + ' arrivées API');
     }
-    if (scan.matchedCount != null) parts.push(String(scan.matchedCount) + ' retenus après filtre');
+    if (scan.matchedCount != null) parts.push(String(scan.matchedCount) + ' retenus Afrique↔EU');
     if (scan.hub) parts.push('hub ' + scan.hub);
     if (scan.returnSlot) parts.push('créneau ' + scan.returnSlot);
+    if (scan.windows && scan.windows.length) {
+      var w0 = scan.windows[0];
+      if (w0 && w0.length >= 2) parts.push('fenêtre ' + w0[0] + '→' + w0[1]);
+    }
+    if (scan.httpErrors && scan.httpErrors.length) parts.push('HTTP ' + scan.httpErrors[0].status);
     return parts.join(' · ');
   }
 
@@ -751,10 +758,10 @@
         return demo.length;
       });
     }
-    if (window.setReturnScanStatus) window.setReturnScanStatus('Retour ' + hub + ' · créneau 18h–23h…');
+    if (window.setReturnScanStatus) window.setReturnScanStatus('Retour ' + hub + ' · créneau 14h–23h…');
     return fetchRadarReturnSlot(hub, g, '1')
       .then(function (d1) {
-        if (window.setReturnScanStatus) window.setReturnScanStatus('Retour ' + hub + ' · créneau 00h–03h…');
+        if (window.setReturnScanStatus) window.setReturnScanStatus('Retour ' + hub + ' · créneau 00h–05h…');
         return fetchRadarReturnSlot(hub, g, '2').then(function (d2) {
           var merged = mergeFlightsDedup((d1.flights || []).concat(d2.flights || []));
           var meta = {
@@ -766,11 +773,14 @@
               mode: 'return',
               hub: hub,
               returnSlots: ['1', '2'],
+              apiRowsFetched:
+                ((d1.scan && d1.scan.apiRowsFetched) || 0) + ((d2.scan && d2.scan.apiRowsFetched) || 0),
               rawArrivalCount:
                 ((d1.scan && (d1.scan.rawArrivalCount != null ? d1.scan.rawArrivalCount : d1.scan.rawDepartureCount)) || 0) +
                 ((d2.scan && (d2.scan.rawArrivalCount != null ? d2.scan.rawArrivalCount : d2.scan.rawDepartureCount)) || 0),
               rawDepartureCount: 0,
               matchedCount: merged.length,
+              windows: (d2.scan && d2.scan.windows) || (d1.scan && d1.scan.windows),
             },
           };
           var label =
@@ -1071,8 +1081,8 @@
               ((document.getElementById('r-sens') && document.getElementById('r-sens').value) || 'tous') +
               '). Remettez Sens = « Tous sens » ou cliquez la carte « Vols listés ».' +
               (formatScanDebug(RADAR_LAST_SCAN) ? ' Debug: ' + formatScanDebug(RADAR_LAST_SCAN) + '.' : '')
-            : 'Aucun vol extrait pour ce hub — élargissez la fenêtre ou réessayez un autre hub.' +
-              (formatScanDebug(RADAR_LAST_SCAN) ? ' Debug API: ' + formatScanDebug(RADAR_LAST_SCAN) + '.' : '');
+            : 'Aucun vol Afrique→Europe pour ce hub dans le créneau 14h–06h (heure locale). Essayez Paris ou Bruxelles, ou relancez après 18h.' +
+              (formatScanDebug(RADAR_LAST_SCAN) ? ' Debug: ' + formatScanDebug(RADAR_LAST_SCAN) + '.' : '');
       tbody.innerHTML =
         '<tr><td colspan="15" style="text-align:center;padding:2rem;color:#9CA3AF">' + emptyMsg + '</td></tr>';
       renderRadarCards([]);
