@@ -22,6 +22,9 @@
 # Radar : 8h bandeau+email, 16-17h EU→AF, 18h-2h AF→EU — scan toutes les 10 min.
 
 # Veille radar V2 — 1 hub / 5 min (aller 8h–18h, retour 18h–03h)
+[functions."radar"]
+  timeout = 26
+
 [functions."radar-veille-cron"]
   schedule = "*/5 * * * *"
   timeout = 26

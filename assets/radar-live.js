@@ -148,6 +148,26 @@
     el.textContent = msg || '';
     el.style.color = isErr ? 'var(--red)' : 'var(--text2)';
   }
+
+  /** Aligné sur Netlify radar timeout 26s + marge réseau. */
+  var RADAR_HTTP_TIMEOUT_MS = 28000;
+
+  function radarFetchInit(extra) {
+    var opts = Object.assign({ cache: 'no-store' }, extra || {});
+    if (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) {
+      opts.signal = AbortSignal.timeout(RADAR_HTTP_TIMEOUT_MS);
+    }
+    return opts;
+  }
+
+  function radarFetchErrorMessage(e) {
+    if (!e) return 'Erreur réseau';
+    if (e.name === 'AbortError' || e.name === 'TimeoutError') {
+      return 'Délai dépassé (~28 s) — réessayez ou un hub à la fois.';
+    }
+    return e.message || 'Erreur réseau';
+  }
+
   window.__radarIsScanning = function () { return SCAN_LOCK; };
   const ZONE_ELIGIBLE_COUNT = {};
 
@@ -502,7 +522,7 @@
 
   function fetchRadarSnapshot() {
     var url = apiRadarOrigin() + '/api/radar-snapshot?_=' + Date.now();
-    return fetch(url, { cache: 'no-store' })
+    return fetch(url, radarFetchInit())
       .then(function (r) {
         return r.text().then(function (text) {
           var data = parseRadarResponse(r, text);
@@ -510,7 +530,7 @@
         });
       })
       .catch(function (e) {
-        RADAR_ERROR = e.message || 'Snapshot inaccessible';
+        RADAR_ERROR = radarFetchErrorMessage(e) || 'Snapshot inaccessible';
         VOLS = [];
       });
   }
@@ -522,7 +542,7 @@
 
     function fetchOne(group) {
       var url = apiRadarOrigin() + '/.netlify/functions/radar?group=' + encodeURIComponent(group) + '&_=' + Date.now();
-      return fetch(url, { cache: 'no-store', credentials: 'include' })
+      return fetch(url, radarFetchInit({ credentials: 'include' }))
         .then(function (r) {
           return r.text().then(function (text) {
             var data = parseRadarResponse(r, text);
@@ -544,7 +564,7 @@
           if (window.__radarMarkHubScanned && LAST_SCAN_ZONE_KEY) window.__radarMarkHubScanned('aller', LAST_SCAN_ZONE_KEY);
         })
         .catch(function (e) {
-          RADAR_ERROR = e.message || 'Erreur réseau';
+          RADAR_ERROR = radarFetchErrorMessage(e);
           VOLS = [];
         });
     }
@@ -578,7 +598,7 @@
         if (window.__radarMarkHubScanned && LAST_SCAN_ZONE_KEY) window.__radarMarkHubScanned('aller', LAST_SCAN_ZONE_KEY);
       })
       .catch(function (e) {
-        RADAR_ERROR = e.message || 'Erreur réseau';
+        RADAR_ERROR = radarFetchErrorMessage(e);
         VOLS = [];
       });
   }
@@ -654,7 +674,7 @@
         return demo.length;
       });
     }
-    return fetch(url, { cache: 'no-store', credentials: 'include' })
+    return fetch(url, radarFetchInit({ credentials: 'include' }))
       .then(function (r) {
         return r.text().then(function (text) {
           var data = parseRadarResponse(r, text);
@@ -668,7 +688,7 @@
         });
       })
       .catch(function (e) {
-        RADAR_ERROR = e.message || 'Erreur réseau';
+        RADAR_ERROR = radarFetchErrorMessage(e);
         throw e;
       });
   }
