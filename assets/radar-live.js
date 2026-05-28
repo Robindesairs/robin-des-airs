@@ -135,7 +135,7 @@
   /** @type {{ updatedAt?: string, viewDate?: string, dataSource?: string }|null} */
   let RADAR_META = null;
   let RADAR_ERROR = null;
-  let RADAR_LOAD_MODE = 'snapshot';
+  let RADAR_LOAD_MODE = 'live';
   let RADAR_DATA_LABEL = '';
   /** @type {Record<string, unknown>|null} */
   let RADAR_LAST_SCAN = null;

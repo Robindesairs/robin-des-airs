@@ -15,25 +15,23 @@
 [functions."whatsapp-gemini-fallback"]
   schedule = "* * * * *"
 
-# Snapshot quotidien — background function (15 min timeout) — 8h Paris (6h UTC été / 7h UTC hiver)
-[functions."daily-radar-snapshot-background"]
-  schedule = "0 6 * * *"
+# AeroDataBox : seul le scan manuel radar-vols-v2 → /.netlify/functions/radar reste actif.
+# Crons désactivés (quota). Réactiver : RADAR_BACKGROUND_API=1 + décommenter les schedule ci-dessous.
 
-# Radar : 8h bandeau+email, 16-17h EU→AF, 18h-2h AF→EU — scan toutes les 10 min.
+# [functions."daily-radar-snapshot-background"]
+#   schedule = "0 6 * * *"
 
-# Veille radar V2 — 1 hub / 5 min (aller 8h–18h, retour 18h–03h)
 [functions."radar"]
   timeout = 26
 
-[functions."radar-veille-cron"]
-  schedule = "*/5 * * * *"
-  timeout = 26
+# [functions."radar-veille-cron"]
+#   schedule = "*/5 * * * *"
 
 [functions."radar-veille-config"]
   timeout = 10
 
-[functions."radar-monitor"]
-  schedule = "*/10 * * * *"
+# [functions."radar-monitor"]
+#   schedule = "*/10 * * * *"
 
 # Rapport matinal WhatsApp 9h15 Paris (= 7h15 UTC en été CEST).
 [functions."morning-report"]

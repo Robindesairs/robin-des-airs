@@ -3,6 +3,7 @@
  */
 
 const { getBlobStore } = require('./netlify-blobs-store');
+const { isRadarVeilleEnabled } = require('./radar-api-policy');
 
 const STORE = 'robin-radar-veille';
 const CONFIG_KEY = 'config.json';
@@ -14,6 +15,7 @@ const DEFAULT_CONFIG = {
 };
 
 function envKillAll() {
+  if (!isRadarVeilleEnabled()) return true;
   const v = String(process.env.RADAR_VEILLE_DISABLED || '').trim().toLowerCase();
   return v === '1' || v === 'true' || v === 'yes';
 }

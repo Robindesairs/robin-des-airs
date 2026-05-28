@@ -53,7 +53,16 @@ async function buildTickerCache(store) {
   };
 }
 
+const { isRadarBackgroundApiEnabled } = require('./lib/radar-api-policy');
+
 exports.handler = async (event) => {
+  if (!isRadarBackgroundApiEnabled()) {
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ok: true, skipped: 'background_api_disabled' }),
+    };
+  }
   const rapidKey = process.env.RAPIDAPI_KEY || process.env.AERODATABOX_RAPIDAPI_KEY;
   if (!rapidKey) {
     return {

@@ -8,6 +8,7 @@ const { getPinnedFlights } = require('./lib/pinned-flights');
 
 const { publicCorsHeaders } = require('./lib/auth-config');
 const { checkRateLimit } = require('./lib/rate-limit');
+const { isVolTickerLiveScanEnabled } = require('./lib/radar-api-policy');
 
 const STORE_NAME = 'robin-radar-ticker';
 const CACHE_KEY = 'banner/latest.json';
@@ -94,6 +95,26 @@ exports.handler = async (event) => {
   }
 
   try {
+    if (!isVolTickerLiveScanEnabled()) {
+      const cachedOnly = await readBlobCache(event);
+      const viewDate = (cachedOnly && cachedOnly.viewDate) || parisDateYmd();
+      const finalFlights = applyPinnedFlights((cachedOnly && cachedOnly.flights) || [], viewDate);
+      return {
+        statusCode: 200,
+        headers: HEADERS,
+        body: JSON.stringify(
+          buildResponse(
+            {
+              viewDate,
+              dataSource: 'cache-only',
+              hint: 'Bandeau sans scan API (RADAR_VOL_TICKER_LIVE non activé).',
+            },
+            finalFlights
+          )
+        ),
+      };
+    }
+
     const cached = await readBlobCache(event);
     const cachedFlights = (cached && cached.flights) || [];
     const staleHours = parseInt(process.env.TICKER_STALE_HOURS || '30', 10) || 30;

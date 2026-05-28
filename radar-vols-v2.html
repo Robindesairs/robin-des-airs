@@ -268,23 +268,24 @@ tbody tr.row-eligible:hover{background:#D5F5E3}
   <div id="radar-api-alert" role="alert" hidden></div>
   <div id="data-source-badge" style="display:none;font-size:11px;color:var(--text2);margin-bottom:8px"></div>
   <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap" role="group" aria-label="Source des données">
-    <button type="button" class="btn btn-sm radar-source-btn active" id="src-snapshot" data-mode="snapshot" title="Snapshot 8h (10 vols impactés) — alimente aussi le bandeau accueil">☀️ Cache matin</button>
-    <button type="button" class="btn btn-sm radar-source-btn" id="src-live" data-mode="live">📡 Scan live</button>
+    <button type="button" class="btn btn-sm radar-source-btn" id="src-snapshot" data-mode="snapshot" title="Snapshot 8h (10 vols impactés) — alimente aussi le bandeau accueil">☀️ Cache matin</button>
+    <button type="button" class="btn btn-sm radar-source-btn active" id="src-live" data-mode="live">📡 Scan live</button>
   </div>
 
   <div id="radar-server-veille-panel" style="margin-bottom:12px;padding:10px 12px;background:#E8F5EE;border:1px solid #A8D5BC;border-radius:var(--r)">
     <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:6px">
       <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#1B5E3B">Veille serveur</span>
       <label style="font-size:12px;display:flex;align-items:center;gap:6px;cursor:pointer">
-        <input type="checkbox" id="veille-server-aller" checked> Aller 8h–18h
+        <input type="checkbox" id="veille-server-aller"> Aller 8h–18h
       </label>
       <label style="font-size:12px;display:flex;align-items:center;gap:6px;cursor:pointer">
-        <input type="checkbox" id="veille-server-return" checked> Retour 18h–3h
+        <input type="checkbox" id="veille-server-return"> Retour 18h–3h
       </label>
       <button type="button" class="btn btn-sm btn-primary" id="btn-veille-server-save">Enregistrer</button>
       <button type="button" class="btn btn-sm" id="btn-veille-server-clear" title="Efface les horodatages scans serveur">🗑 Historique</button>
     </div>
     <p id="veille-server-env-hint" style="display:none;margin:0 0 6px;font-size:11px;color:#7D6608"></p>
+    <p style="margin:0 0 6px;font-size:11px;color:#7D6608"><strong>Veille serveur désactivée</strong> (quota AeroDataBox). Réactiver : <code>RADAR_VEILLE_ENABLED=1</code> + cron Netlify.</p>
     <p style="margin:0;font-size:10px;color:var(--text3)">Scans automatiques Netlify (sans garder l’onglet ouvert). Décochez pour couper aller ou retour vous-même. Les boutons « Veille » ci-dessous = navigateur uniquement.</p>
     <span id="veille-server-status" style="display:block;margin-top:6px;font-size:11px;color:var(--text2)"></span>
   </div>

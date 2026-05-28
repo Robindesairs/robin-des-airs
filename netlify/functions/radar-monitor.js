@@ -9,6 +9,8 @@
  * Manuel : POST /api/radar-monitor?force=morning|eu|africa
  */
 
+const { isRadarBackgroundApiEnabled } = require('./lib/radar-api-policy');
+
 const {
   getParisParts,
   detectSlot,
@@ -311,6 +313,18 @@ exports.handler = async (event) => {
 
   const force = (event.queryStringParameters?.force || '').trim().toLowerCase();
 
+  if (!isRadarBackgroundApiEnabled() && force !== 'test-whatsapp') {
+    return {
+      statusCode: 503,
+      headers: publicCorsHeaders({ 'Cache-Control': 'no-store', 'Content-Type': 'application/json' }),
+      body: JSON.stringify({
+        ok: false,
+        skipped: 'background_api_disabled',
+        hint: 'Seul le scan manuel /.netlify/functions/radar est actif. RADAR_BACKGROUND_API=1 pour monitor/snapshot.',
+      }),
+    };
+  }
+
   let body = {};
   try {
     body = JSON.parse(event.body || '{}');
@@ -344,6 +358,14 @@ exports.handler = async (event) => {
     };
   }
   // ─────────────────────────────────────────────────────────────────────
+
+  if (!isRadarBackgroundApiEnabled() && isNetlifyScheduled(event)) {
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ok: true, skipped: 'background_api_disabled' }),
+    };
+  }
 
   const { dateYmd, hour: parisHour } = getParisParts();
   let slot = detectSlot(parisHour);
