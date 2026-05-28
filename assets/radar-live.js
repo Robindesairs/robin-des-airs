@@ -170,9 +170,19 @@
     if (scan.hub) parts.push('hub ' + scan.hub);
     if (scan.returnSlot) parts.push('créneau ' + scan.returnSlot);
     if (scan.windows && scan.windows.length) {
-      var w0 = scan.windows[0];
-      if (w0 && w0.length >= 2) parts.push('fenêtre ' + w0[0] + '→' + w0[1]);
+      var winTxt = scan.windows
+        .map(function (w) {
+          return w && w.length >= 2 ? w[0] + '→' + w[1] : '';
+        })
+        .filter(Boolean)
+        .join(' ; ');
+      if (winTxt) parts.push('fenêtres ' + winTxt);
     }
+    if (scan.apiRowsFetched === 0 && scan.apiProbeCDG != null) {
+      parts.push('sonde CDG ' + scan.apiProbeCDG + ' vol(s)');
+    }
+    if (scan.apiError) parts.push('API: ' + scan.apiError);
+    if (scan.apiHttpStatus) parts.push('HTTP ' + scan.apiHttpStatus);
     if (scan.httpErrors && scan.httpErrors.length) parts.push('HTTP ' + scan.httpErrors[0].status);
     return parts.join(' · ');
   }
@@ -758,10 +768,10 @@
         return demo.length;
       });
     }
-    if (window.setReturnScanStatus) window.setReturnScanStatus('Retour ' + hub + ' · créneau 14h–23h…');
+    if (window.setReturnScanStatus) window.setReturnScanStatus('Retour ' + hub + ' · matin 00h–11h59…');
     return fetchRadarReturnSlot(hub, g, '1')
       .then(function (d1) {
-        if (window.setReturnScanStatus) window.setReturnScanStatus('Retour ' + hub + ' · créneau 00h–05h…');
+        if (window.setReturnScanStatus) window.setReturnScanStatus('Retour ' + hub + ' · après-midi 12h–23h59…');
         return fetchRadarReturnSlot(hub, g, '2').then(function (d2) {
           var merged = mergeFlightsDedup((d1.flights || []).concat(d2.flights || []));
           var meta = {
@@ -780,7 +790,17 @@
                 ((d2.scan && (d2.scan.rawArrivalCount != null ? d2.scan.rawArrivalCount : d2.scan.rawDepartureCount)) || 0),
               rawDepartureCount: 0,
               matchedCount: merged.length,
-              windows: (d2.scan && d2.scan.windows) || (d1.scan && d1.scan.windows),
+              windows: []
+                .concat((d1.scan && d1.scan.windows) || [])
+                .concat((d2.scan && d2.scan.windows) || []),
+              apiProbeCDG:
+                d2.scan && d2.scan.apiProbeCDG != null
+                  ? d2.scan.apiProbeCDG
+                  : d1.scan && d1.scan.apiProbeCDG != null
+                    ? d1.scan.apiProbeCDG
+                    : undefined,
+              apiError: (d2.scan && d2.scan.apiError) || (d1.scan && d1.scan.apiError),
+              apiHttpStatus: (d2.scan && d2.scan.apiHttpStatus) || (d1.scan && d1.scan.apiHttpStatus),
             },
           };
           var label =
@@ -1081,7 +1101,7 @@
               ((document.getElementById('r-sens') && document.getElementById('r-sens').value) || 'tous') +
               '). Remettez Sens = « Tous sens » ou cliquez la carte « Vols listés ».' +
               (formatScanDebug(RADAR_LAST_SCAN) ? ' Debug: ' + formatScanDebug(RADAR_LAST_SCAN) + '.' : '')
-            : 'Aucun vol Afrique→Europe pour ce hub dans le créneau 14h–06h (heure locale). Essayez Paris ou Bruxelles, ou relancez après 18h.' +
+            : 'Aucun vol Afrique→Europe pour ce hub sur la journée (heure locale). Essayez Paris ou Bruxelles, ou relancez un scan live.' +
               (formatScanDebug(RADAR_LAST_SCAN) ? ' Debug: ' + formatScanDebug(RADAR_LAST_SCAN) + '.' : '');
       tbody.innerHTML =
         '<tr><td colspan="15" style="text-align:center;padding:2rem;color:#9CA3AF">' + emptyMsg + '</td></tr>';

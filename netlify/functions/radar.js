@@ -108,11 +108,10 @@ const HUB_GROUPS = {
 
 function getReturnEveningWindows(dayYmd) {
   const today = dayYmd || parisDateYmd();
-  const tomorrow = parisDateAddDays(1);
-  // 14h–23h59 + 00h–05h59 (heure locale hub) : retours Afrique→EU souvent l'après-midi / soirée.
+  // Journée entière (2 requêtes / timeout) — pas de filtre 14h–06h pour l’instant.
   return [
-    [`${today}T14:00`, `${today}T23:59`],
-    [`${tomorrow}T00:00`, `${tomorrow}T05:59`],
+    [`${today}T00:00`, `${today}T11:59`],
+    [`${today}T12:00`, `${today}T23:59`],
   ];
 }
 
@@ -270,11 +269,29 @@ function sleepMs(ms) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
+
+/** Extrait départs/arrivées quelle que soit la forme JSON AeroDataBox. */
+function extractAdbRows(body, direction) {
+  if (!body || typeof body !== 'object') return { rows: [], hint: 'empty-body' };
+  const key = direction === 'Arrival' ? 'arrivals' : 'departures';
+  if (Array.isArray(body[key])) return { rows: body[key], hint: key };
+  if (Array.isArray(body.flights)) return { rows: body.flights, hint: 'flights' };
+  if (body.data && Array.isArray(body.data[key])) return { rows: body.data[key], hint: 'data.' + key };
+  return { rows: [], hint: 'keys:' + Object.keys(body).slice(0, 8).join(',') };
+}
+
+/** Créneaux locaux hub — AeroDataBox attend yyyy-MM-ddTHH:mm (sans encodage %3A dans le path). */
+function adbWindowPath(isoLocal) {
+  return String(isoLocal || '').trim();
+}
+
 const { aerodataboxHost } = require('./lib/adb-host');
 
 async function fetchAdbWindow(icao, from, to, direction, rapidKey, hubIata, timeoutOverride, adbOpts = {}) {
   const host = aerodataboxHost();
   const withCodeshared = adbOpts.withCodeshared === true ? 'true' : 'false';
+  const fromPath = adbWindowPath(from);
+  const toPath = adbWindowPath(to);
   const params = new URLSearchParams({
     withLeg: 'true',
     direction,
@@ -284,13 +301,12 @@ async function fetchAdbWindow(icao, from, to, direction, rapidKey, hubIata, time
     withPrivate: 'false',
     withLocation: 'false'
   });
-  const fromSeg = encodeURIComponent(from);
-  const toSeg = encodeURIComponent(to);
-  const url = `https://${host}/flights/airports/icao/${icao}/${fromSeg}/${toSeg}?${params}`;
   const timeoutMs =
     timeoutOverride ||
     Math.min(28000, parseInt(process.env.RADAR_FETCH_TIMEOUT_MS || '20000', 10) || 20000);
-  try {
+
+  async function requestByIcao(code) {
+    const url = `https://${host}/flights/airports/icao/${code}/${fromPath}/${toPath}?${params}`;
     const res = await fetch(url, {
       headers: {
         'x-rapidapi-host': host,
@@ -299,14 +315,52 @@ async function fetchAdbWindow(icao, from, to, direction, rapidKey, hubIata, time
       },
       signal: AbortSignal.timeout(timeoutMs)
     });
-    if (!res.ok) {
-      console.warn('radar AerodataBox HTTP', res.status, icao, direction, from, to);
-      return { rows: [], httpStatus: res.status };
+    const text = await res.text();
+    let j = {};
+    try {
+      j = JSON.parse(text);
+    } catch (_) {
+      j = {};
     }
-    const j = await res.json().catch(() => ({}));
-    const key = direction === 'Arrival' ? 'arrivals' : 'departures';
-    const rows = Array.isArray(j[key]) ? j[key] : [];
-    return { rows, httpStatus: res.status };
+    const { rows, hint } = extractAdbRows(j, direction);
+    return { rows, httpStatus: res.status, hint, urlKind: 'icao', code };
+  }
+
+  try {
+    let out = await requestByIcao(icao);
+    if (!out.rows.length && hubIata && hubIata.length === 3) {
+      const iataUrl = `https://${host}/flights/airports/iata/${hubIata}/${fromPath}/${toPath}?${params}`;
+      const res = await fetch(iataUrl, {
+        headers: {
+          'x-rapidapi-host': host,
+          'x-rapidapi-key': rapidKey,
+          Accept: 'application/json'
+        },
+        signal: AbortSignal.timeout(timeoutMs)
+      });
+      const text = await res.text();
+      let j = {};
+      try {
+        j = JSON.parse(text);
+      } catch (_) {
+        j = {};
+      }
+      const { rows, hint } = extractAdbRows(j, direction);
+      if (rows.length) out = { rows, httpStatus: res.status, hint, urlKind: 'iata', code: hubIata };
+      else if (!out.hint && hint) out.hint = hint;
+    }
+    if (!out.rows.length && out.httpStatus >= 400) {
+      console.warn('radar AerodataBox HTTP', out.httpStatus, icao, direction, fromPath, toPath);
+    } else if (!out.rows.length) {
+      console.warn('radar AerodataBox empty', icao, direction, fromPath, toPath, out.hint || '');
+    }
+    return {
+      rows: out.rows,
+      httpStatus: out.httpStatus,
+      hint: out.hint,
+      urlKind: out.urlKind,
+      error: null
+    };
   } catch (e) {
     console.warn('radar AerodataBox fetch', icao, e.message);
     return { rows: [], httpStatus: 0, error: e.message };
@@ -1195,6 +1249,25 @@ exports.handler = async (event) => {
       apiRowsFetched: adbStats.apiRowsFetched || 0,
       windows: adbStats.windows,
     });
+
+    if (scanMode === 'return' && (adbStats.apiRowsFetched || 0) === 0) {
+      const today = parisDateYmd();
+      const probe = await fetchAdbWindow(
+        'LFPG',
+        `${today}T12:00`,
+        `${today}T14:00`,
+        'Departure',
+        rapidKey,
+        'CDG',
+        12000,
+        { withCodeshared: true }
+      );
+      payload.scan.apiProbeCDG = (probe.rows && probe.rows.length) || 0;
+      if (probe.httpStatus && probe.httpStatus >= 400) payload.scan.apiHttpStatus = probe.httpStatus;
+      if (probe.error) payload.scan.apiError = probe.error;
+      else if (probe.hint) payload.scan.apiHint = probe.hint;
+    }
+
     if (scanMode === 'return') {
       payload.flights = (payload.flights || []).filter((f) => {
         const dep = String(f.dep || '').toUpperCase();
@@ -1256,5 +1329,6 @@ exports.isEuSubSaharanAfricaRoute = isEuSubSaharanAfricaRoute;
 exports.HUBS = HUBS;
 exports.runGroupScan = runGroupScan;
 exports.getReturnEveningWindows = getReturnEveningWindows;
+exports.extractAdbRows = extractAdbRows;
 exports.resolveReturnWindows = resolveReturnWindows;
 exports.HUB_GROUPS = HUB_GROUPS;
