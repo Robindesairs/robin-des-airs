@@ -262,7 +262,7 @@ function sleepMs(ms) {
 
 const { aerodataboxHost } = require('./lib/adb-host');
 
-async function fetchAdbWindow(icao, from, to, direction, rapidKey, hubIata) {
+async function fetchAdbWindow(icao, from, to, direction, rapidKey, hubIata, timeoutOverride) {
   const host = aerodataboxHost();
   const params = new URLSearchParams({
     withLeg: 'true',
@@ -274,7 +274,9 @@ async function fetchAdbWindow(icao, from, to, direction, rapidKey, hubIata) {
     withLocation: 'false'
   });
   const url = `https://${host}/flights/airports/icao/${icao}/${from}/${to}?${params}`;
-  const timeoutMs = Math.min(28000, parseInt(process.env.RADAR_FETCH_TIMEOUT_MS || '20000', 10) || 20000);
+  const timeoutMs =
+    timeoutOverride ||
+    Math.min(28000, parseInt(process.env.RADAR_FETCH_TIMEOUT_MS || '20000', 10) || 20000);
   try {
     const res = await fetch(url, {
       headers: {
@@ -385,20 +387,37 @@ async function fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, dateStr, hubLis
     const icao = TICKER_HUB_ICAO[hub] || HUB_ICAO[hub];
     if (!icao) continue;
     if (hi > 0) await new Promise(r => setTimeout(r, delayMs));
-    for (const [a, b] of windows) {
-      const wantDep = directions.includes('Departure');
-      const wantArr = directions.includes('Arrival');
-      const deps = wantDep ? await fetchAdbWindow(icao, a, b, 'Departure', rapidKey, hub) : [];
-      const arrs = wantArr ? await fetchAdbWindow(icao, a, b, 'Arrival', rapidKey, hub) : [];
-      for (const r of deps) {
-        const n = normalizeAdbFlight(r, { direction: 'Departure', hubIata: hub });
-        if (n) allRaw.push(n);
+    const perCallTimeout = opts.fetchTimeoutMs || null;
+    const wantDep = directions.includes('Departure');
+    const wantArr = directions.includes('Arrival');
+    const arrivalOnly = wantArr && !wantDep && windows.length > 1;
+
+    if (arrivalOnly) {
+      const arrsList = await Promise.all(
+        windows.map(([a, b]) => fetchAdbWindow(icao, a, b, 'Arrival', rapidKey, hub, perCallTimeout))
+      );
+      for (const arrs of arrsList) {
+        for (const r of arrs) {
+          const n = normalizeAdbFlight(r, { direction: 'Arrival', hubIata: hub });
+          if (!n) continue;
+          if (arrivalsToAllRaw) allRaw.push(n);
+          else arrivalRaw.push(n);
+        }
       }
-      for (const r of arrs) {
-        const n = normalizeAdbFlight(r, { direction: 'Arrival', hubIata: hub });
-        if (!n) continue;
-        if (arrivalsToAllRaw) allRaw.push(n);
-        else arrivalRaw.push(n);
+    } else {
+      for (const [a, b] of windows) {
+        const deps = wantDep ? await fetchAdbWindow(icao, a, b, 'Departure', rapidKey, hub, perCallTimeout) : [];
+        const arrs = wantArr ? await fetchAdbWindow(icao, a, b, 'Arrival', rapidKey, hub, perCallTimeout) : [];
+        for (const r of deps) {
+          const n = normalizeAdbFlight(r, { direction: 'Departure', hubIata: hub });
+          if (n) allRaw.push(n);
+        }
+        for (const r of arrs) {
+          const n = normalizeAdbFlight(r, { direction: 'Arrival', hubIata: hub });
+          if (!n) continue;
+          if (arrivalsToAllRaw) allRaw.push(n);
+          else arrivalRaw.push(n);
+        }
       }
     }
   }
@@ -737,7 +756,7 @@ function getTrackerUrl(airlineIata, flightNumber) {
   return base + (base.includes('?') ? '&' : '?') + 'flight=' + encodeURIComponent(fn);
 }
 
-async function assembleFlightsFromRaw(allRaw, arrivalRaw) {
+async function assembleFlightsFromRaw(allRaw, arrivalRaw, assembleOpts = {}) {
     /** Map arrivées : clé normalisée -> heure d'arrivée estimée/réelle (API arrival = à jour). */
     const arrivalMap = new Map();
     for (const f of arrivalRaw) {
@@ -938,7 +957,7 @@ async function assembleFlightsFromRaw(allRaw, arrivalRaw) {
 
     // Croisement Amadeus (optionnel) : si CERTIFICATION_API_URL est défini, récupérer is_certified_amadeus
     const certificationApiUrl = process.env.CERTIFICATION_API_URL;
-    if (certificationApiUrl && flights.length > 0) {
+    if (certificationApiUrl && flights.length > 0 && !assembleOpts.skipCertification) {
       try {
         const flightKey = (f) => [f.flight, f.dep, f.arr, f.scheduledDate || ''].map((s) => (s || '').trim().toUpperCase()).join('|');
         const keys = [...new Set(flights.map(flightKey).filter(Boolean))];
@@ -1003,10 +1022,13 @@ async function runGroupScan(rapidKey, { group, scanMode, hub }) {
           directions: ['Arrival'],
           windows: getReturnEveningWindows(parisDateYmd()),
           arrivalsToAllRaw: true,
+          fetchTimeoutMs: parseInt(process.env.RADAR_RETURN_FETCH_TIMEOUT_MS || '14000', 10) || 14000,
         }
       : {};
   await fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, parisDateYmd(), scanHubs, fillOpts);
-  const payload = await assembleFlightsFromRaw(allRaw, arrivalRaw);
+  const payload = await assembleFlightsFromRaw(allRaw, arrivalRaw, {
+    skipCertification: mode === 'return',
+  });
   if (mode === 'return') {
     payload.flights = (payload.flights || []).filter((f) => {
       const dep = String(f.dep || '').toUpperCase();
@@ -1095,11 +1117,14 @@ exports.handler = async (event) => {
             directions: ['Arrival'],
             windows: getReturnEveningWindows(parisDateYmd()),
             arrivalsToAllRaw: true,
+            fetchTimeoutMs: parseInt(process.env.RADAR_RETURN_FETCH_TIMEOUT_MS || '14000', 10) || 14000,
           }
         : {};
     await fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, parisDateYmd(), scanHubs, fillOpts);
 
-    const payload = await assembleFlightsFromRaw(allRaw, arrivalRaw);
+    const payload = await assembleFlightsFromRaw(allRaw, arrivalRaw, {
+      skipCertification: scanMode === 'return',
+    });
     payload.scan = Object.assign(payload.scan || {}, {
       rawDepartureCount: allRaw.length,
       rawArrivalCount: arrivalRaw.length,

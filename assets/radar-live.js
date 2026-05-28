@@ -160,12 +160,16 @@
     return opts;
   }
 
-  function radarFetchErrorMessage(e) {
+  function radarFetchErrorMessage(e, kind) {
     if (!e) return 'Erreur réseau';
-    if (e.name === 'AbortError' || e.name === 'TimeoutError') {
+    var msg = String(e.message || '');
+    if (e.name === 'AbortError' || e.name === 'TimeoutError' || msg.toLowerCase().indexOf('abort') >= 0) {
+      if (kind === 'return') {
+        return 'Scan retour interrompu (délai ~28 s). Réessayez dans 1 min — un seul hub à la fois (ex. Bruxelles).';
+      }
       return 'Délai dépassé (~28 s) — réessayez ou un hub à la fois.';
     }
-    return e.message || 'Erreur réseau';
+    return msg || 'Erreur réseau';
   }
 
   window.__radarIsScanning = function () { return SCAN_LOCK; };
@@ -702,7 +706,7 @@
         });
       })
       .catch(function (e) {
-        RADAR_ERROR = radarFetchErrorMessage(e);
+        RADAR_ERROR = radarFetchErrorMessage(e, 'return');
         throw e;
       });
   }
