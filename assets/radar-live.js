@@ -376,6 +376,12 @@
 
   function hostFixHint(errMsg) {
     var m = String(errMsg || '');
+    if (m.indexOf('Netlify Blobs') >= 0 || m.indexOf('not been configured') >= 0) {
+      return (
+        ' <br><br><strong>Cache matin :</strong> Netlify → <em>Storage</em> → activer <strong>Blobs</strong>, puis redéployer. ' +
+        'En attendant : bouton <strong>Scan live</strong> (AeroDataBox direct, sans Blobs).'
+      );
+    }
     if (m.indexOf('fetch failed') >= 0) {
       return (
         ' <br><br><strong>Cause fréquente :</strong> variable Netlify <code>AERODATABOX_RAPIDAPI_HOST</code> incorrecte ' +
@@ -399,7 +405,7 @@
       el.style.display = 'block';
       el.innerHTML =
         '<strong>Cache matin vide.</strong> Le snapshot de 8h n’a pas encore été généré (Blobs + cron). ' +
-        'Cliquez sur <strong>Scan live</strong> pour un chargement direct, ou lancez <code>POST /api/daily-radar-snapshot</code> depuis Netlify.';
+        'Cliquez sur <strong>Scan live</strong> pour un chargement direct (recommandé si Blobs est en cours d’activation).';
       el.style.background = '#fef9e7';
       el.style.borderColor = '#f6c847';
       el.style.color = '#7d6608';

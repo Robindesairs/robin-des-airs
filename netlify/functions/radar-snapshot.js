@@ -9,13 +9,12 @@
  * Réponse : { flights, date, updatedAt, total, dataSource }
  */
 
-let blobs = null;
-try { blobs = require('@netlify/blobs'); } catch (_) {}
-
+const { getBlobStore } = require('./lib/netlify-blobs-store');
 const { publicCorsHeaders } = require('./lib/auth-config');
 const { checkRateLimit } = require('./lib/rate-limit');
 
 const STORE_NAME = 'robin-radar';
+const SNAPSHOT_KEY = 'radar-daily-snapshot';
 
 const HEADERS = publicCorsHeaders({
   'Cache-Control': 'public, max-age=300, s-maxage=300, stale-while-revalidate=3600',
@@ -27,18 +26,20 @@ exports.handler = async (event) => {
   const rl = await checkRateLimit(event, { key: 'radar-snapshot', max: 60, windowSec: 60 });
   if (!rl.ok) return rl.response;
 
-  if (!blobs) {
+  const store = getBlobStore(event, STORE_NAME);
+  if (!store) {
     return {
       statusCode: 503,
       headers: HEADERS,
-      body: JSON.stringify({ error: 'Netlify Blobs non disponible', flights: [] }),
+      body: JSON.stringify({
+        error: 'Netlify Blobs non disponible — activez Storage sur le site Netlify puis redéployez.',
+        flights: [],
+      }),
     };
   }
 
   try {
-    if (blobs.connectLambda && event) blobs.connectLambda(event);
-    const store = blobs.getStore(STORE_NAME);
-    const snapshot = await store.getJSON('radar-daily-snapshot');
+    const snapshot = await store.get(SNAPSHOT_KEY, { type: 'json' });
 
     if (!snapshot || !Array.isArray(snapshot.flights)) {
       return {

@@ -13,6 +13,7 @@
 
 # Radar vols — tour de contrôle ops (données live AeroDataBox)
 /radar                       /radar-vols-v2.html               200
+/radar.html                  /radar-vols-v2.html               200
 /radar-vols-v2               /radar-vols-v2.html               200
 /radar-choix                /radar-choix.html                 200
 /crm.html                   /crm/                             301
