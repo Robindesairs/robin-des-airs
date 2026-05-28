@@ -982,6 +982,51 @@ async function assembleFlightsFromRaw(allRaw, arrivalRaw) {
     };
 }
 
+/** Scan un groupe hub (veille cron ou scripts internes). */
+async function runGroupScan(rapidKey, { group, scanMode, hub }) {
+  const allRaw = [];
+  const arrivalRaw = [];
+  const groupKey = String(group || '').trim();
+  const groupHubs = HUB_GROUPS[groupKey];
+  if (!groupHubs || !groupHubs.length) {
+    throw new Error(`Groupe hub inconnu: ${groupKey}`);
+  }
+  let scanHubs = groupHubs.slice();
+  const mode = String(scanMode || '').trim();
+  const returnHub = String(hub || '').trim().toUpperCase();
+  if (mode === 'return' && returnHub && (TICKER_HUB_ICAO[returnHub] || HUB_ICAO[returnHub])) {
+    scanHubs = [returnHub];
+  }
+  const fillOpts =
+    mode === 'return'
+      ? {
+          directions: ['Arrival'],
+          windows: getReturnEveningWindows(parisDateYmd()),
+          arrivalsToAllRaw: true,
+        }
+      : {};
+  await fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, parisDateYmd(), scanHubs, fillOpts);
+  const payload = await assembleFlightsFromRaw(allRaw, arrivalRaw);
+  if (mode === 'return') {
+    payload.flights = (payload.flights || []).filter((f) => {
+      const dep = String(f.dep || '').toUpperCase();
+      const arr = String(f.arr || '').toUpperCase();
+      if (!AFRICA_42_SET.has(dep) || !isEurope(getCountry(arr))) return false;
+      if (returnHub && arr !== returnHub) return false;
+      return true;
+    });
+    payload.scan = {
+      mode: 'return',
+      hub: returnHub || scanHubs[0],
+      group: groupKey,
+      hubs: scanHubs,
+    };
+  } else {
+    payload.scan = { mode: 'aller', group: groupKey, hubs: scanHubs };
+  }
+  return payload;
+}
+
 const { checkCrmAccess } = require('./lib/crm-access');
 
 exports.handler = async (event) => {
@@ -1113,3 +1158,6 @@ exports.getTickerAfricaHubs = getTickerAfricaHubs;
 exports.BANNER_EU_HUBS = BANNER_EU_HUBS;
 exports.isEuSubSaharanAfricaRoute = isEuSubSaharanAfricaRoute;
 exports.HUBS = HUBS;
+exports.runGroupScan = runGroupScan;
+exports.getReturnEveningWindows = getReturnEveningWindows;
+exports.HUB_GROUPS = HUB_GROUPS;

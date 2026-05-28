@@ -20,6 +20,15 @@
   schedule = "0 6 * * *"
 
 # Radar : 8h bandeau+email, 16-17h EU→AF, 18h-2h AF→EU — scan toutes les 10 min.
+
+# Veille radar V2 — 1 hub / 5 min (aller 8h–18h, retour 18h–03h)
+[functions."radar-veille-cron"]
+  schedule = "*/5 * * * *"
+  timeout = 26
+
+[functions."radar-veille-config"]
+  timeout = 10
+
 [functions."radar-monitor"]
   schedule = "*/10 * * * *"
 
@@ -217,8 +226,24 @@
   status = 200
 
 [[redirects]]
+  from = "/api/radar-snapshot"
+  to = "/.netlify/functions/radar-snapshot"
+  status = 200
+
+[[redirects]]
   from = "/api/daily-radar-snapshot"
   to = "/.netlify/functions/daily-radar-snapshot"
+  status = 200
+
+
+[[redirects]]
+  from = "/api/radar-veille-config"
+  to = "/.netlify/functions/radar-veille-config"
+  status = 200
+
+[[redirects]]
+  from = "/api/radar-veille-cron"
+  to = "/.netlify/functions/radar-veille-cron"
   status = 200
 
 [[redirects]]

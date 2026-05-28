@@ -91,6 +91,37 @@
     el.classList.toggle('is-fresh', !!ts && Date.now() - ts < 35 * 60 * 1000);
   }
 
+
+  var SERVER_BADGE_MAP = {
+    aller_paris_cdg: ['aller_paris_cdg', 'paris_cdg'],
+    aller_bru: ['aller_bru', 'bru'],
+    aller_ams: ['aller_ams', 'ams'],
+    aller_fco: ['aller_fco', 'fco'],
+    aller_mxp: ['aller_mxp', 'mxp'],
+    aller_lis: ['aller_lis', 'lis'],
+    aller_mad: ['aller_mad', 'mad'],
+    aller_bcn: ['aller_bcn', 'bcn'],
+    aller_fra: ['aller_fra', 'fra'],
+    return_paris: ['paris', 'paris'],
+    return_bru: ['bru', 'bru'],
+    return_ams: ['ams', 'ams'],
+    return_fra: ['fra', 'fra'],
+    return_south_it_fco: ['south_it_fco', 'south_it'],
+    return_south_it_mxp: ['south_it_mxp', 'south_it'],
+    return_south_ib_lis: ['south_ib_lis', 'south_ib'],
+    return_south_ib_mad: ['south_ib_mad', 'south_ib'],
+    return_south_ib_bcn: ['south_ib_bcn', 'south_ib'],
+  };
+
+  window.__radarSyncServerScanBadges = function (lastRuns) {
+    if (!lastRuns) return;
+    Object.keys(lastRuns).forEach(function (runKey) {
+      var ts = lastRuns[runKey];
+      var keys = SERVER_BADGE_MAP[runKey] || [runKey.replace(/^aller_/, ''), runKey.replace(/^return_/, '')];
+      recordScan(keys, ts);
+    });
+  };
+
   function recordScan(keys, ts) {
     var t = ts || Date.now();
     (keys || []).forEach(function (k) {

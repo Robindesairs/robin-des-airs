@@ -30,6 +30,13 @@
       var s2 = document.createElement('script');
       s2.id = 'radar-scan-scheduler';
       s2.src = '/assets/radar-scan-scheduler.js';
+      s2.onload = function () {
+        if (document.getElementById('radar-veille-server-script')) return;
+        var s3 = document.createElement('script');
+        s3.id = 'radar-veille-server-script';
+        s3.src = '/assets/radar-veille-server.js';
+        document.body.appendChild(s3);
+      };
       document.body.appendChild(s2);
     };
     document.body.appendChild(s);
