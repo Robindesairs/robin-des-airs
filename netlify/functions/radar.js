@@ -1010,6 +1010,22 @@ async function assembleFlightsFromRaw(allRaw, arrivalRaw, assembleOpts = {}) {
     };
 }
 
+
+function buildScanStats(allRaw, arrivalRaw, returnMode) {
+  if (returnMode) {
+    return {
+      rawDepartureCount: 0,
+      rawArrivalCount: allRaw.length,
+      rawApiCount: allRaw.length + arrivalRaw.length,
+    };
+  }
+  return {
+    rawDepartureCount: allRaw.length,
+    rawArrivalCount: arrivalRaw.length,
+    rawApiCount: allRaw.length + arrivalRaw.length,
+  };
+}
+
 /** Scan un groupe hub (veille cron ou scripts internes). */
 async function runGroupScan(rapidKey, { group, scanMode, hub, returnSlot }) {
   const allRaw = [];
@@ -1046,14 +1062,23 @@ async function runGroupScan(rapidKey, { group, scanMode, hub, returnSlot }) {
       if (returnHub && arr !== returnHub) return false;
       return true;
     });
-    payload.scan = {
-      mode: 'return',
-      hub: returnHub || scanHubs[0],
-      group: groupKey,
-      hubs: scanHubs,
-    };
+    payload.scan = Object.assign(
+      {
+        mode: 'return',
+        hub: returnHub || scanHubs[0],
+        group: groupKey,
+        hubs: scanHubs,
+      },
+      buildScanStats(allRaw, arrivalRaw, true),
+      { matchedCount: (payload.flights || []).length }
+    );
+    if (returnSlot) payload.scan.returnSlot = returnSlot;
   } else {
-    payload.scan = { mode: 'aller', group: groupKey, hubs: scanHubs };
+    payload.scan = Object.assign(
+      { mode: 'aller', group: groupKey, hubs: scanHubs },
+      buildScanStats(allRaw, arrivalRaw, false),
+      { matchedCount: (payload.flights || []).length }
+    );
   }
   return payload;
 }
@@ -1135,9 +1160,8 @@ exports.handler = async (event) => {
     const payload = await assembleFlightsFromRaw(allRaw, arrivalRaw, {
       skipCertification: scanMode === 'return',
     });
-    payload.scan = Object.assign(payload.scan || {}, {
-      rawDepartureCount: allRaw.length,
-      rawArrivalCount: arrivalRaw.length,
+    const scanStats = buildScanStats(allRaw, arrivalRaw, scanMode === 'return');
+    payload.scan = Object.assign(payload.scan || {}, scanStats, {
       matchedCount: (payload.flights || []).length,
     });
     if (scanMode === 'return') {

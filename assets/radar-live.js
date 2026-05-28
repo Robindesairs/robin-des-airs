@@ -70,7 +70,16 @@
     { code: 'MRS', ville: 'Marseille' },
     { code: 'TLS', ville: 'Toulouse' },
     { code: 'BOD', ville: 'Bordeaux' },
-    { code: 'NTE', ville: 'Nantes' }
+    { code: 'NTE', ville: 'Nantes' },
+    { code: 'LGW', ville: 'Londres Gatwick' },
+    { code: 'BCN', ville: 'Barcelone' },
+    { code: 'MUC', ville: 'Munich' },
+    { code: 'CPH', ville: 'Copenhague' },
+    { code: 'OSL', ville: 'Oslo' },
+    { code: 'DUB', ville: 'Dublin' },
+    { code: 'VIE', ville: 'Vienne' },
+    { code: 'ATH', ville: 'Athènes' },
+    { code: 'LIN', ville: 'Milan Linate' },
   ];
 
   const AIRLINE_IATA_NAME = {
@@ -128,6 +137,8 @@
   let RADAR_ERROR = null;
   let RADAR_LOAD_MODE = 'snapshot';
   let RADAR_DATA_LABEL = '';
+  /** @type {Record<string, unknown>|null} */
+  let RADAR_LAST_SCAN = null;
   let RETURN_HUB_DISPLAY = 'paris';
   let LAST_SCAN_ZONE_KEY = null;
   var SCAN_LOCK = false;
@@ -142,11 +153,47 @@
   function zoneLabel(key) {
     return ZONE_LABELS[String(key || '').trim()] || String(key || 'Hub');
   }
-  function setAllerScanStatus(msg, isErr) {
+  function formatScanDebug(scan) {
+    if (!scan) return '';
+    var mode = String(scan.mode || '');
+    var parts = [];
+    if (mode === 'return') {
+      var arrN = scan.rawArrivalCount != null ? scan.rawArrivalCount : scan.rawDepartureCount;
+      if (arrN != null) parts.push(String(arrN) + ' arrivées API');
+    } else {
+      if (scan.rawDepartureCount != null) parts.push(String(scan.rawDepartureCount) + ' départs API');
+      if (scan.rawArrivalCount != null) parts.push(String(scan.rawArrivalCount) + ' arrivées API');
+    }
+    if (scan.matchedCount != null) parts.push(String(scan.matchedCount) + ' retenus après filtre');
+    if (scan.hub) parts.push('hub ' + scan.hub);
+    if (scan.returnSlot) parts.push('créneau ' + scan.returnSlot);
+    return parts.join(' · ');
+  }
+
+  function resetRadarSensFilter() {
+    var sensSel = document.getElementById('r-sens');
+    if (sensSel) sensSel.value = '';
+    metricQuickFilter = null;
+  }
+
+  function setAllerScanStatus(msg, isErr, scanOpt) {
     var el = document.getElementById('aller-scan-status');
     if (!el) return;
-    el.textContent = msg || '';
+    var scan = scanOpt || RADAR_LAST_SCAN;
+    var debug = formatScanDebug(scan);
+    var text = msg || '';
+    if (debug && text.indexOf(debug) < 0) text = text ? text + ' · ' + debug : debug;
+    el.textContent = text;
     el.style.color = isErr ? 'var(--red)' : 'var(--text2)';
+  }
+
+  function setReturnScanStatusWithDebug(msg, isErr, scanOpt) {
+    if (!window.setReturnScanStatus) return;
+    var scan = scanOpt || RADAR_LAST_SCAN;
+    var debug = formatScanDebug(scan);
+    var text = msg || '';
+    if (debug && text.indexOf(debug) < 0) text = text ? text + ' · ' + debug : debug;
+    window.setReturnScanStatus(text, isErr);
   }
 
   /** Aligné sur Netlify radar timeout 26s + marge réseau. */
@@ -460,6 +507,7 @@
       VOLS = incoming;
     }
     RADAR_DATA_LABEL = label || '';
+    RADAR_LAST_SCAN = data.scan || RADAR_LAST_SCAN;
   }
 
   function isAutoEligible(v) {
@@ -573,11 +621,11 @@
             data && data.scan && data.scan.hubs && data.scan.hubs.length
               ? ' · ' + data.scan.hubs.join(',')
               : '';
-          var scanMeta =
-            data && data.scan && data.scan.matchedCount != null
-              ? ' · ' + (data.scan.rawDepartureCount || 0) + ' bruts → ' + data.scan.matchedCount + ' EU↔AF'
-              : '';
-          applyRadarPayload(data, 'Scan live · ' + (data.flights ? data.flights.length : 0) + ' vols' + hubs + scanMeta);
+          applyRadarPayload(
+            data,
+            'Scan live · ' + (data.flights ? data.flights.length : 0) + ' vols' + hubs +
+              (data && data.scan ? ' · ' + formatScanDebug(data.scan) : '')
+          );
           if (window.__radarMarkHubScanned && LAST_SCAN_ZONE_KEY) window.__radarMarkHubScanned('aller', LAST_SCAN_ZONE_KEY);
         })
         .catch(function (e) {
@@ -718,8 +766,10 @@
               mode: 'return',
               hub: hub,
               returnSlots: ['1', '2'],
-              rawDepartureCount:
-                ((d1.scan && d1.scan.rawDepartureCount) || 0) + ((d2.scan && d2.scan.rawDepartureCount) || 0),
+              rawArrivalCount:
+                ((d1.scan && (d1.scan.rawArrivalCount != null ? d1.scan.rawArrivalCount : d1.scan.rawDepartureCount)) || 0) +
+                ((d2.scan && (d2.scan.rawArrivalCount != null ? d2.scan.rawArrivalCount : d2.scan.rawDepartureCount)) || 0),
+              rawDepartureCount: 0,
               matchedCount: merged.length,
             },
           };
@@ -735,18 +785,19 @@
           renderCompFilter();
           renderRadar();
           if (window.__radarMarkHubScanned) window.__radarMarkHubScanned('return', hub);
-          var sensSel = document.getElementById('r-sens');
-          if (sensSel) sensSel.value = '';
-          metricQuickFilter = null;
-          if (window.setReturnScanStatus) {
-            window.setReturnScanStatus('Retour ' + hub + ' : ' + merged.length + ' vol(s) extraits.');
-          }
+          resetRadarSensFilter();
+          setReturnScanStatusWithDebug(
+            'Retour ' + hub + ' : ' + merged.length + ' vol(s) listés · ' + VOLS.length + ' au total',
+            false,
+            meta.scan
+          );
           return merged.length;
         });
       })
       .catch(function (e) {
         RADAR_ERROR = radarFetchErrorMessage(e, 'return');
-        if (window.setReturnScanStatus) window.setReturnScanStatus(RADAR_ERROR, true);
+        resetRadarSensFilter();
+        setReturnScanStatusWithDebug(RADAR_ERROR, true);
         throw e;
       });
   }
@@ -1014,8 +1065,14 @@
         : RADAR_LOAD_MODE === 'snapshot' && !metricQuickFilter
           ? 'Cache vide — essayez Scan live.'
           : VOLS.length
-            ? 'Aucun vol ne correspond aux filtres (' + VOLS.length + ' extraits). Remettez Sens = « Tous sens » ou cliquez la carte « Vols listés ».'
-            : 'Aucun vol extrait pour ce hub — élargissez la fenêtre ou réessayez un autre hub.';
+            ? 'Aucun vol ne correspond aux filtres (' +
+              VOLS.length +
+              ' extraits, sens=' +
+              ((document.getElementById('r-sens') && document.getElementById('r-sens').value) || 'tous') +
+              '). Remettez Sens = « Tous sens » ou cliquez la carte « Vols listés ».' +
+              (formatScanDebug(RADAR_LAST_SCAN) ? ' Debug: ' + formatScanDebug(RADAR_LAST_SCAN) + '.' : '')
+            : 'Aucun vol extrait pour ce hub — élargissez la fenêtre ou réessayez un autre hub.' +
+              (formatScanDebug(RADAR_LAST_SCAN) ? ' Debug API: ' + formatScanDebug(RADAR_LAST_SCAN) + '.' : '');
       tbody.innerHTML =
         '<tr><td colspan="15" style="text-align:center;padding:2rem;color:#9CA3AF">' + emptyMsg + '</td></tr>';
       renderRadarCards([]);
@@ -1648,12 +1705,22 @@
           window.__radarMarkHubScanned('aller', LAST_SCAN_ZONE_KEY);
         }
         if (!RADAR_ERROR) {
-          var sensSel = document.getElementById('r-sens');
-          if (sensSel && VOLS.length) sensSel.value = '';
-          metricQuickFilter = null;
+          resetRadarSensFilter();
+          var otherSens = 0;
+          VOLS.forEach(function (v) {
+            if (v.sens === 'OTHER') otherSens += 1;
+          });
+          var extra =
+            otherSens > 0
+              ? ' · ' + otherSens + ' vol(s) hors EU↔AF (hub non reconnu — voir Sens « Autre »)'
+              : '';
           setAllerScanStatus(
-            'Scan terminé · ' + VOLS.length + ' vol(s) extraits · ' + zoneLabel(LAST_SCAN_ZONE_KEY)
+            'Scan terminé · ' + VOLS.length + ' vol(s) au tableau · ' + zoneLabel(LAST_SCAN_ZONE_KEY) + extra,
+            false,
+            RADAR_LAST_SCAN
           );
+        } else {
+          resetRadarSensFilter();
         }
         renderMetrics();
         renderRadar();
