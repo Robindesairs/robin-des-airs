@@ -59,6 +59,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .radar-btn-sm{padding:3px 8px;font-size:10px}
 .radar-source-btn{padding:4px 9px;border-radius:var(--r2);border:1.5px solid var(--border);background:var(--card);color:var(--text);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
 .radar-source-btn.active{background:var(--green);color:#fff;border-color:var(--green)}
+.radar-zone-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.radar-return-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+.radar-hub-btn{display:inline-flex;flex-direction:column;align-items:center;gap:1px;line-height:1.15}
+.radar-scan-badge{font-size:9px;font-weight:700;letter-spacing:.02em;opacity:.75;font-variant-numeric:tabular-nums}
+.radar-scan-badge.is-fresh{color:var(--green);opacity:1}
+.radar-scan-blink{animation:radar-hub-blink 1.15s ease-in-out infinite}
+.radar-hub-scanning{animation:radar-hub-blink 0.9s ease-in-out infinite;box-shadow:0 0 0 2px var(--gold)}
+@keyframes radar-hub-blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.72;transform:scale(.98)}}
+
+.radar-zone-eligible{animation:blink 0.85s infinite}
 
 /* ── App ──────────────────────────────────────────────────── */
 .app{max-width:1600px;margin:0 auto;padding:14px}
@@ -221,13 +232,15 @@ tbody tr.row-eligible:hover{background:#D5F5E3}
 </style>
 </head>
 <body>
+<script src="/data/radar-south-departure-routes.js"></script>
+<script src="/data/radar-frankfurt-routes.js"></script>
 <script src="/assets/radar-gate.js"></script>
 
 <!-- ── Top bar ────────────────────────────────────────────── -->
 <div class="topbar">
   <div>
     <div class="brand">ROBIN <span>des Airs</span> — Radar Vols</div>
-    <div class="brand-sub">Europe ↔ Afrique · 240+ liaisons · Score CE 261 · Actualisation automatique</div>
+    <div class="brand-sub" id="radar-brand-sub">Europe ↔ Afrique · 390+ liaisons · 9 portes EU · 44 destinations · Score CE 261 · Actualisation auto</div>
   </div>
   <div class="top-right">
     <div id="last-refresh" style="font-size:10px;color:rgba(255,255,255,.5)"></div>
@@ -249,8 +262,50 @@ tbody tr.row-eligible:hover{background:#D5F5E3}
   <div id="radar-api-alert" role="alert" hidden></div>
   <div id="data-source-badge" style="display:none;font-size:11px;color:var(--text2);margin-bottom:8px"></div>
   <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap" role="group" aria-label="Source des données">
-    <button type="button" class="btn btn-sm radar-source-btn active" id="src-snapshot" data-mode="snapshot">☀️ Cache matin</button>
+    <button type="button" class="btn btn-sm radar-source-btn active" id="src-snapshot" data-mode="snapshot" title="Snapshot 8h (10 vols impactés) — alimente aussi le bandeau accueil">☀️ Cache matin</button>
     <button type="button" class="btn btn-sm radar-source-btn" id="src-live" data-mode="live">📡 Scan live</button>
+  </div>
+
+  <!-- Aller : sélection hub puis scan explicite -->
+  <div style="margin-bottom:10px;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
+    <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center" role="group" aria-label="Scan aller — départs Europe">
+      <span style="font-size:11px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Aller</span>
+      <button type="button" class="btn btn-sm radar-zone-btn active" data-zone="paris_cdg" data-groups="1">Paris CDG</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="bru" data-groups="5">Bruxelles</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="ams" data-groups="6">Amsterdam</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="eu_south_it" data-groups="13,14">Rome · Milan</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="eu_south_ib" data-groups="7,15,16">Lisbonne · Madrid · Barcelone</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="frankfurt" data-groups="17">Francfort</button>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px">
+      <button type="button" class="btn btn-primary btn-sm" id="btn-aller-scan">▶ Scanner ce hub maintenant</button>
+      <button type="button" class="btn btn-sm radar-source-btn" id="btn-aller-auto">🔁 Veille aller (8h–18h / 2h)</button>
+      <span id="aller-scan-status" style="font-size:11px;color:var(--text2);flex:1;min-width:200px"></span>
+    </div>
+    <p style="margin:0;font-size:10px;color:var(--text3)">Choisir un hub puis lancer le scan (Scan live ou démo). Sous chaque bouton : <strong>dernier scan</strong> (heure Paris).</p>
+  </div>
+
+  <!-- Retour : 1 hub à la fois → scan API (18h–03h, décalage 5 min en auto) -->
+  <div style="margin-bottom:10px;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
+    <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center" role="group" aria-label="Scan retour — arrivées Europe">
+      <span style="font-size:11px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Retour</span>
+      <button type="button" class="btn btn-sm radar-return-btn" data-return="paris">Paris CDG</button>
+      <button type="button" class="btn btn-sm radar-return-btn" data-return="bru">Bruxelles</button>
+      <button type="button" class="btn btn-sm radar-return-btn" data-return="ams">Amsterdam</button>
+      <button type="button" class="btn btn-sm radar-return-btn" data-return="fra">Francfort</button>
+      <button type="button" class="btn btn-sm radar-return-btn" data-return="south_it">Rome · Milan</button>
+      <button type="button" class="btn btn-sm radar-return-btn" data-return="south_ib">Lisbonne · Madrid · Barcelone</button>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px">
+      <button type="button" class="btn btn-primary btn-sm" id="btn-return-scan">▶ Scanner ce hub maintenant</button>
+      <button type="button" class="btn btn-sm radar-source-btn" id="btn-return-auto">🔁 Veille auto (18h–3h)</button>
+      <span id="return-scan-status" style="font-size:11px;color:var(--text2);flex:1;min-width:200px"></span>
+    </div>
+    <p style="margin:0 0 6px;font-size:10px;color:var(--text3)">Sous chaque bouton : <strong>dernier scan</strong> (heure Paris). Veille auto = les hubs sont scannés seuls, un par un (pas besoin de cliquer chaque hub). Créneau 18h–03h.</p>
+    <div id="return-watch-panel" style="padding:8px 10px;background:#FEF9E7;border:1px solid #F6C847;border-radius:8px;font-size:12px">
+      <strong style="display:block;margin-bottom:4px;color:#7D6608">⚠️ Retours à surveiller</strong>
+      <p style="margin:0;font-size:12px;color:var(--text3)">Lancez un scan retour pour alimenter cette liste.</p>
+    </div>
   </div>
 
   <!-- Métriques : 7 cards (les 6 générées par radar-live.js + 1 Potentiel du jour) -->

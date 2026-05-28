@@ -254,12 +254,33 @@ function volTickerFormatDelayMinutes(m) {
  * Source : GET /api/vol-ticker (jusqu’à 9 vols EU↔Afrique impactés, scan multi-jours côté serveur).
  */
 var VOL_TICKER_MAX_CHIPS = 9;
+
+function volTickerMergeManualPins(rows) {
+  try {
+    var raw = localStorage.getItem('robin_vol_ticker_manual');
+    if (!raw) return rows;
+    var manual = JSON.parse(raw);
+    if (!Array.isArray(manual) || !manual.length) return rows;
+    var out = manual.concat(rows || []);
+    var seen = new Set();
+    return out.filter(function (r) {
+      var k = (r.flight || '') + '|' + (r.route || '');
+      if (seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    }).slice(0, VOL_TICKER_MAX_CHIPS);
+  } catch (e) {
+    return rows;
+  }
+}
+
 function volTickerRowsFromRadar(data) {
   ensureRouteAmountBuilt();
   if (!data || !Array.isArray(data.flights) || !data.flights.length) return null;
   var viewDate = data.viewDate || new Date().toISOString().slice(0, 10);
   var rows = data.flights.slice();
   if (!rows.length) return null;
+  rows = volTickerMergeManualPins(rows);
   return rows.slice(0, VOL_TICKER_MAX_CHIPS).map(function (f) {
     var fn = String(f.flight || '').replace(/\s/g, '');
     var dep = (f.dep || '').toUpperCase();
@@ -743,8 +764,8 @@ function showLongFunnel() {
   document.getElementById('funnel-long').style.display = 'block';
   var waShortcut = document.querySelector('.funnel-wa-shortcut');
   if (waShortcut) waShortcut.style.display = 'none';
-  var detailLink = document.querySelector('.funnel-detail-link');
-  if (detailLink) detailLink.style.display = 'none';
+  var simBtn = document.getElementById('link-diagnostic-detail');
+  if (simBtn) simBtn.style.display = 'none';
   goTo('step-1', 12);
 }
 /** Clic pastille bandeau : parcours minimal (textarea + bouton), sans en-tête ni autres raccourcis WhatsApp. */
@@ -806,8 +827,18 @@ function restartFunnel() {
   document.querySelectorAll('.dist-pill').forEach(p => p.classList.remove('active'));
   ['da-pax-val','eb-pax-val'].forEach(id => { const el = document.getElementById(id); if(el) el.textContent = '1'; });
   var fbox = document.getElementById('funnel-box');
-  if (fbox) fbox.classList.remove('funnel-from-vol-chip');
-  goTo('step-1', 12);
+  if (fbox) {
+    fbox.classList.remove('funnel-from-vol-chip', 'funnel-box--detailed');
+  }
+  var fl = document.getElementById('funnel-long');
+  var fs = document.getElementById('funnel-short');
+  if (fl) fl.style.display = 'none';
+  if (fs) fs.style.display = 'block';
+  var simBtn = document.getElementById('link-diagnostic-detail');
+  if (simBtn) simBtn.style.display = '';
+  var progWrap = document.getElementById('funnel-progress-wrap');
+  if (progWrap) progWrap.setAttribute('aria-hidden', 'true');
+  goToShortStep();
 }
 
 function setDist(inputId, value, btn) {
@@ -1055,28 +1086,29 @@ function buildCalcDetailText(totals) {
   var totalNet = totals.totalNet;
   if (!window.I18N || typeof I18N.formatFromEur !== 'function') {
     return (
+      'Indemnité légale ' +
       totalBrut +
-      '€ (indemnité légale' +
-      (pax > 1 ? ' · ' + brut + '€ × ' + pax + ' pass.' : '') +
-      ') − 25% Robin (' +
+      '€' +
+      (pax > 1 ? ' (' + brut + '€ × ' + pax + ' pass.)' : '') +
+      ' − 25% Robin (' +
       totalFee +
-      '€) = ' +
+      '€) → ' +
       totalNet +
-      '€ net'
+      '€ net pour vous'
     );
   }
   var f = function (n) {
     return I18N.formatFromEur(n);
   };
   return (
+    'Indemnité légale ' +
     f(totalBrut) +
-    ' (indemnité légale' +
-    (pax > 1 ? ' · ' + f(brut) + ' × ' + pax + ' pass.' : '') +
-    ') − 25% Robin (' +
+    (pax > 1 ? ' (' + f(brut) + ' × ' + pax + ' pass.)' : '') +
+    ' − 25% Robin (' +
     f(totalFee) +
-    ') = ' +
+    ') → ' +
     f(totalNet) +
-    ' net'
+    ' net pour vous'
   );
 }
 

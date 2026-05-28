@@ -5,55 +5,52 @@
 (function () {
   'use strict';
 
+  // Base 44 destinations (hubs) – simplifie l'outil et évite les faux positifs.
   const AF_AIRPORTS = [
-    { code: 'DSS', ville: 'Dakar', pays: 'Sénégal' },
     { code: 'ABJ', ville: 'Abidjan', pays: "Côte d'Ivoire" },
-    { code: 'FIH', ville: 'Kinshasa', pays: 'RDC' },
-    { code: 'BKO', ville: 'Bamako', pays: 'Mali' },
-    { code: 'DLA', ville: 'Douala', pays: 'Cameroun' },
-    { code: 'NSI', ville: 'Yaoundé', pays: 'Cameroun' },
-    { code: 'COO', ville: 'Cotonou', pays: 'Bénin' },
-    { code: 'LOS', ville: 'Lagos', pays: 'Nigeria' },
-    { code: 'ACC', ville: 'Accra', pays: 'Ghana' },
-    { code: 'LFW', ville: 'Lomé', pays: 'Togo' },
-    { code: 'OUA', ville: 'Ouagadougou', pays: 'Burkina' },
-    { code: 'NIM', ville: 'Niamey', pays: 'Niger' },
-    { code: 'LBV', ville: 'Libreville', pays: 'Gabon' },
-    { code: 'BZV', ville: 'Brazzaville', pays: 'Congo' },
-    { code: 'RAK', ville: 'Marrakech', pays: 'Maroc' },
-    { code: 'CMN', ville: 'Casablanca', pays: 'Maroc' },
-    { code: 'ALG', ville: 'Alger', pays: 'Algérie' },
-    { code: 'ORN', ville: 'Oran', pays: 'Algérie' },
-    { code: 'TUN', ville: 'Tunis', pays: 'Tunisie' },
-    { code: 'CAI', ville: 'Le Caire', pays: 'Égypte' },
-    { code: 'ADD', ville: 'Addis-Abeba', pays: 'Éthiopie' },
-    { code: 'NBO', ville: 'Nairobi', pays: 'Kenya' },
-    { code: 'JNB', ville: 'Johannesburg', pays: 'Afrique du Sud' },
-    { code: 'MRU', ville: 'Maurice', pays: 'Maurice' },
-    { code: 'RUN', ville: 'La Réunion', pays: 'Réunion' },
-    { code: 'TNR', ville: 'Antananarivo', pays: 'Madagascar' },
-    { code: 'BJL', ville: 'Banjul', pays: 'Gambie' },
-    { code: 'CKY', ville: 'Conakry', pays: 'Guinée' },
-    { code: 'FNA', ville: 'Freetown', pays: 'Sierra Leone' },
     { code: 'ABV', ville: 'Abuja', pays: 'Nigeria' },
-    { code: 'NDJ', ville: "N'Djamena", pays: 'Tchad' },
-    { code: 'KGL', ville: 'Kigali', pays: 'Rwanda' },
-    { code: 'EBB', ville: 'Entebbe', pays: 'Ouganda' },
-    { code: 'DAR', ville: 'Dar es Salaam', pays: 'Tanzanie' },
-    { code: 'GOA', ville: 'Goma', pays: 'RDC' },
-    { code: 'HAH', ville: 'Moroni', pays: 'Comores' },
-    { code: 'PHC', ville: 'Port Harcourt', pays: 'Nigeria' },
+    { code: 'ACC', ville: 'Accra', pays: 'Ghana' },
+    { code: 'ADD', ville: 'Addis-Abeba', pays: 'Éthiopie' },
+    { code: 'TNR', ville: 'Antananarivo', pays: 'Madagascar' },
+    { code: 'BKO', ville: 'Bamako', pays: 'Mali' },
     { code: 'BGF', ville: 'Bangui', pays: 'RCA' },
-    { code: 'SSG', ville: 'Malabo', pays: 'Guinée Éq.' },
-    { code: 'VXE', ville: 'São Vicente', pays: 'Cap-Vert' },
-    { code: 'RAI', ville: 'Praia', pays: 'Cap-Vert' },
+    { code: 'BJL', ville: 'Banjul', pays: 'Gambie' },
     { code: 'OXB', ville: 'Bissau', pays: 'Guinée-Bissau' },
-    { code: 'MGQ', ville: 'Mogadiscio', pays: 'Somalie' },
+    { code: 'BZV', ville: 'Brazzaville', pays: 'Congo' },
+    { code: 'BJM', ville: 'Bujumbura', pays: 'Burundi' },
+    { code: 'CPT', ville: 'Cape Town', pays: 'Afrique du Sud' },
+    { code: 'CKY', ville: 'Conakry', pays: 'Guinée' },
+    { code: 'COO', ville: 'Cotonou', pays: 'Bénin' },
+    { code: 'DSS', ville: 'Dakar', pays: 'Sénégal' },
+    { code: 'DAR', ville: 'Dar es Salaam', pays: 'Tanzanie' },
     { code: 'JIB', ville: 'Djibouti', pays: 'Djibouti' },
-    { code: 'ASM', ville: 'Asmara', pays: 'Érythrée' },
-    { code: 'SEZ', ville: 'Mahé', pays: 'Seychelles' },
-    { code: 'CPT', ville: 'Le Cap', pays: 'Afrique du Sud' },
-    { code: 'MPM', ville: 'Maputo', pays: 'Mozambique' }
+    { code: 'DLA', ville: 'Douala', pays: 'Cameroun' },
+    { code: 'EBB', ville: 'Entebbe', pays: 'Ouganda' },
+    { code: 'FNA', ville: 'Freetown', pays: 'Sierra Leone' },
+    { code: 'GOM', ville: 'Goma', pays: 'RDC' },
+    { code: 'JNB', ville: 'Johannesburg', pays: 'Afrique du Sud' },
+    { code: 'KGL', ville: 'Kigali', pays: 'Rwanda' },
+    { code: 'JRO', ville: 'Kilimandjaro', pays: 'Tanzanie' },
+    { code: 'FIH', ville: 'Kinshasa', pays: 'RDC' },
+    { code: 'LOS', ville: 'Lagos', pays: 'Nigeria' },
+    { code: 'LBV', ville: 'Libreville', pays: 'Gabon' },
+    { code: 'LFW', ville: 'Lomé', pays: 'Togo' },
+    { code: 'LAD', ville: 'Luanda', pays: 'Angola' },
+    { code: 'SSG', ville: 'Malabo', pays: 'Guinée Équatoriale' },
+    { code: 'MPM', ville: 'Maputo', pays: 'Mozambique' },
+    { code: 'MRU', ville: 'Maurice', pays: 'Maurice' },
+    { code: 'MBA', ville: 'Mombasa', pays: 'Kenya' },
+    { code: 'NDJ', ville: "N'Djamena", pays: 'Tchad' },
+    { code: 'NBO', ville: 'Nairobi', pays: 'Kenya' },
+    { code: 'NIM', ville: 'Niamey', pays: 'Niger' },
+    { code: 'OUA', ville: 'Ouagadougou', pays: 'Burkina Faso' },
+    { code: 'PNR', ville: 'Pointe-Noire', pays: 'Congo' },
+    { code: 'PHC', ville: 'Port Harcourt', pays: 'Nigeria' },
+    { code: 'WDH', ville: 'Windhoek', pays: 'Namibie' },
+    { code: 'NSI', ville: 'Yaoundé', pays: 'Cameroun' },
+    { code: 'ZNZ', ville: 'Zanzibar', pays: 'Tanzanie' },
+    { code: 'FBM', ville: 'Lubumbashi', pays: 'RDC' },
+    { code: 'HRE', ville: 'Harare', pays: 'Zimbabwe' },
   ];
   const EU_AIRPORTS = [
     { code: 'CDG', ville: 'Paris CDG' },
@@ -131,6 +128,86 @@
   let RADAR_ERROR = null;
   let RADAR_LOAD_MODE = 'snapshot';
   let RADAR_DATA_LABEL = '';
+  let RETURN_HUB_DISPLAY = 'paris';
+  let LAST_SCAN_ZONE_KEY = null;
+  var SCAN_LOCK = false;
+  var ZONE_LABELS = {
+    paris_cdg: 'Paris CDG',
+    bru: 'Bruxelles',
+    ams: 'Amsterdam',
+    eu_south_it: 'Rome · Milan',
+    eu_south_ib: 'Lisbonne · Madrid · Barcelone',
+    frankfurt: 'Francfort',
+  };
+  function zoneLabel(key) {
+    return ZONE_LABELS[String(key || '').trim()] || String(key || 'Hub');
+  }
+  function setAllerScanStatus(msg, isErr) {
+    var el = document.getElementById('aller-scan-status');
+    if (!el) return;
+    el.textContent = msg || '';
+    el.style.color = isErr ? 'var(--red)' : 'var(--text2)';
+  }
+  window.__radarIsScanning = function () { return SCAN_LOCK; };
+  const ZONE_ELIGIBLE_COUNT = {};
+
+  const RETURN_HUB_IATA = {
+    paris: new Set(['CDG']),
+    bru: new Set(['BRU']),
+    ams: new Set(['AMS']),
+    fra: new Set(['FRA']),
+    south_it: new Set(['FCO', 'MXP', 'LIN']),
+    south_ib: new Set(['LIS', 'MAD', 'BCN']),
+  };
+
+  function returnHubSetForDisplay(key) {
+    var k = String(key || '').trim();
+    if (!k || k === 'all') return null;
+    return RETURN_HUB_IATA[k] || null;
+  }
+
+  function matchesReturnHubFilter(v) {
+    var set = returnHubSetForDisplay(RETURN_HUB_DISPLAY);
+    if (!set) return true;
+    if (!v || v.sens !== 'AF_EU') return false;
+    return set.has(String(v.arr || '').toUpperCase());
+  }
+
+  function isReturnWatchVol(v) {
+    if (!v || v.sens !== 'AF_EU') return false;
+    if (v.statut === 'ANNULE') return true;
+    if (v.statut === 'RETARD' && v.retardMin >= 120) return true;
+    if (v.elig === 'OUI' && v.retardMin >= 60) return true;
+    return false;
+  }
+  const DEMO_MODE = typeof window !== 'undefined' && new URLSearchParams(window.location.search || '').get('demo') === '1';
+
+  const AFRICA_WEST_SET = new Set([
+    'DSS','DKR','ABJ','BKO','COO','LFW','ACC','LOS','ABV','OUA','NIM','CKY','BJL','FNA','ROB','OXB','RAI','VXE','NKC','NDJ','BGF','SSG','LBV','BZV','FIH','DLA','NSI','PHC'
+  ]);
+  const AFRICA_EAST_SET = new Set([
+    'ADD','NBO','DAR','EBB','KGL','JIB','ASM','MGQ','MBA','JRO','ZNZ','HAH'
+  ]);
+  const AFRICA_INDIAN_SET = new Set([
+    'RUN','MRU','SEZ','TNR','MPM','DZA'
+  ]);
+
+  function africanSideIataForVol(v) {
+    if (!v) return '';
+    if (v.sens === 'EU_AF') return String(v.arr || '').toUpperCase();
+    if (v.sens === 'AF_EU') return String(v.dep || '').toUpperCase();
+    return '';
+  }
+
+  function africaRegionForIata(iata) {
+    var c = String(iata || '').toUpperCase();
+    if (!c) return 'other';
+    if (AFRICA_WEST_SET.has(c)) return 'west';
+    if (AFRICA_EAST_SET.has(c)) return 'east';
+    if (AFRICA_INDIAN_SET.has(c)) return 'indian';
+    if (AF_IATA_SET.has(c)) return 'other';
+    return 'other';
+  }
 
   function apiRadarOrigin() {
     var o = window.location.origin || '';
@@ -321,16 +398,17 @@
     }
   }
 
-  function applyRadarPayload(data, label) {
+  function applyRadarPayload(data, label, opts) {
+    opts = opts || {};
     if (!data) {
       RADAR_ERROR = 'Réponse vide';
-      VOLS = [];
+      if (!opts.merge) VOLS = [];
       return;
     }
     if (data.error && (!data.flights || !data.flights.length)) {
       RADAR_ERROR = data.error;
       RADAR_META = { updatedAt: data.updatedAt, dataSource: data.dataSource, viewDate: data.viewDate || data.date };
-      VOLS = [];
+      if (!opts.merge) VOLS = [];
       return;
     }
     RADAR_ERROR = data.error || null;
@@ -339,8 +417,77 @@
       dataSource: data.dataSource,
       viewDate: data.viewDate || data.date,
     };
-    VOLS = (data.flights || []).map(mapApiFlightToVol);
+    var incoming = (data.flights || []).map(mapApiFlightToVol);
+    if (opts.merge && VOLS.length) {
+      var byId = new Map();
+      VOLS.forEach(function (v) { byId.set(v.id, v); });
+      incoming.forEach(function (v) { byId.set(v.id, v); });
+      VOLS = Array.from(byId.values());
+    } else {
+      VOLS = incoming;
+    }
     RADAR_DATA_LABEL = label || '';
+  }
+
+  function isAutoEligible(v) {
+    if (!v) return false;
+    return v.statut === 'ANNULE' || (v.statut === 'RETARD' && v.retardMin >= 180);
+  }
+
+  function autoAddEligiblesFromCurrentVols() {
+    var added = 0;
+    var existed = new Set(ELIGIBLES.map(function (x) { return x.id; }));
+    VOLS.forEach(function (v) {
+      if (!isAutoEligible(v)) return;
+      if (existed.has(v.id)) return;
+      ELIGIBLES.unshift(v);
+      existed.add(v.id);
+      added += 1;
+    });
+    if (added > 0) {
+      document.getElementById('elig-count-badge').textContent = String(ELIGIBLES.length);
+      renderElig();
+    }
+    return added;
+  }
+
+  function countAutoEligibleInCurrentVols() {
+    var n = 0;
+    VOLS.forEach(function (v) { if (isAutoEligible(v)) n += 1; });
+    return n;
+  }
+
+  function markZoneEligible(zoneKey, eligibleCount) {
+    if (!zoneKey) return;
+    ZONE_ELIGIBLE_COUNT[zoneKey] = Math.max(ZONE_ELIGIBLE_COUNT[zoneKey] || 0, eligibleCount || 0);
+    updateZoneBlinking();
+  }
+
+  function updateZoneBlinking() {
+    document.querySelectorAll('.radar-zone-btn').forEach(function (btn) {
+      var zoneKey = String(btn.getAttribute('data-zone') || '').trim();
+      if (!zoneKey) return;
+      var c = ZONE_ELIGIBLE_COUNT[zoneKey] || 0;
+      if (c > 0) btn.classList.add('radar-zone-eligible');
+      else btn.classList.remove('radar-zone-eligible');
+    });
+  }
+
+  function mergeFlightsDedup(flights) {
+    var out = [];
+    var seen = new Set();
+    (flights || []).forEach(function (f) {
+      if (!f) return;
+      var key =
+        String((f.flight && (f.flight.iata || f.flight.number)) || f.flight || '') +
+        '|' + String(((f.departure && f.departure.iataCode) || f.dep || '')).toUpperCase() +
+        '|' + String(((f.arrival && f.arrival.iataCode) || f.arr || '')).toUpperCase() +
+        '|' + String((f.departure && (f.departure.scheduledTime || f.departure.scheduledTimeUtc || f.departure.scheduledTimeLocal)) || f.scheduledDeparture || f.schedDep || '');
+      if (seen.has(key)) return;
+      seen.add(key);
+      out.push(f);
+    });
+    return out;
   }
 
   function parseRadarResponse(r, text) {
@@ -369,19 +516,194 @@
   }
 
   function fetchRadarLive() {
-    var url = apiRadarOrigin() + '/.netlify/functions/radar?_=' + Date.now();
-    return fetch(url, { cache: 'no-store', credentials: 'include' })
-      .then(function (r) {
-        return r.text().then(function (text) {
-          var data = parseRadarResponse(r, text);
-          applyRadarPayload(data, 'Scan live · ' + (data.flights ? data.flights.length : 0) + ' vols');
+    var groups = window.__RADAR_HUB_GROUPS__ && window.__RADAR_HUB_GROUPS__.length
+      ? window.__RADAR_HUB_GROUPS__.slice()
+      : [window.__RADAR_HUB_GROUP__ || '1'];
+
+    function fetchOne(group) {
+      var url = apiRadarOrigin() + '/.netlify/functions/radar?group=' + encodeURIComponent(group) + '&_=' + Date.now();
+      return fetch(url, { cache: 'no-store', credentials: 'include' })
+        .then(function (r) {
+          return r.text().then(function (text) {
+            var data = parseRadarResponse(r, text);
+            return data;
+          });
         });
+    }
+
+    // 1 seul groupe => comportement identique
+    if (groups.length <= 1) {
+      var g1 = groups[0];
+      return fetchOne(g1)
+        .then(function (data) {
+          var hubs =
+            data && data.scan && data.scan.hubs && data.scan.hubs.length
+              ? ' · ' + data.scan.hubs.join(',')
+              : '';
+          applyRadarPayload(data, 'Scan live · ' + (data.flights ? data.flights.length : 0) + ' vols' + hubs);
+          if (window.__radarMarkHubScanned && LAST_SCAN_ZONE_KEY) window.__radarMarkHubScanned('aller', LAST_SCAN_ZONE_KEY);
+        })
+        .catch(function (e) {
+          RADAR_ERROR = e.message || 'Erreur réseau';
+          VOLS = [];
+        });
+    }
+
+    // Multi-group (scan en chaîne) => merge + dédup
+    var merged = [];
+    var scanHubs = [];
+    var meta = { updatedAt: null, viewDate: null, dataSource: 'live' };
+    return groups
+      .reduce(function (p, g) {
+        return p.then(function () {
+          return fetchOne(g).then(function (data) {
+            if (data && data.flights && data.flights.length) merged = merged.concat(data.flights);
+            if (data && data.scan && data.scan.hubs && data.scan.hubs.length) scanHubs = scanHubs.concat(data.scan.hubs);
+            if (data && data.updatedAt) meta.updatedAt = meta.updatedAt || data.updatedAt;
+            if (data && (data.viewDate || data.date)) meta.viewDate = meta.viewDate || data.viewDate || data.date;
+          });
+        });
+      }, Promise.resolve())
+      .then(function () {
+        var mergedFlights = mergeFlightsDedup(merged);
+        var uniqueHubs = Array.from(new Set(scanHubs.map(function (h) { return String(h || '').toUpperCase(); }).filter(Boolean)));
+        var payload = {
+          flights: mergedFlights,
+          updatedAt: meta.updatedAt,
+          dataSource: meta.dataSource,
+          viewDate: meta.viewDate,
+          scan: { hubs: uniqueHubs },
+        };
+        applyRadarPayload(payload, 'Scan live · ' + mergedFlights.length + ' vols · ' + groups.length + ' zones');
+        if (window.__radarMarkHubScanned && LAST_SCAN_ZONE_KEY) window.__radarMarkHubScanned('aller', LAST_SCAN_ZONE_KEY);
       })
       .catch(function (e) {
         RADAR_ERROR = e.message || 'Erreur réseau';
         VOLS = [];
       });
   }
+
+
+
+  function pinVolToTickerBanner(v) {
+    if (!v) return false;
+    var row = {
+      flight: v.vol,
+      route: v.dep + ' → ' + v.arr,
+      kind: v.statut === 'ANNULE' ? 'cancel' : 'delay',
+      detail: v.statut === 'ANNULE' ? '' : retardH(v.retardMin),
+      date: new Date().toISOString().slice(0, 10),
+      amountEur: 600,
+      pinnedFrom: 'radar',
+      pinnedAt: new Date().toISOString(),
+    };
+    try {
+      var key = 'robin_vol_ticker_manual';
+      var list = [];
+      try { list = JSON.parse(localStorage.getItem(key) || '[]'); } catch (e0) { list = []; }
+      list = list.filter(function (x) { return x.flight !== row.flight || x.route !== row.route; });
+      list.unshift(row);
+      list = list.slice(0, 9);
+      localStorage.setItem(key, JSON.stringify(list));
+      sessionStorage.removeItem('robin_vol_ticker');
+      sessionStorage.removeItem('robin_vol_ticker_ts');
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  window.__radarPinToTicker = pinVolToTickerBanner;
+
+
+  var ALLER_DEMO_ZONE = {
+    fco: 'rome', mxp: 'milan', lis: 'lisbon', mad: 'madrid', bcn: 'barcelona', fra: 'frankfurt',
+  };
+  window.__radarRunAllerScan = function (zoneKey, groups) {
+    window.__RADAR_HUB_GROUPS__ = (groups || []).slice();
+    window.__RADAR_HUB_GROUP__ = window.__RADAR_HUB_GROUPS__[0] || '1';
+    LAST_SCAN_ZONE_KEY = ALLER_DEMO_ZONE[zoneKey] || zoneKey;
+    return refreshAll().then(function () { return VOLS.length; });
+  };
+
+  function fetchRadarReturnHub(hubIata, group) {
+    var hub = String(hubIata || '').toUpperCase();
+    var g = String(group || '1');
+    var url =
+      apiRadarOrigin() +
+      '/.netlify/functions/radar?scanMode=return&hub=' +
+      encodeURIComponent(hub) +
+      '&group=' +
+      encodeURIComponent(g) +
+      '&_=' +
+      Date.now();
+    if (DEMO_MODE) {
+      return Promise.resolve().then(function () {
+        var demo = [
+          { flight: 'AF717', airline: 'AF', dep: 'DSS', arr: hub, cancelled: false, retardMin: 190, schedDep: '15:00', schedArr: '21:10', status: 'Retard' },
+          { flight: 'SN203', airline: 'SN', dep: 'FIH', arr: 'BRU', cancelled: true, retardMin: 0, schedDep: '18:30', schedArr: '23:55', status: 'Annulé' },
+        ].filter(function (f) { return String(f.arr || '').toUpperCase() === hub; });
+        if (!demo.length) {
+          demo = [{ flight: 'ET705', airline: 'ET', dep: 'ADD', arr: hub, cancelled: false, retardMin: 205, schedDep: '19:10', schedArr: '01:05', status: 'Retard' }];
+        }
+        applyRadarPayload({ flights: demo, updatedAt: new Date().toISOString(), dataSource: 'demo-return' }, 'Démo retour ' + hub, { merge: true });
+        autoAddEligiblesFromCurrentVols();
+        renderMetrics();
+        renderCompFilter();
+        renderRadar();
+        return demo.length;
+      });
+    }
+    return fetch(url, { cache: 'no-store', credentials: 'include' })
+      .then(function (r) {
+        return r.text().then(function (text) {
+          var data = parseRadarResponse(r, text);
+          applyRadarPayload(data, 'Retour ' + hub + ' · ' + (data.flights ? data.flights.length : 0) + ' vols', { merge: true });
+          autoAddEligiblesFromCurrentVols();
+          renderMetrics();
+          renderCompFilter();
+          renderRadar();
+          return (data.flights && data.flights.length) || 0;
+        });
+      })
+      .catch(function (e) {
+        RADAR_ERROR = e.message || 'Erreur réseau';
+        throw e;
+      });
+  }
+
+  window.__radarFetchReturnHub = fetchRadarReturnHub;
+
+  function setReturnDisplayFilter(mode) {
+    RETURN_HUB_DISPLAY = String(mode || 'paris').trim() || 'paris';
+    var sensSel = document.getElementById('r-sens');
+    if (sensSel) sensSel.value = 'AF_EU';
+    renderMetrics();
+    renderRadar();
+    renderElig();
+    renderReturnWatchPanel();
+  }
+  window.__radarSetReturnDisplayFilter = setReturnDisplayFilter;
+
+  function renderReturnWatchPanel() {
+    var box = document.getElementById('return-watch-panel');
+    if (!box) return;
+    var list = VOLS.filter(function (v) {
+      return v.sens === 'AF_EU' && isReturnWatchVol(v) && matchesReturnHubFilter(v);
+    });
+    if (!list.length) {
+      box.innerHTML = '<p style="margin:0;font-size:12px;color:var(--text3)">Aucun retour problématique pour ce hub (retard ≥2h, annulé, ou éligible ≥1h).</p>';
+      return;
+    }
+    var html = '<ul style="margin:0;padding-left:18px;font-size:12px;line-height:1.6">';
+    list.slice(0, 12).forEach(function (v) {
+      var flag = v.statut === 'ANNULE' ? '🔴 Annulé' : v.retardMin >= 180 ? '🟠 Retard ≥3h' : '⚠️ À surveiller';
+      html += '<li><strong>' + v.vol + '</strong> ' + v.dep + '→' + v.arr + ' · ' + flag + ' · ' + retardH(v.retardMin) + ' <button type="button" class="radar-btn radar-btn-sm" onclick="event.stopPropagation();window.__radarPinToTicker&&window.__radarPinToTicker(VOLS.find(function(x){return x.id===\'' + v.id + '\'}))">📣 Bandeau</button></li>';
+    });
+    if (list.length > 12) html += '<li style="color:var(--text3)">+' + (list.length - 12) + ' autres (voir tableau)</li>';
+    html += '</ul>';
+    box.innerHTML = html;
+  }
+  window.__radarRenderReturnWatch = renderReturnWatchPanel;
 
   function fetchRadarFromNetlify() {
     if (RADAR_LOAD_MODE === 'live') return fetchRadarLive();
@@ -390,6 +712,47 @@
         if (VOLS.length) RADAR_DATA_LABEL = 'Scan live (cache vide)';
       });
     });
+  }
+
+  function initZoneButtons() {
+    window.__RADAR_HUB_GROUP__ = window.__RADAR_HUB_GROUP__ || '1';
+    document.querySelectorAll('.radar-zone-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var rawGroups = String(btn.getAttribute('data-groups') || btn.getAttribute('data-group') || '').trim();
+        if (!rawGroups) return;
+        var groups = rawGroups.split(',').map(function (x) { return String(x).trim(); }).filter(Boolean);
+        window.__RADAR_HUB_GROUPS__ = groups;
+        window.__RADAR_HUB_GROUP__ = groups[0] || '1';
+        LAST_SCAN_ZONE_KEY = String(btn.getAttribute('data-zone') || '').trim() || null;
+        document.querySelectorAll('.radar-zone-btn').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        var lbl = btn.querySelector('.radar-btn-label');
+        setAllerScanStatus('Hub aller : ' + (lbl ? lbl.textContent.trim() : zoneLabel(LAST_SCAN_ZONE_KEY)) + ' — cliquez « Scanner ce hub maintenant ».');
+      });
+    });
+    var allerScanBtn = document.getElementById('btn-aller-scan');
+    if (allerScanBtn) {
+      allerScanBtn.addEventListener('click', function () {
+        if (SCAN_LOCK) {
+          setAllerScanStatus('Scan déjà en cours…', true);
+          return;
+        }
+        if (window.__radarReturnScheduler && window.__radarReturnScheduler.isBusy()) {
+          setAllerScanStatus('Scan retour en cours — attendez la fin.', true);
+          return;
+        }
+        if (RADAR_LOAD_MODE === 'snapshot') {
+          setAllerScanStatus('Mode cache matin : cliquez ↻ Actualiser en haut, ou passez en Scan live.', true);
+          refreshAll();
+          return;
+        }
+        setAllerScanStatus('Scan aller en cours…');
+        refreshAll();
+      });
+    }
+
+    // Retour / veille : radar-scan-scheduler.js (sélection + scan)
+
   }
 
   function setLoading(on, msg) {
@@ -402,6 +765,8 @@
     });
     var refreshBtn = document.getElementById('btn-refresh');
     if (refreshBtn) refreshBtn.disabled = on;
+    var allerBtn = document.getElementById('btn-aller-scan');
+    if (allerBtn) allerBtn.disabled = on;
   }
 
   function filteredVols() {
@@ -414,6 +779,7 @@
     var elig = (document.getElementById('r-elig') && document.getElementById('r-elig').value) || '';
     var prio = (document.getElementById('r-prio') && document.getElementById('r-prio').value) || '';
     return VOLS.filter(function (v) {
+      if (!matchesReturnHubFilter(v)) return false;
       if (metricQuickFilter === 'a_lheure' && v.statut !== 'A_LHEURE') return false;
       if (metricQuickFilter === 'retard_3h' && !(v.statut === 'RETARD' && v.retardMin >= 180)) return false;
       if (metricQuickFilter === 'annule' && v.statut !== 'ANNULE') return false;
@@ -664,6 +1030,7 @@
       })
       .join('');
     renderRadarCards(rows);
+    renderReturnWatchPanel();
   }
 
   function renderCompFilter() {
@@ -1052,6 +1419,11 @@
   }
 
   function refreshAll() {
+    if (SCAN_LOCK) {
+      setAllerScanStatus('Scan déjà en cours…', true);
+      return Promise.resolve();
+    }
+    SCAN_LOCK = true;
     metricQuickFilter = null;
     var tbody = document.getElementById('radar-tbody');
     if (tbody) {
@@ -1060,14 +1432,141 @@
     }
     var loadMsg = RADAR_LOAD_MODE === 'live' ? 'Scan live AeroDataBox (peut prendre ~1 min)…' : 'Lecture cache matin…';
     setLoading(true, loadMsg);
-    fetchRadarFromNetlify()
+
+    function demoReturnLegs() {
+      return [
+        { flight: 'AF717', airline: 'AF', dep: 'DSS', arr: 'CDG', cancelled: false, retardMin: 190, schedDep: '15:00', schedArr: '21:10', status: 'Retard' },
+        { flight: 'SN203', airline: 'SN', dep: 'FIH', arr: 'BRU', cancelled: true, retardMin: 0, schedDep: '18:30', schedArr: '23:55', status: 'Annulé' },
+        { flight: 'KL590', airline: 'KL', dep: 'LOS', arr: 'AMS', cancelled: false, retardMin: 205, schedDep: '22:10', schedArr: '05:40', status: 'Retard' },
+        { flight: 'AZ853', airline: 'AZ', dep: 'ABJ', arr: 'FCO', cancelled: false, retardMin: 175, schedDep: '09:00', schedArr: '15:20', status: 'Retard' },
+        { flight: 'AZ825', airline: 'AZ', dep: 'DSS', arr: 'MXP', cancelled: false, retardMin: 198, schedDep: '16:00', schedArr: '22:10', status: 'Retard' },
+        { flight: 'TP1474', airline: 'TP', dep: 'DSS', arr: 'LIS', cancelled: false, retardMin: 210, schedDep: '13:20', schedArr: '17:05', status: 'Retard' },
+      ];
+    }
+    function demoFlightsForZone(zoneKey) {
+      // Europe sud — aligné sur data/radar-south-departure-routes.js
+      if (zoneKey === 'rome') {
+        return [
+          { flight: 'AZ852', airline: 'AZ', dep: 'FCO', arr: 'ABJ', cancelled: false, retardMin: 195, schedDep: '09:40', schedArr: '15:10', status: 'Retard' },
+          { flight: 'AZ854', airline: 'AZ', dep: 'FCO', arr: 'DSS', cancelled: false, retardMin: 45, schedDep: '11:15', schedArr: '15:20', status: 'Retard' },
+          { flight: 'UX1091', airline: 'UX', dep: 'FCO', arr: 'JNB', cancelled: true, retardMin: 0, schedDep: '22:05', schedArr: '08:50', status: 'Annulé' },
+          { flight: 'AZ610', airline: 'AZ', dep: 'FCO', arr: 'NBO', cancelled: false, retardMin: 210, schedDep: '13:30', schedArr: '21:00', status: 'Retard' },
+        ];
+      }
+      if (zoneKey === 'milan') {
+        return [
+          { flight: 'AZ824', airline: 'AZ', dep: 'MXP', arr: 'DSS', cancelled: false, retardMin: 220, schedDep: '10:20', schedArr: '14:35', status: 'Retard' },
+          { flight: 'AZ832', airline: 'AZ', dep: 'MXP', arr: 'ABJ', cancelled: false, retardMin: 35, schedDep: '15:10', schedArr: '20:40', status: 'Retard' },
+        ];
+      }
+      if (zoneKey === 'lisbon') {
+        return [
+          { flight: 'TP1473', airline: 'TP', dep: 'LIS', arr: 'DSS', cancelled: false, retardMin: 185, schedDep: '08:55', schedArr: '12:40', status: 'Retard' },
+          { flight: 'TP1527', airline: 'TP', dep: 'LIS', arr: 'ACC', cancelled: true, retardMin: 0, schedDep: '12:00', schedArr: '16:30', status: 'Annulé' },
+          { flight: 'TP280', airline: 'TP', dep: 'LIS', arr: 'LAD', cancelled: false, retardMin: 0, schedDep: '23:10', schedArr: '06:15', status: "À l'heure" },
+          { flight: 'TP1052', airline: 'TP', dep: 'LIS', arr: 'OXB', cancelled: false, retardMin: 55, schedDep: '17:40', schedArr: '21:05', status: 'Retard' },
+        ];
+      }
+      if (zoneKey === 'madrid') {
+        return [
+          { flight: 'IB637', airline: 'IB', dep: 'MAD', arr: 'DSS', cancelled: false, retardMin: 205, schedDep: '10:30', schedArr: '14:15', status: 'Retard' },
+          { flight: 'IB532', airline: 'IB', dep: 'MAD', arr: 'ABJ', cancelled: false, retardMin: 50, schedDep: '16:00', schedArr: '21:10', status: 'Retard' },
+          { flight: 'IB211', airline: 'IB', dep: 'MAD', arr: 'JNB', cancelled: true, retardMin: 0, schedDep: '21:45', schedArr: '08:20', status: 'Annulé' },
+        ];
+      }
+      if (zoneKey === 'eu_south_it') {
+        return [
+          { flight: 'AZ852', airline: 'AZ', dep: 'FCO', arr: 'ABJ', cancelled: false, retardMin: 195, schedDep: '09:40', schedArr: '15:10', status: 'Retard' },
+          { flight: 'AZ824', airline: 'AZ', dep: 'MXP', arr: 'DSS', cancelled: false, retardMin: 220, schedDep: '10:20', schedArr: '14:35', status: 'Retard' },
+          { flight: 'UX1091', airline: 'UX', dep: 'FCO', arr: 'JNB', cancelled: true, retardMin: 0, schedDep: '22:05', schedArr: '08:50', status: 'Annulé' },
+        ];
+      }
+      if (zoneKey === 'eu_south_ib') {
+        return [
+          { flight: 'TP1473', airline: 'TP', dep: 'LIS', arr: 'DSS', cancelled: false, retardMin: 185, schedDep: '08:55', schedArr: '12:40', status: 'Retard' },
+          { flight: 'IB637', airline: 'IB', dep: 'MAD', arr: 'DSS', cancelled: false, retardMin: 205, schedDep: '10:30', schedArr: '14:15', status: 'Retard' },
+          { flight: 'VY8475', airline: 'VY', dep: 'BCN', arr: 'DSS', cancelled: false, retardMin: 200, schedDep: '07:50', schedArr: '11:35', status: 'Retard' },
+          { flight: 'VY8174', airline: 'VY', dep: 'BCN', arr: 'BJL', cancelled: true, retardMin: 0, schedDep: '14:20', schedArr: '18:05', status: 'Annulé' },
+        ];
+      }
+      if (zoneKey === 'barcelona') {
+        return [
+          { flight: 'VY8475', airline: 'VY', dep: 'BCN', arr: 'DSS', cancelled: false, retardMin: 200, schedDep: '07:50', schedArr: '11:35', status: 'Retard' },
+          { flight: 'VY8174', airline: 'VY', dep: 'BCN', arr: 'BJL', cancelled: false, retardMin: 40, schedDep: '14:20', schedArr: '18:05', status: 'Retard' },
+        ];
+      }
+      if (zoneKey === 'bru') {
+        return [
+          { flight: 'SN204', airline: 'SN', dep: 'BRU', arr: 'FIH', cancelled: false, retardMin: 200, schedDep: '10:10', schedArr: '17:05', status: 'Retard' },
+          { flight: 'SN255', airline: 'SN', dep: 'BRU', arr: 'DLA', cancelled: false, retardMin: 65, schedDep: '12:40', schedArr: '19:10', status: 'Retard' },
+          { flight: 'SN901', airline: 'SN', dep: 'BRU', arr: 'ABJ', cancelled: true, retardMin: 0, schedDep: '16:20', schedArr: '21:30', status: 'Annulé' },
+        ];
+      }
+      if (zoneKey === 'frankfurt') {
+        return [
+          { flight: 'LH582', airline: 'LH', dep: 'FRA', arr: 'ADD', cancelled: false, retardMin: 210, schedDep: '14:10', schedArr: '22:30', status: 'Retard' },
+          { flight: 'LH564', airline: 'LH', dep: 'FRA', arr: 'JNB', cancelled: true, retardMin: 0, schedDep: '20:45', schedArr: '07:10', status: 'Annulé' },
+          { flight: 'LH588', airline: 'LH', dep: 'FRA', arr: 'DSS', cancelled: false, retardMin: 55, schedDep: '11:00', schedArr: '14:20', status: 'Retard' },
+        ];
+      }
+      if (zoneKey === 'ams') {
+        return [
+          { flight: 'KL597', airline: 'KL', dep: 'AMS', arr: 'ACC', cancelled: false, retardMin: 35, schedDep: '09:25', schedArr: '14:55', status: 'Retard' },
+          { flight: 'KL589', airline: 'KL', dep: 'AMS', arr: 'LOS', cancelled: false, retardMin: 185, schedDep: '11:05', schedArr: '17:20', status: 'Retard' },
+          { flight: 'KL566', airline: 'KL', dep: 'AMS', arr: 'NBO', cancelled: false, retardMin: 0, schedDep: '20:40', schedArr: '05:45', status: "À l'heure" },
+        ];
+      }
+      return [
+        { flight: 'AF718', airline: 'AF', dep: 'CDG', arr: 'DSS', cancelled: false, retardMin: 210, schedDep: '10:00', schedArr: '14:00', status: 'Retard' },
+        { flight: 'AF706', airline: 'AF', dep: 'CDG', arr: 'ABJ', cancelled: false, retardMin: 55, schedDep: '11:30', schedArr: '16:40', status: 'Retard' },
+        { flight: 'AF556', airline: 'AF', dep: 'CDG', arr: 'JNB', cancelled: true, retardMin: 0, schedDep: '22:15', schedArr: '09:10', status: 'Annulé' },
+      ].concat(demoReturnLegs());
+    }
+
+    var loadPromise = DEMO_MODE
+      ? Promise.resolve().then(function () {
+          var zone = LAST_SCAN_ZONE_KEY || 'paris_cdg';
+          var demoFlights = demoFlightsForZone(zone);
+          var payload = {
+            flights: demoFlights.map(function (f) {
+              return {
+                flight: f.flight,
+                airline: f.airline,
+                dep: f.dep,
+                arr: f.arr,
+                cancelled: f.cancelled,
+                retardMin: f.retardMin,
+                schedDep: f.schedDep,
+                schedArr: f.schedArr,
+                status: f.status,
+                eligible: true,
+              };
+            }),
+            updatedAt: new Date().toISOString(),
+            dataSource: 'demo',
+            viewDate: new Date().toISOString().slice(0, 10),
+            scan: { hubs: [String((window.__RADAR_HUB_GROUPS__ && window.__RADAR_HUB_GROUPS__[0]) || window.__RADAR_HUB_GROUP__ || '1')] },
+          };
+          applyRadarPayload(payload, 'Démo · ' + demoFlights.length + ' vols · ' + zoneLabel(zone));
+        })
+      : fetchRadarFromNetlify();
+
+    return loadPromise
       .then(function () {
         updateApiAlert();
+        // Auto-routage des éligibles + clignotement zone
+        var added = autoAddEligiblesFromCurrentVols();
+        var eligCount = countAutoEligibleInCurrentVols();
+        if (LAST_SCAN_ZONE_KEY) markZoneEligible(LAST_SCAN_ZONE_KEY, eligCount);
+        if (!RADAR_ERROR) {
+          setAllerScanStatus('Scan terminé · ' + VOLS.length + ' vol(s) · ' + zoneLabel(LAST_SCAN_ZONE_KEY));
+        }
         renderMetrics();
         renderRadar();
         renderCompFilter();
         if (currentPeriod) renderStats();
-        renderElig();
+        // renderElig déjà fait si ajout
+        if (!added) renderElig();
         countdownSec = 25 * 60;
         var n = new Date();
         var el = document.getElementById('last-refresh');
@@ -1080,6 +1579,7 @@
       })
       .finally(function () {
         setLoading(false);
+        SCAN_LOCK = false;
       });
   }
 
@@ -1130,6 +1630,8 @@
     });
   });
 
+  initZoneButtons();
+
   document.getElementById('r-search') && (document.getElementById('r-search').oninput = renderRadar);
   document.getElementById('r-sens') && (document.getElementById('r-sens').onchange = renderRadar);
   document.getElementById('r-statut') && (document.getElementById('r-statut').onchange = onRadarStatutEligPrioChange);
@@ -1161,7 +1663,7 @@
     var s = countdownSec % 60;
     var el = document.getElementById('countdown');
     if (el) el.textContent = '↻ ' + m + ':' + String(s).padStart(2, '0');
-    if (countdownSec === 0) refreshAll();
+    if (countdownSec === 0 && !(window.__radarReturnScheduler && window.__radarReturnScheduler.isBusy())) refreshAll();
   }, 1000);
 
   refreshAll();

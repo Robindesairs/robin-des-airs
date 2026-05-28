@@ -14,6 +14,16 @@ const EU_COUNTRIES = ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR
 const AFRICA_COUNTRIES = ['DZ','AO','BJ','BW','BF','BI','CV','CM','CF','TD','KM','CG','CD','CI','DJ','EG','GQ','ER','SZ','ET','GA','GM','GH','GN','KE','LS','LR','LY','MG','MW','ML','MR','MU','MA','MZ','NA','NE','NG','RW','ST','SN','SC','SL','SO','ZA','SS','SD','TZ','TG','TN','UG','ZM','ZW'];
 const EU_AIRLINES_IATA = ['AF','SN','TP','IB','SS','TO','DS','AT','U2','FR','VY','EI','LX','OS','KL'];
 
+// Base "simple et propre" : 42 destinations africaines (hubs) validées pour Robin.
+// Le radar ne garde que les routes EU↔AF dont le côté africain est dans cette liste.
+const AFRICA_42_HUBS = [
+  'ABJ', 'ABV', 'ACC', 'ADD', 'TNR', 'BKO', 'BGF', 'BJL', 'OXB', 'BZV', 'BJM',
+  'CPT', 'CKY', 'COO', 'DSS', 'DAR', 'JIB', 'DLA', 'EBB', 'FNA', 'GOM', 'JNB',
+  'KGL', 'JRO', 'FIH', 'LOS', 'LBV', 'LFW', 'LAD', 'SSG', 'MPM', 'MRU', 'MBA',
+  'NDJ', 'NBO', 'NIM', 'OUA', 'PNR', 'PHC', 'WDH', 'NSI', 'ZNZ', 'FBM', 'HRE',
+];
+const AFRICA_42_SET = new Set(AFRICA_42_HUBS);
+
 const AIRPORT_COUNTRY = {
   CDG:'FR', ORY:'FR', MRS:'FR', LYS:'FR', NCE:'FR', BOD:'FR', TLS:'FR', NTE:'FR', LIL:'FR', SXB:'FR', RUN:'FR',
   BRU:'BE', GVA:'CH', ZRH:'CH', LHR:'GB', LGW:'GB', AMS:'NL', FRA:'DE', MUC:'DE', MAD:'ES', BCN:'ES',
@@ -51,8 +61,67 @@ const HUB_ICAO = {
   NTE: 'LFRS',
   LIL: 'LFQQ',
   SXB: 'LFST',
-  RUN: 'FMEE'
+  RUN: 'FMEE',
+  // Hubs EU étendus (si RADAR_USE_EU_HUBS=1 ou scan par "group")
+  BRU: 'EBBR',
+  AMS: 'EHAM',
+  LIS: 'LPPT',
+  LGW: 'EGKK',
+  LHR: 'EGLL',
+  MAD: 'LEMD',
+  BCN: 'LEBL',
+  FRA: 'EDDF',
+  MUC: 'EDDM',
+  FCO: 'LIRF',
+  MXP: 'LIMC',
+  ZRH: 'LSZH',
+  GVA: 'LSGG',
 };
+
+/**
+ * Groupes "anti-timeout" : découpe le scan en sous-ensembles de hubs.
+ * Objectif : pouvoir lancer Zone 1/2/3… depuis le radar (≤26s).
+ */
+const HUB_GROUPS = {
+  // Paris CDG seul (zone 1) — démarrage ultra léger.
+  '1': ['CDG'],
+  '2': ['MRS', 'LYS', 'NCE'],
+  '3': ['BOD', 'TLS', 'NTE'],
+  '4': ['LIL', 'SXB', 'RUN'],
+  // Hubs Europe (séparés pour minimiser les appels / éviter les timeouts)
+  '5': ['BRU'],
+  '6': ['AMS'],
+  '7': ['LIS'],
+  '8': ['LHR', 'LGW'],
+  '9': ['MAD', 'BCN'],
+  '10': ['FRA', 'MUC'],
+  '11': ['FCO', 'MXP'],
+  '12': ['ZRH', 'GVA'],
+  // Europe sud — 1 hub par bouton (anti-timeout)
+  '13': ['FCO'],
+  '14': ['MXP'],
+  '15': ['MAD'],
+  '16': ['BCN'],
+  '17': ['FRA'],
+};
+
+
+function getReturnEveningWindows(dayYmd) {
+  const today = dayYmd || parisDateYmd();
+  const tomorrow = parisDateAddDays(1);
+  return [
+    [`${today}T18:00`, `${today}T23:59`],
+    [`${tomorrow}T00:00`, `${tomorrow}T03:59`],
+  ];
+}
+
+function parseHubGroup(event) {
+  const raw = String(event.queryStringParameters?.group || '').trim();
+  if (!raw) return null;
+  const hubs = HUB_GROUPS[raw];
+  if (!hubs) return null;
+  return hubs.slice();
+}
 
 /** ICAO → IATA (AeroDataBox renvoie souvent icaoV2 sans iata sur departure/arrival). */
 const ICAO_TO_IATA = {};
@@ -298,13 +367,15 @@ const TICKER_HUB_ICAO = Object.assign({}, HUB_ICAO, AFRICA_HUB_ICAO, {
 });
 for (const [iata, icao] of Object.entries(TICKER_HUB_ICAO)) registerIcaoMap(iata, icao);
 
-async function fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, dateStr, hubList) {
+async function fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, dateStr, hubList, opts = {}) {
   const day = dateStr || parisDateYmd();
   const hubs = hubList && hubList.length ? hubList : RADAR_EU_HUBS;
-  const windows = [
+  const windows = opts.windows || [
     [`${day}T00:00`, `${day}T11:59`],
     [`${day}T12:00`, `${day}T23:59`]
   ];
+  const directions = opts.directions || ['Departure', 'Arrival'];
+  const arrivalsToAllRaw = !!opts.arrivalsToAllRaw;
 
   // Séquentiel par hub, dep+arr en parallèle par fenêtre (2 req simultanées max).
   // Évite les 429 RapidAPI. Délai 300ms entre hubs pour respecter le rate-limit.
@@ -315,17 +386,19 @@ async function fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, dateStr, hubLis
     if (!icao) continue;
     if (hi > 0) await new Promise(r => setTimeout(r, delayMs));
     for (const [a, b] of windows) {
-      const [deps, arrs] = await Promise.all([
-        fetchAdbWindow(icao, a, b, 'Departure', rapidKey, hub),
-        fetchAdbWindow(icao, a, b, 'Arrival', rapidKey, hub)
-      ]);
+      const wantDep = directions.includes('Departure');
+      const wantArr = directions.includes('Arrival');
+      const deps = wantDep ? await fetchAdbWindow(icao, a, b, 'Departure', rapidKey, hub) : [];
+      const arrs = wantArr ? await fetchAdbWindow(icao, a, b, 'Arrival', rapidKey, hub) : [];
       for (const r of deps) {
         const n = normalizeAdbFlight(r, { direction: 'Departure', hubIata: hub });
         if (n) allRaw.push(n);
       }
       for (const r of arrs) {
         const n = normalizeAdbFlight(r, { direction: 'Arrival', hubIata: hub });
-        if (n) arrivalRaw.push(n);
+        if (!n) continue;
+        if (arrivalsToAllRaw) allRaw.push(n);
+        else arrivalRaw.push(n);
       }
     }
   }
@@ -392,10 +465,13 @@ function isEuSubSaharanAfricaRoute(depIata, arrIata) {
   const dc = getCountry(depIata);
   const ac = getCountry(arrIata);
   if (!dc || !ac) return false;
-  return (
-    (isEurope(dc) && isSubSaharanAfricaCountry(ac)) ||
-    (isSubSaharanAfricaCountry(dc) && isEurope(ac))
-  );
+  const dep = (depIata || '').toUpperCase();
+  const arr = (arrIata || '').toUpperCase();
+
+  // Côté africain doit être dans la base 42 hubs
+  if (isEurope(dc) && isSubSaharanAfricaCountry(ac)) return AFRICA_42_SET.has(arr);
+  if (isSubSaharanAfricaCountry(dc) && isEurope(ac)) return AFRICA_42_SET.has(dep);
+  return false;
 }
 
 /** Routes acceptées par le filtre bandeau : EU↔Afrique sub OU routes pinnées (correspondance). */
@@ -961,10 +1037,41 @@ exports.handler = async (event) => {
     // HUBS = France uniquement (CDG/ORY/MRS/LYS/NCE/BOD/TLS/NTE/LIL/SXB/RUN).
     // Passer RADAR_EU_HUBS pour activer les hubs EU non-français (BRU/AMS/LIS/LGW/LHR/MAD)
     // uniquement si le plan RapidAPI dispose d'un quota suffisant (>= 200 req/jour).
-    const scanHubs = process.env.RADAR_USE_EU_HUBS === '1' ? RADAR_EU_HUBS : HUBS;
-    await fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, parisDateYmd(), scanHubs);
+    const scanMode = String(event.queryStringParameters?.scanMode || '').trim();
+    const returnHub = String(event.queryStringParameters?.hub || '').trim().toUpperCase();
+    const groupHubs = parseHubGroup(event);
+    let scanHubs = groupHubs || (process.env.RADAR_USE_EU_HUBS === '1' ? RADAR_EU_HUBS : HUBS);
+    if (scanMode === 'return' && returnHub && (TICKER_HUB_ICAO[returnHub] || HUB_ICAO[returnHub])) {
+      scanHubs = [returnHub];
+    }
+    const fillOpts =
+      scanMode === 'return'
+        ? {
+            directions: ['Arrival'],
+            windows: getReturnEveningWindows(parisDateYmd()),
+            arrivalsToAllRaw: true,
+          }
+        : {};
+    await fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, parisDateYmd(), scanHubs, fillOpts);
 
     const payload = await assembleFlightsFromRaw(allRaw, arrivalRaw);
+    if (scanMode === 'return') {
+      payload.flights = (payload.flights || []).filter((f) => {
+        const dep = String(f.dep || '').toUpperCase();
+        const arr = String(f.arr || '').toUpperCase();
+        if (!AFRICA_42_SET.has(dep) || !isEurope(getCountry(arr))) return false;
+        if (returnHub && arr !== returnHub) return false;
+        return true;
+      });
+      payload.scan = payload.scan || {};
+      payload.scan.mode = 'return';
+      payload.scan.hub = returnHub || (scanHubs[0] || '');
+    }
+    if (groupHubs || scanMode === 'return') {
+      payload.scan = payload.scan || {};
+      payload.scan.hubs = scanHubs;
+      payload.scan.group = String(event.queryStringParameters?.group || '').trim();
+    }
 
     return {
       statusCode: 200,

@@ -5,7 +5,15 @@
 (function () {
   'use strict';
 
-  var AUTH_URL = '/api/crm-auth';
+  function authOrigin() {
+    var o = window.location.origin || '';
+    if (!o || o === 'file://' || o === 'null' || /^https?:\/\/localhost(:\d+)?$/i.test(o) || /^https?:\/\/127\.0\.0\.1(:\d+)?$/i.test(o)) {
+      return 'https://robindesairs.eu';
+    }
+    return o;
+  }
+
+  var AUTH_URL = authOrigin() + '/api/crm-auth';
   var gateEl = null;
 
   function lockPage() {
@@ -17,7 +25,13 @@
     var s = document.createElement('script');
     s.id = 'radar-live-script';
     s.src = '/assets/radar-live.js';
-    s.defer = true;
+    s.onload = function () {
+      if (document.getElementById('radar-scan-scheduler')) return;
+      var s2 = document.createElement('script');
+      s2.id = 'radar-scan-scheduler';
+      s2.src = '/assets/radar-scan-scheduler.js';
+      document.body.appendChild(s2);
+    };
     document.body.appendChild(s);
   }
 
@@ -57,15 +71,15 @@
     gateEl.setAttribute('aria-labelledby', 'radar-gate-title');
     gateEl.innerHTML =
       '<div class="rg-card">' +
-      '<h1 id="radar-gate-title">Accès équipe Robin</h1>' +
-      '<p>Tour de contrôle vols — usage interne uniquement. Les clients n’ont pas accès à cette page.</p>' +
+      '<h1 id="radar-gate-title">Accès restreint</h1>' +
+      '<p>Espace réservé à l’équipe. Merci de saisir votre code d’accès.</p>' +
       '<form id="radar-gate-form">' +
       '<label for="radar-gate-code">Code d’accès</label>' +
       '<input id="radar-gate-code" name="code" type="password" autocomplete="current-password" required placeholder="Code équipe">' +
       '<button type="submit" id="radar-gate-submit">Entrer</button>' +
       '<p class="rg-err" id="radar-gate-err" role="alert"></p>' +
       '</form>' +
-      '<p style="font-size:11px;color:#9CA3AF;margin-top:16px;margin-bottom:0">Même code que le CRM dossiers. <a href="/" style="color:#007A4C">Retour accueil</a></p>' +
+      '<p style="font-size:11px;color:#9CA3AF;margin-top:16px;margin-bottom:0"><a href="/" style="color:#007A4C">Retour accueil</a></p>' +
       '</div>';
     document.body.appendChild(gateEl);
 
@@ -123,6 +137,14 @@
       .catch(function () {
         return false;
       });
+  }
+
+  // Dev/local: autoriser l'accès au visuel sans exposer de secrets.
+  // (Le scan live réel reste protégé en prod via /api/crm-auth.)
+  var isLocal = /^https?:\/\/localhost(:\d+)?$/i.test(window.location.origin || '') || /^https?:\/\/127\.0\.0\.1(:\d+)?$/i.test(window.location.origin || '');
+  if (isLocal) {
+    unlockPage();
+    return;
   }
 
   checkSession().then(function (ok) {
