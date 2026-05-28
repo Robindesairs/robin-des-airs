@@ -154,8 +154,9 @@
 
   function radarFetchInit(extra) {
     var opts = Object.assign({ cache: 'no-store' }, extra || {});
+    var ms = (extra && extra.timeoutMs) || RADAR_HTTP_TIMEOUT_MS;
     if (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) {
-      opts.signal = AbortSignal.timeout(RADAR_HTTP_TIMEOUT_MS);
+      opts.signal = AbortSignal.timeout(ms);
     }
     return opts;
   }
@@ -661,7 +662,7 @@
     return refreshAll().then(function () { return VOLS.length; });
   };
 
-  function fetchRadarReturnHub(hubIata, group) {
+  function fetchRadarReturnSlot(hubIata, group, slot) {
     var hub = String(hubIata || '').toUpperCase();
     var g = String(group || '1');
     var url =
@@ -670,8 +671,20 @@
       encodeURIComponent(hub) +
       '&group=' +
       encodeURIComponent(g) +
+      '&returnSlot=' +
+      encodeURIComponent(String(slot)) +
       '&_=' +
       Date.now();
+    return fetch(url, radarFetchInit({ credentials: 'include', timeoutMs: 24000 })).then(function (r) {
+      return r.text().then(function (text) {
+        return parseRadarResponse(r, text);
+      });
+    });
+  }
+
+  function fetchRadarReturnHub(hubIata, group) {
+    var hub = String(hubIata || '').toUpperCase();
+    var g = String(group || '1');
     if (DEMO_MODE) {
       return Promise.resolve().then(function () {
         var demo = [
@@ -690,23 +703,50 @@
         return demo.length;
       });
     }
-    return fetch(url, radarFetchInit({ credentials: 'include' }))
-      .then(function (r) {
-        return r.text().then(function (text) {
-          var data = parseRadarResponse(r, text);
-          applyRadarPayload(data, 'Retour ' + hub + ' · ' + (data.flights ? data.flights.length : 0) + ' vols', { merge: true });
+    if (window.setReturnScanStatus) window.setReturnScanStatus('Retour ' + hub + ' · créneau 18h–23h…');
+    return fetchRadarReturnSlot(hub, g, '1')
+      .then(function (d1) {
+        if (window.setReturnScanStatus) window.setReturnScanStatus('Retour ' + hub + ' · créneau 00h–03h…');
+        return fetchRadarReturnSlot(hub, g, '2').then(function (d2) {
+          var merged = mergeFlightsDedup((d1.flights || []).concat(d2.flights || []));
+          var meta = {
+            flights: merged,
+            updatedAt: (d2.updatedAt || d1.updatedAt || new Date().toISOString()),
+            dataSource: 'aerodatabox',
+            viewDate: d2.viewDate || d1.viewDate,
+            scan: {
+              mode: 'return',
+              hub: hub,
+              returnSlots: ['1', '2'],
+              rawDepartureCount:
+                ((d1.scan && d1.scan.rawDepartureCount) || 0) + ((d2.scan && d2.scan.rawDepartureCount) || 0),
+              matchedCount: merged.length,
+            },
+          };
+          var label =
+            'Retour ' +
+            hub +
+            ' · ' +
+            merged.length +
+            ' vol(s) · 2 créneaux';
+          applyRadarPayload(meta, label, { merge: true });
           autoAddEligiblesFromCurrentVols();
           renderMetrics();
           renderCompFilter();
           renderRadar();
           if (window.__radarMarkHubScanned) window.__radarMarkHubScanned('return', hub);
           var sensSel = document.getElementById('r-sens');
-          if (sensSel) sensSel.value = 'AF_EU';
-          return (data.flights && data.flights.length) || 0;
+          if (sensSel) sensSel.value = '';
+          metricQuickFilter = null;
+          if (window.setReturnScanStatus) {
+            window.setReturnScanStatus('Retour ' + hub + ' : ' + merged.length + ' vol(s) extraits.');
+          }
+          return merged.length;
         });
       })
       .catch(function (e) {
         RADAR_ERROR = radarFetchErrorMessage(e, 'return');
+        if (window.setReturnScanStatus) window.setReturnScanStatus(RADAR_ERROR, true);
         throw e;
       });
   }

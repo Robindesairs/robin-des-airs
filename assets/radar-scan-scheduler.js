@@ -40,6 +40,11 @@
     south_ib: { id: 'south_ib', label: 'Lisbonne · Madrid · Barcelone', routes: ['south_ib_lis', 'south_ib_mad', 'south_ib_bcn'] },
   };
 
+  var ALLER_UI_PARENT = {
+    eu_south_it: { id: 'eu_south_it', label: 'Rome · Milan', zones: ['fco', 'mxp'] },
+    eu_south_ib: { id: 'eu_south_ib', label: 'Lisbonne · Madrid · Barcelone', zones: ['lis', 'mad', 'bcn'] },
+  };
+
   var state = {
     allerAuto: false,
     returnAuto: false,
@@ -321,6 +326,20 @@
     planNext();
   }
 
+
+  function selectionLabel(selId, kind) {
+    var id = String(selId || '').trim();
+    if (!id) return kind === 'return' ? 'Retour' : 'Aller';
+    var parent = kind === 'return' ? UI_PARENT[id] : ALLER_UI_PARENT[id];
+    if (parent && parent.label) return parent.label;
+    if (kind === 'return') {
+      var r = RETURN_ROUTES.find(function (x) { return x.id === id; });
+      return r ? r.label : id;
+    }
+    var a = ALLER_ROUTES.find(function (x) { return x.zone === id; });
+    return a ? a.label : id;
+  }
+
   function routesForReturnSelection(selId) {
     if (!selId) return [];
     var parent = UI_PARENT[selId];
@@ -330,6 +349,47 @@
     var one = RETURN_ROUTES.find(function (r) { return r.id === selId; });
     return one ? [one] : [];
   }
+
+  function routesForAllerSelection(zoneKey) {
+    if (!zoneKey) return [];
+    var parent = ALLER_UI_PARENT[zoneKey];
+    if (parent) {
+      return ALLER_ROUTES.filter(function (r) { return parent.zones.indexOf(r.zone) >= 0; });
+    }
+    var one = ALLER_ROUTES.find(function (r) { return r.zone === zoneKey; });
+    return one ? [one] : [];
+  }
+
+  function returnRoutesActive() {
+    return routesForReturnSelection(window.__RADAR_RETURN_HUB__ || 'paris');
+  }
+
+  function allerRoutesActive() {
+    return routesForAllerSelection(window.__RADAR_ALLER_ZONE__ || 'paris_cdg');
+  }
+
+  function rescheduleReturnVeille() {
+    if (!state.returnAuto) return;
+    clearTimers();
+    var routes = returnRoutesActive();
+    var label = selectionLabel(window.__RADAR_RETURN_HUB__, 'return');
+    setReturnStatus(
+      'Veille retour · zone « ' + label + ' » (' + routes.length + ' hub(s), /30min, +5 min).'
+    );
+    routes.forEach(scheduleReturnTick);
+    if (state.allerAuto) allerRoutesActive().forEach(scheduleAllerTick);
+  }
+
+  function rescheduleAllerVeille() {
+    if (!state.allerAuto) return;
+    clearTimers();
+    var routes = allerRoutesActive();
+    var label = selectionLabel(window.__RADAR_ALLER_ZONE__, 'aller');
+    setAllerStatus('Veille aller · zone « ' + label + ' » (' + routes.length + ' hub(s), /2h, +5 min).');
+    routes.forEach(scheduleAllerTick);
+    if (state.returnAuto) returnRoutesActive().forEach(scheduleReturnTick);
+  }
+
 
   function toggleAllerAuto(on) {
     state.allerAuto = !!on;
@@ -341,14 +401,13 @@
     }
     if (!state.allerAuto) {
       if (!state.returnAuto) clearTimers();
-      else RETURN_ROUTES.forEach(scheduleReturnTick);
+      else returnRoutesActive().forEach(scheduleReturnTick);
       setAllerStatus('Veille aller arrêtée.');
       return;
     }
     setAllerStatus('Veille aller : scan /2h, +5 min entre hubs (8h–18h).');
     if (!state.returnAuto) clearTimers();
-    ALLER_ROUTES.forEach(scheduleAllerTick);
-    if (state.returnAuto) RETURN_ROUTES.forEach(scheduleReturnTick);
+    rescheduleAllerVeille();
   }
 
   function toggleReturnAuto(on) {
@@ -361,14 +420,11 @@
     }
     if (!state.returnAuto) {
       if (!state.allerAuto) clearTimers();
-      else ALLER_ROUTES.forEach(scheduleAllerTick);
+      else allerRoutesActive().forEach(scheduleAllerTick);
       setReturnStatus('Veille retour arrêtée.');
       return;
     }
-    setReturnStatus('Veille retour : scan /30min, +5 min entre hubs (18h–03h).');
-    if (!state.allerAuto) clearTimers();
-    RETURN_ROUTES.forEach(scheduleReturnTick);
-    if (state.allerAuto) ALLER_ROUTES.forEach(scheduleAllerTick);
+    rescheduleReturnVeille();
   }
 
   function launchManualReturn() {
@@ -385,9 +441,11 @@
       : null;
     var routes = routesForReturnSelection(sel);
     if (!routes.length) {
-      setReturnStatus('Sélectionnez un hub retour.', true);
+      setReturnStatus('Sélectionnez un hub ou une zone retour.', true);
       return;
     }
+    var zoneLbl = selectionLabel(sel, 'return');
+    setReturnStatus('Scan manuel · zone « ' + zoneLbl + ' » · ' + routes.length + ' hub(s)…');
     var chain = Promise.resolve();
     routes.forEach(function (route, idx) {
       chain = chain.then(function () {
@@ -429,7 +487,11 @@
         btn.classList.add('active');
         window.__RADAR_RETURN_HUB__ = id;
         if (window.__radarSetReturnDisplayFilter) window.__radarSetReturnDisplayFilter(id, { filterTable: false });
-        setReturnStatus('Hub retour sélectionné — « Scanner ce hub maintenant ».');
+        if (state.returnAuto) rescheduleReturnVeille();
+        else {
+          var lbl = selectionLabel(id, 'return');
+          setReturnStatus('Zone retour « ' + lbl + ' » — « Scanner ce hub maintenant » (uniquement cette zone).');
+        }
       });
     });
     var first = document.querySelector('.radar-return-btn[data-return="paris"]');
@@ -440,7 +502,15 @@
   }
 
   function init() {
+    window.__RADAR_ALLER_ZONE__ = window.__RADAR_ALLER_ZONE__ || 'paris_cdg';
+    window.setReturnScanStatus = setReturnStatus;
     loadStoredScans();
+    document.querySelectorAll('.radar-zone-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        window.__RADAR_ALLER_ZONE__ = String(btn.getAttribute('data-zone') || '').trim() || 'paris_cdg';
+        if (state.allerAuto) rescheduleAllerVeille();
+      });
+    });
     decorateButtons('.radar-zone-btn', 'aller');
     decorateButtons('.radar-return-btn', 'return');
     initReturnSelection();
@@ -457,6 +527,8 @@
     isAllerWindow: isAllerWindow,
     isBusy: function () { return isScanLocked(); },
     getSelected: function () { return window.__RADAR_RETURN_HUB__ || 'paris'; },
+    getReturnRoutes: function () { return returnRoutesActive(); },
+    getAllerRoutes: function () { return allerRoutesActive(); },
     recordScan: recordScan,
   };
 

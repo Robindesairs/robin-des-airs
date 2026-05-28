@@ -115,6 +115,15 @@ function getReturnEveningWindows(dayYmd) {
   ];
 }
 
+/** Créneau retour découpé (évite timeout Netlify 26s). returnSlot = "1" | "2". */
+function resolveReturnWindows(dayYmd, returnSlot) {
+  const all = getReturnEveningWindows(dayYmd);
+  const slot = String(returnSlot || '').trim();
+  if (slot === '1') return [all[0]];
+  if (slot === '2') return [all[1]];
+  return all;
+}
+
 function parseHubGroup(event) {
   const raw = String(event.queryStringParameters?.group || '').trim();
   if (!raw) return null;
@@ -1002,7 +1011,7 @@ async function assembleFlightsFromRaw(allRaw, arrivalRaw, assembleOpts = {}) {
 }
 
 /** Scan un groupe hub (veille cron ou scripts internes). */
-async function runGroupScan(rapidKey, { group, scanMode, hub }) {
+async function runGroupScan(rapidKey, { group, scanMode, hub, returnSlot }) {
   const allRaw = [];
   const arrivalRaw = [];
   const groupKey = String(group || '').trim();
@@ -1020,9 +1029,9 @@ async function runGroupScan(rapidKey, { group, scanMode, hub }) {
     mode === 'return'
       ? {
           directions: ['Arrival'],
-          windows: getReturnEveningWindows(parisDateYmd()),
+          windows: resolveReturnWindows(parisDateYmd(), returnSlot),
           arrivalsToAllRaw: true,
-          fetchTimeoutMs: parseInt(process.env.RADAR_RETURN_FETCH_TIMEOUT_MS || '14000', 10) || 14000,
+          fetchTimeoutMs: parseInt(process.env.RADAR_RETURN_FETCH_TIMEOUT_MS || '18000', 10) || 18000,
         }
       : {};
   await fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, parisDateYmd(), scanHubs, fillOpts);
@@ -1105,6 +1114,7 @@ exports.handler = async (event) => {
     // Passer RADAR_EU_HUBS pour activer les hubs EU non-français (BRU/AMS/LIS/LGW/LHR/MAD)
     // uniquement si le plan RapidAPI dispose d'un quota suffisant (>= 200 req/jour).
     const scanMode = String(event.queryStringParameters?.scanMode || '').trim();
+    const returnSlot = String(event.queryStringParameters?.returnSlot || '').trim();
     const returnHub = String(event.queryStringParameters?.hub || '').trim().toUpperCase();
     const groupHubs = parseHubGroup(event);
     let scanHubs = groupHubs || (process.env.RADAR_USE_EU_HUBS === '1' ? RADAR_EU_HUBS : HUBS);
@@ -1115,9 +1125,9 @@ exports.handler = async (event) => {
       scanMode === 'return'
         ? {
             directions: ['Arrival'],
-            windows: getReturnEveningWindows(parisDateYmd()),
+            windows: resolveReturnWindows(parisDateYmd(), returnSlot),
             arrivalsToAllRaw: true,
-            fetchTimeoutMs: parseInt(process.env.RADAR_RETURN_FETCH_TIMEOUT_MS || '14000', 10) || 14000,
+            fetchTimeoutMs: parseInt(process.env.RADAR_RETURN_FETCH_TIMEOUT_MS || '18000', 10) || 18000,
           }
         : {};
     await fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, parisDateYmd(), scanHubs, fillOpts);
@@ -1141,6 +1151,7 @@ exports.handler = async (event) => {
       payload.scan = payload.scan || {};
       payload.scan.mode = 'return';
       payload.scan.hub = returnHub || (scanHubs[0] || '');
+      if (returnSlot) payload.scan.returnSlot = returnSlot;
     }
     if (groupHubs || scanMode === 'return') {
       payload.scan = payload.scan || {};
@@ -1190,4 +1201,5 @@ exports.isEuSubSaharanAfricaRoute = isEuSubSaharanAfricaRoute;
 exports.HUBS = HUBS;
 exports.runGroupScan = runGroupScan;
 exports.getReturnEveningWindows = getReturnEveningWindows;
+exports.resolveReturnWindows = resolveReturnWindows;
 exports.HUB_GROUPS = HUB_GROUPS;

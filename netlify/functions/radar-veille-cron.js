@@ -124,10 +124,15 @@ exports.handler = async (event) => {
 
     const scanMode = kind === 'return' ? 'return' : '';
     const hub = kind === 'return' ? route.hub : undefined;
+    const returnSlot =
+      kind === 'return'
+        ? String((parisNow().getMinutes() < 30) ? '1' : '2')
+        : undefined;
     const payload = await runGroupScan(rapidKey, {
       group: route.group,
       scanMode,
       hub,
+      returnSlot,
     });
 
     const runKey = `${kind}_${route.key}`;
