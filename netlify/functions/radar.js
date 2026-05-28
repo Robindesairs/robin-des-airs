@@ -287,6 +287,10 @@ function adbWindowPath(isoLocal) {
 
 const { aerodataboxHost } = require('./lib/adb-host');
 
+function scanStatsRateLimited(stats) {
+  return (stats && stats.httpErrors || []).some((e) => e.status === 429);
+}
+
 async function fetchAdbWindow(icao, from, to, direction, rapidKey, hubIata, timeoutOverride, adbOpts = {}) {
   const host = aerodataboxHost();
   const withCodeshared = adbOpts.withCodeshared === true ? 'true' : 'false';
@@ -304,40 +308,21 @@ async function fetchAdbWindow(icao, from, to, direction, rapidKey, hubIata, time
   const timeoutMs =
     timeoutOverride ||
     Math.min(28000, parseInt(process.env.RADAR_FETCH_TIMEOUT_MS || '20000', 10) || 20000);
+  const maxAttempts = Math.max(1, parseInt(process.env.RADAR_429_RETRIES || '3', 10) || 3);
+  const backoffMs = parseInt(process.env.RADAR_429_BACKOFF_MS || '3000', 10) || 3000;
+  const headers = {
+    'x-rapidapi-host': host,
+    'x-rapidapi-key': rapidKey,
+    Accept: 'application/json'
+  };
 
-  async function requestByIcao(code) {
-    const url = `https://${host}/flights/airports/icao/${code}/${fromPath}/${toPath}?${params}`;
-    const res = await fetch(url, {
-      headers: {
-        'x-rapidapi-host': host,
-        'x-rapidapi-key': rapidKey,
-        Accept: 'application/json'
-      },
-      signal: AbortSignal.timeout(timeoutMs)
-    });
-    const text = await res.text();
-    let j = {};
-    try {
-      j = JSON.parse(text);
-    } catch (_) {
-      j = {};
-    }
-    const { rows, hint } = extractAdbRows(j, direction);
-    return { rows, httpStatus: res.status, hint, urlKind: 'icao', code };
-  }
-
-  try {
-    let out = await requestByIcao(icao);
-    if (!out.rows.length && hubIata && hubIata.length === 3) {
-      const iataUrl = `https://${host}/flights/airports/iata/${hubIata}/${fromPath}/${toPath}?${params}`;
-      const res = await fetch(iataUrl, {
-        headers: {
-          'x-rapidapi-host': host,
-          'x-rapidapi-key': rapidKey,
-          Accept: 'application/json'
-        },
-        signal: AbortSignal.timeout(timeoutMs)
-      });
+  async function requestUrl(url, label) {
+    let lastStatus = 0;
+    let lastHint = '';
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      if (attempt > 0) await sleepMs(backoffMs * attempt);
+      const res = await fetch(url, { headers, signal: AbortSignal.timeout(timeoutMs) });
+      lastStatus = res.status;
       const text = await res.text();
       let j = {};
       try {
@@ -346,12 +331,44 @@ async function fetchAdbWindow(icao, from, to, direction, rapidKey, hubIata, time
         j = {};
       }
       const { rows, hint } = extractAdbRows(j, direction);
-      if (rows.length) out = { rows, httpStatus: res.status, hint, urlKind: 'iata', code: hubIata };
-      else if (!out.hint && hint) out.hint = hint;
+      lastHint = hint;
+      if (res.status === 429 && attempt < maxAttempts - 1) {
+        console.warn('radar AerodataBox 429 retry', attempt + 1, label, fromPath, toPath);
+        continue;
+      }
+      return {
+        rows,
+        httpStatus: res.status,
+        hint,
+        rateLimited: res.status === 429
+      };
+    }
+    return { rows: [], httpStatus: lastStatus, hint: lastHint || 'rate-limit', rateLimited: true };
+  }
+
+  try {
+    const icaoUrl = `https://${host}/flights/airports/icao/${icao}/${fromPath}/${toPath}?${params}`;
+    let out = await requestUrl(icaoUrl, icao);
+    out.urlKind = 'icao';
+    out.code = icao;
+    if (
+      !out.rows.length &&
+      hubIata &&
+      hubIata.length === 3 &&
+      out.httpStatus !== 429 &&
+      !out.rateLimited
+    ) {
+      const iataUrl = `https://${host}/flights/airports/iata/${hubIata}/${fromPath}/${toPath}?${params}`;
+      const iataOut = await requestUrl(iataUrl, hubIata);
+      if (iataOut.rows.length) {
+        out = Object.assign(iataOut, { urlKind: 'iata', code: hubIata });
+      } else if (!out.hint && iataOut.hint) out.hint = iataOut.hint;
+      if (iataOut.rateLimited) out.rateLimited = true;
+      if (iataOut.httpStatus === 429) out.httpStatus = 429;
     }
     if (!out.rows.length && out.httpStatus >= 400) {
       console.warn('radar AerodataBox HTTP', out.httpStatus, icao, direction, fromPath, toPath);
-    } else if (!out.rows.length) {
+    } else if (!out.rows.length && !out.rateLimited) {
       console.warn('radar AerodataBox empty', icao, direction, fromPath, toPath, out.hint || '');
     }
     return {
@@ -359,11 +376,12 @@ async function fetchAdbWindow(icao, from, to, direction, rapidKey, hubIata, time
       httpStatus: out.httpStatus,
       hint: out.hint,
       urlKind: out.urlKind,
+      rateLimited: !!out.rateLimited,
       error: null
     };
   } catch (e) {
     console.warn('radar AerodataBox fetch', icao, e.message);
-    return { rows: [], httpStatus: 0, error: e.message };
+    return { rows: [], httpStatus: 0, error: e.message, rateLimited: false };
   }
 }
 
@@ -465,7 +483,10 @@ async function fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, dateStr, hubLis
 
   // Séquentiel par hub, dep+arr en parallèle par fenêtre (2 req simultanées max).
   // Évite les 429 RapidAPI. Délai 300ms entre hubs pour respecter le rate-limit.
-  const delayMs = parseInt(process.env.RADAR_API_DELAY_MS || '300', 10) || 300;
+  const delayMs =
+    opts.apiDelayMs != null
+      ? opts.apiDelayMs
+      : parseInt(process.env.RADAR_API_DELAY_MS || '300', 10) || 300;
   for (let hi = 0; hi < hubs.length; hi++) {
     const hub = hubs[hi];
     const icao = TICKER_HUB_ICAO[hub] || HUB_ICAO[hub];
@@ -477,9 +498,12 @@ async function fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, dateStr, hubLis
     const arrivalOnly = wantArr && !wantDep && windows.length > 1;
 
     if (arrivalOnly) {
-      const arrsList = await Promise.all(
-        windows.map(([a, b]) => adbFetch(icao, a, b, 'Arrival', hub, perCallTimeout))
-      );
+      const arrsList = [];
+      for (let wi = 0; wi < windows.length; wi++) {
+        if (wi > 0) await sleepMs(delayMs);
+        const [a, b] = windows[wi];
+        arrsList.push(await adbFetch(icao, a, b, 'Arrival', hub, perCallTimeout));
+      }
       for (const arrs of arrsList) {
         for (const r of arrs) {
           const n = normalizeAdbFlight(r, { direction: 'Arrival', hubIata: hub });
@@ -1124,6 +1148,7 @@ async function runGroupScan(rapidKey, { group, scanMode, hub, returnSlot }) {
           arrivalsToAllRaw: true,
           adbFetchOpts: { withCodeshared: true },
           fetchTimeoutMs: parseInt(process.env.RADAR_RETURN_FETCH_TIMEOUT_MS || '18000', 10) || 18000,
+          apiDelayMs: parseInt(process.env.RADAR_RETURN_API_DELAY_MS || '800', 10) || 800,
         }
       : {};
   const adbStats = { apiRowsFetched: 0, windows: fillOpts.windows || [] };
@@ -1234,6 +1259,7 @@ exports.handler = async (event) => {
             arrivalsToAllRaw: true,
             adbFetchOpts: { withCodeshared: true },
             fetchTimeoutMs: parseInt(process.env.RADAR_RETURN_FETCH_TIMEOUT_MS || '18000', 10) || 18000,
+            apiDelayMs: parseInt(process.env.RADAR_RETURN_API_DELAY_MS || '800', 10) || 800,
           }
         : {};
     const adbStats = { apiRowsFetched: 0, windows: fillOpts.windows || [] };
@@ -1248,9 +1274,15 @@ exports.handler = async (event) => {
       matchedCount: (payload.flights || []).length,
       apiRowsFetched: adbStats.apiRowsFetched || 0,
       windows: adbStats.windows,
+      httpErrors: adbStats.httpErrors || [],
+      rateLimited: scanStatsRateLimited(adbStats),
     });
 
-    if (scanMode === 'return' && (adbStats.apiRowsFetched || 0) === 0) {
+    if (
+      scanMode === 'return' &&
+      (adbStats.apiRowsFetched || 0) === 0 &&
+      !scanStatsRateLimited(adbStats)
+    ) {
       const today = parisDateYmd();
       const probe = await fetchAdbWindow(
         'LFPG',
@@ -1264,8 +1296,12 @@ exports.handler = async (event) => {
       );
       payload.scan.apiProbeCDG = (probe.rows && probe.rows.length) || 0;
       if (probe.httpStatus && probe.httpStatus >= 400) payload.scan.apiHttpStatus = probe.httpStatus;
+      if (probe.rateLimited || probe.httpStatus === 429) payload.scan.rateLimited = true;
       if (probe.error) payload.scan.apiError = probe.error;
       else if (probe.hint) payload.scan.apiHint = probe.hint;
+    } else if (scanMode === 'return' && scanStatsRateLimited(adbStats)) {
+      payload.scan.rateLimited = true;
+      payload.scan.apiHttpStatus = payload.scan.apiHttpStatus || 429;
     }
 
     if (scanMode === 'return') {

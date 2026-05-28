@@ -153,6 +153,23 @@
   function zoneLabel(key) {
     return ZONE_LABELS[String(key || '').trim()] || String(key || 'Hub');
   }
+  function scanRateLimited(scan) {
+    if (!scan) return false;
+    if (scan.rateLimited || scan.apiHttpStatus === 429) return true;
+    if (scan.httpErrors && scan.httpErrors.length) {
+      for (var i = 0; i < scan.httpErrors.length; i++) {
+        if (scan.httpErrors[i] && scan.httpErrors[i].status === 429) return true;
+      }
+    }
+    return false;
+  }
+  function scanRateLimitMessage() {
+    return (
+      'Quota API AeroDataBox / RapidAPI dépassé (HTTP 429). Attendez 1–2 minutes avant un nouveau scan, ' +
+      'évitez les scans en rafale (veille + manuel), ou vérifiez votre plan sur rapidapi.com.'
+    );
+  }
+
   function formatScanDebug(scan) {
     if (!scan) return '';
     var mode = String(scan.mode || '');
@@ -178,11 +195,13 @@
         .join(' ; ');
       if (winTxt) parts.push('fenêtres ' + winTxt);
     }
-    if (scan.apiRowsFetched === 0 && scan.apiProbeCDG != null) {
+    if (scanRateLimited(scan)) parts.push('quota 429');
+    if (scan.apiRowsFetched === 0 && scan.apiProbeCDG != null && !scanRateLimited(scan)) {
       parts.push('sonde CDG ' + scan.apiProbeCDG + ' vol(s)');
     }
     if (scan.apiError) parts.push('API: ' + scan.apiError);
-    if (scan.apiHttpStatus) parts.push('HTTP ' + scan.apiHttpStatus);
+    if (scan.apiHttpStatus && scan.apiHttpStatus !== 429) parts.push('HTTP ' + scan.apiHttpStatus);
+    else if (scan.apiHttpStatus === 429) parts.push('HTTP 429');
     if (scan.httpErrors && scan.httpErrors.length) parts.push('HTTP ' + scan.httpErrors[0].status);
     return parts.join(' · ');
   }
@@ -769,10 +788,41 @@
       });
     }
     if (window.setReturnScanStatus) window.setReturnScanStatus('Retour ' + hub + ' · matin 00h–11h59…');
+    function radarPause(ms) {
+      return new Promise(function (resolve) {
+        setTimeout(resolve, ms);
+      });
+    }
     return fetchRadarReturnSlot(hub, g, '1')
       .then(function (d1) {
-        if (window.setReturnScanStatus) window.setReturnScanStatus('Retour ' + hub + ' · après-midi 12h–23h59…');
-        return fetchRadarReturnSlot(hub, g, '2').then(function (d2) {
+        var slot1Limited = d1.scan && (d1.scan.rateLimited || d1.scan.apiHttpStatus === 429);
+        var pauseMs = slot1Limited ? 0 : 1200;
+        if (slot1Limited && window.setReturnScanStatus) {
+          window.setReturnScanStatus(scanRateLimitMessage(), true);
+        } else if (window.setReturnScanStatus) {
+          window.setReturnScanStatus('Retour ' + hub + ' · après-midi 12h–23h59…');
+        }
+        if (slot1Limited) {
+          var onlyMeta = {
+            flights: d1.flights || [],
+            updatedAt: d1.updatedAt || new Date().toISOString(),
+            dataSource: 'aerodatabox',
+            viewDate: d1.viewDate,
+            scan: Object.assign({ mode: 'return', hub: hub, returnSlots: ['1'] }, d1.scan || {}, {
+              rateLimited: true,
+            }),
+          };
+          applyRadarPayload(onlyMeta, 'Retour ' + hub + ' · quota API', { merge: true });
+          resetRadarSensFilter();
+          setReturnScanStatusWithDebug(scanRateLimitMessage(), true, onlyMeta.scan);
+          renderMetrics();
+          renderCompFilter();
+          renderRadar();
+          return Promise.reject(new Error('HTTP 429'));
+        }
+        return radarPause(pauseMs).then(function () {
+          return fetchRadarReturnSlot(hub, g, '2');
+        }).then(function (d2) {
           var merged = mergeFlightsDedup((d1.flights || []).concat(d2.flights || []));
           var meta = {
             flights: merged,
@@ -801,6 +851,12 @@
                     : undefined,
               apiError: (d2.scan && d2.scan.apiError) || (d1.scan && d1.scan.apiError),
               apiHttpStatus: (d2.scan && d2.scan.apiHttpStatus) || (d1.scan && d1.scan.apiHttpStatus),
+              httpErrors: []
+                .concat((d1.scan && d1.scan.httpErrors) || [])
+                .concat((d2.scan && d2.scan.httpErrors) || []),
+              rateLimited:
+                (d1.scan && (d1.scan.rateLimited || d1.scan.apiHttpStatus === 429)) ||
+                (d2.scan && (d2.scan.rateLimited || d2.scan.apiHttpStatus === 429)),
             },
           };
           var label =
@@ -816,15 +872,20 @@
           renderRadar();
           if (window.__radarMarkHubScanned) window.__radarMarkHubScanned('return', hub);
           resetRadarSensFilter();
-          setReturnScanStatusWithDebug(
-            'Retour ' + hub + ' : ' + merged.length + ' vol(s) listés · ' + VOLS.length + ' au total',
-            false,
-            meta.scan
-          );
+          if (scanRateLimited(meta.scan)) {
+            setReturnScanStatusWithDebug(scanRateLimitMessage(), true, meta.scan);
+          } else {
+            setReturnScanStatusWithDebug(
+              'Retour ' + hub + ' : ' + merged.length + ' vol(s) listés · ' + VOLS.length + ' au total',
+              false,
+              meta.scan
+            );
+          }
           return merged.length;
         });
       })
       .catch(function (e) {
+        if (e && String(e.message || '') === 'HTTP 429') return 0;
         RADAR_ERROR = radarFetchErrorMessage(e, 'return');
         resetRadarSensFilter();
         setReturnScanStatusWithDebug(RADAR_ERROR, true);
@@ -1101,7 +1162,10 @@
               ((document.getElementById('r-sens') && document.getElementById('r-sens').value) || 'tous') +
               '). Remettez Sens = « Tous sens » ou cliquez la carte « Vols listés ».' +
               (formatScanDebug(RADAR_LAST_SCAN) ? ' Debug: ' + formatScanDebug(RADAR_LAST_SCAN) + '.' : '')
-            : 'Aucun vol Afrique→Europe pour ce hub sur la journée (heure locale). Essayez Paris ou Bruxelles, ou relancez un scan live.' +
+            : scanRateLimited(RADAR_LAST_SCAN)
+              ? scanRateLimitMessage() +
+                (formatScanDebug(RADAR_LAST_SCAN) ? ' Debug: ' + formatScanDebug(RADAR_LAST_SCAN) + '.' : '')
+              : 'Aucun vol Afrique→Europe pour ce hub sur la journée (heure locale). Essayez Paris ou Bruxelles, ou relancez un scan live.' +
               (formatScanDebug(RADAR_LAST_SCAN) ? ' Debug: ' + formatScanDebug(RADAR_LAST_SCAN) + '.' : '');
       tbody.innerHTML =
         '<tr><td colspan="15" style="text-align:center;padding:2rem;color:#9CA3AF">' + emptyMsg + '</td></tr>';
