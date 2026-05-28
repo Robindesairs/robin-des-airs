@@ -650,6 +650,7 @@
         renderMetrics();
         renderCompFilter();
         renderRadar();
+        if (window.__radarMarkHubScanned) window.__radarMarkHubScanned('return', hub);
         return demo.length;
       });
     }
@@ -662,6 +663,7 @@
           renderMetrics();
           renderCompFilter();
           renderRadar();
+          if (window.__radarMarkHubScanned) window.__radarMarkHubScanned('return', hub);
           return (data.flights && data.flights.length) || 0;
         });
       })
@@ -1558,6 +1560,9 @@
         var added = autoAddEligiblesFromCurrentVols();
         var eligCount = countAutoEligibleInCurrentVols();
         if (LAST_SCAN_ZONE_KEY) markZoneEligible(LAST_SCAN_ZONE_KEY, eligCount);
+        if (!RADAR_ERROR && LAST_SCAN_ZONE_KEY && window.__radarMarkHubScanned) {
+          window.__radarMarkHubScanned('aller', LAST_SCAN_ZONE_KEY);
+        }
         if (!RADAR_ERROR) {
           setAllerScanStatus('Scan terminé · ' + VOLS.length + ' vol(s) · ' + zoneLabel(LAST_SCAN_ZONE_KEY));
         }

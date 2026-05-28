@@ -62,7 +62,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .radar-zone-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
 .radar-return-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
 
-.radar-hub-btn{display:inline-flex;flex-direction:column;align-items:center;gap:1px;line-height:1.15}
+
+.radar-zone-btn,.radar-return-btn{display:inline-flex;flex-direction:column;align-items:center;gap:2px;line-height:1.15;min-width:4.5rem}
+.radar-scan-badge{display:flex;flex-direction:column;align-items:center;gap:0;font-weight:700}
+.radar-scan-badge-label{font-size:7px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;opacity:.7;line-height:1.1}
+.radar-scan-badge-time{font-size:10px;font-variant-numeric:tabular-nums;line-height:1.2}
+.radar-scan-badge.is-empty .radar-scan-badge-time{opacity:.45}
+
 .radar-scan-badge{font-size:9px;font-weight:700;letter-spacing:.02em;opacity:.75;font-variant-numeric:tabular-nums}
 .radar-scan-badge.is-fresh{color:var(--green);opacity:1}
 .radar-scan-blink{animation:radar-hub-blink 1.15s ease-in-out infinite}

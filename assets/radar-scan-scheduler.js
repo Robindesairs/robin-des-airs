@@ -87,8 +87,14 @@
   function updateBadge(key, ts) {
     var el = document.querySelector('.radar-scan-badge[data-scan-key="' + key + '"]');
     if (!el) return;
-    el.textContent = formatScanTime(ts);
+    var time = formatScanTime(ts);
+    el.innerHTML =
+      '<span class="radar-scan-badge-label">dernier scan</span>' +
+      '<span class="radar-scan-badge-time">' +
+      time +
+      '</span>';
     el.classList.toggle('is-fresh', !!ts && Date.now() - ts < 35 * 60 * 1000);
+    el.classList.toggle('is-empty', !ts);
   }
 
 
@@ -112,6 +118,55 @@
     return_south_ib_mad: ['south_ib_mad', 'south_ib'],
     return_south_ib_bcn: ['south_ib_bcn', 'south_ib'],
   };
+
+
+  var ALLER_ZONE_BADGE_KEYS = {
+    paris_cdg: ['aller_paris_cdg', 'paris_cdg'],
+    bru: ['aller_bru', 'bru'],
+    ams: ['aller_ams', 'ams'],
+    eu_south_it: ['aller_eu_south_it', 'eu_south_it', 'aller_fco', 'aller_mxp', 'fco', 'mxp'],
+    eu_south_ib: ['aller_eu_south_ib', 'eu_south_ib', 'aller_lis', 'aller_mad', 'aller_bcn', 'lis', 'mad', 'bcn'],
+    frankfurt: ['aller_frankfurt', 'frankfurt', 'aller_fra', 'fra'],
+    fco: ['aller_fco', 'fco'],
+    mxp: ['aller_mxp', 'mxp'],
+    lis: ['aller_lis', 'lis'],
+    mad: ['aller_mad', 'mad'],
+    bcn: ['aller_bcn', 'bcn'],
+    fra: ['aller_fra', 'fra'],
+    rome: ['aller_fco', 'fco', 'aller_eu_south_it', 'eu_south_it'],
+    milan: ['aller_mxp', 'mxp', 'aller_eu_south_it', 'eu_south_it'],
+    lisbon: ['aller_lis', 'lis', 'aller_eu_south_ib', 'eu_south_ib'],
+    madrid: ['aller_mad', 'mad', 'aller_eu_south_ib', 'eu_south_ib'],
+    barcelona: ['aller_bcn', 'bcn', 'aller_eu_south_ib', 'eu_south_ib'],
+  };
+
+  function returnBadgeKeys(hubOrId) {
+    var hub = String(hubOrId || '').toUpperCase();
+    var byHub = {
+      CDG: ['paris'],
+      BRU: ['bru'],
+      AMS: ['ams'],
+      FRA: ['fra'],
+      FCO: ['south_it_fco', 'south_it'],
+      MXP: ['south_it_mxp', 'south_it'],
+      LIS: ['south_ib_lis', 'south_ib'],
+      MAD: ['south_ib_mad', 'south_ib'],
+      BCN: ['south_ib_bcn', 'south_ib'],
+    };
+    if (byHub[hub]) return byHub[hub];
+    var id = String(hubOrId || '').trim();
+    if (UI_PARENT[id]) return [id];
+    return [id];
+  }
+
+  window.__radarMarkHubScanned = function (kind, zoneOrHub) {
+    var keys =
+      kind === 'aller'
+        ? ALLER_ZONE_BADGE_KEYS[zoneOrHub] || ['aller_' + zoneOrHub, zoneOrHub]
+        : returnBadgeKeys(zoneOrHub);
+    recordScan(keys);
+  };
+
 
   window.__radarSyncServerScanBadges = function (lastRuns) {
     if (!lastRuns) return;
@@ -346,6 +401,7 @@
   function decorateButtons(selector, badgePrefix) {
     document.querySelectorAll(selector).forEach(function (btn) {
       if (btn.querySelector('.radar-scan-badge')) return;
+      btn.classList.add('radar-hub-btn');
       var label = btn.textContent.trim();
       btn.textContent = '';
       var span = document.createElement('span');
