@@ -187,6 +187,8 @@
   }
 
   function matchesReturnHubFilter(v) {
+    var sens = (document.getElementById('r-sens') && document.getElementById('r-sens').value) || '';
+    if (sens !== 'AF_EU') return true;
     var set = returnHubSetForDisplay(RETURN_HUB_DISPLAY);
     if (!set) return true;
     if (!v || v.sens !== 'AF_EU') return false;
@@ -566,7 +568,11 @@
             data && data.scan && data.scan.hubs && data.scan.hubs.length
               ? ' · ' + data.scan.hubs.join(',')
               : '';
-          applyRadarPayload(data, 'Scan live · ' + (data.flights ? data.flights.length : 0) + ' vols' + hubs);
+          var scanMeta =
+            data && data.scan && data.scan.matchedCount != null
+              ? ' · ' + (data.scan.rawDepartureCount || 0) + ' bruts → ' + data.scan.matchedCount + ' EU↔AF'
+              : '';
+          applyRadarPayload(data, 'Scan live · ' + (data.flights ? data.flights.length : 0) + ' vols' + hubs + scanMeta);
           if (window.__radarMarkHubScanned && LAST_SCAN_ZONE_KEY) window.__radarMarkHubScanned('aller', LAST_SCAN_ZONE_KEY);
         })
         .catch(function (e) {
@@ -690,6 +696,8 @@
           renderCompFilter();
           renderRadar();
           if (window.__radarMarkHubScanned) window.__radarMarkHubScanned('return', hub);
+          var sensSel = document.getElementById('r-sens');
+          if (sensSel) sensSel.value = 'AF_EU';
           return (data.flights && data.flights.length) || 0;
         });
       })
@@ -701,10 +709,11 @@
 
   window.__radarFetchReturnHub = fetchRadarReturnHub;
 
-  function setReturnDisplayFilter(mode) {
+  function setReturnDisplayFilter(mode, opts) {
+    opts = opts || {};
     RETURN_HUB_DISPLAY = String(mode || 'paris').trim() || 'paris';
     var sensSel = document.getElementById('r-sens');
-    if (sensSel) sensSel.value = 'AF_EU';
+    if (sensSel && opts.filterTable) sensSel.value = 'AF_EU';
     renderMetrics();
     renderRadar();
     renderElig();
@@ -755,6 +764,9 @@
         document.querySelectorAll('.radar-zone-btn').forEach(function (b) { b.classList.remove('active'); });
         btn.classList.add('active');
         var lbl = btn.querySelector('.radar-btn-label');
+        var sensSel = document.getElementById('r-sens');
+        if (sensSel) sensSel.value = '';
+        metricQuickFilter = null;
         setAllerScanStatus('Hub aller : ' + (lbl ? lbl.textContent.trim() : zoneLabel(LAST_SCAN_ZONE_KEY)) + ' — cliquez « Scanner ce hub maintenant ».');
       });
     });
@@ -957,7 +969,9 @@
         ? 'Aucun vol (erreur API).'
         : RADAR_LOAD_MODE === 'snapshot' && !metricQuickFilter
           ? 'Cache vide — essayez Scan live.'
-          : 'Aucun vol ne correspond aux filtres.';
+          : VOLS.length
+            ? 'Aucun vol ne correspond aux filtres (' + VOLS.length + ' extraits). Remettez Sens = « Tous sens » ou cliquez la carte « Vols listés ».'
+            : 'Aucun vol extrait pour ce hub — élargissez la fenêtre ou réessayez un autre hub.';
       tbody.innerHTML =
         '<tr><td colspan="15" style="text-align:center;padding:2rem;color:#9CA3AF">' + emptyMsg + '</td></tr>';
       renderRadarCards([]);
@@ -1590,7 +1604,12 @@
           window.__radarMarkHubScanned('aller', LAST_SCAN_ZONE_KEY);
         }
         if (!RADAR_ERROR) {
-          setAllerScanStatus('Scan terminé · ' + VOLS.length + ' vol(s) · ' + zoneLabel(LAST_SCAN_ZONE_KEY));
+          var sensSel = document.getElementById('r-sens');
+          if (sensSel && VOLS.length) sensSel.value = '';
+          metricQuickFilter = null;
+          setAllerScanStatus(
+            'Scan terminé · ' + VOLS.length + ' vol(s) extraits · ' + zoneLabel(LAST_SCAN_ZONE_KEY)
+          );
         }
         renderMetrics();
         renderRadar();

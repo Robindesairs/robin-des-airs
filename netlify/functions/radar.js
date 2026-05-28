@@ -1100,6 +1100,11 @@ exports.handler = async (event) => {
     await fillFromAerodatabox(allRaw, arrivalRaw, rapidKey, parisDateYmd(), scanHubs, fillOpts);
 
     const payload = await assembleFlightsFromRaw(allRaw, arrivalRaw);
+    payload.scan = Object.assign(payload.scan || {}, {
+      rawDepartureCount: allRaw.length,
+      rawArrivalCount: arrivalRaw.length,
+      matchedCount: (payload.flights || []).length,
+    });
     if (scanMode === 'return') {
       payload.flights = (payload.flights || []).filter((f) => {
         const dep = String(f.dep || '').toUpperCase();

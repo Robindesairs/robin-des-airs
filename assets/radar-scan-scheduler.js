@@ -428,12 +428,15 @@
         document.querySelectorAll('.radar-return-btn').forEach(function (b) { b.classList.remove('active'); });
         btn.classList.add('active');
         window.__RADAR_RETURN_HUB__ = id;
-        if (window.__radarSetReturnDisplayFilter) window.__radarSetReturnDisplayFilter(id);
+        if (window.__radarSetReturnDisplayFilter) window.__radarSetReturnDisplayFilter(id, { filterTable: false });
         setReturnStatus('Hub retour sélectionné — « Scanner ce hub maintenant ».');
       });
     });
     var first = document.querySelector('.radar-return-btn[data-return="paris"]');
-    if (first) first.click();
+    if (first) {
+      first.classList.add('active');
+      window.__RADAR_RETURN_HUB__ = 'paris';
+    }
   }
 
   function init() {
