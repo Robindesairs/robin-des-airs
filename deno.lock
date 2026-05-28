@@ -20,8 +20,11 @@
         "npm:gray-matter@^4.0.3",
         "npm:marked@^15.0.12",
         "npm:netlify-cli@^24.0.1",
+        "npm:playwright@^1.49.0",
+        "npm:puppeteer@^23.11.1",
         "npm:ts-node@^10.9.2",
-        "npm:typescript@^5.9.3"
+        "npm:typescript@^5.9.3",
+        "npm:vitest@^3.2.4"
       ]
     }
   }

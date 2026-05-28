@@ -132,7 +132,8 @@
       </div>
     </div>
     <!-- CTA visible sur desktop -->
-    <a href="#funnel-box" class="nav-cta nav-cta-inline" onclick="scrollToCalcWithAnimation(event); return false;" data-i18n="nav_cta">Combien je touche ? →</a>
+    <a href="#funnel-box" class="nav-cta-sim nav-cta-inline" onclick="scrollToCalcWithAnimation(event); return false;" data-i18n="nav_cta_sim">Simuler →</a>
+    <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="nav-cta nav-cta-inline" id="nav-wa-cta" data-i18n="nav_cta" onclick="plausible('WhatsApp-CTA', {props: {source: 'nav'}})">WhatsApp →</a>
     <!-- Hamburger toujours visible -->
     <button class="nav-burger" id="nav-burger" onclick="toggleMobileNav()" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -158,7 +159,8 @@
     <li><a href="/blog/" onclick="closeMobileNav()" data-i18n="nav_drawer_blog">📝 Blog &amp; guides</a></li>
     <li><a href="/nos-tarifs.html" onclick="closeMobileNav()" data-i18n="nav_drawer_tarifs">💰 Nos tarifs</a></li>
     <li><a href="/parrainage" onclick="closeMobileNav()">🎁 Parrainage — Gagnez 20 €</a></li>
-    <li><a href="#funnel-box" onclick="closeMobileNav(); setTimeout(function(){ scrollToCalcWithAnimation(); }, 220); return false;" class="drawer-cta" data-i18n="nav_cta">Combien je touche ? →</a></li>
+    <li><a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="drawer-cta" id="nav-drawer-wa-cta" data-i18n="nav_cta" onclick="closeMobileNav(); plausible('WhatsApp-CTA', {props: {source: 'nav-drawer'}})">WhatsApp →</a></li>
+    <li><a href="#funnel-box" onclick="closeMobileNav(); setTimeout(function(){ scrollToCalcWithAnimation(); }, 220); return false;" data-i18n="nav_cta_sim">Simulateur montant →</a></li>
   </ul>
 </div>
 
@@ -167,6 +169,17 @@
 <section id="hero">
   <div class="hero-bg-shape"></div>
   <div class="hero-bg-dots"></div>
+  <!-- Photo : Pexels — famille (licence libre) -->
+  <div class="hero-bg-visual" aria-hidden="true">
+    <img
+      src="/assets/images/hero-diaspora-family.jpg"
+      alt=""
+      width="1600"
+      height="1067"
+      decoding="async"
+      fetchpriority="low"
+    >
+  </div>
 
   <div class="hero-wrap">
 
@@ -184,63 +197,68 @@
         <span data-i18n-html="hero_title">Robin prend<br>aux compagnies,<br></span>
         <span class="neon" data-i18n="hero_title_neon" id="hero-ab-headline">rend à nos familles.</span>
       </h1>
-      <p class="hero-subhead" data-i18n="hero_subhead" id="hero-ab-subhead">Retard important à l’arrivée (+3 h), annulation ou surbooking : nous récupérons votre indemnité CE 261 — jusqu’à 600 € par passager.</p>
+      <p class="hero-subhead" data-i18n="hero_subhead" id="hero-ab-subhead">Vol retardé, annulé ou surbooké ? Ne laissez pas jusqu’à 600 € par passager — l’argent que la compagnie vous doit.</p>
 
-      <p class="hero-desc" data-i18n-html="hero_desc"><strong>Zéro frais si nous n’obtenons rien pour vous.</strong> Notre commission (25 %) uniquement une fois l’indemnité versée sur votre compte.<br>Quand le CE 261 s’applique, la compagnie peut devoir jusqu’à <strong>600 € par passager</strong>.</p>
+      <p class="hero-desc" data-i18n-html="hero_desc"><strong>Frais de succès : 0 € si on ne récupère rien pour vous.</strong> Pas d’avance, pas de frais cachés — notre part (25 %) uniquement quand l’indemnité est sur votre compte.<br>La compagnie compte sur l’abandon après le premier refus. <strong>Nous, on monte le dossier et on va jusqu’au bout.</strong></p>
 
-      <!-- CTA principal = WhatsApp (audit: canal principal en premier) -->
-      <div class="hero-entry">
-        <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="hero-entry-btn primary" data-i18n="hero_btn_wa" id="hero-wa-link" onclick="plausible('WhatsApp-CTA', {props: {source: 'hero'}})">📱 Vérifier mon vol sur WhatsApp</a>
+      <!-- CTA unique : WhatsApp -->
+      <div class="hero-entry hero-entry--wa-first">
+        <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="hero-entry-btn primary hero-entry-btn--xl" data-i18n="hero_btn_wa" id="hero-wa-link" onclick="plausible('WhatsApp-CTA', {props: {source: 'hero'}})">📱 Envoyer mon vol sur WhatsApp</a>
+        <p class="hero-entry-hint" data-i18n="hero_entry_hint">Numéro de vol + date — réponse gratuite en quelques minutes.</p>
         <a href="#funnel-box" class="hero-entry-btn secondary" id="btn-calc-hero" onclick="scrollToCalcWithAnimation(event)" data-i18n="hero_btn_calc">Simuler mon indemnité (2 min) →</a>
       </div>
-      <!-- RGPD : discret, sous les CTAs, ne bloque pas la décision -->
-      <details style="margin-top:8px;">
-        <summary style="font-size:10px;color:rgba(255,255,255,0.4);cursor:pointer;list-style:none;display:inline;">ℹ️ WhatsApp &amp; vie privée</summary>
-        <p class="wa-rgpd-hint" style="margin-top:6px;" data-i18n-html="wa_rgpd_hint">WhatsApp est un service <strong>Meta</strong> : des données peuvent être traitées hors UE. <a href="/politique-confidentialite.html#whatsapp-meta">Confidentialité &amp; alternatives</a> (email, site).</p>
-      </details>
+
+      <ol class="hero-steps" aria-label="Comment ça marche">
+        <li data-i18n-html="hero_step_1"><strong>1.</strong> Vous envoyez vol + date</li>
+        <li data-i18n-html="hero_step_2"><strong>2.</strong> On vérifie l'éligibilité</li>
+        <li data-i18n-html="hero_step_3"><strong>3.</strong> Mandat en ligne — on récupère pour vous</li>
+      </ol>
 
       <div class="hero-stats">
         <div class="stat">
-          <span class="stat-num" data-stat-eur="600">600€</span>
-          <span class="stat-label" data-i18n="hero_stat_max">Indemnité max</span>
+          <span class="stat-num" data-stat-eur="450">450€</span>
+          <span class="stat-label" data-i18n="hero_stat_net_max">Net max / passager</span>
         </div>
-        <div style="width:1px;background:var(--border);height:40px;"></div>
-        <div class="stat">
-          <span class="stat-num">9/10</span>
-          <span class="stat-label" data-i18n="hero_stat_won">Dossiers gagnés</span>
-        </div>
-        <div style="width:1px;background:var(--border);height:40px;"></div>
-        <div class="stat">
-          <span class="stat-num">+200</span>
-          <span class="stat-label">Familles aidées</span>
-        </div>
-        <div style="width:1px;background:var(--border);height:40px;"></div>
+        <div class="hero-stat-sep" aria-hidden="true"></div>
         <div class="stat">
           <span class="stat-num" data-stat-eur="0">0€</span>
           <span class="stat-label" data-i18n="hero_stat_lost">Si on perd</span>
         </div>
+        <div class="hero-stat-sep" aria-hidden="true"></div>
+        <div class="stat">
+          <span class="stat-num">25%</span>
+          <span class="stat-label" data-i18n="hero_stat_fee">Notre part</span>
+        </div>
+        <div class="hero-stat-sep" aria-hidden="true"></div>
+        <div class="stat">
+          <span class="stat-num">24h</span>
+          <span class="stat-label" data-i18n="hero_stat_24h">Dossier monté</span>
+        </div>
       </div>
-      <p style="margin-top:10px;font-size:12px;color:rgba(255,255,255,0.75);">
-        <a href="#" onclick="openWhatsAppQrFromHero(event)" style="color:rgba(255,255,255,0.85);text-decoration:underline;" data-i18n="wa_qr_hint">Pas WhatsApp sur cet appareil ? Scanner le QR →</a>
-      </p>
-      <p class="hero-wa-direct">
-        <a href="https://wa.me/33756863630" target="_blank" rel="noopener" class="hero-wa-link">💬 Réponse directe : WhatsApp <strong>+33</strong> 7&nbsp;56&nbsp;86&nbsp;36&nbsp;30 <span class="wa-hint">(indicatif pays d&rsquo;abord)</span></a>
-        <span style="display:block;font-size:11px;color:rgba(255,255,255,0.6);margin-top:4px;" data-i18n="hero_wa_note">Répondez en français, wolof ou anglais — comme vous préférez.</span>
-      </p>
-      <p class="hero-lang-line">
-        <span class="hero-lang-icon" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></span>
-        <span data-i18n="hero_lang_line">Service disponible en : Français, Wolof, Bambara, Soninké, Peul (Pulaar), Dioula, Swahili, Lingala, Twi, Yoruba.</span>
-      </p>
+      <p class="hero-stat-note" data-i18n="hero_stat_note">9 dossiers sur 10 gagnés — sur les dossiers que nous acceptons.</p>
+
+      <details class="hero-more">
+        <summary data-i18n="hero_more_summary">Contact, langues &amp; confidentialité</summary>
+        <p class="hero-wa-direct">
+          <a href="https://wa.me/33756863630" target="_blank" rel="noopener" class="hero-wa-link">💬 WhatsApp <strong>+33</strong> 7&nbsp;56&nbsp;86&nbsp;36&nbsp;30</a>
+          <span class="hero-wa-note" data-i18n="hero_wa_note">Français, wolof ou anglais — comme vous préférez.</span>
+        </p>
+        <p class="hero-lang-line">
+          <span data-i18n="hero_lang_line">Français, Wolof, Bambara, Soninké, Peul, Dioula, Swahili, Lingala, Twi, Yoruba.</span>
+        </p>
+        <p>
+          <a href="#" onclick="openWhatsAppQrFromHero(event)" class="hero-qr-link" data-i18n="wa_qr_hint">Pas WhatsApp ici ? Scanner le QR →</a>
+        </p>
+        <p class="wa-rgpd-hint" data-i18n-html="wa_rgpd_hint">WhatsApp est un service <strong>Meta</strong> : des données peuvent être traitées hors UE. <a href="/politique-confidentialite.html#whatsapp-meta">Confidentialité &amp; alternatives</a>.</p>
+      </details>
     </div>
 
     <!-- RIGHT — CALCULATEUR ENTONNOIR -->
     <div class="hero-right" id="funnel-box">
 
-      <div class="calc-header">
-        <div class="calc-tag" data-i18n="calc_tag">Votre montant · Robin des Airs</div>
-        <div class="calc-title"><span data-i18n="calc_title_1">Vérifiez en 2 min</span><br><span id="funnel-subtitle">si vous êtes éligible</span></div>
-        <p class="funnel-explainer" data-i18n="funnel_explainer">Même aide que les boutons WhatsApp à gauche : écrivez-nous ou remplissez le champ ci-dessous — ou ouvrez le simulateur détaillé plus bas.</p>
-        <!-- Barre d’étapes : visible uniquement pendant le diagnostic détaillé (évite l’effet « plusieurs étapes » sur la vue WhatsApp 2 min) -->
+      <div class="calc-header calc-header--compact">
+        <div class="calc-title calc-title--compact"><span data-i18n="funnel_card_title">Votre vol</span></div>
+        <p class="funnel-card-sub" data-i18n="funnel_card_sub">Éligibilité gratuite · sans engagement</p>
         <div id="funnel-progress-wrap" class="funnel-progress-wrap" aria-hidden="true">
           <div id="funnel-progress" class="hero-funnel-progress">
             <div id="funnel-progress-bar" class="hero-funnel-progress-bar"></div>
@@ -250,24 +268,17 @@
         <div class="funnel-crumbs" id="funnel-crumbs"></div>
       </div>
 
-      <!-- Raccourci : 1 message WhatsApp -->
-      <div class="funnel-wa-shortcut">
-        <p class="funnel-wa-shortcut-text">Envoyez votre vol sur WhatsApp — on vous dit si vous êtes éligible.</p>
-        <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="funnel-wa-shortcut-btn" id="funnel-wa-eligibility-link" onclick="plausible('WhatsApp-CTA', {props: {source: 'funnel'}})">💬 Vérifier sur WhatsApp</a>
-        <p class="wa-rgpd-hint wa-rgpd-hint--compact" data-i18n-html="wa_rgpd_hint_short">Service Meta — <a href="/politique-confidentialite.html#whatsapp-meta">données &amp; alternatives</a></p>
-      </div>
-      <p class="funnel-detail-link"><a href="#" id="link-diagnostic-detail">Simulateur pas à pas (5 étapes) pour le montant exact →</a></p>
-
-      <!-- ══ PARCOURS RAPIDE — message puis WhatsApp (le numéro client apparaît à l’envoi) ══ -->
-      <div id="funnel-short">
+      <div id="funnel-short" class="funnel-primary">
+        <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="funnel-wa-cta-main" id="funnel-wa-eligibility-link" data-i18n="funnel_wa_main_btn" onclick="plausible('WhatsApp-CTA', {props: {source: 'funnel'}})">💬 Ouvrir WhatsApp — le plus rapide</a>
+        <p class="funnel-or" data-i18n="funnel_or">ou décrivez votre vol ici :</p>
         <div class="fstep short-step" id="step-short-1">
-          <p class="fstep-q">Quel est votre vol ?</p>
-          <p class="funnel-hint" data-i18n="short_hint_vol">Numéro de vol + date, ou ex. « Paris-Dakar du 15/01, retardé »</p>
-          <textarea id="short-vol" class="calc-input calc-input--short-vol" rows="4" maxlength="800" style="margin-bottom:14px;" placeholder="Ex: AF718 du 15/01, retardé"></textarea>
-          <p id="short-wa-note" class="funnel-hint short-wa-note" data-i18n="short_wa_visible_phone_note" style="margin-top:-6px;margin-bottom:12px;line-height:1.45;"></p>
-          <button type="button" class="btn-calc" onclick="openShortWhatsApp()">Continuer sur WhatsApp →</button>
+          <label for="short-vol" class="sr-only" data-i18n="short_hint_vol">Numéro de vol et date</label>
+          <textarea id="short-vol" class="calc-input calc-input--short-vol" rows="3" maxlength="800" placeholder="Ex: AF718 du 15/01, retardé 5 h"></textarea>
+          <p id="short-wa-note" class="funnel-hint short-wa-note" data-i18n="short_wa_visible_phone_note"></p>
+          <button type="button" class="btn-calc btn-calc--wa" onclick="openShortWhatsApp()" data-i18n="funnel_short_submit">Continuer sur WhatsApp avec ce message →</button>
           <p class="wa-rgpd-hint wa-rgpd-hint--compact funnel-short-wa-rgpd" data-i18n-html="wa_rgpd_hint_short">Service Meta — <a href="/politique-confidentialite.html#whatsapp-meta">données &amp; alternatives</a></p>
         </div>
+        <button type="button" class="funnel-simulator-btn" id="link-diagnostic-detail" data-i18n="funnel_detail_link">Calculer le montant exact (5 étapes) →</button>
       </div>
 
       <!-- ══ DIAGNOSTIC DÉTAILLÉ (5 étapes) — masqué par défaut ══ -->
@@ -551,12 +562,10 @@
       <!-- ══ ÉTAPE 4 — RÉSULTAT ══ -->
       <div class="fstep" id="step-result">
         <div class="res-box">
-          <div class="res-tag" style="text-align:center;margin-bottom:8px;">✈ Votre indemnité CE 261/2004</div>
-          <!-- Montant NET — affiché en GRAND pour l'impact psychologique -->
-          <div style="text-align:center;margin-bottom:8px;">
+          <div class="res-tag" style="text-align:center;margin-bottom:8px;" data-i18n="res_tag">✈ Estimation pour votre dossier</div>
+          <div class="res-amount-block">
             <div class="res-amount" id="res-net-big"><span id="res-net-value">0</span><span>€</span></div>
-            <div style="font-size:12px;color:var(--neon-b);font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-top:2px;">dans votre poche</div>
-            <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:6px;">Net pour vous</div>
+            <div class="res-amount-label" data-i18n="res_net_label">net pour vous · dans votre poche</div>
           </div>
           <div class="res-route-wrap" style="text-align:center;margin-top:10px;">
             <span class="res-route" id="res-route">—</span>
@@ -670,9 +679,9 @@
     <div class="loi-cards loi-cards--focus-long">
       <div class="loi-card featured">
         <div class="loi-card-badge" data-i18n="loi_card_long">Nos communautés · Nos familles</div>
-        <div class="loi-amount">600<span style="font-size:28px;color:var(--neon-b);">€</span></div>
-        <div style="font-size:11px;color:var(--neon-b);font-weight:700;margin:2px 0 0;letter-spacing:0.5px;" data-i18n="loi_per_pax">par passager</div>
-        <div style="font-size:10px;color:var(--neon-b);font-weight:700;margin:4px 0 2px;letter-spacing:1px;" data-i18n="loi_net_450">→ 450€ nets par passager (sur 600€)</div>
+        <div class="loi-amount loi-amount--hero" data-stat-eur="450">450<span class="loi-amount-currency">€</span></div>
+        <div class="loi-amount-sublabel" data-i18n="loi_net_pocket">net par passager · long-courrier</div>
+        <div class="loi-amount-legal" data-i18n="loi_legal_600">Indemnité légale 600 € / passager (CE 261) · notre part 25 % au succès</div>
         <div class="loi-distance" data-i18n="loi_distance_long">Plus de 3 500 km — notre cœur de métier · indemnités par passager</div>
       </div>
       <p class="loi-tiers-note" data-i18n="loi_tiers_note">La loi prévoit aussi 250€ ou 400€ pour les distances plus courtes — après analyse de votre vol, on vous dit exactement le montant qui s’applique.</p>
@@ -701,48 +710,68 @@
 
         <div class="testi-card" data-group="0">
           <div class="testi-stars" aria-hidden="true" style="font-size:22px">✈️</div>
-          <p class="testi-quote" data-i18n="testi_quote_1"><strong>Famille de 3 sur Paris→Dakar (CDG→DKR).</strong> Vol retardé de 6 heures à l'arrivée. Distance &gt; 3 500 km (long-courrier). Indemnité légale : 600 € par passager.</p>
+          <p class="testi-quote" data-i18n="testi_quote_1"><strong>Famille de 3 sur Paris→Dakar (CDG→DKR).</strong> Vol retardé de 6 heures à l'arrivée. Distance &gt; 3 500 km (long-courrier).</p>
           <div class="testi-author">
             <div class="testi-avatar" style="background:#0B1F3A;color:#F59E0B">✈</div>
             <div><div class="testi-name">Cas type — retard long-courrier</div><div class="testi-info" data-i18n="testi_info_1">CDG → DKR · 3 passagers · Retard &gt; 4h</div></div>
-            <div class="testi-amount" title="3 × 600 € selon CE 261 art. 7.1.c">1&nbsp;800€</div>
+            <div class="testi-amount-col">
+              <div class="testi-amount" data-stat-eur="1350">1&nbsp;350€</div>
+              <div class="testi-amount-label" data-i18n="testi_net_label">net pour vous</div>
+              <div class="testi-amount-legal" data-i18n="testi_legal_1">Légal 1&nbsp;800&nbsp;€ (600&nbsp;€ × 3)</div>
+            </div>
           </div>
         </div>
         <div class="testi-card" data-group="0">
           <div class="testi-stars" aria-hidden="true" style="font-size:22px">🚫</div>
-          <p class="testi-quote" data-i18n="testi_quote_2"><strong>Couple sur Bruxelles→Abidjan (BRU→ABJ).</strong> Vol annulé moins de 14 jours avant le départ, sans circonstance extraordinaire prouvée. Long-courrier. Indemnité légale : 600 € par passager.</p>
+          <p class="testi-quote" data-i18n="testi_quote_2"><strong>Couple sur Bruxelles→Abidjan (BRU→ABJ).</strong> Vol annulé moins de 14 jours avant le départ, sans circonstance extraordinaire prouvée. Long-courrier.</p>
           <div class="testi-author">
             <div class="testi-avatar" style="background:#0B1F3A;color:#F59E0B">✈</div>
             <div><div class="testi-name">Cas type — annulation tardive</div><div class="testi-info" data-i18n="testi_info_2">BRU → ABJ · 2 passagers · Annulation</div></div>
-            <div class="testi-amount" title="2 × 600 € selon CE 261 art. 5 + 7">1&nbsp;200€</div>
+            <div class="testi-amount-col">
+              <div class="testi-amount" data-stat-eur="900">900€</div>
+              <div class="testi-amount-label" data-i18n="testi_net_label">net pour vous</div>
+              <div class="testi-amount-legal" data-i18n="testi_legal_2">Légal 1&nbsp;200&nbsp;€ (600&nbsp;€ × 2)</div>
+            </div>
           </div>
         </div>
         <div class="testi-card" data-group="0">
           <div class="testi-stars" aria-hidden="true" style="font-size:22px">💶</div>
-          <p class="testi-quote" data-i18n="testi_quote_4"><strong>Passager seul sur Paris→Bamako (CDG→BKO).</strong> Vol annulé. La compagnie propose un bon d'achat de 300 €. Le passager exige le paiement en cash selon CE 261. Indemnité légale : 600 €.</p>
+          <p class="testi-quote" data-i18n="testi_quote_4"><strong>Passager seul sur Paris→Bamako (CDG→BKO).</strong> Vol annulé. La compagnie propose un bon d'achat de 300 €. Le passager exige le paiement en cash selon CE 261.</p>
           <div class="testi-author">
             <div class="testi-avatar" style="background:#0B1F3A;color:#F59E0B">✈</div>
             <div><div class="testi-name">Cas type — refus de l'avoir</div><div class="testi-info" data-i18n="testi_info_4">CDG → BKO · 1 passager · Annulation</div></div>
-            <div class="testi-amount" title="Cash obligatoire selon CE 261 art. 7.3">600€</div>
+            <div class="testi-amount-col">
+              <div class="testi-amount" data-stat-eur="450">450€</div>
+              <div class="testi-amount-label" data-i18n="testi_net_label">net pour vous</div>
+              <div class="testi-amount-legal" data-i18n="testi_legal_4">Légal 600&nbsp;€ (1 passager)</div>
+            </div>
           </div>
         </div>
 
         <div class="testi-card" data-group="1" style="display:none;">
           <div class="testi-stars" aria-hidden="true" style="font-size:22px">🚪</div>
-          <p class="testi-quote" data-i18n="testi_quote_6"><strong>Mère et enfant sur Paris→Douala (CDG→DLA).</strong> Surbooking : refus d'embarquement contre leur gré. Long-courrier. Indemnité légale : 600 € par passager.</p>
+          <p class="testi-quote" data-i18n="testi_quote_6"><strong>Mère et enfant sur Paris→Douala (CDG→DLA).</strong> Surbooking : refus d'embarquement contre leur gré. Long-courrier.</p>
           <div class="testi-author">
             <div class="testi-avatar" style="background:#0B1F3A;color:#F59E0B">✈</div>
             <div><div class="testi-name">Cas type — surbooking</div><div class="testi-info" data-i18n="testi_info_6">CDG → DLA · 2 passagers · Surbooking</div></div>
-            <div class="testi-amount" title="2 × 600 € selon CE 261 art. 4 + 7">1&nbsp;200€</div>
+            <div class="testi-amount-col">
+              <div class="testi-amount" data-stat-eur="900">900€</div>
+              <div class="testi-amount-label" data-i18n="testi_net_label">net pour vous</div>
+              <div class="testi-amount-legal" data-i18n="testi_legal_6">Légal 1&nbsp;200&nbsp;€ (600&nbsp;€ × 2)</div>
+            </div>
           </div>
         </div>
         <div class="testi-card" data-group="1" style="display:none;">
           <div class="testi-stars" aria-hidden="true" style="font-size:22px">👨‍👩‍👧‍👦</div>
-          <p class="testi-quote" data-i18n="testi_quote_8"><strong>Famille de 4 sur Bruxelles→Kinshasa (BRU→FIH).</strong> Vol annulé, réacheminement &gt; 24h plus tard. Long-courrier. Indemnité légale : 600 € par passager.</p>
+          <p class="testi-quote" data-i18n="testi_quote_8"><strong>Famille de 4 sur Bruxelles→Kinshasa (BRU→FIH).</strong> Vol annulé, réacheminement &gt; 24h plus tard. Long-courrier.</p>
           <div class="testi-author">
             <div class="testi-avatar" style="background:#0B1F3A;color:#F59E0B">✈</div>
             <div><div class="testi-name">Cas type — famille annulation</div><div class="testi-info" data-i18n="testi_info_8">BRU → FIH · 4 passagers · Annulation</div></div>
-            <div class="testi-amount" title="4 × 600 € selon CE 261 art. 5 + 7">2&nbsp;400€</div>
+            <div class="testi-amount-col">
+              <div class="testi-amount" data-stat-eur="1800">1&nbsp;800€</div>
+              <div class="testi-amount-label" data-i18n="testi_net_label">net pour vous</div>
+              <div class="testi-amount-legal" data-i18n="testi_legal_8">Légal 2&nbsp;400&nbsp;€ (600&nbsp;€ × 4)</div>
+            </div>
           </div>
         </div>
 
@@ -1103,7 +1132,6 @@ function openWhatsAppQrFromHero(e) {
   if (assigned === "B") {
     label.textContent = "Expert CE 261 Europe–Afrique";
     headline.textContent = "vos droits, sans frontière.";
-    subhead.textContent = "Retard, annulation ou surbooking : on récupère votre indemnité CE 261, jusqu'à 600 € par passager, entre l'Europe et l'Afrique.";
     waBtn.textContent = "📱 Vérifier mon éligibilité";
     calcBtn.textContent = "Voir mon montant exact (2 min) →";
   }

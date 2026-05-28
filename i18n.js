@@ -62,11 +62,19 @@ window.I18N = (function() {
       hero_wa_note: "Répondez en français, wolof ou anglais — comme vous préférez.",
       hero_title: "Robin prend\naux compagnies,\n",
       hero_title_neon: "rend à nos familles.",
-      hero_subhead: "Retard important à l’arrivée (+3 h), annulation ou surbooking : nous récupérons votre indemnité CE 261 — jusqu’à 600 € par passager.",
+      hero_subhead: "Vol retardé, annulé ou surbooké ? Ne laissez pas jusqu’à 600 € par passager — l’argent que la compagnie vous doit.",
       hero_diaspora_why: "On connaît vos lignes, on parle votre langue — on récupère les 600€ pour nos communautés et nos familles.",
-      hero_desc: "<strong>Zéro frais si nous n’obtenons rien pour vous.</strong> Notre commission (25 %) uniquement une fois l’indemnité versée sur votre compte.\nQuand le CE 261 s’applique, la compagnie peut devoir jusqu’à <strong>600 € par passager</strong>.",
-      hero_btn_calc: "Ou calculez le montant exact (2 min) →",
-      hero_btn_wa: "📱 Vérifier sur WhatsApp",
+      hero_desc: "<strong>Frais de succès : 0 € si on ne récupère rien pour vous.</strong> Pas d’avance, pas de frais cachés — notre part (25 %) uniquement quand l’indemnité est sur votre compte.\nLa compagnie compte sur l’abandon après le premier refus. <strong>Nous, on monte le dossier et on va jusqu’au bout.</strong>",
+      hero_btn_calc: "Simuler mon indemnité (2 min) →",
+      hero_btn_wa: "📱 Envoyer mon vol sur WhatsApp",
+      hero_entry_hint: "Numéro de vol + date — réponse gratuite en quelques minutes.",
+      hero_step_1: "<strong>1.</strong> Vous envoyez vol + date",
+      hero_step_2: "<strong>2.</strong> On vérifie l'éligibilité",
+      hero_step_3: "<strong>3.</strong> Mandat en ligne — on récupère pour vous",
+      hero_stat_fee: "Notre part",
+      hero_stat_note: "9 dossiers sur 10 gagnés — sur les dossiers que nous acceptons.",
+      hero_more_summary: "Contact, langues & confidentialité",
+      nav_cta_sim: "Simulateur montant →",
       wa_qr_hint: "Pas WhatsApp sur cet appareil ? Scanner le QR →",
       wa_qr_title: "Continuer sur WhatsApp",
       wa_qr_desc: "Scannez ce QR code avec votre téléphone pour ouvrir WhatsApp.",
@@ -77,10 +85,11 @@ window.I18N = (function() {
       hero_moins_cher: "Notre part (25%) une fois l'argent récupéré · Si on ne gagne pas, vous ne payez rien · Montage dossier sous 24h",
       hero_lang_line: "Service disponible en : Français, Wolof, Bambara, Soninké, Peul (Pulaar), Dioula, Swahili, Lingala, Twi, Yoruba.",
       hero_stat_max: "Indemnité max",
+      hero_stat_net_max: "Net max / passager",
       hero_stat_won: "Dossiers gagnés",
       hero_stat_lost: "Si on perd",
       hero_stat_24h: "Dossier sous 24h",
-      nav_cta: "Combien je touche ? →",
+      nav_cta: "WhatsApp →",
       nav_english_version: "🇬🇧 English",
       nav_french_version: "🇫🇷 Français",
       nav_drawer_english: "🇬🇧 Version anglaise",
@@ -98,7 +107,11 @@ window.I18N = (function() {
       calc_title: "Vérifiez en 2 min\nsi vous êtes éligible",
       calc_title_1: "Vérifiez en 2 min",
       funnel_subtitle: "si vous êtes éligible",
-      funnel_explainer: "Même aide que les boutons WhatsApp à gauche : écrivez-nous ou remplissez le champ ci-dessous — ou ouvrez le simulateur détaillé plus bas.",
+      funnel_card_title: "Votre vol",
+      funnel_card_sub: "Éligibilité gratuite · sans engagement",
+      funnel_wa_main_btn: "💬 Ouvrir WhatsApp — le plus rapide",
+      funnel_or: "ou décrivez votre vol ici :",
+      funnel_short_submit: "Continuer sur WhatsApp avec ce message →",
       funnel_step_short: "2 questions",
       calc_disclaimer: "Notre part (25%) une fois l'argent récupéré · Si on ne gagne pas, vous ne payez rien · Montage dossier sous 24h",
       step1_eyebrow: "Ce qui s'est passé",
@@ -240,14 +253,14 @@ window.I18N = (function() {
       comp_others_wa: "Email ou chatbot",
       section_testi_tag: "Exemples de cas conformes au CE 261/2004",
       section_testi_title: "Combien vous pouvez obtenir.\nSelon votre situation.",
-      testi_quote_1: "<strong>Famille de 3 sur Paris→Dakar (CDG→DKR).</strong> Vol retardé de 6 heures à l'arrivée. Distance > 3 500 km (long-courrier). Indemnité légale : 600 € par passager.",
-      testi_quote_2: "<strong>Couple sur Bruxelles→Abidjan (BRU→ABJ).</strong> Vol annulé moins de 14 jours avant le départ, sans circonstance extraordinaire prouvée. Long-courrier. Indemnité légale : 600 € par passager.",
+      testi_quote_1: "<strong>Famille de 3 sur Paris→Dakar (CDG→DKR).</strong> Vol retardé de 6 heures à l'arrivée. Distance > 3 500 km (long-courrier).",
+      testi_quote_2: "<strong>Couple sur Bruxelles→Abidjan (BRU→ABJ).</strong> Vol annulé moins de 14 jours avant le départ, sans circonstance extraordinaire prouvée. Long-courrier.",
       testi_quote_3: "<strong>Passager seul sur Paris→Pointe-à-Pitre (CDG→PTP).</strong> Vol retardé de 4 heures à l'arrivée. Long-courrier. Indemnité légale : 600 €.",
-      testi_quote_4: "<strong>Passager seul sur Paris→Bamako (CDG→BKO).</strong> Vol annulé. La compagnie propose un bon d'achat de 300 €. Le passager exige le paiement en cash selon CE 261. Indemnité légale : 600 €.",
+      testi_quote_4: "<strong>Passager seul sur Paris→Bamako (CDG→BKO).</strong> Vol annulé. La compagnie propose un bon d'achat de 300 €. Le passager exige le paiement en cash selon CE 261.",
       testi_quote_5: "<strong>Passager seul sur Tunis→Paris.</strong> Retard de 5h motivé par la météo. La vérification des METAR et des autres vols du jour permet de réfuter la circonstance extraordinaire. Moyen-courrier. Indemnité légale : 400 €.",
-      testi_quote_6: "<strong>Mère et enfant sur Paris→Douala (CDG→DLA).</strong> Surbooking : refus d'embarquement contre leur gré. Long-courrier. Indemnité légale : 600 € par passager.",
+      testi_quote_6: "<strong>Mère et enfant sur Paris→Douala (CDG→DLA).</strong> Surbooking : refus d'embarquement contre leur gré. Long-courrier.",
       testi_quote_7: "<strong>Passager seul, dossier déjà refusé en direct.</strong> Le règlement CE 261 ne limite pas le nombre de relances. Une seconde demande argumentée (jurisprudence Sturgeon, Wallentin-Hermann) permet de rouvrir le dossier.",
-      testi_quote_8: "<strong>Famille de 4 sur Bruxelles→Kinshasa (BRU→FIH).</strong> Vol annulé, réacheminement > 24h plus tard. Long-courrier. Indemnité légale : 600 € par passager.",
+      testi_quote_8: "<strong>Famille de 4 sur Bruxelles→Kinshasa (BRU→FIH).</strong> Vol annulé, réacheminement > 24h plus tard. Long-courrier.",
       testi_quote_9: "<strong>Tarification Robin des Airs.</strong> Commission de succès : 25 % TTC du montant encaissé. 0 € si aucune récupération. Aucun frais d'avance, aucun coût caché.",
       testi_info_1: "CDG → DKR · Famille (3) · Retard 6h",
       testi_info_2: "BRU → ABJ · Couple · Annulation",
@@ -286,7 +299,17 @@ window.I18N = (function() {
       funnel_step_label: "Étape 1 sur 5",
       funnel_wa_shortcut_text: "Envoyez votre vol sur WhatsApp — on vous dit si vous êtes éligible.",
       funnel_wa_shortcut_btn: "💬 Vérifier sur WhatsApp",
-      funnel_detail_link: "Simulateur pas à pas (5 étapes) pour le montant exact →",
+      funnel_detail_link: "Calculer le montant exact (5 étapes) →",
+      res_tag: "✈ Estimation pour votre dossier",
+      res_net_label: "net pour vous · dans votre poche",
+      loi_net_pocket: "net par passager · long-courrier",
+      loi_legal_600: "Indemnité légale 600 € / passager (CE 261) · notre part 25 % au succès",
+      testi_net_label: "net pour vous",
+      testi_legal_1: "Légal 1 800 € (600 € × 3)",
+      testi_legal_2: "Légal 1 200 € (600 € × 2)",
+      testi_legal_4: "Légal 600 € (1 passager)",
+      testi_legal_6: "Légal 1 200 € (600 € × 2)",
+      testi_legal_8: "Légal 2 400 € (600 € × 4)",
       short_q_vol: "Quel est votre vol ?",
       short_hint_vol: "Un clic sur un vol du bandeau « Vols éligibles » remplit un message type. Sinon, décrivez votre trajet (vol, date, retard ou annulation).",
       short_placeholder_vol: "Ex. : message prérempli depuis le bandeau, ou AF718 du 15/01/2026, retardé",
@@ -365,11 +388,19 @@ window.I18N = (function() {
       hero_wa_note: "Reply in French, Wolof or English — whatever you prefer.",
       hero_title: "Robin takes from\nairlines,\n",
       hero_title_neon: "gives back to our families.",
-      hero_subhead: "Major delay at arrival (3h+), cancellation or denied boarding: we recover your EU261 compensation — up to €600 per passenger.",
+      hero_subhead: "Flight delayed, cancelled or overbooked? Don't leave up to €600 per passenger — money the airline already owes you.",
       hero_diaspora_why: "We know your routes, we speak your language — we recover the €600 for our communities and our families.",
-      hero_desc: "<strong>No fees if we recover nothing for you.</strong> Our 25% fee only after compensation is paid into your account.\nWhen EU261 applies, the airline may owe up to <strong>€600 per passenger</strong>.",
+      hero_desc: "<strong>Success fee: €0 if we recover nothing for you.</strong> No upfront cost, no hidden fees — our 25% share only when compensation is in your account.\nThe airline counts on you giving up after the first refusal. <strong>We build the case and see it through.</strong>",
       hero_btn_calc: "Or calculate the exact amount (2 min) →",
-      hero_btn_wa: "📱 Check on WhatsApp",
+      hero_btn_wa: "📱 Send my flight on WhatsApp",
+      hero_entry_hint: "Flight number + date — free reply within minutes.",
+      hero_step_1: "<strong>1.</strong> You send flight + date",
+      hero_step_2: "<strong>2.</strong> We check eligibility",
+      hero_step_3: "<strong>3.</strong> Sign online — we recover for you",
+      hero_stat_fee: "Our fee",
+      hero_stat_note: "9 out of 10 cases won — on cases we accept.",
+      hero_more_summary: "Contact, languages & privacy",
+      nav_cta_sim: "Amount estimator →",
       wa_qr_hint: "No WhatsApp on this device? Scan the QR →",
       wa_qr_title: "Continue on WhatsApp",
       wa_qr_desc: "Scan this QR code with your phone to open WhatsApp.",
@@ -380,10 +411,11 @@ window.I18N = (function() {
       hero_moins_cher: "Our share (25%) once money is recovered · If we don't win, you pay nothing · Case file within 24h",
       hero_lang_line: "Service available in: French, English, Wolof, Bambara, Soninké, Peul (Pulaar), Dioula, Swahili, Lingala, Twi, Yoruba.",
       hero_stat_max: "Max compensation",
+      hero_stat_net_max: "Max net / passenger",
       hero_stat_won: "Cases won",
       hero_stat_lost: "If we lose",
       hero_stat_24h: "File within 24h",
-      nav_cta: "Get my compensation →",
+      nav_cta: "WhatsApp →",
       nav_english_version: "🇬🇧 English",
       nav_french_version: "🇫🇷 French",
       nav_drawer_english: "🇬🇧 English version",
@@ -401,7 +433,11 @@ window.I18N = (function() {
       calc_title: "Check in 2 min\nif you're eligible",
       calc_title_1: "Check in 2 min",
       funnel_subtitle: "if you're eligible",
-      funnel_explainer: "Same help as the WhatsApp buttons on the left: message us or use the box below — or open the detailed estimator further down.",
+      funnel_card_title: "Your flight",
+      funnel_card_sub: "Free eligibility check · no commitment",
+      funnel_wa_main_btn: "💬 Open WhatsApp — fastest",
+      funnel_or: "or describe your flight here:",
+      funnel_short_submit: "Continue on WhatsApp with this message →",
       funnel_step_short: "2 questions",
       calc_disclaimer: "Our share (25%) once money is recovered · If we don't win, you pay nothing · Case file within 24h",
       step1_eyebrow: "What happened",
@@ -542,14 +578,14 @@ window.I18N = (function() {
       comp_others_wa: "Email or chatbot",
       section_testi_tag: "Case examples — compliant with EC 261/2004",
       section_testi_title: "How much you can claim.\nDepending on your situation.",
-      testi_quote_1: "<strong>Family of 3 on Paris→Dakar (CDG→DKR).</strong> Flight delayed by 6 hours on arrival. Distance > 3,500 km (long-haul). Legal compensation: €600 per passenger.",
-      testi_quote_2: "<strong>Couple on Brussels→Abidjan (BRU→ABJ).</strong> Flight cancelled less than 14 days before departure, no proven extraordinary circumstance. Long-haul. Legal compensation: €600 per passenger.",
+      testi_quote_1: "<strong>Family of 3 on Paris→Dakar (CDG→DKR).</strong> Flight delayed by 6 hours on arrival. Distance > 3,500 km (long-haul).",
+      testi_quote_2: "<strong>Couple on Brussels→Abidjan (BRU→ABJ).</strong> Flight cancelled less than 14 days before departure, no proven extraordinary circumstance. Long-haul.",
       testi_quote_3: "<strong>Solo passenger on Paris→Pointe-à-Pitre (CDG→PTP).</strong> Flight delayed by 4 hours on arrival. Long-haul. Legal compensation: €600.",
-      testi_quote_4: "<strong>Solo passenger on Paris→Bamako (CDG→BKO).</strong> Flight cancelled. The airline offers a €300 voucher. The passenger demands cash payment per EC 261. Legal compensation: €600.",
+      testi_quote_4: "<strong>Solo passenger on Paris→Bamako (CDG→BKO).</strong> Flight cancelled. The airline offers a €300 voucher. The passenger demands cash payment per EC 261.",
       testi_quote_5: "<strong>Solo passenger on Tunis→Paris.</strong> 5h delay attributed to weather. METAR records and other flights on the same day disprove the extraordinary circumstance. Medium-haul. Legal compensation: €400.",
-      testi_quote_6: "<strong>Mother and child on Paris→Douala (CDG→DLA).</strong> Overbooking: denied boarding against their will. Long-haul. Legal compensation: €600 per passenger.",
+      testi_quote_6: "<strong>Mother and child on Paris→Douala (CDG→DLA).</strong> Overbooking: denied boarding against their will. Long-haul.",
       testi_quote_7: "<strong>Solo passenger, claim already refused directly.</strong> EC 261 does not limit the number of follow-ups. A second well-argued claim (Sturgeon, Wallentin-Hermann case law) can reopen the file.",
-      testi_quote_8: "<strong>Family of 4 on Brussels→Kinshasa (BRU→FIH).</strong> Flight cancelled, re-routing > 24h later. Long-haul. Legal compensation: €600 per passenger.",
+      testi_quote_8: "<strong>Family of 4 on Brussels→Kinshasa (BRU→FIH).</strong> Flight cancelled, re-routing > 24h later. Long-haul.",
       testi_quote_9: "<strong>Robin des Airs pricing.</strong> Success fee: 25% incl. VAT of the amount recovered. €0 if no recovery. No upfront fees, no hidden costs.",
       testi_info_1: "CDG → DKR · Family (3) · 6h delay",
       testi_info_2: "BRU → ABJ · Couple · Cancellation",
@@ -588,7 +624,17 @@ window.I18N = (function() {
       funnel_step_label: "Step 1 of 5",
       funnel_wa_shortcut_text: "Send your flight details on WhatsApp — we'll tell you if you're eligible.",
       funnel_wa_shortcut_btn: "💬 Check on WhatsApp",
-      funnel_detail_link: "Step-by-step estimator (5 steps) for the exact amount →",
+      funnel_detail_link: "Calculate exact amount (5 steps) →",
+      res_tag: "✈ Estimate for your case",
+      res_net_label: "net for you · in your pocket",
+      loi_net_pocket: "net per passenger · long-haul",
+      loi_legal_600: "Legal compensation €600 / passenger (EC 261) · our 25% fee on success only",
+      testi_net_label: "net for you",
+      testi_legal_1: "Legal €1,800 (€600 × 3)",
+      testi_legal_2: "Legal €1,200 (€600 × 2)",
+      testi_legal_4: "Legal €600 (1 passenger)",
+      testi_legal_6: "Legal €1,200 (€600 × 2)",
+      testi_legal_8: "Legal €2,400 (€600 × 4)",
       short_q_vol: "What is your flight?",
       short_hint_vol: "Click a flight in the “Eligible flights” strip for a ready-made message. Or describe your trip (flight, date, delay or cancellation).",
       short_placeholder_vol: "E.g. message from the strip, or AF718 15/01/2026, delayed",
@@ -855,13 +901,6 @@ window.I18N = (function() {
     }
     var labelEl = document.getElementById('funnel-step-label');
     if (labelEl) labelEl.textContent = get('funnel_step_label');
-    var waShortcut = document.querySelector('.funnel-wa-shortcut');
-    if (waShortcut) {
-      var t = waShortcut.querySelector('.funnel-wa-shortcut-text');
-      if (t) t.textContent = get('funnel_wa_shortcut_text');
-      var b = waShortcut.querySelector('.funnel-wa-shortcut-btn');
-      if (b) b.textContent = get('funnel_wa_shortcut_btn');
-    }
     var detailLink = document.getElementById('link-diagnostic-detail');
     if (detailLink) detailLink.textContent = get('funnel_detail_link');
     var waFloat = document.getElementById('wa-float');
@@ -872,12 +911,19 @@ window.I18N = (function() {
     var waEligUrl = 'https://api.whatsapp.com/send?phone=' + encodeURIComponent(waNum) + '&text=' + encodeURIComponent(get('wa_eligibility_prefill'));
     var heroWa = document.getElementById('hero-wa-link');
     if (heroWa) heroWa.href = waEligUrl;
+    ['nav-wa-cta', 'nav-drawer-wa-cta'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.href = waEligUrl;
+    });
     if (waFloat) {
       waFloat.setAttribute('aria-label', get('wa_float_aria'));
       waFloat.href = waEligUrl;
     }
     var funnelWaEl = document.getElementById('funnel-wa-eligibility-link');
-    if (funnelWaEl) funnelWaEl.href = waEligUrl;
+    if (funnelWaEl) {
+      funnelWaEl.href = waEligUrl;
+      if (funnelWaEl.textContent && get('funnel_wa_main_btn')) funnelWaEl.textContent = get('funnel_wa_main_btn');
+    }
     var short1 = document.getElementById('step-short-1');
     if (short1) {
       var q1 = short1.querySelector('.fstep-q');
