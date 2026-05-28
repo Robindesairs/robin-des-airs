@@ -232,6 +232,13 @@ function normalizeAdbFlight(raw, ctx) {
     adbTimeIso(arr, ['estimatedTime', 'revisedTime', 'estimatedTimeUtc', 'estimatedTimeLocal', 'revisedTimeUtc', 'revisedTimeLocal']) ||
     actArr;
 
+  const ac = raw.aircraft || {};
+  const aircraftRegistration = String(
+    ac.reg || ac.registration || ac.regNumber || ac.tailNumber || raw.aircraftRegistration || ''
+  )
+    .trim()
+    .toUpperCase();
+
   const airline = raw.airline || {};
   let iataAirline = String(airline.iata || '').toUpperCase().slice(0, 2);
   let num = String(raw.number || raw.flightNumber || '').replace(/\s/g, '');
@@ -261,7 +268,8 @@ function normalizeAdbFlight(raw, ctx) {
     },
     flight: { iata: flightIata, number: flightIata, icao: raw.callSign },
     airline: { iataCode: iataAirline || flightIata.slice(0, 2) },
-    status: adbStatusToAe(raw.status)
+    status: adbStatusToAe(raw.status),
+    aircraftRegistration: aircraftRegistration || null
   };
 }
 
@@ -927,6 +935,7 @@ async function assembleFlightsFromRaw(allRaw, arrivalRaw, assembleOpts = {}) {
       const color = cancelled ? 'CANCELLED' : getColor(delayMinutes, eligible);
 
       const scheduledDeparture = toTimeStrZulu(dep.scheduledTime);
+      const actualDeparture = toTimeStrZulu(dep.actualTime) || null;
       const estimatedDeparture = toTimeStrZulu(dep.actualTime || dep.estimatedTime || dep.scheduledTime);
       const scheduledArrival = toTimeStrZulu(arr.scheduledTime);
       const keyNorm = arrivalMapKey(flightNumber, depIata, arrIata);
@@ -945,6 +954,7 @@ async function assembleFlightsFromRaw(allRaw, arrivalRaw, assembleOpts = {}) {
         dep: depIata || '—',
         arr: arrIata || '—',
         scheduledDeparture,
+        actualDeparture,
         estimatedDeparture,
         scheduledArrival,
         estimatedArrival,
@@ -958,7 +968,8 @@ async function assembleFlightsFromRaw(allRaw, arrivalRaw, assembleOpts = {}) {
         flightStatus,
         cancelledAt,
         scheduledDate,
-        trackerUrl
+        trackerUrl,
+        registration: f.aircraftRegistration || null
       };
 
       if (!routeMap.has(routeKey)) {
@@ -1022,6 +1033,7 @@ async function assembleFlightsFromRaw(allRaw, arrivalRaw, assembleOpts = {}) {
       const color = cancelled ? 'CANCELLED' : getColor(delayMinutes, eligible);
 
       const scheduledDeparture = toTimeStrZulu(dep.scheduledTime);
+      const actualDeparture = toTimeStrZulu(dep.actualTime) || null;
       const estimatedDeparture = toTimeStrZulu(dep.actualTime || dep.estimatedTime || dep.scheduledTime);
       const scheduledArrival = toTimeStrZulu(arr.scheduledTime);
       const keyNorm = arrivalMapKey(flightNumber, depIata, arrIata);
@@ -1040,6 +1052,7 @@ async function assembleFlightsFromRaw(allRaw, arrivalRaw, assembleOpts = {}) {
         dep: depIata || '—',
         arr: arrIata || '—',
         scheduledDeparture,
+        actualDeparture,
         estimatedDeparture,
         scheduledArrival,
         estimatedArrival,
@@ -1053,7 +1066,8 @@ async function assembleFlightsFromRaw(allRaw, arrivalRaw, assembleOpts = {}) {
         flightStatus: cancelled ? 'cancelled' : (hasActualArr ? 'arrived' : 'scheduled'),
         cancelledAt,
         scheduledDate,
-        trackerUrl
+        trackerUrl,
+        registration: f.aircraftRegistration || null
       };
       routeMap.set(routeKey, { data: flightObj, isOperating: isOperatingRow });
     }

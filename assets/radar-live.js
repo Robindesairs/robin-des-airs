@@ -371,6 +371,112 @@
     return m ? String(parseInt(m[1], 10)).padStart(2, '0') + ':' + m[2] : s.slice(0, 8);
   }
 
+  function formatDateFr(ymd) {
+    if (!ymd) return '—';
+    var p = String(ymd).slice(0, 10).split('-');
+    if (p.length !== 3) return String(ymd);
+    return p[2] + '/' + p[1] + '/' + p[0];
+  }
+
+  function statusVisuHtml(v) {
+    if (v.statut === 'ANNULE') {
+      return '<div class="radar-visu radar-visu-cancel" title="Vol annulé"><span class="radar-visu-dot"></span><span>Annulé</span></div>';
+    }
+    if (v.statut === 'RETARD' && v.retardMin >= 180) {
+      return '<div class="radar-visu radar-visu-crit" title="Retard ≥ 3h"><span class="radar-visu-dot"></span><span>3h+</span></div>';
+    }
+    if (v.statut === 'RETARD' && v.retardMin >= 60) {
+      return '<div class="radar-visu radar-visu-warn" title="Retard important"><span class="radar-visu-dot"></span><span>' + retardH(v.retardMin) + '</span></div>';
+    }
+    if (v.statut === 'RETARD') {
+      return '<div class="radar-visu radar-visu-mild" title="Retard"><span class="radar-visu-dot"></span><span>' + retardH(v.retardMin) + '</span></div>';
+    }
+    return "<div class=\"radar-visu radar-visu-ok\" title=\"À l'heure\"><span class=\"radar-visu-dot\"></span><span>OK</span></div>";
+  }
+
+  var TICKER_MANUAL_KEY = 'robin_vol_ticker_manual';
+
+  function loadTickerManual() {
+    try {
+      var raw = localStorage.getItem(TICKER_MANUAL_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e0) {
+      return [];
+    }
+  }
+
+  function saveTickerManual(list) {
+    try {
+      localStorage.setItem(TICKER_MANUAL_KEY, JSON.stringify((list || []).slice(0, 9)));
+      sessionStorage.removeItem('robin_vol_ticker');
+      sessionStorage.removeItem('robin_vol_ticker_ts');
+    } catch (e1) {}
+  }
+
+  function isVolPinnedToTicker(v) {
+    if (!v) return false;
+    var fn = String(v.vol || '').replace(/\s/g, '');
+    var route = v.dep + ' → ' + v.arr;
+    return loadTickerManual().some(function (x) {
+      return String(x.flight || '').replace(/\s/g, '') === fn && x.route === route;
+    });
+  }
+
+  function setVolPinnedToTicker(v, on) {
+    if (!v) return false;
+    var fn = String(v.vol || '').replace(/\s/g, '');
+    var route = v.dep + ' → ' + v.arr;
+    var list = loadTickerManual().filter(function (x) {
+      return !(String(x.flight || '').replace(/\s/g, '') === fn && x.route === route);
+    });
+    if (on) {
+      list.unshift({
+        flight: fn,
+        route: route,
+        kind: v.statut === 'ANNULE' ? 'cancel' : 'delay',
+        detail: v.statut === 'ANNULE' ? '' : retardH(v.retardMin),
+        date: v.date || new Date().toISOString().slice(0, 10),
+        amountEur: 600,
+        pinnedFrom: 'radar',
+        pinnedAt: new Date().toISOString(),
+      });
+    }
+    saveTickerManual(list);
+    return !!on;
+  }
+
+  function buildGenericWaPubText(v) {
+    if (!v) return '';
+    var dateTxt = v.dateLabel && v.dateLabel !== '—' ? ' le ' + v.dateLabel : '';
+    var stat =
+      v.statut === 'ANNULE'
+        ? 'a été annulé'
+        : 'accuse ' + retardH(v.retardMin) + ' de retard';
+    return (
+      'Bonjour ! Le vol ' +
+      v.vol +
+      ' (' +
+      v.dep +
+      ' → ' +
+      v.arr +
+      ')' +
+      dateTxt +
+      ' ' +
+      stat +
+      '.\n\n' +
+      'Vous pouvez avoir droit à une indemnité jusqu\'à 600 € (règlement CE 261).\n' +
+      'Robin des Airs vérifie votre dossier gratuitement :\n' +
+      'https://robindesairs.eu\n\n' +
+      'Répondez avec votre nom, date du vol et numéro de réservation.'
+    );
+  }
+
+  function openGenericWaPub(v) {
+    var text = buildGenericWaPubText(v);
+    if (!text) return;
+    window.open('https://api.whatsapp.com/send?text=' + encodeURIComponent(text), '_blank', 'noopener');
+  }
+
   function scoreColor(s) {
     return s >= 80 ? 'var(--green)' : s >= 55 ? 'var(--orange)' : 'var(--red)';
   }
@@ -406,6 +512,8 @@
       scheduledDeparture: f.schedDep,
       scheduledArrival: f.schedArr,
       scheduledDate: f.date,
+      actualDeparture: f.actualDeparture,
+      registration: f.registration,
       statusFr: f.status,
       eligible: f.eligible !== false,
     };
@@ -442,7 +550,10 @@
       dep_ville: airportLabel(dep),
       arr: arr,
       arr_ville: airportLabel(arr),
+      date: f.scheduledDate || null,
+      dateLabel: formatDateFr(f.scheduledDate),
       std: zuluToHhmm(f.scheduledDeparture),
+      atd: zuluToHhmm(f.actualDeparture) !== '—' ? zuluToHhmm(f.actualDeparture) : '—',
       sta: zuluToHhmm(f.scheduledArrival),
       eta: zuluToHhmm(f.landedAtZulu || f.estimatedArrival || f.scheduledArrival),
       etd: zuluToHhmm(f.estimatedDeparture || f.scheduledDeparture),
@@ -452,7 +563,7 @@
       elig: elig,
       score: score,
       phase: phaseFromApi(f, statut),
-      immat: '—',
+      immat: (f.registration && String(f.registration).trim()) || '—',
       type: '—',
       af_pays: afPaysFor(dep, arr),
       trackerUrl: f.trackerUrl || '',
@@ -707,33 +818,21 @@
 
 
   function pinVolToTickerBanner(v) {
-    if (!v) return false;
-    var row = {
-      flight: v.vol,
-      route: v.dep + ' → ' + v.arr,
-      kind: v.statut === 'ANNULE' ? 'cancel' : 'delay',
-      detail: v.statut === 'ANNULE' ? '' : retardH(v.retardMin),
-      date: new Date().toISOString().slice(0, 10),
-      amountEur: 600,
-      pinnedFrom: 'radar',
-      pinnedAt: new Date().toISOString(),
-    };
-    try {
-      var key = 'robin_vol_ticker_manual';
-      var list = [];
-      try { list = JSON.parse(localStorage.getItem(key) || '[]'); } catch (e0) { list = []; }
-      list = list.filter(function (x) { return x.flight !== row.flight || x.route !== row.route; });
-      list.unshift(row);
-      list = list.slice(0, 9);
-      localStorage.setItem(key, JSON.stringify(list));
-      sessionStorage.removeItem('robin_vol_ticker');
-      sessionStorage.removeItem('robin_vol_ticker_ts');
-      return true;
-    } catch (e) {
-      return false;
-    }
+    return setVolPinnedToTicker(v, true);
   }
   window.__radarPinToTicker = pinVolToTickerBanner;
+  window.__radarToggleTickerPin = function (id, checked) {
+    var v = VOLS.find(function (x) { return x.id === id; });
+    if (!v) return;
+    setVolPinnedToTicker(v, !!checked);
+    renderRadar();
+    if (window.setReturnScanStatus) {
+      window.setReturnScanStatus(
+        checked ? 'Vol ' + v.vol + ' ajouté au bandeau accueil (cochez pour retirer).' : 'Vol retiré du bandeau.',
+        false
+      );
+    }
+  };
 
 
   var ALLER_DEMO_ZONE = {
@@ -1168,60 +1267,54 @@
               : 'Aucun vol Afrique→Europe pour ce hub sur la journée (heure locale). Essayez Paris ou Bruxelles, ou relancez un scan live.' +
               (formatScanDebug(RADAR_LAST_SCAN) ? ' Debug: ' + formatScanDebug(RADAR_LAST_SCAN) + '.' : '');
       tbody.innerHTML =
-        '<tr><td colspan="15" style="text-align:center;padding:2rem;color:#9CA3AF">' + emptyMsg + '</td></tr>';
+        '<tr><td colspan="14" style="text-align:center;padding:2rem;color:#9CA3AF">' + emptyMsg + '</td></tr>';
       renderRadarCards([]);
       return;
     }
     tbody.innerHTML = rows
       .map(function (v) {
         var sensHtml = sensBadge(v.sens);
-        var statutHtml;
         var retardHtml = '<span style="color:var(--green);font-weight:700">0h00</span>';
-        if (v.statut === 'A_LHEURE') statutHtml = '<span class="badge b-ok">✓ À l\'heure</span>';
-        else if (v.statut === 'RETARD') {
-          statutHtml = '<span class="badge b-retard">Retard</span>';
+        if (v.statut === 'RETARD') {
           var cls = v.retardMin >= 180 ? 'retard-crit' : v.retardMin >= 60 ? 'retard-warn' : 'retard-ok';
           retardHtml = '<span class="retard-h ' + cls + '">' + retardH(v.retardMin) + '</span>';
-        } else {
-          statutHtml = '<span class="badge b-annule">Annulé</span>';
+        } else if (v.statut === 'ANNULE') {
           retardHtml = '<span style="color:var(--red);font-weight:700">—</span>';
         }
-        var causeHtml = v.cause ? '<span class="cause-pill ' + CAUSE_CLS[v.cause] + '">' + CAUSE_LBL[v.cause] + '</span>' : '<span style="color:#9CA3AF;font-size:11px">—</span>';
-        var scoreHtml =
-          v.score > 0
-            ? '<div class="score-bar"><div class="score-bg"><div class="score-fill" style="width:' +
-              v.score +
-              '%;background:' +
-              scoreColor(v.score) +
-              '"></div></div><span class="score-num" style="color:' +
-              scoreColor(v.score) +
-              '">' +
-              v.score +
-              '</span></div>'
-            : '<span style="color:#9CA3AF;font-size:11px">—</span>';
         var prioHtml = '<span class="prio-tag ' + PRIO_CLS[v.prio] + '">' + PRIO_LBL[v.prio] + '</span>';
         var phaseHtml = '<span class="phase ' + (PHASE_CLS[v.phase] || '') + '">' + (PHASE_LBL[v.phase] || v.phase) + '</span>';
-        var eligBadge =
-          v.elig === 'OUI'
-            ? '<div style="font-size:10px;font-weight:700;color:#145A32;background:#D5F5E3;border-radius:4px;padding:1px 5px;margin-top:2px">à qualifier</div>'
-            : '';
+        var visuHtml = statusVisuHtml(v);
+        var pinned = isVolPinnedToTicker(v);
+        var pinHtml =
+          '<label class="radar-pin-label" onclick="event.stopPropagation()" title="Bandeau accueil">' +
+          '<input type="checkbox" class="radar-pin-cb"' +
+          (pinned ? ' checked' : '') +
+          ' onchange="window.__radarToggleTickerPin(&quot;' +
+          v.id +
+          '&quot;, this.checked)"> Bandeau</label>';
         var rowCls = v.prio === 'URGENT' ? (v.statut === 'ANNULE' ? 'row-critical' : 'row-hot') : v.elig === 'OUI' ? 'row-eligible' : '';
+        if (pinned) rowCls += ' row-pinned-ticker';
         var track =
           v.trackerUrl && v.trackerUrl !== '#'
             ? '<a class="btn btn-sm" href="' +
               v.trackerUrl +
               '" target="_blank" rel="noopener" onclick="event.stopPropagation()">Suivi</a> '
             : '';
+        var immatHtml =
+          v.immat && v.immat !== '—'
+            ? '<span class="immat">' + v.immat + '</span>'
+            : '<span style="color:#9CA3AF;font-size:10px">—</span>';
         return (
           '<tr class="' +
           rowCls +
           '" onclick="window.__radarOpenDetail(&quot;' +
           v.id +
-          '&quot;)"><td>' +
+          '&quot;)"><td style="text-align:center">' +
+          pinHtml +
+          '</td><td>' +
           prioHtml +
           '</td><td style="font-weight:700;color:var(--navy);font-size:12px">' +
           v.vol +
-          eligBadge +
           '</td><td style="font-size:12px">' +
           v.comp +
           '</td><td>' +
@@ -1234,39 +1327,35 @@
           v.arr +
           '</strong><div style="font-size:10px;color:#9CA3AF">' +
           v.arr_ville +
-          '</div></td><td style="font-family:monospace;font-size:12px">' +
+          '</div></td><td style="font-family:monospace;font-size:12px;white-space:nowrap">' +
+          (v.dateLabel || '—') +
+          '</td><td style="font-family:monospace;font-size:12px">' +
           v.std +
           '</td><td style="font-family:monospace;font-size:12px">' +
-          (v.sta || '<span style="color:var(--red)">—</span>') +
+          (v.atd || '—') +
           '</td><td style="font-family:monospace;font-size:12px">' +
-          (v.eta || '<span style="color:var(--red)">Annulé</span>') +
+          (v.sta || '—') +
+          '</td><td style="font-family:monospace;font-size:12px">' +
+          (v.eta || (v.statut === 'ANNULE' ? '<span style="color:var(--red)">—</span>' : '—')) +
           '</td><td>' +
           retardHtml +
           '</td><td>' +
           phaseHtml +
           '</td><td>' +
-          causeHtml +
+          visuHtml +
           '</td><td>' +
-          scoreHtml +
-          '</td><td><span class="immat">' +
-          v.immat +
-          '</span><div style="font-size:10px;color:#9CA3AF">' +
-          (v.surveillanceRetour ? 'Surv. retour' : v.type) +
-          '</div></td><td style="white-space:nowrap">' +
+          immatHtml +
+          '</td><td style="white-space:nowrap">' +
           track +
           '<button class="radar-btn radar-btn-sm" onclick="event.stopPropagation();window.__radarOpenDetail(&quot;' +
           v.id +
-          '&quot;)" title="Détail">🔍</button>' +
-          (v.elig === 'OUI' || v.elig === 'PEUT_ETRE'
-            ? '<button class="radar-btn radar-btn-primary radar-btn-sm" onclick="event.stopPropagation();window.__radarAddElig(&quot;' + v.id + '&quot;)" title="Éligible">✓</button>'
-            : '') +
-          '<button class="radar-btn radar-btn-gold radar-btn-sm" onclick="event.stopPropagation();window.__radarOpenPub(&quot;' +
+          '&quot;)" title="Détail">🔍</button> ' +
+          '<button class="btn-wa radar-btn-sm" onclick="event.stopPropagation();window.__radarOpenPub(&quot;' +
           v.id +
-          '&quot;)" title="Pub">📣</button></td></tr>'
+          '&quot;)" title="WhatsApp">💬</button></td></tr>'
         );
       })
       .join('');
-    renderRadarCards(rows);
     renderReturnWatchPanel();
   }
 
@@ -1430,8 +1519,13 @@
     document.getElementById('md-title').textContent = v.vol + ' — ' + v.comp + ' · ' + v.dep + '→' + v.arr;
     document.getElementById('md-elig-btn').onclick = function () { addElig(id); };
     document.getElementById('md-pub-btn').onclick = function () { closeModals(); openPub(id); };
+    var mdWa = document.getElementById('md-wa-btn');
+    if (mdWa) mdWa.onclick = function () { openGenericWaPub(v); };
     document.getElementById('md-body').innerHTML =
       '<div class="grid2" style="margin-bottom:12px"><div class="info-box"><div class="info-box-title">Vol (AeroDataBox)</div>' +
+      '<div class="info-row"><span class="info-label">Date du vol</span><span class="info-val">' +
+      (v.dateLabel || '—') +
+      '</span></div>' +
       '<div class="info-row"><span class="info-label">N° vol</span><span class="info-val">' +
       v.vol +
       '</span></div>' +
@@ -1452,6 +1546,9 @@
       v.arr +
       ' — ' +
       v.arr_ville +
+      '</span></div>' +
+      '<div class="info-row"><span class="info-label">Décollage effectif (Z)</span><span class="info-val">' +
+      (v.atd || '—') +
       '</span></div>' +
       '<div class="info-row"><span class="info-label">Départ prévu (Z)</span><span class="info-val">' +
       v.std +
@@ -1548,19 +1645,16 @@
   }
 
   function openPub(id) {
-    currentPubVol = VOLS.find(function (x) { return x.id === id; });
-    if (!currentPubVol) return;
-    document.getElementById('pub-info').textContent =
-      currentPubVol.vol +
-      ' — ' +
-      currentPubVol.comp +
-      ' — ' +
-      currentPubVol.dep_ville +
-      ' → ' +
-      currentPubVol.arr_ville +
-      ' · ' +
-      (currentPubVol.statut === 'ANNULE' ? 'Annulé' : 'Retard ' + retardH(currentPubVol.retardMin));
-    updBudget();
+    var v = VOLS.find(function (x) { return x.id === id; });
+    if (!v) return;
+    currentPubVol = v;
+    var info = document.getElementById('pub-info');
+    var preview = document.getElementById('pub-wa-preview');
+    if (info) {
+      info.textContent =
+        v.vol + ' · ' + v.dep + '→' + v.arr + ' · ' + (v.dateLabel || '—') + ' · ' + (v.statut === 'ANNULE' ? 'Annulé' : 'Retard ' + retardH(v.retardMin));
+    }
+    if (preview) preview.textContent = buildGenericWaPubText(v);
     openModal('modal-pub');
   }
 
@@ -1573,26 +1667,8 @@
   }
 
   function lancerPub() {
-    var v = parseInt(document.getElementById('budget-sl').value, 10) || 10;
-    var plats = [].slice.call(document.querySelectorAll('.pub-platform.selected')).map(function (e) { return e.dataset.p; }).join(', ');
-    if (!plats) {
-      alert('Sélectionne au moins une plateforme.');
-      return;
-    }
-    alert(
-      '✅ Simulation campagne.\n\nVol : ' +
-        (currentPubVol && currentPubVol.vol) +
-        ' — ' +
-        (currentPubVol && currentPubVol.comp) +
-        '\n' +
-        (currentPubVol && currentPubVol.dep_ville) +
-        ' → ' +
-        (currentPubVol && currentPubVol.arr_ville) +
-        '\nBudget : ' +
-        v +
-        ' €\nPlateformes : ' +
-        plats
-    );
+    if (!currentPubVol) return;
+    openGenericWaPub(currentPubVol);
     closeModals();
   }
 

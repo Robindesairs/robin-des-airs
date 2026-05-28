@@ -147,6 +147,17 @@ tbody tr.row-eligible:hover{background:#D5F5E3}
 .cause-meteo{background:#EBF5FB;color:#1A5276}.cause-technique{background:#FEF9E7;color:#7D6608}
 .cause-greve{background:#FDEDEC;color:#922B21}.cause-trafic{background:#F0F0F0;color:#555}.cause-inconnue{background:#F5EEF8;color:#6C3483}
 .immat{font-family:monospace;font-size:10px;background:#F0F2F5;padding:2px 5px;border-radius:3px;color:var(--navy)}
+.radar-pin-label{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600;cursor:pointer;color:var(--navy)}
+.radar-pin-cb{width:14px;height:14px;cursor:pointer}
+tbody tr.row-pinned-ticker{outline:2px solid var(--gold);outline-offset:-2px}
+.radar-visu{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:4px 8px;border-radius:6px;white-space:nowrap}
+.radar-visu-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.radar-visu-cancel{background:#FADBD8;color:#922B21}.radar-visu-cancel .radar-visu-dot{background:#C0392B}
+.radar-visu-crit{background:#FADBD8;color:#922B21}.radar-visu-crit .radar-visu-dot{background:#E74C3C;box-shadow:0 0 0 3px rgba(231,76,60,.35)}
+.radar-visu-warn{background:#FDEBD0;color:#784212}.radar-visu-warn .radar-visu-dot{background:#E67E22}
+.radar-visu-mild{background:#FEF9E7;color:#7D6608}.radar-visu-mild .radar-visu-dot{background:#F1C40F}
+.radar-visu-ok{background:#D5F5E3;color:#145A32}.radar-visu-ok .radar-visu-dot{background:#27AE60}
+.pub-wa-preview{white-space:pre-wrap;font-size:12px;line-height:1.45;background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px;margin:10px 0;max-height:180px;overflow:auto}
 /* Priority — anti-strobe : uniquement les NOUVEAUX clignotent */
 .prio-tag{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px}
 .prio-urgent{background:#FADBD8;color:#922B21;border:1px solid #F1948A}
@@ -383,17 +394,18 @@ tbody tr.row-eligible:hover{background:#D5F5E3}
           <option value="NORMAL">🔵 Normale</option>
         </select>
       </div>
+      <p style="margin:0 0 10px;font-size:11px;color:var(--text2)"><strong>Bandeau accueil :</strong> cochez « Bandeau » sur les vols à mettre en avant (max 9). Message WhatsApp générique via 💬.</p>
       <div class="tcard">
         <div class="twrap">
           <table>
             <thead><tr>
+              <th title="Afficher sur le bandeau du site">Bandeau</th>
               <th>Priorité</th><th>Vol</th><th>Compagnie</th><th>Sens</th>
               <th>Départ</th><th>Arrivée</th>
-              <th>STD</th><th>STA prévue</th><th>Heure réelle arr.</th>
+              <th>Date</th>
+              <th>STD</th><th>Décollage eff.</th><th>STA prévue</th><th>Arr. réelle</th>
               <th>Retard</th><th>Phase</th>
-              <th>Cause</th><th>Score CE 261</th>
-              <th style="color:var(--green)">⚖️ Excuse CE 261</th>
-              <th style="color:var(--green)">💶 Revenu potentiel</th>
+              <th>Impact</th>
               <th>Immat.</th><th>Actions</th>
             </tr></thead>
             <tbody id="radar-tbody"></tbody>
@@ -448,43 +460,19 @@ tbody tr.row-eligible:hover{background:#D5F5E3}
   </div>
 </div>
 
-<!-- ── Modal Pub ───────────────────────────────────────────── -->
+<!-- ── Modal Pub WhatsApp (message générique) ─────────────── -->
 <div class="modal-bg" id="modal-pub" style="display:none" onclick="if(event.target===this)closeModals()">
   <div class="modal modal-sm">
-    <div class="modal-header"><h2>📣 Lancer une publicité</h2><button class="btn btn-sm" onclick="closeModals()">✕</button></div>
+    <div class="modal-header"><h2>💬 Message WhatsApp</h2><button class="btn btn-sm" onclick="closeModals()">✕</button></div>
     <div class="modal-body">
       <div id="pub-info" style="background:#F7F8FA;border:1px solid var(--border);border-radius:var(--r2);padding:9px 12px;margin-bottom:12px;font-size:12px;font-weight:600;color:var(--navy)"></div>
-
-      <!-- 🆕 Alerte si cause météo ou score faible -->
-      <div id="pub-excuse-alert">
-        <strong>⚠️ Attention —</strong> ce vol a une cause <strong id="pub-excuse-cause">?</strong>.
-        L'indemnisation est incertaine selon CE 261/2004. Voulez-vous quand même lancer une pub ?
-        <div class="alert-btns">
-          <button class="btn btn-sm" onclick="document.getElementById('pub-excuse-alert').style.display='none'">Oui, continuer</button>
-          <button class="btn btn-sm btn-red" onclick="closeModals()">Annuler</button>
-        </div>
-      </div>
-
-      <div class="sec-title">Plateformes</div>
-      <div class="pub-grid">
-        <div class="pub-platform selected" data-p="instagram" onclick="this.classList.toggle('selected')"><div class="icon">📸</div><div class="name">Instagram</div><div class="cpc">~0.80€/clic</div></div>
-        <div class="pub-platform selected" data-p="facebook" onclick="this.classList.toggle('selected')"><div class="icon">👥</div><div class="name">Facebook</div><div class="cpc">~0.60€/clic</div></div>
-        <div class="pub-platform selected" data-p="tiktok" onclick="this.classList.toggle('selected')"><div class="icon">🎵</div><div class="name">TikTok</div><div class="cpc">~0.50€/clic</div></div>
-        <div class="pub-platform" data-p="snapchat" onclick="this.classList.toggle('selected')"><div class="icon">👻</div><div class="name">Snapchat</div><div class="cpc">~0.40€/clic</div></div>
-        <div class="pub-platform" data-p="youtube" onclick="this.classList.toggle('selected')"><div class="icon">▶️</div><div class="name">YouTube</div><div class="cpc">~0.10€/vue</div></div>
-        <div class="pub-platform" data-p="whatsapp" onclick="this.classList.toggle('selected')"><div class="icon">💬</div><div class="name">WhatsApp</div><div class="cpc">~0.30€/clic</div></div>
-      </div>
-      <div class="sec-title">Budget</div>
-      <div class="budget-display" id="budget-disp">10 €</div>
-      <input type="range" style="width:100%" min="5" max="500" step="5" value="10" id="budget-sl" oninput="updBudget()">
-      <div style="font-size:11px;color:var(--text2);text-align:center;margin-top:4px" id="budget-reach">~200 personnes · Diaspora africaine · Aéroport concerné</div>
-      <div style="background:#FEF9E7;border:1px solid #F6C847;border-radius:var(--r2);padding:9px 12px;margin-top:10px;font-size:11px;color:#7D6608">
-        <strong>Ciblage auto :</strong> Diaspora africaine FR/BE/CH · Intérêts voyage · Langue FR + langue locale selon destination
-      </div>
+      <p style="font-size:11px;color:var(--text2);margin:0 0 8px">Message générique diaspora (retard ou annulation) :</p>
+      <div id="pub-wa-preview" class="pub-wa-preview"></div>
+      <p style="font-size:10px;color:var(--text3);margin:0">Cochez aussi <strong>Bandeau</strong> dans le tableau pour l’accueil du site.</p>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModals()">Annuler</button>
-      <button type="button" class="btn btn-gold" id="btn-lancer-pub">🚀 Lancer — <span id="pub-total">10 €</span></button>
+      <button class="btn" onclick="closeModals()">Fermer</button>
+      <button type="button" class="btn btn-wa" id="btn-lancer-pub">Ouvrir WhatsApp</button>
     </div>
   </div>
 </div>
@@ -497,264 +485,8 @@ tbody tr.row-eligible:hover{background:#D5F5E3}
 
 <!-- radar-live.js chargé par radar-gate.js après authentification CRM -->
 
-<!-- ── Extension v3 : excuse + revenu + WA + potentiel ────── -->
-<script>
-(function(){
-  'use strict';
+<!-- Extension v3 désactivée (colonnes intégrées dans radar-live.js) -->
 
-  /* ── Matrice excuse CE 261 (source : CJUE Wallentin-Hermann, C-28/20 Airhelp/SAS, Delayfix) ── */
-  var EXCUSE = {
-    METEO:         { cls:'excuse-warn',  icon:'⚠️', txt:'Météo — à qualifier',       tip:'Banale→récupérable · Extrême→bloquer' },
-    TECHNIQUE:     { cls:'excuse-ok',    icon:'✅', txt:'Panne tech. — récupérable', tip:'Wallentin-Hermann C-549/07' },
-    GREVE_INTERNE: { cls:'excuse-ok',    icon:'✅', txt:'Grève int. — récupérable',  tip:'Airhelp/SAS C-28/20 : interne' },
-    TRAFIC:        { cls:'excuse-warn',  icon:'⚠️', txt:'Trafic — à vérifier',       tip:'Saturation→ok · Grève ATC→bloquer' },
-    INCONNUE:      { cls:'excuse-ok',    icon:'💪', txt:'Inconnue — dossier fort',    tip:'Art.5(3) : charge de preuve sur compagnie' },
-  };
-
-  /* Revenus estimés par fourchette distance (pax moy × 600€ × 25% commission) */
-  function estimateRevenue(depCode, arrCode) {
-    var EU = ['CDG','ORY','BRU','AMS','FCO','MXP','MAD','LIS','ZRH','GVA','LHR','FRA','NCE','LYS','MRS','TLS','BOD','NTE'];
-    var isEU_dep = EU.indexOf(depCode) !== -1;
-    var isEU_arr = EU.indexOf(arrCode) !== -1;
-    if (isEU_dep && !isEU_arr || !isEU_dep && isEU_arr) {
-      // Long-courrier Europe-Afrique (>3500km en général) → 250-350 pax
-      return { min: 37500, max: 52500, label: '37 500 – 52 500 €' };
-    }
-    return { min: 22500, max: 30000, label: '22 500 – 30 000 €' };
-  }
-
-  /* Extrait le code cause depuis les classes CSS de la row */
-  function getCauseFromRow(tr) {
-    var pill = tr.querySelector('.cause-pill');
-    if (!pill) return 'INCONNUE';
-    var cls = pill.className;
-    if (cls.indexOf('cause-meteo') !== -1)     return 'METEO';
-    if (cls.indexOf('cause-technique') !== -1) return 'TECHNIQUE';
-    if (cls.indexOf('cause-greve') !== -1)     return 'GREVE_INTERNE';
-    if (cls.indexOf('cause-trafic') !== -1)    return 'TRAFIC';
-    return 'INCONNUE';
-  }
-
-  /* Extrait codes aéroport (les 2 premiers <strong> dans les td départ/arrivée) */
-  function getRouteFromRow(tr) {
-    var tds = tr.querySelectorAll('td');
-    var dep = tds[4] ? (tds[4].querySelector('strong') || {}).textContent || '' : '';
-    var arr = tds[5] ? (tds[5].querySelector('strong') || {}).textContent || '' : '';
-    return { dep: dep.trim(), arr: arr.trim() };
-  }
-
-  /* Score CE 261 depuis la row */
-  function getScoreFromRow(tr) {
-    var num = tr.querySelector('.score-num');
-    return num ? parseInt(num.textContent, 10) || 0 : 0;
-  }
-
-  /* Retard (texte type "2h30") depuis la row */
-  function getRetardFromRow(tr) {
-    var el = tr.querySelector('.retard-h');
-    return el ? el.textContent.trim() : '?';
-  }
-
-  /* Numéro de vol depuis la row */
-  function getVolFromRow(tr) {
-    var tds = tr.querySelectorAll('td');
-    var cell = tds[1];
-    if (!cell) return '?';
-    // Le premier texte avant tout div enfant
-    var txt = '';
-    cell.childNodes.forEach(function(n){ if (n.nodeType === 3) txt += n.textContent; });
-    return txt.trim() || cell.textContent.trim().split('\n')[0].trim();
-  }
-
-  /* ── Enhance une row en ajoutant Excuse + Revenue + WA btn ── */
-  function enhanceRow(tr) {
-    if (tr.dataset.v3enhanced) return;
-    tr.dataset.v3enhanced = '1';
-
-    var cause    = getCauseFromRow(tr);
-    var route    = getRouteFromRow(tr);
-    var score    = getScoreFromRow(tr);
-    var retard   = getRetardFromRow(tr);
-    var vol      = getVolFromRow(tr);
-    var exc      = EXCUSE[cause] || EXCUSE['INCONNUE'];
-    var rev      = estimateRevenue(route.dep, route.arr);
-
-    /* Cellule Excuse CE 261 */
-    var excTd = document.createElement('td');
-    excTd.className = 'excuse-cell';
-    excTd.innerHTML =
-      '<span class="' + exc.cls + '" title="' + exc.tip + '">' + exc.icon + ' ' + exc.txt + '</span>' +
-      '<div class="excuse-tip">' + exc.tip + '</div>';
-
-    /* Cellule Revenu potentiel */
-    var revTd = document.createElement('td');
-    revTd.className = 'revenue-cell';
-    if (score >= 60) {
-      revTd.innerHTML =
-        '<span class="revenue-val">~' + rev.min.toLocaleString('fr-FR') + ' €</span>' +
-        '<div class="revenue-range">jusqu\'à ' + rev.max.toLocaleString('fr-FR') + ' €<br>25% commission</div>';
-    } else {
-      revTd.innerHTML = '<span style="color:var(--text3);font-size:10px">Score insuffisant</span>';
-    }
-
-    /* Insérer les 2 nouvelles colonnes avant la dernière (Immat.) puis Actions */
-    /* Ordre original: 0=Priorité 1=Vol 2=Comp 3=Sens 4=Dep 5=Arr 6=STD 7=STA 8=ETA 9=Retard 10=Phase 11=Cause 12=Score 13=Immat 14=Actions */
-    /* Nouveau :                                                                                         12=Score 13=Excuse 14=Revenue 15=Immat 16=Actions */
-    var tds   = tr.querySelectorAll('td');
-    var immatTd  = tds[13]; // Immat.
-    if (immatTd) {
-      tr.insertBefore(excTd, immatTd);
-      tr.insertBefore(revTd, immatTd);
-    }
-
-    /* Bouton WhatsApp dans Actions */
-    var actionsTd = tr.querySelectorAll('td')[tr.querySelectorAll('td').length - 1];
-    if (actionsTd && score >= 60) {
-      var waBtn = document.createElement('button');
-      waBtn.className = 'btn-wa radar-btn-sm';
-      waBtn.title = 'Envoyer message WhatsApp aux passagers';
-      waBtn.textContent = '💬 WA';
-      waBtn.onclick = function(e) {
-        e.stopPropagation();
-        var msg = encodeURIComponent(
-          'Bonjour ! Votre vol ' + vol + ' (' + (route.dep||'?') + ' → ' + (route.arr||'?') + ')' +
-          ' a accusé ' + retard + ' de retard.\n\n' +
-          'Vous êtes peut-être éligible à jusqu\'à 600 € d\'indemnisation ' +
-          'via le règlement européen CE 261/2004.\n\n' +
-          'Robin des Airs vérifie votre dossier gratuitement :\n' +
-          'https://linktr.ee/robindesairs\n\n' +
-          'Aucun frais si pas d\'indemnisation obtenue.'
-        );
-        window.open('https://wa.me/?text=' + msg, '_blank', 'noopener');
-      };
-      // Ajouter avant le dernier bouton
-      var lastBtn = actionsTd.querySelector('button:last-child');
-      if (lastBtn) actionsTd.insertBefore(waBtn, lastBtn);
-      else actionsTd.appendChild(waBtn);
-    }
-  }
-
-  /* ── MutationObserver sur #radar-tbody ─────────────────── */
-  function setupObserver() {
-    var tbody = document.getElementById('radar-tbody');
-    if (!tbody) { setTimeout(setupObserver, 300); return; }
-
-    var obs = new MutationObserver(function() {
-      var rows = tbody.querySelectorAll('tr');
-      rows.forEach(enhanceRow);
-      updatePotentielCard();
-      updateUrgentBanner();
-    });
-    obs.observe(tbody, { childList: true, subtree: true });
-  }
-
-  /* ── 7e card "Potentiel du jour" ────────────────────────── */
-  function updatePotentielCard() {
-    var metricsEl = document.getElementById('metrics');
-    if (!metricsEl) return;
-
-    /* Compter les vols éligibles (score ≥ 60) visibles dans le tableau */
-    var rows = document.querySelectorAll('#radar-tbody tr');
-    var eligible = 0;
-    rows.forEach(function(tr) {
-      var score = getScoreFromRow(tr);
-      if (score >= 60) eligible++;
-    });
-
-    /* Potentiel estimé : eligible × avg(37500, 22500) / 2 */
-    var potentiel = eligible * 30000;
-
-    /* Card existante ou créer */
-    var card = document.getElementById('metric-potentiel-card');
-    if (!card) {
-      card = document.createElement('div');
-      card.id = 'metric-potentiel-card';
-      card.className = 'metric';
-      card.style.cssText = 'background:linear-gradient(135deg,#007A4C,#005e3a);border-color:#007A4C';
-      metricsEl.appendChild(card);
-    }
-    card.innerHTML =
-      '<div class="metric-label" style="color:rgba(255,255,255,.75)">💶 Potentiel du jour</div>' +
-      '<div class="metric-val" style="color:#fff;font-size:' + (potentiel > 0 ? '20px' : '22px') + '">' +
-        (potentiel > 0 ? '~' + potentiel.toLocaleString('fr-FR') + ' €' : '—') +
-      '</div>' +
-      '<div class="metric-sub" style="color:rgba(255,255,255,.6)">' +
-        'Commission · ' + eligible + ' vol' + (eligible !== 1 ? 's' : '') + ' éligible' + (eligible !== 1 ? 's' : '') +
-      '</div>';
-  }
-
-  /* ── Bandeau urgent + pill ─────────────────────────────── */
-  function updateUrgentBanner() {
-    var rows = document.querySelectorAll('#radar-tbody tr');
-    var urgents = 0;
-    rows.forEach(function(tr) {
-      if (tr.querySelector('.prio-urgent, .prio-urgent-new')) urgents++;
-    });
-
-    /* Pill topbar */
-    var pill = document.getElementById('urgent-count-pill');
-    if (pill) pill.textContent = urgents;
-
-    /* Bandeau */
-    var banner = document.getElementById('urgent-banner');
-    if (!banner) return;
-    if (urgents > 0) {
-      banner.style.display = 'block';
-      var msg = document.getElementById('urgent-banner-msg');
-      if (msg) msg.textContent = urgents + ' vol' + (urgents > 1 ? 's' : '') + ' urgent' + (urgents > 1 ? 's' : '') + ' — action immédiate requise';
-    }
-  }
-
-  /* ── Alerte excuse dans modal pub ──────────────────────── */
-  /* Hook sur window.__radarOpenPub si disponible */
-  document.addEventListener('DOMContentLoaded', function() {
-    var origOpenPub = window.__radarOpenPub;
-    if (typeof origOpenPub === 'function') {
-      window.__radarOpenPub = function(id) {
-        origOpenPub(id);
-        /* Chercher la cause du vol dans le tableau */
-        var tr = document.querySelector('#radar-tbody tr[data-v3enhanced]');
-        /* … logique de lookup simplifiée */
-        var alert = document.getElementById('pub-excuse-alert');
-        if (alert) alert.style.display = 'none'; // reset
-      };
-    }
-  });
-
-  /* ── Export CSV éligibles ──────────────────────────────── */
-  window.exportEligCsv = function() {
-    var cards = document.querySelectorAll('#elig-list .elig-card');
-    if (!cards.length) { alert('Aucun vol éligible à exporter.'); return; }
-    var rows = ['Vol,Route,Retard,Score CE261,Revenu potentiel'];
-    cards.forEach(function(c) {
-      var texts = c.querySelectorAll('[style*="font-weight:700"],[style*="font-weight: 700"]');
-      var txt = c.textContent.replace(/\n+/g,' ').trim();
-      rows.push('"' + txt.replace(/"/g,'""') + '"');
-    });
-    var blob = new Blob([rows.join('\n')], {type:'text/csv;charset=utf-8;'});
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'eligible-ce261-' + new Date().toISOString().slice(0,10) + '.csv';
-    a.click();
-  };
-
-  /* ── Init ──────────────────────────────────────────────── */
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupObserver);
-  } else {
-    setupObserver();
-  }
-
-  /* Fallback : lancer updatePotentielCard après chargement du JS externe */
-  window.addEventListener('load', function() {
-    setTimeout(function() {
-      updatePotentielCard();
-      updateUrgentBanner();
-    }, 2000);
-  });
-
-})();
-</script>
 
 </body>
 </html>
