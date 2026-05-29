@@ -440,7 +440,7 @@ def ask_passengers(phone, lang="fr"):
             {"id": "pax_3", "title": "3 passagers" if lang == "fr" else "3 passengers", "description": "= 1800 EUR"},
             {"id": "pax_4", "title": "4 passagers" if lang == "fr" else "4 passengers", "description": "= 2400 EUR"},
             {"id": "pax_5", "title": "5 passagers" if lang == "fr" else "5 passengers", "description": "= 3000 EUR"},
-            {"id": "pax_more", "title": "6 ou plus" if lang == "fr" else "6 or more", "description": "Climbie vous appelle"}
+            {"id": "pax_more", "title": "6 ou plus" if lang == "fr" else "6 or more", "description": "Un expert vous rappelle"}
         ]
     }]
     
@@ -454,9 +454,9 @@ def ask_incident_type(phone, conv):
     total = 600 * pax if pax else 600
     
     if lang == "en":
-        body = f"Great! 🎉 {pax} passenger(s) = up to {total} EUR potential 💰\n\n✈️ What happened with your flight?"
+        body = f"Great! 🎉 {pax} passenger(s) = up to *{total} EUR* potential\n_(You keep 75% net — we take 25% only if we win)_ 💰\n\n✈️ What happened with your flight?"
     else:
-        body = f"Genial ! 🎉 {pax} passager(s) = jusqu'a {total} EUR potentiel 💰\n\n✈️ Que s'est-il passe avec votre vol ?"
+        body = f"Parfait ! 🎉 {pax} passager(s) = jusqu'à *{total} €* potentiels\n_(Vous gardez 75% net — on prend 25% uniquement si on gagne)_ 💰\n\n✈️ Que s'est-il passé avec votre vol ?"
     
     buttons = [
         {"id": "inc_delay", "title": "⏱️ Retard +3h" if lang == "fr" else "⏱️ Delay +3h"},
@@ -515,6 +515,15 @@ def send_delay_ineligible(phone, lang="fr"):
             "_L'equipe Robin_"
         )
     send_whatsapp_text(phone, msg)
+
+def ask_route(phone, conv):
+    """Demande l'aéroport de départ et d'arrivée"""
+    lang = conv["data"]["language"]
+    if lang == "en":
+        body = "🗺️ What was your route?\n\nPlease type like this:\n*Paris CDG → Dakar DSS*\n\nor just the two airport codes:\n*CDG → DSS*"
+    else:
+        body = "🗺️ Quel était votre trajet ?\n\nTapez comme ceci :\n*Paris CDG → Dakar DSS*\n\nou juste les codes aéroport :\n*CDG → DSS*"
+    send_whatsapp_text(phone, body)
 
 def ask_airline(phone, conv):
     """ETAPE 4 : Compagnie aerienne (liste avec option Autre)"""
@@ -706,13 +715,14 @@ def show_summary_and_mandat(phone, conv):
             f"_Robin des Airs team_"
         )
     else:
+        route_str = f"\n🗺️ {d.get('route')}" if d.get('route') else ""
         msg_a = (
-            f"🎉 *Dossier enregistre !*\nRef. *{ref}*\n\n"
+            f"🎉 *Dossier enregistré !*\nRéf. *{ref}*\n\n"
             f"👤 {main_name}\n"
-            f"✈️ {d.get('flight_number', '?')} — {d.get('airline', '?')}\n"
+            f"✈️ {d.get('flight_number', '?')} — {d.get('airline', '?')}{route_str}\n"
             f"📅 {d.get('flight_date', '?')} — {incident}\n"
             f"💵 *Objectif : {net} € net*\n\n"
-            f"Prochaine etape : *2 minutes* pour activer votre dossier."
+            f"Prochaine étape : *2 minutes* pour activer votre dossier."
         )
         msg_b = (
             f"✅ *Dossier {ref}*\n\n"
@@ -759,7 +769,7 @@ def process_button_reply(phone, button_id, button_title, conv):
     # PASSAGERS
     if button_id.startswith("pax_"):
         if button_id == "pax_more":
-            send_whatsapp_text(phone, "🙏 Pour les groupes de 6+, Climbie vous appelle directement.\n\n📱 +33 7 56 86 36 30\n\nOu remplissez : 👉 robindesairs.eu/depot-express")
+            send_whatsapp_text(phone, "🙏 Pour les groupes de 6+, Un expert vous rappelle directement.\n\n📱 +33 7 56 86 36 30\n\nOu remplissez : 👉 robindesairs.eu/depot-express")
             return
         conv["data"]["passengers"] = int(button_id.split("_")[1])
         conv["current_step"] = "incident_type"
@@ -789,13 +799,13 @@ def process_button_reply(phone, button_id, button_title, conv):
         conv["current_step"] = "flight_type"
         ask_flight_type(phone, conv)
         return
-    
+
     # TYPE VOL
     if button_id.startswith("type_"):
         mapping = {"type_direct": "direct", "type_connection": "connection"}
         conv["data"]["flight_type"] = mapping.get(button_id, "direct")
-        conv["current_step"] = "airline"
-        ask_airline(phone, conv)
+        conv["current_step"] = "route"
+        ask_route(phone, conv)
         return
     
     # COMPAGNIE
@@ -858,7 +868,7 @@ def process_button_reply(phone, button_id, button_title, conv):
     
     if button_id == "minor_self":
         # Mineur seul - escalade
-        send_whatsapp_text(phone, "👶 Pour un mineur seul, un parent doit signer le mandat.\n\n📱 Climbie vous appelle : +33 7 56 86 36 30")
+        send_whatsapp_text(phone, "👶 Pour un mineur seul, un parent doit signer le mandat.\n\n📱 Un expert vous rappelle : +33 7 56 86 36 30")
         return
     
     if button_id == "minor_yes":
@@ -1175,6 +1185,13 @@ def webhook():
             conv["data"]["airline"] = message_text.strip()
             conv["current_step"] = "flight_number"
             ask_flight_number(phone, conv)
+            return jsonify({"status": "ok"}), 200
+
+        # Saisie route (ex: CDG → DSS ou Paris → Dakar)
+        if current_step == "route":
+            conv["data"]["route"] = message_text.strip()
+            conv["current_step"] = "airline"
+            ask_airline(phone, conv)
             return jsonify({"status": "ok"}), 200
         
         # Saisie numero de vol
