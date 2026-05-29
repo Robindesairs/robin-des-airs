@@ -416,6 +416,13 @@ def ask_passengers(phone, lang="fr"):
             "📸 *Fast option:* Send a photo of your boarding pass and I'll fill everything in automatically!\n\n"
             "👇 Or answer a few quick questions below."
         )
+        rgpd = (
+            "🔒 *Data & consent notice*\n\n"
+            "Robin des Airs collects your information solely to build your compensation file against the airline. "
+            "Your data is never sold or shared with third parties.\n\n"
+            "By continuing this conversation, you accept our *Terms & Conditions*:\n"
+            "👉 robindesairs.eu/cgv.html"
+        )
     else:
         welcome = (
             "👋 Bienvenue chez *Robin des Airs* 🏹\n\n"
@@ -423,8 +430,17 @@ def ask_passengers(phone, lang="fr"):
             "📸 *Option rapide :* Envoyez une photo de votre carte d'embarquement et je remplis tout automatiquement !\n\n"
             "👇 Ou répondez aux quelques questions ci-dessous."
         )
+        rgpd = (
+            "🔒 *Données & consentement*\n\n"
+            "Robin des Airs collecte vos informations uniquement pour constituer votre dossier d'indemnisation contre la compagnie aérienne. "
+            "Vos données ne sont jamais revendues ni partagées avec des tiers.\n\n"
+            "En continuant cette conversation, vous acceptez nos *Conditions Générales de Vente* :\n"
+            "👉 robindesairs.eu/cgv.html"
+        )
     send_whatsapp_text(phone, welcome)
     import time as _time
+    _time.sleep(1)
+    send_whatsapp_text(phone, rgpd)
     _time.sleep(1)
 
     if lang == "en":
