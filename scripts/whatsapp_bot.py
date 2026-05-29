@@ -839,8 +839,13 @@ def process_button_reply(phone, button_id, button_title, conv):
             conv["current_step"] = "airline_other_input"
             return
         conv["data"]["airline"] = airlines_map.get(button_id, "Inconnue")
-        conv["current_step"] = "flight_number"
-        ask_flight_number(phone, conv)
+        if conv["data"].get("boarding_pass_confirmed") and conv["data"].get("flight_number"):
+            # Vol et nom déjà connus via carte — sauter au type de vol
+            conv["current_step"] = "flight_type"
+            ask_flight_type(phone, conv)
+        else:
+            conv["current_step"] = "flight_number"
+            ask_flight_number(phone, conv)
         return
     
     # ANNEE
@@ -870,8 +875,13 @@ def process_button_reply(phone, button_id, button_title, conv):
         year = conv["data"].get("temp_year", "")
         month = conv["data"].get("temp_month", "")
         conv["data"]["flight_date"] = f"{day}/{month}/{year}"
-        conv["current_step"] = "passenger_names"
-        ask_passenger_names(phone, conv)
+        if conv["data"].get("boarding_pass_confirmed") and conv["data"].get("passenger_names"):
+            # Noms déjà connus via carte — sauter directement aux mineurs
+            conv["current_step"] = "minor_check"
+            ask_minors(phone, conv)
+        else:
+            conv["current_step"] = "passenger_names"
+            ask_passenger_names(phone, conv)
         return
     
     # MINEURS
@@ -1184,10 +1194,30 @@ def webhook():
         # Confirmation apres scan carte
         if current_step == "boarding_pass_confirm":
             txt = message_text.strip().lower()
-            if txt in ("oui", "yes", "ok", "correct", "yes correct", "c'est bon"):
-                # Aller directement au type d'incident
-                conv["current_step"] = "incident_type"
-                ask_incident_type(phone, conv)
+            if txt in ("oui", "yes", "ok", "correct", "yes correct", "c'est bon", "👍"):
+                # On a déjà : compagnie, vol, date, nom passager
+                # Il manque : nb passagers, type incident, retard, type vol, route, mineurs
+                # On marque que la carte a été confirmée pour sauter compagnie/vol/noms plus tard
+                conv["data"]["boarding_pass_confirmed"] = True
+                # Si nb passagers pas encore défini, le demander d'abord
+                if not conv["data"].get("passengers"):
+                    conv["current_step"] = "passengers"
+                    if lang == "en":
+                        send_whatsapp_text(phone, "👥 How many passengers were on this flight?")
+                    else:
+                        send_whatsapp_text(phone, "👥 Combien de passagers étaient sur ce vol ?")
+                    sections = [{"title": "Passagers", "rows": [
+                        {"id": "pax_1", "title": "1 passager", "description": "= 600 €"},
+                        {"id": "pax_2", "title": "2 passagers", "description": "= 1 200 €"},
+                        {"id": "pax_3", "title": "3 passagers", "description": "= 1 800 €"},
+                        {"id": "pax_4", "title": "4 passagers", "description": "= 2 400 €"},
+                        {"id": "pax_5", "title": "5 passagers", "description": "= 3 000 €"},
+                        {"id": "pax_more", "title": "6 ou plus", "description": "Un expert vous rappelle"},
+                    ]}]
+                    send_whatsapp_list(phone, "👥 Combien de passagers ?" if lang == "fr" else "👥 How many passengers?", "Choisir 👥", sections)
+                else:
+                    conv["current_step"] = "incident_type"
+                    ask_incident_type(phone, conv)
             else:
                 # Laisser corriger et relancer
                 if lang == "en":
