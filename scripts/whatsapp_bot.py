@@ -408,10 +408,29 @@ def send_whatsapp_list(phone, body_text, button_label, sections, header_text=Non
 
 def ask_passengers(phone, lang="fr"):
     """ETAPE 1 : Nombre de passagers (TOUJOURS EN PREMIER)"""
+    # D'abord envoyer le message d'accueil avec option carte d'embarquement
     if lang == "en":
-        body = "👋 Hello! Welcome to Robin des Airs ✈️\n\nLet's check your eligibility in 2 min.\n\n👥 First, how many passengers were on the flight?"
+        welcome = (
+            "👋 Hello! Welcome to *Robin des Airs* 🏹\n\n"
+            "✈️ Your delayed or cancelled flight may entitle you to *€600 per person*.\n\n"
+            "📸 *Fast option:* Send a photo of your boarding pass and I'll fill everything in automatically!\n\n"
+            "👇 Or answer a few quick questions below."
+        )
     else:
-        body = "👋 Bonjour ! Bienvenue chez Robin des Airs ✈️\n\nVerifions votre eligibilite en 2 min.\n\n👥 D'abord, combien de passagers etaient sur le vol ?"
+        welcome = (
+            "👋 Bienvenue chez *Robin des Airs* 🏹\n\n"
+            "✈️ Votre vol retardé ou annulé peut vous donner droit à *600 € par personne*.\n\n"
+            "📸 *Option rapide :* Envoyez une photo de votre carte d'embarquement et je remplis tout automatiquement !\n\n"
+            "👇 Ou répondez aux quelques questions ci-dessous."
+        )
+    send_whatsapp_text(phone, welcome)
+    import time as _time
+    _time.sleep(1)
+
+    if lang == "en":
+        body = "👥 How many passengers were on the flight?"
+    else:
+        body = "👥 Combien de passagers étaient sur le vol ?"
     
     sections = [{
         "title": "Nombre de passagers" if lang == "fr" else "Number of passengers",
@@ -1072,13 +1091,84 @@ def webhook():
             return jsonify({"status": "duplicate_message"}), 200
 
         print(f"Message de {phone}: {message_text[:80]} (image: {bool(image_data)})")
-        
+
         # Detecter langue au premier message
         if not conv["data"].get("language") or conv["data"]["language"] == "fr":
             conv["data"]["language"] = detect_language(message_text)
-        
-        # ===== GESTION DES SAISIES TEXTE PENDANT FLUX GUIDE =====
+
+        lang = conv["data"].get("language", "fr")
+
+        # ===== SCAN CARTE D'EMBARQUEMENT DES LE DEBUT =====
         current_step = conv.get("current_step")
+        if image_data and current_step in (None, "passengers", "flight_number"):
+            print(f"[BOARDING PASS] scan pour {phone}")
+            extracted_json = call_openai(
+                phone,
+                "Extrait de cette carte d'embarquement ces informations et reponds UNIQUEMENT en JSON valide: "
+                "{\"flight_number\": \"...\", \"date\": \"YYYY-MM-DD\", \"passenger_name\": \"...\", \"airline\": \"...\", \"origin\": \"...\", \"destination\": \"...\"}",
+                image_data
+            )
+            if extracted_json:
+                try:
+                    json_match = re.search(r'\{[^{}]+\}', extracted_json, re.DOTALL)
+                    if json_match:
+                        info = json.loads(json_match.group())
+                        if info.get("flight_number"):
+                            conv["data"]["flight_number"] = info["flight_number"]
+                        if info.get("date"):
+                            conv["data"]["flight_date"] = info["date"]
+                        if info.get("airline"):
+                            conv["data"]["airline"] = info["airline"]
+                        if info.get("passenger_name"):
+                            conv["data"]["passenger_names"] = [info["passenger_name"]]
+                        # Confirmer lecture
+                        if lang == "en":
+                            confirm = (
+                                f"📸 Boarding pass scanned!\n\n"
+                                f"✈️ Flight: *{info.get('flight_number', '?')}*\n"
+                                f"🏢 Airline: *{info.get('airline', '?')}*\n"
+                                f"📅 Date: *{info.get('date', '?')}*\n"
+                                f"👤 Passenger: *{info.get('passenger_name', '?')}*\n\n"
+                                f"Is this correct? If yes, just answer: *Yes*\nIf not, type the correction."
+                            )
+                        else:
+                            confirm = (
+                                f"📸 Carte d'embarquement scannée !\n\n"
+                                f"✈️ Vol : *{info.get('flight_number', '?')}*\n"
+                                f"🏢 Compagnie : *{info.get('airline', '?')}*\n"
+                                f"📅 Date : *{info.get('date', '?')}*\n"
+                                f"👤 Passager : *{info.get('passenger_name', '?')}*\n\n"
+                                f"C'est correct ? Si oui répondez : *Oui*\nSinon, tapez la correction."
+                            )
+                        send_whatsapp_text(phone, confirm)
+                        conv["current_step"] = "boarding_pass_confirm"
+                        return jsonify({"status": "boarding_pass_scanned"}), 200
+                except Exception as e:
+                    print(f"[BOARDING PASS] erreur parsing: {e}")
+            # Si scan échoue, continuer normalement
+            if lang == "en":
+                send_whatsapp_text(phone, "📸 I couldn't read the boarding pass clearly. Let's continue with questions 👇")
+            else:
+                send_whatsapp_text(phone, "📸 Je n'ai pas pu lire la carte clairement. On continue avec les questions 👇")
+            if not conv.get("current_step"):
+                conv["current_step"] = "passengers"
+                ask_passengers(phone, lang)
+            return jsonify({"status": "ok"}), 200
+
+        # Confirmation apres scan carte
+        if current_step == "boarding_pass_confirm":
+            txt = message_text.strip().lower()
+            if txt in ("oui", "yes", "ok", "correct", "yes correct", "c'est bon"):
+                # Aller directement au type d'incident
+                conv["current_step"] = "incident_type"
+                ask_incident_type(phone, conv)
+            else:
+                # Laisser corriger et relancer
+                if lang == "en":
+                    send_whatsapp_text(phone, "✍️ What would you like to correct? (flight number, date, airline or passenger name)")
+                else:
+                    send_whatsapp_text(phone, "✍️ Qu'est-ce que vous voulez corriger ? (numéro de vol, date, compagnie ou nom passager)")
+            return jsonify({"status": "ok"}), 200
         
         # Saisie compagnie "Autre"
         if current_step == "airline_other_input":
