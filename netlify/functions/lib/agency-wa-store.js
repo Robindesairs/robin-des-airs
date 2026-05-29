@@ -5,6 +5,7 @@
 const STORE_NAME = 'robin-wa-agency';
 const LINK_PREFIX = 'link/';
 const SESSION_PREFIX = 'session/';
+const AGENCY_PREFIX = 'agency/';
 const LINK_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
 let netlifyBlobsModule = null;
@@ -82,6 +83,65 @@ async function clearAgencySession(event, phone) {
   await store.delete(SESSION_PREFIX + p);
 }
 
+// ─── Comptes agences dynamiques (créés via auto-inscription) ─────────────────
+
+const CITY_CODES = {
+  douala: 'DLA', yaounde: 'YDE', yaoundé: 'YDE',
+  bafoussam: 'BFM', garoua: 'GRE', bamenda: 'BDA',
+  kribi: 'KBI', limbe: 'LMB', ngaoundere: 'NGE', maroua: 'MRU',
+};
+
+function cityCode(ville) {
+  const n = String(ville || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  return CITY_CODES[n] || n.slice(0, 3).toUpperCase() || 'CMR';
+}
+
+function genPassword() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  return Array.from({ length: 8 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+}
+
+async function saveNewAgency(event, { name, ville, phone, sourcePhone }) {
+  const store = getStore(event);
+  if (!store) return null;
+
+  // Compte le nombre d'agences existantes pour générer le code séquentiel
+  const existing = await loadDynamicAgencies(event);
+  const cc = cityCode(ville);
+  const seq = String(existing.length + 1).padStart(3, '0');
+  const code = `AGC-${cc}-${seq}`;
+  const pass = genPassword();
+
+  const account = {
+    code,
+    pass,
+    name: String(name || '').trim(),
+    ville: String(ville || '').trim(),
+    phone: String(phone || '').replace(/\D/g, ''),
+    sourcePhone: String(sourcePhone || '').replace(/\D/g, ''),
+    whatsappPhones: [String(phone || '').replace(/\D/g, '')],
+    airtableMatch: code,
+    createdAt: new Date().toISOString(),
+    status: 'pending',
+  };
+
+  await setJson(store, AGENCY_PREFIX + code, account);
+  return account;
+}
+
+async function loadDynamicAgencies(event) {
+  const store = getStore(event);
+  if (!store) return [];
+  try {
+    const list = await store.list({ prefix: AGENCY_PREFIX });
+    const keys = (list.blobs || list.keys || []).map(b => b.key || b);
+    const accounts = await Promise.all(keys.map(k => getJson(store, k)));
+    return accounts.filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
 module.exports = {
   STORE_NAME,
   getAgencyLink,
@@ -89,5 +149,7 @@ module.exports = {
   getAgencySession,
   saveAgencySession,
   clearAgencySession,
+  saveNewAgency,
+  loadDynamicAgencies,
   blobsAvailable: () => !!netlifyBlobsModule,
 };

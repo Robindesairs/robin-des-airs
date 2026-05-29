@@ -22,6 +22,8 @@ const {
   getAgencySession,
   saveAgencySession,
   clearAgencySession,
+  saveNewAgency,
+  loadDynamicAgencies,
 } = require('./agency-wa-store');
 const { normalizeWaPhone } = require('./wa-convo-store');
 
@@ -95,6 +97,86 @@ function formatWaPhoneDisplay(phone) {
   return `+${p}`;
 }
 
+const SIGNUP_INTEREST = /oui|yes|interess|partenaire|rejoindre|adherer|adhérer|je veux|ok|go|partner/i;
+
+async function handleSignupFlow(event, phone, inbound, session) {
+  // Étape 1 — premier contact : proposer le partenariat
+  if (!session.flow || session.flow !== 'signup') {
+    if (!SIGNUP_INTEREST.test(inbound) && session.step !== 'SIGNUP_NAME') {
+      const newSession = { step: 'SIGNUP_INTEREST', flow: 'signup', draft: {} };
+      await saveAgencySession(event, phone, newSession);
+      return [
+        '👋 Bienvenue sur le canal *agences partenaires* Robin des Airs 🏹\n\n' +
+        'Nous indemnisons les passagers de vols retardés, annulés ou surbookés (jusqu\'à 600€/passager).\n\n' +
+        '🤝 En tant qu\'agence partenaire, vous gagnez une *commission sur chaque dossier* que vous nous soumettez.\n\n' +
+        'Vos clients voyagent ? Leurs billets nous intéressent.\n\n' +
+        'Tapez *oui* pour rejoindre le programme gratuitement, ou *non* pour arrêter.',
+      ];
+    }
+    if (/non|nope|no\b|pas interesse|pas intéressé/i.test(inbound)) {
+      await clearAgencySession(event, phone);
+      return ['Pas de problème, bonne continuation ! Si vous changez d\'avis, revenez nous voir.'];
+    }
+  }
+
+  if (session.step === 'SIGNUP_INTEREST' || (SIGNUP_INTEREST.test(inbound) && !session.step?.startsWith('SIGNUP_'))) {
+    const newSession = { step: 'SIGNUP_NAME', flow: 'signup', draft: {} };
+    await saveAgencySession(event, phone, newSession);
+    return ['Super ! 🎉\n\nQuel est le *nom de votre agence* ?'];
+  }
+
+  if (session.step === 'SIGNUP_NAME') {
+    if (inbound.length < 2) return ['Merci d\'entrer un nom valide pour votre agence.'];
+    session.draft.name = inbound.trim();
+    session.step = 'SIGNUP_CITY';
+    await saveAgencySession(event, phone, session);
+    return ['Dans quelle *ville* êtes-vous basé(e) ? (ex. Douala, Yaoundé, Bafoussam…)'];
+  }
+
+  if (session.step === 'SIGNUP_CITY') {
+    session.draft.ville = inbound.trim();
+    session.step = 'SIGNUP_CONFIRM';
+    await saveAgencySession(event, phone, session);
+    return [
+      `📋 *Récapitulatif*\n\n` +
+      `Agence : *${session.draft.name}*\nVille : *${session.draft.ville}*\n\n` +
+      'Tapez *oui* pour confirmer et recevoir vos accès partenaire.',
+    ];
+  }
+
+  if (session.step === 'SIGNUP_CONFIRM') {
+    if (!/^oui|ok|yes|confirmer$/i.test(normText(inbound))) {
+      return ['Tapez *oui* pour confirmer, ou *annuler* pour recommencer.'];
+    }
+    const account = await saveNewAgency(event, {
+      name: session.draft.name,
+      ville: session.draft.ville,
+      phone,
+      sourcePhone: phone,
+    });
+    if (!account) {
+      return ['❌ Erreur technique. Contactez Robin des Airs directement pour activer votre compte.'];
+    }
+    await saveAgencyLink(event, phone, account);
+    await clearAgencySession(event, phone);
+    return [
+      `✅ *Bienvenue, ${account.name} !*\n\n` +
+      `Vos accès partenaire :\n` +
+      `• Code agence : *${account.code}*\n` +
+      `• Mot de passe : *${account.pass}*\n\n` +
+      `📱 Portail web : https://robindesairs.eu/espace-agence/\n\n` +
+      `Conservez bien ces informations. Tapez *menu* pour soumettre votre premier dossier.`,
+      MENU_TEXT,
+    ];
+  }
+
+  // Fallback
+  await clearAgencySession(event, phone);
+  return [
+    '👋 Bienvenue ! Tapez *oui* pour rejoindre le programme partenaires Robin des Airs, ou contactez-nous si vous avez déjà un code agence.',
+  ];
+}
+
 async function resolveAgency(event, phone) {
   const linked = await getAgencyLink(event, phone);
   if (linked && linked.code) {
@@ -155,15 +237,16 @@ async function handleAgencyWhatsAppMessage(event, phone, text) {
       await saveAgencyLink(event, phone, pre);
       agency = pre;
     } else {
-      if (session.step !== 'AUTH_CODE' && !isMenuCmd(inbound)) {
-        session = { step: 'AUTH_CODE', draft: {}, flow: null };
-        await saveAgencySession(event, phone, session);
+      // Vérifier dans les comptes dynamiques (Blobs)
+      const dynamic = await loadDynamicAgencies(event);
+      const dynMatch = dynamic.find(a => (a.whatsappPhones || []).includes(phone));
+      if (dynMatch) {
+        await saveAgencyLink(event, phone, dynMatch);
+        agency = dynMatch;
+      } else {
+        // Flow auto-inscription
+        return handleSignupFlow(event, phone, inbound, session);
       }
-      return [
-        '👋 Bienvenue sur le canal *agences partenaires* Robin des Airs.',
-        'Pour vous identifier, envoyez votre *code agence* (ex. GSA-DKR-001), puis votre mot de passe.',
-        'Si votre numéro n’est pas encore activé, contactez l’équipe Robin.',
-      ];
     }
   }
 

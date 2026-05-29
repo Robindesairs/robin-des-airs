@@ -38,6 +38,10 @@
         .badge-600 { background: var(--green); color: black; padding: 6px 12px; border-radius: 6px; font-weight: bold; }
         .btn-tracker { background: var(--blue); color: white; padding: 8px 14px; border-radius: 6px; text-decoration: none; font-size: 12px; font-weight: bold; display: inline-block; }
         .btn-tracker:hover { opacity: 0.9; color: white; }
+        .btn-pub { background: #9b59b6; color: white; padding: 8px 14px; border-radius: 6px; border: none; font-size: 12px; font-weight: bold; cursor: pointer; transition: all 0.2s; }
+        .btn-pub:hover { background: #8e44ad; }
+        .btn-pub:disabled { background: #444; color: #888; cursor: not-allowed; }
+        .btn-pub.sent { background: #27ae60; }
         #loader { text-align: center; padding: 60px; color: #666; font-size: 16px; }
     </style>
 </head>
@@ -83,6 +87,7 @@
                     <th>Retard</th>
                     <th>Indemnité</th>
                     <th>Action</th>
+                    <th>Pub Géo</th>
                 </tr>
             </thead>
             <tbody id="flight-list"></tbody>
@@ -158,7 +163,13 @@
                 var delay = f.cancelled ? '—' : (f.delayMinutes != null ? f.delayMinutes + ' min' : '—');
                 var indemnite = crit && f.eligible ? '<span class="badge-600">600 €</span>' : '—';
                 var tracker = (f.trackerUrl && f.trackerUrl !== '#') ? '<a href="' + f.trackerUrl + '" target="_blank" class="btn-tracker">Traqueur</a>' : '—';
-                row.innerHTML = '<td><b>' + (f.flight || '—') + '</b></td><td>' + (f.airline || '—') + '</td><td>' + (f.dep || '—') + ' → ' + (f.arr || '—') + '</td><td>' + dep + '</td><td>' + arr + '</td><td>' + delay + '</td><td>' + indemnite + '</td><td>' + tracker + '</td>';
+                // Aéroport africain = aéroport de départ si le vol part d'Afrique, sinon arrivée
+                var africaAirports = ['DSS','DKR','BKO','OUA','NIM','CKY','FNA','ROB','ABJ','COO','LFW','ACC','BJL','OXB','LOS','ABV','KAN','PHC','DLA','NSI','LBV','BZV','PNR','FIH','FKI','FBM','GOM','LAD','NDJ','BGF','ADD','NBO','MBA','EBB','KGL','DAR','JRO','ZNZ','TNR','MRU','MPM','LUN','HRE','JNB','CPT','DUR','WDH','JIB','NKC','SSG'];
+                var geoAirport = africaAirports.indexOf(f.dep) !== -1 ? f.dep : (africaAirports.indexOf(f.arr) !== -1 ? f.arr : null);
+                var pubCell = geoAirport
+                    ? '<button class="btn-pub" data-airport="' + geoAirport + '" onclick="launchPub(this)">📢 ' + geoAirport + '</button>'
+                    : '—';
+                row.innerHTML = '<td><b>' + (f.flight || '—') + '</b></td><td>' + (f.airline || '—') + '</td><td>' + (f.dep || '—') + ' → ' + (f.arr || '—') + '</td><td>' + dep + '</td><td>' + arr + '</td><td>' + delay + '</td><td>' + indemnite + '</td><td>' + tracker + '</td><td>' + pubCell + '</td>';
                 list.appendChild(row);
             });
 
@@ -178,6 +189,33 @@
             if (wrap) wrap.style.display = 'none';
         });
     }
+
+    window.launchPub = function(btn) {
+        var airport = btn.getAttribute('data-airport');
+        if (!airport || btn.disabled) return;
+        btn.disabled = true;
+        btn.textContent = '⏳ Envoi...';
+        fetch(apiOrigin() + '/.netlify/functions/ad-launch', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ airport: airport }),
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+            if (d.ok) {
+                btn.textContent = '✅ ' + airport + ' lancé';
+                btn.classList.add('sent');
+            } else {
+                btn.textContent = '❌ Erreur';
+                btn.disabled = false;
+                alert('Erreur Meta Ads : ' + (d.error || 'inconnue'));
+            }
+        })
+        .catch(function(e) {
+            btn.textContent = '❌ Réseau';
+            btn.disabled = false;
+        });
+    };
 
     document.getElementById('btn-scan').onclick = load;
     document.getElementById('btn-auto').onclick = function() {

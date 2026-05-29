@@ -148,6 +148,51 @@ async function watiAgencySendSessionMessage(to, text) {
 }
 
 /**
+ * Envoie un message template WhatsApp (cold outreach — hors fenêtre 24h).
+ * Le template doit être approuvé dans Wati avant utilisation.
+ *
+ * @param {string} to - Numéro destinataire
+ * @param {string} templateName - Nom exact du template dans Wati (ex. "outreach_agence_partenaire")
+ * @param {Array<{name:string,value:string}>} parameters - Variables du template
+ * @param {'agency'|'robin'} [channel] - Canal Wati à utiliser (défaut: agency)
+ */
+async function watiAgencySendTemplate(to, templateName, parameters = [], channel = 'agency') {
+  const cfg = channel === 'agency' ? watiAgencyCfg() : watiCfg();
+  if (!cfg) {
+    return { ok: false, error: `Wati ${channel} non configuré` };
+  }
+
+  const wa = normalizeWatiPhone(to);
+  if (!wa || wa.length < 10) return { ok: false, error: 'Numéro invalide' };
+
+  const url = `${cfg.base}/api/v1/sendTemplateMessage?whatsappNumber=${encodeURIComponent(wa)}`;
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${cfg.token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        template_name: templateName,
+        broadcast_name: `prospection_${Date.now()}`,
+        parameters,
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok || data.ok === false) {
+      const errMsg = data?.message || data?.error || `HTTP ${res.status}`;
+      return { ok: false, error: String(errMsg).slice(0, 300), details: data };
+    }
+    return { ok: true, messageId: data?.message?.whatsappMessageId || data?.id };
+  } catch (e) {
+    return { ok: false, error: e.message || 'Erreur template Wati' };
+  }
+}
+
+/**
  * Envoie un fichier (PDF, image…) via Wati session.
  * @param {string} to - Numéro destinataire
  * @param {Buffer} fileBuffer - Contenu du fichier
@@ -193,6 +238,7 @@ module.exports = {
   normalizeWatiPhone,
   watiSendSessionMessage,
   watiAgencySendSessionMessage,
+  watiAgencySendTemplate,
   watiSendFile,
   DEFAULT_ROBIN_WA,
 };
