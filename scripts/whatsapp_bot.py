@@ -403,13 +403,13 @@ def ask_language(phone):
     sections = [{"title": "Choisir votre langue", "rows": [
         {"id": "lang_fr",      "title": "🇫🇷 Français"},
         {"id": "lang_en",      "title": "🇬🇧 English"},
-        {"id": "lang_wo",      "title": "🌍 Wolof"},
-        {"id": "lang_mandinka","title": "🌍 Mandinka"},
-        {"id": "lang_twi",     "title": "🌍 Twi"},
-        {"id": "lang_yoruba",  "title": "🌍 Yoruba"},
-        {"id": "lang_lingala", "title": "🌍 Lingala"},
-        {"id": "lang_swahili", "title": "🌍 Swahili"},
-        {"id": "lang_peul",    "title": "🌍 Peul / Fulfulde"},
+        {"id": "lang_wo",      "title": "🇸🇳 Wolof"},
+        {"id": "lang_mandinka","title": "🇬🇲 Mandinka"},
+        {"id": "lang_twi",     "title": "🇬🇭 Twi"},
+        {"id": "lang_yoruba",  "title": "🇳🇬 Yoruba"},
+        {"id": "lang_lingala", "title": "🇨🇩 Lingala"},
+        {"id": "lang_swahili", "title": "🇰🇪 Swahili"},
+        {"id": "lang_peul",    "title": "🇬🇳 Peul / Fulfulde"},
     ]}]
     send_whatsapp_list(phone, body, "Choisir 🌍", sections)
 
