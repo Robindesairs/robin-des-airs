@@ -61,6 +61,9 @@ STEP_PROGRESS = {
     "flight_date_confirm": 5,
     "flight_type":         6,
     "minor_check":         6,
+    "minor_select":        6,
+    "passport_collect":    7,
+    "passport_confirm":    7,
     "recap":               6,
     "recap_modify":        6,
     "route_input":         6,
@@ -133,6 +136,9 @@ def get_or_create_conversation(phone):
                 "route":             None,
                 "has_minors":        None,
                 "minors_count":      0,
+                "minor_names":       [],
+                "passports_collected": [],
+                "relance_count":     0,
                 "boarding_pass_confirmed": False,
                 "language":          "fr",
                 "preferred_language": None,
@@ -732,6 +738,53 @@ def ask_minors(phone, conv):
     send_whatsapp_buttons(phone, body, buttons)
 
 
+def ask_minor_select(phone, conv):
+    """Demande lesquels des passagers sont mineurs — liste de noms."""
+    lang  = conv["data"]["language"]
+    names = conv["data"].get("passenger_names", [])
+    if lang == "en":
+        body  = with_bar("minor_check", "👶 Which passengers are minors (under 18)?\n\nSelect each minor one by one and type *done* when finished.")
+        label = "Select minor"
+    else:
+        body  = with_bar("minor_check", "👶 Lesquels des passagers sont mineurs (moins de 18 ans) ?\n\nSélectionnez-les un par un et tapez *ok* quand c'est fini.")
+        label = "Choisir mineur"
+    rows = [{"id": f"minor_pax_{i}", "title": names[i], "description": "👶 Mineur" if lang=="fr" else "👶 Minor"} for i in range(len(names))]
+    sections = [{"title": "Passagers", "rows": rows}]
+    send_whatsapp_list(phone, body, label, sections)
+
+
+def ask_passport(phone, conv):
+    """Demande photo passeport — un par passager."""
+    lang  = conv["data"]["language"]
+    names = conv["data"].get("passenger_names", [])
+    passports = conv["data"].get("passports_collected", [])
+    idx   = len(passports)
+    total = conv["data"].get("passengers", 1)
+
+    if idx >= total:
+        # Tous collectés → RGPD + mandat
+        conv["current_step"] = "summary"
+        show_summary_and_mandat(phone, conv)
+        return
+
+    name = names[idx] if idx < len(names) else f"Passager {idx+1}"
+    if lang == "en":
+        msg = with_bar("passport_collect", (
+            f"🛂 *Passport — {name}* ({idx+1}/{total})\n\n"
+            f"Please send a photo of *{name}'s passport* (photo page).\n\n"
+            f"This is required to file your claim.\n"
+            f"✏️ Type *skip* to send it later by email."
+        ))
+    else:
+        msg = with_bar("passport_collect", (
+            f"🛂 *Passeport — {name}* ({idx+1}/{total})\n\n"
+            f"Envoyez une photo du *passeport de {name}* (page photo).\n\n"
+            f"Ce document est nécessaire pour constituer votre dossier.\n"
+            f"✏️ Tapez *passer* pour l'envoyer plus tard par email."
+        ))
+    send_whatsapp_text(phone, msg)
+
+
 def show_recap(phone, conv):
     """ÉTAPE 7 — Récapitulatif complet modifiable."""
     lang = conv["data"]["language"]
@@ -851,6 +904,10 @@ def _resume_step(phone, conv):
         ask_flight_type(phone, conv)
     elif step == "minor_check":
         ask_minors(phone, conv)
+    elif step == "minor_select":
+        ask_minor_select(phone, conv)
+    elif step in ("passport_collect", "passport_confirm"):
+        ask_passport(phone, conv)
     elif step in ("recap", "recap_modify", "route_input"):
         show_recap(phone, conv)
     elif step in ("rgpd", "summary"):
@@ -941,6 +998,25 @@ def show_summary_and_mandat(phone, conv):
     send_whatsapp_text(phone, msg_a)
     time.sleep(3)
     send_whatsapp_text(phone, msg_b)
+
+    # Message de confirmation dossier reçu (envoyé 5 secondes après le mandat)
+    time.sleep(5)
+    ref = conv.get("ref_dossier", "")
+    if lang == "en":
+        msg_c = (
+            f"🎉 *File {ref} — received!*\n\n"
+            f"We have everything we need. Our team is taking over your claim against the airline.\n\n"
+            f"⏱️ You'll receive an update within *48 working hours*.\n\n"
+            f"Thank you for your trust. *Robin des Airs team* 🏹"
+        )
+    else:
+        msg_c = (
+            f"🎉 *Dossier {ref} — bien reçu !*\n\n"
+            f"Nous avons tout ce qu'il nous faut. Notre équipe prend en charge votre réclamation contre la compagnie aérienne.\n\n"
+            f"⏱️ Vous recevrez une mise à jour sous *48h ouvrées*.\n\n"
+            f"Merci de votre confiance. *L'équipe Robin des Airs* 🏹"
+        )
+    send_whatsapp_text(phone, msg_c)
     conv["current_step"] = "completed"
 
 
@@ -1150,14 +1226,29 @@ def process_button_reply(phone, button_id, button_title, conv):
 
     if button_id == "minor_yes":
         conv["data"]["has_minors"] = True
-        conv["current_step"]       = "recap"
-        show_recap(phone, conv)
+        conv["current_step"] = "minor_select"
+        ask_minor_select(phone, conv)
+        return
+
+    if button_id.startswith("minor_pax_"):
+        idx = int(button_id.split("_")[2])
+        names = conv["data"].get("passenger_names", [])
+        minors = conv["data"].get("minor_names", [])
+        if idx < len(names) and names[idx] not in minors:
+            minors.append(names[idx])
+        conv["data"]["minor_names"] = minors
+        lang = conv["data"]["language"]
+        if lang == "en":
+            send_whatsapp_text(phone, f"✅ *{names[idx]}* marked as minor. Select another or type *done*.")
+        else:
+            send_whatsapp_text(phone, f"✅ *{names[idx]}* marqué comme mineur. Sélectionnez un autre ou tapez *ok*.")
+        # Rester sur minor_select
         return
 
     # ── ÉTAPE 7 — RÉCAP ─────────────────────────────────────────
     if button_id == "recap_ok":
-        conv["current_step"] = "summary"
-        show_summary_and_mandat(phone, conv)
+        conv["current_step"] = "passport_collect"
+        ask_passport(phone, conv)
         return
 
     if button_id == "recap_modify":
@@ -1437,6 +1528,24 @@ def webhook():
             ask_passengers(phone, lang)
             return jsonify({"status": "ok"}), 200
 
+        # ── RÉCEPTION PASSEPORT — ÉTAPE 7 ────────────────────────
+        if current_step == "passport_collect" and image_data:
+            passports = conv["data"].get("passports_collected", [])
+            names = conv["data"].get("passenger_names", [])
+            idx   = len(passports)
+            name  = names[idx] if idx < len(names) else f"Passager {idx+1}"
+            # Stocker référence (on garde juste le fait que c'est reçu — pas stocker les données biométriques en mémoire)
+            passports.append({"name": name, "received": True})
+            conv["data"]["passports_collected"] = passports
+            total = conv["data"].get("passengers", 1)
+            if lang == "en":
+                send_whatsapp_text(phone, with_bar("passport_collect", f"✅ Passport for *{name}* received!"))
+            else:
+                send_whatsapp_text(phone, with_bar("passport_collect", f"✅ Passeport de *{name}* reçu !"))
+            time.sleep(1)
+            ask_passport(phone, conv)
+            return jsonify({"status": "ok"}), 200
+
         # ── MANUEL (option sans photo) — passe au nb passagers ───
         if current_step == "document" and txt_lower in ("manuel","manual","manuellement","manually","✏️"):
             conv["current_step"] = "passengers"
@@ -1540,6 +1649,39 @@ def webhook():
             confirm_flight_date(phone, conv, date_str)
             return jsonify({"status": "ok"}), 200
 
+        # ── SÉLECTION MINEURS (validation) — ÉTAPE 7 ─────────────
+        if current_step == "minor_select":
+            if txt_lower in ("ok", "done", "fini", "c'est bon", "terminé"):
+                minors = conv["data"].get("minor_names", [])
+                conv["data"]["minors_count"] = len(minors)
+                # Si tous mineurs et 1 seul passager → escalade
+                if len(minors) == conv["data"].get("passengers") and conv["data"].get("passengers") == 1:
+                    if lang == "en":
+                        send_whatsapp_text(phone, "👶 For a minor travelling alone, a parent must sign the mandate.\n\n📱 An expert will call you: +33 7 56 86 36 30")
+                    else:
+                        send_whatsapp_text(phone, "👶 Pour un mineur seul, un parent doit signer le mandat.\n\n📱 Un expert vous rappelle : +33 7 56 86 36 30")
+                    return jsonify({"status": "ok"}), 200
+                conv["current_step"] = "passport_collect"
+                ask_passport(phone, conv)
+            return jsonify({"status": "ok"}), 200
+
+        # ── PASSER PASSEPORT — ÉTAPE 7 ───────────────────────────
+        if current_step == "passport_collect":
+            if txt_lower in ("passer", "skip", "plus tard", "later"):
+                passports = conv["data"].get("passports_collected", [])
+                names = conv["data"].get("passenger_names", [])
+                idx   = len(passports)
+                name  = names[idx] if idx < len(names) else f"Passager {idx+1}"
+                passports.append({"name": name, "received": False, "skipped": True})
+                conv["data"]["passports_collected"] = passports
+                if lang == "en":
+                    send_whatsapp_text(phone, f"⏭️ Passport for *{name}* — to send later by email. Noted.")
+                else:
+                    send_whatsapp_text(phone, f"⏭️ Passeport de *{name}* — à envoyer plus tard par email. Noté.")
+                time.sleep(1)
+                ask_passport(phone, conv)
+            return jsonify({"status": "ok"}), 200
+
         # ── SAISIE ROUTE (modification) ──────────────────────────
         if current_step == "route_input":
             conv["data"]["route"]    = message_text.strip()
@@ -1618,6 +1760,33 @@ def list_conversations():
         }
     return jsonify(result), 200
 
+def _relance_message(conv, lang, montant):
+    """Choisit le message de relance selon le nombre de relances déjà envoyées."""
+    count = conv.get("relance_count", 0)
+    ref   = conv.get("ref_dossier", "")
+    ref_str = f" (réf. {ref})" if ref else ""
+
+    if lang == "en":
+        messages = [
+            # Relance 1 — 2h — urgence douce
+            f"✈️ *Your file is waiting!*\n\nYou were 2 minutes away from claiming *{montant}€*.\n\nType *menu* to pick up where you left off 👇",
+            # Relance 2 — 24h — preuve sociale
+            f"💬 *Passengers like you are already getting paid.*\n\nThis week, a Paris-Dakar traveller received *1 350€* thanks to Robin des Airs.\n\nYour file{ref_str} is still open. Type *menu* 👇",
+            # Relance 3 — 72h — dernière chance
+            f"⏳ *Last chance.*\n\nYour file expires soon. Don't let the airline keep your money.\n\nType *menu* now 👇\n\n_Robin des Airs team_",
+        ]
+    else:
+        messages = [
+            # Relance 1 — 2h — urgence douce
+            f"✈️ *Votre dossier vous attend !*\n\nVous étiez à 2 minutes de réclamer *{montant}€*.\n\nTapez *menu* pour reprendre là où vous vous êtes arrêté 👇",
+            # Relance 2 — 24h — preuve sociale
+            f"💬 *Des passagers comme vous ont déjà récupéré leur argent.*\n\nCette semaine, un voyageur Paris-Dakar a reçu *1 350€* grâce à Robin des Airs.\n\nVotre dossier{ref_str} est toujours ouvert. Tapez *menu* 👇",
+            # Relance 3 — 72h — dernière chance
+            f"⏳ *Dernière chance.*\n\nVotre dossier expire bientôt. Ne laissez pas la compagnie garder votre argent.\n\nTapez *menu* maintenant 👇\n\n_L'équipe Robin des Airs_",
+        ]
+    return messages[min(count, len(messages)-1)]
+
+
 @app.route("/check_abandoned", methods=["GET"])
 def check_abandoned():
     """Liste les conversations abandonnées (step != completed, inactives > ABANDON_HOURS).
@@ -1637,21 +1806,20 @@ def check_abandoned():
         lang = d.get("language", "fr")
         pax = d.get("passengers") or 1
         montant = 600 * pax
-        if lang == "en":
-            relance = f"✈️ Your file is waiting! Just a few minutes left to claim your {montant}€. Type *menu* to resume 👇"
-        else:
-            relance = f"✈️ Votre dossier vous attend ! Plus que quelques minutes pour réclamer vos {montant}€. Tapez *menu* pour reprendre 👇"
+        relance = _relance_message(conv, lang, montant)
         entry = {
             "phone": phone,
             "step": step,
             "idle_hours": round(idle_hours, 1),
             "montant": montant,
+            "relance_count": conv.get("relance_count", 0),
             "relance": relance,
         }
         if do_send:
             try:
                 code = send_whatsapp_text(phone, relance, skip_outbound_dedup=True)
                 entry["sent_status"] = code
+                conv["relance_count"] = conv.get("relance_count", 0) + 1
             except Exception as e:
                 entry["sent_status"] = f"error: {e}"
         abandoned.append(entry)
