@@ -1369,7 +1369,7 @@ def process_button_reply(phone, button_id, button_title, conv):
         date_str = conv["data"].get("flight_date", "")
         # Tenter parse date exacte DD/MM/YYYY ou YYYY-MM-DD
         flight_date_obj = None
-        for fmt in ("%d/%m/%Y", "%Y-%m-%d", "%d-%m-%Y", "%m/%d/%Y"):
+        for fmt in ("%d/%m/%Y", "%d-%m-%Y", "%m/%d/%Y"):
             try:
                 flight_date_obj = datetime.strptime(date_str.strip(), fmt)
                 break
