@@ -370,8 +370,8 @@ def ask_delay_duration(phone, lang="fr"):
     send_whatsapp_buttons(phone, body, buttons)
 
 
-def send_rgpd_and_ask_passengers(phone, lang="fr"):
-    """ÉTAPE 4 — RGPD puis passagers"""
+def send_rgpd_and_ask_language(phone, lang="fr"):
+    """ÉTAPE 4 — RGPD puis choix de langue"""
     if lang == "en":
         rgpd = (
             "🔒 *Data & consent*\n\n"
@@ -390,7 +390,58 @@ def send_rgpd_and_ask_passengers(phone, lang="fr"):
         )
     send_whatsapp_text(phone, rgpd)
     time.sleep(1)
-    ask_passengers(phone, lang)
+    ask_language(phone)
+
+
+def ask_language(phone):
+    """ÉTAPE 4bis — Choix de la langue"""
+    body = (
+        "🌍 *Dans quelle langue souhaitez-vous être accompagné(e) ?*\n\n"
+        "Chez Robin des Airs, nous parlons votre langue — car il est toujours plus facile de s'expliquer dans sa langue maternelle. 🤝\n\n"
+        "*In which language would you like to be assisted?*"
+    )
+    sections = [{"title": "Choisir votre langue", "rows": [
+        {"id": "lang_fr",      "title": "🇫🇷 Français"},
+        {"id": "lang_en",      "title": "🇬🇧 English"},
+        {"id": "lang_wo",      "title": "🌍 Wolof"},
+        {"id": "lang_mandinka","title": "🌍 Mandinka"},
+        {"id": "lang_twi",     "title": "🌍 Twi"},
+        {"id": "lang_yoruba",  "title": "🌍 Yoruba"},
+        {"id": "lang_lingala", "title": "🌍 Lingala"},
+        {"id": "lang_swahili", "title": "🌍 Swahili"},
+        {"id": "lang_peul",    "title": "🌍 Peul / Fulfulde"},
+    ]}]
+    send_whatsapp_list(phone, body, "Choisir 🌍", sections)
+
+
+# Langues africaines — messages clés
+LANG_LABELS = {
+    "fr":       "fr",
+    "en":       "en",
+    "wo":       "wo",
+    "mandinka": "mandinka",
+    "twi":      "twi",
+    "yoruba":   "yoruba",
+    "lingala":  "lingala",
+    "swahili":  "swahili",
+    "peul":     "peul",
+}
+
+# Messages de passage à un expert pour les langues africaines
+EXPERT_MSG = {
+    "wo":       "Un expert Wolof vous rappelle directement 🤝\n📱 +33 7 56 86 36 30",
+    "mandinka": "Un expert Mandinka vous rappelle directement 🤝\n📱 +33 7 56 86 36 30",
+    "twi":      "An expert will call you in Twi 🤝\n📱 +33 7 56 86 36 30",
+    "yoruba":   "Àkọ̀wé wa yóò pe yín ní Yorùbá 🤝\n📱 +33 7 56 86 36 30",
+    "lingala":  "Moyangeli na biso akobeta yo telefone na Lingala 🤝\n📱 +33 7 56 86 36 30",
+    "swahili":  "Mtaalamu wetu atakupigia simu kwa Kiswahili 🤝\n📱 +33 7 56 86 36 30",
+    "peul":     "Ko jom biyam am ɓurti wuuri yimɓe heɓata maa 🤝\n📱 +33 7 56 86 36 30",
+}
+
+
+def send_rgpd_and_ask_passengers(phone, lang="fr"):
+    """Alias maintenu pour compatibilité — redirige vers le nouveau flux avec langue"""
+    send_rgpd_and_ask_language(phone, lang)
 
 
 def ask_passengers(phone, lang="fr"):
@@ -768,6 +819,24 @@ def process_button_reply(phone, button_id, button_title, conv):
     button_id    = (button_id    or "").strip()
     button_title = (button_title or "").strip().lower()
     lang = conv["data"].get("language", "fr")
+
+    # ── LANGUE ──────────────────────────────────────────────────
+    if button_id.startswith("lang_"):
+        chosen = button_id.replace("lang_", "")
+        conv["data"]["preferred_language"] = chosen
+        if chosen in ("fr", "en"):
+            conv["data"]["language"] = chosen
+            conv["current_step"]     = "passengers"
+            ask_passengers(phone, chosen)
+        else:
+            # Langue africaine → expert rappelle + continue en FR par défaut
+            expert_msg = EXPERT_MSG.get(chosen, "Un expert vous rappelle directement 🤝\n📱 +33 7 56 86 36 30")
+            send_whatsapp_text(phone, expert_msg)
+            time.sleep(1)
+            # Continuer le flux en français
+            conv["current_step"] = "passengers"
+            ask_passengers(phone, "fr")
+        return
 
     # ── ZONE (qualification route) ──────────────────────────────
     if button_id == "zone_africa_europe":
