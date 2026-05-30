@@ -451,8 +451,9 @@ def send_welcome_hook(phone, conv):
             "👋 *Welcome to Robin des Airs* 🏹\n"
             "*Specialists in delayed or cancelled African flights.*\n\n"
             f"*\"{stat}\"*\n\n"
-            "✈️ EU law CE 261/2004 entitles you to *€600 per person* on flights *departing from Europe*"
-            " — and on flights arriving in Europe operated by a European airline.\n\n"
+            "✈️ EU law CE 261/2004 entitles you to *€600 per person*:\n"
+            "• All flights *departing from Europe* (any airline)\n"
+            "• Flights *arriving in Europe* with a *European airline*\n\n"
             "*€0 if we don't win. No risk for you.*"
         ))
         buttons = [{"id": "start_check", "title": "🚀 Check my compensation"}]
@@ -463,7 +464,9 @@ def send_welcome_hook(phone, conv):
             "*Spécialiste des vols africains retardés ou annulés.*\n\n"
             f"*\"{stat}\"*\n\n"
             "✈️ La loi européenne CE 261/2004 vous donne droit à *600 € par personne* "
-            "sur les vols *au départ de l'Europe* — et sur les vols vers l'Europe opérés par une compagnie européenne.\n\n"
+            "pour les vols :\n"
+            "• *Au départ de l'Europe* — toutes compagnies confondues\n"
+            "• *Vers l'Europe* — si la compagnie est européenne\n\n"
             "*0€ si on ne gagne pas. Aucun risque pour vous.*"
         ))
         buttons = [{"id": "start_check", "title": "🚀 Vérifier mon indemnité"}]
@@ -929,15 +932,19 @@ def ask_boarding_collect(phone, conv):
         return
     if lang == "en":
         msg = with_bar("boarding_collect", (
-            "🎫 *Boarding pass*\n\n"
+            "🎫 *Boarding pass — proof of travel*\n\n"
             "Send a photo of your *boarding pass* for the delayed/cancelled flight.\n\n"
-            "✏️ Type *skip* to send later by email."
+            "📧 No boarding pass? Your *booking confirmation email* works too.\n"
+            "✏️ Type *skip* to send later by email.\n"
+            "📞 Type *appel* if you've lost everything — an expert helps you."
         ))
     else:
         msg = with_bar("boarding_collect", (
-            "🎫 *Carte d'embarquement*\n\n"
+            "🎫 *Carte d'embarquement — justificatif de voyage*\n\n"
             "Envoyez une photo de votre *carte d'embarquement* pour le vol retardé/annulé.\n\n"
-            "✏️ Tapez *passer* pour l'envoyer plus tard par email."
+            "📧 Pas de carte ? Votre *email de confirmation de réservation* fonctionne aussi.\n"
+            "✏️ Tapez *passer* pour l'envoyer plus tard par email.\n"
+            "📞 Tapez *appel* si vous avez tout perdu — un expert vous aide."
         ))
     send_whatsapp_text(phone, msg)
 
@@ -947,15 +954,19 @@ def ask_ebillet(phone, conv):
     lang = conv["data"]["language"]
     if lang == "en":
         msg = with_bar("ebillet_collect", (
-            "📧 *Booking confirmation (e-ticket)*\n\n"
-            "Send a screenshot of your *booking confirmation email*.\n\n"
-            "✏️ Type *skip* to send later by email."
+            "📧 *Booking confirmation (e-ticket) — proof of travel*\n\n"
+            "Send a screenshot of your *booking confirmation email*.\n"
+            "_(Check your inbox, spam folder, or travel app like Booking/Expedia)_\n\n"
+            "✏️ Type *skip* to send later.\n"
+            "📞 Type *call* if you can't find it — an expert helps you retrieve it."
         ))
     else:
         msg = with_bar("ebillet_collect", (
-            "📧 *Confirmation de réservation (e-billet)*\n\n"
-            "Envoyez une capture d'écran de votre *email de confirmation de réservation*.\n\n"
-            "✏️ Tapez *passer* pour l'envoyer plus tard par email."
+            "📧 *Confirmation de réservation (e-billet) — justificatif de voyage*\n\n"
+            "Envoyez une capture d'écran de votre *email de confirmation de réservation*.\n"
+            "_(Vérifiez votre boîte mail, spams, ou votre appli voyage Booking/Expedia)_\n\n"
+            "✏️ Tapez *passer* pour l'envoyer plus tard.\n"
+            "📞 Tapez *appel* si vous ne trouvez pas — un expert vous aide à le récupérer."
         ))
     send_whatsapp_text(phone, msg)
 
@@ -1046,19 +1057,23 @@ def send_rgpd(phone, lang="fr"):
     """MSG 14 — RGPD / CGV (juste avant le mandat)."""
     if lang == "en":
         rgpd = with_bar("rgpd", (
-            "🔒 *Data & consent*\n\n"
-            "Robin des Airs collects your information *solely* to build your compensation file against the airline. "
-            "Your data is never sold or shared.\n\n"
-            "By continuing you accept our *Terms & Conditions* :\n"
-            "👉 robindesairs.eu/cgv.html"
+            "🔒 *Your privacy first — before signing.*\n\n"
+            "Your documents are used *solely* to claim your compensation from the airline. "
+            "They are never sold or shared with commercial third parties. "
+            "You can request their deletion at any time.\n\n"
+            "By continuing you accept our:\n"
+            "• *Privacy policy* : robindesairs.eu/politique-confidentialite.html\n"
+            "• *Terms & Conditions* : robindesairs.eu/cgv.html"
         ))
     else:
         rgpd = with_bar("rgpd", (
-            "🔒 *Données & consentement*\n\n"
-            "Robin des Airs collecte vos informations *uniquement* pour constituer votre dossier d'indemnisation contre la compagnie aérienne. "
-            "Vos données ne sont jamais revendues ni partagées.\n\n"
-            "En continuant vous acceptez nos *Conditions Générales de Vente* :\n"
-            "👉 robindesairs.eu/cgv.html"
+            "🔒 *Avant la signature, votre vie privée d'abord.*\n\n"
+            "Vos documents servent *uniquement* à réclamer votre indemnité auprès de la compagnie. "
+            "Ils ne sont jamais vendus ni partagés à des tiers commerciaux. "
+            "Vous pouvez demander leur suppression à tout moment.\n\n"
+            "En continuant, vous acceptez notre :\n"
+            "• *Politique de confidentialité* : robindesairs.eu/politique-confidentialite.html\n"
+            "• *Conditions Générales de Vente* : robindesairs.eu/cgv.html"
         ))
     send_whatsapp_text(phone, rgpd)
     time.sleep(1)
@@ -2115,6 +2130,14 @@ def webhook():
             return jsonify({"status": "ok"}), 200
 
         if current_step == "boarding_collect":
+            if txt_lower in ("appel", "call", "perdu", "lost", "je n'ai plus", "i lost"):
+                conv["data"]["dossier_status"]  = "escalade_expert"
+                conv["data"]["escalade_reason"] = "document_perdu"
+                if lang == "en":
+                    send_whatsapp_text(phone, "📞 *No worries — our expert can help you retrieve your documents.*\n\nLeave this conversation open. An expert will contact you directly to help.\n\n_Robin des Airs team_")
+                else:
+                    send_whatsapp_text(phone, "📞 *Pas de panique — notre expert peut vous aider à retrouver vos documents.*\n\nLaissez cette conversation ouverte. Un expert vous contacte directement pour vous aider.\n\n_L'équipe Robin des Airs_")
+                return jsonify({"status": "ok"}), 200
             if txt_lower in ("passer", "skip", "plus tard", "later"):
                 conv["data"]["boarding_collected"] = False
                 if lang == "en": send_whatsapp_text(phone, "⏭️ Boarding pass — to send later by email. Noted.")
@@ -2125,6 +2148,14 @@ def webhook():
             return jsonify({"status": "ok"}), 200
 
         if current_step == "ebillet_collect":
+            if txt_lower in ("appel", "call", "perdu", "lost", "je ne trouve pas", "can't find"):
+                conv["data"]["dossier_status"]  = "escalade_expert"
+                conv["data"]["escalade_reason"] = "document_perdu"
+                if lang == "en":
+                    send_whatsapp_text(phone, "📞 *Our expert will help you find your booking confirmation.*\n\nCheck your spam folder or your travel app (Booking, Expedia, airline website).\nIf you still can't find it — leave this conversation open, an expert contacts you.\n\n_Robin des Airs team_")
+                else:
+                    send_whatsapp_text(phone, "📞 *Notre expert peut vous aider à retrouver votre confirmation.*\n\nVérifiez vos spams ou votre appli voyage (Booking, Expedia, site de la compagnie).\nSi vous ne trouvez toujours pas — laissez cette conversation ouverte, un expert vous contacte.\n\n_L'équipe Robin des Airs_")
+                return jsonify({"status": "ok"}), 200
             if txt_lower in ("passer", "skip", "plus tard", "later"):
                 conv["data"]["ebillet_collected"] = False
                 if lang == "en": send_whatsapp_text(phone, "⏭️ Booking confirmation — to send later by email. Noted.")
