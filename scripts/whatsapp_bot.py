@@ -383,17 +383,25 @@ def call_openai(phone, user_message, image_data=None):
         if len(conv["messages"]) > 20:
             conv["messages"] = conv["messages"][-20:]
         system = (
-            "Tu es l'agent IA de ROBIN DES AIRS. Tu réponds dans la langue du client (FR/EN).\n"
-            "Format : 3+ emojis, max 6 lignes, toujours finir par un lien d'action.\n"
-            "Infos clés : 600€/passager, 25% commission si succès seulement, 5 ans rétroactivité.\n"
-            "Pour les cas complexes ou 6+ passagers : escalade expert +33 7 56 86 36 30"
+            "Tu es l'assistant IA de ROBIN DES AIRS, spécialiste indemnisation vols Afrique-Europe.\n\n"
+            "RÈGLES ABSOLUES :\n"
+            "- Réponses COURTES : 2-3 phrases maximum, jamais plus\n"
+            "- Toujours 2-3 emojis par message, ton friendly et chaleureux\n"
+            "- Jamais de listes à puces longues, jamais de paragraphes\n"
+            "- Toujours finir par rediriger vers le flux : 'Tapez *menu* pour démarrer 👇' ou 'Tapez *menu* pour reprendre 👇'\n"
+            "- Si question complexe ou juridique : 'Je laisse ça à notre expert 🙏 Tapez *menu* et on s'en occupe 👇'\n\n"
+            "INFOS CLÉS (à utiliser si pertinent) :\n"
+            "- 600€/passager, vols Afrique-Europe ou départ Europe\n"
+            "- 25% commission uniquement si succès\n"
+            "- 5 ans de rétroactivité\n"
+            "- Retard minimum : 3h à l'arrivée\n"
         )
         messages = [{"role": "system", "content": system}] + conv["messages"]
         model = "gpt-4o" if image_data else "gpt-4o-mini"
         response = requests.post(
             "https://api.openai.com/v1/chat/completions",
             headers={"Authorization": f"Bearer {OPENAI_API_KEY}", "Content-Type": "application/json"},
-            json={"model": model, "messages": messages, "max_tokens": 400, "temperature": 0.7},
+            json={"model": model, "messages": messages, "max_tokens": 150, "temperature": 0.7},
             timeout=45
         )
         data = response.json()
@@ -411,16 +419,26 @@ def call_openai(phone, user_message, image_data=None):
 # LANGUES — LISTE + MESSAGES NATIFS
 # ============================================
 
-LANGUAGE_ROWS = [
-    {"id": "lang_fr",       "title": "🇫🇷 Français"},
-    {"id": "lang_en",       "title": "🇬🇧 English"},
-    {"id": "lang_wo",       "title": "🇸🇳 Wolof"},
-    {"id": "lang_mandinka", "title": "🇬🇲 Mandinka"},
-    {"id": "lang_twi",      "title": "🇬🇭 Twi"},
-    {"id": "lang_yoruba",   "title": "🇳🇬 Yoruba"},
-    {"id": "lang_lingala",  "title": "🇨🇩 Lingala"},
-    {"id": "lang_swahili",  "title": "🇰🇪 Swahili"},
-    {"id": "lang_peul",     "title": "🇬🇳 Peul / Fulfulde"},
+LANGUAGE_SECTIONS = [
+    {
+        "title": "🌍 Langues européennes",
+        "rows": [
+            {"id": "lang_fr", "title": "🇫🇷 Français"},
+            {"id": "lang_en", "title": "🇬🇧 English"},
+        ]
+    },
+    {
+        "title": "🌍 Langues africaines",
+        "rows": [
+            {"id": "lang_wo",       "title": "🇸🇳 Wolof"},
+            {"id": "lang_mandinka", "title": "🇬🇲 Mandinka"},
+            {"id": "lang_twi",      "title": "🇬🇭 Twi"},
+            {"id": "lang_yoruba",   "title": "🇳🇬 Yoruba"},
+            {"id": "lang_lingala",  "title": "🇨🇩 Lingala"},
+            {"id": "lang_swahili",  "title": "🇰🇪 Swahili"},
+            {"id": "lang_peul",     "title": "🇬🇳 Peul / Fulfulde"},
+        ]
+    },
 ]
 
 EXPERT_MSG = {
@@ -480,7 +498,7 @@ def ask_language(phone):
         "Chez Robin des Airs, nous parlons votre langue — il est toujours plus facile de s'expliquer dans sa langue maternelle. 🤝\n\n"
         "*In which language would you like to be assisted?*"
     ))
-    sections = [{"title": "Choisir / Choose", "rows": LANGUAGE_ROWS}]
+    sections = LANGUAGE_SECTIONS
     send_whatsapp_list(phone, body, "Choisir 🌍", sections)
 
 
