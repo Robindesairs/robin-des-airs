@@ -428,27 +428,49 @@ LANGUAGE_SECTIONS = [
         ]
     },
     {
+        # Langues actives — classées par nb de locuteurs
         "title": "🌍 Langues africaines",
         "rows": [
-            {"id": "lang_wo",       "title": "🇸🇳 Wolof"},
-            {"id": "lang_mandinka", "title": "🇬🇲 Mandinka"},
-            {"id": "lang_twi",      "title": "🇬🇭 Twi"},
-            {"id": "lang_yoruba",   "title": "🇳🇬 Yoruba"},
-            {"id": "lang_lingala",  "title": "🇨🇩 Lingala"},
-            {"id": "lang_swahili",  "title": "🇰🇪 Swahili"},
-            {"id": "lang_peul",     "title": "🇬🇳 Peul / Fulfulde"},
+            {"id": "lang_yo",       "title": "🇳🇬 Yoruba"},        # ~50M locuteurs
+            {"id": "lang_lingala",  "title": "🇨🇩 Lingala"},       # ~40M
+            {"id": "lang_wo",       "title": "🇸🇳 Wolof"},         # ~12M
+            {"id": "lang_twi",      "title": "🇬🇭 Twi"},           # ~9M
+            {"id": "lang_mandinka", "title": "🇬🇲 Mandinka"},      # ~5M
+        ]
+    },
+    {
+        # Langues à venir — classées par nb de locuteurs
+        "title": "⏳ Bientôt disponibles",
+        "rows": [
+            {"id": "lang_soon_swahili",  "title": "🇰🇪 Swahili (bientôt)"},     # ~200M
+            {"id": "lang_soon_bambara",  "title": "🇲🇱 Bambara (bientôt)"},     # ~14M
+            {"id": "lang_soon_dioula",   "title": "🇨🇮 Dioula (bientôt)"},      # ~12M
+            {"id": "lang_soon_sonike",   "title": "🇸🇳 Soninké (bientôt)"},     # ~2M
         ]
     },
 ]
 
 EXPERT_MSG = {
+    # Langues actives
     "wo":       "🇸🇳 Dëkk sa Wolof, bëgg na la wax — expert bi dafa di xam Wolof, dafa di waxleen ci kanam. 🤝\n📱 +33 7 56 86 36 30",
     "mandinka": "🇬🇲 An b'i Mandinka kalan — expert be i sɔrɔ ka kuma Mandinka la. 🤝\n📱 +33 7 56 86 36 30",
     "twi":      "🇬🇭 Yɛte wo Twi kasa — obi nyansafo bɛfrɛ wo Twi so. 🤝\n📱 +33 7 56 86 36 30",
-    "yoruba":   "🇳🇬 A gbọ Yorùbá rẹ — akọwe wa yóò pe yín ní Yorùbá. 🤝\n📱 +33 7 56 86 36 30",
+    "yo":       "🇳🇬 A gbọ Yorùbá rẹ — akọwe wa yóò pe yín ní Yorùbá. 🤝\n📱 +33 7 56 86 36 30",
     "lingala":  "🇨🇩 Toyebi lingala — moto ya biso akobeta yo telefone na lingala. 🤝\n📱 +33 7 56 86 36 30",
-    "swahili":  "🇰🇪 Tunasikia Kiswahili — mtaalamu wetu atakupigia simu. 🤝\n📱 +33 7 56 86 36 30",
-    "peul":     "🇬🇳 Min nani Fulfulde — goɗɗo jannginoowo maa wuuri. 🤝\n📱 +33 7 56 86 36 30",
+}
+
+# Langues "bientôt" — message d'attente
+COMING_SOON_MSG = {
+    "fr": (
+        "⏳ *Cette langue arrive bientôt chez Robin des Airs !*\n\n"
+        "En attendant, un expert francophone prend en charge votre dossier. 🤝\n"
+        "Je continue à vous guider en français 👇"
+    ),
+    "en": (
+        "⏳ *This language is coming soon to Robin des Airs!*\n\n"
+        "In the meantime, a French-speaking expert handles your file. 🤝\n"
+        "Let me continue guiding you in French 👇"
+    ),
 }
 
 
@@ -1364,6 +1386,19 @@ def process_button_reply(phone, button_id, button_title, conv):
         return
 
     # ── MSG 2 — LANGUE ──────────────────────────────────────────
+    if button_id.startswith("lang_soon_"):
+        # Langue "bientôt disponible" → message d'attente + continue en FR
+        soon_lang = button_id.replace("lang_soon_", "")
+        conv["data"]["preferred_language"] = soon_lang
+        lang = conv["data"].get("language", "fr")
+        msg = COMING_SOON_MSG.get(lang, COMING_SOON_MSG["fr"])
+        send_whatsapp_text(phone, msg)
+        time.sleep(1)
+        conv["data"]["language"] = "fr"
+        conv["current_step"] = "route_qualify"
+        ask_route_qualify(phone, "fr")
+        return
+
     if button_id.startswith("lang_"):
         chosen = button_id.replace("lang_", "")
         conv["data"]["preferred_language"] = chosen
@@ -2393,22 +2428,30 @@ def _relance_message(conv, lang, montant):
     ref   = conv.get("ref_dossier", "")
     ref_str = f" (réf. {ref})" if ref else ""
 
+    # Variantes de relance 2 (preuve sociale) — rotation par stat_variant ou aléatoire
+    import random as _random
+    r2_idx = conv["data"].get("stat_variant", _random.randrange(3)) % 3
+
     if lang == "en":
-        messages = [
-            # Relance 1 — 2h — urgence douce
-            f"✈️ *Your file is waiting!*\n\nYou were 2 minutes away from claiming *{montant}€*.\n\nType *menu* to pick up where you left off 👇",
-            # Relance 2 — 8h — preuve sociale
+        relance2_variants = [
             f"💬 *Passengers like you are already getting paid.*\n\nThis week, a Paris-Dakar traveller received *1 350€* thanks to Robin des Airs.\n\nYour file{ref_str} is still open. Type *menu* 👇",
-            # Relance 3 — 22h — dernière chance avant fermeture fenêtre
+            f"👨‍👩‍👧 *A family of 3 just recovered 1 800€ this week.*\n\nTheir file took less than 5 minutes to open.\n\nYours{ref_str} is ready. Type *menu* 👇",
+            f"✍️ *A passenger from Abidjan-Paris just signed their mandate.*\n\nYours{ref_str} is waiting — don't leave money on the table.\n\nType *menu* 👇",
+        ]
+        messages = [
+            f"✈️ *Your file is waiting!*\n\nYou were 2 minutes away from claiming *{montant}€*.\n\nType *menu* to pick up where you left off 👇",
+            relance2_variants[r2_idx],
             f"⏳ *Last chance today.*\n\nWe can only keep this conversation open a little longer. Don't let the airline keep your money.\n\nType *menu* now 👇\n\n_Robin des Airs team_",
         ]
     else:
-        messages = [
-            # Relance 1 — 2h — urgence douce
-            f"✈️ *Votre dossier vous attend !*\n\nVous étiez à 2 minutes de réclamer *{montant}€*.\n\nTapez *menu* pour reprendre là où vous vous êtes arrêté 👇",
-            # Relance 2 — 8h — preuve sociale
+        relance2_variants = [
             f"💬 *Des passagers comme vous ont déjà récupéré leur argent.*\n\nCette semaine, un voyageur Paris-Dakar a reçu *1 350€* grâce à Robin des Airs.\n\nVotre dossier{ref_str} est toujours ouvert. Tapez *menu* 👇",
-            # Relance 3 — 22h — dernière chance avant fermeture fenêtre
+            f"👨‍👩‍👧 *Une famille de 3 vient de récupérer 1 800€ cette semaine.*\n\nLeur dossier a été ouvert en moins de 5 minutes.\n\nLe vôtre{ref_str} est prêt. Tapez *menu* 👇",
+            f"✍️ *Un passager Abidjan-Paris vient de signer son mandat.*\n\nLe vôtre{ref_str} vous attend — ne laissez pas cet argent à la compagnie.\n\nTapez *menu* 👇",
+        ]
+        messages = [
+            f"✈️ *Votre dossier vous attend !*\n\nVous étiez à 2 minutes de réclamer *{montant}€*.\n\nTapez *menu* pour reprendre là où vous vous êtes arrêté 👇",
+            relance2_variants[r2_idx],
             f"⏳ *Dernière chance aujourd'hui.*\n\nNous ne pouvons garder cette conversation ouverte que peu de temps encore. Ne laissez pas la compagnie garder votre argent.\n\nTapez *menu* maintenant 👇\n\n_L'équipe Robin des Airs_",
         ]
     return messages[min(count, len(messages)-1)]
