@@ -1367,10 +1367,21 @@ def process_button_reply(phone, button_id, button_title, conv):
     # ── ÉTAPE 6 — CONFIRMATION DATE ─────────────────────────────
     if button_id == "date_confirm_yes":
         date_str = conv["data"].get("flight_date", "")
-        year_match = re.search(r'\b(20\d{2})\b', date_str)
-        if year_match:
-            year = int(year_match.group(1))
-            if datetime.now().year - year > 5:
+        # Tenter parse date exacte DD/MM/YYYY ou YYYY-MM-DD
+        flight_date_obj = None
+        for fmt in ("%d/%m/%Y", "%Y-%m-%d", "%d-%m-%Y", "%m/%d/%Y"):
+            try:
+                flight_date_obj = datetime.strptime(date_str.strip(), fmt)
+                break
+            except ValueError:
+                pass
+        if flight_date_obj is None:
+            # Fallback : extraire juste l'année
+            year_match = re.search(r'\b(20\d{2})\b', date_str)
+            if year_match:
+                flight_date_obj = datetime(int(year_match.group(1)), 6, 1)  # milieu d'année par défaut
+
+        if flight_date_obj and (datetime.now() - flight_date_obj).days > 5 * 365:
                 conv["data"]["dossier_status"] = "non_eligible"
                 conv["data"]["non_eligibility_reason"] = "vol_trop_ancien"
                 if lang == "en":
