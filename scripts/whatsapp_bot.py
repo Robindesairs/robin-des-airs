@@ -697,6 +697,36 @@ def ask_scan_next_passenger(phone, conv):
     send_whatsapp_text(phone, msg)
 
 
+def _sort_scanned_docs(conv):
+    """Trie les docs scannés par heure de départ (ordre chronologique vol 1 → vol 2)."""
+    docs = conv["data"].get("scanned_docs", [])
+    if len(docs) <= 1:
+        return
+    def sort_key(d):
+        # Essayer date + heure de départ
+        dep = (d.get("departure_time") or d.get("date") or "").strip()
+        try:
+            # Formats possibles : "15/03/2023 06:30" ou "15/03/2023" ou "06:30"
+            for fmt in ("%d/%m/%Y %H:%M", "%d/%m/%Y", "%H:%M"):
+                try: return datetime.strptime(dep, fmt)
+                except ValueError: pass
+        except Exception:
+            pass
+        return datetime.min
+    docs.sort(key=sort_key)
+    conv["data"]["scanned_docs"] = docs
+    # Mettre à jour route complète (vol 1 origine → ... → vol N destination)
+    origins = [d.get("origin","") for d in docs if d.get("origin")]
+    dests   = [d.get("destination","") for d in docs if d.get("destination")]
+    if origins and dests:
+        if len(docs) > 1:
+            # Route multi-segments : CDG → CMN → DSS
+            waypoints = [origins[0]] + [d.get("destination","") for d in docs]
+            conv["data"]["route"] = " → ".join(w for w in waypoints if w)
+        else:
+            conv["data"]["route"] = f"{origins[0]} → {dests[0]}"
+
+
 def _advance_after_scan(phone, conv):
     """Après scan(s), passe à la collecte des noms/vol/date manquants."""
     pax   = conv["data"].get("passengers", 1)
@@ -1836,7 +1866,8 @@ def webhook():
             extracted_json = call_openai(
                 phone,
                 'Extract from this travel document and reply ONLY with valid JSON: '
-                '{"flight_number":"...","date":"DD/MM/YYYY","passenger_name":"...","airline":"...","origin":"...","destination":"...","return_flight_number":"...","return_date":"..."}',
+                '{"flight_number":"...","date":"DD/MM/YYYY","departure_time":"HH:MM","passenger_name":"...","airline":"...","origin":"IATA_CODE","destination":"IATA_CODE","return_flight_number":"...","return_date":"..."}. '
+                'departure_time = scheduled departure time on the card (HH:MM). origin/destination = 3-letter IATA airport codes.',
                 image_data
             )
             if extracted_json:
@@ -1858,11 +1889,59 @@ def webhook():
                             if info["passenger_name"] not in names:
                                 names.append(info["passenger_name"])
                             conv["data"]["passenger_names"] = names
-                        conv["data"].setdefault("scanned_docs", []).append({
-                            "flight_number": fn,
+                        # Stocker le doc scanné avec heure de départ pour tri chronologique
+                        scanned = conv["data"].setdefault("scanned_docs", [])
+                        scanned.append({
+                            "flight_number":  fn,
                             "passenger_name": info.get("passenger_name"),
-                            "date": info.get("date"),
+                            "date":           info.get("date"),
+                            "departure_time": info.get("departure_time", ""),
+                            "origin":         info.get("origin", ""),
+                            "destination":    info.get("destination", ""),
                         })
+
+                        pax_total   = conv["data"].get("passengers", 1)
+                        scanned_cnt = len(scanned)
+
+                        # Si vol avec escale ET plusieurs cartes à scanner
+                        if conv["data"].get("flight_type") == "connection" and scanned_cnt < pax_total:
+                            # Proposer de scanner la carte suivante
+                            if lang == "en":
+                                more_msg = with_bar("document", (
+                                    f"✅ Card {scanned_cnt}/{pax_total} scanned!\n\n"
+                                    f"📸 Send the *next boarding pass* (passenger {scanned_cnt+1}).\n"
+                                    f"✏️ Or type *done* if you've sent all cards."
+                                ))
+                            else:
+                                more_msg = with_bar("document", (
+                                    f"✅ Carte {scanned_cnt}/{pax_total} scannée !\n\n"
+                                    f"📸 Envoyez la *carte suivante* (passager {scanned_cnt+1}).\n"
+                                    f"✏️ Ou tapez *fini* si vous avez tout envoyé."
+                                ))
+                            send_whatsapp_text(phone, more_msg)
+                            conv["current_step"] = "document"
+                            return jsonify({"status": "ok"}), 200
+
+                        # Si vol avec escale et 1 seul passager → peut avoir 2 cartes (2 segments)
+                        if conv["data"].get("flight_type") == "connection" and pax_total == 1 and scanned_cnt == 1:
+                            if lang == "en":
+                                seg_msg = with_bar("document", (
+                                    f"✅ Segment 1 scanned!\n\n"
+                                    f"📸 Do you have a *second boarding pass* (connecting flight)?\n"
+                                    f"✏️ Type *fini* if this was your only card."
+                                ))
+                            else:
+                                seg_msg = with_bar("document", (
+                                    f"✅ Segment 1 scanné !\n\n"
+                                    f"📸 Avez-vous une *deuxième carte* (vol de correspondance) ?\n"
+                                    f"✏️ Tapez *fini* si c'est votre seule carte."
+                                ))
+                            send_whatsapp_text(phone, seg_msg)
+                            conv["current_step"] = "document"
+                            return jsonify({"status": "ok"}), 200
+
+                        # Trier les docs scannés par heure de départ (ordre chronologique)
+                        _sort_scanned_docs(conv)
 
                         # Aller-retour ? (2 trajets détectés)
                         if info.get("return_flight_number") or info.get("return_date"):
@@ -2001,8 +2080,19 @@ def webhook():
             _advance_after_scan(phone, conv)
             return jsonify({"status": "ok"}), 200
 
-        # ── SCAN MULTI-PAX : passer ──────────────────────────────
-        if current_step == "document" and txt_lower in ("passer", "skip", "déjà envoyé", "deja envoye"):
+        # ── SCAN MULTI-PAX : fini / passer ───────────────────────
+        if current_step == "document" and txt_lower in ("fini","done","terminé","termine","passer","skip","c'est tout","that's all"):
+            scanned = conv["data"].get("scanned_docs", [])
+            if scanned:
+                _sort_scanned_docs(conv)
+                # Afficher récap des cartes scannées
+                if lang == "en":
+                    lines = "\n".join(f"✅ {d.get('flight_number','?')} — {d.get('passenger_name','?')} ({d.get('date','?')})" for d in scanned)
+                    send_whatsapp_text(phone, f"📋 *All scanned cards:*\n{lines}\n\n{'🗺️ Route: ' + conv['data'].get('route','') if conv['data'].get('route') else ''}")
+                else:
+                    lines = "\n".join(f"✅ {d.get('flight_number','?')} — {d.get('passenger_name','?')} ({d.get('date','?')})" for d in scanned)
+                    send_whatsapp_text(phone, f"📋 *Cartes scannées :*\n{lines}\n\n{'🗺️ Trajet : ' + conv['data'].get('route','') if conv['data'].get('route') else ''}")
+                time.sleep(1)
             _advance_after_scan(phone, conv)
             return jsonify({"status": "ok"}), 200
 
