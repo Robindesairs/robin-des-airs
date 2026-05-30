@@ -818,6 +818,49 @@ def send_rgpd(phone, lang="fr"):
     time.sleep(1)
 
 
+def _resume_step(phone, conv):
+    """Renvoie la question correspondant à l'étape en cours (pour reprendre après abandon)."""
+    step = conv.get("current_step")
+    lang = conv["data"].get("language", "fr")
+
+    if step == "language":
+        ask_language(phone)
+    elif step == "route_qualify":
+        ask_route_qualify(phone, lang)
+    elif step == "incident_type":
+        ask_incident_type(phone, lang)
+    elif step == "delay_duration":
+        ask_delay_duration(phone, lang)
+    elif step == "document":
+        ask_document(phone, lang)
+    elif step in ("doc_confirm", "doc_correction", "trip_select"):
+        ask_document(phone, lang)
+    elif step == "passengers":
+        ask_passengers(phone, lang)
+    elif step in ("passenger_collect", "passenger_confirm"):
+        ask_next_passenger(phone, conv)
+    elif step == "flight_number":
+        ask_flight_number(phone, conv)
+    elif step in ("flight_number_confirm",):
+        ask_flight_number(phone, conv)
+    elif step == "flight_date":
+        ask_flight_date(phone, conv)
+    elif step in ("flight_date_confirm",):
+        ask_flight_date(phone, conv)
+    elif step == "flight_type":
+        ask_flight_type(phone, conv)
+    elif step == "minor_check":
+        ask_minors(phone, conv)
+    elif step in ("recap", "recap_modify", "route_input"):
+        show_recap(phone, conv)
+    elif step in ("rgpd", "summary"):
+        show_summary_and_mandat(phone, conv)
+    else:
+        # Fallback → reprendre depuis la langue
+        conv["current_step"] = "language"
+        ask_language(phone)
+
+
 def show_summary_and_mandat(phone, conv):
     """ÉTAPE 8 — RGPD puis Mandat pré-rempli (TOUT À LA FIN)."""
     lang = conv["data"]["language"]
@@ -974,9 +1017,9 @@ def process_button_reply(phone, button_id, button_title, conv):
     # ── ÉTAPE 3 — DURÉE RETARD ──────────────────────────────────
     if button_id == "delay_lt3":
         if lang == "en":
-            send_whatsapp_text(phone, "😔 For a delay *under 3 hours* at arrival, EU law CE 261 unfortunately does not provide compensation.\n\nIf you think it was actually longer, type *menu* to restart.\n\n_Robin des Airs team_")
+            send_whatsapp_text(phone, "😔 For a delay *under 3 hours* at arrival, EU law CE 261 unfortunately does not provide compensation.\n\nIf you think it was actually longer, type *menu* to resume your file.\n\n_Robin des Airs team_")
         else:
-            send_whatsapp_text(phone, "😔 Pour un retard *inférieur à 3 heures* à l'arrivée, la loi européenne CE 261 ne prévoit malheureusement pas d'indemnisation.\n\nSi vous pensez que le retard était plus long, tapez *menu* pour recommencer.\n\n_L'équipe Robin des Airs_")
+            send_whatsapp_text(phone, "😔 Pour un retard *inférieur à 3 heures* à l'arrivée, la loi européenne CE 261 ne prévoit malheureusement pas d'indemnisation.\n\nSi vous pensez que le retard était plus long, tapez *menu* pour reprendre votre dossier.\n\n_L'équipe Robin des Airs_")
         conv["current_step"] = None
         return
 
@@ -1253,7 +1296,8 @@ def webhook():
         txt_lower    = message_text.strip().lower()
 
         # ── RESET / MENU ─────────────────────────────────────────
-        if txt_lower in ("menu", "restart", "recommencer", "reset", "/reset", "start"):
+        # "nouveau" / "reset" → effacer et recommencer
+        if txt_lower in ("nouveau", "new", "reset", "/reset", "recommencer"):
             if phone in conversations:
                 del conversations[phone]
             conv = get_or_create_conversation(phone)
@@ -1261,6 +1305,25 @@ def webhook():
             conv["current_step"] = "language"
             ask_language(phone)
             return jsonify({"status": "restarted"}), 200
+
+        # "menu" / "reprendre" → reprendre le dossier en cours à l'étape exacte
+        if txt_lower in ("menu", "restart", "start", "reprendre", "continuer", "suite"):
+            step = conv.get("current_step")
+            if step and step not in (None, "completed"):
+                lang = conv["data"].get("language", "fr")
+                if lang == "en":
+                    send_whatsapp_text(phone, f"👋 Welcome back! Let's pick up where you left off.")
+                else:
+                    send_whatsapp_text(phone, f"👋 Re-bonjour ! On reprend votre dossier là où vous vous étiez arrêté.")
+                time.sleep(1)
+                # Renvoyer la question correspondant à l'étape en cours
+                _resume_step(phone, conv)
+            else:
+                # Pas de dossier en cours → démarrer
+                conv["ref_dossier"]  = generate_ref_dossier(phone)
+                conv["current_step"] = "language"
+                ask_language(phone)
+            return jsonify({"status": "resumed"}), 200
 
         # ── DÉMARRAGE — ÉTAPE 1 : LANGUE (avant le scan) ─────────
         if current_step in (None, "completed"):
