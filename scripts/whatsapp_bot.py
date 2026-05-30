@@ -451,8 +451,8 @@ def send_welcome_hook(phone, conv):
             "👋 *Welcome to Robin des Airs* 🏹\n"
             "*Specialists in delayed or cancelled African flights.*\n\n"
             f"*\"{stat}\"*\n\n"
-            "✈️ EU law CE 261/2004 entitles you to *€600 per person* on Africa ↔ Europe flights "
-            "— even with an African airline.\n\n"
+            "✈️ EU law CE 261/2004 entitles you to *€600 per person* on flights *departing from Europe*"
+            " — and on flights arriving in Europe operated by a European airline.\n\n"
             "*€0 if we don't win. No risk for you.*"
         ))
         buttons = [{"id": "start_check", "title": "🚀 Check my compensation"}]
@@ -463,7 +463,7 @@ def send_welcome_hook(phone, conv):
             "*Spécialiste des vols africains retardés ou annulés.*\n\n"
             f"*\"{stat}\"*\n\n"
             "✈️ La loi européenne CE 261/2004 vous donne droit à *600 € par personne* "
-            "sur les vols Afrique ↔ Europe — même si c'est une compagnie africaine.\n\n"
+            "sur les vols *au départ de l'Europe* — et sur les vols vers l'Europe opérés par une compagnie européenne.\n\n"
             "*0€ si on ne gagne pas. Aucun risque pour vous.*"
         ))
         buttons = [{"id": "start_check", "title": "🚀 Vérifier mon indemnité"}]
