@@ -1681,8 +1681,14 @@
     var st  = document.getElementById('pub-status');
     var budget = parseInt((document.getElementById('budget-sl') || {}).value || '10', 10);
 
-    // Déterminer l'aéroport africain : priorité à l'arrivée si sens EU→AF, sinon départ
-    var airport = v.arr || v.dep;
+    // Toujours cibler l'aéroport africain (où sont les passagers qui attendent)
+    // EU→AF : passagers bloqués côté EU, mais la cible comm. est l'arrivée AF
+    // AF→EU : passagers bloqués à l'aéroport AF de départ → cibler le départ
+    var airport = AF_IATA_SET.has(v.arr)
+      ? v.arr  // EU→AF : arrivée est africaine (DSS, ABJ…)
+      : AF_IATA_SET.has(v.dep)
+        ? v.dep // AF→EU : départ est africain → les passagers attendent là
+        : v.arr || v.dep; // fallback
 
     if (btn) { btn.disabled = true; btn.textContent = '⏳ Publication…'; }
     if (st)  { st.style.display = 'block'; st.style.background = '#FFF8E1'; st.style.color = '#7B5800'; st.textContent = 'Envoi vers Meta Ads…'; }
