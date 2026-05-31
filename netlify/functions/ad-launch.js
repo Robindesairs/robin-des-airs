@@ -226,7 +226,7 @@ exports.handler = async (event) => {
       start_time: nowSec,
       end_time: endSec,
       billing_event: 'IMPRESSIONS',
-      optimization_goal: 'LINK_CLICKS',
+      optimization_goal: 'REACH',
       status: 'ACTIVE',
       targeting,
     });
