@@ -218,6 +218,7 @@ exports.handler = async (event) => {
       objective: 'OUTCOME_TRAFFIC',
       status: 'ACTIVE',
       special_ad_categories: [],
+      is_adset_budget_sharing_enabled: false,
     });
 
     // 2. Ad Set géofencé
