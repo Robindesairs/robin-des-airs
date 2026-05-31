@@ -169,7 +169,7 @@ exports.handler = async (event) => {
   const hashes  = getHashes(lang, process.env);
   const msgText = getMsg(lang, coords.city, body);
 
-  if (!hashes.feed && !hashes.square && !hashes.story) {
+  if (!hashes.feedSite && !hashes.squareWa && !hashes.storyWa) {
     return { statusCode: 500, body: JSON.stringify({ error: 'Aucun hash image configuré dans Netlify (META_AD_HASH_FR_FEED etc.)' }) };
   }
 
