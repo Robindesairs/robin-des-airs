@@ -80,11 +80,30 @@ function getHashes(lang, env) {
   };
 }
 
-function getMsg(lang, city) {
+function retardLabel(min) {
+  if (!min || min <= 0) return '';
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return h > 0 ? (h + 'h' + (m > 0 ? String(m).padStart(2,'0') : '')) : (m + 'min');
+}
+
+function getMsg(lang, city, body) {
+  const vol      = body.vol      || '';
+  const dep      = body.dep      || '';
+  const arr      = body.arr      || '';
+  const retard   = retardLabel(body.retardMin);
+  const statut   = body.statut   || 'RETARD';
+  const annule   = statut === 'ANNULE';
+  const volLine  = vol ? `Vol ${vol}` : 'Votre vol';
+  const routeLine = (dep && arr) ? ` ${dep}→${arr}` : (city ? ` depuis ${city}` : '');
+  const delayLine = annule ? ' a été annulé' : (retard ? ` accuse ${retard} de retard` : ' est impacté');
+
   if (lang === 'EN') {
-    return `✈️ Flight from ${city} delayed or cancelled? EU law gives you up to €600 per passenger. Check for free in 2 minutes.`;
+    const enVol   = vol ? `Flight ${vol}` : 'Your flight';
+    const enDelay = annule ? ' has been cancelled' : (retard ? ` is delayed by ${retard}` : ' is impacted');
+    return `✈️ ${enVol}${routeLine}${enDelay}. EU Regulation EC 261 may entitle you to up to €600 per passenger. Free 2-minute check — 0€ if we lose.`;
   }
-  return `✈️ Vol depuis ${city} retardé ou annulé ? La loi européenne vous donne jusqu'à 600 € par passager. Vérifiez gratuitement en 2 minutes.`;
+  return `✈️ ${volLine}${routeLine}${delayLine}. Le règlement CE 261 peut vous donner droit à jusqu'à 600 € par passager. Vérification gratuite en 2 min — 0 € si on perd.`;
 }
 
 exports.handler = async (event) => {
@@ -120,13 +139,17 @@ exports.handler = async (event) => {
 
   const lang    = getLang(airport);
   const hashes  = getHashes(lang, process.env);
-  const msgText = getMsg(lang, coords.city);
+  const msgText = getMsg(lang, coords.city, body);
 
   if (!hashes.feed && !hashes.square && !hashes.story) {
     return { statusCode: 500, body: JSON.stringify({ error: 'Aucun hash image configuré dans Netlify (META_AD_HASH_FR_FEED etc.)' }) };
   }
 
-  const dailyBudget  = parseInt(process.env.META_AD_DAILY_BUDGET_CENTS || '1000', 10);
+  // Budget : priorité au paramètre du radar (en euros), sinon variable Netlify (en centimes)
+  const budgetEuros  = body.budget && body.budget > 0 ? body.budget : null;
+  const dailyBudget  = budgetEuros
+    ? Math.round(budgetEuros * 100)
+    : parseInt(process.env.META_AD_DAILY_BUDGET_CENTS || '1000', 10);
   const radiusKm     = parseFloat(process.env.META_AD_RADIUS_KM || '2');
   const durationDays = parseInt(process.env.META_AD_DURATION_DAYS || '1', 10);
   const nowSec       = Math.floor(Date.now() / 1000);
@@ -160,7 +183,7 @@ exports.handler = async (event) => {
   try {
     // 1. Campagne
     const campaign = await metaPost(`/${accountId}/campaigns`, token, {
-      name: `RDA-GEO-${airport}-${lang}-${new Date().toISOString().slice(0, 10)}`,
+      name: `RDA-${body.vol || 'GEO'}-${airport}-${lang}-${new Date().toISOString().slice(0, 10)}`,
       objective: 'OUTCOME_TRAFFIC',
       status: 'ACTIVE',
       special_ad_categories: [],

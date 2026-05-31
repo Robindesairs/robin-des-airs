@@ -460,19 +460,46 @@ tbody tr.row-pinned-ticker{outline:2px solid var(--gold);outline-offset:-2px}
   </div>
 </div>
 
-<!-- ── Modal Pub WhatsApp (message générique) ─────────────── -->
+<!-- ── Modal Pub Meta Ads ──────────────────────────────────── -->
 <div class="modal-bg" id="modal-pub" style="display:none" onclick="if(event.target===this)closeModals()">
   <div class="modal modal-sm">
-    <div class="modal-header"><h2>💬 Message WhatsApp</h2><button class="btn btn-sm" onclick="closeModals()">✕</button></div>
+    <div class="modal-header">
+      <h2>🚀 Lancer la pub Meta</h2>
+      <button class="btn btn-sm" onclick="closeModals()">✕</button>
+    </div>
     <div class="modal-body">
-      <div id="pub-info" style="background:#F7F8FA;border:1px solid var(--border);border-radius:var(--r2);padding:9px 12px;margin-bottom:12px;font-size:12px;font-weight:600;color:var(--navy)"></div>
-      <p style="font-size:11px;color:var(--text2);margin:0 0 8px">Message générique diaspora (retard ou annulation) :</p>
-      <div id="pub-wa-preview" class="pub-wa-preview"></div>
-      <p style="font-size:10px;color:var(--text3);margin:0">Cochez aussi <strong>Bandeau</strong> dans le tableau pour l’accueil du site.</p>
+      <!-- Vol info -->
+      <div id="pub-info" style="background:#F7F8FA;border:1px solid var(--border);border-radius:var(--r2);padding:9px 12px;margin-bottom:14px;font-size:12px;font-weight:700;color:var(--navy)"></div>
+
+      <!-- Ciblage prévu -->
+      <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.6">
+        <strong>Ciblage automatique :</strong> géofencing <span id="pub-city-label" style="color:var(--navy);font-weight:700"></span> · rayon 2 km autour de l’aéroport<br>
+        <strong>Formats :</strong> Story Instagram · Feed Facebook · Carré WhatsApp<br>
+        <strong>Durée :</strong> 24h (auto-pause)
+      </div>
+
+      <!-- Budget slider -->
+      <label style="font-size:11px;font-weight:700;color:var(--text2);display:block;margin-bottom:6px">
+        Budget journalier : <span id="budget-disp" style="color:var(--navy);font-weight:800">10 €</span>
+        <span style="color:var(--text3);font-weight:400"> — portée estimée : <span id="budget-reach">~200 personnes</span></span>
+      </label>
+      <input type="range" id="budget-sl" min="5" max="100" value="10" step="5"
+        style="width:100%;accent-color:var(--green);margin-bottom:14px">
+
+      <!-- Status retour API -->
+      <div id="pub-status" style="display:none;border-radius:var(--r2);padding:10px 12px;font-size:12px;font-weight:600;margin-bottom:8px"></div>
+
+      <!-- Fallback WhatsApp -->
+      <p style="font-size:10px;color:var(--text3);margin:0">
+        Ou partager manuellement :
+        <button class="btn btn-sm btn-wa" id="btn-wa-fallback" style="padding:3px 10px;font-size:10px;vertical-align:middle;margin-left:4px">WhatsApp</button>
+      </p>
     </div>
     <div class="modal-footer">
-      <button class="btn" onclick="closeModals()">Fermer</button>
-      <button type="button" class="btn btn-wa" id="btn-lancer-pub">Ouvrir WhatsApp</button>
+      <button class="btn" onclick="closeModals()">Annuler</button>
+      <button type="button" class="btn btn-primary" id="btn-lancer-pub" style="background:var(--green);color:#fff;border:none;font-weight:700">
+        🚀 Lancer sur Meta
+      </button>
     </div>
   </div>
 </div>

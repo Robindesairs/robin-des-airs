@@ -1649,27 +1649,80 @@
     if (!v) return;
     currentPubVol = v;
     var info = document.getElementById('pub-info');
-    var preview = document.getElementById('pub-wa-preview');
     if (info) {
       info.textContent =
-        v.vol + ' · ' + v.dep + '→' + v.arr + ' · ' + (v.dateLabel || '—') + ' · ' + (v.statut === 'ANNULE' ? 'Annulé' : 'Retard ' + retardH(v.retardMin));
+        v.vol + ' · ' + v.dep + ' → ' + v.arr + ' · ' + (v.dateLabel || '—') + ' · ' +
+        (v.statut === 'ANNULE' ? '🔴 Annulé' : '🟠 Retard ' + retardH(v.retardMin));
     }
-    if (preview) preview.textContent = buildGenericWaPubText(v);
+    var cityEl = document.getElementById('pub-city-label');
+    if (cityEl) cityEl.textContent = (v.af_ville || v.arr || '?');
+    // Fallback WhatsApp
+    var waBtn = document.getElementById('btn-wa-fallback');
+    if (waBtn) waBtn.onclick = function () { openGenericWaPub(v); };
+    // Reset status
+    var st = document.getElementById('pub-status');
+    if (st) { st.style.display = 'none'; st.textContent = ''; }
+    updBudget();
     openModal('modal-pub');
   }
 
   function updBudget() {
-    var v = parseInt(document.getElementById('budget-sl') && document.getElementById('budget-sl').value, 10) || 10;
-    document.getElementById('budget-disp').textContent = v + ' €';
-    document.getElementById('pub-total').textContent = v + ' €';
-    document.getElementById('budget-reach').textContent =
-      '~' + Math.round(v / 0.05).toLocaleString('fr-FR') + ' personnes · Diaspora ' + (currentPubVol && currentPubVol.af_pays) + ' · Aéroport ' + ((currentPubVol && currentPubVol.dep) || 'concerné');
+    var val = parseInt((document.getElementById('budget-sl') || {}).value || '10', 10);
+    var disp = document.getElementById('budget-disp');
+    var reach = document.getElementById('budget-reach');
+    if (disp) disp.textContent = val + ' €';
+    if (reach) reach.textContent = '~' + Math.round(val / 0.05).toLocaleString('fr-FR') + ' personnes';
   }
 
   function lancerPub() {
     if (!currentPubVol) return;
-    openGenericWaPub(currentPubVol);
-    closeModals();
+    var v = currentPubVol;
+    var btn = document.getElementById('btn-lancer-pub');
+    var st  = document.getElementById('pub-status');
+    var budget = parseInt((document.getElementById('budget-sl') || {}).value || '10', 10);
+
+    // Déterminer l'aéroport africain : priorité à l'arrivée si sens EU→AF, sinon départ
+    var airport = v.arr || v.dep;
+
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Publication…'; }
+    if (st)  { st.style.display = 'block'; st.style.background = '#FFF8E1'; st.style.color = '#7B5800'; st.textContent = 'Envoi vers Meta Ads…'; }
+
+    fetch('/.netlify/functions/ad-launch', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        airport: airport,
+        vol:       v.vol       || '',
+        dep:       v.dep       || '',
+        arr:       v.arr       || '',
+        retardMin: v.retardMin || 0,
+        statut:    v.statut    || 'RETARD',
+        dateLabel: v.dateLabel || '',
+        budget:    budget,
+      }),
+    })
+    .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
+    .then(function (res) {
+      if (btn) { btn.disabled = false; btn.textContent = '🚀 Lancer sur Meta'; }
+      if (res.ok && res.data && res.data.ok) {
+        var d = res.data;
+        if (st) {
+          st.style.background = '#E8F5E9';
+          st.style.color = '#1B5E20';
+          st.innerHTML =
+            '✅ Campagne lancée · ' + (d.city || airport) + ' · ' + (d.budget || budget + ' €/j') +
+            ' · ' + (d.formats || []).length + ' formats' +
+            (d.campaignId ? ' · <a href="https://www.facebook.com/adsmanager" target="_blank" style="color:inherit">Voir dans Meta ↗</a>' : '');
+        }
+      } else {
+        var msg = (res.data && (res.data.error || res.data.detail)) || 'Erreur inconnue';
+        if (st) { st.style.background = '#FFEBEE'; st.style.color = '#B71C1C'; st.textContent = '❌ ' + msg; }
+      }
+    })
+    .catch(function (err) {
+      if (btn) { btn.disabled = false; btn.textContent = '🚀 Lancer sur Meta'; }
+      if (st)  { st.style.background = '#FFEBEE'; st.style.color = '#B71C1C'; st.textContent = '❌ ' + err.message; }
+    });
   }
 
   function switchTab(el, id) {
