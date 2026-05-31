@@ -1712,13 +1712,24 @@
       if (btn) { btn.disabled = false; btn.textContent = '🚀 Lancer sur Meta'; }
       if (res.ok && res.data && res.data.ok) {
         var d = res.data;
+        var endLabel = d.endsAt ? ' · Arrêt auto ' + new Date(d.endsAt).toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'}) : ' · 6h max';
         if (st) {
           st.style.background = '#E8F5E9';
           st.style.color = '#1B5E20';
           st.innerHTML =
-            '✅ Campagne lancée · ' + (d.city || airport) + ' · ' + (d.budget || budget + ' €/j') +
-            ' · ' + (d.formats || []).length + ' formats' +
-            (d.campaignId ? ' · <a href="https://www.facebook.com/adsmanager" target="_blank" style="color:inherit">Voir dans Meta ↗</a>' : '');
+            '✅ Pub active · ' + (d.city || airport) + ' · ' + (d.budget || budget + ' €/j') +
+            ' · ' + (d.formats || []).length + ' formats' + endLabel +
+            (d.campaignId ? ' · <a href="https://www.facebook.com/adsmanager" target="_blank" style="color:inherit">Meta ↗</a>' : '');
+        }
+        // Afficher le bouton Arrêter
+        if (d.campaignId && btn) {
+          var stopBtn = document.createElement('button');
+          stopBtn.className = 'btn';
+          stopBtn.style.cssText = 'background:#FFEBEE;color:#B71C1C;border:1px solid #FFCDD2;margin-top:8px;width:100%;font-weight:700';
+          stopBtn.textContent = '⏹ Arrêter la pub maintenant';
+          var cid = d.campaignId;
+          stopBtn.onclick = function () { arreterPub(cid, stopBtn); };
+          st.parentNode.insertBefore(stopBtn, st.nextSibling);
         }
       } else {
         var msg = (res.data && (res.data.error || res.data.detail)) || 'Erreur inconnue';
@@ -1728,6 +1739,33 @@
     .catch(function (err) {
       if (btn) { btn.disabled = false; btn.textContent = '🚀 Lancer sur Meta'; }
       if (st)  { st.style.background = '#FFEBEE'; st.style.color = '#B71C1C'; st.textContent = '❌ ' + err.message; }
+    });
+  }
+
+  function arreterPub(campaignId, btn) {
+    if (!campaignId) return;
+    if (btn) { btn.disabled = true; btn.textContent = '⏳ Arrêt en cours…'; }
+    fetch('/.netlify/functions/ad-stop', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ campaignId: campaignId }),
+    })
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      if (btn) {
+        if (d.ok) {
+          btn.style.background = '#F5F5F5';
+          btn.style.color = '#9E9E9E';
+          btn.textContent = '⏹ Pub arrêtée';
+          btn.disabled = true;
+        } else {
+          btn.disabled = false;
+          btn.textContent = '❌ Erreur — réessayer';
+        }
+      }
+    })
+    .catch(function () {
+      if (btn) { btn.disabled = false; btn.textContent = '❌ Erreur réseau'; }
     });
   }
 

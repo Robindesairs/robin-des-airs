@@ -150,10 +150,9 @@ exports.handler = async (event) => {
   const dailyBudget  = budgetEuros
     ? Math.round(budgetEuros * 100)
     : parseInt(process.env.META_AD_DAILY_BUDGET_CENTS || '1000', 10);
-  const radiusKm     = parseFloat(process.env.META_AD_RADIUS_KM || '2');
-  const durationDays = parseInt(process.env.META_AD_DURATION_DAYS || '1', 10);
-  const nowSec       = Math.floor(Date.now() / 1000);
-  const endSec       = nowSec + durationDays * 86400;
+  const radiusKm = parseFloat(process.env.META_AD_RADIUS_KM || '2');
+  const nowSec   = Math.floor(Date.now() / 1000);
+  const endSec   = nowSec + 6 * 3600; // 6h max — ad-watch arrête avant si vol décollé
 
   const siteUrl = 'https://robindesairs.eu';
   const waMsg   = lang === 'EN'
@@ -265,6 +264,24 @@ exports.handler = async (event) => {
       ads.push({ label: cr.label, id: ad.id });
     }
 
+    // 5. Stocker dans Blobs pour surveillance par ad-watch
+    try {
+      const { getStore } = require('@netlify/blobs');
+      const store = getStore('active-ad-campaigns');
+      await store.setJSON(campaign.id, {
+        campaignId: campaign.id,
+        adSetId:    adSet.id,
+        airport,
+        vol:        body.vol      || '',
+        dep:        body.dep      || '',
+        arr:        body.arr      || '',
+        launchedAt: Date.now(),
+        endsAt:     Date.now() + 6 * 3600 * 1000,
+      });
+    } catch (e) {
+      console.warn('[ad-launch] Blobs store failed:', e.message);
+    }
+
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
@@ -279,7 +296,7 @@ exports.handler = async (event) => {
         formats: ads.map(a => a.label),
         radius: `${radiusKm} km`,
         budget: `${(dailyBudget / 100).toFixed(2)} €/jour`,
-        duration: `${durationDays} jour(s)`,
+        endsAt: new Date(Date.now() + 6 * 3600 * 1000).toISOString(),
       }),
     };
   } catch (err) {
