@@ -25,3 +25,5 @@ proofs/*
 
 # Dépendances pip locales (tests / dev)
 .pip-local/
+.env.local
+.ad-hashes.env

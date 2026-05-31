@@ -97,12 +97,18 @@ const AD_FILES = [
 const ROOT = path.join(__dirname, '..');
 
 async function uploadImage(filePath, filename) {
-  const bytes = fs.readFileSync(filePath).toString('base64');
+  const fileBytes = fs.readFileSync(filePath);
+  const boundary  = 'RDABoundary' + Date.now();
+  const body = Buffer.concat([
+    Buffer.from(`--${boundary}\r\nContent-Disposition: form-data; name="filename"; filename="${filename}"\r\nContent-Type: image/png\r\n\r\n`),
+    fileBytes,
+    Buffer.from(`\r\n--${boundary}--\r\n`),
+  ]);
 
   const res = await fetch(META_API + `?access_token=${TOKEN}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ [filename]: bytes }),
+    headers: { 'Content-Type': `multipart/form-data; boundary=${boundary}` },
+    body,
   });
 
   const json = await res.json();
