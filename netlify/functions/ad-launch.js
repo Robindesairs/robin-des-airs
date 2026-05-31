@@ -236,31 +236,12 @@ exports.handler = async (event) => {
     // 3. Créer les 4 creatives selon les slots
     const creatives = [];
 
+    // CTA : LEARN_MORE vers le site (WhatsApp reconnectable après dans Page FB)
     const slots = [
-      {
-        label:  'story-wa',
-        hash:   hashes.storyWa,
-        link:   waLink || siteUrl,
-        cta:    waLink ? 'WHATSAPP_MESSAGE' : 'LEARN_MORE',
-      },
-      {
-        label:  'feed-site',
-        hash:   hashes.feedSite,
-        link:   siteUrl,
-        cta:    'LEARN_MORE',
-      },
-      {
-        label:  'square-wa',
-        hash:   hashes.squareWa,
-        link:   waLink || siteUrl,
-        cta:    waLink ? 'WHATSAPP_MESSAGE' : 'LEARN_MORE',
-      },
-      {
-        label:  'square-site',
-        hash:   hashes.squareSite,
-        link:   siteUrl,
-        cta:    'LEARN_MORE',
-      },
+      { label: 'story-wa',    hash: hashes.storyWa,    link: siteUrl, cta: 'LEARN_MORE' },
+      { label: 'feed-site',   hash: hashes.feedSite,   link: siteUrl, cta: 'LEARN_MORE' },
+      { label: 'square-wa',   hash: hashes.squareWa,   link: siteUrl, cta: 'LEARN_MORE' },
+      { label: 'square-site', hash: hashes.squareSite, link: siteUrl, cta: 'LEARN_MORE' },
     ];
 
     for (const slot of slots) {
