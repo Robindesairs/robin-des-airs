@@ -171,13 +171,17 @@ exports.handler = async (event) => {
         radius: radiusKm,
         distance_unit: 'kilometer',
       }],
+      // travel_in = personnes physiquement présentes et en déplacement
+      // (voyageurs à l'aéroport, pas les habitants du quartier)
+      location_types: ['travel_in', 'recent'],
     },
-    age_min: 22,
+    age_min: 18,
     age_max: 65,
-    // Facebook + Instagram
+    // Facebook + Instagram — tous les placements mobiles
     publisher_platforms: ['facebook', 'instagram'],
     facebook_positions: ['feed', 'story', 'reels'],
     instagram_positions: ['stream', 'story', 'reels'],
+    device_platforms: ['mobile'], // les passagers sont sur téléphone
   };
 
   try {
