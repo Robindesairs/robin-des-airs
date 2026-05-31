@@ -203,7 +203,7 @@ exports.handler = async (event) => {
     age_max: 65,
     // Facebook + Instagram — tous les placements mobiles
     publisher_platforms: ['facebook', 'instagram'],
-    facebook_positions: ['feed', 'story', 'reels'],
+    facebook_positions: ['feed', 'story'],
     instagram_positions: ['stream', 'story', 'reels'],
     device_platforms: ['mobile'], // les passagers sont sur téléphone
   };
