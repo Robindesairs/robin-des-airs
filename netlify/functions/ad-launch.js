@@ -222,12 +222,13 @@ exports.handler = async (event) => {
     const adSet = await metaPost(`/${accountId}/adsets`, token, {
       name: `GEO-${airport}-${coords.city}-${lang}`,
       campaign_id: campaign.id,
-      daily_budget: dailyBudget,
+      lifetime_budget: dailyBudget, // budget total (en centimes), pas quotidien
       start_time: nowSec,
       end_time: endSec,
       billing_event: 'IMPRESSIONS',
       optimization_goal: 'REACH',
       bid_strategy: 'LOWEST_COST_WITHOUT_CAP',
+      pacing_type: ['standard'],
       status: 'ACTIVE',
       targeting,
     });
