@@ -128,6 +128,241 @@
 
   let VOLS = [];
   let ELIGIBLES = [];
+  let ELIG_REGISTRY_LOADED = false;
+  let ELIG_TICKER_FALLBACK = [];
+  const HOME_PUB_URL =
+    (typeof window !== 'undefined' && window.location && window.location.origin && !/^https?:\/\/localhost/i.test(window.location.origin))
+      ? window.location.origin.replace(/\/$/, '') + '/?utm_source=meta&utm_medium=cpc&utm_campaign=radar-eligible'
+      : 'https://robindesairs.eu/?utm_source=meta&utm_medium=cpc&utm_campaign=radar-eligible';
+  function ELIG_REGISTRY_URL() {
+    return apiRadarOrigin() + '/api/radar-eligible-registry';
+  }
+
+  function volStableIdFromParts(vol, dep, arr, date) {
+    return [
+      String(vol || '').replace(/\s/g, '').toUpperCase(),
+      String(dep || '').toUpperCase(),
+      String(arr || '').toUpperCase(),
+      String(date || '').slice(0, 10),
+    ]
+      .join('_')
+      .replace(/[^A-Za-z0-9_\-]/g, '')
+      .slice(0, 120) || 'vol_unknown';
+  }
+
+  function volStableId(v) {
+    if (!v) return 'vol_unknown';
+    if (v.id && String(v.id).indexOf('_') >= 0 && !/^r\d+$/.test(String(v.id))) return String(v.id);
+    return volStableIdFromParts(v.vol || v.flight, v.dep, v.arr, v.date || v.scheduledDate);
+  }
+
+  function registryEntryToVol(entry) {
+    if (!entry) return null;
+    var v = Object.assign({}, entry);
+    v.id = entry.id || volStableId(entry);
+    if (!v.dep_ville) v.dep_ville = airportLabel(v.dep);
+    if (!v.arr_ville) v.arr_ville = airportLabel(v.arr);
+    if (!v.dateLabel && v.date) v.dateLabel = formatDateFr(v.date);
+    if (!v.sens) v.sens = sensFromIata(v.dep, v.arr);
+    if (!v.af_pays) v.af_pays = afPaysFor(v.dep, v.arr);
+    if (!v.prio) v.prio = priorityFromVol(v);
+    return v;
+  }
+
+  function volToRegistryPayload(v) {
+    return {
+      id: volStableId(v),
+      vol: v.vol,
+      flight: v.vol,
+      comp: v.comp,
+      airline: v.airlineIata || v.comp,
+      dep: v.dep,
+      arr: v.arr,
+      dep_ville: v.dep_ville,
+      arr_ville: v.arr_ville,
+      date: v.date,
+      dateLabel: v.dateLabel,
+      statut: v.statut,
+      retardMin: v.retardMin,
+      delayMinutes: v.statut === 'ANNULE' ? null : v.retardMin,
+      cancelled: v.statut === 'ANNULE',
+      eligible: true,
+      elig: v.elig,
+      score: v.score,
+      std: v.std,
+      sta: v.sta,
+      eta: v.eta,
+      trackerUrl: v.trackerUrl,
+      af_pays: v.af_pays,
+    };
+  }
+
+  function updateEligBadge() {
+    var badge = document.getElementById('elig-count-badge');
+    if (badge) badge.textContent = String(ELIGIBLES.length);
+    var note = document.getElementById('elig-registry-note');
+    if (note) {
+      note.textContent = ELIG_REGISTRY_LOADED
+        ? ELIGIBLES.length + ' vol(s) enregistré(s) sur le serveur — liste permanente.'
+        : 'Chargement du registre…';
+    }
+  }
+
+  function loadEligibleRegistry() {
+    return fetch(ELIG_REGISTRY_URL() + '?_=' + Date.now(), radarFetchInit({ credentials: 'include' }))
+      .then(function (r) {
+        return r.json().catch(function () { return {}; });
+      })
+      .then(function (data) {
+        if (data && data.ok && Array.isArray(data.flights)) {
+          ELIGIBLES = data.flights.map(registryEntryToVol).filter(Boolean);
+          ELIG_REGISTRY_LOADED = true;
+          updateEligBadge();
+          renderElig();
+        } else if (data && data.error && data.error.indexOf('blobs') >= 0) {
+          ELIG_REGISTRY_LOADED = true;
+          updateEligBadge();
+        }
+      })
+      .catch(function () {
+        ELIG_REGISTRY_LOADED = true;
+        updateEligBadge();
+      });
+  }
+
+  function persistEligiblesToServer(flights, source) {
+    var list = (flights || []).filter(Boolean);
+    if (!list.length) return Promise.resolve();
+    return fetch(ELIG_REGISTRY_URL(), radarFetchInit({
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ flights: list.map(volToRegistryPayload), source: source || 'radar-ui' }),
+    })).then(function (r) {
+      return r.json().catch(function () { return {}; });
+    }).catch(function () {});
+  }
+
+  function removeEligibleFromServer(id) {
+    return fetch(ELIG_REGISTRY_URL() + '?id=' + encodeURIComponent(id), radarFetchInit({
+      method: 'DELETE',
+      credentials: 'include',
+    })).catch(function () {});
+  }
+
+  function mapTickerFlightToVol(f) {
+    if (!f) return null;
+    var dep = String(f.dep || '').toUpperCase();
+    var arr = String(f.arr || '').toUpperCase();
+    var vol = {
+      id: volStableIdFromParts(f.flight, dep, arr, f.scheduledDate),
+      vol: f.flight || '—',
+      comp: airlineLabel(f.airline || f.flight),
+      airlineIata: String(f.airline || '').toUpperCase(),
+      dep: dep,
+      arr: arr,
+      dep_ville: airportLabel(dep),
+      arr_ville: airportLabel(arr) + (f.via ? ' (via ' + f.via + ')' : ''),
+      date: f.scheduledDate || null,
+      dateLabel: formatDateFr(f.scheduledDate),
+      statut: f.cancelled ? 'ANNULE' : 'RETARD',
+      retardMin: f.delayMinutes != null ? Number(f.delayMinutes) : f.cancelled ? 0 : 180,
+      elig: 'OUI',
+      score: f.cancelled ? 72 : 78,
+      pinned: !!f.pinned,
+      fromTicker: true,
+    };
+    vol.prio = priorityFromVol(vol);
+    return vol;
+  }
+
+  function fetchEligTickerFallback() {
+    return fetch(apiRadarOrigin() + '/api/vol-ticker?_=' + Date.now(), radarFetchInit())
+      .then(function (r) { return r.json().catch(function () { return {}; }); })
+      .then(function (data) {
+        if (data && Array.isArray(data.flights)) {
+          ELIG_TICKER_FALLBACK = data.flights.filter(function (f) { return f && f.eligible; });
+        }
+        renderEligPubBanner();
+      })
+      .catch(function () {
+        renderEligPubBanner();
+      });
+  }
+
+  function getLatestEligibleDisplay(limit) {
+    var max = limit || 6;
+    if (ELIGIBLES.length) return ELIGIBLES.slice(0, max);
+    return ELIG_TICKER_FALLBACK.map(mapTickerFlightToVol).filter(Boolean).slice(0, max);
+  }
+
+  function copyHomePubUrl() {
+    var url = HOME_PUB_URL;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(function () {
+        window.alert('Lien pub copié :\n' + url);
+      }).catch(function () {
+        window.prompt('Copiez le lien landing pub Meta :', url);
+      });
+    } else {
+      window.prompt('Copiez le lien landing pub Meta :', url);
+    }
+  }
+
+  function renderEligPubBanner() {
+    var el = document.getElementById('elig-pub-banner');
+    if (!el) return;
+    var latest = getLatestEligibleDisplay(8);
+    var chips = latest.length
+      ? latest
+          .map(function (v) {
+            var via = v.arr_ville && v.arr_ville.indexOf('via') >= 0 ? '' : '';
+            var stat = v.statut === 'ANNULE' ? 'Annulé' : 'Retard ' + retardH(v.retardMin);
+            return (
+              '<span class="elig-pub-flight-chip' +
+              (v.pinned ? ' is-pinned' : '') +
+              '">' +
+              v.vol +
+              ' ' +
+              v.dep +
+              '→' +
+              v.arr +
+              ' · ' +
+              (v.dateLabel || v.date || '—') +
+              ' · ' +
+              stat +
+              (v.pinned ? ' · Bandeau' : '') +
+              '</span>'
+            );
+          })
+          .join('')
+      : '<span class="elig-pub-flight-chip">Aucun vol éligible récent — lancez un scan radar</span>';
+    var sourceLabel = ELIGIBLES.length
+      ? 'Registre permanent (' + ELIGIBLES.length + ' vol(s))'
+      : ELIG_TICKER_FALLBACK.length
+        ? 'Bandeau accueil (' + ELIG_TICKER_FALLBACK.length + ' vol(s) RAM Afrique centrale)'
+        : 'En attente de données';
+
+    el.innerHTML =
+      '<div class="elig-pub-banner">' +
+      '<div class="elig-pub-banner-head">' +
+      '<div><h3>📣 Pub Meta → page d\'accueil Robin</h3>' +
+      '<p>URL de destination pour vos campagnes (WhatsApp + calculateur CE 261). ' +
+      'Source affichée : <strong>' +
+      sourceLabel +
+      '</strong></p></div>' +
+      '<div class="elig-pub-banner-cta">' +
+      '<a class="elig-pub-banner-link" href="' +
+      HOME_PUB_URL +
+      '" target="_blank" rel="noopener">Vérifier mon indemnité →</a>' +
+      '<button type="button" class="elig-pub-banner-copy" onclick="window.__radarCopyHomePubUrl&&window.__radarCopyHomePubUrl()">Copier le lien pub</button>' +
+      '</div></div>' +
+      '<div style="font-size:10px;font-weight:700;opacity:.85;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Derniers vols éligibles</div>' +
+      '<div class="elig-pub-banner-flights">' +
+      chips +
+      '</div></div>';
+  }
+
   let currentPeriod = 'jour';
   let countdownSec = 25 * 60;
   let currentPubVol = null;
@@ -445,9 +680,47 @@
     return !!on;
   }
 
-  function buildGenericWaPubText(v) {
+  function getPubLang() {
+    var sel = document.getElementById('pub-lang');
+    if (sel && sel.value === 'en') return 'en';
+    try {
+      if (new URLSearchParams(window.location.search).get('publang') === 'en') return 'en';
+    } catch (_) {}
+    return 'fr';
+  }
+
+  function buildGenericWaPubText(v, lang) {
     if (!v) return '';
-    var dateTxt = v.dateLabel && v.dateLabel !== '—' ? ' le ' + v.dateLabel : '';
+    lang = lang || getPubLang();
+    var dateTxt =
+      v.dateLabel && v.dateLabel !== '—'
+        ? lang === 'en'
+          ? ' on ' + v.dateLabel
+          : ' le ' + v.dateLabel
+        : '';
+    if (lang === 'en') {
+      var statEn =
+        v.statut === 'ANNULE'
+          ? 'was cancelled'
+          : 'is ' + retardH(v.retardMin) + ' late';
+      return (
+        'Hi! Flight ' +
+        v.vol +
+        ' (' +
+        v.dep +
+        ' → ' +
+        v.arr +
+        ')' +
+        dateTxt +
+        ' ' +
+        statEn +
+        '.\n\n' +
+        'You may be entitled to up to €600 (EU Regulation EC 261).\n' +
+        'Robin des Airs checks your case for free:\n' +
+        'https://robindesairs.eu\n\n' +
+        'Reply with your name, flight date and booking reference.'
+      );
+    }
     var stat =
       v.statut === 'ANNULE'
         ? 'a été annulé'
@@ -541,7 +814,7 @@
     var arr = (f.arr || '').toUpperCase();
     var sens = sensFromIata(dep, arr);
     var vol = {
-      id: 'r' + idx,
+      id: 'pending',
       vol: f.flight || '—',
       comp: airlineLabel(f.airline),
       airlineIata: (f.airline || '').toUpperCase(),
@@ -571,6 +844,7 @@
       surveillanceRetour: !!f.surveillanceRetour,
       dataSource: 'aerodatabox'
     };
+    vol.id = volStableId(vol);
     vol.prio = priorityFromVol(vol);
     return vol;
   }
@@ -664,17 +938,22 @@
 
   function autoAddEligiblesFromCurrentVols() {
     var added = 0;
-    var existed = new Set(ELIGIBLES.map(function (x) { return x.id; }));
+    var newOnes = [];
+    var existed = new Set(ELIGIBLES.map(function (x) { return volStableId(x); }));
     VOLS.forEach(function (v) {
       if (!isAutoEligible(v)) return;
-      if (existed.has(v.id)) return;
+      var sid = volStableId(v);
+      if (existed.has(sid)) return;
+      v.id = sid;
       ELIGIBLES.unshift(v);
-      existed.add(v.id);
+      newOnes.push(v);
+      existed.add(sid);
       added += 1;
     });
     if (added > 0) {
-      document.getElementById('elig-count-badge').textContent = String(ELIGIBLES.length);
+      updateEligBadge();
       renderElig();
+      persistEligiblesToServer(newOnes, 'radar-auto');
     }
     return added;
   }
@@ -1496,8 +1775,45 @@
       '</div></div>';
   }
 
+  function exportEligCsv() {
+    if (!ELIGIBLES.length) {
+      window.alert('Aucun vol éligible à exporter.');
+      return;
+    }
+    var header = ['vol', 'compagnie', 'dep', 'arr', 'date', 'statut', 'retard_min', 'score', 'first_seen', 'last_seen'];
+    var rows = ELIGIBLES.map(function (v) {
+      return [
+        v.vol,
+        v.comp,
+        v.dep,
+        v.arr,
+        v.date || '',
+        v.statut,
+        v.retardMin,
+        v.score,
+        v.firstSeenAt || '',
+        v.lastSeenAt || '',
+      ]
+        .map(function (c) { return '"' + String(c == null ? '' : c).replace(/"/g, '""') + '"'; })
+        .join(',');
+    });
+    var blob = new Blob([header.join(',') + '\n' + rows.join('\n')], { type: 'text/csv;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'robin-eligibles-' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  function findVolById(id) {
+    return (
+      VOLS.find(function (x) { return x.id === id || volStableId(x) === id; }) ||
+      ELIGIBLES.find(function (x) { return x.id === id || volStableId(x) === id; })
+    );
+  }
+
   function openDetail(id) {
-    var v = VOLS.find(function (x) { return x.id === id; });
+    var v = findVolById(id);
     if (!v) return;
     var autresVols = VOLS.filter(function (x) { return x.dep === v.dep && x.id !== v.id && x.statut === 'A_LHEURE'; }).slice(0, 3);
     var eligV = '';
@@ -1587,35 +1903,76 @@
   }
 
   function addElig(id) {
-    var v = VOLS.find(function (x) { return x.id === id; });
+    var v = VOLS.find(function (x) { return x.id === id || volStableId(x) === id; });
     if (!v) return;
-    if (!ELIGIBLES.find(function (x) { return x.id === id; })) ELIGIBLES.unshift(v);
-    document.getElementById('elig-count-badge').textContent = String(ELIGIBLES.length);
+    v.id = volStableId(v);
+    if (!ELIGIBLES.find(function (x) { return volStableId(x) === v.id; })) {
+      ELIGIBLES.unshift(v);
+      persistEligiblesToServer([v], 'radar-manual');
+    }
+    updateEligBadge();
     renderElig();
     closeModals();
     switchTab(document.querySelector('[data-tab="t-eligible"]'), 't-eligible');
   }
 
   function removeElig(id) {
-    ELIGIBLES = ELIGIBLES.filter(function (x) { return x.id !== id; });
-    document.getElementById('elig-count-badge').textContent = String(ELIGIBLES.length);
+    if (!window.confirm('Retirer ce vol du registre permanent ?')) return;
+    ELIGIBLES = ELIGIBLES.filter(function (x) { return x.id !== id && volStableId(x) !== id; });
+    updateEligBadge();
     renderElig();
+    removeEligibleFromServer(id);
   }
 
   function clearElig() {
-    ELIGIBLES = [];
-    document.getElementById('elig-count-badge').textContent = '0';
-    renderElig();
+    window.alert(
+      'La mine d\'or est conservée sur le serveur.\n\n' +
+        'Les vols éligibles détectés au scan restent enregistrés même après fermeture du navigateur.\n\n' +
+        'Pour retirer un vol, utilisez le bouton ✕ sur la fiche.'
+    );
   }
 
   function renderElig() {
+    renderEligPubBanner();
     var el = document.getElementById('elig-list');
     if (!el) return;
     if (!ELIGIBLES.length) {
-      el.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text2)">Aucun vol éligible sauvegardé</div>';
+      var fallback = ELIG_TICKER_FALLBACK.map(mapTickerFlightToVol).filter(Boolean);
+      if (fallback.length) {
+        el.innerHTML =
+          '<p style="font-size:11px;color:var(--text2);margin:0 0 10px">Registre serveur vide (pas encore déployé ou aucun scan). <strong>Derniers vols éligibles du bandeau accueil :</strong></p>' +
+          fallback
+            .map(function (v) {
+              return (
+                '<div class="elig-card" style="opacity:.92"><div style="flex:1"><div style="font-size:14px;font-weight:700;color:var(--navy)">' +
+                v.vol +
+                ' — ' +
+                v.comp +
+                ' <span style="font-size:11px;font-weight:400;color:var(--text2)">' +
+                v.dep_ville +
+                ' → ' +
+                v.arr_ville +
+                '</span></div><div style="font-size:11px;color:var(--text2);margin-top:3px">' +
+                (v.dateLabel || v.date || '—') +
+                ' · Annulé · Bandeau site · ' +
+                v.dep +
+                '→' +
+                v.arr +
+                '</div></div><span class="amount-badge" style="flex-direction:column;line-height:1.2;padding:6px 14px"><span style="font-size:10px;font-weight:600;opacity:.7">éligible</span><span style="font-size:16px">CE 261</span></span></div>'
+              );
+            })
+            .join('');
+        return;
+      }
+      el.innerHTML =
+        '<div style="text-align:center;padding:3rem;color:var(--text2)">' +
+        'Aucun vol éligible enregistré pour l’instant.<br><span style="font-size:11px">Lancez un scan — les vols annulés ou retardés ≥ 3 h s’ajoutent automatiquement ici (liste permanente serveur).</span></div>';
       return;
     }
     el.innerHTML = ELIGIBLES.map(function (v) {
+      var seen = v.firstSeenAt
+        ? ' · vu le ' + new Date(v.firstSeenAt).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: 'numeric' })
+        : '';
       return (
         '<div class="elig-card" onclick="window.__radarOpenDetail(&quot;' +
         v.id +
@@ -1628,6 +1985,8 @@
         ' → ' +
         v.arr_ville +
         '</span></div><div style="font-size:11px;color:var(--text2);margin-top:3px">' +
+        (v.dateLabel || v.date || '—') +
+        ' · ' +
         (v.statut === 'ANNULE' ? 'Annulé' : 'Retard ' + retardH(v.retardMin)) +
         ' · Estim. ' +
         v.score +
@@ -1635,6 +1994,7 @@
         v.dep +
         '→' +
         v.arr +
+        seen +
         '</div></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="amount-badge" style="flex-direction:column;line-height:1.2;padding:6px 14px"><span style="font-size:10px;font-weight:600;opacity:.7">à dossier</span><span style="font-size:16px">CE 261</span></span><button class="radar-btn radar-btn-gold radar-btn-sm" onclick="event.stopPropagation();window.__radarOpenPub(&quot;' +
         v.id +
         '&quot;)">📣 Pub</button><button class="radar-btn radar-btn-sm" onclick="event.stopPropagation();window.__radarRemoveElig(&quot;' +
@@ -1645,7 +2005,7 @@
   }
 
   function openPub(id) {
-    var v = VOLS.find(function (x) { return x.id === id; });
+    var v = findVolById(id);
     if (!v) return;
     currentPubVol = v;
     var info = document.getElementById('pub-info');
@@ -1656,14 +2016,19 @@
     }
     var cityEl = document.getElementById('pub-city-label');
     if (cityEl) cityEl.textContent = (v.af_ville || v.arr || '?');
-    // Fallback WhatsApp
     var waBtn = document.getElementById('btn-wa-fallback');
     if (waBtn) waBtn.onclick = function () { openGenericWaPub(v); };
-    // Reset status
     var st = document.getElementById('pub-status');
     if (st) { st.style.display = 'none'; st.textContent = ''; }
+    var preview = document.getElementById('pub-wa-preview');
+    if (preview) preview.textContent = buildGenericWaPubText(v, getPubLang());
     updBudget();
     openModal('modal-pub');
+  }
+
+  function refreshPubPreview() {
+    var preview = document.getElementById('pub-wa-preview');
+    if (preview && currentPubVol) preview.textContent = buildGenericWaPubText(currentPubVol, getPubLang());
   }
 
   function updBudget() {
@@ -2052,6 +2417,7 @@
       });
   }
 
+  window.__radarCopyHomePubUrl = copyHomePubUrl;
   window.__radarOpenDetail = openDetail;
   window.__radarAddElig = addElig;
   window.__radarRemoveElig = removeElig;
@@ -2086,6 +2452,13 @@
   document.getElementById('btn-refresh') && document.getElementById('btn-refresh').addEventListener('click', refreshAll);
   document.getElementById('btn-clear-elig') && document.getElementById('btn-clear-elig').addEventListener('click', clearElig);
   document.getElementById('btn-lancer-pub') && document.getElementById('btn-lancer-pub').addEventListener('click', lancerPub);
+  var pubLangSel = document.getElementById('pub-lang');
+  if (pubLangSel) {
+    try {
+      if (new URLSearchParams(window.location.search).get('publang') === 'en') pubLangSel.value = 'en';
+    } catch (_) {}
+    pubLangSel.addEventListener('change', refreshPubPreview);
+  }
   document.getElementById('budget-sl') && document.getElementById('budget-sl').addEventListener('input', updBudget);
   document.querySelectorAll('.pub-platform').forEach(function (p) {
     p.addEventListener('click', function () { p.classList.toggle('selected'); });
@@ -2128,6 +2501,7 @@
   window.addElig = addElig;
   window.removeElig = removeElig;
   window.clearElig = clearElig;
+  window.exportEligCsv = exportEligCsv;
   window.openDetail = openDetail;
   window.openPub = openPub;
   window.updBudget = updBudget;
@@ -2142,5 +2516,9 @@
     if (countdownSec === 0 && !(window.__radarReturnScheduler && window.__radarReturnScheduler.isBusy())) refreshAll();
   }, 1000);
 
-  refreshAll();
+  loadEligibleRegistry()
+    .then(function () { return fetchEligTickerFallback(); })
+    .finally(function () {
+      refreshAll();
+    });
 })();

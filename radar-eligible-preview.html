@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aperçu — Mine d'or Éligibles (Radar Robin)</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+:root {
+  --navy: #0B1F3A;
+  --green: #007A4C;
+  --gold: #C9A84C;
+  --bg: #F0F2F5;
+  --card: #fff;
+  --border: #E2E4E8;
+  --text: #1A1A2E;
+  --text2: #6B7280;
+  --radar-green: #007A4C;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  min-height: 100vh;
+}
+.topbar {
+  background: var(--navy);
+  padding: 14px 20px;
+  color: #fff;
+}
+.topbar h1 { font-size: 17px; font-weight: 700; }
+.topbar h1 span { color: var(--gold); }
+.topbar p { font-size: 11px; opacity: 0.65; margin-top: 4px; }
+.wrap { max-width: 960px; margin: 0 auto; padding: 20px 16px 40px; }
+.banner {
+  background: linear-gradient(135deg, #e8f8f0, #fff);
+  border: 1px solid #b8e6cf;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  font-size: 12px;
+  line-height: 1.55;
+}
+.banner strong { color: var(--green); }
+.panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(11, 31, 58, 0.06);
+}
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  background: #fafbfc;
+  flex-wrap: wrap;
+}
+.tab {
+  padding: 12px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text2);
+  border: none;
+  background: transparent;
+  cursor: default;
+}
+.tab.active {
+  color: var(--navy);
+  background: #fff;
+  box-shadow: inset 0 -2px 0 var(--green);
+}
+.tab-badge {
+  background: #D5F5E3;
+  color: #145A32;
+  border-radius: 20px;
+  padding: 1px 7px;
+  font-size: 10px;
+  margin-left: 4px;
+}
+.pane { padding: 14px 16px 18px; }
+.pane-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.pane-note { font-size: 11px; color: var(--text2); max-width: 620px; line-height: 1.5; }
+.btn-sm {
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-sm.primary { background: var(--green); color: #fff; border-color: var(--green); }
+.btn-sm.gold { background: var(--gold); color: var(--navy); border-color: var(--gold); font-weight: 700; }
+.elig-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 15px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.elig-card:hover { background: #f0faf6; }
+.elig-title { font-size: 14px; font-weight: 700; color: var(--navy); }
+.elig-sub { font-size: 11px; color: var(--text2); margin-top: 3px; }
+.elig-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.amount-badge {
+  background: #d5f5e3;
+  color: #145a32;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 999px;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  text-align: center;
+}
+.amount-badge span:first-child { font-size: 10px; font-weight: 600; opacity: 0.7; }
+.flow {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+.flow-item {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.flow-item em { display: block; font-style: normal; font-weight: 700; color: var(--navy); margin-bottom: 4px; font-size: 12px; }
+.footer { margin-top: 18px; font-size: 11px; color: var(--text2); text-align: center; }
+.footer a { color: var(--green); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <h1>ROBIN <span>des Airs</span> — Aperçu mine d'or</h1>
+  <p>Onglet ✅ Éligibles du radar (registre permanent serveur)</p>
+</div>
+
+<div class="wrap">
+  <div class="banner">
+    <strong>Liste permanente</strong> — Chaque vol annulé ou retardé ≥ 3 h détecté au scan s'enregistre automatiquement sur Netlify Blobs.
+    Les données ne disparaissent plus au rechargement du navigateur. Export CSV disponible.
+  </div>
+
+  <div class="panel">
+    <div class="tabs">
+      <button type="button" class="tab">📡 Vols</button>
+      <button type="button" class="tab active">✅ Éligibles <span class="tab-badge">4</span></button>
+      <button type="button" class="tab">📊 Stats</button>
+    </div>
+
+    <div class="pane">
+      <div class="pane-head">
+        <p class="pane-note" id="elig-registry-note">4 vol(s) enregistré(s) sur le serveur — liste permanente.</p>
+        <div style="display:flex;gap:8px">
+          <button type="button" class="btn-sm primary">⬇ Export CSV</button>
+          <button type="button" class="btn-sm" title="La liste serveur n'est jamais vidée">ℹ️</button>
+        </div>
+      </div>
+
+      <div id="elig-list">
+        <div class="elig-card">
+          <div>
+            <div class="elig-title">AF718 — Air France <span style="font-size:11px;font-weight:400;color:var(--text2)">Dakar → Paris CDG</span></div>
+            <div class="elig-sub">13 mai 2026 · Retard 3h10 · Estim. 78/100 · DSS→CDG · vu le 28 mai 2026</div>
+          </div>
+          <div class="elig-actions">
+            <span class="amount-badge"><span>à dossier</span><span>CE 261</span></span>
+            <button type="button" class="btn-sm gold">📣 Pub</button>
+            <button type="button" class="btn-sm">✕</button>
+          </div>
+        </div>
+
+        <div class="elig-card">
+          <div>
+            <div class="elig-title">SN203 — Brussels Airlines <span style="font-size:11px;font-weight:400;color:var(--text2)">Kinshasa → Bruxelles</span></div>
+            <div class="elig-sub">12 mai 2026 · Annulé · Estim. 72/100 · FIH→BRU · vu le 27 mai 2026</div>
+          </div>
+          <div class="elig-actions">
+            <span class="amount-badge"><span>à dossier</span><span>CE 261</span></span>
+            <button type="button" class="btn-sm gold">📣 Pub</button>
+            <button type="button" class="btn-sm">✕</button>
+          </div>
+        </div>
+
+        <div class="elig-card">
+          <div>
+            <div class="elig-title">AT569 — Royal Air Maroc <span style="font-size:11px;font-weight:400;color:var(--text2)">Casablanca → Paris ORY</span></div>
+            <div class="elig-sub">11 mai 2026 · Retard 4h05 · Estim. 78/100 · CMN→ORY · vu le 26 mai 2026</div>
+          </div>
+          <div class="elig-actions">
+            <span class="amount-badge"><span>à dossier</span><span>CE 261</span></span>
+            <button type="button" class="btn-sm gold">📣 Pub</button>
+            <button type="button" class="btn-sm">✕</button>
+          </div>
+        </div>
+
+        <div class="elig-card">
+          <div>
+            <div class="elig-title">ET705 — Ethiopian <span style="font-size:11px;font-weight:400;color:var(--text2)">Addis-Abeba → Paris CDG</span></div>
+            <div class="elig-sub">10 mai 2026 · Retard 3h25 · Estim. 78/100 · ADD→CDG · vu le 25 mai 2026</div>
+          </div>
+          <div class="elig-actions">
+            <span class="amount-badge"><span>à dossier</span><span>CE 261</span></span>
+            <button type="button" class="btn-sm gold">📣 Pub</button>
+            <button type="button" class="btn-sm">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow">
+    <div class="flow-item"><em>1. Scan radar</em>Vol annulé ou retard ≥ 3 h sur route EU↔Afrique</div>
+    <div class="flow-item"><em>2. Auto-enregistrement</em>Ajout immédiat dans le registre Blobs (sans action manuelle)</div>
+    <div class="flow-item"><em>3. Onglet Éligibles</em>Historique complet, export CSV, lancement pub WhatsApp</div>
+  </div>
+
+  <p class="footer">
+    Aperçu statique (données fictives). Radar live :
+    <a href="https://robindesairs.eu/radar">robindesairs.eu/radar</a>
+    · code CRM requis
+  </p>
+</div>
+</body>
+</html>

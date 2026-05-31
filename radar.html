@@ -116,9 +116,10 @@
 
     <div class="radar-pane" id="t-eligible">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
-        <p style="font-size:0.78rem;color:var(--radar-muted)">Sélection pour qualification dossier (retard long ou annulation).</p>
-        <button type="button" class="radar-btn radar-btn-sm" id="btn-clear-elig">Vider</button>
+        <p id="elig-registry-note" style="font-size:0.78rem;color:var(--radar-muted);margin:0">Mine d'or — vols éligibles enregistrés automatiquement au scan (liste permanente serveur).</p>
+        <button type="button" class="radar-btn radar-btn-sm" id="btn-clear-elig" title="La liste serveur n'est jamais vidée">ℹ️</button>
       </div>
+      <div id="elig-pub-banner" aria-label="Bandeau pub Meta vers page d'accueil"></div>
       <div id="elig-list"></div>
     </div>
 
@@ -157,6 +158,13 @@
     </div>
     <div class="modal-body">
       <div id="pub-info" class="info-box" style="margin-bottom:12px;font-weight:600"></div>
+      <div class="sec-title">Message WhatsApp</div>
+      <label for="pub-lang" style="font-size:12px;color:var(--radar-muted);display:block;margin-bottom:6px">Langue</label>
+      <select id="pub-lang" style="width:100%;margin-bottom:8px;padding:8px 10px;border-radius:8px;border:1px solid var(--radar-border)">
+        <option value="fr">Français</option>
+        <option value="en">English</option>
+      </select>
+      <div id="pub-wa-preview" class="pub-wa-preview" style="white-space:pre-wrap;font-size:12px;line-height:1.45;background:#fff;border:1px solid var(--radar-border);border-radius:8px;padding:10px;margin-bottom:12px;max-height:180px;overflow:auto"></div>
       <div class="sec-title">Plateformes</div>
       <div class="pub-grid">
         <div class="pub-platform selected" data-p="instagram">📸 Instagram</div>

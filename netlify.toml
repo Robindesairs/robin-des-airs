@@ -266,6 +266,11 @@
   to = "/.netlify/functions/radar-stats"
   status = 200
 
+[[redirects]]
+  from = "/api/radar-eligible-registry"
+  to = "/.netlify/functions/radar-eligible-registry"
+  status = 200
+
 # Ancien lien bot WATI /sign/xxx → 404 ; filet vers mandat (params perdus — corriger dans Make)
 [[redirects]]
   from = "/sign/*"

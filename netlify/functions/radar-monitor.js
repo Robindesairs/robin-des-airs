@@ -37,6 +37,7 @@ const { parisDateYmd, parisDateAddDays, fetchBannerImpactedFlights } = require('
 const { saveBanner, appendSlotLog, loadDayLogs } = require('./lib/radar-monitor-store');
 const { sendRadarMorningReport } = require('./lib/radar-report-email');
 const { recordMorningBanner, recordSlotScan, loadStatsReport } = require('./lib/radar-stats-store');
+const { mergeFlightsIntoRegistry } = require('./lib/radar-eligible-registry');
 const {
   isNetlifyScheduled,
   verifyInternalSecret,
@@ -125,6 +126,11 @@ async function runMorning(event, parisHour, dateYmd) {
 
   const statsDays = parseInt(process.env.RADAR_STATS_DAYS || '14', 10) || 14;
   await recordMorningBanner(event, { dateYmd, banner: cache });
+  try {
+    await mergeFlightsIntoRegistry(event, cache.flights || [], { source: 'radar-monitor-morning' });
+  } catch (e) {
+    console.warn('registry morning:', e.message);
+  }
   const statsReport = await loadStatsReport(event, statsDays);
 
   const email = await sendRadarMorningReport({
@@ -418,6 +424,11 @@ exports.handler = async (event) => {
       });
       await appendSlotLog(event, entry);
       await recordSlotScan(event, entry);
+      try {
+        await mergeFlightsIntoRegistry(event, entry.flights || [], { source: 'radar-monitor-eu-afternoon' });
+      } catch (e) {
+        console.warn('registry eu-afternoon:', e.message);
+      }
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
@@ -440,6 +451,11 @@ exports.handler = async (event) => {
       });
       await appendSlotLog(event, entry);
       await recordSlotScan(event, entry);
+      try {
+        await mergeFlightsIntoRegistry(event, entry.flights || [], { source: 'radar-monitor-africa-evening' });
+      } catch (e) {
+        console.warn('registry africa-evening:', e.message);
+      }
 
       // ── Alertes WhatsApp (CallMeBot) pour retards ≥ 3h ──────────────────
       await sendDelayAlerts(entry.flights || [], dateYmd);

@@ -1203,6 +1203,7 @@ async function runGroupScan(rapidKey, { group, scanMode, hub, returnSlot }) {
 }
 
 const { checkCrmAccess } = require('./lib/crm-access');
+const { mergeFlightsIntoRegistry } = require('./lib/radar-eligible-registry');
 
 exports.handler = async (event) => {
   const rapidKey = process.env.RAPIDAPI_KEY || process.env.AERODATABOX_RAPIDAPI_KEY;
@@ -1335,6 +1336,19 @@ exports.handler = async (event) => {
       payload.scan = payload.scan || {};
       payload.scan.hubs = scanHubs;
       payload.scan.group = String(event.queryStringParameters?.group || '').trim();
+    }
+
+    try {
+      const registryMerge = await mergeFlightsIntoRegistry(event, filterImpactedEuAfricaFlights(payload.flights || []), {
+        source: 'radar-scan',
+        scanMode: scanMode || 'aller',
+        hubs: scanHubs,
+      });
+      if (registryMerge.added > 0 || registryMerge.updated > 0) {
+        payload.registry = { added: registryMerge.added, updated: registryMerge.updated, total: registryMerge.total };
+      }
+    } catch (regErr) {
+      console.warn('radar eligible-registry:', regErr.message);
     }
 
     return {

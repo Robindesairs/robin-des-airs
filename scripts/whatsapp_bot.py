@@ -294,6 +294,67 @@ def _fp_list(body, label, sections, hdr, ftr):
     return hashlib.sha256(json.dumps({"body":body,"label":label,"s":str(sections)}, sort_keys=True).encode()).hexdigest()
 
 
+def _wati_response_ok(response):
+    """Wati renvoie parfois HTTP 200 avec {"ok": false, "errors": [...]}."""
+    if response.status_code != 200:
+        return False
+    try:
+        data = response.json()
+        if isinstance(data, dict):
+            if data.get("ok") is False:
+                return False
+            errs = data.get("errors")
+            if isinstance(errs, list) and len(errs) > 0:
+                return False
+    except Exception:
+        pass
+    return True
+
+
+def _wati_normalize_list_sections(sections):
+    """Wati : max 10 lignes au total, titres ≤ 24 car., descriptions ≤ 72."""
+    MAX_ROWS = 10
+    MAX_TITLE = 24
+    MAX_DESC = 72
+    MAX_SECTION = 24
+    out = []
+    total = 0
+    for section in sections or []:
+        rows_out = []
+        for row in section.get("rows") or []:
+            if total >= MAX_ROWS:
+                break
+            title = str(row.get("title") or "").strip()
+            if not title:
+                continue
+            rid = str(row.get("id") or row.get("rowId") or row.get("payload") or f"row_{total + 1}").strip()[:200]
+            item = {"title": title[:MAX_TITLE], "rowId": rid}
+            desc = str(row.get("description") or "").strip()
+            if desc:
+                item["description"] = desc[:MAX_DESC]
+            rows_out.append(item)
+            total += 1
+        if rows_out:
+            sec_title = str(section.get("title") or "Choix").strip() or "Choix"
+            out.append({"title": sec_title[:MAX_SECTION], "rows": rows_out})
+        if total >= MAX_ROWS:
+            break
+    return out
+
+
+def _list_fallback_text(body_text, sections):
+    fallback = (body_text or "").strip() + "\n\n"
+    idx = 1
+    for section in sections or []:
+        for row in section.get("rows") or []:
+            title = row.get("title")
+            if not title:
+                continue
+            fallback += f"{idx}. {title}\n"
+            idx += 1
+    fallback += "\nRepondez avec le numero de votre choix."
+    return fallback
+
 # ============================================
 # WATI — ENVOI
 # ============================================
@@ -324,7 +385,7 @@ def send_whatsapp_buttons(phone, body_text, buttons, header_text=None, footer_te
     if _outbound_should_block(phone, step, "buttons", fp): return 429
     r = requests.post(url, headers=hdrs, params={"whatsappNumber": phone}, json=payload, timeout=30)
     print(f"Wati BUTTONS: {r.status_code} - {r.text[:150]}")
-    if r.status_code != 200:
+    if not _wati_response_ok(r):
         fallback = body_text + "\n\n" + "\n".join(f"{i+1}. {b['title']}" for i, b in enumerate(buttons))
         fallback += "\n\nRépondez avec le numéro de votre choix."
         send_whatsapp_text(phone, fallback, skip_outbound_dedup=True)
@@ -336,14 +397,12 @@ def send_whatsapp_buttons(phone, body_text, buttons, header_text=None, footer_te
 def send_whatsapp_list(phone, body_text, button_label, sections, header_text=None, footer_text=None):
     url  = f"{WATI_BASE_URL}/api/v1/sendInteractiveListMessage"
     hdrs = {"Authorization": f"Bearer {WATI_API_TOKEN}", "Content-Type": "application/json", "accept": "*/*"}
-    normalized = []
-    for sec in sections:
-        rows = []
-        for row in sec.get("rows", []):
-            rid = row.get("id") or row.get("rowId") or ""
-            rows.append({"id": rid, "rowId": rid, "title": row.get("title",""), "description": row.get("description","")})
-        normalized.append({"title": sec.get("title",""), "rows": rows})
-    payload = {"body": body_text, "buttonText": button_label, "sections": normalized}
+    normalized = _wati_normalize_list_sections(sections)
+    if not normalized:
+        print("Wati LIST: aucune ligne valide — fallback texte")
+        send_whatsapp_text(phone, _list_fallback_text(body_text, sections), skip_outbound_dedup=True)
+        return 422
+    payload = {"body": body_text, "buttonText": str(button_label or "Voir")[:20], "sections": normalized}
     if header_text: payload["header"] = header_text
     if footer_text: payload["footer"] = footer_text
     step = _conversation_step_for_phone(phone)
@@ -351,15 +410,9 @@ def send_whatsapp_list(phone, body_text, button_label, sections, header_text=Non
     if _outbound_should_block(phone, step, "list", fp): return 429
     r = requests.post(url, headers=hdrs, params={"whatsappNumber": phone}, json=payload, timeout=30)
     print(f"Wati LIST: {r.status_code} - {r.text[:150]}")
-    if r.status_code != 200:
-        fallback = body_text + "\n\n"
-        idx = 1
-        for sec in sections:
-            for row in sec["rows"]:
-                fallback += f"{idx}. {row['title']}\n"
-                idx += 1
-        fallback += "\nRépondez avec le numéro de votre choix."
-        send_whatsapp_text(phone, fallback, skip_outbound_dedup=True)
+    if not _wati_response_ok(r):
+        print(f"Wati LIST: echec API — fallback texte ({r.text[:120]})")
+        send_whatsapp_text(phone, _list_fallback_text(body_text, sections), skip_outbound_dedup=True)
     else:
         _register_outbound_success(phone, step, "list", fp)
     return r.status_code
@@ -367,6 +420,8 @@ def send_whatsapp_list(phone, body_text, button_label, sections, header_text=Non
 
 # ============================================
 # OPENAI
+# ============================================
+
 # ============================================
 
 def call_openai(phone, user_message, image_data=None):
@@ -1798,7 +1853,20 @@ def webhook():
             return jsonify({"status": "no data"}), 200
 
         try:
-            print("[WEBHOOK] IN POST preview=", json.dumps(data, ensure_ascii=False)[:300])
+            print("[WEBHOOK] IN POST preview=", json.dumps(data, ensure_ascii=False)[:500])
+        except Exception:
+            pass
+
+        try:
+            print("[WEBHOOK_DEBUG] meta=", json.dumps({
+                "top_keys": list(data.keys())[:30],
+                "has_buttonReply": bool(data.get("buttonReply")),
+                "has_interactiveButtonReply": bool(data.get("interactiveButtonReply")),
+                "has_listReply": bool(data.get("listReply")),
+                "has_interactive": bool(data.get("interactive")),
+                "has_button_reply": bool(data.get("button_reply")),
+                "has_list_reply": bool(data.get("list_reply")),
+            }, ensure_ascii=False))
         except Exception:
             pass
 

@@ -238,6 +238,16 @@ tbody tr.row-pinned-ticker{outline:2px solid var(--gold);outline-offset:-2px}
 .elig-card.status-inprogress{border-left:3px solid var(--navy)}
 .elig-card.status-done{border-left:3px solid var(--green)}
 .amount-badge{background:#D5F5E3;color:#145A32;font-size:14px;font-weight:700;padding:5px 12px;border-radius:20px}
+.elig-pub-banner{background:linear-gradient(135deg,#0b1f3a 0%,#145a32 55%,#007a4c 100%);border-radius:12px;padding:14px 16px;margin-bottom:12px;color:#fff;box-shadow:0 4px 18px rgba(11,31,58,.18)}
+.elig-pub-banner-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.elig-pub-banner-head h3{margin:0;font-size:14px;font-weight:800}
+.elig-pub-banner-head p{margin:4px 0 0;font-size:11px;opacity:.88;line-height:1.45;max-width:520px}
+.elig-pub-banner-cta{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
+.elig-pub-banner-link{display:inline-block;background:#00e5a0;color:#0b1f3a;font-size:12px;font-weight:800;padding:9px 14px;border-radius:999px;text-decoration:none}
+.elig-pub-banner-copy{border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;font-size:11px;font-weight:700;padding:8px 12px;border-radius:999px;cursor:pointer}
+.elig-pub-banner-flights{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.elig-pub-flight-chip{font-size:10px;font-weight:700;padding:4px 9px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22)}
+.elig-pub-flight-chip.is-pinned{background:rgba(201,168,76,.25);border-color:rgba(201,168,76,.5)}
 
 /* ── Section title ────────────────────────────────────────── */
 .sec-title{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin:14px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
@@ -425,11 +435,13 @@ tbody tr.row-pinned-ticker{outline:2px solid var(--gold);outline-offset:-2px}
             <span style="font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px;background:#D5F5E3;color:#145A32;border:1px solid #A9DFBF" id="elig-done-count">🟢 Envoyé : 0</span>
           </div>
         </div>
-        <div style="display:flex;gap:8px">
+        <div style="display:flex;gap:8px;align-items:center">
           <button type="button" class="btn btn-primary btn-sm" id="btn-export-elig" onclick="exportEligCsv()">⬇ Export CSV</button>
-          <button type="button" class="btn btn-sm" id="btn-clear-elig">🗑 Vider</button>
+          <button type="button" class="btn btn-sm" id="btn-clear-elig" title="La liste serveur n'est jamais vidée">ℹ️</button>
         </div>
       </div>
+      <p id="elig-registry-note" style="font-size:11px;color:var(--text2);margin:0 0 10px">Mine d'or — enregistrement automatique au scan (liste permanente serveur).</p>
+      <div id="elig-pub-banner" aria-label="Bandeau pub Meta vers page d'accueil"></div>
       <div id="elig-list"></div>
     </div>
 
