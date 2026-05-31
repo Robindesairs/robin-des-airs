@@ -1965,6 +1965,13 @@
 
   document.getElementById('r-search') && (document.getElementById('r-search').oninput = renderRadar);
   document.getElementById('r-sens') && (document.getElementById('r-sens').onchange = renderRadar);
+
+  // Pré-filtrer par aéroport via ?airport=DSS (utilisé dans les liens publicitaires)
+  var _airportParam = new URLSearchParams(window.location.search).get('airport');
+  if (_airportParam) {
+    var _searchEl = document.getElementById('r-search');
+    if (_searchEl) _searchEl.value = _airportParam.toUpperCase();
+  }
   document.getElementById('r-statut') && (document.getElementById('r-statut').onchange = onRadarStatutEligPrioChange);
   document.getElementById('r-phase') && (document.getElementById('r-phase').onchange = renderRadar);
   document.getElementById('r-comp') && (document.getElementById('r-comp').onchange = renderRadar);

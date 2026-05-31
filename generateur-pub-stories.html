@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Générateur Stories AF Afrique — Robin des Airs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Montserrat',sans-serif;background:#060D1A;color:#e8edf5;min-height:100vh;padding:24px}
+h1{font-size:1.3rem;font-weight:900;letter-spacing:-0.02em;margin-bottom:4px}
+.sub{font-size:12px;color:#64748b;margin-bottom:28px}
+.sub strong{color:#00E5A0}
+.tabs{display:flex;gap:6px;margin-bottom:20px}
+.tab{padding:8px 18px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:#94a3b8;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s}
+.tab.active{background:#00E5A0;color:#060D1A;border-color:#00E5A0}
+.cities-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
+.city-btn{padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);color:#cbd5e1;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s;display:flex;align-items:center;gap:6px}
+.city-btn:hover{border-color:rgba(0,229,160,0.4);color:#fff}
+.city-btn.selected{border-color:#00E5A0;background:rgba(0,229,160,0.1);color:#00E5A0}
+.previews{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+@media(max-width:900px){.previews{grid-template-columns:repeat(2,1fr)}}
+.preview-wrap{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:14px;text-align:center}
+.preview-wrap h3{font-size:11px;color:#64748b;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.preview-wrap canvas{width:100%;height:auto;border-radius:6px}
+.btn-dl-one{margin-top:10px;width:100%;padding:9px;border-radius:8px;background:#1e3a5f;border:none;color:#94a3b8;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-dl-one:hover{background:#00E5A0;color:#060D1A}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px}
+.btn-batch{padding:14px 28px;border-radius:12px;background:linear-gradient(135deg,#00c87a,#00E5A0);color:#060D1A;font-size:14px;font-weight:900;border:none;cursor:pointer;font-family:inherit;transition:.15s}
+.btn-batch:hover{transform:translateY(-1px);box-shadow:0 8px 30px rgba(0,229,160,.35)}
+.btn-batch:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-ghost{padding:14px 24px;border-radius:12px;background:transparent;color:#94a3b8;font-size:13px;font-weight:700;border:1px solid rgba(255,255,255,.1);cursor:pointer;font-family:inherit}
+.progress{font-size:13px;color:#00E5A0;padding:10px 0;display:none}
+.legend{font-size:11px;color:#475569;margin-top:6px}
+</style>
+</head>
+<body>
+<h1>Générateur Pubs Stories — Escales Air France Afrique</h1>
+<p class="sub">Format <strong>9:16 · 1080×1920 px</strong> · 4 formats × toutes escales · Français + Anglais · Prêt Meta/Instagram</p>
+
+<div class="tabs">
+  <button class="tab active" onclick="setLang('fr',this)">🇫🇷 Escales francophones</button>
+  <button class="tab" onclick="setLang('en',this)">🇬🇧 Anglophone escales</button>
+</div>
+
+<div class="cities-grid" id="cities-grid"></div>
+
+<div class="previews" id="previews">
+  <div class="preview-wrap"><h3>1 · Famille</h3><canvas id="cv1" width="1080" height="1920"></canvas><button class="btn-dl-one" onclick="dlOne(0)">↓ Télécharger</button></div>
+  <div class="preview-wrap"><h3>2 · Route</h3><canvas id="cv2" width="1080" height="1920"></canvas><button class="btn-dl-one" onclick="dlOne(1)">↓ Télécharger</button></div>
+  <div class="preview-wrap"><h3>3 · Urgence</h3><canvas id="cv3" width="1080" height="1920"></canvas><button class="btn-dl-one" onclick="dlOne(2)">↓ Télécharger</button></div>
+  <div class="preview-wrap"><h3>4 · Loi</h3><canvas id="cv4" width="1080" height="1920"></canvas><button class="btn-dl-one" onclick="dlOne(3)">↓ Télécharger</button></div>
+</div>
+
+<div class="actions">
+  <button class="btn-batch" id="btn-all" onclick="downloadAll()">⬇ TOUT TÉLÉCHARGER — toutes villes × 4 formats</button>
+  <button class="btn-ghost" onclick="dlCurrentCity()">↓ Cette ville seulement (4 formats)</button>
+</div>
+<p class="progress" id="progress">Génération en cours…</p>
+<p class="legend">Les fichiers seront nommés : <code>[FORMAT]_[CODE]_[VILLE].png</code></p>
+
+<script>
+const W = 1080, H = 1920;
+const GREEN = '#00E5A0';
+const GREEN_BTN = '#00C87A';
+const NAVY  = '#060D1A';
+
+const CITIES_FR = [
+  {code:'DSS', name:'Dakar',         flag:'🇸🇳', pays:'Sénégal'},
+  {code:'ABJ', name:'Abidjan',       flag:'🇨🇮', pays:"Côte d'Ivoire"},
+  {code:'BKO', name:'Bamako',        flag:'🇲🇱', pays:'Mali'},
+  {code:'DLA', name:'Douala',        flag:'🇨🇲', pays:'Cameroun'},
+  {code:'NSI', name:'Yaoundé',       flag:'🇨🇲', pays:'Cameroun'},
+  {code:'LBV', name:'Libreville',    flag:'🇬🇦', pays:'Gabon'},
+  {code:'BZV', name:'Brazzaville',   flag:'🇨🇬', pays:'Congo'},
+  {code:'FIH', name:'Kinshasa',      flag:'🇨🇩', pays:'RD Congo'},
+  {code:'LFW', name:'Lomé',          flag:'🇹🇬', pays:'Togo'},
+  {code:'COO', name:'Cotonou',       flag:'🇧🇯', pays:'Bénin'},
+  {code:'CKY', name:'Conakry',       flag:'🇬🇳', pays:'Guinée'},
+  {code:'OUA', name:'Ouagadougou',   flag:'🇧🇫', pays:'Burkina Faso'},
+  {code:'NDJ', name:"N'Djamena",     flag:'🇹🇩', pays:'Tchad'},
+  {code:'TNR', name:'Antananarivo',  flag:'🇲🇬', pays:'Madagascar'},
+  {code:'MRU', name:'Maurice',       flag:'🇲🇺', pays:'Maurice'},
+  {code:'FDF', name:'Fort-de-France',flag:'🇲🇶', pays:'Martinique'},
+  {code:'PTP', name:'Pointe-à-Pitre',flag:'🇬🇵', pays:'Guadeloupe'},
+];
+
+const CITIES_EN = [
+  {code:'NBO', name:'Nairobi',       flag:'🇰🇪', pays:'Kenya'},
+  {code:'JNB', name:'Johannesburg',  flag:'🇿🇦', pays:'South Africa'},
+  {code:'LOS', name:'Lagos',         flag:'🇳🇬', pays:'Nigeria'},
+  {code:'ACC', name:'Accra',         flag:'🇬🇭', pays:'Ghana'},
+  {code:'DAR', name:'Dar es Salaam', flag:'🇹🇿', pays:'Tanzania'},
+  {code:'EBB', name:'Entebbe',       flag:'🇺🇬', pays:'Uganda'},
+  {code:'ADD', name:'Addis Abeba',   flag:'🇪🇹', pays:'Ethiopia'},
+  {code:'CPT', name:'Cape Town',     flag:'🇿🇦', pays:'South Africa'},
+  {code:'MBA', name:'Mombasa',       flag:'🇰🇪', pays:'Kenya'},
+];
+
+const FORMATS_FR = ['famille','route','urgence','loi'];
+const FORMATS_EN = ['family','route','urgency','law'];
+const FORMAT_NAMES = ['1_famille','2_route','3_urgence','4_loi'];
+
+let currentLang = 'fr';
+let currentCity = null;
+let currentCities = CITIES_FR;
+
+// ─── UTILS ─────────────────────────────────────────────────────────────────
+
+function rndSeed(i, seed) {
+  return Math.abs(Math.sin(i * seed + seed * 0.31)) % 1;
+}
+
+function drawStars(ctx) {
+  for (let i = 0; i < 70; i++) {
+    const x = rndSeed(i, 127.1) * W;
+    const y = rndSeed(i, 311.7) * H;
+    const r = rndSeed(i, 74.1) * 1.4 + 0.3;
+    const a = rndSeed(i, 53.2) * 0.6 + 0.2;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(255,255,255,${a.toFixed(2)})`;
+    ctx.fill();
+  }
+}
+
+function drawNavyBg(ctx) {
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, '#030A15');
+  grad.addColorStop(0.45, '#0B1F3A');
+  grad.addColorStop(1, '#0D2340');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+  // Blue glow right
+  const g1 = ctx.createRadialGradient(W*0.82, H*0.38, 0, W*0.82, H*0.38, 260);
+  g1.addColorStop(0, 'rgba(30,80,200,0.18)');
+  g1.addColorStop(1, 'rgba(30,80,200,0)');
+  ctx.fillStyle = g1; ctx.fillRect(0,0,W,H);
+  // Green glow left
+  const g2 = ctx.createRadialGradient(W*0.1, H*0.56, 0, W*0.1, H*0.56, 200);
+  g2.addColorStop(0, 'rgba(0,229,160,0.07)');
+  g2.addColorStop(1, 'rgba(0,229,160,0)');
+  ctx.fillStyle = g2; ctx.fillRect(0,0,W,H);
+}
+
+function drawGreenBg(ctx) {
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, '#00A86B');
+  grad.addColorStop(0.5, '#00C87A');
+  grad.addColorStop(1, '#00B872');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, H);
+}
+
+function pill(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.arcTo(x + w, y, x + w, y + r, r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+  ctx.lineTo(x + r, y + h);
+  ctx.arcTo(x, y + h, x, y + h - r, r);
+  ctx.lineTo(x, y + r);
+  ctx.arcTo(x, y, x + r, y, r);
+  ctx.closePath();
+}
+
+function drawBadge(ctx, text, dark) {
+  ctx.save();
+  ctx.font = '500 28px Montserrat,sans-serif';
+  const tw = ctx.measureText(text).width;
+  const pw = tw + 72, ph = 62, py = 100;
+  const px = (W - pw) / 2;
+  pill(ctx, px, py, pw, ph, 31);
+  if (dark) {
+    ctx.fillStyle = 'rgba(255,255,255,0.12)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+  } else {
+    ctx.fillStyle = 'rgba(0,80,40,0.25)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+  }
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  ctx.fillStyle = dark ? '#fff' : '#fff';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, W/2, py + ph/2);
+  ctx.restore();
+}
+
+function drawCTA(ctx, text, darkBg) {
+  const bw = 720, bh = 96;
+  const bx = (W - bw) / 2, by = H - 310;
+  ctx.save();
+  pill(ctx, bx, by, bw, bh, 48);
+  ctx.fillStyle = darkBg ? GREEN_BTN : 'rgba(255,255,255,0.9)';
+  ctx.fill();
+  // WhatsApp circle
+  ctx.beginPath();
+  ctx.arc(bx + 62, by + bh/2, 28, 0, Math.PI*2);
+  ctx.fillStyle = darkBg ? 'rgba(0,0,0,0.15)' : '#00C87A';
+  ctx.fill();
+  // Icon char
+  ctx.font = 'bold 26px sans-serif';
+  ctx.fillStyle = '#fff';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('◉', bx + 62, by + bh/2);
+  // Label
+  ctx.font = '800 36px Montserrat,sans-serif';
+  ctx.fillStyle = darkBg ? '#060D1A' : '#00A060';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, W/2 + 20, by + bh/2);
+  ctx.restore();
+}
+
+function drawFooter(ctx, light) {
+  ctx.save();
+  ctx.font = '700 28px Montserrat,sans-serif';
+  ctx.fillStyle = light ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.65)';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('🏹 ROBIN DES AIRS', W/2, H - 80);
+  ctx.restore();
+}
+
+function txt(ctx, text, y, size, weight, color, align) {
+  ctx.save();
+  ctx.font = `${weight} ${size}px Montserrat,sans-serif`;
+  ctx.fillStyle = color;
+  ctx.textAlign = align || 'center';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillText(text, W/2, y);
+  ctx.restore();
+}
+
+function divider(ctx, y) {
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(W*0.2, y);
+  ctx.lineTo(W*0.8, y);
+  ctx.stroke();
+  ctx.restore();
+}
+
+// ─── FORMAT 1 : FAMILLE ────────────────────────────────────────────────────
+
+function drawFamille(canvas, city, lang) {
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+  drawNavyBg(ctx);
+  drawStars(ctx);
+
+  const badgeTxt = lang === 'fr'
+    ? `✈️ Vol ${city.name} → l'Europe — retard ou annulation ?`
+    : `✈️ Flight ${city.name} → Europe — delayed or cancelled?`;
+  drawBadge(ctx, badgeTxt, true);
+
+  // Headline
+  txt(ctx, lang==='fr' ? 'Vous êtes 4 ?' : 'Travelling as 4?', 480, 60, 900, '#fff');
+  txt(ctx, lang==='fr' ? "Jusqu’à 2 400 € brut" : 'Up to 2,400 € gross', 546, 32, 400, 'rgba(255,255,255,0.8)');
+
+  // Big amount
+  ctx.save();
+  ctx.font = '900 46px Montserrat,sans-serif';
+  ctx.fillStyle = GREEN;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillText('~~', W/2 - 230, 720);
+  ctx.restore();
+  txt(ctx, '1 800 €', 720, 148, 900, GREEN);
+
+  txt(ctx, lang==='fr' ? 'nets pour vous' : 'net for you', 806, 42, 700, '#fff');
+  txt(ctx, lang==='fr' ? '(si éligible)' : '(if eligible)', 858, 26, 400, 'rgba(255,255,255,0.5)');
+
+  divider(ctx, 908);
+
+  txt(ctx, lang==='fr' ? 'Enfants et bébés comptent.' : 'Kids and babies count.', 960, 30, 600, '#fff');
+  txt(ctx, lang==='fr' ? '25 %. 0 € si on perd.' : '25%. 0€ if we lose.', 1010, 30, 700, GREEN);
+
+  drawCTA(ctx, lang==='fr' ? 'Réclamer sur WhatsApp' : 'Claim on WhatsApp', true);
+  drawFooter(ctx, false);
+}
+
+// ─── FORMAT 2 : ROUTE ──────────────────────────────────────────────────────
+
+function drawRoute(canvas, city, lang) {
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+  drawNavyBg(ctx);
+  drawStars(ctx);
+
+  const badgeTxt = lang === 'fr'
+    ? `✈️ Vol ${city.name} → l'Europe — retard ou annulation ?`
+    : `✈️ Flight ${city.name} → Europe — delayed or cancelled?`;
+  drawBadge(ctx, badgeTxt, true);
+
+  // Route headline
+  const routeLbl = `${city.name} → Europe`;
+  txt(ctx, routeLbl, 520, 62, 700, '#fff');
+
+  // Dotted flight arc
+  const x1 = W*0.18, y1 = H*0.48;
+  const x2 = W*0.82, y2 = H*0.34;
+  const cpx = W*0.5,  cpy = H*0.25;
+  ctx.save();
+  ctx.setLineDash([8, 16]);
+  ctx.beginPath();
+  ctx.moveTo(x1, y1); ctx.quadraticCurveTo(cpx, cpy, x2, y2);
+  ctx.strokeStyle = 'rgba(0,229,160,0.55)';
+  ctx.lineWidth = 3;
+  ctx.stroke();
+  ctx.setLineDash([]);
+  // Dots at endpoints
+  [[x1,y1],[x2,y2]].forEach(([ex,ey])=>{
+    ctx.beginPath(); ctx.arc(ex,ey,12,0,Math.PI*2);
+    ctx.fillStyle = GREEN; ctx.fill();
+    ctx.beginPath(); ctx.arc(ex,ey,5,0,Math.PI*2);
+    ctx.fillStyle = NAVY; ctx.fill();
+  });
+  // Plane mid-arc (t=0.5)
+  const mx = 0.25*x1 + 0.5*cpx + 0.25*x2;
+  const my = 0.25*y1 + 0.5*cpy + 0.25*y2;
+  ctx.font = '36px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('✈', mx, my - 18);
+  ctx.restore();
+
+  // Amount
+  const amountY = H*0.63;
+  txt(ctx, lang==='fr' ? 'Indemnité possible' : 'Possible compensation', amountY, 30, 400, 'rgba(255,255,255,0.75)');
+  ctx.save();
+  ctx.font = '900 68px Montserrat,sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'alphabetic';
+  ctx.fillStyle = '#fff';
+  ctx.fillText(lang==='fr' ? "jusqu'à " : 'up to ', W/2 - 120, amountY + 90);
+  ctx.fillStyle = GREEN;
+  ctx.fillText('600 €', W/2 + 130, amountY + 90);
+  ctx.font = '700 36px Montserrat,sans-serif';
+  ctx.fillStyle = '#fff';
+  ctx.fillText(lang==='fr' ? '/ passager' : '/ passenger', W/2, amountY + 148);
+  ctx.restore();
+
+  txt(ctx, lang==='fr' ? 'Vérification gratuite sur WhatsApp' : 'Free check on WhatsApp', amountY+210, 28, 600, 'rgba(255,255,255,0.8)');
+  txt(ctx, lang==='fr' ? '25 % si succès · 0 € sinon' : '25% if success · 0€ otherwise', amountY+258, 26, 400, GREEN);
+
+  drawCTA(ctx, lang==='fr' ? 'Vérifier mon vol' : 'Check my flight', true);
+  drawFooter(ctx, false);
+}
+
+// ─── FORMAT 3 : URGENCE ────────────────────────────────────────────────────
+
+function drawUrgence(canvas, city, lang) {
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+  drawNavyBg(ctx);
+  drawStars(ctx);
+
+  const badgeTxt = lang === 'fr'
+    ? `✈️ Vol ${city.name} → l'Europe — retard ou annulation ?`
+    : `✈️ Flight ${city.name} → Europe — delayed or cancelled?`;
+  drawBadge(ctx, badgeTxt, true);
+
+  // Headline
+  const hl = lang==='fr'
+    ? `✈️ Encore en train d'attendre à ${city.name} ?`
+    : `✈️ Still waiting at ${city.name}?`;
+  // Word wrap if too long
+  ctx.save();
+  ctx.font = '700 44px Montserrat,sans-serif';
+  ctx.fillStyle = '#fff';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'alphabetic';
+  const hlW = ctx.measureText(hl).width;
+  if (hlW > W - 100) {
+    const words = hl.split(' ');
+    const mid = Math.ceil(words.length/2);
+    ctx.fillText(words.slice(0,mid).join(' '), W/2, 460);
+    ctx.fillText(words.slice(mid).join(' '), W/2, 516);
+  } else {
+    ctx.fillText(hl, W/2, 488);
+  }
+  ctx.restore();
+
+  txt(ctx, lang==='fr' ? 'Votre retard peut valoir' : 'Your delay could be worth', 580, 30, 400, 'rgba(255,255,255,0.75)');
+  txt(ctx, lang==='fr' ? "JUSQU'À" : 'UP TO', 630, 22, 700, 'rgba(255,255,255,0.45)');
+
+  // Big 600€
+  txt(ctx, '600 €', 840, 220, 900, GREEN);
+
+  txt(ctx, lang==='fr' ? 'par personne' : 'per person', 900, 40, 700, '#fff');
+  txt(ctx, lang==='fr' ? '(si éligible — CE 261)' : '(if eligible — EC 261)', 952, 24, 400, 'rgba(255,255,255,0.5)');
+
+  // Bullets
+  ctx.save();
+  ctx.font = '600 28px Montserrat,sans-serif';
+  ctx.fillStyle = '#fff';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  const bx = W/2 - 220;
+  ctx.fillText(lang==='fr' ? '•  3 minutes sur WhatsApp.' : '•  3 minutes on WhatsApp.', bx, 1020);
+  ctx.fillText(lang==='fr' ? '•  0 € si on ne gagne pas.' : "•  0€ if we don't win.", bx, 1066);
+  ctx.restore();
+
+  drawCTA(ctx, lang==='fr' ? "C'est mon tour" : "It's my turn", true);
+  drawFooter(ctx, false);
+}
+
+// ─── FORMAT 4 : LOI ────────────────────────────────────────────────────────
+
+function drawLoi(canvas, city, lang) {
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+  drawGreenBg(ctx);
+
+  const badgeTxt = lang === 'fr'
+    ? `✈️ Vol ${city.name} → l'Europe — retard ou annulation ?`
+    : `✈️ Flight ${city.name} → Europe — delayed or cancelled?`;
+  drawBadge(ctx, badgeTxt, false);
+
+  txt(ctx, lang==='fr' ? "JUSQU'À" : 'UP TO', 350, 24, 800, 'rgba(255,255,255,0.75)');
+  txt(ctx, '600 €', 560, 210, 900, '#fff');
+  txt(ctx, lang==='fr' ? 'par passager' : 'per passenger', 626, 42, 700, '#fff');
+  txt(ctx, lang==='fr' ? '(si éligible)' : '(if eligible)', 682, 26, 400, 'rgba(255,255,255,0.7)');
+
+  divider(ctx, 730);
+
+  // Main claim
+  ctx.save();
+  ctx.font = '800 46px Montserrat,sans-serif';
+  ctx.fillStyle = '#fff';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'alphabetic';
+  if (lang === 'fr') {
+    ctx.fillText("C'est la loi européenne.", W/2, 800);
+    ctx.font = '800 46px Montserrat,sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.fillText('Pas une arnaque.', W/2, 858);
+  } else {
+    ctx.fillText("It's European law.", W/2, 800);
+    ctx.font = '800 46px Montserrat,sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.fillText('Not a scam.', W/2, 858);
+  }
+  ctx.restore();
+
+  divider(ctx, 906);
+
+  txt(ctx, lang==='fr' ? "25 % — c'est tout." : "25% — that's it.", 968, 32, 700, '#fff');
+  txt(ctx, lang==='fr' ? '0 € si on ne gagne pas.' : "0€ if we don't win.", 1018, 32, 700, '#fff');
+
+  drawCTA(ctx, lang==='fr' ? 'Vérifier sur WhatsApp' : 'Verify on WhatsApp', false);
+
+  // Sub-CTA text
+  txt(ctx, lang==='fr' ? 'Vérification gratuite · réponse en moins de 3 min' : 'Free check · answer in under 3 min',
+    H - 300, 24, 400, 'rgba(255,255,255,0.65)');
+
+  drawFooter(ctx, true);
+}
+
+// ─── DRAW ALL 4 ─────────────────────────────────────────────────────────────
+
+const DRAWS = [drawFamille, drawRoute, drawUrgence, drawLoi];
+const CVS   = ['cv1','cv2','cv3','cv4'];
+
+function renderPreviews(city, lang) {
+  DRAWS.forEach((fn, i) => fn(document.getElementById(CVS[i]), city, lang));
+}
+
+// ─── DOWNLOAD ───────────────────────────────────────────────────────────────
+
+function dlCanvas(canvas, filename) {
+  return new Promise(resolve => {
+    canvas.toBlob(blob => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); resolve(); }, 200);
+    }, 'image/png');
+  });
+}
+
+function dlOne(idx) {
+  if (!currentCity) return alert("Sélectionne une ville d'abord.");
+  const canvas = document.getElementById(CVS[idx]);
+  const name = `${FORMAT_NAMES[idx]}_${currentCity.code}_${currentCity.name.replace(/[^a-zA-Z]/g,'_')}.png`;
+  dlCanvas(canvas, name);
+}
+
+async function dlCurrentCity() {
+  if (!currentCity) return alert("Sélectionne une ville d'abord.");
+  const prog = document.getElementById('progress');
+  prog.style.display = 'block';
+  for (let i = 0; i < 4; i++) {
+    prog.textContent = `Génération ${i+1}/4 — ${currentCity.name}…`;
+    const name = `${FORMAT_NAMES[i]}_${currentCity.code}_${currentCity.name.replace(/[^a-zA-Z]/g,'_')}.png`;
+    await dlCanvas(document.getElementById(CVS[i]), name);
+    await new Promise(r => setTimeout(r, 250));
+  }
+  prog.textContent = `✅ ${currentCity.name} — 4 fichiers téléchargés.`;
+}
+
+async function downloadAll() {
+  const btn = document.getElementById('btn-all');
+  const prog = document.getElementById('progress');
+  btn.disabled = true;
+  prog.style.display = 'block';
+  const cities = currentCities;
+  const offCanvas = document.createElement('canvas');
+  offCanvas.width = W; offCanvas.height = H;
+  let done = 0;
+  const total = cities.length * 4;
+  for (const city of cities) {
+    for (let i = 0; i < 4; i++) {
+      prog.textContent = `Génération ${++done}/${total} — ${FORMAT_NAMES[i]} · ${city.name}…`;
+      DRAWS[i](offCanvas, city, currentLang);
+      const name = `${FORMAT_NAMES[i]}_${city.code}_${city.name.replace(/[^a-zA-Z]/g,'_')}.png`;
+      await dlCanvas(offCanvas, name);
+      await new Promise(r => setTimeout(r, 300));
+    }
+  }
+  prog.textContent = `✅ Terminé — ${total} fichiers téléchargés.`;
+  btn.disabled = false;
+}
+
+// ─── UI ──────────────────────────────────────────────────────────────────────
+
+function setLang(lang, el) {
+  currentLang = lang;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  currentCities = lang === 'fr' ? CITIES_FR : CITIES_EN;
+  renderCities();
+  if (currentCity && !currentCities.find(c => c.code === currentCity.code)) {
+    currentCity = currentCities[0];
+  }
+  if (currentCity) renderPreviews(currentCity, currentLang);
+}
+
+function renderCities() {
+  const grid = document.getElementById('cities-grid');
+  grid.innerHTML = '';
+  currentCities.forEach(city => {
+    const btn = document.createElement('button');
+    btn.className = 'city-btn' + (currentCity && currentCity.code === city.code ? ' selected' : '');
+    btn.innerHTML = `${city.flag} ${city.name} <span style="color:#475569;font-weight:400">${city.code}</span>`;
+    btn.onclick = () => {
+      document.querySelectorAll('.city-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      currentCity = city;
+      renderPreviews(city, currentLang);
+    };
+    grid.appendChild(btn);
+  });
+}
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+
+document.fonts.ready.then(() => {
+  currentCities = CITIES_FR;
+  currentCity = CITIES_FR[0];
+  renderCities();
+  renderPreviews(currentCity, currentLang);
+});
+</script>
+</body>
+</html>
