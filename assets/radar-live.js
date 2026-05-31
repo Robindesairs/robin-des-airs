@@ -1721,16 +1721,34 @@
             ' · ' + (d.formats || []).length + ' formats' + endLabel +
             (d.campaignId ? ' · <a href="https://www.facebook.com/adsmanager" target="_blank" style="color:inherit">Meta ↗</a>' : '');
         }
-        // Afficher le bouton Arrêter
-        if (d.campaignId && btn) {
+        // Bouton Arrêter + widget stats
+        if (d.campaignId) {
+          var cid = d.campaignId;
           var stopBtn = document.createElement('button');
           stopBtn.className = 'btn';
           stopBtn.style.cssText = 'background:#FFEBEE;color:#B71C1C;border:1px solid #FFCDD2;margin-top:8px;width:100%;font-weight:700';
           stopBtn.textContent = '⏹ Arrêter la pub maintenant';
-          var cid = d.campaignId;
           stopBtn.onclick = function () { arreterPub(cid, stopBtn); };
           st.parentNode.insertBefore(stopBtn, st.nextSibling);
+          // Widget stats (se remplit toutes les 60s)
+          var statsDiv = document.createElement('div');
+          statsDiv.id  = 'pub-stats-' + cid;
+          statsDiv.style.cssText = 'margin-top:8px;padding:8px 10px;background:#F0F4FF;border-radius:6px;font-size:11px;color:#1a237e;line-height:1.8;display:none';
+          stopBtn.parentNode.insertBefore(statsDiv, stopBtn.nextSibling);
+          chargerStats(cid, statsDiv);
+          setInterval(function () { chargerStats(cid, statsDiv); }, 60000);
         }
+      } else if (res.data && res.data.duplicate) {
+        // Doublon détecté (rotation aircraft)
+        var dup = res.data;
+        if (st) {
+          st.style.background = '#FFF8E1';
+          st.style.color = '#7B5800';
+          st.innerHTML = '⚠️ Campagne déjà active sur ' + (dup.city || airport) +
+            ' (vol ' + (dup.existingVol || '?') + ' — rotation aircraft).' +
+            '<br>Arrêtez-la d\'abord ou attendez qu\'elle se termine automatiquement.';
+        }
+        if (btn) { btn.disabled = false; btn.textContent = '🚀 Lancer sur Meta'; }
       } else {
         var msg = (res.data && (res.data.error || res.data.detail)) || 'Erreur inconnue';
         if (st) { st.style.background = '#FFEBEE'; st.style.color = '#B71C1C'; st.textContent = '❌ ' + msg; }
@@ -1740,6 +1758,29 @@
       if (btn) { btn.disabled = false; btn.textContent = '🚀 Lancer sur Meta'; }
       if (st)  { st.style.background = '#FFEBEE'; st.style.color = '#B71C1C'; st.textContent = '❌ ' + err.message; }
     });
+  }
+
+  function chargerStats(campaignId, el) {
+    fetch('/.netlify/functions/ad-stats?campaignId=' + campaignId)
+      .then(function (r) { return r.json(); })
+      .then(function (s) {
+        if (!s.ok || !el) return;
+        var cpm   = parseFloat(s.cpm)   || 0;
+        var spend = parseFloat(s.spend) || 0;
+        if (spend === 0 && s.impressions === 0) {
+          el.style.display = 'block';
+          el.textContent   = '⏳ Pub en cours de review Meta (15-30 min)…';
+          return;
+        }
+        el.style.display = 'block';
+        el.innerHTML =
+          '📊 <strong>' + spend.toFixed(2) + ' €</strong> dépensés · ' +
+          '<strong>' + (s.reach || 0).toLocaleString('fr-FR') + '</strong> personnes touchées · ' +
+          '<strong>' + cpm.toFixed(2) + ' €</strong> CPM · ' +
+          '<strong>' + (s.clicks || 0) + '</strong> clics' +
+          (s.waConvos > 0 ? ' · <strong style="color:#25D366">' + s.waConvos + ' 💬 WA</strong>' : '');
+      })
+      .catch(function () { /* silencieux si pas encore de données */ });
   }
 
   function arreterPub(campaignId, btn) {

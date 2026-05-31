@@ -128,6 +128,34 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: `Aéroport inconnu : ${airport}` }) };
   }
 
+  // Anti-doublon : vérifier si une campagne est déjà active sur cet aéroport
+  // (rotation aircraft : CDG→DSS retardé → DSS→CDG retardé 3-4h après = même aéroport)
+  try {
+    const { getStore } = require('@netlify/blobs');
+    const store  = getStore('active-ad-campaigns');
+    const list   = await store.list();
+    for (const item of (list.blobs || [])) {
+      const existing = await store.get(item.key, { type: 'json' });
+      if (existing && existing.airport === airport) {
+        return {
+          statusCode: 409,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ok: false,
+            duplicate: true,
+            airport,
+            city: coords.city,
+            existingCampaignId: existing.campaignId,
+            existingVol: existing.vol,
+            message: `Campagne déjà active sur ${coords.city} — vol ${existing.vol} (rotation aircraft). Arrêtez-la d'abord si vous voulez en lancer une nouvelle.`,
+          }),
+        };
+      }
+    }
+  } catch (e) {
+    console.warn('[ad-launch] Blobs anti-doublon check:', e.message);
+  }
+
   const token     = process.env.META_ADS_ACCESS_TOKEN;
   const accountId = process.env.META_AD_ACCOUNT_ID;
   const pageId    = process.env.META_AD_PAGE_ID;
