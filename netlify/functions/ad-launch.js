@@ -198,9 +198,6 @@ exports.handler = async (event) => {
         radius: radiusKm,
         distance_unit: 'kilometer',
       }],
-      // travel_in = personnes physiquement présentes et en déplacement
-      // (voyageurs à l'aéroport, pas les habitants du quartier)
-      location_types: ['travel_in', 'recent'],
     },
     age_min: 18,
     age_max: 65,
