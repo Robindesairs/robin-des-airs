@@ -227,6 +227,7 @@ exports.handler = async (event) => {
       end_time: endSec,
       billing_event: 'IMPRESSIONS',
       optimization_goal: 'REACH',
+      bid_strategy: 'LOWEST_COST_WITHOUT_CAP',
       status: 'ACTIVE',
       targeting,
     });
