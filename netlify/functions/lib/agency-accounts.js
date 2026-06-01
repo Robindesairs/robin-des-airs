@@ -28,6 +28,14 @@ const DEV_FALLBACK = [
     name: 'Kombo Travel Services',
     airtableMatch: 'GSA-KMS-001',
   },
+  {
+    code: 'SEYMAN-001',
+    pass: 'seyman2026',
+    name: 'Seyman Travel',
+    airtableMatch: 'SEYMAN-001',
+    commissionGmd: 3800,
+    partnerSignedAt: '2026-06-01',
+  },
 ];
 
 function normalizeWaList(a) {
