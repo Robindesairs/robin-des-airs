@@ -524,6 +524,23 @@ def ask_language(phone):
     send_whatsapp_list(phone, body, "Choisir 🌍", sections)
 
 
+def ask_language_for_calls(phone, lang="fr"):
+    """Question langue pour appels/vocaux — posée après confirmation expert, pas au début."""
+    if lang == "en":
+        body = (
+            "📞 *Last question — for calls and voice messages:*\n\n"
+            "Which language do you prefer when our expert contacts you?"
+        )
+        btn_label = "Choose 🌍"
+    else:
+        body = (
+            "📞 *Dernière question — pour les appels et messages vocaux :*\n\n"
+            "Quelle langue préférez-vous quand notre expert vous contacte ?"
+        )
+        btn_label = "Choisir 🌍"
+    send_whatsapp_list(phone, body, btn_label, LANGUAGE_SECTIONS)
+
+
 def ask_route_qualify(phone, lang="fr"):
     """MSG 3 — Qualification route (4 boutons reformulés)."""
     if lang == "en":
@@ -1311,14 +1328,14 @@ def show_summary_and_mandat(phone, conv):
         msg_c = (
             f"🎉 *File {ref} — received!*\n\n"
             f"We have everything we need. Our team is taking over your claim against the airline.\n\n"
-            f"⏱️ You'll receive an update within *48 working hours*.\n\n"
+            f"⏱️ You'll receive an update within *24 working hours*.\n\n"
             f"Thank you for your trust. *Robin des Airs team* 🏹"
         )
     else:
         msg_c = (
             f"🎉 *Dossier {ref} — bien reçu !*\n\n"
             f"Nous avons tout ce qu'il nous faut. Notre équipe prend en charge votre réclamation contre la compagnie aérienne.\n\n"
-            f"⏱️ Vous recevrez une mise à jour sous *48h ouvrées*.\n\n"
+            f"⏱️ Vous recevrez une mise à jour sous *24h ouvrées*.\n\n"
             f"Merci de votre confiance. *L'équipe Robin des Airs* 🏹"
         )
     send_whatsapp_text(phone, msg_c)
@@ -1338,6 +1355,13 @@ def show_summary_and_mandat(phone, conv):
             "*L'IA ouvre le dossier. L'humain le gagne.* 🏹"
         )
     send_whatsapp_text(phone, msg_d)
+
+    # Question langue pour les appels/vocaux — après confirmation expert
+    time.sleep(2)
+    if lang == "en":
+        ask_language_for_calls(phone, "en")
+    else:
+        ask_language_for_calls(phone, "fr")
 
     conv["current_step"] = "completed"
     conv["data"]["dossier_status"] = "complet"
@@ -1361,10 +1385,10 @@ def process_button_reply(phone, button_id, button_title, conv):
     lang = conv["data"].get("language", "fr")
     touch_activity(conv)
 
-    # ── MSG 1 — ACCROCHE → LANGUE ───────────────────────────────
+    # ── MSG 1 — ACCROCHE → ROUTE (langue détectée automatiquement) ─
     if button_id == "start_check":
-        conv["current_step"] = "language"
-        ask_language(phone)
+        conv["current_step"] = "route_qualify"
+        ask_route_qualify(phone, lang)
         return
 
     # ── FALLBACK IA — DEMANDE RAPPEL EXPERT ─────────────────────
