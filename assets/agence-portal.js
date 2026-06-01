@@ -793,13 +793,31 @@ function showTrialBanner() {
   el.hidden = false;
 }
 
+const DEMO_DOSSIERS = [
+  { ref:'RDA-2026-001', prenom:'Fatou',    nom:'DIALLO',   vol:'SN301', compagnie:'Brussels Airlines', statut:'paye',             nbPassagers:1, date:'2026-01-14', montantGmd:51000, notes:'Vol BJL→BRU retardé 5h. Indemnité versée.' },
+  { ref:'RDA-2026-002', prenom:'Amadou',   nom:'JALLOW',   vol:'SN302', compagnie:'Brussels Airlines', statut:'paye',             nbPassagers:4, date:'2025-12-22', montantGmd:204000, notes:'Famille de 4. Annulation vol de Noel. Remboursé.' },
+  { ref:'RDA-2026-003', prenom:'Mariama',  nom:'CEESAY',   vol:'BY2635',compagnie:'TUI Airways',       statut:'gagne',            nbPassagers:2, date:'2026-02-08', montantGmd:102000, notes:'Retard 6h LGW. Gain obtenu, virement en cours.' },
+  { ref:'RDA-2026-004', prenom:'Ousman',   nom:'SANNEH',   vol:'SN301', compagnie:'Brussels Airlines', statut:'en-cours',         nbPassagers:1, date:'2026-03-15', montantGmd:51000,  notes:'Dossier envoyé à Brussels Airlines. Délai réponse: 6 sem.' },
+  { ref:'RDA-2026-005', prenom:'Binta',    nom:'CAMARA',   vol:'TP1481',compagnie:'TAP Air Portugal', statut:'en-cours',         nbPassagers:3, date:'2026-04-02', montantGmd:153000, notes:'Vol BJL→LIS retardé 4h. Négociation en cours.' },
+  { ref:'RDA-2026-006', prenom:'Lamin',    nom:'TOURAY',   vol:'BY2636',compagnie:'TUI Airways',       statut:'tribunal',         nbPassagers:2, date:'2025-11-19', montantGmd:102000, notes:'TUI a refusé. Dossier transmis au tribunal. Audience fixée.' },
+  { ref:'RDA-2026-007', prenom:'Isatou',   nom:'JOBARTEH', vol:'SN302', compagnie:'Brussels Airlines', statut:'refuse',           nbPassagers:1, date:'2026-01-30', montantGmd:51000,  notes:'Brussels Airlines invoque circonstances extraordinaires. Contre-argumentation préparée.' },
+  { ref:'RDA-2026-008', prenom:'Yankuba',  nom:'DRAMMEH',  vol:'SN301', compagnie:'Brussels Airlines', statut:'mediateur',        nbPassagers:5, date:'2025-10-11', montantGmd:255000, notes:'Refus initial. Dossier soumis au médiateur européen.' },
+  { ref:'RDA-2026-009', prenom:'Adama',    nom:'BARRY',    vol:'BY2635',compagnie:'TUI Airways',       statut:'nouveau',          nbPassagers:1, date:'2026-05-20', montantGmd:51000,  notes:'Dossier reçu. Analyse éligibilité en cours.' },
+  { ref:'RDA-2026-010', prenom:'Sainey',   nom:'COLLEY',   vol:'TP1482',compagnie:'TAP Air Portugal', statut:'nouveau',          nbPassagers:2, date:'2026-05-28', montantGmd:102000, notes:'Documents reçus. En attente validation.' },
+  { ref:'RDA-2026-011', prenom:'Haddijatou',nom:'BALDEH',  vol:'SN302', compagnie:'Brussels Airlines', statut:'attente-incident',  nbPassagers:4, date:'2026-06-01', montantGmd:0,      notes:'Billets vendus. Vol prévu 15/07. Surveillance activée.' },
+  { ref:'RDA-2026-012', prenom:'Sering',   nom:'BOJANG',   vol:'BY2635',compagnie:'TUI Airways',       statut:'refuse',           nbPassagers:1, date:'2025-09-05', montantGmd:51000,  notes:'TUI refuse (météo). Preuves METAR contradictoires. Recours préparé.' },
+  { ref:'RDA-2026-013', prenom:'Fatoumata',nom:'NJIE',     vol:'SN301', compagnie:'Brussels Airlines', statut:'tribunal',         nbPassagers:3, date:'2025-08-22', montantGmd:153000, notes:'2e refus Brussels Airlines. Assignation tribunal Paris envoyée.' },
+  { ref:'RDA-2026-014', prenom:'Ebrima',   nom:'SAIDY',    vol:'SN302', compagnie:'Brussels Airlines', statut:'paye',             nbPassagers:2, date:'2025-06-14', montantGmd:102000, notes:'Dossier clos. Virement effectué. Commission versée à Seyman Travel.' },
+  { ref:'RDA-2026-015', prenom:'Ndey',     nom:'JOBE',     vol:'BY2636',compagnie:'TUI Airways',       statut:'en-cours',         nbPassagers:6, date:'2026-04-18', montantGmd:306000, notes:'Famille de 6. Retard 7h LGW. Négociation prioritaire.' },
+];
+
 function enterTrialModeClientOnly() {
   agencyTrialClientOnly = true;
   showAgencyApp({
     code: 'TRIAL',
-    name: 'Kombo Travel Services (Trial)',
+    name: 'Seyman Travel (Demo)',
   });
-  dossiers = [];
+  dossiers = DEMO_DOSSIERS;
   setAgencySyncStatus(t('trial.sync_demo'), false);
   showTrialBanner();
   updateDashboard();
@@ -1321,6 +1339,9 @@ function badgeHTML(statut) {
     gagne: 'status.gagne',
     paye: 'status.paye',
     rejete: 'status.rejete',
+    refuse: 'Refusé',
+    tribunal: 'Tribunal ⚖️',
+    mediateur: 'Médiateur 🔄',
   };
   const pills = {
     nouveau: 'status-new',
@@ -1329,6 +1350,9 @@ function badgeHTML(statut) {
     gagne: 'status-won',
     paye: 'status-won',
     rejete: 'status-pending',
+    refuse: 'status-pending',
+    tribunal: 'status-tribunal',
+    mediateur: 'status-ongoing',
   };
   const label = keys[statut] ? t(keys[statut]) : statut;
   const pill = pills[statut];
