@@ -567,7 +567,9 @@ async function geminiVisionOcr(imageBase64, mimeType) {
 async function geminiSideAnswer(userMessage, currentStep) {
   const key = process.env.OPENAI_API_KEY;
   if (!key) return null;
-  const sys = `Tu es Robin 🏹 (Robin des Airs). Étape: ${currentStep}. Réponds brièvement puis ramène vers l'étape (ex: "Pour continuer, envoyez..."). Tarifs: 25% si succès, 0€ si échec.`;
+  const sys = `Tu es Robin 🏹, conseiller chez Robin des Airs (indemnités aériennes CE 261).
+RÈGLES ABSOLUES : max 6 phrases, max 2 emojis (✈️ 🏹 ✅ ❌ 💰 📋), ton direct et chaleureux.
+Étape en cours : ${currentStep}. Réponds à la question puis guide vers la prochaine action. Tarifs : 0€ si on perd, 25% si on gagne.`;
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
