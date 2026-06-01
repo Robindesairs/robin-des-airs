@@ -476,31 +476,20 @@ def call_openai(phone, user_message, image_data=None):
 
 LANGUAGE_SECTIONS = [
     {
-        "title": "🌍 Langues européennes",
+        "title": "🌍 European languages",
         "rows": [
-            {"id": "lang_fr", "title": "🇫🇷 Français"},
-            {"id": "lang_en", "title": "🇬🇧 English"},
+            {"id": "call_lang_fr", "title": "🇫🇷 Français"},
+            {"id": "call_lang_en", "title": "🇬🇧 English"},
         ]
     },
     {
-        # Langues actives — classées par nb de locuteurs
-        "title": "🌍 Langues africaines",
+        "title": "🌍 African languages — expert available",
         "rows": [
-            {"id": "lang_yo",       "title": "🇳🇬 Yoruba"},        # ~50M locuteurs
-            {"id": "lang_lingala",  "title": "🇨🇩 Lingala"},       # ~40M
-            {"id": "lang_wo",       "title": "🇸🇳 Wolof"},         # ~12M
-            {"id": "lang_twi",      "title": "🇬🇭 Twi"},           # ~9M
-            {"id": "lang_mandinka", "title": "🇬🇲 Mandinka"},      # ~5M
-        ]
-    },
-    {
-        # Langues à venir — classées par nb de locuteurs
-        "title": "⏳ Bientôt disponibles",
-        "rows": [
-            {"id": "lang_soon_swahili",  "title": "🇰🇪 Swahili (bientôt)"},     # ~200M
-            {"id": "lang_soon_bambara",  "title": "🇲🇱 Bambara (bientôt)"},     # ~14M
-            {"id": "lang_soon_dioula",   "title": "🇨🇮 Dioula (bientôt)"},      # ~12M
-            {"id": "lang_soon_sonike",   "title": "🇸🇳 Soninké (bientôt)"},     # ~2M
+            {"id": "call_lang_wo",       "title": "🇸🇳 Wolof"},
+            {"id": "call_lang_mandinka", "title": "🇬🇲 Mandinka"},
+            {"id": "call_lang_yo",       "title": "🇳🇬 Yoruba"},
+            {"id": "call_lang_lingala",  "title": "🇨🇩 Lingala"},
+            {"id": "call_lang_twi",      "title": "🇬🇭 Twi"},
         ]
     },
 ]
@@ -1478,6 +1467,29 @@ def process_button_reply(phone, button_id, button_title, conv):
         ask_route_qualify(phone, "fr")
         return
 
+    # ── Sélection langue pour appels/vocaux (fin de flow) ─────────
+    if button_id.startswith("call_lang_"):
+        chosen = button_id.replace("call_lang_", "")
+        conv["data"]["preferred_call_language"] = chosen
+        lang = conv["data"].get("language", "fr")
+        lang_names = {
+            "fr": "Français", "en": "English", "wo": "Wolof",
+            "mandinka": "Mandinka", "yo": "Yoruba", "lingala": "Lingala", "twi": "Twi"
+        }
+        lang_label = lang_names.get(chosen, chosen)
+        if lang == "en":
+            send_whatsapp_text(phone, (
+                f"✅ Noted — our expert will contact you in *{lang_label}*.\n\n"
+                "Robin des Airs team 🏹"
+            ))
+        else:
+            send_whatsapp_text(phone, (
+                f"✅ Noté — notre expert vous contactera en *{lang_label}*.\n\n"
+                "L'équipe Robin des Airs 🏹"
+            ))
+        return
+
+    # ── Ancien handler langue (compatibilité) ──────────────────────
     if button_id.startswith("lang_"):
         chosen = button_id.replace("lang_", "")
         conv["data"]["preferred_language"] = chosen
@@ -1490,12 +1502,6 @@ def process_button_reply(phone, button_id, button_title, conv):
             conv["data"]["escalade_reason"] = "langue_africaine"
             expert_msg = EXPERT_MSG.get(chosen, "Un expert vous rappelle directement 🤝\n📱 +33 7 56 86 36 30")
             send_whatsapp_text(phone, expert_msg)
-            time.sleep(1)
-            send_whatsapp_text(phone, (
-                "🤝 *Votre dossier est entre de bonnes mains.*\n\n"
-                "Un expert parlant votre langue vous contactera en cours de dossier.\n\n"
-                "En attendant, je continue à vous guider en français. 👇"
-            ))
             time.sleep(1)
             conv["data"]["language"] = "fr"
             conv["current_step"]     = "route_qualify"
