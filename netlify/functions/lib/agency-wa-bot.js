@@ -332,14 +332,13 @@ async function handleAgencyWhatsAppMessage(event, phone, text) {
     if (session.flow === 'attente') {
       session.step = 'CONFIRM';
       await saveAgencySession(event, phone, session);
-      return buildConfirmMessage(session) + '\n\nRépondez *oui* pour enregistrer ou *annuler*.';
+      return [buildConfirmMessage(session) + '\n\nRépondez *oui* pour enregistrer ou *annuler*.'];
     }
     session.step = 'ASK_PROBLEM';
     await saveAgencySession(event, phone, session);
     return [
-      'Type de problème — répondez 1 à 4 :\n',
-      '1 — Retard +3h à l\'arrivée\n2 — Vol annulé\n3 — Surbooking / refus\n4 — Correspondance manquée',
-    ].join('\n');
+      'Type de problème — répondez 1 à 4 :\n\n1 — Retard +3h à l\'arrivée\n2 — Vol annulé\n3 — Surbooking / refus\n4 — Correspondance manquée',
+    ];
   }
 
   if (session.step === 'ASK_PROBLEM') {
@@ -350,7 +349,7 @@ async function handleAgencyWhatsAppMessage(event, phone, text) {
     session.draft.probleme = PROBLEMS[n - 1];
     session.step = 'CONFIRM';
     await saveAgencySession(event, phone, session);
-    return buildConfirmMessage(session) + '\n\nRépondez *oui* pour enregistrer ou *annuler*.';
+    return [buildConfirmMessage(session) + '\n\nRépondez *oui* pour enregistrer ou *annuler*.'];
   }
 
   if (session.step === 'CONFIRM') {
