@@ -178,9 +178,10 @@ exports.handler = async (event) => {
   const dailyBudget  = budgetEuros
     ? Math.round(budgetEuros * 100)
     : parseInt(process.env.META_AD_DAILY_BUDGET_CENTS || '1000', 10);
-  const radiusKm = parseFloat(process.env.META_AD_RADIUS_KM || '2');
-  const nowSec   = Math.floor(Date.now() / 1000);
-  const endSec   = nowSec + 6 * 3600; // 6h max — ad-watch arrête avant si vol décollé
+  const radiusKm    = parseFloat(process.env.META_AD_RADIUS_KM || '2');
+  const durationHours = body.durationHours && body.durationHours > 0 ? body.durationHours : 6;
+  const nowSec      = Math.floor(Date.now() / 1000);
+  const endSec      = nowSec + Math.round(durationHours * 3600);
 
   const siteUrl = 'https://robindesairs.eu';
   const waMsg   = lang === 'EN'
