@@ -8,7 +8,7 @@
  *   WATI_AGENCY_WEBHOOK_SECRET (optionnel)
  */
 
-const { appendWaMessage, normalizeWaPhone } = require('./lib/wa-convo-store');
+const { appendWaMessage, normalizeWaPhone, listWaMessages } = require('./lib/wa-convo-store');
 const { normalizeWatiPhone, watiAgencyCfg, watiAgencySendSessionMessage } = require('./lib/wati-api');
 const { handleAgencyWhatsAppMessage } = require('./lib/agency-wa-bot');
 const { blobsAvailable } = require('./lib/agency-wa-store');
@@ -108,6 +108,13 @@ exports.handler = async (event) => {
       });
     } catch (e) {
       console.warn('wati-agency-webhook: log in', e.message);
+    }
+
+    // Vérifier la fenêtre 24h avant d'appeler le bot
+    const convoInfo = await listWaMessages(event, msg.phone).catch(() => ({ canSendFreeText: true }));
+    if (!convoInfo.canSendFreeText) {
+      console.warn('wati-agency-webhook: fenêtre 24h expirée pour', msg.phone, '— message ignoré, utiliser un template');
+      continue;
     }
 
     const outs = await handleAgencyWhatsAppMessage(event, msg.phone, msg.text);

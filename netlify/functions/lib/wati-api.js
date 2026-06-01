@@ -25,8 +25,14 @@ function watiCfg() {
 function normalizeWatiPhone(phone) {
   const d = String(phone || '').replace(/\D/g, '');
   if (!d) return '';
-  if (d.startsWith('0')) return '33' + d.slice(1);
-  if (d.length <= 9 && !d.startsWith('33') && !d.startsWith('32')) return '33' + d;
+  // Déjà international (11+ chiffres sans 0 initial)
+  if (d.length >= 11 && !d.startsWith('0')) return d;
+  // Mobile français : 10 chiffres, 06/07/09
+  if (d.length === 10 && /^0[6-9]/.test(d)) return '33' + d.slice(1);
+  // Mobile français sans 0 initial : 9 chiffres commençant par 6 ou 7
+  if (d.length === 9 && /^[67]/.test(d)) return '33' + d;
+  // Autre numéro avec 0 initial (africain local…) → supprimer le 0 seulement
+  if (d.startsWith('0')) return d.slice(1);
   return d;
 }
 

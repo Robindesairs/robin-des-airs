@@ -14,8 +14,10 @@ try {
 function normalizeWaPhone(phone) {
   const d = String(phone || '').replace(/\D/g, '');
   if (!d) return '';
-  if (d.startsWith('0')) return '33' + d.slice(1);
-  if (d.length <= 9 && !d.startsWith('33') && !d.startsWith('32')) return '33' + d;
+  if (d.length >= 11 && !d.startsWith('0')) return d;
+  if (d.length === 10 && /^0[6-9]/.test(d)) return '33' + d.slice(1);
+  if (d.length === 9 && /^[67]/.test(d)) return '33' + d;
+  if (d.startsWith('0')) return d.slice(1);
   return d;
 }
 

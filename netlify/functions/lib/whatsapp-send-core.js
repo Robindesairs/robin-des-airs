@@ -2,7 +2,7 @@
  * Envoi texte WhatsApp — Wati (prioritaire), Meta, ou 360dialog (legacy).
  */
 
-const META_GRAPH_BASE = 'https://graph.facebook.com/v18.0';
+const META_GRAPH_BASE = 'https://graph.facebook.com/v21.0';
 const D360_BASE = 'https://waba-v2.360dialog.io';
 const { watiCfg, watiSendSessionMessage } = require('./wati-api');
 
