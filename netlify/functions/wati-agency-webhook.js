@@ -9,7 +9,7 @@
  */
 
 const { appendWaMessage, normalizeWaPhone, listWaMessages } = require('./lib/wa-convo-store');
-const { normalizeWatiPhone, watiAgencyCfg, watiAgencySendSessionMessage } = require('./lib/wati-api');
+const { normalizeWatiPhone, watiAgencyCfg, watiAgencySendSessionMessage, watiSendTyping } = require('./lib/wati-api');
 const { handleAgencyWhatsAppMessage } = require('./lib/agency-wa-bot');
 const { blobsAvailable } = require('./lib/agency-wa-store');
 
@@ -119,6 +119,7 @@ exports.handler = async (event) => {
 
     const outs = await handleAgencyWhatsAppMessage(event, msg.phone, msg.text);
     for (const outText of outs) {
+      watiSendTyping(msg.phone); // indicateur "en train d'écrire..."
       const sent = await watiAgencySendSessionMessage(msg.phone, outText);
       if (sent.ok) {
         replies += 1;

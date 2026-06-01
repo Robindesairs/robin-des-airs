@@ -7,6 +7,7 @@ const STORE_NAME = 'robin-wa';
 const PENDING_PREFIX = 'pending/';
 const { appendWaMessage, listWaMessages } = require('./lib/wa-convo-store');
 const { sendWhatsAppTextMessage } = require('./lib/whatsapp-send-core');
+const { watiSendTyping } = require('./lib/wati-api');
 
 let netlifyBlobsModule = null;
 try {
@@ -118,6 +119,7 @@ CE 261 NE S'APPLIQUE PAS si :
     const reply = await openaiChat(chatMessages, sys, geminiKey);
 
     if (reply) {
+      watiSendTyping(to); // indicateur "en train d'écrire..."
       const sent = await sendWhatsAppTextMessage(to, reply);
       if (sent.ok) {
         try {

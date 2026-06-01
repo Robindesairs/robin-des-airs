@@ -191,6 +191,8 @@ async function sendWhatsAppText(to, text) {
     console.error('whatsapp-webhook: send skipped, to invalid', to);
     return false;
   }
+  // Indicateur "en train d'écrire..." visible par le client avant la réponse
+  try { const { watiSendTyping } = require('./lib/wati-api'); watiSendTyping(toClean); } catch (_) {}
   console.log('whatsapp-webhook: sending reply to', toClean.slice(-4) + '****', 'provider=' + (config.provider || '?'), 'len=' + (text && text.length));
   const payload = {
     messaging_product: 'whatsapp',

@@ -37,6 +37,25 @@ function normalizeWatiPhone(phone) {
 }
 
 /**
+ * Envoie l'indicateur "en train d'écrire..." au client.
+ * Fire-and-forget — ne bloque pas l'envoi du message.
+ */
+async function watiSendTyping(to) {
+  const cfg = watiCfg();
+  if (!cfg) return;
+  const wa = normalizeWatiPhone(to);
+  if (!wa || wa.length < 10) return;
+  const params = new URLSearchParams({ channelPhoneNumber: cfg.channel });
+  const url = `${cfg.base}/api/v1/sendTyping/${encodeURIComponent(wa)}?${params.toString()}`;
+  try {
+    await fetch(url, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
+    });
+  } catch (_) {}
+}
+
+/**
  * @returns {Promise<{ ok: boolean, messageId?: string, error?: string, details?: unknown }>}
  */
 async function watiSendSessionMessage(to, text) {
@@ -242,6 +261,7 @@ module.exports = {
   watiCfg,
   watiAgencyCfg,
   normalizeWatiPhone,
+  watiSendTyping,
   watiSendSessionMessage,
   watiAgencySendSessionMessage,
   watiAgencySendTemplate,
