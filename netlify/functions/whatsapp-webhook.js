@@ -533,7 +533,12 @@ async function geminiVisionOcr(imageBase64, mimeType) {
   const key = process.env.OPENAI_API_KEY;
   if (!key) return { flightNumber: null, date: null, passengerName: null };
   const data = imageBase64.replace(/^data:image\/\w+;base64,/, '');
-  const prompt = 'Extrait UNIQUEMENT un objet JSON avec: "flightNumber" (ex: AF718), "date" (JJ/MM/AAAA), "passengerName" (nom complet du passager). Si un champ est illisible mets null. Réponds uniquement le JSON.';
+  const prompt = `Analyse cette carte d'embarquement ou confirmation de billet.
+Réponds UNIQUEMENT avec un JSON brut (sans markdown) contenant :
+- "flightNumber" : code compagnie + numéro (ex: "AF718", "HC401", "SS995"). Null si absent.
+- "date" : date du vol au format DD/MM/YYYY. Convertis les formats IATA (ex: "15MAR26" → "15/03/2026"). Null si absent.
+- "passengerName" : prénom et nom. Si format "DIALLO/AMADOUMR" → "Amadou Diallo". Null si absent.
+- "confidence" : "high" si image nette et lisible, "low" si floue ou partielle.`;
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
@@ -556,20 +561,41 @@ async function geminiVisionOcr(imageBase64, mimeType) {
     return {
       flightNumber: o.flightNumber || null,
       date: o.date || null,
-      passengerName: o.passengerName || null
+      passengerName: o.passengerName || null,
+      lowQuality: o.confidence === 'low',
     };
   } catch {
     const m = text.match(/\b([A-Z]{2}\d{2,4})\b/i);
-    return { flightNumber: m ? m[1] : null, date: null, passengerName: null };
+    return { flightNumber: m ? m[1] : null, date: null, passengerName: null, lowQuality: false };
   }
 }
+
+const STEP_LABELS = {
+  AWAITING_CARD: "en attente de la carte d'embarquement ou du numéro de vol",
+  CONFIRM_FLIGHT: 'confirmation du numéro de vol extrait',
+  CHECK_CONNECTION: "vérification d'une correspondance",
+  ASK_PASSENGERS: 'collecte du nombre de passagers',
+  CONFIRM_DATE: 'confirmation de la date du vol',
+  VERDICT: "verdict d'éligibilité communiqué",
+  PASSENGER_FIRST: 'collecte du prénom du passager',
+  PASSENGER_LAST: 'collecte du nom du passager',
+  TRAJET_FLIGHT: 'collecte du numéro de vol',
+  TRAJET_DATE: 'collecte de la date du vol',
+  ASK_PNR: 'collecte du code PNR',
+  ASK_ADDRESS: "collecte de l'adresse postale",
+  STEP1_DONE: 'dossier complété, mandat envoyé',
+};
 
 async function geminiSideAnswer(userMessage, currentStep) {
   const key = process.env.OPENAI_API_KEY;
   if (!key) return null;
-  const sys = `Tu es Robin 🏹, conseiller chez Robin des Airs (indemnités aériennes CE 261).
-RÈGLES ABSOLUES : max 6 phrases, max 2 emojis (✈️ 🏹 ✅ ❌ 💰 📋), ton direct et chaleureux.
-Étape en cours : ${currentStep}. Réponds à la question puis guide vers la prochaine action. Tarifs : 0€ si on perd, 25% si on gagne.`;
+  const stepLabel = STEP_LABELS[currentStep] || currentStep;
+  const sys = `Tu es Robin 🏹, conseiller chez Robin des Airs — indemnités aériennes CE 261/2004 (jusqu'à 600€/passager).
+PUBLIC : diaspora africaine (Sénégal, Côte d'Ivoire, Cameroun, Mali, Congo). Ton : direct, chaleureux.
+RÈGLES : max 6 phrases, max 2 emojis (✈️ 🏹 ✅ ❌ 💰 📋). 0€ si on perd, 25% si on gagne.
+Étape en cours : ${stepLabel}.
+Réponds brièvement à la question, puis rappelle en 1 phrase ce qu'on attend du client pour avancer.
+Ne promets jamais d'indemnité sans préciser que c'est soumis à vérification.`;
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
