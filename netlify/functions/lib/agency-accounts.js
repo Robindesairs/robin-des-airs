@@ -66,20 +66,41 @@ function normalizeAccount(a) {
   };
 }
 
+/** Agences permanentes — toujours actives en prod */
+const STATIC_AGENCIES = [
+  {
+    code: 'SEYMAN-001',
+    pass: 'seyman2026',
+    name: 'Seyman Travel',
+    airtableMatch: 'SEYMAN-001',
+    commissionGmd: 3800,
+    partnerSignedAt: '2026-06-01',
+  },
+];
+
 function loadAgencyAccounts() {
   const raw = (process.env.AGENCY_ACCOUNTS || '').trim();
+  let envAccounts = [];
   if (raw) {
     try {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length) {
-        return parsed.map(normalizeAccount).filter((a) => a.code && (a.pass || a.passHash));
+        envAccounts = parsed.map(normalizeAccount).filter((a) => a.code && (a.pass || a.passHash));
       }
     } catch (e) {
       console.error('agency-accounts: JSON invalide', e.message);
     }
   }
-  if (!isProduction() || allowInsecureAuth()) return DEV_FALLBACK.map(normalizeAccount);
-  return [];
+  const staticAccounts = STATIC_AGENCIES.map(normalizeAccount);
+  const devAccounts = (!isProduction() || allowInsecureAuth()) ? DEV_FALLBACK.map(normalizeAccount) : [];
+  // Fusionner : env > static > dev (env a priorité si même code)
+  const all = [...envAccounts, ...staticAccounts, ...devAccounts];
+  const seen = new Set();
+  return all.filter((a) => {
+    if (seen.has(a.code)) return false;
+    seen.add(a.code);
+    return true;
+  });
 }
 
 function accountPasswordOk(account, pass) {
