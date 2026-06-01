@@ -23,32 +23,30 @@ function normalizeTo(waId) {
   return s;
 }
 
-async function geminiChat(messages, systemInstruction, apiKey) {
+async function openaiChat(messages, systemInstruction, apiKey) {
   if (!apiKey) return null;
-  const GEMINI_BASE =
-    'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
-  const contents = messages.map((m) => ({
-    role: m.role === 'user' ? 'user' : 'model',
-    parts: [{ text: (m.text || '').slice(0, 4096) }],
-  }));
-  const res = await fetch(`${GEMINI_BASE}?key=${apiKey}`, {
+  const oaiMessages = [];
+  if (systemInstruction) oaiMessages.push({ role: 'system', content: systemInstruction });
+  messages.forEach((m) =>
+    oaiMessages.push({ role: m.role === 'user' ? 'user' : 'assistant', content: (m.text || '').slice(0, 4096) })
+  );
+  if (!oaiMessages.some((m) => m.role !== 'system')) {
+    oaiMessages.push({ role: 'user', content: 'Bonjour' });
+  }
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      systemInstruction: systemInstruction ? { parts: [{ text: systemInstruction }] } : undefined,
-      contents: contents.length ? contents : [{ role: 'user', parts: [{ text: 'Bonjour' }] }],
-      generationConfig: { maxOutputTokens: 512 },
-    }),
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+    body: JSON.stringify({ model: 'gpt-4o-mini', messages: oaiMessages, max_tokens: 512 }),
   });
   const json = await res.json().catch(() => ({}));
-  return json.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || null;
+  return json.choices?.[0]?.message?.content?.trim() || null;
 }
 
 exports.handler = async (event) => {
-  const geminiKey = process.env.GEMINI_API_KEY;
+  const geminiKey = process.env.OPENAI_API_KEY;
   if (!geminiKey) {
-    console.log('whatsapp-gemini-fallback: GEMINI_API_KEY missing, skip');
-    return { statusCode: 200, body: JSON.stringify({ ok: true, processed: 0, reason: 'no_gemini' }) };
+    console.log('whatsapp-gemini-fallback: OPENAI_API_KEY missing, skip');
+    return { statusCode: 200, body: JSON.stringify({ ok: true, processed: 0, reason: 'no_openai' }) };
   }
 
   let getStore;
@@ -97,13 +95,13 @@ exports.handler = async (event) => {
 
     const sys = `Tu es Robin 🏹 (Robin des Airs), conseiller en indemnités aériennes (règlement CE 261). Réponds en français, de façon courte et adaptée à WhatsApp. Propose d'envoyer une photo de la carte d'embarquement pour analyser les droits. Tarifs : 25% si succès, 0€ si échec. Lien dépôt : https://robindesairs.eu/depot-express.html`;
     const chatMessages = convo.slice(-20).map((m) => ({ role: m.role, text: m.text }));
-    const reply = await geminiChat(chatMessages, sys, geminiKey);
+    const reply = await openaiChat(chatMessages, sys, geminiKey);
 
     if (reply) {
       const sent = await sendWhatsAppTextMessage(to, reply);
       if (sent.ok) {
         try {
-          await appendWaMessage(event, phone, { role: 'assistant', text: reply, source: 'bot-gemini' });
+          await appendWaMessage(event, phone, { role: 'assistant', text: reply, source: 'bot-openai' });
         } catch (logErr) {
           console.log('whatsapp-gemini-fallback: convo log failed', logErr.message);
         }

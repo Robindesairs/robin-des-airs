@@ -14,7 +14,7 @@
 
 const D360_BASE = 'https://waba-v2.360dialog.io';
 const META_GRAPH_BASE = 'https://graph.facebook.com/v18.0';
-const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+const OPENAI_CHAT_BASE = 'https://api.openai.com/v1/chat/completions'; // eslint-disable-line no-unused-vars
 const LIEN_DEPOT = 'https://robindesairs.eu/depot-express.html';
 const LIEN_SIGNATURE = 'https://robindesairs.eu/depot-express.html';
 const MENU_BIENVENUE = `👋 *Robin des Airs* — Récupérez jusqu'à 600€ si votre vol a été retardé ou annulé.
@@ -530,24 +530,27 @@ function setTunnelSession(phone, data) {
 }
 
 async function geminiVisionOcr(imageBase64, mimeType) {
-  const key = process.env.GEMINI_API_KEY;
+  const key = process.env.OPENAI_API_KEY;
   if (!key) return { flightNumber: null, date: null, passengerName: null };
   const data = imageBase64.replace(/^data:image\/\w+;base64,/, '');
   const prompt = 'Extrait UNIQUEMENT un objet JSON avec: "flightNumber" (ex: AF718), "date" (JJ/MM/AAAA), "passengerName" (nom complet du passager). Si un champ est illisible mets null. Réponds uniquement le JSON.';
-  const res = await fetch(`${GEMINI_BASE}?key=${key}`, {
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
     body: JSON.stringify({
-      contents: [{
-        parts: [
-          { inlineData: { mimeType: mimeType || 'image/jpeg', data } },
-          { text: prompt }
+      model: 'gpt-4o',
+      max_tokens: 256,
+      messages: [{
+        role: 'user',
+        content: [
+          { type: 'image_url', image_url: { url: `data:${mimeType || 'image/jpeg'};base64,${data}` } },
+          { type: 'text', text: prompt }
         ]
       }]
     })
   });
   const json = await res.json().catch(() => ({}));
-  const text = (json.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || '').replace(/```json?\s*/gi, '').replace(/```\s*/g, '').trim();
+  const text = (json.choices?.[0]?.message?.content?.trim() || '').replace(/```json?\s*/gi, '').replace(/```\s*/g, '').trim();
   try {
     const o = JSON.parse(text);
     return {
@@ -562,19 +565,23 @@ async function geminiVisionOcr(imageBase64, mimeType) {
 }
 
 async function geminiSideAnswer(userMessage, currentStep) {
-  const key = process.env.GEMINI_API_KEY;
+  const key = process.env.OPENAI_API_KEY;
   if (!key) return null;
   const sys = `Tu es Robin 🏹 (Robin des Airs). Étape: ${currentStep}. Réponds brièvement puis ramène vers l'étape (ex: "Pour continuer, envoyez..."). Tarifs: 25% si succès, 0€ si échec.`;
-  const res = await fetch(`${GEMINI_BASE}?key=${key}`, {
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
     body: JSON.stringify({
-      contents: [{ parts: [{ text: userMessage }] }],
-      systemInstruction: { parts: [{ text: sys }] }
+      model: 'gpt-4o-mini',
+      max_tokens: 256,
+      messages: [
+        { role: 'system', content: sys },
+        { role: 'user', content: userMessage }
+      ]
     })
   });
   const json = await res.json().catch(() => ({}));
-  return json.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || null;
+  return json.choices?.[0]?.message?.content?.trim() || null;
 }
 
 async function handleTunnel(phone, text, imageBase64, imageMime, origin) {
@@ -1261,7 +1268,7 @@ exports.handler = async (event) => {
         }
 
         try {
-          const tunnelEnabled = process.env.ROBIN_TUNNEL_ENABLED === 'true' || (process.env.GEMINI_API_KEY && process.env.ROBIN_TUNNEL_ENABLED !== 'false');
+          const tunnelEnabled = process.env.ROBIN_TUNNEL_ENABLED === 'true' || (process.env.OPENAI_API_KEY && process.env.ROBIN_TUNNEL_ENABLED !== 'false');
           const geminiDelayEnabled = process.env.ROBIN_GEMINI_DELAY_ENABLED === 'true';
 
           if (tunnelEnabled) {
