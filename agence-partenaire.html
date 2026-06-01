@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Robin des Airs — Agency Partnership · Seyman Travel</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0B1F3A;--neon:#00C87A;--neon-dark:#009960;--gold:#C9A96E;--white:#fff;--gray:#6B7A90;--border:#E4E2DB}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#0a0e1a;color:#fff;overflow-x:hidden}
+
+nav{display:flex;align-items:center;justify-content:space-between;padding:20px 48px;border-bottom:1px solid rgba(255,255,255,.06)}
+.logo{font-size:20px;font-weight:900;letter-spacing:.5px}
+.logo span{color:var(--neon)}
+.badge{background:rgba(0,200,122,.15);color:var(--neon);font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;border:1px solid rgba(0,200,122,.3)}
+
+/* AGENCY HERO CARD */
+.agency-hero{max-width:1100px;margin:40px auto 0;padding:0 48px}
+.agency-card{background:linear-gradient(135deg,rgba(0,200,122,.12),rgba(0,200,122,.03));border:2px solid rgba(0,200,122,.4);border-radius:24px;padding:36px 40px;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center;margin-bottom:0}
+.agency-name{font-size:32px;font-weight:900;margin-bottom:6px}
+.agency-name span{color:var(--neon)}
+.agency-contact{display:flex;flex-direction:column;gap:8px;margin-top:16px}
+.agency-contact a{font-size:14px;color:rgba(255,255,255,.7);text-decoration:none;display:flex;align-items:center;gap:8px}
+.agency-contact a:hover{color:var(--neon)}
+.agency-tag{display:inline-block;background:var(--neon);color:#000;font-size:11px;font-weight:800;padding:4px 12px;border-radius:20px;margin-bottom:12px;text-transform:uppercase;letter-spacing:.06em}
+.exclusive-badge{background:rgba(0,200,122,.1);border:2px solid var(--neon);border-radius:16px;padding:20px 28px;text-align:center;flex-shrink:0}
+.exclusive-badge .eb-label{font-size:11px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.exclusive-badge .eb-zone{font-size:28px;font-weight:900}
+.exclusive-badge .eb-sub{font-size:11px;color:var(--neon);margin-top:6px;font-weight:700}
+
+.hero{text-align:center;padding:64px 48px 48px;max-width:900px;margin:0 auto}
+.hero-tag{display:inline-block;background:rgba(0,200,122,.1);color:var(--neon);font-size:11px;font-weight:700;padding:6px 16px;border-radius:20px;border:1px solid rgba(0,200,122,.25);letter-spacing:.08em;text-transform:uppercase;margin-bottom:24px}
+.hero h1{font-size:52px;font-weight:900;line-height:1.1;margin-bottom:20px}
+.hero h1 em{font-style:normal;color:var(--neon)}
+.hero p{font-size:18px;color:rgba(255,255,255,.6);line-height:1.7;max-width:640px;margin:0 auto 40px}
+.stats{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-bottom:64px}
+.stat-pill{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:40px;padding:12px 24px;text-align:center}
+.stat-pill .n{font-size:28px;font-weight:900;color:var(--neon)}
+.stat-pill .l{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px}
+
+.section{max-width:1100px;margin:0 auto;padding:0 48px 80px}
+.section-tag{font-size:11px;font-weight:700;color:var(--neon);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
+.section-title{font-size:36px;font-weight:900;line-height:1.2;margin-bottom:8px}
+.section-sub{font-size:16px;color:rgba(255,255,255,.5);margin-bottom:40px}
+
+.flow{display:flex;gap:0;margin-bottom:16px;position:relative}
+.flow::before{content:'';position:absolute;top:32px;left:32px;right:32px;height:2px;background:linear-gradient(90deg,var(--neon),rgba(0,200,122,.2));z-index:0}
+.flow-step{flex:1;text-align:center;position:relative;z-index:1}
+.step-circle{width:64px;height:64px;border-radius:50%;border:2px solid var(--neon);background:#0a0e1a;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:24px}
+.step-circle.active{background:var(--neon)}
+.step-circle.active span{filter:brightness(0)}
+.step-label{font-size:13px;font-weight:700;margin-bottom:4px}
+.step-sub{font-size:11px;color:rgba(255,255,255,.4);line-height:1.5}
+.step-arrow{position:absolute;top:32px;right:-12px;color:var(--neon);font-size:18px;z-index:2}
+
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:20px}
+.card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:28px;transition:.2s}
+.card:hover{border-color:rgba(0,200,122,.3);background:rgba(0,200,122,.03)}
+.card-icon{font-size:32px;margin-bottom:16px}
+.card-title{font-size:16px;font-weight:800;margin-bottom:8px}
+.card-text{font-size:13px;color:rgba(255,255,255,.5);line-height:1.6}
+.card.highlight{border-color:rgba(0,200,122,.4);background:rgba(0,200,122,.06)}
+.card.highlight .card-title{color:var(--neon)}
+
+.commission-box{background:linear-gradient(135deg,rgba(0,200,122,.1),rgba(0,200,122,.03));border:1px solid rgba(0,200,122,.3);border-radius:24px;padding:40px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:32px;margin-bottom:20px}
+.comm-col{text-align:center}
+.comm-pct{font-size:52px;font-weight:900;line-height:1}
+.comm-label{font-size:13px;color:rgba(255,255,255,.5);margin-top:8px}
+.comm-sub{font-size:11px;color:rgba(255,255,255,.3);margin-top:4px}
+.divider-v{width:1px;background:rgba(255,255,255,.08);align-self:stretch;margin:auto 0}
+
+.demo-section{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;margin-bottom:80px}
+.phone-wrap{display:flex;justify-content:center}
+.phone{width:280px;background:#1a1a2e;border-radius:40px;border:3px solid rgba(255,255,255,.1);overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.5)}
+.phone-bar{height:48px;background:#111;display:flex;align-items:center;padding:0 20px;gap:12px}
+.phone-avatar{width:32px;height:32px;border-radius:50%;background:var(--neon);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#000}
+.phone-name{font-size:13px;font-weight:700}
+.phone-status{font-size:10px;color:rgba(255,255,255,.4)}
+.phone-body{padding:16px;min-height:400px;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:82%;border-radius:18px;padding:12px 14px;font-size:12px;line-height:1.5}
+.msg.bot{background:rgba(255,255,255,.06);align-self:flex-start;border-bottom-left-radius:4px}
+.msg.user{background:var(--neon);color:#000;align-self:flex-end;border-bottom-right-radius:4px;font-weight:600}
+.msg .time{font-size:9px;opacity:.5;margin-top:4px;text-align:right}
+.btn-wa{display:flex;gap:8px;margin-top:4px}
+.btn-wa button{flex:1;background:rgba(0,200,122,.15);border:1px solid rgba(0,200,122,.3);color:var(--neon);font-size:10px;font-weight:700;padding:8px 6px;border-radius:10px;cursor:pointer;font-family:inherit}
+
+.demo-info{padding-top:16px}
+.demo-info h3{font-size:28px;font-weight:900;margin-bottom:16px}
+.demo-info p{font-size:14px;color:rgba(255,255,255,.6);line-height:1.7;margin-bottom:24px}
+.point{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px}
+.point-dot{width:28px;height:28px;border-radius:50%;background:rgba(0,200,122,.15);border:1px solid rgba(0,200,122,.3);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;margin-top:2px}
+.point-text{font-size:14px;color:rgba(255,255,255,.7);line-height:1.5}
+.point-text strong{color:#fff}
+
+.cta-section{text-align:center;padding:64px 48px 80px;background:linear-gradient(180deg,transparent,rgba(0,200,122,.04))}
+.cta-section h2{font-size:40px;font-weight:900;margin-bottom:16px}
+.cta-section p{font-size:16px;color:rgba(255,255,255,.5);margin-bottom:40px}
+.cta-buttons{display:flex;justify-content:center;gap:16px}
+.btn-primary{background:var(--neon);color:#000;font-size:15px;font-weight:800;padding:16px 36px;border-radius:12px;border:none;cursor:pointer;font-family:inherit}
+.btn-secondary{background:transparent;color:#fff;font-size:15px;font-weight:700;padding:16px 36px;border-radius:12px;border:1px solid rgba(255,255,255,.2);cursor:pointer;font-family:inherit}
+
+.table-wrap{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:20px;overflow:hidden;margin-bottom:20px}
+table{width:100%;border-collapse:collapse}
+th{background:rgba(0,200,122,.08);padding:14px 20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.5);text-align:left}
+td{padding:14px 20px;font-size:13px;border-top:1px solid rgba(255,255,255,.04)}
+td.check{color:var(--neon);font-weight:700}
+td.cross{color:rgba(255,255,255,.2)}
+tr.highlight-row td{background:rgba(0,200,122,.05);font-weight:700}
+.tag-robin{background:rgba(0,200,122,.15);color:var(--neon);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-left:6px}
+
+.sep{height:1px;background:rgba(255,255,255,.05);max-width:1100px;margin:0 auto 64px}
+.flight-row{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:20px 24px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;align-items:center;gap:16px;margin-bottom:12px}
+.flight-row.featured{border-color:rgba(0,200,122,.25)}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">🏹 ROBIN <span>des Airs</span></div>
+  <div class="badge">Agency Partnership Presentation · June 2026</div>
+</nav>
+
+<!-- AGENCY CARD -->
+<div class="agency-hero">
+  <div class="agency-card">
+    <div>
+      <div class="agency-tag">🔒 Exclusive Territory Partner</div>
+      <div class="agency-name"><span>Seyman Travel</span> — The Gambia</div>
+      <div style="font-size:14px;color:rgba(255,255,255,.5);margin-bottom:4px">Contact: <strong style="color:#fff">Aziz</strong></div>
+      <div class="agency-contact">
+        <a href="tel:+2202800580">📞 +220 280 0580</a>
+        <a href="#">📍 Top Floor · Adjacent American Embassy · 98 Kairaba Avenue · Traffic Light · Serrekunda, The Gambia</a>
+      </div>
+    </div>
+    <div class="exclusive-badge">
+      <div class="eb-label">Exclusive Zone</div>
+      <div class="eb-zone">🇬🇲 Gambia</div>
+      <div class="eb-sub">✅ Active Partner</div>
+      <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:8px">BJL & all Gambian routes</div>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-tag">Partnership Programme</div>
+  <h1>Wake up<br><em>the sleeping money.</em></h1>
+  <p>Your clients had delayed or cancelled flights in the last 5 years. They don't know they're owed up to €600 each. You tell them — we recover it — you earn a commission.</p>
+  <div class="stats">
+    <div class="stat-pill"><div class="n">€600</div><div class="l">per passenger</div></div>
+    <div class="stat-pill"><div class="n">£0</div><div class="l">if we lose</div></div>
+    <div class="stat-pill"><div class="n">5 years</div><div class="l">to claim</div></div>
+    <div class="stat-pill"><div class="n">24h</div><div class="l">case filing</div></div>
+  </div>
+</div>
+
+<div class="sep"></div>
+
+<!-- HOW IT WORKS -->
+<div class="section">
+  <div class="section-tag">The Process</div>
+  <div class="section-title">How it works</div>
+  <div class="section-sub">5 steps — from ticket sale to commission received</div>
+  <div class="flow">
+    <div class="flow-step">
+      <div class="step-circle active"><span>✈️</span></div>
+      <div class="step-label">Ticket Sold</div>
+      <div class="step-sub">Your client buys their ticket through your agency</div>
+      <div class="step-arrow">→</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-circle"><span>⚠️</span></div>
+      <div class="step-label">Incident</div>
+      <div class="step-sub">Delay 3h+, cancellation or denied boarding</div>
+      <div class="step-arrow">→</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-circle"><span>📱</span></div>
+      <div class="step-label">Submission</div>
+      <div class="step-sub">You submit the case via WhatsApp or the agency portal</div>
+      <div class="step-arrow">→</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-circle"><span>⚖️</span></div>
+      <div class="step-label">Robin Acts</div>
+      <div class="step-sub">We negotiate with the airline until payment</div>
+      <div class="step-arrow">→</div>
+    </div>
+    <div class="flow-step">
+      <div class="step-circle active"><span>💰</span></div>
+      <div class="step-label">Commission</div>
+      <div class="step-sub">You receive your share once compensation is collected</div>
+    </div>
+  </div>
+</div>
+
+<div class="sep"></div>
+
+<!-- COMMISSION -->
+<div class="section">
+  <div class="section-tag">Financial Model</div>
+  <div class="section-title">How much you earn</div>
+  <div class="section-sub">Example: Banjul → Brussels, delayed 4h, 1 passenger · Rate: 1€ = 85 GMD</div>
+  <div class="commission-box">
+    <div class="comm-col">
+      <div class="comm-pct" style="color:rgba(255,255,255,.3)">€600</div>
+      <div style="font-size:14px;color:rgba(255,255,255,.2);margin-top:4px">51 000 GMD</div>
+      <div class="comm-label">Legal compensation CE 261</div>
+      <div class="comm-sub">What the airline pays</div>
+    </div>
+    <div class="divider-v"></div>
+    <div class="comm-col">
+      <div class="comm-pct" style="color:var(--neon)">3 800</div>
+      <div style="font-size:18px;font-weight:700;color:var(--neon);margin-top:2px">GMD</div>
+      <div class="comm-label">Seyman Travel commission</div>
+      <div class="comm-sub">Per passenger · paid after collection</div>
+    </div>
+    <div class="divider-v"></div>
+    <div class="comm-col">
+      <div class="comm-pct" style="color:rgba(255,255,255,.7)">€450</div>
+      <div style="font-size:14px;color:rgba(255,255,255,.2);margin-top:4px">38 250 GMD</div>
+      <div class="comm-label">Net to passenger</div>
+      <div class="comm-sub">What your client receives</div>
+    </div>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">👨‍👩‍👧‍👦</div>
+      <div class="card-title">Family of 6 passengers</div>
+      <div class="card-text">6 × 3 800 GMD commission<br><strong style="color:var(--neon)">Seyman Travel earns: 22 800 GMD</strong><br><span style="font-size:11px;color:rgba(255,255,255,.35)">~€268 · one single case</span></div>
+    </div>
+    <div class="card highlight">
+      <div class="card-icon">💡</div>
+      <div class="card-title">€0 if we don't win</div>
+      <div class="card-text">No upfront cost, no risk. Robin des Airs only takes its share if compensation is paid. Neither do you.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">📅</div>
+      <div class="card-title">Up to 5 years back</div>
+      <div class="card-text">Clients with delayed flights in 2021, 2022, 2023? We can still claim. That's sleeping revenue in your existing client base.</div>
+    </div>
+  </div>
+</div>
+
+<div class="sep"></div>
+
+<!-- GAMBIA FLIGHTS -->
+<div class="section">
+  <div class="section-tag">Your Territory · Gambia (BJL)</div>
+  <div class="section-title">Most popular flights from Banjul</div>
+  <div class="section-sub">Had a delay in the last 5 years? That money is still recoverable. Every passenger is a potential commission for Seyman Travel.</div>
+
+  <div class="flight-row featured">
+    <div>
+      <div style="font-size:15px;font-weight:800;margin-bottom:4px">🇬🇲 Banjul → 🇧🇪 Brussels</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.4)">Brussels Airlines · SN301/302 · 3–4× per week</div>
+      <div style="font-size:11px;color:var(--neon);margin-top:4px">✅ European airline — CE 261 applies both ways</div>
+    </div>
+    <div style="text-align:center"><div style="font-size:22px;font-weight:900;color:var(--neon)">€600</div><div style="font-size:10px;color:rgba(255,255,255,.4)">per passenger</div></div>
+    <div style="text-align:center"><div style="font-size:22px;font-weight:900">~€90</div><div style="font-size:10px;color:rgba(255,255,255,.4)">your commission</div></div>
+    <div style="text-align:center"><div style="font-size:14px;font-weight:700;color:rgba(255,165,0,.9)">⚠️ Frequent delays</div></div>
+  </div>
+
+  <div class="flight-row">
+    <div>
+      <div style="font-size:15px;font-weight:800;margin-bottom:4px">🇬🇲 Banjul → 🇬🇧 London Gatwick</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.4)">TUI Airways · BY charters · seasonal Oct–Apr</div>
+      <div style="font-size:11px;color:var(--neon);margin-top:4px">✅ European/British airline — CE 261 applies</div>
+    </div>
+    <div style="text-align:center"><div style="font-size:22px;font-weight:900;color:var(--neon)">€600</div><div style="font-size:10px;color:rgba(255,255,255,.4)">per passenger</div></div>
+    <div style="text-align:center"><div style="font-size:22px;font-weight:900">~€90</div><div style="font-size:10px;color:rgba(255,255,255,.4)">your commission</div></div>
+    <div style="text-align:center"><div style="font-size:14px;font-weight:700;color:rgba(255,100,100,.8)">🔴 Charter — very delayed</div></div>
+  </div>
+
+  <div class="flight-row">
+    <div>
+      <div style="font-size:15px;font-weight:800;margin-bottom:4px">🇬🇲 Banjul → 🇵🇹 Lisbon</div>
+      <div style="font-size:12px;color:rgba(255,255,255,.4)">TAP Air Portugal · TP · via Dakar or direct</div>
+      <div style="font-size:11px;color:var(--neon);margin-top:4px">✅ European airline — CE 261 applies</div>
+    </div>
+    <div style="text-align:center"><div style="font-size:22px;font-weight:900;color:var(--neon)">€600</div><div style="font-size:10px;color:rgba(255,255,255,.4)">per passenger</div></div>
+    <div style="text-align:center"><div style="font-size:22px;font-weight:900">~€90</div><div style="font-size:10px;color:rgba(255,255,255,.4)">your commission</div></div>
+    <div style="text-align:center"><div style="font-size:14px;font-weight:700;color:rgba(255,200,50,.8)">🟡 Regular route</div></div>
+  </div>
+
+  <!-- EXAMPLE -->
+  <div style="background:linear-gradient(135deg,rgba(0,200,122,.1),rgba(0,200,122,.03));border:1.5px solid rgba(0,200,122,.35);border-radius:16px;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;gap:24px;margin-top:8px">
+    <div>
+      <div style="font-size:13px;color:var(--neon);font-weight:700;margin-bottom:8px">💡 Sleeping money recovered — Gambian family, Banjul → Brussels</div>
+      <div style="font-size:14px;color:rgba(255,255,255,.8);line-height:1.7">
+        Flight SN301 · delayed 5h · Family of 6 passengers · <em style="color:rgba(255,255,255,.5)">They had no idea they were owed anything.</em><br>
+        Seyman Travel told them. Robin des Airs filed. <strong style="color:#fff">6 × 51 000 GMD recovered for the family.</strong><br>
+        <span style="font-size:12px;color:rgba(255,255,255,.4)">Seyman Travel commission: 22 800 GMD · One case. One conversation.</span>
+      </div>
+    </div>
+    <div style="text-align:center;flex-shrink:0">
+      <div style="font-size:36px;font-weight:900;color:var(--neon)">22 800</div>
+      <div style="font-size:16px;font-weight:700;color:var(--neon)">GMD</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.4)">Seyman Travel<br>commission · 1 case</div>
+    </div>
+  </div>
+</div>
+
+<div class="sep"></div>
+
+<!-- EXCLUSIVITY -->
+<div class="section">
+  <div class="section-tag">Robin des Airs Commitment</div>
+  <div class="section-title">Territorial Exclusivity 🔒</div>
+  <div class="section-sub">One partner per territory — your zone is protected</div>
+
+  <div style="background:linear-gradient(135deg,rgba(0,200,122,.08),rgba(11,31,58,.6));border:2px solid rgba(0,200,122,.4);border-radius:24px;padding:40px;margin-bottom:32px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center">
+    <div>
+      <div style="font-size:13px;color:rgba(0,200,122,.8);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px">Your Exclusive Zone · Gambia</div>
+      <div style="font-size:42px;font-weight:900;margin-bottom:12px">🇬🇲 The Gambia</div>
+      <div style="font-size:16px;color:rgba(255,255,255,.7);line-height:1.7;margin-bottom:24px">
+        Every passenger in Gambia who contacts Robin des Airs and wants local support <strong style="color:#fff">is automatically redirected to Seyman Travel</strong> — no exceptions.
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div style="display:flex;align-items:center;gap:12px;font-size:14px"><span style="color:var(--neon);font-size:18px">✅</span><span>Banjul Airport <strong>(BJL)</strong> — all Europe routes covered</span></div>
+        <div style="display:flex;align-items:center;gap:12px;font-size:14px"><span style="color:var(--neon);font-size:18px">✅</span><span>All <strong>Gambia → Europe</strong> flights (Brussels Airlines, TUI, TAP…)</span></div>
+        <div style="display:flex;align-items:center;gap:12px;font-size:14px"><span style="color:var(--neon);font-size:18px">✅</span><span><strong>Last 5 years</strong> of flights — significant dormant revenue</span></div>
+        <div style="display:flex;align-items:center;gap:12px;font-size:14px"><span style="color:rgba(255,255,255,.3);font-size:18px">🔒</span><span style="color:rgba(255,255,255,.4)">No other agency authorised in this territory while partnership is active</span></div>
+      </div>
+    </div>
+    <div>
+      <div style="background:rgba(0,0,0,.3);border-radius:20px;padding:28px;text-align:center">
+        <div style="font-size:13px;color:rgba(255,255,255,.4);margin-bottom:20px;text-transform:uppercase;letter-spacing:.06em">Partner Territories</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="background:rgba(0,200,122,.15);border:1.5px solid rgba(0,200,122,.5);border-radius:12px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between">
+            <span style="font-weight:800">🇬🇲 Gambia (BJL)</span>
+            <span style="background:var(--neon);color:#000;font-size:10px;font-weight:800;padding:3px 10px;border-radius:20px">SEYMAN TRAVEL</span>
+          </div>
+          <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;opacity:.5">
+            <span style="font-weight:600">🇸🇳 Senegal (DSS)</span>
+            <span style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.4);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px">AVAILABLE</span>
+          </div>
+          <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;opacity:.5">
+            <span style="font-weight:600">🇨🇮 Côte d'Ivoire (ABJ)</span>
+            <span style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.4);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px">AVAILABLE</span>
+          </div>
+          <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;opacity:.5">
+            <span style="font-weight:600">🇨🇲 Cameroon (DLA)</span>
+            <span style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.4);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px">AVAILABLE</span>
+          </div>
+        </div>
+        <div style="margin-top:16px;font-size:11px;color:rgba(255,255,255,.25);line-height:1.6">Being first means blocking the competition.<br>These territories will be taken — the question is by whom.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cards">
+    <div class="card highlight">
+      <div class="card-icon">📄</div>
+      <div class="card-title">Signed Agreement</div>
+      <div class="card-text">Exclusivity is formalised in a partnership agreement. Your territory is contractually protected as long as you remain active.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">📊</div>
+      <div class="card-title">Minimal Activity Threshold</div>
+      <div class="card-text">To keep exclusivity: <strong style="color:#fff">1 case per quarter minimum</strong>. A low bar — a single delayed ticket from your existing clients is enough.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🔄</div>
+      <div class="card-title">Annual Renewal</div>
+      <div class="card-text">Agreement renewed each year. If the partnership works, exclusivity is automatically renewed. 30 days' notice to terminate at any time.</div>
+    </div>
+  </div>
+</div>
+
+<div class="sep"></div>
+
+<!-- WHAT YOU DO -->
+<div class="section">
+  <div class="section-tag">Your Role</div>
+  <div class="section-title">What the agency does</div>
+  <div class="section-sub">No legal expertise needed — we handle everything</div>
+  <div class="cards">
+    <div class="card">
+      <div class="card-icon">🤝</div>
+      <div class="card-title">Local Trust</div>
+      <div class="card-text">Your clients trust you face-to-face. You reassure them in person. That's your main value in this partnership.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">📎</div>
+      <div class="card-title">Collect Documents</div>
+      <div class="card-text">Boarding pass, e-ticket, passenger passport. You gather them and forward via WhatsApp or the partner portal.</div>
+    </div>
+    <div class="card highlight">
+      <div class="card-icon">📣</div>
+      <div class="card-title">Inform Clients</div>
+      <div class="card-text">At ticket sale: "If your flight is delayed, we can recover up to €600 per person for you." That's it.</div>
+    </div>
+  </div>
+</div>
+
+<div class="sep"></div>
+
+<!-- WHATSAPP DEMO -->
+<div class="section">
+  <div class="section-tag">Client Experience</div>
+  <div class="section-title">When your client hesitates</div>
+  <div class="section-sub">The WhatsApp bot reassures them and notifies you automatically</div>
+  <div class="demo-section">
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-bar">
+          <div class="phone-avatar">R</div>
+          <div>
+            <div class="phone-name">Robin des Airs 🏹</div>
+            <div class="phone-status">Online</div>
+          </div>
+        </div>
+        <div class="phone-body">
+          <div class="msg bot">
+            ✈️ Flight SN301 Banjul → Brussels on 28/05<br>
+            Arrival delayed by 4h30.<br><br>
+            <strong>Potential compensation: €600</strong><br>
+            <span style="opacity:.6;font-size:11px">CE 261/2004 · European airline ✅</span>
+            <div class="time">10:14</div>
+          </div>
+          <div class="msg user">
+            Is that real? How does it work?
+            <div class="time">10:15</div>
+          </div>
+          <div class="msg bot">
+            Yes — completely free if we don't win. 🏹<br><br>
+            Would you like to be assisted by our local partner in Gambia?
+            <div class="btn-wa">
+              <button>📍 Yes, meet locally</button>
+              <button>📱 WhatsApp fine</button>
+            </div>
+            <div class="time">10:15</div>
+          </div>
+          <div class="msg user">
+            📍 Yes, meet locally
+            <div class="time">10:16</div>
+          </div>
+          <div class="msg bot">
+            ✅ Perfect! Our local partner in Gambia will contact you within 2 hours.<br><br>
+            <strong>Seyman Travel · Aziz</strong><br>
+            <span style="opacity:.6;font-size:11px">📞 +220 280 0580 · Serrekunda</span>
+            <div class="time">10:16</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="demo-info">
+      <h3>You're notified<br>in real time</h3>
+      <p>When a client chooses "meet locally", Seyman Travel immediately receives a WhatsApp alert with the case details.</p>
+      <div class="point"><div class="point-dot">📩</div><div class="point-text"><strong>Automatic notification</strong> — client name, flight, potential amount, contact number</div></div>
+      <div class="point"><div class="point-dot">📋</div><div class="point-text"><strong>Partner portal</strong> — track all your cases at robindesairs.eu/espace-agence</div></div>
+      <div class="point"><div class="point-dot">✍️</div><div class="point-text"><strong>Mandate signing</strong> — client signs via link sent by your agency or directly online</div></div>
+      <div class="point"><div class="point-dot">💰</div><div class="point-text"><strong>Transparent commission</strong> — visible in your dashboard from the moment it's collected</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="sep"></div>
+
+<!-- COMPARATIF -->
+<div class="section">
+  <div class="section-tag">Comparison</div>
+  <div class="section-title">Why Robin des Airs</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Criteria</th>
+          <th>Robin des Airs <span class="tag-robin">Partner</span></th>
+          <th>AirHelp / Competitors</th>
+          <th>Client alone</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-row">
+          <td>Agency commission</td>
+          <td class="check">✅ Yes — ~15%</td>
+          <td class="cross">❌ None</td>
+          <td class="cross">❌ None</td>
+        </tr>
+        <tr><td>If we lose</td><td class="check">✅ €0</td><td class="check">✅ €0</td><td class="cross">Time wasted</td></tr>
+        <tr><td>African languages</td><td class="check">✅ Wolof, Mandinka, Lingala…</td><td class="cross">❌ English/French only</td><td class="cross">—</td></tr>
+        <tr><td>WhatsApp tracking</td><td class="check">✅ Real time</td><td class="cross">Email only</td><td class="cross">—</td></tr>
+        <tr><td>Africa ↔ Europe flights</td><td class="check">✅ Our speciality</td><td class="cross">Focus on intra-Europe</td><td class="cross">—</td></tr>
+        <tr><td>Local partner visible</td><td class="check">✅ Your name shown to client</td><td class="cross">❌</td><td class="cross">—</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="sep"></div>
+
+<!-- COMPETITOR COMPARISON -->
+<div class="section">
+  <div class="section-tag">Why choose Robin des Airs over the others</div>
+  <div class="section-title">We're built for Africa.<br><em style="color:var(--neon)">They're not.</em></div>
+  <div class="section-sub">AirHelp, Compensair, FlightRight — big platforms, but not made for your clients.</div>
+
+  <div class="table-wrap" style="margin-bottom:32px">
+    <table>
+      <thead>
+        <tr>
+          <th>Criteria</th>
+          <th style="color:var(--neon)">✈️ Robin des Airs</th>
+          <th>AirHelp</th>
+          <th>Compensair</th>
+          <th>FlightRight</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="highlight-row">
+          <td>Agency commission programme</td>
+          <td class="check">✅ Yes — 3 800 GMD/pax</td>
+          <td class="cross">❌ No</td>
+          <td class="cross">❌ No</td>
+          <td class="cross">❌ No</td>
+        </tr>
+        <tr>
+          <td>Speaks Wolof (Gambia/Senegal)</td>
+          <td class="check">✅ Yes</td>
+          <td class="cross">❌ No</td>
+          <td class="cross">❌ No</td>
+          <td class="cross">❌ No</td>
+        </tr>
+        <tr>
+          <td>Speaks Mandinka (Gambia)</td>
+          <td class="check">✅ Yes</td>
+          <td class="cross">❌ No</td>
+          <td class="cross">❌ No</td>
+          <td class="cross">❌ No</td>
+        </tr>
+        <tr>
+          <td>Speaks Dioula (Côte d'Ivoire)</td>
+          <td class="check">✅ Yes</td>
+          <td class="cross">❌ No</td>
+          <td class="cross">❌ No</td>
+          <td class="cross">❌ No</td>
+        </tr>
+        <tr>
+          <td>Local partner visible to client</td>
+          <td class="check">✅ Your name shown</td>
+          <td class="cross">❌ Anonymous platform</td>
+          <td class="cross">❌ Anonymous platform</td>
+          <td class="cross">❌ Anonymous platform</td>
+        </tr>
+        <tr>
+          <td>WhatsApp follow-up</td>
+          <td class="check">✅ Real time</td>
+          <td class="cross">Email only</td>
+          <td class="cross">Email only</td>
+          <td class="cross">Email only</td>
+        </tr>
+        <tr>
+          <td>Africa ↔ Europe speciality</td>
+          <td class="check">✅ Core business</td>
+          <td class="cross">Mostly intra-Europe</td>
+          <td class="cross">Mostly intra-Europe</td>
+          <td class="cross">Mostly intra-Europe</td>
+        </tr>
+        <tr>
+          <td>If we lose</td>
+          <td class="check">✅ 0 GMD</td>
+          <td class="check">✅ 0€</td>
+          <td class="check">✅ 0€</td>
+          <td class="check">✅ 0€</td>
+        </tr>
+        <tr class="highlight-row">
+          <td>Commission if court case</td>
+          <td class="check">✅ Same rate, no increase</td>
+          <td class="cross">Increases to 35-44%</td>
+          <td class="cross">May increase</td>
+          <td class="cross">May increase</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- OUR OPERATORS SPEAK YOUR LANGUAGE -->
+  <div style="background:linear-gradient(135deg,rgba(0,200,122,.08),rgba(0,200,122,.02));border:1.5px solid rgba(0,200,122,.3);border-radius:24px;padding:36px 40px;margin-bottom:20px">
+    <div style="font-size:13px;color:var(--neon);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px">Our key advantage — Language</div>
+    <div style="font-size:28px;font-weight:900;margin-bottom:20px">Our operators speak<br><em style="color:var(--neon)">your clients' language.</em></div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px">
+      <div style="background:rgba(0,0,0,.2);border-radius:16px;padding:20px;text-align:center">
+        <div style="font-size:32px;margin-bottom:10px">🇬🇲</div>
+        <div style="font-weight:800;margin-bottom:6px">Gambia</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6">English<br>Wolof<br><strong style="color:var(--neon)">Mandinka</strong></div>
+      </div>
+      <div style="background:rgba(0,0,0,.2);border-radius:16px;padding:20px;text-align:center">
+        <div style="font-size:32px;margin-bottom:10px">🇸🇳</div>
+        <div style="font-weight:800;margin-bottom:6px">Senegal</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6">French<br><strong style="color:var(--neon)">Wolof</strong><br>Pulaar · Soninké</div>
+      </div>
+      <div style="background:rgba(0,0,0,.2);border-radius:16px;padding:20px;text-align:center">
+        <div style="font-size:32px;margin-bottom:10px">🇨🇮</div>
+        <div style="font-weight:800;margin-bottom:6px">Côte d'Ivoire</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6">French<br><strong style="color:var(--neon)">Dioula</strong><br>English</div>
+      </div>
+      <div style="background:rgba(0,0,0,.2);border-radius:16px;padding:20px;text-align:center">
+        <div style="font-size:32px;margin-bottom:10px">🇨🇲</div>
+        <div style="font-weight:800;margin-bottom:6px">Cameroon</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.6">French<br>English<br><strong style="color:var(--neon)">Fulfuldé</strong></div>
+      </div>
+    </div>
+    <div style="margin-top:20px;padding-top:20px;border-top:1px solid rgba(255,255,255,.06);font-size:14px;color:rgba(255,255,255,.5);line-height:1.7">
+      Also: <strong style="color:#fff">Bambara</strong> (Mali) · <strong style="color:#fff">Lingala</strong> (DRC/Congo) · <strong style="color:#fff">Twi</strong> (Ghana) · <strong style="color:#fff">Yoruba</strong> (Nigeria) · <strong style="color:#fff">Swahili</strong> (East Africa)<br>
+      <span style="font-size:12px;color:rgba(255,255,255,.3)">AirHelp, Compensair and FlightRight operate in English and European languages only.</span>
+    </div>
+  </div>
+
+  <!-- BOTTOM LINE -->
+  <div style="background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;gap:32px">
+    <div>
+      <div style="font-size:18px;font-weight:900;margin-bottom:8px">The bottom line</div>
+      <div style="font-size:14px;color:rgba(255,255,255,.6);line-height:1.7;max-width:600px">
+        AirHelp is good at handling German or French passengers who fill forms online. Your clients are Gambian families who trust a face they know, and speak Wolof or Mandinka. <strong style="color:#fff">Robin des Airs was built for them — and for you.</strong>
+      </div>
+    </div>
+    <div style="flex-shrink:0;text-align:center">
+      <div style="font-size:36px">🏹</div>
+      <div style="font-size:12px;color:rgba(0,200,122,.8);font-weight:700;margin-top:6px">Built for Africa</div>
+    </div>
+  </div>
+</div>
+
+<div class="sep"></div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>Ready to start, Aziz?</h2>
+  <p>Registration is free. Your first case can be submitted today.</p>
+  <div class="cta-buttons">
+    <button class="btn-primary" onclick="window.open('https://wa.me/33756863630?text=Hello, Seyman Travel - Aziz. I want to become an agency partner for Robin des Airs in Gambia.')">
+      💬 Sign up on WhatsApp
+    </button>
+    <button class="btn-secondary" onclick="window.open('https://robindesairs.eu/espace-agence/')">
+      🌐 Agency Portal
+    </button>
+  </div>
+  <p style="margin-top:32px;font-size:12px;opacity:.3">Robin des Airs · expert@robindesairs.eu · robindesairs.eu · +33 7 56 86 36 30</p>
+</div>
+
+</body>
+</html>
