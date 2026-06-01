@@ -69,6 +69,8 @@ const SECTIONS = [
       { url: '/partenaires-rejoindre.html', label: 'Rejoindre' },
       { url: '/partenaires-agences-fcfa.html', label: 'Agences FCFA' },
       { url: '/programme-agents-voyage.html', label: 'Agents de voyage' },
+      { url: '/travel-agents-programme-gambia-en.html', label: 'Gambia programme EN' },
+      { url: '/gambia/travel-agents', label: 'Gambia travel agents (alias)' },
       { url: '/merci-partenaire.html', label: 'Merci partenaire' },
     ],
   },

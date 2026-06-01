@@ -1,0 +1,2401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Travel agency programme — The Gambia · 3,800 GMD/passenger | Robin des Airs</title>
+  <meta name="description" content="3,800 GMD net per compensated passenger paid to your agency — Wave, Afrimoney, QMoney or bank transfer. EC 261 partner programme for Gambian travel agencies." />
+  <link rel="canonical" href="https://robindesairs.eu/travel-agents-programme-gambia-en.html" />
+  <link rel="alternate" hreflang="fr" href="https://robindesairs.eu/programme-agents-voyage.html" />
+  <link rel="alternate" hreflang="en" href="https://robindesairs.eu/travel-agents-programme-gambia-en.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      /* Couleurs officielles Robin des Airs */
+      --navy:          #061326;
+      --navy-mid:      #0c1c38;
+      --text:          #122032;
+      --muted:         #5c6b7f;
+      --line:          #e2e8f0;
+      --line-soft:     rgba(226, 232, 240, 0.65);
+      --bg:            #faf8f3;
+      --bg-warm:       #f2ebe0;
+      --surface:       #ffffff;
+      --surface-glass: rgba(255, 255, 255, 0.72);
+
+      /* Accents */
+      --teal:          #00c87a;
+      --teal-bright:   #00e5a0;
+      --teal-dark:     #009960;
+      --teal-glow:     rgba(0, 200, 122, 0.22);
+      --gold:          #b8956c;
+      --gold-soft:     rgba(184, 149, 108, 0.35);
+      --ochre:         #c17a3a;
+      --terracotta:    #a85c3c;
+      --earth:         #6b4c3b;
+      --savanna:       #2d6b4e;
+      --savanna-soft:  rgba(45, 107, 78, 0.12);
+      --sand-deep:     #e8dcc8;
+
+      --radius: 14px;
+      --shadow: 0 4px 24px rgba(6, 19, 38, 0.10);
+      --shadow-lg: 0 12px 40px rgba(6, 19, 38, 0.16);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.65;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ===== HEADER ===== */
+    header {
+      background: var(--navy);
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 66px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(0, 200, 122, 0.15);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--surface);
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.01em;
+    }
+
+    .logo-mark {
+      width: 36px; height: 36px;
+      background: var(--teal);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .logo span { color: var(--teal); }
+
+    /* ===== HERO ===== */
+    .hero {
+      background: var(--navy);
+      color: var(--surface);
+      padding: 58px 28px 56px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Texture africaine subtile */
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 80% 20%, rgba(0,200,122,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 60% at 10% 80%, rgba(184,149,108,0.10) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-inner { position: relative; z-index: 1; max-width: 740px; margin: 0 auto; }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(0,200,122,0.12);
+      border: 1px solid rgba(0,200,122,0.35);
+      color: var(--teal-bright);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-size: clamp(1.9rem, 5.5vw, 3.1rem);
+      font-weight: 900;
+      line-height: 1.14;
+      letter-spacing: -0.02em;
+      margin-bottom: 22px;
+    }
+
+    .hero h1 .accent { color: var(--teal); }
+    .hero h1 .gold-word { color: var(--gold); }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.18rem);
+      color: rgba(255,255,255,0.72);
+      max-width: 560px;
+      margin: 0 auto 38px;
+      line-height: 1.7;
+    }
+    .hero-money-pitch {
+      margin: 12px auto 18px;
+      font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+      font-weight: 900;
+      color: var(--teal-bright);
+      letter-spacing: -0.01em;
+      max-width: 760px;
+    }
+    .hero-fast-proof {
+      margin: 10px auto 0;
+      max-width: 680px;
+      font-size: 0.86rem;
+      color: rgba(255,255,255,0.78);
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 10px;
+      padding: 8px 12px;
+      line-height: 1.5;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .hero-btns .btn-teal.is-secondary {
+      background: rgba(255,255,255,0.08);
+      color: var(--surface);
+      border: 1.5px solid rgba(255,255,255,0.22);
+      box-shadow: none;
+    }
+    .hero-btns .btn-teal.is-secondary:hover {
+      background: rgba(255,255,255,0.14);
+      transform: translateY(-1px);
+    }
+
+    .btn-teal {
+      background: var(--teal);
+      color: var(--navy);
+      font-weight: 800;
+      font-size: 1rem;
+      padding: 15px 32px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-teal:hover { background: var(--teal-bright); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,200,122,0.35); }
+
+    .btn-wa {
+      background: transparent;
+      color: var(--surface);
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 15px 26px;
+      border-radius: 10px;
+      border: 1.5px solid rgba(255,255,255,0.22);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .btn-wa:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.45); }
+
+    /* ===== COMMISSION STRIPE ===== */
+    .stripe {
+      background: var(--teal);
+      color: var(--navy);
+      text-align: center;
+      padding: 18px 24px;
+      font-weight: 700;
+      font-size: clamp(0.92rem, 2.2vw, 1.1rem);
+    }
+    .stripe strong { font-size: clamp(1.3rem, 3.5vw, 1.85rem); font-weight: 900; }
+    .desktop-scan-strip {
+      display: none;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+    }
+    .desktop-scan-inner {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 12px 28px;
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      justify-content: center;
+      color: var(--navy-mid);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .desktop-scan-inner span strong { color: var(--teal-dark); }
+
+    /* ===== GENERIC SECTION ===== */
+    .section { padding: 76px 28px; }
+    .section-warm { background: var(--bg-warm); }
+    .section-dark { background: var(--navy); color: var(--surface); }
+    .section-sand { background: var(--sand-deep); }
+    .container { max-width: 1040px; margin: 0 auto; }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      background: var(--savanna-soft);
+      color: var(--savanna);
+    }
+    .section-dark .eyebrow {
+      background: rgba(0,200,122,0.15);
+      color: var(--teal-bright);
+    }
+    .section-sand .eyebrow {
+      background: rgba(161,100,67,0.12);
+      color: var(--ochre);
+    }
+
+    h2 {
+      font-size: clamp(1.55rem, 3.5vw, 2.15rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.18;
+      margin-bottom: 12px;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 1.05rem;
+      max-width: 580px;
+      margin-bottom: 52px;
+    }
+    .section-dark .lead { color: rgba(255,255,255,0.6); }
+
+    .why-niche .lead {
+      max-width: 640px;
+      margin-bottom: 1.1rem;
+    }
+    .why-niche .lead:last-of-type {
+      margin-bottom: 1.5rem;
+    }
+    .why-niche-close {
+      max-width: 640px;
+      margin: 0;
+      padding: 18px 22px;
+      border-left: 4px solid var(--teal);
+      background: rgba(255,255,255,0.55);
+      border-radius: 0 12px 12px 0;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--navy);
+      line-height: 1.55;
+    }
+
+    /* ===== STATS ===== */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 14px;
+      background: transparent;
+    }
+
+    .stat-item {
+      background: var(--surface);
+      border: 1.5px solid var(--line-soft);
+      border-radius: var(--radius);
+      padding: 34px 28px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-num {
+      font-size: 2.4rem;
+      font-weight: 900;
+      color: var(--teal-dark);
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-num .money-sub {
+      display: block;
+      font-size: 0.42em;
+      font-weight: 700;
+      letter-spacing: 0;
+      color: var(--navy-mid);
+      margin-top: 6px;
+    }
+
+    .stat-label {
+      font-size: 0.87rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    /* ===== ÉTAPES ===== */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      background: transparent;
+    }
+
+    .step {
+      background: var(--surface);
+      border: 1.5px solid var(--line-soft);
+      border-radius: var(--radius);
+      padding: 34px 26px;
+      position: relative;
+      box-shadow: var(--shadow);
+    }
+
+    .step-num {
+      width: 40px; height: 40px;
+      background: var(--navy);
+      color: var(--teal);
+      font-weight: 900;
+      font-size: 1rem;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+
+    .step h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .step p { font-size: 0.9rem; color: var(--muted); }
+
+    /* ===== AVANTAGES ===== */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1.5px solid var(--line);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .card:hover { border-color: var(--teal); box-shadow: 0 0 0 3px var(--teal-glow); }
+
+    .card-icon {
+      font-size: 1.9rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .card h3 {
+      font-size: 0.97rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .card p { font-size: 0.88rem; color: var(--muted); }
+
+    /* ===== COMMISSIONS ===== */
+    .comm-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .comm-card {
+      border: 1.5px solid rgba(255,255,255,0.12);
+      border-radius: var(--radius);
+      padding: 34px 28px;
+      text-align: center;
+      background: rgba(255,255,255,0.05);
+    }
+
+    .comm-card.featured {
+      background: var(--teal);
+      color: var(--navy);
+      border-color: var(--teal);
+    }
+
+    .comm-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      background: rgba(255,255,255,0.18);
+    }
+    .comm-card.featured .comm-tag {
+      background: var(--navy);
+      color: var(--teal);
+    }
+
+    .comm-currency {
+      font-size: 0.8rem;
+      font-weight: 600;
+      opacity: 0.7;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .comm-amount {
+      font-size: 3rem;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .comm-per {
+      font-size: 0.85rem;
+      opacity: 0.7;
+      margin-bottom: 22px;
+    }
+
+    .comm-list {
+      list-style: none;
+      text-align: left;
+    }
+
+    .comm-list li {
+      display: flex;
+      gap: 9px;
+      font-size: 0.88rem;
+      margin-bottom: 9px;
+      align-items: flex-start;
+      opacity: 0.88;
+    }
+
+    .comm-list li::before {
+      content: '✓';
+      font-weight: 900;
+      flex-shrink: 0;
+      color: inherit;
+    }
+    .comm-card:not(.featured) .comm-list li::before { color: var(--teal-bright); }
+
+    /* ===== AÉROPORTS ===== */
+    .airports-wrap { background: var(--surface); border-radius: var(--radius); padding: 28px; }
+
+    .airport-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .airport-tag {
+      background: var(--bg-warm);
+      border: 1px solid var(--sand-deep);
+      color: var(--text);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 6px 13px;
+      border-radius: 8px;
+    }
+
+    .airport-tag code {
+      font-family: 'Inter', monospace;
+      color: var(--teal-dark);
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-right: 4px;
+    }
+
+    /* ===== FAQ ===== */
+    .faq { display: flex; flex-direction: column; gap: 10px; }
+
+    details {
+      background: var(--surface);
+      border: 1.5px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+
+    details[open] {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px var(--teal-glow);
+    }
+
+    summary {
+      padding: 20px 24px;
+      font-weight: 700;
+      font-size: 0.96rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      list-style: none;
+      user-select: none;
+      gap: 12px;
+    }
+    summary::-webkit-details-marker { display: none; }
+
+    summary::after {
+      content: '+';
+      font-size: 1.4rem;
+      color: var(--teal-dark);
+      font-weight: 400;
+      flex-shrink: 0;
+      transition: transform 0.2s;
+    }
+    details[open] summary::after { content: '−'; }
+
+    .faq-body {
+      padding: 0 24px 22px;
+      font-size: 0.93rem;
+      color: var(--muted);
+      border-top: 1px solid var(--line-soft);
+      line-height: 1.72;
+    }
+
+    /* ===== FORMULAIRE ===== */
+    .form-outer {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .form-box {
+      background: var(--surface);
+      border: 1.5px solid var(--line);
+      border-radius: 20px;
+      padding: 44px 38px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .form-heading {
+      font-size: 1.4rem;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
+    }
+
+    .form-sub {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 30px;
+    }
+
+    .field { margin-bottom: 18px; }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1.5px solid var(--line);
+      border-radius: 9px;
+      font-size: 0.93rem;
+      font-family: inherit;
+      color: var(--text);
+      background: var(--bg);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      appearance: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px var(--teal-glow);
+      background: var(--surface);
+    }
+
+    .phone-row { display: flex; gap: 8px; align-items: stretch; }
+    .phone-row .indicatif-flag {
+      flex: 0 0 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      line-height: 1;
+      background: var(--bg-warm);
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      user-select: none;
+    }
+    .phone-row .indicatif-input {
+      flex: 0 0 min(120px, 30vw);
+      min-width: 88px;
+      font-weight: 600;
+    }
+    .phone-row input[type="tel"] { flex: 1; min-width: 0; }
+
+    .btn-wa-prefill {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      margin-top: 12px;
+      padding: 14px 18px;
+      border-radius: 10px;
+      border: 2px solid var(--teal);
+      background: transparent;
+      color: var(--navy);
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s, opacity 0.2s;
+      text-decoration: none;
+      box-sizing: border-box;
+    }
+    .btn-wa-prefill:not(.is-disabled):hover {
+      background: rgba(0, 200, 122, 0.12);
+      color: var(--navy-mid);
+    }
+    .btn-wa-prefill.is-disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+    .wa-prefill-hint {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 8px;
+      text-align: center;
+      line-height: 1.45;
+    }
+
+    .conv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .conv-opt input[type="radio"] { display: none; }
+
+    .conv-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 18px 12px;
+      border: 2px solid var(--line);
+      border-radius: 11px;
+      cursor: pointer;
+      background: var(--bg);
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .conv-opt input:checked + .conv-label {
+      border-color: var(--teal);
+      background: rgba(0,200,122,0.06);
+    }
+
+    .conv-amount {
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--navy);
+      letter-spacing: -0.02em;
+    }
+
+    .conv-ccy { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+    .conv-badge {
+      margin-top: 7px;
+      background: var(--teal);
+      color: var(--navy);
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 8px;
+    }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--navy);
+      color: var(--surface);
+      font-weight: 800;
+      font-size: 1.02rem;
+      padding: 16px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.2s, transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      letter-spacing: -0.01em;
+    }
+    .btn-submit:hover { background: var(--navy-mid); transform: translateY(-2px); box-shadow: var(--shadow); }
+
+    .form-note {
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 14px;
+    }
+
+    /* ===== CONTACT STRIP ===== */
+    .contact-strip {
+      background: var(--navy-mid);
+      color: var(--surface);
+      padding: 44px 28px;
+      text-align: center;
+      border-top: 1px solid rgba(0,200,122,0.15);
+    }
+
+    .contact-strip h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 22px;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .contact-btns {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .c-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: 1.5px solid rgba(255,255,255,0.18);
+      color: var(--surface);
+      transition: all 0.2s;
+    }
+    .c-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.4); }
+    .c-btn.teal { background: var(--teal); color: var(--navy); border-color: var(--teal); }
+    .c-btn.teal:hover { background: var(--teal-bright); }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--navy);
+      color: rgba(255,255,255,0.45);
+      padding: 28px 28px;
+      text-align: center;
+      font-size: 0.82rem;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    footer a { color: rgba(255,255,255,0.4); transition: color 0.2s; }
+    footer a:hover { color: var(--teal); }
+
+    /* ===== PREUVE SOCIALE ===== */
+    .proof-band {
+      background: var(--bg-warm);
+      padding: 22px 28px;
+      text-align: center;
+      border-bottom: 1px solid var(--sand-deep);
+    }
+    .proof-inner {
+      display: inline-flex;
+      align-items: center;
+      gap: 28px;
+      flex-wrap: wrap;
+      justify-content: center;
+      font-size: 0.88rem;
+      color: var(--text);
+    }
+    .proof-item { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; }
+    .proof-dot { width: 6px; height: 6px; background: var(--teal); border-radius: 50%; }
+    .proof-avatars { display: inline-flex; }
+    .proof-avatars span {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--teal); color: var(--navy);
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 0.72rem; font-weight: 800;
+      border: 2px solid var(--bg-warm);
+      margin-left: -8px;
+    }
+    .proof-avatars span:first-child { margin-left: 0; background: var(--ochre); color: #fff; }
+    .proof-avatars span:nth-child(2) { background: var(--savanna); color: #fff; }
+    .proof-avatars span:nth-child(3) { background: var(--gold); color: #fff; }
+
+    /* ===== SIMULATEUR ===== */
+    .lead.sim-intro { margin-bottom: 14px; max-width: 720px; }
+    .sim-box {
+      background: var(--navy);
+      color: var(--surface);
+      border-radius: 20px;
+      padding: 40px 36px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+    }
+    .sim-box::before {
+      content: '';
+      position: absolute;
+      top: -50px; right: -50px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(0,200,122,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .sim-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: center; }
+    .sim-label { font-size: 0.85rem; color: rgba(255,255,255,0.65); font-weight: 600; margin-bottom: 8px; }
+    .sim-slider-wrap { position: relative; padding: 8px 0; }
+    .sim-slider {
+      width: 100%; height: 6px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 10px; appearance: none; outline: none; cursor: pointer;
+    }
+    .sim-slider::-webkit-slider-thumb {
+      appearance: none; width: 24px; height: 24px;
+      background: var(--teal); border-radius: 50%; cursor: pointer;
+      box-shadow: 0 0 0 4px rgba(0,200,122,0.25);
+      transition: transform 0.15s;
+    }
+    .sim-slider::-webkit-slider-thumb:hover { transform: scale(1.15); }
+    .sim-slider::-moz-range-thumb {
+      width: 24px; height: 24px; background: var(--teal); border: none;
+      border-radius: 50%; cursor: pointer;
+    }
+    .sim-clients { font-size: 2.2rem; font-weight: 900; color: var(--teal); letter-spacing: -0.02em; }
+    .sim-unit { font-size: 0.9rem; color: rgba(255,255,255,0.6); margin-left: 6px; }
+    .sim-rate { font-size: 0.8rem; color: rgba(255,255,255,0.55); margin-top: 6px; font-style: italic; }
+    .sim-result {
+      background: var(--teal); color: var(--navy);
+      border-radius: 14px; padding: 26px 24px; text-align: center;
+    }
+    .sim-result-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.72; }
+    .sim-amount { font-size: 2.6rem; font-weight: 900; letter-spacing: -0.03em; line-height: 1; margin: 6px 0; }
+    .sim-period { font-size: 0.82rem; font-weight: 600; opacity: 0.75; }
+    .sim-year { margin-top: 14px; padding-top: 14px; border-top: 1.5px solid rgba(6,19,38,0.15); font-size: 0.82rem; opacity: 0.8; }
+    .sim-year strong { font-size: 1.05rem; font-weight: 900; }
+
+    /* ===== LOSS FRAMING ===== */
+    .loss-box {
+      background: var(--surface);
+      border: 2px dashed var(--terracotta);
+      border-radius: var(--radius);
+      padding: 34px 32px;
+      text-align: center;
+    }
+    .loss-pill {
+      display: inline-block;
+      background: rgba(168,92,60,0.1);
+      color: var(--terracotta);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+    }
+    .loss-box h3 { font-size: 1.25rem; font-weight: 800; margin-bottom: 12px; max-width: 560px; margin-left: auto; margin-right: auto; }
+    .loss-box p { color: var(--muted); max-width: 540px; margin: 0 auto 20px; font-size: 0.95rem; }
+    .loss-numbers { display: flex; justify-content: center; gap: 32px; margin: 20px 0 26px; flex-wrap: wrap; }
+    .loss-num { text-align: center; }
+    .loss-num strong { display: block; font-size: 1.8rem; font-weight: 900; color: var(--terracotta); line-height: 1; }
+    .loss-num span { font-size: 0.78rem; color: var(--muted); }
+
+    /* ===== TEMOIGNAGE ===== */
+    .quote-box {
+      background: var(--navy);
+      color: var(--surface);
+      border-radius: 20px;
+      padding: 44px 40px;
+      position: relative;
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .quote-mark {
+      position: absolute;
+      top: 18px; left: 30px;
+      font-size: 4.5rem;
+      color: var(--teal);
+      line-height: 1;
+      font-family: Georgia, serif;
+      opacity: 0.5;
+    }
+    .quote-text {
+      font-size: 1.15rem;
+      line-height: 1.6;
+      font-weight: 500;
+      font-style: italic;
+      color: rgba(255,255,255,0.92);
+      margin-bottom: 22px;
+      position: relative; z-index: 1;
+      padding-top: 6px;
+    }
+    .quote-author { display: flex; align-items: center; gap: 14px; }
+    .quote-avatar {
+      width: 46px; height: 46px;
+      background: var(--teal); color: var(--navy);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 1.1rem;
+    }
+    .quote-name { font-weight: 700; font-size: 0.95rem; }
+    .quote-role { font-size: 0.82rem; color: rgba(255,255,255,0.55); }
+
+    /* ===== MICRO CTA ===== */
+    .mini-cta {
+      text-align: center;
+      margin-top: 32px;
+    }
+    .mini-cta a {
+      display: inline-flex; align-items: center; gap: 8px;
+      color: var(--teal-dark); font-weight: 700; font-size: 0.95rem;
+      border-bottom: 2px solid var(--teal);
+      padding-bottom: 3px;
+      transition: all 0.2s;
+    }
+    .mini-cta a:hover { color: var(--navy); border-color: var(--navy); }
+
+    /* ===== CLOSING POWER ===== */
+    .closing-power {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+      color: var(--surface);
+      padding: 56px 40px;
+      border-radius: 20px;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .closing-power::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 50% 60% at 80% 0%, rgba(0,200,122,0.14) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .closing-power-inner { position: relative; z-index: 1; }
+    .urgency-tag {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(193,122,58,0.18);
+      border: 1px solid var(--ochre);
+      color: #f0b896;
+      font-size: 0.76rem; font-weight: 700;
+      padding: 6px 14px; border-radius: 20px;
+      margin-bottom: 20px;
+      letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .urgency-tag::before {
+      content: ''; width: 7px; height: 7px;
+      background: var(--ochre); border-radius: 50%;
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    .closing-power h2 {
+      font-size: clamp(1.6rem, 3.8vw, 2.2rem);
+      margin-bottom: 14px;
+      color: var(--surface);
+    }
+    .closing-power h2 .highlight { color: var(--teal); }
+    .closing-power p {
+      color: rgba(255,255,255,0.7);
+      max-width: 520px; margin: 0 auto 28px;
+      font-size: 1rem; line-height: 1.7;
+    }
+    .closing-power .btn-teal { font-size: 1.05rem; padding: 17px 40px; }
+    .trust-row {
+      display: flex; justify-content: center; gap: 22px; flex-wrap: wrap;
+      margin-top: 24px; font-size: 0.82rem; color: rgba(255,255,255,0.6);
+    }
+    .trust-item { display: inline-flex; align-items: center; gap: 6px; }
+    .trust-item::before { content: '✓'; color: var(--teal); font-weight: 900; }
+
+    /* ===== STICKY MOBILE CTA ===== */
+    .sticky-cta {
+      display: none;
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--navy);
+      padding: 12px 16px;
+      z-index: 90;
+      border-top: 1px solid rgba(0,200,122,0.2);
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.25);
+    }
+    .sticky-cta a {
+      display: block; width: 100%;
+      background: var(--teal); color: var(--navy);
+      text-align: center; font-weight: 800;
+      padding: 14px; border-radius: 9px;
+      font-size: 0.98rem;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 600px) {
+      .section { padding: 54px 18px; }
+      .form-box { padding: 28px 18px; }
+      .phone-row { flex-direction: column; }
+      .phone-row .indicatif-flag { flex: none; width: 100%; min-height: 48px; }
+      .phone-row .indicatif-input { flex: none; width: 100%; }
+      .conv-grid { grid-template-columns: 1fr; }
+      .comm-grid { grid-template-columns: 1fr; }
+      .sim-grid { grid-template-columns: 1fr; gap: 24px; }
+      .sim-box { padding: 28px 22px; }
+      .closing-power { padding: 40px 22px; }
+      .quote-box { padding: 32px 26px; }
+      .quote-mark { font-size: 3.2rem; top: 10px; left: 18px; }
+      .loss-numbers { gap: 20px; }
+      .sticky-cta { display: block; }
+      body { padding-bottom: 72px; }
+      .proof-inner { gap: 14px; font-size: 0.8rem; }
+      .aida-compare { grid-template-columns: 1fr; }
+      .aida-mini-form { grid-template-columns: 1fr; }
+    }
+    @media (min-width: 1024px) {
+      .desktop-scan-strip { display: block; }
+      .hero { padding-top: 68px; padding-bottom: 72px; }
+      .hero-sub { max-width: 760px; }
+      .aida-close-head { font-size: 2rem; }
+      .aida-close-sub { font-size: 1.03rem; max-width: 860px; }
+      .aida-whatsapp { font-size: 1.02rem; padding: 14px 20px; }
+      .steps article p, .card p { font-size: 0.95rem; }
+    }
+
+    /* ===== BLOC AIDA CLOSER ===== */
+    .aida-close {
+      background: var(--surface);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 34px 28px;
+    }
+    .aida-close-inner { max-width: 1040px; margin: 0 auto; }
+    .aida-close-head {
+      margin: 0 0 14px;
+      font-size: 1.7rem;
+      line-height: 1.2;
+      color: var(--navy);
+      letter-spacing: -0.01em;
+    }
+    .aida-close-sub {
+      margin: 0 0 18px;
+      color: var(--muted);
+      max-width: 760px;
+    }
+    .aida-compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .aida-box {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px 16px;
+      background: #fff;
+    }
+    .aida-box h3 { margin: 0 0 8px; font-size: 1rem; }
+    .aida-box ul { margin: 0; padding-left: 18px; color: var(--muted); }
+    .aida-box--bad { border-left: 4px solid #d26b6b; }
+    .aida-box--good { border-left: 4px solid var(--teal); }
+    .aida-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .aida-whatsapp {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--teal);
+      color: var(--navy);
+      border-radius: 10px;
+      padding: 13px 18px;
+      font-weight: 800;
+      font-size: 0.97rem;
+    }
+    .aida-whatsapp:hover { background: var(--teal-bright); }
+    .aida-legal { margin: 0; font-size: 0.9rem; color: var(--earth); }
+    .aida-mini-form {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+    .aida-mini-form .field { margin: 0; }
+    .aida-mini-form label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--earth);
+    }
+    .aida-mini-form input {
+      background: #fff;
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      padding: 11px 12px;
+      font-size: 0.92rem;
+      font-family: inherit;
+    }
+    .aida-mini-form button {
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .aida-mini-note {
+      margin: 8px 0 0;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* ===== MESSAGE ACCOMPAGNEMENT AGENCE ===== */
+    .agency-accompagnement {
+      background: linear-gradient(135deg, rgba(0, 200, 122, 0.08), rgba(184, 149, 108, 0.06));
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 26px 28px;
+    }
+    .agency-accompagnement-inner {
+      max-width: 820px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .agency-accompagnement-inner p {
+      margin: 0;
+      font-size: 1.05rem;
+      color: var(--text);
+      line-height: 1.65;
+    }
+    .agency-accompagnement-inner strong { color: var(--navy); }
+
+    /* ===== TRANSPARENCE ===== */
+    .transparence-list {
+      margin: 20px 0 0;
+      padding: 0;
+      list-style: none;
+      max-width: 720px;
+    }
+    .transparence-list li {
+      position: relative;
+      padding-left: 28px;
+      margin-bottom: 14px;
+      font-size: 0.98rem;
+      color: var(--text);
+      line-height: 1.55;
+    }
+    .transparence-list li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: var(--teal-dark);
+      font-weight: 900;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Netlify form detection fallback (hidden forms) -->
+<form name="agence-express" method="POST" data-netlify="true" action="/merci-partenaire.html" hidden>
+  <input type="hidden" name="form-name" value="agence-express" />
+  <input type="text" name="agence" />
+  <input type="text" name="ville" />
+  <input type="tel" name="whatsapp" />
+</form>
+<form name="partenaire" method="POST" data-netlify="true" action="/merci-partenaire.html" hidden>
+  <input type="hidden" name="form-name" value="partenaire" />
+          <input type="hidden" name="market" value="gambia-en" />
+  <input type="text" name="agence" />
+  <input type="text" name="nom" />
+  <input type="text" name="indicatif" />
+  <input type="tel" name="telephone" />
+  <input type="email" name="email" />
+  <input type="text" name="convention" />
+  <input type="text" name="volume" />
+  <textarea name="message"></textarea>
+</form>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    <div class="logo-mark">✈</div>
+    Robin<span>&nbsp;des Airs</span>
+  </div>
+  <nav style="display:flex;gap:14px;align-items:center;font-size:0.85rem">
+    <a href="/paliers-commission-agence-en.html" style="color:rgba(255,255,255,0.75)">Tiers</a>
+    <a href="/partner-agreement-en.html" style="color:rgba(255,255,255,0.75)">Agreement</a>
+    <a href="/programme-agents-voyage.html" style="color:rgba(255,255,255,0.55)">FR</a>
+  </nav>
+</header>
+<!--
+  Partage agents (hors page) — production :
+  https://robindesairs.eu/travel-agents-programme-gambia-en.html
+  <a href="https://robindesairs.eu/travel-agents-programme-gambia-en.html">Programme partenaire Robin des Airs — agents & agences</a>
+  En local : ouvrir /programme-agents-voyage.html via serveur (ex. python3 -m http.server).
+-->
+
+<!-- Accueil — accroche & CTA -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">✦ Partner programme · The Gambia</div>
+    <h1>
+      Gambian travel agencies: <span class="accent">3,800 GMD/passenger</span>
+    </h1>
+    <p class="hero-money-pitch">🚀 <strong>3,800 GMD</strong> net per compensated passenger — <strong>paid to your agency account</strong> (Wave, Afrimoney, QMoney or bank transfer).</p>
+    <p class="hero-sub">
+      Robin des Airs handles the <strong>EC 261/2004</strong> claim. This is not a virtual bonus: <strong>real money in your agency account</strong>, on top of your usual ticketing revenue.
+    </p>
+    <div class="hero-btns">
+      <a href="https://api.whatsapp.com/send?phone=33677470122&amp;text=Hello%20Robin%20des%20Airs%2C%0A%0AI%20am%20on%20the%20Gambia%20travel%20agency%20programme%20page.%20I%20represent%20a%20travel%20agency%20and%20would%20like%20information%20on%20the%20partnership%20(3%2C800%20GMD%20per%20passenger).%0A%0AThank%20you%21" class="btn-wa" target="_blank" rel="noopener noreferrer">
+        WhatsApp +33 6 77 47 01 22
+      </a>
+      <a href="#rejoindre" class="btn-teal is-secondary">
+        Get started: 3,800 GMD per passenger
+      </a>
+    </div>
+    <p class="hero-fast-proof"><strong>You receive payouts</strong> via <strong>Wave</strong>, <strong>Afrimoney</strong>, <strong>QMoney</strong> or bank transfer — after the passenger is paid by the airline, the agency commission is yours.</p>
+  </div>
+</section>
+
+<!-- Bandeau — promesse commission -->
+<div class="stripe">
+  <strong>3,800 GMD net for your agency</strong> per compensated passenger &nbsp;·&nbsp; Paid to <strong>your account</strong> &nbsp;·&nbsp; No fixed fees &nbsp;·&nbsp; Robin handles the claim
+</div>
+<section class="aida-close" aria-labelledby="aida-title">
+  <div class="aida-close-inner">
+    <h2 id="aida-title" class="aida-close-head">A flight disruption can become net income for your agency.</h2>
+    <p class="aida-close-sub">You refer the client or booking. We handle the file; <strong>commission is paid to your account</strong> — like any other agency receipt.</p>
+    <div class="aida-compare">
+      <article class="aida-box aida-box--bad">
+        <h3>Without Robin des Airs</h3>
+        <ul>
+          <li>Frustrated client, claim never handled.</li>
+          <li>Unpaid support time for your team.</li>
+          <li>0 GMD in additional revenue.</li>
+        </ul>
+      </article>
+      <article class="aida-box aida-box--good">
+        <h3>With Robin des Airs</h3>
+        <ul>
+          <li>Client compensated and well supported.</li>
+          <li>Stronger professional image for your agency.</li>
+          <li><strong>3,800 GMD per compensated passenger is yours</strong> (agency account), not a passenger discount.</li>
+        </ul>
+      </article>
+    </div>
+    <div class="aida-actions">
+      <a class="aida-whatsapp" href="https://api.whatsapp.com/send?phone=33677470122&amp;text=Hello%20Robin%20des%20Airs%2C%20I%20want%20to%20join%20the%20Gambia%20travel%20agency%20partner%20programme." target="_blank" rel="noopener noreferrer">💬 Become a partner in 1 minute</a>
+      <p class="aida-legal"><strong>Legal basis:</strong> EU Regulation <strong>EC 261/2004</strong>.</p>
+    </div>
+    <form class="aida-mini-form" name="agence-express" method="POST" data-netlify="true" action="/merci-partenaire.html">
+      <input type="hidden" name="form-name" value="agence-express">
+      <div class="field">
+        <label for="aida-agence">Agency name</label>
+        <input id="aida-agence" name="agence" type="text" required>
+      </div>
+      <div class="field">
+        <label for="aida-ville">City</label>
+        <input id="aida-ville" name="ville" type="text" required>
+      </div>
+      <div class="field">
+        <label for="aida-whatsapp">WhatsApp</label>
+        <input id="aida-whatsapp" name="whatsapp" type="tel" required>
+      </div>
+      <button type="submit">Send</button>
+    </form>
+    <p class="aida-mini-note">Express form: agency name, city, WhatsApp. We call you back to complete onboarding.</p>
+  </div>
+</section>
+
+<!-- 1. Pourquoi ce créneau — problème & positionnement -->
+<section class="section section-sand why-niche" id="pourquoi-ce-creneau" aria-labelledby="why-creneau-title">
+  <div class="container">
+    <div class="eyebrow">Our positioning</div>
+    <h2 id="why-creneau-title">Why this niche?</h2>
+    <p class="lead">On Africa–Europe routes, many passengers never claim after a flight incident. Agencies absorb support work with no linked revenue.</p>
+    <p class="why-niche-close">Robin des Airs turns these cases into a clear process: EC 261 handling, operational follow-up and agency commission.</p>
+  </div>
+</section>
+
+<!-- 2. How it works — la mécanique en 4 étapes -->
+<section class="section section-warm">
+  <div class="container">
+    <div class="eyebrow">How it works</div>
+    <h2>Simple, fast, no friction</h2>
+    <p class="lead">Your role stops at referral. Robin des Airs handles the full legal claim.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h3>Your client is disrupted</h3>
+        <p>Significant arrival delay, cancellation, denied boarding or missed connection linked to the disruption on sub-Saharan Africa ↔ Europe flights covered by EC 261.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h3>We alert you early</h3>
+        <p>Files linked to your agency are monitored: once a client has booked and you share the flight, we track it. You are notified when a situation may qualify for compensation. No need to report every delay manually — we run operations; you focus on <strong>your commission</strong> and your client.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h3>Robin handles everything</h3>
+        <p>EC 261 analysis, formal notice, mediation, full follow-up. Your client is supported end to end.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h3>You get paid</h3>
+        <p>Once the passenger is compensated, agency payout is triggered within 48 business hours via transfer or mobile money.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. Chiffres clés -->
+<section class="section">
+  <div class="container">
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-num">€600 <span class="money-sub">(≈ 50,400 GMD)</span></div>
+        <div class="stat-label">Indicative maximum compensation<br/>per passenger (EC 261 scale)</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">3,800 GMD <span class="money-sub">(≈ €45)</span></div>
+        <div class="stat-label">net, <strong>credited to your account</strong><br/>per compensated passenger</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">48h</div>
+        <div class="stat-label">Typical payout<br/>after passenger payment</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">0 GMD</div>
+        <div class="stat-label">No fee for your<br/>agency, no risk</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Transparency -->
+<section class="section section-warm" id="transparence" aria-labelledby="transparence-title">
+  <div class="container">
+    <div class="eyebrow">Transparency</div>
+    <h2 id="transparence-title">What your agency sees, in black and white</h2>
+    <p class="lead">Same rules for everyone: no surprises at payout.</p>
+    <ul class="transparence-list">
+      <li><strong>Agency commission:</strong> <strong>3,800 GMD</strong> per compensated passenger (tier locked at signing — see <a href="/paliers-commission-agence-en.html">commission tiers</a>), <strong>paid to the account you choose</strong> (Wave, Afrimoney, QMoney, bank…). Typical timing: within 48 business hours after the passenger receives airline funds — <strong>agency revenue</strong>, not an internal credit.</li>
+      <li><strong>Passenger success fee:</strong> 25% of compensation only if money is recovered; otherwise the passenger pays Robin des Airs nothing — consistent with your “zero risk” message.</li>
+      <li><strong>No agency fees.</strong> No subscription, no joining fee, no minimum number of claims.</li>
+      <li><strong>Tracking:</strong> you can ask for status on a referred file; you remain your client’s relationship contact.</li>
+      <li><strong>Legal framework:</strong> mandate, terms and privacy policy available before signing, with passenger withdrawal rights as required by law.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 4. Why join us — avantages -->
+<section class="section">
+  <div class="container">
+    <div class="eyebrow">Why join us</div>
+    <h2>All upside, no risk</h2>
+    <p class="lead">Designed to fit your business while keeping traveller trust: extra revenue for you, compensation and peace of mind for them.</p>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-icon">💰</div>
+        <div>
+          <h3>Immediate passive revenue</h3>
+          <p>Fixed amount per compensated passenger: money <strong>lands on your business or mobile money account</strong>. No cap — every compensated passenger adds to <strong>your cash flow</strong>.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-icon">⭐</div>
+        <div>
+          <h3>Client satisfaction &amp; brand</h3>
+          <p>Travellers are supported A to Z on their EC 261 claim: less frustration, more gratitude to <strong>your agency</strong> for offering this service.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🛡️</div>
+        <div>
+          <h3>Zero financial risk</h3>
+          <p>Your agency pays nothing. No joining fee. If the claim fails, you lose nothing.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🤝</div>
+        <div>
+          <h3>Retain your clients</h3>
+          <p>Offering real follow-up after delay or cancellation builds trust and brings them back for future trips.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <div>
+          <h3>No operational burden</h3>
+          <p>No files to build, no airline chasing, no procedure to run. Robin des Airs does it.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-icon">📱</div>
+        <div>
+          <h3>Flexible communication</h3>
+          <p>WhatsApp, email or this form for onboarding and questions. File tracking and alerts for <strong>your agency revenue</strong> reach you early, without daily overhead.</p>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔒</div>
+        <div>
+          <h3>Data protected</h3>
+          <p>Data hosted in Europe, GDPR-compliant processing. Your clients’ privacy is protected.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Revenue simulator + cas concret -->
+<section class="section">
+  <div class="container">
+    <div class="eyebrow">Revenue simulator</div>
+    <h2>How much can you earn?</h2>
+    <p class="lead sim-intro">Adjust the slider to your monthly Africa ↔ Europe travellers. The simulator uses about <strong>8%</strong> as eligible incidents — significant arrival delays, cancellations, denied boarding, missed connections when EC 261 still applies.</p>
+    <div class="sim-box">
+      <div class="sim-grid">
+        <div>
+          <div class="sim-label">Your travellers per month</div>
+          <div><span class="sim-clients" id="simClients">50</span><span class="sim-unit">travellers/month</span></div>
+          <div class="sim-slider-wrap" style="margin-top:14px">
+            <input type="range" id="simSlider" class="sim-slider" min="10" max="500" step="10" value="50" />
+          </div>
+          <div class="sim-rate" id="simRate">≈ 4 eligible claims/month</div>
+        </div>
+        <div class="sim-result">
+          <div class="sim-result-label">Estimated monthly revenue</div>
+          <div class="sim-amount" id="simMonthly">15,200 GMD</div>
+          <div class="sim-period">per month · <strong>paid to your agency account</strong> (typ. 48h)</div>
+          <div class="sim-year">Over 12 months: <strong id="simYearly">182,400 GMD (≈ €2,160)</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAS CONCRET -->
+    <div class="case-concrete" style="margin-top:36px;background:linear-gradient(135deg,var(--bg-warm) 0%,var(--sand-deep) 100%);border:1px solid var(--gold);border-radius:16px;padding:28px 30px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <span id="cas-concret-mois-badge" style="background:var(--gold);color:var(--navy);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:5px 12px;border-radius:999px">Real example</span>
+      </div>
+      <h3 style="margin:0 0 14px;color:var(--navy);font-size:22px">Family of 4 · Brussels Airlines Banjul → Brussels</h3>
+      <p style="margin:0 0 18px;color:var(--navy-mid);font-size:15.5px;line-height:1.6">
+        Arrival delay <strong>over 4 hours</strong>. Long-haul segment: agency commission <strong>3,800 GMD per compensated passenger</strong>.
+      </p>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:14px">
+        <div style="background:#fff;border-radius:12px;padding:16px 18px;border-left:4px solid var(--teal)">
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--earth);font-weight:600">Total family compensation</div>
+          <div style="font-size:24px;font-weight:800;color:var(--navy);margin-top:4px">≈ 201,600 GMD</div>
+          <div style="font-size:12px;color:var(--earth);margin-top:2px">4 passengers · indicative order of magnitude</div>
+        </div>
+        <div style="background:#fff;border-radius:12px;padding:16px 18px;border-left:4px solid var(--gold)">
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--earth);font-weight:600">Your commission</div>
+          <div style="font-size:24px;font-weight:800;color:var(--navy);margin-top:4px">15,200 GMD</div>
+          <div style="font-size:12px;color:var(--earth);margin-top:2px">4 × 3,800 GMD · <strong>paid to your agency</strong> (typ. 48h)</div>
+        </div>
+        <div style="background:#fff;border-radius:12px;padding:16px 18px;border-left:4px solid var(--savanna)">
+          <div style="font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--earth);font-weight:600">On your side</div>
+          <div style="font-size:22px;font-weight:800;color:var(--navy);margin-top:4px;line-height:1.2">You refer the client</div>
+          <div style="font-size:12px;color:var(--earth);margin-top:6px;line-height:1.45">Robin des Airs builds and follows the airline claim. No forms on every delay, no legal chasing for your team.</div>
+        </div>
+      </div>
+      <p style="margin:18px 0 0;font-size:13.5px;color:var(--earth);font-style:italic">One family file = <strong>more net cash</strong> than a quiet week of ticketing.</p>
+    </div>
+
+    <div class="mini-cta"><a href="#rejoindre">Start my registration now →</a></div>
+  </div>
+</section>
+
+<script>
+  (function(){
+    const slider = document.getElementById('simSlider');
+    const clients = document.getElementById('simClients');
+    const rate = document.getElementById('simRate');
+    const monthly = document.getElementById('simMonthly');
+    const yearly = document.getElementById('simYearly');
+    function fmt(n){
+      return String(Math.round(Math.abs(n))).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    }
+    function update(){
+      const v = parseInt(slider.value);
+      const eligibles = Math.round(v * 0.08);
+      const gmdM = eligibles * 3800;
+      const gmdY = gmdM * 12;
+      const eurM = Math.round(eligibles * 45);
+      const eurY = eurM * 12;
+      clients.textContent = fmt(v);
+      rate.textContent = '≈ ' + eligibles + ' eligible claim' + (eligibles>1?'s':'') + '/month';
+      monthly.textContent = fmt(gmdM) + ' GMD (≈ €' + fmt(eurM) + ')';
+      yearly.textContent = fmt(gmdY) + ' GMD (≈ €' + fmt(eurY) + ') over 12 months';
+    }
+    slider.addEventListener('input', update);
+    update();
+  })();
+</script>
+
+
+
+<!-- 6. Urgence — ce que vous perdez -->
+<section class="section section-warm">
+  <div class="container">
+    <div class="loss-box">
+      <div class="loss-pill">⚠ What you lose every month</div>
+      <h3>Your travellers already face delays. Without a partner, they give up.</h3>
+      <p>Fewer than 5% of eligible passengers actually claim. Every month your clients leave significant EC 261 amounts on the table — and you leave agency commission unclaimed.</p>
+      <div class="loss-numbers">
+        <div class="loss-num"><strong>95 %</strong><span>of eligible passengers never claim</span></div>
+        <div class="loss-num"><strong>€600</strong><span>(≈ 50,400 GMD max per affected passenger)</span></div>
+        <div class="loss-num"><strong>0 GMD</strong><span> for your agency</span></div>
+      </div>
+      <a href="#rejoindre" class="btn-teal" style="background:var(--navy);color:#fff">
+        ✦ Stop losing out — join in 90 seconds
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- 7. Commission EUR ou FCFA -->
+<section class="section section-dark">
+  <div class="container">
+    <div class="eyebrow">Your commission</div>
+    <h2>Commission at signing (locked for life)</h2>
+    <p class="lead">Tiers are set on the day you sign the <a href="/partner-agreement-en.html">partner agreement</a> — up to <strong>4,000 GMD/pax</strong> for founding partners (3 slots). Indicative rate: <strong>84 GMD = €1</strong>.</p>
+    <div class="comm-grid">
+      <div class="comm-card featured">
+        <div class="comm-tag">Current tier (Summer)</div>
+        <div class="comm-currency">Agency commission</div>
+        <div class="comm-amount">3,800 GMD <span style="font-size:0.52em;font-weight:700;">(≈ €45)</span></div>
+        <div class="comm-per">net per compensated passenger — <strong>stays with the agency</strong></div>
+        <ul class="comm-list">
+          <li>✅ Wave (Gambia)</li>
+          <li>✅ Afrimoney</li>
+          <li>✅ QMoney</li>
+          <li>Bank transfer · GBP/EUR accounts OK</li>
+        </ul>
+      </div>
+      <div class="comm-card">
+        <div class="comm-tag" style="background:rgba(0,200,122,0.15);color:var(--teal-bright)">Quick reference</div>
+        <div class="comm-currency" style="color:rgba(255,255,255,0.6)">Quick examples</div>
+        <div class="comm-amount" style="color:#fff">15,200 GMD</div>
+        <div class="comm-per">family of 4 passengers</div>
+        <ul class="comm-list" style="color:rgba(255,255,255,0.85)">
+          <li>10 claims/month: <strong>38,000 GMD</strong></li>
+          <li>15 claims/month: 57,000 GMD</li>
+          <li>30 claims/month: 114,000 GMD</li>
+          <li>Amounts <strong>paid to you</strong> (agency account)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. Vols éligibles & couverture -->
+<section class="section section-sand">
+  <div class="container">
+    <div class="eyebrow" style="background:rgba(161,100,67,0.12);color:var(--ochre)">Couverture</div>
+    <h2>Which flights qualify?</h2>
+    <p class="lead">Specialist on sub-Saharan Africa ↔ Europe routes — including <strong>Banjul (BJL)</strong> to Brussels, Madrid, Istanbul and beyond.</p>
+    <div class="airports-wrap">
+      <p style="font-size:0.88rem;color:var(--muted);margin-bottom:16px;font-weight:600">African airports covered</p>
+      <div class="airport-tags">
+        <div class="airport-tag" style="background:var(--savanna-soft);border-color:rgba(45,107,78,0.4);color:var(--savanna);font-weight:700"><code>BJL</code> Banjul ★</div>
+        <div class="airport-tag"><code>DSS</code> Dakar</div>
+        <div class="airport-tag"><code>ABJ</code> Abidjan</div>
+        <div class="airport-tag"><code>DLA</code> Douala</div>
+        <div class="airport-tag"><code>NSI</code> Yaoundé</div>
+        <div class="airport-tag"><code>LBV</code> Libreville</div>
+        <div class="airport-tag"><code>COO</code> Cotonou</div>
+        <div class="airport-tag"><code>LFW</code> Lomé</div>
+        <div class="airport-tag"><code>ACC</code> Accra</div>
+        <div class="airport-tag"><code>LOS</code> Lagos</div>
+        <div class="airport-tag"><code>NBO</code> Nairobi</div>
+        <div class="airport-tag"><code>FIH</code> Kinshasa</div>
+        <div class="airport-tag"><code>BKO</code> Bamako</div>
+        <div class="airport-tag"><code>CKY</code> Conakry</div>
+        <div class="airport-tag"><code>OUA</code> Ouagadougou</div>
+        <div class="airport-tag"><code>NIM</code> Niamey</div>
+        <div class="airport-tag"><code>TNR</code> Antananarivo</div>
+        <div class="airport-tag" style="background:var(--savanna-soft);border-color:rgba(45,107,78,0.3);color:var(--savanna)">+ other destinations</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 9. Témoignage -->
+<section class="section">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:32px">
+      <div class="eyebrow">They joined us</div>
+      <h2>Partner agencies speak</h2>
+    </div>
+    <div class="quote-box">
+      <div class="quote-mark">"</div>
+      <p class="quote-text">Our clients book Banjul–Europe trips with us. When a flight qualifies, Robin alerts us early — we earn <strong>our commission</strong> without building claims ourselves. In four months we added <strong>45,600 GMD</strong> on clients we already had.</p>
+      <div class="quote-author">
+        <div class="quote-avatar">M.D.</div>
+        <div>
+          <div class="quote-name">Partner agency</div>
+          <div class="quote-role">Banjul · The Gambia</div>
+        </div>
+      </div>
+    </div>
+    <div class="mini-cta"><a href="#rejoindre">Join these agencies →</a></div>
+  </div>
+</section>
+
+<!-- 10. FAQ -->
+<section class="section">
+  <div class="container">
+    <div class="eyebrow">FAQ</div>
+    <h2>Everything you need to know</h2>
+    <p class="lead">Answers agencies ask before joining.</p>
+    <div class="faq">
+
+      <details>
+        <summary>Does my agency pay anything to join?</summary>
+        <div class="faq-body">
+          No. <strong>3,800 GMD</strong> (tier at signing) is paid by Robin des Airs to your agency on successful claims. Your agency pays nothing. No financial risk if a claim fails.
+        </div>
+      </details>
+
+      <details>
+        <summary>When do I get paid?</summary>
+        <div class="faq-body">
+          Once the passenger has actually received airline compensation, Robin des Airs triggers your commission — typically within 48 business hours via agreed payout (bank, Wave, etc.).
+        </div>
+      </details>
+
+      <details>
+        <summary>Can my clients receive up to €600?</summary>
+        <div class="faq-body">
+          EC 261/2004 sets compensation by distance and incident type. The indicative cap on the longest segments is <strong>€600</strong> (about <strong>50,400 GMD</strong> at 84 GMD/€) per passenger. The amount your client receives depends on the airline and case.
+        </div>
+      </details>
+
+      <details>
+        <summary>How is commission calculated in The Gambia?</summary>
+        <div class="faq-body">
+          Commission is in <strong>Gambian dalasi (GMD)</strong> per compensated passenger, tier locked at signing. See <a href="/paliers-commission-agence-en.html">commission tiers</a> and sign the <a href="/partner-agreement-en.html">partner agreement</a>. Founding partners (3 slots before 31 Aug 2026): <strong>4,000 GMD/pax</strong>.
+        </div>
+      </details>
+
+      <details>
+        <summary>How do I send a case?</summary>
+        <div class="faq-body">
+          Once partnered, Robin des Airs <strong>monitors</strong> relevant situations and <strong>notifies you early</strong> — no manual report for every delay. Share the flight when the client books. For onboarding or edge cases: <strong>partners@robindesairs.eu</strong>, the form below, or WhatsApp <strong>+33 6 77 47 01 22</strong>.
+        </div>
+      </details>
+
+      <details>
+        <summary>Are my travellers’ data protected?</summary>
+        <div class="faq-body">
+          Yes. Data is hosted in Europe with GDPR-compliant processing. Client confidentiality is a priority.
+        </div>
+      </details>
+
+      <details>
+        <summary>Which flights are eligible?</summary>
+        <div class="faq-body">
+          Flights under EC 261/2004: significant arrival delay, cancellation, denied boarding or connection impact when the itinerary remains covered — sub-Saharan Africa ↔ Europe on EU carriers or departing from a European airport.
+        </div>
+      </details>
+
+      <details>
+        <summary>Can I contact you on WhatsApp?</summary>
+        <div class="faq-body">
+          Yes. Message <strong>+33 6 77 47 01 22</strong> (include your country code). Great for a first chat; day-to-day, <strong>early alerts</strong> on monitored files are the main channel.
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<!-- 11. Registration partenaire -->
+<section class="section section-warm" id="rejoindre">
+  <div class="container">
+
+    <!-- BLOC DE CLOSING -->
+    <div class="closing-power">
+      <div class="closing-power-inner">
+        <div class="urgency-tag">Open registration — 2026 partner plan</div>
+        <h2>The longer you wait,<br/><span class="highlight">the more your clients lose</span></h2>
+        <p>Every month of delay means unhandled claims, disappointed clients and commission you never receive. Registration takes 90 seconds. Agreement signed within 24h. First case can start today.</p>
+        <a href="#formulaire" class="btn-teal">✦ Start my partnership now</a>
+        <div class="trust-row">
+          <span class="trust-item">No fees</span>
+          <span class="trust-item">No commitment</span>
+          <span class="trust-item">Leave anytime</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="formulaire" style="text-align:center;margin-bottom:36px">
+      <div class="eyebrow" style="background:var(--savanna-soft);color:var(--savanna)">Registration</div>
+      <h2>Join the partner programme</h2>
+      <p class="lead" style="margin:8px auto 0">Free registration · agreement within 24h</p>
+    </div>
+
+    <div class="form-outer">
+      <div class="form-box">
+        <div class="form-heading">Your details</div>
+        <div class="form-sub">Complete the form — we contact you within 24h to finalise your <a href="/partner-agreement-en.html">partner agreement</a>.</div>
+
+        <form name="partenaire" method="POST" data-netlify="true" action="/merci-partenaire.html">
+          <input type="hidden" name="form-name" value="partenaire" />
+
+          <div class="field">
+            <label for="agence">Agency name *</label>
+            <input type="text" id="agence" name="agence" placeholder="e.g. Kombo Travel Services" required />
+          </div>
+
+          <div class="field">
+            <label for="nom">Your full name *</label>
+            <input type="text" id="nom" name="nom" placeholder="Full name" required />
+          </div>
+
+          <div class="field">
+            <label for="form-indicatif">WhatsApp / Phone *</label>
+            <div class="phone-row">
+              <span class="indicatif-flag" id="indicatif-flag" title="Country code" role="img" aria-label="Country flag">🇬🇲</span>
+              <input
+                type="text"
+                class="indicatif-input"
+                name="indicatif"
+                id="form-indicatif"
+                list="liste-indicatifs"
+                inputmode="tel"
+                autocomplete="tel-country-code"
+                placeholder="+220"
+                value="+220"
+                maxlength="12"
+                required
+                title="International dialling code with + (e.g. +220, +33)"
+                pattern="^\+[1-9]\d{0,9}$"
+              />
+              <input type="tel" name="telephone" id="form-telephone" placeholder="Number without country code" required autocomplete="tel-national" />
+            </div>
+            <datalist id="liste-indicatifs"></datalist>
+            <p class="field-hint" style="font-size:0.8rem;color:var(--muted);margin-top:6px">Any country code works. Flag updates when recognised; list suggests common codes.</p>
+          </div>
+
+          <div class="field">
+            <label for="email">E-mail *</label>
+            <input type="email" id="email" name="email" placeholder="vous@votreagence.com" required autocomplete="email" />
+          </div>
+
+          <div class="field">
+            <label>Payout currency *</label>
+            <div class="conv-grid">
+              <div class="conv-opt">
+                <input type="radio" id="cv-gmd" name="convention" value="GMD 3800 GMD" checked />
+                <label for="cv-gmd" class="conv-label">
+                  <div class="conv-amount">3,800</div>
+                  <div class="conv-ccy">GMD / passenger</div>
+                  <div class="conv-badge">Gambia</div>
+                </label>
+              </div>
+              <div class="conv-opt">
+                <input type="radio" id="cv-eur" name="convention" value="EUR 45 EUR equivalent" />
+                <label for="cv-eur" class="conv-label">
+                  <div class="conv-amount">€45</div>
+                  <div class="conv-ccy">equivalent / pax</div>
+                  <div class="conv-badge">Reference</div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="volume">Monthly travellers (estimate)</label>
+            <select id="volume" name="volume">
+              <option value="">— Optional —</option>
+              <option>Under 50 travellers</option>
+              <option>50 – 200 travellers</option>
+              <option>200 – 500 travellers</option>
+              <option>Over 500 travellers</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="message">Message or questions (optional)</label>
+            <textarea id="message" name="message" rows="3" placeholder="Main routes, questions about tiers…"></textarea>
+          </div>
+
+          <button type="submit" class="btn-submit">
+            ✦ Send partnership request
+          </button>
+          <a href="#" id="wa-prefill-link" class="btn-wa-prefill is-disabled" target="_blank" rel="noopener noreferrer" aria-disabled="true">💬 Open WhatsApp with this message</a>
+          <p class="wa-prefill-hint" id="wa-prefill-hint">Fill required fields (agency, name, country code, number, email) to generate the WhatsApp message.</p>
+          <p class="form-note">🔒 Data protected · Reply within 24h · No commitment</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 12. Contact direct -->
+<div class="contact-strip">
+  <h3>Questions? Contact us directly</h3>
+  <div class="contact-btns">
+    <a href="https://api.whatsapp.com/send?phone=33677470122&amp;text=Hello%20Robin%20des%20Airs%2C%0A%0AGambia%20agency%20programme%20page%20%E2%80%94%20partnership%20info%20(3%2C800%20GMD%20per%20passenger).%0A%0AThank%20you%21" class="c-btn teal" target="_blank" rel="noopener noreferrer">
+      💬 WhatsApp +33 6 77 47 01 22
+    </a>
+    <a href="mailto:expert@robindesairs.eu" class="c-btn">
+      ✉ expert@robindesairs.eu
+    </a>
+    <a href="https://robindesairs.eu" class="c-btn">
+      🌐 robindesairs.eu
+    </a>
+  </div>
+</div>
+
+<!-- STICKY CTA MOBILE -->
+<div class="sticky-cta">
+  <a href="#rejoindre">✦ Join in 90 seconds</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-links">
+    <a href="https://robindesairs.eu">robindesairs.eu</a>
+    <a href="mailto:expert@robindesairs.eu">expert@robindesairs.eu</a>
+    <a href="#">Legal notice</a>
+    <a href="#">RGPD</a>
+  </div>
+  <p>Robin des Airs — 66 av. des Champs-Élysées, 75008 Paris &nbsp;·&nbsp; © 2025–2026 Robin des Airs. All rights reserved.</p>
+  <p><strong>L'Expert Robin des Airs</strong></p>
+</footer>
+
+<script>
+(function () {
+  var WA_ROBIN = '33677470122';
+  /* Indicatif → drapeau (représentation indicative ; +1 = NANP, etc.) */
+  var CODE_FLAG = {
+    '+1': '🇺🇸', '+7': '🇷🇺', '+20': '🇪🇬', '+27': '🇿🇦', '+30': '🇬🇷', '+31': '🇳🇱', '+32': '🇧🇪', '+33': '🇫🇷', '+34': '🇪🇸', '+36': '🇭🇺', '+39': '🇮🇹', '+40': '🇷🇴', '+41': '🇨🇭', '+43': '🇦🇹', '+44': '🇬🇧', '+45': '🇩🇰', '+46': '🇸🇪', '+47': '🇳🇴', '+48': '🇵🇱', '+49': '🇩🇪',
+    '+51': '🇵🇪', '+52': '🇲🇽', '+53': '🇨🇺', '+54': '🇦🇷', '+55': '🇧🇷', '+56': '🇨🇱', '+57': '🇨🇴', '+58': '🇻🇪', '+60': '🇲🇾', '+61': '🇦🇺', '+62': '🇮🇩', '+63': '🇵🇭', '+64': '🇳🇿', '+65': '🇸🇬', '+66': '🇹🇭', '+81': '🇯🇵', '+82': '🇰🇷', '+84': '🇻🇳', '+86': '🇨🇳', '+90': '🇹🇷', '+91': '🇮🇳', '+92': '🇵🇰', '+93': '🇦🇫', '+94': '🇱🇰', '+95': '🇲🇲', '+98': '🇮🇷',
+    '+211': '🇸🇸', '+212': '🇲🇦', '+213': '🇩🇿', '+216': '🇹🇳', '+218': '🇱🇾', '+220': '🇬🇲', '+221': '🇸🇳', '+222': '🇲🇷', '+223': '🇲🇱', '+224': '🇬🇳', '+225': '🇨🇮', '+226': '🇧🇫', '+227': '🇳🇪', '+228': '🇹🇬', '+229': '🇧🇯', '+230': '🇲🇺', '+231': '🇱🇷', '+232': '🇸🇱', '+233': '🇬🇭', '+234': '🇳🇬', '+235': '🇹🇩', '+236': '🇨🇫', '+237': '🇨🇲', '+238': '🇨🇻', '+239': '🇸🇹', '+240': '🇬🇶', '+241': '🇬🇦', '+242': '🇨🇬', '+243': '🇨🇩', '+244': '🇦🇴', '+245': '🇬🇼', '+246': '🇮🇴', '+248': '🇸🇨', '+249': '🇸🇩', '+250': '🇷🇼', '+251': '🇪🇹', '+252': '🇸🇴', '+253': '🇩🇯', '+254': '🇰🇪', '+255': '🇹🇿', '+256': '🇺🇬', '+257': '🇧🇮', '+258': '🇲🇿', '+260': '🇿🇲', '+261': '🇲🇬', '+262': '🇷🇪', '+263': '🇿🇼', '+264': '🇳🇦', '+265': '🇲🇼', '+266': '🇱🇸', '+267': '🇧🇼', '+268': '🇸🇿', '+269': '🇰🇲',
+    '+290': '🇸🇭', '+291': '🇪🇷', '+297': '🇦🇼', '+298': '🇫🇴', '+299': '🇬🇱', '+350': '🇬🇮', '+351': '🇵🇹', '+352': '🇱🇺', '+353': '🇮🇪', '+354': '🇮🇸', '+356': '🇲🇹', '+357': '🇨🇾', '+358': '🇫🇮', '+359': '🇧🇬',
+    '+370': '🇱🇹', '+371': '🇱🇻', '+372': '🇪🇪', '+373': '🇲🇩', '+374': '🇦🇲', '+375': '🇧🇾', '+376': '🇦🇩', '+377': '🇲🇨', '+378': '🇸🇲', '+380': '🇺🇦', '+381': '🇷🇸', '+382': '🇲🇪', '+383': '🇽🇰', '+385': '🇭🇷', '+386': '🇸🇮', '+387': '🇧🇦', '+389': '🇲🇰',
+    '+420': '🇨🇿', '+421': '🇸🇰', '+423': '🇱🇮', '+509': '🇭🇹', '+590': '🇬🇵', '+591': '🇧🇴', '+592': '🇬🇾', '+593': '🇪🇨', '+594': '🇬🇫', '+595': '🇵🇾', '+596': '🇲🇶', '+597': '🇸🇷', '+598': '🇺🇾', '+599': '🇨🇼',
+    '+670': '🇹🇱', '+672': '🇦🇶', '+673': '🇧🇳', '+674': '🇳🇷', '+675': '🇵🇬', '+676': '🇹🇴', '+677': '🇸🇧', '+678': '🇻🇺', '+679': '🇫🇯', '+680': '🇵🇼', '+681': '🇼🇫', '+682': '🇨🇰', '+683': '🇳🇺', '+685': '🇼🇸', '+686': '🇰🇮', '+687': '🇳🇨', '+688': '🇹🇻', '+689': '🇵🇫', '+690': '🇹🇰', '+691': '🇫🇲', '+692': '🇲🇭',
+    '+850': '🇰🇵', '+852': '🇭🇰', '+853': '🇲🇴', '+855': '🇰🇭', '+856': '🇱🇦', '+880': '🇧🇩', '+886': '🇹🇼',
+    '+960': '🇲🇻', '+961': '🇱🇧', '+962': '🇯🇴', '+963': '🇸🇾', '+964': '🇮🇶', '+965': '🇰🇼', '+966': '🇸🇦', '+967': '🇾🇪', '+968': '🇴🇲', '+970': '🇵🇸', '+971': '🇦🇪', '+972': '🇮🇱', '+973': '🇧🇭', '+974': '🇶🇦', '+975': '🇧🇹', '+976': '🇲🇳', '+977': '🇳🇵', '+992': '🇹🇯', '+993': '🇹🇲', '+994': '🇦🇿', '+995': '🇬🇪', '+996': '🇰🇬', '+998': '🇺🇿'
+  };
+  /* Même clés que CODE_FLAG — libellés FR pour le message WhatsApp */
+  var CODE_NAME = {
+    '+1': 'États-Unis / Canada (NANP)', '+7': 'Russie', '+20': 'Égypte', '+27': 'Afrique du Sud', '+30': 'Grèce', '+31': 'Pays-Bas', '+32': 'Belgique', '+33': 'France', '+34': 'Espagne', '+36': 'Hongrie', '+39': 'Italie', '+40': 'Roumanie', '+41': 'Suisse', '+43': 'Autriche', '+44': 'Royaume-Uni', '+45': 'Danemark', '+46': 'Suède', '+47': 'Norvège', '+48': 'Pologne', '+49': 'Allemagne',
+    '+51': 'Pérou', '+52': 'Mexique', '+53': 'Cuba', '+54': 'Argentine', '+55': 'Brésil', '+56': 'Chili', '+57': 'Colombie', '+58': 'Venezuela', '+60': 'Malaisie', '+61': 'Australie', '+62': 'Indonésie', '+63': 'Philippines', '+64': 'Nouvelle-Zélande', '+65': 'Singapour', '+66': 'Thaïlande', '+81': 'Japon', '+82': 'Corée du Sud', '+84': 'Viêt Nam', '+86': 'Chine', '+90': 'Turquie', '+91': 'Inde', '+92': 'Pakistan', '+93': 'Afghanistan', '+94': 'Sri Lanka', '+95': 'Myanmar', '+98': 'Iran',
+    '+211': 'Soudan du Sud', '+212': 'Maroc', '+213': 'Algérie', '+216': 'Tunisie', '+218': 'Libye', '+220': 'Gambie', '+221': 'Sénégal', '+222': 'Mauritanie', '+223': 'Mali', '+224': 'Guinée', '+225': "Côte d'Ivoire", '+226': 'Burkina Faso', '+227': 'Niger', '+228': 'Togo', '+229': 'Bénin', '+230': 'Maurice', '+231': 'Liberia', '+232': 'Sierra Leone', '+233': 'Ghana', '+234': 'Nigeria', '+235': 'Tchad', '+236': 'République centrafricaine', '+237': 'Cameroun', '+238': 'Cap-Vert', '+239': 'São Tomé-et-Príncipe', '+240': 'Guinée équatoriale', '+241': 'Gabon', '+242': 'Congo', '+243': 'RD Congo', '+244': 'Angola', '+245': 'Guinée-Bissau', '+246': 'Territoire britannique océan Indien', '+248': 'Seychelles', '+249': 'Soudan', '+250': 'Rwanda', '+251': 'Éthiopie', '+252': 'Somalie', '+253': 'Djibouti', '+254': 'Kenya', '+255': 'Tanzanie', '+256': 'Ouganda', '+257': 'Burundi', '+258': 'Mozambique', '+260': 'Zambie', '+261': 'Madagascar', '+262': 'La Réunion / Mayotte', '+263': 'Zimbabwe', '+264': 'Namibie', '+265': 'Malawi', '+266': 'Lesotho', '+267': 'Botswana', '+268': 'Eswatini', '+269': 'Comores',
+    '+290': 'Sainte-Hélène', '+291': 'Érythrée', '+297': 'Aruba', '+298': 'Îles Féroé', '+299': 'Groenland', '+350': 'Gibraltar', '+351': 'Portugal', '+352': 'Luxembourg', '+353': 'Irlande', '+354': 'Islande', '+356': 'Malte', '+357': 'Chypre', '+358': 'Finlande', '+359': 'Bulgarie',
+    '+370': 'Lituanie', '+371': 'Lettonie', '+372': 'Estonie', '+373': 'Moldavie', '+374': 'Arménie', '+375': 'Biélorussie', '+376': 'Andorre', '+377': 'Monaco', '+378': 'Saint-Marin', '+380': 'Ukraine', '+381': 'Serbie', '+382': 'Monténégro', '+383': 'Kosovo', '+385': 'Croatie', '+386': 'Slovénie', '+387': 'Bosnie-Herzégovine', '+389': 'Macédoine du Nord',
+    '+420': 'Tchéquie', '+421': 'Slovaquie', '+423': 'Liechtenstein', '+509': 'Haïti', '+590': 'Guadeloupe', '+591': 'Bolivie', '+592': 'Guyana', '+593': 'Équateur', '+594': 'Guyane', '+595': 'Paraguay', '+596': 'Martinique', '+597': 'Suriname', '+598': 'Uruguay', '+599': 'Pays-Bas caribéens',
+    '+670': 'Timor oriental', '+672': 'Antarctique / territoires', '+673': 'Brunei', '+674': 'Nauru', '+675': 'Papouasie-Nouvelle-Guinée', '+676': 'Tonga', '+677': 'Îles Salomon', '+678': 'Vanuatu', '+679': 'Fidji', '+680': 'Palaos', '+681': 'Wallis-et-Futuna', '+682': 'Îles Cook', '+683': 'Niue', '+685': 'Samoa', '+686': 'Kiribati', '+687': 'Nouvelle-Calédonie', '+688': 'Tuvalu', '+689': 'Polynésie française', '+690': 'Tokelau', '+691': 'Micronésie', '+692': 'Îles Marshall',
+    '+850': 'Corée du Nord', '+852': 'Hong Kong', '+853': 'Macao', '+855': 'Cambodge', '+856': 'Laos', '+880': 'Bangladesh', '+886': 'Taïwan',
+    '+960': 'Maldives', '+961': 'Liban', '+962': 'Jordanie', '+963': 'Syrie', '+964': 'Irak', '+965': 'Koweït', '+966': 'Arabie saoudite', '+967': 'Yémen', '+968': 'Oman', '+970': 'Palestine', '+971': 'Émirats arabes unis', '+972': 'Israël', '+973': 'Bahreïn', '+974': 'Qatar', '+975': 'Bhoutan', '+976': 'Mongolie', '+977': 'Népal', '+992': 'Tadjikistan', '+993': 'Turkménistan', '+994': 'Azerbaïdjan', '+995': 'Géorgie', '+996': 'Kirghizistan', '+998': 'Ouzbékistan'
+  };
+  var INDICATIFS = Object.keys(CODE_FLAG);
+
+  function uniqSort(arr) {
+    var seen = {};
+    var out = [];
+    arr.forEach(function (c) {
+      if (!seen[c]) {
+        seen[c] = true;
+        out.push(c);
+      }
+    });
+    out.sort(function (a, b) {
+      return parseInt(a.slice(1), 10) - parseInt(b.slice(1), 10);
+    });
+    return out;
+  }
+
+  var dl = document.getElementById('liste-indicatifs');
+  if (dl) {
+    uniqSort(INDICATIFS).forEach(function (code) {
+      var opt = document.createElement('option');
+      opt.value = code;
+      dl.appendChild(opt);
+    });
+  }
+
+  var form = document.querySelector('form[name="partenaire"]');
+  var link = document.getElementById('wa-prefill-link');
+  var hint = document.getElementById('wa-prefill-hint');
+  if (!form || !link) return;
+
+  var agence = document.getElementById('agence');
+  var nom = document.getElementById('nom');
+  var indicatif = document.getElementById('form-indicatif');
+  var tel = document.getElementById('form-telephone');
+  var flagEl = document.getElementById('indicatif-flag');
+  var email = document.getElementById('email');
+  var volume = document.getElementById('volume');
+  var message = document.getElementById('message');
+
+  function normalizeIndicatif(v) {
+    v = (v || '').trim().replace(/\s/g, '');
+    if (!v) return '';
+    return v.charAt(0) === '+' ? v : '+' + v.replace(/^\+?/, '');
+  }
+
+  function matchIndicatifCode(n) {
+    n = normalizeIndicatif(n);
+    if (!n) return null;
+    var keys = Object.keys(CODE_FLAG).sort(function (a, b) {
+      return b.length - a.length;
+    });
+    for (var i = 0; i < keys.length; i++) {
+      if (n.indexOf(keys[i]) === 0) return keys[i];
+    }
+    return null;
+  }
+
+  function updateIndicatifFlag() {
+    if (!flagEl || !indicatif) return;
+    var code = matchIndicatifCode(indicatif.value);
+    if (code) {
+      flagEl.textContent = CODE_FLAG[code];
+      flagEl.setAttribute('aria-label', 'Indicatif ' + code);
+      return;
+    }
+    flagEl.textContent = '🌍';
+    flagEl.setAttribute('aria-label', 'Indicatif international');
+  }
+
+  function indicatifOk(v) {
+    return /^\+[1-9]\d{0,9}$/.test(normalizeIndicatif(v));
+  }
+
+  function formReady() {
+    if (!agence || !nom || !indicatif || !tel || !email) return false;
+    if (!agence.value.trim() || !nom.value.trim() || !tel.value.trim() || !email.value.trim()) return false;
+    if (!indicatifOk(indicatif.value)) return false;
+    if (!agence.validity.valid || !nom.validity.valid || !tel.validity.valid || !indicatif.validity.valid || !email.validity.valid) return false;
+    return true;
+  }
+
+  function buildMessage() {
+    var agName = agence.value.trim();
+    var n = normalizeIndicatif(indicatif.value);
+    var phoneFull = (n + ' ' + tel.value.trim().replace(/\s+/g, ' ')).trim();
+    var code = matchIndicatifCode(n);
+    var flag = code ? CODE_FLAG[code] : '🌍';
+    var pays = code ? CODE_NAME[code] : 'country (code TBC)';
+    var phoneLine = '— WhatsApp / Phone: ' + phoneFull + ' (' + pays + ' ' + flag + ')';
+
+    var emailLine = '— Email: ' + email.value.trim();
+
+    var convRadio = form.querySelector('input[name="convention"]:checked');
+    var isGmd = convRadio && convRadio.value.indexOf('GMD') !== -1;
+    var conventionText = isGmd
+      ? '3,800 GMD net per compensated passenger — paid to agency account (Wave / Afrimoney / QMoney), typically within 48 business hours after passenger payment.'
+      : '€45 equivalent per compensated passenger — GMD tier applies at signing (see partner agreement).';
+
+    var volumeText =
+      volume && volume.value
+        ? volume.value
+        : '(to confirm on qualification call)';
+
+    var messageText =
+      message && message.value.trim() ? message.value.trim() : '(none)';
+
+    return [
+      'Hello Robin — ' + agName + ' is interested in the Gambia travel agency partner programme. Please call us on WhatsApp to finalise. 🙏',
+      '',
+      'New agency partnership request (Gambia EN page)',
+      '',
+      'Details:',
+      '— Agency: ' + agName,
+      '— Contact: ' + nom.value.trim(),
+      phoneLine,
+      emailLine,
+      '',
+      'Payout preference',
+      conventionText,
+      '',
+      'Estimated volume',
+      volumeText,
+      '',
+      'Message',
+      messageText
+    ].join('\n');
+  }
+
+  function updateWaLink() {
+    if (!formReady()) {
+      link.classList.add('is-disabled');
+      link.setAttribute('href', '#');
+      link.setAttribute('aria-disabled', 'true');
+      if (hint) {
+        hint.textContent = 'Fill required fields (agency, name, country code with +, number, valid email) to enable WhatsApp.';
+      }
+      return;
+    }
+    var url = 'https://api.whatsapp.com/send?phone=' + encodeURIComponent(WA_ROBIN) + '&text=' + encodeURIComponent(buildMessage());
+    link.classList.remove('is-disabled');
+    link.setAttribute('href', url);
+    link.removeAttribute('aria-disabled');
+    if (hint) {
+      hint.textContent = 'Message ready — volume and notes included. You can still edit in WhatsApp before sending.';
+    }
+  }
+
+  function onFormActivity() {
+    updateIndicatifFlag();
+    updateWaLink();
+  }
+
+  form.addEventListener('input', onFormActivity);
+  form.addEventListener('change', onFormActivity);
+  link.addEventListener('click', function (e) {
+    if (link.classList.contains('is-disabled') || link.getAttribute('href') === '#') {
+      e.preventDefault();
+    }
+  });
+  updateIndicatifFlag();
+  updateWaLink();
+})();
+</script>
+<script>
+(function () {
+  var el = document.getElementById('cas-concret-mois-badge');
+  if (!el) return;
+  var mois = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+  var d = new Date();
+  el.textContent = 'Real example · ' + mois[d.getMonth()] + ' ' + d.getFullYear();
+})();
+</script>
+
+<!-- ═══ PREMIUM LAYER — agence de voyages ═══ -->
+<style>
+:root {
+  --ease-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --shimmer-teal: linear-gradient(105deg, transparent 35%, rgba(255,255,255,0.22) 50%, transparent 65%);
+}
+
+/* ── NAV glassmorphism au scroll ── */
+header { transition: background 0.35s, box-shadow 0.35s, backdrop-filter 0.35s; }
+header.prem-scrolled {
+  background: rgba(6, 19, 38, 0.88) !important;
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 8px 40px rgba(0,0,0,0.32);
+}
+
+/* ── HERO — enrichissement ── */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(0,229,160,0.06) 1px, transparent 1px);
+  background-size: 30px 30px;
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 50%, black 20%, transparent 100%);
+  z-index: 0;
+}
+.hero-inner { position: relative; z-index: 1; }
+
+/* ── BOUTON TEAL — gradient + shimmer ── */
+.btn-teal {
+  background: linear-gradient(135deg, #00E5A0 0%, #00C87A 100%);
+  box-shadow: 0 4px 22px rgba(0,200,122,0.35), inset 0 1px 0 rgba(255,255,255,0.18);
+  position: relative;
+  overflow: hidden;
+}
+.btn-teal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--shimmer-teal);
+  background-size: 220% 100%;
+  background-position: -110% 0;
+  transition: background-position 0.6s var(--ease-expo);
+}
+.btn-teal:hover {
+  background: linear-gradient(135deg, #00E5A0 0%, #00A060 100%);
+  box-shadow: 0 8px 36px rgba(0,200,122,0.48), inset 0 1px 0 rgba(255,255,255,0.22);
+  transform: translateY(-2px);
+}
+.btn-teal:hover::after { background-position: 200% 0; }
+
+/* ── CARDS — glow au hover + top border animé ── */
+.card {
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s, box-shadow 0.35s var(--ease-expo), transform 0.3s var(--ease-expo);
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--teal-bright), var(--teal-dark));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s var(--ease-expo);
+}
+.card:hover {
+  border-color: var(--teal);
+  box-shadow: 0 12px 40px rgba(0,200,122,0.14), 0 2px 8px rgba(6,19,38,0.06);
+  transform: translateY(-3px);
+}
+.card:hover::before { transform: scaleX(1); }
+
+/* ── COMM-CARD featured ── */
+.comm-card.featured {
+  box-shadow: 0 24px 64px rgba(0,200,122,0.22), 0 0 0 1px rgba(0,229,160,0.15);
+}
+.comm-card:not(.featured) {
+  transition: background 0.25s, border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+}
+.comm-card:not(.featured):hover {
+  background: rgba(255,255,255,0.09);
+  border-color: rgba(0,229,160,0.3);
+  box-shadow: 0 8px 32px rgba(0,200,122,0.10);
+  transform: translateY(-2px);
+}
+
+/* ── STEP CARDS ── */
+.step {
+  transition: box-shadow 0.3s var(--ease-expo), border-color 0.3s, transform 0.3s var(--ease-expo);
+}
+.step:hover {
+  box-shadow: 0 16px 48px rgba(0,200,122,0.10), 0 2px 8px rgba(6,19,38,0.05);
+  border-color: rgba(0,200,122,0.3);
+  transform: translateY(-3px);
+}
+.step-num {
+  transition: background 0.25s, box-shadow 0.25s;
+}
+.step:hover .step-num {
+  background: var(--teal-dark);
+  box-shadow: 0 0 0 5px rgba(0,200,122,0.12);
+}
+
+/* ── STAT ITEMS — nombres en gradient ── */
+.stat-item {
+  transition: box-shadow 0.3s, border-color 0.3s, transform 0.3s var(--ease-expo);
+}
+.stat-item:hover {
+  box-shadow: 0 12px 40px rgba(0,200,122,0.12);
+  border-color: rgba(0,200,122,0.3);
+  transform: translateY(-3px);
+}
+.stat-num {
+  background: linear-gradient(135deg, #009960 0%, #00C87A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── EYEBROW — ligne accent ── */
+.eyebrow {
+  position: relative;
+  padding-left: 18px;
+}
+.eyebrow::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 50%;
+  transform: translateY(-50%);
+  width: 8px; height: 2.5px;
+  background: linear-gradient(90deg, var(--teal-bright), var(--teal-dark));
+  border-radius: 2px;
+}
+
+/* ── H2 — underline sur le premier mot fort ── */
+h2 { letter-spacing: -0.025em; }
+
+/* ── FOOTER ACCENT LINE ── */
+footer {
+  position: relative;
+}
+footer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,229,160,0.45), transparent);
+}
+footer a { transition: color 0.2s, padding-left 0.2s; }
+footer a:hover { padding-left: 3px; }
+
+/* ── SCROLL REVEAL ── */
+.prem-rv {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s var(--ease-expo), transform 0.65s var(--ease-expo);
+  will-change: opacity, transform;
+}
+.prem-rv.prem-on { opacity: 1; transform: none; }
+.prem-rv:nth-child(2) { transition-delay: 0.09s; }
+.prem-rv:nth-child(3) { transition-delay: 0.18s; }
+.prem-rv:nth-child(4) { transition-delay: 0.26s; }
+.prem-rv:nth-child(5) { transition-delay: 0.32s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .prem-rv { opacity: 1 !important; transform: none !important; transition: none !important; }
+}
+
+</style>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+ * premium-agence.js — interactions premium (inline)
+ * Nav glassmorphism · Scroll reveal · Counters · Tilt cards
+ * ═══════════════════════════════════════════════════════════ */
+;(function () {
+  'use strict';
+
+  var rm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ── 1. NAV — glassmorphisme au scroll ─────────────────── */
+  var hdr = document.querySelector('header');
+  if (hdr) {
+    function onScroll() {
+      hdr.classList.toggle('prem-scrolled', window.scrollY > 48);
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
+
+  if (rm) return;
+
+  /* ── 2. AUTO-TAG — éléments à révéler ─────────────────── */
+  function tag(sel, cls) {
+    document.querySelectorAll(sel).forEach(function (el) {
+      el.classList.add(cls);
+    });
+  }
+
+  /* Titres et eyebrows */
+  tag('.eyebrow',    'prem-rv');
+  tag('h2',          'prem-rv');
+  tag('.lead',       'prem-rv');
+
+  /* Cards grilles */
+  tag('.card',       'prem-rv');
+  tag('.step',       'prem-rv');
+  tag('.comm-card',  'prem-rv');
+  tag('.airport-tag','prem-rv');
+
+  /* Blocs isolés */
+  tag('.quote-box',  'prem-rv');
+  tag('.mini-cta',   'prem-rv');
+  tag('.stats-row',  'prem-rv');
+  tag('.faq details','prem-rv');
+  tag('#rejoindre .form-wrap', 'prem-rv');
+
+  /* ── 3. SCROLL REVEAL — IntersectionObserver ───────────── */
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('prem-on');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.10, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.prem-rv').forEach(function (el) {
+    io.observe(el);
+  });
+
+  /* ── 4. COUNTER ANIMATION — .stat-num ─────────────────── */
+  var statsObs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      statsObs.unobserve(entry.target);
+
+      entry.target.querySelectorAll('.stat-num').forEach(function (el) {
+        /* Ne compte que le premier nœud texte (avant le <span class="money-sub">) */
+        var firstText = null;
+        el.childNodes.forEach(function (n) {
+          if (!firstText && n.nodeType === 3 && n.textContent.trim()) firstText = n;
+        });
+        if (!firstText) return;
+
+        var raw   = firstText.textContent.trim().replace(/\s/g, '');
+        var match = raw.match(/^([+]?)(\d+(?:[.,]\d+)?)(.*?)$/);
+        if (!match) return;
+
+        var prefix   = match[1];
+        var target   = parseFloat(match[2].replace(',', '.'));
+        var suffix   = match[3];
+        var duration = 1400;
+        var startTs  = null;
+
+        function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+
+        function step(ts) {
+          if (!startTs) startTs = ts;
+          var p   = Math.min((ts - startTs) / duration, 1);
+          var val = target * easeOut(p);
+          var fmt = target % 1 !== 0
+            ? val.toFixed(1).replace('.', ',')
+            : Math.round(val).toString();
+          firstText.textContent = prefix + fmt + suffix + ' ';
+          if (p < 1) requestAnimationFrame(step);
+        }
+
+        requestAnimationFrame(step);
+      });
+    });
+  }, { threshold: 0.5 });
+
+  var statsRow = document.querySelector('.stats-row');
+  if (statsRow) statsObs.observe(statsRow);
+
+  /* ── 5. TILT 3D — cards sur desktop ───────────────────── */
+  if (window.innerWidth >= 1024) {
+    document.querySelectorAll('.card, .comm-card, .quote-box').forEach(function (card) {
+      card.addEventListener('mousemove', function (e) {
+        var r = card.getBoundingClientRect();
+        var x = (e.clientX - r.left) / r.width  - 0.5;
+        var y = (e.clientY - r.top)  / r.height - 0.5;
+        card.style.transform =
+          'translateY(-4px) perspective(600px) rotateX(' + (-y * 5) + 'deg) rotateY(' + (x * 5) + 'deg)';
+      });
+      card.addEventListener('mouseleave', function () {
+        card.style.transform = '';
+      });
+    });
+  }
+
+})();
+</script>
+</body>
+</html>
