@@ -15,8 +15,11 @@ try {
 
 function normalizeTo(waId) {
   const s = String(waId || '').replace(/\D/g, '');
-  if (s.startsWith('0')) return '33' + s.slice(1);
-  if (s.length <= 9 && !s.startsWith('33')) return '33' + s;
+  if (!s) return '';
+  if (s.length >= 11 && !s.startsWith('0')) return s;
+  if (s.length === 10 && /^0[6-9]/.test(s)) return '33' + s.slice(1);
+  if (s.length === 9 && /^[67]/.test(s)) return '33' + s;
+  if (s.startsWith('0')) return s.slice(1);
   return s;
 }
 

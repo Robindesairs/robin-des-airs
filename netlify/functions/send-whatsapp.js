@@ -9,8 +9,11 @@ const { safeEqualString } = require('./lib/safe-compare');
 function normalizePhone(phone) {
   if (!phone || typeof phone !== 'string') return '';
   const digits = phone.replace(/\D/g, '');
-  if (digits.startsWith('0')) return '33' + digits.slice(1);
-  if (!digits.startsWith('33') && digits.length <= 9) return '33' + digits;
+  if (!digits) return '';
+  if (digits.length >= 11 && !digits.startsWith('0')) return digits;
+  if (digits.length === 10 && /^0[6-9]/.test(digits)) return '33' + digits.slice(1);
+  if (digits.length === 9 && /^[67]/.test(digits)) return '33' + digits;
+  if (digits.startsWith('0')) return digits.slice(1);
   return digits;
 }
 
