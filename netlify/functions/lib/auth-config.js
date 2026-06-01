@@ -26,6 +26,20 @@ function allowAgencyCodeOnly() {
   return (process.env.ALLOW_AGENCY_CODE_ONLY || '').trim() === 'true';
 }
 
+/**
+ * Accès espace agence sans code (lien ?trial=1).
+ * Netlify : AGENCY_TRIAL_PUBLIC=true (+ compte AGENCY_ACCOUNTS pour AGENCY_TRIAL_CODE).
+ */
+function allowAgencyTrialPublic() {
+  return (process.env.AGENCY_TRIAL_PUBLIC || '').trim() === 'true';
+}
+
+function getAgencyTrialCode() {
+  return String(process.env.AGENCY_TRIAL_CODE || 'GSA-KMS-001')
+    .trim()
+    .toUpperCase();
+}
+
 function getCrmAuthConfig() {
   const accessCode = (process.env.CRM_ACCESS_CODE || '').trim();
   const authSecret = (process.env.CRM_AUTH_SECRET || '').trim();
@@ -86,6 +100,8 @@ module.exports = {
   isProduction,
   allowInsecureAuth,
   allowAgencyCodeOnly,
+  allowAgencyTrialPublic,
+  getAgencyTrialCode,
   getCrmAuthConfig,
   getAgencyAuthSecret,
   getMandatLinkSecret,

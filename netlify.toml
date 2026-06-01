@@ -63,6 +63,9 @@
 
 [context.production.environment]
   RADAR_REPORT_EMAIL = "expert@robindesairs.eu"
+  # Espace agence : /espace-agence.html?trial=1 (sans code agence)
+  AGENCY_TRIAL_PUBLIC = "true"
+  AGENCY_TRIAL_CODE = "GSA-KMS-001"
 
 # Forcer HTTPS (cadenas) : toute requête en http est redirigée en https
 [[redirects]]

@@ -2,7 +2,8 @@
  * Auth espace agence partenaire
  */
 
-const { findAgencyAccount, loadAgencyAccounts } = require('./lib/agency-accounts');
+const { findAgencyAccount, loadAgencyAccounts, getAgencyByCode } = require('./lib/agency-accounts');
+const { allowAgencyTrialPublic, getAgencyTrialCode } = require('./lib/auth-config');
 const {
   makeAgencyToken,
   getAgencySession,
@@ -66,12 +67,37 @@ exports.handler = async (event) => {
       );
     }
 
+    if (body.trialAccess === true && allowAgencyTrialPublic()) {
+      const trialCode = getAgencyTrialCode();
+      const trialAccount = getAgencyByCode(trialCode);
+      if (!trialAccount) {
+        return json(503, {
+          ok: false,
+          error: 'Compte trial introuvable (' + trialCode + ' dans AGENCY_ACCOUNTS)',
+        });
+      }
+      try {
+        const token = makeAgencyToken(trialAccount.code);
+        return json(
+          200,
+          {
+            ok: true,
+            trial: true,
+            agency: { code: trialAccount.code, name: trialAccount.name },
+          },
+          { 'Set-Cookie': agencyCookieHeader(token, event) }
+        );
+      } catch (e) {
+        return json(503, { ok: false, error: e.message });
+      }
+    }
+
     const subjectCode = String(body.code || '').trim().toUpperCase().slice(0, 32);
     const rl = await checkRateLimit(event, {
       key: 'agency-auth-login',
       max: 8,
       windowSec: 60,
-      subject: subjectCode,
+      subject: subjectCode || 'login',
     });
     if (!rl.ok) return rl.response;
 

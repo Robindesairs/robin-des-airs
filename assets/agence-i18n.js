@@ -157,6 +157,10 @@
       'hero.lead':
         'Déposez un dossier en moins d\'une minute. Robin des Airs gère tout le processus et verse votre commission automatiquement.',
       'login.demo': 'Mode démo — code agence uniquement (mot de passe optionnel)',
+      'trial.banner': 'Mode essai — accès sans code (données réelles si compte trial activé sur Netlify)',
+      'trial.banner_demo': 'Mode essai — démo locale : les dossiers ne sont pas envoyés à Airtable',
+      'trial.sync_demo': 'Mode essai — liste vide (démo)',
+      'trial.saved': 'Mode essai — dossier simulé',
       'new.live': 'Sync live',
       'issue.wait_short': 'Billet vendu',
       'form.doc': 'Document',
@@ -364,6 +368,10 @@
       'hero.lead':
         'Submit a claim in under a minute. Robin des Airs handles the process and pays your commission automatically.',
       'login.demo': 'Demo mode — agency code only (password optional)',
+      'trial.banner': 'Trial mode — no agency code required',
+      'trial.banner_demo': 'Trial demo — claims are not sent to Airtable',
+      'trial.sync_demo': 'Trial mode — empty list (demo)',
+      'trial.saved': 'Trial mode — simulated claim',
       'new.live': 'Live sync',
       'issue.wait_short': 'Ticket sold',
       'form.doc': 'Document',

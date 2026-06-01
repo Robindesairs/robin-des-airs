@@ -5,6 +5,7 @@ const AGENCY_AUTH_URL = '/api/agency-auth';
 const AGENCY_DOSSIERS_URL = '/api/agency-dossiers';
 
 let currentAgency = null;
+let agencyTrialClientOnly = false;
 let dossiers = [];
 let pricing = {
   commissionGmd: 3800,
@@ -690,6 +691,13 @@ window.switchTab = function (name, btn) {
 
 async function refreshFromAirtable() {
   if (!currentAgency || _agencyLoading) return;
+  if (agencyTrialClientOnly) {
+    setAgencySyncStatus(t('trial.sync_demo'), false);
+    updateDashboard();
+    renderDossiers();
+    renderCommissions();
+    return;
+  }
   _agencyLoading = true;
   setRefreshButtonsDisabled(true);
   setAgencySyncStatus(t('dash.sync') + ' …');
@@ -757,6 +765,68 @@ function isAgencyCodeOnlyMode() {
     new URLSearchParams(location.search).has('sans-mdp') ||
     new URLSearchParams(location.search).has('demo')
   );
+}
+
+function isTrialMode() {
+  const p = new URLSearchParams(location.search);
+  if (p.has('trial')) return true;
+  try {
+    return localStorage.getItem('rda_agency_trial') === '1';
+  } catch (_) {
+    return false;
+  }
+}
+
+function showTrialBanner() {
+  let el = document.getElementById('agencyTrialBanner');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'agencyTrialBanner';
+    el.setAttribute('role', 'status');
+    el.style.cssText =
+      'position:fixed;top:52px;left:0;right:0;z-index:240;background:rgba(245,166,35,0.95);color:#0A1628;text-align:center;padding:8px 16px;font-size:12px;font-weight:600;';
+    document.body.appendChild(el);
+  }
+  el.textContent = agencyTrialClientOnly
+    ? t('trial.banner_demo')
+    : t('trial.banner');
+  el.hidden = false;
+}
+
+function enterTrialModeClientOnly() {
+  agencyTrialClientOnly = true;
+  showAgencyApp({
+    code: 'TRIAL',
+    name: 'Kombo Travel Services (Trial)',
+  });
+  dossiers = [];
+  setAgencySyncStatus(t('trial.sync_demo'), false);
+  showTrialBanner();
+  updateDashboard();
+  renderDossiers();
+  renderCommissions();
+}
+
+async function tryTrialAutoLogin() {
+  if (!isTrialMode()) return false;
+  try {
+    const r = await agencyFetch(AGENCY_AUTH_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ trialAccess: true }),
+    });
+    const data = await r.json().catch(function () {
+      return {};
+    });
+    if (r.ok && data.ok && data.agency) {
+      agencyTrialClientOnly = false;
+      showAgencyApp(data.agency);
+      showTrialBanner();
+      return true;
+    }
+  } catch (_) {}
+  enterTrialModeClientOnly();
+  return true;
 }
 
 function applyAgencyLoginMode() {
@@ -1167,6 +1237,14 @@ async function submitDossier() {
   vals.notes = notesParts.join(' | ');
 
   if (btnSubmit) btnSubmit.disabled = true;
+  if (agencyTrialClientOnly) {
+    const ref = 'TRIAL-' + Date.now().toString(36).toUpperCase().slice(-6);
+    showToast(t('trial.saved') + ' ' + ref);
+    resetForm();
+    switchPage('dossiers');
+    if (btnSubmit) btnSubmit.disabled = false;
+    return;
+  }
   try {
     const r = await agencyFetch(AGENCY_DOSSIERS_URL, {
       method: 'POST',
@@ -1292,6 +1370,10 @@ window.doLogout = doLogout;
 window.submitDossier = submitDossier;
 
 (async function initAgencyPortal() {
+  if (isTrialMode()) {
+    const ok = await tryTrialAutoLogin();
+    if (ok) return;
+  }
   try {
     const r = await agencyFetch(AGENCY_AUTH_URL);
     const data = await r.json().catch(function () {
