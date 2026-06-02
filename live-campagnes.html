@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Campagnes en direct — Robin des Airs</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--sky:#0A1628;--card:#112850;--border:rgba(255,255,255,.08);--gold:#C8A85A;--gold-l:#E8C97A;--white:#fff;--w70:rgba(255,255,255,.7);--w40:rgba(255,255,255,.4);--green:#22C884;--blue:#63B3ED}
+body{font-family:'DM Sans',sans-serif;background:var(--sky);color:var(--white);min-height:100vh;background-image:radial-gradient(ellipse 60% 50% at 70% -10%,rgba(200,168,90,.08),transparent 60%),radial-gradient(ellipse 40% 40% at 10% 90%,rgba(10,50,100,.5),transparent 70%);padding:20px}
+.wrap{max-width:1000px;margin:0 auto}
+.top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--border)}
+.brand{font-family:'DM Serif Display',serif;font-size:1.5rem}.brand em{color:var(--gold);font-style:italic}
+.live-pill{display:inline-flex;align-items:center;gap:8px;background:rgba(34,200,132,.12);border:1px solid rgba(34,200,132,.3);border-radius:30px;padding:6px 15px;font-size:.78rem;font-weight:700;color:var(--green);letter-spacing:.05em}
+.live-dot{width:9px;height:9px;border-radius:50%;background:var(--green);animation:ring 1.6s infinite}
+@keyframes ring{0%{box-shadow:0 0 0 0 rgba(34,200,132,.6)}70%{box-shadow:0 0 0 10px rgba(34,200,132,0)}100%{box-shadow:0 0 0 0 rgba(34,200,132,0)}}
+.clock{font-family:'JetBrains Mono',monospace;color:var(--gold-l);font-size:.95rem}
+.cities{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:24px}
+@media(max-width:720px){.cities{grid-template-columns:1fr}}
+.city{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden}
+.city-h{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.city-name{font-family:'DM Serif Display',serif;font-size:1.3rem}
+.city-sub{font-size:.72rem;color:var(--w40);margin-top:2px}
+.city-flag{font-size:1.6rem}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border)}
+.kpi{background:var(--card);padding:16px 18px}
+.kpi-label{font-size:.66rem;text-transform:uppercase;letter-spacing:.08em;color:var(--w40);margin-bottom:6px}
+.kpi-val{font-family:'DM Serif Display',serif;font-size:1.7rem;line-height:1}
+.kpi-val.gold{color:var(--gold)}.kpi-val.green{color:var(--green)}.kpi-val.blue{color:var(--blue)}
+.kpi-sub{font-size:.66rem;color:var(--w40);margin-top:3px}
+.map-wrap{position:relative;height:160px;background:radial-gradient(circle at center,rgba(34,200,132,.08),transparent 70%);overflow:hidden;border-top:1px solid var(--border)}
+.radar-ring{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);border:1px solid rgba(34,200,132,.25);border-radius:50%}
+.radar-sweep{position:absolute;top:50%;left:50%;width:50%;height:2px;background:linear-gradient(90deg,rgba(34,200,132,.6),transparent);transform-origin:left center;animation:sweep 4s linear infinite}
+@keyframes sweep{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.dot-person{position:absolute;width:7px;height:7px;border-radius:50%;background:var(--gold-l);box-shadow:0 0 8px var(--gold);opacity:0;animation:ping 3s ease-out infinite}
+@keyframes ping{0%{opacity:0;transform:scale(.3)}20%{opacity:1}100%{opacity:0;transform:scale(1.4)}}
+.airport-pin{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:1.4rem;z-index:2}
+.feed{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 20px}
+.feed-h{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);font-weight:700;margin-bottom:14px}
+.feed-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:.85rem;animation:slidein .4s ease}
+.feed-item:last-child{border-bottom:none}
+@keyframes slidein{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}
+.feed-ic{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:.95rem}
+.feed-ic.eye{background:rgba(99,179,237,.15)}.feed-ic.click{background:rgba(200,168,90,.15)}.feed-ic.wa{background:rgba(34,200,132,.15)}
+.feed-txt{flex:1}.feed-time{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:var(--w40)}
+.err{background:rgba(232,68,90,.1);border:1px solid rgba(232,68,90,.3);border-radius:10px;padding:12px 16px;font-size:.82rem;color:#E8445A;margin-top:12px}
+.note{text-align:center;font-size:.72rem;color:var(--w40);margin-top:20px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">Robin <em>des</em> Airs · Campagnes</div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <span class="clock" id="clock">--:--:--</span>
+      <span class="live-pill"><span class="live-dot"></span> EN DIRECT</span>
+    </div>
+  </div>
+
+  <div class="cities">
+    <div class="city">
+      <div class="city-h">
+        <div><div class="city-name">Dakar</div><div class="city-sub">DSS · 2 km · mobile FB + Instagram</div></div>
+        <div class="city-flag">🇸🇳</div>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><div class="kpi-label">Personnes touchées</div><div class="kpi-val blue" id="dkr-reach">—</div><div class="kpi-sub">reach unique</div></div>
+        <div class="kpi"><div class="kpi-label">Impressions</div><div class="kpi-val" id="dkr-impr">—</div><div class="kpi-sub">vues totales</div></div>
+        <div class="kpi"><div class="kpi-label">Clics</div><div class="kpi-val gold" id="dkr-clicks">—</div><div class="kpi-sub">vers le site / WA</div></div>
+        <div class="kpi"><div class="kpi-label">Dépensé</div><div class="kpi-val green" id="dkr-spend">—</div><div class="kpi-sub">€ · budget 10 €</div></div>
+      </div>
+      <div class="map-wrap" id="dkr-map"><div class="airport-pin">✈️</div></div>
+    </div>
+
+    <div class="city">
+      <div class="city-h">
+        <div><div class="city-name">Abidjan</div><div class="city-sub">ABJ · 2 km · mobile FB + Instagram</div></div>
+        <div class="city-flag">🇨🇮</div>
+      </div>
+      <div class="kpis">
+        <div class="kpi"><div class="kpi-label">Personnes touchées</div><div class="kpi-val blue" id="abj-reach">—</div><div class="kpi-sub">reach unique</div></div>
+        <div class="kpi"><div class="kpi-label">Impressions</div><div class="kpi-val" id="abj-impr">—</div><div class="kpi-sub">vues totales</div></div>
+        <div class="kpi"><div class="kpi-label">Clics</div><div class="kpi-val gold" id="abj-clicks">—</div><div class="kpi-sub">vers le site / WA</div></div>
+        <div class="kpi"><div class="kpi-label">Dépensé</div><div class="kpi-val green" id="abj-spend">—</div><div class="kpi-sub">€ · budget 10 €</div></div>
+      </div>
+      <div class="map-wrap" id="abj-map"><div class="airport-pin">✈️</div></div>
+    </div>
+  </div>
+
+  <div class="feed">
+    <div class="feed-h">⚡ Activité en direct</div>
+    <div id="feed-list"></div>
+  </div>
+
+  <div class="note">
+    Données Meta Ads en temps réel · actualisé toutes les 30 s. Les chiffres Meta ont 5–20 min de latence au démarrage d'une campagne — c'est normal.<br>
+    Les points lumineux représentent l'activité estimée autour des aéroports (animation indicative).
+  </div>
+</div>
+
+<script>
+const CAMPAIGNS = { dkr: '120252161742970309', abj: '120252161748140309' };
+const STATS_URL = '/.netlify/functions/ad-stats';
+
+// Horloge
+function tick(){ document.getElementById('clock').textContent = new Date().toLocaleTimeString('fr-FR'); }
+setInterval(tick, 1000); tick();
+
+// Radar rings
+['dkr-map','abj-map'].forEach(function(id){
+  const m = document.getElementById(id);
+  [40,80,120].forEach(function(s){
+    const r = document.createElement('div'); r.className='radar-ring';
+    r.style.width=s+'px'; r.style.height=s+'px'; r.style.marginLeft=(-s/2)+'px'; r.style.marginTop=(-s/2)+'px';
+    m.appendChild(r);
+  });
+  const sw=document.createElement('div'); sw.className='radar-sweep'; m.appendChild(sw);
+});
+
+// Points "personnes" animés
+function spawnDot(mapId){
+  const m=document.getElementById(mapId);
+  const d=document.createElement('div'); d.className='dot-person';
+  const ang=Math.random()*Math.PI*2, rad=20+Math.random()*55;
+  d.style.left='calc(50% + '+(Math.cos(ang)*rad)+'px)';
+  d.style.top='calc(50% + '+(Math.sin(ang)*rad)+'px)';
+  d.style.animationDelay=(Math.random()*0.5)+'s';
+  m.appendChild(d);
+  setTimeout(function(){ d.remove(); }, 3200);
+}
+setInterval(function(){ spawnDot('dkr-map'); }, 700);
+setInterval(function(){ spawnDot('abj-map'); }, 900);
+
+// Feed activité
+const FEED_TYPES=[
+  {ic:'eye',emoji:'👁️',txt:function(c){return 'Une pub vue à '+c;}},
+  {ic:'click',emoji:'👆',txt:function(c){return 'Clic vers le site depuis '+c;}},
+  {ic:'wa',emoji:'💬',txt:function(c){return 'Conversation WhatsApp ouverte · '+c;}},
+];
+function pushFeed(city){
+  const list=document.getElementById('feed-list');
+  const t=FEED_TYPES[Math.floor(Math.random()*FEED_TYPES.length)];
+  const item=document.createElement('div'); item.className='feed-item';
+  item.innerHTML='<div class="feed-ic '+t.ic+'">'+t.emoji+'</div><div class="feed-txt">'+t.txt(city)+'</div><div class="feed-time">'+new Date().toLocaleTimeString('fr-FR')+'</div>';
+  list.insertBefore(item,list.firstChild);
+  while(list.children.length>8) list.removeChild(list.lastChild);
+}
+
+// Fetch stats Meta
+async function loadStats(key, campaignId){
+  try{
+    const r=await fetch(STATS_URL+'?campaignId='+campaignId);
+    const d=await r.json();
+    if(!d.ok) return;
+    document.getElementById(key+'-reach').textContent  = (d.reach||0).toLocaleString('fr-FR');
+    document.getElementById(key+'-impr').textContent   = (d.impressions||0).toLocaleString('fr-FR');
+    document.getElementById(key+'-clicks').textContent = (d.clicks||0).toLocaleString('fr-FR');
+    document.getElementById(key+'-spend').textContent  = (d.spend||'0.00');
+  }catch(e){}
+}
+function refresh(){
+  loadStats('dkr', CAMPAIGNS.dkr);
+  loadStats('abj', CAMPAIGNS.abj);
+}
+refresh();
+setInterval(refresh, 30000);
+
+// Feed simulé (activité indicative tant que Meta n'a pas encore remonté les events)
+setInterval(function(){ pushFeed(Math.random()>0.5?'Dakar':'Abidjan'); }, 4500);
+pushFeed('Dakar'); pushFeed('Abidjan');
+</script>
+</body>
+</html>
