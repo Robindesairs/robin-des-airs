@@ -1256,8 +1256,23 @@ async function submitDossier() {
 
   if (btnSubmit) btnSubmit.disabled = true;
   if (agencyTrialClientOnly) {
-    const ref = 'TRIAL-' + Date.now().toString(36).toUpperCase().slice(-6);
-    showToast(t('trial.saved') + ' ' + ref);
+    const ref = 'DEMO-' + new Date().getFullYear() + '-' + String(dossiers.length + 1).padStart(3,'0');
+    const newDossier = {
+      ref,
+      prenom: vals.prenom || 'Passager',
+      nom: (vals.nom || 'DEMO').toUpperCase(),
+      vol: vals.vol || '—',
+      compagnie: vals.compagnie || '—',
+      statut: vals.probleme && vals.probleme.includes('attente') ? 'attente-incident' : 'nouveau',
+      nbPassagers: parseInt(document.getElementById('f-nb_passagers')?.value || '1', 10) || 1,
+      date: vals.date || new Date().toISOString().slice(0,10),
+      notes: 'Demo — ' + (vals.probleme || 'Dossier test'),
+      montantGmd: 0,
+    };
+    dossiers.unshift(newDossier);
+    updateDashboard();
+    renderDossiers();
+    showToast('✅ Dossier ' + ref + ' ajouté — demo');
     resetForm();
     switchPage('dossiers');
     if (btnSubmit) btnSubmit.disabled = false;
