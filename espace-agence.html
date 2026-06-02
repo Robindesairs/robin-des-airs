@@ -342,78 +342,96 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
   <div class="form-progress-step" data-step="2">2 · Vol</div>
   <div class="form-progress-step" data-step="3">3 · Perturbation</div>
     </div>
-<div class="commission-preview" id="commission-preview" hidden aria-hidden="true">
-  <span data-i18n="agent.preview.label">Commission estimée (si gagné)</span>
-  <strong id="form-commission-preview">—</strong>
-      </div>
+<!-- commission-preview removed -->
         <input type="hidden" id="f-probleme" value="" />
         <input type="hidden" id="f-compagnie" value="" />
 
+        <!-- STEP 1 — PASSENGERS -->
         <div class="form-section">
-          <div class="section-label" data-i18n="form.step1">Passager</div>
-          <div class="auto-note" data-i18n-html="form.email_auto">✓ Pas d'email — Robin crée <strong>ref@robindesairs.eu</strong> automatiquement</div>
-        <div class="form-row">
-            <div class="form-group"><label data-i18n="form.lastname">Nom</label><input type="text" id="f-nom" autocomplete="family-name" /></div>
-            <div class="form-group"><label data-i18n="form.firstname">Prénom</label><input type="text" id="f-prenom" autocomplete="given-name" /></div>
+          <div class="section-label">Passengers</div>
+          <div class="form-row" style="align-items:end">
+            <div class="form-group">
+              <label>Number of passengers</label>
+              <input type="number" id="f-nb-passagers" min="1" max="20" value="1" />
+            </div>
+            <div class="form-group">
+              <label style="color:var(--gold)">Your commission</label>
+              <div id="pax-commission-preview" style="background:var(--gold-pale);border:1px solid rgba(200,168,90,0.3);border-radius:8px;padding:10px 14px;font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--gold);text-align:center;line-height:1.1">3,800 GMD</div>
+            </div>
+          </div>
+          <p style="font-size:0.72rem;color:var(--white-40);margin-top:6px;line-height:1.5">3,800 GMD per compensated passenger · paid within 48h after Robin collects</p>
+        </div>
+
+        <!-- STEP 2 — PASSENGER INFO -->
+        <div class="form-section">
+          <div class="section-label">Passenger</div>
+          <div class="auto-note">✓ No email required — Robin creates <strong>ref@robindesairs.eu</strong> automatically</div>
+          <div class="form-row">
+            <div class="form-group"><label>Last name</label><input type="text" id="f-nom" autocomplete="family-name" /></div>
+            <div class="form-group"><label>First name</label><input type="text" id="f-prenom" autocomplete="given-name" /></div>
           </div>
           <div class="form-group">
-            <label data-i18n="form.phone">WhatsApp</label>
-            <div class="phone-row">
-              <select class="phone-indicator-select" id="phoneIndicator">
+            <label>WhatsApp</label>
+            <div style="display:flex;gap:6px">
+              <select id="phoneIndicator" style="background:rgba(255,255,255,0.05);border:1px solid var(--sky-border);border-radius:8px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:0.82rem;padding:10px 8px;flex-shrink:0;width:90px;outline:none">
                 <option value="+220" selected>🇬🇲 +220</option>
                 <option value="+221">🇸🇳 +221</option>
-                <option value="+222">🇲🇷 +222</option>
+                <option value="+225">🇨🇮 +225</option>
                 <option value="+223">🇲🇱 +223</option>
                 <option value="+224">🇬🇳 +224</option>
-                <option value="+225">🇨🇮 +225</option>
                 <option value="+226">🇧🇫 +226</option>
-                <option value="+227">🇳🇪 +227</option>
-                <option value="+228">🇹🇬 +228</option>
-                <option value="+229">🇧🇯 +229</option>
                 <option value="+233">🇬🇭 +233</option>
                 <option value="+234">🇳🇬 +234</option>
                 <option value="+237">🇨🇲 +237</option>
-                <option value="+245">🇬🇼 +245</option>
                 <option value="+33">🇫🇷 +33</option>
                 <option value="+32">🇧🇪 +32</option>
-                <option value="+34">🇪🇸 +34</option>
-                <option value="+39">🇮🇹 +39</option>
                 <option value="+44">🇬🇧 +44</option>
+                <option value="+34">🇪🇸 +34</option>
+                <option value="+351">🇵🇹 +351</option>
                 <option value="+49">🇩🇪 +49</option>
                 <option value="+90">🇹🇷 +90</option>
-                <option value="+1">🇺🇸 +1</option>
               </select>
-              <div class="phone-num-input"><input type="tel" id="phoneNumber" placeholder="7XX XX XX XX" /></div>
-          </div>
+              <input type="tel" id="phoneNumber" placeholder="7XX XX XX XX" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid var(--sky-border);border-radius:8px;color:var(--white);font-family:'DM Sans',sans-serif;font-size:0.88rem;padding:10px 14px;outline:none;min-width:0" />
+            </div>
           </div>
         </div>
 
+        <!-- STEP 3 — FLIGHT -->
         <div class="form-section">
-          <div class="section-label" data-i18n="form.step2">Vol</div>
-        <div class="form-row">
-            <div class="form-group"><label data-i18n="form.pnr">PNR</label><input type="text" id="f-pnr" maxlength="6" style="text-transform:uppercase;letter-spacing:0.1em" /></div>
-            <div class="form-group"><label data-i18n="form.flightno">N° vol</label><input type="text" id="f-vol" /></div>
+          <div class="section-label">Flight</div>
+          <div class="form-row">
+            <div class="form-group"><label>PNR <span style="color:var(--white-40);font-weight:400;font-size:0.7rem">(5 or 6 chars)</span></label><input type="text" id="f-pnr" minlength="5" maxlength="6" pattern="[A-Z0-9]{5,6}" style="text-transform:uppercase;letter-spacing:0.1em" placeholder="e.g. K5FW8B or K5FW8" /></div>
+            <div class="form-group"><label>Flight number</label><input type="text" id="f-vol" placeholder="e.g. SN301" /></div>
           </div>
           <div class="form-group">
-            <label data-i18n="form.airline">Compagnie opérante</label>
+            <label>Operating airline</label>
             <div class="airline-wrap">
-              <input class="airline-input" id="airlineInput" type="text" autocomplete="off" />
+              <input class="airline-input" id="airlineInput" type="text" autocomplete="off" placeholder="Brussels Airlines, Air France…" />
               <div class="airline-dropdown" id="airlineDropdown"></div>
               <div class="airline-selected-display" id="airlineSelected"><span id="airlineSelectedText"></span><span class="airline-clear" onclick="clearAirline()">✕</span></div>
-        </div>
+            </div>
           </div>
-          <div class="form-group">
-            <label data-i18n="form.route_quick">Routes fréquentes</label>
-            <div class="routes-group-label">↗ Depuis BJL</div>
+
+          <!-- VOL 1 : départ / arrivée -->
+          <div style="font-size:0.72rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;margin:12px 0 8px">Leg 1</div>
+          <div class="form-row">
+            <div class="form-group"><label>Departure (IATA)</label><input type="text" id="f-depart" style="text-transform:uppercase" maxlength="3" placeholder="BJL" /></div>
+            <div class="form-group"><label>Arrival (IATA)</label><input type="text" id="f-arrivee" style="text-transform:uppercase" maxlength="3" placeholder="BRU" /></div>
+          </div>
+          <div class="form-group"><label>Flight date</label><input type="date" id="f-date" /></div>
+
+          <!-- Routes rapides -->
+          <div class="form-group" style="margin-top:4px">
+            <label>Quick routes</label>
+            <div class="routes-group-label">↗ From BJL</div>
             <div class="routes-row">
               <span class="route-chip" onclick="fillRoute('BJL','CDG')">BJL → CDG (Paris)</span>
-              <span class="route-chip" onclick="fillRoute('BJL','LHR')">BJL → LHR (Londres)</span>
-              <span class="route-chip" onclick="fillRoute('BJL','BRU')">BJL → BRU (Bruxelles)</span>
-              <span class="route-chip" onclick="fillRoute('BJL','BCN')">BJL → BCN (Barcelone)</span>
-              <span class="route-chip" onclick="fillRoute('BJL','LIS')">BJL → LIS (Lisbonne)</span>
-              <span class="route-chip" onclick="fillRoute('BJL','IST')">BJL → IST (Istanbul)</span>
+              <span class="route-chip" onclick="fillRoute('BJL','LHR')">BJL → LHR (London)</span>
+              <span class="route-chip" onclick="fillRoute('BJL','BRU')">BJL → BRU (Brussels)</span>
+              <span class="route-chip" onclick="fillRoute('BJL','BCN')">BJL → BCN (Barcelona)</span>
+              <span class="route-chip" onclick="fillRoute('BJL','LIS')">BJL → LIS (Lisbon)</span>
             </div>
-            <div class="routes-group-label">↙ Vers BJL</div>
+            <div class="routes-group-label">↙ To BJL</div>
             <div class="routes-row">
               <span class="route-chip" onclick="fillRoute('CDG','BJL')">CDG → BJL</span>
               <span class="route-chip" onclick="fillRoute('LHR','BJL')">LHR → BJL</span>
@@ -422,65 +440,53 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
               <span class="route-chip" onclick="fillRoute('LIS','BJL')">LIS → BJL</span>
             </div>
           </div>
-          <div class="form-row">
-            <div class="form-group"><label data-i18n="form.from">Départ</label><input type="text" id="f-depart" style="text-transform:uppercase" maxlength="3" /></div>
-            <div class="form-group"><label data-i18n="form.to">Arrivée</label><input type="text" id="f-arrivee" style="text-transform:uppercase" maxlength="3" /></div>
-          </div>
-          <div class="form-group"><label data-i18n="form.fdate">Date vol</label><input type="date" id="f-date" /></div>
-        </div>
 
-        <div class="form-section" id="pax-section-top">
-          <div class="section-label">Nombre de passagers</div>
-          <div class="form-row" style="align-items:end">
-            <div class="form-group">
-              <label data-i18n="form.pax">Passagers (PNR)</label>
-              <input type="number" id="f-nb-passagers" min="1" max="20" value="1" />
-            </div>
-            <div class="form-group">
-              <label style="color:var(--gold)">Commission estimée</label>
-              <div id="pax-commission-preview" style="background:var(--gold-pale);border:1px solid rgba(200,168,90,0.3);border-radius:8px;padding:10px 14px;font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--gold);text-align:center;line-height:1.1">3 800 GMD</div>
-            </div>
-          </div>
-          <p style="font-size:0.72rem;color:var(--white-40);margin-top:6px;line-height:1.5">3 800 GMD par passager indemnisé · payé sous 48h après encaissement par Robin</p>
-        </div>
-
-        <div class="form-section">
-          <div class="section-label" data-i18n="form.step3">Perturbation</div>
-          <div class="incident-grid">
-            <div class="incident-option" data-value="Retard +3h à l'arrivée"><div class="incident-icon">⏱</div><span data-i18n="issue.delay">Retard +3h</span></div>
-            <div class="incident-option" data-value="Vol annulé"><div class="incident-icon">✕</div><span data-i18n="issue.cancel">Annulé</span></div>
-            <div class="incident-option" data-value="Surbooking / Refus d'embarquement"><div class="incident-icon">🚫</div><span data-i18n="issue.denied">Refus embarquement</span></div>
-            <div class="incident-option" data-value="Correspondance manquée"><div class="incident-icon">↪</div><span data-i18n="issue.missed">Correspondance</span></div>
-          </div>
-          <p id="f-probleme-hint" style="font-size:0.75rem;color:var(--white-40);margin:10px 0;line-height:1.5"></p>
-
-          <div style="margin-top:14px">
-            <label style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--white-70);cursor:pointer">
-              <input type="checkbox" id="toggle-vol2" onchange="document.getElementById('panel-escale').hidden=!this.checked" />
-              <span>Ajouter un 2ᵉ vol (correspondance / escale)</span>
+          <!-- VOL 2 — toggle + smart chain -->
+          <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--sky-border)">
+            <label style="display:flex;align-items:center;gap:10px;font-size:0.85rem;color:var(--white-70);cursor:pointer;user-select:none">
+              <input type="checkbox" id="toggle-vol2" style="accent-color:var(--gold);width:16px;height:16px;flex-shrink:0" />
+              <span>Add a 2nd flight (connection / stopover)</span>
             </label>
           </div>
-          <div class="panel-escale" id="panel-escale" hidden style="margin-top:10px">
+          <div id="panel-vol2" style="display:none;margin-top:14px;padding:16px;background:rgba(255,255,255,0.03);border:1px solid var(--sky-border);border-radius:12px">
+            <div style="font-size:0.72rem;color:var(--gold);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">Leg 2</div>
             <div class="form-row">
-              <div class="form-group"><label data-i18n="form.escale_via">Aéroport d'escale</label><input type="text" id="f-escale-ville" style="text-transform:uppercase" maxlength="3" placeholder="ex. CDG" /></div>
-              <div class="form-group"><label data-i18n="form.escale_vol2">N° vol 2</label><input type="text" id="f-vol2" placeholder="ex. AF1234" /></div>
+              <div class="form-group"><label>Departure (IATA)</label><input type="text" id="f-depart2" style="text-transform:uppercase" maxlength="3" placeholder="auto-filled from Leg 1 arrival" readonly style="opacity:0.7" /></div>
+              <div class="form-group"><label>Arrival (IATA)</label><input type="text" id="f-arrivee2" style="text-transform:uppercase" maxlength="3" placeholder="e.g. CDG" /></div>
             </div>
+            <div class="form-row">
+              <div class="form-group"><label>Flight number</label><input type="text" id="f-vol2" placeholder="e.g. AF1234" /></div>
+              <div class="form-group"><label>Flight date</label><input type="date" id="f-date2" /></div>
+            </div>
+            <p style="font-size:0.72rem;color:var(--white-40);line-height:1.5">Departure of Leg 2 is automatically filled from the arrival of Leg 1.</p>
           </div>
-
-          <div class="form-group"><label data-i18n="form.notes">Notes</label><textarea id="f-notes" rows="3" placeholder="Détails utiles : durée du retard, raison invoquée par la compagnie, frais avancés (taxi/hôtel/repas)..."></textarea></div>
         </div>
 
+        <!-- STEP 4 — INCIDENT -->
         <div class="form-section">
-          <div class="section-label" data-i18n="form.doc">Documents · vous pouvez en ajouter plusieurs</div>
+          <div class="section-label">Disruption</div>
+          <div class="incident-grid">
+            <div class="incident-option" data-value="Delay +3h at arrival"><div class="incident-icon">⏱</div><span>Delay +3h</span></div>
+            <div class="incident-option" data-value="Flight cancelled"><div class="incident-icon">✕</div><span>Cancelled</span></div>
+            <div class="incident-option" data-value="Denied boarding / Overbooking"><div class="incident-icon">🚫</div><span>Denied boarding</span></div>
+            <div class="incident-option" data-value="Missed connection"><div class="incident-icon">↪</div><span>Missed connection</span></div>
+          </div>
+          <p id="f-probleme-hint" style="font-size:0.75rem;color:var(--white-40);margin:10px 0;line-height:1.5"></p>
+          <div class="form-group" style="margin-top:8px"><label>Notes</label><textarea id="f-notes" rows="3" placeholder="Useful details: delay duration, reason given by airline, expenses advanced (taxi / hotel / meals)…"></textarea></div>
+        </div>
+
+        <!-- STEP 5 — DOCUMENTS -->
+        <div class="form-section">
+          <div class="section-label">Documents — add as many as needed</div>
           <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()" style="cursor:pointer">
             <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png,.webp" multiple style="display:none" />
-            <div>📎 <span>E-billet, carte d'embarquement, passeport(s), factures (taxi/hôtel/repas)</span></div>
-            <div style="font-size:0.72rem;color:var(--white-40);margin-top:6px">Toucher pour ajouter — vous pouvez répéter pour empiler plusieurs fichiers</div>
+            <div>📎 <span>E-ticket, boarding pass, passport(s), invoices (taxi / hotel / meals)</span></div>
+            <div style="font-size:0.72rem;color:var(--white-40);margin-top:6px">Tap to add — repeat to stack multiple files</div>
           </div>
           <div id="uploadedFilesList" style="margin-top:10px;display:flex;flex-direction:column;gap:6px"></div>
         </div>
 
-        <button type="button" class="btn-submit" id="btn-submit-dossier" onclick="submitDossier()" data-i18n="form.submit">Soumettre le dossier →</button>
+        <button type="button" class="btn-submit" id="btn-submit-dossier" onclick="submitDossier()">Submit case →</button>
       </div>
     </div>
 
@@ -637,11 +643,33 @@ window.__agencyFiles = [];
 
 // ─── fillRoute — clic sur chip "BJL → CDG" remplit les champs ──────────────
 window.fillRoute = function(from, to) {
-  var d = document.getElementById('f-depart');
-  var a = document.getElementById('f-arrivee');
-  if (d) { d.value = from; d.dispatchEvent(new Event('input', { bubbles: true })); }
-  if (a) { a.value = to;   a.dispatchEvent(new Event('input', { bubbles: true })); }
+  var d  = document.getElementById('f-depart');
+  var a  = document.getElementById('f-arrivee');
+  var d2 = document.getElementById('f-depart2');
+  if (d) d.value = from;
+  if (a) { a.value = to; a.dispatchEvent(new Event('input', { bubbles: true })); }
+  if (d2) d2.value = to;
 };
+
+// 2nd flight toggle + smart chain
+(function setupVol2(){
+  var cb    = document.getElementById('toggle-vol2');
+  var panel = document.getElementById('panel-vol2');
+  var d2    = document.getElementById('f-depart2');
+  var a1    = document.getElementById('f-arrivee');
+  if (!cb || !panel) return;
+  cb.addEventListener('change', function() {
+    panel.style.display = this.checked ? 'block' : 'none';
+    if (this.checked && d2 && a1 && !d2.value && a1.value) {
+      d2.value = a1.value.toUpperCase();
+    }
+  });
+  if (a1 && d2) {
+    a1.addEventListener('input', function() {
+      if (panel.style.display !== 'none') d2.value = this.value.toUpperCase();
+    });
+  }
+})();
 
 // ─── Compteur commission dynamique — N passagers × 3 800 GMD ────────────────
 (function paxCommissionPreview(){
@@ -652,7 +680,8 @@ window.fillRoute = function(from, to) {
   function update() {
     var n = Math.max(1, Math.min(20, parseInt(input.value) || 1));
     var gmd = 3800 * n;
-    out.innerHTML = fmt(gmd) + ' <span style="font-size:0.7rem;font-family:DM Sans,sans-serif;color:var(--gold-light)">GMD</span>';
+    out.innerHTML = gmd.toLocaleString('en-GB') + ' <span style="font-size:0.7rem;font-family:DM Sans,sans-serif;color:var(--gold-light)">GMD</span>';
+    if (n > 1) out.innerHTML += '<div style="font-size:0.65rem;color:var(--white-40);margin-top:2px">' + n + ' x 3,800 GMD</div>';
   }
   input.addEventListener('input', update);
   input.addEventListener('change', update);

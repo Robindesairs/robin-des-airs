@@ -78,25 +78,71 @@ function formatAirlineTransparency(d) {
   const pct = d.airlinePercent;
   const just = (d.airlineJustification || '').trim();
   const en = typeof AgenceI18n !== 'undefined' && AgenceI18n.getLang && AgenceI18n.getLang() === 'en';
+  // Compute weeks-since-submission if date present
+  let weeks = null;
+  if (d.date) {
+    const sub = new Date(d.date);
+    if (!isNaN(sub.getTime())) {
+      weeks = Math.max(0, Math.floor((Date.now() - sub.getTime()) / (7 * 24 * 3600 * 1000)));
+    }
+  }
+  const wkLabel = weeks != null ? (en ? weeks + ' week' + (weeks !== 1 ? 's' : '') + ' since submission' : weeks + ' semaine' + (weeks > 1 ? 's' : '') + ' depuis dépôt') : '';
+
   if (dec === 'accepted') {
     if (col != null && pct != null && ref) {
       return en
-        ? 'Airline: accepted — ' + col + ' € collected (' + pct + '% of indicative ' + ref + ' € bracket).'
-        : 'Compagnie : acceptation — ' + col + ' € encaissés (' + pct + ' % du barème indicatif ' + ref + ' €).';
+        ? 'Airline accepted — ' + col + ' € collected (' + pct + '% of indicative ' + ref + ' € bracket).' + (wkLabel ? ' · Resolved in ' + wkLabel.replace(' since submission', '') + '.' : '')
+        : 'Compagnie : acceptation — ' + col + ' € encaissés (' + pct + ' % du barème ' + ref + ' €).' + (wkLabel ? ' · Résolu en ' + wkLabel.replace(' depuis dépôt', '') + '.' : '');
     }
-    return en
-      ? 'Airline: acceptance recorded. Indicative bracket: ' + (ref || '—') + ' €.'
-      : 'Compagnie : acceptation enregistrée. Barème indicatif : ' + (ref || '—') + ' €.';
+    return en ? 'Acceptance recorded. Indicative bracket: ' + (ref || '—') + ' €.' : 'Acceptation enregistrée. Barème : ' + (ref || '—') + ' €.';
   }
   if (dec === 'refused') {
-    let s = en ? 'Airline: refusal — ' : 'Compagnie : refus — ';
-    s += just || (en ? 'reason documented by Robin des Airs in file notes.' : 'motif documenté par Robin des Airs dans le dossier.');
+    let s = en ? 'Refused — ' : 'Refus — ';
+    s += just || (en ? 'reason documented in file notes.' : 'motif documenté en notes.');
     return s;
   }
   if (d.airlineTransparency) return d.airlineTransparency;
+
+  // ─── Status-aware pending messages with realistic timing ──────────────────
+  const st = (d.statut || '').toLowerCase();
+  if (st === 'nouveau' || st === 'new') {
+    return en
+      ? 'New case — claim sent to airline. Most airlines reply within 4 to 12 weeks.'
+      : 'Nouveau dossier — réclamation envoyée. La plupart des compagnies répondent sous 4 à 12 semaines.';
+  }
+  if (st === 'attente-incident' || st === 'awaiting-incident') {
+    return en
+      ? 'Ticket logged — flight monitored. Claim will open if disruption ≥3h is recorded.'
+      : 'Billet enregistré — vol surveillé. Réclamation ouverte si perturbation ≥3h.';
+  }
+  if (st === 'tribunal' || st === 'escalation' || st === 'escalade') {
+    return en
+      ? 'Escalated — airline did not pay within 12 weeks. Formal recourse procedure underway.'
+      : 'Escalade — pas de paiement sous 12 semaines. Procédure de recours formel engagée.';
+  }
+  if (st === 'mediateur' || st === 'mediation') {
+    return en
+      ? 'Final mediation phase — airline refused, dossier transferred for final review.'
+      : 'Phase de médiation finale — refus compagnie, dossier en révision finale.';
+  }
+  // Generic 'en-cours'
+  if (weeks != null) {
+    if (weeks < 4) return en
+      ? 'Awaiting airline reply — typical response in 4 to 12 weeks. Currently at ' + wkLabel + '.'
+      : 'Attente compagnie — réponse typique sous 4 à 12 semaines. Actuellement ' + wkLabel + '.';
+    if (weeks < 8) return en
+      ? 'In active negotiation — Robin des Airs has issued formal claim. ' + wkLabel + '.'
+      : 'Négociation active — réclamation formelle envoyée. ' + wkLabel + '.';
+    if (weeks < 12) return en
+      ? 'Approaching 12-week threshold — final reminder sent before escalation. ' + wkLabel + '.'
+      : 'Approche du seuil 12 semaines — relance finale avant escalade. ' + wkLabel + '.';
+    return en
+      ? 'Beyond 12 weeks — escalation triggered, formal recourse in preparation. ' + wkLabel + '.'
+      : 'Au-delà de 12 semaines — escalade déclenchée, recours en préparation. ' + wkLabel + '.';
+  }
   return en
-    ? 'Airline decision pending — Robin des Airs will publish acceptance or refusal with justification.'
-    : 'Décision compagnie en attente — Robin des Airs publiera acceptation ou refus motivé.';
+    ? 'Case in progress — most cases resolve in 4 to 12 weeks.'
+    : 'Dossier en cours — la plupart résolus en 4 à 12 semaines.';
 }
 
 function transparencyDetailRow(d, colspan) {
@@ -295,7 +341,7 @@ function updateFormProgress() {
   const comp =
     (document.getElementById('f-compagnie')?.value || '').trim() ||
     (document.getElementById('airlineInput')?.value || '').trim();
-  const step2 = pnr.length === 6 && vol && dep.length === 3 && arr.length === 3 && date && comp;
+  const step2 = pnr.length >= 5 && pnr.length <= 6 && vol && dep.length === 3 && arr.length === 3 && date && comp;
   const prob = (document.getElementById('f-probleme')?.value || '').trim();
   const step3 = !!prob;
   const steps = [
@@ -784,22 +830,45 @@ function showTrialBanner() {
   if (el) { el.hidden = true; el.remove(); }
 }
 
+// Compute dynamic dates relative to "now" so weeks-since make sense
+function _wkAgo(weeks) {
+  const d = new Date();
+  d.setDate(d.getDate() - weeks * 7);
+  return d.toISOString().slice(0, 10);
+}
 const DEMO_DOSSIERS = [
-  { ref:'RDA-2026-001', prenom:'Fatou',    nom:'DIALLO',   vol:'SN301', compagnie:'Brussels Airlines', statut:'paye',             nbPassagers:1, date:'2026-01-14', montantGmd:51000, notes:'Vol BJL→BRU retardé 5h. Indemnité versée.' },
-  { ref:'RDA-2026-002', prenom:'Amadou',   nom:'JALLOW',   vol:'SN302', compagnie:'Brussels Airlines', statut:'paye',             nbPassagers:4, date:'2025-12-22', montantGmd:204000, notes:'Famille de 4. Annulation vol de Noel. Remboursé.' },
-  { ref:'RDA-2026-003', prenom:'Mariama',  nom:'CEESAY',   vol:'BY2635',compagnie:'TUI Airways',       statut:'gagne',            nbPassagers:2, date:'2026-02-08', montantGmd:102000, notes:'Retard 6h LGW. Gain obtenu, virement en cours.' },
-  { ref:'RDA-2026-004', prenom:'Ousman',   nom:'SANNEH',   vol:'SN301', compagnie:'Brussels Airlines', statut:'en-cours',         nbPassagers:1, date:'2026-03-15', montantGmd:51000,  notes:'Dossier envoyé à Brussels Airlines. Délai réponse: 6 sem.' },
-  { ref:'RDA-2026-005', prenom:'Binta',    nom:'CAMARA',   vol:'TP1481',compagnie:'TAP Air Portugal', statut:'en-cours',         nbPassagers:3, date:'2026-04-02', montantGmd:153000, notes:'Vol BJL→LIS retardé 4h. Négociation en cours.' },
-  { ref:'RDA-2026-006', prenom:'Lamin',    nom:'TOURAY',   vol:'BY2636',compagnie:'TUI Airways',       statut:'tribunal',         nbPassagers:2, date:'2025-11-19', montantGmd:102000, notes:'TUI a refusé. Dossier transmis au tribunal. Audience fixée.' },
-  { ref:'RDA-2026-007', prenom:'Isatou',   nom:'JOBARTEH', vol:'SN302', compagnie:'Brussels Airlines', statut:'refuse',           nbPassagers:1, date:'2026-01-30', montantGmd:51000,  notes:'Brussels Airlines invoque circonstances extraordinaires. Contre-argumentation préparée.' },
-  { ref:'RDA-2026-008', prenom:'Yankuba',  nom:'DRAMMEH',  vol:'SN301', compagnie:'Brussels Airlines', statut:'mediateur',        nbPassagers:5, date:'2025-10-11', montantGmd:255000, notes:'Refus initial. Dossier soumis au médiateur européen.' },
-  { ref:'RDA-2026-009', prenom:'Adama',    nom:'BARRY',    vol:'BY2635',compagnie:'TUI Airways',       statut:'nouveau',          nbPassagers:1, date:'2026-05-20', montantGmd:51000,  notes:'Dossier reçu. Analyse éligibilité en cours.' },
-  { ref:'RDA-2026-010', prenom:'Sainey',   nom:'COLLEY',   vol:'TP1482',compagnie:'TAP Air Portugal', statut:'nouveau',          nbPassagers:2, date:'2026-05-28', montantGmd:102000, notes:'Documents reçus. En attente validation.' },
-  { ref:'RDA-2026-011', prenom:'Haddijatou',nom:'BALDEH',  vol:'SN302', compagnie:'Brussels Airlines', statut:'attente-incident',  nbPassagers:4, date:'2026-06-01', montantGmd:0,      notes:'Billets vendus. Vol prévu 15/07. Surveillance activée.' },
-  { ref:'RDA-2026-012', prenom:'Sering',   nom:'BOJANG',   vol:'BY2635',compagnie:'TUI Airways',       statut:'refuse',           nbPassagers:1, date:'2025-09-05', montantGmd:51000,  notes:'TUI refuse (météo). Preuves METAR contradictoires. Recours préparé.' },
-  { ref:'RDA-2026-013', prenom:'Fatoumata',nom:'NJIE',     vol:'SN301', compagnie:'Brussels Airlines', statut:'tribunal',         nbPassagers:3, date:'2025-08-22', montantGmd:153000, notes:'2e refus Brussels Airlines. Assignation tribunal Paris envoyée.' },
-  { ref:'RDA-2026-014', prenom:'Ebrima',   nom:'SAIDY',    vol:'SN302', compagnie:'Brussels Airlines', statut:'paye',             nbPassagers:2, date:'2025-06-14', montantGmd:102000, notes:'Dossier clos. Virement effectué. Commission versée à Seyman Travel.' },
-  { ref:'RDA-2026-015', prenom:'Ndey',     nom:'JOBE',     vol:'BY2636',compagnie:'TUI Airways',       statut:'en-cours',         nbPassagers:6, date:'2026-04-18', montantGmd:306000, notes:'Famille de 6. Retard 7h LGW. Négociation prioritaire.' },
+  // ── PAID — resolved in 4 to 8 weeks (typical fast payouts) ──────────────
+  { ref:'RDA-2026-001', prenom:'Fatou',    nom:'DIALLO',   vol:'SN301', compagnie:'Brussels Airlines', statut:'paye',     nbPassagers:1, date:_wkAgo(20), montantGmd:51000,  pnr:'K5FW8B', notes:'BJL → BRU delayed 5h. Compensation paid out in 6 weeks.' },
+  { ref:'RDA-2026-002', prenom:'Amadou',   nom:'JALLOW',   vol:'SN302', compagnie:'Brussels Airlines', statut:'paye',     nbPassagers:4, date:_wkAgo(24), montantGmd:204000, pnr:'PNR42X', notes:'Family of 4. Christmas flight cancelled. Paid in 8 weeks.' },
+  { ref:'RDA-2026-014', prenom:'Ebrima',   nom:'SAIDY',    vol:'SN302', compagnie:'Brussels Airlines', statut:'paye',     nbPassagers:2, date:_wkAgo(48), montantGmd:102000, pnr:'AB3CD',  notes:'File closed. Wire transfer completed. Commission paid to Seyman Travel.' },
+
+  // ── WON — accepted, payout in progress ──────────────────────────────────
+  { ref:'RDA-2026-003', prenom:'Mariama',  nom:'CEESAY',   vol:'BY2635',compagnie:'TUI Airways',       statut:'gagne',    nbPassagers:2, date:_wkAgo(10), montantGmd:102000, pnr:'TUI901',  notes:'Delay 6h LGW. Airline accepted. Wire transfer scheduled within 5 working days.' },
+
+  // ── IN PROGRESS — within normal 4-12 week window ────────────────────────
+  { ref:'RDA-2026-004', prenom:'Ousman',   nom:'SANNEH',   vol:'SN301', compagnie:'Brussels Airlines', statut:'en-cours', nbPassagers:1, date:_wkAgo(3),  montantGmd:51000,  pnr:'XZ4P9',  notes:'Claim sent to Brussels Airlines. Awaiting initial response (week 3 of typical 4-12).' },
+  { ref:'RDA-2026-005', prenom:'Binta',    nom:'CAMARA',   vol:'TP1481',compagnie:'TAP Air Portugal',  statut:'en-cours', nbPassagers:3, date:_wkAgo(5),  montantGmd:153000, pnr:'TP55Q',  notes:'BJL → LIS delayed 4h. Active negotiation with TAP claims department.' },
+  { ref:'RDA-2026-015', prenom:'Ndey',     nom:'JOBE',     vol:'BY2636',compagnie:'TUI Airways',       statut:'en-cours', nbPassagers:6, date:_wkAgo(7),  montantGmd:306000, pnr:'TUI612', notes:'Family of 6. 7h delay at LGW. Priority case in active negotiation.' },
+  { ref:'RDA-2026-016', prenom:'Modou',    nom:'NDONG',    vol:'AF731', compagnie:'Air France',        statut:'en-cours', nbPassagers:2, date:_wkAgo(9),  montantGmd:102000, pnr:'AF99K',  notes:'Approaching 12-week threshold. Final reminder sent before escalation.' },
+
+  // ── ESCALATION — past 12 weeks, formal recourse ─────────────────────────
+  { ref:'RDA-2026-006', prenom:'Lamin',    nom:'TOURAY',   vol:'BY2636',compagnie:'TUI Airways',       statut:'tribunal', nbPassagers:2, date:_wkAgo(14), montantGmd:102000, pnr:'TUI707', notes:'TUI refused initial claim. Formal recourse procedure engaged after 12 weeks of silence.' },
+  { ref:'RDA-2026-013', prenom:'Fatoumata',nom:'NJIE',     vol:'SN301', compagnie:'Brussels Airlines', statut:'tribunal', nbPassagers:3, date:_wkAgo(18), montantGmd:153000, pnr:'BX2L7',  notes:'Second refusal Brussels Airlines. Formal recourse activated, awaiting written reply.' },
+
+  // ── FINAL MEDIATION — extreme cases ─────────────────────────────────────
+  { ref:'RDA-2026-008', prenom:'Yankuba',  nom:'DRAMMEH',  vol:'SN301', compagnie:'Brussels Airlines', statut:'mediateur',nbPassagers:5, date:_wkAgo(22), montantGmd:255000, pnr:'SN4P2',  notes:'Initial refusal. Case transferred to final mediation review after escalation.' },
+
+  // ── REFUSED — extraordinary circumstances (weather/strike/etc) ──────────
+  { ref:'RDA-2026-007', prenom:'Isatou',   nom:'JOBARTEH', vol:'SN302', compagnie:'Brussels Airlines', statut:'refuse',   nbPassagers:1, date:_wkAgo(9),  montantGmd:51000,  pnr:'JZ8H4',  notes:'Brussels Airlines invoked "extraordinary circumstances" (storm). Counter-evidence (METAR data) being prepared.', airlineDecision:'refused', airlineJustification:'Extraordinary circumstances claimed — adverse weather (storm). Robin des Airs disputes with METAR evidence.' },
+  { ref:'RDA-2026-012', prenom:'Sering',   nom:'BOJANG',   vol:'BY2635',compagnie:'TUI Airways',       statut:'refuse',   nbPassagers:1, date:_wkAgo(11), montantGmd:51000,  pnr:'TUI88',  notes:'TUI invokes weather. METAR data contradictory. Counter-claim being prepared.', airlineDecision:'refused', airlineJustification:'Weather-related extraordinary circumstances claimed. Independent meteorological evidence (METAR) shows conditions were within operational limits.' },
+  { ref:'RDA-2026-017', prenom:'Alieu',    nom:'CONTEH',   vol:'AT591', compagnie:'Royal Air Maroc',   statut:'refuse',   nbPassagers:2, date:_wkAgo(7),  montantGmd:102000, pnr:'RAM77',  notes:'Airline cites ATC strike (extraordinary). Independent verification ongoing.', airlineDecision:'refused', airlineJustification:'Air traffic control strike invoked as extraordinary circumstance. Verification of strike scope and dates underway.' },
+
+  // ── NEW — just submitted ────────────────────────────────────────────────
+  { ref:'RDA-2026-009', prenom:'Adama',    nom:'BARRY',    vol:'BY2635',compagnie:'TUI Airways',       statut:'nouveau',  nbPassagers:1, date:_wkAgo(1),  montantGmd:51000,  pnr:'NEW01', notes:'Case received. Eligibility analysis in progress.' },
+  { ref:'RDA-2026-010', prenom:'Sainey',   nom:'COLLEY',   vol:'TP1482',compagnie:'TAP Air Portugal',  statut:'nouveau',  nbPassagers:2, date:_wkAgo(0),  montantGmd:102000, pnr:'NEW02', notes:'Documents received. Awaiting validation.' },
+
+  // ── AWAITING INCIDENT — future flight monitored ─────────────────────────
+  { ref:'RDA-2026-011', prenom:'Haddijatou',nom:'BALDEH',  vol:'SN302', compagnie:'Brussels Airlines', statut:'attente-incident', nbPassagers:4, date:_wkAgo(0), montantGmd:0, pnr:'WATCH', notes:'Tickets sold. Flight scheduled 15/07. Active surveillance enabled.' },
 ];
 
 function enterTrialModeClientOnly() {
@@ -1216,7 +1285,7 @@ async function submitDossier() {
   }
 
   const pnr = vals.pnr.toUpperCase();
-  if (pnr.length !== 6) {
+  if (pnr.length < 5 || pnr.length > 6 || !/^[A-Z0-9]{5,6}$/.test(pnr)) {
     markFieldInvalid('f-pnr', true);
     showToast(t('toast.pnr_invalid'), true);
     return;
@@ -1338,6 +1407,7 @@ function formatDate(d) {
 }
 
 function badgeHTML(statut) {
+  const isEn = typeof AgenceI18n !== 'undefined' && AgenceI18n.getLang && AgenceI18n.getLang() === 'en';
   const keys = {
     nouveau: 'status.nouveau',
     'attente-incident': 'status.attente',
@@ -1345,9 +1415,9 @@ function badgeHTML(statut) {
     gagne: 'status.gagne',
     paye: 'status.paye',
     rejete: 'status.rejete',
-    refuse: 'Refusé',
-    tribunal: 'Tribunal ⚖️',
-    mediateur: 'Médiateur 🔄',
+    refuse: isEn ? 'Refused' : 'Refusé',
+    tribunal: isEn ? 'Escalation ⚖️' : 'Escalade ⚖️',
+    mediateur: isEn ? 'Final review 🔄' : 'Révision finale 🔄',
   };
   const pills = {
     nouveau: 'status-new',
