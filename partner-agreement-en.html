@@ -9,7 +9,7 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://robindesairs.eu/partner-agreement-fr.html">
 <meta property="og:title" content="Partner Agreement — Robin des Airs × Seyman Travel">
-<meta property="og:description" content="Partner Referral Agreement — apport de dossiers, commission, CE 261.">
+<meta property="og:description" content="Partner Referral Agreement — case referrals, commission, EU Regulation CE 261/2004.">
 <meta property="og:image" content="https://robindesairs.eu/robin-des-airs-logo-texte-profil.png">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -92,6 +92,23 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
 .success-screen{display:none;background:white;border:1px solid var(--border);border-top:4px solid var(--green);padding:60px 40px;text-align:center}
 .success-icon{width:72px;height:72px;background:var(--green);border-radius:50%;color:white;font-size:30px;line-height:72px;margin:0 auto 20px}
 .success-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:500;color:var(--green);margin-bottom:12px}
+.btn-pdf{display:inline-block;background:white;color:var(--green);border:2px solid var(--green);padding:12px 28px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;margin-top:16px;text-decoration:none}
+.btn-pdf:hover{background:var(--green-pale)}
+.robin-sig-block{background:var(--green-pale);border:1px solid #b8cfc3;padding:20px 24px;margin:20px 0;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.robin-sig-col{font-size:12px;color:#3a3630;line-height:1.9}
+.robin-sig-name{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--green);margin-top:6px}
+.robin-sig-img{font-family:'Cormorant Garamond',serif;font-size:22px;font-style:italic;color:var(--green);border-bottom:1px solid var(--green);padding-bottom:4px;display:inline-block;margin-top:4px}
+@media print{
+  .topbar,.progress-wrap,.btn-submit,.btn-pdf,.trust-bar,.lang-pill,.doc-badge,#sigArea,#sigPh,#sigClear,.single-check,.ferr,select,button,.sig-area{display:none!important}
+  body{background:white!important}
+  .page{padding:0!important;max-width:100%!important}
+  .doc-section,.doc-header{border:1px solid #ccc!important}
+  .amount-hero{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #sigDisplayBlock{display:block!important}
+}
+@media(max-width:600px){
+  .robin-sig-block{grid-template-columns:1fr}
+}
 .lang-pill{font-family:'DM Mono',monospace;font-size:10px;color:var(--gold-soft);text-decoration:none;border:1px solid rgba(201,169,110,.4);padding:4px 10px}
 .lang-pill:hover{background:rgba(255,255,255,.08)}
 @media(max-width:600px){
@@ -110,7 +127,7 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   <div style="display:flex;align-items:center;gap:12px">
     <a class="lang-pill" href="/partner-agreement-fr.html">Français</a>
     <a class="lang-pill" href="/bareme-ce261-fr.html">Barème CE 261</a>
-    <a class="lang-pill" href="/espace-agence.html">Espace agence</a>
+    <a class="lang-pill" href="/espace-agence.html">Agency portal</a>
     <div class="doc-badge">Partner Agreement · CE 261/2004</div>
   </div>
 </div>
@@ -124,7 +141,7 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
       <div style="font-size:11px;color:var(--muted);margin-top:4px">Agency Partner Programme · Europe–Africa corridor</div>
     </div>
     <div class="doc-ref">
-      <div>Réf. : <strong id="dRef">—</strong></div>
+      <div>Ref.: <strong id="dRef">—</strong></div>
       <div>Date : <strong id="dDate">—</strong></div>
       <div style="font-size:10px;margin-top:4px">Partner code: <strong id="dCode">—</strong></div>
     </div>
@@ -134,8 +151,8 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
 </div>
 <div class="doc-section" style="padding-top:18px;padding-bottom:18px">
   <div class="declaration-box" style="margin:0">
-    <strong>Contrat B2B d'apport</strong> — vous orientez des passagers ; chacun signe un mandat distinct ; Robin gère le dossier auprès de la compagnie.
-    Vous conservez vos prestations agence habituelles ; la commission est due lorsque Robin encaisse l'indemnité sur votre recommandation.
+    <strong>B2B referral agreement</strong> — you refer passengers; each one signs a separate mandate; Robin manages the claim with the airline.
+    You keep your usual agency services; the commission is due once Robin collects the compensation on your referral.
   </div>
 </div>
 <div class="doc-section">
@@ -225,7 +242,6 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
         <option value="wave">Wave</option>
         <option value="afrimoney">Afrimoney</option>
         <option value="qmoney">QMoney</option>
-        <option value="bank">Bank transfer (SEPA / local)</option>
       </select>
     </div>
   </div>
@@ -235,44 +251,42 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
     <div class="ferr" id="addrErr">Required</div>
   </div>
 </div>
-<div class="doc-section" id="foundingOffer">
-  <div class="declaration-box" style="margin:0;border-color:var(--gold);background:#faf5eb">
-    <strong>★ Founding Partner</strong> — The first <strong>3 agencies</strong> to sign <strong>before 31 August 2026</strong> :
-    <strong>4 000 GMD</strong> / passager gagné, <strong>locked for life</strong>.
-  </div>
-</div>
 <div class="doc-section">
   <div class="sec-title">📅 Agency commission — tiers (by signing date)</div>
   <p style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.65">
-    Le montant par passager indemnisé est celui du <strong>palier en vigueur le jour où vous signez</strong>.
-    Ce montant est <strong>locked for life</strong> pour votre agence : les baisses ultérieures ne s'appliquent qu'aux <em>nouveaux</em> partenaires
-    (après l'échéance, ce palier n'est plus proposé — voir article 2).
-    <a href="/paliers-commission-agence-fr.html" target="_blank" rel="noopener">Détail des paliers ↗</a>
+    The commission per successful passenger is the <strong>tier in effect on the day you sign</strong>.
+    This amount is <strong>locked for life</strong> for your agency — later reductions only apply to <em>new</em> partners (see article 2).
   </p>
   <table class="fee-table" id="tierCommTable">
-    <tr><th>Tier</th><th>Condition</th><th>Commission / pax</th></tr>
-    <tr data-tier="founding" id="foundingRow"><td>★ Founding</td><td>Sign before 31 Aug 2026 · 3 spots</td><td class="em" id="tier0Gmd">4 000 GMD/pax</td></tr>
-    <tr data-tier="ete"><td>1 — Summer</td><td>31 Aug 2026</td><td class="em" id="tier1Gmd">3 800 GMD/pax</td></tr>
-    <tr data-tier="fin_annee"><td>2 — Autumn</td><td>31 Dec 2026</td><td class="em" id="tier2Gmd">3 400 GMD/pax</td></tr>
+    <tr><th>Tier</th><th>Valid until</th><th>Commission / pax</th></tr>
+    <tr data-tier="ete"><td>1 — Summer 2026</td><td>31 Aug 2026</td><td class="em" id="tier1Gmd">3 800 GMD/pax</td></tr>
+    <tr data-tier="fin_annee"><td>2 — Autumn 2026</td><td>31 Dec 2026</td><td class="em" id="tier2Gmd">3 400 GMD/pax</td></tr>
     <tr data-tier="2027"><td>3 — 2027</td><td>From 1 Jan 2027</td><td class="em" id="tier3Gmd">3 000 GMD/pax</td></tr>
   </table>
   <div class="email-tech-note" id="tierActiveNote" style="margin-top:12px">
-    Tier applicable à la signature d'aujourd'hui : <strong id="tierActiveLabel">—</strong>
+    Tier applicable today: <strong id="tierActiveLabel">—</strong>
   </div>
 </div>
 <div class="doc-section">
-  <div class="sec-title">💶 Commercial framework (per successful passenger)</div>
+  <div class="sec-title">💶 How compensation is split (CE 261 — Europe–Africa corridor)</div>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.65">
+    Example based on a <strong>600 € CE 261 compensation</strong> (Europe–Africa, &gt; 3,500 km).
+    The percentage split is <strong>fixed regardless of the amount collected</strong> — it applies the same way whether the airline pays 250 €, 400 €, or 600 €.
+  </p>
   <table class="fee-table">
-    <tr><th>Distance (indicative)</th><th>Compensation / pax</th><th>Net to passenger (75%)</th><th>Notes</th></tr>
-    <tr><td>≤ 1 500 km</td><td class="em">250 €</td><td>187,50 €</td><td>Tier CE 261 — palier 1</td></tr>
-    <tr><td>1 500 – 3 500 km</td><td class="em">400 €</td><td>300 €</td><td>Tier CE 261 — palier 2</td></tr>
-    <tr><td>&gt; 3 500 km</td><td class="em">600 €</td><td>450 €</td><td>e.g. Europe–Africa</td></tr>
-    <tr><td colspan="4" style="font-size:12px;color:var(--muted)">Actual amount varies — see <a href="/bareme-ce261-fr.html" target="_blank" rel="noopener">full schedule</a> et transparency (% of bracket) in portal.</td></tr>
-    <tr><td><strong>Your agency commission</strong></td><td class="em" id="tblComm" colspan="2">3 800 GMD</td><td>Tier en vigueur à la date de signature (tableau ci-dessus)</td></tr>
+    <tr><th>Party</th><th>Example (600 €)</th><th>Share</th><th>Notes</th></tr>
+    <tr><td><strong>Passenger</strong></td><td class="em">420 €</td><td>70%</td><td>Paid directly to the passenger</td></tr>
+    <tr><td><strong>Seyman Travel</strong></td><td class="em" id="tblComm">45 € (3,800 GMD)</td><td>7.5%</td><td>Commission on CE 261 compensation only</td></tr>
+    <tr><td><strong>Robin des Airs</strong></td><td class="em">135 €</td><td>22.5%</td><td>Case management &amp; recovery fee</td></tr>
+    <tr style="background:var(--paper)"><td colspan="4" style="font-size:12px;color:var(--muted);padding:10px 14px">
+      <strong>Important:</strong> Seyman Travel's commission is calculated exclusively on the <strong>CE 261 cash compensation</strong>.
+      It is never deducted from — and has no impact on — reimbursements for hotel, meals, or transport (taxi, etc.), which are separate cost items billed at actual cost.
+    </td></tr>
   </table>
-  <div class="email-tech-note">
-    <strong>Practical note:</strong> no passenger personal email is required in the portal — Robin creates the case address automatically.
-    You can help the passenger fill in the <a href="/autorisation.html" target="_blank" rel="noopener">passenger mandate</a> ; Robin then handles the airline process.
+  <div class="email-tech-note" style="margin-top:12px">
+    <strong>Note — direct vs. agency rate:</strong> Robin des Airs applies a fee of <strong>25%</strong> on cases submitted directly (no agency).
+    The <strong>30% total</strong> on agency-referred cases (22.5% Robin + 7.5% Seyman Travel) reflects the referral cost — the passenger's net is <strong>70%</strong> in both channels.
+    This agreement governs the agency channel exclusively.
   </div>
 </div>
 <div class="doc-section">
@@ -280,24 +294,24 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   <div class="clause le">
     <span class="cnum">Article 1 — Purpose</span>
     This Agreement establishes an <strong>exclusive referral framework</strong> for case referrals and commissions under <strong>EU Regulation CE 261/2004</strong>.
-    Party B refers potentially eligible passengers; Robin des Airs processes claims on a <strong>no win, no fee</strong> basis after the passenger signs the mandate.
+    Seyman Travel (Party B — the partner agency) refers potentially eligible passengers; Robin des Airs processes claims on a <strong>no win, no fee</strong> basis after the passenger signs the mandate.
     Party B uses the <strong>partner portal</strong> (<a href="/espace-agence.html">agency portal</a>) and may continue its usual travel services.
     <strong>Exclusive territory: The Gambia (BJL airport and all Gambian-resident passengers)</strong> — Robin des Airs will not engage any other referral partner in this territory while this Agreement is active.
   </div>
   <div class="clause hi">
     <span class="cnum">Article 2 — Agency commission</span>
     Upon successful collection of passenger compensation, Robin des Airs pays the agency
-    <strong id="clauseComm">3 800 GMD</strong> par passager indemnisé — montant du <strong>palier en vigueur le jour de la signature</strong> (tableau ci-dessus),
-    <strong>locked for life</strong> pour votre agence (non révisable à la baisse lors des paliers suivants ; indicatif ≈ <strong id="clauseCommEur">45 €</strong> à 84 GMD/€).
-    Paiement sous <strong>48 h ouvrées après encaissement effectif par Robin</strong>, selon le mode choisi ci-dessus et des coordonnées valides.
-    Aucune commission si le dossier échoue ou aucune indemnité n'est encaissée.
+    <strong id="clauseComm">3,800 GMD</strong> per successful passenger — the rate of the <strong>tier in effect on the day of signing</strong> (see table above),
+    <strong>locked for life</strong> for your agency (not subject to downward revision when later tiers apply; indicative ≈ <strong id="clauseCommEur">45 €</strong> at 84 GMD/€).
+    Payment within <strong>48 working hours of Robin des Airs receiving the compensation</strong>, via the chosen payment method and valid details provided above.
+    No commission is due if the claim fails or no compensation is collected.
   </div>
   <div class="clause le">
     <span class="cnum">Article 3 — Dossiers &amp; passenger mandate</span>
-    L'agence dépose les données passager/vol via l'<strong>espace agence</strong> et peut <strong>accompagner le passager</strong>
-    (information, WhatsApp, aide à la signature) pour le <a href="/autorisation.html" target="_blank" rel="noopener">passenger mandate</a>.
-    Une fois le mandat signé, <strong>Robin des Airs pilote</strong> les échanges avec la compagnie et le recouvrement.
-    L'email technique du dossier et la représentation du passager sont définis dans ce mandat.
+    The agency submits passenger and flight data via the <strong>partner portal</strong> and may <strong>assist the passenger</strong>
+    (information, WhatsApp, help with signing) for the <a href="/autorisation.html" target="_blank" rel="noopener">passenger mandate</a>.
+    Once the mandate is signed, <strong>Robin des Airs leads</strong> all communications with the airline and the recovery process.
+    The technical case email and passenger representation are defined in that mandate.
   </div>
   <div class="clause">
     <span class="cnum">Article 4 — Obligations of Party B (Seyman Travel)</span>
@@ -315,10 +329,10 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   </div>
   <div class="clause hi">
     <span class="cnum">Article 5.1 — Airline decision transparency</span>
-    For <strong>each open case</strong>, Robin des Airs will communicate to Party B, via the partner portal,
-    the <strong>acceptance or refusal</strong> by the airline with a <strong>reasoned justification</strong>.
-    If the amount collected differs from the <strong>indicative CE 261 schedule</strong>,
-    Robin will also indicate the result as a <strong>percentage of that indicative amount</strong>.
+    For <strong>each case</strong>, Robin des Airs will communicate to the agency, via the partner portal,
+    the airline's decision with a <strong>written justification in all cases</strong> — whether the claim is accepted, refused, or results in a <strong>payment lower than the indicative CE 261 schedule</strong>.
+    A written justification is <strong>always produced</strong>: no decision is communicated without explanation.
+    Where the amount collected differs from the indicative schedule, Robin will also state the result as a <strong>percentage of the indicative amount</strong>.
   </div>
   <div class="clause">
     <span class="cnum">Article 6 — Term, renewal &amp; termination</span>
@@ -370,17 +384,39 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
       <input type="text" id="sigDate" class="ro" readonly>
     </div>
   </div>
-  <p style="font-size:13px;color:var(--muted);margin-bottom:8px">Signez ci-dessous (doigt ou souris) :</p>
+  <p style="font-size:13px;color:var(--muted);margin-bottom:8px">Sign below (finger or mouse):</p>
   <div class="sig-area" id="sigArea">
     <canvas id="sigCanvas" width="680" height="120"></canvas>
     <div class="sig-ph" id="sigPh">✍️ Press to sign</div>
     <div class="sig-clear" id="sigClear" onclick="clearSig(event)">✕ Clear</div>
   </div>
+  <div id="sigDisplayBlock" style="display:none;margin:8px 0"><img id="sigDisplayImg" style="max-width:100%;border:1px solid var(--border)"></div>
   <div class="ferr" id="sigErr">Signature required</div>
-  <button type="button" class="btn-submit" id="btnSub" onclick="submitContract()">📝 Sign the partnership agreement</button>
+
+  <div class="robin-sig-block" style="margin-top:24px">
+    <div class="robin-sig-col">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--muted);margin-bottom:6px">For Robin des Airs</div>
+      <div class="robin-sig-name">Robin des Airs</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:2px">66 Avenue des Champs-Élysées, Paris<br>partners@robindesairs.eu</div>
+      <div class="robin-sig-img" style="margin-top:12px">Robin des Airs</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:6px">Authorised representative — pre-signed</div>
+    </div>
+    <div class="robin-sig-col">
+      <div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--muted);margin-bottom:6px">For <span id="rSigAgency">the Partner Agency</span></div>
+      <div style="font-size:13px;color:var(--ink);font-weight:600" id="rSigName">—</div>
+      <div style="font-size:12px;color:var(--muted)" id="rSigRole">—</div>
+      <div style="font-size:12px;color:var(--muted)" id="rSigCity">—</div>
+      <div style="font-size:12px;color:var(--muted)" id="rSigDate">—</div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;margin-top:24px;flex-wrap:wrap">
+    <button type="button" class="btn-submit" id="btnSub" onclick="submitContract()" style="flex:1;min-width:200px;margin-top:0">📝 Sign the partnership agreement</button>
+    <button type="button" class="btn-pdf" onclick="downloadPdf()" style="flex:0 0 auto">📥 Download PDF</button>
+  </div>
 </div>
 <div class="trust-bar">
-  <div class="trust-item">🔒 Sécurisé</div>
+  <div class="trust-item">🔒 Secure</div>
   <div class="trust-item">⚖️ CE 261/2004</div>
   <div class="trust-item">💶 3,800 GMD / success</div>
   <div class="trust-item">✈ Partner portal</div>
@@ -393,8 +429,11 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
     Thank you. Our team will activate your partner portal access within 24–48 hours.
   </p>
   <p style="color:var(--green);font-size:13px;max-width:440px;margin:12px auto 0" id="sCommNote"></p>
-  <div class="success-ref">Reference: <strong id="sRef">—</strong></div>
-  <p style="margin-top:20px"><a href="/espace-agence.html" style="color:var(--green)">Open partner portal →</a></p>
+  <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-top:12px">Reference: <strong id="sRef">—</strong></div>
+  <div style="margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+    <button class="btn-pdf" onclick="downloadPdf()">📥 Download signed contract (PDF)</button>
+    <a href="/espace-agence.html" style="display:inline-block;background:var(--green);color:white;padding:12px 28px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;text-decoration:none">Open partner portal →</a>
+  </div>
 </div>
 </div>
 <script src="/assets/agence-commission-tiers.js"></script>
@@ -412,7 +451,7 @@ function resolveCommTier() {
     COMM_GMD = COMM_TIER.commissionGmd;
   } else {
     COMM_GMD = parseInt(P.get('commission_gmd') || '3800', 10) || 3800;
-    COMM_TIER = { tierId: 'ete', tierLabel: 'Tier été', commissionGmd: COMM_GMD };
+    COMM_TIER = { tierId: 'ete', tierLabel: 'Summer tier', commissionGmd: COMM_GMD };
   }
   commEur = Math.round((COMM_GMD / GMD_PER_EUR) * 100) / 100;
 }
@@ -422,28 +461,43 @@ function updateParties() {
   const code = document.getElementById('agencyCode')?.value.trim() || P.get('code') || 'SEYMAN-001';
   const country = document.getElementById('country')?.value.trim() || P.get('country') || 'The Gambia';
   const sign = document.getElementById('signName')?.value.trim() || '—';
+  const role = document.getElementById('signRole')?.value.trim() || '—';
+  const city = document.getElementById('sigCity')?.value.trim() || '—';
+  const date = document.getElementById('sigDate')?.value || '—';
   ['pAgency','declAgency'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = name; });
   ['pCode','dCode'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = code; });
   const pc = document.getElementById('pCountry'); if (pc) pc.textContent = country;
   const d = document.getElementById('declarant'); if (d) d.textContent = sign;
+  const rsa = document.getElementById('rSigAgency'); if (rsa) rsa.textContent = name;
+  const rsn = document.getElementById('rSigName'); if (rsn) rsn.textContent = sign;
+  const rsr = document.getElementById('rSigRole'); if (rsr) rsr.textContent = role;
+  const rsc = document.getElementById('rSigCity'); if (rsc) rsc.textContent = city ? 'Signed in: ' + city : '—';
+  const rsd = document.getElementById('rSigDate'); if (rsd) rsd.textContent = date ? 'Date: ' + date : '—';
+}
+
+function downloadPdf() {
+  const sig = document.getElementById('sigCanvas');
+  if (sig && sig.style.display !== 'none') {
+    const img = document.getElementById('sigDisplayImg');
+    if (img) { img.src = sig.toDataURL('image/png'); document.getElementById('sigDisplayBlock').style.display = 'block'; }
+  }
+  setTimeout(() => window.print(), 100);
 }
 
 function setCommLabels() {
   resolveCommTier();
-  const gmd = COMM_GMD.toLocaleString('fr-FR') + ' GMD';
-  const eur = '≈ ' + commEur.toLocaleString('fr-FR') + ' €';
+  const gmd = COMM_GMD.toLocaleString('en-GB') + ' GMD';
+  const eur = '≈ ' + commEur.toLocaleString('en-GB') + ' €';
   ['hCommGmd','clauseComm','tblComm'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = gmd; });
-  const ce = document.getElementById('clauseCommEur'); if (ce) ce.textContent = commEur.toLocaleString('fr-FR') + ' €';
-  const sub = document.getElementById('hCommSub'); if (sub) sub.textContent = 'Par passager indemnisé · ' + eur + ' à ' + GMD_PER_EUR + ' GMD/€';
+  const ce = document.getElementById('clauseCommEur'); if (ce) ce.textContent = commEur.toLocaleString('en-GB') + ' €';
+  const sub = document.getElementById('hCommSub'); if (sub) sub.textContent = 'Per successful passenger · ' + eur + ' at ' + GMD_PER_EUR + ' GMD/€';
   document.querySelectorAll('#tierCommTable tr[data-tier]').forEach(function (row) {
     row.style.background = row.getAttribute('data-tier') === COMM_TIER.tierId ? '#e8f0ec' : '';
     row.style.fontWeight = row.getAttribute('data-tier') === COMM_TIER.tierId ? '600' : '';
   });
   const lab = document.getElementById('tierActiveLabel');
   if (lab) {
-    lab.textContent =
-      COMM_GMD.toLocaleString('fr-FR') +
-      ' GMD (tier date) — founding 4,000 GMD if signed before 31/08/2026 (first 3 agencies).';
+    lab.textContent = COMM_GMD.toLocaleString('en-GB') + ' GMD / pax (tier in effect today)';
   }
 }
 
@@ -592,10 +646,9 @@ async function showSuccess() {
   const note = document.getElementById('sCommNote');
   if (note) {
     note.textContent =
-      'Commission acquise à vie : ' +
-      COMM_GMD.toLocaleString('fr-FR') +
-      ' GMD par passager indemnisé' +
-      (COMM_TIER && COMM_TIER.founding ? ' (partenaire fondateur ★).' : ' (palier du jour de signature).');
+      'Commission locked for life: ' +
+      COMM_GMD.toLocaleString('en-GB') +
+      ' GMD per successful passenger (tier in effect on signing date).';
   }
   document.getElementById('pgBar').style.width = '100%';
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -603,8 +656,8 @@ async function showSuccess() {
 
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('dRef').textContent = REF;
-  document.getElementById('dDate').textContent = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-  document.getElementById('sigDate').value = new Date().toLocaleDateString('fr-FR');
+  document.getElementById('dDate').textContent = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  document.getElementById('sigDate').value = new Date().toLocaleDateString('en-GB');
   if (P.get('code')) document.getElementById('agencyCode').value = P.get('code');
   if (P.get('name')) document.getElementById('agencyName').value = P.get('name');
   if (P.get('country')) document.getElementById('country').value = P.get('country');

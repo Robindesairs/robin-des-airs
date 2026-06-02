@@ -97,8 +97,21 @@ exports.handler = async (event) => {
         body: JSON.stringify({
           from: process.env.MANDAT_NOTIFY_FROM || 'Robin des Airs <contact@robindesairs.eu>',
           to: [notifyEmail],
-          subject: `Contrat partenaire signé — ${agencyName} (${agencyCode})`,
-          text: `Réf. ${ref}\nAgence: ${agencyName}\nCode: ${agencyCode}\nCommission palier date (indicatif): ${record.commissionGmd} GMD (${record.commissionTierLabel})\n\n→ AGENCY_ACCOUNTS : "commissionGmd": …, "commissionTier": "founding" (4 000) OU "${record.commissionTier}", "partnerSignedAt": "${ts}"\n→ Si parmi les 3 premières agences ET signature avant le 31/08/2026 : 4 000 GMD acquis à vie (manuel).\n\nSignataire: ${record.signName} (${record.signRole})\nWhatsApp: ${record.whatsapp}\nEmail: ${record.email}\nPays: ${record.country}`,
+          subject: `✅ Partner agreement signed — ${agencyName} (${agencyCode})`,
+          html: `<h2>New partner agreement signed</h2>
+<table style="font-family:sans-serif;font-size:14px;border-collapse:collapse">
+  <tr><td style="padding:4px 12px 4px 0;color:#666">Reference</td><td><strong>${ref}</strong></td></tr>
+  <tr><td style="padding:4px 12px 4px 0;color:#666">Agency</td><td><strong>${agencyName}</strong> (${agencyCode})</td></tr>
+  <tr><td style="padding:4px 12px 4px 0;color:#666">Signatory</td><td>${record.signName} — ${record.signRole}</td></tr>
+  <tr><td style="padding:4px 12px 4px 0;color:#666">Country</td><td>${record.country}</td></tr>
+  <tr><td style="padding:4px 12px 4px 0;color:#666">WhatsApp</td><td>${record.whatsapp}</td></tr>
+  <tr><td style="padding:4px 12px 4px 0;color:#666">Email</td><td>${record.email}</td></tr>
+  <tr><td style="padding:4px 12px 4px 0;color:#666">Payout method</td><td>${record.payout || '—'}</td></tr>
+  <tr><td style="padding:4px 12px 4px 0;color:#666">Commission</td><td><strong>${record.commissionGmd} GMD / pax</strong> (${record.commissionTierLabel}) — locked for life</td></tr>
+  <tr><td style="padding:4px 12px 4px 0;color:#666">Signed at</td><td>${record.sigCity} · ${new Date(ts).toLocaleString('en-GB')}</td></tr>
+</table>
+${record.signatureImg ? `<p style="margin-top:16px;font-family:sans-serif;font-size:13px;color:#666">Signature:</p><img src="${record.signatureImg}" style="border:1px solid #ccc;max-width:400px">` : ''}
+<p style="margin-top:20px;font-family:sans-serif;font-size:13px;color:#999">Ref: ${ref}</p>`,
         }),
       });
     } catch (e) {
