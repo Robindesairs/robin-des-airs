@@ -76,7 +76,10 @@ async function sendList(phone, { header, body, footer, buttonText, items }, cfg)
       }
     );
     const data = await res.json().catch(() => ({}));
-    if (!data.result) {
+    // Succès = HTTP 2xx sans erreur explicite. WATI ne renvoie pas toujours `result`
+    // même quand le message interactif part bien → ne pas faire de faux fallback.
+    const failed = !res.ok || data.result === false || data.error || data.ok === false;
+    if (failed) {
       const txt = (header ? `*${header}*\n\n` : '') + body + '\n\n' +
         items.map((it, idx) => `${idx + 1} — ${it.title}`).join('\n');
       await send(phone, txt, cfg);
@@ -105,7 +108,8 @@ async function sendButtons(phone, { body, footer, buttons }, cfg) {
       }
     );
     const data = await res.json().catch(() => ({}));
-    if (!data.result) {
+    const failed = !res.ok || data.result === false || data.error || data.ok === false;
+    if (failed) {
       const txt = body + '\n\n' + buttons.map((b, i) => `${i + 1} — ${b.text}`).join('\n');
       await send(phone, txt, cfg);
     }
@@ -831,6 +835,7 @@ Confidentialité : https://robindesairs.eu/politique-confidentialite`;
 // ─── Extraction message entrant WATI ─────────────────────────────────────────
 function extractInbound(payload) {
   const list = [];
+  const seen = new Set(); // dédup : un même message inbound peut apparaître à la racine ET dans data/messages
   if (!payload || typeof payload !== 'object') return list;
   const push = (item) => {
     if (!item || typeof item !== 'object') return;
@@ -858,6 +863,10 @@ function extractInbound(payload) {
     if (!waId) return;
     const phone = normalizeWaPhone(normalizeWatiPhone(waId));
     if (!String(text || '').trim()) return;
+    // Clé de dédup : id WATI du message si dispo, sinon téléphone+texte
+    const key = item.id || item.messageId || item.whatsappMessageId || `${phone}|${String(text).trim()}`;
+    if (seen.has(key)) return;
+    seen.add(key);
     list.push({ phone, text: String(text || '').slice(0, 4096) });
   };
   if (Array.isArray(payload)) { payload.forEach(push); return list; }
