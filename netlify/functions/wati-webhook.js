@@ -710,16 +710,16 @@ async function handleMessage(phone, text, cfg) {
       s.step = 'done';
       await setState(phone, s);
 
-      // FIN A — Récap immédiat
+      // ⚠️ Serverless: PAS de longs setTimeout (Netlify tue la fonction >10-26s).
+      // On envoie les 3 messages de fin en séquence rapide (~0.8s entre chaque).
+      // FIN A — Récap
       await send(phone, formatFinA(s), cfg);
+      // FIN B — Mandat
+      await sendDelayed(phone, formatFinB(s), cfg, 800);
+      // FIN C — Pièces
+      await sendDelayed(phone, formatFinC(s), cfg, 800);
 
-      // FIN B — Mandat seul (+3s)
-      await sendDelayed(phone, formatFinB(s), cfg, 3000);
-
-      // FIN C — Pièces (+30s)
-      await sendDelayed(phone, formatFinC(s), cfg, 30000);
-
-      // Webhook Make → création Airtable
+      // Webhook Make → création Airtable (fire, ne pas bloquer si lent)
       try {
         const makeUrl = process.env.MAKE_WEBHOOK_NEW_DOSSIER;
         if (makeUrl) {
