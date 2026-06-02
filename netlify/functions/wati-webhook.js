@@ -1,5 +1,5 @@
 /**
- * Webhook WATI — Bot Robin des Airs v3.1 + historique CRM
+ * Webhook WATI — Bot Robin des Airs v3.2 + historique CRM
  *
  * URL à configurer dans WATI : Connectors → Webhooks
  *   https://robindesairs.eu/api/wati-webhook
@@ -8,35 +8,112 @@
  *   accueil → gate europe → nb passagers → type vol → incident
  *   → durée/correspondance → remboursements → OCR → vérif
  *   → année → passagers → mineurs → email → adresse → langue → FIN A/B/C
+ *
+ * Boutons interactifs WATI :
+ *   - sendList  → jusqu'à 10 options (liste déroulante)
+ *   - sendButtons → 2–3 boutons rapides
  */
 
 const { appendWaMessage, normalizeWaPhone } = require('./lib/wa-convo-store');
-const { normalizeWatiPhone, watiCfg, watiSendTyping } = require('./lib/wati-api');
+const { normalizeWatiPhone, watiCfg } = require('./lib/wati-api');
 
 const HEADERS = {
   'Content-Type': 'application/json',
   'Access-Control-Allow-Origin': '*',
 };
 
-// ─── Envoi message session WATI ──────────────────────────────────────────────
+// ─── Envoi message texte simple ───────────────────────────────────────────────
 async function send(phone, text, cfg) {
   if (!cfg) return;
   const wa = normalizeWatiPhone(phone);
   const params = new URLSearchParams({ messageText: text, channelPhoneNumber: cfg.channel });
-  const url = `${cfg.base}/api/v1/sendSessionMessage/${encodeURIComponent(wa)}?${params}`;
   try {
-    await fetch(url, {
+    await fetch(`${cfg.base}/api/v1/sendSessionMessage/${encodeURIComponent(wa)}?${params}`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
     });
+  } catch (e) { console.error('wati-bot: send failed', e.message); }
+}
+
+// ─── Envoi liste interactive (jusqu'à 10 options) ────────────────────────────
+// items = [{ title, description? }]
+async function sendList(phone, { header, body, footer, buttonText, items }, cfg) {
+  if (!cfg) return;
+  const wa = normalizeWatiPhone(phone);
+  try {
+    const res = await fetch(
+      `${cfg.base}/api/v1/sendInteractiveListMessage?whatsappNumber=${encodeURIComponent(wa)}`,
+      {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          header: header || '',
+          body,
+          footer: footer || 'robindesairs.eu',
+          buttonText: buttonText || 'Choisir ▾',
+          listItems: items.map(i => ({ title: i.title, description: i.description || '' })),
+        }),
+      }
+    );
+    const data = await res.json().catch(() => ({}));
+    if (!data.result) {
+      // Fallback texte si la liste échoue (hors fenêtre 24h ou format rejeté)
+      const txt = (header ? `*${header}*\n\n` : '') + body + '\n\n' +
+        items.map((it, idx) => `${idx + 1} — ${it.title}`).join('\n');
+      await send(phone, txt, cfg);
+    }
   } catch (e) {
-    console.error('wati-bot: send failed', e.message);
+    console.error('wati-bot: sendList failed', e.message);
+    const txt = body + '\n\n' + items.map((it, idx) => `${idx + 1} — ${it.title}`).join('\n');
+    await send(phone, txt, cfg);
+  }
+}
+
+// ─── Envoi boutons rapides (2–3 boutons) ────────────────────────────────────
+// buttons = [{ text }]
+async function sendButtons(phone, { body, footer, buttons }, cfg) {
+  if (!cfg) return;
+  const wa = normalizeWatiPhone(phone);
+  try {
+    const res = await fetch(
+      `${cfg.base}/api/v1/sendInteractiveButtonsMessage?whatsappNumber=${encodeURIComponent(wa)}`,
+      {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          body,
+          footer: footer || 'robindesairs.eu',
+          buttons: buttons.map(b => ({ text: b.text })),
+        }),
+      }
+    );
+    const data = await res.json().catch(() => ({}));
+    if (!data.result) {
+      const txt = body + '\n\n' + buttons.map((b, i) => `${i + 1} — ${b.text}`).join('\n');
+      await send(phone, txt, cfg);
+    }
+  } catch (e) {
+    console.error('wati-bot: sendButtons failed', e.message);
+    const txt = body + '\n\n' + buttons.map((b, i) => `${i + 1} — ${b.text}`).join('\n');
+    await send(phone, txt, cfg);
   }
 }
 
 async function sendDelayed(phone, text, cfg, ms = 1000) {
   await new Promise(r => setTimeout(r, ms));
   await send(phone, text, cfg);
+}
+
+// ─── Normalisation réponse bouton/liste ──────────────────────────────────────
+// WATI renvoie le texte exact du bouton cliqué — on le mappe vers un index
+function normalizeInput(raw, options) {
+  const t = (raw || '').trim().toLowerCase();
+  // Si c'est déjà un chiffre
+  if (/^\d+$/.test(t)) return t;
+  // Chercher le texte dans les options
+  const idx = options.findIndex(o => t.includes(o.toLowerCase()));
+  if (idx >= 0) return String(idx + 1);
+  return t;
 }
 
 // ─── État conversation (Netlify Blobs) ───────────────────────────────────────
@@ -341,128 +418,252 @@ async function handleMessage(phone, text, event, cfg) {
 
   // ── ACCUEIL ────────────────────────────────────────────────────────────────
   if (s.step === 'accueil' || !s.step) {
-    await send(phone, MSG.accueil(), cfg);
+    await sendButtons(phone, {
+      body: `🟢⚪⚪⚪⚪⚪⚪\n👋 Bienvenue chez *Robin des Airs* 🏹\n\n*Vol retardé, annulé ou surbooké sur un trajet Europe ↔ Afrique ?*\nLa loi vous donne droit à *jusqu'à 600 €* par passager. Vous avez *3 ans* pour réclamer.\n\n⚖️ *Zéro frais.* On prend 25 % uniquement si vous gagnez.`,
+      footer: 'Moins de 10 minutes pour ouvrir votre dossier',
+      buttons: [{ text: '✅ Commencer mon dossier' }],
+    }, cfg);
     await setState(event, phone, { step: 'gate', phone });
     return;
   }
 
   // ── GATE EUROPE ────────────────────────────────────────────────────────────
   if (s.step === 'gate') {
-    if (input === '1') {
-      s.geo = 'eu';
-      s.step = 'nb_pax';
+    const norm = normalizeInput(input, ['Europe', 'Afrique']);
+    if (norm === '1') {
+      s.geo = 'eu'; s.step = 'nb_pax';
       await setState(event, phone, s);
-      await send(phone, MSG.nb_pax(), cfg);
-    } else if (input === '2') {
+      await sendList(phone, {
+        header: '🟢⚪⚪⚪⚪⚪⚪  Robin des Airs',
+        body: '👥 *Pour combien de passagers réclamez-vous ?*',
+        buttonText: 'Nombre de passagers ▾',
+        items: [
+          { title: '1 passager' }, { title: '2 passagers' }, { title: '3 passagers' },
+          { title: '4 passagers' }, { title: '5 passagers' }, { title: '6 ou plus' },
+        ],
+      }, cfg);
+      await setState(event, phone, { ...s, step: 'nb_pax' });
+    } else if (norm === '2') {
       s.step = 'gate_compagnie';
       await setState(event, phone, s);
-      await send(phone, MSG.gate_compagnie(), cfg);
+      await sendButtons(phone, {
+        body: 'Et la compagnie qui opérait ce vol ?',
+        buttons: [
+          { text: '🇪🇺 Compagnie européenne' },
+          { text: '🌍 Compagnie africaine ou autre' },
+        ],
+      }, cfg);
     } else {
-      await send(phone, MSG.gate(), cfg);
+      await sendButtons(phone, {
+        body: '✈️ *D\'où partait votre vol ?*',
+        buttons: [{ text: '🇪🇺 D\'un aéroport en Europe' }, { text: '🌍 D\'Afrique ou ailleurs' }],
+      }, cfg);
     }
     return;
   }
 
   if (s.step === 'gate_compagnie') {
-    if (input === '1') {
-      s.geo = 'eu_carrier';
-      s.step = 'nb_pax';
+    const norm = normalizeInput(input, ['européenne', 'africaine']);
+    if (norm === '1') {
+      s.geo = 'eu_carrier'; s.step = 'nb_pax';
       await setState(event, phone, s);
-      await send(phone, MSG.nb_pax(), cfg);
-    } else if (input === '2') {
+      await sendList(phone, {
+        header: '🟢⚪⚪⚪⚪⚪⚪  Robin des Airs',
+        body: '👥 *Pour combien de passagers réclamez-vous ?*',
+        buttonText: 'Nombre de passagers ▾',
+        items: [
+          { title: '1 passager' }, { title: '2 passagers' }, { title: '3 passagers' },
+          { title: '4 passagers' }, { title: '5 passagers' }, { title: '6 ou plus' },
+        ],
+      }, cfg);
+    } else if (norm === '2') {
       await clearState(event, phone);
       await send(phone, MSG.rejet_zone(), cfg);
     } else {
-      await send(phone, MSG.gate_compagnie(), cfg);
+      await sendButtons(phone, {
+        body: 'La compagnie qui opérait ce vol ?',
+        buttons: [{ text: '🇪🇺 Compagnie européenne' }, { text: '🌍 Africaine ou autre' }],
+      }, cfg);
     }
     return;
   }
 
   // ── NOMBRE PASSAGERS ──────────────────────────────────────────────────────
   if (s.step === 'nb_pax') {
-    const n = parseInt(input);
+    const norm = normalizeInput(input, ['1 passager','2 passagers','3 passagers','4 passagers','5 passagers','6 ou plus']);
+    const n = parseInt(norm);
     if (n >= 1 && n <= 6) {
-      s.pax = n === 6 ? 6 : n;
-      s.step = 'type_vol';
+      s.pax = n; s.step = 'type_vol';
       await setState(event, phone, s);
-      await send(phone, MSG.type_vol(s.pax), cfg);
+      await sendList(phone, {
+        header: '🟢🟢⚪⚪⚪⚪⚪  Robin des Airs',
+        body: `✅ *${s.pax} passager(s) enregistré(s).*\n\n✈️ Sur ce trajet : quel type de vol ?`,
+        buttonText: 'Type de vol ▾',
+        items: [
+          { title: '✈️ Vol direct', description: 'Sans escale' },
+          { title: '🔄 Vol avec escale', description: '' },
+          { title: '⚠️ Correspondance ratée', description: '' },
+        ],
+      }, cfg);
     } else {
-      await send(phone, MSG.nb_pax(), cfg);
+      await sendList(phone, {
+        body: '👥 *Pour combien de passagers réclamez-vous ?*',
+        buttonText: 'Nombre de passagers ▾',
+        items: [
+          { title: '1 passager' }, { title: '2 passagers' }, { title: '3 passagers' },
+          { title: '4 passagers' }, { title: '5 passagers' }, { title: '6 ou plus' },
+        ],
+      }, cfg);
     }
     return;
   }
 
   // ── TYPE VOL ──────────────────────────────────────────────────────────────
   if (s.step === 'type_vol') {
-    if (['1','2','3'].includes(input)) {
-      s.type_vol = input === '1' ? 'direct' : input === '2' ? 'escale' : 'correspondance';
+    const norm = normalizeInput(input, ['direct','escale','correspondance']);
+    if (['1','2','3'].includes(norm)) {
+      s.type_vol = norm === '1' ? 'direct' : norm === '2' ? 'escale' : 'correspondance';
       s.step = 'incident';
       await setState(event, phone, s);
-      await send(phone, MSG.incident(montantIndicatif(s.pax)), cfg);
+      await sendList(phone, {
+        header: '🟢🟢🟢⚪⚪⚪⚪  Robin des Airs',
+        body: `✅ *C'est noté* — nous visons jusqu'à *${montantIndicatif(s.pax)} € net* pour votre groupe. 🚀\n\n⚖️ *Que s'est-il passé exactement ?*`,
+        buttonText: 'Type d\'incident ▾',
+        items: [
+          { title: '⏱️ Retard à l\'arrivée (+3h)', description: '' },
+          { title: '❌ Vol annulé', description: '' },
+          { title: '🚫 Refus d\'embarquement / surbooking', description: '' },
+          { title: '🔄 Correspondance manquée', description: 'À cause d\'un retard' },
+        ],
+      }, cfg);
     } else {
-      await send(phone, MSG.type_vol(s.pax), cfg);
+      await sendList(phone, {
+        body: '✈️ Sur ce trajet : quel type de vol ?',
+        buttonText: 'Type de vol ▾',
+        items: [
+          { title: '✈️ Vol direct' }, { title: '🔄 Vol avec escale' }, { title: '⚠️ Correspondance ratée' },
+        ],
+      }, cfg);
     }
     return;
   }
 
   // ── TYPE INCIDENT ─────────────────────────────────────────────────────────
   if (s.step === 'incident') {
-    if (['1','2','3','4'].includes(input)) {
-      s.incident = input;
-      s.incident_libelle = INCIDENT_LABELS[input];
-      if (input === '1') {
+    const norm = normalizeInput(input, ['retard','annulé','refus','correspondance']);
+    if (['1','2','3','4'].includes(norm)) {
+      s.incident = norm;
+      s.incident_libelle = INCIDENT_LABELS[norm];
+      if (norm === '1') {
         s.step = 'duree_retard';
         await setState(event, phone, s);
-        await send(phone, MSG.duree_retard(), cfg);
-      } else if (input === '4') {
+        await sendList(phone, {
+          header: '⏱️ Durée du retard',
+          body: '⏱️ *Environ combien d\'heures de retard à l\'arrivée ?*',
+          buttonText: 'Durée ▾',
+          items: [
+            { title: 'Moins de 3 heures' },
+            { title: 'Entre 3 et 4 heures' },
+            { title: 'Plus de 4 heures' },
+            { title: 'Je ne me souviens plus' },
+          ],
+        }, cfg);
+      } else if (norm === '4') {
         s.step = 'correspondance';
         await setState(event, phone, s);
-        await send(phone, MSG.correspondance(), cfg);
+        await sendList(phone, {
+          header: '🔄 Correspondance manquée',
+          body: '✈️ *Quel vol pose problème ?*',
+          buttonText: 'Préciser ▾',
+          items: [
+            { title: 'Le vol initial (en retard)' },
+            { title: 'Le vol de correspondance (raté)' },
+            { title: 'Les deux' },
+            { title: 'Je ne sais plus' },
+          ],
+        }, cfg);
       } else {
         s.step = 'remboursements';
         await setState(event, phone, s);
-        await send(phone, MSG.remboursements(), cfg);
+        await sendButtons(phone, {
+          body: '💡 *Bonne nouvelle — Robin récupère aussi vos avances !*\n\nSi vous avez payé de votre poche *(taxi, hôtel, repas, transfert...)* :\n\n🧾 *Conservez toutes vos factures et reçus.*\n\nRobin les soumet à la compagnie *en plus* de l\'indemnité. Zéro effort de votre côté.',
+          footer: 'robindesairs.eu',
+          buttons: [{ text: '✅ Compris, continuer' }],
+        }, cfg);
       }
     } else {
-      await send(phone, MSG.incident(montantIndicatif(s.pax)), cfg);
+      await sendList(phone, {
+        body: '⚖️ *Que s\'est-il passé exactement ?*',
+        buttonText: 'Type d\'incident ▾',
+        items: [
+          { title: '⏱️ Retard à l\'arrivée (+3h)' },
+          { title: '❌ Vol annulé' },
+          { title: '🚫 Refus d\'embarquement' },
+          { title: '🔄 Correspondance manquée' },
+        ],
+      }, cfg);
     }
     return;
   }
 
   // ── DURÉE RETARD ──────────────────────────────────────────────────────────
   if (s.step === 'duree_retard') {
-    if (input === '1') {
+    const norm = normalizeInput(input, ['moins de 3','entre 3','plus de 4','ne me souviens']);
+    if (norm === '1') {
       await clearState(event, phone);
       await send(phone, MSG.rejet_retard_court(), cfg);
-    } else if (['2','3','4'].includes(input)) {
-      s.duree_retard = input === '2' ? '3-4h' : input === '3' ? '4h+' : 'inconnue';
+    } else if (['2','3','4'].includes(norm)) {
+      s.duree_retard = norm === '2' ? '3-4h' : norm === '3' ? '4h+' : 'inconnue';
       s.step = 'remboursements';
       await setState(event, phone, s);
-      await send(phone, MSG.remboursements(), cfg);
+      await sendButtons(phone, {
+        body: '💡 *Bonne nouvelle — Robin récupère aussi vos avances !*\n\nSi vous avez payé de votre poche *(taxi, hôtel, repas, transfert...)* :\n\n🧾 *Conservez toutes vos factures et reçus.*\n\nRobin les soumet à la compagnie *en plus* de l\'indemnité. Zéro effort de votre côté.',
+        footer: 'robindesairs.eu',
+        buttons: [{ text: '✅ Compris, continuer' }],
+      }, cfg);
     } else {
-      await send(phone, MSG.duree_retard(), cfg);
+      await sendList(phone, {
+        body: '⏱️ *Combien d\'heures de retard à l\'arrivée ?*',
+        buttonText: 'Durée ▾',
+        items: [
+          { title: 'Moins de 3 heures' }, { title: 'Entre 3 et 4 heures' },
+          { title: 'Plus de 4 heures' }, { title: 'Je ne me souviens plus' },
+        ],
+      }, cfg);
     }
     return;
   }
 
   // ── CORRESPONDANCE ────────────────────────────────────────────────────────
   if (s.step === 'correspondance') {
-    if (['1','2','3','4'].includes(input)) {
-      s.type_correspondance = input;
+    const norm = normalizeInput(input, ['vol initial','correspondance','les deux','ne sais']);
+    if (['1','2','3','4'].includes(norm)) {
+      s.type_correspondance = norm;
       s.step = 'remboursements';
       await setState(event, phone, s);
-      await send(phone, MSG.remboursements(), cfg);
+      await sendButtons(phone, {
+        body: '💡 *Bonne nouvelle — Robin récupère aussi vos avances !*\n\nSi vous avez payé de votre poche *(taxi, hôtel, repas, transfert...)* :\n\n🧾 *Conservez toutes vos factures et reçus.*\n\nRobin les soumet à la compagnie *en plus* de l\'indemnité. Zéro effort de votre côté.',
+        footer: 'robindesairs.eu',
+        buttons: [{ text: '✅ Compris, continuer' }],
+      }, cfg);
     } else {
-      await send(phone, MSG.correspondance(), cfg);
+      await sendList(phone, {
+        body: '✈️ *Quel vol pose problème ?*',
+        buttonText: 'Préciser ▾',
+        items: [
+          { title: 'Le vol initial (en retard)' }, { title: 'Le vol de correspondance (raté)' },
+          { title: 'Les deux' }, { title: 'Je ne sais plus' },
+        ],
+      }, cfg);
     }
     return;
   }
 
-  // ── REMBOURSEMENTS (info — répondre 1 pour continuer) ─────────────────────
+  // ── REMBOURSEMENTS — bouton "Compris, continuer" ──────────────────────────
   if (s.step === 'remboursements') {
     s.step = 'ocr';
     await setState(event, phone, s);
-    await send(phone, MSG.ocr(), cfg);
+    await send(phone, `📋 *Carte d'embarquement ou e-ticket*\n🟢🟢🟢⚪⚪⚪⚪\n\nEnvoyez une *photo* de votre carte d'embarquement — le bot lit le numéro de vol, la date et votre nom automatiquement.\n\n📱 Photo nette, bien cadrée, à plat.\n\nOu tapez les infos à la main (un seul message) :\nNuméro de vol / Date (JJ/MM/AAAA) / PNR / Itinéraire\n_Ex. : AF718 / 15/03/2024 / K5FW8B / CDG-ABJ_`, cfg);
     return;
   }
 
@@ -490,24 +691,39 @@ async function handleMessage(phone, text, event, cfg) {
 
   // ── CONFIRMATION OCR ──────────────────────────────────────────────────────
   if (s.step === 'confirm_ocr') {
-    if (input === '1') {
-      // Vérifier si la date contient l'année
+    const norm = normalizeInput(input, ['correct','corriger']);
+    if (norm === '1') {
       if (s.date && !/\d{4}/.test(s.date)) {
         s.step = 'annee';
         await setState(event, phone, s);
-        await send(phone, MSG.annee(s.date), cfg);
+        const y = new Date().getFullYear();
+        await sendList(phone, {
+          header: '📅 Année du vol',
+          body: `🗓️ *Quelle année pour le ${s.date} ?*`,
+          buttonText: 'Année ▾',
+          items: [
+            { title: String(y) }, { title: String(y-1) }, { title: String(y-2) },
+            { title: String(y-3) }, { title: String(y-4) + ' ou avant' },
+          ],
+        }, cfg);
       } else {
         s.step = 'mineurs';
         await setState(event, phone, s);
         const noms = s.nom ? `• ${s.nom}` : '• (passager 1)';
-        await send(phone, MSG.mineurs(noms), cfg);
+        await sendButtons(phone, {
+          body: `👶 *Parmi les passagers suivants, y a-t-il des mineurs (moins de 18 ans) ?*\n\n${noms}\n\n⚖️ Obligation légale pour préparer le bon mandat.`,
+          buttons: [{ text: '✅ Non, tous majeurs' }, { text: '👶 Oui, il y a des mineurs' }],
+        }, cfg);
       }
-    } else if (input === '2') {
+    } else if (norm === '2') {
       s.step = 'ocr';
       await setState(event, phone, s);
       await send(phone, MSG.ocr(), cfg);
     } else {
-      await send(phone, MSG.confirm_ocr(s), cfg);
+      await sendButtons(phone, {
+        body: MSG.confirm_ocr(s),
+        buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Corriger' }],
+      }, cfg);
     }
     return;
   }
@@ -515,36 +731,45 @@ async function handleMessage(phone, text, event, cfg) {
   // ── ANNÉE ─────────────────────────────────────────────────────────────────
   if (s.step === 'annee') {
     const y = new Date().getFullYear();
-    const map = { '1': y, '2': y-1, '3': y-2, '4': y-3, '5': y-4 };
-    const annee = map[input] || (input.match(/\d{4}/) ? input.match(/\d{4}/)[0] : null);
+    const yearMap = { '1': y, '2': y-1, '3': y-2, '4': y-3, '5': y-4 };
+    const norm = normalizeInput(input, [String(y),String(y-1),String(y-2),String(y-3),String(y-4)+' ou avant']);
+    const annee = yearMap[norm] || (input.match(/\d{4}/) ? input.match(/\d{4}/)[0] : null);
     if (annee) {
-      // Injecter l'année dans la date
-      if (s.date && !s.date.includes(String(annee))) {
-        s.date = s.date.replace(/\d{4}/, '') + '/' + annee;
-        s.date = s.date.replace(/\/+/, '/').replace(/^\/|\/$/g, '');
-      } else if (!s.date) {
-        s.date = String(annee);
-      }
+      s.date = s.date ? `${s.date}/${annee}`.replace(/\/+/,'/') : String(annee);
       s.step = 'mineurs';
       await setState(event, phone, s);
       const noms = s.nom ? `• ${s.nom}` : '• (passager 1)';
-      await send(phone, MSG.mineurs(noms), cfg);
+      await sendButtons(phone, {
+        body: `👶 *Parmi les passagers suivants, y a-t-il des mineurs (moins de 18 ans) ?*\n\n${noms}\n\n⚖️ Obligation légale pour préparer le bon mandat.`,
+        buttons: [{ text: '✅ Non, tous majeurs' }, { text: '👶 Oui, il y a des mineurs' }],
+      }, cfg);
     } else {
-      await send(phone, MSG.annee(s.date || '?'), cfg);
+      await sendList(phone, {
+        body: `🗓️ *Quelle année pour le ${s.date || '?'} ?*`,
+        buttonText: 'Année ▾',
+        items: [
+          { title: String(y) }, { title: String(y-1) }, { title: String(y-2) },
+          { title: String(y-3) }, { title: String(y-4) + ' ou avant' },
+        ],
+      }, cfg);
     }
     return;
   }
 
   // ── MINEURS ───────────────────────────────────────────────────────────────
   if (s.step === 'mineurs') {
-    if (input === '1' || input === '2') {
-      s.mineurs = input === '2';
+    const norm = normalizeInput(input, ['majeurs','mineurs']);
+    if (norm === '1' || norm === '2') {
+      s.mineurs = norm === '2';
       s.step = 'email';
       await setState(event, phone, s);
-      await send(phone, MSG.email(), cfg);
+      await send(phone, `📧 *Pour vous envoyer le mandat et le suivi du dossier*\n🟢🟢🟢🟢🟢🟢🟢\n\nQuelle est votre adresse email ?\n_(Ex. : prenom@gmail.com)_`, cfg);
     } else {
       const noms = s.nom ? `• ${s.nom}` : '• (passager 1)';
-      await send(phone, MSG.mineurs(noms), cfg);
+      await sendButtons(phone, {
+        body: `👶 *Y a-t-il des mineurs parmi les passagers ?*\n\n${noms}`,
+        buttons: [{ text: '✅ Non, tous majeurs' }, { text: '👶 Oui, il y a des mineurs' }],
+      }, cfg);
     }
     return;
   }
@@ -578,8 +803,9 @@ async function handleMessage(phone, text, event, cfg) {
 
   // ── LANGUE ────────────────────────────────────────────────────────────────
   if (s.step === 'langue') {
-    if (['1','2','3','4','5','6'].includes(input)) {
-      s.langue = LANGUE_LABELS[input];
+    const norm = normalizeInput(input, ['français','english','wolof','bambara','dioula','autre']);
+    if (['1','2','3','4','5','6'].includes(norm)) {
+      s.langue = LANGUE_LABELS[norm];
       s.ref = genRef();
       s.mandat_url = buildMandatUrl({ ...s, phone });
       s.step = 'done';
@@ -606,7 +832,15 @@ async function handleMessage(phone, text, event, cfg) {
         console.error('wati-bot: make webhook failed', e.message);
       }
     } else {
-      await send(phone, MSG.langue(), cfg);
+      await sendList(phone, {
+        header: '🌍 Dernière question !',
+        body: '🟢🟢🟢🟢🟢🟢🟢\n\nDans quelle langue nos experts doivent-ils vous contacter *(appels, vocaux WhatsApp, suivi)* ?',
+        buttonText: 'Choisir la langue ▾',
+        items: [
+          { title: '🇫🇷 Français' }, { title: '🇬🇧 English' }, { title: '🇸🇳 Wolof' },
+          { title: '🇲🇱 Bambara' }, { title: '🇨🇮 Dioula' }, { title: '🌐 Autre' },
+        ],
+      }, cfg);
     }
     return;
   }
