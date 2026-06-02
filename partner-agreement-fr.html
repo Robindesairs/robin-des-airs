@@ -242,33 +242,21 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   </div>
 </div>
 <div class="doc-section">
-  <div class="sec-title">📅 Commission agence — paliers (date de signature)</div>
+  <div class="sec-title">📅 Commission agence</div>
   <p style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.65">
-    Le montant par passager indemnisé est celui du <strong>palier en vigueur le jour où vous signez</strong>.
-    Ce montant est <strong>acquis à vie</strong> pour votre agence : les baisses ultérieures ne s'appliquent qu'aux <em>nouveaux</em> partenaires
-    (après l'échéance, ce palier n'est plus proposé — voir article 2).
-    <a href="/paliers-commission-agence-fr.html" target="_blank" rel="noopener">Détail des paliers ↗</a>
+    La commission agence est un taux unique de <strong>7,5 % de l'indemnité CE 261 réellement encaissée</strong>, par passager indemnisé — le même taux pour tous les partenaires.
+    Sur une indemnité pleine de 600 €, cela équivaut à <strong>≈ 45 € (3 800 GMD)</strong> ; si un montant plus faible est recouvré, la commission est de 7,5 % de ce montant (ex. 7,5 % × 250 € ≈ 18,75 €).
   </p>
-  <table class="fee-table" id="tierCommTable">
-    <tr><th>Palier</th><th>Condition</th><th>Commission / pax</th></tr>
-    <tr data-tier="founding" id="foundingRow"><td>★ Fondateur</td><td>Signature avant le 31 août 2026 · 3 places</td><td class="em" id="tier0Gmd">4 000 GMD/pax</td></tr>
-    <tr data-tier="ete"><td>1 — Été</td><td>31 août 2026</td><td class="em" id="tier1Gmd">3 800 GMD/pax</td></tr>
-    <tr data-tier="fin_annee"><td>2 — Automne</td><td>31 décembre 2026</td><td class="em" id="tier2Gmd">3 400 GMD/pax</td></tr>
-    <tr data-tier="2027"><td>3 — 2027</td><td>À partir du 1<sup>er</sup> janvier 2027</td><td class="em" id="tier3Gmd">3 000 GMD/pax</td></tr>
-  </table>
-  <div class="email-tech-note" id="tierActiveNote" style="margin-top:12px">
-    Palier applicable à la signature d'aujourd'hui : <strong id="tierActiveLabel">—</strong>
-  </div>
 </div>
 <div class="doc-section">
   <div class="sec-title">💶 Cadre commercial (par passager indemnisé)</div>
   <table class="fee-table">
-    <tr><th>Distance (indicative)</th><th>Indemnité / pax</th><th>Net passager (75 %)</th><th>Notes</th></tr>
-    <tr><td>≤ 1 500 km</td><td class="em">250 €</td><td>187,50 €</td><td>Palier CE 261 — palier 1</td></tr>
-    <tr><td>1 500 – 3 500 km</td><td class="em">400 €</td><td>300 €</td><td>Palier CE 261 — palier 2</td></tr>
-    <tr><td>&gt; 3 500 km</td><td class="em">600 €</td><td>450 €</td><td>Ex. Europe–Afrique</td></tr>
-    <tr><td colspan="4" style="font-size:12px;color:var(--muted)">Montant réel variable — voir <a href="/bareme-ce261-fr.html" target="_blank" rel="noopener">barème complet</a> et transparence (% du palier) dans le portail.</td></tr>
-    <tr><td><strong>Votre commission agence</strong></td><td class="em" id="tblComm" colspan="2">3 800 GMD</td><td>Palier en vigueur à la date de signature (tableau ci-dessus)</td></tr>
+    <tr><th>Distance (indicative)</th><th>Indemnité / pax</th><th>Net passager (70 %)</th><th>Notes</th></tr>
+    <tr><td>≤ 1 500 km</td><td class="em">250 €</td><td>175 €</td><td>Palier CE 261 — palier 1</td></tr>
+    <tr><td>1 500 – 3 500 km</td><td class="em">400 €</td><td>280 €</td><td>Palier CE 261 — palier 2</td></tr>
+    <tr><td>&gt; 3 500 km</td><td class="em">600 €</td><td>420 €</td><td>Ex. Europe–Afrique</td></tr>
+    <tr><td colspan="4" style="font-size:12px;color:var(--muted)">Net passager via agence = 70 % (Robin 22,5 % + commission agence 7,5 %). En direct, sans agence, le passager garde 75 %. Montant réel variable — voir <a href="/bareme-ce261-fr.html" target="_blank" rel="noopener">barème complet</a>.</td></tr>
+    <tr><td><strong>Votre commission agence</strong></td><td class="em" id="tblComm" colspan="2">7,5 % · ≈ 3 800 GMD sur 600 €</td><td>7,5 % de l'indemnité encaissée (palier de référence à la date de signature)</td></tr>
   </table>
   <div class="email-tech-note">
     <strong>Note pratique :</strong> aucun email personnel du passager n'est requis dans le portail — Robin crée l'adresse dossier automatiquement.
@@ -286,8 +274,7 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   <div class="clause hi">
     <span class="cnum">Article 2 — Commission agence</span>
     En cas de succès et de paiement effectif de l'indemnité au passager, Robin des Airs verse à l'agence
-    <strong id="clauseComm">3 800 GMD</strong> par passager indemnisé — montant du <strong>palier en vigueur le jour de la signature</strong> (tableau ci-dessus),
-    <strong>acquis à vie</strong> pour votre agence (non révisable à la baisse lors des paliers suivants ; indicatif ≈ <strong id="clauseCommEur">45 €</strong> à 84 GMD/€).
+    un taux unique de <strong>7,5 % de l'indemnité effectivement encaissée</strong> par passager indemnisé — soit <strong id="clauseComm">3 800 GMD</strong> (≈ <strong id="clauseCommEur">45 €</strong>) sur une indemnité pleine de 600 €, et proportionnellement moins si la compagnie verse moins.
     Paiement sous <strong>48 h ouvrées après encaissement effectif par Robin</strong>, selon le mode choisi ci-dessus et des coordonnées valides.
     Aucune commission si le dossier échoue ou aucune indemnité n'est encaissée.
   </div>
@@ -381,7 +368,7 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
 <div class="trust-bar">
   <div class="trust-item">🔒 Sécurisé</div>
   <div class="trust-item">⚖️ CE 261/2004</div>
-  <div class="trust-item">💶 3 800 GMD / succès</div>
+  <div class="trust-item">💶 7,5 % / succès</div>
   <div class="trust-item">✈ Espace agence</div>
 </div>
 </div>
@@ -396,7 +383,6 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   <p style="margin-top:20px"><a href="/espace-agence.html" style="color:var(--green)">Ouvrir l'espace agence →</a></p>
 </div>
 </div>
-<script src="/assets/agence-commission-tiers.js"></script>
 <script>
 const P = new URLSearchParams(location.search);
 let REF = P.get('ref') || ('PTR-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + Math.random().toString(36).slice(2,6).toUpperCase());
@@ -406,13 +392,9 @@ let COMM_GMD = 3800;
 let commEur = 45;
 
 function resolveCommTier() {
-  if (typeof AgenceCommissionTiers !== 'undefined') {
-    COMM_TIER = AgenceCommissionTiers.resolve(new Date(), 'fr');
-    COMM_GMD = COMM_TIER.commissionGmd;
-  } else {
-    COMM_GMD = parseInt(P.get('commission_gmd') || '3800', 10) || 3800;
-    COMM_TIER = { tierId: 'ete', tierLabel: 'Palier été', commissionGmd: COMM_GMD };
-  }
+  // Taux unique 7,5 % pour tous. 3 800 GMD est la référence sur une indemnité pleine de 600 €.
+  COMM_GMD = parseInt(P.get('commission_gmd') || '3800', 10) || 3800;
+  COMM_TIER = { tierId: 'flat', tierLabel: '7,5 % unique', commissionGmd: COMM_GMD };
   commEur = Math.round((COMM_GMD / GMD_PER_EUR) * 100) / 100;
 }
 
@@ -431,19 +413,10 @@ function setCommLabels() {
   resolveCommTier();
   const gmd = COMM_GMD.toLocaleString('fr-FR') + ' GMD';
   const eur = '≈ ' + commEur.toLocaleString('fr-FR') + ' €';
-  ['hCommGmd','clauseComm','tblComm'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = gmd; });
+  ['hCommGmd','clauseComm'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = gmd; });
+  const tbl = document.getElementById('tblComm'); if (tbl) tbl.textContent = '7,5 % · ≈ ' + gmd + ' sur 600 €';
   const ce = document.getElementById('clauseCommEur'); if (ce) ce.textContent = commEur.toLocaleString('fr-FR') + ' €';
   const sub = document.getElementById('hCommSub'); if (sub) sub.textContent = 'Par passager indemnisé · ' + eur + ' à ' + GMD_PER_EUR + ' GMD/€';
-  document.querySelectorAll('#tierCommTable tr[data-tier]').forEach(function (row) {
-    row.style.background = row.getAttribute('data-tier') === COMM_TIER.tierId ? '#e8f0ec' : '';
-    row.style.fontWeight = row.getAttribute('data-tier') === COMM_TIER.tierId ? '600' : '';
-  });
-  const lab = document.getElementById('tierActiveLabel');
-  if (lab) {
-    lab.textContent =
-      COMM_GMD.toLocaleString('fr-FR') +
-      ' GMD (palier date) — fondateur 4 000 GMD si signature avant le 31/08/2026 (3 premières agences).';
-  }
 }
 
 let drawing = false, sigCtx, sigCanvas;

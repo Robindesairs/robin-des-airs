@@ -252,29 +252,22 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   </div>
 </div>
 <div class="doc-section">
-  <div class="sec-title">📅 Agency commission — tiers (by signing date)</div>
+  <div class="sec-title">📅 Agency commission</div>
   <p style="font-size:13px;color:var(--muted);margin-bottom:12px;line-height:1.65">
-    The commission per successful passenger is the <strong>tier in effect on the day you sign</strong>.
-    This amount is <strong>locked for life</strong> for your agency — later reductions only apply to <em>new</em> partners (see article 2).
+    The agency commission is a flat <strong>7.5% of the CE 261 compensation actually collected</strong>, per successful passenger — the same rate for every partner.
+    On a full 600 € indemnity this equals <strong>≈ 45 € (3,800 GMD)</strong>; if a smaller amount is recovered, the commission is 7.5% of that smaller amount (e.g. 7.5% × 250 € ≈ 18.75 €).
   </p>
-  <table class="fee-table" id="tierCommTable">
-    <tr><th>Tier</th><th>Valid until</th><th>Commission / pax</th></tr>
-    <tr data-tier="ete"><td>1 — Summer 2026</td><td>31 Aug 2026</td><td class="em" id="tier1Gmd">3 800 GMD/pax</td></tr>
-    <tr data-tier="fin_annee"><td>2 — Autumn 2026</td><td>31 Dec 2026</td><td class="em" id="tier2Gmd">3 400 GMD/pax</td></tr>
-    <tr data-tier="2027"><td>3 — 2027</td><td>From 1 Jan 2027</td><td class="em" id="tier3Gmd">3 000 GMD/pax</td></tr>
-  </table>
-  <div class="email-tech-note" id="tierActiveNote" style="margin-top:12px">
-    Tier applicable today: <strong id="tierActiveLabel">—</strong>
-  </div>
 </div>
 <div class="doc-section">
   <div class="sec-title">💶 How compensation is split (CE 261 — Europe–Africa corridor)</div>
   <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.65">
     Example based on a <strong>600 € CE 261 compensation</strong> (Europe–Africa, &gt; 3,500 km).
-    The percentage split is <strong>fixed regardless of the amount collected</strong> — it applies the same way whether the airline pays 250 €, 400 €, or 600 €.
+    The <strong>percentages are fixed</strong> — they apply the same way whether the airline pays 250 €, 400 €, or 600 €. Each party's amount is always calculated as its <strong>share of the sum actually collected</strong>, so the euro figures scale with what the airline pays (the 600 € column below is just an example).
+    <br><br>
+    <strong>This split applies to an agency-referred case.</strong> The passenger keeps <strong>70%</strong> here because the agency commission (7.5%) is added to Robin's fee. A passenger who comes <strong>directly</strong> (no agency) keeps <strong>75%</strong> — Robin's fee is 25% and there is no agency commission.
   </p>
   <table class="fee-table">
-    <tr><th>Party</th><th>Example (600 €)</th><th>Share</th><th>Notes</th></tr>
+    <tr><th>Party</th><th>Example (if 600 € collected)</th><th>Share</th><th>Notes</th></tr>
     <tr><td><strong>Passenger</strong></td><td class="em">420 €</td><td>70%</td><td>Paid directly to the passenger</td></tr>
     <tr><td><strong>Seyman Travel</strong></td><td class="em" id="tblComm">45 € (3,800 GMD)</td><td>7.5%</td><td>Commission on CE 261 compensation only</td></tr>
     <tr><td><strong>Robin des Airs</strong></td><td class="em">135 €</td><td>22.5%</td><td>Case management &amp; recovery fee</td></tr>
@@ -284,9 +277,9 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
     </td></tr>
   </table>
   <div class="email-tech-note" style="margin-top:12px">
-    <strong>Note — €/GMD exchange rate:</strong> The agency commission is denominated as <strong>45 €</strong> on a 600 € reference indemnity, and paid out in GMD at the prevailing exchange rate.
+    <strong>Note — €/GMD exchange rate:</strong> The agency commission is <strong>7.5% of the compensation actually collected</strong>, paid out in GMD at the prevailing exchange rate.
+    The <strong>3,800 GMD ≈ 45 €</strong> figure is the reference on a <strong>full 600 € indemnity</strong>; if a smaller amount is recovered, the commission is 7.5% of that smaller amount (e.g. 7.5% × 250 € ≈ 18.75 €).
     The reference rate used each month is the <strong>official €/GMD rate published on the 1st of that month</strong> by the Central Bank of The Gambia, and applies to all commissions paid during that calendar month.
-    Example at current rate: 45 € ≈ <strong>3,800 GMD</strong> per successful passenger.
   </div>
 </div>
 <div class="doc-section">
@@ -301,8 +294,7 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   <div class="clause hi">
     <span class="cnum">Article 2 — Agency commission</span>
     Upon successful collection of passenger compensation, Robin des Airs pays the agency
-    <strong id="clauseComm">3,800 GMD</strong> per successful passenger — the rate of the <strong>tier in effect on the day of signing</strong> (see table above),
-    <strong>locked for life</strong> for your agency (not subject to downward revision when later tiers apply; indicative ≈ <strong id="clauseCommEur">45 €</strong> at 84 GMD/€).
+    a flat <strong>7.5% of the compensation actually collected</strong> per successful passenger — i.e. <strong id="clauseComm">3,800 GMD</strong> (≈ <strong id="clauseCommEur">45 €</strong>) on a full 600 € indemnity, and proportionally less if the airline pays less.
     Payment within <strong>48 working hours of Robin des Airs receiving the compensation</strong>, via the chosen payment method and valid details provided above.
     No commission is due if the claim fails or no compensation is collected.
   </div>
@@ -436,7 +428,6 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   </div>
 </div>
 </div>
-<script src="/assets/agence-commission-tiers.js"></script>
 <script>
 const P = new URLSearchParams(location.search);
 let REF = P.get('ref') || ('PTR-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + Math.random().toString(36).slice(2,6).toUpperCase());
@@ -446,13 +437,9 @@ let COMM_GMD = 3800;
 let commEur = 45;
 
 function resolveCommTier() {
-  if (typeof AgenceCommissionTiers !== 'undefined') {
-    COMM_TIER = AgenceCommissionTiers.resolve(new Date(), 'fr');
-    COMM_GMD = COMM_TIER.commissionGmd;
-  } else {
-    COMM_GMD = parseInt(P.get('commission_gmd') || '3800', 10) || 3800;
-    COMM_TIER = { tierId: 'ete', tierLabel: 'Summer tier', commissionGmd: COMM_GMD };
-  }
+  // Flat 7.5% rate for every partner. 3,800 GMD is the reference on a full 600 € indemnity.
+  COMM_GMD = parseInt(P.get('commission_gmd') || '3800', 10) || 3800;
+  COMM_TIER = { tierId: 'flat', tierLabel: '7.5% flat', commissionGmd: COMM_GMD };
   commEur = Math.round((COMM_GMD / GMD_PER_EUR) * 100) / 100;
 }
 
@@ -488,17 +475,10 @@ function setCommLabels() {
   resolveCommTier();
   const gmd = COMM_GMD.toLocaleString('en-GB') + ' GMD';
   const eur = '≈ ' + commEur.toLocaleString('en-GB') + ' €';
-  ['hCommGmd','clauseComm','tblComm'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = gmd; });
+  ['hCommGmd','clauseComm'].forEach(id => { const el = document.getElementById(id); if (el) el.textContent = gmd; });
+  const tbl = document.getElementById('tblComm'); if (tbl) tbl.textContent = commEur.toLocaleString('en-GB') + ' € (' + gmd + ')';
   const ce = document.getElementById('clauseCommEur'); if (ce) ce.textContent = commEur.toLocaleString('en-GB') + ' €';
   const sub = document.getElementById('hCommSub'); if (sub) sub.textContent = 'Per successful passenger · ' + eur + ' at ' + GMD_PER_EUR + ' GMD/€';
-  document.querySelectorAll('#tierCommTable tr[data-tier]').forEach(function (row) {
-    row.style.background = row.getAttribute('data-tier') === COMM_TIER.tierId ? '#e8f0ec' : '';
-    row.style.fontWeight = row.getAttribute('data-tier') === COMM_TIER.tierId ? '600' : '';
-  });
-  const lab = document.getElementById('tierActiveLabel');
-  if (lab) {
-    lab.textContent = COMM_GMD.toLocaleString('en-GB') + ' GMD / pax (tier in effect today)';
-  }
 }
 
 let drawing = false, sigCtx, sigCanvas;

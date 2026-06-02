@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="/favicon.png" type="image/png">
-<title>3 paliers commission agence — Robin des Airs</title>
+<title>Commission agence 7,5 % — Robin des Airs</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -42,22 +42,19 @@ h1{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--green);marg
 </div>
 <div class="page">
   <div class="doc">
-    <h1>Commission agence — 3 paliers</h1>
-    <p class="sub">Date de signature du contrat partenaire · GMD / pax</p>
+    <h1>Commission agence — 7,5 %</h1>
+    <p class="sub">Taux unique · % de l'indemnité encaissée</p>
     <p class="lead">
-      Les <strong>3 premières agences</strong> qui signent <strong>avant le 31 août 2026</strong> : <strong>4 000 GMD</strong> / passager gagné, acquis à vie.
-      Les autres paliers par date : 3 800 (été) → 3 400 (fin d'année) → 3 000 (2027). <em>Après l'heure, ce n'est plus l'heure.</em>
+      La commission agence est un <strong>taux unique de 7,5 %</strong> de l'indemnité CE 261 réellement encaissée, par passager indemnisé — <strong>le même taux pour tous les partenaires</strong>, sans condition de date.
     </p>
-    <table class="fee-table" id="tierTable">
-      <tr><th>Palier</th><th>Signature avant le</th><th>Commission / pax</th><th>Notes</th></tr>
-      <tr data-tier="founding"><td>★ Fondateur</td><td class="em">31 août 2026</td><td class="em">4 000 GMD/pax</td><td>3 premières agences</td></tr>
-      <tr data-tier="ete"><td>1 — Été</td><td>31 août 2026</td><td class="em" id="c1">3 800 GMD/pax</td><td>Sinon, palier été</td></tr>
-      <tr data-tier="fin_annee"><td>2 — Automne</td><td>31 décembre 2026</td><td class="em" id="c2">3 400 GMD/pax</td><td>Tarif intermédiaire</td></tr>
-      <tr data-tier="2027"><td>3 — 2027</td><td>À partir du 1<sup>er</sup> janvier 2027</td><td class="em" id="c3">3 000 GMD/pax</td><td>Tarif standard</td></tr>
+    <table class="fee-table">
+      <tr><th>Indemnité encaissée</th><th>Commission agence (7,5 %)</th><th>Notes</th></tr>
+      <tr><td class="em">250 €</td><td class="em">≈ 18,75 € (1 575 GMD)</td><td>CE 261 — court courrier</td></tr>
+      <tr><td class="em">400 €</td><td class="em">≈ 30 € (2 520 GMD)</td><td>CE 261 — moyen courrier</td></tr>
+      <tr><td class="em">600 €</td><td class="em">≈ 45 € (3 800 GMD)</td><td>CE 261 — long courrier (réf.)</td></tr>
     </table>
-    <div class="note" id="todayNote">Palier en vigueur aujourd'hui : —</div>
-    <div class="warn" style="margin-top:16px">
-      <strong>Déjà partenaire ?</strong> Votre commission signée ne baisse jamais. Les dates ci-dessus concernent uniquement les <strong>nouvelles signatures</strong>.
+    <div class="note">
+      La commission est <strong>toujours 7,5 % du montant réellement obtenu</strong> : si la compagnie verse moins, la commission baisse proportionnellement. Les montants en GMD sont indicatifs, au taux ≈ 84 GMD/€.
     </div>
     <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-top:12px">
       Paiement sous <strong>48 h ouvrées</strong> après encaissement effectif par Robin des Airs (Wave, Afrimoney, QMoney).
@@ -70,44 +67,5 @@ h1{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--green);marg
     </div>
   </div>
 </div>
-<script src="/assets/agence-commission-tiers.js"></script>
-<script>
-(function () {
-  if (typeof AgenceCommissionTiers === 'undefined') return;
-  const t = AgenceCommissionTiers.resolve(new Date(), 'fr');
-  const ids = { ete: 'c1', fin_annee: 'c2', '2027': 'c3' };
-  t.allTiers.forEach(function (row) {
-    const el = document.getElementById(ids[row.id]);
-    if (el) el.textContent = row.commissionGmd.toLocaleString('fr-FR') + ' GMD/pax';
-  });
-  document.querySelectorAll('#tierTable tr[data-tier]').forEach(function (tr) {
-    if (tr.getAttribute('data-tier') === t.tierId) tr.classList.add('tier-active');
-  });
-  const note = document.getElementById('todayNote');
-  if (note) {
-    note.innerHTML =
-      'Palier en vigueur aujourd\'hui : <strong>' +
-      t.commissionGmd.toLocaleString('fr-FR') +
-      ' GMD/pax</strong> — ' +
-      esc(t.tierLabel) +
-      (t.tierEndsYmd
-        ? '. Prochain palier (nouveaux contrats) : <strong>' +
-          t.nextTierGmd.toLocaleString('fr-FR') +
-          ' GMD/pax</strong> à partir du ' +
-          formatFr(t.nextTierStartsYmd) +
-          '.'
-        : '.') +
-      ' <em>Fondateur : sign. avant le 31/08/2026 (3 premières agences) → 4 000 GMD/pax.</em>';
-  }
-  function esc(s) {
-    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;');
-  }
-  function formatFr(ymd) {
-    if (!ymd) return '';
-    const d = new Date(ymd + 'T12:00:00');
-    return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-  }
-})();
-</script>
 </body>
 </html>

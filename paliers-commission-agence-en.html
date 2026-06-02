@@ -44,22 +44,19 @@ h1{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--green);marg
 </div>
 <div class="page">
   <div class="doc">
-    <h1>Agency commission — 3 tiers</h1>
-    <p class="sub">Partner agreement signing date · GMD / pax</p>
+    <h1>Agency commission — 7.5%</h1>
+    <p class="sub">Single flat rate · % of compensation collected</p>
     <p class="lead">
-      The <strong>first 3 agencies</strong> that <strong>sign before 31 August 2026</strong> lock in <strong>4,000 GMD per pax</strong>, for life.
-      Other date tiers: 3,800 (summer) → 3,400 (year-end) → 3,000 (2027). <em>Once a deadline passes, that tier is no longer offered.</em>
+      The agency commission is a <strong>flat 7.5%</strong> of the CE 261 compensation actually collected, per successful passenger — <strong>the same rate for every partner</strong>, with no date condition.
     </p>
-    <table class="fee-table" id="tierTable">
-      <tr><th>Tier</th><th>Sign before</th><th>Commission / pax</th><th>Notes</th></tr>
-      <tr data-tier="founding"><td>★ Founding</td><td class="em">31 August 2026</td><td class="em">4,000 GMD/pax</td><td>First 3 agencies</td></tr>
-      <tr data-tier="ete"><td>1 — Summer</td><td>31 August 2026</td><td class="em" id="c1">3,800 GMD/pax</td><td>Otherwise summer tier</td></tr>
-      <tr data-tier="fin_annee"><td>2 — Autumn</td><td>31 December 2026</td><td class="em" id="c2">3,400 GMD/pax</td><td>Mid-year rate</td></tr>
-      <tr data-tier="2027"><td>3 — 2027</td><td>From 1 January 2027</td><td class="em" id="c3">3,000 GMD/pax</td><td>Standard rate</td></tr>
+    <table class="fee-table">
+      <tr><th>Compensation collected</th><th>Agency commission (7.5%)</th><th>Notes</th></tr>
+      <tr><td class="em">€250</td><td class="em">≈ €18.75 (1,575 GMD)</td><td>CE 261 — short-haul</td></tr>
+      <tr><td class="em">€400</td><td class="em">≈ €30 (2,520 GMD)</td><td>CE 261 — medium-haul</td></tr>
+      <tr><td class="em">€600</td><td class="em">≈ €45 (3,800 GMD)</td><td>CE 261 — long-haul (ref.)</td></tr>
     </table>
-    <div class="note" id="todayNote">Tier in force today: —</div>
-    <div class="warn">
-      <strong>Already a partner?</strong> Your signed commission never goes down. The dates above apply only to <strong>new agreements</strong>.
+    <div class="note">
+      The commission is <strong>always 7.5% of the amount actually obtained</strong>: if the airline pays less, the commission drops proportionally. GMD figures are indicative, at ≈ 84 GMD/€.
     </div>
     <p style="font-size:12px;color:var(--muted);line-height:1.7;margin-top:12px">
       Paid within <strong>48 business hours</strong> after Robin des Airs receives cleared compensation (Wave, Afrimoney, QMoney).
@@ -73,46 +70,5 @@ h1{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--green);marg
     </div>
   </div>
 </div>
-<script src="/assets/agence-commission-tiers.js"></script>
-<script>
-(function () {
-  if (typeof AgenceCommissionTiers === 'undefined') return;
-  const t = AgenceCommissionTiers.resolve(new Date(), 'en');
-  const ids = { ete: 'c1', fin_annee: 'c2', '2027': 'c3' };
-  t.allTiers.forEach(function (row) {
-    const el = document.getElementById(ids[row.id]);
-    if (el) el.textContent = row.commissionGmd.toLocaleString('en') + ' GMD/pax';
-  });
-  document.querySelectorAll('#tierTable tr[data-tier]').forEach(function (tr) {
-    if (tr.getAttribute('data-tier') === t.tierId) tr.classList.add('tier-active');
-  });
-  const note = document.getElementById('todayNote');
-  if (note) {
-    let html =
-      'Tier in force today: <strong>' +
-      t.commissionGmd.toLocaleString('en') +
-      ' GMD/pax</strong> — ' +
-      esc(t.tierLabel);
-    if (t.tierEndsYmd && t.nextTierGmd) {
-      html +=
-        '. Next tier for <em>new</em> sign-ups: <strong>' +
-        t.nextTierGmd.toLocaleString('en') +
-        ' GMD/pax</strong> from ' +
-        formatEn(t.nextTierStartsYmd) +
-        '.';
-    }
-    html += ' <em>Founding: sign before 31 Aug 2026 (first 3 agencies) → 4,000 GMD per pax.</em>';
-    note.innerHTML = html;
-  }
-  function esc(s) {
-    return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;');
-  }
-  function formatEn(ymd) {
-    if (!ymd) return '';
-    const d = new Date(ymd + 'T12:00:00');
-    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-  }
-})();
-</script>
 </body>
 </html>
