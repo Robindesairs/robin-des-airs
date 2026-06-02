@@ -837,14 +837,27 @@ function extractInbound(payload) {
     const waId = item.waId || item.whatsappNumber || item.from;
     const isOutbound = item.owner === true || item.eventType === 'sentMessage' || item.fromMe === true;
     if (isOutbound) return;
+
+    // ── Réponses interactives WATI (priorité : un tap de bouton/liste = la sélection) ──
+    // WATI envoie : listReply {id,title,description} · interactiveButtonReply {id,text} · buttonReply {text}
+    const listReply = item.listReply || item.list_reply || item.interactiveListReply;
+    const btnReply  = item.interactiveButtonReply || item.buttonReply || item.button_reply;
+    const replyText =
+      (listReply && (listReply.title || listReply.id)) ||
+      (btnReply  && (btnReply.text || btnReply.title || btnReply.id)) ||
+      null;
+
+    // Ignorer le payload de test WATI (placeholders littéraux)
+    if (waId === 'senderPhone' || item.text === 'text') return;
+
     const text =
+      replyText ||
       item.text ||
       (item.finalText && String(item.finalText)) ||
-      (item.interactiveButtonReply && item.interactiveButtonReply.text) ||
-      (item.interactiveListReply && item.interactiveListReply.title) ||
       (item.type && item.type !== 'text' ? `[${item.type}]` : '');
     if (!waId) return;
     const phone = normalizeWaPhone(normalizeWatiPhone(waId));
+    if (!String(text || '').trim()) return;
     list.push({ phone, text: String(text || '').slice(0, 4096) });
   };
   if (Array.isArray(payload)) { payload.forEach(push); return list; }
