@@ -914,6 +914,33 @@ async function loadBureauStats(){
   }
   setSrcBadge();
 }
+async function loadMetaStats(){
+  // Vraies stats Meta Ads (compte publicitaire, 7 j) — token serveur.
+  const d = await jget('/api/meta-stats');
+  if(d && d.ok){
+    REAL.meta = d; REAL.sources.meta = true;
+    // le poste Growth (Yanis = index 7) tourne sur les vrais chiffres Meta
+    const camp = d.activeCampaigns!=null ? `${d.activeCampaigns} campagne(s) Meta active(s)` : 'Campagnes Meta en cours';
+    AGENTS[7].tasks = ()=>[
+      `Meta réel (7j) · <span class="hl">${fmt(d.spend)} €</span> dépensés — <span class="ok">${fmt(d.waConvos)}</span> conv. WhatsApp${d.cpl?` · CPL <span class="ok">${d.cpl} €</span>`:''}`,
+      `Reach 7j : <span class="hl">${fmt(d.reach)}</span> personnes · ${fmt(d.impressions)} impressions`,
+      `CPM <span class="hl">${d.cpm} €</span> · <span class="ok">${fmt(d.clicks)}</span> clics · CPC ${d.cpc} €`,
+      camp,
+    ];
+    AGENTS[7].kpiL = 'conv. WhatsApp'; AGENTS[7].kpi = d.waConvos || AGENTS[7].kpi;
+    const k=document.getElementById('kpi-7'); if(k) k.textContent = fmt(AGENTS[7].kpi);
+    const card7=document.querySelectorAll('#agents .agent')[7]; const lab=card7 && card7.querySelector('.kpi .l'); if(lab) lab.textContent='conv. WhatsApp';
+    const t=document.getElementById('task-7'); if(t) t.innerHTML = AGENTS[7].tasks()[0];
+    const gb=document.getElementById('gb-7'); if(gb) gb.innerHTML = AGENTS[7].tasks()[0];
+    // événement dans le fil
+    const el=document.createElement('div'); el.className='feed-item';
+    el.innerHTML=`<div class="feed-ic" style="--fp:var(--amber-pale)">📈</div>
+      <div class="feed-c"><div class="feed-txt">Meta Ads réel (7j) : <b>${fmt(d.impressions)}</b> impressions · <b>${fmt(d.reach)}</b> reach · <span class="grn">${fmt(d.waConvos)}</span> conv. WhatsApp · <span class="eur">${fmt(d.spend)} €</span></div>
+      <div class="feed-meta">meta-stats · compte publicitaire${d.activeCampaigns!=null?` · ${d.activeCampaigns} active(s)`:''}</div></div>`;
+    const feed=document.getElementById('feed'); feed.insertBefore(el, feed.firstChild);
+  }
+  setSrcBadge();
+}
 async function loadProtected(){
   // Endpoints protégés (token) : on tente, sinon on garde la démo silencieusement.
   const stats = await jget('/api/radar-stats?days=14');
@@ -923,7 +950,7 @@ async function loadProtected(){
   setSrcBadge();
 }
 async function loadRealData(){
-  await Promise.allSettled([ loadRadar(), loadWhatsApp(), loadBureauStats(), loadProtected() ]);
+  await Promise.allSettled([ loadRadar(), loadWhatsApp(), loadBureauStats(), loadMetaStats(), loadProtected() ]);
   setSrcBadge();
 }
 
@@ -947,6 +974,7 @@ loadRealData();
 setInterval(loadRadar, 180000);      // rafraîchit les vols réels toutes les 3 min
 setInterval(loadWhatsApp, 120000);   // état bot toutes les 2 min
 setInterval(loadBureauStats, 180000);// vrais chiffres CRM toutes les 3 min
+setInterval(loadMetaStats, 300000);  // stats Meta Ads toutes les 5 min
 </script>
 </body>
 </html>
