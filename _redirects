@@ -31,6 +31,7 @@
 /api/daily-radar-snapshot    /.netlify/functions/daily-radar-snapshot    200
 /api/radar-monitor           /.netlify/functions/radar-monitor           200
 /api/radar-stats             /.netlify/functions/radar-stats             200
+/api/bureau-stats            /.netlify/functions/bureau-stats            200
 /api/radar-eligible-registry /.netlify/functions/radar-eligible-registry 200
 /api/whatsapp-status         /.netlify/functions/whatsapp-status         200
 /api/airtable-webhook       /.netlify/functions/airtable-webhook  200

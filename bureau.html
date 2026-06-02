@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Le Bureau — Robin des Airs · Salle de contrôle</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="robin-des-airs-logo-profil-1024.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --sky: #0A1628; --sky-mid: #0D2240; --sky-card: #112850; --sky-card-2: #0E2244;
+  --sky-border: rgba(255,255,255,0.08);
+  --gold: #C8A85A; --gold-light: #E8C97A; --gold-pale: rgba(200,168,90,0.12);
+  --white: #FFFFFF; --white-70: rgba(255,255,255,0.7); --white-40: rgba(255,255,255,0.4); --white-15: rgba(255,255,255,0.12);
+  --green: #22C884; --green-pale: rgba(34,200,132,0.12);
+  --amber: #F5A623; --amber-pale: rgba(245,166,35,0.12);
+  --red: #E8445A; --red-pale: rgba(232,68,90,0.12);
+  --blue: #7EC8F0; --blue-pale: rgba(99,179,237,0.15);
+  --purple: #B794F6; --purple-pale: rgba(183,148,246,0.15);
+}
+html { font-size: 16px; }
+body { font-family: 'DM Sans', sans-serif; background: var(--sky); color: var(--white); min-height: 100vh;
+  background-image: radial-gradient(ellipse 60% 50% at 75% -10%, rgba(200,168,90,0.08) 0%, transparent 60%), radial-gradient(ellipse 50% 45% at 5% 100%, rgba(10,50,100,0.5) 0%, transparent 70%);
+  padding-bottom: 3rem; }
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ---- top bar ---- */
+.topbar { position: sticky; top: 0; z-index: 200; background: rgba(10,22,40,0.94); backdrop-filter: blur(14px); border-bottom: 1px solid var(--sky-border); }
+.topbar-inner { max-width: 1320px; margin: 0 auto; padding: 0.85rem 1.75rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 11px; text-decoration: none; color: var(--white); }
+.brand .mark { width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, var(--gold), #9c7f3a); display: flex; align-items: center; justify-content: center; font-size: 19px; box-shadow: 0 4px 18px rgba(200,168,90,0.3); }
+.brand .name { font-family: 'DM Serif Display', serif; font-size: 1.22rem; line-height: 1; }
+.brand .name em { color: var(--gold); font-style: normal; }
+.brand .sub { font-size: 0.68rem; color: var(--white-40); letter-spacing: 0.14em; text-transform: uppercase; margin-top: 3px; }
+.topbar-right { display: flex; align-items: center; gap: 14px; }
+.sound-btn { background: rgba(255,255,255,0.05); border:1px solid var(--sky-border); color: var(--white-70); font-family:'DM Sans',sans-serif; font-size:0.74rem; font-weight:600; padding:6px 12px; border-radius:8px; cursor:pointer; transition:all .2s; letter-spacing:.03em; }
+.sound-btn:hover { border-color: rgba(200,168,90,0.4); color: var(--white); }
+.sound-btn.on { background: var(--green-pale); border-color: rgba(34,200,132,0.4); color: var(--green); }
+.live-clock { font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; color: var(--gold-light); letter-spacing: 0.05em; }
+
+/* ---- tools dock ---- */
+.dock { margin-bottom: 1.6rem; }
+.dock-group { margin-bottom: 0.9rem; }
+.dock-glabel { font-size:0.66rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold); font-weight:600; margin-bottom:0.5rem; display:flex; align-items:center; gap:8px; }
+.dock-glabel::after { content:''; flex:1; height:1px; background:var(--gold-pale); }
+.dock-chips { display:flex; flex-wrap:wrap; gap:8px; }
+.chip { display:inline-flex; align-items:center; gap:7px; background:var(--sky-card); border:1px solid var(--sky-border); border-radius:10px; padding:8px 13px; font-size:0.82rem; color:var(--white-70); text-decoration:none; transition:all .18s; }
+.chip:hover { border-color:rgba(200,168,90,0.45); color:var(--white); background:#163060; transform:translateY(-1px); }
+.chip .ci { font-size:15px; }
+.chip[target] .ext { font-size:0.62rem; color:var(--white-40); }
+.agent.linked { cursor:pointer; }
+.agent .open-tool { font-size:0.66rem; color:var(--white-40); opacity:0; transition:opacity .2s; display:inline-flex; align-items:center; gap:4px; }
+.agent.linked:hover .open-tool { opacity:1; color:var(--gold-light); }
+.live-pill { display: inline-flex; align-items: center; gap: 7px; background: var(--green-pale); border: 1px solid rgba(34,200,132,0.3); border-radius: 30px; padding: 5px 13px; font-size: 0.72rem; font-weight: 600; color: var(--green); letter-spacing: 0.05em; }
+.src-badge { display:inline-flex; align-items:center; gap:6px; border-radius:30px; padding:5px 12px; font-size:0.68rem; font-weight:600; letter-spacing:0.04em; border:1px solid; white-space:nowrap; }
+.src-badge.real { background:var(--green-pale); border-color:rgba(34,200,132,0.35); color:var(--green); }
+.src-badge.demo { background:var(--amber-pale); border-color:rgba(245,166,35,0.35); color:var(--amber); }
+.src-badge.wait { background:rgba(255,255,255,0.05); border-color:var(--sky-border); color:var(--white-40); }
+.mini-src { font-size:0.6rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; padding:2px 7px; border-radius:6px; }
+.mini-src.real { background:var(--green-pale); color:var(--green); } .mini-src.demo { background:var(--amber-pale); color:var(--amber); }
+.live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 0 rgba(34,200,132,0.6); animation: ring 1.8s infinite; }
+@keyframes ring { 0%{box-shadow:0 0 0 0 rgba(34,200,132,0.5)} 70%{box-shadow:0 0 0 8px rgba(34,200,132,0)} 100%{box-shadow:0 0 0 0 rgba(34,200,132,0)} }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+.wrap { max-width: 1320px; margin: 0 auto; padding: 1.75rem; }
+
+/* ---- hero / pulse ---- */
+.hero-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.4rem; }
+.hero-title { font-family: 'DM Serif Display', serif; font-size: clamp(1.9rem, 3.6vw, 2.8rem); line-height: 1.05; }
+.hero-title em { color: var(--gold); font-style: italic; }
+.hero-sub { color: var(--white-70); font-size: 0.95rem; margin-top: 6px; max-width: 560px; }
+.hero-date { text-align: right; }
+.hero-date .d { font-size: 0.78rem; color: var(--white-40); text-transform: uppercase; letter-spacing: 0.1em; }
+.hero-date .v { font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: var(--gold-light); }
+
+.pulse-bar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: var(--sky-border); border: 1px solid var(--sky-border); border-radius: 16px; overflow: hidden; margin-bottom: 1.6rem; }
+.pulse-cell { background: var(--sky-card); padding: 1.25rem 1.4rem; position: relative; }
+.pulse-cell::after { content:''; position:absolute; top:0; left:0; width:100%; height:2px; background: linear-gradient(90deg, transparent, var(--accent,var(--gold)), transparent); opacity:0.5; }
+.pulse-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--white-40); margin-bottom: 9px; }
+.pulse-value { font-family: 'DM Serif Display', serif; font-size: 1.85rem; line-height: 1; }
+.pulse-value.gold{color:var(--gold-light)} .pulse-value.green{color:var(--green)} .pulse-value.blue{color:var(--blue)} .pulse-value.amber{color:var(--amber)}
+.pulse-sub { font-size: 0.72rem; color: var(--white-40); margin-top: 6px; }
+.pulse-sub b{color:var(--green)}
+
+/* ---- layout ---- */
+.grid { display: grid; grid-template-columns: 1fr 380px; gap: 1.5rem; align-items: start; }
+.section-h { display:flex; align-items:center; gap:10px; margin: 0 0 0.9rem; }
+.section-h h2 { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: 1.3rem; }
+.section-h .tag { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--white-40); border:1px solid var(--sky-border); padding: 3px 9px; border-radius: 20px; }
+.section-h .line { flex:1; height:1px; background: var(--sky-border); }
+
+/* ---- agent cards ---- */
+.agents { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+.agent { background: var(--sky-card); border: 1px solid var(--sky-border); border-radius: 16px; padding: 1.1rem 1.2rem; position: relative; overflow: hidden; transition: transform .2s, border-color .2s; }
+.agent:hover { transform: translateY(-2px); border-color: rgba(200,168,90,0.35); }
+.agent::before { content:''; position:absolute; inset:0 auto 0 0; width:3px; background: var(--ac, var(--gold)); }
+.agent-top { display:flex; align-items:center; gap:11px; margin-bottom: 0.85rem; }
+.avatar { width: 46px; height: 46px; border-radius: 12px; flex-shrink:0; background: var(--acp, var(--gold-pale)); border:1px solid var(--ac,var(--gold)); position:relative; }
+.avatar .av-badge { position:absolute; bottom:-4px; right:-4px; width:20px; height:20px; border-radius:50%; background:var(--sky); border:1.5px solid var(--ac,var(--gold)); display:flex; align-items:center; justify-content:center; font-size:10px; }
+.agent-id { flex:1; min-width:0; }
+.agent-name { font-weight: 600; font-size: 0.98rem; display:flex; align-items:center; gap:7px; }
+.agent-role { font-size: 0.74rem; color: var(--white-40); margin-top:1px; }
+.status { font-size: 0.64rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; padding: 3px 8px; border-radius: 20px; display:inline-flex; align-items:center; gap:5px; white-space:nowrap; }
+.status .sd { width:6px; height:6px; border-radius:50%; animation: pulse 1.6s infinite; }
+.st-on { background: var(--green-pale); color: var(--green); } .st-on .sd{background:var(--green)}
+.st-busy { background: var(--amber-pale); color: var(--amber); } .st-busy .sd{background:var(--amber)}
+.st-idle { background: rgba(255,255,255,0.06); color: var(--white-40); } .st-idle .sd{background:var(--white-40); animation:none}
+.agent-task { font-size: 0.82rem; color: var(--white-70); line-height: 1.5; min-height: 2.5em; }
+.agent-task .hl { color: var(--gold-light); font-weight: 500; }
+.agent-task .ok { color: var(--green); font-weight: 500; }
+.agent-task .warn { color: var(--amber); font-weight: 500; }
+.typing { display:inline-flex; gap:3px; vertical-align:middle; margin-left:4px; }
+.typing i { width:5px; height:5px; border-radius:50%; background: var(--gold-light); animation: blink 1.2s infinite; }
+.typing i:nth-child(2){animation-delay:.2s} .typing i:nth-child(3){animation-delay:.4s}
+@keyframes blink { 0%,60%,100%{opacity:.25} 30%{opacity:1} }
+.agent-foot { display:flex; align-items:center; justify-content:space-between; margin-top: 0.95rem; padding-top: 0.8rem; border-top:1px solid var(--sky-border); }
+.kpi { display:flex; flex-direction:column; gap:1px; }
+.kpi .k { font-family:'JetBrains Mono',monospace; font-size: 1.05rem; font-weight: 500; color: var(--white); }
+.kpi .l { font-size: 0.64rem; color: var(--white-40); text-transform:uppercase; letter-spacing:.06em; }
+.mini-bar { width: 70px; height: 5px; border-radius: 4px; background: rgba(255,255,255,0.08); overflow:hidden; }
+.mini-bar i { display:block; height:100%; background: var(--ac,var(--gold)); border-radius:4px; transition: width .8s; }
+
+/* ---- right column ---- */
+.panel { background: var(--sky-card); border:1px solid var(--sky-border); border-radius:16px; margin-bottom:1.4rem; overflow:hidden; }
+.panel-h { padding: 1rem 1.2rem; border-bottom:1px solid var(--sky-border); display:flex; align-items:center; justify-content:space-between; }
+.panel-h .t { font-family:'DM Serif Display',serif; font-size:1.08rem; }
+.panel-b { padding: 0.4rem 0; max-height: 420px; overflow-y:auto; }
+.panel-b::-webkit-scrollbar{width:6px} .panel-b::-webkit-scrollbar-thumb{background:var(--white-15);border-radius:3px}
+
+/* feed */
+.feed-item { display:flex; gap:11px; padding: 0.7rem 1.2rem; border-bottom:1px solid rgba(255,255,255,0.04); animation: slidein .4s ease; }
+@keyframes slidein { from{opacity:0; transform:translateY(-6px)} to{opacity:1; transform:none} }
+.feed-item.win-flash { animation: slidein .4s ease, winglow 2.4s ease; }
+@keyframes winglow { 0%{background:var(--gold-pale)} 100%{background:transparent} }
+.feed-ic { width:30px; height:30px; border-radius:9px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:14px; background: var(--fp,var(--gold-pale)); }
+.feed-c { flex:1; min-width:0; }
+.feed-txt { font-size: 0.82rem; line-height:1.45; color: var(--white-70); }
+.feed-txt b { color: var(--white); font-weight:600; }
+.feed-txt .eur { color: var(--gold-light); font-weight:600; }
+.feed-txt .grn { color: var(--green); font-weight:600; }
+.feed-meta { font-size: 0.66rem; color: var(--white-40); margin-top:3px; font-family:'JetBrains Mono',monospace; }
+
+/* whatsapp */
+.wa { background: linear-gradient(180deg, #0c2a22, #0a1f1a); border:1px solid rgba(34,200,132,0.18); border-radius:16px; margin-bottom:1.4rem; overflow:hidden; }
+.wa-h { background: #075E54; padding: 0.7rem 1rem; display:flex; align-items:center; gap:10px; }
+.wa-h .av { width:34px;height:34px;border-radius:50%; background:#25D366; display:flex;align-items:center;justify-content:center; font-size:17px; }
+.wa-h .nm { font-size:0.85rem; font-weight:600; } .wa-h .pr { font-size:0.66rem; color:rgba(255,255,255,0.6); }
+.wa-body { padding: 0.9rem; min-height: 240px; display:flex; flex-direction:column; gap:8px; background-image: radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 14px 14px; }
+.bub { max-width: 82%; padding: 7px 11px; border-radius: 12px; font-size: 0.8rem; line-height:1.4; animation: slidein .35s; }
+.bub.in { align-self:flex-start; background:#1f2c34; border-bottom-left-radius:3px; }
+.bub.out { align-self:flex-end; background:#056162; border-bottom-right-radius:3px; }
+.bub .tm { font-size:0.6rem; color:rgba(255,255,255,0.45); text-align:right; margin-top:3px; }
+
+/* radar mini */
+.radar-list .r { display:flex; align-items:center; gap:10px; padding:0.6rem 1.2rem; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.8rem; }
+.radar-list .fl { font-family:'JetBrains Mono',monospace; font-weight:500; color:var(--white); width:62px; }
+.radar-list .rt { color:var(--white-70); flex:1; }
+.radar-list .bd { font-family:'JetBrains Mono',monospace; font-weight:600; }
+.bd.delay{color:var(--amber)} .bd.cancel{color:var(--red)}
+.radar-list .eu { font-size:0.7rem; color:var(--gold-light); font-weight:600; }
+
+.foot-note { text-align:center; color:var(--white-40); font-size:0.72rem; margin-top:2rem; line-height:1.6; }
+.foot-note b{color:var(--white-70)}
+
+/* ============ MODE JEU 🎮 ============ */
+#gameView { display:none; }
+body.game-mode #dashView { display:none; }
+body.game-mode #gameView { display:block; }
+.px { font-family:'Press Start 2P', monospace; }
+
+/* HUD arcade */
+.hud { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:1.4rem; }
+.hud-cell { background:#0a1b3a; border:3px solid #1d3a6e; border-radius:10px; padding:14px 12px; position:relative; box-shadow:inset 0 0 0 2px #0a1b3a, 0 0 18px rgba(126,200,240,0.12); }
+.hud-cell .hl { font-family:'Press Start 2P',monospace; font-size:0.5rem; color:var(--white-40); letter-spacing:0.05em; margin-bottom:9px; }
+.hud-cell .hv { font-family:'Press Start 2P',monospace; font-size:1rem; line-height:1.2; }
+.hv.score{color:var(--gold-light)} .hv.lvl{color:var(--green)} .hv.combo{color:var(--amber)} .hv.pass{color:var(--blue)}
+.hud-cell .hbar { height:7px; background:#06122a; border-radius:4px; margin-top:9px; overflow:hidden; border:1px solid #1d3a6e; }
+.hud-cell .hbar i { display:block; height:100%; background:linear-gradient(90deg,var(--green),var(--gold)); transition:width .5s; }
+
+.arcade-title { text-align:center; margin:0.5rem 0 1.6rem; }
+.arcade-title .t { font-family:'Press Start 2P',monospace; font-size:1.15rem; color:var(--gold-light); text-shadow:0 0 12px rgba(200,168,90,0.5), 3px 3px 0 #6b4f1a; letter-spacing:0.04em; animation:titlefloat 3s ease-in-out infinite; }
+@keyframes titlefloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+.arcade-title .s { font-family:'Press Start 2P',monospace; font-size:0.5rem; color:var(--white-40); margin-top:12px; letter-spacing:0.1em; }
+.arcade-title .s .blink { color:var(--green); animation:pulse 1s steps(1) infinite; }
+
+/* scène isométrique */
+.iso-wrap { position:relative; height:560px; margin:0 auto 1.5rem; max-width:980px; overflow:hidden; border-radius:18px;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 20%, rgba(126,200,240,0.10), transparent 60%),
+    linear-gradient(180deg,#0b1d3e 0%, #0a1730 100%);
+  border:3px solid #1d3a6e; box-shadow:inset 0 0 60px rgba(0,0,0,0.5); }
+/* overlay CRT scanlines */
+.iso-wrap::after { content:''; position:absolute; inset:0; pointer-events:none; z-index:30;
+  background:repeating-linear-gradient(0deg, rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 1px, transparent 2px, transparent 4px);
+  mix-blend-mode:overlay; }
+.iso-floor { position:absolute; left:50%; top:54%; width:600px; height:600px; margin:-300px 0 0 -300px;
+  transform:rotateX(58deg) rotateZ(45deg); transform-style:preserve-3d;
+  background-image:linear-gradient(rgba(126,200,240,0.16) 2px, transparent 2px), linear-gradient(90deg, rgba(126,200,240,0.16) 2px, transparent 2px);
+  background-size:75px 75px; background-color:rgba(20,48,96,0.35);
+  border:2px solid rgba(126,200,240,0.25); border-radius:6px; }
+
+/* stations (billboard, non skew) */
+.station { position:absolute; transform:translate(-50%,-100%); text-align:center; z-index:10; cursor:pointer; transition:transform .15s; }
+.station:hover { z-index:25; }
+.station:hover .char { transform:scale(1.12); }
+.bubble { background:#0e2244; border:2px solid var(--ac,#C8A85A); color:#fff; font-size:0.62rem; line-height:1.35; max-width:150px; padding:6px 9px; border-radius:9px; margin:0 auto 6px; position:relative; box-shadow:0 4px 14px rgba(0,0,0,0.4); min-height:1.5em; }
+.bubble::after { content:''; position:absolute; bottom:-7px; left:50%; margin-left:-6px; border:6px solid transparent; border-top-color:var(--ac,#C8A85A); }
+.bubble .hl{color:var(--gold-light)} .bubble .ok{color:var(--green)} .bubble .warn{color:var(--amber)}
+.desk { width:62px; height:30px; margin:0 auto; background:linear-gradient(180deg,#2a4a82,#1b3358); border:2px solid #34589a; border-radius:6px 6px 3px 3px; position:relative; box-shadow:0 6px 0 #112444; }
+.desk .screen { position:absolute; top:-13px; left:50%; margin-left:-13px; width:26px; height:18px; background:#0a1b3a; border:2px solid #4a7fd0; border-radius:3px; box-shadow:0 0 8px rgba(74,127,208,0.6); }
+.desk .screen::after { content:''; position:absolute; inset:2px; background:linear-gradient(135deg,#22C884,#7EC8F0); opacity:0.5; animation:flicker 2s steps(2) infinite; }
+@keyframes flicker { 0%,100%{opacity:0.5} 50%{opacity:0.2} }
+.char { font-size:34px; line-height:1; filter:drop-shadow(0 4px 4px rgba(0,0,0,0.5)); animation:bob 1.8s ease-in-out infinite; transition:transform .15s; }
+.char-photo { width:56px; height:56px; margin:0 auto; border-radius:50%; background-size:cover; background-position:center top;
+  border:3px solid var(--ac,#C8A85A); box-shadow:0 6px 14px rgba(0,0,0,0.55), 0 0 0 2px #0a1628;
+  animation:bob 1.8s ease-in-out infinite; transition:transform .15s; position:relative; }
+.char-photo .role-badge { position:absolute; bottom:-4px; right:-4px; width:22px; height:22px; border-radius:50%; background:#0e2244; border:2px solid var(--ac,#C8A85A); display:flex; align-items:center; justify-content:center; font-size:11px; }
+.station:nth-child(2n) .char-photo{animation-delay:.3s} .station:nth-child(3n) .char-photo{animation-delay:.6s}
+.station.busy .char-photo { animation:bobfast .5s ease-in-out infinite; }
+@keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+.nameplate { font-family:'Press Start 2P',monospace; font-size:0.42rem; color:#fff; margin-top:6px; letter-spacing:0.02em; }
+.lvlchip { display:inline-block; font-family:'Press Start 2P',monospace; font-size:0.42rem; color:#0a1628; background:var(--gold-light); padding:3px 5px; border-radius:4px; margin-top:5px; }
+.xpbar { width:74px; height:5px; background:#06122a; border:1px solid #1d3a6e; border-radius:3px; margin:5px auto 0; overflow:hidden; }
+.xpbar i { display:block; height:100%; background:var(--ac,#22C884); transition:width .6s; }
+.zzz { position:absolute; top:-6px; right:-4px; font-size:14px; opacity:0; }
+.station.busy .char { animation:bobfast .5s ease-in-out infinite; }
+@keyframes bobfast { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+/* score popups */
+.scorepop { position:fixed; font-family:'Press Start 2P',monospace; font-size:0.9rem; color:var(--gold-light); text-shadow:2px 2px 0 #6b4f1a; pointer-events:none; z-index:998; animation:floatup 1.4s ease-out forwards; }
+@keyframes floatup { 0%{transform:translateY(0); opacity:1} 100%{transform:translateY(-80px); opacity:0} }
+
+.game-legend { text-align:center; font-family:'Press Start 2P',monospace; font-size:0.5rem; color:var(--white-40); line-height:2; }
+.game-legend b{color:var(--gold-light)}
+@media (max-width:700px){ .hud{grid-template-columns:repeat(2,1fr)} .iso-wrap{height:480px} .iso-floor{width:440px;height:440px;margin:-220px 0 0 -220px;background-size:55px 55px} }
+
+@media (max-width: 1040px){ .grid{grid-template-columns:1fr} .pulse-bar{grid-template-columns:repeat(2,1fr)} }
+@media (max-width: 600px){ .agents{grid-template-columns:1fr} .pulse-bar{grid-template-columns:1fr} .topbar-right .live-clock{display:none} }
+</style>
+</head>
+<body>
+
+<canvas id="confetti" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:999"></canvas>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="index.html">
+      <span class="mark">🦅</span>
+      <span>
+        <span class="name">Robin <em>des Airs</em></span>
+        <div class="sub">Le Bureau · Salle de contrôle</div>
+      </span>
+    </a>
+    <div class="topbar-right">
+      <button class="sound-btn" id="viewBtn" title="Basculer Tableau / Jeu">🎮 Mode Jeu</button>
+      <button class="sound-btn" id="soundBtn" title="Activer le son des dossiers gagnés">🔇 Son</button>
+      <span class="live-clock mono" id="clock">--:--:--</span>
+      <span class="src-badge wait" id="srcBadge">⏳ Connexion…</span>
+      <span class="live-pill"><span class="live-dot"></span> EN DIRECT</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+ <div id="dashView">
+  <div class="hero-row">
+    <div>
+      <h1 class="hero-title">Le bureau tourne <em>à plein régime</em></h1>
+      <p class="hero-sub">Vue d'ensemble en temps réel de l'entreprise — chaque poste, chaque dossier, chaque euro récupéré. Vos agents travaillent pendant que vous regardez.</p>
+    </div>
+    <div class="hero-date">
+      <div class="d">Aujourd'hui</div>
+      <div class="v" id="today">—</div>
+    </div>
+  </div>
+
+  <!-- PULSE -->
+  <div class="pulse-bar">
+    <div class="pulse-cell" style="--accent:var(--gold)">
+      <div class="pulse-label">Dossiers actifs</div>
+      <div class="pulse-value gold" id="kpiDossiers">0</div>
+      <div class="pulse-sub"><b>+<span id="kpiDossiersNew">0</span></b> aujourd'hui</div>
+    </div>
+    <div class="pulse-cell" style="--accent:var(--green)">
+      <div class="pulse-label">€ en récupération</div>
+      <div class="pulse-value green">€<span id="kpiEur">0</span></div>
+      <div class="pulse-sub">indemnités en cours</div>
+    </div>
+    <div class="pulse-cell" style="--accent:var(--blue)">
+      <div class="pulse-label">Taux de succès</div>
+      <div class="pulse-value blue" id="kpiTaux">0%</div>
+      <div class="pulse-sub">dossiers gagnés</div>
+    </div>
+    <div class="pulse-cell" style="--accent:var(--amber)">
+      <div class="pulse-label">Agences partenaires</div>
+      <div class="pulse-value amber" id="kpiAgences">0</div>
+      <div class="pulse-sub"><b>+<span id="kpiAgencesNew">0</span></b> ce mois</div>
+    </div>
+    <div class="pulse-cell" style="--accent:var(--green)">
+      <div class="pulse-label">Postes actifs</div>
+      <div class="pulse-value green"><span id="kpiAgentsOn">0</span><span style="color:var(--white-40);font-size:1.1rem">/8</span></div>
+      <div class="pulse-sub" id="kpiAgentsTxt">tout le monde au travail</div>
+    </div>
+  </div>
+
+  <!-- TOOLS DOCK -->
+  <div class="dock">
+    <div class="section-h"><h2>Tous les outils</h2><span class="tag">accès rapide</span><span class="line"></span></div>
+    <div id="dock"></div>
+  </div>
+
+  <div class="grid">
+    <!-- LEFT : agents -->
+    <div>
+      <div class="section-h">
+        <h2>L'équipe au travail</h2>
+        <span class="tag">8 postes · live</span>
+        <span class="line"></span>
+      </div>
+      <div class="agents" id="agents"></div>
+    </div>
+
+    <!-- RIGHT : feed + whatsapp + radar -->
+    <div>
+      <div class="section-h"><h2>Ce qui se passe</h2><span class="line"></span></div>
+
+      <div class="wa">
+        <div class="wa-h">
+          <div class="av">🤖</div>
+          <div style="flex:1">
+            <div class="nm">Robin · Bot WhatsApp</div>
+            <div class="pr" id="waStatus">en ligne · répond en 2 s</div>
+          </div>
+          <span class="live-dot"></span>
+        </div>
+        <div class="wa-body" id="waBody"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-h"><span class="t">Radar vols · CE261</span><span class="mini-src demo" id="radarSrc">DÉMO</span></div>
+        <div class="panel-b radar-list" id="radar"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-h"><span class="t">Fil d'activité</span><span class="tag" style="font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--white-40);border:1px solid var(--sky-border);padding:3px 9px;border-radius:20px">temps réel</span></div>
+        <div class="panel-b" id="feed"></div>
+      </div>
+    </div>
+  </div>
+
+ </div><!-- /#dashView -->
+
+ <div id="gameView">
+   <div class="arcade-title">
+     <div class="t">🦅 ROBIN DES AIRS</div>
+     <div class="s">— LE BUREAU · NIVEAU <span id="gLvlTitle">7</span> — <span class="blink">▶ ON JOUE</span></div>
+   </div>
+   <div class="hud">
+     <div class="hud-cell"><div class="hl">SCORE €</div><div class="hv score" id="gScore">0</div></div>
+     <div class="hud-cell"><div class="hl">NIVEAU</div><div class="hv lvl" id="gLvl">7</div><div class="hbar"><i id="gXp" style="width:40%"></i></div></div>
+     <div class="hud-cell"><div class="hl">COMBO</div><div class="hv combo" id="gCombo">x1</div></div>
+     <div class="hud-cell"><div class="hl">PASSAGERS</div><div class="hv pass" id="gPass">0</div></div>
+   </div>
+   <div class="iso-wrap">
+     <div class="iso-floor"></div>
+     <div id="stations"></div>
+   </div>
+   <div class="game-legend">
+     CLIC SUR UN PERSO → OUVRE SON OUTIL &nbsp;·&nbsp; <b>DOSSIER GAGNÉ</b> &amp; <b>MANDAT SIGNÉ</b> = 🎉 + SON + SCORE
+   </div>
+ </div><!-- /#gameView -->
+
+  <p class="foot-note">
+    <b>Le Bureau</b> — tableau de bord interne Robin des Airs. Données d'activité simulées en direct à des fins de pilotage et de démonstration.<br>
+    Les vols, compagnies et routes proviennent de la base réelle Europe ↔ Afrique. Page privée · <span class="mono">noindex</span>
+  </p>
+</div>
+
+<script>
+/* ============ DONNÉES RÉELLES (extraites de data/) ============ */
+const AIRLINES = ["Air France","Corsair","Transavia France","Brussels Airlines","Royal Air Maroc","Tunisair","Air Algérie","ASKY Airlines","Ethiopian Airlines","Kenya Airways","Air Sénégal","Camair-Co","Air Côte d'Ivoire","TAP Air Portugal","Turkish Airlines","EgyptAir","RwandAir","Lufthansa","British Airways","KLM","Iberia","Ryanair","Vueling"];
+const FLIGHTS = [
+  {fl:"AF718",r:"CDG → DKR",a:"Air France",eu:600},{fl:"SN255",r:"BRU → DKR",a:"Brussels Airlines",eu:600},
+  {fl:"AT700",r:"CDG → DKR",a:"Royal Air Maroc",eu:600},{fl:"ET704",r:"CDG → ADD",a:"Ethiopian Airlines",eu:600},
+  {fl:"AF756",r:"CDG → FIH",a:"Air France",eu:600},{fl:"TO850",r:"ORY → DKR",a:"Transavia France",eu:600},
+  {fl:"AF732",r:"CDG → BKO",a:"Air France",eu:600},{fl:"SN401",r:"BRU → FIH",a:"Brussels Airlines",eu:600},
+  {fl:"AF742",r:"CDG → DSS",a:"Air France",eu:600},{fl:"AT960",r:"ORY → CMN",a:"Royal Air Maroc",eu:400},
+  {fl:"TU720",r:"ORY → TUN",a:"Tunisair",eu:400},{fl:"AH1006",r:"ORY → ALG",a:"Air Algérie",eu:400},
+  {fl:"AF703",r:"DKR → CDG",a:"Air France",eu:600},{fl:"KQ116",r:"CDG → NBO",a:"Kenya Airways",eu:600},
+  {fl:"WB100",r:"BRU → KGL",a:"RwandAir",eu:600},{fl:"QC512",r:"CDG → DLA",a:"Camair-Co",eu:600}
+];
+const PRENOMS = ["Fatou","Mamadou","Aminata","Ibrahima","Aïssatou","Ousmane","Mariama","Cheikh","Awa","Moussa","Bineta","Modou","Khady","Lamine","Sokhna","Abdou","Ndeye","Pape","Coumba","Souleymane"];
+const VILLES = ["Dakar","Abidjan","Douala","Bamako","Conakry","Lomé","Cotonou","Brazzaville","Kinshasa","Nairobi","Addis-Abeba","Yaoundé"];
+const AGENCES = ["Seyman Travel","Teranga Voyages","Sahel Tours","Baobab Travel","Atlantique Évasion","Sénégal Air Services","Niang Voyages","Diarra Travel","Sunu Trip","Karang Tours"];
+
+const rnd = a => a[Math.floor(Math.random()*a.length)];
+const ri = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+const fmt = n => n.toLocaleString('fr-FR');
+
+/* ============ DOCK OUTILS ============ */
+const DOCK = [
+  { g:"Opérations & dossiers", items:[
+    {ic:"🛰️",l:"Radar vols",u:"/radar-vols-v2"},{ic:"📄",l:"Dossier",u:"/dossier"},
+    {ic:"📥",l:"Dépôt en ligne",u:"/depot-en-ligne.html"},{ic:"🔎",l:"Suivi dossier",u:"/suivi-dossier"},
+    {ic:"🌦️",l:"Météo dossier",u:"/meteo-dossier-indemnite.html"},{ic:"🧭",l:"Choix réclamation",u:"/choix-reclamation"} ]},
+  { g:"Agences & partenaires", items:[
+    {ic:"🏢",l:"Espace agence",u:"/espace-agence"},{ic:"🗂️",l:"CRM",u:"/crm/"},
+    {ic:"✍️",l:"Contrat partenaire",u:"/partner-agreement-fr.html"},{ic:"📊",l:"Paliers commission",u:"/paliers-commission-agence-fr.html"},
+    {ic:"🎫",l:"Programme agents",u:"/programme-agents-voyage.html"},{ic:"🤝",l:"Rejoindre",u:"/partenaires-rejoindre.html"} ]},
+  { g:"Marketing & croissance", items:[
+    {ic:"🎨",l:"Générateur pub",u:"/generateur-pub.html"},{ic:"📱",l:"Générateur stories",u:"/generateur-pub-stories.html"},
+    {ic:"🎁",l:"Parrainage",u:"/parrainage"},{ic:"💸",l:"Nos tarifs",u:"/nos-tarifs.html"} ]},
+  { g:"Légal & CE261", items:[
+    {ic:"⚖️",l:"Mandat FR",u:"/mandat"},{ic:"📏",l:"Barème CE261",u:"/bareme-ce261-fr.html"},
+    {ic:"⏳",l:"Délais & dates",u:"/delais-dates-ce261-fr.html"},{ic:"📜",l:"CGV",u:"/cgv"},
+    {ic:"🔒",l:"Confidentialité",u:"/politique-confidentialite"} ]},
+  { g:"Système & contenu", items:[
+    {ic:"🧪",l:"Tests API Netlify",u:"/verification-fonctions.html"},{ic:"🗺️",l:"Navigation interne",u:"/navigation-interne"},
+    {ic:"📰",l:"Blog",u:"/blog/"},{ic:"📍",l:"Destinations",u:"/destinations/"},{ic:"🏠",l:"Accueil",u:"/"} ]},
+];
+const dockEl = document.getElementById('dock');
+DOCK.forEach(grp=>{
+  const g=document.createElement('div'); g.className='dock-group';
+  g.innerHTML = `<div class="dock-glabel">${grp.g}</div><div class="dock-chips">`+
+    grp.items.map(it=>`<a class="chip" href="${it.u}"><span class="ci">${it.ic}</span>${it.l}</a>`).join('')+`</div>`;
+  dockEl.appendChild(g);
+});
+
+/* ============ SON VICTOIRE 🏆 ============ */
+let SOUND_ON = false, audioCtx = null;
+const soundBtn = document.getElementById('soundBtn');
+soundBtn.addEventListener('click', ()=>{
+  SOUND_ON = !SOUND_ON;
+  soundBtn.classList.toggle('on', SOUND_ON);
+  soundBtn.textContent = SOUND_ON ? '🔊 Son' : '🔇 Son';
+  if(SOUND_ON){ if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==='suspended') audioCtx.resume(); winSound(); launchConfetti(90); }
+});
+function winSound(){
+  if(!SOUND_ON || !audioCtx) return;
+  const now = audioCtx.currentTime;
+  // petit arpège ascendant "ka-ching" doré : C5 E5 G5 C6
+  const notes = [523.25, 659.25, 783.99, 1046.50];
+  notes.forEach((f,i)=>{
+    const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = 'triangle'; o.frequency.value = f;
+    const t = now + i*0.09;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(0.22, t+0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, t+0.35);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(t); o.stop(t+0.4);
+  });
+}
+
+/* ============ CONFETTIS 🎉 ============ */
+const confCanvas = document.getElementById('confetti');
+const cctx = confCanvas.getContext('2d');
+let confParts = [], confRAF = null;
+function sizeConf(){ confCanvas.width = window.innerWidth; confCanvas.height = window.innerHeight; }
+sizeConf(); window.addEventListener('resize', sizeConf);
+const CONF_COLORS = ['#C8A85A','#E8C97A','#22C884','#7EC8F0','#B794F6','#F5A623','#FFFFFF'];
+function launchConfetti(n=130){
+  for(let i=0;i<n;i++){
+    confParts.push({
+      x: confCanvas.width*(0.15+Math.random()*0.7),
+      y: -20 - Math.random()*confCanvas.height*0.3,
+      vx: (Math.random()-0.5)*5,
+      vy: 2 + Math.random()*4.5,
+      sz: 5 + Math.random()*7,
+      rot: Math.random()*Math.PI,
+      vr: (Math.random()-0.5)*0.3,
+      col: CONF_COLORS[Math.floor(Math.random()*CONF_COLORS.length)],
+      life: 1
+    });
+  }
+  if(!confRAF) confRAF = requestAnimationFrame(stepConf);
+}
+function stepConf(){
+  cctx.clearRect(0,0,confCanvas.width,confCanvas.height);
+  for(let i=confParts.length-1;i>=0;i--){
+    const p = confParts[i];
+    p.vy += 0.06; p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+    if(p.y > confCanvas.height*0.78) p.life -= 0.012;
+    cctx.save(); cctx.globalAlpha = Math.max(0,p.life);
+    cctx.translate(p.x,p.y); cctx.rotate(p.rot); cctx.fillStyle = p.col;
+    cctx.fillRect(-p.sz/2,-p.sz/2,p.sz,p.sz*0.6); cctx.restore();
+    if(p.life<=0 || p.y>confCanvas.height+30) confParts.splice(i,1);
+  }
+  if(confParts.length){ confRAF = requestAnimationFrame(stepConf); }
+  else { cctx.clearRect(0,0,confCanvas.width,confCanvas.height); confRAF = null; }
+}
+
+/* ============ ÉTAT GLOBAL ============ */
+let S = { dossiers: 1847, dossiersNew: 23, eur: 1108200, agences: 34, agencesNew: 5, gagnes:1402, total:1620 };
+// REAL : rempli par les endpoints /api/* quand disponibles (site Netlify). Sinon vide → mode démo.
+let REAL = { radar: null, whatsapp: null, kpi: false, sources: {} };
+
+/* ============ POSTES / AGENTS ============ */
+const AGENTS = [
+  { ic:"👑", ac:"var(--gold)", acp:"var(--gold-pale)", name:"Aïcha Diallo", role:"Directrice Générale",
+    kpiL:"pilotage", kpiUnit:"", base:96,
+    tasks:()=>[ `Revue du <span class="hl">tableau de bord</span> — ${fmt(S.dossiers)} dossiers, tout est vert`,
+      `Arbitrage : priorité aux dossiers <span class="hl">Air France &gt; 3 mois</span>`,
+      `Validation objectif mensuel — <span class="ok">112 % atteint</span> 🎯`,
+      `Point hebdo avec les 8 postes — <span class="ok">aucun blocage</span>` ] },
+  { ic:"🛰️", ac:"var(--blue)", acp:"var(--blue-pale)", name:"Malik Touré", role:"Analyste Vols · Radar CE261",
+    kpiL:"vols scannés", kpiUnit:"", base:88,
+    tasks:()=>{ const f=rnd(FLIGHTS); return [
+      `Détection : <span class="hl">${f.fl}</span> ${f.r} retardé <span class="warn">+${ri(3,7)}h${ri(0,5)}0</span> → éligible <span class="hl">${f.eu} €</span>`,
+      `Scan AeroDataBox en cours <span class="typing"><i></i><i></i><i></i></span>`,
+      `<span class="ok">${ri(4,11)} vols</span> remontés ce matin — Europe ↔ Afrique`,
+      `Vérification distance &amp; juridiction <span class="hl">${f.fl}</span> — <span class="ok">OK</span>` ]; } },
+  { ic:"🤖", ac:"var(--green)", acp:"var(--green-pale)", name:"Robin", role:"Bot WhatsApp · 1er contact",
+    kpiL:"conversations", kpiUnit:"", base:74,
+    tasks:()=>{ const p=rnd(PRENOMS); return [
+      `Conversation avec <span class="hl">${p}</span> <span class="typing"><i></i><i></i><i></i></span>`,
+      `<span class="hl">${p}</span> envoie sa carte d'embarquement 📎`,
+      `Qualification : vol éligible → <span class="ok">transfert au juriste</span>`,
+      `${ri(3,9)} passagers en file — réponse <span class="ok">&lt; 2 s</span>` ]; } },
+  { ic:"⚖️", ac:"var(--purple)", acp:"var(--purple-pale)", name:"Me Lefèvre", role:"Juriste · Mises en demeure",
+    kpiL:"mises en demeure", kpiUnit:"", base:91,
+    tasks:()=>{ const a=rnd(AIRLINES); return [
+      `Rédaction mise en demeure → <span class="hl">${a}</span> · <span class="hl">600 €</span>`,
+      `Relance contentieuse <span class="hl">${a}</span> — délai 14 j dépassé`,
+      `<span class="ok">Accord obtenu</span> de ${a} — indemnité validée ✓`,
+      `Dossier transmis au tribunal de proximité <span class="typing"><i></i><i></i><i></i></span>` ]; } },
+  { ic:"🤝", ac:"var(--gold)", acp:"var(--gold-pale)", name:"Sofia Mendy", role:"Chasseuse de Partenaires",
+    kpiL:"agences en pipe", kpiUnit:"", base:67,
+    tasks:()=>{ const ag=rnd(AGENCES),v=rnd(VILLES); return [
+      `Prospection <span class="hl">${ag}</span> (${v}) — programme agents de voyage`,
+      `Démo contrat 70 / 7,5 / 22,5 à <span class="hl">${ag}</span>`,
+      `<span class="ok">${ag} signe !</span> — nouvelle agence partenaire 🎉`,
+      `Relance ${ri(3,8)} agences ${v} <span class="typing"><i></i><i></i><i></i></span>` ]; } },
+  { ic:"💰", ac:"var(--green)", acp:"var(--green-pale)", name:"Karim Benali", role:"Comptable · Trésorerie",
+    kpiL:"encaissé ce mois", kpiUnit:"€", base:99,
+    tasks:()=>[ `Encaissement <span class="grn">+${fmt(ri(600,3600))} €</span> — indemnité reçue`,
+      `Versement commission agence <span class="hl">7,5 %</span> traité`,
+      `Rapprochement bancaire du jour — <span class="ok">équilibré</span>`,
+      `Reversement passager <span class="grn">${fmt(ri(400,600))} €</span> sous 48 h ✓` ] },
+  { ic:"💬", ac:"var(--blue)", acp:"var(--blue-pale)", name:"Léa Fontaine", role:"Suivi Dossiers · Client",
+    kpiL:"dossiers suivis", kpiUnit:"", base:82,
+    tasks:()=>{ const p=rnd(PRENOMS); return [
+      `Mise à jour statut dossier <span class="hl">${p}</span> → <span class="ok">indemnisé</span>`,
+      `Appel de courtoisie <span class="hl">${p}</span> — satisfaction <span class="ok">5/5 ⭐</span>`,
+      `Envoi du justificatif de paiement à <span class="hl">${p}</span>`,
+      `${ri(5,14)} dossiers passés en phase finale aujourd'hui` ]; } },
+  { ic:"📈", ac:"var(--amber)", acp:"var(--amber-pale)", name:"Yanis Roux", role:"Growth · Pub Meta",
+    kpiL:"leads / jour", kpiUnit:"", base:71,
+    tasks:()=>[ `Campagne <span class="hl">« Montant qui frappe »</span> — CPL <span class="ok">2,10 €</span>`,
+      `A/B test créa <span class="hl">Cash vs Bon d'achat</span> en cours`,
+      `<span class="ok">${ri(40,120)} clics</span> sur le radar éligibilité aujourd'hui`,
+      `Budget Meta optimisé → <span class="ok">+${ri(8,24)} % de leads</span>` ] },
+];
+
+/* ============ RENDER AGENTS ============ */
+// outil ouvert au clic sur la carte du poste
+const AGENT_LINKS = ["/navigation-interne","/radar-vols-v2","/guide-whatsapp","/mandat","/espace-agence","/crm/","/suivi-dossier","/generateur-pub.html"];
+const AGENT_LINKS_PHOTO = ["aicha","malik","robin","lefevre","sofia","karim","lea","yanis"].map(n=>`assets/bureau/${n}.jpg`);
+const agentsEl = document.getElementById('agents');
+AGENTS.forEach((ag,i)=>{
+  ag.kpi = ag.base + ri(0,40);
+  const link = AGENT_LINKS[i];
+  const el = document.createElement('div');
+  el.className = 'agent linked';
+  el.style.setProperty('--ac', ag.ac); el.style.setProperty('--acp', ag.acp);
+  el.addEventListener('click', ()=>{ window.location.href = link; });
+  el.innerHTML = `
+    <div class="agent-top">
+      <div class="avatar" style="background-image:url('${AGENT_LINKS_PHOTO[i]}');background-size:cover;background-position:center top"><span class="av-badge">${ag.ic}</span></div>
+      <div class="agent-id">
+        <div class="agent-name">${ag.name}</div>
+        <div class="agent-role">${ag.role}</div>
+      </div>
+      <span class="status st-on" id="st-${i}"><span class="sd"></span>actif</span>
+    </div>
+    <div class="agent-task" id="task-${i}">${rnd(ag.tasks())}</div>
+    <div class="agent-foot">
+      <div class="kpi"><span class="k" id="kpi-${i}">${ag.kpiUnit}${fmt(ag.kpi)}</span><span class="l">${ag.kpiL}</span></div>
+      <span class="open-tool">ouvrir l'outil →</span>
+      <div class="mini-bar"><i id="bar-${i}" style="width:${ri(45,92)}%"></i></div>
+    </div>`;
+  agentsEl.appendChild(el);
+});
+
+/* ============ MODE JEU : STATIONS ISO ============ */
+const POS = [ {l:50,t:30},{l:32,t:39},{l:68,t:39},{l:19,t:50},{l:81,t:50},{l:36,t:60},{l:64,t:60},{l:50,t:71} ];
+const PHOTOS = AGENT_LINKS_PHOTO;
+const stationsEl = document.getElementById('stations');
+function shortName(n){ const p=n.split(' '); return (p[0]==='Me'? p[1]||p[0] : p[0]).toUpperCase(); }
+AGENTS.forEach((ag,i)=>{
+  ag.level = ri(5,9); ag.xp = ri(20,90);
+  const pos = POS[i]||{l:50,t:50};
+  const s = document.createElement('div');
+  s.className='station';
+  s.style.left=pos.l+'%'; s.style.top=pos.t+'%'; s.style.setProperty('--ac', ag.ac);
+  s.addEventListener('click', ()=>{ window.location.href = AGENT_LINKS[i]; });
+  s.innerHTML = `
+    <div class="bubble" id="gb-${i}">${rnd(ag.tasks())}</div>
+    <div class="char-photo" style="background-image:url('${PHOTOS[i]}')"><span class="role-badge">${ag.ic}</span></div>
+    <div class="desk"><div class="screen"></div></div>
+    <div class="nameplate">${shortName(ag.name)}</div>
+    <div class="xpbar"><i id="gxp-${i}" style="width:${ag.xp}%"></i></div>
+    <div class="lvlchip">LV ${ag.level}</div>`;
+  stationsEl.appendChild(s);
+  ag.stationEl = s;
+});
+
+/* ============ HUD JEU ============ */
+let GAME = { combo:1, comboTimer:0, pass:0, lvl:7, xp:40 };
+function updateHUD(){
+  document.getElementById('gScore').textContent = fmt(S.eur);
+  document.getElementById('gPass').textContent = fmt(GAME.pass);
+  document.getElementById('gCombo').textContent = 'x'+GAME.combo;
+  document.getElementById('gLvl').textContent = GAME.lvl;
+  document.getElementById('gLvlTitle').textContent = GAME.lvl;
+  document.getElementById('gXp').style.width = GAME.xp+'%';
+}
+function scorePop(amount){
+  const p=document.createElement('div'); p.className='scorepop px';
+  p.textContent='+'+fmt(amount)+' €';
+  p.style.left=(window.innerWidth*(0.3+Math.random()*0.4))+'px';
+  p.style.top=(window.innerHeight*0.42)+'px';
+  document.body.appendChild(p);
+  setTimeout(()=>p.remove(),1400);
+}
+function gameWin(){
+  GAME.combo = Math.min(GAME.combo+1, 9);
+  GAME.comboTimer = 6;
+  const gain = ri(400,600)*GAME.combo;
+  GAME.xp += ri(6,16);
+  while(GAME.xp>=100){ GAME.xp-=100; GAME.lvl++; }
+  scorePop(gain);
+  updateHUD();
+}
+// décrément du combo
+setInterval(()=>{ if(GAME.comboTimer>0){ GAME.comboTimer--; if(GAME.comboTimer===0 && GAME.combo>1){ GAME.combo=1; updateHUD(); } } }, 1000);
+
+/* ============ TOGGLE VUE ============ */
+const viewBtn = document.getElementById('viewBtn');
+viewBtn.addEventListener('click', ()=>{
+  const game = document.body.classList.toggle('game-mode');
+  viewBtn.textContent = game ? '📊 Mode Tableau' : '🎮 Mode Jeu';
+  if(game) updateHUD();
+});
+
+function tickAgents(){
+  AGENTS.forEach((ag,i)=>{
+    if(Math.random()<0.55){
+      const newTask = rnd(ag.tasks());
+      const t=document.getElementById('task-'+i);
+      t.style.opacity=0;
+      setTimeout(()=>{ t.innerHTML=newTask; t.style.transition='opacity .3s'; t.style.opacity=1; },200);
+      // statut occasionnel
+      const st=document.getElementById('st-'+i);
+      const r=Math.random(); let busy=false, idle=false;
+      if(r<0.15){ st.className='status st-busy'; st.innerHTML='<span class="sd"></span>en mission'; busy=true; }
+      else if(r<0.2){ st.className='status st-idle'; st.innerHTML='<span class="sd"></span>pause'; idle=true; }
+      else { st.className='status st-on'; st.innerHTML='<span class="sd"></span>actif'; }
+      // sync station jeu
+      const gb=document.getElementById('gb-'+i); if(gb) gb.innerHTML=newTask;
+      if(ag.stationEl){ ag.stationEl.classList.toggle('busy', busy); ag.stationEl.style.opacity = idle?0.55:1; }
+    }
+    if(Math.random()<0.5){
+      ag.kpi += ri(0,4);
+      document.getElementById('kpi-'+i).textContent = ag.kpiUnit + fmt(ag.kpi);
+      document.getElementById('bar-'+i).style.width = ri(45,98)+'%';
+      ag.xp = Math.min(99, ag.xp + ri(0,5));
+      const gx=document.getElementById('gxp-'+i); if(gx) gx.style.width = ag.xp+'%';
+    }
+  });
+  updateAgentsOn();
+}
+function updateAgentsOn(){
+  const on = document.querySelectorAll('.status.st-on, .status.st-busy').length;
+  document.getElementById('kpiAgentsOn').textContent = on;
+  document.getElementById('kpiAgentsTxt').textContent = on>=7 ? "tout le monde au travail" : on+" postes en activité";
+}
+
+/* ============ FIL D'ACTIVITÉ ============ */
+const feedEl = document.getElementById('feed');
+const FEED_TYPES = [
+  ()=>{const p=rnd(PRENOMS),f=rnd(FLIGHTS);return{ic:"📩",fp:"var(--blue-pale)",t:`<b>${p}</b> ouvre un dossier — vol <b>${f.fl}</b> ${f.r}`};},
+  ()=>{const a=rnd(AIRLINES);return{ic:"⚖️",fp:"var(--purple-pale)",t:`Mise en demeure envoyée à <b>${a}</b> — <span class="eur">600 €</span> réclamés`};},
+  ()=>{const p=rnd(PRENOMS),e=ri(400,600);return{ic:"✅",fp:"var(--green-pale)",t:`<b>${p}</b> indemnisé·e — <span class="grn">${fmt(e)} €</span> reversés`};},
+  ()=>{const ag=rnd(AGENCES);return{ic:"🤝",fp:"var(--gold-pale)",t:`Nouvelle agence partenaire : <b>${ag}</b> signe le contrat`};},
+  ()=>{const f=rnd(FLIGHTS);return{ic:"🛰️",fp:"var(--blue-pale)",t:`Radar : <b>${f.fl}</b> ${f.r} retardé +${ri(3,7)}h → <span class="eur">${f.eu} €</span> éligible`};},
+  ()=>{const p=rnd(PRENOMS);return{ic:"🤖",fp:"var(--green-pale)",t:`Bot WhatsApp qualifie <b>${p}</b> → transfert juriste`};},
+  ()=>{const a=rnd(AIRLINES);return{ic:"🏆",fp:"var(--gold-pale)",t:`<b>${a}</b> accepte l'indemnisation — dossier gagné 🎉`,win:true};},
+  ()=>{const p=rnd(PRENOMS);return{ic:"✍️",fp:"var(--gold-pale)",t:`<b>${p}</b> signe son mandat de représentation ✒️`,win:true};},
+  ()=>{const e=ri(600,2400);return{ic:"💰",fp:"var(--green-pale)",t:`Encaissement <span class="grn">+${fmt(e)} €</span> sur le compte`};},
+];
+let feedCount=0;
+function addFeed(){
+  const d=rnd(FEED_TYPES)();
+  const now=new Date();
+  const el=document.createElement('div');
+  el.className='feed-item';
+  el.innerHTML=`<div class="feed-ic" style="--fp:${d.fp}">${d.ic}</div>
+    <div class="feed-c"><div class="feed-txt">${d.t}</div>
+    <div class="feed-meta">${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')} · à l'instant</div></div>`;
+  if(d.win){ el.classList.add('win-flash'); winSound(); launchConfetti(); gameWin(); S.gagnes++; }
+  feedEl.insertBefore(el, feedEl.firstChild);
+  while(feedEl.children.length>14) feedEl.removeChild(feedEl.lastChild);
+  feedCount++;
+}
+
+/* ============ RADAR ============ */
+const radarEl=document.getElementById('radar');
+function renderRadar(){
+  radarEl.innerHTML='';
+  if(REAL.radar && REAL.radar.length){
+    // données réelles /api/vol-ticker
+    REAL.radar.slice(0,8).forEach(f=>{
+      const cancel = f.kind==='cancel';
+      const el=document.createElement('div'); el.className='r';
+      el.innerHTML=`<span class="fl">${f.fl}</span><span class="rt">${f.r}</span>
+        <span class="bd ${cancel?'cancel':'delay'}">${cancel?'ANNULÉ':(f.detail||'retard')}</span>
+        <span class="eu">${f.eu} €</span>`;
+      radarEl.appendChild(el);
+    });
+    return;
+  }
+  const shuffled=[...FLIGHTS].sort(()=>Math.random()-0.5).slice(0,7);
+  shuffled.forEach(f=>{
+    const cancel=Math.random()<0.25;
+    const el=document.createElement('div'); el.className='r';
+    el.innerHTML=`<span class="fl">${f.fl}</span><span class="rt">${f.r}</span>
+      <span class="bd ${cancel?'cancel':'delay'}">${cancel?'ANNULÉ':'+'+ri(3,7)+'h'+ri(0,5)+'0'}</span>
+      <span class="eu">${f.eu} €</span>`;
+    radarEl.appendChild(el);
+  });
+}
+
+/* ============ WHATSAPP LIVE ============ */
+const waBody=document.getElementById('waBody');
+function waScript(){
+  const p=rnd(PRENOMS), f=rnd(FLIGHTS), e=f.eu;
+  return [
+    {s:'in',t:`Bonjour, mon vol ${f.fl} avait beaucoup de retard 😩`},
+    {s:'out',t:`Bonjour ${p} 👋 Je suis Robin. Le ${f.fl} ${f.r} ? Vérifions tout de suite.`},
+    {s:'out',t:`✅ Bonne nouvelle : ce vol est éligible. Vous pouvez réclamer jusqu'à ${e} €.`},
+    {s:'in',t:`Sérieux ?! Et je n'avance rien ?`},
+    {s:'out',t:`Exactement. 0 € d'avance, on est payés seulement si vous l'êtes. Envoyez votre carte d'embarquement 📎`},
+    {s:'in',t:`La voici 📎`},
+    {s:'out',t:`Parfait ${p} ! Dossier ouvert. Notre juriste prend le relais. Vous serez indemnisé·e 💪`},
+  ];
+}
+let waQueue=[], waI=0;
+function waStep(){
+  if(waI>=waQueue.length){ waQueue=waScript(); waI=0; waBody.innerHTML=''; }
+  const m=waQueue[waI++];
+  const now=new Date();
+  const b=document.createElement('div');
+  b.className='bub '+m.s;
+  b.innerHTML=`${m.t}<div class="tm">${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} ${m.s==='out'?'✓✓':''}</div>`;
+  waBody.appendChild(b);
+  while(waBody.children.length>6) waBody.removeChild(waBody.firstChild);
+  waBody.scrollTop=waBody.scrollHeight;
+}
+
+/* ============ KPI TICKERS ============ */
+function tickKPI(){
+  // En mode réel (CRM Airtable), les KPI restent ancrés aux vrais chiffres — pas d'inflation simulée.
+  if(!REAL.kpi){
+    if(Math.random()<0.4){ S.dossiers++; S.dossiersNew++; }
+    if(Math.random()<0.6){ S.eur += ri(0,600); }
+    if(Math.random()<0.04){ S.agences++; S.agencesNew++; }
+    S.gagnes += Math.random()<0.3?1:0; S.total += Math.random()<0.35?1:0;
+    if(Math.random()<0.5) GAME.pass++;
+  }
+  document.getElementById('kpiDossiers').textContent=fmt(S.dossiers);
+  document.getElementById('kpiDossiersNew').textContent=S.dossiersNew;
+  document.getElementById('kpiEur').textContent=fmt(S.eur);
+  document.getElementById('kpiTaux').textContent=(S.total>0?Math.round(S.gagnes/S.total*100):0)+'%';
+  document.getElementById('kpiAgences').textContent=S.agences;
+  document.getElementById('kpiAgencesNew').textContent=S.agencesNew;
+  updateHUD();
+}
+
+/* ============ HORLOGE ============ */
+function clock(){
+  const n=new Date();
+  document.getElementById('clock').textContent=`${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}:${String(n.getSeconds()).padStart(2,'0')}`;
+}
+document.getElementById('today').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+
+/* ============ COUCHE DONNÉES RÉELLES ============ */
+// Récupère du JSON sur un endpoint /api/* avec timeout ; renvoie null si indisponible (→ repli démo).
+async function jget(path, ms=6500){
+  const ctrl = new AbortController(); const to = setTimeout(()=>ctrl.abort(), ms);
+  try{
+    const r = await fetch(path, { signal: ctrl.signal, headers:{ 'Accept':'application/json' } });
+    clearTimeout(to);
+    if(!r.ok) return null;
+    return await r.json();
+  }catch(e){ clearTimeout(to); return null; }
+}
+function setSrcBadge(){
+  const real = Object.values(REAL.sources).filter(Boolean).length;
+  const el = document.getElementById('srcBadge');
+  if(real>0){ el.className='src-badge real'; el.textContent='🟢 '+real+' source'+(real>1?'s':'')+' réelle'+(real>1?'s':''); }
+  else { el.className='src-badge demo'; el.textContent='🟡 Mode démo'; }
+}
+// Normalise un vol /api/vol-ticker → {fl, r, kind, detail, eu}
+function normFlight(f){
+  return {
+    fl: f.flight || f.fl || '—',
+    r: (f.route || f.r || '').replace('→','→'),
+    kind: f.kind || (f.cancelled ? 'cancel' : 'delay'),
+    detail: f.detail || (f.delayMinutes ? '+'+Math.floor(f.delayMinutes/60)+'h'+String(f.delayMinutes%60).padStart(2,'0') : ''),
+    eu: f.compensation || f.eu || 600
+  };
+}
+async function loadRadar(){
+  const d = await jget('/api/vol-ticker');
+  if(d && Array.isArray(d.flights) && d.flights.length){
+    REAL.radar = d.flights.map(normFlight);
+    REAL.sources.radar = true;
+    document.getElementById('radarSrc').className='mini-src real';
+    document.getElementById('radarSrc').textContent='RÉEL';
+    renderRadar();
+    // injecte quelques vrais vols dans le fil d'activité
+    REAL.radar.slice(0,3).forEach(f=>{
+      const el=document.createElement('div'); el.className='feed-item';
+      el.innerHTML=`<div class="feed-ic" style="--fp:var(--blue-pale)">🛰️</div>
+        <div class="feed-c"><div class="feed-txt">Radar réel : <b>${f.fl}</b> ${f.r} ${f.kind==='cancel'?'annulé':'retardé '+(f.detail||'')} → <span class="eur">${f.eu} €</span> éligible</div>
+        <div class="feed-meta">vol-ticker · AeroDataBox</div></div>`;
+      document.getElementById('feed').insertBefore(el, document.getElementById('feed').firstChild);
+    });
+  }
+  setSrcBadge();
+}
+async function loadWhatsApp(){
+  const d = await jget('/api/whatsapp-status');
+  if(d && d.whatsapp){
+    REAL.whatsapp = d; REAL.sources.whatsapp = true;
+    const ok = d.whatsapp==='ok';
+    const wa = document.getElementById('waStatus');
+    wa.textContent = ok ? ('en ligne · '+(d.robin_number? '+'+d.robin_number : 'Robin actif')) : 'hors ligne · configuration requise';
+    wa.style.color = ok ? '' : 'var(--amber)';
+    // reflète l'état réel sur le poste « Robin » (index 2)
+    const st = document.getElementById('st-2');
+    if(st){ if(ok){ st.className='status st-on'; st.innerHTML='<span class="sd"></span>actif'; } else { st.className='status st-idle'; st.innerHTML='<span class="sd"></span>hors ligne'; } }
+  }
+  setSrcBadge();
+}
+async function loadBureauStats(){
+  // Vrais chiffres CRM (Airtable) agrégés côté serveur — clé jamais exposée.
+  const d = await jget('/api/bureau-stats');
+  if(d && d.ok){
+    REAL.kpi = true; REAL.sources.crm = true;
+    if(typeof d.dossiers==='number') S.dossiers = d.dossiers;
+    if(typeof d.eur==='number') S.eur = d.eur;
+    if(typeof d.agencesActives==='number') S.agences = d.agencesActives;
+    if(typeof d.gagnes==='number') S.gagnes = d.gagnes;
+    if(typeof d.engages==='number') S.total = Math.max(d.gagnes + d.engages, 1);
+    if(typeof d.prospects==='number') S.agencesNew = d.prospects; // prospects « à contacter »
+    GAME.pass = d.whatsappLeads || GAME.pass;
+    // bascule les libellés en mode réel
+    const ds = document.querySelector('.pulse-cell .pulse-sub'); // 1ère cellule
+    tickKPI(); updateHUD();
+    // marque les KPI comme réels
+    document.querySelectorAll('.pulse-label').forEach(el=>{ if(!el.querySelector('.mini-src')){ const b=document.createElement('span'); b.className='mini-src real'; b.textContent='CRM'; b.style.marginLeft='6px'; el.appendChild(b); } });
+  }
+  setSrcBadge();
+}
+async function loadProtected(){
+  // Endpoints protégés (token) : on tente, sinon on garde la démo silencieusement.
+  const stats = await jget('/api/radar-stats?days=14');
+  if(stats && stats.ok && stats.index){ REAL.sources.stats = true; }
+  const reg = await jget('/api/radar-eligible-registry');
+  if(reg && reg.ok && typeof reg.total==='number'){ REAL.sources.registry = true; }
+  setSrcBadge();
+}
+async function loadRealData(){
+  await Promise.allSettled([ loadRadar(), loadWhatsApp(), loadBureauStats(), loadProtected() ]);
+  setSrcBadge();
+}
+
+/* ============ BOOT ============ */
+tickKPI();
+renderRadar();
+for(let i=0;i<6;i++) addFeed();
+waQueue=waScript();
+waStep();
+
+clock(); setInterval(clock,1000);
+setInterval(tickAgents, 3200);
+setInterval(addFeed, 4500);
+setInterval(waStep, 2600);
+setInterval(tickKPI, 2000);
+setInterval(renderRadar, 12000);
+updateAgentsOn();
+
+// branchement données réelles (repli démo automatique si /api indisponible)
+loadRealData();
+setInterval(loadRadar, 180000);      // rafraîchit les vols réels toutes les 3 min
+setInterval(loadWhatsApp, 120000);   // état bot toutes les 2 min
+setInterval(loadBureauStats, 180000);// vrais chiffres CRM toutes les 3 min
+</script>
+</body>
+</html>
