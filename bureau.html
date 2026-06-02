@@ -165,6 +165,32 @@ body { font-family: 'DM Sans', sans-serif; background: var(--sky); color: var(--
 .foot-note { text-align:center; color:var(--white-40); font-size:0.72rem; margin-top:2rem; line-height:1.6; }
 .foot-note b{color:var(--white-70)}
 
+/* ---- panneau Pub Meta ---- */
+.meta-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:1rem; }
+.meta-stat { background:rgba(255,255,255,0.04); border:1px solid var(--sky-border); border-radius:10px; padding:9px 10px; }
+.meta-stat .ms-v { font-family:'JetBrains Mono',monospace; font-size:1.02rem; font-weight:600; color:#fff; }
+.meta-stat .ms-v.gld { color:var(--gold-light); }
+.meta-stat .ms-l { font-size:0.6rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--white-40); margin-top:3px; }
+.meta-funnel { display:flex; flex-direction:column; gap:4px; }
+.mf-row { display:flex; justify-content:space-between; font-size:0.72rem; color:var(--white-70); margin-top:4px; }
+.mf-row span:last-child { font-family:'JetBrains Mono',monospace; color:#fff; }
+.mf-bar { height:7px; background:rgba(255,255,255,0.06); border-radius:4px; overflow:hidden; }
+.mf-bar i { display:block; height:100%; background:var(--amber); border-radius:4px; transition:width 1s ease; }
+
+/* ---- avion qui traverse ---- */
+.flyby { position:fixed; top:64px; left:-60px; font-size:22px; z-index:150; pointer-events:none; opacity:0; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.5)); }
+.flyby.go { animation: flyacross 7s linear forwards; }
+@keyframes flyacross { 0%{ left:-60px; opacity:0; } 8%{ opacity:0.9; } 92%{ opacity:0.9; } 100%{ left:calc(100% + 60px); opacity:0; } }
+.flyby .trail { color:var(--gold-light); }
+
+/* ---- titre scintillant ---- */
+.hero-title em { background:linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 45%, #fff 50%, var(--gold-light) 55%, var(--gold) 100%); background-size:250% 100%; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; animation:shimmer 6s linear infinite; }
+@keyframes shimmer { 0%{ background-position:150% 0; } 100%{ background-position:-150% 0; } }
+
+/* ---- count-up : léger flash quand un KPI change ---- */
+.pulse-value.bump { animation: bump 0.5s ease; }
+@keyframes bump { 0%{ transform:scale(1); } 35%{ transform:scale(1.08); color:var(--gold-light); } 100%{ transform:scale(1); } }
+
 /* ============ MODE JEU 🎮 ============ */
 #gameView { display:none; }
 body.game-mode #dashView { display:none; }
@@ -278,6 +304,7 @@ body.game-mode #gameView { display:block; }
 <body>
 
 <canvas id="confetti" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:999"></canvas>
+<div class="flyby" id="flyby"><span class="trail">⸺</span>✈️</div>
 
 <header class="topbar">
   <div class="topbar-inner">
@@ -383,6 +410,28 @@ body.game-mode #gameView { display:block; }
       <div class="panel">
         <div class="panel-h"><span class="t">Radar vols · CE261</span><span class="mini-src demo" id="radarSrc">DÉMO</span></div>
         <div class="panel-b radar-list" id="radar"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-h"><span class="t">📈 Pub Meta · 7 j</span><span class="mini-src demo" id="metaSrc">DÉMO</span></div>
+        <div class="panel-b" style="padding:1rem 1.2rem">
+          <div class="meta-grid">
+            <div class="meta-stat"><div class="ms-v" id="mSpend">—</div><div class="ms-l">Dépense</div></div>
+            <div class="meta-stat"><div class="ms-v" id="mReach">—</div><div class="ms-l">Reach</div></div>
+            <div class="meta-stat"><div class="ms-v" id="mImpr">—</div><div class="ms-l">Impressions</div></div>
+            <div class="meta-stat"><div class="ms-v" id="mClicks">—</div><div class="ms-l">Clics</div></div>
+            <div class="meta-stat"><div class="ms-v" id="mCpm">—</div><div class="ms-l">CPM</div></div>
+            <div class="meta-stat"><div class="ms-v gld" id="mWa">—</div><div class="ms-l">Conv. WhatsApp</div></div>
+          </div>
+          <div class="meta-funnel">
+            <div class="mf-row"><span>Impressions</span><span id="mfImpr">—</span></div>
+            <div class="mf-bar"><i id="mfImprBar" style="width:100%"></i></div>
+            <div class="mf-row"><span>Clics</span><span id="mfClicks">—</span></div>
+            <div class="mf-bar"><i id="mfClicksBar" style="width:4%;background:var(--blue)"></i></div>
+            <div class="mf-row"><span>Conv. WhatsApp</span><span id="mfWa">—</span></div>
+            <div class="mf-bar"><i id="mfWaBar" style="width:1%;background:var(--green)"></i></div>
+          </div>
+        </div>
       </div>
 
       <div class="panel">
@@ -745,7 +794,7 @@ function addFeed(){
   el.innerHTML=`<div class="feed-ic" style="--fp:${d.fp}">${d.ic}</div>
     <div class="feed-c"><div class="feed-txt">${d.t}</div>
     <div class="feed-meta">${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')} · à l'instant</div></div>`;
-  if(d.win){ el.classList.add('win-flash'); winSound(); launchConfetti(); gameWin(); S.gagnes++; }
+  if(d.win){ el.classList.add('win-flash'); winSound(); launchConfetti(); gameWin(); planeFlyby(); S.gagnes++; }
   feedEl.insertBefore(el, feedEl.firstChild);
   while(feedEl.children.length>14) feedEl.removeChild(feedEl.lastChild);
   feedCount++;
@@ -833,6 +882,40 @@ function clock(){
 }
 document.getElementById('today').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
 
+/* ============ ANIMATIONS BUREAU ============ */
+// count-up animé d'un compteur vers une cible
+function animateValue(el, to, suffix=''){
+  if(!el) return;
+  const from = parseInt((el.textContent||'0').replace(/[^\d]/g,'')) || 0;
+  if(from===to){ el.textContent=fmt(to)+suffix; return; }
+  const dur=800, t0=performance.now();
+  el.classList.add('bump'); setTimeout(()=>el.classList.remove('bump'),500);
+  (function step(now){
+    const p=Math.min(1,(now-t0)/dur), e=1-Math.pow(1-p,3);
+    el.textContent=fmt(Math.round(from+(to-from)*e))+suffix;
+    if(p<1) requestAnimationFrame(step);
+  })(t0);
+}
+// avion qui traverse l'écran
+function planeFlyby(){
+  const f=document.getElementById('flyby'); if(!f) return;
+  f.classList.remove('go'); void f.offsetWidth; f.classList.add('go');
+}
+
+/* ============ PANNEAU PUB META ============ */
+const META_DEMO = { spend:1284, reach:184200, impressions:312450, clicks:4380, cpm:'4.11', waConvos:611, cpl:2.10 };
+function renderMeta(d, real){
+  const set=(id,v)=>{ const e=document.getElementById(id); if(e) e.textContent=v; };
+  set('mSpend', fmt(Math.round(d.spend))+' €'); set('mReach', fmt(d.reach)); set('mImpr', fmt(d.impressions));
+  set('mClicks', fmt(d.clicks)); set('mCpm', d.cpm+' €'); set('mWa', fmt(d.waConvos));
+  set('mfImpr', fmt(d.impressions)); set('mfClicks', fmt(d.clicks)); set('mfWa', fmt(d.waConvos));
+  const imp=Math.max(d.impressions,1);
+  // largeurs entonnoir (min visibles)
+  document.getElementById('mfClicksBar').style.width = Math.max(5, Math.min(100, d.clicks/imp*1000)).toFixed(1)+'%';
+  document.getElementById('mfWaBar').style.width = Math.max(2, Math.min(100, d.waConvos/imp*4000)).toFixed(1)+'%';
+  const ms=document.getElementById('metaSrc'); if(ms){ ms.className='mini-src '+(real?'real':'demo'); ms.textContent=real?'RÉEL':'DÉMO'; }
+}
+
 /* ============ COUCHE DONNÉES RÉELLES ============ */
 // Récupère du JSON sur un endpoint /api/* avec timeout ; renvoie null si indisponible (→ repli démo).
 async function jget(path, ms=6500){
@@ -906,9 +989,15 @@ async function loadBureauStats(){
     if(typeof d.prospects==='number') S.agencesNew = d.prospects; // prospects « à contacter »
     if(typeof d.whatsappLeads==='number') S.waLeads = d.whatsappLeads;
     GAME.pass = d.whatsappLeads || GAME.pass;
-    // bascule les libellés en mode réel
-    const ds = document.querySelector('.pulse-cell .pulse-sub'); // 1ère cellule
-    tickKPI(); updateHUD();
+    // count-up animé vers les vrais chiffres
+    animateValue(document.getElementById('kpiDossiers'), S.dossiers);
+    animateValue(document.getElementById('kpiEur'), S.eur);
+    animateValue(document.getElementById('kpiAgences'), S.agences);
+    animateValue(document.getElementById('kpiWaLeads'), S.waLeads);
+    document.getElementById('kpiDossiersNew').textContent = S.dossiersNew;
+    document.getElementById('kpiAgencesNew').textContent = S.agencesNew;
+    document.getElementById('kpiTaux').textContent = (S.total>0?Math.round(S.gagnes/S.total*100):0)+'%';
+    updateHUD();
     // marque les KPI comme réels
     document.querySelectorAll('.pulse-label').forEach(el=>{ if(!el.querySelector('.mini-src')){ const b=document.createElement('span'); b.className='mini-src real'; b.textContent='CRM'; b.style.marginLeft='6px'; el.appendChild(b); } });
   }
@@ -919,6 +1008,7 @@ async function loadMetaStats(){
   const d = await jget('/api/meta-stats');
   if(d && d.ok){
     REAL.meta = d; REAL.sources.meta = true;
+    renderMeta(d, true);
     // le poste Growth (Yanis = index 7) tourne sur les vrais chiffres Meta
     const camp = d.activeCampaigns!=null ? `${d.activeCampaigns} campagne(s) Meta active(s)` : 'Campagnes Meta en cours';
     AGENTS[7].tasks = ()=>[
@@ -957,6 +1047,7 @@ async function loadRealData(){
 /* ============ BOOT ============ */
 tickKPI();
 renderRadar();
+renderMeta(META_DEMO, false);   // panneau Meta en démo tant que /api/meta-stats n'a pas répondu
 for(let i=0;i<6;i++) addFeed();
 waQueue=waScript();
 waStep();
@@ -975,6 +1066,8 @@ setInterval(loadRadar, 180000);      // rafraîchit les vols réels toutes les 3
 setInterval(loadWhatsApp, 120000);   // état bot toutes les 2 min
 setInterval(loadBureauStats, 180000);// vrais chiffres CRM toutes les 3 min
 setInterval(loadMetaStats, 300000);  // stats Meta Ads toutes les 5 min
+setInterval(planeFlyby, 26000);      // avion qui traverse régulièrement
+setTimeout(planeFlyby, 1500);        // un premier passage au chargement
 </script>
 </body>
 </html>
