@@ -82,9 +82,11 @@ nav { display: flex; align-items: center; justify-content: space-between; paddin
 .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: rgba(200,168,90,0.5); background: rgba(200,168,90,0.04); }
 .form-group select { cursor: pointer; }
 .form-group select option { background: #0D2240; }
-.phone-row { display: flex; gap: 8px; }
-.phone-indicator-select { background: rgba(255,255,255,0.05); border: 1px solid var(--sky-border); border-radius: 8px; color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 0.82rem; padding: 8px 4px; cursor: pointer; outline: none; width: 72px; flex-shrink: 0; }
-.phone-num-input { flex: 1; }
+.phone-row { display: flex; gap: 6px; }
+.phone-indicator-select { background: rgba(255,255,255,0.05); border: 1px solid var(--sky-border); border-radius: 8px; color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 0.78rem; padding: 8px 2px 8px 6px; cursor: pointer; outline: none; width: 86px; flex-shrink: 0; -webkit-appearance: none; appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--white-40) 50%), linear-gradient(135deg, var(--white-40) 50%, transparent 50%); background-position: calc(100% - 12px) 50%, calc(100% - 7px) 50%; background-size: 5px 5px, 5px 5px; background-repeat: no-repeat; padding-right: 22px; }
+.phone-num-input { flex: 1; min-width: 0; }
+.phone-num-input input { width: 100%; }
+@media (max-width: 480px) { .phone-indicator-select { width: 78px; font-size: 0.74rem; } }
 .airline-wrap { position: relative; }
 .airline-input { background: rgba(255,255,255,0.05); border: 1px solid var(--sky-border); border-radius: 8px; color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 0.88rem; padding: 10px 14px; width: 100%; outline: none; }
 .airline-dropdown { position: absolute; top: calc(100% + 4px); left: 0; right: 0; background: #0D2240; border: 1px solid rgba(200,168,90,0.3); border-radius: 10px; z-index: 50; max-height: 240px; overflow-y: auto; display: none; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
@@ -401,19 +403,24 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
         </div>
           </div>
           <div class="form-group">
-            <label data-i18n="form.route_quick">Routes rapides</label>
-            <div class="routes-group-label">↗ BJL</div>
+            <label data-i18n="form.route_quick">Routes fréquentes</label>
+            <div class="routes-group-label">↗ Depuis BJL</div>
             <div class="routes-row">
-              <span class="route-chip" onclick="fillRoute('BJL','CDG')">BJL → CDG</span>
-              <span class="route-chip" onclick="fillRoute('BJL','BRU')">BJL → BRU</span>
-              <span class="route-chip" onclick="fillRoute('BJL','IST')">BJL → IST</span>
-              <span class="route-chip" onclick="fillRoute('BJL','LIS')">BJL → LIS</span>
-          </div>
-            <div class="routes-group-label">↙ BJL</div>
+              <span class="route-chip" onclick="fillRoute('BJL','CDG')">BJL → CDG (Paris)</span>
+              <span class="route-chip" onclick="fillRoute('BJL','LHR')">BJL → LHR (Londres)</span>
+              <span class="route-chip" onclick="fillRoute('BJL','BRU')">BJL → BRU (Bruxelles)</span>
+              <span class="route-chip" onclick="fillRoute('BJL','BCN')">BJL → BCN (Barcelone)</span>
+              <span class="route-chip" onclick="fillRoute('BJL','LIS')">BJL → LIS (Lisbonne)</span>
+              <span class="route-chip" onclick="fillRoute('BJL','IST')">BJL → IST (Istanbul)</span>
+            </div>
+            <div class="routes-group-label">↙ Vers BJL</div>
             <div class="routes-row">
               <span class="route-chip" onclick="fillRoute('CDG','BJL')">CDG → BJL</span>
+              <span class="route-chip" onclick="fillRoute('LHR','BJL')">LHR → BJL</span>
               <span class="route-chip" onclick="fillRoute('BRU','BJL')">BRU → BJL</span>
-        </div>
+              <span class="route-chip" onclick="fillRoute('BCN','BJL')">BCN → BJL</span>
+              <span class="route-chip" onclick="fillRoute('LIS','BJL')">LIS → BJL</span>
+            </div>
           </div>
           <div class="form-row">
             <div class="form-group"><label data-i18n="form.from">Départ</label><input type="text" id="f-depart" style="text-transform:uppercase" maxlength="3" /></div>
@@ -422,32 +429,55 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
           <div class="form-group"><label data-i18n="form.fdate">Date vol</label><input type="date" id="f-date" /></div>
         </div>
 
+        <div class="form-section" id="pax-section-top">
+          <div class="section-label">Nombre de passagers</div>
+          <div class="form-row" style="align-items:end">
+            <div class="form-group">
+              <label data-i18n="form.pax">Passagers (PNR)</label>
+              <input type="number" id="f-nb-passagers" min="1" max="20" value="1" />
+            </div>
+            <div class="form-group">
+              <label style="color:var(--gold)">Commission estimée</label>
+              <div id="pax-commission-preview" style="background:var(--gold-pale);border:1px solid rgba(200,168,90,0.3);border-radius:8px;padding:10px 14px;font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--gold);text-align:center;line-height:1.1">3 800 GMD</div>
+            </div>
+          </div>
+          <p style="font-size:0.72rem;color:var(--white-40);margin-top:6px;line-height:1.5">3 800 GMD par passager indemnisé · payé sous 48h après encaissement par Robin</p>
+        </div>
+
         <div class="form-section">
           <div class="section-label" data-i18n="form.step3">Perturbation</div>
           <div class="incident-grid">
-            <div class="incident-option" data-value="__ATTENTE__"><div class="incident-icon">🎫</div><span data-i18n="issue.wait_short">Billet vendu</span></div>
             <div class="incident-option" data-value="Retard +3h à l'arrivée"><div class="incident-icon">⏱</div><span data-i18n="issue.delay">Retard +3h</span></div>
             <div class="incident-option" data-value="Vol annulé"><div class="incident-icon">✕</div><span data-i18n="issue.cancel">Annulé</span></div>
             <div class="incident-option" data-value="Surbooking / Refus d'embarquement"><div class="incident-icon">🚫</div><span data-i18n="issue.denied">Refus embarquement</span></div>
             <div class="incident-option" data-value="Correspondance manquée"><div class="incident-icon">↪</div><span data-i18n="issue.missed">Correspondance</span></div>
-                    <p id="f-probleme-hint" style="font-size:0.75rem;color:var(--white-40);margin-bottom:10px;line-height:1.5"></p>
-          <div class="panel-escale" id="panel-escale" hidden>
-        <div class="form-row">
-              <div class="form-group"><label data-i18n="form.escale_via">Escale</label><input type="text" id="f-escale-ville" /></div>
-              <div class="form-group"><label data-i18n="form.escale_vol2">Vol 2</label><input type="text" id="f-vol2" /></div>
           </div>
+          <p id="f-probleme-hint" style="font-size:0.75rem;color:var(--white-40);margin:10px 0;line-height:1.5"></p>
+
+          <div style="margin-top:14px">
+            <label style="display:flex;align-items:center;gap:8px;font-size:0.8rem;color:var(--white-70);cursor:pointer">
+              <input type="checkbox" id="toggle-vol2" onchange="document.getElementById('panel-escale').hidden=!this.checked" />
+              <span>Ajouter un 2ᵉ vol (correspondance / escale)</span>
+            </label>
           </div>
-          <div class="form-row">
-            <div class="form-group"><label id="f-retard-label" data-i18n="form.delay">Retard (h)</label><input type="number" id="f-retard" min="0" max="72" /></div>
-            <div class="form-group"><label data-i18n="form.pax">Passagers (PNR)</label><input type="number" id="f-nb-passagers" min="1" max="20" value="1" /></div>
+          <div class="panel-escale" id="panel-escale" hidden style="margin-top:10px">
+            <div class="form-row">
+              <div class="form-group"><label data-i18n="form.escale_via">Aéroport d'escale</label><input type="text" id="f-escale-ville" style="text-transform:uppercase" maxlength="3" placeholder="ex. CDG" /></div>
+              <div class="form-group"><label data-i18n="form.escale_vol2">N° vol 2</label><input type="text" id="f-vol2" placeholder="ex. AF1234" /></div>
+            </div>
           </div>
-          <div class="form-group"><label data-i18n="form.notes">Notes</label><textarea id="f-notes" rows="3"></textarea></div>
+
+          <div class="form-group"><label data-i18n="form.notes">Notes</label><textarea id="f-notes" rows="3" placeholder="Détails utiles : durée du retard, raison invoquée par la compagnie, frais avancés (taxi/hôtel/repas)..."></textarea></div>
         </div>
 
         <div class="form-section">
-          <div class="section-label" data-i18n="form.doc">Document</div>
-          <div class="upload-zone" id="uploadZone"><input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png,.webp" /><div>📎 <span data-i18n="form.doc_hint">E-billet ou confirmation</span></div></div>
-          <div class="uploaded-file" id="uploadedFile"><span id="fileName"></span><span onclick="removeFile()" style="cursor:pointer;margin-left:auto">✕</span></div>
+          <div class="section-label" data-i18n="form.doc">Documents · vous pouvez en ajouter plusieurs</div>
+          <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()" style="cursor:pointer">
+            <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png,.webp" multiple style="display:none" />
+            <div>📎 <span>E-billet, carte d'embarquement, passeport(s), factures (taxi/hôtel/repas)</span></div>
+            <div style="font-size:0.72rem;color:var(--white-40);margin-top:6px">Toucher pour ajouter — vous pouvez répéter pour empiler plusieurs fichiers</div>
+          </div>
+          <div id="uploadedFilesList" style="margin-top:10px;display:flex;flex-direction:column;gap:6px"></div>
         </div>
 
         <button type="button" class="btn-submit" id="btn-submit-dossier" onclick="submitDossier()" data-i18n="form.submit">Soumettre le dossier →</button>
@@ -571,12 +601,62 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
 <script src="/assets/agence-commission-tiers.js"></script>
 <script src="/assets/agence-portal.js"></script>
 <script>
+// ─── Multi-fichiers — empile les fichiers à chaque sélection ─────────────────
+window.__agencyFiles = [];
 (function uploadUI(){
-  var zone=document.getElementById('uploadZone'), fi=document.getElementById('fileInput'), uf=document.getElementById('uploadedFile');
-  if(!fi||!zone)return;
-  function show(f){ if(!f)return; zone.style.display='none'; document.getElementById('fileName').textContent=f.name; uf.classList.add('show'); }
-  fi.onchange=function(){ show(fi.files[0]); };
-  window.removeFile=function(){ uf.classList.remove('show'); zone.style.display=''; fi.value=''; };
+  var zone = document.getElementById('uploadZone');
+  var fi   = document.getElementById('fileInput');
+  var list = document.getElementById('uploadedFilesList');
+  if (!fi || !zone || !list) return;
+
+  function render() {
+    list.innerHTML = '';
+    window.__agencyFiles.forEach(function(f, i) {
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;gap:8px;background:rgba(34,200,132,0.08);border:1px solid rgba(34,200,132,0.2);border-radius:8px;padding:8px 12px;font-size:0.82rem';
+      var icon = /\.pdf$/i.test(f.name) ? '📄' : '🖼️';
+      row.innerHTML = '<span>' + icon + '</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + f.name + '</span><span style="font-size:0.7rem;color:var(--white-40)">' + Math.round(f.size/1024) + ' Ko</span><span style="cursor:pointer;color:var(--red);font-weight:600;padding:0 6px" data-rm="' + i + '">✕</span>';
+      list.appendChild(row);
+    });
+    list.querySelectorAll('[data-rm]').forEach(function(el) {
+      el.onclick = function() {
+        var idx = parseInt(el.getAttribute('data-rm'));
+        window.__agencyFiles.splice(idx, 1);
+        render();
+      };
+    });
+  }
+
+  fi.onchange = function() {
+    Array.from(fi.files || []).forEach(function(f) { window.__agencyFiles.push(f); });
+    fi.value = '';
+    render();
+  };
+  window.removeFile = function() { window.__agencyFiles = []; render(); };
+})();
+
+// ─── fillRoute — clic sur chip "BJL → CDG" remplit les champs ──────────────
+window.fillRoute = function(from, to) {
+  var d = document.getElementById('f-depart');
+  var a = document.getElementById('f-arrivee');
+  if (d) { d.value = from; d.dispatchEvent(new Event('input', { bubbles: true })); }
+  if (a) { a.value = to;   a.dispatchEvent(new Event('input', { bubbles: true })); }
+};
+
+// ─── Compteur commission dynamique — N passagers × 3 800 GMD ────────────────
+(function paxCommissionPreview(){
+  var input = document.getElementById('f-nb-passagers');
+  var out   = document.getElementById('pax-commission-preview');
+  if (!input || !out) return;
+  function fmt(n) { return n.toLocaleString('fr-FR').replace(/ /g, ' '); }
+  function update() {
+    var n = Math.max(1, Math.min(20, parseInt(input.value) || 1));
+    var gmd = 3800 * n;
+    out.innerHTML = fmt(gmd) + ' <span style="font-size:0.7rem;font-family:DM Sans,sans-serif;color:var(--gold-light)">GMD</span>';
+  }
+  input.addEventListener('input', update);
+  input.addEventListener('change', update);
+  update();
 })();
 </script>
 </body>

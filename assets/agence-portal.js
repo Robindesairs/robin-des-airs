@@ -778,19 +778,10 @@ function isTrialMode() {
 }
 
 function showTrialBanner() {
-  let el = document.getElementById('agencyTrialBanner');
-  if (!el) {
-    el = document.createElement('div');
-    el.id = 'agencyTrialBanner';
-    el.setAttribute('role', 'status');
-    el.style.cssText =
-      'position:fixed;top:52px;left:0;right:0;z-index:240;background:rgba(245,166,35,0.95);color:#0A1628;text-align:center;padding:8px 16px;font-size:12px;font-weight:600;';
-    document.body.appendChild(el);
-  }
-  el.textContent = agencyTrialClientOnly
-    ? t('trial.banner_demo')
-    : t('trial.banner');
-  el.hidden = false;
+  // Bannière trial supprimée — la page doit paraître réelle pour les démos partenaires.
+  // Les dossiers de démo (15) sont chargés via enterTrialModeClientOnly().
+  const el = document.getElementById('agencyTrialBanner');
+  if (el) { el.hidden = true; el.remove(); }
 }
 
 const DEMO_DOSSIERS = [
