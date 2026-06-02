@@ -1,6 +1,7 @@
 /**
  * Radar V2 — veille auto aller (8h–18h, /2h) + retour (18h–03h, /30min).
- * Un seul scan à la fois · décalage 5 min entre hubs · pas de chevauchement aller/retour.
+ * Les deux veilles peuvent être actives en même temps (chevauchement autorisé).
+ * Bouton « Tout scanner » : balaye tous les hubs un par un (départs + arrivées fusionnés).
  */
 (function () {
   'use strict';
@@ -34,6 +35,20 @@
     { id: 'south_ib_mad', label: 'Madrid', hub: 'MAD', group: '15', minute: 40, parent: 'south_ib' },
     { id: 'south_ib_bcn', label: 'Barcelone', hub: 'BCN', group: '16', minute: 45, parent: 'south_ib' },
   ];
+
+  /** Liste unifiée des hubs (aller + retour appariés par groupe) pour le scan global. */
+  var ALL_HUBS = [
+    { label: 'Paris CDG', zone: 'paris_cdg', group: '1', hub: 'CDG' },
+    { label: 'Bruxelles', zone: 'bru', group: '5', hub: 'BRU' },
+    { label: 'Amsterdam', zone: 'ams', group: '6', hub: 'AMS' },
+    { label: 'Francfort', zone: 'fra', group: '17', hub: 'FRA' },
+    { label: 'Rome', zone: 'fco', group: '13', hub: 'FCO' },
+    { label: 'Milan', zone: 'mxp', group: '14', hub: 'MXP' },
+    { label: 'Lisbonne', zone: 'lis', group: '7', hub: 'LIS' },
+    { label: 'Madrid', zone: 'mad', group: '15', hub: 'MAD' },
+    { label: 'Barcelone', zone: 'bcn', group: '16', hub: 'BCN' },
+  ];
+  var SCAN_ALL_GAP_MS = 1500;
 
   var UI_PARENT = {
     south_it: { id: 'south_it', label: 'Rome · Milan', routes: ['south_it_fco', 'south_it_mxp'] },
@@ -222,7 +237,7 @@
   function runAllerRoute(route) {
     if (!route || !window.__radarRunAllerScan) return Promise.reject(new Error('Radar non prêt'));
     if (!isAllerWindow()) return Promise.resolve(0);
-    if (isReturnWindow() || isScanLocked()) return Promise.resolve(0);
+    if (isScanLocked()) return Promise.resolve(0);
     state.scanBusy = true;
     setAllerStatus('Veille aller · ' + route.label + '…');
     return window
@@ -244,7 +259,7 @@
   function runReturnRoute(route) {
     if (!route || !window.__radarFetchReturnHub) return Promise.reject(new Error('Radar non prêt'));
     if (!isReturnWindow()) return Promise.resolve(0);
-    if (isAllerWindow() || isScanLocked()) return Promise.resolve(0);
+    if (isScanLocked()) return Promise.resolve(0);
     state.scanBusy = true;
     setReturnStatus('Veille retour · ' + route.label + '…');
     return window
@@ -272,10 +287,6 @@
         state.timers.push(setTimeout(planNext, 60 * 1000));
         return;
       }
-      if (isReturnWindow()) {
-        state.timers.push(setTimeout(planNext, 60 * 1000));
-        return;
-      }
       var now = parisNow();
       var min = now.getMinutes();
       var sec = now.getSeconds();
@@ -285,7 +296,7 @@
       var delay = deltaMin * 60 * 1000 - sec * 1000;
       if (delay < 3000) delay += ALLER_CYCLE_MS;
       state.timers.push(setTimeout(function () {
-        if (!state.allerAuto || isReturnWindow()) {
+        if (!state.allerAuto) {
           planNext();
           return;
         }
@@ -303,10 +314,6 @@
         state.timers.push(setTimeout(planNext, 60 * 1000));
         return;
       }
-      if (isAllerWindow()) {
-        state.timers.push(setTimeout(planNext, 60 * 1000));
-        return;
-      }
       var now = parisNow();
       var min = now.getMinutes();
       var sec = now.getSeconds();
@@ -316,7 +323,7 @@
       var delay = deltaMin * 60 * 1000 - sec * 1000;
       if (delay < 3000) delay += RETURN_CYCLE_MS;
       state.timers.push(setTimeout(function () {
-        if (!state.returnAuto || isAllerWindow()) {
+        if (!state.returnAuto) {
           planNext();
           return;
         }
@@ -456,6 +463,52 @@
     chain.catch(function () {});
   }
 
+  /**
+   * Scan fusionné d'un hub : départs (aller) + arrivées (retour) dans le même tableau.
+   * `replace` = true vide le tableau avant (1er hub), sinon on additionne.
+   */
+  function scanHubBoth(h, replace) {
+    if (!window.__radarRunAllerScan) return Promise.reject(new Error('Radar non prêt'));
+    return window
+      .__radarRunAllerScan(h.zone, [h.group], { merge: !replace })
+      .then(function () {
+        if (window.__radarMarkHubScanned) window.__radarMarkHubScanned('aller', h.zone);
+        if (!window.__radarFetchReturnHub) return 0;
+        return window.__radarFetchReturnHub(h.hub, h.group).catch(function () { return 0; });
+      })
+      .then(function () {
+        if (window.__radarMarkHubScanned) window.__radarMarkHubScanned('return', h.hub);
+        if (window.__radarRenderReturnWatch) window.__radarRenderReturnWatch();
+      });
+  }
+
+  function scanAllHubs() {
+    if (isScanLocked()) {
+      setAllerStatus('Scan déjà en cours — patientez.', true);
+      return;
+    }
+    state.scanBusy = true;
+    var btn = document.getElementById('btn-scan-all');
+    if (btn) { btn.disabled = true; btn.classList.add('radar-scan-blink'); }
+    var total = ALL_HUBS.length;
+    var chain = Promise.resolve();
+    ALL_HUBS.forEach(function (h, idx) {
+      chain = chain
+        .then(function () { return idx > 0 ? sleep(SCAN_ALL_GAP_MS) : null; })
+        .then(function () {
+          setAllerStatus('Tout scanner · ' + h.label + ' (' + (idx + 1) + '/' + total + ')…');
+          return scanHubBoth(h, idx === 0);
+        });
+    });
+    chain
+      .then(function () { setAllerStatus('Tout scanner terminé · ' + total + ' hubs (départs + arrivées).'); })
+      .catch(function (e) { setAllerStatus('Tout scanner interrompu : ' + (e.message || e), true); })
+      .finally(function () {
+        state.scanBusy = false;
+        if (btn) { btn.disabled = false; btn.classList.remove('radar-scan-blink'); }
+      });
+  }
+
   function decorateButtons(selector, badgePrefix) {
     document.querySelectorAll(selector).forEach(function (btn) {
       if (btn.querySelector('.radar-scan-badge')) return;
@@ -520,6 +573,8 @@
     if (retAuto) retAuto.addEventListener('click', function () { toggleReturnAuto(!state.returnAuto); });
     var allerAuto = document.getElementById('btn-aller-auto');
     if (allerAuto) allerAuto.addEventListener('click', function () { toggleAllerAuto(!state.allerAuto); });
+    var scanAll = document.getElementById('btn-scan-all');
+    if (scanAll) scanAll.addEventListener('click', scanAllHubs);
   }
 
   window.__radarReturnScheduler = {

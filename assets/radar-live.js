@@ -1022,7 +1022,8 @@
       });
   }
 
-  function fetchRadarLive() {
+  function fetchRadarLive(opts) {
+    var doMerge = !!(opts && opts.merge);
     var groups = window.__RADAR_HUB_GROUPS__ && window.__RADAR_HUB_GROUPS__.length
       ? window.__RADAR_HUB_GROUPS__.slice()
       : [window.__RADAR_HUB_GROUP__ || '1'];
@@ -1050,7 +1051,8 @@
           applyRadarPayload(
             data,
             'Scan live · ' + (data.flights ? data.flights.length : 0) + ' vols' + hubs +
-              (data && data.scan ? ' · ' + formatScanDebug(data.scan) : '')
+              (data && data.scan ? ' · ' + formatScanDebug(data.scan) : ''),
+            { merge: doMerge }
           );
           if (window.__radarMarkHubScanned && LAST_SCAN_ZONE_KEY) window.__radarMarkHubScanned('aller', LAST_SCAN_ZONE_KEY);
         })
@@ -1085,7 +1087,7 @@
           viewDate: meta.viewDate,
           scan: { hubs: uniqueHubs },
         };
-        applyRadarPayload(payload, 'Scan live · ' + mergedFlights.length + ' vols · ' + groups.length + ' zones');
+        applyRadarPayload(payload, 'Scan live · ' + mergedFlights.length + ' vols · ' + groups.length + ' zones', { merge: doMerge });
         if (window.__radarMarkHubScanned && LAST_SCAN_ZONE_KEY) window.__radarMarkHubScanned('aller', LAST_SCAN_ZONE_KEY);
       })
       .catch(function (e) {
@@ -1117,11 +1119,11 @@
   var ALLER_DEMO_ZONE = {
     fco: 'rome', mxp: 'milan', lis: 'lisbon', mad: 'madrid', bcn: 'barcelona', fra: 'frankfurt',
   };
-  window.__radarRunAllerScan = function (zoneKey, groups) {
+  window.__radarRunAllerScan = function (zoneKey, groups, opts) {
     window.__RADAR_HUB_GROUPS__ = (groups || []).slice();
     window.__RADAR_HUB_GROUP__ = window.__RADAR_HUB_GROUPS__[0] || '1';
     LAST_SCAN_ZONE_KEY = ALLER_DEMO_ZONE[zoneKey] || zoneKey;
-    return refreshAll().then(function () { return VOLS.length; });
+    return refreshAll({ merge: !!(opts && opts.merge) }).then(function () { return VOLS.length; });
   };
 
   function fetchRadarReturnSlot(hubIata, group, slot) {
@@ -1306,8 +1308,8 @@
   }
   window.__radarRenderReturnWatch = renderReturnWatchPanel;
 
-  function fetchRadarFromNetlify() {
-    if (RADAR_LOAD_MODE === 'live') return fetchRadarLive();
+  function fetchRadarFromNetlify(opts) {
+    if (RADAR_LOAD_MODE === 'live') return fetchRadarLive(opts);
     return fetchRadarSnapshot().then(function () {
       if (!VOLS.length && !RADAR_ERROR) return fetchRadarLive().then(function () {
         if (VOLS.length) RADAR_DATA_LABEL = 'Scan live (cache vide)';
@@ -2234,15 +2236,16 @@
     renderRadar();
   }
 
-  function refreshAll() {
+  function refreshAll(opts) {
+    var doMerge = !!(opts && opts.merge);
     if (SCAN_LOCK) {
       setAllerScanStatus('Scan déjà en cours…', true);
       return Promise.resolve();
     }
     SCAN_LOCK = true;
-    metricQuickFilter = null;
+    if (!doMerge) metricQuickFilter = null;
     var tbody = document.getElementById('radar-tbody');
-    if (tbody) {
+    if (tbody && !doMerge) {
       tbody.innerHTML =
         '<tr><td colspan="15" style="text-align:center;padding:2rem;color:#9CA3AF">Chargement…</td></tr>';
     }
@@ -2363,9 +2366,9 @@
             viewDate: new Date().toISOString().slice(0, 10),
             scan: { hubs: [String((window.__RADAR_HUB_GROUPS__ && window.__RADAR_HUB_GROUPS__[0]) || window.__RADAR_HUB_GROUP__ || '1')] },
           };
-          applyRadarPayload(payload, 'Démo · ' + demoFlights.length + ' vols · ' + zoneLabel(zone));
+          applyRadarPayload(payload, 'Démo · ' + demoFlights.length + ' vols · ' + zoneLabel(zone), { merge: doMerge });
         })
-      : fetchRadarFromNetlify();
+      : fetchRadarFromNetlify(opts);
 
     return loadPromise
       .then(function () {

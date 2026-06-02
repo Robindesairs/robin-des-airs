@@ -494,6 +494,7 @@ const fmt = n => n.toLocaleString('fr-FR');
 const DOCK = [
   { g:"Opérations & dossiers", items:[
     {ic:"🛰️",l:"Radar vols",u:"/radar-vols-v2"},{ic:"📄",l:"Dossier",u:"/dossier"},
+    {ic:"💬",l:"WhatsApp WATI",u:"https://live.wati.io/10168942",t:"_blank"},
     {ic:"📥",l:"Dépôt en ligne",u:"/depot-en-ligne.html"},{ic:"🔎",l:"Suivi dossier",u:"/suivi-dossier"},
     {ic:"🌦️",l:"Météo dossier",u:"/meteo-dossier-indemnite.html"},{ic:"🧭",l:"Choix réclamation",u:"/choix-reclamation"} ]},
   { g:"Agences & partenaires", items:[
@@ -515,7 +516,7 @@ const dockEl = document.getElementById('dock');
 DOCK.forEach(grp=>{
   const g=document.createElement('div'); g.className='dock-group';
   g.innerHTML = `<div class="dock-glabel">${grp.g}</div><div class="dock-chips">`+
-    grp.items.map(it=>`<a class="chip" href="${it.u}"><span class="ci">${it.ic}</span>${it.l}</a>`).join('')+`</div>`;
+    grp.items.map(it=>`<a class="chip" href="${it.u}"${it.t?` target="${it.t}" rel="noopener"`:''}><span class="ci">${it.ic}</span>${it.l}</a>`).join('')+`</div>`;
   dockEl.appendChild(g);
 });
 
