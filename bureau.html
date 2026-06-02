@@ -239,6 +239,40 @@ body.game-mode #gameView { display:block; }
 
 @media (max-width: 1040px){ .grid{grid-template-columns:1fr} .pulse-bar{grid-template-columns:repeat(3,1fr)} }
 @media (max-width: 600px){ .agents{grid-template-columns:1fr} .pulse-bar{grid-template-columns:1fr} .topbar-right .live-clock{display:none} }
+
+/* ============ IMPRESSION 🖨️ ============ */
+@media print {
+  @page { margin: 12mm; }
+  * { animation: none !important; box-shadow: none !important; }
+  body { background: #fff !important; color: #111 !important; padding: 0 !important; background-image: none !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .topbar { position: static !important; background: #fff !important; border-bottom: 1px solid #ccc !important; }
+  /* éléments interactifs / animés masqués */
+  #printBtn, #viewBtn, #soundBtn, .src-badge, .live-pill, .live-clock, #confetti, .wa { display: none !important; }
+  /* impression toujours en vue tableau, même si Mode Jeu actif */
+  #gameView { display: none !important; }
+  body.game-mode #dashView { display: block !important; }
+  .brand .name, .brand .sub { color: #111 !important; }
+  .brand .name em { color: #a8852f !important; }
+  .brand .mark { box-shadow: none !important; }
+  .hero-title { color: #111 !important; } .hero-title em { color: #a8852f !important; }
+  .hero-sub, .hero-date .d { color: #444 !important; } .hero-date .v { color: #a8852f !important; }
+  .pulse-bar, .pulse-cell, .card, .panel, .agent, .chip, .dock-group { background: #fff !important; border: 1px solid #ccc !important; }
+  .pulse-label, .pulse-sub, .agent-role, .card-subtitle, .feed-meta, .section-h .tag, .dock-glabel { color: #555 !important; }
+  .pulse-value, .agent-name, .agent-task, .feed-txt, .card-title, .section-h h2, .chip, .radar-list .fl { color: #111 !important; }
+  .pulse-value.gold, .agent-task .hl, .feed-txt .eur, .radar-list .eu { color: #a8852f !important; }
+  .pulse-value.green, .agent-task .ok, .feed-txt .grn { color: #1a7f4f !important; }
+  .pulse-value.blue { color: #1f6fa8 !important; } .pulse-value.amber, .bd.delay { color: #b5740a !important; }
+  .bd.cancel { color: #b32436 !important; }
+  .mini-src.real { background: #e6f7ee !important; color: #1a7f4f !important; }
+  .mini-src.demo { background: #fdf0db !important; color: #b5740a !important; }
+  /* mise en page papier : agents + activité côte à côte */
+  .grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+  .agents { grid-template-columns: repeat(2, 1fr) !important; }
+  .agent { break-inside: avoid; page-break-inside: avoid; }
+  .panel-b { max-height: none !important; overflow: visible !important; }
+  .foot-note { color: #777 !important; }
+  .foot-note b { color: #333 !important; }
+}
 </style>
 </head>
 <body>
@@ -255,6 +289,7 @@ body.game-mode #gameView { display:block; }
       </span>
     </a>
     <div class="topbar-right">
+      <button class="sound-btn" id="printBtn" title="Imprimer le tableau de bord (PDF / papier)">🖨️ Imprimer</button>
       <button class="sound-btn" id="viewBtn" title="Basculer Tableau / Jeu">🎮 Mode Jeu</button>
       <button class="sound-btn" id="soundBtn" title="Activer le son des dossiers gagnés">🔇 Son</button>
       <span class="live-clock mono" id="clock">--:--:--</span>
@@ -643,6 +678,9 @@ function gameWin(){
 }
 // décrément du combo
 setInterval(()=>{ if(GAME.comboTimer>0){ GAME.comboTimer--; if(GAME.comboTimer===0 && GAME.combo>1){ GAME.combo=1; updateHUD(); } } }, 1000);
+
+/* ============ IMPRESSION ============ */
+document.getElementById('printBtn').addEventListener('click', ()=> window.print());
 
 /* ============ TOGGLE VUE ============ */
 const viewBtn = document.getElementById('viewBtn');
