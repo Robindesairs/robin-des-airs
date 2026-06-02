@@ -28,28 +28,28 @@
 
 ---
 
-## Vue du flow v2
+## Vue du flow v3 (langue en dernier)
 
 ```
-🟢⚪⚪⚪⚪⚪⚪  1 — Accueil v2
-🟢⚪⚪⚪⚪⚪⚪  1bis — Gate Europe (nouveau)
-🟢⚪⚪⚪⚪⚪⚪  1b — Nombre de passagers
-🟢🟢⚪⚪⚪⚪⚪  2 — Direct ou escale
-🟢🟢⚪⚪⚪⚪⚪  2b — Langue vocaux
-🟢🟢🟢⚪⚪⚪⚪  3 — Type d'incident
-🟢🟢🟢⚪⚪⚪⚪  3a — Durée retard (si Retard) — NOUVEAU
-🟢🟢🟢⚪⚪⚪⚪  3trust — Confiance avant OCR — NOUVEAU
-🟢🟢🟢⚪⚪⚪⚪  3b — Photo OCR ou saisie manuelle
-🟢🟢🟢🟢🟢⚪⚪  4 — Vérification OCR
-🟢🟢🟢🟢🟢🟢🟢  5 — Année du vol
-🟢🟢🟢🟢🟢🟢🟢  6 — Confirmation passagers
-🟢🟢🟢🟢🟢🟢🟢  7 — Mineurs
-🟢🟢🟢🟢🟢🟢🟢  7b — Email — NOUVEAU
-🟢🟢🟢🟢🟢🟢🟢  7c — Adresse — NOUVEAU
+🟢⚪⚪⚪⚪⚪⚪  1    — Accueil v2
+🟢⚪⚪⚪⚪⚪⚪  1bis — Gate Europe
+🟢⚪⚪⚪⚪⚪⚪  1b   — Nombre de passagers
+🟢🟢⚪⚪⚪⚪⚪  2    — Direct ou escale
+🟢🟢🟢⚪⚪⚪⚪  3    — Type d'incident
+🟢🟢🟢⚪⚪⚪⚪  3a   — Durée retard (si Retard)
+🟢🟢🟢⚪⚪⚪⚪  3trust — Confiance avant OCR
+🟢🟢🟢⚪⚪⚪⚪  3b   — Photo OCR ou saisie manuelle
+🟢🟢🟢🟢🟢⚪⚪  4    — Vérification OCR
+🟢🟢🟢🟢🟢🟢🟢  5    — Année du vol
+🟢🟢🟢🟢🟢🟢🟢  6    — Confirmation passagers
+🟢🟢🟢🟢🟢🟢🟢  7    — Mineurs
+🟢🟢🟢🟢🟢🟢🟢  7b   — Email
+🟢🟢🟢🟢🟢🟢🟢  7c   — Adresse
+🟢🟢🟢🟢🟢🟢🟢  7d   — Langue vocaux ← DÉPLACÉE ICI (en dernier)
 🟢🟢🟢🟢🟢🟢🟢  Fin A → Fin B (+3–5 s) → Fin C (+30 s)
 ```
 
-**Supprimé :** étape 2c « On continue ? »
+**Supprimés :** étape 2b langue (ancienne position) · étape 2c « On continue ? »
 
 ---
 
@@ -145,25 +145,10 @@ _L'équipe Robin 🏹_
 
 ---
 
-### [ÉTAPE 2b — Langue vocaux]
+### [ÉTAPE 3 — Type d'incident]
 
 ```
 ✅ *C'est noté* — nous visons jusqu'à *{{montant_net}} € net* pour votre groupe. 🚀
-
-Dans quelle langue nos experts doivent-ils vous contacter *(vocal, suivi)* ?
-🟢🟢⚪⚪⚪⚪⚪
-```
-
-*(Boutons langue selon pays / IATA)*
-
-**→ Plus d'étape « On continue ? ».** Enchaîner directement après choix langue :
-
----
-
-### [ÉTAPE 3 — Type d'incident] (fusion confirmation langue)
-
-```
-✅ Parfait — vocaux en *{{langue}}*.
 
 ⚖️ *Que s'est-il passé sur ce vol ?*
 🟢🟢🟢⚪⚪⚪⚪
@@ -338,6 +323,24 @@ Rue, ville et pays — ou *ville + pays* si vous préférez.
 
 ---
 
+### [ÉTAPE 7d — Langue vocaux] — DÉPLACÉE EN DERNIER ⚠️
+
+```
+🌍 *Dernière question !*
+
+Dans quelle langue nos experts doivent-ils vous contacter
+*(appels, vocaux WhatsApp, suivi)* ?
+🟢🟢🟢🟢🟢🟢🟢
+
+👆 Ouvrez *Choisir*
+```
+
+*(Boutons liste : Français / English / Wolof / Bambara / Dioula / Autre)*
+
+**→ Après ce choix, enchaîner directement sur FIN A. Pas de confirmation intermédiaire.**
+
+---
+
 ### [FIN A — Récap célébration] — immédiat
 
 ```
@@ -463,7 +466,7 @@ _L'équipe Robin_
 
 ## Champs Airtable à remplir avant `mandat_url`
 
-| Champ | Collecté par bot v2 |
+| Champ | Collecté par bot v3 |
 |-------|---------------------|
 | Référence Dossier | Auto `RDA-...` |
 | Numéro WhatsApp | Meta |
