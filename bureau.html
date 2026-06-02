@@ -1062,6 +1062,8 @@ updateAgentsOn();
 
 // branchement données réelles (repli démo automatique si /api indisponible)
 loadRealData();
+// après ouverture de session CRM (gate), recharge les endpoints protégés (radar-stats, registre)
+window.addEventListener('bureau-crm-unlocked', loadProtected);
 setInterval(loadRadar, 180000);      // rafraîchit les vols réels toutes les 3 min
 setInterval(loadWhatsApp, 120000);   // état bot toutes les 2 min
 setInterval(loadBureauStats, 180000);// vrais chiffres CRM toutes les 3 min
@@ -1069,5 +1071,6 @@ setInterval(loadMetaStats, 300000);  // stats Meta Ads toutes les 5 min
 setInterval(planeFlyby, 26000);      // avion qui traverse régulièrement
 setTimeout(planeFlyby, 1500);        // un premier passage au chargement
 </script>
+<script src="/assets/bureau-gate.js"></script>
 </body>
 </html>
