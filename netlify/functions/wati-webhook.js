@@ -1,17 +1,18 @@
 /**
- * Webhook WATI — Bot Robin des Airs v3.2 + historique CRM
+ * Webhook WATI — Bot Robin des Airs v4.0 · Mix v1 (mai) + v3.2
  *
- * URL à configurer dans WATI : Connectors → Webhooks
+ * URL WATI : Connectors → Webhooks
  *   https://robindesairs.eu/api/wati-webhook
  *
- * Flow complet géré ici (state machine via Netlify Blobs) :
- *   accueil → gate europe → nb passagers → type vol → incident
- *   → durée/correspondance → remboursements → OCR → vérif
- *   → année → passagers → mineurs → email → adresse → langue → FIN A/B/C
- *
- * Boutons interactifs WATI :
- *   - sendList  → jusqu'à 10 options (liste déroulante)
- *   - sendButtons → 2–3 boutons rapides
+ * Améliorations v4 :
+ *   - Pastille progression dynamique sur CHAQUE message
+ *   - Saisie manuelle structurée (1 champ à la fois)
+ *   - Nom passager principal + compagnie + route demandés
+ *   - Confirmation passagers (étape 6) comme v1
+ *   - Récap complet avant FIN A/B/C
+ *   - Boutons interactifs partout (sendList / sendButtons)
+ *   - Commandes globales : menu / restart
+ *   - Webhook Make pour création Airtable
  */
 
 const { appendWaMessage, normalizeWaPhone } = require('./lib/wa-convo-store');
@@ -21,6 +22,26 @@ const HEADERS = {
   'Content-Type': 'application/json',
   'Access-Control-Allow-Origin': '*',
 };
+
+// ─── Progress bar dynamique ──────────────────────────────────────────────────
+// Chaque step a une position sur 7 cases (comme v1 mai)
+const PROGRESS = {
+  accueil: 0, gate: 1, gate_compagnie: 1,
+  nb_pax: 1,
+  type_vol: 2,
+  lang_pref: 2, // langue précoce supprimée — on garde la slot pour compat
+  incident: 3, duree_retard: 3, correspondance: 3, remboursements: 3,
+  ocr: 3, manuel_vol: 3, manuel_compagnie: 3, manuel_date: 3, manuel_pnr: 3, manuel_route: 3, manuel_nom: 3,
+  confirm_ocr: 4,
+  annee: 5,
+  confirm_pax: 6,
+  mineurs: 6,
+  email: 7, adresse: 7, langue: 7, done: 7,
+};
+function bar(step) {
+  const n = PROGRESS[step] ?? 0;
+  return '🟢'.repeat(Math.max(0, n)) + '⚪'.repeat(Math.max(0, 7 - n));
+}
 
 // ─── Envoi message texte simple ───────────────────────────────────────────────
 async function send(phone, text, cfg) {
@@ -35,8 +56,7 @@ async function send(phone, text, cfg) {
   } catch (e) { console.error('wati-bot: send failed', e.message); }
 }
 
-// ─── Envoi liste interactive (jusqu'à 10 options) ────────────────────────────
-// items = [{ title, description? }]
+// ─── Liste interactive (jusqu'à 10 options) ──────────────────────────────────
 async function sendList(phone, { header, body, footer, buttonText, items }, cfg) {
   if (!cfg) return;
   const wa = normalizeWatiPhone(phone);
@@ -57,20 +77,17 @@ async function sendList(phone, { header, body, footer, buttonText, items }, cfg)
     );
     const data = await res.json().catch(() => ({}));
     if (!data.result) {
-      // Fallback texte si la liste échoue (hors fenêtre 24h ou format rejeté)
       const txt = (header ? `*${header}*\n\n` : '') + body + '\n\n' +
         items.map((it, idx) => `${idx + 1} — ${it.title}`).join('\n');
       await send(phone, txt, cfg);
     }
   } catch (e) {
-    console.error('wati-bot: sendList failed', e.message);
     const txt = body + '\n\n' + items.map((it, idx) => `${idx + 1} — ${it.title}`).join('\n');
     await send(phone, txt, cfg);
   }
 }
 
-// ─── Envoi boutons rapides (2–3 boutons) ────────────────────────────────────
-// buttons = [{ text }]
+// ─── Boutons rapides (max 3) ─────────────────────────────────────────────────
 async function sendButtons(phone, { body, footer, buttons }, cfg) {
   if (!cfg) return;
   const wa = normalizeWatiPhone(phone);
@@ -83,7 +100,7 @@ async function sendButtons(phone, { body, footer, buttons }, cfg) {
         body: JSON.stringify({
           body,
           footer: footer || 'robindesairs.eu',
-          buttons: buttons.map(b => ({ text: b.text })),
+          buttons: buttons.slice(0, 3).map(b => ({ text: b.text })),
         }),
       }
     );
@@ -93,7 +110,6 @@ async function sendButtons(phone, { body, footer, buttons }, cfg) {
       await send(phone, txt, cfg);
     }
   } catch (e) {
-    console.error('wati-bot: sendButtons failed', e.message);
     const txt = body + '\n\n' + buttons.map((b, i) => `${i + 1} — ${b.text}`).join('\n');
     await send(phone, txt, cfg);
   }
@@ -104,41 +120,23 @@ async function sendDelayed(phone, text, cfg, ms = 1000) {
   await send(phone, text, cfg);
 }
 
-// ─── Normalisation réponse bouton/liste ──────────────────────────────────────
-// WATI renvoie le texte exact du bouton cliqué — on le mappe vers un index
-function normalizeInput(raw, options) {
-  const t = (raw || '').trim().toLowerCase();
-  // Si c'est déjà un chiffre
-  if (/^\d+$/.test(t)) return t;
-  // Chercher le texte dans les options
-  const idx = options.findIndex(o => t.includes(o.toLowerCase()));
-  if (idx >= 0) return String(idx + 1);
-  return t;
-}
-
-// ─── État conversation (Netlify Blobs) ───────────────────────────────────────
-async function getState(event, phone) {
+// ─── État conversation ───────────────────────────────────────────────────────
+async function getState(phone) {
   try {
     const { getStore } = require('@netlify/blobs');
     const store = getStore({ name: 'robin-bot-state', consistency: 'strong' });
-    const key = `state/${phone.replace(/\D/g, '')}`;
-    const raw = await store.get(key, { type: 'json' });
+    const raw = await store.get(`state/${phone.replace(/\D/g, '')}`, { type: 'json' });
     return raw || { step: 'accueil' };
   } catch { return { step: 'accueil' }; }
 }
-
-async function setState(event, phone, state) {
+async function setState(phone, state) {
   try {
     const { getStore } = require('@netlify/blobs');
     const store = getStore({ name: 'robin-bot-state', consistency: 'strong' });
-    const key = `state/${phone.replace(/\D/g, '')}`;
-    await store.setJSON(key, { ...state, updatedAt: new Date().toISOString() });
-  } catch (e) {
-    console.error('wati-bot: setState failed', e.message);
-  }
+    await store.setJSON(`state/${phone.replace(/\D/g, '')}`, { ...state, updatedAt: new Date().toISOString() });
+  } catch (e) { console.error('setState failed', e.message); }
 }
-
-async function clearState(event, phone) {
+async function clearState(phone) {
   try {
     const { getStore } = require('@netlify/blobs');
     const store = getStore({ name: 'robin-bot-state', consistency: 'strong' });
@@ -146,248 +144,27 @@ async function clearState(event, phone) {
   } catch {}
 }
 
-// ─── Génération référence dossier ─────────────────────────────────────────────
+// ─── Utilitaires ─────────────────────────────────────────────────────────────
 function genRef() {
   const d = new Date();
   const ymd = d.toISOString().slice(0, 10).replace(/-/g, '');
   const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
   return `RDA-${ymd}-${rand}`;
 }
+function montantNet(pax = 1) { return 420 * pax; }
 
-// ─── Calcul montant indicatif ─────────────────────────────────────────────────
-function montantIndicatif(pax = 1) {
-  const netParPax = 420; // 600€ × 70%
-  return netParPax * pax;
+function normalizeInput(raw, options) {
+  const t = (raw || '').trim().toLowerCase();
+  if (/^\d+$/.test(t)) return t;
+  const idx = options.findIndex(o => t.includes(o.toLowerCase()));
+  if (idx >= 0) return String(idx + 1);
+  return t;
 }
 
-// ─── Messages du bot ──────────────────────────────────────────────────────────
-const MSG = {
-  accueil: () => `🟢⚪⚪⚪⚪⚪⚪
-👋 Bienvenue chez *Robin des Airs* 🏹
-
-*Vol retardé, annulé ou surbooké sur un trajet Europe ↔ Afrique ?*
-La loi vous donne droit à *jusqu'à 600 €* par passager.
-Vous avez *3 ans* pour réclamer — pas de frais si on ne gagne pas.
-
-⚖️ *Zéro frais.* On prend 25 % uniquement si vous gagnez.
-
-Répondez *1* pour commencer votre dossier (moins de 10 min).`,
-
-  gate: () => `✈️ *D'où partait votre vol ?*
-
-1 — D'un aéroport en *Europe* (France, Belgique, UK, Suisse…)
-2 — D'un aéroport en *Afrique ou ailleurs*`,
-
-  gate_compagnie: () => `Et la compagnie qui opérait ce vol ?
-
-1 — Compagnie *européenne* (Air France, Brussels Airlines, TUI, easyJet…)
-2 — Compagnie *africaine ou autre*`,
-
-  rejet_zone: () => `Merci pour ces informations.
-
-Le règlement européen CE 261 couvre uniquement les vols qui *partent d'Europe*, ou qui arrivent en Europe avec une *compagnie européenne*.
-
-Votre situation n'entre malheureusement pas dans ce cadre.
-
-Si vous avez d'autres vols via l'Europe, revenez ici — vous avez *3 ans* pour agir.
-
-_L'équipe Robin 🏹_`,
-
-  nb_pax: () => `🟢⚪⚪⚪⚪⚪⚪
-👥 *Pour combien de passagers réclamez-vous ?*
-
-1 — 1 passager
-2 — 2 passagers
-3 — 3 passagers
-4 — 4 passagers
-5 — 5 passagers
-6 — 6 ou plus`,
-
-  type_vol: (pax) => `✅ *${pax} passager(s) enregistré(s).*
-
-✈️ Sur ce trajet : quel type de vol ?
-🟢🟢⚪⚪⚪⚪⚪
-
-1 — Vol *direct* (sans escale)
-2 — Vol *avec escale*
-3 — *Correspondance ratée*`,
-
-  incident: (montant) => `✅ *C'est noté* — nous visons jusqu'à *${montant} € net* pour votre groupe. 🚀
-
-⚖️ *Que s'est-il passé exactement ?*
-🟢🟢🟢⚪⚪⚪⚪
-
-1 — Retard à l'arrivée (+3h)
-2 — Vol annulé
-3 — Refus d'embarquement / surbooking
-4 — Correspondance manquée à cause d'un retard`,
-
-  duree_retard: () => `⏱️ *Environ combien d'heures de retard à l'arrivée ?*
-
-1 — Moins de 3 heures
-2 — Entre 3 et 4 heures
-3 — Plus de 4 heures
-4 — Je ne me souviens plus`,
-
-  rejet_retard_court: () => `Merci. Pour un retard *inférieur à 3 heures* à l'arrivée, la loi européenne CE 261 ne prévoit pas d'indemnité.
-
-Si vous pensez que le retard était plus long, ou si vous avez un autre incident, tapez *menu* pour recommencer.
-
-_L'équipe Robin 🏹_`,
-
-  correspondance: () => `✈️ *Correspondance manquée — précisons le vol concerné.*
-
-1 — Le vol *initial* qui était en retard
-2 — Le vol de *correspondance* que j'ai raté
-3 — Les deux
-4 — Je ne sais plus`,
-
-  remboursements: () => `💡 *Bonne nouvelle — Robin récupère aussi vos avances !*
-
-Si vous avez payé de votre poche à cause de ce vol *(taxi, hôtel, repas, transfert...)* :
-
-🧾 *Conservez toutes vos factures et reçus.*
-
-Robin des Airs les soumet à la compagnie et récupère ces frais *en plus* de l'indemnité légale. *Zéro effort de votre côté.*
-
-Répondez *1* pour continuer.`,
-
-  ocr: () => `📋 *Carte d'embarquement ou e-ticket*
-🟢🟢🟢⚪⚪⚪⚪
-
-Envoyez une *photo* de votre carte d'embarquement — le bot lit le numéro de vol, la date et votre nom automatiquement.
-
-📱 Photo nette, bien cadrée, à plat.
-
-Ou tapez les infos à la main :
-✍️ Envoyez en un seul message :
-Numéro de vol / Date (JJ/MM/AAAA) / PNR / Itinéraire (ex: CDG-ABJ)`,
-
-  annee: (datejm) => `🗓️ *Quelle année pour le ${datejm} ?*
-
-1 — ${new Date().getFullYear()}
-2 — ${new Date().getFullYear() - 1}
-3 — ${new Date().getFullYear() - 2}
-4 — ${new Date().getFullYear() - 3}
-5 — ${new Date().getFullYear() - 4} ou avant
-
-_(Date antérieure ? Tapez la date complète ex. 15/03/2021)_
-🟢🟢🟢🟢🟢🟢🟢`,
-
-  confirm_ocr: (data) => `📸 *Billet lu ! Vérifiez :*
-
-✈️ *${data.vol || '?'}* — ${data.compagnie || '?'}
-🎫 *${data.date || '?'}*
-📋 *${data.pnr || '?'}*
-🛤️ *${data.route || '?'}*
-👤 *${data.nom || '?'}*
-
-1 — ✅ Tout est correct
-2 — ✏️ Corriger`,
-
-  mineurs: (noms) => `👶 *Question juridique importante*
-🟢🟢🟢🟢🟢🟢🟢
-
-Parmi les passagers suivants, y a-t-il des *mineurs* (moins de 18 ans) ?
-
-${noms}
-
-⚖️ Obligation légale pour préparer le bon mandat.
-
-1 — Non, tous majeurs
-2 — Oui, il y a des mineurs`,
-
-  email: () => `📧 *Pour vous envoyer le mandat et le suivi du dossier*
-🟢🟢🟢🟢🟢🟢🟢
-
-Quelle est votre adresse email ?
-_(Ex. : prenom@gmail.com)_`,
-
-  adresse: () => `📮 *Adresse postale* (pour le mandat officiel)
-
-Rue, ville et pays — ou *ville + pays* si vous préférez.
-_(Ex. : 12 rue Léon Blum, Dakar, Sénégal)_`,
-
-  langue: () => `🌍 *Dernière question !*
-🟢🟢🟢🟢🟢🟢🟢
-
-Dans quelle langue nos experts doivent-ils vous contacter *(appels, vocaux WhatsApp, suivi)* ?
-
-1 — 🇫🇷 Français
-2 — 🇬🇧 English
-3 — 🇸🇳 Wolof
-4 — 🇲🇱 Bambara
-5 — 🇨🇮 Dioula
-6 — Autre`,
-
-  fin_a: (s) => `🎉 *Dossier enregistré !*
-Réf. *${s.ref}*
-
-👤 ${s.nom || '(passager)'}
-✈️ ${s.vol || '?'} — ${s.compagnie || '?'} — ${s.route || '?'}
-📅 ${s.date || '?'} · ${s.incident_libelle || '?'}
-💵 *Objectif : ${montantIndicatif(s.pax)} € net*
-
-Notre équipe a votre dossier. Prochaine étape : *2 minutes* pour l'activer. ⬇️`,
-
-  fin_b: (s) => `✅ *Dossier ${s.ref} enregistré.*
-
-Pour que Robin des Airs représente *${s.nom || 'votre groupe'}* auprès de *${s.compagnie || 'la compagnie'}*, signez votre *mandat de représentation*.
-
-📋 Lisible avant signature — *aucune info bancaire à cette étape.*
-
-👉 Signez ici (2 min) :
-${s.mandat_url || 'https://robindesairs.eu/mandat.html?ref=' + s.ref}
-
-Sans signature, nous ne pouvons pas agir en votre nom.
-
-_L'équipe Robin 🏹_`,
-
-  fin_c: (s) => `📎 *Ensuite — vos justificatifs*
-
-Envoyez ici, en photos :
-
-1. *Passeport ou CNI* (face lisible)
-2. *Carte d'embarquement* ou confirmation *(si vous l'avez encore)*
-
-🔒 Pièces réservées au dossier *${s.ref}* uniquement.
-Confidentialité : https://robindesairs.eu/politique-confidentialite`,
-
-  incompris: () => `Je n'ai pas compris votre réponse. Tapez le *numéro* correspondant à votre choix, ou tapez *menu* pour recommencer.`,
-
-  menu: () => `🔄 Tapez *1* pour démarrer un nouveau dossier, ou envoyez votre question ici.`,
-};
-
-const INCIDENT_LABELS = {
-  '1': 'Retard +3h', '2': 'Vol annulé', '3': 'Refus d\'embarquement', '4': 'Correspondance manquée',
-};
-const LANGUE_LABELS = {
-  '1': '🇫🇷 Français', '2': '🇬🇧 English', '3': '🇸🇳 Wolof',
-  '4': '🇲🇱 Bambara', '5': '🇨🇮 Dioula', '6': 'Autre',
-};
-
-// ─── Parsing message entrant ──────────────────────────────────────────────────
-function parseVol(text) {
-  // Tente de parser "AF718 / 12/05/2024 / K5FW8B / CDG-ABJ"
-  const parts = text.split(/[\/\n|,]/).map(s => s.trim()).filter(Boolean);
-  if (parts.length >= 2) {
-    return {
-      vol: parts[0]?.toUpperCase() || '',
-      date: parts[1] || '',
-      pnr: parts[2]?.toUpperCase() || '',
-      route: parts[3]?.toUpperCase() || '',
-      compagnie: '',
-      nom: '',
-    };
-  }
-  return null;
-}
-
-function buildMandatUrl(s) {
-  const base = 'https://robindesairs.eu/mandat.html';
+function buildMandatUrl(s, phone) {
   const p = new URLSearchParams({
     ref: s.ref || '',
-    phone: s.phone || '',
+    phone: phone || '',
     name: s.nom || '',
     vol: s.vol || '',
     date: s.date || '',
@@ -396,66 +173,88 @@ function buildMandatUrl(s) {
     compagnie: s.compagnie || '',
     motif: s.incident_libelle || '',
     indemnite: '600',
+    lang: s.langue_code || 'fr',
     source: 'wati-bot',
   });
-  return `${base}?${p.toString()}`;
+  return `https://robindesairs.eu/mandat.html?${p.toString()}`;
 }
 
-// ─── Machine à états ──────────────────────────────────────────────────────────
-async function handleMessage(phone, text, event, cfg) {
+const INCIDENT_LABELS = {
+  '1': 'Retard +3h', '2': 'Vol annulé', '3': 'Refus d\'embarquement', '4': 'Correspondance manquée',
+};
+const LANGUE_LABELS = {
+  '1': { name: '🇫🇷 Français', code: 'fr' },
+  '2': { name: '🇬🇧 English', code: 'en' },
+  '3': { name: '🇸🇳 Wolof', code: 'wo' },
+  '4': { name: '🇲🇱 Bambara', code: 'bm' },
+  '5': { name: '🇨🇮 Dioula', code: 'dyu' },
+  '6': { name: '🌐 Autre', code: 'other' },
+};
+
+// ─── Handler principal — state machine ───────────────────────────────────────
+async function handleMessage(phone, text, cfg) {
   const input = (text || '').trim();
   const lower = input.toLowerCase();
 
   // Commandes globales
   if (['menu', 'restart', 'recommencer', 'start', 'bonjour', 'hello', 'hi', 'salut'].includes(lower)) {
-    await clearState(event, phone);
-    await send(phone, MSG.accueil(), cfg);
-    await setState(event, phone, { step: 'gate', phone });
+    await clearState(phone);
+    await sendButtons(phone, {
+      body: `${bar('accueil')}\n👋 Bienvenue chez *Robin des Airs* 🏹\n\n*Vol retardé, annulé ou surbooké sur un trajet Europe ↔ Afrique ?*\nLa loi vous donne droit à *jusqu'à 600 €* par passager.\n\n⚖️ *Zéro frais.* On prend 25 % uniquement si vous gagnez.\n\n👥 Déjà +1 200 familles indemnisées.\n⏱️ Moins de 10 min pour ouvrir votre dossier.`,
+      footer: 'Vous avez 3 ans pour réclamer',
+      buttons: [{ text: '✅ Commencer mon dossier' }],
+    }, cfg);
+    await setState(phone, { step: 'gate', phone });
     return;
   }
 
-  let s = await getState(event, phone);
+  let s = await getState(phone);
 
   // ── ACCUEIL ────────────────────────────────────────────────────────────────
   if (s.step === 'accueil' || !s.step) {
     await sendButtons(phone, {
-      body: `🟢⚪⚪⚪⚪⚪⚪\n👋 Bienvenue chez *Robin des Airs* 🏹\n\n*Vol retardé, annulé ou surbooké sur un trajet Europe ↔ Afrique ?*\nLa loi vous donne droit à *jusqu'à 600 €* par passager. Vous avez *3 ans* pour réclamer.\n\n⚖️ *Zéro frais.* On prend 25 % uniquement si vous gagnez.`,
-      footer: 'Moins de 10 minutes pour ouvrir votre dossier',
+      body: `${bar('accueil')}\n👋 Bienvenue chez *Robin des Airs* 🏹\n\n*Vol retardé, annulé ou surbooké sur un trajet Europe ↔ Afrique ?*\nLa loi vous donne droit à *jusqu'à 600 €* par passager.\n\n⚖️ *Zéro frais.* On prend 25 % uniquement si vous gagnez.\n\n👥 Déjà +1 200 familles indemnisées.\n⏱️ Moins de 10 min pour ouvrir votre dossier.`,
+      footer: 'Vous avez 3 ans pour réclamer',
       buttons: [{ text: '✅ Commencer mon dossier' }],
     }, cfg);
-    await setState(event, phone, { step: 'gate', phone });
+    await setState(phone, { step: 'gate', phone });
     return;
   }
 
   // ── GATE EUROPE ────────────────────────────────────────────────────────────
   if (s.step === 'gate') {
-    const norm = normalizeInput(input, ['Europe', 'Afrique']);
-    if (norm === '1') {
+    const norm = normalizeInput(input, ['europe', 'afrique', 'commencer']);
+    if (norm === '1' || lower.includes('commencer')) {
+      // Premier message = soit "Commencer" soit "Europe"
+      if (lower.includes('commencer')) {
+        // affiche gate
+        await sendButtons(phone, {
+          body: `${bar('gate')}\n✈️ *D'où partait votre vol ?*\n\nPour vérifier que vous êtes couvert par la loi européenne (CE 261).`,
+          buttons: [{ text: '🇪🇺 D\'un aéroport en Europe' }, { text: '🌍 D\'Afrique ou ailleurs' }],
+        }, cfg);
+        return;
+      }
       s.geo = 'eu'; s.step = 'nb_pax';
-      await setState(event, phone, s);
+      await setState(phone, s);
       await sendList(phone, {
-        header: '🟢⚪⚪⚪⚪⚪⚪  Robin des Airs',
-        body: '👥 *Pour combien de passagers réclamez-vous ?*',
-        buttonText: 'Nombre de passagers ▾',
+        header: 'Robin des Airs',
+        body: `${bar('nb_pax')}\n👥 *Pour combien de passagers réclamez-vous ?*`,
+        buttonText: 'Nombre ▾',
         items: [
           { title: '1 passager' }, { title: '2 passagers' }, { title: '3 passagers' },
           { title: '4 passagers' }, { title: '5 passagers' }, { title: '6 ou plus' },
         ],
       }, cfg);
-      await setState(event, phone, { ...s, step: 'nb_pax' });
     } else if (norm === '2') {
       s.step = 'gate_compagnie';
-      await setState(event, phone, s);
+      await setState(phone, s);
       await sendButtons(phone, {
-        body: 'Et la compagnie qui opérait ce vol ?',
-        buttons: [
-          { text: '🇪🇺 Compagnie européenne' },
-          { text: '🌍 Compagnie africaine ou autre' },
-        ],
+        body: `${bar('gate_compagnie')}\nEt la compagnie qui opérait ce vol ?`,
+        buttons: [{ text: '🇪🇺 Compagnie européenne' }, { text: '🌍 Africaine ou autre' }],
       }, cfg);
     } else {
       await sendButtons(phone, {
-        body: '✈️ *D\'où partait votre vol ?*',
+        body: `${bar('gate')}\n✈️ *D'où partait votre vol ?*\n\nPour vérifier que vous êtes couvert par la loi européenne (CE 261).`,
         buttons: [{ text: '🇪🇺 D\'un aéroport en Europe' }, { text: '🌍 D\'Afrique ou ailleurs' }],
       }, cfg);
     }
@@ -466,19 +265,18 @@ async function handleMessage(phone, text, event, cfg) {
     const norm = normalizeInput(input, ['européenne', 'africaine']);
     if (norm === '1') {
       s.geo = 'eu_carrier'; s.step = 'nb_pax';
-      await setState(event, phone, s);
+      await setState(phone, s);
       await sendList(phone, {
-        header: '🟢⚪⚪⚪⚪⚪⚪  Robin des Airs',
-        body: '👥 *Pour combien de passagers réclamez-vous ?*',
-        buttonText: 'Nombre de passagers ▾',
+        body: `${bar('nb_pax')}\n👥 *Pour combien de passagers réclamez-vous ?*`,
+        buttonText: 'Nombre ▾',
         items: [
           { title: '1 passager' }, { title: '2 passagers' }, { title: '3 passagers' },
           { title: '4 passagers' }, { title: '5 passagers' }, { title: '6 ou plus' },
         ],
       }, cfg);
     } else if (norm === '2') {
-      await clearState(event, phone);
-      await send(phone, MSG.rejet_zone(), cfg);
+      await clearState(phone);
+      await send(phone, `Merci pour ces informations.\n\nLa loi européenne CE 261 couvre uniquement les vols qui *partent d'Europe* ou arrivent en Europe avec une *compagnie européenne*.\n\nSi vous avez d'autres vols passés via l'Europe, vous avez *3 ans* pour réclamer — revenez ici.\n\n_L'équipe Robin 🏹_`, cfg);
     } else {
       await sendButtons(phone, {
         body: 'La compagnie qui opérait ce vol ?',
@@ -490,25 +288,24 @@ async function handleMessage(phone, text, event, cfg) {
 
   // ── NOMBRE PASSAGERS ──────────────────────────────────────────────────────
   if (s.step === 'nb_pax') {
-    const norm = normalizeInput(input, ['1 passager','2 passagers','3 passagers','4 passagers','5 passagers','6 ou plus']);
+    const norm = normalizeInput(input, ['1 passager', '2 passagers', '3 passagers', '4 passagers', '5 passagers', '6 ou plus']);
     const n = parseInt(norm);
     if (n >= 1 && n <= 6) {
       s.pax = n; s.step = 'type_vol';
-      await setState(event, phone, s);
+      await setState(phone, s);
       await sendList(phone, {
-        header: '🟢🟢⚪⚪⚪⚪⚪  Robin des Airs',
-        body: `✅ *${s.pax} passager(s) enregistré(s).*\n\n✈️ Sur ce trajet : quel type de vol ?`,
+        body: `${bar('type_vol')}\n✅ *${s.pax} passager(s) enregistré(s).*\n\n✈️ Sur ce trajet : quel type de vol ?`,
         buttonText: 'Type de vol ▾',
         items: [
           { title: '✈️ Vol direct', description: 'Sans escale' },
-          { title: '🔄 Vol avec escale', description: '' },
-          { title: '⚠️ Correspondance ratée', description: '' },
+          { title: '🔄 Vol avec escale', description: 'Une ou plusieurs escales' },
+          { title: '⚠️ Correspondance ratée', description: 'À cause d\'un retard' },
         ],
       }, cfg);
     } else {
       await sendList(phone, {
-        body: '👥 *Pour combien de passagers réclamez-vous ?*',
-        buttonText: 'Nombre de passagers ▾',
+        body: `${bar('nb_pax')}\n👥 *Pour combien de passagers ?*`,
+        buttonText: 'Nombre ▾',
         items: [
           { title: '1 passager' }, { title: '2 passagers' }, { title: '3 passagers' },
           { title: '4 passagers' }, { title: '5 passagers' }, { title: '6 ou plus' },
@@ -520,25 +317,24 @@ async function handleMessage(phone, text, event, cfg) {
 
   // ── TYPE VOL ──────────────────────────────────────────────────────────────
   if (s.step === 'type_vol') {
-    const norm = normalizeInput(input, ['direct','escale','correspondance']);
+    const norm = normalizeInput(input, ['direct', 'escale', 'correspondance']);
     if (['1','2','3'].includes(norm)) {
       s.type_vol = norm === '1' ? 'direct' : norm === '2' ? 'escale' : 'correspondance';
       s.step = 'incident';
-      await setState(event, phone, s);
+      await setState(phone, s);
       await sendList(phone, {
-        header: '🟢🟢🟢⚪⚪⚪⚪  Robin des Airs',
-        body: `✅ *C'est noté* — nous visons jusqu'à *${montantIndicatif(s.pax)} € net* pour votre groupe. 🚀\n\n⚖️ *Que s'est-il passé exactement ?*`,
-        buttonText: 'Type d\'incident ▾',
+        body: `${bar('incident')}\n✅ *C'est noté* — objectif jusqu'à *${montantNet(s.pax)} € net* pour votre groupe. 🚀\n\n⚖️ *Que s'est-il passé exactement ?*`,
+        buttonText: 'Incident ▾',
         items: [
-          { title: '⏱️ Retard à l\'arrivée (+3h)', description: '' },
-          { title: '❌ Vol annulé', description: '' },
-          { title: '🚫 Refus d\'embarquement / surbooking', description: '' },
-          { title: '🔄 Correspondance manquée', description: 'À cause d\'un retard' },
+          { title: '⏱️ Retard à l\'arrivée (+3h)' },
+          { title: '❌ Vol annulé' },
+          { title: '🚫 Refus d\'embarquement / surbooking' },
+          { title: '🔄 Correspondance manquée' },
         ],
       }, cfg);
     } else {
       await sendList(phone, {
-        body: '✈️ Sur ce trajet : quel type de vol ?',
+        body: `${bar('type_vol')}\n✈️ Sur ce trajet : quel type de vol ?`,
         buttonText: 'Type de vol ▾',
         items: [
           { title: '✈️ Vol direct' }, { title: '🔄 Vol avec escale' }, { title: '⚠️ Correspondance ratée' },
@@ -548,18 +344,17 @@ async function handleMessage(phone, text, event, cfg) {
     return;
   }
 
-  // ── TYPE INCIDENT ─────────────────────────────────────────────────────────
+  // ── INCIDENT ──────────────────────────────────────────────────────────────
   if (s.step === 'incident') {
-    const norm = normalizeInput(input, ['retard','annulé','refus','correspondance']);
+    const norm = normalizeInput(input, ['retard', 'annulé', 'refus', 'correspondance']);
     if (['1','2','3','4'].includes(norm)) {
       s.incident = norm;
       s.incident_libelle = INCIDENT_LABELS[norm];
       if (norm === '1') {
         s.step = 'duree_retard';
-        await setState(event, phone, s);
+        await setState(phone, s);
         await sendList(phone, {
-          header: '⏱️ Durée du retard',
-          body: '⏱️ *Environ combien d\'heures de retard à l\'arrivée ?*',
+          body: `${bar('duree_retard')}\n⏱️ *Environ combien d'heures de retard à l'arrivée ?*`,
           buttonText: 'Durée ▾',
           items: [
             { title: 'Moins de 3 heures' },
@@ -570,10 +365,9 @@ async function handleMessage(phone, text, event, cfg) {
         }, cfg);
       } else if (norm === '4') {
         s.step = 'correspondance';
-        await setState(event, phone, s);
+        await setState(phone, s);
         await sendList(phone, {
-          header: '🔄 Correspondance manquée',
-          body: '✈️ *Quel vol pose problème ?*',
+          body: `${bar('correspondance')}\n✈️ *Quel vol pose problème ?*`,
           buttonText: 'Préciser ▾',
           items: [
             { title: 'Le vol initial (en retard)' },
@@ -583,23 +377,15 @@ async function handleMessage(phone, text, event, cfg) {
           ],
         }, cfg);
       } else {
-        s.step = 'remboursements';
-        await setState(event, phone, s);
-        await sendButtons(phone, {
-          body: '💡 *Bonne nouvelle — Robin récupère aussi vos avances !*\n\nSi vous avez payé de votre poche *(taxi, hôtel, repas, transfert...)* :\n\n🧾 *Conservez toutes vos factures et reçus.*\n\nRobin les soumet à la compagnie *en plus* de l\'indemnité. Zéro effort de votre côté.',
-          footer: 'robindesairs.eu',
-          buttons: [{ text: '✅ Compris, continuer' }],
-        }, cfg);
+        await showRemboursements(phone, s, cfg);
       }
     } else {
       await sendList(phone, {
-        body: '⚖️ *Que s\'est-il passé exactement ?*',
-        buttonText: 'Type d\'incident ▾',
+        body: `${bar('incident')}\n⚖️ *Que s'est-il passé exactement ?*`,
+        buttonText: 'Incident ▾',
         items: [
-          { title: '⏱️ Retard à l\'arrivée (+3h)' },
-          { title: '❌ Vol annulé' },
-          { title: '🚫 Refus d\'embarquement' },
-          { title: '🔄 Correspondance manquée' },
+          { title: '⏱️ Retard à l\'arrivée (+3h)' }, { title: '❌ Vol annulé' },
+          { title: '🚫 Refus d\'embarquement' }, { title: '🔄 Correspondance manquée' },
         ],
       }, cfg);
     }
@@ -608,22 +394,16 @@ async function handleMessage(phone, text, event, cfg) {
 
   // ── DURÉE RETARD ──────────────────────────────────────────────────────────
   if (s.step === 'duree_retard') {
-    const norm = normalizeInput(input, ['moins de 3','entre 3','plus de 4','ne me souviens']);
+    const norm = normalizeInput(input, ['moins de 3', 'entre 3', 'plus de 4', 'souviens']);
     if (norm === '1') {
-      await clearState(event, phone);
-      await send(phone, MSG.rejet_retard_court(), cfg);
+      await clearState(phone);
+      await send(phone, `Merci. Pour un retard *inférieur à 3 heures* à l'arrivée, la loi européenne CE 261 ne prévoit pas d'indemnité forfaitaire.\n\nSi vous pensez que le retard était plus long, ou si vous avez un autre incident, tapez *menu* pour recommencer.\n\n_L'équipe Robin 🏹_`, cfg);
     } else if (['2','3','4'].includes(norm)) {
       s.duree_retard = norm === '2' ? '3-4h' : norm === '3' ? '4h+' : 'inconnue';
-      s.step = 'remboursements';
-      await setState(event, phone, s);
-      await sendButtons(phone, {
-        body: '💡 *Bonne nouvelle — Robin récupère aussi vos avances !*\n\nSi vous avez payé de votre poche *(taxi, hôtel, repas, transfert...)* :\n\n🧾 *Conservez toutes vos factures et reçus.*\n\nRobin les soumet à la compagnie *en plus* de l\'indemnité. Zéro effort de votre côté.',
-        footer: 'robindesairs.eu',
-        buttons: [{ text: '✅ Compris, continuer' }],
-      }, cfg);
+      await showRemboursements(phone, s, cfg);
     } else {
       await sendList(phone, {
-        body: '⏱️ *Combien d\'heures de retard à l\'arrivée ?*',
+        body: `${bar('duree_retard')}\n⏱️ *Combien d'heures de retard à l'arrivée ?*`,
         buttonText: 'Durée ▾',
         items: [
           { title: 'Moins de 3 heures' }, { title: 'Entre 3 et 4 heures' },
@@ -636,19 +416,13 @@ async function handleMessage(phone, text, event, cfg) {
 
   // ── CORRESPONDANCE ────────────────────────────────────────────────────────
   if (s.step === 'correspondance') {
-    const norm = normalizeInput(input, ['vol initial','correspondance','les deux','ne sais']);
+    const norm = normalizeInput(input, ['vol initial', 'vol de correspondance', 'les deux', 'sais']);
     if (['1','2','3','4'].includes(norm)) {
       s.type_correspondance = norm;
-      s.step = 'remboursements';
-      await setState(event, phone, s);
-      await sendButtons(phone, {
-        body: '💡 *Bonne nouvelle — Robin récupère aussi vos avances !*\n\nSi vous avez payé de votre poche *(taxi, hôtel, repas, transfert...)* :\n\n🧾 *Conservez toutes vos factures et reçus.*\n\nRobin les soumet à la compagnie *en plus* de l\'indemnité. Zéro effort de votre côté.',
-        footer: 'robindesairs.eu',
-        buttons: [{ text: '✅ Compris, continuer' }],
-      }, cfg);
+      await showRemboursements(phone, s, cfg);
     } else {
       await sendList(phone, {
-        body: '✈️ *Quel vol pose problème ?*',
+        body: `${bar('correspondance')}\n✈️ *Quel vol pose problème ?*`,
         buttonText: 'Préciser ▾',
         items: [
           { title: 'Le vol initial (en retard)' }, { title: 'Le vol de correspondance (raté)' },
@@ -659,69 +433,155 @@ async function handleMessage(phone, text, event, cfg) {
     return;
   }
 
-  // ── REMBOURSEMENTS — bouton "Compris, continuer" ──────────────────────────
+  // ── REMBOURSEMENTS (info) → OCR ───────────────────────────────────────────
   if (s.step === 'remboursements') {
     s.step = 'ocr';
-    await setState(event, phone, s);
-    await send(phone, `📋 *Carte d'embarquement ou e-ticket*\n🟢🟢🟢⚪⚪⚪⚪\n\nEnvoyez une *photo* de votre carte d'embarquement — le bot lit le numéro de vol, la date et votre nom automatiquement.\n\n📱 Photo nette, bien cadrée, à plat.\n\nOu tapez les infos à la main (un seul message) :\nNuméro de vol / Date (JJ/MM/AAAA) / PNR / Itinéraire\n_Ex. : AF718 / 15/03/2024 / K5FW8B / CDG-ABJ_`, cfg);
+    await setState(phone, s);
+    await sendButtons(phone, {
+      body: `${bar('ocr')}\n📋 *Carte d'embarquement ou e-ticket*\n\n👍 *On vous fait gagner du temps* — une photo nette permet de remplir le dossier automatiquement.`,
+      footer: 'C\'est le plus rapide',
+      buttons: [{ text: '📸 Envoyer une photo' }, { text: '✍️ Saisir à la main' }],
+    }, cfg);
     return;
   }
 
   // ── OCR / SAISIE MANUELLE ─────────────────────────────────────────────────
   if (s.step === 'ocr') {
-    // Si c'est une image → signaler que l'OCR est en cours
-    if (input.startsWith('[image]') || input.startsWith('[document]') || input.startsWith('[photo]')) {
-      await send(phone, '📸 Image reçue — traitement en cours… Répondez *1* quand vous êtes prêt(e) pour continuer en saisie manuelle, ou attendez quelques secondes.', cfg);
-      // En prod: déclencher OCR via Make/Zapier. Pour l'instant, demander saisie manuelle.
-      s.step = 'ocr';
-      await setState(event, phone, s);
-      return;
-    }
-    // Tenter parsing manuel
-    const vol_data = parseVol(input);
-    if (vol_data && vol_data.vol) {
-      s = { ...s, ...vol_data, step: 'confirm_ocr' };
-      await setState(event, phone, s);
-      await send(phone, MSG.confirm_ocr(s), cfg);
+    const norm = normalizeInput(input, ['photo', 'saisir']);
+    if (norm === '1' || input.startsWith('[image]') || input.startsWith('[photo]')) {
+      await send(phone, `📸 Envoyez maintenant la *photo* de votre carte d'embarquement ou e-ticket.\n\n_(Photo nette, bien cadrée, à plat — le bot lit automatiquement)_\n\n⏳ Pas de carte sous la main ? Tapez *saisie* pour entrer les infos manuellement.`, cfg);
+      // En prod : Make/OCR webhook prend le relais
+      s.step = 'ocr_waiting';
+      await setState(phone, s);
+    } else if (norm === '2' || lower.includes('saisi') || lower.includes('main')) {
+      s.step = 'manuel_vol';
+      await setState(phone, s);
+      await send(phone, `${bar('manuel_vol')}\n✍️ *Saisie manuelle — étape 1/6*\n\n*Numéro de vol*\n_(ex. AF718, SN301, EJU7524)_`, cfg);
     } else {
-      await send(phone, `Je n'ai pas pu lire les informations. Envoyez en ce format (une ligne chacun) :\n\nNuméro de vol (ex. AF718)\nDate (ex. 12/05/2024)\nPNR (ex. K5FW8B)\nItinéraire (ex. CDG → ABJ)`, cfg);
+      await sendButtons(phone, {
+        body: `${bar('ocr')}\n📋 *Carte d'embarquement ou e-ticket*\n\nComment souhaitez-vous continuer ?`,
+        buttons: [{ text: '📸 Envoyer une photo' }, { text: '✍️ Saisir à la main' }],
+      }, cfg);
     }
     return;
   }
 
-  // ── CONFIRMATION OCR ──────────────────────────────────────────────────────
+  // ── SAISIE MANUELLE — 1 champ à la fois ──────────────────────────────────
+  if (s.step === 'manuel_vol') {
+    const vol = input.toUpperCase().replace(/\s+/g, '');
+    if (/^[A-Z0-9]{3,8}$/.test(vol)) {
+      s.vol = vol; s.step = 'manuel_compagnie';
+      await setState(phone, s);
+      await send(phone, `${bar('manuel_compagnie')}\n✍️ *Étape 2/6 — Compagnie aérienne*\n\nQuelle compagnie opérait le vol ${vol} ?\n_(ex. Air France, Brussels Airlines, easyJet, ASKY…)_`, cfg);
+    } else {
+      await send(phone, `Numéro de vol non reconnu. Format attendu : *2-3 lettres + chiffres* (ex. AF718, SN301).\n\nRenvoyez le numéro de vol :`, cfg);
+    }
+    return;
+  }
+
+  if (s.step === 'manuel_compagnie') {
+    if (input.length >= 2) {
+      s.compagnie = input; s.step = 'manuel_date';
+      await setState(phone, s);
+      await send(phone, `${bar('manuel_date')}\n✍️ *Étape 3/6 — Date du vol*\n\nFormat : *JJ/MM/AAAA*\n_(ex. 12/05/2024)_`, cfg);
+    } else {
+      await send(phone, `Nom de compagnie trop court. Renvoyez la compagnie aérienne :`, cfg);
+    }
+    return;
+  }
+
+  if (s.step === 'manuel_date') {
+    const m = input.match(/(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})/);
+    if (m) {
+      const yy = m[3].length === 2 ? '20' + m[3] : m[3];
+      s.date = `${m[1].padStart(2,'0')}/${m[2].padStart(2,'0')}/${yy}`;
+      s.step = 'manuel_pnr';
+      await setState(phone, s);
+      await send(phone, `${bar('manuel_pnr')}\n✍️ *Étape 4/6 — Code PNR (réservation)*\n\n6 caractères au-dessus du nom sur la carte d'embarquement.\n_(ex. K5FW8B)_\n\nVous ne l'avez pas ? Tapez *passer*.`, cfg);
+    } else {
+      await send(phone, `Date non reconnue. Format : *JJ/MM/AAAA* (ex. 12/05/2024).\n\nRenvoyez la date :`, cfg);
+    }
+    return;
+  }
+
+  if (s.step === 'manuel_pnr') {
+    if (lower === 'passer' || lower === 'skip') {
+      s.pnr = ''; s.step = 'manuel_route';
+    } else {
+      const pnr = input.toUpperCase().replace(/\s+/g, '');
+      if (/^[A-Z0-9]{5,8}$/.test(pnr)) {
+        s.pnr = pnr; s.step = 'manuel_route';
+      } else {
+        await send(phone, `Code PNR invalide. 6 caractères alphanumériques attendus (ex. K5FW8B). Ou tapez *passer*.`, cfg);
+        return;
+      }
+    }
+    await setState(phone, s);
+    await send(phone, `${bar('manuel_route')}\n✍️ *Étape 5/6 — Itinéraire*\n\n*Aéroport de départ → aéroport d'arrivée*\nCodes IATA 3 lettres préférés.\n_(ex. CDG → ABJ, BRU → DKR, AMS → NBO)_`, cfg);
+    return;
+  }
+
+  if (s.step === 'manuel_route') {
+    const route = input.replace(/[\s\-]+/g, ' ').replace(/→|->/g, ' → ').trim();
+    if (route.length >= 5) {
+      s.route = route; s.step = 'manuel_nom';
+      await setState(phone, s);
+      await send(phone, `${bar('manuel_nom')}\n✍️ *Étape 6/6 — Nom du passager principal*\n\nTel qu'écrit sur la carte d'embarquement.\n_(ex. M. SAMIR DRIDI, Mme FATOU DIOP)_`, cfg);
+    } else {
+      await send(phone, `Itinéraire trop court. Format : *aéroport départ → aéroport arrivée* (ex. CDG → ABJ).`, cfg);
+    }
+    return;
+  }
+
+  if (s.step === 'manuel_nom') {
+    if (input.length >= 3) {
+      s.nom = input.toUpperCase();
+      s.step = 'confirm_ocr';
+      await setState(phone, s);
+      await sendButtons(phone, {
+        body: `${bar('confirm_ocr')}\n📸 *Récapitulatif du vol — vérifiez :*\n\n✈️ *${s.vol}* — ${s.compagnie}\n🎫 *${s.date}*\n📋 *${s.pnr || '—'}*\n🛤️ *${s.route}*\n👤 *${s.nom}*\n\nℹ️ Une info incorrecte ? Touchez *Corriger*.`,
+        buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Corriger' }],
+      }, cfg);
+    } else {
+      await send(phone, `Nom trop court. Renvoyez le nom complet du passager principal :`, cfg);
+    }
+    return;
+  }
+
+  // ── CONFIRMATION VOL ──────────────────────────────────────────────────────
   if (s.step === 'confirm_ocr') {
-    const norm = normalizeInput(input, ['correct','corriger']);
+    const norm = normalizeInput(input, ['correct', 'corriger']);
     if (norm === '1') {
-      if (s.date && !/\d{4}/.test(s.date)) {
+      // Demander année si manquante
+      if (s.date && /^(\d{1,2})\/(\d{1,2})$/.test(s.date)) {
         s.step = 'annee';
-        await setState(event, phone, s);
+        await setState(phone, s);
         const y = new Date().getFullYear();
         await sendList(phone, {
-          header: '📅 Année du vol',
-          body: `🗓️ *Quelle année pour le ${s.date} ?*`,
+          body: `${bar('annee')}\n🗓️ *Quelle année pour le ${s.date} ?*`,
           buttonText: 'Année ▾',
           items: [
             { title: String(y) }, { title: String(y-1) }, { title: String(y-2) },
             { title: String(y-3) }, { title: String(y-4) + ' ou avant' },
           ],
         }, cfg);
-      } else {
-        s.step = 'mineurs';
-        await setState(event, phone, s);
-        const noms = s.nom ? `• ${s.nom}` : '• (passager 1)';
-        await sendButtons(phone, {
-          body: `👶 *Parmi les passagers suivants, y a-t-il des mineurs (moins de 18 ans) ?*\n\n${noms}\n\n⚖️ Obligation légale pour préparer le bon mandat.`,
-          buttons: [{ text: '✅ Non, tous majeurs' }, { text: '👶 Oui, il y a des mineurs' }],
-        }, cfg);
+        return;
       }
+      s.step = 'confirm_pax';
+      await setState(phone, s);
+      const noms = s.nom ? `1. *${s.nom}*` : '1. (à confirmer)';
+      const note_pax_supplementaires = s.pax > 1 ? `\n\n_Pour les ${s.pax - 1} autres passagers, nous reviendrons vers vous avec un lien sécurisé après ouverture du dossier._` : '';
+      await sendButtons(phone, {
+        body: `${bar('confirm_pax')}\n👥 *Les ${s.pax} passagers — confirmez*\n\n${noms}${note_pax_supplementaires}`,
+        buttons: [{ text: '✅ Confirmer' }, { text: '✏️ Modifier' }],
+      }, cfg);
     } else if (norm === '2') {
-      s.step = 'ocr';
-      await setState(event, phone, s);
-      await send(phone, MSG.ocr(), cfg);
+      s.step = 'manuel_vol';
+      await setState(phone, s);
+      await send(phone, `${bar('manuel_vol')}\n✍️ *Reprise saisie — Étape 1/6*\n\n*Numéro de vol*`, cfg);
     } else {
       await sendButtons(phone, {
-        body: MSG.confirm_ocr(s),
+        body: `📸 *Récapitulatif du vol — vérifiez :*\n\n✈️ *${s.vol}* — ${s.compagnie}\n🎫 *${s.date}*\n📋 *${s.pnr || '—'}*\n🛤️ *${s.route}*\n👤 *${s.nom}*`,
         buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Corriger' }],
       }, cfg);
     }
@@ -732,20 +592,25 @@ async function handleMessage(phone, text, event, cfg) {
   if (s.step === 'annee') {
     const y = new Date().getFullYear();
     const yearMap = { '1': y, '2': y-1, '3': y-2, '4': y-3, '5': y-4 };
-    const norm = normalizeInput(input, [String(y),String(y-1),String(y-2),String(y-3),String(y-4)+' ou avant']);
+    const norm = normalizeInput(input, [String(y), String(y-1), String(y-2), String(y-3), String(y-4) + ' ou avant']);
     const annee = yearMap[norm] || (input.match(/\d{4}/) ? input.match(/\d{4}/)[0] : null);
     if (annee) {
-      s.date = s.date ? `${s.date}/${annee}`.replace(/\/+/,'/') : String(annee);
-      s.step = 'mineurs';
-      await setState(event, phone, s);
-      const noms = s.nom ? `• ${s.nom}` : '• (passager 1)';
+      if (s.date && /^\d{1,2}\/\d{1,2}$/.test(s.date)) {
+        s.date = `${s.date}/${annee}`;
+      } else if (!s.date.includes(String(annee))) {
+        s.date = s.date + '/' + annee;
+      }
+      s.step = 'confirm_pax';
+      await setState(phone, s);
+      const noms = s.nom ? `1. *${s.nom}*` : '1. (à confirmer)';
+      const note_pax_supplementaires = s.pax > 1 ? `\n\n_Pour les ${s.pax - 1} autres passagers, nous reviendrons vers vous avec un lien sécurisé après ouverture du dossier._` : '';
       await sendButtons(phone, {
-        body: `👶 *Parmi les passagers suivants, y a-t-il des mineurs (moins de 18 ans) ?*\n\n${noms}\n\n⚖️ Obligation légale pour préparer le bon mandat.`,
-        buttons: [{ text: '✅ Non, tous majeurs' }, { text: '👶 Oui, il y a des mineurs' }],
+        body: `${bar('confirm_pax')}\n👥 *Les ${s.pax} passagers — confirmez*\n\n${noms}${note_pax_supplementaires}`,
+        buttons: [{ text: '✅ Confirmer' }, { text: '✏️ Modifier' }],
       }, cfg);
     } else {
       await sendList(phone, {
-        body: `🗓️ *Quelle année pour le ${s.date || '?'} ?*`,
+        body: `${bar('annee')}\n🗓️ *Quelle année pour le ${s.date || '?'} ?*`,
         buttonText: 'Année ▾',
         items: [
           { title: String(y) }, { title: String(y-1) }, { title: String(y-2) },
@@ -756,18 +621,43 @@ async function handleMessage(phone, text, event, cfg) {
     return;
   }
 
+  // ── CONFIRMATION PASSAGERS ────────────────────────────────────────────────
+  if (s.step === 'confirm_pax') {
+    const norm = normalizeInput(input, ['confirmer', 'modifier']);
+    if (norm === '1') {
+      s.step = 'mineurs';
+      await setState(phone, s);
+      const noms = s.nom ? `• *${s.nom}*` : '• (passager 1)';
+      await sendButtons(phone, {
+        body: `${bar('mineurs')}\n👶 *Question juridique importante*\n\nParmi les passagers suivants, y a-t-il des *mineurs* (moins de 18 ans) ?\n\n${noms}\n\n⚖️ Obligation légale pour préparer le bon mandat.`,
+        buttons: [{ text: '✅ Non, tous majeurs' }, { text: '👶 Oui, il y a des mineurs' }],
+      }, cfg);
+    } else if (norm === '2') {
+      s.step = 'manuel_nom';
+      await setState(phone, s);
+      await send(phone, `${bar('manuel_nom')}\n✍️ Renvoyez le nom du passager principal :`, cfg);
+    } else {
+      const noms = s.nom ? `1. *${s.nom}*` : '1. (passager 1)';
+      await sendButtons(phone, {
+        body: `${bar('confirm_pax')}\n👥 *Les ${s.pax} passagers — confirmez*\n\n${noms}`,
+        buttons: [{ text: '✅ Confirmer' }, { text: '✏️ Modifier' }],
+      }, cfg);
+    }
+    return;
+  }
+
   // ── MINEURS ───────────────────────────────────────────────────────────────
   if (s.step === 'mineurs') {
-    const norm = normalizeInput(input, ['majeurs','mineurs']);
+    const norm = normalizeInput(input, ['majeurs', 'mineurs']);
     if (norm === '1' || norm === '2') {
       s.mineurs = norm === '2';
       s.step = 'email';
-      await setState(event, phone, s);
-      await send(phone, `📧 *Pour vous envoyer le mandat et le suivi du dossier*\n🟢🟢🟢🟢🟢🟢🟢\n\nQuelle est votre adresse email ?\n_(Ex. : prenom@gmail.com)_`, cfg);
+      await setState(phone, s);
+      await send(phone, `${bar('email')}\n📧 *Pour vous envoyer le mandat et le suivi du dossier*\n\nQuelle est votre adresse email ?\n_(Ex. : prenom@gmail.com)_`, cfg);
     } else {
-      const noms = s.nom ? `• ${s.nom}` : '• (passager 1)';
+      const noms = s.nom ? `• *${s.nom}*` : '• (passager 1)';
       await sendButtons(phone, {
-        body: `👶 *Y a-t-il des mineurs parmi les passagers ?*\n\n${noms}`,
+        body: `${bar('mineurs')}\n👶 *Y a-t-il des mineurs parmi les passagers ?*\n\n${noms}`,
         buttons: [{ text: '✅ Non, tous majeurs' }, { text: '👶 Oui, il y a des mineurs' }],
       }, cfg);
     }
@@ -776,12 +666,11 @@ async function handleMessage(phone, text, event, cfg) {
 
   // ── EMAIL ─────────────────────────────────────────────────────────────────
   if (s.step === 'email') {
-    const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (emailRx.test(input)) {
+    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input)) {
       s.email = input;
       s.step = 'adresse';
-      await setState(event, phone, s);
-      await send(phone, MSG.adresse(), cfg);
+      await setState(phone, s);
+      await send(phone, `${bar('adresse')}\n📮 *Adresse postale* (pour le mandat officiel)\n\nRue, ville et pays — ou *ville + pays* si vous préférez.\n_(Ex. : 12 rue Léon Blum, Dakar, Sénégal)_`, cfg);
     } else {
       await send(phone, `Format email invalide. Envoyez votre adresse email (ex. prenom@gmail.com) :`, cfg);
     }
@@ -793,49 +682,58 @@ async function handleMessage(phone, text, event, cfg) {
     if (input.length >= 5) {
       s.adresse = input;
       s.step = 'langue';
-      await setState(event, phone, s);
-      await send(phone, MSG.langue(), cfg);
+      await setState(phone, s);
+      await sendList(phone, {
+        header: '🌍 Dernière question !',
+        body: `${bar('langue')}\nDans quelle langue nos experts doivent-ils vous contacter *(appels, vocaux WhatsApp, suivi)* ?`,
+        buttonText: 'Langue ▾',
+        items: [
+          { title: '🇫🇷 Français' }, { title: '🇬🇧 English' }, { title: '🇸🇳 Wolof' },
+          { title: '🇲🇱 Bambara' }, { title: '🇨🇮 Dioula' }, { title: '🌐 Autre' },
+        ],
+      }, cfg);
     } else {
-      await send(phone, MSG.adresse(), cfg);
+      await send(phone, `Adresse trop courte. Renvoyez votre adresse (ville + pays minimum) :`, cfg);
     }
     return;
   }
 
-  // ── LANGUE ────────────────────────────────────────────────────────────────
+  // ── LANGUE → FIN A/B/C ────────────────────────────────────────────────────
   if (s.step === 'langue') {
-    const norm = normalizeInput(input, ['français','english','wolof','bambara','dioula','autre']);
+    const norm = normalizeInput(input, ['français', 'english', 'wolof', 'bambara', 'dioula', 'autre']);
     if (['1','2','3','4','5','6'].includes(norm)) {
-      s.langue = LANGUE_LABELS[norm];
+      const L = LANGUE_LABELS[norm];
+      s.langue = L.name;
+      s.langue_code = L.code;
       s.ref = genRef();
-      s.mandat_url = buildMandatUrl({ ...s, phone });
+      s.mandat_url = buildMandatUrl(s, phone);
       s.step = 'done';
-      await setState(event, phone, s);
+      await setState(phone, s);
 
-      // FIN A — immédiat
-      await send(phone, MSG.fin_a(s), cfg);
-      // FIN B — +3s
-      await sendDelayed(phone, MSG.fin_b(s), cfg, 3000);
-      // FIN C — +30s
-      await sendDelayed(phone, MSG.fin_c(s), cfg, 30000);
+      // FIN A — Récap immédiat
+      await send(phone, formatFinA(s), cfg);
 
-      // Sauvegarder le dossier complet dans Airtable via Make (si configuré)
+      // FIN B — Mandat seul (+3s)
+      await sendDelayed(phone, formatFinB(s), cfg, 3000);
+
+      // FIN C — Pièces (+30s)
+      await sendDelayed(phone, formatFinC(s), cfg, 30000);
+
+      // Webhook Make → création Airtable
       try {
         const makeUrl = process.env.MAKE_WEBHOOK_NEW_DOSSIER;
         if (makeUrl) {
           await fetch(makeUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ ...s, source: 'wati-bot' }),
+            body: JSON.stringify({ ...s, phone, source: 'wati-bot-v4' }),
           });
         }
-      } catch (e) {
-        console.error('wati-bot: make webhook failed', e.message);
-      }
+      } catch (e) { console.error('make webhook failed', e.message); }
     } else {
       await sendList(phone, {
-        header: '🌍 Dernière question !',
-        body: '🟢🟢🟢🟢🟢🟢🟢\n\nDans quelle langue nos experts doivent-ils vous contacter *(appels, vocaux WhatsApp, suivi)* ?',
-        buttonText: 'Choisir la langue ▾',
+        body: `${bar('langue')}\n🌍 Dans quelle langue voulez-vous être contacté ?`,
+        buttonText: 'Langue ▾',
         items: [
           { title: '🇫🇷 Français' }, { title: '🇬🇧 English' }, { title: '🇸🇳 Wolof' },
           { title: '🇲🇱 Bambara' }, { title: '🇨🇮 Dioula' }, { title: '🌐 Autre' },
@@ -851,8 +749,83 @@ async function handleMessage(phone, text, event, cfg) {
     return;
   }
 
-  // ── PAR DÉFAUT ────────────────────────────────────────────────────────────
-  await send(phone, MSG.incompris(), cfg);
+  if (s.step === 'ocr_waiting') {
+    // Si on reçoit du texte ici, on traite comme une saisie manuelle
+    if (input.startsWith('[image]') || input.startsWith('[photo]')) {
+      await send(phone, `📸 Photo bien reçue. Notre équipe la traite. En attendant, vous pouvez tout saisir à la main — tapez *saisie*.`, cfg);
+    } else if (lower.includes('saisi')) {
+      s.step = 'manuel_vol';
+      await setState(phone, s);
+      await send(phone, `${bar('manuel_vol')}\n✍️ *Saisie manuelle — Étape 1/6*\n\n*Numéro de vol*`, cfg);
+    } else {
+      await send(phone, `J'attends votre carte d'embarquement en photo. Pas de carte ? Tapez *saisie*.`, cfg);
+    }
+    return;
+  }
+
+  // ── INCOMPRIS ─────────────────────────────────────────────────────────────
+  await send(phone, `Je n'ai pas compris votre réponse. Tapez le *numéro* ou utilisez le bouton, ou *menu* pour recommencer.`, cfg);
+}
+
+// ─── Helpers messages ────────────────────────────────────────────────────────
+async function showRemboursements(phone, s, cfg) {
+  s.step = 'remboursements';
+  await setState(phone, s);
+  await sendButtons(phone, {
+    body: `💡 *Bonne nouvelle — Robin récupère aussi vos avances !*\n\nSi vous avez payé de votre poche à cause de ce vol *(taxi, hôtel, repas, transfert...)* :\n\n🧾 *Conservez toutes vos factures et reçus.*\n\nRobin des Airs les soumet à la compagnie et récupère ces frais *en plus* de l'indemnité légale. *Zéro effort de votre côté.*`,
+    footer: 'On continue avec votre billet ?',
+    buttons: [{ text: '✅ Compris, continuer' }],
+  }, cfg);
+}
+
+function formatFinA(s) {
+  return `🎉 *Dossier prêt à être déposé !*
+
+📋 *Récapitulatif*
+👥 *Passagers :* ${s.pax}
+🪪 *Nom principal :* ${s.nom || '(à compléter)'}
+✈️ *Parcours :* ${s.type_vol === 'direct' ? 'direct' : s.type_vol === 'escale' ? 'avec escale' : 'correspondance'}
+📞 *Langue suivi :* ${s.langue}
+⚖️ *Incident :* ${s.incident_libelle}${s.duree_retard ? ' (' + s.duree_retard + ')' : ''}
+🛫 *Compagnie :* ${s.compagnie || '—'}
+🔢 *N° de vol :* ${s.vol || '—'}
+📅 *Date :* ${s.date || '—'}
+🎫 *PNR :* ${s.pnr || '—'}
+🌍 *Itinéraire :* ${s.route || '—'}
+📧 ${s.email || '—'}
+
+📁 *Réf. dossier :* *${s.ref}*
+💵 *Montant net visé (groupe) :* *${montantNet(s.pax)} €*
+
+⬇️ Prochaine étape : *2 minutes* pour signer.`;
+}
+
+function formatFinB(s) {
+  return `✅ *Action requise — signature du mandat*
+
+Pour que Robin des Airs représente *${s.nom || 'votre groupe'}* auprès de *${s.compagnie || 'la compagnie'}*, signez votre *mandat de représentation*.
+
+📋 Lisible avant signature — *aucune info bancaire à cette étape.*
+
+👉 *Signez ici* (2 min) :
+${s.mandat_url}
+
+Sans signature, nous ne pouvons pas agir en votre nom.
+
+_L'équipe Robin 🏹_`;
+}
+
+function formatFinC(s) {
+  return `📎 *Ensuite — vos justificatifs*
+
+Envoyez ici, en photos :
+
+1. *Passeport ou CNI* (face lisible)
+2. *Carte d'embarquement* ou confirmation _(si vous l'avez encore)_
+${s.duree_retard || s.type_correspondance ? '3. *Factures taxi / hôtel / repas* (avances payées de votre poche)' : ''}
+
+🔒 Pièces réservées au dossier *${s.ref}* uniquement.
+Confidentialité : https://robindesairs.eu/politique-confidentialite`;
 }
 
 // ─── Extraction message entrant WATI ─────────────────────────────────────────
@@ -863,10 +836,12 @@ function extractInbound(payload) {
     if (!item || typeof item !== 'object') return;
     const waId = item.waId || item.whatsappNumber || item.from;
     const isOutbound = item.owner === true || item.eventType === 'sentMessage' || item.fromMe === true;
-    if (isOutbound) return; // on ignore les messages sortants
+    if (isOutbound) return;
     const text =
       item.text ||
       (item.finalText && String(item.finalText)) ||
+      (item.interactiveButtonReply && item.interactiveButtonReply.text) ||
+      (item.interactiveListReply && item.interactiveListReply.title) ||
       (item.type && item.type !== 'text' ? `[${item.type}]` : '');
     if (!waId) return;
     const phone = normalizeWaPhone(normalizeWatiPhone(waId));
@@ -903,17 +878,11 @@ exports.handler = async (event) => {
 
   for (const { phone, text } of items) {
     if (!phone) continue;
-    // Stocker dans CRM
-    try {
-      const { appendWaMessage } = require('./lib/wa-convo-store');
-      await appendWaMessage(event, phone, { role: 'user', text, source: 'wati' });
-    } catch {}
-    // Traiter le message avec le bot
-    try {
-      await handleMessage(phone, text, event, cfg);
-    } catch (e) {
-      console.error('wati-bot: handleMessage error', e.message);
-      if (cfg) await send(phone, 'Une erreur est survenue. Tapez *menu* pour recommencer.', cfg);
+    try { await appendWaMessage(event, phone, { role: 'user', text, source: 'wati' }); } catch {}
+    try { await handleMessage(phone, text, cfg); }
+    catch (e) {
+      console.error('wati-bot: handleMessage error', e.message, e.stack);
+      if (cfg) await send(phone, `Une erreur est survenue. Tapez *menu* pour recommencer.`, cfg);
     }
   }
 
