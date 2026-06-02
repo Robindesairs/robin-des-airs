@@ -1,6 +1,6 @@
-# WATI — Flow complet v3 · Copier-coller prêt au déploiement
-**Version :** 3.0 · 2 juin 2026  
-**Changements v3 :** langue en dernier (7d) · correspondance ajoutée · blocage post-langue résolu
+# WATI — Flow complet v3.1 · Copier-coller prêt au déploiement
+**Version :** 3.1 · 2 juin 2026  
+**Changements v3.1 :** langue en dernier (7d) · correspondance ajoutée · blocage post-langue résolu · message remboursements taxi/hôtel/repas ajouté (STEP 3b-info)
 
 ---
 
@@ -14,6 +14,7 @@ STEP 2      Direct / Escale / Correspondance
 STEP 3      Type d'incident
 STEP 3a     Durée retard (branche Retard uniquement)
 STEP 3corr  Correspondance — vol initial ou vol de remplacement ? (branche Correspondance)
+STEP 3info  💡 Remboursements taxi/hôtel/repas  ← NOUVEAU
 STEP 3trust Confiance avant OCR
 STEP 3b     Photo ou saisie manuelle
 STEP 4      Vérification OCR
@@ -220,6 +221,27 @@ C'est lequel qui pose problème ?
 
 → Tous les cas → STEP 3trust
 *(Flag `type_correspondance` en Airtable)*
+
+---
+
+### STEP 3info — Remboursements taxi / hôtel / repas ⭐ NOUVEAU
+
+> *(Envoyé après STEP 3a ou 3corr — avant l'OCR. Message informatif, pas de bouton, enchaîne automatiquement sur STEP 3trust.)*
+
+```
+💡 *Bonne nouvelle — Robin récupère aussi vos avances !*
+
+Si vous avez payé de votre poche à cause de ce vol
+*(taxi, hôtel, repas, transfert...)* :
+
+🧾 *Conservez toutes vos factures et reçus.*
+
+Robin des Airs les soumet à la compagnie
+et récupère ces frais *en plus* de l'indemnité légale.
+*Zéro effort de votre côté.*
+```
+
+*(Message informatif — pas de bouton — enchaîner automatiquement vers STEP 3trust)*
 
 ---
 
