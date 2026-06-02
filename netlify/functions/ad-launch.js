@@ -213,7 +213,8 @@ exports.handler = async (event) => {
     // 1. Campagne
     const campaign = await metaPost(`/${accountId}/campaigns`, token, {
       name: `RDA-${body.vol || 'GEO'}-${airport}-${lang}-${new Date().toISOString().slice(0, 10)}`,
-      objective: 'OUTCOME_TRAFFIC',
+      // Click-to-WhatsApp si numéro configuré (objectif Engagement/Messages), sinon trafic site
+      objective: waLink ? 'OUTCOME_ENGAGEMENT' : 'OUTCOME_TRAFFIC',
       status: 'ACTIVE',
       special_ad_categories: [],
       is_adset_budget_sharing_enabled: false,
@@ -227,7 +228,9 @@ exports.handler = async (event) => {
       start_time: nowSec,
       end_time: endSec,
       billing_event: 'IMPRESSIONS',
-      optimization_goal: 'REACH',
+      // Click-to-WhatsApp : optimise pour les conversations démarrées + destination WhatsApp
+      optimization_goal: waLink ? 'CONVERSATIONS' : 'LINK_CLICKS',
+      ...(waLink ? { destination_type: 'WHATSAPP', promoted_object: { page_id: pageId } } : {}),
       bid_strategy: 'LOWEST_COST_WITHOUT_CAP',
       pacing_type: ['standard'],
       status: 'ACTIVE',
@@ -237,9 +240,15 @@ exports.handler = async (event) => {
     // 3. Créer les 4 creatives selon les slots
     const creatives = [];
 
-    // CTA : LEARN_MORE vers le site (WhatsApp reconnectable après dans Page FB)
-    const slots = [
-      { label: 'story-wa',    hash: hashes.storyWa,    link: siteUrl, cta: 'LEARN_MORE' },
+    // Click-to-WhatsApp : toutes les créas ouvrent WhatsApp avec message pré-rempli.
+    // Sinon (pas de numéro configuré) : repli sur le site avec LEARN_MORE.
+    const slots = waLink ? [
+      { label: 'story-wa',   hash: hashes.storyWa,    link: waLink,  cta: 'WHATSAPP_MESSAGE' },
+      { label: 'feed-wa',    hash: hashes.feedSite,   link: waLink,  cta: 'WHATSAPP_MESSAGE' },
+      { label: 'square-wa',  hash: hashes.squareWa,   link: waLink,  cta: 'WHATSAPP_MESSAGE' },
+      { label: 'square-wa2', hash: hashes.squareSite, link: waLink,  cta: 'WHATSAPP_MESSAGE' },
+    ] : [
+      { label: 'story-site',  hash: hashes.storyWa,    link: siteUrl, cta: 'LEARN_MORE' },
       { label: 'feed-site',   hash: hashes.feedSite,   link: siteUrl, cta: 'LEARN_MORE' },
       { label: 'square-wa',   hash: hashes.squareWa,   link: siteUrl, cta: 'LEARN_MORE' },
       { label: 'square-site', hash: hashes.squareSite, link: siteUrl, cta: 'LEARN_MORE' },
@@ -255,7 +264,9 @@ exports.handler = async (event) => {
             image_hash: slot.hash,
             link:       slot.link,
             message:    msgText,
-            call_to_action: { type: slot.cta, value: { link: slot.link } },
+            call_to_action: waLink
+              ? { type: 'WHATSAPP_MESSAGE', value: { app_destination: 'WHATSAPP', link: slot.link } }
+              : { type: slot.cta, value: { link: slot.link } },
           },
         },
       });
