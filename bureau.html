@@ -76,7 +76,7 @@ body { font-family: 'DM Sans', sans-serif; background: var(--sky); color: var(--
 .hero-date .d { font-size: 0.78rem; color: var(--white-40); text-transform: uppercase; letter-spacing: 0.1em; }
 .hero-date .v { font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: var(--gold-light); }
 
-.pulse-bar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: var(--sky-border); border: 1px solid var(--sky-border); border-radius: 16px; overflow: hidden; margin-bottom: 1.6rem; }
+.pulse-bar { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background: var(--sky-border); border: 1px solid var(--sky-border); border-radius: 16px; overflow: hidden; margin-bottom: 1.6rem; }
 .pulse-cell { background: var(--sky-card); padding: 1.25rem 1.4rem; position: relative; }
 .pulse-cell::after { content:''; position:absolute; top:0; left:0; width:100%; height:2px; background: linear-gradient(90deg, transparent, var(--accent,var(--gold)), transparent); opacity:0.5; }
 .pulse-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--white-40); margin-bottom: 9px; }
@@ -237,7 +237,7 @@ body.game-mode #gameView { display:block; }
 .game-legend b{color:var(--gold-light)}
 @media (max-width:700px){ .hud{grid-template-columns:repeat(2,1fr)} .iso-wrap{height:480px} .iso-floor{width:440px;height:440px;margin:-220px 0 0 -220px;background-size:55px 55px} }
 
-@media (max-width: 1040px){ .grid{grid-template-columns:1fr} .pulse-bar{grid-template-columns:repeat(2,1fr)} }
+@media (max-width: 1040px){ .grid{grid-template-columns:1fr} .pulse-bar{grid-template-columns:repeat(3,1fr)} }
 @media (max-width: 600px){ .agents{grid-template-columns:1fr} .pulse-bar{grid-template-columns:1fr} .topbar-right .live-clock{display:none} }
 </style>
 </head>
@@ -299,6 +299,11 @@ body.game-mode #gameView { display:block; }
       <div class="pulse-label">Agences partenaires</div>
       <div class="pulse-value amber" id="kpiAgences">0</div>
       <div class="pulse-sub"><b>+<span id="kpiAgencesNew">0</span></b> ce mois</div>
+    </div>
+    <div class="pulse-cell" style="--accent:#25D366">
+      <div class="pulse-label">Leads WhatsApp</div>
+      <div class="pulse-value" style="color:#25D366" id="kpiWaLeads">0</div>
+      <div class="pulse-sub">via le bot Robin</div>
     </div>
     <div class="pulse-cell" style="--accent:var(--green)">
       <div class="pulse-label">Postes actifs</div>
@@ -495,7 +500,7 @@ function stepConf(){
 }
 
 /* ============ ÉTAT GLOBAL ============ */
-let S = { dossiers: 1847, dossiersNew: 23, eur: 1108200, agences: 34, agencesNew: 5, gagnes:1402, total:1620 };
+let S = { dossiers: 1847, dossiersNew: 23, eur: 1108200, agences: 34, agencesNew: 5, gagnes:1402, total:1620, waLeads: 312 };
 // REAL : rempli par les endpoints /api/* quand disponibles (site Netlify). Sinon vide → mode démo.
 let REAL = { radar: null, whatsapp: null, kpi: false, sources: {} };
 
@@ -770,8 +775,10 @@ function tickKPI(){
     if(Math.random()<0.6){ S.eur += ri(0,600); }
     if(Math.random()<0.04){ S.agences++; S.agencesNew++; }
     S.gagnes += Math.random()<0.3?1:0; S.total += Math.random()<0.35?1:0;
-    if(Math.random()<0.5) GAME.pass++;
+    if(Math.random()<0.5){ GAME.pass++; }
+    if(Math.random()<0.3) S.waLeads++;
   }
+  document.getElementById('kpiWaLeads').textContent=fmt(S.waLeads);
   document.getElementById('kpiDossiers').textContent=fmt(S.dossiers);
   document.getElementById('kpiDossiersNew').textContent=S.dossiersNew;
   document.getElementById('kpiEur').textContent=fmt(S.eur);
@@ -859,6 +866,7 @@ async function loadBureauStats(){
     if(typeof d.gagnes==='number') S.gagnes = d.gagnes;
     if(typeof d.engages==='number') S.total = Math.max(d.gagnes + d.engages, 1);
     if(typeof d.prospects==='number') S.agencesNew = d.prospects; // prospects « à contacter »
+    if(typeof d.whatsappLeads==='number') S.waLeads = d.whatsappLeads;
     GAME.pass = d.whatsappLeads || GAME.pass;
     // bascule les libellés en mode réel
     const ds = document.querySelector('.pulse-cell .pulse-sub'); // 1ère cellule
