@@ -376,7 +376,6 @@ body.game-mode #gameView { display:block; }
     </a>
     <div class="topbar-right">
       <button class="sound-btn" id="printBtn" title="Imprimer le tableau de bord (PDF / papier)">🖨️ Imprimer</button>
-      <button class="sound-btn" id="viewBtn" title="Basculer Tableau / Jeu">🎮 Mode Jeu</button>
       <button class="sound-btn" id="soundBtn" title="Activer le son des dossiers gagnés">🔇 Son</button>
       <span class="live-clock mono" id="clock">--:--:--</span>
       <span class="src-badge wait" id="srcBadge">⏳ Connexion…</span>
@@ -690,73 +689,34 @@ let REAL = { radar: null, whatsapp: null, kpi: false, sources: {} };
 const AGENTS = [
   { ic:"👑", ac:"var(--gold)", acp:"var(--gold-pale)", name:"Aïcha Diallo", role:"Directrice Générale",
     kpiL:"pilotage", kpiUnit:"", base:96,
-    tasks:()=>[ `Revue du <span class="hl">tableau de bord</span> — ${fmt(S.dossiers)} dossiers, tout est vert`,
-      `Arbitrage : priorité aux dossiers <span class="hl">Air France &gt; 3 mois</span>`,
-      `Validation objectif mensuel — <span class="ok">112 % atteint</span> 🎯`,
-      `Point hebdo avec les 8 postes — <span class="ok">aucun blocage</span>` ] },
+    tasks:()=>[ `Pilotage global — <span class="hl">${fmt(S.dossiers)}</span> dossiers · <span class="hl">${fmt(S.eur)} €</span> en récupération` ] },
   { ic:"🛰️", ac:"var(--blue)", acp:"var(--blue-pale)", name:"Malik Touré", role:"Analyste Vols · Radar CE261",
-    kpiL:"vols scannés", kpiUnit:"", base:88,
-    tasks:()=>{ const f=rnd(FLIGHTS); return [
-      `Détection : <span class="hl">${f.fl}</span> ${f.r} retardé <span class="warn">+${ri(3,7)}h${ri(0,5)}0</span> → éligible <span class="hl">${f.eu} €</span>`,
-      `Scan AeroDataBox en cours <span class="typing"><i></i><i></i><i></i></span>`,
-      `<span class="ok">${ri(4,11)} vols</span> remontés ce matin — Europe ↔ Afrique`,
-      `Vérification distance &amp; juridiction <span class="hl">${f.fl}</span> — <span class="ok">OK</span>` ]; } },
+    kpiL:"vols détectés", kpiUnit:"", base:0,
+    tasks:()=>[ `Surveille les vols Europe ↔ Afrique — annulations & retards ≥ 3 h éligibles CE261` ] },
   { ic:"🤖", ac:"var(--green)", acp:"var(--green-pale)", name:"Robin", role:"Bot WhatsApp · 1er contact",
-    kpiL:"conversations", kpiUnit:"", base:74,
-    tasks:()=>{ const p=rnd(PRENOMS); return [
-      `Conversation avec <span class="hl">${p}</span> <span class="typing"><i></i><i></i><i></i></span>`,
-      `<span class="hl">${p}</span> envoie sa carte d'embarquement 📎`,
-      `Qualification : vol éligible → <span class="ok">transfert au juriste</span>`,
-      `${ri(3,9)} passagers en file — réponse <span class="ok">&lt; 2 s</span>` ]; } },
+    kpiL:"leads WhatsApp", kpiUnit:"", base:0,
+    tasks:()=>[ `1er contact WhatsApp — qualifie les passagers et ouvre les dossiers` ] },
   { ic:"⚖️", ac:"var(--purple)", acp:"var(--purple-pale)", name:"Me Lefèvre", role:"Juriste · Mises en demeure",
-    kpiL:"mises en demeure", kpiUnit:"", base:91,
-    tasks:()=>{ const a=rnd(AIRLINES); return [
-      `Rédaction mise en demeure → <span class="hl">${a}</span> · <span class="hl">600 €</span>`,
-      `Relance contentieuse <span class="hl">${a}</span> — délai 14 j dépassé`,
-      `<span class="ok">Accord obtenu</span> de ${a} — indemnité validée ✓`,
-      `Dossier transmis au tribunal de proximité <span class="typing"><i></i><i></i><i></i></span>` ]; } },
+    kpiL:"dossiers engagés", kpiUnit:"", base:0,
+    tasks:()=>[ `Mises en demeure & contentieux jusqu'au paiement de l'indemnité` ] },
   { ic:"🤝", ac:"var(--gold)", acp:"var(--gold-pale)", name:"Sofia Mendy", role:"Chasseuse de Partenaires",
-    kpiL:"agences en pipe", kpiUnit:"", base:67,
-    tasks:()=>{ const ag=rnd(AGENCES),v=rnd(VILLES); return [
-      `Prospection <span class="hl">${ag}</span> (${v}) — programme agents de voyage`,
-      `Démo contrat 70 / 7,5 / 22,5 à <span class="hl">${ag}</span>`,
-      `<span class="ok">${ag} signe !</span> — nouvelle agence partenaire 🎉`,
-      `Relance ${ri(3,8)} agences ${v} <span class="typing"><i></i><i></i><i></i></span>` ]; } },
+    kpiL:"agences actives", kpiUnit:"", base:0,
+    tasks:()=>[ `Recrute et anime le réseau d'agences partenaires (Europe ↔ Afrique)` ] },
   { ic:"💰", ac:"var(--green)", acp:"var(--green-pale)", name:"Karim Benali", role:"Comptable · Trésorerie",
-    kpiL:"encaissé ce mois", kpiUnit:"€", base:99,
-    tasks:()=>[ `Encaissement <span class="grn">+${fmt(ri(600,3600))} €</span> — indemnité reçue`,
-      `Versement commission agence <span class="hl">7,5 %</span> traité`,
-      `Rapprochement bancaire du jour — <span class="ok">équilibré</span>`,
-      `Reversement passager <span class="grn">${fmt(ri(400,600))} €</span> sous 48 h ✓` ] },
+    kpiL:"€ en récupération", kpiUnit:"", base:0,
+    tasks:()=>[ `Encaissements, reversements passagers & suivi de trésorerie` ] },
   { ic:"💬", ac:"var(--blue)", acp:"var(--blue-pale)", name:"Léa Fontaine", role:"Suivi Dossiers · Client",
-    kpiL:"dossiers suivis", kpiUnit:"", base:82,
-    tasks:()=>{ const p=rnd(PRENOMS); return [
-      `Mise à jour statut dossier <span class="hl">${p}</span> → <span class="ok">indemnisé</span>`,
-      `Appel de courtoisie <span class="hl">${p}</span> — satisfaction <span class="ok">5/5 ⭐</span>`,
-      `Envoi du justificatif de paiement à <span class="hl">${p}</span>`,
-      `${ri(5,14)} dossiers passés en phase finale aujourd'hui` ]; } },
+    kpiL:"dossiers suivis", kpiUnit:"", base:0,
+    tasks:()=>[ `Suivi de chaque dossier et de la satisfaction client jusqu'à l'indemnisation` ] },
   { ic:"📈", ac:"var(--amber)", acp:"var(--amber-pale)", name:"Yanis Roux", role:"Growth · Pub Meta",
-    kpiL:"leads / jour", kpiUnit:"", base:71,
-    tasks:()=>[ `Campagne <span class="hl">« Montant qui frappe »</span> — CPL <span class="ok">2,10 €</span>`,
-      `A/B test créa <span class="hl">Cash vs Bon d'achat</span> en cours`,
-      `<span class="ok">${ri(40,120)} clics</span> sur le radar éligibilité aujourd'hui`,
-      `Budget Meta optimisé → <span class="ok">+${ri(8,24)} % de leads</span>` ] },
+    kpiL:"conv. WhatsApp", kpiUnit:"", base:0,
+    tasks:()=>[ `Campagnes Click-to-WhatsApp (Meta) — acquisition payante` ] },
   { ic:"💼", ac:"var(--purple)", acp:"var(--purple-pale)", name:"Nadia Chérif", role:"Contrôle de gestion · Rentabilité",
     kpiL:"seuil / mois", kpiUnit:"", base:0, fixedKpi:()=>RENTA.seuil,
-    tasks:()=>[
-      `Seuil de rentabilité : <span class="hl">${RENTA.seuil} dossiers gagnés/mois</span> couvrent tout`,
-      `Coûts mensuels <span class="warn">${fmt(RENTA.total)} €</span> = abos ${RENTA.abos} € + salaires ${fmt(COSTS.salaires)} € + pub ${COSTS.pub} €`,
-      `Marge nette / dossier gagné : <span class="ok">${COSTS.margeParDossier} €</span>`,
-      `Il faut <span class="hl">${RENTA.dossiersAouvrir} dossiers ouverts/mois</span> (à 60 %) pour être renta`,
-      `Reste à couvrir ce mois : <span class="warn">${fmt(Math.max(0, RENTA.total - S.gagnes*COSTS.margeParDossier))} €</span>` ] },
+    tasks:()=>[ `Seuil de rentabilité : <span class="hl">${RENTA.seuil} dossiers gagnés/mois</span> · coûts ${fmt(RENTA.total)} €` ] },
   { ic:"📱", ac:"var(--blue)", acp:"var(--blue-pale)", name:"Aïssa Ndiaye", role:"Community Manager · IG / FB",
-    kpiL:"clics WhatsApp / mois", kpiUnit:"", base:38,
-    tasks:()=>[
-      `Publication carrousel <span class="hl">« Connais-tu tes droits ? »</span> → IG + FB`,
-      `Story témoignage <span class="hl">« J'ai reçu 1 350 € »</span> + sticker lien WhatsApp`,
-      `Reel <span class="hl">vol Abidjan→Paris retardé</span> → <span class="ok">${ri(20,80)} clics</span>`,
-      `Réponse DM → bascule WhatsApp · <span class="ok">${ri(3,12)} conversations</span> aujourd'hui`,
-      `Engagement du jour : <span class="ok">${ri(15,60)} likes</span> · ${ri(2,12)} commentaires` ] },
+    kpiL:"clics WhatsApp / mois", kpiUnit:"", base:0,
+    tasks:()=>[ `Anime Instagram + Facebook → renvoie vers le bot WhatsApp` ] },
 ];
 
 /* ============ RENDER AGENTS ============ */
@@ -776,9 +736,27 @@ const OBJECTIVES = [
   { t:`🎯 Atteindre le seuil : ${RENTA.seuil} dossiers gagnés/mois`, pct: Math.min(100, Math.round(S.gagnes/RENTA.seuil*100)) },
   { t:"🎯 400 clics WhatsApp · 70 conv. sociales / mois", pct:18 },
 ];
+// Compteur réel par poste (puisé dans les vraies données CRM / radar / Meta)
+function agentRealKpi(i){
+  switch(i){
+    case 0: return S.dossiers;
+    case 1: return (REAL.radar||[]).length;
+    case 2: return S.waLeads;
+    case 3: return Math.max((S.total||0)-(S.gagnes||0),0);
+    case 4: return S.agences;
+    case 5: return S.eur;
+    case 6: return S.dossiers;
+    case 7: return (REAL.meta&&REAL.meta.waConvos)||0;
+    case 8: return RENTA.seuil;
+    default: return 0;
+  }
+}
+function refreshAgentKpis(){
+  AGENTS.forEach((ag,i)=>{ const v=ag.fixedKpi?ag.fixedKpi():agentRealKpi(i); ag.kpi=v; const k=document.getElementById('kpi-'+i); if(k) k.textContent=(ag.kpiUnit||'')+fmt(v); });
+}
 const agentsEl = document.getElementById('agents');
 AGENTS.forEach((ag,i)=>{
-  ag.kpi = ag.fixedKpi ? ag.fixedKpi() : ag.base + ri(0,40);
+  ag.kpi = ag.fixedKpi ? ag.fixedKpi() : agentRealKpi(i);
   const link = AGENT_LINKS[i];
   const el = document.createElement('div');
   el.className = 'agent linked';
@@ -801,7 +779,7 @@ AGENTS.forEach((ag,i)=>{
     <div class="agent-foot">
       <div class="kpi"><span class="k" id="kpi-${i}">${ag.kpiUnit}${fmt(ag.kpi)}</span><span class="l">${ag.kpiL}</span></div>
       <span class="open-tool">voir le détail →</span>
-      <div class="mini-bar"><i id="bar-${i}" style="width:${ri(45,92)}%"></i></div>
+      <div class="mini-bar"><i id="bar-${i}" style="width:${(OBJECTIVES[i]||{}).pct||0}%"></i></div>
     </div>`;
   agentsEl.appendChild(el);
 });
@@ -895,49 +873,15 @@ document.addEventListener('keydown', e=>{ if(e.key==='Escape') closePoste(); });
 /* ============ IMPRESSION ============ */
 document.getElementById('printBtn').addEventListener('click', ()=> window.print());
 
-/* ============ TOGGLE VUE ============ */
+/* ============ MODE JEU SUPPRIMÉ ============ */
 const viewBtn = document.getElementById('viewBtn');
-viewBtn.addEventListener('click', ()=>{
-  const game = document.body.classList.toggle('game-mode');
-  viewBtn.textContent = game ? '📊 Mode Tableau' : '🎮 Mode Jeu';
-  if(game) updateHUD();
-});
+if(viewBtn) viewBtn.addEventListener('click', ()=>{ document.body.classList.toggle('game-mode'); });
 
 function tickAgents(){
-  AGENTS.forEach((ag,i)=>{
-    if(Math.random()<0.55){
-      const newTask = rnd(ag.tasks());
-      const t=document.getElementById('task-'+i);
-      t.style.opacity=0;
-      setTimeout(()=>{ t.innerHTML=newTask; t.style.transition='opacity .3s'; t.style.opacity=1; },200);
-      // statut occasionnel
-      const st=document.getElementById('st-'+i);
-      const r=Math.random(); let busy=false, idle=false;
-      if(r<0.15){ st.className='status st-busy'; st.innerHTML='<span class="sd"></span>en mission'; busy=true; }
-      else if(r<0.2){ st.className='status st-idle'; st.innerHTML='<span class="sd"></span>pause'; idle=true; }
-      else { st.className='status st-on'; st.innerHTML='<span class="sd"></span>actif'; }
-      // sync station jeu
-      const gb=document.getElementById('gb-'+i); if(gb) gb.innerHTML=newTask;
-      if(ag.stationEl){ ag.stationEl.classList.toggle('busy', busy); ag.stationEl.style.opacity = idle?0.55:1; }
-    }
-    if(!ag.fixedKpi && Math.random()<0.5){
-      ag.kpi += ri(0,4);
-      document.getElementById('kpi-'+i).textContent = ag.kpiUnit + fmt(ag.kpi);
-      document.getElementById('bar-'+i).style.width = ri(45,98)+'%';
-      ag.xp = Math.min(99, ag.xp + ri(0,5));
-      const gx=document.getElementById('gxp-'+i); if(gx) gx.style.width = ag.xp+'%';
-    }
-    // progression vers l'objectif (léger mouvement + données réelles)
-    if(Math.random()<0.45 && OBJECTIVES[i]){
-      let p = OBJECTIVES[i].pct;
-      if(i===4) p = Math.min(100, Math.round(S.agences/55*100));          // Sofia : agences / 55 (réel)
-      else if(i===7 && REAL.meta && REAL.meta.cpl) p = Math.min(100, Math.round(3/Math.max(REAL.meta.cpl,0.1)*100)); // Yanis : CPL ≤ 3€ (réel)
-      else p = Math.min(96, p + (Math.random()<0.6?ri(0,1):0));           // progression douce vers l'objectif
-      OBJECTIVES[i].pct = p;
-      const ob=document.getElementById('obj-'+i); if(ob) ob.style.width = p+'%';
-      const op=document.getElementById('objpct-'+i); if(op) op.textContent = p+'%';
-    }
-  });
+  // Aucune animation/random : on rafraîchit uniquement les compteurs réels
+  // et la progression d'objectif quand elle est branchée sur une vraie donnée.
+  refreshAgentKpis();
+  if(OBJECTIVES[4]){ const p=Math.min(100,Math.round((S.agences/55)*100)); OBJECTIVES[4].pct=p; const ob=document.getElementById('obj-4'); if(ob)ob.style.width=p+'%'; const op=document.getElementById('objpct-4'); if(op)op.textContent=p+'%'; }
   updateAgentsOn();
 }
 function updateAgentsOn(){
@@ -1168,6 +1112,7 @@ async function loadRadar(){
     document.getElementById('radarSrc').className='mini-src real';
     document.getElementById('radarSrc').textContent='RÉEL';
     renderRadar();
+    refreshAgentKpis(); // compteur « vols détectés » de Malik = réel
     // injecte quelques vrais vols dans le fil d'activité (retire d'abord l'état vide)
     const feedRoot=document.getElementById('feed');
     if(feedRoot && feedRoot.children.length===1 && !feedRoot.querySelector('.feed-item')) feedRoot.innerHTML='';
@@ -1221,6 +1166,7 @@ async function loadBureauStats(){
     document.querySelectorAll('.pulse-label').forEach(el=>{ if(!el.querySelector('.mini-src')){ const b=document.createElement('span'); b.className='mini-src real'; b.textContent='CRM'; b.style.marginLeft='6px'; el.appendChild(b); } });
     renderRenta(); // met à jour le seuil avec les vrais dossiers gagnés
     renderRealFeed(d.recent); // fil d'activité = vrais derniers dossiers (anonymisés)
+    refreshAgentKpis(); // compteurs des postes = vraies valeurs CRM
   }
   setSrcBadge();
 }
