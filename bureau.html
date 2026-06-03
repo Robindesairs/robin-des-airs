@@ -591,7 +591,8 @@ function stepConf(){
 }
 
 /* ============ ÉTAT GLOBAL ============ */
-let S = { dossiers: 1847, dossiersNew: 23, eur: 1108200, agences: 34, agencesNew: 5, gagnes:1402, total:1620, waLeads: 312 };
+// Baseline = derniers chiffres réels CRM connus (remplacés en live par /api/bureau-stats). Pas d'inflation fantaisiste.
+let S = { dossiers: 44, dossiersNew: 3, eur: 40790, agences: 12, agencesNew: 53, gagnes: 2, total: 14, waLeads: 29 };
 // REAL : rempli par les endpoints /api/* quand disponibles (site Netlify). Sinon vide → mode démo.
 let REAL = { radar: null, whatsapp: null, kpi: false, sources: {} };
 
@@ -826,7 +827,7 @@ function addFeed(){
   el.innerHTML=`<div class="feed-ic" style="--fp:${d.fp}">${d.ic}</div>
     <div class="feed-c"><div class="feed-txt">${d.t}</div>
     <div class="feed-meta">${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')} · à l'instant</div></div>`;
-  if(d.win){ el.classList.add('win-flash'); winSound(); launchConfetti(); gameWin(); planeFlyby(); S.gagnes++; }
+  if(d.win){ el.classList.add('win-flash'); winSound(); launchConfetti(); gameWin(); planeFlyby(); if(!REAL.kpi) S.gagnes++; }
   feedEl.insertBefore(el, feedEl.firstChild);
   while(feedEl.children.length>14) feedEl.removeChild(feedEl.lastChild);
   feedCount++;
