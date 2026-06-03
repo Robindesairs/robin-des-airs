@@ -116,7 +116,13 @@ body { font-family: 'DM Sans', sans-serif; background: var(--sky); color: var(--
 .typing i { width:5px; height:5px; border-radius:50%; background: var(--gold-light); animation: blink 1.2s infinite; }
 .typing i:nth-child(2){animation-delay:.2s} .typing i:nth-child(3){animation-delay:.4s}
 @keyframes blink { 0%,60%,100%{opacity:.25} 30%{opacity:1} }
-.agent-foot { display:flex; align-items:center; justify-content:space-between; margin-top: 0.95rem; padding-top: 0.8rem; border-top:1px solid var(--sky-border); }
+.agent-obj { margin-top: 0.8rem; padding-top: 0.7rem; border-top:1px dashed var(--sky-border); }
+.obj-top { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px; }
+.obj-label { font-size:0.72rem; color:var(--gold-light); font-weight:500; line-height:1.3; }
+.obj-pct { font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--white-70); flex-shrink:0; }
+.obj-bar { height:6px; border-radius:4px; background:rgba(255,255,255,0.07); overflow:hidden; }
+.obj-bar i { display:block; height:100%; background:linear-gradient(90deg, var(--ac,var(--gold)), var(--gold-light)); border-radius:4px; transition:width 1s ease; }
+.agent-foot { display:flex; align-items:center; justify-content:space-between; margin-top: 0.85rem; padding-top: 0.8rem; border-top:1px solid var(--sky-border); }
 .kpi { display:flex; flex-direction:column; gap:1px; }
 .kpi .k { font-family:'JetBrains Mono',monospace; font-size: 1.05rem; font-weight: 500; color: var(--white); }
 .kpi .l { font-size: 0.64rem; color: var(--white-40); text-transform:uppercase; letter-spacing:.06em; }
@@ -650,6 +656,17 @@ const AGENTS = [
 // outil ouvert au clic sur la carte du poste
 const AGENT_LINKS = ["/navigation-interne","/radar-vols-v2","/guide-whatsapp","/mandat","/espace-agence","/crm/","/suivi-dossier","/generateur-pub.html"];
 const AGENT_LINKS_PHOTO = ["aicha","malik","robin","lefevre","sofia","karim","lea","yanis"].map(n=>`assets/bureau/${n}.jpg`);
+// Objectifs réels (plan de lancement) par poste — affichés sur chaque carte
+const OBJECTIVES = [
+  { t:"🎯 81 k€ CA net · 55 agences — An 1", pct:28 },
+  { t:"🎯 40 vols éligibles détectés / mois", pct:72 },
+  { t:"🎯 48 dossiers ouverts / mois (WhatsApp)", pct:41 },
+  { t:"🎯 Taux ≥ 60 % · mise en demeure < 5 j", pct:63 },
+  { t:"🎯 55 agences actives", pct:33 },
+  { t:"🎯 Reversement < 48 h · 10 k€ / mois", pct:88 },
+  { t:"🎯 Satisfaction ≥ 4,5/5 · 0 dossier oublié", pct:91 },
+  { t:"🎯 CPL ≤ 3 € · 150 conv. WhatsApp / mois", pct:47 },
+];
 const agentsEl = document.getElementById('agents');
 AGENTS.forEach((ag,i)=>{
   ag.kpi = ag.base + ri(0,40);
@@ -668,6 +685,10 @@ AGENTS.forEach((ag,i)=>{
       <span class="status st-on" id="st-${i}"><span class="sd"></span>actif</span>
     </div>
     <div class="agent-task" id="task-${i}">${rnd(ag.tasks())}</div>
+    <div class="agent-obj">
+      <div class="obj-top"><span class="obj-label">${(OBJECTIVES[i]||{}).t||''}</span><span class="obj-pct" id="objpct-${i}">${(OBJECTIVES[i]||{}).pct||0}%</span></div>
+      <div class="obj-bar"><i id="obj-${i}" style="width:${(OBJECTIVES[i]||{}).pct||0}%"></i></div>
+    </div>
     <div class="agent-foot">
       <div class="kpi"><span class="k" id="kpi-${i}">${ag.kpiUnit}${fmt(ag.kpi)}</span><span class="l">${ag.kpiL}</span></div>
       <span class="open-tool">ouvrir l'outil →</span>
@@ -763,6 +784,16 @@ function tickAgents(){
       document.getElementById('bar-'+i).style.width = ri(45,98)+'%';
       ag.xp = Math.min(99, ag.xp + ri(0,5));
       const gx=document.getElementById('gxp-'+i); if(gx) gx.style.width = ag.xp+'%';
+    }
+    // progression vers l'objectif (léger mouvement + données réelles)
+    if(Math.random()<0.45 && OBJECTIVES[i]){
+      let p = OBJECTIVES[i].pct;
+      if(i===4) p = Math.min(100, Math.round(S.agences/55*100));          // Sofia : agences / 55 (réel)
+      else if(i===7 && REAL.meta && REAL.meta.cpl) p = Math.min(100, Math.round(3/Math.max(REAL.meta.cpl,0.1)*100)); // Yanis : CPL ≤ 3€ (réel)
+      else p = Math.min(96, p + (Math.random()<0.6?ri(0,1):0));           // progression douce vers l'objectif
+      OBJECTIVES[i].pct = p;
+      const ob=document.getElementById('obj-'+i); if(ob) ob.style.width = p+'%';
+      const op=document.getElementById('objpct-'+i); if(op) op.textContent = p+'%';
     }
   });
   updateAgentsOn();
