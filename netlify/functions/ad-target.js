@@ -75,7 +75,53 @@ exports.handler = async (event) => {
       };
     }
 
-    // --- MODIFICATION ---
+    // --- DÉPLACER LE PIN (action=move&lat=..&lng=..&radius=..) ---
+    if (q.action === 'move') {
+      if (q.confirm !== 'OUI') {
+        return { statusCode: 400, body: JSON.stringify({ error: 'confirm=OUI requis pour modifier' }) };
+      }
+      const lat = parseFloat(q.lat), lng = parseFloat(q.lng);
+      if (!isFinite(lat) || !isFinite(lng)) {
+        return { statusCode: 400, body: JSON.stringify({ error: 'lat & lng requis' }) };
+      }
+      const radius = parseFloat(q.radius) || 2;
+      const results = [];
+      for (const a of adsets) {
+        const targeting = a.targeting || {};
+        targeting.geo_locations = targeting.geo_locations || {};
+        const old = (targeting.geo_locations.custom_locations || [])[0] || {};
+        // on ne garde que les champs géo strictement nécessaires (Meta re-résout ville/région)
+        targeting.geo_locations.custom_locations = [{
+          latitude: lat,
+          longitude: lng,
+          radius,
+          distance_unit: 'kilometer',
+          country: old.country || q.country,
+        }];
+        const body = new URLSearchParams({
+          targeting: JSON.stringify(targeting),
+          access_token: token,
+        });
+        try {
+          const up = await getJSON(`${META_API}/${a.id}`, { method: 'POST', body });
+          results.push({
+            id: a.id, name: a.name,
+            before: { lat: old.latitude, lng: old.longitude, radius: old.radius },
+            after: { lat, lng, radius },
+            success: up.success !== false,
+          });
+        } catch (e) {
+          results.push({ id: a.id, name: a.name, error: e.message, meta: e.meta });
+        }
+      }
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ok: true, mode: 'move', campaignId, results }, null, 2),
+      };
+    }
+
+    // --- MODIFICATION location_types ---
     if (q.confirm !== 'OUI') {
       return { statusCode: 400, body: JSON.stringify({ error: 'confirm=OUI requis pour modifier' }) };
     }
