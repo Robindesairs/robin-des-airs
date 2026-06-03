@@ -131,6 +131,67 @@ async function sendDelayed(phone, text, cfg, ms = 1000) {
   await send(phone, text, cfg);
 }
 
+// ─── OCR carte d'embarquement (OpenAI Vision) ────────────────────────────────
+// Télécharge l'image WATI, l'envoie à GPT-4o, renvoie {vol,compagnie,date,pnr,route,nom}
+async function ocrBoardingPass(mediaUrl, cfg) {
+  const openaiKey = process.env.OPENAI_API_KEY;
+  if (!openaiKey || !mediaUrl) return null;
+  try {
+    // 1. Télécharger l'image depuis WATI (auth Bearer)
+    const imgRes = await fetch(mediaUrl, {
+      headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {},
+    });
+    if (!imgRes.ok) { console.error('OCR: download failed', imgRes.status); return null; }
+    const buf = Buffer.from(await imgRes.arrayBuffer());
+    const b64 = buf.toString('base64');
+
+    // 2. OpenAI Vision — extraction structurée JSON
+    const prompt = `Tu es un OCR spécialisé cartes d'embarquement / e-billets d'avion.
+Lis l'image et extrais UNIQUEMENT un JSON valide, sans texte autour :
+{"vol":"","compagnie":"","date":"","pnr":"","depart":"","arrivee":"","nom":""}
+Règles :
+- "vol" : numéro de vol (ex: SN301, AF718) en majuscules sans espace
+- "compagnie" : nom complet de la compagnie (déduis depuis le code vol si besoin : SN=Brussels Airlines, AF=Air France, TP=TAP, etc.)
+- "date" : format JJ/MM/AAAA. Si l'année manque sur le billet, mets JJ/MM sans année.
+- "pnr" : code réservation 5-6 caractères alphanumériques
+- "depart" / "arrivee" : codes IATA 3 lettres (ex: BJL, CDG)
+- "nom" : nom du passager en MAJUSCULES (avec civilité si présente)
+- Champ inconnu = chaîne vide "". Ne JAMAIS inventer.`;
+
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${openaiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        max_tokens: 300,
+        temperature: 0,
+        response_format: { type: 'json_object' },
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'text', text: prompt },
+            { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${b64}` } },
+          ],
+        }],
+      }),
+    });
+    const data = await res.json();
+    if (!data.choices) { console.error('OCR: openai error', JSON.stringify(data).slice(0, 200)); return null; }
+    const parsed = JSON.parse(data.choices[0].message.content);
+    return {
+      vol: (parsed.vol || '').toUpperCase().replace(/\s+/g, ''),
+      compagnie: parsed.compagnie || '',
+      date: parsed.date || '',
+      pnr: (parsed.pnr || '').toUpperCase().replace(/\s+/g, ''),
+      route: parsed.depart && parsed.arrivee ? `${parsed.depart} → ${parsed.arrivee}`.toUpperCase() : '',
+      nom: (parsed.nom || '').toUpperCase(),
+    };
+  } catch (e) {
+    console.error('OCR exception', e.message);
+    return null;
+  }
+}
+
 // ─── État conversation ───────────────────────────────────────────────────────
 async function getState(phone) {
   try {
@@ -219,7 +280,7 @@ const LANGUE_LABELS = {
 };
 
 // ─── Handler principal — state machine ───────────────────────────────────────
-async function handleMessage(phone, text, cfg) {
+async function handleMessage(phone, text, cfg, mediaUrl) {
   const input = (text || '').trim();
   const lower = input.toLowerCase();
 
@@ -474,10 +535,11 @@ async function handleMessage(phone, text, cfg) {
 
   // ── OCR / SAISIE MANUELLE ─────────────────────────────────────────────────
   if (s.step === 'ocr') {
+    // Photo reçue directement → OCR immédiat
+    if (mediaUrl) { await processOcr(phone, s, mediaUrl, cfg); return; }
     const norm = normalizeInput(input, ['photo', 'saisir']);
     if (norm === '1' || input.startsWith('[image]') || input.startsWith('[photo]')) {
-      await send(phone, `📸 Envoyez maintenant la *photo* de votre carte d'embarquement ou e-ticket.\n\n_(Photo nette, bien cadrée, à plat — le bot lit automatiquement)_\n\n⏳ Pas de carte sous la main ? Tapez *saisie* pour entrer les infos manuellement.`, cfg);
-      // En prod : Make/OCR webhook prend le relais
+      await send(phone, `📸 Parfait — envoyez maintenant la *photo* de votre carte d'embarquement ou e-ticket.\n\n_(Photo nette, bien cadrée, à plat — je lis automatiquement)_\n\n⏳ Pas de carte ? Tapez *saisie* pour entrer à la main.`, cfg);
       s.step = 'ocr_waiting';
       await setState(phone, s);
     } else if (norm === '2' || lower.includes('saisi') || lower.includes('main')) {
@@ -777,21 +839,47 @@ async function handleMessage(phone, text, cfg) {
   }
 
   if (s.step === 'ocr_waiting') {
-    // Si on reçoit du texte ici, on traite comme une saisie manuelle
+    // Photo reçue → OCR
+    if (mediaUrl) { await processOcr(phone, s, mediaUrl, cfg); return; }
     if (input.startsWith('[image]') || input.startsWith('[photo]')) {
-      await send(phone, `📸 Photo bien reçue. Notre équipe la traite. En attendant, vous pouvez tout saisir à la main — tapez *saisie*.`, cfg);
+      await send(phone, `📸 Photo reçue mais illisible. Renvoyez-la plus nette, ou tapez *saisie* pour entrer à la main.`, cfg);
     } else if (lower.includes('saisi')) {
       s.step = 'manuel_vol';
       await setState(phone, s);
       await send(phone, `${bar('manuel_vol')}\n✍️ *Saisie manuelle — Étape 1/6*\n\n*Numéro de vol*`, cfg);
     } else {
-      await send(phone, `J'attends votre carte d'embarquement en photo. Pas de carte ? Tapez *saisie*.`, cfg);
+      await send(phone, `J'attends votre carte d'embarquement en photo 📸. Pas de carte ? Tapez *saisie*.`, cfg);
     }
     return;
   }
 
   // ── INCOMPRIS ─────────────────────────────────────────────────────────────
   await send(phone, `Je n'ai pas compris votre réponse. Tapez le *numéro* ou utilisez le bouton, ou *menu* pour recommencer.`, cfg);
+}
+
+// ─── Traitement OCR d'une carte d'embarquement ───────────────────────────────
+async function processOcr(phone, s, mediaUrl, cfg) {
+  await send(phone, `📸 *Carte reçue — lecture en cours…* ⏳`, cfg);
+  const data = await ocrBoardingPass(mediaUrl, cfg);
+  if (data && (data.vol || data.pnr || data.nom)) {
+    s.vol = data.vol || s.vol || '';
+    s.compagnie = data.compagnie || s.compagnie || '';
+    s.date = data.date || s.date || '';
+    s.pnr = data.pnr || s.pnr || '';
+    s.route = data.route || s.route || '';
+    s.nom = data.nom || s.nom || '';
+    s.step = 'confirm_ocr';
+    await setState(phone, s);
+    await sendButtons(phone, {
+      body: `${bar('confirm_ocr')}\n📸 *Lu ! Vérifiez :*\n\n✈️ *${s.vol || '—'}* — ${s.compagnie || '—'}\n🎫 *${s.date || '—'}*\n📋 *${s.pnr || '—'}*\n🛤️ *${s.route || '—'}*\n👤 *${s.nom || '—'}*\n\nℹ️ Une info incorrecte ? Touchez *Corriger*.`,
+      buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Corriger' }],
+    }, cfg);
+  } else {
+    // OCR échoué → bascule saisie manuelle
+    s.step = 'manuel_vol';
+    await setState(phone, s);
+    await send(phone, `😕 Je n'ai pas réussi à lire la carte (photo floue ou format non reconnu).\n\nOn la fait à la main, c'est rapide :\n\n${bar('manuel_vol')}\n✍️ *Étape 1/6 — Numéro de vol*\n_(ex. AF718, SN301)_`, cfg);
+  }
 }
 
 // ─── Helpers messages ────────────────────────────────────────────────────────
@@ -878,11 +966,15 @@ function extractInbound(payload) {
     // Ignorer le payload de test WATI (placeholders littéraux)
     if (waId === 'senderPhone' || item.text === 'text') return;
 
+    // ── Image (carte d'embarquement) : capter l'URL média WATI ──
+    const isImage = item.type === 'image' || (item.type && /image/i.test(item.type));
+    const mediaUrl = isImage ? (item.data || item.mediaUrl || item.media_url || item.url) : null;
+
     const text =
       replyText ||
       item.text ||
       (item.finalText && String(item.finalText)) ||
-      (item.type && item.type !== 'text' ? `[${item.type}]` : '');
+      (isImage ? '[image]' : (item.type && item.type !== 'text' ? `[${item.type}]` : ''));
     if (!waId) return;
     const phone = normalizeWaPhone(normalizeWatiPhone(waId));
     if (!String(text || '').trim()) return;
@@ -890,7 +982,7 @@ function extractInbound(payload) {
     const key = item.id || item.messageId || item.whatsappMessageId || `${phone}|${String(text).trim()}`;
     if (seen.has(key)) return;
     seen.add(key);
-    list.push({ phone, text: String(text || '').slice(0, 4096) });
+    list.push({ phone, text: String(text || '').slice(0, 4096), mediaUrl });
   };
   if (Array.isArray(payload)) { payload.forEach(push); return list; }
   push(payload);
@@ -930,12 +1022,12 @@ exports.handler = async (event) => {
   const cfg = watiCfg();
   const items = extractInbound(body);
 
-  for (const { phone, text } of items) {
+  for (const { phone, text, mediaUrl } of items) {
     if (!phone) continue;
     try { await appendWaMessage(event, phone, { role: 'user', text, source: 'wati' }); } catch {}
     // notifie le propriétaire qu'un client écrit (email + Telegram, anti-spam 30 min/numéro)
     try { await notifyOwnerWhatsApp(phone, text); } catch (e) { console.error('owner-notify:', e.message); }
-    try { await handleMessage(phone, text, cfg); }
+    try { await handleMessage(phone, text, cfg, mediaUrl); }
     catch (e) {
       console.error('wati-bot: handleMessage error', e.message, e.stack);
       if (cfg) await send(phone, `Une erreur est survenue. Tapez *menu* pour recommencer.`, cfg);
