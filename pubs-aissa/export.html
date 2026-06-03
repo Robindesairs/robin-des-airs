@@ -1,0 +1,778 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Robin des Airs — Export PNG 1080×1920</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900&display=swap" rel="stylesheet"/>
+  <style>
+    :root { --green: #00C896; --navy: #11162a; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: "DM Sans", system-ui, sans-serif;
+      background: radial-gradient(120% 90% at 50% 0%, #1a2138 0%, #0b0f1a 60%, #070a12 100%);
+      color: #fff; min-height: 100vh; -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 56px 40px 80px; }
+    .head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-bottom: 8px; }
+    .title { font-size: 34px; font-weight: 800; letter-spacing: -0.5px; }
+    .title b { color: var(--green); }
+    .sub { font-size: 16px; color: rgba(255,255,255,0.6); margin-top: 8px; max-width: 620px; line-height: 1.5; }
+    .actions { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 12px; border: none; cursor: pointer;
+      font-family: inherit; font-weight: 700; font-size: 18px; letter-spacing: -0.2px;
+      padding: 18px 28px; border-radius: 999px; background: var(--green); color: #06231a;
+      box-shadow: 0 16px 40px rgba(0,200,150,0.35); transition: transform .12s, filter .12s;
+    }
+    .btn:hover { filter: brightness(1.06); transform: translateY(-1px); }
+    .btn:disabled { opacity: 0.6; cursor: default; box-shadow: none; transform: none; }
+    .status { font-size: 15px; color: rgba(255,255,255,0.7); min-height: 22px; margin: 22px 0 36px; font-variant-numeric: tabular-nums; }
+    .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 22px; }
+    @media (max-width: 980px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 620px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+    .card { display: flex; flex-direction: column; gap: 12px; }
+    .thumb {
+      width: 100%; aspect-ratio: 9 / 16; border-radius: 16px; overflow: hidden; position: relative;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.45); background: #000;
+    }
+    .thumb .scaler { position: absolute; top: 0; left: 0; width: 1080px; height: 1920px; transform-origin: top left; }
+    .meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .fname { font-family: ui-monospace, monospace; font-size: 12.5px; color: rgba(255,255,255,0.55); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dl { flex-shrink: 0; width: 34px; height: 34px; border-radius: 9px; border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.06); color: #fff; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: background .12s; }
+    .dl:hover { background: rgba(0,200,150,0.2); }
+    /* offscreen full-size capture slot (must be laid out, not display:none).
+       Offset lives on the WRAPPER so the captured slot itself has no transform/
+       offset that would survive html-to-image's clone and blank the output. */
+    #capture-wrap { position: fixed; top: 0; left: -40000px; }
+    #capture-slot { width: 1080px; height: 1920px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="head">
+      <div>
+        <div class="title">Export Meta Ads — <b>Robin des Airs</b> 🏹</div>
+        <div class="sub">5 visuels · <b>PNG 1080×1920</b> plein écran (9:16) · prêts pour Meta Ads Manager — Stories, Reels, Statut WhatsApp. Le fond couvre tout le cadre, aucune marge.</div>
+      </div>
+      <div class="actions">
+        <button class="btn" id="all">⬇ Télécharger le pack (.zip)</button>
+      </div>
+    </div>
+    <div class="status" id="status">Prêt. Clique pour générer les 5 PNG.</div>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <div id="capture-wrap"><div id="capture-slot"></div></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/html-to-image@1.11.11/dist/html-to-image.js"></script>
+  <script src="https://unpkg.com/jszip@3.10.1/dist/jszip.min.js"></script>
+
+  <script type="text/babel" data-presets="react" data-source="pub/ad-brand.jsx">
+// Robin des Airs — Meta Ads atoms (flat fintech charter)
+// Flat, premium-minimal · solid green / navy starry · DM Sans.
+// 9:16 · 1080×1920, Meta safe zones. Target: Afrique → Europe passengers.
+
+const { useMemo: useMemoAd } = React;
+
+// ─── Palette ───────────────────────────────────────────────
+const AD = {
+  green:     '#00C896',
+  greenDeep: '#00B085',
+  greenDark: '#009E78',
+  navy:      '#1A1F36',
+  navyDeep:  '#0B0F1A',
+  red:       '#E53935',
+  redDeep:   '#C62828',
+  white:     '#FFFFFF',
+  whatsapp:  '#25D366',
+  phone:     '+33 7 56 86 36 30',
+  url:       'robindesairs.eu',
+  font:      '"DM Sans", system-ui, -apple-system, sans-serif',
+};
+
+// Meta safe zones. Top/side 80px; bottom ~196px reserved for native button.
+const SAFE = { top: 88, side: 92, bottom: 188 };
+
+// ─── Seeded RNG + Starfield (shared navy "nuit étoilée") ───
+function adSeed(n) {
+  let s = n >>> 0;
+  return () => {
+    s += 0x6D2B79F5;
+    let t = s;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function Starfield({ density = 70, seed = 7, accent = AD.green }) {
+  const stars = useMemoAd(() => {
+    const r = adSeed(seed);
+    return Array.from({ length: density }, () => {
+      const size = 0.8 + r() * 2.6;
+      return {
+        x: r() * 100, y: r() * 100, size,
+        opacity: 0.18 + r() * 0.5,
+        tinted: r() > 0.9,
+      };
+    });
+  }, [density, seed]);
+  return (
+    <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+      {stars.map((s, i) => (
+        <div key={i} style={{
+          position: 'absolute', left: `${s.x}%`, top: `${s.y}%`,
+          width: s.size, height: s.size, borderRadius: '50%',
+          background: s.tinted ? accent : '#fff', opacity: s.opacity,
+          boxShadow: s.size > 2 ? `0 0 ${s.size * 3}px ${s.tinted ? accent : 'rgba(255,255,255,0.6)'}` : 'none',
+        }}/>
+      ))}
+    </div>
+  );
+}
+
+// ─── Flight arc Afrique → Europe (abstract: 2 nodes + curve) ─
+// variant 'bg'   → faint, decorative, fills frame behind content
+// variant 'hero' → prominent central graphic with A/B labels
+function FlightArc({ variant = 'bg', labels = false, accent = AD.green,
+                     labelA = 'Afrique', labelB = 'Europe', plane = false }) {
+  const faint = variant === 'bg';
+  const stroke = faint ? `${accent}55` : accent;
+  // path from lower-left node to upper-right node, in a 1080×620 space
+  const A = { x: 130, y: 500 }, B = { x: 950, y: 170 };
+  const C = { x: 560, y: 92 }; // control
+  const d = `M ${A.x} ${A.y} Q ${C.x} ${C.y} ${B.x} ${B.y}`;
+  return (
+    <svg viewBox="0 0 1080 620" width="100%" height="100%" preserveAspectRatio="xMidYMid meet"
+      style={{ display: 'block', overflow: 'visible' }} aria-hidden="true">
+      <path d={d} fill="none" stroke={stroke}
+        strokeWidth={faint ? 2 : 3.5} strokeDasharray="3 14" strokeLinecap="round"/>
+      {/* node A */}
+      <circle cx={A.x} cy={A.y} r={faint ? 7 : 11} fill={accent}/>
+      <circle cx={A.x} cy={A.y} r={faint ? 16 : 24} fill="none" stroke={accent} strokeWidth="1.5" opacity="0.5"/>
+      {/* node B */}
+      <circle cx={B.x} cy={B.y} r={faint ? 7 : 11} fill={accent}
+        style={{ filter: faint ? 'none' : `drop-shadow(0 0 10px ${accent})` }}/>
+      <circle cx={B.x} cy={B.y} r={faint ? 16 : 24} fill="none" stroke={accent} strokeWidth="1.5" opacity="0.5"/>
+      {plane && (
+        <g transform={`translate(${C.x - 6} ${C.y + 30}) rotate(-30)`}>
+          <path d="M0 7 L30 0 L0 -7 L8 0 Z" fill={accent}
+            style={{ filter: `drop-shadow(0 0 8px ${accent})` }}/>
+        </g>
+      )}
+      {labels && (
+        <>
+          <text x={A.x} y={A.y + 54} fill="rgba(255,255,255,0.78)"
+            fontFamily={AD.font} fontSize="32" fontWeight="600"
+            letterSpacing="1" textAnchor="middle">{labelA}</text>
+          <text x={B.x} y={B.y - 40} fill="rgba(255,255,255,0.92)"
+            fontFamily={AD.font} fontSize="32" fontWeight="700"
+            letterSpacing="1" textAnchor="middle">{labelB}</text>
+        </>
+      )}
+    </svg>
+  );
+}
+
+// ─── Clock filigree (simple geometric: circle + ticks + hands) ─
+function ClockGlyph({ size = 480, color = '#fff', style }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" style={style} aria-hidden="true">
+      <circle cx="50" cy="50" r="44" stroke={color} strokeWidth="1.4"/>
+      <circle cx="50" cy="50" r="2.2" fill={color}/>
+      {Array.from({ length: 12 }, (_, i) => {
+        const a = (i / 12) * Math.PI * 2;
+        const r1 = 44, r2 = i % 3 === 0 ? 38 : 40.5;
+        return <line key={i}
+          x1={50 + Math.sin(a) * r1} y1={50 - Math.cos(a) * r1}
+          x2={50 + Math.sin(a) * r2} y2={50 - Math.cos(a) * r2}
+          stroke={color} strokeWidth={i % 3 === 0 ? 1.6 : 0.9}/>;
+      })}
+      <line x1="50" y1="50" x2="50" y2="26" stroke={color} strokeWidth="2.4" strokeLinecap="round"/>
+      <line x1="50" y1="50" x2="69" y2="59" stroke={color} strokeWidth="2.4" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+// ─── Minimal plane glyph (outline, geometric) ──────────────
+function PlaneGlyph({ size = 30, color = '#fff', style }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" style={style} aria-hidden="true">
+      <path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L11 19v-5.5L21 16z"
+        fill="none" stroke={color} strokeWidth="1.4" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
+// ─── WhatsApp glyph ────────────────────────────────────────
+function WAGlyph({ size = 40, color = AD.green }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <path d="M16 3C8.8 3 3 8.8 3 16c0 2.4.7 4.7 1.9 6.7L3 29l6.5-1.8c1.9 1 4.2 1.6 6.5 1.6 7.2 0 13-5.8 13-13S23.2 3 16 3z" fill={color}/>
+      <path d="M11.5 9.2c-.3-.7-.6-.7-.9-.7h-.7c-.3 0-.7.1-1.1.5-.4.4-1.4 1.4-1.4 3.3 0 1.9 1.4 3.8 1.6 4.1.2.3 2.8 4.4 6.8 6 3.4 1.3 4 1 4.7.9.7-.1 2.3-.9 2.6-1.9.3-.9.3-1.7.2-1.9-.1-.2-.4-.3-.8-.5-.4-.2-2.3-1.1-2.7-1.3-.4-.1-.6-.2-.9.2-.3.4-1 1.3-1.3 1.5-.2.3-.5.3-.8.1-.4-.2-1.6-.6-3-1.8-1.1-1-1.9-2.2-2.1-2.5-.2-.4 0-.6.2-.8l.6-.7c.2-.2.3-.4.4-.6.1-.3.1-.5 0-.7-.1-.2-.9-2.2-1.2-2.9z" fill="#fff"/>
+    </svg>
+  );
+}
+
+// ─── Mandatory Meta filter pill (on every creative) ────────
+// "Vol vers l'Europe — retard ou annulation ?" — pre-qualifies the audience.
+function FilterPill({ tone = 'dark', label }) {
+  const light = tone === 'light'; // on green bg
+  const text = label || 'Vol vers l’Europe — retard ou annulation\u202f?';
+  return (
+    <div style={{
+      display: 'inline-flex', alignItems: 'center', gap: 14,
+      padding: '16px 28px', borderRadius: 999,
+      border: `1.5px solid ${light ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.22)'}`,
+      background: light ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.05)',
+      maxWidth: '100%',
+    }}>
+      <PlaneGlyph size={26} color={light ? '#fff' : AD.green}/>
+      <span style={{
+        fontFamily: AD.font, fontWeight: 600, fontSize: 30,
+        letterSpacing: -0.2, color: light ? '#fff' : 'rgba(255,255,255,0.94)',
+        whiteSpace: 'nowrap',
+      }}>{text}</span>
+    </div>
+  );
+}
+
+// ─── WhatsApp CTA pill ─────────────────────────────────────
+function WhatsAppPill({ label, variant = 'white', sub }) {
+  const isWhite = variant === 'white';
+  const bg = isWhite ? AD.white : AD.green;
+  const fg = isWhite ? AD.greenDark : AD.white;
+  const glyphCircle = isWhite ? AD.green : AD.white;
+  const glyphColor = isWhite ? '#fff' : AD.green;
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 20 }}>
+      <div style={{
+        display: 'inline-flex', alignItems: 'center', gap: 22,
+        padding: '32px 50px', borderRadius: 999, background: bg,
+        boxShadow: isWhite ? '0 24px 60px rgba(0,0,0,0.20)' : `0 24px 60px ${AD.green}55`,
+      }}>
+        <span style={{
+          width: 60, height: 60, borderRadius: '50%', background: glyphCircle,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+        }}>
+          <WAGlyph size={36} color={glyphColor}/>
+        </span>
+        <span style={{
+          fontFamily: AD.font, fontWeight: 700, fontSize: 42,
+          color: fg, letterSpacing: -0.5, whiteSpace: 'nowrap',
+        }}>{label}</span>
+      </div>
+      {sub && (
+        <span style={{
+          fontFamily: AD.font, fontWeight: 500, fontSize: 25,
+          color: isWhite ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.7)',
+          letterSpacing: 0.2, textAlign: 'center',
+        }}>{sub}</span>
+      )}
+    </div>
+  );
+}
+
+// ─── Logo wordmark (discret) ───────────────────────────────
+function AdLogo({ color = '#fff', mark = AD.green, upper = false }) {
+  return (
+    <div style={{
+      display: 'inline-flex', alignItems: 'center', gap: 13,
+      fontFamily: AD.font, fontWeight: upper ? 700 : 600,
+      fontSize: upper ? 26 : 30, color,
+      letterSpacing: upper ? 1.5 : -0.2,
+      textTransform: upper ? 'uppercase' : 'none',
+    }}>
+      <span style={{
+        width: 38, height: 38, borderRadius: 11, background: mark, color: AD.navy,
+        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 21, lineHeight: 1,
+      }}>🏹</span>
+      {upper ? <span>Robin des Airs</span>
+             : <span>Robin <span style={{ opacity: 0.65 }}>des Airs</span></span>}
+    </div>
+  );
+}
+
+// ─── Ad frame — 1080×1920 with Meta safe zones ─────────────
+function AdFrame({ bg, children, footer, header,
+                   starfield = false, starSeed = 7, arc = null, decor = null,
+                   logoUpper = false }) {
+  return (
+    <div style={{
+      width: 1080, height: 1920, position: 'relative',
+      background: bg, overflow: 'hidden', fontFamily: AD.font, color: AD.white,
+    }}>
+      {starfield && <Starfield seed={starSeed}/>}
+      {decor}
+      {arc && (
+        <div style={{
+          position: 'absolute', left: 0, right: 0, top: '16%', height: '46%',
+          opacity: arc.variant === 'bg' ? 0.55 : 1, zIndex: 1, pointerEvents: 'none',
+        }}>
+          <FlightArc {...arc}/>
+        </div>
+      )}
+
+      <div style={{
+        position: 'absolute', inset: 0,
+        paddingTop: SAFE.top, paddingBottom: 132,
+        paddingLeft: SAFE.side, paddingRight: SAFE.side,
+        display: 'flex', flexDirection: 'column', zIndex: 3,
+      }}>
+        {/* mandatory Meta filter pill, centered at top */}
+        {header && (
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 4 }}>{header}</div>
+        )}
+
+        {children}
+
+        {/* footer region pinned to bottom: CTA + discreet logo, clears the
+            ~120px reserved Meta "Send message" button zone */}
+        <div style={{
+          marginTop: 'auto', display: 'flex', flexDirection: 'column',
+          alignItems: 'center', gap: 30,
+        }}>
+          {footer}
+          <AdLogo upper={logoUpper}/>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+Object.assign(window, {
+  AD, SAFE, Starfield, FlightArc, PlaneGlyph, ClockGlyph, WAGlyph,
+  FilterPill, WhatsAppPill, AdLogo, AdFrame,
+});
+  </script>
+
+  <script type="text/babel" data-presets="react" data-source="pub/ads.jsx">
+// Robin des Airs — 5 Meta Story ad creatives (1080×1920)
+// Afrique → Europe targeting · Meta-compliant (question/«jusqu'à»/«si éligible»,
+// mandatory filter line, no «garanti», no «votre vol A du retard»).
+
+// Mandatory filter / pre-qualifier line (every creative carries it).
+const FILTER = {
+  fr: 'Vol vers l’Europe — retard ou annulation\u202f?',
+  en: 'Flight to Europe — delayed or cancelled?',
+};
+
+// Shared layout atoms (uniquely named to avoid global style collisions).
+const adColCenter = {
+  flex: 1, display: 'flex', flexDirection: 'column',
+  justifyContent: 'center', alignItems: 'center', textAlign: 'center',
+  position: 'relative', zIndex: 2,
+};
+const adHairlineLight = { width: 120, height: 2, margin: '46px 0 40px', background: 'rgba(255,255,255,0.4)' };
+const adHairlineDark  = { width: 120, height: 2, margin: '46px 0 38px', background: 'rgba(255,255,255,0.16)' };
+const adEligible = { fontFamily: AD.font, fontWeight: 500, fontSize: 30, color: 'rgba(255,255,255,0.78)', marginTop: 10 };
+
+// ─── Big money unit ────────────────────────────────────────
+function Money({ amount = '600', symbol = '€', pos = 'after', size = 340,
+                 color = '#fff', weight = 800 }) {
+  const sym = <span style={{ fontSize: '0.5em', fontWeight: 700, verticalAlign: '0.46em' }}>{symbol}</span>;
+  return (
+    <span style={{
+      fontFamily: AD.font, fontWeight: weight, fontSize: size,
+      lineHeight: 0.82, letterSpacing: -size * 0.035, color, display: 'inline-block',
+    }}>
+      {pos === 'before' ? <>{sym}<span style={{ marginLeft: 2 }}>{amount}</span></>
+                        : <>{amount}<span style={{ marginLeft: 6 }}>{sym}</span></>}
+    </span>
+  );
+}
+
+// ═══ CRÉA 1 — Le montant qui frappe (vert) ═════════════════
+function Crea1({ lang = 'fr' }) {
+  const c = lang === 'en' ? {
+    upto: 'up to', per: 'per passenger', elig: '(if eligible)',
+    law: 'It’s EU law.', notscam: 'Not a scam.',
+    t1: '25% — that’s all.', t2: '€0 if we don’t win.',
+    cta: 'Check on WhatsApp', sub: 'Free check · reply in under 3 min', pos: 'before',
+  } : {
+    upto: 'Jusqu’à', per: 'par passager', elig: '(si éligible)',
+    law: 'C’est la loi européenne.', notscam: 'Pas une arnaque.',
+    t1: '25\u202f% — c’est tout.', t2: '0\u202f€ si on ne gagne pas.',
+    cta: 'Vérifier sur WhatsApp', sub: 'Vérification gratuite · réponse en moins de 3\u202fmin', pos: 'after',
+  };
+  return (
+    <AdFrame
+      bg={`linear-gradient(157deg, ${AD.green} 0%, ${AD.greenDeep} 62%, ${AD.greenDark} 100%)`}
+      header={<FilterPill tone="light" label={lang === 'en' ? FILTER.en : undefined}/>}
+      footer={<WhatsAppPill label={c.cta} variant="white" sub={c.sub}/>}
+      logoUpper
+    >
+      <div style={adColCenter}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <span style={{
+            fontFamily: AD.font, fontWeight: 600, fontSize: 44, letterSpacing: 0.5,
+            textTransform: 'uppercase', color: 'rgba(255,255,255,0.85)', marginBottom: -4,
+          }}>{c.upto}</span>
+          <Money amount="600" pos={c.pos} size={360} color="#fff"/>
+          <span style={{ fontFamily: AD.font, fontWeight: 400, fontSize: 58, letterSpacing: -0.5, marginTop: 2 }}>{c.per}</span>
+          <span style={adEligible}>{c.elig}</span>
+        </div>
+        <div style={{ marginTop: 56, fontFamily: AD.font, fontWeight: 600, fontSize: 50, letterSpacing: -0.5, lineHeight: 1.18 }}>
+          <span>{c.law} </span><span style={{ opacity: 0.66 }}>{c.notscam}</span>
+        </div>
+        <div style={adHairlineLight}/>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, fontFamily: AD.font, fontWeight: 500, fontSize: 38, color: 'rgba(255,255,255,0.92)', letterSpacing: -0.2 }}>
+          <div>{c.t1}</div><div>{c.t2}</div>
+        </div>
+      </div>
+    </AdFrame>
+  );
+}
+
+// ═══ CRÉA 2 — Comparaison Robin vs concurrent (split) ══════
+function Crea2({ lang = 'fr' }) {
+  const c = lang === 'en' ? {
+    on: 'On €600 of compensation:', robin: 'ROBIN', others: 'OTHERS',
+    keep: 'You keep', r1: '25%', r2: 'if we win', o1: 'up to 50%', o2: 'if it goes to court',
+    calc: 'Do the math.', cta: 'WhatsApp Robin',
+  } : {
+    on: 'Sur 600\u202f€ d’indemnité\u202f:', robin: 'ROBIN', others: 'AUTRES',
+    keep: 'Vous gardez', r1: '25\u202f%', r2: 'si on gagne', o1: 'Jusqu’à 50\u202f%', o2: 'si procès',
+    calc: 'Faites le calcul.', cta: 'WhatsApp Robin',
+  };
+  const colStyle = { display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 6 };
+  const keepStyle = { fontFamily: AD.font, fontWeight: 500, fontSize: 32, color: 'rgba(255,255,255,0.82)' };
+  const headStyle = { fontFamily: AD.font, fontWeight: 700, fontSize: 38, letterSpacing: 2, display: 'flex', alignItems: 'center', gap: 12, marginBottom: 6 };
+  const bigStyle = { fontFamily: AD.font, fontWeight: 800, fontSize: 150, lineHeight: 0.9, letterSpacing: -5, color: '#fff' };
+  const pctStyle = { fontFamily: AD.font, fontWeight: 700, fontSize: 56, lineHeight: 1, marginTop: 22 };
+  const subStyle = { fontFamily: AD.font, fontWeight: 500, fontSize: 28, color: 'rgba(255,255,255,0.8)' };
+
+  return (
+    <div style={{ width: 1080, height: 1920, position: 'relative', overflow: 'hidden',
+      fontFamily: AD.font, color: '#fff',
+      background: `linear-gradient(90deg, ${AD.green} 0 50%, ${AD.redDeep} 50% 100%)` }}>
+      {/* seam */}
+      <div style={{ position: 'absolute', top: 0, bottom: 0, left: 540, width: 2, background: 'rgba(255,255,255,0.25)', zIndex: 2 }}/>
+
+      <div style={{ position: 'absolute', inset: 0, paddingTop: SAFE.top, paddingBottom: 132,
+        paddingLeft: SAFE.side, paddingRight: SAFE.side, display: 'flex', flexDirection: 'column', zIndex: 3 }}>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <FilterPill tone="light" label={lang === 'en' ? FILTER.en : undefined}/>
+        </div>
+
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <div style={{ textAlign: 'center', fontFamily: AD.font, fontWeight: 600, fontSize: 46, letterSpacing: -0.5, marginBottom: 64 }}>{c.on}</div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+            {/* ROBIN */}
+            <div style={colStyle}>
+              <div style={headStyle}>
+                <span style={{ width: 36, height: 36, borderRadius: '50%', background: '#fff', color: AD.green,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, fontWeight: 800 }}>✓</span>
+                {c.robin}
+              </div>
+              <div style={keepStyle}>{c.keep}</div>
+              <div style={bigStyle}>450€</div>
+              <div style={pctStyle}>{c.r1}</div>
+              <div style={subStyle}>{c.r2}</div>
+            </div>
+            {/* AUTRES */}
+            <div style={{ ...colStyle, opacity: 0.96 }}>
+              <div style={{ ...headStyle, color: 'rgba(255,255,255,0.92)' }}>
+                <span style={{ width: 36, height: 36, borderRadius: '50%', background: 'rgba(255,255,255,0.18)', color: '#fff',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, fontWeight: 800 }}>✕</span>
+                {c.others}
+              </div>
+              <div style={keepStyle}>{c.keep}</div>
+              <div style={{ ...bigStyle, color: 'rgba(255,255,255,0.85)' }}>300€</div>
+              <div style={pctStyle}>{c.o1}</div>
+              <div style={subStyle}>{c.o2}</div>
+            </div>
+          </div>
+
+          <div style={{ textAlign: 'center', marginTop: 70, fontFamily: AD.font, fontWeight: 700, fontSize: 52, letterSpacing: -0.5 }}>{c.calc}</div>
+        </div>
+
+        <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 30 }}>
+          <WhatsAppPill label={c.cta} variant="white"/>
+          <AdLogo upper/>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══ CRÉA 3 — Famille diaspora (navy étoilé + arc) ═════════
+function Crea3({ lang = 'fr' }) {
+  const c = lang === 'en' ? {
+    you: 'Travelling as 4?', brut: 'Up to €2,400 gross', net: 'net for you',
+    nets: '~€1,800', elig: '(if eligible)',
+    kids: 'Children and babies count.', terms: '25%. €0 if we lose.',
+    cta: 'Claim on WhatsApp', pos: 'before',
+  } : {
+    you: 'Vous êtes 4\u202f?', brut: 'Jusqu’à 2\u202f400\u202f€ brut', net: 'nets pour vous',
+    nets: '~1\u202f800', elig: '(si éligible)',
+    kids: 'Enfants et bébés comptent.', terms: '25\u202f%. 0\u202f€ si on perd.',
+    cta: 'Réclamer sur WhatsApp', pos: 'after',
+  };
+  return (
+    <AdFrame starfield starSeed={21} arc={{ variant: 'bg' }} logoUpper
+      bg={`radial-gradient(130% 90% at 50% 8%, #232a47 0%, ${AD.navy} 58%, #11152a 100%)`}
+      header={<FilterPill tone="dark" label={lang === 'en' ? FILTER.en : undefined}/>}
+      footer={<WhatsAppPill label={c.cta} variant="green"/>}>
+      <div style={adColCenter}>
+        <div style={{ fontFamily: AD.font, fontWeight: 700, fontSize: 62, letterSpacing: -1, color: '#fff' }}>{c.you}</div>
+
+        <div style={{ marginTop: 30, fontFamily: AD.font, fontWeight: 500, fontSize: 46, color: 'rgba(255,255,255,0.78)', letterSpacing: -0.3 }}>{c.brut}</div>
+
+        <div style={{ marginTop: 4, display: 'flex', alignItems: 'baseline', gap: 4 }}>
+          {lang === 'fr' && <span style={{ fontFamily: AD.font, fontWeight: 800, fontSize: 150, color: AD.green, letterSpacing: -6, lineHeight: 0.82 }}>~</span>}
+          <Money amount={c.nets} pos={c.pos} size={250} color={AD.green} weight={800}/>
+        </div>
+        <div style={{ fontFamily: AD.font, fontWeight: 600, fontSize: 52, color: '#fff', letterSpacing: -0.5, marginTop: 6 }}>{c.net}</div>
+        <div style={{ ...adEligible, color: 'rgba(255,255,255,0.6)' }}>{c.elig}</div>
+
+        <div style={adHairlineDark}/>
+        <div style={{ fontFamily: AD.font, fontWeight: 500, fontSize: 42, color: 'rgba(255,255,255,0.9)', letterSpacing: -0.3 }}>{c.kids}</div>
+        <div style={{ fontFamily: AD.font, fontWeight: 600, fontSize: 40, color: AD.green, marginTop: 14, letterSpacing: -0.2 }}>{c.terms}</div>
+      </div>
+    </AdFrame>
+  );
+}
+
+// ═══ CRÉA 4 — Urgence aéroport (navy étoilé + avion) ═══════
+function Crea4({ lang = 'fr' }) {
+  const c = lang === 'en' ? {
+    eyebrow: '✈\uFE0F  Still waiting at the gate?',
+    lead: 'Your delay could be worth', upto: 'up to', per: 'per person',
+    elig: '(if eligible — EC 261)',
+    rows: ['3 minutes on WhatsApp.', '€0 if we don’t win.'],
+    cta: 'This is my turn', pos: 'before',
+  } : {
+    eyebrow: '✈\uFE0F  Encore en train d’attendre\u202f?',
+    lead: 'Votre retard peut valoir', upto: 'jusqu’à', per: 'par personne',
+    elig: '(si éligible — CE 261)',
+    rows: ['3 minutes sur WhatsApp.', '0\u202f€ si on ne gagne pas.'],
+    cta: 'C’est mon tour', pos: 'after',
+  };
+  return (
+    <AdFrame starfield starSeed={51}
+      bg={`radial-gradient(130% 90% at 50% 10%, #141b30 0%, ${AD.navyDeep} 62%, #05070d 100%)`}
+      header={<FilterPill tone="dark" label={lang === 'en' ? FILTER.en : undefined}/>}
+      footer={<WhatsAppPill label={c.cta} variant="green"/>}
+      logoUpper
+      decor={<ClockGlyph size={460} color={AD.white}
+        style={{ position: 'absolute', top: 150, right: -90, opacity: 0.07, zIndex: 1 }}/>}>
+      <div style={adColCenter}>
+        <div style={{ fontFamily: AD.font, fontWeight: 500, fontSize: 44, color: 'rgba(255,255,255,0.84)', letterSpacing: -0.3 }}>{c.eyebrow}</div>
+
+        <div style={{ marginTop: 34, fontFamily: AD.font, fontWeight: 600, fontSize: 50, letterSpacing: -0.5, color: '#fff' }}>{c.lead}</div>
+        <div style={{ marginTop: 6, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <span style={{ fontFamily: AD.font, fontWeight: 600, fontSize: 38, letterSpacing: 0.5, textTransform: 'uppercase', color: 'rgba(255,255,255,0.6)', marginBottom: -2 }}>{c.upto}</span>
+          <Money amount="600" pos={c.pos} size={290} color={AD.green}/>
+          <span style={{ fontFamily: AD.font, fontWeight: 400, fontSize: 50, color: 'rgba(255,255,255,0.94)', marginTop: 6, letterSpacing: -0.5 }}>{c.per}</span>
+          <span style={{ ...adEligible, color: 'rgba(255,255,255,0.6)' }}>{c.elig}</span>
+        </div>
+
+        <div style={{ marginTop: 50, display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {c.rows.map((r, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 18,
+              fontFamily: AD.font, fontWeight: 500, fontSize: 38,
+              color: i === 2 ? '#fff' : 'rgba(255,255,255,0.88)', letterSpacing: -0.3 }}>
+              <span style={{ width: 12, height: 12, borderRadius: '50%', background: AD.green, flexShrink: 0, boxShadow: `0 0 16px ${AD.green}88` }}/>
+              <span>{r}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </AdFrame>
+  );
+}
+
+// ═══ CRÉA 5 — Route Afrique → Europe (minimaliste) ═════════
+function Crea5({ lang = 'fr' }) {
+  const c = lang === 'en' ? {
+    route: 'Africa → Europe', poss: 'Possible compensation',
+    amtPre: 'up to ', amt: '€600', amtPost: ' / passenger',
+    free1: 'Free check', free2: 'on WhatsApp', terms: '25% if we win · €0 otherwise',
+    cta: 'Check my flight',
+  } : {
+    route: 'Afrique → Europe', poss: 'Indemnité possible',
+    amtPre: 'jusqu’à ', amt: '600\u202f€', amtPost: ' / passager',
+    free1: 'Vérification gratuite', free2: 'sur WhatsApp', terms: '25\u202f% si succès · 0\u202f€ sinon',
+    cta: 'Vérifier mon vol',
+  };
+  return (
+    <AdFrame starfield starSeed={88}
+      bg={`radial-gradient(125% 85% at 50% 12%, #222a49 0%, ${AD.navy} 60%, #12162b 100%)`}
+      header={<FilterPill tone="dark" label={lang === 'en' ? FILTER.en : undefined}/>}
+      footer={<WhatsAppPill label={c.cta} variant="green"/>}
+      logoUpper>
+      <div style={adColCenter}>
+        <div style={{ fontFamily: AD.font, fontWeight: 600, fontSize: 44, letterSpacing: 1, color: 'rgba(255,255,255,0.9)' }}>{c.route}</div>
+
+        <div style={{ width: '100%', height: 430, position: 'relative', marginTop: 6 }}>
+          <FlightArc variant="hero" plane/>
+        </div>
+
+        <div style={{ marginTop: 8, fontFamily: AD.font, fontWeight: 500, fontSize: 44, color: 'rgba(255,255,255,0.82)', letterSpacing: -0.3 }}>{c.poss}</div>
+        <div style={{ marginTop: 6, fontFamily: AD.font, fontWeight: 700, fontSize: 62, letterSpacing: -1 }}>
+          <span style={{ color: '#fff' }}>{c.amtPre}</span>
+          <span style={{ color: AD.green }}>{c.amt}</span>
+          <span style={{ color: '#fff' }}>{c.amtPost}</span>
+        </div>
+
+        <div style={{ marginTop: 44, fontFamily: AD.font, fontWeight: 600, fontSize: 44, lineHeight: 1.15, color: '#fff' }}>
+          {c.free1} <span style={{ color: 'rgba(255,255,255,0.7)' }}>{c.free2}</span>
+        </div>
+        <div style={{ marginTop: 22, fontFamily: AD.font, fontWeight: 500, fontSize: 34, color: 'rgba(255,255,255,0.78)', letterSpacing: 0.2 }}>{c.terms}</div>
+      </div>
+    </AdFrame>
+  );
+}
+
+Object.assign(window, { Money, Crea1, Crea2, Crea3, Crea4, Crea5 });
+
+  </script>
+
+  <script type="text/babel" data-presets="react">
+    const ORDER = [
+      { key: 'c1', file: 'AF-EU-1A-montant-vert.png',         name: '1A · Montant vert' },
+      { key: 'c4', file: 'AF-EU-1D-attente-navy.png',         name: '1D · Attente navy' },
+      { key: 'c2', file: 'AF-EU-1B-comparaison.png',          name: '1B · Comparaison' },
+      { key: 'c3', file: 'AF-EU-1C-famille-nuit-etoilee.png', name: '1C · Famille nuit étoilée' },
+      { key: 'c5', file: 'AF-EU-1E-route-minimal.png',        name: '1E · Route minimal' },
+    ];
+    const MAP = { c1: Crea1, c2: Crea2, c3: Crea3, c4: Crea4, c5: Crea5 };
+
+    const statusEl = document.getElementById('status');
+    const setStatus = (t) => { statusEl.textContent = t; };
+
+    // Offscreen capture root (full 1080×1920, laid out off-screen).
+    const slot = document.getElementById('capture-slot');
+    const capRoot = ReactDOM.createRoot(slot);
+
+    function renderInto(key) {
+      return new Promise((res) => {
+        capRoot.render(<MapComp keyName={key} />);
+        // setTimeout (not requestAnimationFrame) so it still resolves when the
+        // tab is backgrounded; gives layout + webfont a moment to settle.
+        setTimeout(res, 260);
+      });
+    }
+    function MapComp({ keyName }) {
+      const C = MAP[keyName] || Crea1;
+      return <C lang="fr" />;
+    }
+
+    let __fontCSS = null;
+    async function ensureFontCSS() {
+      if (__fontCSS !== null) return __fontCSS;
+      // Build @font-face CSS with base64 woff2 ourselves. (html-to-image's own
+      // getFontEmbedCSS can't read Google's cross-origin <link> stylesheet, so
+      // it returns empty and text would fall back to the wrong font.)
+      try {
+        const cssUrl = 'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap';
+        let css = await (await fetch(cssUrl)).text();
+        const urls = [...new Set([...css.matchAll(/url\((https:[^)]+\.woff2)\)/g)].map((m) => m[1]))];
+        for (const u of urls) {
+          const buf = await (await fetch(u)).arrayBuffer();
+          const bytes = new Uint8Array(buf);
+          let bin = '';
+          for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+          css = css.split(u).join('data:font/woff2;base64,' + btoa(bin));
+        }
+        __fontCSS = css;
+      } catch (e) {
+        __fontCSS = '';
+      }
+      return __fontCSS;
+    }
+    async function capture(key) {
+      await renderInto(key);
+      const fontEmbedCSS = await ensureFontCSS();
+      return await window.htmlToImage.toBlob(slot, {
+        width: 1080, height: 1920, pixelRatio: 1, backgroundColor: '#000000', fontEmbedCSS,
+      });
+    }
+    window.__capture = capture; // for self-test
+
+    function saveBlob(blob, name) {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = name;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    }
+
+    async function downloadOne(item) {
+      setStatus('Génération de ' + item.file + '…');
+      const b = await capture(item.key);
+      saveBlob(b, item.file);
+      setStatus(item.file + ' — ' + Math.round(b.size / 1024) + ' Ko · 1080×1920 ✓');
+    }
+
+    async function downloadAll() {
+      const btn = document.getElementById('all');
+      btn.disabled = true;
+      try {
+        await document.fonts.ready;
+        const zip = new JSZip();
+        for (let i = 0; i < ORDER.length; i++) {
+          setStatus('Génération ' + (i + 1) + '/5 — ' + ORDER[i].file + '…');
+          const b = await capture(ORDER[i].key);
+          zip.file(ORDER[i].file, b);
+        }
+        setStatus('Compression du pack…');
+        const z = await zip.generateAsync({ type: 'blob' });
+        saveBlob(z, 'robin-des-airs-pubs-meta.zip');
+        setStatus('✓ Pack téléchargé — 5 PNG 1080×1920 plein écran.');
+      } catch (e) {
+        setStatus('Erreur : ' + e.message);
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    // Build preview thumbnails (scaled live renders).
+    function Thumb({ item }) {
+      const ref = React.useRef(null);
+      React.useEffect(() => {
+        const el = ref.current;
+        const fit = () => {
+          const w = el.parentElement.clientWidth;
+          el.style.transform = 'scale(' + (w / 1080) + ')';
+          el.parentElement.style.height = (w * 1920 / 1080) + 'px';
+        };
+        fit();
+        const ro = new ResizeObserver(fit); ro.observe(el.parentElement);
+        return () => ro.disconnect();
+      }, []);
+      const C = MAP[item.key];
+      return (
+        <div className="card">
+          <div className="thumb">
+            <div className="scaler" ref={ref}><C lang="fr" /></div>
+          </div>
+          <div className="meta">
+            <span className="fname" title={item.file}>{item.file}</span>
+            <button className="dl" title="Télécharger ce PNG" onClick={() => downloadOne(item)}>↓</button>
+          </div>
+        </div>
+      );
+    }
+
+    function Grid() {
+      return <>{ORDER.map((item) => <Thumb key={item.key} item={item} />)}</>;
+    }
+
+    function start() {
+      if (!window.Crea1 || !window.AD || !window.htmlToImage || !window.JSZip) return setTimeout(start, 50);
+      ReactDOM.createRoot(document.getElementById('grid')).render(<Grid />);
+      document.getElementById('all').addEventListener('click', downloadAll);
+    }
+    start();
+  </script>
+</body>
+</html>

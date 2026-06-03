@@ -1,0 +1,475 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Robin des Airs — Dakar · AF 719 retardé</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=Barlow+Condensed:wght@200;300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      font-family: "Barlow Condensed", system-ui, sans-serif;
+      background: #060e19;
+      color: #fff;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+    #root { width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; }
+
+    @keyframes rdaTwinkle { 0%,100%{opacity:.2;transform:scale(1)} 50%{opacity:1;transform:scale(1.15)} }
+    @keyframes rdaPulse   { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.45;transform:scale(.85)} }
+    @keyframes rdaAlert   { 0%,100%{opacity:.7} 50%{opacity:1} }
+    @keyframes rdaFadeUp  { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes rdaFadeIn  { from{opacity:0} to{opacity:1} }
+    @keyframes rdaGlow    { 0%,100%{text-shadow:0 0 18px currentColor} 50%{text-shadow:0 0 36px currentColor, 0 0 70px currentColor} }
+    @keyframes rdaFlicker { 0%,100%{opacity:1} 47%{opacity:1} 48%{opacity:.7} 49%{opacity:1} 70%{opacity:1} 71%{opacity:.85} 72%{opacity:1} }
+    @keyframes rdaScanlines { from{background-position:0 0} to{background-position:0 4px} }
+
+    /* Scale 1080×1080 canvas to fit viewport */
+    .stage { transform-origin: center center; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script type="text/babel" data-presets="react">
+    const { useEffect, useState, useMemo, useRef } = React;
+
+    // ─── Brand tokens ───────────────────────────────────────
+    const RDA = {
+      ink:'#0d1f35', inkDeep:'#07111e', inkMid:'#122848', inkText:'#060e19',
+      neon:'#00e5a0', neonDeep:'#00c98e',
+      gold:'#c9a96e', goldHi:'#f0d080',
+      white:'#fff',
+      whatsapp:'#25d366',
+      alert:'#c0392b', alertHi:'#e94f3a',
+      faint:'rgba(255,255,255,0.55)',
+      hairline:'rgba(255,255,255,0.10)',
+      display:'"Cormorant Garamond", Georgia, serif',
+      body:   '"Barlow Condensed", system-ui, sans-serif',
+      mono:   '"DM Mono", ui-monospace, monospace',
+    };
+
+    // ─── Stage: scale 1080×1080 to viewport ────────────────
+    function Stage({ children }) {
+      const [scale, setScale] = useState(1);
+      useEffect(() => {
+        const fit = () => {
+          const m = Math.min(window.innerWidth / 1080, window.innerHeight / 1080) * 0.96;
+          setScale(m);
+        };
+        fit();
+        window.addEventListener('resize', fit);
+        return () => window.removeEventListener('resize', fit);
+      }, []);
+      return (
+        <div className="stage" style={{ transform: `scale(${scale})` }}>
+          {children}
+        </div>
+      );
+    }
+
+    // ─── Starfield (sober) ─────────────────────────────────
+    function seed(n) {
+      let s = n >>> 0;
+      return () => { s += 0x6D2B79F5; let t = s; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+    }
+    function Starfield({ density = 50, accent = RDA.neon }) {
+      const stars = useMemo(() => {
+        const r = seed(77);
+        return Array.from({ length: density }, () => ({
+          x: r()*100, y: r()*70,
+          size: 0.6 + r()*1.8,
+          opacity: 0.2 + r()*0.55,
+          delay: r()*6, dur: 3 + r()*5,
+          tinted: r() > 0.92,
+        }));
+      }, [density]);
+      return (
+        <div style={{ position:'absolute', inset:0, pointerEvents:'none', overflow:'hidden' }}>
+          {stars.map((s, i) => (
+            <div key={i} style={{
+              position:'absolute', left:`${s.x}%`, top:`${s.y}%`,
+              width:s.size, height:s.size, borderRadius:'50%',
+              background: s.tinted ? accent : '#fff',
+              opacity: s.opacity,
+              boxShadow: s.size > 1.4 ? `0 0 ${s.size*3}px ${s.tinted ? accent : 'rgba(255,255,255,0.7)'}` : 'none',
+              animation: `rdaTwinkle ${s.dur}s ease-in-out ${s.delay}s infinite`,
+            }}/>
+          ))}
+        </div>
+      );
+    }
+
+    // ─── Neon bar ──────────────────────────────────────────
+    function NeonBar({ pos = 'top', accent = RDA.neon }) {
+      const t = pos === 'top';
+      return (
+        <div style={{
+          position:'absolute', left:0, right:0,
+          [t?'top':'bottom']: 0, height: 3,
+          background: `linear-gradient(90deg, transparent 0%, ${accent} 20%, ${RDA.neonDeep} 50%, ${accent} 80%, transparent 100%)`,
+          boxShadow: `0 0 22px ${accent}aa, 0 0 6px ${accent}`,
+          zIndex: 6,
+        }}/>
+      );
+    }
+
+    // ─── Logo wordmark ─────────────────────────────────────
+    function RDALogo({ size = 36, accent = RDA.neon }) {
+      return (
+        <div style={{
+          fontFamily: RDA.display, fontWeight: 600,
+          fontSize: size, lineHeight: 0.85, letterSpacing: -size*0.025,
+          color: RDA.white, whiteSpace: 'nowrap',
+        }}>
+          ROBIN <span style={{
+            fontStyle:'italic', fontWeight:400, color: accent,
+            textShadow: `0 0 18px ${accent}88`,
+          }}>des Airs</span>
+        </div>
+      );
+    }
+
+    // ─── FIDS row ──────────────────────────────────────────
+    function FidsRow({ flight, dest, gate, time, status, statusColor, highlight }) {
+      const baseColor = highlight ? statusColor : 'rgba(255,255,255,0.55)';
+      return (
+        <div style={{
+          display:'grid',
+          gridTemplateColumns:'130px 1fr 80px 130px 220px',
+          alignItems:'center',
+          padding:'18px 28px',
+          borderBottom: `1px solid ${RDA.hairline}`,
+          background: highlight ? 'rgba(192, 57, 43, 0.10)' : 'transparent',
+          position:'relative',
+          fontFamily: RDA.mono,
+          letterSpacing: 1.5,
+        }}>
+          {highlight && (
+            <div style={{
+              position:'absolute', left: -1, top: 0, bottom: 0, width: 4,
+              background: statusColor, boxShadow: `0 0 14px ${statusColor}`,
+            }}/>
+          )}
+          <div style={{
+            fontSize: 26, color: highlight ? RDA.white : 'rgba(255,255,255,0.7)',
+            fontWeight: 500,
+          }}>{flight}</div>
+          <div style={{
+            fontSize: 26, color: highlight ? RDA.white : 'rgba(255,255,255,0.85)',
+            fontWeight: 500, textTransform: 'uppercase',
+          }}>{dest}</div>
+          <div style={{
+            fontSize: 22, color: 'rgba(255,255,255,0.55)', textAlign:'center',
+          }}>{gate}</div>
+          <div style={{
+            fontSize: 26, color: highlight ? RDA.white : 'rgba(255,255,255,0.7)',
+            fontVariantNumeric: 'tabular-nums',
+          }}>{time}</div>
+          <div style={{
+            display:'flex', justifyContent:'flex-end',
+          }}>
+            <div style={{
+              display:'inline-flex', alignItems:'center', gap: 10,
+              padding:'6px 14px',
+              borderRadius: 4,
+              background: highlight ? statusColor : 'transparent',
+              border: highlight ? 'none' : `1px solid ${baseColor}`,
+              color: highlight ? '#fff' : baseColor,
+              fontWeight: 600, fontSize: 18, letterSpacing: 2.5,
+              textTransform: 'uppercase',
+              boxShadow: highlight ? `0 0 24px ${statusColor}88` : 'none',
+              animation: highlight ? 'rdaFlicker 3.2s infinite' : 'none',
+            }}>
+              {highlight && (
+                <span style={{
+                  width: 8, height: 8, borderRadius: '50%', background: '#fff',
+                  animation: 'rdaPulse 0.9s ease-in-out infinite',
+                }}/>
+              )}
+              {status}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // ─── Main composition ──────────────────────────────────
+    function Composition() {
+      return (
+        <div style={{
+          width: 1080, height: 1080,
+          position: 'relative',
+          background: `
+            radial-gradient(ellipse at 50% 0%, ${RDA.inkMid} 0%, ${RDA.ink} 50%, ${RDA.inkDeep} 100%),
+            linear-gradient(180deg, ${RDA.inkDeep} 0%, ${RDA.ink} 100%)
+          `,
+          overflow: 'hidden',
+          color: RDA.white,
+          fontFamily: RDA.body,
+        }}>
+          <Starfield density={55} accent={RDA.neon} />
+          {/* warm horizon glow at bottom — Dakar sunset */}
+          <div style={{
+            position:'absolute', left: 0, right: 0, bottom: 0, height: '38%',
+            background: `radial-gradient(ellipse at 50% 100%, ${RDA.gold}33 0%, ${RDA.alert}11 30%, transparent 70%)`,
+            pointerEvents: 'none',
+            filter: 'blur(20px)',
+          }}/>
+          <NeonBar pos="top" />
+          <NeonBar pos="bottom" />
+
+          {/* ─── Flex column layout (avoids any absolute overlap) ─── */}
+          <div style={{
+            position: 'relative', zIndex: 5,
+            width: '100%', height: '100%',
+            padding: '50px 70px 50px 70px',
+            boxSizing: 'border-box',
+            display: 'flex', flexDirection: 'column',
+            gap: 28,
+          }}>
+
+            {/* TOP HEADER */}
+            <div style={{
+              display:'flex', justifyContent:'space-between', alignItems:'flex-start',
+              gap: 24, flexShrink: 0,
+              animation: 'rdaFadeUp 0.6s 0.1s ease-out both',
+            }}>
+              <div style={{ whiteSpace: 'nowrap', flexShrink: 0 }}>
+                <RDALogo size={32} />
+              </div>
+              <div style={{ textAlign:'right', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                <div style={{
+                  fontFamily: RDA.mono, fontSize: 13, letterSpacing: 2.5,
+                  color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase',
+                }}>Mercredi 21 mai 2026 · 14:08 LOCAL</div>
+                <div style={{
+                  marginTop: 6,
+                  display:'inline-flex', alignItems:'center', gap: 8,
+                  fontFamily: RDA.mono, fontSize: 12, letterSpacing: 2.5,
+                  color: RDA.neon, textTransform: 'uppercase',
+                }}>
+                  <span style={{
+                    width: 7, height: 7, borderRadius: '50%', background: RDA.neon,
+                    boxShadow: `0 0 10px ${RDA.neon}`,
+                    animation: 'rdaPulse 1.4s ease-in-out infinite',
+                  }}/>
+                  Surveillance active · 35 aéroports
+                </div>
+              </div>
+            </div>
+
+            {/* DAKAR WORDMARK */}
+            <div style={{
+              flexShrink: 0,
+              animation: 'rdaFadeUp 0.7s 0.3s ease-out both',
+            }}>
+              <div style={{
+                display:'flex', alignItems:'baseline', gap: 8,
+              }}>
+                <h1 style={{
+                  margin: 0, paddingRight: 22,
+                  fontFamily: RDA.display, fontWeight: 400, fontStyle: 'italic',
+                  fontSize: 130, lineHeight: 0.95,
+                  color: RDA.white, letterSpacing: -3,
+                  whiteSpace: 'nowrap',
+                }}>Dakar</h1>
+                <div style={{
+                  fontFamily: RDA.mono, fontSize: 46, fontWeight: 300,
+                  color: RDA.gold, letterSpacing: 8,
+                  textShadow: `0 0 20px ${RDA.gold}66`,
+                  paddingBottom: 18,
+                  whiteSpace: 'nowrap',
+                }}>· DSS</div>
+              </div>
+              <div style={{
+                marginTop: 4,
+                display: 'flex', alignItems: 'center', gap: 14,
+                fontFamily: RDA.mono, fontSize: 14, letterSpacing: 2.5,
+                color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase',
+                whiteSpace: 'nowrap',
+              }}>
+                <span>Aéroport Blaise Diagne</span>
+                <span style={{ width: 6, height: 6, borderRadius: '50%', background: RDA.gold, opacity: 0.7 }}/>
+                <span style={{ color: RDA.gold }}>Salaam · Bienvenue</span>
+              </div>
+            </div>
+
+            {/* FIDS PANEL — trimmed: just the example row, no extra strip so the 600 € hero gets the room it needs */}
+            <div style={{
+              flexShrink: 0,
+              background: 'rgba(6, 14, 25, 0.85)',
+              border: `1px solid ${RDA.hairline}`,
+              borderRadius: 6,
+              boxShadow: `0 24px 60px rgba(0,0,0,0.5), inset 0 0 60px rgba(0,229,160,0.03)`,
+              overflow: 'hidden',
+              position: 'relative',
+              animation: 'rdaFadeUp 0.7s 0.5s ease-out both',
+              backgroundImage: `repeating-linear-gradient(
+                0deg,
+                rgba(255,255,255,0.02) 0px,
+                rgba(255,255,255,0.02) 1px,
+                transparent 1px,
+                transparent 3px
+              )`,
+            }}>
+              {/* Démonstration banner */}
+              <div style={{
+                padding:'8px 24px',
+                background: 'rgba(192, 57, 43, 0.18)',
+                borderBottom: `1px solid ${RDA.alertHi}55`,
+                display:'flex', alignItems:'center', justifyContent:'space-between',
+                fontFamily: RDA.mono, fontSize: 11, letterSpacing: 3,
+                color: RDA.alertHi, textTransform: 'uppercase', fontWeight: 500,
+              }}>
+                <span style={{ display:'inline-flex', alignItems:'center', gap: 10 }}>
+                  <span style={{
+                    width: 6, height: 6, borderRadius:'50%', background: RDA.alertHi,
+                    animation:'rdaPulse 1.2s ease-in-out infinite',
+                  }}/>
+                  Démonstration · Cas d’école
+                </span>
+                <span style={{ color:'rgba(255,255,255,0.5)' }}>Pas un horaire réel</span>
+              </div>
+
+              {/* FIDS header */}
+              <div style={{
+                display:'grid',
+                gridTemplateColumns:'120px 1fr 70px 110px 220px',
+                padding:'10px 24px',
+                borderBottom: `1px solid ${RDA.neon}33`,
+                background: 'rgba(0, 229, 160, 0.04)',
+                fontFamily: RDA.mono, fontSize: 11, letterSpacing: 3,
+                color: RDA.neon, textTransform: 'uppercase',
+                fontWeight: 500,
+              }}>
+                <div>Vol</div>
+                <div>Destination</div>
+                <div style={{ textAlign:'center' }}>Porte</div>
+                <div>Départ</div>
+                <div style={{ textAlign:'right' }}>Statut</div>
+              </div>
+
+              <FidsRow flight="XX 000" dest="Europe (exemple)" gate="—" time="09:55" status="Retardé +4h" statusColor={RDA.alertHi} highlight />
+            </div>
+
+            {/* HERO AMOUNT — 600 € as the unambiguous focal point */}
+            <div style={{
+              flex: 1, minHeight: 0,
+              display:'flex', flexDirection:'column', justifyContent:'center',
+              alignItems:'center', textAlign:'center', gap: 14,
+              animation: 'rdaFadeUp 0.8s 1s ease-out both',
+            }}>
+              <div style={{
+                fontFamily: RDA.mono, fontSize: 14, letterSpacing: 3.5,
+                color: RDA.alertHi, textTransform: 'uppercase',
+                animation: 'rdaAlert 1.4s ease-in-out infinite',
+                whiteSpace: 'nowrap',
+              }}>Vol retardé +3 h · indemnité due</div>
+
+              <div style={{
+                display:'flex', alignItems:'baseline', justifyContent:'center', gap: 8,
+                whiteSpace: 'nowrap',
+              }}>
+                <span style={{
+                  fontFamily: RDA.display, fontWeight: 500,
+                  fontSize: 340, lineHeight: 0.85,
+                  color: RDA.goldHi, letterSpacing: -14,
+                  textShadow: `0 0 60px ${RDA.gold}88, 0 0 24px ${RDA.gold}aa`,
+                }}>600</span>
+                <span style={{
+                  fontFamily: RDA.display, fontWeight: 400,
+                  fontSize: 200, lineHeight: 0.85,
+                  color: RDA.goldHi,
+                  textShadow: `0 0 40px ${RDA.gold}66`,
+                }}>€</span>
+              </div>
+
+              <div style={{
+                fontFamily: RDA.display, fontStyle: 'italic', fontWeight: 400,
+                fontSize: 38, lineHeight: 1.2, color: RDA.white,
+                maxWidth: 800, textWrap: 'pretty',
+              }}>
+                Ton vol est retardé. <span style={{ color: RDA.neon, textShadow: `0 0 14px ${RDA.neon}55` }}>Ton argent t’attend.</span>
+              </div>
+
+              <div style={{
+                fontFamily: RDA.mono, fontSize: 13, letterSpacing: 2.5,
+                color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase',
+                whiteSpace: 'nowrap', marginTop: 4,
+              }}>
+                Par passager · Règlement européen CE 261/2004
+              </div>
+            </div>
+
+            {/* FOOTER / CTA */}
+            <div style={{
+              display:'flex', alignItems:'center', justifyContent:'space-between',
+              gap: 24, flexShrink: 0,
+              animation: 'rdaFadeUp 0.6s 1.3s ease-out both',
+            }}>
+              {/* WhatsApp pill */}
+              <div style={{
+                display:'flex', alignItems:'center', gap: 14,
+                padding:'12px 20px',
+                borderRadius: 999,
+                background: RDA.whatsapp,
+                boxShadow: `0 12px 32px ${RDA.whatsapp}66, 0 0 0 1px rgba(255,255,255,0.18) inset`,
+                flexShrink: 0, whiteSpace: 'nowrap',
+              }}>
+                <div style={{
+                  width: 34, height: 34, borderRadius: '50%',
+                  background: '#fff',
+                  display:'flex', alignItems:'center', justifyContent:'center',
+                  flexShrink: 0,
+                }}>
+                  <svg width="20" height="20" viewBox="0 0 32 32" fill="none">
+                    <path d="M16 3C8.8 3 3 8.8 3 16c0 2.4.7 4.7 1.9 6.7L3 29l6.5-1.8c1.9 1 4.2 1.6 6.5 1.6 7.2 0 13-5.8 13-13S23.2 3 16 3z" fill={RDA.whatsapp}/>
+                    <path d="M11.5 9.2c-.3-.7-.6-.7-.9-.7h-.7c-.3 0-.7.1-1.1.5-.4.4-1.4 1.4-1.4 3.3 0 1.9 1.4 3.8 1.6 4.1.2.3 2.8 4.4 6.8 6 3.4 1.3 4 1 4.7.9.7-.1 2.3-.9 2.6-1.9.3-.9.3-1.7.2-1.9-.1-.2-.4-.3-.8-.5-.4-.2-2.3-1.1-2.7-1.3-.4-.1-.6-.2-.9.2-.3.4-1 1.3-1.3 1.5-.2.3-.5.3-.8.1-.4-.2-1.6-.6-3-1.8-1.1-1-1.9-2.2-2.1-2.5-.2-.4 0-.6.2-.8l.6-.7c.2-.2.3-.4.4-.6.1-.3.1-.5 0-.7-.1-.2-.9-2.2-1.2-2.9z" fill="#fff"/>
+                  </svg>
+                </div>
+                <div>
+                  <div style={{
+                    fontFamily: RDA.body, fontWeight: 600, fontSize: 22,
+                    color: '#fff', letterSpacing: 0.3, lineHeight: 1,
+                    whiteSpace: 'nowrap',
+                  }}>Réclamer en 3 minutes</div>
+                  <div style={{
+                    fontFamily: RDA.mono, fontSize: 11, letterSpacing: 1.5,
+                    color: 'rgba(255,255,255,0.85)', marginTop: 4,
+                    whiteSpace: 'nowrap',
+                  }}>WhatsApp · +33 7 56 86 36 30</div>
+                </div>
+              </div>
+              {/* Proof bar */}
+              <div style={{
+                fontFamily: RDA.mono, fontSize: 12, letterSpacing: 2.2,
+                color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase',
+                textAlign: 'right', lineHeight: 1.7,
+                flexShrink: 0, whiteSpace: 'nowrap',
+              }}>
+                <div><span style={{ color: RDA.neon }}>★</span> 9/10 gagnés</div>
+                <div>Zéro frais si on perd</div>
+                <div>Part de succès · 25 %</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function App() {
+      return <Stage><Composition/></Stage>;
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+  </script>
+</body>
+</html>

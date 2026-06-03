@@ -1,0 +1,3152 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Robin des Airs — Posts Instagram 1:1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=Barlow+Condensed:wght@200;300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      font-family: "Barlow Condensed", system-ui, sans-serif;
+      background: #07111e;
+      -webkit-font-smoothing: antialiased;
+      color: #fff;
+      overflow: hidden;
+    }
+    #root { width: 100vw; height: 100vh; }
+    body {
+      background:
+        radial-gradient(900px 600px at 20% 10%, rgba(0,229,160,0.06), transparent 60%),
+        radial-gradient(700px 500px at 80% 90%, rgba(201,169,110,0.04), transparent 60%),
+        linear-gradient(160deg, #07111e 0%, #0d1f35 100%);
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- Pre-seed canvas viewport so 12 large 1080×1080 artboards fit on first paint -->
+  <script>
+    (function() {
+      try {
+        const key = 'dc-viewport:' + location.pathname;
+        const cur = localStorage.getItem(key);
+        const isDefault = !cur || cur === '{"x":0,"y":0,"scale":1}';
+        if (!isDefault) return;
+        const vw = window.innerWidth, vh = window.innerHeight;
+        const worldW = 4 * 1080 + 3 * 48 + 120;
+        const worldH = 3 * 1080 + 2 * 48 + 240;
+        const scale = Math.min(vw / worldW, vh / worldH) * 0.95;
+        const x = (vw - worldW * scale) / 2;
+        const y = (vh - worldH * scale) / 2 - 30;
+        localStorage.setItem(key, JSON.stringify({ x, y, scale }));
+      } catch (e) {}
+    })();
+  </script>
+
+  <script type="application/json" id="rda-meta">
+    { "brand": "Robin des Airs", "version": "1.0", "format": "1:1 · 1080×1080 · Instagram Feed" }
+  </script>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <!-- ===== Brand atoms (RDA tokens, Starfield, NeonBar, RDALogo, Eyebrow, CountUp, useLoop) ===== -->
+  <script type="text/babel" data-presets="react" data-source="stories/brand.jsx">
+// Robin des Airs — Brand atoms (dark/neon charter)
+// Shared visual building blocks for the stories deliverable.
+
+const { useEffect: useEffectBrand, useRef: useRefBrand, useState: useStateBrand, useMemo: useMemoBrand } = React;
+
+// ─── Brand tokens ──────────────────────────────────────────
+const RDA = {
+  ink:      '#0d1f35',  // main dark night-blue
+  inkDeep:  '#07111e',  // darker
+  inkMid:   '#122848',  // cards / sections
+  inkText:  '#060e19',  // text background panels
+  neon:     '#00e5a0',  // signature neon green
+  neonDeep: '#00c98e',  // gradient neon
+  gold:     '#c9a96e',  // premium detail
+  goldHi:   '#f0d080',  // bright money
+  white:    '#ffffff',
+  whatsapp: '#25d366',  // WhatsApp CTA only
+  alert:    '#c0392b',  // urgency only
+  faint:    'rgba(255,255,255,0.55)',
+  hairline: 'rgba(255,255,255,0.10)',
+  display:  '"Cormorant Garamond", "Cormorant", Georgia, serif',
+  body:     '"Barlow Condensed", "Barlow", system-ui, sans-serif',
+  mono:     '"DM Mono", "JetBrains Mono", ui-monospace, monospace',
+};
+
+// ─── i18n strings ─────────────────────────────────────────
+const STRINGS = {
+  fr: {
+    tagline: 'Spécialiste liaisons Europe · Afrique',
+    proofBar: '9/10 gagnés  ·  Zéro frais si on perd  ·  Paris',
+    sigBar: 'WhatsApp  ·  Europe · Afrique  ·  25% si on gagne',
+    whatsapp: 'Ouvrir WhatsApp',
+    whatsappSub: 'Réponse en moins de 3 min',
+    perPassenger: 'par passager',
+    regulation: 'Règlement européen CE 261/2004',
+    routes: 'Routes Europe · Afrique  ·  +3\u202fh de retard',
+    // Story 1 — Tip
+    s1Eyebrow: 'Saviez-vous que',
+    s1Body: "Tout passager dont le vol Europe ↔ Afrique a plus de 3 heures de retard a droit à une indemnisation forfaitaire.",
+    s1Foot: 'Loi européenne · 5 ans de prescription',
+    // Story 2 — Alert
+    s2Eyebrow: 'Retard détecté',
+    s2Route: 'Dakar  →  Paris',
+    s2Flight: 'AF 719 · 21 mai 2026',
+    s2Delay: 'Retard',
+    s2DelayValue: '4 h 12',
+    s2Bottom: '300 passagers concernés · 600 € chacun',
+    s2Cta: 'Réclamer en 3 minutes',
+    // Story 3 — Stat shock
+    s3Eyebrow: 'Le chiffre',
+    s3Stat: '92%',
+    s3StatLine: 'des passagers ne réclament jamais',
+    s3Calc1: '300 passagers',
+    s3CalcMul: '×',
+    s3Calc2: '600 €',
+    s3CalcEq: '=',
+    s3Total: '180\u202f000 €',
+    s3TotalCaption: 'que la compagnie garde par vol si personne ne réclame',
+    // Story 4 — Before / After
+    s4Eyebrow: 'Pourquoi nous',
+    s4Before: 'Ailleurs',
+    s4After:  'Robin des Airs',
+    s4Row1: ['Commission', '35 %', '25 %'],
+    s4Row2: ['Contact', 'Formulaire web · 15 min', 'WhatsApp · 3 min'],
+    s4Row3: ['Routes Afrique', 'Non couvertes', '35 aéroports · 54 routes'],
+    s4Row4: ['Langues', 'Anglais', 'Wolof · Bambara · Lingala · +7'],
+    s4Foot: 'Le moins cher du marché',
+  },
+  en: {
+    tagline: 'Europe · Africa flight specialist',
+    proofBar: '9/10 won  ·  No win no fee  ·  Paris',
+    sigBar: 'WhatsApp  ·  Europe · Africa  ·  25% if we win',
+    whatsapp: 'Open WhatsApp',
+    whatsappSub: 'Reply in under 3 min',
+    perPassenger: 'per passenger',
+    regulation: 'EU Regulation EC 261/2004',
+    routes: 'Europe · Africa routes  ·  3+ h delay',
+    // Story 1
+    s1Eyebrow: 'Did you know',
+    s1Body: 'Any passenger on a Europe ↔ Africa flight delayed by more than 3 hours is owed flat-rate compensation.',
+    s1Foot: 'EU law · 5-year claim window',
+    // Story 2
+    s2Eyebrow: 'Delay detected',
+    s2Route: 'Dakar  →  Paris',
+    s2Flight: 'AF 719 · 21 May 2026',
+    s2Delay: 'Delay',
+    s2DelayValue: '4 h 12',
+    s2Bottom: '300 passengers affected · €600 each',
+    s2Cta: 'Claim in 3 minutes',
+    // Story 3
+    s3Eyebrow: 'The number',
+    s3Stat: '92%',
+    s3StatLine: 'of passengers never claim',
+    s3Calc1: '300 passengers',
+    s3CalcMul: '×',
+    s3Calc2: '€600',
+    s3CalcEq: '=',
+    s3Total: '€180,000',
+    s3TotalCaption: 'kept by the airline per flight if nobody claims',
+    // Story 4
+    s4Eyebrow: 'Why us',
+    s4Before: 'Elsewhere',
+    s4After:  'Robin des Airs',
+    s4Row1: ['Commission', '35 %', '25 %'],
+    s4Row2: ['Contact', 'Web form · 15 min', 'WhatsApp · 3 min'],
+    s4Row3: ['Africa routes', 'Not covered', '35 airports · 54 routes'],
+    s4Row4: ['Languages', 'English', 'Wolof · Bambara · Lingala · +7'],
+    s4Foot: 'Cheapest on the market',
+  },
+};
+
+// ─── Starfield background ──────────────────────────────────
+// Deterministic seeded stars so they're stable, with subtle twinkle.
+function rdaSeed(n) {
+  // mulberry32
+  let s = n >>> 0;
+  return () => {
+    s += 0x6D2B79F5;
+    let t = s;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function Starfield({ density = 80, seed = 42, accent = RDA.neon }) {
+  const stars = useMemoBrand(() => {
+    const r = rdaSeed(seed);
+    return Array.from({ length: density }, (_, i) => {
+      const size = 0.6 + r() * 2.2;
+      return {
+        x: r() * 100,
+        y: r() * 100,
+        size,
+        opacity: 0.25 + r() * 0.6,
+        delay: r() * 6,
+        dur: 3 + r() * 5,
+        tinted: r() > 0.93, // a few faint neon stars
+      };
+    });
+  }, [density, seed]);
+  return (
+    <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
+      {/* aurora-like glow at top */}
+      <div style={{
+        position: 'absolute', top: '-15%', left: '-10%', right: '-10%', height: '55%',
+        background: `radial-gradient(ellipse at 30% 40%, ${accent}22 0%, transparent 55%),
+                     radial-gradient(ellipse at 75% 20%, ${RDA.inkMid}cc 0%, transparent 60%)`,
+        filter: 'blur(40px)',
+      }}/>
+      {/* stars */}
+      {stars.map((s, i) => (
+        <div key={i} style={{
+          position: 'absolute',
+          left: `${s.x}%`, top: `${s.y}%`,
+          width: s.size, height: s.size, borderRadius: '50%',
+          background: s.tinted ? accent : '#fff',
+          opacity: s.opacity,
+          boxShadow: s.size > 1.8 ? `0 0 ${s.size*3}px ${s.tinted ? accent : 'rgba(255,255,255,0.7)'}` : 'none',
+          animation: `rdaTwinkle ${s.dur}s ease-in-out ${s.delay}s infinite`,
+        }}/>
+      ))}
+    </div>
+  );
+}
+
+// ─── Decorative neon bars (top + bottom of stories) ────────
+function NeonBar({ position = 'top', accent = RDA.neon }) {
+  const isTop = position === 'top';
+  return (
+    <div style={{
+      position: 'absolute', left: 0, right: 0,
+      [isTop ? 'top' : 'bottom']: 0,
+      height: 4,
+      background: `linear-gradient(90deg, transparent 0%, ${accent} 20%, ${RDA.neonDeep} 50%, ${accent} 80%, transparent 100%)`,
+      boxShadow: `0 0 24px ${accent}aa, 0 0 6px ${accent}`,
+      zIndex: 4,
+    }}/>
+  );
+}
+
+// ─── Logo wordmark ─────────────────────────────────────────
+function RDALogo({ size = 48, accent = RDA.neon, align = 'center' }) {
+  return (
+    <div style={{
+      display: 'inline-flex', flexDirection: 'column',
+      alignItems: align === 'center' ? 'center' : 'flex-start',
+      lineHeight: 0.85,
+    }}>
+      <div style={{
+        fontFamily: RDA.display, fontWeight: 600,
+        fontSize: size, color: RDA.white,
+        letterSpacing: -size * 0.025,
+      }}>
+        ROBIN <span style={{
+          fontStyle: 'italic', fontWeight: 400, color: accent,
+          textShadow: `0 0 18px ${accent}88`,
+        }}>des Airs</span>
+      </div>
+    </div>
+  );
+}
+
+// ─── Signature bar at top of story ─────────────────────────
+function SignatureBar({ lang = 'fr', accent = RDA.neon }) {
+  const S = STRINGS[lang];
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      padding: '0 8px',
+      fontFamily: RDA.mono, fontSize: 18, letterSpacing: 0.5,
+      color: RDA.faint, textTransform: 'uppercase',
+    }}>
+      <span>RobinDesAirs.eu</span>
+      <span style={{
+        display: 'inline-flex', alignItems: 'center', gap: 8,
+      }}>
+        <span style={{
+          width: 8, height: 8, borderRadius: '50%', background: accent,
+          boxShadow: `0 0 12px ${accent}`,
+          animation: 'rdaPulse 1.6s ease-in-out infinite',
+        }}/>
+        Paris
+      </span>
+    </div>
+  );
+}
+
+// ─── WhatsApp CTA button ───────────────────────────────────
+function WhatsAppCTA({ lang = 'fr', label }) {
+  const S = STRINGS[lang];
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', gap: 16,
+      padding: '20px 24px',
+      borderRadius: 999,
+      background: RDA.whatsapp,
+      boxShadow: `0 14px 40px ${RDA.whatsapp}66, 0 0 0 1px rgba(255,255,255,0.18) inset`,
+    }}>
+      {/* WA glyph (geometric circle + chat tail) */}
+      <div style={{
+        width: 44, height: 44, borderRadius: '50%',
+        background: '#fff',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        flexShrink: 0,
+      }}>
+        <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+          <path d="M16 3C8.8 3 3 8.8 3 16c0 2.4.7 4.7 1.9 6.7L3 29l6.5-1.8c1.9 1 4.2 1.6 6.5 1.6 7.2 0 13-5.8 13-13S23.2 3 16 3z" fill={RDA.whatsapp}/>
+          <path d="M11.5 9.2c-.3-.7-.6-.7-.9-.7h-.7c-.3 0-.7.1-1.1.5-.4.4-1.4 1.4-1.4 3.3 0 1.9 1.4 3.8 1.6 4.1.2.3 2.8 4.4 6.8 6 3.4 1.3 4 1 4.7.9.7-.1 2.3-.9 2.6-1.9.3-.9.3-1.7.2-1.9-.1-.2-.4-.3-.8-.5-.4-.2-2.3-1.1-2.7-1.3-.4-.1-.6-.2-.9.2-.3.4-1 1.3-1.3 1.5-.2.3-.5.3-.8.1-.4-.2-1.6-.6-3-1.8-1.1-1-1.9-2.2-2.1-2.5-.2-.4 0-.6.2-.8l.6-.7c.2-.2.3-.4.4-.6.1-.3.1-.5 0-.7-.1-.2-.9-2.2-1.2-2.9z" fill="#fff"/>
+        </svg>
+      </div>
+      <div style={{
+        display: 'flex', flexDirection: 'column', gap: 2,
+      }}>
+        <span style={{
+          fontFamily: RDA.body, fontWeight: 600, fontSize: 28, color: '#fff',
+          letterSpacing: 0.3, lineHeight: 1,
+        }}>{label || S.whatsapp}</span>
+        <span style={{
+          fontFamily: RDA.mono, fontSize: 13, color: 'rgba(255,255,255,0.85)',
+          letterSpacing: 0.5,
+        }}>+33 7 56 86 36 30  ·  {S.whatsappSub}</span>
+      </div>
+    </div>
+  );
+}
+
+// ─── Tagline (small caps eyebrow) ──────────────────────────
+function Eyebrow({ children, accent = RDA.neon, size = 18 }) {
+  return (
+    <div style={{
+      display: 'inline-flex', alignItems: 'center', gap: 12,
+      fontFamily: RDA.mono, fontSize: size, letterSpacing: 2.5,
+      color: accent, textTransform: 'uppercase',
+    }}>
+      <span style={{
+        width: 28, height: 1, background: accent, boxShadow: `0 0 8px ${accent}`,
+      }}/>
+      {children}
+    </div>
+  );
+}
+
+// ─── Proof bar (bottom) ────────────────────────────────────
+function ProofBar({ lang = 'fr', accent = RDA.neon }) {
+  const S = STRINGS[lang];
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+      padding: '14px 18px',
+      borderRadius: 999,
+      background: 'rgba(255,255,255,0.04)',
+      border: `1px solid ${RDA.hairline}`,
+      backdropFilter: 'blur(8px)',
+      fontFamily: RDA.mono, fontSize: 16, letterSpacing: 1.5,
+      color: 'rgba(255,255,255,0.75)', textTransform: 'uppercase',
+    }}>
+      <span style={{ color: accent, textShadow: `0 0 8px ${accent}88` }}>★</span>
+      {S.proofBar}
+    </div>
+  );
+}
+
+// ─── Story frame — 9:16 canvas ─────────────────────────────
+function StoryFrame({ children, accent = RDA.neon, bg = RDA.ink, seed = 42, density = 80 }) {
+  return (
+    <div style={{
+      width: 1080, height: 1920, position: 'relative',
+      background: `radial-gradient(ellipse at 50% 0%, ${RDA.inkMid} 0%, ${bg} 55%, ${RDA.inkDeep} 100%)`,
+      overflow: 'hidden',
+      fontFamily: RDA.body,
+    }}>
+      <Starfield density={density} seed={seed} accent={accent} />
+      <NeonBar position="top" accent={accent} />
+      <NeonBar position="bottom" accent={accent} />
+      <div style={{ position: 'relative', zIndex: 5, width: '100%', height: '100%' }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// ─── Animated number counter ───────────────────────────────
+function CountUp({ to, duration = 1800, format = (n) => n, style, trigger = 0 }) {
+  const [val, setVal] = useStateBrand(0);
+  useEffectBrand(() => {
+    let raf;
+    const start = performance.now();
+    const tick = (now) => {
+      const t = Math.min(1, (now - start) / duration);
+      // easeOutCubic
+      const eased = 1 - Math.pow(1 - t, 3);
+      setVal(Math.round(to * eased));
+      if (t < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [to, duration, trigger]);
+  return <span style={style}>{format(val)}</span>;
+}
+
+// ─── Auto-loop hook : retriggers animations every N seconds ─
+function useLoop(period = 7000) {
+  const [tick, setTick] = useStateBrand(0);
+  useEffectBrand(() => {
+    const id = setInterval(() => setTick(t => t + 1), period);
+    return () => clearInterval(id);
+  }, [period]);
+  return tick;
+}
+
+// Inject keyframes once
+(function injectRDAKeyframes() {
+  if (document.getElementById('rda-keyframes')) return;
+  const s = document.createElement('style');
+  s.id = 'rda-keyframes';
+  s.textContent = `
+    @keyframes rdaTwinkle {
+      0%, 100% { opacity: 0.2; transform: scale(1); }
+      50%      { opacity: 1;   transform: scale(1.15); }
+    }
+    @keyframes rdaPulse {
+      0%, 100% { opacity: 1;   transform: scale(1); }
+      50%      { opacity: 0.45; transform: scale(0.85); }
+    }
+    @keyframes rdaAlertPulse {
+      0%, 100% { opacity: 0.6; }
+      50%      { opacity: 1; }
+    }
+    @keyframes rdaFadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes rdaFadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes rdaSlideIn {
+      from { opacity: 0; transform: translateX(-40px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes rdaScaleIn {
+      from { opacity: 0; transform: scale(0.6); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    @keyframes rdaDashRoll {
+      to { stroke-dashoffset: -40; }
+    }
+    @keyframes rdaGlow {
+      0%, 100% { text-shadow: 0 0 18px currentColor; }
+      50%      { text-shadow: 0 0 38px currentColor, 0 0 80px currentColor; }
+    }
+    @keyframes rdaRotate {
+      to { transform: rotate(360deg); }
+    }
+  `;
+  document.head.appendChild(s);
+})();
+
+Object.assign(window, {
+  RDA, STRINGS, Starfield, NeonBar, RDALogo, SignatureBar,
+  WhatsAppCTA, Eyebrow, ProofBar, StoryFrame, CountUp, useLoop,
+});
+  </script>
+
+  <!-- ===== Design canvas ===== -->
+  <script type="text/babel" data-presets="react" data-source="stories/design-canvas.jsx">
+// DesignCanvas.jsx — Figma-ish design canvas wrapper
+// Warm gray grid bg + Sections + Artboards + PostIt notes.
+// Artboards are reorderable (grip-drag), deletable, labels/titles are
+// inline-editable, and any artboard can be opened in a fullscreen focus
+// overlay (←/→/Esc). State persists to a .design-canvas.state.json sidecar
+// via the host bridge. No assets, no deps.
+//
+// Usage:
+//   <DesignCanvas>
+//     <DCSection id="onboarding" title="Onboarding" subtitle="First-run variants">
+//       <DCArtboard id="a" label="A · Dusk" width={260} height={480}>…</DCArtboard>
+//       <DCArtboard id="b" label="B · Minimal" width={260} height={480}>…</DCArtboard>
+//     </DCSection>
+//   </DesignCanvas>
+
+const DC = {
+  bg: '#f0eee9',
+  grid: 'rgba(0,0,0,0.06)',
+  label: 'rgba(60,50,40,0.7)',
+  title: 'rgba(40,30,20,0.85)',
+  subtitle: 'rgba(60,50,40,0.6)',
+  postitBg: '#fef4a8',
+  postitText: '#5a4a2a',
+  font: '-apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif',
+};
+
+// One-time CSS injection (classes are dc-prefixed so they don't collide with
+// the hosted design's own styles).
+if (typeof document !== 'undefined' && !document.getElementById('dc-styles')) {
+  const s = document.createElement('style');
+  s.id = 'dc-styles';
+  s.textContent = [
+    '.dc-editable{cursor:text;outline:none;white-space:nowrap;border-radius:3px;padding:0 2px;margin:0 -2px}',
+    '.dc-editable:focus{background:#fff;box-shadow:0 0 0 1.5px #c96442}',
+    '[data-dc-slot]{transition:transform .18s cubic-bezier(.2,.7,.3,1)}',
+    '[data-dc-slot].dc-dragging{transition:none;z-index:10;pointer-events:none}',
+    '[data-dc-slot].dc-dragging .dc-card{box-shadow:0 12px 40px rgba(0,0,0,.25),0 0 0 2px #c96442;transform:scale(1.02)}',
+    // isolation:isolate contains artboard content's z-indexes so a
+    // z-indexed child (sticky navbar etc.) can't paint over .dc-header or
+    // the .dc-menu popover that drops into the top of the card.
+    '.dc-card{isolation:isolate;transition:box-shadow .15s,transform .15s}',
+    '.dc-card *{scrollbar-width:none}',
+    '.dc-card *::-webkit-scrollbar{display:none}',
+    // Per-artboard header: grip + label on the left, delete/expand on the
+    // right. Single flex row; when the artboard's on-screen width is too
+    // narrow for both the label yields (ellipsis, then hidden entirely below
+    // ~4ch via the container query) and the buttons stay on the row.
+    '.dc-header{position:absolute;bottom:100%;left:-4px;margin-bottom:calc(4px * var(--dc-inv-zoom,1));z-index:2;',
+    '  display:flex;align-items:center;container-type:inline-size}',
+    '.dc-labelrow{display:flex;align-items:center;gap:4px;height:24px;flex:1 1 auto;min-width:0}',
+    '.dc-grip{flex:0 0 auto;cursor:grab;display:flex;align-items:center;padding:5px 4px;border-radius:4px;transition:background .12s,opacity .12s}',
+    '.dc-grip:hover{background:rgba(0,0,0,.08)}',
+    '.dc-grip:active{cursor:grabbing}',
+    '.dc-labeltext{flex:1 1 auto;min-width:0;cursor:pointer;border-radius:4px;padding:3px 6px;',
+    '  display:flex;align-items:center;transition:background .12s;overflow:hidden}',
+    // Below ~4ch of label room: hide the label entirely, and drop the grip to
+    // hover-only (same reveal rule as .dc-btns) so a narrow header is clean
+    // until the card is moused.
+    '@container (max-width: 110px){',
+    '  .dc-labeltext{display:none}',
+    '  .dc-grip{opacity:0}',
+    '  [data-dc-slot]:hover .dc-grip{opacity:1}',
+    '}',
+    '.dc-labeltext:hover{background:rgba(0,0,0,.05)}',
+    '.dc-labeltext .dc-editable{overflow:hidden;text-overflow:ellipsis;max-width:100%}',
+    '.dc-labeltext .dc-editable:focus{overflow:visible;text-overflow:clip}',
+    '.dc-btns{flex:0 0 auto;margin-left:auto;display:flex;gap:2px;opacity:0;transition:opacity .12s}',
+    '[data-dc-slot]:hover .dc-btns,.dc-btns:has(.dc-menu){opacity:1}',
+    '.dc-expand,.dc-kebab{width:22px;height:22px;border-radius:5px;border:none;cursor:pointer;padding:0;',
+    '  background:transparent;color:rgba(60,50,40,.7);display:flex;align-items:center;justify-content:center;',
+    '  font:inherit;transition:background .12s,color .12s}',
+    '.dc-expand:hover,.dc-kebab:hover{background:rgba(0,0,0,.06);color:#2a251f}',
+    // Slot hosting an open menu floats above later siblings (which otherwise
+    // paint on top — same z-index:auto, later DOM order) so the popup isn't
+    // clipped by the next card.
+    '[data-dc-slot]:has(.dc-menu){z-index:10}',
+    '.dc-menu{position:absolute;top:100%;right:0;margin-top:4px;background:#fff;border-radius:8px;',
+    '  box-shadow:0 8px 28px rgba(0,0,0,.18),0 0 0 1px rgba(0,0,0,.05);padding:4px;min-width:160px;z-index:10}',
+    '.dc-menu button{display:block;width:100%;padding:7px 10px;border:0;background:transparent;',
+    '  border-radius:5px;font-family:inherit;font-size:13px;font-weight:500;line-height:1.2;',
+    '  color:#29261b;cursor:pointer;text-align:left;transition:background .12s;white-space:nowrap}',
+    '.dc-menu button:hover{background:rgba(0,0,0,.05)}',
+    '.dc-menu hr{border:0;border-top:1px solid rgba(0,0,0,.08);margin:4px 2px}',
+    '.dc-menu .dc-danger{color:#c96442}',
+    '.dc-menu .dc-danger:hover{background:rgba(201,100,66,.1)}',
+    // Chrome (titles / labels / buttons) counter-scales against the viewport
+    // zoom so it stays a constant on-screen size. --dc-inv-zoom is set by
+    // DCViewport on every transform update and inherits to all descendants —
+    // any overlay inside the world (e.g. a TweaksPanel on an artboard) can use
+    // it the same way.
+    //
+    // The header uses transform:scale (out-of-flow, so layout impact doesn't
+    // matter) with its world-space width set to card-width / inv-zoom so that
+    // after counter-scaling its on-screen width exactly matches the card's —
+    // that's what lets the container query + text-overflow behave against the
+    // card's visible edge at every zoom level.
+    //
+    // The section head uses CSS zoom instead of transform so its layout box
+    // grows with the counter-scale, pushing the card row down — otherwise the
+    // constant-screen-size title would overflow into the (shrinking) world-
+    // space gap and overlap the artboard headers at low zoom.
+    '.dc-header{width:calc((100% + 4px) / var(--dc-inv-zoom,1));',
+    '  transform:scale(var(--dc-inv-zoom,1));transform-origin:bottom left}',
+    '.dc-sectionhead{zoom:var(--dc-inv-zoom,1)}',
+  ].join('\n');
+  document.head.appendChild(s);
+}
+
+const DCCtx = React.createContext(null);
+
+// Recursively unwrap React.Fragment so <>…</> grouping doesn't hide
+// DCSection/DCArtboard children from the type-based walks below.
+function dcFlatten(children) {
+  const out = [];
+  React.Children.forEach(children, (c) => {
+    if (c && c.type === React.Fragment) out.push(...dcFlatten(c.props.children));
+    else out.push(c);
+  });
+  return out;
+}
+
+// ─────────────────────────────────────────────────────────────
+// DesignCanvas — stateful wrapper around the pan/zoom viewport.
+// Owns runtime state (per-section order, renamed titles/labels, hidden
+// artboards, focused artboard). Order/titles/labels/hidden persist to a
+// .design-canvas.state.json
+// sidecar next to the HTML. Reads go via plain fetch() so the saved
+// arrangement is visible anywhere the HTML + sidecar are served together
+// (omelette preview, direct link, downloaded zip). Writes go through the
+// host's window.omelette bridge — editing requires the omelette runtime.
+// Focus is ephemeral.
+// ─────────────────────────────────────────────────────────────
+const DC_STATE_FILE = '.design-canvas.state.json';
+
+function DesignCanvas({ children, minScale, maxScale, style }) {
+  const [state, setState] = React.useState({ sections: {}, focus: null });
+  // Hold rendering until the sidecar read settles so the saved order/titles
+  // appear on first paint (no source-order flash). didRead gates writes until
+  // the read settles so the empty initial state can't clobber a slow read;
+  // skipNextWrite suppresses the one echo-write that would otherwise follow
+  // hydration.
+  const [ready, setReady] = React.useState(false);
+  const didRead = React.useRef(false);
+  const skipNextWrite = React.useRef(false);
+
+  React.useEffect(() => {
+    let off = false;
+    fetch('./' + DC_STATE_FILE)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((saved) => {
+        if (off || !saved || !saved.sections) return;
+        skipNextWrite.current = true;
+        setState((s) => ({ ...s, sections: saved.sections }));
+      })
+      .catch(() => {})
+      .finally(() => { didRead.current = true; if (!off) setReady(true); });
+    const t = setTimeout(() => { if (!off) setReady(true); }, 150);
+    return () => { off = true; clearTimeout(t); };
+  }, []);
+
+  React.useEffect(() => {
+    if (!didRead.current) return;
+    if (skipNextWrite.current) { skipNextWrite.current = false; return; }
+    const t = setTimeout(() => {
+      window.omelette?.writeFile(DC_STATE_FILE, JSON.stringify({ sections: state.sections })).catch(() => {});
+    }, 250);
+    return () => clearTimeout(t);
+  }, [state.sections]);
+
+  // Build registries synchronously from children so FocusOverlay can read
+  // them in the same render. Fragments are flattened; wrapping in other
+  // elements still opts out of focus/reorder.
+  const registry = {};     // slotId -> { sectionId, artboard }
+  const sectionMeta = {};  // sectionId -> { title, subtitle, slotIds[] }
+  const sectionOrder = [];
+  dcFlatten(children).forEach((sec) => {
+    if (!sec || sec.type !== DCSection) return;
+    const sid = sec.props.id ?? sec.props.title;
+    if (!sid) return;
+    sectionOrder.push(sid);
+    const persisted = state.sections[sid] || {};
+    const abs = [];
+    dcFlatten(sec.props.children).forEach((ab) => {
+      if (!ab || ab.type !== DCArtboard) return;
+      const aid = ab.props.id ?? ab.props.label;
+      if (aid) abs.push([aid, ab]);
+    });
+    // hidden is scoped to one source revision — when the agent regenerates
+    // (artboard-ID set changes), prior deletes don't apply to new content.
+    const srcKey = abs.map(([k]) => k).join('\x1f');
+    const hidden = persisted.srcKey === srcKey ? (persisted.hidden || []) : [];
+    const srcIds = [];
+    abs.forEach(([aid, ab]) => {
+      if (hidden.includes(aid)) return;
+      registry[`${sid}/${aid}`] = { sectionId: sid, artboard: ab };
+      srcIds.push(aid);
+    });
+    const kept = (persisted.order || []).filter((k) => srcIds.includes(k));
+    sectionMeta[sid] = {
+      title: persisted.title ?? sec.props.title,
+      subtitle: sec.props.subtitle,
+      slotIds: [...kept, ...srcIds.filter((k) => !kept.includes(k))],
+    };
+  });
+
+  const api = React.useMemo(() => ({
+    state,
+    section: (id) => state.sections[id] || {},
+    patchSection: (id, p) => setState((s) => ({
+      ...s,
+      sections: { ...s.sections, [id]: { ...s.sections[id], ...(typeof p === 'function' ? p(s.sections[id] || {}) : p) } },
+    })),
+    setFocus: (slotId) => setState((s) => ({ ...s, focus: slotId })),
+  }), [state]);
+
+  // Esc exits focus; any outside pointerdown commits an in-progress rename.
+  React.useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') api.setFocus(null); };
+    const onPd = (e) => {
+      const ae = document.activeElement;
+      if (ae && ae.isContentEditable && !ae.contains(e.target)) ae.blur();
+    };
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('pointerdown', onPd, true);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('pointerdown', onPd, true);
+    };
+  }, [api]);
+
+  return (
+    <DCCtx.Provider value={api}>
+      <DCViewport minScale={minScale} maxScale={maxScale} style={style}>{ready && children}</DCViewport>
+      {state.focus && registry[state.focus] && (
+        <DCFocusOverlay entry={registry[state.focus]} sectionMeta={sectionMeta} sectionOrder={sectionOrder} />
+      )}
+    </DCCtx.Provider>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// DCViewport — transform-based pan/zoom (internal)
+//
+// Input mapping (Figma-style):
+//   • trackpad pinch  → zoom   (ctrlKey wheel; Safari gesture* events)
+//   • trackpad scroll → pan    (two-finger)
+//   • mouse wheel     → zoom   (notched; distinguished from trackpad scroll)
+//   • middle-drag / primary-drag-on-bg → pan
+//
+// Transform state lives in a ref and is written straight to the DOM
+// (translate3d + will-change) so wheel ticks don't go through React —
+// keeps pans at 60fps on dense canvases.
+// ─────────────────────────────────────────────────────────────
+function DCViewport({ children, minScale = 0.1, maxScale = 8, style = {} }) {
+  const vpRef = React.useRef(null);
+  const worldRef = React.useRef(null);
+  const tf = React.useRef({ x: 0, y: 0, scale: 1 });
+  // Persist viewport across reloads so the user lands back where they were
+  // after an agent edit or browser refresh. The sandbox origin is already
+  // per-project; pathname keeps multiple canvas files in one project apart.
+  const tfKey = 'dc-viewport:' + location.pathname;
+  const saveT = React.useRef(0);
+
+  const lastPostedScale = React.useRef();
+  const apply = React.useCallback(() => {
+    const { x, y, scale } = tf.current;
+    const el = worldRef.current;
+    if (!el) return;
+    el.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
+    // Exposed for zoom-invariant chrome (labels, buttons, TweaksPanel).
+    el.style.setProperty('--dc-inv-zoom', String(1 / scale));
+    // Keep the host toolbar's % readout in sync with the canvas scale. Pan
+    // ticks leave scale unchanged — skip the cross-frame post for those.
+    if (lastPostedScale.current !== scale) {
+      lastPostedScale.current = scale;
+      window.parent.postMessage({ type: '__dc_zoom', scale }, '*');
+    }
+    clearTimeout(saveT.current);
+    saveT.current = setTimeout(() => {
+      try { localStorage.setItem(tfKey, JSON.stringify(tf.current)); } catch {}
+    }, 200);
+  }, [tfKey]);
+
+  React.useLayoutEffect(() => {
+    const flush = () => {
+      clearTimeout(saveT.current);
+      try { localStorage.setItem(tfKey, JSON.stringify(tf.current)); } catch {}
+    };
+    try {
+      const s = JSON.parse(localStorage.getItem(tfKey) || 'null');
+      if (s && Number.isFinite(s.x) && Number.isFinite(s.y) && Number.isFinite(s.scale)) {
+        tf.current = { x: s.x, y: s.y, scale: Math.min(maxScale, Math.max(minScale, s.scale)) };
+        apply();
+      }
+    } catch {}
+    // Flush on pagehide and unmount so a reload within the 200ms debounce
+    // window doesn't drop the last pan/zoom.
+    window.addEventListener('pagehide', flush);
+    return () => { window.removeEventListener('pagehide', flush); flush(); };
+  }, []);
+
+  React.useEffect(() => {
+    const vp = vpRef.current;
+    if (!vp) return;
+
+    const zoomAt = (cx, cy, factor) => {
+      const r = vp.getBoundingClientRect();
+      const px = cx - r.left, py = cy - r.top;
+      const t = tf.current;
+      const next = Math.min(maxScale, Math.max(minScale, t.scale * factor));
+      const k = next / t.scale;
+      // --dc-inv-zoom consumers (.dc-sectionhead's CSS zoom, each section's
+      // marginBottom) reflow on every scale change, vertically shifting the
+      // world layout — so a world point mathematically pinned under the cursor
+      // drifts as you zoom (content creeps up on zoom-in, down on zoom-out).
+      // Anchor the DOM element under the cursor instead: record its screen Y,
+      // apply the transform + --dc-inv-zoom, then cancel whatever vertical
+      // drift the reflow introduced so it stays put on screen.
+      let marker = null, markerY0 = 0;
+      if (k !== 1) {
+        const hit = document.elementFromPoint(cx, cy);
+        marker = hit && hit.closest ? hit.closest('[data-dc-slot],[data-dc-section]') : null;
+        if (marker) markerY0 = marker.getBoundingClientRect().top;
+      }
+      // keep the world point under the cursor fixed
+      t.x = px - (px - t.x) * k;
+      t.y = py - (py - t.y) * k;
+      t.scale = next;
+      apply();
+      if (marker) {
+        // A pure zoom around (cx, cy) maps screen Y → cy + (Y - cy) * k. Any
+        // departure after the --dc-inv-zoom reflow is the layout drift.
+        const drift = marker.getBoundingClientRect().top - (cy + (markerY0 - cy) * k);
+        if (Math.abs(drift) > 0.1) { t.y -= drift; apply(); }
+      }
+    };
+
+    // Mouse-wheel vs trackpad-scroll heuristic. A physical wheel sends
+    // line-mode deltas (Firefox) or large integer pixel deltas with no X
+    // component (Chrome/Safari, typically multiples of 100/120). Trackpad
+    // two-finger scroll sends small/fractional pixel deltas, often with
+    // non-zero deltaX. ctrlKey is set by the browser for trackpad pinch.
+    const isMouseWheel = (e) =>
+      e.deltaMode !== 0 ||
+      (e.deltaX === 0 && Number.isInteger(e.deltaY) && Math.abs(e.deltaY) >= 40);
+
+    const onWheel = (e) => {
+      e.preventDefault();
+      if (isGesturing) return; // Safari: gesture* owns the pinch — discard concurrent wheels
+      if ((e.ctrlKey || e.metaKey) && !isMouseWheel(e)) {
+        // trackpad pinch, or ctrl/cmd + smooth-scroll mouse. Notched
+        // wheels fall through to the fixed-step branch below.
+        zoomAt(e.clientX, e.clientY, Math.exp(-e.deltaY * 0.01));
+      } else if (isMouseWheel(e)) {
+        // notched mouse wheel — fixed-ratio step per click
+        zoomAt(e.clientX, e.clientY, Math.exp(-Math.sign(e.deltaY) * 0.18));
+      } else {
+        // trackpad two-finger scroll — pan
+        tf.current.x -= e.deltaX;
+        tf.current.y -= e.deltaY;
+        apply();
+      }
+    };
+
+    // Safari sends native gesture* events for trackpad pinch with a smooth
+    // e.scale; preferring these over the ctrl+wheel fallback gives a much
+    // better feel there. No-ops on other browsers. Safari also fires
+    // ctrlKey wheel events during the same pinch — isGesturing makes
+    // onWheel drop those entirely so they neither zoom nor pan.
+    let gsBase = 1;
+    let isGesturing = false;
+    const onGestureStart = (e) => { e.preventDefault(); isGesturing = true; gsBase = tf.current.scale; };
+    const onGestureChange = (e) => {
+      e.preventDefault();
+      zoomAt(e.clientX, e.clientY, (gsBase * e.scale) / tf.current.scale);
+    };
+    const onGestureEnd = (e) => { e.preventDefault(); isGesturing = false; };
+
+    // Drag-pan: middle button anywhere, or primary button on canvas
+    // background (anything that isn't an artboard or an inline editor).
+    let drag = null;
+    const onPointerDown = (e) => {
+      const onBg = !e.target.closest('[data-dc-slot], .dc-editable');
+      if (!(e.button === 1 || (e.button === 0 && onBg))) return;
+      e.preventDefault();
+      vp.setPointerCapture(e.pointerId);
+      drag = { id: e.pointerId, lx: e.clientX, ly: e.clientY };
+      vp.style.cursor = 'grabbing';
+    };
+    const onPointerMove = (e) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      tf.current.x += e.clientX - drag.lx;
+      tf.current.y += e.clientY - drag.ly;
+      drag.lx = e.clientX; drag.ly = e.clientY;
+      apply();
+    };
+    const onPointerUp = (e) => {
+      if (!drag || e.pointerId !== drag.id) return;
+      vp.releasePointerCapture(e.pointerId);
+      drag = null;
+      vp.style.cursor = '';
+    };
+
+    // Host-driven zoom (toolbar % menu). Zooms around viewport centre so the
+    // visible midpoint stays fixed — matching the host's iframe-zoom feel.
+    const onHostMsg = (e) => {
+      const d = e.data;
+      if (d && d.type === '__dc_set_zoom' && typeof d.scale === 'number') {
+        const r = vp.getBoundingClientRect();
+        zoomAt(r.left + r.width / 2, r.top + r.height / 2, d.scale / tf.current.scale);
+      } else if (d && d.type === '__dc_probe') {
+        // Host's [readyGen] reset asks whether a canvas is present; it
+        // fires on the iframe's native 'load', which for canvases with
+        // images/fonts is after our mount-time announce, so re-announce.
+        // Clear the pan-tick guard so apply() re-posts the current scale
+        // even if it's unchanged — the host just reset dcScale to 1.
+        window.parent.postMessage({ type: '__dc_present' }, '*');
+        lastPostedScale.current = undefined;
+        apply();
+      }
+    };
+    window.addEventListener('message', onHostMsg);
+    // Announce canvas mode so the host toolbar proxies its % control here
+    // instead of scaling the iframe element (which would just shrink the
+    // viewport window of an infinite canvas). The apply() that follows emits
+    // the initial __dc_zoom so the toolbar % is correct before first pinch.
+    // lastPostedScale reset mirrors the __dc_probe handler: the layout
+    // effect's restore-path apply() may already have posted the restored
+    // scale (before __dc_present), so clear the guard to re-post it in order.
+    window.parent.postMessage({ type: '__dc_present' }, '*');
+    lastPostedScale.current = undefined;
+    apply();
+
+    vp.addEventListener('wheel', onWheel, { passive: false });
+    vp.addEventListener('gesturestart', onGestureStart, { passive: false });
+    vp.addEventListener('gesturechange', onGestureChange, { passive: false });
+    vp.addEventListener('gestureend', onGestureEnd, { passive: false });
+    vp.addEventListener('pointerdown', onPointerDown);
+    vp.addEventListener('pointermove', onPointerMove);
+    vp.addEventListener('pointerup', onPointerUp);
+    vp.addEventListener('pointercancel', onPointerUp);
+    return () => {
+      window.removeEventListener('message', onHostMsg);
+      vp.removeEventListener('wheel', onWheel);
+      vp.removeEventListener('gesturestart', onGestureStart);
+      vp.removeEventListener('gesturechange', onGestureChange);
+      vp.removeEventListener('gestureend', onGestureEnd);
+      vp.removeEventListener('pointerdown', onPointerDown);
+      vp.removeEventListener('pointermove', onPointerMove);
+      vp.removeEventListener('pointerup', onPointerUp);
+      vp.removeEventListener('pointercancel', onPointerUp);
+    };
+  }, [apply, minScale, maxScale]);
+
+  const gridSvg = `url("data:image/svg+xml,%3Csvg width='120' height='120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M120 0H0v120' fill='none' stroke='${encodeURIComponent(DC.grid)}' stroke-width='1'/%3E%3C/svg%3E")`;
+  return (
+    <div
+      ref={vpRef}
+      className="design-canvas"
+      style={{
+        height: '100vh', width: '100vw',
+        background: DC.bg,
+        overflow: 'hidden',
+        overscrollBehavior: 'none',
+        touchAction: 'none',
+        position: 'relative',
+        fontFamily: DC.font,
+        boxSizing: 'border-box',
+        ...style,
+      }}
+    >
+      <div
+        ref={worldRef}
+        style={{
+          position: 'absolute', top: 0, left: 0,
+          transformOrigin: '0 0',
+          willChange: 'transform',
+          width: 'max-content', minWidth: '100%',
+          minHeight: '100%',
+          padding: '60px 0 80px',
+        }}
+      >
+        <div style={{ position: 'absolute', inset: -6000, backgroundImage: gridSvg, backgroundSize: '120px 120px', pointerEvents: 'none', zIndex: -1 }} />
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// DCSection — editable title + h-row of artboards in persisted order
+// ─────────────────────────────────────────────────────────────
+function DCSection({ id, title, subtitle, children, gap = 48 }) {
+  const ctx = React.useContext(DCCtx);
+  const sid = id ?? title;
+  const all = React.Children.toArray(dcFlatten(children));
+  const artboards = all.filter((c) => c && c.type === DCArtboard);
+  const rest = all.filter((c) => !(c && c.type === DCArtboard));
+  const sec = (ctx && sid && ctx.section(sid)) || {};
+  // Must match DesignCanvas's srcKey computation exactly (it filters falsy
+  // IDs), or onDelete persists a srcKey that DesignCanvas never recognizes.
+  const allIds = artboards.map((a) => a.props.id ?? a.props.label).filter(Boolean);
+  const srcKey = allIds.join('\x1f');
+  const hidden = sec.srcKey === srcKey ? (sec.hidden || []) : [];
+  const srcOrder = allIds.filter((k) => !hidden.includes(k));
+
+  const order = React.useMemo(() => {
+    const kept = (sec.order || []).filter((k) => srcOrder.includes(k));
+    return [...kept, ...srcOrder.filter((k) => !kept.includes(k))];
+  }, [sec.order, srcOrder.join('|')]);
+
+  const byId = Object.fromEntries(artboards.map((a) => [a.props.id ?? a.props.label, a]));
+
+  // marginBottom counter-scales so the on-screen gap between sections stays
+  // constant — otherwise at low zoom the (world-space) gap collapses while
+  // the screen-constant sectionhead below it doesn't, and the title reads as
+  // belonging to the section above. paddingBottom below is just enough for
+  // the 24px artboard-header (abs-positioned above each card) plus ~8px, so
+  // the title sits tight against its own row at every zoom.
+  return (
+    <div data-dc-section={sid}
+      style={{ marginBottom: 'calc(80px * var(--dc-inv-zoom, 1))', position: 'relative' }}>
+      <div style={{ padding: '0 60px' }}>
+        <div className="dc-sectionhead" style={{ paddingBottom: 36 }}>
+          <DCEditable tag="div" value={sec.title ?? title}
+            onChange={(v) => ctx && sid && ctx.patchSection(sid, { title: v })}
+            style={{ fontSize: 28, fontWeight: 600, color: DC.title, letterSpacing: -0.4, marginBottom: 6, display: 'inline-block' }} />
+          {subtitle && <div style={{ fontSize: 16, color: DC.subtitle }}>{subtitle}</div>}
+        </div>
+      </div>
+      <div style={{ display: 'flex', gap, padding: '0 60px', alignItems: 'flex-start', width: 'max-content' }}>
+        {order.map((k) => (
+          <DCArtboardFrame key={k} sectionId={sid} artboard={byId[k]} order={order}
+            label={(sec.labels || {})[k] ?? byId[k].props.label}
+            onRename={(v) => ctx && ctx.patchSection(sid, (x) => ({ labels: { ...x.labels, [k]: v } }))}
+            onReorder={(next) => ctx && ctx.patchSection(sid, { order: next })}
+            onDelete={() => ctx && ctx.patchSection(sid, (x) => ({
+              hidden: [...(x.srcKey === srcKey ? (x.hidden || []) : []), k],
+              srcKey,
+            }))}
+            onFocus={() => ctx && ctx.setFocus(`${sid}/${k}`)} />
+        ))}
+      </div>
+      {rest}
+    </div>
+  );
+}
+
+// DCArtboard — marker; rendered by DCArtboardFrame via DCSection.
+function DCArtboard() { return null; }
+
+// Per-artboard export (kind: 'png' | 'html'). Both paths share the same
+// self-contained clone: computed styles baked in, @font-face / <img> /
+// inline-style background-image urls inlined as data URIs. PNG wraps the
+// clone in foreignObject→canvas at 3× the artboard's natural width×height
+// (same pipeline the host uses for page captures); HTML wraps it in a
+// minimal standalone document. Both are independent of viewport zoom.
+async function dcExport(node, w, h, name, kind) {
+  try { await document.fonts.ready; } catch {}
+  const toDataURL = (url) => fetch(url).then((r) => r.blob()).then((b) => new Promise((res) => {
+    const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = () => res(url); fr.readAsDataURL(b);
+  })).catch(() => url);
+
+  // Collect @font-face rules. ss.cssRules throws SecurityError on
+  // cross-origin sheets (e.g. fonts.googleapis.com) — in that case fetch
+  // the CSS text directly (those endpoints send ACAO:*) and regex-extract
+  // the blocks. @import and @media/@supports are walked so nested
+  // @font-face rules aren't missed.
+  const fontRules = [], pending = [], seen = new Set();
+  const scrapeCss = (href) => {
+    if (seen.has(href)) return; seen.add(href);
+    pending.push(fetch(href).then((r) => r.text()).then((css) => {
+      for (const m of css.match(/@font-face\s*{[^}]*}/g) || []) fontRules.push({ css: m, base: href });
+      for (const m of css.matchAll(/@import\s+(?:url\()?['"]?([^'")\s;]+)/g))
+        scrapeCss(new URL(m[1], href).href);
+    }).catch(() => {}));
+  };
+  const walk = (rules, base) => {
+    for (const r of rules) {
+      if (r.type === CSSRule.FONT_FACE_RULE) fontRules.push({ css: r.cssText, base });
+      else if (r.type === CSSRule.IMPORT_RULE && r.styleSheet) {
+        const ibase = r.styleSheet.href || base;
+        try { walk(r.styleSheet.cssRules, ibase); } catch { scrapeCss(ibase); }
+      } else if (r.cssRules) walk(r.cssRules, base);
+    }
+  };
+  for (const ss of document.styleSheets) {
+    const base = ss.href || location.href;
+    try { walk(ss.cssRules, base); } catch { if (ss.href) scrapeCss(ss.href); }
+  }
+  while (pending.length) await pending.shift();
+  const fontCss = (await Promise.all(fontRules.map(async (rule) => {
+    let out = rule.css, m; const re = /url\((['"]?)([^'")]+)\1\)/g;
+    while ((m = re.exec(rule.css))) {
+      if (m[2].indexOf('data:') === 0) continue;
+      let abs; try { abs = new URL(m[2], rule.base).href; } catch { continue; }
+      out = out.split(m[0]).join('url("' + await toDataURL(abs) + '")');
+    }
+    return out;
+  }))).join('\n');
+
+  const cloneStyled = (src) => {
+    if (src.nodeType === 8 || (src.nodeType === 1 && src.tagName === 'SCRIPT')) return document.createTextNode('');
+    const dst = src.cloneNode(false);
+    if (src.nodeType === 1) {
+      const cs = getComputedStyle(src); let txt = '';
+      for (let i = 0; i < cs.length; i++) txt += cs[i] + ':' + cs.getPropertyValue(cs[i]) + ';';
+      dst.setAttribute('style', txt + 'animation:none;transition:none;');
+      if (src.tagName === 'CANVAS') try { const im = document.createElement('img'); im.src = src.toDataURL(); im.setAttribute('style', txt); return im; } catch {}
+    }
+    for (let c = src.firstChild; c; c = c.nextSibling) dst.appendChild(cloneStyled(c));
+    return dst;
+  };
+  const clone = cloneStyled(node);
+  clone.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+  // Drop the card's own shadow/radius so the export is a flush w×h rect;
+  // the artboard's own background (if any) is already in the computed style.
+  clone.style.boxShadow = 'none'; clone.style.borderRadius = '0';
+
+  const jobs = [];
+  clone.querySelectorAll('img').forEach((el) => {
+    const s = el.getAttribute('src');
+    if (s && s.indexOf('data:') !== 0) jobs.push(toDataURL(el.src).then((d) => el.setAttribute('src', d)));
+  });
+  [clone, ...clone.querySelectorAll('*')].forEach((el) => {
+    const bg = el.style.backgroundImage; if (!bg) return;
+    let m; const re = /url\(["']?([^"')]+)["']?\)/g;
+    while ((m = re.exec(bg))) {
+      const tok = m[0], url = m[1];
+      if (url.indexOf('data:') === 0) continue;
+      jobs.push(toDataURL(url).then((d) => { el.style.backgroundImage = el.style.backgroundImage.split(tok).join('url("' + d + '")'); }));
+    }
+  });
+  await Promise.all(jobs);
+
+  const xml = new XMLSerializer().serializeToString(clone);
+  const save = (blob, ext) => {
+    if (!blob) return;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name + '.' + ext; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  };
+
+  if (kind === 'html') {
+    const html = '<!doctype html><html><head><meta charset="utf-8"><title>' + name + '</title>' +
+      (fontCss ? '<style>' + fontCss + '</style>' : '') +
+      '</head><body style="margin:0">' + xml + '</body></html>';
+    return save(new Blob([html], { type: 'text/html' }), 'html');
+  }
+
+  // PNG: the SVG's own width/height must be the output resolution — an
+  // <img>-loaded SVG rasterizes at its intrinsic size, so sizing it at 1×
+  // and ctx.scale()-ing up would just upscale a 1× bitmap. viewBox maps the
+  // w×h foreignObject onto the px·w × px·h SVG canvas so the browser renders
+  // the HTML at full resolution.
+  const px = 3;
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + w * px + '" height="' + h * px +
+    '" viewBox="0 0 ' + w + ' ' + h + '"><foreignObject width="' + w + '" height="' + h + '">' +
+    (fontCss ? '<style><![CDATA[' + fontCss + ']]></style>' : '') + xml + '</foreignObject></svg>';
+  const img = new Image();
+  await new Promise((res, rej) => {
+    img.onload = res; img.onerror = () => rej(new Error('svg load failed'));
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  });
+  const cv = document.createElement('canvas');
+  cv.width = w * px; cv.height = h * px;
+  cv.getContext('2d').drawImage(img, 0, 0);
+  cv.toBlob((blob) => save(blob, 'png'), 'image/png');
+}
+
+function DCArtboardFrame({ sectionId, artboard, label, order, onRename, onReorder, onFocus, onDelete }) {
+  const { id: rawId, label: rawLabel, width = 260, height = 480, children, style = {} } = artboard.props;
+  const id = rawId ?? rawLabel;
+  const ref = React.useRef(null);
+  const cardRef = React.useRef(null);
+  const menuRef = React.useRef(null);
+  const [menuOpen, setMenuOpen] = React.useState(false);
+  const [confirming, setConfirming] = React.useState(false);
+
+  // ⋯ menu: close on any outside pointerdown. Two-click delete lives inside
+  // the menu — first click arms the row, second commits; closing disarms.
+  React.useEffect(() => {
+    if (!menuOpen) { setConfirming(false); return; }
+    const off = (e) => { if (!menuRef.current || !menuRef.current.contains(e.target)) setMenuOpen(false); };
+    document.addEventListener('pointerdown', off, true);
+    return () => document.removeEventListener('pointerdown', off, true);
+  }, [menuOpen]);
+
+  const doExport = (kind) => {
+    setMenuOpen(false);
+    if (!cardRef.current) return;
+    const name = String(label || id || 'artboard').replace(/[^\w\s.-]+/g, '_');
+    dcExport(cardRef.current, width, height, name, kind)
+      .catch((e) => console.error('[design-canvas] export failed:', e));
+  };
+
+  // Live drag-reorder: dragged card sticks to cursor; siblings slide into
+  // their would-be slots in real time via transforms. DOM order only
+  // changes on drop.
+  const onGripDown = (e) => {
+    e.preventDefault(); e.stopPropagation();
+    const me = ref.current;
+    // translateX is applied in local (pre-scale) space but pointer deltas and
+    // getBoundingClientRect().left are screen-space — divide by the viewport's
+    // current scale so the dragged card tracks the cursor at any zoom level.
+    const scale = me.getBoundingClientRect().width / me.offsetWidth || 1;
+    const peers = Array.from(document.querySelectorAll(`[data-dc-section="${sectionId}"] [data-dc-slot]`));
+    const homes = peers.map((el) => ({ el, id: el.dataset.dcSlot, x: el.getBoundingClientRect().left }));
+    const slotXs = homes.map((h) => h.x);
+    const startIdx = order.indexOf(id);
+    const startX = e.clientX;
+    let liveOrder = order.slice();
+    me.classList.add('dc-dragging');
+
+    const layout = () => {
+      for (const h of homes) {
+        if (h.id === id) continue;
+        const slot = liveOrder.indexOf(h.id);
+        h.el.style.transform = `translateX(${(slotXs[slot] - h.x) / scale}px)`;
+      }
+    };
+
+    const move = (ev) => {
+      const dx = ev.clientX - startX;
+      me.style.transform = `translateX(${dx / scale}px)`;
+      const cur = homes[startIdx].x + dx;
+      let nearest = 0, best = Infinity;
+      for (let i = 0; i < slotXs.length; i++) {
+        const d = Math.abs(slotXs[i] - cur);
+        if (d < best) { best = d; nearest = i; }
+      }
+      if (liveOrder.indexOf(id) !== nearest) {
+        liveOrder = order.filter((k) => k !== id);
+        liveOrder.splice(nearest, 0, id);
+        layout();
+      }
+    };
+
+    const up = () => {
+      document.removeEventListener('pointermove', move);
+      document.removeEventListener('pointerup', up);
+      const finalSlot = liveOrder.indexOf(id);
+      me.classList.remove('dc-dragging');
+      me.style.transform = `translateX(${(slotXs[finalSlot] - homes[startIdx].x) / scale}px)`;
+      // After the settle transition, kill transitions + clear transforms +
+      // commit the reorder in the same frame so there's no visual snap-back.
+      setTimeout(() => {
+        for (const h of homes) { h.el.style.transition = 'none'; h.el.style.transform = ''; }
+        if (liveOrder.join('|') !== order.join('|')) onReorder(liveOrder);
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          for (const h of homes) h.el.style.transition = '';
+        }));
+      }, 180);
+    };
+    document.addEventListener('pointermove', move);
+    document.addEventListener('pointerup', up);
+  };
+
+  return (
+    <div ref={ref} data-dc-slot={id} style={{ position: 'relative', flexShrink: 0 }}>
+      <div className="dc-header" data-omelette-chrome="" style={{ color: DC.label }} onPointerDown={(e) => e.stopPropagation()}>
+        <div className="dc-labelrow">
+          <div className="dc-grip" onPointerDown={onGripDown} title="Drag to reorder">
+            <svg width="9" height="13" viewBox="0 0 9 13" fill="currentColor"><circle cx="2" cy="2" r="1.1"/><circle cx="7" cy="2" r="1.1"/><circle cx="2" cy="6.5" r="1.1"/><circle cx="7" cy="6.5" r="1.1"/><circle cx="2" cy="11" r="1.1"/><circle cx="7" cy="11" r="1.1"/></svg>
+          </div>
+          <div className="dc-labeltext" onClick={onFocus} title="Click to focus">
+            <DCEditable value={label} onChange={onRename} onClick={(e) => e.stopPropagation()}
+              style={{ fontSize: 15, fontWeight: 500, color: DC.label, lineHeight: 1 }} />
+          </div>
+        </div>
+        <div className="dc-btns">
+          <div ref={menuRef} style={{ position: 'relative' }}>
+            <button className="dc-kebab" title="More" onClick={() => setMenuOpen((o) => !o)}>
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="2.5" cy="6" r="1.1"/><circle cx="6" cy="6" r="1.1"/><circle cx="9.5" cy="6" r="1.1"/></svg>
+            </button>
+            {menuOpen && (
+              <div className="dc-menu" onPointerDown={(e) => e.stopPropagation()}>
+                <button onClick={() => doExport('png')}>Download PNG</button>
+                <button onClick={() => doExport('html')}>Download HTML</button>
+                <hr />
+                <button className="dc-danger"
+                  onClick={() => { if (confirming) { setMenuOpen(false); onDelete(); } else setConfirming(true); }}>
+                  {confirming ? 'Click again to delete' : 'Delete'}
+                </button>
+              </div>
+            )}
+          </div>
+          <button className="dc-expand" onClick={onFocus} title="Focus">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><path d="M7 1h4v4M5 11H1V7M11 1L7.5 4.5M1 11l3.5-3.5"/></svg>
+          </button>
+        </div>
+      </div>
+      <div ref={cardRef} className="dc-card"
+        style={{ borderRadius: 2, boxShadow: '0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06)', overflow: 'hidden', width, height, background: '#fff', ...style }}>
+        {children || <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb', fontSize: 13, fontFamily: DC.font }}>{id}</div>}
+      </div>
+    </div>
+  );
+}
+
+// Inline rename — commits on blur or Enter.
+function DCEditable({ value, onChange, style, tag = 'span', onClick }) {
+  const T = tag;
+  return (
+    <T className="dc-editable" contentEditable suppressContentEditableWarning
+      onClick={onClick}
+      onPointerDown={(e) => e.stopPropagation()}
+      onBlur={(e) => onChange && onChange(e.currentTarget.textContent)}
+      onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); e.currentTarget.blur(); } }}
+      style={style}>{value}</T>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Focus mode — overlay one artboard; ←/→ within section, ↑/↓ across
+// sections, Esc or backdrop click to exit.
+// ─────────────────────────────────────────────────────────────
+function DCFocusOverlay({ entry, sectionMeta, sectionOrder }) {
+  const ctx = React.useContext(DCCtx);
+  const { sectionId, artboard } = entry;
+  const sec = ctx.section(sectionId);
+  const meta = sectionMeta[sectionId];
+  const peers = meta.slotIds;
+  const aid = artboard.props.id ?? artboard.props.label;
+  const idx = peers.indexOf(aid);
+  const secIdx = sectionOrder.indexOf(sectionId);
+
+  const go = (d) => { const n = peers[(idx + d + peers.length) % peers.length]; if (n) ctx.setFocus(`${sectionId}/${n}`); };
+  const goSection = (d) => {
+    // Sections whose artboards are all deleted have slotIds:[] — step past
+    // them to the next non-empty section so ↑/↓ doesn't dead-end.
+    const n = sectionOrder.length;
+    for (let i = 1; i < n; i++) {
+      const ns = sectionOrder[(((secIdx + d * i) % n) + n) % n];
+      const first = sectionMeta[ns] && sectionMeta[ns].slotIds[0];
+      if (first) { ctx.setFocus(`${ns}/${first}`); return; }
+    }
+  };
+
+  React.useEffect(() => {
+    const k = (e) => {
+      if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); go(1); }
+      if (e.key === 'ArrowUp') { e.preventDefault(); goSection(-1); }
+      if (e.key === 'ArrowDown') { e.preventDefault(); goSection(1); }
+    };
+    document.addEventListener('keydown', k);
+    return () => document.removeEventListener('keydown', k);
+  });
+
+  const { width = 260, height = 480, children } = artboard.props;
+  const [vp, setVp] = React.useState({ w: window.innerWidth, h: window.innerHeight });
+  React.useEffect(() => { const r = () => setVp({ w: window.innerWidth, h: window.innerHeight }); window.addEventListener('resize', r); return () => window.removeEventListener('resize', r); }, []);
+  const scale = Math.max(0.1, Math.min((vp.w - 200) / width, (vp.h - 260) / height, 2));
+
+  const [ddOpen, setDd] = React.useState(false);
+  const Arrow = ({ dir, onClick }) => (
+    <button onClick={(e) => { e.stopPropagation(); onClick(); }}
+      style={{ position: 'absolute', top: '50%', [dir]: 28, transform: 'translateY(-50%)',
+        border: 'none', background: 'rgba(255,255,255,.08)', color: 'rgba(255,255,255,.9)',
+        width: 44, height: 44, borderRadius: 22, fontSize: 18, cursor: 'pointer',
+        display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background .15s' }}
+      onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,.18)')}
+      onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,.08)')}>
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+        <path d={dir === 'left' ? 'M11 3L5 9l6 6' : 'M7 3l6 6-6 6'} /></svg>
+    </button>
+  );
+
+  // Portal to body so position:fixed is the real viewport regardless of any
+  // transform on DesignCanvas's ancestors (including the canvas zoom itself).
+  return ReactDOM.createPortal(
+    <div onClick={() => ctx.setFocus(null)}
+      onWheel={(e) => e.preventDefault()}
+      style={{ position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(24,20,16,.6)', backdropFilter: 'blur(14px)',
+        fontFamily: DC.font, color: '#fff' }}>
+
+      {/* top bar: section dropdown (left) · close (right) */}
+      <div onClick={(e) => e.stopPropagation()}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 72, display: 'flex', alignItems: 'flex-start', padding: '16px 20px 0', gap: 16 }}>
+        <div style={{ position: 'relative' }}>
+          <button onClick={() => setDd((o) => !o)}
+            style={{ border: 'none', background: 'transparent', color: '#fff', cursor: 'pointer', padding: '6px 8px',
+              borderRadius: 6, textAlign: 'left', fontFamily: 'inherit' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: 18, fontWeight: 600, letterSpacing: -0.3 }}>{meta.title}</span>
+              <svg width="11" height="11" viewBox="0 0 11 11" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" style={{ opacity: .7 }}><path d="M2 4l3.5 3.5L9 4"/></svg>
+            </span>
+            {meta.subtitle && <span style={{ display: 'block', fontSize: 13, opacity: .6, fontWeight: 400, marginTop: 2 }}>{meta.subtitle}</span>}
+          </button>
+          {ddOpen && (
+            <div style={{ position: 'absolute', top: '100%', left: 0, marginTop: 4, background: '#2a251f', borderRadius: 8,
+              boxShadow: '0 8px 32px rgba(0,0,0,.4)', padding: 4, minWidth: 200, zIndex: 10 }}>
+              {sectionOrder.filter((sid) => sectionMeta[sid].slotIds.length).map((sid) => (
+                <button key={sid} onClick={() => { setDd(false); const f = sectionMeta[sid].slotIds[0]; if (f) ctx.setFocus(`${sid}/${f}`); }}
+                  style={{ display: 'block', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer',
+                    background: sid === sectionId ? 'rgba(255,255,255,.1)' : 'transparent', color: '#fff',
+                    padding: '8px 12px', borderRadius: 5, fontSize: 14, fontWeight: sid === sectionId ? 600 : 400, fontFamily: 'inherit' }}>
+                  {sectionMeta[sid].title}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+        <div style={{ flex: 1 }} />
+        <button onClick={() => ctx.setFocus(null)}
+          onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(255,255,255,.12)')}
+          onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+          style={{ border: 'none', background: 'transparent', color: 'rgba(255,255,255,.7)', width: 32, height: 32,
+            borderRadius: 16, fontSize: 20, cursor: 'pointer', lineHeight: 1, transition: 'background .12s' }}>×</button>
+      </div>
+
+      {/* card centered, label + index below — only the card itself stops
+          propagation so any backdrop click (including the margins around
+          the card) exits focus */}
+      <div
+        style={{ position: 'absolute', top: 64, bottom: 56, left: 100, right: 100, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+        <div onClick={(e) => e.stopPropagation()} style={{ width: width * scale, height: height * scale, position: 'relative' }}>
+          <div style={{ width, height, transform: `scale(${scale})`, transformOrigin: 'top left', background: '#fff', borderRadius: 2, overflow: 'hidden',
+            boxShadow: '0 20px 80px rgba(0,0,0,.4)' }}>
+            {children || <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#bbb' }}>{aid}</div>}
+          </div>
+        </div>
+        <div onClick={(e) => e.stopPropagation()} style={{ fontSize: 14, fontWeight: 500, opacity: .85, textAlign: 'center' }}>
+          {(sec.labels || {})[aid] ?? artboard.props.label}
+          <span style={{ opacity: .5, marginLeft: 10, fontVariantNumeric: 'tabular-nums' }}>{idx + 1} / {peers.length}</span>
+        </div>
+      </div>
+
+      <Arrow dir="left" onClick={() => go(-1)} />
+      <Arrow dir="right" onClick={() => go(1)} />
+
+      {/* dots */}
+      <div onClick={(e) => e.stopPropagation()}
+        style={{ position: 'absolute', bottom: 20, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 8 }}>
+        {peers.map((p, i) => (
+          <button key={p} onClick={() => ctx.setFocus(`${sectionId}/${p}`)}
+            style={{ border: 'none', padding: 0, cursor: 'pointer', width: 6, height: 6, borderRadius: 3,
+              background: i === idx ? '#fff' : 'rgba(255,255,255,.3)' }} />
+        ))}
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Post-it — absolute-positioned sticky note
+// ─────────────────────────────────────────────────────────────
+function DCPostIt({ children, top, left, right, bottom, rotate = -2, width = 180 }) {
+  return (
+    <div style={{
+      position: 'absolute', top, left, right, bottom, width,
+      background: DC.postitBg, padding: '14px 16px',
+      fontFamily: '"Comic Sans MS", "Marker Felt", "Segoe Print", cursive',
+      fontSize: 14, lineHeight: 1.4, color: DC.postitText,
+      boxShadow: '0 2px 8px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08)',
+      transform: `rotate(${rotate}deg)`,
+      zIndex: 5,
+    }}>{children}</div>
+  );
+}
+
+Object.assign(window, { DesignCanvas, DCSection, DCArtboard, DCPostIt });
+  </script>
+
+  <!-- ===== Tweaks panel ===== -->
+  <script type="text/babel" data-presets="react" data-source="stories/tweaks-panel.jsx">
+// tweaks-panel.jsx
+// Reusable Tweaks shell + form-control helpers.
+//
+// Owns the host protocol (listens for __activate_edit_mode / __deactivate_edit_mode,
+// posts __edit_mode_available / __edit_mode_set_keys / __edit_mode_dismissed) so
+// individual prototypes don't re-roll it. Ships a consistent set of controls so you
+// don't hand-draw <input type="range">, segmented radios, steppers, etc.
+//
+// Usage (in an HTML file that loads React + Babel):
+//
+//   const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+//     "primaryColor": "#D97757",
+//     "palette": ["#D97757", "#29261b", "#f6f4ef"],
+//     "fontSize": 16,
+//     "density": "regular",
+//     "dark": false
+//   }/*EDITMODE-END*/;
+//
+//   function App() {
+//     const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+//     return (
+//       <div style={{ fontSize: t.fontSize, color: t.primaryColor }}>
+//         Hello
+//         <TweaksPanel>
+//           <TweakSection label="Typography" />
+//           <TweakSlider label="Font size" value={t.fontSize} min={10} max={32} unit="px"
+//                        onChange={(v) => setTweak('fontSize', v)} />
+//           <TweakRadio  label="Density" value={t.density}
+//                        options={['compact', 'regular', 'comfy']}
+//                        onChange={(v) => setTweak('density', v)} />
+//           <TweakSection label="Theme" />
+//           <TweakColor  label="Primary" value={t.primaryColor}
+//                        options={['#D97757', '#2A6FDB', '#1F8A5B', '#7A5AE0']}
+//                        onChange={(v) => setTweak('primaryColor', v)} />
+//           <TweakColor  label="Palette" value={t.palette}
+//                        options={[['#D97757', '#29261b', '#f6f4ef'],
+//                                  ['#475569', '#0f172a', '#f1f5f9']]}
+//                        onChange={(v) => setTweak('palette', v)} />
+//           <TweakToggle label="Dark mode" value={t.dark}
+//                        onChange={(v) => setTweak('dark', v)} />
+//         </TweaksPanel>
+//       </div>
+//     );
+//   }
+//
+// ─────────────────────────────────────────────────────────────────────────────
+
+const __TWEAKS_STYLE = `
+  .twk-panel{position:fixed;right:16px;bottom:16px;z-index:2147483646;width:280px;
+    max-height:calc(100vh - 32px);display:flex;flex-direction:column;
+    transform:scale(var(--dc-inv-zoom,1));transform-origin:bottom right;
+    background:rgba(250,249,247,.78);color:#29261b;
+    -webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%);
+    border:.5px solid rgba(255,255,255,.6);border-radius:14px;
+    box-shadow:0 1px 0 rgba(255,255,255,.5) inset,0 12px 40px rgba(0,0,0,.18);
+    font:11.5px/1.4 ui-sans-serif,system-ui,-apple-system,sans-serif;overflow:hidden}
+  .twk-hd{display:flex;align-items:center;justify-content:space-between;
+    padding:10px 8px 10px 14px;cursor:move;user-select:none}
+  .twk-hd b{font-size:12px;font-weight:600;letter-spacing:.01em}
+  .twk-x{appearance:none;border:0;background:transparent;color:rgba(41,38,27,.55);
+    width:22px;height:22px;border-radius:6px;cursor:default;font-size:13px;line-height:1}
+  .twk-x:hover{background:rgba(0,0,0,.06);color:#29261b}
+  .twk-body{padding:2px 14px 14px;display:flex;flex-direction:column;gap:10px;
+    overflow-y:auto;overflow-x:hidden;min-height:0;
+    scrollbar-width:thin;scrollbar-color:rgba(0,0,0,.15) transparent}
+  .twk-body::-webkit-scrollbar{width:8px}
+  .twk-body::-webkit-scrollbar-track{background:transparent;margin:2px}
+  .twk-body::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:4px;
+    border:2px solid transparent;background-clip:content-box}
+  .twk-body::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,.25);
+    border:2px solid transparent;background-clip:content-box}
+  .twk-row{display:flex;flex-direction:column;gap:5px}
+  .twk-row-h{flex-direction:row;align-items:center;justify-content:space-between;gap:10px}
+  .twk-lbl{display:flex;justify-content:space-between;align-items:baseline;
+    color:rgba(41,38,27,.72)}
+  .twk-lbl>span:first-child{font-weight:500}
+  .twk-val{color:rgba(41,38,27,.5);font-variant-numeric:tabular-nums}
+
+  .twk-sect{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    color:rgba(41,38,27,.45);padding:10px 0 0}
+  .twk-sect:first-child{padding-top:0}
+
+  .twk-field{appearance:none;box-sizing:border-box;width:100%;min-width:0;height:26px;padding:0 8px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:7px;
+    background:rgba(255,255,255,.6);color:inherit;font:inherit;outline:none}
+  .twk-field:focus{border-color:rgba(0,0,0,.25);background:rgba(255,255,255,.85)}
+  select.twk-field{padding-right:22px;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='rgba(0,0,0,.5)' d='M0 0h10L5 6z'/></svg>");
+    background-repeat:no-repeat;background-position:right 8px center}
+
+  .twk-slider{appearance:none;-webkit-appearance:none;width:100%;height:4px;margin:6px 0;
+    border-radius:999px;background:rgba(0,0,0,.12);outline:none}
+  .twk-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;
+    width:14px;height:14px;border-radius:50%;background:#fff;
+    border:.5px solid rgba(0,0,0,.12);box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:default}
+  .twk-slider::-moz-range-thumb{width:14px;height:14px;border-radius:50%;
+    background:#fff;border:.5px solid rgba(0,0,0,.12);box-shadow:0 1px 3px rgba(0,0,0,.2);cursor:default}
+
+  .twk-seg{position:relative;display:flex;padding:2px;border-radius:8px;
+    background:rgba(0,0,0,.06);user-select:none}
+  .twk-seg-thumb{position:absolute;top:2px;bottom:2px;border-radius:6px;
+    background:rgba(255,255,255,.9);box-shadow:0 1px 2px rgba(0,0,0,.12);
+    transition:left .15s cubic-bezier(.3,.7,.4,1),width .15s}
+  .twk-seg.dragging .twk-seg-thumb{transition:none}
+  .twk-seg button{appearance:none;position:relative;z-index:1;flex:1;border:0;
+    background:transparent;color:inherit;font:inherit;font-weight:500;min-height:22px;
+    border-radius:6px;cursor:default;padding:4px 6px;line-height:1.2;
+    overflow-wrap:anywhere}
+
+  .twk-toggle{position:relative;width:32px;height:18px;border:0;border-radius:999px;
+    background:rgba(0,0,0,.15);transition:background .15s;cursor:default;padding:0}
+  .twk-toggle[data-on="1"]{background:#34c759}
+  .twk-toggle i{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;
+    background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s}
+  .twk-toggle[data-on="1"] i{transform:translateX(14px)}
+
+  .twk-num{display:flex;align-items:center;box-sizing:border-box;min-width:0;height:26px;padding:0 0 0 8px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:7px;background:rgba(255,255,255,.6)}
+  .twk-num-lbl{font-weight:500;color:rgba(41,38,27,.6);cursor:ew-resize;
+    user-select:none;padding-right:8px}
+  .twk-num input{flex:1;min-width:0;height:100%;border:0;background:transparent;
+    font:inherit;font-variant-numeric:tabular-nums;text-align:right;padding:0 8px 0 0;
+    outline:none;color:inherit;-moz-appearance:textfield}
+  .twk-num input::-webkit-inner-spin-button,.twk-num input::-webkit-outer-spin-button{
+    -webkit-appearance:none;margin:0}
+  .twk-num-unit{padding-right:8px;color:rgba(41,38,27,.45)}
+
+  .twk-btn{appearance:none;height:26px;padding:0 12px;border:0;border-radius:7px;
+    background:rgba(0,0,0,.78);color:#fff;font:inherit;font-weight:500;cursor:default}
+  .twk-btn:hover{background:rgba(0,0,0,.88)}
+  .twk-btn.secondary{background:rgba(0,0,0,.06);color:inherit}
+  .twk-btn.secondary:hover{background:rgba(0,0,0,.1)}
+
+  .twk-swatch{appearance:none;-webkit-appearance:none;width:56px;height:22px;
+    border:.5px solid rgba(0,0,0,.1);border-radius:6px;padding:0;cursor:default;
+    background:transparent;flex-shrink:0}
+  .twk-swatch::-webkit-color-swatch-wrapper{padding:0}
+  .twk-swatch::-webkit-color-swatch{border:0;border-radius:5.5px}
+  .twk-swatch::-moz-color-swatch{border:0;border-radius:5.5px}
+
+  .twk-chips{display:flex;gap:6px}
+  .twk-chip{position:relative;appearance:none;flex:1;min-width:0;height:46px;
+    padding:0;border:0;border-radius:6px;overflow:hidden;cursor:default;
+    box-shadow:0 0 0 .5px rgba(0,0,0,.12),0 1px 2px rgba(0,0,0,.06);
+    transition:transform .12s cubic-bezier(.3,.7,.4,1),box-shadow .12s}
+  .twk-chip:hover{transform:translateY(-1px);
+    box-shadow:0 0 0 .5px rgba(0,0,0,.18),0 4px 10px rgba(0,0,0,.12)}
+  .twk-chip[data-on="1"]{box-shadow:0 0 0 1.5px rgba(0,0,0,.85),
+    0 2px 6px rgba(0,0,0,.15)}
+  .twk-chip>span{position:absolute;top:0;bottom:0;right:0;width:34%;
+    display:flex;flex-direction:column;box-shadow:-1px 0 0 rgba(0,0,0,.1)}
+  .twk-chip>span>i{flex:1;box-shadow:0 -1px 0 rgba(0,0,0,.1)}
+  .twk-chip>span>i:first-child{box-shadow:none}
+  .twk-chip svg{position:absolute;top:6px;left:6px;width:13px;height:13px;
+    filter:drop-shadow(0 1px 1px rgba(0,0,0,.3))}
+`;
+
+// ── useTweaks ───────────────────────────────────────────────────────────────
+// Single source of truth for tweak values. setTweak persists via the host
+// (__edit_mode_set_keys → host rewrites the EDITMODE block on disk).
+function useTweaks(defaults) {
+  const [values, setValues] = React.useState(defaults);
+  // Accepts either setTweak('key', value) or setTweak({ key: value, ... }) so a
+  // useState-style call doesn't write a "[object Object]" key into the persisted
+  // JSON block.
+  const setTweak = React.useCallback((keyOrEdits, val) => {
+    const edits = typeof keyOrEdits === 'object' && keyOrEdits !== null
+      ? keyOrEdits : { [keyOrEdits]: val };
+    setValues((prev) => ({ ...prev, ...edits }));
+    window.parent.postMessage({ type: '__edit_mode_set_keys', edits }, '*');
+    // Same-window signal so in-page listeners (deck-stage rail thumbnails)
+    // can react — the parent message only reaches the host, not peers.
+    window.dispatchEvent(new CustomEvent('tweakchange', { detail: edits }));
+  }, []);
+  return [values, setTweak];
+}
+
+// ── TweaksPanel ─────────────────────────────────────────────────────────────
+// Floating shell. Registers the protocol listener BEFORE announcing
+// availability — if the announce ran first, the host's activate could land
+// before our handler exists and the toolbar toggle would silently no-op.
+// The close button posts __edit_mode_dismissed so the host's toolbar toggle
+// flips off in lockstep; the host echoes __deactivate_edit_mode back which
+// is what actually hides the panel.
+function TweaksPanel({ title = 'Tweaks', children }) {
+  const [open, setOpen] = React.useState(false);
+  const dragRef = React.useRef(null);
+  const offsetRef = React.useRef({ x: 16, y: 16 });
+  const PAD = 16;
+
+  const clampToViewport = React.useCallback(() => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const w = panel.offsetWidth, h = panel.offsetHeight;
+    const maxRight = Math.max(PAD, window.innerWidth - w - PAD);
+    const maxBottom = Math.max(PAD, window.innerHeight - h - PAD);
+    offsetRef.current = {
+      x: Math.min(maxRight, Math.max(PAD, offsetRef.current.x)),
+      y: Math.min(maxBottom, Math.max(PAD, offsetRef.current.y)),
+    };
+    panel.style.right = offsetRef.current.x + 'px';
+    panel.style.bottom = offsetRef.current.y + 'px';
+  }, []);
+
+  React.useEffect(() => {
+    if (!open) return;
+    clampToViewport();
+    if (typeof ResizeObserver === 'undefined') {
+      window.addEventListener('resize', clampToViewport);
+      return () => window.removeEventListener('resize', clampToViewport);
+    }
+    const ro = new ResizeObserver(clampToViewport);
+    ro.observe(document.documentElement);
+    return () => ro.disconnect();
+  }, [open, clampToViewport]);
+
+  React.useEffect(() => {
+    const onMsg = (e) => {
+      const t = e?.data?.type;
+      if (t === '__activate_edit_mode') setOpen(true);
+      else if (t === '__deactivate_edit_mode') setOpen(false);
+    };
+    window.addEventListener('message', onMsg);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', onMsg);
+  }, []);
+
+  const dismiss = () => {
+    setOpen(false);
+    window.parent.postMessage({ type: '__edit_mode_dismissed' }, '*');
+  };
+
+  const onDragStart = (e) => {
+    const panel = dragRef.current;
+    if (!panel) return;
+    const r = panel.getBoundingClientRect();
+    const sx = e.clientX, sy = e.clientY;
+    const startRight = window.innerWidth - r.right;
+    const startBottom = window.innerHeight - r.bottom;
+    const move = (ev) => {
+      offsetRef.current = {
+        x: startRight - (ev.clientX - sx),
+        y: startBottom - (ev.clientY - sy),
+      };
+      clampToViewport();
+    };
+    const up = () => {
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseup', up);
+    };
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', up);
+  };
+
+  if (!open) return null;
+  return (
+    <>
+      <style>{__TWEAKS_STYLE}</style>
+      <div ref={dragRef} className="twk-panel" data-omelette-chrome=""
+           style={{ right: offsetRef.current.x, bottom: offsetRef.current.y }}>
+        <div className="twk-hd" onMouseDown={onDragStart}>
+          <b>{title}</b>
+          <button className="twk-x" aria-label="Close tweaks"
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={dismiss}>✕</button>
+        </div>
+        <div className="twk-body">
+          {children}
+        </div>
+      </div>
+    </>
+  );
+}
+
+// ── Layout helpers ──────────────────────────────────────────────────────────
+
+function TweakSection({ label, children }) {
+  return (
+    <>
+      <div className="twk-sect">{label}</div>
+      {children}
+    </>
+  );
+}
+
+function TweakRow({ label, value, children, inline = false }) {
+  return (
+    <div className={inline ? 'twk-row twk-row-h' : 'twk-row'}>
+      <div className="twk-lbl">
+        <span>{label}</span>
+        {value != null && <span className="twk-val">{value}</span>}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+// ── Controls ────────────────────────────────────────────────────────────────
+
+function TweakSlider({ label, value, min = 0, max = 100, step = 1, unit = '', onChange }) {
+  return (
+    <TweakRow label={label} value={`${value}${unit}`}>
+      <input type="range" className="twk-slider" min={min} max={max} step={step}
+             value={value} onChange={(e) => onChange(Number(e.target.value))} />
+    </TweakRow>
+  );
+}
+
+function TweakToggle({ label, value, onChange }) {
+  return (
+    <div className="twk-row twk-row-h">
+      <div className="twk-lbl"><span>{label}</span></div>
+      <button type="button" className="twk-toggle" data-on={value ? '1' : '0'}
+              role="switch" aria-checked={!!value}
+              onClick={() => onChange(!value)}><i /></button>
+    </div>
+  );
+}
+
+function TweakRadio({ label, value, options, onChange }) {
+  const trackRef = React.useRef(null);
+  const [dragging, setDragging] = React.useState(false);
+  // The active value is read by pointer-move handlers attached for the lifetime
+  // of a drag — ref it so a stale closure doesn't fire onChange for every move.
+  const valueRef = React.useRef(value);
+  valueRef.current = value;
+
+  // Segments wrap mid-word once per-segment width runs out. The track is
+  // ~248px (280 panel − 28 body pad − 4 seg pad), each button loses 12px
+  // to its own padding, and 11.5px system-ui averages ~6.3px/char — so 2
+  // options fit ~16 chars each, 3 fit ~10. Past that (or >3 options), fall
+  // back to a dropdown rather than wrap.
+  const labelLen = (o) => String(typeof o === 'object' ? o.label : o).length;
+  const maxLen = options.reduce((m, o) => Math.max(m, labelLen(o)), 0);
+  const fitsAsSegments = maxLen <= ({ 2: 16, 3: 10 }[options.length] ?? 0);
+  if (!fitsAsSegments) {
+    // <select> emits strings — map back to the original option value so the
+    // fallback stays type-preserving (numbers, booleans) like the segment path.
+    const resolve = (s) => {
+      const m = options.find((o) => String(typeof o === 'object' ? o.value : o) === s);
+      return m === undefined ? s : typeof m === 'object' ? m.value : m;
+    };
+    return <TweakSelect label={label} value={value} options={options}
+                        onChange={(s) => onChange(resolve(s))} />;
+  }
+  const opts = options.map((o) => (typeof o === 'object' ? o : { value: o, label: o }));
+  const idx = Math.max(0, opts.findIndex((o) => o.value === value));
+  const n = opts.length;
+
+  const segAt = (clientX) => {
+    const r = trackRef.current.getBoundingClientRect();
+    const inner = r.width - 4;
+    const i = Math.floor(((clientX - r.left - 2) / inner) * n);
+    return opts[Math.max(0, Math.min(n - 1, i))].value;
+  };
+
+  const onPointerDown = (e) => {
+    setDragging(true);
+    const v0 = segAt(e.clientX);
+    if (v0 !== valueRef.current) onChange(v0);
+    const move = (ev) => {
+      if (!trackRef.current) return;
+      const v = segAt(ev.clientX);
+      if (v !== valueRef.current) onChange(v);
+    };
+    const up = () => {
+      setDragging(false);
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  };
+
+  return (
+    <TweakRow label={label}>
+      <div ref={trackRef} role="radiogroup" onPointerDown={onPointerDown}
+           className={dragging ? 'twk-seg dragging' : 'twk-seg'}>
+        <div className="twk-seg-thumb"
+             style={{ left: `calc(2px + ${idx} * (100% - 4px) / ${n})`,
+                      width: `calc((100% - 4px) / ${n})` }} />
+        {opts.map((o) => (
+          <button key={o.value} type="button" role="radio" aria-checked={o.value === value}>
+            {o.label}
+          </button>
+        ))}
+      </div>
+    </TweakRow>
+  );
+}
+
+function TweakSelect({ label, value, options, onChange }) {
+  return (
+    <TweakRow label={label}>
+      <select className="twk-field" value={value} onChange={(e) => onChange(e.target.value)}>
+        {options.map((o) => {
+          const v = typeof o === 'object' ? o.value : o;
+          const l = typeof o === 'object' ? o.label : o;
+          return <option key={v} value={v}>{l}</option>;
+        })}
+      </select>
+    </TweakRow>
+  );
+}
+
+function TweakText({ label, value, placeholder, onChange }) {
+  return (
+    <TweakRow label={label}>
+      <input className="twk-field" type="text" value={value} placeholder={placeholder}
+             onChange={(e) => onChange(e.target.value)} />
+    </TweakRow>
+  );
+}
+
+function TweakNumber({ label, value, min, max, step = 1, unit = '', onChange }) {
+  const clamp = (n) => {
+    if (min != null && n < min) return min;
+    if (max != null && n > max) return max;
+    return n;
+  };
+  const startRef = React.useRef({ x: 0, val: 0 });
+  const onScrubStart = (e) => {
+    e.preventDefault();
+    startRef.current = { x: e.clientX, val: value };
+    const decimals = (String(step).split('.')[1] || '').length;
+    const move = (ev) => {
+      const dx = ev.clientX - startRef.current.x;
+      const raw = startRef.current.val + dx * step;
+      const snapped = Math.round(raw / step) * step;
+      onChange(clamp(Number(snapped.toFixed(decimals))));
+    };
+    const up = () => {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', up);
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', up);
+  };
+  return (
+    <div className="twk-num">
+      <span className="twk-num-lbl" onPointerDown={onScrubStart}>{label}</span>
+      <input type="number" value={value} min={min} max={max} step={step}
+             onChange={(e) => onChange(clamp(Number(e.target.value)))} />
+      {unit && <span className="twk-num-unit">{unit}</span>}
+    </div>
+  );
+}
+
+// Relative-luminance contrast pick — checkmarks drawn over a swatch need to
+// read on both #111 and #fafafa without per-option configuration. Hex input
+// only (#rgb / #rrggbb); named or rgb()/hsl() colors fall through to "light".
+function __twkIsLight(hex) {
+  const h = String(hex).replace('#', '');
+  const x = h.length === 3 ? h.replace(/./g, (c) => c + c) : h.padEnd(6, '0');
+  const n = parseInt(x.slice(0, 6), 16);
+  if (Number.isNaN(n)) return true;
+  const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  return r * 299 + g * 587 + b * 114 > 148000;
+}
+
+const __TwkCheck = ({ light }) => (
+  <svg viewBox="0 0 14 14" aria-hidden="true">
+    <path d="M3 7.2 5.8 10 11 4.2" fill="none" strokeWidth="2.2"
+          strokeLinecap="round" strokeLinejoin="round"
+          stroke={light ? 'rgba(0,0,0,.78)' : '#fff'} />
+  </svg>
+);
+
+// TweakColor — curated color/palette picker. Each option is either a single
+// hex string or an array of 1-5 hex strings; the card adapts — a lone color
+// renders solid, a palette renders colors[0] as the hero (left ~2/3) with the
+// rest stacked in a sharp column on the right. onChange emits the
+// option in the shape it was passed (string stays string, array stays array).
+// Without options it falls back to the native color input for back-compat.
+function TweakColor({ label, value, options, onChange }) {
+  if (!options || !options.length) {
+    return (
+      <div className="twk-row twk-row-h">
+        <div className="twk-lbl"><span>{label}</span></div>
+        <input type="color" className="twk-swatch" value={value}
+               onChange={(e) => onChange(e.target.value)} />
+      </div>
+    );
+  }
+  // Native <input type=color> emits lowercase hex per the HTML spec, so
+  // compare case-insensitively. String() guards JSON.stringify(undefined),
+  // which returns the primitive undefined (no .toLowerCase).
+  const key = (o) => String(JSON.stringify(o)).toLowerCase();
+  const cur = key(value);
+  return (
+    <TweakRow label={label}>
+      <div className="twk-chips" role="radiogroup">
+        {options.map((o, i) => {
+          const colors = Array.isArray(o) ? o : [o];
+          const [hero, ...rest] = colors;
+          const sup = rest.slice(0, 4);
+          const on = key(o) === cur;
+          return (
+            <button key={i} type="button" className="twk-chip" role="radio"
+                    aria-checked={on} data-on={on ? '1' : '0'}
+                    aria-label={colors.join(', ')} title={colors.join(' · ')}
+                    style={{ background: hero }}
+                    onClick={() => onChange(o)}>
+              {sup.length > 0 && (
+                <span>
+                  {sup.map((c, j) => <i key={j} style={{ background: c }} />)}
+                </span>
+              )}
+              {on && <__TwkCheck light={__twkIsLight(hero)} />}
+            </button>
+          );
+        })}
+      </div>
+    </TweakRow>
+  );
+}
+
+function TweakButton({ label, onClick, secondary = false }) {
+  return (
+    <button type="button" className={secondary ? 'twk-btn secondary' : 'twk-btn'}
+            onClick={onClick}>{label}</button>
+  );
+}
+
+Object.assign(window, {
+  useTweaks, TweaksPanel, TweakSection, TweakRow,
+  TweakSlider, TweakToggle, TweakRadio, TweakSelect,
+  TweakText, TweakNumber, TweakColor, TweakButton,
+});
+  </script>
+
+  <!-- ===== Post-specific atoms ===== -->
+  <script type="text/babel" data-presets="react" data-source="posts/brand-posts.jsx">
+// Robin des Airs — atoms specific to Instagram 1:1 posts.
+// Reuses RDA tokens, Starfield, NeonBar, RDALogo, Eyebrow, CountUp, useLoop
+// from stories/brand.jsx (loaded earlier as window globals).
+
+// ─── Post frame (1080×1080 · 1:1) ──────────────────────────
+function PostFrame({ children, accent = RDA.neon, density = 80, seed = 42, bg, padding = 80 }) {
+  return (
+    <div style={{
+      width: 1080, height: 1080, position: 'relative',
+      background: bg || `radial-gradient(ellipse at 50% 0%, ${RDA.inkMid} 0%, ${RDA.ink} 55%, ${RDA.inkDeep} 100%)`,
+      overflow: 'hidden',
+      fontFamily: RDA.body,
+      color: RDA.white,
+    }}>
+      <Starfield density={density} seed={seed} accent={accent} />
+      <NeonBar position="top" accent={accent} />
+      <NeonBar position="bottom" accent={accent} />
+      <div style={{
+        position: 'relative', zIndex: 5,
+        width: '100%', height: '100%',
+        padding, boxSizing: 'border-box',
+      }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// ─── Discreet bottom strip: handle + WhatsApp ────────────────
+function PostFooter({ accent = RDA.neon, side = false }) {
+  return (
+    <div style={{
+      position: 'absolute', bottom: 30, left: 80, right: 80,
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      fontFamily: RDA.mono, fontSize: 15, letterSpacing: 2.2,
+      color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase',
+      zIndex: 6,
+    }}>
+      <span>robindesairs.eu</span>
+      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+        <span style={{
+          width: 7, height: 7, borderRadius: '50%', background: accent,
+          boxShadow: `0 0 10px ${accent}`,
+          animation: 'rdaPulse 1.6s ease-in-out infinite',
+        }}/>
+        WhatsApp · +33 7 56 86 36 30
+      </span>
+    </div>
+  );
+}
+
+// ─── Header strip: logo + small caption right ────────────────
+function PostTopBar({ accent = RDA.neon, label }) {
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      position: 'relative', zIndex: 6,
+    }}>
+      <RDALogo size={36} accent={accent} align="left" />
+      {label && (
+        <span style={{
+          fontFamily: RDA.mono, fontSize: 14, letterSpacing: 2.5,
+          color: accent, textTransform: 'uppercase',
+          textShadow: `0 0 10px ${accent}55`,
+        }}>{label}</span>
+      )}
+    </div>
+  );
+}
+
+// ─── Numbered step pill (mono) ───────────────────────────────
+function StepNumber({ n, accent = RDA.neon, size = 80 }) {
+  return (
+    <span style={{
+      fontFamily: RDA.mono, fontSize: size, fontWeight: 300,
+      color: accent, lineHeight: 0.9,
+      textShadow: `0 0 ${size*0.3}px ${accent}55`,
+      letterSpacing: -2,
+    }}>{n}</span>
+  );
+}
+
+Object.assign(window, { PostFrame, PostFooter, PostTopBar, StepNumber });
+
+  </script>
+
+  <!-- ===== Posts 1-4 ===== -->
+  <script type="text/babel" data-presets="react" data-source="posts/posts-a.jsx">
+// Posts 1-4 — classic, vertical, brutalist, editorial.
+
+// ════════ Post 01 — Classic 3-col horizontal ════════
+function Post01Classic({ accent, density }) {
+  return (
+    <PostFrame accent={accent} density={density} seed={31}>
+      <PostTopBar accent={accent} label="01 · Process" />
+      <div style={{
+        position: 'absolute', inset: '170px 80px 100px',
+        display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 56,
+      }}>
+        <div style={{ animation: 'rdaFadeUp 0.6s 0.1s ease-out both' }}>
+          <Eyebrow accent={accent} size={20}>Trois étapes</Eyebrow>
+        </div>
+        <h1 style={{
+          margin: 0,
+          fontFamily: RDA.display, fontWeight: 500, fontSize: 108,
+          lineHeight: 0.95, color: RDA.white, letterSpacing: -3,
+          animation: 'rdaFadeUp 0.7s 0.3s ease-out both',
+          textWrap: 'pretty',
+        }}>
+          De ton billet à{' '}
+          <span style={{
+            color: accent, fontStyle: 'italic', fontWeight: 400,
+            textShadow: `0 0 24px ${accent}66`,
+          }}>600 €</span>
+        </h1>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 40 }}>
+          {[
+            ['01', 'Photo billet', 'Une seule photo lisible suffit.'],
+            ['02', 'WhatsApp',     'On répond en moins de 3 minutes.'],
+            ['03', 'Virement',     '600 € sous 48 h après encaissement.'],
+          ].map(([n, title, sub], i) => (
+            <div key={i} style={{ animation: `rdaFadeUp 0.6s ${0.6 + i*0.2}s ease-out both` }}>
+              <StepNumber n={n} accent={accent} size={86} />
+              <div style={{
+                width: 60, height: 1, background: accent, margin: '20px 0 22px',
+                boxShadow: `0 0 8px ${accent}`,
+              }}/>
+              <div style={{
+                fontFamily: RDA.body, fontWeight: 600, fontSize: 26,
+                color: RDA.white, marginBottom: 12, letterSpacing: 1.4,
+                textTransform: 'uppercase',
+              }}>{title}</div>
+              <div style={{
+                fontFamily: RDA.display, fontWeight: 400, fontSize: 22,
+                color: 'rgba(255,255,255,0.72)', lineHeight: 1.3,
+                textWrap: 'pretty',
+              }}>{sub}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <PostFooter accent={accent} />
+    </PostFrame>
+  );
+}
+
+// ════════ Post 02 — Vertical timeline ════════
+function Post02Timeline({ accent, density }) {
+  const tick = useLoop(8000);
+  return (
+    <PostFrame accent={accent} density={density} seed={62}>
+      <PostTopBar accent={accent} label="02 · Process" />
+      <div style={{
+        position: 'absolute', inset: '180px 100px 100px',
+        display: 'flex', flexDirection: 'column',
+      }}>
+        <div style={{ animation: 'rdaFadeUp 0.6s 0.1s ease-out both', marginBottom: 16 }}>
+          <Eyebrow accent={accent} size={20}>Process</Eyebrow>
+        </div>
+        <h1 style={{
+          margin: '0 0 60px',
+          fontFamily: RDA.display, fontWeight: 500, fontSize: 92,
+          lineHeight: 0.95, color: RDA.white, letterSpacing: -2.5,
+          animation: 'rdaFadeUp 0.7s 0.3s ease-out both',
+        }}>
+          3 étapes.{' '}
+          <span style={{ fontStyle: 'italic', fontWeight: 400, color: accent }}>1 virement.</span>
+        </h1>
+
+        {/* timeline */}
+        <div style={{ position: 'relative', flex: 1 }}>
+          {/* vertical dashed line */}
+          <svg width="2" height="100%" viewBox="0 0 2 500" preserveAspectRatio="none"
+            style={{ position: 'absolute', left: 27, top: 40, bottom: 40, height: 'calc(100% - 80px)' }}>
+            <line x1="1" y1="0" x2="1" y2="500" stroke={accent} strokeWidth="2"
+              strokeDasharray="6 8" style={{ animation: 'rdaDashRoll 1.5s linear infinite' }}/>
+          </svg>
+          {[
+            ['01', 'Photo billet', 'Une photo lisible de ta carte d’embarquement ou de ton billet électronique.'],
+            ['02', 'WhatsApp 3 min', 'On vérifie l’éligibilité et on lance le dossier — sans formulaire.'],
+            ['03', 'Virement 48 h', '600 € versés sous 48 h après que la compagnie a payé.'],
+          ].map(([n, title, sub], i) => (
+            <div key={i} style={{
+              display: 'grid', gridTemplateColumns: '56px 1fr', gap: 32,
+              padding: '24px 0 32px',
+              animation: `rdaFadeUp 0.6s ${0.5 + i*0.25}s ease-out both`,
+            }}>
+              <div style={{
+                width: 56, height: 56, borderRadius: '50%',
+                background: RDA.ink,
+                border: `2px solid ${accent}`,
+                boxShadow: `0 0 20px ${accent}88, inset 0 0 12px ${accent}22`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontFamily: RDA.mono, fontSize: 22, fontWeight: 500,
+                color: accent,
+              }}>{n}</div>
+              <div>
+                <div style={{
+                  fontFamily: RDA.body, fontWeight: 600, fontSize: 36,
+                  color: RDA.white, letterSpacing: 0.8,
+                  textTransform: 'uppercase', marginBottom: 8,
+                }}>{title}</div>
+                <div style={{
+                  fontFamily: RDA.display, fontWeight: 400, fontSize: 24,
+                  color: 'rgba(255,255,255,0.75)', lineHeight: 1.35,
+                  textWrap: 'pretty', maxWidth: 700,
+                }}>{sub}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <PostFooter accent={accent} />
+    </PostFrame>
+  );
+}
+
+// ════════ Post 03 — Brutalist XXL "3" ════════
+function Post03Brutalist({ accent, density }) {
+  return (
+    <PostFrame accent={accent} density={density} seed={303}>
+      <PostTopBar accent={accent} label="03 · Process" />
+      <div style={{
+        position: 'absolute', inset: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}>
+        <div style={{
+          fontFamily: RDA.display, fontWeight: 500,
+          fontSize: 1100, lineHeight: 0.78,
+          color: RDA.white, letterSpacing: -60,
+          textShadow: `0 0 80px ${accent}33`,
+          animation: 'rdaFadeIn 0.8s ease-out both',
+        }}>3</div>
+        {/* gold étapes label crossing */}
+        <div style={{
+          position: 'absolute', top: '52%', left: 0, right: 0,
+          textAlign: 'center', pointerEvents: 'none',
+          fontFamily: RDA.body, fontWeight: 700, fontSize: 72,
+          color: RDA.goldHi, letterSpacing: 12,
+          textTransform: 'uppercase',
+          textShadow: `0 0 28px ${RDA.gold}66`,
+          animation: 'rdaFadeUp 0.8s 0.4s ease-out both',
+        }}>étapes</div>
+      </div>
+      {/* corner labels */}
+      <div style={{
+        position: 'absolute', left: 80, bottom: 100,
+        fontFamily: RDA.mono, fontSize: 16, letterSpacing: 3,
+        color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase',
+        lineHeight: 1.8,
+        animation: 'rdaFadeUp 0.6s 0.8s ease-out both',
+      }}>
+        <div>01 · photo billet</div>
+        <div>02 · whatsapp</div>
+        <div>03 · 600 € virés</div>
+      </div>
+      <div style={{
+        position: 'absolute', right: 80, bottom: 100, textAlign: 'right',
+        fontFamily: RDA.display, fontStyle: 'italic', fontWeight: 400,
+        fontSize: 32, color: accent,
+        textShadow: `0 0 18px ${accent}66`,
+        animation: 'rdaFadeUp 0.6s 1s ease-out both',
+        maxWidth: 320, lineHeight: 1.2,
+      }}>"Le reste, c’est notre métier."</div>
+      <PostFooter accent={accent} />
+    </PostFrame>
+  );
+}
+
+// ════════ Post 04 — Editorial Cormorant ════════
+function Post04Editorial({ accent, density }) {
+  return (
+    <PostFrame accent={accent} density={density} seed={444}>
+      <PostTopBar accent={accent} label="04 · Process" />
+      <div style={{
+        position: 'absolute', inset: '160px 80px 100px',
+        display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+      }}>
+        <div style={{ animation: 'rdaFadeUp 0.7s 0.2s ease-out both' }}>
+          <div style={{
+            fontFamily: RDA.mono, fontSize: 18, letterSpacing: 3,
+            color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase',
+            marginBottom: 20,
+          }}>— No 04 · Méthode</div>
+          <h1 style={{
+            margin: 0,
+            fontFamily: RDA.display, fontWeight: 400, fontStyle: 'italic',
+            fontSize: 240, lineHeight: 0.88,
+            color: RDA.white, letterSpacing: -8,
+          }}>
+            Trois<br/>
+            <span style={{ color: accent, textShadow: `0 0 30px ${accent}55` }}>étapes,</span><br/>
+            <span style={{
+              color: RDA.goldHi, fontStyle: 'normal', fontWeight: 500,
+              textShadow: `0 0 30px ${RDA.gold}55`,
+            }}>600 €.</span>
+          </h1>
+        </div>
+        <div style={{
+          display: 'flex', gap: 60, paddingTop: 32,
+          borderTop: `1px solid ${RDA.hairline}`,
+          animation: 'rdaFadeUp 0.6s 0.8s ease-out both',
+        }}>
+          {[
+            ['i.',   'Photographie ton billet.'],
+            ['ii.',  'Envoie-le sur WhatsApp.'],
+            ['iii.', 'Reçois ton virement.'],
+          ].map(([n, txt], i) => (
+            <div key={i} style={{ flex: 1 }}>
+              <div style={{
+                fontFamily: RDA.display, fontStyle: 'italic',
+                fontSize: 38, color: accent, lineHeight: 1,
+                marginBottom: 12, fontWeight: 500,
+              }}>{n}</div>
+              <div style={{
+                fontFamily: RDA.display, fontWeight: 400,
+                fontSize: 28, color: 'rgba(255,255,255,0.85)',
+                lineHeight: 1.3, textWrap: 'pretty',
+              }}>{txt}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <PostFooter accent={accent} />
+    </PostFrame>
+  );
+}
+
+Object.assign(window, { Post01Classic, Post02Timeline, Post03Brutalist, Post04Editorial });
+
+  </script>
+
+  <!-- ===== Posts 5-8 ===== -->
+  <script type="text/babel" data-presets="react" data-source="posts/posts-b.jsx">
+// Posts 5-8 — 3 MIN countdown, diagonal cards, boarding pass, WhatsApp chat.
+
+// ════════ Post 05 — "3 MIN" countdown ════════
+function Post053Min({ accent, density }) {
+  const tick = useLoop(8000);
+  return (
+    <PostFrame accent={accent} density={density} seed={505}>
+      <PostTopBar accent={accent} label="05 · Process" />
+      <div style={{
+        position: 'absolute', inset: '180px 80px 100px',
+        display: 'flex', flexDirection: 'column', justifyContent: 'center',
+        alignItems: 'center', gap: 36,
+      }}>
+        <div style={{
+          fontFamily: RDA.mono, fontSize: 22, letterSpacing: 4,
+          color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase',
+          animation: 'rdaFadeUp 0.6s 0.1s ease-out both',
+        }}>Temps total pour ouvrir un dossier</div>
+
+        <div key={tick} style={{
+          display: 'flex', alignItems: 'baseline', gap: 20,
+          animation: 'rdaScaleIn 0.9s 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both',
+        }}>
+          <CountUp to={3} duration={1400} trigger={tick} style={{
+            fontFamily: RDA.display, fontWeight: 500,
+            fontSize: 520, lineHeight: 0.85,
+            color: accent, letterSpacing: -16,
+            textShadow: `0 0 60px ${accent}aa, 0 0 20px ${accent}66`,
+          }}/>
+          <span style={{
+            fontFamily: RDA.body, fontWeight: 600, fontSize: 140,
+            color: RDA.white, letterSpacing: 4,
+            textTransform: 'uppercase', lineHeight: 0.85,
+          }}>min</span>
+        </div>
+
+        <div style={{
+          fontFamily: RDA.display, fontStyle: 'italic', fontWeight: 400,
+          fontSize: 44, color: 'rgba(255,255,255,0.85)', textAlign: 'center',
+          maxWidth: 720, lineHeight: 1.2,
+          animation: 'rdaFadeUp 0.6s 0.9s ease-out both',
+          textWrap: 'pretty',
+        }}>
+          Ouvre WhatsApp, envoie une photo de billet, on s’occupe du reste.
+        </div>
+
+        <div style={{
+          display: 'flex', gap: 14, marginTop: 14,
+          animation: 'rdaFadeUp 0.6s 1.3s ease-out both',
+        }}>
+          {['Photo billet', 'WhatsApp', '600 € reçus'].map((t, i) => (
+            <div key={i} style={{
+              padding: '12px 22px',
+              borderRadius: 999,
+              border: `1px solid ${accent}55`,
+              background: `${accent}10`,
+              fontFamily: RDA.mono, fontSize: 16, letterSpacing: 2,
+              color: 'rgba(255,255,255,0.85)', textTransform: 'uppercase',
+            }}>
+              <span style={{ color: accent, marginRight: 10 }}>0{i+1}</span>
+              {t}
+            </div>
+          ))}
+        </div>
+      </div>
+      <PostFooter accent={accent} />
+    </PostFrame>
+  );
+}
+
+// ════════ Post 06 — Diagonal offset cards ════════
+function Post06Diagonal({ accent, density }) {
+  return (
+    <PostFrame accent={accent} density={density} seed={606}>
+      <PostTopBar accent={accent} label="06 · Process" />
+      <div style={{
+        position: 'absolute', inset: '160px 80px 100px',
+        display: 'flex', flexDirection: 'column', justifyContent: 'center',
+      }}>
+        <div style={{ animation: 'rdaFadeUp 0.6s 0.1s ease-out both' }}>
+          <Eyebrow accent={accent} size={20}>Comment ça marche</Eyebrow>
+        </div>
+        <h1 style={{
+          margin: '24px 0 60px',
+          fontFamily: RDA.display, fontWeight: 500, fontSize: 100,
+          color: RDA.white, lineHeight: 0.95, letterSpacing: -3,
+          animation: 'rdaFadeUp 0.7s 0.3s ease-out both',
+        }}>
+          Trois gestes. <span style={{ color: accent, fontStyle: 'italic', fontWeight: 400 }}>Zéro effort.</span>
+        </h1>
+        <div style={{ position: 'relative', height: 460 }}>
+          {[
+            { n: '01', t: 'Photo', s: 'de ton billet',     rot: -4, x:   0,  y:   0, bg: '#152a4a' },
+            { n: '02', t: 'WhatsApp', s: '+33 7 56 86 36 30', rot: 3, x: 220,  y:  80, bg: '#0d1f35' },
+            { n: '03', t: '600 €', s: 'sur ton compte',    rot: -2, x: 460,  y:   30, bg: '#1a3258' },
+          ].map((c, i) => (
+            <div key={i} style={{
+              position: 'absolute', left: c.x, top: c.y,
+              width: 380, height: 360,
+              background: c.bg,
+              border: `1px solid ${accent}66`,
+              boxShadow: `0 24px 60px rgba(0,0,0,0.5), 0 0 0 1px ${accent}22, inset 0 0 60px ${accent}08`,
+              transform: `rotate(${c.rot}deg)`,
+              padding: 36, boxSizing: 'border-box',
+              display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+              animation: `rdaScaleIn 0.7s ${0.4 + i*0.2}s cubic-bezier(0.34, 1.4, 0.64, 1) both`,
+            }}>
+              <StepNumber n={c.n} accent={accent} size={88} />
+              <div>
+                <div style={{
+                  fontFamily: RDA.display, fontWeight: 500, fontSize: i === 2 ? 78 : 56,
+                  color: i === 2 ? RDA.goldHi : RDA.white,
+                  letterSpacing: -1.5, lineHeight: 0.95,
+                  textShadow: i === 2 ? `0 0 24px ${RDA.gold}66` : 'none',
+                }}>{c.t}</div>
+                <div style={{
+                  marginTop: 8,
+                  fontFamily: RDA.mono, fontSize: 16, letterSpacing: 1.5,
+                  color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase',
+                }}>{c.s}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <PostFooter accent={accent} />
+    </PostFrame>
+  );
+}
+
+// ════════ Post 07 — Boarding pass ════════
+function Post07BoardingPass({ accent, density }) {
+  return (
+    <PostFrame accent={accent} density={density} seed={707}>
+      <PostTopBar accent={accent} label="07 · Process" />
+      <div style={{
+        position: 'absolute', inset: '170px 60px 100px',
+        display: 'flex', flexDirection: 'column', justifyContent: 'center',
+      }}>
+        {/* Header strip */}
+        <div style={{
+          padding: '14px 32px',
+          background: RDA.inkText,
+          border: `1px solid ${RDA.hairline}`,
+          borderBottom: 'none',
+          borderTopLeftRadius: 8, borderTopRightRadius: 8,
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          animation: 'rdaFadeUp 0.5s 0.2s ease-out both',
+        }}>
+          <span style={{
+            fontFamily: RDA.mono, fontSize: 14, letterSpacing: 2.5,
+            color: accent, textTransform: 'uppercase',
+          }}>BOARDING PROCESS — RDA</span>
+          <span style={{
+            fontFamily: RDA.mono, fontSize: 14, letterSpacing: 2.5,
+            color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase',
+          }}>CE 261/2004</span>
+        </div>
+
+        {/* Body — three columns + tear-off stub */}
+        <div style={{
+          display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1.1fr',
+          background: '#0a1828',
+          border: `1px solid ${RDA.hairline}`,
+          animation: 'rdaFadeUp 0.6s 0.4s ease-out both',
+        }}>
+          {/* perforation visualization for tear-off (last column) */}
+          {[
+            { code: 'PHO', from: 'photo', to: 'billet',    n: '01' },
+            { code: 'WSP', from: 'whatsapp', to: '3 minutes', n: '02' },
+            { code: 'EUR', from: '600 €', to: 'virement 48 h', n: '03' },
+          ].map((s, i) => (
+            <div key={i} style={{
+              padding: '36px 24px',
+              borderRight: `1px dashed ${RDA.hairline}`,
+            }}>
+              <div style={{
+                fontFamily: RDA.mono, fontSize: 13, letterSpacing: 2.5,
+                color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase',
+                marginBottom: 16,
+              }}>Step {s.n}</div>
+              <div style={{
+                fontFamily: RDA.display, fontWeight: 500, fontSize: 110,
+                lineHeight: 0.85, color: RDA.white, letterSpacing: -4,
+                marginBottom: 14,
+              }}>{s.code}</div>
+              <div style={{
+                fontFamily: RDA.mono, fontSize: 13, letterSpacing: 1.5,
+                color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase',
+              }}>{s.from}</div>
+              <div style={{
+                fontFamily: RDA.display, fontWeight: 400, fontStyle: 'italic',
+                fontSize: 22, color: accent, marginTop: 4,
+              }}>{s.to}</div>
+            </div>
+          ))}
+          {/* Tear-off stub: amount */}
+          <div style={{
+            padding: '36px 24px',
+            background: `linear-gradient(135deg, ${RDA.inkMid} 0%, ${RDA.ink} 100%)`,
+            position: 'relative',
+            display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+          }}>
+            <div style={{
+              fontFamily: RDA.mono, fontSize: 13, letterSpacing: 2.5,
+              color: accent, textTransform: 'uppercase',
+            }}>Indemnité</div>
+            <div>
+              <div style={{
+                fontFamily: RDA.display, fontWeight: 500, fontSize: 110,
+                color: RDA.goldHi, lineHeight: 0.85, letterSpacing: -3,
+                textShadow: `0 0 28px ${RDA.gold}66`,
+              }}>600 €</div>
+              <div style={{
+                marginTop: 8,
+                fontFamily: RDA.mono, fontSize: 13, letterSpacing: 1.5,
+                color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase',
+              }}>par passager</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer barcode-ish */}
+        <div style={{
+          padding: '20px 32px',
+          background: RDA.inkText,
+          border: `1px solid ${RDA.hairline}`,
+          borderTop: 'none',
+          borderBottomLeftRadius: 8, borderBottomRightRadius: 8,
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          animation: 'rdaFadeUp 0.5s 0.6s ease-out both',
+        }}>
+          <div style={{ display: 'flex', gap: 2 }}>
+            {Array.from({ length: 40 }, (_, i) => (
+              <div key={i} style={{
+                width: ((i * 7) % 4) + 1, height: 28,
+                background: i % 3 === 0 ? accent : 'rgba(255,255,255,0.7)',
+                opacity: 0.7 + ((i * 13) % 3) * 0.1,
+              }}/>
+            ))}
+          </div>
+          <span style={{
+            fontFamily: RDA.mono, fontSize: 13, letterSpacing: 2,
+            color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase',
+          }}>9/10 gagnés · zéro frais si on perd</span>
+        </div>
+      </div>
+      <PostFooter accent={accent} />
+    </PostFrame>
+  );
+}
+
+// ════════ Post 08 — WhatsApp chat preview ════════
+function Post08Chat({ accent, density }) {
+  return (
+    <PostFrame accent={accent} density={density} seed={808}>
+      <PostTopBar accent={accent} label="08 · Process" />
+      <div style={{
+        position: 'absolute', inset: '160px 80px 100px',
+        display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 28,
+      }}>
+        <div style={{ animation: 'rdaFadeUp 0.5s 0.1s ease-out both' }}>
+          <Eyebrow accent={accent} size={20}>Le process, en vrai</Eyebrow>
+        </div>
+
+        {/* Chat messages */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {/* User bubble — ticket photo placeholder */}
+          <div style={{
+            alignSelf: 'flex-end', maxWidth: 480,
+            animation: 'rdaFadeUp 0.5s 0.4s ease-out both',
+          }}>
+            <div style={{
+              background: '#1f3a5f',
+              border: `1px solid ${RDA.hairline}`,
+              borderRadius: '20px 20px 4px 20px',
+              padding: 16,
+              fontFamily: RDA.body,
+              color: '#fff',
+            }}>
+              {/* ticket placeholder */}
+              <div style={{
+                width: 440, height: 200,
+                background: `repeating-linear-gradient(45deg, ${RDA.inkText}, ${RDA.inkText} 12px, #0d1f35 12px, #0d1f35 24px)`,
+                borderRadius: 8,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontFamily: RDA.mono, fontSize: 14, letterSpacing: 2,
+                color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase',
+                marginBottom: 10,
+              }}>[ photo du billet ]</div>
+              <div style={{
+                fontFamily: RDA.body, fontSize: 22, fontWeight: 400,
+              }}>Vol AF 719 du 21 mai. Retard 4 h.</div>
+              <div style={{
+                fontFamily: RDA.mono, fontSize: 12, letterSpacing: 1.5,
+                color: 'rgba(255,255,255,0.5)', textAlign: 'right', marginTop: 6,
+              }}>14:02  ✓✓</div>
+            </div>
+          </div>
+
+          {/* RDA bubble */}
+          <div style={{
+            alignSelf: 'flex-start', maxWidth: 520,
+            animation: 'rdaFadeUp 0.5s 0.9s ease-out both',
+          }}>
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              marginBottom: 6, paddingLeft: 8,
+            }}>
+              <span style={{
+                width: 8, height: 8, borderRadius: '50%', background: accent,
+                boxShadow: `0 0 8px ${accent}`,
+              }}/>
+              <span style={{
+                fontFamily: RDA.mono, fontSize: 13, letterSpacing: 2,
+                color: accent, textTransform: 'uppercase',
+              }}>Robin des Airs</span>
+            </div>
+            <div style={{
+              background: '#0f3d2a',
+              borderRadius: '20px 20px 20px 4px',
+              border: `1px solid ${accent}55`,
+              padding: '16px 22px',
+              fontFamily: RDA.body, fontSize: 26, fontWeight: 400,
+              color: '#fff', lineHeight: 1.3,
+            }}>
+              Dossier ouvert ✓<br/>
+              <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: 22 }}>
+                On envoie la mise en demeure aujourd’hui. Je te tiens au courant.
+              </span>
+              <div style={{
+                fontFamily: RDA.mono, fontSize: 12, letterSpacing: 1.5,
+                color: 'rgba(255,255,255,0.55)', textAlign: 'right', marginTop: 6,
+              }}>14:04</div>
+            </div>
+          </div>
+
+          {/* RDA bubble — virement */}
+          <div style={{
+            alignSelf: 'flex-start', maxWidth: 480,
+            animation: 'rdaFadeUp 0.5s 1.4s ease-out both',
+          }}>
+            <div style={{
+              background: '#0f3d2a',
+              borderRadius: '20px 20px 20px 4px',
+              border: `1px solid ${accent}55`,
+              padding: '20px 26px',
+              fontFamily: RDA.body, fontSize: 26, fontWeight: 400,
+              color: '#fff', lineHeight: 1.3,
+            }}>
+              <span style={{
+                fontFamily: RDA.display, fontWeight: 500, fontSize: 56,
+                color: RDA.goldHi, letterSpacing: -1.5,
+                textShadow: `0 0 16px ${RDA.gold}55`,
+              }}>+ 450 €</span>
+              <div style={{ fontSize: 20, color: 'rgba(255,255,255,0.8)', marginTop: 4 }}>
+                Virement envoyé. <span style={{ color: accent }}>Merci !</span>
+              </div>
+              <div style={{
+                fontFamily: RDA.mono, fontSize: 12, letterSpacing: 1.5,
+                color: 'rgba(255,255,255,0.55)', textAlign: 'right', marginTop: 6,
+              }}>+ 6 semaines</div>
+            </div>
+          </div>
+        </div>
+
+        <div style={{
+          marginTop: 8,
+          fontFamily: RDA.display, fontStyle: 'italic', fontWeight: 400,
+          fontSize: 28, color: accent, textAlign: 'center',
+          textShadow: `0 0 18px ${accent}55`,
+          animation: 'rdaFadeUp 0.5s 1.9s ease-out both',
+        }}>"On gagne, tu touches. On perd, tu ne paies rien."</div>
+      </div>
+      <PostFooter accent={accent} />
+    </PostFrame>
+  );
+}
+
+Object.assign(window, { Post053Min, Post06Diagonal, Post07BoardingPass, Post08Chat });
+
+  </script>
+
+  <!-- ===== Posts 9-12 ===== -->
+  <script type="text/babel" data-presets="react" data-source="posts/posts-c.jsx">
+// Posts 9-12 — receipt monospace, constellation, passport stamps, radial.
+
+// ════════ Post 09 — Receipt / facture monospace ════════
+function Post09Receipt({ accent, density }) {
+  const tick = useLoop(8500);
+  return (
+    <PostFrame accent={accent} density={density} seed={909}>
+      <PostTopBar accent={accent} label="09 · Process" />
+      <div style={{
+        position: 'absolute', inset: '170px 80px 100px',
+        display: 'flex', flexDirection: 'column', justifyContent: 'center',
+      }}>
+        <div key={tick} style={{
+          background: RDA.inkText,
+          border: `1px solid ${RDA.hairline}`,
+          borderRadius: 4,
+          padding: '42px 50px',
+          fontFamily: RDA.mono,
+          color: RDA.white,
+          boxShadow: `0 24px 60px rgba(0,0,0,0.5)`,
+          animation: 'rdaFadeUp 0.7s 0.3s ease-out both',
+        }}>
+          {/* receipt header */}
+          <div style={{
+            textAlign: 'center', paddingBottom: 24,
+            borderBottom: `1px dashed ${RDA.hairline}`,
+          }}>
+            <div style={{
+              fontSize: 14, letterSpacing: 3, color: accent,
+              textTransform: 'uppercase', marginBottom: 8,
+            }}>— RDA · Reçu de procédure —</div>
+            <div style={{
+              fontFamily: RDA.display, fontSize: 36, fontWeight: 500,
+              color: RDA.white, letterSpacing: -0.5, marginBottom: 4,
+            }}>Dossier CE 261/2004</div>
+            <div style={{
+              fontSize: 14, letterSpacing: 2,
+              color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase',
+            }}>Vol Europe → Afrique · +3 h retard</div>
+          </div>
+
+          {/* line items */}
+          <div style={{ padding: '28px 0', display: 'flex', flexDirection: 'column', gap: 22 }}>
+            {[
+              ['Photo billet',           'reçue',     '✓'],
+              ['Vérification éligibilité', '< 3 min',   '✓'],
+              ['Mise en demeure',         'envoyée',  '✓'],
+              ['Recouvrement',            '6-12 sem.', '✓'],
+              ['Virement passager',       '48 h',      '✓'],
+            ].map(([label, val, ok], i) => (
+              <div key={i} style={{
+                display: 'flex', alignItems: 'baseline', gap: 8,
+                fontSize: 24, letterSpacing: 0.5,
+                animation: `rdaFadeIn 0.4s ${0.5 + i*0.15}s ease-out both`,
+              }}>
+                <span style={{ color: accent }}>{ok}</span>
+                <span style={{ color: 'rgba(255,255,255,0.85)' }}>{label}</span>
+                <span style={{
+                  flex: 1,
+                  borderBottom: `2px dotted ${RDA.hairline}`,
+                  margin: '0 12px', height: 1, alignSelf: 'flex-end',
+                  marginBottom: 6,
+                }}/>
+                <span style={{ color: 'rgba(255,255,255,0.6)' }}>{val}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* total */}
+          <div style={{
+            borderTop: `2px dashed ${accent}66`,
+            paddingTop: 22, marginTop: 6,
+            display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
+            animation: 'rdaFadeUp 0.5s 1.3s ease-out both',
+          }}>
+            <span style={{
+              fontFamily: RDA.body, fontWeight: 600, fontSize: 32,
+              color: RDA.white, letterSpacing: 2, textTransform: 'uppercase',
+            }}>Total</span>
+            <span style={{
+              fontFamily: RDA.display, fontWeight: 500, fontSize: 92,
+              color: RDA.goldHi, lineHeight: 0.9, letterSpacing: -2,
+              textShadow: `0 0 24px ${RDA.gold}66`,
+            }}><CountUp to={600} duration={1600} trigger={tick} />€</span>
+          </div>
+          <div style={{
+            textAlign: 'center', marginTop: 18, paddingTop: 14,
+            borderTop: `1px dashed ${RDA.hairline}`,
+            fontSize: 13, letterSpacing: 2.5,
+            color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase',
+          }}>Part de succès 25 % · Zéro frais si on perd</div>
+        </div>
+      </div>
+      <PostFooter accent={accent} />
+    </PostFrame>
+  );
+}
+
+// ════════ Post 10 — Constellation route ════════
+function Post10Constellation({ accent, density }) {
+  return (
+    <PostFrame accent={accent} density={density} seed={1010}>
+      <PostTopBar accent={accent} label="10 · Process" />
+      <div style={{
+        position: 'absolute', inset: '170px 80px 100px',
+        display: 'flex', flexDirection: 'column', justifyContent: 'space-between',
+      }}>
+        <div style={{ animation: 'rdaFadeUp 0.6s 0.2s ease-out both' }}>
+          <Eyebrow accent={accent} size={20}>Constellation</Eyebrow>
+          <h1 style={{
+            margin: '20px 0 0',
+            fontFamily: RDA.display, fontWeight: 500, fontSize: 100,
+            lineHeight: 0.95, color: RDA.white, letterSpacing: -3,
+          }}>
+            Trois <span style={{ color: accent, fontStyle: 'italic', fontWeight: 400 }}>étoiles</span>
+            <br/>
+            entre toi et <span style={{ color: RDA.goldHi, textShadow: `0 0 24px ${RDA.gold}66` }}>600 €</span>.
+          </h1>
+        </div>
+
+        {/* SVG constellation */}
+        <div style={{
+          position: 'relative', width: '100%', height: 480,
+          animation: 'rdaFadeIn 0.8s 0.5s ease-out both',
+        }}>
+          <svg viewBox="0 0 920 480" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
+            {/* connecting lines */}
+            <line x1="100" y1="380" x2="420" y2="160" stroke={accent} strokeWidth="2"
+              strokeDasharray="4 8" opacity="0.7"
+              style={{ animation: 'rdaDashRoll 2s linear infinite' }}/>
+            <line x1="420" y1="160" x2="820" y2="320" stroke={accent} strokeWidth="2"
+              strokeDasharray="4 8" opacity="0.7"
+              style={{ animation: 'rdaDashRoll 2s linear infinite' }}/>
+            {[
+              { x: 100, y: 380, n: '01', t: 'Photo', s: 'billet' },
+              { x: 420, y: 160, n: '02', t: 'WhatsApp', s: '3 min' },
+              { x: 820, y: 320, n: '03', t: '600 €', s: 'virement' },
+            ].map((s, i) => (
+              <g key={i}>
+                {/* glowing star */}
+                <circle cx={s.x} cy={s.y} r={28} fill={accent} opacity="0.18"/>
+                <circle cx={s.x} cy={s.y} r={14} fill={accent} opacity="0.4"/>
+                <circle cx={s.x} cy={s.y} r={6} fill="#fff"
+                  style={{ filter: `drop-shadow(0 0 8px ${accent})` }}/>
+                {/* radiating ticks */}
+                {[0, 90, 180, 270].map((deg) => (
+                  <line key={deg}
+                    x1={s.x} y1={s.y}
+                    x2={s.x + Math.cos(deg*Math.PI/180)*22}
+                    y2={s.y + Math.sin(deg*Math.PI/180)*22}
+                    stroke={accent} strokeWidth="1.5" opacity="0.6"/>
+                ))}
+                {/* label */}
+                <text x={s.x} y={s.y - 50}
+                  textAnchor="middle"
+                  fontFamily={RDA.mono} fontSize="20" letterSpacing="3"
+                  fill={accent} opacity="0.95"
+                  style={{ textTransform: 'uppercase' }}>{s.n}</text>
+                <text x={s.x} y={s.y + 60}
+                  textAnchor="middle"
+                  fontFamily={RDA.display} fontSize="38" fontWeight="500"
+                  fill="#fff">{s.t}</text>
+                <text x={s.x} y={s.y + 88}
+                  textAnchor="middle"
+                  fontFamily={RDA.mono} fontSize="14" letterSpacing="2"
+                  fill="rgba(255,255,255,0.6)"
+                  style={{ textTransform: 'uppercase' }}>{s.s}</text>
+              </g>
+            ))}
+          </svg>
+        </div>
+      </div>
+      <PostFooter accent={accent} />
+    </PostFrame>
+  );
+}
+
+// ════════ Post 11 — Passport stamps ════════
+function Post11Stamps({ accent, density }) {
+  return (
+    <PostFrame accent={accent} density={density} seed={1111}>
+      <PostTopBar accent={accent} label="11 · Process" />
+      <div style={{
+        position: 'absolute', inset: '170px 80px 100px',
+        display: 'flex', flexDirection: 'column', justifyContent: 'center',
+      }}>
+        <div style={{ animation: 'rdaFadeUp 0.6s 0.1s ease-out both', marginBottom: 40 }}>
+          <Eyebrow accent={accent} size={20}>Trois tampons</Eyebrow>
+          <h1 style={{
+            margin: '20px 0 0',
+            fontFamily: RDA.display, fontWeight: 500, fontSize: 96,
+            color: RDA.white, lineHeight: 0.95, letterSpacing: -3,
+          }}>
+            Trois étapes, <span style={{ color: accent, fontStyle: 'italic', fontWeight: 400 }}>une indemnité.</span>
+          </h1>
+        </div>
+
+        {/* Three circular stamps */}
+        <div style={{
+          display: 'flex', justifyContent: 'space-around', alignItems: 'center', gap: 20,
+          paddingTop: 20,
+        }}>
+          {[
+            { n: '01', t: 'PHOTO', s: 'BILLET', rot: -7 },
+            { n: '02', t: 'WHATSAPP', s: '3 MIN', rot: 5 },
+            { n: '03', t: '600 €', s: 'VIRÉS', rot: -3, gold: true },
+          ].map((s, i) => (
+            <div key={i} style={{
+              width: 260, height: 260,
+              borderRadius: '50%',
+              border: `3px ${s.gold ? 'double' : 'solid'} ${s.gold ? RDA.goldHi : accent}`,
+              position: 'relative',
+              transform: `rotate(${s.rot}deg)`,
+              boxShadow: `0 0 40px ${s.gold ? RDA.gold : accent}55, inset 0 0 30px ${s.gold ? RDA.gold : accent}22`,
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              animation: `rdaScaleIn 0.7s ${0.4 + i*0.2}s cubic-bezier(0.34, 1.4, 0.64, 1) both`,
+            }}>
+              {/* inner ring */}
+              <div style={{
+                position: 'absolute', inset: 14, borderRadius: '50%',
+                border: `1px solid ${s.gold ? RDA.goldHi : accent}55`,
+              }}/>
+              {/* top label curved-ish (straight text) */}
+              <div style={{
+                fontFamily: RDA.mono, fontSize: 14, letterSpacing: 4,
+                color: s.gold ? RDA.goldHi : accent,
+                textTransform: 'uppercase', marginBottom: 8,
+              }}>· VALIDÉ ·</div>
+              <div style={{
+                fontFamily: RDA.display, fontWeight: 500, fontSize: 48,
+                color: s.gold ? RDA.goldHi : accent, lineHeight: 0.9,
+                textShadow: `0 0 16px ${s.gold ? RDA.gold : accent}66`,
+                letterSpacing: -1, marginBottom: 4,
+              }}>{s.t}</div>
+              <div style={{
+                fontFamily: RDA.body, fontWeight: 600, fontSize: 22,
+                color: 'rgba(255,255,255,0.85)', letterSpacing: 2.5,
+                textTransform: 'uppercase',
+              }}>{s.s}</div>
+              <div style={{
+                marginTop: 14,
+                fontFamily: RDA.mono, fontSize: 14, letterSpacing: 3,
+                color: 'rgba(255,255,255,0.55)',
+              }}>STEP {s.n}</div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{
+          textAlign: 'center', marginTop: 60,
+          fontFamily: RDA.display, fontStyle: 'italic', fontWeight: 400,
+          fontSize: 30, color: 'rgba(255,255,255,0.85)',
+          animation: 'rdaFadeUp 0.6s 1.2s ease-out both',
+        }}>"Aucune signature, aucun papier, aucune attente."</div>
+      </div>
+      <PostFooter accent={accent} />
+    </PostFrame>
+  );
+}
+
+// ════════ Post 12 — Radial / circular timeline ════════
+function Post12Radial({ accent, density }) {
+  const tick = useLoop(9000);
+  return (
+    <PostFrame accent={accent} density={density} seed={1212}>
+      <PostTopBar accent={accent} label="12 · Process" />
+      <div style={{
+        position: 'absolute', inset: '160px 80px 100px',
+        display: 'flex', flexDirection: 'column', justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+        <div style={{
+          textAlign: 'center', marginBottom: 28,
+          animation: 'rdaFadeUp 0.6s 0.1s ease-out both',
+        }}>
+          <Eyebrow accent={accent} size={20}>Cycle</Eyebrow>
+        </div>
+
+        <div style={{
+          position: 'relative', width: 640, height: 640,
+          animation: 'rdaFadeIn 0.8s 0.3s ease-out both',
+        }}>
+          <svg viewBox="0 0 640 640" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
+            <defs>
+              <linearGradient id="rdaRing" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor={accent} stopOpacity="0.9"/>
+                <stop offset="50%" stopColor={accent} stopOpacity="0.3"/>
+                <stop offset="100%" stopColor={accent} stopOpacity="0.9"/>
+              </linearGradient>
+            </defs>
+            {/* outer ring */}
+            <circle cx="320" cy="320" r="280" fill="none"
+              stroke="url(#rdaRing)" strokeWidth="2"
+              strokeDasharray="2 8"/>
+            {/* inner ring */}
+            <circle cx="320" cy="320" r="220" fill="none"
+              stroke={RDA.hairline} strokeWidth="1"/>
+            {/* three sector arcs */}
+            {[0, 120, 240].map((a, i) => {
+              const start = a - 50, end = a + 50;
+              const sx = 320 + Math.cos(start*Math.PI/180) * 250;
+              const sy = 320 + Math.sin(start*Math.PI/180) * 250;
+              const ex = 320 + Math.cos(end*Math.PI/180) * 250;
+              const ey = 320 + Math.sin(end*Math.PI/180) * 250;
+              return (
+                <path key={i}
+                  d={`M ${sx} ${sy} A 250 250 0 0 1 ${ex} ${ey}`}
+                  fill="none" stroke={accent} strokeWidth="4"
+                  strokeLinecap="round"
+                  opacity="0.9"
+                  style={{ filter: `drop-shadow(0 0 8px ${accent})` }}/>
+              );
+            })}
+            {/* step labels positioned around the ring */}
+            {[
+              { a: 270, n: '01', t: 'Photo', s: 'billet' },
+              { a:  30, n: '02', t: 'WhatsApp', s: '3 min' },
+              { a: 150, n: '03', t: '600 €', s: 'virés' },
+            ].map((s, i) => {
+              const r = 250;
+              const x = 320 + Math.cos(s.a*Math.PI/180) * r;
+              const y = 320 + Math.sin(s.a*Math.PI/180) * r;
+              return (
+                <g key={i}>
+                  <circle cx={x} cy={y} r="22" fill={RDA.ink}
+                    stroke={accent} strokeWidth="2"
+                    style={{ filter: `drop-shadow(0 0 10px ${accent})` }}/>
+                  <text x={x} y={y+5} textAnchor="middle"
+                    fontFamily={RDA.mono} fontSize="16" fontWeight="500"
+                    fill={accent}>{s.n}</text>
+                  {/* outer label */}
+                  <text
+                    x={320 + Math.cos(s.a*Math.PI/180) * 340}
+                    y={320 + Math.sin(s.a*Math.PI/180) * 340 - 6}
+                    textAnchor="middle"
+                    fontFamily={RDA.display} fontSize="40" fontWeight="500"
+                    fill="#fff">{s.t}</text>
+                  <text
+                    x={320 + Math.cos(s.a*Math.PI/180) * 340}
+                    y={320 + Math.sin(s.a*Math.PI/180) * 340 + 24}
+                    textAnchor="middle"
+                    fontFamily={RDA.mono} fontSize="14" letterSpacing="2"
+                    fill="rgba(255,255,255,0.6)"
+                    style={{ textTransform: 'uppercase' }}>{s.s}</text>
+                </g>
+              );
+            })}
+            {/* center medallion */}
+            <circle cx="320" cy="320" r="120" fill={RDA.inkDeep}
+              stroke={accent} strokeWidth="1"
+              style={{ filter: `drop-shadow(0 0 20px ${accent}66)` }}/>
+            <text x="320" y="305" textAnchor="middle"
+              fontFamily={RDA.mono} fontSize="14" letterSpacing="3.5"
+              fill={accent}
+              style={{ textTransform: 'uppercase' }}>Indemnité</text>
+            <text x="320" y="370" textAnchor="middle"
+              fontFamily={RDA.display} fontSize="86" fontWeight="500"
+              fill={RDA.goldHi} letterSpacing="-2"
+              style={{ filter: `drop-shadow(0 0 12px ${RDA.gold})` }}>
+              600 €
+            </text>
+          </svg>
+        </div>
+      </div>
+      <PostFooter accent={accent} />
+    </PostFrame>
+  );
+}
+
+Object.assign(window, { Post09Receipt, Post10Constellation, Post11Stamps, Post12Radial });
+
+  </script>
+
+  <!-- ===== Main app ===== -->
+  <script type="text/babel" data-presets="react">
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "starDensity": "starry",
+      "accent": "#00e5a0"
+    }/*EDITMODE-END*/;
+
+    const DENSITY_MAP = {
+      sober:  30,
+      starry: 80,
+      dense:  170,
+    };
+
+    const ACCENT_OPTIONS = [
+      "#00e5a0",
+      "#f0d080",
+      "#7DD3FC",
+      "#FF6F61",
+    ];
+
+    function App() {
+      const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+      const density = DENSITY_MAP[t.starDensity] ?? 80;
+      const accent = t.accent;
+
+      const posts = [
+        { id: 'p01', label: '01 · Classic 3-col',       Comp: Post01Classic },
+        { id: 'p02', label: '02 · Timeline vertical',   Comp: Post02Timeline },
+        { id: 'p03', label: '03 · Brutalist XXL',       Comp: Post03Brutalist },
+        { id: 'p04', label: '04 · Editorial Cormorant', Comp: Post04Editorial },
+        { id: 'p05', label: '05 · 3 minutes',           Comp: Post053Min },
+        { id: 'p06', label: '06 · Diagonal cards',      Comp: Post06Diagonal },
+        { id: 'p07', label: '07 · Boarding pass',       Comp: Post07BoardingPass },
+        { id: 'p08', label: '08 · WhatsApp chat',       Comp: Post08Chat },
+        { id: 'p09', label: '09 · Reçu monospace',      Comp: Post09Receipt },
+        { id: 'p10', label: '10 · Constellation',       Comp: Post10Constellation },
+        { id: 'p11', label: '11 · Tampons passeport',   Comp: Post11Stamps },
+        { id: 'p12', label: '12 · Cycle radial',        Comp: Post12Radial },
+      ];
+
+      return (
+        <React.Fragment>
+          <DesignCanvas>
+            <DCSection
+              id="posts"
+              title="Posts Instagram · Process en 3 étapes"
+              subtitle="12 variations · 1080×1080 · 1:1 · animation légère · cliquez sur ⤢ pour le plein écran"
+            >
+              {posts.map(({ id, label, Comp }) => (
+                <DCArtboard key={id} id={id} label={label} width={1080} height={1080}>
+                  <Comp accent={accent} density={density} />
+                </DCArtboard>
+              ))}
+            </DCSection>
+          </DesignCanvas>
+
+          <TweaksPanel title="Tweaks">
+            <TweakSection label="Ciel" />
+            <TweakRadio
+              label="Densité d’étoiles"
+              value={t.starDensity}
+              options={[
+                { value: 'sober',  label: 'Sobre' },
+                { value: 'starry', label: 'Étoilée' },
+                { value: 'dense',  label: 'Dense' },
+              ]}
+              onChange={(v) => setTweak('starDensity', v)}
+            />
+
+            <TweakSection label="Accent" />
+            <TweakColor
+              label="Couleur"
+              value={t.accent}
+              options={ACCENT_OPTIONS}
+              onChange={(v) => setTweak('accent', v)}
+            />
+          </TweaksPanel>
+        </React.Fragment>
+      );
+    }
+
+    function mount() {
+      if (!window.Post01Classic || !window.Post12Radial ||
+          !window.DesignCanvas || !window.TweaksPanel ||
+          !window.RDA || !window.PostFrame) {
+        return setTimeout(mount, 40);
+      }
+      ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    }
+    mount();
+  </script>
+</body>
+</html>
