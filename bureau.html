@@ -195,6 +195,12 @@ body { font-family: 'DM Sans', sans-serif; background: var(--sky); color: var(--
 .renta-rows .rr.total b { color:var(--amber); }
 .renta-prog .rp-top { display:flex; justify-content:space-between; font-size:0.72rem; color:var(--white-40); margin-bottom:5px; }
 .renta-note { font-size:0.66rem; color:var(--white-40); margin-top:0.8rem; font-style:italic; }
+/* ---- panneau Réseaux sociaux ---- */
+.social-grid { display:flex; flex-direction:column; gap:10px; margin-bottom:0.4rem; }
+.social-stat .ss-top { display:flex; justify-content:space-between; font-size:0.76rem; color:var(--white-70); margin-bottom:3px; }
+.social-stat .ss-pct { font-family:'JetBrains Mono',monospace; color:var(--blue); }
+.social-stat .ss-v { font-size:0.7rem; color:var(--white-40); margin-bottom:4px; }
+.social-stat .ss-v b { font-family:'JetBrains Mono',monospace; font-size:0.98rem; color:#fff; font-weight:600; }
 
 /* ---- avion qui traverse ---- */
 .flyby { position:fixed; top:64px; left:-60px; font-size:22px; z-index:150; pointer-events:none; opacity:0; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.5)); }
@@ -388,7 +394,7 @@ body.game-mode #gameView { display:block; }
     </div>
     <div class="pulse-cell" style="--accent:var(--green)">
       <div class="pulse-label">Postes actifs</div>
-      <div class="pulse-value green"><span id="kpiAgentsOn">0</span><span style="color:var(--white-40);font-size:1.1rem">/9</span></div>
+      <div class="pulse-value green"><span id="kpiAgentsOn">0</span><span style="color:var(--white-40);font-size:1.1rem">/10</span></div>
       <div class="pulse-sub" id="kpiAgentsTxt">tout le monde au travail</div>
     </div>
   </div>
@@ -404,7 +410,7 @@ body.game-mode #gameView { display:block; }
     <div>
       <div class="section-h">
         <h2>L'équipe au travail</h2>
-        <span class="tag">9 postes · live</span>
+        <span class="tag">10 postes · live</span>
         <span class="line"></span>
       </div>
       <div class="agents" id="agents"></div>
@@ -456,6 +462,11 @@ body.game-mode #gameView { display:block; }
       <div class="panel">
         <div class="panel-h"><span class="t">💼 Rentabilité · seuil</span><span class="mini-src demo" id="rentaSrc">ESTIM.</span></div>
         <div class="panel-b" style="padding:1rem 1.2rem" id="rentaBody"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-h"><span class="t">📱 Réseaux sociaux · croissance</span><span class="mini-src demo" id="socialSrc">ESTIM.</span></div>
+        <div class="panel-b" style="padding:1rem 1.2rem" id="socialBody"></div>
       </div>
 
       <div class="panel">
@@ -704,12 +715,20 @@ const AGENTS = [
       `Marge nette / dossier gagné : <span class="ok">${COSTS.margeParDossier} €</span>`,
       `Il faut <span class="hl">${RENTA.dossiersAouvrir} dossiers ouverts/mois</span> (à 60 %) pour être renta`,
       `Reste à couvrir ce mois : <span class="warn">${fmt(Math.max(0, RENTA.total - S.gagnes*COSTS.margeParDossier))} €</span>` ] },
+  { ic:"📱", ac:"var(--blue)", acp:"var(--blue-pale)", name:"Aïssa Ndiaye", role:"Community Manager · IG / FB",
+    kpiL:"clics WhatsApp / mois", kpiUnit:"", base:38,
+    tasks:()=>[
+      `Publication carrousel <span class="hl">« Connais-tu tes droits ? »</span> → IG + FB`,
+      `Story témoignage <span class="hl">« J'ai reçu 1 350 € »</span> + sticker lien WhatsApp`,
+      `Reel <span class="hl">vol Abidjan→Paris retardé</span> → <span class="ok">${ri(20,80)} clics</span>`,
+      `Réponse DM → bascule WhatsApp · <span class="ok">${ri(3,12)} conversations</span> aujourd'hui`,
+      `Engagement du jour : <span class="ok">${ri(15,60)} likes</span> · ${ri(2,12)} commentaires` ] },
 ];
 
 /* ============ RENDER AGENTS ============ */
 // outil ouvert au clic sur la carte du poste
-const AGENT_LINKS = ["/navigation-interne","/radar-vols-v2","/guide-whatsapp","/mandat","/espace-agence","/crm/","/suivi-dossier","/generateur-pub.html","/nos-tarifs.html"];
-const AGENT_LINKS_PHOTO = ["aicha","malik","robin","lefevre","sofia","karim","lea","yanis","nadia"].map(n=>`assets/bureau/${n}.jpg`);
+const AGENT_LINKS = ["/navigation-interne","/radar-vols-v2","/guide-whatsapp","/mandat","/espace-agence","/crm/","/suivi-dossier","/generateur-pub.html","/nos-tarifs.html","/generateur-pub-stories.html"];
+const AGENT_LINKS_PHOTO = ["aicha","malik","robin","lefevre","sofia","karim","lea","yanis","nadia","aissa"].map(n=>`assets/bureau/${n}.jpg`);
 // Objectifs réels (plan de lancement) par poste — affichés sur chaque carte
 const OBJECTIVES = [
   { t:"🎯 81 k€ CA net · 55 agences — An 1", pct:28 },
@@ -721,6 +740,7 @@ const OBJECTIVES = [
   { t:"🎯 Satisfaction ≥ 4,5/5 · 0 dossier oublié", pct:91 },
   { t:"🎯 CPL ≤ 3 € · 150 conv. WhatsApp / mois", pct:47 },
   { t:`🎯 Atteindre le seuil : ${RENTA.seuil} dossiers gagnés/mois`, pct: Math.min(100, Math.round(S.gagnes/RENTA.seuil*100)) },
+  { t:"🎯 400 clics WhatsApp · 70 conv. sociales / mois", pct:18 },
 ];
 const agentsEl = document.getElementById('agents');
 AGENTS.forEach((ag,i)=>{
@@ -753,7 +773,7 @@ AGENTS.forEach((ag,i)=>{
 });
 
 /* ============ MODE JEU : STATIONS ISO ============ */
-const POS = [ {l:50,t:27},{l:30,t:36},{l:70,t:36},{l:17,t:47},{l:83,t:47},{l:35,t:57},{l:65,t:57},{l:25,t:69},{l:62,t:70} ];
+const POS = [ {l:50,t:25},{l:30,t:34},{l:70,t:34},{l:16,t:44},{l:84,t:44},{l:36,t:54},{l:64,t:54},{l:20,t:65},{l:50,t:67},{l:80,t:67} ];
 const PHOTOS = AGENT_LINKS_PHOTO;
 const stationsEl = document.getElementById('stations');
 function shortName(n){ const p=n.split(' '); return (p[0]==='Me'? p[1]||p[0] : p[0]).toUpperCase(); }
@@ -1003,6 +1023,24 @@ function renderMeta(d, real){
   const ms=document.getElementById('metaSrc'); if(ms){ ms.className='mini-src '+(real?'real':'demo'); ms.textContent=real?'RÉEL':'DÉMO'; }
 }
 
+/* ============ PANNEAU RÉSEAUX SOCIAUX ============ */
+const SOCIAL = { metrics: [
+  { k:"Publications", cur:6, tgt:20, ic:"📝" },
+  { k:"Likes", cur:120, tgt:1200, ic:"❤️" },
+  { k:"Commentaires", cur:18, tgt:160, ic:"💬" },
+  { k:"Clics WhatsApp", cur:45, tgt:400, ic:"👉" },
+  { k:"Conversations sociales", cur:9, tgt:70, ic:"🤝" },
+]};
+function renderSocial(){
+  const el=document.getElementById('socialBody'); if(!el) return;
+  el.innerHTML = `<div class="social-grid">`+SOCIAL.metrics.map(m=>{
+    const pct=Math.min(100,Math.round(m.cur/m.tgt*100));
+    return `<div class="social-stat"><div class="ss-top"><span>${m.ic} ${m.k}</span><span class="ss-pct">${pct}%</span></div>
+      <div class="ss-v"><b>${fmt(m.cur)}</b><span> / ${fmt(m.tgt)} ce mois</span></div>
+      <div class="mf-bar"><i style="width:${pct}%;background:var(--blue)"></i></div></div>`;
+  }).join('')+`</div><div class="renta-note">Objectifs organiques IG + FB (plan Community Manager). Brancher l'API Instagram pour le réel.</div>`;
+}
+
 /* ============ PANNEAU RENTABILITÉ ============ */
 function renderRenta(){
   RENTA = calcRenta();
@@ -1158,6 +1196,7 @@ tickKPI();
 renderRadar();
 renderMeta(META_DEMO, false);   // panneau Meta en démo tant que /api/meta-stats n'a pas répondu
 renderRenta();                  // panneau rentabilité / seuil
+renderSocial();                 // panneau réseaux sociaux / croissance
 for(let i=0;i<6;i++) addFeed();
 waQueue=waScript();
 waStep();
