@@ -12,8 +12,6 @@ const AFRICA_EVENING_HUBS = [
   'DLA', 'NSI', 'LBV', 'BZV', 'BGF', 'FIH', 'NDJ',
   // Afrique de l'Est & océan Indien
   'ADD', 'NBO', 'KGL', 'BJM', 'TNR',
-  // Maghreb
-  'CMN', 'ALG', 'TUN',
 ];
 
 /**
