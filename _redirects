@@ -39,6 +39,7 @@
 /api/airtable-sync          /.netlify/functions/airtable-sync     200
 /api/crm-airtable-sync      /.netlify/functions/crm-airtable-sync 200
 /api/wa-messages            /.netlify/functions/wa-messages            200
+/api/wa-recent              /.netlify/functions/wa-recent              200
 /api/crm-wa-send            /.netlify/functions/crm-wa-send            200
 /api/send-whatsapp          /.netlify/functions/send-whatsapp          200
 /api/wati-webhook           /.netlify/functions/wati-webhook           200

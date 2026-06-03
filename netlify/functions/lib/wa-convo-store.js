@@ -96,10 +96,53 @@ async function listWaMessages(event, phone) {
   };
 }
 
+/**
+ * Liste les conversations récentes (dernier message de chaque numéro), triées
+ * du plus récent au plus ancien. Utilisé par le tableau de bord interne.
+ * @param {object} event
+ * @param {number} [limit=10]
+ */
+async function listRecentConvos(event, limit = 10) {
+  const store = getStore(event);
+  if (!store) {
+    return { blobsAvailable: false, conversations: [], error: 'Blobs non disponibles' };
+  }
+  let listing;
+  try {
+    listing = await store.list({ prefix: CONVO_PREFIX });
+  } catch (e) {
+    return { blobsAvailable: true, conversations: [], error: e.message };
+  }
+  const keys = (listing && listing.blobs ? listing.blobs : []).map((b) => b.key);
+  const convos = [];
+  for (const key of keys) {
+    const phone = key.slice(CONVO_PREFIX.length);
+    let messages = [];
+    try { messages = await readConvo(store, phone); } catch { messages = []; }
+    if (!messages.length) continue;
+    const last = messages[messages.length - 1];
+    convos.push({
+      phone,
+      count: messages.length,
+      lastText: String(last.text || '').slice(0, 280),
+      lastRole: last.role || 'user',
+      lastAt: last.timestamp || null,
+      lastSource: last.source || null,
+    });
+  }
+  convos.sort((a, b) => (Date.parse(b.lastAt || 0) || 0) - (Date.parse(a.lastAt || 0) || 0));
+  return {
+    blobsAvailable: true,
+    total: convos.length,
+    conversations: convos.slice(0, Math.max(1, Math.min(50, limit))),
+  };
+}
+
 module.exports = {
   STORE_NAME,
   normalizeWaPhone,
   appendWaMessage,
   listWaMessages,
+  listRecentConvos,
   blobsAvailable: () => !!netlifyBlobsModule,
 };

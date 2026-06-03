@@ -913,10 +913,34 @@ function renderRadar(){
 const waBody=document.getElementById('waBody');
 // Aucune fausse conversation : l'état réel du bot est affiché par loadWhatsApp
 // (en-tête « waStatus »). Le corps reste un état neutre.
-function emptyWhatsApp(){
+function emptyWhatsApp(msg){
   if(waBody){
-    waBody.innerHTML='<div style="padding:14px 16px;color:var(--white-40);font-size:.8rem">Statut du bot Robin affiché en temps réel ci-dessus. Aucune conversation simulée.</div>';
+    waBody.innerHTML='<div style="padding:14px 16px;color:var(--white-40);font-size:.8rem">'+(msg||'Statut du bot Robin affiché ci-dessus. Connexion CRM requise pour voir les conversations réelles.')+'</div>';
   }
+}
+// masque le numéro : 33 6 12 •• •• 89
+function maskPhone(d){ const s=String(d||''); if(s.length<6) return s; return s.slice(0,4)+' ••• '+s.slice(-2); }
+function waAgo(ts){ if(!ts) return ''; const ms=Date.now()-Date.parse(ts); if(isNaN(ms)) return ''; const m=Math.floor(ms/60000); if(m<1) return 'à l\'instant'; if(m<60) return m+' min'; const h=Math.floor(m/60); if(h<24) return h+' h'; return Math.floor(h/24)+' j'; }
+function renderWaConversations(list){
+  if(!waBody) return;
+  if(!list || !list.length){ emptyWhatsApp('Aucune conversation WhatsApp enregistrée pour l\'instant.'); return; }
+  waBody.innerHTML = list.map(c=>{
+    const out = c.lastRole==='assistant';
+    const who = out ? 'Robin' : maskPhone(c.phone);
+    return `<div class="bub ${out?'out':'in'}">`+
+      `<div style="font-size:.62rem;opacity:.7;margin-bottom:2px">${who} · ${maskPhone(c.phone)}</div>`+
+      `${(c.lastText||'').replace(/</g,'&lt;')}`+
+      `<div class="tm">${waAgo(c.lastAt)} ${out?'✓✓':''}</div></div>`;
+  }).join('');
+  waBody.scrollTop=0;
+}
+async function loadWaConversations(){
+  const d = await jget('/api/wa-recent?limit=8');
+  if(d && d.ok){
+    REAL.sources.waConvos = true;
+    renderWaConversations(d.conversations);
+  }
+  setSrcBadge();
 }
 
 /* ============ KPI TICKERS ============ */
@@ -1137,6 +1161,7 @@ async function loadProtected(){
   if(stats && stats.ok && stats.index){ REAL.sources.stats = true; }
   const reg = await jget('/api/radar-eligible-registry');
   if(reg && reg.ok && typeof reg.total==='number'){ REAL.sources.registry = true; }
+  await loadWaConversations();   // vraies conversations WhatsApp (CRM)
   setSrcBadge();
 }
 async function loadRealData(){
@@ -1164,6 +1189,7 @@ loadRealData();
 window.addEventListener('bureau-crm-unlocked', loadProtected);
 setInterval(loadRadar, 180000);      // rafraîchit les vols réels toutes les 3 min
 setInterval(loadWhatsApp, 120000);   // état bot toutes les 2 min
+setInterval(loadWaConversations, 120000); // vraies conversations WhatsApp toutes les 2 min
 setInterval(loadBureauStats, 180000);// vrais chiffres CRM toutes les 3 min
 setInterval(loadMetaStats, 300000);  // stats Meta Ads toutes les 5 min
 setInterval(planeFlyby, 26000);      // avion qui traverse régulièrement
