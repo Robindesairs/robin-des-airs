@@ -64,7 +64,7 @@ exports.handler = async (event) => {
     };
 
     // --- LECTURE seule ---
-    if (q.action !== 'set') {
+    if (q.action !== 'set' && q.action !== 'move') {
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
