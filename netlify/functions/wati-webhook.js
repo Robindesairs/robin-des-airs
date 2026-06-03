@@ -17,6 +17,7 @@
 
 const { appendWaMessage, normalizeWaPhone } = require('./lib/wa-convo-store');
 const { normalizeWatiPhone, watiCfg } = require('./lib/wati-api');
+const { notifyOwnerWhatsApp } = require('./lib/owner-notify');
 
 const HEADERS = {
   'Content-Type': 'application/json',
@@ -932,6 +933,8 @@ exports.handler = async (event) => {
   for (const { phone, text } of items) {
     if (!phone) continue;
     try { await appendWaMessage(event, phone, { role: 'user', text, source: 'wati' }); } catch {}
+    // notifie le propriétaire qu'un client écrit (email + Telegram, anti-spam 30 min/numéro)
+    try { await notifyOwnerWhatsApp(phone, text); } catch (e) { console.error('owner-notify:', e.message); }
     try { await handleMessage(phone, text, cfg); }
     catch (e) {
       console.error('wati-bot: handleMessage error', e.message, e.stack);

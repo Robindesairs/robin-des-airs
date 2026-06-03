@@ -173,11 +173,11 @@ exports.handler = async (event) => {
     return { statusCode: 500, body: JSON.stringify({ error: 'Aucun hash image configuré dans Netlify (META_AD_HASH_FR_FEED etc.)' }) };
   }
 
-  // Budget : priorité au paramètre du radar (en euros), sinon variable Netlify (en centimes)
+  // Budget : priorité au paramètre du radar (en euros), sinon BUDGET PAR INCIDENT (centimes)
   const budgetEuros  = body.budget && body.budget > 0 ? body.budget : null;
   const dailyBudget  = budgetEuros
     ? Math.round(budgetEuros * 100)
-    : parseInt(process.env.META_AD_DAILY_BUDGET_CENTS || '1000', 10);
+    : parseInt(process.env.META_AD_BUDGET_PER_INCIDENT || process.env.META_AD_DAILY_BUDGET_CENTS || '300', 10);
   const radiusKm    = parseFloat(process.env.META_AD_RADIUS_KM || '2');
   const durationHours = body.durationHours && body.durationHours > 0 ? body.durationHours : 6;
   const nowSec      = Math.floor(Date.now() / 1000);
@@ -210,6 +210,29 @@ exports.handler = async (event) => {
   };
 
   try {
+    // 0. GARDE-FOU BUDGET MENSUEL — ne jamais dépasser le plafond
+    const monthlyCapCents = parseInt(process.env.META_AD_MONTHLY_CAP || '0', 10);
+    if (monthlyCapCents > 0) {
+      try {
+        const insRes = await fetch(`${META_API}/${accountId}/insights?level=account&fields=spend&date_preset=this_month&access_token=${token}`);
+        const insJson = await insRes.json();
+        const spentEuros = parseFloat(((insJson.data || [])[0] || {}).spend || 0);
+        const spentCents = Math.round(spentEuros * 100);
+        if (spentCents + dailyBudget > monthlyCapCents) {
+          return {
+            statusCode: 200,
+            body: JSON.stringify({
+              skipped: 'monthly_cap_reached',
+              spentThisMonth: spentEuros,
+              capEuros: monthlyCapCents / 100,
+              wouldAddEuros: dailyBudget / 100,
+              message: `Plafond mensuel atteint (${(monthlyCapCents / 100).toFixed(2)} €). Déjà dépensé ce mois : ${spentEuros.toFixed(2)} €. Campagne NON lancée.`,
+            }),
+          };
+        }
+      } catch (e) { console.warn('[ad-launch] budget cap check failed:', e.message); }
+    }
+
     // 1. Campagne
     const campaign = await metaPost(`/${accountId}/campaigns`, token, {
       name: `RDA-${body.vol || 'GEO'}-${airport}-${lang}-${new Date().toISOString().slice(0, 10)}`,
