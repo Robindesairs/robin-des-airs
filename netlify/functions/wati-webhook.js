@@ -162,7 +162,7 @@ Règles :
       method: 'POST',
       headers: { Authorization: `Bearer ${openaiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'gpt-4o-mini',
         max_tokens: 300,
         temperature: 0,
         response_format: { type: 'json_object' },
@@ -176,7 +176,7 @@ Règles :
       }),
     });
     const data = await res.json();
-    if (!data.choices) { console.error('OCR: openai error', JSON.stringify(data).slice(0, 200)); return null; }
+    if (!data.choices) { globalThis.__lastOcrErr = (data.error && data.error.message) || JSON.stringify(data).slice(0, 200); console.error('OCR: openai error', globalThis.__lastOcrErr); return null; }
     const parsed = JSON.parse(data.choices[0].message.content);
     return {
       vol: (parsed.vol || '').toUpperCase().replace(/\s+/g, ''),
@@ -1024,6 +1024,7 @@ exports.handler = async (event) => {
       // 2. Test Vision sur l'image fournie (ou image hébergée robindesairs)
       const sample = q.img || 'https://robindesairs.eu/ad_set3_3B_social_proof.png';
       out.ocrResult = await ocrBoardingPass(sample, null);
+      if (out.ocrResult === null && globalThis.__lastOcrErr) out.ocrError = globalThis.__lastOcrErr;
       return { statusCode: 200, headers: HEADERS, body: JSON.stringify(out) };
     }
     return { statusCode: 403, headers: HEADERS, body: JSON.stringify({ error: 'Forbidden' }) };
