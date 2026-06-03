@@ -27,9 +27,9 @@ const {
 } = require('./radar');
 
 /**
- * Préfixe la liste finale avec les vols "pinned" (priorité absolue) tant que
- * la fenêtre d'activité est ouverte. Les pinned occupent les premiers slots,
- * les vols live remplissent le reste jusqu'à BANNER_TARGET_COUNT.
+ * Les vols live / sélectionnés passent EN PREMIER (jamais écrasés). Les vols
+ * "pinned" (RAM suspension) complètent uniquement les slots restants jusqu'à
+ * BANNER_TARGET_COUNT, tant que la fenêtre d'activité est ouverte.
  */
 function applyPinnedFlights(flights, viewDate) {
   const pinned = getPinnedFlights(viewDate);
@@ -41,7 +41,9 @@ function applyPinnedFlights(flights, viewDate) {
   const live = (flights || []).filter(
     (f) => !pinnedKeys.has(`${f.flight}|${f.dep}|${f.arr}|${f.scheduledDate}`)
   );
-  return pinned.concat(live).slice(0, target);
+  // Nouveaux vols (live / sélectionnés) EN PREMIER — ils ne sont plus écrasés par
+  // les RAM épinglés. Les pinned complètent uniquement les slots restants.
+  return live.concat(pinned).slice(0, target);
 }
 
 async function readBlobCache(event) {
