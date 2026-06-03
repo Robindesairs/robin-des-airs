@@ -183,6 +183,19 @@ body { font-family: 'DM Sans', sans-serif; background: var(--sky); color: var(--
 .mf-bar { height:7px; background:rgba(255,255,255,0.06); border-radius:4px; overflow:hidden; }
 .mf-bar i { display:block; height:100%; background:var(--amber); border-radius:4px; transition:width 1s ease; }
 
+/* ---- panneau Rentabilité ---- */
+.renta-big { text-align:center; padding:0.4rem 0 0.9rem; border-bottom:1px dashed var(--sky-border); margin-bottom:0.8rem; }
+.renta-big .rb-num { font-family:'DM Serif Display',serif; font-size:2.4rem; color:var(--purple); line-height:1; }
+.renta-big .rb-lab { display:block; font-size:0.72rem; color:var(--white-40); margin-top:6px; }
+.renta-rows { display:flex; flex-direction:column; gap:5px; margin-bottom:0.8rem; }
+.renta-rows .rr { display:flex; justify-content:space-between; font-size:0.78rem; color:var(--white-70); }
+.renta-rows .rr b { color:#fff; font-family:'JetBrains Mono',monospace; font-weight:500; }
+.renta-rows .rr b.ok { color:var(--green); }
+.renta-rows .rr.total { border-top:1px solid var(--sky-border); padding-top:6px; margin-top:3px; }
+.renta-rows .rr.total b { color:var(--amber); }
+.renta-prog .rp-top { display:flex; justify-content:space-between; font-size:0.72rem; color:var(--white-40); margin-bottom:5px; }
+.renta-note { font-size:0.66rem; color:var(--white-40); margin-top:0.8rem; font-style:italic; }
+
 /* ---- avion qui traverse ---- */
 .flyby { position:fixed; top:64px; left:-60px; font-size:22px; z-index:150; pointer-events:none; opacity:0; filter:drop-shadow(0 2px 6px rgba(0,0,0,0.5)); }
 .flyby.go { animation: flyacross 7s linear forwards; }
@@ -375,7 +388,7 @@ body.game-mode #gameView { display:block; }
     </div>
     <div class="pulse-cell" style="--accent:var(--green)">
       <div class="pulse-label">Postes actifs</div>
-      <div class="pulse-value green"><span id="kpiAgentsOn">0</span><span style="color:var(--white-40);font-size:1.1rem">/8</span></div>
+      <div class="pulse-value green"><span id="kpiAgentsOn">0</span><span style="color:var(--white-40);font-size:1.1rem">/9</span></div>
       <div class="pulse-sub" id="kpiAgentsTxt">tout le monde au travail</div>
     </div>
   </div>
@@ -391,7 +404,7 @@ body.game-mode #gameView { display:block; }
     <div>
       <div class="section-h">
         <h2>L'équipe au travail</h2>
-        <span class="tag">8 postes · live</span>
+        <span class="tag">9 postes · live</span>
         <span class="line"></span>
       </div>
       <div class="agents" id="agents"></div>
@@ -438,6 +451,11 @@ body.game-mode #gameView { display:block; }
             <div class="mf-bar"><i id="mfWaBar" style="width:1%;background:var(--green)"></i></div>
           </div>
         </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-h"><span class="t">💼 Rentabilité · seuil</span><span class="mini-src demo" id="rentaSrc">ESTIM.</span></div>
+        <div class="panel-b" style="padding:1rem 1.2rem" id="rentaBody"></div>
       </div>
 
       <div class="panel">
@@ -593,6 +611,35 @@ function stepConf(){
 /* ============ ÉTAT GLOBAL ============ */
 // Baseline = derniers chiffres réels CRM connus (remplacés en live par /api/bureau-stats). Pas d'inflation fantaisiste.
 let S = { dossiers: 44, dossiersNew: 3, eur: 40790, agences: 12, agencesNew: 53, gagnes: 2, total: 14, waLeads: 29 };
+
+/* ============ MODÈLE DE COÛTS & SEUIL DE RENTABILITÉ ============ */
+// ⚠️ Estimations — à remplacer par tes vraies factures / abonnements (montants mensuels €).
+const COSTS = {
+  abonnements: [
+    { n:"WATI (WhatsApp API)", m:80 },
+    { n:"Airtable", m:20 },
+    { n:"Netlify Pro", m:18 },
+    { n:"Radar API (AeroDataBox)", m:30 },
+    { n:"Automatisation (Make)", m:16 },
+    { n:"Email (Resend)", m:10 },
+    { n:"Outils créa (Gamma/Canva)", m:25 },
+    { n:"Domaine + divers", m:6 },
+  ],
+  salaires: 2000,        // masse salariale lancement (juriste mi-temps + extras)
+  pub: 600,              // budget Meta mensuel
+  margeParDossier: 180,  // € net RDA par dossier gagné (75% passager / 25% RDA, ~1,5 pax, -agence)
+  tauxReussite: 0.60,
+};
+function calcRenta(){
+  const abos = COSTS.abonnements.reduce((s,a)=>s+a.m,0);
+  const fixe = abos + COSTS.salaires;
+  const total = fixe + COSTS.pub;
+  const seuil = Math.ceil(total / COSTS.margeParDossier);
+  const seuilFixe = Math.ceil(fixe / COSTS.margeParDossier);
+  const dossiersAouvrir = Math.ceil(seuil / COSTS.tauxReussite);
+  return { abos, fixe, total, seuil, seuilFixe, dossiersAouvrir, caSeuil: seuil*COSTS.margeParDossier };
+}
+let RENTA = calcRenta();
 // REAL : rempli par les endpoints /api/* quand disponibles (site Netlify). Sinon vide → mode démo.
 let REAL = { radar: null, whatsapp: null, kpi: false, sources: {} };
 
@@ -651,12 +698,20 @@ const AGENTS = [
       `A/B test créa <span class="hl">Cash vs Bon d'achat</span> en cours`,
       `<span class="ok">${ri(40,120)} clics</span> sur le radar éligibilité aujourd'hui`,
       `Budget Meta optimisé → <span class="ok">+${ri(8,24)} % de leads</span>` ] },
+  { ic:"💼", ac:"var(--purple)", acp:"var(--purple-pale)", name:"Nadia Chérif", role:"Contrôle de gestion · Rentabilité",
+    kpiL:"seuil / mois", kpiUnit:"", base:0, fixedKpi:()=>RENTA.seuil,
+    tasks:()=>[
+      `Seuil de rentabilité : <span class="hl">${RENTA.seuil} dossiers gagnés/mois</span> couvrent tout`,
+      `Coûts mensuels <span class="warn">${fmt(RENTA.total)} €</span> = abos ${RENTA.abos} € + salaires ${fmt(COSTS.salaires)} € + pub ${COSTS.pub} €`,
+      `Marge nette / dossier gagné : <span class="ok">${COSTS.margeParDossier} €</span>`,
+      `Il faut <span class="hl">${RENTA.dossiersAouvrir} dossiers ouverts/mois</span> (à 60 %) pour être renta`,
+      `Reste à couvrir ce mois : <span class="warn">${fmt(Math.max(0, RENTA.total - S.gagnes*COSTS.margeParDossier))} €</span>` ] },
 ];
 
 /* ============ RENDER AGENTS ============ */
 // outil ouvert au clic sur la carte du poste
-const AGENT_LINKS = ["/navigation-interne","/radar-vols-v2","/guide-whatsapp","/mandat","/espace-agence","/crm/","/suivi-dossier","/generateur-pub.html"];
-const AGENT_LINKS_PHOTO = ["aicha","malik","robin","lefevre","sofia","karim","lea","yanis"].map(n=>`assets/bureau/${n}.jpg`);
+const AGENT_LINKS = ["/navigation-interne","/radar-vols-v2","/guide-whatsapp","/mandat","/espace-agence","/crm/","/suivi-dossier","/generateur-pub.html","/nos-tarifs.html"];
+const AGENT_LINKS_PHOTO = ["aicha","malik","robin","lefevre","sofia","karim","lea","yanis","nadia"].map(n=>`assets/bureau/${n}.jpg`);
 // Objectifs réels (plan de lancement) par poste — affichés sur chaque carte
 const OBJECTIVES = [
   { t:"🎯 81 k€ CA net · 55 agences — An 1", pct:28 },
@@ -667,10 +722,11 @@ const OBJECTIVES = [
   { t:"🎯 Reversement < 48 h · 10 k€ / mois", pct:88 },
   { t:"🎯 Satisfaction ≥ 4,5/5 · 0 dossier oublié", pct:91 },
   { t:"🎯 CPL ≤ 3 € · 150 conv. WhatsApp / mois", pct:47 },
+  { t:`🎯 Atteindre le seuil : ${RENTA.seuil} dossiers gagnés/mois`, pct: Math.min(100, Math.round(S.gagnes/RENTA.seuil*100)) },
 ];
 const agentsEl = document.getElementById('agents');
 AGENTS.forEach((ag,i)=>{
-  ag.kpi = ag.base + ri(0,40);
+  ag.kpi = ag.fixedKpi ? ag.fixedKpi() : ag.base + ri(0,40);
   const link = AGENT_LINKS[i];
   const el = document.createElement('div');
   el.className = 'agent linked';
@@ -699,7 +755,7 @@ AGENTS.forEach((ag,i)=>{
 });
 
 /* ============ MODE JEU : STATIONS ISO ============ */
-const POS = [ {l:50,t:30},{l:32,t:39},{l:68,t:39},{l:19,t:50},{l:81,t:50},{l:36,t:60},{l:64,t:60},{l:50,t:71} ];
+const POS = [ {l:50,t:27},{l:30,t:36},{l:70,t:36},{l:17,t:47},{l:83,t:47},{l:35,t:57},{l:65,t:57},{l:25,t:69},{l:62,t:70} ];
 const PHOTOS = AGENT_LINKS_PHOTO;
 const stationsEl = document.getElementById('stations');
 function shortName(n){ const p=n.split(' '); return (p[0]==='Me'? p[1]||p[0] : p[0]).toUpperCase(); }
@@ -779,7 +835,7 @@ function tickAgents(){
       const gb=document.getElementById('gb-'+i); if(gb) gb.innerHTML=newTask;
       if(ag.stationEl){ ag.stationEl.classList.toggle('busy', busy); ag.stationEl.style.opacity = idle?0.55:1; }
     }
-    if(Math.random()<0.5){
+    if(!ag.fixedKpi && Math.random()<0.5){
       ag.kpi += ri(0,4);
       document.getElementById('kpi-'+i).textContent = ag.kpiUnit + fmt(ag.kpi);
       document.getElementById('bar-'+i).style.width = ri(45,98)+'%';
@@ -949,6 +1005,26 @@ function renderMeta(d, real){
   const ms=document.getElementById('metaSrc'); if(ms){ ms.className='mini-src '+(real?'real':'demo'); ms.textContent=real?'RÉEL':'DÉMO'; }
 }
 
+/* ============ PANNEAU RENTABILITÉ ============ */
+function renderRenta(){
+  RENTA = calcRenta();
+  const r=RENTA, pct=Math.min(100, Math.round(S.gagnes/r.seuil*100));
+  const el=document.getElementById('rentaBody'); if(!el) return;
+  el.innerHTML = `
+    <div class="renta-big"><span class="rb-num">${r.seuil}</span><span class="rb-lab">dossiers gagnés / mois pour être <b style="color:var(--purple-light,#B794F6)">rentable</b></span></div>
+    <div class="renta-rows">
+      <div class="rr"><span>Abonnements (${COSTS.abonnements.length})</span><b>${r.abos} €</b></div>
+      <div class="rr"><span>Salaires</span><b>${fmt(COSTS.salaires)} €</b></div>
+      <div class="rr"><span>Pub Meta</span><b>${COSTS.pub} €</b></div>
+      <div class="rr total"><span>Coûts mensuels</span><b>${fmt(r.total)} €</b></div>
+      <div class="rr"><span>Marge nette / dossier gagné</span><b class="ok">${COSTS.margeParDossier} €</b></div>
+      <div class="rr"><span>→ dossiers à ouvrir / mois (60 %)</span><b>${r.dossiersAouvrir}</b></div>
+    </div>
+    <div class="renta-prog"><div class="rp-top"><span>Où on en est (dossiers gagnés)</span><span>${S.gagnes}/${r.seuil}</span></div>
+      <div class="mf-bar"><i style="width:${pct}%;background:${pct>=100?'var(--green)':'var(--amber)'}"></i></div></div>
+    <div class="renta-note">Estimations — remplace par tes vraies factures pour un seuil exact.</div>`;
+}
+
 /* ============ COUCHE DONNÉES RÉELLES ============ */
 // Récupère du JSON sur un endpoint /api/* avec timeout ; renvoie null si indisponible (→ repli démo).
 async function jget(path, ms=6500){
@@ -1033,6 +1109,7 @@ async function loadBureauStats(){
     updateHUD();
     // marque les KPI comme réels
     document.querySelectorAll('.pulse-label').forEach(el=>{ if(!el.querySelector('.mini-src')){ const b=document.createElement('span'); b.className='mini-src real'; b.textContent='CRM'; b.style.marginLeft='6px'; el.appendChild(b); } });
+    renderRenta(); // met à jour le seuil avec les vrais dossiers gagnés
   }
   setSrcBadge();
 }
@@ -1081,6 +1158,7 @@ async function loadRealData(){
 tickKPI();
 renderRadar();
 renderMeta(META_DEMO, false);   // panneau Meta en démo tant que /api/meta-stats n'a pas répondu
+renderRenta();                  // panneau rentabilité / seuil
 for(let i=0;i<6;i++) addFeed();
 waQueue=waScript();
 waStep();
