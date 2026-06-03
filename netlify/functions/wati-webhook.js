@@ -80,6 +80,7 @@ async function sendList(phone, { header, body, footer, buttonText, items }, cfg)
     // Succès = HTTP 2xx sans erreur explicite. WATI ne renvoie pas toujours `result`
     // même quand le message interactif part bien → ne pas faire de faux fallback.
     const failed = !res.ok || data.result === false || data.error || data.ok === false;
+    await saveInteractiveDebug({ fn: 'sendList', endpoint: `${cfg.base}/api/v1/sendInteractiveListMessage`, status: res.status, failed, resp: data });
     if (failed) {
       console.error('wati-bot: sendList failed', res.status, JSON.stringify(data).slice(0, 400));
       const txt = (header ? `*${header}*\n\n` : '') + body + '\n\n' +
@@ -112,6 +113,7 @@ async function sendButtons(phone, { body, footer, buttons }, cfg) {
     );
     const data = await res.json().catch(() => ({}));
     const failed = !res.ok || data.result === false || data.error || data.ok === false;
+    await saveInteractiveDebug({ fn: 'sendButtons', endpoint: `${cfg.base}/api/v1/sendInteractiveButtonsMessage`, status: res.status, failed, resp: data });
     if (failed) {
       console.error('wati-bot: sendButtons failed', res.status, JSON.stringify(data).slice(0, 400));
       const txt = body + '\n\n' + buttons.map((b, i) => `${i + 1} — ${b.text}`).join('\n');
@@ -144,6 +146,22 @@ async function setState(phone, state) {
     await store.setJSON(`state/${phone.replace(/\D/g, '')}`, { ...state, updatedAt: new Date().toISOString() });
   } catch (e) { console.error('setState failed', e.message); }
 }
+// ─── Debug : dernière réponse WATI interactive (lisible via GET ?debug=interactive) ──
+async function saveInteractiveDebug(obj) {
+  try {
+    const { getStore } = require('@netlify/blobs');
+    const store = getStore({ name: 'robin-bot-state', consistency: 'strong' });
+    await store.setJSON('debug/last-interactive', { ...obj, ts: new Date().toISOString() });
+  } catch (e) { console.error('saveInteractiveDebug failed', e.message); }
+}
+async function readInteractiveDebug() {
+  try {
+    const { getStore } = require('@netlify/blobs');
+    const store = getStore({ name: 'robin-bot-state', consistency: 'strong' });
+    return await store.get('debug/last-interactive', { type: 'json' });
+  } catch { return null; }
+}
+
 async function clearState(phone) {
   try {
     const { getStore } = require('@netlify/blobs');
@@ -889,6 +907,15 @@ function verifyWatiSecret(body, headers) {
 // ─── Handler principal ────────────────────────────────────────────────────────
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: HEADERS, body: '' };
+  if (event.httpMethod === 'GET') {
+    const q = event.queryStringParameters || {};
+    const key = (process.env.WATI_WEBHOOK_SECRET || process.env.CRM_ACCESS_CODE || '').trim();
+    if (q.debug === 'interactive' && key && q.key === key) {
+      const dbg = await readInteractiveDebug();
+      return { statusCode: 200, headers: HEADERS, body: JSON.stringify(dbg || { none: true }) };
+    }
+    return { statusCode: 403, headers: HEADERS, body: JSON.stringify({ error: 'Forbidden' }) };
+  }
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers: HEADERS, body: JSON.stringify({ error: 'POST only' }) };
 
   let body;
