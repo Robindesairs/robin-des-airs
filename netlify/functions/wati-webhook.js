@@ -1007,6 +1007,13 @@ exports.handler = async (event) => {
       const dbg = await readInteractiveDebug();
       return { statusCode: 200, headers: HEADERS, body: JSON.stringify(dbg || { none: true }) };
     }
+    // Self-test OCR : ?selftest=ocr&img=<url public carte d'embarquement>
+    if (q.selftest === 'ocr') {
+      const hasKey = !!process.env.OPENAI_API_KEY;
+      const sample = q.img || 'https://upload.wikimedia.org/wikipedia/commons/8/82/Boarding_pass_for_British_Airways_flight.jpg';
+      const result = await ocrBoardingPass(sample, null);
+      return { statusCode: 200, headers: HEADERS, body: JSON.stringify({ openaiKeyPresent: hasKey, ocrResult: result }) };
+    }
     return { statusCode: 403, headers: HEADERS, body: JSON.stringify({ error: 'Forbidden' }) };
   }
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers: HEADERS, body: JSON.stringify({ error: 'POST only' }) };
