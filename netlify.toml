@@ -34,8 +34,10 @@
 [functions."radar-veille-config"]
   timeout = 10
 
-# [functions."radar-monitor"]
-#   schedule = "*/10 * * * *"
+# Malik réveillé — surveillance vols + alertes (Telegram/email/CallMeBot).
+# Cadence ciblée ~12 runs/jour (matin + après-midi EU + soirée Afrique) ≈ 700 req/j (plan ULTRA OK).
+[functions."radar-monitor"]
+  schedule = "5 7,16,17,18,19,20,21,22,23,0,1,2 * * *"
 
 # Rapport matinal WhatsApp 9h15 Paris (= 7h15 UTC en été CEST).
 [functions."morning-report"]

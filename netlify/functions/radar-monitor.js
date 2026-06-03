@@ -21,6 +21,7 @@ const {
 } = require('./lib/radar-monitor-config');
 
 const { sendCallMeBot } = require('./lib/callmebot');
+const { notifyOwner } = require('./lib/owner-notify');
 const { getStore } = require('@netlify/blobs');
 
 const {
@@ -304,6 +305,14 @@ async function sendDelayAlerts(flights, dateYmd) {
       await new Promise((r) => setTimeout(r, 2000));
     } catch (e) {
       console.error('[alerts] sendCallMeBot error:', e.message);
+    }
+    // Notif propriétaire : Telegram + email (en plus de CallMeBot)
+    try {
+      const subj = f.cancelled ? `🚫 Vol annulé — ${f.flight || ''} ${f.dep || ''}→${f.arr || ''}`
+                               : `✈️ Retard ${f.flight || ''} ${f.dep || ''}→${f.arr || ''}`;
+      await notifyOwner(subj, msg);
+    } catch (e) {
+      console.error('[alerts] notifyOwner error:', e.message);
     }
   }
 }

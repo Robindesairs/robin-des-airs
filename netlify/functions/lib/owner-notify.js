@@ -79,4 +79,14 @@ async function notifyOwnerWhatsApp(phone, text) {
   return { ok: true };
 }
 
-module.exports = { notifyOwnerWhatsApp };
+/**
+ * Notification générique au propriétaire (Telegram + email), sans throttle.
+ * Utilisée par le radar pour les alertes vol (déjà dédupliquées en amont).
+ */
+async function notifyOwner(subject, text) {
+  try { await sendTelegramText(text); } catch (e) { /* ignore */ }
+  await sendEmail(subject, text);
+  return { ok: true };
+}
+
+module.exports = { notifyOwnerWhatsApp, notifyOwner };
