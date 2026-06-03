@@ -27,7 +27,14 @@ const MODES = {
 async function getJSON(url, opts) {
   const res  = await fetch(url, opts);
   const json = await res.json();
-  if (json.error) throw new Error(json.error.message);
+  if (json.error) {
+    const e = json.error;
+    const detail = [e.message, e.error_user_title, e.error_user_msg]
+      .filter(Boolean).join(' | ');
+    const err = new Error(detail || 'Erreur Meta');
+    err.meta = { code: e.code, subcode: e.error_subcode, blame: e.error_data };
+    throw err;
+  }
   return json;
 }
 
@@ -81,6 +88,12 @@ exports.handler = async (event) => {
       targeting.geo_locations = targeting.geo_locations || {};
       const before = targeting.geo_locations.location_types || null;
       targeting.geo_locations.location_types = newTypes;
+      // certaines configs exigent location_types aussi DANS chaque custom_location
+      if (Array.isArray(targeting.geo_locations.custom_locations)) {
+        targeting.geo_locations.custom_locations = targeting.geo_locations.custom_locations.map(
+          (c) => ({ ...c, location_types: newTypes }),
+        );
+      }
 
       const upUrl = `${META_API}/${a.id}`;
       const body = new URLSearchParams({
@@ -91,7 +104,7 @@ exports.handler = async (event) => {
         const up = await getJSON(upUrl, { method: 'POST', body });
         results.push({ id: a.id, name: a.name, before, after: newTypes, success: up.success !== false });
       } catch (e) {
-        results.push({ id: a.id, name: a.name, before, after: newTypes, error: e.message });
+        results.push({ id: a.id, name: a.name, before, after: newTypes, error: e.message, meta: e.meta });
       }
     }
 
