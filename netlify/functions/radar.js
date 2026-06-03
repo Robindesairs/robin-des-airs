@@ -666,7 +666,7 @@ function sortImpactedForTicker(flights) {
 
 /** Hubs bandeau matin (conso réduite, timeout Netlify). */
 const BANNER_HUBS = ['CDG', 'ORY', 'RUN', 'DSS', 'DKR', 'ABJ', 'ACC', 'LOS', 'CMN', 'BJL'];
-const BANNER_TARGET_COUNT = Math.min(9, Math.max(1, parseInt(process.env.TICKER_BANNER_COUNT || '9', 10) || 9));
+const BANNER_TARGET_COUNT = Math.min(20, Math.max(1, parseInt(process.env.TICKER_BANNER_COUNT || '14', 10) || 14));
 
 /** Fusionne cache + scan : les vols les plus récents remplacent les plus anciens (max 9). */
 function mergeTickerBannerFlights(existingList, incomingList, targetCount) {

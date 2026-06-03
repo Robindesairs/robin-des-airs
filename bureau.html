@@ -1083,11 +1083,13 @@ function setSrcBadge(){
 }
 // Normalise un vol /api/vol-ticker → {fl, r, kind, detail, eu}
 function normFlight(f){
+  // route : soit fournie, soit construite depuis dep→arr (vols vol-ticker : dep/arr/via)
+  const route = f.route || f.r || ((f.dep && f.arr) ? (f.dep+' → '+f.arr+(f.via?' ('+f.via+')':'')) : '');
   return {
     fl: f.flight || f.fl || '—',
-    r: (f.route || f.r || '').replace('→','→'),
+    r: route,
     kind: f.kind || (f.cancelled ? 'cancel' : 'delay'),
-    detail: f.detail || (f.delayMinutes ? '+'+Math.floor(f.delayMinutes/60)+'h'+String(f.delayMinutes%60).padStart(2,'0') : ''),
+    detail: f.detail || (f.cancelled ? '' : (f.delayMinutes ? '+'+Math.floor(f.delayMinutes/60)+'h'+String(f.delayMinutes%60).padStart(2,'0') : '')),
     eu: f.compensation || f.eu || 600
   };
 }
