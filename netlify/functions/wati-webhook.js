@@ -1007,8 +1007,8 @@ exports.handler = async (event) => {
       const dbg = await readInteractiveDebug();
       return { statusCode: 200, headers: HEADERS, body: JSON.stringify(dbg || { none: true }) };
     }
-    // Self-test OCR : ?selftest=ocr&img=<url image>
-    if (q.selftest === 'ocr') {
+    // Self-test OCR : ?selftest=ocr&key=<secret> (gated pour éviter l'abus)
+    if (q.selftest === 'ocr' && key && q.key === key) {
       const out = { openaiKeyPresent: !!process.env.OPENAI_API_KEY };
       // 1. Valide la clé avec un appel texte minimal
       try {
