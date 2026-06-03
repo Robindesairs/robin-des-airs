@@ -1007,12 +1007,24 @@ exports.handler = async (event) => {
       const dbg = await readInteractiveDebug();
       return { statusCode: 200, headers: HEADERS, body: JSON.stringify(dbg || { none: true }) };
     }
-    // Self-test OCR : ?selftest=ocr&img=<url public carte d'embarquement>
+    // Self-test OCR : ?selftest=ocr&img=<url image>
     if (q.selftest === 'ocr') {
-      const hasKey = !!process.env.OPENAI_API_KEY;
-      const sample = q.img || 'https://upload.wikimedia.org/wikipedia/commons/8/82/Boarding_pass_for_British_Airways_flight.jpg';
-      const result = await ocrBoardingPass(sample, null);
-      return { statusCode: 200, headers: HEADERS, body: JSON.stringify({ openaiKeyPresent: hasKey, ocrResult: result }) };
+      const out = { openaiKeyPresent: !!process.env.OPENAI_API_KEY };
+      // 1. Valide la clé avec un appel texte minimal
+      try {
+        const r = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ model: 'gpt-4o-mini', max_tokens: 5, messages: [{ role: 'user', content: 'say OK' }] }),
+        });
+        const d = await r.json();
+        out.keyValid = !!d.choices;
+        if (d.error) out.keyError = d.error.message;
+      } catch (e) { out.keyError = e.message; }
+      // 2. Test Vision sur l'image fournie (ou image hébergée robindesairs)
+      const sample = q.img || 'https://robindesairs.eu/ad_set3_3B_social_proof.png';
+      out.ocrResult = await ocrBoardingPass(sample, null);
+      return { statusCode: 200, headers: HEADERS, body: JSON.stringify(out) };
     }
     return { statusCode: 403, headers: HEADERS, body: JSON.stringify({ error: 'Forbidden' }) };
   }
