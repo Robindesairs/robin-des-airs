@@ -60,9 +60,10 @@ async function send(phone, text, cfg) {
 async function sendList(phone, { header, body, footer, buttonText, items }, cfg) {
   if (!cfg) return;
   const wa = normalizeWatiPhone(phone);
+  const qs = new URLSearchParams({ whatsappNumber: wa, channelPhoneNumber: cfg.channel });
   try {
     const res = await fetch(
-      `${cfg.base}/api/v1/sendInteractiveListMessage?whatsappNumber=${encodeURIComponent(wa)}`,
+      `${cfg.base}/api/v1/sendInteractiveListMessage?${qs.toString()}`,
       {
         method: 'POST',
         headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
@@ -80,6 +81,7 @@ async function sendList(phone, { header, body, footer, buttonText, items }, cfg)
     // même quand le message interactif part bien → ne pas faire de faux fallback.
     const failed = !res.ok || data.result === false || data.error || data.ok === false;
     if (failed) {
+      console.error('wati-bot: sendList failed', res.status, JSON.stringify(data).slice(0, 400));
       const txt = (header ? `*${header}*\n\n` : '') + body + '\n\n' +
         items.map((it, idx) => `${idx + 1} — ${it.title}`).join('\n');
       await send(phone, txt, cfg);
@@ -94,9 +96,10 @@ async function sendList(phone, { header, body, footer, buttonText, items }, cfg)
 async function sendButtons(phone, { body, footer, buttons }, cfg) {
   if (!cfg) return;
   const wa = normalizeWatiPhone(phone);
+  const qs = new URLSearchParams({ whatsappNumber: wa, channelPhoneNumber: cfg.channel });
   try {
     const res = await fetch(
-      `${cfg.base}/api/v1/sendInteractiveButtonsMessage?whatsappNumber=${encodeURIComponent(wa)}`,
+      `${cfg.base}/api/v1/sendInteractiveButtonsMessage?${qs.toString()}`,
       {
         method: 'POST',
         headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
@@ -110,6 +113,7 @@ async function sendButtons(phone, { body, footer, buttons }, cfg) {
     const data = await res.json().catch(() => ({}));
     const failed = !res.ok || data.result === false || data.error || data.ok === false;
     if (failed) {
+      console.error('wati-bot: sendButtons failed', res.status, JSON.stringify(data).slice(0, 400));
       const txt = body + '\n\n' + buttons.map((b, i) => `${i + 1} — ${b.text}`).join('\n');
       await send(phone, txt, cfg);
     }
