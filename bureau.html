@@ -614,19 +614,17 @@ let S = { dossiers: 44, dossiersNew: 3, eur: 40790, agences: 12, agencesNew: 53,
 
 /* ============ MODÈLE DE COÛTS & SEUIL DE RENTABILITÉ ============ */
 // ⚠️ Estimations — à remplacer par tes vraies factures / abonnements (montants mensuels €).
+// Chiffres RÉELS (registre factures Drive, 2026-06). Salaires = 0 pour l'instant.
 const COSTS = {
   abonnements: [
-    { n:"WATI (WhatsApp API)", m:80 },
-    { n:"Airtable", m:20 },
-    { n:"Netlify Pro", m:18 },
-    { n:"Radar API (AeroDataBox)", m:30 },
-    { n:"Automatisation (Make)", m:16 },
-    { n:"Email (Resend)", m:10 },
-    { n:"Outils créa (Gamma/Canva)", m:25 },
-    { n:"Domaine + divers", m:6 },
+    { n:"WATI (WhatsApp)", m:42 },         // 46,13 $
+    { n:"AeroDataBox (radar)", m:29 },     // 32 $ plan ULTRA
+    { n:"Google Workspace", m:7 },
+    { n:"Google Cloud", m:10 },
+    // Anthropic/Claude : montant à confirmer (reçu Stripe) ; Netlify/Airtable : offre gratuite
   ],
-  salaires: 2000,        // masse salariale lancement (juriste mi-temps + extras)
-  pub: 600,              // budget Meta mensuel
+  salaires: 0,           // pas de salaire pour le moment
+  pub: 40,               // pub Meta réelle récente (~10 €/sem, variable)
   margeParDossier: 180,  // € net RDA par dossier gagné (75% passager / 25% RDA, ~1,5 pax, -agence)
   tauxReussite: 0.60,
 };
@@ -1022,7 +1020,8 @@ function renderRenta(){
     </div>
     <div class="renta-prog"><div class="rp-top"><span>Où on en est (dossiers gagnés)</span><span>${S.gagnes}/${r.seuil}</span></div>
       <div class="mf-bar"><i style="width:${pct}%;background:${pct>=100?'var(--green)':'var(--amber)'}"></i></div></div>
-    <div class="renta-note">Estimations — remplace par tes vraies factures pour un seuil exact.</div>`;
+    <div class="renta-note">Chiffres réels (registre factures Drive). Salaires 0 €. Anthropic/Claude à confirmer.</div>`;
+  const b=document.getElementById('rentaSrc'); if(b){ b.className='mini-src real'; b.textContent='RÉEL'; }
 }
 
 /* ============ COUCHE DONNÉES RÉELLES ============ */
