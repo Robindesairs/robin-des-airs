@@ -433,12 +433,12 @@ body.game-mode #gameView { display:block; }
       </div>
 
       <div class="panel">
-        <div class="panel-h"><span class="t">Radar vols · CE261</span><span class="mini-src demo" id="radarSrc">DÉMO</span></div>
+        <div class="panel-h"><span class="t">Radar vols · CE261</span><span class="mini-src demo" id="radarSrc">EN ATTENTE</span></div>
         <div class="panel-b radar-list" id="radar"></div>
       </div>
 
       <div class="panel">
-        <div class="panel-h"><span class="t">📈 Pub Meta · 7 j</span><span class="mini-src demo" id="metaSrc">DÉMO</span></div>
+        <div class="panel-h"><span class="t">📈 Pub Meta · 7 j</span><span class="mini-src demo" id="metaSrc">EN ATTENTE</span></div>
         <div class="panel-b" style="padding:1rem 1.2rem">
           <div class="meta-grid">
             <div class="meta-stat"><div class="ms-v" id="mSpend">—</div><div class="ms-l">Dépense</div></div>
@@ -499,8 +499,8 @@ body.game-mode #gameView { display:block; }
  </div><!-- /#gameView -->
 
   <p class="foot-note">
-    <b>Le Bureau</b> — tableau de bord interne Robin des Airs. Données d'activité simulées en direct à des fins de pilotage et de démonstration.<br>
-    Les vols, compagnies et routes proviennent de la base réelle Europe ↔ Afrique. Page privée · <span class="mono">noindex</span>
+    <b>Le Bureau</b> — tableau de bord interne Robin des Airs. Données réelles (CRM Airtable, WhatsApp Wati, Meta Ads, radar vols CE261) ; les blocs sans données réelles restent vides.<br>
+    Page privée · <span class="mono">noindex</span>
   </p>
 </div>
 
@@ -879,32 +879,14 @@ function updateAgentsOn(){
   document.getElementById('kpiAgentsTxt').textContent = on>=7 ? "tout le monde au travail" : on+" postes en activité";
 }
 
-/* ============ FIL D'ACTIVITÉ ============ */
+/* ============ FIL D'ACTIVITÉ (réel uniquement) ============ */
 const feedEl = document.getElementById('feed');
-const FEED_TYPES = [
-  ()=>{const p=rnd(PRENOMS),f=rnd(FLIGHTS);return{ic:"📩",fp:"var(--blue-pale)",t:`<b>${p}</b> ouvre un dossier — vol <b>${f.fl}</b> ${f.r}`};},
-  ()=>{const a=rnd(AIRLINES);return{ic:"⚖️",fp:"var(--purple-pale)",t:`Mise en demeure envoyée à <b>${a}</b> — <span class="eur">600 €</span> réclamés`};},
-  ()=>{const p=rnd(PRENOMS),e=ri(400,600);return{ic:"✅",fp:"var(--green-pale)",t:`<b>${p}</b> indemnisé·e — <span class="grn">${fmt(e)} €</span> reversés`};},
-  ()=>{const ag=rnd(AGENCES);return{ic:"🤝",fp:"var(--gold-pale)",t:`Nouvelle agence partenaire : <b>${ag}</b> signe le contrat`};},
-  ()=>{const f=rnd(FLIGHTS);return{ic:"🛰️",fp:"var(--blue-pale)",t:`Radar : <b>${f.fl}</b> ${f.r} retardé +${ri(3,7)}h → <span class="eur">${f.eu} €</span> éligible`};},
-  ()=>{const p=rnd(PRENOMS);return{ic:"🤖",fp:"var(--green-pale)",t:`Bot WhatsApp qualifie <b>${p}</b> → transfert juriste`};},
-  ()=>{const a=rnd(AIRLINES);return{ic:"🏆",fp:"var(--gold-pale)",t:`<b>${a}</b> accepte l'indemnisation — dossier gagné 🎉`,win:true};},
-  ()=>{const p=rnd(PRENOMS);return{ic:"✍️",fp:"var(--gold-pale)",t:`<b>${p}</b> signe son mandat de représentation ✒️`,win:true};},
-  ()=>{const e=ri(600,2400);return{ic:"💰",fp:"var(--green-pale)",t:`Encaissement <span class="grn">+${fmt(e)} €</span> sur le compte`};},
-];
-let feedCount=0;
-function addFeed(){
-  const d=rnd(FEED_TYPES)();
-  const now=new Date();
-  const el=document.createElement('div');
-  el.className='feed-item';
-  el.innerHTML=`<div class="feed-ic" style="--fp:${d.fp}">${d.ic}</div>
-    <div class="feed-c"><div class="feed-txt">${d.t}</div>
-    <div class="feed-meta">${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')} · à l'instant</div></div>`;
-  if(d.win){ el.classList.add('win-flash'); winSound(); launchConfetti(); gameWin(); planeFlyby(); if(!REAL.kpi) S.gagnes++; }
-  feedEl.insertBefore(el, feedEl.firstChild);
-  while(feedEl.children.length>14) feedEl.removeChild(feedEl.lastChild);
-  feedCount++;
+// État vide tant qu'aucun évènement réel n'est remonté (les vrais vols sont
+// injectés par loadRadar via /api/vol-ticker). Aucune activité inventée.
+function emptyFeed(){
+  if(feedEl && !feedEl.children.length){
+    feedEl.innerHTML='<div style="padding:14px 16px;color:var(--white-40);font-size:.8rem">En attente d\'activité réelle…</div>';
+  }
 }
 
 /* ============ RADAR ============ */
@@ -923,55 +905,23 @@ function renderRadar(){
     });
     return;
   }
-  const shuffled=[...FLIGHTS].sort(()=>Math.random()-0.5).slice(0,7);
-  shuffled.forEach(f=>{
-    const cancel=Math.random()<0.25;
-    const el=document.createElement('div'); el.className='r';
-    el.innerHTML=`<span class="fl">${f.fl}</span><span class="rt">${f.r}</span>
-      <span class="bd ${cancel?'cancel':'delay'}">${cancel?'ANNULÉ':'+'+ri(3,7)+'h'+ri(0,5)+'0'}</span>
-      <span class="eu">${f.eu} €</span>`;
-    radarEl.appendChild(el);
-  });
+  // Pas de données réelles → état vide (aucun vol inventé).
+  radarEl.innerHTML='<div style="padding:14px 16px;color:var(--white-40);font-size:.8rem">En attente de vols réels (radar CE261)…</div>';
 }
 
-/* ============ WHATSAPP LIVE ============ */
+/* ============ WHATSAPP (état réel uniquement) ============ */
 const waBody=document.getElementById('waBody');
-function waScript(){
-  const p=rnd(PRENOMS), f=rnd(FLIGHTS), e=f.eu;
-  return [
-    {s:'in',t:`Bonjour, mon vol ${f.fl} avait beaucoup de retard 😩`},
-    {s:'out',t:`Bonjour ${p} 👋 Je suis Robin. Le ${f.fl} ${f.r} ? Vérifions tout de suite.`},
-    {s:'out',t:`✅ Bonne nouvelle : ce vol est éligible. Vous pouvez réclamer jusqu'à ${e} €.`},
-    {s:'in',t:`Sérieux ?! Et je n'avance rien ?`},
-    {s:'out',t:`Exactement. 0 € d'avance, on est payés seulement si vous l'êtes. Envoyez votre carte d'embarquement 📎`},
-    {s:'in',t:`La voici 📎`},
-    {s:'out',t:`Parfait ${p} ! Dossier ouvert. Notre juriste prend le relais. Vous serez indemnisé·e 💪`},
-  ];
-}
-let waQueue=[], waI=0;
-function waStep(){
-  if(waI>=waQueue.length){ waQueue=waScript(); waI=0; waBody.innerHTML=''; }
-  const m=waQueue[waI++];
-  const now=new Date();
-  const b=document.createElement('div');
-  b.className='bub '+m.s;
-  b.innerHTML=`${m.t}<div class="tm">${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} ${m.s==='out'?'✓✓':''}</div>`;
-  waBody.appendChild(b);
-  while(waBody.children.length>6) waBody.removeChild(waBody.firstChild);
-  waBody.scrollTop=waBody.scrollHeight;
+// Aucune fausse conversation : l'état réel du bot est affiché par loadWhatsApp
+// (en-tête « waStatus »). Le corps reste un état neutre.
+function emptyWhatsApp(){
+  if(waBody){
+    waBody.innerHTML='<div style="padding:14px 16px;color:var(--white-40);font-size:.8rem">Statut du bot Robin affiché en temps réel ci-dessus. Aucune conversation simulée.</div>';
+  }
 }
 
 /* ============ KPI TICKERS ============ */
 function tickKPI(){
-  // En mode réel (CRM Airtable), les KPI restent ancrés aux vrais chiffres — pas d'inflation simulée.
-  if(!REAL.kpi){
-    if(Math.random()<0.4){ S.dossiers++; S.dossiersNew++; }
-    if(Math.random()<0.6){ S.eur += ri(0,600); }
-    if(Math.random()<0.04){ S.agences++; S.agencesNew++; }
-    S.gagnes += Math.random()<0.3?1:0; S.total += Math.random()<0.35?1:0;
-    if(Math.random()<0.5){ GAME.pass++; }
-    if(Math.random()<0.3) S.waLeads++;
-  }
+  // KPI = uniquement les vrais chiffres CRM (/api/bureau-stats). Aucune inflation simulée.
   document.getElementById('kpiWaLeads').textContent=fmt(S.waLeads);
   document.getElementById('kpiDossiers').textContent=fmt(S.dossiers);
   document.getElementById('kpiDossiersNew').textContent=S.dossiersNew;
@@ -1010,7 +960,6 @@ function planeFlyby(){
 }
 
 /* ============ PANNEAU PUB META ============ */
-const META_DEMO = { spend:1284, reach:184200, impressions:312450, clicks:4380, cpm:'4.11', waConvos:611, cpl:2.10 };
 function renderMeta(d, real){
   const set=(id,v)=>{ const e=document.getElementById(id); if(e) e.textContent=v; };
   set('mSpend', fmt(Math.round(d.spend))+' €'); set('mReach', fmt(d.reach)); set('mImpr', fmt(d.impressions));
@@ -1020,25 +969,27 @@ function renderMeta(d, real){
   // largeurs entonnoir (min visibles)
   document.getElementById('mfClicksBar').style.width = Math.max(5, Math.min(100, d.clicks/imp*1000)).toFixed(1)+'%';
   document.getElementById('mfWaBar').style.width = Math.max(2, Math.min(100, d.waConvos/imp*4000)).toFixed(1)+'%';
-  const ms=document.getElementById('metaSrc'); if(ms){ ms.className='mini-src '+(real?'real':'demo'); ms.textContent=real?'RÉEL':'DÉMO'; }
+  const ms=document.getElementById('metaSrc'); if(ms){ ms.className='mini-src '+(real?'real':'demo'); ms.textContent=real?'RÉEL':'EN ATTENTE'; }
 }
 
 /* ============ PANNEAU RÉSEAUX SOCIAUX ============ */
-const SOCIAL = { metrics: [
-  { k:"Publications", cur:6, tgt:20, ic:"📝" },
-  { k:"Likes", cur:120, tgt:1200, ic:"❤️" },
-  { k:"Commentaires", cur:18, tgt:160, ic:"💬" },
-  { k:"Clics WhatsApp", cur:45, tgt:400, ic:"👉" },
-  { k:"Conversations sociales", cur:9, tgt:70, ic:"🤝" },
+// Objectifs mensuels IG + FB (cibles du plan Community Manager). Aucun chiffre
+// d'activité courant n'est inventé : tant que l'API Instagram n'est pas branchée,
+// on n'affiche que les cibles, pas de faux « réalisé ».
+const SOCIAL = { targets: [
+  { k:"Publications", tgt:20, ic:"📝" },
+  { k:"Likes", tgt:1200, ic:"❤️" },
+  { k:"Commentaires", tgt:160, ic:"💬" },
+  { k:"Clics WhatsApp", tgt:400, ic:"👉" },
+  { k:"Conversations sociales", tgt:70, ic:"🤝" },
 ]};
 function renderSocial(){
   const el=document.getElementById('socialBody'); if(!el) return;
-  el.innerHTML = `<div class="social-grid">`+SOCIAL.metrics.map(m=>{
-    const pct=Math.min(100,Math.round(m.cur/m.tgt*100));
-    return `<div class="social-stat"><div class="ss-top"><span>${m.ic} ${m.k}</span><span class="ss-pct">${pct}%</span></div>
-      <div class="ss-v"><b>${fmt(m.cur)}</b><span> / ${fmt(m.tgt)} ce mois</span></div>
-      <div class="mf-bar"><i style="width:${pct}%;background:var(--blue)"></i></div></div>`;
-  }).join('')+`</div><div class="renta-note">Objectifs organiques IG + FB (plan Community Manager). Brancher l'API Instagram pour le réel.</div>`;
+  el.innerHTML = `<div class="social-grid">`+SOCIAL.targets.map(m=>
+    `<div class="social-stat"><div class="ss-top"><span>${m.ic} ${m.k}</span><span class="ss-pct">—</span></div>
+      <div class="ss-v"><b>—</b><span> / ${fmt(m.tgt)} ce mois</span></div>
+      <div class="mf-bar"><i style="width:0%;background:var(--blue)"></i></div></div>`
+  ).join('')+`</div><div class="renta-note">Cibles organiques IG + FB. Réalisé non connecté — brancher l'API Instagram pour les chiffres réels.</div>`;
 }
 
 /* ============ PANNEAU RENTABILITÉ ============ */
@@ -1077,7 +1028,7 @@ function setSrcBadge(){
   const real = Object.values(REAL.sources).filter(Boolean).length;
   const el = document.getElementById('srcBadge');
   if(real>0){ el.className='src-badge real'; el.textContent='🟢 '+real+' source'+(real>1?'s':'')+' réelle'+(real>1?'s':''); }
-  else { el.className='src-badge demo'; el.textContent='🟡 Mode démo'; }
+  else { el.className='src-badge demo'; el.textContent='🟡 En attente de données réelles'; }
 }
 // Normalise un vol /api/vol-ticker → {fl, r, kind, detail, eu}
 function normFlight(f){
@@ -1097,7 +1048,9 @@ async function loadRadar(){
     document.getElementById('radarSrc').className='mini-src real';
     document.getElementById('radarSrc').textContent='RÉEL';
     renderRadar();
-    // injecte quelques vrais vols dans le fil d'activité
+    // injecte quelques vrais vols dans le fil d'activité (retire d'abord l'état vide)
+    const feedRoot=document.getElementById('feed');
+    if(feedRoot && feedRoot.children.length===1 && !feedRoot.querySelector('.feed-item')) feedRoot.innerHTML='';
     REAL.radar.slice(0,3).forEach(f=>{
       const el=document.createElement('div'); el.className='feed-item';
       el.innerHTML=`<div class="feed-ic" style="--fp:var(--blue-pale)">🛰️</div>
@@ -1194,17 +1147,13 @@ async function loadRealData(){
 /* ============ BOOT ============ */
 tickKPI();
 renderRadar();
-renderMeta(META_DEMO, false);   // panneau Meta en démo tant que /api/meta-stats n'a pas répondu
-renderRenta();                  // panneau rentabilité / seuil
+renderRenta();                  // panneau rentabilité / seuil (coûts réels)
 renderSocial();                 // panneau réseaux sociaux / croissance
-for(let i=0;i<6;i++) addFeed();
-waQueue=waScript();
-waStep();
+emptyFeed();                    // fil d'activité : vide tant qu'il n'y a pas d'évènement réel
+emptyWhatsApp();                // panneau WhatsApp : état réel uniquement
 
 clock(); setInterval(clock,1000);
 setInterval(tickAgents, 3200);
-setInterval(addFeed, 4500);
-setInterval(waStep, 2600);
 setInterval(tickKPI, 2000);
 setInterval(renderRadar, 12000);
 updateAgentsOn();
