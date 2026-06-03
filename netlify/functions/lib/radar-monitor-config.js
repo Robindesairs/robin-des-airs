@@ -6,12 +6,24 @@ const EU_AFTERNOON_HUBS = ['CDG', 'ORY', 'MRS', 'LYS', 'NCE', 'RUN', 'BRU', 'LIS
 
 /** Départs Afrique + escales hub diaspora (soir 18h → 02h). */
 const AFRICA_EVENING_HUBS = [
-  // Afrique de l'Ouest
-  'DSS', 'ABJ', 'BKO', 'ACC', 'LOS', 'BJL', 'CKY', 'LFW', 'COO', 'OUA', 'NIM', 'FNA', 'ROB', 'NKC',
-  // Afrique centrale (manquaient — Cameroun / Gabon / Congo / RCA / RDC / Tchad)
-  'DLA', 'NSI', 'LBV', 'BZV', 'BGF', 'FIH', 'NDJ',
-  // Afrique de l'Est & océan Indien
-  'ADD', 'NBO', 'KGL', 'BJM', 'TNR',
+  'DSS',
+  'DKR',
+  'ABJ',
+  'ACC',
+  'LOS',
+  'CMN',
+  'BKO',
+  'BJL',
+  'ADD',
+  'NBO',
+  'CKY',
+  'FIH',
+  'LFW',
+  'COO',
+  'OUA',
+  'NDJ',
+  'ALG',
+  'TUN',
 ];
 
 /**
