@@ -168,6 +168,28 @@ body { font-family: 'DM Sans', sans-serif; background: var(--sky); color: var(--
 .bd.delay{color:var(--amber)} .bd.cancel{color:var(--red)}
 .radar-list .eu { font-size:0.7rem; color:var(--gold-light); font-weight:600; }
 
+/* ---- modale détail poste ---- */
+.poste-modal{position:fixed;inset:0;z-index:1000;background:rgba(5,12,24,.72);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;padding:20px}
+.poste-modal.open{display:flex}
+.pm-box{background:var(--sky-card);border:1px solid var(--sky-border);border-radius:16px;max-width:580px;width:100%;max-height:86vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+.pm-head{display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--sky-border);position:sticky;top:0;background:var(--sky-card)}
+.pm-av{width:46px;height:46px;border-radius:12px;background-size:cover;background-position:center top;border:2px solid var(--ac,var(--gold));flex-shrink:0}
+.pm-title{font-weight:600;font-size:1rem}.pm-role{font-size:.76rem;color:var(--white-40)}
+.pm-close{margin-left:auto;background:rgba(255,255,255,.06);border:1px solid var(--sky-border);color:var(--white-70);width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:18px;flex-shrink:0}
+.pm-close:hover{color:#fff;border-color:rgba(255,255,255,.25)}
+.pm-body{padding:14px 18px;font-size:.86rem;color:var(--white-70);line-height:1.5}
+.pm-body h4{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin:14px 0 8px}
+.pm-stat{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.pm-stat b{color:#fff;font-family:'JetBrains Mono',monospace}
+.pm-flight{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.82rem}
+.pm-flight .fl{font-family:'JetBrains Mono',monospace;font-weight:600;width:56px;color:#fff}
+.pm-flight .rt{flex:1;color:var(--white-70)}
+.pm-flight .bd{font-family:'JetBrains Mono',monospace;font-weight:600}.pm-flight .bd.cancel{color:var(--red)}.pm-flight .bd.delay{color:var(--amber)}
+.pm-flight .eu{color:var(--gold-light);font-weight:600}
+.pm-empty{color:var(--white-40);padding:10px 0;font-style:italic}
+.pm-foot{padding:14px 18px;border-top:1px solid var(--sky-border);display:flex;gap:10px;flex-wrap:wrap}
+.pm-link{display:inline-flex;align-items:center;gap:6px;background:var(--gold-pale);border:1px solid rgba(200,168,90,.4);color:var(--gold-light);padding:9px 16px;border-radius:9px;text-decoration:none;font-size:.84rem;font-weight:600}
+.pm-link:hover{background:#163060}
 .foot-note { text-align:center; color:var(--white-40); font-size:0.72rem; margin-top:2rem; line-height:1.6; }
 .foot-note b{color:var(--white-70)}
 
@@ -330,6 +352,18 @@ body.game-mode #gameView { display:block; }
 
 <canvas id="confetti" style="position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:999"></canvas>
 <div class="flyby" id="flyby"><span class="trail">⸺</span>✈️</div>
+
+<div class="poste-modal" id="posteModal" onclick="if(event.target===this)closePoste()">
+  <div class="pm-box">
+    <div class="pm-head">
+      <div class="pm-av" id="pmAv"></div>
+      <div><div class="pm-title" id="pmTitle">—</div><div class="pm-role" id="pmRole">—</div></div>
+      <button class="pm-close" onclick="closePoste()">✕</button>
+    </div>
+    <div class="pm-body" id="pmBody"></div>
+    <div class="pm-foot"><a class="pm-link" id="pmLink" href="#">Ouvrir l'outil →</a></div>
+  </div>
+</div>
 
 <header class="topbar">
   <div class="topbar-inner">
@@ -749,7 +783,7 @@ AGENTS.forEach((ag,i)=>{
   const el = document.createElement('div');
   el.className = 'agent linked';
   el.style.setProperty('--ac', ag.ac); el.style.setProperty('--acp', ag.acp);
-  el.addEventListener('click', ()=>{ window.location.href = link; });
+  el.addEventListener('click', ()=> openPoste(i));
   el.innerHTML = `
     <div class="agent-top">
       <div class="avatar" style="background-image:url('${AGENT_LINKS_PHOTO[i]}');background-size:cover;background-position:center top"><span class="av-badge">${ag.ic}</span></div>
@@ -766,7 +800,7 @@ AGENTS.forEach((ag,i)=>{
     </div>
     <div class="agent-foot">
       <div class="kpi"><span class="k" id="kpi-${i}">${ag.kpiUnit}${fmt(ag.kpi)}</span><span class="l">${ag.kpiL}</span></div>
-      <span class="open-tool">ouvrir l'outil →</span>
+      <span class="open-tool">voir le détail →</span>
       <div class="mini-bar"><i id="bar-${i}" style="width:${ri(45,92)}%"></i></div>
     </div>`;
   agentsEl.appendChild(el);
@@ -783,7 +817,7 @@ AGENTS.forEach((ag,i)=>{
   const s = document.createElement('div');
   s.className='station';
   s.style.left=pos.l+'%'; s.style.top=pos.t+'%'; s.style.setProperty('--ac', ag.ac);
-  s.addEventListener('click', ()=>{ window.location.href = AGENT_LINKS[i]; });
+  s.addEventListener('click', ()=> openPoste(i));
   s.innerHTML = `
     <div class="bubble" id="gb-${i}">${rnd(ag.tasks())}</div>
     <div class="char-photo" style="background-image:url('${PHOTOS[i]}')"><span class="role-badge">${ag.ic}</span></div>
@@ -824,6 +858,39 @@ function gameWin(){
 }
 // décrément du combo
 setInterval(()=>{ if(GAME.comboTimer>0){ GAME.comboTimer--; if(GAME.comboTimer===0 && GAME.combo>1){ GAME.combo=1; updateHUD(); } } }, 1000);
+
+/* ============ DÉTAIL POSTE (clic) — vraies données ============ */
+function pmStat(label,val){ return `<div class="pm-stat"><span>${label}</span><b>${val}</b></div>`; }
+function pmFlight(f){ const c=f.kind==='cancel'; return `<div class="pm-flight"><span class="fl">${f.fl}</span><span class="rt">${f.r||''}</span><span class="bd ${c?'cancel':'delay'}">${c?'ANNULÉ':(f.detail||'retard')}</span><span class="eu">${f.eu} €</span></div>`; }
+function posteContent(i){
+  const taux = S.total>0?Math.round(S.gagnes/S.total*100):0;
+  const flights = REAL.radar || [];
+  switch(i){
+    case 0: return `<h4>Scorecard entreprise (réel · CRM)</h4>${pmStat('Dossiers actifs',fmt(S.dossiers))}${pmStat('€ en récupération',fmt(S.eur)+' €')}${pmStat('Taux de réussite',taux+'%')}${pmStat('Agences actives',S.agences)}${pmStat('Leads WhatsApp',S.waLeads)}`;
+    case 1: return `<h4>Vols détectés — radar CE261 (réel)</h4>`+(flights.length?flights.map(pmFlight).join(''):`<div class="pm-empty">En attente de vols réels (le scan tourne ~12×/jour).</div>`)+`<h4>Objectif</h4>${pmStat('Vols éligibles / mois','40')}`;
+    case 2: return `<h4>Bot WhatsApp (réel)</h4>${pmStat('Statut',(REAL.whatsapp&&REAL.whatsapp.whatsapp==='ok')?'🟢 en ligne':'—')}${pmStat('Leads WhatsApp (CRM)',fmt(S.waLeads))}<div class="pm-empty" style="font-style:normal">Conversations réelles dans le panneau WhatsApp (numéros masqués).</div>`;
+    case 3: return `<h4>Dossiers juridiques (réel)</h4>${pmStat('Dossiers gagnés',fmt(S.gagnes))}${pmStat('Dossiers engagés',fmt(Math.max(S.total-S.gagnes,0)))}${pmStat('Taux de réussite',taux+'%')}`;
+    case 4: return `<h4>Agences partenaires (réel)</h4>${pmStat('Agences actives',S.agences)}${pmStat('Prospects à contacter',S.agencesNew)}${pmStat('Objectif','55 actives')}`;
+    case 5: return `<h4>Finances (réel)</h4>${pmStat('€ en récupération',fmt(S.eur)+' €')}${pmStat('Dossiers payés',fmt(S.gagnes))}${pmStat('Coûts mensuels',fmt(RENTA.total)+' €')}`;
+    case 6: return `<h4>Suivi dossiers (réel)</h4>${pmStat('Dossiers suivis',fmt(S.dossiers))}${pmStat('Gagnés',fmt(S.gagnes))}`;
+    case 7: if(REAL.meta){const d=REAL.meta;return `<h4>Pub Meta — 7 jours (réel)</h4>${pmStat('Dépense',fmt(d.spend)+' €')}${pmStat('Impressions',fmt(d.impressions))}${pmStat('Reach',fmt(d.reach))}${pmStat('Clics',fmt(d.clicks))}${pmStat('Conversations WhatsApp',fmt(d.waConvos))}${pmStat('CPM',d.cpm+' €')}`;} return `<div class="pm-empty">Stats Meta indisponibles (token à renouveler).</div>`;
+    case 8: return `<h4>Rentabilité (réel · factures Drive)</h4>${pmStat('Coûts mensuels',fmt(RENTA.total)+' €')}${pmStat('Marge / dossier gagné',COSTS.margeParDossier+' €')}${pmStat('Seuil de rentabilité',RENTA.seuil+' dossiers/mois')}<h4>Détail des coûts</h4>${COSTS.abonnements.map(a=>pmStat(a.n,a.m+' €')).join('')}${pmStat('Pub Meta',COSTS.pub+' €')}${pmStat('Salaires',COSTS.salaires+' €')}`;
+    case 9: return `<h4>Réseaux sociaux — objectifs</h4>${SOCIAL.targets.map(m=>pmStat(m.ic+' '+m.k,'— / '+fmt(m.tgt))).join('')}<div class="pm-empty" style="font-style:normal">Réalisé non connecté — API Instagram à brancher.</div>`;
+    default: return '';
+  }
+}
+function openPoste(i){
+  const ag=AGENTS[i]; if(!ag) return;
+  const av=document.getElementById('pmAv');
+  av.style.backgroundImage=`url('${AGENT_LINKS_PHOTO[i]}')`; av.style.setProperty('--ac',ag.ac);
+  document.getElementById('pmTitle').textContent=ag.name;
+  document.getElementById('pmRole').textContent=ag.role;
+  document.getElementById('pmBody').innerHTML=posteContent(i);
+  document.getElementById('pmLink').href=AGENT_LINKS[i]||'#';
+  document.getElementById('posteModal').classList.add('open');
+}
+function closePoste(){ document.getElementById('posteModal').classList.remove('open'); }
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closePoste(); });
 
 /* ============ IMPRESSION ============ */
 document.getElementById('printBtn').addEventListener('click', ()=> window.print());
