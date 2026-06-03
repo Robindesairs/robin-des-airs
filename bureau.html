@@ -1000,6 +1000,33 @@ function renderMeta(d, real){
 // Objectifs mensuels IG + FB (cibles du plan Community Manager). Aucun chiffre
 // d'activité courant n'est inventé : tant que l'API Instagram n'est pas branchée,
 // on n'affiche que les cibles, pas de faux « réalisé ».
+/* ============ FIL D'ACTIVITÉ RÉEL (derniers dossiers CRM) ============ */
+function feedIcon(st){
+  const s=(st||'').toLowerCase();
+  if(/payé|indemnis/.test(s)) return ['✅','var(--green-pale)'];
+  if(/mandat/.test(s)) return ['✍️','var(--gold-pale)'];
+  if(/lrar|demeure|contentieux/.test(s)) return ['⚖️','var(--purple-pale)'];
+  if(/médiation|mediation/.test(s)) return ['🤝','var(--gold-pale)'];
+  if(/document/.test(s)) return ['📄','var(--blue-pale)'];
+  return ['📩','var(--blue-pale)'];
+}
+function renderRealFeed(recent){
+  if(!Array.isArray(recent) || !recent.length) return;
+  const feed=document.getElementById('feed'); if(!feed) return;
+  // retire le placeholder « en attente » mais garde les events radar/Meta réels déjà là
+  if(feed.children.length===1 && !feed.querySelector('.feed-item')) feed.innerHTML='';
+  recent.forEach(r=>{
+    const [ic,fp]=feedIcon(r.statut);
+    const montant = r.montant>0 ? ` · <span class="eur">${fmt(r.montant)} €</span>` : '';
+    const vol = r.vol ? ' '+r.vol : '';
+    const el=document.createElement('div'); el.className='feed-item';
+    el.innerHTML=`<div class="feed-ic" style="--fp:${fp}">${ic}</div>
+      <div class="feed-c"><div class="feed-txt"><b>${r.initiales||'Client'}</b> · ${r.compagnie||'—'}${vol} — ${r.statut}${montant}</div>
+      <div class="feed-meta">CRM · dossier réel</div></div>`;
+    feed.appendChild(el);
+  });
+}
+
 const SOCIAL = { targets: [
   { k:"Publications", tgt:20, ic:"📝" },
   { k:"Likes", tgt:1200, ic:"❤️" },
@@ -1124,6 +1151,7 @@ async function loadBureauStats(){
     // marque les KPI comme réels
     document.querySelectorAll('.pulse-label').forEach(el=>{ if(!el.querySelector('.mini-src')){ const b=document.createElement('span'); b.className='mini-src real'; b.textContent='CRM'; b.style.marginLeft='6px'; el.appendChild(b); } });
     renderRenta(); // met à jour le seuil avec les vrais dossiers gagnés
+    renderRealFeed(d.recent); // fil d'activité = vrais derniers dossiers (anonymisés)
   }
   setSrcBadge();
 }

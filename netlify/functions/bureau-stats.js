@@ -17,7 +17,12 @@ const F = {
   whatsapp: 'fldsFH0PoWe3AV0sI',      // Numéro WhatsApp
   ag_statut: 'fldXE9N3wp1EDTblM',     // Statut (Agences)
   ag_revenu: 'fldS2mXrWeBgiCeXk',     // Revenu Total Généré (Agences)
+  nom: 'fldCtJysGhTYF2LNf',           // Nom Passager
+  prenom: 'fldai6AzcJXIePgAe',        // Prénom Passager
+  compagnie: 'fld8Ku1jGMOPWnrQc',     // Compagnie Aérienne
+  vol: 'fldcVnS4B86eZntjr',           // Numéro de vol
 };
+const selVal = (v) => (v && typeof v === 'object' ? (v.name || '') : (v || ''));
 
 const HEADERS = {
   'Content-Type': 'application/json',
@@ -86,6 +91,26 @@ exports.handler = async (event) => {
     const base = engages + gagnes;
     const taux = base > 0 ? Math.round((gagnes / Math.max(base, 1)) * 100) : null;
 
+    // Activité récente RÉELLE (anonymisée : initiales seulement — endpoint public)
+    const recent = dossiers
+      .filter((r) => r.fields && (r.fields[F.statutSuivi] || r.fields[F.vol] || r.fields[F.compagnie]))
+      .sort((a, b) => String(b.createdTime || '').localeCompare(String(a.createdTime || '')))
+      .slice(0, 8)
+      .map((r) => {
+        const f = r.fields || {};
+        const nom = String(selVal(f[F.nom])).trim();
+        const prenom = String(selVal(f[F.prenom])).trim();
+        const initiales = ((prenom[0] || '') + '.' + (nom[0] || '') + '.').toUpperCase().replace(/^\.+|\.+$/g, '') || 'Client';
+        return {
+          initiales,
+          compagnie: String(selVal(f[F.compagnie])).slice(0, 24),
+          vol: String(selVal(f[F.vol])).slice(0, 12),
+          statut: String(selVal(f[F.statutSuivi]) || 'Nouveau').slice(0, 28),
+          montant: Number(f[F.indemnite] || f[F.montantClient] || 0),
+          at: r.createdTime || null,
+        };
+      });
+
     return {
       statusCode: 200,
       headers: HEADERS,
@@ -102,6 +127,7 @@ exports.handler = async (event) => {
         prospects,
         revenuAgences,
         taux, // % gagnés parmi les dossiers engagés (null si aucun)
+        recent, // derniers dossiers réels (anonymisés) pour le fil d'activité
       }),
     };
   } catch (e) {
