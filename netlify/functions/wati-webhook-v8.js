@@ -127,8 +127,11 @@ async function sendList(phone, { header, body, footer, buttonText, items }, cfg)
           ...(header ? { header: clip(header, 60) } : {}),
           body: body,
           footer: footer || 'robindesairs.eu',
+          button: clip(buttonText || 'Choisir', 20),
           buttonText: clip(buttonText || 'Choisir', 20),
+          buttonTitle: clip(buttonText || 'Choisir', 20),
           sections: [{ title: clip(header || 'Choix', 24), rows }],
+          action: { button: clip(buttonText || 'Choisir', 20), buttonText: clip(buttonText || 'Choisir', 20) },
         },
       }),
     });
