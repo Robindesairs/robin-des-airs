@@ -119,15 +119,18 @@ async function patchAirtableSigned(record) {
       recs = data.records || [];
     }
   }
-  if (!recs.length) {
-    console.warn(`submit-mandat: aucune ligne Airtable pour ref=${ref}`);
-    return { updated: 0, created: false };
-  }
-
   const signedNote = `Mandat signé le ${record.signed_at || new Date().toISOString()} (cert ${record.cert_id || '—'})`;
   const addr = (record.address || '').trim();
   const itin = [record.depAirport, record.arrAirport].filter(Boolean).join(' → ');
   const incidentLabel = INCIDENT_AT[record.incident] || record.incident || '';
+  const remarquesExtra = [
+    signedNote,
+    addr ? `Adresse: ${addr}` : '',
+    record.email ? `Email: ${record.email}` : '',
+    (record.passengerNames && record.passengerNames.length) ? `Passagers: ${record.passengerNames.join(', ')}` : '',
+    record.operatedBy ? `Opéré par: ${record.operatedBy}` : '',
+    record.connecting ? `Correspondance: ${record.connecting}` : '',
+  ].filter(Boolean).join(' | ');
 
   const common = {};
   if (cfg.fStatutSuivi && cfg.statutSuiviSigne) common[cfg.fStatutSuivi] = cfg.statutSuiviSigne;
@@ -140,23 +143,36 @@ async function patchAirtableSigned(record) {
   if (cfg.fItineraire && itin) common[cfg.fItineraire] = itin;
   if (cfg.fWa && phone) common[cfg.fWa] = phone;
 
-  const updates = recs.map((rec, i) => {
+  const apiUrl = `https://api.airtable.com/v0/${cfg.base}/${cfg.table}`;
+
+  // ── Upsert : si aucune fiche (réf ni téléphone), on la CRÉE ──────────────
+  if (!recs.length) {
+    const createFields = { ...common };
+    if (cfg.fRef) createFields[cfg.fRef] = ref;
+    if (cfg.fRemarques) createFields[cfg.fRemarques] = remarquesExtra;
+    const cr = await fetch(apiUrl, {
+      method: 'POST',
+      headers: atHeaders(cfg.key),
+      body: JSON.stringify({ records: [{ fields: createFields }], typecast: true }),
+    });
+    if (!cr.ok) {
+      const t = await cr.text();
+      throw new Error(`Airtable create ${cr.status}: ${t.slice(0, 300)}`);
+    }
+    console.log(`submit-mandat: Airtable CREATE fiche ref=${ref}`);
+    return { created: 1, updated: 0 };
+  }
+
+  // ── Sinon : mise à jour de la/les fiche(s) existante(s) ──────────────────
+  const updates = recs.map((rec) => {
     const f = { ...common };
     if (cfg.fRemarques) {
       const prev = (rec.fields && rec.fields[cfg.fRemarques]) || '';
-      const extra = [signedNote, addr ? `Adresse: ${addr}` : '', record.email ? `Email: ${record.email}` : '']
-        .filter(Boolean)
-        .join(' | ');
-      f[cfg.fRemarques] = prev ? `${prev} | ${extra}` : extra;
-    }
-    if (i === 0 && record.passengerNames && record.passengerNames.length) {
-      f._note_pax = record.passengerNames.join(', ');
+      f[cfg.fRemarques] = prev ? `${prev} | ${remarquesExtra}` : remarquesExtra;
     }
     return { id: rec.id, fields: f };
   });
-
-  const patchUrl = `https://api.airtable.com/v0/${cfg.base}/${cfg.table}`;
-  const pr = await fetch(patchUrl, {
+  const pr = await fetch(apiUrl, {
     method: 'PATCH',
     headers: atHeaders(cfg.key),
     body: JSON.stringify({ records: updates }),
