@@ -216,6 +216,9 @@ Règles STRICTES :
 function tooOld(dateStr) { const m = (dateStr || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); if (!m) return false; const d = new Date(+m[3], +m[2] - 1, +m[1]); return (Date.now() - d.getTime()) > 5 * 365.25 * 864e5; }
 // Date sans année (ex. "15/07") → il faut demander l'année (ne jamais la deviner).
 function needYear(d) { return /^\d{1,2}\/\d{1,2}$/.test((d || '').trim()); }
+// Date dans le futur (> demain) → impossible pour un vol déjà perturbé.
+function inFuture(dateStr) { const m = (dateStr || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); if (!m) return false; return new Date(+m[3], +m[2] - 1, +m[1]).getTime() > Date.now() + 864e5; }
+const FUTURE_JOKE = `😄 Là vous voyagez dans le futur ! Ce vol n'a pas encore eu lieu — on ne peut réclamer que pour un vol *déjà passé*. 🪄\n\nDonnez-moi la *vraie* date du vol (JJ/MM/AAAA) :`;
 function recentYears() { const base = new Date().getFullYear(); return [base, base - 1, base - 2, base - 3, base - 4]; }
 
 const STOP_FOOTER = '_L\'équipe Robin des Airs_';
@@ -329,6 +332,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
     const n = normInput(input, ['oui', 'corriger']);
     if (n === '1' || lower.includes('oui')) {
       if (needYear(s.date)) { s.step = 'annee'; await setState(phone, s); return askYear(phone, s, cfg); }
+      if (inFuture(s.date)) { s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, FUTURE_JOKE, cfg); }
       return apresVol(phone, s, cfg);
     }
     s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
@@ -338,7 +342,9 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
     const m = input.match(/\b(19\d{2}|20\d{2})\b/);
     const year = m ? m[1] : null;
     if (year) {
-      s.date = `${s.date.replace(/\/$/, '')}/${year}`;
+      const d = `${s.date.replace(/\/$/, '')}/${year}`;
+      if (inFuture(d)) { await send(phone, `😄 ${year} ? Ce vol n'a pas encore eu lieu — on réclame pour un vol *déjà passé* ! Choisissez la bonne année 👇`, cfg); return askYear(phone, s, cfg); }
+      s.date = d;
       if (tooOld(s.date)) { await clearState(phone); return send(phone, `😔 Vol trop ancien — délai légal dépassé.\nLa prescription est de 5 ans. Votre vol date du ${s.date}.\n❓ Si la date est incorrecte, tapez *menu*.\n\n${STOP_FOOTER}`, cfg); }
       await setState(phone, s); return apresVol(phone, s, cfg);
     }
@@ -353,7 +359,9 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
   }
   if (s.step === 'm_date') {
     const m = input.match(/(\d{1,2})[\/\-. ](\d{1,2})[\/\-. ](\d{2,4})/);
-    if (m) { const yy = m[3].length === 2 ? '20' + m[3] : m[3]; s.date = `${m[1].padStart(2, '0')}/${m[2].padStart(2, '0')}/${yy}`;
+    if (m) { const yy = m[3].length === 2 ? '20' + m[3] : m[3]; const d = `${m[1].padStart(2, '0')}/${m[2].padStart(2, '0')}/${yy}`;
+      if (inFuture(d)) return send(phone, FUTURE_JOKE, cfg);
+      s.date = d;
       if (tooOld(s.date)) { await clearState(phone); return send(phone, `😔 Vol trop ancien — délai légal dépassé.\nLa prescription est de 5 ans. Votre vol date du ${s.date}.\n❓ Si la date est incorrecte, tapez *menu*.\n\n${STOP_FOOTER}`, cfg); }
       await setState(phone, s); return apresVol(phone, s, cfg);
     }
