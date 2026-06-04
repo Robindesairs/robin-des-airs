@@ -11,6 +11,12 @@ try { netlifyBlobsModule = require('@netlify/blobs'); } catch (e) {}
 const { clientEmailForRef } = require('./lib/airtable-robin');
 const { checkRateLimit: rateLimitCheck } = require('./lib/rate-limit');
 
+// Génération + envoi de la copie PDF signée (best-effort : ne doit jamais casser la signature)
+let genererMandatPdf = null;
+try { ({ genererMandatPdf } = require('./lib/mandat-pdf')); } catch (e) { console.error('submit-mandat: mandat-pdf indisponible:', e.message); }
+let watiSendFile = null, watiCfg = null;
+try { ({ watiSendFile, watiCfg } = require('./lib/wati-api')); } catch (e) { /* WhatsApp optionnel */ }
+
 const STORE_NAME = 'robin-signatures';
 
 const HEADERS = {
@@ -302,7 +308,7 @@ async function sendResendEmail(apiKey, payload) {
 }
 
 /** Emails équipe + client (si email valide). Resend : RESEND_API_KEY, MANDAT_NOTIFY_EMAIL, MANDAT_EMAIL_FROM */
-async function notifyMandatSignedByEmail(record) {
+async function notifyMandatSignedByEmail(record, pdfBuffer) {
   const apiKey = (process.env.RESEND_API_KEY || '').trim();
   if (!apiKey) {
     return { skipped: true, reason: 'no RESEND_API_KEY' };
@@ -344,6 +350,10 @@ async function notifyMandatSignedByEmail(record) {
       html: clientContent.html,
       ...(replyTo ? { reply_to: replyTo } : {}),
     };
+    if (pdfBuffer) {
+      const fileRef = (record.ref || 'dossier').replace(/[^A-Za-z0-9_-]/g, '_');
+      clientPayload.attachments = [{ filename: `Mandat-${fileRef}.pdf`, content: pdfBuffer.toString('base64') }];
+    }
     result.client = await sendResendEmail(apiKey, clientPayload);
   } else {
     result.client = { skipped: true, reason: clientEmail ? 'invalid email' : 'no client email' };
@@ -386,6 +396,22 @@ async function forwardBotWebhook(record) {
     if (!r.ok) console.error('submit-mandat: bot webhook', r.status, await r.text().then((t) => t.slice(0, 200)));
   } catch (e) {
     console.error('submit-mandat: bot webhook error:', e.message);
+  }
+}
+
+/** Envoie la copie PDF du mandat signé au client par WhatsApp (Wati). Best-effort. */
+async function sendMandatWhatsappCopy(record, pdfBuffer) {
+  if (!pdfBuffer || !watiSendFile || !watiCfg || !watiCfg()) {
+    return { skipped: true, reason: !pdfBuffer ? 'pas de PDF' : 'Wati non configuré' };
+  }
+  const ref = record.ref || record.cert_id || 'dossier';
+  const fileName = `Mandat-${String(ref).replace(/[^A-Za-z0-9_-]/g, '_')}.pdf`;
+  const caption = `Votre mandat signé (réf. ${ref}). Conservez cette copie. — Robin des Airs`;
+  try {
+    return await watiSendFile(record.whatsapp, pdfBuffer, fileName, caption);
+  } catch (e) {
+    console.error('submit-mandat: WhatsApp copie error:', e.message);
+    return { ok: false, error: e.message };
   }
 }
 
@@ -491,9 +517,17 @@ exports.handler = async (event) => {
     airtableResult = { error: e.message };
   }
 
-  const [webhookResult, emailResult] = await Promise.all([
+  // Génère la copie PDF du mandat signé (best-effort)
+  let pdfBuffer = null;
+  if (genererMandatPdf) {
+    try { pdfBuffer = await genererMandatPdf(record); }
+    catch (e) { console.error('submit-mandat: génération PDF échouée:', e.message); }
+  }
+
+  const [webhookResult, emailResult, waCopyResult] = await Promise.all([
     forwardBotWebhook(record).then(() => ({ ok: true })).catch((e) => ({ ok: false, error: e.message })),
-    notifyMandatSignedByEmail(record),
+    notifyMandatSignedByEmail(record, pdfBuffer),
+    sendMandatWhatsappCopy(record, pdfBuffer),
   ]);
 
   return {
@@ -506,6 +540,8 @@ exports.handler = async (event) => {
       airtable: airtableResult,
       email: emailResult,
       webhook: webhookResult,
+      whatsapp_copy: waCopyResult,
+      pdf_generated: !!pdfBuffer,
     }),
   };
 };
