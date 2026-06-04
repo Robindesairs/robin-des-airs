@@ -25,6 +25,24 @@ function enqueteModel() {
   return (process.env.RADAR_ENQUETE_MODEL || DEFAULT_MODEL).trim();
 }
 
+// Page de statut officielle de la compagnie (copie minimale de radar.js, non exporté là-bas).
+const AIRLINE_TRACKER = {
+  AF: 'https://www.airfrance.fr/flightstatus/search', KL: 'https://www.klm.com/flightstatus',
+  SN: 'https://www.brusselsairlines.com/en/flight-status', LH: 'https://www.lufthansa.com/flight-status',
+  IB: 'https://www.iberia.com/flight-status', TP: 'https://www.flytap.com/flight-status',
+  FR: 'https://www.ryanair.com/flight-status', VY: 'https://www.vueling.com/en/flight-status',
+  EI: 'https://www.aerlingus.com/flight-status', LX: 'https://www.swiss.com/flight-status',
+  OS: 'https://www.austrian.com/flight-status', DS: 'https://www.corsair.com/fr/suivi-de-vol',
+};
+function getTracker(iata, fn) {
+  const base = AIRLINE_TRACKER[(iata || '').toUpperCase()];
+  if (!base) return null;
+  const f = (fn || '').replace(/\s/g, '');
+  if (base.includes('airfrance')) return base + '?flightNumber=' + encodeURIComponent(f);
+  if (base.includes('klm.com')) return base + '?searchKey=' + encodeURIComponent(f);
+  return base + (base.includes('?') ? '&' : '?') + 'flight=' + encodeURIComponent(f);
+}
+
 function blobStore(event) {
   if (!blobs) return null;
   try {
@@ -154,7 +172,11 @@ QUALIFICATION (décisif pour l'indemnisation) :
 - Extraordinaire (compagnie EXONÉRÉE) : météo dangereuse avérée, grève EXTERNE (contrôleurs aériens, aéroport), décision/restriction ATC, sûreté/sécurité, instabilité politique, catastrophe.
 - LA ROTATION PRÉCÉDENTE EST DÉCISIVE : si l'avion est arrivé en retard de son vol précédent, le retard est très probablement EN CASCADE → NON extraordinaire, SAUF si la cause amont était elle-même extraordinaire (à vérifier).
 
-MÉTHODE : utilise web_search pour vérifier l'actualité du jour (grève contrôleurs/compagnie/aéroport, météo, restriction d'espace aérien) sur la date et les aéroports concernés. Croise avec le METAR fourni. Cite tes sources (URL).
+MÉTHODE (utilise web_search, croise plusieurs sources, cite chaque URL) :
+1. PAGE STATUT OFFICIELLE DE LA COMPAGNIE (URL fournie dans les FAITS) : cherche le motif déclaré pour CE numéro de vol à cette date (statut, nouvel horaire, raison invoquée).
+2. EUROCONTROL — régulations ATFM du jour sur l'aéroport/zone (motif : météo, capacité/staffing ATC, grève contrôleurs…) : signal fort. Une décision/restriction ATC ou une grève EXTERNE de contrôleurs = extraordinaire ; une saturation/organisation interne = non.
+3. NOTAM de l'aéroport (piste/espace fermé, équipement HS) + actualité grève/incident (contrôleurs, compagnie, aéroport) à la date.
+4. Croise avec le METAR fourni et la rotation précédente. Si les sources se contredisent, dis-le.
 
 RÉPONDS EN FRANÇAIS, BREF, EXACTEMENT dans ce format (une ligne par champ) :
 CAUSE: <1-2 phrases>
@@ -242,6 +264,8 @@ async function runEnquete(event, input, opts = {}) {
   }
 
   const key = rapidApiKey();
+  const airline = (input.airline || vol.slice(0, 2)).toUpperCase();
+  const trackerOfficiel = getTracker(airline, vol);
   const sources = [];
   const errors = [];
 
@@ -291,6 +315,7 @@ async function runEnquete(event, input, opts = {}) {
     const facts = [
       `Vol ${vol} du ${date}`,
       dep && arr ? `Route ${dep} → ${arr}` : null,
+      `Compagnie : ${airline}${trackerOfficiel ? ` — page statut officielle à consulter en priorité : ${trackerOfficiel}` : ''}`,
       input.cancelled ? 'Statut : ANNULÉ' : (retardMin != null ? `Retard à l'arrivée : ${retardMin} min` : 'Retard détecté'),
       statut ? `Statut API : ${statut}` : null,
       reg ? `Appareil : ${reg}${aircraftModel ? ' (' + aircraftModel + ')' : ''}` : null,
@@ -317,6 +342,8 @@ async function runEnquete(event, input, opts = {}) {
     ok: true,
     vol,
     date,
+    airline,
+    trackerOfficiel,
     route: dep && arr ? `${dep} → ${arr}` : (input.route || ''),
     dep, arr,
     statut,

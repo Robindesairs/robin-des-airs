@@ -908,7 +908,11 @@ function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,
 // Rendu de l'enquête malick : cause + circonstance extraordinaire + rotation appareil + météo + sources.
 function enqueteHtml(f){
   const e=f.enquete;
-  if(!e){ return f.enqueteLoading ? `<div class="pm-enq loading">🔍 Enquête malick en cours… (cause, météo, rotation appareil)</div>` : ''; }
+  if(!e){
+    if(f.enqueteLoading) return `<div class="pm-enq loading">🔍 Enquête malick en cours… (cause, météo, rotation appareil)</div>`;
+    if(f.rebookWatch) return `<div class="pm-enq"><span class="enq-badge warn">Annulation à l'avance</span> <span class="muted">réacheminement à surveiller — pas d'enquête cause (non indemnisable si préavis ≥ 14 j)</span></div>`;
+    return '';
+  }
   if(e.ok===false) return '';
   const ex=e.extraordinaire;
   const exCls = ex==='NON'?'ok':(ex==='OUI'?'bad':'warn');
@@ -1000,7 +1004,7 @@ function renderRadar(){
       const cancel = f.kind==='cancel';
       const hrs = fhours(f);
       const el=document.createElement('div'); el.className='r';
-      const eqd = f.enquete&&f.enquete.extraordinaire ? `<span class="enq-dot ${f.enquete.extraordinaire==='NON'?'ok':f.enquete.extraordinaire==='OUI'?'bad':'warn'}" title="${f.enquete.extraordinaire==='NON'?'Indemnisable (non extraordinaire)':f.enquete.extraordinaire==='OUI'?'Risque exonération (extraordinaire)':'À confirmer'}">⚖</span>` : '';
+      const eqd = f.enquete&&f.enquete.extraordinaire ? `<span class="enq-dot ${f.enquete.extraordinaire==='NON'?'ok':f.enquete.extraordinaire==='OUI'?'bad':'warn'}" title="${f.enquete.extraordinaire==='NON'?'Indemnisable (non extraordinaire)':f.enquete.extraordinaire==='OUI'?'Risque exonération (extraordinaire)':'À confirmer'}">⚖</span>` : (f.rebookWatch ? `<span class="enq-dot warn" title="Annulation à l'avance — réacheminement à surveiller">🗓️</span>` : '');
       el.innerHTML=`<span class="fl">${f.fl}</span><span class="rt">${f.r}${eqd}${f.reg?`<span class="reg">${f.reg}</span>`:''}${hrs?`<span class="hrs">${hrs}</span>`:''}</span>
         <span class="bd ${cancel?'cancel':'delay'}">${cancel?'ANNULÉ':(f.detail||'retard')}</span>
         <span class="eu">${f.eu} €</span>`;
@@ -1023,12 +1027,33 @@ function refreshOpenPoste(){
     document.getElementById('pmBody').innerHTML=posteContent(1);
   }
 }
+// Heure de départ programmée du vol (UTC) en ms, à partir de date + std.
+function flightDepMs(f){
+  if(!f.date) return null;
+  const t=String(f.std||'').replace(/Z$/,'');
+  const ms=Date.parse(f.date+'T'+(/^\d{2}:\d{2}/.test(t)?t:'00:00')+':00Z');
+  return Number.isNaN(ms)?null:ms;
+}
+// Annulation "de dernière minute" : vol déjà passé, aujourd'hui, ou départ dans < 24 h
+// (passager impacté → on enquête la cause). Sinon = annulée à l'avance → réacheminement.
+function isLastMinuteCancel(f){
+  const dep=flightDepMs(f);
+  if(dep==null) return true;            // date inconnue → on enquête par prudence
+  return (dep - Date.now()) <= 24*3600*1000;
+}
 async function enrichEnquetes(){
   if(ENQUETE_RUNNING) return;
   ENQUETE_RUNNING=true;
   try{
-    // Pour l'instant : enquête uniquement sur les RETARDS éligibles (≥ 3 h), pas les annulations.
-    const cands=(REAL.radar||[]).filter(f=> !f.enquete && f.fl && f.fl!=='—' && f.kind!=='cancel' && (f.delayMin||0)>=180).slice(0,6);
+    // Annulations déclarées longtemps à l'avance → on ne cherche pas la cause (non indemnisable
+    // si préavis ≥ 14 j) mais on signale le réacheminement à surveiller.
+    (REAL.radar||[]).forEach(f=>{ if(f.kind==='cancel' && !f.enquete) f.rebookWatch=!isLastMinuteCancel(f); });
+    renderRadar(); refreshOpenPoste();
+    // Enquête cause : retards éligibles (≥3h) + annulations de dernière minute.
+    const cands=(REAL.radar||[]).filter(f=> !f.enquete && f.fl && f.fl!=='—' && (
+      (f.kind!=='cancel' && (f.delayMin||0)>=180) ||
+      (f.kind==='cancel' && isLastMinuteCancel(f))
+    )).slice(0,6);
     for(const f of cands){
       f.enqueteLoading=true; refreshOpenPoste();
       try{

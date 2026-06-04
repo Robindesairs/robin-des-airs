@@ -44,6 +44,7 @@ exports.handler = async (event) => {
       date: body.date,
       dep: body.dep,
       arr: body.arr,
+      airline: body.airline,
       delayMin: body.delayMin,
       cancelled: !!body.cancelled,
       route: body.route,
