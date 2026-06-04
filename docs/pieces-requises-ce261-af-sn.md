@@ -22,6 +22,19 @@
 
 > 👉 **Réponse à « faut-il toutes les cartes d'embarquement ? » : NON.** Mandats + identités (chacun) + **une** preuve de réservation du groupe = dossier recevable. Les cartes renforcent mais ne sont pas toutes obligatoires. Les compagnies disposent du **manifeste passagers** et peuvent vérifier qui était à bord.
 
+### ⚖️ Jurisprudence clé — la carte d'embarquement n'est PAS exigible
+
+**CJUE, ordonnance du 24 octobre 2019, aff. C-756/18, *LATAM Airlines Group SA***
+
+> Un passager **titulaire d'une réservation confirmée** sur un vol **retardé de 3 heures ou plus à l'arrivée** **ne peut pas se voir refuser l'indemnisation au seul motif qu'il n'a pas prouvé sa présence à l'enregistrement, notamment au moyen de la carte d'embarquement.**
+
+- **Charge de la preuve inversée** : ce n'est pas au passager de prouver qu'il a embarqué — c'est à la **compagnie** de démontrer qu'il **ne s'est pas présenté** ou qu'il a **voyagé sur un autre vol**.
+- Cet arrêt a **renversé la jurisprudence française** antérieure (qui exigeait la carte d'embarquement). Confirmé côté consommateurs (UFC-Que Choisir : « plus besoin de la carte d'embarquement »).
+
+**Usage dans nos mises en demeure / réponses :** si AF ou SN opposent l'absence de carte d'embarquement, **citer C-756/18** : la réservation confirmée suffit, la charge de la preuve leur incombe (ils détiennent le manifeste passagers).
+
+> ⚠️ À ne pas confondre avec **CJUE 26 oct. 2023, C-238/22 (FW c/ LATAM)** — qui concerne le **refus d'embarquement anticipé** (passager non présenté car prévenu en amont), sujet distinct.
+
 ---
 
 ## 2. Air France (AF) — spécificités
@@ -57,5 +70,7 @@ Le flux est cohérent avec ces exigences :
 - AirHelp — Indemnisation Air France : https://www.airhelp.fr/compagnies-aeriennes/air-france/indemnisation/
 - Brussels Airlines — Passenger rights : https://www.brusselsairlines.com/us/en/legal-notices/passenger-rights
 - Documents pour une réclamation : https://www.travelstacks.com/blog/documents-needed-flight-compensation-claim
+- **CJUE C-756/18 (24 oct. 2019, LATAM)** — UFC-Que Choisir « plus besoin de la carte d'embarquement » : https://www.quechoisir.org/actualite-indemnisation-pour-vol-retarde-ou-annule-plus-besoin-de-la-carte-d-embarquement-n85867/
+- CJUE C-238/22 (26 oct. 2023, FW c/ LATAM, refus d'embarquement anticipé) : https://juricaf.org/arret/CJUE-COURDEJUSTICEDELUNIONEUROPEENNE-20231026-C23822
 
 _Mise à jour : 2026-06-04 · Robin des Airs._
