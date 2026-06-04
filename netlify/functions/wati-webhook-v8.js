@@ -372,7 +372,10 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
     return send(phone, `📄 Envoyez le certificat de retard (optionnel), ou tapez *passer*.`, cfg);
   }
 
-  if (s.step === 'done') { return send(phone, `✅ Votre dossier *${s.ref}* est enregistré.\n👉 Signez le mandat : ${s.mandat_url}\nPour un nouveau dossier : tapez *menu*.`, cfg); }
+  if (s.step === 'done') {
+    if (!s.ref || !s.mandat_url) { await clearState(phone); return sendAccueil(phone, cfg); } // état périmé → on repart proprement
+    return send(phone, `✅ Votre dossier *${s.ref}* est enregistré.\n👉 Signez le mandat : ${s.mandat_url}\n\nPour un nouveau dossier : tapez *menu*.`, cfg);
+  }
 
   // Incompris
   return send(phone, `Je n'ai pas compris. Utilisez les boutons, ou tapez *menu* pour reprendre. 👇`, cfg);
