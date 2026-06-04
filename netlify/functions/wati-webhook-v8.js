@@ -32,7 +32,7 @@ const PROGRESS = {
   incident: 2, duree: 2,
   nb_pax: 3, nb_pax_exact: 3,
   type_vol: 4, motivation: 4,
-  scan: 5, scan_confirm: 5, m_vol: 5, m_date: 5, m_route: 5, names: 5,
+  scan: 5, scan_confirm: 5, m_vol: 5, m_date: 5, m_route: 5, names: 5, names_confirm: 5, names_fix_which: 5, names_fix_one: 5,
   vd_vol: 6, vd_date: 6, annee: 6, mineurs: 6, mineurs_which: 6,
   correction: 6, fix_vol: 6, fix_date: 6, fix_nom: 6, fix_route: 6,
   recap: 7, documents: 7, doc_pass: 7, doc_boarding: 7, doc_eticket: 7, doc_cert: 7, rgpd: 7,
@@ -242,7 +242,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
   // T2 — fallback IA hors-flux (question libre) → réponse + boutons
   try {
     const { isClientQuestion, isSensitive, answerClientQuestion } = require('./lib/robin-ai-responder');
-    const FREE = ['m_vol', 'm_date', 'm_route', 'names', 'vd_vol', 'vd_date', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route'];
+    const FREE = ['m_vol', 'm_date', 'm_route', 'names', 'vd_vol', 'vd_date', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'names_fix_which', 'names_fix_one'];
     const looks = FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input);
     if (looks) {
       if (isSensitive(input)) { await send(phone, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nTapez *menu* pour ouvrir/continuer votre dossier.`, cfg); return; }
@@ -406,6 +406,22 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
     if (input.length >= 3 && !/^\d+$/.test(input)) { s.names[s.name_idx] = input.toUpperCase(); s.name_idx++; await setState(phone, s); }
     return askName(phone, s, cfg);
   }
+  // Confirmation de la liste des passagers (+ correction par numéro)
+  if (s.step === 'names_confirm') {
+    const n = normInput(input, ['confirmer', 'corriger']);
+    if (n === '1' || lower.includes('confirm')) { return sendMineurs(phone, s, cfg); }
+    if (n === '2' || lower.includes('corrig')) { s.step = 'names_fix_which'; await setState(phone, s); return send(phone, `✏️ Quel passager corriger ? Indiquez son *numéro* (1 à ${s.pax}).`, cfg); }
+    return showNamesConfirm(phone, s, cfg);
+  }
+  if (s.step === 'names_fix_which') {
+    const i = parseInt((input.match(/\d+/) || [])[0]);
+    if (i >= 1 && i <= s.pax) { s.fix_name_idx = i - 1; s.step = 'names_fix_one'; await setState(phone, s); return send(phone, `👤 Nouveau nom du *passager ${i}* ?\n_(ex : Aminata Diallo)_`, cfg); }
+    return send(phone, `Indiquez un numéro entre 1 et ${s.pax} :`, cfg);
+  }
+  if (s.step === 'names_fix_one') {
+    if (input.length >= 3 && !/^\d+$/.test(input)) { s.names[s.fix_name_idx] = input.toUpperCase(); await setState(phone, s); return showNamesConfirm(phone, s, cfg); }
+    return send(phone, `Nom trop court. Renvoyez le nom complet :`, cfg);
+  }
 
   // MSG11 — MINEURS
   if (s.step === 'mineurs') {
@@ -533,12 +549,17 @@ async function askName(phone, s, cfg) {
   const names = s.names || [];
   const doneList = names.slice(0, s.name_idx).filter(Boolean).map((n, i) => `✅ ${i + 1}. ${n}`).join('\n');
   if (s.name_idx >= s.pax) {
-    if (s.pax > 1 && doneList) await send(phone, `👥 *Passagers enregistrés (${s.pax}) :*\n${doneList}`, cfg);
+    if (s.pax > 1) return showNamesConfirm(phone, s, cfg);
     return sendMineurs(phone, s, cfg);
   }
   s.step = 'names'; await setState(phone, s);
   const prefix = doneList ? `${doneList}\n\n` : '';
   return send(phone, `${bar('names')}\n${prefix}👤 *Passager ${s.name_idx + 1} sur ${s.pax}* — Prénom et nom ?\n_(ex : Aminata Diallo)_`, cfg);
+}
+async function showNamesConfirm(phone, s, cfg) {
+  s.step = 'names_confirm'; await setState(phone, s);
+  const list = (s.names || []).slice(0, s.pax).map((n, i) => `✅ ${i + 1}. ${n || '—'}`).join('\n');
+  return sendButtons(phone, { body: `${bar('names')}\n👥 *Les ${s.pax} passagers :*\n${list}\n\nTout est correct ?`, buttons: [{ text: '✅ Confirmer' }, { text: '✏️ Corriger nom' }] }, cfg);
 }
 
 // Documents
