@@ -17,6 +17,12 @@
 
 const { appendWaMessage, normalizeWaPhone } = require('./lib/wa-convo-store');
 const { normalizeWatiPhone, watiCfg } = require('./lib/wati-api');
+const { getBlobStore } = require('./lib/netlify-blobs-store');
+
+// Event Lambda courant (posé en tête de handler) → permet à la lib Blobs éprouvée
+// de faire connectLambda(event) ou le repli siteID+token, comme radar-today.
+let LAMBDA_EVENT = null;
+function botStore() { return getBlobStore(LAMBDA_EVENT, 'robin-bot-state'); }
 const { notifyOwnerWhatsApp } = require('./lib/owner-notify');
 
 const HEADERS = {
@@ -195,31 +201,31 @@ Règles :
 // ─── État conversation ───────────────────────────────────────────────────────
 async function getState(phone) {
   try {
-    const { getStore } = require('@netlify/blobs');
-    const store = getStore({ name: 'robin-bot-state', consistency: 'strong' });
+    const store = botStore();
+    if (!store) throw new Error('blobs indisponible');
     const raw = await store.get(`state/${phone.replace(/\D/g, '')}`, { type: 'json' });
     return raw || { step: 'accueil' };
   } catch { return { step: 'accueil' }; }
 }
 async function setState(phone, state) {
   try {
-    const { getStore } = require('@netlify/blobs');
-    const store = getStore({ name: 'robin-bot-state', consistency: 'strong' });
+    const store = botStore();
+    if (!store) throw new Error('blobs indisponible');
     await store.setJSON(`state/${phone.replace(/\D/g, '')}`, { ...state, updatedAt: new Date().toISOString() });
   } catch (e) { console.error('setState failed', e.message); }
 }
 // ─── Debug : dernière réponse WATI interactive (lisible via GET ?debug=interactive) ──
 async function saveInteractiveDebug(obj) {
   try {
-    const { getStore } = require('@netlify/blobs');
-    const store = getStore({ name: 'robin-bot-state', consistency: 'strong' });
+    const store = botStore();
+    if (!store) throw new Error('blobs indisponible');
     await store.setJSON('debug/last-interactive', { ...obj, ts: new Date().toISOString() });
   } catch (e) { console.error('saveInteractiveDebug failed', e.message); }
 }
 async function readInteractiveDebug() {
   try {
-    const { getStore } = require('@netlify/blobs');
-    const store = getStore({ name: 'robin-bot-state', consistency: 'strong' });
+    const store = botStore();
+    if (!store) throw new Error('blobs indisponible');
     return await store.get('debug/last-interactive', { type: 'json' });
   } catch { return null; }
 }
@@ -229,8 +235,8 @@ async function readInteractiveDebug() {
 async function isDuplicateMessage(id, hasId) {
   if (!id) return false;
   try {
-    const { getStore } = require('@netlify/blobs');
-    const store = getStore({ name: 'robin-bot-state', consistency: 'strong' });
+    const store = botStore();
+    if (!store) throw new Error('blobs indisponible');
     const k = 'seen/' + String(id).replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 200);
     const prev = await store.get(k, { type: 'json' });
     const now = Date.now();
@@ -243,8 +249,8 @@ async function isDuplicateMessage(id, hasId) {
 
 async function clearState(phone) {
   try {
-    const { getStore } = require('@netlify/blobs');
-    const store = getStore({ name: 'robin-bot-state', consistency: 'strong' });
+    const store = botStore();
+    if (!store) throw new Error('blobs indisponible');
     await store.delete(`state/${phone.replace(/\D/g, '')}`);
   } catch {}
 }
@@ -1046,10 +1052,10 @@ function verifyWatiSecret(body, headers, query) {
 
 // ─── Handler principal ────────────────────────────────────────────────────────
 exports.handler = async (event) => {
-  // ⚠️ INDISPENSABLE : sans connectLambda, tous les accès Netlify Blobs plantent en prod
-  // (v8) → l'état de conversation ne se sauvegarde pas (boucle d'accueil) ET
-  // saveInteractiveDebug lève une exception qui fait retomber les boutons en texte.
-  try { const { connectLambda } = require('@netlify/blobs'); if (connectLambda) connectLambda(event); } catch (e) { console.error('connectLambda failed', e.message); }
+  // ⚠️ INDISPENSABLE : on mémorise l'event pour que la lib Blobs éprouvée (getBlobStore)
+  // fasse connectLambda(event) — sinon l'état ne se sauvegarde pas (boucle d'accueil) et
+  // saveInteractiveDebug plante (boutons en texte). Même mécanisme que radar-today.
+  LAMBDA_EVENT = event;
 
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: HEADERS, body: '' };
   if (event.httpMethod === 'GET') {
