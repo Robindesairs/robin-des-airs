@@ -286,7 +286,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="sec-title">✈️ Le vol concerné</div>
   <div class="field-row tri">
     <div>
-      <label>Compagnie <span class="req">*</span></label>
+      <label>Compagnie (sur le billet) <span class="req">*</span></label>
       <input type="text" id="cie" placeholder="Brussels Airlines" class="ro">
     </div>
     <div>
@@ -329,6 +329,11 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     <label>Correspondance(s) <span style="text-transform:none;letter-spacing:0;color:var(--muted)">— escale(s) et n° de vol(s), si votre voyage en comportait</span></label>
     <input type="text" id="connecting" placeholder="Ex. : escale Bruxelles — vols SN271 puis SN204">
     <div style="font-size:11px;color:var(--muted);margin-top:4px;font-style:italic">💡 Pour un voyage sous une même réservation, l'indemnité se calcule sur la <strong>destination finale</strong> et la <strong>distance totale</strong> — la correspondance est couverte.</div>
+  </div>
+  <div class="field-row">
+    <label>Vol opéré par <span style="text-transform:none;letter-spacing:0;color:var(--muted)">— transporteur réel, si différent du billet (partage de code / codeshare)</span></label>
+    <input type="text" id="operatedby" placeholder="Ex. : vol AF545 réellement opéré par KLM">
+    <div style="font-size:11px;color:var(--muted);margin-top:4px;font-style:italic">💡 L'indemnité est due par la compagnie qui a <strong>réellement opéré</strong> le vol, pas celle inscrite sur le billet.</div>
   </div>
   <!-- Compteur passagers caché — géré par JS -->
   <input type="hidden" id="pax" value="1">
@@ -431,7 +436,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="clause le">
     <span class="cnum">Article 5 bis — Cession de créance aux fins de recouvrement (créance née ou à naître)</span>
     <div class="plain">💡 <strong>En clair&nbsp;:</strong> Pour sécuriser le recouvrement, vous nous cédez votre créance le temps de la récupérer. Si ça échoue, elle vous revient.</div>
-    En exécution de l'<strong>option de l'Article 1 bis</strong>, le Mandant <strong>consent à céder</strong> à Robin des Airs, à titre de recouvrement, la <strong>créance d'indemnisation née ou à naître</strong> qu'il détient à l'encontre de la compagnie aérienne au titre du <strong>Règlement (CE) n° 261/2004</strong> pour le vol identifié au présent acte (l'«&nbsp;Incident&nbsp;»), en ce compris l'<strong>indemnité forfaitaire</strong> (art. 7), les <strong>remboursements et frais</strong> (art. 8 et 9), le <strong>préjudice complémentaire</strong> (art. 12), intérêts, pénalités et accessoires.
+    En exécution de l'<strong>option de l'Article 1 bis</strong>, le Mandant <strong>consent à céder</strong> à Robin des Airs, à titre de recouvrement, la <strong>créance d'indemnisation née ou à naître</strong> qu'il détient à l'encontre de la compagnie aérienne — <strong>le transporteur aérien effectif</strong> ayant réellement réalisé le vol (art. 2 b) du Règlement), quel que soit le numéro de vol commercial ou la compagnie de commercialisation (vols en <strong>partage de code / codeshare</strong>) — au titre du <strong>Règlement (CE) n° 261/2004</strong> pour le vol identifié au présent acte (l'«&nbsp;Incident&nbsp;»), en ce compris l'<strong>indemnité forfaitaire</strong> (art. 7), les <strong>remboursements et frais</strong> (art. 8 et 9), le <strong>préjudice complémentaire</strong> (art. 12), intérêts, pénalités et accessoires.
     <br><br>
     Cette cession est consentie <strong>à titre de recouvrement</strong>&nbsp;: Robin des Airs en assure l'encaissement <strong>en qualité de cessionnaire</strong> et <strong>reverse au Mandant sa part nette (75&nbsp;%)</strong> dans les conditions de l'Article 5, déduction faite de la seule commission de l'Article 4. Elle ne modifie ni le caractère <strong>«&nbsp;No Win No Fee&nbsp;»</strong>, ni le droit de rétractation de l'Article 9.
     <br><br>
@@ -1192,6 +1197,7 @@ function submitMandat() {
     mandataireName: 'Robin des Airs — Service juridique CE 261/2004',
     mandataireAcceptedAt: new Date().toISOString(),
     airline:   document.getElementById('cie').value.trim(),
+    operatedBy: document.getElementById('operatedby')?.value.trim() || '',
     flightNum: document.getElementById('fnum').value.trim(),
     flightDate:document.getElementById('fdate').value,
     pnr:       document.getElementById('pnr').value.trim(),

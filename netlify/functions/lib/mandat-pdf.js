@@ -114,7 +114,8 @@ function genererMandatPdf(record) {
 
     // ── Vol ──
     sectionTitle('Le vol concerné');
-    kv('Compagnie', record.airline);
+    kv('Compagnie (billet)', record.airline);
+    if (record.operatedBy) kv('Opéré par (réel)', record.operatedBy);
     kv('N° de vol', record.flightNum);
     kv('Date du vol', record.flightDate);
     kv('PNR', record.pnr);
