@@ -35,7 +35,7 @@ const PROGRESS = {
   scan: 5, scan_confirm: 5, m_vol: 5, m_date: 5, m_route: 5, names: 5, names_confirm: 5, names_fix_which: 5, names_fix_one: 5,
   vd_vol: 6, vd_date: 6, annee: 6, mineurs: 6, mineurs_which: 6,
   correction: 6, fix_vol: 6, fix_date: 6, fix_nom: 6, fix_route: 6,
-  recap: 7, documents: 7, doc_pass: 7, doc_name: 7, doc_dob: 7, doc_boarding: 7, doc_eticket: 7, doc_cert: 7, rgpd: 7,
+  recap: 7, documents: 7, doc_pass: 7, doc_pass_confirm: 7, doc_name: 7, doc_dob: 7, doc_boarding: 7, doc_eticket: 7, doc_cert: 7, rgpd: 7,
   done: 8,
 };
 function bar(step) { const n = PROGRESS[step] ?? 0; return '🟢'.repeat(n) + '⚪'.repeat(8 - n); }
@@ -243,6 +243,36 @@ Règles :
 }
 // Pièce expirée (date d'expiration passée) ?
 function isExpired(dateStr) { const m = (dateStr || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); if (!m) return false; return new Date(+m[3], +m[2] - 1, +m[1]).getTime() < Date.now(); }
+
+// ─── OCR confirm helper ─────────────────────────────────────────────────────────
+// Lit la pièce, affiche le résumé et demande confirmation avant de stocker.
+async function askOcrConfirm(phone, s, cfg, mediaUrl) {
+  const i = s.doc_idx + 1;
+  const pp = await ocrPassport(mediaUrl, cfg);
+  if (pp && (pp.name || pp.dob)) {
+    const minor = pp.dob ? isMinorAt(pp.dob, s.date) : false;
+    const expired = pp.expiry ? isExpired(pp.expiry) : false;
+    s.doc_pending = { name: pp.name || '', dob: pp.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || '', viaPhoto: true };
+    s.step = 'doc_pass_confirm';
+    await setState(phone, s);
+    const lines = [
+      `📋 *Passager ${i}/${s.pax} — j'ai lu :*`,
+      `👤 ${pp.name || '—'}`,
+      pp.dob ? `🎂 Né(e) le ${pp.dob}` : '',
+      pp.adresse ? `📍 ${pp.adresse}` : '',
+      minor ? `👶 *Mineur·e* — signature parentale requise` : '',
+      expired ? `⚠️ Pièce *expirée* (${pp.expiry}). On continue, un conseiller vérifiera.` : '',
+      `\nC'est bien cette personne ?`,
+    ].filter(Boolean).join('\n');
+    await send(phone, lines, cfg);
+    return sendButtons(phone, [{ id: 'pass_ok', text: '✅ C\'est correct' }, { id: 'pass_fix', text: '✏️ Corriger' }], cfg);
+  } else {
+    // OCR échoué → pièce illisible
+    s.step = 'doc_pass';
+    await setState(phone, s);
+    return send(phone, `😕 Je n'arrive pas à lire cette pièce (photo trop sombre ou floue ?). Réessayez avec une meilleure photo, ou tapez *saisir* pour entrer le nom et la date de naissance.`, cfg);
+  }
+}
 
 // ─── Helpers prescription / dates ──────────────────────────────────────────────
 function tooOld(dateStr) { const m = (dateStr || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); if (!m) return false; const d = new Date(+m[3], +m[2] - 1, +m[1]); return (Date.now() - d.getTime()) > 5 * 365.25 * 864e5; }
@@ -488,23 +518,35 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
   // MSG13 — DOCUMENTS (passeports 1..n → carte → e-billet → certificat)
   if (s.step === 'doc_pass') {
     s.passengers = s.passengers || [];
-    if (mediaUrl) {
-      const i = s.doc_idx + 1;
-      const pp = await ocrPassport(mediaUrl, cfg);
-      if (pp && (pp.name || pp.dob)) {
-        const minor = pp.dob ? isMinorAt(pp.dob, s.date) : false;
-        const expired = pp.expiry ? isExpired(pp.expiry) : false;
-        s.passengers[s.doc_idx] = { name: pp.name || '', dob: pp.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || '', viaPhoto: true };
-        await send(phone, `✅ Pièce d'identité ${i}/${s.pax} lue !\n${pp.name || ''}${pp.dob ? ` — né(e) le ${pp.dob}` : ''}${pp.adresse ? `\n📍 ${pp.adresse}` : ''}${minor ? '\n👶 *Mineur·e* — signature d\'un parent/tuteur (on vous guide).' : ''}${expired ? `\n⚠️ Cette pièce semble *expirée* (${pp.expiry}). Si possible, envoyez-en une *en cours de validité* — sinon on continue, un conseiller vérifiera.` : ''}`, cfg);
-      } else {
-        s.passengers[s.doc_idx] = { viaPhoto: true };
-        await send(phone, `✅ Pièce d'identité ${i}/${s.pax} reçue ! _(nom & date de naissance vérifiés par notre équipe)_`, cfg);
-      }
-      s.doc_idx++; await setState(phone, s); return nextPassport(phone, s, cfg);
-    }
+    if (mediaUrl) { return askOcrConfirm(phone, s, cfg, mediaUrl); }
     if (lower === 'passer') { s.passengers[s.doc_idx] = { skipped: true }; s.docs_pending = true; s.doc_idx++; await setState(phone, s); return nextPassport(phone, s, cfg); }
     if (lower.includes('saisir') || lower.includes('manuel') || lower.includes('tape')) { s.step = 'doc_name'; await setState(phone, s); return send(phone, `👤 *Passager ${s.doc_idx + 1}* — Nom et prénom ?\n_(ex : Aminata Diallo)_`, cfg); }
     return send(phone, `🛂 Envoyez la *photo de la pièce d'identité*, tapez *saisir* (nom + date de naissance), ou *passer*.`, cfg);
+  }
+  if (s.step === 'doc_pass_confirm') {
+    s.passengers = s.passengers || [];
+    // Nouvelle photo → re-OCR immédiat
+    if (mediaUrl) { delete s.doc_pending; return askOcrConfirm(phone, s, cfg, mediaUrl); }
+    const ok = n === '1' || id === 'pass_ok' || lower.includes('correct') || lower.startsWith('oui') || lower === 'ok' || lower.includes('parfait') || lower.includes('exact');
+    const fix = n === '2' || id === 'pass_fix' || lower.includes('corrig') || lower.startsWith('non') || lower.includes('erreur') || lower.includes('faux');
+    if (ok) {
+      s.passengers[s.doc_idx] = s.doc_pending || { viaPhoto: true };
+      delete s.doc_pending; s.doc_idx++; await setState(phone, s);
+      return nextPassport(phone, s, cfg);
+    }
+    if (fix) {
+      delete s.doc_pending; s.step = 'doc_pass'; await setState(phone, s);
+      return sendButtons(phone, [{ id: 'doc_photo', text: '📸 Nouvelle photo' }, { id: 'doc_saisir', text: '✏️ Saisir manuellement' }], cfg);
+    }
+    if (id === 'doc_photo' || lower.includes('photo') || lower.includes('renvo') || lower.includes('nouv')) {
+      s.step = 'doc_pass'; await setState(phone, s);
+      return send(phone, `📸 Envoyez la photo de la pièce d'identité du passager ${s.doc_idx + 1}.`, cfg);
+    }
+    if (id === 'doc_saisir' || lower.includes('saisir') || lower.includes('manuel')) {
+      delete s.doc_pending; s.step = 'doc_name'; await setState(phone, s);
+      return send(phone, `👤 *Passager ${s.doc_idx + 1}* — Nom et prénom ?\n_(ex : Aminata Diallo)_`, cfg);
+    }
+    return sendButtons(phone, [{ id: 'pass_ok', text: '✅ C\'est correct' }, { id: 'pass_fix', text: '✏️ Corriger' }], cfg);
   }
   if (s.step === 'doc_name') {
     if (input.length >= 3 && !/^\d+$/.test(input)) { s.passengers = s.passengers || []; s.passengers[s.doc_idx] = { name: input.toUpperCase() }; s.step = 'doc_dob'; await setState(phone, s); return send(phone, `📅 *Date de naissance* de ${input} ? _(JJ/MM/AAAA)_`, cfg); }
