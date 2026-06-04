@@ -113,7 +113,8 @@ async function sendList(phone, { header, body, footer, buttonText, items }, cfg)
   if (!cfg) return;
   const wa = normalizeWatiPhone(phone);
   const qs = new URLSearchParams({ whatsappNumber: wa, channelPhoneNumber: cfg.channel });
-  const rows = items.map(i => ({ title: clip(i.title, 24), description: clip(i.description || '', 72) }));
+  // ⚠️ WhatsApp/WATI exige un `id` UNIQUE par ligne, sinon la liste dégrade en texte.
+  const rows = items.map((i, idx) => ({ id: String(idx + 1), title: clip(i.title, 24), description: clip(i.description || '', 72) }));
   try {
     const res = await fetch(`${cfg.base}/api/v1/sendInteractiveListMessage?${qs}`, {
       method: 'POST', headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
@@ -522,6 +523,14 @@ exports.handler = async (event) => {
     const key = (process.env.WATI_WEBHOOK_SECRET || process.env.CRM_ACCESS_CODE || '').trim();
     if (q.debug === 'inbound' && key && q.key === key) return { statusCode: 200, headers: HEADERS, body: JSON.stringify((await readInboundDebug()) || { none: true }) };
     if (q.debug === 'interactive' && key && q.key === key) return { statusCode: 200, headers: HEADERS, body: JSON.stringify((await readInteractiveDebug()) || { none: true }) };
+    // Self-test liste cliquable : ?selftest=list&key=SECRET&to=33XXXXXXXXX
+    if (q.selftest === 'list' && key && q.key === key && q.to) {
+      const cfg = watiCfg();
+      await sendList(q.to, { header: 'Test liste', body: '🧪 Test liste cliquable Robin', buttonText: 'Choisir', items: [{ title: 'Option 1', description: 'desc 1' }, { title: 'Option 2', description: 'desc 2' }, { title: 'Option 3' }] }, cfg);
+      const dbg = await readInteractiveDebug();
+      const type = dbg && dbg.resp && dbg.resp.message && dbg.resp.message.type;
+      return { statusCode: 200, headers: HEADERS, body: JSON.stringify({ sent: true, watiMessageType: type, interactif: type && type !== 'text', resp: dbg }) };
+    }
     return { statusCode: 403, headers: HEADERS, body: JSON.stringify({ error: 'Forbidden' }) };
   }
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers: HEADERS, body: JSON.stringify({ error: 'POST only' }) };
