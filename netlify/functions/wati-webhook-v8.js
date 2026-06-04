@@ -220,11 +220,12 @@ async function ocrPassport(mediaUrl, cfg) {
     if (!imgRes.ok) return null;
     const b64 = Buffer.from(await imgRes.arrayBuffer()).toString('base64');
     const prompt = `Tu lis une pièce d'identité (PASSEPORT, carte nationale d'identité, titre de séjour, carte de résident…) — utilise aussi la zone MRZ en bas si présente. Réponds UNIQUEMENT en JSON :
-{"nom":"","prenom":"","date_naissance":""}
+{"nom":"","prenom":"","date_naissance":"","date_expiration":""}
 Règles :
 - nom : nom de famille en MAJUSCULES.
 - prenom : prénom(s).
-- date_naissance : format JJ/MM/AAAA. Convertis depuis la MRZ (AAMMJJ) si besoin, en déduisant le siècle de façon logique (une naissance est dans le passé).
+- date_naissance : format JJ/MM/AAAA. Convertis depuis la MRZ (AAMMJJ) si besoin, en déduisant le siècle logiquement (une naissance est dans le passé).
+- date_expiration : date de fin de validité, format JJ/MM/AAAA (depuis la MRZ ou le champ imprimé). Si absente, "".
 - Champ inconnu = "". Ne JAMAIS inventer.`;
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
@@ -234,9 +235,12 @@ Règles :
     const p = JSON.parse(data.choices[0].message.content);
     const name = [p.prenom, p.nom].filter(Boolean).join(' ').toUpperCase().trim();
     const dob = (p.date_naissance || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/) ? p.date_naissance : '';
-    return { name, dob };
+    const expiry = (p.date_expiration || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/) ? p.date_expiration : '';
+    return { name, dob, expiry };
   } catch (e) { return null; }
 }
+// Pièce expirée (date d'expiration passée) ?
+function isExpired(dateStr) { const m = (dateStr || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); if (!m) return false; return new Date(+m[3], +m[2] - 1, +m[1]).getTime() < Date.now(); }
 
 // ─── Helpers prescription / dates ──────────────────────────────────────────────
 function tooOld(dateStr) { const m = (dateStr || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); if (!m) return false; const d = new Date(+m[3], +m[2] - 1, +m[1]); return (Date.now() - d.getTime()) > 5 * 365.25 * 864e5; }
@@ -487,8 +491,9 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
       const pp = await ocrPassport(mediaUrl, cfg);
       if (pp && (pp.name || pp.dob)) {
         const minor = pp.dob ? isMinorAt(pp.dob, s.date) : false;
-        s.passengers[s.doc_idx] = { name: pp.name || '', dob: pp.dob || '', minor, viaPhoto: true };
-        await send(phone, `✅ Pièce d'identité ${i}/${s.pax} lue !\n${pp.name || ''}${pp.dob ? ` — né(e) le ${pp.dob}` : ''}${minor ? '\n👶 *Mineur·e* — signature d\'un parent/tuteur (on vous guide).' : ''}`, cfg);
+        const expired = pp.expiry ? isExpired(pp.expiry) : false;
+        s.passengers[s.doc_idx] = { name: pp.name || '', dob: pp.dob || '', expiry: pp.expiry || '', expired, minor, viaPhoto: true };
+        await send(phone, `✅ Pièce d'identité ${i}/${s.pax} lue !\n${pp.name || ''}${pp.dob ? ` — né(e) le ${pp.dob}` : ''}${minor ? '\n👶 *Mineur·e* — signature d\'un parent/tuteur (on vous guide).' : ''}${expired ? `\n⚠️ Cette pièce semble *expirée* (${pp.expiry}). Si possible, envoyez-en une *en cours de validité* — sinon on continue, un conseiller vérifiera.` : ''}`, cfg);
       } else {
         s.passengers[s.doc_idx] = { viaPhoto: true };
         await send(phone, `✅ Pièce d'identité ${i}/${s.pax} reçue ! _(nom & date de naissance vérifiés par notre équipe)_`, cfg);
