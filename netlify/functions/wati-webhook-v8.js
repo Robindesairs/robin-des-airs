@@ -212,6 +212,31 @@ Règles STRICTES :
     return { vol, compagnie: p.compagnie || deduceAirline(vol), date: p.date || '', pnr: /^[A-Z0-9]{5,8}$/.test(pnr) ? pnr : '', route, nom: (p.nom || '').toUpperCase() };
   } catch (e) { return null; }
 }
+// OCR passeport / CNI : lit nom + prénom + date de naissance (la magie aussi sur le passeport).
+async function ocrPassport(mediaUrl, cfg) {
+  const key = process.env.OPENAI_API_KEY; if (!key || !mediaUrl) return null;
+  try {
+    const imgRes = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {} });
+    if (!imgRes.ok) return null;
+    const b64 = Buffer.from(await imgRes.arrayBuffer()).toString('base64');
+    const prompt = `Tu lis la page d'identité d'un PASSEPORT ou d'une CNI (utilise aussi la zone MRZ en bas si présente). Réponds UNIQUEMENT en JSON :
+{"nom":"","prenom":"","date_naissance":""}
+Règles :
+- nom : nom de famille en MAJUSCULES.
+- prenom : prénom(s).
+- date_naissance : format JJ/MM/AAAA. Convertis depuis la MRZ (AAMMJJ) si besoin, en déduisant le siècle de façon logique (une naissance est dans le passé).
+- Champ inconnu = "". Ne JAMAIS inventer.`;
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 200, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${b64}` } }] }] }),
+    });
+    const data = await res.json(); if (!data.choices) return null;
+    const p = JSON.parse(data.choices[0].message.content);
+    const name = [p.prenom, p.nom].filter(Boolean).join(' ').toUpperCase().trim();
+    const dob = (p.date_naissance || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/) ? p.date_naissance : '';
+    return { name, dob };
+  } catch (e) { return null; }
+}
 
 // ─── Helpers prescription / dates ──────────────────────────────────────────────
 function tooOld(dateStr) { const m = (dateStr || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); if (!m) return false; const d = new Date(+m[3], +m[2] - 1, +m[1]); return (Date.now() - d.getTime()) > 5 * 365.25 * 864e5; }
@@ -457,7 +482,19 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
   // MSG13 — DOCUMENTS (passeports 1..n → carte → e-billet → certificat)
   if (s.step === 'doc_pass') {
     s.passengers = s.passengers || [];
-    if (mediaUrl) { s.passengers[s.doc_idx] = { viaPhoto: true }; await send(phone, `✅ Passeport ${s.doc_idx + 1}/${s.pax} reçu ! _(nom & date de naissance lus dessus)_`, cfg); s.doc_idx++; await setState(phone, s); return nextPassport(phone, s, cfg); }
+    if (mediaUrl) {
+      const i = s.doc_idx + 1;
+      const pp = await ocrPassport(mediaUrl, cfg);
+      if (pp && (pp.name || pp.dob)) {
+        const minor = pp.dob ? isMinorAt(pp.dob, s.date) : false;
+        s.passengers[s.doc_idx] = { name: pp.name || '', dob: pp.dob || '', minor, viaPhoto: true };
+        await send(phone, `✅ Passeport ${i}/${s.pax} lu !\n${pp.name || ''}${pp.dob ? ` — né(e) le ${pp.dob}` : ''}${minor ? '\n👶 *Mineur·e* — signature d\'un parent/tuteur (on vous guide).' : ''}`, cfg);
+      } else {
+        s.passengers[s.doc_idx] = { viaPhoto: true };
+        await send(phone, `✅ Passeport ${i}/${s.pax} reçu ! _(nom & date de naissance vérifiés par notre équipe)_`, cfg);
+      }
+      s.doc_idx++; await setState(phone, s); return nextPassport(phone, s, cfg);
+    }
     if (lower === 'passer') { s.passengers[s.doc_idx] = { skipped: true }; s.docs_pending = true; s.doc_idx++; await setState(phone, s); return nextPassport(phone, s, cfg); }
     if (lower.includes('saisir') || lower.includes('manuel') || lower.includes('tape')) { s.step = 'doc_name'; await setState(phone, s); return send(phone, `👤 *Passager ${s.doc_idx + 1}* — Nom et prénom ?\n_(ex : Aminata Diallo)_`, cfg); }
     return send(phone, `🛂 Envoyez la *photo du passeport*, tapez *saisir* (nom + date de naissance), ou *passer*.`, cfg);
