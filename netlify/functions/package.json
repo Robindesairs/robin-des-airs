@@ -3,7 +3,7 @@
   "private": true,
   "description": "Deps dédiées aux fonctions (zip Netlify) — @netlify/blobs doit être résolu ici si le bundle racine échoue",
   "dependencies": {
-    "@netlify/blobs": "^5.0.0",
+    "@netlify/blobs": "^8.1.0",
     "pdfkit": "^0.18.0"
   }
 }

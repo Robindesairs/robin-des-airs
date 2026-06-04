@@ -42,7 +42,7 @@
   "homepage": "https://github.com/Robindesairs/robin-des-airs#readme",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.99.0",
-    "@netlify/blobs": "^5.0.0",
+    "@netlify/blobs": "^8.1.0",
     "amadeus": "^11.0.0",
     "better-sqlite3": "^12.6.2",
     "cheerio": "^1.2.0",
