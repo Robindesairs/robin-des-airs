@@ -298,8 +298,8 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
     else if (n === '2' || lower.includes('escale')) s.type_vol = 'escale';
     else return sendButtons(phone, { body: `${bar('type_vol')}\n✈️ Vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg);
     s.step = 'scan'; await setState(phone, s);
-    await send(phone, `${bar('motivation')}\n🎉 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* d'indemnité !\n\n💶 Vous percevez *${montantNet(s.pax)} € nets* (75%).\nRobin prélève 25% *uniquement* si nous obtenons le paiement. Si vous ne touchez rien → nous non plus.\n\nNotre intérêt est le vôtre. 🤝`, cfg);
-    return sendDelayed(phone, `${bar('scan')}\n⚡ On va vous faire gagner du temps !\n\nEnvoyez une *photo* de votre carte d'embarquement ou e-billet — je lis les infos automatiquement.${s.pax > 1 ? `\n\n👥 Vous êtes ${s.pax} — on demandera la carte de chacun.` : ''}\n\n📎 Envoyez votre document\n✏️ Ou tapez *manuel* pour saisir vous-même`, cfg, 800);
+    // Un seul message (motivation + scan) → réponse immédiate, pas de délai où les taps s'entrecroisent.
+    return send(phone, `${bar('scan')}\n🎉 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (*${montantNet(s.pax)} € nets*, 75%). Robin prélève 25% *uniquement* si vous gagnez. 🤝\n\n⚡ Pour gagner du temps, envoyez une *photo* de votre carte d'embarquement ou e-billet — je lis tout automatiquement.${s.pax > 1 ? `\n👥 Vous êtes ${s.pax} : on demandera la carte de chacun.` : ''}\n\n📎 Envoyez la photo  ·  ✏️ ou tapez *manuel*`, cfg);
   }
 
   // MSG8 — SCAN
