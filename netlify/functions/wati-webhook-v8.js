@@ -342,10 +342,10 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
   // ── MENU DE CORRECTION (champ par champ) ──────────────────────────────────
   if (s.step === 'correction') {
     const n = normInput(input, ['vol', 'date', 'nom', 'trajet']);
-    if (n === '1' || lower.includes('vol')) { s.step = 'fix_vol'; await setState(phone, s); return send(phone, `✈️ Nouveau *numéro de vol* ? _(ex. AF718)_`, cfg); }
-    if (n === '2' || lower.includes('date')) { s.step = 'fix_date'; await setState(phone, s); return send(phone, `📅 Nouvelle *date du vol* ? _(JJ/MM/AAAA)_`, cfg); }
-    if (n === '3' || lower.includes('nom')) { s.step = 'fix_nom'; await setState(phone, s); return send(phone, `👤 Nouveau *nom du passager principal* ?`, cfg); }
-    if (n === '4' || lower.includes('trajet') || lower.includes('route')) { s.step = 'fix_route'; await setState(phone, s); return send(phone, `🗺️ Nouveau *trajet* ? _(ex. CDG → DSS)_`, cfg); }
+    if (n === '1' || lower.includes('vol')) { s.step = 'fix_vol'; await setState(phone, s); return send(phone, `✈️ Vol actuel :\n\n${s.vol || '—'}\n\n👆 Copiez, corrigez, renvoyez :`, cfg); }
+    if (n === '2' || lower.includes('date')) { s.step = 'fix_date'; await setState(phone, s); return send(phone, `📅 Date actuelle :\n\n${s.date || '—'}\n\n👆 Renvoyez la date corrigée (JJ/MM/AAAA) :`, cfg); }
+    if (n === '3' || lower.includes('nom')) { s.step = 'fix_nom'; await setState(phone, s); return send(phone, `👤 Nom actuel :\n\n${(s.names && s.names[0]) || '—'}\n\n👆 Copiez, corrigez la lettre, renvoyez :`, cfg); }
+    if (n === '4' || lower.includes('trajet') || lower.includes('route')) { s.step = 'fix_route'; await setState(phone, s); return send(phone, `🗺️ Trajet actuel :\n\n${s.route || '—'}\n\n👆 Renvoyez le trajet corrigé (ex. CDG → DSS) :`, cfg); }
     return goCorrection(phone, s, cfg);
   }
   if (s.step === 'fix_vol') {
@@ -415,7 +415,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
   }
   if (s.step === 'names_fix_which') {
     const i = parseInt((input.match(/\d+/) || [])[0]);
-    if (i >= 1 && i <= s.pax) { s.fix_name_idx = i - 1; s.step = 'names_fix_one'; await setState(phone, s); return send(phone, `👤 Nouveau nom du *passager ${i}* ?\n_(ex : Aminata Diallo)_`, cfg); }
+    if (i >= 1 && i <= s.pax) { s.fix_name_idx = i - 1; s.step = 'names_fix_one'; await setState(phone, s); return send(phone, `👤 *Passager ${i}* actuellement :\n\n${s.names[i - 1] || '—'}\n\n👆 Copiez ce nom, corrigez la lettre, et renvoyez-le.`, cfg); }
     return send(phone, `Indiquez un numéro entre 1 et ${s.pax} :`, cfg);
   }
   if (s.step === 'names_fix_one') {
