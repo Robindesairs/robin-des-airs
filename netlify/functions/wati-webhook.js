@@ -298,6 +298,29 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
 
   let s = await getState(phone);
 
+  // ── Intercept "hors-tunnel" : question libre du client → réponse IA (GPT-4o-mini) ──
+  // Ne se déclenche QUE sur une vraie question/phrase, pas sur une sélection.
+  // Ne modifie pas l'étape : le client peut continuer son dossier juste après.
+  try {
+    const { isClientQuestion, isSensitive, answerClientQuestion } = require('./lib/robin-ai-responder');
+    // Étapes de saisie libre : une adresse/nom/compagnie ne doit PAS être prise pour une question.
+    // Sur ces étapes, on n'intercepte que si le message contient explicitement « ? ».
+    const FREE_TEXT_STEPS = ['manuel_vol','manuel_compagnie','manuel_date','manuel_pnr','manuel_route','manuel_nom','email','adresse','ocr_waiting'];
+    const askLooks = FREE_TEXT_STEPS.includes(s.step) ? input.includes('?') : isClientQuestion(input);
+    if (askLooks) {
+      if (isSensitive(input)) {
+        await send(phone, `Je comprends, c'est important. Je transmets votre demande à un conseiller Robin des Airs qui vous répondra personnellement. 🙏\n\nEn attendant, vous pouvez ouvrir/continuer votre dossier en tapant *menu*.`, cfg);
+        return;
+      }
+      const aiReply = await answerClientQuestion(input, process.env.OPENAI_API_KEY);
+      if (aiReply) {
+        await send(phone, aiReply, cfg);
+        return;
+      }
+      // si l'IA échoue, on laisse la machine à états gérer (repli normal)
+    }
+  } catch (e) { console.error('ai-responder intercept failed', e.message); }
+
   // ── ACCUEIL ────────────────────────────────────────────────────────────────
   if (s.step === 'accueil' || !s.step) {
     await sendButtons(phone, {
