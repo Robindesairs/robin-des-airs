@@ -284,6 +284,8 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
     (information, WhatsApp, aide à la signature) pour le <a href="/autorisation.html" target="_blank" rel="noopener">mandat passager</a>.
     Une fois le mandat signé, <strong>Robin des Airs pilote</strong> les échanges avec la compagnie et le recouvrement.
     L'email technique du dossier et la représentation du passager sont définis dans ce mandat.
+    <br><br>
+    L'agence <strong>n'acquiert aucun droit sur la créance du passager</strong>&nbsp;: seule la cession de créance consentie par le passager à Robin des Airs dans le mandat (Article 5 bis) emporte transfert aux fins de recouvrement. Le rôle de l'agence se limite à l'<strong>apport et à l'accompagnement</strong>, rémunérés par la commission de l'Article 2.
   </div>
   <div class="clause">
     <span class="cnum">Article 4 — Obligations de l'agence</span>
@@ -339,8 +341,8 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   <div class="single-check" onclick="document.getElementById('mainCheck').checked=!document.getElementById('mainCheck').checked">
     <input type="checkbox" id="mainCheck" onclick="event.stopPropagation()">
     <p>
-      I accept the <strong>Contrat agence partenaire</strong> and the commercial framework (commission per winning passenger, portal rules, GDPR).
-      I understand that Robin leads the airline claim after the passenger signs the mandate; I may still help my client with travel services as usual.
+      J'accepte le <strong>Contrat agence partenaire</strong> et le cadre commercial (commission par passager indemnisé, règles du portail, RGPD).
+      Je comprends que <strong>Robin des Airs pilote le recours</strong> auprès de la compagnie après la signature du mandat par le passager ; je peux continuer à servir mon client pour ses prestations voyage habituelles.
     </p>
   </div>
   <div class="ferr" id="checkErr">Veuillez cocher la case pour continuer.</div>
@@ -363,6 +365,13 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
     <div class="sig-clear" id="sigClear" onclick="clearSig(event)">✕ Effacer</div>
   </div>
   <div class="ferr" id="sigErr">Signature obligatoire</div>
+  <div style="margin-top:20px;border:1px solid var(--border);border-left:3px solid var(--green-mid);padding:16px 18px;background:var(--green-pale)">
+    <div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--green);font-weight:600;margin-bottom:8px">Acceptation — Robin des Airs</div>
+    <p style="font-size:12px;line-height:1.7;color:#3a3630;margin:0">
+      Robin des Airs <strong>accepte le présent contrat de partenariat</strong> et confirme l'activation de l'espace agence après vérification — l'acceptation du partenaire est <strong>concomitante</strong> à la signature de l'agence.<br>
+      Représentant habilité&nbsp;: <strong>Robin des Airs — Partenariats</strong> · Réf.&nbsp;: <strong id="sigRdaRef">—</strong> · Acceptation le&nbsp;: <strong id="sigRdaDate">—</strong>
+    </p>
+  </div>
   <button type="button" class="btn-submit" id="btnSub" onclick="submitContract()">📝 Signer le contrat partenaire</button>
 </div>
 <div class="trust-bar">
@@ -543,6 +552,9 @@ function submitContract() {
     sigCity: document.getElementById('sigCity').value.trim(),
     signatureImg: document.getElementById('sigCanvas').toDataURL('image/png'),
     signedAt: new Date().toISOString(),
+    mandataireAccepted: true,
+    mandataireName: 'Robin des Airs — Partenariats',
+    mandataireAcceptedAt: new Date().toISOString(),
     lang: 'fr',
     commissionGmd: COMM_GMD,
     commissionTier: COMM_TIER && COMM_TIER.tierId,
@@ -577,6 +589,8 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('dRef').textContent = REF;
   document.getElementById('dDate').textContent = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
   document.getElementById('sigDate').value = new Date().toLocaleDateString('fr-FR');
+  const rdaRef = document.getElementById('sigRdaRef'); if (rdaRef) rdaRef.textContent = REF;
+  const rdaDate = document.getElementById('sigRdaDate'); if (rdaDate) rdaDate.textContent = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
   if (P.get('code')) document.getElementById('agencyCode').value = P.get('code');
   if (P.get('name')) document.getElementById('agencyName').value = P.get('name');
   if (P.get('country')) document.getElementById('country').value = P.get('country');

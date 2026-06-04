@@ -6,9 +6,9 @@
 <link rel="icon" href="/favicon.png" type="image/png">
 <meta name="description" content="Signez votre mandat de représentation Robin des Airs — CE 261/2004. No Win No Fee.">
 <title>Mandat de Représentation — Robin des Airs</title>
-<!-- Aperçu lien WhatsApp / Wati : sans og:image absolu, la carte affiche souvent « image introuvable ». -->
+<meta name="theme-color" content="#0B1F3A">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://robindesairs.eu/mandat.html">
+<meta property="og:url" content="https://robindesairs.eu/autorisation.html">
 <meta property="og:title" content="Mandat de représentation — Robin des Airs">
 <meta property="og:description" content="Signez votre mandat CE 261 en 2 minutes — sécurisé, honoraires uniquement après succès.">
 <meta property="og:image" content="https://robindesairs.eu/robin-des-airs-logo-texte-profil.png">
@@ -18,134 +18,158 @@
 <meta name="twitter:title" content="Mandat de représentation — Robin des Airs">
 <meta name="twitter:description" content="Signez votre mandat CE 261 en 2 minutes — sécurisé.">
 <meta name="twitter:image" content="https://robindesairs.eu/robin-des-airs-logo-texte-profil.png">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --green:#0a3d2e;--green-mid:#1a5a47;--green-pale:#e8f0ec;
-  --gold:#8a6d3b;--gold-soft:#c9a96e;--gold-pale:#faf5eb;
-  --paper:#fdfcf8;--paper-mid:#f5f2ea;
-  --border:#d4cfc0;--muted:#7a7060;--ink:#111108;--red:#c0392b;
+  /* Palette officielle Robin des Airs */
+  --navy:#0B1F3A;
+  --navy-soft:#1A3559;
+  --green:#00C87A;
+  --green-bright:#00E5A0;
+  --green-deep:#009960;
+  --green-pale:#E6FAF1;
+  --green-tint:#EFF9F4;
+  --bg:#F9FAFB;
+  --bg-soft:#F7F8FA;
+  --paper:#FFFFFF;
+  --border:#E2E6EE;
+  --border-soft:#F1F2F4;
+  --ink:#0B1F3A;
+  --text:#374151;
+  --muted:#6B7A90;
+  --red:#DC2626;
+  --red-bg:#FEF2F2;
+  --red-border:#FECACA;
 }
-html{-webkit-font-smoothing:antialiased}
-body{background:var(--paper-mid);font-family:'DM Sans',sans-serif;color:var(--ink);min-height:100vh}
+html{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{background:var(--bg);font-family:'Montserrat',sans-serif;color:var(--text);min-height:100vh}
 /* TOP BAR */
-.topbar{background:var(--green);padding:14px 32px;display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid var(--gold);position:sticky;top:0;z-index:100}
-.brand{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:white}
-.brand em{font-style:italic;color:var(--gold-soft)}
-.doc-badge{font-family:'DM Mono',monospace;font-size:9px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.2em}
-.progress-wrap{height:3px;background:rgba(10,61,46,.15)}
-.progress-bar{height:3px;background:linear-gradient(90deg,var(--gold),#d4af6a);width:0%;transition:width .5s}
+.topbar{background:var(--navy);padding:14px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid var(--green);position:sticky;top:0;z-index:100;flex-wrap:wrap;gap:10px}
+.brand{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:900;color:#fff;letter-spacing:.5px;text-transform:uppercase}
+.brand em{font-style:normal;color:var(--green-bright);font-weight:800}
+.doc-badge{font-family:'DM Mono',monospace;font-size:9px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.2em}
+.topbar-links{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.topbar-links a{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.85);text-decoration:none;border:1px solid rgba(0,229,160,.45);padding:4px 10px;border-radius:4px;transition:background .2s,color .2s}
+.topbar-links a:hover{background:var(--green);color:var(--navy);border-color:var(--green)}
+.progress-wrap{height:3px;background:rgba(11,31,58,.12)}
+.progress-bar{height:3px;background:linear-gradient(90deg,var(--green),var(--green-bright));width:0%;transition:width .5s}
 /* MISE EN PAGE */
-.page{max-width:780px;margin:0 auto;padding:40px 24px 80px}
+.page{max-width:780px;margin:0 auto;padding:32px 20px 80px}
 /* BLOCS */
-.doc-header{background:white;border:1px solid var(--border);border-top:4px solid var(--green);padding:36px 40px 28px}
-.doc-logo-line{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px}
-.doc-logo{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--green)}
-.doc-logo em{font-style:italic;color:var(--gold)}
+.doc-header{background:var(--paper);border:1px solid var(--border);border-top:4px solid var(--green);border-radius:12px 12px 0 0;padding:32px 36px 24px}
+.doc-logo-line{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+.doc-logo{font-family:'Montserrat',sans-serif;font-size:22px;font-weight:900;color:var(--navy);letter-spacing:.5px;text-transform:uppercase}
+.doc-logo em{font-style:normal;color:var(--green-deep);font-weight:800}
 .doc-ref{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-align:right;line-height:1.9}
-.doc-ref strong{color:var(--ink)}
-.doc-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:500;text-align:center;color:var(--ink);padding:18px 0 6px;border-top:1px solid var(--border)}
-.doc-subtitle{font-size:12px;color:var(--muted);text-align:center;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.15em;margin-top:6px}
-.doc-section{background:white;border:1px solid var(--border);border-top:none;padding:28px 40px}
-.doc-section:last-of-type{border-bottom:1px solid var(--border)}
+.doc-ref strong{color:var(--navy)}
+.doc-title{font-family:'Montserrat',sans-serif;font-size:26px;font-weight:900;text-align:center;color:var(--navy);padding:18px 0 6px;border-top:1px solid var(--border);line-height:1.2}
+.doc-subtitle{font-size:11px;color:var(--muted);text-align:center;font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.15em;margin-top:8px}
+.doc-section{background:var(--paper);border:1px solid var(--border);border-top:none;padding:28px 36px}
+.doc-section:last-of-type{border-bottom:1px solid var(--border);border-radius:0 0 12px 12px}
 /* HERO MONTANT */
-.amount-hero{background:linear-gradient(135deg,var(--green),var(--green-mid));color:white;padding:26px 32px;margin:0 -40px 28px;display:grid;grid-template-columns:1fr 1px 1fr;align-items:center}
+.amount-hero{background:linear-gradient(135deg,var(--navy),var(--navy-soft));color:#fff;padding:26px 32px;margin:0 -36px 28px;border-radius:0;display:grid;grid-template-columns:1fr 1px 1fr;align-items:center}
 .amount-col{text-align:center;padding:0 20px}
 .amount-div{background:rgba(255,255,255,.2);align-self:stretch}
-.amount-tag{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:rgba(255,255,255,.6);margin-bottom:6px}
-.amount-num{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;line-height:1}
-.amount-num.net{color:var(--gold-soft)}
-.amount-sub{font-size:11px;margin-top:4px;color:rgba(255,255,255,.7)}
-.formula-box{font-size:12px;margin-top:10px;padding:7px 12px;background:rgba(0,0,0,.2);font-family:'DM Mono',monospace;color:rgba(255,255,255,.9);display:inline-block}
+.amount-tag{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:rgba(255,255,255,.7);margin-bottom:6px}
+.amount-num{font-family:'Montserrat',sans-serif;font-size:34px;font-weight:900;line-height:1;color:#fff}
+.amount-num.net{color:var(--green-bright)}
+.amount-sub{font-size:11px;margin-top:6px;color:rgba(255,255,255,.75)}
+.formula-box{font-size:12px;margin-top:10px;padding:7px 12px;background:rgba(0,0,0,.25);font-family:'DM Mono',monospace;color:#fff;display:inline-block;border-radius:4px}
 /* PARTIES */
 .parties-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
-.partie-box{border:1px solid var(--border);padding:18px 20px;position:relative}
-.partie-box::before{content:attr(data-label);position:absolute;top:-9px;left:14px;background:white;font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--gold);padding:0 6px}
-.partie-name{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--green);margin-bottom:8px}
+.partie-box{border:1px solid var(--border);padding:18px 20px;position:relative;border-radius:8px;background:var(--bg-soft)}
+.partie-box::before{content:attr(data-label);position:absolute;top:-9px;left:14px;background:var(--bg-soft);font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--green-deep);padding:0 6px;font-weight:700}
+.partie-name{font-family:'Montserrat',sans-serif;font-size:16px;font-weight:800;color:var(--navy);margin-bottom:8px}
 .partie-detail{font-size:12px;color:var(--muted);line-height:1.8}
 /* SECTION TITRE */
-.sec-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--green);padding-bottom:10px;border-bottom:1px solid var(--border);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.sec-title{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:800;color:var(--navy);padding-bottom:10px;border-bottom:2px solid var(--green);margin-bottom:20px;display:flex;align-items:center;gap:8px}
 /* CHAMPS */
 .field-row{margin-bottom:16px}
 .field-row.duo{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .field-row.tri{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}
-label{display:block;font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-bottom:5px;font-weight:500}
+label{display:block;font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-bottom:6px;font-weight:600}
 label .req{color:var(--red);margin-left:2px}
-input,select,textarea{width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);transition:border-color .2s;-webkit-appearance:none;border-radius:0}
-input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold);background:white}
-input.ro{background:var(--green-pale);border-color:#b8cfc3;color:var(--green);font-weight:500}
+input,select,textarea{width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:'Montserrat',sans-serif;font-size:13px;color:var(--ink);transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;border-radius:6px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(0,200,122,.15)}
+input.ro{background:var(--green-tint);border-color:#B8DDC9;color:var(--green-deep);font-weight:600}
 textarea{resize:vertical;min-height:72px}
-.ferr{color:var(--red);font-size:11px;margin-top:4px;display:none}
-input.err,textarea.err,select.err{border-color:var(--red)!important}
+.ferr{color:var(--red);font-size:11px;margin-top:4px;display:none;font-weight:600}
+input.err,textarea.err,select.err{border-color:var(--red)!important;background:var(--red-bg)}
 /* CLAUSES */
-.clause{padding:14px 18px;border-left:3px solid var(--border);margin:12px 0;font-size:13px;line-height:1.75;color:#3a3630}
-.clause strong{color:var(--ink)}
-.cnum{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--gold);margin-bottom:5px;display:block}
-.clause.hi{background:var(--gold-pale);border-color:var(--gold)}
-.clause.le{background:var(--green-pale);border-color:var(--green-mid)}
-.clause.pro{background:#fff8f8;border-color:#e8b4b4}
+.clause{padding:14px 18px;border-left:3px solid var(--border);margin:12px 0;font-size:13px;line-height:1.75;color:var(--text);border-radius:0 6px 6px 0;background:var(--bg-soft)}
+.clause strong{color:var(--navy)}
+.cnum{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--green-deep);margin-bottom:5px;display:block;font-weight:700}
+.clause.hi{background:var(--green-tint);border-color:var(--green)}
+.clause.le{background:var(--green-pale);border-color:var(--green-deep)}
+.clause.pro{background:var(--red-bg);border-color:var(--red-border)}
 /* TABLEAU HONORAIRES */
-.fee-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px}
-.fee-table th{background:var(--ink);color:white;font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;padding:10px 14px;text-align:left;font-weight:400}
-.fee-table td{padding:10px 14px;border-bottom:1px solid var(--border)}
-.fee-table tr:nth-child(even) td{background:var(--paper)}
+.fee-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px;border-radius:8px;overflow:hidden;border:1px solid var(--border)}
+.fee-table th{background:var(--navy);color:#fff;font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;padding:11px 14px;text-align:left;font-weight:600}
+.fee-table td{padding:10px 14px;border-bottom:1px solid var(--border-soft)}
+.fee-table tr:nth-child(even) td{background:var(--bg-soft)}
 .fee-table tr:last-child td{border-bottom:none}
-.fee-table .em{font-weight:600;color:var(--green)}
+.fee-table .em{font-weight:700;color:var(--green-deep)}
 /* DÉCLARATION */
-.declaration-box{background:var(--green-pale);border:1px solid #b8cfc3;padding:18px 20px;margin:20px 0;font-size:13px;line-height:1.75}
+.declaration-box{background:var(--green-tint);border:1px solid #B8DDC9;border-radius:8px;padding:18px 20px;margin:20px 0;font-size:13px;line-height:1.75;color:var(--text)}
+.declaration-box strong{color:var(--navy)}
 /* SEUL CHECK UNIQUE */
-.single-check{display:flex;align-items:flex-start;gap:14px;padding:16px 18px;border:1.5px solid var(--border);background:var(--gold-pale);margin:16px 0;cursor:pointer;transition:border-color .2s}
-.single-check:hover{border-color:var(--gold)}
-.single-check input[type=checkbox]{width:20px;height:20px;min-width:20px;margin-top:2px;cursor:pointer;accent-color:var(--green)}
-.single-check p{font-size:13px;line-height:1.7;color:var(--ink)}
-.single-check p strong{color:var(--green)}
+.single-check{display:flex;align-items:flex-start;gap:14px;padding:16px 18px;border:1.5px solid var(--border);background:var(--bg-soft);border-radius:8px;margin:16px 0;cursor:pointer;transition:border-color .2s,background .2s}
+.single-check:hover{border-color:var(--green);background:var(--green-tint)}
+.single-check input[type=checkbox]{width:20px;height:20px;min-width:20px;margin-top:2px;cursor:pointer;accent-color:var(--green-deep)}
+.single-check p{font-size:13px;line-height:1.7;color:var(--text)}
+.single-check p strong{color:var(--navy)}
 /* EMAIL DOSSIER TECHNIQUE */
-.email-tech-note{font-size:12px;line-height:1.75;color:#3a3630;padding:14px 18px;background:var(--green-pale);border:1px solid #b8cfc3;border-left:3px solid var(--green-mid);margin:10px 0 0}
-.email-tech-note strong{color:var(--green)}
-.email-tech-ref{font-family:'DM Mono',monospace;font-size:12px;color:var(--green);word-break:break-all}
+.email-tech-note{font-size:12px;line-height:1.75;color:var(--text);padding:14px 18px;background:var(--green-tint);border:1px solid #B8DDC9;border-left:3px solid var(--green-deep);border-radius:0 6px 6px 0;margin:10px 0 0}
+.email-tech-note strong{color:var(--navy)}
+.email-tech-ref{font-family:'DM Mono',monospace;font-size:12px;color:var(--green-deep);word-break:break-all;font-weight:600}
 /* SIGNATURE */
-.sig-area{background:white;border:2px dashed var(--border);padding:16px;text-align:center;cursor:pointer;transition:border-color .2s;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;margin:16px 0}
-.sig-area:hover{border-color:var(--gold)}
-#sigCanvas{display:none;border:1.5px solid var(--border);cursor:crosshair;touch-action:none;background:white;max-width:100%}
-.sig-ph{font-family:'DM Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted)}
-.sig-clear{font-size:11px;color:var(--gold);text-decoration:underline;cursor:pointer;font-family:'DM Mono',monospace;display:none;margin-top:4px}
+.sig-area{background:var(--paper);border:2px dashed var(--border);border-radius:8px;padding:16px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;margin:16px 0}
+.sig-area:hover{border-color:var(--green);background:var(--green-tint)}
+#sigCanvas{display:none;border:1.5px solid var(--border);cursor:crosshair;touch-action:none;background:#fff;max-width:100%;border-radius:6px}
+.sig-ph{font-family:'DM Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);font-weight:600}
+.sig-clear{font-size:11px;color:var(--green-deep);text-decoration:underline;cursor:pointer;font-family:'DM Mono',monospace;display:none;margin-top:4px;font-weight:600}
 /* BOUTONS */
-.btn-submit{width:100%;background:var(--green);color:white;border:none;padding:18px 32px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:600;cursor:pointer;letter-spacing:.03em;transition:background .2s,transform .1s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:24px}
-.btn-submit:hover{background:#063022;transform:translateY(-1px)}
-.btn-submit:disabled{background:var(--muted);cursor:not-allowed;transform:none}
+.btn-submit{width:100%;background:var(--green);color:var(--navy);border:none;padding:18px 32px;font-family:'Montserrat',sans-serif;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.03em;transition:background .2s,transform .1s,box-shadow .2s;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:24px;border-radius:8px;text-transform:uppercase;box-shadow:0 4px 12px rgba(0,200,122,.25)}
+.btn-submit:hover{background:var(--green-bright);transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,200,122,.35)}
+.btn-submit:disabled{background:var(--muted);color:#fff;cursor:not-allowed;transform:none;box-shadow:none}
 /* TRUST */
-.trust-bar{display:flex;justify-content:space-around;padding:14px 20px;background:var(--paper-mid);border:1px solid var(--border);border-top:none;flex-wrap:wrap;gap:8px}
-.trust-item{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted)}
+.trust-bar{display:flex;justify-content:space-around;padding:14px 20px;background:var(--bg-soft);border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;flex-wrap:wrap;gap:8px}
+.trust-item{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);font-weight:600}
 /* SUCCÈS */
-.success-screen{display:none;background:white;border:1px solid var(--border);border-top:4px solid var(--green);padding:60px 40px;text-align:center}
-.success-icon{width:72px;height:72px;background:var(--green);border-radius:50%;color:white;font-size:30px;line-height:72px;margin:0 auto 20px}
-.success-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:500;color:var(--green);margin-bottom:12px}
-.success-ref{font-family:'DM Mono',monospace;font-size:13px;color:var(--muted);background:var(--green-pale);padding:10px 20px;display:inline-block;margin:10px 0 20px}
-.success-ref strong{color:var(--green)}
-.success-steps{text-align:left;max-width:420px;margin:20px auto 0}
-.sstep{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.6}
+.success-screen{display:none;background:var(--paper);border:1px solid var(--border);border-top:4px solid var(--green);border-radius:12px;padding:60px 40px;text-align:center}
+.success-icon{width:72px;height:72px;background:var(--green);border-radius:50%;color:var(--navy);font-size:32px;font-weight:900;line-height:72px;margin:0 auto 20px;box-shadow:0 4px 12px rgba(0,200,122,.3)}
+.success-title{font-family:'Montserrat',sans-serif;font-size:28px;font-weight:900;color:var(--navy);margin-bottom:12px}
+.success-ref{font-family:'DM Mono',monospace;font-size:13px;color:var(--muted);background:var(--green-tint);border:1px solid #B8DDC9;padding:10px 20px;display:inline-block;margin:10px 0 20px;border-radius:6px;font-weight:600}
+.success-ref strong{color:var(--green-deep)}
+.success-steps{text-align:left;max-width:440px;margin:20px auto 0}
+.sstep{display:flex;align-items:flex-start;gap:12px;padding:14px 0;border-bottom:1px solid var(--border-soft);font-size:13px;line-height:1.6;color:var(--text)}
 .sstep:last-child{border-bottom:none}
-.snum{width:26px;height:26px;min-width:26px;background:var(--green);color:white;border-radius:50%;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:600;margin-top:1px}
+.sstep strong{color:var(--navy)}
+.snum{width:28px;height:28px;min-width:28px;background:var(--green);color:var(--navy);border-radius:50%;font-size:12px;display:flex;align-items:center;justify-content:center;font-weight:800;margin-top:1px}
 @media(max-width:600px){
   .page{padding:20px 12px 60px}
   .doc-header,.doc-section{padding:20px 20px}
-  .amount-hero{grid-template-columns:1fr;padding:20px}
+  .amount-hero{grid-template-columns:1fr;padding:20px;margin:0 -20px 24px}
   .amount-div{display:none}
   .parties-grid,.field-row.duo,.field-row.tri{grid-template-columns:1fr}
   .doc-badge{display:none}
+  .doc-title{font-size:22px}
 }
 </style>
+  <script src="/assets/pre-launch.js" defer></script>
 </head>
 <body>
 <div class="topbar">
-  <a href="/" style="text-decoration:none;color:inherit"><div class="brand">Robin <em>des</em> Airs</div></a>
-  <div style="display:flex;align-items:center;gap:8px">
-    <a href="/documents/mandat-fr.html?print=1" target="_blank" rel="noopener" style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.85);text-decoration:none;border:1px solid rgba(201,169,110,.5);padding:4px 10px">Mandat PDF ↓</a>
-    <a href="/mandat-en.html" style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.7);text-decoration:none;border:1px solid rgba(201,169,110,.4);padding:4px 10px">EN</a>
-    <a href="/delais-dates-ce261-fr.html" style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.7);text-decoration:none;border:1px solid rgba(201,169,110,.4);padding:4px 10px">Délais</a>
-    <a href="/bareme-ce261-fr.html" style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.7);text-decoration:none;border:1px solid rgba(201,169,110,.4);padding:4px 10px">Barème CE 261</a>
-    <div class="doc-badge">Mandat de représentation · CE 261/2004</div>
+  <a href="/" style="text-decoration:none;color:inherit"><div class="brand">Robin <em>des Airs</em></div></a>
+  <div class="topbar-links">
+    <a href="/documents/mandat-fr.html?print=1" target="_blank" rel="noopener">Document PDF ↓</a>
+    <a href="/mandat-en.html">EN</a>
+    <a href="/delais-dates-ce261-fr.html">Délais</a>
+    <a href="/bareme-ce261-fr.html">Barème CE 261</a>
+    <div class="doc-badge">Autorisation · CE 261/2004</div>
   </div>
 </div>
 <div class="progress-wrap"><div class="progress-bar" id="pgBar"></div></div>
@@ -155,7 +179,7 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
 <div class="doc-header">
   <div class="doc-logo-line">
     <div>
-      <div class="doc-logo">Robin <em>des</em> Airs</div>
+      <div class="doc-logo">Robin <em>des Airs</em></div>
       <div style="font-size:11px;color:var(--muted);margin-top:4px">Service de réclamation · Vols Europe–Afrique · No Win No Fee</div>
     </div>
     <div class="doc-ref">
@@ -165,7 +189,7 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
     </div>
   </div>
   <div class="doc-title">Mandat de Représentation</div>
-  <div class="doc-subtitle">Convention exclusive de gestion et recouvrement d'indemnité aérienne</div>
+  <div class="doc-subtitle">Mandat exclusif (art. 1984 C. civ.) & cession de créance née ou à naître aux fins de recouvrement (art. 1321 C. civ.) · CE 261/2004</div>
 </div>
 <!-- HÉRO MONTANT -->
 <div class="doc-section">
@@ -238,9 +262,9 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   <div class="field-row">
     <label>Adresse postale complète <span class="req">*</span></label>
     <textarea id="addr" placeholder="12 rue de la Paix&#10;75001 Paris — France" rows="3"></textarea>
-    <div class="ferr" id="addrErr">Adresse requise pour le mandat</div>
+    <div class="ferr" id="addrErr">Adresse requise pour l'autorisation</div>
   </div>
-  <div style="font-size:12px;color:var(--muted);font-style:italic;padding:10px 14px;background:var(--green-pale);border-left:3px solid var(--green-mid);margin-top:4px">
+  <div style="font-size:12px;color:var(--text);font-style:italic;padding:10px 14px;background:var(--green-tint);border-left:3px solid var(--green-deep);border-radius:0 6px 6px 0;margin-top:4px">
     💶 Vos coordonnées bancaires seront collectées ultérieurement pour le versement de votre net (75%) sous 48h ouvrées après encaissement.
   </div>
 </div>
@@ -294,11 +318,12 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   <!-- Bouton ajouter un passager -->
   <button type="button" id="btnAddPax" onclick="addPassenger()" style="
     margin-top:8px;width:100%;padding:11px 14px;
-    background:white;border:1.5px dashed var(--gold);
-    font-family:'DM Sans',sans-serif;font-size:13px;
-    color:var(--gold);cursor:pointer;text-align:center;
-    transition:background .2s,color .2s;
-  " onmouseover="this.style.background='var(--gold-pale)'" onmouseout="this.style.background='white'">
+    background:var(--paper);border:1.5px dashed var(--green);
+    font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;
+    color:var(--green-deep);cursor:pointer;text-align:center;
+    border-radius:6px;
+    transition:background .2s,color .2s,border-color .2s;
+  " onmouseover="this.style.background='var(--green-tint)';this.style.borderColor='var(--green-deep)'" onmouseout="this.style.background='var(--paper)';this.style.borderColor='var(--green)'">
     ➕ Ajouter un passager
   </button>
   <div style="font-size:11px;color:var(--muted);margin-top:6px;font-style:italic">
@@ -310,7 +335,7 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   <div class="sec-title">⚖️ Conditions du mandat</div>
   <div class="clause le">
     <span class="cnum">Article 1 — Objet du mandat et adresse email du dossier</span>
-    Le Mandant confie à Robin des Airs une mission <strong>exclusive</strong> d'agir en son nom et pour son compte afin d'obtenir l'indemnisation due au titre du <strong>Règlement (CE) n° 261/2004</strong>, par toute voie amiable, administrative, judiciaire ou arbitrale.
+    Le Mandant confie à Robin des Airs une mission <strong>exclusive</strong> d'agir en son nom et pour son compte afin d'obtenir, au titre du <strong>Règlement (CE) n° 261/2004</strong>, l'<strong>indemnisation forfaitaire</strong> (art. 7) ainsi que <strong>le remboursement des frais engagés, la prise en charge due (art. 8 et 9) et, le cas échéant, la réparation du préjudice complémentaire (art. 12)</strong> liés au retard, à l'annulation ou au refus d'embarquement, par toute voie amiable, administrative, judiciaire ou arbitrale.
     <br><br>
     Pour les besoins du traitement du dossier, Robin des Airs crée une <strong>adresse email technique</strong> unique, composée de la référence du mandat en minuscules suivie de «&nbsp;@robindesairs.eu&nbsp;»
     (ex.&nbsp;: <strong id="clauseEmailExample">ref@robindesairs.eu</strong>).
@@ -324,6 +349,8 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
     <br><br>
     Le <strong>suivi opérationnel avec le Mandant</strong> peut notamment être assuré via <strong>WhatsApp</strong> ou tout autre canal de communication convenu entre les parties,
     <strong>sans caractère exclusif</strong> de ces canaux pour la notification d'informations importantes.
+    <br><br>
+    Afin de sécuriser l'encaissement, le présent mandat est <strong>complété par une cession de créance née ou à naître</strong> consentie à l'<strong>Article 5 bis</strong>, opposable à la compagnie aérienne dans les conditions des <strong>articles 1321 à 1324 du Code civil</strong>.
   </div>
   <div class="clause">
     <span class="cnum">Article 2 — Durée</span>
@@ -335,27 +362,39 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   </div>
   <div class="clause hi">
     <span class="cnum">Article 4 — Honoraires · No Win, No Fee</span>
-    Robin des Airs perçoit une commission de <strong>25% TTC du montant effectivement encaissé</strong>, <strong>uniquement en cas de succès</strong>. En cas d'échec ou de non-recouvrement, <strong>aucun frais n'est dû</strong>. Aucune avance n'est exigée à aucun stade.
+    Robin des Airs perçoit une commission de <strong>25% TTC du montant effectivement encaissé</strong>, <strong>uniquement en cas de succès</strong>. Cette commission s'applique à <strong>l'ensemble des sommes recouvrées au titre du dossier</strong> — indemnité forfaitaire, remboursements, frais et préjudices liés à l'incident. En cas d'échec ou de non-recouvrement, <strong>aucun frais n'est dû</strong>. Aucune avance n'est exigée à aucun stade.
   </div>
-  <div class="clause hi" style="border-color:#1a5a47;background:#e8f0ec;">
-    <span class="cnum" style="color:#1a5a47;">Article 4.1 — Frais Judiciaires</span>
+  <div class="clause le">
+    <span class="cnum">Article 4.1 — Frais Judiciaires</span>
     Robin des Airs prend en charge <strong>100% des frais d'avocat, de greffe, d'huissier et de procédure judiciaire TTC</strong> liés au traitement du dossier. Le Mandant n'avance aucune somme à quelque stade que ce soit. Robin des Airs se réserve le droit de <strong>sélectionner librement les dossiers</strong> qu'elle estime viables avant d'engager une procédure judiciaire.
   </div>
   <table class="fee-table">
     <tr><th>Distance du vol</th><th>Indemnité légale / pax</th><th>Commission RDA (25%)</th><th>Net client</th></tr>
     <tr><td>≤ 1 500 km</td><td>250 €</td><td>62,50 €</td><td class="em">187,50 €</td></tr>
-    <tr><td>1 500 – 3 500 km</td><td>400 €</td><td>100 €</td><td class="em">300 €</td></tr>
-    <tr><td>&gt; 3 500 km (Europe-Afrique)</td><td>600 €</td><td>150 €</td><td class="em">450 €</td></tr>
+    <tr><td>1 500 – 3 500 km (Maghreb — ex. Maroc)</td><td>400 €</td><td>100 €</td><td class="em">300 €</td></tr>
+    <tr><td>&gt; 3 500 km (Afrique subsaharienne)</td><td>600 €</td><td>150 €</td><td class="em">450 €</td></tr>
   </table>
   <div class="clause pro">
     <span class="cnum">Article 5 — Paiement & Protection du Mandant</span>
     Le Mandant donne instruction expresse à la compagnie aérienne de verser toute indemnité au <strong>compte désigné par Robin des Airs</strong>. Dès encaissement, Robin des Airs reverse au Mandant sa part nette (75%) sur l'IBAN communiqué dans ce mandat, dans un délai de <strong>48 heures ouvrées</strong>. Si la compagnie verse directement au Mandant, celui-ci s'engage à reverser sans délai la commission de 25% à Robin des Airs.
   </div>
-  <div class="clause pro" style="border-left-color:#8a1c1c;background:#fff4f4;">
-    <span class="cnum" style="color:#8a1c1c;">Article 6 — Clause Non Libératoire pour la Compagnie Aérienne</span>
+  <div class="clause le">
+    <span class="cnum">Article 5 bis — Cession de créance aux fins de recouvrement (créance née ou à naître)</span>
+    Afin de sécuriser le recouvrement, le Mandant <strong>cède et transporte</strong> à Robin des Airs, qui l'accepte, la <strong>créance d'indemnisation née ou à naître</strong> qu'il détient à l'encontre de la compagnie aérienne au titre du <strong>Règlement (CE) n° 261/2004</strong> pour le vol identifié au présent acte (l'«&nbsp;Incident&nbsp;»), en ce compris l'<strong>indemnité forfaitaire</strong> (art. 7), les <strong>remboursements et frais</strong> (art. 8 et 9), le <strong>préjudice complémentaire</strong> (art. 12), intérêts, pénalités et accessoires.
+    <br><br>
+    Cette cession est consentie <strong>à titre de recouvrement</strong>&nbsp;: Robin des Airs en assure l'encaissement <strong>en qualité de cessionnaire</strong> et <strong>reverse au Mandant sa part nette (75&nbsp;%)</strong> dans les conditions de l'Article 5, déduction faite de la seule commission de l'Article 4. Elle ne modifie ni le caractère <strong>«&nbsp;No Win No Fee&nbsp;»</strong>, ni le droit de rétractation de l'Article 9.
+    <br><br>
+    Conformément aux <strong>articles 1321 à 1326 du Code civil</strong>, la cession prend effet <strong>entre les parties dès la signature</strong> et porte sur une créance <strong>déterminable</strong> (parties, vol, date, fondement CE&nbsp;261/2004). Elle est <strong>opposable à la compagnie aérienne (débiteur cédé) à compter de sa notification</strong> au sens de l'<strong>article 1324 du Code civil</strong>&nbsp;; la mise en demeure adressée par Robin des Airs <strong>vaut notification de la cession</strong>.
+    <br><br>
+    En conséquence, <strong>à compter de cette notification, seul le paiement effectué entre les mains de Robin des Airs est libératoire</strong>&nbsp;; Robin des Airs est habilité à <strong>agir en recouvrement en son nom propre</strong>, par toute voie amiable, administrative, judiciaire ou arbitrale. Le Mandant <strong>garantit l'existence</strong> de la créance et déclare qu'elle n'a fait l'objet d'aucune cession, transaction ni paiement antérieur. À l'extinction du mandat sans recouvrement, ou en cas de rétractation dans le délai de l'Article 9, la créance est <strong>rétrocédée de plein droit</strong> au Mandant.
+    <br><br>
+    <strong>Clause de continuité.</strong> Si la cession est prohibée, refusée ou déclarée inopposable — notamment par les <strong>conditions générales de transport</strong> du transporteur — le <strong>mandat de représentation subsiste de plein droit</strong> et Robin des Airs agit alors <strong>au nom et pour le compte du Mandant</strong> sur le fondement des <strong>articles 1984 et suivants du Code civil</strong>, le Mandant demeurant titulaire de la créance. L'instruction de paiement de l'Article 5 reste applicable.
+  </div>
+  <div class="clause pro">
+    <span class="cnum" style="color:var(--red)">Article 6 — Clause Non Libératoire pour la Compagnie Aérienne</span>
     <strong>Tout paiement effectué directement par la compagnie aérienne au Mandant ne libère pas la compagnie de ses obligations</strong> envers Robin des Airs, mandataire exclusif désigné par acte signé. Robin des Airs notifie expressément la compagnie, dès la mise en demeure, que le <strong>seul paiement libératoire valable</strong> est celui effectué sur le compte bancaire de Robin des Airs.
     <br><br>
-    En conséquence : (i) tout règlement opéré directement au Mandant en violation de cette instruction sera réputé <strong>non libératoire à l'égard de Robin des Airs</strong> ; (ii) la compagnie demeurera redevable du paiement auprès du mandataire ; (iii) Robin des Airs se réserve le droit d'engager toute action en recouvrement, y compris judiciaire, à l'encontre de la compagnie aérienne. Cette stipulation constitue une <strong>instruction de paiement irrévocable</strong> au sens des articles 1984 et suivants du Code civil, opposable à tout tiers dûment notifié.
+    En conséquence : (i) tout règlement opéré directement au Mandant en violation de cette instruction sera réputé <strong>non libératoire à l'égard de Robin des Airs</strong> ; (ii) la compagnie demeurera redevable du paiement auprès du mandataire ; (iii) Robin des Airs se réserve le droit d'engager toute action en recouvrement, y compris judiciaire, à l'encontre de la compagnie aérienne. Cette stipulation constitue une <strong>instruction de paiement irrévocable</strong> au sens des articles 1984 et suivants du Code civil et s'appuie sur la <strong>cession de créance de l'Article 5 bis</strong> (articles 1321 à 1324 du Code civil)&nbsp;; elle est opposable à la compagnie aérienne et à tout tiers <strong>à compter de la notification</strong> qui leur en est faite.
   </div>
   <div class="clause">
     <span class="cnum">Article 7 — Obligations de Robin des Airs</span>
@@ -390,16 +429,16 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   <div class="single-check" onclick="toggleMainCheck()">
     <input type="checkbox" id="mainCheck" onclick="event.stopPropagation()">
     <p>
-      Je mandate <strong>Robin des Airs</strong> pour récupérer mon indemnité aérienne.<br>
+      J'autorise <strong>Robin des Airs</strong> à récupérer mon indemnité aérienne en mon nom et je lui <strong>cède ma créance aux fins de recouvrement</strong> (Article 5 bis).<br>
       <strong>Aucun frais si le dossier échoue.</strong> Commission de 25% uniquement en cas de succès.<br>
       <span style="font-size:12px;color:var(--muted);">
-        Mandat exclusif 24 mois · Rétractation possible sous 14 jours par email · RGPD
+        Exclusivité 24 mois · Rétractation possible sous 14 jours par email · RGPD
       </span>
     </p>
   </div>
-  <div class="ferr" id="checkErr" style="font-size:13px">Veuillez cocher cette case pour valider le mandat.</div>
+  <div class="ferr" id="checkErr" style="font-size:13px">Veuillez cocher cette case pour valider l'autorisation.</div>
   <!-- CASE 2 — Démarrage immédiat (optionnelle mais recommandée) -->
-  <div class="single-check" style="background:var(--green-pale);border-color:var(--green-mid)" onclick="document.getElementById('startNow').checked=!document.getElementById('startNow').checked">
+  <div class="single-check" style="background:var(--green-tint);border-color:var(--green)" onclick="document.getElementById('startNow').checked=!document.getElementById('startNow').checked">
     <input type="checkbox" id="startNow" onclick="event.stopPropagation()">
     <p>
       <strong>Je demande le démarrage immédiat de mon dossier</strong>, sans attendre l'expiration du délai de rétractation de 14 jours.<br>
@@ -410,12 +449,12 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
   </div>
   <!-- CO-PASSAGERS ADULTES -->
   <div id="coPassSection" style="display:none;margin-top:20px">
-    <div class="sec-title" style="font-size:15px">👥 Consentement des co-passagers adultes</div>
+    <div class="sec-title" style="font-size:15px">👥 Signature des co-passagers</div>
     <p style="font-size:13px;color:var(--muted);margin-bottom:14px">
-      Chaque passager majeur doit confirmer son accord. Cochez la case correspondant à chaque co-passager adulte.
+      Pour que le mandat et la cession de créance soient <strong>opposables pour chaque passager</strong>, chaque co-passager majeur <strong>signe individuellement</strong> ci-dessous. Pour un passager mineur, son <strong>représentant légal</strong> indique son nom et signe en son nom.
     </p>
     <div id="coPassChecks"></div>
-    <div class="ferr" id="coPassErr" style="font-size:13px">Tous les co-passagers adultes doivent confirmer leur accord.</div>
+    <div class="ferr" id="coPassErr" style="font-size:13px">Chaque co-passager doit signer (et le représentant légal pour un mineur).</div>
   </div>
 </div>
 <!-- SIGNATURE -->
@@ -438,14 +477,21 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
     <div class="sig-ph" id="sigPh">✍️ Appuyez ici pour signer</div>
     <div class="sig-clear" id="sigClear" onclick="clearSig(event)">✕ Recommencer</div>
   </div>
-  <div class="ferr" id="sigErr">Votre signature est requise pour valider le mandat</div>
+  <div class="ferr" id="sigErr">Votre signature est requise pour valider l'autorisation</div>
+  <div style="margin-top:20px;border:1px solid var(--border);border-left:3px solid var(--green-deep);border-radius:0 8px 8px 0;padding:16px 18px;background:var(--green-tint)">
+    <div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--green-deep);font-weight:700;margin-bottom:8px">Acceptation du Mandataire — Robin des Airs</div>
+    <p style="font-size:12px;line-height:1.7;color:var(--text);margin:0">
+      Robin des Airs <strong>accepte le présent mandat et la cession de créance</strong> (Article 5 bis) et en confirme la prise en charge dès l'ouverture du dossier — l'acceptation du mandataire est ainsi <strong>concomitante</strong> à la signature du Mandant.<br>
+      Représentant habilité&nbsp;: <strong>Robin des Airs — Service juridique CE 261/2004</strong> · Réf. dossier&nbsp;: <strong id="sigRdaRef">—</strong> · Acceptation le&nbsp;: <strong id="sigRdaDate">—</strong>
+    </p>
+  </div>
   <button class="btn-submit" id="btnSub" onclick="submitMandat()">
-    📝 Valider et signer mon mandat
+    Valider et signer mon autorisation →
   </button>
 </div>
 <div class="trust-bar">
   <div class="trust-item">🔒 SSL sécurisé</div>
-  <div class="trust-item">⚖️ Avocate Me Pitcher</div>
+  <div class="trust-item">⚖️ Frais de justice pris en charge</div>
   <div class="trust-item">✅ 9/10 gagnés</div>
   <div class="trust-item">💶 Versement 48h</div>
   <div class="trust-item">🏛️ CE 261/2004</div>
@@ -454,8 +500,8 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
 <!-- ÉCRAN SUCCÈS -->
 <div class="success-screen" id="successScreen">
   <div class="success-icon">✓</div>
-  <div class="success-title">Mandat signé !</div>
-  <p style="color:var(--muted);font-size:14px;max-width:420px;margin:0 auto">
+  <div class="success-title">Autorisation signée !</div>
+  <p style="color:var(--text);font-size:14px;max-width:440px;margin:0 auto">
     Votre dossier est officiellement ouvert. Robin des Airs prend le relais immédiatement.
   </p>
   <div class="success-ref">Référence : <strong id="sRef">—</strong></div>
@@ -467,7 +513,7 @@ input.err,textarea.err,select.err{border-color:var(--red)!important}
     <div class="sstep"><div class="snum">4</div><div><strong>Versement sur votre IBAN sous 48h</strong><br>Dès encaissement, votre net (75%) vous est versé.</div></div>
   </div>
   <div style="margin-top:32px">
-    <a href="https://robindesairs.eu" style="color:var(--green);font-size:13px;text-decoration:none;border-bottom:1px solid var(--gold)">Retour à robindesairs.eu →</a>
+    <a href="https://robindesairs.eu" style="color:var(--green-deep);font-size:13px;text-decoration:none;border-bottom:1px solid var(--green);font-weight:600">Retour à robindesairs.eu →</a>
   </div>
 </div>
 </div><!-- fin page -->
@@ -485,6 +531,8 @@ function applyDossierEmailUI() {
   if (ex) ex.textContent = addr || 'ref@robindesairs.eu';
   const cl = document.getElementById('clauseEmailExample');
   if (cl) cl.textContent = addr || 'ref@robindesairs.eu';
+  const rdaRef = document.getElementById('sigRdaRef');
+  if (rdaRef) rdaRef.textContent = REF;
 }
 // ── URL PARAMS ───────────────────────────────────────────────────
 const P = new URLSearchParams(window.location.search);
@@ -510,7 +558,7 @@ window.addEventListener('DOMContentLoaded', () => {
         const bar = document.createElement('div');
         bar.setAttribute('role', 'alert');
         bar.style.cssText =
-          'background:#fef2f2;border:1px solid #fecaca;color:#991b1b;padding:12px 16px;margin:12px 24px 0;font-size:13px;border-radius:4px';
+          'background:var(--red-bg);border:1px solid var(--red-border);color:var(--red);padding:12px 16px;margin:12px 24px 0;font-size:13px;border-radius:6px;font-weight:600';
         bar.textContent = j.reason === 'expired'
           ? 'Ce lien de mandat a expiré. Demandez un nouveau lien à Robin des Airs.'
           : 'Lien de mandat invalide ou modifié. Contactez Robin des Airs pour un lien sécurisé.';
@@ -524,6 +572,8 @@ window.addEventListener('DOMContentLoaded', () => {
   const now = new Date();
   document.getElementById('dDate').textContent = now.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
   document.getElementById('sigDate').value     = now.toLocaleDateString('fr-FR');
+  const rdaDateEl = document.getElementById('sigRdaDate');
+  if (rdaDateEl) rdaDateEl.textContent = now.toLocaleDateString('fr-FR');
   if (VOL)  document.getElementById('fnum').value = VOL;
   if (CIE)  document.getElementById('cie').value  = CIE;
   if (PNR)  document.getElementById('pnr').value  = PNR;
@@ -649,6 +699,9 @@ function updateAmounts() {
 // ── CHAMPS PASSAGERS ─────────────────────────────────────────────
 // ── PASSAGERS DYNAMIQUES ─────────────────────────────────────────
 let paxCount = PAXN || 1;
+// Signatures co-passagers (dataURL) et noms des représentants légaux, indexés par n° de passager (1..N-1)
+const coSigData = {};
+const coRepData = {};
 function getPaxValue() {
   return paxCount;
 }
@@ -667,6 +720,9 @@ function removePassenger(idx) {
   if (paxCount <= 1) return;
   paxCount--;
   document.getElementById('pax').value = paxCount;
+  // Les index de passagers changent : on réinitialise les signatures co-passagers (re-signature requise)
+  Object.keys(coSigData).forEach(k => delete coSigData[k]);
+  Object.keys(coRepData).forEach(k => delete coRepData[k]);
   renderAllPassengers();
   updateAmounts();
 }
@@ -686,11 +742,11 @@ function renderAllPassengers() {
     const pre = saved[i] || {};
     const div = document.createElement('div');
     div.className = 'pax-row';
-    div.style.cssText = 'border:1px solid var(--border);padding:16px;margin-bottom:12px;background:var(--paper);position:relative';
+    div.style.cssText = 'border:1px solid var(--border);padding:16px;margin-bottom:12px;background:var(--bg-soft);position:relative;border-radius:8px';
     const isMinor = pre.minor || false;
     div.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <span style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--gold)">
+        <span style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--green-deep);font-weight:700">
           Passager ${i+1}${i===0?' — Signataire principal':''}
         </span>
         ${i > 0 ? `<button type="button" onclick="removePassenger(${i})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:2px 6px" title="Supprimer ce passager">✕ Retirer</button>` : ''}
@@ -704,17 +760,17 @@ function renderAllPassengers() {
         <div>
           <label>Date de naissance${isMinor ? ' <span class="req">*</span>' : ''}</label>
           <input type="date" class="pdob" value="${pre.dob||''}"
-            style="width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:'DM Sans',sans-serif;font-size:13px;border-radius:0"
+            style="width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:'Montserrat',sans-serif;font-size:13px;border-radius:6px;color:var(--ink)"
             onchange="checkMinorAge(this, ${i})">
           <div style="font-size:10px;color:var(--muted);margin-top:3px;font-style:italic">Obligatoire si mineur</div>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:${isMinor?'#fff8f8':'var(--paper-mid)'};border:1px solid ${isMinor?'#e8b4b4':'var(--border)'}">
+      <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:${isMinor?'var(--red-bg)':'var(--bg-soft)'};border:1px solid ${isMinor?'var(--red-border)':'var(--border)'};border-radius:6px">
         <input type="checkbox" class="pminor" id="minor${i}" ${isMinor?'checked':''}
-          style="width:16px;height:16px;accent-color:var(--green);cursor:pointer"
+          style="width:16px;height:16px;accent-color:var(--green-deep);cursor:pointer"
           onchange="toggleMinorRow(this, ${i})">
-        <label for="minor${i}" style="font-size:12px;color:var(--ink);cursor:pointer;font-family:'DM Sans',sans-serif;text-transform:none;letter-spacing:0;margin:0">
-          <strong>Passager mineur</strong> (moins de 18 ans) — un représentant légal devra co-signer
+        <label for="minor${i}" style="font-size:12px;color:var(--text);cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:none;letter-spacing:0;margin:0;font-weight:500">
+          <strong style="color:var(--navy);font-weight:700">Passager mineur</strong> (moins de 18 ans) — un représentant légal devra co-signer
         </label>
       </div>
     `;
@@ -739,9 +795,9 @@ function toggleMinorRow(cb, idx) {
   if (!row) return;
   const box = row.querySelector('div[style*="display:flex"]');
   if (cb.checked) {
-    if (box) { box.style.background='#fff8f8'; box.style.borderColor='#e8b4b4'; }
+    if (box) { box.style.background='var(--red-bg)'; box.style.borderColor='var(--red-border)'; }
   } else {
-    if (box) { box.style.background='var(--paper-mid)'; box.style.borderColor='var(--border)'; }
+    if (box) { box.style.background='var(--bg-soft)'; box.style.borderColor='var(--border)'; }
   }
   buildCoPassChecks();
 }
@@ -766,11 +822,23 @@ function getNames() {
 function getPassengersData() {
   const data = [];
   document.querySelectorAll('.pax-row').forEach((row, i) => {
-    data.push({
+    const entry = {
       name:  row.querySelector('.pnif')?.value?.trim() || '',
       dob:   row.querySelector('.pdob')?.value || '',
       minor: row.querySelector('.pminor')?.checked || false,
-    });
+    };
+    if (i === 0) {
+      // Passager 1 = signataire principal (canvas principal)
+      try {
+        const c = document.getElementById('sigCanvas');
+        if (c && started) entry.signatureImg = c.toDataURL('image/png');
+      } catch (e) {}
+    } else {
+      // Co-passagers : signature individuelle + nom du représentant légal si mineur
+      if (coSigData[i]) entry.signatureImg = coSigData[i];
+      if ((coRepData[i] || '').trim()) entry.legalRepName = coRepData[i].trim();
+    }
+    data.push(entry);
   });
   return data;
 }
@@ -791,48 +859,115 @@ function toggleMainCheck() {
   cb.checked = !cb.checked;
   calcProgress();
 }
-// ── CO-PASSAGERS ADULTES ─────────────────────────────────────
+// ── PAD DE SIGNATURE GÉNÉRIQUE ───────────────────────────────
+function attachSigPad(canvas, onChange) {
+  const ctx = canvas.getContext('2d');
+  ctx.strokeStyle = '#111108'; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  let draw = false;
+  const pt = e => {
+    const r = canvas.getBoundingClientRect();
+    return e.touches ? { x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top }
+                     : { x: e.clientX - r.left, y: e.clientY - r.top };
+  };
+  const down = e => { draw = true; ctx.beginPath(); const p = pt(e); ctx.moveTo(p.x, p.y); if (e.preventDefault) e.preventDefault(); };
+  const mv   = e => { if (!draw) return; const p = pt(e); ctx.lineTo(p.x, p.y); ctx.stroke(); if (e.preventDefault) e.preventDefault(); };
+  const up   = () => { if (draw && onChange) onChange(); draw = false; };
+  canvas.addEventListener('mousedown', down);
+  canvas.addEventListener('mousemove', mv);
+  canvas.addEventListener('mouseup', up);
+  canvas.addEventListener('mouseleave', up);
+  canvas.addEventListener('touchstart', down, { passive: false });
+  canvas.addEventListener('touchmove', mv, { passive: false });
+  canvas.addEventListener('touchend', up);
+}
+function canvasHasInk(canvas) {
+  try {
+    const d = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
+    for (let i = 3; i < d.length; i += 4) if (d[i] > 0) return true;
+  } catch (e) {}
+  return false;
+}
+// ── CO-PASSAGERS — SIGNATURE INDIVIDUELLE ────────────────────
 function buildCoPassChecks() {
-  const pax   = paxCount||1;
-  const names = getNames();
-  const sec   = document.getElementById('coPassSection');
-  const cont  = document.getElementById('coPassChecks');
-  // Passagers 2, 3, 4... (le 1er = signataire principal)
-  const coPax = names.slice(1);
-  if (pax <= 1 || coPax.length === 0) {
+  const data = getPassengersData();          // [{name,dob,minor,...}]
+  const sec  = document.getElementById('coPassSection');
+  const cont = document.getElementById('coPassChecks');
+  if (!sec || !cont) return;
+  const coPax = data.slice(1);               // passagers 2..N
+  if ((paxCount || 1) <= 1 || coPax.length === 0) {
     sec.style.display = 'none';
+    cont.innerHTML = '';
     return;
   }
   sec.style.display = 'block';
+  // Sauvegarde des signatures déjà tracées avant le re-render
+  document.querySelectorAll('.co-sig-canvas').forEach(c => {
+    const idx = parseInt(c.dataset.idx, 10);
+    if (canvasHasInk(c)) coSigData[idx] = c.toDataURL('image/png');
+  });
   cont.innerHTML = '';
-  coPax.forEach((name, i) => {
-    const id  = `coCheck${i}`;
-    const div = document.createElement('div');
-    div.className = 'single-check';
-    div.style.marginBottom = '10px';
-    div.onclick = () => {
-      document.getElementById(id).checked = !document.getElementById(id).checked;
+  coPax.forEach((p, k) => {
+    const idx = k + 1;                        // index réel du passager (pax-row)
+    const nm  = (p.name || ('Passager ' + (idx + 1))).replace(/</g, '&lt;');
+    const card = document.createElement('div');
+    card.style.cssText = 'border:1px solid var(--border);padding:16px;margin-bottom:12px;background:var(--bg-soft);border-radius:8px';
+    card.innerHTML =
+      '<div style="font-family:\'DM Mono\',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--green-deep);font-weight:700;margin-bottom:8px">'
+        + 'Signature — ' + nm + (p.minor ? ' (mineur)' : '') + '</div>'
+      + '<p style="font-size:12px;line-height:1.6;color:var(--text);margin:0 0 10px">'
+        + (p.minor
+            ? 'Passager mineur : son <strong>représentant légal</strong> signe en son nom et accepte le mandat et la cession de créance (Article 5 bis), aux mêmes conditions.'
+            : 'Je confirme mandater <strong>Robin des Airs</strong> et lui céder ma créance aux fins de recouvrement (Article 5 bis), aux mêmes conditions (No Win No Fee · commission 25% · rétractation 14 jours).')
+        + '</p>'
+      + (p.minor
+          ? '<label style="display:block;font-family:\'DM Mono\',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-bottom:6px;font-weight:600">Nom du représentant légal <span style="color:var(--red)">*</span></label>'
+            + '<input type="text" class="co-rep" data-idx="' + idx + '" placeholder="Prénom NOM du parent / tuteur" value="' + (coRepData[idx] || '').replace(/"/g, '&quot;') + '" oninput="coRepData[' + idx + ']=this.value" style="width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:\'Montserrat\',sans-serif;font-size:13px;border-radius:6px;color:var(--ink);margin-bottom:10px">'
+          : '')
+      + '<div class="co-sig-area" data-idx="' + idx + '" style="background:var(--paper);border:2px dashed var(--border);border-radius:8px;padding:12px;text-align:center;cursor:pointer;min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px">'
+        + '<canvas class="co-sig-canvas" data-idx="' + idx + '" width="640" height="100" style="display:none;border:1.5px solid var(--border);background:#fff;border-radius:6px;max-width:100%;touch-action:none;cursor:crosshair"></canvas>'
+        + '<div class="co-sig-ph" style="font-family:\'DM Mono\',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);font-weight:600">✍️ Appuyez ici pour signer</div>'
+        + '<div class="co-sig-clear" data-idx="' + idx + '" style="display:none;font-size:11px;color:var(--green-deep);text-decoration:underline;cursor:pointer;font-family:\'DM Mono\',monospace;font-weight:600">✕ Recommencer</div>'
+      + '</div>'
+      + '<div class="co-sig-err ferr" data-idx="' + idx + '" style="font-size:12px">Signature requise pour ce passager.</div>';
+    cont.appendChild(card);
+    const canvas = card.querySelector('.co-sig-canvas');
+    const area   = card.querySelector('.co-sig-area');
+    const ph     = card.querySelector('.co-sig-ph');
+    const clr    = card.querySelector('.co-sig-clear');
+    let inited = false;
+    const ensure = () => {
+      if (inited) return; inited = true;
+      canvas.style.display = 'block'; ph.style.display = 'none'; clr.style.display = 'block';
+      canvas.width = Math.min(area.offsetWidth - 24, 640); canvas.height = 100;
+      attachSigPad(canvas, () => { coSigData[idx] = canvas.toDataURL('image/png'); });
     };
-    div.innerHTML = `
-      <input type="checkbox" id="${id}" onclick="event.stopPropagation()">
-      <p>
-        <strong>${name || 'Passager ' + (i + 2)}</strong> confirme mandater Robin des Airs
-        pour agir en son nom sur ce dossier et accepte les mêmes conditions.<br>
-        <span style="font-size:12px;color:var(--muted);">
-          Aucun frais si échec · Commission 25% si succès · Rétractation 14 jours
-        </span>
-      </p>`;
-    cont.appendChild(div);
+    area.addEventListener('click', (e) => { if (e.target === clr) return; ensure(); });
+    clr.addEventListener('click', (e) => {
+      e.stopPropagation();
+      canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+      delete coSigData[idx];
+      inited = false; canvas.style.display = 'none'; ph.style.display = 'block'; clr.style.display = 'none';
+    });
+    // Restaure une signature précédemment tracée (re-render sur frappe clavier)
+    if (coSigData[idx]) {
+      ensure();
+      const img = new Image();
+      img.onload = () => canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      img.src = coSigData[idx];
+    }
   });
 }
 function allCoPassChecked() {
-  const pax = paxCount||1;
-  if (pax <= 1) return true;
-  const names = getNames();
-  const coPax = names.slice(1);
+  const data = getPassengersData();
+  if ((paxCount || 1) <= 1) return true;
+  const coPax = data.slice(1);
   if (coPax.length === 0) return true;
-  for (let i = 0; i < coPax.length; i++) {
-    if (!document.getElementById(`coCheck${i}`)?.checked) return false;
+  for (let k = 0; k < coPax.length; k++) {
+    const idx = k + 1;
+    const canvas = document.querySelector('.co-sig-canvas[data-idx="' + idx + '"]');
+    const signed = (canvas && canvasHasInk(canvas)) || !!coSigData[idx];
+    if (!signed) return false;
+    if (coPax[k].minor && !((coRepData[idx] || '').trim())) return false;
   }
   return true;
 }
@@ -943,6 +1078,14 @@ function validate() {
     }
   });
   const allCo = allCoPassChecked();
+  document.querySelectorAll('.co-sig-canvas').forEach(c => {
+    const idx = parseInt(c.dataset.idx, 10);
+    const signed = canvasHasInk(c) || !!coSigData[idx];
+    const err = document.querySelector('.co-sig-err[data-idx="' + idx + '"]');
+    if (err) err.style.display = signed ? 'none' : 'block';
+    const rep = document.querySelector('.co-rep[data-idx="' + idx + '"]');
+    if (rep) rep.classList.toggle('err', !(coRepData[idx] || '').trim());
+  });
   document.getElementById('coPassErr').style.display = allCo ? 'none' : 'block';
   if (!allCo) ok = false;
   const checked = document.getElementById('mainCheck').checked;
@@ -970,6 +1113,10 @@ function submitMandat() {
     address:   document.getElementById('addr').value.trim(),
     startNow:  document.getElementById('startNow').checked,
     coPassAgreement: allCoPassChecked(),
+    cessionCreance: true,
+    mandataireAccepted: true,
+    mandataireName: 'Robin des Airs — Service juridique CE 261/2004',
+    mandataireAcceptedAt: new Date().toISOString(),
     airline:   document.getElementById('cie').value.trim(),
     flightNum: document.getElementById('fnum').value.trim(),
     flightDate:document.getElementById('fdate').value,

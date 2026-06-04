@@ -205,6 +205,8 @@ function buildTeamMandatEmailContent(record) {
     ['Itinéraire', itin],
     ['Incident', incident],
     ['Passagers', pax],
+    ['Cession de créance', record.cessionCreance === false ? 'Non' : 'Oui (Art. 5 bis — née ou à naître)'],
+    ['Acceptation mandataire', `${record.mandataireName || 'Robin des Airs'} — ${record.mandataireAcceptedAt || record.signed_at || '—'}`],
     ['Source', record.source || 'mandat.html'],
   ];
   const text = lines.map(([k, v]) => `${k} : ${v}`).join('\n');
@@ -437,6 +439,10 @@ exports.handler = async (event) => {
     address: body.address || '',
     startNow: !!body.startNow,
     coPassAgreement: !!body.coPassAgreement,
+    cessionCreance: body.cessionCreance !== false,
+    mandataireAccepted: body.mandataireAccepted !== false,
+    mandataireName: body.mandataireName || 'Robin des Airs — Service juridique CE 261/2004',
+    mandataireAcceptedAt: body.mandataireAcceptedAt || ts,
     airline: body.airline || '',
     flightNum: body.flightNum || '',
     flightDate: body.flightDate || '',

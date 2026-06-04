@@ -70,6 +70,9 @@ exports.handler = async (event) => {
     payout: body.payout || '',
     sigCity: body.sigCity || '',
     signatureImg: body.signatureImg || '',
+    mandataireAccepted: body.mandataireAccepted !== false,
+    mandataireName: body.mandataireName || 'Robin des Airs — Partenariats',
+    mandataireAcceptedAt: body.mandataireAcceptedAt || ts,
     source: body.source || 'partner-agreement',
   };
 
