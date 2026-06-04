@@ -1046,6 +1046,11 @@ function verifyWatiSecret(body, headers, query) {
 
 // ─── Handler principal ────────────────────────────────────────────────────────
 exports.handler = async (event) => {
+  // ⚠️ INDISPENSABLE : sans connectLambda, tous les accès Netlify Blobs plantent en prod
+  // (v8) → l'état de conversation ne se sauvegarde pas (boucle d'accueil) ET
+  // saveInteractiveDebug lève une exception qui fait retomber les boutons en texte.
+  try { const { connectLambda } = require('@netlify/blobs'); if (connectLambda) connectLambda(event); } catch (e) { console.error('connectLambda failed', e.message); }
+
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: HEADERS, body: '' };
   if (event.httpMethod === 'GET') {
     const q = event.queryStringParameters || {};
