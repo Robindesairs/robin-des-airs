@@ -65,12 +65,21 @@ const LANGS = {
   'yoruba':   { code: 'yo', flag: '🇳🇬', label: 'Yoruba', africaine: true, natif: 'A nsọ Yoruba — amoye kan tó ń sọ Yoruba yóò pè ọ. 🤝' },
   'peul':     { code: 'ff', flag: '🇬🇳', label: 'Peul / Fulfulde', africaine: true, natif: 'Eɗen haala Pulaar — annduɗo haalata Pulaar maa noddu maa. 🤝' },
 };
+const FLAG_LANG = { '🇫🇷': 'fr', '🇬🇧': 'en', '🇸🇳': 'wo', '🇬🇲': 'mnk', '🇬🇭': 'twi', '🇳🇬': 'yo', '🇬🇳': 'ff' };
 function matchLang(input) {
-  const t = (input || '').toLowerCase();
+  const raw = input || '';
+  const t = raw.toLowerCase();
+  // 1) par drapeau (le titre de liste WATI commence par le drapeau)
+  for (const [flag, code] of Object.entries(FLAG_LANG)) {
+    if (raw.includes(flag)) return Object.values(LANGS).find(v => v.code === code) || null;
+  }
+  // 2) par nom / clé / code
   for (const [k, v] of Object.entries(LANGS)) {
     if (t.includes(k) || t.includes(v.label.toLowerCase()) || t.includes(v.code)) return v;
   }
-  if (t.includes('english') || t.includes('anglais')) return LANGS['english'];
+  if (t.includes('anglais')) return LANGS['english'];
+  // 3) sélection par numéro de ligne (1..7) si WATI renvoie l'index
+  if (/^\d+$/.test(t)) { const arr = Object.values(LANGS); const i = parseInt(t) - 1; if (arr[i]) return arr[i]; }
   return null;
 }
 
@@ -121,6 +130,14 @@ async function sendDelayed(phone, text, cfg, ms = 700) { await new Promise(r => 
 async function getState(phone) { try { const st = botStore(); if (!st) throw 0; return (await st.get(`state/${phone.replace(/\D/g, '')}`, { type: 'json' })) || { step: 'accueil' }; } catch { return { step: 'accueil' }; } }
 async function setState(phone, s) { try { const st = botStore(); if (!st) return; await st.setJSON(`state/${phone.replace(/\D/g, '')}`, { ...s, updatedAt: new Date().toISOString() }); } catch (e) { console.error('v8 setState', e.message); } }
 async function clearState(phone) { try { const st = botStore(); if (!st) return; await st.delete(`state/${phone.replace(/\D/g, '')}`); } catch {} }
+async function saveInboundDebug(rawBody, items) {
+  try { const st = botStore(); if (!st) return;
+    const prev = (await st.get('debug/inbound', { type: 'json' })) || [];
+    prev.unshift({ ts: new Date().toISOString(), raw: String(rawBody).slice(0, 1500), extracted: items.map(it => ({ ph: it.phone, txt: it.text, dedupId: it.dedupId })) });
+    await st.setJSON('debug/inbound', prev.slice(0, 8));
+  } catch (e) {}
+}
+async function readInboundDebug() { try { const st = botStore(); if (!st) return null; return await st.get('debug/inbound', { type: 'json' }); } catch { return null; } }
 async function isDuplicateMessage(id, hasId) {
   if (!id) return false;
   try { const st = botStore(); if (!st) return false;
@@ -449,7 +466,7 @@ function extractInbound(payload) {
     if (!item || typeof item !== 'object') return;
     const waId = item.waId || item.whatsappNumber || item.from;
     if (item.owner === true || item.eventType === 'sentMessage' || item.fromMe === true) return;
-    const listReply = item.listReply || item.list_reply; const btnReply = item.interactiveButtonReply || item.buttonReply;
+    const listReply = item.listReply || item.list_reply || item.interactiveListReply; const btnReply = item.interactiveButtonReply || item.buttonReply || item.button_reply;
     const replyText = (listReply && (listReply.title || listReply.id)) || (btnReply && (btnReply.text || btnReply.title || btnReply.id)) || null;
     if (waId === 'senderPhone' || item.text === 'text') return;
     const isImage = item.type === 'image' || (item.type && /image/i.test(item.type));
@@ -478,10 +495,17 @@ function verifyWatiSecret(body, headers, query) {
 exports.handler = async (event) => {
   LAMBDA_EVENT = event;
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: HEADERS, body: '' };
+  if (event.httpMethod === 'GET') {
+    const q = event.queryStringParameters || {};
+    const key = (process.env.WATI_WEBHOOK_SECRET || process.env.CRM_ACCESS_CODE || '').trim();
+    if (q.debug === 'inbound' && key && q.key === key) return { statusCode: 200, headers: HEADERS, body: JSON.stringify((await readInboundDebug()) || { none: true }) };
+    return { statusCode: 403, headers: HEADERS, body: JSON.stringify({ error: 'Forbidden' }) };
+  }
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers: HEADERS, body: JSON.stringify({ error: 'POST only' }) };
   let body; try { body = JSON.parse(event.body || '{}'); } catch { return { statusCode: 400, headers: HEADERS, body: JSON.stringify({ error: 'Invalid JSON' }) }; }
   if (!verifyWatiSecret(body, event.headers || {}, event.queryStringParameters || {})) return { statusCode: 401, headers: HEADERS, body: JSON.stringify({ error: 'Secret invalide' }) };
   const cfg = watiCfg(); const items = extractInbound(body);
+  try { await saveInboundDebug(event.body || '{}', items); } catch {}
   for (const { phone, text, mediaUrl, dedupId, hasId } of items) {
     if (!phone) continue;
     if (await isDuplicateMessage(dedupId, hasId)) continue;
