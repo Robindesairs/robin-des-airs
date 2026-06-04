@@ -1032,10 +1032,16 @@ function extractInbound(payload) {
   return list;
 }
 
-function verifyWatiSecret(body, headers) {
+function verifyWatiSecret(body, headers, query) {
   const expected = (process.env.WATI_WEBHOOK_SECRET || '').trim();
   if (!expected) return true;
-  return (body && body.secret) === expected || (headers['x-wati-secret'] || headers['X-Wati-Secret']) === expected;
+  const h = headers || {};
+  const q = query || {};
+  return (
+    (body && body.secret) === expected ||                       // secret dans le body
+    h['x-wati-secret'] === expected || h['X-Wati-Secret'] === expected || // header
+    q.s === expected || q.secret === expected                   // ?s=... ou ?secret=... dans l'URL
+  );
 }
 
 // ─── Handler principal ────────────────────────────────────────────────────────
@@ -1076,7 +1082,7 @@ exports.handler = async (event) => {
   try { body = JSON.parse(event.body || '{}'); }
   catch { return { statusCode: 400, headers: HEADERS, body: JSON.stringify({ error: 'Invalid JSON' }) }; }
 
-  if (!verifyWatiSecret(body, event.headers || {})) {
+  if (!verifyWatiSecret(body, event.headers || {}, event.queryStringParameters || {})) {
     return { statusCode: 401, headers: HEADERS, body: JSON.stringify({ error: 'Secret invalide' }) };
   }
 
