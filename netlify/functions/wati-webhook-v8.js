@@ -134,6 +134,13 @@ async function sendList(phone, { header, body, footer, buttonText, items }, cfg)
   } catch (e) { await send(phone, body + '\n\n' + items.map((it, idx) => `${idx + 1} — ${it.title}`).join('\n'), cfg); }
 }
 async function sendDelayed(phone, text, cfg, ms = 700) { await new Promise(r => setTimeout(r, ms)); await send(phone, text, cfg); }
+// WATI ne rend pas les listes interactives sur ce compte (elles arrivent en texte).
+// → on envoie un choix numéroté clair, et les handlers acceptent le numéro OU le mot-clé.
+const NUMEMO = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
+async function sendChoices(phone, { body, items, footer }, cfg) {
+  const lines = items.map((it, i) => `${NUMEMO[i] || (i + 1 + '.')} ${it.title}${it.description ? ` — _${it.description}_` : ''}`).join('\n');
+  await send(phone, `${body}\n\n${lines}\n\n👉 Répondez avec le *numéro* (ex. 1)${footer ? `\n${footer}` : ''}`, cfg);
+}
 
 // ─── État ──────────────────────────────────────────────────────────────────────
 async function getState(phone) { try { const st = botStore(); if (!st) throw 0; return (await st.get(`state/${phone.replace(/\D/g, '')}`, { type: 'json' })) || { step: 'accueil' }; } catch { return { step: 'accueil' }; } }
@@ -149,12 +156,13 @@ async function saveInboundDebug(rawBody, items) {
 async function readInboundDebug() { try { const st = botStore(); if (!st) return null; return await st.get('debug/inbound', { type: 'json' }); } catch { return null; } }
 async function saveInteractiveDebug(obj) { try { const st = botStore(); if (!st) return; await st.setJSON('debug/interactive', { ...obj, ts: new Date().toISOString() }); } catch (e) {} }
 async function readInteractiveDebug() { try { const st = botStore(); if (!st) return null; return await st.get('debug/interactive', { type: 'json' }); } catch { return null; } }
-async function isDuplicateMessage(id, hasId) {
+async function isDuplicateMessage(id, hasId, windowMs) {
   if (!id) return false;
   try { const st = botStore(); if (!st) return false;
     const k = 'seen/' + String(id).replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 200);
     const prev = await st.get(k, { type: 'json' }); const now = Date.now();
-    if (prev && prev.t && (now - prev.t) < (hasId ? 600000 : 60000)) return true;
+    const w = windowMs || (hasId ? 600000 : 60000);
+    if (prev && prev.t && (now - prev.t) < w) return true;
     await st.setJSON(k, { t: now }); return false;
   } catch { return false; }
 }
@@ -388,7 +396,7 @@ async function sendAccueil(phone, cfg) {
 }
 async function sendLangue(phone, s, cfg) {
   s.step = 'langue'; await setState(phone, s);
-  await sendList(phone, { header: '🌍 Votre langue', body: `${bar('langue')}\n🌍 Dans quelle langue souhaitez-vous être accompagné(e) ?\n\nChez Robin des Airs, nous parlons votre langue — il est toujours plus facile de s'expliquer dans sa langue maternelle. 🤝\n\n_In which language would you like to be assisted?_\n\n🔜 D'autres langues arrivent bientôt.`, buttonText: '🌍 Choisir', items: [
+  await sendChoices(phone, { header: '🌍 Votre langue', body: `${bar('langue')}\n🌍 Dans quelle langue souhaitez-vous être accompagné(e) ?\n\nChez Robin des Airs, nous parlons votre langue — il est toujours plus facile de s'expliquer dans sa langue maternelle. 🤝\n\n_In which language would you like to be assisted?_\n\n🔜 D'autres langues arrivent bientôt.`, buttonText: '🌍 Choisir', items: [
     { title: '🇫🇷 Français', description: 'Européenne' }, { title: '🇬🇧 English', description: 'Européenne' },
     { title: '🇸🇳 Wolof', description: 'Africaine' }, { title: '🇬🇲 Mandinka', description: 'Africaine' }, { title: '🇬🇭 Twi', description: 'Africaine' },
     { title: '🇳🇬 Yoruba', description: 'Africaine' }, { title: '🇬🇳 Peul / Fulfulde', description: 'Africaine' },
@@ -396,14 +404,14 @@ async function sendLangue(phone, s, cfg) {
 }
 async function sendRoute(phone, s, cfg) {
   s.step = 'route'; await setState(phone, s);
-  await sendList(phone, { body: `${bar('route')}\n🗺️ Votre vol était sur quelle route ?\nCela détermine si le CE 261/2004 s'applique.`, buttonText: 'Choisir ▾', items: [
+  await sendChoices(phone, { body: `${bar('route')}\n🗺️ Votre vol était sur quelle route ?\nCela détermine si le CE 261/2004 s'applique.`, buttonText: 'Choisir ▾', items: [
     { title: '🌍 Afrique ↔ Europe', description: 'Notre spécialité' }, { title: '🇪🇺 Europe ↔ Europe' }, { title: '🛫 Départ/arrivée Europe' }, { title: '🌐 Autre' },
   ] }, cfg);
 }
 async function sendIncident(phone, s, cfg) { s.step = 'incident'; await setState(phone, s); await sendButtons(phone, { body: `${bar('incident')}\n✈️ Que s'est-il passé avec votre vol ?`, buttons: [{ text: '⏱️ Retard arrivée' }, { text: '❌ Annulation' }, { text: "🚫 Refus d'embarq." }] }, cfg); }
 async function sendPax(phone, s, cfg) {
   s.step = 'nb_pax'; await setState(phone, s);
-  await sendList(phone, { body: `${bar('nb_pax')}\n👥 Combien de passagers réclament sur ce vol ?`, buttonText: 'Nombre ▾', items: [
+  await sendChoices(phone, { body: `${bar('nb_pax')}\n👥 Combien de passagers réclament sur ce vol ?`, buttonText: 'Nombre ▾', items: [
     { title: '1 passager', description: '600 €' }, { title: '2 passagers', description: '1 200 €' }, { title: '3 passagers', description: '1 800 €' }, { title: '4 passagers', description: '2 400 €' }, { title: '5 passagers', description: '3 000 €' }, { title: '6 ou plus', description: 'On gère votre groupe' },
   ] }, cfg);
 }
@@ -525,7 +533,7 @@ exports.handler = async (event) => {
     if (!phone) continue;
     if (await isDuplicateMessage(dedupId, hasId)) continue;
     // Absorbe les double-taps du même bouton/liste (id WATI différent mais même contenu) sur ~60 s.
-    if (interactive && await isDuplicateMessage(`ck|${phone}|${String(text).trim().toLowerCase()}`, false)) continue;
+    if (interactive && await isDuplicateMessage(`ck|${phone}|${String(text).trim().toLowerCase()}`, false, 12000)) continue;
     try { await appendWaMessage(event, phone, { role: 'user', text, source: 'wati-v8' }); } catch {}
     notifyOwnerWhatsApp(phone, text).catch(() => {}); // fire-and-forget : ne ralentit plus la réponse au client
     try { await handleMessage(phone, text, cfg, mediaUrl); }
