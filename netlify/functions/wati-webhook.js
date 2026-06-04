@@ -834,7 +834,11 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
       s.mineurs = norm === '2';
       s.step = 'email';
       await setState(phone, s);
-      await send(phone, `${bar('email')}\n📧 *Pour vous envoyer le mandat et le suivi du dossier*\n\nQuelle est votre adresse email ?\n_(Ex. : prenom@gmail.com)_`, cfg);
+      await sendButtons(phone, {
+        body: `${bar('email')}\n📧 *Pour recevoir votre mandat signé + le suivi*\n\nVotre adresse email ? _(Ex. : prenom@gmail.com)_\n\n_Pas obligatoire — vous recevrez tout par WhatsApp._`,
+        footer: 'Tapez votre email, ou :',
+        buttons: [{ text: '⏭️ Passer (sans email)' }],
+      }, cfg);
     } else {
       const noms = s.nom ? `• *${s.nom}*` : '• (passager 1)';
       await sendButtons(phone, {
@@ -847,13 +851,19 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
 
   // ── EMAIL ─────────────────────────────────────────────────────────────────
   if (s.step === 'email') {
-    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input)) {
+    const skip = /passer|sans email|aucun|skip|non merci|plus tard/i.test(input);
+    if (skip) {
+      s.email = '';
+      s.step = 'adresse';
+      await setState(phone, s);
+      await send(phone, `👍 Pas de souci — *tout vous sera envoyé sur WhatsApp.*\n\n${bar('adresse')}\n📮 *Adresse postale* (pour le mandat officiel)\n\nRue, ville et pays — ou *ville + pays* si vous préférez.\n_(Ex. : 12 rue Léon Blum, Dakar, Sénégal)_`, cfg);
+    } else if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input)) {
       s.email = input;
       s.step = 'adresse';
       await setState(phone, s);
       await send(phone, `${bar('adresse')}\n📮 *Adresse postale* (pour le mandat officiel)\n\nRue, ville et pays — ou *ville + pays* si vous préférez.\n_(Ex. : 12 rue Léon Blum, Dakar, Sénégal)_`, cfg);
     } else {
-      await send(phone, `Format email invalide. Envoyez votre adresse email (ex. prenom@gmail.com) :`, cfg);
+      await send(phone, `Format email invalide. Envoyez votre email (ex. prenom@gmail.com) — ou tapez *passer* pour continuer sans.`, cfg);
     }
     return;
   }
