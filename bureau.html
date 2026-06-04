@@ -855,7 +855,7 @@ function posteContent(i){
     case 6: return `<h4>Suivi dossiers (réel)</h4>${pmStat('Dossiers suivis',fmt(S.dossiers))}${pmStat('Gagnés',fmt(S.gagnes))}`;
     case 7: if(REAL.meta){const d=REAL.meta;return `<h4>Pub Meta — 7 jours (réel)</h4>${pmStat('Dépense',fmt(d.spend)+' €')}${pmStat('Impressions',fmt(d.impressions))}${pmStat('Reach',fmt(d.reach))}${pmStat('Clics',fmt(d.clicks))}${pmStat('Conversations WhatsApp',fmt(d.waConvos))}${pmStat('CPM',d.cpm+' €')}`;} return `<div class="pm-empty">Stats Meta indisponibles (token à renouveler).</div>`;
     case 8: return `<h4>Rentabilité (réel · factures Drive)</h4>${pmStat('Coûts mensuels',fmt(RENTA.total)+' €')}${pmStat('Marge / dossier gagné',COSTS.margeParDossier+' €')}${pmStat('Seuil de rentabilité',RENTA.seuil+' dossiers/mois')}<h4>Détail des coûts</h4>${COSTS.abonnements.map(a=>pmStat(a.n,a.m+' €')).join('')}${pmStat('Pub Meta',COSTS.pub+' €')}${pmStat('Salaires',COSTS.salaires+' €')}`;
-    case 9: return `<h4>Réseaux sociaux — objectifs</h4>${SOCIAL.targets.map(m=>pmStat(m.ic+' '+m.k,'— / '+fmt(m.tgt))).join('')}<div class="pm-empty" style="font-style:normal">Réalisé non connecté — API Instagram à brancher.</div>`;
+    case 9: { const R=SOCIAL.real; return `<h4>Réseaux sociaux — objectifs (juin · lancement)</h4>${SOCIAL.targets.map(m=>{const v=(R&&R[m.field]!=null)?R[m.field]:null; return pmStat(m.ic+' '+m.k,(v!=null?fmt(v):'—')+' / '+fmt(m.tgt));}).join('')}<div class="pm-empty" style="font-style:normal">${R?`IG réel, mois en cours${R.followers!=null?` · ${fmt(R.followers)} abonnés`:''}. Clics WhatsApp & conversations DM non mesurables en organique.`:'Réalisé non connecté — API Instagram à brancher.'}</div>`; }
     default: return '';
   }
 }
@@ -1040,20 +1040,39 @@ function renderRealFeed(recent){
   });
 }
 
+// Cibles ORGANIQUES recalées pour juin = 1er mois de lancement du compte.
+// Réalistes pour un compte neuf (faible base d'abonnés), pas les volumes d'un
+// compte établi. `field` = clé renvoyée par /api/instagram-stats (null = non
+// mesurable en organique → reste « — »).
 const SOCIAL = { targets: [
-  { k:"Publications", tgt:20, ic:"📝" },
-  { k:"Likes", tgt:1200, ic:"❤️" },
-  { k:"Commentaires", tgt:160, ic:"💬" },
-  { k:"Clics WhatsApp", tgt:400, ic:"👉" },
-  { k:"Conversations sociales", tgt:70, ic:"🤝" },
-]};
+  { k:"Publications", tgt:15, ic:"📝", field:"publications" },
+  { k:"Likes", tgt:250, ic:"❤️", field:"likes" },
+  { k:"Commentaires", tgt:30, ic:"💬", field:"comments" },
+  { k:"Clics WhatsApp", tgt:50, ic:"👉", field:"whatsappClicks" },
+  { k:"Conversations sociales", tgt:15, ic:"🤝", field:"socialConversations" },
+], real:null };
 function renderSocial(){
   const el=document.getElementById('socialBody'); if(!el) return;
-  el.innerHTML = `<div class="social-grid">`+SOCIAL.targets.map(m=>
-    `<div class="social-stat"><div class="ss-top"><span>${m.ic} ${m.k}</span><span class="ss-pct">—</span></div>
-      <div class="ss-v"><b>—</b><span> / ${fmt(m.tgt)} ce mois</span></div>
-      <div class="mf-bar"><i style="width:0%;background:var(--blue)"></i></div></div>`
-  ).join('')+`</div><div class="renta-note">Cibles organiques IG + FB. Réalisé non connecté — brancher l'API Instagram pour les chiffres réels.</div>`;
+  const R = SOCIAL.real;
+  el.innerHTML = `<div class="social-grid">`+SOCIAL.targets.map(m=>{
+    const v = (R && R[m.field]!=null) ? R[m.field] : null;
+    const pct = (v!=null && m.tgt>0) ? Math.min(100, Math.round(v/m.tgt*100)) : 0;
+    return `<div class="social-stat"><div class="ss-top"><span>${m.ic} ${m.k}</span><span class="ss-pct">${v!=null?pct+'%':'—'}</span></div>
+      <div class="ss-v"><b>${v!=null?fmt(v):'—'}</b><span> / ${fmt(m.tgt)} ce mois</span></div>
+      <div class="mf-bar"><i style="width:${pct}%;background:var(--blue)"></i></div></div>`;
+  }).join('')+`</div><div class="renta-note">${R
+    ? `IG réel (mois en cours${R.followers!=null?` · ${fmt(R.followers)} abonnés`:''}). Clics WhatsApp & conversations DM non mesurables en organique → « — ».`
+    : `Cibles organiques IG + FB · lancement juin. Réalisé non connecté — brancher l'API Instagram pour les chiffres réels.`}</div>`;
+}
+// Branche les vrais chiffres IG (publications/likes/commentaires du mois).
+async function loadInstagram(){
+  const d = await jget('/api/instagram-stats');
+  if(d && d.ok){
+    SOCIAL.real = d; REAL.sources.instagram = true;
+    renderSocial();
+    const b=document.getElementById('socialSrc'); if(b){ b.className='mini-src real'; b.textContent='RÉEL'; }
+  }
+  setSrcBadge();
 }
 
 /* ============ PANNEAU RENTABILITÉ ============ */
@@ -1221,7 +1240,7 @@ async function loadProtected(){
   setSrcBadge();
 }
 async function loadRealData(){
-  await Promise.allSettled([ loadRadar(), loadWhatsApp(), loadBureauStats(), loadMetaStats(), loadProtected() ]);
+  await Promise.allSettled([ loadRadar(), loadWhatsApp(), loadBureauStats(), loadMetaStats(), loadInstagram(), loadProtected() ]);
   setSrcBadge();
 }
 
