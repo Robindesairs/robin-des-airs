@@ -33,15 +33,18 @@ function isSensitive(text) {
 }
 
 // Heuristique : est-ce une question libre (hors script) plutôt qu'une sélection ?
+// IMPORTANT : les réponses par bouton/liste reviennent sous forme de TITRE multi-mots
+// (« D'un aéroport en Europe », « Refus d'embarquement »…). On ne se fie donc PAS au
+// nombre de mots — uniquement à « ? » ou à un mot interrogatif en début de message.
+// Les titres de boutons n'ont jamais de « ? » et ne commencent pas par un interrogatif.
+const INTERROGATIVE = /^\s*(combien|comment|pourquoi|pourquoi|quand|où|ou\b|est-?ce|c'?est quoi|qu'?est|quel|quelle|quels|quelles|puis-?je|peut-?on|vous prenez|ça coûte|ca coute|c'?est gratuit|j'?ai droit|ai-?je droit|que faire|faut-?il)/i;
 function isClientQuestion(text) {
   const t = (text || '').trim();
   if (!t) return false;
-  if (/^\d+$/.test(t)) return false;                 // sélection numérique → script
-  if (t.length < 6) return false;                    // trop court (oui/non/menu)
-  if (t.includes('?')) return true;                  // question explicite
-  // phrase (plusieurs mots) qui ressemble à une demande
-  const words = t.split(/\s+/);
-  if (words.length >= 4) return true;
+  if (/^\d+$/.test(t)) return false;     // sélection numérique → script
+  if (t.length < 6) return false;        // trop court (oui/non/menu)
+  if (t.includes('?')) return true;      // question explicite
+  if (INTERROGATIVE.test(t)) return true; // commence par un mot interrogatif
   return false;
 }
 
