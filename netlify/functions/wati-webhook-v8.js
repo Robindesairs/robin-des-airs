@@ -33,7 +33,7 @@ const PROGRESS = {
   nb_pax: 3, nb_pax_exact: 3,
   type_vol: 4, motivation: 4,
   scan: 5, scan_confirm: 5, m_vol: 5, m_date: 5, m_route: 5, names: 5,
-  vd_vol: 6, vd_date: 6, mineurs: 6, mineurs_which: 6,
+  vd_vol: 6, vd_date: 6, annee: 6, mineurs: 6, mineurs_which: 6,
   recap: 7, documents: 7, doc_pass: 7, doc_boarding: 7, doc_eticket: 7, doc_cert: 7, rgpd: 7,
   done: 8,
 };
@@ -178,7 +178,7 @@ function normInput(raw, options) { const t = (raw || '').trim().toLowerCase(); i
 const AIRLINES = { AF: 'Air France', SN: 'Brussels Airlines', TP: 'TAP Air Portugal', AT: 'Royal Air Maroc', HC: 'Air Sénégal', KQ: 'Kenya Airways', ET: 'Ethiopian Airlines', EK: 'Emirates', TK: 'Turkish Airlines', KL: 'KLM', LH: 'Lufthansa', IB: 'Iberia', EJU: 'easyJet', U2: 'easyJet', FR: 'Ryanair', TO: 'Transavia', KP: 'ASKY', DN: 'Senegal Airlines' };
 function deduceAirline(vol) { const m = (vol || '').toUpperCase().match(/^([A-Z]{2,3})\d/); return (m && AIRLINES[m[1]]) || ''; }
 function buildMandatUrl(s, phone) {
-  const p = new URLSearchParams({ ref: s.ref || '', phone: phone || '', name: (s.names && s.names[0]) || s.nom || '', vol: s.vol || '', date: s.date || '', route: s.route || '', compagnie: s.compagnie || '', motif: s.incident_libelle || '', indemnite: '600', pax: String(s.pax || 1), lang: s.langue_code || 'fr', source: 'wati-bot-v8' });
+  const p = new URLSearchParams({ ref: s.ref || '', phone: phone || '', name: (s.names && s.names[0]) || s.nom || '', vol: s.vol || '', date: s.date || '', pnr: s.pnr || '', route: s.route || '', compagnie: s.compagnie || '', motif: s.incident_libelle || '', indemnite: '600', pax: String(s.pax || 1), lang: s.langue_code || 'fr', source: 'wati-bot-v8' });
   return `https://robindesairs.eu/mandat.html?${p.toString()}`;
 }
 
@@ -189,21 +189,34 @@ async function ocrBoardingPass(mediaUrl, cfg) {
     const imgRes = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {} });
     if (!imgRes.ok) return null;
     const b64 = Buffer.from(await imgRes.arrayBuffer()).toString('base64');
-    const prompt = `OCR carte d'embarquement/e-billet. Réponds UNIQUEMENT en JSON: {"vol":"","compagnie":"","date":"","pnr":"","depart":"","arrivee":"","nom":""}. vol=numéro majuscule sans espace; date=JJ/MM/AAAA; depart/arrivee=codes IATA 3 lettres; nom=MAJUSCULES; inconnu="".`;
+    const prompt = `Tu lis une carte d'embarquement / e-billet d'avion. Réponds UNIQUEMENT en JSON :
+{"vol":"","compagnie":"","date":"","pnr":"","depart":"","arrivee":"","nom":""}
+Règles STRICTES :
+- vol : numéro de vol en MAJUSCULES sans espace (ex. EJU7273, AF718).
+- compagnie : nom complet (déduis du code IATA si besoin).
+- date : "JJ/MM" si l'année N'EST PAS imprimée sur le document ; "JJ/MM/AAAA" UNIQUEMENT si l'année est réellement écrite. NE JAMAIS deviner ni inventer l'année (les cartes d'embarquement n'ont souvent pas l'année).
+- pnr : référence de réservation (libellés possibles : PNR, Booking ref, Réf, Record locator, Confirmation) — 5 à 8 caractères ALPHANUMÉRIQUES, souvent près du nom ou d'un code-barres. Cherche-la attentivement. Si vraiment absente, "".
+- depart / arrivee : codes IATA 3 lettres.
+- nom : nom du passager en MAJUSCULES.
+- Champ inconnu = "". Ne JAMAIS inventer.`;
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'gpt-4o-mini', max_tokens: 300, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${b64}` } }] }] }),
+      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 300, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${b64}` } }] }] }),
     });
     const data = await res.json(); if (!data.choices) return null;
     const p = JSON.parse(data.choices[0].message.content);
     const vol = (p.vol || '').toUpperCase().replace(/\s+/g, '');
     const route = (p.depart && p.arrivee) ? `${p.depart} → ${p.arrivee}` : '';
-    return { vol, compagnie: p.compagnie || deduceAirline(vol), date: p.date || '', pnr: p.pnr || '', route, nom: (p.nom || '').toUpperCase() };
+    const pnr = (p.pnr || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    return { vol, compagnie: p.compagnie || deduceAirline(vol), date: p.date || '', pnr: /^[A-Z0-9]{5,8}$/.test(pnr) ? pnr : '', route, nom: (p.nom || '').toUpperCase() };
   } catch (e) { return null; }
 }
 
 // ─── Helpers prescription / dates ──────────────────────────────────────────────
 function tooOld(dateStr) { const m = (dateStr || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); if (!m) return false; const d = new Date(+m[3], +m[2] - 1, +m[1]); return (Date.now() - d.getTime()) > 5 * 365.25 * 864e5; }
+// Date sans année (ex. "15/07") → il faut demander l'année (ne jamais la deviner).
+function needYear(d) { return /^\d{1,2}\/\d{1,2}$/.test((d || '').trim()); }
+function recentYears() { const base = new Date().getFullYear(); return [base, base - 1, base - 2, base - 3, base - 4]; }
 
 const STOP_FOOTER = '_L\'équipe Robin des Airs_';
 
@@ -306,7 +319,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
   if (s.step === 'scan') {
     if (mediaUrl) { const d = await ocrBoardingPass(mediaUrl, cfg);
       if (d && (d.vol || d.nom)) { Object.assign(s, { vol: d.vol || s.vol, compagnie: d.compagnie || s.compagnie, date: d.date || s.date, route: d.route || s.route, pnr: d.pnr || s.pnr }); if (d.nom) s.names[0] = d.nom; s.step = 'scan_confirm'; await setState(phone, s);
-        return sendButtons(phone, { body: `✅ Document lu !\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date || '—'}\n👤 Passager : ${s.names[0] || '—'}\n🗺️ Trajet : ${s.route || '—'}\n\nC'est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg); }
+        return sendButtons(phone, { body: `✅ Document lu !\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date || '—'}${needYear(s.date) ? ' _(année à préciser)_' : ''}\n🎫 PNR : ${s.pnr || '—'}\n👤 Passager : ${s.names[0] || '—'}\n🗺️ Trajet : ${s.route || '—'}\n\nC'est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg); }
       await send(phone, `😕 La qualité de l'image n'a pas permis la lecture. On fait à la main, ça prend 2 min. 👇`, cfg); s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
     }
     if (lower.includes('manuel') || lower.includes('manuelle')) { s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg); }
@@ -314,8 +327,22 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
   }
   if (s.step === 'scan_confirm') {
     const n = normInput(input, ['oui', 'corriger']);
-    if (n === '1' || lower.includes('oui')) { return apresVol(phone, s, cfg); }
+    if (n === '1' || lower.includes('oui')) {
+      if (needYear(s.date)) { s.step = 'annee'; await setState(phone, s); return askYear(phone, s, cfg); }
+      return apresVol(phone, s, cfg);
+    }
     s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
+  }
+  // Année manquante (carte sans année) → on la demande, jamais deviner
+  if (s.step === 'annee') {
+    const m = input.match(/\b(19\d{2}|20\d{2})\b/);
+    const year = m ? m[1] : null;
+    if (year) {
+      s.date = `${s.date.replace(/\/$/, '')}/${year}`;
+      if (tooOld(s.date)) { await clearState(phone); return send(phone, `😔 Vol trop ancien — délai légal dépassé.\nLa prescription est de 5 ans. Votre vol date du ${s.date}.\n❓ Si la date est incorrecte, tapez *menu*.\n\n${STOP_FOOTER}`, cfg); }
+      await setState(phone, s); return apresVol(phone, s, cfg);
+    }
+    return askYear(phone, s, cfg);
   }
 
   // Saisie manuelle vol/date (MSG10) — sert scan raté ET correction
@@ -420,6 +447,11 @@ async function sendPax(phone, s, cfg) {
     { title: '1 passager', description: '600 €' }, { title: '2 passagers', description: '1 200 €' }, { title: '3 passagers', description: '1 800 €' }, { title: '4 passagers', description: '2 400 €' }, { title: '5 passagers', description: '3 000 €' }, { title: '6 ou plus', description: 'On gère votre groupe' },
   ] }, cfg);
 }
+async function askYear(phone, s, cfg) {
+  s.step = 'annee'; await setState(phone, s);
+  const ys = recentYears();
+  await sendList(phone, { header: 'Année du vol', body: `${bar('annee')}\n📅 Quelle *année* pour le ${s.date} ?\n_(elle n'est pas imprimée sur la carte — je ne veux pas la deviner)_`, buttonText: 'Année ▾', items: ys.map(y => ({ title: String(y) })).concat([{ title: `Avant ${ys[ys.length - 1]}` }]) }, cfg);
+}
 async function estimationPuisPax(phone, s, cfg) { s.step = 'nb_pax'; await setState(phone, s); await send(phone, `💡 Votre vol avec *${s.incident_libelle}* = potentiellement *600 € par passager*. Continuons !`, cfg); return sendPax(phone, s, cfg); }
 async function sendMineurs(phone, s, cfg) {
   s.step = 'mineurs'; await setState(phone, s);
@@ -429,7 +461,7 @@ async function sendMineurs(phone, s, cfg) {
 async function sendRecap(phone, s, cfg) {
   s.step = 'recap'; await setState(phone, s);
   const noms = (s.names || []).filter(Boolean).join(', ') || '—';
-  await sendButtons(phone, { body: `${bar('recap')}\n📋 *Récapitulatif — confirmez svp*\n\n👥 ${s.pax} passager${s.pax > 1 ? 's' : ''} : ${noms}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n🛤️ ${s.type_vol === 'escale' ? 'Avec escale' : 'Direct'}\n💵 Objectif : *${montantNet(s.pax)} € nets* (75%)`, buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Modifier' }] }, cfg);
+  await sendButtons(phone, { body: `${bar('recap')}\n📋 *Récapitulatif — confirmez svp*\n\n👥 ${s.pax} passager${s.pax > 1 ? 's' : ''} : ${noms}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n🛤️ ${s.type_vol === 'escale' ? 'Avec escale' : 'Direct'}\n💵 Objectif : *${montantNet(s.pax)} € nets* (75%)`, buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Modifier' }] }, cfg);
 }
 
 // après vol+date connus → collecte des noms manquants
