@@ -923,6 +923,8 @@ function enqueteHtml(f){
   if(e.rotation){ const rd=e.rotation.arrivalDelayMin; rows.push(`<div><span class="k">Rotation</span> ${esc((e.rotation.flight||'')+' '+(e.rotation.from||'')+'→'+(e.rotation.to||''))}${rd!=null?(rd>30?` · arrivé <b class="enq-bad">+${rd} min</b> → retard en cascade probable`:` · arrivé à l'heure`):''}</div>`); }
   else if(e.rotationAnalyse) rows.push(`<div><span class="k">Rotation</span> ${esc(e.rotationAnalyse)}</div>`);
   if(e.meteo&&e.meteo.length) rows.push(`<div><span class="k">Météo</span> ${e.meteo.map(m=>`${esc(m.id)} <span class="muted">${esc(m.raw)}</span>`).join('<br>')}</div>`);
+  if(e.art9&&e.art9.note) rows.push(`<div><span class="k">Art. 9</span> 🏨 ${esc(e.art9.note)}</div>`);
+  if(e.hotelsProbables && !['-','—',''].includes(String(e.hotelsProbables).trim())) rows.push(`<div><span class="k">Hôtels</span> ${esc(e.hotelsProbables)} <span class="muted">(indicatif, pas l'hôtel exact)</span></div>`);
   if(e.autres&&e.autres!=='-'&&e.autres!=='—') rows.push(`<div><span class="k">Autres</span> ${esc(e.autres)}</div>`);
   if(e.sources&&e.sources.length) rows.push(`<div class="muted">Sources : ${e.sources.map(s=>`<a href="${esc(s)}" target="_blank" rel="noopener">${esc(s.replace(/^https?:\/\//,'').split('/')[0])}</a>`).join(' · ')}</div>`);
   return rows.length?`<div class="pm-enq">${rows.join('')}</div>`:'';
@@ -1034,12 +1036,12 @@ function flightDepMs(f){
   const ms=Date.parse(f.date+'T'+(/^\d{2}:\d{2}/.test(t)?t:'00:00')+':00Z');
   return Number.isNaN(ms)?null:ms;
 }
-// Annulation "de dernière minute" : vol déjà passé, aujourd'hui, ou départ dans < 24 h
-// (passager impacté → on enquête la cause). Sinon = annulée à l'avance → réacheminement.
+// Annulation "de dernière minute" : vol déjà passé, ou départ dans < 4 h (passager
+// probablement à l'aéroport → on enquête la cause). Au-delà = annulée à l'avance → réacheminement.
 function isLastMinuteCancel(f){
   const dep=flightDepMs(f);
   if(dep==null) return true;            // date inconnue → on enquête par prudence
-  return (dep - Date.now()) <= 24*3600*1000;
+  return (dep - Date.now()) <= 4*3600*1000;
 }
 async function enrichEnquetes(){
   if(ENQUETE_RUNNING) return;

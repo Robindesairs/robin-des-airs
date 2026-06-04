@@ -177,12 +177,14 @@ MÉTHODE (utilise web_search, croise plusieurs sources, cite chaque URL) :
 2. EUROCONTROL — régulations ATFM du jour sur l'aéroport/zone (motif : météo, capacité/staffing ATC, grève contrôleurs…) : signal fort. Une décision/restriction ATC ou une grève EXTERNE de contrôleurs = extraordinaire ; une saturation/organisation interne = non.
 3. NOTAM de l'aéroport (piste/espace fermé, équipement HS) + actualité grève/incident (contrôleurs, compagnie, aéroport) à la date.
 4. Croise avec le METAR fourni et la rotation précédente. Si les sources se contredisent, dis-le.
+5. HÔTELS (seulement si annulation ou retard avec nuitée probable) : cite 2-3 hôtels proches de l'aéroport de départ où les passagers sont susceptibles d'être logés, + l'hôtel habituel de la compagnie en cas d'irrégularité si tu le trouves (indicatif, pas l'hôtel exact).
 
 RÉPONDS EN FRANÇAIS, BREF, EXACTEMENT dans ce format (une ligne par champ) :
 CAUSE: <1-2 phrases>
 EXTRAORDINAIRE: OUI | NON | INCERTAIN — <raison en 1 phrase>
 ROTATION: <ce que montre la rotation précédente de l'appareil pour ce retard>
 AUTRES: <autres vols perturbés au même aéroport ce jour-là, sinon ->
+HÔTELS: <2-3 hôtels proches de l'aéroport de départ / hôtel habituel compagnie, sinon ->
 SOURCES: <url1 ; url2>`;
 
 async function callClaude(apiKey, model, userText) {
@@ -242,6 +244,7 @@ function parseReply(text) {
     extraordinaireRaison: extraLine.replace(/^(oui|non|incertain)\s*[—-]?\s*/i, '').trim(),
     rotationAnalyse: field(text, 'ROTATION'),
     autres: field(text, 'AUTRES'),
+    hotelsProbables: field(text, 'HÔTELS') || field(text, 'HOTELS'),
     sources,
     rawText: text || '',
   };
@@ -338,6 +341,17 @@ async function runEnquete(event, input, opts = {}) {
     errors.push('ANTHROPIC_API_KEY absent — cause non recherchée');
   }
 
+  // Art. 9 CE 261 — prise en charge due (déterministe, gratuit) : repas dès 2h, hébergement
+  // si annulation ou retard impliquant une nuitée. Non fourni → remboursement EN PLUS des 600 €.
+  const art9 = {
+    repasDu: !!input.cancelled || (retardMin != null && retardMin >= 120),
+    hotelDu: !!input.cancelled || (retardMin != null && retardMin >= 300),
+    note: '',
+  };
+  art9.note = art9.hotelDu
+    ? 'Hébergement + repas + transferts dus par la compagnie (Art. 9 CE 261) si une nuitée est nécessaire. Si non fourni → remboursement EN PLUS des 600 €.'
+    : (art9.repasDu ? 'Repas/rafraîchissements dus par la compagnie (Art. 9 CE 261) ; remboursement des frais avancés.' : '');
+
   const result = {
     ok: true,
     vol,
@@ -353,11 +367,13 @@ async function runEnquete(event, input, opts = {}) {
     aircraftModel,
     meteo,
     rotation,
+    art9,
     cause: analysis ? analysis.cause : '',
     extraordinaire: analysis ? analysis.extraordinaire : null,
     extraordinaireRaison: analysis ? analysis.extraordinaireRaison : '',
     rotationAnalyse: analysis ? analysis.rotationAnalyse : '',
     autres: analysis ? analysis.autres : '',
+    hotelsProbables: analysis ? analysis.hotelsProbables : '',
     sources: analysis ? analysis.sources : [],
     apiSources: [...new Set(sources)],
     errors,
