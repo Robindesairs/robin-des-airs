@@ -35,7 +35,7 @@ const PROGRESS = {
   scan: 5, scan_confirm: 5, m_vol: 5, m_date: 5, m_route: 5, names: 5, names_confirm: 5, names_fix_which: 5, names_fix_one: 5,
   vd_vol: 6, vd_date: 6, annee: 6, mineurs: 6, mineurs_which: 6,
   correction: 6, fix_vol: 6, fix_date: 6, fix_nom: 6, fix_route: 6,
-  recap: 7, documents: 7, doc_pass: 7, doc_boarding: 7, doc_eticket: 7, doc_cert: 7, rgpd: 7,
+  recap: 7, documents: 7, doc_pass: 7, doc_name: 7, doc_dob: 7, doc_boarding: 7, doc_eticket: 7, doc_cert: 7, rgpd: 7,
   done: 8,
 };
 function bar(step) { const n = PROGRESS[step] ?? 0; return '🟢'.repeat(n) + '⚪'.repeat(8 - n); }
@@ -219,6 +219,16 @@ function tooOld(dateStr) { const m = (dateStr || '').match(/(\d{1,2})\/(\d{1,2})
 function needYear(d) { return /^\d{1,2}\/\d{1,2}$/.test((d || '').trim()); }
 // Date dans le futur (> demain) → impossible pour un vol déjà perturbé.
 function inFuture(dateStr) { const m = (dateStr || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); if (!m) return false; return new Date(+m[3], +m[2] - 1, +m[1]).getTime() > Date.now() + 864e5; }
+// Mineur à la date du vol (ou aujourd'hui si date vol inconnue) à partir de la date de naissance.
+function isMinorAt(dob, flightDateStr) {
+  const b = (dob || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); if (!b) return false;
+  const birth = new Date(+b[3], +b[2] - 1, +b[1]);
+  const f = (flightDateStr || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  const ref = f ? new Date(+f[3], +f[2] - 1, +f[1]) : new Date();
+  let age = ref.getFullYear() - birth.getFullYear();
+  if (ref.getMonth() < birth.getMonth() || (ref.getMonth() === birth.getMonth() && ref.getDate() < birth.getDate())) age--;
+  return age < 18;
+}
 const FUTURE_JOKE = `😄 Là vous voyagez dans le futur ! Ce vol n'a pas encore eu lieu — on ne peut réclamer que pour un vol *déjà passé*. 🪄\n\nDonnez-moi la *vraie* date du vol (JJ/MM/AAAA) :`;
 function recentYears() { const base = new Date().getFullYear(); return [base, base - 1, base - 2, base - 3, base - 4]; }
 
@@ -242,7 +252,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
   // T2 — fallback IA hors-flux (question libre) → réponse + boutons
   try {
     const { isClientQuestion, isSensitive, answerClientQuestion } = require('./lib/robin-ai-responder');
-    const FREE = ['m_vol', 'm_date', 'm_route', 'names', 'vd_vol', 'vd_date', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'names_fix_which', 'names_fix_one'];
+    const FREE = ['m_vol', 'm_date', 'm_route', 'names', 'vd_vol', 'vd_date', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob'];
     const looks = FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input);
     if (looks) {
       if (isSensitive(input)) { await send(phone, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nTapez *menu* pour ouvrir/continuer votre dossier.`, cfg); return; }
@@ -446,9 +456,25 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
 
   // MSG13 — DOCUMENTS (passeports 1..n → carte → e-billet → certificat)
   if (s.step === 'doc_pass') {
-    if (mediaUrl) { await send(phone, `✅ Passeport ${s.doc_idx + 1}/${s.pax} reçu !`, cfg); s.doc_idx++; await setState(phone, s); return nextPassport(phone, s, cfg); }
-    if (lower === 'passer') { s.docs_pending = true; s.doc_idx++; await setState(phone, s); return nextPassport(phone, s, cfg); }
-    return send(phone, `🛂 Envoyez la photo du passeport, ou tapez *passer*.`, cfg);
+    s.passengers = s.passengers || [];
+    if (mediaUrl) { s.passengers[s.doc_idx] = { viaPhoto: true }; await send(phone, `✅ Passeport ${s.doc_idx + 1}/${s.pax} reçu ! _(nom & date de naissance lus dessus)_`, cfg); s.doc_idx++; await setState(phone, s); return nextPassport(phone, s, cfg); }
+    if (lower === 'passer') { s.passengers[s.doc_idx] = { skipped: true }; s.docs_pending = true; s.doc_idx++; await setState(phone, s); return nextPassport(phone, s, cfg); }
+    if (lower.includes('saisir') || lower.includes('manuel') || lower.includes('tape')) { s.step = 'doc_name'; await setState(phone, s); return send(phone, `👤 *Passager ${s.doc_idx + 1}* — Nom et prénom ?\n_(ex : Aminata Diallo)_`, cfg); }
+    return send(phone, `🛂 Envoyez la *photo du passeport*, tapez *saisir* (nom + date de naissance), ou *passer*.`, cfg);
+  }
+  if (s.step === 'doc_name') {
+    if (input.length >= 3 && !/^\d+$/.test(input)) { s.passengers = s.passengers || []; s.passengers[s.doc_idx] = { name: input.toUpperCase() }; s.step = 'doc_dob'; await setState(phone, s); return send(phone, `📅 *Date de naissance* de ${input} ? _(JJ/MM/AAAA)_`, cfg); }
+    return send(phone, `Nom trop court. Renvoyez nom et prénom :`, cfg);
+  }
+  if (s.step === 'doc_dob') {
+    const m = input.match(/(\d{1,2})[\/\-. ](\d{1,2})[\/\-. ](\d{2,4})/);
+    if (m) { const yy = m[3].length === 2 ? '19' + m[3] : m[3]; const dob = `${m[1].padStart(2, '0')}/${m[2].padStart(2, '0')}/${yy}`;
+      const minor = isMinorAt(dob, s.date);
+      const p = s.passengers[s.doc_idx] || {}; p.dob = dob; p.minor = minor; s.passengers[s.doc_idx] = p;
+      await send(phone, `✅ ${p.name || ('Passager ' + (s.doc_idx + 1))} — ${dob}${minor ? ' 👶 _(mineur·e : signature parentale requise)_' : ''}`, cfg);
+      s.doc_idx++; await setState(phone, s); return nextPassport(phone, s, cfg);
+    }
+    return send(phone, `Date non reconnue. Format JJ/MM/AAAA (ex. 05/09/2012) :`, cfg);
   }
   if (s.step === 'doc_boarding') {
     if (mediaUrl) { await send(phone, `✅ Carte d'embarquement reçue !`, cfg); return gotoEticket(phone, s, cfg); }
@@ -533,14 +559,14 @@ async function sendMineurs(phone, s, cfg) {
 }
 async function sendRecap(phone, s, cfg) {
   s.step = 'recap'; await setState(phone, s);
-  await sendButtons(phone, { body: `${bar('recap')}\n📋 *Récapitulatif — confirmez svp*\n\n👥 ${s.pax} passager${s.pax > 1 ? 's' : ''}${s.minorsPresent ? ' (dont mineur·s)' : ''}\n_Noms lus sur les passeports envoyés_\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n🛤️ ${s.type_vol === 'escale' ? 'Avec escale' : 'Direct'}\n💵 Objectif : *${montantNet(s.pax)} € nets* (75%)`, buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Modifier' }] }, cfg);
+  await sendButtons(phone, { body: `${bar('recap')}\n📋 *Récapitulatif — confirmez svp*\n\n👥 ${s.pax} passager${s.pax > 1 ? 's' : ''}\n_Identités à l'étape suivante (passeport ou saisie)_\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n🛤️ ${s.type_vol === 'escale' ? 'Avec escale' : 'Direct'}\n💵 Objectif : *${montantNet(s.pax)} € nets* (75%)`, buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Modifier' }] }, cfg);
 }
 
 // après vol+date connus → collecte des noms manquants
 async function apresVol(phone, s, cfg) {
-  // Zéro saisie de noms : ils seront lus sur les passeports envoyés à l'étape documents.
+  // Plus de question mineurs : l'âge vient du passeport / de la date de naissance (étape documents).
   s.names = s.names || [];
-  return sendMineurs(phone, s, cfg);
+  return sendRecap(phone, s, cfg);
 }
 async function askName(phone, s, cfg) {
   const names = s.names || [];
@@ -568,7 +594,7 @@ async function startDocuments(phone, s, cfg) {
 async function nextPassport(phone, s, cfg) {
   if (s.doc_idx >= s.pax) { return gotoBoarding(phone, s, cfg); }
   s.step = 'doc_pass'; await setState(phone, s);
-  return send(phone, `🛂 *Passeport ${s.doc_idx + 1} sur ${s.pax}*\nEnvoyez la photo de la page passeport (le nom y sera lu).\n✏️ Tapez *passer* pour l'envoyer plus tard.`, cfg);
+  return send(phone, `🛂 *Passager ${s.doc_idx + 1} sur ${s.pax}*\n📸 Envoyez la *photo du passeport* (nom + date de naissance lus automatiquement).\n✍️ Pas le passeport sous la main ? Tapez *saisir* (nom + date de naissance).\n⏭️ Ou *passer* pour plus tard.`, cfg);
 }
 async function gotoBoarding(phone, s, cfg) { s.step = 'doc_boarding'; await setState(phone, s); return send(phone, `🎫 Carte d'embarquement\nEnvoyez-en une photo pour le vol concerné.\n📧 Pas de carte ? Votre e-billet fonctionne aussi.\n✏️ *passer* · 📞 *appel* si tout perdu.`, cfg); }
 async function gotoEticket(phone, s, cfg) { s.step = 'doc_eticket'; await setState(phone, s); return send(phone, `📧 Confirmation de réservation (e-billet)\nEnvoyez une capture (pensez aux spams / appli Booking).\n✏️ *passer* · 📞 *appel*.`, cfg); }
@@ -576,10 +602,13 @@ async function gotoCert(phone, s, cfg) { s.step = 'doc_cert'; await setState(pho
 
 // MSG14 — RGPD + mandat + reçu + clôture
 async function finaliser(phone, s, cfg) {
+  const pax = s.passengers || [];
+  const nom = (pax[0] && pax[0].name) || (s.names && s.names[0]) || '—';
+  s.minorsCount = pax.filter(p => p && p.minor).length;
   s.ref = genRef(); s.mandat_url = buildMandatUrl(s, phone); s.step = 'done'; await setState(phone, s);
-  const nom = (s.names && s.names[0]) || '—';
+  const minorNote = s.minorsCount ? `\n👶 ${s.minorsCount} mineur·s : signature d'un parent/tuteur requise (un expert vous guide).` : '';
   await send(phone, `${bar('documents')}\n🔒 Avant la signature, votre vie privée d'abord.\nVos documents servent uniquement à réclamer votre indemnité. Jamais vendus ni partagés. Suppression possible à tout moment.\nEn continuant, vous acceptez :\n• Confidentialité : robindesairs.eu/politique-confidentialite\n• CGV : robindesairs.eu/cgv`, cfg);
-  await sendDelayed(phone, `🎉 Dossier enregistré ! Réf. *${s.ref}*\n\n👤 ${nom}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n💵 Objectif : *${montantNet(s.pax)} € nets*\n\nDernière étape : signez le mandat en 2 minutes.`, cfg, 700);
+  await sendDelayed(phone, `🎉 Dossier enregistré ! Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n💵 Objectif : *${montantNet(s.pax)} € nets*${minorNote}\n\nDernière étape : signez le mandat en 2 minutes.`, cfg, 700);
   await sendDelayed(phone, `${bar('done')}\n💰 *${s.compagnie || 'La compagnie'} vous doit jusqu'à 600 € + vos frais — Robin les récupère pour vous.*\n\n✔️ *0 € si on ne récupère rien.* 25 % seulement en cas de succès.\n✔️ Aucune info bancaire ici. ✔️ Vols avec correspondance couverts.\n\n👉 *Signez votre mandat (2 min, lisible avant signature) :*\n${s.mandat_url}\n\nSans signature, on ne peut pas agir en votre nom.\n${STOP_FOOTER} 🏹`, cfg, 700);
   await sendDelayed(phone, `🤝 Chez Robin des Airs, l'accompagnement est humain.\nVotre dossier est entre les mains d'un expert qui suivra chaque étape jusqu'au paiement.\n\n*L'IA ouvre le dossier. L'humain le gagne.* 🏹`, cfg, 700);
   try { const makeUrl = process.env.MAKE_WEBHOOK_NEW_DOSSIER; if (makeUrl) await fetch(makeUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...s, phone, source: 'wati-bot-v8' }) }); } catch (e) {}
