@@ -431,11 +431,10 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
       if (n === '2' || lower.includes('mineur')) { await clearState(phone); return send(phone, `👶 Passager mineur — signature parentale requise.\nLa loi exige qu'un parent/tuteur signe le mandat.\n📱 Un expert vous rappelle sous 24h.\n\n${STOP_FOOTER}`, cfg); }
       return sendButtons(phone, { body: `${bar('mineurs')}\n👤 Êtes-vous majeur(e) (18+) ?`, buttons: [{ text: '✅ Oui, majeur(e)' }, { text: '👶 Non, mineur(e)' }] }, cfg);
     }
-    if (n === '1' || lower.includes('tous majeurs') || lower.includes('majeur')) { s.mineurs = []; await setState(phone, s); return sendRecap(phone, s, cfg); }
-    if (n === '2' || lower.includes('mineur')) { s.step = 'mineurs_which'; s.mineurs = []; await setState(phone, s); return send(phone, `👶 Quels passagers sont mineurs ? Donnez leurs noms séparés par une virgule.\n_(${s.names.filter(Boolean).join(', ')})_`, cfg); }
+    if (n === '1' || lower.includes('tous majeurs')) { s.minorsPresent = false; await setState(phone, s); return sendRecap(phone, s, cfg); }
+    if (n === '2' || lower.includes('mineur')) { s.minorsPresent = true; await setState(phone, s); return send(phone, `👶 Bien noté — il y a des mineurs. La signature d'un parent/tuteur sera requise pour eux (on s'en occupe avec vous via les passeports). On continue 👇`, cfg).then(() => sendRecap(phone, s, cfg)); }
     return sendMineurs(phone, s, cfg);
   }
-  if (s.step === 'mineurs_which') { s.mineurs = input.split(',').map(x => x.trim().toUpperCase()).filter(Boolean); await setState(phone, s); return sendRecap(phone, s, cfg); }
 
   // MSG12 — RÉCAP
   if (s.step === 'recap') {
@@ -447,7 +446,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
 
   // MSG13 — DOCUMENTS (passeports 1..n → carte → e-billet → certificat)
   if (s.step === 'doc_pass') {
-    if (mediaUrl) { await send(phone, `✅ Passeport de ${s.names[s.doc_idx] || ('passager ' + (s.doc_idx + 1))} reçu ! (${s.doc_idx + 1}/${s.pax})`, cfg); s.doc_idx++; await setState(phone, s); return nextPassport(phone, s, cfg); }
+    if (mediaUrl) { await send(phone, `✅ Passeport ${s.doc_idx + 1}/${s.pax} reçu !`, cfg); s.doc_idx++; await setState(phone, s); return nextPassport(phone, s, cfg); }
     if (lower === 'passer') { s.docs_pending = true; s.doc_idx++; await setState(phone, s); return nextPassport(phone, s, cfg); }
     return send(phone, `🛂 Envoyez la photo du passeport, ou tapez *passer*.`, cfg);
   }
@@ -534,16 +533,14 @@ async function sendMineurs(phone, s, cfg) {
 }
 async function sendRecap(phone, s, cfg) {
   s.step = 'recap'; await setState(phone, s);
-  const noms = (s.names || []).filter(Boolean).join(', ') || '—';
-  await sendButtons(phone, { body: `${bar('recap')}\n📋 *Récapitulatif — confirmez svp*\n\n👥 ${s.pax} passager${s.pax > 1 ? 's' : ''} : ${noms}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n🛤️ ${s.type_vol === 'escale' ? 'Avec escale' : 'Direct'}\n💵 Objectif : *${montantNet(s.pax)} € nets* (75%)`, buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Modifier' }] }, cfg);
+  await sendButtons(phone, { body: `${bar('recap')}\n📋 *Récapitulatif — confirmez svp*\n\n👥 ${s.pax} passager${s.pax > 1 ? 's' : ''}${s.minorsPresent ? ' (dont mineur·s)' : ''}\n_Noms lus sur les passeports envoyés_\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n🛤️ ${s.type_vol === 'escale' ? 'Avec escale' : 'Direct'}\n💵 Objectif : *${montantNet(s.pax)} € nets* (75%)`, buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Modifier' }] }, cfg);
 }
 
 // après vol+date connus → collecte des noms manquants
 async function apresVol(phone, s, cfg) {
+  // Zéro saisie de noms : ils seront lus sur les passeports envoyés à l'étape documents.
   s.names = s.names || [];
-  s.name_idx = s.names[0] ? 1 : 0;
-  s.step = 'names'; await setState(phone, s);
-  return askName(phone, s, cfg);
+  return sendMineurs(phone, s, cfg);
 }
 async function askName(phone, s, cfg) {
   const names = s.names || [];
@@ -571,7 +568,7 @@ async function startDocuments(phone, s, cfg) {
 async function nextPassport(phone, s, cfg) {
   if (s.doc_idx >= s.pax) { return gotoBoarding(phone, s, cfg); }
   s.step = 'doc_pass'; await setState(phone, s);
-  return send(phone, `🛂 Passeport ${s.doc_idx + 1}/${s.pax} — ${s.names[s.doc_idx] || ('passager ' + (s.doc_idx + 1))}\nEnvoyez la photo de la page passeport.\n✏️ Tapez *passer* pour l'envoyer plus tard.`, cfg);
+  return send(phone, `🛂 *Passeport ${s.doc_idx + 1} sur ${s.pax}*\nEnvoyez la photo de la page passeport (le nom y sera lu).\n✏️ Tapez *passer* pour l'envoyer plus tard.`, cfg);
 }
 async function gotoBoarding(phone, s, cfg) { s.step = 'doc_boarding'; await setState(phone, s); return send(phone, `🎫 Carte d'embarquement\nEnvoyez-en une photo pour le vol concerné.\n📧 Pas de carte ? Votre e-billet fonctionne aussi.\n✏️ *passer* · 📞 *appel* si tout perdu.`, cfg); }
 async function gotoEticket(phone, s, cfg) { s.step = 'doc_eticket'; await setState(phone, s); return send(phone, `📧 Confirmation de réservation (e-billet)\nEnvoyez une capture (pensez aux spams / appli Booking).\n✏️ *passer* · 📞 *appel*.`, cfg); }
