@@ -124,9 +124,9 @@ async function sendList(phone, { header, body, footer, buttonText, items }, cfg)
         target: wa,
         type: 'list',
         list_message: {
-          ...(header ? { header: { type: 'text', text: clip(header, 60) } } : {}),
-          body: { text: body },
-          footer: { text: footer || 'robindesairs.eu' },
+          ...(header ? { header: clip(header, 60) } : {}),
+          body: body,
+          footer: footer || 'robindesairs.eu',
           action: { button: clip(buttonText || 'Choisir', 20), sections: [{ title: clip(header || 'Choix', 24), rows }] },
         },
       }),
