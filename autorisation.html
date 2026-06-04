@@ -306,13 +306,18 @@ input.err,textarea.err,select.err{border-color:var(--red)!important;background:v
   </div>
   <div class="field-row duo">
     <div>
-      <label>Aéroport de départ</label>
+      <label>Départ initial</label>
       <input type="text" id="dep" placeholder="Paris CDG">
     </div>
     <div>
-      <label>Aéroport d'arrivée</label>
+      <label>Destination finale</label>
       <input type="text" id="arr" placeholder="Banjul BJL">
     </div>
+  </div>
+  <div class="field-row">
+    <label>Correspondance(s) <span style="text-transform:none;letter-spacing:0;color:var(--muted)">— escale(s) et n° de vol(s), si votre voyage en comportait</span></label>
+    <input type="text" id="connecting" placeholder="Ex. : escale Bruxelles — vols SN271 puis SN204">
+    <div style="font-size:11px;color:var(--muted);margin-top:4px;font-style:italic">💡 Pour un voyage sous une même réservation, l'indemnité se calcule sur la <strong>destination finale</strong> et la <strong>distance totale</strong> — la correspondance est couverte.</div>
   </div>
   <!-- Compteur passagers caché — géré par JS -->
   <input type="hidden" id="pax" value="1">
@@ -337,8 +342,10 @@ input.err,textarea.err,select.err{border-color:var(--red)!important;background:v
   <div class="sec-title">⚖️ Conditions du mandat</div>
   <div class="clause le">
     <span class="cnum">Article 1 — Objet, double régime et adresse email du dossier</span>
-    <div class="plain">💡 <strong>En clair&nbsp;:</strong> Vous chargez Robin des Airs de récupérer l'argent que la compagnie vous doit. On agit d'abord en votre nom — ça garde l'accès à la médiation.</div>
+    <div class="plain">💡 <strong>En clair&nbsp;:</strong> Vous chargez Robin des Airs de récupérer l'argent que la compagnie vous doit. On agit d'abord en votre nom — ça garde l'accès à la médiation. Vol avec correspondance ? C'est l'arrivée finale qui compte — c'est couvert.</div>
     Le Mandant confie à Robin des Airs une mission <strong>exclusive</strong> de recouvrement, au titre du <strong>Règlement (CE) n° 261/2004</strong>, de l'<strong>indemnisation forfaitaire</strong> (art. 7) ainsi que <strong>du remboursement des frais engagés, de la prise en charge due (art. 8 et 9) et, le cas échéant, du préjudice complémentaire (art. 12)</strong> liés au retard, à l'annulation ou au refus d'embarquement, par toute voie amiable, administrative, judiciaire ou arbitrale.
+    <br><br>
+    <strong>Vols avec correspondance.</strong> Lorsque le voyage comporte une ou plusieurs correspondances sous une <strong>même réservation</strong>, le mandat couvre <strong>l'ensemble du voyage</strong>&nbsp;: l'indemnisation est déterminée par la <strong>destination finale</strong> et la <strong>distance totale</strong>, le retard étant apprécié à l'<strong>arrivée à la destination finale</strong> (CJUE, 26 février 2013, <em>Folkerts</em>, C-11/11).
     <br><br>
     Cette mission s'exerce selon un <strong>double régime</strong>&nbsp;: (1) un <strong>mandat de représentation (art. 1984 C. civ.)</strong> qui s'applique <strong>par défaut</strong> dès la signature — Robin des Airs agissant au nom du Mandant, qui <strong>conserve la qualité de créancier</strong>, ce régime préservant notamment l'accès du Mandant, en sa qualité de consommateur, à la <strong>médiation</strong>&nbsp;; et (2) une <strong>option de cession de créance à titre de recouvrement</strong> que Robin des Airs peut lever dans les conditions de l'<strong>Article 1 bis</strong> (modalités&nbsp;: Article 5 bis).
     <br><br>
@@ -1163,6 +1170,7 @@ function submitMandat() {
     passengersData: getPassengersData(),
     depAirport:document.getElementById('dep').value.trim(),
     arrAirport:document.getElementById('arr').value.trim(),
+    connecting: document.getElementById('connecting')?.value.trim() || '',
     signCity:  document.getElementById('sigCity').value.trim(),
     signDate:  document.getElementById('sigDate').value,
     signatureImg: document.getElementById('sigCanvas').toDataURL('image/png'),

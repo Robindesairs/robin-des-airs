@@ -119,6 +119,7 @@ function genererMandatPdf(record) {
     kv('Date du vol', record.flightDate);
     kv('PNR', record.pnr);
     kv('Itinéraire', [record.depAirport, record.arrAirport].filter(Boolean).join(' -> '));
+    if (record.connecting) kv('Correspondance(s)', record.connecting);
     kv('Incident', INCIDENT_LABEL[record.incident] || record.incident);
     doc.moveDown(0.4);
 
