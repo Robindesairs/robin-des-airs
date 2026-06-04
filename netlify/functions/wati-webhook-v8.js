@@ -259,7 +259,6 @@ async function askOcrConfirm(phone, s, cfg, mediaUrl) {
       `📋 *Passager ${i}/${s.pax} — j'ai lu :*`,
       `👤 ${pp.name || '—'}`,
       pp.dob ? `🎂 Né(e) le ${pp.dob}` : '',
-      pp.adresse ? `📍 ${pp.adresse}` : '',
       minor ? `👶 *Mineur·e* — signature parentale requise` : '',
       expired ? `⚠️ Pièce *expirée* (${pp.expiry}). On continue, un conseiller vérifiera.` : '',
       `\nC'est bien cette personne ?`,
