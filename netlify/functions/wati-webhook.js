@@ -1044,8 +1044,9 @@ function extractInbound(payload) {
     if (!waId) return;
     const phone = normalizeWaPhone(normalizeWatiPhone(waId));
     if (!String(text || '').trim()) return;
-    // Clé de dédup : id WATI du message si dispo, sinon téléphone+texte
-    const realId = item.id || item.messageId || item.whatsappMessageId || null;
+    // Clé de dédup : whatsappMessageId (ID WhatsApp STABLE) en priorité — WATI peut
+    // réémettre le même message avec un nouvel `id` interne mais le même wamid.
+    const realId = item.whatsappMessageId || item.whatsapp_message_id || item.id || item.messageId || null;
     const key = realId || `${phone}|${String(text).trim()}`;
     if (seen.has(key)) return;
     seen.add(key);
