@@ -35,7 +35,7 @@ const PROGRESS = {
   scan: 5, scan_confirm: 5, m_vol: 5, m_date: 5, m_route: 5, names: 5, names_confirm: 5, names_fix_which: 5, names_fix_one: 5,
   vd_vol: 6, vd_date: 6, annee: 6, mineurs: 6, mineurs_which: 6,
   correction: 6, fix_vol: 6, fix_date: 6, fix_nom: 6, fix_route: 6,
-  recap: 7, documents: 7, doc_pass: 7, doc_pass_confirm: 7, doc_name: 7, doc_dob: 7, doc_boarding: 7, doc_eticket: 7, doc_cert: 7, rgpd: 7,
+  recap: 7, documents: 7, doc_pass: 7, doc_pass_confirm: 7, doc_mandant: 7, doc_name: 7, doc_dob: 7, doc_boarding: 7, doc_eticket: 7, doc_cert: 7, rgpd: 7,
   done: 8,
 };
 function bar(step) { const n = PROGRESS[step] ?? 0; return '🟢'.repeat(n) + '⚪'.repeat(8 - n); }
@@ -179,7 +179,8 @@ function normInput(raw, options) { const t = (raw || '').trim().toLowerCase(); i
 const AIRLINES = { AF: 'Air France', SN: 'Brussels Airlines', TP: 'TAP Air Portugal', AT: 'Royal Air Maroc', HC: 'Air Sénégal', KQ: 'Kenya Airways', ET: 'Ethiopian Airlines', EK: 'Emirates', TK: 'Turkish Airlines', KL: 'KLM', LH: 'Lufthansa', IB: 'Iberia', EJU: 'easyJet', U2: 'easyJet', FR: 'Ryanair', TO: 'Transavia', KP: 'ASKY', DN: 'Senegal Airlines' };
 function deduceAirline(vol) { const m = (vol || '').toUpperCase().match(/^([A-Z]{2,3})\d/); return (m && AIRLINES[m[1]]) || ''; }
 function buildMandatUrl(s, phone) {
-  const p = new URLSearchParams({ ref: s.ref || '', phone: phone || '', name: (s.names && s.names[0]) || s.nom || '', vol: s.vol || '', date: s.date || '', pnr: s.pnr || '', route: s.route || '', compagnie: s.compagnie || '', motif: s.incident_libelle || '', indemnite: '600', pax: String(s.pax || 1), lang: s.langue_code || 'fr', source: 'wati-bot-v8', address: (s.passengers && s.passengers[0] && s.passengers[0].adresse) || '' });
+  const mandant = (s.passengers && s.passengers[s.mandant_idx != null ? s.mandant_idx : 0]) || {};
+  const p = new URLSearchParams({ ref: s.ref || '', phone: phone || '', name: mandant.name || (s.names && s.names[0]) || s.nom || '', vol: s.vol || '', date: s.date || '', pnr: s.pnr || '', route: s.route || '', compagnie: s.compagnie || '', motif: s.incident_libelle || '', indemnite: '600', pax: String(s.pax || 1), lang: s.langue_code || 'fr', source: 'wati-bot-v8', address: mandant.adresse || '' });
   return `https://robindesairs.eu/mandat.html?${p.toString()}`;
 }
 
@@ -547,6 +548,27 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
     }
     return sendButtons(phone, [{ id: 'pass_ok', text: '✅ C\'est correct' }, { id: 'pass_fix', text: '✏️ Corriger' }], cfg);
   }
+  if (s.step === 'doc_mandant') {
+    s.passengers = s.passengers || [];
+    // Résoudre l'index du signataire (bouton id 'mdt_N', numéro tapé, ou nom partiel)
+    let idx = -1;
+    if (id && /^mdt_\d+$/.test(id)) idx = parseInt(id.slice(4));
+    else if (/^\d+$/.test(n) && parseInt(n) >= 1 && parseInt(n) <= s.pax) idx = parseInt(n) - 1;
+    else {
+      const lowNames = (s.passengers).slice(0, s.pax).map(p => (p.name || '').toLowerCase());
+      idx = lowNames.findIndex(nm => nm && lower.split(' ').some(w => w.length > 2 && nm.includes(w)));
+    }
+    if (idx >= 0 && idx < s.pax) {
+      s.mandant_idx = idx; await setState(phone, s);
+      const chosen = s.passengers[idx] || {};
+      const addrNote = chosen.adresse
+        ? `\n📍 Adresse détectée : *${chosen.adresse}*\n_(pré-remplie sur le mandat — modifiable si besoin)_`
+        : `\n_(Aucune adresse lue sur la pièce — vous la saisirez sur le mandat.)_`;
+      await send(phone, `👤 *${chosen.name || `Passager ${idx + 1}`}* signe le mandat.${addrNote}`, cfg);
+      return gotoBoarding(phone, s, cfg);
+    }
+    return askMandant(phone, s, cfg);
+  }
   if (s.step === 'doc_name') {
     if (input.length >= 3 && !/^\d+$/.test(input)) { s.passengers = s.passengers || []; s.passengers[s.doc_idx] = { name: input.toUpperCase() }; s.step = 'doc_dob'; await setState(phone, s); return send(phone, `📅 *Date de naissance* de ${input} ? _(JJ/MM/AAAA)_`, cfg); }
     return send(phone, `Nom trop court. Renvoyez nom et prénom :`, cfg);
@@ -677,9 +699,20 @@ async function startDocuments(phone, s, cfg) {
   return nextPassport(phone, s, cfg);
 }
 async function nextPassport(phone, s, cfg) {
-  if (s.doc_idx >= s.pax) { return gotoBoarding(phone, s, cfg); }
+  if (s.doc_idx >= s.pax) { return askMandant(phone, s, cfg); }
   s.step = 'doc_pass'; await setState(phone, s);
   return send(phone, `🛂 *Passager ${s.doc_idx + 1} sur ${s.pax}*\n📸 Envoyez la *photo d'une pièce d'identité* (passeport, CNI, titre de séjour…) — nom + date de naissance lus automatiquement.\n✍️ Pas de pièce sous la main ? Tapez *saisir* (nom + date de naissance).\n⏭️ Ou *passer* pour plus tard.`, cfg);
+}
+async function askMandant(phone, s, cfg) {
+  // 1 seul passager → signataire évident, pas de question
+  if (s.pax <= 1) { s.mandant_idx = 0; await setState(phone, s); return gotoBoarding(phone, s, cfg); }
+  s.step = 'doc_mandant'; await setState(phone, s);
+  const names = (s.passengers || []).slice(0, s.pax).map((p, i) => p.name || `Passager ${i + 1}`);
+  await send(phone, `✅ Toutes les pièces sont collectées !\n\n*Qui va signer le mandat ?*\n_(Souvent vous — la personne qui ouvre le dossier.)_`, cfg);
+  if (names.length <= 3) {
+    return sendButtons(phone, names.map((nm, i) => ({ id: `mdt_${i}`, text: clip(nm, 20) })), cfg);
+  }
+  return sendList(phone, 'Choisir', [{ title: 'Passagers', rows: names.map((nm, i) => ({ id: `mdt_${i}`, title: clip(nm, 24), description: `Passager ${i + 1}` })) }], cfg);
 }
 async function gotoBoarding(phone, s, cfg) { s.step = 'doc_boarding'; await setState(phone, s); return send(phone, `🎫 Carte d'embarquement\nEnvoyez-en une photo pour le vol concerné.\n📧 Pas de carte ? Votre e-billet fonctionne aussi.\n✏️ *passer* · 📞 *appel* si tout perdu.`, cfg); }
 async function gotoEticket(phone, s, cfg) { s.step = 'doc_eticket'; await setState(phone, s); return send(phone, `📧 Confirmation de réservation (e-billet)\nEnvoyez une capture (pensez aux spams / appli Booking).\n✏️ *passer* · 📞 *appel*.`, cfg); }
