@@ -257,7 +257,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
     else if (n === '2' || lower.includes('escale')) s.type_vol = 'escale';
     else return sendButtons(phone, { body: `${bar('type_vol')}\n✈️ Vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg);
     s.step = 'scan'; await setState(phone, s);
-    await send(phone, `${bar('motivation')}\n🎉 ${s.pax} passager(s) = jusqu'à *${montantTotal(s.pax)} €* d'indemnité !\n\n💶 Vous percevez *${montantNet(s.pax)} € nets* (75%).\nRobin prélève 25% *uniquement* si nous obtenons le paiement. Si vous ne touchez rien → nous non plus.\n\nNotre intérêt est le vôtre. 🤝`, cfg);
+    await send(phone, `${bar('motivation')}\n🎉 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* d'indemnité !\n\n💶 Vous percevez *${montantNet(s.pax)} € nets* (75%).\nRobin prélève 25% *uniquement* si nous obtenons le paiement. Si vous ne touchez rien → nous non plus.\n\nNotre intérêt est le vôtre. 🤝`, cfg);
     return sendDelayed(phone, `${bar('scan')}\n⚡ On va vous faire gagner du temps !\n\nEnvoyez une *photo* de votre carte d'embarquement ou e-billet — je lis les infos automatiquement.${s.pax > 1 ? `\n\n👥 Vous êtes ${s.pax} — on demandera la carte de chacun.` : ''}\n\n📎 Envoyez votre document\n✏️ Ou tapez *manuel* pour saisir vous-même`, cfg, 800);
   }
 
@@ -385,7 +385,7 @@ async function sendMineurs(phone, s, cfg) {
 async function sendRecap(phone, s, cfg) {
   s.step = 'recap'; await setState(phone, s);
   const noms = (s.names || []).filter(Boolean).join(', ') || '—';
-  await sendButtons(phone, { body: `${bar('recap')}\n📋 *Récapitulatif — confirmez svp*\n\n👥 ${s.pax} passager(s) : ${noms}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n🛤️ ${s.type_vol === 'escale' ? 'Avec escale' : 'Direct'}\n💵 Objectif : *${montantNet(s.pax)} € nets* (75%)`, buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Modifier' }] }, cfg);
+  await sendButtons(phone, { body: `${bar('recap')}\n📋 *Récapitulatif — confirmez svp*\n\n👥 ${s.pax} passager${s.pax > 1 ? 's' : ''} : ${noms}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n🛤️ ${s.type_vol === 'escale' ? 'Avec escale' : 'Direct'}\n💵 Objectif : *${montantNet(s.pax)} € nets* (75%)`, buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Modifier' }] }, cfg);
 }
 
 // après vol+date connus → collecte des noms manquants
