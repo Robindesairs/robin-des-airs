@@ -179,7 +179,7 @@ function normInput(raw, options) { const t = (raw || '').trim().toLowerCase(); i
 const AIRLINES = { AF: 'Air France', SN: 'Brussels Airlines', TP: 'TAP Air Portugal', AT: 'Royal Air Maroc', HC: 'Air Sénégal', KQ: 'Kenya Airways', ET: 'Ethiopian Airlines', EK: 'Emirates', TK: 'Turkish Airlines', KL: 'KLM', LH: 'Lufthansa', IB: 'Iberia', EJU: 'easyJet', U2: 'easyJet', FR: 'Ryanair', TO: 'Transavia', KP: 'ASKY', DN: 'Senegal Airlines' };
 function deduceAirline(vol) { const m = (vol || '').toUpperCase().match(/^([A-Z]{2,3})\d/); return (m && AIRLINES[m[1]]) || ''; }
 function buildMandatUrl(s, phone) {
-  const p = new URLSearchParams({ ref: s.ref || '', phone: phone || '', name: (s.names && s.names[0]) || s.nom || '', vol: s.vol || '', date: s.date || '', pnr: s.pnr || '', route: s.route || '', compagnie: s.compagnie || '', motif: s.incident_libelle || '', indemnite: '600', pax: String(s.pax || 1), lang: s.langue_code || 'fr', source: 'wati-bot-v8' });
+  const p = new URLSearchParams({ ref: s.ref || '', phone: phone || '', name: (s.names && s.names[0]) || s.nom || '', vol: s.vol || '', date: s.date || '', pnr: s.pnr || '', route: s.route || '', compagnie: s.compagnie || '', motif: s.incident_libelle || '', indemnite: '600', pax: String(s.pax || 1), lang: s.langue_code || 'fr', source: 'wati-bot-v8', address: (s.passengers && s.passengers[0] && s.passengers[0].adresse) || '' });
   return `https://robindesairs.eu/mandat.html?${p.toString()}`;
 }
 
@@ -220,12 +220,13 @@ async function ocrPassport(mediaUrl, cfg) {
     if (!imgRes.ok) return null;
     const b64 = Buffer.from(await imgRes.arrayBuffer()).toString('base64');
     const prompt = `Tu lis une pièce d'identité (PASSEPORT, carte nationale d'identité, titre de séjour, carte de résident…) — utilise aussi la zone MRZ en bas si présente. Réponds UNIQUEMENT en JSON :
-{"nom":"","prenom":"","date_naissance":"","date_expiration":""}
+{"nom":"","prenom":"","date_naissance":"","date_expiration":"","adresse":""}
 Règles :
 - nom : nom de famille en MAJUSCULES.
 - prenom : prénom(s).
 - date_naissance : format JJ/MM/AAAA. Convertis depuis la MRZ (AAMMJJ) si besoin, en déduisant le siècle logiquement (une naissance est dans le passé).
 - date_expiration : date de fin de validité, format JJ/MM/AAAA (depuis la MRZ ou le champ imprimé). Si absente, "".
+- adresse : champ "Adresse", "Domicile" ou "Address" visible sur la page (hors MRZ). Recopie tel quel sur une seule ligne. Si absent, "".
 - Champ inconnu = "". Ne JAMAIS inventer.`;
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
@@ -236,7 +237,8 @@ Règles :
     const name = [p.prenom, p.nom].filter(Boolean).join(' ').toUpperCase().trim();
     const dob = (p.date_naissance || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/) ? p.date_naissance : '';
     const expiry = (p.date_expiration || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/) ? p.date_expiration : '';
-    return { name, dob, expiry };
+    const adresse = (p.adresse || '').trim();
+    return { name, dob, expiry, adresse };
   } catch (e) { return null; }
 }
 // Pièce expirée (date d'expiration passée) ?
@@ -492,8 +494,8 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
       if (pp && (pp.name || pp.dob)) {
         const minor = pp.dob ? isMinorAt(pp.dob, s.date) : false;
         const expired = pp.expiry ? isExpired(pp.expiry) : false;
-        s.passengers[s.doc_idx] = { name: pp.name || '', dob: pp.dob || '', expiry: pp.expiry || '', expired, minor, viaPhoto: true };
-        await send(phone, `✅ Pièce d'identité ${i}/${s.pax} lue !\n${pp.name || ''}${pp.dob ? ` — né(e) le ${pp.dob}` : ''}${minor ? '\n👶 *Mineur·e* — signature d\'un parent/tuteur (on vous guide).' : ''}${expired ? `\n⚠️ Cette pièce semble *expirée* (${pp.expiry}). Si possible, envoyez-en une *en cours de validité* — sinon on continue, un conseiller vérifiera.` : ''}`, cfg);
+        s.passengers[s.doc_idx] = { name: pp.name || '', dob: pp.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || '', viaPhoto: true };
+        await send(phone, `✅ Pièce d'identité ${i}/${s.pax} lue !\n${pp.name || ''}${pp.dob ? ` — né(e) le ${pp.dob}` : ''}${pp.adresse ? `\n📍 ${pp.adresse}` : ''}${minor ? '\n👶 *Mineur·e* — signature d\'un parent/tuteur (on vous guide).' : ''}${expired ? `\n⚠️ Cette pièce semble *expirée* (${pp.expiry}). Si possible, envoyez-en une *en cours de validité* — sinon on continue, un conseiller vérifiera.` : ''}`, cfg);
       } else {
         s.passengers[s.doc_idx] = { viaPhoto: true };
         await send(phone, `✅ Pièce d'identité ${i}/${s.pax} reçue ! _(nom & date de naissance vérifiés par notre équipe)_`, cfg);
