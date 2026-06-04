@@ -1111,6 +1111,12 @@ function verifyWatiSecret(body, headers, query) {
 
 // ─── Handler principal ────────────────────────────────────────────────────────
 exports.handler = async (event) => {
+  // 🔁 BOT UNIFIÉ : l'ancien bot est désormais DÉSACTIVÉ et délègue intégralement à la v8.
+  // Quelle que soit l'URL appelée par WATI (/api/wati-webhook ou /api/wati-webhook-v8),
+  // c'est la MÊME logique v8 qui répond → aucun risque de "deux bots". (réversible : retirer ce bloc)
+  try { return await require('./wati-webhook-v8').handler(event); }
+  catch (e) { console.error('wati-webhook: délégation v8 échouée', e.message); }
+
   // ⚠️ INDISPENSABLE : on mémorise l'event pour que la lib Blobs éprouvée (getBlobStore)
   // fasse connectLambda(event) — sinon l'état ne se sauvegarde pas (boucle d'accueil) et
   // saveInteractiveDebug plante (boutons en texte). Même mécanisme que radar-today.
