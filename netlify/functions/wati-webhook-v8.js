@@ -34,6 +34,7 @@ const PROGRESS = {
   type_vol: 4, motivation: 4,
   scan: 5, scan_confirm: 5, m_vol: 5, m_date: 5, m_route: 5, names: 5,
   vd_vol: 6, vd_date: 6, annee: 6, mineurs: 6, mineurs_which: 6,
+  correction: 6, fix_vol: 6, fix_date: 6, fix_nom: 6, fix_route: 6,
   recap: 7, documents: 7, doc_pass: 7, doc_boarding: 7, doc_eticket: 7, doc_cert: 7, rgpd: 7,
   done: 8,
 };
@@ -241,7 +242,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
   // T2 — fallback IA hors-flux (question libre) → réponse + boutons
   try {
     const { isClientQuestion, isSensitive, answerClientQuestion } = require('./lib/robin-ai-responder');
-    const FREE = ['m_vol', 'm_date', 'm_route', 'names', 'vd_vol', 'vd_date', 'mineurs_which'];
+    const FREE = ['m_vol', 'm_date', 'm_route', 'names', 'vd_vol', 'vd_date', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route'];
     const looks = FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input);
     if (looks) {
       if (isSensitive(input)) { await send(phone, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nTapez *menu* pour ouvrir/continuer votre dossier.`, cfg); return; }
@@ -335,7 +336,39 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
       if (inFuture(s.date)) { s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, FUTURE_JOKE, cfg); }
       return apresVol(phone, s, cfg);
     }
-    s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
+    s.fix_return = 'scan'; await setState(phone, s); return goCorrection(phone, s, cfg);
+  }
+
+  // ── MENU DE CORRECTION (champ par champ) ──────────────────────────────────
+  if (s.step === 'correction') {
+    const n = normInput(input, ['vol', 'date', 'nom', 'trajet']);
+    if (n === '1' || lower.includes('vol')) { s.step = 'fix_vol'; await setState(phone, s); return send(phone, `✈️ Nouveau *numéro de vol* ? _(ex. AF718)_`, cfg); }
+    if (n === '2' || lower.includes('date')) { s.step = 'fix_date'; await setState(phone, s); return send(phone, `📅 Nouvelle *date du vol* ? _(JJ/MM/AAAA)_`, cfg); }
+    if (n === '3' || lower.includes('nom')) { s.step = 'fix_nom'; await setState(phone, s); return send(phone, `👤 Nouveau *nom du passager principal* ?`, cfg); }
+    if (n === '4' || lower.includes('trajet') || lower.includes('route')) { s.step = 'fix_route'; await setState(phone, s); return send(phone, `🗺️ Nouveau *trajet* ? _(ex. CDG → DSS)_`, cfg); }
+    return goCorrection(phone, s, cfg);
+  }
+  if (s.step === 'fix_vol') {
+    const vol = input.toUpperCase().replace(/\s+/g, '');
+    if (/^[A-Z0-9]{3,8}$/.test(vol)) { s.vol = vol; s.compagnie = deduceAirline(vol) || s.compagnie || ''; await setState(phone, s); return afterFix(phone, s, cfg); }
+    return send(phone, `Numéro non reconnu (ex. AF718). Renvoyez-le :`, cfg);
+  }
+  if (s.step === 'fix_date') {
+    const m = input.match(/(\d{1,2})[\/\-. ](\d{1,2})[\/\-. ](\d{2,4})/);
+    if (m) { const yy = m[3].length === 2 ? '20' + m[3] : m[3]; const d = `${m[1].padStart(2, '0')}/${m[2].padStart(2, '0')}/${yy}`;
+      if (inFuture(d)) return send(phone, FUTURE_JOKE, cfg);
+      if (tooOld(d)) { await clearState(phone); return send(phone, `😔 Vol trop ancien (prescription 5 ans). Tapez *menu* si la date est incorrecte.\n\n${STOP_FOOTER}`, cfg); }
+      s.date = d; await setState(phone, s); return afterFix(phone, s, cfg);
+    }
+    return send(phone, `Date non reconnue. Format JJ/MM/AAAA :`, cfg);
+  }
+  if (s.step === 'fix_nom') {
+    if (input.length >= 3 && !/^\d+$/.test(input)) { s.names = s.names || []; s.names[0] = input.toUpperCase(); await setState(phone, s); return afterFix(phone, s, cfg); }
+    return send(phone, `Nom trop court. Renvoyez le nom complet :`, cfg);
+  }
+  if (s.step === 'fix_route') {
+    if (input.length >= 3) { s.route = input.replace(/->/g, '→').trim(); await setState(phone, s); return afterFix(phone, s, cfg); }
+    return send(phone, `Trajet trop court (ex. CDG → DSS) :`, cfg);
   }
   // Année manquante (carte sans année) → on la demande, jamais deviner
   if (s.step === 'annee') {
@@ -392,7 +425,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
   if (s.step === 'recap') {
     const n = normInput(input, ['correct', 'modifier']);
     if (n === '1' || lower.includes('correct')) { s.step = 'documents'; s.doc_idx = 0; await setState(phone, s); return startDocuments(phone, s, cfg); }
-    if (n === '2' || lower.includes('modifier')) { s.step = 'm_vol'; await setState(phone, s); return send(phone, `✏️ On reprend. Numéro de vol ? _(ex. AF718)_`, cfg); }
+    if (n === '2' || lower.includes('modifier')) { s.fix_return = 'recap'; await setState(phone, s); return goCorrection(phone, s, cfg); }
     return sendRecap(phone, s, cfg);
   }
 
@@ -459,6 +492,23 @@ async function askYear(phone, s, cfg) {
   s.step = 'annee'; await setState(phone, s);
   const ys = recentYears();
   await sendList(phone, { header: 'Année du vol', body: `${bar('annee')}\n📅 Quelle *année* pour le ${s.date} ?\n_(elle n'est pas imprimée sur la carte — je ne veux pas la deviner)_`, buttonText: 'Année ▾', items: ys.map(y => ({ title: String(y) })).concat([{ title: `Avant ${ys[ys.length - 1]}` }]) }, cfg);
+}
+async function goCorrection(phone, s, cfg) {
+  s.step = 'correction'; await setState(phone, s);
+  await sendList(phone, { header: 'Corriger', body: `✏️ Que souhaitez-vous corriger ?`, buttonText: 'Corriger ▾', items: [
+    { title: '✈️ Vol', description: s.vol || '—' },
+    { title: '📅 Date', description: s.date || '—' },
+    { title: '👤 Nom', description: (s.names && s.names[0]) || '—' },
+    { title: '🗺️ Trajet', description: s.route || '—' },
+  ] }, cfg);
+}
+async function showScanConfirm(phone, s, cfg) {
+  s.step = 'scan_confirm'; await setState(phone, s);
+  return sendButtons(phone, { body: `📋 Vérifiez :\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date || '—'}${needYear(s.date) ? ' _(année à préciser)_' : ''}\n🎫 PNR : ${s.pnr || '—'}\n👤 Passager : ${(s.names && s.names[0]) || '—'}\n🗺️ Trajet : ${s.route || '—'}\n\nC'est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg);
+}
+async function afterFix(phone, s, cfg) {
+  if (s.fix_return === 'recap') return sendRecap(phone, s, cfg);
+  return showScanConfirm(phone, s, cfg);
 }
 async function estimationPuisPax(phone, s, cfg) { s.step = 'nb_pax'; await setState(phone, s); await send(phone, `💡 Votre vol avec *${s.incident_libelle}* = potentiellement *600 € par passager*. Continuons !`, cfg); return sendPax(phone, s, cfg); }
 async function sendMineurs(phone, s, cfg) {
