@@ -25,8 +25,9 @@ RÈGLES STRICTES :
 - N'invente aucune donnée de dossier, aucun statut, aucun chiffre.
 - Termine en invitant à ouvrir/continuer le dossier (ex : "Voulez-vous que je vous aide à ouvrir votre dossier ? Tapez *menu*.").`;
 
-// Cas sensibles → on bascule vers un humain plutôt que de laisser l'IA répondre.
-const SENSITIVE = /(avocat|tribunal|procès|proc[eè]dure judiciaire|plainte|litige|rembours[eé].*refus|données personnelles|RGPD|supprim.*donn|porter plainte|parler à (quelqu'un|un humain|un conseiller|un agent)|réclamation contre robin|remboursez-moi|arnaque|escroquerie)/i;
+// Cas sensibles → on bascule vers un humain (rappel expert) plutôt que l'IA.
+// (sans accent toléré : "parler a quelqu'un", "etre rappele"…)
+const SENSITIVE = /(avocat|tribunal|procès|proc[eè]dure judiciaire|plainte|porter plainte|litige|rembours[eé].*refus|données personnelles|supprim.*donn|réclamation contre robin|remboursez[ -]?moi|parler\s+[àa]\s+(quelqu|un humain|une personne|un conseiller|un agent|un expert)|je veux parler|joindre\s+(quelqu|un humain|un conseiller|un agent)|un (vrai )?humain|[êe]tre rappel|me rappeler|rappelez[ -]?moi|num[ée]ro de t[ée]l)/i;
 
 function isSensitive(text) {
   return SENSITIVE.test(text || '');
@@ -37,14 +38,18 @@ function isSensitive(text) {
 // (« D'un aéroport en Europe », « Refus d'embarquement »…). On ne se fie donc PAS au
 // nombre de mots — uniquement à « ? » ou à un mot interrogatif en début de message.
 // Les titres de boutons n'ont jamais de « ? » et ne commencent pas par un interrogatif.
-const INTERROGATIVE = /^\s*(combien|comment|pourquoi|pourquoi|quand|où|ou\b|est-?ce|c'?est quoi|qu'?est|quel|quelle|quels|quelles|puis-?je|peut-?on|vous prenez|ça coûte|ca coute|c'?est gratuit|j'?ai droit|ai-?je droit|que faire|faut-?il)/i;
+const INTERROGATIVE = /^\s*(combien|comment|pourquoi|quand|où|est-?ce|c'?est quoi|qu'?est|quel|quelle|quels|quelles|puis-?je|peut-?on|vous prenez|ça coûte|ca coute|c'?est gratuit|j'?ai droit|ai-?je droit|que faire|faut-?il)/i;
+// Mots-clés FAQ détectés N'IMPORTE OÙ dans le message (sans risque sur les titres de
+// boutons, qui ne contiennent aucun de ces mots).
+const FAQ = /(arnaque|escroc|fiable|s[ée]rieux|garantie|confiance|combien|c'?est quoi|fonctionne|(ç|c|s)a\s*marche|(ça|ca)\s*(coûte|coute)|\bprix\b|tarif|gratuit|payer|d[ée]lai|rembours|\bdroit\b|éligib|eligib|comment|pourquoi)/i;
 function isClientQuestion(text) {
   const t = (text || '').trim();
   if (!t) return false;
   if (/^\d+$/.test(t)) return false;     // sélection numérique → script
-  if (t.length < 6) return false;        // trop court (oui/non/menu)
+  if (t.length < 5) return false;        // trop court (oui/non)
   if (t.includes('?')) return true;      // question explicite
-  if (INTERROGATIVE.test(t)) return true; // commence par un mot interrogatif
+  if (INTERROGATIVE.test(t)) return true; // mot interrogatif en tête
+  if (FAQ.test(t)) return true;          // mot-clé FAQ n'importe où
   return false;
 }
 
