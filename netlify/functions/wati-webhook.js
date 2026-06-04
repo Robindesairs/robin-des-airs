@@ -25,7 +25,8 @@ let LAMBDA_EVENT = null;
 function botStore() { return getBlobStore(LAMBDA_EVENT, 'robin-bot-state'); }
 // Garde-fou WATI : texte bouton ≤ 20, titre de liste ≤ 24 (sinon l'API renvoie une erreur).
 function clip(s, n) { s = String(s == null ? '' : s); return s.length <= n ? s : s.slice(0, n); }
-const { notifyOwnerWhatsApp } = require('./lib/owner-notify');
+const { notifyOwnerWhatsApp, notifyOwner } = require('./lib/owner-notify');
+const { sendCallMeBot } = require('./lib/callmebot');
 
 const HEADERS = {
   'Content-Type': 'application/json',
@@ -348,7 +349,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
     const { isClientQuestion, isSensitive, answerClientQuestion } = require('./lib/robin-ai-responder');
     // Étapes de saisie libre : une adresse/nom/compagnie ne doit PAS être prise pour une question.
     // Sur ces étapes, on n'intercepte que si le message contient explicitement « ? ».
-    const FREE_TEXT_STEPS = ['manuel_vol','manuel_compagnie','manuel_date','manuel_pnr','manuel_route','manuel_nom','email','adresse','ocr_waiting'];
+    const FREE_TEXT_STEPS = ['manuel_vol','manuel_compagnie','manuel_date','manuel_pnr','manuel_route','manuel_nom','email','adresse','ocr_waiting','hotel_ask'];
     const askLooks = FREE_TEXT_STEPS.includes(s.step) ? input.includes('?') : isClientQuestion(input);
     if (askLooks) {
       if (isSensitive(input)) {
@@ -587,12 +588,37 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
     return;
   }
 
-  // ── REMBOURSEMENTS (info) → OCR ───────────────────────────────────────────
+  // ── REMBOURSEMENTS (info) → HÔTEL (subtil) ────────────────────────────────
   if (s.step === 'remboursements') {
-    s.step = 'ocr';
+    s.step = 'hotel_ask';
     await setState(phone, s);
     await sendButtons(phone, {
-      body: `${bar('ocr')}\n📋 *Carte d'embarquement ou e-ticket*\n\n👍 *On vous fait gagner du temps* — une photo nette permet de remplir le dossier automatiquement.`,
+      body: `🏨 *Une dernière chose...*\n\nLa compagnie vous a-t-elle *logé à l'hôtel* à cause de ce vol ?\n\nSi oui, dites-moi *lequel* — ça renforce votre dossier (on récupère ces frais en plus). Sinon, touchez *Non*.`,
+      footer: 'Hôtel pris en charge ?',
+      buttons: [{ text: 'Non, pas d\'hôtel' }],
+    }, cfg);
+    return;
+  }
+
+  // ── HÔTEL (question subtile) → alerte WhatsApp propriétaire → OCR ──────────
+  if (s.step === 'hotel_ask') {
+    if (mediaUrl) { s.hotel = ''; s.step = 'ocr'; await setState(phone, s); await processOcr(phone, s, mediaUrl, cfg); return; }
+    const t = (input || '').trim();
+    const neg = /^(non|nan|pas|aucun|aucune|rien|skip|passer|suivant|0|n)\b/i.test(t);
+    if (!neg && t.length >= 2) {
+      s.hotel = t.slice(0, 200);
+      // Alerte WhatsApp INSTANTANÉE au propriétaire (CallMeBot) + Telegram/email en secours.
+      const alerte = `🏨 Hôtel signalé par un client\n\nClient : +${phone}\nVol : ${s.vol || '?'}${s.compagnie ? ' (' + s.compagnie + ')' : ''}${s.date ? ' · ' + s.date : ''}\nHôtel : « ${s.hotel} »\n\n→ La compagnie l'a hébergé : prise en charge Art. 9 — pense à récupérer le justificatif.`;
+      try { await sendCallMeBot(alerte); } catch (e) { console.error('hotel callmebot:', e.message); }
+      try { await notifyOwner('🏨 Hôtel client +' + phone, alerte); } catch (e) { /* secours */ }
+    } else {
+      s.hotel = '';
+    }
+    s.step = 'ocr';
+    await setState(phone, s);
+    const ack = s.hotel ? `✅ Noté, merci — *${s.hotel}*. Gardez la facture de l'hôtel, on la récupère.\n\n` : '';
+    await sendButtons(phone, {
+      body: `${ack}${bar('ocr')}\n📋 *Carte d'embarquement ou e-ticket*\n\n👍 *On vous fait gagner du temps* — une photo nette permet de remplir le dossier automatiquement.`,
       footer: 'C\'est le plus rapide',
       buttons: [{ text: '📸 Photo' }, { text: '✍️ Saisir' }],
     }, cfg);
