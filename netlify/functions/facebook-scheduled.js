@@ -14,7 +14,7 @@
  *   META_AD_PAGE_ID         — id de la Page FB (ou FACEBOOK_PAGE_ID).
  */
 
-const GRAPH = 'https://graph.facebook.com/v19.0';
+const { GRAPH, resolveMeta } = require('./lib/meta-resolve');
 
 const HEADERS = {
   'Content-Type': 'application/json',
@@ -31,10 +31,15 @@ const fail = (error, extra = {}) => ({
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: HEADERS, body: '' };
 
-  const token = (process.env.META_PAGE_ACCESS_TOKEN || process.env.META_ADS_ACCESS_TOKEN || '').trim();
-  const pageId = (process.env.META_AD_PAGE_ID || process.env.FACEBOOK_PAGE_ID || '').trim();
-  if (!token) return fail('META_PAGE_ACCESS_TOKEN manquant');
-  if (!pageId) return fail('META_AD_PAGE_ID (id de Page FB) manquant');
+  let token, pageId;
+  try {
+    // Token + Page résolus automatiquement (réutilise le token ads valide).
+    const r = await resolveMeta();
+    token = r.pageToken; pageId = r.pageId;
+    if (!pageId) return fail('Page Facebook introuvable (aucune Page gérée par ce token, ou META_AD_PAGE_ID requis)');
+  } catch (e) {
+    return fail(e.message);
+  }
 
   try {
     let scheduled = 0;

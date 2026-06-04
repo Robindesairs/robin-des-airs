@@ -16,7 +16,7 @@
  *   META_AD_PAGE_ID         — id de la Page FB (fallback pour résoudre l'IG id)
  */
 
-const GRAPH = 'https://graph.facebook.com/v19.0';
+const { GRAPH, gget, resolveMeta } = require('./lib/meta-resolve');
 
 const HEADERS = {
   'Content-Type': 'application/json',
@@ -30,33 +30,13 @@ const fail = (error, extra = {}) => ({
   body: JSON.stringify({ ok: false, error, ...extra }),
 });
 
-async function gget(path, token, params = {}) {
-  const qs = new URLSearchParams({ ...params, access_token: token }).toString();
-  const res = await fetch(`${GRAPH}/${path}?${qs}`);
-  const json = await res.json();
-  if (json.error) throw new Error(json.error.message);
-  return json;
-}
-
-// Résout l'id du compte IG Business depuis la Page FB si non fourni explicitement.
-async function resolveIgId(token) {
-  const explicit = (process.env.INSTAGRAM_BUSINESS_ID || '').trim();
-  if (explicit) return explicit;
-  const pageId = (process.env.META_AD_PAGE_ID || '').trim();
-  if (!pageId) return null;
-  const j = await gget(pageId, token, { fields: 'instagram_business_account' });
-  return j.instagram_business_account ? j.instagram_business_account.id : null;
-}
-
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: HEADERS, body: '' };
 
-  const token = (process.env.META_PAGE_ACCESS_TOKEN || process.env.META_ADS_ACCESS_TOKEN || '').trim();
-  if (!token) return fail('META_PAGE_ACCESS_TOKEN manquant');
-
   try {
-    const igId = await resolveIgId(token);
-    if (!igId) return fail('Compte IG Business introuvable (INSTAGRAM_BUSINESS_ID ou META_AD_PAGE_ID requis)');
+    // Token + Page + IG résolus automatiquement (réutilise le token ads valide).
+    const { pageToken: token, igId } = await resolveMeta();
+    if (!igId) return fail('Compte IG Business introuvable. Vérifiez que la Page Facebook est bien liée à un compte Instagram Business, ou définissez INSTAGRAM_BUSINESS_ID.');
 
     // Profil : followers + media_count total
     const profile = await gget(igId, token, { fields: 'followers_count,media_count,username' });
