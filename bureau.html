@@ -1050,7 +1050,7 @@ const SOCIAL = { targets: [
   { k:"Commentaires", tgt:30, ic:"💬", field:"comments" },
   { k:"Clics WhatsApp", tgt:50, ic:"👉", field:"whatsappClicks" },
   { k:"Conversations sociales", tgt:15, ic:"🤝", field:"socialConversations" },
-], real:null };
+], real:null, scheduledFB:null };
 function renderSocial(){
   const el=document.getElementById('socialBody'); if(!el) return;
   const R = SOCIAL.real;
@@ -1060,9 +1060,26 @@ function renderSocial(){
     return `<div class="social-stat"><div class="ss-top"><span>${m.ic} ${m.k}</span><span class="ss-pct">${v!=null?pct+'%':'—'}</span></div>
       <div class="ss-v"><b>${v!=null?fmt(v):'—'}</b><span> / ${fmt(m.tgt)} ce mois</span></div>
       <div class="mf-bar"><i style="width:${pct}%;background:var(--blue)"></i></div></div>`;
-  }).join('')+`</div><div class="renta-note">${R
+  }).join('')+`</div>${socialSchedNote()}<div class="renta-note">${R
     ? `IG réel (mois en cours${R.followers!=null?` · ${fmt(R.followers)} abonnés`:''}). Clics WhatsApp & conversations DM non mesurables en organique → « — ».`
     : `Cibles organiques IG + FB · lancement juin. Réalisé non connecté — brancher l'API Instagram pour les chiffres réels.`}</div>`;
+}
+// Bandeau « posts programmés (FB) » — répond à « où sont mes posts prévus ? ».
+// Ceux planifiés mais pas encore publiés (invisibles côté publications IG).
+function socialSchedNote(){
+  const s = SOCIAL.scheduledFB;
+  if(s==null) return '';
+  if(s.error) return `<div class="renta-note" style="color:var(--amber)">Posts programmés FB : indisponible (${s.error}).</div>`;
+  if(!s.scheduled) return `<div class="renta-note">📅 Aucun post Facebook programmé en file d'attente.</div>`;
+  const when = s.earliest ? new Date(s.earliest).toLocaleDateString('fr-FR',{day:'numeric',month:'short'}) : null;
+  const to = s.latest ? new Date(s.latest).toLocaleDateString('fr-FR',{day:'numeric',month:'short'}) : null;
+  const range = when ? ` · prochain le ${when}${to&&to!==when?` → jusqu'au ${to}`:''}` : '';
+  return `<div class="renta-note" style="color:var(--green)">📅 <b>${fmt(s.scheduled)}${s.capped?'+':''}</b> post(s) Facebook programmé(s)${range}. (Instagram ne montre pas ses programmés via l'API.)</div>`;
+}
+// Branche le compteur de posts FB programmés (Graph API /scheduled_posts).
+async function loadFacebookScheduled(){
+  const d = await jget('/api/facebook-scheduled');
+  if(d){ SOCIAL.scheduledFB = d.ok ? d : { error: d.error || 'erreur' }; renderSocial(); }
 }
 // Branche les vrais chiffres IG (publications/likes/commentaires du mois).
 async function loadInstagram(){
@@ -1240,7 +1257,7 @@ async function loadProtected(){
   setSrcBadge();
 }
 async function loadRealData(){
-  await Promise.allSettled([ loadRadar(), loadWhatsApp(), loadBureauStats(), loadMetaStats(), loadInstagram(), loadProtected() ]);
+  await Promise.allSettled([ loadRadar(), loadWhatsApp(), loadBureauStats(), loadMetaStats(), loadInstagram(), loadFacebookScheduled(), loadProtected() ]);
   setSrcBadge();
 }
 
