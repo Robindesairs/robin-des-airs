@@ -224,6 +224,23 @@ async function readInteractiveDebug() {
   } catch { return null; }
 }
 
+// Dédup PERSISTANTE entre invocations (retries WATI). Fenêtre courte si pas d'id
+// (pour ne pas bloquer un vrai message répété légitime), large si id WATI unique.
+async function isDuplicateMessage(id, hasId) {
+  if (!id) return false;
+  try {
+    const { getStore } = require('@netlify/blobs');
+    const store = getStore({ name: 'robin-bot-state', consistency: 'strong' });
+    const k = 'seen/' + String(id).replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 200);
+    const prev = await store.get(k, { type: 'json' });
+    const now = Date.now();
+    const windowMs = hasId ? 600000 : 60000; // 10 min si id unique, 60 s sinon
+    if (prev && prev.t && (now - prev.t) < windowMs) return true;
+    await store.setJSON(k, { t: now });
+    return false;
+  } catch { return false; } // en cas d'échec Blobs, on ne bloque pas le message
+}
+
 async function clearState(phone) {
   try {
     const { getStore } = require('@netlify/blobs');
@@ -1002,10 +1019,11 @@ function extractInbound(payload) {
     const phone = normalizeWaPhone(normalizeWatiPhone(waId));
     if (!String(text || '').trim()) return;
     // Clé de dédup : id WATI du message si dispo, sinon téléphone+texte
-    const key = item.id || item.messageId || item.whatsappMessageId || `${phone}|${String(text).trim()}`;
+    const realId = item.id || item.messageId || item.whatsappMessageId || null;
+    const key = realId || `${phone}|${String(text).trim()}`;
     if (seen.has(key)) return;
     seen.add(key);
-    list.push({ phone, text: String(text || '').slice(0, 4096), mediaUrl });
+    list.push({ phone, text: String(text || '').slice(0, 4096), mediaUrl, dedupId: key, hasId: !!realId });
   };
   if (Array.isArray(payload)) { payload.forEach(push); return list; }
   push(payload);
@@ -1065,8 +1083,10 @@ exports.handler = async (event) => {
   const cfg = watiCfg();
   const items = extractInbound(body);
 
-  for (const { phone, text, mediaUrl } of items) {
+  for (const { phone, text, mediaUrl, dedupId, hasId } of items) {
     if (!phone) continue;
+    // Dédup persistante : ignore un message déjà traité (retry WATI sur lenteur réseau).
+    if (await isDuplicateMessage(dedupId, hasId)) { console.log('wati-bot: doublon ignoré', dedupId); continue; }
     try { await appendWaMessage(event, phone, { role: 'user', text, source: 'wati' }); } catch {}
     // notifie le propriétaire qu'un client écrit (email + Telegram, anti-spam 30 min/numéro)
     try { await notifyOwnerWhatsApp(phone, text); } catch (e) { console.error('owner-notify:', e.message); }
