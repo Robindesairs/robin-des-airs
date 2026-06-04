@@ -492,7 +492,7 @@ function extractInbound(payload) {
     const realId = item.whatsappMessageId || item.whatsapp_message_id || item.id || item.messageId || null;
     const key = realId || `${phone}|${String(text).trim()}`;
     if (seen.has(key)) return; seen.add(key);
-    list.push({ phone, text: String(text || '').slice(0, 4096), mediaUrl, dedupId: key, hasId: !!realId });
+    list.push({ phone, text: String(text || '').slice(0, 4096), mediaUrl, dedupId: key, hasId: !!realId, interactive: !!(listReply || btnReply) });
   };
   if (Array.isArray(payload)) { payload.forEach(push); return list; }
   push(payload);
@@ -521,11 +521,13 @@ exports.handler = async (event) => {
   if (!verifyWatiSecret(body, event.headers || {}, event.queryStringParameters || {})) return { statusCode: 401, headers: HEADERS, body: JSON.stringify({ error: 'Secret invalide' }) };
   const cfg = watiCfg(); const items = extractInbound(body);
   try { await saveInboundDebug(event.body || '{}', items); } catch {}
-  for (const { phone, text, mediaUrl, dedupId, hasId } of items) {
+  for (const { phone, text, mediaUrl, dedupId, hasId, interactive } of items) {
     if (!phone) continue;
     if (await isDuplicateMessage(dedupId, hasId)) continue;
+    // Absorbe les double-taps du même bouton/liste (id WATI différent mais même contenu) sur ~60 s.
+    if (interactive && await isDuplicateMessage(`ck|${phone}|${String(text).trim().toLowerCase()}`, false)) continue;
     try { await appendWaMessage(event, phone, { role: 'user', text, source: 'wati-v8' }); } catch {}
-    try { await notifyOwnerWhatsApp(phone, text); } catch (e) {}
+    notifyOwnerWhatsApp(phone, text).catch(() => {}); // fire-and-forget : ne ralentit plus la réponse au client
     try { await handleMessage(phone, text, cfg, mediaUrl); }
     catch (e) { console.error('v8 handleMessage error', e.message, e.stack); if (cfg) await send(phone, `Une erreur est survenue. Tapez *menu* pour recommencer.`, cfg); }
   }
