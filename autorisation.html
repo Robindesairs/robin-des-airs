@@ -93,6 +93,9 @@ body{background:var(--bg);font-family:'Montserrat',sans-serif;color:var(--text);
 label{display:block;font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-bottom:6px;font-weight:600}
 label .req{color:var(--red);margin-left:2px}
 input,select,textarea{width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:'Montserrat',sans-serif;font-size:13px;color:var(--ink);transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;border-radius:6px}
+.wa-phone-row{display:flex;gap:8px;align-items:stretch}
+.wa-phone-row .wa-indicatif-select{width:auto;flex:0 0 auto;max-width:50%}
+.wa-phone-row .wa-national-input{flex:1 1 auto;width:auto}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(0,200,122,.15)}
 input.ro{background:var(--green-tint);border-color:#B8DDC9;color:var(--green-deep);font-weight:600}
 textarea{resize:vertical;min-height:72px}
@@ -256,7 +259,47 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="field-row duo">
     <div>
       <label>WhatsApp <span class="req">*</span></label>
-      <input type="tel" id="wa" placeholder="+33 6 12 34 56 78">
+      <div class="wa-phone-row">
+        <select id="wa-indicatif" class="wa-indicatif-select" aria-label="Indicatif pays" onchange="syncWa()">
+          <optgroup label="Afrique de l'Ouest &amp; centrale">
+            <option value="221">🇸🇳 +221 Sénégal</option>
+            <option value="223">🇲🇱 +223 Mali</option>
+            <option value="226">🇧🇫 +226 Burkina Faso</option>
+            <option value="227">🇳🇪 +227 Niger</option>
+            <option value="228">🇹🇬 +228 Togo</option>
+            <option value="229">🇧🇯 +229 Bénin</option>
+            <option value="225">🇨🇮 +225 Côte d'Ivoire</option>
+            <option value="224">🇬🇳 +224 Guinée</option>
+            <option value="233">🇬🇭 +233 Ghana</option>
+            <option value="234">🇳🇬 +234 Nigeria</option>
+            <option value="237">🇨🇲 +237 Cameroun</option>
+            <option value="241">🇬🇦 +241 Gabon</option>
+            <option value="242">🇨🇬 +242 Congo</option>
+            <option value="243">🇨🇩 +243 RDC</option>
+          </optgroup>
+          <optgroup label="Afrique — autres">
+            <option value="212">🇲🇦 +212 Maroc</option>
+            <option value="213">🇩🇿 +213 Algérie</option>
+            <option value="216">🇹🇳 +216 Tunisie</option>
+            <option value="20">🇪🇬 +20 Égypte</option>
+            <option value="254">🇰🇪 +254 Kenya</option>
+            <option value="27">🇿🇦 +27 Afrique du Sud</option>
+          </optgroup>
+          <optgroup label="Europe &amp; autres">
+            <option value="33" selected>🇫🇷 +33 France</option>
+            <option value="32">🇧🇪 +32 Belgique</option>
+            <option value="41">🇨🇭 +41 Suisse</option>
+            <option value="44">🇬🇧 +44 Royaume-Uni</option>
+            <option value="351">🇵🇹 +351 Portugal</option>
+            <option value="34">🇪🇸 +34 Espagne</option>
+            <option value="49">🇩🇪 +49 Allemagne</option>
+            <option value="31">🇳🇱 +31 Pays-Bas</option>
+            <option value="1">🇺🇸 +1 États-Unis / Canada</option>
+          </optgroup>
+        </select>
+        <input type="tel" id="wa-national" class="wa-national-input" inputmode="numeric" autocomplete="tel-national" placeholder="6 12 34 56 78" oninput="syncWa()">
+      </div>
+      <input type="hidden" id="wa">
       <div class="ferr" id="waErr">Numéro requis</div>
     </div>
     <div>
@@ -656,7 +699,7 @@ window.addEventListener('DOMContentLoaded', () => {
   if (VOL)  document.getElementById('fnum').value = VOL;
   if (CIE)  document.getElementById('cie').value  = CIE;
   if (PNR)  document.getElementById('pnr').value  = PNR;
-  if (WA_PREFILL) document.getElementById('wa').value = decodeURIComponent(WA_PREFILL);
+  if (WA_PREFILL) setWaFull(decodeURIComponent(WA_PREFILL));
   if (DATE) {
     const p = DATE.split('/');
     if (p.length===3) document.getElementById('fdate').value = `${p[2]}-${p[1]}-${p[0]}`;
@@ -695,7 +738,7 @@ function applyLegacyUrlParams() {
     setIfEmpty('ln', parts.slice(1).join(' '));
   }
   const phone = P.get('phone') || P.get('whatsapp') || P.get('wa') || P.get('waId');
-  if (phone) setIfEmpty('wa', decodeURIComponent(phone));
+  if (phone && !(document.getElementById('wa-national')?.value || '').trim()) setWaFull(decodeURIComponent(phone));
   setIfEmpty('addr', P.get('address') || '');
   const urlEmail = (P.get('email') || '').trim();
   const techEmail = clientEmailForRef(REF);
@@ -1109,6 +1152,25 @@ function calcProgress() {
   if (document.getElementById('mainCheck')?.checked) n++;
   document.getElementById('pgBar').style.width = Math.round(n/8*100)+'%';
 }
+// ── WhatsApp : indicatif (drapeau) + numéro → #wa caché (numéro complet) ──
+function syncWa(){
+  const sel = document.getElementById('wa-indicatif');
+  const nat = (document.getElementById('wa-national')?.value || '').replace(/[^\d]/g,'');
+  const hid = document.getElementById('wa');
+  if (hid) hid.value = nat ? '+' + (sel ? sel.value : '') + nat : '';
+}
+// Pré-remplissage depuis un contact client (URL ?phone=) → découpe indicatif + numéro local.
+function setWaFull(full){
+  let d = String(full || '').trim().replace(/^\+/,'').replace(/^00/,'').replace(/[^\d]/g,'');
+  const sel = document.getElementById('wa-indicatif');
+  const nat = document.getElementById('wa-national');
+  if (!sel || !nat) return;
+  const codes = Array.from(sel.options).map(o=>o.value).filter(Boolean).sort((a,b)=>b.length-a.length);
+  const m = codes.find(c => d.startsWith(c));
+  if (m){ sel.value = m; nat.value = d.slice(m.length); }
+  else { nat.value = d.replace(/^0+/,''); }   // pas d'indicatif reconnu → numéro local, indicatif par défaut
+  syncWa();
+}
 // ── VALIDATION ───────────────────────────────────────────────────
 function showE(id,eId,show) {
   document.getElementById(id)?.[show?'classList':'classList'][show?'add':'remove']('err');
@@ -1117,7 +1179,7 @@ function showE(id,eId,show) {
 }
 function validate() {
   let ok = true;
-  [['fn','fnErr'],['ln','lnErr'],['wa','waErr'],['addr','addrErr'],
+  [['fn','fnErr'],['ln','lnErr'],['wa-national','waErr'],['addr','addrErr'],
    ['fdate','fdErr'],['inc','incErr'],['sigCity','sigCityErr']
   ].forEach(([id,e])=>{
     const empty=!document.getElementById(id)?.value.trim();
