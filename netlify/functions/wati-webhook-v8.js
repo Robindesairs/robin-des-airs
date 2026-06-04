@@ -117,7 +117,8 @@ async function sendList(phone, { header, body, footer, buttonText, items }, cfg)
   const rows = items.map((i, idx) => ({ id: String(idx + 1), title: clip(i.title, 24), description: clip(i.description || '', 72) }));
   try {
     const res = await fetch(`${cfg.base}/api/v1/sendInteractiveListMessage?${qs}`, {
-      method: 'POST', headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
+      // ⚠️ WATI exige Content-Type: text/json pour les listes — sinon WhatsApp rend en texte (confirmé par le support WATI).
+      method: 'POST', headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'text/json' },
       // WATI attend des `sections`/`rows` (pas `listItems`). On envoie les deux pour compat.
       body: JSON.stringify({
         header: clip(header || '', 60), body, footer: footer || 'robindesairs.eu',
