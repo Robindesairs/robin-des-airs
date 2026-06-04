@@ -239,9 +239,14 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
 
   // MSG5 — PASSAGERS
   if (s.step === 'nb_pax') {
-    const n = parseInt(normInput(input, ['1 passager', '2 passager', '3 passager', '4 passager', '5 passager', '6 ou plus']));
-    if (n === 6 || lower.includes('6 ou plus') || lower.includes('6 ou')) { await clearState(phone); return send(phone, `👥 Groupe de 6+ passagers — dossier prioritaire !\nPotentiellement plus de 3 600 €.\nPour les groupes, traitement manuel :\n👉 robindesairs.eu/depot-express\n\n${STOP_FOOTER}`, cfg); }
-    if (n >= 1 && n <= 5) { s.pax = n; s.names = []; s.step = 'type_vol'; await setState(phone, s); return sendButtons(phone, { body: `${bar('type_vol')}\n✈️ C'était un vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg); }
+    const n = parseInt(normInput(input, ['1 passager', '2 passager', '3 ou plus']));
+    if (n === 1 || n === 2) { s.pax = n; s.names = []; s.step = 'type_vol'; await setState(phone, s); return sendButtons(phone, { body: `${bar('type_vol')}\n✈️ C'était un vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg); }
+    if (n >= 3 || lower.includes('3 ou plus') || lower.includes('groupe') || lower.includes('plus')) {
+      // Groupe 3+ : bascule directe expert prioritaire, DANS WhatsApp (lead conservé)
+      s.pax = n >= 3 ? n : 3; s.escalade = 'groupe_3plus'; s.step = 'done'; await setState(phone, s);
+      try { const makeUrl = process.env.MAKE_WEBHOOK_NEW_DOSSIER; if (makeUrl) await fetch(makeUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...s, phone, source: 'wati-bot-v8-groupe' }) }); } catch (e) {}
+      return send(phone, `👥 *Groupe de ${s.pax}${n >= 3 ? '' : '+'} passagers — dossier prioritaire !* 🎉\nPotentiellement *à partir de ${montantTotal(s.pax)} €*.\n\nVu le nombre de passagers (mandats multiples, signatures éventuelles de mineurs), un *expert Robin des Airs* prend la main pour votre groupe.\n📱 Il vous rappelle directement ICI — laissez cette conversation ouverte. 🤝\n\n${STOP_FOOTER}`, cfg);
+    }
     return sendPax(phone, s, cfg);
   }
 
@@ -364,11 +369,11 @@ async function sendRoute(phone, s, cfg) {
     { title: '🌍 Afrique ↔ Europe', description: 'Notre spécialité' }, { title: '🇪🇺 Europe ↔ Europe' }, { title: '🛫 Départ/arrivée Europe' }, { title: '🌐 Autre' },
   ] }, cfg);
 }
-async function sendIncident(phone, s, cfg) { s.step = 'incident'; await setState(phone, s); await sendButtons(phone, { body: `${bar('incident')}\n✈️ Que s'est-il passé avec votre vol ?`, buttons: [{ text: "⏱️ Retard à l'arrivée" }, { text: '❌ Annulation' }, { text: "🚫 Refus d'embarq." }] }, cfg); }
+async function sendIncident(phone, s, cfg) { s.step = 'incident'; await setState(phone, s); await sendButtons(phone, { body: `${bar('incident')}\n✈️ Que s'est-il passé avec votre vol ?`, buttons: [{ text: '⏱️ Retard arrivée' }, { text: '❌ Annulation' }, { text: "🚫 Refus d'embarq." }] }, cfg); }
 async function sendPax(phone, s, cfg) {
   s.step = 'nb_pax'; await setState(phone, s);
   await sendList(phone, { body: `${bar('nb_pax')}\n👥 Combien de passagers réclament sur ce vol ?`, buttonText: 'Nombre ▾', items: [
-    { title: '1 passager', description: '600 €' }, { title: '2 passagers', description: '1 200 €' }, { title: '3 passagers', description: '1 800 €' }, { title: '4 passagers', description: '2 400 €' }, { title: '5 passagers', description: '3 000 €' }, { title: '6 ou plus', description: 'Dossier prioritaire' },
+    { title: '1 passager', description: '600 €' }, { title: '2 passagers', description: '1 200 €' }, { title: '3 ou plus', description: 'Groupe — expert dédié' },
   ] }, cfg);
 }
 async function estimationPuisPax(phone, s, cfg) { s.step = 'nb_pax'; await setState(phone, s); await send(phone, `💡 Votre vol avec *${s.incident_libelle}* = potentiellement *600 € par passager*. Continuons !`, cfg); return sendPax(phone, s, cfg); }
