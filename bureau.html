@@ -162,8 +162,11 @@ body { font-family: 'DM Sans', sans-serif; background: var(--sky); color: var(--
 
 /* radar mini */
 .radar-list .r { display:flex; align-items:center; gap:10px; padding:0.6rem 1.2rem; border-bottom:1px solid rgba(255,255,255,0.04); font-size:0.8rem; }
-.radar-list .fl { font-family:'JetBrains Mono',monospace; font-weight:500; color:var(--white); width:62px; }
-.radar-list .rt { color:var(--white-70); flex:1; }
+.radar-list .fl { font-family:'JetBrains Mono',monospace; font-weight:500; color:var(--white); min-width:62px; }
+.radar-list .rt { color:var(--white-70); flex:1; line-height:1.3; }
+.radar-list .hrs { display:block; font-family:'JetBrains Mono',monospace; font-size:.66rem; color:var(--white-40); margin-top:2px; }
+.radar-list .reg { display:inline-block; margin-left:6px; font-family:'JetBrains Mono',monospace; font-size:.62rem; color:var(--white-40); }
+.radar-list .hrs .z, .pm-fsub .z { opacity:.55; }
 .radar-list .bd { font-family:'JetBrains Mono',monospace; font-weight:600; }
 .bd.delay{color:var(--amber)} .bd.cancel{color:var(--red)}
 .radar-list .eu { font-size:0.7rem; color:var(--gold-light); font-weight:600; }
@@ -181,11 +184,14 @@ body { font-family: 'DM Sans', sans-serif; background: var(--sky); color: var(--
 .pm-body h4{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin:14px 0 8px}
 .pm-stat{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05)}
 .pm-stat b{color:#fff;font-family:'JetBrains Mono',monospace}
-.pm-flight{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.82rem}
-.pm-flight .fl{font-family:'JetBrains Mono',monospace;font-weight:600;width:56px;color:#fff}
+.pm-flight{display:flex;align-items:center;flex-wrap:wrap;gap:9px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.82rem}
+.pm-flight .fl{font-family:'JetBrains Mono',monospace;font-weight:600;min-width:56px;color:#fff}
 .pm-flight .rt{flex:1;color:var(--white-70)}
 .pm-flight .bd{font-family:'JetBrains Mono',monospace;font-weight:600}.pm-flight .bd.cancel{color:var(--red)}.pm-flight .bd.delay{color:var(--amber)}
 .pm-flight .eu{color:var(--gold-light);font-weight:600}
+.pm-fsub{flex-basis:100%;font-size:.72rem;color:var(--white-40);margin-top:4px;line-height:1.5;font-family:'JetBrains Mono',monospace}
+.pm-fsub a{color:var(--gold-light);text-decoration:none}
+.pm-fsub .bd{font-size:.72rem}
 .pm-empty{color:var(--white-40);padding:10px 0;font-style:italic}
 .pm-foot{padding:14px 18px;border-top:1px solid var(--sky-border);display:flex;gap:10px;flex-wrap:wrap}
 .pm-link{display:inline-flex;align-items:center;gap:6px;background:var(--gold-pale);border:1px solid rgba(200,168,90,.4);color:var(--gold-light);padding:9px 16px;border-radius:9px;text-decoration:none;font-size:.84rem;font-weight:600}
@@ -875,7 +881,21 @@ setInterval(()=>{ if(GAME.comboTimer>0){ GAME.comboTimer--; if(GAME.comboTimer==
 
 /* ============ DÉTAIL POSTE (clic) — vraies données ============ */
 function pmStat(label,val){ return `<div class="pm-stat"><span>${label}</span><b>${val}</b></div>`; }
-function pmFlight(f){ const c=f.kind==='cancel'; return `<div class="pm-flight"><span class="fl">${f.fl}</span><span class="rt">${f.r||''}</span><span class="bd ${c?'cancel':'delay'}">${c?'ANNULÉ':(f.detail||'retard')}</span><span class="eu">${f.eu} €</span></div>`; }
+// Bloc heures compact (UTC) — dép STD→ETD · arr STA→ETA (ETA en gras). Le « Z » des heures est retiré, label UTC unique.
+function fhours(f){
+  const t=s=> s ? String(s).replace(/Z$/,'') : s;
+  const bits=[];
+  const std=t(f.std), etd=t(f.etd); const dep=(etd&&etd!==std)?`${std||'—'}→${etd}`:(std||'');
+  if(dep) bits.push('dép '+dep);
+  if(f.sta||f.eta) bits.push('arr '+(t(f.sta)||'—')+'→<b>'+(t(f.eta)||'—')+'</b>');
+  return bits.length ? bits.join(' · ')+' <span class="z">UTC</span>' : '';
+}
+function pmFlight(f){
+  const c=f.kind==='cancel';
+  const meta=[ f.statut?`<span class="bd ${c?'cancel':'delay'}">${f.statut}</span>`:'', f.reg?`✈︎ ${f.reg}`:'', f.date?`📅 ${String(f.date).slice(0,10)}`:'', f.tracker?`<a href="${f.tracker}" target="_blank" rel="noopener">suivre ↗</a>`:'' ].filter(Boolean).join(' · ');
+  const sub=[fhours(f), meta].filter(Boolean).join('<br>');
+  return `<div class="pm-flight"><span class="fl">${f.fl}</span><span class="rt">${f.r||''}</span><span class="bd ${c?'cancel':'delay'}">${c?'ANNULÉ':(f.detail||'retard')}</span><span class="eu">${f.eu} €</span>${sub?`<div class="pm-fsub">${sub}</div>`:''}</div>`;
+}
 function posteContent(i){
   const taux = S.total>0?Math.round(S.gagnes/S.total*100):0;
   const flights = REAL.radar || [];
@@ -944,8 +964,9 @@ function renderRadar(){
     // données réelles /api/vol-ticker
     REAL.radar.slice(0,8).forEach(f=>{
       const cancel = f.kind==='cancel';
+      const hrs = fhours(f);
       const el=document.createElement('div'); el.className='r';
-      el.innerHTML=`<span class="fl">${f.fl}</span><span class="rt">${f.r}</span>
+      el.innerHTML=`<span class="fl">${f.fl}</span><span class="rt">${f.r}${f.reg?`<span class="reg">${f.reg}</span>`:''}${hrs?`<span class="hrs">${hrs}</span>`:''}</span>
         <span class="bd ${cancel?'cancel':'delay'}">${cancel?'ANNULÉ':(f.detail||'retard')}</span>
         <span class="eu">${f.eu} €</span>`;
       radarEl.appendChild(el);
@@ -1217,16 +1238,28 @@ function setSrcBadge(){
   if(real>0){ el.className='src-badge real'; el.textContent='🟢 '+real+' source'+(real>1?'s':'')+' réelle'+(real>1?'s':''); }
   else { el.className='src-badge demo'; el.textContent='🟡 En attente de données réelles'; }
 }
-// Normalise un vol /api/vol-ticker → {fl, r, kind, detail, eu}
+// Normalise un vol /api/radar-today OU /api/vol-ticker → {fl,r,kind,detail,eu,std,etd,sta,eta,delayMin,statut,reg,tracker,date}
 function normFlight(f){
   // route : soit fournie, soit construite depuis dep→arr (vols vol-ticker : dep/arr/via)
   const route = f.route || f.r || ((f.dep && f.arr) ? (f.dep+' → '+f.arr+(f.via?' ('+f.via+')':'')) : '');
+  const cancelled = f.cancelled || f.kind==='cancel' || f.statut==='ANNULE';
+  const delayMin = f.delayMinutes!=null ? f.delayMinutes : (f.retardMin!=null ? f.retardMin : null);
   return {
     fl: f.flight || f.fl || '—',
     r: route,
-    kind: f.kind || (f.cancelled ? 'cancel' : 'delay'),
-    detail: f.detail || (f.cancelled ? '' : (f.delayMinutes ? '+'+Math.floor(f.delayMinutes/60)+'h'+String(f.delayMinutes%60).padStart(2,'0') : '')),
-    eu: f.compensation || f.eu || 600
+    kind: cancelled ? 'cancel' : 'delay',
+    detail: f.detail || (cancelled ? '' : (delayMin ? '+'+Math.floor(delayMin/60)+'h'+String(delayMin%60).padStart(2,'0') : '')),
+    eu: f.compensation || f.eu || 600,
+    // heures conservées — vol-ticker: scheduled*/estimated* · radar-today: std/sta/eta
+    std: f.scheduledDeparture || f.std || null,
+    etd: f.estimatedDeparture || f.actualDeparture || null,
+    sta: f.scheduledArrival || f.sta || null,
+    eta: f.landedAtZulu || f.estimatedArrival || f.eta || null,
+    delayMin,
+    statut: f.statusFr || (cancelled ? 'Annulé' : (f.statut==='RETARD' ? 'Retardé' : (f.statut==='A_LHEURE' ? 'À l\'heure' : null))),
+    reg: f.registration || null,
+    tracker: f.trackerUrl || null,
+    date: f.scheduledDate || f.date || f.dateLabel || null
   };
 }
 async function loadRadar(){
@@ -1255,8 +1288,8 @@ async function loadRadar(){
     REAL.radar.slice(0,3).forEach(f=>{
       const el=document.createElement('div'); el.className='feed-item';
       el.innerHTML=`<div class="feed-ic" style="--fp:var(--blue-pale)">🛰️</div>
-        <div class="feed-c"><div class="feed-txt">Radar : <b>${f.fl}</b> ${f.r} ${f.kind==='cancel'?'annulé':'retardé '+(f.detail||'')} → <span class="eur">${f.eu} €</span> éligible</div>
-        <div class="feed-meta">radar CE261</div></div>`;
+        <div class="feed-c"><div class="feed-txt">Radar : <b>${f.fl}</b> ${f.r} ${f.kind==='cancel'?'annulé':'retardé '+(f.detail||'')}${f.eta?` (arr. ${String(f.eta).replace(/Z$/,'')} UTC)`:''} → <span class="eur">${f.eu} €</span> éligible</div>
+        <div class="feed-meta">radar CE261${f.std?` · dép ${String(f.std).replace(/Z$/,'')}`:''}</div></div>`;
       document.getElementById('feed').insertBefore(el, document.getElementById('feed').firstChild);
     });
   }

@@ -30,7 +30,7 @@ const PROGRESS = {
   accueil: 0, langue: 0,
   route: 1,
   incident: 2, duree: 2,
-  nb_pax: 3,
+  nb_pax: 3, nb_pax_exact: 3,
   type_vol: 4, motivation: 4,
   scan: 5, scan_confirm: 5, m_vol: 5, m_date: 5, m_route: 5, names: 5,
   vd_vol: 6, vd_date: 6, mineurs: 6, mineurs_which: 6,
@@ -113,13 +113,22 @@ async function sendList(phone, { header, body, footer, buttonText, items }, cfg)
   if (!cfg) return;
   const wa = normalizeWatiPhone(phone);
   const qs = new URLSearchParams({ whatsappNumber: wa, channelPhoneNumber: cfg.channel });
+  const rows = items.map(i => ({ title: clip(i.title, 24), description: clip(i.description || '', 72) }));
   try {
     const res = await fetch(`${cfg.base}/api/v1/sendInteractiveListMessage?${qs}`, {
       method: 'POST', headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ header: header || '', body, footer: footer || 'robindesairs.eu', buttonText: buttonText || 'Choisir ▾', listItems: items.map(i => ({ title: clip(i.title, 24), description: clip(i.description || '', 72) })) }),
+      // WATI attend des `sections`/`rows` (pas `listItems`). On envoie les deux pour compat.
+      body: JSON.stringify({
+        header: clip(header || '', 60), body, footer: footer || 'robindesairs.eu',
+        buttonText: clip(buttonText || 'Choisir', 20),
+        sections: [{ title: clip(header || 'Choix', 24), rows }],
+        listItems: rows,
+      }),
     });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok || data.result === false || data.error || data.ok === false) {
+    const failed = !res.ok || data.result === false || data.error || data.ok === false;
+    await saveInteractiveDebug({ fn: 'sendList', status: res.status, failed, resp: data });
+    if (failed) {
       await send(phone, (header ? `*${header}*\n\n` : '') + body + '\n\n' + items.map((it, idx) => `${idx + 1} — ${it.title}`).join('\n'), cfg);
     }
   } catch (e) { await send(phone, body + '\n\n' + items.map((it, idx) => `${idx + 1} — ${it.title}`).join('\n'), cfg); }
@@ -138,6 +147,8 @@ async function saveInboundDebug(rawBody, items) {
   } catch (e) {}
 }
 async function readInboundDebug() { try { const st = botStore(); if (!st) return null; return await st.get('debug/inbound', { type: 'json' }); } catch { return null; } }
+async function saveInteractiveDebug(obj) { try { const st = botStore(); if (!st) return; await st.setJSON('debug/interactive', { ...obj, ts: new Date().toISOString() }); } catch (e) {} }
+async function readInteractiveDebug() { try { const st = botStore(); if (!st) return null; return await st.get('debug/interactive', { type: 'json' }); } catch { return null; } }
 async function isDuplicateMessage(id, hasId) {
   if (!id) return false;
   try { const st = botStore(); if (!st) return false;
@@ -256,15 +267,15 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
 
   // MSG5 — PASSAGERS
   if (s.step === 'nb_pax') {
-    const n = parseInt(normInput(input, ['1 passager', '2 passager', '3 ou plus']));
-    if (n === 1 || n === 2) { s.pax = n; s.names = []; s.step = 'type_vol'; await setState(phone, s); return sendButtons(phone, { body: `${bar('type_vol')}\n✈️ C'était un vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg); }
-    if (n >= 3 || lower.includes('3 ou plus') || lower.includes('groupe') || lower.includes('plus')) {
-      // Groupe 3+ : bascule directe expert prioritaire, DANS WhatsApp (lead conservé)
-      s.pax = n >= 3 ? n : 3; s.escalade = 'groupe_3plus'; s.step = 'done'; await setState(phone, s);
-      try { const makeUrl = process.env.MAKE_WEBHOOK_NEW_DOSSIER; if (makeUrl) await fetch(makeUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...s, phone, source: 'wati-bot-v8-groupe' }) }); } catch (e) {}
-      return send(phone, `👥 *Groupe de ${s.pax}${n >= 3 ? '' : '+'} passagers — dossier prioritaire !* 🎉\nPotentiellement *à partir de ${montantTotal(s.pax)} €*.\n\nVu le nombre de passagers (mandats multiples, signatures éventuelles de mineurs), un *expert Robin des Airs* prend la main pour votre groupe.\n📱 Il vous rappelle directement ICI — laissez cette conversation ouverte. 🤝\n\n${STOP_FOOTER}`, cfg);
-    }
+    const n = parseInt(normInput(input, ['1 passager', '2 passager', '3 passager', '4 passager', '5 passager', '6 ou plus']));
+    if (n >= 1 && n <= 5) { s.pax = n; s.names = []; s.step = 'type_vol'; await setState(phone, s); return sendButtons(phone, { body: `${bar('type_vol')}\n✈️ C'était un vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg); }
+    if (n >= 6 || lower.includes('6 ou plus') || lower.includes('plus')) { s.step = 'nb_pax_exact'; await setState(phone, s); return send(phone, `${bar('nb_pax')}\n👥 *Combien de passagers en tout ?*\nIndiquez le nombre total (ex. 8). On gère votre groupe directement ici. 🤝`, cfg); }
     return sendPax(phone, s, cfg);
+  }
+  if (s.step === 'nb_pax_exact') {
+    const m = input.match(/\d{1,2}/); const n = m ? parseInt(m[0]) : 0;
+    if (n >= 1 && n <= 30) { s.pax = n; s.names = []; s.step = 'type_vol'; await setState(phone, s); return sendButtons(phone, { body: `${bar('type_vol')}\n✅ ${n} passagers — potentiellement *${montantTotal(n)} €*.\n\n✈️ C'était un vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg); }
+    return send(phone, `Indiquez le *nombre total* de passagers en chiffres (ex. 8) :`, cfg);
   }
 
   // MSG6 — TYPE VOL → MSG7 motivation → scan
@@ -390,7 +401,7 @@ async function sendIncident(phone, s, cfg) { s.step = 'incident'; await setState
 async function sendPax(phone, s, cfg) {
   s.step = 'nb_pax'; await setState(phone, s);
   await sendList(phone, { body: `${bar('nb_pax')}\n👥 Combien de passagers réclament sur ce vol ?`, buttonText: 'Nombre ▾', items: [
-    { title: '1 passager', description: '600 €' }, { title: '2 passagers', description: '1 200 €' }, { title: '3 ou plus', description: 'Groupe — expert dédié' },
+    { title: '1 passager', description: '600 €' }, { title: '2 passagers', description: '1 200 €' }, { title: '3 passagers', description: '1 800 €' }, { title: '4 passagers', description: '2 400 €' }, { title: '5 passagers', description: '3 000 €' }, { title: '6 ou plus', description: 'On gère votre groupe' },
   ] }, cfg);
 }
 async function estimationPuisPax(phone, s, cfg) { s.step = 'nb_pax'; await setState(phone, s); await send(phone, `💡 Votre vol avec *${s.incident_libelle}* = potentiellement *600 € par passager*. Continuons !`, cfg); return sendPax(phone, s, cfg); }
@@ -499,6 +510,7 @@ exports.handler = async (event) => {
     const q = event.queryStringParameters || {};
     const key = (process.env.WATI_WEBHOOK_SECRET || process.env.CRM_ACCESS_CODE || '').trim();
     if (q.debug === 'inbound' && key && q.key === key) return { statusCode: 200, headers: HEADERS, body: JSON.stringify((await readInboundDebug()) || { none: true }) };
+    if (q.debug === 'interactive' && key && q.key === key) return { statusCode: 200, headers: HEADERS, body: JSON.stringify((await readInteractiveDebug()) || { none: true }) };
     return { statusCode: 403, headers: HEADERS, body: JSON.stringify({ error: 'Forbidden' }) };
   }
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers: HEADERS, body: JSON.stringify({ error: 'POST only' }) };

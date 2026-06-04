@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ciblage Banjul — choix du rayon</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+  html,body{margin:0;height:100%;font-family:system-ui,sans-serif}
+  #map{height:100%}
+  .panel{position:absolute;top:10px;left:10px;z-index:1000;background:#fff;
+    padding:12px 14px;border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,.2);max-width:300px;font-size:13px;line-height:1.5}
+  .panel h3{margin:0 0 6px;font-size:14px}
+  .row{margin:3px 0}
+  .sq{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:6px;vertical-align:middle}
+  .c2{background:#16a34a}.c3{background:#f59e0b}.c4{background:#e11d48}
+  .warn{background:#fff7ed;border:1px solid #fed7aa;padding:6px 8px;border-radius:6px;margin-top:8px;color:#9a3412}
+</style>
+</head>
+<body>
+<div class="panel">
+  <h3>🎯 Banjul — aéroport Yundum (BJL)</h3>
+  <div class="row"><span class="sq c2"></span><b>2 km</b> — aéroport + village Yundum</div>
+  <div class="row"><span class="sq c3"></span><b>3 km</b> — un peu de volume, encore propre</div>
+  <div class="row"><span class="sq c4"></span><b>4 km</b> — approche Brikama (résidents)</div>
+  <div class="warn">⚠️ Semi-rural mais Brikama est à ~6-7 km au SE. Rester sous 4 km.</div>
+</div>
+<div id="map"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  var BJL=[13.338,-16.652];
+  var map=L.map('map');
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {attribution:'© OpenStreetMap'}).addTo(map);
+
+  L.circle(BJL,{radius:4000,color:'#e11d48',fill:false,weight:2}).addTo(map).bindTooltip('4 km');
+  L.circle(BJL,{radius:3000,color:'#f59e0b',fillColor:'#f59e0b',fillOpacity:.10,weight:2}).addTo(map).bindTooltip('3 km');
+  L.circle(BJL,{radius:2000,color:'#16a34a',fillColor:'#16a34a',fillOpacity:.12,weight:2}).addTo(map).bindTooltip('2 km');
+  L.marker(BJL).addTo(map).bindPopup('<b>Aéroport Banjul/Yundum</b><br>13.338 / -16.652');
+
+  map.setView(BJL,13);
+</script>
+</body>
+</html>

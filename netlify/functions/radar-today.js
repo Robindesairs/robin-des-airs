@@ -27,6 +27,12 @@ exports.handler = async (event) => {
       eligible: f.eligible !== false,
       date: f.date || null,
       compensation: f.compensation || 600,
+      // Heures + statut + tracker : déjà stockés dans le registre, aucun appel API en plus
+      std: f.std || null,
+      sta: f.sta || null,
+      eta: f.eta || null,
+      statut: f.statut || null,
+      trackerUrl: f.trackerUrl || '',
     }));
     return {
       statusCode: 200,
