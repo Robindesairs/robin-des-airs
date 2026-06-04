@@ -982,16 +982,18 @@ function formatFinA(s) {
 }
 
 function formatFinB(s) {
-  return `✅ *Action requise — signature du mandat*
+  return `✅ *Dernière étape — votre dossier ${s.ref} est prêt !*
 
-Pour que Robin des Airs représente *${s.nom || 'votre groupe'}* auprès de *${s.compagnie || 'la compagnie'}*, signez votre *mandat de représentation*.
+Robin des Airs récupère votre argent auprès de *${s.compagnie || 'la compagnie'}* — *jusqu'à 600 €* + vos frais.
 
-📋 Lisible avant signature — *aucune info bancaire à cette étape.*
+✔️ *0 € si on ne récupère rien.* 25 % seulement en cas de succès.
+✔️ Aucune info bancaire à cette étape.
+✔️ Vols avec correspondance couverts.
 
-👉 *Signez ici* (2 min) :
+👉 *Signez (2 min) :*
 ${s.mandat_url}
 
-Sans signature, nous ne pouvons pas agir en votre nom.
+Sans signature, on ne peut pas agir en votre nom.
 
 _L'équipe Robin 🏹_`;
 }
