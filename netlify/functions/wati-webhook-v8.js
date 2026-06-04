@@ -123,7 +123,6 @@ async function sendList(phone, { header, body, footer, buttonText, items }, cfg)
         header: clip(header || '', 60), body, footer: footer || 'robindesairs.eu',
         buttonText: clip(buttonText || 'Choisir', 20),
         sections: [{ title: clip(header || 'Choix', 24), rows }],
-        listItems: rows,
       }),
     });
     const data = await res.json().catch(() => ({}));
