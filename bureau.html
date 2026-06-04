@@ -1027,7 +1027,8 @@ async function enrichEnquetes(){
   if(ENQUETE_RUNNING) return;
   ENQUETE_RUNNING=true;
   try{
-    const cands=(REAL.radar||[]).filter(f=> !f.enquete && f.fl && f.fl!=='—' && (f.kind==='cancel' || (f.delayMin||0)>=180)).slice(0,6);
+    // Pour l'instant : enquête uniquement sur les RETARDS éligibles (≥ 3 h), pas les annulations.
+    const cands=(REAL.radar||[]).filter(f=> !f.enquete && f.fl && f.fl!=='—' && f.kind!=='cancel' && (f.delayMin||0)>=180).slice(0,6);
     for(const f of cands){
       f.enqueteLoading=true; refreshOpenPoste();
       try{
