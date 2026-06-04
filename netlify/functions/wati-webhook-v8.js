@@ -112,27 +112,30 @@ async function sendButtons(phone, { body, footer, buttons }, cfg) {
 async function sendList(phone, { header, body, footer, buttonText, items }, cfg) {
   if (!cfg) return;
   const wa = normalizeWatiPhone(phone);
-  const qs = new URLSearchParams({ whatsappNumber: wa, channelPhoneNumber: cfg.channel });
-  // ⚠️ WhatsApp/WATI exige un `id` UNIQUE par ligne, sinon la liste dégrade en texte.
   const rows = items.map((i, idx) => ({ id: String(idx + 1), title: clip(i.title, 24), description: clip(i.description || '', 72) }));
+  // ✅ Vraie liste cliquable = endpoint v3 "active conversation" avec type:"list"
+  //    (le /api/v1/sendInteractiveListMessage rend toujours en texte — confirmé support WATI).
+  let host; try { host = new URL(cfg.base).origin; } catch { host = cfg.base; }
+  const textFallback = () => send(phone, (header ? `*${header}*\n\n` : '') + body + '\n\n' + items.map((it, idx) => `${NUMEMO[idx] || (idx + 1 + '.')} ${it.title}`).join('\n') + `\n\n👉 Répondez avec le *numéro*.`, cfg);
   try {
-    const res = await fetch(`${cfg.base}/api/v1/sendInteractiveListMessage?${qs}`, {
-      // ⚠️ WATI exige Content-Type: text/json pour les listes — sinon WhatsApp rend en texte (confirmé par le support WATI).
-      method: 'POST', headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'text/json' },
-      // WATI attend des `sections`/`rows` (pas `listItems`). On envoie les deux pour compat.
+    const res = await fetch(`${host}/api/ext/v3/conversations/messages/interactive`, {
+      method: 'POST', headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        header: clip(header || '', 60), body, footer: footer || 'robindesairs.eu',
-        buttonText: clip(buttonText || 'Choisir', 20),
-        sections: [{ title: clip(header || 'Choix', 24), rows }],
+        target: wa,
+        type: 'list',
+        list_message: {
+          ...(header ? { header: { type: 'text', text: clip(header, 60) } } : {}),
+          body: { text: body },
+          footer: { text: footer || 'robindesairs.eu' },
+          action: { button: clip(buttonText || 'Choisir', 20), sections: [{ title: clip(header || 'Choix', 24), rows }] },
+        },
       }),
     });
     const data = await res.json().catch(() => ({}));
-    const failed = !res.ok || data.result === false || data.error || data.ok === false;
-    await saveInteractiveDebug({ fn: 'sendList', status: res.status, failed, resp: data });
-    if (failed) {
-      await send(phone, (header ? `*${header}*\n\n` : '') + body + '\n\n' + items.map((it, idx) => `${idx + 1} — ${it.title}`).join('\n'), cfg);
-    }
-  } catch (e) { await send(phone, body + '\n\n' + items.map((it, idx) => `${idx + 1} — ${it.title}`).join('\n'), cfg); }
+    const failed = !res.ok || data.result === false || data.error || data.ok === false || data.success === false;
+    await saveInteractiveDebug({ fn: 'sendList-v3', status: res.status, failed, resp: data });
+    if (failed) await textFallback();
+  } catch (e) { await textFallback(); }
 }
 async function sendDelayed(phone, text, cfg, ms = 700) { await new Promise(r => setTimeout(r, ms)); await send(phone, text, cfg); }
 // WATI ne rend pas les listes interactives sur ce compte (elles arrivent en texte).
