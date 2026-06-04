@@ -523,6 +523,23 @@ body.game-mode #gameView { display:block; }
           <div class="renta-note" style="margin-top:.7rem">Pour toute question, les salariés peuvent contacter le bureau par email ou iMessage.</div>
         </div>
       </div>
+
+      <div class="panel" style="grid-column:1/-1">
+        <div class="panel-h"><span class="t">🤖 Mes agents</span><span class="tag" style="font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--white-40);border:1px solid var(--sky-border);padding:3px 9px;border-radius:20px">IA en direct</span></div>
+        <div class="panel-b" style="padding:1rem 1.2rem">
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.8rem" id="agentChips">
+            <button class="agent-chip" data-agent="veille" data-q="Quoi de neuf dans la veille du jour : grèves, météo ou perturbations qui pourraient affecter nos vols ?">🔎 Veille actu vols</button>
+            <button class="agent-chip" data-agent="enquete" data-q="Comment lancer une enquête de preuves sur un vol retardé, et que vas-tu chercher exactement ?">🕵️ Enquêteur retard</button>
+            <button class="agent-chip" data-agent="surveillance" data-q="Quels dossiers du jour faut-il surveiller pour un retard supérieur à 1h30 ?">🚨 Surveillance retards</button>
+          </div>
+          <div id="chatLog" style="max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:.55rem;margin-bottom:.7rem;font-size:.85rem;line-height:1.45"></div>
+          <form id="chatForm" style="display:flex;gap:.5rem">
+            <input id="chatInput" type="text" autocomplete="off" placeholder="Posez une question à l'assistant Robin…" style="flex:1;background:rgba(255,255,255,.06);border:1px solid var(--sky-border,rgba(255,255,255,.15));border-radius:10px;padding:.6rem .8rem;color:inherit;font-size:.88rem">
+            <button id="chatSend" type="submit" style="background:var(--blue,#3b82f6);border:none;border-radius:10px;padding:.6rem 1rem;color:#fff;font-weight:600;cursor:pointer">Envoyer</button>
+          </form>
+          <div class="renta-note" style="margin-top:.55rem">L'assistant peut chercher sur le web (grèves, météo, statut d'un vol). Réponses indicatives — validez le juridique avec un juriste.</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1109,6 +1126,59 @@ async function loadInstagram(){
   setSrcBadge();
 }
 
+/* ============ CHAT AGENTS IA ============ */
+const CHAT = { messages: [], agent: null, busy: false };
+function chatBubble(role, text, pending){
+  const log = document.getElementById('chatLog'); if(!log) return null;
+  const el = document.createElement('div');
+  const me = role === 'user';
+  el.style.cssText = `align-self:${me?'flex-end':'flex-start'};max-width:85%;padding:.5rem .75rem;border-radius:12px;white-space:pre-wrap;`+
+    (me ? 'background:var(--blue,#3b82f6);color:#fff;' : 'background:rgba(255,255,255,.07);border:1px solid var(--sky-border,rgba(255,255,255,.12));');
+  if(pending){ el.classList.add('chat-pending'); el.textContent='…'; }
+  else el.textContent = text;
+  log.appendChild(el); log.scrollTop = log.scrollHeight;
+  return el;
+}
+async function chatSend(text, agent){
+  if(CHAT.busy || !text.trim()) return;
+  CHAT.busy = true;
+  const sendBtn = document.getElementById('chatSend'); if(sendBtn) sendBtn.disabled = true;
+  if(agent) CHAT.agent = agent;
+  CHAT.messages.push({ role:'user', content:text });
+  chatBubble('user', text);
+  const pending = chatBubble('assistant', '', true);
+  try{
+    const r = await fetch('/api/agent-chat', {
+      method:'POST', headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({ messages: CHAT.messages.slice(-20), agent: CHAT.agent }),
+    });
+    const d = await r.json().catch(()=>({ok:false,error:'réponse illisible'}));
+    if(d && d.ok){
+      if(pending){ pending.classList.remove('chat-pending'); pending.textContent = d.reply; }
+      CHAT.messages.push({ role:'assistant', content:d.reply });
+    } else {
+      if(pending){ pending.classList.remove('chat-pending'); pending.textContent = '⚠️ '+((d&&d.error)||'erreur')+(/ANTHROPIC_API_KEY/.test((d&&d.error)||'')?'\n(Ajoutez ANTHROPIC_API_KEY dans Netlify.)':''); pending.style.color='var(--amber,#f59e0b)'; }
+    }
+  } catch(e){
+    if(pending){ pending.classList.remove('chat-pending'); pending.textContent='⚠️ Connexion impossible à l\'assistant.'; pending.style.color='var(--amber,#f59e0b)'; }
+  } finally {
+    CHAT.busy = false; if(sendBtn) sendBtn.disabled = false;
+    const log = document.getElementById('chatLog'); if(log) log.scrollTop = log.scrollHeight;
+  }
+}
+function initChat(){
+  const form = document.getElementById('chatForm'); const input = document.getElementById('chatInput');
+  if(form && !form.dataset.wired){
+    form.dataset.wired = '1';
+    form.addEventListener('submit', (e)=>{ e.preventDefault(); const v=input.value; input.value=''; chatSend(v); });
+  }
+  document.querySelectorAll('.agent-chip').forEach(btn=>{
+    if(btn.dataset.wired) return; btn.dataset.wired='1';
+    btn.style.cssText += 'background:rgba(255,255,255,.06);border:1px solid var(--sky-border,rgba(255,255,255,.15));border-radius:20px;padding:.4rem .8rem;color:inherit;cursor:pointer;font-size:.78rem';
+    btn.addEventListener('click', ()=> chatSend(btn.dataset.q, btn.dataset.agent));
+  });
+}
+
 /* ============ PANNEAU RENTABILITÉ ============ */
 function renderRenta(){
   RENTA = calcRenta();
@@ -1283,6 +1353,7 @@ tickKPI();
 renderRadar();
 renderRenta();                  // panneau rentabilité / seuil (coûts réels)
 renderSocial();                 // panneau réseaux sociaux / croissance
+initChat();                     // chat IA "Mes agents"
 emptyFeed();                    // fil d'activité : vide tant qu'il n'y a pas d'évènement réel
 emptyWhatsApp();                // panneau WhatsApp : état réel uniquement
 
