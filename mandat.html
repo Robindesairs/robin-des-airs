@@ -260,47 +260,12 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     <div>
       <label>WhatsApp <span class="req">*</span></label>
       <div class="wa-phone-row">
-        <select id="wa-indicatif" class="wa-indicatif-select" aria-label="Indicatif pays" onchange="syncWa()">
-          <optgroup label="Afrique de l'Ouest &amp; centrale">
-            <option value="221">🇸🇳 +221 Sénégal</option>
-            <option value="223">🇲🇱 +223 Mali</option>
-            <option value="226">🇧🇫 +226 Burkina Faso</option>
-            <option value="227">🇳🇪 +227 Niger</option>
-            <option value="228">🇹🇬 +228 Togo</option>
-            <option value="229">🇧🇯 +229 Bénin</option>
-            <option value="225">🇨🇮 +225 Côte d'Ivoire</option>
-            <option value="224">🇬🇳 +224 Guinée</option>
-            <option value="233">🇬🇭 +233 Ghana</option>
-            <option value="234">🇳🇬 +234 Nigeria</option>
-            <option value="237">🇨🇲 +237 Cameroun</option>
-            <option value="241">🇬🇦 +241 Gabon</option>
-            <option value="242">🇨🇬 +242 Congo</option>
-            <option value="243">🇨🇩 +243 RDC</option>
-          </optgroup>
-          <optgroup label="Afrique — autres">
-            <option value="212">🇲🇦 +212 Maroc</option>
-            <option value="213">🇩🇿 +213 Algérie</option>
-            <option value="216">🇹🇳 +216 Tunisie</option>
-            <option value="20">🇪🇬 +20 Égypte</option>
-            <option value="254">🇰🇪 +254 Kenya</option>
-            <option value="27">🇿🇦 +27 Afrique du Sud</option>
-          </optgroup>
-          <optgroup label="Europe &amp; autres">
-            <option value="33" selected>🇫🇷 +33 France</option>
-            <option value="32">🇧🇪 +32 Belgique</option>
-            <option value="41">🇨🇭 +41 Suisse</option>
-            <option value="44">🇬🇧 +44 Royaume-Uni</option>
-            <option value="351">🇵🇹 +351 Portugal</option>
-            <option value="34">🇪🇸 +34 Espagne</option>
-            <option value="49">🇩🇪 +49 Allemagne</option>
-            <option value="31">🇳🇱 +31 Pays-Bas</option>
-            <option value="1">🇺🇸 +1 États-Unis / Canada</option>
-          </optgroup>
-        </select>
+        <input type="text" id="wa-indicatif" class="wa-indicatif-select" list="pays-list" aria-label="Pays ou indicatif" placeholder="Pays ou +indicatif" autocomplete="off" oninput="syncWa()" value="🇫🇷 France +33">
+        <datalist id="pays-list"></datalist>
         <input type="tel" id="wa-national" class="wa-national-input" inputmode="numeric" autocomplete="tel-national" placeholder="6 12 34 56 78" oninput="syncWa()">
       </div>
       <input type="hidden" id="wa">
-      <div class="ferr" id="waErr">Numéro requis</div>
+      <div class="ferr" id="waErr">Indiquez votre pays et votre numéro WhatsApp</div>
     </div>
     <div>
       <label>Adresse email du dossier</label>
@@ -713,6 +678,7 @@ window.addEventListener('DOMContentLoaded', () => {
   renderAllPassengers();
   updateAmounts();
   updateParties();
+  buildPaysList();
   initSig();
   initProgress();
   applyLegacyUrlParams();
@@ -1153,22 +1119,54 @@ function calcProgress() {
   document.getElementById('pgBar').style.width = Math.round(n/8*100)+'%';
 }
 // ── WhatsApp : indicatif (drapeau) + numéro → #wa caché (numéro complet) ──
+// Liste pays (drapeau, nom, indicatif) — champ recherchable. Tout indicatif non listé
+// reste possible : le client tape « +XXX » directement (filet de sécurité universel).
+const COUNTRIES = [
+  ['🇸🇳','Sénégal','221'],['🇲🇱','Mali','223'],['🇧🇫','Burkina Faso','226'],['🇳🇪','Niger','227'],
+  ['🇹🇬','Togo','228'],['🇧🇯','Bénin','229'],['🇨🇮','Côte d\'Ivoire','225'],['🇬🇳','Guinée','224'],
+  ['🇬🇲','Gambie','220'],['🇬🇼','Guinée-Bissau','245'],['🇲🇷','Mauritanie','222'],['🇸🇱','Sierra Leone','232'],
+  ['🇱🇷','Liberia','231'],['🇨🇻','Cap-Vert','238'],['🇬🇭','Ghana','233'],['🇳🇬','Nigeria','234'],
+  ['🇨🇲','Cameroun','237'],['🇹🇩','Tchad','235'],['🇨🇫','Centrafrique','236'],['🇬🇦','Gabon','241'],
+  ['🇨🇬','Congo','242'],['🇨🇩','RDC','243'],['🇬🇶','Guinée équatoriale','240'],['🇸🇹','Sao Tomé','239'],
+  ['🇦🇴','Angola','244'],['🇲🇦','Maroc','212'],['🇩🇿','Algérie','213'],['🇹🇳','Tunisie','216'],
+  ['🇱🇾','Libye','218'],['🇪🇬','Égypte','20'],['🇸🇩','Soudan','249'],['🇲🇿','Mozambique','258'],
+  ['🇰🇪','Kenya','254'],['🇹🇿','Tanzanie','255'],['🇺🇬','Ouganda','256'],['🇷🇼','Rwanda','250'],
+  ['🇧🇮','Burundi','257'],['🇪🇹','Éthiopie','251'],['🇸🇴','Somalie','252'],['🇩🇯','Djibouti','253'],
+  ['🇲🇬','Madagascar','261'],['🇲🇺','Maurice','230'],['🇰🇲','Comores','269'],['🇿🇦','Afrique du Sud','27'],
+  ['🇿🇲','Zambie','260'],['🇿🇼','Zimbabwe','263'],['🇧🇼','Botswana','267'],['🇳🇦','Namibie','264'],
+  ['🇲🇼','Malawi','265'],
+  ['🇫🇷','France','33'],['🇧🇪','Belgique','32'],['🇨🇭','Suisse','41'],['🇬🇧','Royaume-Uni','44'],
+  ['🇵🇹','Portugal','351'],['🇪🇸','Espagne','34'],['🇮🇹','Italie','39'],['🇩🇪','Allemagne','49'],
+  ['🇳🇱','Pays-Bas','31'],['🇱🇺','Luxembourg','352'],['🇮🇪','Irlande','353'],['🇸🇪','Suède','46'],
+  ['🇳🇴','Norvège','47'],['🇩🇰','Danemark','45'],['🇫🇮','Finlande','358'],['🇦🇹','Autriche','43'],
+  ['🇵🇱','Pologne','48'],['🇬🇷','Grèce','30'],
+  ['🇺🇸','États-Unis / Canada','1'],['🇦🇪','Émirats','971'],['🇸🇦','Arabie Saoudite','966'],
+  ['🇶🇦','Qatar','974'],['🇰🇼','Koweït','965'],['🇱🇧','Liban','961'],['🇹🇷','Turquie','90'],
+  ['🇨🇳','Chine','86'],['🇮🇳','Inde','91'],['🇧🇷','Brésil','55'],
+];
+function buildPaysList(){
+  const dl = document.getElementById('pays-list');
+  if (dl) dl.innerHTML = COUNTRIES.map(c => `<option value="${c[0]} ${c[1]} +${c[2]}"></option>`).join('');
+}
 function syncWa(){
-  const sel = document.getElementById('wa-indicatif');
+  const ind = document.getElementById('wa-indicatif');
   const nat = (document.getElementById('wa-national')?.value || '').replace(/[^\d]/g,'');
   const hid = document.getElementById('wa');
-  if (hid) hid.value = nat ? '+' + (sel ? sel.value : '') + nat : '';
+  if (!hid) return;
+  const m = String(ind ? ind.value : '').match(/\+\s*(\d{1,4})/);
+  const code = m ? m[1] : '';
+  hid.value = (code && nat) ? '+' + code + nat : '';
 }
-// Pré-remplissage depuis un contact client (URL ?phone=) → découpe indicatif + numéro local.
+// Pré-remplissage depuis ?phone= → découpe indicatif + numéro local.
 function setWaFull(full){
   let d = String(full || '').trim().replace(/^\+/,'').replace(/^00/,'').replace(/[^\d]/g,'');
-  const sel = document.getElementById('wa-indicatif');
+  const ind = document.getElementById('wa-indicatif');
   const nat = document.getElementById('wa-national');
-  if (!sel || !nat) return;
-  const codes = Array.from(sel.options).map(o=>o.value).filter(Boolean).sort((a,b)=>b.length-a.length);
+  if (!ind || !nat) return;
+  const codes = COUNTRIES.map(c => c[2]).sort((a,b) => b.length - a.length);
   const m = codes.find(c => d.startsWith(c));
-  if (m){ sel.value = m; nat.value = d.slice(m.length); }
-  else { nat.value = d.replace(/^0+/,''); }   // pas d'indicatif reconnu → numéro local, indicatif par défaut
+  if (m){ const c = COUNTRIES.find(x => x[2] === m); ind.value = c ? `${c[0]} ${c[1]} +${c[2]}` : `+${m}`; nat.value = d.slice(m.length); }
+  else { nat.value = d.replace(/^0+/,''); }   // indicatif non reconnu → garde la valeur courante
   syncWa();
 }
 // ── VALIDATION ───────────────────────────────────────────────────
@@ -1186,6 +1184,13 @@ function validate() {
     showE(id,e,empty);
     if(empty) ok=false;
   });
+  // WhatsApp : exiger indicatif (pays) + numéro → un numéro international valide
+  const waFull = (document.getElementById('wa')?.value || '').trim();
+  if (!/^\+\d{7,15}$/.test(waFull)) {
+    document.getElementById('wa-national')?.classList.add('err');
+    const we = document.getElementById('waErr'); if (we) we.style.display = 'block';
+    ok = false;
+  }
   // Validation passagers — nom obligatoire + date de naissance obligatoire si mineur
   document.querySelectorAll('.pax-row').forEach((row, i) => {
     const nameInp  = row.querySelector('.pnif');
