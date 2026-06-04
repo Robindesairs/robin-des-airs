@@ -530,9 +530,15 @@ async function apresVol(phone, s, cfg) {
   return askName(phone, s, cfg);
 }
 async function askName(phone, s, cfg) {
-  if (s.name_idx >= s.pax) { return sendMineurs(phone, s, cfg); }
+  const names = s.names || [];
+  const doneList = names.slice(0, s.name_idx).filter(Boolean).map((n, i) => `✅ ${i + 1}. ${n}`).join('\n');
+  if (s.name_idx >= s.pax) {
+    if (s.pax > 1 && doneList) await send(phone, `👥 *Passagers enregistrés (${s.pax}) :*\n${doneList}`, cfg);
+    return sendMineurs(phone, s, cfg);
+  }
   s.step = 'names'; await setState(phone, s);
-  return send(phone, `${bar('names')}\n👤 Passager ${s.name_idx + 1} sur ${s.pax} — Prénom et nom ?\n_(ex : Aminata Diallo)_`, cfg);
+  const prefix = doneList ? `${doneList}\n\n` : '';
+  return send(phone, `${bar('names')}\n${prefix}👤 *Passager ${s.name_idx + 1} sur ${s.pax}* — Prénom et nom ?\n_(ex : Aminata Diallo)_`, cfg);
 }
 
 // Documents
