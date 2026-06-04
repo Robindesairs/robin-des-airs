@@ -231,6 +231,24 @@ async function readInteractiveDebug() {
     return await store.get('debug/last-interactive', { type: 'json' });
   } catch { return null; }
 }
+// Debug entrant : garde les 8 derniers payloads bruts WATI (lisible via ?debug=inbound)
+async function saveInboundDebug(rawBody, items) {
+  try {
+    const store = botStore();
+    if (!store) return;
+    const prev = (await store.get('debug/inbound', { type: 'json' })) || [];
+    const keys = (() => { try { return Object.keys(JSON.parse(rawBody) || {}); } catch { return []; } })();
+    prev.unshift({ ts: new Date().toISOString(), bodyKeys: keys, raw: String(rawBody).slice(0, 1500), extracted: items.map(it => ({ ph: it.phone, txt: it.text, dedupId: it.dedupId, hasId: it.hasId })) });
+    await store.setJSON('debug/inbound', prev.slice(0, 8));
+  } catch (e) { console.error('saveInboundDebug failed', e.message); }
+}
+async function readInboundDebug() {
+  try {
+    const store = botStore();
+    if (!store) throw new Error('blobs indisponible');
+    return await store.get('debug/inbound', { type: 'json' });
+  } catch { return null; }
+}
 
 // Dédup PERSISTANTE entre invocations (retries WATI). Fenêtre courte si pas d'id
 // (pour ne pas bloquer un vrai message répété légitime), large si id WATI unique.
@@ -1067,6 +1085,10 @@ exports.handler = async (event) => {
       const dbg = await readInteractiveDebug();
       return { statusCode: 200, headers: HEADERS, body: JSON.stringify(dbg || { none: true }) };
     }
+    if (q.debug === 'inbound' && key && q.key === key) {
+      const dbg = await readInboundDebug();
+      return { statusCode: 200, headers: HEADERS, body: JSON.stringify(dbg || { none: true }) };
+    }
     // Self-test OCR : ?selftest=ocr&key=<secret> (gated pour éviter l'abus)
     if (q.selftest === 'ocr' && key && q.key === key) {
       const out = { openaiKeyPresent: !!process.env.OPENAI_API_KEY };
@@ -1101,6 +1123,7 @@ exports.handler = async (event) => {
 
   const cfg = watiCfg();
   const items = extractInbound(body);
+  try { await saveInboundDebug(event.body || '{}', items); } catch {}
 
   for (const { phone, text, mediaUrl, dedupId, hasId } of items) {
     if (!phone) continue;
