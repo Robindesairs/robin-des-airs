@@ -23,6 +23,8 @@ const { getBlobStore } = require('./lib/netlify-blobs-store');
 // de faire connectLambda(event) ou le repli siteID+token, comme radar-today.
 let LAMBDA_EVENT = null;
 function botStore() { return getBlobStore(LAMBDA_EVENT, 'robin-bot-state'); }
+// Garde-fou WATI : texte bouton ≤ 20, titre de liste ≤ 24 (sinon l'API renvoie une erreur).
+function clip(s, n) { s = String(s == null ? '' : s); return s.length <= n ? s : s.slice(0, n); }
 const { notifyOwnerWhatsApp } = require('./lib/owner-notify');
 
 const HEADERS = {
@@ -79,7 +81,7 @@ async function sendList(phone, { header, body, footer, buttonText, items }, cfg)
           body,
           footer: footer || 'robindesairs.eu',
           buttonText: buttonText || 'Choisir ▾',
-          listItems: items.map(i => ({ title: i.title, description: i.description || '' })),
+          listItems: items.map(i => ({ title: clip(i.title, 24), description: i.description || '' })),
         }),
       }
     );
@@ -114,7 +116,7 @@ async function sendButtons(phone, { body, footer, buttons }, cfg) {
         body: JSON.stringify({
           body,
           footer: footer || 'robindesairs.eu',
-          buttons: buttons.slice(0, 3).map(b => ({ text: b.text })),
+          buttons: buttons.slice(0, 3).map(b => ({ text: clip(b.text, 20) })),
         }),
       }
     );
@@ -313,7 +315,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
     await sendButtons(phone, {
       body: `${bar('accueil')}\n👋 Bienvenue chez *Robin des Airs* 🏹\n\n*Vol retardé, annulé ou surbooké sur un trajet Europe ↔ Afrique ?*\nLa loi vous donne droit à *jusqu'à 600 €* par passager.\n\n⚖️ *Zéro frais.* On prend 25 % uniquement si vous gagnez.\n\n👥 Déjà +1 200 familles indemnisées.\n⏱️ Moins de 10 min pour ouvrir votre dossier.`,
       footer: 'Vous avez 3 ans pour réclamer',
-      buttons: [{ text: '✅ Commencer mon dossier' }],
+      buttons: [{ text: '✅ Commencer' }],
     }, cfg);
     await setState(phone, { step: 'gate', phone });
     return;
@@ -349,7 +351,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
     await sendButtons(phone, {
       body: `${bar('accueil')}\n👋 Bienvenue chez *Robin des Airs* 🏹\n\n*Vol retardé, annulé ou surbooké sur un trajet Europe ↔ Afrique ?*\nLa loi vous donne droit à *jusqu'à 600 €* par passager.\n\n⚖️ *Zéro frais.* On prend 25 % uniquement si vous gagnez.\n\n👥 Déjà +1 200 familles indemnisées.\n⏱️ Moins de 10 min pour ouvrir votre dossier.`,
       footer: 'Vous avez 3 ans pour réclamer',
-      buttons: [{ text: '✅ Commencer mon dossier' }],
+      buttons: [{ text: '✅ Commencer' }],
     }, cfg);
     await setState(phone, { step: 'gate', phone });
     return;
@@ -364,7 +366,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
         // affiche gate
         await sendButtons(phone, {
           body: `${bar('gate')}\n✈️ *D'où partait votre vol ?*\n\nPour vérifier que vous êtes couvert par la loi européenne (CE 261).`,
-          buttons: [{ text: '🇪🇺 D\'un aéroport en Europe' }, { text: '🌍 D\'Afrique ou ailleurs' }],
+          buttons: [{ text: 'Départ d\'Europe' }, { text: 'Afrique / ailleurs' }],
         }, cfg);
         return;
       }
@@ -384,12 +386,12 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
       await setState(phone, s);
       await sendButtons(phone, {
         body: `${bar('gate_compagnie')}\nEt la compagnie qui opérait ce vol ?`,
-        buttons: [{ text: '🇪🇺 Compagnie européenne' }, { text: '🌍 Africaine ou autre' }],
+        buttons: [{ text: 'Cie européenne' }, { text: 'Africaine / autre' }],
       }, cfg);
     } else {
       await sendButtons(phone, {
         body: `${bar('gate')}\n✈️ *D'où partait votre vol ?*\n\nPour vérifier que vous êtes couvert par la loi européenne (CE 261).`,
-        buttons: [{ text: '🇪🇺 D\'un aéroport en Europe' }, { text: '🌍 D\'Afrique ou ailleurs' }],
+        buttons: [{ text: 'Départ d\'Europe' }, { text: 'Afrique / ailleurs' }],
       }, cfg);
     }
     return;
@@ -414,7 +416,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
     } else {
       await sendButtons(phone, {
         body: 'La compagnie qui opérait ce vol ?',
-        buttons: [{ text: '🇪🇺 Compagnie européenne' }, { text: '🌍 Africaine ou autre' }],
+        buttons: [{ text: 'Cie européenne' }, { text: 'Africaine / autre' }],
       }, cfg);
     }
     return;
@@ -433,7 +435,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
         items: [
           { title: '✈️ Vol direct', description: 'Sans escale' },
           { title: '🔄 Vol avec escale', description: 'Une ou plusieurs escales' },
-          { title: '⚠️ Correspondance ratée', description: 'À cause d\'un retard' },
+          { title: 'Correspondance ratée', description: 'À cause d\'un retard' },
         ],
       }, cfg);
     } else {
@@ -460,10 +462,10 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
         body: `${bar('incident')}\n✅ *C'est noté* — objectif jusqu'à *${montantNet(s.pax)} € net* pour votre groupe. 🚀\n\n⚖️ *Que s'est-il passé exactement ?*`,
         buttonText: 'Incident ▾',
         items: [
-          { title: '⏱️ Retard à l\'arrivée (+3h)' },
-          { title: '❌ Vol annulé' },
-          { title: '🚫 Refus d\'embarquement / surbooking' },
-          { title: '🔄 Correspondance manquée' },
+          { title: 'Retard +3h' },
+          { title: 'Vol annulé' },
+          { title: 'Refus d\'embarquement' },
+          { title: 'Correspondance manquée' },
         ],
       }, cfg);
     } else {
@@ -471,7 +473,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
         body: `${bar('type_vol')}\n✈️ Sur ce trajet : quel type de vol ?`,
         buttonText: 'Type de vol ▾',
         items: [
-          { title: '✈️ Vol direct' }, { title: '🔄 Vol avec escale' }, { title: '⚠️ Correspondance ratée' },
+          { title: '✈️ Vol direct' }, { title: '🔄 Vol avec escale' }, { title: 'Correspondance ratée' },
         ],
       }, cfg);
     }
@@ -504,8 +506,8 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
           body: `${bar('correspondance')}\n✈️ *Quel vol pose problème ?*`,
           buttonText: 'Préciser ▾',
           items: [
-            { title: 'Le vol initial (en retard)' },
-            { title: 'Le vol de correspondance (raté)' },
+            { title: 'Vol initial (retard)' },
+            { title: 'Vol correspondance raté' },
             { title: 'Les deux' },
             { title: 'Je ne sais plus' },
           ],
@@ -518,8 +520,8 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
         body: `${bar('incident')}\n⚖️ *Que s'est-il passé exactement ?*`,
         buttonText: 'Incident ▾',
         items: [
-          { title: '⏱️ Retard à l\'arrivée (+3h)' }, { title: '❌ Vol annulé' },
-          { title: '🚫 Refus d\'embarquement' }, { title: '🔄 Correspondance manquée' },
+          { title: 'Retard +3h' }, { title: 'Vol annulé' },
+          { title: 'Refus d\'embarquement' }, { title: 'Correspondance manquée' },
         ],
       }, cfg);
     }
@@ -550,7 +552,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
 
   // ── CORRESPONDANCE ────────────────────────────────────────────────────────
   if (s.step === 'correspondance') {
-    const norm = normalizeInput(input, ['vol initial', 'vol de correspondance', 'les deux', 'sais']);
+    const norm = normalizeInput(input, ['vol initial', 'correspondance', 'les deux', 'sais']);
     if (['1','2','3','4'].includes(norm)) {
       s.type_correspondance = norm;
       await showRemboursements(phone, s, cfg);
@@ -559,7 +561,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
         body: `${bar('correspondance')}\n✈️ *Quel vol pose problème ?*`,
         buttonText: 'Préciser ▾',
         items: [
-          { title: 'Le vol initial (en retard)' }, { title: 'Le vol de correspondance (raté)' },
+          { title: 'Vol initial (retard)' }, { title: 'Vol correspondance raté' },
           { title: 'Les deux' }, { title: 'Je ne sais plus' },
         ],
       }, cfg);
@@ -574,7 +576,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
     await sendButtons(phone, {
       body: `${bar('ocr')}\n📋 *Carte d'embarquement ou e-ticket*\n\n👍 *On vous fait gagner du temps* — une photo nette permet de remplir le dossier automatiquement.`,
       footer: 'C\'est le plus rapide',
-      buttons: [{ text: '📸 Envoyer une photo' }, { text: '✍️ Saisir à la main' }],
+      buttons: [{ text: '📸 Photo' }, { text: '✍️ Saisir' }],
     }, cfg);
     return;
   }
@@ -595,7 +597,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
     } else {
       await sendButtons(phone, {
         body: `${bar('ocr')}\n📋 *Carte d'embarquement ou e-ticket*\n\nComment souhaitez-vous continuer ?`,
-        buttons: [{ text: '📸 Envoyer une photo' }, { text: '✍️ Saisir à la main' }],
+        buttons: [{ text: '📸 Photo' }, { text: '✍️ Saisir' }],
       }, cfg);
     }
     return;
@@ -675,7 +677,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
       await setState(phone, s);
       await sendButtons(phone, {
         body: `${bar('confirm_ocr')}\n📸 *Récapitulatif du vol — vérifiez :*\n\n✈️ *${s.vol}* — ${s.compagnie}\n🎫 *${s.date}*\n📋 *${s.pnr || '—'}*\n🛤️ *${s.route}*\n👤 *${s.nom}*\n\nℹ️ Une info incorrecte ? Touchez *Corriger*.`,
-        buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Corriger' }],
+        buttons: [{ text: '✅ Correct' }, { text: '✏️ Corriger' }],
       }, cfg);
     } else {
       await send(phone, `Nom trop court. Renvoyez le nom complet du passager principal :`, cfg);
@@ -717,7 +719,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
     } else {
       await sendButtons(phone, {
         body: `📸 *Récapitulatif du vol — vérifiez :*\n\n✈️ *${s.vol}* — ${s.compagnie}\n🎫 *${s.date}*\n📋 *${s.pnr || '—'}*\n🛤️ *${s.route}*\n👤 *${s.nom}*`,
-        buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Corriger' }],
+        buttons: [{ text: '✅ Correct' }, { text: '✏️ Corriger' }],
       }, cfg);
     }
     return;
@@ -765,7 +767,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
       const noms = s.nom ? `• *${s.nom}*` : '• (passager 1)';
       await sendButtons(phone, {
         body: `${bar('mineurs')}\n👶 *Question juridique importante*\n\nParmi les passagers suivants, y a-t-il des *mineurs* (moins de 18 ans) ?\n\n${noms}\n\n⚖️ Obligation légale pour préparer le bon mandat.`,
-        buttons: [{ text: '✅ Non, tous majeurs' }, { text: '👶 Oui, il y a des mineurs' }],
+        buttons: [{ text: '✅ Tous majeurs' }, { text: '👶 Des mineurs' }],
       }, cfg);
     } else if (norm === '2') {
       s.step = 'manuel_nom';
@@ -793,7 +795,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
       const noms = s.nom ? `• *${s.nom}*` : '• (passager 1)';
       await sendButtons(phone, {
         body: `${bar('mineurs')}\n👶 *Y a-t-il des mineurs parmi les passagers ?*\n\n${noms}`,
-        buttons: [{ text: '✅ Non, tous majeurs' }, { text: '👶 Oui, il y a des mineurs' }],
+        buttons: [{ text: '✅ Tous majeurs' }, { text: '👶 Des mineurs' }],
       }, cfg);
     }
     return;
@@ -918,7 +920,7 @@ async function processOcr(phone, s, mediaUrl, cfg) {
     await setState(phone, s);
     await sendButtons(phone, {
       body: `${bar('confirm_ocr')}\n📸 *Lu ! Vérifiez :*\n\n✈️ *${s.vol || '—'}* — ${s.compagnie || '—'}\n🎫 *${s.date || '—'}*\n📋 *${s.pnr || '—'}*\n🛤️ *${s.route || '—'}*\n👤 *${s.nom || '—'}*\n\nℹ️ Une info incorrecte ? Touchez *Corriger*.`,
-      buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Corriger' }],
+      buttons: [{ text: '✅ Correct' }, { text: '✏️ Corriger' }],
     }, cfg);
   } else {
     // OCR échoué → bascule saisie manuelle
@@ -935,7 +937,7 @@ async function showRemboursements(phone, s, cfg) {
   await sendButtons(phone, {
     body: `💡 *Bonne nouvelle — Robin récupère aussi vos avances !*\n\nSi vous avez payé de votre poche à cause de ce vol *(taxi, hôtel, repas, transfert...)* :\n\n🧾 *Conservez toutes vos factures et reçus.*\n\nRobin des Airs les soumet à la compagnie et récupère ces frais *en plus* de l'indemnité légale. *Zéro effort de votre côté.*`,
     footer: 'On continue avec votre billet ?',
-    buttons: [{ text: '✅ Compris, continuer' }],
+    buttons: [{ text: '✅ Continuer' }],
   }, cfg);
 }
 
