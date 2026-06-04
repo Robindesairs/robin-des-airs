@@ -63,9 +63,7 @@ const LANGS = {
   'mandinka': { code: 'mnk', flag: '🇬🇲', label: 'Mandinka', africaine: true, natif: 'I be Mandinka kan na — expert do bena i ye Mandinka fo. 🤝' },
   'twi':      { code: 'twi', flag: '🇬🇭', label: 'Twi', africaine: true, natif: 'Yɛka Twi — ɔbenfoɔ bi a ɔka Twi bɛfrɛ wo. 🤝' },
   'yoruba':   { code: 'yo', flag: '🇳🇬', label: 'Yoruba', africaine: true, natif: 'A nsọ Yoruba — amoye kan tó ń sọ Yoruba yóò pè ọ. 🤝' },
-  'lingala':  { code: 'ln', flag: '🇨🇩', label: 'Lingala', africaine: true, natif: 'Tolobaka Lingala — moto ya mayele oyo alobaka Lingala akobenga yo. 🤝' },
-  'swahili':  { code: 'sw', flag: '🇰🇪', label: 'Swahili', africaine: true, natif: 'Tunazungumza Kiswahili — mtaalam anayezungumza Kiswahili atakupigia. 🤝' },
-  'peul':     { code: 'ff', flag: '🇬🇳', label: 'Peul / Fulfulde', africaine: true, natif: 'Eɗen haala Pulaar — annduɗo g772o haalata Pulaar maa noddu maa. 🤝' },
+  'peul':     { code: 'ff', flag: '🇬🇳', label: 'Peul / Fulfulde', africaine: true, natif: 'Eɗen haala Pulaar — annduɗo haalata Pulaar maa noddu maa. 🤝' },
 };
 function matchLang(input) {
   const t = (input || '').toLowerCase();
@@ -349,15 +347,15 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
 
 // ─── Émetteurs d'écran ───────────────────────────────────────────────────────
 async function sendAccueil(phone, cfg) {
-  await sendButtons(phone, { body: `${bar('accueil')}\n👋 Bienvenue chez *Robin des Airs* 🏹\nSpécialiste des vols africains retardés ou annulés.\n\n"${pickStat(phone)}"\n\n✈️ La loi européenne CE 261/2004 vous donne droit à *600 € par personne* pour les vols :\n• Au départ de l'Europe — toutes compagnies\n• Vers l'Europe — si compagnie européenne\n\n*0€ si on ne gagne pas.* Aucun risque pour vous.`, footer: 'CE 261/2004', buttons: [{ text: '🚀 Vérifier mon indemnité' }] }, cfg);
+  await sendButtons(phone, { body: `${bar('accueil')}\n👋 Bienvenue chez *Robin des Airs* 🏹\nSpécialiste des vols africains retardés ou annulés.\n\n"${pickStat(phone)}"\n\n✈️ La loi européenne CE 261/2004 vous donne droit à *600 € par personne* pour les vols :\n• Au départ de l'Europe — toutes compagnies\n• Vers l'Europe — si compagnie européenne\n\n*0€ si on ne gagne pas.* Aucun risque pour vous.`, footer: 'CE 261/2004', buttons: [{ text: '🚀 Mon indemnité' }] }, cfg);
   await setState(phone, { step: 'langue', phone });
 }
 async function sendLangue(phone, s, cfg) {
   s.step = 'langue'; await setState(phone, s);
-  await sendList(phone, { header: '🌍 Votre langue', body: `${bar('langue')}\nDans quelle langue souhaitez-vous être accompagné(e) ? 🤝\n_In which language would you like to be assisted?_`, buttonText: '🌍 Choisir', items: [
+  await sendList(phone, { header: '🌍 Votre langue', body: `${bar('langue')}\nDans quelle langue souhaitez-vous être accompagné(e) ? 🤝\n_In which language would you like to be assisted?_\n\n🔜 D'autres langues arrivent bientôt.`, buttonText: '🌍 Choisir', items: [
     { title: '🇫🇷 Français', description: 'Européenne' }, { title: '🇬🇧 English', description: 'Européenne' },
     { title: '🇸🇳 Wolof', description: 'Africaine' }, { title: '🇬🇲 Mandinka', description: 'Africaine' }, { title: '🇬🇭 Twi', description: 'Africaine' },
-    { title: '🇳🇬 Yoruba', description: 'Africaine' }, { title: '🇨🇩 Lingala', description: 'Africaine' }, { title: '🇰🇪 Swahili', description: 'Africaine' }, { title: '🇬🇳 Peul / Fulfulde', description: 'Africaine' },
+    { title: '🇳🇬 Yoruba', description: 'Africaine' }, { title: '🇬🇳 Peul / Fulfulde', description: 'Africaine' },
   ] }, cfg);
 }
 async function sendRoute(phone, s, cfg) {
