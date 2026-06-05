@@ -267,14 +267,15 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       <div class="ferr" id="waErr">Indiquez votre pays et votre numéro WhatsApp</div>
     </div>
     <div>
-      <label>Adresse email du dossier</label>
-      <input type="email" id="em" class="ro" readonly aria-readonly="true" autocomplete="off">
+      <label>Your case tracking</label>
+      <input type="hidden" id="em">
       <div class="email-tech-note" id="emailTechNote">
-        <strong>Case reference email:</strong>
-        <span class="email-tech-ref" id="emailTechExample">ref@robindesairs.eu</span>
+        📱 <strong>You're kept updated on WhatsApp</strong> — an expert guides you through to your compensation payout.
         <span style="display:block;margin-top:6px">
-          Created and managed by Robin des Airs — see <strong>Article 1</strong>.
-          Updates to you: <strong>WhatsApp</strong> or another agreed channel (additional).
+          ✉️ A question? Email us at <strong>contact@robindesairs.eu</strong>.
+        </span>
+        <span style="display:block;margin-top:8px;font-size:12px;color:var(--muted)">
+          🔒 Robin des Airs handles all correspondence with the airline — you have nothing to do.
         </span>
       </div>
     </div>
@@ -595,7 +596,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     Your case is officially open. Robin des Airs takes over immediately.
   </p>
   <div class="success-ref">Reference: <strong id="sRef">—</strong></div>
-  <div class="success-ref" style="margin-top:8px">Case email: <strong id="sEmail">—</strong></div>
+  <div class="success-ref" style="margin-top:8px">📱 Tracked via WhatsApp — Robin des Airs handles correspondence with the airline for you.</div>
   <div class="success-steps">
     <div class="sstep"><div class="snum">1</div><div><strong>WhatsApp confirmation within 24h</strong><br>Full summary + tracking number.</div></div>
     <div class="sstep"><div class="snum">2</div><div><strong>Formal notice within 48h</strong><br>Official letter sent to the airline.</div></div>
@@ -719,9 +720,9 @@ function applyLegacyUrlParams() {
       const note = document.getElementById('emailTechNote');
       if (note) {
         note.innerHTML +=
-          ' <span style="display:block;margin-top:8px;font-size:11px;color:var(--muted)">Airtable email saved: ' +
+          ' <span style="display:block;margin-top:8px;font-size:12px;color:var(--muted)">✅ Your contact email is saved: <strong>' +
           urlEmail.replace(/</g, '&lt;') +
-          ' (identique au format technique attendu pour ce dossier).</span>';
+          '</strong></span>';
       }
     }
   }
