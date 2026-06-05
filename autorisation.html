@@ -838,7 +838,6 @@ function renderAllPassengers() {
     saved.push({
       name:  row.querySelector('.pnif')?.value || '',
       dob:   row.querySelector('.pdob')?.value || '',
-      minor: row.querySelector('.pminor')?.checked || false,
     });
   });
   c.innerHTML = '';
@@ -847,7 +846,7 @@ function renderAllPassengers() {
     const div = document.createElement('div');
     div.className = 'pax-row';
     div.style.cssText = 'border:1px solid var(--border);padding:16px;margin-bottom:12px;background:var(--bg-soft);position:relative;border-radius:8px';
-    const isMinor = pre.minor || false;
+    const isMinor = isMinorFromDob(pre.dob);
     div.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <span style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--green-deep);font-weight:700">
@@ -862,47 +861,37 @@ function renderAllPassengers() {
             oninput="updateParties();buildCoPassChecks()">
         </div>
         <div>
-          <label>Date de naissance${isMinor ? ' <span class="req">*</span>' : ''}</label>
+          <label>Date de naissance</label>
           <input type="date" class="pdob" value="${pre.dob||''}"
             style="width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:'Montserrat',sans-serif;font-size:13px;border-radius:6px;color:var(--ink)"
             onchange="checkMinorAge(this, ${i})">
-          <div style="font-size:10px;color:var(--muted);margin-top:3px;font-style:italic">Obligatoire si mineur</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:3px;font-style:italic">Permet de détecter automatiquement les passagers mineurs</div>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:${isMinor?'var(--red-bg)':'var(--bg-soft)'};border:1px solid ${isMinor?'var(--red-border)':'var(--border)'};border-radius:6px">
-        <input type="checkbox" class="pminor" id="minor${i}" ${isMinor?'checked':''}
-          style="width:16px;height:16px;accent-color:var(--green-deep);cursor:pointer"
-          onchange="toggleMinorRow(this, ${i})">
-        <label for="minor${i}" style="font-size:12px;color:var(--text);cursor:pointer;font-family:'Montserrat',sans-serif;text-transform:none;letter-spacing:0;margin:0;font-weight:500">
-          <strong style="color:var(--navy);font-weight:700">Passager mineur</strong> (moins de 18 ans) — un représentant légal devra co-signer
-        </label>
+      <div class="pminor-badge" id="minorBadge${i}" style="${isMinor?'display:flex':'display:none'};align-items:center;gap:8px;padding:8px 12px;background:var(--red-bg);border:1px solid var(--red-border);border-radius:6px">
+        <span style="font-size:16px">👶</span>
+        <span style="font-size:12px;color:var(--navy);font-family:'Montserrat',sans-serif"><strong style="font-weight:700">Passager mineur</strong> (moins de 18 ans) — un représentant légal co-signe automatiquement.</span>
       </div>
     `;
     c.appendChild(div);
   }
   buildCoPassChecks();
 }
-function checkMinorAge(input, idx) {
-  if (!input.value) return;
-  const dob  = new Date(input.value);
-  const now  = new Date();
-  const age  = Math.floor((now - dob) / (365.25 * 24 * 3600 * 1000));
-  const row  = document.querySelectorAll('.pax-row')[idx];
-  const cb   = row?.querySelector('.pminor');
-  if (age < 18 && cb) {
-    cb.checked = true;
-    toggleMinorRow(cb, idx);
-  }
+function isMinorFromDob(dobStr) {
+  if (!dobStr) return false;
+  const dob = new Date(dobStr);
+  if (isNaN(dob.getTime())) return false;
+  const now = new Date();
+  let age = now.getFullYear() - dob.getFullYear();
+  const m = now.getMonth() - dob.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < dob.getDate())) age--;
+  return age >= 0 && age < 18;
 }
-function toggleMinorRow(cb, idx) {
+function checkMinorAge(input, idx) {
   const row = document.querySelectorAll('.pax-row')[idx];
   if (!row) return;
-  const box = row.querySelector('div[style*="display:flex"]');
-  if (cb.checked) {
-    if (box) { box.style.background='var(--red-bg)'; box.style.borderColor='var(--red-border)'; }
-  } else {
-    if (box) { box.style.background='var(--bg-soft)'; box.style.borderColor='var(--border)'; }
-  }
+  const badge = row.querySelector('.pminor-badge');
+  if (badge) badge.style.display = isMinorFromDob(input.value) ? 'flex' : 'none';
   buildCoPassChecks();
 }
 function buildPaxFields(pax, pre) {
@@ -929,7 +918,7 @@ function getPassengersData() {
     const entry = {
       name:  row.querySelector('.pnif')?.value?.trim() || '',
       dob:   row.querySelector('.pdob')?.value || '',
-      minor: row.querySelector('.pminor')?.checked || false,
+      minor: isMinorFromDob(row.querySelector('.pdob')?.value || ''),
     };
     if (i === 0) {
       // Passager 1 = signataire principal (canvas principal)
@@ -1207,36 +1196,14 @@ function validate() {
     const we = document.getElementById('waErr'); if (we) we.style.display = 'block';
     ok = false;
   }
-  // Validation passagers — nom obligatoire + date de naissance obligatoire si mineur
-  document.querySelectorAll('.pax-row').forEach((row, i) => {
-    const nameInp  = row.querySelector('.pnif');
-    const dobInp   = row.querySelector('.pdob');
-    const minorCb  = row.querySelector('.pminor');
-    const isMinor  = minorCb?.checked || false;
-    // Nom obligatoire
+  // Validation passagers — nom obligatoire (le statut mineur est déduit automatiquement de la date de naissance)
+  document.querySelectorAll('.pax-row').forEach((row) => {
+    const nameInp = row.querySelector('.pnif');
     if (!nameInp?.value.trim()) {
       nameInp?.classList.add('err');
       ok = false;
     } else {
       nameInp?.classList.remove('err');
-    }
-    // Date de naissance obligatoire si mineur
-    if (isMinor && !dobInp?.value) {
-      dobInp?.classList.add('err');
-      dobInp?.setAttribute('style', dobInp.getAttribute('style') + ';border-color:var(--red)!important');
-      // Ajoute message d'erreur si pas déjà là
-      let errMsg = row.querySelector('.dob-err');
-      if (!errMsg) {
-        errMsg = document.createElement('div');
-        errMsg.className = 'dob-err ferr';
-        errMsg.style.display = 'block';
-        errMsg.textContent = '⚠️ Date de naissance obligatoire pour les mineurs';
-        dobInp?.parentNode?.appendChild(errMsg);
-      }
-      ok = false;
-    } else {
-      dobInp?.classList.remove('err');
-      row.querySelector('.dob-err')?.remove();
     }
   });
   const allCo = allCoPassChecked();
