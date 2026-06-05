@@ -18,6 +18,16 @@ const { getBlobStore } = require('./lib/netlify-blobs-store');
 
 let LAMBDA_EVENT = null;
 function botStore() { return getBlobStore(LAMBDA_EVENT, 'robin-bot-v8'); }
+
+// ─── Dédup en mémoire (même instance Lambda — première barrière, instantanée) ──
+const MEM_SEEN = new Map(); // key → timestamp
+function memSeen(key) {
+  const now = Date.now();
+  // Nettoyage des entrées > 60s
+  for (const [k, t] of MEM_SEEN) { if (now - t > 60000) MEM_SEEN.delete(k); }
+  if (MEM_SEEN.has(key)) return true;
+  MEM_SEEN.set(key, now); return false;
+}
 function clip(s, n) { s = String(s == null ? '' : s); return s.length <= n ? s : s.slice(0, n); }
 
 let notifyOwnerWhatsApp = async () => {};
@@ -166,10 +176,15 @@ async function isDuplicateMessage(id, hasId, windowMs) {
   if (!id) return false;
   try { const st = botStore(); if (!st) return false;
     const k = 'seen/' + String(id).replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 200);
-    const prev = await st.get(k, { type: 'json' }); const now = Date.now();
-    const w = windowMs || (hasId ? 600000 : 60000);
+    const now = Date.now(); const w = windowMs || (hasId ? 600000 : 60000);
+    const prev = await st.get(k, { type: 'json' });
     if (prev && prev.t && (now - prev.t) < w) return true;
-    await st.setJSON(k, { t: now }); return false;
+    // Écrire avec un claim unique, puis vérifier qu'on est bien le premier
+    const claim = now.toString(36) + Math.random().toString(36).slice(2, 6);
+    await st.setJSON(k, { t: now, c: claim });
+    const check = await st.get(k, { type: 'json' });
+    if (check && check.c !== claim) return true; // une autre instance a gagné la course
+    return false;
   } catch { return false; }
 }
 
@@ -805,9 +820,13 @@ exports.handler = async (event) => {
   try { await saveInboundDebug(event.body || '{}', items); } catch {}
   for (const { phone, text, mediaUrl, dedupId, hasId, interactive } of items) {
     if (!phone) continue;
+    const ckKey = `ck|${phone}|${String(text).trim().toLowerCase().slice(0, 200)}`;
+    // Couche 1 : mémoire (même instance, instantané — couvre la race condition intra-instance)
+    if (memSeen(dedupId || ckKey)) continue;
+    // Couche 2 : ID stable WATI (cross-instance, fenêtre 10 min)
     if (await isDuplicateMessage(dedupId, hasId)) continue;
-    // Absorbe les double-taps du même bouton/liste (id WATI différent mais même contenu) sur ~60 s.
-    if (interactive && await isDuplicateMessage(`ck|${phone}|${String(text).trim().toLowerCase()}`, false, 12000)) continue;
+    // Couche 3 : contenu (tous messages, fenêtre 30 s — couvre les doublons sans ID stable)
+    if (await isDuplicateMessage(ckKey, false, 30000)) continue;
     try { await appendWaMessage(event, phone, { role: 'user', text, source: 'wati-v8' }); } catch {}
     notifyOwnerWhatsApp(phone, text).catch(() => {}); // fire-and-forget : ne ralentit plus la réponse au client
     try { await handleMessage(phone, text, cfg, mediaUrl); }
