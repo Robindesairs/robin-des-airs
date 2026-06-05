@@ -980,6 +980,33 @@ function canvasHasInk(canvas) {
   return false;
 }
 // ── CO-PASSAGERS — SIGNATURE INDIVIDUELLE ────────────────────
+function buildRepField(idx, data) {
+  const esc = s => String(s == null ? '' : s).replace(/</g, '&lt;').replace(/"/g, '&quot;');
+  const cur = (coRepData[idx] || '').trim();
+  // Candidats : les autres passagers du mandat, non mineurs, avec un nom saisi
+  const cands = [];
+  data.forEach((p, j) => {
+    if (j === idx || p.minor) return;
+    const nm = (p.name || '').trim();
+    if (nm && !cands.includes(nm)) cands.push(nm);
+  });
+  const showAutre = !!cur && !cands.includes(cur);   // un nom personnalisé est déjà saisi
+  const style = "width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:'Montserrat',sans-serif;font-size:13px;border-radius:6px;color:var(--ink);margin-bottom:10px";
+  let opts = '<option value="">— Choose the parent / guardian —</option>';
+  cands.forEach(nm => { opts += '<option value="' + esc(nm) + '"' + (nm === cur ? ' selected' : '') + '>' + esc(nm) + '</option>'; });
+  opts += '<option value="__autre__"' + (showAutre ? ' selected' : '') + '>Other (enter a name)</option>';
+  return '<select class="co-rep-sel" data-idx="' + idx + '" onchange="onRepSelect(this,' + idx + ')" style="' + style + '">' + opts + '</select>'
+    + '<input type="text" class="co-rep" data-idx="' + idx + '" placeholder="First name SURNAME of parent / guardian" value="' + esc(cur) + '" oninput="coRepData[' + idx + ']=this.value" style="' + (showAutre ? '' : 'display:none;') + style + '">';
+}
+function onRepSelect(sel, idx) {
+  const txt = document.querySelector('.co-rep[data-idx="' + idx + '"]');
+  if (sel.value === '__autre__') {
+    if (txt) { txt.style.display = 'block'; coRepData[idx] = txt.value.trim(); txt.focus(); }
+  } else {
+    if (txt) txt.style.display = 'none';
+    coRepData[idx] = sel.value;   // nom du passager choisi (ou '' si placeholder)
+  }
+}
 function buildCoPassChecks() {
   const data = getPassengersData();          // [{name,dob,minor,...}]
   const sec  = document.getElementById('coPassSection');
@@ -1012,8 +1039,8 @@ function buildCoPassChecks() {
             : 'I confirm appointing <strong>Robin des Airs</strong> and assigning my claim to it for recovery purposes (Article 5 bis), on the same terms (No Win No Fee · 25% commission · 14-day withdrawal).')
         + '</p>'
       + (p.minor
-          ? '<label style="display:block;font-family:\'DM Mono\',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-bottom:6px;font-weight:600">Name of legal representative <span style="color:var(--red)">*</span></label>'
-            + '<input type="text" class="co-rep" data-idx="' + idx + '" placeholder="First name SURNAME of parent / guardian" value="' + (coRepData[idx] || '').replace(/"/g, '&quot;') + '" oninput="coRepData[' + idx + ']=this.value" style="width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:\'Montserrat\',sans-serif;font-size:13px;border-radius:6px;color:var(--ink);margin-bottom:10px">'
+          ? '<label style="display:block;font-family:\'DM Mono\',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-bottom:6px;font-weight:600">Legal representative (parent / guardian) <span style="color:var(--red)">*</span></label>'
+            + buildRepField(idx, data)
           : '')
       + '<div class="co-sig-area" data-idx="' + idx + '" style="background:var(--paper);border:2px dashed var(--border);border-radius:8px;padding:12px;text-align:center;cursor:pointer;min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px">'
         + '<canvas class="co-sig-canvas" data-idx="' + idx + '" width="640" height="100" style="display:none;border:1.5px solid var(--border);background:#fff;border-radius:6px;max-width:100%;touch-action:none;cursor:crosshair"></canvas>'
@@ -1211,8 +1238,11 @@ function validate() {
     const signed = canvasHasInk(c) || !!coSigData[idx];
     const err = document.querySelector('.co-sig-err[data-idx="' + idx + '"]');
     if (err) err.style.display = signed ? 'none' : 'block';
-    const rep = document.querySelector('.co-rep[data-idx="' + idx + '"]');
-    if (rep) rep.classList.toggle('err', !(coRepData[idx] || '').trim());
+    const repMissing = !(coRepData[idx] || '').trim();
+    const repSel = document.querySelector('.co-rep-sel[data-idx="' + idx + '"]');
+    const repTxt = document.querySelector('.co-rep[data-idx="' + idx + '"]');
+    if (repSel) repSel.classList.toggle('err', repMissing);
+    if (repTxt) repTxt.classList.toggle('err', repMissing);
   });
   document.getElementById('coPassErr').style.display = allCo ? 'none' : 'block';
   if (!allCo) ok = false;
