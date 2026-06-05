@@ -220,6 +220,8 @@ NEW_PAIRS = [
 NEW_PAIRS2 = [
     # --- "En clair" prefix (applies to all 17 boxes) ---
     ("💡 <strong>En clair&nbsp;:</strong>", "💡 <strong>In plain terms:</strong>"),
+    ("Pour gérer votre dossier, Robin des Airs ouvre une adresse email dédiée qui reçoit les réponses de la compagnie. C'est nous qui nous en occupons de A à Z&nbsp;— vous, vous êtes simplement suivi par WhatsApp.",
+     "To handle your case, Robin des Airs opens a dedicated email address that receives the airline's replies. We take care of it from start to finish&nbsp;— you're simply kept updated on WhatsApp."),
 
     # --- 17 "En clair" plain-language boxes ---
     ("Vous chargez Robin des Airs de récupérer l'argent que la compagnie vous doit. On agit d'abord en votre nom — ça garde l'accès à la médiation. Vol avec correspondance ? C'est l'arrivée finale qui compte — c'est couvert.",
