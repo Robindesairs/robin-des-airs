@@ -90,19 +90,44 @@ function genererMandatPdf(record) {
     doc.fillColor(NAVY).fontSize(18).font('Helvetica-Bold').text('Mandat de Représentation — copie signée', left, doc.y, { width: contentW, align: 'center' });
     doc.moveDown(0.6);
 
-    // ── Bloc certificat ──
-    ensure(82);
-    const cy = doc.y;
-    doc.rect(left, cy, contentW, 72).fill(OFF);
-    doc.rect(left, cy, 3, 72).fill(NEON);
-    doc.fillColor(NAVY).fontSize(9).font('Helvetica-Bold').text('SIGNATURE ÉLECTRONIQUE CERTIFIÉE (eIDAS)', left + 14, cy + 9);
-    doc.fillColor(GRAY).fontSize(8.5).font('Helvetica')
-      .text(`Référence dossier : ${ref}`, left + 14, cy + 24)
-      .text(`Certificat : ${record.cert_id || '—'}    ·    Signé le : ${fmtDate(record.signed_at)}`, left + 14, cy + 36)
-      .text(`Empreinte technique : ${record.ip_hash || '—'}`, left + 14, cy + 48);
-    doc.fillColor(GRAY).fontSize(7.5).font('Helvetica')
-      .text(`Empreinte du document (SHA-256) : ${record.doc_hash ? record.doc_hash.slice(0, 40) + '…' : '—'}`, left + 14, cy + 60);
-    doc.y = cy + 84;
+    // ── Certificat de signature électronique (eIDAS) — piste de preuve détaillée ──
+    sectionTitle('Certificat de signature électronique (eIDAS)');
+    const certLine = (label, val) => {
+      ensure(13); const y = doc.y;
+      doc.fillColor(GRAY).fontSize(8.5).font('Helvetica-Bold').text(label, left, y, { width: 178 });
+      doc.fillColor(TEXT).font('Helvetica').fontSize(8.5).text(String(val == null || val === '' ? '—' : val), left + 182, y, { width: contentW - 182 });
+      doc.y = Math.max(doc.y, y + 12);
+    };
+    certLine('Type de signature', 'Signature électronique simple (SES) — règl. (UE) 910/2014, art. 25');
+    certLine('Signataire', [[record.firstName, record.lastName].filter(Boolean).join(' '), record.email, record.whatsapp].filter(Boolean).join('  ·  ') || '—');
+    certLine('Référence dossier', ref);
+    certLine('Identifiant du certificat', record.cert_id);
+    certLine('Document signé le', `${fmtDate(record.signed_at)} (heure de Paris)`);
+    certLine('Adresse IP (empreinte)', record.ip_hash);
+    certLine('Appareil / navigateur', record.user_agent);
+    if (record.mandat_version) certLine('Version du mandat', record.mandat_version);
+    // Empreinte SHA-256 complète (64 caractères) — auto-vérifiable
+    ensure(28);
+    doc.fillColor(GRAY).fontSize(8.5).font('Helvetica-Bold').text("Empreinte d'intégrité (SHA-256)", left, doc.y);
+    doc.fillColor(TEXT).fontSize(8).font('Courier').text(record.doc_hash || '—', left, doc.y + 1, { width: contentW });
+    doc.moveDown(0.4);
+    // Journal de preuve (horodatages)
+    ensure(54);
+    doc.fillColor(NAVY).fontSize(8.5).font('Helvetica-Bold').text('Journal de preuve', left, doc.y); doc.moveDown(0.2);
+    [
+      record.link_sent_at ? `Mandat transmis au signataire — ${fmtDate(record.link_sent_at)}` : null,
+      `Document consulté et signé par le Mandant — ${fmtDate(record.signed_at)}`,
+      `Acceptation du Mandataire (Robin des Airs) — ${fmtDate(record.mandataireAcceptedAt || record.signed_at)}`,
+    ].filter(Boolean).forEach((e) => {
+      ensure(13); const y = doc.y;
+      doc.fillColor(NEON).fontSize(8.5).font('Helvetica-Bold').text('•', left, y);
+      doc.fillColor(TEXT).fontSize(8.5).font('Helvetica').text(e, left + 12, y, { width: contentW - 12 });
+      doc.y = Math.max(doc.y, y + 12);
+    });
+    ensure(16);
+    doc.fillColor(GRAY).fontSize(7.5).font('Helvetica-Oblique')
+      .text("Toute modification ultérieure du document altère l'empreinte SHA-256 ci-dessus : la falsification est ainsi détectable. La présente copie vaut preuve de la signature électronique au sens de l'art. 1367 du Code civil.", left, doc.y + 2, { width: contentW });
+    doc.moveDown(0.6);
 
     // ── Parties ──
     sectionTitle('Les parties');
@@ -121,7 +146,7 @@ function genererMandatPdf(record) {
     kv('N° de vol', record.flightNum);
     kv('Date du vol', record.flightDate);
     kv('PNR', record.pnr);
-    kv('Itinéraire', [record.depAirport, record.arrAirport].filter(Boolean).join(' -> '));
+    kv('Itinéraire', [record.depAirport, record.arrAirport].filter(Boolean).join(' -> ') || record.route);
     if (record.connecting) kv('Correspondance(s)', record.connecting);
     kv('Incident', INCIDENT_LABEL[record.incident] || record.incident);
     doc.moveDown(0.4);
@@ -144,6 +169,26 @@ function genererMandatPdf(record) {
     ensure(20);
     doc.fillColor(GRAY).fontSize(9).font('Helvetica-Oblique')
       .text(`Texte intégral des 12 articles : robindesairs.eu/autorisation.html (réf. ${ref}).`, left, doc.y, { width: contentW });
+    doc.moveDown(0.6);
+
+    // ── Consentements recueillis (cases cochées par le signataire) ──
+    sectionTitle('Consentements recueillis');
+    const consent = (ok, t) => {
+      ensure(16); const y = doc.y;
+      if (ok) {
+        doc.rect(left, y, 10, 10).fill(NEON);
+        doc.moveTo(left + 2, y + 5).lineTo(left + 4, y + 7.5).lineTo(left + 8.2, y + 2.5).lineWidth(1.4).stroke('white');
+      } else {
+        doc.rect(left, y, 10, 10).lineWidth(1).strokeColor(BORDER).stroke();
+      }
+      doc.fillColor(TEXT).fontSize(8.5).font('Helvetica').text(t, left + 16, y - 1, { width: contentW - 16 });
+      doc.y = Math.max(doc.y, y + 13);
+    };
+    consent(true, "Déclaration sur l'honneur : avoir été passager(e) du vol indiqué, à la date mentionnée, et avoir subi le préjudice déclaré.");
+    consent(true, "Lecture et acceptation du mandat de représentation ; cession de la créance aux fins de recouvrement (Article 5 bis).");
+    consent(record.eligibilityAcknowledged !== false, "Compréhension : l'indemnité n'est pas garantie — obligation de moyens, sous réserve d'éligibilité (CE 261/2004) et de paiement effectif par la compagnie.");
+    consent(!!record.startNow, "Demande de démarrage immédiat du dossier, sans attendre le délai de rétractation de 14 jours (Art. L.221-25 C. conso.).");
+    if ((record.pax || 1) > 1) consent(!!record.coPassAgreement, "Accord de tous les co-passagers (et du représentant légal pour chaque passager mineur).");
     doc.moveDown(0.6);
 
     // ── Signatures ──
@@ -255,7 +300,7 @@ function genererMandatBilinguePdf(record) {
       kv(fr ? 'N° de vol' : 'Flight no.', record.flightNum);
       kv(fr ? 'Date du vol' : 'Flight date', record.flightDate);
       kv('PNR', record.pnr);
-      kv(fr ? 'Itinéraire' : 'Itinerary', [record.depAirport, record.arrAirport].filter(Boolean).join(' -> '));
+      kv(fr ? 'Itinéraire' : 'Itinerary', [record.depAirport, record.arrAirport].filter(Boolean).join(' -> ') || record.route);
       if (record.connecting) kv(fr ? 'Correspondance(s)' : 'Connection(s)', record.connecting);
       kv(fr ? 'Incident' : 'Disruption', (fr ? INCIDENT_LABEL : INCIDENT_LABEL_EN)[record.incident] || record.incident);
       doc.moveDown(0.4);

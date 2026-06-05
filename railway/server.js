@@ -244,13 +244,14 @@ async function storeDossierDurable(ref, dossier) {
 function buildMandatUrl(s, phone) {
   const idx = s.mandant_idx != null ? s.mandant_idx : 0;
   const mandant = (s.passengers && s.passengers[idx]) || {};
+  const _routeParts = (s.route || '').split(/→|->|—|-/).map((x) => x.trim()).filter(Boolean);
   const dossier = {
     ref: s.ref || '', phone: phone || '',
     name: cleanName(mandant.name || (s.names && s.names[0]) || s.nom || ''),
     dob: toISODate(mandant.dob || ''),
     address: mandant.adresse || '',
     vol: s.vol || '', date: s.date || '', pnr: s.pnr || '', compagnie: s.compagnie || '',
-    route: s.route || '', motif: s.incident_libelle || '', pax: s.pax || 1, indemnite: 600,
+    route: s.route || '', depAirport: _routeParts[0] || '', arrAirport: _routeParts[_routeParts.length - 1] || '', motif: s.incident_libelle || '', pax: s.pax || 1, indemnite: 600,
     lang: s.langue_code || 'fr',
     passengers: (s.passengers || []).slice(0, s.pax || 1).map(p => ({ name: cleanName((p && p.name) || ''), dob: toISODate((p && p.dob) || '') })),
     cid: phone || '', lsa: new Date().toISOString(), source: 'wati-bot-v8',
@@ -497,7 +498,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     else return sendButtons(phone, { body: `${bar('type_vol')}\n✈️ Vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg);
     s.step = 'scan'; await setState(phone, s);
     // Un seul message (motivation + scan) → réponse immédiate, pas de délai où les taps s'entrecroisent.
-    return send(phone, `${bar('scan')}\n🎉 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (*${montantNet(s.pax)} € nets*, 75%). Robin prélève 25% *uniquement* si vous gagnez. 🤝\n\n⚡ Pour gagner du temps, envoyez une *photo* de votre carte d'embarquement ou e-billet — je lis tout automatiquement.${s.pax > 1 ? `\n👥 Vous êtes ${s.pax} : on demandera la carte de chacun.` : ''}\n\n📎 Envoyez la photo  ·  ✏️ ou tapez *manuel*`, cfg);
+    return sendButtons(phone, { body: `${bar('scan')}\n🎉 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (*${montantNet(s.pax)} € nets*, 75 %). Robin prélève 25 % *uniquement* si vous gagnez. 🤝\n\n⚡ Envoyez une *photo* de votre carte d'embarquement ou e-billet — je lis le vol automatiquement.${s.pax > 1 ? `\n👥 (une carte suffit pour le vol)` : ''}\n\n📎 *Envoyez la photo*, ou :`, buttons: [{ id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
   }
 
   // MSG8 — SCAN
@@ -507,8 +508,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
         return sendButtons(phone, { body: `${pickVariant(phone, 'SCAN_REUSSI')}\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date || '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ Trajet : ${s.route || '—'}\n\n_(votre identité sera lue sur le passeport, plus tard)_\nTout est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg); }
       await send(phone, `😕 La qualité de l'image n'a pas permis la lecture. On fait à la main, ça prend 2 min. 👇`, cfg); s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
     }
-    if (lower.includes('manuel') || lower.includes('manuelle')) { s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg); }
-    return send(phone, `📎 Envoyez une *photo* de votre carte/e-billet, ou tapez *manuel*.`, cfg);
+    if (id === 'scan_manuel' || lower.includes('manuel') || lower.includes('manuelle') || lower.includes('saisir')) { s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg); }
+    return sendButtons(phone, { body: `📎 Envoyez une *photo* de votre carte/e-billet, ou :`, buttons: [{ id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
   }
   if (s.step === 'scan_confirm') {
     const n = normInput(input, ['oui', 'corriger']);
@@ -629,9 +630,9 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (s.step === 'doc_pass') {
     s.passengers = s.passengers || [];
     if (mediaUrl) { return askOcrConfirm(phone, s, cfg, mediaUrl); }
-    if (lower === 'passer') { s.passengers[s.doc_idx] = { skipped: true }; s.docs_pending = true; s.doc_idx++; await setState(phone, s); return nextPassport(phone, s, cfg); }
-    if (lower.includes('saisir') || lower.includes('manuel') || lower.includes('tape')) { s.step = 'doc_name'; await setState(phone, s); return send(phone, `👤 *Passager ${s.doc_idx + 1}* — Nom et prénom ?\n_(ex : Aminata Diallo)_`, cfg); }
-    return send(phone, `🛂 Envoyez la *photo de la pièce d'identité*, tapez *saisir* (nom + date de naissance), ou *passer*.`, cfg);
+    if (id === 'doc_passer' || lower.includes('passer')) { s.passengers[s.doc_idx] = { skipped: true }; s.docs_pending = true; s.doc_idx++; await setState(phone, s); return nextPassport(phone, s, cfg); }
+    if (id === 'doc_saisir' || lower.includes('saisir') || lower.includes('manuel') || lower.includes('tape')) { s.step = 'doc_name'; await setState(phone, s); return send(phone, `👤 *Passager ${s.doc_idx + 1}* — Nom et prénom ?\n_(ex : Aminata Diallo)_`, cfg); }
+    return sendButtons(phone, { body: `🛂 Envoyez la *photo* de la pièce d'identité, ou :`, buttons: [{ id: 'doc_saisir', text: '✍️ Saisir à la main' }, { id: 'doc_passer', text: '⏭️ Passer' }] }, cfg);
   }
   if (s.step === 'doc_pass_confirm') {
     s.passengers = s.passengers || [];
@@ -807,14 +808,23 @@ async function showNamesConfirm(phone, s, cfg) {
 
 // Documents
 async function startDocuments(phone, s, cfg) {
-  s.step = 'doc_pass'; s.doc_idx = 0; await setState(phone, s);
-  await send(phone, `${bar('documents')}\n📁 Dernière étape — c'est rapide !\nUne *pièce d'identité* par passager (passeport, CNI…) : on lit le nom et la date de naissance automatiquement. Rien d'autre à faire. Tout est conservé en sécurité. 🔒`, cfg);
+  s.step = 'doc_pass'; s.doc_idx = 0; s.passengers = s.passengers || []; await setState(phone, s);
   return nextPassport(phone, s, cfg);
 }
 async function nextPassport(phone, s, cfg) {
   if (s.doc_idx >= s.pax) { return askMandant(phone, s, cfg); }
   s.step = 'doc_pass'; await setState(phone, s);
-  return send(phone, `🛂 *Passager ${s.doc_idx + 1} sur ${s.pax}*\n📸 Envoyez la *photo d'une pièce d'identité* (passeport, CNI, titre de séjour…) — nom + date de naissance lus automatiquement.\n✍️ Pas de pièce sous la main ? Tapez *saisir* (nom + date de naissance).\n⏭️ Ou *passer* pour plus tard.`, cfg);
+  // Intro courte au 1er passager
+  const intro = s.doc_idx === 0 ? `📁 *Dernière étape !* Une pièce d'identité par passager — on lit le nom et la date de naissance pour vous. 🔒\n\n` : '';
+  // En-tête : passagers déjà enregistrés
+  let done = '';
+  for (let i = 0; i < s.doc_idx; i++) {
+    const p = (s.passengers && s.passengers[i]) || {};
+    const nm = p.skipped ? '_(à compléter plus tard)_' : (p.name || `Passager ${i + 1}`);
+    done += `✅ ${i + 1}. ${nm}\n`;
+  }
+  const header = done ? `${done}\n` : '';
+  return sendButtons(phone, { body: `${bar('documents')}\n${intro}${header}🛂 *Passager ${s.doc_idx + 1} sur ${s.pax}*\n📸 Envoyez la *photo* d'une pièce d'identité (passeport, CNI, titre de séjour…).`, buttons: [{ id: 'doc_saisir', text: '✍️ Saisir à la main' }, { id: 'doc_passer', text: '⏭️ Passer' }] }, cfg);
 }
 async function askMandant(phone, s, cfg) {
   // 1 seul passager → signataire évident, pas de question

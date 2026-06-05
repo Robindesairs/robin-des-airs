@@ -494,6 +494,7 @@ exports.handler = async (event) => {
     email: (body.email || '').trim() || clientEmailForRef(ref),
     address: body.address || '',
     startNow: !!body.startNow,
+    eligibilityAcknowledged: body.eligibilityAcknowledged !== false,
     coPassAgreement: !!body.coPassAgreement,
     cessionCreance: body.cessionCreance !== false,
     mandataireAccepted: body.mandataireAccepted !== false,
