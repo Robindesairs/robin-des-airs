@@ -677,7 +677,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
         ? `\n📍 Adresse détectée : *${chosen.adresse}*\n_(pré-remplie sur le mandat — modifiable si besoin)_`
         : `\n_(Aucune adresse lue sur la pièce — vous la saisirez sur le mandat.)_`;
       await send(phone, `👤 *${chosen.name || `Passager ${idx + 1}`}* signe le mandat.${addrNote}`, cfg);
-      return gotoBoarding(phone, s, cfg);
+      return finaliser(phone, s, cfg);
     }
     return askMandant(phone, s, cfg);
   }
@@ -779,7 +779,7 @@ async function sendMineurs(phone, s, cfg) {
 }
 async function sendRecap(phone, s, cfg) {
   s.step = 'recap'; await setState(phone, s);
-  await sendButtons(phone, { body: `${bar('recap')}\n📋 *Récapitulatif — confirmez svp*\n\n👥 ${s.pax} passager${s.pax > 1 ? 's' : ''}\n_Identités à l'étape suivante (pièce d'identité ou saisie)_\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n🛤️ ${s.type_vol === 'escale' ? 'Avec escale' : 'Direct'}\n💵 Potentiellement *${montantNet(s.pax)} € nets* pour vous (75 %)`, buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Modifier' }] }, cfg);
+  await sendButtons(phone, { body: `${bar('recap')}\n📋 *Récapitulatif — confirmez svp*\n\n👥 ${s.pax} passager${s.pax > 1 ? 's' : ''}\n_Identités à l'étape suivante (pièce d'identité ou saisie)_\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n🛤️ ${s.type_vol === 'escale' ? 'Avec escale' : 'Direct'}\n💰 Jusqu'à *${montantTotal(s.pax)} €* — vous gardez *${montantNet(s.pax)} € nets* (75 %)`, buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Modifier' }] }, cfg);
 }
 
 // après vol+date connus → collecte des noms manquants
@@ -808,7 +808,7 @@ async function showNamesConfirm(phone, s, cfg) {
 // Documents
 async function startDocuments(phone, s, cfg) {
   s.step = 'doc_pass'; s.doc_idx = 0; await setState(phone, s);
-  await send(phone, `${bar('documents')}\n📁 Documents — dernière étape avant que votre dossier soit complet !\nQuelques photos pour constituer le dossier officiel. Temps estimé : ${s.pax} min. Tout est conservé en sécurité. 🔒`, cfg);
+  await send(phone, `${bar('documents')}\n📁 Dernière étape — c'est rapide !\nUne *pièce d'identité* par passager (passeport, CNI…) : on lit le nom et la date de naissance automatiquement. Rien d'autre à faire. Tout est conservé en sécurité. 🔒`, cfg);
   return nextPassport(phone, s, cfg);
 }
 async function nextPassport(phone, s, cfg) {
@@ -818,7 +818,7 @@ async function nextPassport(phone, s, cfg) {
 }
 async function askMandant(phone, s, cfg) {
   // 1 seul passager → signataire évident, pas de question
-  if (s.pax <= 1) { s.mandant_idx = 0; await setState(phone, s); return gotoBoarding(phone, s, cfg); }
+  if (s.pax <= 1) { s.mandant_idx = 0; await setState(phone, s); return finaliser(phone, s, cfg); }
   s.step = 'doc_mandant'; await setState(phone, s);
   const names = (s.passengers || []).slice(0, s.pax).map((p, i) => p.name || `Passager ${i + 1}`);
   await send(phone, `✅ Toutes les pièces sont collectées !\n\n*Qui va signer le mandat ?*\n_(Souvent vous — la personne qui ouvre le dossier.)_`, cfg);
@@ -840,7 +840,7 @@ async function finaliser(phone, s, cfg) {
   const minorNote = s.minorsCount ? `\n👶 ${s.minorsCount} mineur·s : signature d'un parent/tuteur requise (un expert vous guide).` : '';
   await send(phone, `${bar('documents')}\n🔒 Avant la signature, votre vie privée d'abord.\nVos documents servent uniquement à réclamer votre indemnité. Jamais vendus ni partagés. Suppression possible à tout moment.\nEn continuant, vous acceptez :\n• Confidentialité : robindesairs.eu/politique-confidentialite\n• CGV : robindesairs.eu/cgv`, cfg);
   await sendDelayed(phone, `🎉 C'est fait : votre dossier est complet et enregistré. Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n💵 Potentiellement *${montantNet(s.pax)} € nets* pour vous${minorNote}\n\nÀ partir de maintenant, vous n'êtes plus seul·e face à la compagnie. Dernière étape, très simple : votre signature.`, cfg, 700);
-  await sendDelayed(phone, `${bar('done')}\n💰 *${s.compagnie || 'La compagnie'} pourrait vous devoir jusqu'à 600 € par passager — Robin va les récupérer pour vous.*\n\n✔️ *0 € si on ne récupère rien.* 25 % de commission uniquement en cas de succès.\n✔️ Aucune info bancaire ici. ✔️ Vols avec correspondance couverts.\n\n👉 *Signez votre mandat (2 min, lisible avant signature) :*\n${s.mandat_url}\n\nUne question, un doute ? On est là, vraiment. Sans signature, on ne peut pas agir en votre nom.\n\n${STOP_FOOTER}`, cfg, 700);
+  await sendDelayed(phone, `${bar('done')}\n💰 *${s.compagnie || 'La compagnie'} pourrait vous devoir jusqu'à ${montantTotal(s.pax)} €.* On va les chercher pour vous.\n\n✅ *0 € d'avance.* On n'est payés (25 %) que si vous l'êtes.\n🔒 Aucune information bancaire demandée.\n\n👉 *Signez votre mandat — 2 min, lisible avant de signer :*\n${s.mandat_url}\n\nSans votre signature, on ne peut pas agir en votre nom.\n\n${STOP_FOOTER}`, cfg, 700);
   await sendDelayed(phone, `🤝 Chez Robin des Airs, l'accompagnement est humain.\nVotre dossier est entre les mains d'un expert qui suivra chaque étape jusqu'au paiement.\n\n*L'IA ouvre le dossier. L'humain le gagne.* 🏹`, cfg, 700);
   try { const makeUrl = process.env.MAKE_WEBHOOK_NEW_DOSSIER; if (makeUrl) await fetch(makeUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...s, phone, source: 'wati-bot-v8' }) }); } catch (e) {}
 }
