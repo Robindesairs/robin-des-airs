@@ -40,6 +40,13 @@ const DEDUP = new Map();   // key → ts
 const DEBUG_INBOUND = [];
 let   DEBUG_INTERACTIVE = null;
 
+// ─── Dossiers (pour lien mandat court : mandat.html?r=REF → la page récupère tout) ──
+const fs = require('fs');
+const DOSSIERS_FILE = process.env.DOSSIERS_FILE || '/tmp/robin-dossiers.json';
+const DOSSIERS = new Map();
+try { const raw = fs.readFileSync(DOSSIERS_FILE, 'utf8'); for (const [k, v] of Object.entries(JSON.parse(raw))) DOSSIERS.set(k, v); console.log('📂 ' + DOSSIERS.size + ' dossiers chargés'); } catch (_) {}
+function persistDossiers() { try { const o = {}; for (const [k, v] of DOSSIERS) o[k] = v; fs.writeFileSync(DOSSIERS_FILE, JSON.stringify(o)); } catch (e) { console.error('persistDossiers', e.message); } }
+
 // ─── Dédup en mémoire (même instance Lambda — première barrière, instantanée) ──
 const MEM_SEEN = new Map(); // key → timestamp
 function memSeen(key) {
@@ -220,10 +227,35 @@ function deduceAirline(vol) { const m = (vol || '').toUpperCase().match(/^([A-Z]
 // Extrait l'index de ligne (0-based) depuis un ID WATI de liste format "sectionIdx-rowIdx" : "0-2"→2, "0-0"→0
 // NE traite PAS les IDs numériques simples ("1","2") qui sont des IDs de boutons WATI, pas des lignes de liste.
 function listRowIdx(id) { if (!id) return -1; const m = /^\d+-(\d+)$/.exec(id); return m ? parseInt(m[1]) : -1; }
+// JJ/MM/AAAA → AAAA-MM-JJ (pour input[type=date]). Renvoie '' si pas une date complète.
+function toISODate(d) { const m = (d || '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); return m ? `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}` : ''; }
+// "NOM/PRENOM" (carte d'embarquement) → "PRENOM NOM". Sinon renvoie tel quel.
+function cleanName(n) { n = (n || '').trim(); if (n.includes('/')) { const [a, b] = n.split('/'); return `${(b||'').trim()} ${(a||'').trim()}`.trim(); } return n; }
+// Stockage DURABLE du dossier sur Netlify Blobs (survit aux redémarrages Railway).
+// Fire-and-forget : le serveur Railway étant persistant, le POST se termine en arrière-plan.
+async function storeDossierDurable(ref, dossier) {
+  try {
+    await fetch('https://robindesairs.eu/api/dossier-store', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ref, dossier, secret: (process.env.WATI_WEBHOOK_SECRET || '').trim() }) });
+  } catch (e) { console.error('storeDossierDurable', e.message); }
+}
+
+// Construit + stocke le dossier, renvoie le lien court mandat.html?r=REF
 function buildMandatUrl(s, phone) {
-  const mandant = (s.passengers && s.passengers[s.mandant_idx != null ? s.mandant_idx : 0]) || {};
-  const p = new URLSearchParams({ ref: s.ref || '', phone: phone || '', name: mandant.name || (s.names && s.names[0]) || s.nom || '', vol: s.vol || '', date: s.date || '', pnr: s.pnr || '', route: s.route || '', compagnie: s.compagnie || '', motif: s.incident_libelle || '', indemnite: '600', pax: String(s.pax || 1), lang: s.langue_code || 'fr', source: 'wati-bot-v8', cid: phone || '', lsa: new Date().toISOString(), address: mandant.adresse || '' });
-  return `https://robindesairs.eu/mandat.html?${p.toString()}`;
+  const idx = s.mandant_idx != null ? s.mandant_idx : 0;
+  const mandant = (s.passengers && s.passengers[idx]) || {};
+  const dossier = {
+    ref: s.ref || '', phone: phone || '',
+    name: cleanName(mandant.name || (s.names && s.names[0]) || s.nom || ''),
+    dob: toISODate(mandant.dob || ''),
+    address: mandant.adresse || '',
+    vol: s.vol || '', date: s.date || '', pnr: s.pnr || '', compagnie: s.compagnie || '',
+    route: s.route || '', motif: s.incident_libelle || '', pax: s.pax || 1, indemnite: 600,
+    lang: s.langue_code || 'fr',
+    passengers: (s.passengers || []).slice(0, s.pax || 1).map(p => ({ name: cleanName((p && p.name) || ''), dob: toISODate((p && p.dob) || '') })),
+    cid: phone || '', lsa: new Date().toISOString(), source: 'wati-bot-v8',
+  };
+  if (s.ref) { DOSSIERS.set(s.ref, dossier); persistDossiers(); storeDossierDurable(s.ref, dossier).catch(() => {}); }
+  return `https://robindesairs.eu/mandat.html?r=${encodeURIComponent(s.ref || '')}`;
 }
 
 // ─── OCR (Vision) ────────────────────────────────────────────────────────────
@@ -888,6 +920,16 @@ app.get('/api/wati-webhook', async (req, res) => {
   res.status(403).json({ error: 'Forbidden' });
 });
 
+// File d'attente PAR NUMÉRO — sérialise le traitement d'un même client.
+// Un seul message d'un numéro est traité à la fois → zéro entrelacement, zéro race condition.
+const QUEUES = new Map();
+function enqueue(phone, task) {
+  const prev = QUEUES.get(phone) || Promise.resolve();
+  const next = prev.then(task).catch(e => console.error('queue', e && e.message));
+  QUEUES.set(phone, next.finally(() => { if (QUEUES.get(phone) === next) QUEUES.delete(phone); }));
+  return next;
+}
+
 app.post('/api/wati-webhook', async (req, res) => {
   const body = req.body;
   if (!verifyWatiSecret(body, req.headers, req.query)) return res.status(401).json({ error: 'Secret invalide' });
@@ -901,14 +943,24 @@ app.post('/api/wati-webhook', async (req, res) => {
     const ckKey = `ck|${phone}|${String(text).trim().toLowerCase().slice(0, 200)}`;
     if (!hasId && await isDuplicateMessage(ckKey, false, 5000)) continue;
     notifyOwnerWhatsApp(phone, text).catch(() => {});
-    handleMessage(phone, text, cfg, mediaUrl, replyId).catch(e => {
+    // Sérialisé par numéro : les messages d'un même client se traitent dans l'ordre, un par un.
+    enqueue(phone, () => handleMessage(phone, text, cfg, mediaUrl, replyId).catch(e => {
       console.error('bot error', e.message, e.stack);
-      if (cfg) send(phone, 'Une erreur est survenue. Tapez *menu* pour recommencer.', cfg).catch(() => {});
-    });
+      if (cfg) return send(phone, 'Une erreur est survenue. Tapez *menu* pour recommencer.', cfg).catch(() => {});
+    }));
   }
 });
 
-app.get('/health', (req, res) => res.json({ ok: true, sessions: STATE.size, dedup: DEDUP.size, uptime: process.uptime(), ts: new Date().toISOString() }));
+// Récupération dossier pour le lien court mandat.html?r=REF (CORS déjà ouvert plus haut)
+app.get('/api/dossier', (req, res) => {
+  const ref = (req.query.r || req.query.ref || '').trim();
+  if (!ref) return res.status(400).json({ error: 'ref manquante' });
+  const d = DOSSIERS.get(ref);
+  if (!d) return res.status(404).json({ error: 'dossier introuvable' });
+  res.json(d);
+});
+
+app.get('/health', (req, res) => res.json({ ok: true, sessions: STATE.size, dedup: DEDUP.size, dossiers: DOSSIERS.size, uptime: process.uptime(), ts: new Date().toISOString() }));
 app.get('/', (req, res) => res.send('\ud83c\udff9 Robin des Airs Bot v8 — Railway OK'));
 
 const PORT = parseInt(process.env.PORT || '3000', 10);

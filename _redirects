@@ -36,6 +36,8 @@
 /api/instagram-stats         /.netlify/functions/instagram-stats         200
 /api/facebook-scheduled      /.netlify/functions/facebook-scheduled      200
 /api/agent-chat              /.netlify/functions/agent-chat              200
+/api/dossier-store           /.netlify/functions/dossier-store           200
+/api/dossier-get             /.netlify/functions/dossier-get             200
 /api/radar-eligible-registry /.netlify/functions/radar-eligible-registry 200
 /api/radar-today             /.netlify/functions/radar-today             200
 /api/radar-enquete           /.netlify/functions/radar-enquete           200

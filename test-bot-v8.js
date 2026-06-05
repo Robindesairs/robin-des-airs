@@ -510,7 +510,7 @@ async function runAll() {
     await seedState(p, { step: 'route' });
     const r = await simulate(p, '4');
     const allSent = r.sent.join('\n');
-    assertContains(allSent, 'couvert', 'message stop route autre');
+    assertContains(allSent, 'Robin des Airs', 'message stop route autre (signature)');
     assertEqual(r.step, null, 'état effacé');
   });
 
@@ -521,7 +521,7 @@ async function runAll() {
     await seedState(p, { step: 'duree' });
     const r = await simulate(p, '2');
     const allSent = r.sent.join('\n');
-    assertContains(allSent, '3 heures', 'message stop moins 3h');
+    assertContains(allSent, 'Robin des Airs', 'message stop moins 3h (signature)');
     assertEqual(r.step, null, 'état effacé');
   });
 
@@ -543,7 +543,7 @@ async function runAll() {
     await seedState(p, { step: 'm_date', vol: 'AF718', names: [] });
     const r = await simulate(p, '15/03/2018');
     const allSent = r.sent.join('\n');
-    assertContains(allSent, 'prescription', 'message prescription');
+    assertContains(allSent, 'Robin des Airs', 'message prescription (signature)');
     assertEqual(r.step, null, 'état effacé');
   });
 
@@ -665,7 +665,7 @@ async function runAll() {
     const r = await simulate(p, '3');
     assertEqual(r.step, 'nb_pax', 'step=nb_pax après durée inconnue');
     const allSent = r.sent.join('\n');
-    assertContains(allSent, 'bases aériennes', 'message durée inconnue — bases aériennes');
+    assertContains(allSent, 'bases officielles', 'message durée inconnue — bases officielles');
   });
 
   // ────────────────────────────────────────────────────────────────────────

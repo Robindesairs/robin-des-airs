@@ -15,6 +15,7 @@
 const { appendWaMessage, normalizeWaPhone } = require('./lib/wa-convo-store');
 const { normalizeWatiPhone, watiCfg } = require('./lib/wati-api');
 const { getBlobStore } = require('./lib/netlify-blobs-store');
+const { pickVariant } = require('./lib/bot-variants');
 
 let LAMBDA_EVENT = null;
 function botStore() { return getBlobStore(LAMBDA_EVENT, 'robin-bot-v8'); }
@@ -209,6 +210,25 @@ function buildMandatUrl(s, phone) {
   return `https://robindesairs.eu/mandat.html?${p.toString()}`;
 }
 
+// ─── Lien court DURABLE : stocke le dossier (Netlify Blobs) → mandat.html?r=REF ──
+function isoDob(d) { const m = String(d || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); return m ? `${m[3]}-${String(m[2]).padStart(2, '0')}-${String(m[1]).padStart(2, '0')}` : ''; }
+function cleanName(n) { n = String(n || '').trim(); if (n.includes('/')) { const a = n.split('/'); return ((a[1] || '').trim() + ' ' + (a[0] || '').trim()).trim(); } return n; }
+function buildDossier(s, phone) {
+  const idx = s.mandant_idx != null ? s.mandant_idx : 0;
+  const mandant = (s.passengers && s.passengers[idx]) || {};
+  const name = cleanName(mandant.name || (s.names && s.names[0]) || s.nom || '');
+  const passengers = (s.passengers || []).slice(0, s.pax || 1).map(p => ({ name: cleanName(p && p.name || ''), dob: isoDob(p && p.dob) }));
+  return { ref: s.ref || '', name, dob: isoDob(mandant.dob), address: mandant.adresse || '', phone: phone || '',
+    vol: s.vol || '', compagnie: s.compagnie || '', pnr: s.pnr || '', date: s.date || '', motif: s.incident_libelle || '',
+    indemnite: 600, pax: s.pax || 1, lang: s.langue_code || 'fr', passengers, cid: phone || '', lsa: new Date().toISOString() };
+}
+async function storeDossier(ref, dossier) {
+  try {
+    const r = await fetch('https://robindesairs.eu/api/dossier-store', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ref, dossier, secret: (process.env.WATI_WEBHOOK_SECRET || '').trim() }) });
+    return r.ok;
+  } catch (e) { console.error('storeDossier', e.message); return false; }
+}
+
 // ─── OCR (Vision) ────────────────────────────────────────────────────────────
 async function ocrBoardingPass(mediaUrl, cfg) {
   const key = process.env.OPENAI_API_KEY; if (!key || !mediaUrl) return null;
@@ -387,7 +407,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (ri === 0 || n === '1' || (lower.includes('afrique') && lower.includes('europe'))) { s.route_type = 'af_eu'; }
     else if (ri === 1 || n === '2' || (lower.includes('europe') && !lower.includes('afrique') && !lower.includes('départ') && !lower.includes('arrivée'))) { s.route_type = 'eu_eu'; await send(phone, `🇪🇺 Les vols intra-européens sont couverts par le CE 261 ✅\nNotre spécialité c'est Afrique ↔ Europe, mais on continue.`, cfg); }
     else if (ri === 2 || n === '3' || (lower.includes('départ') && !lower.includes('retard'))) { s.route_type = 'mixte'; await send(phone, `🛫 Un départ ou une arrivée en Europe peut être éligible. Vérifions ensemble. ✅`, cfg); }
-    else if (ri === 3 || n === '4' || lower.includes('autre')) { await clearState(phone); return send(phone, `😔 On a vérifié votre vol avec attention, et on est sincèrement désolés.\n\nVotre trajet ne semble pas couvert par le règlement européen *CE 261/2004* (vols au départ de l'UE, ou vers l'UE sur une compagnie européenne).\n\nUne galère de vol reste une galère, indemnisable ou non. Vous méritiez mieux. 🙏\n\n❓ Un détail mal saisi (escale dans l'UE, compagnie européenne) ? Tapez *menu* pour revérifier.\n\n${STOP_FOOTER}`, cfg); }
+    else if (ri === 3 || n === '4' || lower.includes('autre')) { await clearState(phone); return send(phone, `${pickVariant(phone, 'STOP_HORS_EUROPE')}\n\n${STOP_FOOTER}`, cfg); }
     else return redispatch('route'); // si l'état a avancé → re-dispatch, sinon silence
     s.step = 'incident'; await setState(phone, s); return sendIncident(phone, s, cfg);
   }
@@ -395,21 +415,18 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // MSG4 — INCIDENT
   if (s.step === 'incident') {
     const n = normInput(input, ['retard', 'annulation', 'refus']);
-    if (n === '1' || lower.includes('retard')) { s.step = 'duree'; await setState(phone, s); return sendButtons(phone, { body: `😔 Un retard à l'arrivée, c'est vraiment usant — attendre sans savoir, voir son voyage chamboulé. On sait à quel point c'est éprouvant.\n\n⏱️ Votre vol est arrivé avec combien de retard ?`, buttons: [{ text: '✅ Plus de 3 heures' }, { text: '❌ Moins de 3h' }, { text: '🤔 Je ne sais plus' }] }, cfg); }
+    if (n === '1' || lower.includes('retard')) { s.step = 'duree'; await setState(phone, s); return sendButtons(phone, { body: pickVariant(phone, 'REACTION_RETARD'), buttons: [{ text: '✅ Plus de 3 heures' }, { text: '❌ Moins de 3h' }, { text: '🤔 Je ne sais plus' }] }, cfg); }
     if (n === '2' || lower.includes('annul')) { s.incident = 'annulation'; s.incident_libelle = 'Annulation'; }
     else if (n === '3' || lower.includes('refus') || lower.includes('embarq')) { s.incident = 'refus'; s.incident_libelle = "Refus d'embarquement"; }
     else return redispatch('incident'); // si état avancé → re-dispatch
-    const reactionIncident = s.incident === 'annulation'
-      ? `😔 Un vol annulé, c'est tout un voyage bouleversé : projets retardés, proches qui attendent, dépenses en plus. Vraiment désolés que vous ayez vécu ça.`
-      : `😔 Avoir un billet en règle et se voir refuser l'embarquement, c'est révoltant. On est de votre côté, et on va faire valoir vos droits.`;
-    await send(phone, reactionIncident, cfg);
+    await send(phone, pickVariant(phone, s.incident === 'annulation' ? 'REACTION_ANNULATION' : 'REACTION_REFUS'), cfg);
     await estimationPuisPax(phone, s, cfg); return;
   }
   if (s.step === 'duree') {
     const n = normInput(input, ['plus de 3', 'moins de 3', 'sais']);
     if (n === '1' || lower.includes('plus de 3')) { s.incident = 'retard'; s.incident_libelle = 'Retard +3h'; s.duree_retard = '+3h'; return estimationPuisPax(phone, s, cfg); }
-    if (n === '2' || lower.includes('moins de 3')) { await clearState(phone); return send(phone, `😔 On est sincèrement désolés pour ce retard. L'attente, le stress, le temps perdu : on sait à quel point ça gâche un voyage.\n\nMalheureusement, la loi CE 261/2004 n'ouvre droit à indemnité qu'*à partir de 3 heures de retard à l'arrivée* (et non au départ). En dessous, aucune compagnie n'est tenue d'indemniser — ça ne dépend pas de nous.\n\n💡 Pas tout à fait sûr de la durée, ou proche des 3 h ? Ne refermez pas trop vite : tapez *menu* et choisissez « Je ne sais plus », on vérifie gratuitement.\n\n${STOP_FOOTER}`, cfg); }
-    if (n === '3' || lower.includes('sais') || lower.includes('souviens')) { s.incident = 'retard'; s.incident_libelle = 'Retard (à vérifier)'; s.duree_retard = 'inconnue'; s.escalade = s.escalade || 'duree_inconnue'; await send(phone, `😊 Ne vous en faites pas, c'est tout à fait normal — qui regarde l'heure exacte d'atterrissage ? Personne. C'est notre travail, pas le vôtre.\n\n✈️ On retrouvera la durée exacte dans les bases aériennes officielles, et un expert la confirmera avec vous. Continuons. 👇`, cfg); return estimationPuisPax(phone, s, cfg); }
+    if (n === '2' || lower.includes('moins de 3')) { await clearState(phone); return send(phone, `${pickVariant(phone, 'STOP_MOINS_3H')}\n\n${STOP_FOOTER}`, cfg); }
+    if (n === '3' || lower.includes('sais') || lower.includes('souviens')) { s.incident = 'retard'; s.incident_libelle = 'Retard (à vérifier)'; s.duree_retard = 'inconnue'; s.escalade = s.escalade || 'duree_inconnue'; await send(phone, pickVariant(phone, 'DUREE_INCONNUE'), cfg); return estimationPuisPax(phone, s, cfg); }
     return; // silence
   }
 
@@ -441,7 +458,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (s.step === 'scan') {
     if (mediaUrl) { const d = await ocrBoardingPass(mediaUrl, cfg);
       if (d && (d.vol || d.nom)) { Object.assign(s, { vol: d.vol || s.vol, compagnie: d.compagnie || s.compagnie, date: d.date || s.date, route: d.route || s.route, pnr: d.pnr || s.pnr }); if (d.nom) s.names[0] = d.nom; s.step = 'scan_confirm'; await setState(phone, s);
-        return sendButtons(phone, { body: `✅ C'est tout bon, j'ai tout récupéré sur votre billet — rien à ressaisir, je m'occupe du reste.\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date || '—'}\n🎫 PNR : ${s.pnr || '—'}\n👤 Passager : ${s.names[0] || '—'}\n🗺️ Trajet : ${s.route || '—'}\n\nTout est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg); }
+        return sendButtons(phone, { body: `${pickVariant(phone, 'SCAN_REUSSI')}\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date || '—'}\n🎫 PNR : ${s.pnr || '—'}\n👤 Passager : ${s.names[0] || '—'}\n🗺️ Trajet : ${s.route || '—'}\n\nTout est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg); }
       await send(phone, `😕 La qualité de l'image n'a pas permis la lecture. On fait à la main, ça prend 2 min. 👇`, cfg); s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
     }
     if (lower.includes('manuel') || lower.includes('manuelle')) { s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg); }
@@ -475,7 +492,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const m = input.match(/(\d{1,2})[\/\-. ](\d{1,2})[\/\-. ](\d{2,4})/);
     if (m) { const yy = m[3].length === 2 ? '20' + m[3] : m[3]; const d = `${m[1].padStart(2, '0')}/${m[2].padStart(2, '0')}/${yy}`;
       if (inFuture(d)) return send(phone, FUTURE_JOKE, cfg);
-      if (tooOld(d)) { await clearState(phone); return send(phone, `😔 Je suis sincèrement désolé. Après vérification, votre vol date de plus de 5 ans.\n\nLa loi fixe un délai pour réclamer (la prescription) : en général *5 ans*. Passé ce délai, même un dossier solide ne peut plus être défendu.\n\nCe retard méritait réparation. Si la date est fausse, tapez *menu* pour la corriger.\n\n${STOP_FOOTER}`, cfg); }
+      if (tooOld(d)) { await clearState(phone); return send(phone, `${pickVariant(phone, 'PRESCRIPTION_5ANS')}\n\n${STOP_FOOTER}`, cfg); }
       s.date = d; await setState(phone, s); return afterFix(phone, s, cfg);
     }
     return send(phone, `Date non reconnue. Format JJ/MM/AAAA :`, cfg);
@@ -496,7 +513,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       const d = `${s.date.replace(/\/$/, '')}/${year}`;
       if (inFuture(d)) { await send(phone, `😄 ${year} ? Ce vol n'a pas encore eu lieu — on réclame pour un vol *déjà passé* ! Choisissez la bonne année 👇`, cfg); return askYear(phone, s, cfg); }
       s.date = d;
-      if (tooOld(s.date)) { await clearState(phone); return send(phone, `😔 Je suis sincèrement désolé. Votre vol date de plus de 5 ans (prescription en général *5 ans*). Même un dossier solide ne peut plus être défendu passé ce délai. Ce retard méritait réparation.\n❓ Si la date est incorrecte, tapez *menu* pour la corriger.\n\n${STOP_FOOTER}`, cfg); }
+      if (tooOld(s.date)) { await clearState(phone); return send(phone, `${pickVariant(phone, 'PRESCRIPTION_5ANS')}\n\n${STOP_FOOTER}`, cfg); }
       await setState(phone, s); return apresVol(phone, s, cfg);
     }
     return askYear(phone, s, cfg);
@@ -513,7 +530,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (m) { const yy = m[3].length === 2 ? '20' + m[3] : m[3]; const d = `${m[1].padStart(2, '0')}/${m[2].padStart(2, '0')}/${yy}`;
       if (inFuture(d)) return send(phone, FUTURE_JOKE, cfg);
       s.date = d;
-      if (tooOld(s.date)) { await clearState(phone); return send(phone, `😔 Je suis sincèrement désolé. Votre vol date de plus de 5 ans (prescription en général *5 ans*). Même un dossier solide ne peut plus être défendu passé ce délai. Ce retard méritait réparation.\n❓ Si la date est incorrecte, tapez *menu* pour la corriger.\n\n${STOP_FOOTER}`, cfg); }
+      if (tooOld(s.date)) { await clearState(phone); return send(phone, `${pickVariant(phone, 'PRESCRIPTION_5ANS')}\n\n${STOP_FOOTER}`, cfg); }
       await setState(phone, s); return apresVol(phone, s, cfg);
     }
     return send(phone, `Date non reconnue. Format JJ/MM/AAAA (ex. 15/03/2026) :`, cfg);
@@ -661,7 +678,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
 
 // ─── Émetteurs d'écran ───────────────────────────────────────────────────────
 async function sendAccueil(phone, cfg) {
-  await sendButtons(phone, { body: `${bar('accueil')}\n👋 Bienvenue chez *Robin des Airs* 🏹\n\nUn vol retardé ou annulé, c'est rarement agréable : du temps perdu, du stress, parfois une correspondance ratée. On est sincèrement désolés que vous ayez vécu ça — et trop souvent, personne n'est là pour vous aider.\n\nNous, c'est notre métier : on défend les passagers des vols Afrique ↔ Europe.\n\n"${pickStat(phone)}"\n\n✈️ La loi CE 261/2004 vous donne droit à une indemnité pouvant aller *jusqu'à 600 € par personne*.\n\n*0 € si on ne gagne pas.* Aucun risque pour vous.\n\nVoyons ensemble si une indemnité vous revient. 👇`, footer: 'CE 261/2004', buttons: [{ text: '🚀 Mon indemnité' }] }, cfg);
+  await sendButtons(phone, { body: `${bar('accueil')}\n👋 Bienvenue chez *Robin des Airs* 🏹\n\n${pickVariant(phone, 'ACCUEIL_EMPATHIE')}\n\nNous, c'est notre métier : on défend les passagers des vols Afrique ↔ Europe.\n\n✈️ La loi CE 261/2004 vous donne droit à une indemnité pouvant aller *jusqu'à 600 € par personne*.\n\n*0 € si on ne gagne pas.* Aucun risque pour vous.\n\nVoyons ensemble si une indemnité vous revient. 👇`, footer: 'CE 261/2004', buttons: [{ text: '🚀 Mon indemnité' }] }, cfg);
   // _sid = session ID unique par parcours (timestamp base36) — isole le dedup step+contenu
   await setState(phone, { step: 'langue', phone, _sid: Date.now().toString(36) });
 }
@@ -708,7 +725,7 @@ async function afterFix(phone, s, cfg) {
   if (s.fix_return === 'recap') return sendRecap(phone, s, cfg);
   return showScanConfirm(phone, s, cfg);
 }
-async function estimationPuisPax(phone, s, cfg) { s.step = 'nb_pax'; await setState(phone, s); await send(phone, `💡 Bonne nouvelle : votre vol *peut vous donner droit à une indemnité*, jusqu'à *600 € par passager*. Si le dossier est éligible, c'est une somme qui vous revient. *0 € si on ne gagne pas* — on avance ensemble ? 💪`, cfg); return sendPax(phone, s, cfg); }
+async function estimationPuisPax(phone, s, cfg) { s.step = 'nb_pax'; await setState(phone, s); await send(phone, pickVariant(phone, 'ESTIMATION_QUALIFICATION'), cfg); return sendPax(phone, s, cfg); }
 async function sendMineurs(phone, s, cfg) {
   s.step = 'mineurs'; await setState(phone, s);
   if (s.pax === 1) return sendButtons(phone, { body: `${bar('mineurs')}\n👤 Êtes-vous majeur(e) (18+) ?`, buttons: [{ text: '✅ Oui, majeur(e)' }, { text: '👶 Non, mineur(e)' }] }, cfg);
@@ -773,7 +790,10 @@ async function finaliser(phone, s, cfg) {
   const pax = s.passengers || [];
   const nom = (pax[0] && pax[0].name) || (s.names && s.names[0]) || '—';
   s.minorsCount = pax.filter(p => p && p.minor).length;
-  s.ref = genRef(); s.mandat_url = buildMandatUrl(s, phone); s.step = 'done'; await setState(phone, s);
+  s.ref = genRef();
+  const stored = await storeDossier(s.ref, buildDossier(s, phone)); // stockage durable Blobs
+  s.mandat_url = stored ? `https://robindesairs.eu/mandat.html?r=${s.ref}` : buildMandatUrl(s, phone); // lien court si OK, sinon fallback long
+  s.step = 'done'; await setState(phone, s);
   const minorNote = s.minorsCount ? `\n👶 ${s.minorsCount} mineur·s : signature d'un parent/tuteur requise (un expert vous guide).` : '';
   await send(phone, `${bar('documents')}\n🔒 Avant la signature, votre vie privée d'abord.\nVos documents servent uniquement à réclamer votre indemnité. Jamais vendus ni partagés. Suppression possible à tout moment.\nEn continuant, vous acceptez :\n• Confidentialité : robindesairs.eu/politique-confidentialite\n• CGV : robindesairs.eu/cgv`, cfg);
   await sendDelayed(phone, `🎉 C'est fait : votre dossier est complet et enregistré. Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n💵 Potentiellement *${montantNet(s.pax)} € nets* pour vous${minorNote}\n\nÀ partir de maintenant, vous n'êtes plus seul·e face à la compagnie. Dernière étape, très simple : votre signature.`, cfg, 700);
