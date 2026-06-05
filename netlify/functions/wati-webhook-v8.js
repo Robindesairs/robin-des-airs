@@ -129,7 +129,7 @@ async function sendButtons(phone, config, cfg) {
 async function sendList(phone, { header, body, footer, buttonText, items }, cfg) {
   if (!cfg) return;
   const wa = normalizeWatiPhone(phone);
-  const rows = items.map((i, idx) => ({ id: String(idx + 1), title: clip(i.title, 24), description: clip(i.description || '', 72) }));
+  const rows = items.map((i, idx) => ({ id: i.id || String(idx + 1), title: clip(i.title, 24), description: clip(i.description || '', 72) }));
   // ✅ Vraie liste cliquable = endpoint v3 "active conversation" avec type:"list"
   //    (le /api/v1/sendInteractiveListMessage rend toujours en texte — confirmé support WATI).
   let host; try { host = new URL(cfg.base).origin; } catch { host = cfg.base; }
@@ -337,13 +337,13 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId) {
   }
 
   let s = await getState(phone);
-  const stepAtRead = s ? s.step : null; // étape au moment de la lecture — détecte les avances concurrentes
 
   // T2 — fallback IA hors-flux (question libre) → réponse + boutons
+  // ⚠️ Jamais intercepté si c'est une réponse interactive (bouton/liste) : replyId présent → flux prioritaire
   try {
     const { isClientQuestion, isSensitive, answerClientQuestion } = require('./lib/robin-ai-responder');
     const FREE = ['m_vol', 'm_date', 'm_route', 'names', 'vd_vol', 'vd_date', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob'];
-    const looks = FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input);
+    const looks = !id && (FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input));
     if (looks) {
       if (isSensitive(input)) { await send(phone, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nTapez *menu* pour ouvrir/continuer votre dossier.`, cfg); return; }
       const r = await answerClientQuestion(input, process.env.OPENAI_API_KEY);
@@ -556,6 +556,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId) {
     s.passengers = s.passengers || [];
     // Nouvelle photo → re-OCR immédiat
     if (mediaUrl) { delete s.doc_pending; return askOcrConfirm(phone, s, cfg, mediaUrl); }
+    const n = normInput(input, ['correct', 'corriger']);
     const ok = n === '1' || id === 'pass_ok' || lower.includes('correct') || lower.startsWith('oui') || lower === 'ok' || lower.includes('parfait') || lower.includes('exact');
     const fix = n === '2' || id === 'pass_fix' || lower.includes('corrig') || lower.startsWith('non') || lower.includes('erreur') || lower.includes('faux');
     if (ok) {
@@ -579,10 +580,11 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId) {
   }
   if (s.step === 'doc_mandant') {
     s.passengers = s.passengers || [];
-    // Résoudre l'index du signataire (bouton id 'mdt_N', numéro tapé, ou nom partiel)
+    // Résoudre l'index du signataire : id bouton/liste 'mdt_N', numéro tapé, ou nom partiel
     let idx = -1;
-    if (id && /^mdt_\d+$/.test(id)) idx = parseInt(id.slice(4));
-    else if (/^\d+$/.test(n) && parseInt(n) >= 1 && parseInt(n) <= s.pax) idx = parseInt(n) - 1;
+    if (id && /^mdt_\d+$/.test(id)) idx = parseInt(id.slice(4));           // bouton mdt_N
+    else if (id && /^\d+$/.test(id)) idx = parseInt(id) - 1;               // liste → id numérique "1","2"...
+    else if (/^\d+$/.test(input.trim())) idx = parseInt(input.trim()) - 1; // saisi à la main
     else {
       const lowNames = (s.passengers).slice(0, s.pax).map(p => (p.name || '').toLowerCase());
       idx = lowNames.findIndex(nm => nm && lower.split(' ').some(w => w.length > 2 && nm.includes(w)));
@@ -741,7 +743,7 @@ async function askMandant(phone, s, cfg) {
   if (names.length <= 3) {
     return sendButtons(phone, names.map((nm, i) => ({ id: `mdt_${i}`, text: clip(nm, 20) })), cfg);
   }
-  return sendList(phone, 'Choisir', [{ title: 'Passagers', rows: names.map((nm, i) => ({ id: `mdt_${i}`, title: clip(nm, 24), description: `Passager ${i + 1}` })) }], cfg);
+  return sendList(phone, { header: 'Signataire du mandat', body: 'Qui va signer le mandat ?', buttonText: 'Choisir', items: names.map((nm, i) => ({ id: `mdt_${i}`, title: clip(nm, 24), description: `Passager ${i + 1}` })) }, cfg);
 }
 async function gotoBoarding(phone, s, cfg) { s.step = 'doc_boarding'; await setState(phone, s); return send(phone, `🎫 Carte d'embarquement\nEnvoyez-en une photo pour le vol concerné.\n📧 Pas de carte ? Votre e-billet fonctionne aussi.\n✏️ *passer* · 📞 *appel* si tout perdu.`, cfg); }
 async function gotoEticket(phone, s, cfg) { s.step = 'doc_eticket'; await setState(phone, s); return send(phone, `📧 Confirmation de réservation (e-billet)\nEnvoyez une capture (pensez aux spams / appli Booking).\n✏️ *passer* · 📞 *appel*.`, cfg); }
@@ -837,12 +839,14 @@ exports.handler = async (event) => {
   for (const { phone, text, mediaUrl, dedupId, hasId, interactive, replyId } of items) {
     if (!phone) continue;
     const ckKey = `ck|${phone}|${String(text).trim().toLowerCase().slice(0, 200)}`;
-    // Couche 1 : mémoire (même instance, instantané — couvre la race condition intra-instance)
-    if (memSeen(dedupId || ckKey)) continue;
-    // Couche 2 : ID stable WATI (cross-instance, fenêtre 10 min)
-    if (await isDuplicateMessage(dedupId, hasId)) continue;
-    // Couche 3 : contenu (tous messages, fenêtre 30 s — couvre les doublons sans ID stable)
-    if (await isDuplicateMessage(ckKey, false, 30000)) continue;
+    // Couche 1 : mémoire intra-instance (ID stable uniquement)
+    if (hasId && memSeen(dedupId)) continue;
+    // Couche 2 : Blobs ID stable WATI (cross-instance, 10 min)
+    if (hasId && await isDuplicateMessage(dedupId, true)) continue;
+    // Couche 3 : contenu (tous messages), fenêtre 3 s
+    // — Un vrai doublon réseau WATI arrive en < 1 s. Une navigation rapide légitime prend > 3 s
+    //   (temps de traitement bot + rendu WhatsApp + lecture + action humaine).
+    if (await isDuplicateMessage(ckKey, false, 3000)) continue;
     try { await appendWaMessage(event, phone, { role: 'user', text, source: 'wati-v8' }); } catch {}
     notifyOwnerWhatsApp(phone, text).catch(() => {}); // fire-and-forget : ne ralentit plus la réponse au client
     try { await handleMessage(phone, text, cfg, mediaUrl, replyId); }
