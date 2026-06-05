@@ -12,8 +12,8 @@ const { clientEmailForRef } = require('./lib/airtable-robin');
 const { checkRateLimit: rateLimitCheck } = require('./lib/rate-limit');
 
 // Génération + envoi de la copie PDF signée (best-effort : ne doit jamais casser la signature)
-let genererMandatPdf = null;
-try { ({ genererMandatPdf } = require('./lib/mandat-pdf')); } catch (e) { console.error('submit-mandat: mandat-pdf indisponible:', e.message); }
+let genererMandatPdf = null, genererMandatBilinguePdf = null;
+try { ({ genererMandatPdf, genererMandatBilinguePdf } = require('./lib/mandat-pdf')); } catch (e) { console.error('submit-mandat: mandat-pdf indisponible:', e.message); }
 let watiSendFile = null, watiCfg = null;
 try { ({ watiSendFile, watiCfg } = require('./lib/wati-api')); } catch (e) { /* WhatsApp optionnel */ }
 
@@ -326,7 +326,7 @@ async function sendResendEmail(apiKey, payload) {
 }
 
 /** Emails équipe + client (si email valide). Resend : RESEND_API_KEY, MANDAT_NOTIFY_EMAIL, MANDAT_EMAIL_FROM */
-async function notifyMandatSignedByEmail(record, pdfBuffer) {
+async function notifyMandatSignedByEmail(record, pdfBuffer, pdfBilingueBuffer) {
   const apiKey = (process.env.RESEND_API_KEY || '').trim();
   if (!apiKey) {
     return { skipped: true, reason: 'no RESEND_API_KEY' };
@@ -344,13 +344,21 @@ async function notifyMandatSignedByEmail(record, pdfBuffer) {
       text: teamContent.text,
       html: teamContent.html,
     };
+    const teamAttachments = [];
     const sigB64 = signatureBase64(record);
     if (sigB64) {
-      teamPayload.attachments = [{
+      teamAttachments.push({
         filename: `signature-${(record.ref || 'mandat').replace(/[^a-zA-Z0-9_-]/g, '_')}.png`,
         content: sigB64,
-      }];
+      });
     }
+    if (pdfBilingueBuffer) {
+      teamAttachments.push({
+        filename: `Mandat-bilingue-FR-EN-${(record.ref || 'mandat').replace(/[^a-zA-Z0-9_-]/g, '_')}.pdf`,
+        content: pdfBilingueBuffer.toString('base64'),
+      });
+    }
+    if (teamAttachments.length) teamPayload.attachments = teamAttachments;
     result.team = await sendResendEmail(apiKey, teamPayload);
   } else {
     result.team = { skipped: true, reason: 'no MANDAT_NOTIFY_EMAIL' };
@@ -547,10 +555,16 @@ exports.handler = async (event) => {
     try { pdfBuffer = await genererMandatPdf(record); }
     catch (e) { console.error('submit-mandat: génération PDF échouée:', e.message); }
   }
+  // Génère le PDF bilingue FR/EN (pour les compagnies étrangères) — joint à la notif équipe
+  let pdfBilingueBuffer = null;
+  if (genererMandatBilinguePdf) {
+    try { pdfBilingueBuffer = await genererMandatBilinguePdf(record); }
+    catch (e) { console.error('submit-mandat: génération PDF bilingue échouée:', e.message); }
+  }
 
   const [webhookResult, emailResult, waCopyResult] = await Promise.all([
     forwardBotWebhook(record).then(() => ({ ok: true })).catch((e) => ({ ok: false, error: e.message })),
-    notifyMandatSignedByEmail(record, pdfBuffer),
+    notifyMandatSignedByEmail(record, pdfBuffer, pdfBilingueBuffer),
     sendMandatWhatsappCopy(record, pdfBuffer),
   ]);
 
