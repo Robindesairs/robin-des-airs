@@ -2367,6 +2367,12 @@ function openDetail(id){
     </div>`).join('')}
     <div class="detail-row"><span class="detail-label">Source acquisition</span><span class="detail-val">${escHtml(CRM_SOURCE_LABELS[effSource]||effSource)}</span></div>
     <div class="detail-row"><span class="detail-label">Statut</span><span class="detail-val" style="display:flex;flex-wrap:wrap;align-items:center;gap:6px"><span class="badge s-${d.statut}">${STATUT_LABELS[d.statut]||d.statut}</span>${d.date_statut?`<span style="color:#6B7280;font-size:13px">depuis le ${d.date_statut}</span>`:''}${d.statut==='PAYE'&&d.date_paiement?`<span style="color:#007A4C;font-size:13px;font-weight:600">· paiement ${d.date_paiement}</span>`:''}</span></div>
+    <div class="section-title">Actions — mise en demeure CE 261</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px">
+      <button type="button" class="btn btn-primary btn-sm" onclick="crmGenerateClaim('${id}')">⚖️ Générer la mise en demeure (PDF)</button>
+      <button type="button" class="btn btn-sm" onclick="crmMarkLrarSent('${id}')">📮 Marquer « LRAR envoyée » → armer relances</button>
+    </div>
+    <p style="font-size:11px;color:#9CA3AF;margin:0 0 4px;line-height:1.5">Génère le PDF depuis Airtable (synchronisez le dossier au préalable). « LRAR envoyée » fixe la date du jour et arme les jalons J+15 / J+30 / J+62. <strong>Aucun envoi automatique</strong> : vous validez et expédiez vous-même.</p>
     <div class="section-title">Pièces jointes (${(d.pieces||[]).length})</div>
     <p style="font-size:12px;color:#6B7280;margin-bottom:10px">Vue synthèse — détail et ajout dans l’onglet <strong>Pièces</strong> ou bouton <strong>Pièces du dossier</strong> en haut.</p>
     ${(d.pieces||[]).length?`<ul style="font-size:13px;line-height:1.6;margin:0;padding-left:18px;color:#1A1A2E">${d.pieces.map(p=>`<li>${escHtml(p.filename)} <span style="color:#9CA3AF">(${PIECES_CAT_LABELS[p.cat]||p.cat})</span></li>`).join('')}</ul>`:'<p style="font-size:12px;color:#9CA3AF">Aucune pièce répertoriée.</p>'}
@@ -2777,6 +2783,69 @@ function updateDossier(id){
   persistCrmDb();
   render(); openDetail(id);
   if(prev!==d.statut) showCrmToast('Statut enregistré — copiez le message WhatsApp pour le client');
+}
+
+/** Génère la mise en demeure CE 261 (PDF déterministe) via /api/generate-claim et la télécharge. */
+async function crmGenerateClaim(id){
+  if(!requireCrmAgent()) return;
+  const d=DB.find(x=>x.id===id); if(!d) return;
+  showCrmToast('Génération de la mise en demeure…');
+  let resp, data;
+  try {
+    resp = await crmApiFetch('/api/generate-claim', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json' },
+      body: JSON.stringify({ ref: d.id })
+    });
+    data = await resp.json().catch(function(){ return {}; });
+  } catch(e){
+    alert('Échec réseau lors de la génération : '+((e&&e.message)||e));
+    return;
+  }
+  if(!resp.ok || !data.ok){
+    if(resp.status===404){ alert('Dossier introuvable dans Airtable.\n\nLancez d’abord « ↻ Sync cloud + Airtable » puis réessayez.'); return; }
+    if(resp.status===401){ alert('Session CRM expirée — reconnectez-vous puis réessayez.'); return; }
+    alert('Génération impossible : '+(data.error||('HTTP '+resp.status)));
+    return;
+  }
+  // Téléchargement du PDF (base64 → Blob)
+  if(data.pdfBase64){
+    try {
+      const bin = atob(data.pdfBase64);
+      const bytes = new Uint8Array(bin.length);
+      for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
+      const blob = new Blob([bytes], {type:'application/pdf'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href=url; a.download='Mise-en-demeure-'+d.id+'.pdf';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+    } catch(e){ /* download best-effort : le PDF reste stocké côté serveur (Blobs) */ }
+  }
+  const cash = data.exigerCash ? ' · CASH exigé (refus des bons)' : '';
+  crmAuditEvent(d, 'Mise en demeure CE 261 générée', 'Canal : '+(data.channel||'?')+' · '+(data.montant||'?')+' € · NEB : '+(data.neb||'—')+cash+' · à valider puis envoyer (mandat requis pour le paiement)');
+  persistCrmDb();
+  showCrmToast('Mise en demeure prête — '+(data.airline||'compagnie')+', '+(data.montant||'?')+' € — PDF téléchargé. À valider puis envoyer.');
+  if(window._crmOpenId===id){ render(); openDetail(id); }
+}
+
+/** Marque la LRAR comme envoyée : fixe la date du jour si absente, passe en LRAR_ENVOYEE, arme les jalons J+15/30/62. */
+function crmMarkLrarSent(id){
+  if(!requireCrmAgent()) return;
+  const d=DB.find(x=>x.id===id); if(!d) return;
+  if(!confirm('Confirmer que la mise en demeure a bien été ENVOYÉE à la compagnie ?\n\nCela fixe la date d’envoi (aujourd’hui si vide), passe le dossier en « LRAR envoyée » et arme les relances J+15 / J+30 / J+62.')) return;
+  const prevStatut = d.statut, prevLrar = d.lrar;
+  if(!d.lrar) d.lrar = today();
+  d.statut = 'LRAR_ENVOYEE';
+  d.date_statut = today();
+  const parts=[];
+  if(prevStatut!==d.statut) parts.push('Statut : '+(STATUT_LABELS[prevStatut]||prevStatut)+' → '+(STATUT_LABELS[d.statut]||d.statut));
+  if(String(prevLrar||'')!==String(d.lrar||'')) parts.push('Date LRAR : '+(prevLrar||'—')+' → '+d.lrar);
+  parts.push('Relances armées : J+15 ('+addDaysToISO(d.lrar,15)+'), J+30 ('+addDaysToISO(d.lrar,30)+'), J+62 ('+addDaysToISO(d.lrar,62)+')');
+  crmAuditEvent(d, 'Mise en demeure envoyée (LRAR) — relances armées', parts.join(' · '));
+  persistCrmDb();
+  render(); openDetail(id);
+  showCrmToast('Dossier en « LRAR envoyée » — relances armées (J+15 / J+30 / J+62).');
 }
 
 function genLettre(id){

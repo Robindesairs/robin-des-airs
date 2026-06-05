@@ -307,6 +307,8 @@ function buildMandatUrl(s, phone) {
     indemnite: '600',
     lang: s.langue_code || 'fr',
     source: 'wati-bot',
+    cid: phone || '',                    // trail de consentement : conversation WhatsApp
+    lsa: new Date().toISOString(),       // link sent at : horodatage d'envoi du lien
   });
   return `https://robindesairs.eu/mandat.html?${p.toString()}`;
 }

@@ -11,6 +11,7 @@ const { airtableCfg, airtableFindByRef, recordFromAirtableFields, airtablePatch 
 const { getAirlineClaim } = require('./lib/airlines-claims');
 const { genererClaimPdf } = require('./lib/claim-pdf');
 const { verifyInternalSecret, publicCorsHeaders, denyResponse } = require('./lib/internal-auth');
+const { checkCrmAccess } = require('./lib/crm-access');
 
 let blobs = null;
 try { blobs = require('@netlify/blobs'); } catch (_) {}
@@ -36,8 +37,12 @@ exports.handler = async (event) => {
   try { body = JSON.parse(event.body || '{}'); }
   catch { return { statusCode: 400, headers: HEADERS, body: JSON.stringify({ ok: false, error: 'JSON invalide' }) }; }
 
+  // Auth : soit secret interne (cron/Make/serveur), soit session CRM (bouton, header X-CRM-Code).
   const auth = verifyInternalSecret(event, body);
-  if (!auth.ok) return denyResponse(401, auth.error, 'public');
+  if (!auth.ok) {
+    const crm = checkCrmAccess(event);
+    if (!crm.ok) return denyResponse(401, auth.error || crm.error, 'public');
+  }
 
   const ref = (body.ref || '').trim();
   if (!ref) return { statusCode: 400, headers: HEADERS, body: JSON.stringify({ ok: false, error: 'ref requis' }) };
