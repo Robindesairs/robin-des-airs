@@ -266,16 +266,15 @@ async function ocrBoardingPass(mediaUrl, cfg) {
     const imgRes = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {} });
     if (!imgRes.ok) return null;
     const b64 = Buffer.from(await imgRes.arrayBuffer()).toString('base64');
-    const prompt = `Tu lis une carte d'embarquement / e-billet d'avion. Réponds UNIQUEMENT en JSON :
-{"vol":"","compagnie":"","date":"","pnr":"","depart":"","arrivee":"","nom":""}
+    const prompt = `Tu lis une carte d'embarquement / e-billet d'avion. On ne veut QUE les informations du VOL (l'identité du passager viendra du passeport, pas d'ici). Réponds UNIQUEMENT en JSON :
+{"vol":"","compagnie":"","date":"","pnr":"","depart":"","arrivee":""}
 Règles STRICTES :
 - vol : numéro de vol en MAJUSCULES sans espace (ex. EJU7273, AF718).
 - compagnie : nom complet (déduis du code IATA si besoin).
 - date : "JJ/MM" si l'année N'EST PAS imprimée sur le document ; "JJ/MM/AAAA" UNIQUEMENT si l'année est réellement écrite. NE JAMAIS deviner ni inventer l'année (les cartes d'embarquement n'ont souvent pas l'année).
-- pnr : référence de réservation (libellés possibles : PNR, Booking ref, Réf, Record locator, Confirmation) — 5 à 8 caractères ALPHANUMÉRIQUES, souvent près du nom ou d'un code-barres. Cherche-la attentivement. Si vraiment absente, "".
+- pnr : référence de réservation (libellés possibles : PNR, Booking ref, Réf, Record locator, Confirmation) — 5 à 8 caractères ALPHANUMÉRIQUES, souvent près d'un code-barres. Cherche-la attentivement. Si vraiment absente, "".
 - depart / arrivee : codes IATA 3 lettres.
-- nom : nom du passager en MAJUSCULES.
-- Champ inconnu = "". Ne JAMAIS inventer.`;
+- Champ inconnu = "". Ne JAMAIS inventer. N'extrais PAS le nom du passager.`;
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: 'gpt-4o', max_tokens: 300, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${b64}` } }] }] }),
@@ -285,7 +284,7 @@ Règles STRICTES :
     const vol = (p.vol || '').toUpperCase().replace(/\s+/g, '');
     const route = (p.depart && p.arrivee) ? `${p.depart} → ${p.arrivee}` : '';
     const pnr = (p.pnr || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
-    return { vol, compagnie: p.compagnie || deduceAirline(vol), date: p.date || '', pnr: /^[A-Z0-9]{5,8}$/.test(pnr) ? pnr : '', route, nom: (p.nom || '').toUpperCase() };
+    return { vol, compagnie: p.compagnie || deduceAirline(vol), date: p.date || '', pnr: /^[A-Z0-9]{5,8}$/.test(pnr) ? pnr : '', route };
   } catch (e) { return null; }
 }
 // OCR passeport / CNI : lit nom + prénom + date de naissance (la magie aussi sur le passeport).
@@ -504,8 +503,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // MSG8 — SCAN
   if (s.step === 'scan') {
     if (mediaUrl) { const d = await ocrBoardingPass(mediaUrl, cfg);
-      if (d && (d.vol || d.nom)) { Object.assign(s, { vol: d.vol || s.vol, compagnie: d.compagnie || s.compagnie, date: d.date || s.date, route: d.route || s.route, pnr: d.pnr || s.pnr }); if (d.nom) s.names[0] = d.nom; s.step = 'scan_confirm'; await setState(phone, s);
-        return sendButtons(phone, { body: `${pickVariant(phone, 'SCAN_REUSSI')}\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date || '—'}\n🎫 PNR : ${s.pnr || '—'}\n👤 Passager : ${s.names[0] || '—'}\n🗺️ Trajet : ${s.route || '—'}\n\nTout est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg); }
+      if (d && d.vol) { Object.assign(s, { vol: d.vol || s.vol, compagnie: d.compagnie || s.compagnie, date: d.date || s.date, route: d.route || s.route, pnr: d.pnr || s.pnr }); s.step = 'scan_confirm'; await setState(phone, s);
+        return sendButtons(phone, { body: `${pickVariant(phone, 'SCAN_REUSSI')}\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date || '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ Trajet : ${s.route || '—'}\n\n_(votre identité sera lue sur le passeport, plus tard)_\nTout est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg); }
       await send(phone, `😕 La qualité de l'image n'a pas permis la lecture. On fait à la main, ça prend 2 min. 👇`, cfg); s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
     }
     if (lower.includes('manuel') || lower.includes('manuelle')) { s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg); }
