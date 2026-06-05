@@ -268,14 +268,15 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       <div class="ferr" id="waErr">Indiquez votre pays et votre numéro WhatsApp</div>
     </div>
     <div>
-      <label>Adresse email du dossier</label>
-      <input type="email" id="em" class="ro" readonly aria-readonly="true" autocomplete="off">
+      <label>Suivi de votre dossier</label>
+      <input type="hidden" id="em">
       <div class="email-tech-note" id="emailTechNote">
-        <strong>Adresse de référence du dossier :</strong>
-        <span class="email-tech-ref" id="emailTechExample">ref@robindesairs.eu</span>
+        📱 <strong>Vous êtes suivi par WhatsApp</strong> — un expert vous accompagne jusqu'au versement de votre indemnité.
         <span style="display:block;margin-top:6px">
-          Création et gestion exclusive par Robin des Airs — cadre juridique : <strong>Article 1</strong>.
-          Suivi avec vous : <strong>WhatsApp</strong> ou autre canal convenu (complémentaire).
+          ✉️ Une question ? Écrivez-nous à <strong>contact@robindesairs.eu</strong>.
+        </span>
+        <span style="display:block;margin-top:8px;font-size:12px;color:var(--muted)">
+          🔒 Robin des Airs gère seul la correspondance avec la compagnie aérienne — vous n'avez rien à faire.
         </span>
       </div>
     </div>
@@ -596,7 +597,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     Votre dossier est officiellement ouvert. Robin des Airs prend le relais immédiatement.
   </p>
   <div class="success-ref">Référence : <strong id="sRef">—</strong></div>
-  <div class="success-ref" style="margin-top:8px">Email dossier : <strong id="sEmail">—</strong></div>
+  <div class="success-ref" style="margin-top:8px">📱 Suivi par WhatsApp — Robin des Airs gère la correspondance avec la compagnie pour vous.</div>
   <div class="success-steps">
     <div class="sstep"><div class="snum">1</div><div><strong>Confirmation WhatsApp sous 24h</strong><br>Récapitulatif complet + numéro de suivi.</div></div>
     <div class="sstep"><div class="snum">2</div><div><strong>Mise en demeure sous 48h</strong><br>Courrier officiel envoyé à la compagnie aérienne.</div></div>
@@ -720,9 +721,9 @@ function applyLegacyUrlParams() {
       const note = document.getElementById('emailTechNote');
       if (note) {
         note.innerHTML +=
-          ' <span style="display:block;margin-top:8px;font-size:11px;color:var(--muted)">Email Airtable enregistré : ' +
+          ' <span style="display:block;margin-top:8px;font-size:12px;color:var(--muted)">✅ Votre email de contact est enregistré : <strong>' +
           urlEmail.replace(/</g, '&lt;') +
-          ' (identique au format technique attendu pour ce dossier).</span>';
+          '</strong></span>';
       }
     }
   }
