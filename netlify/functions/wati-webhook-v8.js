@@ -341,6 +341,17 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId) {
 
   let s = await getState(phone);
 
+  // T1b — Dédup par step + contenu (60 s) — protège contre les re-livraisons WATI tardives
+  // (WATI peut re-livrer une sélection de liste avec un NOUVEL ID jusqu'à ~20s après).
+  // La clé inclut le step courant : même contenu dans deux steps différents = deux clés distinctes.
+  if (input) {
+    const sCkKey = `sck|${phone}|${(s.step||'?')}|${input.toLowerCase().slice(0, 120)}`;
+    if (await isDuplicateMessage(sCkKey, false, 60000)) {
+      console.log(`[v8 step-dedup] ${phone}@${s.step}: skip re-delivery "${input.slice(0,40)}"`);
+      return;
+    }
+  }
+
   // T2 — fallback IA hors-flux (question libre) → réponse + boutons
   // ⚠️ Jamais intercepté si c'est une réponse interactive (bouton/liste) : replyId présent → flux prioritaire
   try {
