@@ -663,7 +663,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId) {
 // ─── Émetteurs d'écran ───────────────────────────────────────────────────────
 async function sendAccueil(phone, cfg) {
   await sendButtons(phone, { body: `${bar('accueil')}\n👋 Bienvenue chez *Robin des Airs* 🏹\nSpécialiste des vols africains retardés ou annulés.\n\n"${pickStat(phone)}"\n\n✈️ La loi européenne CE 261/2004 vous donne droit à *600 € par personne* pour les vols :\n• Au départ de l'Europe — toutes compagnies\n• Vers l'Europe — si compagnie européenne\n\n*0€ si on ne gagne pas.* Aucun risque pour vous.`, footer: 'CE 261/2004', buttons: [{ text: '🚀 Mon indemnité' }] }, cfg);
-  await setState(phone, { step: 'langue', phone });
+  // _sid = session ID unique par parcours (timestamp base36) — isole le dedup step+contenu
+  await setState(phone, { step: 'langue', phone, _sid: Date.now().toString(36) });
 }
 async function sendLangue(phone, s, cfg) {
   s.step = 'langue'; await setState(phone, s);
