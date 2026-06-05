@@ -1,10 +1,18 @@
-# Guide des messages WhatsApp — Robin des Airs 🏹 (v2)
+# Guide des messages WhatsApp — Robin des Airs 🏹 (v10)
 
 > Spécialiste indemnisation des vols retardés/annulés Afrique ↔ Europe.
 > Cadre juridique : **Règlement (CE) 261/2004** — jusqu'à **600 € / passager**.
 > Modèle : **0 € si on ne gagne pas, 25 % de commission en cas de succès uniquement.**
 >
-> Ce guide reflète le **flux v8** réellement implémenté dans `scripts/whatsapp_bot.py`.
+> Ce guide reflète le **flux v8** réellement implémenté dans `scripts/whatsapp_bot.py`,
+> augmenté de la **couche d'encouragement v10** (voir section dédiée) : la conversion v10 ne se
+> gagne plus en ajoutant des questions, mais en transformant le tunnel en **conversation accompagnée**.
+>
+> **Ce qui change en v10 :** chaque message ne se contente plus de poser une question — il *réagit*
+> à ce que le client vient de faire, *situe* sa progression et *reprojette* le gain. Zéro écran
+> ajouté sur le chemin critique (réseau africain instable) ; l'encouragement s'intègre **dans** les
+> messages existants, sauf à 3 jointures de friction maximale (après scan, avant documents, après
+> récap) où une micro-célébration dédiée relance le momentum.
 
 ---
 
@@ -49,6 +57,98 @@ C'est une **promesse** (effet Zeigarnik façon Duolingo) : le cerveau déteste a
 
 ---
 
+## La couche d'encouragement (v10) — le « fil rouge » conversationnel
+
+> **Le diagnostic v8 → v10 :** le flux v8 enchaînait les questions correctement, mais *froidement* —
+> question, réponse, question suivante. Le client avait l'impression de remplir un formulaire, pas
+> d'être accompagné. Or sur un sujet anxiogène (« est-ce que je vais vraiment toucher quelque chose ? »,
+> « c'est pas une arnaque ? »), c'est l'**accompagnement** qui fait franchir chaque micro-friction.
+> La v10 ajoute un **fil rouge d'encouragement** qui transforme le tunnel en conversation.
+
+### Le principe directeur : zéro écran ajouté
+
+Sur réseau africain instable, **chaque message supplémentaire est un point de rupture potentiel**
+(message non délivré, session coupée, lassitude). Donc la règle d'or v10 :
+
+> **L'encouragement s'intègre DANS les messages existants** (en ligne d'ouverture ou de clôture),
+> il ne crée pas d'écran en plus — **sauf aux 3 jointures de friction maximale** où une
+> micro-célébration dédiée est rentable (voir « Transitions dédiées » plus bas).
+
+### La formule en 3 temps : Réagir → Situer → Reprojeter
+
+Chaque transition entre deux étapes applique (tout ou partie de) ces 3 temps :
+
+1. **Réagir** — accuser réception de l'effort que le client vient de faire. *« Parfait ✅ »*, *« C'est noté 👍 »*, *« Excellent, scan réussi ! »*. Le cerveau a besoin d'un feedback à chaque action (boucle de récompense type Duolingo).
+2. **Situer** — rappeler où on en est dans la barre de progression, en insistant sur ce qui **reste** (court) plutôt que sur ce qui est fait. *« Plus que 2 étapes »*, *« On arrive au bout »*, *« Dernière ligne droite »*.
+3. **Reprojeter** — re-ancrer le **bénéfice** (le montant, le prénom, la route) pour que l'effort suivant ait un sens. *« vos 1 200 € se rapprochent »*, *« on construit VOTRE dossier, Aminata »*.
+
+Exemple condensé (les 3 temps en une ligne) :
+> *« Parfait ✅ Plus que 2 étapes et vos 1 200 € sont entre de bonnes mains. »*
+
+### Bibliothèque de micro-encouragements (réutilisables)
+
+À piocher selon le moment. Garder **1 ligne**, **1 emoji fonctionnel**, ton chaleureux-pro, vouvoiement.
+
+| Moment | FR | EN |
+|--------|----|----|
+| Après un tap rapide | « Parfait 👍 » / « C'est noté ✅ » | « Perfect 👍 » / « Got it ✅ » |
+| Après une qualification réussie | « Bonne nouvelle : votre vol coche les cases ✅ » | « Good news — your flight qualifies ✅ » |
+| Après le scan réussi | « 🎉 Scan réussi ! Vous venez de gagner 5 minutes de saisie. » | « 🎉 Scanned! You just saved 5 minutes of typing. » |
+| Après un nom confirmé | « Merci 🙏 c'est enregistré au nom exact. » | « Thanks 🙏 saved with the exact name. » |
+| Mi-parcours (relancer) | « Vous êtes à mi-chemin — le plus dur est derrière vous 💪 » | « You're halfway — the hard part is behind you 💪 » |
+| Avant une étape lourde | « Dernière ligne droite, on y est presque ! » | « Final stretch — almost there! » |
+| Personnalisation prénom | « On y est presque, [Prénom] 🤝 » | « Almost there, [First name] 🤝 » |
+| Reprojection du gain | « Vos [montant] € se rapprochent. » | « Your €[amount] is getting closer. » |
+| Réassurance anti-défiance | « 0 € si on ne gagne pas — vous ne risquez rien. » | « €0 if we don't win — zero risk for you. » |
+| Après le récap validé | « Tout est carré ✅ Il ne reste que la signature. » | « All set ✅ Just the signature left. » |
+
+### Les 3 transitions dédiées (les seuls écrans ajoutés autorisés)
+
+Aux 3 points où le client doit fournir le **plus d'effort** ou prendre le **plus de risque perçu**,
+une micro-célébration dédiée (1 message court) est rentable car elle relance avant l'effort :
+
+1. **Après le scan réussi → avant la collecte/les noms** (l'étape scan est le plus gros point de fuite historique) :
+```
+💪 Le plus dur est fait !
+
+Vos infos de vol sont enregistrées. Il ne reste que quelques détails et votre dossier est complet.
+```
+
+2. **Après le récap validé → avant les documents (MSG 12 → 13)** (passage à l'étape engageante) :
+```
+🎯 Votre dossier prend forme, [Prénom] !
+
+Encore quelques pièces et on lance la réclamation contre la compagnie. On y est presque.
+```
+
+3. **Avant le mandat (dans MSG 14)** (la conversion finale) — intégrée au récap de clôture :
+```
+🙌 Bravo, vous avez tout fait !
+
+Il ne reste qu'une signature de 2 minutes pour nous autoriser à récupérer votre argent.
+```
+
+> Ces 3 messages sont **les seuls écrans d'encouragement ajoutés**. Partout ailleurs, l'encouragement
+> est une ligne intégrée au message qui posait déjà la question.
+
+### ⚠️ À éviter (l'encouragement qui dessert)
+
+- **Flatterie vide** sans action derrière (« Vous êtes formidable ! ») : ça sonne faux et ça rallonge.
+- **Multiplier les écrans** « bravo ! » entre chaque question : effet spam, l'inverse du but.
+- **Encourager après un stop** (non-éligible) : déplacé. Un stop se gère avec empathie, pas avec des confettis.
+- **Promesse implicite** (« vous allez toucher vos 600 € ! ») : rester sur « potentiellement » / « se rapprochent ».
+- **Sur-personnaliser** le prénom à chaque ligne : 1 à 2 fois dans le flux suffit, sinon ça devient mécanique.
+
+### 📊 Comment mesurer que la v10 marche
+
+L'encouragement est un **investissement en messages** : il doit se payer en conversion.
+
+- **KPI roi inchangé** : taux MSG 1 → mandat signé (cible > 12-15 %). La v10 doit le faire **monter**, sinon retirer les transitions dédiées.
+- **Drop-off par étape** : comparer v8 vs v10 sur les 3 jointures (scan, docs, mandat) — c'est là que les transitions dédiées doivent réduire l'abandon.
+- **Garde-fou** : si l'ajout des 3 transitions dédiées **augmente** l'abandon (lassitude > motivation), les repasser en ligne intégrée. Tester A/B avant de généraliser.
+
+---
+
 ## L'ordre exact du flux (14 messages)
 
 1. **MSG 1** — Accroche commerciale + stat choc (6 variantes) + bouton « Vérifier mon indemnité »
@@ -67,6 +167,8 @@ C'est une **promesse** (effet Zeigarnik façon Duolingo) : le cerveau déteste a
 14. **MSG 14** — RGPD + mandat + dossier reçu + clôture humaine
 
 **Convention de ton :** vouvoiement, chaleureux mais pro, 1 à 3 emojis fonctionnels par message, phrases courtes, montants en gras, une décision par écran (boutons, pas « tapez 1/2/3 »). On parle d'argent **dû au client**, jamais de « frais ».
+
+**Convention v10 (fil rouge) :** chaque message qui suit une action du client ouvre ou ferme sur la formule **Réagir → Situer → Reprojeter** (voir « La couche d'encouragement »). Le but n'est jamais d'ajouter un écran, mais de faire sentir au client qu'**on l'accompagne** plutôt qu'on l'interroge.
 
 ---
 
@@ -300,8 +402,11 @@ Continuons à remplir votre dossier. Si le retard s'avère inférieur à 3h, nou
 
 **Estimation (avant MSG 5) :**
 ```
-💡 Votre vol avec [retard +3h / annulation / refus d'embarquement] = potentiellement 600€ par passager. Continuons !
+💡 Bonne nouvelle : votre vol coche les cases ✅
+Avec [retard +3h / annulation / refus d'embarquement], vous avez potentiellement droit à 600€ par passager. Continuons — on y est presque !
 ```
+
+**v10 — fil rouge :** *Réagir + Reprojeter.* On célèbre la qualification réussie (« coche les cases ✅ ») avant de relancer. C'est le 1er moment où le dossier devient « réel » pour le client — il faut le marquer.
 
 **2. 🎯 Objectif :** qualifier le fait générateur sans perdre les utilisateurs qui ignorent la durée exacte.
 
@@ -475,7 +580,7 @@ Le scan (OCR via GPT-4o) extrait : **n° de vol, date, heure de départ, nom pas
 
 **Confirmation (scan réussi, 1 carte) :**
 ```
-✅ Document lu !
+🎉 Scan réussi ! Vous venez de gagner 5 minutes de saisie.
 
 ✈️ Vol : AT540 — Royal Air Maroc
 📅 Date : 14/03/2026
@@ -485,6 +590,14 @@ Le scan (OCR via GPT-4o) extrait : **n° de vol, date, heure de départ, nom pas
 C'est correct ?
 [✅ Oui]   [✏️ Corriger]
 ```
+
+**v10 — transition dédiée n°1 (après « Oui » → avant collecte/noms) :** l'étape scan est le plus gros point de fuite historique ; on célèbre franchement le passage avant les étapes restantes :
+```
+💪 Le plus dur est fait !
+
+Vos infos de vol sont enregistrées. Il ne reste que quelques détails et votre dossier est complet.
+```
+*(en mono-passager dont le nom a été lu au scan, on enchaîne directement sur la suite après cette transition.)*
 
 **Aller-retour détecté (vol retour dans le scan) :**
 ```
@@ -538,12 +651,14 @@ _(ex : Jean Dupont)_
 
 **Confirmation :**
 ```
-✅ Passager 2 : Aminata Diallo
+✅ Passager 2 sur 3 : Aminata Diallo — merci 🙏
 C'est correct ?
 [✅ Oui, correct]   [✏️ Corriger]
 ```
 
 Déclenché **uniquement** pour les passagers dont le nom n'a pas été lu au scan.
+
+**v10 — fil rouge :** *Réagir + Situer.* C'est l'étape la plus répétitive (un nom après l'autre) — donc la plus à risque d'effet « formulaire froid ». Le « merci 🙏 » + le compteur « 2 sur 3 » à chaque confirmation maintiennent la sensation d'avancer plutôt que de subir. Sur le **dernier** passager, basculer le compteur en encouragement : *« ✅ Dernier passager enregistré — c'était la partie la plus longue, bravo ! »*.
 
 **2. 🎯 Objectif :** récupérer les noms manquants, un par un, avec validation — le nom exact (tel que passeport) est juridiquement essentiel au mandat.
 
@@ -728,15 +843,22 @@ _L'équipe Robin des Airs_
 
 ## MSG 13 — Documents justificatifs
 
+**v10 — transition dédiée n°2 (après récap validé, MSG 12 → 13) :** juste avant l'étape engageante (documents), on célèbre que le dossier prend forme et on personnalise avec le prénom :
+```
+🎯 Votre dossier prend forme, [Prénom] !
+
+Encore quelques pièces et on lance la réclamation contre la compagnie. On y est presque.
+```
+
 **1. Intro avec temps estimé** (calculé selon nb passagers / carte déjà confirmée)
 
 ```
 🟢🟢🟢🟢🟢🟢🟢⚪
 
-📁 Documents — dernière étape avant que votre dossier soit complet !
+📁 Documents — dernière ligne droite avant que votre dossier soit complet ! 💪
 
 Nous avons besoin de quelques photos pour constituer votre dossier officiel.
-Temps estimé : 2 minute(s).
+Temps estimé : 2 minute(s) — promis, c'est rapide.
 
 Tout est conservé en sécurité. 🔒
 ```
@@ -827,11 +949,11 @@ En continuant, vous acceptez notre :
 • Conditions Générales de Vente : robindesairs.eu/cgv.html
 ```
 
-**Récap + annonce mandat :**
+**Récap + annonce mandat (v10 — transition dédiée n°3, intégrée) :**
 ```
 🟢🟢🟢🟢🟢🟢🟢⚪
 
-🎉 Dossier enregistré ! Réf. RDA-20260530-XXXX
+🙌 Bravo, vous avez tout fait ! Dossier enregistré — Réf. RDA-20260530-XXXX
 
 👤 Aminata DIALLO
 ✈️ AT540 — Royal Air Maroc
@@ -839,8 +961,10 @@ En continuant, vous acceptez notre :
 📅 14/03/2026 — Retard +3h
 💵 Objectif : 900 € nets
 
-Dernière étape : signez le mandat en 2 minutes.
+Il ne reste qu'une signature de 2 minutes pour nous autoriser à récupérer votre argent. 🤝
 ```
+
+**v10 — fil rouge :** *Réagir + Situer.* « Bravo, vous avez tout fait ! » récompense l'effort accompli juste avant l'unique action qui compte (la signature). On présente le mandat non comme une corvée de plus mais comme la **dernière** action — et la seule qui débloque l'argent.
 
 **Lien mandat pré-rempli (URL générée avec ref, nom, vol, date, compagnie, motif, nb pax, paxlist) :**
 ```
@@ -1022,3 +1146,4 @@ _L'équipe Robin des Airs_
 3. **Le « 0 € si on perd » est répété** (MSG 1, 7, 14). Argument anti-défiance, présent à chaque friction.
 4. **L'humain est un produit, pas un fallback.** « L'IA ouvre, l'humain gagne » rassure plus que toute automatisation.
 5. **Tester en conditions réelles** : 3G lente, petit écran, noms à particules/accents.
+6. **L'encouragement est un investissement, pas une décoration (v10).** Il ne se justifie que s'il fait monter le taux MSG 1 → mandat signé. Intégrer en ligne par défaut, n'ajouter un écran qu'aux 3 jointures de friction max, et A/B tester avant de généraliser. Si une transition dédiée augmente l'abandon, la repasser en ligne intégrée.
