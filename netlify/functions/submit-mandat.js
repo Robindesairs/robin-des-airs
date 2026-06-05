@@ -40,6 +40,11 @@ function hashString(str) {
   return Math.abs(h).toString(16).padStart(8, '0').toUpperCase();
 }
 
+// Empreinte cryptographique (intégrité du document signé — preuve eIDAS)
+function sha256(str) {
+  return require('crypto').createHash('sha256').update(String(str), 'utf8').digest('hex');
+}
+
 function generateCertId(phone, ref, ts) {
   const date = (ts || new Date().toISOString()).substring(0, 10).replace(/-/g, '');
   const shortPhone = (phone || '').replace(/\D/g, '').slice(-4) || 'XXXX';
@@ -516,6 +521,16 @@ exports.handler = async (event) => {
     link_sent_at: body.linkSentAt || '',
     wati_conversation_id: body.watiConversationId || phone || '',
   };
+
+  // Empreinte SHA-256 du document signé : lie les termes essentiels + la signature.
+  // Toute altération ultérieure (montant, vol, identité, signature) change l'empreinte → inaltérable.
+  record.doc_hash = sha256([
+    record.ref, record.firstName, record.lastName, record.whatsapp, record.address,
+    record.airline, record.operatedBy, record.flightNum, record.flightDate, record.pnr,
+    record.incident, String(record.pax), record.depAirport, record.arrAirport, record.connecting,
+    String(record.cessionCreance), String(record.mandataireAccepted), record.mandat_version,
+    record.signed_at, record.signatureImg || '', JSON.stringify(record.passengersData || []),
+  ].join('|'));
 
   if (netlifyBlobsModule) {
     try {

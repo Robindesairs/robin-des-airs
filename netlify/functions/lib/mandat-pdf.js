@@ -91,16 +91,18 @@ function genererMandatPdf(record) {
     doc.moveDown(0.6);
 
     // ── Bloc certificat ──
-    ensure(70);
+    ensure(82);
     const cy = doc.y;
-    doc.rect(left, cy, contentW, 60).fill(OFF);
-    doc.rect(left, cy, 3, 60).fill(NEON);
-    doc.fillColor(NAVY).fontSize(9).font('Helvetica-Bold').text('SIGNATURE ÉLECTRONIQUE CERTIFIÉE', left + 14, cy + 9);
+    doc.rect(left, cy, contentW, 72).fill(OFF);
+    doc.rect(left, cy, 3, 72).fill(NEON);
+    doc.fillColor(NAVY).fontSize(9).font('Helvetica-Bold').text('SIGNATURE ÉLECTRONIQUE CERTIFIÉE (eIDAS)', left + 14, cy + 9);
     doc.fillColor(GRAY).fontSize(8.5).font('Helvetica')
       .text(`Référence dossier : ${ref}`, left + 14, cy + 24)
       .text(`Certificat : ${record.cert_id || '—'}    ·    Signé le : ${fmtDate(record.signed_at)}`, left + 14, cy + 36)
       .text(`Empreinte technique : ${record.ip_hash || '—'}`, left + 14, cy + 48);
-    doc.y = cy + 72;
+    doc.fillColor(GRAY).fontSize(7.5).font('Helvetica')
+      .text(`Empreinte du document (SHA-256) : ${record.doc_hash ? record.doc_hash.slice(0, 40) + '…' : '—'}`, left + 14, cy + 60);
+    doc.y = cy + 84;
 
     // ── Parties ──
     sectionTitle('Les parties');
@@ -307,16 +309,18 @@ function genererMandatBilinguePdf(record) {
     doc.y = by + 64;
 
     // ── Certificat ──
-    ensure(70);
+    ensure(82);
     const cy = doc.y;
-    doc.rect(left, cy, contentW, 60).fill(OFF);
-    doc.rect(left, cy, 3, 60).fill(NEON);
-    doc.fillColor(NAVY).fontSize(9).font('Helvetica-Bold').text('SIGNATURE ÉLECTRONIQUE CERTIFIÉE · CERTIFIED E-SIGNATURE', left + 14, cy + 9);
+    doc.rect(left, cy, contentW, 72).fill(OFF);
+    doc.rect(left, cy, 3, 72).fill(NEON);
+    doc.fillColor(NAVY).fontSize(9).font('Helvetica-Bold').text('SIGNATURE ÉLECTRONIQUE CERTIFIÉE (eIDAS) · CERTIFIED E-SIGNATURE', left + 14, cy + 9);
     doc.fillColor(GRAY).fontSize(8.5).font('Helvetica')
       .text(`Référence dossier / Case ref. : ${ref}`, left + 14, cy + 24)
       .text(`Certificat : ${record.cert_id || '—'}    ·    Signé le / Signed on : ${fmtDate(record.signed_at)}`, left + 14, cy + 36)
       .text(`Empreinte technique / Technical hash : ${record.ip_hash || '—'}`, left + 14, cy + 48);
-    doc.y = cy + 72;
+    doc.fillColor(GRAY).fontSize(7.5).font('Helvetica')
+      .text(`Empreinte SHA-256 / Doc hash : ${record.doc_hash ? record.doc_hash.slice(0, 40) + '…' : '—'}`, left + 14, cy + 60);
+    doc.y = cy + 84;
 
     // ── Version française (fait foi) ──
     doc.fillColor(NAVY).fontSize(15).font('Helvetica-Bold').text('Mandat de Représentation — version française (fait foi)', left, doc.y, { width: contentW, align: 'center' });
