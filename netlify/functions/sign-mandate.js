@@ -29,12 +29,10 @@ const HEADERS = {
 };
 
 function hashString(str) {
-  // Hash léger sans dépendance externe (pour anonymiser IP)
-  let h = 0;
-  for (let i = 0; i < str.length; i++) {
-    h = Math.imul(31, h) + str.charCodeAt(i) | 0;
-  }
-  return Math.abs(h).toString(16).padStart(8, '0').toUpperCase();
+  // Pseudonymisation forte : SHA-256 salé, tronqué (96 bits) — non réversible / non ré-identifiable.
+  // Définir RDA_HASH_SALT dans l'environnement Netlify pour un sel secret (sinon fallback ci-dessous).
+  const salt = process.env.RDA_HASH_SALT || 'rda-ce261-pseudo-v1';
+  return require('crypto').createHash('sha256').update(salt + '|' + String(str), 'utf8').digest('hex').slice(0, 24);
 }
 
 function generateCertId(phone, vol, docHash, ts) {
