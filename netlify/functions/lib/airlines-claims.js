@@ -128,8 +128,8 @@ const AIRLINES = {
     formUrl: 'https://www.turkishairlines.com/en-int/any-questions/compensation-and-refund/',
     entryMode: 'form_no_login',
     depotNote: 'Voie « Compensation and refund » / feedback : n° de billet (013…) ou PNR + nom, sans compte. Form protégé Akamai → préremplissage + clic humain.',
-    emailReclamations: null, // non publié — passer par le formulaire ; AR24 sur adresse siège à confirmer
-    adresseAR: null,         // à confirmer (siège Istanbul Airport, Yeşilköy)
+    emailReclamations: null, // non publié — passer par le formulaire ; AR24 sur adresse siège
+    adresseAR: 'Turkish Airlines (Türk Hava Yolları A.O.), General Management Building, Atatürk Airport, Yeşilköy, 34149 Istanbul, Türkiye', // siège historique ; siège opérationnel déménagé à Istanbul Airport (Arnavutköy) — à confirmer
     exigerCash: true,
     conversion: 'haute',     // « bon payeur » Compensair (juin 2026)
     neb: NEB_PAYS_DEPART,
@@ -142,7 +142,7 @@ const AIRLINES = {
     entryMode: 'form',
     depotNote: 'Pas de formulaire « réclamation » dédié : voie « Envoyez-nous un message » de la page contact. Tél. SN +221 33 923 15 15 / FR +33 1 89 61 11 11 (07h–21h).',
     emailReclamations: null, // non publié sur le site — à confirmer
-    adresseAR: null,         // siège Dakar — à confirmer pour AR24
+    adresseAR: 'Air Sénégal SA, Agence Rotonde, Rue Amadou Assane Ndoye (angle Dr Thèze), Immeuble Rotonde, Dakar, Sénégal', // agence principale Dakar ; siège social statutaire à confirmer (AIBD Diass)
     exigerCash: false,
     conversion: 'inconnue',  // non-UE, pas de donnée Compensair
     neb: NEB_PAYS_DEPART,
@@ -154,8 +154,8 @@ const AIRLINES = {
     formUrl: 'https://www.aircotedivoire.com/en/claim/',
     entryMode: 'form_no_login',
     depotNote: 'Formulaire « Claim » SANS compte : Nom/Prénom, email, tél., motif (« Delayed flight » / « Cancelled flight »), date, route, n° de billet, pièces jointes.',
-    emailReclamations: null, // non publié — formulaire ; page contact /en/contact-us/
-    adresseAR: null,         // siège Abidjan — à confirmer pour AR24
+    emailReclamations: null, // formulaire « Claim » ; email service client à confirmer (page contact /en/contact-us/, tél. +225 27 20 25 10 30)
+    adresseAR: 'Air Côte d’Ivoire, Agence du Plateau, Place de la République, Abidjan, Côte d’Ivoire', // agence principale Plateau ; siège statutaire à confirmer
     exigerCash: false,
     conversion: 'inconnue',  // non-UE, pas de donnée Compensair
     neb: NEB_PAYS_DEPART,
