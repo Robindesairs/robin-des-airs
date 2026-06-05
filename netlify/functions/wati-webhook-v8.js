@@ -105,10 +105,16 @@ async function send(phone, text, cfg) {
     });
   } catch (e) { console.error('v8 send failed', e.message); }
 }
-async function sendButtons(phone, { body, footer, buttons }, cfg) {
+async function sendButtons(phone, config, cfg) {
   if (!cfg) return;
+  // Accepte : {body, footer, buttons:[]} OU directement un tableau [{id,text}]
+  const isArr = Array.isArray(config);
+  const body    = isArr ? '👇' : (config.body || '');
+  const footer  = isArr ? undefined : config.footer;
+  const buttons = isArr ? config : (config.buttons || []);
   const wa = normalizeWatiPhone(phone);
   const qs = new URLSearchParams({ whatsappNumber: wa, channelPhoneNumber: cfg.channel });
+  const fallbackText = (body && body !== '👇' ? body + '\n\n' : '') + buttons.map((b, i) => `${i + 1} — ${b.text}`).join('\n');
   try {
     const res = await fetch(`${cfg.base}/api/v1/sendInteractiveButtonsMessage?${qs}`, {
       method: 'POST', headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
@@ -116,9 +122,9 @@ async function sendButtons(phone, { body, footer, buttons }, cfg) {
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok || data.result === false || data.error || data.ok === false) {
-      await send(phone, body + '\n\n' + buttons.map((b, i) => `${i + 1} — ${b.text}`).join('\n'), cfg);
+      await send(phone, fallbackText, cfg);
     }
-  } catch (e) { await send(phone, body + '\n\n' + buttons.map((b, i) => `${i + 1} — ${b.text}`).join('\n'), cfg); }
+  } catch (e) { await send(phone, fallbackText, cfg); }
 }
 async function sendList(phone, { header, body, footer, buttonText, items }, cfg) {
   if (!cfg) return;
@@ -161,6 +167,12 @@ async function sendChoices(phone, { body, items, footer }, cfg) {
 // ─── État ──────────────────────────────────────────────────────────────────────
 async function getState(phone) { try { const st = botStore(); if (!st) throw 0; return (await st.get(`state/${phone.replace(/\D/g, '')}`, { type: 'json' })) || { step: 'accueil' }; } catch { return { step: 'accueil' }; } }
 async function setState(phone, s) { try { const st = botStore(); if (!st) return; await st.setJSON(`state/${phone.replace(/\D/g, '')}`, { ...s, updatedAt: new Date().toISOString() }); } catch (e) { console.error('v8 setState', e.message); } }
+// Guard fallback : re-lit l'état avant de re-poser une question.
+// Si le step a changé (doublon concurrent traité en premier), on ignore silencieusement.
+async function safeFallback(phone, expectedStep, fn) {
+  try { const cur = await getState(phone); if (cur && cur.step !== expectedStep) return; } catch {}
+  return fn();
+}
 async function clearState(phone) { try { const st = botStore(); if (!st) return; await st.delete(`state/${phone.replace(/\D/g, '')}`); } catch {} }
 async function saveInboundDebug(rawBody, items) {
   try { const st = botStore(); if (!st) return;
@@ -311,9 +323,10 @@ function recentYears() { const base = new Date().getFullYear(); return [base, ba
 const STOP_FOOTER = '_L\'équipe Robin des Airs_';
 
 // ═══════════════ MACHINE À ÉTATS v8 ═══════════════
-async function handleMessage(phone, text, cfg, mediaUrl) {
+async function handleMessage(phone, text, cfg, mediaUrl, replyId) {
   const input = (text || '').trim();
   const lower = input.toLowerCase();
+  const id = replyId || ''; // id du bouton/liste envoyé par WATI (ex: 'pass_ok', 'mdt_0'…)
 
   // T1 — menu / reset
   if (['nouveau', 'new', 'reset', '/reset', 'recommencer'].includes(lower)) { await clearState(phone); return sendAccueil(phone, cfg); }
@@ -324,6 +337,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
   }
 
   let s = await getState(phone);
+  const stepAtRead = s ? s.step : null; // étape au moment de la lecture — détecte les avances concurrentes
 
   // T2 — fallback IA hors-flux (question libre) → réponse + boutons
   try {
@@ -360,7 +374,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
     else if (n === '2' || (lower.includes('europe') && !lower.includes('afrique') && !lower.includes('départ'))) { s.route_type = 'eu_eu'; await send(phone, `🇪🇺 Les vols intra-européens sont couverts par le CE 261 ✅\nNotre spécialité c'est Afrique ↔ Europe, mais on continue.`, cfg); }
     else if (n === '3' || lower.includes('départ') || lower.includes('arrivée')) { s.route_type = 'mixte'; await send(phone, `🛫 Un départ ou une arrivée en Europe peut être éligible. Vérifions ensemble. ✅`, cfg); }
     else if (n === '4' || lower.includes('autre')) { await clearState(phone); return send(phone, `😔 Votre vol ne semble pas couvert par la loi européenne.\n\nLe CE 261/2004 s'applique aux vols au départ/à l'arrivée d'un aéroport européen, ou opérés par une compagnie européenne.\n\n❓ Si erreur, tapez *menu* pour choisir une autre route.\n\n${STOP_FOOTER}`, cfg); }
-    else return sendRoute(phone, s, cfg);
+    else return safeFallback(phone, 'route', () => sendRoute(phone, s, cfg));
     s.step = 'incident'; await setState(phone, s); return sendIncident(phone, s, cfg);
   }
 
@@ -370,7 +384,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
     if (n === '1' || lower.includes('retard')) { s.step = 'duree'; await setState(phone, s); return sendButtons(phone, { body: `⏱️ De combien d'heures était le retard à l'arrivée ?`, buttons: [{ text: '✅ Plus de 3 heures' }, { text: '❌ Moins de 3h' }, { text: '🤔 Je ne sais plus' }] }, cfg); }
     if (n === '2' || lower.includes('annul')) { s.incident = 'annulation'; s.incident_libelle = 'Annulation'; }
     else if (n === '3' || lower.includes('refus') || lower.includes('embarq')) { s.incident = 'refus'; s.incident_libelle = "Refus d'embarquement"; }
-    else return sendIncident(phone, s, cfg);
+    else return safeFallback(phone, 'incident', () => sendIncident(phone, s, cfg));
     await estimationPuisPax(phone, s, cfg); return;
   }
   if (s.step === 'duree') {
@@ -378,7 +392,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
     if (n === '1' || lower.includes('plus de 3')) { s.incident = 'retard'; s.incident_libelle = 'Retard +3h'; s.duree_retard = '+3h'; return estimationPuisPax(phone, s, cfg); }
     if (n === '2' || lower.includes('moins de 3')) { await clearState(phone); return send(phone, `😔 Retard inférieur à 3 heures — pas d'indemnisation possible.\n\nLe CE 261/2004 fixe un seuil de 3h de retard à l'arrivée.\n\n💡 Pas sûr de la durée ? Tapez *menu* et choisissez « Je ne sais plus » — un expert vérifie gratuitement.\n\n${STOP_FOOTER}`, cfg); }
     if (n === '3' || lower.includes('sais') || lower.includes('souviens')) { s.incident = 'retard'; s.incident_libelle = 'Retard (à vérifier)'; s.duree_retard = 'inconnue'; s.escalade = s.escalade || 'duree_inconnue'; await send(phone, `🤔 Pas de problème — on vérifie pour vous.\nLa durée exacte figure dans les bases aériennes ; notre équipe la retrouve via votre n° de vol et date. Continuons. 👇`, cfg); return estimationPuisPax(phone, s, cfg); }
-    return sendButtons(phone, { body: `⏱️ Le retard à l'arrivée était de :`, buttons: [{ text: '✅ Plus de 3 heures' }, { text: '❌ Moins de 3h' }, { text: '🤔 Je ne sais plus' }] }, cfg);
+    return safeFallback(phone, 'duree', () => sendButtons(phone, { body: `⏱️ Le retard à l'arrivée était de :`, buttons: [{ text: '✅ Plus de 3 heures' }, { text: '❌ Moins de 3h' }, { text: '🤔 Je ne sais plus' }] }, cfg));
   }
 
   // MSG5 — PASSAGERS
@@ -386,7 +400,7 @@ async function handleMessage(phone, text, cfg, mediaUrl) {
     const n = parseInt(normInput(input, ['1 passager', '2 passager', '3 passager', '4 passager', '5 passager', '6 ou plus']));
     if (n >= 1 && n <= 5) { s.pax = n; s.names = []; s.step = 'type_vol'; await setState(phone, s); return sendButtons(phone, { body: `${bar('type_vol')}\n✈️ C'était un vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg); }
     if (n >= 6 || lower.includes('6 ou plus') || lower.includes('plus')) { s.step = 'nb_pax_exact'; await setState(phone, s); return send(phone, `${bar('nb_pax')}\n👥 *Combien de passagers en tout ?*\nIndiquez le nombre total (ex. 8). On gère votre groupe directement ici. 🤝`, cfg); }
-    return sendPax(phone, s, cfg);
+    return safeFallback(phone, 'nb_pax', () => sendPax(phone, s, cfg));
   }
   if (s.step === 'nb_pax_exact') {
     const m = input.match(/\d{1,2}/); const n = m ? parseInt(m[0]) : 0;
@@ -770,6 +784,8 @@ function extractInbound(payload) {
     const waId = item.waId || item.whatsappNumber || item.from;
     if (item.owner === true || item.eventType === 'sentMessage' || item.fromMe === true) return;
     const listReply = item.listReply || item.list_reply || item.interactiveListReply; const btnReply = item.interactiveButtonReply || item.buttonReply || item.button_reply;
+    // replyId = l'id sémantique qu'on a mis sur le bouton/la ligne de liste (ex: 'pass_ok', 'mdt_0')
+    const replyId = (listReply && listReply.id) || (btnReply && btnReply.id) || null;
     const replyText = (listReply && (listReply.title || listReply.id)) || (btnReply && (btnReply.text || btnReply.title || btnReply.id)) || null;
     if (waId === 'senderPhone' || item.text === 'text') return;
     const isImage = item.type === 'image' || (item.type && /image/i.test(item.type));
@@ -781,7 +797,7 @@ function extractInbound(payload) {
     const realId = item.whatsappMessageId || item.whatsapp_message_id || item.id || item.messageId || null;
     const key = realId || `${phone}|${String(text).trim()}`;
     if (seen.has(key)) return; seen.add(key);
-    list.push({ phone, text: String(text || '').slice(0, 4096), mediaUrl, dedupId: key, hasId: !!realId, interactive: !!(listReply || btnReply) });
+    list.push({ phone, text: String(text || '').slice(0, 4096), mediaUrl, dedupId: key, hasId: !!realId, interactive: !!(listReply || btnReply), replyId: replyId || '' });
   };
   if (Array.isArray(payload)) { payload.forEach(push); return list; }
   push(payload);
@@ -818,7 +834,7 @@ exports.handler = async (event) => {
   if (!verifyWatiSecret(body, event.headers || {}, event.queryStringParameters || {})) return { statusCode: 401, headers: HEADERS, body: JSON.stringify({ error: 'Secret invalide' }) };
   const cfg = watiCfg(); const items = extractInbound(body);
   try { await saveInboundDebug(event.body || '{}', items); } catch {}
-  for (const { phone, text, mediaUrl, dedupId, hasId, interactive } of items) {
+  for (const { phone, text, mediaUrl, dedupId, hasId, interactive, replyId } of items) {
     if (!phone) continue;
     const ckKey = `ck|${phone}|${String(text).trim().toLowerCase().slice(0, 200)}`;
     // Couche 1 : mémoire (même instance, instantané — couvre la race condition intra-instance)
@@ -829,7 +845,7 @@ exports.handler = async (event) => {
     if (await isDuplicateMessage(ckKey, false, 30000)) continue;
     try { await appendWaMessage(event, phone, { role: 'user', text, source: 'wati-v8' }); } catch {}
     notifyOwnerWhatsApp(phone, text).catch(() => {}); // fire-and-forget : ne ralentit plus la réponse au client
-    try { await handleMessage(phone, text, cfg, mediaUrl); }
+    try { await handleMessage(phone, text, cfg, mediaUrl, replyId); }
     catch (e) { console.error('v8 handleMessage error', e.message, e.stack); if (cfg) await send(phone, `Une erreur est survenue. Tapez *menu* pour recommencer.`, cfg); }
   }
   return { statusCode: 200, headers: HEADERS, body: JSON.stringify({ ok: true, processed: items.length }) };
