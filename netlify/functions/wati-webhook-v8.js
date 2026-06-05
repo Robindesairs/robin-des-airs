@@ -205,7 +205,7 @@ function deduceAirline(vol) { const m = (vol || '').toUpperCase().match(/^([A-Z]
 function listRowIdx(id) { if (!id) return -1; const m = /^\d+-(\d+)$/.exec(id); return m ? parseInt(m[1]) : -1; }
 function buildMandatUrl(s, phone) {
   const mandant = (s.passengers && s.passengers[s.mandant_idx != null ? s.mandant_idx : 0]) || {};
-  const p = new URLSearchParams({ ref: s.ref || '', phone: phone || '', name: mandant.name || (s.names && s.names[0]) || s.nom || '', vol: s.vol || '', date: s.date || '', pnr: s.pnr || '', route: s.route || '', compagnie: s.compagnie || '', motif: s.incident_libelle || '', indemnite: '600', pax: String(s.pax || 1), lang: s.langue_code || 'fr', source: 'wati-bot-v8', address: mandant.adresse || '' });
+  const p = new URLSearchParams({ ref: s.ref || '', phone: phone || '', name: mandant.name || (s.names && s.names[0]) || s.nom || '', vol: s.vol || '', date: s.date || '', pnr: s.pnr || '', route: s.route || '', compagnie: s.compagnie || '', motif: s.incident_libelle || '', indemnite: '600', pax: String(s.pax || 1), lang: s.langue_code || 'fr', source: 'wati-bot-v8', cid: phone || '', lsa: new Date().toISOString(), address: mandant.adresse || '' });
   return `https://robindesairs.eu/mandat.html?${p.toString()}`;
 }
 

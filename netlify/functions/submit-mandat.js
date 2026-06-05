@@ -503,6 +503,10 @@ exports.handler = async (event) => {
     signDate: body.signDate || '',
     signatureImg: body.signatureImg || '',
     source: body.source || 'web',
+    // Trail de consentement renforcé : preuve « c'est lui + il a accepté » (liant WhatsApp)
+    mandat_version: body.mandatVersion || '',
+    link_sent_at: body.linkSentAt || '',
+    wati_conversation_id: body.watiConversationId || phone || '',
   };
 
   if (netlifyBlobsModule) {

@@ -650,6 +650,9 @@ const INC   = P.get('incident')  || '';
 const PNR   = P.get('pnr')       || '';
 const NOMS  = P.get('noms')      ? decodeURIComponent(P.get('noms')).split(',') : [];
 const SRC   = P.get('source')    || 'web';
+const CID   = P.get('cid')       || '';   // ID conversation WhatsApp (liant identité)
+const LSA   = P.get('lsa')       || '';   // horodatage d'envoi du lien (preuve de délivrance)
+const MANDAT_VERSION = '2026-06-v1';        // version du texte de mandat accepté
 // ── INIT ─────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
   (async function verifyMandatLink() {
@@ -1294,6 +1297,9 @@ function submitMandat() {
     signatureImg: document.getElementById('sigCanvas').toDataURL('image/png'),
     source:    SRC,
     signedAt:  new Date().toISOString(),
+    mandatVersion: MANDAT_VERSION,
+    watiConversationId: CID,
+    linkSentAt: LSA,
   };
   fetch('/api/submit-mandat', {
     method:'POST',
