@@ -375,7 +375,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const L = (ri >= 0 && langArr[ri]) ? langArr[ri] : matchLang(input);
     if (!L) return sendLangue(phone, s, cfg);
     s.langue = `${L.flag} ${L.label}`; s.langue_code = L.code;
-    if (L.africaine) { s.escalade = 'langue_africaine'; await send(phone, `${L.natif}\n📱 +33 7 56 86 36 30\n\n🤝 Votre dossier est entre de bonnes mains.\nUn expert parlant votre langue vous contactera. En attendant, je continue en français. 👇`, cfg); }
+    if (L.africaine) { s.escalade = 'langue_africaine'; await send(phone, `${L.natif}\n📱 +33 7 56 86 36 30\n\n🤝 Votre dossier est entre de bonnes mains.\n📞 Un expert parlant votre langue *vous appellera* pour vous accompagner.\nEn attendant, je continue à vous guider en français. 👇`, cfg); }
     s.step = 'route'; await setState(phone, s); return sendRoute(phone, s, cfg);
   }
 
