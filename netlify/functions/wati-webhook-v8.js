@@ -191,12 +191,7 @@ async function isDuplicateMessage(id, hasId, windowMs) {
     const now = Date.now(); const w = windowMs || (hasId ? 600000 : 60000);
     const prev = await st.get(k, { type: 'json' });
     if (prev && prev.t && (now - prev.t) < w) return true;
-    // Écrire avec un claim unique, puis vérifier qu'on est bien le premier
-    const claim = now.toString(36) + Math.random().toString(36).slice(2, 6);
-    await st.setJSON(k, { t: now, c: claim });
-    const check = await st.get(k, { type: 'json' });
-    if (check && check.c !== claim) return true; // une autre instance a gagné la course
-    return false;
+    await st.setJSON(k, { t: now }); return false; // 2 ops max — pas de claim pour éviter timeout
   } catch { return false; }
 }
 
@@ -340,17 +335,6 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId) {
   }
 
   let s = await getState(phone);
-
-  // T1b — Dédup par step + contenu (60 s) — protège contre les re-livraisons WATI tardives
-  // (WATI peut re-livrer une sélection de liste avec un NOUVEL ID jusqu'à ~20s après).
-  // La clé inclut le step courant : même contenu dans deux steps différents = deux clés distinctes.
-  if (input) {
-    const sCkKey = `sck|${phone}|${(s.step||'?')}|${input.toLowerCase().slice(0, 120)}`;
-    if (await isDuplicateMessage(sCkKey, false, 60000)) {
-      console.log(`[v8 step-dedup] ${phone}@${s.step}: skip re-delivery "${input.slice(0,40)}"`);
-      return;
-    }
-  }
 
   // T2 — fallback IA hors-flux (question libre) → réponse + boutons
   // ⚠️ Jamais intercepté si c'est une réponse interactive (bouton/liste) : replyId présent → flux prioritaire
@@ -858,15 +842,14 @@ exports.handler = async (event) => {
   try { await saveInboundDebug(event.body || '{}', items); } catch {}
   for (const { phone, text, mediaUrl, dedupId, hasId, interactive, replyId } of items) {
     if (!phone) continue;
-    const ckKey = `ck|${phone}|${String(text).trim().toLowerCase().slice(0, 200)}`;
-    // Couche 1 : mémoire intra-instance (ID stable uniquement)
+    // Dédup allégé — 2 Blobs ops max par message (read + write)
+    // Couche 1 : mémoire intra-instance (ID stable uniquement, 0 Blobs)
     if (hasId && memSeen(dedupId)) continue;
-    // Couche 2 : Blobs ID stable WATI (cross-instance, 10 min)
+    // Couche 2 : Blobs ID stable WATI (cross-instance, 10 min) — 2 Blobs ops
     if (hasId && await isDuplicateMessage(dedupId, true)) continue;
-    // Couche 3 : contenu (tous messages), fenêtre 3 s
-    // — Un vrai doublon réseau WATI arrive en < 1 s. Une navigation rapide légitime prend > 3 s
-    //   (temps de traitement bot + rendu WhatsApp + lecture + action humaine).
-    if (await isDuplicateMessage(ckKey, false, 3000)) continue;
+    // Couche 3 : contenu sans ID (fallback), fenêtre 5 s — seulement si pas d'ID stable
+    const ckKey = `ck|${phone}|${String(text).trim().toLowerCase().slice(0, 200)}`;
+    if (!hasId && await isDuplicateMessage(ckKey, false, 5000)) continue;
     try { await appendWaMessage(event, phone, { role: 'user', text, source: 'wati-v8' }); } catch {}
     notifyOwnerWhatsApp(phone, text).catch(() => {}); // fire-and-forget : ne ralentit plus la réponse au client
     try { await handleMessage(phone, text, cfg, mediaUrl, replyId); }
