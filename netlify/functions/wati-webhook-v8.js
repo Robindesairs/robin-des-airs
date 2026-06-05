@@ -321,10 +321,21 @@ function recentYears() { const base = new Date().getFullYear(); return [base, ba
 const STOP_FOOTER = '_L\'équipe Robin des Airs_';
 
 // ═══════════════ MACHINE À ÉTATS v8 ═══════════════
-async function handleMessage(phone, text, cfg, mediaUrl, replyId) {
+async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   const input = (text || '').trim();
   const lower = input.toLowerCase();
   const id = replyId || ''; // id du bouton/liste envoyé par WATI (ex: 'pass_ok', 'mdt_0'…)
+  // Re-dispatch : si l'état a avancé entre la lecture et le traitement (race Blobs),
+  // on re-lit l'état et on relance une fois. Évite le silence quand le bouton incident
+  // arrive pendant que l'écriture route→incident est en cours.
+  const redispatch = async (currentStep) => {
+    if (_retried) return; // une seule tentative
+    const fresh = await getState(phone);
+    if (fresh && fresh.step !== currentStep) {
+      console.log(`[v8 redispatch] ${phone}: ${currentStep}→${fresh.step} pour "${input.slice(0,30)}"`);
+      return handleMessage(phone, text, cfg, mediaUrl, replyId, true);
+    }
+  };
 
   // T1 — menu / reset
   if (['nouveau', 'new', 'reset', '/reset', 'recommencer'].includes(lower)) { await clearState(phone); return sendAccueil(phone, cfg); }
@@ -377,7 +388,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId) {
     else if (ri === 1 || n === '2' || (lower.includes('europe') && !lower.includes('afrique') && !lower.includes('départ') && !lower.includes('arrivée'))) { s.route_type = 'eu_eu'; await send(phone, `🇪🇺 Les vols intra-européens sont couverts par le CE 261 ✅\nNotre spécialité c'est Afrique ↔ Europe, mais on continue.`, cfg); }
     else if (ri === 2 || n === '3' || (lower.includes('départ') && !lower.includes('retard'))) { s.route_type = 'mixte'; await send(phone, `🛫 Un départ ou une arrivée en Europe peut être éligible. Vérifions ensemble. ✅`, cfg); }
     else if (ri === 3 || n === '4' || lower.includes('autre')) { await clearState(phone); return send(phone, `😔 Votre vol ne semble pas couvert par la loi européenne.\n\nLe CE 261/2004 s'applique aux vols au départ/à l'arrivée d'un aéroport européen, ou opérés par une compagnie européenne.\n\n❓ Si erreur, tapez *menu* pour choisir une autre route.\n\n${STOP_FOOTER}`, cfg); }
-    else return; // input non reconnu → silence (évite de re-poser la question pendant la transition d'état)
+    else return redispatch('route'); // si l'état a avancé → re-dispatch, sinon silence
     s.step = 'incident'; await setState(phone, s); return sendIncident(phone, s, cfg);
   }
 
@@ -387,7 +398,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId) {
     if (n === '1' || lower.includes('retard')) { s.step = 'duree'; await setState(phone, s); return sendButtons(phone, { body: `⏱️ De combien d'heures était le retard à l'arrivée ?`, buttons: [{ text: '✅ Plus de 3 heures' }, { text: '❌ Moins de 3h' }, { text: '🤔 Je ne sais plus' }] }, cfg); }
     if (n === '2' || lower.includes('annul')) { s.incident = 'annulation'; s.incident_libelle = 'Annulation'; }
     else if (n === '3' || lower.includes('refus') || lower.includes('embarq')) { s.incident = 'refus'; s.incident_libelle = "Refus d'embarquement"; }
-    else return; // silence — doublon ou input hors-contexte
+    else return redispatch('incident'); // si état avancé → re-dispatch
     await estimationPuisPax(phone, s, cfg); return;
   }
   if (s.step === 'duree') {
