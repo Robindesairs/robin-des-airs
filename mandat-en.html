@@ -77,6 +77,8 @@ body{background:var(--bg);font-family:'Montserrat',sans-serif;color:var(--text);
 .amount-num{font-family:'Montserrat',sans-serif;font-size:34px;font-weight:900;line-height:1;color:#fff}
 .amount-num.net{color:var(--green-bright)}
 .amount-sub{font-size:11px;margin-top:6px;color:rgba(255,255,255,.75)}
+.amount-reserve{font-size:11px;line-height:1.6;margin-top:12px;padding:8px 12px;background:rgba(0,0,0,.22);border-radius:6px;color:rgba(255,255,255,.82)}
+.amount-reserve strong{color:#fff}
 .formula-box{font-size:12px;margin-top:10px;padding:7px 12px;background:rgba(0,0,0,.25);font-family:'DM Mono',monospace;color:#fff;display:inline-block;border-radius:4px}
 /* PARTIES */
 .parties-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0}
@@ -211,17 +213,18 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="amount-hero">
     <div class="amount-col">
       <div class="amount-tag">Statutory compensation (gross)</div>
-      <div class="amount-num" id="hGross">600 €</div>
-      <div class="amount-sub">Regulation (EC) No 261/2004</div>
+      <div class="amount-num" id="hGross">Jusqu'à 600 €</div>
+      <div class="amount-sub">Barème max. Regulation (EC) No 261/2004</div>
     </div>
     <div class="amount-div"></div>
     <div class="amount-col">
-      <div class="amount-tag">✅ Net to you</div>
-      <div class="amount-num net" id="hNet">450 €</div>
+      <div class="amount-tag">✅ Net estimé*</div>
+      <div class="amount-num net" id="hNet">Jusqu'à 450 €</div>
       <div class="amount-sub">After RDA fee (25% on success only)</div>
-      <div class="formula-box" id="hFormula">600 € − 150 € = 450 €</div>
+      <div class="formula-box" id="hFormula">Exemple si succès : 600 € − 150 € = 450 €</div>
     </div>
   </div>
+  <div class="amount-reserve">*Estimation indicative, sous réserve de l'éligibilité du vol au règlement CE 261/2004 et du paiement effectif par la compagnie. <strong>Aucune garantie de résultat.</strong></div>
   <!-- PARTIES -->
   <div class="sec-title">👥 The parties</div>
   <div class="parties-grid">
@@ -542,6 +545,17 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     </p>
   </div>
   <div class="ferr" id="checkErr" style="font-size:13px">Please tick this box to validate the authorisation.</div>
+  <!-- CASE 1 bis — Reconnaissance d'éligibilité (obligatoire) -->
+  <div class="single-check" onclick="document.getElementById('eligCheck').checked=!document.getElementById('eligCheck').checked;calcProgress()">
+    <input type="checkbox" id="eligCheck" onclick="event.stopPropagation();calcProgress()">
+    <p>
+      <strong>Je comprends que mon indemnité n'est pas garantie.</strong> Le montant affiché est une <strong>estimation</strong> qui dépend de l'<strong>éligibilité de mon vol</strong> au règlement CE 261/2004 (retard ≥ 3 h à destination finale, distance, absence de circonstance extraordinaire) et du <strong>paiement effectif par la compagnie</strong>.<br>
+      <span style="font-size:12px;color:var(--muted);">
+        Robin des Airs est tenue à une obligation de moyens — aucune garantie de résultat.
+      </span>
+    </p>
+  </div>
+  <div class="ferr" id="eligErr" style="font-size:13px">Veuillez cocher cette case pour confirmer que vous avez compris.</div>
   <!-- CASE 2 — Démarrage immédiat (optionnelle mais recommandée) -->
   <div class="single-check" style="background:var(--green-tint);border-color:var(--green)" onclick="document.getElementById('startNow').checked=!document.getElementById('startNow').checked">
     <input type="checkbox" id="startNow" onclick="event.stopPropagation()">
@@ -704,7 +718,55 @@ window.addEventListener('DOMContentLoaded', () => {
   initSig();
   initProgress();
   applyLegacyUrlParams();
+  fetchAndApplyDossier();   // lien court ?r=REF → récupère le dossier et pré-remplit tout
 });
+
+// ─── LIEN COURT : mandat.html?r=REF → récupère le dossier depuis le bot ──────────
+async function fetchAndApplyDossier() {
+  const Q = new URLSearchParams(window.location.search);
+  const ref = Q.get('r');
+  if (!ref) return; // pas un lien court → applyLegacyUrlParams a déjà géré
+  // 1) Stockage DURABLE Netlify Blobs (même origine → pas de CORS, survit aux redémarrages)
+  try {
+    const res = await fetch('/api/dossier-get?r=' + encodeURIComponent(ref), { credentials: 'omit' });
+    if (res.ok) { applyDossier(await res.json()); return; }
+  } catch (_) {}
+  // 2) Secours : RAM du bot Railway (si le dossier n'est pas encore/plus dans Blobs)
+  const api = (Q.get('api') || 'https://robin-bot-v8-production.up.railway.app').replace(/\/$/, '');
+  try {
+    const res = await fetch(api + '/api/dossier?r=' + encodeURIComponent(ref), { credentials: 'omit' });
+    if (res.ok) applyDossier(await res.json());
+  } catch (_) { /* fetch échoué → la page reste utilisable, saisie manuelle */ }
+}
+function applyDossier(d) {
+  if (!d) return;
+  const setIfEmpty = (id, val) => { const el = document.getElementById(id); if (el && val && !String(el.value || '').trim()) el.value = val; };
+  if (d.ref) { REF = d.ref; const dr = document.getElementById('dRef'); if (dr) dr.textContent = REF; applyDossierEmailUI(); }
+  // Identité du signataire (nom déjà nettoyé "PRENOM NOM" côté bot)
+  if (d.name) {
+    let fn = '', ln = '';
+    if (d.name.includes('/')) { const [a, b] = d.name.split('/'); ln = (a || '').trim(); fn = (b || '').trim(); }
+    else { const p = d.name.trim().split(/\s+/); fn = p[0] || ''; ln = p.slice(1).join(' '); }
+    setIfEmpty('fn', fn); setIfEmpty('ln', ln);
+  }
+  if (d.address) setIfEmpty('addr', d.address);
+  if (d.phone && typeof setWaFull === 'function') { const w = document.getElementById('wa-national'); if (w && !w.value.trim()) setWaFull(String(d.phone)); }
+  setIfEmpty('fnum', d.vol); setIfEmpty('cie', d.compagnie); setIfEmpty('pnr', d.pnr);
+  if (d.date) { const p = String(d.date).split('/'); if (p.length === 3) { const el = document.getElementById('fdate'); if (el && !el.value) el.value = `${p[2]}-${p[1]}-${p[0]}`; } }
+  if (d.indemnite) window.MANDAT_INDEMNITE_PER_PAX = d.indemnite;
+  // Passagers (noms + dates de naissance)
+  if (d.pax && d.pax !== paxCount) { paxCount = d.pax; const pe = document.getElementById('pax'); if (pe) pe.value = paxCount; renderAllPassengers(); }
+  const fillPax = () => {
+    const nifs = [...document.querySelectorAll('.pnif')], dobs = [...document.querySelectorAll('.pdob')];
+    if (Array.isArray(d.passengers) && d.passengers.length) {
+      d.passengers.forEach((p, i) => { if (p && p.name && nifs[i] && !nifs[i].value) nifs[i].value = p.name; if (p && p.dob && dobs[i] && !dobs[i].value) dobs[i].value = p.dob; });
+    } else if (d.dob && dobs[0] && !dobs[0].value) { dobs[0].value = d.dob; }
+  };
+  fillPax();
+  try { updateAmounts(); } catch (_) {}
+  try { updateParties(); } catch (_) {}
+  try { if (typeof calcProgress === 'function') calcProgress(); } catch (_) {}
+}
 
 function applyLegacyUrlParams() {
   const P = new URLSearchParams(window.location.search);
@@ -721,9 +783,11 @@ function applyLegacyUrlParams() {
   };
   const name = P.get('name');
   if (name) {
-    const parts = name.trim().split(/\s+/);
-    setIfEmpty('fn', parts[0] || '');
-    setIfEmpty('ln', parts.slice(1).join(' '));
+    let fn = '', ln = '';
+    if (name.includes('/')) { const [a, b] = name.split('/'); ln = (a || '').trim(); fn = (b || '').trim(); } // "NOM/PRENOM" carte d'embarquement
+    else { const parts = name.trim().split(/\s+/); fn = parts[0] || ''; ln = parts.slice(1).join(' '); }
+    setIfEmpty('fn', fn);
+    setIfEmpty('ln', ln);
   }
   const phone = P.get('phone') || P.get('whatsapp') || P.get('wa') || P.get('waId');
   if (phone && !(document.getElementById('wa-national')?.value || '').trim()) setWaFull(decodeURIComponent(phone));
@@ -796,14 +860,30 @@ function applyLegacyUrlParams() {
   if (window.MANDAT_INDEMNITE_PER_PAX) updateAmounts();
 }
 
+// ── BARÈME CE 261 (filet de sécurité : le bon montant selon la route) ─────────
+// Maghreb (Maroc/Algérie/Tunisie, 1500–3500 km) = 400 € ; Afrique subsaharienne
+// (>3500 km) = 600 €. Évite d'afficher 600 € à tort sur un dossier Maghreb,
+// même si le lien envoie indemnite=600.
+function baremeIndemnitePerPax(dep, arr, route, fallback) {
+  const hay = ' ' + (String(dep) + ' ' + String(arr) + ' ' + String(route))
+    .toLowerCase().replace(/[éèê]/g, 'e').replace(/[^a-z0-9]+/g, ' ').trim() + ' ';
+  const MAGHREB = ['maroc','morocco','casablanca','marrakech','rabat','fes','tanger','tangier','agadir','oujda','nador','tetouan','essaouira','ouarzazate','algerie','algeria','alger','algiers','oran','constantine','annaba','tlemcen','setif','bejaia','tunisie','tunisia','tunis','monastir','djerba','sfax','tozeur','gabes','enfidha'];
+  for (let i = 0; i < MAGHREB.length; i++) { if (hay.indexOf(' ' + MAGHREB[i] + ' ') !== -1) return 400; }
+  return fallback;
+}
 // ── MONTANTS ─────────────────────────────────────────────────────
 function updateAmounts() {
   const pax = paxCount || 1;
-  const perPax = window.MANDAT_INDEMNITE_PER_PAX || 600;
+  const perPax = baremeIndemnitePerPax(
+    document.getElementById('dep')?.value || '',
+    document.getElementById('arr')?.value || '',
+    '',
+    window.MANDAT_INDEMNITE_PER_PAX || 600
+  );
   const brut = perPax*pax, net = Math.round(brut*.75), com = brut-net;
-  document.getElementById('hGross').textContent  = brut.toLocaleString('fr-FR')+' €';
-  document.getElementById('hNet').textContent    = net.toLocaleString('fr-FR')+' €';
-  document.getElementById('hFormula').textContent= `${brut.toLocaleString('fr-FR')} € − ${com.toLocaleString('fr-FR')} € = ${net.toLocaleString('fr-FR')} €`;
+  document.getElementById('hGross').textContent  = "Jusqu'à "+brut.toLocaleString('fr-FR')+' €';
+  document.getElementById('hNet').textContent    = "Jusqu'à "+net.toLocaleString('fr-FR')+' €';
+  document.getElementById('hFormula').textContent= `Exemple si succès : ${brut.toLocaleString('fr-FR')} € − ${com.toLocaleString('fr-FR')} € = ${net.toLocaleString('fr-FR')} €`;
   updateParties();
 }
 // ── CHAMPS PASSAGERS ─────────────────────────────────────────────
@@ -1154,7 +1234,8 @@ function calcProgress() {
   if (document.getElementById('fdate')?.value) n++;
   if (document.getElementById('inc')?.value)   n++;
   if (document.getElementById('mainCheck')?.checked) n++;
-  document.getElementById('pgBar').style.width = Math.round(n/8*100)+'%';
+  if (document.getElementById('eligCheck')?.checked) n++;
+  document.getElementById('pgBar').style.width = Math.round(n/9*100)+'%';
 }
 // ── WhatsApp : indicatif (drapeau) + numéro → #wa caché (numéro complet) ──
 // Liste pays (drapeau, nom, indicatif) — champ recherchable. Tout indicatif non listé
@@ -1256,6 +1337,9 @@ function validate() {
   const checked = document.getElementById('mainCheck').checked;
   document.getElementById('checkErr').style.display = checked?'none':'block';
   if(!checked) ok=false;
+  const eligOk = document.getElementById('eligCheck').checked;
+  document.getElementById('eligErr').style.display = eligOk?'none':'block';
+  if(!eligOk) ok=false;
   const hs = hasSig();
   document.getElementById('sigErr').style.display = hs?'none':'block';
   if(!hs) ok=false;
@@ -1277,6 +1361,7 @@ function submitMandat() {
     email:     clientEmailForRef(REF) || document.getElementById('em').value.trim(),
     address:   document.getElementById('addr').value.trim(),
     startNow:  document.getElementById('startNow').checked,
+    eligibilityAcknowledged: document.getElementById('eligCheck').checked,
     coPassAgreement: allCoPassChecked(),
     cessionCreance: true,
     mandataireAccepted: true,
