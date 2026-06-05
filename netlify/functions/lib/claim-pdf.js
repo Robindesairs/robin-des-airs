@@ -70,6 +70,7 @@ function genererClaimPdf(c) {
     // Destinataire + date
     doc.fillColor(TEXT).fontSize(10).font('Helvetica-Bold').text(`À l'attention de : ${c.airlineName || c.compagnie || 'la compagnie aérienne'}`, left, doc.y, { width: contentW });
     doc.font('Helvetica').fillColor(GRAY).fontSize(9).text(`Service Réclamations / Indemnisations`, { width: contentW });
+    if (c.adresseAR) doc.fillColor(GRAY).fontSize(9).font('Helvetica').text(c.adresseAR, { width: contentW });
     doc.moveDown(0.4);
     doc.fillColor(GRAY).fontSize(9).font('Helvetica').text(`${fmtTodayFr()} — Réf. dossier : ${c.ref || '—'}`, left, doc.y, { width: contentW, align: 'right' });
     doc.moveDown(0.6);

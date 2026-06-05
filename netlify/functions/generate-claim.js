@@ -9,6 +9,7 @@
 
 const { airtableCfg, airtableFindByRef, recordFromAirtableFields, airtablePatch } = require('./lib/airtable-robin');
 const { getAirlineClaim } = require('./lib/airlines-claims');
+const { africanDepartureFromRoute } = require('./lib/airport-coords');
 const { genererClaimPdf } = require('./lib/claim-pdf');
 const { verifyInternalSecret, publicCorsHeaders, denyResponse } = require('./lib/internal-auth');
 const { checkCrmAccess } = require('./lib/crm-access');
@@ -69,11 +70,26 @@ exports.handler = async (event) => {
     } catch (_) {}
   }
 
+  // Garde-fou CE 261 art. 3§1 : un transporteur NON-UE n'est redevable qu'AU DÉPART d'un aéroport UE.
+  // Non bloquant (human-in-loop) mais surfacé fort à l'opérateur avant envoi.
+  const nonUe = !!(airline && airline.ue === false);
+  const afriDep = nonUe ? africanDepartureFromRoute(data.route) : null;
+  let eligibiliteAlerte = null;
+  if (nonUe) {
+    const cie = (airline && airline.nom) || data.compagnie || 'transporteur non-UE';
+    eligibiliteAlerte = afriDep
+      ? { niveau: 'bloquant', code: 'NON_UE_DEPART_AFRIQUE',
+          message: `${cie} (non-UE) au départ de ${afriDep.city} (${afriDep.iata}) : vol NON couvert par le CE 261 (art. 3§1 — transporteur non communautaire redevable uniquement au départ d'un aéroport UE). MED probablement sans fondement — vérifier le sens du vol AVANT envoi.` }
+      : { niveau: 'avertissement', code: 'NON_UE_VERIFIER_DEPART',
+          message: `${cie} (non-UE) : le CE 261 ne s'applique qu'AU DÉPART d'un aéroport UE (art. 3§1). Vérifier que le vol part bien de l'UE avant envoi.` };
+  }
+
   const claim = {
     ref,
     passengerName: data.name || '—',
     address: data.address || '',
     airlineName: (airline && airline.nom) || data.compagnie || 'la compagnie aérienne',
+    adresseAR: (airline && airline.adresseAR) || '',
     neb: (airline && airline.neb && airline.neb.nom) || '',
     vol: data.vol || '',
     dateVol: data.date || '',
@@ -82,6 +98,7 @@ exports.handler = async (event) => {
     incident: data.motif || '',
     montant,
     exigerCash: !!(airline && airline.exigerCash),
+    conversion: (airline && airline.conversion) || 'inconnue',
     art9Note,
     delaiJours: 14,
   };
@@ -98,13 +115,14 @@ exports.handler = async (event) => {
       if (blobs.connectLambda && event) blobs.connectLambda(event);
       const store = blobs.getStore(STORE);
       await store.set(blobKey, pdf, { metadata: { contentType: 'application/pdf', ref, generatedAt: new Date().toISOString() } });
-      await store.setJSON(`claim/${safeRef}/lrar.json`, { ref, claim, generatedAt: new Date().toISOString(), channel: airline && airline.entryMode });
+      await store.setJSON(`claim/${safeRef}/lrar.json`, { ref, claim, generatedAt: new Date().toISOString(), channel: airline && airline.entryMode, conversion: claim.conversion, eligibiliteAlerte });
     } catch (e) { console.error('generate-claim: Blobs error:', e.message); }
   }
 
   // Remarque Airtable (PAS de changement de statut : human-in-loop)
   try {
-    const note = `MED générée ${new Date().toISOString().slice(0, 10)} — canal ${(airline && airline.entryMode) || '?'}${claim.exigerCash ? ' — cash exigé' : ''} — à valider/envoyer`;
+    const alerteTag = eligibiliteAlerte ? ` — ⚠️ ${eligibiliteAlerte.code}` : '';
+    const note = `MED générée ${new Date().toISOString().slice(0, 10)} — canal ${(airline && airline.entryMode) || '?'} — payeur ${claim.conversion}${claim.exigerCash ? ' — cash exigé' : ''}${alerteTag} — à valider/envoyer`;
     const prev = (data.remarques || '').trim();
     let remark = prev ? `${prev} | ${note}` : note;
     if (remark.length > 900) remark = remark.slice(-900);
@@ -114,10 +132,14 @@ exports.handler = async (event) => {
   // Notif owner (best-effort)
   if (notifyOwner) {
     try {
+      const alerteLigne = eligibiliteAlerte
+        ? `${eligibiliteAlerte.niveau === 'bloquant' ? '🛑 ÉLIGIBILITÉ' : '⚠️ Éligibilité'}: ${eligibiliteAlerte.message}\n`
+        : '';
       await notifyOwner(
-        `Mise en demeure prête — ${ref} (${claim.airlineName})`,
+        `${eligibiliteAlerte && eligibiliteAlerte.niveau === 'bloquant' ? '🛑 ' : ''}Mise en demeure prête — ${ref} (${claim.airlineName})`,
+        alerteLigne +
         `MED générée pour ${claim.passengerName} · vol ${claim.vol || '—'} · ${montant} €${claim.exigerCash ? ' · CASH exigé' : ''}\n` +
-        `Canal: ${(airline && airline.entryMode) || 'à confirmer'} · NEB: ${claim.neb || '—'}\n` +
+        `Canal: ${(airline && airline.entryMode) || 'à confirmer'} · Payeur: ${claim.conversion} · NEB: ${claim.neb || '—'}\n` +
         `À VALIDER puis envoyer (mandat requis pour le paiement sur compte tiers).`
       );
     } catch (_) {}
@@ -132,6 +154,8 @@ exports.handler = async (event) => {
       airline: claim.airlineName,
       channel: airline && airline.entryMode,
       exigerCash: claim.exigerCash,
+      conversion: claim.conversion,
+      eligibiliteAlerte,
       montant,
       neb: claim.neb,
       art9: !!art9Note,

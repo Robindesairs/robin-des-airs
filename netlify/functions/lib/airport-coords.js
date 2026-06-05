@@ -72,4 +72,29 @@ function getAirportCoords(iata) {
   return AIRPORT_COORDS[(iata || '').toUpperCase()] || null;
 }
 
-module.exports = { AIRPORT_COORDS, getAirportCoords };
+/**
+ * Détecte si l'aéroport de DÉPART d'un itinéraire (texte libre) est un hub africain connu.
+ * Garde-fou CE 261 art. 3§1 : un transporteur NON communautaire n'est redevable qu'AU DÉPART
+ * d'un aéroport UE. Un départ africain sur transporteur non-UE = vol non couvert.
+ * Parse le premier segment de la route : « Dakar → Paris », « DSS-CDG », « Abidjan/Paris »…
+ * Biaisé vers la détection (sur-alerter un humain coûte moins cher que rater un dossier mort).
+ * @returns {object|null} { iata, lat, lng, name, city } si départ africain identifié, sinon null.
+ */
+function africanDepartureFromRoute(route) {
+  const raw = String(route || '').trim();
+  if (!raw) return null;
+  // Premier segment avant un séparateur d'itinéraire (→ - – — > / , « to » « vers »).
+  const first = raw.split(/\s*(?:→|->|–|—|>|\/|-|,|\bto\b|\bvers\b)\s*/i)[0].trim();
+  if (!first) return null;
+  // 1) Code IATA explicite (3 lettres).
+  const code = first.toUpperCase().match(/\b([A-Z]{3})\b/);
+  if (code && AIRPORT_COORDS[code[1]]) return { iata: code[1], ...AIRPORT_COORDS[code[1]] };
+  // 2) Nom de ville connu (Dakar, Abidjan, Bamako…).
+  const low = first.toLowerCase();
+  for (const [iata, hub] of Object.entries(AIRPORT_COORDS)) {
+    if (hub.city && low.includes(hub.city.toLowerCase())) return { iata, ...hub };
+  }
+  return null;
+}
+
+module.exports = { AIRPORT_COORDS, getAirportCoords, africanDepartureFromRoute };
