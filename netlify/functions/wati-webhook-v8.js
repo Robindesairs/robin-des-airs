@@ -437,7 +437,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (s.step === 'scan') {
     if (mediaUrl) { const d = await ocrBoardingPass(mediaUrl, cfg);
       if (d && (d.vol || d.nom)) { Object.assign(s, { vol: d.vol || s.vol, compagnie: d.compagnie || s.compagnie, date: d.date || s.date, route: d.route || s.route, pnr: d.pnr || s.pnr }); if (d.nom) s.names[0] = d.nom; s.step = 'scan_confirm'; await setState(phone, s);
-        return sendButtons(phone, { body: `✅ Document lu !\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date || '—'}${needYear(s.date) ? ' _(année à préciser)_' : ''}\n🎫 PNR : ${s.pnr || '—'}\n👤 Passager : ${s.names[0] || '—'}\n🗺️ Trajet : ${s.route || '—'}\n\nC'est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg); }
+        return sendButtons(phone, { body: `✅ Document lu !\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date || '—'}\n🎫 PNR : ${s.pnr || '—'}\n👤 Passager : ${s.names[0] || '—'}\n🗺️ Trajet : ${s.route || '—'}\n\nC'est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg); }
       await send(phone, `😕 La qualité de l'image n'a pas permis la lecture. On fait à la main, ça prend 2 min. 👇`, cfg); s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
     }
     if (lower.includes('manuel') || lower.includes('manuelle')) { s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg); }
@@ -685,7 +685,7 @@ async function sendPax(phone, s, cfg) {
 async function askYear(phone, s, cfg) {
   s.step = 'annee'; await setState(phone, s);
   const ys = recentYears();
-  await sendList(phone, { header: 'Année du vol', body: `${bar('annee')}\n📅 Quelle *année* pour le ${s.date} ?\n_(elle n'est pas imprimée sur la carte — je ne veux pas la deviner)_`, buttonText: 'Année ▾', items: ys.map(y => ({ title: String(y) })).concat([{ title: `Avant ${ys[ys.length - 1]}` }]) }, cfg);
+  await sendList(phone, { header: 'Année du vol', body: `${bar('annee')}\n📅 Votre billet indique le *${s.date}* mais ne précise pas l'année.\nC'était quelle année ?`, buttonText: 'Année ▾', items: ys.map(y => ({ title: String(y) })).concat([{ title: `Avant ${ys[ys.length - 1]}` }]) }, cfg);
 }
 async function goCorrection(phone, s, cfg) {
   s.step = 'correction'; await setState(phone, s);
@@ -698,7 +698,7 @@ async function goCorrection(phone, s, cfg) {
 }
 async function showScanConfirm(phone, s, cfg) {
   s.step = 'scan_confirm'; await setState(phone, s);
-  return sendButtons(phone, { body: `📋 Vérifiez :\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date || '—'}${needYear(s.date) ? ' _(année à préciser)_' : ''}\n🎫 PNR : ${s.pnr || '—'}\n👤 Passager : ${(s.names && s.names[0]) || '—'}\n🗺️ Trajet : ${s.route || '—'}\n\nC'est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg);
+  return sendButtons(phone, { body: `📋 Vérifiez :\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date || '—'}\n🎫 PNR : ${s.pnr || '—'}\n👤 Passager : ${(s.names && s.names[0]) || '—'}\n🗺️ Trajet : ${s.route || '—'}\n\nC'est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg);
 }
 async function afterFix(phone, s, cfg) {
   if (s.fix_return === 'recap') return sendRecap(phone, s, cfg);
