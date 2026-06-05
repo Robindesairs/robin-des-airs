@@ -205,6 +205,8 @@ function genRef() { const d = new Date(); return `RDA-${d.toISOString().slice(0,
 function normInput(raw, options) { const t = (raw || '').trim().toLowerCase(); if (/^\d+$/.test(t)) return t; const i = options.findIndex(o => t.includes(o.toLowerCase())); return i >= 0 ? String(i + 1) : t; }
 const AIRLINES = { AF: 'Air France', SN: 'Brussels Airlines', TP: 'TAP Air Portugal', AT: 'Royal Air Maroc', HC: 'Air Sénégal', KQ: 'Kenya Airways', ET: 'Ethiopian Airlines', EK: 'Emirates', TK: 'Turkish Airlines', KL: 'KLM', LH: 'Lufthansa', IB: 'Iberia', EJU: 'easyJet', U2: 'easyJet', FR: 'Ryanair', TO: 'Transavia', KP: 'ASKY', DN: 'Senegal Airlines' };
 function deduceAirline(vol) { const m = (vol || '').toUpperCase().match(/^([A-Z]{2,3})\d/); return (m && AIRLINES[m[1]]) || ''; }
+// Extrait l'index de ligne (0-based) depuis un ID WATI de liste : "0-2" → 2, "3" → 2 (1-based→0-based), sinon -1
+function listRowIdx(id) { if (!id) return -1; const m = /^\d+-(\d+)$/.exec(id); if (m) return parseInt(m[1]); if (/^\d+$/.test(id)) return parseInt(id) - 1; return -1; }
 function buildMandatUrl(s, phone) {
   const mandant = (s.passengers && s.passengers[s.mandant_idx != null ? s.mandant_idx : 0]) || {};
   const p = new URLSearchParams({ ref: s.ref || '', phone: phone || '', name: mandant.name || (s.names && s.names[0]) || s.nom || '', vol: s.vol || '', date: s.date || '', pnr: s.pnr || '', route: s.route || '', compagnie: s.compagnie || '', motif: s.incident_libelle || '', indemnite: '600', pax: String(s.pax || 1), lang: s.langue_code || 'fr', source: 'wati-bot-v8', address: mandant.adresse || '' });
@@ -360,7 +362,10 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId) {
 
   // MSG2 — LANGUE
   if (s.step === 'langue') {
-    const L = matchLang(input);
+    // Matching par ID WATI liste ("0-N") si disponible, sinon par texte/flag
+    const ri = listRowIdx(id);
+    const langArr = Object.values(LANGS);
+    const L = (ri >= 0 && langArr[ri]) ? langArr[ri] : matchLang(input);
     if (!L) return sendLangue(phone, s, cfg);
     s.langue = `${L.flag} ${L.label}`; s.langue_code = L.code;
     if (L.africaine) { s.escalade = 'langue_africaine'; await send(phone, `${L.natif}\n📱 +33 7 56 86 36 30\n\n🤝 Votre dossier est entre de bonnes mains.\nUn expert parlant votre langue vous contactera. En attendant, je continue en français. 👇`, cfg); }
@@ -369,11 +374,13 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId) {
 
   // MSG3 — ROUTE
   if (s.step === 'route') {
+    // Matching prioritaire : ID WATI de la liste (format "sectionIdx-rowIdx", 0-based)
+    const ri = listRowIdx(id); // 0=Afrique↔EU, 1=EU↔EU, 2=Départ/arr EU, 3=Autre
     const n = normInput(input, ['afrique', 'europe ↔', 'départ', 'autre']);
-    if (n === '1' || lower.includes('afrique ↔') || (lower.includes('afrique') && lower.includes('europe'))) { s.route_type = 'af_eu'; }
-    else if (n === '2' || (lower.includes('europe') && !lower.includes('afrique') && !lower.includes('départ'))) { s.route_type = 'eu_eu'; await send(phone, `🇪🇺 Les vols intra-européens sont couverts par le CE 261 ✅\nNotre spécialité c'est Afrique ↔ Europe, mais on continue.`, cfg); }
-    else if (n === '3' || lower.includes('départ') || lower.includes('arrivée')) { s.route_type = 'mixte'; await send(phone, `🛫 Un départ ou une arrivée en Europe peut être éligible. Vérifions ensemble. ✅`, cfg); }
-    else if (n === '4' || lower.includes('autre')) { await clearState(phone); return send(phone, `😔 Votre vol ne semble pas couvert par la loi européenne.\n\nLe CE 261/2004 s'applique aux vols au départ/à l'arrivée d'un aéroport européen, ou opérés par une compagnie européenne.\n\n❓ Si erreur, tapez *menu* pour choisir une autre route.\n\n${STOP_FOOTER}`, cfg); }
+    if (ri === 0 || n === '1' || (lower.includes('afrique') && lower.includes('europe'))) { s.route_type = 'af_eu'; }
+    else if (ri === 1 || n === '2' || (lower.includes('europe') && !lower.includes('afrique') && !lower.includes('départ') && !lower.includes('arrivée'))) { s.route_type = 'eu_eu'; await send(phone, `🇪🇺 Les vols intra-européens sont couverts par le CE 261 ✅\nNotre spécialité c'est Afrique ↔ Europe, mais on continue.`, cfg); }
+    else if (ri === 2 || n === '3' || (lower.includes('départ') && !lower.includes('retard'))) { s.route_type = 'mixte'; await send(phone, `🛫 Un départ ou une arrivée en Europe peut être éligible. Vérifions ensemble. ✅`, cfg); }
+    else if (ri === 3 || n === '4' || lower.includes('autre')) { await clearState(phone); return send(phone, `😔 Votre vol ne semble pas couvert par la loi européenne.\n\nLe CE 261/2004 s'applique aux vols au départ/à l'arrivée d'un aéroport européen, ou opérés par une compagnie européenne.\n\n❓ Si erreur, tapez *menu* pour choisir une autre route.\n\n${STOP_FOOTER}`, cfg); }
     else return safeFallback(phone, 'route', () => sendRoute(phone, s, cfg));
     s.step = 'incident'; await setState(phone, s); return sendIncident(phone, s, cfg);
   }
