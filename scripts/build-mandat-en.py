@@ -308,6 +308,8 @@ NEW_PAIRS2 = [
     #     translated by an earlier pair, so only the French tail remains) ---
     (" La commission s'applique également à <strong>toute compensation en nature</strong> (bon d'achat, avoir, miles…) acceptée au titre du dossier, calculée sur sa valeur&nbsp;; le Mandant s'engage à ne pas accepter une telle compensation sans l'accord de Robin des Airs.",
      " The fee also applies to <strong>any compensation in kind</strong> (voucher, credit note, miles…) accepted for the case, calculated on its value&nbsp;; the Client undertakes not to accept such compensation without the agreement of Robin des Airs."),
+    (" Le Mandant <strong>exige le paiement en numéraire (virement)</strong> et <strong>refuse expressément, dès à présent, tout bon d'achat, avoir, miles ou autre service</strong> proposé en lieu et place : conformément à l'<strong>article 7§3 du Règlement (CE) n° 261/2004</strong>, une compensation en nature suppose l'accord signé du passager, que le Mandant ne donne pas.",
+     " The Client <strong>requires payment in cash (bank transfer)</strong> and <strong>expressly refuses, as of now, any voucher, credit note, miles or other service</strong> offered in lieu thereof: under <strong>Article 7(3) of Regulation (EC) No 261/2004</strong>, compensation in kind requires the passenger's signed agreement, which the Client does not give."),
 
     # --- Article 4.1 (appended sentence on Article 700 / dépens; tail only) ---
     (" Les sommes éventuellement allouées au titre des <strong>frais de procédure (article 700 du Code de procédure civile, dépens)</strong> restent acquises à Robin des Airs, qui en a fait l'avance&nbsp;; les <strong>intérêts</strong> suivent le sort de la créance (Article 5 bis).",
