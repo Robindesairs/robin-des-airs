@@ -382,7 +382,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId) {
     else if (ri === 1 || n === '2' || (lower.includes('europe') && !lower.includes('afrique') && !lower.includes('départ') && !lower.includes('arrivée'))) { s.route_type = 'eu_eu'; await send(phone, `🇪🇺 Les vols intra-européens sont couverts par le CE 261 ✅\nNotre spécialité c'est Afrique ↔ Europe, mais on continue.`, cfg); }
     else if (ri === 2 || n === '3' || (lower.includes('départ') && !lower.includes('retard'))) { s.route_type = 'mixte'; await send(phone, `🛫 Un départ ou une arrivée en Europe peut être éligible. Vérifions ensemble. ✅`, cfg); }
     else if (ri === 3 || n === '4' || lower.includes('autre')) { await clearState(phone); return send(phone, `😔 Votre vol ne semble pas couvert par la loi européenne.\n\nLe CE 261/2004 s'applique aux vols au départ/à l'arrivée d'un aéroport européen, ou opérés par une compagnie européenne.\n\n❓ Si erreur, tapez *menu* pour choisir une autre route.\n\n${STOP_FOOTER}`, cfg); }
-    else return safeFallback(phone, 'route', () => sendRoute(phone, s, cfg));
+    else return; // input non reconnu → silence (évite de re-poser la question pendant la transition d'état)
     s.step = 'incident'; await setState(phone, s); return sendIncident(phone, s, cfg);
   }
 
@@ -392,7 +392,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId) {
     if (n === '1' || lower.includes('retard')) { s.step = 'duree'; await setState(phone, s); return sendButtons(phone, { body: `⏱️ De combien d'heures était le retard à l'arrivée ?`, buttons: [{ text: '✅ Plus de 3 heures' }, { text: '❌ Moins de 3h' }, { text: '🤔 Je ne sais plus' }] }, cfg); }
     if (n === '2' || lower.includes('annul')) { s.incident = 'annulation'; s.incident_libelle = 'Annulation'; }
     else if (n === '3' || lower.includes('refus') || lower.includes('embarq')) { s.incident = 'refus'; s.incident_libelle = "Refus d'embarquement"; }
-    else return safeFallback(phone, 'incident', () => sendIncident(phone, s, cfg));
+    else return; // silence — doublon ou input hors-contexte
     await estimationPuisPax(phone, s, cfg); return;
   }
   if (s.step === 'duree') {
@@ -400,7 +400,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId) {
     if (n === '1' || lower.includes('plus de 3')) { s.incident = 'retard'; s.incident_libelle = 'Retard +3h'; s.duree_retard = '+3h'; return estimationPuisPax(phone, s, cfg); }
     if (n === '2' || lower.includes('moins de 3')) { await clearState(phone); return send(phone, `😔 Retard inférieur à 3 heures — pas d'indemnisation possible.\n\nLe CE 261/2004 fixe un seuil de 3h de retard à l'arrivée.\n\n💡 Pas sûr de la durée ? Tapez *menu* et choisissez « Je ne sais plus » — un expert vérifie gratuitement.\n\n${STOP_FOOTER}`, cfg); }
     if (n === '3' || lower.includes('sais') || lower.includes('souviens')) { s.incident = 'retard'; s.incident_libelle = 'Retard (à vérifier)'; s.duree_retard = 'inconnue'; s.escalade = s.escalade || 'duree_inconnue'; await send(phone, `🤔 Pas de problème — on vérifie pour vous.\nLa durée exacte figure dans les bases aériennes ; notre équipe la retrouve via votre n° de vol et date. Continuons. 👇`, cfg); return estimationPuisPax(phone, s, cfg); }
-    return safeFallback(phone, 'duree', () => sendButtons(phone, { body: `⏱️ Le retard à l'arrivée était de :`, buttons: [{ text: '✅ Plus de 3 heures' }, { text: '❌ Moins de 3h' }, { text: '🤔 Je ne sais plus' }] }, cfg));
+    return; // silence
   }
 
   // MSG5 — PASSAGERS
@@ -408,7 +408,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId) {
     const n = parseInt(normInput(input, ['1 passager', '2 passager', '3 passager', '4 passager', '5 passager', '6 ou plus']));
     if (n >= 1 && n <= 5) { s.pax = n; s.names = []; s.step = 'type_vol'; await setState(phone, s); return sendButtons(phone, { body: `${bar('type_vol')}\n✈️ C'était un vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg); }
     if (n >= 6 || lower.includes('6 ou plus') || lower.includes('plus')) { s.step = 'nb_pax_exact'; await setState(phone, s); return send(phone, `${bar('nb_pax')}\n👥 *Combien de passagers en tout ?*\nIndiquez le nombre total (ex. 8). On gère votre groupe directement ici. 🤝`, cfg); }
-    return safeFallback(phone, 'nb_pax', () => sendPax(phone, s, cfg));
+    return; // silence
   }
   if (s.step === 'nb_pax_exact') {
     const m = input.match(/\d{1,2}/); const n = m ? parseInt(m[0]) : 0;
