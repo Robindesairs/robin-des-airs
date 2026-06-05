@@ -436,7 +436,7 @@ async function sendMandatWhatsappCopy(record, pdfBuffer) {
   }
   const ref = record.ref || record.cert_id || 'dossier';
   const fileName = `Mandat-${String(ref).replace(/[^A-Za-z0-9_-]/g, '_')}.pdf`;
-  const caption = `Votre mandat signé (réf. ${ref}). Conservez cette copie. — Robin des Airs`;
+  const caption = `✅ Mandat signé — merci de votre confiance ! (réf. ${ref})\n\nVotre dossier passe maintenant entre les mains de notre équipe : à partir d'ici, c'est nous qui parlons à la compagnie, plus vous. 0 € si on ne gagne pas, 25 % uniquement si vous êtes indemnisé.\n\nVoici votre copie à conserver. On revient vers vous dès qu'il y a du nouveau. 🏹\nL'équipe Robin des Airs`;
   try {
     return await watiSendFile(record.whatsapp, pdfBuffer, fileName, caption);
   } catch (e) {
