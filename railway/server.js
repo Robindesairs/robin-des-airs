@@ -126,6 +126,18 @@ function bar(step) { const n = PROGRESS[step] ?? 0; return '🟢'.repeat(n) + '�
 // ─── Montants (net 75 %) ──────────────────────────────────────────────────────
 function montantTotal(pax = 1) { return 600 * pax; }
 function montantNet(pax = 1) { return Math.round(600 * pax * 0.75); }
+// Montant RÉEL après vérification du vol (s.perPax issu de /api/flight-verdict ; 600 par défaut = accroche subsaharienne).
+function perPaxOf(s) { const p = s && Number(s.perPax); return (p && p > 0) ? p : 600; }
+function montantReel(s) { return perPaxOf(s) * ((s && s.pax) || 1); }
+function montantNetReel(s) { return Math.round(montantReel(s) * 0.75); }
+// Ligne montant à afficher (récap/done) selon le verdict vol.
+function montantLine(s) {
+  const v = s && s.flightVerdict;
+  if (v === 'hors_champ' || v === 'sous_seuil') return `💰 Montant à confirmer par un expert _(vérification gratuite)_`;
+  const verified = !!(s && s.flightChecked) && v === 'eligible';
+  const prefix = verified ? '' : 'Jusqu’à ';
+  return `💰 ${prefix}*${montantReel(s)} €* — vous gardez *${montantNetReel(s)} € nets* (75 %)`;
+}
 
 // ─── Stats choc (rotation MSG1) ───────────────────────────────────────────────
 const STAT_VARIANTS = [
@@ -270,6 +282,19 @@ function genRef() { const d = new Date(); return `RDA-${d.toISOString().slice(0,
 function normInput(raw, options) { const t = (raw || '').trim().toLowerCase(); if (/^\d+$/.test(t)) return t; const i = options.findIndex(o => t.includes(o.toLowerCase())); return i >= 0 ? String(i + 1) : t; }
 const AIRLINES = { AF: 'Air France', SN: 'Brussels Airlines', TP: 'TAP Air Portugal', AT: 'Royal Air Maroc', HC: 'Air Sénégal', KQ: 'Kenya Airways', ET: 'Ethiopian Airlines', EK: 'Emirates', TK: 'Turkish Airlines', KL: 'KLM', LH: 'Lufthansa', IB: 'Iberia', EJU: 'easyJet', U2: 'easyJet', FR: 'Ryanair', TO: 'Transavia', KP: 'ASKY', DN: 'Senegal Airlines' };
 function deduceAirline(vol) { const m = (vol || '').toUpperCase().match(/^([A-Z]{2,3})\d/); return (m && AIRLINES[m[1]]) || ''; }
+// Verdict CE261 vérifié via /api/flight-verdict (AeroDataBox). Best-effort : ne bloque jamais le tunnel.
+async function fetchFlightVerdict(vol, date, typeVol) {
+  const v = String(vol || '').split('+')[0].trim().split(/\s+/)[0]; // 1er n° de vol seulement
+  if (!v) return null;
+  try {
+    const u = `https://robindesairs.eu/api/flight-verdict?flight=${encodeURIComponent(v)}&date=${encodeURIComponent(date || '')}&type=${typeVol === 'escale' ? 'escale' : 'direct'}`;
+    const opts = (typeof AbortSignal !== 'undefined' && AbortSignal.timeout) ? { signal: AbortSignal.timeout(6000) } : {};
+    const res = await fetch(u, opts);
+    if (!res.ok) return null;
+    const j = await res.json();
+    return (j && j.ok) ? j : null;
+  } catch (_) { return null; }
+}
 // Ordonne les segments d'une correspondance par chaînage (arrivée d'un vol = départ du suivant),
 // quel que soit l'ordre de saisie. Renvoie null si non chaînable (aéroports manquants/boucle) → on garde l'ordre saisi.
 function chainLegs(legs) {
@@ -309,7 +334,10 @@ function buildMandatUrl(s, phone) {
     dob: toISODate(mandant.dob || ''),
     address: mandant.adresse || '',
     vol: s.vol || '', date: s.date || '', pnr: s.pnr || '', compagnie: s.compagnie || '',
-    route: s.route || '', depAirport: _routeParts[0] || '', arrAirport: _routeParts[_routeParts.length - 1] || '', motif: s.incident_libelle || '', incident: _incidentCode, pax: s.pax || 1, indemnite: 600,
+    route: s.route || '', depAirport: _routeParts[0] || '', arrAirport: _routeParts[_routeParts.length - 1] || '', motif: s.incident_libelle || '', incident: _incidentCode, pax: s.pax || 1, indemnite: perPaxOf(s),
+    // Vérification vol (AeroDataBox) — destinée à l'équipe qui rappelle / au calcul de la lettre.
+    flightVerdict: s.flightVerdict || '', flightChecked: !!s.flightChecked, flightDelayMin: (s.flightDelayMin != null ? s.flightDelayMin : ''), distanceKm: s.distanceKm || '',
+    aVerifierExpert: ['a_verifier', 'hors_champ', 'sous_seuil'].includes(s.flightVerdict) || s.type_vol === 'escale',
     lang: s.langue_code || 'fr',
     passengers: (s.passengers || []).slice(0, s.pax || 1).map(p => ({ name: cleanName((p && p.name) || ''), dob: toISODate((p && p.dob) || '') })),
     cid: phone || '', lsa: new Date().toISOString(), source: 'wati-bot-v8',
@@ -1014,13 +1042,43 @@ async function sendMineurs(phone, s, cfg) {
 }
 async function sendRecap(phone, s, cfg) {
   s.step = 'recap'; await setState(phone, s);
-  await sendButtons(phone, { body: `${bar('recap')}\n📋 *Récapitulatif — confirmez svp*\n\n👥 ${s.pax} passager${s.pax > 1 ? 's' : ''}\n_Identités à l'étape suivante (pièce d'identité ou saisie)_\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n🛤️ ${s.type_vol === 'escale' ? 'Avec escale' : 'Direct'}\n💰 Jusqu'à *${montantTotal(s.pax)} €* — vous gardez *${montantNet(s.pax)} € nets* (75 %)`, buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Modifier' }] }, cfg);
+  await sendButtons(phone, { body: `${bar('recap')}\n📋 *Récapitulatif — confirmez svp*\n\n👥 ${s.pax} passager${s.pax > 1 ? 's' : ''}\n_Identités à l'étape suivante (pièce d'identité ou saisie)_\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n🛤️ ${s.type_vol === 'escale' ? 'Avec escale' : 'Direct'}\n${montantLine(s)}`, buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Modifier' }] }, cfg);
+}
+
+// Vérifie le vol (vols DIRECTS uniquement) et adapte montant + message. Idempotent, best-effort.
+async function applyFlightVerdict(phone, s, cfg) {
+  if (s.flightChecked) return;
+  if (s.type_vol === 'escale') { s.flightVerdict = 'a_verifier'; return; } // correspondance → expert, pas d'appel
+  if (!s.vol || !s.date) return; // pas assez d'infos → on garde le déclaratif
+  const v = await fetchFlightVerdict(s.vol, s.date, 'direct');
+  s.flightChecked = true;
+  if (!v || v.verdict === 'introuvable') return; // vol non retrouvé → silence, on garde le déclaratif (jamais de "non")
+  s.flightVerdict = v.verdict;
+  if (Number.isFinite(v.delayMin)) s.flightDelayMin = v.delayMin;
+  if (v.distanceKm) s.distanceKm = v.distanceKm;
+  if (v.route && (!s.route || s.route === '—')) s.route = v.route;
+  if (v.verdict === 'eligible') {
+    s.perPax = (v.perPax && v.perPax > 0) ? v.perPax : 600;
+    await setState(phone, s);
+    return send(phone, `✅ *Bonne nouvelle !* ${v.proofLine || 'Votre vol est éligible.'}\nVous pouvez prétendre à *${montantReel(s)} €*${s.pax > 1 ? ` au total (${s.pax} passagers)` : ''} — soit *${montantNetReel(s)} € nets* pour vous. 🎉`, cfg);
+  }
+  s.perPax = 0; // sortie douce : pas de montant ferme affiché
+  await setState(phone, s);
+  if (v.verdict === 'hors_champ') {
+    return send(phone, `ℹ️ D'après les données de vol, ce trajet n'entre pas *automatiquement* dans le règlement européen (compagnie hors-UE au départ hors-UE). Pas d'inquiétude : un expert vérifie *gratuitement* s'il existe un autre recours. On garde votre dossier. 🤝`, cfg);
+  }
+  if (v.verdict === 'sous_seuil') {
+    return send(phone, `ℹ️ Selon les données, le retard est *sous le seuil des 3h* pour l'indemnité forfaitaire. Mais vous avez peut-être droit au *remboursement de vos frais* — un expert vérifie. On garde votre dossier. 🤝`, cfg);
+  }
+  // a_verifier
+  return send(phone, `🔎 Un expert confirmera le *montant exact* de votre dossier. On continue. 👍`, cfg);
 }
 
 // après vol+date connus → collecte des noms manquants
 async function apresVol(phone, s, cfg) {
   // Plus de question mineurs : l'âge vient du passeport / de la date de naissance (étape documents).
   s.names = s.names || [];
+  await applyFlightVerdict(phone, s, cfg); // vérifie le vol direct → ajuste montant + message (best-effort)
   return sendRecap(phone, s, cfg);
 }
 async function askName(phone, s, cfg) {
@@ -1084,7 +1142,7 @@ async function finaliser(phone, s, cfg) {
   // Lead à relancer tant que le mandat n'est pas signé (nudge 2h/8h/22h dans la fenêtre 24h)
   upsertLead(phone, { ref: s.ref, mandatUrl: s.mandat_url, mandatSentAt: Date.now(), lastClientAt: Date.now(), pax: s.pax || 1, name: firstNameOf(s), signed: false, completed: true, nudges: [] });
   const minorNote = s.minorsCount ? `\n👶 ${s.minorsCount} mineur·s : signature d'un parent/tuteur requise (un expert vous guide).` : '';
-  await send(phone, `${bar('done')}\n🎉 *Dossier complet !* Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n💰 Jusqu'à *${montantTotal(s.pax)} €* — vous gardez *${montantNet(s.pax)} € nets*${minorNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % au succès uniquement · 🔒 aucune info bancaire.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_\n\n👉 *Signez ici :*\n${s.mandat_url}\n\nSans votre signature, on ne peut pas agir en votre nom. ${STOP_FOOTER}`, cfg);
+  await send(phone, `${bar('done')}\n🎉 *Dossier complet !* Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n${montantLine(s)}${minorNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % au succès uniquement · 🔒 aucune info bancaire.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_\n\n👉 *Signez ici :*\n${s.mandat_url}\n\nSans votre signature, on ne peut pas agir en votre nom. ${STOP_FOOTER}`, cfg);
   try { const makeUrl = process.env.MAKE_WEBHOOK_NEW_DOSSIER; if (makeUrl) await fetch(makeUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...s, phone, source: 'wati-bot-v8' }) }); } catch (e) {}
 }
 

@@ -39,6 +39,7 @@
 /api/dossier-store           /.netlify/functions/dossier-store           200
 /api/dossier-get             /.netlify/functions/dossier-get             200
 /api/depot-upload            /.netlify/functions/depot-upload            200
+/api/flight-verdict          /.netlify/functions/flight-verdict          200
 /api/radar-eligible-registry /.netlify/functions/radar-eligible-registry 200
 /api/radar-today             /.netlify/functions/radar-today             200
 /api/radar-enquete           /.netlify/functions/radar-enquete           200
