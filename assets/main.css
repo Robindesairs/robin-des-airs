@@ -933,8 +933,9 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   margin: 0 auto;
   width: 100%;
   display: grid;
-  /* Desktop : carte (droite) réduite, texte (gauche) élargi → carte moins dominante + plus de photo visible */
-  grid-template-columns: 1.2fr 0.8fr;
+  /* Desktop : texte à gauche, photo famille à droite. La carte (.hero-right) est masquée ≥769px
+   * (voir bloc plus bas) — le simulateur reste sur mobile. */
+  grid-template-columns: 1fr 1fr;
   gap: 36px;
   /* Aligner par le haut : le sommet du funnel droite reste au niveau du H1 gauche
    * même quand le funnel droite est nettement plus long que la colonne gauche.
@@ -943,6 +944,16 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   position: relative;
   z-index: 2;
   padding-bottom: 40px;
+}
+
+/* Desktop/tablette (≥769px) : hero épuré — pas de carte calculateur.
+ * Le CTA WhatsApp à gauche porte la conversion ; la photo famille occupe la droite.
+ * Le simulateur (carte) reste actif sur mobile (≤768px). Les CTA "Simuler" sont masqués ici ;
+ * les autres CTA qui ciblaient la carte ouvrent WhatsApp (cf. scrollToCalcWithAnimation). */
+@media (min-width: 769px) {
+  .hero-right { display: none; }
+  .nav-cta-sim { display: none; }
+  #btn-calc-hero { display: none; }
 }
 
 /* HERO LEFT — texte blanc sur fond implicite */

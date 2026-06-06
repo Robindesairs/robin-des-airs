@@ -576,6 +576,17 @@ function scrollToFunnelAndHighlight() {
   }, 520);
 }
 function scrollToCalcWithAnimation(e) {
+  // Desktop : la carte/simulateur est masquée (CSS ≥769px) → ces CTA ouvrent WhatsApp.
+  // (Sur mobile la carte est visible → comportement normal : scroll + highlight.)
+  var fbEl = document.getElementById('funnel-box');
+  if (fbEl && getComputedStyle(fbEl).display === 'none') {
+    if (e && e.preventDefault) e.preventDefault();
+    var waEl = document.getElementById('hero-wa-link');
+    var waUrl = waEl ? waEl.href : 'https://wa.me/33756863630';
+    window.open(waUrl, '_blank', 'noopener');
+    try { if (typeof plausible === 'function') plausible('WhatsApp-CTA', { props: { source: 'desktop-no-card' } }); } catch (err) {}
+    return;
+  }
   function go() {
     if (e && e.preventDefault) e.preventDefault();
     var fb = document.getElementById('funnel-box');
