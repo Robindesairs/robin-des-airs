@@ -3,27 +3,107 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Déposer mon dossier — Robin des Airs</title>
+  <title>Dépôt sécurisé de vos pièces — Robin des Airs</title>
   <link rel="icon" href="/favicon.png" type="image/png">
-  <!-- Dépôt en ligne consolidé : un seul parcours de mandat (page autorisation/mandat,
-       backend /api/submit-mandat → Airtable). Cette page redirige donc vers autorisation.html
-       en conservant les paramètres (?phone, ?ref, ?name…) pour le pré-remplissage. -->
-  <link rel="canonical" href="https://robindesairs.eu/autorisation.html">
-  <meta name="robots" content="noindex,follow">
-  <meta http-equiv="refresh" content="0; url=/autorisation.html">
-  <script>
-    (function () {
-      var target = "/autorisation.html" + (window.location.search || "") + (window.location.hash || "");
-      window.location.replace(target);
-    })();
-  </script>
+  <meta name="robots" content="noindex,nofollow">
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; display: grid; place-items: center; min-height: 100vh; background: #f7f8fa; color: #0b1f3a; }
-    a { color: #009960; font-weight: 700; }
+    :root{--navy:#0b1f3a;--green:#009960;--green-tint:#e8f7f0;--border:#d7dde5;--muted:#5b6b80;--bg:#f7f8fa;--text:#0b1f3a}
+    *{box-sizing:border-box}
+    body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:var(--bg);color:var(--text)}
+    header{background:var(--navy);color:#fff;padding:18px 16px}
+    header b{font-size:18px}
+    header .sub{color:#7fe3b6;font-size:12px}
+    .wrap{max-width:560px;margin:0 auto;padding:18px 16px 60px}
+    .card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;margin:14px 0}
+    h1{font-size:19px;margin:6px 0 4px}
+    .ref{font-size:12px;color:var(--muted)}
+    .lock{display:inline-flex;align-items:center;gap:6px;background:var(--green-tint);color:#06603c;border-radius:20px;padding:5px 12px;font-size:12px;font-weight:700;margin:8px 0}
+    .need{font-size:14px;line-height:1.7}
+    .need li{margin:3px 0}
+    label.drop{display:block;border:2px dashed var(--green);border-radius:12px;padding:22px 14px;text-align:center;cursor:pointer;background:var(--green-tint);color:#06603c;font-weight:700}
+    label.drop small{display:block;color:var(--muted);font-weight:400;margin-top:4px;font-size:12px}
+    input[type=file]{display:none}
+    .files{list-style:none;padding:0;margin:12px 0 0}
+    .files li{display:flex;align-items:center;gap:8px;font-size:13px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;margin:6px 0;background:#fff}
+    .files .st{margin-left:auto;font-size:12px;font-weight:700}
+    .st.ok{color:var(--green)} .st.err{color:#c0392b} .st.up{color:var(--muted)}
+    button.go{width:100%;background:var(--green);color:#fff;border:0;border-radius:10px;padding:15px;font-size:16px;font-weight:800;cursor:pointer;margin-top:14px}
+    button.go:disabled{opacity:.5;cursor:not-allowed}
+    .rgpd{font-size:11.5px;color:var(--muted);margin-top:14px;line-height:1.6}
+    .done{display:none;text-align:center;padding:24px}
+    .done .big{font-size:42px}
+    .err-box{display:none;background:#fdecea;color:#c0392b;border-radius:8px;padding:10px;font-size:13px;margin-top:10px}
   </style>
-  <script src="/assets/pre-launch.js" defer></script>
 </head>
 <body>
-  <p>Redirection vers votre mandat de représentation…<br><a href="/autorisation.html">Cliquez ici si rien ne se passe</a>.</p>
+  <header><b>Robin des Airs</b> 🏹<div class="sub">Dépôt sécurisé de vos pièces — CE 261/2004</div></header>
+  <div class="wrap">
+    <div class="card" id="form">
+      <h1>📎 Déposez vos pièces en toute sécurité</h1>
+      <div class="ref" id="refLine">Dossier : —</div>
+      <div class="lock">🔒 Lien privé &amp; chiffré · vos pièces ne servent qu'à votre réclamation</div>
+      <p class="need">À déposer :</p>
+      <ul class="need" id="needList">
+        <li>🛂 Une <b>pièce d'identité</b> par passager (passeport, CNI, titre de séjour)</li>
+        <li>🎫 Votre <b>carte d'embarquement</b> ou votre <b>e-billet</b> (confirmation de réservation)</li>
+      </ul>
+      <label class="drop" for="fileInput">📷 Ajouter mes documents
+        <small>Photos ou PDF — vous pouvez en sélectionner plusieurs</small>
+      </label>
+      <input type="file" id="fileInput" accept="image/*,application/pdf" multiple>
+      <ul class="files" id="fileList"></ul>
+      <div class="err-box" id="errBox"></div>
+      <button class="go" id="sendBtn" disabled>Envoyer mes pièces</button>
+      <p class="rgpd">🔒 Transmission sécurisée (HTTPS), pièces conservées chiffrées et utilisées <b>uniquement</b> pour réclamer votre indemnité auprès de la compagnie. Jamais revendues. Suppression possible à tout moment — RGPD.</p>
+    </div>
+    <div class="card done" id="doneCard">
+      <div class="big">✅</div>
+      <h1>Merci, c'est bien reçu !</h1>
+      <p class="need">Vos pièces sont enregistrées dans votre dossier. Notre équipe prend le relais et vous appellera depuis le <b>+33 7 56 86 36 30</b> (enregistrez-le sous « Retard Robin »). 🏹</p>
+    </div>
+  </div>
+  <script>
+    const P = new URLSearchParams(location.search);
+    const REF = (P.get('r') || P.get('ref') || '').trim();
+    document.getElementById('refLine').textContent = REF ? ('Dossier : ' + REF) : 'Lien invalide — réf. manquante';
+    const MAX = 4 * 1024 * 1024; // 4 Mo / fichier (plafond serveur)
+    const queue = [];
+    const fileInput = document.getElementById('fileInput');
+    const fileList = document.getElementById('fileList');
+    const sendBtn = document.getElementById('sendBtn');
+    const errBox = document.getElementById('errBox');
+    function showErr(m){ errBox.style.display = 'block'; errBox.textContent = m; }
+    fileInput.addEventListener('change', () => {
+      for (const f of fileInput.files) {
+        if (f.size > MAX) { showErr('« ' + f.name + ' » dépasse 4 Mo — reprenez la photo en qualité standard.'); continue; }
+        const li = document.createElement('li');
+        li.innerHTML = '📄 <span>' + f.name + '</span><span class="st up">en attente</span>';
+        fileList.appendChild(li);
+        queue.push({ file: f, li, sent: false });
+      }
+      sendBtn.disabled = queue.length === 0 || !REF;
+      fileInput.value = '';
+    });
+    function toB64(file){ return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1]); r.onerror = rej; r.readAsDataURL(file); }); }
+    sendBtn.addEventListener('click', async () => {
+      if (!REF) { showErr('Réf. de dossier manquante dans le lien.'); return; }
+      sendBtn.disabled = true; sendBtn.textContent = 'Envoi en cours…';
+      let okAll = true;
+      for (const item of queue) {
+        if (item.sent) continue;
+        const st = item.li.querySelector('.st'); st.className = 'st up'; st.textContent = 'envoi…';
+        try {
+          const dataBase64 = await toB64(item.file);
+          const r = await fetch('/api/depot-upload', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ref: REF, filename: item.file.name, mime: item.file.type || 'application/octet-stream', dataBase64 }) });
+          if (r.ok) { st.className = 'st ok'; st.textContent = '✓ envoyé'; item.sent = true; }
+          else { const j = await r.json().catch(() => ({})); st.className = 'st err'; st.textContent = '✗ échec'; okAll = false; showErr(j.error || 'Échec de l\'envoi, réessayez.'); }
+        } catch (e) { st.className = 'st err'; st.textContent = '✗ échec'; okAll = false; showErr('Erreur réseau, réessayez.'); }
+      }
+      if (okAll && queue.every(q => q.sent)) {
+        document.getElementById('form').style.display = 'none';
+        document.getElementById('doneCard').style.display = 'block';
+      } else { sendBtn.disabled = false; sendBtn.textContent = 'Réessayer'; }
+    });
+  </script>
 </body>
 </html>

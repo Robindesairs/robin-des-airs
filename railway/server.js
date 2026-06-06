@@ -909,7 +909,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       await setState(phone, s);
       return send(phone, `${ack}\n\n${missingDocsText(s)}`, cfg);
     }
-    return send(phone, `✅ Votre dossier *${s.ref}* est bien enregistré.\n${missingDocsText(s)}\n📞 Un expert vous appellera depuis le *+33 7 56 86 36 30* — enregistrez-le sous « *Retard Robin* ».\n\nPour un nouveau dossier : tapez *menu*.`, cfg);
+    return send(phone, `✅ Votre dossier *${s.ref}* est bien enregistré.\n${missingDocsText(s)}\n📎 Envoyez vos pièces ici, ou déposez-les sur un *lien sécurisé* 👉 https://robindesairs.eu/depot-en-ligne.html?r=${encodeURIComponent(s.ref)}\n📞 Un expert vous appellera depuis le *+33 7 56 86 36 30* — enregistrez-le sous « *Retard Robin* ».\n\nPour un nouveau dossier : tapez *menu*.`, cfg);
   }
 
   // Incompris
