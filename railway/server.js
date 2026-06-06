@@ -14,6 +14,7 @@
 
 const express = require('express');
 const { pickVariant } = require('./lib/bot-variants');
+const { SYSTEM_PROMPT: FAQ_SYSTEM_PROMPT, FAQ_KNOWLEDGE } = require('./lib/faq-hors-tunnel');
 
 // ─── Fonctions inline (autonome — aucune dépendance au monorepo Netlify) ───────
 function normalizeWatiPhone(phone) {
@@ -374,13 +375,13 @@ const STOP_FOOTER = '_L\'équipe Robin des Airs 🏹_';
 // ─── Responder IA hors-tunnel (inline) ─────────────────────────────────────────
 const AI = (() => {
   const SENSITIVE = /(avocat|tribunal|proc[e\u00e8]s|plainte|litige|rembours|parler\s+[\u00e0a]\s+(quelqu|un humain|une personne|un conseiller|un agent)|un (vrai )?humain|[\u00eae]tre rappel|rappelez)/i;
-  const FAQ = /(arnaque|fiable|s[\u00e9e]rieux|garantie|combien|c'?est quoi|fonctionne|(\u00e7|c|s)a\s*marche|(\u00e7a|ca)\s*(co\u00fbte|coute)|\bprix\b|tarif|gratuit|payer|d[\u00e9e]lai|rembours|\bdroit\b|\u00e9ligib|comment|pourquoi)/i;
+  const FAQ = /(arnaque|escroc|fiable|s[\u00e9e]rieux|confiance|garantie|combien|c'?est quoi|fonctionne|(\u00e7|c|s)a\s*marche|(\u00e7a|ca)\s*(co\u00fbte|coute)|\bco[u\u00fb]te?\b|cher|\bprix\b|tarif|gratuit|frais|commission|payer|paiement|montant|euros?|\u20ac|orange\s*money|wave|mobile\s*money|virement|d[\u00e9e]lai|temps|long|semaine|mois|attente|quand|rembours|\bdroit\b|\u00e9ligib|document|passeport|carte|donn[\u00e9e]es|rgpd|s[\u00e9e]curis|comment|pourquoi)/i;
   function isClientQuestion(text) { const t = (text || '').trim(); if (!t || /^\d+$/.test(t) || t.length < 5) return false; if (t.includes('?')) return true; return FAQ.test(t); }
   function isSensitive(text) { return SENSITIVE.test(text || ''); }
   async function answerClientQuestion(text, apiKey) {
     if (!apiKey) return null;
     try {
-      const res = await fetch('https://api.openai.com/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + apiKey }, body: JSON.stringify({ model: 'gpt-4o-mini', max_tokens: 300, temperature: 0.5, messages: [{ role: 'system', content: "Tu es l'assistant WhatsApp de Robin des Airs (indemnisation a\u00e9rienne CE 261/2004, axe Europe-Afrique). R\u00e9ponds court (2-4 phrases), chaleureux, dans la langue du client. Jamais de montant ferme garanti (dis 'jusqu'\u00e0 600 \u20ac'). Pas de conseil juridique engageant. Termine en invitant \u00e0 taper *menu* pour ouvrir le dossier." }, { role: 'user', content: String(text || '').slice(0, 2000) }] }) });
+      const res = await fetch('https://api.openai.com/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + apiKey }, body: JSON.stringify({ model: 'gpt-4o-mini', max_tokens: 320, temperature: 0.5, messages: [{ role: 'system', content: FAQ_SYSTEM_PROMPT + '\n\n# BASE FAQ DE R\u00c9F\u00c9RENCE\n' + FAQ_KNOWLEDGE }, { role: 'user', content: String(text || '').slice(0, 2000) }] }) });
       const json = await res.json().catch(() => ({}));
       return json.choices?.[0]?.message?.content?.trim() || null;
     } catch (e) { return null; }
