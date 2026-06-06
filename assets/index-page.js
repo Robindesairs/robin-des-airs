@@ -1785,11 +1785,6 @@ function toggleEscaleVol3() {
       { who: 'robin',  typing: 1100, hold: 2600, html: '🌍 Spécialistes <b>Europe–Afrique</b> : on connaît Dakar, Abidjan, Bamako… et on vous répond en <b>wolof, bambara, lingala…</b>' },
       { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 <b>Envoyez-moi juste votre n° de vol</b> — je m\'occupe du reste 💪' }
     ];
-    // Boucle douce ensuite : on garde le montant (600 €) et l'appel à l'action à l'écran, sans rejouer toute la scène.
-    var STEPS_LOOP = [
-      { who: 'robin', delay: 200, hold: 2800, cls: 'wa-msg--verdict', html: '✅ Éligible — <span class="wa-verdict-amt">jusqu\'à 600 €</span> / passager · <b>0 €</b> si on perd' },
-      { who: 'robin', typing: 700, hold: 3400, html: '👉 <b>Envoyez-moi juste votre n° de vol</b> — je m\'occupe du reste 💪' }
-    ];
 
     function addMsg(s) {
       var b = document.createElement('span');
@@ -1831,7 +1826,13 @@ function toggleEscaleVol3() {
       }
       next();
     }
-    function loop() { run(STEPS_LOOP, loop); } // après la scène complète : boucle douce verdict + CTA
+    // Rejoue toute la conversation en boucle (la carte reste pleine + ça « reprend » visiblement).
+    // Léger fondu à la remise à zéro : le reset paraît voulu, pas un bug / une carte qui se vide.
+    function loop() {
+      chat.style.transition = 'opacity .35s ease';
+      chat.style.opacity = '0';
+      timers.push(setTimeout(function () { chat.style.opacity = '1'; run(STEPS, loop); }, 360));
+    }
 
     var started = false;
     function start() { if (started) return; started = true; run(STEPS, loop); }
