@@ -436,7 +436,7 @@ async function sendMandatWhatsappCopy(record, pdfBuffer) {
   }
   const ref = record.ref || record.cert_id || 'dossier';
   const fileName = `Mandat-${String(ref).replace(/[^A-Za-z0-9_-]/g, '_')}.pdf`;
-  const caption = `✅ Mandat signé — merci de votre confiance ! (réf. ${ref})\n\nVotre dossier passe maintenant entre les mains de notre équipe : à partir d'ici, c'est nous qui parlons à la compagnie, plus vous. 0 € si on ne gagne pas, 25 % uniquement si vous êtes indemnisé.\n\nVoici votre copie à conserver. On revient vers vous dès qu'il y a du nouveau. 🏹\nL'équipe Robin des Airs`;
+  const caption = `✅ Mandat signé — merci de votre confiance ! (réf. ${ref})\n\nVotre dossier passe entre les mains de notre équipe. *0 € si on ne gagne pas*, 25 % uniquement si vous êtes indemnisé. Voici votre copie à conserver.\n\n📎 *Pour accélérer votre dossier*, envoyez-nous ici les justificatifs que vous avez sous la main :\n• votre *carte d'embarquement* ou votre *e-billet* (confirmation de réservation)\n• une *pièce d'identité* pour chaque passager (si ce n'est pas déjà fait)\n\n📞 *Un expert va vous appeler* depuis le *+33 7 56 86 36 30*. Enregistrez ce numéro sous « *Retard Robin* » pour reconnaître notre appel. 🏹\n\nL'équipe Robin des Airs`;
   try {
     return await watiSendFile(record.whatsapp, pdfBuffer, fileName, caption);
   } catch (e) {

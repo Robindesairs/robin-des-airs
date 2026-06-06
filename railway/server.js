@@ -732,7 +732,9 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
 
   if (s.step === 'done') {
     if (!s.ref || !s.mandat_url) { await clearState(phone); return sendAccueil(phone, cfg); } // état périmé → on repart proprement
-    return send(phone, `✅ Votre dossier *${s.ref}* est enregistré.\n👉 Signez le mandat : ${s.mandat_url}\n\nPour un nouveau dossier : tapez *menu*.`, cfg);
+    // Le client envoie un justificatif après coup (carte, e-billet, pièce d'identité) → on accuse réception
+    if (mediaUrl) { return send(phone, `✅ Document bien reçu, merci ! 🙏 Notre équipe l'ajoute à votre dossier *${s.ref}*.\nVous pouvez en envoyer d'autres (carte d'embarquement, e-billet, pièce d'identité de chaque passager).`, cfg); }
+    return send(phone, `✅ Votre dossier *${s.ref}* est bien enregistré.\n📎 N'hésitez pas à nous envoyer ici vos justificatifs (carte d'embarquement / e-billet, pièce d'identité de chaque passager).\n📞 Un expert vous appellera depuis le *+33 7 56 86 36 30* — enregistrez-le sous « *Retard Robin* ».\n\nPour un nouveau dossier : tapez *menu*.`, cfg);
   }
 
   // Incompris
