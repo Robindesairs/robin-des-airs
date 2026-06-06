@@ -46,25 +46,41 @@ let   DEBUG_INTERACTIVE = null;
 
 // ─── Dossiers (pour lien mandat court : mandat.html?r=REF → la page récupère tout) ──
 const fs = require('fs');
+const crypto = require('crypto');
+// ─── Chiffrement AU REPOS (AES-256-GCM) — actif si DATA_ENC_KEY est défini, sinon clair (rétrocompat) ──
+const _ENC = (process.env.DATA_ENC_KEY || '').trim();
+function _encKey() { return _ENC ? crypto.createHash('sha256').update(_ENC).digest() : null; }
+function encWriteFile(file, obj) {
+  const data = JSON.stringify(obj); const k = _encKey();
+  if (!k) { fs.writeFileSync(file, data); return; }
+  const iv = crypto.randomBytes(12); const c = crypto.createCipheriv('aes-256-gcm', k, iv);
+  const enc = Buffer.concat([c.update(data, 'utf8'), c.final()]); const tag = c.getAuthTag();
+  fs.writeFileSync(file, JSON.stringify({ _enc: 1, iv: iv.toString('base64'), tag: tag.toString('base64'), d: enc.toString('base64') }));
+}
+function encReadFile(file) {
+  const raw = fs.readFileSync(file, 'utf8'); let p; try { p = JSON.parse(raw); } catch (_) { return {}; }
+  if (p && p._enc) { const k = _encKey(); if (!k) throw new Error('DATA_ENC_KEY manquante pour déchiffrer ' + file); const dc = crypto.createDecipheriv('aes-256-gcm', k, Buffer.from(p.iv, 'base64')); dc.setAuthTag(Buffer.from(p.tag, 'base64')); return JSON.parse(Buffer.concat([dc.update(Buffer.from(p.d, 'base64')), dc.final()]).toString('utf8')); }
+  return p; // clair (legacy) — re-chiffré au prochain write si la clé est active
+}
 const DOSSIERS_FILE = process.env.DOSSIERS_FILE || '/tmp/robin-dossiers.json';
 const DOSSIERS = new Map();
-try { const raw = fs.readFileSync(DOSSIERS_FILE, 'utf8'); for (const [k, v] of Object.entries(JSON.parse(raw))) DOSSIERS.set(k, v); console.log('📂 ' + DOSSIERS.size + ' dossiers chargés'); } catch (_) {}
-function persistDossiers() { try { const o = {}; for (const [k, v] of DOSSIERS) o[k] = v; fs.writeFileSync(DOSSIERS_FILE, JSON.stringify(o)); } catch (e) { console.error('persistDossiers', e.message); } }
+try { for (const [k, v] of Object.entries(encReadFile(DOSSIERS_FILE))) DOSSIERS.set(k, v); console.log('📂 ' + DOSSIERS.size + ' dossiers chargés'); } catch (_) {}
+function persistDossiers() { try { const o = {}; for (const [k, v] of DOSSIERS) o[k] = v; encWriteFile(DOSSIERS_FILE, o); } catch (e) { console.error('persistDossiers', e.message); } }
 
 // ─── Persistance de l'ÉTAT conversationnel (la reprise survit aux redémarrages) ──
 const STATE_FILE = process.env.STATE_FILE || '/tmp/robin-state.json';
-try { const raw = fs.readFileSync(STATE_FILE, 'utf8'); for (const [k, v] of Object.entries(JSON.parse(raw))) STATE.set(k, v); console.log('💾 ' + STATE.size + ' sessions restaurées'); } catch (_) {}
+try { for (const [k, v] of Object.entries(encReadFile(STATE_FILE))) STATE.set(k, v); console.log('💾 ' + STATE.size + ' sessions restaurées'); } catch (_) {}
 let _stateTimer = null;
 function persistState() { // débounce léger : au plus 1 écriture / 1,5 s
   if (_stateTimer) return;
-  _stateTimer = setTimeout(() => { _stateTimer = null; try { const o = {}; for (const [k, v] of STATE) o[k] = v; fs.writeFileSync(STATE_FILE, JSON.stringify(o)); } catch (e) { console.error('persistState', e.message); } }, 1500);
+  _stateTimer = setTimeout(() => { _stateTimer = null; try { const o = {}; for (const [k, v] of STATE) o[k] = v; encWriteFile(STATE_FILE, o); } catch (e) { console.error('persistState', e.message); } }, 1500);
 }
 
 // ─── LEADS : dossiers non signés à relancer (nudge 2h / 8h / 22h, fenêtre 24h) ──
 const LEADS_FILE = process.env.LEADS_FILE || '/tmp/robin-leads.json';
 const LEADS = new Map(); // phone digits → { phone, ref, mandatUrl, mandatSentAt, lastClientAt, pax, signed, completed, nudges:[] }
-try { const raw = fs.readFileSync(LEADS_FILE, 'utf8'); for (const [k, v] of Object.entries(JSON.parse(raw))) LEADS.set(k, v); console.log('🔔 ' + LEADS.size + ' leads chargés'); } catch (_) {}
-function persistLeads() { try { const o = {}; for (const [k, v] of LEADS) o[k] = v; fs.writeFileSync(LEADS_FILE, JSON.stringify(o)); } catch (e) { console.error('persistLeads', e.message); } }
+try { for (const [k, v] of Object.entries(encReadFile(LEADS_FILE))) LEADS.set(k, v); console.log('🔔 ' + LEADS.size + ' leads chargés'); } catch (_) {}
+function persistLeads() { try { const o = {}; for (const [k, v] of LEADS) o[k] = v; encWriteFile(LEADS_FILE, o); } catch (e) { console.error('persistLeads', e.message); } }
 function leadKey(phone) { return String(phone || '').replace(/\D/g, ''); }
 function upsertLead(phone, patch) { const k = leadKey(phone); const cur = LEADS.get(k) || { phone: k, signed: false, completed: false, nudges: [] }; LEADS.set(k, { ...cur, ...patch }); persistLeads(); }
 function markLeadSigned(phoneOrRef) {
@@ -249,7 +265,8 @@ async function isDuplicateMessage(id, hasId, windowMs) {
 }
 
 // ─── Utilitaires ────────────────────────────────────────────────────────────────
-function genRef() { const d = new Date(); return `RDA-${d.toISOString().slice(0,10).replace(/-/g,'')}-${hashStr(String(d.getTime())).toString(36).slice(-4).toUpperCase()}`; }
+// Réf = jeton aléatoire (crypto) non énumérable : agit comme "lien magique" pour /api/dossier (données perso).
+function genRef() { const d = new Date(); return `RDA-${d.toISOString().slice(0,10).replace(/-/g,'')}-${crypto.randomBytes(9).toString('hex').toUpperCase()}`; }
 function normInput(raw, options) { const t = (raw || '').trim().toLowerCase(); if (/^\d+$/.test(t)) return t; const i = options.findIndex(o => t.includes(o.toLowerCase())); return i >= 0 ? String(i + 1) : t; }
 const AIRLINES = { AF: 'Air France', SN: 'Brussels Airlines', TP: 'TAP Air Portugal', AT: 'Royal Air Maroc', HC: 'Air Sénégal', KQ: 'Kenya Airways', ET: 'Ethiopian Airlines', EK: 'Emirates', TK: 'Turkish Airlines', KL: 'KLM', LH: 'Lufthansa', IB: 'Iberia', EJU: 'easyJet', U2: 'easyJet', FR: 'Ryanair', TO: 'Transavia', KP: 'ASKY', DN: 'Senegal Airlines' };
 function deduceAirline(vol) { const m = (vol || '').toUpperCase().match(/^([A-Z]{2,3})\d/); return (m && AIRLINES[m[1]]) || ''; }
