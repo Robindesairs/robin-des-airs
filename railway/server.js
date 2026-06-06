@@ -346,6 +346,49 @@ function buildMandatUrl(s, phone) {
   return `https://robindesairs.eu/mandat.html?r=${encodeURIComponent(s.ref || '')}`;
 }
 
+// ─── Transcription audio (notes vocales WhatsApp, multilingue) ────────────────
+// Le client peut RACONTER son vol à la voix (wolof, darija, lingala, français…).
+// On transcrit via OpenAI (détection de langue automatique). Best-effort : si ça
+// échoue, on retombe sur un message d'invitation, jamais de blocage.
+// Retour : { text, langDetectee } ou null.
+async function transcribeAudio(mediaUrl, cfg) {
+  const key = process.env.OPENAI_API_KEY; if (!key || !mediaUrl) return null;
+  try {
+    const r = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {} });
+    if (!r.ok) return null;
+    const buf = Buffer.from(await r.arrayBuffer());
+    if (!buf.length || buf.length > 24 * 1024 * 1024) return null; // garde-fou taille
+    const fd = new FormData();
+    fd.append('file', new Blob([buf], { type: 'audio/ogg' }), 'voice.ogg');
+    fd.append('model', process.env.STT_MODEL || 'gpt-4o-mini-transcribe');
+    fd.append('response_format', 'json');
+    const res = await fetch('https://api.openai.com/v1/audio/transcriptions', {
+      method: 'POST', headers: { Authorization: `Bearer ${key}` }, body: fd,
+    });
+    if (!res.ok) { console.error('transcribe http', res.status); return null; }
+    const j = await res.json();
+    const text = (j && j.text) ? String(j.text).trim() : '';
+    return text ? { text, langDetectee: j.language || '' } : null;
+  } catch (e) { console.error('transcribe failed', e.message); return null; }
+}
+// Traduit un texte libre vers le français pour le matching du tunnel (mots-clés FR).
+// Best-effort : si échec, on renvoie le texte original.
+async function toFrench(text) {
+  const key = process.env.OPENAI_API_KEY; const t = String(text || '').trim();
+  if (!key || !t) return t;
+  try {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
+      body: JSON.stringify({ model: 'gpt-4o-mini', max_tokens: 200, temperature: 0,
+        messages: [{ role: 'system', content: 'Traduis en français le message d\'un passager aérien. Réponds UNIQUEMENT par la traduction, sans guillemets ni commentaire. Conserve tels quels les numéros de vol, codes (ex AF718), villes, dates et chiffres.' },
+          { role: 'user', content: t.slice(0, 1000) }] }),
+    });
+    if (!res.ok) return t;
+    const j = await res.json();
+    return (j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content || t).trim();
+  } catch (_) { return t; }
+}
+
 // ─── OCR (Vision) ────────────────────────────────────────────────────────────
 async function ocrBoardingPass(mediaUrl, cfg) {
   const key = process.env.OPENAI_API_KEY; if (!key || !mediaUrl) return null;
@@ -634,7 +677,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const L = (ri >= 0 && langArr[ri]) ? langArr[ri] : matchLang(input);
     if (!L) return sendLangue(phone, s, cfg);
     s.langue = `${L.flag} ${L.label}`; s.langue_code = L.code;
-    if (L.africaine) { s.escalade = 'langue_africaine'; await send(phone, `${L.natif}\n📱 +33 7 56 86 36 30\n\n🤝 Votre dossier est entre de bonnes mains.\n📞 Un expert parlant votre langue *vous appellera* pour vous accompagner.\nEn attendant, je continue à vous guider en français. 👇`, cfg); }
+    if (L.africaine) { s.escalade = 'langue_africaine'; s.voiceLang = L.code; await send(phone, `${L.natif}\n\n🎙️ *Vous n'êtes pas à l'aise à l'écrit ?* Envoyez-moi un *message vocal* dans votre langue — je vous comprends et je vous guide. Vous pouvez parler à tout moment.\n📞 Et un expert parlant votre langue peut vous rappeler : +33 7 56 86 36 30 (« Retard Robin »).\n\nOn continue ensemble. 👇`, cfg); }
     s.step = 'route'; await setState(phone, s); return sendRoute(phone, s, cfg);
   }
 
@@ -1174,15 +1217,17 @@ function extractInbound(payload) {
     const replyText = (listReply && (listReply.title || listReply.id)) || (btnReply && (btnReply.text || btnReply.title || btnReply.id)) || null;
     if (waId === 'senderPhone' || item.text === 'text') return;
     const isImage = item.type === 'image' || (item.type && /image/i.test(item.type));
+    const isAudio = item.type && /audio|voice|ptt/i.test(item.type);
     const mediaUrl = isImage ? (item.data || item.mediaUrl || item.media_url || item.url) : null;
-    const text = replyText || item.text || (item.finalText && String(item.finalText)) || (isImage ? '[image]' : (item.type && item.type !== 'text' ? `[${item.type}]` : ''));
+    const audioUrl = isAudio ? (item.data || item.mediaUrl || item.media_url || item.url) : null;
+    const text = replyText || item.text || (item.finalText && String(item.finalText)) || (isImage ? '[image]' : (isAudio ? '[audio]' : (item.type && item.type !== 'text' ? `[${item.type}]` : '')));
     if (!waId) return;
     const phone = normalizeWaPhone(normalizeWatiPhone(waId));
-    if (!String(text || '').trim() && !mediaUrl) return;
+    if (!String(text || '').trim() && !mediaUrl && !audioUrl) return;
     const realId = item.whatsappMessageId || item.whatsapp_message_id || item.id || item.messageId || null;
     const key = realId || `${phone}|${String(text).trim()}`;
     if (seen.has(key)) return; seen.add(key);
-    list.push({ phone, text: String(text || '').slice(0, 4096), mediaUrl, dedupId: key, hasId: !!realId, interactive: !!(listReply || btnReply), replyId: replyId || '' });
+    list.push({ phone, text: String(text || '').slice(0, 4096), mediaUrl, audioUrl, dedupId: key, hasId: !!realId, interactive: !!(listReply || btnReply), replyId: replyId || '' });
   };
   if (Array.isArray(payload)) { payload.forEach(push); return list; }
   push(payload);
@@ -1238,7 +1283,7 @@ app.post('/api/wati-webhook', async (req, res) => {
   const cfg = watiCfg(); const items = extractInbound(body);
   saveInboundDebug(JSON.stringify(body), items);
   res.json({ ok: true, processed: items.length }); // répondre WATI tout de suite
-  for (const { phone, text, mediaUrl, dedupId, hasId, replyId } of items) {
+  for (const { phone, text, mediaUrl, audioUrl, dedupId, hasId, replyId } of items) {
     if (!phone) continue;
     if (hasId && memSeen(dedupId)) continue;
     if (hasId && await isDuplicateMessage(dedupId, true)) continue;
@@ -1247,10 +1292,25 @@ app.post('/api/wati-webhook', async (req, res) => {
     notifyOwnerWhatsApp(phone, text).catch(() => {});
     if (LEADS.has(leadKey(phone))) upsertLead(phone, { lastClientAt: Date.now() }); // garde la fenêtre 24h fraîche
     // Sérialisé par numéro : les messages d'un même client se traitent dans l'ordre, un par un.
-    enqueue(phone, () => handleMessage(phone, text, cfg, mediaUrl, replyId).catch(e => {
-      console.error('bot error', e.message, e.stack);
-      if (cfg) return send(phone, 'Une erreur est survenue. Tapez *menu* pour recommencer.', cfg).catch(() => {});
-    }));
+    enqueue(phone, async () => {
+      try {
+        let t = text;
+        // 🎙️ Note vocale : on transcrit (multilingue) puis on traite comme du texte.
+        if (audioUrl && (!String(t || '').trim() || t === '[audio]')) {
+          const tr = await transcribeAudio(audioUrl, cfg);
+          if (tr && tr.text) {
+            await send(phone, `🎙️ Message vocal bien reçu, voici ce que j'ai compris :\n_« ${tr.text.slice(0, 300)} »_`, cfg).catch(() => {});
+            t = await toFrench(tr.text); // traduit vers FR pour le matching du tunnel (mots-clés FR)
+          } else {
+            return send(phone, `🎙️ Je n'ai pas réussi à écouter votre message vocal (réseau ou format). Réécrivez-le ou réessayez, je vous écoute. 🙏`, cfg).catch(() => {});
+          }
+        }
+        return await handleMessage(phone, t, cfg, mediaUrl, replyId);
+      } catch (e) {
+        console.error('bot error', e.message, e.stack);
+        if (cfg) return send(phone, 'Une erreur est survenue. Tapez *menu* pour recommencer.', cfg).catch(() => {});
+      }
+    });
   }
 });
 
