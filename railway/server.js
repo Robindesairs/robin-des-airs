@@ -49,6 +49,31 @@ const DOSSIERS = new Map();
 try { const raw = fs.readFileSync(DOSSIERS_FILE, 'utf8'); for (const [k, v] of Object.entries(JSON.parse(raw))) DOSSIERS.set(k, v); console.log('📂 ' + DOSSIERS.size + ' dossiers chargés'); } catch (_) {}
 function persistDossiers() { try { const o = {}; for (const [k, v] of DOSSIERS) o[k] = v; fs.writeFileSync(DOSSIERS_FILE, JSON.stringify(o)); } catch (e) { console.error('persistDossiers', e.message); } }
 
+// ─── Persistance de l'ÉTAT conversationnel (la reprise survit aux redémarrages) ──
+const STATE_FILE = process.env.STATE_FILE || '/tmp/robin-state.json';
+try { const raw = fs.readFileSync(STATE_FILE, 'utf8'); for (const [k, v] of Object.entries(JSON.parse(raw))) STATE.set(k, v); console.log('💾 ' + STATE.size + ' sessions restaurées'); } catch (_) {}
+let _stateTimer = null;
+function persistState() { // débounce léger : au plus 1 écriture / 1,5 s
+  if (_stateTimer) return;
+  _stateTimer = setTimeout(() => { _stateTimer = null; try { const o = {}; for (const [k, v] of STATE) o[k] = v; fs.writeFileSync(STATE_FILE, JSON.stringify(o)); } catch (e) { console.error('persistState', e.message); } }, 1500);
+}
+
+// ─── LEADS : dossiers non signés à relancer (nudge 2h / 8h / 22h, fenêtre 24h) ──
+const LEADS_FILE = process.env.LEADS_FILE || '/tmp/robin-leads.json';
+const LEADS = new Map(); // phone digits → { phone, ref, mandatUrl, mandatSentAt, lastClientAt, pax, signed, completed, nudges:[] }
+try { const raw = fs.readFileSync(LEADS_FILE, 'utf8'); for (const [k, v] of Object.entries(JSON.parse(raw))) LEADS.set(k, v); console.log('🔔 ' + LEADS.size + ' leads chargés'); } catch (_) {}
+function persistLeads() { try { const o = {}; for (const [k, v] of LEADS) o[k] = v; fs.writeFileSync(LEADS_FILE, JSON.stringify(o)); } catch (e) { console.error('persistLeads', e.message); } }
+function leadKey(phone) { return String(phone || '').replace(/\D/g, ''); }
+function upsertLead(phone, patch) { const k = leadKey(phone); const cur = LEADS.get(k) || { phone: k, signed: false, completed: false, nudges: [] }; LEADS.set(k, { ...cur, ...patch }); persistLeads(); }
+function markLeadSigned(phoneOrRef) {
+  const k = leadKey(phoneOrRef);
+  let found = false;
+  if (LEADS.has(k)) { const l = LEADS.get(k); l.signed = true; LEADS.set(k, l); found = true; }
+  for (const [kk, l] of LEADS) { if (l.ref && String(l.ref) === String(phoneOrRef)) { l.signed = true; LEADS.set(kk, l); found = true; } }
+  if (found) persistLeads();
+  return found;
+}
+
 // ─── Dédup en mémoire (même instance Lambda — première barrière, instantanée) ──
 const MEM_SEEN = new Map(); // key → timestamp
 function memSeen(key) {
@@ -196,14 +221,14 @@ async function sendChoices(phone, { body, items, footer }, cfg) {
 
 // ─── État ──────────────────────────────────────────────────────────────────────
 async function getState(phone) { return STATE.get(phone.replace(/\D/g, '')) || { step: 'accueil' }; }
-async function setState(phone, s) { STATE.set(phone.replace(/\D/g, ''), { ...s, updatedAt: new Date().toISOString() }); }
+async function setState(phone, s) { STATE.set(phone.replace(/\D/g, ''), { ...s, updatedAt: new Date().toISOString() }); persistState(); }
 // Guard fallback : re-lit l'état avant de re-poser une question.
 // Si le step a changé (doublon concurrent traité en premier), on ignore silencieusement.
 async function safeFallback(phone, expectedStep, fn) {
   try { const cur = await getState(phone); if (cur && cur.step !== expectedStep) return; } catch {}
   return fn();
 }
-async function clearState(phone) { STATE.delete(phone.replace(/\D/g, '')); }
+async function clearState(phone) { STATE.delete(phone.replace(/\D/g, '')); persistState(); }
 function saveInboundDebug(rawBody, items) {
   DEBUG_INBOUND.unshift({ ts: new Date().toISOString(), raw: String(rawBody).slice(0, 1500), extracted: items.map(it => ({ ph: it.phone, txt: it.text, dedupId: it.dedupId })) });
   if (DEBUG_INBOUND.length > 20) DEBUG_INBOUND.length = 20;
@@ -865,6 +890,8 @@ async function finaliser(phone, s, cfg) {
   const nom = (pax[0] && pax[0].name) || (s.names && s.names[0]) || '—';
   s.minorsCount = pax.filter(p => p && p.minor).length;
   s.ref = genRef(); s.mandat_url = buildMandatUrl(s, phone); s.step = 'done'; await setState(phone, s);
+  // Lead à relancer tant que le mandat n'est pas signé (nudge 2h/8h/22h dans la fenêtre 24h)
+  upsertLead(phone, { ref: s.ref, mandatUrl: s.mandat_url, mandatSentAt: Date.now(), lastClientAt: Date.now(), pax: s.pax || 1, signed: false, completed: true, nudges: [] });
   const minorNote = s.minorsCount ? `\n👶 ${s.minorsCount} mineur·s : signature d'un parent/tuteur requise (un expert vous guide).` : '';
   await send(phone, `${bar('done')}\n🎉 *Dossier complet !* Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n💰 Jusqu'à *${montantTotal(s.pax)} €* — vous gardez *${montantNet(s.pax)} € nets*${minorNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % au succès uniquement · 🔒 aucune info bancaire.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_\n\n👉 *Signez ici :*\n${s.mandat_url}\n\nSans votre signature, on ne peut pas agir en votre nom. ${STOP_FOOTER}`, cfg);
   try { const makeUrl = process.env.MAKE_WEBHOOK_NEW_DOSSIER; if (makeUrl) await fetch(makeUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...s, phone, source: 'wati-bot-v8' }) }); } catch (e) {}
@@ -969,6 +996,7 @@ app.post('/api/wati-webhook', async (req, res) => {
     const ckKey = `ck|${phone}|${String(text).trim().toLowerCase().slice(0, 200)}`;
     if (!hasId && await isDuplicateMessage(ckKey, false, 5000)) continue;
     notifyOwnerWhatsApp(phone, text).catch(() => {});
+    if (LEADS.has(leadKey(phone))) upsertLead(phone, { lastClientAt: Date.now() }); // garde la fenêtre 24h fraîche
     // Sérialisé par numéro : les messages d'un même client se traitent dans l'ordre, un par un.
     enqueue(phone, () => handleMessage(phone, text, cfg, mediaUrl, replyId).catch(e => {
       console.error('bot error', e.message, e.stack);
@@ -986,8 +1014,50 @@ app.get('/api/dossier', (req, res) => {
   res.json(d);
 });
 
-app.get('/health', (req, res) => res.json({ ok: true, sessions: STATE.size, dedup: DEDUP.size, dossiers: DOSSIERS.size, uptime: process.uptime(), ts: new Date().toISOString() }));
+app.get('/health', (req, res) => res.json({ ok: true, sessions: STATE.size, dedup: DEDUP.size, dossiers: DOSSIERS.size, leads: LEADS.size, uptime: process.uptime(), ts: new Date().toISOString() }));
 app.get('/', (req, res) => res.send('\ud83c\udff9 Robin des Airs Bot v8 — Railway OK'));
+
+// ─── Signature reçue → marque le lead signé (stoppe les relances) ───────────────
+app.post('/api/mandat-signed', (req, res) => {
+  res.set('Access-Control-Allow-Origin', '*');
+  const b = req.body || {};
+  const secret = (b.secret || req.query.s || req.headers['x-secret'] || '').toString().trim();
+  const expected = (process.env.WATI_WEBHOOK_SECRET || '').trim();
+  if (expected && secret !== expected) return res.status(401).json({ error: 'secret invalide' });
+  const marked = markLeadSigned(b.ref || '') || markLeadSigned(b.phone || b.waId || '');
+  console.log('mandat signe ref=' + (b.ref || '?') + ' marked=' + marked);
+  res.json({ ok: true, marked });
+});
+
+// ─── Relances : nudge 2h / 8h / 22h sur dossiers non signés, fenêtre WhatsApp 24h ──
+const RELANCE_THRESHOLDS_H = [2, 8, 22];
+const _H = 3600000;
+function relanceText(n, lead) {
+  const url = lead.mandatUrl || ('https://robindesairs.eu/mandat.html?r=' + encodeURIComponent(lead.ref || ''));
+  const total = 600 * (lead.pax || 1);
+  if (n === 2) return `✈️ Il ne reste qu'une signature ! Votre dossier *${lead.ref}* est prêt — 2 min pour autoriser Robin des Airs à réclamer jusqu'à *${total} €*.\n*0 € si on ne gagne pas.*\n👉 ${url}`;
+  if (n === 8) return `💬 Des passagers comme vous récupèrent leur argent chaque semaine. Votre mandat (réf. *${lead.ref}*) n'attend que votre signature 👇\n👉 ${url}\nUne question ? Tapez *menu*.`;
+  return `⏳ Dernière chance aujourd'hui pour votre dossier *${lead.ref}*. Sans votre signature, on ne peut pas agir en votre nom — ne laissez pas la compagnie garder votre argent.\n👉 ${url}\n\n_L'équipe Robin des Airs 🏹_`;
+}
+async function runRelances() {
+  try {
+    const cfg = watiCfg(); if (!cfg) return;
+    const now = Date.now();
+    for (const [k, lead] of LEADS) {
+      if (!lead) continue;
+      if (lead.signed || (lead.mandatSentAt && now - lead.mandatSentAt > 30 * 24 * _H)) { LEADS.delete(k); persistLeads(); continue; }
+      if (!lead.mandatSentAt) continue;
+      if (now - (lead.lastClientAt || lead.mandatSentAt) > 24 * _H) continue; // fenêtre 24h fermée
+      const hoursSince = (now - lead.mandatSentAt) / _H;
+      const nudges = lead.nudges || [];
+      const due = RELANCE_THRESHOLDS_H.find((t) => hoursSince >= t && !nudges.includes(t));
+      if (due == null) continue;
+      try { await send(lead.phone, relanceText(due, lead), cfg); console.log('relance +' + due + 'h -> ' + lead.ref); } catch (_) {}
+      lead.nudges = nudges.concat(due); LEADS.set(k, lead); persistLeads();
+    }
+  } catch (e) { console.error('runRelances', e.message); }
+}
+setInterval(runRelances, 15 * 60 * 1000); // toutes les 15 min
 
 const PORT = parseInt(process.env.PORT || '3000', 10);
 app.listen(PORT, () => { console.log('\ud83e\udd16 Robin des Airs Bot v8 — Railway — port ' + PORT); });

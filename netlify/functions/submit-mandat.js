@@ -393,9 +393,10 @@ async function notifyMandatSignedByEmail(record, pdfBuffer, pdfBilingueBuffer) {
 }
 
 async function forwardBotWebhook(record) {
-  const url = (process.env.MANDAT_SIGNED_WEBHOOK_URL || '').trim();
+  // URL par défaut = endpoint du bot Railway (aucune config requise) ; secret = celui de WATI (déjà présent)
+  const url = (process.env.MANDAT_SIGNED_WEBHOOK_URL || 'https://robin-bot-v8-production.up.railway.app/api/mandat-signed').trim();
   if (!url) return;
-  const secret = (process.env.MANDAT_SIGNED_WEBHOOK_SECRET || '').trim();
+  const secret = (process.env.MANDAT_SIGNED_WEBHOOK_SECRET || process.env.WATI_WEBHOOK_SECRET || '').trim();
   const body = {
     ref: record.ref,
     secret,
