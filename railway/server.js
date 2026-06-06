@@ -382,13 +382,31 @@ function docsStatus(s) {
   const travelProofOk = !!s.travelProof;
   return { missingId, travelProofOk, complete: missingId.length === 0 && travelProofOk };
 }
-// Rattache un nom lu sur une pièce à l'index du passager (match sur un token du nom, ≥3 lettres)
-function matchPassengerByName(s, nom) {
-  const tokens = String(nom || '').toUpperCase().split(/\s+/).filter((t) => t.length >= 3);
-  if (!tokens.length) return -1;
+// Indices des passagers SANS pièce d'identité
+function missingIdIndices(s) {
+  const pax = s.pax || ((s.passengers && s.passengers.length) || 1); const out = [];
+  for (let i = 0; i < pax; i++) { const p = (s.passengers || [])[i] || {}; if (!(p && !p.skipped && (p.idReceived || p.dob))) out.push(i); }
+  return out;
+}
+// Attribue une pièce d'identité au bon passager, SANS jamais demander au client.
+// 1) match prénom+nom (départage les familles)  2) élimination (1 seul manquant)  3) doute → best-effort + flag expert
+function attributeId(s, nom) {
+  const norm = (x) => String(x || '').toUpperCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
   const pax = s.pax || ((s.passengers && s.passengers.length) || 1);
-  for (let i = 0; i < pax; i++) { const pn = String(paxName(s, i)).toUpperCase(); if (tokens.some((t) => pn.includes(t))) return i; }
-  return -1;
+  const tokens = norm(nom).split(/\s+/).filter((t) => t.length >= 3);
+  let best = -1, bestScore = 0, ties = 0;
+  for (let i = 0; i < pax; i++) {
+    const pn = norm(paxName(s, i));
+    const sc = tokens.filter((t) => pn.includes(t)).length;
+    if (sc > bestScore) { bestScore = sc; best = i; ties = 1; } else if (sc === bestScore && sc > 0) { ties++; }
+  }
+  // 1) match nom confiant : un seul gagnant net (prénom+nom, ou token unique)
+  if (best >= 0 && bestScore >= 1 && ties === 1) return { idx: best, confident: true, reason: 'nom' };
+  // 2) élimination : s'il ne reste qu'un passager sans pièce, c'est forcément lui
+  const missing = missingIdIndices(s);
+  if (missing.length === 1) return { idx: missing[0], confident: true, reason: 'elimination' };
+  // 3) doute : rattache au mieux (1er manquant) mais sans certitude → l'expert vérifie
+  return { idx: missing.length ? missing[0] : -1, confident: false, reason: 'doute' };
 }
 // Formate la liste des pièces manquantes (texte WhatsApp)
 function missingDocsText(s) {
@@ -817,10 +835,15 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       const d = await classifyDoc(mediaUrl, cfg);
       let ack;
       if (d.kind === 'identite') {
-        let idx = matchPassengerByName(s, d.nom);
-        if (idx < 0) { const pax = s.pax || s.passengers.length || 1; for (let i = 0; i < pax; i++) { const pp = s.passengers[i] || {}; if (!(pp && !pp.skipped && (pp.idReceived || pp.dob))) { idx = i; break; } } }
-        if (idx >= 0) { const p = s.passengers[idx] || {}; p.idReceived = true; if (!p.name && d.nom) p.name = d.nom; s.passengers[idx] = p; ack = `✅ Pièce d'identité de *${paxName(s, idx)}* bien reçue. 🙏`; }
-        else { ack = `✅ Pièce d'identité bien reçue. 🙏`; }
+        const a = attributeId(s, d.nom);
+        if (a.idx >= 0) {
+          const p = s.passengers[a.idx] || {}; p.idReceived = true; if (!p.name && d.nom) p.name = d.nom; s.passengers[a.idx] = p;
+          if (a.confident) { ack = `✅ Pièce d'identité de *${paxName(s, a.idx)}* bien reçue. 🙏`; }
+          else { // doute → on ne nomme pas le client, et on alerte l'expert pour vérification manuelle
+            ack = `✅ Pièce d'identité bien reçue, merci. 🙏`;
+            notifyOwnerWhatsApp(phone, `⚠️ Dossier ${s.ref} : pièce d'identité reçue (lue « ${d.nom || '?'} ») à rattacher/vérifier manuellement — ${s.pax} passagers.`).catch(() => {});
+          }
+        } else { ack = `✅ Pièce d'identité bien reçue. 🙏`; }
       } else if (d.kind === 'voyage') {
         s.travelProof = d.voyageType || 'voyage';
         ack = d.voyageType === 'ebooking' ? `✅ Confirmation de réservation reçue — elle couvre *tout le voyage et tous les passagers*. 👍` : `✅ Carte d'embarquement reçue. 👍`;
