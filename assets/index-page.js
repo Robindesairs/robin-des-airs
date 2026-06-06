@@ -1771,12 +1771,9 @@ function toggleEscaleVol3() {
     if (!typed) return;
     var demo = document.getElementById('wa-typedemo');
     var wa = document.getElementById('hero-wa-link');
-    var msg = '';
-    if (wa) {
-      try { var m = /[?&]text=([^&]+)/.exec(wa.href); if (m) msg = decodeURIComponent(m[1]); } catch (e) {}
-      if (demo) demo.href = wa.href; // garde l'aperçu synchro avec le vrai message
-    }
-    if (!msg) msg = "Bonjour Robin ! Mon vol a été retardé ou annulé — ai-je droit à une indemnité (jusqu'à 600 €) ?\n✈️ N° de vol :\n📅 Date :";
+    var msg = (typed.getAttribute('data-msg') || '').trim();
+    if (wa && demo) demo.href = wa.href; // le clic ouvre WhatsApp avec le vrai message pré-rempli
+    if (!msg) msg = "On parle votre langue. On se comprend.";
     var caret = demo ? demo.querySelector('.wa-caret') : null;
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       typed.textContent = msg; if (caret) caret.style.display = 'none'; return;

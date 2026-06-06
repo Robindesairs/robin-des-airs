@@ -921,11 +921,11 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% 38%;
-  transform: scale(1.1);
-  transform-origin: 72% 38%;
+  object-position: 50% 42%;
+  transform: none; /* dézoom : on montre la photo au plus large (était scale 1.1) */
+  transform-origin: center;
   opacity: 1;
-  filter: saturate(1.08) contrast(1.04) brightness(1.02);
+  filter: saturate(1.06) contrast(1.03) brightness(1.02);
 }
 
 .hero-wrap {
@@ -971,14 +971,14 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 .wa-typedemo-name { color: #fff; font-weight: 700; font-size: 13px; }
 .wa-typedemo-online { color: #25D366; font-size: 11px; font-weight: 600; }
 .wa-typedemo-bubble {
-  display: block; position: relative; background: #d9fdd3; color: #0b2a17;
-  border-radius: 4px 12px 12px 12px; padding: 9px 11px; font-size: 13px; line-height: 1.5;
-  min-height: 86px; box-shadow: 0 1px 1px rgba(0,0,0,0.12);
+  display: block; position: relative; background: #ffffff; color: #111b21;
+  border-radius: 4px 12px 12px 12px; padding: 9px 12px; font-size: 14px; line-height: 1.5;
+  min-height: 50px; box-shadow: 0 1px 1px rgba(0,0,0,0.18);
 }
-.wa-typedemo-text { white-space: pre-wrap; }
-.wa-caret { display: inline-block; width: 2px; height: 1.05em; background: #0b2a17; vertical-align: -2px; margin-left: 1px; animation: waBlink 1s steps(1) infinite; }
+.wa-typedemo-text { white-space: pre-wrap; font-weight: 600; }
+.wa-caret { display: inline-block; width: 2px; height: 1.05em; background: #25D366; vertical-align: -2px; margin-left: 1px; animation: waBlink 1s steps(1) infinite; }
 @keyframes waBlink { 50% { opacity: 0; } }
-.wa-typedemo-meta { display: block; text-align: right; font-size: 10px; color: #3f7a52; margin-top: 6px; font-weight: 600; }
+.wa-typedemo-meta { display: block; text-align: right; font-size: 10px; color: #667781; margin-top: 6px; font-weight: 600; }
 @media (prefers-reduced-motion: reduce) { .wa-caret { animation: none; } }
 
 .hero-badge {
