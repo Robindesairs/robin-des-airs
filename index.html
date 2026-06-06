@@ -133,7 +133,7 @@
     </div>
     <!-- CTA visible sur desktop -->
     <a href="#funnel-box" class="nav-cta-sim nav-cta-inline" onclick="scrollToCalcWithAnimation(event); return false;" data-i18n="nav_cta_sim">Simuler →</a>
-    <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="nav-cta nav-cta-inline" id="nav-wa-cta" data-i18n="nav_cta" onclick="plausible('WhatsApp-CTA', {props: {source: 'nav'}})">WhatsApp →</a>
+    <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20%21%20Mon%20vol%20a%20%C3%A9t%C3%A9%20retard%C3%A9%20ou%20annul%C3%A9%20%E2%80%94%20ai-je%20droit%20%C3%A0%20une%20indemnit%C3%A9%20%28jusqu%27%C3%A0%20600%20%E2%82%AC%29%20%3F%0A%E2%9C%88%EF%B8%8F%20N%C2%B0%20de%20vol%20%3A%0A%F0%9F%93%85%20Date%20%3A%0A%F0%9F%9B%AB%20Trajet%20%3A" target="_blank" rel="noopener" class="nav-cta nav-cta-inline" id="nav-wa-cta" data-i18n="nav_cta" onclick="plausible('WhatsApp-CTA', {props: {source: 'nav'}})">Combien on me doit ? →</a>
     <!-- Hamburger toujours visible -->
     <button class="nav-burger" id="nav-burger" onclick="toggleMobileNav()" aria-label="Menu">
       <span></span><span></span><span></span>
@@ -159,7 +159,7 @@
     <li><a href="/blog/" onclick="closeMobileNav()" data-i18n="nav_drawer_blog">📝 Blog &amp; guides</a></li>
     <li><a href="/nos-tarifs.html" onclick="closeMobileNav()" data-i18n="nav_drawer_tarifs">💰 Nos tarifs</a></li>
     <li><a href="/parrainage" onclick="closeMobileNav()">🎁 Parrainage — Gagnez 20 €</a></li>
-    <li><a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="drawer-cta" id="nav-drawer-wa-cta" data-i18n="nav_cta" onclick="closeMobileNav(); plausible('WhatsApp-CTA', {props: {source: 'nav-drawer'}})">WhatsApp →</a></li>
+    <li><a href="https://wa.me/33756863630?text=Bonjour%20Robin%20%21%20Mon%20vol%20a%20%C3%A9t%C3%A9%20retard%C3%A9%20ou%20annul%C3%A9%20%E2%80%94%20ai-je%20droit%20%C3%A0%20une%20indemnit%C3%A9%20%28jusqu%27%C3%A0%20600%20%E2%82%AC%29%20%3F%0A%E2%9C%88%EF%B8%8F%20N%C2%B0%20de%20vol%20%3A%0A%F0%9F%93%85%20Date%20%3A%0A%F0%9F%9B%AB%20Trajet%20%3A" target="_blank" rel="noopener" class="drawer-cta" id="nav-drawer-wa-cta" data-i18n="nav_cta" onclick="closeMobileNav(); plausible('WhatsApp-CTA', {props: {source: 'nav-drawer'}})">Combien on me doit ? →</a></li>
     <li><a href="#funnel-box" onclick="closeMobileNav(); setTimeout(function(){ scrollToCalcWithAnimation(); }, 220); return false;" data-i18n="nav_cta_sim">Simulateur montant →</a></li>
   </ul>
 </div>
@@ -201,8 +201,8 @@
 
       <!-- CTA unique : WhatsApp -->
       <div class="hero-entry hero-entry--wa-first">
-        <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="hero-entry-btn primary hero-entry-btn--xl" data-i18n="hero_btn_wa" id="hero-wa-link" onclick="plausible('WhatsApp-CTA', {props: {source: 'hero'}})">📱 Envoyer mon vol sur WhatsApp</a>
-        <p class="hero-entry-hint" data-i18n="hero_entry_hint">Numéro de vol + date. Réponse en quelques minutes.</p>
+        <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20%21%20Mon%20vol%20a%20%C3%A9t%C3%A9%20retard%C3%A9%20ou%20annul%C3%A9%20%E2%80%94%20ai-je%20droit%20%C3%A0%20une%20indemnit%C3%A9%20%28jusqu%27%C3%A0%20600%20%E2%82%AC%29%20%3F%0A%E2%9C%88%EF%B8%8F%20N%C2%B0%20de%20vol%20%3A%0A%F0%9F%93%85%20Date%20%3A%0A%F0%9F%9B%AB%20Trajet%20%3A" target="_blank" rel="noopener" class="hero-entry-btn primary hero-entry-btn--xl" data-i18n="hero_btn_wa" id="hero-wa-link" onclick="plausible('WhatsApp-CTA', {props: {source: 'hero'}})">💰 Voir combien on me doit — jusqu'à 600 €</a>
+        <p class="hero-entry-hint" data-i18n="hero_entry_hint">Gratuit, sans engagement · n° de vol + date · réponse sur WhatsApp</p>
         <a href="#funnel-box" class="hero-entry-btn secondary" id="btn-calc-hero" onclick="scrollToCalcWithAnimation(event)" data-i18n="hero_btn_calc">Simuler mon indemnité (2 min) →</a>
       </div>
 
@@ -255,7 +255,7 @@
 
       <div class="calc-header calc-header--compact">
         <div class="calc-title calc-title--compact"><span data-i18n="funnel_card_title">Votre vol</span></div>
-        <p class="funnel-card-sub" data-i18n="funnel_card_sub">Éligibilité gratuite · sans engagement</p>
+        <p class="funnel-card-sub" data-i18n="funnel_card_sub">On vous dit en 2 min si votre vol vaut une indemnité. Gratuit.</p>
         <div id="funnel-progress-wrap" class="funnel-progress-wrap" aria-hidden="true">
           <div id="funnel-progress" class="hero-funnel-progress">
             <div id="funnel-progress-bar" class="hero-funnel-progress-bar"></div>
@@ -266,13 +266,13 @@
       </div>
 
       <div id="funnel-short" class="funnel-primary">
-        <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="funnel-wa-cta-main" id="funnel-wa-eligibility-link" data-i18n="funnel_wa_main_btn" onclick="plausible('WhatsApp-CTA', {props: {source: 'funnel'}})">💬 Ouvrir WhatsApp — le plus rapide</a>
+        <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20%21%20Mon%20vol%20a%20%C3%A9t%C3%A9%20retard%C3%A9%20ou%20annul%C3%A9%20%E2%80%94%20ai-je%20droit%20%C3%A0%20une%20indemnit%C3%A9%20%28jusqu%27%C3%A0%20600%20%E2%82%AC%29%20%3F%0A%E2%9C%88%EF%B8%8F%20N%C2%B0%20de%20vol%20%3A%0A%F0%9F%93%85%20Date%20%3A%0A%F0%9F%9B%AB%20Trajet%20%3A" target="_blank" rel="noopener" class="funnel-wa-cta-main" id="funnel-wa-eligibility-link" data-i18n="funnel_wa_main_btn" onclick="plausible('WhatsApp-CTA', {props: {source: 'funnel'}})">💬 Savoir combien on me doit (jusqu'à 600 €)</a>
         <p class="funnel-or" data-i18n="funnel_or">ou décrivez votre vol ici :</p>
         <div class="fstep short-step" id="step-short-1">
           <label for="short-vol" class="sr-only" data-i18n="short_hint_vol">Numéro de vol et date</label>
           <textarea id="short-vol" class="calc-input calc-input--short-vol" rows="3" maxlength="800" placeholder="Ex: AF718 du 15/01, retardé 5 h"></textarea>
           <p id="short-wa-note" class="funnel-hint short-wa-note" data-i18n="short_wa_visible_phone_note"></p>
-          <button type="button" class="btn-calc btn-calc--wa" onclick="openShortWhatsApp()" data-i18n="funnel_short_submit">Continuer sur WhatsApp avec ce message →</button>
+          <button type="button" class="btn-calc btn-calc--wa" onclick="openShortWhatsApp()" data-i18n="funnel_short_submit">Envoyer et savoir si j'ai droit à une indemnité →</button>
           <p class="wa-rgpd-hint wa-rgpd-hint--compact funnel-short-wa-rgpd" data-i18n-html="wa_rgpd_hint_short">Service Meta — <a href="/politique-confidentialite.html#whatsapp-meta">données &amp; alternatives</a></p>
         </div>
         <button type="button" class="funnel-simulator-btn" id="link-diagnostic-detail" data-i18n="funnel_detail_link">Calculer le montant exact (5 étapes) →</button>
@@ -1127,7 +1127,7 @@ function openWhatsAppQrFromHero(e) {
 
   if (assigned === "B") {
     headline.textContent = "Jusqu’à 600 € par passager";
-    waBtn.textContent = "📱 Vérifier mon éligibilité";
+    waBtn.textContent = "📱 Mon vol me donne-t-il droit à 600 € ?";
     calcBtn.textContent = "Voir mon montant exact (2 min) →";
   }
 
@@ -1138,11 +1138,11 @@ function openWhatsAppQrFromHero(e) {
 </script>
 
 <!-- Un seul CTA persistant : bouton WhatsApp flottant -->
-<a href="https://api.whatsapp.com/send?phone=33756863630&amp;text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="wa-float" id="wa-float" aria-label="Vérifier mon éligibilité sur WhatsApp — Robin des Airs">
+<a href="https://api.whatsapp.com/send?phone=33756863630&amp;text=Bonjour%20Robin%20%21%20Mon%20vol%20a%20%C3%A9t%C3%A9%20retard%C3%A9%20ou%20annul%C3%A9%20%E2%80%94%20ai-je%20droit%20%C3%A0%20une%20indemnit%C3%A9%20%28jusqu%27%C3%A0%20600%20%E2%82%AC%29%20%3F%0A%E2%9C%88%EF%B8%8F%20N%C2%B0%20de%20vol%20%3A%0A%F0%9F%93%85%20Date%20%3A%0A%F0%9F%9B%AB%20Trajet%20%3A" target="_blank" rel="noopener" class="wa-float" id="wa-float" aria-label="Combien la compagnie vous doit ? Vérifier gratuitement sur WhatsApp — Robin des Airs">
   <span class="wa-float-icon" aria-hidden="true">
     <svg class="wa-float-icon-svg" viewBox="0 0 24 24" width="28" height="28" fill="currentColor" focusable="false" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.881 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
   </span>
-  <span class="wa-float-text" data-i18n="wa_float_text">Vérifier gratuitement</span>
+  <span class="wa-float-text" data-i18n="wa_float_text">Combien on me doit ? (gratuit)</span>
 </a>
 
 <script>
