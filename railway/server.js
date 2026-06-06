@@ -270,6 +270,18 @@ function genRef() { const d = new Date(); return `RDA-${d.toISOString().slice(0,
 function normInput(raw, options) { const t = (raw || '').trim().toLowerCase(); if (/^\d+$/.test(t)) return t; const i = options.findIndex(o => t.includes(o.toLowerCase())); return i >= 0 ? String(i + 1) : t; }
 const AIRLINES = { AF: 'Air France', SN: 'Brussels Airlines', TP: 'TAP Air Portugal', AT: 'Royal Air Maroc', HC: 'Air Sénégal', KQ: 'Kenya Airways', ET: 'Ethiopian Airlines', EK: 'Emirates', TK: 'Turkish Airlines', KL: 'KLM', LH: 'Lufthansa', IB: 'Iberia', EJU: 'easyJet', U2: 'easyJet', FR: 'Ryanair', TO: 'Transavia', KP: 'ASKY', DN: 'Senegal Airlines' };
 function deduceAirline(vol) { const m = (vol || '').toUpperCase().match(/^([A-Z]{2,3})\d/); return (m && AIRLINES[m[1]]) || ''; }
+// Ordonne les segments d'une correspondance par chaînage (arrivée d'un vol = départ du suivant),
+// quel que soit l'ordre de saisie. Renvoie null si non chaînable (aéroports manquants/boucle) → on garde l'ordre saisi.
+function chainLegs(legs) {
+  if (!legs || legs.length < 2) return legs;
+  if (legs.some((l) => !l.dep || !l.arr)) return null;
+  const norm = (x) => String(x || '').toUpperCase().trim();
+  const start = legs.find((l) => !legs.some((o) => o !== l && norm(o.arr) === norm(l.dep)));
+  if (!start) return null;
+  const chain = [start]; let rem = legs.filter((l) => l !== start);
+  while (rem.length) { const last = chain[chain.length - 1]; const next = rem.find((l) => norm(l.dep) === norm(last.arr)); if (!next) return null; chain.push(next); rem = rem.filter((l) => l !== next); }
+  return chain;
+}
 // Extrait l'index de ligne (0-based) depuis un ID WATI de liste format "sectionIdx-rowIdx" : "0-2"→2, "0-0"→0
 // NE traite PAS les IDs numériques simples ("1","2") qui sont des IDs de boutons WATI, pas des lignes de liste.
 function listRowIdx(id) { if (!id) return -1; const m = /^\d+-(\d+)$/.exec(id); return m ? parseInt(m[1]) : -1; }
@@ -570,7 +582,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // ⚠️ Jamais intercepté si c'est une réponse interactive (bouton/liste) : replyId présent → flux prioritaire
   try {
     const { isClientQuestion, isSensitive, answerClientQuestion } = AI;
-    const FREE = ['m_vol', 'm_date', 'm_route', 'm_pnr', 'names', 'vd_vol', 'vd_date', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob'];
+    const FREE = ['m_vol', 'm_date', 'm_route', 'm_pnr', 'leg_count', 'leg_input', 'names', 'vd_vol', 'vd_date', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob'];
     const looks = !id && (FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input));
     if (looks) {
       if (isSensitive(input)) { await send(phone, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nTapez *menu* pour ouvrir/continuer votre dossier.`, cfg); return; }
@@ -645,12 +657,41 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // MSG6 — TYPE VOL → MSG7 motivation → scan
   if (s.step === 'type_vol') {
     const n = normInput(input, ['direct', 'escale']);
+    if (n === '2' || lower.includes('escale')) {
+      s.type_vol = 'escale'; s.legs = []; s.legIdx = 0; s.step = 'leg_count'; await setState(phone, s);
+      return sendButtons(phone, { body: `${bar('scan')}\n🔄 Votre voyage comportait *combien de vols* (correspondance) ?`, buttons: [{ text: '✈️ 2 vols' }, { text: '🔄 3 vols' }] }, cfg);
+    }
     if (n === '1' || lower.includes('direct')) s.type_vol = 'direct';
-    else if (n === '2' || lower.includes('escale')) s.type_vol = 'escale';
     else return sendButtons(phone, { body: `${bar('type_vol')}\n✈️ Vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg);
     s.step = 'scan'; await setState(phone, s);
     // Un seul message (motivation + scan) → réponse immédiate, pas de délai où les taps s'entrecroisent.
     return sendButtons(phone, { body: `${bar('scan')}\n🎉 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (*${montantNet(s.pax)} € nets*, 75 %). Robin prélève 25 % *uniquement* si vous gagnez. 🤝\n\n⚡ Envoyez une *photo* de votre carte d'embarquement ou e-billet — je lis le vol automatiquement.${s.pax > 1 ? `\n👥 (une carte suffit pour le vol)` : ''}\n\n📎 *Envoyez la photo*, ou :`, buttons: [{ id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
+  }
+  // ── Correspondance : combien de vols, puis chaque segment, puis ordre automatique ──
+  if (s.step === 'leg_count') {
+    let n2 = 0; const m = (input.match(/\d+/) || [])[0]; if (m) n2 = parseInt(m);
+    if (lower.includes('deux')) n2 = 2; if (lower.includes('trois')) n2 = 3;
+    if (!(n2 >= 2 && n2 <= 4)) return sendButtons(phone, { body: `🔄 Combien de vols dans votre trajet ?`, buttons: [{ text: '✈️ 2 vols' }, { text: '🔄 3 vols' }] }, cfg);
+    s.legCount = n2; s.legs = []; s.legIdx = 0; s.step = 'leg_input'; await setState(phone, s);
+    return send(phone, `✈️ *Vol 1 sur ${n2}* — donnez le *numéro de vol* et le *trajet*.\n_(ex : AF718 Dakar → Casablanca)_`, cfg);
+  }
+  if (s.step === 'leg_input') {
+    const volm = input.toUpperCase().match(/[A-Z]{2,3}\s?\d{1,4}[A-Z]?/);
+    const vol = volm ? volm[0].replace(/\s/g, '') : '';
+    const rest = input.replace(volm ? volm[0] : '', '');
+    const parts = rest.replace(/'/g, '').split(/→|->|—|–|,|\bvers\b|\bà\b|\ba\b/i).map((x) => x.trim()).filter((x) => x.length >= 2);
+    s.legs = s.legs || []; s.legs.push({ vol, dep: parts[0] || '', arr: parts[1] || '' });
+    s.legIdx = (s.legIdx || 0) + 1; await setState(phone, s);
+    if (s.legIdx < s.legCount) return send(phone, `✈️ *Vol ${s.legIdx + 1} sur ${s.legCount}* — numéro + trajet.\n_(ex : AT540 Casablanca → Paris)_`, cfg);
+    // Tous les segments reçus → on remet dans l'ordre automatiquement (chaînage des aéroports)
+    const ordered = chainLegs(s.legs) || s.legs;
+    s.legs = ordered;
+    const airports = []; ordered.forEach((l, i) => { if (i === 0 && l.dep) airports.push(l.dep); if (l.arr) airports.push(l.arr); });
+    s.route = airports.filter(Boolean).join(' → ') || s.route || '';
+    s.vol = ordered.map((l) => l.vol).filter(Boolean).join(' + ') || s.vol || '';
+    s.compagnie = deduceAirline(ordered[ordered.length - 1] && ordered[ordered.length - 1].vol) || deduceAirline(ordered[0] && ordered[0].vol) || s.compagnie || '';
+    s.step = 'm_date'; await setState(phone, s);
+    return send(phone, `📅 Date du *premier vol* ? _(ex : 15/03/2026)_`, cfg);
   }
 
   // MSG8 — SCAN
