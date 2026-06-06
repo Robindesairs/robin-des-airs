@@ -20,6 +20,7 @@ const { fetchAerodatabox, parisYmd, rapidApiKey } = require('./lib/aerodatabox-f
 const { verdict } = require('./lib/ce261-verdict');
 const { publicCorsHeaders } = require('./lib/auth-config');
 const { checkRateLimit } = require('./lib/rate-limit');
+const { getBlobStore } = require('./lib/netlify-blobs-store');
 
 function corsJson(statusCode, body) {
   return { statusCode, headers: publicCorsHeaders({}), body: typeof body === 'string' ? body : JSON.stringify(body) };
@@ -61,6 +62,16 @@ exports.handler = async (event) => {
     return corsJson(200, { ok: true, found: false, source: 'rule', ...v });
   }
 
+  // ─── Cache Blobs : vol PASSÉ = retard figé → on ne paie qu'une fois par (vol+date). ───
+  // (vols d'aujourd'hui/futur : pas de cache, le retard n'est pas final.)
+  const past = dateYmd < parisYmd();
+  const cache = past ? getBlobStore(event, 'flightcache') : null;
+  const cacheKey = `v/${flight}_${dateYmd}`;
+  if (cache) {
+    try { const hit = await cache.get(cacheKey); if (hit) return corsJson(200, { ...JSON.parse(hit), source: 'cache' }); } catch (_) {}
+  }
+  const remember = async (out) => { if (cache) { try { await cache.set(cacheKey, JSON.stringify(out)); } catch (_) {} } return out; };
+
   const rapidKey = rapidApiKey();
   if (!rapidKey) return corsJson(200, { ok: true, found: false, verdict: 'introuvable', raison: 'API vol non configurée', source: 'none' });
 
@@ -68,10 +79,11 @@ exports.handler = async (event) => {
   try {
     rows = await fetchAerodatabox(flight, dateYmd, rapidKey);
   } catch (e) {
+    // erreur transitoire → on ne met PAS en cache (on réessaiera plus tard)
     return corsJson(200, { ok: true, found: false, verdict: 'introuvable', raison: 'API vol indisponible', source: 'error' });
   }
   if (!Array.isArray(rows) || rows.length === 0) {
-    return corsJson(200, { ok: true, found: false, verdict: 'introuvable', raison: 'Vol non retrouvé pour cette date', source: 'adb' });
+    return corsJson(200, await remember({ ok: true, found: false, verdict: 'introuvable', raison: 'Vol non retrouvé pour cette date', source: 'adb' }));
   }
 
   const f = rows[0];
@@ -85,12 +97,12 @@ exports.handler = async (event) => {
   const v = verdict({ depIata, arrIata, delayMin, distanceKm, carrierIata, status: f.status || '', typeVol: 'direct' });
 
   const route = depIata && arrIata ? `${depIata} → ${arrIata}` : '';
-  return corsJson(200, {
+  return corsJson(200, await remember({
     ok: true, found: true, source: 'adb',
     ...v,
     route,
     airline: f.airline || '',
     scheduledDep: dep.scheduled || null,
     scheduledArr: arr.scheduled || null,
-  });
+  }));
 };
