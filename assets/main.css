@@ -921,7 +921,7 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 48% 32%;
+  object-position: 50% 38%;
   transform: scale(1.1);
   transform-origin: 72% 38%;
   opacity: 1;

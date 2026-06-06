@@ -176,7 +176,7 @@
       src="/assets/images/hero-famille-diaspora.jpg"
       alt="Famille africaine souriante préparant son voyage — droits des passagers et indemnisation des vols Europe-Afrique"
       width="1920"
-      height="1280"
+      height="1500"
       decoding="async"
       fetchpriority="high"
     >
@@ -187,9 +187,6 @@
     <!-- LEFT -->
     <div class="hero-left">
       <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;align-items:center;">
-        <p id="hero-ab-label" style="display:inline-block;margin:0;padding:4px 10px;border:1px solid rgba(0,229,160,0.35);border-radius:999px;font-size:11px;font-weight:700;letter-spacing:0.8px;color:var(--neon-b);text-transform:uppercase;">
-          Justice aérienne pour l’Afrique
-        </p>
         <span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:999px;font-size:11px;font-weight:600;color:rgba(255,255,255,0.8);">
           🗣️ Wolof · Bambara · Lingala + 7 langues
         </span>
@@ -1122,15 +1119,13 @@ function openWhatsAppQrFromHero(e) {
     localStorage.setItem(AB_KEY, assigned);
   }
 
-  var label = document.getElementById("hero-ab-label");
   var headline = document.getElementById("hero-ab-headline");
   var subhead = document.getElementById("hero-ab-subhead");
   var waBtn = document.getElementById("hero-wa-link");
   var calcBtn = document.getElementById("btn-calc-hero");
-  if (!label || !headline || !subhead || !waBtn || !calcBtn) return;
+  if (!headline || !subhead || !waBtn || !calcBtn) return;
 
   if (assigned === "B") {
-    label.textContent = "Expert CE 261 Europe–Afrique";
     headline.textContent = "Jusqu’à 600 € par passager";
     waBtn.textContent = "📱 Vérifier mon éligibilité";
     calcBtn.textContent = "Voir mon montant exact (2 min) →";
