@@ -921,7 +921,7 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 50% 42%;
+  object-position: 50% 14%;
   transform: none; /* dézoom : on montre la photo au plus large (était scale 1.1) */
   transform-origin: center;
   opacity: 1;
@@ -956,7 +956,11 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   #btn-calc-hero { display: none; }
   /* Zone sombre (photo + forme navy) calée sur la moitié droite EXACTE → ne passe plus
    * sous le contenu gauche (texte/stats foncés sur fond clair restent lisibles). */
-  .hero-bg-visual, .hero-bg-shape, .hero-bg-dots { width: 50%; }
+  /* Desktop : montrer la famille EN ENTIER (pas une tranche zoomée), sur le fond clair du hero */
+  .hero-bg-visual { width: 50%; display: flex; align-items: center; justify-content: center; }
+  .hero-bg-shape, .hero-bg-dots { display: none; } /* pas de bloc navy : la photo famille suffit sur fond clair */
+  .hero-bg-visual img { object-fit: contain; object-position: center; }
+  .hero-bg-visual::after { display: none; } /* pas de voile sombre sur la photo entière */
 }
 
 /* HERO LEFT — texte blanc sur fond implicite */
