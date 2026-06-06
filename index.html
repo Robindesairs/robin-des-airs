@@ -169,17 +169,10 @@
 <section id="hero">
   <div class="hero-bg-shape"></div>
   <div class="hero-bg-dots"></div>
-  <!-- Photo : Pexels #7176319 — famille (August de Richelieu, licence libre) -->
-  <div class="hero-bg-visual" aria-hidden="true">
-    <img
-      src="/assets/images/hero-diaspora-family.jpg"
-      alt="Famille africaine souriante — voyages et droits des passagers Europe-Afrique"
-      width="1920"
-      height="1280"
-      decoding="async"
-      fetchpriority="high"
-    >
-  </div>
+  <!-- Photo hero retirée : l'ancienne (hero-diaspora-family.jpg) montrait une scène de coaching/thérapie,
+       sans rapport avec l'aérien ni la diaspora. À remplacer par un visuel adapté (voir propositions).
+       Le dégradé navy de .hero-bg-visual reste actif ; il suffit de réinsérer un <img> ici. -->
+  <div class="hero-bg-visual" aria-hidden="true"></div>
 
   <div class="hero-wrap">
 
@@ -194,17 +187,17 @@
         </span>
       </div>
       <h1 class="hero-title">
-        <span data-i18n-html="hero_title">Robin prend<br>aux compagnies,<br></span>
-        <span class="neon" data-i18n="hero_title_neon" id="hero-ab-headline">rend à nos familles.</span>
+        <span data-i18n-html="hero_title">Vol Europe-Afrique<br>retardé ou annulé ?<br></span>
+        <span class="neon" data-i18n="hero_title_neon" id="hero-ab-headline">Récupérez jusqu’à 600 €</span>
       </h1>
-      <p class="hero-subhead" data-i18n="hero_subhead" id="hero-ab-subhead">Vol retardé, annulé ou surbooké ? Ne laissez pas jusqu’à 600 € par passager — l’argent que la compagnie vous doit.</p>
+      <p class="hero-subhead" data-i18n="hero_subhead" id="hero-ab-subhead">On prend aux compagnies, on rend aux familles. Retard, annulation ou surbooking : on va chercher l’argent qu’elles vous doivent, par passager.</p>
 
-      <p class="hero-desc" data-i18n-html="hero_desc"><strong>Frais de succès : 0 € si on ne récupère rien pour vous.</strong> Pas d’avance, pas de frais cachés — notre part (25 %) uniquement quand l’indemnité est sur votre compte.<br>La compagnie compte sur l’abandon après le premier refus. <strong>Nous, on monte le dossier et on va jusqu’au bout.</strong></p>
+      <p class="hero-desc" data-i18n-html="hero_desc"><strong>0 € si on perd. 25 % seulement si vous gagnez.</strong> Pas d’avance, jamais.</p>
 
       <!-- CTA unique : WhatsApp -->
       <div class="hero-entry hero-entry--wa-first">
         <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20v%C3%A9rifier%20si%20mon%20vol%20est%20%C3%A9ligible.%0ANum%C3%A9ro%20de%20vol%20%3A%0ADate%20%3A" target="_blank" rel="noopener" class="hero-entry-btn primary hero-entry-btn--xl" data-i18n="hero_btn_wa" id="hero-wa-link" onclick="plausible('WhatsApp-CTA', {props: {source: 'hero'}})">📱 Envoyer mon vol sur WhatsApp</a>
-        <p class="hero-entry-hint" data-i18n="hero_entry_hint">Numéro de vol + date — réponse gratuite en quelques minutes.</p>
+        <p class="hero-entry-hint" data-i18n="hero_entry_hint">Numéro de vol + date. Réponse en quelques minutes.</p>
         <a href="#funnel-box" class="hero-entry-btn secondary" id="btn-calc-hero" onclick="scrollToCalcWithAnimation(event)" data-i18n="hero_btn_calc">Simuler mon indemnité (2 min) →</a>
       </div>
 
@@ -235,7 +228,6 @@
           <span class="stat-label" data-i18n="hero_stat_24h">Dossier monté</span>
         </div>
       </div>
-      <p class="hero-stat-note" data-i18n="hero_stat_note">On n'accepte que les dossiers solides — zéro frais si on ne récupère rien.</p>
 
       <details class="hero-more">
         <summary data-i18n="hero_more_summary">Contact, langues &amp; confidentialité</summary>
@@ -580,7 +572,7 @@
           <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(0,229,160,0.13);">
             <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">La Promesse Robin</div>
             <ul style="font-size:11px;color:rgba(255,255,255,0.7);line-height:1.6;margin:0;padding-left:18px;">
-              <li style="margin-bottom:6px;"><strong style="color:rgba(255,255,255,0.9);">Transparence :</strong> on ne prend notre part (25%) qu'une fois votre argent récupéré — cela finance les preuves techniques (Aviation Edge) et le suivi. Les autres services affichent souvent 35% à 50%.</li>
+              <li style="margin-bottom:6px;"><strong style="color:rgba(255,255,255,0.9);">25 % seulement, au succès.</strong> Les autres services prennent souvent 35 % à 50 %.</li>
               <li style="margin-bottom:6px;"><strong style="color:rgba(255,255,255,0.9);">Zéro risque :</strong> aucune avance, aucun frais de dossier. <strong>Si on ne gagne pas, vous ne payez rien.</strong></li>
               <li><strong style="color:rgba(255,255,255,0.9);">Accompagnement WhatsApp :</strong> Un suivi humain et direct sans attente téléphonique.</li>
             </ul>
@@ -807,7 +799,7 @@
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C87A" stroke-width="2.2" stroke-linecap="round"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
         <h3 class="step-title">Vous vérifiez</h3>
-        <p class="step-desc">WhatsApp, pastille « Vols éligibles » ou diagnostic en ligne — éligibilité et montant net en quelques minutes.</p>
+        <p class="step-desc">En quelques minutes : votre éligibilité et votre montant net.</p>
         <span class="step-time">⏱ Quelques minutes</span>
       </div>
 
@@ -827,7 +819,7 @@
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C87A" stroke-width="2.2" stroke-linecap="round"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
         </div>
         <h3 class="step-title">On monte le dossier</h3>
-        <p class="step-desc">Sous 24h, dossier technique : METAR/TAF, comparaison avec les autres vols au même moment, si d'autres avions ont décollé, on le documente.</p>
+        <p class="step-desc">Sous 24 h, on monte un dossier technique béton : météo officielle, preuve que d'autres avions ont décollé ce jour-là.</p>
         <span class="step-time">⏱ 24 heures</span>
       </div>
 
@@ -837,7 +829,7 @@
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#00C87A" stroke-width="2.2" stroke-linecap="round"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         </div>
         <h3 class="step-title">Vous encaissez</h3>
-        <p class="step-desc">Robin négocie jusqu'au bout : en général la compagnie paie sous 4 à 12 semaines ; sinon médiateur puis tribunal <strong>à nos frais</strong>. Dès réception des fonds, virement de votre part, le détail des pourcentages est fixé avant signature (voir FAQ).</p>
+        <p class="step-desc">On négocie jusqu'au bout : paiement en 4 à 12 semaines en général ; sinon médiateur puis tribunal, <strong>à nos frais</strong>. Dès réception, on vous vire votre part.</p>
       </div>
     </div>
     <div style="margin-top:48px;text-align:center;">
@@ -1131,7 +1123,7 @@ function openWhatsAppQrFromHero(e) {
 
   if (assigned === "B") {
     label.textContent = "Expert CE 261 Europe–Afrique";
-    headline.textContent = "vos droits, sans frontière.";
+    headline.textContent = "Jusqu’à 600 € par passager";
     waBtn.textContent = "📱 Vérifier mon éligibilité";
     calcBtn.textContent = "Voir mon montant exact (2 min) →";
   }
