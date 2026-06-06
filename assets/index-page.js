@@ -1763,3 +1763,40 @@ function toggleEscaleVol3() {
     updateEscaleDist();
   }
 }
+
+/* ═══ Aperçu WhatsApp : le message pré-rempli s'écrit tout seul ═══ */
+(function () {
+  function init() {
+    var typed = document.getElementById('wa-typed');
+    if (!typed) return;
+    var demo = document.getElementById('wa-typedemo');
+    var wa = document.getElementById('hero-wa-link');
+    var msg = '';
+    if (wa) {
+      try { var m = /[?&]text=([^&]+)/.exec(wa.href); if (m) msg = decodeURIComponent(m[1]); } catch (e) {}
+      if (demo) demo.href = wa.href; // garde l'aperçu synchro avec le vrai message
+    }
+    if (!msg) msg = "Bonjour Robin ! Mon vol a été retardé ou annulé — ai-je droit à une indemnité (jusqu'à 600 €) ?\n✈️ N° de vol :\n📅 Date :";
+    var caret = demo ? demo.querySelector('.wa-caret') : null;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      typed.textContent = msg; if (caret) caret.style.display = 'none'; return;
+    }
+    var chars = Array.from(msg), i = 0, started = false;
+    function tick() {
+      if (i <= chars.length) {
+        typed.textContent = chars.slice(0, i).join(''); i++;
+        setTimeout(tick, 30 + Math.random() * 45);
+      } else {
+        setTimeout(function () { i = 0; typed.textContent = ''; tick(); }, 2800);
+      }
+    }
+    function start() { if (started) return; started = true; setTimeout(tick, 450); }
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (es) {
+        for (var k = 0; k < es.length; k++) { if (es[k].isIntersecting) { start(); io.disconnect(); break; } }
+      }, { threshold: 0.25 });
+      io.observe(typed);
+    } else { start(); }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();

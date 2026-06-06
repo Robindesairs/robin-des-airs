@@ -959,6 +959,28 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 /* HERO LEFT — texte blanc sur fond implicite */
 .hero-left { }
 
+/* Aperçu WhatsApp animé : le message pré-rempli s'écrit tout seul (montre ce qu'on envoie) */
+.wa-typedemo {
+  display: block; max-width: 430px; margin: 16px 0 6px; text-decoration: none;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px; padding: 11px 12px; transition: border-color .2s, background .2s;
+}
+.wa-typedemo:hover { border-color: rgba(37,211,102,0.55); background: rgba(255,255,255,0.07); }
+.wa-typedemo-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.wa-typedemo-avatar { width: 26px; height: 26px; border-radius: 50%; background: #25D366; color: #062b16; font-weight: 900; font-size: 13px; display: grid; place-items: center; flex: 0 0 auto; }
+.wa-typedemo-name { color: #fff; font-weight: 700; font-size: 13px; }
+.wa-typedemo-online { color: #25D366; font-size: 11px; font-weight: 600; }
+.wa-typedemo-bubble {
+  display: block; position: relative; background: #d9fdd3; color: #0b2a17;
+  border-radius: 4px 12px 12px 12px; padding: 9px 11px; font-size: 13px; line-height: 1.5;
+  min-height: 86px; box-shadow: 0 1px 1px rgba(0,0,0,0.12);
+}
+.wa-typedemo-text { white-space: pre-wrap; }
+.wa-caret { display: inline-block; width: 2px; height: 1.05em; background: #0b2a17; vertical-align: -2px; margin-left: 1px; animation: waBlink 1s steps(1) infinite; }
+@keyframes waBlink { 50% { opacity: 0; } }
+.wa-typedemo-meta { display: block; text-align: right; font-size: 10px; color: #3f7a52; margin-top: 6px; font-weight: 600; }
+@media (prefers-reduced-motion: reduce) { .wa-caret { animation: none; } }
+
 .hero-badge {
   display: inline-flex;
   align-items: center;
