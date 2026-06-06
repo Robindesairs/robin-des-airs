@@ -1775,12 +1775,20 @@ function toggleEscaleVol3() {
 
     var PASS = '<span class="wa-pass"><span class="wa-pass-ic">🎫</span><span class="wa-pass-txt">Carte d\'embarquement</span><span class="wa-pass-bars"></span></span>';
     var STEPS = [
-      { who: 'client', delay: 300,  hold: 850,  html: 'AF718 du 15/01, retardé 5 h à l\'arrivée 😤' },
-      { who: 'robin',  typing: 1100, hold: 900, html: '👋 Envoyez une <b>photo de votre carte d\'embarquement</b> — je lis le vol tout seul 📸' },
-      { who: 'client', delay: 700,  hold: 800,  html: PASS },
-      { who: 'robin',  delay: 350,  hold: 1500, cls: 'wa-scan', html: '🔎 Lecture de la carte…' },
-      { who: 'robin',  typing: 1000, hold: 1700, cls: 'wa-msg--verdict', html: '✈️ <b>AF718 · Dakar → Paris</b><br>⏱️ Retard 5 h 12 à l\'arrivée<br>✅ Éligible — <span class="wa-verdict-amt">jusqu\'à 600 €</span> / passager' },
-      { who: 'robin',  typing: 650,  hold: 2600, html: 'On monte le dossier ? 💪' }
+      { who: 'client', delay: 400,  hold: 1100, html: 'AF718 du 15/01, retardé 5 h à l\'arrivée 😤' },
+      { who: 'robin',  typing: 1300, hold: 1200, html: '👋 Envoyez une <b>photo de votre carte d\'embarquement</b> — je lis le vol tout seul 📸' },
+      { who: 'client', delay: 900,  hold: 1000, html: PASS },
+      { who: 'robin',  delay: 450,  hold: 1700, cls: 'wa-scan', html: '🔎 Lecture de la carte…' },
+      { who: 'robin',  typing: 1200, hold: 2800, cls: 'wa-msg--verdict', html: '✈️ <b>AF718 · Dakar → Paris</b><br>⏱️ Retard 5 h 12 à l\'arrivée<br>✅ Éligible — <span class="wa-verdict-amt">jusqu\'à 600 €</span> / passager' },
+      { who: 'client', delay: 600,  hold: 1100, html: 'C\'est combien, vous ? 🤔' },
+      { who: 'robin',  typing: 1100, hold: 2700, html: '<b>25 % au succès</b>, c\'est tout. Si on ne récupère rien, vous payez <b>0 €</b> — aucune avance 🤝 <span class="wa-aside">(d\'autres prennent 35 à 50 %)</span>' },
+      { who: 'robin',  typing: 1100, hold: 2600, html: '🌍 Spécialistes <b>Europe–Afrique</b> : on connaît Dakar, Abidjan, Bamako… et on vous répond en <b>wolof, bambara, lingala…</b>' },
+      { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 <b>Envoyez-moi juste votre n° de vol</b> — je m\'occupe du reste 💪' }
+    ];
+    // Boucle douce ensuite : on garde le montant (600 €) et l'appel à l'action à l'écran, sans rejouer toute la scène.
+    var STEPS_LOOP = [
+      { who: 'robin', delay: 200, hold: 2800, cls: 'wa-msg--verdict', html: '✅ Éligible — <span class="wa-verdict-amt">jusqu\'à 600 €</span> / passager · <b>0 €</b> si on perd' },
+      { who: 'robin', typing: 700, hold: 3400, html: '👉 <b>Envoyez-moi juste votre n° de vol</b> — je m\'occupe du reste 💪' }
     ];
 
     function addMsg(s) {
@@ -1800,14 +1808,14 @@ function toggleEscaleVol3() {
       return;
     }
 
-    var timers = [], cycles = 0;
+    var timers = [];
     function clearTimers() { timers.forEach(clearTimeout); timers = []; }
-    function run() {
+    function run(steps, onDone) {
       clearTimers(); chat.innerHTML = '';
       var i = 0;
       function next() {
-        if (i >= STEPS.length) { cycles++; if (cycles < 2) timers.push(setTimeout(run, 1500)); return; }
-        var s = STEPS[i++];
+        if (i >= steps.length) { if (onDone) timers.push(setTimeout(onDone, 1800)); return; }
+        var s = steps[i++];
         timers.push(setTimeout(function () {
           if (s.who === 'robin' && s.typing) {
             var dots = document.createElement('span');
@@ -1823,9 +1831,10 @@ function toggleEscaleVol3() {
       }
       next();
     }
+    function loop() { run(STEPS_LOOP, loop); } // après la scène complète : boucle douce verdict + CTA
 
     var started = false;
-    function start() { if (started) return; started = true; run(); }
+    function start() { if (started) return; started = true; run(STEPS, loop); }
     if ('IntersectionObserver' in window) {
       var io = new IntersectionObserver(function (es) {
         for (var k = 0; k < es.length; k++) { if (es[k].isIntersecting) { start(); io.disconnect(); break; } }
