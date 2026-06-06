@@ -957,10 +957,10 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   /* Zone sombre (photo + forme navy) calée sur la moitié droite EXACTE → ne passe plus
    * sous le contenu gauche (texte/stats foncés sur fond clair restent lisibles). */
   /* Desktop : montrer la famille EN ENTIER (pas une tranche zoomée), sur le fond clair du hero */
-  .hero-bg-visual { width: 50%; display: flex; align-items: center; justify-content: center; }
+  .hero-bg-visual { width: 50%; background: url(/assets/images/hero-famille-desktop.jpg) center top / cover no-repeat; }
   .hero-bg-shape, .hero-bg-dots { display: none; } /* pas de bloc navy : la photo famille suffit sur fond clair */
-  .hero-bg-visual img { object-fit: contain; object-position: center; }
-  .hero-bg-visual::after { display: none; } /* pas de voile sombre sur la photo entière */
+  .hero-bg-visual img { display: none; } /* desktop : visuel portrait en fond (remplit la colonne) ; mobile garde l'<img> bannière */
+  .hero-bg-visual::after { display: none; }
 }
 
 /* HERO LEFT — texte blanc sur fond implicite */
