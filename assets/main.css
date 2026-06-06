@@ -1169,7 +1169,9 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 
 /* HERO RIGHT — Calculateur (style épuré, compact) — tout le diagnostic doit apparaître */
 .hero-right {
-  background: linear-gradient(165deg, var(--navy) 0%, var(--navy2) 100%);
+  /* Verre dépoli desktop : la photo famille transparaît derrière le formulaire.
+     Fond quasi-opaque par défaut = fallback sûr ; allégé + flou dans le @supports ci-dessous. */
+  background: linear-gradient(165deg, rgba(11,31,58,0.90) 0%, rgba(13,36,69,0.92) 100%);
   border-radius: var(--radius-lg);
   padding: 20px 24px;
   position: relative;
@@ -1177,9 +1179,18 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   overflow-y: auto;
   max-height: min(90vh, 900px);
   box-shadow: var(--shadow-premium);
-  transform-style: preserve-3d;
   transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.10);
+}
+
+/* Effet verre dépoli appliqué seulement si le flou est supporté
+   (sinon le fond quasi-opaque ci-dessus protège la lisibilité du formulaire). */
+@supports ((-webkit-backdrop-filter: blur(14px)) or (backdrop-filter: blur(14px))) {
+  .hero-right {
+    background: linear-gradient(165deg, rgba(11,31,58,0.76) 0%, rgba(13,36,69,0.82) 100%);
+    -webkit-backdrop-filter: blur(16px) saturate(1.1);
+    backdrop-filter: blur(16px) saturate(1.1);
+  }
 }
 .hero-right.calc-highlight {
   /* Même si la carte est déjà visible (hero 2 colonnes), l’effet + halo vert signalent le clic */
@@ -2633,6 +2644,10 @@ button:focus-visible,
     padding: 22px 16px;
     box-shadow: 0 14px 44px -18px rgba(11, 31, 58, 0.22);
     border-color: rgba(255, 255, 255, 0.05);
+    /* Mobile : la photo est une bannière au-dessus, rien derrière la carte → fond plein opaque */
+    background: linear-gradient(165deg, var(--navy) 0%, var(--navy2) 100%);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
   .calc-header {
     margin-bottom: 8px;
