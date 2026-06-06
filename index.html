@@ -201,17 +201,15 @@
         <a href="#funnel-box" class="hero-entry-btn secondary" id="btn-calc-hero" onclick="scrollToCalcWithAnimation(event)" data-i18n="hero_btn_calc">Simuler mon indemnité (2 min) →</a>
       </div>
 
-      <!-- Aperçu : le message WhatsApp s'écrit tout seul (montre exactement ce qu'on envoie) -->
-      <a href="https://wa.me/33756863630" id="wa-typedemo" class="wa-typedemo" target="_blank" rel="noopener" onclick="plausible('WhatsApp-CTA', {props:{source:'hero-typedemo'}})" aria-label="Ouvrir WhatsApp avec ce message déjà rempli">
+      <!-- Aperçu animé : la vraie séquence WhatsApp (client écrit → carte → scan → verdict) -->
+      <a href="https://wa.me/33756863630" id="wa-typedemo" class="wa-typedemo wa-chatdemo" target="_blank" rel="noopener" onclick="plausible('WhatsApp-CTA', {props:{source:'hero-chatdemo'}})" aria-label="Aperçu d'une conversation WhatsApp avec Robin — cliquer pour ouvrir">
         <span class="wa-typedemo-head">
           <span class="wa-typedemo-avatar">R</span>
           <span class="wa-typedemo-name">Robin des Airs</span>
           <span class="wa-typedemo-online">● en ligne</span>
         </span>
-        <span class="wa-typedemo-bubble">
-          <span id="wa-typed" class="wa-typedemo-text" data-msg="On parle votre langue. On se comprend."></span><span class="wa-caret" aria-hidden="true"></span>
-          <span class="wa-typedemo-meta">Français, Wolof, Bambara, Lingala… + 7 langues</span>
-        </span>
+        <span class="wa-chat" id="wa-chat" aria-hidden="true"></span>
+        <span class="wa-typedemo-meta wa-chatdemo-foot">On parle votre langue · réponse en quelques minutes →</span>
       </a>
 
       <ol class="hero-steps" aria-label="Comment ça marche">

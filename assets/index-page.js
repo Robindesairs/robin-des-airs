@@ -1764,35 +1764,73 @@ function toggleEscaleVol3() {
   }
 }
 
-/* ═══ Aperçu WhatsApp : le message pré-rempli s'écrit tout seul ═══ */
+/* ═══ Hero : conversation WhatsApp animée (client écrit → carte → scan → verdict) ═══ */
 (function () {
   function init() {
-    var typed = document.getElementById('wa-typed');
-    if (!typed) return;
+    var chat = document.getElementById('wa-chat');
+    if (!chat) return;
     var demo = document.getElementById('wa-typedemo');
     var wa = document.getElementById('hero-wa-link');
-    var msg = (typed.getAttribute('data-msg') || '').trim();
-    if (wa && demo) demo.href = wa.href; // le clic ouvre WhatsApp avec le vrai message pré-rempli
-    if (!msg) msg = "On parle votre langue. On se comprend.";
-    var caret = demo ? demo.querySelector('.wa-caret') : null;
+    if (wa && demo) demo.href = wa.href; // le clic ouvre WhatsApp (vrai message pré-rempli)
+
+    var PASS = '<span class="wa-pass"><span class="wa-pass-ic">🎫</span><span class="wa-pass-txt">Carte d\'embarquement</span><span class="wa-pass-bars"></span></span>';
+    var STEPS = [
+      { who: 'client', delay: 300,  hold: 850,  html: 'AF718 du 15/01, retardé 5 h à l\'arrivée 😤' },
+      { who: 'robin',  typing: 1100, hold: 900, html: '👋 Envoyez une <b>photo de votre carte d\'embarquement</b> — je lis le vol tout seul 📸' },
+      { who: 'client', delay: 700,  hold: 800,  html: PASS },
+      { who: 'robin',  delay: 350,  hold: 1500, cls: 'wa-scan', html: '🔎 Lecture de la carte…' },
+      { who: 'robin',  typing: 1000, hold: 1700, cls: 'wa-msg--verdict', html: '✈️ <b>AF718 · Dakar → Paris</b><br>⏱️ Retard 5 h 12 à l\'arrivée<br>✅ Éligible — <span class="wa-verdict-amt">jusqu\'à 600 €</span> / passager' },
+      { who: 'robin',  typing: 650,  hold: 2600, html: 'On monte le dossier ? 💪' }
+    ];
+
+    function addMsg(s) {
+      var b = document.createElement('span');
+      b.className = 'wa-msg wa-msg--' + s.who + (s.cls ? ' ' + s.cls : '');
+      b.innerHTML = s.html;
+      chat.appendChild(b);
+      return b;
+    }
+
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      typed.textContent = msg; if (caret) caret.style.display = 'none'; return;
+      chat.innerHTML = '';
+      STEPS.forEach(function (s) {
+        if (s.cls === 'wa-scan') return;
+        var b = addMsg(s); b.style.animation = 'none'; b.style.opacity = '1'; b.style.transform = 'none';
+      });
+      return;
     }
-    var chars = Array.from(msg), i = 0, started = false;
-    function tick() {
-      if (i <= chars.length) {
-        typed.textContent = chars.slice(0, i).join(''); i++;
-        setTimeout(tick, 30 + Math.random() * 45);
-      } else {
-        setTimeout(function () { i = 0; typed.textContent = ''; tick(); }, 2800);
+
+    var timers = [];
+    function clearTimers() { timers.forEach(clearTimeout); timers = []; }
+    function run() {
+      clearTimers(); chat.innerHTML = '';
+      var i = 0;
+      function next() {
+        if (i >= STEPS.length) { timers.push(setTimeout(run, 1200)); return; }
+        var s = STEPS[i++];
+        timers.push(setTimeout(function () {
+          if (s.who === 'robin' && s.typing) {
+            var dots = document.createElement('span');
+            dots.className = 'wa-msg wa-msg--robin';
+            dots.innerHTML = '<span class="wa-typing"><i></i><i></i><i></i></span>';
+            chat.appendChild(dots);
+            timers.push(setTimeout(function () { dots.remove(); addMsg(s); timers.push(setTimeout(next, s.hold || 800)); }, s.typing));
+          } else {
+            addMsg(s);
+            timers.push(setTimeout(next, s.hold || 800));
+          }
+        }, s.delay || 300));
       }
+      next();
     }
-    function start() { if (started) return; started = true; setTimeout(tick, 450); }
+
+    var started = false;
+    function start() { if (started) return; started = true; run(); }
     if ('IntersectionObserver' in window) {
       var io = new IntersectionObserver(function (es) {
         for (var k = 0; k < es.length; k++) { if (es[k].isIntersecting) { start(); io.disconnect(); break; } }
-      }, { threshold: 0.25 });
-      io.observe(typed);
+      }, { threshold: 0.2 });
+      io.observe(chat);
     } else { start(); }
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();

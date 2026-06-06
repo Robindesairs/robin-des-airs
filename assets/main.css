@@ -989,6 +989,29 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 .wa-typedemo-meta { display: block; text-align: right; font-size: 10px; color: #667781; margin-top: 6px; font-weight: 600; }
 @media (prefers-reduced-motion: reduce) { .wa-caret { animation: none; } }
 
+/* ── Conversation WhatsApp animée (client écrit → carte → scan → verdict) ── */
+.wa-chat { display: flex; flex-direction: column; justify-content: flex-end; gap: 7px; min-height: 300px; max-height: 300px; overflow: hidden; margin-top: 4px; }
+.wa-msg { max-width: 86%; padding: 7px 10px; font-size: 13px; line-height: 1.42; border-radius: 12px; opacity: 0; transform: translateY(8px); animation: waMsgIn .28s ease forwards; box-shadow: 0 1px 1px rgba(0,0,0,.06); }
+.wa-msg--client { align-self: flex-end; background: #d9fdd3; color: #0b2a17; border-radius: 12px 12px 3px 12px; }
+.wa-msg--robin { align-self: flex-start; background: #fff; color: #111b21; border: 1px solid #eef0f3; border-radius: 12px 12px 12px 3px; }
+.wa-msg b { font-weight: 800; }
+@keyframes waMsgIn { to { opacity: 1; transform: none; } }
+.wa-typing { display: inline-flex; gap: 3px; align-items: center; padding: 2px 0; }
+.wa-typing i { width: 6px; height: 6px; border-radius: 50%; background: #9aa3ad; display: inline-block; animation: waDot 1s infinite; }
+.wa-typing i:nth-child(2) { animation-delay: .15s; }
+.wa-typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes waDot { 0%,60%,100% { opacity: .3; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-2px); } }
+.wa-pass { display: flex; align-items: center; gap: 8px; background: #fff7e6; border: 1px dashed #e0b35c; border-radius: 8px; padding: 6px 8px; }
+.wa-pass-ic { font-size: 18px; flex: 0 0 auto; }
+.wa-pass-txt { font-size: 11px; color: #7a5a1e; font-weight: 700; line-height: 1.25; }
+.wa-pass-bars { height: 16px; flex: 1; min-width: 40px; background: repeating-linear-gradient(90deg,#3a3a3a 0 2px,transparent 2px 4px); opacity: .5; border-radius: 2px; }
+.wa-scan { position: relative; overflow: hidden; }
+.wa-scan::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg,transparent,rgba(0,200,122,.28),transparent); transform: translateX(-100%); animation: waScan 1.1s linear infinite; }
+@keyframes waScan { to { transform: translateX(100%); } }
+.wa-msg--verdict { background: #eafff3; border-color: #9ee9c0; }
+.wa-verdict-amt { color: #00875a; font-weight: 900; }
+@media (prefers-reduced-motion: reduce) { .wa-msg, .wa-typing i, .wa-scan::after { animation: none; opacity: 1; transform: none; } }
+
 .hero-badge {
   display: inline-flex;
   align-items: center;
