@@ -678,7 +678,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
 
 // ─── Émetteurs d'écran ───────────────────────────────────────────────────────
 async function sendAccueil(phone, cfg) {
-  await sendButtons(phone, { body: `${bar('accueil')}\n👋 Bienvenue chez *Robin des Airs* 🏹\n\n${pickVariant(phone, 'ACCUEIL_EMPATHIE')}\n\nNous, c'est notre métier : on défend les passagers des vols Afrique ↔ Europe.\n\n✈️ La loi CE 261/2004 vous donne droit à une indemnité pouvant aller *jusqu'à 600 € par personne*.\n\n*0 € si on ne gagne pas.* Aucun risque pour vous.\n\nVoyons ensemble si une indemnité vous revient. 👇`, footer: 'CE 261/2004', buttons: [{ text: '🚀 Mon indemnité' }] }, cfg);
+  await sendButtons(phone, { body: `${bar('accueil')}\n👋 Bienvenue chez *Robin des Airs* 🏹\n_Je suis l'assistant Robin des Airs, je vous accompagne pas à pas._\n\n${pickVariant(phone, 'ACCUEIL_EMPATHIE')}\n\nNous, c'est notre métier : on défend les passagers des vols Afrique ↔ Europe.\n\n✈️ La loi CE 261/2004 vous donne droit à une indemnité pouvant aller *jusqu'à 600 € par personne*.\n\n*0 € si on ne gagne pas.* Aucun risque pour vous.\n\nVoyons ensemble si une indemnité vous revient. 👇`, footer: 'CE 261/2004', buttons: [{ text: '🚀 Mon indemnité' }] }, cfg);
   // _sid = session ID unique par parcours (timestamp base36) — isole le dedup step+contenu
   await setState(phone, { step: 'langue', phone, _sid: Date.now().toString(36) });
 }
