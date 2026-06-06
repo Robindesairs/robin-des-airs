@@ -1800,13 +1800,13 @@ function toggleEscaleVol3() {
       return;
     }
 
-    var timers = [];
+    var timers = [], cycles = 0;
     function clearTimers() { timers.forEach(clearTimeout); timers = []; }
     function run() {
       clearTimers(); chat.innerHTML = '';
       var i = 0;
       function next() {
-        if (i >= STEPS.length) { timers.push(setTimeout(run, 1200)); return; }
+        if (i >= STEPS.length) { cycles++; if (cycles < 2) timers.push(setTimeout(run, 1500)); return; }
         var s = STEPS[i++];
         timers.push(setTimeout(function () {
           if (s.who === 'robin' && s.typing) {

@@ -187,7 +187,7 @@ window.I18N = (function() {
       how_further: "Pour aller plus loin : <a href=\"/meteo-dossier-indemnite.html\" style=\"color:var(--neon-dark);font-weight:600;\">Météo et dossier (TAF, METAR…)</a> · <a href=\"/pourquoi-si-peu-reclament.html\" style=\"color:var(--neon-dark);font-weight:600;\">Pourquoi si peu récupèrent leur indemnité ?</a>",
       testi_aria_prev: "Précédent",
       testi_aria_next: "Suivant",
-      footer_tagline: "Réclamation aérienne · Spécialiste Diaspora · Prix fixe · No win no fee",
+      footer_tagline: "Réclamation aérienne · Spécialiste Diaspora · Prix fixe · Gratuit si on ne gagne pas",
       footer_nav: "Navigation",
       footer_landmark_title: "Liens et informations du site",
       footer_legal: "Légal",

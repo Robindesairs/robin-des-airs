@@ -97,14 +97,14 @@
   --off:     #F7F8FA;
   --off2:    #EEF0F4;
   --text:    #1a2436;
-  --gray:    #6B7A90;
-  --gray2:   #8C9AB0;
+  --gray:    #5C6B82;
+  --gray2:   #6A7890;
   --border:  #E2E6EE;
   --green:   #00C87A;
   --shadow:  0 8px 32px rgba(11,31,58,0.06);
   --shadow-lg: 0 24px 64px rgba(11,31,58,0.1);
   --shadow-premium: 0 32px 80px -16px rgba(11,31,58,0.14);
-  --focus-ring: 0 0 0 3px rgba(0,200,122,0.35);
+  --focus-ring: 0 0 0 3px rgba(0,153,96,0.7);
   --radius: 12px;
   --radius-lg: 20px;
   /* Hauteur réelle fixée par JS sur #site-header (diaspora + nav) */
@@ -950,7 +950,7 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
  * Le CTA WhatsApp à gauche porte la conversion ; la photo famille occupe la droite.
  * Le simulateur (carte) reste actif sur mobile (≤768px). Les CTA "Simuler" sont masqués ici ;
  * les autres CTA qui ciblaient la carte ouvrent WhatsApp (cf. scrollToCalcWithAnimation). */
-@media (min-width: 769px) {
+@media (min-width: 1081px) {
   .hero-right { display: none; }
   .nav-cta-sim { display: none; }
   #btn-calc-hero { display: none; }
@@ -977,7 +977,7 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 .wa-typedemo-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .wa-typedemo-avatar { width: 26px; height: 26px; border-radius: 50%; background: #25D366; color: #062b16; font-weight: 900; font-size: 13px; display: grid; place-items: center; flex: 0 0 auto; }
 .wa-typedemo-name { color: var(--navy); font-weight: 700; font-size: 13px; }
-.wa-typedemo-online { color: #25D366; font-size: 11px; font-weight: 600; }
+.wa-typedemo-online { color: #0F7268; font-size: 11px; font-weight: 700; }
 .wa-typedemo-bubble {
   display: block; position: relative; background: #ffffff; color: #111b21;
   border-radius: 4px 12px 12px 12px; padding: 9px 12px; font-size: 14px; line-height: 1.5;
