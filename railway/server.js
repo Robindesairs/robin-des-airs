@@ -245,13 +245,14 @@ function buildMandatUrl(s, phone) {
   const idx = s.mandant_idx != null ? s.mandant_idx : 0;
   const mandant = (s.passengers && s.passengers[idx]) || {};
   const _routeParts = (s.route || '').split(/→|->|—|-/).map((x) => x.trim()).filter(Boolean);
+  const _incidentCode = { retard: 'delay', annulation: 'cancel', refus: 'denied' }[s.incident] || '';
   const dossier = {
     ref: s.ref || '', phone: phone || '',
     name: cleanName(mandant.name || (s.names && s.names[0]) || s.nom || ''),
     dob: toISODate(mandant.dob || ''),
     address: mandant.adresse || '',
     vol: s.vol || '', date: s.date || '', pnr: s.pnr || '', compagnie: s.compagnie || '',
-    route: s.route || '', depAirport: _routeParts[0] || '', arrAirport: _routeParts[_routeParts.length - 1] || '', motif: s.incident_libelle || '', pax: s.pax || 1, indemnite: 600,
+    route: s.route || '', depAirport: _routeParts[0] || '', arrAirport: _routeParts[_routeParts.length - 1] || '', motif: s.incident_libelle || '', incident: _incidentCode, pax: s.pax || 1, indemnite: 600,
     lang: s.langue_code || 'fr',
     passengers: (s.passengers || []).slice(0, s.pax || 1).map(p => ({ name: cleanName((p && p.name) || ''), dob: toISODate((p && p.dob) || '') })),
     cid: phone || '', lsa: new Date().toISOString(), source: 'wati-bot-v8',
@@ -418,7 +419,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // ⚠️ Jamais intercepté si c'est une réponse interactive (bouton/liste) : replyId présent → flux prioritaire
   try {
     const { isClientQuestion, isSensitive, answerClientQuestion } = AI;
-    const FREE = ['m_vol', 'm_date', 'm_route', 'names', 'vd_vol', 'vd_date', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob'];
+    const FREE = ['m_vol', 'm_date', 'm_route', 'm_pnr', 'names', 'vd_vol', 'vd_date', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob'];
     const looks = !id && (FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input));
     if (looks) {
       if (isSensitive(input)) { await send(phone, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nTapez *menu* pour ouvrir/continuer votre dossier.`, cfg); return; }
@@ -578,9 +579,23 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       if (inFuture(d)) return send(phone, FUTURE_JOKE, cfg);
       s.date = d;
       if (tooOld(s.date)) { await clearState(phone); return send(phone, `${pickVariant(phone, 'PRESCRIPTION_5ANS')}\n\n${STOP_FOOTER}`, cfg); }
-      await setState(phone, s); return apresVol(phone, s, cfg);
+      s.step = (s.route ? 'm_pnr' : 'm_route'); await setState(phone, s);
+      if (s.route) return send(phone, `🎫 Quel est votre *numéro de réservation* (PNR) ?\nC'est un code de 6 lettres/chiffres, sur votre billet ou votre email de confirmation _(ex : TFSCBC)_.\n✏️ Tapez *passer* si vous ne l'avez pas.`, cfg);
+      return send(phone, `🗺️ Quel était le *trajet* ? Indiquez le *départ* et l'*arrivée* (ville ou code aéroport).\n_(ex : Dakar → Paris, ou DSS → CDG)_`, cfg);
     }
     return send(phone, `Date non reconnue. Format JJ/MM/AAAA (ex. 15/03/2026) :`, cfg);
+  }
+  if (s.step === 'm_route') {
+    let r = input.trim().replace(/\s*(?:->|→|—|–|,|\s-\s|\bvers\b|\bà\b)\s*/gi, ' → ');
+    if (!r.includes('→')) { const parts = r.split(/\s+/); if (parts.length === 2) r = parts.join(' → '); }
+    if (r.length >= 3) { s.route = r; s.step = 'm_pnr'; await setState(phone, s); return send(phone, `🎫 Quel est votre *numéro de réservation* (PNR) ?\nC'est un code de 6 lettres/chiffres, sur votre billet ou votre email de confirmation _(ex : TFSCBC)_.\n✏️ Tapez *passer* si vous ne l'avez pas.`, cfg); }
+    return send(phone, `🗺️ Indiquez le trajet : *départ → arrivée* _(ex : Dakar → Paris)_`, cfg);
+  }
+  if (s.step === 'm_pnr') {
+    if (lower === 'passer' || lower === 'non' || lower === 'skip') { await setState(phone, s); return apresVol(phone, s, cfg); }
+    const pnr = input.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (/^[A-Z0-9]{5,8}$/.test(pnr)) { s.pnr = pnr; await setState(phone, s); return apresVol(phone, s, cfg); }
+    return send(phone, `🎫 Le PNR fait 5 à 8 caractères (lettres/chiffres), ex : *TFSCBC*. Réessayez, ou tapez *passer*.`, cfg);
   }
 
   // MSG9 — NOMS (un par un)

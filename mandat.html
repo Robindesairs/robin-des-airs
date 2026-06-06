@@ -753,6 +753,12 @@ function applyDossier(d) {
   if (d.address) setIfEmpty('addr', d.address);
   if (d.phone && typeof setWaFull === 'function') { const w = document.getElementById('wa-national'); if (w && !w.value.trim()) setWaFull(String(d.phone)); }
   setIfEmpty('fnum', d.vol); setIfEmpty('cie', d.compagnie); setIfEmpty('pnr', d.pnr);
+  setIfEmpty('dep', d.depAirport); setIfEmpty('arr', d.arrAirport);
+  // Incident → liste déroulante #inc (code delay/cancel/denied)
+  { const ie = document.getElementById('inc');
+    let code = d.incident || '';
+    if (!code && d.motif) { const m = String(d.motif).toLowerCase(); code = /retard|delay/.test(m) ? 'delay' : /annul|cancel/.test(m) ? 'cancel' : /refus|denied|embarq/.test(m) ? 'denied' : ''; }
+    if (ie && code && !ie.value) ie.value = code; }
   if (d.date) { const p = String(d.date).split('/'); if (p.length === 3) { const el = document.getElementById('fdate'); if (el && !el.value) el.value = `${p[2]}-${p[1]}-${p[0]}`; } }
   if (d.indemnite) window.MANDAT_INDEMNITE_PER_PAX = d.indemnite;
   // Passagers (noms + dates de naissance)
