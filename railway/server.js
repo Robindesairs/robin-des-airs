@@ -15,6 +15,8 @@
 const express = require('express');
 const { pickVariant } = require('./lib/bot-variants');
 const { SYSTEM_PROMPT: FAQ_SYSTEM_PROMPT, FAQ_KNOWLEDGE } = require('./lib/faq-hors-tunnel');
+const { pickRV, fillTpl } = require('./lib/relance-variants');
+function firstNameOf(s) { const n = (s.passengers && s.passengers[s.mandant_idx || 0] && s.passengers[s.mandant_idx || 0].name) || (s.names && s.names[0]) || ''; return /^passager/i.test(n) ? '' : (n.split(/\s+/)[0] || ''); }
 
 // ─── Fonctions inline (autonome — aucune dépendance au monorepo Netlify) ───────
 function normalizeWatiPhone(phone) {
@@ -446,7 +448,8 @@ function missingDocsText(s) {
   const st = docsStatus(s); const miss = [];
   if (st.missingId.length) miss.push(`la *pièce d'identité* de *${st.missingId.join('*, *')}*`);
   if (!st.travelProofOk) miss.push(`votre *carte d'embarquement* ou *e-billet*`);
-  return miss.length ? `📎 Il manque encore : ${miss.join(' et ')}.` : `🎉 Toutes vos pièces sont là, merci ! Notre équipe prend le relais.`;
+  if (miss.length) return `📎 Il manque encore : ${miss.join(' et ')}.`;
+  return fillTpl(pickRV(s.ref || '', 'DOC_COMPLET'), { REF: s.ref || '', TOTAL: (600 * (s.pax || 1)) + ' €', NOM: firstNameOf(s) }) || `🎉 Toutes vos pièces sont là, merci ! Notre équipe prend le relais.`;
 }
 
 // Pièce expirée (date d'expiration passée) ?
@@ -869,14 +872,14 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       // Contrôle qualité AVANT tout : une pièce illisible peut être refusée par la compagnie → on redemande
       if (d.lisible === false && d.kind !== 'autre') {
         const pb = { flou: 'un peu floue', sombre: 'trop sombre', 'coupé': 'coupée', reflet: 'avec un reflet' }[d.probleme] || 'difficile à lire';
-        return send(phone, `😕 La photo est *${pb}* et risque d'être *refusée par la compagnie*. Renvoyez-la *à plat, en pleine lumière, les 4 coins visibles* — c'est ce qui protège votre dossier. 📸`, cfg);
+        return send(phone, fillTpl(pickRV(s.ref || '', 'PHOTO_QUALITE'), { NOM: firstNameOf(s), PB: pb, REF: s.ref || '' }) || `😕 La photo est ${pb} et risque d'être refusée par la compagnie. Renvoyez-la à plat, en pleine lumière, les 4 coins visibles. 📸`, cfg);
       }
       let ack;
       if (d.kind === 'identite') {
         const a = attributeId(s, d.nom);
         if (a.idx >= 0) {
           const p = s.passengers[a.idx] || {}; p.idReceived = true; if (!p.name && d.nom) p.name = d.nom; s.passengers[a.idx] = p;
-          if (a.confident) { ack = `✅ Pièce d'identité de *${paxName(s, a.idx)}* bien reçue. 🙏`; }
+          if (a.confident) { ack = fillTpl(pickRV(s.ref || '', 'DOC_RECU_PIECE'), { NOM: paxName(s, a.idx) }) || `✅ Pièce d'identité de *${paxName(s, a.idx)}* bien reçue. 🙏`; }
           else { // doute → on ne nomme pas le client, et on alerte l'expert pour vérification manuelle
             ack = `✅ Pièce d'identité bien reçue, merci. 🙏`;
             notifyOwnerWhatsApp(phone, `⚠️ Dossier ${s.ref} : pièce d'identité reçue (lue « ${d.nom || '?'} ») à rattacher/vérifier manuellement — ${s.pax} passagers.`).catch(() => {});
@@ -1021,7 +1024,7 @@ async function finaliser(phone, s, cfg) {
   s.minorsCount = pax.filter(p => p && p.minor).length;
   s.ref = genRef(); s.mandat_url = buildMandatUrl(s, phone); s.step = 'done'; await setState(phone, s);
   // Lead à relancer tant que le mandat n'est pas signé (nudge 2h/8h/22h dans la fenêtre 24h)
-  upsertLead(phone, { ref: s.ref, mandatUrl: s.mandat_url, mandatSentAt: Date.now(), lastClientAt: Date.now(), pax: s.pax || 1, signed: false, completed: true, nudges: [] });
+  upsertLead(phone, { ref: s.ref, mandatUrl: s.mandat_url, mandatSentAt: Date.now(), lastClientAt: Date.now(), pax: s.pax || 1, name: firstNameOf(s), signed: false, completed: true, nudges: [] });
   const minorNote = s.minorsCount ? `\n👶 ${s.minorsCount} mineur·s : signature d'un parent/tuteur requise (un expert vous guide).` : '';
   await send(phone, `${bar('done')}\n🎉 *Dossier complet !* Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n💰 Jusqu'à *${montantTotal(s.pax)} €* — vous gardez *${montantNet(s.pax)} € nets*${minorNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % au succès uniquement · 🔒 aucune info bancaire.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_\n\n👉 *Signez ici :*\n${s.mandat_url}\n\nSans votre signature, on ne peut pas agir en votre nom. ${STOP_FOOTER}`, cfg);
   try { const makeUrl = process.env.MAKE_WEBHOOK_NEW_DOSSIER; if (makeUrl) await fetch(makeUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...s, phone, source: 'wati-bot-v8' }) }); } catch (e) {}
@@ -1164,10 +1167,10 @@ const RELANCE_THRESHOLDS_H = [2, 8, 22];
 const _H = 3600000;
 function relanceText(n, lead) {
   const url = lead.mandatUrl || ('https://robindesairs.eu/mandat.html?r=' + encodeURIComponent(lead.ref || ''));
-  const total = 600 * (lead.pax || 1);
-  if (n === 2) return `✈️ Il ne reste qu'une signature ! Votre dossier *${lead.ref}* est prêt — 2 min pour autoriser Robin des Airs à réclamer jusqu'à *${total} €*.\n*0 € si on ne gagne pas.*\n👉 ${url}`;
-  if (n === 8) return `💬 Des passagers comme vous récupèrent leur argent chaque semaine. Votre mandat (réf. *${lead.ref}*) n'attend que votre signature 👇\n👉 ${url}\nUne question ? Tapez *menu*.`;
-  return `⏳ Dernière chance aujourd'hui pour votre dossier *${lead.ref}*. Sans votre signature, on ne peut pas agir en votre nom — ne laissez pas la compagnie garder votre argent.\n👉 ${url}\n\n_L'équipe Robin des Airs 🏹_`;
+  const total = (600 * (lead.pax || 1)) + ' €';
+  const key = n === 2 ? 'RELANCE_2H' : n === 8 ? 'RELANCE_8H' : 'RELANCE_22H';
+  const txt = fillTpl(pickRV(lead.ref || lead.phone, key), { REF: lead.ref || '', TOTAL: total, URL: url, NOM: lead.name || '' });
+  return txt || `Il ne reste qu'une signature pour votre dossier ${lead.ref}. 👉 ${url}\n0 € si on ne gagne pas.`;
 }
 async function runRelances() {
   try {
