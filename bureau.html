@@ -929,11 +929,26 @@ function enqueteHtml(f){
   if(e.sources&&e.sources.length) rows.push(`<div class="muted">Sources : ${e.sources.map(s=>`<a href="${esc(s)}" target="_blank" rel="noopener">${esc(s.replace(/^https?:\/\//,'').split('/')[0])}</a>`).join(' · ')}</div>`);
   return rows.length?`<div class="pm-enq">${rows.join('')}</div>`:'';
 }
+// Report d'annulation : « prochain vol » (même numéro) — l'info n°1 pour lancer la pub.
+function reportHtml(f){
+  if(f.kind!=='cancel') return '';
+  const det = f.cancelDetectedAt ? `détectée ${String(f.cancelDetectedAt).slice(11,16)} UTC` : '';
+  let main='', accent='var(--amber,#b45309)', bg='rgba(180,83,9,.08)';
+  if(f.rescheduledTo){
+    main = `🔄 Reporté : <b>${esc(f.rescheduledTo)}</b>${f.rescheduledRoute?` <span style="opacity:.7">(${esc(f.rescheduledRoute)})</span>`:''}`;
+    accent='var(--green,#0a7d55)'; bg='rgba(16,122,87,.10)';
+  } else if(f.nextFlightFound===false){
+    main = `🔄 Prochain vol non trouvé <span style="opacity:.7">— rebooking compagnie à confirmer</span>`;
+  } else if(det){
+    main = `🚫 Annulation`;
+  } else { return ''; }
+  return `<div class="pm-report" style="margin-top:6px;padding:6px 9px;border-left:3px solid ${accent};background:${bg};border-radius:4px;font-size:12px;line-height:1.4">${main}${det?` <span style="opacity:.6">· ${det}</span>`:''}</div>`;
+}
 function pmFlight(f){
   const c=f.kind==='cancel';
   const meta=[ f.statut?`<span class="bd ${c?'cancel':'delay'}">${f.statut}</span>`:'', f.reg?`✈︎ ${f.reg}`:'', f.date?`📅 ${String(f.date).slice(0,10)}`:'', f.tracker?`<a href="${f.tracker}" target="_blank" rel="noopener">suivre ↗</a>`:'' ].filter(Boolean).join(' · ');
   const sub=[fhours(f), meta].filter(Boolean).join('<br>');
-  return `<div class="pm-flight"><span class="fl">${f.fl}</span><span class="rt">${f.r||''}</span><span class="bd ${c?'cancel':'delay'}">${c?'ANNULÉ':(f.detail||'retard')}</span><span class="eu">${f.eu} €</span>${sub?`<div class="pm-fsub">${sub}</div>`:''}${enqueteHtml(f)}</div>`;
+  return `<div class="pm-flight"><span class="fl">${f.fl}</span><span class="rt">${f.r||''}</span><span class="bd ${c?'cancel':'delay'}">${c?'ANNULÉ':(f.detail||'retard')}</span><span class="eu">${f.eu} €</span>${sub?`<div class="pm-fsub">${sub}</div>`:''}${reportHtml(f)}${enqueteHtml(f)}</div>`;
 }
 function posteContent(i){
   const taux = S.total>0?Math.round(S.gagnes/S.total*100):0;
@@ -1354,6 +1369,12 @@ function normFlight(f){
     date: f.scheduledDate || f.date || f.dateLabel || null,
     dep: String(f.dep||'').toUpperCase(),
     arr: String(f.arr||'').toUpperCase(),
+    // Report d'annulation (prochain vol même numéro) + heure de détection radar
+    rescheduledTo: f.rescheduledTo || null,
+    rescheduledRoute: f.rescheduledRoute || null,
+    rescheduledDayOffset: f.rescheduledDayOffset!=null ? f.rescheduledDayOffset : null,
+    nextFlightFound: f.nextFlightFound!=null ? !!f.nextFlightFound : null,
+    cancelDetectedAt: f.cancelDetectedAt || null,
     enquete: null
   };
 }
@@ -1368,6 +1389,14 @@ async function loadRadar(){
   // fusion : DÉTECTÉS d'abord, puis épinglés, dédupliqués par vol+route
   const seen=new Set(); const merged=[];
   [...detected, ...pinned].forEach(f=>{ const k=(f.fl||'')+'|'+(f.r||''); if(!seen.has(k)){ seen.add(k); merged.push(f); } });
+  // Tri métier : vols les plus proches (veille en bas), annulés en haut, puis retard décroissant.
+  const todayY=(()=>{ try{ return new Date().toLocaleDateString('en-CA',{timeZone:'Europe/Paris'}); }catch(e){ return new Date().toISOString().slice(0,10);} })();
+  const isVeilleB=f=>{ const d=String(f.date||'').slice(0,10); return !!d && d<todayY; };
+  merged.sort((a,b)=>{
+    const va=isVeilleB(a)?1:0, vb=isVeilleB(b)?1:0; if(va!==vb) return va-vb;
+    const ca=a.kind==='cancel'?0:1, cb=b.kind==='cancel'?0:1; if(ca!==cb) return ca-cb;
+    return (b.delayMin||0)-(a.delayMin||0);
+  });
   if(merged.length){
     REAL.radar = merged;
     REAL.sources.radar = true;

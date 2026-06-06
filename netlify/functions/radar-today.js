@@ -33,6 +33,12 @@ exports.handler = async (event) => {
       eta: f.eta || null,
       statut: f.statut || null,
       trackerUrl: f.trackerUrl || '',
+      // Report d'annulation (prochain vol) + fraîcheur — pour le panneau radar du bureau
+      rescheduledTo: f.rescheduledTo || null,
+      rescheduledRoute: f.rescheduledRoute || null,
+      rescheduledDayOffset: f.rescheduledDayOffset != null ? f.rescheduledDayOffset : null,
+      nextFlightFound: f.nextFlightFound != null ? !!f.nextFlightFound : null,
+      cancelDetectedAt: f.cancelDetectedAt || null,
     }));
     return {
       statusCode: 200,

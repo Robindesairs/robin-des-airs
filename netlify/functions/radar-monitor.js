@@ -22,6 +22,7 @@ const {
 
 const { sendCallMeBot } = require('./lib/callmebot');
 const { notifyOwner } = require('./lib/owner-notify');
+const { enrichCancellationReschedule } = require('./lib/radar-reschedule');
 const { getStore } = require('@netlify/blobs');
 
 const {
@@ -132,6 +133,12 @@ async function runMorning(event, parisHour, dateYmd) {
   } catch (e) {
     console.warn('registry morning:', e.message);
   }
+  // Alertes dès le matin : annulations / retards ≥3h détectés au scan 7h (avant on n'alertait que le soir).
+  try {
+    await sendDelayAlerts(event, cache.allImpacted || cache.flights || [], dateYmd);
+  } catch (e) {
+    console.warn('alerts morning:', e.message);
+  }
   const statsReport = await loadStatsReport(event, statsDays);
 
   const email = await sendRadarMorningReport({
@@ -173,7 +180,7 @@ async function runMorning(event, parisHour, dateYmd) {
  *
  * Chaque message inclut un lien FlightRadar24 pour suivi en direct.
  */
-async function sendDelayAlerts(flights, dateYmd) {
+async function sendDelayAlerts(event, flights, dateYmd) {
   const minDelay = parseInt(process.env.MONITOR_ALERT_MIN_DELAY || '180', 10) || 180;
   // Palier de ré-alerte en minutes (défaut 30 min)
   const stepDelay = parseInt(process.env.MONITOR_ALERT_STEP || '30', 10) || 30;
@@ -189,6 +196,14 @@ async function sendDelayAlerts(flights, dateYmd) {
   } catch (e) {
     console.warn('[alerts] getStore error:', e.message);
     return;
+  }
+
+  // Cache des reports d'annulation (12 h) — évite de re-chercher le prochain vol.
+  let rescheduleStore = null;
+  try {
+    rescheduleStore = getStore('radar-reschedule');
+  } catch (_) {
+    rescheduleStore = null;
   }
 
   for (const f of toAlert) {
@@ -211,6 +226,16 @@ async function sendDelayAlerts(flights, dateYmd) {
       const prevDelay = prevState ? (prevState.delayMinutes || 0) : null;
       // Pas encore alerté → OK. Déjà alerté → re-alerter seulement si +stepDelay min
       if (prevDelay !== null && f.delayMinutes - prevDelay < stepDelay) continue;
+    }
+
+    // ── Annulation : retrouver le report (prochain vol même numéro) ──────
+    if (f.cancelled) {
+      try {
+        await enrichCancellationReschedule(f, rescheduleStore);
+      } catch (e) {
+        console.warn('[alerts] reschedule:', e.message);
+      }
+      f.cancelDetectedAt = new Date().toISOString();
     }
 
     // ── Sauvegarder le nouvel état (TTL 30h) ────────────────────────────
@@ -240,24 +265,36 @@ async function sendDelayAlerts(flights, dateYmd) {
     let msg;
 
     if (f.cancelled) {
-      const cancelHour = f.cancelledAt
-        ? new Date(f.cancelledAt).toLocaleTimeString('fr-FR', {
-            hour: '2-digit', minute: '2-digit', timeZone: 'UTC',
-          })
-        : '?';
+      // Heure de détection = maintenant (1ʳᵉ fois que le radar voit l'annulation).
+      const detectHour = new Date().toLocaleTimeString('fr-FR', {
+        hour: '2-digit', minute: '2-digit', timeZone: 'UTC',
+      });
+      // Fraîcheur : annulation proche de l'heure prévue = passagers encore à l'aéroport.
+      const schedMs = f.scheduledDeparture ? Date.parse(f.scheduledDeparture) : null;
+      const fresh = schedMs != null && Math.abs(Date.now() - schedMs) <= 3 * 3600 * 1000;
+      const freshLine = fresh
+        ? `🆕 Annulation fraîche — passagers probablement encore à l'aéroport`
+        : null;
+      // Report : prochain vol planifié (même numéro), enrichi plus haut.
+      const nextLine = f.nextFlightFound && f.rescheduledTo
+        ? `🔄 Reporté : ${f.rescheduledTo}${f.rescheduledRoute ? ` (${f.rescheduledRoute})` : ''}`
+        : `🔄 Reporté : prochain vol non trouvé (rebooking compagnie à confirmer)`;
+
       msg = [
         `🚫 VOL ANNULÉ — Robin des Airs`,
         ``,
         `Vol    : ${f.flight || '—'}`,
         `Trajet : ${f.dep || '?'} → ${f.arr || '?'}`,
         `Prévu  : ${schedHour} UTC`,
-        `Annulé : ${cancelHour} UTC`,
+        `Détecté: ${detectHour} UTC (radar)`,
+        freshLine,
+        nextLine,
         ``,
         ce261,
         ``,
         `🔍 Suivi : ${fr24}`,
         `👉 Lancer le dossier CE261 maintenant`,
-      ].join('\n');
+      ].filter(Boolean).join('\n');
     } else {
       const delayH = Math.floor(f.delayMinutes / 60);
       const delayM = f.delayMinutes % 60;
@@ -313,6 +350,15 @@ async function sendDelayAlerts(flights, dateYmd) {
       await notifyOwner(subj, msg);
     } catch (e) {
       console.error('[alerts] notifyOwner error:', e.message);
+    }
+
+    // Remonter report + heure de détection au registre → visible dans le tableau bureau.
+    if (event && f.cancelled) {
+      try {
+        await mergeFlightsIntoRegistry(event, [f], { source: 'reschedule-enrich' });
+      } catch (e) {
+        console.warn('[alerts] registry reschedule writeback:', e.message);
+      }
     }
   }
 }
@@ -438,6 +484,8 @@ exports.handler = async (event) => {
       } catch (e) {
         console.warn('registry eu-afternoon:', e.message);
       }
+      // Alertes aussi l'après-midi (départs EU→Afrique annulés / ≥3h), plus seulement le soir.
+      await sendDelayAlerts(event, entry.flights || [], dateYmd);
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
@@ -467,7 +515,7 @@ exports.handler = async (event) => {
       }
 
       // ── Alertes WhatsApp (CallMeBot) pour retards ≥ 3h ──────────────────
-      await sendDelayAlerts(entry.flights || [], dateYmd);
+      await sendDelayAlerts(event, entry.flights || [], dateYmd);
       // ─────────────────────────────────────────────────────────────────────
 
       return {

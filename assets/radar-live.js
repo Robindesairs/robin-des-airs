@@ -1401,10 +1401,35 @@
         (!elig || v.elig === elig) &&
         (!prio || v.prio === prio)
       );
-    }).sort(function (a, b) {
-      var O = { URGENT: 0, HIGH: 1, NORMAL: 2, LOW: 3 };
-      return (O[a.prio] || 3) - (O[b.prio] || 3);
-    });
+    }).sort(radarRowCompare);
+  }
+
+  // Jour courant Paris (YYYY-MM-DD) pour distinguer « aujourd'hui » de « la veille ».
+  function ymdParisToday() {
+    try { return new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Paris' }); }
+    catch (e) { return new Date().toISOString().slice(0, 10); }
+  }
+  function isVeille(v) {
+    var d = String(v.date || v.scheduledDate || '').slice(0, 10);
+    return !!d && d < ymdParisToday();
+  }
+  // Tri métier : « quel vol pour lancer une pub MAINTENANT ».
+  // 1) la veille descend (on veut les vols les plus proches) — gardés, pas masqués.
+  // 2) priorité (URGENT = annulé ou retard ≥3h éligible).
+  // 3) départ Afrique d'abord (meilleure cible diaspora).
+  // 4) annulé avant retard, puis retard décroissant.
+  var PRIO_ORDER = { URGENT: 0, HIGH: 1, NORMAL: 2, LOW: 3 };
+  function radarRowCompare(a, b) {
+    var va = isVeille(a) ? 1 : 0, vb = isVeille(b) ? 1 : 0;
+    if (va !== vb) return va - vb;
+    var pa = PRIO_ORDER[a.prio] != null ? PRIO_ORDER[a.prio] : 3;
+    var pb = PRIO_ORDER[b.prio] != null ? PRIO_ORDER[b.prio] : 3;
+    if (pa !== pb) return pa - pb;
+    var aa = a.sens === 'AF_EU' ? 0 : 1, ab = b.sens === 'AF_EU' ? 0 : 1;
+    if (aa !== ab) return aa - ab;
+    var ca = a.statut === 'ANNULE' ? 1 : 0, cb = b.statut === 'ANNULE' ? 1 : 0;
+    if (ca !== cb) return cb - ca;
+    return (b.retardMin || 0) - (a.retardMin || 0);
   }
 
   function retardH(min) {

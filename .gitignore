@@ -27,3 +27,6 @@ proofs/*
 .pip-local/
 .env.local
 .ad-hashes.env
+
+# Contact iMessage du poller radar (numéro perso — jamais sur git)
+scripts/.imessage-radar.env

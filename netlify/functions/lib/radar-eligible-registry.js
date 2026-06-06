@@ -82,6 +82,13 @@ function apiFlightToEntry(f, meta) {
     cancelled,
     delayMinutes: cancelled ? null : dm,
     eligible: f.eligible !== false,
+    // Report d'annulation (prochain vol même numéro) + fraîcheur — enrichi par radar-monitor.
+    rescheduledTo: f.rescheduledTo || null,
+    rescheduledAtLocal: f.rescheduledAtLocal || null,
+    rescheduledDayOffset: f.rescheduledDayOffset != null ? f.rescheduledDayOffset : null,
+    rescheduledRoute: f.rescheduledRoute || null,
+    nextFlightFound: f.nextFlightFound != null ? !!f.nextFlightFound : null,
+    cancelDetectedAt: f.cancelDetectedAt || null,
     firstSeenAt: now,
     lastSeenAt: now,
     seenCount: 1,
@@ -98,6 +105,12 @@ function mergeEntry(existing, incoming) {
   out.seenCount = (existing.seenCount || 0) + 1;
   const src = new Set([...(existing.sources || []), ...(incoming.sources || [])]);
   out.sources = Array.from(src).slice(-8);
+  // Préserver l'enrichissement report/annulation si le scan courant ne le porte pas
+  // (les scans normaux ne calculent pas le report — seul radar-monitor l'enrichit).
+  const keep = (k) => {
+    if (incoming[k] == null && existing[k] != null) out[k] = existing[k];
+  };
+  ['rescheduledTo', 'rescheduledAtLocal', 'rescheduledDayOffset', 'rescheduledRoute', 'nextFlightFound', 'cancelDetectedAt'].forEach(keep);
   return out;
 }
 
