@@ -344,6 +344,60 @@ Règles :
     return { name, dob, expiry, adresse };
   } catch (e) { return null; }
 }
+
+// ─── Classifieur : une photo envoyée = pièce d'identité, preuve de voyage, ou autre ──
+async function classifyDoc(mediaUrl, cfg) {
+  const key = process.env.OPENAI_API_KEY; if (!key || !mediaUrl) return { kind: 'autre', nom: '', voyageType: '' };
+  try {
+    const imgRes = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {} });
+    if (!imgRes.ok) return { kind: 'autre', nom: '', voyageType: '' };
+    const b64 = Buffer.from(await imgRes.arrayBuffer()).toString('base64');
+    const prompt = `Tu classes une photo/capture envoyée par un passager. Réponds UNIQUEMENT en JSON :
+{"kind":"identite|voyage|autre","nom":"","voyageType":"ebooking|carte|"}
+- "identite" : passeport, carte nationale d'identité (CNI), titre de séjour. Mets dans "nom" le NOM et prénom lus (MAJUSCULES).
+- "voyage" : preuve de voyage. voyageType="ebooking" si CONFIRMATION DE RÉSERVATION / e-billet / itinéraire (liste souvent PLUSIEURS passagers et/ou PLUSIEURS vols). voyageType="carte" si CARTE D'EMBARQUEMENT (un seul passager / un seul vol).
+- "autre" : tout le reste.
+Champ inconnu = "". Ne JAMAIS inventer.`;
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 120, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${b64}` } }] }] }),
+    });
+    const data = await res.json(); if (!data.choices) return { kind: 'autre', nom: '', voyageType: '' };
+    const p = JSON.parse(data.choices[0].message.content);
+    return { kind: ['identite', 'voyage', 'autre'].includes(p.kind) ? p.kind : 'autre', nom: (p.nom || '').toUpperCase().trim(), voyageType: p.voyageType || '' };
+  } catch (e) { return { kind: 'autre', nom: '', voyageType: '' }; }
+}
+
+// ─── État des pièces (déterministe) : quel passager n'a pas sa pièce ? preuve de voyage ? ──
+function paxName(s, i) { const p = (s.passengers || [])[i] || {}; return p.name || (s.names && s.names[i]) || `Passager ${i + 1}`; }
+function docsStatus(s) {
+  const pax = s.pax || ((s.passengers && s.passengers.length) || 1);
+  const missingId = [];
+  for (let i = 0; i < pax; i++) {
+    const p = (s.passengers || [])[i] || {};
+    const provided = !!(p && !p.skipped && (p.idReceived || p.dob)); // pièce lue (photo/saisie) → dob présent
+    if (!provided) missingId.push(paxName(s, i));
+  }
+  // Preuve de voyage = niveau DOSSIER : un e-billet couvre tous les passagers ET tous les segments (correspondances)
+  const travelProofOk = !!s.travelProof;
+  return { missingId, travelProofOk, complete: missingId.length === 0 && travelProofOk };
+}
+// Rattache un nom lu sur une pièce à l'index du passager (match sur un token du nom, ≥3 lettres)
+function matchPassengerByName(s, nom) {
+  const tokens = String(nom || '').toUpperCase().split(/\s+/).filter((t) => t.length >= 3);
+  if (!tokens.length) return -1;
+  const pax = s.pax || ((s.passengers && s.passengers.length) || 1);
+  for (let i = 0; i < pax; i++) { const pn = String(paxName(s, i)).toUpperCase(); if (tokens.some((t) => pn.includes(t))) return i; }
+  return -1;
+}
+// Formate la liste des pièces manquantes (texte WhatsApp)
+function missingDocsText(s) {
+  const st = docsStatus(s); const miss = [];
+  if (st.missingId.length) miss.push(`la *pièce d'identité* de *${st.missingId.join('*, *')}*`);
+  if (!st.travelProofOk) miss.push(`votre *carte d'embarquement* ou *e-billet*`);
+  return miss.length ? `📎 Il manque encore : ${miss.join(' et ')}.` : `🎉 Toutes vos pièces sont là, merci ! Notre équipe prend le relais.`;
+}
+
 // Pièce expirée (date d'expiration passée) ?
 function isExpired(dateStr) { const m = (dateStr || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); if (!m) return false; return new Date(+m[3], +m[2] - 1, +m[1]).getTime() < Date.now(); }
 
@@ -531,7 +585,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // MSG8 — SCAN
   if (s.step === 'scan') {
     if (mediaUrl) { const d = await ocrBoardingPass(mediaUrl, cfg);
-      if (d && d.vol) { Object.assign(s, { vol: d.vol || s.vol, compagnie: d.compagnie || s.compagnie, date: d.date || s.date, route: d.route || s.route, pnr: d.pnr || s.pnr }); s.step = 'scan_confirm'; await setState(phone, s);
+      if (d && d.vol) { Object.assign(s, { vol: d.vol || s.vol, compagnie: d.compagnie || s.compagnie, date: d.date || s.date, route: d.route || s.route, pnr: d.pnr || s.pnr }); s.travelProof = s.travelProof || 'scan'; s.step = 'scan_confirm'; await setState(phone, s);
         return sendButtons(phone, { body: `${pickVariant(phone, 'SCAN_REUSSI')}\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date || '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ Trajet : ${s.route || '—'}\n\n_(votre identité sera lue sur le passeport, plus tard)_\nTout est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg); }
       await send(phone, `😕 La qualité de l'image n'a pas permis la lecture. On fait à la main, ça prend 2 min. 👇`, cfg); s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
     }
@@ -757,9 +811,24 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
 
   if (s.step === 'done') {
     if (!s.ref || !s.mandat_url) { await clearState(phone); return sendAccueil(phone, cfg); } // état périmé → on repart proprement
-    // Le client envoie un justificatif après coup (carte, e-billet, pièce d'identité) → on accuse réception
-    if (mediaUrl) { return send(phone, `✅ Document bien reçu, merci ! 🙏 Notre équipe l'ajoute à votre dossier *${s.ref}*.\nVous pouvez en envoyer d'autres (carte d'embarquement, e-billet, pièce d'identité de chaque passager).`, cfg); }
-    return send(phone, `✅ Votre dossier *${s.ref}* est bien enregistré.\n📎 N'hésitez pas à nous envoyer ici vos justificatifs (carte d'embarquement / e-billet, pièce d'identité de chaque passager).\n📞 Un expert vous appellera depuis le *+33 7 56 86 36 30* — enregistrez-le sous « *Retard Robin* ».\n\nPour un nouveau dossier : tapez *menu*.`, cfg);
+    // Le client envoie un justificatif après coup → l'IA le classe, le rattache au passager, et on dit ce qui manque
+    if (mediaUrl) {
+      s.passengers = s.passengers || [];
+      const d = await classifyDoc(mediaUrl, cfg);
+      let ack;
+      if (d.kind === 'identite') {
+        let idx = matchPassengerByName(s, d.nom);
+        if (idx < 0) { const pax = s.pax || s.passengers.length || 1; for (let i = 0; i < pax; i++) { const pp = s.passengers[i] || {}; if (!(pp && !pp.skipped && (pp.idReceived || pp.dob))) { idx = i; break; } } }
+        if (idx >= 0) { const p = s.passengers[idx] || {}; p.idReceived = true; if (!p.name && d.nom) p.name = d.nom; s.passengers[idx] = p; ack = `✅ Pièce d'identité de *${paxName(s, idx)}* bien reçue. 🙏`; }
+        else { ack = `✅ Pièce d'identité bien reçue. 🙏`; }
+      } else if (d.kind === 'voyage') {
+        s.travelProof = d.voyageType || 'voyage';
+        ack = d.voyageType === 'ebooking' ? `✅ Confirmation de réservation reçue — elle couvre *tout le voyage et tous les passagers*. 👍` : `✅ Carte d'embarquement reçue. 👍`;
+      } else { ack = `✅ Document bien reçu, merci. 🙏 Notre équipe l'ajoute à votre dossier.`; }
+      await setState(phone, s);
+      return send(phone, `${ack}\n\n${missingDocsText(s)}`, cfg);
+    }
+    return send(phone, `✅ Votre dossier *${s.ref}* est bien enregistré.\n${missingDocsText(s)}\n📞 Un expert vous appellera depuis le *+33 7 56 86 36 30* — enregistrez-le sous « *Retard Robin* ».\n\nPour un nouveau dossier : tapez *menu*.`, cfg);
   }
 
   // Incompris
