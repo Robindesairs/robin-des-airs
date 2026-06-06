@@ -123,7 +123,10 @@ input.err,textarea.err,select.err{border-color:var(--red)!important;background:v
 /* SEUL CHECK UNIQUE */
 .single-check{display:flex;align-items:flex-start;gap:14px;padding:16px 18px;border:1.5px solid var(--border);background:var(--bg-soft);border-radius:8px;margin:16px 0;cursor:pointer;transition:border-color .2s,background .2s}
 .single-check:hover{border-color:var(--green);background:var(--green-tint)}
-.single-check input[type=checkbox]{width:20px;height:20px;min-width:20px;margin-top:2px;cursor:pointer;accent-color:var(--green-deep)}
+.single-check input[type=checkbox]{-webkit-appearance:none;appearance:none;width:24px;height:24px;min-width:24px;margin-top:1px;cursor:pointer;border:2px solid var(--green-deep);border-radius:6px;background:#fff;position:relative;flex-shrink:0;transition:background .15s,border-color .15s}
+.single-check input[type=checkbox]:checked{background:var(--green-deep);border-color:var(--green-deep)}
+.single-check input[type=checkbox]:checked::after{content:"";position:absolute;left:7px;top:3px;width:6px;height:11px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg)}
+.single-check:has(input[type=checkbox]:checked){border-color:var(--green-deep);background:var(--green-tint)}
 .single-check p{font-size:13px;line-height:1.7;color:var(--text)}
 .single-check p strong{color:var(--navy)}
 /* EMAIL DOSSIER TECHNIQUE */
