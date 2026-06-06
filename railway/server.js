@@ -347,25 +347,28 @@ Règles :
 
 // ─── Classifieur : une photo envoyée = pièce d'identité, preuve de voyage, ou autre ──
 async function classifyDoc(mediaUrl, cfg) {
-  const key = process.env.OPENAI_API_KEY; if (!key || !mediaUrl) return { kind: 'autre', nom: '', voyageType: '' };
+  const FALLBACK = { kind: 'autre', nom: '', voyageType: '', lisible: true, probleme: '' };
+  const key = process.env.OPENAI_API_KEY; if (!key || !mediaUrl) return FALLBACK;
   try {
     const imgRes = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {} });
-    if (!imgRes.ok) return { kind: 'autre', nom: '', voyageType: '' };
+    if (!imgRes.ok) return FALLBACK;
     const b64 = Buffer.from(await imgRes.arrayBuffer()).toString('base64');
-    const prompt = `Tu classes une photo/capture envoyée par un passager. Réponds UNIQUEMENT en JSON :
-{"kind":"identite|voyage|autre","nom":"","voyageType":"ebooking|carte|"}
+    const prompt = `Tu classes une photo/capture envoyée par un passager, et tu juges sa QUALITÉ (une pièce illisible peut être refusée par la compagnie). Réponds UNIQUEMENT en JSON :
+{"kind":"identite|voyage|autre","nom":"","voyageType":"ebooking|carte|","lisible":true,"probleme":""}
 - "identite" : passeport, carte nationale d'identité (CNI), titre de séjour. Mets dans "nom" le NOM et prénom lus (MAJUSCULES).
 - "voyage" : preuve de voyage. voyageType="ebooking" si CONFIRMATION DE RÉSERVATION / e-billet / itinéraire (liste souvent PLUSIEURS passagers et/ou PLUSIEURS vols). voyageType="carte" si CARTE D'EMBARQUEMENT (un seul passager / un seul vol).
 - "autre" : tout le reste.
-Champ inconnu = "". Ne JAMAIS inventer.`;
+- "lisible" : false si la photo est FLOUE, SOMBRE, COUPÉE, avec REFLET, ou si les informations clés (nom, n° de pièce) ne sont pas lisibles avec certitude. Sinon true.
+- "probleme" : si lisible=false, un mot : "flou" | "sombre" | "coupé" | "reflet" | "illisible".
+Champ inconnu = "". Ne JAMAIS inventer un nom si la photo est illisible.`;
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 120, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${b64}` } }] }] }),
+      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 140, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${b64}` } }] }] }),
     });
-    const data = await res.json(); if (!data.choices) return { kind: 'autre', nom: '', voyageType: '' };
+    const data = await res.json(); if (!data.choices) return FALLBACK;
     const p = JSON.parse(data.choices[0].message.content);
-    return { kind: ['identite', 'voyage', 'autre'].includes(p.kind) ? p.kind : 'autre', nom: (p.nom || '').toUpperCase().trim(), voyageType: p.voyageType || '' };
-  } catch (e) { return { kind: 'autre', nom: '', voyageType: '' }; }
+    return { kind: ['identite', 'voyage', 'autre'].includes(p.kind) ? p.kind : 'autre', nom: (p.nom || '').toUpperCase().trim(), voyageType: p.voyageType || '', lisible: p.lisible !== false, probleme: p.probleme || '' };
+  } catch (e) { return FALLBACK; }
 }
 
 // ─── État des pièces (déterministe) : quel passager n'a pas sa pièce ? preuve de voyage ? ──
@@ -388,25 +391,55 @@ function missingIdIndices(s) {
   for (let i = 0; i < pax; i++) { const p = (s.passengers || [])[i] || {}; if (!(p && !p.skipped && (p.idReceived || p.dob))) out.push(i); }
   return out;
 }
-// Attribue une pièce d'identité au bon passager, SANS jamais demander au client.
-// 1) match prénom+nom (départage les familles)  2) élimination (1 seul manquant)  3) doute → best-effort + flag expert
-function attributeId(s, nom) {
-  const norm = (x) => String(x || '').toUpperCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
-  const pax = s.pax || ((s.passengers && s.passengers.length) || 1);
-  const tokens = norm(nom).split(/\s+/).filter((t) => t.length >= 3);
-  let best = -1, bestScore = 0, ties = 0;
-  for (let i = 0; i < pax; i++) {
-    const pn = norm(paxName(s, i));
-    const sc = tokens.filter((t) => pn.includes(t)).length;
-    if (sc > bestScore) { bestScore = sc; best = i; ties = 1; } else if (sc === bestScore && sc > 0) { ties++; }
+// ─── Moteur d'attribution pièce→passager (robuste, SANS jamais demander au client) ──
+// Anticipe : nom de jeune fille/épouse, ordre inversé, translittération, particules,
+// homonymes/fratrie, GDS collé, prénoms composés. En cas de doute → expert (idx=-1).
+const nmMARK = new Set(['nee', 'epouse', 'ep', 'vve', 'veuve', 'dite', 'div', 'divorcee', 'veuf']);
+const nmTITLE = new Set(['m', 'mr', 'mme', 'mrs', 'ms', 'mstr', 'chd', 'inf', 'dr', 'mlle', 'sir', 'feu']);
+const nmSYN = { mohamed: 'mohammed', mohammed: 'mohammed', muhammad: 'mohammed', cheikh: 'cheikh', cheick: 'cheikh', sheikh: 'cheikh', aissatou: 'aissata', aissata: 'aissata', ousmane: 'ousmane', ousman: 'ousmane', abdoulaye: 'abdoulaye', abdallah: 'abdoulaye', bah: 'ba' };
+function nmSyn(t) { return nmSYN[t] || t; }
+function nmStrip(x) { return String(x || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+function nmLev(a, b) { const m = a.length, n = b.length; if (!m) return n; if (!n) return m; const d = [...Array(m + 1)].map((_, i) => [i, ...Array(n).fill(0)]); for (let j = 0; j <= n; j++) d[0][j] = j; for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[m][n]; }
+function nmTok(a, b) { a = nmSyn(a); b = nmSyn(b); if (a === b) return 1; if (a.length >= 4 && b.length >= 4 && (a.includes(b) || b.includes(a))) return 0.85; if (a.length >= 4 && b.length >= 4 && nmLev(a, b) <= 2) return 0.6; if ((a.length === 1 && b[0] === a) || (b.length === 1 && a[0] === b)) return 0.4; return 0; }
+function nmBest(d, p) { let m = 0; for (const x of d) for (const y of p) { const s = nmTok(x, y); if (s > m) m = s; } return m; }
+function nmToks(name) { let t = nmStrip(name).replace(/'/g, '').replace(/[\/\-_.]/g, ' ').replace(/[^a-z\s]/g, ' ').split(/\s+/).filter(Boolean); const isBoarding = /embarq|boarding|flight/.test(nmStrip(name)); t = t.filter((w) => !nmMARK.has(w) && !nmTITLE.has(w) && w.length >= 2).map(nmSyn); return { t, isBoarding }; }
+function nmAttribute(docName, passengers, alreadyDone) {
+  const done = new Set((alreadyDone || []).map(Number));
+  const P = passengers.map((full, i) => { const a = nmStrip(full).replace(/'/g, '').replace(/[\/\-_.]/g, ' ').split(/\s+/).filter(Boolean).map(nmSyn); return { i, given: a.slice(0, 1), last: a.slice(1).length ? a.slice(1) : a.slice(0, 1), all: a, done: done.has(i) }; });
+  const pending = P.filter((p) => !p.done);
+  if (!pending.length) return { idx: -1, confident: false, reason: 'AUCUN_PENDING' };
+  const { t: dt, isBoarding } = nmToks(docName);
+  if (isBoarding) return { idx: -1, confident: false, reason: 'PAS_UNE_PIECE' };
+  if (dt.length < 1) return { idx: -1, confident: false, reason: 'ININTELLIGIBLE' };
+  if (dt.length === 1 && dt[0].length >= 8) { // GDS collé
+    const blob = dt[0].replace(/(mrs|mstr|chd|inf|mr|ms)$/, '');
+    const c = pending.filter((p) => p.all.length >= 2 && p.all.every((pt) => blob.includes(pt)));
+    if (c.length === 1) return { idx: c[0].i, confident: true, reason: 'GDS_CONCAT' };
+    if (c.length >= 2) return { idx: -1, confident: false, reason: 'GDS_AMBIGU' };
   }
-  // 1) match nom confiant : un seul gagnant net (prénom+nom, ou token unique)
-  if (best >= 0 && bestScore >= 1 && ties === 1) return { idx: best, confident: true, reason: 'nom' };
-  // 2) élimination : s'il ne reste qu'un passager sans pièce, c'est forcément lui
-  const missing = missingIdIndices(s);
-  if (missing.length === 1) return { idx: missing[0], confident: true, reason: 'elimination' };
-  // 3) doute : rattache au mieux (1er manquant) mais sans certitude → l'expert vérifie
-  return { idx: missing.length ? missing[0] : -1, confident: false, reason: 'doute' };
+  const scored = pending.map((p) => { const lastScore = nmBest(dt, p.last); const firstScore = nmBest(dt, p.given); const matched = p.all.filter((pt) => dt.some((d) => nmTok(d, pt) >= 0.85)).length; const unmatched = dt.filter((d) => p.all.every((pt) => nmTok(d, pt) < 0.85)); return { p, lastScore, firstScore, matched, unmatched, strong: (lastScore >= 0.85 && firstScore >= 0.6) || matched >= 2 }; });
+  const sameLast = scored.filter((s) => s.lastScore >= 0.85).length;
+  const strongHits = scored.filter((s) => s.strong);
+  if (sameLast >= 2) { const ex = scored.filter((s) => s.lastScore >= 0.85 && nmBest(dt, s.p.given) >= 1.0); if (ex.length === 1) return { idx: ex[0].p.i, confident: true, reason: 'FRATRIE_PRENOM_EXACT' }; return { idx: -1, confident: false, reason: 'FRATRIE_AMBIGU' }; }
+  if (strongHits.length === 1) return { idx: strongHits[0].p.i, confident: true, reason: 'NOM_PRENOM' };
+  if (strongHits.length >= 2) return { idx: -1, confident: false, reason: 'HOMONYMIE' };
+  if (pending.length === 1) {
+    const o = scored[0];
+    if (o.lastScore >= 0.85) { if (o.firstScore >= 0.6) return { idx: o.p.i, confident: true, reason: 'ELIMINATION' }; if (o.unmatched.length === 0) return { idx: o.p.i, confident: false, reason: 'ELIM_NOM_SEUL' }; return { idx: -1, confident: false, reason: 'PRENOM_CONTRADICTOIRE' }; }
+    if (o.firstScore >= 0.85 && o.lastScore >= 0.6) return { idx: o.p.i, confident: true, reason: 'ELIM_TRANSLIT' };
+    if (o.firstScore >= 0.85) return { idx: -1, confident: false, reason: 'JEUNE_FILLE_NOM_ETRANGER' };
+    if (dt.length <= 1 && o.firstScore === 0) return { idx: o.p.i, confident: false, reason: 'ELIM_ILLISIBLE' };
+    return { idx: -1, confident: false, reason: 'NOM_ETRANGER' };
+  }
+  return { idx: -1, confident: false, reason: 'DOUTE' };
+}
+// Adaptateur : depuis l'état du dossier (done = indices ayant déjà une pièce)
+function attributeId(s, nom) {
+  const pax = s.pax || ((s.passengers && s.passengers.length) || 1);
+  const names = []; for (let i = 0; i < pax; i++) names.push(paxName(s, i));
+  const miss = missingIdIndices(s);
+  const done = [...Array(pax).keys()].filter((i) => !miss.includes(i));
+  return nmAttribute(nom, names, done);
 }
 // Formate la liste des pièces manquantes (texte WhatsApp)
 function missingDocsText(s) {
@@ -833,6 +866,11 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (mediaUrl) {
       s.passengers = s.passengers || [];
       const d = await classifyDoc(mediaUrl, cfg);
+      // Contrôle qualité AVANT tout : une pièce illisible peut être refusée par la compagnie → on redemande
+      if (d.lisible === false && d.kind !== 'autre') {
+        const pb = { flou: 'un peu floue', sombre: 'trop sombre', 'coupé': 'coupée', reflet: 'avec un reflet' }[d.probleme] || 'difficile à lire';
+        return send(phone, `😕 La photo est *${pb}* et risque d'être *refusée par la compagnie*. Renvoyez-la *à plat, en pleine lumière, les 4 coins visibles* — c'est ce qui protège votre dossier. 📸`, cfg);
+      }
       let ack;
       if (d.kind === 'identite') {
         const a = attributeId(s, d.nom);
