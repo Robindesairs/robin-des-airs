@@ -954,6 +954,9 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   .hero-right { display: none; }
   .nav-cta-sim { display: none; }
   #btn-calc-hero { display: none; }
+  /* Zone sombre (photo + forme navy) calée sur la moitié droite EXACTE → ne passe plus
+   * sous le contenu gauche (texte/stats foncés sur fond clair restent lisibles). */
+  .hero-bg-visual, .hero-bg-shape, .hero-bg-dots { width: 50%; }
 }
 
 /* HERO LEFT — texte blanc sur fond implicite */
