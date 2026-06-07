@@ -1794,7 +1794,7 @@ function toggleEscaleVol3() {
         { who: 'client', delay: 600,  hold: 1100, html: 'C\'est combien, vous ? 🤔' },
         { who: 'robin',  typing: 1100, hold: 2700, html: '<b>25 % au succès</b>, c\'est tout. Si on ne récupère rien, vous payez <b>0 €</b> — aucune avance 🤝 <span class="wa-aside">(d\'autres prennent 35 à 50 %)</span>' },
         { who: 'robin',  typing: 1100, hold: 2600, html: '🌍 Spécialistes <b>Europe–Afrique</b> : on connaît Dakar, Abidjan, Bamako… et on vous répond en <b>wolof, bambara, lingala…</b>' },
-        { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 <b>Envoyez-moi juste votre n° de vol</b> — je m\'occupe du reste 💪' }
+        { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 <b>Vous n\'avez plus qu\'à signer</b> — je m\'occupe du reste 💪' }
       ]; },
       en: function () { return [
         { who: 'client', delay: 400,  hold: 1100, sender: 'Ama', html: 'BA0078 on 15/01, landed 5 h late 😤' },
@@ -1807,7 +1807,7 @@ function toggleEscaleVol3() {
         { who: 'client', delay: 600,  hold: 1100, html: 'And what\'s your cut? 🤔' },
         { who: 'robin',  typing: 1100, hold: 2700, html: '<b>25% on success</b>, that\'s it. If we recover nothing, you pay <b>€0</b> — no upfront fee 🤝 <span class="wa-aside">(others charge 35–50%)</span>' },
         { who: 'robin',  typing: 1100, hold: 2600, html: '🌍 <b>Europe–Africa</b> specialists: we know Accra, Lagos, Abidjan… and we reply in <b>Twi, Yoruba, Pidgin…</b>' },
-        { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 <b>Just send me your flight number</b> — I\'ll take care of the rest 💪' }
+        { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 <b>You just sign</b> — I\'ll take care of the rest 💪' }
       ]; }
     };
 
