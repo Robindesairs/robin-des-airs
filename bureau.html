@@ -770,12 +770,12 @@ const AGENTS = [
     tasks:()=>[ `Seuil de rentabilité : <span class="hl">${RENTA.seuil} dossiers gagnés/mois</span> · coûts ${fmt(RENTA.total)} €` ] },
   { ic:"📱", ac:"var(--blue)", acp:"var(--blue-pale)", name:"Aïssa Ndiaye", role:"Community Manager · IG / FB",
     kpiL:"clics WhatsApp / mois", kpiUnit:"", base:0,
-    tasks:()=>[ `Anime Instagram + Facebook → renvoie vers le bot WhatsApp` ] },
+    tasks:()=>[ `Anime IG + FB, automatise les DM via <span class="hl">ManyChat</span> (commentaire → lien WhatsApp) → relais vers Robin` ] },
 ];
 
 /* ============ RENDER AGENTS ============ */
 // outil ouvert au clic sur la carte du poste
-const AGENT_LINKS = ["/navigation-interne","/radar-vols-v2","/guide-whatsapp","/mandat","/espace-agence","/crm/","/suivi-dossier","/generateur-pub.html","/nos-tarifs.html","/generateur-pub-stories.html"];
+const AGENT_LINKS = ["/navigation-interne","/radar-vols-v2","/guide-whatsapp","/mandat","/espace-agence","/crm/","/suivi-dossier","/generateur-pub.html","/nos-tarifs.html","https://app.manychat.com"];
 const AGENT_LINKS_PHOTO = ["aicha","malik","robin","lefevre","sofia","karim","lea","yanis","nadia","aissa"].map(n=>`assets/bureau/${n}.jpg`);
 // Objectifs réels (plan de lancement) par poste — affichés sur chaque carte
 // Objectifs MENSUELS calés sur un budget pub de 60 €/mois (≈20 conversations →
@@ -974,7 +974,7 @@ function openPoste(i){
   document.getElementById('pmTitle').textContent=ag.name;
   document.getElementById('pmRole').textContent=ag.role;
   document.getElementById('pmBody').innerHTML=posteContent(i);
-  document.getElementById('pmLink').href=AGENT_LINKS[i]||'#';
+  { const L=AGENT_LINKS[i]||'#', pl=document.getElementById('pmLink'); pl.href=L; if(/^https?:/.test(L)){pl.target='_blank';pl.rel='noopener';}else{pl.removeAttribute('target');pl.removeAttribute('rel');} }
   document.getElementById('posteModal').classList.add('open');
   if(i===1) enrichEnquetes(); // poste Malik ouvert → lance/complète les enquêtes vols
 }
