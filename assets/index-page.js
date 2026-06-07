@@ -1773,38 +1773,77 @@ function toggleEscaleVol3() {
     var wa = document.getElementById('hero-wa-link');
     if (wa && demo) demo.href = wa.href; // le clic ouvre WhatsApp (vrai message pré-rempli)
 
-    var PASS = '<span class="wa-pass"><span class="wa-pass-ic">🎫</span><span class="wa-pass-txt">Carte d\'embarquement</span><span class="wa-pass-bars"></span></span>';
-    var STEPS = [
-      { who: 'client', delay: 400,  hold: 1100, html: 'AF718 du 15/01, retardé 5 h à l\'arrivée 😤' },
-      { who: 'robin',  typing: 1300, hold: 1200, html: '👋 Envoyez une <b>photo de votre carte d\'embarquement</b> — je lis le vol tout seul 📸' },
-      { who: 'client', delay: 900,  hold: 1000, html: PASS },
-      { who: 'robin',  delay: 450,  hold: 1700, cls: 'wa-scan', html: '🔎 Lecture de la carte…' },
-      { who: 'robin',  typing: 1200, hold: 2800, cls: 'wa-msg--verdict', html: '✈️ <b>AF718 · Dakar → Paris</b><br>⏱️ Retard 5 h 12 à l\'arrivée<br>✅ Éligible — <span class="wa-verdict-amt">jusqu\'à 600 €</span> / passager' },
-      { who: 'client', delay: 600,  hold: 1100, html: 'C\'est combien, vous ? 🤔' },
-      { who: 'robin',  typing: 1100, hold: 2700, html: '<b>25 % au succès</b>, c\'est tout. Si on ne récupère rien, vous payez <b>0 €</b> — aucune avance 🤝 <span class="wa-aside">(d\'autres prennent 35 à 50 %)</span>' },
-      { who: 'robin',  typing: 1100, hold: 2600, html: '🌍 Spécialistes <b>Europe–Afrique</b> : on connaît Dakar, Abidjan, Bamako… et on vous répond en <b>wolof, bambara, lingala…</b>' },
-      { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 <b>Envoyez-moi juste votre n° de vol</b> — je m\'occupe du reste 💪' }
-    ];
+    // Langue courante (i18n.js expose window.I18N.getLang() + l'event 'robin-locale-change').
+    function lang() { try { return (window.I18N && window.I18N.getLang() === 'en') ? 'en' : 'fr'; } catch (e) { return 'fr'; } }
+
+    var PASS = {
+      fr: '<span class="wa-pass"><span class="wa-pass-ic">🎫</span><span class="wa-pass-txt">Carte d\'embarquement</span><span class="wa-pass-bars"></span></span>',
+      en: '<span class="wa-pass"><span class="wa-pass-ic">🎫</span><span class="wa-pass-txt">Boarding pass</span><span class="wa-pass-bars"></span></span>'
+    };
+
+    // La cliente porte un prénom africain (reco sous-agent CQ) : Aminata (FR) / Ama (EN, diaspora anglophone).
+    var STEPS_BY_LANG = {
+      fr: function () { return [
+        { who: 'client', delay: 400,  hold: 1100, sender: 'Aminata', html: 'AF718 du 15/01, retardé 5 h à l\'arrivée 😤' },
+        { who: 'robin',  typing: 1300, hold: 1200, html: '👋 Envoyez une <b>photo de votre carte d\'embarquement</b> — je lis le vol tout seul 📸' },
+        { who: 'client', delay: 900,  hold: 1000, html: PASS.fr },
+        { who: 'robin',  delay: 450,  hold: 1700, cls: 'wa-scan', html: '🔎 Lecture de la carte…' },
+        { who: 'robin',  typing: 1200, hold: 2800, cls: 'wa-msg--verdict', html: '✈️ <b>AF718 · Dakar → Paris</b><br>⏱️ Retard 5 h 12 à l\'arrivée<br>✅ Éligible — <span class="wa-verdict-amt">jusqu\'à 600 €</span> / passager' },
+        { who: 'client', delay: 600,  hold: 1100, html: 'C\'est combien, vous ? 🤔' },
+        { who: 'robin',  typing: 1100, hold: 2700, html: '<b>25 % au succès</b>, c\'est tout. Si on ne récupère rien, vous payez <b>0 €</b> — aucune avance 🤝 <span class="wa-aside">(d\'autres prennent 35 à 50 %)</span>' },
+        { who: 'robin',  typing: 1100, hold: 2600, html: '🌍 Spécialistes <b>Europe–Afrique</b> : on connaît Dakar, Abidjan, Bamako… et on vous répond en <b>wolof, bambara, lingala…</b>' },
+        { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 <b>Envoyez-moi juste votre n° de vol</b> — je m\'occupe du reste 💪' }
+      ]; },
+      en: function () { return [
+        { who: 'client', delay: 400,  hold: 1100, sender: 'Ama', html: 'BA0078 on 15/01, landed 5 h late 😤' },
+        { who: 'robin',  typing: 1300, hold: 1200, html: '👋 Just send a <b>photo of your boarding pass</b> — I\'ll read the flight myself 📸' },
+        { who: 'client', delay: 900,  hold: 1000, html: PASS.en },
+        { who: 'robin',  delay: 450,  hold: 1700, cls: 'wa-scan', html: '🔎 Reading your boarding pass…' },
+        { who: 'robin',  typing: 1200, hold: 2800, cls: 'wa-msg--verdict', html: '✈️ <b>BA0078 · Accra → London</b><br>⏱️ 5 h 12 late on arrival<br>✅ Eligible — <span class="wa-verdict-amt">up to €600</span> / passenger' },
+        { who: 'client', delay: 600,  hold: 1100, html: 'And what\'s your cut? 🤔' },
+        { who: 'robin',  typing: 1100, hold: 2700, html: '<b>25% on success</b>, that\'s it. If we recover nothing, you pay <b>€0</b> — no upfront fee 🤝 <span class="wa-aside">(others charge 35–50%)</span>' },
+        { who: 'robin',  typing: 1100, hold: 2600, html: '🌍 <b>Europe–Africa</b> specialists: we know Accra, Lagos, Abidjan… and we reply in <b>Twi, Yoruba, Pidgin…</b>' },
+        { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 <b>Just send me your flight number</b> — I\'ll take care of the rest 💪' }
+      ]; }
+    };
+
+    // Pied visible + textes a11y (aria-label, sr-only) traduits aussi sur le site EN.
+    var META = {
+      fr: {
+        foot: 'On parle votre langue · réponse en quelques minutes →',
+        aria: 'Aperçu d\'une conversation WhatsApp avec Robin — cliquer pour ouvrir',
+        sr: 'Exemple de conversation WhatsApp : Aminata envoie son numéro de vol puis une photo de sa carte d\'embarquement ; Robin lit le vol, confirme l\'éligibilité et l\'indemnité — jusqu\'à 600 € par passager. Robin précise sa commission de 25 % au succès seulement (0 € si on ne gagne pas, aucune avance), son expertise des vols Europe–Afrique (Dakar, Abidjan, Bamako) et qu\'il répond en wolof, bambara, lingala ou français.'
+      },
+      en: {
+        foot: 'We speak your language · reply in minutes →',
+        aria: 'Preview of a WhatsApp conversation with Robin — tap to open',
+        sr: 'Example WhatsApp conversation: Ama sends her flight number then a photo of her boarding pass; Robin reads the flight, confirms eligibility and the amount — up to €600 per passenger. Robin charges 25% on success only (€0 if we don\'t win, no upfront fee), specialises in Europe–Africa flights (Accra, Lagos, Abidjan) and replies in Twi, Yoruba, Pidgin or English.'
+      }
+    };
+
+    function applyMeta(L) {
+      var m = META[L] || META.fr;
+      var foot = document.querySelector('.wa-chatdemo-foot');
+      if (foot) foot.textContent = m.foot;
+      if (demo) {
+        demo.setAttribute('aria-label', m.aria);
+        var sr = demo.querySelector('.sr-only');
+        if (sr) sr.textContent = m.sr;
+      }
+    }
 
     function addMsg(s) {
       var b = document.createElement('span');
       b.className = 'wa-msg wa-msg--' + s.who + (s.cls ? ' ' + s.cls : '');
-      b.innerHTML = s.html;
+      b.innerHTML = (s.sender ? '<span class="wa-sender">' + s.sender + '</span>' : '') + s.html;
       chat.appendChild(b);
       return b;
     }
 
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      chat.innerHTML = '';
-      STEPS.forEach(function (s) {
-        if (s.cls === 'wa-scan') return;
-        var b = addMsg(s); b.style.animation = 'none'; b.style.opacity = '1'; b.style.transform = 'none';
-      });
-      return;
-    }
-
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var timers = [];
     function clearTimers() { timers.forEach(clearTimeout); timers = []; }
+    var currentSteps = [];
     function run(steps, onDone) {
       clearTimers(); chat.innerHTML = '';
       var i = 0;
@@ -1831,17 +1870,41 @@ function toggleEscaleVol3() {
     function loop() {
       chat.style.transition = 'opacity .35s ease';
       chat.style.opacity = '0';
-      timers.push(setTimeout(function () { chat.style.opacity = '1'; run(STEPS, loop); }, 360));
+      timers.push(setTimeout(function () { chat.style.opacity = '1'; run(currentSteps, loop); }, 360));
     }
 
+    // (Re)joue la conversation dans la langue courante (gère aussi prefers-reduced-motion).
+    function render() {
+      clearTimers();
+      currentSteps = STEPS_BY_LANG[lang()]();
+      chat.style.opacity = '1';
+      if (reduce) {
+        chat.innerHTML = '';
+        currentSteps.forEach(function (s) {
+          if (s.cls === 'wa-scan') return;
+          var b = addMsg(s); b.style.animation = 'none'; b.style.opacity = '1'; b.style.transform = 'none';
+        });
+        return;
+      }
+      run(currentSteps, loop);
+    }
+
+    applyMeta(lang()); // pied + a11y dans la bonne langue dès le chargement
+
     var started = false;
-    function start() { if (started) return; started = true; run(STEPS, loop); }
+    function start() { if (started) return; started = true; render(); }
     if ('IntersectionObserver' in window) {
       var io = new IntersectionObserver(function (es) {
         for (var k = 0; k < es.length; k++) { if (es[k].isIntersecting) { start(); io.disconnect(); break; } }
       }, { threshold: 0.2 });
       io.observe(chat);
     } else { start(); }
+
+    // Bascule de langue EN/FR (toggle sans rechargement) : re-traduit le pied + rejoue la scène.
+    document.addEventListener('robin-locale-change', function () {
+      applyMeta(lang());
+      if (started) render();
+    });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

@@ -1004,6 +1004,8 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 .wa-msg--client { align-self: flex-end; background: #d9fdd3; color: #0b2a17; border-radius: 12px 12px 3px 12px; }
 .wa-msg--robin { align-self: flex-start; background: #fff; color: #111b21; border: 1px solid #eef0f3; border-radius: 12px 12px 12px 3px; }
 .wa-msg b { font-weight: 800; }
+/* Nom de l'expéditeur (prénom africain de la cliente) sur la 1re bulle client uniquement */
+.wa-sender { display: block; font-size: 11px; font-weight: 800; color: #0b8043; margin: 0 0 2px; line-height: 1.1; }
 @keyframes waMsgIn { to { opacity: 1; transform: none; } }
 .wa-typing { display: inline-flex; gap: 3px; align-items: center; padding: 2px 0; }
 .wa-typing i { width: 6px; height: 6px; border-radius: 50%; background: #9aa3ad; display: inline-block; animation: waDot 1s infinite; }
