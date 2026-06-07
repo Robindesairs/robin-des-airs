@@ -11,7 +11,6 @@ const AFRICA_EVENING_HUBS = [
   'ABJ',
   'ACC',
   'LOS',
-  'CMN',
   'BKO',
   'BJL',
   'ADD',
