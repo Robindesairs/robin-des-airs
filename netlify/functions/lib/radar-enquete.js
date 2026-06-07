@@ -164,37 +164,54 @@ function localWindow(localStr, hBefore, hAfter) {
   return { from: fmt(wall - hBefore * 3600000), to: fmt(wall + hAfter * 3600000) };
 }
 
-async function adbAirportDepartures(iata, from, to, key) {
+function localHHMM(timeObj) {
+  const s = timeObj && timeObj.local;
+  const m = s ? /[T ](\d{2}:\d{2})/.exec(String(s)) : null;
+  return m ? m[1] : (hhmm(timeObj) || '');
+}
+
+async function adbAirportFlights(iata, from, to, key, direction) {
+  const dir = direction === 'Arrival' ? 'Arrival' : 'Departure';
   const url = `https://${ADB_HOST}/flights/airports/iata/${encodeURIComponent(iata)}/${from}/${to}`
-    + `?direction=Departure&withCancelled=true&withCodeshared=false&withLocation=false`;
+    + `?direction=${dir}&withCancelled=true&withCodeshared=false&withLocation=false`;
   try {
     const r = await fetch(url, { headers: { 'x-rapidapi-host': ADB_HOST, 'x-rapidapi-key': key, Accept: 'application/json' } });
     if (!r.ok) return [];
     const j = await r.json().catch(() => null);
-    return Array.isArray(j && j.departures) ? j.departures : (Array.isArray(j) ? j : []);
+    const k = dir === 'Arrival' ? 'arrivals' : 'departures';
+    return Array.isArray(j && j[k]) ? j[k] : (Array.isArray(j) ? j : []);
   } catch (_) { return []; }
 }
 
-async function sameWindowComparator(depIata, schedDepLocal, ourVol, key) {
-  if (!depIata || !key) return null;
-  const win = localWindow(schedDepLocal, 2, 2);
+// direction 'Departure' = vols partis du même aéroport ; 'Arrival' = vols arrivés au même aéroport.
+// Documente chaque vol (n°, heure locale programmée, état) → mini-déroulant côté bureau.
+async function windowComparator(iata, schedLocalStr, ourVol, key, direction) {
+  if (!iata || !key) return null;
+  const win = localWindow(schedLocalStr, 2, 2);
   if (!win) return null;
-  const deps = await adbAirportDepartures(depIata, win.from, win.to, key);
-  if (!deps.length) return null;
+  const list = await adbAirportFlights(iata, win.from, win.to, key, direction);
+  if (!list.length) return null;
   const our = (ourVol || '').toUpperCase();
-  let partis = 0, retardes = 0, annules = 0;
-  for (const d of deps) {
-    const num = String(d.number || d.callSign || '').replace(/\s/g, '').toUpperCase();
+  const isArr = direction === 'Arrival';
+  const vols = [];
+  let aLHeure = 0, retardes = 0, annules = 0;
+  for (const f of list) {
+    const num = String(f.number || f.callSign || '').replace(/\s/g, '').toUpperCase();
     if (our && num === our) continue; // exclure notre propre vol
-    const st = String(d.status || '').toLowerCase();
-    if (/cancel|annul/.test(st)) { annules++; continue; }
-    const dl = segDelay(d.departure);
-    if (dl != null && dl >= 60) retardes++;
-    else partis++; // parti à l'heure / retard < 1 h / inconnu non annulé
+    const seg = isArr ? f.arrival : f.departure;
+    const st = String(f.status || '').toLowerCase();
+    let etat;
+    if (/cancel|annul/.test(st)) { annules += 1; etat = 'annulé'; }
+    else {
+      const dl = segDelay(seg);
+      if (dl != null && dl >= 60) { retardes += 1; etat = '+' + dl + ' min'; }
+      else { aLHeure += 1; etat = "à l'heure"; }
+    }
+    if (vols.length < 30) vols.push({ num: num || '?', h: localHHMM(seg && seg.scheduledTime), etat });
   }
-  const total = partis + retardes + annules;
+  const total = aLHeure + retardes + annules;
   if (!total) return null;
-  return { fenetre: `${win.from.slice(11)}–${win.to.slice(11)}`, total, partisNormalement: partis, retardes, annules };
+  return { fenetre: `${win.from.slice(11)}–${win.to.slice(11)}`, total, aLHeure, retardes, annules, vols };
 }
 
 // ─── Météo METAR (par ICAO, NOAA) ────────────────────────────────────────────
@@ -345,7 +362,7 @@ async function runEnquete(event, input, opts = {}) {
   let arr = (input.arr || '').toUpperCase();
   let depIcao = '', arrIcao = '', reg = '', statut = input.cancelled ? 'Annulé' : '';
   let retardMin = input.delayMin != null ? input.delayMin : null;
-  let schedDepMs = null, schedDepLocal = '', aircraftModel = '';
+  let schedDepMs = null, schedDepLocal = '', schedArrLocal = '', aircraftModel = '';
   if (key) {
     const rows = await adbFetch(`/flights/number/${encodeURIComponent(vol)}/${date}/${date}`, key);
     const row = pickRow(rows, dep, arr);
@@ -360,6 +377,7 @@ async function runEnquete(event, input, opts = {}) {
       statut = row.status || statut;
       schedDepMs = tms(row.departure?.scheduledTime);
       schedDepLocal = row.departure?.scheduledTime?.local || '';
+      schedArrLocal = row.arrival?.scheduledTime?.local || '';
       const d = segDelay(row.arrival);
       if (d != null) retardMin = d;
     } else {
@@ -381,10 +399,15 @@ async function runEnquete(event, input, opts = {}) {
   }
 
   // 3b) Comparateur « autres vols même fenêtre » — contre-preuve météo/ATC « extraordinaire »
-  let volsMemeFenetre = null;
+  //     Départs du même aéroport (origine) ET arrivées au même aéroport (destination).
+  let volsMemeFenetre = null, volsMemeFenetreArr = null;
   if (dep && schedDepLocal && key) {
-    volsMemeFenetre = await sameWindowComparator(dep, schedDepLocal, vol, key);
+    volsMemeFenetre = await windowComparator(dep, schedDepLocal, vol, key, 'Departure');
     if (volsMemeFenetre) sources.push('aerodatabox-departures');
+  }
+  if (arr && schedArrLocal && key) {
+    volsMemeFenetreArr = await windowComparator(arr, schedArrLocal, vol, key, 'Arrival');
+    if (volsMemeFenetreArr) sources.push('aerodatabox-arrivals');
   }
 
   // 4) Cause via Claude (web_search)
@@ -402,8 +425,12 @@ async function runEnquete(event, input, opts = {}) {
         ? `Rotation précédente : ${rotation.flight || 'vol amont'} ${rotation.from}→${rotation.to}, retard arrivée ${rotation.arrivalDelayMin != null ? rotation.arrivalDelayMin + ' min' : 'inconnu'} (l'appareil ${rotation.arrivalDelayMin > 30 ? 'EST arrivé en retard' : 'est arrivé à l\'heure'} avant ce vol)`
         : "Rotation précédente : non disponible",
       volsMemeFenetre
-        ? `Autres vols du même aéroport (fenêtre ±2 h, ${volsMemeFenetre.fenetre}) : ${volsMemeFenetre.total} départs — ${volsMemeFenetre.partisNormalement} partis ~à l'heure, ${volsMemeFenetre.retardes} retardés, ${volsMemeFenetre.annules} annulés. (Beaucoup de départs normaux ⇒ une cause météo/ATC « extraordinaire » est peu plausible / n'explique pas tout le retard.)`
-        : 'Autres vols même fenêtre : non disponible',
+        ? `Autres DÉPARTS de ${dep} (fenêtre ±2 h, ${volsMemeFenetre.fenetre}) : ${volsMemeFenetre.total} vols — ${volsMemeFenetre.aLHeure} ~à l'heure, ${volsMemeFenetre.retardes} retardés, ${volsMemeFenetre.annules} annulés.`
+        : 'Autres départs même fenêtre : non disponible',
+      volsMemeFenetreArr
+        ? `Autres ARRIVÉES à ${arr} (fenêtre ±2 h, ${volsMemeFenetreArr.fenetre}) : ${volsMemeFenetreArr.total} vols — ${volsMemeFenetreArr.aLHeure} ~à l'heure, ${volsMemeFenetreArr.retardes} retardés, ${volsMemeFenetreArr.annules} annulés.`
+        : null,
+      "Si beaucoup d'autres vols sont partis/arrivés normalement dans la même fenêtre, une cause météo/ATC « extraordinaire » est peu plausible ou n'explique pas tout le retard.",
       meteo.length
         ? `METAR : ${meteo.map((m) => `${m.id} ${m.raw}`).join(' || ')}`
         : 'METAR : non disponible',
@@ -447,6 +474,7 @@ async function runEnquete(event, input, opts = {}) {
     meteo,
     rotation,
     volsMemeFenetre,
+    volsMemeFenetreArr,
     art9,
     cause: analysis ? analysis.cause : '',
     extraordinaire: analysis ? analysis.extraordinaire : null,

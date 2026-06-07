@@ -210,6 +210,14 @@ body { font-family: 'DM Sans', sans-serif; background: var(--sky); color: var(--
 .enq-strat{margin-top:8px;padding:8px 10px;border-left:3px solid var(--gold);background:rgba(200,168,90,.08);border-radius:6px}
 .enq-strat-h{color:var(--gold);font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
 .enq-strat .enq-warn{margin-top:4px;font-style:italic}
+.enq-deroul{display:inline}
+.enq-deroul summary{cursor:pointer;display:inline;list-style:none}
+.enq-deroul summary::-webkit-details-marker{display:none}
+.enq-deroul summary::before{content:'▸';color:var(--gold);margin-right:4px;font-size:.7rem}
+.enq-deroul[open] summary::before{content:'▾'}
+.enq-list{margin:5px 0 2px 12px;padding-left:8px;border-left:1px solid var(--sky-border);display:grid;gap:2px}
+.enq-li{font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--white-40)}
+.enq-li .enq-fn{color:var(--white-70)}
 .pm-empty{color:var(--white-40);padding:10px 0;font-style:italic}
 .pm-foot{padding:14px 18px;border-top:1px solid var(--sky-border);display:flex;gap:10px;flex-wrap:wrap}
 .pm-link{display:inline-flex;align-items:center;gap:6px;background:var(--gold-pale);border:1px solid rgba(200,168,90,.4);color:var(--gold-light);padding:9px 16px;border-radius:9px;text-decoration:none;font-size:.84rem;font-weight:600}
@@ -909,6 +917,15 @@ function fhours(f){
   return bits.length ? bits.join(' · ')+' <span class="z">UTC</span>' : '';
 }
 function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+// Comparateur « même fenêtre » → ligne + mini-déroulant documentant chaque vol (n°, heure, état).
+function fenetreHtml(v, kLabel, sumPrefix){
+  if(!v) return '';
+  const fort=(v.aLHeure||0)>=3;
+  const head=`${sumPrefix} <b class="enq-ok">${v.aLHeure}</b> ~à l'heure${v.retardes?` · ${v.retardes} retardés`:''}${v.annules?` · ${v.annules} annulés`:''} <span class="muted">(${v.total} vols, ${esc(v.fenetre)})</span>${fort?` <span class="muted">→ « extraordinaire » peu plausible</span>`:''}`;
+  const li=(v.vols||[]).map(x=>{ const cls=x.etat==="à l'heure"?'enq-ok':(x.etat==='annulé'?'enq-bad':''); return `<div class="enq-li"><b class="enq-fn">${esc(x.num)}</b> <span class="muted">${esc(x.h||'')}</span> <span class="${cls}">${esc(x.etat)}</span></div>`; }).join('');
+  return `<div><span class="k">${esc(kLabel)}</span> <details class="enq-deroul"><summary>${head}</summary><div class="enq-list">${li||'<span class="muted">détail indisponible</span>'}</div></details></div>`;
+}
+
 // Rendu de l'enquête malick : cause + circonstance extraordinaire + rotation appareil + météo + sources.
 function enqueteHtml(f){
   const e=f.enquete;
@@ -926,7 +943,8 @@ function enqueteHtml(f){
   if(ex) rows.push(`<div><span class="enq-badge ${exCls}">${exLabel}</span>${e.extraordinaireRaison?` <span class="muted">${esc(e.extraordinaireRaison)}</span>`:''}</div>`);
   if(e.rotation){ const rd=e.rotation.arrivalDelayMin; rows.push(`<div><span class="k">Rotation</span> ${esc((e.rotation.flight||'')+' '+(e.rotation.from||'')+'→'+(e.rotation.to||''))}${rd!=null?(rd>30?` · arrivé <b class="enq-bad">+${rd} min</b> → retard en cascade probable`:` · arrivé à l'heure`):''}</div>`); }
   else if(e.rotationAnalyse) rows.push(`<div><span class="k">Rotation</span> ${esc(e.rotationAnalyse)}</div>`);
-  if(e.volsMemeFenetre){ const v=e.volsMemeFenetre; const fort=v.partisNormalement>=3; rows.push(`<div><span class="k">Même fenêtre</span> <b class="enq-ok">${v.partisNormalement}</b> vols partis ~à l'heure${v.retardes?` · ${v.retardes} retardés`:''}${v.annules?` · ${v.annules} annulés`:''} <span class="muted">(${v.total} départs, ${esc(v.fenetre)})</span>${fort?` <span class="muted">→ météo/ATC « extraordinaire » peu plausible</span>`:''}</div>`); }
+  { const fd=fenetreHtml(e.volsMemeFenetre,'Fenêtre dép','Départ'+(e.dep?' '+e.dep:'')+' :'); if(fd) rows.push(fd);
+    const fa=fenetreHtml(e.volsMemeFenetreArr,'Fenêtre arr','Arrivée'+(e.arr?' '+e.arr:'')+' :'); if(fa) rows.push(fa); }
   if(e.meteo&&e.meteo.length) rows.push(`<div><span class="k">Météo</span> ${e.meteo.map(m=>`${esc(m.id)} <span class="muted">${esc(m.raw)}</span>`).join('<br>')}</div>`);
   if(e.art9&&e.art9.note) rows.push(`<div><span class="k">Art. 9</span> 🏨 ${esc(e.art9.note)}</div>`);
   if(e.hotelsProbables && !['-','—',''].includes(String(e.hotelsProbables).trim())) rows.push(`<div><span class="k">Hôtels</span> ${esc(e.hotelsProbables)} <span class="muted">(indicatif, pas l'hôtel exact)</span></div>`);
