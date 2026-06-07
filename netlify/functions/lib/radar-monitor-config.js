@@ -24,6 +24,14 @@ const AFRICA_EVENING_HUBS = [
   'NDJ',
   'ALG',
   'TUN',
+  // Afrique centrale/ouest francophone — diaspora noire → Paris (vols Air France/Brussels)
+  'DLA', // Douala
+  'NSI', // Yaoundé
+  'LBV', // Libreville
+  'BZV', // Brazzaville
+  'PNR', // Pointe-Noire
+  'NIM', // Niamey
+  'NKC', // Nouakchott
 ];
 
 /**
