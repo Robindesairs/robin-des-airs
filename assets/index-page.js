@@ -1798,7 +1798,7 @@ function toggleEscaleVol3() {
         { who: 'client', delay: 400,  hold: 1100, sender: 'Ama', html: 'BA0078 on 15/01, landed 5 h late 😤' },
         { who: 'robin',  typing: 1300, hold: 1200, html: '👋 Just send a <b>photo of your boarding pass</b> — I\'ll read the flight myself 📸' },
         { who: 'client', delay: 900,  hold: 1000, html: PASS.en },
-        { who: 'robin',  delay: 450,  hold: 1700, cls: 'wa-scan', html: '🔎 Reading your boarding pass…' },
+        { who: 'robin',  delay: 450,  hold: 1700, cls: 'wa-scan', html: '🔎 Reading the pass…' },
         { who: 'robin',  typing: 1200, hold: 2800, cls: 'wa-msg--verdict', html: '✈️ <b>BA0078 · Accra → London</b><br>⏱️ 5 h 12 late on arrival<br>✅ Eligible — <span class="wa-verdict-amt">up to €600</span> / passenger' },
         { who: 'client', delay: 600,  hold: 1100, html: 'And what\'s your cut? 🤔' },
         { who: 'robin',  typing: 1100, hold: 2700, html: '<b>25% on success</b>, that\'s it. If we recover nothing, you pay <b>€0</b> — no upfront fee 🤝 <span class="wa-aside">(others charge 35–50%)</span>' },

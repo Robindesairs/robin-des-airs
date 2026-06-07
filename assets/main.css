@@ -1016,7 +1016,7 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 .wa-pass-ic { font-size: 18px; flex: 0 0 auto; }
 .wa-pass-txt { font-size: 11px; color: #7a5a1e; font-weight: 700; line-height: 1.25; }
 .wa-pass-bars { height: 16px; flex: 1; min-width: 40px; background: repeating-linear-gradient(90deg,#3a3a3a 0 2px,transparent 2px 4px); opacity: .5; border-radius: 2px; }
-.wa-scan { position: relative; overflow: hidden; }
+.wa-scan { position: relative; overflow: hidden; white-space: nowrap; max-width: 100%; }
 .wa-scan::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg,transparent,rgba(0,200,122,.28),transparent); transform: translateX(-100%); animation: waScan 1.1s linear infinite; }
 @keyframes waScan { to { transform: translateX(100%); } }
 .wa-msg--verdict { background: #eafff3; border-color: #9ee9c0; }
