@@ -786,7 +786,7 @@ const AGENT_LINKS_PHOTO = ["aicha","malik","robin","lefevre","sofia","karim","le
 // ~6 dossiers ouverts → ~3-4 gagnés → ~650 € CA net). % réel quand mesurable, sinon 0.
 const OBJECTIVES = [
   { t:"🎯 +6 dossiers · ~650 € CA net / mois (pub 60 €)", pct:0 },
-  { t:"🎯 Capter tous les vols éligibles (objectif 40 / mois)", pct:0 },
+  { t:"🎯 2,7 vols éligibles / jour (≈ 81 / mois)", pct:0 },
   { t:"🎯 20 conversations → 6 dossiers / mois", pct:0 },
   { t:"🎯 Taux ≥ 60 % · mise en demeure < 5 j", pct: Math.min(100, Math.round(S.gagnes/Math.max(S.total,1)*100)) },
   { t:"🎯 55 agences actives (≈ +3 / mois)", pct: Math.min(100, Math.round(S.agences/55*100)) },
@@ -965,7 +965,7 @@ function posteContent(i){
   const flights = REAL.radar || [];
   switch(i){
     case 0: return `<h4>Scorecard entreprise (réel · CRM)</h4>${pmStat('Dossiers actifs',fmt(S.dossiers))}${pmStat('€ en récupération',fmt(S.eur)+' €')}${pmStat('Taux de réussite',taux+'%')}${pmStat('Agences actives',S.agences)}${pmStat('Leads WhatsApp',S.waLeads)}`;
-    case 1: return `<h4>Vols détectés — radar CE261 (réel)</h4>`+(flights.length?flights.map(pmFlight).join(''):`<div class="pm-empty">En attente de vols réels (le scan tourne ~12×/jour).</div>`)+`<h4>Objectif</h4>${pmStat('Vols éligibles / mois','40')}`;
+    case 1: return `<h4>Vols détectés — radar CE261 (réel)</h4>`+(flights.length?flights.map(pmFlight).join(''):`<div class="pm-empty">En attente de vols réels (le scan tourne ~12×/jour).</div>`)+`<h4>Objectif</h4>${pmStat('Vols éligibles','2,7 / jour (≈ 81 / mois)')}`;
     case 2: return `<h4>Bot WhatsApp (réel)</h4>${pmStat('Statut',(REAL.whatsapp&&REAL.whatsapp.whatsapp==='ok')?'🟢 en ligne':'—')}${pmStat('Leads WhatsApp (CRM)',fmt(S.waLeads))}<div class="pm-empty" style="font-style:normal">Conversations réelles dans le panneau WhatsApp (numéros masqués).</div>`;
     case 3: return `<h4>Dossiers juridiques (réel)</h4>${pmStat('Dossiers gagnés',fmt(S.gagnes))}${pmStat('Dossiers engagés',fmt(Math.max(S.total-S.gagnes,0)))}${pmStat('Taux de réussite',taux+'%')}`;
     case 4: return `<h4>Agences partenaires (réel)</h4>${pmStat('Agences actives',S.agences)}${pmStat('Prospects à contacter',S.agencesNew)}${pmStat('Objectif','55 actives')}`;
@@ -1414,8 +1414,8 @@ async function loadRadar(){
     document.getElementById('radarSrc').textContent='RÉEL';
     renderRadar();
     refreshAgentKpis(); // compteur « vols détectés » de Malik = réel
-    // objectif Malik = vrais vols éligibles détectés ce mois / 40
-    if(OBJECTIVES[1]){ const p=Math.min(100, Math.round((detectedTotal/40)*100)); OBJECTIVES[1].pct=p; const ob=document.getElementById('obj-1'); if(ob)ob.style.width=p+'%'; const op=document.getElementById('objpct-1'); if(op)op.textContent=p+'%'; }
+    // objectif Malik = vrais vols éligibles détectés ce mois / 81 (≈ 2,7 / jour)
+    if(OBJECTIVES[1]){ const p=Math.min(100, Math.round((detectedTotal/81)*100)); OBJECTIVES[1].pct=p; const ob=document.getElementById('obj-1'); if(ob)ob.style.width=p+'%'; const op=document.getElementById('objpct-1'); if(op)op.textContent=p+'%'; }
     // fil d'activité : vrais vols détectés
     const feedRoot=document.getElementById('feed');
     if(feedRoot && feedRoot.children.length===1 && !feedRoot.querySelector('.feed-item')) feedRoot.innerHTML='';
