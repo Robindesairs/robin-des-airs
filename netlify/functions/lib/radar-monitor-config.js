@@ -22,8 +22,7 @@ const AFRICA_EVENING_HUBS = [
   'COO',
   'OUA',
   'NDJ',
-  'ALG',
-  'TUN',
+  // Alger/Tunis retirés (Maghreb, hors niche « africain noir »). Casablanca gardé (transit ouest-africain).
   // Afrique centrale/ouest francophone — diaspora noire → Paris (vols Air France/Brussels)
   'DLA', // Douala
   'NSI', // Yaoundé
