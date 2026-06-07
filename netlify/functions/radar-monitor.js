@@ -363,6 +363,37 @@ async function sendDelayAlerts(event, flights, dateYmd) {
   }
 }
 
+/**
+ * Scan « heures chaudes » : départs Afrique → Europe (jour entier) + alertes.
+ * Partagé par le handler (créneau africa-evening) et radar-monitor-hot (cron rapproché).
+ * Fenêtre forcée sur la journée complète (2×12h) → robuste quelle que soit l'heure/DST.
+ */
+async function runAfricaEveningScan(event) {
+  const { dateYmd, hour: parisHour } = getParisParts();
+  const windows = [
+    [`${dateYmd}T00:00`, `${dateYmd}T11:59`],
+    [`${dateYmd}T12:00`, `${dateYmd}T23:59`],
+  ];
+  const monitorHubs = getMonitorHubs();
+  const entry = await runSlotScan({
+    slot: 'africa-evening',
+    hubs: monitorHubs,
+    filterFn: filterAfricaEveningDepartures,
+    parisHour,
+    dateYmd,
+    windows,
+  });
+  await appendSlotLog(event, entry);
+  await recordSlotScan(event, entry);
+  try {
+    await mergeFlightsIntoRegistry(event, entry.flights || [], { source: 'radar-monitor-africa-evening' });
+  } catch (e) {
+    console.warn('registry africa-evening:', e.message);
+  }
+  await sendDelayAlerts(event, entry.flights || [], dateYmd);
+  return entry;
+}
+
 exports.handler = async (event) => {
   const rapidKey = process.env.RAPIDAPI_KEY || process.env.AERODATABOX_RAPIDAPI_KEY;
   if (!rapidKey) {
@@ -494,30 +525,9 @@ exports.handler = async (event) => {
     }
 
     if (slot === 'africa-evening') {
-      // Hubs configurables via MONITOR_HUBS (ex: "DSS,ABJ" au démarrage).
-      const monitorHubs = getMonitorHubs();
-
-      // Scan jour entier : windows déjà élargies par slotTimeWindows pour africa-evening.
-      const entry = await runSlotScan({
-        slot: 'africa-evening',
-        hubs: monitorHubs,
-        filterFn: filterAfricaEveningDepartures,
-        parisHour,
-        dateYmd,
-        windows,
-      });
-      await appendSlotLog(event, entry);
-      await recordSlotScan(event, entry);
-      try {
-        await mergeFlightsIntoRegistry(event, entry.flights || [], { source: 'radar-monitor-africa-evening' });
-      } catch (e) {
-        console.warn('registry africa-evening:', e.message);
-      }
-
-      // ── Alertes WhatsApp (CallMeBot) pour retards ≥ 3h ──────────────────
-      await sendDelayAlerts(event, entry.flights || [], dateYmd);
-      // ─────────────────────────────────────────────────────────────────────
-
+      // Hubs MONITOR_HUBS, scan jour entier + alertes — voir runAfricaEveningScan
+      // (mutualisé avec le cron rapproché radar-monitor-hot).
+      const entry = await runAfricaEveningScan(event);
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json' },
@@ -543,3 +553,6 @@ exports.handler = async (event) => {
     };
   }
 };
+
+// Réutilisé par radar-monitor-hot (cron rapproché heures chaudes).
+exports.runAfricaEveningScan = runAfricaEveningScan;

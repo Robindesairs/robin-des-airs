@@ -39,6 +39,12 @@
 [functions."radar-monitor"]
   schedule = "5 7,16,17,18,19,20,21,22,23,0,1,2 * * *"
 
+# Scan rapproché « heures chaudes » : départs Afrique 18h-02h UTC, à :25 et :45 (le
+# monitor couvre déjà :05) → cadence ~20 min → alertes annulation/retard ≥3h plus fraîches.
+# Coût : ~18 scans/j × 2 hubs (MONITOR_HUBS=DSS,ABJ) ≈ +70 req/j. Dédup d'alertes partagée.
+[functions."radar-monitor-hot"]
+  schedule = "25,45 18,19,20,21,22,23,0,1,2 * * *"
+
 # Rapport matinal WhatsApp 9h15 Paris (= 7h15 UTC en été CEST).
 [functions."morning-report"]
   schedule = "15 7 * * *"
