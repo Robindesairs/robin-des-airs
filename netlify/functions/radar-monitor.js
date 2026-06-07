@@ -368,16 +368,17 @@ async function sendDelayAlerts(event, flights, dateYmd) {
  * Partagé par le handler (créneau africa-evening) et radar-monitor-hot (cron rapproché).
  * Fenêtre forcée sur la journée complète (2×12h) → robuste quelle que soit l'heure/DST.
  */
-async function runAfricaEveningScan(event) {
+async function runAfricaEveningScan(event, opts = {}) {
   const { dateYmd, hour: parisHour } = getParisParts();
   const windows = [
     [`${dateYmd}T00:00`, `${dateYmd}T11:59`],
     [`${dateYmd}T12:00`, `${dateYmd}T23:59`],
   ];
-  const monitorHubs = getMonitorHubs();
+  const hubs = opts.hubs && opts.hubs.length ? opts.hubs : getMonitorHubs();
+  const source = opts.source || 'radar-monitor-africa-evening';
   const entry = await runSlotScan({
     slot: 'africa-evening',
-    hubs: monitorHubs,
+    hubs,
     filterFn: filterAfricaEveningDepartures,
     parisHour,
     dateYmd,
@@ -386,7 +387,7 @@ async function runAfricaEveningScan(event) {
   await appendSlotLog(event, entry);
   await recordSlotScan(event, entry);
   try {
-    await mergeFlightsIntoRegistry(event, entry.flights || [], { source: 'radar-monitor-africa-evening' });
+    await mergeFlightsIntoRegistry(event, entry.flights || [], { source });
   } catch (e) {
     console.warn('registry africa-evening:', e.message);
   }

@@ -41,6 +41,24 @@ function getMonitorHubs() {
   return AFRICA_EVENING_HUBS;
 }
 
+/**
+ * Hubs « secondaires » — surveillés à cadence plus lente (radar-monitor-hot2, ~45 min).
+ * Les hubs prioritaires (MONITOR_HUBS, scannés toutes les ~20 min) sont exclus pour
+ * ne pas les scanner deux fois. Priorité env MONITOR_HUBS_SECONDARY, sinon
+ * AFRICA_EVENING_HUBS moins les prioritaires moins DKR (Dakar-Yoff fermé).
+ */
+function getSecondaryHubs() {
+  const raw = process.env.MONITOR_HUBS_SECONDARY || '';
+  const primary = new Set(getMonitorHubs());
+  if (raw.trim()) {
+    return raw
+      .split(/[\s,;]+/)
+      .map((h) => h.trim().toUpperCase().slice(0, 3))
+      .filter((h) => h.length === 3 && !primary.has(h));
+  }
+  return AFRICA_EVENING_HUBS.filter((h) => !primary.has(h) && h !== 'DKR');
+}
+
 /** Bandeau matin — hubs prioritaires (conso API maîtrisée). */
 const BANNER_HUBS = ['CDG', 'ORY', 'RUN', 'DSS', 'DKR', 'ABJ', 'ACC', 'LOS', 'CMN', 'BJL'];
 
@@ -118,4 +136,5 @@ module.exports = {
   detectSlot,
   isAfricaEveningHour,
   getMonitorHubs,
+  getSecondaryHubs,
 };
