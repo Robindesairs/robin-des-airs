@@ -3694,3 +3694,23 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .step-card { position: relative; }
 
+/* ─────────────────────────────────────────────────────────────────────────
+   Ajustements mobile (≤768px) — demande client :
+   1. retirer la liste des vols retardés (ticker) du bandeau haut
+   2. ne plus couper la tête du père dans la photo du hero
+   3. réduire le blanc entre le hero et la section suivante
+   Placé en fin de fichier pour l'emporter sur le bloc @media (max-width:1080px).
+   ───────────────────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* 1. Liste des vols retardés masquée sur mobile (on garde « On parle votre langue ») */
+  .diaspora-bar-track { display: none; }
+
+  /* 2. Photo hero : cadrage remonté + dézoom → la tête du père n'est plus coupée */
+  .hero-bg-visual img { object-position: 50% 8%; transform: none; }
+
+  /* 3. Moins de blanc juste après le hero (carte simulateur → section « la loi ») */
+  #hero { padding-bottom: 12px; }
+  .hero-wrap { padding-bottom: 8px; }
+  #la-loi { padding-top: 28px; }
+}
+
