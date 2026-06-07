@@ -762,9 +762,9 @@ const AGENTS = [
   { ic:"💬", ac:"var(--blue)", acp:"var(--blue-pale)", name:"Léa Fontaine", role:"Suivi Dossiers · Client",
     kpiL:"dossiers suivis", kpiUnit:"", base:0,
     tasks:()=>[ `Suivi de chaque dossier et de la satisfaction client jusqu'à l'indemnisation` ] },
-  { ic:"📈", ac:"var(--amber)", acp:"var(--amber-pale)", name:"Yanis Roux", role:"Growth · Pub Meta",
+  { ic:"📈", ac:"var(--amber)", acp:"var(--amber-pale)", name:"Yanis Roux", role:"Media Buyer · Pub Meta",
     kpiL:"conv. WhatsApp", kpiUnit:"", base:0,
-    tasks:()=>[ `Campagnes Click-to-WhatsApp (Meta) — acquisition payante` ] },
+    tasks:()=>[ `Pilote toute la pub Meta — ciblage aéroports diaspora, budgets, optimisation & créas (Click-to-WhatsApp)` ] },
   { ic:"💼", ac:"var(--purple)", acp:"var(--purple-pale)", name:"Nadia Chérif", role:"Contrôle de gestion · Rentabilité",
     kpiL:"seuil / mois", kpiUnit:"", base:0, fixedKpi:()=>RENTA.seuil,
     tasks:()=>[ `Seuil de rentabilité : <span class="hl">${RENTA.seuil} dossiers gagnés/mois</span> · coûts ${fmt(RENTA.total)} €` ] },
@@ -961,7 +961,7 @@ function posteContent(i){
     case 4: return `<h4>Agences partenaires (réel)</h4>${pmStat('Agences actives',S.agences)}${pmStat('Prospects à contacter',S.agencesNew)}${pmStat('Objectif','55 actives')}`;
     case 5: return `<h4>Finances (réel)</h4>${pmStat('€ en récupération',fmt(S.eur)+' €')}${pmStat('Dossiers payés',fmt(S.gagnes))}${pmStat('Coûts mensuels',fmt(RENTA.total)+' €')}`;
     case 6: return `<h4>Suivi dossiers (réel)</h4>${pmStat('Dossiers suivis',fmt(S.dossiers))}${pmStat('Gagnés',fmt(S.gagnes))}`;
-    case 7: if(REAL.meta){const d=REAL.meta;return `<h4>Pub Meta — 7 jours (réel)</h4>${pmStat('Dépense',fmt(d.spend)+' €')}${pmStat('Impressions',fmt(d.impressions))}${pmStat('Reach',fmt(d.reach))}${pmStat('Clics',fmt(d.clicks))}${pmStat('Conversations WhatsApp',fmt(d.waConvos))}${pmStat('CPM',d.cpm+' €')}`;} return `<div class="pm-empty">Stats Meta indisponibles (token à renouveler).</div>`;
+    case 7: { const scope='<h4>Périmètre — il fait tout</h4><div class="pm-empty" style="font-style:normal">Achat média Meta de bout en bout : ciblage aéroports diaspora, budgets &amp; enchères, créas + A/B, optimisation CPA, lancements (Dakar, Abidjan, Banjul…).</div>'; if(REAL.meta){const d=REAL.meta;return `<h4>Pub Meta — 7 jours (réel)</h4>${pmStat('Dépense',fmt(d.spend)+' €')}${pmStat('Impressions',fmt(d.impressions))}${pmStat('Reach',fmt(d.reach))}${pmStat('Clics',fmt(d.clicks))}${pmStat('Conversations WhatsApp',fmt(d.waConvos))}${pmStat('CPM',d.cpm+' €')}`+scope;} return `<div class="pm-empty">Stats Meta indisponibles (token à renouveler).</div>`+scope; }
     case 8: return `<h4>Rentabilité (réel · factures Drive)</h4>${pmStat('Coûts mensuels',fmt(RENTA.total)+' €')}${pmStat('Marge / dossier gagné',COSTS.margeParDossier+' €')}${pmStat('Seuil de rentabilité',RENTA.seuil+' dossiers/mois')}<h4>Détail des coûts</h4>${COSTS.abonnements.map(a=>pmStat(a.n,a.m+' €')).join('')}${pmStat('Pub Meta',COSTS.pub+' €')}${pmStat('Salaires',COSTS.salaires+' €')}`;
     case 9: { const R=SOCIAL.real; return `<h4>Réseaux sociaux — objectifs (juin · lancement)</h4>${SOCIAL.targets.map(m=>{const v=(R&&R[m.field]!=null)?R[m.field]:null; return pmStat(m.ic+' '+m.k,(v!=null?fmt(v):'—')+' / '+fmt(m.tgt));}).join('')}<div class="pm-empty" style="font-style:normal">${R?`IG réel, mois en cours${R.followers!=null?` · ${fmt(R.followers)} abonnés`:''}. Clics WhatsApp & conversations DM non mesurables en organique.`:'Réalisé non connecté — API Instagram à brancher.'}</div>`; }
     default: return '';
