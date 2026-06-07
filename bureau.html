@@ -206,6 +206,10 @@ body { font-family: 'DM Sans', sans-serif; background: var(--sky); color: var(--
 .enq-badge.warn{background:rgba(210,153,34,.16);color:#e3b341}
 .radar-list .enq-dot{display:inline-block;margin-left:6px;font-size:.72rem;cursor:help}
 .enq-dot.ok{color:#3fb950}.enq-dot.bad{color:#f85149}.enq-dot.warn{color:#e3b341}
+.pm-enq .enq-ok{color:#3fb950;font-weight:600}
+.enq-strat{margin-top:8px;padding:8px 10px;border-left:3px solid var(--gold);background:rgba(200,168,90,.08);border-radius:6px}
+.enq-strat-h{color:var(--gold);font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.enq-strat .enq-warn{margin-top:4px;font-style:italic}
 .pm-empty{color:var(--white-40);padding:10px 0;font-style:italic}
 .pm-foot{padding:14px 18px;border-top:1px solid var(--sky-border);display:flex;gap:10px;flex-wrap:wrap}
 .pm-link{display:inline-flex;align-items:center;gap:6px;background:var(--gold-pale);border:1px solid rgba(200,168,90,.4);color:var(--gold-light);padding:9px 16px;border-radius:9px;text-decoration:none;font-size:.84rem;font-weight:600}
@@ -922,10 +926,16 @@ function enqueteHtml(f){
   if(ex) rows.push(`<div><span class="enq-badge ${exCls}">${exLabel}</span>${e.extraordinaireRaison?` <span class="muted">${esc(e.extraordinaireRaison)}</span>`:''}</div>`);
   if(e.rotation){ const rd=e.rotation.arrivalDelayMin; rows.push(`<div><span class="k">Rotation</span> ${esc((e.rotation.flight||'')+' '+(e.rotation.from||'')+'→'+(e.rotation.to||''))}${rd!=null?(rd>30?` · arrivé <b class="enq-bad">+${rd} min</b> → retard en cascade probable`:` · arrivé à l'heure`):''}</div>`); }
   else if(e.rotationAnalyse) rows.push(`<div><span class="k">Rotation</span> ${esc(e.rotationAnalyse)}</div>`);
+  if(e.volsMemeFenetre){ const v=e.volsMemeFenetre; const fort=v.partisNormalement>=3; rows.push(`<div><span class="k">Même fenêtre</span> <b class="enq-ok">${v.partisNormalement}</b> vols partis ~à l'heure${v.retardes?` · ${v.retardes} retardés`:''}${v.annules?` · ${v.annules} annulés`:''} <span class="muted">(${v.total} départs, ${esc(v.fenetre)})</span>${fort?` <span class="muted">→ météo/ATC « extraordinaire » peu plausible</span>`:''}</div>`); }
   if(e.meteo&&e.meteo.length) rows.push(`<div><span class="k">Météo</span> ${e.meteo.map(m=>`${esc(m.id)} <span class="muted">${esc(m.raw)}</span>`).join('<br>')}</div>`);
   if(e.art9&&e.art9.note) rows.push(`<div><span class="k">Art. 9</span> 🏨 ${esc(e.art9.note)}</div>`);
   if(e.hotelsProbables && !['-','—',''].includes(String(e.hotelsProbables).trim())) rows.push(`<div><span class="k">Hôtels</span> ${esc(e.hotelsProbables)} <span class="muted">(indicatif, pas l'hôtel exact)</span></div>`);
   if(e.autres&&e.autres!=='-'&&e.autres!=='—') rows.push(`<div><span class="k">Autres</span> ${esc(e.autres)}</div>`);
+  const strat=[];
+  if(e.defenseProbable) strat.push(`<div><span class="k">Défense</span> ${esc(e.defenseProbable)}</div>`);
+  if(e.contreArgument) strat.push(`<div><span class="k">Contre</span> ${esc(e.contreArgument)}</div>`);
+  if(e.jurisprudence) strat.push(`<div><span class="k">Jurisprudence</span> ⚖️ ${esc(e.jurisprudence)}</div>`);
+  if(strat.length) rows.push(`<div class="enq-strat"><div class="enq-strat-h">🎯 Stratégie de réponse</div>${strat.join('')}<div class="muted enq-warn">⚠ À valider par un juriste avant usage contentieux.</div></div>`);
   if(e.sources&&e.sources.length) rows.push(`<div class="muted">Sources : ${e.sources.map(s=>`<a href="${esc(s)}" target="_blank" rel="noopener">${esc(s.replace(/^https?:\/\//,'').split('/')[0])}</a>`).join(' · ')}</div>`);
   return rows.length?`<div class="pm-enq">${rows.join('')}</div>`:'';
 }

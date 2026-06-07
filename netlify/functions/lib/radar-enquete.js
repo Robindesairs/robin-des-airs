@@ -123,7 +123,9 @@ function pickRow(rows, dep, arr) {
 // ─── Rotation précédente (par immatriculation) ──────────────────────────────
 async function previousRotation(reg, date, depIata, schedDepMs, key) {
   if (!reg || !key) return null;
-  const rows = await adbFetch(`/flights/reg/${encodeURIComponent(reg)}/${date}/${date}`, key);
+  // Fenêtre J-1 → J : capte aussi une rotation arrivée la veille au soir.
+  const prev = new Date(Date.parse(date + 'T00:00:00Z') - 86400000).toISOString().slice(0, 10);
+  const rows = await adbFetch(`/flights/reg/${encodeURIComponent(reg)}/${prev}/${date}`, key);
   if (!rows.length) return null;
   // legs arrivant à notre aéroport de départ, avant notre départ programmé
   let best = null;
@@ -144,6 +146,55 @@ async function previousRotation(reg, date, depIata, schedDepMs, key) {
     actualArrival: hhmm(best.arrival?.actualTime) || hhmm(best.arrival?.revisedTime),
     status: best.status || '',
   };
+}
+
+// ─── Comparateur « autres vols même fenêtre » (contre-preuve météo/ATC) ──────
+// Beaucoup de départs normaux du même aéroport ⇒ une « circonstance extraordinaire »
+// météo/ATC est peu plausible. Preuve clé, surtout quand la rotation est indisponible.
+function localWindow(localStr, hBefore, hAfter) {
+  if (!localStr) return null;
+  const s = String(localStr).replace(' ', 'T');
+  const m = /([+-])(\d{2}):?(\d{2})$/.exec(s); // besoin de l'offset local de l'aéroport
+  if (!m) return null;
+  const ms = Date.parse(s);
+  if (Number.isNaN(ms)) return null;
+  const offMin = (m[1] === '-' ? -1 : 1) * (parseInt(m[2], 10) * 60 + parseInt(m[3], 10));
+  const wall = ms + offMin * 60000;
+  const fmt = (w) => new Date(w).toISOString().slice(0, 16); // YYYY-MM-DDTHH:mm (heure locale aéroport)
+  return { from: fmt(wall - hBefore * 3600000), to: fmt(wall + hAfter * 3600000) };
+}
+
+async function adbAirportDepartures(iata, from, to, key) {
+  const url = `https://${ADB_HOST}/flights/airports/iata/${encodeURIComponent(iata)}/${from}/${to}`
+    + `?direction=Departure&withCancelled=true&withCodeshared=false&withLocation=false`;
+  try {
+    const r = await fetch(url, { headers: { 'x-rapidapi-host': ADB_HOST, 'x-rapidapi-key': key, Accept: 'application/json' } });
+    if (!r.ok) return [];
+    const j = await r.json().catch(() => null);
+    return Array.isArray(j && j.departures) ? j.departures : (Array.isArray(j) ? j : []);
+  } catch (_) { return []; }
+}
+
+async function sameWindowComparator(depIata, schedDepLocal, ourVol, key) {
+  if (!depIata || !key) return null;
+  const win = localWindow(schedDepLocal, 2, 2);
+  if (!win) return null;
+  const deps = await adbAirportDepartures(depIata, win.from, win.to, key);
+  if (!deps.length) return null;
+  const our = (ourVol || '').toUpperCase();
+  let partis = 0, retardes = 0, annules = 0;
+  for (const d of deps) {
+    const num = String(d.number || d.callSign || '').replace(/\s/g, '').toUpperCase();
+    if (our && num === our) continue; // exclure notre propre vol
+    const st = String(d.status || '').toLowerCase();
+    if (/cancel|annul/.test(st)) { annules++; continue; }
+    const dl = segDelay(d.departure);
+    if (dl != null && dl >= 60) retardes++;
+    else partis++; // parti à l'heure / retard < 1 h / inconnu non annulé
+  }
+  const total = partis + retardes + annules;
+  if (!total) return null;
+  return { fenetre: `${win.from.slice(11)}–${win.to.slice(11)}`, total, partisNormalement: partis, retardes, annules };
 }
 
 // ─── Météo METAR (par ICAO, NOAA) ────────────────────────────────────────────
@@ -179,9 +230,23 @@ MÉTHODE (utilise web_search, croise plusieurs sources, cite chaque URL) :
 4. Croise avec le METAR fourni et la rotation précédente. Si les sources se contredisent, dis-le.
 5. HÔTELS (seulement si annulation ou retard avec nuitée probable) : cite 2-3 hôtels proches de l'aéroport de départ où les passagers sont susceptibles d'être logés, + l'hôtel habituel de la compagnie en cas d'irrégularité si tu le trouves (indicatif, pas l'hôtel exact).
 
+STRATÉGIE DE RÉPONSE (anticipe la défense de la compagnie, donne le contre-argument et l'arrêt CJEU). Trois principes : (1) la CHARGE DE LA PREUVE pèse sur la compagnie ; (2) même extraordinaire, une cause n'exonère que si la compagnie prouve AUSSI avoir pris « toutes les mesures raisonnables » (art. 5§3) ; (3) le retard se mesure à l'ARRIVÉE FINALE (Sturgeon/Nelson C-402/07 & C-581/10 ; Folkerts C-11/11) — clé sur les vols avec escale.
+RÉFÉRENTIEL cause → catégorie → arrêt-pivot → angle :
+- Technique courant → REDEVABLE → Wallentin-Hermann C-549/07 + van der Lans C-257/14 → inhérent à l'activité (sauf défaut caché signalé par le constructeur/une autorité).
+- Rotation / retard en cascade → REDEVABLE → TAP c. LE C-74/19 (a contrario) → remonter à la cause-racine ; extraordinaire seulement si la cause amont l'était ET mesures raisonnables prises.
+- Météo → EXONÉRÉE en principe → Pešková C-315/15 → casser le lien de causalité (comparateur ±2 h) + mesures raisonnables ; le surplus de retard après l'épisode n'est plus imputable.
+- Grève INTERNE (pilotes/PNC/sol compagnie, même légale, avec préavis) → REDEVABLE → Airhelp c. SAS C-28/20 (Grande Chambre) + Krüsemann C-195/17 → gestion normale de l'entreprise.
+- Grève EXTERNE (contrôleurs/aéroport) → EXONÉRÉE en principe → attaquer l'anticipation (préavis) + la causalité.
+- Restriction/décision ATC, slot → EXONÉRÉE en principe → exiger le NOTAM/EUROCONTROL officiel + causalité (Moens C-159/18).
+- Manque/retard d'équipage → REDEVABLE → Krüsemann C-195/17 + Wallentin-Hermann → organisation interne (équipages de réserve).
+- Surbooking / refus d'embarquement → REDEVABLE → art. 4 & 7 (droit forfaitaire automatique) ; refuser tout bon/avoir, exiger le cash.
+
 RÉPONDS EN FRANÇAIS, BREF, EXACTEMENT dans ce format (une ligne par champ) :
 CAUSE: <1-2 phrases>
 EXTRAORDINAIRE: OUI | NON | INCERTAIN — <raison en 1 phrase>
+DÉFENSE: <l'exonération que la compagnie va probablement invoquer>
+CONTRE: <comment la casser + preuves à exiger (METAR, comparateur ±2 h, rapport technique, code retard IATA, NOTAM…)>
+JURISPRUDENCE: <Arrêt, C-xxx/xx, année — principe en 1 phrase (depuis le référentiel ci-dessus)>
 ROTATION: <ce que montre la rotation précédente de l'appareil pour ce retard>
 AUTRES: <autres vols perturbés au même aéroport ce jour-là, sinon ->
 HÔTELS: <2-3 hôtels proches de l'aéroport de départ / hôtel habituel compagnie, sinon ->
@@ -242,6 +307,9 @@ function parseReply(text) {
     cause: field(text, 'CAUSE') || (text || '').slice(0, 300),
     extraordinaire: extra,
     extraordinaireRaison: extraLine.replace(/^(oui|non|incertain)\s*[—-]?\s*/i, '').trim(),
+    defenseProbable: field(text, 'DÉFENSE') || field(text, 'DEFENSE'),
+    contreArgument: field(text, 'CONTRE'),
+    jurisprudence: field(text, 'JURISPRUDENCE'),
     rotationAnalyse: field(text, 'ROTATION'),
     autres: field(text, 'AUTRES'),
     hotelsProbables: field(text, 'HÔTELS') || field(text, 'HOTELS'),
@@ -277,7 +345,7 @@ async function runEnquete(event, input, opts = {}) {
   let arr = (input.arr || '').toUpperCase();
   let depIcao = '', arrIcao = '', reg = '', statut = input.cancelled ? 'Annulé' : '';
   let retardMin = input.delayMin != null ? input.delayMin : null;
-  let schedDepMs = null, aircraftModel = '';
+  let schedDepMs = null, schedDepLocal = '', aircraftModel = '';
   if (key) {
     const rows = await adbFetch(`/flights/number/${encodeURIComponent(vol)}/${date}/${date}`, key);
     const row = pickRow(rows, dep, arr);
@@ -291,6 +359,7 @@ async function runEnquete(event, input, opts = {}) {
       aircraftModel = row.aircraft?.model || '';
       statut = row.status || statut;
       schedDepMs = tms(row.departure?.scheduledTime);
+      schedDepLocal = row.departure?.scheduledTime?.local || '';
       const d = segDelay(row.arrival);
       if (d != null) retardMin = d;
     } else {
@@ -311,6 +380,13 @@ async function runEnquete(event, input, opts = {}) {
     if (rotation) sources.push('aerodatabox-rotation');
   }
 
+  // 3b) Comparateur « autres vols même fenêtre » — contre-preuve météo/ATC « extraordinaire »
+  let volsMemeFenetre = null;
+  if (dep && schedDepLocal && key) {
+    volsMemeFenetre = await sameWindowComparator(dep, schedDepLocal, vol, key);
+    if (volsMemeFenetre) sources.push('aerodatabox-departures');
+  }
+
   // 4) Cause via Claude (web_search)
   const apiKey = (process.env.ANTHROPIC_API_KEY || '').trim();
   let analysis = null;
@@ -325,6 +401,9 @@ async function runEnquete(event, input, opts = {}) {
       rotation
         ? `Rotation précédente : ${rotation.flight || 'vol amont'} ${rotation.from}→${rotation.to}, retard arrivée ${rotation.arrivalDelayMin != null ? rotation.arrivalDelayMin + ' min' : 'inconnu'} (l'appareil ${rotation.arrivalDelayMin > 30 ? 'EST arrivé en retard' : 'est arrivé à l\'heure'} avant ce vol)`
         : "Rotation précédente : non disponible",
+      volsMemeFenetre
+        ? `Autres vols du même aéroport (fenêtre ±2 h, ${volsMemeFenetre.fenetre}) : ${volsMemeFenetre.total} départs — ${volsMemeFenetre.partisNormalement} partis ~à l'heure, ${volsMemeFenetre.retardes} retardés, ${volsMemeFenetre.annules} annulés. (Beaucoup de départs normaux ⇒ une cause météo/ATC « extraordinaire » est peu plausible / n'explique pas tout le retard.)`
+        : 'Autres vols même fenêtre : non disponible',
       meteo.length
         ? `METAR : ${meteo.map((m) => `${m.id} ${m.raw}`).join(' || ')}`
         : 'METAR : non disponible',
@@ -367,10 +446,14 @@ async function runEnquete(event, input, opts = {}) {
     aircraftModel,
     meteo,
     rotation,
+    volsMemeFenetre,
     art9,
     cause: analysis ? analysis.cause : '',
     extraordinaire: analysis ? analysis.extraordinaire : null,
     extraordinaireRaison: analysis ? analysis.extraordinaireRaison : '',
+    defenseProbable: analysis ? analysis.defenseProbable : '',
+    contreArgument: analysis ? analysis.contreArgument : '',
+    jurisprudence: analysis ? analysis.jurisprudence : '',
     rotationAnalyse: analysis ? analysis.rotationAnalyse : '',
     autres: analysis ? analysis.autres : '',
     hotelsProbables: analysis ? analysis.hotelsProbables : '',
