@@ -28,6 +28,7 @@ Règles STRICTES :
 - segments : UN objet par vol/coupon, dans l'ordre du voyage (depart → arrivee + n° de vol + date de ce vol).
 - passagers : la LISTE de TOUS les passagers nommés sur le billet. nom = nom de famille en MAJUSCULES ; prenom = prénom(s). Les noms sont souvent écrits "NOM / Prénom".
 - date_naissance : SEULEMENT si elle est imprimée sur le billet (rare) au format JJ/MM/AAAA, sinon "".
+- Le document peut s'étaler sur PLUSIEURS images/pages : FUSIONNE-les en UN seul résultat, et ne liste chaque passager qu'UNE fois (pas de doublon d'une page à l'autre).
 - Champ inconnu = "". Ne JAMAIS inventer.`;
 
 // ── Normalisation (pure) ──────────────────────────────────────────────────────
@@ -63,37 +64,50 @@ function normalize(raw) {
   const vol = segs.length > 1 ? segs.map((s) => s.vol).filter(Boolean).join(' + ') : (up(raw.vol) || (segs[0] && segs[0].vol) || '');
   const pnrRaw = String(raw.pnr || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
   const pnr = /^[A-Z0-9]{5,8}$/.test(pnrRaw) ? pnrRaw : '';
-  const passengers = (Array.isArray(raw.passagers) ? raw.passagers : [])
-    .map((p) => ({ name: paxName(p), dob: dateNorm(p.date_naissance) }))
-    .filter((p) => p.name);
+  // Passagers : dédoublonnés par nom (un même passager peut figurer sur 2 pages photographiées).
+  const byName = new Map();
+  for (const p of (Array.isArray(raw.passagers) ? raw.passagers : [])) {
+    const name = paxName(p); if (!name) continue;
+    const dob = dateNorm(p.date_naissance); const k = name.toUpperCase();
+    if (byName.has(k)) { const ex = byName.get(k); if (!ex.dob && dob) ex.dob = dob; }
+    else byName.set(k, { name, dob });
+  }
+  const passengers = [...byName.values()];
   return { vol, compagnie: String(raw.compagnie || '').trim(), date: dateNorm(raw.date), pnr, depart, arrivee, route, escale, segments: segs, passengers, pax: passengers.length || 0 };
 }
 
-// ── Moteurs (réseau) ──────────────────────────────────────────────────────────
-async function callOpenAIVision(b64, mime, key) {
+// ── Moteurs (réseau) — acceptent PLUSIEURS pages/images en UN seul appel ───────
+function looksLikePdf(bytes) { try { return Buffer.from(bytes.slice(0, 5)).toString('latin1').startsWith('%PDF'); } catch (_) { return false; } }
+function detectMime(bytes, mime) {
+  if (mime && /pdf|image\//i.test(mime)) return mime.toLowerCase();
+  return looksLikePdf(bytes) ? 'application/pdf' : (mime || 'image/jpeg');
+}
+
+async function callOpenAIVision(items, key) {
+  const content = [{ type: 'text', text: PROMPT }];
+  for (const it of items) content.push({ type: 'image_url', image_url: { url: `data:${it.mime || 'image/jpeg'};base64,${it.b64}` } });
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: process.env.ETICKET_OPENAI_MODEL || 'gpt-4o',
-      max_tokens: 900, temperature: 0, response_format: { type: 'json_object' },
-      messages: [{ role: 'user', content: [{ type: 'text', text: PROMPT }, { type: 'image_url', image_url: { url: `data:${mime || 'image/jpeg'};base64,${b64}` } }] }],
-    }),
+    body: JSON.stringify({ model: process.env.ETICKET_OPENAI_MODEL || 'gpt-4o', max_tokens: 1200, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content }] }),
   });
   const data = await res.json();
   if (!data.choices) return null;
   return JSON.parse(data.choices[0].message.content);
 }
 
-async function callClaudeDoc(b64, mime, key, model) {
-  const isPdf = /pdf/i.test(mime || '');
-  const media = isPdf
-    ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: b64 } }
-    : { type: 'image', source: { type: 'base64', media_type: mime || 'image/jpeg', data: b64 } };
+async function callClaudeDoc(items, key, model) {
+  const content = [];
+  for (const it of items) {
+    content.push(/pdf/i.test(it.mime || '')
+      ? { type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: it.b64 } }
+      : { type: 'image', source: { type: 'base64', media_type: it.mime || 'image/jpeg', data: it.b64 } });
+  }
+  content.push({ type: 'text', text: PROMPT });
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-    body: JSON.stringify({ model, max_tokens: 1200, messages: [{ role: 'user', content: [media, { type: 'text', text: PROMPT }] }] }),
+    body: JSON.stringify({ model, max_tokens: 1500, messages: [{ role: 'user', content }] }),
   });
   const data = await res.json();
   const txt = (data.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('\n');
@@ -101,29 +115,29 @@ async function callClaudeDoc(b64, mime, key, model) {
   return m ? JSON.parse(m[0]) : null;
 }
 
-function looksLikePdf(bytes) { try { return Buffer.from(bytes.slice(0, 5)).toString('latin1').startsWith('%PDF'); } catch (_) { return false; } }
-
 /**
- * @param {Buffer|Uint8Array} bytes  octets bruts du document
- * @param {string} mime              content-type (ex. 'application/pdf', 'image/jpeg')
- * @param {object} [opts]            { openaiKey, anthropicKey, model }
- * @returns {Promise<object|null>}   objet normalisé (voir normalize) ou null si échec / pas de clé
+ * Extraction depuis PLUSIEURS pages/images (e-billet photographié recto/verso/page 2…).
+ * Toutes les pages partent en UN seul appel → le modèle FUSIONNE en un résultat cohérent.
+ * @param {Array<{bytes:(Buffer|Uint8Array), mime?:string}>} parts
+ * @param {object} [opts] { openaiKey, anthropicKey, model }
+ * @returns {Promise<object|null>}
  */
-async function extractEticket(bytes, mime, opts = {}) {
+async function extractEticketMulti(parts, opts = {}) {
   try {
-    const b64 = Buffer.from(bytes).toString('base64');
-    const isPdf = /pdf/i.test(mime || '') || (!/^image\//i.test(mime || '') && looksLikePdf(bytes));
+    const items = (parts || []).filter((p) => p && p.bytes).map((p) => ({ b64: Buffer.from(p.bytes).toString('base64'), mime: detectMime(p.bytes, p.mime) }));
+    if (!items.length) return null;
+    const anyPdf = items.some((it) => /pdf/i.test(it.mime));
     const openaiKey = opts.openaiKey || process.env.OPENAI_API_KEY;
     const anthropicKey = opts.anthropicKey || process.env.ANTHROPIC_API_KEY;
     const model = opts.model || process.env.ETICKET_MODEL || process.env.RADAR_ENQUETE_MODEL || 'claude-sonnet-4-5';
     let raw = null;
-    if (isPdf) {
+    if (anyPdf) {
       if (!anthropicKey) return null; // un PDF exige Claude (gpt-4o Vision ne lit pas les PDF)
-      raw = await callClaudeDoc(b64, 'application/pdf', anthropicKey, model);
+      raw = await callClaudeDoc(items, anthropicKey, model);
     } else if (openaiKey) {
-      raw = await callOpenAIVision(b64, mime, openaiKey);
+      raw = await callOpenAIVision(items, openaiKey);
     } else if (anthropicKey) {
-      raw = await callClaudeDoc(b64, mime || 'image/jpeg', anthropicKey, model);
+      raw = await callClaudeDoc(items, anthropicKey, model);
     } else {
       return null;
     }
@@ -133,4 +147,9 @@ async function extractEticket(bytes, mime, opts = {}) {
   }
 }
 
-module.exports = { extractEticket, normalize, PROMPT };
+// Convenance : une seule page/image.
+async function extractEticket(bytes, mime, opts = {}) {
+  return extractEticketMulti([{ bytes, mime }], opts);
+}
+
+module.exports = { extractEticket, extractEticketMulti, normalize, PROMPT };

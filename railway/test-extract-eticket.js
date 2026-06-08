@@ -72,6 +72,24 @@ check('segments', e.segments.length, 2);
 check('pax', e.pax, 3);
 check('noms', e.passengers.map((p) => p.name), ['CLIMBIE KODJO', 'SEYNI KODJO', 'DJIBRIL KODJO']);
 
+// Multi-pages photographiées : le modèle peut renvoyer un passager EN DOUBLE (présent p.1 et p.2).
+// normalize() doit le dédoublonner par nom (et garder la date de naissance si une seule page la porte).
+console.log('\nBillet PHOTOGRAPHIÉ EN 2 PAGES (passager en doublon entre les pages) :');
+const m = normalize({
+  vol: 'AF718', compagnie: 'Air France', date: '24/05/2026', pnr: 'RBNAF3', depart: 'CDG', arrivee: 'DSS',
+  segments: [{ vol: 'AF718', depart: 'CDG', arrivee: 'DSS', date: '24/05/2026' }],
+  passagers: [
+    { nom: 'KODJO', prenom: 'Climbie' },                                  // page 1
+    { nom: 'KODJO', prenom: 'Seyni' },                                    // page 1
+    { nom: 'KODJO', prenom: 'Climbie', date_naissance: '14/02/1990' },   // page 2 (doublon + DDN)
+    { nom: 'KODJO', prenom: 'Djibril' },                                  // page 2
+  ],
+});
+console.log('  →', JSON.stringify(m.passengers));
+check('pax dédoublonné', m.pax, 3);
+check('noms uniques', m.passengers.map((p) => p.name), ['CLIMBIE KODJO', 'SEYNI KODJO', 'DJIBRIL KODJO']);
+check('DDN récupérée sur la page 2', m.passengers[0].dob, '14/02/1990');
+
 console.log(`\n${fails === 0 ? '✅ OFFLINE : tous les champs OK' : `❌ OFFLINE : ${fails} échec(s)`}\n`);
 
 // ── MODE LIVE (optionnel) ──────────────────────────────────────────────────────
