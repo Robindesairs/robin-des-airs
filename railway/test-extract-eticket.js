@@ -90,6 +90,37 @@ check('pax dédoublonné', m.pax, 3);
 check('noms uniques', m.passengers.map((p) => p.name), ['CLIMBIE KODJO', 'SEYNI KODJO', 'DJIBRIL KODJO']);
 check('DDN récupérée sur la page 2', m.passengers[0].dob, '14/02/1990');
 
+// ALLER-RETOUR : le billet contient un aller (24/05) ET un retour (14/06). Doit donner 2 trajets,
+// PAS une route chaînée "CDG → DSS → CDG". Le trajet principal (racine) = l'aller par défaut.
+console.log('\nBillet ALLER-RETOUR (schéma trajets) :');
+const ar = normalize({
+  compagnie: 'Air France', pnr: 'RBNAF3', aller_retour: true,
+  trajets: [
+    { sens: 'aller', date: '24/05/2026', depart: 'CDG', arrivee: 'DSS', segments: [{ vol: 'AF718', depart: 'CDG', arrivee: 'DSS', date: '24/05/2026' }] },
+    { sens: 'retour', date: '14/06/2026', depart: 'DSS', arrivee: 'CDG', segments: [{ vol: 'AF719', depart: 'DSS', arrivee: 'CDG', date: '14/06/2026' }] },
+  ],
+  passagers: [{ nom: 'KODJO', prenom: 'Climbie' }, { nom: 'KODJO', prenom: 'Seyni' }, { nom: 'KODJO', prenom: 'Djibril' }],
+});
+console.log('  →', JSON.stringify({ allerRetour: ar.allerRetour, racine: ar.route, trajets: ar.trajets.map((t) => `${t.sens}:${t.route}@${t.date}`) }));
+check('aller_retour détecté', ar.allerRetour, true);
+check('2 trajets', ar.trajets.length, 2);
+check('racine = aller (pas de route chaînée A→B→A)', ar.route, 'CDG → DSS');
+check('trajet aller', `${ar.trajets[0].route}@${ar.trajets[0].date}`, 'CDG → DSS@24/05/2026');
+check('trajet retour', `${ar.trajets[1].route}@${ar.trajets[1].date}`, 'DSS → CDG@14/06/2026');
+
+console.log('\nBillet ALLER-RETOUR (repli : segments à plat, dates différentes) :');
+const arf = normalize({
+  compagnie: 'Air France', pnr: 'RBNAF3',
+  segments: [
+    { vol: 'AF718', depart: 'CDG', arrivee: 'DSS', date: '24/05/2026' },
+    { vol: 'AF719', depart: 'DSS', arrivee: 'CDG', date: '14/06/2026' },
+  ],
+  passagers: [{ nom: 'KODJO', prenom: 'Climbie' }],
+});
+check('repli : 2 trajets via saut de date', arf.trajets.length, 2);
+check('repli : aller', arf.trajets[0].route, 'CDG → DSS');
+check('repli : retour', arf.trajets[1].route, 'DSS → CDG');
+
 console.log(`\n${fails === 0 ? '✅ OFFLINE : tous les champs OK' : `❌ OFFLINE : ${fails} échec(s)`}\n`);
 
 // ── MODE LIVE (optionnel) ──────────────────────────────────────────────────────

@@ -13,22 +13,22 @@
  */
 'use strict';
 
-const PROMPT = `Tu lis un E-BILLET / une CONFIRMATION DE RÉSERVATION d'avion (souvent PLUSIEURS passagers et/ou PLUSIEURS vols).
+const PROMPT = `Tu lis un E-BILLET / une CONFIRMATION DE RÉSERVATION d'avion (souvent PLUSIEURS passagers, et parfois un ALLER + un RETOUR).
 Extrais TOUTES les informations nécessaires à un mandat de réclamation. Réponds UNIQUEMENT en JSON, ce schéma exact :
-{"vol":"","compagnie":"","date":"","pnr":"","depart":"","arrivee":"","escale":false,
- "segments":[{"vol":"","depart":"","arrivee":"","date":""}],
+{"compagnie":"","pnr":"","aller_retour":false,
+ "trajets":[{"sens":"aller","date":"","depart":"","arrivee":"","segments":[{"vol":"","depart":"","arrivee":"","date":""}]}],
  "passagers":[{"nom":"","prenom":"","date_naissance":""}]}
 Règles STRICTES :
-- vol : numéro du vol en MAJUSCULES sans espace (ex. AF718, AT540). Pour le niveau racine, mets le 1er vol.
-- compagnie : nom complet de la compagnie (déduis du code IATA du vol si besoin, ex. AF → Air France).
-- date : date du 1er vol. "JJ/MM/AAAA" si l'année est imprimée ; "JJ/MM" si l'année N'EST PAS écrite. NE JAMAIS deviner ni inventer l'année.
-- pnr : référence de réservation / record locator (libellés : PNR, Booking ref, Réf, Confirmation) — 5 à 8 caractères ALPHANUMÉRIQUES. Si vraiment absente, "".
-- depart : code IATA 3 lettres du point de départ INITIAL. arrivee : code IATA de la destination FINALE.
-- escale : true s'il y a PLUS D'UN vol (correspondance), sinon false.
-- segments : UN objet par vol/coupon, dans l'ordre du voyage (depart → arrivee + n° de vol + date de ce vol).
-- passagers : la LISTE de TOUS les passagers nommés sur le billet. nom = nom de famille en MAJUSCULES ; prenom = prénom(s). Les noms sont souvent écrits "NOM / Prénom".
-- date_naissance : SEULEMENT si elle est imprimée sur le billet (rare) au format JJ/MM/AAAA, sinon "".
-- Le document peut s'étaler sur PLUSIEURS images/pages : FUSIONNE-les en UN seul résultat, et ne liste chaque passager qu'UNE fois (pas de doublon d'une page à l'autre).
+- compagnie : nom complet de la compagnie (déduis du code IATA du vol, ex. AF → Air France).
+- pnr : référence de réservation / record locator (PNR, Booking ref, Réf, Confirmation) — 5 à 8 caractères ALPHANUMÉRIQUES. Sinon "".
+- trajets : UN objet par DIRECTION de voyage.
+   • Une CORRESPONDANCE (escale le MÊME JOUR, ex. MRS→CDG puis CDG→DSS) reste DANS LE MÊME trajet (plusieurs segments).
+   • Un RETOUR (on revient vers le point de départ, à une date ULTÉRIEURE) est un trajet SÉPARÉ. sens="aller" pour le 1er, "retour" pour le retour.
+- aller_retour : true s'il y a un trajet aller ET un trajet retour.
+- segments : dans l'ordre, chacun avec vol (MAJUSCULES sans espace, ex. AF718), depart/arrivee (IATA 3 lettres), date du segment.
+- date : "JJ/MM/AAAA" si l'année est imprimée, sinon "JJ/MM". NE JAMAIS deviner ni inventer l'année.
+- passagers : TOUS les passagers nommés. nom = nom de famille en MAJUSCULES ; prenom = prénom(s) (souvent "NOM / Prénom"). date_naissance SEULEMENT si imprimée (JJ/MM/AAAA), sinon "".
+- Plusieurs images/pages : FUSIONNE en UN seul résultat ; ne liste chaque passager qu'UNE fois (pas de doublon entre pages).
 - Champ inconnu = "". Ne JAMAIS inventer.`;
 
 // ── Normalisation (pure) ──────────────────────────────────────────────────────
@@ -50,18 +50,51 @@ function paxName(x) {
   return [prenom, nom].filter(Boolean).join(' ').toUpperCase().replace(/\s+/g, ' ').trim();
 }
 
-function normalize(raw) {
-  raw = raw || {};
-  const segs = (Array.isArray(raw.segments) ? raw.segments : [])
-    .map((s) => ({ vol: up(s.vol), depart: iata(s.depart), arrivee: iata(s.arrivee), date: dateNorm(s.date) }))
-    .filter((s) => s.vol || s.depart || s.arrivee);
-  const escale = !!raw.escale || segs.length > 1;
-  const depart = iata(raw.depart) || (segs[0] && segs[0].depart) || '';
-  const arrivee = iata(raw.arrivee) || (segs.length ? segs[segs.length - 1].arrivee : '');
+// Un trajet = UNE direction (aller OU retour), avec ses segments chaînés.
+function tripFromSegments(segs, fb) {
+  fb = fb || {};
+  const depart = (segs[0] && segs[0].depart) || iata(fb.depart) || '';
+  const arrivee = (segs.length ? segs[segs.length - 1].arrivee : '') || iata(fb.arrivee) || '';
   let route = '';
   if (segs.length) { const ap = []; segs.forEach((l, i) => { if (i === 0 && l.depart) ap.push(l.depart); if (l.arrivee) ap.push(l.arrivee); }); route = ap.filter(Boolean).join(' → '); }
   if (!route && depart && arrivee) route = `${depart} → ${arrivee}`;
-  const vol = segs.length > 1 ? segs.map((s) => s.vol).filter(Boolean).join(' + ') : (up(raw.vol) || (segs[0] && segs[0].vol) || '');
+  const vol = segs.length > 1 ? segs.map((s) => s.vol).filter(Boolean).join(' + ') : ((segs[0] && segs[0].vol) || up(fb.vol) || '');
+  const date = (segs[0] && segs[0].date) || dateNorm(fb.date) || '';
+  return { sens: String(fb.sens || '').toLowerCase(), date, depart, arrivee, route, vol, escale: segs.length > 1, segments: segs };
+}
+// Repli (si le modèle n'a pas groupé) : segments à plat → trajets. Rupture = CHANGEMENT DE JOUR
+// (une correspondance est le même jour ; un retour est un autre jour) → sépare aller / retour.
+function groupFlatSegments(segs) {
+  const groups = []; let cur = [];
+  for (const s of segs) {
+    const prev = cur[cur.length - 1];
+    if (prev && s.date && prev.date && s.date !== prev.date) { groups.push(cur); cur = []; }
+    cur.push(s);
+  }
+  if (cur.length) groups.push(cur);
+  return groups.map((g, i) => tripFromSegments(g, { sens: i === 0 ? 'aller' : (i === 1 ? 'retour' : '') }));
+}
+
+function normalize(raw) {
+  raw = raw || {};
+  const normSeg = (s) => ({ vol: up(s.vol), depart: iata(s.depart), arrivee: iata(s.arrivee), date: dateNorm(s.date) });
+  let trajets = [];
+  if (Array.isArray(raw.trajets) && raw.trajets.length) {
+    trajets = raw.trajets.map((t) => {
+      let segs = (Array.isArray(t.segments) ? t.segments : []).map(normSeg).filter((x) => x.vol || x.depart || x.arrivee);
+      if (!segs.length && (t.vol || t.depart || t.arrivee)) segs = [normSeg({ vol: t.vol, depart: t.depart, arrivee: t.arrivee, date: t.date })];
+      return tripFromSegments(segs, { sens: t.sens, depart: t.depart, arrivee: t.arrivee, date: t.date, vol: t.vol });
+    }).filter((t) => t.depart || t.arrivee || t.vol);
+  }
+  if (!trajets.length) {
+    // Compat : ancien schéma à plat (segments / depart / arrivee).
+    const flat = (Array.isArray(raw.segments) ? raw.segments : []).map(normSeg).filter((x) => x.vol || x.depart || x.arrivee);
+    if (flat.length) trajets = groupFlatSegments(flat);
+    else if (raw.depart || raw.arrivee || raw.vol) trajets = [tripFromSegments([], { sens: 'aller', depart: raw.depart, arrivee: raw.arrivee, date: raw.date, vol: raw.vol })];
+  }
+  if (trajets[0] && !trajets[0].sens) trajets[0].sens = 'aller';
+  if (trajets[1] && !trajets[1].sens) trajets[1].sens = 'retour';
+  const main = trajets[0] || { sens: '', date: '', depart: '', arrivee: '', route: '', vol: '', escale: false, segments: [] };
   const pnrRaw = String(raw.pnr || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
   const pnr = /^[A-Z0-9]{5,8}$/.test(pnrRaw) ? pnrRaw : '';
   // Passagers : dédoublonnés par nom (un même passager peut figurer sur 2 pages photographiées).
@@ -73,7 +106,13 @@ function normalize(raw) {
     else byName.set(k, { name, dob });
   }
   const passengers = [...byName.values()];
-  return { vol, compagnie: String(raw.compagnie || '').trim(), date: dateNorm(raw.date), pnr, depart, arrivee, route, escale, segments: segs, passengers, pax: passengers.length || 0 };
+  // Champs racine = trajet principal (aller, par défaut) → compat avec le tunnel existant ; + trajets[] pour aller/retour.
+  return {
+    vol: main.vol, compagnie: String(raw.compagnie || '').trim(), date: main.date, pnr,
+    depart: main.depart, arrivee: main.arrivee, route: main.route, escale: main.escale, segments: main.segments,
+    allerRetour: trajets.length > 1, trajets,
+    passengers, pax: passengers.length || 0,
+  };
 }
 
 // ── Moteurs (réseau) — acceptent PLUSIEURS pages/images en UN seul appel ───────
