@@ -11,13 +11,13 @@
 <meta property="og:url" content="https://robindesairs.eu/mandat-en.html">
 <meta property="og:title" content="Representation mandate — Robin des Airs">
 <meta property="og:description" content="Sign your EU 261 mandate in 2 minutes — secure, fees only on success.">
-<meta property="og:image" content="https://robindesairs.eu/robin-des-airs-logo-texte-profil.png">
+<meta property="og:image" content="https://robindesairs.eu/robin-des-airs-og-1200x630.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Representation mandate — Robin des Airs">
 <meta name="twitter:description" content="Sign your EU 261 mandate in 2 minutes — secure.">
-<meta name="twitter:image" content="https://robindesairs.eu/robin-des-airs-logo-texte-profil.png">
+<meta name="twitter:image" content="https://robindesairs.eu/robin-des-airs-og-1200x630.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -123,7 +123,10 @@ input.err,textarea.err,select.err{border-color:var(--red)!important;background:v
 /* SEUL CHECK UNIQUE */
 .single-check{display:flex;align-items:flex-start;gap:14px;padding:16px 18px;border:1.5px solid var(--border);background:var(--bg-soft);border-radius:8px;margin:16px 0;cursor:pointer;transition:border-color .2s,background .2s}
 .single-check:hover{border-color:var(--green);background:var(--green-tint)}
-.single-check input[type=checkbox]{width:20px;height:20px;min-width:20px;margin-top:2px;cursor:pointer;accent-color:var(--green-deep)}
+.single-check input[type=checkbox]{-webkit-appearance:none;appearance:none;width:24px;height:24px;min-width:24px;margin-top:1px;cursor:pointer;border:2px solid var(--green-deep);border-radius:6px;background:#fff;position:relative;flex-shrink:0;transition:background .15s,border-color .15s}
+.single-check input[type=checkbox]:checked{background:var(--green-deep);border-color:var(--green-deep)}
+.single-check input[type=checkbox]:checked::after{content:"";position:absolute;left:7px;top:3px;width:6px;height:11px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg)}
+.single-check:has(input[type=checkbox]:checked){border-color:var(--green-deep);background:var(--green-tint)}
 .single-check p{font-size:13px;line-height:1.7;color:var(--text)}
 .single-check p strong{color:var(--navy)}
 /* EMAIL DOSSIER TECHNIQUE */
@@ -224,7 +227,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       <div class="formula-box" id="hFormula">Exemple si succès : 600 € − 150 € = 450 €</div>
     </div>
   </div>
-  <div class="amount-reserve">*Estimation indicative, sous réserve de l'éligibilité du vol au règlement CE 261/2004 et du paiement effectif par la compagnie. <strong>Aucune garantie de résultat.</strong></div>
+  <div class="amount-reserve">*Estimation. <strong>0 € à payer si nous ne récupérons rien.</strong> Montant final selon l'éligibilité de votre vol (CE 261/2004).</div>
   <!-- PARTIES -->
   <div class="sec-title">👥 The parties</div>
   <div class="parties-grid">
@@ -544,7 +547,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       </span>
     </p>
   </div>
-  <div class="ferr" id="checkErr" style="font-size:13px">Please tick this box to validate the authorisation.</div>
+  <div class="ferr" id="checkErr" style="font-size:13px">Please tick this box to sign the mandate.</div>
   <!-- CASE 1 bis — Reconnaissance d'éligibilité (obligatoire) -->
   <div class="single-check" onclick="document.getElementById('eligCheck').checked=!document.getElementById('eligCheck').checked;calcProgress()">
     <input type="checkbox" id="eligCheck" onclick="event.stopPropagation();calcProgress()">
@@ -582,7 +585,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="field-row duo">
     <div>
       <label>Signed at (city) <span class="req">*</span></label>
-      <input type="text" id="sigCity" placeholder="Paris">
+      <input type="text" id="sigCity" placeholder="Paris" value="Paris">
       <div class="ferr" id="sigCityErr">City required</div>
     </div>
     <div>
@@ -596,7 +599,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     <div class="sig-ph" id="sigPh">✍️ Tap here to sign</div>
     <div class="sig-clear" id="sigClear" onclick="clearSig(event)">✕ Start over</div>
   </div>
-  <div class="ferr" id="sigErr">Your signature is required to validate the authorisation</div>
+  <div class="ferr" id="sigErr">Votre signature est requise pour valider le mandat</div>
   <div style="margin-top:20px;border:1px solid var(--border);border-left:3px solid var(--green-deep);border-radius:0 8px 8px 0;padding:16px 18px;background:var(--green-tint)">
     <div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--green-deep);font-weight:700;margin-bottom:8px">Acceptance by the Representative — Robin des Airs</div>
     <p style="font-size:12px;line-height:1.7;color:var(--text);margin:0">
@@ -605,7 +608,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     </p>
   </div>
   <button class="btn-submit" id="btnSub" onclick="submitMandat()">
-    Confirm and sign my mandate →
+    Valider et signer mon mandat →
   </button>
 </div>
 <div class="trust-bar">
@@ -752,6 +755,12 @@ function applyDossier(d) {
   if (d.address) setIfEmpty('addr', d.address);
   if (d.phone && typeof setWaFull === 'function') { const w = document.getElementById('wa-national'); if (w && !w.value.trim()) setWaFull(String(d.phone)); }
   setIfEmpty('fnum', d.vol); setIfEmpty('cie', d.compagnie); setIfEmpty('pnr', d.pnr);
+  setIfEmpty('dep', d.depAirport); setIfEmpty('arr', d.arrAirport);
+  // Incident → liste déroulante #inc (code delay/cancel/denied)
+  { const ie = document.getElementById('inc');
+    let code = d.incident || '';
+    if (!code && d.motif) { const m = String(d.motif).toLowerCase(); code = /retard|delay/.test(m) ? 'delay' : /annul|cancel/.test(m) ? 'cancel' : /refus|denied|embarq/.test(m) ? 'denied' : ''; }
+    if (ie && code && !ie.value) ie.value = code; }
   if (d.date) { const p = String(d.date).split('/'); if (p.length === 3) { const el = document.getElementById('fdate'); if (el && !el.value) el.value = `${p[2]}-${p[1]}-${p[0]}`; } }
   if (d.indemnite) window.MANDAT_INDEMNITE_PER_PAX = d.indemnite;
   // Passagers (noms + dates de naissance)

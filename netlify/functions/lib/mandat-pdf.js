@@ -168,7 +168,7 @@ function genererMandatPdf(record) {
     });
     ensure(20);
     doc.fillColor(GRAY).fontSize(9).font('Helvetica-Oblique')
-      .text(`Texte intégral des 12 articles : robindesairs.eu/autorisation.html (réf. ${ref}).`, left, doc.y, { width: contentW });
+      .text(`Texte intégral des 12 articles : robindesairs.eu/mandat.html (réf. ${ref}).`, left, doc.y, { width: contentW });
     doc.moveDown(0.6);
 
     // ── Consentements recueillis (cases cochées par le signataire) ──
@@ -327,7 +327,7 @@ function genererMandatBilinguePdf(record) {
       ensure(20);
       doc.fillColor(GRAY).fontSize(9).font('Helvetica-Oblique')
         .text(fr
-          ? `Texte intégral des articles : robindesairs.eu/autorisation.html (réf. ${ref}).`
+          ? `Texte intégral des articles : robindesairs.eu/mandat.html (réf. ${ref}).`
           : `Full text of the articles: robindesairs.eu/mandat-en.html (ref. ${ref}).`, left, doc.y, { width: contentW });
       doc.moveDown(0.6);
     }
