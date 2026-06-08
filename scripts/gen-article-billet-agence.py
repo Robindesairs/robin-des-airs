@@ -59,6 +59,22 @@ BODY = """
 <p>Que le billet ait été payé par vous ou par un proche, c’est le <strong>passager nommé sur le billet</strong> qui détient le droit à l’indemnité. <a href="/blog/ce261-nationalite-residence-qui-peut-reclamer.html">Qui peut réclamer, exactement ?</a></p>
 """
 
+INSIDER = (
+    '<aside style="margin:1.5rem 0;padding:1.1rem 1.25rem;border-left:4px solid #F59E0B;'
+    'background:#FFF9E6;border-radius:0 .5rem .5rem 0">'
+    '<p style="margin:0 0 .5rem;font-size:.7rem;font-weight:800;letter-spacing:.06em;'
+    'text-transform:uppercase;color:#92400E">Ce que j&rsquo;ai vu de l&rsquo;int&eacute;rieur</p>'
+    '<p style="margin:0 0 .6rem">Au milieu des ann&eacute;es 2000, je me suis form&eacute; au m&eacute;tier du voyage '
+    '(formation BTS Tourisme, stages en agence, 2005-2007). Le r&egrave;glement CE&nbsp;261 venait tout juste '
+    'd&rsquo;entrer en application, et on ne nous y sensibilisait pas. Quand un vol &eacute;tait annul&eacute; ou '
+    'lourdement retard&eacute;, le r&eacute;flexe, c&rsquo;&eacute;tait de <strong>reporter</strong> le voyage ou de '
+    'proposer un <strong>avoir</strong> &mdash; jamais «&nbsp;vous avez peut-&ecirc;tre droit &agrave; une indemnit&eacute;&nbsp;». '
+    'Le droit existait d&eacute;j&agrave; ; la culture du m&eacute;tier, non.</p>'
+    '<p style="margin:0;font-size:.8125rem;color:#6B7280;font-style:italic">&mdash; Climbi&eacute;, fondateur de Robin des Airs</p>'
+    '</aside>'
+)
+BODY = BODY.replace('<h2>Acheté en agence', INSIDER + '\n\n<h2>Acheté en agence', 1)
+
 QA = ("La compagnie doit informer le passager de ses droits (art. 14 du CE 261) — mais ses notifications "
       "(annulation, changement d’horaire) partent au <strong>contact de la réservation</strong>. Si vous avez "
       "acheté en agence ou sur un site, l’email part souvent <strong>chez l’intermédiaire, pas chez vous</strong>. "
@@ -103,6 +119,12 @@ art = {
 html = render(art)
 # Le gabarit fige la date visible au "26 mai 2026" → on remet la date réelle (les attributs datetime sont déjà corrects).
 html = html.replace(">26 mai 2026<", f">{DATE_FR}<")
+# Signature de l'article : fondateur (Climbié) au lieu de "l'équipe", + auteur Person (E-E-A-T).
+html = html.replace("Par <strong>l'équipe Robin des Airs</strong>", "Par <strong>Climbié</strong>, fondateur de Robin des Airs")
+html = html.replace(
+    '"author": {"@type": "Organization", "@id": "https://robindesairs.eu/#organization", "name": "Robin des Airs", "url": "https://robindesairs.eu/"}',
+    '"author": {"@type": "Person", "@id": "https://robindesairs.eu/a-propos.html#climbie", "name": "Climbié", "jobTitle": "Fondateur de Robin des Airs", "url": "https://robindesairs.eu/a-propos.html"}',
+)
 out = ROOT / "blog" / f"{SLUG}.html"
 out.write_text(html, encoding="utf-8")
 print(f"✓ écrit : {out.relative_to(ROOT)}  ({len(html):,} octets)")
