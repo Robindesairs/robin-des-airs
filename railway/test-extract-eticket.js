@@ -117,9 +117,25 @@ const arf = normalize({
   ],
   passagers: [{ nom: 'KODJO', prenom: 'Climbie' }],
 });
-check('repli : 2 trajets via saut de date', arf.trajets.length, 2);
+check('repli : 2 trajets via saut de date (21 j)', arf.trajets.length, 2);
 check('repli : aller', arf.trajets[0].route, 'CDG → DSS');
 check('repli : retour', arf.trajets[1].route, 'DSS → CDG');
+
+// Retour Afrique avec ESCALE DE NUIT : segments à cheval sur 2 jours (14 → 15/06) mais UN SEUL trajet.
+// Piège classique : ne PAS le confondre avec un aller/retour.
+console.log('\nRetour Afrique, ESCALE DE NUIT (segments J et J+1) — DOIT rester 1 trajet :');
+const nuit = normalize({
+  compagnie: 'Royal Air Maroc', pnr: 'RAM456',
+  segments: [
+    { vol: 'AT500', depart: 'DSS', arrivee: 'CMN', date: '14/06/2026' },   // Dakar → Casa (soir)
+    { vol: 'AT784', depart: 'CMN', arrivee: 'CDG', date: '15/06/2026' },   // Casa → Paris (lendemain matin)
+  ],
+  passagers: [{ nom: 'KODJO', prenom: 'Climbie' }],
+});
+console.log('  →', JSON.stringify({ allerRetour: nuit.allerRetour, trajets: nuit.trajets.length, route: nuit.route }));
+check('escale de nuit = 1 SEUL trajet', nuit.trajets.length, 1);
+check('route chaînée malgré le +1 jour', nuit.route, 'DSS → CMN → CDG');
+check('pas d\'aller-retour fictif', nuit.allerRetour, false);
 
 console.log(`\n${fails === 0 ? '✅ OFFLINE : tous les champs OK' : `❌ OFFLINE : ${fails} échec(s)`}\n`);
 

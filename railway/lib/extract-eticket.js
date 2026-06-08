@@ -22,8 +22,8 @@ Règles STRICTES :
 - compagnie : nom complet de la compagnie (déduis du code IATA du vol, ex. AF → Air France).
 - pnr : référence de réservation / record locator (PNR, Booking ref, Réf, Confirmation) — 5 à 8 caractères ALPHANUMÉRIQUES. Sinon "".
 - trajets : UN objet par DIRECTION de voyage.
-   • Une CORRESPONDANCE (escale le MÊME JOUR, ex. MRS→CDG puis CDG→DSS) reste DANS LE MÊME trajet (plusieurs segments).
-   • Un RETOUR (on revient vers le point de départ, à une date ULTÉRIEURE) est un trajet SÉPARÉ. sens="aller" pour le 1er, "retour" pour le retour.
+   • Une CORRESPONDANCE (escale) reste DANS LE MÊME trajet, MÊME si le vol suivant part le LENDEMAIN (escale de NUIT — fréquent sur les retours d'Afrique : ex. Dakar→Casablanca le soir puis Casablanca→Paris le lendemain matin = UN SEUL trajet).
+   • Un RETOUR = on REVIENT vers le point de départ initial (la destination du retour = le départ de l'aller), en général plusieurs JOURS plus tard → trajet SÉPARÉ. sens="aller" pour le 1er, "retour" pour le retour.
 - aller_retour : true s'il y a un trajet aller ET un trajet retour.
 - segments : dans l'ordre, chacun avec vol (MAJUSCULES sans espace, ex. AF718), depart/arrivee (IATA 3 lettres), date du segment.
 - date : "JJ/MM/AAAA" si l'année est imprimée, sinon "JJ/MM". NE JAMAIS deviner ni inventer l'année.
@@ -62,13 +62,17 @@ function tripFromSegments(segs, fb) {
   const date = (segs[0] && segs[0].date) || dateNorm(fb.date) || '';
   return { sens: String(fb.sens || '').toLowerCase(), date, depart, arrivee, route, vol, escale: segs.length > 1, segments: segs };
 }
-// Repli (si le modèle n'a pas groupé) : segments à plat → trajets. Rupture = CHANGEMENT DE JOUR
-// (une correspondance est le même jour ; un retour est un autre jour) → sépare aller / retour.
+// Écart en JOURS entre deux dates "JJ/MM/AAAA" (0 si l'une n'a pas d'année → on ne coupe pas au doute).
+function _ymd(d) { const m = String(d || '').match(/^(\d{2})\/(\d{2})\/(\d{4})$/); return m ? new Date(+m[3], +m[2] - 1, +m[1]) : null; }
+function dayGap(a, b) { const da = _ymd(a), db = _ymd(b); return (da && db) ? Math.round(Math.abs(db - da) / 86400000) : 0; }
+// Repli (si le modèle n'a pas groupé) : segments à plat → trajets. Une escale — MÊME de NUIT (vol
+// suivant le lendemain, fréquent sur les retours d'Afrique) — reste un seul trajet ; on ne SÉPARE
+// aller / retour que sur un vrai écart ≥ 2 JOURS.
 function groupFlatSegments(segs) {
   const groups = []; let cur = [];
   for (const s of segs) {
     const prev = cur[cur.length - 1];
-    if (prev && s.date && prev.date && s.date !== prev.date) { groups.push(cur); cur = []; }
+    if (prev && dayGap(prev.date, s.date) >= 2) { groups.push(cur); cur = []; }
     cur.push(s);
   }
   if (cur.length) groups.push(cur);
