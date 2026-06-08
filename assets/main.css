@@ -3337,6 +3337,22 @@ button:focus-visible,
   font-weight: 600;
   line-height: 1.45;
 }
+.hero-entry-badge {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 6px;
+  margin: 10px 0 0;
+  padding: 5px 12px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  color: var(--neon-dark);
+  background: rgba(0, 200, 122, 0.10);
+  border: 1px solid rgba(0, 200, 122, 0.28);
+  border-radius: 999px;
+  line-height: 1.3;
+}
 .hero-entry-link-secondary {
   display: inline-block;
   margin-top: 12px;
