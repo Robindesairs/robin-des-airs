@@ -308,6 +308,83 @@ async function callClaude(apiKey, model, userText) {
     .trim();
 }
 
+// ─── Gemini (Google Search grounding) — secours sans crédits Anthropic ────────
+async function callGemini(userText) {
+  const key = (process.env.GEMINI_API_KEY || '').trim();
+  if (!key) throw new Error('GEMINI_API_KEY absent');
+  const model = (process.env.ENQUETE_GEMINI_MODEL || 'gemini-2.0-flash').trim();
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
+  const body = {
+    system_instruction: { parts: [{ text: SYSTEM }] },
+    contents: [{ role: 'user', parts: [{ text: userText }] }],
+    tools: [{ google_search: {} }], // recherche Google native (équivalent web_search)
+    generationConfig: { temperature: 0.2, maxOutputTokens: 1400 },
+  };
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error((json && json.error && json.error.message) || `HTTP ${res.status}`);
+  const parts = (json.candidates && json.candidates[0] && json.candidates[0].content && json.candidates[0].content.parts) || [];
+  return parts.filter((p) => p && typeof p.text === 'string').map((p) => p.text).join('').trim();
+}
+
+// ─── OpenAI (sans recherche web) — dernier recours, raisonne sur les FAITS ────
+async function callOpenAI(userText) {
+  const key = (process.env.OPENAI_API_KEY || '').trim();
+  if (!key) throw new Error('OPENAI_API_KEY absent');
+  const model = (process.env.ENQUETE_OPENAI_MODEL || 'gpt-4o-mini').trim();
+  const sys = SYSTEM + "\n\n(IMPORTANT : tu n'as PAS d'accès web ici. Raisonne uniquement sur les FAITS fournis — rotation précédente, METAR, comparateur « même fenêtre ». Si une vérification web serait nécessaire pour trancher, mets EXTRAORDINAIRE: INCERTAIN et laisse SOURCES vide.)";
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
+    body: JSON.stringify({
+      model,
+      max_tokens: 1200,
+      temperature: 0.2,
+      messages: [{ role: 'system', content: sys }, { role: 'user', content: userText }],
+    }),
+  });
+  const json = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error((json && json.error && json.error.message) || `HTTP ${res.status}`);
+  return ((json.choices && json.choices[0] && json.choices[0].message && json.choices[0].message.content) || '').trim();
+}
+
+/**
+ * Cause IA avec bascule automatique de fournisseur (résilience multi-LLM).
+ * Ordre configurable via ENQUETE_LLM_ORDER (défaut : anthropic,gemini,openai —
+ * Anthropic d'abord = qualité Opus + clé rechargée ; bascule auto si épuisé).
+ * État des clés (juin 2026) : Anthropic = recharger ; Gemini = activer facturation
+ * Google (free tier=0 en UE) ; OpenAI = clé à régénérer (401). Mettre en tête le
+ * fournisseur réellement approvisionné évite un appel raté inutile.
+ * @returns {{ text, provider, model }}
+ */
+async function callEnqueteLLM(userText) {
+  const order = (process.env.ENQUETE_LLM_ORDER || 'anthropic,gemini,openai')
+    .split(/[,\s]+/).map((s) => s.trim().toLowerCase()).filter(Boolean);
+  const errs = [];
+  for (const p of order) {
+    try {
+      if (p === 'anthropic') {
+        const k = (process.env.ANTHROPIC_API_KEY || '').trim();
+        if (!k) { errs.push('anthropic: clé absente'); continue; }
+        return { text: await callClaude(k, enqueteModel(), userText), provider: 'anthropic', model: enqueteModel() };
+      }
+      if (p === 'gemini') {
+        return { text: await callGemini(userText), provider: 'gemini', model: (process.env.ENQUETE_GEMINI_MODEL || 'gemini-2.0-flash').trim() };
+      }
+      if (p === 'openai') {
+        return { text: await callOpenAI(userText), provider: 'openai', model: (process.env.ENQUETE_OPENAI_MODEL || 'gpt-4o-mini').trim() };
+      }
+    } catch (e) {
+      errs.push(`${p}: ${e.message}`);
+    }
+  }
+  throw new Error('aucun fournisseur IA dispo — ' + (errs.join(' | ') || 'aucune clé'));
+}
+
 function field(text, label) {
   const m = new RegExp(`^${label}:\\s*(.+)$`, 'im').exec(text || '');
   return m ? m[1].trim() : '';
@@ -410,10 +487,11 @@ async function runEnquete(event, input, opts = {}) {
     if (volsMemeFenetreArr) sources.push('aerodatabox-arrivals');
   }
 
-  // 4) Cause via Claude (web_search)
-  const apiKey = (process.env.ANTHROPIC_API_KEY || '').trim();
+  // 4) Cause IA — bascule auto Gemini/Anthropic/OpenAI (ENQUETE_LLM_ORDER)
+  const hasLLM = !!((process.env.GEMINI_API_KEY || '').trim() || (process.env.ANTHROPIC_API_KEY || '').trim() || (process.env.OPENAI_API_KEY || '').trim());
   let analysis = null;
-  if (apiKey) {
+  let llmProvider = null, llmModel = null;
+  if (hasLLM) {
     const facts = [
       `Vol ${vol} du ${date}`,
       dep && arr ? `Route ${dep} → ${arr}` : null,
@@ -437,14 +515,18 @@ async function runEnquete(event, input, opts = {}) {
     ].filter(Boolean).join('\n');
 
     try {
-      const reply = await callClaude(apiKey, enqueteModel(), facts);
-      analysis = parseReply(reply);
-      sources.push('claude-web_search');
+      const out = await callEnqueteLLM(facts);
+      analysis = parseReply(out.text);
+      llmProvider = out.provider;
+      llmModel = out.model;
+      sources.push(out.provider === 'gemini' ? 'gemini-google_search'
+        : out.provider === 'anthropic' ? 'claude-web_search'
+        : 'openai');
     } catch (e) {
       errors.push('cause IA : ' + e.message);
     }
   } else {
-    errors.push('ANTHROPIC_API_KEY absent — cause non recherchée');
+    errors.push('aucune clé IA (GEMINI/ANTHROPIC/OPENAI) — cause non recherchée');
   }
 
   // Art. 9 CE 261 — prise en charge due (déterministe, gratuit) : repas dès 2h, hébergement
@@ -489,11 +571,12 @@ async function runEnquete(event, input, opts = {}) {
     apiSources: [...new Set(sources)],
     errors,
     analyzedAt: new Date().toISOString(),
-    model: apiKey ? enqueteModel() : null,
+    provider: llmProvider,
+    model: llmModel,
   };
 
   await saveCache(event, vol, date, result);
   return result;
 }
 
-module.exports = { runEnquete, loadCache };
+module.exports = { runEnquete, loadCache, callEnqueteLLM };
