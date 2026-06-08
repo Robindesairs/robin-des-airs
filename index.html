@@ -207,11 +207,11 @@
         <span class="wa-typedemo-head">
           <span class="wa-typedemo-avatar">R</span>
           <span class="wa-typedemo-name">Robin des Airs</span>
-          <span class="wa-typedemo-online">● en ligne</span>
+          <span class="wa-typedemo-online" data-i18n="wa_online">● en ligne</span>
         </span>
-        <span class="sr-only">Exemple de conversation WhatsApp : vous envoyez votre numéro de vol puis une photo de votre carte d'embarquement ; Robin lit le vol, confirme l'éligibilité et l'indemnité — jusqu'à 600 € par passager. Robin précise sa commission de 25 % au succès seulement (0 € si on ne gagne pas, aucune avance), son expertise des vols Europe–Afrique (Dakar, Abidjan, Bamako) et qu'il répond en wolof, bambara, lingala ou français.</span>
+        <span class="sr-only" data-i18n="hero_wa_demo_sr">Exemple de conversation WhatsApp : vous envoyez votre numéro de vol puis une photo de votre carte d'embarquement ; Robin lit le vol, confirme l'éligibilité et l'indemnité — jusqu'à 600 € par passager. Robin précise sa commission de 25 % au succès seulement (0 € si on ne gagne pas, aucune avance), son expertise des vols Europe–Afrique (Dakar, Abidjan, Bamako) et qu'il répond en wolof, bambara, lingala ou français.</span>
         <span class="wa-chat" id="wa-chat" aria-hidden="true"></span>
-        <span class="wa-typedemo-meta wa-chatdemo-foot">On parle votre langue · réponse en quelques minutes →</span>
+        <span class="wa-typedemo-meta wa-chatdemo-foot" data-i18n="hero_wa_demo_foot">On parle votre langue · réponse en quelques minutes →</span>
       </a>
 
       <!-- Étapes 1/2/3 retirées du hero : doublon avec la conversation animée qui montre déjà le parcours.
@@ -288,7 +288,7 @@
       <!-- ══ ÉTAPE 1 — MOTIF ══ -->
       <div class="fstep" id="step-1">
         <div class="fstep-eyebrow">Ce qui s'est passé</div>
-        <p class="funnel-hint">Pas de souci si vous ne vous souvenez plus des détails — on vérifie pour vous.</p>
+        <p class="funnel-hint" data-i18n="step1_hint">Pas de souci si vous ne vous souvenez plus des détails — on vérifie pour vous.</p>
         <div class="choice-grid one-col">
           <button class="cb" onclick="pickMotif('retard')">
             <span class="cb-icon">⏱️</span>
@@ -338,63 +338,63 @@
             <span class="reason-icon">💭</span> Je ne sais pas / Je ne m'en souviens plus
           </button>
         </div>
-        <p class="reason-nesaispas-msg" id="step1c-nesaispas-msg" style="display:none; font-size:11px; color:var(--neon-b); margin-top:10px; font-weight:600;">Pas de souci, on vérifiera les registres météo pour vous.</p>
-        <button class="back-btn" id="back1c" onclick="">← Retour</button>
+        <p class="reason-nesaispas-msg" id="step1c-nesaispas-msg" style="display:none; font-size:11px; color:var(--neon-b); margin-top:10px; font-weight:600;" data-i18n="step1c_nesaispas_msg">Pas de souci, on vérifiera les registres météo pour vous.</p>
+        <button class="back-btn" id="back1c" onclick="" data-i18n="funnel_back">← Retour</button>
       </div>
 
       <!-- ══ ÉTAPE 1b annulation — PRÉAVIS ══ -->
       <div class="fstep" id="step-1b">
-        <div class="fstep-eyebrow">Étape 1b — Délai de prévenance</div>
-        <p class="fstep-q">Quand avez-vous appris l'annulation ?</p>
+        <div class="fstep-eyebrow" data-i18n="step1b_eyebrow">Étape 1b — Délai de prévenance</div>
+        <p class="fstep-q" data-i18n="step1b_q">Quand avez-vous appris l'annulation ?</p>
         <div class="choice-grid one-col">
           <button class="cb" onclick="pickAnnDelai('late')">
             <span class="cb-icon">🔔</span>
-            <span class="cb-main">Moins de 14 jours avant le départ</span>
-            <span class="cb-sub">Annulation tardive → indemnisation pleine ✅</span>
+            <span class="cb-main" data-i18n="step1b_late_main">Moins de 14 jours avant le départ</span>
+            <span class="cb-sub" data-i18n="step1b_late_sub">Annulation tardive → indemnisation pleine ✅</span>
           </button>
           <button class="cb warn-cb" onclick="pickAnnDelai('early')">
             <span class="cb-icon">📅</span>
-            <span class="cb-main">Plus de 14 jours avant le départ</span>
-            <span class="cb-sub">Préavis suffisant — indemnisation probablement non due</span>
+            <span class="cb-main" data-i18n="step1b_early_main">Plus de 14 jours avant le départ</span>
+            <span class="cb-sub" data-i18n="step1b_early_sub">Préavis suffisant — indemnisation probablement non due</span>
           </button>
         </div>
-        <button class="back-btn" onclick="goTo('step-1', 12)">← Retour</button>
+        <button class="back-btn" onclick="goTo('step-1', 12)" data-i18n="funnel_back">← Retour</button>
       </div>
 
       <!-- ══ ÉTAPE 2 — DIRECT ou ESCALE ══ -->
       <div class="fstep" id="step-2">
-        <div class="fstep-eyebrow">Étape 2 sur 5 — Type de trajet</div>
-        <p class="funnel-hint">En quelques minutes, vous savez ce que vous touchez.</p>
-        <p class="fstep-q">Ce voyage était-il direct ou avec correspondance ?</p>
+        <div class="fstep-eyebrow" data-i18n="step2_eyebrow">Étape 2 sur 5 — Type de trajet</div>
+        <p class="funnel-hint" data-i18n="step2_hint">En quelques minutes, vous savez ce que vous touchez.</p>
+        <p class="fstep-q" data-i18n="step2_q">Ce voyage était-il direct ou avec correspondance ?</p>
         <div class="choice-grid">
           <button class="cb" onclick="pickTrajet('direct')">
             <span class="cb-icon">✈️</span>
-            <span class="cb-main">Vol direct</span>
-            <span class="cb-sub">Sans escale</span>
-            <small class="block text-sm text-gray-500 mt-1">Sans escale — calcul simplifié</small>
+            <span class="cb-main" data-i18n="step2_direct_main">Vol direct</span>
+            <span class="cb-sub" data-i18n="step2_direct_sub">Sans escale</span>
+            <small class="block text-sm text-gray-500 mt-1" data-i18n="step2_direct_note">Sans escale — calcul simplifié</small>
           </button>
           <button class="cb" onclick="pickTrajet('escale')">
             <span class="cb-icon">🔄</span>
-            <span class="cb-main">Avec correspondance</span>
-            <span class="cb-sub">1 escale ou plus</span>
-            <small class="block text-sm text-gray-500 mt-1">C'est le dernier vol qui compte — on explique</small>
+            <span class="cb-main" data-i18n="step2_escale_main">Avec correspondance</span>
+            <span class="cb-sub" data-i18n="step2_escale_sub">1 escale ou plus</span>
+            <small class="block text-sm text-gray-500 mt-1" data-i18n="step2_escale_note">C'est le dernier vol qui compte — on explique</small>
           </button>
         </div>
-        <button class="back-btn" id="back2">← Retour</button>
+        <button class="back-btn" id="back2" data-i18n="funnel_back">← Retour</button>
       </div>
 
       <!-- ══ ÉTAPE 3a — VOL DIRECT (Robin des Airs) ══ -->
       <div class="fstep" id="step-3a">
-        <div class="fstep-eyebrow">Étape 3 sur 5 — Détails du vol</div>
-        <p class="calc-robin-hint">Indiquez votre numéro de vol, ou les villes de départ et d'arrivée.</p>
+        <div class="fstep-eyebrow" data-i18n="step3a_eyebrow">Étape 3 sur 5 — Détails du vol</div>
+        <p class="calc-robin-hint" data-i18n="step3a_hint">Indiquez votre numéro de vol, ou les villes de départ et d'arrivée.</p>
 
         <div class="calc-field" style="margin-bottom:12px">
-          <label class="calc-label" for="flight_number">Numéro de vol</label>
+          <label class="calc-label" for="flight_number" data-i18n="calc_flight_number">Numéro de vol</label>
           <input type="text" id="flight_number" class="calc-input" placeholder="Ex: AF718" maxlength="8" autocomplete="off">
           <div id="flight_number_status" class="flight-status" aria-live="polite"></div>
-          <button type="button" class="link-no-vol" id="btn-je-ne-trouve-pas-mon-vol">Je ne trouve pas mon vol</button>
+          <button type="button" class="link-no-vol" id="btn-je-ne-trouve-pas-mon-vol" data-i18n="calc_no_flight">Je ne trouve pas mon vol</button>
           <div id="da-principaux-vols" class="principaux-vols-wrap" style="display:none;" aria-label="Principaux vols Air France, Corsair et Air Sénégal vers l'Afrique subsaharienne">
-            <p class="principaux-vols-title">Principaux vols Air France / Corsair / Air Sénégal (Afrique subsaharienne)</p>
+            <p class="principaux-vols-title" data-i18n="calc_main_flights_title">Principaux vols Air France / Corsair / Air Sénégal (Afrique subsaharienne)</p>
             <div class="principaux-vols-chips">
               <button type="button" class="principaux-vol-chip" data-code="AF718">Paris → Dakar (AF718)</button>
               <button type="button" class="principaux-vol-chip" data-code="AF702">Paris → Dakar (AF702)</button>
@@ -413,12 +413,12 @@
         </div>
 
         <div class="calc-field" id="da-manual-wrap">
-          <label class="calc-label">Ville de départ et d'arrivée (recherche : ville ou code IATA)</label>
+          <label class="calc-label" data-i18n="calc_city_search_label">Ville de départ et d'arrivée (recherche : ville ou code IATA)</label>
           <div class="calc-row">
             <select id="da-ville-depart" class="calc-select calc-select-airport" placeholder="Départ (ex. Paris, CDG)"><option value=""></option></select>
             <select id="da-ville-arrivee" class="calc-select calc-select-airport" placeholder="Arrivée (ex. Dakar, DKR)"><option value=""></option></select>
           </div>
-          <p id="funnel-guide-dakar" class="funnel-guide-link" style="display:none; margin-top:8px; font-size:11px;">
+          <p id="funnel-guide-dakar" class="funnel-guide-link" style="display:none; margin-top:8px; font-size:11px;" data-i18n-html="calc_guide_help">
             Besoin d'aide ? <a href="/blog/vol-retarde-dakar-paris-indemnite.html" target="_blank" rel="noopener">Lire notre guide sur le vol Paris-Dakar</a>
           </p>
         </div>
@@ -428,14 +428,14 @@
 
         <div class="calc-row">
           <div class="calc-field">
-            <label class="calc-label" for="da-date">Date du vol</label>
+            <label class="calc-label" for="da-date" data-i18n="calc_flight_date">Date du vol</label>
             <div class="custom-date-wrap">
               <input type="date" id="da-date" class="calc-input" style="padding-right:44px;">
               <span class="date-display">📅</span>
             </div>
           </div>
           <div class="calc-field">
-            <label class="calc-label">Passagers</label>
+            <label class="calc-label" data-i18n="calc_passengers">Passagers</label>
             <div class="pax-control" id="da-pax-ctrl">
               <button class="pax-btn" type="button" onclick="changePax('da-pax-val',-1)">−</button>
               <span class="pax-val" id="da-pax-val">1</span>
@@ -444,34 +444,34 @@
           </div>
         </div>
 
-        <button class="btn-calc" onclick="calcDirect()">Voir mon indemnité →</button>
-        <button class="back-btn" onclick="goTo('step-2', 50)">← Retour</button>
+        <button class="btn-calc" onclick="calcDirect()" data-i18n="calc_see_amount">Voir mon indemnité →</button>
+        <button class="back-btn" onclick="goTo('step-2', 50)" data-i18n="funnel_back">← Retour</button>
       </div>
 
       <!-- ══ ÉTAPE 3b — AVEC ESCALE ══ -->
       <div class="fstep" id="step-3b">
-        <div class="fstep-eyebrow">Étape 3 sur 5 — Vos deux vols</div>
-        <p class="calc-robin-hint">Robin des Airs : c’est le dernier vol qui détermine l’indemnité.</p>
+        <div class="fstep-eyebrow" data-i18n="step3b_eyebrow">Étape 3 sur 5 — Vos deux vols</div>
+        <p class="calc-robin-hint" data-i18n="step3b_hint">Robin des Airs : c’est le dernier vol qui détermine l’indemnité.</p>
 
         <div class="escale-info">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--neon-b)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          <span>La loi CE 261 prend la <strong>distance totale</strong> départ (1er vol) → arrivée finale (dernier vol). Le <strong>dernier vol</strong> détermine l'indemnité.</span>
+          <span data-i18n-html="step3b_info">La loi CE 261 prend la <strong>distance totale</strong> départ (1er vol) → arrivée finale (dernier vol). Le <strong>dernier vol</strong> détermine l'indemnité.</span>
         </div>
 
         <div class="eb-vol-block" id="eb-vol-block-1">
-          <div class="calc-field-label-vol">Vol 1 — Premier tronçon</div>
+          <div class="calc-field-label-vol" data-i18n="calc_vol1_label">Vol 1 — Premier tronçon</div>
           <div class="calc-row">
             <div class="calc-field">
-              <label class="calc-label">Ville de départ</label>
+              <label class="calc-label" data-i18n="calc_city_from">Ville de départ</label>
               <select id="eb-ville-depart-1" class="calc-select-airport" placeholder="Départ"><option value=""></option></select>
             </div>
             <div class="calc-field">
-              <label class="calc-label">Ville de fin</label>
+              <label class="calc-label" data-i18n="calc_city_to">Ville de fin</label>
               <select id="eb-ville-arrivee-1" class="calc-select-airport" placeholder="Arrivée"><option value=""></option></select>
             </div>
           </div>
           <div class="calc-field">
-            <label class="calc-label" for="eb-vol1">Numéro de vol <span style="color:rgba(255,255,255,0.35);font-size:9px;">optionnel</span></label>
+            <label class="calc-label" for="eb-vol1" data-i18n-html="calc_flight_number_opt">Numéro de vol <span style="color:rgba(255,255,255,0.35);font-size:9px;">optionnel</span></label>
             <input type="text" id="eb-vol1" class="calc-input" placeholder="Ex: AF1234" maxlength="8" autocomplete="off" oninput="volLookup(this,'eb-chip1',null,null)">
           </div>
           <div class="vol-chip" id="eb-chip1" style="display:none;">
@@ -482,19 +482,19 @@
         </div>
 
         <div class="eb-vol-block" id="eb-vol-block-2">
-          <div class="calc-field-label-vol">Vol 2 — Dernier tronçon <span style="color:var(--neon-b);font-size:9px;">CE VOL COMPTE</span></div>
+          <div class="calc-field-label-vol" data-i18n-html="calc_vol2_label">Vol 2 — Dernier tronçon <span style="color:var(--neon-b);font-size:9px;">CE VOL COMPTE</span></div>
           <div class="calc-row">
             <div class="calc-field">
-              <label class="calc-label">Ville de départ</label>
+              <label class="calc-label" data-i18n="calc_city_from">Ville de départ</label>
               <select id="eb-ville-depart-2" class="calc-select-airport" placeholder="Départ"><option value=""></option></select>
             </div>
             <div class="calc-field">
-              <label class="calc-label">Ville de fin</label>
+              <label class="calc-label" data-i18n="calc_city_to">Ville de fin</label>
               <select id="eb-ville-arrivee-2" class="calc-select-airport" placeholder="Arrivée"><option value=""></option></select>
             </div>
           </div>
           <div class="calc-field">
-            <label class="calc-label" for="eb-vol2">Numéro de vol</label>
+            <label class="calc-label" for="eb-vol2" data-i18n="calc_flight_number">Numéro de vol</label>
             <input type="text" id="eb-vol2" class="calc-input" placeholder="Ex: AF718" maxlength="8" autocomplete="off" oninput="volLookup(this,'eb-chip2',null,null); updateEscaleDist();">
           </div>
           <div class="vol-chip" id="eb-chip2" style="display:none;">
@@ -505,36 +505,36 @@
         </div>
 
         <div class="eb-vol-block" id="eb-vol-block-3" style="display:none;">
-          <div class="calc-field-label-vol">Vol 3</div>
+          <div class="calc-field-label-vol" data-i18n="calc_vol3_label">Vol 3</div>
           <div class="calc-row">
             <div class="calc-field">
-              <label class="calc-label">Ville de départ</label>
+              <label class="calc-label" data-i18n="calc_city_from">Ville de départ</label>
               <select id="eb-ville-depart-3" class="calc-select-airport" placeholder="Départ"><option value=""></option></select>
             </div>
             <div class="calc-field">
-              <label class="calc-label">Ville de fin</label>
+              <label class="calc-label" data-i18n="calc_city_to">Ville de fin</label>
               <select id="eb-ville-arrivee-3" class="calc-select-airport" placeholder="Arrivée"><option value=""></option></select>
             </div>
           </div>
           <div class="calc-field">
-            <label class="calc-label" for="eb-vol3">Numéro de vol</label>
+            <label class="calc-label" for="eb-vol3" data-i18n="calc_flight_number">Numéro de vol</label>
             <input type="text" id="eb-vol3" class="calc-input" placeholder="Ex: BA456" maxlength="8" autocomplete="off" oninput="updateEscaleDist()">
           </div>
         </div>
 
-        <button type="button" class="eb-add-vol-btn" id="eb-add-vol-btn" onclick="toggleEscaleVol3()">+ Ajouter un 3e vol</button>
+        <button type="button" class="eb-add-vol-btn" id="eb-add-vol-btn" onclick="toggleEscaleVol3()" data-i18n="calc_add_vol3">+ Ajouter un 3e vol</button>
         <input type="hidden" id="eb-dist" value="">
 
         <div class="calc-row">
           <div class="calc-field">
-            <label class="calc-label" for="eb-date">Date de départ</label>
+            <label class="calc-label" for="eb-date" data-i18n="calc_departure_date">Date de départ</label>
             <div class="custom-date-wrap">
               <input type="date" id="eb-date" class="calc-input" style="padding-right:44px;">
               <span class="date-display">📅</span>
             </div>
           </div>
           <div class="calc-field">
-            <label class="calc-label">Passagers</label>
+            <label class="calc-label" data-i18n="calc_passengers">Passagers</label>
             <div class="pax-control">
               <button class="pax-btn" type="button" onclick="changePax('eb-pax-val',-1)">−</button>
               <span class="pax-val" id="eb-pax-val">1</span>
@@ -543,13 +543,13 @@
           </div>
         </div>
 
-        <button class="btn-calc" onclick="calcEscale()">Voir mon indemnité →</button>
-        <button class="back-btn" onclick="goTo('step-2', 50)">← Retour</button>
+        <button class="btn-calc" onclick="calcEscale()" data-i18n="calc_see_amount">Voir mon indemnité →</button>
+        <button class="back-btn" onclick="goTo('step-2', 50)" data-i18n="funnel_back">← Retour</button>
       </div>
 
       <!-- ══ LOADER SUSPENSE ══ -->
       <div class="fstep" id="step-loader">
-        <p class="funnel-hint">Plus qu'une étape. Votre résultat arrive.</p>
+        <p class="funnel-hint" data-i18n="funnel_almost">Plus qu'une étape. Votre résultat arrive.</p>
         <div class="result-loader">
           <div class="loader-dots">
             <div class="loader-dot"></div>
@@ -557,7 +557,7 @@
             <div class="loader-dot"></div>
           </div>
           <div class="loader-text" id="loader-text">Consultation des données de vol...</div>
-          <div class="loader-steps" id="loader-steps">Vérification Eurocontrol · Analyse distance · CE 261/2004</div>
+          <div class="loader-steps" id="loader-steps" data-i18n="loader_steps">Vérification Eurocontrol · Analyse distance · CE 261/2004</div>
         </div>
       </div>
 
@@ -575,16 +575,16 @@
           </div>
           <div class="res-calc-detail" id="res-calc-detail" style="display:none;">—</div>
           <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(0,229,160,0.13);">
-            <div style="font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Raison invoquée par la compagnie :</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;" data-i18n="res_raison_label">Raison invoquée par la compagnie :</div>
             <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.7);" id="res-raison-txt">—</div>
             <div style="font-size:10px;color:var(--neon-b);margin-top:3px;" id="res-raison-note"></div>
           </div>
           <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(0,229,160,0.13);">
             <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">La Promesse Robin</div>
             <ul style="font-size:11px;color:rgba(255,255,255,0.7);line-height:1.6;margin:0;padding-left:18px;">
-              <li style="margin-bottom:6px;"><strong style="color:rgba(255,255,255,0.9);">25 % seulement, au succès.</strong> Les autres services prennent souvent 35 % à 50 %.</li>
-              <li style="margin-bottom:6px;"><strong style="color:rgba(255,255,255,0.9);">Zéro risque :</strong> aucune avance, aucun frais de dossier. <strong>Si on ne gagne pas, vous ne payez rien.</strong></li>
-              <li><strong style="color:rgba(255,255,255,0.9);">Accompagnement WhatsApp :</strong> Un suivi humain et direct sans attente téléphonique.</li>
+              <li style="margin-bottom:6px;" data-i18n-html="promise_p1"><strong style="color:rgba(255,255,255,0.9);">25 % seulement, au succès.</strong> Les autres services prennent souvent 35 % à 50 %.</li>
+              <li style="margin-bottom:6px;" data-i18n-html="promise_p2"><strong style="color:rgba(255,255,255,0.9);">Zéro risque :</strong> aucune avance, aucun frais de dossier. <strong>Si on ne gagne pas, vous ne payez rien.</strong></li>
+              <li data-i18n-html="promise_p3"><strong style="color:rgba(255,255,255,0.9);">Accompagnement WhatsApp :</strong> Un suivi humain et direct sans attente téléphonique.</li>
             </ul>
           </div>
         </div>
@@ -598,31 +598,31 @@
            onclick="plausible('WhatsApp-CTA', {props: {source: 'simulator-result'}})">
           <span id="sticky-cta-amount">RÉCUPÉRER MON INDEMNITÉ →</span>
         </a>
-        <p style="text-align:center;font-size:10px;color:rgba(255,255,255,0.35);margin-top:6px;">Gratuit si on ne gagne pas · Réponse WhatsApp sous 24h</p>
+        <p style="text-align:center;font-size:10px;color:rgba(255,255,255,0.35);margin-top:6px;" data-i18n="result_free_note">Gratuit si on ne gagne pas · Réponse WhatsApp sous 24h</p>
 
-        <button class="back-btn" style="margin-top:8px;" onclick="restartFunnel()">↺ Recommencer le diagnostic</button>
+        <button class="back-btn" style="margin-top:8px;" onclick="restartFunnel()" data-i18n="funnel_restart">↺ Recommencer le diagnostic</button>
       </div>
 
       <!-- ══ NON-ÉLIGIBLE (sortie douce pour tous les cas) ══ -->
       <div class="fstep" id="step-nope">
         <div class="non-eligible-exit">
-          <h3 class="nope-title">⚠️ Ce vol ne semble pas éligible à l'indemnisation</h3>
+          <h3 class="nope-title" data-i18n="nope_title">⚠️ Ce vol ne semble pas éligible à l'indemnisation</h3>
           <p class="nope-body" id="step-nope-reason">L'annulation a été communiquée plus de 14 jours avant le départ. La loi CE 261 n'impose pas d'indemnisation dans ce cas. Vous avez cependant droit au <strong>remboursement intégral de votre billet.</strong></p>
 
           <div class="exit-capture">
-            <h4 class="exit-capture-title">📩 Vous avez un prochain vol prévu ?</h4>
-            <p>Laissez votre email — on vous alerte automatiquement si un retard ouvre un droit.</p>
+            <h4 class="exit-capture-title" data-i18n="exit_capture_title">📩 Vous avez un prochain vol prévu ?</h4>
+            <p data-i18n="exit_capture_body">Laissez votre email — on vous alerte automatiquement si un retard ouvre un droit.</p>
             <input type="email" class="non-eligible-input" placeholder="votre@email.com" />
-            <button type="button" class="non-eligible-btn">M'alerter gratuitement</button>
+            <button type="button" class="non-eligible-btn" data-i18n="exit_capture_btn">M'alerter gratuitement</button>
           </div>
 
           <div class="exit-referral">
-            <h4 class="exit-referral-title">👥 Vous connaissez quelqu'un dont le vol a été retardé ?</h4>
-            <p>Partagez Robin — chaque passager peut toucher jusqu'à 600€.</p>
-            <a href="https://wa.me/?text=Mon%20ami%20Robin%20des%20Airs%20récupère%20les%20indemnités%20aériennes.%20Si%20ton%20vol%20a%20été%20retardé%20tu%20as%20droit%20à%20600€%20%3A%20https%3A%2F%2Frobindesairs.eu" class="btn-whatsapp non-eligible-link" target="_blank" rel="noopener">💬 Partager sur WhatsApp</a>
+            <h4 class="exit-referral-title" data-i18n="exit_referral_title">👥 Vous connaissez quelqu'un dont le vol a été retardé ?</h4>
+            <p data-i18n="exit_referral_body">Partagez Robin — chaque passager peut toucher jusqu'à 600€.</p>
+            <a href="https://wa.me/?text=Mon%20ami%20Robin%20des%20Airs%20récupère%20les%20indemnités%20aériennes.%20Si%20ton%20vol%20a%20été%20retardé%20tu%20as%20droit%20à%20600€%20%3A%20https%3A%2F%2Frobindesairs.eu" class="btn-whatsapp non-eligible-link" target="_blank" rel="noopener" data-i18n="share_whatsapp_btn">💬 Partager sur WhatsApp</a>
           </div>
 
-          <button class="btn-restart back-btn" onclick="restartFunnel()">↺ Recommencer le diagnostic</button>
+          <button class="btn-restart back-btn" onclick="restartFunnel()" data-i18n="funnel_restart">↺ Recommencer le diagnostic</button>
         </div>
       </div>
       </div><!-- /funnel-long -->
@@ -703,7 +703,7 @@
       <h2 class="section-title" data-i18n-html="section_testi_title">Combien vous pouvez obtenir.<br>Selon votre situation.</h2>
     </div>
 
-    <div class="testi-disclaimer" style="max-width:840px;margin:14px auto 28px;padding:14px 18px;background:rgba(255,255,255,0.08);border-left:3px solid #F59E0B;border-radius:6px;color:rgba(255,255,255,0.85);font-size:13px;line-height:1.55;text-align:left">
+    <div class="testi-disclaimer" style="max-width:840px;margin:14px auto 28px;padding:14px 18px;background:rgba(255,255,255,0.08);border-left:3px solid #F59E0B;border-radius:6px;color:rgba(255,255,255,0.85);font-size:13px;line-height:1.55;text-align:left" data-i18n-html="testi_disclaimer">
       <strong style="color:#F59E0B">ℹ️ Ces exemples sont pédagogiques.</strong> Ils illustrent les indemnités prévues par le règlement européen <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A32004R0261" target="_blank" rel="noopener external" style="color:#FED7AA;text-decoration:underline">CE 261/2004</a>. Ils ne constituent pas des avis clients. Robin des Airs est en phase de pré-lancement&nbsp;: les premiers avis vérifiés seront publiés après ouverture officielle du service.
     </div>
 
@@ -715,7 +715,7 @@
           <p class="testi-quote" data-i18n-html="testi_quote_1"><strong>Famille de 3 sur Paris→Dakar (CDG→DKR).</strong> Vol retardé de 6 heures à l'arrivée. Distance &gt; 3 500 km (long-courrier).</p>
           <div class="testi-author">
             <div class="testi-avatar" style="background:#0B1F3A;color:#F59E0B">✈</div>
-            <div><div class="testi-name">Cas type — retard long-courrier</div><div class="testi-info" data-i18n="testi_info_1">CDG → DKR · 3 passagers · Retard &gt; 4h</div></div>
+            <div><div class="testi-name" data-i18n="testi_name_1">Cas type — retard long-courrier</div><div class="testi-info" data-i18n="testi_info_1">CDG → DKR · 3 passagers · Retard &gt; 4h</div></div>
             <div class="testi-amount-col">
               <div class="testi-amount" data-stat-eur="1350">1&nbsp;350€</div>
               <div class="testi-amount-label" data-i18n="testi_net_label">net pour vous</div>
@@ -728,7 +728,7 @@
           <p class="testi-quote" data-i18n-html="testi_quote_2"><strong>Couple sur Bruxelles→Abidjan (BRU→ABJ).</strong> Vol annulé moins de 14 jours avant le départ, sans circonstance extraordinaire prouvée. Long-courrier.</p>
           <div class="testi-author">
             <div class="testi-avatar" style="background:#0B1F3A;color:#F59E0B">✈</div>
-            <div><div class="testi-name">Cas type — annulation tardive</div><div class="testi-info" data-i18n="testi_info_2">BRU → ABJ · 2 passagers · Annulation</div></div>
+            <div><div class="testi-name" data-i18n="testi_name_2">Cas type — annulation tardive</div><div class="testi-info" data-i18n="testi_info_2">BRU → ABJ · 2 passagers · Annulation</div></div>
             <div class="testi-amount-col">
               <div class="testi-amount" data-stat-eur="900">900€</div>
               <div class="testi-amount-label" data-i18n="testi_net_label">net pour vous</div>
@@ -741,7 +741,7 @@
           <p class="testi-quote" data-i18n-html="testi_quote_4"><strong>Passager seul sur Paris→Bamako (CDG→BKO).</strong> Vol annulé. La compagnie propose un bon d'achat de 300 €. Le passager exige le paiement en cash selon CE 261.</p>
           <div class="testi-author">
             <div class="testi-avatar" style="background:#0B1F3A;color:#F59E0B">✈</div>
-            <div><div class="testi-name">Cas type — refus de l'avoir</div><div class="testi-info" data-i18n="testi_info_4">CDG → BKO · 1 passager · Annulation</div></div>
+            <div><div class="testi-name" data-i18n="testi_name_4">Cas type — refus de l'avoir</div><div class="testi-info" data-i18n="testi_info_4">CDG → BKO · 1 passager · Annulation</div></div>
             <div class="testi-amount-col">
               <div class="testi-amount" data-stat-eur="450">450€</div>
               <div class="testi-amount-label" data-i18n="testi_net_label">net pour vous</div>
@@ -755,7 +755,7 @@
           <p class="testi-quote" data-i18n-html="testi_quote_6"><strong>Mère et enfant sur Paris→Douala (CDG→DLA).</strong> Surbooking : refus d'embarquement contre leur gré. Long-courrier.</p>
           <div class="testi-author">
             <div class="testi-avatar" style="background:#0B1F3A;color:#F59E0B">✈</div>
-            <div><div class="testi-name">Cas type — surbooking</div><div class="testi-info" data-i18n="testi_info_6">CDG → DLA · 2 passagers · Surbooking</div></div>
+            <div><div class="testi-name" data-i18n="testi_name_6">Cas type — surbooking</div><div class="testi-info" data-i18n="testi_info_6">CDG → DLA · 2 passagers · Surbooking</div></div>
             <div class="testi-amount-col">
               <div class="testi-amount" data-stat-eur="900">900€</div>
               <div class="testi-amount-label" data-i18n="testi_net_label">net pour vous</div>
@@ -768,7 +768,7 @@
           <p class="testi-quote" data-i18n-html="testi_quote_8"><strong>Famille de 4 sur Bruxelles→Kinshasa (BRU→FIH).</strong> Vol annulé, réacheminement &gt; 24h plus tard. Long-courrier.</p>
           <div class="testi-author">
             <div class="testi-avatar" style="background:#0B1F3A;color:#F59E0B">✈</div>
-            <div><div class="testi-name">Cas type — famille annulation</div><div class="testi-info" data-i18n="testi_info_8">BRU → FIH · 4 passagers · Annulation</div></div>
+            <div><div class="testi-name" data-i18n="testi_name_8">Cas type — famille annulation</div><div class="testi-info" data-i18n="testi_info_8">BRU → FIH · 4 passagers · Annulation</div></div>
             <div class="testi-amount-col">
               <div class="testi-amount" data-stat-eur="1800">1&nbsp;800€</div>
               <div class="testi-amount-label" data-i18n="testi_net_label">net pour vous</div>
@@ -788,7 +788,7 @@
       </div>
       <button class="testi-arrow" onclick="slideTestis(1)" aria-label="Suivant">→</button>
     </div>
-    <p style="margin-top:18px;font-size:12px;color:rgba(255,255,255,0.55);text-align:center">
+    <p style="margin-top:18px;font-size:12px;color:rgba(255,255,255,0.55);text-align:center" data-i18n-html="testi_source">
       Source : <a href="https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A32004R0261" target="_blank" rel="noopener external" style="color:rgba(255,255,255,0.75);text-decoration:underline">Règlement (CE) n° 261/2004 du Parlement européen et du Conseil</a> · barème articles 4, 5 et 7
     </p>
   </div>
@@ -994,7 +994,7 @@
       <div class="footer-logo">ROBIN <span>des Airs</span></div>
       <p class="footer-tagline" data-i18n="footer_tagline">Réclamation aérienne · Spécialiste Diaspora · Prix fixe · Gratuit si on ne gagne pas</p>
       <p class="footer-address">Robin des Airs · 66 avenue des Champs-Élysées, Paris 🇫🇷</p>
-      <p style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:10px;font-style:italic;">"Robin prend aux compagnies,<br>rend à nos familles."</p>
+      <p style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:10px;font-style:italic;" data-i18n-html="footer_slogan">"Robin prend aux compagnies,<br>rend à nos familles."</p>
     </div>
     <div class="footer-col">
       <h3 class="footer-col-heading" data-i18n="footer_nav">Navigation</h3>
@@ -1007,43 +1007,43 @@
       </ul>
     </div>
     <div class="footer-col">
-      <h3 class="footer-col-heading">Guide du Voyageur</h3>
+      <h3 class="footer-col-heading" data-i18n="footer_guide_heading">Guide du Voyageur</h3>
       <ul>
-        <li><a href="/blog/">Blog — guides et articles</a></li>
-        <li><a href="/blog/jurisprudence-ce261-arrets-cjue.html">Jurisprudence CJUE (CE 261)</a></li>
-        <li><a href="/blog/reglementation-ce261-resume.html">Résumé du règlement CE 261</a></li>
+        <li><a href="/blog/" data-i18n="footer_blog">Blog — guides et articles</a></li>
+        <li><a href="/blog/jurisprudence-ce261-arrets-cjue.html" data-i18n="footer_jurisprudence">Jurisprudence CJUE (CE 261)</a></li>
+        <li><a href="/blog/reglementation-ce261-resume.html" data-i18n="footer_ce261_summary">Résumé du règlement CE 261</a></li>
       </ul>
     </div>
     <div class="footer-col">
-      <h3 class="footer-col-heading">Ressources</h3>
+      <h3 class="footer-col-heading" data-i18n="footer_resources_heading">Ressources</h3>
       <ul>
-        <li><a href="/meteo-dossier-indemnite.html">Météo et dossier (TAF, METAR…)</a></li>
-        <li><a href="/pourquoi-si-peu-reclament.html">Pourquoi si peu récupèrent leur indemnité ?</a></li>
+        <li><a href="/meteo-dossier-indemnite.html" data-i18n="footer_meteo">Météo et dossier (TAF, METAR…)</a></li>
+        <li><a href="/pourquoi-si-peu-reclament.html" data-i18n="footer_why_few">Pourquoi si peu récupèrent leur indemnité ?</a></li>
         <li><a href="/depot-express.html" data-i18n="footer_depot_online">Dépôt en ligne</a></li>
-        <li><a href="/llms.txt">Documentation IA (llms.txt)</a></li>
-        <li><a href="/llms-full.txt">Index complet URLs (llms-full.txt)</a></li>
-        <li><a href="/crm" rel="nofollow">CRM — accès équipe</a></li>
+        <li><a href="/llms.txt" data-i18n="footer_ai_docs">Documentation IA (llms.txt)</a></li>
+        <li><a href="/llms-full.txt" data-i18n="footer_ai_index">Index complet URLs (llms-full.txt)</a></li>
+        <li><a href="/crm" rel="nofollow" data-i18n="footer_crm">CRM — accès équipe</a></li>
       </ul>
     </div>
     <div class="footer-col">
       <h3 class="footer-col-heading" data-i18n="footer_legal">Légal</h3>
       <ul>
-        <li><a href="/cgv.html">CGV</a></li>
-        <li><a href="/politique-confidentialite.html">Politique de confidentialité</a></li>
-        <li><a href="/mandat.html">Mandat de représentation (signer en ligne)</a></li>
-        <li><a href="/documents/mandat-fr.html?print=1" target="_blank" rel="noopener">Mandat PDF (FR)</a></li>
-        <li><a href="/droit-retractation.html">Droit de rétractation</a></li>
+        <li><a href="/cgv.html" data-i18n="footer_cgv">CGV</a></li>
+        <li><a href="/politique-confidentialite.html" data-i18n="footer_privacy">Politique de confidentialité</a></li>
+        <li><a href="/mandat.html" data-i18n="footer_mandate">Mandat de représentation (signer en ligne)</a></li>
+        <li><a href="/documents/mandat-fr.html?print=1" target="_blank" rel="noopener" data-i18n="footer_mandat_pdf">Mandat PDF (FR)</a></li>
+        <li><a href="/droit-retractation.html" data-i18n="footer_withdrawal">Droit de rétractation</a></li>
       </ul>
     </div>
     <div class="footer-col">
       <h3 class="footer-col-heading" data-i18n="footer_contact">Contact</h3>
       <ul>
         <li><a href="https://wa.me/33756863630" target="_blank">💬 WhatsApp</a></li>
-        <li><a href="/suivi-dossier.html">📋 Où en est mon dossier ?</a></li>
+        <li><a href="/suivi-dossier.html" data-i18n="footer_track">📋 Où en est mon dossier ?</a></li>
         <li><a href="mailto:expert@robindesairs.eu">expert@robindesairs.eu</a></li>
         <li>66 avenue des Champs-Élysées, Paris 🇫🇷</li>
         <li><a href="#faq">FAQ</a></li>
-        <li class="footer-crisis"><!-- Vérifier que le numéro est actif avant lancement, sinon supprimer --><strong>Ligne crise (plusieurs vols annulés)</strong> — ouverte uniquement en période de crise : <a href="tel:+33189628969">01 89 62 89 69</a></li>
+        <li class="footer-crisis" data-i18n-html="footer_crisis"><!-- Vérifier que le numéro est actif avant lancement, sinon supprimer --><strong>Ligne crise (plusieurs vols annulés)</strong> — ouverte uniquement en période de crise : <a href="tel:+33189628969">01 89 62 89 69</a></li>
       </ul>
     </div>
   </div>
@@ -1054,8 +1054,8 @@
     <p id="footer-currency-hint" class="footer-currency-hint" style="display:none;margin-top:12px;font-size:11px;color:rgba(255,255,255,0.45);line-height:1.5;"></p>
   </div>
   <div class="footer-bottom">
-    <div class="footer-legal">© 2026 Robin des Airs — 66 av. des Champs-Élysées, 75008 Paris · Réclamation aérienne · Au service de nos communautés et de nos familles</div>
-    <div class="footer-reg">Fondé sur le Règlement CE 261/2004<br>Données protégées · RGPD conforme</div>
+    <div class="footer-legal" data-i18n="footer_copyright">© 2026 Robin des Airs — 66 av. des Champs-Élysées, 75008 Paris · Réclamation aérienne · Au service de nos communautés et de nos familles</div>
+    <div class="footer-reg" data-i18n-html="footer_reg">Fondé sur le Règlement CE 261/2004<br>Données protégées · RGPD conforme</div>
   </div>
 </footer>
 
