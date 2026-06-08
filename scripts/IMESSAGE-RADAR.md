@@ -60,3 +60,25 @@ https://www.flightradar24.com/af718
 
 > Dédup : un vol n'est envoyé qu'une fois (clé vol+route+date+palier). Un retard qui
 > s'aggrave d'une heure ou qui passe en annulation redéclenche une alerte.
+
+## 2 Macs (redondance, sans doublon)
+
+Faire tourner le poller sur **2 Macs** : si l'un dort, l'autre couvre. Pour ne pas
+recevoir chaque alerte **en double**, les deux partagent leur mémoire « déjà envoyé »
+via **iCloud Drive**.
+
+> Prérequis : les 2 Macs connectés au **même identifiant Apple** (iCloud Drive activé + iMessage).
+
+1. Sur **chaque** Mac, dans `scripts/.imessage-radar.env`, mettre la **même** ligne d'état partagé :
+   ```
+   ROBIN_IMESSAGE_TO=<ton Apple ID / numéro>
+   ROBIN_STATE_FILE=~/Library/Mobile Documents/com~apple~CloudDocs/RobinRadar/imessage-sent.json
+   ```
+   (`~` est étendu automatiquement ; le chemin pointe vers le **même fichier synchronisé** sur les 2 Macs.)
+2. Sur le **2ᵉ Mac** : récupérer le projet, créer ce `.env`, puis `bash scripts/install-imessage-radar.sh`.
+3. Permissions du 2ᵉ Mac : Réglages → Confidentialité & sécurité → **Automatisation** (Node/Terminal → Messages).
+
+Résultat : le premier Mac qui voit un vol l'envoie et l'inscrit dans l'état iCloud ;
+l'autre lit « déjà vu » et **n'envoie pas**. Si un Mac est éteint/endormi, l'autre prend le relais.
+(Les alertes étant rares, le risque de double simultané est négligeable ; on peut au besoin
+décaler le 2ᵉ Mac de quelques minutes.)

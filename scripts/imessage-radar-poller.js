@@ -14,6 +14,8 @@
  *   ROBIN_RADAR_URL     défaut https://robindesairs.eu/api/radar-today
  *   ROBIN_MIN_DELAY     retard mini en minutes (défaut 180 = 3h)
  *   ROBIN_TODAY_ONLY    "1" (défaut) = seulement les vols du jour (Paris)
+ *   ROBIN_STATE_FILE    chemin du fichier « déjà envoyé » ; le pointer vers iCloud Drive
+ *                       (même chemin sur les 2 Macs) pour partager la dédup → pas de doublon
  *
  * Usage :
  *   node imessage-radar-poller.js            # cycle normal (1ʳᵉ exécution = amorçage sans envoi)
@@ -35,8 +37,13 @@ const RADAR_URL = (process.env.ROBIN_RADAR_URL || 'https://robindesairs.eu/api/r
 const MIN_DELAY = parseInt(process.env.ROBIN_MIN_DELAY || '180', 10) || 180;
 const TODAY_ONLY = (process.env.ROBIN_TODAY_ONLY || '1') !== '0';
 
-const STATE_DIR = path.join(os.homedir(), '.robin-radar');
-const STATE_FILE = path.join(STATE_DIR, 'imessage-sent.json');
+// Fichier d'état « déjà envoyé ». Configurable (ROBIN_STATE_FILE) pour le PARTAGER
+// entre 2 Macs via iCloud Drive → la dédup est commune, pas de doublon d'alerte.
+// ~ et $HOME sont étendus → la MÊME ligne .env marche sur les 2 Macs.
+const STATE_FILE = ((process.env.ROBIN_STATE_FILE || '').trim()
+  || path.join(os.homedir(), '.robin-radar', 'imessage-sent.json'))
+  .replace(/^~(?=[/\\])/, os.homedir()).replace(/^\$HOME(?=[/\\])/, os.homedir());
+const STATE_DIR = path.dirname(STATE_FILE);
 const APPLESCRIPT = path.join(__dirname, 'imessage-send.applescript');
 const KEEP_DAYS = 3;
 
