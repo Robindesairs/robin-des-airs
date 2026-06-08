@@ -8,13 +8,23 @@ window.I18N = (function() {
     }
   }
 
+  /** Page anglaise « figée » (ex. /index-en.html servi sur /en) : le HTML déclare lang="en".
+   *  Permet de rendre l'anglais même hors du chemin /en (accès direct au fichier, preview local). */
+  function htmlLangEn() {
+    try {
+      return (document.documentElement.getAttribute('lang') || '').toLowerCase() === 'en';
+    } catch (e) {
+      return false;
+    }
+  }
+
   var stored = (localStorage.getItem('robin_lang') || 'fr').toLowerCase();
   var urlLang = '';
   try {
     urlLang = (new URLSearchParams(location.search).get('lang') || '').toLowerCase();
   } catch (e2) {}
   var currentLang = 'fr';
-  if (isEnPath() || urlLang === 'en') {
+  if (isEnPath() || urlLang === 'en' || htmlLangEn()) {
     currentLang = 'en';
     try {
       localStorage.setItem('robin_lang', 'en');

@@ -9,8 +9,10 @@
 /navigation-interne    /navigation-interne.html    200
 /interne               /navigation-interne.html    200
 
-# Accueil anglais (URL /en — même page, langue EN via i18n.js)
-/en    /index.html    200
+# Accueil anglais (URL /en) — vraie page statique anglaise (anglais figé : SEO + aperçus WhatsApp/Meta).
+# index-en.html est GÉNÉRÉ par scripts/build-en-home.js (source : index.html + dico EN de i18n.js). Ne pas l'éditer à la main.
+/en     /index-en.html    200
+/en/    /index-en.html    200
 
 # Netlify : forcer la racine à servir index.html
 /    /index.html    200
