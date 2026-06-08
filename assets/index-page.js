@@ -1785,7 +1785,7 @@ function toggleEscaleVol3() {
     var STEPS_BY_LANG = {
       fr: function () { return [
         { who: 'client', delay: 400,  hold: 1100, sender: 'Aminata', html: 'AF718 retardé 5 h au départ 😤' },
-        { who: 'robin',  typing: 1300, hold: 1200, html: '👋 Envoyez une <b>photo de votre carte d\'embarquement</b> — je lis le vol tout seul 📸' },
+        { who: 'robin',  typing: 1300, hold: 1200, html: '5 h de retard, c\'est rageant 😤 Envoyez-moi juste une <b>photo de votre carte d\'embarquement</b>, je lis le vol tout seul 📸' },
         { who: 'client', delay: 900,  hold: 1000, html: PASS.fr },
         { who: 'robin',  delay: 450,  hold: 1700, cls: 'wa-scan', html: '🔎 Lecture de la carte…' },
         { who: 'robin',  delay: 400,  hold: 1900, html: '📄 Lu sur votre carte : <b>AF718</b> · <b>Paris → Dakar</b> ✓' },
@@ -1798,7 +1798,7 @@ function toggleEscaleVol3() {
       ]; },
       en: function () { return [
         { who: 'client', delay: 400,  hold: 1100, sender: 'Ama', html: 'BA081 delayed 5 h at departure 😤' },
-        { who: 'robin',  typing: 1300, hold: 1200, html: '👋 Just send a <b>photo of your boarding pass</b> — I\'ll read the flight myself 📸' },
+        { who: 'robin',  typing: 1300, hold: 1200, html: '5 h delayed, that\'s maddening 😤 Just send me a <b>photo of your boarding pass</b>, I\'ll read the flight myself 📸' },
         { who: 'client', delay: 900,  hold: 1000, html: PASS.en },
         { who: 'robin',  delay: 450,  hold: 1700, cls: 'wa-scan', html: '🔎 Reading the pass…' },
         { who: 'robin',  delay: 400,  hold: 1900, html: '📄 From your pass: <b>BA081</b> · <b>London → Accra</b> ✓' },
