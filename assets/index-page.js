@@ -1784,11 +1784,11 @@ function toggleEscaleVol3() {
     // La cliente porte un prénom africain (reco sous-agent CQ) : Aminata (FR) / Ama (EN, diaspora anglophone).
     var STEPS_BY_LANG = {
       fr: function () { return [
-        { who: 'client', delay: 400,  hold: 1100, sender: 'Aminata', html: 'AF718 du 15/01, retardé 5 h à l\'arrivée 😤' },
+        { who: 'client', delay: 400,  hold: 1100, sender: 'Aminata', html: 'AF719 retardé 5 h à l\'arrivée 😤' },
         { who: 'robin',  typing: 1300, hold: 1200, html: '👋 Envoyez une <b>photo de votre carte d\'embarquement</b> — je lis le vol tout seul 📸' },
         { who: 'client', delay: 900,  hold: 1000, html: PASS.fr },
         { who: 'robin',  delay: 450,  hold: 1700, cls: 'wa-scan', html: '🔎 Lecture de la carte…' },
-        { who: 'robin',  delay: 400,  hold: 1900, html: '📄 Lu sur votre carte : <b>AF718</b> · 15/01 · <b>Dakar → Paris</b> ✓' },
+        { who: 'robin',  delay: 400,  hold: 1900, html: '📄 Lu sur votre carte : <b>AF719</b> · <b>Dakar → Paris</b> ✓' },
         { who: 'robin',  typing: 1000, hold: 2800, cls: 'wa-msg--verdict', html: '⏱️ Vol vérifié : <b>5 h 12</b> de retard à l\'arrivée<br>✅ Éligible — <span class="wa-verdict-amt">jusqu\'à 600 €</span> / passager' },
         { who: 'robin',  typing: 1000, hold: 2600, html: 'Et je prépare déjà votre mandat — <b>pas de long formulaire</b> chez nous, j\'ai presque toutes vos infos 💪' },
         { who: 'client', delay: 600,  hold: 1100, html: 'C\'est combien, vous ? 🤔' },
@@ -1797,11 +1797,11 @@ function toggleEscaleVol3() {
         { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 <b>Vous n\'avez plus qu\'à signer</b> — je m\'occupe du reste 💪' }
       ]; },
       en: function () { return [
-        { who: 'client', delay: 400,  hold: 1100, sender: 'Ama', html: 'BA0078 on 15/01, landed 5 h late 😤' },
+        { who: 'client', delay: 400,  hold: 1100, sender: 'Ama', html: 'BA0078 landed 5 h late 😤' },
         { who: 'robin',  typing: 1300, hold: 1200, html: '👋 Just send a <b>photo of your boarding pass</b> — I\'ll read the flight myself 📸' },
         { who: 'client', delay: 900,  hold: 1000, html: PASS.en },
         { who: 'robin',  delay: 450,  hold: 1700, cls: 'wa-scan', html: '🔎 Reading the pass…' },
-        { who: 'robin',  delay: 400,  hold: 1900, html: '📄 From your pass: <b>BA0078</b> · 15/01 · <b>Accra → London</b> ✓' },
+        { who: 'robin',  delay: 400,  hold: 1900, html: '📄 From your pass: <b>BA0078</b> · <b>Accra → London</b> ✓' },
         { who: 'robin',  typing: 1000, hold: 2800, cls: 'wa-msg--verdict', html: '⏱️ Flight checked: <b>5 h 12</b> late on arrival<br>✅ Eligible — <span class="wa-verdict-amt">up to €600</span> / passenger' },
         { who: 'robin',  typing: 1000, hold: 2600, html: 'And I\'m already getting your claim ready — <b>no long form</b> with us, I\'ve got almost everything 💪' },
         { who: 'client', delay: 600,  hold: 1100, html: 'And what\'s your cut? 🤔' },
