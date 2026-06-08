@@ -7,8 +7,9 @@
  * Résultat mis en cache (Netlify Blobs) par VOL_DATE — une enquête coûte 1 appel IA, on ne la rejoue pas.
  *
  * Variables Netlify : ANTHROPIC_API_KEY (cause IA), RAPIDAPI_KEY (vol + rotation).
- *   RADAR_ENQUETE_MODEL — modèle Claude (défaut claude-opus-4-8, raisonnement juridique max).
- *                         Mettre claude-haiku-4-5 pour réduire fortement le coût/token.
+ *   RADAR_ENQUETE_MODEL — modèle Claude (défaut claude-sonnet-4-5 : bon rapport
+ *                         qualité/coût pour le raisonnement juridique + web_search).
+ *                         claude-haiku-4-5 = encore moins cher ; claude-opus-4-8 = max qualité.
  */
 
 const { ADB_HOST, rapidApiKey, parisYmd } = require('./aerodatabox-flight');
@@ -19,7 +20,7 @@ try { blobs = require('@netlify/blobs'); } catch (_) {}
 const STORE = 'robin-radar-enquetes';
 const FRESH_MS = 12 * 3600 * 1000; // une enquête reste valable 12 h
 const API_URL = 'https://api.anthropic.com/v1/messages';
-const DEFAULT_MODEL = 'claude-opus-4-8';
+const DEFAULT_MODEL = 'claude-sonnet-4-5';
 
 function enqueteModel() {
   return (process.env.RADAR_ENQUETE_MODEL || DEFAULT_MODEL).trim();
