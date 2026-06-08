@@ -379,6 +379,7 @@
   var SCAN_LOCK = false;
   var ZONE_LABELS = {
     paris_cdg: 'Paris CDG',
+    paris_ory: 'Paris Orly',
     bru: 'Bruxelles',
     ams: 'Amsterdam',
     eu_south_it: 'Rome · Milan',
@@ -496,6 +497,7 @@
 
   const RETURN_HUB_IATA = {
     paris: new Set(['CDG']),
+    ory: new Set(['ORY']),
     bru: new Set(['BRU']),
     ams: new Set(['AMS']),
     fra: new Set(['FRA']),

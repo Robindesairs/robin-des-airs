@@ -14,6 +14,7 @@
   /** Hubs aller atomiques (ordre = décalage +5 min). */
   var ALLER_ROUTES = [
     { zone: 'paris_cdg', label: 'Paris CDG', group: '1', minute: 0 },
+    { zone: 'paris_ory', label: 'Paris Orly', group: '18', minute: 45 },
     { zone: 'bru', label: 'Bruxelles', group: '5', minute: 5 },
     { zone: 'ams', label: 'Amsterdam', group: '6', minute: 10 },
     { zone: 'fco', label: 'Rome', group: '13', minute: 15 },
@@ -26,6 +27,7 @@
 
   var RETURN_ROUTES = [
     { id: 'paris', label: 'Paris CDG', hub: 'CDG', group: '1', minute: 5 },
+    { id: 'ory', label: 'Paris Orly', hub: 'ORY', group: '18', minute: 50 },
     { id: 'bru', label: 'Bruxelles', hub: 'BRU', group: '5', minute: 10 },
     { id: 'ams', label: 'Amsterdam', hub: 'AMS', group: '6', minute: 15 },
     { id: 'fra', label: 'Francfort', hub: 'FRA', group: '17', minute: 20 },
@@ -39,6 +41,7 @@
   /** Liste unifiée des hubs (aller + retour appariés par groupe) pour le scan global. */
   var ALL_HUBS = [
     { label: 'Paris CDG', zone: 'paris_cdg', group: '1', hub: 'CDG' },
+    { label: 'Paris Orly', zone: 'paris_ory', group: '18', hub: 'ORY' },
     { label: 'Bruxelles', zone: 'bru', group: '5', hub: 'BRU' },
     { label: 'Amsterdam', zone: 'ams', group: '6', hub: 'AMS' },
     { label: 'Francfort', zone: 'fra', group: '17', hub: 'FRA' },
@@ -120,6 +123,7 @@
 
   var SERVER_BADGE_MAP = {
     aller_paris_cdg: ['aller_paris_cdg', 'paris_cdg'],
+    aller_paris_ory: ['aller_paris_ory', 'paris_ory'],
     aller_bru: ['aller_bru', 'bru'],
     aller_ams: ['aller_ams', 'ams'],
     aller_fco: ['aller_fco', 'fco'],
@@ -129,6 +133,7 @@
     aller_bcn: ['aller_bcn', 'bcn'],
     aller_fra: ['aller_fra', 'fra'],
     return_paris: ['paris', 'paris'],
+    return_ory: ['ory', 'ory'],
     return_bru: ['bru', 'bru'],
     return_ams: ['ams', 'ams'],
     return_fra: ['fra', 'fra'],
@@ -142,6 +147,7 @@
 
   var ALLER_ZONE_BADGE_KEYS = {
     paris_cdg: ['aller_paris_cdg', 'paris_cdg'],
+    paris_ory: ['aller_paris_ory', 'paris_ory'],
     bru: ['aller_bru', 'bru'],
     ams: ['aller_ams', 'ams'],
     eu_south_it: ['aller_eu_south_it', 'eu_south_it', 'aller_fco', 'aller_mxp', 'fco', 'mxp'],
@@ -164,6 +170,7 @@
     var hub = String(hubOrId || '').toUpperCase();
     var byHub = {
       CDG: ['paris'],
+      ORY: ['ory'],
       BRU: ['bru'],
       AMS: ['ams'],
       FRA: ['fra'],

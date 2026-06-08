@@ -103,6 +103,8 @@ const HUB_GROUPS = {
   '15': ['MAD'],
   '16': ['BCN'],
   '17': ['FRA'],
+  // Paris Orly seul — Corsair (SS) + AF/Transavia Orly → Afrique subsaharienne.
+  '18': ['ORY'],
 };
 
 

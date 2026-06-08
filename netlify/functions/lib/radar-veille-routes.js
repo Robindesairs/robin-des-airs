@@ -4,6 +4,7 @@
 
 const ALLER_ROUTES = [
   { key: 'paris_cdg', label: 'Paris CDG', group: '1', minute: 0 },
+  { key: 'paris_ory', label: 'Paris Orly', group: '18', minute: 45 },
   { key: 'bru', label: 'Bruxelles', group: '5', minute: 5 },
   { key: 'ams', label: 'Amsterdam', group: '6', minute: 10 },
   { key: 'fco', label: 'Rome', group: '13', minute: 15 },
@@ -16,6 +17,7 @@ const ALLER_ROUTES = [
 
 const RETURN_ROUTES = [
   { key: 'paris', label: 'Paris CDG', hub: 'CDG', group: '1', minute: 5 },
+  { key: 'ory', label: 'Paris Orly', hub: 'ORY', group: '18', minute: 50 },
   { key: 'bru', label: 'Bruxelles', hub: 'BRU', group: '5', minute: 10 },
   { key: 'ams', label: 'Amsterdam', hub: 'AMS', group: '6', minute: 15 },
   { key: 'fra', label: 'Francfort', hub: 'FRA', group: '17', minute: 20 },
