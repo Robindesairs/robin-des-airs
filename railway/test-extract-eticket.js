@@ -137,6 +137,22 @@ check('escale de nuit = 1 SEUL trajet', nuit.trajets.length, 1);
 check('route chaînée malgré le +1 jour', nuit.route, 'DSS → CMN → CDG');
 check('pas d\'aller-retour fictif', nuit.allerRetour, false);
 
+// PNR durci : une référence PUREMENT NUMÉRIQUE (réf agence/OTA) doit être rejetée ; un vrai PNR (avec lettres) passe.
+console.log('\nPNR durci (rejet des références agence purement numériques) :');
+check('réf agence 1234567 rejetée', normalize({ pnr: '1234567', segments: [{ vol: 'AF718', depart: 'CDG', arrivee: 'DSS' }] }).pnr, '');
+check('vrai PNR RBNAF3 accepté', normalize({ pnr: 'RBNAF3', segments: [{ vol: 'AF718', depart: 'CDG', arrivee: 'DSS' }] }).pnr, 'RBNAF3');
+
+// Signaux qualité : lisible/confidence (gate serveur) + multiPNR (plusieurs réservations).
+console.log('\nSignaux qualité (lisible / confidence / multiPNR) :');
+const q = normalize({ lisible: false, confidence: 0.2, multi_pnr: true, pnr: 'RBNAF3', segments: [{ vol: 'AF718', depart: 'CDG', arrivee: 'DSS' }] });
+check('lisible=false propagé', q.lisible, false);
+check('confidence propagée', q.confidence, 0.2);
+check('multiPNR propagé', q.multiPNR, true);
+const q2 = normalize({ pnr: 'RBNAF3', segments: [{ vol: 'AF718', depart: 'CDG', arrivee: 'DSS' }] });
+check('défaut permissif : lisible=true', q2.lisible, true);
+check('défaut permissif : confidence=1', q2.confidence, 1);
+check('défaut : multiPNR=false', q2.multiPNR, false);
+
 console.log(`\n${fails === 0 ? '✅ OFFLINE : tous les champs OK' : `❌ OFFLINE : ${fails} échec(s)`}\n`);
 
 // ── MODE LIVE (optionnel) ──────────────────────────────────────────────────────

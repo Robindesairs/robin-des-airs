@@ -15,12 +15,14 @@
 
 const PROMPT = `Tu lis un E-BILLET / une CONFIRMATION DE RÉSERVATION d'avion (souvent PLUSIEURS passagers, et parfois un ALLER + un RETOUR).
 Extrais TOUTES les informations nécessaires à un mandat de réclamation. Réponds UNIQUEMENT en JSON, ce schéma exact :
-{"compagnie":"","pnr":"","aller_retour":false,
+{"lisible":true,"confidence":1.0,"multi_pnr":false,"compagnie":"","pnr":"","aller_retour":false,
  "trajets":[{"sens":"aller","date":"","depart":"","arrivee":"","segments":[{"vol":"","depart":"","arrivee":"","date":""}]}],
  "passagers":[{"nom":"","prenom":"","date_naissance":""}]}
 Règles STRICTES :
+- lisible / confidence : si le document est trop FLOU, SOMBRE, COUPÉ, incliné ou compressé pour lire les champs clés (n° de vol, PNR, noms) avec CERTITUDE → lisible=false, confidence basse (≤0.4) et laisse VIDES les champs incertains. NE DEVINE JAMAIS un n° de vol "probable" pour remplir : mieux vaut vide que faux.
 - compagnie : nom complet de la compagnie (déduis du code IATA du vol, ex. AF → Air France).
-- pnr : référence de réservation / record locator (PNR, Booking ref, Réf, Confirmation) — 5 à 8 caractères ALPHANUMÉRIQUES. Sinon "".
+- pnr : le RECORD LOCATOR de la COMPAGNIE (6 caractères alphanumériques, contient des LETTRES, souvent près du code-barres ou des segments). Libellés possibles : PNR, Booking ref, Réf, Confirmation, Dossier, Record locator, Airline ref, Réf. transporteur, Localizador, Buchungscode, Filekey. PRÉFÈRE-le à la référence de l'AGENCE/OTA (eDreams, Opodo, Gotogate, Wakanow…). IGNORE une référence PUREMENT NUMÉRIQUE (c'est une réf agence, pas un PNR). Si vraiment absent, "".
+- multi_pnr : true s'il y a PLUSIEURS réservations DISTINCTES (PNR différents) sur le(s) document(s) — dans ce cas NE FUSIONNE PAS les passagers, signale-le simplement.
 - trajets : UN objet par DIRECTION de voyage.
    • Une CORRESPONDANCE (escale) reste DANS LE MÊME trajet, MÊME si le vol suivant part le LENDEMAIN (escale de NUIT — fréquent sur les retours d'Afrique : ex. Dakar→Casablanca le soir puis Casablanca→Paris le lendemain matin = UN SEUL trajet).
    • Un RETOUR = on REVIENT vers le point de départ initial (la destination du retour = le départ de l'aller), en général plusieurs JOURS plus tard → trajet SÉPARÉ. sens="aller" pour le 1er, "retour" pour le retour.
@@ -28,7 +30,7 @@ Règles STRICTES :
 - segments : dans l'ordre, chacun avec vol (MAJUSCULES sans espace, ex. AF718), depart/arrivee (IATA 3 lettres), date du segment.
 - date : "JJ/MM/AAAA" si l'année est imprimée, sinon "JJ/MM". NE JAMAIS deviner ni inventer l'année.
 - passagers : TOUS les passagers nommés. nom = nom de famille en MAJUSCULES ; prenom = prénom(s) (souvent "NOM / Prénom"). date_naissance SEULEMENT si imprimée (JJ/MM/AAAA), sinon "".
-- Plusieurs images/pages : FUSIONNE en UN seul résultat ; ne liste chaque passager qu'UNE fois (pas de doublon entre pages).
+- Plusieurs images/pages d'un MÊME billet : FUSIONNE en UN seul résultat ; ne liste chaque passager qu'UNE fois (pas de doublon entre pages).
 - Champ inconnu = "". Ne JAMAIS inventer.`;
 
 // ── Normalisation (pure) ──────────────────────────────────────────────────────
@@ -100,7 +102,8 @@ function normalize(raw) {
   if (trajets[1] && !trajets[1].sens) trajets[1].sens = 'retour';
   const main = trajets[0] || { sens: '', date: '', depart: '', arrivee: '', route: '', vol: '', escale: false, segments: [] };
   const pnrRaw = String(raw.pnr || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
-  const pnr = /^[A-Z0-9]{5,8}$/.test(pnrRaw) ? pnrRaw : '';
+  // Un vrai record locator compagnie contient des LETTRES → on rejette un code purement numérique (= réf agence/OTA).
+  const pnr = (/^[A-Z0-9]{5,8}$/.test(pnrRaw) && /[A-Z]/.test(pnrRaw)) ? pnrRaw : '';
   // Passagers : dédoublonnés par nom (un même passager peut figurer sur 2 pages photographiées).
   const byName = new Map();
   for (const p of (Array.isArray(raw.passagers) ? raw.passagers : [])) {
@@ -116,6 +119,10 @@ function normalize(raw) {
     depart: main.depart, arrivee: main.arrivee, route: main.route, escale: main.escale, segments: main.segments,
     allerRetour: trajets.length > 1, trajets,
     passengers, pax: passengers.length || 0,
+    // Signaux qualité (gate côté serveur) — défaut permissif si le modèle ne les fournit pas.
+    lisible: raw.lisible !== false,
+    confidence: typeof raw.confidence === 'number' ? Math.max(0, Math.min(1, raw.confidence)) : (raw.lisible === false ? 0.3 : 1),
+    multiPNR: !!raw.multi_pnr,
   };
 }
 
@@ -133,7 +140,9 @@ async function callOpenAIVision(items, key) {
     method: 'POST',
     headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ model: process.env.ETICKET_OPENAI_MODEL || 'gpt-4o', max_tokens: 1200, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content }] }),
+    signal: AbortSignal.timeout(45000),
   });
+  if (!res.ok) throw new Error('openai_http_' + res.status); // 429/5xx → relancé par extractEticketMulti
   const data = await res.json();
   if (!data.choices) return null;
   return JSON.parse(data.choices[0].message.content);
@@ -150,8 +159,10 @@ async function callClaudeDoc(items, key, model) {
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-    body: JSON.stringify({ model, max_tokens: 1500, messages: [{ role: 'user', content }] }),
+    body: JSON.stringify({ model, max_tokens: 1500, temperature: 0, messages: [{ role: 'user', content }] }),
+    signal: AbortSignal.timeout(60000),
   });
+  if (!res.ok) throw new Error('anthropic_http_' + res.status); // 429/5xx → relancé par extractEticketMulti
   const data = await res.json();
   const txt = (data.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('\n');
   const m = txt.match(/\{[\s\S]*\}/);
@@ -173,16 +184,16 @@ async function extractEticketMulti(parts, opts = {}) {
     const openaiKey = opts.openaiKey || process.env.OPENAI_API_KEY;
     const anthropicKey = opts.anthropicKey || process.env.ANTHROPIC_API_KEY;
     const model = opts.model || process.env.ETICKET_MODEL || process.env.RADAR_ENQUETE_MODEL || 'claude-sonnet-4-5';
+    let call = null;
+    if (anyPdf) { if (!anthropicKey) return null; call = () => callClaudeDoc(items, anthropicKey, model); } // un PDF exige Claude
+    else if (openaiKey) call = () => callOpenAIVision(items, openaiKey);
+    else if (anthropicKey) call = () => callClaudeDoc(items, anthropicKey, model);
+    else return null;
+    // 2 tentatives : une erreur transitoire (429 / 5xx / timeout) ne doit pas se traduire en « illisible ».
     let raw = null;
-    if (anyPdf) {
-      if (!anthropicKey) return null; // un PDF exige Claude (gpt-4o Vision ne lit pas les PDF)
-      raw = await callClaudeDoc(items, anthropicKey, model);
-    } else if (openaiKey) {
-      raw = await callOpenAIVision(items, openaiKey);
-    } else if (anthropicKey) {
-      raw = await callClaudeDoc(items, anthropicKey, model);
-    } else {
-      return null;
+    for (let attempt = 0; attempt < 2 && raw == null; attempt++) {
+      try { raw = await call(); }
+      catch (e) { if (attempt === 0) await new Promise((r) => setTimeout(r, 800)); else throw e; }
     }
     return raw ? normalize(raw) : null;
   } catch (e) {
