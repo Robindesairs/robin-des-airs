@@ -972,6 +972,40 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   .hero-bg-visual::after { display: none; }
 }
 
+/* ── Hero desktop « tout sur un écran » ────────────────────────────────────────
+ *  Objectif : voir ENSEMBLE, sans scroller, la photo famille (droite) ET la
+ *  conversation WhatsApp (gauche). On « dézoome » le hero :
+ *   · titre 3 lignes au lieu de 4 (« Récupérez jusqu'à 600 € » tient sur 1 ligne) ;
+ *   · réserves anti-CLS (min-height) neutralisées + marges resserrées ;
+ *   · conversation élargie (« plus grande ») et remontée au-dessus de la flottaison ;
+ *   · contenu calé en haut (flex-start) pour ne plus déborder en haut/bas.
+ *  Scopé ≥1081px (là où la famille occupe la moitié droite). */
+@media (min-width: 1081px) {
+  /* préfixe #hero : passe devant les .hero-* de base définis plus bas dans le fichier */
+  #hero { align-items: flex-start; padding-top: 120px; }
+
+  #hero .hero-title {
+    font-size: clamp(34px, 3.2vw, 44px);
+    letter-spacing: -2.5px;
+    line-height: 1.04;
+    margin-bottom: 8px;
+  }
+  #hero .hero-subhead { font-size: 14px; line-height: 1.4; margin: -2px 0 6px 0; min-height: 0; }
+  #hero .hero-desc    { line-height: 1.5; margin-bottom: 7px; min-height: 0; }
+
+  #hero .hero-entry       { margin-bottom: 7px; gap: 8px; }
+  #hero .hero-entry-hint  { margin-top: 2px; line-height: 1.35; }
+  #hero .hero-entry-badge { margin-top: 6px; }
+
+  /* Conversation : plus large (« plus grande ») ; fenêtre de défilement un peu plus courte
+   * pour que TOUTE la conversation tienne au-dessus de la flottaison sur écran ~800px
+   * (les messages défilent dans cette fenêtre — aucun message perdu). */
+  #hero .wa-typedemo { max-width: 500px; margin: 4px 0 4px; }
+  #hero .wa-chat     { min-height: 246px; max-height: 246px; }
+
+  #hero .hero-stats { margin-top: 9px; padding-top: 9px; }
+}
+
 /* HERO LEFT — texte blanc sur fond implicite */
 .hero-left { }
 
