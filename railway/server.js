@@ -735,7 +735,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
 
   // T1 — menu / reset
   if (['nouveau', 'new', 'reset', '/reset', 'recommencer'].includes(lower)) { await clearState(phone); return sendAccueil(phone, cfg); }
-  if (['menu', 'start', 'reprendre', 'continuer', 'suite', 'bonjour', 'hello', 'hi', 'salut'].includes(lower) || id === 'menu') {
+  if (['go', 'menu', 'start', 'reprendre', 'continuer', 'suite', 'bonjour', 'hello', 'hi', 'salut'].includes(lower) || id === 'menu') {
     const cur = await getState(phone);
     if (cur && cur.step && cur.step !== 'accueil' && cur.step !== 'done') { await send(phone, `👋 Re-bonjour ! On reprend votre dossier là où vous vous étiez arrêté.`, cfg); return relancerEtape(phone, cur, cfg); }
     await clearState(phone); return sendAccueil(phone, cfg);
@@ -748,7 +748,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (id === 'appel' || ((lower === 'appel' || lower === 'rappel' || lower === 'rappelez-moi' || lower === 'rappeler')
       && !(s && (s.step === 'doc_boarding' || s.step === 'doc_eticket')))) {
     upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now(), lastClientAt: Date.now() });
-    return send(phone, `📞 C'est noté — un conseiller Robin des Airs vous rappelle très vite depuis le *+33 7 56 86 36 30* (enregistrez-le sous « *Retard Robin* »). Vous pouvez aussi reprendre quand vous voulez en écrivant *reprendre*, on repart là où on s'est arrêté. 🙏`, cfg);
+    return send(phone, `📞 C'est noté — un conseiller Robin des Airs vous rappelle très vite depuis le *+33 7 56 86 36 30* (enregistrez-le sous « *Retard Robin* »). Vous pouvez aussi reprendre quand vous voulez en écrivant *go*, on repart là où on s'est arrêté. 🙏`, cfg);
   }
 
   // T1.3 — « Plus tard » : le client veut reprendre plus tard. Son tap a déjà rouvert la fenêtre 24h (gratuit) ;
@@ -759,7 +759,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const _patch = { lastClientAt: Date.now() };
     if (!_l.completed) _patch.nudges = ['e3', 'e14']; // engagé : ne garde que la dernière relance « bord de fenêtre »
     upsertLead(phone, _patch);
-    return send(phone, `👍 C'est noté${nm ? ' ' + nm : ''} — je garde votre dossier au chaud, on ne le ferme pas. Reprenez quand vous voulez en écrivant *reprendre*. Je vous ferai juste un petit rappel plus tard, sans insister. 🙏`, cfg);
+    return send(phone, `👍 C'est noté${nm ? ' ' + nm : ''} — je garde votre dossier au chaud, on ne le ferme pas. Reprenez quand vous voulez en écrivant *go*. Je vous ferai juste un petit rappel plus tard, sans insister. 🙏`, cfg);
   }
 
   // T1.5 — Vol cliqué dans le bandeau « vols éligibles » du site (premier contact) ──────────────
@@ -794,7 +794,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const FREE = ['m_vol', 'm_date', 'm_route', 'm_pnr', 'leg_count', 'leg_input', 'names', 'vd_vol', 'vd_date', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob'];
     const looks = !id && (FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input));
     if (looks) {
-      if (isSensitive(input)) { await send(phone, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nÉcrivez *reprendre* pour continuer votre dossier.`, cfg); return; }
+      if (isSensitive(input)) { await send(phone, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nÉcrivez *go* pour continuer votre dossier.`, cfg); return; }
       const r = await answerClientQuestion(input, process.env.OPENAI_API_KEY);
       await sendButtons(phone, { body: (r || `🤖 Je suis l'assistant IA de Robin des Airs.`) + `\n\n👉 *Démarrez* ci-dessous 👇`, buttons: [{ text: '📋 Démarrer' }, { text: '📞 Être rappelé' }] }, cfg);
       return;
@@ -827,7 +827,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (ri === 0 || n === '1' || (lower.includes('afrique') && lower.includes('europe'))) { s.route_type = 'af_eu'; }
     else if (ri === 1 || n === '2' || (lower.includes('europe') && !lower.includes('afrique') && !lower.includes('départ') && !lower.includes('arrivée'))) { s.route_type = 'eu_eu'; await send(phone, `🇪🇺 Les vols intra-européens sont couverts par le CE 261 ✅\nNotre spécialité c'est Afrique ↔ Europe, mais on continue.`, cfg); }
     else if (ri === 2 || n === '3' || (lower.includes('départ') && !lower.includes('retard'))) { s.route_type = 'mixte'; await send(phone, `🛫 Un départ ou une arrivée en Europe peut être éligible. Vérifions ensemble. ✅`, cfg); }
-    else if (ri === 3 || n === '4' || lower.includes('autre')) { await clearState(phone); return send(phone, `😔 Votre vol ne semble pas couvert par la loi européenne.\n\nLe CE 261/2004 s'applique aux vols au départ/à l'arrivée d'un aéroport européen, ou opérés par une compagnie européenne.\n\n❓ Si erreur, écrivez *reprendre* pour choisir une autre route.\n\n${STOP_FOOTER}`, cfg); }
+    else if (ri === 3 || n === '4' || lower.includes('autre')) { await clearState(phone); return send(phone, `😔 Votre vol ne semble pas couvert par la loi européenne.\n\nLe CE 261/2004 s'applique aux vols au départ/à l'arrivée d'un aéroport européen, ou opérés par une compagnie européenne.\n\n❓ Si erreur, écrivez *go* pour choisir une autre route.\n\n${STOP_FOOTER}`, cfg); }
     else return redispatch('route'); // si l'état a avancé → re-dispatch, sinon silence
     s.step = 'incident'; await setState(phone, s); return sendIncident(phone, s, cfg);
   }
@@ -1530,7 +1530,7 @@ app.post('/api/wati-webhook', async (req, res) => {
     // Sérialisé par numéro : les messages d'un même client se traitent dans l'ordre, un par un.
     enqueue(phone, () => handleMessage(phone, text, cfg, mediaUrl, replyId).catch(e => {
       console.error('bot error', e.message, e.stack);
-      if (cfg) return send(phone, 'Une erreur est survenue. Écrivez *reprendre* pour continuer votre dossier.', cfg).catch(() => {});
+      if (cfg) return send(phone, 'Une erreur est survenue. Écrivez *go* pour continuer votre dossier.', cfg).catch(() => {});
     }));
   }
 });
