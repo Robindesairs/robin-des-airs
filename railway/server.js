@@ -748,7 +748,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (id === 'appel' || ((lower === 'appel' || lower === 'rappel' || lower === 'rappelez-moi' || lower === 'rappeler')
       && !(s && (s.step === 'doc_boarding' || s.step === 'doc_eticket')))) {
     upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now(), lastClientAt: Date.now() });
-    return send(phone, `📞 C'est noté — un conseiller Robin des Airs vous rappelle très vite depuis le *+33 7 56 86 36 30* (enregistrez-le sous « *Retard Robin* »). Vous pouvez aussi reprendre ici quand vous voulez : tapez *menu*, on repart là où on s'est arrêté. 🙏`, cfg);
+    return send(phone, `📞 C'est noté — un conseiller Robin des Airs vous rappelle très vite depuis le *+33 7 56 86 36 30* (enregistrez-le sous « *Retard Robin* »). Vous pouvez aussi reprendre quand vous voulez en écrivant *reprendre*, on repart là où on s'est arrêté. 🙏`, cfg);
   }
 
   // T1.3 — « Plus tard » : le client veut reprendre plus tard. Son tap a déjà rouvert la fenêtre 24h (gratuit) ;
@@ -759,7 +759,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const _patch = { lastClientAt: Date.now() };
     if (!_l.completed) _patch.nudges = ['e3', 'e14']; // engagé : ne garde que la dernière relance « bord de fenêtre »
     upsertLead(phone, _patch);
-    return send(phone, `👍 C'est noté${nm ? ' ' + nm : ''} — je garde votre dossier au chaud, on ne le ferme pas. Reprenez quand vous voulez : tapez *menu*. Je vous ferai juste un petit rappel plus tard, sans insister. 🙏`, cfg);
+    return send(phone, `👍 C'est noté${nm ? ' ' + nm : ''} — je garde votre dossier au chaud, on ne le ferme pas. Reprenez quand vous voulez en écrivant *reprendre*. Je vous ferai juste un petit rappel plus tard, sans insister. 🙏`, cfg);
   }
 
   // T1.5 — Vol cliqué dans le bandeau « vols éligibles » du site (premier contact) ──────────────
@@ -1613,7 +1613,7 @@ function relanceTextEngaged(n, lead, step) {
   if (n >= 22) { key = 'ENG_EDGE'; }                       // dernière relance avant fermeture de la fenêtre → urgence courte (peu importe l'étape)
   else { const g = engGroup(step); const suffix = n <= 3 ? '_1' : '_2'; key = g ? ('ENG_' + g + suffix) : ('RELANCE_ENGAGED' + suffix); }
   const txt = fillTpl(pickRV(lead.phone, key), { NOM: lead.name || '', VOL: lead.vol || 'concerné', TOTAL: total });
-  return txt || `On a commencé votre dossier — tapez *menu* pour le finaliser (jusqu'à ${total}, 0 € si on ne gagne pas), ou *appel* pour être rappelé. 🙏`;
+  return txt || `On a commencé votre dossier — appuyez sur *Reprendre* 👇 pour le finaliser (jusqu'à ${total}, 0 € si on ne gagne pas), ou *Rappel* 📞. 🙏`;
 }
 async function runRelances() {
   try {
