@@ -990,7 +990,10 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
     line-height: 1.04;
     margin-bottom: 8px;
   }
-  #hero .hero-subhead { font-size: 14px; line-height: 1.4; margin: -2px 0 6px 0; min-height: 0; }
+  /* sous-titre masqué en desktop (doublon de l'accroche + de la conversation ; relevé
+   * par la revue UI/Growth) → aère la colonne, renforce le CTA, remonte les stats.
+   * Conservé en mobile (<1081px) où il porte le message. */
+  #hero .hero-subhead { display: none; }
   #hero .hero-desc    { line-height: 1.5; margin-bottom: 7px; min-height: 0; }
 
   #hero .hero-entry       { margin-bottom: 7px; gap: 8px; }
