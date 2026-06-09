@@ -1106,9 +1106,14 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const ok = n === '1' || id === 'pass_ok' || lower.includes('correct') || lower.startsWith('oui') || lower === 'ok' || lower.includes('parfait') || lower.includes('exact');
     const fix = n === '2' || id === 'pass_fix' || lower.includes('corrig') || lower.startsWith('non') || lower.includes('erreur') || lower.includes('faux');
     if (ok) {
-      s.passengers[s.doc_idx] = s.doc_pending || { viaPhoto: true };
-      delete s.doc_pending; s.doc_idx++; await setState(phone, s);
-      return nextPassport(phone, s, cfg);
+      const e = s.doc_pending || { viaPhoto: true };
+      // Rattacher la pièce au BON passager par le NOM lu (pas par l'ordre des photos) → gère l'envoi dans le désordre.
+      const a = e.name ? attributeId(s, e.name) : { idx: -1, confident: false };
+      const idx = (a.confident && a.idx >= 0) ? a.idx : s.doc_idx;
+      const cur = s.passengers[idx] || {};
+      s.passengers[idx] = { ...cur, ...e, name: cur.name || e.name, idReceived: true }; // garde le nom de l'e-billet, ajoute DDN/pièce
+      delete s.doc_pending; await setState(phone, s);
+      return nextPassport(phone, s, cfg); // avance vers le prochain passager sans pièce (garde-fou dans nextPassport)
     }
     if (fix) {
       delete s.doc_pending; s.step = 'doc_pass'; await setState(phone, s);
@@ -1350,6 +1355,8 @@ async function startDocuments(phone, s, cfg) {
   return nextPassport(phone, s, cfg);
 }
 async function nextPassport(phone, s, cfg) {
+  // Sauter les passagers déjà traités (pièce reçue / saisie / passée) — robuste si les photos arrivent dans le désordre.
+  while (s.doc_idx < s.pax) { const p = (s.passengers || [])[s.doc_idx] || {}; if (p.skipped || p.idReceived || p.dob) s.doc_idx++; else break; }
   if (s.doc_idx >= s.pax) { return askMandant(phone, s, cfg); }
   s.step = 'doc_pass'; await setState(phone, s);
   // Intro courte au 1er passager
