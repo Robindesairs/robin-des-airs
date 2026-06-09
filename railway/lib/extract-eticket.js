@@ -133,6 +133,28 @@ function detectMime(bytes, mime) {
   return looksLikePdf(bytes) ? 'application/pdf' : (mime || 'image/jpeg');
 }
 
+// ── Rastérisation PDF → PNG (repli quand pas de clé Claude : gpt-4o lit alors les pages) ──
+// mupdf = WASM pur (aucun binaire natif) → import paresseux + cache ; si indispo, on renvoie null
+// (l'appelant retombe sur le message honnête « envoyez une capture »).
+let _mupdfPromise = null;
+function _loadMupdf() { if (!_mupdfPromise) _mupdfPromise = import('mupdf').then((m) => m.default || m).catch(() => null); return _mupdfPromise; }
+async function pdfToImages(pdfBytes, opts = {}) {
+  const maxPages = opts.maxPages || 5;
+  try {
+    const mupdf = await _loadMupdf();
+    if (!mupdf || !mupdf.Document) return null;
+    const doc = mupdf.Document.openDocument(new Uint8Array(pdfBytes), 'application/pdf');
+    const n = Math.min(doc.countPages(), maxPages);
+    const out = [];
+    for (let i = 0; i < n; i++) {
+      const page = doc.loadPage(i);
+      const pix = page.toPixmap(mupdf.Matrix.scale(2, 2), mupdf.ColorSpace.DeviceRGB, false); // ~144 dpi : net pour l'OCR
+      out.push(Buffer.from(pix.asPNG()));
+    }
+    return out.length ? out : null;
+  } catch (e) { return null; }
+}
+
 async function callOpenAIVision(items, key) {
   const content = [{ type: 'text', text: PROMPT }];
   for (const it of items) content.push({ type: 'image_url', image_url: { url: `data:${it.mime || 'image/jpeg'};base64,${it.b64}` } });
@@ -185,10 +207,29 @@ async function extractEticketMulti(parts, opts = {}) {
     const anthropicKey = opts.anthropicKey || process.env.ANTHROPIC_API_KEY;
     const model = opts.model || process.env.ETICKET_MODEL || process.env.RADAR_ENQUETE_MODEL || 'claude-sonnet-4-5';
     let call = null;
-    if (anyPdf) { if (!anthropicKey) return null; call = () => callClaudeDoc(items, anthropicKey, model); } // un PDF exige Claude
-    else if (openaiKey) call = () => callOpenAIVision(items, openaiKey);
-    else if (anthropicKey) call = () => callClaudeDoc(items, anthropicKey, model);
-    else return null;
+    if (anyPdf && anthropicKey) {
+      call = () => callClaudeDoc(items, anthropicKey, model);               // PDF natif Claude (meilleure qualité)
+    } else if (anyPdf && openaiKey) {
+      // Pas de clé Claude → on RASTÉRISE les PDF en images, gpt-4o lit alors les pages.
+      const imgItems = [];
+      for (const it of items) {
+        if (/pdf/i.test(it.mime)) {
+          const pages = await pdfToImages(Buffer.from(it.b64, 'base64'), { maxPages: 5 });
+          if (!pages) return null;                                          // conversion indispo → repli message honnête en amont
+          for (const png of pages) imgItems.push({ b64: png.toString('base64'), mime: 'image/png' });
+        } else imgItems.push(it);
+      }
+      if (!imgItems.length) return null;
+      call = () => callOpenAIVision(imgItems, openaiKey);
+    } else if (anyPdf) {
+      return null;                                                          // PDF mais aucune clé dispo
+    } else if (openaiKey) {
+      call = () => callOpenAIVision(items, openaiKey);
+    } else if (anthropicKey) {
+      call = () => callClaudeDoc(items, anthropicKey, model);
+    } else {
+      return null;
+    }
     // 2 tentatives : une erreur transitoire (429 / 5xx / timeout) ne doit pas se traduire en « illisible ».
     let raw = null;
     for (let attempt = 0; attempt < 2 && raw == null; attempt++) {
@@ -206,4 +247,4 @@ async function extractEticket(bytes, mime, opts = {}) {
   return extractEticketMulti([{ bytes, mime }], opts);
 }
 
-module.exports = { extractEticket, extractEticketMulti, normalize, PROMPT };
+module.exports = { extractEticket, extractEticketMulti, normalize, pdfToImages, PROMPT };

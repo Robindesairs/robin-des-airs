@@ -11,7 +11,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
-const { extractEticket, normalize } = require('./lib/extract-eticket');
+const { extractEticket, normalize, pdfToImages } = require('./lib/extract-eticket');
 
 let fails = 0;
 function check(label, got, expected) {
@@ -155,11 +155,25 @@ check('défaut : multiPNR=false', q2.multiPNR, false);
 
 console.log(`\n${fails === 0 ? '✅ OFFLINE : tous les champs OK' : `❌ OFFLINE : ${fails} échec(s)`}\n`);
 
-// ── MODE LIVE (optionnel) ──────────────────────────────────────────────────────
+// ── PDF→image (repli gpt-4o sans clé Claude) : conversion RÉELLE via mupdf, SANS réseau ni clé ──
 (async () => {
+  console.log('── PDF→image (mupdf, aucune clé requise) ──');
+  const pdfPath = path.join(__dirname, '../ebooking-test-AF-escale-3pax.pdf');
+  if (fs.existsSync(pdfPath)) {
+    const imgs = await pdfToImages(fs.readFileSync(pdfPath), { maxPages: 5 });
+    const isPng = (b) => !!(b && Buffer.from(b.slice(0, 8)).toString('hex').startsWith('89504e47'));
+    check('PDF→image : ≥ 1 page rendue', !!(imgs && imgs.length >= 1), true);
+    check('PDF→image : PNG valide', !!(imgs && imgs[0] && isPng(imgs[0])), true);
+    if (imgs) console.log(`  → ${imgs.length} page(s) PNG (${Math.round((imgs[0] || []).length / 1024)} Ko/page)`);
+  } else {
+    console.log('  (PDF de test absent — sauté)');
+  }
+  console.log(`\n${fails === 0 ? '✅ Tous les tests hors-ligne OK' : `❌ ${fails} échec(s)`}\n`);
+
+  // ── MODE LIVE (optionnel) ────────────────────────────────────────────────────
   const hasKey = process.env.ANTHROPIC_API_KEY || process.env.OPENAI_API_KEY;
   if (!hasKey) {
-    console.log('── MODE LIVE : sauté (pose ANTHROPIC_API_KEY pour lire les vrais PDF) ──\n');
+    console.log('── MODE LIVE : sauté (pose ANTHROPIC_API_KEY ou OPENAI_API_KEY pour lire les vrais PDF) ──\n');
     process.exit(fails === 0 ? 0 : 1);
   }
   console.log('── MODE LIVE : extraction réelle des PDF ──\n');
