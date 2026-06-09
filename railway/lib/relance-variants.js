@@ -76,24 +76,24 @@ const RV = {
   "On garde votre place {NOM} ✊ Pour défendre votre dossier vol {VOL}, on a juste besoin d'une pièce d'identité (jamais revendue, uniquement pour la réclamation). Tapez *menu* pour l'envoyer, ou *appel* et on s'en occupe ensemble."
  ],
  "ENG_BOARDING_1": [
-  "Bonjour {NOM} 👋 Pas de carte d'embarquement pour le vol {VOL} ? Aucun souci — votre *e-billet ou confirmation de réservation* suffit (regardez vos mails ou l'appli Booking). On peut lancer votre dossier (jusqu'à {TOTAL}, 0 € si on ne gagne pas). Tapez *menu* pour reprendre, ou *appel* si vous avez tout perdu : on vous aide à récupérer les preuves.",
-  "{NOM}, ne bloquez pas sur la carte d'embarquement 🎫 Pour le vol {VOL}, un *e-billet* fait tout aussi bien l'affaire. Tapez *menu* pour l'envoyer (jusqu'à {TOTAL}), ou *appel* et on retrouve vos justificatifs ensemble. 🙏",
-  "On ne lâche rien pour votre dossier vol {VOL}, {NOM} ! Carte d'embarquement égarée ? C'est fréquent — votre confirmation de réservation suffit. Tapez *menu* pour reprendre, ou *appel* si vous ne retrouvez rien, un conseiller vous accompagne. Jusqu'à {TOTAL} en jeu."
+  "Bonjour {NOM} 👋 Carte d'embarquement perdue pour le vol {VOL} ? Aucun souci, c'est fréquent — d'autres preuves font l'affaire : votre *e-billet*, une *confirmation de réservation*, ou même une *étiquette de bagage*. On peut lancer votre dossier (jusqu'à {TOTAL}, 0 € si on ne gagne pas). Tapez *menu* pour reprendre, ou *appel* / écrivez-nous et on trouve une solution ensemble. 🙏",
+  "{NOM}, ne bloquez pas sur la carte d'embarquement 🎫 Pour le vol {VOL}, un *e-billet*, une *confirmation de réservation* ou une *étiquette de bagage* font tout aussi bien l'affaire. Tapez *menu* pour l'envoyer (jusqu'à {TOTAL}), ou *appel* et on cherche la meilleure preuve ensemble. 🙏",
+  "On ne lâche rien pour votre dossier vol {VOL}, {NOM} ! Carte égarée ? C'est fréquent — un e-billet, une confirmation de réservation ou une étiquette de bagage suffit. Tapez *menu* pour reprendre, ou *appel* si vous ne retrouvez rien : on trouve une solution avec vous. Jusqu'à {TOTAL} en jeu."
  ],
  "ENG_BOARDING_2": [
-  "{NOM}, il ne manque qu'un justificatif de vol pour votre dossier {VOL} 🎫 Carte d'embarquement OU e-billet — l'un ou l'autre suffit. Tapez *menu* pour l'envoyer (jusqu'à {TOTAL}, 0 € si on ne gagne pas), ou *appel* et on cherche ensemble. 🙏",
-  "Votre dossier vol {VOL} avance bien {NOM} — il reste juste une preuve du voyage. Pas de carte ? Un e-billet convient. Tapez *menu*, ou *appel* si vous avez besoin d'aide pour le retrouver.",
-  "On y est presque {NOM} ! Pour le vol {VOL}, envoyez n'importe quelle preuve du voyage (carte d'embarquement ou e-billet) et on lance tout (jusqu'à {TOTAL}). Tapez *menu*, ou *appel* si tout est perdu. 🙏"
+  "{NOM}, il ne manque qu'une preuve du vol {VOL} 🎫 Carte d'embarquement, e-billet, confirmation de réservation OU étiquette de bagage — n'importe laquelle suffit. Tapez *menu* pour l'envoyer (jusqu'à {TOTAL}, 0 € si on ne gagne pas), ou *appel* et on cherche ensemble. 🙏",
+  "Votre dossier vol {VOL} avance bien {NOM} — il reste juste une preuve du voyage. Pas de carte ? Un e-billet, une réservation ou une étiquette de bagage conviennent. Tapez *menu*, ou *appel* et on trouve une solution.",
+  "On y est presque {NOM} ! Pour le vol {VOL}, envoyez n'importe quelle preuve du voyage (carte, e-billet, réservation, étiquette de bagage) et on lance tout (jusqu'à {TOTAL}). Vous ne retrouvez rien ? *appel*, on s'en occupe avec vous. 🙏"
  ],
  "ENG_ETICKET_1": [
-  "Bonjour {NOM} 👋 Pour finaliser votre dossier vol {VOL} (jusqu'à {TOTAL}), il nous faut votre *confirmation de réservation*. Vous ne la retrouvez pas ? Pensez à vos *spams*, à l'appli (Booking, etc.) ou à l'agence qui a réservé pour vous. Bloqué ? Répondez *appel*, on vous aide à la récupérer. Sinon tapez *menu*.",
-  "{NOM}, votre dossier vol {VOL} est presque complet — il ne manque que votre *e-billet* 📧 (souvent caché dans les spams ou l'appli de réservation). Tapez *menu* pour l'envoyer (0 € si on ne gagne pas), ou *appel* et un conseiller le retrouve avec vous. 🙏",
-  "On veut aller au bout de votre dossier vol {VOL}, {NOM} ! Si l'e-billet vous échappe : vérifiez vos courriers indésirables, ou demandez-le à qui a réservé. Toujours rien ? Répondez *appel*, on s'en occupe. Sinon tapez *menu*. Jusqu'à {TOTAL} à récupérer."
+  "Bonjour {NOM} 👋 Pour finaliser votre dossier vol {VOL} (jusqu'à {TOTAL}), il nous faut votre *confirmation de réservation*. Vous ne la retrouvez pas ? Pensez à vos *spams*, à l'*appli de la compagnie*, ou à l'*agence de voyage* qui a réservé pour vous. Bloqué ? Répondez *appel*, on vous aide à la récupérer. Sinon tapez *menu*.",
+  "{NOM}, votre dossier vol {VOL} est presque complet — il ne manque que votre *e-billet* 📧 (souvent dans les spams, ou récupérable auprès de l'agence / la compagnie qui a réservé). Tapez *menu* pour l'envoyer (0 € si on ne gagne pas), ou *appel* et un conseiller le retrouve avec vous. 🙏",
+  "On veut aller au bout de votre dossier vol {VOL}, {NOM} ! Si l'e-billet vous échappe : vérifiez vos courriers indésirables, ou demandez-le à l'agence / la compagnie qui a réservé. Toujours rien ? Répondez *appel*, on s'en occupe. Sinon tapez *menu*. Jusqu'à {TOTAL} à récupérer."
  ],
  "ENG_ETICKET_2": [
-  "{NOM}, il ne reste que votre *confirmation de réservation* pour boucler le dossier vol {VOL} 📧 Jetez un œil aux spams / à l'appli Booking. Tapez *menu* pour l'envoyer (jusqu'à {TOTAL}, 0 € si on ne gagne pas), ou *appel* si vous voulez qu'on vous aide à la retrouver. 🙏",
+  "{NOM}, il ne reste que votre *confirmation de réservation* pour boucler le dossier vol {VOL} 📧 Jetez un œil aux spams, ou demandez-la à l'agence / la compagnie qui a réservé. Tapez *menu* pour l'envoyer (jusqu'à {TOTAL}, 0 € si on ne gagne pas), ou *appel* si vous voulez qu'on vous aide à la retrouver. 🙏",
   "Votre dossier vol {VOL} est à un cheveu d'être complet {NOM} — manque juste l'e-billet. Tapez *menu* pour l'envoyer, ou *appel* et on le récupère ensemble. On ne lâche pas. 💪",
-  "On garde votre dossier vol {VOL} au chaud {NOM} ⏳ Dès qu'on a votre confirmation de réservation (regardez les spams !), on lance la réclamation (jusqu'à {TOTAL}). Tapez *menu*, ou *appel* pour de l'aide."
+  "On garde votre dossier vol {VOL} au chaud {NOM} ⏳ Dès qu'on a votre confirmation de réservation (regardez les spams, ou côté agence / compagnie !), on lance la réclamation (jusqu'à {TOTAL}). Tapez *menu*, ou *appel* pour de l'aide."
  ],
  "ENG_CERT_1": [
   "Bonjour {NOM} 👋 Bonne nouvelle : le certificat de retard est *optionnel* — vous n'en avez pas besoin pour qu'on lance votre dossier vol {VOL} (jusqu'à {TOTAL}) ! Tapez *menu* puis *passer*, et c'est finalisé. Une question ? Répondez *appel*. 🙏",
