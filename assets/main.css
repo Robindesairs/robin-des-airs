@@ -996,7 +996,7 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
    * Mobile (<1081px) garde le texte complet (slogan + explication). */
   #hero .hero-subhead { font-size: 14px; line-height: 1.4; margin: -2px 0 7px 0; min-height: 0; }
   #hero .hero-subhead-extra { display: none; }
-  #hero .hero-desc    { line-height: 1.5; margin-bottom: 7px; min-height: 0; }
+  #hero .hero-desc    { line-height: 1.4; margin-bottom: 4px; min-height: 0; }
 
   #hero .hero-entry       { margin-bottom: 7px; gap: 8px; }
   #hero .hero-entry-hint  { margin-top: 2px; line-height: 1.35; }
@@ -1008,7 +1008,7 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   #hero .wa-typedemo { max-width: 500px; margin: 4px 0 4px; }
   #hero .wa-chat     { min-height: 246px; max-height: 246px; }
 
-  #hero .hero-stats { margin-top: 9px; padding-top: 9px; }
+  #hero .hero-stats { margin-top: 5px; padding-top: 6px; }
 }
 
 /* a11y — écran court OU zoom navigateur élevé (la hauteur en px CSS chute) : on fige
