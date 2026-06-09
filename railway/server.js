@@ -794,9 +794,9 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const FREE = ['m_vol', 'm_date', 'm_route', 'm_pnr', 'leg_count', 'leg_input', 'names', 'vd_vol', 'vd_date', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob'];
     const looks = !id && (FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input));
     if (looks) {
-      if (isSensitive(input)) { await send(phone, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nTapez *menu* pour ouvrir/continuer votre dossier.`, cfg); return; }
+      if (isSensitive(input)) { await send(phone, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nÉcrivez *reprendre* pour continuer votre dossier.`, cfg); return; }
       const r = await answerClientQuestion(input, process.env.OPENAI_API_KEY);
-      await sendButtons(phone, { body: (r || `🤖 Je suis l'assistant IA de Robin des Airs.`) + `\n\nPour ouvrir votre dossier, tapez *menu* 👇`, buttons: [{ text: '📋 Démarrer' }, { text: '📞 Être rappelé' }] }, cfg);
+      await sendButtons(phone, { body: (r || `🤖 Je suis l'assistant IA de Robin des Airs.`) + `\n\n👉 *Démarrez* ci-dessous 👇`, buttons: [{ text: '📋 Démarrer' }, { text: '📞 Être rappelé' }] }, cfg);
       return;
     }
   } catch (e) {}
@@ -827,7 +827,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (ri === 0 || n === '1' || (lower.includes('afrique') && lower.includes('europe'))) { s.route_type = 'af_eu'; }
     else if (ri === 1 || n === '2' || (lower.includes('europe') && !lower.includes('afrique') && !lower.includes('départ') && !lower.includes('arrivée'))) { s.route_type = 'eu_eu'; await send(phone, `🇪🇺 Les vols intra-européens sont couverts par le CE 261 ✅\nNotre spécialité c'est Afrique ↔ Europe, mais on continue.`, cfg); }
     else if (ri === 2 || n === '3' || (lower.includes('départ') && !lower.includes('retard'))) { s.route_type = 'mixte'; await send(phone, `🛫 Un départ ou une arrivée en Europe peut être éligible. Vérifions ensemble. ✅`, cfg); }
-    else if (ri === 3 || n === '4' || lower.includes('autre')) { await clearState(phone); return send(phone, `😔 Votre vol ne semble pas couvert par la loi européenne.\n\nLe CE 261/2004 s'applique aux vols au départ/à l'arrivée d'un aéroport européen, ou opérés par une compagnie européenne.\n\n❓ Si erreur, tapez *menu* pour choisir une autre route.\n\n${STOP_FOOTER}`, cfg); }
+    else if (ri === 3 || n === '4' || lower.includes('autre')) { await clearState(phone); return send(phone, `😔 Votre vol ne semble pas couvert par la loi européenne.\n\nLe CE 261/2004 s'applique aux vols au départ/à l'arrivée d'un aéroport européen, ou opérés par une compagnie européenne.\n\n❓ Si erreur, écrivez *reprendre* pour choisir une autre route.\n\n${STOP_FOOTER}`, cfg); }
     else return redispatch('route'); // si l'état a avancé → re-dispatch, sinon silence
     s.step = 'incident'; await setState(phone, s); return sendIncident(phone, s, cfg);
   }
@@ -1228,11 +1228,11 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       await setState(phone, s);
       return send(phone, `${ack}\n\n${missingDocsText(s)}`, cfg);
     }
-    return send(phone, `✅ Votre dossier *${s.ref}* est bien enregistré.\n${missingDocsText(s)}\n📎 Envoyez vos pièces ici, ou déposez-les sur un *lien sécurisé* 👉 https://robindesairs.eu/depot-en-ligne.html?r=${encodeURIComponent(s.ref)}\n📞 Un expert vous appellera depuis le *+33 7 56 86 36 30* — enregistrez-le sous « *Retard Robin* ».\n\nPour un nouveau dossier : tapez *menu*.`, cfg);
+    return send(phone, `✅ Votre dossier *${s.ref}* est bien enregistré.\n${missingDocsText(s)}\n📎 Envoyez vos pièces ici, ou déposez-les sur un *lien sécurisé* 👉 https://robindesairs.eu/depot-en-ligne.html?r=${encodeURIComponent(s.ref)}\n📞 Un expert vous appellera depuis le *+33 7 56 86 36 30* — enregistrez-le sous « *Retard Robin* ».\n\nPour un nouveau dossier, écrivez *nouveau*.`, cfg);
   }
 
   // Incompris
-  return send(phone, `Je n'ai pas compris. Utilisez les boutons, ou tapez *menu* pour reprendre. 👇`, cfg);
+  return sendButtons(phone, { body: `Je n'ai pas compris 🙂 Reprenez où on s'était arrêté 👇`, buttons: [{ id: 'menu', text: '▶️ Reprendre' }, { id: 'appel', text: '📞 Rappel' }] }, cfg);
 }
 
 // ─── Émetteurs d'écran ───────────────────────────────────────────────────────
@@ -1530,7 +1530,7 @@ app.post('/api/wati-webhook', async (req, res) => {
     // Sérialisé par numéro : les messages d'un même client se traitent dans l'ordre, un par un.
     enqueue(phone, () => handleMessage(phone, text, cfg, mediaUrl, replyId).catch(e => {
       console.error('bot error', e.message, e.stack);
-      if (cfg) return send(phone, 'Une erreur est survenue. Tapez *menu* pour recommencer.', cfg).catch(() => {});
+      if (cfg) return send(phone, 'Une erreur est survenue. Écrivez *reprendre* pour continuer votre dossier.', cfg).catch(() => {});
     }));
   }
 });
