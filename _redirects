@@ -34,6 +34,7 @@
 /api/radar-monitor           /.netlify/functions/radar-monitor           200
 /api/radar-stats             /.netlify/functions/radar-stats             200
 /api/bureau-stats            /.netlify/functions/bureau-stats            200
+/api/leads-a-rappeler        /.netlify/functions/leads-a-rappeler        200
 /api/meta-stats              /.netlify/functions/meta-stats              200
 /api/instagram-stats         /.netlify/functions/instagram-stats         200
 /api/facebook-scheduled      /.netlify/functions/facebook-scheduled      200

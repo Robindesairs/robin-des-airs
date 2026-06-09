@@ -79,7 +79,8 @@ function persistState() { // débounce léger : au plus 1 écriture / 1,5 s
 
 // ─── LEADS : dossiers non signés à relancer (nudge 2h / 8h / 22h, fenêtre 24h) ──
 const LEADS_FILE = process.env.LEADS_FILE || '/tmp/robin-leads.json';
-const LEADS = new Map(); // phone digits → { phone, ref, mandatUrl, mandatSentAt, lastClientAt, pax, signed, completed, nudges:[] }
+const LEADS = new Map(); // phone digits → { phone, ref, mandatUrl, mandatSentAt, lastClientAt, pax, signed, completed, nudges:[],
+                         //   stage:'engaged'|'completed', engagedAt, vol, route, incident, wantsCall, wantsCallAt }
 try { for (const [k, v] of Object.entries(encReadFile(LEADS_FILE))) LEADS.set(k, v); console.log('🔔 ' + LEADS.size + ' leads chargés'); } catch (_) {}
 function persistLeads() { try { const o = {}; for (const [k, v] of LEADS) o[k] = v; encWriteFile(LEADS_FILE, o); } catch (e) { console.error('persistLeads', e.message); } }
 function leadKey(phone) { return String(phone || '').replace(/\D/g, ''); }
@@ -91,6 +92,23 @@ function markLeadSigned(phoneOrRef) {
   for (const [kk, l] of LEADS) { if (l.ref && String(l.ref) === String(phoneOrRef)) { l.signed = true; LEADS.set(kk, l); found = true; } }
   if (found) persistLeads();
   return found;
+}
+// Lead « partiel » : le client a engagé un dossier (vol connu au récap) mais n'a pas encore tout finalisé.
+// On le relance dans la fenêtre 24h WhatsApp (gratuite) ; s'il décroche, il bascule en « à rappeler » (Bureau).
+function markEngagedLead(phone, s) {
+  const cur = LEADS.get(leadKey(phone));
+  if (cur && cur.completed) return; // déjà finalisé → géré par le nudge signature, on ne rétrograde pas
+  const patch = {
+    stage: 'engaged',
+    lastClientAt: Date.now(),
+    pax: (s && s.pax) || (cur && cur.pax) || 1,
+    name: (s && firstNameOf(s)) || (cur && cur.name) || '',
+    vol: (s && s.vol) || (cur && cur.vol) || '',
+    route: (s && s.route) || (cur && cur.route) || '',
+    incident: (s && s.incident_libelle) || (cur && cur.incident) || '',
+  };
+  if (!cur || !cur.engagedAt) patch.engagedAt = Date.now(); // ancre la relance sur le 1er engagement
+  upsertLead(phone, patch);
 }
 
 // ─── Dédup en mémoire (même instance Lambda — première barrière, instantanée) ──
@@ -717,13 +735,21 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
 
   // T1 — menu / reset
   if (['nouveau', 'new', 'reset', '/reset', 'recommencer'].includes(lower)) { await clearState(phone); return sendAccueil(phone, cfg); }
-  if (['menu', 'start', 'reprendre', 'continuer', 'suite', 'bonjour', 'hello', 'hi', 'salut'].includes(lower)) {
+  if (['menu', 'start', 'reprendre', 'continuer', 'suite', 'bonjour', 'hello', 'hi', 'salut'].includes(lower) || id === 'menu') {
     const cur = await getState(phone);
     if (cur && cur.step && cur.step !== 'accueil' && cur.step !== 'done') { await send(phone, `👋 Re-bonjour ! On reprend votre dossier là où vous vous étiez arrêté.`, cfg); return relancerEtape(phone, cur, cfg); }
     await clearState(phone); return sendAccueil(phone, cfg);
   }
 
   let s = await getState(phone);
+
+  // T1.2 — Demande de rappel humain : à tout moment (hors étapes documents qui ont leur propre "appel"),
+  // "appel" flague le dossier pour la liste « À rappeler » du Bureau et rassure le client.
+  if (id === 'appel' || ((lower === 'appel' || lower === 'rappel' || lower === 'rappelez-moi' || lower === 'rappeler')
+      && !(s && (s.step === 'doc_boarding' || s.step === 'doc_eticket')))) {
+    upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now(), lastClientAt: Date.now() });
+    return send(phone, `📞 C'est noté — un conseiller Robin des Airs vous rappelle très vite depuis le *+33 7 56 86 36 30* (enregistrez-le sous « *Retard Robin* »). Vous pouvez aussi reprendre ici quand vous voulez : tapez *menu*, on repart là où on s'est arrêté. 🙏`, cfg);
+  }
 
   // T1.5 — Vol cliqué dans le bandeau « vols éligibles » du site (premier contact) ──────────────
   // Le site préremplit « …le vol AF718 du 08/06/2026, qui a été retardé… ». On enregistre le vol
@@ -1137,7 +1163,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (s.step === 'doc_boarding') {
     if (mediaUrl) { await send(phone, `✅ Carte d'embarquement reçue !`, cfg); return gotoEticket(phone, s, cfg); }
     if (lower === 'passer') { s.docs_pending = true; return gotoEticket(phone, s, cfg); }
-    if (lower === 'appel') { s.escalade = 'document_perdu'; await send(phone, `📞 Pas de panique — un expert vous aide à retrouver vos documents. Laissez la conversation ouverte.\n\n${STOP_FOOTER}`, cfg); return gotoEticket(phone, s, cfg); }
+    if (lower === 'appel') { s.escalade = 'document_perdu'; upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now() }); await send(phone, `📞 Pas de panique — un expert vous aide à retrouver vos documents. Laissez la conversation ouverte.\n\n${STOP_FOOTER}`, cfg); return gotoEticket(phone, s, cfg); }
     return send(phone, `🎫 Envoyez la carte d'embarquement, ou *passer*, ou *appel* si vous avez tout perdu.`, cfg);
   }
   if (s.step === 'doc_eticket') {
@@ -1148,7 +1174,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       await send(phone, e ? `✅ E-billet reçu !${lu}` : `✅ Document bien reçu — notre équipe le vérifiera et l'ajoute à votre dossier. 🙏`, cfg); return gotoCert(phone, s, cfg);
     }
     if (lower === 'passer') { s.docs_pending = true; return gotoCert(phone, s, cfg); }
-    if (lower === 'appel') { s.escalade = 'document_perdu'; await send(phone, `📞 Un expert vous aide à récupérer votre e-billet. Laissez la conversation ouverte.\n\n${STOP_FOOTER}`, cfg); return gotoCert(phone, s, cfg); }
+    if (lower === 'appel') { s.escalade = 'document_perdu'; upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now() }); await send(phone, `📞 Un expert vous aide à récupérer votre e-billet. Laissez la conversation ouverte.\n\n${STOP_FOOTER}`, cfg); return gotoCert(phone, s, cfg); }
     return send(phone, `📧 Envoyez l'e-billet (pensez aux spams/Booking), ou *passer*, ou *appel*.`, cfg);
   }
   if (s.step === 'doc_cert') {
@@ -1261,6 +1287,7 @@ async function sendMineurs(phone, s, cfg) {
 }
 async function sendRecap(phone, s, cfg) {
   s.step = 'recap'; await setState(phone, s);
+  try { markEngagedLead(phone, s); } catch (_) {} // dossier relançable dès que le vol est connu (récupère les abandons avant signature)
   await sendButtons(phone, { body: `${bar('recap')}\n📋 *Récapitulatif — confirmez svp*\n\n👥 ${s.pax} passager${s.pax > 1 ? 's' : ''}\n_Identités à l'étape suivante (pièce d'identité ou saisie)_\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n🛤️ ${s.type_vol === 'escale' ? 'Avec escale' : 'Direct'}\n${montantLine(s)}`, buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Modifier' }] }, cfg);
 }
 
@@ -1469,7 +1496,14 @@ app.post('/api/wati-webhook', async (req, res) => {
     const ckKey = `ck|${phone}|${String(text).trim().toLowerCase().slice(0, 200)}`;
     if (!hasId && await isDuplicateMessage(ckKey, false, 5000)) continue;
     notifyOwnerWhatsApp(phone, text).catch(() => {});
-    if (LEADS.has(leadKey(phone))) upsertLead(phone, { lastClientAt: Date.now() }); // garde la fenêtre 24h fraîche
+    if (LEADS.has(leadKey(phone))) { // message entrant → garde la fenêtre 24h fraîche
+      const _l = LEADS.get(leadKey(phone)); const _p = { lastClientAt: Date.now() };
+      // Sa réponse rouvre la fenêtre gratuitement → on réarme un cycle de relances « reprise » (borné à 3 cycles, anti-spam).
+      if (_l && !_l.completed && _l.engagedAt && (_l.engagedRounds || 0) < 3 && (_l.nudges || []).some(n => /^e\d/.test(n))) {
+        _p.nudges = (_l.nudges || []).filter(n => !/^e\d/.test(n)); _p.engagedRounds = (_l.engagedRounds || 0) + 1;
+      }
+      upsertLead(phone, _p);
+    }
     // Sérialisé par numéro : les messages d'un même client se traitent dans l'ordre, un par un.
     enqueue(phone, () => handleMessage(phone, text, cfg, mediaUrl, replyId).catch(e => {
       console.error('bot error', e.message, e.stack);
@@ -1487,6 +1521,33 @@ app.get('/api/dossier', (req, res) => {
   res.json(d);
 });
 
+// ─── Liste « À rappeler » pour le Bureau : dossiers non signés dont la fenêtre WhatsApp 24h s'est
+//     fermée (plus joignables gratuitement) OU qui ont explicitement demandé un rappel. Secret partagé. ──
+app.get('/api/leads-a-rappeler', (req, res) => {
+  const secret = (req.query.s || req.headers['x-secret'] || req.headers['x-wati-secret'] || '').toString().trim();
+  const expected = (process.env.WATI_WEBHOOK_SECRET || process.env.CRM_ACCESS_CODE || '').trim();
+  if (expected && secret !== expected) return res.status(401).json({ ok: false, error: 'secret invalide' });
+  const now = Date.now();
+  const WIN = 24 * 3600000;
+  const out = [];
+  for (const [, lead] of LEADS) {
+    if (!lead || lead.signed) continue;
+    const anchor = lead.lastClientAt || lead.mandatSentAt || lead.engagedAt || now;
+    const windowClosed = now - anchor > WIN;
+    if (!lead.wantsCall && !windowClosed) continue; // encore relançable gratuitement par le bot → pas (encore) à rappeler
+    const since = lead.wantsCall ? (lead.wantsCallAt || anchor) : anchor;
+    out.push({
+      phone: lead.phone || '', name: lead.name || '', vol: lead.vol || '', route: lead.route || '',
+      incident: lead.incident || '', pax: lead.pax || 1, montant: 600 * (lead.pax || 1), ref: lead.ref || '',
+      stage: lead.completed ? 'completed' : 'engaged',
+      reason: lead.wantsCall ? 'rappel_demande' : (lead.completed ? 'mandat_non_signe' : 'abandon_avant_signature'),
+      wantsCall: !!lead.wantsCall, since, ageHours: Math.max(0, Math.round((now - since) / 3600000)),
+    });
+  }
+  out.sort((a, b) => (Number(b.wantsCall) - Number(a.wantsCall)) || (a.since - b.since)); // rappels demandés d'abord, puis les plus anciens
+  res.json({ ok: true, updatedAt: new Date().toISOString(), total: out.length, leads: out });
+});
+
 app.get('/health', (req, res) => res.json({ ok: true, sessions: STATE.size, dedup: DEDUP.size, dossiers: DOSSIERS.size, leads: LEADS.size, uptime: process.uptime(), ts: new Date().toISOString() }));
 app.get('/', (req, res) => res.send('\ud83c\udff9 Robin des Airs Bot v8 — Railway OK'));
 
@@ -1502,8 +1563,10 @@ app.post('/api/mandat-signed', (req, res) => {
   res.json({ ok: true, marked });
 });
 
-// ─── Relances : nudge 2h / 8h / 22h sur dossiers non signés, fenêtre WhatsApp 24h ──
-const RELANCE_THRESHOLDS_H = [2, 8, 22];
+// ─── Relances « signature » (2h/8h/22h après envoi du mandat) ET « dossier en cours » (reprise à 3h/14h
+//     puis dernière chance à 22h, juste avant la fermeture) — toutes dans la fenêtre WhatsApp 24h gratuite. ──
+const RELANCE_THRESHOLDS_H = [2, 8, 22];   // dossier finalisé, mandat envoyé, pas signé
+const ENGAGED_THRESHOLDS_H = [3, 14, 22];  // dossier engagé : reprise (3h), rappel (14h), dernière chance avant fermeture (22h)
 const _H = 3600000;
 function relanceText(n, lead) {
   const url = lead.mandatUrl || ('https://robindesairs.eu/mandat.html?r=' + encodeURIComponent(lead.ref || ''));
@@ -1512,20 +1575,54 @@ function relanceText(n, lead) {
   const txt = fillTpl(pickRV(lead.ref || lead.phone, key), { REF: lead.ref || '', TOTAL: total, URL: url, NOM: lead.name || '' });
   return txt || `Il ne reste qu'une signature pour votre dossier ${lead.ref}. 👉 ${url}\n0 € si on ne gagne pas.`;
 }
+// Groupe de message selon l'étape où le client a décroché → on adresse la cause probable de l'arrêt.
+function engGroup(step) {
+  if (step === 'recap') return 'RECAP';                  // a vu le récap, pas validé → hésitation/confiance
+  if (step === 'doc_boarding') return 'BOARDING';        // carte d'embarquement → souvent perdue (l'e-billet suffit)
+  if (step === 'doc_eticket') return 'ETICKET';          // e-billet → introuvable (spams/Booking/agence)
+  if (step === 'doc_cert') return 'CERT';                // certificat → ils croient devoir l'attendre (c'est optionnel)
+  if (step && /^doc_/.test(step)) return 'PASS';         // pièce d'identité / saisie (doc_pass, doc_name, doc_dob, doc_mandant…)
+  return null;                                           // étape inconnue → message de reprise générique
+}
+function relanceTextEngaged(n, lead, step) {
+  const total = (600 * (lead.pax || 1)) + ' €';
+  let key;
+  if (n >= 22) { key = 'ENG_EDGE'; }                       // dernière relance avant fermeture de la fenêtre → urgence courte (peu importe l'étape)
+  else { const g = engGroup(step); const suffix = n <= 3 ? '_1' : '_2'; key = g ? ('ENG_' + g + suffix) : ('RELANCE_ENGAGED' + suffix); }
+  const txt = fillTpl(pickRV(lead.phone, key), { NOM: lead.name || '', VOL: lead.vol || 'concerné', TOTAL: total });
+  return txt || `On a commencé votre dossier — tapez *menu* pour le finaliser (jusqu'à ${total}, 0 € si on ne gagne pas), ou *appel* pour être rappelé. 🙏`;
+}
 async function runRelances() {
   try {
     const cfg = watiCfg(); if (!cfg) return;
     const now = Date.now();
     for (const [k, lead] of LEADS) {
       if (!lead) continue;
-      if (lead.signed || (lead.mandatSentAt && now - lead.mandatSentAt > 30 * 24 * _H)) { LEADS.delete(k); persistLeads(); continue; }
-      if (!lead.mandatSentAt) continue;
-      if (now - (lead.lastClientAt || lead.mandatSentAt) > 24 * _H) continue; // fenêtre 24h fermée
-      const hoursSince = (now - lead.mandatSentAt) / _H;
+      const anchorAge = lead.mandatSentAt || lead.engagedAt || 0;
+      // Purge : signé, ou trop vieux (30 j) — qu'il soit finalisé ou seulement engagé.
+      if (lead.signed || (anchorAge && now - anchorAge > 30 * 24 * _H)) { LEADS.delete(k); persistLeads(); continue; }
+      // Fenêtre WhatsApp 24h (envoi gratuit) fermée → on n'écrit plus ; le dossier reste dans la liste « À rappeler ».
+      if (now - (lead.lastClientAt || anchorAge) > 24 * _H) continue;
       const nudges = lead.nudges || [];
-      const due = RELANCE_THRESHOLDS_H.find((t) => hoursSince >= t && !nudges.includes(t));
+      let due = null, text = null;
+      if (lead.completed && lead.mandatSentAt) {
+        // Mandat envoyé, pas signé → nudge signature (ancré sur l'envoi ; jetons numériques, rétrocompatible).
+        const h = (now - lead.mandatSentAt) / _H;
+        const t = RELANCE_THRESHOLDS_H.find((t) => h >= t && !nudges.includes(t));
+        if (t != null) { text = relanceText(t, lead); due = t; }
+      } else if (lead.engagedAt) {
+        // Dossier en cours, pas de lien mandat → relances « reprise » à 3h/14h puis dernière chance à 22h de SILENCE.
+        const hSilent = (now - (lead.lastClientAt || lead.engagedAt)) / _H;
+        const t = ENGAGED_THRESHOLDS_H.find((t) => hSilent >= t && !nudges.includes('e' + t));
+        if (t != null) { text = relanceTextEngaged(t, lead, (STATE.get(k) || {}).step); due = 'e' + t; } // étape réelle d'arrêt → message adapté à la cause
+
+      }
       if (due == null) continue;
-      try { await send(lead.phone, relanceText(due, lead), cfg); console.log('relance +' + due + 'h -> ' + lead.ref); } catch (_) {}
+      try {
+        if (lead.completed) await send(lead.phone, text, cfg);                          // nudge signature (le texte contient déjà le lien mandat)
+        else await sendButtons(lead.phone, { body: text, buttons: [{ id: 'menu', text: '▶️ Reprendre' }, { id: 'appel', text: '📞 Être rappelé' }] }, cfg); // 1 tap = réponse → rouvre la fenêtre 24h gratis + réarme un cycle
+        console.log('relance ' + due + ' -> ' + (lead.ref || lead.phone));
+      } catch (_) {}
       lead.nudges = nudges.concat(due); LEADS.set(k, lead); persistLeads();
     }
   } catch (e) { console.error('runRelances', e.message); }

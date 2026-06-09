@@ -498,6 +498,11 @@ body.game-mode #gameView { display:block; }
       </div>
 
       <div class="panel">
+        <div class="panel-h"><span class="t">📞 À rappeler</span><span class="mini-src demo" id="rappelSrc">EN ATTENTE</span></div>
+        <div class="panel-b" id="rappelBody"><div style="padding:14px 16px;color:var(--white-40);font-size:.8rem">Connexion CRM requise pour afficher les dossiers à rappeler.</div></div>
+      </div>
+
+      <div class="panel">
         <div class="panel-h"><span class="t">Radar vols · CE261</span><span class="mini-src demo" id="radarSrc">EN ATTENTE</span></div>
         <div class="panel-b radar-list" id="radar"></div>
       </div>
@@ -1146,6 +1151,40 @@ async function loadWaConversations(){
   setSrcBadge();
 }
 
+/* ============ À RAPPELER (dossiers où la fenêtre WhatsApp 24h s'est fermée / rappel demandé) ============ */
+function rappelReason(r){
+  return {rappel_demande:'📞 Rappel demandé', mandat_non_signe:'✍️ Mandat non signé', abandon_avant_signature:'⏸️ Arrêté avant signature'}[r] || r || '';
+}
+function renderRappels(leads){
+  const body=document.getElementById('rappelBody'); if(!body) return;
+  if(!leads || !leads.length){ body.innerHTML='<div style="padding:14px 16px;color:var(--white-40);font-size:.8rem">Aucun dossier à rappeler pour le moment. ✅</div>'; return; }
+  body.innerHTML = leads.map(l=>{
+    const tel = String(l.phone||'').replace(/\D/g,'');
+    const nom = ((l.name||'').replace(/</g,'&lt;')) || 'Passager';
+    const vol = (l.vol||'').replace(/</g,'&lt;');
+    const route = (l.route||'').replace(/</g,'&lt;');
+    const urgent = !!l.wantsCall;
+    return `<div style="padding:11px 16px;border-bottom:1px solid var(--sky-border);display:flex;gap:10px;align-items:flex-start">`+
+      `<div style="flex:1;min-width:0">`+
+        `<div style="font-weight:600;font-size:.9rem">${nom}${l.pax>1?` <span style="opacity:.55;font-weight:400">+${l.pax-1}</span>`:''} · <span style="color:#1aa251">${fmt(l.montant)} €</span></div>`+
+        `<div style="font-size:.74rem;color:var(--white-40);margin-top:2px">${vol?('✈️ '+vol+(route?(' · '+route):'')):'(vol non renseigné)'}</div>`+
+        `<div style="font-size:.7rem;margin-top:3px"><span style="${urgent?'color:#e0533d;font-weight:600':'color:var(--white-40)'}">${rappelReason(l.reason)}</span> · il y a ${l.ageHours}h</div>`+
+      `</div>`+
+      (tel?`<a href="tel:+${tel}" style="flex-shrink:0;background:#25D366;color:#fff;text-decoration:none;padding:6px 12px;border-radius:9px;font-size:.78rem;font-weight:600;white-space:nowrap">📞 Appeler</a>`:'')+
+    `</div>`;
+  }).join('');
+}
+async function loadRappels(){
+  const d = await jget('/api/leads-a-rappeler');
+  const src=document.getElementById('rappelSrc');
+  if(d && d.ok){
+    REAL.sources.rappels = true;
+    renderRappels(d.leads||[]);
+    if(src){ src.className='mini-src real'; src.textContent=(d.total||0)+' à rappeler'; }
+  } else if(src){ src.className='mini-src demo'; src.textContent='CRM requis'; }
+  setSrcBadge();
+}
+
 /* ============ KPI TICKERS ============ */
 function tickKPI(){
   // KPI = uniquement les vrais chiffres CRM (/api/bureau-stats). Aucune inflation simulée.
@@ -1527,6 +1566,7 @@ async function loadProtected(){
   const reg = await jget('/api/radar-eligible-registry');
   if(reg && reg.ok && typeof reg.total==='number'){ REAL.sources.registry = true; }
   await loadWaConversations();   // vraies conversations WhatsApp (CRM)
+  await loadRappels();           // dossiers « à rappeler » (fenêtre 24h fermée / rappel demandé)
   setSrcBadge();
 }
 async function loadRealData(){
@@ -1556,6 +1596,7 @@ window.addEventListener('bureau-crm-unlocked', loadProtected);
 setInterval(loadRadar, 180000);      // rafraîchit les vols réels toutes les 3 min
 setInterval(loadWhatsApp, 120000);   // état bot toutes les 2 min
 setInterval(loadWaConversations, 120000); // vraies conversations WhatsApp toutes les 2 min
+setInterval(loadRappels, 120000);    // dossiers à rappeler toutes les 2 min
 setInterval(loadBureauStats, 180000);// vrais chiffres CRM toutes les 3 min
 setInterval(loadMetaStats, 300000);  // stats Meta Ads toutes les 5 min
 setInterval(planeFlyby, 26000);      // avion qui traverse régulièrement
