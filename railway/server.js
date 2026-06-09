@@ -1421,6 +1421,11 @@ async function relancerEtape(phone, s, cfg) {
     case 'mineurs': return sendMineurs(phone, s, cfg);
     case 'recap': return sendRecap(phone, s, cfg);
     case 'names': return askName(phone, s, cfg);
+    case 'doc_pass': case 'doc_pass_confirm': case 'doc_dob': case 'doc_name': return nextPassport(phone, s, cfg);
+    case 'doc_mandant': return askMandant(phone, s, cfg);
+    case 'doc_boarding': return gotoBoarding(phone, s, cfg);
+    case 'doc_eticket': return gotoEticket(phone, s, cfg);
+    case 'doc_cert': return gotoCert(phone, s, cfg);
     default: return send(phone, `On reprend 👇 Répondez à la dernière question, ou tapez *nouveau* pour recommencer.`, cfg);
   }
 }
