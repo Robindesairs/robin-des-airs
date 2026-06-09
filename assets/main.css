@@ -990,10 +990,12 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
     line-height: 1.04;
     margin-bottom: 8px;
   }
-  /* sous-titre masqué en desktop (doublon de l'accroche + de la conversation ; relevé
-   * par la revue UI/Growth) → aère la colonne, renforce le CTA, remonte les stats.
-   * Conservé en mobile (<1081px) où il porte le message. */
-  #hero .hero-subhead { display: none; }
+  /* Sous-titre desktop : on garde le SLOGAN signature (« On prend aux compagnies, on rend
+   * aux familles… ») et on masque seulement la phrase d'explication (doublon relevé par la
+   * revue UI/Growth). → slogan visible, colonne aérée, stats hautes.
+   * Mobile (<1081px) garde le texte complet (slogan + explication). */
+  #hero .hero-subhead { font-size: 14px; line-height: 1.4; margin: -2px 0 7px 0; min-height: 0; }
+  #hero .hero-subhead-extra { display: none; }
   #hero .hero-desc    { line-height: 1.5; margin-bottom: 7px; min-height: 0; }
 
   #hero .hero-entry       { margin-bottom: 7px; gap: 8px; }
