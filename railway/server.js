@@ -16,6 +16,7 @@ const express = require('express');
 const { pickVariant } = require('./lib/bot-variants');
 const { SYSTEM_PROMPT: FAQ_SYSTEM_PROMPT, FAQ_KNOWLEDGE } = require('./lib/faq-hors-tunnel');
 const { pickRV, fillTpl } = require('./lib/relance-variants');
+const { extractEticketMulti: extractEticketMultiLib } = require('./lib/extract-eticket');
 function firstNameOf(s) { const n = (s.passengers && s.passengers[s.mandant_idx || 0] && s.passengers[s.mandant_idx || 0].name) || (s.names && s.names[0]) || ''; return /^passager/i.test(n) ? '' : (n.split(/\s+/)[0] || ''); }
 
 // ─── Fonctions inline (autonome — aucune dépendance au monorepo Netlify) ───────
@@ -310,6 +311,29 @@ function chainLegs(legs) {
 // Extrait l'index de ligne (0-based) depuis un ID WATI de liste format "sectionIdx-rowIdx" : "0-2"→2, "0-0"→0
 // NE traite PAS les IDs numériques simples ("1","2") qui sont des IDs de boutons WATI, pas des lignes de liste.
 function listRowIdx(id) { if (!id) return -1; const m = /^\d+-(\d+)$/.exec(id); return m ? parseInt(m[1]) : -1; }
+// Vol cliqué dans le bandeau « vols éligibles » du site (index.html) — ou client qui décrit son vol
+// d'emblée. Le site préremplit un message type : « …j'ai été affecté par le vol AF718 du 08/06/2026,
+// qui a été retardé… ». On en extrait vol + date + incident pour court-circuiter le questionnaire
+// d'éligibilité (le bandeau ne liste que des vols Europe↔Afrique déjà vérifiés éligibles).
+// Renvoie null si ce n'est pas un message « vol + incident » → on retombe sur le flux normal.
+function parseTickerFlight(text) {
+  const t = String(text || '');
+  // n° de vol : priorité à celui qui suit « vol »/« flight » (le gabarit écrit « le vol AF718 »)
+  const fm = t.match(/\b(?:vol|flight)\s+([A-Z]{2,3})\s?-?\s?(\d{1,4})\b/i)
+          || t.toUpperCase().match(/\b([A-Z]{2,3})\s?(\d{1,4})\b/);
+  if (!fm) return null;
+  const vol = (fm[1] + fm[2]).toUpperCase();
+  if (/^(CE|EU)\d{3}$/.test(vol) || vol.endsWith('2004')) return null; // « CE 261 »/« CE 261/2004 » = le règlement, pas un vol
+  const low = t.toLowerCase();
+  let incident = null;
+  if (/(annul|cancel)/.test(low)) incident = 'annulation';
+  else if (/(retard|delay)/.test(low)) incident = 'retard';
+  if (!incident) return null; // ni retard ni annulation reconnaissable → ce n'est pas un clic « vol éligible »
+  let date = '';
+  const dm = t.match(/\b(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})\b/);
+  if (dm) { const yy = dm[3].length === 2 ? '20' + dm[3] : dm[3]; date = `${dm[1].padStart(2, '0')}/${dm[2].padStart(2, '0')}/${yy}`; }
+  return { vol, incident, date };
+}
 // JJ/MM/AAAA → AAAA-MM-JJ (pour input[type=date]). Renvoie '' si pas une date complète.
 function toISODate(d) { const m = (d || '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); return m ? `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}` : ''; }
 // "NOM/PRENOM" (carte d'embarquement) → "PRENOM NOM". Sinon renvoie tel quel.
@@ -373,6 +397,101 @@ Règles STRICTES :
     const pnr = (p.pnr || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
     return { vol, compagnie: p.compagnie || deduceAirline(vol), date: p.date || '', pnr: /^[A-Z0-9]{5,8}$/.test(pnr) ? pnr : '', route };
   } catch (e) { return null; }
+}
+// ── E-billet / confirmation de réservation : extraction COMPLÈTE (vol+route+date+PNR+NOMS) ──
+// PDF → Claude (bloc document) ; image(s) → gpt-4o. Accepte PLUSIEURS pages (e-billet photographié)
+// → toutes téléchargées et envoyées en UN appel, le modèle fusionne.
+async function extractEticketPages(mediaUrls, cfg) {
+  const urls = (Array.isArray(mediaUrls) ? mediaUrls : [mediaUrls]).filter(Boolean);
+  if (!urls.length) return null;
+  try {
+    const parts = [];
+    for (const u of urls) {
+      const r = await fetch(u, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {}, signal: AbortSignal.timeout(20000) });
+      if (!r.ok) continue;
+      const mime = (r.headers.get('content-type') || '').split(';')[0].trim();
+      parts.push({ bytes: Buffer.from(await r.arrayBuffer()), mime });
+    }
+    if (!parts.length) return null;
+    const out = await extractEticketMultiLib(parts);
+    if (out && out.vol && !out.compagnie) out.compagnie = deduceAirline(out.vol) || '';
+    return out;
+  } catch (e) { return null; }
+}
+// Convenance : une seule page (étape doc_eticket).
+async function extractEticket(mediaUrl, cfg) { return extractEticketPages([mediaUrl], cfg); }
+// Reporte (SANS écraser une valeur déjà confirmée) les infos d'un e-billet extrait dans l'état `s`.
+function applyEticket(s, e) {
+  if (!e) return;
+  if (e.vol && !s.vol) s.vol = e.vol;
+  if (e.compagnie && !s.compagnie) s.compagnie = e.compagnie;
+  if (e.date && !s.date) s.date = e.date;
+  if (e.pnr && !s.pnr) s.pnr = e.pnr;
+  if (e.route && !s.route) s.route = e.route;
+  if (e.escale && !s.type_vol) s.type_vol = 'escale';
+  if (e.segments && e.segments.length > 1 && !(s.legs && s.legs.length)) s.legs = e.segments.map((x) => ({ vol: x.vol, dep: x.depart, arr: x.arrivee }));
+  if (e.passengers && e.passengers.length) {
+    s.names = s.names || []; s.passengers = s.passengers || [];
+    e.passengers.forEach((p, i) => {
+      if (p.name && !s.names[i]) s.names[i] = p.name.toUpperCase();
+      const cur = s.passengers[i] || {};
+      if (!cur.name && p.name) cur.name = p.name;
+      if (!cur.dob && p.dob) cur.dob = p.dob;
+      s.passengers[i] = cur;
+    });
+    if (!s.pax) s.pax = e.passengers.length;
+  }
+}
+// Étape SCAN : on relit TOUTES les pages à chaque nouvelle photo → la lecture est complète, on écrase
+// les champs e-billet (les corrections manuelles viennent APRÈS, via le menu de correction).
+function setEticketFields(s, e) {
+  if (!e) return;
+  if (e.vol) s.vol = e.vol;
+  if (e.compagnie) s.compagnie = e.compagnie;
+  if (e.date) s.date = e.date;
+  if (e.pnr) s.pnr = e.pnr;
+  if (e.route) s.route = e.route;
+  if (e.escale) s.type_vol = s.type_vol || 'escale';
+  if (e.segments && e.segments.length > 1) s.legs = e.segments.map((x) => ({ vol: x.vol, dep: x.depart, arr: x.arrivee }));
+  if (e.passengers && e.passengers.length) {
+    s.names = s.names || []; s.passengers = s.passengers || [];
+    e.passengers.forEach((p, i) => {
+      s.names[i] = p.name.toUpperCase();
+      const cur = s.passengers[i] || {}; cur.name = p.name; if (!cur.dob && p.dob) cur.dob = p.dob; s.passengers[i] = cur;
+    });
+    // Billet de GROUPE : si le billet liste PLUS de passagers que déclaré, on remonte le compte (jamais en silence → sinon des passagers tombent du mandat).
+    if (e.passengers.length > (s.pax || 0)) s.pax = e.passengers.length;
+  }
+  // Signal qualité pour la carte de confirmation : lecture douteuse ou incomplète → on prévient au lieu de claironner « réussi ».
+  s._scanWarn = (e.lisible === false) || (typeof e.confidence === 'number' && e.confidence < 0.5) || !(e.vol && (e.route || e.depart) && (e.date || e.pnr));
+}
+// Bascule l'état sur un trajet précis (aller OU retour) choisi par le client.
+function applyTrajet(s, t) {
+  if (!t) return;
+  if (t.vol) s.vol = t.vol;
+  if (t.date) s.date = t.date;
+  if (t.route) s.route = t.route;
+  s.type_vol = t.escale ? 'escale' : 'direct';
+  if (t.segments && t.segments.length > 1) s.legs = t.segments.map((x) => ({ vol: x.vol, dep: x.depart, arr: x.arrivee }));
+  else delete s.legs;
+}
+// Carte de confirmation du scan (affiche le nb de pages lues + invite à en envoyer d'autres).
+async function scanConfirmCard(phone, s, cfg) {
+  const pages = (s.scan_pages || []).length;
+  const noms = (s.names || []).filter(Boolean);
+  const paxLine = noms.length ? `\n👥 ${noms.length} passager(s) : ${noms.join(', ')}` : `\n_(votre identité sera lue sur le passeport, plus tard)_`;
+  const pageLine = pages > 1 ? `\n📄 ${pages} pages lues` : '';
+  // Lecture douteuse/incomplète → on NE claironne PAS « réussi », on invite à vérifier (un caractère faux = rejet compagnie).
+  const header = s._scanWarn
+    ? `⚠️ J'ai lu votre billet, mais l'image était *difficile à lire*. Vérifiez bien le *n° de vol* et le *PNR* ci-dessous 👇`
+    : pickVariant(phone, 'SCAN_REUSSI');
+  return sendButtons(phone, { body: `${header}${pageLine}\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date || '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ Trajet : ${s.route || '—'}${paxLine}\n\n_E-billet en plusieurs pages ? Envoyez-les, je complète._\nTout est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg);
+}
+// Aller-retour détecté → on demande quel vol a été perturbé (l'e-billet ne dit pas ce qui a foiré).
+async function askSens(phone, s, cfg) {
+  s.step = 'scan_sens'; await setState(phone, s);
+  const t = s.trajets || []; const a = t[0] || {}, r = t[1] || {};
+  return sendButtons(phone, { body: `📑 Votre billet contient un *aller* et un *retour*.\nQuel vol a connu le problème (retard / annulation) ?\n\n🛫 *Aller* — ${a.route || '—'}${a.date ? ` · ${a.date}` : ''}\n🛬 *Retour* — ${r.route || '—'}${r.date ? ` · ${r.date}` : ''}`, buttons: [{ id: 'sens_aller', text: '🛫 L\'aller' }, { id: 'sens_retour', text: '🛬 Le retour' }] }, cfg);
 }
 // OCR passeport / CNI : lit nom + prénom + date de naissance (la magie aussi sur le passeport).
 async function ocrPassport(mediaUrl, cfg) {
@@ -606,11 +725,36 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
 
   let s = await getState(phone);
 
+  // T1.5 — Vol cliqué dans le bandeau « vols éligibles » du site (premier contact) ──────────────
+  // Le site préremplit « …le vol AF718 du 08/06/2026, qui a été retardé… ». On enregistre le vol
+  // directement et on SAUTE le questionnaire d'éligibilité : on demande seulement la correspondance,
+  // puis on continue vers passagers → pièces → mandat. Plus de fallback IA générique « tapez menu ».
+  // Garde-fou : uniquement tant qu'aucun vol n'est saisi et avant le tunnel détaillé (jamais en plein dossier),
+  // et jamais sur un tap bouton/liste (id présent → flux interactif prioritaire).
+  {
+    const EARLY = ['accueil', 'go_langue', 'langue', 'route', 'incident', 'duree'];
+    if (!id && !s.vol && (!s.step || EARLY.includes(s.step))) {
+      const tk = parseTickerFlight(input);
+      if (tk) {
+        const f = { step: 'q_corr', route_type: 'af_eu', fromTicker: true, names: [] };
+        if (s.langue) { f.langue = s.langue; f.langue_code = s.langue_code; f.escalade = s.escalade; }
+        f.vol = tk.vol; f.compagnie = deduceAirline(tk.vol) || '';
+        if (tk.date) f.date = tk.date;
+        if (tk.incident === 'annulation') { f.incident = 'annulation'; f.incident_libelle = 'Annulation'; }
+        else { f.incident = 'retard'; f.incident_libelle = 'Retard +3h'; f.duree_retard = '+3h'; }
+        await setState(phone, f);
+        const dStr = tk.date ? ` du *${tk.date}*` : '';
+        const incStr = f.incident === 'annulation' ? 'a été *annulé*' : 'a été *retardé*';
+        return sendButtons(phone, { body: `✅ C'est noté — votre *vol ${tk.vol}*${dStr} ${incStr}. 🎯\nCe type de vol Europe ↔ Afrique est *souvent éligible* jusqu'à *600 € par passager*. 🎉\n\nPour ne rien oublier : ce vol faisait-il partie d'une *correspondance* (un autre vol juste avant ou juste après) ?`, buttons: [{ id: 'corr_direct', text: '✈️ Non, vol direct' }, { id: 'corr_escale', text: '🔄 Oui, correspondance' }] }, cfg);
+      }
+    }
+  }
+
   // T2 — fallback IA hors-flux (question libre) → réponse + boutons
   // ⚠️ Jamais intercepté si c'est une réponse interactive (bouton/liste) : replyId présent → flux prioritaire
   try {
     const { isClientQuestion, isSensitive, answerClientQuestion } = AI;
-    const FREE = ['m_vol', 'm_date', 'm_route', 'm_pnr', 'leg_count', 'leg_input', 'names', 'vd_vol', 'vd_date', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob'];
+    const FREE = ['m_vol', 'm_date', 'm_route', 'm_pnr', 'leg_count', 'leg_input', 'names', 'vd_vol', 'vd_date', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob'];
     const looks = !id && (FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input));
     if (looks) {
       if (isSensitive(input)) { await send(phone, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nTapez *menu* pour ouvrir/continuer votre dossier.`, cfg); return; }
@@ -672,13 +816,13 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // MSG5 — PASSAGERS
   if (s.step === 'nb_pax') {
     const n = parseInt(normInput(input, ['1 passager', '2 passager', '3 passager', '4 passager', '5 passager', '6 ou plus']));
-    if (n >= 1 && n <= 5) { s.pax = n; s.names = []; s.step = 'type_vol'; await setState(phone, s); return sendButtons(phone, { body: `${bar('type_vol')}\n✈️ C'était un vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg); }
+    if (n >= 1 && n <= 5) { s.pax = n; s.names = []; if (s.fromTicker) { await setState(phone, s); return afterPaxFromTicker(phone, s, cfg); } s.step = 'type_vol'; await setState(phone, s); return sendButtons(phone, { body: `${bar('type_vol')}\n✈️ C'était un vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg); }
     if (n >= 6 || lower.includes('6 ou plus') || lower.includes('plus')) { s.step = 'nb_pax_exact'; await setState(phone, s); return send(phone, `${bar('nb_pax')}\n👥 *Combien de passagers en tout ?*\nIndiquez le nombre total (ex. 8). On gère votre groupe directement ici. 🤝`, cfg); }
     return; // silence
   }
   if (s.step === 'nb_pax_exact') {
     const m = input.match(/\d{1,2}/); const n = m ? parseInt(m[0]) : 0;
-    if (n >= 1 && n <= 30) { s.pax = n; s.names = []; s.step = 'type_vol'; await setState(phone, s); return sendButtons(phone, { body: `${bar('type_vol')}\n✅ ${n} passagers — potentiellement *${montantTotal(n)} €*.\n\n✈️ C'était un vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg); }
+    if (n >= 1 && n <= 30) { s.pax = n; s.names = []; if (s.fromTicker) { await setState(phone, s); return afterPaxFromTicker(phone, s, cfg); } s.step = 'type_vol'; await setState(phone, s); return sendButtons(phone, { body: `${bar('type_vol')}\n✅ ${n} passagers — potentiellement *${montantTotal(n)} €*.\n\n✈️ C'était un vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg); }
     return send(phone, `Indiquez le *nombre total* de passagers en chiffres (ex. 8) :`, cfg);
   }
 
@@ -694,6 +838,19 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     s.step = 'scan'; await setState(phone, s);
     // Un seul message (motivation + scan) → réponse immédiate, pas de délai où les taps s'entrecroisent.
     return sendButtons(phone, { body: `${bar('scan')}\n🎉 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (*${montantNet(s.pax)} € nets*, 75 %). Robin prélève 25 % *uniquement* si vous gagnez. 🤝\n\n⚡ Envoyez une *photo* de votre carte d'embarquement ou e-billet — je lis le vol automatiquement.${s.pax > 1 ? `\n👥 (une carte suffit pour le vol)` : ''}\n\n📎 *Envoyez la photo*, ou :`, buttons: [{ id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
+  }
+  // ── Correspondance « rapide » (raccourci bandeau) : vol déjà connu, on demande juste s'il y en avait un autre ──
+  if (s.step === 'q_corr') {
+    const n = normInput(input, ['direct', 'correspondance']);
+    if (id === 'corr_escale' || n === '2' || lower.includes('corresp') || lower.includes('escale') || (lower.includes('oui') && !lower.includes('direct'))) {
+      s.type_vol = 'escale'; await setState(phone, s);
+      return sendPax(phone, s, cfg); // passagers d'abord, puis collecte des segments (flux escale standard)
+    }
+    if (id === 'corr_direct' || n === '1' || lower.includes('direct') || lower.includes('non') || lower.includes('seul') || lower.includes('aucun')) {
+      s.type_vol = 'direct'; await setState(phone, s);
+      return sendPax(phone, s, cfg); // passagers → vérif éligibilité (vol+date déjà connus) → récap
+    }
+    return sendButtons(phone, { body: `Ce vol faisait-il partie d'une *correspondance* (un autre vol juste avant ou juste après) ?`, buttons: [{ id: 'corr_direct', text: '✈️ Non, vol direct' }, { id: 'corr_escale', text: '🔄 Oui, correspondance' }] }, cfg);
   }
   // ── Correspondance : combien de vols, puis chaque segment, puis ordre automatique ──
   if (s.step === 'leg_count') {
@@ -722,34 +879,80 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     return send(phone, `📅 Date du *premier vol* ? _(ex : 15/03/2026)_`, cfg);
   }
 
-  // MSG8 — SCAN
+  // MSG8 — SCAN (e-billet / carte — accepte PLUSIEURS pages photographiées)
   if (s.step === 'scan') {
-    if (mediaUrl) { const d = await ocrBoardingPass(mediaUrl, cfg);
-      if (d && d.vol) { Object.assign(s, { vol: d.vol || s.vol, compagnie: d.compagnie || s.compagnie, date: d.date || s.date, route: d.route || s.route, pnr: d.pnr || s.pnr }); s.travelProof = s.travelProof || 'scan'; s.step = 'scan_confirm'; await setState(phone, s);
-        return sendButtons(phone, { body: `${pickVariant(phone, 'SCAN_REUSSI')}\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date || '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ Trajet : ${s.route || '—'}\n\n_(votre identité sera lue sur le passeport, plus tard)_\nTout est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg); }
-      await send(phone, `😕 La qualité de l'image n'a pas permis la lecture. On fait à la main, ça prend 2 min. 👇`, cfg); s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
+    if (mediaUrl) {
+      s.scan_pages = s.scan_pages || []; if (s.scan_pages.length < 8) s.scan_pages.push(mediaUrl);
+      let d = await extractEticketPages(s.scan_pages, cfg);              // relit TOUTES les pages d'un coup → fusion
+      if (!d || !d.vol) { const bp = await ocrBoardingPass(mediaUrl, cfg); if (bp && bp.vol) d = bp; } // repli carte d'embarquement (image)
+      if (d && d.multiPNR) { delete s.scan_pages; await setState(phone, s); return sendButtons(phone, { body: `📑 J'ai vu *plusieurs réservations* (PNR différents) sur cette image. Pour ne pas les mélanger, envoyez-les *une par une* (une photo par réservation), en commençant par le vol qui a eu le problème.`, buttons: [{ id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg); }
+      if (d && d.vol) {
+        setEticketFields(s, d); s.travelProof = s.travelProof || ((d.passengers && d.passengers.length) ? 'ebooking' : 'scan');
+        if (d.allerRetour && d.trajets && d.trajets.length > 1) { s.trajets = d.trajets; await setState(phone, s); return askSens(phone, s, cfg); }
+        s.step = 'scan_confirm'; await setState(phone, s); return scanConfirmCard(phone, s, cfg);
+      }
+      delete s.scan_pages; await send(phone, `😕 Je n'ai pas réussi à lire ce document (PDF protégé, image trop sombre ou coupée…). Réessayez avec une *capture d'écran nette*, ou faisons-le à la main — ça prend 2 min. 👇`, cfg); s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
     }
     if (id === 'scan_manuel' || lower.includes('manuel') || lower.includes('manuelle') || lower.includes('saisir')) { s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg); }
-    return sendButtons(phone, { body: `📎 Envoyez une *photo* de votre carte/e-billet, ou :`, buttons: [{ id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
+    return sendButtons(phone, { body: `📎 Envoyez une *photo* (ou le *PDF*) de votre e-billet. _Plusieurs pages ? Envoyez-les une par une, je les assemble._\n\n_🔒 Votre document est lu par un outil de lecture automatique (IA) à seule fin de pré-remplir votre dossier (voir robindesairs.eu/politique-confidentialite). En l'envoyant, vous acceptez cette lecture._`, buttons: [{ id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
   }
   if (s.step === 'scan_confirm') {
+    if (mediaUrl) {                                                       // page SUPPLÉMENTAIRE d'un e-billet multi-pages
+      s.scan_pages = s.scan_pages || []; if (s.scan_pages.length < 8) s.scan_pages.push(mediaUrl);
+      const d = await extractEticketPages(s.scan_pages, cfg);
+      if (d && d.vol) {
+        setEticketFields(s, d);
+        if (d.allerRetour && d.trajets && d.trajets.length > 1) { s.trajets = d.trajets; await setState(phone, s); return askSens(phone, s, cfg); }
+      }
+      await setState(phone, s); return scanConfirmCard(phone, s, cfg);
+    }
     const n = normInput(input, ['oui', 'corriger']);
     if (n === '1' || lower.includes('oui')) {
+      delete s.scan_pages; delete s._scanWarn;
       if (needYear(s.date)) { s.step = 'annee'; await setState(phone, s); return askYear(phone, s, cfg); }
       if (inFuture(s.date)) { s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, FUTURE_JOKE, cfg); }
+      if (tooOld(s.date)) { await clearState(phone); return send(phone, `${pickVariant(phone, 'PRESCRIPTION_5ANS')}\n\n${STOP_FOOTER}`, cfg); }
       return apresVol(phone, s, cfg);
     }
     s.fix_return = 'scan'; await setState(phone, s); return goCorrection(phone, s, cfg);
   }
+  // Aller-retour : le client choisit le vol perturbé → on bascule l'état sur ce trajet.
+  if (s.step === 'scan_sens') {
+    if (mediaUrl) {                                                       // encore une page → relire puis re-décider
+      s.scan_pages = s.scan_pages || []; if (s.scan_pages.length < 8) s.scan_pages.push(mediaUrl);
+      const d = await extractEticketPages(s.scan_pages, cfg);
+      if (d && d.vol) { setEticketFields(s, d); if (d.allerRetour && d.trajets && d.trajets.length > 1) { s.trajets = d.trajets; await setState(phone, s); return askSens(phone, s, cfg); } }
+      s.step = 'scan_confirm'; await setState(phone, s); return scanConfirmCard(phone, s, cfg);
+    }
+    const t = s.trajets || [];
+    if (id === 'sens_retour' || lower.includes('retour')) { applyTrajet(s, t[1]); s.step = 'scan_confirm'; await setState(phone, s); return scanConfirmCard(phone, s, cfg); }
+    if (id === 'sens_aller' || lower.includes('aller')) { applyTrajet(s, t[0]); s.step = 'scan_confirm'; await setState(phone, s); return scanConfirmCard(phone, s, cfg); }
+    return askSens(phone, s, cfg);
+  }
 
   // ── MENU DE CORRECTION (champ par champ) ──────────────────────────────────
   if (s.step === 'correction') {
-    const n = normInput(input, ['vol', 'date', 'nom', 'trajet']);
+    const n = normInput(input, ['vol', 'date', 'nom', 'trajet', 'pnr']);
     if (n === '1' || lower.includes('vol')) { s.step = 'fix_vol'; await setState(phone, s); return send(phone, `✈️ Vol actuel : *${s.vol || '—'}*\nTapez simplement le *bon numéro* 👇 _(ex. AF718)_`, cfg); }
     if (n === '2' || lower.includes('date')) { s.step = 'fix_date'; await setState(phone, s); return send(phone, `📅 Date actuelle : *${s.date || '—'}*\nTapez simplement la *bonne date* 👇 _(JJ/MM/AAAA)_`, cfg); }
-    if (n === '3' || lower.includes('nom')) { s.step = 'fix_nom'; await setState(phone, s); return send(phone, `👤 Nom actuel : *${(s.names && s.names[0]) || '—'}*\nTapez simplement le *bon nom complet* 👇`, cfg); }
+    if (n === '3' || lower.includes('nom')) {
+      if (s.pax > 1) { s.step = 'fix_nom_which'; await setState(phone, s); return send(phone, `✏️ Quel passager corriger ? Indiquez son *numéro* (1 à ${s.pax}).`, cfg); }
+      s.step = 'fix_nom'; await setState(phone, s); return send(phone, `👤 Nom actuel : *${(s.names && s.names[0]) || '—'}*\nTapez simplement le *bon nom complet* 👇`, cfg);
+    }
     if (n === '4' || lower.includes('trajet') || lower.includes('route')) { s.step = 'fix_route'; await setState(phone, s); return send(phone, `🗺️ Trajet actuel : *${s.route || '—'}*\nTapez simplement le *bon trajet* 👇 _(ex. CDG → DSS)_`, cfg); }
+    if (n === '5' || lower.includes('pnr') || lower.includes('réserv') || lower.includes('reserv')) { s.step = 'fix_pnr'; await setState(phone, s); return send(phone, `🎫 PNR actuel : *${s.pnr || '—'}*\nTapez le *bon numéro de réservation* (6 caractères, lettres + chiffres) 👇, ou *passer*.`, cfg); }
     return goCorrection(phone, s, cfg);
+  }
+  if (s.step === 'fix_nom_which') {
+    const i = parseInt((input.match(/\d+/) || [])[0]);
+    if (i >= 1 && i <= s.pax) { s.fix_name_idx = i - 1; s.step = 'fix_nom'; await setState(phone, s); return send(phone, `👤 *Passager ${i}* (actuel : ${(s.names && s.names[i - 1]) || '—'})\nTapez le *bon nom complet* 👇`, cfg); }
+    return send(phone, `Indiquez un numéro entre 1 et ${s.pax} :`, cfg);
+  }
+  if (s.step === 'fix_pnr') {
+    if (lower === 'passer' || lower === 'non' || lower === 'skip') { s.pnr = ''; await setState(phone, s); return afterFix(phone, s, cfg); }
+    const pnr = input.toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (/^[A-Z0-9]{5,8}$/.test(pnr) && /[A-Z]/.test(pnr)) { s.pnr = pnr; await setState(phone, s); return afterFix(phone, s, cfg); }
+    return send(phone, `🎫 Le PNR fait 5 à 8 caractères avec des *lettres* (ex : *TFSCBC*). Réessayez, ou tapez *passer*.`, cfg);
   }
   if (s.step === 'fix_vol') {
     const vol = input.toUpperCase().replace(/\s+/g, '');
@@ -766,7 +969,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     return send(phone, `Date non reconnue. Format JJ/MM/AAAA :`, cfg);
   }
   if (s.step === 'fix_nom') {
-    if (input.length >= 3 && !/^\d+$/.test(input)) { s.names = s.names || []; s.names[0] = input.toUpperCase(); await setState(phone, s); return afterFix(phone, s, cfg); }
+    if (input.length >= 3 && !/^\d+$/.test(input)) { s.names = s.names || []; s.names[s.fix_name_idx || 0] = input.toUpperCase(); s.fix_name_idx = 0; await setState(phone, s); return afterFix(phone, s, cfg); }
     return send(phone, `Nom trop court. Renvoyez le nom complet :`, cfg);
   }
   if (s.step === 'fix_route') {
@@ -845,7 +1048,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const n = normInput(input, ['majeur', 'mineur', 'tous majeurs', 'des mineurs']);
     if (s.pax === 1) {
       if (n === '1' || lower.includes('majeur')) { s.mineurs = []; await setState(phone, s); return sendRecap(phone, s, cfg); }
-      if (n === '2' || lower.includes('mineur')) { await clearState(phone); return send(phone, `👶 Passager mineur — signature parentale requise.\nLa loi exige qu'un parent/tuteur signe le mandat.\n📱 Un expert vous rappelle sous 24h.\n\n${STOP_FOOTER}`, cfg); }
+      if (n === '2' || lower.includes('mineur')) { s.minorsPresent = true; s.minorSelf = true; await setState(phone, s); await send(phone, `👶 Bien noté. L'indemnité d'un mineur est bien due — le *mandat est signé par son parent ou tuteur légal* (on vous guide à l'étape finale, rien à avancer). On continue 👇`, cfg); return sendRecap(phone, s, cfg); }
       return sendButtons(phone, { body: `${bar('mineurs')}\n👤 Êtes-vous majeur(e) (18+) ?`, buttons: [{ text: '✅ Oui, majeur(e)' }, { text: '👶 Non, mineur(e)' }] }, cfg);
     }
     if (n === '1' || lower.includes('tous majeurs')) { s.minorsPresent = false; await setState(phone, s); return sendRecap(phone, s, cfg); }
@@ -938,7 +1141,12 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     return send(phone, `🎫 Envoyez la carte d'embarquement, ou *passer*, ou *appel* si vous avez tout perdu.`, cfg);
   }
   if (s.step === 'doc_eticket') {
-    if (mediaUrl) { await send(phone, `✅ E-billet reçu !`, cfg); return gotoCert(phone, s, cfg); }
+    if (mediaUrl) {
+      const e = await extractEticket(mediaUrl, cfg); if (e) applyEticket(s, e);
+      s.travelProof = s.travelProof || 'ebooking'; await setState(phone, s);
+      const lu = (e && (e.pnr || (e.passengers && e.passengers.length))) ? ` _(${[e.vol, e.pnr && 'PNR ' + e.pnr, e.passengers && e.passengers.length && `${e.passengers.length} passager(s)`].filter(Boolean).join(' · ')})_` : '';
+      await send(phone, e ? `✅ E-billet reçu !${lu}` : `✅ Document bien reçu — notre équipe le vérifiera et l'ajoute à votre dossier. 🙏`, cfg); return gotoCert(phone, s, cfg);
+    }
     if (lower === 'passer') { s.docs_pending = true; return gotoCert(phone, s, cfg); }
     if (lower === 'appel') { s.escalade = 'document_perdu'; await send(phone, `📞 Un expert vous aide à récupérer votre e-billet. Laissez la conversation ouverte.\n\n${STOP_FOOTER}`, cfg); return gotoCert(phone, s, cfg); }
     return send(phone, `📧 Envoyez l'e-billet (pensez aux spams/Booking), ou *passer*, ou *appel*.`, cfg);
@@ -1024,6 +1232,7 @@ async function goCorrection(phone, s, cfg) {
     { title: '📅 Date', description: s.date || '—' },
     { title: '👤 Nom', description: (s.names && s.names[0]) || '—' },
     { title: '🗺️ Trajet', description: s.route || '—' },
+    { title: '🎫 PNR', description: s.pnr || '—' },
   ] }, cfg);
 }
 async function showScanConfirm(phone, s, cfg) {
@@ -1035,6 +1244,16 @@ async function afterFix(phone, s, cfg) {
   return showScanConfirm(phone, s, cfg);
 }
 async function estimationPuisPax(phone, s, cfg) { s.step = 'nb_pax'; await setState(phone, s); await send(phone, pickVariant(phone, 'ESTIMATION_QUALIFICATION'), cfg); return sendPax(phone, s, cfg); }
+// Raccourci bandeau : passagers connus → si direct, vol+date sont déjà là (vérif éligibilité + récap) ;
+// si correspondance, on bascule sur le flux escale standard pour collecter les segments.
+async function afterPaxFromTicker(phone, s, cfg) {
+  if (s.type_vol === 'escale') {
+    s.legs = []; s.legIdx = 0; s.step = 'leg_count'; await setState(phone, s);
+    return sendButtons(phone, { body: `${bar('scan')}\n🔄 Votre voyage comportait *combien de vols* en tout (correspondance) ?`, buttons: [{ text: '✈️ 2 vols' }, { text: '🔄 3 vols' }] }, cfg);
+  }
+  await setState(phone, s);
+  return apresVol(phone, s, cfg); // direct : vol + date connus → vérification puis récapitulatif
+}
 async function sendMineurs(phone, s, cfg) {
   s.step = 'mineurs'; await setState(phone, s);
   if (s.pax === 1) return sendButtons(phone, { body: `${bar('mineurs')}\n👤 Êtes-vous majeur(e) (18+) ?`, buttons: [{ text: '✅ Oui, majeur(e)' }, { text: '👶 Non, mineur(e)' }] }, cfg);
@@ -1150,6 +1369,7 @@ async function finaliser(phone, s, cfg) {
 async function relancerEtape(phone, s, cfg) {
   switch (s.step) {
     case 'langue': return sendLangue(phone, s, cfg);
+    case 'q_corr': return sendButtons(phone, { body: `Ce vol faisait-il partie d'une *correspondance* (un autre vol juste avant ou juste après) ?`, buttons: [{ id: 'corr_direct', text: '✈️ Non, vol direct' }, { id: 'corr_escale', text: '🔄 Oui, correspondance' }] }, cfg);
     case 'route': return sendRoute(phone, s, cfg);
     case 'incident': return sendIncident(phone, s, cfg);
     case 'nb_pax': return sendPax(phone, s, cfg);
@@ -1173,9 +1393,13 @@ function extractInbound(payload) {
     const replyId = (listReply && listReply.id) || (btnReply && btnReply.id) || null;
     const replyText = (listReply && (listReply.title || listReply.id)) || (btnReply && (btnReply.text || btnReply.title || btnReply.id)) || null;
     if (waId === 'senderPhone' || item.text === 'text') return;
-    const isImage = item.type === 'image' || (item.type && /image/i.test(item.type));
-    const mediaUrl = isImage ? (item.data || item.mediaUrl || item.media_url || item.url) : null;
-    const text = replyText || item.text || (item.finalText && String(item.finalText)) || (isImage ? '[image]' : (item.type && item.type !== 'text' ? `[${item.type}]` : ''));
+    const typeStr = String(item.type || '').toLowerCase();
+    const mimeStr = String(item.mimeType || item.mime_type || item.mime || '').toLowerCase();
+    const fnameStr = String(item.fileName || item.filename || item.data || item.url || item.mediaUrl || '').toLowerCase();
+    const isImage = typeStr === 'image' || /image/i.test(typeStr) || /^image\//.test(mimeStr);
+    const isDoc = typeStr === 'document' || typeStr === 'file' || /pdf|document/i.test(typeStr) || /pdf|officedocument|msword/.test(mimeStr) || /\.pdf(\?|#|$)/.test(fnameStr);
+    const mediaUrl = (isImage || isDoc) ? (item.data || item.mediaUrl || item.media_url || item.url || null) : null;
+    const text = replyText || item.text || (item.finalText && String(item.finalText)) || (isImage ? '[image]' : isDoc ? '[document]' : (item.type && item.type !== 'text' ? `[${item.type}]` : ''));
     if (!waId) return;
     const phone = normalizeWaPhone(normalizeWatiPhone(waId));
     if (!String(text || '').trim() && !mediaUrl) return;
