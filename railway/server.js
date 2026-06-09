@@ -751,6 +751,17 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     return send(phone, `📞 C'est noté — un conseiller Robin des Airs vous rappelle très vite depuis le *+33 7 56 86 36 30* (enregistrez-le sous « *Retard Robin* »). Vous pouvez aussi reprendre ici quand vous voulez : tapez *menu*, on repart là où on s'est arrêté. 🙏`, cfg);
   }
 
+  // T1.3 — « Plus tard » : le client veut reprendre plus tard. Son tap a déjà rouvert la fenêtre 24h (gratuit) ;
+  // on garde le dossier ouvert SANS le harceler → on ne laisse qu'une relance, près du bord de la fenêtre (~22h).
+  if (id === 'snooze' || lower === 'plus tard' || lower === 'demain' || lower === 'tard') {
+    const nm = firstNameOf(s);
+    const _l = LEADS.get(leadKey(phone)) || {};
+    const _patch = { lastClientAt: Date.now() };
+    if (!_l.completed) _patch.nudges = ['e3', 'e14']; // engagé : ne garde que la dernière relance « bord de fenêtre »
+    upsertLead(phone, _patch);
+    return send(phone, `👍 C'est noté${nm ? ' ' + nm : ''} — je garde votre dossier au chaud, on ne le ferme pas. Reprenez quand vous voulez : tapez *menu*. Je vous ferai juste un petit rappel plus tard, sans insister. 🙏`, cfg);
+  }
+
   // T1.5 — Vol cliqué dans le bandeau « vols éligibles » du site (premier contact) ──────────────
   // Le site préremplit « …le vol AF718 du 08/06/2026, qui a été retardé… ». On enregistre le vol
   // directement et on SAUTE le questionnaire d'éligibilité : on demande seulement la correspondance,
@@ -1627,7 +1638,7 @@ async function runRelances() {
       if (due == null) continue;
       try {
         if (lead.completed) await send(lead.phone, text, cfg);                          // nudge signature (le texte contient déjà le lien mandat)
-        else await sendButtons(lead.phone, { body: text, buttons: [{ id: 'menu', text: '▶️ Reprendre' }, { id: 'appel', text: '📞 Être rappelé' }] }, cfg); // 1 tap = réponse → rouvre la fenêtre 24h gratis + réarme un cycle
+        else await sendButtons(lead.phone, { body: text, buttons: [{ id: 'menu', text: '✅ Continuer' }, { id: 'snooze', text: '⏰ Plus tard' }, { id: 'appel', text: '📞 Rappel' }] }, cfg); // 1 tap = réponse → rouvre la fenêtre 24h gratis
         console.log('relance ' + due + ' -> ' + (lead.ref || lead.phone));
       } catch (_) {}
       lead.nudges = nudges.concat(due); LEADS.set(k, lead); persistLeads();
