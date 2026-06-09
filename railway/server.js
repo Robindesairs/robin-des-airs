@@ -1643,7 +1643,7 @@ async function runRelances() {
       if (due == null) continue;
       try {
         if (lead.completed) await send(lead.phone, text, cfg);                          // nudge signature (le texte contient déjà le lien mandat)
-        else await sendButtons(lead.phone, { body: text, buttons: [{ id: 'menu', text: '✅ Continuer' }, { id: 'snooze', text: '⏰ Plus tard' }, { id: 'appel', text: '📞 Rappel' }] }, cfg); // 1 tap = réponse → rouvre la fenêtre 24h gratis
+        else await sendButtons(lead.phone, { body: text, buttons: [{ id: 'menu', text: '▶️ Reprendre' }, { id: 'snooze', text: '⏰ Plus tard' }, { id: 'appel', text: '📞 Rappel' }] }, cfg); // 1 tap = réponse → rouvre la fenêtre 24h gratis (id 'menu' = même action que le mot tapé)
         console.log('relance ' + due + ' -> ' + (lead.ref || lead.phone));
       } catch (_) {}
       lead.nudges = nudges.concat(due); LEADS.set(k, lead); persistLeads();
