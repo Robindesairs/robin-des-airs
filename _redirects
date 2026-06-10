@@ -41,6 +41,7 @@
 /api/agent-chat              /.netlify/functions/agent-chat              200
 /api/dossier-store           /.netlify/functions/dossier-store           200
 /api/dossier-get             /.netlify/functions/dossier-get             200
+/api/is-signed               /.netlify/functions/is-signed               200
 /api/depot-upload            /.netlify/functions/depot-upload            200
 /api/flight-verdict          /.netlify/functions/flight-verdict          200
 /api/radar-eligible-registry /.netlify/functions/radar-eligible-registry 200
