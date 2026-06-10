@@ -139,7 +139,7 @@ const HEADERS = { 'Content-Type': 'application/json', 'Access-Control-Allow-Orig
 const PROGRESS = {
   accueil: 0, langue: 0,
   route: 1,
-  incident: 2, duree: 2,
+  incident: 2, duree: 2, annul_delai: 2,
   nb_pax: 3, nb_pax_exact: 3,
   type_vol: 4, motivation: 4,
   scan: 5, scan_confirm: 5, m_vol: 5, m_date: 5, m_route: 5, names: 5, names_confirm: 5, names_fix_which: 5, names_fix_one: 5,
@@ -787,20 +787,25 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // Garde-fou : uniquement tant qu'aucun vol n'est saisi et avant le tunnel détaillé (jamais en plein dossier),
   // et jamais sur un tap bouton/liste (id présent → flux interactif prioritaire).
   {
-    const EARLY = ['accueil', 'go_langue', 'langue', 'route', 'incident', 'duree'];
+    const EARLY = ['accueil', 'go_langue', 'langue', 'route', 'incident', 'duree', 'annul_delai'];
     if (!id && !s.vol && (!s.step || EARLY.includes(s.step))) {
       const tk = parseTickerFlight(input);
       if (tk) {
-        const f = { step: 'q_corr', route_type: 'af_eu', fromTicker: true, names: [] };
+        const f = { route_type: 'af_eu', fromTicker: true, names: [] };
         if (s.langue) { f.langue = s.langue; f.langue_code = s.langue_code; f.escalade = s.escalade; }
         f.vol = tk.vol; f.compagnie = deduceAirline(tk.vol) || '';
         if (tk.date) f.date = tk.date;
-        if (tk.incident === 'annulation') { f.incident = 'annulation'; f.incident_libelle = 'Annulation'; }
-        else { f.incident = 'retard'; f.incident_libelle = 'Retard +3h'; f.duree_retard = '+3h'; }
-        await setState(phone, f);
         const dStr = tk.date ? ` du *${tk.date}*` : '';
-        const incStr = f.incident === 'annulation' ? 'a été *annulé*' : 'a été *retardé*';
-        return sendButtons(phone, { body: `✅ C'est noté — votre *vol ${tk.vol}*${dStr} ${incStr}. 🎯\nCe type de vol Europe ↔ Afrique est *souvent éligible* jusqu'à *600 € par passager*. 🎉\n\nPour ne rien oublier : ce vol faisait-il partie d'une *correspondance* (un autre vol juste avant ou juste après) ?`, buttons: [{ id: 'corr_direct', text: '✈️ Non, vol direct' }, { id: 'corr_escale', text: '🔄 Oui, correspondance' }] }, cfg);
+        // Annulation : on passe par le gate des 14 jours AVANT de continuer (même via lien prérempli).
+        if (tk.incident === 'annulation') {
+          f.incident = 'annulation'; f.incident_libelle = 'Annulation'; f.step = 'annul_delai';
+          await setState(phone, f);
+          await send(phone, `✅ C'est noté — votre *vol ${tk.vol}*${dStr} a été *annulé*. 🎯`, cfg);
+          return sendAnnulDelai(phone, f, cfg);
+        }
+        f.step = 'q_corr'; f.incident = 'retard'; f.incident_libelle = 'Retard +3h'; f.duree_retard = '+3h';
+        await setState(phone, f);
+        return sendButtons(phone, { body: `✅ C'est noté — votre *vol ${tk.vol}*${dStr} a été *retardé*. 🎯\nCe type de vol Europe ↔ Afrique est *souvent éligible* jusqu'à *600 € par passager*. 🎉\n\nPour ne rien oublier : ce vol faisait-il partie d'une *correspondance* (un autre vol juste avant ou juste après) ?`, buttons: [{ id: 'corr_direct', text: '✈️ Non, vol direct' }, { id: 'corr_escale', text: '🔄 Oui, correspondance' }] }, cfg);
       }
     }
   }
@@ -854,11 +859,18 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (s.step === 'incident') {
     const n = normInput(input, ['retard', 'annulation', 'refus']);
     if (n === '1' || lower.includes('retard')) { s.step = 'duree'; await setState(phone, s); return sendButtons(phone, { body: pickVariant(phone, 'REACTION_RETARD'), buttons: [{ text: '✅ Plus de 3 heures' }, { text: '❌ Moins de 3h' }, { text: '🤔 Je ne sais plus' }] }, cfg); }
-    if (n === '2' || lower.includes('annul')) { s.incident = 'annulation'; s.incident_libelle = 'Annulation'; }
-    else if (n === '3' || lower.includes('refus') || lower.includes('embarq')) { s.incident = 'refus'; s.incident_libelle = "Refus d'embarquement"; }
-    else return redispatch('incident'); // si état avancé → re-dispatch
-    await send(phone, pickVariant(phone, s.incident === 'annulation' ? 'REACTION_ANNULATION' : 'REACTION_REFUS'), cfg);
-    await estimationPuisPax(phone, s, cfg); return;
+    if (n === '2' || lower.includes('annul')) { s.incident = 'annulation'; s.incident_libelle = 'Annulation'; return sendAnnulDelai(phone, s, cfg); }
+    if (n === '3' || lower.includes('refus') || lower.includes('embarq')) { s.incident = 'refus'; s.incident_libelle = "Refus d'embarquement"; await setState(phone, s); await send(phone, pickVariant(phone, 'REACTION_REFUS'), cfg); return estimationPuisPax(phone, s, cfg); }
+    return redispatch('incident'); // si état avancé → re-dispatch
+  }
+  // MSG4b — ANNULATION : règle des 14 jours de préavis (art. 5 CE 261). Pré-filtre AVANT le n° de vol.
+  // Le critère légal = écart NOTIFICATION → date du vol, pas « le vol est dans +/- 14 j à partir d'aujourd'hui ».
+  if (s.step === 'annul_delai') {
+    const n = normInput(input, ['ou moins', 'plus de', 'sais']); // mots-clés NON chevauchants (« 14 jours » est dans les 2 boutons)
+    if (n === '2' || lower.includes('plus de 14')) { await clearState(phone); return send(phone, `${pickVariant(phone, 'STOP_ANNUL_14J')}\n\n${STOP_FOOTER}`, cfg); }
+    if (n === '3' || lower.includes('sais') || lower.includes('souviens') || lower.includes('aucune idée')) { s.annul_preavis = 'inconnu'; s.escalade = s.escalade || 'preavis_inconnu'; await send(phone, pickVariant(phone, 'ANNUL_PREAVIS_INCONNU'), cfg); return continueAnnul(phone, s, cfg); }
+    if (n === '1' || lower.includes('ou moins') || lower.includes('moins de 14') || lower.includes('14')) { s.annul_preavis = '<=14j'; await send(phone, pickVariant(phone, 'REACTION_ANNULATION'), cfg); return continueAnnul(phone, s, cfg); }
+    return; // silence : on attend un tap valide
   }
   if (s.step === 'duree') {
     const n = normInput(input, ['plus de 3', 'moins de 3', 'sais']);
@@ -1296,6 +1308,21 @@ async function sendRoute(phone, s, cfg) {
   ] }, cfg);
 }
 async function sendIncident(phone, s, cfg) { s.step = 'incident'; await setState(phone, s); await sendButtons(phone, { body: `${bar('incident')}\n✈️ Racontez-nous ce qui s'est passé avec votre vol. On est là pour vous aider.`, buttons: [{ text: '⏱️ Retard arrivée' }, { text: '❌ Annulation' }, { text: "🚫 Refus d'embarq." }] }, cfg); }
+
+// Gate ANNULATION — la règle des 14 jours de préavis (art. 5 CE 261), posée AVANT le n° de vol.
+// Ancré sur « quand on vous a prévenu(e), le vol était dans combien de temps » (notification → vol),
+// PAS sur « aujourd'hui → vol » (qui serait juridiquement faux).
+async function sendAnnulDelai(phone, s, cfg) {
+  s.step = 'annul_delai'; await setState(phone, s);
+  return sendButtons(phone, { body: `${bar('incident')}\n📅 Pour une *annulation*, ce qui compte n'est pas un retard mais *quand la compagnie vous a prévenu(e)*.\n\nLe jour où elle a annoncé l'annulation, votre vol était prévu dans *combien de temps* ?`, buttons: [{ text: '🟢 14 jours ou moins' }, { text: '🔴 Plus de 14 jours' }, { text: '🤔 Je ne sais plus' }] }, cfg);
+}
+
+// Suite après le gate annulation : reprend le flux normal (estimation → passagers),
+// ou la branche « ticker » (vol déjà prérempli par un lien du site) → question correspondance.
+async function continueAnnul(phone, s, cfg) {
+  if (s.fromTicker) { s.step = 'q_corr'; await setState(phone, s); return sendButtons(phone, { body: `Ce vol faisait-il partie d'une *correspondance* (un autre vol juste avant ou juste après) ?`, buttons: [{ id: 'corr_direct', text: '✈️ Non, vol direct' }, { id: 'corr_escale', text: '🔄 Oui, correspondance' }] }, cfg); }
+  return estimationPuisPax(phone, s, cfg);
+}
 async function sendPax(phone, s, cfg) {
   s.step = 'nb_pax'; await setState(phone, s);
   await sendList(phone, { body: `${bar('nb_pax')}\n👥 Combien de passagers réclament sur ce vol ?`, buttonText: 'Nombre ▾', items: [
@@ -1475,6 +1502,7 @@ async function relancerEtape(phone, s, cfg) {
     case 'q_corr': return sendButtons(phone, { body: `Ce vol faisait-il partie d'une *correspondance* (un autre vol juste avant ou juste après) ?`, buttons: [{ id: 'corr_direct', text: '✈️ Non, vol direct' }, { id: 'corr_escale', text: '🔄 Oui, correspondance' }] }, cfg);
     case 'route': return sendRoute(phone, s, cfg);
     case 'incident': return sendIncident(phone, s, cfg);
+    case 'annul_delai': return sendAnnulDelai(phone, s, cfg);
     case 'nb_pax': return sendPax(phone, s, cfg);
     case 'mineurs': return sendMineurs(phone, s, cfg);
     case 'recap': return sendRecap(phone, s, cfg);
@@ -1677,6 +1705,17 @@ function relanceTextEngaged(n, lead, step) {
   const txt = fillTpl(pickRV(lead.phone, key), { NOM: lead.name || '', VOL: lead.vol || 'concerné', TOTAL: total });
   return txt || `On a commencé votre dossier — appuyez sur *Reprendre* 👇 pour le finaliser (jusqu'à ${total}, 0 € si on ne gagne pas), ou *Rappel* 📞. 🙏`;
 }
+// Vérif durable « déjà signé ? » via l'endpoint Netlify — SOURCE DE VÉRITÉ indépendante du webhook.
+// Best-effort + timeout : toute erreur → false → on relance normalement (jamais de blocage, jamais pire).
+async function isAlreadySigned(ref) {
+  if (!ref) return false;
+  try {
+    const r = await fetch('https://robindesairs.eu/api/is-signed?r=' + encodeURIComponent(ref), { signal: AbortSignal.timeout(6000) });
+    if (!r.ok) return false;
+    const j = await r.json().catch(() => ({}));
+    return !!(j && j.signed === true);
+  } catch (_) { return false; }
+}
 async function runRelances() {
   try {
     const cfg = watiCfg(); if (!cfg) return;
@@ -1704,7 +1743,17 @@ async function runRelances() {
         // Mandat envoyé, pas signé → nudge signature (ancré sur l'envoi ; jetons numériques, rétrocompatible).
         const h = (now - lead.mandatSentAt) / _H;
         const t = RELANCE_THRESHOLDS_H.find((t) => h >= t && !nudges.includes(t));
-        if (t != null) { text = relanceText(t, lead); due = t; }
+        if (t != null) {
+          // SOURCE DE VÉRITÉ avant de relancer : si déjà signé en base (Netlify Blobs durable),
+          // on marque et on n'envoie RIEN — le « signez ! » ne part jamais à quelqu'un qui a signé.
+          // Best-effort : si la vérif échoue, isAlreadySigned renvoie false → relance normale (fail-safe).
+          if (await isAlreadySigned(lead.ref)) {
+            markLeadSigned(lead.phone); lead.signed = true; LEADS.set(k, lead); persistLeads();
+            console.log('relance signature ANNULÉE (déjà signé en base) -> ' + (lead.ref || lead.phone));
+            continue;
+          }
+          text = relanceText(t, lead); due = t;
+        }
       } else if (lead.engagedAt) {
         // Dossier en cours, pas de lien mandat → relances « reprise » à 3h/14h puis dernière chance à 22h de SILENCE.
         const hSilent = (now - (lead.lastClientAt || lead.engagedAt)) / _H;
