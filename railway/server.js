@@ -1314,7 +1314,7 @@ async function sendIncident(phone, s, cfg) { s.step = 'incident'; await setState
 // PAS sur « aujourd'hui → vol » (qui serait juridiquement faux).
 async function sendAnnulDelai(phone, s, cfg) {
   s.step = 'annul_delai'; await setState(phone, s);
-  return sendButtons(phone, { body: `${bar('incident')}\n📅 Pour une *annulation*, ce qui compte c'est *quand la compagnie vous a prévenu(e)*.\n\nLe jour où elle a annoncé l'annulation, votre vol était prévu dans *combien de temps* ?`, buttons: [{ text: '🟢 14 jours ou moins' }, { text: '🔴 Plus de 14 jours' }, { text: '🤔 Je ne sais plus' }] }, cfg);
+  return sendButtons(phone, { body: `${bar('incident')}\n📅 Pour une *annulation*, c'est le *moment où on vous a prévenu(e)* qui compte.\n\nQuand la compagnie a annoncé l'annulation, votre vol était dans *plus de 14 jours* ou *14 jours ou moins* ?`, buttons: [{ text: '🟢 14 jours ou moins' }, { text: '🔴 Plus de 14 jours' }, { text: '🤔 Je ne sais plus' }] }, cfg);
 }
 
 // Suite après le gate annulation : reprend le flux normal (estimation → passagers),
