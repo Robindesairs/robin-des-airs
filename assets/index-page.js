@@ -87,7 +87,9 @@ const S = {
 
 /* ═══ NAV SCROLL ═══ */
 window.addEventListener('scroll', () => {
-  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+  // nav fusionnée dans le bandeau : on applique « scrolled » au header (null-safe)
+  var sh = document.getElementById('site-header');
+  if (sh) sh.classList.toggle('scrolled', window.scrollY > 40);
 });
 
 function toggleMobileNav() {

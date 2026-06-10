@@ -107,51 +107,25 @@
         </div>
       </div>
     </div>
+    <!-- Actions remontées dans le bandeau (langue + menu ☰) — nav séparée supprimée pour aérer le haut -->
+    <div class="diaspora-bar-actions">
+      <div class="lang-dropdown" id="lang-dropdown" style="position:relative;">
+        <div class="lang-btn-wrap" onclick="toggleLangMenu()" role="button" tabindex="0" aria-label="Langue">
+          <span class="lang-flag" id="current-flag">🇫🇷</span>
+          <svg width="8" height="5" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="lang-menu" id="lang-menu">
+          <div class="lang-option active" data-lang="fr" onclick="switchLang('FR','🇫🇷')">🇫🇷 &nbsp;Français</div>
+          <div class="lang-option" data-lang="en" onclick="switchLang('EN','🇬🇧')">🇬🇧 &nbsp;English</div>
+        </div>
+      </div>
+      <button class="nav-burger" id="nav-burger" onclick="toggleMobileNav()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </div>
 </div>
 
-<!-- ═══════ NAV ═══════ -->
-<nav id="navbar" aria-label="Navigation principale">
-  <a href="/" class="nav-logo" id="nav-logo-home">
-    <svg width="26" height="26" viewBox="0 0 60 60" fill="none">
-      <path d="M8 8 Q-2 30 8 52" fill="none" stroke="#00C87A" stroke-width="4" stroke-linecap="round"/>
-      <line x1="12" y1="30" x2="42" y2="30" stroke="#0B1F3A" stroke-width="2.5"/>
-      <path d="M40 30 L52 27 L49 30 L52 33 Z" fill="#0B1F3A"/>
-    </svg>
-    ROBIN<span class="nav-logo-accent"> des Airs</span>
-  </a>
-
-  <div style="display:flex;align-items:center;gap:8px;">
-    <a href="/en" class="nav-lang-direct" id="nav-lang-direct" data-i18n="nav_english_version">🇬🇧 English</a>
-    <!-- Lang: toujours visible -->
-    <div class="lang-dropdown" id="lang-dropdown" style="position:relative;">
-      <div class="lang-btn-wrap" onclick="toggleLangMenu()">
-        <span class="lang-flag" id="current-flag">🇫🇷</span>
-        <svg width="8" height="5" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-      </div>
-      <div class="lang-menu" id="lang-menu">
-        <div class="lang-option active" data-lang="fr" onclick="switchLang('FR','🇫🇷')">🇫🇷 &nbsp;Français</div>
-        <div class="lang-option" data-lang="en" onclick="switchLang('EN','🇬🇧')">🇬🇧 &nbsp;English</div>
-      </div>
-    </div>
-    <div class="currency-dropdown" id="currency-dropdown" style="position:relative;">
-      <div class="currency-btn-wrap" onclick="toggleCurrencyMenu()" title="Devise d’affichage">
-        <span class="currency-label" id="current-currency-label">EUR</span>
-        <svg width="8" height="5" viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-      </div>
-      <div class="currency-menu" id="currency-menu">
-        <div class="currency-option active" data-currency="eur" onclick="switchCurrency('eur')">EUR (€)</div>
-      </div>
-    </div>
-    <!-- CTA visible sur desktop -->
-    <a href="#funnel-box" class="nav-cta-sim nav-cta-inline" onclick="scrollToCalcWithAnimation(event); return false;" data-i18n="nav_cta_sim">Simuler →</a>
-    <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20%21%20Mon%20vol%20a%20%C3%A9t%C3%A9%20retard%C3%A9%20ou%20annul%C3%A9%20%E2%80%94%20ai-je%20droit%20%C3%A0%20une%20indemnit%C3%A9%20%28jusqu%27%C3%A0%20600%20%E2%82%AC%29%20%3F%0A%E2%9C%88%EF%B8%8F%20N%C2%B0%20de%20vol%20%3A%0A%F0%9F%93%85%20Date%20%3A" target="_blank" rel="noopener" class="nav-cta nav-cta-inline" id="nav-wa-cta" data-i18n="nav_cta" onclick="plausible('WhatsApp-CTA', {props: {source: 'nav'}})">Combien on me doit ? →</a>
-    <!-- Hamburger toujours visible -->
-    <button class="nav-burger" id="nav-burger" onclick="toggleMobileNav()" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</nav>
 </header>
 
 <div class="nav-drawer" id="nav-drawer">

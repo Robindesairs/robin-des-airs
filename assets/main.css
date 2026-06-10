@@ -557,6 +557,37 @@ button.vol-ticker-chip .vol-ticker-chip-flight {
   display: none;
 }
 
+/* ── Actions du bandeau (langue + ☰) : la nav séparée a été fusionnée ici pour aérer le haut ── */
+.diaspora-bar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* couleurs adaptées au fond navy */
+.diaspora-bar-actions .lang-btn-wrap {
+  border-color: rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.92);
+  padding: 4px 7px;
+}
+.diaspora-bar-actions .lang-btn-wrap:hover { border-color: var(--neon-b); }
+.diaspora-bar-actions .nav-burger { padding: 5px; }
+.diaspora-bar-actions .nav-burger span { background: #fff; width: 20px; }
+
+/* Desktop large : le bandeau est une rangée → actions = item flex à l'extrême droite */
+@media (min-width: 1081px) {
+  .diaspora-bar-actions { flex: 0 0 auto; }
+}
+/* Mobile/tablette : bandeau empilé → actions épinglées en haut à droite, on réserve la place */
+@media (max-width: 1080px) {
+  .diaspora-bar-actions {
+    position: absolute;
+    top: 6px;
+    right: max(12px, env(safe-area-inset-right, 12px));
+    z-index: 20;
+  }
+  .diaspora-bar-inner--stack { padding-right: 84px; }
+}
+
 .diaspora-bar-title {
   display: flex;
   align-items: center;
