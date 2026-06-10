@@ -148,7 +148,7 @@ input.err,textarea.err,select.err{border-color:var(--red)!important;background:v
 .trust-item{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);font-weight:600}
 /* SUCCÈS */
 .success-screen{display:none;background:var(--paper);border:1px solid var(--border);border-top:4px solid var(--green);border-radius:12px;padding:60px 40px;text-align:center}
-.success-icon{width:72px;height:72px;background:var(--green);border-radius:50%;color:var(--navy);font-size:32px;font-weight:900;line-height:72px;margin:0 auto 20px;box-shadow:0 4px 12px rgba(0,200,122,.3)}
+.success-icon{width:92px;height:92px;background:radial-gradient(circle at 50% 38%,var(--green-bright),var(--green));border-radius:50%;color:#fff;font-size:44px;font-weight:900;line-height:92px;margin:0 auto 22px;box-shadow:0 0 0 9px var(--green-tint),0 10px 24px rgba(0,200,122,.32);animation:seal-pop .5s cubic-bezier(.23,1,.32,1) both}
 .success-title{font-family:'Montserrat',sans-serif;font-size:28px;font-weight:900;color:var(--navy);margin-bottom:12px}
 .success-ref{font-family:'DM Mono',monospace;font-size:13px;color:var(--muted);background:var(--green-tint);border:1px solid #B8DDC9;padding:10px 20px;display:inline-block;margin:10px 0 20px;border-radius:6px;font-weight:600}
 .success-ref strong{color:var(--green-deep)}
@@ -157,6 +157,31 @@ input.err,textarea.err,select.err{border-color:var(--red)!important;background:v
 .sstep:last-child{border-bottom:none}
 .sstep strong{color:var(--navy)}
 .snum{width:28px;height:28px;min-width:28px;background:var(--green);color:var(--navy);border-radius:50%;font-size:12px;display:flex;align-items:center;justify-content:center;font-weight:800;margin-top:1px}
+/* SUCCÈS — blocs enrichis (preuve, rassurance, contact, croissance) */
+@keyframes seal-pop{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
+.success-screen{max-width:520px;margin:0 auto}
+.success-screen:focus{outline:none}
+h1.success-title{margin:0 auto 10px}
+.success-kicker{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--green-deep);font-weight:700;margin-bottom:10px}
+.success-tagline{font-family:'Montserrat',sans-serif;font-weight:800;font-size:14.5px;line-height:1.45;color:var(--green-deep);max-width:440px;margin:14px auto 0;padding:8px 0 8px 13px;border-left:3px solid var(--green);text-align:left}
+.success-tagline span{color:var(--navy)}
+.success-warn{max-width:440px;margin:16px auto 0;background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;padding:12px 16px;font-size:12.5px;line-height:1.6;color:#9A3412;text-align:left;display:none}
+.success-warn strong{color:#7C2D12}
+.success-block{max-width:440px;margin:16px auto 0;text-align:left;border:1px solid var(--border);border-radius:10px;padding:16px 18px;background:var(--paper)}
+.success-block.tint{background:var(--green-tint);border-color:#B8DDC9;border-left:3px solid var(--green-deep);border-radius:0 10px 10px 0}
+.sb-label{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--green-deep);margin-bottom:8px}
+.sb-meta{font-size:12.5px;line-height:1.85;color:var(--text)}
+.sb-meta strong{color:var(--navy)}
+.sb-note{font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.65}
+.success-cta{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:13px 20px;border-radius:8px;font-family:'Montserrat',sans-serif;font-weight:800;font-size:14px;text-decoration:none}
+.success-cta.full{width:100%}
+.success-cta.wa{background:#1FAF54;color:#fff;box-shadow:0 4px 12px rgba(31,175,84,.28)}
+.success-cta.nav{background:var(--navy);color:#fff;box-shadow:0 4px 12px rgba(11,31,58,.18)}
+.success-cta.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--border)}
+.success-cta.wa:hover{background:#198F45}.success-cta.nav:hover{background:var(--navy-soft)}.success-cta.ghost:hover{border-color:var(--green);background:var(--green-tint)}
+.success-signoff{font-size:13px;color:var(--text);font-style:italic;margin:22px auto 4px;max-width:440px}
+.success-signoff b{color:var(--navy);font-style:normal}
+.success-screen a.back-link{display:inline-block;min-height:44px;padding:12px 16px;color:#007A4D;font-weight:700;font-size:13px;text-decoration:underline}
 @media(max-width:600px){
   .page{padding:20px 12px 60px}
   .doc-header,.doc-section{padding:20px 20px}
@@ -179,6 +204,7 @@ details.mandat-full>summary::-webkit-details-marker{display:none}
 details.mandat-full>summary::after{content:'▾';margin-left:auto}
 details.mandat-full[open]>summary{margin-bottom:12px}
 @media print{details.mandat-full{display:block}details.mandat-full>summary{display:none}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
   <script src="/assets/pre-launch.js" defer></script>
 </head>
@@ -596,7 +622,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   </div>
   <p style="font-size:13px;color:var(--muted);margin-bottom:8px">Tracez votre signature ci-dessous (doigt ou souris) :</p>
   <div class="sig-area" id="sigArea">
-    <canvas id="sigCanvas" width="680" height="120"></canvas>
+    <canvas id="sigCanvas" width="680" height="120" role="img" aria-label="Zone de signature manuscrite — tracez votre signature au doigt ou à la souris"></canvas>
     <div class="sig-ph" id="sigPh">✍️ Appuyez ici pour signer</div>
     <div class="sig-clear" id="sigClear" onclick="clearSig(event)">✕ Recommencer</div>
   </div>
@@ -621,22 +647,71 @@ details.mandat-full[open]>summary{margin-bottom:12px}
 </div>
 </div><!-- fin mandatForm -->
 <!-- ÉCRAN SUCCÈS -->
-<div class="success-screen" id="successScreen">
-  <div class="success-icon">✓</div>
-  <div class="success-title">Mandat signé !</div>
-  <p style="color:var(--text);font-size:14px;max-width:440px;margin:0 auto">
-    Votre dossier est officiellement ouvert. Robin des Airs prend le relais immédiatement.
+<div class="success-screen" id="successScreen" role="status" aria-live="polite" tabindex="-1">
+  <div class="success-kicker">Mandat signé · CE 261/2004</div>
+  <div class="success-icon" aria-hidden="true">✓</div>
+  <h1 class="success-title" id="sTitle">C'est fait !</h1>
+  <p style="color:var(--text);font-size:14.5px;max-width:460px;margin:0 auto;line-height:1.6" id="sLead">
+    Votre dossier est officiellement ouvert. <strong>Vous n'êtes plus seul·e face à la compagnie</strong> — à partir de maintenant, c'est nous qui écrivons, relançons et nous battons pour vos <strong>600&nbsp;€</strong>. Rien à avancer, rien à craindre.
   </p>
-  <div class="success-ref">Référence : <strong id="sRef">—</strong></div>
-  <div class="success-ref" style="margin-top:8px">📱 Suivi par WhatsApp — Robin des Airs gère la correspondance avec la compagnie pour vous.</div>
-  <div class="success-steps">
-    <div class="sstep"><div class="snum">1</div><div><strong>Confirmation WhatsApp sous 24h</strong><br>Récapitulatif complet + numéro de suivi.</div></div>
-    <div class="sstep"><div class="snum">2</div><div><strong>Mise en demeure sous 48h</strong><br>Courrier officiel envoyé à la compagnie aérienne.</div></div>
-    <div class="sstep"><div class="snum">3</div><div><strong>Suivi en temps réel</strong><br>Consultez l'avancement : robindesairs.eu/suivi</div></div>
-    <div class="sstep"><div class="snum">4</div><div><strong>Versement sur votre IBAN sous 48h</strong><br>Dès encaissement, votre net (75%) vous est versé.</div></div>
+  <p class="success-tagline">On prend aux compagnies, on rend aux familles.<br><span>Aujourd'hui, votre famille en fait partie.</span></p>
+
+  <div class="success-warn" id="sWarn" role="alert">
+    ⏳ Votre signature est bien enregistrée. La confirmation de l'ouverture du dossier est <strong>en cours</strong> — si vous ne recevez pas notre message sous 1&nbsp;h, écrivez-nous sur WhatsApp avec votre référence ci-dessous.
   </div>
-  <div style="margin-top:32px">
-    <a href="https://robindesairs.eu" style="color:var(--green-deep);font-size:13px;text-decoration:none;border-bottom:1px solid var(--green);font-weight:600">Retour à robindesairs.eu →</a>
+
+  <div class="success-ref" style="margin-top:18px">Votre référence : <strong id="sRef">—</strong></div>
+
+  <div class="success-block">
+    <div class="sb-label"><span aria-hidden="true">📄</span> Votre exemplaire</div>
+    <div class="sb-meta">
+      Mandat de représentation <strong>+ cession de créance</strong> (art. 5 bis)<br>
+      Signé le <strong id="sWhen">—</strong> à <strong id="sWhere">—</strong> · version <strong>2026-06-v1</strong>
+    </div>
+    <a class="success-cta nav full" id="sPdf" href="/documents/mandat-fr.html?print=1" target="_blank" rel="noopener" style="margin-top:12px">Enregistrer / imprimer mon mandat</a>
+    <div class="sb-note">Gardez votre référence. Un récapitulatif complet vous est aussi envoyé par e-mail et sur WhatsApp.</div>
+  </div>
+
+  <div class="success-block tint">
+    <div class="sb-meta">
+      <span aria-hidden="true">✅</span> <strong>0&nbsp;€ à avancer</strong>, jamais — aucune carte, aucune commission sans résultat.<br>
+      <span aria-hidden="true">✅</span> Nous réclamons <strong>jusqu'à 600&nbsp;€ par passager</strong>. En cas de succès vous gardez <strong>75&nbsp;% net</strong> ; 0&nbsp;€ si nous échouons.<br>
+      <span aria-hidden="true">✅</span> <strong>Vous pouvez changer d'avis pendant 14&nbsp;jours</strong>, jusqu'au <strong id="sRetract">—</strong>, sans frais : un e-mail à contact@robindesairs.eu suffit.
+    </div>
+  </div>
+
+  <div class="success-block">
+    <div class="sb-label"><span aria-hidden="true">💬</span> Votre contact direct</div>
+    <div class="sb-meta">Une personne de l'équipe vous suit jusqu'au virement. Écrivez-nous à tout moment — réponses <strong>en français</strong>.</div>
+    <a class="success-cta wa full" id="sWa" href="https://wa.me/33756863630" target="_blank" rel="noopener" style="margin-top:12px">Écrire sur WhatsApp</a>
+    <div class="sb-note">Vous préférez de vive voix ? <strong>Demandez un rappel</strong> — on peut vous appeler en français, wolof, bambara ou lingala.</div>
+  </div>
+
+  <div class="success-block tint" id="sCoPax" style="display:none">
+    <div class="sb-label"><span aria-hidden="true">👨‍👩‍👧‍👦</span> Vos co-passagers</div>
+    <div class="sb-meta">Vous voyagiez à <strong id="sPaxN">—</strong> sur ce vol ? <strong>Chaque passager a droit à sa propre indemnité de 600&nbsp;€.</strong> Ajoutez-les en un message, on s'occupe du reste.</div>
+    <a class="success-cta nav full" id="sCoPaxBtn" href="https://wa.me/33756863630" target="_blank" rel="noopener" style="margin-top:12px">Ajouter mes co-passagers</a>
+  </div>
+
+  <div class="success-steps">
+    <div class="sstep"><div class="snum">1</div><div><strong>Confirmation WhatsApp — en cours</strong><br>Récapitulatif complet + votre contact dédié, sous 24&nbsp;h.</div></div>
+    <div class="sstep"><div class="snum">2</div><div><strong>Mise en demeure — rédaction lancée</strong><br>Courrier officiel envoyé à la compagnie sous 48&nbsp;h.</div></div>
+    <div class="sstep"><div class="snum">3</div><div><strong>Suivi à chaque étape</strong><br>On vous tient au courant — vous n'attendez jamais dans le noir.</div></div>
+    <div class="sstep"><div class="snum">4</div><div><strong>Votre argent sur votre compte</strong><br>Dès que la compagnie paie, on vous reverse votre part (75&nbsp;% net) sous 48&nbsp;h.</div></div>
+  </div>
+
+  <div class="success-block">
+    <div class="sb-label"><span aria-hidden="true">🛋️</span> Un proche a vécu la même galère ?</div>
+    <div class="sb-meta">Parrainez-le : pour chaque dossier gagné, vous recevez un <strong>accès salon (lounge)</strong> dans un aéroport au choix, valable 1&nbsp;an. Sans limite.</div>
+    <a class="success-cta ghost full" id="sParrain" href="/parrainage.html" style="margin-top:12px">Parrainer un proche →</a>
+  </div>
+
+  <div class="sb-note" id="sSigners" style="max-width:440px;margin:16px auto 0;text-align:left"></div>
+  <div class="sb-note" style="max-width:440px;margin:6px auto 0;text-align:left"><span aria-hidden="true">🔒</span> Données enregistrées (nom, contact, vol, signature) utilisées <strong>uniquement</strong> pour votre dossier, jamais revendues — RGPD. Accès / suppression : contact@robindesairs.eu.</div>
+
+  <p class="success-signoff" id="sSignoff">Reposez-vous — on prend le relais. <b>— L'équipe Robin des Airs</b></p>
+  <div style="margin-top:12px">
+    <a class="back-link" href="https://robindesairs.eu">Retour à robindesairs.eu →</a>
   </div>
 </div>
 </div><!-- fin page -->
@@ -1403,17 +1478,65 @@ function submitMandat() {
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify(payload),
   })
-  .then(()=>showSuccess())
-  .catch(()=>showSuccess());
+  .then(r=>showSuccess(payload, !!(r && r.ok)))
+  .catch(()=>showSuccess(payload, false));
 }
-function showSuccess() {
+function fmtDateLongFR(d){ try{ return d.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'}); }catch(e){ return ''; } }
+function showSuccess(payload, ok) {
+  payload = payload || {};
   document.getElementById('mandatForm').style.display='none';
-  document.getElementById('successScreen').style.display='block';
+  const ss = document.getElementById('successScreen');
+  ss.style.display='block';
   document.getElementById('sRef').textContent = REF;
-  const se = document.getElementById('sEmail');
-  if (se) se.textContent = clientEmailForRef(REF) || '—';
+  // Titre + signature chaleureuse personnalisés (prénom)
+  const fnRaw = (payload.firstName || document.getElementById('fn')?.value || '').trim();
+  const fn = fnRaw ? fnRaw.split(/\s+/)[0] : '';
+  const tEl = document.getElementById('sTitle');
+  if (tEl) tEl.textContent = fn ? ('C’est fait, ' + fn + ' !') : 'C’est fait !';
+  const soEl = document.getElementById('sSignoff');
+  if (soEl) {
+    soEl.textContent = fn ? ('Reposez-vous, ' + fn + ' — on prend le relais. ') : 'Reposez-vous — on prend le relais. ';
+    const b = document.createElement('b'); b.textContent = '— L’équipe Robin des Airs'; soEl.appendChild(b);
+  }
+  // Preuve : date/heure + ville de signature + date butoir de rétractation (J+14)
+  let signedAt = new Date();
+  if (payload.signedAt) { const d = new Date(payload.signedAt); if (!isNaN(d.getTime())) signedAt = d; }
+  const whenEl = document.getElementById('sWhen');
+  if (whenEl) { let h=''; try{ h=' à '+signedAt.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); }catch(e){} whenEl.textContent = fmtDateLongFR(signedAt) + h; }
+  const whereEl = document.getElementById('sWhere');
+  if (whereEl) whereEl.textContent = (payload.signCity || document.getElementById('sigCity')?.value || 'Paris');
+  const retract = new Date(signedAt.getTime()); retract.setDate(retract.getDate()+14);
+  const retEl = document.getElementById('sRetract'); if (retEl) retEl.textContent = fmtDateLongFR(retract);
+  // Liens pré-remplis (PDF + WhatsApp)
+  const pdfEl = document.getElementById('sPdf');
+  if (pdfEl) pdfEl.href = '/documents/mandat-fr.html?print=1&ref=' + encodeURIComponent(REF);
+  const waBase = 'https://wa.me/33756863630?text=';
+  const waEl = document.getElementById('sWa');
+  if (waEl) waEl.href = waBase + encodeURIComponent('Bonjour Robin des Airs, je viens de signer mon mandat (réf. ' + REF + '). Je confirme mon dossier.');
+  // Co-passagers (si plusieurs sur le vol)
+  const px = parseInt(payload.pax || paxCount || 1, 10) || 1;
+  const co = document.getElementById('sCoPax');
+  if (co) co.style.display = (px > 1) ? 'block' : 'none';
+  if (px > 1) {
+    const pn = document.getElementById('sPaxN'); if (pn) pn.textContent = px;
+    const cob = document.getElementById('sCoPaxBtn');
+    if (cob) cob.href = waBase + encodeURIComponent('Bonjour Robin des Airs, j’ai signé le mandat (réf. ' + REF + '). Nous étions ' + px + ' sur le même vol — je veux ajouter les autres passagers à la réclamation.');
+  }
+  // Signataires (preuve de complétude pour un dossier groupe)
+  let names = [];
+  if (payload.passengerNames && payload.passengerNames.length) names = payload.passengerNames;
+  else if (typeof getNames === 'function') { try { names = getNames(); } catch(e){} }
+  const sgEl = document.getElementById('sSigners');
+  if (sgEl && names.length) {
+    sgEl.innerHTML = '<span aria-hidden="true">🖊️</span> <strong>Signataire' + (names.length>1?'s':'') + ' :</strong> ';
+    sgEl.appendChild(document.createTextNode(names.join(' · ')));
+  }
+  // Confirmation serveur incertaine → bandeau d'attente honnête (ne pas affirmer un succès non garanti)
+  const w = document.getElementById('sWarn');
+  if (w) w.style.display = (ok === false) ? 'block' : 'none';
   document.getElementById('pgBar').style.width='100%';
   window.scrollTo({top:0,behavior:'smooth'});
+  try { ss.focus(); } catch(e){}
 }
 </script>
 </body>
