@@ -1082,7 +1082,7 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
    * pour que TOUTE la conversation tienne au-dessus de la flottaison sur écran ~800px
    * (les messages défilent dans cette fenêtre — aucun message perdu). */
   #hero .wa-typedemo { max-width: 500px; margin: 4px 0 4px; }
-  #hero .wa-chat     { min-height: 246px; max-height: 246px; }
+  #hero .wa-chat     { min-height: 165px; max-height: 165px; }
 
   #hero .hero-stats { margin-top: 5px; padding-top: 6px; }
 }
@@ -1121,7 +1121,7 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 @media (prefers-reduced-motion: reduce) { .wa-caret { animation: none; } }
 
 /* ── Conversation WhatsApp animée (client écrit → carte → scan → verdict) ── */
-.wa-chat { display: flex; flex-direction: column; justify-content: flex-end; gap: 7px; min-height: 300px; max-height: 300px; overflow: hidden; margin-top: 4px; -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 38px); mask-image: linear-gradient(to bottom, transparent 0, #000 38px); }
+.wa-chat { display: flex; flex-direction: column; justify-content: flex-end; gap: 7px; min-height: 200px; max-height: 200px; overflow: hidden; margin-top: 4px; -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 32px); mask-image: linear-gradient(to bottom, transparent 0, #000 32px); }
 .wa-msg { max-width: 86%; padding: 7px 10px; font-size: 13px; line-height: 1.42; border-radius: 12px; opacity: 0; transform: translateY(8px); animation: waMsgIn .28s ease forwards; box-shadow: 0 1px 1px rgba(0,0,0,.06); }
 .wa-msg--client { align-self: flex-end; background: #d9fdd3; color: #0b2a17; border-radius: 12px 12px 3px 12px; }
 .wa-msg--robin { align-self: flex-start; background: #fff; color: #111b21; border: 1px solid #eef0f3; border-radius: 12px 12px 12px 3px; }
