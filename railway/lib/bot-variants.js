@@ -92,6 +92,20 @@ const VARIANTS = {
     `Ce détail-là, on le récupère nous-mêmes. Rien à mémoriser, rien à chercher. Chaque vol commercial est déclaré aux autorités — l'heure réelle d'arrivée est enregistrée. On la trouve avec votre numéro de vol. 🙂`,
   ],
 
+  // Message d'arrêt : annulation notifiée ≥ 14 jours avant le vol (art. 5 CE 261 → pas d'indemnité forfaitaire)
+  STOP_ANNUL_14J: [
+    `Merci pour cette précision — c'est *l'info clé* pour une annulation. 🙏\n\nLa loi européenne (CE 261/2004) prévoit une indemnité *uniquement si* la compagnie vous a prévenu(e) *moins de 14 jours* avant le départ. Au-delà, elle vous a laissé le temps de vous réorganiser : aucune indemnité forfaitaire n'est due. Ce n'est pas nous, c'est la règle — on ne peut pas monter un dossier dessus.\n\n💡 Vous gardez quand même droit au *remboursement* du billet ou à un *réacheminement*. Et si en réalité on vous a prévenu(e) *moins de 14 jours* avant, écrivez *go* — on reprend tout de suite.`,
+    `On préfère être francs plutôt que de vous lancer dans un dossier qui n'aboutira pas. 🙏\n\nQuand une compagnie annule en prévenant *au moins 14 jours à l'avance*, le règlement CE 261/2004 ne prévoit *aucune indemnité forfaitaire*. Le seuil est strict, et on ne peut pas le contourner.\n\n💡 Il vous reste le droit au *remboursement intégral* ou à un autre vol. Un doute sur la date exacte où on vous a prévenu(e) ? Écrivez *go*, on repart.`,
+    `Merci, c'est ça qui fait toute la différence pour une annulation.\n\nLe seuil, c'est *14 jours* : prévenu(e) *14 jours ou plus* avant le vol, la compagnie est dans son droit et CE 261/2004 ne prévoit pas d'indemnité. On ne peut pas aller contre la loi, même avec la meilleure volonté. 😔\n\n💡 Le *remboursement* ou un *réacheminement* vous restent acquis auprès de la compagnie. Si vous pensez avoir été prévenu(e) *moins de 14 jours* avant, écrivez *go*.`,
+  ],
+
+  // Réponse quand l'utilisateur ne sait plus de combien de jours il a été prévenu avant le vol (annulation)
+  ANNUL_PREAVIS_INCONNU: [
+    `Pas de souci, c'est un détail qu'on ne retient pas forcément. 🙂 On confirmera la date exacte avec votre *e-mail ou SMS d'annulation* — c'est lui qui fait foi, gardez-le précieusement. On continue votre dossier.`,
+    `Aucun problème — ne vous en faites pas pour la date au jour près. 👌 La preuve, c'est le *message d'annulation* de la compagnie (e-mail ou SMS) : on s'appuiera dessus le moment venu. On avance.`,
+    `C'est normal de ne plus savoir exactement. 🙂 Ce qui tranchera, c'est l'*avis d'annulation* que la compagnie vous a envoyé — on le récupérera avec vos pièces. On poursuit pour l'instant.`,
+  ],
+
   // Message affiché quand le vol semble éligible et qu'on présente l'estimation
   ESTIMATION_QUALIFICATION: [
     `Ce que vous avez vécu, c'est vraiment pas normal. Et la loi peut parfois le chiffrer — jusqu'à 600 € selon votre situation. On prend le dossier en main à votre place. Rien à payer si on ne gagne pas.`,
