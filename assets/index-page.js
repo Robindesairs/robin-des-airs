@@ -1844,6 +1844,20 @@ function toggleEscaleVol3() {
       return b;
     }
 
+    // Fenêtre glissante : dès qu'une bulle déborde par le haut (flex-end + overflow:hidden),
+    // on retire la plus ancienne. Évite que « Lecture de la carte » & co soient coupés net.
+    // On lit les positions réelles : scrollHeight ment avec justify-content:flex-end.
+    function trimToFit() {
+      var guard = 0;
+      var cTop = chat.getBoundingClientRect().top;
+      while (chat.children.length > 1 && guard++ < 30) {
+        var first = chat.firstChild;
+        if (first.getBoundingClientRect && first.getBoundingClientRect().top < cTop - 0.5) {
+          chat.removeChild(first);
+        } else break;
+      }
+    }
+
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var timers = [];
     function clearTimers() { timers.forEach(clearTimeout); timers = []; }
@@ -1860,9 +1874,11 @@ function toggleEscaleVol3() {
             dots.className = 'wa-msg wa-msg--robin';
             dots.innerHTML = '<span class="wa-typing"><i></i><i></i><i></i></span>';
             chat.appendChild(dots);
-            timers.push(setTimeout(function () { dots.remove(); addMsg(s); timers.push(setTimeout(next, s.hold || 800)); }, s.typing));
+            trimToFit();
+            timers.push(setTimeout(function () { dots.remove(); addMsg(s); trimToFit(); timers.push(setTimeout(next, s.hold || 800)); }, s.typing));
           } else {
             addMsg(s);
+            trimToFit();
             timers.push(setTimeout(next, s.hold || 800));
           }
         }, s.delay || 300));
