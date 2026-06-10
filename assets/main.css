@@ -1056,35 +1056,34 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
  *  Scopé ≥1081px (là où la famille occupe la moitié droite). */
 @media (min-width: 1081px) {
   /* préfixe #hero : passe devant les .hero-* de base définis plus bas dans le fichier */
-  #hero { align-items: flex-start; padding-top: 120px; }
+  /* Rythme à 2 niveaux (audit UI + UX, juin 2026) : serré DANS un groupe, large ENTRE les groupes.
+   * Groupe A = titre + slogan · Groupe B = desc + puces + CTA · Groupe C = démo + stats.
+   * + on « relève » le titre (air au-dessus, interligne ouvert, marge dessous). */
+  #hero { align-items: flex-start; padding-top: 128px; }
 
   #hero .hero-title {
     font-size: clamp(34px, 3.2vw, 44px);
-    /* garde le -2px de base (le -2.5px serrait trop « annulé ? » à 44px) */
-    line-height: 1.04;
-    margin-bottom: 8px;
+    line-height: 1.08;        /* dé-tasse les 3 lignes (était 1.04) */
+    margin-bottom: 14px;      /* détache le titre du slogan = « relever » (était 8px) */
   }
-  /* Sous-titre desktop : on garde le SLOGAN signature (« On prend aux compagnies, on rend
-   * aux familles… ») et on masque seulement la phrase d'explication (doublon relevé par la
-   * revue UI/Growth). → slogan visible, colonne aérée, stats hautes.
-   * Mobile (<1081px) garde le texte complet (slogan + explication). */
-  #hero .hero-subhead { font-size: 14px; line-height: 1.4; margin: -2px 0 7px 0; min-height: 0; }
+  /* Sous-titre desktop : on garde le SLOGAN signature et on masque la phrase d'explication.
+   * margin-bottom = grande couture Groupe A → B. */
+  #hero .hero-subhead { font-size: 14px; line-height: 1.4; margin: -2px 0 22px 0; min-height: 0; }
   #hero .hero-subhead-extra { display: none; }
-  #hero .hero-desc    { line-height: 1.4; margin-bottom: 4px; min-height: 0; }
-  #hero .hero-promises    { margin-bottom: 7px; gap: 6px; }
+  #hero .hero-desc    { line-height: 1.45; margin-bottom: 12px; min-height: 0; }  /* dans B, serré */
+  #hero .hero-promises    { margin-bottom: 12px; gap: 6px; }                       /* dans B, serré */
   #hero .hero-promises li { padding: 4px 10px; font-size: 12px; }
 
-  #hero .hero-entry       { margin-bottom: 7px; gap: 8px; }
+  #hero .hero-entry       { margin-bottom: 22px; gap: 8px; }                       /* grande couture B → C */
   #hero .hero-entry-hint  { margin-top: 2px; line-height: 1.35; }
   #hero .hero-entry-badge { margin-top: 6px; }
 
-  /* Conversation : plus large (« plus grande ») ; fenêtre de défilement un peu plus courte
-   * pour que TOUTE la conversation tienne au-dessus de la flottaison sur écran ~800px
-   * (les messages défilent dans cette fenêtre — aucun message perdu). */
-  #hero .wa-typedemo { max-width: 500px; margin: 4px 0 4px; }
-  #hero .wa-chat     { min-height: 165px; max-height: 165px; }
+  /* Conversation : fenêtre un peu plus courte (140px) pour financer l'air — c'est une BOUCLE,
+   * tous les messages défilent quand même (aucun perdu). */
+  #hero .wa-typedemo { max-width: 500px; margin: 4px 0 10px; }
+  #hero .wa-chat     { min-height: 140px; max-height: 140px; }
 
-  #hero .hero-stats { margin-top: 5px; padding-top: 6px; }
+  #hero .hero-stats { margin-top: 10px; padding-top: 10px; }                        /* dans C */
 }
 
 /* a11y — écran court OU zoom navigateur élevé (la hauteur en px CSS chute) : on fige
