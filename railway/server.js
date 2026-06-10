@@ -759,6 +759,16 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     return send(phone, `📞 C'est noté — un conseiller Robin des Airs vous rappelle très vite depuis le *+33 7 56 86 36 30* (enregistrez-le sous « *Retard Robin* »). Vous pouvez aussi reprendre quand vous voulez en écrivant *go*, on repart là où on s'est arrêté. 🙏`, cfg);
   }
 
+  // T1.2b — « J'ai déjà signé » (bouton des relances signature) : FILET DE SÉCURITÉ si le webhook de
+  // signature a échoué (le « signé » n'est pas remonté). 1 tap → on stoppe les relances tout de suite,
+  // et on alerte l'équipe pour vérifier (au cas où ce ne serait pas réellement signé).
+  if (id === 'deja_signe' || lower === 'déjà signé' || lower === 'deja signe' || lower === "j'ai déjà signé" || lower === "j'ai signé" || lower === 'jai signe') {
+    const okMark = markLeadSigned(phone);
+    const _l = LEADS.get(leadKey(phone)) || {};
+    notifyOwnerWhatsApp(phone, `🖊️ « Déjà signé » déclaré par le client (${_l.ref || phone}) → relances STOPPÉES${okMark ? '' : ' (lead introuvable)'}. ⚠️ À VÉRIFIER : si le mandat n'est pas réellement signé (webhook manqué), relancer manuellement.`).catch(() => {});
+    return send(phone, `Merci ! ✅ On arrête les rappels. Si jamais votre signature n'était pas encore arrivée chez nous, un conseiller vous le dira — sinon, votre dossier suit son cours. 🙏`, cfg);
+  }
+
   // T1.3 — « Plus tard » : le client veut reprendre plus tard. Son tap a déjà rouvert la fenêtre 24h (gratuit) ;
   // on garde le dossier ouvert SANS le harceler → on ne laisse qu'une relance, près du bord de la fenêtre (~22h).
   if (id === 'snooze' || lower === 'plus tard' || lower === 'demain' || lower === 'tard') {
@@ -1634,6 +1644,7 @@ app.post('/api/mandat-signed', (req, res) => {
   const marked = markLeadSigned(b.ref || '') || markLeadSigned(b.phone || b.waId || '');
   console.log('mandat signe ref=' + (b.ref || '?') + ' marked=' + marked);
   if (lead && lead.phone) triggerFraisCollection(lead).catch(() => {}); // propose l'envoi des reçus de frais (Art. 8/9), best-effort
+  if (!marked) notifyOwnerWhatsApp(b.phone || b.waId || '', `⚠️ Signature reçue (ref=${b.ref || '?'} · tel=${b.phone || b.waId || '?'}) mais LEAD INTROUVABLE → relances NON stoppées. À vérifier / arrêter manuellement.`).catch(() => {}); // fin de l'échec silencieux
   res.json({ ok: true, marked });
 });
 
@@ -1703,7 +1714,7 @@ async function runRelances() {
       }
       if (due == null) continue;
       try {
-        if (lead.completed) await send(lead.phone, text, cfg);                          // nudge signature (le texte contient déjà le lien mandat)
+        if (lead.completed) await sendButtons(lead.phone, { body: text, buttons: [{ id: 'deja_signe', text: '✅ J\'ai déjà signé' }, { id: 'appel', text: '📞 Besoin d\'aide' }] }, cfg); // nudge signature (lien dans le body) + filet « déjà signé »
         else await sendButtons(lead.phone, { body: text, buttons: [{ id: 'menu', text: '▶️ Reprendre' }, { id: 'snooze', text: '⏰ Plus tard' }, { id: 'appel', text: '📞 Rappel' }] }, cfg); // 1 tap = réponse → rouvre la fenêtre 24h gratis (id 'menu' = même action que le mot tapé)
         console.log('relance ' + due + ' -> ' + (lead.ref || lead.phone));
       } catch (_) {}
