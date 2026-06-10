@@ -66,12 +66,24 @@
 <!-- Bandeau diaspora : identité (drapeaux + titre) + piste vols (bloc arrondi) -->
 <div class="diaspora-bar">
   <div class="diaspora-bar-inner diaspora-bar-inner--stack">
-    <span class="sr-only" data-i18n="diaspora_bar_flags_aria">Diaspora : Sénégal, Mali, Côte d’Ivoire, Guinée, Cameroun, RDC, Bénin, Togo, Ghana, Nigeria.</span>
+    <span class="sr-only" data-i18n="diaspora_bar_flags_aria">Diaspora : Cameroun, Comores, Côte d’Ivoire, Madagascar, Mali, Nigeria, RDC, Sénégal — et toute l’Afrique.</span>
     <span id="vol-ticker-sr" class="sr-only" data-i18n="vol_ticker_sr">Les 10 derniers vols impactés Europe–Afrique et Afrique–Europe. Jusqu'à 600 euros si le CE 261 s'applique. Cliquez sur une pastille pour préremplir le formulaire.</span>
 
     <div class="diaspora-bar-head">
+      <!-- Drapeaux en SVG (Twemoji auto-hébergés) : les emoji Unicode s'affichent en « SN ML CI… » sur Windows.
+           ~8 corridors + grosses communautés FR (Madagascar #1, Comores) + « toute l'Afrique » pour ne pas lire comme une liste d'éligibilité. Ordre alphabétique. -->
       <div class="diaspora-bar-flags-pill" aria-hidden="true">
-        <span class="diaspora-bar-flags">🇸🇳 🇲🇱 🇨🇮 🇬🇳 🇨🇲 🇨🇩 🇧🇯 🇹🇬 🇬🇭 🇳🇬</span>
+        <span class="diaspora-bar-flags">
+          <img class="diaspora-flag" src="/assets/flags/cm.svg" alt="" width="18" height="18" decoding="async">
+          <img class="diaspora-flag" src="/assets/flags/km.svg" alt="" width="18" height="18" decoding="async">
+          <img class="diaspora-flag" src="/assets/flags/ci.svg" alt="" width="18" height="18" decoding="async">
+          <img class="diaspora-flag" src="/assets/flags/mg.svg" alt="" width="18" height="18" decoding="async">
+          <img class="diaspora-flag" src="/assets/flags/ml.svg" alt="" width="18" height="18" decoding="async">
+          <img class="diaspora-flag" src="/assets/flags/ng.svg" alt="" width="18" height="18" decoding="async">
+          <img class="diaspora-flag" src="/assets/flags/cd.svg" alt="" width="18" height="18" decoding="async">
+          <img class="diaspora-flag" src="/assets/flags/sn.svg" alt="" width="18" height="18" decoding="async">
+        </span>
+        <span class="diaspora-bar-flags-more" data-i18n="diaspora_flags_more">+ toute l’Afrique</span>
       </div>
       <div class="diaspora-bar-head-divider" aria-hidden="true"></div>
       <div class="diaspora-bar-title">
