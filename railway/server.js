@@ -1659,6 +1659,21 @@ app.get('/api/leads-a-rappeler', (req, res) => {
 });
 
 app.get('/health', (req, res) => res.json({ ok: true, sessions: STATE.size, dedup: DEDUP.size, dossiers: DOSSIERS.size, leads: LEADS.size, uptime: process.uptime(), ts: new Date().toISOString() }));
+// Commit déployé (injecté par Railway) — pour vérifier un déploiement d'un coup d'œil.
+app.get('/version', (req, res) => {
+  const sha = process.env.RAILWAY_GIT_COMMIT_SHA || process.env.COMMIT_SHA || process.env.SOURCE_VERSION || '';
+  res.json({
+    ok: true,
+    service: 'robin-bot-v8',
+    commit: sha ? sha.slice(0, 7) : 'unknown',
+    commit_full: sha || null,
+    branch: process.env.RAILWAY_GIT_BRANCH || null,
+    message: process.env.RAILWAY_GIT_COMMIT_MESSAGE || null,
+    deploy_id: process.env.RAILWAY_DEPLOYMENT_ID || null,
+    uptime_s: Math.round(process.uptime()),
+    ts: new Date().toISOString(),
+  });
+});
 app.get('/', (req, res) => res.send('\ud83c\udff9 Robin des Airs Bot v8 — Railway OK'));
 
 // ─── Signature reçue → marque le lead signé (stoppe les relances) ───────────────
