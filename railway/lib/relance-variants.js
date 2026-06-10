@@ -15,6 +15,10 @@ const RV = {
   "Ne laissez pas votre dossier {REF} dormir 💤 Une signature suffit à l'activer et à viser jusqu'à {TOTAL}. Et rassurez-vous : si on ne gagne pas, vous ne payez rien 👉 {URL}",
   "Plus qu'un petit pas pour {REF} 🚀 Votre signature lance toute la procédure. 2 minutes pour viser jusqu'à {TOTAL}, et zéro frais si on ne gagne pas 👉 {URL}"
  ],
+ "RELANCE_FRAIS": [
+  "💶 Petit rappel : vos reçus (taxi, hôtel, repas, billet…) partent dans notre 1er envoi si on les a aujourd'hui. Une photo suffit 📷 — ou appuyez sur « Pas de frais ». (Aucun souci si c'est pour plus tard : on peut aussi les ajouter ensuite.)",
+  "🧾 On envoie bientôt votre réclamation. Si ce vol vous a coûté hôtel, taxi ou repas, envoyez une photo des reçus pour qu'on les joigne — sinon « Pas de frais ». On peut toujours les ajouter plus tard. 🤝"
+ ],
  "RELANCE_8H": [
   "Bonjour {NOM}, je reviens vers vous : pas mal de passagers de votre vol ont déjà signé et lancé leur dossier. Ça vaut le coup de ne pas rester de côté, voici votre lien 👉 {URL}",
   "{NOM}, juste un mot rapide. D'autres voyageurs dans votre cas ont lancé leur demande d'indemnité simplement en signant le mandat. Le vôtre est prêt ici : {URL}",

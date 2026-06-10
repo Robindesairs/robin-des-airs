@@ -93,6 +93,14 @@ function markLeadSigned(phoneOrRef) {
   if (found) persistLeads();
   return found;
 }
+function findLead(refOrPhone) {
+  const k = leadKey(refOrPhone);
+  if (LEADS.has(k)) return LEADS.get(k);
+  for (const [, l] of LEADS) { if (l && l.ref && String(l.ref) === String(refOrPhone)) return l; }
+  return null;
+}
+// Frais (reçus post-signature) : le client a répondu (reçu envoyé ou « pas de frais ») → on coupe la relance frais.
+function markFraisAnswered(phone) { const k = leadKey(phone); const l = LEADS.get(k); if (l) { l.fraisPending = false; LEADS.set(k, l); persistLeads(); } }
 // Lead « partiel » : le client a engagé un dossier (vol connu au récap) mais n'a pas encore tout finalisé.
 // On le relance dans la fenêtre 24h WhatsApp (gratuite) ; s'il décroche, il bascule en « à rappeler » (Bureau).
 function markEngagedLead(phone, s) {
@@ -1199,6 +1207,28 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     return send(phone, `📄 Envoyez le certificat de retard (optionnel), ou tapez *passer*.`, cfg);
   }
 
+  // FRAIS (Art. 8 & 9) — proposé après signature : on collecte les reçus, on en redemande, on clôt proprement.
+  if (s.step === 'frais') {
+    if (mediaUrl) {
+      s.fraisCount = (s.fraisCount || 0) + 1; await setState(phone, s);
+      markFraisAnswered(phone); // le client a répondu → plus de relance frais
+      notifyOwnerWhatsApp(phone, `🧾 Dossier ${s.ref || '?'} : reçu de frais reçu (#${s.fraisCount}) — à joindre à la réclamation (Art. 8/9).`).catch(() => {});
+      return sendButtons(phone, { body: `✅ Bien reçu, ajouté à votre dossier ! 🙏\nD'autres frais (taxi, repas, hôtel…) ? Envoyez la photo. Sinon :`, buttons: [{ id: 'frais_fini', text: '✅ C\'est tout' }] }, cfg);
+    }
+    if (id === 'frais_non' || lower.includes('pas de frais') || lower.includes('aucun frais') || lower === 'non') {
+      markFraisAnswered(phone); s.step = 'done'; await setState(phone, s);
+      return send(phone, `Parfait, c'est noté ✅ On part avec votre indemnité. Si un reçu refait surface plus tard, envoyez-le, on l'ajoute. 🤝`, cfg);
+    }
+    if (id === 'frais_fini' || lower.includes("c'est tout") || lower.includes('cest tout') || lower.includes('termin') || lower.includes('fini')) {
+      markFraisAnswered(phone); s.step = 'done'; await setState(phone, s);
+      return send(phone, `Parfait ✅ On joint vos reçus à votre réclamation. Merci ! 🤝`, cfg);
+    }
+    if (id === 'frais_oui' || lower.includes('envoi') || lower.includes('reçu') || lower.includes('recu') || lower.startsWith('oui')) {
+      return send(phone, `👍 Envoyez une *photo* de chaque reçu (hôtel, repas, taxi, billet…). Même flou, même plusieurs.`, cfg);
+    }
+    return sendButtons(phone, { body: `💶 Des frais à cause de ce vol (hôtel, repas, taxi…) ? Envoyez une *photo* du reçu, ou :`, buttons: [{ id: 'frais_non', text: '❌ Pas de frais' }] }, cfg);
+  }
+
   if (s.step === 'done') {
     if (!s.ref || !s.mandat_url) { await clearState(phone); return sendAccueil(phone, cfg); } // état périmé → on repart proprement
     // Le client envoie un justificatif après coup → l'IA le classe, le rattache au passager, et on dit ce qui manque
@@ -1410,6 +1440,24 @@ async function finaliser(phone, s, cfg) {
   try { const makeUrl = process.env.MAKE_WEBHOOK_NEW_DOSSIER; if (makeUrl) await fetch(makeUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...s, phone, source: 'wati-bot-v8' }) }); } catch (e) {}
 }
 
+// ─── FRAIS (Art. 8 & 9 CE261) — APRÈS signature, on propose d'envoyer les reçus (hôtel/taxi/repas/billet…)
+//     réclamés EN PLUS de l'indemnité. Urgence VRAIE (joints au 1er envoi), JAMAIS de forclusion. ──
+const FRAIS_BTNS = [{ id: 'frais_oui', text: '📷 Envoyer reçus' }, { id: 'frais_non', text: '❌ Pas de frais' }];
+async function sendFraisRequest(phone, s, cfg) {
+  s.step = 'frais'; s.fraisAsked = true; await setState(phone, s);
+  return sendButtons(phone, { body: `💶 *Une dernière chose qui peut vous rapporter plus*\n\nEn plus de votre indemnité, la compagnie doit aussi *rembourser les frais* que ce vol vous a coûtés : hôtel, repas, taxi/transport, billet de remplacement, appels… 📲\n\nOn envoie votre réclamation *sous 24 h* — pour qu'on *joigne vos reçus dès le 1er envoi*, envoyez-les aujourd'hui. Reçu plus tard ? Aucun souci, on les réclame en complément. 🤝\n\n👉 *Une photo de chaque reçu suffit* (frais raisonnables, un justificatif par dépense).`, buttons: FRAIS_BTNS }, cfg);
+}
+// Déclenché par le webhook de signature — best-effort : n'impacte JAMAIS la réponse webhook.
+async function triggerFraisCollection(lead) {
+  try {
+    if (!lead || !lead.phone || lead.fraisAskedAt) return; // invalide ou déjà demandé (webhook rejoué)
+    const cfg = watiCfg(); if (!cfg) return;
+    upsertLead(lead.phone, { fraisPending: true, fraisAskedAt: Date.now() }); // garde le lead vivant pour 1 relance frais
+    const s = await getState(lead.phone); if (!s.ref && lead.ref) s.ref = lead.ref;
+    await sendFraisRequest(lead.phone, s, cfg);
+  } catch (e) { console.error('triggerFraisCollection', e.message); }
+}
+
 // reprise d'étape (T1) — renvoie l'écran courant
 async function relancerEtape(phone, s, cfg) {
   switch (s.step) {
@@ -1426,6 +1474,7 @@ async function relancerEtape(phone, s, cfg) {
     case 'doc_boarding': return gotoBoarding(phone, s, cfg);
     case 'doc_eticket': return gotoEticket(phone, s, cfg);
     case 'doc_cert': return gotoCert(phone, s, cfg);
+    case 'frais': return sendFraisRequest(phone, s, cfg);
     default: return send(phone, `On reprend 👇 Répondez à la dernière question, ou tapez *nouveau* pour recommencer.`, cfg);
   }
 }
@@ -1581,8 +1630,10 @@ app.post('/api/mandat-signed', (req, res) => {
   const secret = (b.secret || req.query.s || req.headers['x-secret'] || '').toString().trim();
   const expected = (process.env.WATI_WEBHOOK_SECRET || '').trim();
   if (expected && secret !== expected) return res.status(401).json({ error: 'secret invalide' });
+  const lead = findLead(b.ref || '') || findLead(b.phone || b.waId || '');
   const marked = markLeadSigned(b.ref || '') || markLeadSigned(b.phone || b.waId || '');
   console.log('mandat signe ref=' + (b.ref || '?') + ' marked=' + marked);
+  if (lead && lead.phone) triggerFraisCollection(lead).catch(() => {}); // propose l'envoi des reçus de frais (Art. 8/9), best-effort
   res.json({ ok: true, marked });
 });
 
@@ -1623,10 +1674,20 @@ async function runRelances() {
       if (!lead) continue;
       const anchorAge = lead.mandatSentAt || lead.engagedAt || 0;
       // Purge : signé, ou trop vieux (30 j) — qu'il soit finalisé ou seulement engagé.
-      if (lead.signed || (anchorAge && now - anchorAge > 30 * 24 * _H)) { LEADS.delete(k); persistLeads(); continue; }
+      if ((lead.signed && !lead.fraisPending) || (anchorAge && now - anchorAge > 30 * 24 * _H)) { LEADS.delete(k); persistLeads(); continue; }
       // Fenêtre WhatsApp 24h (envoi gratuit) fermée → on n'écrit plus ; le dossier reste dans la liste « À rappeler ».
       if (now - (lead.lastClientAt || anchorAge) > 24 * _H) continue;
       const nudges = lead.nudges || [];
+      // Relance FRAIS : signé mais reçus pas encore envoyés → 1 SEUL rappel à 3h, dans la fenêtre 24h.
+      if (lead.signed && lead.fraisPending) {
+        const hF = (now - (lead.fraisAskedAt || now)) / _H;
+        if (hF >= 3 && !nudges.includes('frais')) {
+          const txt = fillTpl(pickRV(lead.phone, 'RELANCE_FRAIS'), {}) || `💶 Petit rappel : vos reçus (taxi, hôtel, repas…) partent dans notre 1er envoi si on les a aujourd'hui. Une photo suffit 📷 — ou « Pas de frais ». On peut aussi les ajouter plus tard.`;
+          try { await sendButtons(lead.phone, { body: txt, buttons: [{ id: 'frais_non', text: '❌ Pas de frais' }] }, cfg); console.log('relance frais -> ' + (lead.ref || lead.phone)); } catch (_) {}
+          lead.nudges = nudges.concat('frais'); lead.fraisPending = false; LEADS.set(k, lead); persistLeads();
+        }
+        continue; // signé → jamais de relance signature
+      }
       let due = null, text = null;
       if (lead.completed && lead.mandatSentAt) {
         // Mandat envoyé, pas signé → nudge signature (ancré sur l'envoi ; jetons numériques, rétrocompatible).
