@@ -381,8 +381,9 @@ async function notifyMandatSignedByEmail(record, pdfBuffer, pdfBilingueBuffer) {
       ...(replyTo ? { reply_to: replyTo } : {}),
     };
     if (pdfBuffer) {
-      const fileRef = (record.ref || 'dossier').replace(/[^A-Za-z0-9_-]/g, '_');
-      clientPayload.attachments = [{ filename: `Mandat-${fileRef}.pdf`, content: pdfBuffer.toString('base64') }];
+      const suffixe = (record.ref || '').replace(/[^A-Za-z0-9]/g, '').slice(-4).toUpperCase();
+      const filename = suffixe ? `Mandat-Robin-des-Airs-${suffixe}.pdf` : 'Mandat-Robin-des-Airs.pdf';
+      clientPayload.attachments = [{ filename, content: pdfBuffer.toString('base64') }];
     }
     result.client = await sendResendEmail(apiKey, clientPayload);
   } else {
@@ -436,7 +437,8 @@ async function sendMandatWhatsappCopy(record, pdfBuffer) {
     return { skipped: true, reason: !pdfBuffer ? 'pas de PDF' : 'Wati non configuré' };
   }
   const ref = record.ref || record.cert_id || 'dossier';
-  const fileName = `Mandat-${String(ref).replace(/[^A-Za-z0-9_-]/g, '_')}.pdf`;
+  const suffixe = String(ref).replace(/[^A-Za-z0-9]/g, '').slice(-4).toUpperCase();
+  const fileName = suffixe ? `Mandat-Robin-des-Airs-${suffixe}.pdf` : 'Mandat-Robin-des-Airs.pdf';
   const caption = `✅ Mandat signé — merci de votre confiance ! (réf. ${ref})\n\nVotre dossier passe entre les mains de notre équipe. *0 € si on ne gagne pas*, 25 % uniquement si vous êtes indemnisé. Voici votre copie à conserver.\n\n📎 *Pour accélérer votre dossier*, envoyez-nous ici les justificatifs que vous avez sous la main :\n• votre *carte d'embarquement* ou votre *e-billet* (confirmation de réservation)\n• une *pièce d'identité* pour chaque passager (si ce n'est pas déjà fait)\n\n🔒 Vous préférez tout déposer en une fois sur un *lien sécurisé* (vos pièces ne passent pas par la conversation) ?\n👉 https://robindesairs.eu/depot-en-ligne.html?r=${ref}\n\n📞 *Un expert va vous appeler* depuis le *+33 7 56 86 36 30*. Enregistrez ce numéro sous « *Retard Robin* » pour reconnaître notre appel. 🏹\n\nL'équipe Robin des Airs`;
   try {
     return await watiSendFile(record.whatsapp, pdfBuffer, fileName, caption);
