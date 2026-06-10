@@ -557,6 +557,30 @@ button.vol-ticker-chip .vol-ticker-chip-flight {
   display: none;
 }
 
+/* ── Petit logo dans le bandeau (marque = confiance), adapté au fond navy ── */
+.diaspora-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  text-decoration: none;
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: #fff;
+  line-height: 1;
+  white-space: nowrap;
+}
+.diaspora-logo svg { flex: 0 0 auto; }
+.diaspora-logo-accent { color: var(--neon-b); font-weight: 700; }
+.diaspora-logo:hover .diaspora-logo-accent { color: var(--neon); }
+/* Le logo n'est « gratuit » que dans le bandeau une-ligne du desktop (≥1081px). En dessous, le bandeau
+   s'empile et la pastille drapeaux remplit la largeur → le logo réépaissirait la barre. On le masque donc
+   sous 1081px (la marque reste portée par le hero — démo chat « Robin des Airs » — et le footer). */
+@media (max-width: 1080px) {
+  .diaspora-logo { display: none; }
+}
+
 /* ── Actions du bandeau (langue + ☰) : la nav séparée a été fusionnée ici pour aérer le haut ── */
 .diaspora-bar-actions {
   display: flex;
