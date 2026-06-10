@@ -1,1 +1,1 @@
-web: node railway-bot.js
+web: node railway/server.js
