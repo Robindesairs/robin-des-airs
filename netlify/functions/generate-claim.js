@@ -11,6 +11,7 @@ const { airtableCfg, airtableFindByRef, recordFromAirtableFields, airtablePatch 
 const { getAirlineClaim } = require('./lib/airlines-claims');
 const { africanDepartureFromRoute } = require('./lib/airport-coords');
 const { genererClaimPdf } = require('./lib/claim-pdf');
+const { nomFichierCompagnie } = require('./lib/doc-filename');
 const { verifyInternalSecret, publicCorsHeaders, denyResponse } = require('./lib/internal-auth');
 const { checkCrmAccess } = require('./lib/crm-access');
 
@@ -145,12 +146,21 @@ exports.handler = async (event) => {
     } catch (_) {}
   }
 
+  // Noms de fichier « côté compagnie » prêts à l'emploi (mandat + mise en demeure).
+  // Format <Type>-NOM-Prénom-VOL-CODE.pdf — voir lib/doc-filename.js.
+  const docInput = { nom: data.nom, prenom: data.prenom, vol: data.vol, ref };
+  const fichiers = {
+    mandat: nomFichierCompagnie(docInput, 'mandat'),
+    med: nomFichierCompagnie(docInput, 'med'),
+  };
+
   return {
     statusCode: 200,
     headers: HEADERS,
     body: JSON.stringify({
       ok: true,
       ref,
+      fichiers,
       airline: claim.airlineName,
       channel: airline && airline.entryMode,
       exigerCash: claim.exigerCash,
