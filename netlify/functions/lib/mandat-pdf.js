@@ -7,6 +7,7 @@
  */
 
 const PDFDocument = require('pdfkit');
+const MANDAT_ARTICLES = require('./mandat-articles-fr.json'); // texte intégral extrait de autorisation.html (scripts/build-mandat-articles.js)
 
 const NAVY = '#0B1F3A';
 const NEON = '#00C87A';
@@ -73,6 +74,33 @@ function genererMandatPdf(record) {
       doc.fillColor(GRAY).fontSize(9).font('Helvetica-Bold').text(label, left, y, { width: 150 });
       doc.fillColor(TEXT).font('Helvetica').fontSize(10).text(String(value == null || value === '' ? '—' : value), left + 160, y, { width: contentW - 160 });
       doc.y = Math.max(doc.y, y + 16);
+    }
+    // Rendu d'un article du mandat (titre + « en clair » + corps juridique justifié)
+    function clauseTitle(t) {
+      ensure(26);
+      doc.fillColor(NAVY).fontSize(10.5).font('Helvetica-Bold').text(t, left, doc.y, { width: contentW });
+      doc.y += 1;
+    }
+    function clausePlain(t) {
+      ensure(14);
+      doc.fillColor(GRAY).fontSize(8.5).font('Helvetica-Oblique').text(t, left, doc.y, { width: contentW });
+      doc.moveDown(0.12);
+    }
+    function clauseBody(t) {
+      ensure(16);
+      doc.fillColor(TEXT).fontSize(9).font('Helvetica').text(t, left, doc.y, { width: contentW, align: 'justify' });
+      doc.moveDown(0.2);
+    }
+    function clauseTable(rows) {
+      if (!rows || !rows.length) return;
+      ensure(16 * rows.length + 6);
+      doc.fillColor(NAVY).fontSize(8.5).font('Helvetica-Bold').text(rows[0].join('  ·  '), left, doc.y, { width: contentW });
+      doc.moveDown(0.1);
+      rows.slice(1).forEach((r) => {
+        doc.fillColor(TEXT).fontSize(8.5).font('Helvetica').text('•  ' + r.join('  ·  '), left, doc.y, { width: contentW });
+        doc.moveDown(0.1);
+      });
+      doc.moveDown(0.2);
     }
 
     // ── En-tête ──
@@ -151,25 +179,16 @@ function genererMandatPdf(record) {
     kv('Incident', INCIDENT_LABEL[record.incident] || record.incident);
     doc.moveDown(0.4);
 
-    // ── Conditions essentielles ──
-    sectionTitle('Conditions essentielles');
-    const terms = [
-      'Double régime (Art. 1 & 1 bis) : mandat de représentation (art. 1984 C. civ.) par défaut, et option de cession de créance à titre de recouvrement (art. 1321) que Robin des Airs peut lever pour le contentieux.',
-      'Honoraires : 25% TTC, uniquement en cas de succès (No Win No Fee), sur l\'ensemble des sommes recouvrées (indemnité, frais, préjudices). Aucun frais si échec.',
-      'Versement de votre part nette (75%) sous 48h ouvrées après encaissement.',
-      'Durée : 24 mois. Droit de rétractation : 14 jours (contact@robindesairs.eu).',
-    ];
-    terms.forEach((t) => {
-      ensure(28);
-      const y = doc.y;
-      doc.fillColor(NEON).fontSize(10).font('Helvetica-Bold').text('•', left, y);
-      doc.fillColor(TEXT).fontSize(9.5).font('Helvetica').text(t, left + 14, y, { width: contentW - 14 });
-      doc.y += 4;
+    // ── Texte intégral du mandat (extrait de la page signée — « ce que vous signez = ce que vous recevez ») ──
+    sectionTitle('Texte intégral du mandat');
+    (MANDAT_ARTICLES.items || []).forEach((it) => {
+      if (it.type === 'table') { clauseTable(it.rows); return; }
+      clauseTitle(it.title);
+      (it.plain || []).forEach(clausePlain);
+      (it.body || []).forEach(clauseBody);
+      doc.moveDown(0.25);
     });
-    ensure(20);
-    doc.fillColor(GRAY).fontSize(9).font('Helvetica-Oblique')
-      .text(`Texte intégral des 12 articles : robindesairs.eu/mandat.html (réf. ${ref}).`, left, doc.y, { width: contentW });
-    doc.moveDown(0.6);
+    doc.moveDown(0.4);
 
     // ── Consentements recueillis (cases cochées par le signataire) ──
     sectionTitle('Consentements recueillis');

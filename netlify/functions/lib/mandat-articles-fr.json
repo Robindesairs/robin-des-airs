@@ -1,0 +1,253 @@
+{
+  "source": "autorisation.html",
+  "generatedFrom": "build-mandat-articles.js",
+  "items": [
+    {
+      "type": "article",
+      "title": "Article 1 — Objet, double régime et adresse email du dossier",
+      "plain": [
+        "En clair : Vous chargez Robin des Airs de récupérer l'argent que la compagnie vous doit. On agit d'abord en votre nom — ça garde l'accès à la médiation. Vol avec correspondance ? C'est l'arrivée finale qui compte — c'est couvert.",
+        "En clair : Pour gérer votre dossier, Robin des Airs ouvre une adresse email dédiée qui reçoit les réponses de la compagnie. C'est nous qui nous en occupons de A à Z — vous, vous êtes simplement suivi par WhatsApp.",
+        "En clair : Votre mandat existe en français et en anglais (même document). Vous signez une fois ; si la compagnie est étrangère, on lui présente la version anglaise — mais c'est toujours votre version française signée qui fait foi."
+      ],
+      "body": [
+        "Le Mandant confie à Robin des Airs une mission exclusive de recouvrement, au titre du Règlement (CE) n° 261/2004, de l'indemnisation forfaitaire (art. 7) ainsi que du remboursement des frais engagés, de la prise en charge due (art. 8 et 9) et, le cas échéant, du préjudice complémentaire (art. 12) liés au retard, à l'annulation ou au refus d'embarquement, par toute voie amiable, administrative, judiciaire ou arbitrale.",
+        "Vols avec correspondance. Lorsque le voyage comporte une ou plusieurs correspondances sous une même réservation, le mandat couvre l'ensemble du voyage : l'indemnisation est déterminée par la destination finale et la distance totale, le retard étant apprécié à l'arrivée à la destination finale (CJUE, 26 février 2013, Folkerts, C-11/11).",
+        "Cette mission s'exerce selon un double régime : (1) un mandat de représentation (art. 1984 C. civ.) qui s'applique par défaut dès la signature — Robin des Airs agissant au nom du Mandant, qui conserve la qualité de créancier, ce régime préservant notamment l'accès du Mandant, en sa qualité de consommateur, à la médiation ; et (2) une option de cession de créance à titre de recouvrement que Robin des Airs peut lever dans les conditions de l'Article 1 bis (modalités : Article 5 bis).",
+        "Pour les besoins du traitement du dossier, Robin des Airs crée une adresse email technique unique, composée de la référence du mandat en minuscules suivie de « @robindesairs.eu » (ex. : ref@robindesairs.eu). Cette adresse constitue l'adresse de référence du dossier pour l'ensemble des échanges avec la compagnie aérienne, ses représentants, ses conseils, ses intermédiaires et, plus généralement, tout tiers intervenant dans le cadre du recouvrement. Robin des Airs en assure seul l'administration et la gestion exclusive.",
+        "Le Mandant autorise expressément Robin des Airs à créer et exploiter, pour la durée du mandat, cette adresse et à l'utiliser pour toute correspondance utile au traitement du dossier, y compris les mises en demeure et actes de procédure. Robin des Airs conserve les accès, copies et pièces issus de ces échanges afin d'assurer la traçabilité du dossier.",
+        "Le Mandant reconnaît que Robin des Airs pourra également utiliser, si la procédure l'exige, l'adresse email personnelle du Mandant communiquée dans le présent mandat ou ultérieurement.",
+        "Le suivi opérationnel avec le Mandant peut notamment être assuré via WhatsApp ou tout autre canal de communication convenu entre les parties, sans caractère exclusif de ces canaux pour la notification d'informations importantes.",
+        "Langue. Le présent mandat constitue un instrument bilingue établi en français et en anglais, le texte français étant la seule version faisant foi. Le Mandant accepte cet instrument dans ses deux versions et autorise Robin des Airs à établir, produire et opposer la version anglaise (ou une traduction fidèle dans la langue de la compagnie) à la compagnie aérienne, à ses représentants et à tout tiers intervenant dans le recouvrement. La version anglaise n'a aucune valeur juridique autonome ; en cas de divergence, l'original français signé prévaut. La signature du Mandant couvre l'instrument dans ses deux langues."
+      ]
+    },
+    {
+      "type": "article",
+      "title": "Article 1 bis — Option d'exercice : mandat ou cession",
+      "plain": [
+        "En clair : Tant qu'on règle à l'amiable, vous restez propriétaire de votre dossier. Si on doit aller au tribunal, on bascule pour agir plus efficacement."
+      ],
+      "body": [
+        "Le présent acte emporte, dès la signature, mandat de représentation (Article 1, régime par défaut) et promesse de cession de la créance née ou à naître (Article 5 bis). Tant que Robin des Airs n'a pas levé l'option de cession, le Mandant demeure seul titulaire de la créance et Robin des Airs agit en qualité de mandataire.",
+        "Robin des Airs peut lever l'option de cession à tout moment, dans l'intérêt du recouvrement, notamment pour engager une procédure judiciaire, une mesure d'exécution ou former opposition à un paiement. À la levée de l'option, la cession prend effet entre les parties (art. 1321 C. civ.) et devient opposable à la compagnie aérienne à compter de sa notification (art. 1324 C. civ.) ; Robin des Airs agit alors en son nom propre, en qualité de cessionnaire.",
+        "Discipline procédurale. Le régime applicable est arrêté avant l'acte de procédure concerné et notifié à la compagnie ; Robin des Airs n'invoque qu'un seul régime par instance afin de préserver sa qualité à agir. En pratique : mandat pour la phase amiable et la médiation, cession (option levée) pour la phase contentieuse.",
+        "Cette faculté est stipulée dans l'intérêt du Mandant : elle préserve son accès à la médiation tout en permettant à Robin des Airs d'agir efficacement en justice. Elle ne modifie ni la commission (Article 4), ni le droit de rétractation (Article 9), ni l'obligation de reverser au Mandant sa part nette (75 %)."
+      ]
+    },
+    {
+      "type": "article",
+      "title": "Article 2 — Durée",
+      "plain": [
+        "En clair : Le mandat dure 24 mois. Il peut être arrêté de part et d'autre en cas de problème grave (préavis 15 jours)."
+      ],
+      "body": [
+        "Le mandat est consenti pour 24 mois à compter de la signature. Cette durée est nécessaire pour traiter les dossiers complexes incluant relances, médiation et procédure judiciaire si nécessaire. Il peut être résilié par email à tout moment en cas de faute grave, fraude avérée ou non-coopération persistante de l'une des parties, avec un préavis de 15 jours."
+      ]
+    },
+    {
+      "type": "article",
+      "title": "Article 3 — Exclusivité & Anti-contournement",
+      "plain": [
+        "En clair : Pendant ce temps, ne confiez pas le même dossier à quelqu'un d'autre et ne négociez pas seul avec la compagnie sans nous prévenir."
+      ],
+      "body": [
+        "Le présent mandat est exclusif. Pendant sa durée, le Mandant s'engage à ne pas confier le même dossier à un tiers ni à négocier directement avec la compagnie pour le même incident sans en informer préalablement Robin des Airs. Tout accord conclu en violation de cette clause engage la responsabilité du Mandant, qui restera redevable de la commission convenue."
+      ]
+    },
+    {
+      "type": "article",
+      "title": "Article 4 — Honoraires · No Win, No Fee",
+      "plain": [
+        "En clair : On prend 25 % seulement si on récupère de l'argent. Si on ne gagne rien, vous ne payez rien."
+      ],
+      "body": [
+        "Robin des Airs perçoit une commission de 25% TTC du montant effectivement encaissé, uniquement en cas de succès. Cette commission s'applique à l'ensemble des sommes recouvrées au titre du dossier — indemnité forfaitaire, remboursements, frais et préjudices liés à l'incident. En cas d'échec ou de non-recouvrement, aucun frais n'est dû. Aucune avance n'est exigée à aucun stade. La commission s'applique également à toute compensation en nature (bon d'achat, avoir, miles…) acceptée au titre du dossier, calculée sur sa valeur ; le Mandant s'engage à ne pas accepter une telle compensation sans l'accord de Robin des Airs. Le Mandant exige le paiement en numéraire (virement) et refuse expressément, dès à présent, tout bon d'achat, avoir, miles ou autre service proposé en lieu et place : conformément à l'article 7§3 du Règlement (CE) n° 261/2004, une compensation en nature suppose l'accord signé du passager, que le Mandant ne donne pas."
+      ]
+    },
+    {
+      "type": "article",
+      "title": "Article 4.1 — Frais Judiciaires",
+      "plain": [
+        "En clair : Les frais d'avocat et de justice sont pour nous. Vous n'avancez jamais d'argent."
+      ],
+      "body": [
+        "Robin des Airs prend en charge 100% des frais d'avocat, de greffe, d'huissier et de procédure judiciaire TTC liés au traitement du dossier. Le Mandant n'avance aucune somme à quelque stade que ce soit. Robin des Airs se réserve le droit de sélectionner librement les dossiers qu'elle estime viables avant d'engager une procédure judiciaire. Les sommes éventuellement allouées au titre des frais de procédure (article 700 du Code de procédure civile, dépens) restent acquises à Robin des Airs, qui en a fait l'avance ; les intérêts suivent le sort de la créance (Article 5 bis)."
+      ]
+    },
+    {
+      "type": "table",
+      "rows": [
+        [
+          "Distance du vol",
+          "Indemnité légale / pax",
+          "Commission RDA (25%)",
+          "Net client"
+        ],
+        [
+          "≤ 1 500 km",
+          "250 €",
+          "62,50 €",
+          "187,50 €"
+        ],
+        [
+          "1 500 – 3 500 km (Maghreb — ex. Maroc)",
+          "400 €",
+          "100 €",
+          "300 €"
+        ],
+        [
+          "> 3 500 km (Afrique subsaharienne)",
+          "600 €",
+          "150 €",
+          "450 €"
+        ]
+      ]
+    },
+    {
+      "type": "article",
+      "title": "Article 5 — Paiement & Protection du Mandant",
+      "plain": [
+        "En clair : La compagnie paie sur NOTRE compte, jamais le vôtre. On vous reverse vos 75 % sous 48 h une fois l'argent vraiment encaissé."
+      ],
+      "body": [
+        "Le Mandant donne instruction expresse et irrévocable à la compagnie aérienne de verser toute indemnité, tout remboursement et toute somme due exclusivement sur le compte bancaire désigné par Robin des Airs, à l'exclusion de tout autre compte, y compris celui du Mandant. Robin des Airs reverse au Mandant sa part nette (75%) sur l'IBAN communiqué dans ce mandat dans un délai de 48 heures ouvrées à compter de l'encaissement effectif et irrévocable des fonds (virement SEPA crédité, sans réserve ni rétrofacturation). Si la compagnie verse directement au Mandant, celui-ci s'engage à reverser sans délai la commission de 25% à Robin des Airs."
+      ]
+    },
+    {
+      "type": "article",
+      "title": "Article 5.1 — Reversement, Mandant injoignable & fonds non réclamés",
+      "plain": [
+        "En clair : Vos 75 % restent à vous. Si on n'arrive pas à vous joindre ou sans RIB valide, on garde l'argent à votre disposition et on continue de vous chercher — jamais pour nous."
+      ],
+      "body": [
+        "Le solde net (75 %) revenant au Mandant demeure sa propriété. Si le reversement ne peut intervenir faute de coordonnées bancaires valides et/ou d'impossibilité de joindre le Mandant, les fonds sont conservés et tenus à sa disposition par Robin des Airs, identifiés comme fonds détenus pour son compte, et ne constituent ni un produit ni un revenu de Robin des Airs. Robin des Airs effectue des diligences raisonnables de contact (WhatsApp, courriel, téléphone puis, en cas d'échec, courrier recommandé à la dernière adresse communiquée), le Mandant s'engageant à tenir ses coordonnées à jour. À défaut de réponse utile dans un délai de six (6) mois à compter de la première sollicitation de reversement, Robin des Airs pourra mettre le Mandant en demeure de recevoir les fonds (art. 1345 C. civ.) puis se libérer par consignation de la somme auprès de la Caisse des dépôts et consignations (art. 1345-1 C. civ.). Le droit du Mandant au reversement se prescrit par cinq (5) ans (art. 2224 C. civ.). Le reversement demeure subordonné aux vérifications d'identité et de conformité (LCB-FT)."
+      ]
+    },
+    {
+      "type": "article",
+      "title": "Article 5 bis — Cession de créance aux fins de recouvrement (créance née ou à naître)",
+      "plain": [
+        "En clair : Pour sécuriser le recouvrement, vous nous cédez votre créance le temps de la récupérer. Si ça échoue, elle vous revient."
+      ],
+      "body": [
+        "En exécution de l'option de l'Article 1 bis, le Mandant consent à céder à Robin des Airs, à titre de recouvrement, la créance d'indemnisation née ou à naître qu'il détient à l'encontre de la compagnie aérienne — le transporteur aérien effectif ayant réellement réalisé le vol (art. 2 b) du Règlement), quel que soit le numéro de vol commercial ou la compagnie de commercialisation (vols en partage de code / codeshare) — au titre du Règlement (CE) n° 261/2004 pour le vol identifié au présent acte (l'« Incident »), en ce compris l'indemnité forfaitaire (art. 7), les remboursements et frais (art. 8 et 9), le préjudice complémentaire (art. 12), intérêts, pénalités et accessoires.",
+        "Cette cession est consentie à titre de recouvrement : Robin des Airs en assure l'encaissement en qualité de cessionnaire et reverse au Mandant sa part nette (75 %) dans les conditions de l'Article 5, déduction faite de la seule commission de l'Article 4. Elle ne modifie ni le caractère « No Win No Fee », ni le droit de rétractation de l'Article 9.",
+        "Conformément aux articles 1321 à 1326 du Code civil, la cession prend effet entre les parties à la levée de l'option (Article 1 bis) et porte sur une créance déterminable (parties, vol, date, fondement CE 261/2004). Elle est opposable à la compagnie aérienne (débiteur cédé) à compter de sa notification au sens de l'article 1324 du Code civil ; la mise en demeure adressée par Robin des Airs vaut notification de la cession.",
+        "En conséquence, à compter de cette notification, seul le paiement effectué entre les mains de Robin des Airs est libératoire ; Robin des Airs est habilité à agir en recouvrement en son nom propre, par toute voie amiable, administrative, judiciaire ou arbitrale. Le Mandant garantit l'existence de la créance et déclare qu'elle n'a fait l'objet d'aucune cession, transaction ni paiement antérieur. À l'extinction du mandat sans recouvrement, ou en cas de rétractation dans le délai de l'Article 9, la créance est rétrocédée de plein droit au Mandant.",
+        "Clause de continuité. Si la cession est prohibée, refusée ou déclarée inopposable — notamment par les conditions générales de transport du transporteur — le mandat de représentation subsiste de plein droit et Robin des Airs agit alors au nom et pour le compte du Mandant sur le fondement des articles 1984 et suivants du Code civil, le Mandant demeurant titulaire de la créance. L'instruction de paiement de l'Article 5 reste applicable."
+      ]
+    },
+    {
+      "type": "article",
+      "title": "Article 5 ter — Inopposabilité des clauses d'incessibilité",
+      "plain": [
+        "En clair : Si la compagnie prétend que vous n'aviez pas le droit de nous céder le dossier, c'est faux : la justice européenne l'a tranché."
+      ],
+      "body": [
+        "Le Mandant déclare avoir connaissance des conditions générales de transport de la compagnie. Toute clause des conditions générales de transport interdisant ou limitant la cession de la créance d'indemnisation due au titre du Règlement (CE) n° 261/2004 est inopposable : la Cour de justice de l'Union européenne a jugé qu'une telle clause est contraire à l'article 15 du Règlement (CJUE, 3e ch., 29 février 2024, Eventmedia c/ Air Europa, C-11/23). En conséquence, la compagnie aérienne ne saurait opposer une telle clause à la cession consentie à Robin des Airs (Article 5 bis)."
+      ]
+    },
+    {
+      "type": "article",
+      "title": "Article 6 — Clause Non Libératoire pour la Compagnie Aérienne",
+      "plain": [
+        "En clair : Si la compagnie vous paie directement pour nous contourner, elle nous doit quand même le paiement."
+      ],
+      "body": [
+        "Tout paiement effectué directement par la compagnie aérienne au Mandant ne libère pas la compagnie de ses obligations envers Robin des Airs, mandataire exclusif désigné par acte signé. Robin des Airs notifie expressément la compagnie, dès la mise en demeure, que le seul paiement libératoire valable est celui effectué sur le compte bancaire de Robin des Airs.",
+        "En conséquence : (i) tout règlement opéré directement au Mandant en violation de cette instruction sera réputé non libératoire à l'égard de Robin des Airs ; (ii) la compagnie demeurera redevable du paiement auprès du mandataire ; (iii) Robin des Airs se réserve le droit d'engager toute action en recouvrement, y compris judiciaire, à l'encontre de la compagnie aérienne. Cette stipulation constitue une instruction de paiement irrévocable au sens des articles 1984 et suivants du Code civil et s'appuie sur la cession de créance de l'Article 5 bis (articles 1321 à 1324 du Code civil) ; elle est opposable à la compagnie aérienne et à tout tiers à compter de la notification qui leur en est faite."
+      ]
+    },
+    {
+      "type": "article",
+      "title": "Article 7 — Obligations de Robin des Airs",
+      "plain": [
+        "En clair : On traite votre dossier avec sérieux, on vous tient informé, on vous paie vite et on protège vos données."
+      ],
+      "body": [
+        "Robin des Airs s'engage à : (i) instruire le dossier avec diligence ; (ii) informer le Mandant à chaque étape clé ; (iii) reverser les sommes dans les 48h ouvrées après encaissement effectif et irrévocable ; (iv) notifier expressément la compagnie aérienne de l'existence du présent mandat et de l'instruction de paiement exclusif ; (v) protéger les données personnelles conformément au RGPD."
+      ]
+    },
+    {
+      "type": "article",
+      "title": "Article 7 bis — Responsabilité & obligation de moyens",
+      "plain": [
+        "En clair : On s'engage à tout faire pour gagner, mais aucun service ne peut garantir le résultat. Si on commet une erreur, notre responsabilité est plafonnée."
+      ],
+      "body": [
+        "Robin des Airs est tenue d'une obligation de moyens et ne garantit pas l'obtention de l'indemnisation. Sauf faute lourde ou dol, sa responsabilité est limitée aux dommages directs et plafonnée au montant de la commission effectivement perçue sur le dossier. Robin des Airs n'est pas responsable des retards, refus ou décisions de la compagnie aérienne, des juridictions ou des médiateurs."
+      ]
+    },
+    {
+      "type": "article",
+      "title": "Article 7 ter — Sous-traitance & intervenants",
+      "plain": [
+        "En clair : On peut confier votre dossier à un avocat (à nos frais) ; pour ça on doit pouvoir lui transmettre vos pièces — vous nous y autorisez."
+      ],
+      "body": [
+        "Robin des Airs peut, à son initiative et à ses frais (Article 4.1), confier tout ou partie de l'exécution à des avocats, auxiliaires de justice ou prestataires techniques de son choix, agissant pour son compte ; aucune relation contractuelle directe n'est créée entre eux et le Mandant du seul fait du mandat. Le Mandant consent expressément à ce que Robin des Airs communique aux avocats et tiers strictement nécessaires les données et pièces du dossier, aux seules fins du recouvrement, dans le respect du RGPD et de la Politique de confidentialité. Robin des Airs demeure responsable de la bonne exécution de la prestation à l'égard du Mandant."
+      ]
+    },
+    {
+      "type": "article",
+      "title": "Article 7 quater — Clôture pour irrécouvrabilité",
+      "plain": [
+        "En clair : Si le dossier est manifestement perdu d'avance, on peut l'arrêter — vous ne payez rien."
+      ],
+      "body": [
+        "Robin des Airs peut mettre fin au dossier par notification motivée s'il apparaît, après analyse, que la réclamation est manifestement irrécouvrable (notamment insolvabilité du transporteur, prescription, absence de fondement au regard du Règlement). Cette clôture n'ouvre droit à aucune indemnité de part et d'autre et, conformément au principe « No Win No Fee », aucune somme n'est due par le Mandant ; la créance, si une option de cession avait été levée, lui est rétrocédée de plein droit."
+      ]
+    },
+    {
+      "type": "article",
+      "title": "Article 8 — Obligations du Mandant",
+      "plain": [
+        "En clair : Donnez-nous des infos exactes, prévenez-nous si la compagnie vous contacte, et n'encaissez rien sans nous le dire."
+      ],
+      "body": [
+        "Le Mandant s'engage à : (i) fournir des informations exactes et complètes ; (ii) transmettre tout document utile dans les meilleurs délais ; (iii) informer Robin des Airs de tout contact ou offre de la compagnie aérienne dans les 24h ; (iv) ne pas accepter ni encaisser aucun paiement de la compagnie sans en aviser Robin des Airs ; (v) ne pas agir en parallèle sur le même dossier sans accord préalable écrit. Le Mandant garantit l'exactitude et la sincérité des informations et documents fournis et répond du préjudice causé à Robin des Airs par des informations sciemment ou grossièrement inexactes ou incomplètes ; il rembourse, le cas échéant, les frais engagés à tort de ce fait. Le Mandant garantit en outre que la créance n'a fait l'objet d'aucune cession, transaction, renonciation ni paiement antérieur, que la même réclamation n'est pas déjà confiée à un tiers ni l'objet d'une procédure pendante, et qu'il en est seul titulaire (ou dûment habilité). Il tient Robin des Airs indemne des conséquences directes d'un manquement à ces garanties et reverse les sommes indûment perçues, cette obligation étant limitée aux préjudices directs imputables au manquement du Mandant."
+      ]
+    },
+    {
+      "type": "article",
+      "title": "Article 9 — Droit de rétractation (14 jours) & Démarrage immédiat",
+      "plain": [
+        "En clair : Vous pouvez changer d'avis sous 14 jours, sans frais ni justification."
+      ],
+      "body": [
+        "Conformément aux articles L. 221-18 et suivants du Code de la consommation, le Mandant dispose d'un délai de rétractation de 14 jours calendaires à compter de la signature, sans pénalité. Il suffit d'envoyer un email à contact@robindesairs.eu avec la mention « Je me rétracte — Réf. [numéro de dossier] ».",
+        "Conformément à l'article L. 221-25 du Code de la consommation, si le Mandant demande expressément l'exécution immédiate du mandat avant l'expiration du délai de 14 jours (case cochée ci-dessous), Robin des Airs est autorisée à débuter les démarches sans attendre. En cas de rétractation ultérieure dans ce délai, le Mandant reconnaît que les prestations déjà accomplies seront dues au prorata — étant précisé qu'aucune somme ne sera exigible avant encaissement effectif de l'indemnité (principe No Win No Fee)."
+      ]
+    },
+    {
+      "type": "article",
+      "title": "Article 9 bis — Passagers mineurs",
+      "plain": [
+        "En clair : Pour un enfant mineur, c'est le parent ou le tuteur qui signe à sa place."
+      ],
+      "body": [
+        "Pour tout passager mineur, le représentant légal signe seul, en son nom et au nom du mineur ; le mineur ne signe pas. Le représentant légal déclare exercer l'autorité parentale (ou la qualité de tuteur) sur le mineur et s'engage personnellement aux termes du présent mandat, y compris quant à la cession de créance (Article 5 bis)."
+      ]
+    },
+    {
+      "type": "article",
+      "title": "Article 10 — Confidentialité & RGPD",
+      "plain": [
+        "En clair : Vos données servent uniquement à votre dossier. Jamais revendues."
+      ],
+      "body": [
+        "Les données personnelles collectées sont utilisées exclusivement pour la gestion du dossier. Elles ne sont pas revendues. Conformément au RGPD, le Mandant dispose d'un droit d'accès, de rectification et de suppression en contactant contact@robindesairs.eu."
+      ]
+    },
+    {
+      "type": "article",
+      "title": "Article 11 — Loi applicable, divisibilité & litiges",
+      "plain": [
+        "En clair : Droit français. En cas de litige, on cherche d'abord une solution à l'amiable."
+      ],
+      "body": [
+        "Le présent mandat est soumis au droit français. En cas de litige, les parties privilégient une résolution amiable dans les 30 jours. À défaut d'accord, le différend est soumis aux juridictions compétentes. Divisibilité : si une stipulation du présent mandat est jugée nulle ou inopposable, les autres conservent leur plein effet, la stipulation concernée étant réputée non écrite ou réduite dans la mesure permise par la loi. Survie : la fin du mandat ne met pas fin aux stipulations qui, par leur nature, survivent — notamment confidentialité et données personnelles, obligation de reverser la commission en cas de paiement postérieur au titre de l'incident, propriété intellectuelle, responsabilité et règlement des litiges."
+      ]
+    }
+  ]
+}
