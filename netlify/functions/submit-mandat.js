@@ -573,6 +573,22 @@ exports.handler = async (event) => {
     try { pdfBuffer = await genererMandatPdf(record); }
     catch (e) { console.error('submit-mandat: génération PDF échouée:', e.message); }
   }
+
+  // ── Archive le PDF signé EXACT (byte-identique à la copie reçue par le client) + son SHA-256 ──
+  // Stocké en base64 sous pdf/<ref> dans le store des signatures. Récupérable via /api/mandat-pdf?r=REF.
+  // Insensible aux futurs changements de template : la copie archivée reste celle envoyée. Best-effort.
+  if (pdfBuffer && netlifyBlobsModule) {
+    try {
+      const blobs = netlifyBlobsModule;
+      if (blobs.connectLambda && event) blobs.connectLambda(event);
+      const store = blobs.getStore(STORE_NAME);
+      const pdfSha = require('crypto').createHash('sha256').update(pdfBuffer).digest('hex');
+      await store.set(`pdf/${ref}`, pdfBuffer.toString('base64'), {
+        metadata: { ref, cert_id: certId, sha256: pdfSha, signed_at: ts, bytes: pdfBuffer.length },
+      });
+      console.log(`submit-mandat: PDF archivé pdf/${ref} (${pdfBuffer.length} o · sha ${pdfSha.slice(0, 12)}…)`);
+    } catch (e) { console.error('submit-mandat: archive PDF échouée:', e.message); }
+  }
   // Génère le PDF bilingue FR/EN (pour les compagnies étrangères) — joint à la notif équipe
   let pdfBilingueBuffer = null;
   if (genererMandatBilinguePdf) {
