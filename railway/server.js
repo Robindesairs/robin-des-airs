@@ -1660,6 +1660,7 @@ app.get('/api/leads-a-rappeler', (req, res) => {
 
 app.get('/health', (req, res) => res.json({ ok: true, sessions: STATE.size, dedup: DEDUP.size, dossiers: DOSSIERS.size, leads: LEADS.size, uptime: process.uptime(), ts: new Date().toISOString() }));
 // Commit déployé (injecté par Railway) — pour vérifier un déploiement d'un coup d'œil.
+// [auto-deploy-test] modif neutre pour vérifier qu'un push GitHub redéploie le bot — à retirer après validation.
 app.get('/version', (req, res) => {
   const sha = process.env.RAILWAY_GIT_COMMIT_SHA || process.env.COMMIT_SHA || process.env.SOURCE_VERSION || '';
   res.json({
