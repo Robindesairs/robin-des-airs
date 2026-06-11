@@ -725,6 +725,23 @@ const AI = (() => {
 })();
 
 // ═══════════════ MACHINE À ÉTATS v8 ═══════════════
+// Archive durable d'une pièce envoyée au bot (passeport/CNI, carte d'embarquement, e-billet,
+// certificat, reçu de frais) → Netlify Blobs (store 'pieces', clé wa/<tel>/…). Best-effort :
+// télécharge l'image WATI puis la pousse vers /api/piece-store. N'impacte jamais le parcours.
+async function archivePiece(phone, kind, mediaUrl, cfg) {
+  try {
+    if (!phone || !mediaUrl) return;
+    const r = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {} });
+    if (!r.ok) return;
+    const mime = (r.headers.get('content-type') || 'image/jpeg').split(';')[0].trim();
+    const buf = Buffer.from(await r.arrayBuffer());
+    if (!buf.length || buf.length > 8000000) return;
+    await fetch('https://robindesairs.eu/api/piece-store', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone, kind: kind || 'piece', mime, dataBase64: buf.toString('base64'), secret: (process.env.WATI_WEBHOOK_SECRET || '').trim() }),
+    });
+  } catch (e) { console.error('archivePiece', e.message); }
+}
 async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   const input = (text || '').trim();
   const lower = input.toLowerCase();
@@ -750,6 +767,13 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   }
 
   let s = await getState(phone);
+
+  // Archive durable de TOUTE pièce envoyée (image/PDF) → Blobs, best-effort, ne bloque pas le flux.
+  // Clé par téléphone (la réf n'existe pas encore en collecte) ; la récupération résout réf→tel.
+  if (mediaUrl) {
+    const KIND = { doc_pass: 'identite', doc_pass_confirm: 'identite', doc_boarding: 'carte-embarquement', doc_eticket: 'ebillet', doc_cert: 'certificat', done: 'justificatif', frais: 'frais' };
+    archivePiece(phone, KIND[s.step] || 'document', mediaUrl, cfg).catch(() => {});
+  }
 
   // T1.2 — Demande de rappel humain : à tout moment (hors étapes documents qui ont leur propre "appel"),
   // "appel" flague le dossier pour la liste « À rappeler » du Bureau et rassure le client.
