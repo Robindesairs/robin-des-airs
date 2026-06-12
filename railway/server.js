@@ -430,7 +430,7 @@ function cleanName(n) { n = (n || '').trim(); if (n.includes('/')) { const [a, b
 // '' = saisie inutilisable (vide, nombre, trop long) → on repose la question.
 function cleanCity(input) {
   const c = String(input || '').replace(/[«»"]/g, '').replace(/\s+/g, ' ').trim();
-  if (c.length < 2 || c.length > 40 || /^\d+$/.test(c) || !/[a-zà-öø-ÿ]/i.test(c)) return '';
+  if (c.length < 2 || c.length > 40 || /^\d+$/.test(c) || /^\[/.test(c) || !/[a-zà-öø-ÿ]/i.test(c)) return '';
   if (c.length === 3 && /^[a-z]{3}$/i.test(c) && c !== c.toLowerCase()) return c.toUpperCase(); // « DSS », « Cdg » = code aéroport
   return c.charAt(0).toUpperCase() + c.slice(1);
 }
@@ -1040,6 +1040,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     return sendButtons(phone, { body: `Ce vol faisait-il partie d'une *correspondance* (un autre vol juste avant ou juste après) ?`, buttons: [{ id: 'corr_direct', text: '✈️ Non, vol direct' }, { id: 'corr_escale', text: '🔄 Oui, correspondance' }] }, cfg);
   }
   // ── Correspondance GUIDÉE ville par ville : départ → escale(s) → arrivée finale → n° des vols ──
+  // Une photo envoyée en plein milieu = le client tend son e-billet → on bascule sur le scan (il lit tout d'un coup).
+  if (/^esc_/.test(s.step) && mediaUrl) { s.step = 'scan'; await setState(phone, s); return handleMessage(phone, text, cfg, mediaUrl, replyId, true); }
   if (s.step === 'esc_dep') {
     const city = cleanCity(input);
     if (!city) return send(phone, `🛫 Indiquez la ville de *départ* de votre voyage _(ex : Dakar)_ :`, cfg);
