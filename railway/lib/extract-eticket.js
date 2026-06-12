@@ -15,13 +15,14 @@
 
 const PROMPT = `Tu lis un E-BILLET / une CONFIRMATION DE RÉSERVATION d'avion (souvent PLUSIEURS passagers, et parfois un ALLER + un RETOUR).
 Extrais TOUTES les informations nécessaires à un mandat de réclamation. Réponds UNIQUEMENT en JSON, ce schéma exact :
-{"lisible":true,"confidence":1.0,"multi_pnr":false,"compagnie":"","pnr":"","aller_retour":false,
+{"lisible":true,"confidence":1.0,"multi_pnr":false,"compagnie":"","pnr":"","numero_billet":"","aller_retour":false,
  "trajets":[{"sens":"aller","date":"","depart":"","arrivee":"","segments":[{"vol":"","depart":"","arrivee":"","date":""}]}],
  "passagers":[{"nom":"","prenom":"","date_naissance":""}]}
 Règles STRICTES :
 - lisible / confidence : si le document est trop FLOU, SOMBRE, COUPÉ, incliné ou compressé pour lire les champs clés (n° de vol, PNR, noms) avec CERTITUDE → lisible=false, confidence basse (≤0.4) et laisse VIDES les champs incertains. NE DEVINE JAMAIS un n° de vol "probable" pour remplir : mieux vaut vide que faux.
 - compagnie : nom complet de la compagnie (déduis du code IATA du vol, ex. AF → Air France).
 - pnr : le RECORD LOCATOR de la COMPAGNIE (6 caractères alphanumériques, contient des LETTRES, souvent près du code-barres ou des segments). Libellés possibles : PNR, Booking ref, Réf, Confirmation, Dossier, Record locator, Airline ref, Réf. transporteur, Localizador, Buchungscode, Filekey. PRÉFÈRE-le à la référence de l'AGENCE/OTA (eDreams, Opodo, Gotogate, Wakanow…). IGNORE une référence PUREMENT NUMÉRIQUE (c'est une réf agence, pas un PNR). Si vraiment absent, "".
+- numero_billet : le NUMÉRO DE BILLET électronique (e-ticket, ex. 057-1234567890) = 13 chiffres (3 du code compagnie + 10). Libellés : Numéro de billet, Ticket number, e-Ticket, Billet n°, Ticket/Document no. C'est une AUTRE référence EN PLUS du PNR — ne le mets PAS dans pnr (le PNR contient des lettres), et ne le confonds pas avec une réf agence/OTA. Si absent, "".
 - multi_pnr : true s'il y a PLUSIEURS réservations DISTINCTES (PNR différents) sur le(s) document(s) — dans ce cas NE FUSIONNE PAS les passagers, signale-le simplement.
 - trajets : UN objet par DIRECTION de voyage.
    • Une CORRESPONDANCE (escale) reste DANS LE MÊME trajet, MÊME si le vol suivant part le LENDEMAIN (escale de NUIT — fréquent sur les retours d'Afrique : ex. Dakar→Casablanca le soir puis Casablanca→Paris le lendemain matin = UN SEUL trajet).
@@ -104,6 +105,11 @@ function normalize(raw) {
   const pnrRaw = String(raw.pnr || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
   // Un vrai record locator compagnie contient des LETTRES → on rejette un code purement numérique (= réf agence/OTA).
   const pnr = (/^[A-Z0-9]{5,8}$/.test(pnrRaw) && /[A-Z]/.test(pnrRaw)) ? pnrRaw : '';
+  // N° de billet e-ticket (13 chiffres) → référence de SECOURS si le PNR est absent : pour la
+  // compagnie, le n° de billet identifie la réservation aussi bien que le record locator.
+  const billetRaw = String(raw.numero_billet || '').replace(/\D/g, '');
+  const billet = /^\d{13,14}$/.test(billetRaw) ? billetRaw : '';
+  const reference = pnr || billet; // ce qu'on utilisera comme « PNR » dans le tunnel + le mandat
   // Passagers : dédoublonnés par nom (un même passager peut figurer sur 2 pages photographiées).
   const byName = new Map();
   for (const p of (Array.isArray(raw.passagers) ? raw.passagers : [])) {
@@ -115,7 +121,7 @@ function normalize(raw) {
   const passengers = [...byName.values()];
   // Champs racine = trajet principal (aller, par défaut) → compat avec le tunnel existant ; + trajets[] pour aller/retour.
   return {
-    vol: main.vol, compagnie: String(raw.compagnie || '').trim(), date: main.date, pnr,
+    vol: main.vol, compagnie: String(raw.compagnie || '').trim(), date: main.date, pnr: reference, billet, refType: pnr ? 'pnr' : (billet ? 'billet' : ''),
     depart: main.depart, arrivee: main.arrivee, route: main.route, escale: main.escale, segments: main.segments,
     allerRetour: trajets.length > 1, trajets,
     passengers, pax: passengers.length || 0,
