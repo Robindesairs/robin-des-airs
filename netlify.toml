@@ -219,11 +219,6 @@
   status = 200
 
 [[redirects]]
-  from = "/api/wati-webhook"
-  to = "/.netlify/functions/wati-webhook"
-  status = 200
-
-[[redirects]]
   from = "/api/agency-auth"
   to = "/.netlify/functions/agency-auth"
   status = 200
