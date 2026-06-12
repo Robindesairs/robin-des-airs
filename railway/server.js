@@ -418,7 +418,7 @@ function parseTickerFlight(text) {
   if (!incident) return null; // ni retard ni annulation reconnaissable → ce n'est pas un clic « vol éligible »
   let date = '';
   const dm = t.match(/\b(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})\b/);
-  if (dm) { const yy = dm[3].length === 2 ? '20' + dm[3] : dm[3]; date = `${dm[1].padStart(2, '0')}/${dm[2].padStart(2, '0')}/${yy}`; }
+  if (dm) { const yy = dm[3].length === 2 ? '20' + dm[3] : dm[3]; if (isRealDate(dm[1], dm[2], yy)) date = `${dm[1].padStart(2, '0')}/${dm[2].padStart(2, '0')}/${yy}`; } // date invalide (25/00/2026…) → '' = redemandée dans le flux
   return { vol, incident, date };
 }
 // JJ/MM/AAAA → AAAA-MM-JJ (pour input[type=date]). Renvoie '' si pas une date complète.
@@ -572,7 +572,7 @@ async function scanConfirmCard(phone, s, cfg) {
   const header = s._scanWarn
     ? `⚠️ J'ai lu votre billet, mais l'image était *difficile à lire*. Vérifiez bien le *n° de vol* et le *PNR* ci-dessous 👇`
     : pickVariant(phone, 'SCAN_REUSSI');
-  return sendButtons(phone, { body: `${header}${pageLine}\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date || '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ Trajet : ${s.route || '—'}${paxLine}\n\n_E-billet en plusieurs pages ? Envoyez-les, je complète._\nTout est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg);
+  return sendButtons(phone, { body: `${header}${pageLine}\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date ? `${s.date}${isValidStoredDate(s.date) ? ` (${dateEnLettres(s.date)})` : ''}` : '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ Trajet : ${s.route || '—'}${paxLine}\n\n_E-billet en plusieurs pages ? Envoyez-les, je complète._\nTout est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg);
 }
 // Aller-retour détecté → on demande quel vol a été perturbé (l'e-billet ne dit pas ce qui a foiré).
 async function askSens(phone, s, cfg) {
@@ -748,6 +748,30 @@ async function askOcrConfirm(phone, s, cfg, mediaUrl) {
 }
 
 // ─── Helpers prescription / dates ──────────────────────────────────────────────
+// Date calendaire RÉELLE ? JS « corrige » en silence (mois 00 → décembre de l'année
+// d'avant), donc 25/00/2026 passait inFuture/tooOld sans broncher. On vérifie ici.
+function isRealDate(dd, mm, yyyy) {
+  const d = +dd, m = +mm, y = +yyyy;
+  if (!(y >= 1900 && y <= 2099) || !(m >= 1 && m <= 12) || !(d >= 1 && d <= 31)) return false;
+  const dt = new Date(y, m - 1, d);
+  return dt.getFullYear() === y && dt.getMonth() === m - 1 && dt.getDate() === d; // 30/02 etc. débordent
+}
+// Saisie libre → 'JJ/MM/AAAA' normalisé si c'est une vraie date, sinon null.
+// century : préfixe pour les années à 2 chiffres ('20' vol, '19' naissance).
+function parseDateInput(input, century) {
+  const m = String(input || '').match(/(\d{1,2})[\/\-. ](\d{1,2})[\/\-. ](\d{2,4})/);
+  if (!m) return null;
+  if (m[3].length === 3) return null; // « 15/03/202 » = année tronquée, pas une date
+  const yy = m[3].length === 2 ? (century || '20') + m[3] : m[3];
+  if (!isRealDate(m[1], m[2], yy)) return null;
+  return `${m[1].padStart(2, '0')}/${m[2].padStart(2, '0')}/${yy}`;
+}
+// La date du state (OCR ou ancienne saisie) est-elle complète ET réelle ?
+function isValidStoredDate(d) { const m = (d || '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); return !!m && isRealDate(m[1], m[2], m[3]); }
+const MOIS_FR = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
+// '15/03/2026' → '15 mars 2026' (confirmation lisible, lève les inversions JJ/MM).
+function dateEnLettres(d) { const m = (d || '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); if (!m) return d || ''; const j = +m[1]; return `${j === 1 ? '1er' : j} ${MOIS_FR[+m[2] - 1]} ${m[3]}`; }
+const DATE_INVALIDE = (txt) => `🤔 *${txt}* n'existe pas dans le calendrier (vérifiez le jour et le mois).\nRenvoyez la date au format *JJ/MM/AAAA* _(ex. 15/03/2026 pour le 15 mars 2026)_ :`;
 function tooOld(dateStr) { const m = (dateStr || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); if (!m) return false; const d = new Date(+m[3], +m[2] - 1, +m[1]); return (Date.now() - d.getTime()) > 5 * 365.25 * 864e5; }
 // Date sans année (ex. "15/07") → il faut demander l'année (ne jamais la deviner).
 function needYear(d) { return /^\d{1,2}\/\d{1,2}$/.test((d || '').trim()); }
@@ -1072,6 +1096,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (n === '1' || lower.includes('oui')) {
       delete s.scan_pages; delete s._scanWarn;
       if (needYear(s.date)) { s.step = 'annee'; await setState(phone, s); return askYear(phone, s, cfg); }
+      if (s.date && !isValidStoredDate(s.date)) { const bad = s.date; s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, DATE_INVALIDE(bad), cfg); }
       if (inFuture(s.date)) { s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, FUTURE_JOKE, cfg); }
       if (tooOld(s.date)) { await clearState(phone); return send(phone, `${pickVariant(phone, 'PRESCRIPTION_5ANS')}\n\n${STOP_FOOTER}`, cfg); }
       return apresVol(phone, s, cfg);
@@ -1122,12 +1147,15 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     return send(phone, `Numéro non reconnu (ex. AF718). Renvoyez-le :`, cfg);
   }
   if (s.step === 'fix_date') {
-    const m = input.match(/(\d{1,2})[\/\-. ](\d{1,2})[\/\-. ](\d{2,4})/);
-    if (m) { const yy = m[3].length === 2 ? '20' + m[3] : m[3]; const d = `${m[1].padStart(2, '0')}/${m[2].padStart(2, '0')}/${yy}`;
+    const d = parseDateInput(input, '20');
+    if (d) {
       if (inFuture(d)) return send(phone, FUTURE_JOKE, cfg);
       if (tooOld(d)) { await clearState(phone); return send(phone, `${pickVariant(phone, 'PRESCRIPTION_5ANS')}\n\n${STOP_FOOTER}`, cfg); }
-      s.date = d; await setState(phone, s); return afterFix(phone, s, cfg);
+      s.date = d; await setState(phone, s);
+      await send(phone, `✅ Date corrigée : *${d}* — le *${dateEnLettres(d)}*.`, cfg);
+      return afterFix(phone, s, cfg);
     }
+    if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim()), cfg);
     return send(phone, `Date non reconnue. Format JJ/MM/AAAA :`, cfg);
   }
   if (s.step === 'fix_nom') {
@@ -1144,10 +1172,13 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const year = m ? m[1] : null;
     if (year) {
       const d = `${s.date.replace(/\/$/, '')}/${year}`;
+      if (!isValidStoredDate(d)) { s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, DATE_INVALIDE(d), cfg); }
       if (inFuture(d)) { await send(phone, `😄 ${year} ? Ce vol n'a pas encore eu lieu — on réclame pour un vol *déjà passé* ! Choisissez la bonne année 👇`, cfg); return askYear(phone, s, cfg); }
       s.date = d;
       if (tooOld(s.date)) { await clearState(phone); return send(phone, `${pickVariant(phone, 'PRESCRIPTION_5ANS')}\n\n${STOP_FOOTER}`, cfg); }
-      await setState(phone, s); return apresVol(phone, s, cfg);
+      await setState(phone, s);
+      await send(phone, `✅ Vol du *${d}* — le *${dateEnLettres(d)}*.`, cfg);
+      return apresVol(phone, s, cfg);
     }
     return askYear(phone, s, cfg);
   }
@@ -1159,15 +1190,17 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     return send(phone, `Numéro non reconnu (ex. AF718). Renvoyez-le :`, cfg);
   }
   if (s.step === 'm_date') {
-    const m = input.match(/(\d{1,2})[\/\-. ](\d{1,2})[\/\-. ](\d{2,4})/);
-    if (m) { const yy = m[3].length === 2 ? '20' + m[3] : m[3]; const d = `${m[1].padStart(2, '0')}/${m[2].padStart(2, '0')}/${yy}`;
+    const d = parseDateInput(input, '20');
+    if (d) {
       if (inFuture(d)) return send(phone, FUTURE_JOKE, cfg);
       s.date = d;
       if (tooOld(s.date)) { await clearState(phone); return send(phone, `${pickVariant(phone, 'PRESCRIPTION_5ANS')}\n\n${STOP_FOOTER}`, cfg); }
       s.step = (s.route ? 'm_pnr' : 'm_route'); await setState(phone, s);
-      if (s.route) return send(phone, `🎫 Quel est votre *numéro de réservation* (PNR) ?\nC'est un code de 6 lettres/chiffres, sur votre billet ou votre email de confirmation _(ex : TFSCBC)_.\n✏️ Tapez *passer* si vous ne l'avez pas.`, cfg);
-      return send(phone, `🗺️ Quel était le *trajet* ? Indiquez le *départ* et l'*arrivée* (ville ou code aéroport).\n_(ex : Dakar → Paris, ou DSS → CDG)_`, cfg);
+      const ok = `✅ Vol du *${d}* — le *${dateEnLettres(d)}*.`;
+      if (s.route) return send(phone, `${ok}\n\n🎫 Quel est votre *numéro de réservation* (PNR) ?\nC'est un code de 6 lettres/chiffres, sur votre billet ou votre email de confirmation _(ex : TFSCBC)_.\n✏️ Tapez *passer* si vous ne l'avez pas.`, cfg);
+      return send(phone, `${ok}\n\n🗺️ Quel était le *trajet* ? Indiquez le *départ* et l'*arrivée* (ville ou code aéroport).\n_(ex : Dakar → Paris, ou DSS → CDG)_`, cfg);
     }
+    if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim()), cfg);
     return send(phone, `Date non reconnue. Format JJ/MM/AAAA (ex. 15/03/2026) :`, cfg);
   }
   if (s.step === 'm_route') {
@@ -1300,13 +1333,15 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     return send(phone, `Nom trop court. Renvoyez nom et prénom :`, cfg);
   }
   if (s.step === 'doc_dob') {
-    const m = input.match(/(\d{1,2})[\/\-. ](\d{1,2})[\/\-. ](\d{2,4})/);
-    if (m) { const yy = m[3].length === 2 ? '19' + m[3] : m[3]; const dob = `${m[1].padStart(2, '0')}/${m[2].padStart(2, '0')}/${yy}`;
+    const dob = parseDateInput(input, '19');
+    if (dob) {
+      if (inFuture(dob)) return send(phone, `🤔 Cette date de naissance est dans le futur. Renvoyez-la au format JJ/MM/AAAA _(ex. 05/09/2012)_ :`, cfg);
       const minor = isMinorAt(dob, s.date);
       const p = s.passengers[s.doc_idx] || {}; p.dob = dob; p.minor = minor; s.passengers[s.doc_idx] = p;
-      await send(phone, `✅ ${p.name || ('Passager ' + (s.doc_idx + 1))} — ${dob}${minor ? ' 👶 _(mineur·e : signature parentale requise)_' : ''}`, cfg);
+      await send(phone, `✅ ${p.name || ('Passager ' + (s.doc_idx + 1))} — né·e le *${dob}* (${dateEnLettres(dob)})${minor ? ' 👶 _(mineur·e : signature parentale requise)_' : ''}`, cfg);
       s.doc_idx++; await setState(phone, s); return nextPassport(phone, s, cfg);
     }
+    if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim()), cfg);
     return send(phone, `Date non reconnue. Format JJ/MM/AAAA (ex. 05/09/2012) :`, cfg);
   }
   if (s.step === 'doc_boarding') {
@@ -1449,7 +1484,7 @@ async function goCorrection(phone, s, cfg) {
 }
 async function showScanConfirm(phone, s, cfg) {
   s.step = 'scan_confirm'; await setState(phone, s);
-  return sendButtons(phone, { body: `📋 Vérifiez :\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date || '—'}\n🎫 PNR : ${s.pnr || '—'}\n👤 Passager : ${(s.names && s.names[0]) || '—'}\n🗺️ Trajet : ${s.route || '—'}\n\nC'est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg);
+  return sendButtons(phone, { body: `📋 Vérifiez :\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date ? `${s.date}${isValidStoredDate(s.date) ? ` (${dateEnLettres(s.date)})` : ''}` : '—'}\n🎫 PNR : ${s.pnr || '—'}\n👤 Passager : ${(s.names && s.names[0]) || '—'}\n🗺️ Trajet : ${s.route || '—'}\n\nC'est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg);
 }
 async function afterFix(phone, s, cfg) {
   if (s.fix_return === 'recap') return sendRecap(phone, s, cfg);
@@ -1474,7 +1509,7 @@ async function sendMineurs(phone, s, cfg) {
 async function sendRecap(phone, s, cfg) {
   s.step = 'recap'; await setState(phone, s);
   try { markEngagedLead(phone, s); } catch (_) {} // dossier relançable dès que le vol est connu (récupère les abandons avant signature)
-  await sendButtons(phone, { body: `${bar('recap')}\n📋 *Récapitulatif — confirmez svp*\n\n👥 ${s.pax} passager${s.pax > 1 ? 's' : ''}\n_Identités à l'étape suivante (pièce d'identité ou saisie)_\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n🛤️ ${s.type_vol === 'escale' ? 'Avec escale' : 'Direct'}\n${montantLine(s)}`, buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Modifier' }] }, cfg);
+  await sendButtons(phone, { body: `${bar('recap')}\n📋 *Récapitulatif — confirmez svp*\n\n👥 ${s.pax} passager${s.pax > 1 ? 's' : ''}\n_Identités à l'étape suivante (pièce d'identité ou saisie)_\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date ? `${s.date}${isValidStoredDate(s.date) ? ` (${dateEnLettres(s.date)})` : ''}` : '—'} — ${s.incident_libelle || '—'}\n🛤️ ${s.type_vol === 'escale' ? 'Avec escale' : 'Direct'}\n${montantLine(s)}`, buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Modifier' }] }, cfg);
 }
 
 // Vérifie le vol (vols DIRECTS uniquement) et adapte montant + message. Idempotent, best-effort.
