@@ -141,7 +141,8 @@ exports.handler = async (event) => {
         alerteLigne +
         `MED générée pour ${claim.passengerName} · vol ${claim.vol || '—'} · ${montant} €${claim.exigerCash ? ' · CASH exigé' : ''}\n` +
         `Canal: ${(airline && airline.entryMode) || 'à confirmer'} · Payeur: ${claim.conversion} · NEB: ${claim.neb || '—'}\n` +
-        `À VALIDER puis envoyer (mandat requis pour le paiement sur compte tiers).`
+        `À VALIDER puis envoyer (mandat requis pour le paiement sur compte tiers).\n` +
+        `⚠️ Vérifier que la PIÈCE D'IDENTITÉ de chaque passager est présente (= identité du mandant) AVANT l'envoi — sinon réclamation invérifiable/contestable.`
       );
     } catch (_) {}
   }

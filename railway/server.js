@@ -1529,6 +1529,17 @@ async function finaliser(phone, s, cfg) {
   const minorNote = s.minorsCount ? `\n👶 ${s.minorsCount} mineur·s : signature d'un parent/tuteur requise (un expert vous guide).` : '';
   await send(phone, `${bar('done')}\n🎉 *Dossier complet !* Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n${montantLine(s)}${minorNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % au succès uniquement · 🔒 aucune info bancaire.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_\n\n👉 *Signez ici :*\n${s.mandat_url}\n\nSans votre signature, on ne peut pas agir en votre nom. ${STOP_FOOTER}`, cfg);
   try { const makeUrl = process.env.MAKE_WEBHOOK_NEW_DOSSIER; if (makeUrl) await fetch(makeUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...s, phone, source: 'wati-bot-v8' }) }); } catch (e) {}
+  // Garde-fou anti-zombie : dossier finalisé avec pièce(s) manquante(s) → on alerte l'équipe EXPLICITEMENT.
+  // (le client est relancé tant qu'il n'a pas signé ; après signature le lead est purgé du bot → c'est au bureau de chasser.)
+  try {
+    const _st = docsStatus(s);
+    if (_st.missingId.length || !_st.travelProofOk) {
+      const _miss = [];
+      if (_st.missingId.length) _miss.push(`pièce d'identité de ${_st.missingId.join(', ')}`);
+      if (!_st.travelProofOk) _miss.push(`preuve de voyage (carte d'embarquement / e-billet)`);
+      notifyOwnerWhatsApp(phone, `⚠️ Dossier ${s.ref} (${nom}) — PIÈCE(S) MANQUANTE(S) : ${_miss.join(' · ')}.\nÀ récupérer (dépôt en ligne / appel expert) AVANT d'envoyer la mise en demeure — sinon réclamation invérifiable.`).catch(() => {});
+    }
+  } catch (_) {}
 }
 
 // ─── FRAIS (Art. 8 & 9 CE261) — APRÈS signature, on propose d'envoyer les reçus (hôtel/taxi/repas/billet…)
