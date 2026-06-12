@@ -175,7 +175,7 @@ const PROGRESS = {
   incident: 2, duree: 2, annul_delai: 2,
   nb_pax: 3, nb_pax_exact: 3,
   type_vol: 4, motivation: 4,
-  scan: 5, scan_confirm: 5, m_vol: 5, m_date: 5, m_route: 5, m_route_confirm: 5, m_pnr: 5, names: 5, names_confirm: 5, names_fix_which: 5, names_fix_one: 5,
+  scan: 5, scan_confirm: 5, m_vol: 5, m_date: 5, m_route: 5, m_route_confirm: 5, m_dep: 5, m_arr: 5, m_pnr: 5, names: 5, names_confirm: 5, names_fix_which: 5, names_fix_one: 5,
   esc_dep: 5, esc_via: 5, esc_more: 5, esc_arr: 5, esc_vol: 5,
   annee: 6, mineurs: 6, mineurs_which: 6,
   correction: 6, fix_vol: 6, fix_date: 6, fix_nom: 6, fix_route: 6,
@@ -979,7 +979,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // ⚠️ Jamais intercepté si c'est une réponse interactive (bouton/liste) : replyId présent → flux prioritaire
   try {
     const { isClientQuestion, isSensitive, answerClientQuestion } = AI;
-    const FREE = ['m_vol', 'm_date', 'm_route', 'm_pnr', 'leg_count', 'leg_input', 'esc_dep', 'esc_via', 'esc_arr', 'esc_vol', 'names', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob'];
+    const FREE = ['m_vol', 'm_date', 'm_route', 'm_dep', 'm_arr', 'm_pnr', 'leg_count', 'leg_input', 'esc_dep', 'esc_via', 'esc_arr', 'esc_vol', 'names', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob'];
     const looks = !id && (FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input));
     if (looks) {
       if (isSensitive(input)) { await send(phone, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nÉcrivez *go* pour continuer votre dossier.`, cfg); return; }
@@ -1348,8 +1348,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
         s.step = 'm_route_confirm'; await setState(phone, s);
         return sendButtons(phone, { body: `✈️ J'ai retrouvé votre trajet : *${s.route}*${s.compagnie ? ` (${s.compagnie})` : ''}.\nC'est bien ça ?`, buttons: [{ id: 'route_ok', text: '✅ Oui, c\'est ça' }, { id: 'route_fix', text: '✏️ Corriger' }] }, cfg);
       }
-      s.step = 'm_route'; await setState(phone, s);
-      return send(phone, `🗺️ Quel était le *trajet* ? Indiquez le *départ* et l'*arrivée* (ville ou code aéroport).\n_(ex : Dakar → Paris, ou DSS → CDG)_`, cfg);
+      // Introuvable / API muette → on demande le trajet en 2 questions imagées (décollage 🛫 / atterrissage 🛬).
+      return askDepCity(phone, s, cfg);
     }
     if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim()), cfg);
     return send(phone, `Date non reconnue. Format JJ/MM/AAAA (ex. 15/03/2026) :`, cfg);
@@ -1361,16 +1361,31 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       return gotoPnr(phone, s, cfg);
     }
     if (id === 'route_fix' || n === '2' || lower.includes('corrig') || lower.startsWith('non') || lower.includes('faux')) {
-      s.route = ''; s.step = 'm_route'; await setState(phone, s);
-      return send(phone, `🗺️ Pas de souci — quel était le *trajet* ? Indiquez le *départ → arrivée* _(ex : Dakar → Paris, ou DSS → CDG)_`, cfg);
+      s.route = ''; await setState(phone, s);
+      return askDepCity(phone, s, cfg, `🗺️ Pas de souci, on le fait ensemble.`);
     }
     return sendButtons(phone, { body: `✈️ Votre trajet était *${s.route}* ?`, buttons: [{ id: 'route_ok', text: '✅ Oui' }, { id: 'route_fix', text: '✏️ Corriger' }] }, cfg);
   }
-  if (s.step === 'm_route') {
-    let r = input.trim().replace(/\s*(?:->|→|—|–|,|\s-\s|\bvers\b|\bà\b)\s*/gi, ' → ');
-    if (!r.includes('→')) { const parts = r.split(/\s+/); if (parts.length === 2) r = parts.join(' → '); }
-    if (r.length >= 3) { s.route = r; return gotoPnr(phone, s, cfg); }
-    return send(phone, `🗺️ Indiquez le trajet : *départ → arrivée* _(ex : Dakar → Paris)_`, cfg);
+  // Trajet direct en 2 questions claires : d'où l'avion DÉCOLLE 🛫, puis où il ATTERRIT 🛬.
+  if (s.step === 'm_dep') {
+    const pair = parseRoutePair(input); // tolère un client qui tape « Dakar → Paris » d'un coup
+    if (!id && pair) { s.route = `${pair[0]} → ${pair[1]}`; await setState(phone, s); return gotoPnr(phone, s, cfg, `✅ Trajet : *${s.route}*`); }
+    const pk = cityPick(input, id, VILLES_COURANTES);
+    if (pk && pk.autre) return send(phone, `✏️ Tapez la ville d'où votre avion *décolle* _(ex : Cotonou, ou le code DSS)_ :`, cfg);
+    if (!pk) return askDepCity(phone, s, cfg);
+    s.depCity = pk.city; await setState(phone, s);
+    await send(phone, `✅ Décollage : *${pk.city}* 🛫`, cfg);
+    return askArrCity(phone, s, cfg);
+  }
+  if (s.step === 'm_arr') {
+    const pk = cityPick(input, id, VILLES_COURANTES);
+    if (pk && pk.autre) return send(phone, `✏️ Tapez la ville où votre avion *atterrit* _(ex : Toulouse, ou le code CDG)_ :`, cfg);
+    if (!pk) return askArrCity(phone, s, cfg);
+    if (s.depCity && pk.city.toLowerCase() === s.depCity.toLowerCase()) {
+      return send(phone, `🤔 L'arrivée (*${pk.city}*) est identique au départ — pour un *aller-retour*, décrivez le vol qui a eu le problème.\n🛬 Dans quelle ville votre avion *atterrit*-il ?`, cfg);
+    }
+    s.route = `${s.depCity} → ${pk.city}`; await setState(phone, s);
+    return gotoPnr(phone, s, cfg, `✅ Trajet : *${s.route}* 🛬`);
   }
   if (s.step === 'm_pnr') {
     if (lower === 'passer' || lower === 'non' || lower === 'skip') { await setState(phone, s); return apresVol(phone, s, cfg); }
@@ -1673,6 +1688,24 @@ async function gotoPnr(phone, s, cfg, prefix) {
   s.step = 'm_pnr'; await setState(phone, s);
   return send(phone, `${prefix ? prefix + '\n\n' : ''}🎫 Quel est votre *numéro de réservation* (PNR) ?\nC'est un code de 6 lettres/chiffres, sur votre billet ou votre email de confirmation _(ex : TFSCBC)_.\n✏️ Tapez *passer* si vous ne l'avez pas.`, cfg);
 }
+// Trajet direct (repli quand AeroDataBox n'a pas trouvé) : 2 questions imagées, listes cliquables + Autre.
+async function askDepCity(phone, s, cfg, prefix) {
+  s.step = 'm_dep'; await setState(phone, s);
+  return sendCityList(phone, { header: 'Ville de départ', body: `${prefix ? prefix + '\n\n' : ''}🛫 De quelle ville votre *avion décolle*-t-il ?` }, VILLES_COURANTES, cfg);
+}
+async function askArrCity(phone, s, cfg) {
+  s.step = 'm_arr'; await setState(phone, s);
+  return sendCityList(phone, { header: 'Ville d\'arrivée', body: `🛬 Et dans quelle ville votre *avion atterrit*-il ? _(votre arrivée)_` }, VILLES_COURANTES, cfg);
+}
+// Tolère un trajet tapé d'un coup (« Dakar → Paris », « Dakar Paris », « DSS-CDG ») → [dep, arr], sinon null.
+function parseRoutePair(input) {
+  const codePair = String(input || '').trim().match(/^([a-z]{3})\s*[-\/]\s*([a-z]{3})$/i); // « DSS-CDG » sans toucher « Saint-Louis »
+  if (codePair) return [codePair[1].toUpperCase(), codePair[2].toUpperCase()];
+  let r = String(input || '').trim().replace(/\s*(?:->|→|—|–|,|\s-\s|\bvers\b|\bà\b)\s*/gi, ' → ');
+  let parts = r.includes('→') ? r.split('→') : (r.split(/\s+/).length === 2 ? r.split(/\s+/) : []);
+  parts = parts.map((x) => cleanCity(x)).filter(Boolean);
+  return parts.length === 2 ? parts : null;
+}
 // Entrée du parcours correspondance GUIDÉ : une question = une info.
 // Ville de départ (liste corridor) → escale(s) (liste 9 hubs + Autre) → arrivée finale (code/ville) → n° vols.
 async function askEscDep(phone, s, cfg, intro) {
@@ -1878,6 +1911,8 @@ async function relancerEtape(phone, s, cfg) {
     case 'm_vol': return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
     case 'm_date': return send(phone, `📅 Date du vol ? _(ex. 15/03/2026)_`, cfg);
     case 'm_route': return send(phone, `🗺️ Quel était le *trajet* ? _(ex : Dakar → Paris, ou DSS → CDG)_`, cfg);
+    case 'm_dep': return askDepCity(phone, s, cfg);
+    case 'm_arr': return askArrCity(phone, s, cfg);
     case 'm_pnr': return gotoPnr(phone, s, cfg);
     case 'doc_pass': case 'doc_pass_confirm': case 'doc_dob': case 'doc_name': return nextPassport(phone, s, cfg);
     case 'doc_mandant': return askMandant(phone, s, cfg);
