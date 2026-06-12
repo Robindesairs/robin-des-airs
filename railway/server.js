@@ -1369,10 +1369,19 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       if (stops.length >= 3) { s.routeStops = stops; await setState(phone, s); return askStopArr(phone, s, cfg); }
       // Vol simple A → B retrouvé → confirmation 1 tap.
       if (stops.length === 2) {
-        s.route = `${stops[0].label} → ${stops[1].label}`; s.step = 'm_route_confirm'; await setState(phone, s);
-        return sendButtons(phone, { body: `✈️ J'ai retrouvé votre trajet : *${s.route}*${s.compagnie ? ` (${s.compagnie})` : ''}.\nC'est bien ça ?`, buttons: [{ id: 'route_ok', text: '✅ Oui, c\'est ça' }, { id: 'route_fix', text: '✏️ Corriger' }] }, cfg);
+        s.route = `${stops[0].label} → ${stops[1].label}`;
+        return askRouteConfirm(phone, s, cfg);
       }
-      // Introuvable / API muette → on demande le trajet en 2 questions imagées (décollage 🛫 / atterrissage 🛬).
+      // flight-info muet → on RETENTE flight-verdict (en cache + extraction route plus simple) AVANT de
+      // demander la route au client. Évite « il a trouvé le vol mais me redemande la route ». Le verdict
+      // est MÉMORISÉ (s._verdict) pour ne pas rappeler l'API à l'étape éligibilité.
+      const vFallback = await fetchFlightVerdict(s.vol, s.date, 'direct');
+      if (vFallback && vFallback.route && /→/.test(vFallback.route)) {
+        s.route = vFallback.route; if (vFallback.airline && !s.compagnie) s.compagnie = vFallback.airline;
+        s._verdict = vFallback;
+        return askRouteConfirm(phone, s, cfg);
+      }
+      // Vol vraiment non retrouvé → on demande le trajet en 2 questions imagées (décollage 🛫 / atterrissage 🛬).
       return askDepCity(phone, s, cfg);
     }
     if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim()), cfg);
@@ -1734,6 +1743,11 @@ async function afterFix(phone, s, cfg) {
   return showScanConfirm(phone, s, cfg);
 }
 async function estimationPuisPax(phone, s, cfg) { s.step = 'nb_pax'; await setState(phone, s); await send(phone, pickVariant(phone, 'ESTIMATION_QUALIFICATION'), cfg); return sendPax(phone, s, cfg); }
+// Confirmation 1 tap du trajet retrouvé automatiquement (flight-info ou flight-verdict).
+async function askRouteConfirm(phone, s, cfg) {
+  s.step = 'm_route_confirm'; await setState(phone, s);
+  return sendButtons(phone, { body: `✈️ J'ai retrouvé votre trajet : *${s.route}*${s.compagnie ? ` (${s.compagnie})` : ''}.\nC'est bien ça ?`, buttons: [{ id: 'route_ok', text: '✅ Oui, c\'est ça' }, { id: 'route_fix', text: '✏️ Corriger' }] }, cfg);
+}
 // Demande du PNR (factorisé : utilisé après date+route, après confirmation/saisie du trajet).
 async function gotoPnr(phone, s, cfg, prefix) {
   s.step = 'm_pnr'; await setState(phone, s);
@@ -1814,7 +1828,8 @@ async function applyFlightVerdict(phone, s, cfg) {
   if (s.flightChecked) return;
   if (s.type_vol === 'escale') { s.flightVerdict = 'a_verifier'; return; } // correspondance → expert, pas d'appel
   if (!s.vol || !s.date) return; // pas assez d'infos → on garde le déclaratif
-  const v = await fetchFlightVerdict(s.vol, s.date, 'direct');
+  const v = s._verdict || await fetchFlightVerdict(s.vol, s.date, 'direct'); // réutilise le verdict déjà obtenu en m_date (zéro double appel)
+  if (s._verdict) delete s._verdict;
   s.flightChecked = true;
   if (!v || v.verdict === 'introuvable') return; // vol non retrouvé → silence, on garde le déclaratif (jamais de "non")
   s.flightVerdict = v.verdict;
