@@ -477,6 +477,24 @@ exports.handler = async (event) => {
     };
   }
 
+  // SÉCURITÉ (audit) : on ne signe QUE pour un dossier RÉEL pré-existant (m/<ref> créé par le bot,
+  // réf indevinable ~72 bits). Empêche la forge de fausses signatures et l'empoisonnement de
+  // /api/is-signed pour des réfs arbitraires/devinées. Même modèle que /api/depot-upload (prod).
+  if (netlifyBlobsModule) {
+    try {
+      if (netlifyBlobsModule.connectLambda && event) netlifyBlobsModule.connectLambda(event);
+      const dossierExists = await netlifyBlobsModule.getStore('mandats').get('m/' + ref, { type: 'json' });
+      if (!dossierExists) {
+        console.warn(`submit-mandat: REFUS signature — dossier inconnu pour ref=${ref} (forge probable)`);
+        return { statusCode: 403, headers: HEADERS, body: JSON.stringify({ error: 'Dossier inconnu ou lien expiré. Contactez-nous : contact@robindesairs.eu' }) };
+      }
+    } catch (e) {
+      // Panne Blobs : on ne bloque pas une VRAIE signature pour une panne d'infra (le stockage
+      // de la signature échouerait de toute façon). Loggé pour visibilité.
+      console.error('submit-mandat: vérif dossier impossible (Blobs):', e.message);
+    }
+  }
+
   const ts = body.signedAt || new Date().toISOString();
   const certId = generateCertId(phone, ref, ts);
 
@@ -582,11 +600,17 @@ exports.handler = async (event) => {
       const blobs = netlifyBlobsModule;
       if (blobs.connectLambda && event) blobs.connectLambda(event);
       const store = blobs.getStore(STORE_NAME);
-      const pdfSha = require('crypto').createHash('sha256').update(pdfBuffer).digest('hex');
-      await store.set(`pdf/${ref}`, pdfBuffer.toString('base64'), {
-        metadata: { ref, cert_id: certId, sha256: pdfSha, signed_at: ts, bytes: pdfBuffer.length },
-      });
-      console.log(`submit-mandat: PDF archivé pdf/${ref} (${pdfBuffer.length} o · sha ${pdfSha.slice(0, 12)}…)`);
+      // Immutabilité (audit sécu) : ne JAMAIS écraser un PDF déjà archivé (preuve eIDAS du 1er signataire).
+      const already = await store.getMetadata(`pdf/${ref}`).catch(() => null);
+      if (already && already.metadata) {
+        console.warn(`submit-mandat: PDF déjà archivé pour ${ref} — pas d'écrasement (immutabilité)`);
+      } else {
+        const pdfSha = require('crypto').createHash('sha256').update(pdfBuffer).digest('hex');
+        await store.set(`pdf/${ref}`, pdfBuffer.toString('base64'), {
+          metadata: { ref, cert_id: certId, sha256: pdfSha, signed_at: ts, bytes: pdfBuffer.length },
+        });
+        console.log(`submit-mandat: PDF archivé pdf/${ref} (${pdfBuffer.length} o · sha ${pdfSha.slice(0, 12)}…)`);
+      }
     } catch (e) { console.error('submit-mandat: archive PDF échouée:', e.message); }
   }
   // Génère le PDF bilingue FR/EN (pour les compagnies étrangères) — joint à la notif équipe
