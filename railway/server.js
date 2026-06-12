@@ -175,7 +175,7 @@ const PROGRESS = {
   incident: 2, duree: 2, annul_delai: 2,
   nb_pax: 3, nb_pax_exact: 3,
   type_vol: 4, motivation: 4,
-  scan: 5, scan_confirm: 5, m_vol: 5, m_date: 5, m_route: 5, names: 5, names_confirm: 5, names_fix_which: 5, names_fix_one: 5,
+  scan: 5, scan_confirm: 5, m_vol: 5, m_date: 5, m_route: 5, m_route_confirm: 5, m_pnr: 5, names: 5, names_confirm: 5, names_fix_which: 5, names_fix_one: 5,
   esc_dep: 5, esc_via: 5, esc_more: 5, esc_arr: 5, esc_vol: 5,
   annee: 6, mineurs: 6, mineurs_which: 6,
   correction: 6, fix_vol: 6, fix_date: 6, fix_nom: 6, fix_route: 6,
@@ -387,6 +387,14 @@ async function fetchFlightVerdict(vol, date, typeVol) {
     const j = await res.json();
     return (j && j.ok) ? j : null;
   } catch (_) { return null; }
+}
+// Résout le TRAJET depuis le n° de vol via AeroDataBox (best-effort) — évite de faire taper la route
+// au client quand il n'a ni e-billet ni carte. Le trajet est ensuite CONFIRMÉ d'un tap (jamais imposé :
+// un codeshare/escale mal résolu se corrige). Garde-fou mémoire : la route vient de l'API, jamais d'un LLM.
+async function resolveRoute(vol, date) {
+  const v = await fetchFlightVerdict(vol, date, 'direct');
+  if (v && v.route && /→/.test(v.route)) return { route: v.route, compagnie: v.airline || v.compagnie || '' };
+  return null;
 }
 // Ordonne les segments d'une correspondance par chaînage (arrivée d'un vol = départ du suivant),
 // quel que soit l'ordre de saisie. Renvoie null si non chaînable (aéroports manquants/boucle) → on garde l'ordre saisi.
@@ -1330,18 +1338,38 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       if (inFuture(d)) return send(phone, FUTURE_JOKE, cfg);
       s.date = d;
       if (tooOld(s.date)) { await clearState(phone); return send(phone, `${pickVariant(phone, 'PRESCRIPTION_5ANS')}\n\n${STOP_FOOTER}`, cfg); }
-      s.step = (s.route ? 'm_pnr' : 'm_route'); await setState(phone, s);
       const ok = `✅ Vol du *${d}* — le *${dateEnLettres(d)}*.`;
-      if (s.route) return send(phone, `${ok}\n\n🎫 Quel est votre *numéro de réservation* (PNR) ?\nC'est un code de 6 lettres/chiffres, sur votre billet ou votre email de confirmation _(ex : TFSCBC)_.\n✏️ Tapez *passer* si vous ne l'avez pas.`, cfg);
-      return send(phone, `${ok}\n\n🗺️ Quel était le *trajet* ? Indiquez le *départ* et l'*arrivée* (ville ou code aéroport).\n_(ex : Dakar → Paris, ou DSS → CDG)_`, cfg);
+      if (s.route) return gotoPnr(phone, s, cfg, ok);
+      // Pas de route (ni scan ni saisie) → on tente de la RETROUVER depuis le n° de vol (AeroDataBox).
+      await send(phone, ok, cfg);
+      const rr = await resolveRoute(s.vol, s.date);
+      if (rr && rr.route) {
+        s.route = rr.route; if (rr.compagnie && !s.compagnie) s.compagnie = rr.compagnie;
+        s.step = 'm_route_confirm'; await setState(phone, s);
+        return sendButtons(phone, { body: `✈️ J'ai retrouvé votre trajet : *${s.route}*${s.compagnie ? ` (${s.compagnie})` : ''}.\nC'est bien ça ?`, buttons: [{ id: 'route_ok', text: '✅ Oui, c\'est ça' }, { id: 'route_fix', text: '✏️ Corriger' }] }, cfg);
+      }
+      s.step = 'm_route'; await setState(phone, s);
+      return send(phone, `🗺️ Quel était le *trajet* ? Indiquez le *départ* et l'*arrivée* (ville ou code aéroport).\n_(ex : Dakar → Paris, ou DSS → CDG)_`, cfg);
     }
     if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim()), cfg);
     return send(phone, `Date non reconnue. Format JJ/MM/AAAA (ex. 15/03/2026) :`, cfg);
   }
+  // Confirmation du trajet retrouvé automatiquement (AeroDataBox) — 1 tap, ou correction manuelle.
+  if (s.step === 'm_route_confirm') {
+    const n = normInput(input, ['oui', 'corriger']);
+    if (id === 'route_ok' || n === '1' || lower.startsWith('oui') || lower.includes('correct') || lower.includes('exact') || lower === 'ok' || lower === 'c\'est ça' || lower === 'cest ca') {
+      return gotoPnr(phone, s, cfg);
+    }
+    if (id === 'route_fix' || n === '2' || lower.includes('corrig') || lower.startsWith('non') || lower.includes('faux')) {
+      s.route = ''; s.step = 'm_route'; await setState(phone, s);
+      return send(phone, `🗺️ Pas de souci — quel était le *trajet* ? Indiquez le *départ → arrivée* _(ex : Dakar → Paris, ou DSS → CDG)_`, cfg);
+    }
+    return sendButtons(phone, { body: `✈️ Votre trajet était *${s.route}* ?`, buttons: [{ id: 'route_ok', text: '✅ Oui' }, { id: 'route_fix', text: '✏️ Corriger' }] }, cfg);
+  }
   if (s.step === 'm_route') {
     let r = input.trim().replace(/\s*(?:->|→|—|–|,|\s-\s|\bvers\b|\bà\b)\s*/gi, ' → ');
     if (!r.includes('→')) { const parts = r.split(/\s+/); if (parts.length === 2) r = parts.join(' → '); }
-    if (r.length >= 3) { s.route = r; s.step = 'm_pnr'; await setState(phone, s); return send(phone, `🎫 Quel est votre *numéro de réservation* (PNR) ?\nC'est un code de 6 lettres/chiffres, sur votre billet ou votre email de confirmation _(ex : TFSCBC)_.\n✏️ Tapez *passer* si vous ne l'avez pas.`, cfg); }
+    if (r.length >= 3) { s.route = r; return gotoPnr(phone, s, cfg); }
     return send(phone, `🗺️ Indiquez le trajet : *départ → arrivée* _(ex : Dakar → Paris)_`, cfg);
   }
   if (s.step === 'm_pnr') {
@@ -1640,6 +1668,11 @@ async function afterFix(phone, s, cfg) {
   return showScanConfirm(phone, s, cfg);
 }
 async function estimationPuisPax(phone, s, cfg) { s.step = 'nb_pax'; await setState(phone, s); await send(phone, pickVariant(phone, 'ESTIMATION_QUALIFICATION'), cfg); return sendPax(phone, s, cfg); }
+// Demande du PNR (factorisé : utilisé après date+route, après confirmation/saisie du trajet).
+async function gotoPnr(phone, s, cfg, prefix) {
+  s.step = 'm_pnr'; await setState(phone, s);
+  return send(phone, `${prefix ? prefix + '\n\n' : ''}🎫 Quel est votre *numéro de réservation* (PNR) ?\nC'est un code de 6 lettres/chiffres, sur votre billet ou votre email de confirmation _(ex : TFSCBC)_.\n✏️ Tapez *passer* si vous ne l'avez pas.`, cfg);
+}
 // Entrée du parcours correspondance GUIDÉ : une question = une info.
 // Ville de départ (liste corridor) → escale(s) (liste 9 hubs + Autre) → arrivée finale (code/ville) → n° vols.
 async function askEscDep(phone, s, cfg, intro) {
@@ -1841,6 +1874,11 @@ async function relancerEtape(phone, s, cfg) {
     case 'mineurs': return sendMineurs(phone, s, cfg);
     case 'recap': return sendRecap(phone, s, cfg);
     case 'names': return askName(phone, s, cfg);
+    case 'm_route_confirm': return s.route ? sendButtons(phone, { body: `✈️ Votre trajet était *${s.route}* ?`, buttons: [{ id: 'route_ok', text: '✅ Oui' }, { id: 'route_fix', text: '✏️ Corriger' }] }, cfg) : send(phone, `🗺️ Quel était le *trajet* ? _(ex : Dakar → Paris)_`, cfg);
+    case 'm_vol': return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
+    case 'm_date': return send(phone, `📅 Date du vol ? _(ex. 15/03/2026)_`, cfg);
+    case 'm_route': return send(phone, `🗺️ Quel était le *trajet* ? _(ex : Dakar → Paris, ou DSS → CDG)_`, cfg);
+    case 'm_pnr': return gotoPnr(phone, s, cfg);
     case 'doc_pass': case 'doc_pass_confirm': case 'doc_dob': case 'doc_name': return nextPassport(phone, s, cfg);
     case 'doc_mandant': return askMandant(phone, s, cfg);
     case 'doc_boarding': return gotoBoarding(phone, s, cfg);
