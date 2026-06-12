@@ -46,6 +46,7 @@
 /api/piece-store             /.netlify/functions/piece-store             200
 /api/pieces                  /.netlify/functions/pieces                  200
 /api/owner-alert             /.netlify/functions/owner-alert             200
+/api/bot-state               /.netlify/functions/bot-state               200
 /api/depot-upload            /.netlify/functions/depot-upload            200
 /api/flight-verdict          /.netlify/functions/flight-verdict          200
 /api/radar-eligible-registry /.netlify/functions/radar-eligible-registry 200

@@ -83,6 +83,40 @@ const LEADS = new Map(); // phone digits → { phone, ref, mandatUrl, mandatSent
                          //   stage:'engaged'|'completed', engagedAt, vol, route, incident, wantsCall, wantsCallAt }
 try { for (const [k, v] of Object.entries(encReadFile(LEADS_FILE))) LEADS.set(k, v); console.log('🔔 ' + LEADS.size + ' leads chargés'); } catch (_) {}
 function persistLeads() { try { const o = {}; for (const [k, v] of LEADS) o[k] = v; encWriteFile(LEADS_FILE, o); } catch (e) { console.error('persistLeads', e.message); } }
+
+// ─── Sauvegarde DURABLE (Netlify Blobs) : l'état survit aux redeploys Railway (/tmp éphémère) ──
+// Sans ça, chaque deploy effaçait LEADS/STATE/DOSSIERS → relances stoppées, clients en cours perdus.
+// Garde-fou _durableSafe : on ne snapshot QUE si l'état RAM est réconcilié avec le durable, sinon
+// un redeploy + restauration ratée + 1 nouveau lead écraserait le bon backup avec un état partiel.
+let _durableSafe = (LEADS.size > 0 || STATE.size > 0); // /tmp avait des données (redémarrage à chaud)
+async function snapshotDurable() {
+  try {
+    if (!_durableSafe) return;
+    const secret = (process.env.WATI_WEBHOOK_SECRET || '').trim(); if (!secret) return;
+    const cap = (m) => [...m.entries()].slice(-5000);
+    await fetch('https://robindesairs.eu/api/bot-state', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ secret, leads: cap(LEADS), state: cap(STATE), dossiers: cap(DOSSIERS) }),
+      signal: AbortSignal.timeout(15000),
+    });
+  } catch (e) { console.error('snapshotDurable', e.message); }
+}
+setInterval(snapshotDurable, 60000); // toutes les 60 s (best-effort)
+(async () => { // restauration au boot si /tmp était vide (= redeploy)
+  try {
+    if (_durableSafe) return; // /tmp avait des données → on garde le frais (pas d'écrasement)
+    const secret = (process.env.WATI_WEBHOOK_SECRET || '').trim(); if (!secret) return;
+    const r = await fetch('https://robindesairs.eu/api/bot-state', { headers: { 'x-bot-secret': secret }, signal: AbortSignal.timeout(15000) });
+    if (!r.ok) return; // lecture ratée → _durableSafe reste false → on NE snapshot PAS (backup préservé)
+    const d = await r.json().catch(() => ({}));
+    for (const [k, v] of (d.leads || [])) if (!LEADS.has(k)) LEADS.set(k, v);
+    for (const [k, v] of (d.state || [])) if (!STATE.has(k)) STATE.set(k, v);
+    for (const [k, v] of (d.dossiers || [])) if (!DOSSIERS.has(k)) DOSSIERS.set(k, v);
+    _durableSafe = true; // lecture réussie (même vide) → l'état RAM reflète le durable → snapshot autorisé
+    console.log(`♻️ Restauré depuis Blobs : ${LEADS.size} leads · ${STATE.size} sessions · ${DOSSIERS.size} dossiers`);
+  } catch (e) { console.error('restoreDurable', e.message); }
+})();
+
 function leadKey(phone) { return String(phone || '').replace(/\D/g, ''); }
 function upsertLead(phone, patch) { const k = leadKey(phone); const cur = LEADS.get(k) || { phone: k, signed: false, completed: false, nudges: [] }; LEADS.set(k, { ...cur, ...patch }); persistLeads(); }
 function markLeadSigned(phoneOrRef) {
