@@ -33,13 +33,13 @@ const RV = {
  ],
  "RELANCE_22H": [
   "Juste un petit mot avant ce soir 🕙 La fenêtre pour lancer votre dossier {REF} se referme dans quelques heures. Vous n'avez qu'à signer ici : {URL}\n0€ si on ne gagne pas.",
-  "Cette indemnisation, autant qu'elle vous revienne plutôt qu'elle reste à la compagnie 💶 Votre dossier {REF} peut vous rapporter jusqu'à {TOTAL}€. La signature prend une minute : {URL}\n0€ si on ne gagne pas.",
+  "Cette indemnisation, autant qu'elle vous revienne plutôt qu'elle reste à la compagnie 💶 Votre dossier {REF} peut vous rapporter jusqu'à {TOTAL}. La signature prend une minute : {URL}\n0€ si on ne gagne pas.",
   "Dernière occasion aujourd'hui pour votre dossier {REF} ⏳ Après ce soir, on repart de zéro. Vous validez en un clic ici : {URL}\nRien à avancer : on se rémunère seulement si on gagne (commission de 25%).",
-  "On y est presque ✅ Il ne manque que votre signature pour défendre votre dossier {REF}, qui peut vous rapporter jusqu'à {TOTAL}€. Le lien reste actif encore quelques heures : {URL}",
+  "On y est presque ✅ Il ne manque que votre signature pour défendre votre dossier {REF}, qui peut vous rapporter jusqu'à {TOTAL}. Le lien reste actif encore quelques heures : {URL}",
   "Avant de clôturer votre dossier {REF} ce soir, je tenais à vous laisser une dernière chance 🙏 Signez ici, et on se charge du reste : {URL}\n0€ si on ne gagne pas.",
-  "Cet argent peut vous revenir, pas rester chez la compagnie ✈️ Vous pouvez récupérer jusqu'à {TOTAL}€ avec le dossier {REF}. C'est le dernier moment pour signer : {URL}\n0€ si on ne gagne pas.",
+  "Cet argent peut vous revenir, pas rester chez la compagnie ✈️ Vous pouvez récupérer jusqu'à {TOTAL} avec le dossier {REF}. C'est le dernier moment pour signer : {URL}\n0€ si on ne gagne pas.",
   "La journée touche à sa fin et votre dossier {REF} attend toujours votre feu vert 🟢 Un clic, et on lance la démarche : {URL}\nCommission de 25% seulement si on gagne.",
-  "Je n'aimerais pas que vous passiez à côté d'une indemnisation qui peut aller jusqu'à {TOTAL}€ 💙 La fenêtre se referme bientôt pour le dossier {REF}. Tout se règle ici, en une minute : {URL}",
+  "Je n'aimerais pas que vous passiez à côté d'une indemnisation qui peut aller jusqu'à {TOTAL} 💙 La fenêtre se referme bientôt pour le dossier {REF}. Tout se règle ici, en une minute : {URL}",
   "Un dernier petit rappel pour ce soir 🌙 Votre dossier {REF} est prêt, il n'attend plus que votre signature : {URL}\nSi on ne gagne pas, vous ne payez rien.",
   "Encore quelques heures pour réclamer ce qui peut vous revenir ⏰ Ne laissez pas la compagnie l'emporter sans rien faire. Signez votre dossier {REF} ici : {URL}\n0€ si on ne gagne pas."
  ],
@@ -127,16 +127,16 @@ const RV = {
   "Pour défendre au mieux votre dossier {REF}, transmettez-nous la pièce d'identité de {NOMS} et votre carte d'embarquement (ou e-billet). Aucun frais d'avance, on n'est payés qu'en cas de succès."
  ],
  "DOC_COMPLET": [
-  "Merci {NOM}, c'est bon : votre dossier {REF} est complet. On prend le relais à partir de maintenant. On va réclamer jusqu'à {TOTAL}€ pour vous, et s'il n'y a rien à la fin, vous ne payez rien. On s'occupe de tout.",
-  "C'est noté {NOM}. On a bien reçu toutes vos pièces pour le dossier {REF}. On lance la démarche auprès de la compagnie, pour un montant qui peut aller jusqu'à {TOTAL}€. Je vous tiens au courant à chaque étape.",
-  "Votre dossier {REF} est complet, {NOM}. Vous pouvez souffler, le plus pénible est derrière vous. On s'occupe de réclamer jusqu'à {TOTAL}€ en votre nom. Et pour rappel : si on ne gagne pas, vous ne payez rien.",
-  "Parfait {NOM}, on a tout ce qu'il faut. Votre dossier {REF} passe maintenant entre nos mains. On part réclamer jusqu'à {TOTAL}€. Dès qu'on a du nouveau, je reviens vers vous.",
-  "Merci de votre confiance, {NOM}. Le dossier {REF} est complet, on prend la suite. Vous pourriez toucher jusqu'à {TOTAL}€, et vous n'avez aucune avance à faire : si on ne gagne pas, c'est 0€.",
-  "Tout est en ordre {NOM}. Vos documents pour le dossier {REF} sont validés. On engage la procédure pour un montant qui peut atteindre {TOTAL}€. À partir de là, on défend vos droits à votre place.",
-  "C'est confirmé {NOM}, on a tout reçu. Le dossier {REF} est entre nos mains. On lance la réclamation auprès de la compagnie, pour un montant qui peut aller jusqu'à {TOTAL}€. Je vous préviens à chaque avancée.",
-  "Bravo {NOM}, le dossier {REF} est complet. Vous avez fait votre part, maintenant c'est à nous de jouer. On réclame jusqu'à {TOTAL}€, et si on ne gagne pas, vous ne payez rien. Vous pouvez être tranquille.",
-  "Bien reçu et validé, merci {NOM}. Votre dossier {REF} démarre officiellement. On prend tout en charge face à la compagnie, pour un montant qui peut aller jusqu'à {TOTAL}€. Je vous tiens au courant.",
-  "On a toutes les pièces, {NOM}. Le dossier {REF} est lancé. On va se battre pour récupérer jusqu'à {TOTAL}€ en votre nom. Et rassurez-vous : si on ne gagne pas, c'est 0€ pour vous."
+  "Merci {NOM}, c'est bon : votre dossier {REF} est complet. On prend le relais à partir de maintenant. On va réclamer jusqu'à {TOTAL} pour vous, et s'il n'y a rien à la fin, vous ne payez rien. On s'occupe de tout.",
+  "C'est noté {NOM}. On a bien reçu toutes vos pièces pour le dossier {REF}. On lance la démarche auprès de la compagnie, pour un montant qui peut aller jusqu'à {TOTAL}. Je vous tiens au courant à chaque étape.",
+  "Votre dossier {REF} est complet, {NOM}. Vous pouvez souffler, le plus pénible est derrière vous. On s'occupe de réclamer jusqu'à {TOTAL} en votre nom. Et pour rappel : si on ne gagne pas, vous ne payez rien.",
+  "Parfait {NOM}, on a tout ce qu'il faut. Votre dossier {REF} passe maintenant entre nos mains. On part réclamer jusqu'à {TOTAL}. Dès qu'on a du nouveau, je reviens vers vous.",
+  "Merci de votre confiance, {NOM}. Le dossier {REF} est complet, on prend la suite. Vous pourriez toucher jusqu'à {TOTAL}, et vous n'avez aucune avance à faire : si on ne gagne pas, c'est 0€.",
+  "Tout est en ordre {NOM}. Vos documents pour le dossier {REF} sont validés. On engage la procédure pour un montant qui peut atteindre {TOTAL}. À partir de là, on défend vos droits à votre place.",
+  "C'est confirmé {NOM}, on a tout reçu. Le dossier {REF} est entre nos mains. On lance la réclamation auprès de la compagnie, pour un montant qui peut aller jusqu'à {TOTAL}. Je vous préviens à chaque avancée.",
+  "Bravo {NOM}, le dossier {REF} est complet. Vous avez fait votre part, maintenant c'est à nous de jouer. On réclame jusqu'à {TOTAL}, et si on ne gagne pas, vous ne payez rien. Vous pouvez être tranquille.",
+  "Bien reçu et validé, merci {NOM}. Votre dossier {REF} démarre officiellement. On prend tout en charge face à la compagnie, pour un montant qui peut aller jusqu'à {TOTAL}. Je vous tiens au courant.",
+  "On a toutes les pièces, {NOM}. Le dossier {REF} est lancé. On va se battre pour récupérer jusqu'à {TOTAL} en votre nom. Et rassurez-vous : si on ne gagne pas, c'est 0€ pour vous."
  ],
  "DOC_RECU_PIECE": [
   "C'est bon, j'ai bien reçu la pièce d'identité de {NOM} 🙏 Je continue et je reviens vers vous très vite.",

@@ -17,7 +17,10 @@ const { pickVariant } = require('./lib/bot-variants');
 const { SYSTEM_PROMPT: FAQ_SYSTEM_PROMPT, FAQ_KNOWLEDGE } = require('./lib/faq-hors-tunnel');
 const { pickRV, fillTpl } = require('./lib/relance-variants');
 const { extractEticketMulti: extractEticketMultiLib } = require('./lib/extract-eticket');
-function firstNameOf(s) { const n = (s.passengers && s.passengers[s.mandant_idx || 0] && s.passengers[s.mandant_idx || 0].name) || (s.names && s.names[0]) || ''; return /^passager/i.test(n) ? '' : (n.split(/\s+/)[0] || ''); }
+// Prénom du signataire, joliment capitalisé pour l'affichage (les noms sont stockés en MAJUSCULES) :
+// « CLIMBIE » → « Climbie », « jean-pierre » → « Jean-Pierre », « n'goran » → « N'Goran ».
+function titleCaseName(x) { return String(x || '').toLowerCase().replace(/(^|[\s\-'])([a-zà-ÿ])/g, (m, sep, c) => sep + c.toUpperCase()); }
+function firstNameOf(s) { const n = (s.passengers && s.passengers[s.mandant_idx || 0] && s.passengers[s.mandant_idx || 0].name) || (s.names && s.names[0]) || ''; if (/^passager/i.test(n)) return ''; return titleCaseName(n.split(/\s+/)[0] || ''); }
 
 // ─── Fonctions inline (autonome — aucune dépendance au monorepo Netlify) ───────
 function normalizeWatiPhone(phone) {
@@ -1634,7 +1637,19 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       await setState(phone, s);
       return send(phone, `${ack}\n\n${missingDocsText(s)}`, cfg);
     }
-    return send(phone, `✅ Votre dossier *${s.ref}* est bien enregistré.\n${missingDocsText(s)}\n📎 Envoyez vos pièces ici, ou déposez-les sur un *lien sécurisé* 👉 https://robindesairs.eu/depot-en-ligne.html?r=${encodeURIComponent(s.ref)}\n📞 Un expert vous appellera depuis le *+33 7 56 86 36 30* — enregistrez-le sous « *Robin des Airs* ».\n\nPour un nouveau dossier, écrivez *nouveau*.`, cfg);
+    const _st = docsStatus(s);
+    const _url = `https://robindesairs.eu/depot-en-ligne.html?r=${encodeURIComponent(s.ref)}`;
+    // Dossier complet : la para DOC_COMPLET nomme déjà la réf (on ne la répète pas). Sinon, on confirme l'enregistrement.
+    const _lead = _st.complete ? '' : `✅ *Dossier ${s.ref} bien enregistré.*\n\n`;
+    const _pieces = _st.complete
+      ? `📎 *Un justificatif en plus ?* (reçu de frais, hôtel, taxi…)\nEnvoyez-le ici, ou sur votre lien sécurisé 👉\n${_url}`
+      : `📎 *Envoyez vos pièces* ici, ou sur votre lien sécurisé 👉\n${_url}`;
+    return send(phone,
+      `${_lead}${missingDocsText(s)}\n\n` +
+      `━━━━━━━━━━\n` +
+      `${_pieces}\n\n` +
+      `📞 *Un expert vous rappelle* au *+33 7 56 86 36 30*\n_Enregistrez ce numéro sous « Robin des Airs » pour reconnaître l'appel._\n\n` +
+      `✍️ Un autre dossier ? Écrivez *nouveau*.`, cfg);
   }
 
   // Incompris
