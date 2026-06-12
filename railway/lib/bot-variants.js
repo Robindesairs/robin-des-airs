@@ -25,20 +25,20 @@ const VARIANTS = {
   // Réaction après que l'utilisateur déclare un retard
   REACTION_RETARD: [
     `✊ Un retard peut tout faire basculer — les plans, les gens qui vous attendent, l'énergie que ça demande. C'est loin d'être anodin, et on le prend vraiment au sérieux. Pour qu'on puisse voir ce à quoi vous avez droit, vous arrivez avec combien d'heures de retard ?`,
-    `Attendre à l'aéroport sans savoir quand ça va bouger… honnêtement c'est l'un des trucs les plus éprouvants qui soit. Vraiment désolés que vous ayez vécu ça. ✈️ Et ce retard, il était de combien d'heures à l'arrivée ?`,
+    `Attendre à l'aéroport sans savoir quand ça va bouger, c'est éprouvant — et la compagnie vous en doit peut-être réparation. ✈️ Ce retard, il était de combien d'heures à l'arrivée ?`,
     `Le pire avec les retards, c'est souvent le silence. La compagnie qui ne dit rien, et vous qui attendez dans le vide. Ça, c'est inacceptable. 😔 Pour qu'on voit ce que vous pouvez récupérer, vous étiez en retard de combien d'heures ?`,
     `😔 Des heures à patienter, des plans qui s'effondrent — un retard c'est épuisant, physiquement et mentalement. On comprend vraiment. Et à l'arrivée, c'était combien d'heures de retard exactement ?`,
     `Rater une correspondance, voir sa famille attendre, manquer un rendez-vous qui ne se rattrape pas… c'est bien plus qu'un simple contretemps. On mesure ce que ça représente. Vous étiez en retard de combien d'heures à l'arrivée ?`,
     `🕐 Ces heures perdues dans un aéroport, debout ou calé sur une chaise inconfortable à rafraîchir les écrans — ça use vraiment. Pour voir ce à quoi vous avez droit, c'était combien d'heures de retard ?`,
-    `Un retard à l'arrivée ça ne s'oublie pas facilement — surtout quand quelqu'un vous attendait de l'autre côté. On est sincèrement navrés. Et ce retard, vous étiez décalé de combien d'heures ?`,
+    `Un retard à l'arrivée, surtout quand quelqu'un vous attendait de l'autre côté, ça ne s'oublie pas. La loi prévoit peut-être une compensation. Vous étiez décalé de combien d'heures ?`,
     `Ces heures perdues sur place ont un coût bien réel — une journée de travail, une réunion, un rendez-vous qui ne revient pas. On ne minimise pas ça. Pour qu'on puisse vous dire ce que ça peut vous rapporter, c'était combien d'heures de retard ?`,
     `😓 Annoncer à ses proches qu'on est encore bloqué, regarder les minutes défiler sans explication… c'est décourageant. Vous n'auriez pas dû subir ça. Ce retard à l'arrivée, il était de combien d'heures ?`,
-    `Voyager dans l'incertitude, sans savoir à quelle heure vous allez vraiment poser pied à terre — c'est une épreuve en soi. Sincèrement désolés pour ce que vous avez traversé. Et à l'arrivée, vous aviez combien d'heures de retard ?`,
+    `Voyager sans savoir à quelle heure vous allez vraiment arriver, c'est une épreuve. Voyons ce que la loi vous permet de récupérer. À l'arrivée, vous aviez combien d'heures de retard ?`,
   ],
 
   // Réaction après que l'utilisateur déclare une annulation
   REACTION_ANNULATION: [
-    `😤 Une annulation sans explication, sans solution, sans rien — c'est vraiment pas acceptable. Vous méritez mieux que ça. Donnez-nous les détails de votre vol, on se bat pour vous. Et si on ne gagne pas, vous ne payez rien.`,
+    `😤 Une annulation sans explication ni solution, ce n'est pas acceptable — et c'est souvent indemnisable. Donnez-nous les détails de votre vol, on se bat pour vous. 0 € si on ne gagne pas.`,
     `🤝 Se retrouver seul face à une compagnie aérienne après une annulation, c'est épuisant. On est là exactement pour ça — pour que vous n'ayez pas à gérer ça tout seul. Sans risque de votre côté : 0€ si on ne gagne pas. Alors autant essayer ensemble, non ?`,
     `😞 Arriver à l'aéroport et apprendre que votre vol est annulé... le stress, les appels, tout ce qui s'effondre d'un coup. Personne ne devrait vivre ça. Mais la compagnie a peut-être des comptes à rendre — on regarde votre dossier ensemble ?`,
     `La compagnie, elle, est passée à autre chose. Vous, vous portez encore les conséquences. C'est pas juste — et la loi est peut-être de votre côté. On vérifie votre éligibilité maintenant, ça prend deux minutes.`,
