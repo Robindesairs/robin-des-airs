@@ -214,7 +214,7 @@ async function send(phone, text, cfg) {
   const params = new URLSearchParams({ messageText: text, channelPhoneNumber: cfg.channel });
   try {
     const res = await fetch(`${cfg.base}/api/v1/sendSessionMessage/${encodeURIComponent(wa)}?${params}`, {
-      method: 'POST', headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
+      method: 'POST', signal: AbortSignal.timeout(12000), headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
     });
     // ⚠️ WATI renvoie HTTP 200 MÊME en échec applicatif :
     // {result:false, info:"Invalid Conversation"} = fenêtre 24 h fermée.
@@ -237,7 +237,7 @@ async function sendButtons(phone, config, cfg) {
   const fallbackText = (body && body !== '👇' ? body + '\n\n' : '') + buttons.map((b, i) => `${i + 1} — ${b.text}`).join('\n');
   try {
     const res = await fetch(`${cfg.base}/api/v1/sendInteractiveButtonsMessage?${qs}`, {
-      method: 'POST', headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
+      method: 'POST', signal: AbortSignal.timeout(12000), headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ body, footer: footer || 'robindesairs.eu', buttons: buttons.slice(0, 3).map(b => ({ text: clip(b.text, 20) })) }),
     });
     const data = await res.json().catch(() => ({}));
@@ -256,7 +256,7 @@ async function sendList(phone, { header, body, footer, buttonText, items }, cfg)
   const textFallback = () => send(phone, (header ? `*${header}*\n\n` : '') + body + '\n\n' + items.map((it, idx) => `${NUMEMO[idx] || (idx + 1 + '.')} ${it.title}`).join('\n') + `\n\n👉 Répondez avec le *numéro*.`, cfg);
   try {
     const res = await fetch(`${host}/api/ext/v3/conversations/messages/interactive`, {
-      method: 'POST', headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
+      method: 'POST', signal: AbortSignal.timeout(12000), headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         target: wa,
         type: 'list',
@@ -427,7 +427,7 @@ function buildMandatUrl(s, phone) {
 async function ocrBoardingPass(mediaUrl, cfg) {
   const key = process.env.OPENAI_API_KEY; if (!key || !mediaUrl) return null;
   try {
-    const imgRes = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {} });
+    const imgRes = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {}, signal: AbortSignal.timeout(20000) });
     if (!imgRes.ok) return null;
     const b64 = Buffer.from(await imgRes.arrayBuffer()).toString('base64');
     const prompt = `Tu lis une carte d'embarquement / e-billet d'avion. On ne veut QUE les informations du VOL (l'identité du passager viendra du passeport, pas d'ici). Réponds UNIQUEMENT en JSON :
@@ -440,7 +440,7 @@ Règles STRICTES :
 - depart / arrivee : codes IATA 3 lettres.
 - Champ inconnu = "". Ne JAMAIS inventer. N'extrais PAS le nom du passager.`;
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+      method: 'POST', signal: AbortSignal.timeout(45000), headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: 'gpt-4o', max_tokens: 300, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${b64}` } }] }] }),
     });
     const data = await res.json(); if (!data.choices) return null;
@@ -550,7 +550,7 @@ async function askSens(phone, s, cfg) {
 async function ocrPassport(mediaUrl, cfg) {
   const key = process.env.OPENAI_API_KEY; if (!key || !mediaUrl) return null;
   try {
-    const imgRes = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {} });
+    const imgRes = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {}, signal: AbortSignal.timeout(20000) });
     if (!imgRes.ok) return null;
     const b64 = Buffer.from(await imgRes.arrayBuffer()).toString('base64');
     const prompt = `Tu lis une pièce d'identité (PASSEPORT, carte nationale d'identité, titre de séjour, carte de résident…) — utilise aussi la zone MRZ en bas si présente. Réponds UNIQUEMENT en JSON :
@@ -563,7 +563,7 @@ Règles :
 - adresse : champ "Adresse", "Domicile" ou "Address" visible sur la page (hors MRZ). Recopie tel quel sur une seule ligne. Si absent, "".
 - Champ inconnu = "". Ne JAMAIS inventer.`;
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+      method: 'POST', signal: AbortSignal.timeout(45000), headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: 'gpt-4o', max_tokens: 200, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${b64}` } }] }] }),
     });
     const data = await res.json(); if (!data.choices) return null;
@@ -581,7 +581,7 @@ async function classifyDoc(mediaUrl, cfg) {
   const FALLBACK = { kind: 'autre', nom: '', voyageType: '', lisible: true, probleme: '' };
   const key = process.env.OPENAI_API_KEY; if (!key || !mediaUrl) return FALLBACK;
   try {
-    const imgRes = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {} });
+    const imgRes = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {}, signal: AbortSignal.timeout(20000) });
     if (!imgRes.ok) return FALLBACK;
     const b64 = Buffer.from(await imgRes.arrayBuffer()).toString('base64');
     const prompt = `Tu classes une photo/capture envoyée par un passager, et tu juges sa QUALITÉ (une pièce illisible peut être refusée par la compagnie). Réponds UNIQUEMENT en JSON :
@@ -593,7 +593,7 @@ async function classifyDoc(mediaUrl, cfg) {
 - "probleme" : si lisible=false, un mot : "flou" | "sombre" | "coupé" | "reflet" | "illisible".
 Champ inconnu = "". Ne JAMAIS inventer un nom si la photo est illisible.`;
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+      method: 'POST', signal: AbortSignal.timeout(45000), headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: 'gpt-4o', max_tokens: 140, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${b64}` } }] }] }),
     });
     const data = await res.json(); if (!data.choices) return FALLBACK;
@@ -743,7 +743,7 @@ const AI = (() => {
   async function answerClientQuestion(text, apiKey) {
     if (!apiKey) return null;
     try {
-      const res = await fetch('https://api.openai.com/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + apiKey }, body: JSON.stringify({ model: 'gpt-4o-mini', max_tokens: 320, temperature: 0.5, messages: [{ role: 'system', content: FAQ_SYSTEM_PROMPT + '\n\n# BASE FAQ DE R\u00c9F\u00c9RENCE\n' + FAQ_KNOWLEDGE }, { role: 'user', content: String(text || '').slice(0, 2000) }] }) });
+      const res = await fetch('https://api.openai.com/v1/chat/completions', { method: 'POST', signal: AbortSignal.timeout(45000), headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + apiKey }, body: JSON.stringify({ model: 'gpt-4o-mini', max_tokens: 320, temperature: 0.5, messages: [{ role: 'system', content: FAQ_SYSTEM_PROMPT + '\n\n# BASE FAQ DE R\u00c9F\u00c9RENCE\n' + FAQ_KNOWLEDGE }, { role: 'user', content: String(text || '').slice(0, 2000) }] }) });
       const json = await res.json().catch(() => ({}));
       return json.choices?.[0]?.message?.content?.trim() || null;
     } catch (e) { return null; }
@@ -758,13 +758,13 @@ const AI = (() => {
 async function archivePiece(phone, kind, mediaUrl, cfg) {
   try {
     if (!phone || !mediaUrl) return;
-    const r = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {} });
+    const r = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {}, signal: AbortSignal.timeout(20000) });
     if (!r.ok) return;
     const mime = (r.headers.get('content-type') || 'image/jpeg').split(';')[0].trim();
     const buf = Buffer.from(await r.arrayBuffer());
     if (!buf.length || buf.length > 8000000) return;
     await fetch('https://robindesairs.eu/api/piece-store', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      method: 'POST', signal: AbortSignal.timeout(15000), headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ phone, kind: kind || 'piece', mime, dataBase64: buf.toString('base64'), secret: (process.env.WATI_WEBHOOK_SECRET || '').trim() }),
     });
   } catch (e) { console.error('archivePiece', e.message); }
