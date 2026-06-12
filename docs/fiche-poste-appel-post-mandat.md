@@ -2,7 +2,7 @@
 
 **Mission en une phrase :** rappeler chaque client juste après la signature de son mandat, dans sa langue, pour **sécuriser la confiance**, **vérifier les informations que le bot ne peut pas trancher seul**, et **compléter le dossier** — afin qu'il soit propre, complet et gagnable.
 
-> Numéro à utiliser : **+33 7 56 86 36 30** — demander au client de l'enregistrer sous « **Retard Robin** ».
+> Numéro à utiliser : **+33 7 56 86 36 30** — demander au client de l'enregistrer sous « **Robin des Airs** ».
 > Modèle : 0 € d'avance, **25 % de commission au succès uniquement** (30 % si dossier monté en agence physique).
 
 ---

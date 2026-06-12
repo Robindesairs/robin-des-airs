@@ -441,13 +441,13 @@
 ### 🇫🇷 Français
 - **WhatsApp / bot :** premier contact et qualification automatique.
 - **CRM :** chaque dossier a une **référence** (`RDA-…`). Après chaque appel, **tracer** : vérifié humain, corrections (ex. correspondance), pièces manquantes, moyen de paiement, niveau de confiance.
-- **Numéro expert :** +33 7 56 86 36 30 (« Retard Robin »).
+- **Numéro expert :** +33 7 56 86 36 30 (« Robin des Airs »).
 - **Dépôt sécurisé des pièces :** lien `depot-en-ligne.html?r=REF`.
 
 ### 🇬🇧 English
 - **WhatsApp / bot:** first contact and automatic qualification.
 - **CRM:** every case has a **reference** (`RDA-…`). After each call, **log**: human-verified, corrections (e.g. connection), missing documents, payment method, confidence level.
-- **Expert number:** +33 7 56 86 36 30 ("Retard Robin").
+- **Expert number:** +33 7 56 86 36 30 ("Robin des Airs").
 - **Secure document upload:** link `depot-en-ligne.html?r=REF`.
 
 ---

@@ -780,7 +780,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (id === 'appel' || ((lower === 'appel' || lower === 'rappel' || lower === 'rappelez-moi' || lower === 'rappeler')
       && !(s && (s.step === 'doc_boarding' || s.step === 'doc_eticket')))) {
     upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now(), lastClientAt: Date.now() });
-    return send(phone, `📞 *C'est noté !* Un vrai conseiller Robin des Airs — un humain, pas un robot 🙂 — vous rappelle très vite.\n\n👉 On vous appelle depuis le *+33 7 56 86 36 30* : enregistrez-le tout de suite sous « *Retard Robin* » pour reconnaître l'appel et *décrocher* (sinon il s'affiche comme un numéro inconnu).\n\n🔒 C'est bien nous, jamais une arnaque : *0 € tant qu'on ne gagne pas*, et on ne vous demandera jamais de payer au téléphone.\n\nPas dispo ? Répondez ici quand vous voulez, ou écrivez *go* pour reprendre. 🙏`, cfg);
+    return send(phone, `📞 *C'est noté !* Un vrai conseiller Robin des Airs — un humain, pas un robot 🙂 — vous rappelle très vite.\n\n👉 On vous appelle depuis le *+33 7 56 86 36 30* : enregistrez-le tout de suite sous « *Robin des Airs* » pour reconnaître l'appel et *décrocher* (sinon il s'affiche comme un numéro inconnu).\n\n🔒 C'est bien nous, jamais une arnaque : *0 € tant qu'on ne gagne pas*, et on ne vous demandera jamais de payer au téléphone.\n\nPas dispo ? Répondez ici quand vous voulez, ou écrivez *go* pour reprendre. 🙏`, cfg);
   }
 
   // T1.2b — « J'ai déjà signé » (bouton des relances signature) : FILET DE SÉCURITÉ si le webhook de
@@ -1304,7 +1304,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       await setState(phone, s);
       return send(phone, `${ack}\n\n${missingDocsText(s)}`, cfg);
     }
-    return send(phone, `✅ Votre dossier *${s.ref}* est bien enregistré.\n${missingDocsText(s)}\n📎 Envoyez vos pièces ici, ou déposez-les sur un *lien sécurisé* 👉 https://robindesairs.eu/depot-en-ligne.html?r=${encodeURIComponent(s.ref)}\n📞 Un expert vous appellera depuis le *+33 7 56 86 36 30* — enregistrez-le sous « *Retard Robin* ».\n\nPour un nouveau dossier, écrivez *nouveau*.`, cfg);
+    return send(phone, `✅ Votre dossier *${s.ref}* est bien enregistré.\n${missingDocsText(s)}\n📎 Envoyez vos pièces ici, ou déposez-les sur un *lien sécurisé* 👉 https://robindesairs.eu/depot-en-ligne.html?r=${encodeURIComponent(s.ref)}\n📞 Un expert vous appellera depuis le *+33 7 56 86 36 30* — enregistrez-le sous « *Robin des Airs* ».\n\nPour un nouveau dossier, écrivez *nouveau*.`, cfg);
   }
 
   // Incompris

@@ -140,9 +140,9 @@
 ## 🎬 LEÇON 11 — Outils & traçabilité (≈ 1 min)
 
 🎙️ SCRIPT
-> Pour finir, vos outils. [pause] WhatsApp et le robot gèrent le premier contact et la qualification. [pause] Chaque dossier a une référence, qui commence par R-D-A. Après chaque appel, vous tracez dans le CRM : dossier vérifié, corrections éventuelles, pièces manquantes, moyen de paiement, et niveau de confiance. [pause] Le numéro expert à donner au client : il commence par plus trente-trois sept cinquante-six… à enregistrer sous « Retard Robin ». [pause] Et pour les pièces, le client peut tout déposer sur un lien sécurisé. [pause] Bravo : vous avez terminé la formation. Place à l'évaluation.
+> Pour finir, vos outils. [pause] WhatsApp et le robot gèrent le premier contact et la qualification. [pause] Chaque dossier a une référence, qui commence par R-D-A. Après chaque appel, vous tracez dans le CRM : dossier vérifié, corrections éventuelles, pièces manquantes, moyen de paiement, et niveau de confiance. [pause] Le numéro expert à donner au client : il commence par plus trente-trois sept cinquante-six… à enregistrer sous « Robin des Airs ». [pause] Et pour les pièces, le client peut tout déposer sur un lien sécurisé. [pause] Bravo : vous avez terminé la formation. Place à l'évaluation.
 
-🖥️ À L'ÉCRAN : `CRM : réf. RDA-…` · `Tracer après chaque appel` · `Expert : +33 7 56 86 36 30 ("Retard Robin")` · `Dépôt sécurisé : depot-en-ligne`
+🖥️ À L'ÉCRAN : `CRM : réf. RDA-…` · `Tracer après chaque appel` · `Expert : +33 7 56 86 36 30 ("Robin des Airs")` · `Dépôt sécurisé : depot-en-ligne`
 🎞️ VISUEL : écran CRM + téléphone.
 
 ---
