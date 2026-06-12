@@ -172,7 +172,7 @@ const HEADERS = { 'Content-Type': 'application/json', 'Access-Control-Allow-Orig
 // ─── Barre 8 pastilles ───────────────────────────────────────────────────────
 const PROGRESS = {
   accueil: 0, langue: 0,
-  route: 1,
+  route: 1, route_dep: 1, route_arr: 1,
   incident: 2, duree: 2, annul_delai: 2,
   nb_pax: 3, nb_pax_exact: 3,
   type_vol: 4, motivation: 4,
@@ -446,6 +446,17 @@ const VILLES_HUBS = [
   { v: 'Lisbonne', d: 'TAP Air Portugal' }, { v: 'Bruxelles', d: 'Brussels Airlines' }, { v: 'Addis-Abeba', d: 'Ethiopian' },
   { v: 'Alger', d: 'Air Algérie' }, { v: 'Tunis', d: 'Tunisair' }, { v: 'Dubaï', d: 'Emirates' },
 ];
+// Zone d'une ville → déduit la route juridique (af_eu/eu_eu/mixte) SANS poser la question abstraite
+// « quelle route ? » au client. Ville inconnue = '' → on continue (l'expert/le verdict vol tranchera,
+// jamais de faux « non » sur une ville qu'on ne connaît pas).
+const ZONE_AF = ['dakar', 'abidjan', 'bamako', 'conakry', 'douala', 'yaounde', 'cotonou', 'lome', 'lagos', 'abuja', 'accra', 'banjul', 'bissau', 'nouakchott', 'niamey', 'ouagadougou', 'kinshasa', 'brazzaville', 'libreville', 'casablanca', 'rabat', 'marrakech', 'agadir', 'tanger', 'alger', 'oran', 'tunis', 'caire', 'le caire', 'addis-abeba', 'addis abeba', 'nairobi', 'mombasa', 'antananarivo', 'tananarive', 'moroni', 'praia', 'freetown', 'monrovia', 'ziguinchor', 'saint-louis', 'cap-skirring', 'djibouti', 'khartoum', 'bangui', 'ndjamena', 'malabo', 'kigali', 'bujumbura', 'luanda', 'dar es salaam', 'johannesburg', 'le cap', 'dss', 'abj', 'bko', 'cky', 'dla', 'nsi', 'coo', 'lfw', 'los', 'cmn', 'rak', 'alg', 'tun', 'add', 'nbo', 'fih', 'bjl'];
+const ZONE_EU = ['paris', 'marseille', 'lyon', 'toulouse', 'bordeaux', 'nantes', 'lille', 'nice', 'strasbourg', 'mulhouse', 'montpellier', 'bruxelles', 'liege', 'charleroi', 'amsterdam', 'lisbonne', 'porto', 'madrid', 'barcelone', 'rome', 'milan', 'geneve', 'zurich', 'londres', 'berlin', 'francfort', 'munich', 'vienne', 'dublin', 'copenhague', 'stockholm', 'oslo', 'varsovie', 'prague', 'budapest', 'athenes', 'luxembourg', 'cdg', 'ory', 'mrs', 'lys', 'bru', 'crl', 'ams', 'lis', 'mad', 'bcn', 'fco', 'mxp', 'gva', 'lhr', 'fra', 'muc'];
+function cityZone(city) {
+  const c = nmStrip(city).trim();
+  if (ZONE_AF.includes(c)) return 'af';
+  if (ZONE_EU.includes(c)) return 'eu';
+  return '';
+}
 // Interprète la réponse à une liste de villes : tap (id WATI « 0-N » ou titre), numéro du repli texte,
 // « autre » → saisie libre, sinon le texte est traité comme une ville tapée directement.
 function cityPick(input, id, cities) {
@@ -932,7 +943,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // Garde-fou : uniquement tant qu'aucun vol n'est saisi et avant le tunnel détaillé (jamais en plein dossier),
   // et jamais sur un tap bouton/liste (id présent → flux interactif prioritaire).
   {
-    const EARLY = ['accueil', 'go_langue', 'langue', 'route', 'incident', 'duree', 'annul_delai'];
+    const EARLY = ['accueil', 'go_langue', 'langue', 'route', 'route_dep', 'route_arr', 'incident', 'duree', 'annul_delai'];
     if (!id && !s.vol && (!s.step || EARLY.includes(s.step))) {
       const tk = parseTickerFlight(input);
       if (tk) {
@@ -959,7 +970,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // ⚠️ Jamais intercepté si c'est une réponse interactive (bouton/liste) : replyId présent → flux prioritaire
   try {
     const { isClientQuestion, isSensitive, answerClientQuestion } = AI;
-    const FREE = ['m_vol', 'm_date', 'm_route', 'm_pnr', 'leg_count', 'leg_input', 'esc_dep', 'esc_via', 'esc_arr', 'esc_vol', 'names', 'vd_vol', 'vd_date', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob'];
+    const FREE = ['m_vol', 'm_date', 'm_route', 'm_pnr', 'leg_count', 'leg_input', 'route_dep', 'route_arr', 'esc_dep', 'esc_via', 'esc_arr', 'esc_vol', 'names', 'vd_vol', 'vd_date', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob'];
     const looks = !id && (FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input));
     if (looks) {
       if (isSensitive(input)) { await send(phone, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nÉcrivez *go* pour continuer votre dossier.`, cfg); return; }
@@ -984,10 +995,33 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (!L) return sendLangue(phone, s, cfg);
     s.langue = `${L.flag} ${L.label}`; s.langue_code = L.code;
     if (L.africaine) { s.escalade = 'langue_africaine'; await send(phone, `${L.natif}\n📱 +33 7 56 86 36 30\n\n🤝 Votre dossier est entre de bonnes mains.\n📞 Un expert parlant votre langue *vous appellera* pour vous accompagner.\nEn attendant, je continue à vous guider en français. 👇`, cfg); }
-    s.step = 'route'; await setState(phone, s); return sendRoute(phone, s, cfg);
+    await setState(phone, s); return sendRouteDep(phone, s, cfg);
   }
 
-  // MSG3 — ROUTE
+  // MSG3 — ROUTE par villes : départ → arrivée (zone juridique déduite, jamais demandée)
+  if (s.step === 'route_dep') {
+    const pk = cityPick(input, id, VILLES_COURANTES);
+    if (pk && pk.autre) return send(phone, `✏️ Tapez votre ville de *départ* _(ex : Cotonou)_ :`, cfg);
+    if (!pk) return sendRouteDep(phone, s, cfg);
+    s.routeDep = pk.city; await setState(phone, s);
+    return sendRouteArr(phone, s, cfg);
+  }
+  if (s.step === 'route_arr') {
+    const pk = cityPick(input, id, VILLES_COURANTES);
+    if (pk && pk.autre) return send(phone, `✏️ Tapez votre ville d'*arrivée finale* _(ex : Toulouse)_ :`, cfg);
+    if (!pk) return sendRouteArr(phone, s, cfg);
+    if (s.routeDep && pk.city.toLowerCase() === s.routeDep.toLowerCase()) {
+      return send(phone, `🤔 Votre arrivée (*${pk.city}*) est identique à votre départ — pour un *aller-retour*, ne décrivez que le voyage qui a eu le problème (l'aller OU le retour).\n🛬 Vous arriviez dans quelle ville ?`, cfg);
+    }
+    const zd = cityZone(s.routeDep), za = cityZone(pk.city);
+    if (zd === 'af' && za === 'af') { await clearState(phone); return send(phone, `😔 Un vol *${s.routeDep} → ${pk.city}* (Afrique → Afrique) n'est pas couvert par la loi européenne CE 261/2004 — elle protège les vols au départ ou à l'arrivée de l'Europe.\n\n❓ En cas d'erreur (escale en Europe ?), écrivez *go*.\n\n${STOP_FOOTER}`, cfg); }
+    s.routeArr = pk.city; s.route = `${s.routeDep} → ${pk.city}`;
+    s.route_type = (zd === 'eu' && za === 'eu') ? 'eu_eu' : ((zd === 'af' && za === 'eu') || (zd === 'eu' && za === 'af')) ? 'af_eu' : 'mixte';
+    s.step = 'incident'; await setState(phone, s);
+    await send(phone, `✅ *${s.route}* — c'est noté.`, cfg);
+    return sendIncident(phone, s, cfg);
+  }
+  // MSG3 — ROUTE (LEGACY : sessions déjà engagées sur l'ancienne question abstraite)
   if (s.step === 'route') {
     // Matching prioritaire : ID WATI de la liste (format "sectionIdx-rowIdx", 0-based)
     const ri = listRowIdx(id); // 0=Afrique↔EU, 1=EU↔EU, 2=Départ/arr EU, 3=Autre
@@ -1082,12 +1116,12 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (pk && pk.autre) return send(phone, `✏️ Tapez le nom de la ville d'*escale* _(ex : Nairobi)_ :`, cfg);
     if (!pk) return askEscVia(phone, s, cfg, (s.escCities || []).length >= 2);
     s.escCities = s.escCities || []; s.escCities.push(pk.city);
-    if (s.escCities.length >= 4) return askEscArr(phone, s, cfg, `✅ Escale : *${pk.city}*`);
+    if (s.escCities.length >= 4) { if (s.routeArr) { await send(phone, `✅ Escale : *${pk.city}*`, cfg); return buildEscLegs(phone, s, cfg, s.routeArr); } return askEscArr(phone, s, cfg, `✅ Escale : *${pk.city}*`); }
     s.step = 'esc_more'; await setState(phone, s);
     return sendButtons(phone, { body: `✅ Escale : *${pk.city}*\n\nY avait-il une *autre escale* ?`, buttons: [{ id: 'esc_oui', text: '🔄 Oui, une autre' }, { id: 'esc_non', text: '➡️ Non' }] }, cfg);
   }
   if (s.step === 'esc_more') {
-    if (id === 'esc_non' || /^non/.test(lower)) return askEscArr(phone, s, cfg);
+    if (id === 'esc_non' || /^non/.test(lower)) { if (s.routeArr) return buildEscLegs(phone, s, cfg, s.routeArr); return askEscArr(phone, s, cfg); }
     if (id === 'esc_oui' || /^oui/.test(lower)) return askEscVia(phone, s, cfg, true);
     return sendButtons(phone, { body: `Y avait-il une *autre escale* ?`, buttons: [{ id: 'esc_oui', text: '🔄 Oui, une autre' }, { id: 'esc_non', text: '➡️ Non' }] }, cfg);
   }
@@ -1100,11 +1134,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (s.escCities && s.escCities[0] && city.toLowerCase() === s.escCities[0].toLowerCase()) {
       return send(phone, `🤔 Votre arrivée (*${city}*) est identique à votre départ — pour un *aller-retour*, ne décrivez que le voyage qui a eu le problème (l'aller OU le retour).\n🛬 Quelle est la ville d'arrivée de *ce* voyage ?`, cfg);
     }
-    const c = (s.escCities || []).concat(city);
-    s.escCities = c; s.route = c.join(' → ');
-    s.legs = c.slice(0, -1).map((dep, i) => ({ vol: '', dep, arr: c[i + 1] }));
-    s.legCount = s.legs.length; s.legIdx = 0; s.step = 'esc_vol'; await setState(phone, s);
-    return send(phone, `✅ Trajet : *${s.route}*\n\n✈️ Numéro du vol *${s.legs[0].dep} → ${s.legs[0].arr}* ? _(ex : AT540, sur votre billet)_\n✏️ Tapez *passer* si vous ne l'avez plus.`, cfg);
+    return buildEscLegs(phone, s, cfg, city);
   }
   if (s.step === 'esc_vol') {
     let vol = '';
@@ -1532,11 +1562,22 @@ async function sendLangue(phone, s, cfg) {
     { title: '🇳🇬 Yoruba', description: 'Africaine' }, { title: '🇬🇳 Peul / Fulfulde', description: 'Africaine' },
   ] }, cfg);
 }
+// LEGACY (sessions en cours uniquement) : question route abstraite — remplacée par route_dep/route_arr.
 async function sendRoute(phone, s, cfg) {
   s.step = 'route'; await setState(phone, s);
   await sendList(phone, { body: `${bar('route')}\n🗺️ Votre vol était sur quelle route ?\nCela détermine si le CE 261/2004 s'applique.`, buttonText: 'Choisir ▾', items: [
     { title: '🌍 Afrique ↔ Europe', description: 'Notre spécialité' }, { title: '🇪🇺 Europe ↔ Europe' }, { title: '🛫 Départ/arrivée Europe' }, { title: '🌐 Autre' },
   ] }, cfg);
+}
+// Route par VILLES (concret, pas juridique) : départ puis arrivée — la zone (Afrique/Europe) est déduite,
+// et le trajet est pré-rempli pour tout le reste du parcours (escale, récap, mandat).
+async function sendRouteDep(phone, s, cfg) {
+  s.step = 'route_dep'; await setState(phone, s);
+  return sendCityList(phone, { header: 'Ville de départ', body: `${bar('route')}\n🛫 De quelle ville *partiez-vous* ?` }, VILLES_COURANTES, cfg);
+}
+async function sendRouteArr(phone, s, cfg) {
+  s.step = 'route_arr'; await setState(phone, s);
+  return sendCityList(phone, { header: 'Ville d\'arrivée', body: `${bar('route')}\n🛬 Et vous arriviez dans quelle ville ? (destination *finale*)` }, VILLES_COURANTES, cfg);
 }
 async function sendIncident(phone, s, cfg) { s.step = 'incident'; await setState(phone, s); await sendButtons(phone, { body: `${bar('incident')}\n✈️ Racontez-nous ce qui s'est passé avec votre vol. On est là pour vous aider.`, buttons: [{ text: '⏱️ Retard arrivée' }, { text: '❌ Annulation' }, { text: "🚫 Refus d'embarq." }] }, cfg); }
 
@@ -1585,8 +1626,14 @@ async function afterFix(phone, s, cfg) {
 }
 async function estimationPuisPax(phone, s, cfg) { s.step = 'nb_pax'; await setState(phone, s); await send(phone, pickVariant(phone, 'ESTIMATION_QUALIFICATION'), cfg); return sendPax(phone, s, cfg); }
 // Entrée du parcours correspondance guidé : une question = une info (départ, escale, autre ?, arrivée, n° vols).
+// Si départ/arrivée sont DÉJÀ connus (questions route du début), on ne demande QUE les escales.
 async function askEscDep(phone, s, cfg, intro) {
-  s.legs = []; s.escCities = []; s.legIdx = 0; s.step = 'esc_dep'; await setState(phone, s);
+  s.legs = []; s.legIdx = 0;
+  if (s.routeDep && s.routeArr) {
+    s.escCities = [s.routeDep]; s.step = 'esc_via'; await setState(phone, s);
+    return sendCityList(phone, { header: 'Ville d\'escale', body: `${intro ? intro + '\n\n' : ''}${bar('esc_dep')}\n*${s.routeDep} → ${s.routeArr}* — 🔄 dans quelle ville avez-vous fait *escale* ?` }, VILLES_HUBS, cfg);
+  }
+  s.escCities = []; s.step = 'esc_dep'; await setState(phone, s);
   return sendCityList(phone, { header: 'Ville de départ', body: `${intro ? intro + '\n\n' : ''}${bar('esc_dep')}\n🛫 Quelle est la ville de *départ* de votre voyage ?` }, VILLES_COURANTES, cfg);
 }
 async function askEscVia(phone, s, cfg, suivante) {
@@ -1596,6 +1643,14 @@ async function askEscVia(phone, s, cfg, suivante) {
 async function askEscArr(phone, s, cfg, prefix) {
   s.step = 'esc_arr'; await setState(phone, s);
   return sendCityList(phone, { header: 'Arrivée finale', body: `${prefix ? prefix + '\n\n' : ''}🛬 Et quelle est votre ville d'*arrivée finale* ?` }, VILLES_COURANTES, cfg);
+}
+// Toutes les villes sont connues → construit trajet + segments, puis demande les n° de vol un par un.
+async function buildEscLegs(phone, s, cfg, arrCity) {
+  const c = (s.escCities || []).concat(arrCity);
+  s.escCities = c; s.route = c.join(' → ');
+  s.legs = c.slice(0, -1).map((dep, i) => ({ vol: '', dep, arr: c[i + 1] }));
+  s.legCount = s.legs.length; s.legIdx = 0; s.step = 'esc_vol'; await setState(phone, s);
+  return send(phone, `✅ Trajet : *${s.route}*\n\n✈️ Numéro du vol *${s.legs[0].dep} → ${s.legs[0].arr}* ? _(ex : AT540, sur votre billet)_\n✏️ Tapez *passer* si vous ne l'avez plus.`, cfg);
 }
 // Raccourci bandeau : passagers connus → si direct, vol+date sont déjà là (vérif éligibilité + récap) ;
 // si correspondance, on bascule sur le flux escale standard pour collecter les segments.
@@ -1764,6 +1819,8 @@ async function relancerEtape(phone, s, cfg) {
     case 'langue': return sendLangue(phone, s, cfg);
     case 'q_corr': return sendButtons(phone, { body: `Ce vol faisait-il partie d'une *correspondance* (un autre vol juste avant ou juste après) ?`, buttons: [{ id: 'corr_direct', text: '✈️ Non, vol direct' }, { id: 'corr_escale', text: '🔄 Oui, correspondance' }] }, cfg);
     case 'route': return sendRoute(phone, s, cfg);
+    case 'route_dep': return sendRouteDep(phone, s, cfg);
+    case 'route_arr': return sendRouteArr(phone, s, cfg);
     case 'incident': return sendIncident(phone, s, cfg);
     case 'annul_delai': return sendAnnulDelai(phone, s, cfg);
     case 'nb_pax': return sendPax(phone, s, cfg);
