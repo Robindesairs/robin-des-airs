@@ -280,7 +280,7 @@ async function sendButtons(phone, config, cfg) {
   try {
     const res = await fetch(`${cfg.base}/api/v1/sendInteractiveButtonsMessage?${qs}`, {
       method: 'POST', signal: AbortSignal.timeout(12000), headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ body, footer: footer || 'robindesairs.eu', buttons: buttons.slice(0, 3).map(b => ({ text: clip(b.text, 20) })) }),
+      body: JSON.stringify({ body, footer: footer || '🏹 Robin des Airs', buttons: buttons.slice(0, 3).map(b => ({ text: clip(b.text, 20) })) }),
     });
     const data = await res.json().catch(() => ({}));
     if (!res.ok || data.result === false || data.error || data.ok === false) {
@@ -305,7 +305,7 @@ async function sendList(phone, { header, body, footer, buttonText, items }, cfg)
         list_message: {
           ...(header ? { header: clip(header, 60) } : {}),
           body: body,
-          footer: footer || 'robindesairs.eu',
+          footer: footer || '🏹 Robin des Airs',
           button_text: clip(buttonText || 'Choisir', 20), // ✅ champ exact confirmé par WATI (snake_case)
           sections: [{ title: clip(header || 'Choix', 24), rows }],
         },
