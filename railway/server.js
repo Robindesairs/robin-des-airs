@@ -940,8 +940,10 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (s.step === 'type_vol') {
     const n = normInput(input, ['direct', 'escale']);
     if (n === '2' || lower.includes('escale')) {
-      s.type_vol = 'escale'; s.legs = []; s.legIdx = 0; s.step = 'leg_count'; await setState(phone, s);
-      return sendButtons(phone, { body: `${bar('scan')}\n🔄 Votre voyage comportait *combien de vols* (correspondance) ?`, buttons: [{ text: '✈️ 2 vols' }, { text: '🔄 3 vols' }] }, cfg);
+      // Escale = on POUSSE LA PHOTO d'abord (l'e-billet contient tous les segments → extraction en 1 coup).
+      // La saisie manuelle leg par leg ne reste qu'en repli (bouton « Saisir à la main » → leg_count).
+      s.type_vol = 'escale'; s.legs = []; s.legIdx = 0; s.step = 'scan'; await setState(phone, s);
+      return sendButtons(phone, { body: `${bar('scan')}\n🎉 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (*${montantNet(s.pax)} € nets*, 75 %). 🤝\n\n🔄 Votre *e-billet* (la confirmation de réservation) contient *tous vos vols*, la correspondance incluse.\n⚡ Le plus simple : envoyez-en une *photo* — *je lis tous vos vols d'un coup*, vous ne tapez rien.\n\n📎 *Envoyez la photo*, ou :`, buttons: [{ id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
     }
     if (n === '1' || lower.includes('direct')) s.type_vol = 'direct';
     else return sendButtons(phone, { body: `${bar('type_vol')}\n✈️ Vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg);
@@ -968,7 +970,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (lower.includes('deux')) n2 = 2; if (lower.includes('trois')) n2 = 3;
     if (!(n2 >= 2 && n2 <= 4)) return sendButtons(phone, { body: `🔄 Combien de vols dans votre trajet ?`, buttons: [{ text: '✈️ 2 vols' }, { text: '🔄 3 vols' }] }, cfg);
     s.legCount = n2; s.legs = []; s.legIdx = 0; s.step = 'leg_input'; await setState(phone, s);
-    return send(phone, `✈️ *Vol 1 sur ${n2}* — donnez le *numéro de vol* et le *trajet*.\n_(ex : AF718 Dakar → Casablanca)_`, cfg);
+    return send(phone, `✈️ *Vol 1 sur ${n2}* — son *code* (ex : AF718), puis *de quelle ville à quelle ville* (ex : Dakar → Casablanca).`, cfg);
   }
   if (s.step === 'leg_input') {
     const volm = input.toUpperCase().match(/[A-Z]{2,3}\s?\d{1,4}[A-Z]?/);
@@ -977,7 +979,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const parts = rest.replace(/'/g, '').split(/→|->|—|–|,|\bvers\b|\bà\b|\ba\b/i).map((x) => x.trim()).filter((x) => x.length >= 2);
     s.legs = s.legs || []; s.legs.push({ vol, dep: parts[0] || '', arr: parts[1] || '' });
     s.legIdx = (s.legIdx || 0) + 1; await setState(phone, s);
-    if (s.legIdx < s.legCount) return send(phone, `✈️ *Vol ${s.legIdx + 1} sur ${s.legCount}* — numéro + trajet.\n_(ex : AT540 Casablanca → Paris)_`, cfg);
+    if (s.legIdx < s.legCount) return send(phone, `✈️ *Vol ${s.legIdx + 1} sur ${s.legCount}* — son *code* (ex : AT540), puis *de quelle ville à quelle ville* (ex : Casablanca → Paris).`, cfg);
     // Tous les segments reçus → on remet dans l'ordre automatiquement (chaînage des aéroports)
     const ordered = chainLegs(s.legs) || s.legs;
     s.legs = ordered;
@@ -1001,9 +1003,14 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
         if (d.allerRetour && d.trajets && d.trajets.length > 1) { s.trajets = d.trajets; await setState(phone, s); return askSens(phone, s, cfg); }
         s.step = 'scan_confirm'; await setState(phone, s); return scanConfirmCard(phone, s, cfg);
       }
-      delete s.scan_pages; await send(phone, `😕 Je n'ai pas réussi à lire ce document (PDF protégé, image trop sombre ou coupée…). Réessayez avec une *capture d'écran nette*, ou faisons-le à la main — ça prend 2 min. 👇`, cfg); s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
+      delete s.scan_pages; await send(phone, `😕 Je n'ai pas réussi à lire ce document (PDF protégé, image trop sombre ou coupée…). Réessayez avec une *capture d'écran nette*, ou faisons-le à la main — ça prend 2 min. 👇`, cfg);
+      if (s.type_vol === 'escale') { s.legs = []; s.legIdx = 0; s.step = 'leg_count'; await setState(phone, s); return sendButtons(phone, { body: `🔄 Votre voyage comportait *combien de vols* (correspondance) ?`, buttons: [{ text: '✈️ 2 vols' }, { text: '🔄 3 vols' }] }, cfg); }
+      s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
     }
-    if (id === 'scan_manuel' || lower.includes('manuel') || lower.includes('manuelle') || lower.includes('saisir')) { s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg); }
+    if (id === 'scan_manuel' || lower.includes('manuel') || lower.includes('manuelle') || lower.includes('saisir')) {
+      if (s.type_vol === 'escale') { s.legs = []; s.legIdx = 0; s.step = 'leg_count'; await setState(phone, s); return sendButtons(phone, { body: `🔄 Pas de souci. Votre voyage comportait *combien de vols* (correspondance) ?`, buttons: [{ text: '✈️ 2 vols' }, { text: '🔄 3 vols' }] }, cfg); }
+      s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
+    }
     return sendButtons(phone, { body: `📎 Envoyez une *photo* (ou le *PDF*) de votre e-billet. _Plusieurs pages ? Envoyez-les une par une, je les assemble._\n\n_🔒 Votre document est lu par un outil de lecture automatique (IA) à seule fin de pré-remplir votre dossier (voir robindesairs.eu/politique-confidentialite). En l'envoyant, vous acceptez cette lecture._`, buttons: [{ id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
   }
   if (s.step === 'scan_confirm') {
