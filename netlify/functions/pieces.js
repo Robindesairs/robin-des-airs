@@ -9,20 +9,21 @@
  * la réf est résolue en téléphone via le dossier (store 'mandats', m/<ref>).
  */
 const { getBlobStore } = require('./lib/netlify-blobs-store');
+const { safeEqualString } = require('./lib/safe-compare');
 
 const J = (code, obj) => ({
   statusCode: code,
-  headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'no-store' },
+  headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://robindesairs.eu', 'Cache-Control': 'no-store' },
   body: JSON.stringify(obj),
 });
 
 exports.handler = async (event) => {
-  if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: { 'Access-Control-Allow-Origin': '*' }, body: '' };
+  if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: { 'Access-Control-Allow-Origin': 'https://robindesairs.eu' }, body: '' };
 
   const q = event.queryStringParameters || {};
   const secret = String(q.s || '').trim();
   const expected = (process.env.WATI_WEBHOOK_SECRET || '').trim();
-  if (expected && secret !== expected) return J(401, { error: 'unauthorized' });
+  if (expected && !safeEqualString(secret, expected)) return J(401, { error: 'unauthorized' });
 
   const pieces = getBlobStore(event, 'pieces');
   if (!pieces) return J(500, { error: 'store indisponible' });
@@ -37,7 +38,7 @@ exports.handler = async (event) => {
       const name = key.split('/').pop() || 'piece';
       return {
         statusCode: 200,
-        headers: { 'Content-Type': mime, 'Content-Disposition': `inline; filename="${name}"`, 'Cache-Control': 'no-store', 'Access-Control-Allow-Origin': '*' },
+        headers: { 'Content-Type': mime, 'Content-Disposition': `inline; filename="${name}"`, 'Cache-Control': 'no-store', 'Access-Control-Allow-Origin': 'https://robindesairs.eu' },
         body: Buffer.from(res.data).toString('base64'),
         isBase64Encoded: true,
       };

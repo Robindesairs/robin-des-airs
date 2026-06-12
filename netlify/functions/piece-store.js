@@ -6,6 +6,7 @@
  * Secret = WATI_WEBHOOK_SECRET (le bot le possède). Récupération via /api/pieces?r=REF.
  */
 const { getBlobStore } = require('./lib/netlify-blobs-store');
+const { safeEqualString } = require('./lib/safe-compare');
 
 const H = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type' };
 
@@ -16,7 +17,7 @@ exports.handler = async (event) => {
   let b; try { b = JSON.parse(event.body || '{}'); } catch { return { statusCode: 400, headers: H, body: JSON.stringify({ error: 'bad json' }) }; }
 
   const expected = (process.env.WATI_WEBHOOK_SECRET || '').trim();
-  if (expected && String(b.secret || '').trim() !== expected) return { statusCode: 401, headers: H, body: JSON.stringify({ error: 'unauthorized' }) };
+  if (expected && !safeEqualString(String(b.secret || '').trim(), expected)) return { statusCode: 401, headers: H, body: JSON.stringify({ error: 'unauthorized' }) };
 
   const phoneKey = String(b.phone || '').replace(/\D/g, '').slice(0, 20);
   const mime = String(b.mime || '').toLowerCase();

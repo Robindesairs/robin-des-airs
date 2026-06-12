@@ -11,8 +11,9 @@
  * Stocke sous la clé m/<ref> dans le store 'mandats' (persistant).
  */
 const { getBlobStore } = require('./lib/netlify-blobs-store');
+const { safeEqualString } = require('./lib/safe-compare');
 
-const H = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type' };
+const H = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://robindesairs.eu', 'Access-Control-Allow-Headers': 'Content-Type' };
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: H, body: '' };
@@ -21,7 +22,7 @@ exports.handler = async (event) => {
   let b; try { b = JSON.parse(event.body || '{}'); } catch { return { statusCode: 400, headers: H, body: JSON.stringify({ error: 'bad json' }) }; }
 
   const secret = (process.env.WATI_WEBHOOK_SECRET || '').trim();
-  if (secret && b.secret !== secret) return { statusCode: 401, headers: H, body: JSON.stringify({ error: 'unauthorized' }) };
+  if (secret && !safeEqualString(String(b.secret || '').trim(), secret)) return { statusCode: 401, headers: H, body: JSON.stringify({ error: 'unauthorized' }) };
 
   const ref = String(b.ref || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 64);
   if (!ref || !b.dossier || typeof b.dossier !== 'object') return { statusCode: 400, headers: H, body: JSON.stringify({ error: 'ref + dossier requis' }) };

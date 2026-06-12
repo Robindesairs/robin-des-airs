@@ -10,12 +10,12 @@ const { getBlobStore } = require('./lib/netlify-blobs-store');
 
 const J = (code, obj) => ({
   statusCode: code,
-  headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'no-store' },
+  headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://robindesairs.eu', 'Cache-Control': 'no-store' },
   body: JSON.stringify(obj),
 });
 
 exports.handler = async (event) => {
-  if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: { 'Access-Control-Allow-Origin': '*' }, body: '' };
+  if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: { 'Access-Control-Allow-Origin': 'https://robindesairs.eu' }, body: '' };
   const q = event.queryStringParameters || {};
   const ref = String(q.r || q.ref || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 64);
   if (!ref) return J(400, { error: 'r requis' });
@@ -31,7 +31,7 @@ exports.handler = async (event) => {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `inline; filename="Mandat-Robin-des-Airs-${ref}.pdf"`,
         'Cache-Control': 'no-store',
-        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Origin': 'https://robindesairs.eu',
       },
       body: b64,
       isBase64Encoded: true,
