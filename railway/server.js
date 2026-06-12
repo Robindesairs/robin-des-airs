@@ -309,6 +309,15 @@ function genRef() { const d = new Date(); return `RDA-${d.toISOString().slice(0,
 function normInput(raw, options) { const t = (raw || '').trim().toLowerCase(); if (/^\d+$/.test(t)) return t; const i = options.findIndex(o => t.includes(o.toLowerCase())); return i >= 0 ? String(i + 1) : t; }
 const AIRLINES = { AF: 'Air France', SN: 'Brussels Airlines', TP: 'TAP Air Portugal', AT: 'Royal Air Maroc', HC: 'Air Sénégal', KQ: 'Kenya Airways', ET: 'Ethiopian Airlines', EK: 'Emirates', TK: 'Turkish Airlines', KL: 'KLM', LH: 'Lufthansa', IB: 'Iberia', EJU: 'easyJet', U2: 'easyJet', FR: 'Ryanair', TO: 'Transavia', KP: 'ASKY', DN: 'Senegal Airlines' };
 function deduceAirline(vol) { const m = (vol || '').toUpperCase().match(/^([A-Z]{2,3})\d/); return (m && AIRLINES[m[1]]) || ''; }
+// Libellé « voyage » pour les relances : compagnie (déduite du n° de vol) + trajet (capté à l'intake).
+// Ex. « Royal Air Maroc · Dakar → Paris ». Repli : compagnie seule → trajet → n° de vol → « concerné ».
+// Plus parlant que « AT718 + AT713 » : le client reconnaît sa compagnie et sa destination.
+function tripLabel(lead) {
+  const cie = deduceAirline(lead && lead.vol);
+  const route = ((lead && lead.route) || '').trim();
+  if (cie && route) return `${cie} · ${route}`;
+  return cie || route || (lead && lead.vol) || 'concerné';
+}
 // Verdict CE261 vérifié via /api/flight-verdict (AeroDataBox). Best-effort : ne bloque jamais le tunnel.
 async function fetchFlightVerdict(vol, date, typeVol) {
   const v = String(vol || '').split('+')[0].trim().split(/\s+/)[0]; // 1er n° de vol seulement
@@ -1742,7 +1751,7 @@ function relanceTextEngaged(n, lead, step) {
   let key;
   if (n >= 22) { key = 'ENG_EDGE'; }                       // dernière relance avant fermeture de la fenêtre → urgence courte (peu importe l'étape)
   else { const g = engGroup(step); const suffix = n <= 3 ? '_1' : '_2'; key = g ? ('ENG_' + g + suffix) : ('RELANCE_ENGAGED' + suffix); }
-  const txt = fillTpl(pickRV(lead.phone, key), { NOM: lead.name || '', VOL: lead.vol || 'concerné', TOTAL: total });
+  const txt = fillTpl(pickRV(lead.phone, key), { NOM: lead.name || '', VOL: tripLabel(lead), TOTAL: total });
   return txt || `On a commencé votre dossier — appuyez sur *Reprendre* 👇 pour le finaliser (jusqu'à ${total}, 0 € si on ne gagne pas), ou *Rappel* 📞. 🙏`;
 }
 // Vérif durable « déjà signé ? » via l'endpoint Netlify — SOURCE DE VÉRITÉ indépendante du webhook.

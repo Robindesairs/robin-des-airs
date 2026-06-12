@@ -45,74 +45,74 @@ const RV = {
  ],
  "RELANCE_ENGAGED_1": [
   "Bonjour {NOM} 👋 On a bien commencé votre dossier pour le vol {VOL}, il ne reste qu'une étape pour viser jusqu'à {TOTAL}. On reprend là où vous vous étiez arrêté ? 👇 Appuyez sur *Reprendre* — et si on ne gagne pas, vous ne payez rien. Une question ? *Rappel* 📞 et on vous appelle. 🙏",
-  "{NOM}, votre dossier vol {VOL} est presque prêt 🙂 Quelques minutes suffisent pour le finaliser et viser jusqu'à {TOTAL} (0 € si on ne gagne pas). Appuyez sur *Reprendre* 👇, ou *Rappel* 📞 si vous préférez qu'on vous explique de vive voix.",
+  "{NOM}, votre dossier {VOL} est presque prêt 🙂 Quelques minutes suffisent pour le finaliser et viser jusqu'à {TOTAL} (0 € si on ne gagne pas). Appuyez sur *Reprendre* 👇, ou *Rappel* 📞 si vous préférez qu'on vous explique de vive voix.",
   "On ne vous oublie pas {NOM} ✈️ Il manque juste la fin de votre dossier (vol {VOL}) pour lancer la réclamation — jusqu'à {TOTAL} possibles. Reprenez quand vous voulez 👇. Besoin d'aide ? Demandez un *Rappel* 📞. 🙏",
   "{NOM}, on était en train d'ouvrir votre dossier pour le vol {VOL} 🗂️ On le termine ensemble ? Appuyez sur *Reprendre* 👇 pour repartir où on s'est arrêté. Jusqu'à {TOTAL}, et rien à avancer. Vous préférez en parler ? *Rappel* 📞.",
-  "Petit coup de pouce {NOM} 🙂 Votre dossier vol {VOL} est commencé mais pas encore finalisé. Encore 2 min et on peut réclamer jusqu'à {TOTAL} pour vous (0 € si on ne gagne pas). 👇 *Reprendre*, ou *Rappel* 📞 pour être appelé.",
+  "Petit coup de pouce {NOM} 🙂 Votre dossier {VOL} est commencé mais pas encore finalisé. Encore 2 min et on peut réclamer jusqu'à {TOTAL} pour vous (0 € si on ne gagne pas). 👇 *Reprendre*, ou *Rappel* 📞 pour être appelé.",
   "On y était presque {NOM} ! Pour le vol {VOL}, il ne reste qu'à terminer votre dossier — jusqu'à {TOTAL} en jeu. Appuyez sur *Reprendre* 👇. Une question avant de continuer ? *Rappel* 📞, un conseiller vous appelle. 🙏"
  ],
  "RELANCE_ENGAGED_2": [
-  "{NOM}, votre dossier vol {VOL} est encore ouvert chez nous, mais on va bientôt devoir le mettre en pause ⏳ Quelques minutes suffisent pour le finaliser (jusqu'à {TOTAL}, 0 € si on ne gagne pas). Appuyez sur *Reprendre* 👇, ou *Rappel* 📞 pour qu'on vous appelle.",
-  "Dernier petit rappel pour aujourd'hui {NOM} 🙏 Votre dossier vol {VOL} n'attend que vous pour viser jusqu'à {TOTAL}. Reprenez juste en dessous 👇. Vous préférez par téléphone ? *Rappel* 📞.",
+  "{NOM}, votre dossier {VOL} est encore ouvert chez nous, mais on va bientôt devoir le mettre en pause ⏳ Quelques minutes suffisent pour le finaliser (jusqu'à {TOTAL}, 0 € si on ne gagne pas). Appuyez sur *Reprendre* 👇, ou *Rappel* 📞 pour qu'on vous appelle.",
+  "Dernier petit rappel pour aujourd'hui {NOM} 🙏 Votre dossier {VOL} n'attend que vous pour viser jusqu'à {TOTAL}. Reprenez juste en dessous 👇. Vous préférez par téléphone ? *Rappel* 📞.",
   "{NOM}, on n'aimerait pas que vous passiez à côté de votre indemnisation (jusqu'à {TOTAL}) pour le vol {VOL} 💙 Il reste juste à finaliser votre dossier : appuyez sur *Reprendre* 👇. Ou *Rappel* 📞 et un conseiller vous appelle, sans engagement.",
-  "Votre dossier vol {VOL} est presque bouclé {NOM} ⏳ Encore un petit effort pour réclamer jusqu'à {TOTAL} (et 0 € si on ne gagne pas). *Reprendre* 👇, ou *Rappel* 📞 pour être appelé aujourd'hui.",
-  "{NOM}, on garde votre dossier vol {VOL} au chaud, mais il faut le finaliser pour avancer 🙂 Jusqu'à {TOTAL} possibles, rien à avancer. Appuyez sur *Reprendre* 👇, ou *Rappel* 📞 si c'est plus simple d'en parler.",
-  "On reste à vos côtés {NOM} 🤝 Votre dossier vol {VOL} peut vous rapporter jusqu'à {TOTAL}. Il ne manque que la fin : *Reprendre* 👇 pour repartir où on s'est arrêté, ou *Rappel* 📞."
+  "Votre dossier {VOL} est presque bouclé {NOM} ⏳ Encore un petit effort pour réclamer jusqu'à {TOTAL} (et 0 € si on ne gagne pas). *Reprendre* 👇, ou *Rappel* 📞 pour être appelé aujourd'hui.",
+  "{NOM}, on garde votre dossier {VOL} au chaud, mais il faut le finaliser pour avancer 🙂 Jusqu'à {TOTAL} possibles, rien à avancer. Appuyez sur *Reprendre* 👇, ou *Rappel* 📞 si c'est plus simple d'en parler.",
+  "On reste à vos côtés {NOM} 🤝 Votre dossier {VOL} peut vous rapporter jusqu'à {TOTAL}. Il ne manque que la fin : *Reprendre* 👇 pour repartir où on s'est arrêté, ou *Rappel* 📞."
  ],
  "ENG_RECAP_1": [
   "Bonjour {NOM} 👋 Votre récapitulatif pour le vol {VOL} est prêt — il n'attend qu'une validation pour qu'on lance la réclamation (jusqu'à {TOTAL}, et 0 € si on ne gagne pas). Un doute ? C'est sans engagement, on vous explique tout : *Rappel* 📞. Sinon, appuyez sur *Reprendre* 👇. 🙏",
-  "{NOM}, on a gardé votre dossier vol {VOL} de côté 🙂 Vous étiez à la dernière vérification — il suffit de confirmer le récap pour avancer (jusqu'à {TOTAL}). Une question avant de valider ? *Rappel* 📞, un conseiller vous appelle. Pour reprendre, appuyez sur *Reprendre* 👇.",
+  "{NOM}, on a gardé votre dossier {VOL} de côté 🙂 Vous étiez à la dernière vérification — il suffit de confirmer le récap pour avancer (jusqu'à {TOTAL}). Une question avant de valider ? *Rappel* 📞, un conseiller vous appelle. Pour reprendre, appuyez sur *Reprendre* 👇.",
   "On y est presque {NOM} ! Votre récap pour le vol {VOL} ne demande qu'à être validé pour démarrer (jusqu'à {TOTAL}, rien à avancer). Si quelque chose vous retient, dites-le-nous : *Rappel* 📞. Sinon, appuyez sur *Reprendre* 👇. ✈️"
  ],
  "ENG_RECAP_2": [
-  "{NOM}, votre dossier vol {VOL} est toujours là, prêt à partir ⏳ Une validation et on s'occupe de tout (jusqu'à {TOTAL}). Appuyez sur *Reprendre* 👇, ou *Rappel* 📞 si vous préférez qu'on en parle. 🙏",
+  "{NOM}, votre dossier {VOL} est toujours là, prêt à partir ⏳ Une validation et on s'occupe de tout (jusqu'à {TOTAL}). Appuyez sur *Reprendre* 👇, ou *Rappel* 📞 si vous préférez qu'on en parle. 🙏",
   "Dernier petit rappel {NOM} 🙂 Il ne manque que votre validation du récap pour lancer la réclamation vol {VOL} (jusqu'à {TOTAL}, 0 € si on ne gagne pas). *Reprendre* 👇, ou *Rappel* 📞 pour être appelé.",
-  "On ne voudrait pas que vous laissiez filer votre indemnisation {NOM} 💙 Votre récap vol {VOL} (jusqu'à {TOTAL}) attend juste votre feu vert. Appuyez sur *Reprendre* 👇, ou *Rappel* 📞 pour la moindre question."
+  "On ne voudrait pas que vous laissiez filer votre indemnisation {NOM} 💙 Votre récap {VOL} (jusqu'à {TOTAL}) attend juste votre feu vert. Appuyez sur *Reprendre* 👇, ou *Rappel* 📞 pour la moindre question."
  ],
  "ENG_PASS_1": [
-  "Bonjour {NOM} 👋 Il ne manque qu'une *pièce d'identité* pour lancer votre dossier vol {VOL} (jusqu'à {TOTAL}). C'est obligatoire pour réclamer en votre nom — et vos données ne servent qu'à ça, jamais revendues 🔒. Une simple photo (passeport, CNI ou titre de séjour) suffit. Vous ne l'avez pas sous la main ? *Rappel* 📞, on s'arrange. Sinon, appuyez sur *Reprendre* 👇.",
-  "{NOM}, votre dossier vol {VOL} attend juste votre *pièce d'identité* 🪪 Une photo nette suffit, et c'est protégé — uniquement pour votre réclamation (jusqu'à {TOTAL}, 0 € si on ne gagne pas). Un souci pour l'envoyer ou la retrouver ? *Rappel* 📞 et on vous guide. Pour reprendre, appuyez sur *Reprendre* 👇.",
-  "On est à deux doigts de lancer votre dossier vol {VOL}, {NOM} ! Il nous faut juste une *pièce d'identité* (obligatoire pour agir en votre nom auprès de la compagnie). C'est sécurisé et confidentiel 🔒. Appuyez sur *Reprendre* 👇 pour envoyer la photo, ou *Rappel* 📞 si vous préférez qu'on vous aide. Jusqu'à {TOTAL} à la clé."
+  "Bonjour {NOM} 👋 Il ne manque qu'une *pièce d'identité* pour lancer votre dossier {VOL} (jusqu'à {TOTAL}). C'est obligatoire pour réclamer en votre nom — et vos données ne servent qu'à ça, jamais revendues 🔒. Une simple photo (passeport, CNI ou titre de séjour) suffit. Vous ne l'avez pas sous la main ? *Rappel* 📞, on s'arrange. Sinon, appuyez sur *Reprendre* 👇.",
+  "{NOM}, votre dossier {VOL} attend juste votre *pièce d'identité* 🪪 Une photo nette suffit, et c'est protégé — uniquement pour votre réclamation (jusqu'à {TOTAL}, 0 € si on ne gagne pas). Un souci pour l'envoyer ou la retrouver ? *Rappel* 📞 et on vous guide. Pour reprendre, appuyez sur *Reprendre* 👇.",
+  "On est à deux doigts de lancer votre dossier {VOL}, {NOM} ! Il nous faut juste une *pièce d'identité* (obligatoire pour agir en votre nom auprès de la compagnie). C'est sécurisé et confidentiel 🔒. Appuyez sur *Reprendre* 👇 pour envoyer la photo, ou *Rappel* 📞 si vous préférez qu'on vous aide. Jusqu'à {TOTAL} à la clé."
  ],
  "ENG_PASS_2": [
-  "{NOM}, il ne reste qu'une *photo de pièce d'identité* pour boucler votre dossier vol {VOL} 🪪 Passeport, CNI ou titre de séjour — au choix. Appuyez sur *Reprendre* 👇 pour l'envoyer (jusqu'à {TOTAL}, 0 € si on ne gagne pas), ou *Rappel* 📞 si besoin d'un coup de main. 🙏",
-  "Votre dossier vol {VOL} est presque prêt {NOM} — il n'attend que votre pièce d'identité. Une photo et on prend le relais (jusqu'à {TOTAL}). Appuyez sur *Reprendre* 👇, ou *Rappel* 📞 si vous ne savez pas comment l'envoyer. 🙏",
-  "On garde votre place {NOM} ✊ Pour défendre votre dossier vol {VOL}, on a juste besoin d'une pièce d'identité (jamais revendue, uniquement pour la réclamation). Appuyez sur *Reprendre* 👇 pour l'envoyer, ou *Rappel* 📞 et on s'en occupe ensemble."
+  "{NOM}, il ne reste qu'une *photo de pièce d'identité* pour boucler votre dossier {VOL} 🪪 Passeport, CNI ou titre de séjour — au choix. Appuyez sur *Reprendre* 👇 pour l'envoyer (jusqu'à {TOTAL}, 0 € si on ne gagne pas), ou *Rappel* 📞 si besoin d'un coup de main. 🙏",
+  "Votre dossier {VOL} est presque prêt {NOM} — il n'attend que votre pièce d'identité. Une photo et on prend le relais (jusqu'à {TOTAL}). Appuyez sur *Reprendre* 👇, ou *Rappel* 📞 si vous ne savez pas comment l'envoyer. 🙏",
+  "On garde votre place {NOM} ✊ Pour défendre votre dossier {VOL}, on a juste besoin d'une pièce d'identité (jamais revendue, uniquement pour la réclamation). Appuyez sur *Reprendre* 👇 pour l'envoyer, ou *Rappel* 📞 et on s'en occupe ensemble."
  ],
  "ENG_BOARDING_1": [
   "Bonjour {NOM} 👋 Carte d'embarquement perdue pour le vol {VOL} ? Aucun souci, c'est fréquent — d'autres preuves font l'affaire : votre *e-billet*, une *confirmation de réservation*, ou même une *étiquette de bagage*. On peut lancer votre dossier (jusqu'à {TOTAL}, 0 € si on ne gagne pas). Appuyez sur *Reprendre* 👇, ou *Rappel* 📞 et on trouve une solution ensemble. 🙏",
   "{NOM}, ne bloquez pas sur la carte d'embarquement 🎫 Pour le vol {VOL}, un *e-billet*, une *confirmation de réservation* ou une *étiquette de bagage* font tout aussi bien l'affaire. Appuyez sur *Reprendre* 👇 pour l'envoyer (jusqu'à {TOTAL}), ou *Rappel* 📞 et on cherche la meilleure preuve ensemble. 🙏",
-  "On ne lâche rien pour votre dossier vol {VOL}, {NOM} ! Carte égarée ? C'est fréquent — un e-billet, une confirmation de réservation ou une étiquette de bagage suffit. Appuyez sur *Reprendre* 👇, ou *Rappel* 📞 si vous ne retrouvez rien : on trouve une solution avec vous. Jusqu'à {TOTAL} en jeu."
+  "On ne lâche rien pour votre dossier {VOL}, {NOM} ! Carte égarée ? C'est fréquent — un e-billet, une confirmation de réservation ou une étiquette de bagage suffit. Appuyez sur *Reprendre* 👇, ou *Rappel* 📞 si vous ne retrouvez rien : on trouve une solution avec vous. Jusqu'à {TOTAL} en jeu."
  ],
  "ENG_BOARDING_2": [
   "{NOM}, il ne manque qu'une preuve du vol {VOL} 🎫 Carte d'embarquement, e-billet, confirmation de réservation OU étiquette de bagage — n'importe laquelle suffit. Appuyez sur *Reprendre* 👇 pour l'envoyer (jusqu'à {TOTAL}, 0 € si on ne gagne pas), ou *Rappel* 📞 et on cherche ensemble. 🙏",
-  "Votre dossier vol {VOL} avance bien {NOM} — il reste juste une preuve du voyage. Pas de carte ? Un e-billet, une réservation ou une étiquette de bagage conviennent. Appuyez sur *Reprendre* 👇, ou *Rappel* 📞 et on trouve une solution.",
+  "Votre dossier {VOL} avance bien {NOM} — il reste juste une preuve du voyage. Pas de carte ? Un e-billet, une réservation ou une étiquette de bagage conviennent. Appuyez sur *Reprendre* 👇, ou *Rappel* 📞 et on trouve une solution.",
   "On y est presque {NOM} ! Pour le vol {VOL}, appuyez sur *Reprendre* 👇 et envoyez n'importe quelle preuve du voyage (carte, e-billet, réservation, étiquette de bagage) — on lance tout (jusqu'à {TOTAL}). Vous ne retrouvez rien ? *Rappel* 📞, on s'en occupe avec vous. 🙏"
  ],
  "ENG_ETICKET_1": [
-  "Bonjour {NOM} 👋 Pour finaliser votre dossier vol {VOL} (jusqu'à {TOTAL}), il nous faut votre *confirmation de réservation*. Vous ne la retrouvez pas ? Pensez à vos *spams*, à l'*appli de la compagnie*, ou à l'*agence de voyage* qui a réservé pour vous. Bloqué ? *Rappel* 📞, on vous aide à la récupérer. Sinon, appuyez sur *Reprendre* 👇.",
-  "{NOM}, votre dossier vol {VOL} est presque complet — il ne manque que votre *e-billet* 📧 (souvent dans les spams, ou récupérable auprès de l'agence / la compagnie qui a réservé). Appuyez sur *Reprendre* 👇 pour l'envoyer (0 € si on ne gagne pas), ou *Rappel* 📞 et un conseiller le retrouve avec vous. 🙏",
-  "On veut aller au bout de votre dossier vol {VOL}, {NOM} ! Si l'e-billet vous échappe : vérifiez vos courriers indésirables, ou demandez-le à l'agence / la compagnie qui a réservé. Toujours rien ? *Rappel* 📞, on s'en occupe. Sinon, appuyez sur *Reprendre* 👇. Jusqu'à {TOTAL} à récupérer."
+  "Bonjour {NOM} 👋 Pour finaliser votre dossier {VOL} (jusqu'à {TOTAL}), il nous faut votre *confirmation de réservation*. Vous ne la retrouvez pas ? Pensez à vos *spams*, à l'*appli de la compagnie*, ou à l'*agence de voyage* qui a réservé pour vous. Bloqué ? *Rappel* 📞, on vous aide à la récupérer. Sinon, appuyez sur *Reprendre* 👇.",
+  "{NOM}, votre dossier {VOL} est presque complet — il ne manque que votre *e-billet* 📧 (souvent dans les spams, ou récupérable auprès de l'agence / la compagnie qui a réservé). Appuyez sur *Reprendre* 👇 pour l'envoyer (0 € si on ne gagne pas), ou *Rappel* 📞 et un conseiller le retrouve avec vous. 🙏",
+  "On veut aller au bout de votre dossier {VOL}, {NOM} ! Si l'e-billet vous échappe : vérifiez vos courriers indésirables, ou demandez-le à l'agence / la compagnie qui a réservé. Toujours rien ? *Rappel* 📞, on s'en occupe. Sinon, appuyez sur *Reprendre* 👇. Jusqu'à {TOTAL} à récupérer."
  ],
  "ENG_ETICKET_2": [
-  "{NOM}, il ne reste que votre *confirmation de réservation* pour boucler le dossier vol {VOL} 📧 Jetez un œil aux spams, ou demandez-la à l'agence / la compagnie qui a réservé. Appuyez sur *Reprendre* 👇 pour l'envoyer (jusqu'à {TOTAL}, 0 € si on ne gagne pas), ou *Rappel* 📞 si vous voulez qu'on vous aide à la retrouver. 🙏",
-  "Votre dossier vol {VOL} est à un cheveu d'être complet {NOM} — manque juste l'e-billet. Appuyez sur *Reprendre* 👇 pour l'envoyer, ou *Rappel* 📞 et on le récupère ensemble. On ne lâche pas. 💪",
-  "On garde votre dossier vol {VOL} au chaud {NOM} ⏳ Dès qu'on a votre confirmation de réservation (regardez les spams, ou côté agence / compagnie !), on lance la réclamation (jusqu'à {TOTAL}). Appuyez sur *Reprendre* 👇, ou *Rappel* 📞 pour de l'aide."
+  "{NOM}, il ne reste que votre *confirmation de réservation* pour boucler le dossier {VOL} 📧 Jetez un œil aux spams, ou demandez-la à l'agence / la compagnie qui a réservé. Appuyez sur *Reprendre* 👇 pour l'envoyer (jusqu'à {TOTAL}, 0 € si on ne gagne pas), ou *Rappel* 📞 si vous voulez qu'on vous aide à la retrouver. 🙏",
+  "Votre dossier {VOL} est à un cheveu d'être complet {NOM} — manque juste l'e-billet. Appuyez sur *Reprendre* 👇 pour l'envoyer, ou *Rappel* 📞 et on le récupère ensemble. On ne lâche pas. 💪",
+  "On garde votre dossier {VOL} au chaud {NOM} ⏳ Dès qu'on a votre confirmation de réservation (regardez les spams, ou côté agence / compagnie !), on lance la réclamation (jusqu'à {TOTAL}). Appuyez sur *Reprendre* 👇, ou *Rappel* 📞 pour de l'aide."
  ],
  "ENG_CERT_1": [
-  "Bonjour {NOM} 👋 Bonne nouvelle : le certificat de retard est *optionnel* — vous n'en avez pas besoin pour qu'on lance votre dossier vol {VOL} (jusqu'à {TOTAL}) ! Appuyez sur *Reprendre* 👇 (vous pourrez le *passer*) et c'est finalisé. Une question ? *Rappel* 📞. 🙏",
-  "{NOM}, ne bloquez pas sur le certificat de retard : il est *facultatif*. Votre dossier vol {VOL} peut partir sans (jusqu'à {TOTAL}, 0 € si on ne gagne pas). Appuyez sur *Reprendre* 👇 puis *passer* pour terminer, ou *Rappel* 📞 si vous hésitez. 🙏",
-  "Vous y êtes presque {NOM} ! Pas de certificat de retard ? Aucun problème, ce n'est pas obligatoire. Appuyez sur *Reprendre* 👇 puis *passer* et on boucle votre dossier vol {VOL} (jusqu'à {TOTAL}). Besoin d'un coup de main ? *Rappel* 📞."
+  "Bonjour {NOM} 👋 Bonne nouvelle : le certificat de retard est *optionnel* — vous n'en avez pas besoin pour qu'on lance votre dossier {VOL} (jusqu'à {TOTAL}) ! Appuyez sur *Reprendre* 👇 (vous pourrez le *passer*) et c'est finalisé. Une question ? *Rappel* 📞. 🙏",
+  "{NOM}, ne bloquez pas sur le certificat de retard : il est *facultatif*. Votre dossier {VOL} peut partir sans (jusqu'à {TOTAL}, 0 € si on ne gagne pas). Appuyez sur *Reprendre* 👇 puis *passer* pour terminer, ou *Rappel* 📞 si vous hésitez. 🙏",
+  "Vous y êtes presque {NOM} ! Pas de certificat de retard ? Aucun problème, ce n'est pas obligatoire. Appuyez sur *Reprendre* 👇 puis *passer* et on boucle votre dossier {VOL} (jusqu'à {TOTAL}). Besoin d'un coup de main ? *Rappel* 📞."
  ],
  "ENG_CERT_2": [
-  "{NOM}, votre dossier vol {VOL} est à deux doigts d'être bouclé — et le certificat n'est même pas nécessaire (c'est optionnel). Appuyez sur *Reprendre* 👇 puis *passer* pour terminer (jusqu'à {TOTAL}, 0 € si on ne gagne pas), ou *Rappel* 📞 si besoin. 🙏",
+  "{NOM}, votre dossier {VOL} est à deux doigts d'être bouclé — et le certificat n'est même pas nécessaire (c'est optionnel). Appuyez sur *Reprendre* 👇 puis *passer* pour terminer (jusqu'à {TOTAL}, 0 € si on ne gagne pas), ou *Rappel* 📞 si besoin. 🙏",
   "Dernier pas {NOM} 🙂 Inutile d'attendre un certificat de retard pour le vol {VOL}, il est facultatif. Appuyez sur *Reprendre* 👇 puis *passer* et on s'occupe du reste (jusqu'à {TOTAL}). Une question ? *Rappel* 📞.",
-  "On finalise votre dossier vol {VOL}, {NOM} ? Le certificat est optionnel, pas besoin de l'attendre. Appuyez sur *Reprendre* 👇 puis *passer* (jusqu'à {TOTAL}, 0 € si on ne gagne pas), ou *Rappel* 📞 pour qu'on vous guide. 🙏"
+  "On finalise votre dossier {VOL}, {NOM} ? Le certificat est optionnel, pas besoin de l'attendre. Appuyez sur *Reprendre* 👇 puis *passer* (jusqu'à {TOTAL}, 0 € si on ne gagne pas), ou *Rappel* 📞 pour qu'on vous guide. 🙏"
  ],
  "ENG_EDGE": [
-  "{NOM}, votre dossier vol {VOL} se referme bientôt ⏳ Après ça, on devra vous rappeler par téléphone. Encore quelques minutes pour le finaliser et viser jusqu'à {TOTAL} (0 € si on ne gagne pas). 👇 Reprenez ou demandez un rappel ci-dessous.",
-  "Dernière chance aujourd'hui pour votre dossier vol {VOL} {NOM} 🕙 La fenêtre se referme dans quelques heures — un seul geste suffit pour viser jusqu'à {TOTAL}. 👇",
-  "{NOM}, on ne voudrait pas perdre le fil de votre dossier vol {VOL} 💙 Il reste peu de temps aujourd'hui pour le finaliser (jusqu'à {TOTAL}, rien à avancer). Répondez-nous juste en dessous 👇"
+  "{NOM}, votre dossier {VOL} se referme bientôt ⏳ Après ça, on devra vous rappeler par téléphone. Encore quelques minutes pour le finaliser et viser jusqu'à {TOTAL} (0 € si on ne gagne pas). 👇 Reprenez ou demandez un rappel ci-dessous.",
+  "Dernière chance aujourd'hui pour votre dossier {VOL} {NOM} 🕙 La fenêtre se referme dans quelques heures — un seul geste suffit pour viser jusqu'à {TOTAL}. 👇",
+  "{NOM}, on ne voudrait pas perdre le fil de votre dossier {VOL} 💙 Il reste peu de temps aujourd'hui pour le finaliser (jusqu'à {TOTAL}, rien à avancer). Répondez-nous juste en dessous 👇"
  ],
  "DOC_MANQUANT": [
   "Il nous manque encore deux choses pour avancer : une pièce d'identité de {NOMS} et votre carte d'embarquement (ou le e-billet). Dès qu'on a ça, on lance le dossier {REF}.",
