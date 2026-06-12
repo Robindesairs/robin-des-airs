@@ -171,7 +171,7 @@ try { ({ notifyOwnerWhatsApp } = require('./lib/owner-notify')); } catch (_) {}
 // ─── Barre 8 pastilles ───────────────────────────────────────────────────────
 const PROGRESS = {
   accueil: 0, langue: 0,
-  route: 1, route_dep: 1, route_arr: 1,
+  route: 1, route_zone: 1, route_dep: 1, route_arr: 1,
   incident: 2, duree: 2, annul_delai: 2,
   nb_pax: 3, nb_pax_exact: 3,
   type_vol: 4, motivation: 4,
@@ -955,7 +955,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // Garde-fou : uniquement tant qu'aucun vol n'est saisi et avant le tunnel détaillé (jamais en plein dossier),
   // et jamais sur un tap bouton/liste (id présent → flux interactif prioritaire).
   {
-    const EARLY = ['accueil', 'go_langue', 'langue', 'route', 'route_dep', 'route_arr', 'incident', 'duree', 'annul_delai'];
+    const EARLY = ['accueil', 'go_langue', 'langue', 'route', 'route_zone', 'route_dep', 'route_arr', 'incident', 'duree', 'annul_delai'];
     if (!id && !s.vol && (!s.step || EARLY.includes(s.step))) {
       const tk = parseTickerFlight(input);
       if (tk) {
@@ -1007,7 +1007,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (!L) return sendLangue(phone, s, cfg);
     s.langue = `${L.flag} ${L.label}`; s.langue_code = L.code;
     if (L.africaine) { s.escalade = 'langue_africaine'; await send(phone, `${L.natif}\n📱 +33 7 56 86 36 30\n\n🤝 Votre dossier est entre de bonnes mains.\n📞 Un expert parlant votre langue *vous appellera* pour vous accompagner.\nEn attendant, je continue à vous guider en français. 👇`, cfg); }
-    await setState(phone, s); return sendRouteDep(phone, s, cfg);
+    await setState(phone, s); return askRouteZone(phone, s, cfg);
   }
 
   // MSG3 — ROUTE par villes : départ → arrivée (zone juridique déduite, jamais demandée)
@@ -1026,12 +1026,38 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       return send(phone, `🤔 Votre arrivée (*${pk.city}*) est identique à votre départ — pour un *aller-retour*, ne décrivez que le voyage qui a eu le problème (l'aller OU le retour).\n🛬 Vous arriviez dans quelle ville ?`, cfg);
     }
     const zd = cityZone(s.routeDep), za = cityZone(pk.city);
-    if (zd === 'af' && za === 'af') { await clearState(phone); return send(phone, `😔 Un vol *${s.routeDep} → ${pk.city}* (Afrique → Afrique) n'est pas couvert par la loi européenne CE 261/2004 — elle protège les vols au départ ou à l'arrivée de l'Europe.\n\n❓ En cas d'erreur (escale en Europe ?), écrivez *go*.\n\n${STOP_FOOTER}`, cfg); }
     s.routeArr = pk.city; s.route = `${s.routeDep} → ${pk.city}`;
-    s.route_type = (zd === 'eu' && za === 'eu') ? 'eu_eu' : ((zd === 'af' && za === 'eu') || (zd === 'eu' && za === 'af')) ? 'af_eu' : 'mixte';
-    s.step = 'incident'; await setState(phone, s);
-    await send(phone, `✅ *${s.route}* — c'est noté.`, cfg);
-    return sendIncident(phone, s, cfg);
+    // Point de contact avec l'Europe confirmé par les villes connues → couvert, on continue.
+    if (zd === 'eu' || za === 'eu') {
+      s.route_type = (zd === 'eu' && za === 'eu') ? 'eu_eu' : 'af_eu';
+      s.step = 'incident'; await setState(phone, s);
+      await send(phone, `✅ *${s.route}* — c'est noté.`, cfg);
+      return sendIncident(phone, s, cfg);
+    }
+    // Deux villes africaines connues → hors CE 261, on le dit clairement.
+    if (zd === 'af' && za === 'af') { await clearState(phone); return send(phone, `😔 Un vol *${s.routeDep} → ${pk.city}* (Afrique → Afrique) n'est pas couvert par la loi européenne CE 261/2004 — elle protège les vols au départ ou à l'arrivée de l'Europe.\n\n❓ En cas d'erreur (escale en Europe ?), écrivez *go*.\n\n${STOP_FOOTER}`, cfg); }
+    // Au moins une ville inconnue → on pose directement le critère LÉGAL : le voyage touche-t-il l'Europe ?
+    await setState(phone, s);
+    return askRouteZone(phone, s, cfg);
+  }
+  // Classification CE 261 par rapport à l'Europe — quand les villes ne suffisent pas à trancher.
+  if (s.step === 'route_zone') {
+    const n = normInput(input, ['commence', 'arrive', 'ni']);
+    if (id === 'rz_dep' || n === '1' || lower.includes('commence') || /d[ée]part|d[ée]coll|\bpars?\b/.test(lower)) {
+      s.route_type = 'af_eu'; s.europeTouch = 'depart'; s.step = 'incident'; await setState(phone, s);
+      await send(phone, `✅ Départ d'Europe — vous êtes protégé(e) par le CE 261/2004. 👍`, cfg);
+      return sendIncident(phone, s, cfg);
+    }
+    if (id === 'rz_arr' || n === '2' || lower.includes('arrive')) {
+      s.route_type = 'af_eu'; s.europeTouch = 'arrivee'; s.step = 'incident'; await setState(phone, s);
+      await send(phone, `✅ Arrivée en Europe — souvent couvert (un expert confirme selon la compagnie). On continue. 👍`, cfg);
+      return sendIncident(phone, s, cfg);
+    }
+    if (id === 'rz_non' || n === '3' || lower.includes('ni l') || lower === 'ni' || lower.includes('aucun')) {
+      await clearState(phone);
+      return send(phone, `😔 Si votre vol ne *part pas* d'Europe et n'*arrive pas* en Europe, il n'entre pas dans la loi européenne CE 261/2004.\n\n❓ En cas d'erreur (une escale en Europe compte !), écrivez *go*.\n\n${STOP_FOOTER}`, cfg);
+    }
+    return askRouteZone(phone, s, cfg);
   }
   // MSG3 — ROUTE (LEGACY : sessions déjà engagées sur l'ancienne question abstraite)
   if (s.step === 'route') {
@@ -1597,8 +1623,18 @@ async function sendRoute(phone, s, cfg) {
     { title: '🌍 Afrique ↔ Europe', description: 'Notre spécialité' }, { title: '🇪🇺 Europe ↔ Europe' }, { title: '🛫 Départ/arrivée Europe' }, { title: '🌐 Autre' },
   ] }, cfg);
 }
-// Route par VILLES (concret, pas juridique) : départ puis arrivée — la zone (Afrique/Europe) est déduite,
-// et le trajet est pré-rempli pour tout le reste du parcours (escale, récap, mandat).
+// ROUTE — qualification en UN tap par le critère légal CE 261 : le voyage touche-t-il l'Europe ?
+// (départ OU arrivée). Plus facile à qualifier qu'une ville à retrouver/taper. La ville exacte du
+// trajet est récupérée ensuite (scan e-billet/carte, ou saisie vol) — jamais redemandée pour qualifier.
+async function askRouteZone(phone, s, cfg) {
+  s.step = 'route_zone'; await setState(phone, s);
+  return sendButtons(phone, { body: `${bar('route')}\n🗺️ Pour vérifier vos droits, votre voyage :\n\n🛫 *commence en Europe* (vous décollez d'un aéroport européen)\n🛬 ou *arrive en Europe*\n🌍 ou *ni l'un ni l'autre* (ex. entre deux pays d'Afrique)\n\n_💡 Une escale en Europe compte aussi !_`, buttons: [
+    { id: 'rz_dep', text: '🛫 Départ d\'Europe' },
+    { id: 'rz_arr', text: '🛬 Arrivée en Europe' },
+    { id: 'rz_non', text: '🌍 Aucun des deux' },
+  ] }, cfg);
+}
+// LEGACY (sessions en cours) — route par VILLES : départ puis arrivée, zone déduite, trajet pré-rempli.
 async function sendRouteDep(phone, s, cfg) {
   s.step = 'route_dep'; await setState(phone, s);
   return sendCityList(phone, { header: 'Ville de départ', body: `${bar('route')}\n🛫 De quelle ville *partiez-vous* ?` }, VILLES_COURANTES, cfg);
@@ -1847,6 +1883,7 @@ async function relancerEtape(phone, s, cfg) {
     case 'langue': return sendLangue(phone, s, cfg);
     case 'q_corr': return sendButtons(phone, { body: `Ce vol faisait-il partie d'une *correspondance* (un autre vol juste avant ou juste après) ?`, buttons: [{ id: 'corr_direct', text: '✈️ Non, vol direct' }, { id: 'corr_escale', text: '🔄 Oui, correspondance' }] }, cfg);
     case 'route': return sendRoute(phone, s, cfg);
+    case 'route_zone': return askRouteZone(phone, s, cfg);
     case 'route_dep': return sendRouteDep(phone, s, cfg);
     case 'route_arr': return sendRouteArr(phone, s, cfg);
     case 'incident': return sendIncident(phone, s, cfg);
