@@ -9,7 +9,15 @@
  * Variables Netlify : ANTHROPIC_API_KEY (cause IA), RAPIDAPI_KEY (vol + rotation).
  *   RADAR_ENQUETE_MODEL — modèle Claude (défaut claude-sonnet-4-5 : bon rapport
  *                         qualité/coût pour le raisonnement juridique + web_search).
- *                         claude-haiku-4-5 = encore moins cher ; claude-opus-4-8 = max qualité.
+ *                         claude-haiku-4-5 = encore moins cher ; claude-opus-4-8 = max qualité ;
+ *                         claude-fable-5 = qualité max (cher) → réserver via budget mensuel.
+ *   RADAR_ENQUETE_BUDGET — plafond MENSUEL d'appels au modèle premium ci-dessus (0/absent = illimité).
+ *                          Au-delà, bascule auto sur RADAR_ENQUETE_FALLBACK_MODEL. Ne compte que les
+ *                          vrais appels au modèle (un cache-hit n'y arrive jamais). Cap « soft » :
+ *                          léger dépassement possible en cas d'appels concurrents.
+ *   RADAR_ENQUETE_FALLBACK_MODEL — modèle de repli une fois le budget épuisé (défaut claude-sonnet-4-5).
+ *   RADAR_ENQUETE_EFFORT — force l'effort pour tous (low|medium|high|xhigh). Sinon : fable=high,
+ *                          haiku=aucun, autres=low.
  */
 
 const { ADB_HOST, rapidApiKey, parisYmd } = require('./aerodatabox-flight');
@@ -24,6 +32,40 @@ const DEFAULT_MODEL = 'claude-sonnet-4-5';
 
 function enqueteModel() {
   return (process.env.RADAR_ENQUETE_MODEL || DEFAULT_MODEL).trim();
+}
+
+// ─── Budget mensuel du modèle premium (ex. Fable) ────────────────────────────
+// Plafonne le NOMBRE d'enquêtes/mois sur le modèle premium ; au-delà → fallback Sonnet.
+// On ne compte que les vrais appels au modèle : un cache-hit retourne avant d'arriver ici.
+// Cap « soft » : en cas d'appels concurrents le compteur peut sous-estimer (léger dépassement borné).
+function fallbackModel() {
+  return (process.env.RADAR_ENQUETE_FALLBACK_MODEL || DEFAULT_MODEL).trim();
+}
+function premiumBudget() {
+  const n = parseInt(process.env.RADAR_ENQUETE_BUDGET || '0', 10);
+  return Number.isFinite(n) && n > 0 ? n : 0;            // 0/absent = illimité (comportement historique)
+}
+function budgetKey() {
+  return `_budget_${parisYmd().slice(0, 7)}`;            // _budget_YYYY-MM (mois calendaire Paris)
+}
+async function budgetCount(event) {
+  const store = blobStore(event);
+  if (!store) return null;                               // Blobs illisible → compteur inconnu
+  try { const v = await store.get(budgetKey(), { type: 'json' }); return (v && typeof v.n === 'number') ? v.n : 0; }
+  catch (_) { return null; }
+}
+async function budgetIncr(event, prev) {
+  const store = blobStore(event);
+  if (!store) return;
+  try { await store.setJSON(budgetKey(), { n: (prev || 0) + 1, at: new Date().toISOString() }); } catch (_) {}
+}
+// Effort par modèle : Fable mérite « high » (sortie plafonnée à 1200 tokens → coût borné).
+function effortFor(model) {
+  const override = (process.env.RADAR_ENQUETE_EFFORT || '').trim();
+  if (override) return override;
+  if (/haiku/i.test(model)) return '';                  // haiku : pas d'effort
+  if (/fable/i.test(model)) return 'high';              // fable : raisonnement profond
+  return 'low';                                         // sonnet/opus : bon rapport coût/qualité
 }
 
 // Page de statut officielle de la compagnie (copie minimale de radar.js, non exporté là-bas).
@@ -278,7 +320,8 @@ async function callClaude(apiKey, model, userText) {
     messages: [{ role: 'user', content: userText }],
     tools: [{ type: 'web_search_20260209', name: 'web_search' }],
   };
-  if (!/haiku/i.test(model)) body.output_config = { effort: 'low' };
+  const eff = effortFor(model);
+  if (eff) body.output_config = { effort: eff };
 
   let res = await fetch(API_URL, {
     method: 'POST',
@@ -362,7 +405,7 @@ async function callOpenAI(userText) {
  * fournisseur réellement approvisionné évite un appel raté inutile.
  * @returns {{ text, provider, model }}
  */
-async function callEnqueteLLM(userText) {
+async function callEnqueteLLM(userText, event) {
   const order = (process.env.ENQUETE_LLM_ORDER || 'anthropic,gemini,openai')
     .split(/[,\s]+/).map((s) => s.trim().toLowerCase()).filter(Boolean);
   const errs = [];
@@ -371,7 +414,20 @@ async function callEnqueteLLM(userText) {
       if (p === 'anthropic') {
         const k = (process.env.ANTHROPIC_API_KEY || '').trim();
         if (!k) { errs.push('anthropic: clé absente'); continue; }
-        return { text: await callClaude(k, enqueteModel(), userText), provider: 'anthropic', model: enqueteModel() };
+        // Sélection modèle avec budget mensuel : premium tant qu'il reste du quota, sinon fallback.
+        const primary = enqueteModel();
+        const fb = fallbackModel();
+        const budget = premiumBudget();
+        let model = primary, slot = null;
+        if (budget && primary !== fb) {
+          const used = await budgetCount(event);
+          // Compteur illisible OU quota épuisé → repli SÛR sur le fallback (jamais de premium non plafonné).
+          if (used == null || used >= budget) model = fb;
+          else slot = used;                              // quota dispo → premium, on incrémente après succès
+        }
+        const text = await callClaude(k, model, userText);
+        if (slot != null) await budgetIncr(event, slot); // incrément après succès seulement
+        return { text, provider: 'anthropic', model };
       }
       if (p === 'gemini') {
         return { text: await callGemini(userText), provider: 'gemini', model: (process.env.ENQUETE_GEMINI_MODEL || 'gemini-2.0-flash').trim() };
@@ -516,7 +572,7 @@ async function runEnquete(event, input, opts = {}) {
     ].filter(Boolean).join('\n');
 
     try {
-      const out = await callEnqueteLLM(facts);
+      const out = await callEnqueteLLM(facts, event);
       analysis = parseReply(out.text);
       llmProvider = out.provider;
       llmModel = out.model;
