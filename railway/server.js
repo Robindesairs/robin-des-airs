@@ -714,6 +714,13 @@ Champ inconnu = "". Ne JAMAIS inventer un nom si la photo est illisible.`;
 
 // ─── État des pièces (déterministe) : quel passager n'a pas sa pièce ? preuve de voyage ? ──
 function paxName(s, i) { const p = (s.passengers || [])[i] || {}; return p.name || (s.names && s.names[i]) || `Passager ${i + 1}`; }
+// Enregistre une carte d'embarquement reçue, par NOM (1 carte = 1 passager prouvé). Dédupliqué.
+function addCarteName(s, name) {
+  const n = String(name || '').trim().toUpperCase();
+  if (n.length < 3) return;
+  s.carteNames = s.carteNames || [];
+  if (!s.carteNames.includes(n)) s.carteNames.push(n);
+}
 function docsStatus(s) {
   const pax = s.pax || ((s.passengers && s.passengers.length) || 1);
   const missingId = [];
@@ -722,9 +729,18 @@ function docsStatus(s) {
     const provided = !!(p && !p.skipped && (p.idReceived || p.dob)); // pièce lue (photo/saisie) → dob présent
     if (!provided) missingId.push(paxName(s, i));
   }
-  // Preuve de voyage = niveau DOSSIER : un e-billet couvre tous les passagers ET tous les segments (correspondances)
-  const travelProofOk = !!s.travelProof;
-  return { missingId, travelProofOk, complete: missingId.length === 0 && travelProofOk };
+  // Preuve de voyage : un E-BILLET liste TOUS les passagers → couvre tout le groupe (et toutes les escales).
+  // Une CARTE D'EMBARQUEMENT ne prouve qu'1 personne → il en faut 1 par passager (suivi par nom).
+  const eBillet = (s.travelProof === 'ebooking');
+  const carteNames = (s.carteNames || []).map((x) => String(x).toUpperCase());
+  const travelProofOk = pax <= 1 ? !!s.travelProof : (eBillet || carteNames.length >= pax);
+  // Passagers sans carte (par nom) — sert au message « il manque la preuve de X ».
+  const missingTravel = travelProofOk ? [] : (() => {
+    const set = new Set(carteNames); const out = [];
+    for (let i = 0; i < pax; i++) { const nm = paxName(s, i); if (!set.has(String(nm).toUpperCase())) out.push(nm); }
+    return out;
+  })();
+  return { missingId, travelProofOk, missingTravel, complete: missingId.length === 0 && travelProofOk };
 }
 // Indices des passagers SANS pièce d'identité
 function missingIdIndices(s) {
@@ -786,7 +802,11 @@ function attributeId(s, nom) {
 function missingDocsText(s) {
   const st = docsStatus(s); const miss = [];
   if (st.missingId.length) miss.push(`la *pièce d'identité* de *${st.missingId.join('*, *')}*`);
-  if (!st.travelProofOk) miss.push(`votre *carte d'embarquement* ou *e-billet*`);
+  if (!st.travelProofOk) {
+    if ((s.pax || 1) <= 1) miss.push(`votre *carte d'embarquement* ou *e-billet*`);
+    else if (st.missingTravel.length && st.missingTravel.length < s.pax) miss.push(`la *preuve de voyage* de *${st.missingTravel.join('*, *')}* — sa *carte d'embarquement*, ou un *e-billet* qui liste tout le monde`);
+    else miss.push(`une *preuve de voyage par passager* : une *carte d'embarquement* pour chacun, ou un seul *e-billet* qui les liste tous`);
+  }
   if (miss.length) return `📎 Il manque encore : ${miss.join(' et ')}.`;
   return fillTpl(pickRV(s.ref || '', 'DOC_COMPLET'), { REF: s.ref || '', TOTAL: (600 * (s.pax || 1)) + ' €', NOM: firstNameOf(s) }) || `🎉 Toutes vos pièces sont là, merci ! Notre équipe prend le relais.`;
 }
@@ -1224,9 +1244,10 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
             s.names[idx] = nmU;
             const cur = s.passengers[idx] || {}; if (!cur.name) cur.name = nm; s.passengers[idx] = cur;
           }
+          addCarteName(s, nm); // carte d'embarquement = preuve de voyage de CE passager (suivi par nom)
           d = { ...d, passengers: [] }; // noms déjà fusionnés → setEticketFields n'y touche plus
         }
-        setEticketFields(s, d); s.travelProof = s.travelProof || (d._carte ? 'carte' : ((d.passengers && d.passengers.length) ? 'ebooking' : 'scan'));
+        setEticketFields(s, d); s.travelProof = (d.passengers && d.passengers.length) ? 'ebooking' : (s.travelProof || (d._carte ? 'carte' : 'scan'));
         if (d.allerRetour && d.trajets && d.trajets.length > 1) { s.trajets = d.trajets; await setState(phone, s); return askSens(phone, s, cfg); }
         s.step = 'scan_confirm'; await setState(phone, s); return scanConfirmCard(phone, s, cfg);
       }
@@ -1640,8 +1661,10 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
           }
         } else { ack = `✅ Pièce d'identité bien reçue. 🙏`; }
       } else if (d.kind === 'voyage') {
-        s.travelProof = d.voyageType || 'voyage';
-        ack = d.voyageType === 'ebooking' ? `✅ Confirmation de réservation reçue — elle couvre *tout le voyage et tous les passagers*. 👍` : `✅ Carte d'embarquement reçue. 👍`;
+        // E-billet → couvre tout le groupe. Carte → preuve d'1 passager (suivi par nom).
+        s.travelProof = d.voyageType === 'ebooking' ? 'ebooking' : (s.travelProof === 'ebooking' ? 'ebooking' : (d.voyageType || 'voyage'));
+        if (d.voyageType === 'carte') addCarteName(s, d.nom);
+        ack = d.voyageType === 'ebooking' ? `✅ Confirmation de réservation reçue — elle couvre *tout le voyage et tous les passagers*. 👍` : `✅ Carte d'embarquement reçue${d.nom ? ` (${titleCaseName(d.nom.split(/\s+/)[0])})` : ''}. 👍`;
       } else { ack = `✅ Document bien reçu, merci. 🙏 Notre équipe l'ajoute à votre dossier.`; }
       await setState(phone, s);
       return send(phone, `${ack}\n\n${missingDocsText(s)}`, cfg);
