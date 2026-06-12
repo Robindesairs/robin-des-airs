@@ -1501,7 +1501,7 @@ async function nextPassport(phone, s, cfg) {
   // Nom du passager courant : connu seulement si e-billet scanné (sinon lu sur la pièce). Conditionnel.
   const curName = (s.passengers && s.passengers[s.doc_idx] && s.passengers[s.doc_idx].name) || (s.names && s.names[s.doc_idx]) || '';
   const who = curName ? ` — *${curName}*` : '';
-  return sendButtons(phone, { body: `${bar('documents')}\n${intro}${header}🛂 *Passager ${s.doc_idx + 1} sur ${s.pax}*${who}\n📸 *Le plus simple* : une *photo* de sa pièce d'identité — *passeport, CNI ou carte de séjour*. On lit le nom et la date *automatiquement*. ⏱️ *10 secondes et c'est réglé !*\nℹ️ Cette pièce est *indispensable* pour réclamer en son nom — on la classe *directement dans votre dossier*, uniquement pour votre réclamation. 🔒`, buttons: [{ id: 'doc_photo', text: '📸 Envoyer ma photo' }, { id: 'doc_saisir', text: '✍️ Saisir à la main' }, { id: 'doc_passer', text: '⏭️ Je l\'envoie après' }] }, cfg);
+  return sendButtons(phone, { body: `${bar('documents')}\n${intro}${header}🛂 *Passager ${s.doc_idx + 1} sur ${s.pax}*${who}\n📸 *Le plus simple* : une *photo* de sa pièce d'identité — *passeport, CNI ou carte de séjour*. On lit le nom et la date *automatiquement*. ⏱️ *10 secondes et c'est réglé !*\nℹ️ Cette pièce est *indispensable* pour réclamer en son nom — classée *directement dans votre dossier*.\n🔒 Transmission *sécurisée*, uniquement pour votre réclamation — *jamais revendue*.`, buttons: [{ id: 'doc_photo', text: '📸 Envoyer ma photo' }, { id: 'doc_saisir', text: '✍️ Saisir à la main' }, { id: 'doc_passer', text: '⏭️ Je l\'envoie après' }] }, cfg);
 }
 async function askMandant(phone, s, cfg) {
   // 1 seul passager → signataire évident, pas de question
