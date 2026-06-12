@@ -434,6 +434,33 @@ function cleanCity(input) {
   if (c.length === 3 && /^[a-z]{3}$/i.test(c) && c !== c.toLowerCase()) return c.toUpperCase(); // « DSS », « Cdg » = code aéroport
   return c.charAt(0).toUpperCase() + c.slice(1);
 }
+// Villes proposées en liste cliquable (max 9 + « Autre » : WhatsApp plafonne à 10 lignes).
+// Départ/arrivée = corridor Afrique ↔ Europe (campagnes Dakar/Abidjan, diaspora FR/BE) ; escale = hubs.
+const VILLES_COURANTES = [
+  { v: 'Dakar', d: 'Sénégal' }, { v: 'Paris', d: 'France' }, { v: 'Abidjan', d: 'Côte d\'Ivoire' },
+  { v: 'Bruxelles', d: 'Belgique' }, { v: 'Bamako', d: 'Mali' }, { v: 'Conakry', d: 'Guinée' },
+  { v: 'Douala', d: 'Cameroun' }, { v: 'Marseille', d: 'France' }, { v: 'Lyon', d: 'France' },
+];
+const VILLES_HUBS = [
+  { v: 'Casablanca', d: 'Royal Air Maroc' }, { v: 'Istanbul', d: 'Turkish Airlines' }, { v: 'Paris', d: 'Air France' },
+  { v: 'Lisbonne', d: 'TAP Air Portugal' }, { v: 'Bruxelles', d: 'Brussels Airlines' }, { v: 'Addis-Abeba', d: 'Ethiopian' },
+  { v: 'Alger', d: 'Air Algérie' }, { v: 'Tunis', d: 'Tunisair' }, { v: 'Dubaï', d: 'Emirates' },
+];
+// Interprète la réponse à une liste de villes : tap (id WATI « 0-N » ou titre), numéro du repli texte,
+// « autre » → saisie libre, sinon le texte est traité comme une ville tapée directement.
+function cityPick(input, id, cities) {
+  if (id === 'ville_autre') return { autre: true };
+  const ri = listRowIdx(id);
+  if (ri >= 0) return ri < cities.length ? { city: cities[ri].v } : { autre: true };
+  const t = String(input || '').trim().toLowerCase();
+  if (/^\d{1,2}$/.test(t)) { const i = parseInt(t) - 1; if (i >= 0 && i < cities.length) return { city: cities[i].v }; if (i === cities.length) return { autre: true }; return null; }
+  if (/\bautre\b/.test(t)) return { autre: true };
+  const c = cleanCity(input);
+  return c ? { city: c } : null;
+}
+async function sendCityList(phone, { header, body }, cities, cfg) {
+  return sendList(phone, { header, body, buttonText: 'Ville ▾', items: cities.map((c) => ({ title: c.v, description: c.d })).concat([{ id: 'ville_autre', title: '✏️ Autre ville', description: 'Tapez son nom' }]) }, cfg);
+}
 // Stockage DURABLE du dossier sur Netlify Blobs (survit aux redémarrages Railway).
 // Fire-and-forget : le serveur Railway étant persistant, le POST se termine en arrière-plan.
 async function storeDossierDurable(ref, dossier) {
@@ -1043,27 +1070,36 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // Une photo envoyée en plein milieu = le client tend son e-billet → on bascule sur le scan (il lit tout d'un coup).
   if (/^esc_/.test(s.step) && mediaUrl) { s.step = 'scan'; await setState(phone, s); return handleMessage(phone, text, cfg, mediaUrl, replyId, true); }
   if (s.step === 'esc_dep') {
-    const city = cleanCity(input);
-    if (!city) return send(phone, `🛫 Indiquez la ville de *départ* de votre voyage _(ex : Dakar)_ :`, cfg);
-    s.escCities = [city]; s.step = 'esc_via'; await setState(phone, s);
-    return send(phone, `✅ Départ : *${city}*\n\n🔄 Dans quelle ville avez-vous fait *escale* ? _(ex : Casablanca)_`, cfg);
+    const pk = cityPick(input, id, VILLES_COURANTES);
+    if (pk && pk.autre) return send(phone, `✏️ Tapez le nom de votre ville de *départ* _(ex : Cotonou)_ :`, cfg);
+    if (!pk) return askEscDep(phone, s, cfg);
+    s.escCities = [pk.city]; await setState(phone, s);
+    await send(phone, `✅ Départ : *${pk.city}*`, cfg);
+    return askEscVia(phone, s, cfg);
   }
   if (s.step === 'esc_via') {
-    const city = cleanCity(input);
-    if (!city) return send(phone, `🔄 Indiquez la ville de l'*escale* _(ex : Casablanca)_ :`, cfg);
-    s.escCities = s.escCities || []; s.escCities.push(city);
-    if (s.escCities.length >= 4) { s.step = 'esc_arr'; await setState(phone, s); return send(phone, `✅ Escale : *${city}*\n\n🛬 Et quelle est votre ville d'*arrivée finale* ? _(ex : Paris)_`, cfg); }
+    const pk = cityPick(input, id, VILLES_HUBS);
+    if (pk && pk.autre) return send(phone, `✏️ Tapez le nom de la ville d'*escale* _(ex : Nairobi)_ :`, cfg);
+    if (!pk) return askEscVia(phone, s, cfg, (s.escCities || []).length >= 2);
+    s.escCities = s.escCities || []; s.escCities.push(pk.city);
+    if (s.escCities.length >= 4) return askEscArr(phone, s, cfg, `✅ Escale : *${pk.city}*`);
     s.step = 'esc_more'; await setState(phone, s);
-    return sendButtons(phone, { body: `✅ Escale : *${city}*\n\nY avait-il une *autre escale* ?`, buttons: [{ id: 'esc_oui', text: '🔄 Oui, une autre' }, { id: 'esc_non', text: '➡️ Non' }] }, cfg);
+    return sendButtons(phone, { body: `✅ Escale : *${pk.city}*\n\nY avait-il une *autre escale* ?`, buttons: [{ id: 'esc_oui', text: '🔄 Oui, une autre' }, { id: 'esc_non', text: '➡️ Non' }] }, cfg);
   }
   if (s.step === 'esc_more') {
-    if (id === 'esc_non' || /^non/.test(lower)) { s.step = 'esc_arr'; await setState(phone, s); return send(phone, `🛬 Et quelle est votre ville d'*arrivée finale* ? _(ex : Paris)_`, cfg); }
-    if (id === 'esc_oui' || /^oui/.test(lower)) { s.step = 'esc_via'; await setState(phone, s); return send(phone, `🔄 Dans quelle ville était l'escale *suivante* ?`, cfg); }
+    if (id === 'esc_non' || /^non/.test(lower)) return askEscArr(phone, s, cfg);
+    if (id === 'esc_oui' || /^oui/.test(lower)) return askEscVia(phone, s, cfg, true);
     return sendButtons(phone, { body: `Y avait-il une *autre escale* ?`, buttons: [{ id: 'esc_oui', text: '🔄 Oui, une autre' }, { id: 'esc_non', text: '➡️ Non' }] }, cfg);
   }
   if (s.step === 'esc_arr') {
-    const city = cleanCity(input);
-    if (!city) return send(phone, `🛬 Indiquez la ville d'*arrivée finale* _(ex : Paris)_ :`, cfg);
+    const pk = cityPick(input, id, VILLES_COURANTES);
+    if (pk && pk.autre) return send(phone, `✏️ Tapez le nom de votre ville d'*arrivée finale* _(ex : Toulouse)_ :`, cfg);
+    if (!pk) return askEscArr(phone, s, cfg);
+    const city = pk.city;
+    // Arrivée = départ → aller-retour confondu : on ne décrit que le voyage qui a eu le problème.
+    if (s.escCities && s.escCities[0] && city.toLowerCase() === s.escCities[0].toLowerCase()) {
+      return send(phone, `🤔 Votre arrivée (*${city}*) est identique à votre départ — pour un *aller-retour*, ne décrivez que le voyage qui a eu le problème (l'aller OU le retour).\n🛬 Quelle est la ville d'arrivée de *ce* voyage ?`, cfg);
+    }
     const c = (s.escCities || []).concat(city);
     s.escCities = c; s.route = c.join(' → ');
     s.legs = c.slice(0, -1).map((dep, i) => ({ vol: '', dep, arr: c[i + 1] }));
@@ -1551,7 +1587,15 @@ async function estimationPuisPax(phone, s, cfg) { s.step = 'nb_pax'; await setSt
 // Entrée du parcours correspondance guidé : une question = une info (départ, escale, autre ?, arrivée, n° vols).
 async function askEscDep(phone, s, cfg, intro) {
   s.legs = []; s.escCities = []; s.legIdx = 0; s.step = 'esc_dep'; await setState(phone, s);
-  return send(phone, `${intro ? intro + '\n\n' : ''}${bar('esc_dep')}\n🛫 Quelle est la ville de *départ* de votre voyage ? _(ex : Dakar)_`, cfg);
+  return sendCityList(phone, { header: 'Ville de départ', body: `${intro ? intro + '\n\n' : ''}${bar('esc_dep')}\n🛫 Quelle est la ville de *départ* de votre voyage ?` }, VILLES_COURANTES, cfg);
+}
+async function askEscVia(phone, s, cfg, suivante) {
+  s.step = 'esc_via'; await setState(phone, s);
+  return sendCityList(phone, { header: suivante ? 'Escale suivante' : 'Ville d\'escale', body: suivante ? `🔄 Dans quelle ville était l'escale *suivante* ?` : `🔄 Dans quelle ville avez-vous fait *escale* ?` }, VILLES_HUBS, cfg);
+}
+async function askEscArr(phone, s, cfg, prefix) {
+  s.step = 'esc_arr'; await setState(phone, s);
+  return sendCityList(phone, { header: 'Arrivée finale', body: `${prefix ? prefix + '\n\n' : ''}🛬 Et quelle est votre ville d'*arrivée finale* ?` }, VILLES_COURANTES, cfg);
 }
 // Raccourci bandeau : passagers connus → si direct, vol+date sont déjà là (vérif éligibilité + récap) ;
 // si correspondance, on bascule sur le flux escale standard pour collecter les segments.
@@ -1723,6 +1767,11 @@ async function relancerEtape(phone, s, cfg) {
     case 'incident': return sendIncident(phone, s, cfg);
     case 'annul_delai': return sendAnnulDelai(phone, s, cfg);
     case 'nb_pax': return sendPax(phone, s, cfg);
+    case 'esc_dep': return askEscDep(phone, s, cfg);
+    case 'esc_via': return askEscVia(phone, s, cfg, (s.escCities || []).length >= 2);
+    case 'esc_more': return sendButtons(phone, { body: `Y avait-il une *autre escale* ?`, buttons: [{ id: 'esc_oui', text: '🔄 Oui, une autre' }, { id: 'esc_non', text: '➡️ Non' }] }, cfg);
+    case 'esc_arr': return askEscArr(phone, s, cfg);
+    case 'esc_vol': { const l = (s.legs || [])[s.legIdx || 0]; if (l) return send(phone, `✈️ Numéro du vol *${l.dep} → ${l.arr}* ? _(ex : AT540)_\n✏️ Tapez *passer* si vous ne l'avez plus.`, cfg); return askEscDep(phone, s, cfg); }
     case 'mineurs': return sendMineurs(phone, s, cfg);
     case 'recap': return sendRecap(phone, s, cfg);
     case 'names': return askName(phone, s, cfg);
