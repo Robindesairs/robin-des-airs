@@ -175,7 +175,7 @@ const PROGRESS = {
   incident: 2, duree: 2, annul_delai: 2,
   nb_pax: 3, nb_pax_exact: 3,
   type_vol: 4, motivation: 4,
-  scan: 5, scan_confirm: 5, m_vol: 5, m_date: 5, m_route: 5, m_route_confirm: 5, m_dep: 5, m_arr: 5, m_pnr: 5, names: 5, names_confirm: 5, names_fix_which: 5, names_fix_one: 5,
+  scan: 5, scan_confirm: 5, m_vol: 5, m_date: 5, m_route: 5, m_route_confirm: 5, m_dep: 5, m_arr: 5, m_stop_arr: 5, m_pnr: 5, names: 5, names_confirm: 5, names_fix_which: 5, names_fix_one: 5,
   esc_dep: 5, esc_via: 5, esc_more: 5, esc_arr: 5, esc_vol: 5,
   annee: 6, mineurs: 6, mineurs_which: 6,
   correction: 6, fix_vol: 6, fix_date: 6, fix_nom: 6, fix_route: 6,
@@ -388,13 +388,30 @@ async function fetchFlightVerdict(vol, date, typeVol) {
     return (j && j.ok) ? j : null;
   } catch (_) { return null; }
 }
-// Résout le TRAJET depuis le n° de vol via AeroDataBox (best-effort) — évite de faire taper la route
-// au client quand il n'a ni e-billet ni carte. Le trajet est ensuite CONFIRMÉ d'un tap (jamais imposé :
-// un codeshare/escale mal résolu se corrige). Garde-fou mémoire : la route vient de l'API, jamais d'un LLM.
-async function resolveRoute(vol, date) {
-  const v = await fetchFlightVerdict(vol, date, 'direct');
-  if (v && v.route && /→/.test(v.route)) return { route: v.route, compagnie: v.airline || v.compagnie || '' };
-  return null;
+// Résout les TRONÇONS du vol via AeroDataBox (flight-info renvoie un tableau de legs). Un vol multi-stop
+// sous le même n° (ex. ORY→COO→ABJ) revient en plusieurs lignes → on les CHAÎNE en arrêts ordonnés.
+// Évite de faire taper la route au client (pas d'e-billet/carte) ; toujours CONFIRMÉ ensuite (jamais imposé).
+// Garde-fou mémoire : la route vient de l'API, jamais d'un LLM. Renvoie { airline, stops:[{code,label}] } ou null.
+async function resolveLegs(vol, date) {
+  try {
+    const v = String(vol || '').split('+')[0].trim().split(/\s+/)[0];
+    const ymd = toISODate(date);
+    if (!v || !ymd) return null;
+    const res = await fetch(`https://robindesairs.eu/api/flight-info?flight=${encodeURIComponent(v)}&date=${encodeURIComponent(ymd)}`, { signal: AbortSignal.timeout(6000) });
+    if (!res.ok) return null;
+    const data = await res.json().catch(() => null);
+    if (!Array.isArray(data) || !data.length) return null;
+    const legs = data.map((r) => ({ dep: (r.departure || {}).iataCode || '', arr: (r.arrival || {}).iataCode || '', depCity: (r.departure || {}).city || '', arrCity: (r.arrival || {}).city || '' })).filter((l) => l.dep && l.arr);
+    if (!legs.length) return null;
+    const airline = (data[0] || {}).airline || '';
+    const labelOf = {}; for (const l of legs) { if (!labelOf[l.dep]) labelOf[l.dep] = l.depCity || l.dep; if (!labelOf[l.arr]) labelOf[l.arr] = l.arrCity || l.arr; }
+    let codes;
+    if (legs.length === 1) codes = [legs[0].dep, legs[0].arr];
+    else { const ch = chainLegs(legs); if (!ch) return null; codes = []; ch.forEach((l, i) => { if (i === 0) codes.push(l.dep); codes.push(l.arr); }); } // pas chaînable proprement → ambigu, on n'invente pas
+    const uniq = codes.filter((c, i) => i === 0 || c !== codes[i - 1]).slice(0, 9);
+    if (uniq.length < 2) return null;
+    return { airline, stops: uniq.map((c) => ({ code: c, label: labelOf[c] || c })) };
+  } catch (_) { return null; }
 }
 // Ordonne les segments d'une correspondance par chaînage (arrivée d'un vol = départ du suivant),
 // quel que soit l'ordre de saisie. Renvoie null si non chaînable (aéroports manquants/boucle) → on garde l'ordre saisi.
@@ -979,7 +996,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // ⚠️ Jamais intercepté si c'est une réponse interactive (bouton/liste) : replyId présent → flux prioritaire
   try {
     const { isClientQuestion, isSensitive, answerClientQuestion } = AI;
-    const FREE = ['m_vol', 'm_date', 'm_route', 'm_dep', 'm_arr', 'm_pnr', 'leg_count', 'leg_input', 'esc_dep', 'esc_via', 'esc_arr', 'esc_vol', 'names', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob'];
+    const FREE = ['m_vol', 'm_date', 'm_route', 'm_dep', 'm_arr', 'm_stop_arr', 'm_pnr', 'leg_count', 'leg_input', 'esc_dep', 'esc_via', 'esc_arr', 'esc_vol', 'names', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob'];
     const looks = !id && (FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input));
     if (looks) {
       if (isSensitive(input)) { await send(phone, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nÉcrivez *go* pour continuer votre dossier.`, cfg); return; }
@@ -1342,10 +1359,14 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       if (s.route) return gotoPnr(phone, s, cfg, ok);
       // Pas de route (ni scan ni saisie) → on tente de la RETROUVER depuis le n° de vol (AeroDataBox).
       await send(phone, ok, cfg);
-      const rr = await resolveRoute(s.vol, s.date);
-      if (rr && rr.route) {
-        s.route = rr.route; if (rr.compagnie && !s.compagnie) s.compagnie = rr.compagnie;
-        s.step = 'm_route_confirm'; await setState(phone, s);
+      const legsInfo = await resolveLegs(s.vol, s.date);
+      if (legsInfo && legsInfo.airline && !s.compagnie) s.compagnie = legsInfo.airline;
+      const stops = (legsInfo && legsInfo.stops) || [];
+      // Vol MULTI-ESCALES (ex. Orly → Cotonou → Abidjan) → on PROPOSE les arrêts (où êtes-vous descendu ?).
+      if (stops.length >= 3) { s.routeStops = stops; await setState(phone, s); return askStopArr(phone, s, cfg); }
+      // Vol simple A → B retrouvé → confirmation 1 tap.
+      if (stops.length === 2) {
+        s.route = `${stops[0].label} → ${stops[1].label}`; s.step = 'm_route_confirm'; await setState(phone, s);
         return sendButtons(phone, { body: `✈️ J'ai retrouvé votre trajet : *${s.route}*${s.compagnie ? ` (${s.compagnie})` : ''}.\nC'est bien ça ?`, buttons: [{ id: 'route_ok', text: '✅ Oui, c\'est ça' }, { id: 'route_fix', text: '✏️ Corriger' }] }, cfg);
       }
       // Introuvable / API muette → on demande le trajet en 2 questions imagées (décollage 🛫 / atterrissage 🛬).
@@ -1386,6 +1407,21 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     }
     s.route = `${s.depCity} → ${pk.city}`; await setState(phone, s);
     return gotoPnr(phone, s, cfg, `✅ Trajet : *${s.route}* 🛬`);
+  }
+  // Vol multi-escales retrouvé (AeroDataBox) : départ = 1er arrêt, on demande OÙ le client est descendu.
+  if (s.step === 'm_stop_arr') {
+    const stops = s.routeStops || [];
+    const downstream = stops.slice(1); // arrivées possibles (le départ = stops[0])
+    let chosen = null;
+    if (id === 'stop_autre' || /\bautre\b/.test(lower)) { s.route = ''; s.routeStops = null; await setState(phone, s); return askDepCity(phone, s, cfg, `🗺️ Pas de souci, on précise ensemble.`); }
+    if (id && /^stop_\d+$/.test(id)) chosen = downstream[parseInt(id.slice(5))];
+    else {
+      const ri = listRowIdx(id); if (ri >= 0) { if (ri < downstream.length) chosen = downstream[ri]; else { s.route = ''; s.routeStops = null; await setState(phone, s); return askDepCity(phone, s, cfg); } }
+      if (!chosen) { const t = nmStrip(input).trim(); if (t) chosen = downstream.find((d) => nmStrip(d.label).includes(t) || d.code.toLowerCase() === lower.trim()); }
+      if (!chosen && /^\d+$/.test(lower.trim())) { const i = parseInt(lower) - 1; if (i >= 0 && i < downstream.length) chosen = downstream[i]; else if (i === downstream.length) { s.route = ''; s.routeStops = null; await setState(phone, s); return askDepCity(phone, s, cfg); } }
+    }
+    if (chosen) { s.route = `${stops[0].label} → ${chosen.label}`; s.routeStops = null; await setState(phone, s); return gotoPnr(phone, s, cfg, `✅ Trajet : *${s.route}* 🛬`); }
+    return askStopArr(phone, s, cfg);
   }
   if (s.step === 'm_pnr') {
     if (lower === 'passer' || lower === 'non' || lower === 'skip') { await setState(phone, s); return apresVol(phone, s, cfg); }
@@ -1697,6 +1733,18 @@ async function askArrCity(phone, s, cfg) {
   s.step = 'm_arr'; await setState(phone, s);
   return sendCityList(phone, { header: 'Ville d\'arrivée', body: `🛬 Et dans quelle ville votre *avion atterrit*-il ? _(votre arrivée)_` }, VILLES_COURANTES, cfg);
 }
+// Vol multi-escales retrouvé : on montre le routing complet et on demande l'arrêt de DESCENTE du client.
+async function askStopArr(phone, s, cfg) {
+  s.step = 'm_stop_arr'; await setState(phone, s);
+  const stops = s.routeStops || [];
+  const chain = stops.map((x) => x.label).join(' → ');
+  const downstream = stops.slice(1); // le départ = stops[0], les arrivées possibles = la suite
+  const body = `✈️ Ce vol dessert *${chain}*.\nOù êtes-vous *descendu(e)* ? _(votre arrivée)_`;
+  if (downstream.length <= 2) {
+    return sendButtons(phone, { body, buttons: downstream.map((d, i) => ({ id: `stop_${i}`, text: clip(d.label, 20) })).concat([{ id: 'stop_autre', text: '✏️ Autre' }]) }, cfg);
+  }
+  return sendList(phone, { header: 'Votre arrivée', body, buttonText: 'Arrivée ▾', items: downstream.map((d, i) => ({ id: `stop_${i}`, title: d.label, description: d.code })).concat([{ id: 'stop_autre', title: '✏️ Autre ville' }]) }, cfg);
+}
 // Tolère un trajet tapé d'un coup (« Dakar → Paris », « Dakar Paris », « DSS-CDG ») → [dep, arr], sinon null.
 function parseRoutePair(input) {
   const codePair = String(input || '').trim().match(/^([a-z]{3})\s*[-\/]\s*([a-z]{3})$/i); // « DSS-CDG » sans toucher « Saint-Louis »
@@ -1913,6 +1961,7 @@ async function relancerEtape(phone, s, cfg) {
     case 'm_route': return send(phone, `🗺️ Quel était le *trajet* ? _(ex : Dakar → Paris, ou DSS → CDG)_`, cfg);
     case 'm_dep': return askDepCity(phone, s, cfg);
     case 'm_arr': return askArrCity(phone, s, cfg);
+    case 'm_stop_arr': return (s.routeStops && s.routeStops.length) ? askStopArr(phone, s, cfg) : askDepCity(phone, s, cfg);
     case 'm_pnr': return gotoPnr(phone, s, cfg);
     case 'doc_pass': case 'doc_pass_confirm': case 'doc_dob': case 'doc_name': return nextPassport(phone, s, cfg);
     case 'doc_mandant': return askMandant(phone, s, cfg);
