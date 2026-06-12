@@ -1528,7 +1528,15 @@ async function finaliser(phone, s, cfg) {
   upsertLead(phone, { ref: s.ref, mandatUrl: s.mandat_url, mandatSentAt: Date.now(), lastClientAt: Date.now(), pax: s.pax || 1, name: firstNameOf(s), signed: false, completed: true, nudges: [] });
   const minorNote = s.minorsCount ? `\n👶 ${s.minorsCount} mineur·s : signature d'un parent/tuteur requise (un expert vous guide).` : '';
   await send(phone, `${bar('done')}\n🎉 *Dossier complet !* Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n${montantLine(s)}${minorNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % au succès uniquement · 🔒 aucune info bancaire.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_\n\n👉 *Signez ici :*\n${s.mandat_url}\n\nSans votre signature, on ne peut pas agir en votre nom. ${STOP_FOOTER}`, cfg);
-  try { const makeUrl = process.env.MAKE_WEBHOOK_NEW_DOSSIER; if (makeUrl) await fetch(makeUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...s, phone, source: 'wati-bot-v8' }) }); } catch (e) {}
+  try {
+    const makeUrl = process.env.MAKE_WEBHOOK_NEW_DOSSIER;
+    if (makeUrl) {
+      // Champs « prêts à mapper » dans Airtable pour le filtre bureau « pièce manquante » (pas de logique côté Make).
+      const _d = docsStatus(s);
+      const _mq = []; if (_d.missingId.length) _mq.push(`pièce d'identité de ${_d.missingId.join(', ')}`); if (!_d.travelProofOk) _mq.push(`preuve de voyage (carte/e-billet)`);
+      await fetch(makeUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...s, phone, source: 'wati-bot-v8', pieces_manquantes: _mq.join(' · '), dossier_complet: _d.complete }) });
+    }
+  } catch (e) {}
   // Garde-fou anti-zombie : dossier finalisé avec pièce(s) manquante(s) → on alerte l'équipe EXPLICITEMENT.
   // (le client est relancé tant qu'il n'a pas signé ; après signature le lead est purgé du bot → c'est au bureau de chasser.)
   try {
