@@ -177,6 +177,7 @@ const PROGRESS = {
   nb_pax: 3, nb_pax_exact: 3,
   type_vol: 4, motivation: 4,
   scan: 5, scan_confirm: 5, m_vol: 5, m_date: 5, m_route: 5, names: 5, names_confirm: 5, names_fix_which: 5, names_fix_one: 5,
+  esc_dep: 5, esc_via: 5, esc_more: 5, esc_arr: 5, esc_vol: 5,
   vd_vol: 6, vd_date: 6, annee: 6, mineurs: 6, mineurs_which: 6,
   correction: 6, fix_vol: 6, fix_date: 6, fix_nom: 6, fix_route: 6,
   recap: 7, documents: 7, doc_pass: 7, doc_pass_confirm: 7, doc_mandant: 7, doc_name: 7, doc_dob: 7, doc_boarding: 7, doc_eticket: 7, doc_cert: 7, rgpd: 7,
@@ -425,6 +426,14 @@ function parseTickerFlight(text) {
 function toISODate(d) { const m = (d || '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); return m ? `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}` : ''; }
 // "NOM/PRENOM" (carte d'embarquement) → "PRENOM NOM". Sinon renvoie tel quel.
 function cleanName(n) { n = (n || '').trim(); if (n.includes('/')) { const [a, b] = n.split('/'); return `${(b||'').trim()} ${(a||'').trim()}`.trim(); } return n; }
+// Ville tapée librement (parcours correspondance guidé) : « dakar » → « Dakar », « dss » → « DSS ».
+// '' = saisie inutilisable (vide, nombre, trop long) → on repose la question.
+function cleanCity(input) {
+  const c = String(input || '').replace(/[«»"]/g, '').replace(/\s+/g, ' ').trim();
+  if (c.length < 2 || c.length > 40 || /^\d+$/.test(c) || !/[a-zà-öø-ÿ]/i.test(c)) return '';
+  if (c.length === 3 && /^[a-z]{3}$/i.test(c) && c !== c.toLowerCase()) return c.toUpperCase(); // « DSS », « Cdg » = code aéroport
+  return c.charAt(0).toUpperCase() + c.slice(1);
+}
 // Stockage DURABLE du dossier sur Netlify Blobs (survit aux redémarrages Railway).
 // Fire-and-forget : le serveur Railway étant persistant, le POST se termine en arrière-plan.
 async function storeDossierDurable(ref, dossier) {
@@ -923,7 +932,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // ⚠️ Jamais intercepté si c'est une réponse interactive (bouton/liste) : replyId présent → flux prioritaire
   try {
     const { isClientQuestion, isSensitive, answerClientQuestion } = AI;
-    const FREE = ['m_vol', 'm_date', 'm_route', 'm_pnr', 'leg_count', 'leg_input', 'names', 'vd_vol', 'vd_date', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob'];
+    const FREE = ['m_vol', 'm_date', 'm_route', 'm_pnr', 'leg_count', 'leg_input', 'esc_dep', 'esc_via', 'esc_arr', 'esc_vol', 'names', 'vd_vol', 'vd_date', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob'];
     const looks = !id && (FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input));
     if (looks) {
       if (isSensitive(input)) { await send(phone, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nÉcrivez *go* pour continuer votre dossier.`, cfg); return; }
@@ -1030,7 +1039,53 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     }
     return sendButtons(phone, { body: `Ce vol faisait-il partie d'une *correspondance* (un autre vol juste avant ou juste après) ?`, buttons: [{ id: 'corr_direct', text: '✈️ Non, vol direct' }, { id: 'corr_escale', text: '🔄 Oui, correspondance' }] }, cfg);
   }
+  // ── Correspondance GUIDÉE ville par ville : départ → escale(s) → arrivée finale → n° des vols ──
+  if (s.step === 'esc_dep') {
+    const city = cleanCity(input);
+    if (!city) return send(phone, `🛫 Indiquez la ville de *départ* de votre voyage _(ex : Dakar)_ :`, cfg);
+    s.escCities = [city]; s.step = 'esc_via'; await setState(phone, s);
+    return send(phone, `✅ Départ : *${city}*\n\n🔄 Dans quelle ville avez-vous fait *escale* ? _(ex : Casablanca)_`, cfg);
+  }
+  if (s.step === 'esc_via') {
+    const city = cleanCity(input);
+    if (!city) return send(phone, `🔄 Indiquez la ville de l'*escale* _(ex : Casablanca)_ :`, cfg);
+    s.escCities = s.escCities || []; s.escCities.push(city);
+    if (s.escCities.length >= 4) { s.step = 'esc_arr'; await setState(phone, s); return send(phone, `✅ Escale : *${city}*\n\n🛬 Et quelle est votre ville d'*arrivée finale* ? _(ex : Paris)_`, cfg); }
+    s.step = 'esc_more'; await setState(phone, s);
+    return sendButtons(phone, { body: `✅ Escale : *${city}*\n\nY avait-il une *autre escale* ?`, buttons: [{ id: 'esc_oui', text: '🔄 Oui, une autre' }, { id: 'esc_non', text: '➡️ Non' }] }, cfg);
+  }
+  if (s.step === 'esc_more') {
+    if (id === 'esc_non' || /^non/.test(lower)) { s.step = 'esc_arr'; await setState(phone, s); return send(phone, `🛬 Et quelle est votre ville d'*arrivée finale* ? _(ex : Paris)_`, cfg); }
+    if (id === 'esc_oui' || /^oui/.test(lower)) { s.step = 'esc_via'; await setState(phone, s); return send(phone, `🔄 Dans quelle ville était l'escale *suivante* ?`, cfg); }
+    return sendButtons(phone, { body: `Y avait-il une *autre escale* ?`, buttons: [{ id: 'esc_oui', text: '🔄 Oui, une autre' }, { id: 'esc_non', text: '➡️ Non' }] }, cfg);
+  }
+  if (s.step === 'esc_arr') {
+    const city = cleanCity(input);
+    if (!city) return send(phone, `🛬 Indiquez la ville d'*arrivée finale* _(ex : Paris)_ :`, cfg);
+    const c = (s.escCities || []).concat(city);
+    s.escCities = c; s.route = c.join(' → ');
+    s.legs = c.slice(0, -1).map((dep, i) => ({ vol: '', dep, arr: c[i + 1] }));
+    s.legCount = s.legs.length; s.legIdx = 0; s.step = 'esc_vol'; await setState(phone, s);
+    return send(phone, `✅ Trajet : *${s.route}*\n\n✈️ Numéro du vol *${s.legs[0].dep} → ${s.legs[0].arr}* ? _(ex : AT540, sur votre billet)_\n✏️ Tapez *passer* si vous ne l'avez plus.`, cfg);
+  }
+  if (s.step === 'esc_vol') {
+    let vol = '';
+    if (!(lower === 'passer' || lower === 'non' || lower === 'skip' || lower.includes('sais pas') || lower.includes('sais plus'))) {
+      const vm = input.toUpperCase().match(/[A-Z]{2,3}\s?\d{1,4}[A-Z]?/);
+      if (!vm) return send(phone, `Numéro non reconnu _(ex : AT540)_. Renvoyez-le, ou tapez *passer* :`, cfg);
+      vol = vm[0].replace(/\s/g, '');
+    }
+    s.legs = s.legs || []; if (s.legs[s.legIdx]) s.legs[s.legIdx].vol = vol;
+    s.legIdx = (s.legIdx || 0) + 1;
+    if (s.legIdx < s.legCount) { await setState(phone, s); const l = s.legs[s.legIdx]; return send(phone, `✈️ Et le numéro du vol *${l.dep} → ${l.arr}* ?\n✏️ _Tapez *passer* si vous ne l'avez plus._`, cfg); }
+    s.vol = s.legs.map((l) => l.vol).filter(Boolean).join(' + ') || s.vol || '';
+    s.compagnie = deduceAirline(s.legs[s.legs.length - 1] && s.legs[s.legs.length - 1].vol) || deduceAirline(s.legs[0] && s.legs[0].vol) || s.compagnie || '';
+    s.step = 'm_date'; await setState(phone, s);
+    return send(phone, `📅 Date du *premier vol* ? _(ex : 15/03/2026)_`, cfg);
+  }
+
   // ── Correspondance : combien de vols, puis chaque segment, puis ordre automatique ──
+  // (ANCIEN flux, conservé pour les conversations déjà engagées dessus — les nouvelles passent par esc_dep)
   if (s.step === 'leg_count') {
     let n2 = 0; const m = (input.match(/\d+/) || [])[0]; if (m) n2 = parseInt(m);
     if (lower.includes('deux')) n2 = 2; if (lower.includes('trois')) n2 = 3;
@@ -1070,14 +1125,14 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
         s.step = 'scan_confirm'; await setState(phone, s); return scanConfirmCard(phone, s, cfg);
       }
       delete s.scan_pages; await send(phone, `😕 Je n'ai pas réussi à lire ce document (PDF protégé, image trop sombre ou coupée…). Réessayez avec une *capture d'écran nette*, ou faisons-le à la main — ça prend 2 min. 👇`, cfg);
-      if (s.type_vol === 'escale') { s.legs = []; s.legIdx = 0; s.step = 'leg_count'; await setState(phone, s); return sendButtons(phone, { body: `🔄 Votre voyage comportait *combien de vols* (correspondance) ?`, buttons: [{ text: '✈️ 2 vols' }, { text: '🔄 3 vols' }] }, cfg); }
+      if (s.type_vol === 'escale') return askEscDep(phone, s, cfg);
       s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
     }
     if (id === 'scan_photo' || lower.includes('envoyer une photo') || lower.includes('envoie une photo')) {
       return send(phone, `👍 Parfait ! Appuyez sur 📎 (ou 📷) en bas et envoyez la *photo* de votre *e-billet* (il contient tous vos vols) — ou de votre *carte d'embarquement*. Je lis tout. 🔒`, cfg);
     }
     if (id === 'scan_manuel' || lower.includes('manuel') || lower.includes('manuelle') || lower.includes('saisir')) {
-      if (s.type_vol === 'escale') { s.legs = []; s.legIdx = 0; s.step = 'leg_count'; await setState(phone, s); return sendButtons(phone, { body: `🔄 Pas de souci. Votre voyage comportait *combien de vols* (correspondance) ?`, buttons: [{ text: '✈️ 2 vols' }, { text: '🔄 3 vols' }] }, cfg); }
+      if (s.type_vol === 'escale') return askEscDep(phone, s, cfg, `🔄 Pas de souci, on le fait ensemble — une question à la fois.`);
       s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
     }
     return sendButtons(phone, { body: `📎 Envoyez une *photo* (ou le *PDF*) de votre e-billet. _Plusieurs pages ? Envoyez-les une par une, je les assemble._\n\n_🔒 Votre document est lu par un outil de lecture automatique (IA) à seule fin de pré-remplir votre dossier (voir robindesairs.eu/politique-confidentialite). En l'envoyant, vous acceptez cette lecture._`, buttons: [{ id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
@@ -1491,13 +1546,15 @@ async function afterFix(phone, s, cfg) {
   return showScanConfirm(phone, s, cfg);
 }
 async function estimationPuisPax(phone, s, cfg) { s.step = 'nb_pax'; await setState(phone, s); await send(phone, pickVariant(phone, 'ESTIMATION_QUALIFICATION'), cfg); return sendPax(phone, s, cfg); }
+// Entrée du parcours correspondance guidé : une question = une info (départ, escale, autre ?, arrivée, n° vols).
+async function askEscDep(phone, s, cfg, intro) {
+  s.legs = []; s.escCities = []; s.legIdx = 0; s.step = 'esc_dep'; await setState(phone, s);
+  return send(phone, `${intro ? intro + '\n\n' : ''}${bar('esc_dep')}\n🛫 Quelle est la ville de *départ* de votre voyage ? _(ex : Dakar)_`, cfg);
+}
 // Raccourci bandeau : passagers connus → si direct, vol+date sont déjà là (vérif éligibilité + récap) ;
 // si correspondance, on bascule sur le flux escale standard pour collecter les segments.
 async function afterPaxFromTicker(phone, s, cfg) {
-  if (s.type_vol === 'escale') {
-    s.legs = []; s.legIdx = 0; s.step = 'leg_count'; await setState(phone, s);
-    return sendButtons(phone, { body: `${bar('scan')}\n🔄 Votre voyage comportait *combien de vols* en tout (correspondance) ?`, buttons: [{ text: '✈️ 2 vols' }, { text: '🔄 3 vols' }] }, cfg);
-  }
+  if (s.type_vol === 'escale') return askEscDep(phone, s, cfg);
   await setState(phone, s);
   return apresVol(phone, s, cfg); // direct : vol + date connus → vérification puis récapitulatif
 }
