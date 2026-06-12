@@ -870,6 +870,14 @@ exports.handler = async (event) => {
     }
     return { statusCode: 403, headers: HEADERS, body: JSON.stringify({ error: 'Forbidden' }) };
   }
+  // ⛔ BOT NETLIFY DÉSACTIVÉ (audit 12/06/2026) — le bot de PRODUCTION est sur Railway
+  // (WATI poste directement sur l'URL Railway). Cette fonction — et /api/wati-webhook qui
+  // y délègue — restait déployée, joignable, avec le MÊME WATI_WEBHOOK_SECRET → risque de
+  // double réponse si WATI repointait ici. On neutralise le traitement des messages (POST).
+  // Le GET ?debug=... reste actif (forensic). Réversible : env WATI_NETLIFY_BOT_ENABLED=1, ou retirer ce bloc.
+  if (event.httpMethod === 'POST' && process.env.WATI_NETLIFY_BOT_ENABLED !== '1') {
+    return { statusCode: 410, headers: HEADERS, body: JSON.stringify({ ok: false, disabled: true, liveBot: 'railway' }) };
+  }
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers: HEADERS, body: JSON.stringify({ error: 'POST only' }) };
   let body; try { body = JSON.parse(event.body || '{}'); } catch { return { statusCode: 400, headers: HEADERS, body: JSON.stringify({ error: 'Invalid JSON' }) }; }
   if (!verifyWatiSecret(body, event.headers || {}, event.queryStringParameters || {})) return { statusCode: 401, headers: HEADERS, body: JSON.stringify({ error: 'Secret invalide' }) };
