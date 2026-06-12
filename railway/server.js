@@ -208,14 +208,22 @@ function matchLang(input) {
 
 // ─── Envoi texte / liste / boutons (plomberie éprouvée + clip + debug) ─────────
 async function send(phone, text, cfg) {
-  if (!cfg) return;
+  if (!cfg) { console.error('v8 send IGNORÉ — watiCfg null (WATI_API_TOKEN/WATI_API_BASE manquant)'); return; }
   const wa = normalizeWatiPhone(phone);
+  const mask = wa.length > 6 ? wa.slice(0, 4) + '***' + wa.slice(-2) : wa;
   const params = new URLSearchParams({ messageText: text, channelPhoneNumber: cfg.channel });
   try {
-    await fetch(`${cfg.base}/api/v1/sendSessionMessage/${encodeURIComponent(wa)}?${params}`, {
+    const res = await fetch(`${cfg.base}/api/v1/sendSessionMessage/${encodeURIComponent(wa)}?${params}`, {
       method: 'POST', headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
     });
-  } catch (e) { console.error('v8 send failed', e.message); }
+    // ⚠️ WATI renvoie HTTP 200 MÊME en échec applicatif :
+    // {result:false, info:"Invalid Conversation"} = fenêtre 24 h fermée.
+    // Sans lire le corps, l'échec d'envoi était totalement invisible (aucun log).
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || data.result === false || data.ok === false || data.error) {
+      console.error('v8 WATI send REJETÉ', res.status, JSON.stringify(data).slice(0, 200), '→', mask);
+    }
+  } catch (e) { console.error('v8 send failed', e.message, '→', mask); }
 }
 async function sendButtons(phone, config, cfg) {
   if (!cfg) return;
@@ -1697,6 +1705,7 @@ app.post('/api/wati-webhook', async (req, res) => {
       }
       upsertLead(phone, _p);
     }
+    console.log('📩 inbound', (phone.length > 6 ? phone.slice(0, 4) + '***' + phone.slice(-2) : phone), 'len', String(text || '').length, mediaUrl ? '+media' : '', cfg ? '' : '⚠️cfgNULL');
     // Sérialisé par numéro : les messages d'un même client se traitent dans l'ordre, un par un.
     enqueue(phone, () => handleMessage(phone, text, cfg, mediaUrl, replyId).catch(e => {
       console.error('bot error', e.message, e.stack);
