@@ -167,7 +167,6 @@ function clip(s, n) { s = String(s == null ? '' : s); return s.length <= n ? s :
 let notifyOwnerWhatsApp = async () => {};
 try { ({ notifyOwnerWhatsApp } = require('./lib/owner-notify')); } catch (_) {}
 
-const HEADERS = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' };
 
 // ─── Barre 8 pastilles ───────────────────────────────────────────────────────
 const PROGRESS = {
@@ -178,7 +177,7 @@ const PROGRESS = {
   type_vol: 4, motivation: 4,
   scan: 5, scan_confirm: 5, m_vol: 5, m_date: 5, m_route: 5, names: 5, names_confirm: 5, names_fix_which: 5, names_fix_one: 5,
   esc_dep: 5, esc_via: 5, esc_more: 5, esc_arr: 5, esc_vol: 5,
-  vd_vol: 6, vd_date: 6, annee: 6, mineurs: 6, mineurs_which: 6,
+  annee: 6, mineurs: 6, mineurs_which: 6,
   correction: 6, fix_vol: 6, fix_date: 6, fix_nom: 6, fix_route: 6,
   recap: 7, documents: 7, doc_pass: 7, doc_pass_confirm: 7, doc_mandant: 7, doc_name: 7, doc_dob: 7, doc_boarding: 7, doc_eticket: 7, doc_cert: 7, rgpd: 7,
   done: 8,
@@ -257,6 +256,11 @@ async function send(phone, text, cfg) {
     const data = await res.json().catch(() => ({}));
     if (!res.ok || data.result === false || data.ok === false || data.error) {
       console.error('v8 WATI send REJETÉ', res.status, JSON.stringify(data).slice(0, 200), '→', mask);
+      // Fenêtre 24h fermée (« Invalid Conversation ») : le client n'est plus joignable gratuitement.
+      // → bascule IMMÉDIATE dans la liste « À rappeler » du bureau (avant : invisible jusqu'au calcul 24h).
+      if (/invalid conversation/i.test(JSON.stringify(data))) {
+        try { const k = leadKey(phone); const l = LEADS.get(k); if (l && !l.signed && !l.windowClosed) { l.windowClosed = true; LEADS.set(k, l); persistLeads(); } } catch (_) {}
+      }
     }
   } catch (e) { console.error('v8 send failed', e.message, '→', mask); }
 }
@@ -970,7 +974,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // ⚠️ Jamais intercepté si c'est une réponse interactive (bouton/liste) : replyId présent → flux prioritaire
   try {
     const { isClientQuestion, isSensitive, answerClientQuestion } = AI;
-    const FREE = ['m_vol', 'm_date', 'm_route', 'm_pnr', 'leg_count', 'leg_input', 'route_dep', 'route_arr', 'esc_dep', 'esc_via', 'esc_arr', 'esc_vol', 'names', 'vd_vol', 'vd_date', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob'];
+    const FREE = ['m_vol', 'm_date', 'm_route', 'm_pnr', 'leg_count', 'leg_input', 'route_dep', 'route_arr', 'esc_dep', 'esc_via', 'esc_arr', 'esc_vol', 'names', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob'];
     const looks = !id && (FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input));
     if (looks) {
       if (isSensitive(input)) { await send(phone, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nÉcrivez *go* pour continuer votre dossier.`, cfg); return; }
@@ -1307,6 +1311,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   }
 
   // Saisie manuelle vol/date (MSG10) — sert scan raté ET correction
+  // Une photo en pleine saisie = le client tend son billet → on bascule sur le scan (lecture automatique).
+  if (/^m_(vol|date|route|pnr)$/.test(s.step) && mediaUrl) { s.step = 'scan'; await setState(phone, s); return handleMessage(phone, text, cfg, mediaUrl, replyId, true); }
   if (s.step === 'm_vol') {
     const vol = input.toUpperCase().replace(/\s+/g, '');
     if (/^[A-Z0-9]{3,8}$/.test(vol)) { s.vol = vol; s.compagnie = deduceAirline(vol) || s.compagnie || ''; s.step = 'm_date'; await setState(phone, s); return send(phone, `✅ Vol ${vol}${s.compagnie ? ' — ' + s.compagnie : ''}\n\n📅 Date du vol ? _(ex. 15/03/2026)_`, cfg); }
@@ -1452,10 +1458,12 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     return askMandant(phone, s, cfg);
   }
   if (s.step === 'doc_name') {
-    if (input.length >= 3 && !/^\d+$/.test(input)) { s.passengers = s.passengers || []; s.passengers[s.doc_idx] = { name: input.toUpperCase() }; s.step = 'doc_dob'; await setState(phone, s); return send(phone, `📅 *Date de naissance* de ${input} ? _(JJ/MM/AAAA)_`, cfg); }
+    if (mediaUrl) return askOcrConfirm(phone, s, cfg, mediaUrl); // il envoie finalement la pièce → on la lit
+    if (input.length >= 3 && !/^\d+$/.test(input) && !/^\[/.test(input)) { s.passengers = s.passengers || []; s.passengers[s.doc_idx] = { name: input.toUpperCase() }; s.step = 'doc_dob'; await setState(phone, s); return send(phone, `📅 *Date de naissance* de ${input} ? _(JJ/MM/AAAA)_`, cfg); }
     return send(phone, `Nom trop court. Renvoyez nom et prénom :`, cfg);
   }
   if (s.step === 'doc_dob') {
+    if (mediaUrl) return askOcrConfirm(phone, s, cfg, mediaUrl); // pareil : la photo de la pièce vaut mieux que la saisie
     const dob = parseDateInput(input, '19');
     if (dob) {
       if (inFuture(dob)) return send(phone, `🤔 Cette date de naissance est dans le futur. Renvoyez-la au format JJ/MM/AAAA _(ex. 05/09/2012)_ :`, cfg);
@@ -1876,18 +1884,25 @@ function extractInbound(payload) {
   if (payload.data && typeof payload.data === 'object') push(payload.data);
   return list;
 }
+// Comparaison de secret à temps constant (timing-safe) — même durcissement que côté Netlify (cafbcca).
+function safeEq(a, b) { const A = Buffer.from(String(a || '')), B = Buffer.from(String(b || '')); return A.length === B.length && A.length > 0 && crypto.timingSafeEqual(A, B); }
 function verifyWatiSecret(body, headers, query) {
   const expected = (process.env.WATI_WEBHOOK_SECRET || '').trim(); if (!expected) return true;
   const h = headers || {}, q = query || {};
-  return (body && body.secret) === expected || h['x-wati-secret'] === expected || h['X-Wati-Secret'] === expected || q.s === expected || q.secret === expected;
+  return safeEq(body && body.secret, expected) || safeEq(h['x-wati-secret'], expected) || safeEq(h['X-Wati-Secret'], expected) || safeEq(q.s, expected) || safeEq(q.secret, expected);
 }
 
 // ═══════════════ SERVEUR EXPRESS (Railway — persistant, état RAM) ═══════════════
 const app = express();
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
+// CORS restreint au site (avant : « * » global, y compris sur /api/dossier qui sert des données perso).
+// Les appels server-to-server (WATI, fonctions Netlify) n'envoient pas d'Origin → non concernés par CORS.
+const CORS_ORIGINS = new Set(['https://robindesairs.eu', 'https://www.robindesairs.eu']);
 app.use((req, res, next) => {
-  res.set('Access-Control-Allow-Origin', '*');
+  const o = req.headers.origin || '';
+  res.set('Access-Control-Allow-Origin', CORS_ORIGINS.has(o) ? o : 'https://robindesairs.eu');
+  res.set('Vary', 'Origin');
   res.set('Access-Control-Allow-Headers', 'Content-Type, X-Wati-Secret');
   if (req.method === 'OPTIONS') return res.status(204).end();
   next();
@@ -1897,10 +1912,10 @@ app.get('/api/wati-webhook', async (req, res) => {
   const q = req.query;
   const key = (process.env.WATI_WEBHOOK_SECRET || process.env.CRM_ACCESS_CODE || '').trim();
   if (!key) return res.status(403).json({ error: 'No secret configured' });
-  if (q.debug === 'inbound' && q.key === key) return res.json((await readInboundDebug()) || { none: true });
-  if (q.debug === 'interactive' && q.key === key) return res.json((await readInteractiveDebug()) || { none: true });
-  if (q.debug === 'state' && q.key === key) { const out = {}; for (const [k, v] of STATE) out[k] = v.step; return res.json({ sessions: STATE.size, steps: out }); }
-  if (q.selftest === 'list' && q.key === key && q.to) {
+  if (q.debug === 'inbound' && safeEq(q.key, key)) return res.json((await readInboundDebug()) || { none: true });
+  if (q.debug === 'interactive' && safeEq(q.key, key)) return res.json((await readInteractiveDebug()) || { none: true });
+  if (q.debug === 'state' && safeEq(q.key, key)) { const out = {}; for (const [k, v] of STATE) out[k] = v.step; return res.json({ sessions: STATE.size, steps: out }); }
+  if (q.selftest === 'list' && safeEq(q.key, key) && q.to) {
     const cfg = watiCfg();
     await sendList(q.to, { header: 'Test liste', body: '\ud83e\uddea Test liste cliquable Robin', buttonText: 'Choisir', items: [{ title: 'Option 1', description: 'desc 1' }, { title: 'Option 2', description: 'desc 2' }, { title: 'Option 3' }] }, cfg);
     return res.json({ sent: true, resp: await readInteractiveDebug() });
@@ -1932,7 +1947,7 @@ app.post('/api/wati-webhook', async (req, res) => {
     if (!hasId && await isDuplicateMessage(ckKey, false, 5000)) continue;
     notifyOwnerWhatsApp(phone, text).catch(() => {});
     if (LEADS.has(leadKey(phone))) { // message entrant → garde la fenêtre 24h fraîche
-      const _l = LEADS.get(leadKey(phone)); const _p = { lastClientAt: Date.now() };
+      const _l = LEADS.get(leadKey(phone)); const _p = { lastClientAt: Date.now(), windowClosed: false }; // son message rouvre la fenêtre 24h
       // Sa réponse rouvre la fenêtre gratuitement → on réarme un cycle de relances « reprise » (borné à 3 cycles, anti-spam).
       if (_l && !_l.completed && _l.engagedAt && (_l.engagedRounds || 0) < 3 && (_l.nudges || []).some(n => /^e\d/.test(n))) {
         _p.nudges = (_l.nudges || []).filter(n => !/^e\d/.test(n)); _p.engagedRounds = (_l.engagedRounds || 0) + 1;
@@ -1962,14 +1977,14 @@ app.get('/api/dossier', (req, res) => {
 app.get('/api/leads-a-rappeler', (req, res) => {
   const secret = (req.query.s || req.headers['x-secret'] || req.headers['x-wati-secret'] || '').toString().trim();
   const expected = (process.env.WATI_WEBHOOK_SECRET || process.env.CRM_ACCESS_CODE || '').trim();
-  if (expected && secret !== expected) return res.status(401).json({ ok: false, error: 'secret invalide' });
+  if (expected && !safeEq(secret, expected)) return res.status(401).json({ ok: false, error: 'secret invalide' });
   const now = Date.now();
   const WIN = 24 * 3600000;
   const out = [];
   for (const [, lead] of LEADS) {
     if (!lead || lead.signed) continue;
     const anchor = lead.lastClientAt || lead.mandatSentAt || lead.engagedAt || now;
-    const windowClosed = now - anchor > WIN;
+    const windowClosed = lead.windowClosed === true || now - anchor > WIN; // flag posé dès qu'un envoi est rejeté « Invalid Conversation »
     if (!lead.wantsCall && !windowClosed) continue; // encore relançable gratuitement par le bot → pas (encore) à rappeler
     const since = lead.wantsCall ? (lead.wantsCallAt || anchor) : anchor;
     out.push({
@@ -2005,11 +2020,10 @@ app.get('/', (req, res) => res.send('\ud83c\udff9 Robin des Airs Bot v8 — Rail
 
 // ─── Signature reçue → marque le lead signé (stoppe les relances) ───────────────
 app.post('/api/mandat-signed', (req, res) => {
-  res.set('Access-Control-Allow-Origin', '*');
   const b = req.body || {};
   const secret = (b.secret || req.query.s || req.headers['x-secret'] || '').toString().trim();
   const expected = (process.env.WATI_WEBHOOK_SECRET || '').trim();
-  if (expected && secret !== expected) return res.status(401).json({ error: 'secret invalide' });
+  if (expected && !safeEq(secret, expected)) return res.status(401).json({ error: 'secret invalide' });
   const lead = findLead(b.ref || '') || findLead(b.phone || b.waId || '');
   const marked = markLeadSigned(b.ref || '') || markLeadSigned(b.phone || b.waId || '');
   console.log('mandat signe ref=' + (b.ref || '?') + ' marked=' + marked);
@@ -2068,7 +2082,7 @@ async function runRelances() {
       // Purge : signé, ou trop vieux (30 j) — qu'il soit finalisé ou seulement engagé.
       if ((lead.signed && !lead.fraisPending) || (anchorAge && now - anchorAge > 30 * 24 * _H)) { LEADS.delete(k); persistLeads(); continue; }
       // Fenêtre WhatsApp 24h (envoi gratuit) fermée → on n'écrit plus ; le dossier reste dans la liste « À rappeler ».
-      if (now - (lead.lastClientAt || anchorAge) > 24 * _H) continue;
+      if (lead.windowClosed || now - (lead.lastClientAt || anchorAge) > 24 * _H) continue;
       const nudges = lead.nudges || [];
       // Relance FRAIS : signé mais reçus pas encore envoyés → 1 SEUL rappel à 3h, dans la fenêtre 24h.
       if (lead.signed && lead.fraisPending) {
