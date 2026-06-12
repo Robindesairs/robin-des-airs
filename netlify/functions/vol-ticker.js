@@ -9,6 +9,7 @@ const { getPinnedFlights } = require('./lib/pinned-flights');
 const { publicCorsHeaders } = require('./lib/auth-config');
 const { checkRateLimit } = require('./lib/rate-limit');
 const { isVolTickerLiveScanEnabled } = require('./lib/radar-api-policy');
+const { listRegistryFlights } = require('./lib/radar-eligible-registry');
 
 const STORE_NAME = 'robin-radar-ticker';
 const CACHE_KEY = 'banner/latest.json';
@@ -44,6 +45,59 @@ function applyPinnedFlights(flights, viewDate) {
   // Nouveaux vols (live / sélectionnés) EN PREMIER — ils ne sont plus écrasés par
   // les RAM épinglés. Les pinned complètent uniquement les slots restants.
   return live.concat(pinned).slice(0, target);
+}
+
+/* Clé d'unicité d'un vol bandeau (même schéma que applyPinnedFlights). */
+function bannerFlightKey(f) {
+  return [
+    String(f.flight || '').replace(/\s/g, '').toUpperCase(),
+    String(f.dep || '').toUpperCase(),
+    String(f.arr || '').toUpperCase(),
+    String(f.scheduledDate || '').slice(0, 10),
+  ].join('|');
+}
+
+function dedupeBannerFlights(list) {
+  const seen = new Set();
+  const out = [];
+  for (const f of list || []) {
+    if (!f) continue;
+    const k = bannerFlightKey(f);
+    if (seen.has(k)) continue;
+    seen.add(k);
+    out.push(f);
+  }
+  return out;
+}
+
+/**
+ * Vols ÉLIGIBLES réellement détectés par le radar (registre permanent Blobs
+ * robin-radar / eligible-registry), mappés au format bandeau. MÊME source que
+ * /api/radar-today et l'admin — c'est ce qui reconnecte le bandeau public aux
+ * vols du radar (sans dépendre du scan live RADAR_VOL_TICKER_LIVE).
+ */
+async function readRegistryBannerFlights(event) {
+  try {
+    const res = await listRegistryFlights(event, { limit: BANNER_TARGET_COUNT || TARGET });
+    if (!res || res.ok === false || !Array.isArray(res.flights)) return [];
+    return res.flights
+      .filter((e) => e && e.eligible !== false)
+      .map((e) => {
+        const dm = e.delayMinutes != null ? e.delayMinutes : e.retardMin != null ? e.retardMin : null;
+        return {
+          flight: e.vol || e.flight || '—',
+          dep: String(e.dep || '').toUpperCase(),
+          arr: String(e.arr || '').toUpperCase(),
+          via: String(e.via || '').toUpperCase(),
+          cancelled: !!e.cancelled,
+          delayMinutes: e.cancelled ? null : dm,
+          scheduledDate: e.date || null,
+        };
+      });
+  } catch (e) {
+    console.warn('vol-ticker registry read:', e.message);
+    return [];
+  }
 }
 
 async function readBlobCache(event) {
@@ -97,10 +151,17 @@ exports.handler = async (event) => {
   }
 
   try {
+    // Vols éligibles du registre radar (même source que /api/radar-today + admin).
+    // Ils MÈNENT le bandeau ; les pinned RAM ne complètent que les slots restants.
+    const registryFlights = await readRegistryBannerFlights(event);
+
     if (!isVolTickerLiveScanEnabled()) {
       const cachedOnly = await readBlobCache(event);
       const viewDate = (cachedOnly && cachedOnly.viewDate) || parisDateYmd();
-      const finalFlights = applyPinnedFlights((cachedOnly && cachedOnly.flights) || [], viewDate);
+      const base = dedupeBannerFlights(
+        registryFlights.concat((cachedOnly && cachedOnly.flights) || [])
+      );
+      const finalFlights = applyPinnedFlights(base, viewDate);
       return {
         statusCode: 200,
         headers: HEADERS,
@@ -108,8 +169,11 @@ exports.handler = async (event) => {
           buildResponse(
             {
               viewDate,
-              dataSource: 'cache-only',
-              hint: 'Bandeau sans scan API (RADAR_VOL_TICKER_LIVE non activé).',
+              dataSource: registryFlights.length ? 'eligible-registry' : 'cache-only',
+              registryCount: registryFlights.length,
+              hint: registryFlights.length
+                ? 'Vols éligibles issus du registre radar (sans scan live).'
+                : 'Bandeau sans scan API (RADAR_VOL_TICKER_LIVE non activé).',
             },
             finalFlights
           )
@@ -118,7 +182,10 @@ exports.handler = async (event) => {
     }
 
     const cached = await readBlobCache(event);
-    const cachedFlights = (cached && cached.flights) || [];
+    // Le registre radar mène, le cache scan complète (puis dédup).
+    const cachedFlights = dedupeBannerFlights(
+      registryFlights.concat((cached && cached.flights) || [])
+    );
     const staleHours = parseInt(process.env.TICKER_STALE_HOURS || '30', 10) || 30;
     const staleMs = staleHours * 3600000;
     const updated = cached && cached.updatedAt ? Date.parse(cached.updatedAt) : 0;
@@ -126,11 +193,11 @@ exports.handler = async (event) => {
     const cacheComplete = cachedFlights.length >= (BANNER_TARGET_COUNT || TARGET);
 
     /* Cache récent et déjà 9 vols → réponse immédiate (pas de scan lourd).
-     * On réinjecte les pinned au cas où la fenêtre d'activité a changé depuis
-     * la dernière écriture du cache. */
+     * Le registre radar mène toujours ; on réinjecte les pinned au cas où la
+     * fenêtre d'activité a changé depuis la dernière écriture du cache. */
     if (cacheComplete && !isStale) {
       const out = Object.assign({}, cached, {
-        flights: applyPinnedFlights(cached.flights, cached.viewDate),
+        flights: applyPinnedFlights(cachedFlights, cached.viewDate),
       });
       return {
         statusCode: 200,
