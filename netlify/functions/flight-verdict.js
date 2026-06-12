@@ -91,7 +91,12 @@ exports.handler = async (event) => {
   const arr = f.arrival || {};
   const depIata = dep.iataCode || (dep.airport && dep.airport.iataCode) || '';
   const arrIata = arr.iataCode || (arr.airport && arr.airport.iataCode) || '';
-  const delayMin = (typeof arr.delay === 'number') ? arr.delay : null;
+  // ⚠️ Ne PAS confondre « retard = 0 confirmé » et « pas de données ». Sans heure d'arrivée RÉELLE
+  // enregistrée, le mapping renvoie un retard à 0 par défaut → on annoncerait à tort « sous 3h » à un
+  // passager réellement très en retard (fréquent sur les routes Afrique, couverture data plus faible).
+  // → On n'a confiance au retard que si une heure d'arrivée réelle existe ; sinon null → verdict 'a_verifier'.
+  const hasArrEvidence = !!arr.actual;
+  const delayMin = (hasArrEvidence && typeof arr.delay === 'number') ? arr.delay : null;
   const distanceKm = (f.geography && f.geography.distance) || f.distance || null;
 
   const v = verdict({ depIata, arrIata, delayMin, distanceKm, carrierIata, status: f.status || '', typeVol: 'direct' });
