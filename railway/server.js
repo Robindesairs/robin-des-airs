@@ -515,15 +515,16 @@ async function ocrBoardingPass(mediaUrl, cfg) {
     const imgRes = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {}, signal: AbortSignal.timeout(20000) });
     if (!imgRes.ok) return null;
     const b64 = Buffer.from(await imgRes.arrayBuffer()).toString('base64');
-    const prompt = `Tu lis une carte d'embarquement / e-billet d'avion. On ne veut QUE les informations du VOL (l'identité du passager viendra du passeport, pas d'ici). Réponds UNIQUEMENT en JSON :
-{"vol":"","compagnie":"","date":"","pnr":"","depart":"","arrivee":""}
+    const prompt = `Tu lis une carte d'embarquement / e-billet d'avion. Réponds UNIQUEMENT en JSON :
+{"vol":"","compagnie":"","date":"","pnr":"","depart":"","arrivee":"","nom":""}
 Règles STRICTES :
 - vol : numéro de vol en MAJUSCULES sans espace (ex. EJU7273, AF718).
 - compagnie : nom complet (déduis du code IATA si besoin).
 - date : "JJ/MM" si l'année N'EST PAS imprimée sur le document ; "JJ/MM/AAAA" UNIQUEMENT si l'année est réellement écrite. NE JAMAIS deviner ni inventer l'année (les cartes d'embarquement n'ont souvent pas l'année).
 - pnr : référence de réservation (libellés possibles : PNR, Booking ref, Réf, Record locator, Confirmation) — 5 à 8 caractères ALPHANUMÉRIQUES, souvent près d'un code-barres. Cherche-la attentivement. Si vraiment absente, "".
 - depart / arrivee : codes IATA 3 lettres.
-- Champ inconnu = "". Ne JAMAIS inventer. N'extrais PAS le nom du passager.`;
+- nom : nom du passager tel qu'imprimé (souvent "NOM/PRENOM" ou "NOM PRENOM", en MAJUSCULES). Si illisible ou absent, "".
+- Champ inconnu = "". Ne JAMAIS inventer.`;
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST', signal: AbortSignal.timeout(45000), headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ model: 'gpt-4o', max_tokens: 300, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${b64}` } }] }] }),
@@ -533,7 +534,12 @@ Règles STRICTES :
     const vol = (p.vol || '').toUpperCase().replace(/\s+/g, '');
     const route = (p.depart && p.arrivee) ? `${p.depart} → ${p.arrivee}` : '';
     const pnr = (p.pnr || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
-    return { vol, compagnie: p.compagnie || deduceAirline(vol), date: p.date || '', pnr: /^[A-Z0-9]{5,8}$/.test(pnr) ? pnr : '', route };
+    // Nom lu sur la carte → pré-remplit le passager 1 (le PASSEPORT reste la pièce qui fait foi, demandé ensuite).
+    let nomRaw = (p.nom || '').toUpperCase().trim();
+    nomRaw = nomRaw.replace(/\s+(MRS|MR|MS|MME|MLLE|MSTR|CHD|INF)\.?$/, '');          // titre séparé : « DIALLO/AMINATA MRS »
+    nomRaw = nomRaw.replace(/^(.+\/.+?)(MRS|MSTR|CHD|INF)$/, '$1');                   // titre GDS collé : « DIALLO/AMINATAMRS » (pas MR/MS : trop de vrais noms finissent ainsi)
+    const nom = cleanName(nomRaw);
+    return { vol, compagnie: p.compagnie || deduceAirline(vol), date: p.date || '', pnr: /^[A-Z0-9]{5,8}$/.test(pnr) ? pnr : '', route, passengers: (nom && nom.length >= 3) ? [{ name: nom }] : [] };
   } catch (e) { return null; }
 }
 // ── E-billet / confirmation de réservation : extraction COMPLÈTE (vol+route+date+PNR+NOMS) ──
@@ -617,7 +623,9 @@ function applyTrajet(s, t) {
 async function scanConfirmCard(phone, s, cfg) {
   const pages = (s.scan_pages || []).length;
   const noms = (s.names || []).filter(Boolean);
-  const paxLine = noms.length ? `\n👥 ${noms.length} passager(s) : ${noms.join(', ')}` : `\n_(votre identité sera lue sur le passeport, plus tard)_`;
+  const paxLine = !noms.length ? `\n_(votre identité sera lue sur le passeport, plus tard)_`
+    : noms.length < (s.pax || 1) ? `\n👤 ${noms.join(', ')} _(les identités des autres passagers viendront de leurs passeports)_`
+    : `\n👥 ${noms.length} passager(s) : ${noms.join(', ')}`;
   const pageLine = pages > 1 ? `\n📄 ${pages} pages lues` : '';
   // Lecture douteuse/incomplète → on NE claironne PAS « réussi », on invite à vérifier (un caractère faux = rejet compagnie).
   const header = s._scanWarn
@@ -1189,10 +1197,22 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (mediaUrl) {
       s.scan_pages = s.scan_pages || []; if (s.scan_pages.length < 8) s.scan_pages.push(mediaUrl);
       let d = await extractEticketPages(s.scan_pages, cfg);              // relit TOUTES les pages d'un coup → fusion
-      if (!d || !d.vol) { const bp = await ocrBoardingPass(mediaUrl, cfg); if (bp && bp.vol) d = bp; } // repli carte d'embarquement (image)
+      if (!d || !d.vol) { const bp = await ocrBoardingPass(mediaUrl, cfg); if (bp && bp.vol) { d = bp; d._carte = true; } } // repli carte d'embarquement (image)
       if (d && d.multiPNR) { delete s.scan_pages; await setState(phone, s); return sendButtons(phone, { body: `📑 J'ai vu *plusieurs réservations* (PNR différents) sur cette image. Pour ne pas les mélanger, envoyez-les *une par une* (une photo par réservation), en commençant par le vol qui a eu le problème.`, buttons: [{ id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg); }
       if (d && d.vol) {
-        setEticketFields(s, d); s.travelProof = s.travelProof || ((d.passengers && d.passengers.length) ? 'ebooking' : 'scan');
+        // Carte d'embarquement : 1 nom par carte → on FUSIONNE dans la liste (une 2e carte = le passager
+        // suivant, jamais d'écrasement du 1er). L'étape documents demandera son passeport EN PREMIER, par son nom.
+        if (d._carte && d.passengers && d.passengers.length) {
+          const nm = d.passengers[0].name; const nmU = nm.toUpperCase();
+          s.names = s.names || []; s.passengers = s.passengers || [];
+          if (!s.names.filter(Boolean).some((x) => String(x).toUpperCase() === nmU)) {
+            const idx = s.names.filter(Boolean).length;
+            s.names[idx] = nmU;
+            const cur = s.passengers[idx] || {}; if (!cur.name) cur.name = nm; s.passengers[idx] = cur;
+          }
+          d = { ...d, passengers: [] }; // noms déjà fusionnés → setEticketFields n'y touche plus
+        }
+        setEticketFields(s, d); s.travelProof = s.travelProof || (d._carte ? 'carte' : ((d.passengers && d.passengers.length) ? 'ebooking' : 'scan'));
         if (d.allerRetour && d.trajets && d.trajets.length > 1) { s.trajets = d.trajets; await setState(phone, s); return askSens(phone, s, cfg); }
         s.step = 'scan_confirm'; await setState(phone, s); return scanConfirmCard(phone, s, cfg);
       }
