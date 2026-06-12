@@ -943,13 +943,13 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       // Escale = on POUSSE LA PHOTO d'abord (l'e-billet contient tous les segments → extraction en 1 coup).
       // La saisie manuelle leg par leg ne reste qu'en repli (bouton « Saisir à la main » → leg_count).
       s.type_vol = 'escale'; s.legs = []; s.legIdx = 0; s.step = 'scan'; await setState(phone, s);
-      return sendButtons(phone, { body: `${bar('scan')}\n🎉 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (*${montantNet(s.pax)} € nets*, 75 %). 🤝\n\n🔄 Votre *e-billet* (la confirmation de réservation) contient *tous vos vols*, la correspondance incluse.\n⚡ Le plus simple : envoyez-en une *photo* — *je lis tous vos vols d'un coup*, vous ne tapez rien.\n\n📎 *Envoyez la photo*, ou :`, buttons: [{ id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
+      return sendButtons(phone, { body: `${bar('scan')}\n🎉 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (*${montantNet(s.pax)} € nets*, 75 %). 🤝\n\n🔄 Le plus simple : une *photo* de votre *e-billet* (confirmation de réservation) — il contient *tous vos vols d'un coup*, correspondance incluse. Je lis tout, vous ne tapez rien.\n🎫 Pas d'e-billet ? Vos *cartes d'embarquement* aussi (une par vol).`, buttons: [{ id: 'scan_photo', text: '📸 Envoyer une photo' }, { id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
     }
     if (n === '1' || lower.includes('direct')) s.type_vol = 'direct';
     else return sendButtons(phone, { body: `${bar('type_vol')}\n✈️ Vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg);
     s.step = 'scan'; await setState(phone, s);
     // Un seul message (motivation + scan) → réponse immédiate, pas de délai où les taps s'entrecroisent.
-    return sendButtons(phone, { body: `${bar('scan')}\n🎉 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (*${montantNet(s.pax)} € nets*, 75 %). Robin prélève 25 % *uniquement* si vous gagnez. 🤝\n\n⚡ Envoyez une *photo* de votre carte d'embarquement ou e-billet — je lis le vol automatiquement.${s.pax > 1 ? `\n👥 (une carte suffit pour le vol)` : ''}\n\n📎 *Envoyez la photo*, ou :`, buttons: [{ id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
+    return sendButtons(phone, { body: `${bar('scan')}\n🎉 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (*${montantNet(s.pax)} € nets*, 75 %). Robin prélève 25 % *uniquement* si vous gagnez. 🤝\n\n⚡ Envoyez une *photo* de votre carte d'embarquement ou e-billet — je lis le vol automatiquement.${s.pax > 1 ? `\n👥 (une carte suffit pour le vol)` : ''}\n\n📎 *Envoyez la photo*, ou choisissez 👇`, buttons: [{ id: 'scan_photo', text: '📸 Envoyer une photo' }, { id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
   }
   // ── Correspondance « rapide » (raccourci bandeau) : vol déjà connu, on demande juste s'il y en avait un autre ──
   if (s.step === 'q_corr') {
@@ -1006,6 +1006,9 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       delete s.scan_pages; await send(phone, `😕 Je n'ai pas réussi à lire ce document (PDF protégé, image trop sombre ou coupée…). Réessayez avec une *capture d'écran nette*, ou faisons-le à la main — ça prend 2 min. 👇`, cfg);
       if (s.type_vol === 'escale') { s.legs = []; s.legIdx = 0; s.step = 'leg_count'; await setState(phone, s); return sendButtons(phone, { body: `🔄 Votre voyage comportait *combien de vols* (correspondance) ?`, buttons: [{ text: '✈️ 2 vols' }, { text: '🔄 3 vols' }] }, cfg); }
       s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
+    }
+    if (id === 'scan_photo' || lower.includes('envoyer une photo') || lower.includes('envoie une photo')) {
+      return send(phone, `👍 Parfait ! Appuyez sur 📎 (ou 📷) en bas et envoyez la *photo* de votre *e-billet* (il contient tous vos vols) — ou de votre *carte d'embarquement*. Je lis tout. 🔒`, cfg);
     }
     if (id === 'scan_manuel' || lower.includes('manuel') || lower.includes('manuelle') || lower.includes('saisir')) {
       if (s.type_vol === 'escale') { s.legs = []; s.legIdx = 0; s.step = 'leg_count'; await setState(phone, s); return sendButtons(phone, { body: `🔄 Pas de souci. Votre voyage comportait *combien de vols* (correspondance) ?`, buttons: [{ text: '✈️ 2 vols' }, { text: '🔄 3 vols' }] }, cfg); }
