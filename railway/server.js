@@ -309,12 +309,22 @@ function genRef() { const d = new Date(); return `RDA-${d.toISOString().slice(0,
 function normInput(raw, options) { const t = (raw || '').trim().toLowerCase(); if (/^\d+$/.test(t)) return t; const i = options.findIndex(o => t.includes(o.toLowerCase())); return i >= 0 ? String(i + 1) : t; }
 const AIRLINES = { AF: 'Air France', SN: 'Brussels Airlines', TP: 'TAP Air Portugal', AT: 'Royal Air Maroc', HC: 'Air Sénégal', KQ: 'Kenya Airways', ET: 'Ethiopian Airlines', EK: 'Emirates', TK: 'Turkish Airlines', KL: 'KLM', LH: 'Lufthansa', IB: 'Iberia', EJU: 'easyJet', U2: 'easyJet', FR: 'Ryanair', TO: 'Transavia', KP: 'ASKY', DN: 'Senegal Airlines' };
 function deduceAirline(vol) { const m = (vol || '').toUpperCase().match(/^([A-Z]{2,3})\d/); return (m && AIRLINES[m[1]]) || ''; }
-// Libellé « voyage » pour les relances : compagnie (déduite du n° de vol) + trajet (capté à l'intake).
+// Trajet compact : départ → destination FINALE, sans les escales (« Dakar → Casa → Paris » → « Dakar → Paris »).
+// Gère l'aller-retour (départ = arrivée) en prenant la dernière ville DISTINCTE de l'origine.
+function routeShort(route) {
+  const parts = String(route || '').split(/\s*(?:→|->|—)\s*/).map((s) => s.trim()).filter(Boolean);
+  if (!parts.length) return '';
+  const origin = parts[0];
+  let dest = '';
+  for (let i = parts.length - 1; i >= 1; i--) { if (parts[i] !== origin) { dest = parts[i]; break; } }
+  return dest ? `${origin} → ${dest}` : origin;
+}
+// Libellé « voyage » pour les relances : compagnie (déduite du n° de vol) + trajet compact (départ → destination finale).
 // Ex. « Royal Air Maroc · Dakar → Paris ». Repli : compagnie seule → trajet → n° de vol → « concerné ».
 // Plus parlant que « AT718 + AT713 » : le client reconnaît sa compagnie et sa destination.
 function tripLabel(lead) {
   const cie = deduceAirline(lead && lead.vol);
-  const route = ((lead && lead.route) || '').trim();
+  const route = routeShort((lead && lead.route) || '');
   if (cie && route) return `${cie} · ${route}`;
   return cie || route || (lead && lead.vol) || 'concerné';
 }
