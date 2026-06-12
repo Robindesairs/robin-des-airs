@@ -1335,7 +1335,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   }
 
   // Incompris
-  return sendButtons(phone, { body: `Je n'ai pas compris 🙂 Reprenez où on s'était arrêté 👇`, buttons: [{ id: 'menu', text: '▶️ Reprendre' }, { id: 'appel', text: '📞 Rappel' }] }, cfg);
+  return sendButtons(phone, { body: `Je n'ai pas compris 🙂 Reprenez où on s'était arrêté 👇`, buttons: [{ id: 'menu', text: '▶️ Reprendre' }, { id: 'appel', text: '📞 Être rappelé' }] }, cfg);
 }
 
 // ─── Émetteurs d'écran ───────────────────────────────────────────────────────
@@ -1853,7 +1853,7 @@ async function runRelances() {
       if (due == null) continue;
       try {
         if (lead.completed) await sendButtons(lead.phone, { body: text, buttons: [{ id: 'deja_signe', text: '✅ J\'ai déjà signé' }, { id: 'appel', text: '📞 Besoin d\'aide' }] }, cfg); // nudge signature (lien dans le body) + filet « déjà signé »
-        else await sendButtons(lead.phone, { body: text, buttons: [{ id: 'menu', text: '▶️ Reprendre' }, { id: 'snooze', text: '⏰ Plus tard' }, { id: 'appel', text: '📞 Rappel' }] }, cfg); // 1 tap = réponse → rouvre la fenêtre 24h gratis (id 'menu' = même action que le mot tapé)
+        else await sendButtons(lead.phone, { body: text, buttons: [{ id: 'menu', text: '▶️ Reprendre' }, { id: 'snooze', text: '⏰ Plus tard' }, { id: 'appel', text: '📞 Être rappelé' }] }, cfg); // 1 tap = réponse → rouvre la fenêtre 24h gratis (id 'menu' = même action que le mot tapé)
         console.log('relance ' + due + ' -> ' + (lead.ref || lead.phone));
       } catch (_) {}
       lead.nudges = nudges.concat(due); LEADS.set(k, lead); persistLeads();
