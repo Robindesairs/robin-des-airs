@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Confirmation de réservation — TEST Robin des Airs</title>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 24px; font-family: -apple-system, "Helvetica Neue", Arial, sans-serif; background: #f2f4f7; color: #1a2330; }
+  .mail { max-width: 680px; margin: 0 auto; background: #fff; border-radius: 14px; overflow: hidden; box-shadow: 0 8px 28px rgba(0,0,0,.10); }
+  .bar { background: #00468b; color: #fff; padding: 20px 26px; }
+  .bar .brand { font-size: 19px; font-weight: 800; }
+  .bar .sub { font-size: 13px; opacity: .9; margin-top: 2px; }
+  .hi { padding: 22px 26px 6px; }
+  .hi h1 { font-size: 19px; margin: 0 0 4px; }
+  .hi p { margin: 0; color: #5a6572; font-size: 14px; }
+  .ref { margin: 16px 26px; background: #eaf2fb; border: 1px solid #cfe0f4; border-radius: 10px; padding: 14px 18px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  .ref div .k { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: #6b7886; }
+  .ref div .v { font-size: 17px; font-weight: 800; color: #00468b; margin-top: 2px; }
+  .seg { margin: 0 26px 18px; border: 1px solid #e4e8ee; border-radius: 12px; overflow: hidden; }
+  .seg .top { background: #f7f9fc; padding: 10px 16px; font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: #6b7886; display: flex; justify-content: space-between; }
+  .seg .mid { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; }
+  .seg .pt { text-align: center; }
+  .seg .iata { font-size: 30px; font-weight: 800; color: #1a2330; }
+  .seg .time { font-size: 15px; font-weight: 700; margin-top: 2px; }
+  .seg .city { font-size: 12px; color: #6b7886; }
+  .seg .plane { color: #c8a45c; font-size: 22px; }
+  .seg .det { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; border-top: 1px solid #eef1f5; padding: 12px 18px; }
+  .seg .det .k { font-size: 10px; text-transform: uppercase; color: #8a94a0; letter-spacing: .5px; }
+  .seg .det .v { font-size: 14px; font-weight: 700; margin-top: 2px; }
+  .pax { margin: 0 26px 18px; }
+  .pax h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .5px; color: #6b7886; margin: 0 0 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th { text-align: left; font-size: 11px; text-transform: uppercase; color: #8a94a0; border-bottom: 2px solid #e4e8ee; padding: 6px 8px; }
+  td { padding: 8px; border-bottom: 1px solid #eef1f5; }
+  .ticket { font-family: "SF Mono", Menlo, monospace; color: #00468b; font-weight: 700; }
+  .note { margin: 0 26px 22px; background: #fff8e8; border: 1px solid #e3c97a; border-radius: 10px; padding: 13px 16px; font-size: 13px; color: #6b5a2a; }
+  .foot { background: #f7f9fc; padding: 14px 26px; font-size: 11px; color: #9aa4b0; text-align: center; }
+  .fake { color: #b00; font-weight: 700; letter-spacing: 1px; margin-top: 6px; }
+</style>
+</head>
+<body>
+<div class="mail">
+  <div class="bar">
+    <div class="brand">✈ Brussels Airlines</div>
+    <div class="sub">Confirmation de réservation / Booking confirmation</div>
+  </div>
+
+  <div class="hi">
+    <h1>Votre réservation est confirmée</h1>
+    <p>Merci d'avoir réservé avec Brussels Airlines. Voici le récapitulatif de votre voyage.</p>
+  </div>
+
+  <div class="ref">
+    <div><div class="k">Référence de réservation (PNR)</div><div class="v">RBN3PX</div></div>
+    <div><div class="k">Émis le</div><div class="v">28/01/2024</div></div>
+    <div><div class="k">Passagers</div><div class="v">3</div></div>
+  </div>
+
+  <div class="seg">
+    <div class="top"><span>Vol aller — Direct</span><span>SN 204</span></div>
+    <div class="mid">
+      <div class="pt">
+        <div class="iata">DSS</div>
+        <div class="time">15:25</div>
+        <div class="city">Dakar — Blaise Diagne</div>
+      </div>
+      <div class="plane">———  ✈  ———</div>
+      <div class="pt">
+        <div class="iata">BRU</div>
+        <div class="time">19:35</div>
+        <div class="city">Bruxelles — Zaventem</div>
+      </div>
+    </div>
+    <div class="det">
+      <div><div class="k">Date</div><div class="v">15/03/2024</div></div>
+      <div><div class="k">Compagnie</div><div class="v">Brussels Airlines</div></div>
+      <div><div class="k">Classe</div><div class="v">Économique (V)</div></div>
+    </div>
+  </div>
+
+  <div class="pax">
+    <h3>Passagers & billets électroniques</h3>
+    <table>
+      <thead><tr><th>Nom</th><th>Type</th><th>N° de billet électronique</th></tr></thead>
+      <tbody>
+        <tr><td>DIALLO / Aminata</td><td>Adulte</td><td class="ticket">082 2412345678</td></tr>
+        <tr><td>DIALLO / Ousmane</td><td>Adulte</td><td class="ticket">082 2412345679</td></tr>
+        <tr><td>DIALLO / Fatou</td><td>Enfant</td><td class="ticket">082 2412345680</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    ⏱️ Information service : ce vol SN 204 du 15/03/2024 est arrivé à Bruxelles avec un <b>retard de 4 h 10</b>
+    (arrivée réelle 23 h 45 au lieu de 19 h 35). Distance DSS→BRU ≈ 4 300 km → indemnité pouvant atteindre
+    <b>600 € par passager</b> au titre du Règlement (CE) n° 261/2004.
+  </div>
+
+  <div class="foot">
+    Brussels Airlines SA/NV — Confirmation automatique, ne pas répondre.
+    <div class="fake">⚠️ DOCUMENT FICTIF — TEST ROBIN DES AIRS UNIQUEMENT ⚠️</div>
+  </div>
+</div>
+</body>
+</html>

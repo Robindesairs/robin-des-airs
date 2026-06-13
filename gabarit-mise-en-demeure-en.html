@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Letter Before Action — {{COMPAGNIE}} — Ref. {{REF}}</title>
+<style>
+  @page { size: A4; margin: 22mm 20mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Helvetica Neue", Arial, sans-serif; color: #1a2330; font-size: 12px; line-height: 1.5; max-width: 760px; margin: 0 auto; padding: 24px; }
+  .head { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #00468b; padding-bottom: 12px; margin-bottom: 18px; }
+  .brand { font-size: 18px; font-weight: 800; color: #00468b; }
+  .brand small { display: block; font-size: 10px; font-weight: 400; color: #5a6572; margin-top: 2px; }
+  .meta { text-align: right; font-size: 11px; color: #5a6572; }
+  .to { margin: 18px 0; }
+  .to b { display: block; }
+  .obj { background: #eaf2fb; border-left: 3px solid #00468b; padding: 8px 12px; margin: 16px 0; font-weight: 700; }
+  h2 { font-size: 13px; color: #00468b; margin: 18px 0 6px; border-bottom: 1px solid #dde4ec; padding-bottom: 3px; }
+  table.facts { width: 100%; border-collapse: collapse; margin: 8px 0; }
+  table.facts td { padding: 4px 8px; border-bottom: 1px solid #eef1f5; vertical-align: top; }
+  table.facts td:first-child { color: #6b7886; width: 38%; }
+  .amount { font-size: 15px; font-weight: 800; color: #00468b; }
+  .warn { background: #fff8e8; border: 1px solid #e3c97a; border-radius: 6px; padding: 10px 12px; margin: 14px 0; }
+  .sign { margin-top: 26px; }
+  .foot { margin-top: 30px; border-top: 1px solid #dde4ec; padding-top: 8px; font-size: 9.5px; color: #9aa4b0; }
+  .ph { background: #fff3cd; padding: 0 3px; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<div class="head">
+  <div class="brand">Robin des Airs
+    <small>SASU in the course of registration with the Paris Trade & Companies Register<br>66 avenue des Champs-Élysées, 75008 Paris — France<br>expert@robindesairs.eu</small>
+  </div>
+  <div class="meta">
+    Date: <span class="ph">{{DATE_ENVOI}}</span><br>
+    File ref.: <b>{{REF}}</b><br>
+    Sent by registered post + email
+  </div>
+</div>
+
+<div class="to">
+  <b>{{COMPAGNIE}}</b>
+  Customer Relations / Legal Department<br>
+  <span class="ph">{{ADRESSE_COMPAGNIE}}</span><br>
+  <span class="ph">{{EMAIL_COMPAGNIE}}</span>
+</div>
+
+<div class="obj">
+  Re: LETTER BEFORE ACTION — Formal demand for payment — Compensation under Regulation (EC) No 261/2004 — Flight {{VOL}} of {{DATE_VOL}} — {{NB_PAX}} passenger(s) — Amount: €{{MONTANT_TOTAL}}
+</div>
+
+<p>Dear Sir or Madam,</p>
+
+<p>Robin des Airs acts as <b>assignee of the compensation claims</b> of the passengers named below, under a deed of assignment duly executed in its favour (Articles 1321 et seq. of the French Civil Code). <b>This letter constitutes notice of that assignment</b> (Article 1324 of the French Civil Code): from receipt of this letter, you may validly discharge your debt only into the hands of Robin des Airs.</p>
+
+<h2>1. The flight concerned</h2>
+<table class="facts">
+  <tr><td>Operating carrier</td><td><span class="ph">{{COMPAGNIE}}</span> (<span class="ph">{{VOL}}</span>)</td></tr>
+  <tr><td>Route</td><td><span class="ph">{{TRAJET}}</span></td></tr>
+  <tr><td>Date</td><td><span class="ph">{{DATE_VOL}}</span></td></tr>
+  <tr><td>Booking reference (PNR)</td><td><span class="ph">{{PNR}}</span></td></tr>
+  <tr><td>Disruption</td><td>Arrival delay of <span class="ph">{{RETARD}}</span> (actual arrival <span class="ph">{{H_REELLE}}</span> instead of <span class="ph">{{H_PREVUE}}</span>)</td></tr>
+  <tr><td>Great-circle distance</td><td><span class="ph">{{DISTANCE}}</span></td></tr>
+</table>
+
+<h2>2. Legal basis of the right to compensation</h2>
+<p>Under Articles 5, 6 and 7 of Regulation (EC) No 261/2004, as interpreted by the Court of Justice of the European Union (judgments <i>Sturgeon</i>, C-402/07, and <i>Nelson</i>, C-581/10), an arrival delay of three hours or more gives rise to the fixed compensation provided for in Article 7. As the relevant distance exceeds 3,500 km, the amount is <b>€600 per passenger</b>.</p>
+<p>The delay being <span class="ph">{{RETARD}}</span>, the right to compensation is established. Should you wish to rely on <b>extraordinary circumstances</b> within the meaning of Article 5(3), the burden of proof lies with you; ordinary operating contingencies do not qualify (CJEU, <i>Wallentin-Hermann</i>, C-549/07).</p>
+
+<h2>3. Passengers and amount claimed</h2>
+<table class="facts">
+  <tr><td>Passenger 1</td><td><span class="ph">{{PAX1}}</span> — €600</td></tr>
+  <tr><td>Passenger 2</td><td><span class="ph">{{PAX2}}</span> — €600</td></tr>
+  <tr><td>Passenger 3</td><td><span class="ph">{{PAX3}}</span> — €600</td></tr>
+  <tr><td>Total due</td><td class="amount">€<span class="ph">{{MONTANT_TOTAL}}</span></td></tr>
+</table>
+
+<h2>4. Formal demand</h2>
+<p>Accordingly, I hereby <b>formally demand payment of the sum of €<span class="ph">{{MONTANT_TOTAL}}</span></b> into the hands of Robin des Airs within <b>fifteen (15) days</b> of receipt of this letter, by bank transfer to the following account:</p>
+<table class="facts">
+  <tr><td>Beneficiary</td><td>Robin des Airs</td></tr>
+  <tr><td>IBAN</td><td><span class="ph">{{IBAN}}</span></td></tr>
+  <tr><td>Reference</td><td>Ref. <span class="ph">{{REF}}</span></td></tr>
+</table>
+
+<div class="warn">
+  <b>Failing full payment within that period</b>, Robin des Airs will, without further notice, bring proceedings before the competent court (place of the flight's arrival) under the <b>European Small Claims Procedure</b> (Regulation (EC) No 861/2007), and will seek, in addition to the principal sum:
+  <ul style="margin:6px 0 0">
+    <li><b>statutory default interest</b> running from this letter before action;</li>
+    <li><b>reimbursement of the costs of the proceedings</b>;</li>
+    <li>any additional sum on account of unreasonable resistance to a manifestly well-founded claim.</li>
+  </ul>
+</div>
+
+<p>This letter constitutes a prior attempt at amicable settlement. I remain available for any payment or supporting document.</p>
+
+<div class="sign">
+  <p>Yours faithfully,</p>
+  <p><b>For and on behalf of Robin des Airs</b><br>
+  <span class="ph">{{SIGNATAIRE}}</span>, acting for Robin des Airs (SASU in formation)<br>
+  EU 261/2004 Legal Department</p>
+</div>
+
+<div class="foot">
+  Enclosures: (1) signed deed of assignment / representation mandate · (2) booking confirmation / e-tickets · (3) proof of delay · (4) passengers' identity documents.<br>
+  Robin des Airs — SASU in the course of registration — 66 av. des Champs-Élysées, 75008 Paris — expert@robindesairs.eu
+</div>
+
+</body>
+</html>

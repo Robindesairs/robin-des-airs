@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mise en demeure — {{COMPAGNIE}} — Réf. {{REF}}</title>
+<style>
+  @page { size: A4; margin: 22mm 20mm; }
+  * { box-sizing: border-box; }
+  body { font-family: "Helvetica Neue", Arial, sans-serif; color: #1a2330; font-size: 12px; line-height: 1.5; max-width: 760px; margin: 0 auto; padding: 24px; }
+  .head { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #00468b; padding-bottom: 12px; margin-bottom: 18px; }
+  .brand { font-size: 18px; font-weight: 800; color: #00468b; }
+  .brand small { display: block; font-size: 10px; font-weight: 400; color: #5a6572; margin-top: 2px; }
+  .meta { text-align: right; font-size: 11px; color: #5a6572; }
+  .to { margin: 18px 0; }
+  .to b { display: block; }
+  .obj { background: #eaf2fb; border-left: 3px solid #00468b; padding: 8px 12px; margin: 16px 0; font-weight: 700; }
+  h2 { font-size: 13px; color: #00468b; margin: 18px 0 6px; border-bottom: 1px solid #dde4ec; padding-bottom: 3px; }
+  table.facts { width: 100%; border-collapse: collapse; margin: 8px 0; }
+  table.facts td { padding: 4px 8px; border-bottom: 1px solid #eef1f5; vertical-align: top; }
+  table.facts td:first-child { color: #6b7886; width: 38%; }
+  .amount { font-size: 15px; font-weight: 800; color: #00468b; }
+  .warn { background: #fff8e8; border: 1px solid #e3c97a; border-radius: 6px; padding: 10px 12px; margin: 14px 0; }
+  .sign { margin-top: 26px; }
+  .foot { margin-top: 30px; border-top: 1px solid #dde4ec; padding-top: 8px; font-size: 9.5px; color: #9aa4b0; }
+  .ph { background: #fff3cd; padding: 0 3px; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!--
+  GABARIT FR GÉNÉRIQUE — Mise en demeure CE 261/2004 (toute compagnie, tout trajet).
+  Remplacer chaque {{PLACEHOLDER}} avant envoi. Montant par passager selon le barème
+  de l'art. 7 : 250 € (≤ 1 500 km) · 400 € (intra-UE > 1 500 km, ou 1 500–3 500 km) ·
+  600 € (> 3 500 km hors UE). Juridiction = lieu d'arrivée dans l'UE OU lieu de départ
+  si le vol part de l'UE (à confirmer par legal:compliance-check avant envoi).
+  Pour le cas figé Brussels Airlines Dakar→Bruxelles, voir gabarit-mise-en-demeure-brussels-DSS-BRU.html.
+-->
+
+<div class="head">
+  <div class="brand">Robin des Airs
+    <small>SASU en cours d'immatriculation au RCS de Paris<br>66 avenue des Champs-Élysées, 75008 Paris — France<br>expert@robindesairs.eu</small>
+  </div>
+  <div class="meta">
+    Le <span class="ph">{{DATE_ENVOI}}</span><br>
+    Réf. dossier : <b>{{REF}}</b><br>
+    Envoi recommandé AR + courriel
+  </div>
+</div>
+
+<div class="to">
+  <b>{{COMPAGNIE}}</b>
+  Service Relations Clientèle / Service juridique<br>
+  <span class="ph">{{ADRESSE_COMPAGNIE}}</span><br>
+  <span class="ph">{{EMAIL_COMPAGNIE}}</span>
+</div>
+
+<div class="obj">
+  Objet : MISE EN DEMEURE de payer — Indemnisation Règlement (CE) n° 261/2004 — Vol {{VOL}} du {{DATE_VOL}} — {{NB_PAX}} passager(s) — Montant : {{MONTANT_TOTAL}} €
+</div>
+
+<p>Madame, Monsieur,</p>
+
+<p>La société <b>Robin des Airs</b> intervient en qualité de <b>cessionnaire des créances d'indemnisation</b> des passagers ci-après désignés, en vertu d'un acte de cession de créance régulièrement consenti à son profit (article 1321 et suivants du Code civil). <b>La présente vaut notification de cette cession au sens de l'article 1324 du Code civil</b> : à compter de sa réception, vous ne pouvez valablement vous libérer qu'entre les mains de Robin des Airs.</p>
+
+<h2>1. Le vol concerné</h2>
+<table class="facts">
+  <tr><td>Compagnie effective</td><td><span class="ph">{{COMPAGNIE}}</span> (<span class="ph">{{VOL}}</span>)</td></tr>
+  <tr><td>Trajet</td><td><span class="ph">{{TRAJET}}</span></td></tr>
+  <tr><td>Date</td><td><span class="ph">{{DATE_VOL}}</span></td></tr>
+  <tr><td>Référence de réservation (PNR)</td><td><span class="ph">{{PNR}}</span></td></tr>
+  <tr><td>Perturbation</td><td>Retard à l'arrivée de <span class="ph">{{RETARD}}</span> (arrivée réelle <span class="ph">{{H_REELLE}}</span> au lieu de <span class="ph">{{H_PREVUE}}</span>)</td></tr>
+  <tr><td>Distance orthodromique</td><td><span class="ph">{{DISTANCE}}</span></td></tr>
+</table>
+
+<h2>2. Le fondement du droit à indemnisation</h2>
+<p>En application des articles 5, 6 et 7 du Règlement (CE) n° 261/2004, tel qu'interprété par la Cour de justice de l'Union européenne (arrêts <i>Sturgeon</i>, C-402/07, et <i>Nelson</i>, C-581/10), un retard à l'arrivée égal ou supérieur à trois heures ouvre droit à l'indemnisation forfaitaire de l'article 7. Compte tenu de la distance du vol, le montant applicable est de <b><span class="ph">{{MONTANT_PAX}}</span> € par passager</b>.</p>
+<p>Le retard constaté étant de <span class="ph">{{RETARD}}</span>, le droit à indemnisation est acquis. Il vous appartiendrait, le cas échéant, de rapporter la preuve de <b>circonstances extraordinaires</b> au sens de l'article 5 §3 ; la charge de cette preuve vous incombe et de telles circonstances ne sauraient résulter du seul aléa d'exploitation (CJUE, <i>Wallentin-Hermann</i>, C-549/07).</p>
+
+<h2>3. Les passagers et le montant réclamé</h2>
+<table class="facts">
+  <tr><td>Passager 1</td><td><span class="ph">{{PAX1}}</span> — <span class="ph">{{MONTANT_PAX}}</span> €</td></tr>
+  <tr><td>Passager 2</td><td><span class="ph">{{PAX2}}</span> — <span class="ph">{{MONTANT_PAX}}</span> €</td></tr>
+  <tr><td>Passager 3</td><td><span class="ph">{{PAX3}}</span> — <span class="ph">{{MONTANT_PAX}}</span> €</td></tr>
+  <tr><td>Total dû</td><td class="amount"><span class="ph">{{MONTANT_TOTAL}}</span> €</td></tr>
+</table>
+
+<h2>4. Mise en demeure</h2>
+<p>En conséquence, je vous <b>mets en demeure de payer la somme de <span class="ph">{{MONTANT_TOTAL}}</span> €</b> entre les mains de Robin des Airs, dans un délai de <b>quinze (15) jours</b> à compter de la réception de la présente, par virement sur le compte suivant :</p>
+<table class="facts">
+  <tr><td>Bénéficiaire</td><td>Robin des Airs</td></tr>
+  <tr><td>IBAN</td><td><span class="ph">{{IBAN}}</span></td></tr>
+  <tr><td>Communication</td><td>Réf. <span class="ph">{{REF}}</span></td></tr>
+</table>
+
+<div class="warn">
+  <b>À défaut de paiement intégral dans ce délai</b>, Robin des Airs saisira, sans autre avis, la <b>juridiction compétente (<span class="ph">{{JURIDICTION}}</span> — lieu de départ ou d'arrivée du vol)</b> au moyen de la <b>procédure européenne de règlement des petits litiges</b> (Règlement (CE) n° 861/2007), et sollicitera, outre le principal :
+  <ul style="margin:6px 0 0">
+    <li>les <b>intérêts moratoires</b> à compter de la présente mise en demeure (art. 1344-1 du Code civil) ;</li>
+    <li>le <b>remboursement des frais de procédure</b> ;</li>
+    <li>toute somme complémentaire au titre de la résistance abusive à une demande manifestement fondée.</li>
+  </ul>
+</div>
+
+<p>Cette lettre constitue une tentative de résolution amiable préalable. Je reste à votre disposition pour tout règlement ou justificatif.</p>
+
+<div class="sign">
+  <p>Veuillez agréer, Madame, Monsieur, l'expression de mes salutations distinguées.</p>
+  <p><b>Pour Robin des Airs</b><br>
+  <span class="ph">{{SIGNATAIRE}}</span>, agissant pour le compte de la SASU Robin des Airs en cours de formation<br>
+  Service juridique CE 261/2004</p>
+</div>
+
+<div class="foot">
+  Pièces jointes : (1) acte de cession de créance / mandat de représentation signé · (2) confirmation de réservation / e-billets · (3) justificatif du retard · (4) pièces d'identité des passagers.<br>
+  Robin des Airs — SASU en cours d'immatriculation — 66 av. des Champs-Élysées, 75008 Paris — expert@robindesairs.eu
+</div>
+
+</body>
+</html>
