@@ -21,24 +21,6 @@
 
 'use strict';
 
-// Cadence de relance = MÊME source de vérité que la machine à états CRM
-// (lib/dossier-state.js, jalons J+15/J+30/J+62 alignés sur crm/index.html).
-// On opère ici sur les libellés « Statut du Dossier Suivi » d'Airtable (vocabulaire
-// du bureau) et on DÉRIVE le timing du jour de génération de la MED (la base
-// Dossiers Passagers n'a pas de champ « date LRAR » → on lit la remarque « MED générée »).
-let dossierState = null;
-try { dossierState = require('./dossier-state'); } catch (_) {}
-function jalon(statutKey, fallback) {
-  try {
-    const ST = dossierState.STATUTS, S = dossierState.SCHEDULE;
-    const v = (S[ST[statutKey]] || {}).offsetFromLrar;
-    return Number.isFinite(v) ? v : fallback;
-  } catch (_) { return fallback; }
-}
-const J_RELANCE_1 = jalon('LRAR_ENVOYEE', 15); // 1re relance après MED
-const J_RELANCE_2 = jalon('RELANCE_1', 30); // relance ferme
-const J_NEB = jalon('RELANCE_2', 62); // escalade NEB / médiation
-
 const DAY_MS = 24 * 3600 * 1000;
 
 // Statuts hors-pipeline (dossier clos, dans un sens ou l'autre).
@@ -59,10 +41,9 @@ function intEnv(name, def) {
 function defaultThresholds() {
   return {
     medSlaDays: intEnv('LEGAL_MED_SLA_DAYS', 5), // mandat signé → MED envoyée
-    relanceDays: intEnv('LEGAL_RELANCE_DAYS', J_RELANCE_1), // MED → 1re relance (J+15)
-    relance2Days: intEnv('LEGAL_RELANCE2_DAYS', J_RELANCE_2), // → relance ferme (J+30)
-    escaladeDays: intEnv('LEGAL_ESCALADE_DAYS', J_NEB), // → escalade NEB / médiation (J+62)
-    contentieuxDays: intEnv('LEGAL_CONTENTIEUX_DAYS', 90), // → contentieux (J+90)
+    relanceDays: intEnv('LEGAL_RELANCE_DAYS', 14), // MED → relance (= délai donné à la cie)
+    escaladeDays: intEnv('LEGAL_ESCALADE_DAYS', 30), // MED → escalade NEB
+    contentieuxDays: intEnv('LEGAL_CONTENTIEUX_DAYS', 45), // MED → contentieux
     prescriptionYears: intEnv('LEGAL_PRESCRIPTION_YEARS', 5), // for FR par défaut
     prescriptionAlertDays: intEnv('LEGAL_PRESCRIPTION_ALERT_DAYS', 90), // alerte prescription
   };
@@ -174,15 +155,11 @@ function evaluateDossier(d, ctx) {
       urgence = 'rouge';
     } else if (joursDepuis >= T.escaladeDays) {
       action = `Escalade NEB${airline && airline.neb ? ` — ${airline.neb.nom}` : ''}`;
-      detail = `${joursDepuis} j sans réponse (≥ ${T.escaladeDays} j). Saisir l'organisme national de contrôle / médiation.`;
+      detail = `${joursDepuis} j sans réponse (≥ ${T.escaladeDays} j). Saisir l'organisme national de contrôle.`;
       urgence = 'rouge';
-    } else if (joursDepuis >= T.relance2Days) {
-      action = 'Relance 2 — mise en demeure ferme';
-      detail = `${joursDepuis} j écoulés (≥ ${T.relance2Days} j). Dernière relance + préavis d'escalade NEB.`;
-      urgence = 'orange';
     } else if (joursDepuis >= T.relanceDays) {
-      action = 'Relancer la compagnie';
-      detail = `${joursDepuis} j écoulés (≥ ${T.relanceDays} j). Relance + préavis.`;
+      action = 'Relancer la compagnie (mise en demeure ferme)';
+      detail = `${joursDepuis} j écoulés (délai donné : ${T.relanceDays} j). Relance + préavis d'escalade.`;
       urgence = 'orange';
     } else {
       action = 'Suivre la réponse de la compagnie';
