@@ -720,17 +720,27 @@ Règles :
 }
 
 // ─── Classifieur : une photo envoyée = pièce d'identité, preuve de voyage, ou autre ──
+let _warnedNoOpenAI = false;
+function warnOpenAIClassifyOff() {
+  if (_warnedNoOpenAI) return;
+  _warnedNoOpenAI = true;
+  console.error('🔴 OPENAI_API_KEY absente → lecture/classification automatique des documents DÉSACTIVÉE (pièces acceptées mais non lues).');
+  try { if (typeof notifyOwnerWhatsApp === 'function') notifyOwnerWhatsApp('', '🔴 Bot: OPENAI_API_KEY absente → lecture auto des pièces (passeport / e-billet / carte / reçus) DÉSACTIVÉE. Les documents sont reçus mais NON classés/lus. Configure la clé sur Railway.').catch(() => {}); } catch (_) {}
+}
 async function classifyDoc(mediaUrl, cfg) {
   const FALLBACK = { kind: 'autre', nom: '', voyageType: '', lisible: true, probleme: '' };
-  const key = process.env.OPENAI_API_KEY; if (!key || !mediaUrl) return FALLBACK;
+  const key = process.env.OPENAI_API_KEY;
+  if (!mediaUrl) return FALLBACK;
+  if (!key) return { ...FALLBACK, _unavailable: true, _reason: 'no_key' }; // pas de clé → on ne fait PAS semblant d'avoir classé
   try {
     const imgRes = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {}, signal: AbortSignal.timeout(20000) });
     if (!imgRes.ok) return FALLBACK;
     const b64 = Buffer.from(await imgRes.arrayBuffer()).toString('base64');
     const prompt = `Tu classes une photo/capture envoyée par un passager, et tu juges sa QUALITÉ (une pièce illisible peut être refusée par la compagnie). Réponds UNIQUEMENT en JSON :
-{"kind":"identite|voyage|autre","nom":"","voyageType":"ebooking|carte|","lisible":true,"probleme":""}
+{"kind":"identite|voyage|frais|autre","nom":"","voyageType":"ebooking|carte|","lisible":true,"probleme":""}
 - "identite" : passeport, carte nationale d'identité (CNI), titre de séjour. Mets dans "nom" le NOM et prénom lus (MAJUSCULES).
 - "voyage" : preuve de voyage. voyageType="ebooking" si CONFIRMATION DE RÉSERVATION / e-billet / itinéraire (liste souvent PLUSIEURS passagers et/ou PLUSIEURS vols). voyageType="carte" si CARTE D'EMBARQUEMENT (un seul passager / un seul vol).
+- "frais" : reçu, facture ou ticket d'une DÉPENSE liée à la perturbation du vol (hôtel, taxi/VTC, repas/restaurant, transport, parking). PAS un billet d'avion ni une réservation de vol.
 - "autre" : tout le reste.
 - "lisible" : false si la photo est FLOUE, SOMBRE, COUPÉE, avec REFLET, ou si les informations clés (nom, n° de pièce) ne sont pas lisibles avec certitude. Sinon true.
 - "probleme" : si lisible=false, un mot : "flou" | "sombre" | "coupé" | "reflet" | "illisible".
@@ -741,8 +751,8 @@ Champ inconnu = "". Ne JAMAIS inventer un nom si la photo est illisible.`;
     });
     const data = await res.json(); if (!data.choices) return FALLBACK;
     const p = JSON.parse(data.choices[0].message.content);
-    return { kind: ['identite', 'voyage', 'autre'].includes(p.kind) ? p.kind : 'autre', nom: (p.nom || '').toUpperCase().trim(), voyageType: p.voyageType || '', lisible: p.lisible !== false, probleme: p.probleme || '' };
-  } catch (e) { return FALLBACK; }
+    return { kind: ['identite', 'voyage', 'frais', 'autre'].includes(p.kind) ? p.kind : 'autre', nom: (p.nom || '').toUpperCase().trim(), voyageType: p.voyageType || '', lisible: p.lisible !== false, probleme: p.probleme || '' };
+  } catch (e) { return { ...FALLBACK, _unavailable: true, _reason: 'api_error' }; } // API en panne/timeout → ne pas classer en silence
 }
 
 // ─── État des pièces (déterministe) : quel passager n'a pas sa pièce ? preuve de voyage ? ──
@@ -1685,6 +1695,13 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (mediaUrl) {
       s.passengers = s.passengers || [];
       const d = await classifyDoc(mediaUrl, cfg);
+      // Auto-lecture indisponible (clé OpenAI absente ou API en panne) → ne PAS faire semblant d'avoir classé/lu.
+      // On reste honnête avec le client (vérif manuelle) et on alerte l'équipe (1 fois) si la clé manque.
+      if (d._unavailable) {
+        if (d._reason === 'no_key') warnOpenAIClassifyOff();
+        await setState(phone, s);
+        return send(phone, `✅ Bien reçu, merci 🙏 — un conseiller vérifie ce document et l'ajoute à votre dossier.\n\n${missingDocsText(s)}`, cfg);
+      }
       // Contrôle qualité AVANT tout : une pièce illisible peut être refusée par la compagnie → on redemande
       if (d.lisible === false && d.kind !== 'autre') {
         const pb = { flou: 'un peu floue', sombre: 'trop sombre', 'coupé': 'coupée', reflet: 'avec un reflet' }[d.probleme] || 'difficile à lire';
@@ -1706,6 +1723,11 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
         s.travelProof = d.voyageType === 'ebooking' ? 'ebooking' : (s.travelProof === 'ebooking' ? 'ebooking' : (d.voyageType || 'voyage'));
         if (d.voyageType === 'carte') addCarteName(s, d.nom);
         ack = d.voyageType === 'ebooking' ? `✅ Confirmation de réservation reçue — elle couvre *tout le voyage et tous les passagers*. 👍` : `✅ Carte d'embarquement reçue${d.nom ? ` (${titleCaseName(d.nom.split(/\s+/)[0])})` : ''}. 👍`;
+      } else if (d.kind === 'frais') {
+        // Reçu de dépense (hôtel/taxi/repas…) envoyé hors de l'étape frais → on le compte et on le signale (Art. 8/9 CE261).
+        s.fraisCount = (s.fraisCount || 0) + 1;
+        ack = `🧾 Reçu de frais bien reçu — on le joint à votre réclamation (hôtel, taxi, repas… remboursables au titre des art. 8 & 9). 👍`;
+        notifyOwnerWhatsApp(phone, `🧾 Dossier ${s.ref || '?'} : reçu de frais reçu (#${s.fraisCount}) — à joindre à la réclamation (Art. 8/9).`).catch(() => {});
       } else { ack = `✅ Document bien reçu, merci. 🙏 Notre équipe l'ajoute à votre dossier.`; }
       await setState(phone, s);
       return send(phone, `${ack}\n\n${missingDocsText(s)}`, cfg);
