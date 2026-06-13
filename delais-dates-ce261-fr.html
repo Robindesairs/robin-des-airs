@@ -5,106 +5,156 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="/favicon.png" type="image/png">
 <title>Délais &amp; limites de dates — CE 261 · Robin des Airs</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=DM+Sans:wght@400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--green:#0a3d2e;--gold:#8a6d3b;--gold-soft:#c9a96e;--border:#d4cfc0;--muted:#7a7060;--ink:#111108;--paper:#fdfcf8}
-body{font-family:'DM Sans',sans-serif;background:#f5f2ea;color:var(--ink)}
-.topbar{background:var(--green);padding:14px 32px;display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid var(--gold)}
-.brand{font-family:'Cormorant Garamond',serif;font-size:20px;color:#fff;text-decoration:none}
-.brand em{font-style:italic;color:var(--gold-soft)}
-.page{max-width:780px;margin:0 auto;padding:40px 20px 80px}
-.doc{background:white;border:1px solid var(--border);border-top:4px solid var(--green);padding:36px 40px}
-h1{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--green);margin-bottom:6px}
-.sub{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);margin-bottom:20px}
-.lead{font-size:14px;line-height:1.75;margin-bottom:24px;color:#3a3630}
-h2{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--green);margin:28px 0 12px}
-.fee-table{width:100%;border-collapse:collapse;margin:12px 0 20px;font-size:13px}
-.fee-table th{background:var(--green);color:#fff;font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:2px solid var(--gold-soft)}
-.fee-table td{padding:10px 14px;border-bottom:1px solid var(--border);vertical-align:top}
-.fee-table tr:nth-child(even) td{background:var(--paper)}
-.fee-table .em{font-weight:600;color:var(--green);white-space:nowrap}
-.note{font-size:12px;line-height:1.7;padding:14px 18px;background:#e8f0ec;border-left:3px solid var(--green);margin:16px 0}
-.warn{font-size:12px;line-height:1.7;padding:14px 18px;background:#faf5eb;border-left:3px solid var(--gold);margin:16px 0}
-.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}
-.links a{font-size:12px;color:var(--green);text-decoration:none;border:1px solid var(--border);padding:8px 12px}
-.links a:hover{background:#e8f0ec}
-ul{margin:0 0 12px 1.1rem;font-size:13px;line-height:1.7}
+:root{
+  --navy:#0B1F3A;--sapin:#0a3d2e;--neon:#00C87A;--neon-dark:#009960;
+  --gold:#c9a96e;--gold-soft:#dfc18f;
+  --ink:#1b2430;--muted:#5c6775;--line:#e7eaf0;--bg:#ffffff;--soft:#f6f8fb;
+}
+body{font-family:'Montserrat',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+a{color:inherit}
+
+/* ── header de marque ── */
+.site-header{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.site-header-in{max-width:900px;margin:0 auto;padding:13px 22px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.brand{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;color:var(--sapin);text-decoration:none;letter-spacing:-.02em;display:inline-flex;align-items:center;gap:9px}
+.brand .mark{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--neon),var(--sapin));display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px}
+.brand span{color:var(--neon-dark)}
+.hnav{display:flex;gap:8px;flex-wrap:wrap}
+.hnav a{font-size:12px;font-weight:600;color:var(--muted);text-decoration:none;border:1px solid var(--line);padding:7px 12px;border-radius:8px;transition:all .15s}
+.hnav a:hover{border-color:var(--neon);color:var(--navy)}
+
+/* ── page ── */
+.page{max-width:900px;margin:0 auto;padding:40px 22px 70px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--sapin);background:var(--soft);border:1px solid var(--line);padding:6px 13px;border-radius:999px;margin-bottom:16px}
+.eyebrow::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--neon)}
+h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(26px,5vw,38px);color:var(--navy);line-height:1.08;letter-spacing:-.02em;margin-bottom:12px}
+.lead{font-size:15px;line-height:1.7;color:var(--muted);max-width:700px}
+.lead a{color:var(--neon-dark);font-weight:600;text-decoration:none}
+.lead a:hover{text-decoration:underline}
+h2{font-family:'Syne',sans-serif;font-weight:700;font-size:20px;color:var(--navy);margin:34px 0 12px;padding-left:12px;border-left:3px solid var(--neon)}
+
+/* ── tables ── */
+.fee-table{width:100%;border-collapse:collapse;margin:10px 0 18px;font-size:13.5px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.fee-table th{background:var(--navy);color:#fff;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding:11px 14px;text-align:left}
+.fee-table td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+.fee-table tr:last-child td{border-bottom:none}
+.fee-table tbody tr:nth-child(even) td,.fee-table tr:nth-child(even) td{background:var(--soft)}
+.fee-table .em{font-weight:700;color:var(--sapin);white-space:nowrap}
+.fee-table strong{color:var(--navy)}
+
+/* ── encadrés ── */
+.note{font-size:13px;line-height:1.65;padding:13px 16px;background:rgba(0,200,122,.07);border:1px solid rgba(0,200,122,.25);border-left:3px solid var(--neon);border-radius:8px;margin:16px 0;color:#15503a}
+.note strong{color:#0e6b45}
+.warn{font-size:13px;line-height:1.65;padding:13px 16px;background:rgba(201,169,110,.12);border:1px solid rgba(201,169,110,.4);border-left:3px solid var(--gold);border-radius:8px;margin:16px 0;color:#6b5326}
+.warn strong{color:#5a4416}
+ul{margin:0 0 14px 1.1rem;font-size:13.5px;line-height:1.75}
+ul strong{color:var(--navy)}
+
+/* ── liens bas de page ── */
+.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+.links a{font-size:12.5px;font-weight:600;color:var(--navy);text-decoration:none;border:1px solid var(--line);padding:9px 14px;border-radius:9px;transition:all .15s}
+.links a:hover{border-color:var(--neon);background:var(--soft)}
+
+/* ── footer ── */
+.site-footer{border-top:1px solid var(--line);background:var(--soft)}
+.site-footer-in{max-width:900px;margin:0 auto;padding:24px 22px;font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;justify-content:space-between}
+.site-footer .flog{font-family:'Syne',sans-serif;font-weight:800;color:var(--sapin)}
+.site-footer .flog span{color:var(--neon-dark)}
+.site-footer a{color:var(--muted);text-decoration:none}
+.site-footer a:hover{color:var(--navy)}
+
+@media(max-width:600px){
+  .page{padding:30px 16px 50px}
+  /* Tables larges → défilement horizontal au lieu de déborder la page. */
+  .fee-table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:12.5px;white-space:nowrap}
+  .fee-table th,.fee-table td{padding:9px 11px}
+  .fee-table td:nth-child(2){white-space:normal;min-width:170px}
+  .fee-table td:nth-child(3){white-space:normal;min-width:130px}
+}
 </style>
 </head>
 <body>
-<div class="topbar">
-  <a href="/" class="brand">Robin <em>des</em> Airs</a>
-  <div style="display:flex;gap:8px">
-    <a href="/ce261-date-deadlines-en.html" style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.7);text-decoration:none;border:1px solid rgba(201,169,110,.4);padding:4px 10px">EN</a>
-    <a href="/bareme-ce261-fr.html" style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.7);text-decoration:none;border:1px solid rgba(201,169,110,.4);padding:4px 10px">Barème €</a>
-    <a href="/espace-agence.html" style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.7);text-decoration:none;border:1px solid rgba(201,169,110,.4);padding:4px 10px">Espace agence</a>
-  </div>
-</div>
+<header class="site-header"><div class="site-header-in">
+  <a href="/" class="brand"><span class="mark">✈</span>Robin <span>des&nbsp;Airs</span></a>
+  <nav class="hnav">
+    <a href="/ce261-date-deadlines-en.html">🇬🇧 EN</a>
+    <a href="/bareme-ce261-fr.html">Barème €</a>
+    <a href="/espace-agence.html">Espace agence</a>
+  </nav>
+</div></header>
+
 <div class="page">
-  <div class="doc">
-    <h1>Délais &amp; limites de dates</h1>
-    <p class="sub">Référence CE 261 · mandat · agence · procédure Robin</p>
-    <p class="lead">
-      Synthèse des <strong>délais indicatifs</strong> utilisés sur le site, dans le <a href="/autorisation.html">mandat passager</a>,
-      le <a href="/partner-agreement-fr.html">contrat agence</a> et le <strong>CRM</strong> (jalons après mise en demeure).
-      Ce document ne remplace pas un avis juridique ; les cas particuliers (prescription, circonstances extraordinaires) peuvent modifier l’éligibilité.
-    </p>
+  <span class="eyebrow">Référence CE 261/2004</span>
+  <h1>Délais &amp; limites de dates</h1>
+  <p class="lead">
+    Synthèse des <strong>délais indicatifs</strong> utilisés sur le site, dans le <a href="/autorisation.html">mandat passager</a>,
+    le <a href="/partner-agreement-fr.html">contrat agence</a> et le <strong>CRM</strong> (jalons après mise en demeure).
+    Ce document ne remplace pas un avis juridique ; les cas particuliers (prescription, circonstances extraordinaires) peuvent modifier l’éligibilité.
+  </p>
 
-    <h2>1 — Droit de réclamer (passager)</h2>
-    <table class="fee-table">
-      <tr><th>Délai / limite</th><th>Règle indicative</th><th>Où c’est vu</th></tr>
-      <tr><td class="em">Prescription</td><td><strong>5 ans</strong> en droit français à compter du fait générateur (souvent la <strong>date du vol</strong>)</td><td>Site, blog, vérification gratuite</td></tr>
-      <tr><td class="em">Annulation</td><td>Préavis compagnie <strong>&lt; 14 jours</strong> avant le départ → indemnité CE 261 possible (sauf circonstances extraordinaires)</td><td>Formulaire d’éligibilité site</td></tr>
-      <tr><td class="em">Retard</td><td>Arrivée avec <strong>≥ 3 h</strong> de retard (selon distance / règles CE 261)</td><td>Mandat, dossier agence</td></tr>
-    </table>
-    <div class="warn">Au-delà de la prescription, le dossier peut être classé <strong>Prescrit</strong> dans le CRM — sans recours indemnitaire.</div>
+  <h2>1 — Droit de réclamer (passager)</h2>
+  <table class="fee-table">
+    <tr><th>Délai / limite</th><th>Règle indicative</th><th>Où c’est vu</th></tr>
+    <tr><td class="em">Prescription</td><td><strong>5 ans</strong> en droit français à compter du fait générateur (souvent la <strong>date du vol</strong>)</td><td>Site, blog, vérification gratuite</td></tr>
+    <tr><td class="em">Annulation</td><td>Préavis compagnie <strong>&lt; 14 jours</strong> avant le départ → indemnité CE 261 possible (sauf circonstances extraordinaires)</td><td>Formulaire d’éligibilité site</td></tr>
+    <tr><td class="em">Retard</td><td>Arrivée avec <strong>≥ 3 h</strong> de retard (selon distance / règles CE 261)</td><td>Mandat, dossier agence</td></tr>
+  </table>
+  <div class="warn">Au-delà de la prescription, le dossier peut être classé <strong>Prescrit</strong> dans le CRM — sans recours indemnitaire.</div>
 
-    <h2>2 — Mandat passager (signature)</h2>
-    <table class="fee-table">
-      <tr><th>Délai</th><th>Durée</th><th>Notes</th></tr>
-      <tr><td class="em">Rétractation</td><td><strong>14 jours</strong> calendaires après signature</td><td>Email : contact@robindesairs.eu — « Je me rétracte — Réf. … »</td></tr>
-      <tr><td class="em">Démarrage immédiat</td><td>Option à la signature</td><td>Robin peut agir avant la fin des 14 jours si le passager coche la case</td></tr>
-      <tr><td class="em">Durée du mandat</td><td><strong>24 mois</strong></td><td>Résiliation possible (faute grave, etc.) — préavis 15 jours</td></tr>
-      <tr><td class="em">Contact compagnie</td><td><strong>24 h</strong></td><td>Le passager informe Robin de tout contact ou offre de la compagnie</td></tr>
-      <tr><td class="em">Reversement net</td><td><strong>48 h ouvrées</strong></td><td>Après encaissement effectif par Robin (75 % au passager)</td></tr>
-    </table>
+  <h2>2 — Mandat passager (signature)</h2>
+  <table class="fee-table">
+    <tr><th>Délai</th><th>Durée</th><th>Notes</th></tr>
+    <tr><td class="em">Rétractation</td><td><strong>14 jours</strong> calendaires après signature</td><td>Email : contact@robindesairs.eu — « Je me rétracte — Réf. … »</td></tr>
+    <tr><td class="em">Démarrage immédiat</td><td>Option à la signature</td><td>Robin peut agir avant la fin des 14 jours si le passager coche la case</td></tr>
+    <tr><td class="em">Durée du mandat</td><td><strong>24 mois</strong></td><td>Résiliation possible (faute grave, etc.) — préavis 15 jours</td></tr>
+    <tr><td class="em">Contact compagnie</td><td><strong>24 h</strong></td><td>Le passager informe Robin de tout contact ou offre de la compagnie</td></tr>
+    <tr><td class="em">Reversement net</td><td><strong>48 h ouvrées</strong></td><td>Après encaissement effectif par Robin (75 % au passager)</td></tr>
+  </table>
 
-    <h2>3 — Agence partenaire</h2>
-    <table class="fee-table">
-      <tr><th>Délai</th><th>Durée</th><th>Notes</th></tr>
-      <tr><td class="em">Contrat agence</td><td><strong>24 mois</strong></td><td>Reconduction tacite ; dénonciation <strong>30 jours</strong> par écrit</td></tr>
-      <tr><td class="em">Commission</td><td><strong>48 h ouvrées</strong></td><td>Après encaissement effectif par Robin (ex. 3 800 GMD / passager gagné)</td></tr>
-      <tr><td class="em">Même incident</td><td>Sans retard injustifié</td><td>Prévenir Robin si passager ou compagnie contacte l’agence</td></tr>
-    </table>
+  <h2>3 — Agence partenaire</h2>
+  <table class="fee-table">
+    <tr><th>Délai</th><th>Durée</th><th>Notes</th></tr>
+    <tr><td class="em">Contrat agence</td><td><strong>24 mois</strong></td><td>Reconduction tacite ; dénonciation <strong>30 jours</strong> par écrit</td></tr>
+    <tr><td class="em">Commission</td><td><strong>48 h ouvrées</strong></td><td>Après encaissement effectif par Robin (ex. 3 800 GMD / passager gagné)</td></tr>
+    <tr><td class="em">Même incident</td><td>Sans retard injustifié</td><td>Prévenir Robin si passager ou compagnie contacte l’agence</td></tr>
+  </table>
 
-    <h2>4 — Procédure Robin (après mise en demeure LRAR)</h2>
-    <p style="font-size:13px;line-height:1.7;margin-bottom:10px">Dans le <strong>CRM</strong>, la date de <strong>réception de la LRAR</strong> déclenche les jalons suivants (jours ouvrés / calendaires selon usage interne — affichés J+… dans l’outil) :</p>
-    <table class="fee-table">
-      <tr><th>Jalon</th><th>À partir de la LRAR</th><th>Étape CRM</th></tr>
-      <tr><td class="em">Relance 1</td><td><strong>J+15</strong></td><td>RELANCE_1</td></tr>
-      <tr><td class="em">Relance 2</td><td><strong>J+30</strong></td><td>RELANCE_2</td></tr>
-      <tr><td class="em">Médiation</td><td><strong>J+62</strong></td><td>MEDIATION</td></tr>
-      <tr><td class="em">Indemnité moratoire</td><td><strong>J+16</strong></td><td>Compteur « moratoire » dans le CRM (forfait indicatif affiché)</td></tr>
-    </table>
-    <div class="note">Ces dates sont saisies et suivies par l’équipe Robin ; l’espace agence voit surtout l’<strong>avancement dossier</strong> et la <strong>décision compagnie</strong>, pas le détail LRAR.</div>
+  <h2>4 — Procédure Robin (après mise en demeure LRAR)</h2>
+  <p style="font-size:13.5px;line-height:1.7;margin-bottom:10px;color:var(--ink)">Dans le <strong style="color:var(--navy)">CRM</strong>, la date de <strong style="color:var(--navy)">réception de la LRAR</strong> déclenche les jalons suivants (jours ouvrés / calendaires selon usage interne — affichés J+… dans l’outil) :</p>
+  <table class="fee-table">
+    <tr><th>Jalon</th><th>À partir de la LRAR</th><th>Étape CRM</th></tr>
+    <tr><td class="em">Relance 1</td><td><strong>J+15</strong></td><td>RELANCE_1</td></tr>
+    <tr><td class="em">Relance 2</td><td><strong>J+30</strong></td><td>RELANCE_2</td></tr>
+    <tr><td class="em">Médiation</td><td><strong>J+62</strong></td><td>MEDIATION</td></tr>
+    <tr><td class="em">Indemnité moratoire</td><td><strong>J+16</strong></td><td>Compteur « moratoire » dans le CRM (forfait indicatif affiché)</td></tr>
+  </table>
+  <div class="note">Ces dates sont saisies et suivies par l’équipe Robin ; l’espace agence voit surtout l’<strong>avancement dossier</strong> et la <strong>décision compagnie</strong>, pas le détail LRAR.</div>
 
-    <h2>5 — Dates enregistrées sur chaque dossier</h2>
-    <ul>
-      <li><strong>Date du vol</strong> — incident aérien concerné (formulaire agence / mandat).</li>
-      <li><strong>Date dossier</strong> — jour de création du dossier dans Airtable (dépôt agence).</li>
-      <li><strong>Date LRAR</strong> — réception mise en demeure (CRM, usage interne).</li>
-      <li><strong>Date paiement</strong> — encaissement / reversement (statut Payé).</li>
-    </ul>
+  <h2>5 — Dates enregistrées sur chaque dossier</h2>
+  <ul>
+    <li><strong>Date du vol</strong> — incident aérien concerné (formulaire agence / mandat).</li>
+    <li><strong>Date dossier</strong> — jour de création du dossier dans Airtable (dépôt agence).</li>
+    <li><strong>Date LRAR</strong> — réception mise en demeure (CRM, usage interne).</li>
+    <li><strong>Date paiement</strong> — encaissement / reversement (statut Payé).</li>
+  </ul>
 
-    <div class="links">
-      <a href="/bareme-ce261-fr.html">Barème 250 / 400 / 600 €</a>
-      <a href="/autorisation.html">Autorisation (signer en ligne)</a>
-      <a href="/documents/mandat-fr.html?print=1" target="_blank" rel="noopener">Mandat PDF (FR)</a>
-      <a href="/partner-agreement-fr.html">Contrat agence</a>
-      <a href="/espace-agence.html">Espace agence</a>
-    </div>
+  <div class="links">
+    <a href="/bareme-ce261-fr.html">Barème 250 / 400 / 600 €</a>
+    <a href="/autorisation.html">Autorisation (signer en ligne)</a>
+    <a href="/documents/mandat-fr.html?print=1" target="_blank" rel="noopener">Mandat PDF (FR)</a>
+    <a href="/partner-agreement-fr.html">Contrat agence</a>
+    <a href="/espace-agence.html">Espace agence</a>
   </div>
 </div>
+
+<footer class="site-footer"><div class="site-footer-in">
+  <span class="flog">Robin <span>des Airs</span></span>
+  <span>Réclamation aérienne CE 261/2004 · Spécialiste diaspora · 0 € si on ne gagne pas</span>
+  <a href="/">robindesairs.eu</a>
+</div></footer>
 </body>
 </html>
