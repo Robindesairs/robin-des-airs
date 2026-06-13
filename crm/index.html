@@ -407,6 +407,14 @@
   .s-PAYE { background: #D1FAE5; color: #064E3B; }
   .s-REFUSE_DEFINITIF, .s-ABANDON, .s-PRESCRIT { background: #FEE2E2; color: #7F1D1D; }
   .moratoire-pill { background: #FEF3C7; color: #92400E; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 5px; white-space: nowrap; }
+  /* Prescription CE261 (date du vol + 5 ans) */
+  .presc-pill { display:inline-block; margin-top:4px; font-size:10.5px; font-weight:700; padding:2px 7px; border-radius:10px; white-space:nowrap; }
+  .presc-rouge { background:#FEE2E2; color:#B91C1C; }
+  .presc-orange { background:#FFEDD5; color:#C2410C; }
+  .presc-banner { margin:10px 0; padding:10px 14px; border-radius:8px; font-size:13px; font-weight:600; display:flex; align-items:center; gap:8px; }
+  .presc-banner.presc-rouge { border:1px solid #FCA5A5; }
+  .presc-banner.presc-orange { border:1px solid #FDBA74; }
+  .presc-banner.presc-ok { background:#ECFDF5; color:#065F46; border:1px solid #A7F3D0; }
   .moratoire-soon { background: #F0FAF5; color: var(--green); font-size: 11px; padding: 3px 8px; border-radius: 5px; }
 
   /* ── MODAL ── */
@@ -683,6 +691,7 @@
         <button type="button" class="btn btn-sm" onclick="closeAll()">✕ Fermer</button>
       </div>
     </div>
+    <div id="presc-banner" style="display:none;margin:12px 20px 0"></div>
     <div class="modal-body" id="detail-body"></div>
   </div>
 </div>
@@ -1169,6 +1178,23 @@ function crmAuditEvent(d, action, meta){
 
 function addDays(d,n){ const x=new Date(d); x.setDate(x.getDate()+n); return x.toISOString().slice(0,10); }
 function diffDays(a,b){ return Math.floor((new Date(b)-new Date(a))/(86400000)); }
+// Prescription CE261 : 5 ans à compter de la date du vol. Renvoie {deadline, jours, level} ou null.
+var PRESC_CLOS = ['PRESCRIT','PAYE','REFUSE_DEFINITIF','ABANDON','NON_ELIGIBLE','LEAD_FROID','LITIGE_CLIENT'];
+function prescriptionInfo(d){
+  var v0 = (d && d.vols && d.vols[0]) ? d.vols[0] : null;
+  var fd = v0 && v0.date;
+  if(!fd || !/^\d{4}-\d{2}-\d{2}/.test(String(fd))) return null;
+  var deadline = (parseInt(fd.slice(0,4),10)+5) + fd.slice(4,10); // date vol + 5 ans
+  var jours = diffDays(today(), deadline);
+  var level = jours < 30 ? 'rouge' : (jours < 120 ? 'orange' : 'ok');
+  return { deadline: deadline, jours: jours, level: level };
+}
+// Dossier ACTIF dont la prescription approche (rouge/orange) — pour le KPI et les pastilles.
+function prescActif(d){
+  if(PRESC_CLOS.indexOf(d.statut) !== -1) return null;
+  var p = prescriptionInfo(d);
+  return (p && p.level !== 'ok') ? p : null;
+}
 
 function calcFin(palier,nb){
   const brut=palier*nb, comm=Math.round(brut*.25*100)/100, net=brut-comm;
@@ -2243,16 +2269,26 @@ function filtered(){
     const coTxt = (d.coPassagers||[]).map(x=>((x.prenom||'')+' '+(x.nom||'')).toLowerCase().trim()).filter(Boolean).join(' ');
     const txt=(d.id+' '+d.prenom+' '+d.nom+' '+String(d.adresse||'').toLowerCase()+' '+coTxt+' '+v0.vol+' '+v0.pnr).toLowerCase();
     const matchQ = !q || txt.includes(q) || (qNorm.length>=3 && idNorm.includes(qNorm));
-    return matchQ && (!st||d.statut===st) && (!pal||d.palier===parseInt(pal));
+    return matchQ && (!st||d.statut===st) && (!pal||d.palier===parseInt(pal)) && (!window._prescFilter || !!prescActif(d));
   });
 }
+function filterPrescription(){ window._prescFilter = !window._prescFilter; render(); }
 
 function renderMetrics(){
   const enCours=DB.filter(d=>!['PAYE','REFUSE_DEFINITIF','ABANDON','PRESCRIT'].includes(d.statut)).length;
   const payes=DB.filter(d=>d.statut==='PAYE').length;
   const caClient=DB.filter(d=>d.statut==='PAYE').reduce((s,d)=>s+calcFin(d.palier,d.adultes).net,0);
   const caRobin=DB.filter(d=>d.statut==='PAYE').reduce((s,d)=>s+calcFin(d.palier,d.adultes).comm,0);
+  // Prescription : dossiers ACTIFS dont l'échéance des 5 ans approche (le risque n°1 du métier).
+  const prescList=DB.map(prescActif).filter(Boolean);
+  const prescN=prescList.length, prescUrg=prescList.filter(p=>p.level==='rouge').length;
+  const prescCard=`<div class="metric" style="cursor:pointer" onclick="filterPrescription()" title="Filtrer les dossiers à prescription proche">
+      <div class="metric-label">⏳ Prescription &lt; 4 mois</div>
+      <div class="metric-val" style="color:${prescN?'#B91C1C':'var(--text)'}">${prescN}</div>
+      ${prescUrg?`<div style="font-size:11px;color:#B91C1C;font-weight:600;margin-top:4px">dont ${prescUrg} &lt; 30 j</div>`:''}
+    </div>`;
   document.getElementById('metrics').innerHTML=`
+    ${prescCard}
     <div class="metric"><div class="metric-label">En cours</div><div class="metric-val orange">${enCours}</div></div>
     <div class="metric"><div class="metric-label">Payés</div><div class="metric-val green">${payes}</div></div>
     <div class="metric"><div class="metric-label">Reversé clients</div><div class="metric-val green">${caClient.toLocaleString('fr-FR')} €</div></div>
@@ -2272,6 +2308,8 @@ function render(){
     const v0=(d.vols&&d.vols[0])?d.vols[0]:{vol:'—',dep:'',arr:'',pnr:''};
     const f=calcFin(d.palier,d.adultes);
     const m=calcMoratoire(d.lrar);
+    const pr=prescActif(d);
+    const prPill = pr ? `<div class="presc-pill presc-${pr.level}" title="Prescription le ${pr.deadline}">⏳ ${pr.jours<0?'PRESCRIT':pr.jours+' j'} · ${pr.deadline}</div>` : '';
     let morCell='<span style="color:#9CA3AF;font-size:12px">—</span>';
     if(m){
       if(!m.actif) morCell=`<span class="moratoire-soon">J+16 le ${m.j16}</span>`;
@@ -2288,7 +2326,7 @@ function render(){
     return`<tr onclick="openDetail('${d.id}')">
       <td><div class="td-id">${d.id}</div><div class="td-sub">${d.date}</div></td>
       <td>${d.prenom} ${d.nom}${nbBadge}${coLine}</td>
-      <td>${v0.vol}${volsBadge}<div class="td-sub">${v0.dep} → ${v0.arr}</div></td>
+      <td>${v0.vol}${volsBadge}<div class="td-sub">${v0.dep} → ${v0.arr}</div>${prPill}</td>
       <td style="font-weight:700;color:${d.palier===600?'#007A4C':d.palier===400?'#1D4ED8':'#5F5E5A'}">${d.palier} €</td>
       <td><span style="font-weight:700;color:#007A4C">${f.net.toLocaleString('fr-FR')} €</span><div class="td-sub">${f.parPax.toLocaleString('fr-FR')} €/pers</div></td>
       <td style="font-weight:700;color:#0B1F3A">${f.comm.toLocaleString('fr-FR')} €</td>
@@ -2318,6 +2356,17 @@ function openDetail(id){
   const f=calcFin(d.palier,d.adultes);
   const m=calcMoratoire(d.lrar);
   document.getElementById('detail-title').textContent=`${d.id} — ${d.prenom} ${d.nom}`;
+  // Bandeau prescription : visible pour un dossier ACTIF, couleur selon l'échéance des 5 ans.
+  (function(){
+    var pb=document.getElementById('presc-banner'); if(!pb) return;
+    var pr=prescriptionInfo(d);
+    if(pr && PRESC_CLOS.indexOf(d.statut)===-1){
+      var lbl = pr.jours<0 ? ('⚠️ PRESCRIT depuis '+(-pr.jours)+' j — créance éteinte') : ('il reste '+pr.jours+' j');
+      pb.className='presc-banner presc-'+pr.level;
+      pb.innerHTML='⏳ Vol du '+((d.vols&&d.vols[0]&&d.vols[0].date)||'—')+' — prescription le <b>'+pr.deadline+'</b> — '+lbl;
+      pb.style.display='flex';
+    } else { pb.style.display='none'; }
+  })();
   const moratoireHTML=m?`<div class="moratoire-box">
     <div class="moratoire-box-title">Indemnité moratoire de retard</div>
     ${!d.lrar?'<p style="font-size:12px;color:#92400E">LRAR non encore envoyée — renseigner la date de réception pour démarrer le compteur.</p>':
