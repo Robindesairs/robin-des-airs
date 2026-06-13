@@ -934,6 +934,17 @@ function recentYears() { const base = new Date().getFullYear(); return [base, ba
 
 const STOP_FOOTER = '_L\'équipe Robin des Airs 🏹_';
 
+// Sortie « propre » quand le vol n'est PAS éligible : on explique le refus (reasonText),
+// puis on REBONDIT (réclamation rétroactive 5 ans → « pensez à un autre vol »).
+// L'appelant a déjà fait clearState() : pas d'état en cours, les boutons relancent à neuf.
+async function finNonEligible(phone, reasonText, cfg) {
+  await send(phone, `${reasonText}\n\n${STOP_FOOTER}`, cfg);
+  return sendButtons(phone, {
+    body: pickVariant(phone, 'RELANCE_AUTRE_VOL'),
+    buttons: [{ id: 'autre_vol', text: '✈️ Vérifier un autre vol' }, { id: 'appel', text: '📞 Être rappelé' }],
+  }, cfg);
+}
+
 // ─── Responder IA hors-tunnel (inline) ─────────────────────────────────────────
 const AI = (() => {
   const SENSITIVE = /(avocat|tribunal|proc[e\u00e8]s|plainte|litige|rembours|parler\s+[\u00e0a]\s+(quelqu|un humain|une personne|un conseiller|un agent)|un (vrai )?humain|[\u00eae]tre rappel|rappelez)/i;
@@ -987,6 +998,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
 
   // T1 — menu / reset
   if (['nouveau', 'new', 'reset', '/reset', 'recommencer'].includes(lower)) { await clearState(phone); return sendAccueil(phone, cfg); }
+  // « ✈️ Vérifier un autre vol » (relance après vol non éligible) → on repart à neuf sur le tunnel.
+  if (id === 'autre_vol' || lower === 'autre vol' || lower === 'un autre vol' || lower === 'vérifier un autre vol') { await clearState(phone); return sendAccueil(phone, cfg); }
   if (['go', 'menu', 'start', 'reprendre', 'continuer', 'suite', 'bonjour', 'hello', 'hi', 'salut'].includes(lower) || id === 'menu') {
     const cur = await getState(phone);
     if (cur && cur.step && cur.step !== 'accueil' && cur.step !== 'done') { await send(phone, `👋 Re-bonjour ! On reprend votre dossier là où vous vous étiez arrêté.`, cfg); return relancerEtape(phone, cur, cfg); }
@@ -1110,7 +1123,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     }
     if (id === 'rz_non' || n === '3' || lower.includes('ni l') || lower === 'ni' || lower.includes('aucun')) {
       await clearState(phone);
-      return send(phone, `😔 Si votre vol ne *part pas* d'Europe et n'*arrive pas* en Europe, il n'entre pas dans la loi européenne CE 261/2004.\n\n❓ En cas d'erreur (une escale en Europe compte !), écrivez *go*.\n\n${STOP_FOOTER}`, cfg);
+      return finNonEligible(phone, `😔 Si votre vol ne *part pas* d'Europe et n'*arrive pas* en Europe, il n'entre pas dans la loi européenne CE 261/2004.\n\n❓ En cas d'erreur (une escale en Europe compte !), écrivez *go*.`, cfg);
     }
     return askRouteZone(phone, s, cfg);
   }
@@ -1122,7 +1135,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (ri === 0 || n === '1' || (lower.includes('afrique') && lower.includes('europe'))) { s.route_type = 'af_eu'; }
     else if (ri === 1 || n === '2' || (lower.includes('europe') && !lower.includes('afrique') && !lower.includes('départ') && !lower.includes('arrivée'))) { s.route_type = 'eu_eu'; await send(phone, `🇪🇺 Les vols intra-européens sont couverts par le CE 261 ✅\nNotre spécialité c'est Afrique ↔ Europe, mais on continue.`, cfg); }
     else if (ri === 2 || n === '3' || (lower.includes('départ') && !lower.includes('retard'))) { s.route_type = 'mixte'; await send(phone, `🛫 Un départ ou une arrivée en Europe peut être éligible. Vérifions ensemble. ✅`, cfg); }
-    else if (ri === 3 || n === '4' || lower.includes('autre')) { await clearState(phone); return send(phone, `😔 Votre vol ne semble pas couvert par la loi européenne.\n\nLe CE 261/2004 s'applique aux vols au départ/à l'arrivée d'un aéroport européen, ou opérés par une compagnie européenne.\n\n❓ Si erreur, écrivez *go* pour choisir une autre route.\n\n${STOP_FOOTER}`, cfg); }
+    else if (ri === 3 || n === '4' || lower.includes('autre')) { await clearState(phone); return finNonEligible(phone, `😔 Votre vol ne semble pas couvert par la loi européenne.\n\nLe CE 261/2004 s'applique aux vols au départ/à l'arrivée d'un aéroport européen, ou opérés par une compagnie européenne.\n\n❓ Si erreur, écrivez *go* pour choisir une autre route.`, cfg); }
     else return redispatch('route'); // si l'état a avancé → re-dispatch, sinon silence
     s.step = 'incident'; await setState(phone, s); return sendIncident(phone, s, cfg);
   }
@@ -1139,7 +1152,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // Le critère légal = écart NOTIFICATION → date du vol, pas « le vol est dans +/- 14 j à partir d'aujourd'hui ».
   if (s.step === 'annul_delai') {
     const n = normInput(input, ['ou moins', 'plus de', 'sais']); // mots-clés NON chevauchants (« 14 jours » est dans les 2 boutons)
-    if (n === '2' || lower.includes('plus de 14')) { await clearState(phone); return send(phone, `${pickVariant(phone, 'STOP_ANNUL_14J')}\n\n${STOP_FOOTER}`, cfg); }
+    if (n === '2' || lower.includes('plus de 14')) { await clearState(phone); return finNonEligible(phone, pickVariant(phone, 'STOP_ANNUL_14J'), cfg); }
     if (n === '3' || lower.includes('sais') || lower.includes('souviens') || lower.includes('aucune idée')) { s.annul_preavis = 'inconnu'; s.escalade = s.escalade || 'preavis_inconnu'; await send(phone, pickVariant(phone, 'ANNUL_PREAVIS_INCONNU'), cfg); return continueAnnul(phone, s, cfg); }
     if (n === '1' || lower.includes('ou moins') || lower.includes('moins de 14') || lower.includes('14')) { s.annul_preavis = '<=14j'; await send(phone, pickVariant(phone, 'REACTION_ANNULATION'), cfg); return continueAnnul(phone, s, cfg); }
     await send(phone, `🙂 Je n'ai pas bien compris. Touchez un des boutons ci-dessous 👇`, cfg); return sendAnnulDelai(phone, s, cfg);
@@ -1147,7 +1160,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (s.step === 'duree') {
     const n = normInput(input, ['plus de 3', 'moins de 3', 'sais']);
     if (n === '1' || lower.includes('plus de 3')) { s.incident = 'retard'; s.incident_libelle = 'Retard +3h'; s.duree_retard = '+3h'; return estimationPuisPax(phone, s, cfg); }
-    if (n === '2' || lower.includes('moins de 3')) { await clearState(phone); return send(phone, `${pickVariant(phone, 'STOP_MOINS_3H')}\n\n${STOP_FOOTER}`, cfg); }
+    if (n === '2' || lower.includes('moins de 3')) { await clearState(phone); return finNonEligible(phone, pickVariant(phone, 'STOP_MOINS_3H'), cfg); }
     if (n === '3' || lower.includes('sais') || lower.includes('souviens')) { s.incident = 'retard'; s.incident_libelle = 'Retard (à vérifier)'; s.duree_retard = 'inconnue'; s.escalade = s.escalade || 'duree_inconnue'; await send(phone, pickVariant(phone, 'DUREE_INCONNUE'), cfg); return estimationPuisPax(phone, s, cfg); }
     return sendButtons(phone, { body: `🙂 Touchez un bouton : votre retard à l'arrivée était-il de plus de 3 heures ?`, buttons: [{ text: '✅ Plus de 3 heures' }, { text: '❌ Moins de 3h' }, { text: '🤔 Je ne sais plus' }] }, cfg);
   }
@@ -1327,7 +1340,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       if (needYear(s.date)) { s.step = 'annee'; await setState(phone, s); return askYear(phone, s, cfg); }
       if (s.date && !isValidStoredDate(s.date)) { const bad = s.date; s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, DATE_INVALIDE(bad), cfg); }
       if (inFuture(s.date)) { s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, FUTURE_JOKE, cfg); }
-      if (tooOld(s.date)) { await clearState(phone); return send(phone, `${pickVariant(phone, 'PRESCRIPTION_5ANS')}\n\n${STOP_FOOTER}`, cfg); }
+      if (tooOld(s.date)) { await clearState(phone); return finNonEligible(phone, pickVariant(phone, 'PRESCRIPTION_5ANS'), cfg); }
       return apresVol(phone, s, cfg);
     }
     s.fix_return = 'scan'; await setState(phone, s); return goCorrection(phone, s, cfg);
@@ -1379,7 +1392,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const d = parseDateInput(input, '20');
     if (d) {
       if (inFuture(d)) return send(phone, FUTURE_JOKE, cfg);
-      if (tooOld(d)) { await clearState(phone); return send(phone, `${pickVariant(phone, 'PRESCRIPTION_5ANS')}\n\n${STOP_FOOTER}`, cfg); }
+      if (tooOld(d)) { await clearState(phone); return finNonEligible(phone, pickVariant(phone, 'PRESCRIPTION_5ANS'), cfg); }
       s.date = d; await setState(phone, s);
       await send(phone, `✅ Date corrigée : *${d}* — le *${dateEnLettres(d)}*.`, cfg);
       return afterFix(phone, s, cfg);
@@ -1404,7 +1417,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       if (!isValidStoredDate(d)) { s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, DATE_INVALIDE(d), cfg); }
       if (inFuture(d)) { await send(phone, `😄 ${year} ? Ce vol n'a pas encore eu lieu — on réclame pour un vol *déjà passé* ! Choisissez la bonne année 👇`, cfg); return askYear(phone, s, cfg); }
       s.date = d;
-      if (tooOld(s.date)) { await clearState(phone); return send(phone, `${pickVariant(phone, 'PRESCRIPTION_5ANS')}\n\n${STOP_FOOTER}`, cfg); }
+      if (tooOld(s.date)) { await clearState(phone); return finNonEligible(phone, pickVariant(phone, 'PRESCRIPTION_5ANS'), cfg); }
       await setState(phone, s);
       await send(phone, `✅ Vol du *${d}* — le *${dateEnLettres(d)}*.`, cfg);
       return apresVol(phone, s, cfg);
@@ -1425,7 +1438,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (d) {
       if (inFuture(d)) return send(phone, FUTURE_JOKE, cfg);
       s.date = d;
-      if (tooOld(s.date)) { await clearState(phone); return send(phone, `${pickVariant(phone, 'PRESCRIPTION_5ANS')}\n\n${STOP_FOOTER}`, cfg); }
+      if (tooOld(s.date)) { await clearState(phone); return finNonEligible(phone, pickVariant(phone, 'PRESCRIPTION_5ANS'), cfg); }
       const ok = `✅ Vol du *${d}* — le *${dateEnLettres(d)}*.`;
       if (s.route) return gotoPnr(phone, s, cfg, ok);
       // Pas de route (ni scan ni saisie) → on tente de la RETROUVER depuis le n° de vol (AeroDataBox).

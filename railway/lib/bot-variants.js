@@ -176,6 +176,14 @@ const VARIANTS = {
     `C'est un peu comme un billet expiré sans qu'on le sache : passé 5 ans, la loi ne permet plus d'ouvrir un dossier — même si la compagnie était clairement en tort. Je suis désolé de vous l'apprendre à ce stade. Date mal saisie ? Tapez menu, une vérification rapide ne coûte rien. 😞`,
   ],
 
+  // Sortie « propre » quand le vol N'EST PAS éligible : on rebondit sur un AUTRE vol
+  // (réclamation rétroactive 5 ans → « pensez à une réservation plus ancienne »).
+  RELANCE_AUTRE_VOL: [
+    `💡 Ce vol-ci n'ouvre pas de droit — mais c'est peut-être pas le seul que vous ayez pris.\n\nUn vol sur dix subit un retard ou une annulation, et on peut réclamer *jusqu'à 5 ans en arrière*. Sur autant d'années de voyages, vous (ou un proche) avez sûrement eu un vol *retardé de 3 h ou plus*, annulé ou refusé à l'embarquement — souvent sans savoir qu'il valait *jusqu'à 600 € par passager*.\n\n✈️ Pensez à une réservation plus ancienne : un retour de vacances, un mariage, une rentrée…`,
+    `💡 Pas de droit sur ce vol précis — mais ne refermez pas si vite.\n\nLes retards de 3 h et plus, les annulations et les surbookings touchent énormément de voyageurs, et la loi permet de remonter *jusqu'à 5 ans*. Un autre de vos vols (ou de votre famille) est peut-être concerné sans que vous le sachiez : *jusqu'à 600 € par passager*, et *0 € à avancer*.\n\n✈️ Un autre voyage vous revient en tête ?`,
+    `💡 Ce vol n'est pas éligible — mais c'est rarement le seul voyage d'une famille.\n\nUn vol sur dix est retardé ou annulé, et la réclamation est rétroactive *5 ans*. Repensez à vos derniers voyages : un retard de *3 h+* à l'arrivée, une annulation, un embarquement refusé = *jusqu'à 600 € par passager*. 0 € si on ne gagne pas.\n\n✈️ On vérifie un autre vol ?`,
+  ],
+
   // Message de clôture envoyé après signature du mandat
   CLOTURE_POST_SIGNATURE: [
     `Mandat reçu. Et on mesure ce que vous venez de faire — vous nous confiez quelque chose qui vous appartient, et ça, on ne l'oublie pas.\n\nPromesse concrète : on vous tient au courant, on ne lâche pas, et si ça n'aboutit pas, vous ne nous devez rien. Si la compagnie paie, vous gardez 75 %. Notre part, on la mérite seulement si on a gagné. 💪`,
