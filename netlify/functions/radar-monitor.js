@@ -22,6 +22,7 @@ const {
 
 const { sendCallMeBot } = require('./lib/callmebot');
 const { notifyOwner } = require('./lib/owner-notify');
+const { maybeLaunchAd } = require('./lib/auto-ad-launch');
 const { enrichCancellationReschedule } = require('./lib/radar-reschedule');
 const { getStore } = require('@netlify/blobs');
 
@@ -219,6 +220,8 @@ async function sendDelayAlerts(event, flights, dateYmd) {
     }
 
     // ── Décision d'alerte ───────────────────────────────────────────────
+    // Première alerte pour ce vol ? (sert à ne lancer la pub auto qu'une seule fois.)
+    const firstAlertForAd = !prevState;
     if (f.cancelled) {
       // Annulation : une seule alerte par vol par jour
       if (prevState && prevState.cancelled) continue;
@@ -350,6 +353,18 @@ async function sendDelayAlerts(event, flights, dateYmd) {
       await notifyOwner(subj, msg);
     } catch (e) {
       console.error('[alerts] notifyOwner error:', e.message);
+    }
+
+    // Pub Meta auto-déclenchée (OFF par défaut — voir AUTO_AD_LAUNCH). Seulement à la
+    // 1ʳᵉ alerte du vol : ad-launch porte son propre anti-doublon + plafond mensuel.
+    if (firstAlertForAd) {
+      try {
+        const ad = await maybeLaunchAd(f);
+        if (ad && ad.launched) console.log(`[alerts] pub auto lancée ${ad.airport} (${ad.campaignId}) pour ${f.flight}`);
+        else if (ad && ad.skipped && ad.skipped !== 'disabled') console.log(`[alerts] pub auto ignorée (${ad.skipped}) pour ${f.flight}`);
+      } catch (e) {
+        console.error('[alerts] maybeLaunchAd error:', e.message);
+      }
     }
 
     // Remonter report + heure de détection au registre → visible dans le tableau bureau.

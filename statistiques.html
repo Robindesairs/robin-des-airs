@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Statistiques — Robin des Airs · Compagnies & routes les plus en retard</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="robin-des-airs-logo-profil-1024.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --sky: #0A1628; --sky-mid: #0D2240; --sky-card: #112850; --sky-card-2: #0E2244;
+  --sky-border: rgba(255,255,255,0.08);
+  --gold: #C8A85A; --gold-light: #E8C97A; --gold-pale: rgba(200,168,90,0.12);
+  --white: #FFFFFF; --white-70: rgba(255,255,255,0.7); --white-40: rgba(255,255,255,0.4);
+  --green: #22C884; --green-pale: rgba(34,200,132,0.12);
+  --amber: #F5A623; --amber-pale: rgba(245,166,35,0.12);
+  --red: #E8445A; --red-pale: rgba(232,68,90,0.12);
+  --blue: #7EC8F0; --blue-pale: rgba(99,179,237,0.15);
+}
+html { font-size: 16px; }
+body { font-family: 'DM Sans', sans-serif; background: var(--sky); color: var(--white); min-height: 100vh;
+  background-image: radial-gradient(ellipse 60% 50% at 75% -10%, rgba(200,168,90,0.08) 0%, transparent 60%), radial-gradient(ellipse 50% 45% at 5% 100%, rgba(10,50,100,0.5) 0%, transparent 70%);
+  padding-bottom: 3rem; }
+.mono { font-family: 'JetBrains Mono', monospace; }
+a { color: inherit; }
+
+.topbar { position: sticky; top: 0; z-index: 200; background: rgba(10,22,40,0.94); backdrop-filter: blur(14px); border-bottom: 1px solid var(--sky-border); }
+.topbar-inner { max-width: 1320px; margin: 0 auto; padding: 0.85rem 1.75rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 11px; text-decoration: none; color: var(--white); }
+.brand .mark { width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, var(--gold), #9c7f3a); display: flex; align-items: center; justify-content: center; font-size: 19px; box-shadow: 0 4px 18px rgba(200,168,90,0.3); }
+.brand .name { font-family: 'DM Serif Display', serif; font-size: 1.22rem; line-height: 1; }
+.brand .name em { color: var(--gold); font-style: normal; }
+.brand .sub { font-size: 0.68rem; color: var(--white-40); letter-spacing: 0.14em; text-transform: uppercase; margin-top: 3px; }
+.topbar-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.navlink { font-size: 0.78rem; color: var(--white-70); text-decoration: none; padding: 6px 11px; border-radius: 8px; border: 1px solid var(--sky-border); transition: all .18s; }
+.navlink:hover { border-color: rgba(200,168,90,0.4); color: var(--white); }
+
+.wrap { max-width: 1320px; margin: 0 auto; padding: 1.75rem; }
+.hero-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.4rem; }
+.hero-title { font-family: 'DM Serif Display', serif; font-size: clamp(1.7rem, 3.4vw, 2.5rem); line-height: 1.05; }
+.hero-title em { color: var(--gold); font-style: italic; }
+.hero-sub { color: var(--white-70); font-size: 0.92rem; margin-top: 6px; max-width: 620px; }
+
+.period { display: flex; gap: 6px; }
+.period button { background: var(--sky-card); border: 1px solid var(--sky-border); color: var(--white-70); font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 600; padding: 7px 13px; border-radius: 9px; cursor: pointer; transition: all .18s; }
+.period button:hover { border-color: rgba(200,168,90,0.4); color: var(--white); }
+.period button.active { background: var(--gold-pale); border-color: rgba(200,168,90,0.5); color: var(--gold-light); }
+
+.pulse-bar { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1px; background: var(--sky-border); border: 1px solid var(--sky-border); border-radius: 16px; overflow: hidden; margin-bottom: 1.6rem; }
+.pulse-cell { background: var(--sky-card); padding: 1.2rem 1.3rem; position: relative; }
+.pulse-cell::after { content:''; position:absolute; top:0; left:0; width:100%; height:2px; background: linear-gradient(90deg, transparent, var(--accent,var(--gold)), transparent); opacity:0.5; }
+.pulse-label { font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--white-40); margin-bottom: 9px; }
+.pulse-value { font-family: 'DM Serif Display', serif; font-size: 1.7rem; line-height: 1; }
+.pulse-value.gold{color:var(--gold-light)} .pulse-value.green{color:var(--green)} .pulse-value.blue{color:var(--blue)} .pulse-value.amber{color:var(--amber)} .pulse-value.red{color:var(--red)}
+.pulse-sub { font-size: 0.7rem; color: var(--white-40); margin-top: 6px; }
+
+.section-h { display:flex; align-items:center; gap:10px; margin: 1.8rem 0 0.9rem; }
+.section-h h2 { font-family: 'DM Serif Display', serif; font-weight: 400; font-size: 1.25rem; }
+.section-h .tag { font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--white-40); border:1px solid var(--sky-border); padding: 3px 9px; border-radius: 20px; }
+.section-h .line { flex:1; height:1px; background: var(--sky-border); }
+
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; }
+@media (max-width: 920px){ .cols { grid-template-columns: 1fr; } .pulse-bar { grid-template-columns: repeat(2,1fr); } }
+
+.panel { background: var(--sky-card); border: 1px solid var(--sky-border); border-radius: 16px; padding: 1.1rem 1.2rem; }
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+th { text-align: left; font-size: 0.64rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--white-40); font-weight: 600; padding: 0 8px 9px; border-bottom: 1px solid var(--sky-border); }
+th.num, td.num { text-align: right; }
+td { padding: 9px 8px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr.row:hover td { background: rgba(255,255,255,0.03); }
+.rank { font-family:'JetBrains Mono',monospace; color: var(--white-40); width: 22px; }
+.cname { font-weight: 600; }
+.ccode { font-family:'JetBrains Mono',monospace; color: var(--white-40); font-size: 0.72rem; }
+.barcell { position: relative; min-width: 110px; }
+.bar { height: 7px; border-radius: 4px; background: rgba(255,255,255,0.07); overflow: hidden; }
+.bar i { display:block; height:100%; border-radius:4px; background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+.bar i.red { background: linear-gradient(90deg, #b5374a, var(--red)); }
+.pill { display:inline-block; font-size:0.7rem; font-family:'JetBrains Mono',monospace; padding:2px 7px; border-radius:6px; }
+.pill.red { background: var(--red-pale); color: var(--red); }
+.pill.amber { background: var(--amber-pale); color: var(--amber); }
+.muted { color: var(--white-40); }
+
+.spark { display:flex; align-items:flex-end; gap:2px; height:70px; margin-top: 4px; }
+.spark i { flex:1; background: linear-gradient(180deg, var(--blue), rgba(126,200,240,0.25)); border-radius: 2px 2px 0 0; min-height: 2px; transition: height .4s; }
+.spark i.cancel { background: linear-gradient(180deg, var(--red), rgba(232,68,90,0.25)); }
+
+.note { font-size: 0.74rem; color: var(--white-40); margin-top: 1.2rem; line-height: 1.5; }
+.state { padding: 2rem; text-align: center; color: var(--white-40); font-size: 0.9rem; }
+.refresh-meta { font-size: 0.7rem; color: var(--white-40); }
+</style>
+</head>
+<body>
+<div class="topbar"><div class="topbar-inner">
+  <a class="brand" href="bureau.html">
+    <span class="mark">📊</span>
+    <span><span class="name">Robin <em>des Airs</em></span><br><span class="sub">Statistiques retards</span></span>
+  </a>
+  <div class="topbar-right">
+    <span class="refresh-meta" id="meta">—</span>
+    <a class="navlink" href="bureau.html">← Bureau</a>
+    <a class="navlink" href="radar.html">Radar</a>
+    <a class="navlink" href="crm/">CRM</a>
+  </div>
+</div></div>
+
+<div class="wrap">
+  <div class="hero-row">
+    <div>
+      <h1 class="hero-title">Compagnies & routes <em>les plus en retard</em></h1>
+      <p class="hero-sub">Vols éligibles CE&nbsp;261 captés par le radar (annulés ou retard arrivée ≥ 3&nbsp;h). Sers-t'en pour cibler la pub, prioriser les enquêtes et négocier avec les compagnies récidivistes.</p>
+    </div>
+    <div class="period" id="period">
+      <button data-d="7">7 j</button>
+      <button data-d="30">30 j</button>
+      <button data-d="90" class="active">90 j</button>
+      <button data-d="365">1 an</button>
+    </div>
+  </div>
+
+  <div class="pulse-bar" id="pulse">
+    <div class="pulse-cell"><div class="pulse-label">Vols éligibles</div><div class="pulse-value gold" id="k-total">—</div><div class="pulse-sub">sur la période</div></div>
+    <div class="pulse-cell" style="--accent:var(--red)"><div class="pulse-label">Annulés</div><div class="pulse-value red" id="k-cancel">—</div><div class="pulse-sub">vols supprimés</div></div>
+    <div class="pulse-cell" style="--accent:var(--amber)"><div class="pulse-label">Retard ≥ 3 h</div><div class="pulse-value amber" id="k-delay">—</div><div class="pulse-sub">indemnisables</div></div>
+    <div class="pulse-cell" style="--accent:var(--blue)"><div class="pulse-label">Compagnies</div><div class="pulse-value blue" id="k-airlines">—</div><div class="pulse-sub">distinctes</div></div>
+    <div class="pulse-cell" style="--accent:var(--blue)"><div class="pulse-label">Routes</div><div class="pulse-value blue" id="k-routes">—</div><div class="pulse-sub">distinctes</div></div>
+    <div class="pulse-cell" style="--accent:var(--green)"><div class="pulse-label">Potentiel indicatif</div><div class="pulse-value green" id="k-eur">—</div><div class="pulse-sub">600 € × vols</div></div>
+  </div>
+
+  <div class="section-h"><h2>Activité radar</h2><span class="tag" id="tl-range">—</span><span class="line"></span></div>
+  <div class="panel"><div class="spark" id="spark"></div></div>
+
+  <div class="cols">
+    <div>
+      <div class="section-h"><h2>🏢 Compagnies</h2><span class="tag">les plus en retard</span><span class="line"></span></div>
+      <div class="panel">
+        <table>
+          <thead><tr><th></th><th>Compagnie</th><th class="num">Vols</th><th class="num">Annul.</th><th class="num">Retard moy.</th><th>Volume</th></tr></thead>
+          <tbody id="t-airlines"><tr><td colspan="6" class="state">Chargement…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <div class="section-h"><h2>🛫 Routes</h2><span class="tag">les plus en retard</span><span class="line"></span></div>
+      <div class="panel">
+        <table>
+          <thead><tr><th></th><th>Route</th><th class="num">Vols</th><th class="num">Annul.</th><th class="num">Retard moy.</th><th>Volume</th></tr></thead>
+          <tbody id="t-routes"><tr><td colspan="6" class="state">Chargement…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <p class="note" id="note">Données : registre permanent des vols éligibles (radar-monitor). « Potentiel indicatif » = 600 € × nombre de vols, une borne haute non garantie servant à prioriser — pas un montant réellement dû.</p>
+</div>
+
+<script>
+const CODE_KEY = 'rda_crm_offline_code_v1';
+function crmCode(){ return localStorage.getItem(CODE_KEY) || 'robin-dakar'; }
+function fmt(n){ return (n==null||isNaN(n)) ? '—' : Number(n).toLocaleString('fr-FR'); }
+function eur(n){ if(n==null||isNaN(n)) return '—'; if(n>=1000000) return (n/1000000).toFixed(1).replace('.0','')+' M€'; if(n>=1000) return Math.round(n/1000)+' k€'; return n+' €'; }
+const $ = (id)=>document.getElementById(id);
+
+let currentDays = 90;
+
+async function load(days){
+  currentDays = days;
+  document.querySelectorAll('#period button').forEach(b=>b.classList.toggle('active', +b.dataset.d===days));
+  $('t-airlines').innerHTML = '<tr><td colspan="6" class="state">Chargement…</td></tr>';
+  $('t-routes').innerHTML = '<tr><td colspan="6" class="state">Chargement…</td></tr>';
+  let data;
+  try {
+    const r = await fetch('/api/stats-flights-aggregated?days='+days, { headers: { 'X-CRM-Code': crmCode() } });
+    if (r.status === 401) { promptCode(); return; }
+    data = await r.json();
+  } catch(e){ $('t-airlines').innerHTML = '<tr><td colspan="6" class="state">Erreur réseau</td></tr>'; return; }
+  if (!data || !data.ok) {
+    const msg = (data && data.error) || 'indisponible';
+    $('t-airlines').innerHTML = '<tr><td colspan="6" class="state">'+msg+'</td></tr>';
+    $('t-routes').innerHTML = '<tr><td colspan="6" class="state">'+msg+'</td></tr>';
+    return;
+  }
+  render(data);
+}
+
+function render(d){
+  const s = d.summary || {};
+  $('k-total').textContent = fmt(s.totalFlights);
+  $('k-cancel').textContent = fmt(s.totalCancelled);
+  $('k-delay').textContent = fmt(s.totalDelayed);
+  $('k-airlines').textContent = fmt(s.distinctAirlines);
+  $('k-routes').textContent = fmt(s.distinctRoutes);
+  $('k-eur').textContent = eur(s.potentielEur);
+  $('meta').textContent = d.registryUpdatedAt ? ('màj '+new Date(d.registryUpdatedAt).toLocaleDateString('fr-FR')) : '';
+  $('tl-range').textContent = d.period ? ('depuis '+d.period.since) : '';
+
+  const maxA = Math.max(1, ...(d.airlines||[]).map(a=>a.total));
+  $('t-airlines').innerHTML = (d.airlines||[]).slice(0,15).map((a,i)=>rowHtml(i, a.name, a.key, a, maxA, true)).join('') || emptyRow();
+
+  const maxR = Math.max(1, ...(d.routes||[]).map(a=>a.total));
+  $('t-routes').innerHTML = (d.routes||[]).slice(0,15).map((a,i)=>rowHtml(i, a.key.replace('→',' → '), '', a, maxR, false)).join('') || emptyRow();
+
+  renderSpark(d.timeline||[]);
+}
+
+function rowHtml(i, name, code, a, max, showCode){
+  const w = Math.round(a.total/max*100);
+  const cancelHeavy = a.cancelled > a.total*0.25;
+  const avg = a.avgDelayMin ? (a.avgDelayMin+' min') : '—';
+  const avgPill = a.avgDelayMin>=300 ? 'pill red' : a.avgDelayMin>=180 ? 'pill amber' : '';
+  return '<tr class="row">'
+    + '<td class="rank">'+(i+1)+'</td>'
+    + '<td><span class="cname">'+esc(name)+'</span>'+(showCode&&code&&code!==name?' <span class="ccode">'+esc(code)+'</span>':'')+'</td>'
+    + '<td class="num mono">'+fmt(a.total)+'</td>'
+    + '<td class="num">'+(a.cancelled?('<span class="pill '+(cancelHeavy?'red':'amber')+'">'+a.cancelled+'</span>'):'<span class="muted">0</span>')+'</td>'
+    + '<td class="num">'+(avgPill?('<span class="'+avgPill+'">'+avg+'</span>'):('<span class="muted">'+avg+'</span>'))+'</td>'
+    + '<td class="barcell"><div class="bar"><i class="'+(cancelHeavy?'red':'')+'" style="width:'+w+'%"></i></div></td>'
+    + '</tr>';
+}
+function emptyRow(){ return '<tr><td colspan="6" class="state">Aucun vol sur la période. Le registre se remplit à chaque retard capté.</td></tr>'; }
+
+function renderSpark(tl){
+  if(!tl.length){ $('spark').innerHTML=''; return; }
+  const max = Math.max(1, ...tl.map(d=>d.total));
+  $('spark').innerHTML = tl.map(d=>{
+    const h = Math.round(d.total/max*100);
+    const cls = d.cancelled>d.total*0.3 ? 'cancel' : '';
+    return '<i class="'+cls+'" style="height:'+Math.max(3,h)+'%" title="'+d.date+' · '+d.total+' vols'+(d.cancelled?(' ('+d.cancelled+' annulés)'):'')+'"></i>';
+  }).join('');
+}
+
+function esc(s){ return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+function promptCode(){
+  const c = prompt('Code d\'accès CRM requis pour les statistiques :');
+  if (c){ localStorage.setItem(CODE_KEY, c.trim()); load(currentDays); }
+  else { $('t-airlines').innerHTML = '<tr><td colspan="6" class="state">Accès refusé — code CRM requis.</td></tr>'; }
+}
+
+document.getElementById('period').addEventListener('click', e=>{ const b=e.target.closest('button'); if(b) load(+b.dataset.d); });
+load(90);
+</script>
+</body>
+</html>

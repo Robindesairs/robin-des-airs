@@ -1,9 +1,14 @@
 /**
  * Enquêteur retard — assemble pour un vol retardé/annulé :
  *   1. Faits vol (AeroDataBox brut : ICAO départ/arrivée, immat, statut, retard, horaires)
- *   2. Météo officielle METAR + TAF (NOAA aviationweather.gov, par code ICAO — gratuit)
+ *   2. Météo officielle METAR (obs) + TAF (prévision) (NOAA aviationweather.gov, par ICAO — gratuit)
+ *      → détection auto des phénomènes dangereux (orage, gel, brouillard, neige, rafales…).
  *   3. Rotation précédente de l'appareil (l'avion est-il arrivé en retard ? → retard en cascade)
- *   4. Cause probable + qualification « circonstance extraordinaire » via Claude (web_search)
+ *   4. Comparateur ±2 h VENTILÉ PAR COMPAGNIE (seule la nôtre touchée = interne/redevable ;
+ *      tout l'aéroport touché = externe/extraordinaire possible).
+ *   5. VERDICT PROCÉDURE déterministe (LANCER / PRUDENCE / SOUS_SEUIL) — aide à la décision,
+ *      tombe même sans clé IA, puis affiné par l'avis IA.
+ *   6. Cause probable + qualification « circonstance extraordinaire » via Claude (web_search)
  * Résultat mis en cache (Netlify Blobs) par VOL_DATE — une enquête coûte 1 appel IA, on ne la rejoue pas.
  *
  * Variables Netlify : ANTHROPIC_API_KEY (cause IA), RAPIDAPI_KEY (vol + rotation).
@@ -228,6 +233,9 @@ async function adbAirportFlights(iata, from, to, key, direction) {
 
 // direction 'Departure' = vols partis du même aéroport ; 'Arrival' = vols arrivés au même aéroport.
 // Documente chaque vol (n°, heure locale programmée, état) → mini-déroulant côté bureau.
+// VENTILE par compagnie : « notre » compagnie vs les AUTRES, pour distinguer un problème
+// INTERNE compagnie (seule la nôtre est perturbée → REDEVABLE) d'un problème EXTERNE
+// météo/ATC (tout l'aéroport est perturbé → potentiellement extraordinaire).
 async function windowComparator(iata, schedLocalStr, ourVol, key, direction) {
   if (!iata || !key) return null;
   const win = localWindow(schedLocalStr, 2, 2);
@@ -235,26 +243,37 @@ async function windowComparator(iata, schedLocalStr, ourVol, key, direction) {
   const list = await adbAirportFlights(iata, win.from, win.to, key, direction);
   if (!list.length) return null;
   const our = (ourVol || '').toUpperCase();
+  const ourAirline = our.slice(0, 2); // code IATA compagnie (ex. AF)
   const isArr = direction === 'Arrival';
   const vols = [];
   let aLHeure = 0, retardes = 0, annules = 0;
+  // Ventilation par compagnie : nous = notre compagnie, autres = le reste de l'aéroport.
+  const nous = { total: 0, aLHeure: 0, retardes: 0, annules: 0 };
+  const autres = { total: 0, aLHeure: 0, retardes: 0, annules: 0 };
   for (const f of list) {
     const num = String(f.number || f.callSign || '').replace(/\s/g, '').toUpperCase();
     if (our && num === our) continue; // exclure notre propre vol
     const seg = isArr ? f.arrival : f.departure;
     const st = String(f.status || '').toLowerCase();
+    const bucket = (ourAirline && num.slice(0, 2) === ourAirline) ? nous : autres;
     let etat;
-    if (/cancel|annul/.test(st)) { annules += 1; etat = 'annulé'; }
+    if (/cancel|annul/.test(st)) { annules += 1; bucket.annules += 1; etat = 'annulé'; }
     else {
       const dl = segDelay(seg);
-      if (dl != null && dl >= 60) { retardes += 1; etat = '+' + dl + ' min'; }
-      else { aLHeure += 1; etat = "à l'heure"; }
+      if (dl != null && dl >= 60) { retardes += 1; bucket.retardes += 1; etat = '+' + dl + ' min'; }
+      else { aLHeure += 1; bucket.aLHeure += 1; etat = "à l'heure"; }
     }
+    bucket.total += 1;
     if (vols.length < 30) vols.push({ num: num || '?', h: localHHMM(seg && seg.scheduledTime), etat });
   }
   const total = aLHeure + retardes + annules;
   if (!total) return null;
-  return { fenetre: `${win.from.slice(11)}–${win.to.slice(11)}`, total, aLHeure, retardes, annules, vols };
+  return {
+    fenetre: `${win.from.slice(11)}–${win.to.slice(11)}`,
+    total, aLHeure, retardes, annules,
+    parCompagnie: { code: ourAirline, nous, autres },
+    vols,
+  };
 }
 
 // ─── Météo METAR (par ICAO, NOAA) ────────────────────────────────────────────
@@ -273,6 +292,92 @@ async function fetchMetar(icaos) {
       obs: m.obsTime || m.reportTime || '',
     }));
   } catch (_) { return []; }
+}
+
+// ─── Météo PRÉVUE TAF (par ICAO, NOAA) ───────────────────────────────────────
+// Le METAR = obs instantanée ; le TAF = prévision couvrant la fenêtre du vol.
+// Décisif quand le retard est imputé à une météo « annoncée » : si le TAF ne montre
+// aucun phénomène dangereux sur le créneau, la défense météo de la compagnie s'effondre.
+async function fetchTaf(icaos) {
+  const ids = [...new Set((icaos || []).filter((x) => /^[A-Z]{4}$/.test(x)))];
+  if (!ids.length) return [];
+  try {
+    const r = await fetch(`https://aviationweather.gov/api/data/taf?ids=${ids.join(',')}&format=json`, {
+      headers: { Accept: 'application/json', 'User-Agent': 'RobinDesAirs-Enquete/1.0' },
+    });
+    if (!r.ok) return [];
+    const j = await r.json().catch(() => []);
+    return (Array.isArray(j) ? j : []).map((m) => ({
+      id: m.icaoId || m.stationId || '?',
+      raw: String(m.rawTAF || m.rawOb || '').slice(0, 400),
+    })).filter((t) => t.raw);
+  } catch (_) { return []; }
+}
+
+// Phénomènes dangereux dans un METAR/TAF brut (orage, gel, brouillard épais, neige,
+// grêle, pluie/vent forts, cendres). Sert au verdict procédure déterministe.
+function meteoDangereuse(raws) {
+  const txt = (raws || []).join(' ').toUpperCase();
+  const hits = [];
+  if (/\bTS\b|\+TS|TSRA|TSGR/.test(txt)) hits.push('orage');
+  if (/\bFZ|FZRA|FZFG|FZDZ/.test(txt)) hits.push('précipitations verglaçantes');
+  if (/\b(BCFG|PRFG|\bFG\b|VV00\d)/.test(txt) || /\b0[0-4]\d\dV?\b.*FG/.test(txt)) hits.push('brouillard');
+  if (/\bSN\b|\+SN|SHSN|BLSN/.test(txt)) hits.push('neige');
+  if (/\bGR\b|\bGS\b/.test(txt)) hits.push('grêle');
+  if (/\+RA|\+SHRA/.test(txt)) hits.push('forte pluie');
+  if (/\bVA\b/.test(txt)) hits.push('cendres volcaniques');
+  // Rafales ≥ 35 kt (G35+ dans le groupe vent dddffGgg)
+  const g = /\d{3}\d{2}G(\d{2,3})KT/.exec(txt);
+  if (g && parseInt(g[1], 10) >= 35) hits.push('rafales ' + g[1] + 'kt');
+  return hits;
+}
+
+// ─── Verdict procédure déterministe (aide à la décision « je lance ou pas ») ──
+// Synthèse SANS IA des signaux objectifs → recommandation explicable. Le LLM affine
+// ensuite, mais ce verdict tombe même sans clé IA. Conservateur par construction :
+// au moindre signal « extraordinaire » fort, il bascule en PRUDENCE.
+//   reco : 'LANCER' | 'PRUDENCE' | 'SOUS_SEUIL' | 'INCERTAIN'
+function procedureSignal({ retardMin, cancelled, rotation, comparateurDep, comparateurArr, hazards, extraordinaireIA }) {
+  const raisons = [];
+  // 1) Seuil CE261 — sous 3 h et non annulé : pas d'indemnité forfaitaire.
+  if (!cancelled && (retardMin == null || retardMin < 180)) {
+    return { reco: 'SOUS_SEUIL', score: 0, raisons: ['Retard < 3 h et vol non annulé : pas d\'indemnité forfaitaire 261 (autres droits possibles).'] };
+  }
+  let score = 0;
+  // 2) Rotation en cascade → compagnie redevable.
+  if (rotation && rotation.arrivalDelayMin != null && rotation.arrivalDelayMin > 30) {
+    score += 2; raisons.push(`Avion déjà en retard de sa rotation précédente (+${rotation.arrivalDelayMin} min) → retard en cascade, a priori REDEVABLE.`);
+  }
+  // 3) Comparateur : seule notre compagnie souffre ? (signal interne fort)
+  const cmp = comparateurDep || comparateurArr;
+  if (cmp && cmp.parCompagnie) {
+    const a = cmp.parCompagnie.autres;
+    const n = cmp.parCompagnie.nous;
+    const autresPerturbesPct = a.total ? (a.retardes + a.annules) / a.total : 0;
+    if (a.total >= 5 && autresPerturbesPct <= 0.25) {
+      score += 2; raisons.push(`Le reste de l'aéroport tourne normalement (${a.aLHeure}/${a.total} autres vols à l'heure) → cause externe météo/ATC peu plausible.`);
+    } else if (a.total >= 5 && autresPerturbesPct >= 0.6) {
+      score -= 2; raisons.push(`Beaucoup d'autres compagnies aussi perturbées (${a.retardes + a.annules}/${a.total}) → possible cause externe (météo/ATC) à écarter.`);
+    }
+    if (n.total >= 2 && (n.retardes + n.annules) >= n.total * 0.5) {
+      score += 1; raisons.push('Plusieurs vols de la compagnie perturbés au même moment → problème d\'organisation interne probable.');
+    }
+  }
+  // 4) Météo dangereuse avérée → prudence (la compagnie aura un argument).
+  if (hazards && hazards.length) {
+    score -= 2; raisons.push('Météo dangereuse relevée (' + hazards.join(', ') + ') : la compagnie invoquera l\'art. 5§3 — exiger METAR/TAF + preuve des mesures raisonnables.');
+  } else {
+    score += 1; raisons.push('Aucun phénomène météo dangereux dans METAR/TAF dep+arr.');
+  }
+  // 5) Avis IA si présent.
+  if (extraordinaireIA === 'OUI') { score -= 3; raisons.push('L\'analyse IA penche pour une circonstance extraordinaire : faire valider par un juriste avant d\'engager.'); }
+  else if (extraordinaireIA === 'NON') { score += 2; raisons.push('L\'analyse IA conclut : NON extraordinaire (compagnie redevable).'); }
+
+  let reco;
+  if (score >= 3) reco = 'LANCER';
+  else if (score <= 0) reco = 'PRUDENCE';
+  else reco = 'INCERTAIN';
+  return { reco, score, raisons };
 }
 
 // ─── Cause probable via Claude (web_search) ──────────────────────────────────
@@ -521,9 +626,14 @@ async function runEnquete(event, input, opts = {}) {
     errors.push('RAPIDAPI_KEY absent — vol/rotation/ICAO indisponibles');
   }
 
-  // 2) Météo METAR (ICAO)
-  const meteo = await fetchMetar([depIcao, arrIcao]);
+  // 2) Météo METAR (obs) + TAF (prévision couvrant la fenêtre du vol)
+  const [meteo, meteoTaf] = await Promise.all([
+    fetchMetar([depIcao, arrIcao]),
+    fetchTaf([depIcao, arrIcao]),
+  ]);
   if (meteo.length) sources.push('aviationweather-metar');
+  if (meteoTaf.length) sources.push('aviationweather-taf');
+  const hazards = meteoDangereuse([...meteo.map((m) => m.raw), ...meteoTaf.map((t) => t.raw)]);
 
   // 3) Rotation précédente de l'appareil
   let rotation = null;
@@ -565,10 +675,19 @@ async function runEnquete(event, input, opts = {}) {
       volsMemeFenetreArr
         ? `Autres ARRIVÉES à ${arr} (fenêtre ±2 h, ${volsMemeFenetreArr.fenetre}) : ${volsMemeFenetreArr.total} vols — ${volsMemeFenetreArr.aLHeure} ~à l'heure, ${volsMemeFenetreArr.retardes} retardés, ${volsMemeFenetreArr.annules} annulés.`
         : null,
+      volsMemeFenetre && volsMemeFenetre.parCompagnie
+        ? `Ventilation départs ${dep} par compagnie : ${airline} (la nôtre) = ${volsMemeFenetre.parCompagnie.nous.aLHeure} à l'heure / ${volsMemeFenetre.parCompagnie.nous.retardes} retardés / ${volsMemeFenetre.parCompagnie.nous.annules} annulés ; AUTRES compagnies = ${volsMemeFenetre.parCompagnie.autres.aLHeure} à l'heure / ${volsMemeFenetre.parCompagnie.autres.retardes} retardés / ${volsMemeFenetre.parCompagnie.autres.annules} annulés. Si seule ${airline} est touchée → problème INTERNE (redevable) ; si tout l'aéroport est touché → cause externe possible.`
+        : null,
       "Si beaucoup d'autres vols sont partis/arrivés normalement dans la même fenêtre, une cause météo/ATC « extraordinaire » est peu plausible ou n'explique pas tout le retard.",
       meteo.length
-        ? `METAR : ${meteo.map((m) => `${m.id} ${m.raw}`).join(' || ')}`
+        ? `METAR (obs) : ${meteo.map((m) => `${m.id} ${m.raw}`).join(' || ')}`
         : 'METAR : non disponible',
+      meteoTaf.length
+        ? `TAF (prévision) : ${meteoTaf.map((t) => `${t.id} ${t.raw}`).join(' || ')}`
+        : 'TAF : non disponible',
+      hazards.length
+        ? `Phénomènes dangereux détectés automatiquement dans METAR/TAF : ${hazards.join(', ')}.`
+        : 'Aucun phénomène météo dangereux détecté automatiquement dans METAR/TAF.',
     ].filter(Boolean).join('\n');
 
     try {
@@ -597,6 +716,17 @@ async function runEnquete(event, input, opts = {}) {
     ? 'Hébergement + repas + transferts dus par la compagnie (Art. 9 CE 261) si une nuitée est nécessaire. Si non fourni → remboursement EN PLUS des 600 €.'
     : (art9.repasDu ? 'Repas/rafraîchissements dus par la compagnie (Art. 9 CE 261) ; remboursement des frais avancés.' : '');
 
+  // Verdict procédure déterministe (tombe même sans IA ; affiné par l'avis IA si présent).
+  const procedure = procedureSignal({
+    retardMin,
+    cancelled: !!input.cancelled,
+    rotation,
+    comparateurDep: volsMemeFenetre,
+    comparateurArr: volsMemeFenetreArr,
+    hazards,
+    extraordinaireIA: analysis ? analysis.extraordinaire : null,
+  });
+
   const result = {
     ok: true,
     vol,
@@ -611,6 +741,9 @@ async function runEnquete(event, input, opts = {}) {
     reg,
     aircraftModel,
     meteo,
+    meteoTaf,
+    hazards,
+    procedure,
     rotation,
     volsMemeFenetre,
     volsMemeFenetreArr,
