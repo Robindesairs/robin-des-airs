@@ -40,7 +40,28 @@ function watiCfg() {
   const channel = (process.env.WATI_CHANNEL_PHONE || process.env.WHATSAPP_CONTACT_NUMBER || '33756863630').replace(/\D/g, '');
   return { token, base, channel };
 }
-async function appendWaMessage() {} // no-op (historique géré ailleurs)
+async function appendWaMessage() {} // no-op (compat — historique léger ci-dessous)
+
+// ─── Historique léger des conversations (panneau « WhatsApp » du Bureau) ──────
+// RAM uniquement, capé : assez pour montrer « les dernières conversations » sans
+// stockage lourd ni RGPD durable. Lu par /api/recent-conversations (proxy Netlify wa-recent).
+const CONVOS = new Map();            // phoneDigits → { phone, msgs:[{role,text,at}], lastAt }
+const CONVO_MAX_MSG = 12;            // derniers messages gardés par conversation
+const CONVO_MAX_PHONES = 60;        // nombre de conversations gardées (les plus récentes)
+function recordConvo(phone, role, text) {
+  try {
+    const p = String(phone || '').replace(/\D/g, ''); if (!p) return;
+    const t = String(text || '').trim(); if (!t) return;
+    let c = CONVOS.get(p); if (!c) { c = { phone: p, msgs: [] }; CONVOS.set(p, c); }
+    c.msgs.push({ role: role === 'out' ? 'assistant' : 'user', text: t.slice(0, 500), at: Date.now() });
+    if (c.msgs.length > CONVO_MAX_MSG) c.msgs = c.msgs.slice(-CONVO_MAX_MSG);
+    c.lastAt = Date.now();
+    if (CONVOS.size > CONVO_MAX_PHONES) {
+      const oldest = [...CONVOS.values()].sort((a, b) => (a.lastAt || 0) - (b.lastAt || 0))[0];
+      if (oldest) CONVOS.delete(oldest.phone);
+    }
+  } catch (_) {}
+}
 
 // ─── STOCKAGE EN RAM (remplace Netlify Blobs — single-thread = zéro race condition) ──
 const STATE = new Map();   // phone digits → state
@@ -245,6 +266,7 @@ function matchLang(input) {
 
 // ─── Envoi texte / liste / boutons (plomberie éprouvée + clip + debug) ─────────
 async function send(phone, text, cfg) {
+  recordConvo(phone, 'out', text); // historique léger pour le Bureau
   if (!cfg) { console.error('v8 send IGNORÉ — watiCfg null (WATI_API_TOKEN/WATI_API_BASE manquant)'); return; }
   const wa = normalizeWatiPhone(phone);
   const mask = wa.length > 6 ? wa.slice(0, 4) + '***' + wa.slice(-2) : wa;
@@ -2149,6 +2171,7 @@ app.post('/api/wati-webhook', async (req, res) => {
       }
       upsertLead(phone, _p);
     }
+    recordConvo(phone, 'in', mediaUrl && !String(text || '').trim() ? '[pièce jointe]' : text); // historique léger pour le Bureau
     console.log('📩 inbound', (phone.length > 6 ? phone.slice(0, 4) + '***' + phone.slice(-2) : phone), 'len', String(text || '').length, mediaUrl ? '+media' : '', cfg ? '' : '⚠️cfgNULL');
     // Sérialisé par numéro : les messages d'un même client se traitent dans l'ordre, un par un.
     enqueue(phone, () => handleMessage(phone, text, cfg, mediaUrl, replyId).catch(e => {
@@ -2194,7 +2217,24 @@ app.get('/api/leads-a-rappeler', (req, res) => {
   res.json({ ok: true, updatedAt: new Date().toISOString(), total: out.length, leads: out });
 });
 
-app.get('/health', (req, res) => res.json({ ok: true, sessions: STATE.size, dedup: DEDUP.size, dossiers: DOSSIERS.size, leads: LEADS.size, uptime: process.uptime(), ts: new Date().toISOString() }));
+// ─── Conversations récentes pour le panneau « WhatsApp » du Bureau (proxy via Netlify wa-recent). ──
+app.get('/api/recent-conversations', (req, res) => {
+  const secret = (req.query.s || req.headers['x-secret'] || req.headers['x-wati-secret'] || '').toString().trim();
+  const expected = (process.env.WATI_WEBHOOK_SECRET || process.env.CRM_ACCESS_CODE || '').trim();
+  if (expected && !safeEq(secret, expected)) return res.status(401).json({ ok: false, error: 'secret invalide' });
+  const limit = Math.min(30, Math.max(1, parseInt(req.query.limit, 10) || 8));
+  const conversations = [...CONVOS.values()]
+    .filter(c => c.msgs && c.msgs.length)
+    .sort((a, b) => (b.lastAt || 0) - (a.lastAt || 0))
+    .slice(0, limit)
+    .map(c => { const last = c.msgs[c.msgs.length - 1]; return {
+      phone: c.phone, lastText: last.text, lastRole: last.role,
+      lastAt: new Date(last.at).toISOString(), count: c.msgs.length,
+    }; });
+  res.json({ ok: true, updatedAt: new Date().toISOString(), total: conversations.length, conversations });
+});
+
+app.get('/health', (req, res) => res.json({ ok: true, sessions: STATE.size, dedup: DEDUP.size, dossiers: DOSSIERS.size, leads: LEADS.size, convos: CONVOS.size, uptime: process.uptime(), ts: new Date().toISOString() }));
 // Commit déployé (injecté par Railway) — pour vérifier un déploiement d'un coup d'œil.
 // [auto-deploy-test] modif neutre pour vérifier qu'un push GitHub redéploie le bot — à retirer après validation.
 app.get('/version', (req, res) => {

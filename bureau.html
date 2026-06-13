@@ -1231,9 +1231,10 @@ function renderWaConversations(list){
   if(!list || !list.length){ emptyWhatsApp('Aucune conversation WhatsApp enregistrée pour l\'instant.'); return; }
   waBody.innerHTML = list.map(c=>{
     const out = c.lastRole==='assistant';
-    const who = out ? 'Robin' : maskPhone(c.phone);
+    // En-tête : « Robin · <num> » pour le bot, juste le <num> masqué pour le client (pas de doublon).
+    const head = out ? ('Robin · '+maskPhone(c.phone)) : maskPhone(c.phone);
     return `<div class="bub ${out?'out':'in'}">`+
-      `<div style="font-size:.62rem;opacity:.7;margin-bottom:2px">${who} · ${maskPhone(c.phone)}</div>`+
+      `<div style="font-size:.62rem;opacity:.7;margin-bottom:2px">${head}</div>`+
       `${(c.lastText||'').replace(/</g,'&lt;')}`+
       `<div class="tm">${waAgo(c.lastAt)} ${out?'✓✓':''}</div></div>`;
   }).join('');
