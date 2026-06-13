@@ -12,6 +12,7 @@
  */
 const { getBlobStore } = require('./lib/netlify-blobs-store');
 const { safeEqualString } = require('./lib/safe-compare');
+const { syncNewDossierToAirtable } = require('./lib/dossier-airtable-sync');
 
 const H = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://robindesairs.eu', 'Access-Control-Allow-Headers': 'Content-Type' };
 
@@ -31,7 +32,14 @@ exports.handler = async (event) => {
     const st = getBlobStore(event, 'mandats');
     if (!st) return { statusCode: 500, headers: H, body: JSON.stringify({ error: 'store indisponible' }) };
     await st.setJSON('m/' + ref, { ...b.dossier, _ts: new Date().toISOString() });
-    return { statusCode: 200, headers: H, body: JSON.stringify({ ok: true, ref }) };
+
+    // Best-effort : créer le dossier dans Airtable s'il manque (non-signé compris), sans
+    // jamais toucher un dossier déjà présent. Un échec Airtable ne casse pas le dépôt Blobs.
+    let airtable = null;
+    try { airtable = await syncNewDossierToAirtable({ ...b.dossier, ref }); }
+    catch (e) { airtable = { ok: false, error: e.message }; }
+
+    return { statusCode: 200, headers: H, body: JSON.stringify({ ok: true, ref, airtable }) };
   } catch (e) {
     return { statusCode: 500, headers: H, body: JSON.stringify({ error: e.message }) };
   }
