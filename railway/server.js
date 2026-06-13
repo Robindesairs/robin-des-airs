@@ -1051,14 +1051,14 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // Le détail ville-par-ville n'est demandé QUE pour une correspondance (steps esc_*).
   if (s.step === 'route_zone') {
     const n = normInput(input, ['commence', 'arrive', 'ni']);
-    if (id === 'rz_dep' || n === '1' || lower.includes('commence') || /d[ée]part|d[ée]coll|\bpars?\b/.test(lower)) {
+    if (id === 'rz_dep' || n === '1' || lower.includes('commence') || /d[ée]part|d[ée]coll|\bpar[st]?\b/.test(lower)) {
       s.route_type = 'af_eu'; s.europeTouch = 'depart'; s.step = 'incident'; await setState(phone, s);
-      await send(phone, `✅ Départ d'Europe — vous êtes protégé(e) par le CE 261/2004. 👍`, cfg);
+      await send(phone, `✅ Vol au *départ d'Europe* : vous êtes couvert(e) par le CE 261/2004 — *quelle que soit la compagnie*. 👍`, cfg);
       return sendIncident(phone, s, cfg);
     }
     if (id === 'rz_arr' || n === '2' || lower.includes('arrive')) {
       s.route_type = 'af_eu'; s.europeTouch = 'arrivee'; s.step = 'incident'; await setState(phone, s);
-      await send(phone, `✅ Arrivée en Europe — souvent couvert (un expert confirme selon la compagnie). On continue. 👍`, cfg);
+      await send(phone, `✅ Vol à *l'arrivée en Europe* : couvert *si la compagnie est européenne* (Air France, Brussels, TAP…). Sinon, un expert vérifie un autre recours — on garde votre dossier dans tous les cas. 👍`, cfg);
       return sendIncident(phone, s, cfg);
     }
     if (id === 'rz_non' || n === '3' || lower.includes('ni l') || lower === 'ni' || lower.includes('aucun')) {
@@ -1721,7 +1721,7 @@ async function sendRoute(phone, s, cfg) {
 // trajet est récupérée ensuite (scan e-billet/carte, ou saisie vol) — jamais redemandée pour qualifier.
 async function askRouteZone(phone, s, cfg) {
   s.step = 'route_zone'; await setState(phone, s);
-  return sendButtons(phone, { body: `${bar('route')}\n🗺️ Pour vérifier vos droits, votre voyage :\n\n🛫 *commence en Europe* (vous décollez d'un aéroport européen)\n🛬 ou *arrive en Europe*\n🌍 ou *ni l'un ni l'autre* (ex. entre deux pays d'Afrique)\n\n_💡 Une escale en Europe compte aussi !_`, buttons: [
+  return sendButtons(phone, { body: `${bar('route')}\n🗺️ Pour vérifier vos droits, votre voyage :\n\n🛫 *part d'Europe* (vous décollez d'un aéroport européen)\n🛬 *arrive en Europe* (vous atterrissez dans un aéroport européen)\n🌍 *ni l'un ni l'autre* (ex. entre deux pays d'Afrique)\n\n_💡 Une escale en Europe compte aussi !_`, buttons: [
     { id: 'rz_dep', text: '🛫 Départ d\'Europe' },
     { id: 'rz_arr', text: '🛬 Arrivée en Europe' },
     { id: 'rz_non', text: '🌍 Aucun des deux' },
