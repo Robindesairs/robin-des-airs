@@ -249,10 +249,13 @@ async function attachPiecesToAirtable(record, event) {
     if (/carte|boarding|ebillet|ebooking|billet|voyage/.test(k)) return cfg.fPieceCarte;
     return null;
   };
-  const recId = recs[0].id; // fiche canonique
   const code = (codeFromRef ? codeFromRef(ref) : ref.replace(/[^A-Za-z0-9]/g, '').slice(-4).toUpperCase());
+  // CRM = 1 ligne par passager → on attache chaque pièce à TOUTES les fiches du dossier (même réf),
+  // pour que l'e-billet (partagé) apparaisse sur chaque passager. Séquentiel + plafond (limite débit Airtable).
   let uploaded = 0, nId = 0, nCarte = 0;
+  const MAX_UPLOADS = 12;
   for (const key of keys.slice(0, 12)) {
+    if (uploaded >= MAX_UPLOADS) break;
     try {
       const res = await store.getWithMetadata(key, { type: 'arrayBuffer' });
       if (!res || !res.data) continue;
@@ -268,16 +271,19 @@ async function attachPiecesToAirtable(record, event) {
       const filename = field === cfg.fPiecePasseport
         ? `Piece-identite-${code}-${++nId}.${ext}`
         : `Carte-embarquement-${code}-${++nCarte}.${ext}`;
-      const up = await fetch(`https://content.airtable.com/v0/${cfg.base}/${recId}/${field}/uploadAttachment`, {
-        method: 'POST', headers: atHeaders(cfg.key),
-        body: JSON.stringify({ contentType: meta.mime || 'application/octet-stream', file: buf.toString('base64'), filename }),
-      });
-      if (up.ok) uploaded++;
-      else console.error(`submit-mandat: upload pièce ${key} → Airtable ${up.status}`);
+      const body = JSON.stringify({ contentType: meta.mime || 'application/octet-stream', file: buf.toString('base64'), filename });
+      for (const rec of recs) {
+        if (uploaded >= MAX_UPLOADS) break;
+        const up = await fetch(`https://content.airtable.com/v0/${cfg.base}/${rec.id}/${field}/uploadAttachment`, {
+          method: 'POST', headers: atHeaders(cfg.key), body,
+        });
+        if (up.ok) uploaded++;
+        else console.error(`submit-mandat: upload pièce ${key} → ${rec.id} Airtable ${up.status}`);
+      }
     } catch (e) { console.error('submit-mandat: pièce → Airtable', key, e.message); }
   }
-  console.log(`submit-mandat: ${uploaded} pièce·s attachée·s à Airtable ref=${ref}`);
-  return { uploaded };
+  console.log(`submit-mandat: ${uploaded} upload·s pièce·s (${recs.length} fiche·s du dossier) ref=${ref}`);
+  return { uploaded, records: recs.length };
 }
 
 function signatureBase64(record) {
