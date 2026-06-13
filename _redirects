@@ -64,6 +64,7 @@
 /api/wa-messages            /.netlify/functions/wa-messages            200
 /api/wa-recent              /.netlify/functions/wa-recent              200
 /api/crm-wa-send            /.netlify/functions/crm-wa-send            200
+/api/crm-pieces             /.netlify/functions/crm-pieces             200
 /api/send-whatsapp          /.netlify/functions/send-whatsapp          200
 /api/wati-agency-webhook    /.netlify/functions/wati-agency-webhook    200
 /api/agency-auth            /.netlify/functions/agency-auth            200

@@ -2422,6 +2422,12 @@ function openDetail(id){
   <div class="tab-content" id="t-pieces">
     <p style="font-size:12px;color:#6B7280;margin-bottom:12px;line-height:1.5"><strong>${(d.pieces||[]).length}</strong> pièce(s) sur ce dossier. Les fichiers ajoutés ici sont stockés dans la mémoire du navigateur (rechargement = perte si pas d’export futur).</p>
     <div id="crm-pieces-list-wrap">${formatPiecesRows(d,id)}</div>
+    <div class="crm-server-pieces" style="margin:8px 0 16px">
+      <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:8px">
+        📎 Pièces déposées par le client <span style="font-weight:500;text-transform:none;letter-spacing:0;color:var(--text3)">(dépôt web + WhatsApp · serveur sécurisé)</span>
+      </div>
+      <div id="crm-server-pieces-wrap"><p class="crm-doc-empty">Chargement des pièces serveur…</p></div>
+    </div>
     <div class="crm-piece-add">
       <div class="crm-piece-add-title">Ajouter une pièce</div>
       <div class="field"><label>Type de document</label>
@@ -2517,7 +2523,39 @@ function openDetail(id){
     var ea = document.getElementById('edit-adultes');
     if(ea) ea.setAttribute('data-prev-copax', String(d.adultes));
     crmInitAddressAutocomplete('edit-adresse-search', 'edit-adresse-dd', 'edit-adresse');
+    loadServerPieces(id);
   }, 0);
+}
+
+/** Pièces stockées côté serveur (dépôt web + WhatsApp) — passeport, carte d'embarquement, e-billet.
+ *  Via /api/crm-pieces : authentifié par l'accès CRM, URLs de fichiers signées à durée limitée. */
+function serverPieceLabel(p){
+  var lbl = String(p.label || '').toLowerCase();
+  if(/passe?port|cni|identit|ident/.test(lbl)) return '🪪 Pièce d’identité';
+  if(/embarq|boarding|carte/.test(lbl)) return '🎫 Carte d’embarquement';
+  if(/billet|ticket|e-?ticket|reservation|réservation/.test(lbl)) return '✈️ E-billet / réservation';
+  if(/certif|retard|attest/.test(lbl)) return '📄 Certificat / attestation';
+  return '📎 ' + (p.label || 'Pièce');
+}
+function loadServerPieces(ref){
+  var wrap = document.getElementById('crm-server-pieces-wrap');
+  if(!wrap) return;
+  crmApiFetch('/api/crm-pieces?r=' + encodeURIComponent(ref))
+    .then(function(r){ return r.ok ? r.json() : r.json().then(function(j){ throw new Error(j.error||('HTTP '+r.status)); }); })
+    .then(function(j){
+      var list = (j && j.pieces) || [];
+      if(!list.length){ wrap.innerHTML = '<p class="crm-doc-empty">Aucune pièce déposée par le client (le client n’a pas encore envoyé ses documents).</p>'; return; }
+      wrap.innerHTML = '<div class="crm-doc-list">' + list.map(function(p){
+        var src = p.source === 'bot' ? 'WhatsApp' : 'Dépôt web';
+        var when = p.ts ? new Date(p.ts).toLocaleDateString('fr-FR') : '';
+        return '<div class="crm-doc-row"><div><div class="crm-doc-name">' + serverPieceLabel(p) + '</div>'
+          + '<div class="crm-doc-meta">' + src + (when?(' · '+when):'') + '</div></div>'
+          + '<div class="crm-doc-actions"><a class="btn btn-sm btn-primary" href="' + p.url + '" target="_blank" rel="noopener">Ouvrir</a></div></div>';
+      }).join('') + '</div>';
+    })
+    .catch(function(e){
+      wrap.innerHTML = '<p class="crm-doc-empty">Pièces serveur indisponibles' + (e && e.message ? ' (' + escHtml(e.message) + ')' : '') + '.</p>';
+    });
 }
 
 function togglePaiementField(val){
