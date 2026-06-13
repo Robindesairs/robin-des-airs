@@ -823,7 +823,10 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   box-shadow: 0 12px 40px rgba(11,31,58,0.14);
   min-width: 145px; overflow: hidden; z-index: 9999;
 }
-.lang-menu.open { display: block; animation: fstepIn 0.18s ease; }
+/* opacity:1 explicite → le menu reste visible même si l'animation fstepIn ne joue pas
+   (reduced-motion, animations désactivées, navigateur capricieux). Avant : visibilité
+   dépendante uniquement de l'animation → menu invisible dans ces cas. */
+.lang-menu.open { display: block; opacity: 1; animation: fstepIn 0.18s ease; }
 .lang-option {
   display: flex; align-items: center; gap: 9px;
   padding: 10px 14px; font-size: 12px; font-weight: 600;

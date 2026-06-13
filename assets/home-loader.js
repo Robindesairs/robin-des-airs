@@ -97,10 +97,19 @@
   async function boot() {
     if (isDeferFunnel()) window.__ROBIN_DEFER_FUNNEL__ = true;
 
-    try {
-      await loadScript('/i18n.js');
-      await loadScript('/data/vol-ticker.js');
-      if (!window.__ROBIN_DEFER_FUNNEL__) {
+    // ── CŒUR INTERACTIF : i18n + bandeau + index-page (switchLang, nav, sélecteur de langue). ──
+    // DOIT se charger AVANT le funnel lourd (CDN), et chaque maillon est isolé (try/catch).
+    // Auparavant, sur desktop, index-page.js se chargeait en DERNIER, après flatpickr/tom-select :
+    // si un CDN échouait (réseau lent/bloqué, adblock), la bascule de langue — et toute
+    // l'interactivité — ne s'initialisait jamais, et les DEUX directions FR↔EN tombaient ensemble.
+    try { await loadScript('/i18n.js'); } catch (e) { console.error('Robin i18n:', e); }
+    try { await loadScript('/data/vol-ticker.js'); } catch (e) { console.error('Robin vol-ticker:', e); }
+    try { await loadScript('/assets/index-page.js'); } catch (e) { console.error('Robin index-page:', e); }
+    if (typeof window.refreshVolTicker === 'function') window.refreshVolTicker();
+
+    // ── FUNNEL LOURD (CDN) — best-effort, APRÈS le cœur. Son échec ne casse plus la langue/nav. ──
+    if (!window.__ROBIN_DEFER_FUNNEL__) {
+      try {
         await loadScript('https://cdn.jsdelivr.net/npm/flatpickr');
         await loadScript('https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/fr.js');
         await loadScript('/data/airlines.js');
@@ -108,19 +117,17 @@
         await loadScript('https://cdn.jsdelivr.net/npm/tom-select@2/dist/js/tom-select.complete.min.js');
         await loadScript('/data/flights-db.js');
         window.__ROBIN_FUNNEL_READY__ = true;
+        if (typeof ensureRouteAmountBuilt === 'function') ensureRouteAmountBuilt();
+        if (typeof window.refreshVolTicker === 'function') window.refreshVolTicker();
+      } catch (e) {
+        console.error('Robin funnel bundle:', e);
       }
-      await loadScript('/assets/index-page.js');
-      if (window.__ROBIN_FUNNEL_READY__ && typeof ensureRouteAmountBuilt === 'function') ensureRouteAmountBuilt();
-      if (typeof window.refreshVolTicker === 'function') window.refreshVolTicker();
-      if (window.__ROBIN_DEFER_FUNNEL__) {
-        if (typeof window.robinWhenDomReady === 'function') {
-          window.robinWhenDomReady(attachFunnelFocusPrefetch);
-        } else {
-          attachFunnelFocusPrefetch();
-        }
+    } else {
+      if (typeof window.robinWhenDomReady === 'function') {
+        window.robinWhenDomReady(attachFunnelFocusPrefetch);
+      } else {
+        attachFunnelFocusPrefetch();
       }
-    } catch (e) {
-      console.error('Robin home boot:', e);
     }
   }
 
