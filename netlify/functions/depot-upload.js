@@ -9,8 +9,18 @@
  *  - Notifie l'équipe (Make) en best-effort.
  */
 const { getBlobStore } = require('./lib/netlify-blobs-store');
+let attachPieceToDossier = null;
+try { ({ attachPieceToDossier } = require('./lib/airtable-attach')); } catch (e) {}
 
 const H = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type' };
+
+// Type de pièce : « kind » envoyé par la page, sinon déduit du nom de fichier (passeport/carte…).
+function inferKind(explicit, filename) {
+  const s = `${explicit || ''} ${filename || ''}`.toLowerCase();
+  if (/identite|passeport|cni|passport|sejour|s[ée]jour/.test(s)) return 'identite';
+  if (/carte|boarding|embarq|ebillet|e-billet|billet|booking|voyage/.test(s)) return 'carte-embarquement';
+  return explicit || '';
+}
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: H, body: '' };
@@ -35,7 +45,12 @@ exports.handler = async (event) => {
     if (!pieces) return { statusCode: 500, headers: H, body: JSON.stringify({ error: 'store indisponible' }) };
     const safe = String(b.filename || 'piece').replace(/[^A-Za-z0-9._-]/g, '_').slice(0, 80);
     const key = 'p/' + ref + '/' + Date.now() + '_' + safe;
-    await pieces.set(key, buf, { metadata: { ref, filename: safe, mime, ts: new Date().toISOString() } });
+    const kind = inferKind(b.kind, b.filename);
+    await pieces.set(key, buf, { metadata: { ref, filename: safe, mime, kind, ts: new Date().toISOString() } });
+
+    // Attache la pièce à la/les fiche·s CRM du dossier dès maintenant (réf connue). Best-effort —
+    // si la fiche n'existe pas encore (avant signature), no-op : submit-mandat l'attachera à la signature.
+    if (attachPieceToDossier) { try { await attachPieceToDossier({ buf, mime, kind, ref }); } catch (_) {} }
 
     // Notif équipe (best-effort)
     try { const u = process.env.MAKE_WEBHOOK_NEW_DOSSIER; if (u) await fetch(u, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ event: 'piece_deposee', ref, filename: safe, mime, key, source: 'depot-en-ligne' }) }); } catch (_) {}

@@ -7,6 +7,8 @@
  */
 const { getBlobStore } = require('./lib/netlify-blobs-store');
 const { safeEqualString } = require('./lib/safe-compare');
+let attachPieceToDossier = null;
+try { ({ attachPieceToDossier } = require('./lib/airtable-attach')); } catch (e) {}
 
 const H = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type' };
 
@@ -35,6 +37,9 @@ exports.handler = async (event) => {
     const ext = mime === 'application/pdf' ? 'pdf' : (mime.split('/')[1] || 'jpg').replace(/[^a-z0-9]/gi, '').slice(0, 5);
     const key = `wa/${phoneKey}/${Date.now()}_${kind}.${ext}`;
     await pieces.set(key, buf, { metadata: { phone: phoneKey, kind, mime, ts: new Date().toISOString(), source: 'wati-bot' } });
+    // Attache la pièce à la fiche CRM dès maintenant (si le dossier existe déjà = dépôt APRÈS signature).
+    // Avant signature : aucune fiche → no-op, submit-mandat l'attachera à la signature. Best-effort.
+    if (attachPieceToDossier) { try { await attachPieceToDossier({ buf, mime, kind, phone: phoneKey }); } catch (_) {} }
     return { statusCode: 200, headers: H, body: JSON.stringify({ ok: true, key }) };
   } catch (e) {
     return { statusCode: 500, headers: H, body: JSON.stringify({ error: e.message }) };
