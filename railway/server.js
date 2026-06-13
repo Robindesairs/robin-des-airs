@@ -726,7 +726,7 @@ function docsStatus(s) {
   const missingId = [];
   for (let i = 0; i < pax; i++) {
     const p = (s.passengers || [])[i] || {};
-    const provided = !!(p && !p.skipped && (p.idReceived || p.dob)); // pièce lue (photo/saisie) → dob présent
+    const provided = !!(p && !p.skipped && p.idReceived); // SEULE une vraie photo de pièce compte — un nom/DDN (e-billet ou saisie) ne remplace PAS la CNI/passeport
     if (!provided) missingId.push(paxName(s, i));
   }
   // Preuve de voyage : un E-BILLET liste TOUS les passagers → couvre tout le groupe (et toutes les escales).
@@ -745,7 +745,7 @@ function docsStatus(s) {
 // Indices des passagers SANS pièce d'identité
 function missingIdIndices(s) {
   const pax = s.pax || ((s.passengers && s.passengers.length) || 1); const out = [];
-  for (let i = 0; i < pax; i++) { const p = (s.passengers || [])[i] || {}; if (!(p && !p.skipped && (p.idReceived || p.dob))) out.push(i); }
+  for (let i = 0; i < pax; i++) { const p = (s.passengers || [])[i] || {}; if (!(p && !p.skipped && p.idReceived)) out.push(i); }
   return out;
 }
 // ─── Moteur d'attribution pièce→passager (robuste, SANS jamais demander au client) ──
@@ -1586,8 +1586,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (dob) {
       if (inFuture(dob)) return send(phone, `🤔 Cette date de naissance est dans le futur. Renvoyez-la au format JJ/MM/AAAA _(ex. 05/09/2012)_ :`, cfg);
       const minor = isMinorAt(dob, s.date);
-      const p = s.passengers[s.doc_idx] || {}; p.dob = dob; p.minor = minor; s.passengers[s.doc_idx] = p;
-      await send(phone, `✅ ${p.name || ('Passager ' + (s.doc_idx + 1))} — né·e le *${dob}* (${dateEnLettres(dob)})${minor ? ' 👶 _(mineur·e : signature parentale requise)_' : ''}`, cfg);
+      const p = s.passengers[s.doc_idx] || {}; p.dob = dob; p.minor = minor; p.idDeferred = true; s.passengers[s.doc_idx] = p; // nom+DDN notés, mais la PHOTO de la pièce reste à envoyer
+      await send(phone, `✅ ${p.name || ('Passager ' + (s.doc_idx + 1))} — né·e le *${dob}* (${dateEnLettres(dob)})${minor ? ' 👶 _(mineur·e : signature parentale requise)_' : ''}\n📸 _Sa pièce d'identité (passeport/CNI) reste à envoyer — indispensable pour réclamer en son nom._`, cfg);
       s.doc_idx++; await setState(phone, s); return nextPassport(phone, s, cfg);
     }
     if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim()), cfg);
@@ -1907,7 +1907,7 @@ async function startDocuments(phone, s, cfg) {
 }
 async function nextPassport(phone, s, cfg) {
   // Sauter les passagers déjà traités (pièce reçue / saisie / passée) — robuste si les photos arrivent dans le désordre.
-  while (s.doc_idx < s.pax) { const p = (s.passengers || [])[s.doc_idx] || {}; if (p.skipped || p.idReceived || p.dob) s.doc_idx++; else break; }
+  while (s.doc_idx < s.pax) { const p = (s.passengers || [])[s.doc_idx] || {}; if (p.skipped || p.idReceived || p.idDeferred) s.doc_idx++; else break; } // un dob (e-billet/saisie) ne saute PLUS la demande de photo
   if (s.doc_idx >= s.pax) { return askMandant(phone, s, cfg); }
   s.step = 'doc_pass'; await setState(phone, s);
   // Intro courte au 1er passager
@@ -1917,7 +1917,7 @@ async function nextPassport(phone, s, cfg) {
   for (let i = 0; i < s.doc_idx; i++) {
     const p = (s.passengers && s.passengers[i]) || {};
     const nm = p.name || (s.names && s.names[i]) || `Passager ${i + 1}`;
-    done += p.skipped ? `⏳ ${i + 1}. ${nm} — _à envoyer plus tard_\n` : `✅ ${i + 1}. ${nm}\n`;
+    done += p.idReceived ? `✅ ${i + 1}. ${nm}\n` : `⏳ ${i + 1}. ${nm} — _pièce à envoyer_\n`;
   }
   const header = done ? `${done}\n` : '';
   // Nom du passager courant : connu seulement si e-billet scanné (sinon lu sur la pièce). Conditionnel.
