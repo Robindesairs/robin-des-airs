@@ -70,6 +70,7 @@ function airtableCfg() {
     fPnr: (process.env.AIRTABLE_F_PNR || 'fld7scWE20q3DRPUa').trim(),
     fIncident: (process.env.AIRTABLE_F_TYPE_INCIDENT || 'fldci5VnHb0HpOoKL').trim(),
     fItineraire: (process.env.AIRTABLE_F_ITINERAIRE || 'fldtCISegQZ58Yvrl').trim(),
+    fMandatPdf: (process.env.AIRTABLE_F_MANDAT_PDF || 'fldynALd43y4YYcxz').trim(), // champ pièce jointe « Mandat de Représentation signé »
     statutSuiviSigne: (process.env.AIRTABLE_STATUT_SUIVI_MANDAT_SIGNE || 'Mandat signé').trim(),
   };
 }
@@ -187,6 +188,27 @@ async function patchAirtableSigned(record) {
   }
   console.log(`submit-mandat: Airtable PATCH ${updates.length} ligne(s) ref=${ref}`);
   return { updated: updates.length };
+}
+
+// Attache le PDF signé BILINGUE à la fiche Airtable (champ « Mandat de Représentation signé »).
+// Étape SÉPARÉE, lancée APRÈS l'archivage du PDF (sinon Airtable irait chercher un PDF absent → 404).
+// URL publique-par-réf (/api/mandat-pdf, pas de secret) → Airtable la récupère et stocke sa propre copie.
+async function attachMandatToAirtable(record) {
+  const cfg = airtableCfg();
+  if (!cfg || !cfg.fMandatPdf) return { skipped: true };
+  const ref = (record.ref || '').trim();
+  if (!ref) return { skipped: true, reason: 'no ref' };
+  const recs = await airtableFindByRef(cfg, ref);
+  if (!recs.length) return { skipped: true, reason: 'fiche introuvable' };
+  const url = `https://robindesairs.eu/api/mandat-pdf?r=${encodeURIComponent(ref)}&bilingue=1`;
+  const filename = `Mandat-bilingue-FR-EN-${ref.replace(/[^A-Za-z0-9_-]/g, '_')}.pdf`;
+  const updates = recs.map((rec) => ({ id: rec.id, fields: { [cfg.fMandatPdf]: [{ url, filename }] } }));
+  const pr = await fetch(`https://api.airtable.com/v0/${cfg.base}/${cfg.table}`, {
+    method: 'PATCH', headers: atHeaders(cfg.key), body: JSON.stringify({ records: updates }),
+  });
+  if (!pr.ok) throw new Error(`Airtable attach mandat ${pr.status}: ${(await pr.text()).slice(0, 200)}`);
+  console.log(`submit-mandat: mandat bilingue attaché à Airtable (${updates.length} fiche·s) ref=${ref}`);
+  return { attached: updates.length };
 }
 
 function signatureBase64(record) {
@@ -649,6 +671,10 @@ exports.handler = async (event) => {
       }
     } catch (e) { console.error('submit-mandat: archive PDF bilingue échouée:', e.message); }
   }
+
+  // Attache le mandat signé bilingue à la fiche Airtable (CRM) — APRÈS archivage du PDF. Best-effort.
+  try { await attachMandatToAirtable(record); }
+  catch (e) { console.error('submit-mandat: attache mandat Airtable échouée:', e.message); }
 
   const [webhookResult, emailResult, waCopyResult] = await Promise.all([
     forwardBotWebhook(record).then(() => ({ ok: true })).catch((e) => ({ ok: false, error: e.message })),
