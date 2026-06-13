@@ -216,18 +216,18 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="amount-hero">
     <div class="amount-col">
       <div class="amount-tag">Statutory compensation (gross)</div>
-      <div class="amount-num" id="hGross">Jusqu'à 600 €</div>
-      <div class="amount-sub">Barème max. Regulation (EC) No 261/2004</div>
+      <div class="amount-num" id="hGross">Up to €600</div>
+      <div class="amount-sub">Max. scale — Regulation (EC) No 261/2004</div>
     </div>
     <div class="amount-div"></div>
     <div class="amount-col">
-      <div class="amount-tag">✅ Net estimé*</div>
-      <div class="amount-num net" id="hNet">Jusqu'à 450 €</div>
+      <div class="amount-tag">✅ Estimated net*</div>
+      <div class="amount-num net" id="hNet">Up to €450</div>
       <div class="amount-sub">After RDA fee (25% on success only)</div>
-      <div class="formula-box" id="hFormula">Exemple si succès : 600 € − 150 € = 450 €</div>
+      <div class="formula-box" id="hFormula">Example on success: €600 − €150 = €450</div>
     </div>
   </div>
-  <div class="amount-reserve">*Estimation. <strong>0 € à payer si nous ne récupérons rien.</strong> Montant final selon l'éligibilité de votre vol (CE 261/2004).</div>
+  <div class="amount-reserve">*Estimate. <strong>€0 to pay if we recover nothing.</strong> Final amount depends on your flight's eligibility (Regulation (EC) No 261/2004).</div>
   <!-- PARTIES -->
   <div class="sec-title">👥 The parties</div>
   <div class="parties-grid">
@@ -256,7 +256,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       <div class="ferr" id="fnErr">Required</div>
     </div>
     <div>
-      <label>Nom <span class="req">*</span></label>
+      <label>Last name <span class="req">*</span></label>
       <input type="text" id="ln" placeholder="DUPONT" oninput="updateParties()">
       <div class="ferr" id="lnErr">Required</div>
     </div>
@@ -265,12 +265,12 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     <div>
       <label>WhatsApp <span class="req">*</span></label>
       <div class="wa-phone-row">
-        <input type="text" id="wa-indicatif" class="wa-indicatif-select" list="pays-list" aria-label="Pays ou indicatif" placeholder="Pays ou +indicatif" autocomplete="off" oninput="syncWa()" value="🇫🇷 France +33">
+        <input type="text" id="wa-indicatif" class="wa-indicatif-select" list="pays-list" aria-label="Country or dialing code" placeholder="Country or +code" autocomplete="off" oninput="syncWa()" value="🇫🇷 France +33">
         <datalist id="pays-list"></datalist>
         <input type="tel" id="wa-national" class="wa-national-input" inputmode="numeric" autocomplete="tel-national" placeholder="6 12 34 56 78" oninput="syncWa()">
       </div>
       <input type="hidden" id="wa">
-      <div class="ferr" id="waErr">Indiquez votre pays et votre numéro WhatsApp</div>
+      <div class="ferr" id="waErr">Enter your country and WhatsApp number</div>
     </div>
     <div>
       <label>Your case tracking</label>
@@ -297,15 +297,17 @@ details.mandat-full[open]>summary{margin-bottom:12px}
 </div>
 <!-- VOL CONCERNÉ -->
 <div class="doc-section">
-  <div class="sec-title">✈️ Le vol concerné</div>
+  <div class="sec-title">✈️ The flight concerned</div>
   <div class="field-row tri">
     <div>
       <label>Airline (on the ticket) <span class="req">*</span></label>
       <input type="text" id="cie" placeholder="Brussels Airlines" class="ro">
+      <div class="ferr" id="cieErr">Airline required</div>
     </div>
     <div>
-      <label>N° de vol <span class="req">*</span></label>
+      <label>Flight number <span class="req">*</span></label>
       <input type="text" id="fnum" placeholder="SN271" class="ro" oninput="updateParties()">
+      <div class="ferr" id="fnumErr">Flight number required</div>
     </div>
     <div>
       <label>PNR / Booking</label>
@@ -521,7 +523,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="clause">
     <span class="cnum">Article 10 — Confidentiality & GDPR</span>
     <div class="plain">💡 <strong>In plain terms:</strong> Your data is used only for your case. Never resold.</div>
-    Personal data is used only for case management, not sold. GDPR rights: contact@robindesairs.eu.
+    Personal data is used only for case management, not sold. Under the GDPR the Client has the rights of <strong>access, rectification, erasure, restriction, portability and objection</strong>, and the right to withdraw consent, by writing to <strong>expert@robindesairs.eu</strong>; the Client may also lodge a complaint with the CNIL. Full details (purposes, retention periods, processors) are in the <a href="politique-confidentialite.html" target="_blank" rel="noopener">Privacy Policy</a>.
   </div>
   <div class="clause">
     <span class="cnum">Article 11 — Governing law, severability & disputes</span>
@@ -543,7 +545,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       I have read and accept the <strong>representation mandate</strong> (summary above, full details above). I authorise <strong>Robin des Airs</strong> to recover my flight compensation on my behalf and I <strong>assign my claim to it for recovery purposes</strong> (Article 5 bis).<br>
       <strong>No fee if the case fails.</strong> 25% commission on success only.<br>
       <span style="font-size:12px;color:var(--muted);">
-        Exclusive 24 months · Withdrawal possible within 14 days by email · GDPR
+        Exclusive 24 months · Withdrawal possible within 14 days by email · <a href="politique-confidentialite.html" target="_blank" rel="noopener">GDPR — Privacy Policy</a>
       </span>
     </p>
   </div>
@@ -552,13 +554,13 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="single-check" onclick="document.getElementById('eligCheck').checked=!document.getElementById('eligCheck').checked;calcProgress()">
     <input type="checkbox" id="eligCheck" onclick="event.stopPropagation();calcProgress()">
     <p>
-      <strong>Je comprends que mon indemnité n'est pas garantie.</strong> Le montant affiché est une <strong>estimation</strong> qui dépend de l'<strong>éligibilité de mon vol</strong> au règlement CE 261/2004 (retard ≥ 3 h à destination finale, distance, absence de circonstance extraordinaire) et du <strong>paiement effectif par la compagnie</strong>.<br>
+      <strong>I understand that my compensation is not guaranteed.</strong> The amount shown is an <strong>estimate</strong> that depends on my <strong>flight's eligibility</strong> under Regulation (EC) No 261/2004 (delay ≥ 3 h at final destination, distance, no extraordinary circumstances) and on <strong>actual payment by the airline</strong>.<br>
       <span style="font-size:12px;color:var(--muted);">
-        Robin des Airs est tenue à une obligation de moyens — aucune garantie de résultat.
+        Robin des Airs is bound by a best-efforts obligation — no guarantee of result.
       </span>
     </p>
   </div>
-  <div class="ferr" id="eligErr" style="font-size:13px">Veuillez cocher cette case pour confirmer que vous avez compris.</div>
+  <div class="ferr" id="eligErr" style="font-size:13px">Please tick this box to confirm you have understood.</div>
   <!-- CASE 2 — Démarrage immédiat (optionnelle mais recommandée) -->
   <div class="single-check" style="background:var(--green-tint);border-color:var(--green)" onclick="document.getElementById('startNow').checked=!document.getElementById('startNow').checked">
     <input type="checkbox" id="startNow" onclick="event.stopPropagation()">
@@ -599,7 +601,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     <div class="sig-ph" id="sigPh">✍️ Tap here to sign</div>
     <div class="sig-clear" id="sigClear" onclick="clearSig(event)">✕ Start over</div>
   </div>
-  <div class="ferr" id="sigErr">Votre signature est requise pour valider le mandat</div>
+  <div class="ferr" id="sigErr">Your signature is required to sign the mandate</div>
   <div style="margin-top:20px;border:1px solid var(--border);border-left:3px solid var(--green-deep);border-radius:0 8px 8px 0;padding:16px 18px;background:var(--green-tint)">
     <div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--green-deep);font-weight:700;margin-bottom:8px">Acceptance by the Representative — Robin des Airs</div>
     <p style="font-size:12px;line-height:1.7;color:var(--text);margin:0">
@@ -608,7 +610,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     </p>
   </div>
   <button class="btn-submit" id="btnSub" onclick="submitMandat()">
-    Valider et signer mon mandat →
+    Confirm and sign my mandate →
   </button>
 </div>
 <div class="trust-bar">
@@ -738,8 +740,27 @@ async function fetchAndApplyDossier() {
   const api = (Q.get('api') || 'https://robin-bot-v8-production.up.railway.app').replace(/\/$/, '');
   try {
     const res = await fetch(api + '/api/dossier?r=' + encodeURIComponent(ref), { credentials: 'omit' });
-    if (res.ok) applyDossier(await res.json());
+    if (res.ok) { applyDossier(await res.json()); return; }
   } catch (_) { /* fetch échoué → la page reste utilisable, saisie manuelle */ }
+  // Both sources failed although a ?r= link was provided: we cannot let a mandate be
+  // signed without an identified flight (the assigned claim would be undeterminable).
+  // Warn the Client and force manual entry of the airline and flight number.
+  warnDossierUnavailable();
+}
+function warnDossierUnavailable() {
+  const cie = document.getElementById('cie'), fnum = document.getElementById('fnum');
+  if (cie && cie.value.trim() && fnum && fnum.value.trim()) return;
+  if (!document.getElementById('dossierWarnBar')) {
+    const bar = document.createElement('div');
+    bar.id = 'dossierWarnBar';
+    bar.setAttribute('role', 'alert');
+    bar.style.cssText =
+      'background:var(--red-bg);border:1px solid var(--red-border);color:var(--red);padding:12px 16px;margin:12px 24px 0;font-size:13px;border-radius:6px;font-weight:600';
+    bar.textContent = 'We could not load your case automatically. Please check and complete the airline and flight number below before signing.';
+    const page = document.querySelector('.page');
+    if (page) page.insertBefore(bar, page.firstChild);
+  }
+  [cie, fnum].forEach(el => { if (el) el.classList.remove('ro'); });
 }
 function applyDossier(d) {
   if (!d) return;
@@ -890,9 +911,9 @@ function updateAmounts() {
     window.MANDAT_INDEMNITE_PER_PAX || 600
   );
   const brut = perPax*pax, net = Math.round(brut*.75), com = brut-net;
-  document.getElementById('hGross').textContent  = "Jusqu'à "+brut.toLocaleString('fr-FR')+' €';
-  document.getElementById('hNet').textContent    = "Jusqu'à "+net.toLocaleString('fr-FR')+' €';
-  document.getElementById('hFormula').textContent= `Exemple si succès : ${brut.toLocaleString('fr-FR')} € − ${com.toLocaleString('fr-FR')} € = ${net.toLocaleString('fr-FR')} €`;
+  document.getElementById('hGross').textContent  = 'Up to €'+brut.toLocaleString('en-GB');
+  document.getElementById('hNet').textContent    = 'Up to €'+net.toLocaleString('en-GB');
+  document.getElementById('hFormula').textContent= `Example on success: €${brut.toLocaleString('en-GB')} − €${com.toLocaleString('en-GB')} = €${net.toLocaleString('en-GB')}`;
   updateParties();
 }
 // ── CHAMPS PASSAGERS ─────────────────────────────────────────────
@@ -1306,6 +1327,7 @@ function showE(id,eId,show) {
 function validate() {
   let ok = true;
   [['fn','fnErr'],['ln','lnErr'],['wa-national','waErr'],['addr','addrErr'],
+   ['cie','cieErr'],['fnum','fnumErr'],
    ['fdate','fdErr'],['inc','incErr'],['sigCity','sigCityErr']
   ].forEach(([id,e])=>{
     const empty=!document.getElementById(id)?.value.trim();

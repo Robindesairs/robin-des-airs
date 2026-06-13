@@ -477,6 +477,20 @@ exports.handler = async (event) => {
     };
   }
 
+  // Le vol doit être identifié : un mandat (cession de créance, Art. 5 bis) sans transporteur
+  // NI n° de vol rend la créance indéterminable et donc inopposable. Le front valide déjà
+  // ces champs ; on double le contrôle côté serveur pour rejeter tout payload incomplet.
+  const airlineIn = (body.airline || '').trim();
+  const flightNumIn = (body.flightNum || '').trim();
+  if (!airlineIn && !flightNumIn) {
+    console.warn(`submit-mandat: REFUS signature — vol non identifié (airline+flightNum vides) pour ref=${ref}`);
+    return {
+      statusCode: 400,
+      headers: HEADERS,
+      body: JSON.stringify({ error: 'Compagnie et n° de vol requis pour identifier la créance.' }),
+    };
+  }
+
   // SÉCURITÉ (audit) : on ne signe QUE pour un dossier RÉEL pré-existant (m/<ref> créé par le bot,
   // réf indevinable ~72 bits). Empêche la forge de fausses signatures et l'empoisonnement de
   // /api/is-signed pour des réfs arbitraires/devinées. Même modèle que /api/depot-upload (prod).

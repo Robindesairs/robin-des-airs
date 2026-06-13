@@ -343,10 +343,12 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     <div>
       <label>Compagnie (sur le billet) <span class="req">*</span></label>
       <input type="text" id="cie" placeholder="Brussels Airlines" class="ro">
+      <div class="ferr" id="cieErr">Compagnie requise</div>
     </div>
     <div>
       <label>N° de vol <span class="req">*</span></label>
       <input type="text" id="fnum" placeholder="SN271" class="ro" oninput="updateParties()">
+      <div class="ferr" id="fnumErr">N° de vol requis</div>
     </div>
     <div>
       <label>PNR / Réservation</label>
@@ -562,7 +564,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="clause">
     <span class="cnum">Article 10 — Confidentialité & RGPD</span>
     <div class="plain">💡 <strong>En clair&nbsp;:</strong> Vos données servent uniquement à votre dossier. Jamais revendues.</div>
-    Les données personnelles collectées sont utilisées exclusivement pour la gestion du dossier. Elles ne sont pas revendues. Conformément au RGPD, le Mandant dispose d'un droit d'accès, de rectification et de suppression en contactant contact@robindesairs.eu.
+    Les données personnelles collectées sont utilisées exclusivement pour la gestion du dossier. Elles ne sont pas revendues. Conformément au RGPD, le Mandant dispose des droits d'<strong>accès, de rectification, d'effacement, de limitation, de portabilité et d'opposition</strong>, ainsi que du droit de retirer son consentement, en écrivant à <strong>expert@robindesairs.eu</strong> ; il peut également saisir la <strong>CNIL</strong>. Les modalités complètes (finalités, durées de conservation, sous-traitants) figurent dans la <a href="politique-confidentialite.html" target="_blank" rel="noopener">Politique de confidentialité</a>.
   </div>
   <div class="clause">
     <span class="cnum">Article 11 — Loi applicable, divisibilité & litiges</span>
@@ -584,7 +586,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       J'ai lu et j'accepte le <strong>mandat de représentation</strong> (résumé ci-dessus, détail complet ci-dessus). J'autorise <strong>Robin des Airs</strong> à récupérer mon indemnité aérienne en mon nom et je lui <strong>cède ma créance aux fins de recouvrement</strong> (Article 5 bis).<br>
       <strong>Aucun frais si le dossier échoue.</strong> Commission de 25% uniquement en cas de succès.<br>
       <span style="font-size:12px;color:var(--muted);">
-        Exclusivité 24 mois · Rétractation possible sous 14 jours par email · RGPD
+        Exclusivité 24 mois · Rétractation possible sous 14 jours par email · <a href="politique-confidentialite.html" target="_blank" rel="noopener">RGPD — Politique de confidentialité</a>
       </span>
     </p>
   </div>
@@ -666,7 +668,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="success-icon" aria-hidden="true">✓</div>
   <h1 class="success-title" id="sTitle">C'est fait !</h1>
   <p style="color:var(--text);font-size:14.5px;max-width:460px;margin:0 auto;line-height:1.6" id="sLead">
-    Votre dossier est officiellement ouvert. <strong>Vous n'êtes plus seul·e face à la compagnie</strong> — à partir de maintenant, c'est nous qui écrivons, relançons et nous battons pour vos <strong>600&nbsp;€</strong>. Rien à avancer, rien à craindre.
+    Votre dossier est officiellement ouvert. <strong>Vous n'êtes plus seul·e face à la compagnie</strong> — à partir de maintenant, c'est nous qui écrivons, relançons et nous battons pour votre indemnité (<strong>jusqu'à 600&nbsp;€</strong>). Rien à avancer, rien à craindre.
   </p>
   <p class="success-tagline">On prend aux compagnies, on rend aux familles.<br><span>Aujourd'hui, votre famille en fait partie.</span></p>
 
@@ -721,7 +723,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   </div>
 
   <div class="sb-note" id="sSigners" style="max-width:440px;margin:16px auto 0;text-align:left"></div>
-  <div class="sb-note" style="max-width:440px;margin:6px auto 0;text-align:left"><span aria-hidden="true">🔒</span> Données enregistrées (nom, contact, vol, signature) utilisées <strong>uniquement</strong> pour votre dossier, jamais revendues — RGPD. Accès / suppression : contact@robindesairs.eu.</div>
+  <div class="sb-note" style="max-width:440px;margin:6px auto 0;text-align:left"><span aria-hidden="true">🔒</span> Données enregistrées (nom, contact, vol, signature) utilisées <strong>uniquement</strong> pour votre dossier, jamais revendues — RGPD. Accès / suppression : expert@robindesairs.eu.</div>
 
   <p class="success-signoff" id="sSignoff">Reposez-vous — on prend le relais. <b>— L'équipe Robin des Airs</b></p>
   <div class="hero-seal">
@@ -832,8 +834,29 @@ async function fetchAndApplyDossier() {
   const api = (Q.get('api') || 'https://robin-bot-v8-production.up.railway.app').replace(/\/$/, '');
   try {
     const res = await fetch(api + '/api/dossier?r=' + encodeURIComponent(ref), { credentials: 'omit' });
-    if (res.ok) applyDossier(await res.json());
+    if (res.ok) { applyDossier(await res.json()); return; }
   } catch (_) { /* fetch échoué → la page reste utilisable, saisie manuelle */ }
+  // Les deux sources ont échoué alors qu'un lien ?r= était fourni : on ne peut pas
+  // laisser signer un mandat sans vol identifié (créance indéterminable). On prévient
+  // et on force la saisie manuelle de la compagnie et du n° de vol.
+  warnDossierUnavailable();
+}
+function warnDossierUnavailable() {
+  // déjà rempli (cas rare où une autre source a peuplé les champs) → ne pas alerter
+  const cie = document.getElementById('cie'), fnum = document.getElementById('fnum');
+  if (cie && cie.value.trim() && fnum && fnum.value.trim()) return;
+  if (!document.getElementById('dossierWarnBar')) {
+    const bar = document.createElement('div');
+    bar.id = 'dossierWarnBar';
+    bar.setAttribute('role', 'alert');
+    bar.style.cssText =
+      'background:var(--red-bg);border:1px solid var(--red-border);color:var(--red);padding:12px 16px;margin:12px 24px 0;font-size:13px;border-radius:6px;font-weight:600';
+    bar.textContent = 'Nous n’avons pas pu charger automatiquement votre dossier. Vérifiez et complétez la compagnie et le n° de vol ci-dessous avant de signer.';
+    const page = document.querySelector('.page');
+    if (page) page.insertBefore(bar, page.firstChild);
+  }
+  // champs rendus clairement éditables (la classe .ro n'est que cosmétique)
+  [cie, fnum].forEach(el => { if (el) el.classList.remove('ro'); });
 }
 function applyDossier(d) {
   if (!d) return;
@@ -1400,6 +1423,7 @@ function showE(id,eId,show) {
 function validate() {
   let ok = true;
   [['fn','fnErr'],['ln','lnErr'],['wa-national','waErr'],['addr','addrErr'],
+   ['cie','cieErr'],['fnum','fnumErr'],
    ['fdate','fdErr'],['inc','incErr'],['sigCity','sigCityErr']
   ].forEach(([id,e])=>{
     const empty=!document.getElementById(id)?.value.trim();
