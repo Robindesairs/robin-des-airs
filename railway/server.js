@@ -966,7 +966,7 @@ const AI = (() => {
 // Archive durable d'une pièce envoyée au bot (passeport/CNI, carte d'embarquement, e-billet,
 // certificat, reçu de frais) → Netlify Blobs (store 'pieces', clé wa/<tel>/…). Best-effort :
 // télécharge l'image WATI puis la pousse vers /api/piece-store. N'impacte jamais le parcours.
-async function archivePiece(phone, kind, mediaUrl, cfg) {
+async function archivePiece(phone, kind, mediaUrl, cfg, passenger) {
   try {
     if (!phone || !mediaUrl) return;
     const r = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {}, signal: AbortSignal.timeout(20000) });
@@ -976,7 +976,7 @@ async function archivePiece(phone, kind, mediaUrl, cfg) {
     if (!buf.length || buf.length > 8000000) return;
     await fetch('https://robindesairs.eu/api/piece-store', {
       method: 'POST', signal: AbortSignal.timeout(15000), headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone, kind: kind || 'piece', mime, dataBase64: buf.toString('base64'), secret: (process.env.WATI_WEBHOOK_SECRET || '').trim() }),
+      body: JSON.stringify({ phone, kind: kind || 'piece', passenger: passenger || '', mime, dataBase64: buf.toString('base64'), secret: (process.env.WATI_WEBHOOK_SECRET || '').trim() }),
     });
   } catch (e) { console.error('archivePiece', e.message); }
 }
@@ -1012,7 +1012,12 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // Clé par téléphone (la réf n'existe pas encore en collecte) ; la récupération résout réf→tel.
   if (mediaUrl) {
     const KIND = { doc_pass: 'identite', doc_pass_confirm: 'identite', doc_boarding: 'carte-embarquement', doc_eticket: 'ebillet', doc_cert: 'certificat', done: 'justificatif', frais: 'frais' };
-    archivePiece(phone, KIND[s.step] || 'document', mediaUrl, cfg).catch(() => {});
+    const _kind = KIND[s.step] || 'document';
+    // Pièce d'identité : on étiquette avec le passager en cours de collecte (le 1ᵉʳ sans pièce)
+    // → la pièce apparaît « 🪪 Pièce d'identité — NOM » dans le CRM. Best-effort, jamais bloquant.
+    let _pax = '';
+    if (_kind === 'identite') { try { const idx = missingIdIndices(s)[0]; _pax = paxName(s, idx == null ? 0 : idx); } catch (_) {} }
+    archivePiece(phone, _kind, mediaUrl, cfg, _pax).catch(() => {});
   }
 
   // T1.2 — Demande de rappel humain : à tout moment (hors étapes documents qui ont leur propre "appel"),

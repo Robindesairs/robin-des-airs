@@ -586,6 +586,7 @@
   .crm-doc-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
   .crm-doc-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 12px 14px; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); }
   .crm-doc-name { font-weight: 600; font-size: 13px; color: var(--navy); word-break: break-word; }
+  .crm-doc-who { font-weight: 700; color: #3730A3; }
   .crm-doc-meta { font-size: 11px; color: var(--text2); margin-top: 4px; }
   .crm-doc-actions { display: flex; flex-wrap: wrap; gap: 6px; flex-shrink: 0; }
   .crm-piece-add { background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: var(--radius-sm); padding: 14px; margin-top: 8px; }
@@ -2707,13 +2708,25 @@ function openDetail(id){
 
 /** Pièces stockées côté serveur (dépôt web + WhatsApp) — passeport, carte d'embarquement, e-billet.
  *  Via /api/crm-pieces : authentifié par l'accès CRM, URLs de fichiers signées à durée limitée. */
+var PIECE_CAT_LABEL = {
+  IDENTITE: '🪪 Pièce d’identité',
+  EMBARQUEMENT: '🎫 Carte d’embarquement',
+  EBILLET: '✈️ E-billet / réservation',
+  CERTIFICAT: '📄 Certificat / attestation',
+  FRAIS: '💶 Justificatif de frais',
+  AUTRE: '📎 Pièce jointe'
+};
 function serverPieceLabel(p){
-  var lbl = String(p.label || '').toLowerCase();
-  if(/passe?port|cni|identit|ident/.test(lbl)) return '🪪 Pièce d’identité';
-  if(/embarq|boarding|carte/.test(lbl)) return '🎫 Carte d’embarquement';
-  if(/billet|ticket|e-?ticket|reservation|réservation/.test(lbl)) return '✈️ E-billet / réservation';
-  if(/certif|retard|attest/.test(lbl)) return '📄 Certificat / attestation';
-  return '📎 ' + (p.label || 'Pièce');
+  // Catégorie = celle calculée par le serveur d'après les métadonnées (fiable).
+  // Repli (ancien blob sans catégorie) : on tente kind puis le nom de fichier.
+  if(p && p.category && PIECE_CAT_LABEL[p.category]) return PIECE_CAT_LABEL[p.category];
+  var s = String((p&&p.kind)||'').toLowerCase() + ' ' + String((p&&p.filename)||'').toLowerCase();
+  if(/passe?port|cni|identit|ident|sejour/.test(s)) return PIECE_CAT_LABEL.IDENTITE;
+  if(/embarq|boarding|carte/.test(s)) return PIECE_CAT_LABEL.EMBARQUEMENT;
+  if(/billet|ticket|e-?ticket|reservation|réservation|voyage/.test(s)) return PIECE_CAT_LABEL.EBILLET;
+  if(/certif|retard|attest/.test(s)) return PIECE_CAT_LABEL.CERTIFICAT;
+  if(/frais|re[çc]u|recu/.test(s)) return PIECE_CAT_LABEL.FRAIS;
+  return PIECE_CAT_LABEL.AUTRE;
 }
 function loadServerPieces(ref){
   var wrap = document.getElementById('crm-server-pieces-wrap');
@@ -2726,8 +2739,10 @@ function loadServerPieces(ref){
       wrap.innerHTML = '<div class="crm-doc-list">' + list.map(function(p){
         var src = p.source === 'bot' ? 'WhatsApp' : 'Dépôt web';
         var when = p.ts ? new Date(p.ts).toLocaleDateString('fr-FR') : '';
-        return '<div class="crm-doc-row"><div><div class="crm-doc-name">' + serverPieceLabel(p) + '</div>'
-          + '<div class="crm-doc-meta">' + src + (when?(' · '+when):'') + '</div></div>'
+        var who = p.passenger ? ' <span class="crm-doc-who">— ' + escHtml(p.passenger) + '</span>' : '';
+        var fn = p.filename ? (' · ' + escHtml(p.filename)) : '';
+        return '<div class="crm-doc-row"><div><div class="crm-doc-name">' + serverPieceLabel(p) + who + '</div>'
+          + '<div class="crm-doc-meta">' + src + (when?(' · '+when):'') + fn + '</div></div>'
           + '<div class="crm-doc-actions"><a class="btn btn-sm btn-primary" href="' + p.url + '" target="_blank" rel="noopener">Ouvrir</a></div></div>';
       }).join('') + '</div>';
     })

@@ -89,31 +89,58 @@ exports.handler = async (event) => {
     const ref = String(q.r || q.ref || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 64);
     if (!ref) return J(400, { error: 'r (référence) requis' });
 
-    const describe = (key, source) => {
-      const name = key.split('/').pop() || key;
-      const m = name.match(/^(\d{10,})_(.+?)(?:\.[a-z0-9]+)?$/i);
+    // Dossier : résout le n° de tel (pièces WhatsApp) ET, si un seul passager, fournit son
+    // nom pour étiqueter les pièces d'identité d'anciens dépôts (où le nom n'était pas stocké).
+    let phoneKey = '', dossier = null;
+    try {
+      const mandats = getBlobStore(event, 'mandats');
+      dossier = mandats && (await mandats.get('m/' + ref, { type: 'json' }));
+      if (dossier && dossier.phone) phoneKey = String(dossier.phone).replace(/\D/g, '');
+    } catch (_) {}
+    const soloName = (() => {
+      if (!dossier) return '';
+      const nbPax = (dossier.passengers && dossier.passengers.length) || dossier.pax || 0;
+      if (nbPax > 1) return ''; // ambigu : on n'invente pas l'attribution
+      return (dossier.passengers && dossier.passengers[0] && dossier.passengers[0].name) || dossier.name || '';
+    })();
+
+    // Catégorie LISIBLE déduite du « kind » des métadonnées (source de vérité), repli sur le nom de fichier.
+    const categoryOf = (kind, filename) => {
+      const s = `${kind || ''} ${filename || ''}`.toLowerCase();
+      if (/passe?port|cni|identit|ident|sejour|s[ée]jour/.test(s)) return 'IDENTITE';
+      if (/embarq|boarding|carte/.test(s)) return 'EMBARQUEMENT';
+      if (/billet|ticket|booking|reservation|réservation|voyage|ebillet/.test(s)) return 'EBILLET';
+      if (/certif|retard|attest/.test(s)) return 'CERTIFICAT';
+      if (/frais|re[çc]u|recu/.test(s)) return 'FRAIS';
+      return 'AUTRE';
+    };
+
+    // Lit les métadonnées du blob (kind/passenger/filename/ts) — fiable, plutôt que de deviner via le nom de fichier.
+    const describe = async (key, source) => {
+      const fname = key.split('/').pop() || key;
+      const m = fname.match(/^(\d{10,})_(.+?)(?:\.[a-z0-9]+)?$/i);
+      let md = {};
+      try { const meta = await pieces.getMetadata(key); md = (meta && (meta.metadata || meta)) || {}; } catch (_) {}
+      const kind = String(md.kind || '').toLowerCase();
+      const filename = md.filename || (m ? m[2] : fname);
+      const category = categoryOf(kind, filename);
+      let passenger = md.passenger || md.name || '';
+      if (!passenger && category === 'IDENTITE') passenger = soloName; // mono-passager : sans ambiguïté
       return {
-        key,
-        source,
-        label: m ? m[2] : name,
-        ts: m ? new Date(Number(m[1])).toISOString() : '',
+        key, source, kind, category,
+        passenger: passenger || '',
+        filename,
+        ts: md.ts || (m ? new Date(Number(m[1])).toISOString() : ''),
         url: `/api/crm-pieces?k=${encodeURIComponent(key)}&t=${encodeURIComponent(makeToken(key))}`,
       };
     };
 
     const items = [];
     const web = await pieces.list({ prefix: 'p/' + ref + '/' });
-    for (const it of (web.blobs || [])) items.push(describe(it.key, 'web'));
-
-    let phoneKey = '';
-    try {
-      const mandats = getBlobStore(event, 'mandats');
-      const d = mandats && (await mandats.get('m/' + ref, { type: 'json' }));
-      if (d && d.phone) phoneKey = String(d.phone).replace(/\D/g, '');
-    } catch (_) {}
+    for (const it of (web.blobs || [])) items.push(await describe(it.key, 'web'));
     if (phoneKey) {
       const bot = await pieces.list({ prefix: 'wa/' + phoneKey + '/' });
-      for (const it of (bot.blobs || [])) items.push(describe(it.key, 'bot'));
+      for (const it of (bot.blobs || [])) items.push(await describe(it.key, 'bot'));
     }
 
     items.sort((a, b) => String(a.ts).localeCompare(String(b.ts)));

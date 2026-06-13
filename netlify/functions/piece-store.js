@@ -25,6 +25,7 @@ exports.handler = async (event) => {
   const mime = String(b.mime || '').toLowerCase();
   const data = String(b.dataBase64 || '');
   const kind = (String(b.kind || 'piece').replace(/[^a-z0-9-]/gi, '') || 'piece').slice(0, 32);
+  const passenger = String(b.passenger || b.name || '').replace(/\s+/g, ' ').trim().slice(0, 80);
   if (!phoneKey || !data) return { statusCode: 400, headers: H, body: JSON.stringify({ error: 'phone + fichier requis' }) };
   if (!/^image\/|^application\/pdf/.test(mime)) return { statusCode: 415, headers: H, body: JSON.stringify({ error: 'type non supporté' }) };
   if (data.length > 11000000) return { statusCode: 413, headers: H, body: JSON.stringify({ error: 'trop volumineux' }) };
@@ -36,7 +37,7 @@ exports.handler = async (event) => {
     if (!pieces) return { statusCode: 500, headers: H, body: JSON.stringify({ error: 'store indisponible' }) };
     const ext = mime === 'application/pdf' ? 'pdf' : (mime.split('/')[1] || 'jpg').replace(/[^a-z0-9]/gi, '').slice(0, 5);
     const key = `wa/${phoneKey}/${Date.now()}_${kind}.${ext}`;
-    await pieces.set(key, buf, { metadata: { phone: phoneKey, kind, mime, ts: new Date().toISOString(), source: 'wati-bot' } });
+    await pieces.set(key, buf, { metadata: { phone: phoneKey, kind, passenger, mime, ts: new Date().toISOString(), source: 'wati-bot' } });
     // Attache la pièce à la fiche CRM dès maintenant (si le dossier existe déjà = dépôt APRÈS signature).
     // Avant signature : aucune fiche → no-op, submit-mandat l'attachera à la signature. Best-effort.
     if (attachPieceToDossier) { try { await attachPieceToDossier({ buf, mime, kind, phone: phoneKey }); } catch (_) {} }

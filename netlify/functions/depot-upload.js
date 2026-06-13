@@ -46,7 +46,8 @@ exports.handler = async (event) => {
     const safe = String(b.filename || 'piece').replace(/[^A-Za-z0-9._-]/g, '_').slice(0, 80);
     const key = 'p/' + ref + '/' + Date.now() + '_' + safe;
     const kind = inferKind(b.kind, b.filename);
-    await pieces.set(key, buf, { metadata: { ref, filename: safe, mime, kind, ts: new Date().toISOString() } });
+    const passenger = String(b.passenger || b.name || '').replace(/\s+/g, ' ').trim().slice(0, 80);
+    await pieces.set(key, buf, { metadata: { ref, filename: safe, mime, kind, passenger, ts: new Date().toISOString() } });
 
     // Attache la pièce à la/les fiche·s CRM du dossier dès maintenant (réf connue). Best-effort —
     // si la fiche n'existe pas encore (avant signature), no-op : submit-mandat l'attachera à la signature.
