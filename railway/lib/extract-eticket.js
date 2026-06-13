@@ -17,7 +17,7 @@ const PROMPT = `Tu lis un E-BILLET / une CONFIRMATION DE RÉSERVATION d'avion (s
 Extrais TOUTES les informations nécessaires à un mandat de réclamation. Réponds UNIQUEMENT en JSON, ce schéma exact :
 {"lisible":true,"confidence":1.0,"multi_pnr":false,"compagnie":"","pnr":"","numero_billet":"","aller_retour":false,
  "trajets":[{"sens":"aller","date":"","depart":"","arrivee":"","segments":[{"vol":"","depart":"","arrivee":"","date":""}]}],
- "passagers":[{"nom":"","prenom":"","date_naissance":""}]}
+ "passagers":[{"nom":"","prenom":"","date_naissance":"","type":""}]}
 Règles STRICTES :
 - lisible / confidence : si le document est trop FLOU, SOMBRE, COUPÉ, incliné ou compressé pour lire les champs clés (n° de vol, PNR, noms) avec CERTITUDE → lisible=false, confidence basse (≤0.4) et laisse VIDES les champs incertains. NE DEVINE JAMAIS un n° de vol "probable" pour remplir : mieux vaut vide que faux.
 - compagnie : nom complet de la compagnie (déduis du code IATA du vol, ex. AF → Air France).
@@ -31,6 +31,7 @@ Règles STRICTES :
 - segments : dans l'ordre, chacun avec vol (MAJUSCULES sans espace, ex. AF718), depart/arrivee (IATA 3 lettres), date du segment.
 - date : "JJ/MM/AAAA" si l'année est imprimée, sinon "JJ/MM". NE JAMAIS deviner ni inventer l'année.
 - passagers : TOUS les passagers nommés. nom = nom de famille en MAJUSCULES ; prenom = prénom(s) (souvent "NOM / Prénom"). date_naissance SEULEMENT si imprimée (JJ/MM/AAAA), sinon "".
+- type : le TYPE de passager s'il est indiqué (colonne "Type", ou mention à côté du nom) → renvoie "adulte", "enfant" ou "bebe". Indices : Adulte/Adult/ADT → "adulte" ; Enfant/Child/CHD/CNN → "enfant" ; Bébé/Bebe/Infant/INF/Nourrisson → "bebe". Si rien d'indiqué, "".
 - Plusieurs images/pages d'un MÊME billet : FUSIONNE en UN seul résultat ; ne liste chaque passager qu'UNE fois (pas de doublon entre pages).
 - Champ inconnu = "". Ne JAMAIS inventer.`;
 
@@ -115,8 +116,11 @@ function normalize(raw) {
   for (const p of (Array.isArray(raw.passagers) ? raw.passagers : [])) {
     const name = paxName(p); if (!name) continue;
     const dob = dateNorm(p.date_naissance); const k = name.toUpperCase();
-    if (byName.has(k)) { const ex = byName.get(k); if (!ex.dob && dob) ex.dob = dob; }
-    else byName.set(k, { name, dob });
+    // Type "Enfant/Bébé/Child/Infant" sur le billet → mineur certain, MÊME sans date de naissance imprimée
+    // (cas fréquent des familles : l'enfant est sur la réservation, étiqueté, sans DDN).
+    const minorByType = /enfant|b[ée]b[ée]|bebe|child|infant|nourrisson|\bchd\b|\bcnn\b|\binf\b/i.test(String(p.type || ''));
+    if (byName.has(k)) { const ex = byName.get(k); if (!ex.dob && dob) ex.dob = dob; if (minorByType) ex.minor = true; }
+    else { const o = { name, dob }; if (minorByType) o.minor = true; byName.set(k, o); }
   }
   const passengers = [...byName.values()];
   // Champs racine = trajet principal (aller, par défaut) → compat avec le tunnel existant ; + trajets[] pour aller/retour.

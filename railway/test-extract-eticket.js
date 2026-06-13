@@ -153,6 +153,20 @@ check('défaut permissif : lisible=true', q2.lisible, true);
 check('défaut permissif : confidence=1', q2.confidence, 1);
 check('défaut : multiPNR=false', q2.multiPNR, false);
 
+// Mineur détecté par le TYPE « Enfant/Bébé » même SANS date de naissance (billet Brussels DIALLO).
+console.log('\nMineur par type (Enfant/Bébé, sans date de naissance) :');
+const fam = normalize({ pnr: 'RBN3PX', compagnie: 'Brussels Airlines',
+  trajets: [{ sens: 'aller', date: '15/03/2024', depart: 'DSS', arrivee: 'BRU', segments: [{ vol: 'SN204', depart: 'DSS', arrivee: 'BRU', date: '15/03/2024' }] }],
+  passagers: [
+    { nom: 'DIALLO', prenom: 'Aminata', date_naissance: '', type: 'Adulte' },
+    { nom: 'DIALLO', prenom: 'Ousmane', date_naissance: '', type: 'Adulte' },
+    { nom: 'DIALLO', prenom: 'Fatou', date_naissance: '', type: 'Enfant' },
+  ] });
+check('enfant (sans DDN) → minor:true', !!(fam.passengers.find(p => /FATOU/.test(p.name)) || {}).minor, true);
+check('adultes non marqués mineurs', fam.passengers.filter(p => p.minor).length, 1);
+const inf = normalize({ pnr: 'X', segments: [{ vol: 'AF1', depart: 'CDG', arrivee: 'DSS' }], passagers: [{ nom: 'X', prenom: 'Y', type: 'INF' }] });
+check('type "INF" (nourrisson) → minor:true', !!inf.passengers[0].minor, true);
+
 console.log(`\n${fails === 0 ? '✅ OFFLINE : tous les champs OK' : `❌ OFFLINE : ${fails} échec(s)`}\n`);
 
 // ── PDF→image (repli gpt-4o sans clé Claude) : conversion RÉELLE via mupdf, SANS réseau ni clé ──

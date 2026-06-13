@@ -651,7 +651,10 @@ function setEticketFields(s, e) {
     s.names = s.names || []; s.passengers = s.passengers || [];
     e.passengers.forEach((p, i) => {
       s.names[i] = p.name.toUpperCase();
-      const cur = s.passengers[i] || {}; cur.name = p.name; if (!cur.dob && p.dob) cur.dob = p.dob; s.passengers[i] = cur;
+      const cur = s.passengers[i] || {}; cur.name = p.name; if (!cur.dob && p.dob) cur.dob = p.dob;
+      // Mineur si le billet l'étiquette « Enfant/Bébé » (p.minor, sans DDN) OU si la DDN lue le confirme.
+      if (p.minor || (cur.dob && isMinorAt(cur.dob, s.date))) cur.minor = true;
+      s.passengers[i] = cur;
     });
     // Billet de GROUPE : si le billet liste PLUS de passagers que déclaré, on remonte le compte (jamais en silence → sinon des passagers tombent du mandat).
     if (e.passengers.length > (s.pax || 0)) s.pax = e.passengers.length;
@@ -2060,7 +2063,7 @@ async function finaliser(phone, s, cfg) {
     // (mandat invalide). On le signale explicitement à l'équipe pour vérification.
     const _dobUnknown = (s.passengers || []).slice(0, s.pax || 1)
       .map((p, i) => ({ label: (p && p.name) ? p.name : `passager ${i + 1}`, p }))
-      .filter(({ p }) => !(p && p.dob))
+      .filter(({ p }) => !(p && (p.dob || p.minor))) // déjà connu mineur (type billet) → pas « non vérifié »
       .map(({ label }) => label);
     if (_dobUnknown.length) {
       notifyOwnerWhatsApp(phone, `👶 Dossier ${s.ref} (${nom}) — MINORITÉ NON VÉRIFIÉE pour : ${_dobUnknown.join(', ')} (date de naissance inconnue, pièce non lue). Si l'un est MINEUR, exiger la signature du représentant légal — sinon le mandat est invalide pour ce passager.`).catch(() => {});
