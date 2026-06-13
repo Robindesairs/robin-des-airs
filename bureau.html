@@ -436,6 +436,7 @@ body.game-mode #gameView { display:block; }
       </span>
     </a>
     <div class="topbar-right">
+      <button class="sound-btn" id="crmLoginBtn" title="Se connecter au CRM pour afficher les dossiers réels" onclick="crmLogin()">🔓 Connexion CRM</button>
       <button class="sound-btn" id="printBtn" title="Imprimer le tableau de bord (PDF / papier)">🖨️ Imprimer</button>
       <button class="sound-btn" id="soundBtn" title="Activer le son des dossiers gagnés">🔇 Son</button>
       <span class="live-clock mono" id="clock">--:--:--</span>
@@ -1272,11 +1273,29 @@ function renderRappels(leads){
     `</div>`;
   }).join('');
 }
+/* ============ CONNEXION CRM (cookie rda_crm partagé avec /crm/) ============ */
+function updateCrmBtn(connected){
+  const b=document.getElementById('crmLoginBtn'); if(!b) return;
+  b.textContent = connected ? '✅ CRM connecté' : '🔓 Connexion CRM';
+  b.title = connected ? 'Session CRM active (7 j)' : 'Se connecter au CRM pour afficher les dossiers réels';
+  b.style.opacity = connected ? '.7' : '1';
+}
+async function crmLogin(){
+  const code = prompt('Code d’accès CRM :');
+  if(!code || !code.trim()) return;
+  try{
+    const r = await fetch('/api/crm-auth', { method:'POST', credentials:'same-origin', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: code.trim() }) });
+    const j = await r.json().catch(()=>({}));
+    if(r.ok && j && j.ok){ updateCrmBtn(true); location.reload(); }
+    else { alert('Code CRM incorrect ou refusé.'); }
+  }catch(e){ alert('Connexion impossible : '+(e&&e.message||e)); }
+}
 async function loadRappels(){
   const d = await jget('/api/leads-a-rappeler');
   const src=document.getElementById('rappelSrc');
   if(d && d.ok){
     REAL.sources.rappels = true;
+    updateCrmBtn(true); // les données CRM répondent → session active
     renderRappels(d.leads||[]);
     if(src){ src.className='mini-src real'; src.textContent=(d.total||0)+' à rappeler'; }
   } else if(src){ src.className='mini-src demo'; src.textContent='CRM requis'; }
