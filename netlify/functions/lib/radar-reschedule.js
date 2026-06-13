@@ -50,6 +50,14 @@ function depTimeMs(row) {
   return Number.isNaN(ms) ? Infinity : ms;
 }
 
+// Parse une heure programmée → ms, en tolérant le format AeroDataBox "2026-06-12 21:40+00:00"
+// (espace au lieu de "T", que Date.parse peut rejeter). Renvoie null si illisible.
+function parseSchedMs(s) {
+  if (!s) return null;
+  const ms = Date.parse(String(s).replace(' ', 'T'));
+  return Number.isNaN(ms) ? null : ms;
+}
+
 /**
  * Trouve la prochaine occurrence planifiée du même numéro de vol sur la même route.
  * @param {object} flight  { flight|vol, dep, arr, scheduledDate|date, scheduledDeparture }
@@ -64,7 +72,7 @@ async function findNextScheduledFlight(flight) {
   const dep = String(flight.dep || '').toUpperCase();
   const arr = String(flight.arr || '').toUpperCase();
   const baseDate = String(flight.scheduledDate || flight.date || parisYmd()).slice(0, 10);
-  const cancelledDepMs = flight.scheduledDeparture ? Date.parse(flight.scheduledDeparture) : null;
+  const cancelledDepMs = parseSchedMs(flight.scheduledDeparture);
 
   const days = [baseDate, addDaysYmd(baseDate, 1), addDaysYmd(baseDate, 2)].filter(Boolean);
 
@@ -86,11 +94,18 @@ async function findNextScheduledFlight(flight) {
 
     for (const r of matches) {
       const sched = (r.departure && r.departure.scheduled) || null;
-      const schedMs = sched ? Date.parse(String(sched).replace(' ', 'T')) : null;
-      // Le même jour, ignorer l'occurrence annulée elle-même (≤ heure prévue + 5 min).
-      if (i === 0 && cancelledDepMs && schedMs && schedMs <= cancelledDepMs + 5 * 60000) continue;
+      const schedMs = parseSchedMs(sched);
       // Ignorer une occurrence elle-même annulée si l'API le dit.
       if (/cancel|annul/i.test(String(r.status || ''))) continue;
+      // MÊME JOUR (i === 0) : un report n'a de sens que sur une occurrence STRICTEMENT
+      // postérieure au vol annulé (≥ 30 min après). Si on ne connaît pas de façon fiable
+      // l'heure du vol annulé OU celle du candidat, on ne tente PAS un report « même jour » :
+      // ce serait l'instance annulée elle-même (bug « reporté même jour, même heure »).
+      // On laisse alors la boucle passer à demain / après-demain.
+      if (i === 0) {
+        if (cancelledDepMs == null || schedMs == null) continue;
+        if (schedMs <= cancelledDepMs + 30 * 60000) continue;
+      }
       return {
         flight: num,
         dep: (r.departure && r.departure.iataCode || dep).toUpperCase(),
