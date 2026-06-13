@@ -82,6 +82,13 @@
 [functions."bureau-daily"]
   schedule = "35 7 * * *"
 
+# Sofia — prospection d'agences partenaires (OpenStreetMap) chaque lundi 7h40 UTC.
+# Démarre par Dakar (SN), Abidjan (CI), Banjul (GM) : trouve de vraies agences de voyage,
+# filtre les compagnies aériennes, dédoublonne contre le CRM → liste « à contacter » +
+# brief WhatsApp. Import CRM opt-in seulement (?save=1). Lecture seule live pour le bureau.
+[functions."sofia-prospect"]
+  schedule = "40 7 * * 1"
+
 [build]
   publish = "."
   # S'assurer que les deps (dont @netlify/blobs) sont présentes avant le bundle des fonctions

@@ -1053,6 +1053,19 @@ function deskBriefHtml(i){
   const rows = (B.actions||[]).map(a=>`<div class="pm-flight"><span class="fl">${URG_ICON[a.urgence]||'⚪'}</span><span class="rt">${a.txt}</span></div>`).join('');
   return `<h4>${B.titre} — point du jour</h4>${rows}`;
 }
+// Sofia — agences à prospecter (OpenStreetMap), données réelles /api/sofia-prospect
+function sofiaProspectsHtml(){
+  const S0 = REAL.sofia;
+  if(!(S0 && Array.isArray(S0.prospects))) return '';
+  if(!S0.prospects.length) return `<h4>Prospection agences (Afrique)</h4><div class="pm-empty" style="font-style:normal">Aucune nouvelle agence pour l'instant — relancé chaque lundi (Dakar · Abidjan · Banjul).</div>`;
+  const cibles=(S0.cibles||[]).map(c=>`${c.paysNom||c.pays} — ${c.ville} : ${c.nouveau||0}`).join(' · ');
+  const rows=S0.prospects.slice(0,12).map(p=>{
+    const contact=[p.phone?('📞 '+p.phone):'', p.website?'🌐 site':'', p.email?('✉️ '+p.email):''].filter(Boolean).join(' · ');
+    return `<div class="pm-flight"><span class="fl">${p.contactable?'🟢':'⚪'} ${p.name}</span><span class="rt">${p.paysNom||p.pays} · ${p.ville}</span>${contact?`<div class="pm-fsub">${contact}</div>`:''}${p.address?`<div class="pm-fsub">${p.address}</div>`:''}</div>`;
+  }).join('');
+  const more=S0.prospects.length>12?`<div class="pm-empty" style="font-style:normal">… +${S0.prospects.length-12} autre(s)</div>`:'';
+  return `<h4>Prospection agences — ${fmt(S0.totalNouveau||S0.prospects.length)} à contacter (${S0.contactables||0} avec coordonnées)</h4><div class="pm-empty" style="font-style:normal">${cibles}</div>${rows}${more}`;
+}
 function posteLegal(taux){
   const L=REAL.legal;
   const head=`<h4>Dossiers juridiques (réel)</h4>${pmStat('Dossiers gagnés',fmt(S.gagnes))}${pmStat('Dossiers engagés',fmt(Math.max(S.total-S.gagnes,0)))}${pmStat('Taux de réussite',taux+'%')}`;
@@ -1085,7 +1098,7 @@ function posteContent(i){
     case 1: return `<h4>Vols détectés — radar CE261 (réel)</h4>`+(flights.length?flights.map(pmFlight).join(''):`<div class="pm-empty">En attente de vols réels (le scan tourne ~12×/jour).</div>`)+`<h4>Objectif</h4>${pmStat('Vols éligibles','2,7 / jour (≈ 81 / mois)')}`;
     case 2: return `<h4>Bot WhatsApp (réel)</h4>${pmStat('Statut',(REAL.whatsapp&&REAL.whatsapp.whatsapp==='ok')?'🟢 en ligne':'—')}${pmStat('Leads WhatsApp (CRM)',fmt(S.waLeads))}<div class="pm-empty" style="font-style:normal">Conversations réelles dans le panneau WhatsApp (numéros masqués).</div>`;
     case 3: return posteLegal(taux);
-    case 4: return deskBriefHtml(4)+`<h4>Agences partenaires (réel)</h4>${pmStat('Agences actives',S.agences)}${pmStat('Prospects à contacter',S.agencesNew)}${pmStat('Objectif','55 actives')}`;
+    case 4: return deskBriefHtml(4)+sofiaProspectsHtml()+`<h4>Agences partenaires (réel)</h4>${pmStat('Agences actives',S.agences)}${pmStat('Prospects à contacter',S.agencesNew)}${pmStat('Objectif','55 actives')}`;
     case 5: return deskBriefHtml(5)+`<h4>Finances (réel)</h4>${pmStat('€ en récupération',fmt(S.eur)+' €')}${pmStat('Dossiers payés',fmt(S.gagnes))}${pmStat('Coûts mensuels',fmt(RENTA.total)+' €')}`;
     case 6: return deskBriefHtml(6)+`<h4>Suivi dossiers (réel)</h4>${pmStat('Dossiers suivis',fmt(S.dossiers))}${pmStat('Gagnés',fmt(S.gagnes))}`;
     case 7: { const scope='<h4>Périmètre — il fait tout</h4><div class="pm-empty" style="font-style:normal">Achat média Meta de bout en bout : ciblage aéroports diaspora, budgets &amp; enchères, créas + A/B, optimisation CPA, lancements (Dakar, Abidjan, Banjul…).</div>'; if(REAL.meta){const d=REAL.meta;return `<h4>Pub Meta — 7 jours (réel)</h4>${pmStat('Dépense',fmt(d.spend)+' €')}${pmStat('Impressions',fmt(d.impressions))}${pmStat('Reach',fmt(d.reach))}${pmStat('Clics',fmt(d.clicks))}${pmStat('Conversations WhatsApp',fmt(d.waConvos))}${pmStat('CPM',d.cpm+' €')}`+scope;} return `<div class="pm-empty">Stats Meta indisponibles (token à renouveler).</div>`+scope; }
@@ -1375,6 +1388,17 @@ async function loadDeskBriefs(){
     }
   }
   setSrcBadge();
+}
+// Sofia — agences africaines à prospecter (OpenStreetMap, CRM-gated, snapshot hebdo)
+async function loadSofiaProspects(){
+  const d = await jget('/api/sofia-prospect');
+  if(d && d.ok && Array.isArray(d.prospects)){
+    REAL.sofia=d; REAL.sources.sofia=true;
+    const modal=document.getElementById('posteModal');
+    if(modal && modal.classList.contains('open') && document.getElementById('pmTitle').textContent===AGENTS[4].name){
+      document.getElementById('pmBody').innerHTML=posteContent(4);
+    }
+  }
 }
 
 /* ============ KPI TICKERS ============ */
@@ -1761,6 +1785,7 @@ async function loadProtected(){
   await loadRappels();           // dossiers « à rappeler » (fenêtre 24h fermée / rappel demandé)
   await loadLegal();             // Cabinet Me Lefèvre — file d'actions juridiques du jour
   await loadDeskBriefs();        // Bureau — point du jour des autres postes (DG/partenaires/trésorerie/suivi/rentabilité)
+  await loadSofiaProspects();    // Sofia — agences africaines à prospecter (Dakar/Abidjan/Banjul)
   setSrcBadge();
 }
 async function loadRealData(){
