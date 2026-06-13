@@ -69,6 +69,13 @@
 [functions."instagram-publisher"]
   schedule = "0 7 * * *"
 
+# Cabinet Me Lefèvre — point juridique quotidien à 7h30 UTC (9h30 Paris été).
+# Scanne les dossiers engagés, calcule la file d'actions (MED < 5 j, relance, escalade
+# NEB, contentieux, prescription) et pousse un brief WhatsApp si du rouge/orange.
+# Lecture seule, human-in-the-loop : aucun envoi compagnie, aucun changement de statut.
+[functions."legal-daily"]
+  schedule = "30 7 * * *"
+
 [build]
   publish = "."
   # S'assurer que les deps (dont @netlify/blobs) sont présentes avant le bundle des fonctions
