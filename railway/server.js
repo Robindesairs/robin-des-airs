@@ -1117,14 +1117,14 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (n === '2' || lower.includes('plus de 14')) { await clearState(phone); return send(phone, `${pickVariant(phone, 'STOP_ANNUL_14J')}\n\n${STOP_FOOTER}`, cfg); }
     if (n === '3' || lower.includes('sais') || lower.includes('souviens') || lower.includes('aucune idée')) { s.annul_preavis = 'inconnu'; s.escalade = s.escalade || 'preavis_inconnu'; await send(phone, pickVariant(phone, 'ANNUL_PREAVIS_INCONNU'), cfg); return continueAnnul(phone, s, cfg); }
     if (n === '1' || lower.includes('ou moins') || lower.includes('moins de 14') || lower.includes('14')) { s.annul_preavis = '<=14j'; await send(phone, pickVariant(phone, 'REACTION_ANNULATION'), cfg); return continueAnnul(phone, s, cfg); }
-    return; // silence : on attend un tap valide
+    await send(phone, `🙂 Je n'ai pas bien compris. Touchez un des boutons ci-dessous 👇`, cfg); return sendAnnulDelai(phone, s, cfg);
   }
   if (s.step === 'duree') {
     const n = normInput(input, ['plus de 3', 'moins de 3', 'sais']);
     if (n === '1' || lower.includes('plus de 3')) { s.incident = 'retard'; s.incident_libelle = 'Retard +3h'; s.duree_retard = '+3h'; return estimationPuisPax(phone, s, cfg); }
     if (n === '2' || lower.includes('moins de 3')) { await clearState(phone); return send(phone, `${pickVariant(phone, 'STOP_MOINS_3H')}\n\n${STOP_FOOTER}`, cfg); }
     if (n === '3' || lower.includes('sais') || lower.includes('souviens')) { s.incident = 'retard'; s.incident_libelle = 'Retard (à vérifier)'; s.duree_retard = 'inconnue'; s.escalade = s.escalade || 'duree_inconnue'; await send(phone, pickVariant(phone, 'DUREE_INCONNUE'), cfg); return estimationPuisPax(phone, s, cfg); }
-    return; // silence
+    return sendButtons(phone, { body: `🙂 Touchez un bouton : votre retard à l'arrivée était-il de plus de 3 heures ?`, buttons: [{ text: '✅ Plus de 3 heures' }, { text: '❌ Moins de 3h' }, { text: '🤔 Je ne sais plus' }] }, cfg);
   }
 
   // MSG5 — PASSAGERS
@@ -1132,7 +1132,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const n = parseInt(normInput(input, ['1 passager', '2 passager', '3 passager', '4 passager', '5 passager', '6 ou plus']));
     if (n >= 1 && n <= 5) { s.pax = n; s.names = []; if (s.fromTicker) { await setState(phone, s); return afterPaxFromTicker(phone, s, cfg); } s.step = 'type_vol'; await setState(phone, s); return sendButtons(phone, { body: `${bar('type_vol')}\n✈️ C'était un vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg); }
     if (n >= 6 || lower.includes('6 ou plus') || lower.includes('plus')) { s.step = 'nb_pax_exact'; await setState(phone, s); return send(phone, `${bar('nb_pax')}\n👥 *Combien de passagers en tout ?*\nIndiquez le nombre total (ex. 8). On gère votre groupe directement ici. 🤝`, cfg); }
-    return; // silence
+    await send(phone, `🙂 Je n'ai pas bien compris. Choisissez le nombre de passagers ci-dessous 👇`, cfg); return sendPax(phone, s, cfg);
   }
   if (s.step === 'nb_pax_exact') {
     const m = input.match(/\d{1,2}/); const n = m ? parseInt(m[0]) : 0;
@@ -1992,13 +1992,25 @@ async function finaliser(phone, s, cfg) {
   await send(phone, `${bar('done')}\n🎉 *Dossier complet !* Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n${montantLine(s)}${minorNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % au succès uniquement · 🔒 aucune info bancaire.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_\n\n👉 *Signez ici :*\n${s.mandat_url}\n\nSans votre signature, on ne peut pas agir en votre nom. ${STOP_FOOTER}`, cfg);
   try {
     const makeUrl = process.env.MAKE_WEBHOOK_NEW_DOSSIER;
-    if (makeUrl) {
-      // Champs « prêts à mapper » dans Airtable pour le filtre bureau « pièce manquante » (pas de logique côté Make).
-      const _d = docsStatus(s);
-      const _mq = []; if (_d.missingId.length) _mq.push(`pièce d'identité de ${_d.missingId.join(', ')}`); if (!_d.travelProofOk) _mq.push(`preuve de voyage (carte/e-billet)`);
-      await fetch(makeUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...s, phone, source: 'wati-bot-v8', pieces_manquantes: _mq.join(' · '), dossier_complet: _d.complete }) });
+    // Champs « prêts à mapper » dans Airtable pour le filtre bureau « pièce manquante » (pas de logique côté Make).
+    const _d = docsStatus(s);
+    const _mq = []; if (_d.missingId.length) _mq.push(`pièce d'identité de ${_d.missingId.join(', ')}`); if (!_d.travelProofOk) _mq.push(`preuve de voyage (carte/e-billet)`);
+    if (!makeUrl) {
+      // Env absente (cas connu en prod) : le dossier n'atteint JAMAIS Airtable. Ne plus échouer en silence → alerter.
+      console.error(`CRM: MAKE_WEBHOOK_NEW_DOSSIER absent → dossier ${s.ref} NON transmis à Airtable`);
+      notifyOwnerWhatsApp(phone, `⚠️ Dossier ${s.ref} (${nom}) complété mais le CRM (Make→Airtable) n'est pas configuré sur Railway → à saisir à la main. Réf. ${s.ref}.`).catch(() => {});
+    } else {
+      const r = await fetch(makeUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...s, phone, source: 'wati-bot-v8', pieces_manquantes: _mq.join(' · '), dossier_complet: _d.complete }), signal: AbortSignal.timeout(8000) });
+      if (!r.ok) {
+        console.error(`CRM: Make a répondu HTTP ${r.status} pour dossier ${s.ref}`);
+        notifyOwnerWhatsApp(phone, `⚠️ Dossier ${s.ref} (${nom}) : envoi CRM (Make) en échec (HTTP ${r.status}). À vérifier dans Airtable.`).catch(() => {});
+      }
     }
-  } catch (e) {}
+  } catch (e) {
+    // Réseau / timeout Make : ne plus avaler en silence.
+    console.error(`CRM: échec envoi Make pour dossier ${s.ref}: ${e.message}`);
+    try { notifyOwnerWhatsApp(phone, `⚠️ Dossier ${s.ref} (${nom}) : envoi CRM (Make) a échoué (${e.message}). À saisir manuellement dans Airtable.`).catch(() => {}); } catch (_) {}
+  }
   // Garde-fou anti-zombie : dossier finalisé avec pièce(s) manquante(s) → on alerte l'équipe EXPLICITEMENT.
   // (le client est relancé tant qu'il n'a pas signé ; après signature le lead est purgé du bot → c'est au bureau de chasser.)
   try {
@@ -2008,6 +2020,16 @@ async function finaliser(phone, s, cfg) {
       if (_st.missingId.length) _miss.push(`pièce d'identité de ${_st.missingId.join(', ')}`);
       if (!_st.travelProofOk) _miss.push(`preuve de voyage (carte d'embarquement / e-billet)`);
       notifyOwnerWhatsApp(phone, `⚠️ Dossier ${s.ref} (${nom}) — PIÈCE(S) MANQUANTE(S) : ${_miss.join(' · ')}.\nÀ récupérer (dépôt en ligne / appel expert) AVANT d'envoyer la mise en demeure — sinon réclamation invérifiable.`).catch(() => {});
+    }
+    // Statut MINEUR non vérifiable : si une pièce est envoyée plus tard / saisie sans date de naissance,
+    // on ne peut pas savoir si le passager est mineur → la signature du représentant légal pourrait manquer
+    // (mandat invalide). On le signale explicitement à l'équipe pour vérification.
+    const _dobUnknown = (s.passengers || []).slice(0, s.pax || 1)
+      .map((p, i) => ({ label: (p && p.name) ? p.name : `passager ${i + 1}`, p }))
+      .filter(({ p }) => !(p && p.dob))
+      .map(({ label }) => label);
+    if (_dobUnknown.length) {
+      notifyOwnerWhatsApp(phone, `👶 Dossier ${s.ref} (${nom}) — MINORITÉ NON VÉRIFIÉE pour : ${_dobUnknown.join(', ')} (date de naissance inconnue, pièce non lue). Si l'un est MINEUR, exiger la signature du représentant légal — sinon le mandat est invalide pour ce passager.`).catch(() => {});
     }
   } catch (_) {}
 }
@@ -2103,8 +2125,20 @@ function extractInbound(payload) {
 }
 // Comparaison de secret à temps constant (timing-safe) — même durcissement que côté Netlify (cafbcca).
 function safeEq(a, b) { const A = Buffer.from(String(a || '')), B = Buffer.from(String(b || '')); return A.length === B.length && A.length > 0 && crypto.timingSafeEqual(A, B); }
+let _warnedNoWatiSecret = false;
 function verifyWatiSecret(body, headers, query) {
-  const expected = (process.env.WATI_WEBHOOK_SECRET || '').trim(); if (!expected) return true;
+  const expected = (process.env.WATI_WEBHOOK_SECRET || '').trim();
+  if (!expected) {
+    // FAIL-CLOSED : sans secret configuré, on REFUSE (ne jamais accepter de webhook en clair —
+    // n'importe qui pourrait injecter de faux messages, créer de faux leads, déclencher des envois WATI).
+    // Ce secret commande aussi la persistance durable (Blobs) → son absence est une alerte critique.
+    if (!_warnedNoWatiSecret) {
+      _warnedNoWatiSecret = true;
+      console.error('🔴 SÉCURITÉ: WATI_WEBHOOK_SECRET absent → webhooks REFUSÉS (fail-closed). Configurez la variable d\'env Railway.');
+      try { notifyOwnerWhatsApp('', '🔴 Bot: WATI_WEBHOOK_SECRET absent → webhook fermé. Configure la variable d\'env Railway, sinon aucun message client n\'est traité.').catch(() => {}); } catch (_) {}
+    }
+    return false;
+  }
   const h = headers || {}, q = query || {};
   return safeEq(body && body.secret, expected) || safeEq(h['x-wati-secret'], expected) || safeEq(h['X-Wati-Secret'], expected) || safeEq(q.s, expected) || safeEq(q.secret, expected);
 }
@@ -2363,6 +2397,19 @@ async function runRelances() {
   } catch (e) { console.error('runRelances', e.message); }
 }
 setInterval(runRelances, 15 * 60 * 1000); // toutes les 15 min
+
+// Filet anti-crash : une promesse rejetée non capturée tuerait le process (Node ≥18) →
+// /tmp perdu, sessions en cours interrompues. On logge + alerte SANS tuer le process,
+// pour préserver l'état RAM (le bot reste vivant ; l'erreur devient visible).
+process.on('unhandledRejection', (reason) => {
+  const msg = (reason && reason.message) || String(reason);
+  console.error('🔴 unhandledRejection:', msg, (reason && reason.stack) || '');
+  try { notifyOwnerWhatsApp('', '🔴 Bot v8 — unhandledRejection : ' + msg).catch(() => {}); } catch (_) {}
+});
+process.on('uncaughtException', (err) => {
+  console.error('🔴 uncaughtException:', (err && err.message), (err && err.stack) || '');
+  try { notifyOwnerWhatsApp('', '🔴 Bot v8 — uncaughtException : ' + (err && err.message)).catch(() => {}); } catch (_) {}
+});
 
 const PORT = parseInt(process.env.PORT || '3000', 10);
 app.listen(PORT, () => { console.log('\ud83e\udd16 Robin des Airs Bot v8 — Railway — port ' + PORT); });
