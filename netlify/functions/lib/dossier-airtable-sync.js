@@ -40,6 +40,18 @@ function indemniteNumber(v) {
 }
 
 /**
+ * Code interne du bot (server.js : delay/cancel/denied) → libellé Airtable du champ
+ * « Type d'incident » (singleSelect). Évite que le code brut « delay » fuite dans le CRM.
+ * Repli sur `motif` (libellé FR déjà propre, posé par le bot), puis sur la valeur telle quelle.
+ */
+const INCIDENT_CODE_TO_AT = { delay: 'Retard +3h', cancel: 'Annulation', denied: 'Surbooking' };
+function incidentLabel(d) {
+  const code = String((d && d.incident) || '').toLowerCase();
+  if (INCIDENT_CODE_TO_AT[code]) return INCIDENT_CODE_TO_AT[code];
+  return (String((d && d.motif) || '').trim()) || (d && d.incident) || '';
+}
+
+/**
  * @param dossier shape bot : { ref, name, address, phone, vol, compagnie, pnr, date, indemnite, incident?, route? }
  * @returns {Promise<{ok:boolean, action?:string, skipped?:string, recordId?:string, error?:string}>}
  */
@@ -88,7 +100,7 @@ async function syncNewDossierToAirtable(dossier) {
       dateVol,
       compagnie,
       pnr,
-      incident: dossier.incident || '',
+      incident: incidentLabel(dossier),
       indemnite: indemniteNumber(dossier.indemnite),
       route,
       statutSuivi: cfg.statutSignatureAttente, // « Signature en attente » : mandat prêt, pas encore signé

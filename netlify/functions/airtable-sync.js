@@ -23,6 +23,16 @@ const JSON_HEADERS = {
   'Access-Control-Allow-Headers': 'Content-Type, X-Airtable-Secret',
 };
 
+// Code interne bot → libellé Airtable « Type d'incident » ; le libellé propre (motif) prime,
+// et on traduit un éventuel code brut (delay/cancel/denied) plutôt que de l'écrire tel quel.
+const INCIDENT_CODE_TO_AT = { delay: 'Retard +3h', cancel: 'Annulation', denied: 'Surbooking' };
+function incidentLabel(d) {
+  const clean = String((d && d.motif) || '').trim();
+  if (clean) return clean;
+  const code = String((d && d.incident) || '').toLowerCase();
+  return INCIDENT_CODE_TO_AT[code] || (d && d.incident) || '';
+}
+
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers: JSON_HEADERS, body: '' };
@@ -105,7 +115,7 @@ exports.handler = async (event) => {
     dateVol: dossier.dateVol || dossier.flightDate || dossier.date,
     compagnie: dossier.compagnie || dossier.airline,
     pnr: dossier.pnr,
-    incident: dossier.incident || dossier.motif,
+    incident: incidentLabel(dossier),
     indemnite: dossier.indemnite,
     route: dossier.route || dossier.itineraire,
     statutSuivi: dossier.statutSuivi || dossier.statut,
