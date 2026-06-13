@@ -85,6 +85,35 @@ body { font-family: 'DM Sans', sans-serif; background: var(--sky); color: var(--
 .pulse-sub { font-size: 0.72rem; color: var(--white-40); margin-top: 6px; }
 .pulse-sub b{color:var(--green)}
 
+/* ---- bande ACTION REQUISE (alertes prioritaires retards/annulations) ---- */
+.alert-band { border: 1px solid rgba(232,68,90,0.35); border-radius: 16px; background: linear-gradient(180deg, rgba(232,68,90,0.10), rgba(17,40,80,0.4)); margin-bottom: 1.6rem; overflow: hidden; }
+.alert-band-h { display:flex; align-items:center; gap:11px; padding: 0.85rem 1.2rem; border-bottom:1px solid var(--sky-border); flex-wrap:wrap; }
+.alert-band-h .ab-title { font-family:'DM Serif Display',serif; font-size:1.15rem; color:#FF8FA0; }
+.alert-band-h .ab-count { font-family:'JetBrains Mono',monospace; font-weight:700; background:var(--red); color:#fff; border-radius:20px; padding:2px 11px; font-size:0.9rem; }
+.alert-band-h .ab-sub { font-size:0.78rem; color:var(--white-40); }
+.alert-band-h .ab-link { margin-left:auto; font-size:0.78rem; color:var(--gold-light); text-decoration:none; border:1px solid var(--sky-border); padding:5px 11px; border-radius:8px; }
+.alert-band-h .ab-link:hover { border-color:rgba(200,168,90,0.45); }
+.ab-row { display:flex; align-items:center; gap:12px; padding:0.7rem 1.2rem; border-bottom:1px solid rgba(255,255,255,0.05); cursor:pointer; transition:background .12s; }
+.ab-row:last-child{border-bottom:none} .ab-row:hover{background:rgba(255,255,255,0.03)}
+.ab-route { font-weight:700; color:var(--white); min-width:122px; }
+.ab-route .fl { color:var(--gold-light); font-family:'JetBrains Mono',monospace; font-size:0.82rem; display:block; }
+.ab-delay { font-family:'DM Serif Display',serif; font-size:1.15rem; min-width:78px; }
+.ab-delay.crit{color:var(--red)} .ab-delay.warn{color:var(--amber)}
+.ab-eu { color:var(--green); font-weight:700; min-width:58px; }
+.ab-verdict { margin-left:auto; font-size:0.72rem; font-weight:700; padding:4px 10px; border-radius:20px; white-space:nowrap; display:inline-flex; align-items:center; gap:5px; }
+.ab-v-go { background:var(--green-pale); color:var(--green); border:1px solid rgba(34,200,132,0.4); }
+.ab-v-warn { background:var(--amber-pale); color:var(--amber); border:1px solid rgba(245,166,35,0.4); }
+.ab-v-wait { background:rgba(255,255,255,0.06); color:var(--white-40); border:1px solid var(--sky-border); }
+.ab-empty { padding:0.9rem 1.2rem; color:var(--white-40); font-size:0.82rem; }
+/* verdict procédure en tête d'enquête (poste Malik) */
+.enq-verdict { font-weight:700; font-size:0.8rem; padding:6px 11px; border-radius:8px; margin-bottom:4px; display:flex; align-items:flex-start; gap:7px; flex-wrap:wrap; }
+.enq-verdict.go { background:var(--green-pale); color:var(--green); border:1px solid rgba(34,200,132,0.4); }
+.enq-verdict.warn { background:var(--amber-pale); color:var(--amber); border:1px solid rgba(245,166,35,0.4); }
+.enq-verdict.muted { background:rgba(255,255,255,0.05); color:var(--white-40); border:1px solid var(--sky-border); }
+.enq-verdict .evr { flex-basis:100%; font-weight:400; font-size:0.72rem; opacity:0.85; margin-top:2px; }
+.radar-list .verdict-chip { font-size:0.6rem; font-weight:700; padding:1px 6px; border-radius:10px; margin-left:6px; }
+.radar-list .verdict-chip.go{background:var(--green-pale);color:var(--green)} .radar-list .verdict-chip.warn{background:var(--amber-pale);color:var(--amber)}
+
 /* ---- layout ---- */
 .grid { display: grid; grid-template-columns: 1fr 380px; gap: 1.5rem; align-items: start; }
 .section-h { display:flex; align-items:center; gap:10px; margin: 0 0 0.9rem; }
@@ -462,6 +491,17 @@ body.game-mode #gameView { display:block; }
       <div class="pulse-value green"><span id="kpiAgentsOn">0</span><span style="color:var(--white-40);font-size:1.1rem">/10</span></div>
       <div class="pulse-sub" id="kpiAgentsTxt">tout le monde au travail</div>
     </div>
+  </div>
+
+  <!-- ACTION REQUISE — vols captés à traiter maintenant (caché si radar calme) -->
+  <div class="alert-band" id="alertBand" style="display:none">
+    <div class="alert-band-h">
+      <span class="ab-title">🚨 Action requise</span>
+      <span class="ab-count" id="abCount">0</span>
+      <span class="ab-sub">vol(s) capté(s) à traiter — retard ≥ 3 h ou annulation</span>
+      <a class="ab-link" href="radar-vols-v2.html">Radar complet →</a>
+    </div>
+    <div id="alertBandBody"></div>
   </div>
 
   <!-- TOOLS DOCK -->
@@ -932,6 +972,18 @@ function fenetreHtml(v, kLabel, sumPrefix){
 }
 
 // Rendu de l'enquête malick : cause + circonstance extraordinaire + rotation appareil + météo + sources.
+// Verdict procédure déterministe (mon enrichissement enquête) → libellé + style affichables.
+function procVerdict(e){
+  const p = e && e.procedure;
+  if(!p || !p.reco) return null;
+  const map = {
+    LANCER:    { cls:'go',    chip:'go',   ic:'🟢', lbl:'LANCER la procédure' },
+    PRUDENCE:  { cls:'warn',  chip:'warn', ic:'🟠', lbl:'Prudence — valider juriste' },
+    INCERTAIN: { cls:'warn',  chip:'warn', ic:'⚪', lbl:'À confirmer' },
+    SOUS_SEUIL:{ cls:'muted', chip:'',     ic:'⚪', lbl:'Sous le seuil 3 h' },
+  };
+  return map[p.reco] || null;
+}
 function enqueteHtml(f){
   const e=f.enquete;
   if(!e){
@@ -944,6 +996,12 @@ function enqueteHtml(f){
   const exCls = ex==='NON'?'ok':(ex==='OUI'?'bad':'warn');
   const exLabel = ex==='NON'?'Indemnisable ✓ — non extraordinaire':(ex==='OUI'?"Risque d'exonération — extraordinaire":'Qualification à confirmer');
   const rows=[];
+  // Verdict procédure EN TÊTE : la décision actionnable « je lance ou pas ».
+  const pv=procVerdict(e);
+  if(pv){
+    const rTop=(e.procedure.raisons||[]).slice(0,2).map(r=>esc(r)).join(' ');
+    rows.push(`<div class="enq-verdict ${pv.cls}">${pv.ic} ${pv.lbl}${rTop?`<span class="evr">${rTop}</span>`:''}</div>`);
+  }
   if(e.cause) rows.push(`<div><span class="k">Cause</span> ${esc(e.cause)}</div>`);
   if(ex) rows.push(`<div><span class="enq-badge ${exCls}">${exLabel}</span>${e.extraordinaireRaison?` <span class="muted">${esc(e.extraordinaireRaison)}</span>`:''}</div>`);
   if(e.rotation){ const rd=e.rotation.arrivalDelayMin; rows.push(`<div><span class="k">Rotation</span> ${esc((e.rotation.flight||'')+' '+(e.rotation.from||'')+'→'+(e.rotation.to||''))}${rd!=null?(rd>30?` · arrivé <b class="enq-bad">+${rd} min</b> → retard en cascade probable`:` · arrivé à l'heure`):''}</div>`); }
@@ -1055,15 +1113,54 @@ function renderRadar(){
       const hrs = fhours(f);
       const el=document.createElement('div'); el.className='r';
       const eqd = f.enquete&&f.enquete.extraordinaire ? `<span class="enq-dot ${f.enquete.extraordinaire==='NON'?'ok':f.enquete.extraordinaire==='OUI'?'bad':'warn'}" title="${f.enquete.extraordinaire==='NON'?'Indemnisable (non extraordinaire)':f.enquete.extraordinaire==='OUI'?'Risque exonération (extraordinaire)':'À confirmer'}">⚖</span>` : (f.rebookWatch ? `<span class="enq-dot warn" title="Annulation à l'avance — réacheminement à surveiller">🗓️</span>` : '');
-      el.innerHTML=`<span class="fl">${f.fl}</span><span class="rt">${f.r}${eqd}${f.reg?`<span class="reg">${f.reg}</span>`:''}${hrs?`<span class="hrs">${hrs}</span>`:''}</span>
+      const vreco = f.enquete&&f.enquete.procedure&&f.enquete.procedure.reco;
+      const vchip = vreco==='LANCER' ? '<span class="verdict-chip go" title="Feu vert : lancer la procédure">LANCER</span>'
+                  : vreco==='PRUDENCE' ? '<span class="verdict-chip warn" title="Prudence — valider juriste">PRUDENCE</span>' : '';
+      el.innerHTML=`<span class="fl">${f.fl}</span><span class="rt">${f.r}${eqd}${vchip}${f.reg?`<span class="reg">${f.reg}</span>`:''}${hrs?`<span class="hrs">${hrs}</span>`:''}</span>
         <span class="bd ${cancel?'cancel':'delay'}">${cancel?'ANNULÉ':(f.detail||'retard')}</span>
         <span class="eu">${f.eu} €</span>`;
       radarEl.appendChild(el);
     });
+    renderAlertBand();
     return;
   }
   // Pas de données réelles → état vide (aucun vol inventé).
   radarEl.innerHTML='<div style="padding:14px 16px;color:var(--white-40);font-size:.8rem">En attente de vols réels (radar CE261)…</div>';
+  renderAlertBand();
+}
+
+// Bande « Action requise » : vols éligibles (annulé ou retard ≥ 3 h) triés LANCER d'abord,
+// puis par retard. Cachée quand le radar est calme — on ne crie que s'il y a à faire.
+function renderAlertBand(){
+  const band=document.getElementById('alertBand');
+  const body=document.getElementById('alertBandBody');
+  const cnt=document.getElementById('abCount');
+  if(!band||!body) return;
+  const elig=(REAL.radar||[]).filter(f=> f.fl && f.fl!=='—' && (f.kind==='cancel' || (f.delayMin||0)>=180));
+  if(!elig.length){ band.style.display='none'; return; }
+  const rank=f=>{ const r=f.enquete&&f.enquete.procedure&&f.enquete.procedure.reco;
+    return r==='LANCER'?0 : r==='PRUDENCE'?2 : r==='INCERTAIN'?1 : 1.5; };
+  elig.sort((a,b)=>{ const dr=rank(a)-rank(b); if(dr) return dr; return (b.delayMin||(b.kind==='cancel'?9999:0))-(a.delayMin||(a.kind==='cancel'?9999:0)); });
+  if(cnt) cnt.textContent=elig.length;
+  band.style.display='block';
+  body.innerHTML=elig.slice(0,6).map((f,idx)=>{
+    const cancel=f.kind==='cancel';
+    const pv=f.enquete&&procVerdict(f.enquete);
+    let verdict;
+    if(pv && f.enquete.procedure.reco==='LANCER') verdict='<span class="ab-verdict ab-v-go">🟢 LANCER</span>';
+    else if(pv && f.enquete.procedure.reco==='PRUDENCE') verdict='<span class="ab-verdict ab-v-warn">🟠 Prudence</span>';
+    else if(pv) verdict='<span class="ab-verdict ab-v-wait">⚪ À confirmer</span>';
+    else if(f.enqueteLoading) verdict='<span class="ab-verdict ab-v-wait">🔍 Enquête…</span>';
+    else verdict='<span class="ab-verdict ab-v-wait">à enquêter</span>';
+    const delayCls=cancel?'crit':((f.delayMin||0)>=300?'crit':'warn');
+    const delay=cancel?'ANNULÉ':(f.detail||((f.delayMin?Math.floor(f.delayMin/60)+'h'+(f.delayMin%60?String(f.delayMin%60).padStart(2,'0'):''):'retard')));
+    return `<div class="ab-row" onclick="openPoste(1)" title="Ouvrir l'enquêteur Malik">`+
+      `<span class="ab-route">${esc(f.r||'')}<span class="fl">${esc(f.fl)}</span></span>`+
+      `<span class="ab-delay ${delayCls}">${esc(delay)}</span>`+
+      `<span class="ab-eu">${esc(String(f.eu||''))} €</span>`+
+      verdict+
+    `</div>`;
+  }).join('');
 }
 
 /* ============ ENQUÊTE AUTO (malick) ============ */
