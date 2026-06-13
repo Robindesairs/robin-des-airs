@@ -24,6 +24,9 @@ function cfg() {
   };
 }
 
+let notifyOwner = null;
+try { ({ notifyOwner } = require('./owner-notify')); } catch (e) {}
+
 const escFormula = (s) => String(s || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 
 // Type de pièce → champ Airtable. Certificat / frais : pas de champ dédié → null (restent dans Blobs).
@@ -39,7 +42,22 @@ async function attachPieceToDossier({ buf, mime, kind, ref, phone }) {
     const c = cfg();
     if (!c || !buf || !buf.length || buf.length > 3500000) return { skipped: true };
     const field = fieldForKind(kind, c);
-    if (!field) return { skipped: true, reason: 'type sans champ dédié' };
+    if (!field) {
+      // Certificat / reçus de frais : pas de colonne dédiée → silence (intentionnel).
+      // Sinon = type NON RECONNU (ex. fichier déposé au nom générique) → impossible à ranger → on ALERTE l'owner.
+      const k = String(kind || '').toLowerCase();
+      const knownNoField = /certificat|frais|recu|re[çc]u|justif|attestation/.test(k);
+      if (!knownNoField && notifyOwner) {
+        const ou = ref ? `réf ${ref}` : (phone ? `WhatsApp +${String(phone).replace(/\D/g, '')}` : 'dossier inconnu');
+        const dispo = ref ? ` (récupérable sur /api/pieces?r=${ref})` : '';
+        try {
+          await notifyOwner('⚠️ Pièce à classer à la main',
+            `Une pièce a été déposée (${ou}) mais je n'ai pas pu déterminer si c'est un passeport / CNI / titre de séjour ou une carte d'embarquement (type non reconnu).\n\nElle est bien stockée${dispo}, mais PAS rangée automatiquement dans Airtable. Merci de la rattacher à la main sur la fiche du dossier.`);
+        } catch (_) {}
+        return { skipped: true, reason: 'type-inconnu', needsManual: true };
+      }
+      return { skipped: true, reason: 'type sans champ dédié' };
+    }
 
     let formula = '';
     if (ref) formula = `{${c.fRef}}='${escFormula(ref)}'`;

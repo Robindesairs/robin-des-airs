@@ -1596,6 +1596,11 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       const idx = (a.confident && a.idx >= 0) ? a.idx : s.doc_idx;
       const cur = s.passengers[idx] || {};
       s.passengers[idx] = { ...cur, ...e, name: cur.name || e.name, idReceived: true }; // garde le nom de l'e-billet, ajoute DDN/pièce
+      // Attribution incertaine sur un dossier MULTI-passagers → rattachée par défaut au passager courant.
+      // On prévient l'owner pour vérification manuelle (cas demandé par Climbie).
+      if (s.pax > 1 && !(a.confident && a.idx >= 0)) {
+        notifyOwnerWhatsApp(phone, `⚠️ Dossier ${s.ref || phone} : pièce d'identité lue « ${e.name || '?'} » attribuée PAR DÉFAUT au passager ${idx + 1}/${s.pax} (rapprochement par nom non certain). À vérifier/réattribuer à la main.`).catch(() => {});
+      }
       delete s.doc_pending; await setState(phone, s);
       return nextPassport(phone, s, cfg); // avance vers le prochain passager sans pièce (garde-fou dans nextPassport)
     }
