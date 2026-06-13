@@ -21,6 +21,17 @@ const { extractEticketMulti: extractEticketMultiLib } = require('./lib/extract-e
 // « CLIMBIE » → « Climbie », « jean-pierre » → « Jean-Pierre », « n'goran » → « N'Goran ».
 function titleCaseName(x) { return String(x || '').toLowerCase().replace(/(^|[\s\-'])([a-zà-ÿ])/g, (m, sep, c) => sep + c.toUpperCase()); }
 function firstNameOf(s) { const n = (s.passengers && s.passengers[s.mandant_idx || 0] && s.passengers[s.mandant_idx || 0].name) || (s.names && s.names[0]) || ''; if (/^passager/i.test(n)) return ''; return titleCaseName(n.split(/\s+/)[0] || ''); }
+// Alerte temps réel DÉDIÉE « un pax veut être rappelé » (Telegram + e-mail), distincte du miroir
+// des messages → ne pas la noyer dans le flux. Appelée dès qu'un client demande un humain/rappel.
+function notifyCallbackWanted(phone, s, why) {
+  try {
+    const nm = (s && firstNameOf(s)) || '';
+    const ref = (s && s.ref) ? ` · réf ${s.ref}` : '';
+    const route = (s && (s.route || s.vol)) ? ` · ${s.route || s.vol}` : '';
+    const pax = (s && s.pax > 1) ? ` · ${s.pax} pax` : '';
+    if (typeof notifyOwnerWhatsApp === 'function') notifyOwnerWhatsApp(phone, `📞 RAPPEL DEMANDÉ — ${nm || phone} veut être rappelé (${why}).\nTél ${phone}${ref}${route}${pax}. → en tête de la liste « À rappeler » du Bureau.`).catch(() => {});
+  } catch (_) {}
+}
 
 // ─── Fonctions inline (autonome — aucune dépendance au monorepo Netlify) ───────
 function normalizeWatiPhone(phone) {
@@ -983,6 +994,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (id === 'appel' || ((lower === 'appel' || lower === 'rappel' || lower === 'rappelez-moi' || lower === 'rappeler')
       && !(s && (s.step === 'doc_boarding' || s.step === 'doc_eticket')))) {
     upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now(), lastClientAt: Date.now() });
+    notifyCallbackWanted(phone, s, 'a demandé à être rappelé');
     return send(phone, `📞 *C'est noté !* Un vrai conseiller Robin des Airs — un humain, pas un robot 🙂 — vous rappelle très vite.\n\n👉 On vous appelle depuis le *+33 7 56 86 36 30* : enregistrez-le tout de suite sous « *Robin des Airs* » pour reconnaître l'appel et *décrocher* (sinon il s'affiche comme un numéro inconnu).\n\n🔒 C'est bien nous, jamais une arnaque : *0 € tant qu'on ne gagne pas*, et on ne vous demandera jamais de payer au téléphone.\n\nPas dispo ? Répondez ici quand vous voulez, ou écrivez *go* pour reprendre. 🙏`, cfg);
   }
 
@@ -1044,7 +1056,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const FREE = ['m_vol', 'm_date', 'm_route', 'm_dep', 'm_arr', 'm_stop_arr', 'm_pnr', 'leg_count', 'leg_input', 'esc_dep', 'esc_via', 'esc_arr', 'esc_vol', 'names', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob', 'doc_adresse'];
     const looks = !id && (FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input));
     if (looks) {
-      if (isSensitive(input)) { await send(phone, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nÉcrivez *go* pour continuer votre dossier.`, cfg); return; }
+      if (isSensitive(input)) { upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now(), lastClientAt: Date.now() }); notifyCallbackWanted(phone, s, `question sensible : « ${String(input).slice(0, 80)} »`); await send(phone, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nÉcrivez *go* pour continuer votre dossier.`, cfg); return; }
       const r = await answerClientQuestion(input, process.env.OPENAI_API_KEY);
       await sendButtons(phone, { body: (r || `🤖 Je suis l'assistant IA de Robin des Airs.`) + `\n\n👉 *Démarrez* ci-dessous 👇`, buttons: [{ text: '📋 Démarrer' }, { text: '📞 Être rappelé' }] }, cfg);
       return;
@@ -1625,7 +1637,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (s.step === 'doc_boarding') {
     if (mediaUrl) { await send(phone, `✅ Carte d'embarquement reçue !`, cfg); return gotoEticket(phone, s, cfg); }
     if (lower === 'passer') { s.docs_pending = true; return gotoEticket(phone, s, cfg); }
-    if (lower === 'appel') { s.escalade = 'document_perdu'; upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now() }); await send(phone, `📞 Pas de panique — un expert vous aide à retrouver vos documents. Laissez la conversation ouverte.\n\n${STOP_FOOTER}`, cfg); return gotoEticket(phone, s, cfg); }
+    if (lower === 'appel') { s.escalade = 'document_perdu'; upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now() }); notifyCallbackWanted(phone, s, 'documents perdus (carte d\'embarquement)'); await send(phone, `📞 Pas de panique — un expert vous aide à retrouver vos documents. Laissez la conversation ouverte.\n\n${STOP_FOOTER}`, cfg); return gotoEticket(phone, s, cfg); }
     return send(phone, `🎫 Envoyez la carte d'embarquement, ou *passer*, ou *appel* si vous avez tout perdu.`, cfg);
   }
   if (s.step === 'doc_eticket') {
@@ -1636,7 +1648,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       await send(phone, e ? `✅ E-billet reçu !${lu}` : `✅ Document bien reçu — notre équipe le vérifiera et l'ajoute à votre dossier. 🙏`, cfg); return gotoCert(phone, s, cfg);
     }
     if (lower === 'passer') { s.docs_pending = true; return gotoCert(phone, s, cfg); }
-    if (lower === 'appel') { s.escalade = 'document_perdu'; upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now() }); await send(phone, `📞 Un expert vous aide à récupérer votre e-billet. Laissez la conversation ouverte.\n\n${STOP_FOOTER}`, cfg); return gotoCert(phone, s, cfg); }
+    if (lower === 'appel') { s.escalade = 'document_perdu'; upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now() }); notifyCallbackWanted(phone, s, 'documents perdus (e-billet)'); await send(phone, `📞 Un expert vous aide à récupérer votre e-billet. Laissez la conversation ouverte.\n\n${STOP_FOOTER}`, cfg); return gotoCert(phone, s, cfg); }
     return send(phone, `📧 Envoyez l'e-billet (pensez aux spams/Booking), ou *passer*, ou *appel*.`, cfg);
   }
   if (s.step === 'doc_cert') {
