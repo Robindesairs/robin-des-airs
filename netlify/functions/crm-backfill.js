@@ -53,6 +53,7 @@ exports.handler = async (event) => {
     if (!dossier || typeof dossier !== 'object') { errors++; continue; }
     const ref = String(dossier.ref || key.slice(2) || '').trim();
     if (!ref) { errors++; continue; }
+    if (/test/i.test(ref)) { exists++; continue; } // ignorer les dossiers de test (ex. RDA-TEST-…)
     try {
       const r = await syncNewDossierToAirtable({ ...dossier, ref });
       if (r && r.action === 'created') { created++; if (createdRefs.length < 25) createdRefs.push(ref); }

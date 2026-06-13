@@ -11,7 +11,17 @@
  * Best-effort : ne jette jamais (un échec Airtable ne doit pas casser le dépôt Blobs).
  */
 
-const { airtableCfg, airtableFindByRef, airtableCreate, dossierToAirtableFields } = require('./airtable-robin');
+const { airtableCfg, airtableFindByRef, airtableCreate, airtablePatch, dossierToAirtableFields } = require('./airtable-robin');
+
+/** Date du bot (« JJ/MM/AAAA » français, ou ISO) → « AAAA-MM-JJ » pour le champ date Airtable. */
+function toAirtableDate(d) {
+  const s = String(d || '').trim();
+  if (!s) return '';
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10); // déjà ISO
+  const m = s.match(/^(\d{1,2})[/.\-](\d{1,2})[/.\-](\d{2,4})$/); // JJ/MM/AAAA
+  if (m) { const yy = m[3].length === 2 ? '20' + m[3] : m[3]; return `${yy}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`; }
+  return '';
+}
 
 /** « Aminata Diallo » → { prenom:'Aminata', nom:'Diallo' } ; 1 seul mot → tout en nom. */
 function splitName(name) {
@@ -40,9 +50,32 @@ async function syncNewDossierToAirtable(dossier) {
     const ref = String((dossier && dossier.ref) || '').trim();
     if (!ref) return { ok: false, skipped: 'no_ref' };
 
-    // Ne JAMAIS toucher un dossier déjà présent (signé, en cours…). On ne fait que combler les manques.
+    const L = cfg.labels;
+    // Champs FACTUELS du dossier (date convertie en ISO ; route avec repli depAirport→arrAirport).
+    const dateVol = toAirtableDate(dossier.date);
+    const route = dossier.route || [dossier.depAirport, dossier.arrAirport].filter(Boolean).join(' → ');
+    const vol = dossier.vol || '';
+    const compagnie = dossier.compagnie || '';
+    const pnr = dossier.pnr ? String(dossier.pnr).toUpperCase() : '';
+
     const existing = await airtableFindByRef(cfg, ref);
-    if (existing && existing.length) return { ok: true, skipped: 'exists', recordId: existing[0].id };
+    if (existing && existing.length) {
+      // Dossier déjà présent (signé, en cours…) : on ne touche JAMAIS le statut ni un champ déjà
+      // rempli. On AUTO-RÉPARE seulement les champs factuels VIDES (date, route, vol, compagnie, pnr).
+      const rec = existing[0];
+      const cur = rec.fields || {};
+      const patch = {};
+      if (dateVol && !cur[L.dateVol]) patch[L.dateVol] = dateVol;
+      if (route && !cur[L.itineraire]) patch[L.itineraire] = route;
+      if (vol && !cur[L.vol]) patch[L.vol] = vol;
+      if (compagnie && !cur[L.compagnie]) patch[L.compagnie] = compagnie;
+      if (pnr && !cur[L.pnr]) patch[L.pnr] = pnr;
+      if (Object.keys(patch).length) {
+        try { await airtablePatch(cfg, rec.id, patch); return { ok: true, action: 'repaired', recordId: rec.id, patched: Object.keys(patch).length }; }
+        catch (e) { return { ok: false, error: 'patch: ' + e.message }; }
+      }
+      return { ok: true, skipped: 'exists', recordId: rec.id };
+    }
 
     const { prenom, nom } = splitName(dossier.name);
     const fields = dossierToAirtableFields(cfg, {
@@ -51,13 +84,13 @@ async function syncNewDossierToAirtable(dossier) {
       nom,
       whatsapp: dossier.phone || '',
       address: dossier.address || '',
-      vol: dossier.vol || '',
-      dateVol: /^\d{4}-\d{2}-\d{2}/.test(String(dossier.date)) ? String(dossier.date).slice(0, 10) : '',
-      compagnie: dossier.compagnie || '',
-      pnr: dossier.pnr ? String(dossier.pnr).toUpperCase() : '',
+      vol,
+      dateVol,
+      compagnie,
+      pnr,
       incident: dossier.incident || '',
       indemnite: indemniteNumber(dossier.indemnite),
-      route: dossier.route || '',
+      route,
       statutSuivi: cfg.statutSignatureAttente, // « Signature en attente » : mandat prêt, pas encore signé
       remarques: `Dossier complété via bot WhatsApp le ${new Date().toISOString().slice(0, 10)} — en attente de signature.`,
     });
