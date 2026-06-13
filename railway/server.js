@@ -182,7 +182,7 @@ const PROGRESS = {
   esc_dep: 5, esc_via: 5, esc_more: 5, esc_arr: 5, esc_vol: 5,
   annee: 6, mineurs: 6, mineurs_which: 6,
   correction: 6, fix_vol: 6, fix_date: 6, fix_nom: 6, fix_route: 6,
-  recap: 7, documents: 7, doc_pass: 7, doc_pass_confirm: 7, doc_mandant: 7, doc_name: 7, doc_dob: 7, doc_boarding: 7, doc_eticket: 7, doc_cert: 7, rgpd: 7,
+  recap: 7, documents: 7, doc_pass: 7, doc_pass_confirm: 7, doc_mandant: 7, doc_adresse: 7, doc_name: 7, doc_dob: 7, doc_boarding: 7, doc_eticket: 7, doc_cert: 7, rgpd: 7,
   done: 8,
 };
 function bar(step) { const n = PROGRESS[step] ?? 0; return '🟢'.repeat(n) + '⚪'.repeat(8 - n); }
@@ -1019,7 +1019,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // ⚠️ Jamais intercepté si c'est une réponse interactive (bouton/liste) : replyId présent → flux prioritaire
   try {
     const { isClientQuestion, isSensitive, answerClientQuestion } = AI;
-    const FREE = ['m_vol', 'm_date', 'm_route', 'm_dep', 'm_arr', 'm_stop_arr', 'm_pnr', 'leg_count', 'leg_input', 'esc_dep', 'esc_via', 'esc_arr', 'esc_vol', 'names', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob'];
+    const FREE = ['m_vol', 'm_date', 'm_route', 'm_dep', 'm_arr', 'm_stop_arr', 'm_pnr', 'leg_count', 'leg_input', 'esc_dep', 'esc_via', 'esc_arr', 'esc_vol', 'names', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob', 'doc_adresse'];
     const looks = !id && (FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input));
     if (looks) {
       if (isSensitive(input)) { await send(phone, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nÉcrivez *go* pour continuer votre dossier.`, cfg); return; }
@@ -1567,13 +1567,20 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (idx >= 0 && idx < s.pax) {
       s.mandant_idx = idx; await setState(phone, s);
       const chosen = s.passengers[idx] || {};
-      const addrNote = chosen.adresse
-        ? `\n📍 Adresse détectée : *${chosen.adresse}*\n_(pré-remplie sur le mandat — modifiable si besoin)_`
-        : `\n_(Aucune adresse lue sur la pièce — vous la saisirez sur le mandat.)_`;
-      await send(phone, `👤 *${chosen.name || `Passager ${idx + 1}`}* signe le mandat.${addrNote}`, cfg);
-      return finaliser(phone, s, cfg);
+      await send(phone, `✅ Parfait — c'est *${chosen.name || `Passager ${idx + 1}`}* qui suit le dossier.`, cfg);
+      return askAddressOrFinalize(phone, s, cfg);
     }
     return askMandant(phone, s, cfg);
+  }
+  // Adresse du contact (dernière question) — saisie manuelle si non lue sur le passeport.
+  if (s.step === 'doc_adresse') {
+    const adr = input.trim();
+    if (adr.length >= 8 && /[a-zà-ÿ]/i.test(adr) && !/^\d+$/.test(adr)) {
+      s.passengers = s.passengers || []; const i = s.mandant_idx || 0;
+      const m = s.passengers[i] || {}; m.adresse = adr; s.passengers[i] = m; await setState(phone, s);
+      return finaliser(phone, s, cfg);
+    }
+    return send(phone, `📍 Indiquez votre *adresse complète* : numéro, rue, code postal, ville, pays _(ex : 12 rue des Lilas, 75011 Paris, France)_ :`, cfg);
   }
   if (s.step === 'doc_name') {
     if (mediaUrl) return askOcrConfirm(phone, s, cfg, mediaUrl); // il envoie finalement la pièce → on la lit
@@ -1926,15 +1933,26 @@ async function nextPassport(phone, s, cfg) {
   return sendButtons(phone, { body: `${bar('documents')}\n${intro}${header}🛂 *Passager ${s.doc_idx + 1} sur ${s.pax}*${who}\n📸 *Le plus simple* : une *photo* de sa pièce d'identité — *passeport, CNI ou carte de séjour*. On lit le nom et la date *automatiquement*. ⏱️ *10 secondes et c'est réglé !*\nℹ️ Cette pièce est *indispensable* pour réclamer en son nom — classée *directement dans votre dossier*.\n🔒 Transmission *sécurisée*, uniquement pour votre réclamation — *jamais revendue*.`, buttons: [{ id: 'doc_photo', text: '📸 Envoyer ma photo' }, { id: 'doc_saisir', text: '✍️ Saisir à la main' }, { id: 'doc_passer', text: '⏭️ Je l\'envoie après' }] }, cfg);
 }
 async function askMandant(phone, s, cfg) {
-  // 1 seul passager → signataire évident, pas de question
-  if (s.pax <= 1) { s.mandant_idx = 0; await setState(phone, s); return finaliser(phone, s, cfg); }
+  // 1 seul passager → c'est forcément lui le contact, pas de question → adresse puis finalisation.
+  if (s.pax <= 1) { s.mandant_idx = 0; await setState(phone, s); return askAddressOrFinalize(phone, s, cfg); }
   s.step = 'doc_mandant'; await setState(phone, s);
   const names = (s.passengers || []).slice(0, s.pax).map((p, i) => p.name || `Passager ${i + 1}`);
-  await send(phone, `✅ Toutes les pièces sont collectées !\n\n*Qui va signer le mandat ?*\n_(Souvent vous — la personne qui ouvre le dossier.)_`, cfg);
+  // On ne demande PAS « qui signe » (tout le monde signe son mandat) — juste à qui est ce WhatsApp (le contact du dossier).
+  await send(phone, `✅ Pièces collectées ! Une dernière chose.\n\n📱 *À qui appartient ce numéro WhatsApp ?*\n_(la personne qui suit le dossier — chaque passager signera son propre mandat, peu importe lequel.)_`, cfg);
   if (names.length <= 3) {
     return sendButtons(phone, names.map((nm, i) => ({ id: `mdt_${i}`, text: clip(nm, 20) })), cfg);
   }
-  return sendList(phone, { header: 'Signataire du mandat', body: 'Qui va signer le mandat ?', buttonText: 'Choisir', items: names.map((nm, i) => ({ id: `mdt_${i}`, title: clip(nm, 24), description: `Passager ${i + 1}` })) }, cfg);
+  return sendList(phone, { header: 'Ce numéro WhatsApp', body: 'À qui appartient ce numéro ?', buttonText: 'Choisir', items: names.map((nm, i) => ({ id: `mdt_${i}`, title: clip(nm, 24), description: `Passager ${i + 1}` })) }, cfg);
+}
+// Adresse du contact : prise du passeport si lue, sinon demandée (DERNIÈRE question), puis finalisation.
+async function askAddressOrFinalize(phone, s, cfg) {
+  const m = (s.passengers || [])[s.mandant_idx || 0] || {};
+  if (m.adresse && m.adresse.trim().length >= 8) {
+    await send(phone, `📍 Adresse trouvée sur votre pièce : *${m.adresse}*\n_(utilisée pour le mandat — corrigeable au moment de signer.)_`, cfg);
+    return finaliser(phone, s, cfg);
+  }
+  s.step = 'doc_adresse'; await setState(phone, s);
+  return send(phone, `📍 *Dernière question !* Votre *adresse postale complète* ? _(numéro, rue, code postal, ville, pays)_\nC'est l'adresse qui figure sur le mandat, où la compagnie doit vous répondre.`, cfg);
 }
 async function gotoBoarding(phone, s, cfg) { s.step = 'doc_boarding'; await setState(phone, s); return send(phone, `🎫 Carte d'embarquement\nEnvoyez-en une photo pour le vol concerné.\n📧 Pas de carte ? Un e-billet, une confirmation de réservation ou une étiquette de bagage fonctionnent aussi.\n✏️ *passer* · 📞 *appel* si tout perdu, on trouve une solution.`, cfg); }
 async function gotoEticket(phone, s, cfg) { s.step = 'doc_eticket'; await setState(phone, s); return send(phone, `📧 Confirmation de réservation (e-billet)\nEnvoyez une capture (pensez aux spams / appli Booking).\n✏️ *passer* · 📞 *appel*.`, cfg); }
@@ -2018,6 +2036,7 @@ async function relancerEtape(phone, s, cfg) {
     case 'm_pnr': return gotoPnr(phone, s, cfg);
     case 'doc_pass': case 'doc_pass_confirm': case 'doc_dob': case 'doc_name': return nextPassport(phone, s, cfg);
     case 'doc_mandant': return askMandant(phone, s, cfg);
+    case 'doc_adresse': return send(phone, `📍 *Dernière question !* Votre *adresse postale complète* ? _(numéro, rue, code postal, ville, pays)_`, cfg);
     case 'doc_boarding': return gotoBoarding(phone, s, cfg);
     case 'doc_eticket': return gotoEticket(phone, s, cfg);
     case 'doc_cert': return gotoCert(phone, s, cfg);
