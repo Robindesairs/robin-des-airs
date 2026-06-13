@@ -809,7 +809,7 @@ const AGENTS = [
     kpiL:"leads WhatsApp", kpiUnit:"", base:0,
     tasks:()=>[ `1er contact WhatsApp — qualifie les passagers et ouvre les dossiers` ] },
   { ic:"⚖️", ac:"var(--purple)", acp:"var(--purple-pale)", name:"Me Lefèvre", role:"Juriste · Mises en demeure",
-    kpiL:"dossiers engagés", kpiUnit:"", base:0,
+    kpiL:"à traiter aujourd'hui", kpiUnit:"", base:0,
     tasks:()=>[ `Mises en demeure & contentieux jusqu'au paiement de l'indemnité` ] },
   { ic:"🤝", ac:"var(--gold)", acp:"var(--gold-pale)", name:"Sofia Mendy", role:"Chasseuse de Partenaires",
     kpiL:"agences actives", kpiUnit:"", base:0,
@@ -856,7 +856,7 @@ function agentRealKpi(i){
     case 0: return S.dossiers;
     case 1: return (REAL.radar||[]).length;
     case 2: return S.waLeads;
-    case 3: return Math.max((S.total||0)-(S.gagnes||0),0);
+    case 3: return (AGENTS[3]&&AGENTS[3].liveKpi!=null) ? AGENTS[3].liveKpi : Math.max((S.total||0)-(S.gagnes||0),0);
     case 4: return S.agences;
     case 5: return S.eur;
     case 6: return S.dossiers;
@@ -1042,6 +1042,32 @@ function pmFlight(f){
   const sub=[fhours(f), meta].filter(Boolean).join('<br>');
   return `<div class="pm-flight"><span class="fl">${f.fl}</span><span class="rt">${f.r||''}</span><span class="bd ${c?'cancel':'delay'}">${c?'ANNULÉ':(f.detail||'retard')}</span><span class="eu">${f.eu} €</span>${sub?`<div class="pm-fsub">${sub}</div>`:''}${reportHtml(f)}${enqueteHtml(f)}</div>`;
 }
+// Poste Me Lefèvre — file d'actions juridiques (réel) ou repli compteurs CRM.
+const URG_ICON={rouge:'🔴',orange:'🟠',vert:'🟢',info:'⚪'};
+function posteLegal(taux){
+  const L=REAL.legal;
+  const head=`<h4>Dossiers juridiques (réel)</h4>${pmStat('Dossiers gagnés',fmt(S.gagnes))}${pmStat('Dossiers engagés',fmt(Math.max(S.total-S.gagnes,0)))}${pmStat('Taux de réussite',taux+'%')}`;
+  if(!(L && Array.isArray(L.items))){
+    return head+`<div class="pm-empty" style="font-style:normal">Ouvrez une session CRM pour voir la file d'actions du jour de Me Lefèvre (mises en demeure, relances, escalades, prescriptions).</div>`;
+  }
+  const c=L.counts||{};
+  const synth=`<h4>Point du jour — ${fmt(L.total||0)} dossier(s) au pipeline</h4>`+
+    `${pmStat('🔴 Urgent',fmt(c.rouge||0))}${pmStat('🟠 À faire',fmt(c.orange||0))}${pmStat('🟢 En suivi',fmt(c.vert||0))}`+
+    (c.prescriptionProche?pmStat('⏳ Prescription proche',fmt(c.prescriptionProche)):'')+
+    (c.eligibiliteDouteuse?pmStat('⚠️ Éligibilité à vérifier',fmt(c.eligibiliteDouteuse)):'');
+  const rows=L.items.slice(0,14).map(it=>{
+    const sub=[it.compagnie, it.dueLabel, it.payeur&&it.payeur!=='inconnue'?'payeur '+it.payeur:'', it.neb?('NEB: '+it.neb):''].filter(Boolean).join(' · ');
+    const al=it.alerte?`<div class="pm-fsub" style="color:var(--amber)">⚠️ ${it.alerte.message}</div>`:'';
+    const det=it.detail?`<div class="pm-fsub">${it.detail}</div>`:'';
+    return `<div class="pm-flight"><span class="fl">${URG_ICON[it.urgence]||'⚪'} ${it.ref||'—'}</span><span class="rt">${it.name||''}</span>`+
+      `<span class="bd ${it.urgence==='rouge'?'cancel':'delay'}">${it.action}</span>`+(it.montant?`<span class="eu">${String(it.montant).replace(/[^\d]/g,'')||'600'} €</span>`:'')+
+      (sub?`<div class="pm-fsub">${sub}</div>`:'')+det+al+`</div>`;
+  }).join('');
+  const more=L.items.length>14?`<div class="pm-empty" style="font-style:normal">… +${L.items.length-14} autre(s)</div>`:'';
+  const body=L.items.length?`<h4>File d'actions (du plus urgent au moins urgent)</h4>${rows}${more}`:`<div class="pm-empty">✅ Aucune action urgente — pipeline à jour.</div>`;
+  const foot=`<div class="pm-empty" style="font-style:normal">Human-in-the-loop : Me Lefèvre prépare la liste ; aucun envoi automatique à une compagnie. Brief WhatsApp quotidien (9h30).</div>`;
+  return head+synth+body+foot;
+}
 function posteContent(i){
   const taux = S.total>0?Math.round(S.gagnes/S.total*100):0;
   const flights = REAL.radar || [];
@@ -1049,7 +1075,7 @@ function posteContent(i){
     case 0: return `<h4>Scorecard entreprise (réel · CRM)</h4>${pmStat('Dossiers actifs',fmt(S.dossiers))}${pmStat('€ en récupération',fmt(S.eur)+' €')}${pmStat('Taux de réussite',taux+'%')}${pmStat('Agences actives',S.agences)}${pmStat('Leads WhatsApp',S.waLeads)}`;
     case 1: return `<h4>Vols détectés — radar CE261 (réel)</h4>`+(flights.length?flights.map(pmFlight).join(''):`<div class="pm-empty">En attente de vols réels (le scan tourne ~12×/jour).</div>`)+`<h4>Objectif</h4>${pmStat('Vols éligibles','2,7 / jour (≈ 81 / mois)')}`;
     case 2: return `<h4>Bot WhatsApp (réel)</h4>${pmStat('Statut',(REAL.whatsapp&&REAL.whatsapp.whatsapp==='ok')?'🟢 en ligne':'—')}${pmStat('Leads WhatsApp (CRM)',fmt(S.waLeads))}<div class="pm-empty" style="font-style:normal">Conversations réelles dans le panneau WhatsApp (numéros masqués).</div>`;
-    case 3: return `<h4>Dossiers juridiques (réel)</h4>${pmStat('Dossiers gagnés',fmt(S.gagnes))}${pmStat('Dossiers engagés',fmt(Math.max(S.total-S.gagnes,0)))}${pmStat('Taux de réussite',taux+'%')}`;
+    case 3: return posteLegal(taux);
     case 4: return `<h4>Agences partenaires (réel)</h4>${pmStat('Agences actives',S.agences)}${pmStat('Prospects à contacter',S.agencesNew)}${pmStat('Objectif','55 actives')}`;
     case 5: return `<h4>Finances (réel)</h4>${pmStat('€ en récupération',fmt(S.eur)+' €')}${pmStat('Dossiers payés',fmt(S.gagnes))}${pmStat('Coûts mensuels',fmt(RENTA.total)+' €')}`;
     case 6: return `<h4>Suivi dossiers (réel)</h4>${pmStat('Dossiers suivis',fmt(S.dossiers))}${pmStat('Gagnés',fmt(S.gagnes))}`;
@@ -1299,6 +1325,26 @@ async function loadRappels(){
     renderRappels(d.leads||[]);
     if(src){ src.className='mini-src real'; src.textContent=(d.total||0)+' à rappeler'; }
   } else if(src){ src.className='mini-src demo'; src.textContent='CRM requis'; }
+  setSrcBadge();
+}
+// Cabinet Me Lefèvre — file d'actions juridiques du jour (CRM-gated, recalcul live 24/24)
+async function loadLegal(){
+  const d = await jget('/api/legal-daily');
+  if(d && d.ok && Array.isArray(d.items)){
+    REAL.legal = d; REAL.sources.legal = true;
+    // KPI carte = dossiers actionnables (rouge + orange), task = action la plus urgente
+    const c=d.counts||{}; const act=(c.rouge||0)+(c.orange||0);
+    const ag=AGENTS[3]; if(ag){ ag.liveKpi=act; }
+    const top=d.items[0];
+    const tEl=document.getElementById('task-3');
+    if(tEl){ tEl.innerHTML = top
+      ? `${({rouge:'🔴',orange:'🟠',vert:'🟢',info:'⚪'})[top.urgence]||'⚖️'} <span class="hl">${top.action}</span> — ${top.ref}${top.name?' · '+top.name:''}`
+      : `✅ Aucune action urgente — pipeline à jour`; }
+    const kEl=document.getElementById('kpi-3'); if(kEl) kEl.textContent=fmt(act);
+    if(document.getElementById('posteModal').classList.contains('open') && document.getElementById('pmTitle').textContent===AGENTS[3].name){
+      document.getElementById('pmBody').innerHTML=posteContent(3); // rafraîchit si le poste est ouvert
+    }
+  }
   setSrcBadge();
 }
 
@@ -1684,6 +1730,7 @@ async function loadProtected(){
   if(reg && reg.ok && typeof reg.total==='number'){ REAL.sources.registry = true; }
   await loadWaConversations();   // vraies conversations WhatsApp (CRM)
   await loadRappels();           // dossiers « à rappeler » (fenêtre 24h fermée / rappel demandé)
+  await loadLegal();             // Cabinet Me Lefèvre — file d'actions juridiques du jour
   setSrcBadge();
 }
 async function loadRealData(){
