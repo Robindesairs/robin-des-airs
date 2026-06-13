@@ -10,6 +10,7 @@
   var SL_FR = {
     BROUILLON: 'Brouillon',
     ELIGIBLE: 'Éligible',
+    SIGNATURE_ATTENTE: 'Signature en attente',
     MANDAT_SIGNE: 'Mandat signé',
     LRAR_ENVOYEE: 'LRAR envoyée',
     RELANCE_1: 'Relance 1',
@@ -24,6 +25,7 @@
   var SL_EN = {
     BROUILLON: 'Draft',
     ELIGIBLE: 'Eligible',
+    SIGNATURE_ATTENTE: 'Awaiting signature',
     MANDAT_SIGNE: 'Mandate signed',
     LRAR_ENVOYEE: 'LRAR sent',
     RELANCE_1: '1st reminder',

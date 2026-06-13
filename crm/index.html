@@ -399,6 +399,7 @@
   .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
   .s-BROUILLON { background: #F1EFE8; color: #5F5E5A; }
   .s-ELIGIBLE { background: #DBEAFE; color: #1D4ED8; }
+  .s-SIGNATURE_ATTENTE { background: #E0E7FF; color: #3730A3; }
   .s-MANDAT_SIGNE { background: #D1FAE5; color: #065F46; }
   .s-LRAR_ENVOYEE { background: #FEF3C7; color: #92400E; }
   .s-RELANCE_1, .s-RELANCE_2 { background: #FEE2E2; color: #991B1B; }
@@ -665,17 +666,8 @@
   <div class="controls">
     <input type="text" id="search" placeholder="🔍  N° dossier, passager, vol, PNR…" oninput="render()">
     <select id="filterStatut" onchange="render()">
+      <!-- Options injectées par populateStatutFilter() depuis STATUT_ORDER (source unique, jamais désynchronisé). -->
       <option value="">Tous les statuts</option>
-      <option value="BROUILLON">Brouillon</option>
-      <option value="ELIGIBLE">Éligible</option>
-      <option value="MANDAT_SIGNE">Mandat signé</option>
-      <option value="LRAR_ENVOYEE">LRAR envoyée</option>
-      <option value="RELANCE_1">Relance 1</option>
-      <option value="RELANCE_2">Relance 2</option>
-      <option value="MEDIATION">Médiation</option>
-      <option value="CONTENTIEUX">Contentieux</option>
-      <option value="PAYE">Payé</option>
-      <option value="REFUSE_DEFINITIF">Refusé</option>
     </select>
     <select id="filterPalier" onchange="render()">
       <option value="">Tous les paliers</option>
@@ -1092,7 +1084,7 @@ document.getElementById('crm-gate-form').addEventListener('submit', function (e)
 
 var STATUT_LABELS = {};
 /** Ordre du parcours juridique (filtres & listes) */
-const STATUT_ORDER = ['BROUILLON','ELIGIBLE','MANDAT_SIGNE','LRAR_ENVOYEE','RELANCE_1','RELANCE_2','MEDIATION','CONTENTIEUX','PAYE','REFUSE_DEFINITIF','ABANDON','PRESCRIT'];
+const STATUT_ORDER = ['BROUILLON','ELIGIBLE','SIGNATURE_ATTENTE','MANDAT_SIGNE','LRAR_ENVOYEE','RELANCE_1','RELANCE_2','MEDIATION','CONTENTIEUX','PAYE','REFUSE_DEFINITIF','ABANDON','PRESCRIT'];
 
 /** Sources connues — toute valeur inconnue ou vide → « autre » (défaut métier). */
 const CRM_SOURCE_KEYS = ['autre','tiktok_ad','fb_reels','instagram','youtube','whatsapp','referral','organic_site','blog'];
@@ -1479,6 +1471,22 @@ function crmSyncLabelObjects() {
   Object.assign(STATUT_LABELS, b.statutLabels);
   Object.assign(PIECES_CAT_LABELS, b.piecesCat);
   Object.assign(CRM_SOURCE_LABELS, b.sourceLabels);
+  populateStatutFilter();
+}
+
+/** Remplit le filtre statut depuis STATUT_ORDER (source unique) — évite toute désync.
+ *  Préserve la sélection courante et se relance au basculement FR↔EN (labels à jour). */
+function populateStatutFilter() {
+  var sel = document.getElementById('filterStatut');
+  if (!sel) return;
+  var cur = sel.value || '';
+  var opts = '<option value="">' + escHtml(crmT('fil_all_status')) + '</option>';
+  STATUT_ORDER.forEach(function (k) {
+    if (!STATUT_LABELS[k]) return;
+    opts += '<option value="' + k + '">' + escHtml(STATUT_LABELS[k]) + '</option>';
+  });
+  sel.innerHTML = opts;
+  sel.value = cur; // restaure la sélection (vide si le code n'existe plus)
 }
 crmSyncLabelObjects();
 
@@ -2317,7 +2325,8 @@ function filterPrescription(){ window._prescFilter = !window._prescFilter; rende
 // ===== Vue Kanban (pipeline par statut) =====
 var KANBAN_COLS = [
   {label:'Nouveau lead', st:['BROUILLON']},
-  {label:'Signature en attente', st:['ELIGIBLE']},
+  {label:'Docs / éligible', st:['ELIGIBLE']},
+  {label:'Signature en attente', st:['SIGNATURE_ATTENTE']},
   {label:'Mandat signé', st:['MANDAT_SIGNE']},
   {label:'Mise en demeure', st:['LRAR_ENVOYEE']},
   {label:'Relances', st:['RELANCE_1','RELANCE_2']},

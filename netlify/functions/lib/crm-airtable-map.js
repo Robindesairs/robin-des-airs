@@ -5,6 +5,10 @@
 const CRM_STATUT_TO_AT = {
   BROUILLON: 'Nouveau',
   ELIGIBLE: 'Documents en cours',
+  // Mandat prêt, pas encore signé (état dominant des dossiers créés par le bot).
+  // Indispensable pour un aller-retour SANS perte : sans cette clé, l'import Airtable
+  // repliait « Signature en attente » sur ELIGIBLE puis le ré-écrivait en « Documents en cours ».
+  SIGNATURE_ATTENTE: 'Signature en attente',
   MANDAT_SIGNE: 'Mandat signé',
   LRAR_ENVOYEE: 'LRAR envoyée',
   RELANCE_1: 'Relance 1',
