@@ -16,6 +16,9 @@ let genererMandatPdf = null, genererMandatBilinguePdf = null;
 try { ({ genererMandatPdf, genererMandatBilinguePdf } = require('./lib/mandat-pdf')); } catch (e) { console.error('submit-mandat: mandat-pdf indisponible:', e.message); }
 let watiSendFile = null, watiCfg = null;
 try { ({ watiSendFile, watiCfg } = require('./lib/wati-api')); } catch (e) { /* WhatsApp optionnel */ }
+// Convention de nom « côté compagnie » : Mandat-NOM-Prénom-VOL-CODE.pdf (lib/doc-filename)
+let nomFichierCompagnie = null, codeFromRef = null;
+try { ({ nomFichierCompagnie, codeFromRef } = require('./lib/doc-filename')); } catch (e) {}
 
 const STORE_NAME = 'robin-signatures';
 
@@ -203,7 +206,10 @@ async function attachMandatToAirtable(record) {
   const recs = await airtableFindByRef(cfg, ref);
   if (!recs.length) return { skipped: true, reason: 'fiche introuvable' };
   const url = `https://robindesairs.eu/api/mandat-pdf?r=${encodeURIComponent(ref)}&bilingue=1`;
-  const filename = `Mandat-bilingue-FR-EN-${ref.replace(/[^A-Za-z0-9_-]/g, '_')}.pdf`;
+  // Nom propre « côté compagnie » : Mandat-NOM-Prénom-VOL-CODE.pdf (sinon repli sur la réf).
+  const filename = (nomFichierCompagnie
+    ? nomFichierCompagnie({ nom: record.lastName, prenom: record.firstName, vol: record.flightNum, ref }, 'mandat')
+    : `Mandat-Robin-des-Airs-${ref.replace(/[^A-Za-z0-9_-]/g, '_')}.pdf`);
   const updates = recs.map((rec) => ({ id: rec.id, fields: { [cfg.fMandatPdf]: [{ url, filename }] } }));
   const pr = await fetch(`https://api.airtable.com/v0/${cfg.base}/${cfg.table}`, {
     method: 'PATCH', headers: atHeaders(cfg.key), body: JSON.stringify({ records: updates }),
@@ -244,7 +250,8 @@ async function attachPiecesToAirtable(record, event) {
     return null;
   };
   const recId = recs[0].id; // fiche canonique
-  let uploaded = 0;
+  const code = (codeFromRef ? codeFromRef(ref) : ref.replace(/[^A-Za-z0-9]/g, '').slice(-4).toUpperCase());
+  let uploaded = 0, nId = 0, nCarte = 0;
   for (const key of keys.slice(0, 12)) {
     try {
       const res = await store.getWithMetadata(key, { type: 'arrayBuffer' });
@@ -255,9 +262,15 @@ async function attachPiecesToAirtable(record, event) {
       if (!field) continue;
       const buf = Buffer.from(res.data);
       if (!buf.length || buf.length > 3500000) continue; // garde-fou : limite upload Airtable (~5 Mo requête)
+      // Nom propre (pas l'horodatage) — par type + code dossier + index. Pas de nom de passager (la pièce
+      // peut être celle d'un co-passager : on ne risque pas de la mal étiqueter).
+      const ext = ((key.split('.').pop() || (meta.mime || '').split('/')[1] || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg').slice(0, 4);
+      const filename = field === cfg.fPiecePasseport
+        ? `Piece-identite-${code}-${++nId}.${ext}`
+        : `Carte-embarquement-${code}-${++nCarte}.${ext}`;
       const up = await fetch(`https://content.airtable.com/v0/${cfg.base}/${recId}/${field}/uploadAttachment`, {
         method: 'POST', headers: atHeaders(cfg.key),
-        body: JSON.stringify({ contentType: meta.mime || 'application/octet-stream', file: buf.toString('base64'), filename: key.split('/').pop() || 'piece' }),
+        body: JSON.stringify({ contentType: meta.mime || 'application/octet-stream', file: buf.toString('base64'), filename }),
       });
       if (up.ok) uploaded++;
       else console.error(`submit-mandat: upload pièce ${key} → Airtable ${up.status}`);
