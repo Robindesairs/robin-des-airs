@@ -619,6 +619,22 @@ exports.handler = async (event) => {
     try { pdfBilingueBuffer = await genererMandatBilinguePdf(record); }
     catch (e) { console.error('submit-mandat: génération PDF bilingue échouée:', e.message); }
   }
+  // Archive le PDF BILINGUE aussi → récupérable à la demande via /api/mandat-pdf?r=REF&bilingue=1
+  // (document à envoyer aux compagnies étrangères). Immutable, best-effort, comme le PDF FR.
+  if (pdfBilingueBuffer && netlifyBlobsModule) {
+    try {
+      const blobs = netlifyBlobsModule;
+      if (blobs.connectLambda && event) blobs.connectLambda(event);
+      const store = blobs.getStore(STORE_NAME);
+      const already = await store.getMetadata(`pdf-bilingue/${ref}`).catch(() => null);
+      if (!(already && already.metadata)) {
+        await store.set(`pdf-bilingue/${ref}`, pdfBilingueBuffer.toString('base64'), {
+          metadata: { ref, cert_id: certId, signed_at: ts, bytes: pdfBilingueBuffer.length, lang: 'fr-en' },
+        });
+        console.log(`submit-mandat: PDF bilingue archivé pdf-bilingue/${ref} (${pdfBilingueBuffer.length} o)`);
+      }
+    } catch (e) { console.error('submit-mandat: archive PDF bilingue échouée:', e.message); }
+  }
 
   const [webhookResult, emailResult, waCopyResult] = await Promise.all([
     forwardBotWebhook(record).then(() => ({ ok: true })).catch((e) => ({ ok: false, error: e.message })),
