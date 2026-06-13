@@ -1506,49 +1506,63 @@
       '</div><div class="radar-metric-sub">annul. ou 3h+ élig.</div></div>';
   }
 
+  // Vue « cartes » — lisible d'un coup d'œil, triée par gravité (même ordre que la table).
+  // C'est la vue par défaut du radar : route + RETARD en gros + verdict + actions.
   function renderRadarCards(rows) {
     var cards = document.getElementById('radar-cards');
     if (!cards) return;
     if (!rows.length) {
-      cards.innerHTML = '';
+      cards.innerHTML = '<div class="radar-cards-empty">Aucun vol à afficher — lance un scan ou élargis les filtres.</div>';
       return;
     }
     cards.innerHTML = rows
       .map(function (v) {
         var rowCls = v.prio === 'URGENT' ? (v.statut === 'ANNULE' ? 'row-critical' : 'row-hot') : v.elig === 'OUI' ? 'row-eligible' : '';
-        var stat =
-          v.statut === 'ANNULE' ? 'Annulé' : v.statut === 'RETARD' ? 'Retard ' + retardH(v.retardMin) : "À l'heure";
+        // Bloc retard : gros chiffre coloré (ce que l'œil cherche en premier).
+        var delayHtml;
+        if (v.statut === 'ANNULE') {
+          delayHtml = '<span class="rc-cancel">ANNULÉ</span>';
+        } else if (v.statut === 'RETARD') {
+          var cls = v.retardMin >= 180 ? 'rc-crit' : v.retardMin >= 60 ? 'rc-warn' : 'rc-mild';
+          delayHtml = '<span class="rc-retard ' + cls + '">' + retardH(v.retardMin) + '</span><span class="rc-retard-lbl">de retard</span>';
+        } else {
+          delayHtml = '<span class="rc-ontime">à l\'heure</span>';
+        }
+        var veille = isVeille(v) ? ' · <span class="rc-veille">' + (v.dateLabel || 'veille') + '</span>' : '';
         return (
-          '<article class="radar-card-item ' +
-          rowCls +
-          '" data-id="' +
-          v.id +
-          '"><div class="radar-card-head"><div><strong>' +
-          v.vol +
-          '</strong> · ' +
-          v.comp +
-          '<div class="radar-card-route">' +
-          v.dep +
-          ' ' +
-          v.dep_ville +
-          ' → ' +
-          v.arr +
-          ' ' +
-          v.arr_ville +
-          '</div></div><span class="prio-tag ' +
-          PRIO_CLS[v.prio] +
-          '">' +
-          PRIO_LBL[v.prio] +
-          '</span></div><div style="font-size:0.72rem;color:var(--radar-muted)">' +
-          stat +
-          (v.elig === 'OUI' ? ' · CE 261 à qualifier' : '') +
-          '</div></article>'
+          '<article class="radar-card-item ' + rowCls + '" data-id="' + v.id + '">' +
+            '<div class="rc-main">' +
+              '<div class="rc-route"><span class="rc-iata">' + v.dep + '</span>' +
+                '<span class="rc-arrow">→</span><span class="rc-iata">' + v.arr + '</span> ' +
+                sensBadge(v.sens) + '</div>' +
+              '<div class="rc-sub">' + v.vol + ' · ' + v.comp + ' · ' +
+                (v.dep_ville || v.dep) + ' → ' + (v.arr_ville || v.arr) + veille + '</div>' +
+            '</div>' +
+            '<div class="rc-delay">' + delayHtml + '</div>' +
+            '<div class="rc-side">' +
+              '<span class="prio-tag ' + PRIO_CLS[v.prio] + '">' + PRIO_LBL[v.prio] + '</span>' +
+              (v.elig === 'OUI' ? '<span class="rc-ce261">CE 261 ✓</span>' : '') +
+            '</div>' +
+            '<div class="rc-actions">' +
+              '<button type="button" class="btn-wa radar-btn-sm" data-act="wa" title="Message WhatsApp passagers">💬</button>' +
+              '<button type="button" class="btn btn-gold radar-btn-sm" data-act="pub" title="Lancer une pub">📣</button>' +
+              '<button type="button" class="radar-btn radar-btn-sm" data-act="detail" title="Détail + enquête">🔍</button>' +
+            '</div>' +
+          '</article>'
         );
       })
       .join('');
     cards.querySelectorAll('.radar-card-item').forEach(function (card) {
-      card.addEventListener('click', function () {
-        window.__radarOpenDetail(card.getAttribute('data-id'));
+      var id = card.getAttribute('data-id');
+      card.addEventListener('click', function () { window.__radarOpenDetail(id); });
+      card.querySelectorAll('button[data-act]').forEach(function (b) {
+        b.addEventListener('click', function (e) {
+          e.stopPropagation();
+          var act = b.getAttribute('data-act');
+          if (act === 'wa') window.__radarOpenPub ? window.__radarOpenPub(id) : window.__radarOpenDetail(id);
+          else if (act === 'pub') window.__radarOpenPub ? window.__radarOpenPub(id) : window.__radarOpenDetail(id);
+          else window.__radarOpenDetail(id);
+        });
       });
     });
   }
@@ -1664,6 +1678,7 @@
         );
       })
       .join('');
+    renderRadarCards(rows); // alimente la vue cartes (défaut) avec les mêmes lignes triées
     renderReturnWatchPanel();
   }
 

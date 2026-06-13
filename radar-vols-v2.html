@@ -253,12 +253,55 @@ tbody tr.row-pinned-ticker{outline:2px solid var(--gold);outline-offset:-2px}
 .sec-title{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin:14px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
 #radar-loading{margin:10px 0;padding:12px;text-align:center;color:var(--text2);font-size:12px}
 
+/* ── 🆕 Vue CARTES (lisible) — vue par défaut du radar ────── */
+:root{--radar-muted:var(--text2)}
+.view-bar{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.view-toggle{display:inline-flex;border:1.5px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.view-toggle button{padding:5px 13px;font-size:12px;font-weight:600;border:none;background:var(--card);color:var(--text2);cursor:pointer;transition:all .12s}
+.view-toggle button.active{background:var(--navy);color:#fff}
+#radar-cards{display:flex;flex-direction:column;gap:8px}
+.radar-cards-empty{padding:2rem;text-align:center;color:var(--text3);font-size:12px}
+.radar-card-item{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--border);border-left:4px solid var(--border);border-radius:var(--r);padding:11px 15px;cursor:pointer;transition:background .12s,box-shadow .12s}
+.radar-card-item:hover{background:#F0FAF6;box-shadow:0 2px 12px rgba(11,31,58,.07)}
+.radar-card-item.row-critical{border-left-color:var(--red);background:#FFF6F5}
+.radar-card-item.row-hot{border-left-color:var(--orange);background:#FFF9F2}
+.radar-card-item.row-eligible{border-left-color:var(--green)}
+.rc-main{flex:1;min-width:0}
+.rc-route{display:flex;align-items:center;gap:7px;font-size:16px;font-weight:800;color:var(--navy)}
+.rc-arrow{color:var(--text3);font-weight:600}
+.rc-sub{font-size:11px;color:var(--text2);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rc-veille{color:var(--orange);font-weight:700}
+.rc-delay{flex-shrink:0;min-width:96px;text-align:right;display:flex;flex-direction:column;align-items:flex-end;line-height:1}
+.rc-retard{font-size:23px;font-weight:800}
+.rc-retard.rc-crit{color:var(--red)}.rc-retard.rc-warn{color:var(--orange)}.rc-retard.rc-mild{color:#B7950B}
+.rc-retard-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:.04em;margin-top:3px}
+.rc-cancel{font-size:14px;font-weight:800;color:#fff;background:var(--red);padding:3px 10px;border-radius:6px}
+.rc-ontime{font-size:13px;font-weight:700;color:var(--green)}
+.rc-side{flex-shrink:0;display:flex;flex-direction:column;gap:4px;align-items:flex-end;min-width:80px}
+.rc-ce261{font-size:9px;font-weight:800;color:#145A32;background:#D5F5E3;border:1px solid #A9DFBF;padding:1px 7px;border-radius:20px}
+.rc-actions{flex-shrink:0;display:flex;gap:4px}
+body.rv-table #radar-cards{display:none}
+body.rv-cards .tcard{display:none}
+/* Contrôles scan/veille repliés par défaut */
+.radar-tools{margin-bottom:12px;border:1px solid var(--border);border-radius:var(--r);background:var(--card)}
+.radar-tools>summary{cursor:pointer;list-style:none;padding:10px 14px;font-size:12px;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:8px}
+.radar-tools>summary::-webkit-details-marker{display:none}
+.radar-tools>summary::after{content:'▾';margin-left:auto;color:var(--text3)}
+.radar-tools[open]>summary::after{content:'▴'}
+.radar-tools[open]>summary{border-bottom:1px solid var(--border)}
+.radar-tools-body{padding:12px 14px 4px}
+
 /* ── Responsive ───────────────────────────────────────────── */
 @media(max-width:900px){.metrics{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:680px){
+  .radar-card-item{flex-wrap:wrap;gap:8px}
+  .rc-main{flex-basis:62%}.rc-delay{min-width:0}
+  .rc-actions{flex-basis:100%;justify-content:flex-end}
+}
 @media(max-width:600px){.metrics{grid-template-columns:repeat(2,1fr)}.grid2,.grid3{grid-template-columns:1fr}.app{padding:8px}.pub-grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
-<body>
+<body class="rv-cards">
 <script src="/data/radar-south-departure-routes.js"></script>
 <script src="/data/radar-frankfurt-routes.js"></script>
 <script src="/assets/radar-gate.js"></script>
@@ -288,6 +331,9 @@ tbody tr.row-pinned-ticker{outline:2px solid var(--gold);outline-offset:-2px}
 <div class="app">
   <div id="radar-api-alert" role="alert" hidden></div>
   <div id="data-source-badge" style="display:none;font-size:11px;color:var(--text2);margin-bottom:8px"></div>
+  <details class="radar-tools">
+  <summary>⚙️ Scan manuel &amp; veille — sources, hubs aller / retour</summary>
+  <div class="radar-tools-body">
   <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap" role="group" aria-label="Source des données">
     <button type="button" class="btn btn-sm radar-source-btn" id="src-snapshot" data-mode="snapshot" title="Snapshot 8h (10 vols impactés) — alimente aussi le bandeau accueil">☀️ Cache matin</button>
     <button type="button" class="btn btn-sm radar-source-btn active" id="src-live" data-mode="live">📡 Scan live</button>
@@ -355,6 +401,8 @@ tbody tr.row-pinned-ticker{outline:2px solid var(--gold);outline-offset:-2px}
       <p style="margin:0;font-size:12px;color:var(--text3)">Lancez un scan retour pour alimenter cette liste.</p>
     </div>
   </div>
+  </div>
+  </details>
 
   <!-- Métriques : 7 cards (les 6 générées par radar-live.js + 1 Potentiel du jour) -->
   <div class="metrics" id="metrics">
@@ -408,6 +456,14 @@ tbody tr.row-pinned-ticker{outline:2px solid var(--gold);outline-offset:-2px}
         </select>
       </div>
       <p style="margin:0 0 10px;font-size:11px;color:var(--text2)"><strong>Bandeau accueil :</strong> cochez « Bandeau » sur les vols à mettre en avant (max 14, dont ~6 vols RAM épinglés auto). Message WhatsApp générique via 💬.</p>
+      <div class="view-bar">
+        <div class="view-toggle" id="radar-view-toggle">
+          <button type="button" data-view="cards" class="active">🃏 Cartes</button>
+          <button type="button" data-view="table">📋 Tableau détaillé</button>
+        </div>
+        <span style="font-size:11px;color:var(--text2)">Trié par gravité — urgents et plus gros retards en haut. 🔍 détail · 💬 WhatsApp · 📣 pub.</span>
+      </div>
+      <div id="radar-cards"></div>
       <div class="tcard">
         <div class="twrap">
           <table>
@@ -526,6 +582,28 @@ tbody tr.row-pinned-ticker{outline:2px solid var(--gold);outline-offset:-2px}
 </div>
 
 <!-- radar-live.js chargé par radar-gate.js après authentification CRM -->
+
+<!-- Bascule Cartes / Tableau (vue cartes = défaut, plus lisible) -->
+<script>
+(function(){
+  var tg = document.getElementById('radar-view-toggle');
+  if (!tg) return;
+  tg.addEventListener('click', function(e){
+    var b = e.target.closest('button[data-view]');
+    if (!b) return;
+    var view = b.getAttribute('data-view');
+    document.body.classList.toggle('rv-cards', view === 'cards');
+    document.body.classList.toggle('rv-table', view === 'table');
+    tg.querySelectorAll('button').forEach(function(x){ x.classList.toggle('active', x === b); });
+    try { localStorage.setItem('rda_radar_view', view); } catch(_){}
+  });
+  // Restaure le dernier choix
+  try {
+    var saved = localStorage.getItem('rda_radar_view');
+    if (saved === 'table') { var t = tg.querySelector('button[data-view="table"]'); if (t) t.click(); }
+  } catch(_){}
+})();
+</script>
 
 <!-- Extension v3 désactivée (colonnes intégrées dans radar-live.js) -->
 
