@@ -71,6 +71,8 @@ function airtableCfg() {
     fIncident: (process.env.AIRTABLE_F_TYPE_INCIDENT || 'fldci5VnHb0HpOoKL').trim(),
     fItineraire: (process.env.AIRTABLE_F_ITINERAIRE || 'fldtCISegQZ58Yvrl').trim(),
     fMandatPdf: (process.env.AIRTABLE_F_MANDAT_PDF || 'fldynALd43y4YYcxz').trim(), // champ pièce jointe « Mandat de Représentation signé »
+    fPiecePasseport: (process.env.AIRTABLE_F_PIECE_PASSEPORT || 'fldCTsCendE7smLCG').trim(), // « Copie Passeport / CI »
+    fPieceCarte: (process.env.AIRTABLE_F_PIECE_CARTE || 'flddIxlejoKprr2Ok').trim(), // « Carte d'embarquement »
     statutSuiviSigne: (process.env.AIRTABLE_STATUT_SUIVI_MANDAT_SIGNE || 'Mandat signé').trim(),
   };
 }
@@ -209,6 +211,60 @@ async function attachMandatToAirtable(record) {
   if (!pr.ok) throw new Error(`Airtable attach mandat ${pr.status}: ${(await pr.text()).slice(0, 200)}`);
   console.log(`submit-mandat: mandat bilingue attaché à Airtable (${updates.length} fiche·s) ref=${ref}`);
   return { attached: updates.length };
+}
+
+// Téléverse les pièces (passeport/CNI, carte d'embarquement) du dossier vers les champs Airtable dédiés,
+// en BASE64 via l'API « uploadAttachment » d'Airtable — les octets vont directement de Blobs à Airtable,
+// AUCUNE URL ni secret exposé. Mappe par type. Best-effort, plafonné en taille et en nombre.
+async function attachPiecesToAirtable(record, event) {
+  const cfg = airtableCfg();
+  if (!cfg || !netlifyBlobsModule || (!cfg.fPiecePasseport && !cfg.fPieceCarte)) return { skipped: true };
+  const ref = (record.ref || '').trim();
+  if (!ref) return { skipped: true, reason: 'no ref' };
+  const recs = await airtableFindByRef(cfg, ref);
+  if (!recs.length) return { skipped: true, reason: 'fiche introuvable' };
+
+  const blobs = netlifyBlobsModule;
+  if (blobs.connectLambda && event) blobs.connectLambda(event);
+  const store = blobs.getStore('pieces');
+  if (!store) return { skipped: true, reason: 'store pieces indisponible' };
+
+  // Clés des pièces : dépôt web (p/<ref>/…) + bot WhatsApp (wa/<tel>/…)
+  const phoneDigits = String(record.whatsapp || '').replace(/\D/g, '');
+  const keys = [];
+  try { const w = await store.list({ prefix: `p/${ref}/` }); for (const b of (w.blobs || [])) keys.push(b.key); } catch (_) {}
+  if (phoneDigits) { try { const a = await store.list({ prefix: `wa/${phoneDigits}/` }); for (const b of (a.blobs || [])) keys.push(b.key); } catch (_) {} }
+  if (!keys.length) return { skipped: true, reason: 'aucune pièce' };
+
+  // Type de pièce → champ Airtable. Certificat / frais : pas de champ dédié → ignorés (restent dans Blobs).
+  const fieldFor = (kind) => {
+    const k = String(kind || '').toLowerCase();
+    if (/identite|passeport|cni|passport|sejour/.test(k)) return cfg.fPiecePasseport;
+    if (/carte|boarding|ebillet|ebooking|billet|voyage/.test(k)) return cfg.fPieceCarte;
+    return null;
+  };
+  const recId = recs[0].id; // fiche canonique
+  let uploaded = 0;
+  for (const key of keys.slice(0, 12)) {
+    try {
+      const res = await store.getWithMetadata(key, { type: 'arrayBuffer' });
+      if (!res || !res.data) continue;
+      const meta = res.metadata || {};
+      const kind = meta.kind || (key.split('/').pop() || '').replace(/^\d+_/, '').replace(/\.[a-z0-9]+$/i, '');
+      const field = fieldFor(kind);
+      if (!field) continue;
+      const buf = Buffer.from(res.data);
+      if (!buf.length || buf.length > 3500000) continue; // garde-fou : limite upload Airtable (~5 Mo requête)
+      const up = await fetch(`https://content.airtable.com/v0/${cfg.base}/${recId}/${field}/uploadAttachment`, {
+        method: 'POST', headers: atHeaders(cfg.key),
+        body: JSON.stringify({ contentType: meta.mime || 'application/octet-stream', file: buf.toString('base64'), filename: key.split('/').pop() || 'piece' }),
+      });
+      if (up.ok) uploaded++;
+      else console.error(`submit-mandat: upload pièce ${key} → Airtable ${up.status}`);
+    } catch (e) { console.error('submit-mandat: pièce → Airtable', key, e.message); }
+  }
+  console.log(`submit-mandat: ${uploaded} pièce·s attachée·s à Airtable ref=${ref}`);
+  return { uploaded };
 }
 
 function signatureBase64(record) {
@@ -675,6 +731,9 @@ exports.handler = async (event) => {
   // Attache le mandat signé bilingue à la fiche Airtable (CRM) — APRÈS archivage du PDF. Best-effort.
   try { await attachMandatToAirtable(record); }
   catch (e) { console.error('submit-mandat: attache mandat Airtable échouée:', e.message); }
+  // Téléverse les pièces (passeport, carte) vers Airtable en base64 (sans secret exposé). Best-effort.
+  try { await attachPiecesToAirtable(record, event); }
+  catch (e) { console.error('submit-mandat: attache pièces Airtable échouée:', e.message); }
 
   const [webhookResult, emailResult, waCopyResult] = await Promise.all([
     forwardBotWebhook(record).then(() => ({ ok: true })).catch((e) => ({ ok: false, error: e.message })),
