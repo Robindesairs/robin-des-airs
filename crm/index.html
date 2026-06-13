@@ -432,6 +432,19 @@
   .kb-amt { font-weight:700; color:var(--green); font-size:12.5px; }
   .kb-empty { color:#9CA3AF; font-size:11px; text-align:center; padding:10px 0; }
   @media(max-width:640px){ .kb-col{ flex-basis:80vw; } }
+  /* File « À rappeler » (Malik) */
+  .rappel-head { font-size:15px; font-weight:700; color:var(--text); margin:4px 0 12px; }
+  .rappel-empty { color:var(--text2); font-size:14px; text-align:center; padding:40px 16px; background:var(--bg); border:1px dashed var(--border); border-radius:10px; }
+  .rappel-card { display:flex; align-items:center; gap:12px; background:#fff; border:1px solid var(--border); border-radius:10px; padding:12px 14px; margin-bottom:8px; }
+  .rappel-card.rappel-urgent { border-left:3px solid var(--green); background:#F0FDF4; }
+  .rappel-name { font-weight:700; font-size:14px; color:var(--text); }
+  .rappel-sub { font-size:12px; color:var(--text2); margin:2px 0; }
+  .rappel-meta { font-size:11.5px; color:#6B7280; }
+  .rappel-actions { display:flex; gap:8px; flex-shrink:0; }
+  .rappel-btn { text-decoration:none; font-size:13px; font-weight:600; padding:8px 12px; border-radius:8px; white-space:nowrap; }
+  .rappel-btn.call { background:var(--navy); color:#fff; }
+  .rappel-btn.wa { background:#25D366; color:#fff; }
+  @media(max-width:640px){ .rappel-card{ flex-direction:column; align-items:stretch; } .rappel-btn{ flex:1; text-align:center; } }
   .moratoire-soon { background: #F0FAF5; color: var(--green); font-size: 11px; padding: 3px 8px; border-radius: 5px; }
 
   /* ── MODAL ── */
@@ -673,11 +686,15 @@
     <div class="view-toggle" style="margin-left:auto">
       <button type="button" id="vt-kanban" class="active" onclick="setCrmView('kanban')">▦ Pipeline</button>
       <button type="button" id="vt-liste" onclick="setCrmView('liste')">≣ Liste</button>
+      <button type="button" id="vt-rappel" onclick="setCrmView('rappel')">📞 À rappeler</button>
     </div>
   </div>
 
   <!-- KANBAN (pipeline par statut) -->
   <div class="kanban" id="kanban"></div>
+
+  <!-- À RAPPELER (file d'appels de Malik) -->
+  <div id="rappel-view" style="display:none"></div>
 
   <!-- TABLEAU -->
   <div class="table-card" id="table-card">
@@ -2329,15 +2346,50 @@ function renderKanban(){
       +'<div class="kb-col-body">'+(items.map(kanbanCard).join('')||'<div class="kb-empty">—</div>')+'</div></div>';
   }).join('');
 }
+function applyCrmView(v){
+  if(['kanban','liste','rappel'].indexOf(v)===-1) v='kanban';
+  window._crmView=v;
+  var kb=document.getElementById('kanban'), tc=document.getElementById('table-card'), rv=document.getElementById('rappel-view');
+  if(kb) kb.style.display=(v==='kanban')?'flex':'none';
+  if(tc) tc.style.display=(v==='liste')?'block':'none';
+  if(rv) rv.style.display=(v==='rappel')?'block':'none';
+  var map={kanban:'vt-kanban',liste:'vt-liste',rappel:'vt-rappel'};
+  ['vt-kanban','vt-liste','vt-rappel'].forEach(function(id){var b=document.getElementById(id); if(b) b.classList.toggle('active', id===map[v]);});
+  if(v==='rappel' && rv && !/rappel-card|rappel-empty/.test(rv.innerHTML)) loadRappelView();
+}
 function setCrmView(v){
-  window._crmView = v;
   try{ localStorage.setItem('rda_crm_view', v); }catch(e){}
-  var kb=document.getElementById('kanban'), tc=document.getElementById('table-card');
-  if(kb) kb.style.display = (v==='kanban') ? 'flex' : 'none';
-  if(tc) tc.style.display = (v==='kanban') ? 'none' : 'block';
-  var bk=document.getElementById('vt-kanban'), bl=document.getElementById('vt-liste');
-  if(bk) bk.classList.toggle('active', v==='kanban');
-  if(bl) bl.classList.toggle('active', v!=='kanban');
+  applyCrmView(v);
+  if(v==='rappel') loadRappelView();
+}
+// ===== File « À rappeler » (proxy /api/leads-a-rappeler → bot) =====
+function rappelTel(p){ return String(p||'').replace(/\D/g,''); }
+async function loadRappelView(){
+  var rv=document.getElementById('rappel-view'); if(!rv) return;
+  rv.innerHTML='<div class="rappel-empty">Chargement de la file d’appels…</div>';
+  var data=null;
+  try{ var r=await fetch('/api/leads-a-rappeler',{headers:{Accept:'application/json'},credentials:'same-origin'}); if(r.ok) data=await r.json(); }catch(e){}
+  if(!data || !data.ok){ rv.innerHTML='<div class="rappel-empty">📞 File « À rappeler » indisponible — connexion CRM requise, ou aucun lead à rappeler pour l’instant.</div>'; return; }
+  renderRappelList(data.leads||[]);
+}
+function renderRappelList(leads){
+  var rv=document.getElementById('rappel-view'); if(!rv) return;
+  if(!leads.length){ rv.innerHTML='<div class="rappel-empty">✅ Personne à rappeler — tout le monde a été contacté.</div>'; return; }
+  rv.innerHTML='<div class="rappel-head">📞 '+leads.length+' à rappeler <span style="color:var(--text2);font-weight:400;font-size:12px">· rappels demandés en tête</span></div>'
+    + leads.map(function(l){
+      var tel=rappelTel(l.phone);
+      var nom=escHtml((String(l.name||'').trim())||'(sans nom)');
+      var reason = l.wantsCall ? '📞 Rappel demandé' : (l.reason==='mandat_non_signe'?'Mandat non signé':(l.reason==='abandon_avant_signature'?'Abandon avant signature':'Fenêtre 24h fermée'));
+      var sub=[l.vol,l.route,l.incident].filter(Boolean).map(escHtml).join(' · ');
+      var age=(l.ageHours!=null)?(l.ageHours<24?l.ageHours+'h':Math.round(l.ageHours/24)+'j'):'';
+      return '<div class="rappel-card'+(l.wantsCall?' rappel-urgent':'')+'">'
+        +'<div style="flex:1;min-width:0"><div class="rappel-name">'+nom+(l.pax>1?' ×'+l.pax:'')+'</div>'
+        +'<div class="rappel-sub">'+(sub||'—')+'</div>'
+        +'<div class="rappel-meta">'+reason+(age?' · il y a '+age:'')+(l.montant?' · jusqu’à '+l.montant+' €':'')+'</div></div>'
+        +'<div class="rappel-actions">'
+        +(tel?'<a class="rappel-btn call" href="tel:+'+tel+'">📞 Appeler</a><a class="rappel-btn wa" href="https://wa.me/'+tel+'" target="_blank" rel="noopener">💬 WhatsApp</a>':'')
+        +'</div></div>';
+    }).join('');
 }
 
 function renderMetrics(){
@@ -2365,7 +2417,7 @@ function render(){
   renderMetrics();
   renderJalons();
   renderKanban();
-  setCrmView(window._crmView || (function(){try{return localStorage.getItem('rda_crm_view')}catch(e){return null}})() || 'kanban');
+  applyCrmView(window._crmView || (function(){try{return localStorage.getItem('rda_crm_view')}catch(e){return null}})() || 'kanban');
   const rows=filtered();
   const tbody=document.getElementById('tbody');
   if(!rows.length){
