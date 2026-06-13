@@ -207,7 +207,18 @@ details.mandat-full>summary:hover{background:#EFF9F4}
 details.mandat-full>summary::-webkit-details-marker{display:none}
 details.mandat-full>summary::after{content:'▾';margin-left:auto}
 details.mandat-full[open]>summary{margin-bottom:12px}
-@media print{details.mandat-full{display:block}details.mandat-full>summary{display:none}}
+@media print{
+  /* N'imprimer QUE le mandat rempli (parties + texte complet + signature), même depuis l'écran de succès. */
+  body{background:#fff !important}
+  body *{visibility:hidden !important}
+  #mandatForm,#mandatForm *{visibility:visible !important}
+  #mandatForm{display:block !important;position:absolute;left:0;top:0;width:100%;margin:0;padding:0}
+  details.mandat-full{display:block !important}
+  details.mandat-full>summary{display:none}
+  #successScreen{display:none !important}
+  /* Masquer l'interface interactive (boutons, aide à signer) — on garde le contenu du mandat et la signature. */
+  #btnAddPax,.btn-submit,.success-cta,.sig-clear,#sigPh{display:none !important;visibility:hidden !important}
+}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
   <script src="/assets/pre-launch.js" defer></script>
@@ -216,7 +227,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
 <div class="topbar">
   <a href="/" style="text-decoration:none;color:inherit"><div class="brand">Robin <em>des Airs</em></div></a>
   <div class="topbar-links">
-    <a href="/documents/mandat-fr.html?print=1" target="_blank" rel="noopener">Document PDF ↓</a>
+    <a href="#" onclick="window.print();return false;">Document PDF ↓</a>
     <a href="/mandat-en.html">EN</a>
     <a href="/delais-dates-ce261-fr.html">Délais</a>
     <a href="/bareme-ce261-fr.html">Barème CE 261</a>
@@ -672,7 +683,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       Mandat de représentation <strong>+ cession de créance</strong> (art. 5 bis)<br>
       Signé le <strong id="sWhen">—</strong> à <strong id="sWhere">—</strong> · version <strong>2026-06-v1</strong>
     </div>
-    <a class="success-cta nav full" id="sPdf" href="/documents/mandat-fr.html?print=1" target="_blank" rel="noopener" style="margin-top:12px">Enregistrer / imprimer mon mandat</a>
+    <a class="success-cta nav full" id="sPdf" href="#" onclick="window.print();return false;" style="margin-top:12px">Enregistrer / imprimer mon mandat</a>
     <div class="sb-note">Gardez votre référence. Un récapitulatif complet vous est aussi envoyé par e-mail et sur WhatsApp.</div>
   </div>
 
@@ -1517,7 +1528,7 @@ function showSuccess(payload, ok) {
   const retEl = document.getElementById('sRetract'); if (retEl) retEl.textContent = fmtDateLongFR(retract);
   // Liens pré-remplis (PDF + WhatsApp)
   const pdfEl = document.getElementById('sPdf');
-  if (pdfEl) pdfEl.href = '/documents/mandat-fr.html?print=1&ref=' + encodeURIComponent(REF);
+  if (pdfEl) pdfEl.onclick = function (e) { e.preventDefault(); window.print(); }; // imprime le mandat REMPLI (cette page), plus l'ancien template vierge
   const waBase = 'https://wa.me/33756863630?text=';
   const waEl = document.getElementById('sWa');
   if (waEl) waEl.href = waBase + encodeURIComponent('Bonjour Robin des Airs, je viens de signer mon mandat (réf. ' + REF + '). Je confirme mon dossier.');
