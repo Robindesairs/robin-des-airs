@@ -76,6 +76,12 @@
 [functions."legal-daily"]
   schedule = "30 7 * * *"
 
+# Bureau Robin — point du jour des postes (Aïcha/Sofia/Karim/Léa/Nadia) à 7h35 UTC
+# (9h35 Paris été). Calcule reversements à faire, agences à contacter, pièces à relancer,
+# rentabilité vs seuil → brief WhatsApp consolidé si actions. Lecture seule, human-in-the-loop.
+[functions."bureau-daily"]
+  schedule = "35 7 * * *"
+
 [build]
   publish = "."
   # S'assurer que les deps (dont @netlify/blobs) sont présentes avant le bundle des fonctions

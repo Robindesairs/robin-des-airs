@@ -58,6 +58,7 @@
 /api/radar-enquete           /.netlify/functions/radar-enquete           200
 /api/generate-claim          /.netlify/functions/generate-claim          200
 /api/legal-daily             /.netlify/functions/legal-daily             200
+/api/bureau-daily            /.netlify/functions/bureau-daily            200
 /api/whatsapp-status         /.netlify/functions/whatsapp-status         200
 /api/airtable-webhook       /.netlify/functions/airtable-webhook  200
 /api/airtable-sync          /.netlify/functions/airtable-sync     200

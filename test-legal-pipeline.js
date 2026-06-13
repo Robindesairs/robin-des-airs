@@ -42,22 +42,26 @@ ok('signé J+8 = rouge (SLA 5j dépassé)', it.urgence === 'rouge', it.urgence);
 it = evaluateDossier({ ref: 'RDA-3', statut: 'Mandat signé', vol: 'AF718', dateVol: daysAgo(60), dateDossier: daysAgo(3), remarques: `MED générée ${daysAgo(1)} — à valider` }, ctx);
 ok('signé + MED générée = orange + envoyer', it.urgence === 'orange' && /Envoyer la mise en demeure/.test(it.action), it.action);
 
-// 4. LRAR envoyée, MED il y a 5 j → suivi, vert
+// 4. LRAR envoyée, MED il y a 5 j → suivi, vert (cadence dérivée de dossier-state : J+15/30/62)
 it = evaluateDossier({ ref: 'RDA-4', statut: 'LRAR envoyée', vol: 'AF718', dateVol: daysAgo(60), dateDossier: daysAgo(20), remarques: `MED générée ${daysAgo(5)}` }, ctx);
 ok('LRAR +5j = vert (suivi)', it.urgence === 'vert' && /Suivre/.test(it.action), it.action);
 
-// 5. LRAR, MED il y a 20 j → relance, orange
+// 5. LRAR, MED il y a 20 j → relance 1, orange (J+15)
 it = evaluateDossier({ ref: 'RDA-5', statut: 'LRAR envoyée', vol: 'AF718', dateVol: daysAgo(80), dateDossier: daysAgo(40), remarques: `MED générée ${daysAgo(20)}` }, ctx);
 ok('LRAR +20j = orange (relance)', it.urgence === 'orange' && /Relancer la compagnie/.test(it.action), it.action);
 
-// 6. LRAR, MED il y a 35 j → escalade NEB, rouge
-it = evaluateDossier({ ref: 'RDA-6', statut: 'LRAR envoyée', vol: 'AF718', dateVol: daysAgo(120), dateDossier: daysAgo(50), remarques: `MED générée ${daysAgo(35)}` }, ctx);
-ok('LRAR +35j = rouge (escalade NEB)', it.urgence === 'rouge' && /Escalade NEB/.test(it.action), it.action);
+// 6. LRAR, MED il y a 40 j → relance 2 ferme, orange (J+30)
+it = evaluateDossier({ ref: 'RDA-6', statut: 'LRAR envoyée', vol: 'AF718', dateVol: daysAgo(120), dateDossier: daysAgo(55), remarques: `MED générée ${daysAgo(40)}` }, ctx);
+ok('LRAR +40j = orange (relance 2 ferme)', it.urgence === 'orange' && /Relance 2/.test(it.action), it.action);
+
+// 7. LRAR, MED il y a 70 j → escalade NEB, rouge (J+62)
+it = evaluateDossier({ ref: 'RDA-7', statut: 'LRAR envoyée', vol: 'AF718', dateVol: daysAgo(200), dateDossier: daysAgo(90), remarques: `MED générée ${daysAgo(70)}` }, ctx);
+ok('LRAR +70j = rouge (escalade NEB)', it.urgence === 'rouge' && /Escalade NEB/.test(it.action), it.action);
 ok('escalade NEB cite la DGAC (AF=FR)', /DGAC/.test(it.action), it.action);
 
-// 7. LRAR, MED il y a 50 j → contentieux, rouge
-it = evaluateDossier({ ref: 'RDA-7', statut: 'LRAR envoyée', vol: 'AF718', dateVol: daysAgo(200), dateDossier: daysAgo(70), remarques: `MED générée ${daysAgo(50)}` }, ctx);
-ok('LRAR +50j = rouge (contentieux)', it.urgence === 'rouge' && /contentieux/i.test(it.action), it.action);
+// 8. LRAR, MED il y a 100 j → contentieux, rouge (J+90)
+it = evaluateDossier({ ref: 'RDA-7b', statut: 'LRAR envoyée', vol: 'AF718', dateVol: daysAgo(300), dateDossier: daysAgo(120), remarques: `MED générée ${daysAgo(100)}` }, ctx);
+ok('LRAR +100j = rouge (contentieux)', it.urgence === 'rouge' && /contentieux/i.test(it.action), it.action);
 
 // 8. Refus (non définitif) → escalade NEB, rouge
 it = evaluateDossier({ ref: 'RDA-8', statut: 'Refus', vol: 'AF718', dateVol: daysAgo(100), dateDossier: daysAgo(60) }, ctx);
@@ -82,7 +86,7 @@ ok('Signature en attente = null (amont)', evaluateDossier({ ref: 'RDA-12', statu
 console.log('\n— buildLegalQueue (file + tri + exclusions) —');
 const records = [
   { ref: 'RDA-A', statut: 'Mandat signé', vol: 'AF718', dateVol: daysAgo(40), dateDossier: daysAgo(2) },
-  { ref: 'RDA-B', statut: 'LRAR envoyée', vol: 'AF718', dateVol: daysAgo(120), dateDossier: daysAgo(50), remarques: `MED générée ${daysAgo(35)}` },
+  { ref: 'RDA-B', statut: 'LRAR envoyée', vol: 'AF718', dateVol: daysAgo(200), dateDossier: daysAgo(90), remarques: `MED générée ${daysAgo(70)}` },
   { ref: 'RDA-C', statut: 'Payé client', vol: 'AF718' },
   { ref: 'RDA-TEST-1', name: 'Test Démo', statut: 'Mandat signé', vol: 'AF718', dateVol: daysAgo(60), dateDossier: daysAgo(9) },
   { ref: 'RDA-D', name: 'exemple', statut: 'LRAR envoyée', vol: 'AF718', dateVol: daysAgo(60), dateDossier: daysAgo(20) },
