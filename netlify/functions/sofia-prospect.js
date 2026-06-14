@@ -21,6 +21,7 @@
 'use strict';
 
 const P = require('./lib/agency-prospector');
+const IG = require('./lib/ig-prospector');
 const { sendCallMeBot } = require('./lib/callmebot');
 const { isNetlifyScheduled, verifyInternalSecret, publicCorsHeaders } = require('./lib/internal-auth');
 const { checkCrmAccess } = require('./lib/crm-access');
@@ -47,6 +48,12 @@ const OVERPASS_MIRRORS = [
   'https://overpass-api.de/api/interpreter',
   'https://overpass.kumi.systems/api/interpreter',
 ];
+
+// Instagram Graph API (token Meta + compte IG Business déjà présents dans le projet).
+const IG_GRAPH = `https://graph.facebook.com/${(process.env.META_GRAPH_VERSION || 'v21.0')}`;
+const IG_USER_ID = (process.env.INSTAGRAM_BUSINESS_ID || '').trim();
+const IG_TOKEN = (process.env.META_PAGE_ACCESS_TOKEN || process.env.META_ADS_ACCESS_TOKEN || '').trim();
+const IG_HASHTAG_CACHE_KEY = 'ig/hashtag-ids.json';
 
 function intEnv(n, d) { const v = parseInt(String(process.env[n] || '').trim(), 10); return Number.isFinite(v) ? v : d; }
 
@@ -75,6 +82,68 @@ async function overpassFetch(ql) {
     } catch (e) { lastErr = e.message; }
   }
   throw new Error('Overpass indisponible (' + lastErr + ')');
+}
+
+// ── Instagram (recherche par hashtag) ──────────────────────────────────────
+
+async function igGet(path, params) {
+  const url = new URL(`${IG_GRAPH}/${path}`);
+  for (const [k, v] of Object.entries(params || {})) url.searchParams.set(k, v);
+  url.searchParams.set('access_token', IG_TOKEN);
+  const ctrl = new AbortController();
+  const to = setTimeout(() => ctrl.abort(), 15000);
+  try {
+    const r = await fetch(url.toString(), { signal: ctrl.signal });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error((data.error && data.error.message) || `HTTP ${r.status}`);
+    return data;
+  } finally { clearTimeout(to); }
+}
+
+/** Cache des IDs de hashtag (résolution = quota 30/7j → on ne résout qu'une fois). */
+async function loadHashtagCache(event) {
+  if (!blobs) return {};
+  try { if (blobs.connectLambda && event) blobs.connectLambda(event); return (await blobs.getStore(STORE).get(IG_HASHTAG_CACHE_KEY, { type: 'json' })) || {}; }
+  catch (_) { return {}; }
+}
+async function saveHashtagCache(event, cache) {
+  if (!blobs) return;
+  try { if (blobs.connectLambda && event) blobs.connectLambda(event); await blobs.getStore(STORE).setJSON(IG_HASHTAG_CACHE_KEY, cache); }
+  catch (_) {}
+}
+
+/** Découvre des prospects via les hashtags IG. Renvoie { prospects, error?, count }. */
+async function fetchInstagram(paysArg, event) {
+  if (!IG_USER_ID || !IG_TOKEN) return { prospects: [], error: 'Instagram non configuré (INSTAGRAM_BUSINESS_ID / token Meta)', count: 0 };
+  const targets = IG.igTargets(paysArg);
+  const cache = await loadHashtagCache(event);
+  let cacheDirty = false;
+  const prospects = [];
+  let firstError = null;
+  for (const t of targets) {
+    try {
+      // 1) résoudre l'ID du hashtag (depuis le cache si possible)
+      let id = cache[t.tag];
+      if (!id) {
+        const res = await igGet('ig_hashtag_search', { user_id: IG_USER_ID, q: t.tag });
+        id = res && res.data && res.data[0] && res.data[0].id;
+        if (id) { cache[t.tag] = id; cacheDirty = true; }
+      }
+      if (!id) continue;
+      // 2) médias récents du hashtag
+      const media = await igGet(`${id}/recent_media`, {
+        user_id: IG_USER_ID,
+        fields: 'caption,permalink,timestamp,like_count,comments_count',
+        limit: '40',
+      });
+      const list = (media && media.data) || [];
+      prospects.push(...IG.mediaListToProspects(list, { ville: t.ville, pays: t.pays, tag: t.tag }));
+    } catch (e) {
+      if (!firstError) firstError = e.message;
+    }
+  }
+  if (cacheDirty) await saveHashtagCache(event, cache);
+  return { prospects, error: firstError, count: prospects.length };
 }
 
 /** Noms + téléphones des agences déjà au CRM (pour ne proposer que du nouveau). */
@@ -146,28 +215,46 @@ async function store(event, payload) {
   catch (e) { console.error('[sofia-prospect] Blobs:', e.message); }
 }
 
-/** Recalcule la liste de prospects depuis Overpass (+ dédup CRM). */
-async function compute(paysArg) {
-  const cities = P.citiesFor(paysArg);
+/** Recalcule la liste de prospects (OpenStreetMap + Instagram), dédup + dédup CRM. */
+async function compute(paysArg, event, src) {
+  const useOsm = !src || src === 'osm' || src === 'both';
+  const useIg = !src || src === 'ig' || src === 'both';
   const existing = await fetchExistingAgencies();
   const parVille = [];
   let all = [];
-  for (const city of cities) {
-    try {
-      const data = await overpassFetch(P.buildOverpassQL(city));
-      const parsed = P.parseElements(data.elements || [], { ville: city.ville, pays: city.pays });
-      parVille.push({ ville: city.ville, pays: city.pays, paysNom: P.COUNTRY_NAMES[city.pays] || city.pays, trouve: parsed.length });
-      all = all.concat(parsed);
-    } catch (e) {
-      parVille.push({ ville: city.ville, pays: city.pays, paysNom: P.COUNTRY_NAMES[city.pays] || city.pays, trouve: 0, erreur: e.message });
+
+  // Source 1 : OpenStreetMap (agences physiques)
+  if (useOsm) {
+    for (const city of P.citiesFor(paysArg)) {
+      try {
+        const data = await overpassFetch(P.buildOverpassQL(city));
+        const parsed = P.parseElements(data.elements || [], { ville: city.ville, pays: city.pays }).map((p) => ({ ...p, source: 'osm' }));
+        parVille.push({ ville: city.ville, pays: city.pays, paysNom: P.COUNTRY_NAMES[city.pays] || city.pays, trouve: parsed.length });
+        all = all.concat(parsed);
+      } catch (e) {
+        parVille.push({ ville: city.ville, pays: city.pays, paysNom: P.COUNTRY_NAMES[city.pays] || city.pays, trouve: 0, erreur: e.message });
+      }
     }
   }
+
+  // Source 2 : Instagram (hashtags) — token Meta existant
+  let igError = null;
+  if (useIg) {
+    const ig = await fetchInstagram(paysArg, event);
+    igError = ig.error || null;
+    all = all.concat(ig.prospects || []);
+  }
+
   const news = P.sortProspects(P.filterNew(P.dedupe(all), existing));
-  // recompte par ville APRÈS dédup/filtre
   for (const v of parVille) v.nouveau = news.filter((p) => p.ville === v.ville).length;
   return {
     generatedAt: new Date().toISOString(),
     cibles: parVille,
+    sources: {
+      osm: news.filter((p) => p.source === 'osm').length,
+      instagram: news.filter((p) => p.source === 'instagram').length,
+    },
+    igError,
     totalTrouve: all.length,
     totalNouveau: news.length,
     contactables: news.filter((p) => p.contactable).length,
@@ -181,7 +268,9 @@ function todayLabel() {
 function ownerBrief(payload, dateLabel, saved) {
   const lines = ['🤝 Sofia — prospection agences', `📅 ${dateLabel}`, ''];
   lines.push(`${payload.totalNouveau} nouvelle(s) agence(s) à contacter (${payload.contactables} avec coordonnées)`);
+  if (payload.sources) lines.push(`📍 ${payload.sources.osm || 0} via carte · 📸 ${payload.sources.instagram || 0} via Instagram`);
   for (const v of payload.cibles) lines.push(`${P.COUNTRY_FLAG[v.pays] || '•'} ${v.ville} : ${v.nouveau || 0}${v.erreur ? ' (source indispo)' : ''}`);
+  if (payload.igError) lines.push(`⚠️ Instagram indispo : ${String(payload.igError).slice(0, 80)}`);
   if (saved != null) lines.push('', `✅ ${saved} importée(s) au CRM (statut « À contacter »)`);
   lines.push('', '🔗 robindesairs.eu/bureau (poste Sofia)');
   return lines.join('\n');
@@ -194,6 +283,7 @@ exports.handler = async (event) => {
   try { body = JSON.parse(event.body || '{}'); } catch (_) {}
   const q = event.queryStringParameters || {};
   const paysArg = (q.pays || body.pays || '').split(',').map((s) => s.trim().toUpperCase()).filter(Boolean);
+  const src = (q.src || body.src || '').toLowerCase().trim() || null; // 'osm' | 'ig' | 'both' (défaut both)
 
   const fullRun = isNetlifyScheduled(event) || verifyInternalSecret(event, body).ok;
 
@@ -204,7 +294,7 @@ exports.handler = async (event) => {
     const stored = await loadStored(event);
     if (stored) return { statusCode: 200, headers: HEADERS, body: JSON.stringify({ ok: true, cached: true, ...stored }) };
     try {
-      const payload = await compute(paysArg);
+      const payload = await compute(paysArg, event, src);
       await store(event, payload);
       return { statusCode: 200, headers: HEADERS, body: JSON.stringify({ ok: true, ...payload }) };
     } catch (e) {
@@ -214,7 +304,7 @@ exports.handler = async (event) => {
 
   // Run complet (cron / secret).
   let payload;
-  try { payload = await compute(paysArg); }
+  try { payload = await compute(paysArg, event, src); }
   catch (e) { return { statusCode: 502, headers: HEADERS, body: JSON.stringify({ ok: false, error: e.message }) }; }
   await store(event, payload);
 
