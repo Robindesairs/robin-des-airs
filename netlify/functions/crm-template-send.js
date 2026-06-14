@@ -24,6 +24,7 @@ const ALLOWED = new Set([
   'dossier_recu', 'mandat_signe', 'reclamation_envoyee', 'relance_compagnie',
   'reponse_compagnie_accord', 'escalade_procedure', 'paiement_en_cours',
   'piece_manquante', 'photo_a_reprendre', 'rappel_programme', 'parrainage',
+  'dossier_lien_depot',
 ]);
 
 exports.handler = async (event) => {

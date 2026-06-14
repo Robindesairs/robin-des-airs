@@ -225,6 +225,25 @@ On prend aux compagnies, on rend aux familles
 - **Boutons** (Quick Reply) : `Renvoyer la photo`
 - **Échantillons** : `Awa` · `RDA-260614-1234` · `{{3}}=un peu flou`
 
+### C3 — `dossier_lien_depot` (lien de dépôt personnalisé) · **UTILITY**
+> Envoyé par un **opérateur depuis le CRM** (bouton « Demander les pièces au client ») pour
+> qu'un client dépose lui-même sa **carte d'embarquement + passeport(s)** — fonctionne **hors
+> fenêtre 24h**. Le lien `{{3}}` pointe vers `depot-en-ligne.html?r=<jeton>` (jeton opaque,
+> non devinable, généré par `/api/crm-depot-link`).
+- **Catégorie** : UTILITY · fr
+- **Corps** :
+  ```
+  Bonjour {{1}} 👋
+
+  Pour préparer votre dossier {{2}}, déposez ici en quelques secondes votre carte d'embarquement et votre pièce d'identité (passeport ou CNI) :
+
+  {{3}}
+
+  Vos documents sont chiffrés et ne servent qu'à votre réclamation 🔒.
+  ```
+- **Échantillons** : `Awa` · `RDA-260614-1234` · `{{3}}=https://robindesairs.eu/depot-en-ligne.html?r=RDA-260614-ABC123`
+- **Note** : si Meta préfère un **bouton URL dynamique** à l'approbation, basculer sur `URLBTN` + étendre `crm-template-send` pour passer le suffixe du bouton (petit complément).
+
 ---
 
 ## D. RAPPEL TÉLÉPHONIQUE & PARRAINAGE
@@ -328,6 +347,7 @@ Balaie Airtable, détecte un **changement** de « Statut du Dossier Suivi » et 
 | `paiement_en_cours` | UTILITY | indemnité obtenue | — |
 | `piece_manquante` | UTILITY | pièce/carte/e-billet manquant | Envoyer · Rappel |
 | `photo_a_reprendre` | UTILITY | photo illisible | Renvoyer |
+| `dossier_lien_depot` | UTILITY | lien de dépôt carte+passeport (CRM) | — |
 | `rappel_programme` | UTILITY | rappel tél planifié | — |
 | `parrainage` | MARKETING | après paiement | Partager (URL) |
 

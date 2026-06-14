@@ -123,6 +123,14 @@ const TEMPLATES = [
       QR('Renvoyer la photo'),
     ],
   },
+  // Lien de dépôt personnalisé (opérateur → client, hors fenêtre 24h). {{1}} prénom · {{2}} réf · {{3}} lien.
+  {
+    name: 'dossier_lien_depot', category: 'UTILITY',
+    components: [
+      BODY("Bonjour {{1}} 👋\n\nPour préparer votre dossier {{2}}, déposez ici en quelques secondes votre carte d'embarquement et votre pièce d'identité (passeport ou CNI) :\n\n{{3}}\n\nVos documents sont chiffrés et ne servent qu'à votre réclamation 🔒.", ['Awa', 'RDA-260614-1234', 'https://robindesairs.eu/depot-en-ligne.html?r=RDA-260614-ABC123']),
+      FOOTER(SLOGAN),
+    ],
+  },
   // D — Rappel & parrainage.
   {
     name: 'rappel_programme', category: 'UTILITY',

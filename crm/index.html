@@ -2599,6 +2599,12 @@ function openDetail(id){
     </div>
   </div>
   <div class="tab-content" id="t-pieces">
+    <div style="border:1px solid #00C87A;background:#F0FDF7;border-radius:10px;padding:12px;margin-bottom:14px">
+      <div style="font-size:13px;font-weight:800;color:#0B1F3A;margin-bottom:4px">📎 Demander les pièces au client</div>
+      <p style="font-size:12px;color:#374151;line-height:1.45;margin:0 0 10px">Lien sécurisé pour que le client envoie lui-même sa <strong>carte d’embarquement</strong> + son/ses <strong>passeport(s)</strong> — évite les erreurs de saisie au téléphone.</p>
+      <div id="crm-depot-result-${id}" style="margin-bottom:10px">${d.depotRef?crmDepotResultHtml(d.depotRef):''}</div>
+      <button type="button" class="btn btn-primary btn-sm" onclick="crmGenererLienDepot('${id}')">${d.depotRef?'Régénérer le lien':'Générer le lien de dépôt'}</button>
+    </div>
     <p style="font-size:12px;color:#6B7280;margin-bottom:12px;line-height:1.5"><strong>${(d.pieces||[]).length}</strong> pièce(s) sur ce dossier. Les fichiers ajoutés ici sont stockés dans la mémoire du navigateur (rechargement = perte si pas d’export futur).</p>
     <div id="crm-pieces-list-wrap">${formatPiecesRows(d,id)}</div>
     <div class="crm-server-pieces" style="margin:8px 0 16px">
@@ -2702,8 +2708,85 @@ function openDetail(id){
     var ea = document.getElementById('edit-adultes');
     if(ea) ea.setAttribute('data-prev-copax', String(d.adultes));
     crmInitAddressAutocomplete('edit-adresse-search', 'edit-adresse-dd', 'edit-adresse');
-    loadServerPieces(id);
+    loadServerPieces(d.depotRef || id);
   }, 0);
+}
+
+/* ── Lien de dépôt personnalisé ──────────────────────────────────────────────
+ * Fait envoyer au client un lien sécurisé pour qu'il dépose lui-même sa carte
+ * d'embarquement + son/ses passeport(s) → zéro saisie tél, zéro erreur. */
+function crmDepotLink(ref){ return location.origin + '/depot-en-ligne.html?r=' + encodeURIComponent(ref); }
+
+function crmDepotResultHtml(ref){
+  var link = crmDepotLink(ref);
+  return '<div style="display:flex;flex-direction:column;gap:8px">'
+    + '<input type="text" readonly value="'+escAttr(link)+'" onclick="this.select()" style="width:100%;font-size:12px;padding:7px 9px;border:1px solid #D1D5DB;border-radius:8px;background:#fff;color:#0B1F3A">'
+    + '<div style="display:flex;gap:8px;flex-wrap:wrap">'
+    + '<button type="button" class="btn btn-sm" onclick="crmCopyDepotLink(\''+escAttr(ref)+'\')">Copier le lien</button>'
+    + '<button type="button" class="btn btn-sm btn-primary" onclick="crmEnvoyerLienDepotTemplate(\''+escAttr(ref)+'\')">Envoyer sur WhatsApp</button>'
+    + '</div></div>';
+}
+
+function crmCopyDepotLink(ref){
+  var link = crmDepotLink(ref);
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(link).then(function(){ showCrmToast('Lien copié ✅'); }).catch(function(){ showCrmToast('Lien : '+link); }); }
+  else { showCrmToast('Lien : '+link); }
+}
+
+/** Passagers (titulaire + co-passagers) → pour pré-renseigner le dossier de dépôt. */
+function crmDepotPassengers(d){
+  var out = [];
+  var main = ((d.prenom||'')+' '+(d.nom||'')).trim();
+  if(main) out.push({name:main});
+  (d.coPassagers||[]).forEach(function(c){
+    var n = (c && (c.prenom||c.nom)) ? ((c.prenom||'')+' '+(c.nom||'')).trim() : String(c||'').trim();
+    if(n) out.push({name:n});
+  });
+  return out;
+}
+
+async function crmGenererLienDepot(id){
+  var d = DB.find(function(x){ return x.id===id; });
+  if(!d){ showCrmToast('Dossier introuvable'); return; }
+  var box = document.getElementById('crm-depot-result-'+id);
+  if(box) box.innerHTML = '<p style="font-size:12px;color:#6B7280">Génération…</p>';
+  var v = (d.vols&&d.vols[0])||{};
+  try{
+    var r = await crmApiFetch('/api/crm-depot-link', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        id: d.id, ref: d.depotRef||'',
+        prenom: d.prenom, nom: d.nom, phone: crmE164Digits(d), address: d.adresse||'',
+        vol: v.vol||'', date: v.date||'', pnr: v.pnr||'', compagnie: v.comp||v.compagnie||'',
+        palier: d.palier, pax: (d.adultes||0)+(d.bebes||0), passengers: crmDepotPassengers(d)
+      })
+    });
+    var data = await r.json();
+    if(!r.ok||!data.ok) throw new Error(data.error||('HTTP '+r.status));
+    d.depotRef = data.ref; persistCrmDb();
+    if(box) box.innerHTML = crmDepotResultHtml(data.ref);
+    loadServerPieces(data.ref);
+  }catch(e){
+    if(box) box.innerHTML = '<p style="font-size:12px;color:#B91C1C">Erreur : '+escHtml(e.message)+'</p>';
+  }
+}
+
+async function crmEnvoyerLienDepotTemplate(ref){
+  var d = DB.find(function(x){ return x.depotRef===ref; });
+  if(!d){ showCrmToast('Dossier introuvable'); return; }
+  var phone = crmE164Digits(d);
+  if(phone.length<10){ showCrmToast('Numéro client manquant ou invalide'); return; }
+  var link = crmDepotLink(ref);
+  if(!confirm('Envoyer au client ('+phone+') le lien de dépôt par WhatsApp (template) ?\n\n'+link)) return;
+  try{
+    var r = await crmApiFetch('/api/crm-template-send', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ phone:phone, template:'dossier_lien_depot', params:[d.prenom||'', d.id, link], dossierRef:d.id, agent:'CRM' })
+    });
+    var data = await r.json();
+    if(r.ok&&data.ok){ showCrmToast('Lien envoyé sur WhatsApp ✅'); }
+    else { showCrmToast('Échec envoi : '+(data.error||('HTTP '+r.status))); }
+  }catch(e){ showCrmToast('Erreur : '+e.message); }
 }
 
 /** Pièces stockées côté serveur (dépôt web + WhatsApp) — passeport, carte d'embarquement, e-billet.
