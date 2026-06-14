@@ -1099,6 +1099,41 @@ function posteLegal(taux){
   const foot=`<div class="pm-empty" style="font-style:normal">Human-in-the-loop : Me Lefèvre prépare la liste ; aucun envoi automatique à une compagnie. Brief WhatsApp quotidien (9h30).</div>`;
   return head+synth+body+foot;
 }
+// Yanis — veille concurrents (Ad Library + diff prix + SEO), données réelles /api/concurrents-watch
+function concEsc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+const AD_LIB_FALLBACK='https://www.facebook.com/ads/library/?active_status=active&ad_type=all&country=FR&q=indemnisation%20vol&media_type=all';
+function concRow(main,sub,linkHtml){
+  return `<div style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08)"><div>${main}</div>`+
+    (sub?`<div style="opacity:.72;font-size:.86em;margin-top:2px">${sub}${linkHtml||''}</div>`:'')+`</div>`;
+}
+function concurrentsHtml(){
+  const d=REAL.concurrents;
+  if(!d){ return `<h4>🕵️ Veille concurrents</h4><div class="pm-empty" style="font-style:normal">Le renseignement hebdo n'a pas encore tourné (lundi). <a href="${AD_LIB_FALLBACK}" target="_blank" rel="noopener">Ouvrir l'Ad Library →</a></div>`; }
+  let h=`<h4>🕵️ Veille concurrents — pubs qui durent (= qui convertissent)</h4>`;
+  const ads=d.topAds||[];
+  if(ads.length){
+    h+=ads.slice(0,6).map(a=>{
+      const days=a.daysRunning!=null?`${a.daysRunning} j`:'?';
+      const txt=concEsc((a.body||a.title||'').slice(0,110));
+      const link=a.snapshot?` · <a href="${concEsc(a.snapshot)}" target="_blank" rel="noopener">voir la pub</a>`:'';
+      return concRow(`<b>${concEsc(a.page)}</b> — <span class="hl">${days}</span>`,`« ${txt} »`,link);
+    }).join('');
+  } else {
+    const kw=(d.links&&d.links.keywords)||AD_LIB_FALLBACK;
+    h+=`<div class="pm-empty" style="font-style:normal">Aucune pub concurrente captée par l'API${d.adsApiError?` (${concEsc(String(d.adsApiError).slice(0,60))})`:''}. <a href="${concEsc(kw)}" target="_blank" rel="noopener">Voir l'Ad Library à la main →</a></div>`;
+  }
+  if((d.newAdvertisers||[]).length){
+    h+=`<h4>👀 Nouveaux annonceurs sur le créneau</h4><div class="pm-empty" style="font-style:normal">${d.newAdvertisers.map(concEsc).join(' · ')}</div>`;
+  }
+  if((d.pageChanges||[]).length){
+    h+=`<h4>📝 Changements prix / positionnement</h4>`+d.pageChanges.slice(0,8).map(c=>concRow(`<b>${concEsc(c.name)}</b>`,concEsc(c.change))).join('');
+  }
+  if((d.newArticles||[]).length){
+    h+=`<h4>✍️ Nouveaux articles SEO</h4>`+d.newArticles.slice(0,6).map(a=>concRow(`<b>${concEsc(a.name)}</b>`,'',` <a href="${concEsc(a.url)}" target="_blank" rel="noopener">${concEsc(a.url.replace(/^https?:\/\/(www\.)?/,'').slice(0,58))}</a>`)).join('');
+  }
+  h+=`<div class="pm-empty" style="font-style:normal">Renseignement 100 % public (Ad Library + sites concurrents). Maj hebdo (lundi). Rien n'est envoyé — Yanis s'en inspire pour les créas.</div>`;
+  return h;
+}
 function posteContent(i){
   const taux = S.total>0?Math.round(S.gagnes/S.total*100):0;
   const flights = REAL.radar || [];
@@ -1110,7 +1145,7 @@ function posteContent(i){
     case 4: return deskBriefHtml(4)+sofiaProspectsHtml()+`<h4>Agences partenaires (réel)</h4>${pmStat('Agences actives',S.agences)}${pmStat('Prospects à contacter',S.agencesNew)}${pmStat('Objectif','55 actives')}`;
     case 5: return deskBriefHtml(5)+`<h4>Finances (réel)</h4>${pmStat('€ en récupération',fmt(S.eur)+' €')}${pmStat('Dossiers payés',fmt(S.gagnes))}${pmStat('Coûts mensuels',fmt(RENTA.total)+' €')}`;
     case 6: return deskBriefHtml(6)+`<h4>Suivi dossiers (réel)</h4>${pmStat('Dossiers suivis',fmt(S.dossiers))}${pmStat('Gagnés',fmt(S.gagnes))}`;
-    case 7: { const scope='<h4>Périmètre — il fait tout</h4><div class="pm-empty" style="font-style:normal">Achat média Meta de bout en bout : ciblage aéroports diaspora, budgets &amp; enchères, créas + A/B, optimisation CPA, lancements (Dakar, Abidjan, Banjul…).</div>'; if(REAL.meta){const d=REAL.meta;return `<h4>Pub Meta — 7 jours (réel)</h4>${pmStat('Dépense',fmt(d.spend)+' €')}${pmStat('Impressions',fmt(d.impressions))}${pmStat('Reach',fmt(d.reach))}${pmStat('Clics',fmt(d.clicks))}${pmStat('Conversations WhatsApp',fmt(d.waConvos))}${pmStat('CPM',d.cpm+' €')}`+scope;} return `<div class="pm-empty">Stats Meta indisponibles (token à renouveler).</div>`+scope; }
+    case 7: { const scope='<h4>Périmètre — il fait tout</h4><div class="pm-empty" style="font-style:normal">Achat média Meta de bout en bout : ciblage aéroports diaspora, budgets &amp; enchères, créas + A/B, optimisation CPA, lancements (Dakar, Abidjan, Banjul…).</div>'; const meta = REAL.meta ? `<h4>Pub Meta — 7 jours (réel)</h4>${pmStat('Dépense',fmt(REAL.meta.spend)+' €')}${pmStat('Impressions',fmt(REAL.meta.impressions))}${pmStat('Reach',fmt(REAL.meta.reach))}${pmStat('Clics',fmt(REAL.meta.clicks))}${pmStat('Conversations WhatsApp',fmt(REAL.meta.waConvos))}${pmStat('CPM',REAL.meta.cpm+' €')}` : `<div class="pm-empty">Stats Meta indisponibles (token à renouveler).</div>`; return meta+concurrentsHtml()+scope; }
     case 8: return deskBriefHtml(8)+`<h4>Rentabilité (réel · factures Drive)</h4>${pmStat('Coûts mensuels',fmt(RENTA.total)+' €')}${pmStat('Marge / dossier gagné',COSTS.margeParDossier+' €')}${pmStat('Seuil de rentabilité',RENTA.seuil+' dossiers/mois')}<h4>Détail des coûts</h4>${COSTS.abonnements.map(a=>pmStat(a.n,a.m+' €')).join('')}${pmStat('Pub Meta',COSTS.pub+' €')}${pmStat('Salaires',COSTS.salaires+' €')}`;
     case 9: { const R=SOCIAL.real; return `<h4>Réseaux sociaux — objectifs (juin · lancement)</h4>${SOCIAL.targets.map(m=>{const v=(R&&R[m.field]!=null)?R[m.field]:null; return pmStat(m.ic+' '+m.k,(v!=null?fmt(v):'—')+' / '+fmt(m.tgt));}).join('')}<div class="pm-empty" style="font-style:normal">${R?`IG réel, mois en cours${R.followers!=null?` · ${fmt(R.followers)} abonnés`:''}. Clics WhatsApp & conversations DM non mesurables en organique.`:'Réalisé non connecté — API Instagram à brancher.'}</div>`; }
     default: return '';
@@ -1451,6 +1486,18 @@ async function loadSofiaProspects(){
     const modal=document.getElementById('posteModal');
     if(modal && modal.classList.contains('open') && document.getElementById('pmTitle').textContent===AGENTS[4].name){
       document.getElementById('pmBody').innerHTML=posteContent(4);
+    }
+  }
+}
+
+// Yanis — veille concurrents (Ad Library + diff prix + SEO), CRM-gated, snapshot hebdo
+async function loadConcurrents(){
+  const d = await jget('/api/concurrents-watch');
+  if(d && d.ok){
+    REAL.concurrents=d; REAL.sources.concurrents=true;
+    const modal=document.getElementById('posteModal');
+    if(modal && modal.classList.contains('open') && document.getElementById('pmTitle').textContent===AGENTS[7].name){
+      document.getElementById('pmBody').innerHTML=posteContent(7);
     }
   }
 }
@@ -1841,6 +1888,7 @@ async function loadProtected(){
   await loadLegal();             // Cabinet Me Lefèvre — file d'actions juridiques du jour
   await loadDeskBriefs();        // Bureau — point du jour des autres postes (DG/partenaires/trésorerie/suivi/rentabilité)
   await loadSofiaProspects();    // Sofia — agences africaines à prospecter (Dakar/Abidjan/Banjul)
+  await loadConcurrents();       // Yanis — veille concurrents (pubs Ad Library + prix + SEO)
   setSrcBadge();
 }
 async function loadRealData(){

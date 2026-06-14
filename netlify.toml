@@ -96,6 +96,15 @@
 [functions."sofia-prospect"]
   schedule = "40 7 * * 1"
 
+# Veille concurrents — renseignement PUBLIC (Ad Library + diff prix/positionnement + nouveaux
+# articles SEO) chaque lundi 8h10 UTC (10h10 Paris été). Classe les pubs concurrentes par durée
+# d'activité (les durables = celles qui convertissent → à copier), repère les nouveaux annonceurs
+# du créneau, les changements de prix et les articles. Brief WhatsApp si du neuf. Lecture seule,
+# zéro envoi, zéro action sortante — pur renseignement, l'humain décide.
+[functions."concurrents-watch"]
+  schedule = "10 8 * * 1"
+  timeout = 26
+
 [build]
   publish = "."
   # S'assurer que les deps (dont @netlify/blobs) sont présentes avant le bundle des fonctions
