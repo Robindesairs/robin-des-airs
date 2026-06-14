@@ -422,3 +422,266 @@ button.vol-ticker-chip,
   border-radius: 3px;
   opacity: 0.6;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   CALM PREMIUM — refonte « haut de gamme & calme » (hero + en-tête)
+   Direction validée : luxe discret (Apple / Stripe / banque privée).
+   Principe : RETIRER les effets tape-à-l'œil (texte en dégradé,
+   shimmer, halos verts, trame « tech ») ; le premium est porté par
+   l'espace, la typo et UN vert profond utilisé avec parcimonie.
+   Bloc placé en fin de fichier → il gagne la cascade. Réversible :
+   supprimer ce bloc rétablit l'ancien rendu.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  --emerald:      #0B7A53;            /* vert profond « banque privée » — fonds d'action */
+  --emerald-deep: #075E40;            /* état survol */
+  --hairline:     rgba(11,31,58,0.10);
+  --ease-lux:     cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── 1. Fond du hero : on enlève la trame de points et on apaise le halo ── */
+#hero::after { display: none !important; }          /* trame de points = trop « tech » */
+#hero::before {
+  background-image:
+    radial-gradient(ellipse 60% 50% at 82% 38%, rgba(11,31,58,0.035) 0%, transparent 60%);
+}
+
+/* ── 2. Titre : tracking moins serré (raffiné, pas « crié ») + plus d'air ── */
+.hero-title { letter-spacing: -0.012em; }
+
+/* ── 3. Puces « promesses » : neutres (le vert devient rare) ── */
+.hero-promises li {
+  background: #fff;
+  border: 1px solid var(--hairline);
+  color: var(--navy);
+  font-weight: 700;
+  box-shadow: 0 1px 2px rgba(11,31,58,0.05);
+}
+
+/* ── 4. CTA principal : vert VIF « Wave » (repère diaspora) mais PROPRE ──
+   Verdict du concile (14/06) : garder le nettoyage MAIS réinjecter la
+   chaleur sur l'action. Donc vert vif familier + texte navy lisible,
+   sans shimmer ni effet clinquant. L'émeraude reste pour le décor. */
+.hero-entry-btn.primary {
+  background: var(--neon);            /* vert Wave vif = familier, « vivant » */
+  background-image: none;
+  color: var(--navy);
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(0,150,96,0.30), 0 10px 28px -10px rgba(0,150,96,0.55);
+  transition: transform .28s var(--ease-lux),
+              box-shadow .28s var(--ease-lux),
+              background-color .28s var(--ease-lux);
+}
+.hero-entry-btn.primary::after { content: none; }   /* coupe le balayage shimmer */
+.hero-entry-btn.primary:hover {
+  background: var(--neon-b);          /* un cran plus lumineux au survol */
+  color: var(--navy);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(0,150,96,0.32), 0 18px 40px -12px rgba(0,150,96,0.55);
+}
+
+/* ── 5. Stats : chiffres en aplat navy (on tue le texte-dégradé) ── */
+.hero-stats {
+  border-top: 1px solid var(--hairline);
+  gap: 30px;
+}
+.stat-num,
+.stat:hover .stat-num {
+  background: none;
+  -webkit-text-fill-color: var(--navy);
+  background-clip: initial;
+  -webkit-background-clip: initial;
+  color: var(--navy);
+  letter-spacing: -0.5px;
+  transition: none;
+}
+
+/* ── 6. Carte simulateur (mobile/tablette) : ombre profonde, sans lueur verte ── */
+.hero-right {
+  box-shadow:
+    0 30px 70px -20px rgba(11,31,58,0.30),
+    0 0 0 1px rgba(255,255,255,0.05);
+}
+
+/* ── 7. En-tête / bandeau diaspora : navy profond, filets discrets ── */
+.diaspora-bar {
+  background: linear-gradient(180deg, #0a1c34 0%, #0b1f3a 100%);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.diaspora-bar-inner--stack { border-bottom: none; }
+.diaspora-bar-track {
+  background: rgba(0,0,0,0.20);
+  border-color: rgba(255,255,255,0.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+}
+.diaspora-bar-flags-pill {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.09);
+}
+.diaspora-bar-title .vol-ticker-label {
+  color: rgba(255,255,255,0.80);
+  letter-spacing: 0.10em;
+}
+.diaspora-bar-flags-more { color: rgba(255,255,255,0.66); }
+
+/* ── 8. Réglages desktop (≥1081px) : respiration + photo fondue ── */
+@media (min-width: 1081px) {
+  #hero { padding-top: 150px; }                     /* air au-dessus du titre */
+  #hero .hero-title { line-height: 1.1; margin-bottom: 18px; }
+  #hero .hero-subhead {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--navy);
+    opacity: 0.9;
+    margin: 0 0 26px 0;
+  }
+  #hero .hero-stats { margin-top: 16px; padding-top: 16px; }
+
+  /* La famille reste BIEN VISIBLE (verdict concile : un vrai visage = signal
+     de confiance n°1). On garde juste un fondu LÉGER du bord gauche pour
+     effacer la couture dure — sans « noyer » la photo dans le fond. */
+  .hero-bg-visual {
+    clip-path: none;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 8%, #000 100%);
+    mask-image: linear-gradient(90deg, transparent 0%, #000 8%, #000 100%);
+  }
+}
+
+/* ── 9. Entrée scénographiée du hero (calme, courte, accessible) ── */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-left .hero-title,
+  .hero-left .hero-subhead,
+  .hero-left .hero-promises,
+  .hero-left .hero-entry,
+  .hero-left .wa-typedemo,
+  .hero-left .hero-stats {
+    opacity: 0;
+    animation: heroRise 0.7s var(--ease-lux) forwards;
+  }
+  .hero-left .hero-title    { animation-delay: 0.05s; }
+  .hero-left .hero-subhead  { animation-delay: 0.14s; }
+  .hero-left .hero-promises { animation-delay: 0.22s; }
+  .hero-left .hero-entry    { animation-delay: 0.30s; }
+  .hero-left .wa-typedemo   { animation-delay: 0.38s; }
+  .hero-left .hero-stats    { animation-delay: 0.46s; }
+}
+@keyframes heroRise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── 10. Mobile : dompter le « mur » de titre + couper la césure moche ── */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: clamp(25px, 6.6vw, 34px);   /* moins « crié » : le titre respire (mur 7 lignes -> ~5) */
+    line-height: 1.06;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+  /* jamais de « jus-qu'à » : on coupe sur l'espace/le tiret, pas au milieu d'un mot */
+  .hero-entry-btn,
+  .hero-entry-btn--xl {
+    hyphens: manual;
+    -webkit-hyphens: manual;
+    word-break: normal;
+    overflow-wrap: normal;
+    font-size: 13px;
+    letter-spacing: 0.2px;
+    line-height: 1.35;
+  }
+  .hero-promises { gap: 7px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CALM PREMIUM — extension à TOUTE la page d'accueil
+   Mêmes règles que le hero : pas de texte en dégradé, pas de
+   shimmer, pas de halo vert fluo. Survols apaisés (ombres navy),
+   intertitres transformés en kickers discrets, vert rare et profond.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Intertitres (eyebrows) : kicker sobre au lieu de l'étiquette verte ── */
+.section-tag {
+  color: #5C6B82;                 /* slate discret, AA (≈5.4:1) — au lieu du vert criard */
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+.section-tag::before {
+  width: 18px;
+  height: 2px;
+  background: var(--emerald);     /* petit trait émeraude = touche de marque, pas un dégradé */
+  border-radius: 2px;
+}
+
+/* ── Titres de section : tracking un cran plus ouvert + soulignement uni ── */
+.section-title { letter-spacing: -0.01em; }
+.section-title .neon::after {
+  background: var(--emerald);
+  height: 2px;
+  opacity: 0.30;
+}
+
+/* ── Numéros d'étape : chiffre « fantôme » net (plus de dégradé 76px) ── */
+.step-num {
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  background-clip: initial !important;
+  -webkit-text-fill-color: rgba(11,31,58,0.13) !important;
+  color: rgba(11,31,58,0.13) !important;
+}
+
+/* ── Boutons de section : même vert vif « Wave » que le CTA, mais propre ── */
+.btn-primary {
+  background: var(--neon);
+  background-image: none;
+  color: var(--navy);
+  box-shadow: 0 1px 2px rgba(0,150,96,0.28), 0 10px 26px -10px rgba(0,150,96,0.50);
+}
+.btn-primary::after { content: none; }
+.btn-primary:hover {
+  background: var(--neon-b);
+  background-image: none;
+  color: var(--navy);
+  transform: translateY(-2px);
+  box-shadow: 0 2px 6px rgba(0,150,96,0.30), 0 16px 36px -12px rgba(0,150,96,0.55);
+}
+
+/* ── Survols de cartes : ombres navy douces, on retire la lueur verte ── */
+.loi-card:hover,
+.testi-card:hover,
+.faq-item:hover {
+  border-color: rgba(11,31,58,0.16);
+  box-shadow: 0 18px 48px -20px rgba(11,31,58,0.22);
+}
+.loi-card.featured {
+  box-shadow: 0 24px 64px -26px rgba(11,31,58,0.30), 0 0 0 1px rgba(11,31,58,0.07);
+}
+.loi-card.featured:hover {
+  box-shadow: 0 30px 72px -26px rgba(11,31,58,0.36), 0 0 0 1px rgba(11,31,58,0.11);
+}
+.testi-card::after { display: none; }      /* trait dégradé au survol → retiré */
+.step-card:hover .step-icon-wrap {
+  background: rgba(11,31,58,0.05);
+  border-color: rgba(11,31,58,0.14);
+  box-shadow: 0 0 0 6px rgba(11,31,58,0.03);
+}
+.step-card:hover .step-title { color: var(--navy); }
+
+/* ── FAQ : accordéon neutre (le vert ne ressort qu'à l'ouverture) ── */
+.faq-toggle { background: rgba(11,31,58,0.04); }
+.faq-question.open .faq-toggle {
+  background: rgba(11,122,83,0.10);
+  border-color: rgba(11,122,83,0.35);
+}
+
+/* ── Bande preuve sociale : sobre ── */
+.social-proof-strip {
+  background: rgba(11,31,58,0.02);
+  border-top-color: rgba(11,31,58,0.08);
+  border-bottom-color: rgba(11,31,58,0.06);
+}
+
+/* ── CTA final (section sombre) : on garde le navy, halo vert apaisé ── */
+#cta-final::before {
+  background: radial-gradient(circle, rgba(0,229,160,0.05) 0%, transparent 65%);
+}
