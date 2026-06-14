@@ -95,7 +95,7 @@
   # S'assurer que les deps (dont @netlify/blobs) sont présentes avant le bundle des fonctions
   # notify:indexnow en dernier : push les URLs modifiées du jour à Bing/Yandex/Naver
   # (non bloquant — exit 0 même si l'API IndexNow renvoie une erreur)
-  command = "npm install && npm install --prefix netlify/functions && npm run build:sitemap && npm run build:blog && npm run build:nav-interne && npm run notify:indexnow"
+  command = "npm install --include=dev && npm install --prefix netlify/functions && npm run build:sitemap && npm run build:blog && npm run build:nav-interne && npm run notify:indexnow"
 
 [context.production.environment]
   RADAR_REPORT_EMAIL = "expert@robindesairs.eu"
