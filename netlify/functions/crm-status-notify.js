@@ -20,6 +20,7 @@
 const { airtableCfg, airtableListRecords, recordFromAirtableFields } = require('./lib/airtable-robin');
 const { watiAgencySendTemplate } = require('./lib/wati-api');
 const { requireCronOrInternalSecret, publicCorsHeaders } = require('./lib/internal-auth');
+const { checkCrmAccess } = require('./lib/crm-access');
 
 let blobs = null;
 try { blobs = require('@netlify/blobs'); } catch (_) {}
@@ -63,9 +64,13 @@ exports.handler = async (event) => {
 
   let body = {};
   try { body = event && event.body ? JSON.parse(event.body) : {}; } catch (_) {}
+  // Cron/secret → run complet (envoi si activé). Session CRM → APERÇU lecture seule (jamais d'envoi
+  // ni d'écriture d'état) pour la carte « Relances/Notifs » du bureau, dispo 24/24.
   const auth = requireCronOrInternalSecret(event, body);
-  if (!auth.ok) {
-    return { statusCode: 403, headers: HEADERS, body: JSON.stringify({ ok: false, error: auth.error || 'Accès refusé (cron ou secret requis)' }) };
+  const crm = auth.ok ? null : checkCrmAccess(event);
+  const preview = !auth.ok && !!(crm && crm.ok);
+  if (!auth.ok && !preview) {
+    return { statusCode: 403, headers: HEADERS, body: JSON.stringify({ ok: false, error: auth.error || 'Accès refusé (cron, secret ou session CRM requis)' }) };
   }
 
   const cfg = airtableCfg();
@@ -85,6 +90,7 @@ exports.handler = async (event) => {
 
   let scanned = 0, transitions = 0, sent = 0, seeded = 0, skipped = 0;
   const log = [];
+  const pending = []; // mode aperçu : ce qui PARTIRAIT (template mappé + tel valide)
 
   for (const rec of records) {
     const r = recordFromAirtableFields(cfg, rec.fields || {});
@@ -99,8 +105,15 @@ exports.handler = async (event) => {
 
     const mapper = STATUS_TEMPLATES[statut];
     const phone = (r.whatsapp || '').replace(/\s/g, '');
-    const sendable = enabled && !firstRun && prev !== undefined && mapper && phone && phone.replace(/\D/g, '').length >= 10;
+    const hasPhone = phone && phone.replace(/\D/g, '').length >= 10;
 
+    // Aperçu : on liste ce qui partirait sur une vraie transition mappée (sans rien envoyer/écrire).
+    if (preview) {
+      if (prev !== undefined && mapper && hasPhone) pending.push({ ref, from: prev || '∅', to: statut, template: mapper(r).name, name: r.prenom || r.name || '' });
+      continue;
+    }
+
+    const sendable = enabled && !firstRun && prev !== undefined && mapper && hasPhone;
     if (sendable) {
       const { name, params } = mapper(r);
       const res = await watiAgencySendTemplate(phone, name, params, 'robin');
@@ -110,6 +123,10 @@ exports.handler = async (event) => {
       seeded++;
     }
     seed[ref] = statut; // mémorise le nouveau statut (après envoi réussi, ou en amorçage / dry-run)
+  }
+
+  if (preview) {
+    return { statusCode: 200, headers: HEADERS, body: JSON.stringify({ ok: true, preview: true, enabled, firstRun, scanned, transitions, pending: pending.slice(0, 50) }) };
   }
 
   try { await st.setJSON(KEY, seed); } catch (e) { return { statusCode: 502, headers: HEADERS, body: JSON.stringify({ ok: false, error: 'Blobs set: ' + e.message }) }; }

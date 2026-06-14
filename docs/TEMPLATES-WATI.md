@@ -306,6 +306,12 @@ Balaie Airtable, détecte un **changement** de « Statut du Dossier Suivi » et 
 
 ---
 
+### Intégration CRM / création (câblé ✅)
+
+- **Création en masse** : `node scripts/meta-create-templates.js --submit` soumet les 14 templates à Meta d'un coup (dry-run sans `--submit`). Requiert `WHATSAPP_WABA_ID` + `WHATSAPP_ACCESS_TOKEN` (scope `whatsapp_business_management`). Les templates vivent sur le WABA → WATI les voit.
+- **Bouton « Relancer » dans le bureau** : chaque dossier « À rappeler » (`bureau.html`) a un bouton qui envoie `relance_dossier_a_finaliser` via `POST /api/crm-template-send` (`crm-template-send.js`, CRM-gated, allowlist des 14 templates, dry-run possible).
+- **Panneau « Relances & notifs WhatsApp »** : aperçu lecture seule (statut auto ON/OFF + notifs en attente) via `GET /api/crm-status-notify?preview=1` (session CRM, aucun envoi).
+
 ## 3. Récap des templates
 
 | Nom (Meta) | Catégorie | Déclencheur | Boutons |

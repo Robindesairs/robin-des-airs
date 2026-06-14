@@ -544,6 +544,11 @@ body.game-mode #gameView { display:block; }
       </div>
 
       <div class="panel">
+        <div class="panel-h"><span class="t">📤 Relances &amp; notifs WhatsApp</span><span class="mini-src demo" id="tplSrc">EN ATTENTE</span></div>
+        <div class="panel-b" id="tplBody"><div style="padding:14px 16px;color:var(--white-40);font-size:.8rem">Connexion CRM requise.</div></div>
+      </div>
+
+      <div class="panel">
         <div class="panel-h"><span class="t">Radar vols · CE261</span><span class="mini-src demo" id="radarSrc">EN ATTENTE</span></div>
         <div class="panel-b radar-list" id="radar"></div>
       </div>
@@ -1321,9 +1326,32 @@ function renderRappels(leads){
         `<div style="font-size:.74rem;color:var(--white-40);margin-top:2px">${vol?('✈️ '+vol+(route?(' · '+route):'')):'(vol non renseigné)'}</div>`+
         `<div style="font-size:.7rem;margin-top:3px"><span style="${urgent?'color:#e0533d;font-weight:600':'color:var(--white-40)'}">${rappelReason(l.reason)}</span> · il y a ${l.ageHours}h</div>`+
       `</div>`+
-      (tel?`<a href="tel:+${tel}" style="flex-shrink:0;background:#25D366;color:#fff;text-decoration:none;padding:6px 12px;border-radius:9px;font-size:.78rem;font-weight:600;white-space:nowrap">📞 Appeler</a>`:'')+
+      (tel?`<div style="flex-shrink:0;display:flex;flex-direction:column;gap:6px">`+
+        `<a href="tel:+${tel}" style="background:#25D366;color:#fff;text-decoration:none;padding:6px 12px;border-radius:9px;font-size:.78rem;font-weight:600;white-space:nowrap;text-align:center">📞 Appeler</a>`+
+        `<button class="tpl-relance" data-phone="${tel}" data-name="${nom.replace(/"/g,'&quot;')}" data-vol="${(vol||route).replace(/"/g,'&quot;')}" data-montant="${fmt(l.montant)}" data-ref="${String(l.ref||'').replace(/"/g,'&quot;')}" style="background:transparent;border:1px solid var(--sky-border);color:#9fb8cc;cursor:pointer;padding:6px 12px;border-radius:9px;font-size:.78rem;font-weight:600;white-space:nowrap" title="Relance par template WhatsApp approuvé (utile quand la fenêtre 24h est fermée)">📤 Relancer</button>`+
+      `</div>`:'')+
     `</div>`;
   }).join('');
+  ensureRelanceDelegation();
+}
+// Envoi de relance par TEMPLATE depuis « À rappeler » (clic délégué → survit aux re-rendus /2 min).
+let _tplDelegated=false;
+function ensureRelanceDelegation(){
+  if(_tplDelegated) return; const body=document.getElementById('rappelBody'); if(!body) return;
+  body.addEventListener('click', async (e)=>{
+    const btn=e.target.closest('.tpl-relance'); if(!btn) return;
+    const name=btn.dataset.name||'ce passager';
+    if(!confirm('Envoyer la relance WhatsApp (template approuvé) à '+name+' ?\n\nÀ utiliser quand la fenêtre 24 h est fermée. Le template doit être validé par Meta.')) return;
+    const old=btn.textContent; btn.disabled=true; btn.textContent='⏳ Envoi…';
+    try{
+      const params=[btn.dataset.name||'', btn.dataset.vol||'votre vol', (btn.dataset.montant||'')+' €'];
+      const r=await fetch('/api/crm-template-send',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({phone:btn.dataset.phone,template:'relance_dossier_a_finaliser',params,dossierRef:btn.dataset.ref,agent:'Bureau'})});
+      const j=await r.json().catch(()=>({}));
+      if(r.ok&&j.ok){ btn.textContent='✅ Envoyé'; }
+      else { btn.textContent=old; btn.disabled=false; alert('Échec : '+((j&&j.error)||('HTTP '+r.status))+'\n\n(Si « template inconnu / non approuvé » : il faut d’abord faire valider le template par Meta.)'); }
+    }catch(err){ btn.textContent=old; btn.disabled=false; alert('Erreur réseau : '+(err&&err.message||err)); }
+  });
+  _tplDelegated=true;
 }
 /* ============ CONNEXION CRM (cookie rda_crm partagé avec /crm/) ============ */
 function updateCrmBtn(connected){
@@ -1351,6 +1379,28 @@ async function loadRappels(){
     renderRappels(d.leads||[]);
     if(src){ src.className='mini-src real'; src.textContent=(d.total||0)+' à rappeler'; }
   } else if(src){ src.className='mini-src demo'; src.textContent='CRM requis'; }
+  setSrcBadge();
+}
+// Relances & notifs WhatsApp — aperçu lecture seule (CRM-gated) : statut auto + notifs en attente.
+async function loadTplStatus(){
+  const d = await jget('/api/crm-status-notify?preview=1');
+  const src=document.getElementById('tplSrc'); const body=document.getElementById('tplBody'); if(!body) return;
+  if(d && d.ok){
+    REAL.sources.tpl = true;
+    const pend = d.pending||[];
+    if(src){ src.className='mini-src real'; src.textContent = d.enabled ? '🟢 auto ON' : '⏸️ auto OFF'; }
+    let html = `<div style="padding:10px 16px;font-size:.74rem;color:var(--white-40);border-bottom:1px solid var(--sky-border)">`+
+      `Notifs auto de statut : <b style="color:${d.enabled?'#1aa251':'#e0a23d'}">${d.enabled?'ACTIVÉES':'désactivées'}</b> · ${d.transitions||0} changement(s) détecté(s)`+
+      (d.firstRun?` · <span style="color:#e0a23d">⚠️ état non amorcé</span>`:'')+`</div>`;
+    if(!pend.length){ html += `<div style="padding:12px 16px;color:var(--white-40);font-size:.8rem">Aucune notification en attente. ✅</div>`; }
+    else {
+      html += pend.slice(0,12).map(p=>`<div style="padding:9px 16px;border-bottom:1px solid var(--sky-border);font-size:.78rem">`+
+        `<b>${String(p.name||p.ref).replace(/</g,'&lt;')}</b> <span style="opacity:.55">${String(p.ref).replace(/</g,'&lt;')}</span><br>`+
+        `<span style="color:var(--white-40);font-size:.72rem">${String(p.from).replace(/</g,'&lt;')} → ${String(p.to).replace(/</g,'&lt;')} · <code>${String(p.template).replace(/</g,'&lt;')}</code></span></div>`).join('');
+      if(!d.enabled) html += `<div style="padding:10px 16px;font-size:.72rem;color:#e0a23d">Ces notifs partiraient si l’auto était activée (CRM_STATUS_TEMPLATES=1).</div>`;
+    }
+    body.innerHTML = html;
+  } else if(src){ src.className='mini-src demo'; src.textContent='CRM requis'; body.innerHTML='<div style="padding:14px 16px;color:var(--white-40);font-size:.8rem">Connexion CRM requise.</div>'; }
   setSrcBadge();
 }
 // Cabinet Me Lefèvre — file d'actions juridiques du jour (CRM-gated, recalcul live 24/24)
@@ -1787,6 +1837,7 @@ async function loadProtected(){
   if(reg && reg.ok && typeof reg.total==='number'){ REAL.sources.registry = true; }
   await loadWaConversations();   // vraies conversations WhatsApp (CRM)
   await loadRappels();           // dossiers « à rappeler » (fenêtre 24h fermée / rappel demandé)
+  loadTplStatus();               // relances & notifs WhatsApp (aperçu statut auto + en attente)
   await loadLegal();             // Cabinet Me Lefèvre — file d'actions juridiques du jour
   await loadDeskBriefs();        // Bureau — point du jour des autres postes (DG/partenaires/trésorerie/suivi/rentabilité)
   await loadSofiaProspects();    // Sofia — agences africaines à prospecter (Dakar/Abidjan/Banjul)
@@ -1820,6 +1871,7 @@ setInterval(loadRadar, 180000);      // rafraîchit les vols réels toutes les 3
 setInterval(loadWhatsApp, 120000);   // état bot toutes les 2 min
 setInterval(loadWaConversations, 120000); // vraies conversations WhatsApp toutes les 2 min
 setInterval(loadRappels, 120000);    // dossiers à rappeler toutes les 2 min
+setInterval(loadTplStatus, 180000);  // relances & notifs WhatsApp toutes les 3 min
 setInterval(loadBureauStats, 180000);// vrais chiffres CRM toutes les 3 min
 setInterval(loadMetaStats, 300000);  // stats Meta Ads toutes les 5 min
 setInterval(planeFlyby, 26000);      // avion qui traverse régulièrement
