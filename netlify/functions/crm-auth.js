@@ -88,7 +88,11 @@ exports.handler = async (event) => {
   if (method === 'GET') {
     const cookieHeader = event.headers.cookie || event.headers.Cookie || '';
     const token = parseCookie(cookieHeader, COOKIE_NAME);
-    return json(200, { ok: verifyToken(token), configured: true, insecure: !!cfg.insecure });
+    // Session valide via cookie rda_crm OU en-tête X-CRM-Code (résilient quand le
+    // navigateur bloque les cookies : iframe/preview, Safari ITP, contexte tiers).
+    const hdrCode = (event.headers['x-crm-code'] || event.headers['X-CRM-Code'] || '').trim();
+    const ok = verifyToken(token) || (!!hdrCode && safeEqualString(hdrCode, cfg.accessCode));
+    return json(200, { ok, configured: true, insecure: !!cfg.insecure });
   }
 
   if (method === 'POST') {

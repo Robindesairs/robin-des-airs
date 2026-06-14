@@ -1401,7 +1401,7 @@ async function crmLogin(){
   try{
     const r = await fetch('/api/crm-auth', { method:'POST', credentials:'same-origin', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: code.trim() }) });
     const j = await r.json().catch(()=>({}));
-    if(r.ok && j && j.ok){ updateCrmBtn(true); location.reload(); }
+    if(r.ok && j && j.ok){ try{ sessionStorage.setItem('rda_crm_code', code.trim()); }catch(_e){} updateCrmBtn(true); location.reload(); }
     else { alert('Code CRM incorrect ou refusé.'); }
   }catch(e){ alert('Connexion impossible : '+(e&&e.message||e)); }
 }
@@ -1716,8 +1716,12 @@ function renderRenta(){
 // Récupère du JSON sur un endpoint /api/* avec timeout ; renvoie null si indisponible (→ repli démo).
 async function jget(path, ms=6500){
   const ctrl = new AbortController(); const to = setTimeout(()=>ctrl.abort(), ms);
+  const headers={ 'Accept':'application/json' };
+  // Auth résiliente : si le cookie rda_crm ne tient pas (iframe/preview, Safari ITP),
+  // on rejoue le code CRM en en-tête X-CRM-Code (mémorisé au login).
+  try{ const c=sessionStorage.getItem('rda_crm_code'); if(c) headers['X-CRM-Code']=c; }catch(_e){}
   try{
-    const r = await fetch(path, { signal: ctrl.signal, headers:{ 'Accept':'application/json' } });
+    const r = await fetch(path, { signal: ctrl.signal, headers });
     clearTimeout(to);
     if(!r.ok) return null;
     return await r.json();

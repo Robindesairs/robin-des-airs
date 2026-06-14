@@ -97,6 +97,8 @@
         })
         .then(function (res) {
           if (res.ok && res.data && res.data.ok) {
+            // Mémorise le code pour l'auth par en-tête (résiste au blocage des cookies).
+            try { sessionStorage.setItem('rda_crm_code', code); } catch (e) {}
             unlockPage();
             return;
           }
@@ -114,7 +116,9 @@
   }
 
   function checkSession() {
-    return fetch(AUTH_URL, { method: 'GET', credentials: 'include' })
+    var h = {};
+    try { var c = sessionStorage.getItem('rda_crm_code'); if (c) h['X-CRM-Code'] = c; } catch (e) {}
+    return fetch(AUTH_URL, { method: 'GET', credentials: 'include', headers: h })
       .then(function (r) { return r.json(); })
       .then(function (d) { return d && d.ok === true; })
       .catch(function () { return false; });

@@ -17,7 +17,7 @@ const HEADERS = { ...corsHeaders(), 'Cache-Control': 'no-store' };
 
 async function fromRailway(limit) {
   const base = (process.env.RAILWAY_BOT_URL || 'https://robin-bot-v8-production.up.railway.app').replace(/\/$/, '');
-  const secret = (process.env.MANDAT_SIGNED_WEBHOOK_SECRET || process.env.WATI_WEBHOOK_SECRET || '').trim();
+  const secret = (process.env.WATI_WEBHOOK_SECRET || process.env.MANDAT_SIGNED_WEBHOOK_SECRET || process.env.CRM_ACCESS_CODE || '').trim();
   if (!secret) return null;
   const url = `${base}/api/recent-conversations?limit=${encodeURIComponent(limit)}&s=${encodeURIComponent(secret)}`;
   const ctrl = new AbortController();

@@ -24,7 +24,9 @@ exports.handler = async (event) => {
   }
 
   const base = (process.env.RAILWAY_BOT_URL || 'https://robin-bot-v8-production.up.railway.app').replace(/\/$/, '');
-  const secret = (process.env.MANDAT_SIGNED_WEBHOOK_SECRET || process.env.WATI_WEBHOOK_SECRET || '').trim();
+  // Le bot valide /api/leads-a-rappeler contre WATI_WEBHOOK_SECRET (|| CRM_ACCESS_CODE).
+  // On envoie donc CE secret-là en priorité ; MANDAT_SIGNED_WEBHOOK_SECRET = repli legacy.
+  const secret = (process.env.WATI_WEBHOOK_SECRET || process.env.MANDAT_SIGNED_WEBHOOK_SECRET || process.env.CRM_ACCESS_CODE || '').trim();
 
   try {
     const url = base + '/api/leads-a-rappeler?s=' + encodeURIComponent(secret);
