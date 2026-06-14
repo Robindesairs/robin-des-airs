@@ -30,6 +30,7 @@
 /crm.html                   /crm/                             301
 /api/crm-auth               /.netlify/functions/crm-auth      200
 /api/crm-backup             /.netlify/functions/crm-backup    200
+/api/crm-status-notify       /.netlify/functions/crm-status-notify       200
 /api/radar-snapshot          /.netlify/functions/radar-snapshot          200
 /api/vol-ticker              /.netlify/functions/vol-ticker              200
 /api/daily-radar-snapshot    /.netlify/functions/daily-radar-snapshot    200

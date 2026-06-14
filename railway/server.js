@@ -351,6 +351,27 @@ async function sendList(phone, { header, body, footer, buttonText, items }, cfg)
   } catch (e) { await textFallback(); }
 }
 async function sendDelayed(phone, text, cfg, ms = 700) { await new Promise(r => setTimeout(r, ms)); await send(phone, text, cfg); }
+// ─── Envoi d'un TEMPLATE WhatsApp APPROUVÉ (hors fenêtre 24h) ──────────────────
+// Le bot n'écrit en texte libre QUE dans la fenêtre 24h ; passé ce délai, seul un
+// template Meta approuvé peut re-toucher le client. Le tap sur son bouton « Reprendre »
+// rouvre la fenêtre → le handler inbound reprend le flux tout seul (cf. docs/TEMPLATES-WATI.md).
+// parameters = [{name:'1', value:'…'}, …] (format WATI sendTemplateMessage).
+async function watiSendTemplate(phone, templateName, parameters, cfg) {
+  if (!cfg || !templateName) return { ok: false };
+  const wa = normalizeWatiPhone(phone);
+  if (!wa || wa.length < 10) return { ok: false };
+  try {
+    const res = await fetch(`${cfg.base}/api/v1/sendTemplateMessage?whatsappNumber=${encodeURIComponent(wa)}`, {
+      method: 'POST', signal: AbortSignal.timeout(12000),
+      headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ template_name: templateName, broadcast_name: `relance_${templateName}_${Date.now()}`, parameters: parameters || [] }),
+    });
+    const data = await res.json().catch(() => ({}));
+    const ok = res.ok && data.result !== false && data.ok !== false && !data.error;
+    if (!ok) console.error('v8 WATI template REJETÉ', res.status, JSON.stringify(data).slice(0, 200), '→', templateName);
+    return { ok, data };
+  } catch (e) { console.error('watiSendTemplate', e.message); return { ok: false }; }
+}
 // WATI ne rend pas les listes interactives sur ce compte (elles arrivent en texte).
 // → on envoie un choix numéroté clair, et les handlers acceptent le numéro OU le mot-clé.
 const NUMEMO = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
@@ -2396,6 +2417,41 @@ async function isAlreadySigned(ref) {
     return !!(j && j.signed === true);
   } catch (_) { return false; }
 }
+// ─── Relances HORS fenêtre 24h (templates approuvés) ───────────────────────────
+// Quand la fenêtre est fermée, le bot ne peut plus écrire gratuitement → le lead dort
+// dans « À rappeler ». Ces templates le re-touchent (payant) ; son tap rouvre la fenêtre
+// et le bot reprend. DÉSACTIVÉ par défaut : ne part QUE si RELANCE_HSM_TEMPLATES=1 ET que
+// les templates sont approuvés côté Meta/WATI (cf. docs/TEMPLATES-WATI.md).
+const HSM_RELANCE = [
+  { name: (process.env.HSM_TPL_RELANCE_1 || 'relance_dossier_a_finaliser').trim() }, // J+1 après fermeture
+  { name: (process.env.HSM_TPL_RELANCE_2 || 'relance_preuve_sociale').trim() },        // J+2
+  { name: (process.env.HSM_TPL_RELANCE_3 || 'relance_derniere_chance').trim() },       // J+4
+];
+const HSM_THRESHOLDS_D = [2, 3, 5]; // jours de SILENCE (la fenêtre 24h ferme à J+1) → 3 paliers
+async function maybeSendHsmRelance(lead, k, now, cfg) {
+  try {
+    if (process.env.RELANCE_HSM_TEMPLATES !== '1') return;          // OFF par défaut : rien ne part
+    if (!lead || lead.signed || lead.wantsCall) return;             // signé / rappel demandé → on ne pousse pas de template
+    if (!(lead.engagedAt || lead.mandatSentAt)) return;             // pas un vrai lead en cours
+    const sent = lead.hsmNudges || [];
+    const dSilent = (now - (lead.lastClientAt || lead.engagedAt || lead.mandatSentAt || now)) / (24 * _H);
+    const idx = HSM_THRESHOLDS_D.findIndex((t, i) => dSilent >= t && !sent.includes('h' + i));
+    if (idx < 0) return;
+    if (lead.lastHsmAt && now - lead.lastHsmAt < 20 * _H) return;   // ~1 relance HSM / jour max (anti-spam)
+    // Source de vérité : ne JAMAIS relancer quelqu'un qui a signé entre-temps.
+    if (await isAlreadySigned(lead.ref)) { markLeadSigned(lead.phone); lead.signed = true; LEADS.set(k, lead); persistLeads(); return; }
+    const params = [
+      { name: '1', value: lead.name || 'à vous' },
+      { name: '2', value: tripLabel(lead) || lead.vol || 'votre vol' },
+      { name: '3', value: (600 * (lead.pax || 1)) + ' €' },
+    ];
+    const r = await watiSendTemplate(lead.phone, HSM_RELANCE[idx].name, params, cfg);
+    if (r && r.ok) {
+      lead.hsmNudges = sent.concat('h' + idx); lead.lastHsmAt = now; LEADS.set(k, lead); persistLeads();
+      console.log(`relance HSM ${HSM_RELANCE[idx].name} (silence ${Math.floor(dSilent)}j) -> ${lead.ref || lead.phone}`);
+    }
+  } catch (e) { console.error('maybeSendHsmRelance', e.message); }
+}
 async function runRelances() {
   try {
     const cfg = watiCfg(); if (!cfg) return;
@@ -2405,8 +2461,10 @@ async function runRelances() {
       const anchorAge = lead.mandatSentAt || lead.engagedAt || 0;
       // Purge : signé, ou trop vieux (30 j) — qu'il soit finalisé ou seulement engagé.
       if ((lead.signed && !lead.fraisPending) || (anchorAge && now - anchorAge > 30 * 24 * _H)) { LEADS.delete(k); persistLeads(); continue; }
-      // Fenêtre WhatsApp 24h (envoi gratuit) fermée → on n'écrit plus ; le dossier reste dans la liste « À rappeler ».
-      if (lead.windowClosed || now - (lead.lastClientAt || anchorAge) > 24 * _H) continue;
+      // Fenêtre WhatsApp 24h (envoi gratuit) fermée → on n'écrit plus en texte libre ; le dossier reste
+      // dans « À rappeler ». On tente une relance par TEMPLATE approuvé (payant, OFF par défaut) pour
+      // le ramener dans la conversation ; son tap rouvre la fenêtre et le flux reprend.
+      if (lead.windowClosed || now - (lead.lastClientAt || anchorAge) > 24 * _H) { await maybeSendHsmRelance(lead, k, now, cfg); continue; }
       const nudges = lead.nudges || [];
       // Relance FRAIS : signé mais reçus pas encore envoyés → 1 SEUL rappel à 3h, dans la fenêtre 24h.
       if (lead.signed && lead.fraisPending) {

@@ -105,7 +105,7 @@ On prend aux compagnies, on rend aux familles
 - **Catégorie** : MARKETING · fr
 - **Corps** :
   ```
-  Bonjour {{1}}, dernier petit rappel pour votre dossier {{2}} 🙏
+  Bonjour {{1}}, dernier petit rappel pour votre dossier (vol {{2}}) 🙏
 
   Votre indemnisation (jusqu'à {{3}}) peut encore être réclamée — autant qu'elle vous revienne plutôt qu'elle reste à la compagnie.
 
@@ -113,7 +113,9 @@ On prend aux compagnies, on rend aux familles
   ```
 - **Footer** : `On prend aux compagnies, on rend aux familles`
 - **Boutons** : `Reprendre mon dossier` · `Plus tard`
-- **Échantillons** : `Awa` · `RDA-260614-1234` · `600 €`
+- **Échantillons** : `Awa` · `AF718` · `600 €`
+
+> ⚠️ Les **3 relances A partagent le même ordre de variables** (`{{1}}` prénom · `{{2}}` vol/voyage · `{{3}}` montant) — c'est ce que le bot envoie automatiquement (cf. § 4). Ne changez pas cet ordre sans adapter `HSM_RELANCE` dans `railway/server.js`.
 
 ---
 
@@ -273,10 +275,34 @@ POST https://robindesairs.eu/.netlify/functions/send-whatsapp
 ```
 > `templateParams` = valeurs de `{{1}} {{2}} {{3}}` **dans l'ordre**. Voir `WHATSAPP-AUTO.md`.
 
-### Branchement automatique conseillé (prochaine étape, non câblé)
-- **Lead fenêtre fermée** (`l.windowClosed=true` dans `server.js`) → envoyer **A1** ; J+2 → **A2** ; J+4 → **A3**.
-- **Statut Airtable change** (« Réclamation envoyée », « Accord », « Payé »…) → **B3 / B5 / B7** via Make ou un cron Netlify.
-- Le bouton **« Reprendre »** des templates A doit pointer vers le webhook bot pour rouvrir la fenêtre et relancer le flux (`RELANCE_ENGAGED_*` / `ENG_*`).
+### Option 3 — ENVOI AUTOMATIQUE (câblé ✅, désactivé par défaut)
+
+Deux automates existent déjà dans le code. **Rien ne part tant que tu n'as pas (1) fait approuver les
+templates côté Meta/WATI et (2) activé le flag.** Tant que le flag est OFF, les automates tournent à vide
+(et amorcent leur état) → activer plus tard ne déclenche **aucun** envoi en masse sur le backlog.
+
+**A. Relances hors-fenêtre** — `railway/server.js`, dans `runRelances()` (balayage /15 min).
+Quand un lead non signé passe `windowClosed`, le bot envoie **A1 → A2 → A3** aux paliers de **silence
+J+2 / J+3 / J+5** (la fenêtre ferme à J+1), max **1 template/jour**. Le tap « Reprendre » rouvre la
+fenêtre → le bot reprend avec les messages adaptés à l'étape (`RELANCE_ENGAGED_*` / `ENG_*`).
+- **Activer** : variable Railway `RELANCE_HSM_TEMPLATES=1`
+- **Noms surchargeables** : `HSM_TPL_RELANCE_1` / `_2` / `_3` (défaut = `relance_dossier_a_finaliser`, `relance_preuve_sociale`, `relance_derniere_chance`)
+- Garde-fous : jamais si `signed`, si rappel demandé (`wantsCall`), ou si signé entre-temps (`is-signed`).
+
+**B. Notifs de statut** — fonction Netlify `crm-status-notify` (`/api/crm-status-notify`, cron 2×/j).
+Balaie Airtable, détecte un **changement** de « Statut du Dossier Suivi » et envoie le template UTILITY :
+
+| Statut Airtable | Template |
+|---|---|
+| `Mandat signé` | `mandat_signe` |
+| `LRAR envoyée` | `reclamation_envoyee` |
+| `Relance 1` / `Relance 2` | `relance_compagnie` |
+| `Médiation` / `Contentieux` | `escalade_procedure` |
+| `Payé client` / `Payé` / `Indemnisé` | `paiement_en_cours` |
+
+- **Activer** : `CRM_STATUS_TEMPLATES=1` (Netlify) **+** décommenter `[functions."crm-status-notify"]` dans `netlify.toml`
+- **Idempotent** : n'envoie que sur une vraie transition ; le 1er passage amorce l'état (Blobs `crm-status-notify`) sans rien envoyer.
+- **Test manuel** : `GET /api/crm-status-notify?secret=<WATI_WEBHOOK_SECRET>` → renvoie `{scanned, transitions, sent, dryRun}`.
 
 ---
 

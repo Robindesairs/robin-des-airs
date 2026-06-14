@@ -25,6 +25,12 @@
 # [functions."daily-radar-snapshot-background"]
 #   schedule = "0 6 * * *"
 
+# Notifs WhatsApp client sur changement de statut Airtable (mandat signé → réclamation → payé).
+# DÉSACTIVÉ : décommenter + poser CRM_STATUS_TEMPLATES=1 (templates approuvés) pour activer.
+# ~2 runs/jour = coût négligeable. Cf. docs/TEMPLATES-WATI.md.
+# [functions."crm-status-notify"]
+#   schedule = "0 8,18 * * *"
+
 [functions."radar"]
   timeout = 26
 
