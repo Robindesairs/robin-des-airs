@@ -170,6 +170,26 @@ function findLead(refOrPhone) {
 }
 // Frais (reçus post-signature) : le client a répondu (reçu envoyé ou « pas de frais ») → on coupe la relance frais.
 function markFraisAnswered(phone) { const k = leadKey(phone); const l = LEADS.get(k); if (l) { l.fraisPending = false; LEADS.set(k, l); persistLeads(); } }
+// Frais annexes (Art 8/9) : normalisation devise saisie par le client + total par devise (multi-monnaie diaspora).
+function parseDevise(t) {
+  const x = String(t || '').toLowerCase();
+  if (/€|eur|euro/.test(x)) return 'EUR';
+  if (/fcfa|\bcfa\b|xof|franc/.test(x)) return 'XOF';
+  if (/dirham|\bmad\b|\bdh\b/.test(x)) return 'MAD';
+  if (/dalasi|\bgmd\b/.test(x)) return 'GMD';
+  if (/dollar|\busd\b|\$/.test(x)) return 'USD';
+  if (/livre|\bgbp\b|£/.test(x)) return 'GBP';
+  // Repli : un code ISO connu écrit en clair (pas n'importe quel mot de 3 lettres → évite « pas » → « PAS »).
+  const known = ['eur', 'xof', 'xaf', 'mad', 'gmd', 'usd', 'gbp', 'ngn', 'ghs', 'cdf', 'kes', 'dzd', 'tnd'];
+  const f = (x.match(/\b[a-z]{3}\b/g) || []).find((c) => known.includes(c));
+  return f ? f.toUpperCase() : '';
+}
+function fraisTotal(s) {
+  const by = {};
+  for (const f of (s.fraisList || [])) { if (!f || !f.montant) continue; const d = f.devise || '?'; by[d] = (by[d] || 0) + f.montant; }
+  const parts = Object.entries(by).map(([d, v]) => `${Math.round(v * 100) / 100} ${d}`);
+  return parts.length ? parts.join(' + ') : '—';
+}
 // Lead « partiel » : le client a engagé un dossier (vol connu au récap) mais n'a pas encore tout finalisé.
 // On le relance dans la fenêtre 24h WhatsApp (gratuite) ; s'il décroche, il bascule en « à rappeler » (Bureau).
 function markEngagedLead(phone, s) {
@@ -759,12 +779,14 @@ async function classifyDoc(mediaUrl, cfg) {
   try {
     const imgRes = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {}, signal: AbortSignal.timeout(20000) });
     if (!imgRes.ok) return FALLBACK;
-    const b64 = Buffer.from(await imgRes.arrayBuffer()).toString('base64');
+    const buf = Buffer.from(await imgRes.arrayBuffer());
+    const hash = crypto.createHash('sha256').update(buf).digest('hex'); // anti-doublon (même fichier renvoyé)
+    const b64 = buf.toString('base64');
     const prompt = `Tu classes une photo/capture envoyée par un passager, et tu juges sa QUALITÉ (une pièce illisible peut être refusée par la compagnie). Réponds UNIQUEMENT en JSON :
-{"kind":"identite|voyage|frais|autre","nom":"","voyageType":"ebooking|carte|","lisible":true,"probleme":""}
+{"kind":"identite|voyage|frais|autre","nom":"","voyageType":"ebooking|carte|","lisible":true,"probleme":"","montant":null,"devise":""}
 - "identite" : passeport, carte nationale d'identité (CNI), titre de séjour. Mets dans "nom" le NOM et prénom lus (MAJUSCULES).
 - "voyage" : preuve de voyage. voyageType="ebooking" si CONFIRMATION DE RÉSERVATION / e-billet / itinéraire (liste souvent PLUSIEURS passagers et/ou PLUSIEURS vols). voyageType="carte" si CARTE D'EMBARQUEMENT (un seul passager / un seul vol).
-- "frais" : reçu, facture ou ticket d'une DÉPENSE liée à la perturbation du vol (hôtel, taxi/VTC, repas/restaurant, transport, parking). PAS un billet d'avion ni une réservation de vol.
+- "frais" : reçu, facture ou ticket d'une DÉPENSE liée à la perturbation du vol (hôtel, taxi/VTC, repas/restaurant, transport, parking). PAS un billet d'avion ni une réservation de vol. Pour un "frais", lis le MONTANT TOTAL payé → "montant" (nombre seul, ex 84.50 ; sinon null) et la DEVISE → "devise" (EUR, XOF/FCFA, MAD, GMD, USD, GBP… si visible, sinon "").
 - "autre" : tout le reste.
 - "lisible" : false si la photo est FLOUE, SOMBRE, COUPÉE, avec REFLET, ou si les informations clés (nom, n° de pièce) ne sont pas lisibles avec certitude. Sinon true.
 - "probleme" : si lisible=false, un mot : "flou" | "sombre" | "coupé" | "reflet" | "illisible".
@@ -775,7 +797,9 @@ Champ inconnu = "". Ne JAMAIS inventer un nom si la photo est illisible.`;
     });
     const data = await res.json(); if (!data.choices) return FALLBACK;
     const p = JSON.parse(data.choices[0].message.content);
-    return { kind: ['identite', 'voyage', 'frais', 'autre'].includes(p.kind) ? p.kind : 'autre', nom: (p.nom || '').toUpperCase().trim(), voyageType: p.voyageType || '', lisible: p.lisible !== false, probleme: p.probleme || '' };
+    const montant = typeof p.montant === 'number' ? p.montant : (parseFloat(String(p.montant == null ? '' : p.montant).replace(',', '.').replace(/[^\d.]/g, '')) || null);
+    const devise = String(p.devise || '').toUpperCase().replace(/FCFA|CFA/g, 'XOF').replace(/€|EURO/g, 'EUR').replace(/[^A-Z]/g, '').slice(0, 6);
+    return { kind: ['identite', 'voyage', 'frais', 'autre'].includes(p.kind) ? p.kind : 'autre', nom: (p.nom || '').toUpperCase().trim(), voyageType: p.voyageType || '', lisible: p.lisible !== false, probleme: p.probleme || '', montant, devise, hash };
   } catch (e) { return { ...FALLBACK, _unavailable: true, _reason: 'api_error' }; } // API en panne/timeout → ne pas classer en silence
 }
 
@@ -1714,13 +1738,45 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     return send(phone, `📄 Envoyez le certificat de retard (optionnel), ou tapez *passer*.`, cfg);
   }
 
-  // FRAIS (Art. 8 & 9) — proposé après signature : on collecte les reçus, on en redemande, on clôt proprement.
+  // FRAIS (Art. 8 & 9) — proposé après signature : on collecte les reçus, on LIT le montant + la devise,
+  // on DÉDUPLIQUE (même fichier), on en redemande, on clôt proprement. Le montant est un bonus EN PLUS de l'indemnité.
   if (s.step === 'frais') {
+    // Le client précise la monnaie d'un reçu dont le montant a été lu mais la devise pas détectée.
+    if (!mediaUrl && s.fraisAwaitDevise != null) {
+      const dv = parseDevise(text);
+      if (dv) {
+        const it = (s.fraisList || [])[s.fraisAwaitDevise]; if (it) it.devise = dv;
+        s.fraisAwaitDevise = null; await setState(phone, s);
+        notifyOwnerWhatsApp(phone, `🧾 Dossier ${s.ref || '?'} : devise précisée → ${it ? it.montant + ' ' + dv : dv}. Total frais ≈ ${fraisTotal(s)}.`).catch(() => {});
+        return sendButtons(phone, { body: `✅ Noté : *${it ? it.montant : ''} ${dv}* — un montant qui vous revient *en plus* de l'indemnité 🙌\nUn autre reçu ? Envoyez la photo, sinon :`, buttons: [{ id: 'frais_fini', text: '✅ C\'est tout' }] }, cfg);
+      }
+      // monnaie non reconnue → on laisse les boutons/handlers ci-dessous gérer
+    }
     if (mediaUrl) {
-      s.fraisCount = (s.fraisCount || 0) + 1; await setState(phone, s);
+      const d = await classifyDoc(mediaUrl, cfg);
+      s.fraisHashes = s.fraisHashes || [];
+      // Anti-doublon : même reçu (fichier identique) déjà reçu → on ne le compte pas 2×.
+      if (d && d.hash && s.fraisHashes.includes(d.hash)) {
+        await setState(phone, s);
+        return sendButtons(phone, { body: `🔁 Ce reçu est *déjà dans votre dossier* — pas besoin de le renvoyer. Un *autre* reçu ? Sinon :`, buttons: [{ id: 'frais_fini', text: '✅ C\'est tout' }] }, cfg);
+      }
+      if (d && d.hash) s.fraisHashes.push(d.hash);
+      s.fraisCount = (s.fraisCount || 0) + 1;
       markFraisAnswered(phone); // le client a répondu → plus de relance frais
-      notifyOwnerWhatsApp(phone, `🧾 Dossier ${s.ref || '?'} : reçu de frais reçu (#${s.fraisCount}) — à joindre à la réclamation (Art. 8/9).`).catch(() => {});
-      return sendButtons(phone, { body: `✅ Bien reçu, ajouté à votre dossier ! 🙏\nD'autres frais (taxi, repas, hôtel…) ? Envoyez la photo. Sinon :`, buttons: [{ id: 'frais_fini', text: '✅ C\'est tout' }] }, cfg);
+      const montant = d && d.montant ? d.montant : null;
+      const devise = d && d.devise ? d.devise : '';
+      s.fraisList = s.fraisList || [];
+      s.fraisList.push({ montant, devise, hash: (d && d.hash) || null, at: Date.now() });
+      // Montant lu mais devise inconnue → on demande la monnaie (1 fois), sinon on enregistre tel quel.
+      if (montant && !devise) {
+        s.fraisAwaitDevise = s.fraisList.length - 1; await setState(phone, s);
+        notifyOwnerWhatsApp(phone, `🧾 Dossier ${s.ref || '?'} : reçu frais #${s.fraisCount}, montant ${montant} (devise à préciser).`).catch(() => {});
+        return send(phone, `✅ Reçu enregistré — j'ai lu *${montant}*. Dans quelle *monnaie* ? (ex. *€*, *FCFA*, *dirham*, *dalasi*)`, cfg);
+      }
+      await setState(phone, s);
+      const lu = montant ? ` — *${montant}${devise ? ' ' + devise : ''}*` : '';
+      notifyOwnerWhatsApp(phone, `🧾 Dossier ${s.ref || '?'} : reçu frais #${s.fraisCount}${lu}. Total ≈ ${fraisTotal(s)} (Art. 8/9).`).catch(() => {});
+      return sendButtons(phone, { body: `✅ Bien reçu${lu} — ajouté à votre dossier 🙏 C'est un montant qui *vous revient en plus* de l'indemnité.\nUn autre reçu (taxi, repas, hôtel…) ? Envoyez la photo, sinon :`, buttons: [{ id: 'frais_fini', text: '✅ C\'est tout' }] }, cfg);
     }
     if (id === 'frais_non' || lower.includes('pas de frais') || lower.includes('aucun frais') || lower === 'non') {
       markFraisAnswered(phone); s.step = 'done'; await setState(phone, s);
@@ -1728,12 +1784,13 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     }
     if (id === 'frais_fini' || lower.includes("c'est tout") || lower.includes('cest tout') || lower.includes('termin') || lower.includes('fini')) {
       markFraisAnswered(phone); s.step = 'done'; await setState(phone, s);
-      return send(phone, `Parfait ✅ On joint vos reçus à votre réclamation. Merci ! 🤝`, cfg);
+      const tot = fraisTotal(s);
+      return send(phone, `Parfait ✅ On joint vos reçus à votre réclamation${tot !== '—' ? ` (≈ ${tot} de frais, en plus de l'indemnité)` : ''}. Merci ! 🤝`, cfg);
     }
     if (id === 'frais_oui' || lower.includes('envoi') || lower.includes('reçu') || lower.includes('recu') || lower.startsWith('oui')) {
-      return send(phone, `👍 Envoyez une *photo* de chaque reçu (hôtel, repas, taxi, billet…). Même flou, même plusieurs.`, cfg);
+      return send(phone, `👍 Envoyez une *photo* de chaque reçu (hôtel, repas, taxi…). Ces montants vous reviennent *en plus* de l'indemnité. Même flou, même plusieurs — envoyez juste ce que vous avez vraiment payé.`, cfg);
     }
-    return sendButtons(phone, { body: `💶 Des frais à cause de ce vol (hôtel, repas, taxi…) ? Envoyez une *photo* du reçu, ou :`, buttons: [{ id: 'frais_non', text: '❌ Pas de frais' }] }, cfg);
+    return sendButtons(phone, { body: `💶 Des frais à cause de ce vol (hôtel, repas, taxi…) ? Ils vous sont remboursés *en plus* de l'indemnité — envoyez une *photo* du reçu, ou :`, buttons: [{ id: 'frais_non', text: '❌ Pas de frais' }] }, cfg);
   }
 
   if (s.step === 'done') {
@@ -2020,8 +2077,9 @@ async function nextPassport(phone, s, cfg) {
   while (s.doc_idx < s.pax) { const p = (s.passengers || [])[s.doc_idx] || {}; if (p.skipped || p.idReceived || p.idDeferred) s.doc_idx++; else break; } // un dob (e-billet/saisie) ne saute PLUS la demande de photo
   if (s.doc_idx >= s.pax) { return askMandant(phone, s, cfg); }
   s.step = 'doc_pass'; await setState(phone, s);
-  // Intro courte au 1er passager
-  const intro = s.doc_idx === 0 ? `📁 *Dernière étape !* Une pièce d'identité par passager. 🔒\n\n` : '';
+  // Intro au 1er passager : on RAPPELLE d'abord ce que le client touche (le chiffre rassure et justifie
+  // l'effort), PUIS on demande la pièce d'identité — qui ne sert qu'à réclamer en son nom auprès de la compagnie.
+  const intro = s.doc_idx === 0 ? `✅ *On y est presque — votre dossier tient la route.*\n${montantLine(s)}\n\n📁 *Dernière étape* avant de lancer la réclamation *en votre nom* : une pièce d'identité par passager. 🔒\n\n` : '';
   // En-tête : passagers déjà traités (✅) ou reportés (⏳) — nom affiché s'il est connu (e-billet / pièce lue)
   let done = '';
   for (let i = 0; i < s.doc_idx; i++) {
