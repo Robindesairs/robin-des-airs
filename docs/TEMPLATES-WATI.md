@@ -1,0 +1,302 @@
+# Templates WhatsApp (WATI / Meta) — Robin des Airs
+
+> Modèles **approuvables Meta** prêts à copier-coller dans **WATI → Broadcast → Template Messages**.
+> Ils servent à joindre un client **quand la fenêtre 24 h est fermée** — le seul cas où le bot
+> (`railway/server.js`) ne peut plus écrire gratuitement.
+
+---
+
+## 0. Quand a-t-on besoin d'un template ? (lire avant tout)
+
+WhatsApp impose une **fenêtre de service de 24 h** : on ne peut envoyer du **texte libre**
+(les relances de `railway/lib/relance-variants.js`) **que** si le client nous a écrit dans les
+dernières 24 h. Cette fenêtre n'est rouverte **que par un message ENTRANT du client** — nos
+relances ne la rouvrent pas.
+
+| Situation | Fenêtre 24 h | Quoi envoyer |
+|---|---|---|
+| Le client vient d'écrire / a tapé un bouton | **ouverte** | Texte libre du bot (gratuit) — déjà géré par `relance-variants.js` |
+| Le client est silencieux depuis > 24 h (`Invalid Conversation` côté WATI, bascule « À rappeler ») | **fermée** | **Template approuvé** (ce document) — payant, mais seul moyen de le re-toucher |
+
+**Architecture à retenir (pas de duplication)** : une relance hors-fenêtre n'a *pas* besoin d'être
+déclinée par étape (récap / passeport / carte / e-billet / certificat). On envoie **un seul template
+de ré-engagement** avec un bouton **« Reprendre mon dossier »**. Le tap = message entrant → **rouvre
+la fenêtre 24 h** → le bot reprend ensuite tout seul, à l'étape exacte d'arrêt, avec les messages
+déjà existants. Le template ne fait que **ramener le client dans la conversation**.
+
+```
+Fenêtre fermée → [Template MARKETING A1] → client tape « Reprendre »
+   → fenêtre 24 h rouverte → bot RELANCE_ENGAGED/ENG_* (gratuit, adapté à l'étape)
+```
+
+---
+
+## 1. Conventions Meta (à respecter sous peine de refus)
+
+- **Nom** : minuscules, chiffres, `_` uniquement. **Pas d'accent, pas d'espace, pas de majuscule.**
+  (⚠️ l'ancien `dossier_reçu` de `WHATSAPP-AUTO.md` est invalide → utiliser `dossier_recu`.)
+- **Variables** : numérotées `{{1}}`, `{{2}}`… dans l'ordre. Le corps **ne peut pas commencer
+  ni finir par une variable**, et **deux variables ne peuvent pas se toucher**.
+- **Corps** ≤ 1024 caractères · **Header texte** ≤ 60 · **Footer** ≤ 60.
+- **Boutons** : on **ne mélange pas** Quick Reply et CTA (URL/Appel) dans le même template.
+  Quick Reply : viser ≤ 3. Le **payload** du bouton doit mapper un handler du bot.
+- **Catégorie** :
+  - **UTILITY** = mise à jour d'un dossier/transaction existant (statut, pièce). Approbation facile, **moins cher**.
+  - **MARKETING** = ré-engagement / incitation / parrainage. Le client peut se désabonner.
+  - Mettre la **bonne** catégorie : un MARKETING déguisé en UTILITY se fait recatégoriser (ou refuser).
+- **Échantillons** : WATI exige une valeur d'exemple par variable à la soumission (colonnes ci-dessous).
+
+### Variables standard (mapping vers les données dossier)
+
+| Placeholder | Donnée | Source code | Exemple |
+|---|---|---|---|
+| `{{prenom}}` | prénom client | `STATE.prenom` / lead | `Awa` |
+| `{{ref}}` | référence dossier RDA | `REF` | `RDA-260614-1234` |
+| `{{vol}}` | n° de vol | `VOL` | `AF718` |
+| `{{total}}` | montant visé (brut) | `TOTAL` (400 € Maroc, 600 € sinon) | `600 €` |
+| `{{net}}` | part nette client | net (≈ −25 %) | `450 €` |
+
+> En `templateParams` (appel `send-whatsapp`), c'est **positionnel** : `["Awa","AF718","600 €"]`
+> pour `{{1}} {{2}} {{3}}`. Les noms ci-dessus sont juste une aide de lecture.
+
+### Footer signature (réutilisable partout, 45 car. — OK)
+
+```
+On prend aux compagnies, on rend aux familles
+```
+
+---
+
+## A. RÉ-ENGAGEMENT — relance hors fenêtre 24 h · catégorie **MARKETING**
+
+> Bouton **Quick Reply** obligatoire : c'est le tap qui rouvre la fenêtre et redonne la main au bot.
+> Mapper le payload : `Reprendre`→ reprise flux · `Rappel`→ liste « À rappeler » bureau · `Plus tard`→ T1.3.
+
+### A1 — `relance_dossier_a_finaliser` (relance principale, J+1 à J+2)
+- **Catégorie** : MARKETING · **Langue** : fr
+- **Header** (texte) : `Votre dossier est presque prêt ✈️`
+- **Corps** :
+  ```
+  Bonjour {{1}} 👋
+
+  Votre dossier d'indemnisation pour le vol {{2}} est presque complet — il ne manque qu'une étape pour réclamer jusqu'à {{3}}.
+
+  On s'occupe de tout, et si on ne gagne pas, vous ne payez rien. On reprend là où vous vous étiez arrêté ?
+  ```
+- **Footer** : `On prend aux compagnies, on rend aux familles`
+- **Boutons** (Quick Reply) : `Reprendre mon dossier` · `Être rappelé(e)`
+- **Échantillons** : `{{1}}=Awa` · `{{2}}=AF718` · `{{3}}=600 €`
+
+### A2 — `relance_preuve_sociale` (2ᵉ relance, angle « autres passagers »)
+- **Catégorie** : MARKETING · fr
+- **Corps** :
+  ```
+  Bonjour {{1}}, on revient vers vous 🙂
+
+  Plusieurs passagers de votre vol {{2}} ont déjà lancé leur réclamation avec nous. Plus on est nombreux, plus le dossier est solide.
+
+  Votre place est gardée — il suffit de reprendre pour viser jusqu'à {{3}} (0 € si on ne gagne pas).
+  ```
+- **Footer** : `On prend aux compagnies, on rend aux familles`
+- **Boutons** : `Reprendre mon dossier` · `Être rappelé(e)`
+- **Échantillons** : `Awa` · `AF718` · `600 €`
+
+### A3 — `relance_derniere_chance` (dernière relance, urgence douce)
+- **Catégorie** : MARKETING · fr
+- **Corps** :
+  ```
+  Bonjour {{1}}, dernier petit rappel pour votre dossier {{2}} 🙏
+
+  Votre indemnisation (jusqu'à {{3}}) peut encore être réclamée — autant qu'elle vous revienne plutôt qu'elle reste à la compagnie.
+
+  Une minute suffit pour reprendre, on fait le reste.
+  ```
+- **Footer** : `On prend aux compagnies, on rend aux familles`
+- **Boutons** : `Reprendre mon dossier` · `Plus tard`
+- **Échantillons** : `Awa` · `RDA-260614-1234` · `600 €`
+
+---
+
+## B. SUIVI DE DOSSIER — milestones · catégorie **UTILITY**
+
+> Mises à jour d'un dossier existant → faciles à approuver, moins chères, joignent même hors-fenêtre.
+> Elles **entretiennent la confiance** et **gardent le client engagé** sans effort commercial.
+
+### B1 — `dossier_recu` (accusé de réception)
+- **Catégorie** : UTILITY · fr
+- **Corps** :
+  ```
+  Bonjour {{1}}, votre dossier {{2}} a bien été enregistré ✅
+
+  Nous prenons le relais et réclamons jusqu'à {{3}} en votre nom auprès de la compagnie. On vous tient informé(e) à chaque étape — vous n'avez rien à avancer.
+  ```
+- **Footer** : `On prend aux compagnies, on rend aux familles`
+- **Échantillons** : `Awa` · `RDA-260614-1234` · `600 €`
+
+### B2 — `mandat_signe` (confirmation signature mandat)
+- **Catégorie** : UTILITY · fr
+- **Corps** :
+  ```
+  Merci {{1}} 🙏 Votre mandat pour le dossier {{2}} est bien signé.
+
+  Votre réclamation est désormais entre nos mains : on engage la démarche auprès de la compagnie pour récupérer jusqu'à {{3}}. Rappel : 0 € à payer, on se rémunère uniquement en cas de succès (commission 25 %).
+  ```
+- **Footer** : `On prend aux compagnies, on rend aux familles`
+- **Échantillons** : `Awa` · `RDA-260614-1234` · `600 €`
+
+### B3 — `reclamation_envoyee` (réclamation partie à la compagnie)
+- **Catégorie** : UTILITY · fr
+- **Corps** :
+  ```
+  Bonne nouvelle {{1}} ✈️ Votre réclamation pour le vol {{2}} vient d'être envoyée à la compagnie.
+
+  La loi leur laisse un délai pour répondre. On suit ça de près et on revient vers vous dès qu'il y a du nouveau.
+  ```
+- **Échantillons** : `Awa` · `AF718`
+
+### B4 — `relance_compagnie` (mise en demeure / relance formelle)
+- **Catégorie** : UTILITY · fr
+- **Corps** :
+  ```
+  Point sur votre dossier {{1}}, {{2}} : la compagnie n'a pas encore répondu dans les délais, alors on vient de lui envoyer une relance formelle (mise en demeure).
+
+  C'est une étape normale de la procédure. On continue de défendre votre indemnisation.
+  ```
+- **Échantillons** : `{{1}}=RDA-260614-1234` · `{{2}}=Awa`
+
+### B5 — `reponse_compagnie_accord` (la compagnie accepte)
+- **Catégorie** : UTILITY · fr
+- **Corps** :
+  ```
+  Très bonne nouvelle {{1}} 🎉 La compagnie a accepté d'indemniser votre dossier {{2}}.
+
+  Un conseiller revient vers vous très vite pour la suite et le versement de votre indemnité.
+  ```
+- **Boutons** (Quick Reply) : `Être rappelé(e)`
+- **Échantillons** : `Awa` · `RDA-260614-1234`
+
+### B6 — `escalade_procedure` (médiateur / contentieux)
+- **Catégorie** : UTILITY · fr
+- **Corps** :
+  ```
+  Point sur votre dossier {{1}}, {{2}} : faute de réponse satisfaisante de la compagnie, on passe à l'étape supérieure (saisine du médiateur, puis procédure si nécessaire).
+
+  Vous n'avez rien à faire ni à avancer — on porte votre dossier jusqu'au bout.
+  ```
+- **Échantillons** : `RDA-260614-1234` · `Awa`
+
+### B7 — `paiement_en_cours` (indemnité obtenue → versement)
+- **Catégorie** : UTILITY · fr
+- **Corps** :
+  ```
+  Excellente nouvelle {{1}} 💸 L'indemnité de votre dossier {{2}} a été obtenue.
+
+  Votre part, soit {{3}}, part vers vous. Merci de votre confiance — c'est exactement pour ça qu'on existe.
+  ```
+- **Footer** : `On prend aux compagnies, on rend aux familles`
+- **Échantillons** : `Awa` · `RDA-260614-1234` · `net=450 €`
+
+---
+
+## C. PIÈCES MANQUANTES · catégorie **UTILITY**
+
+### C1 — `piece_manquante` (relance document, générique)
+- **Catégorie** : UTILITY · fr
+- **Corps** :
+  ```
+  Bonjour {{1}}, votre dossier {{2}} avance bien 🙂 Il nous manque encore une pièce pour le finaliser : {{3}}.
+
+  Une simple photo suffit, directement ici dans la conversation. Vos données ne servent qu'à votre réclamation et ne sont jamais revendues 🔒.
+  ```
+- **Boutons** (Quick Reply) : `Envoyer maintenant` · `Être rappelé(e)`
+- **Échantillons** : `Awa` · `RDA-260614-1234` · `{{3}}=une pièce d'identité (passeport, CNI ou titre de séjour)`
+- *Valeurs `{{3}}` types* : `une pièce d'identité…` · `votre carte d'embarquement (ou e-billet / confirmation de réservation)` · `votre confirmation de réservation`
+
+### C2 — `photo_a_reprendre` (qualité photo insuffisante)
+- **Catégorie** : UTILITY · fr
+- **Corps** :
+  ```
+  Merci {{1}} 🙏 Petit souci sur le document reçu pour le dossier {{2}} : il est {{3}} et risque d'être refusé par la compagnie.
+
+  Pouvez-vous le reprendre à plat, en pleine lumière, les 4 coins bien visibles ? Ça sécurise votre demande.
+  ```
+- **Boutons** (Quick Reply) : `Renvoyer la photo`
+- **Échantillons** : `Awa` · `RDA-260614-1234` · `{{3}}=un peu flou`
+
+---
+
+## D. RAPPEL TÉLÉPHONIQUE & PARRAINAGE
+
+### D1 — `rappel_programme` (confirmation de rappel) · **UTILITY**
+> Sert aussi pour les clients wolof/bambara : le **conseiller** rappelle dans la langue ;
+> ne **jamais** écrire que WhatsApp répond dans la langue du client (faux + non conforme).
+- **Catégorie** : UTILITY · fr
+- **Corps** :
+  ```
+  Bonjour {{1}}, c'est noté 📞 Un conseiller Robin des Airs vous rappelle {{2}} au sujet de votre dossier {{3}}.
+
+  Vous pouvez aussi nous écrire ici à tout moment, on vous répond.
+  ```
+- **Échantillons** : `Awa` · `{{2}}=aujourd'hui avant 18h` · `{{3}}=RDA-260614-1234`
+
+### D2 — `parrainage` (après paiement) · **MARKETING**
+- **Catégorie** : MARKETING · fr
+- **Corps** :
+  ```
+  Bonjour {{1}} 🙌 Content(e) d'avoir récupéré votre indemnité avec vous !
+
+  Un proche a vécu un vol retardé (3 h ou plus), annulé ou un refus d'embarquement — même jusqu'à 5 ans en arrière ? Transmettez-lui notre contact : même accompagnement, 0 € à avancer.
+  ```
+- **Footer** : `On prend aux compagnies, on rend aux familles`
+- **Boutons** (CTA URL) : `Partager Robin des Airs` → `https://robindesairs.eu`
+- **Échantillons** : `Awa`
+
+---
+
+## 2. Comment les envoyer
+
+### Option 1 — WATI (interface, recommandé pour démarrer)
+1. WATI → **Broadcast** → **Template Messages** → **Add Template** → copier nom/catégorie/corps/boutons ci-dessus.
+2. Attendre l'approbation Meta (souvent 24–48 h ; UTILITY plus rapide).
+3. Lancer un **Broadcast** ciblé (ex. leads « À rappeler ») ou déclencher via une **automation** WATI.
+
+### Option 2 — par code (`send-whatsapp`, déjà branché Meta/360dialog)
+```json
+POST https://robindesairs.eu/.netlify/functions/send-whatsapp
+{
+  "secret": "<WHATSAPP_WEBHOOK_SECRET>",
+  "to": "33612345678",
+  "template": "relance_dossier_a_finaliser",
+  "templateParams": ["Awa", "AF718", "600 €"],
+  "language": "fr"
+}
+```
+> `templateParams` = valeurs de `{{1}} {{2}} {{3}}` **dans l'ordre**. Voir `WHATSAPP-AUTO.md`.
+
+### Branchement automatique conseillé (prochaine étape, non câblé)
+- **Lead fenêtre fermée** (`l.windowClosed=true` dans `server.js`) → envoyer **A1** ; J+2 → **A2** ; J+4 → **A3**.
+- **Statut Airtable change** (« Réclamation envoyée », « Accord », « Payé »…) → **B3 / B5 / B7** via Make ou un cron Netlify.
+- Le bouton **« Reprendre »** des templates A doit pointer vers le webhook bot pour rouvrir la fenêtre et relancer le flux (`RELANCE_ENGAGED_*` / `ENG_*`).
+
+---
+
+## 3. Récap des templates
+
+| Nom (Meta) | Catégorie | Déclencheur | Boutons |
+|---|---|---|---|
+| `relance_dossier_a_finaliser` | MARKETING | lead silencieux > 24 h, J+1 | Reprendre · Rappel |
+| `relance_preuve_sociale` | MARKETING | relance J+2 | Reprendre · Rappel |
+| `relance_derniere_chance` | MARKETING | relance J+4 | Reprendre · Plus tard |
+| `dossier_recu` | UTILITY | dossier enregistré | — |
+| `mandat_signe` | UTILITY | mandat signé | — |
+| `reclamation_envoyee` | UTILITY | réclamation envoyée compagnie | — |
+| `relance_compagnie` | UTILITY | mise en demeure envoyée | — |
+| `reponse_compagnie_accord` | UTILITY | compagnie accepte | Rappel |
+| `escalade_procedure` | UTILITY | médiateur / contentieux | — |
+| `paiement_en_cours` | UTILITY | indemnité obtenue | — |
+| `piece_manquante` | UTILITY | pièce/carte/e-billet manquant | Envoyer · Rappel |
+| `photo_a_reprendre` | UTILITY | photo illisible | Renvoyer |
+| `rappel_programme` | UTILITY | rappel tél planifié | — |
+| `parrainage` | MARKETING | après paiement | Partager (URL) |
+
+*Robin des Airs — templates WhatsApp WATI/Meta · voir aussi `WHATSAPP-AUTO.md`, `railway/lib/relance-variants.js`.*
