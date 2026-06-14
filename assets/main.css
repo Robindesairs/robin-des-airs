@@ -93,6 +93,7 @@
   --neon:    #00C87A;
   --neon-b:  #00E5A0;
   --neon-dark: #009960;
+  --neon-ink: #047857; /* vert accessible (>=4.5:1) pour TEXTE vert sur fond clair */
   --white:   #FFFFFF;
   --off:     #F7F8FA;
   --off2:    #EEF0F4;
@@ -1283,7 +1284,7 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   margin-bottom: 18px;
 }
 
-.hero-title .neon { color: var(--neon); }
+.hero-title .neon { color: var(--neon-ink); }
 
 /* Phrase « ce que fait le site » — lisibilité avant le slogan détaillé */
 .hero-subhead {
@@ -1916,7 +1917,7 @@ textarea.calc-input.calc-input--short-vol { min-height: 96px; resize: vertical; 
   font-weight: 700;
   letter-spacing: 3px;
   text-transform: uppercase;
-  color: var(--neon-dark);
+  color: var(--neon-ink);
   margin-bottom: 12px;
   display: flex;
   align-items: center;
@@ -1940,7 +1941,7 @@ textarea.calc-input.calc-input--short-vol { min-height: 96px; resize: vertical; 
   line-height: 1.05;
 }
 
-.section-title .neon { color: var(--neon); }
+.section-title .neon { color: var(--neon-ink); }
 
 /* Buttons shared */
 .btn-primary {
@@ -2340,7 +2341,7 @@ textarea.calc-input.calc-input--short-vol { min-height: 96px; resize: vertical; 
 
 .check { color: var(--neon-dark); font-weight: 900; font-size: 16px; }
 .cross { color: #E05050; font-size: 14px; }
-.price-green { color: var(--neon-dark); font-weight: 900; font-size: 14px; }
+.price-green { color: var(--neon-ink); font-weight: 900; font-size: 14px; }
 .price-red { color: #c0392b; font-weight: 700; font-size: 13px; }
 
 /* ═══════ TÉMOIGNAGES ═══════ */

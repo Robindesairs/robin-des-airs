@@ -384,7 +384,7 @@ footer::before {
 
 /* ═══════ 12. SECTION comparatif — legère surface colorée sur highlights ═══════ */
 .comp-cell.hl { background: rgba(0,200,122,0.055); }
-.comp-head-cell.hl { background: rgba(0,229,160,0.12); color: var(--neon-b); }
+.comp-head-cell.hl { background: rgba(0,229,160,0.12); color: var(--neon-ink); }
 
 /* ═══════ 13. CURSOR POINTER — tous les éléments interactifs ═══════ */
 .loi-card,
