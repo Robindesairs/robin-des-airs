@@ -1053,18 +1053,22 @@ function deskBriefHtml(i){
   const rows = (B.actions||[]).map(a=>`<div class="pm-flight"><span class="fl">${URG_ICON[a.urgence]||'⚪'}</span><span class="rt">${a.txt}</span></div>`).join('');
   return `<h4>${B.titre} — point du jour</h4>${rows}`;
 }
-// Sofia — agences à prospecter (OpenStreetMap), données réelles /api/sofia-prospect
+// Sofia — agences à prospecter (OpenStreetMap 📍 + Instagram 📸), données réelles /api/sofia-prospect
 function sofiaProspectsHtml(){
   const S0 = REAL.sofia;
   if(!(S0 && Array.isArray(S0.prospects))) return '';
   if(!S0.prospects.length) return `<h4>Prospection agences (Afrique)</h4><div class="pm-empty" style="font-style:normal">Aucune nouvelle agence pour l'instant — relancé chaque lundi (Dakar · Abidjan · Banjul).</div>`;
   const cibles=(S0.cibles||[]).map(c=>`${c.paysNom||c.pays} — ${c.ville} : ${c.nouveau||0}`).join(' · ');
-  const rows=S0.prospects.slice(0,12).map(p=>{
-    const contact=[p.phone?('📞 '+p.phone):'', p.website?'🌐 site':'', p.email?('✉️ '+p.email):''].filter(Boolean).join(' · ');
-    return `<div class="pm-flight"><span class="fl">${p.contactable?'🟢':'⚪'} ${p.name}</span><span class="rt">${p.paysNom||p.pays} · ${p.ville}</span>${contact?`<div class="pm-fsub">${contact}</div>`:''}${p.address?`<div class="pm-fsub">${p.address}</div>`:''}</div>`;
+  const src=S0.sources?`📍 ${S0.sources.osm||0} carte · 📸 ${S0.sources.instagram||0} Instagram`:'';
+  const rows=S0.prospects.slice(0,14).map(p=>{
+    const ico=p.source==='instagram'?'📸':'📍';
+    const lien=p.permalink?`<a href="${p.permalink}" target="_blank" rel="noopener">post ↗</a>`:(p.website?`<a href="${p.website}" target="_blank" rel="noopener">${p.source==='instagram'?'profil ↗':'site ↗'}</a>`:'');
+    const contact=[p.phone?('📞 '+p.phone):'', lien, p.email?('✉️ '+p.email):''].filter(Boolean).join(' · ');
+    return `<div class="pm-flight"><span class="fl">${p.contactable?'🟢':'⚪'} ${ico} ${p.name}</span><span class="rt">${p.paysNom||p.pays} · ${p.ville}</span>${contact?`<div class="pm-fsub">${contact}</div>`:''}${p.address&&p.source!=='instagram'?`<div class="pm-fsub">${p.address}</div>`:''}</div>`;
   }).join('');
-  const more=S0.prospects.length>12?`<div class="pm-empty" style="font-style:normal">… +${S0.prospects.length-12} autre(s)</div>`:'';
-  return `<h4>Prospection agences — ${fmt(S0.totalNouveau||S0.prospects.length)} à contacter (${S0.contactables||0} avec coordonnées)</h4><div class="pm-empty" style="font-style:normal">${cibles}</div>${rows}${more}`;
+  const more=S0.prospects.length>14?`<div class="pm-empty" style="font-style:normal">… +${S0.prospects.length-14} autre(s)</div>`:'';
+  const igNote=S0.igError?`<div class="pm-empty" style="font-style:normal">📸 Instagram indisponible : ${String(S0.igError).slice(0,90)}</div>`:'';
+  return `<h4>Prospection agences — ${fmt(S0.totalNouveau||S0.prospects.length)} à contacter (${S0.contactables||0} avec coordonnées)</h4><div class="pm-empty" style="font-style:normal">${cibles}${src?' · '+src:''}</div>${rows}${more}${igNote}`;
 }
 function posteLegal(taux){
   const L=REAL.legal;

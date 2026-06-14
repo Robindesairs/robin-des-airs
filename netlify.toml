@@ -82,10 +82,11 @@
 [functions."bureau-daily"]
   schedule = "35 7 * * *"
 
-# Sofia — prospection d'agences partenaires (OpenStreetMap) chaque lundi 7h40 UTC.
-# Démarre par Dakar (SN), Abidjan (CI), Banjul (GM) : trouve de vraies agences de voyage,
-# filtre les compagnies aériennes, dédoublonne contre le CRM → liste « à contacter » +
-# brief WhatsApp. Import CRM opt-in seulement (?save=1). Lecture seule live pour le bureau.
+# Sofia — prospection d'agences partenaires (OpenStreetMap + Instagram) chaque lundi 7h40 UTC.
+# Démarre par Dakar (SN), Abidjan (CI), Banjul (GM) : OSM (agences physiques) + IG (hashtags,
+# WhatsApp en légende). Filtre les compagnies aériennes, dédoublonne contre le CRM → liste
+# « à contacter » + brief WhatsApp. Import CRM opt-in (?save=1). Lecture seule live pour le bureau.
+# Cadence hebdo = alignée sur le quota IG (30 hashtags / 7 j).
 [functions."sofia-prospect"]
   schedule = "40 7 * * 1"
 
