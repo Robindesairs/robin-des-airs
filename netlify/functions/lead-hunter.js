@@ -16,6 +16,8 @@
  *   GET  /api/lead-hunter?secret=…               → run complet
  *   GET  /api/lead-hunter?secret=…&save=1        → run + import Airtable
  *   GET  /api/lead-hunter?secret=…&tags=retardavion,ce261  → hashtags spécifiques
+ *
+ * Instagram activé en prod le 2026-06-14 (INSTAGRAM_BUSINESS_ID + META_PAGE_ACCESS_TOKEN).
  */
 
 'use strict';
