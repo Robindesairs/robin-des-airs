@@ -1778,9 +1778,27 @@ function toggleEscaleVol3() {
     // Langue courante (i18n.js expose window.I18N.getLang() + l'event 'robin-locale-change').
     function lang() { try { return (window.I18N && window.I18N.getLang() === 'en') ? 'en' : 'fr'; } catch (e) { return 'fr'; } }
 
+    // Mini carte d'embarquement (maquette neutre, sans logo compagnie) :
+    // nom FICTIF + vol réel cité en texte (usage nominatif licite) + AUCUNE date
+    // calendaire (non falsifiable) + code-barres purement décoratif → illustration,
+    // pas un « faux » au sens de l'art. 441-1. Voir mémo design/légal.
+    function boardingPass(o) {
+      return '<span class="wa-bp" role="img" aria-label="' + o.aria + '">'
+        + '<span class="wa-bp-head"><span class="wa-bp-plane" aria-hidden="true">✈</span><span class="wa-bp-kicker">' + o.kicker + '</span></span>'
+        + '<span class="wa-bp-row">'
+          + '<span class="wa-bp-field"><span class="wa-bp-l">' + o.lPax + '</span><span class="wa-bp-v">' + o.pax + '</span></span>'
+          + '<span class="wa-bp-field wa-bp-right"><span class="wa-bp-l">' + o.lSeat + '</span><span class="wa-bp-v">' + o.seat + '</span></span>'
+        + '</span>'
+        + '<span class="wa-bp-route"><span class="wa-bp-ap"><b>' + o.fromC + '</b><small>' + o.fromN + '</small></span><span class="wa-bp-arrow" aria-hidden="true">✈</span><span class="wa-bp-ap"><b>' + o.toC + '</b><small>' + o.toN + '</small></span></span>'
+        + '<span class="wa-bp-row wa-bp-foot">'
+          + '<span class="wa-bp-field"><span class="wa-bp-l">' + o.lFlight + '</span><span class="wa-bp-v">' + o.flight + '</span></span>'
+          + '<span class="wa-bp-bars" aria-hidden="true"></span>'
+        + '</span>'
+      + '</span>';
+    }
     var PASS = {
-      fr: '<span class="wa-pass"><span class="wa-pass-ic">🎫</span><span class="wa-pass-txt">Carte d\'embarquement</span><span class="wa-pass-bars"></span></span>',
-      en: '<span class="wa-pass"><span class="wa-pass-ic">🎫</span><span class="wa-pass-txt">Boarding pass</span><span class="wa-pass-bars"></span></span>'
+      fr: boardingPass({ aria: 'Carte d\'embarquement (exemple)', kicker: 'Carte d\'embarquement', lPax: 'Passager', pax: 'AMINATA DIALLO', lSeat: 'Siège', seat: '23A', fromC: 'CDG', fromN: 'Paris', toC: 'DKR', toN: 'Dakar', lFlight: 'Vol', flight: 'AF718' }),
+      en: boardingPass({ aria: 'Boarding pass (example)', kicker: 'Boarding pass', lPax: 'Passenger', pax: 'AMA MENSAH', lSeat: 'Seat', seat: '23A', fromC: 'LHR', fromN: 'London', toC: 'ACC', toN: 'Accra', lFlight: 'Flight', flight: 'BA081' })
     };
 
     // La cliente porte un prénom africain (reco sous-agent CQ) : Aminata (FR) / Ama (EN, diaspora anglophone).
@@ -1788,7 +1806,7 @@ function toggleEscaleVol3() {
       fr: function () { return [
         { who: 'client', delay: 400,  hold: 1100, sender: 'Aminata', html: 'AF718 retardé 5 h au départ 😤' },
         { who: 'robin',  typing: 1300, hold: 1200, html: '5 h de retard, c\'est rageant 😤 Envoyez-moi juste une <b>photo de votre carte d\'embarquement</b>, je lis le vol tout seul 📸' },
-        { who: 'client', delay: 900,  hold: 1000, html: PASS.fr },
+        { who: 'client', delay: 900,  hold: 1300, cls: 'wa-msg--bp', html: PASS.fr },
         { who: 'robin',  delay: 450,  hold: 1700, cls: 'wa-scan', html: '🔎 Lecture de la carte…' },
         { who: 'robin',  delay: 400,  hold: 1900, html: '📄 Lu sur votre carte : <b>AF718</b> · <b>Paris → Dakar</b> ✓' },
         { who: 'robin',  typing: 1000, hold: 2800, cls: 'wa-msg--verdict', html: '⏱️ Vol vérifié : <b>5 h 12</b> de retard à l\'arrivée<br>✅ Éligible — <span class="wa-verdict-amt">jusqu\'à 600 €</span> / passager' },
@@ -1801,7 +1819,7 @@ function toggleEscaleVol3() {
       en: function () { return [
         { who: 'client', delay: 400,  hold: 1100, sender: 'Ama', html: 'BA081 delayed 5 h at departure 😤' },
         { who: 'robin',  typing: 1300, hold: 1200, html: '5 h delayed, that\'s maddening 😤 Just send me a <b>photo of your boarding pass</b>, I\'ll read the flight myself 📸' },
-        { who: 'client', delay: 900,  hold: 1000, html: PASS.en },
+        { who: 'client', delay: 900,  hold: 1300, cls: 'wa-msg--bp', html: PASS.en },
         { who: 'robin',  delay: 450,  hold: 1700, cls: 'wa-scan', html: '🔎 Reading the pass…' },
         { who: 'robin',  delay: 400,  hold: 1900, html: '📄 From your pass: <b>BA081</b> · <b>London → Accra</b> ✓' },
         { who: 'robin',  typing: 1000, hold: 2800, cls: 'wa-msg--verdict', html: '⏱️ Flight checked: <b>5 h 12</b> late on arrival<br>✅ Eligible — <span class="wa-verdict-amt">up to €600</span> / passenger' },
