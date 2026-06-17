@@ -816,6 +816,10 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 }
 .lang-btn-wrap:hover { border-color: var(--neon); }
 .lang-flag { font-size: 14px; line-height: 1; }
+/* Switch langue lisible partout (texte « FR/EN » → ne dépend pas de l'emoji drapeau,
+ * cassé sur Windows). Globe = signal universel « langue ». */
+.lang-globe { font-size: 13px; line-height: 1; }
+.lang-code { font-size: 12px; font-weight: 800; letter-spacing: .03em; line-height: 1; }
 .lang-menu {
   display: none; position: absolute;
   top: calc(100% + 8px); right: 0;
@@ -2859,6 +2863,9 @@ button:focus-visible,
     margin-left: 6px;
     font-size: 10.5px;
   }
+  /* Place pour le switch FR/EN (réintroduit sur mobile) : on réduit les drapeaux
+   * mais on garde « + toute l'Afrique » (le message inclusif). */
+  .diaspora-bar-flags .diaspora-flag:nth-child(n+5) { display: none; }
   .diaspora-bar-track {
     padding: 6px 2px 6px 8px;
     border-radius: 10px;
@@ -2869,8 +2876,9 @@ button:focus-visible,
     padding-bottom: env(safe-area-inset-bottom, 0);
   }
   .nav-cta-inline,
-  .lang-dropdown,
   .currency-dropdown { display: none !important; }
+  /* .lang-dropdown reste VISIBLE sur mobile : le switch FR/EN doit toujours se voir
+   * (avant il était masqué → seul accès via le drawer ☰, invisible). */
   .skip-link:focus { left: env(safe-area-inset-left, 16px); }
   #hero {
     padding: calc(var(--site-header-height, 92px) + 12px) 20px 20px;

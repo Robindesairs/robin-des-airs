@@ -125,7 +125,8 @@ function switchLang(code, flag) {
     location.href = '/' + (location.hash || '');
     return;
   }
-  document.getElementById('current-flag').textContent = flag;
+  var cf = document.getElementById('current-flag'); if (cf) cf.textContent = flag;
+  var cc = document.getElementById('current-lang-code'); if (cc) cc.textContent = lang.toUpperCase();
   document.querySelectorAll('.lang-option').forEach(o => o.classList.remove('active'));
   var opt = document.querySelector('.lang-option[data-lang="' + lang + '"]');
   if (opt) opt.classList.add('active');

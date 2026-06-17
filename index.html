@@ -119,13 +119,15 @@
     <!-- Actions remontées dans le bandeau (langue + menu ☰) — nav séparée supprimée pour aérer le haut -->
     <div class="diaspora-bar-actions">
       <div class="lang-dropdown" id="lang-dropdown" style="position:relative;">
-        <div class="lang-btn-wrap" onclick="toggleLangMenu()" role="button" tabindex="0" aria-label="Langue">
-          <span class="lang-flag" id="current-flag">🇫🇷</span>
+        <div class="lang-btn-wrap" onclick="toggleLangMenu()" role="button" tabindex="0" aria-label="Changer de langue : français ou anglais">
+          <span class="lang-globe" aria-hidden="true">🌐</span>
+          <span class="lang-code" id="current-lang-code">FR</span>
+          <span class="lang-flag" id="current-flag" hidden></span>
           <svg width="8" height="5" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
         </div>
         <div class="lang-menu" id="lang-menu">
-          <div class="lang-option active" data-lang="fr" onclick="switchLang('FR','🇫🇷')">🇫🇷 &nbsp;Français</div>
-          <div class="lang-option" data-lang="en" onclick="switchLang('EN','🇬🇧')">🇬🇧 &nbsp;English</div>
+          <div class="lang-option active" data-lang="fr" onclick="switchLang('FR','🇫🇷')">Français</div>
+          <div class="lang-option" data-lang="en" onclick="switchLang('EN','🇬🇧')">English</div>
         </div>
       </div>
       <button class="nav-burger" id="nav-burger" onclick="toggleMobileNav()" aria-label="Menu">
