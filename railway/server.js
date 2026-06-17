@@ -1261,7 +1261,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     else return sendButtons(phone, { body: `${bar('type_vol')}\n✈️ Vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg);
     s.step = 'scan'; await setState(phone, s);
     // Un seul message (motivation + scan) → réponse immédiate, pas de délai où les taps s'entrecroisent.
-    return sendButtons(phone, { body: `${bar('scan')}\n💰 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (*${montantNet(s.pax)} € nets*, 75 %). Robin prélève 25 % *uniquement* si vous gagnez. 🤝\n\n⚡ Envoyez une *photo* de votre carte d'embarquement ou e-billet — je lis le vol automatiquement.${s.pax > 1 ? `\n👥 (une carte suffit pour le vol)` : ''}\n📄 _Votre mandat et le dossier pour la compagnie sont prêts plus vite._\n\n📎 *Envoyez la photo*, ou choisissez 👇`, buttons: [{ id: 'scan_photo', text: '📸 Envoyer une photo' }, { id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
+    return sendButtons(phone, { body: `${bar('scan')}\n💰 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (*${montantNet(s.pax)} € nets*, 75 %). Robin prélève 25 % *uniquement* si vous gagnez.\n\nEnvoyez une *photo* de votre carte d'embarquement ou e-billet — je lis le vol automatiquement.${s.pax > 1 ? `\n(une carte suffit pour le vol)` : ''}\n_Votre mandat et le dossier pour la compagnie sont prêts plus vite._\n\n📎 *Envoyez la photo*, ou choisissez ci-dessous`, buttons: [{ id: 'scan_photo', text: '📸 Envoyer une photo' }, { id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
   }
   // ── Correspondance « rapide » (raccourci bandeau) : vol déjà connu, on demande juste s'il y en avait un autre ──
   if (s.step === 'q_corr') {
@@ -2146,12 +2146,12 @@ async function finaliser(phone, s, cfg) {
   s.minorsCount = pax.filter(p => p && p.minor).length;
   s.ref = genRef(); s.mandat_url = buildMandatUrl(s, phone); s.step = 'done'; await setState(phone, s);
   const st = docsStatus(s); // titre HONNÊTE : « Dossier complet » seulement si toutes les pièces sont là (sinon le msg suivant se contredisait)
-  const titre = st.complete ? '🎉 *Dossier complet !*' : '✅ *Récapitulatif enregistré*';
+  const titre = st.complete ? '✅ *Dossier complet !*' : '✅ *Récapitulatif enregistré*';
   const docsNote = st.complete ? '' : `\n\n${missingDocsText(s)}`;
   // Lead à relancer tant que le mandat n'est pas signé (nudge 2h/8h/22h dans la fenêtre 24h)
   upsertLead(phone, { ref: s.ref, mandatUrl: s.mandat_url, mandatSentAt: Date.now(), lastClientAt: Date.now(), pax: s.pax || 1, name: firstNameOf(s), perPax: s.perPax, flightVerdict: s.flightVerdict || '', signed: false, completed: true, nudges: [] });
   const minorNote = s.minorsCount ? `\n👶 ${s.minorsCount} mineur·s : signature d'un parent/tuteur requise (un expert vous guide).` : '';
-  await send(phone, `${bar('done')}\n${titre} Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % au succès uniquement · 🔒 aucune info bancaire.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_\n\n👉 *Signez ici :*\n${s.mandat_url}\n\nSans votre signature, on ne peut pas agir en votre nom. ${STOP_FOOTER}`, cfg);
+  await send(phone, `${bar('done')}\n${titre} Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % au succès uniquement · aucune info bancaire.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_\n\n👉 *Signez ici :*\n${s.mandat_url}\n\nSans votre signature, on ne peut pas agir en votre nom. ${STOP_FOOTER}`, cfg);
   // CRM : la fiche Airtable est désormais créée par la synchro DIRECTE (storeDossierDurable →
   // /api/dossier-store → syncNewDossierToAirtable, statut « Signature en attente »). Le webhook
   // Make ci-dessous n'est plus qu'un hook OPTIONNEL pour d'éventuelles automatisations externes :
