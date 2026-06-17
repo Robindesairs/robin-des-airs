@@ -68,12 +68,33 @@
 <!-- Bandeau diaspora : identité (drapeaux + titre) + piste vols (bloc arrondi) -->
 <div class="diaspora-bar">
   <div class="diaspora-bar-inner diaspora-bar-inner--stack">
-    <span class="sr-only" data-i18n="diaspora_bar_flags_aria">Diaspora: Senegal, Mali, Ivory Coast, Guinea, Cameroon, DRC, Benin, Togo, Ghana, Nigeria (flags beside).</span>
+    <span class="sr-only" data-i18n="diaspora_bar_flags_aria">Diaspora: Cameroon, Comoros, Côte d’Ivoire, Madagascar, Mali, Nigeria, DR Congo, Senegal — and all of Africa.</span>
     <span id="vol-ticker-sr" class="sr-only" data-i18n="vol_ticker_sr">Strip of Europe–Africa and Africa–Europe flights with 3h+ arrival delay or cancellation. Up to €600 if EU 261 applies. Click a pill to pre-fill the form.</span>
 
     <div class="diaspora-bar-head">
+      <!-- Petit logo (marque = confiance pour un service argent/juridique), couleurs adaptées au navy -->
+      <a href="/" class="diaspora-logo" id="nav-logo-home" aria-label="Robin des Airs — accueil">
+        <svg width="20" height="20" viewBox="0 0 60 60" fill="none" aria-hidden="true">
+          <path d="M8 8 Q-2 30 8 52" fill="none" stroke="#00E5A0" stroke-width="4" stroke-linecap="round"/>
+          <line x1="12" y1="30" x2="42" y2="30" stroke="#fff" stroke-width="2.5"/>
+          <path d="M40 30 L52 27 L49 30 L52 33 Z" fill="#fff"/>
+        </svg>
+        <span class="diaspora-logo-text">Robin<span class="diaspora-logo-accent"> des Airs</span></span>
+      </a>
+      <!-- Drapeaux en SVG (Twemoji auto-hébergés) : les emoji Unicode s'affichent en « SN ML CI… » sur Windows.
+           ~8 corridors + grosses communautés FR (Madagascar #1, Comores) + « toute l'Afrique » pour ne pas lire comme une liste d'éligibilité. Ordre alphabétique. -->
       <div class="diaspora-bar-flags-pill" aria-hidden="true">
-        <span class="diaspora-bar-flags">🇸🇳 🇲🇱 🇨🇮 🇬🇳 🇨🇲 🇨🇩 🇧🇯 🇹🇬 🇬🇭 🇳🇬</span>
+        <span class="diaspora-bar-flags">
+          <img class="diaspora-flag" src="/assets/flags/cm.svg" alt="" width="18" height="18" decoding="async">
+          <img class="diaspora-flag" src="/assets/flags/km.svg" alt="" width="18" height="18" decoding="async">
+          <img class="diaspora-flag" src="/assets/flags/ci.svg" alt="" width="18" height="18" decoding="async">
+          <img class="diaspora-flag" src="/assets/flags/mg.svg" alt="" width="18" height="18" decoding="async">
+          <img class="diaspora-flag" src="/assets/flags/ml.svg" alt="" width="18" height="18" decoding="async">
+          <img class="diaspora-flag" src="/assets/flags/ng.svg" alt="" width="18" height="18" decoding="async">
+          <img class="diaspora-flag" src="/assets/flags/cd.svg" alt="" width="18" height="18" decoding="async">
+          <img class="diaspora-flag" src="/assets/flags/sn.svg" alt="" width="18" height="18" decoding="async">
+        </span>
+        <span class="diaspora-bar-flags-more" data-i18n="diaspora_flags_more">+ all of Africa</span>
       </div>
       <div class="diaspora-bar-head-divider" aria-hidden="true"></div>
       <div class="diaspora-bar-title">
@@ -97,63 +118,35 @@
         </div>
       </div>
     </div>
+    <!-- Actions remontées dans le bandeau (langue + menu ☰) — nav séparée supprimée pour aérer le haut -->
+    <div class="diaspora-bar-actions">
+      <div class="lang-dropdown" id="lang-dropdown" style="position:relative;">
+        <div class="lang-btn-wrap" onclick="toggleLangMenu()" role="button" tabindex="0" aria-label="Changer de langue : français ou anglais">
+          <span class="lang-globe" aria-hidden="true">🌐</span>
+          <span class="lang-code" id="current-lang-code">EN</span>
+          <span class="lang-flag" id="current-flag" hidden></span>
+          <svg width="8" height="5" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <div class="lang-menu" id="lang-menu">
+          <div class="lang-option" data-lang="fr" onclick="switchLang('FR','🇫🇷')">Français</div>
+          <div class="lang-option active" data-lang="en" onclick="switchLang('EN','🇬🇧')">English</div>
+        </div>
+      </div>
+      <button class="nav-burger" id="nav-burger" onclick="toggleMobileNav()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
   </div>
 </div>
 
-<!-- ═══════ NAV ═══════ -->
-<nav id="navbar" aria-label="Navigation principale">
-  <a href="/" class="nav-logo" id="nav-logo-home">
-    <svg width="26" height="26" viewBox="0 0 60 60" fill="none">
-      <path d="M8 8 Q-2 30 8 52" fill="none" stroke="#00C87A" stroke-width="4" stroke-linecap="round"/>
-      <line x1="12" y1="30" x2="42" y2="30" stroke="#0B1F3A" stroke-width="2.5"/>
-      <path d="M40 30 L52 27 L49 30 L52 33 Z" fill="#0B1F3A"/>
-    </svg>
-    ROBIN<span class="nav-logo-accent"> des Airs</span>
-  </a>
-
-  <div style="display:flex;align-items:center;gap:8px;">
-    <a href="/en" class="nav-lang-direct" id="nav-lang-direct" data-i18n="nav_english_version">🇬🇧 English</a>
-    <!-- Lang: toujours visible -->
-    <div class="lang-dropdown" id="lang-dropdown" style="position:relative;">
-      <div class="lang-btn-wrap" onclick="toggleLangMenu()" role="button" tabindex="0" aria-label="Change language: French or English">
-        <span class="lang-globe" aria-hidden="true">🌐</span>
-        <span class="lang-code" id="current-lang-code">EN</span>
-        <span class="lang-flag" id="current-flag" hidden></span>
-        <svg width="8" height="5" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-      </div>
-      <div class="lang-menu" id="lang-menu">
-        <div class="lang-option" data-lang="fr" onclick="switchLang('FR','🇫🇷')">Français</div>
-        <div class="lang-option active" data-lang="en" onclick="switchLang('EN','🇬🇧')">English</div>
-      </div>
-    </div>
-    <div class="currency-dropdown" id="currency-dropdown" style="position:relative;">
-      <div class="currency-btn-wrap" onclick="toggleCurrencyMenu()" title="Devise d’affichage">
-        <span class="currency-label" id="current-currency-label">EUR</span>
-        <svg width="8" height="5" viewBox="0 0 10 6" fill="none" aria-hidden="true"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-      </div>
-      <div class="currency-menu" id="currency-menu">
-        <div class="currency-option active" data-currency="eur" onclick="switchCurrency('eur')">EUR (€)</div>
-      </div>
-    </div>
-    <!-- CTA visible sur desktop -->
-    <a href="#funnel-box" class="nav-cta-sim nav-cta-inline" onclick="scrollToCalcWithAnimation(event); return false;" data-i18n="nav_cta_sim">Amount estimator →</a>
-    <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20%21%20Mon%20vol%20a%20%C3%A9t%C3%A9%20retard%C3%A9%20ou%20annul%C3%A9%20%E2%80%94%20ai-je%20droit%20%C3%A0%20une%20indemnit%C3%A9%20%28jusqu%27%C3%A0%20600%20%E2%82%AC%29%20%3F%0A%E2%9C%88%EF%B8%8F%20N%C2%B0%20de%20vol%20%3A%0A%F0%9F%93%85%20Date%20%3A" target="_blank" rel="noopener" class="nav-cta nav-cta-inline" id="nav-wa-cta" data-i18n="nav_cta" onclick="plausible('WhatsApp-CTA', {props: {source: 'nav'}})">What am I owed? →</a>
-    <!-- Hamburger toujours visible -->
-    <button class="nav-burger" id="nav-burger" onclick="toggleMobileNav()" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</nav>
 </header>
 
 <div class="nav-drawer" id="nav-drawer">
   <div class="nav-drawer-lang" id="nav-drawer-lang">
         <a href="/en" class="nav-drawer-lang-direct" id="nav-drawer-lang-direct" data-i18n="nav_drawer_english">🇬🇧 English version</a>
         <span class="nav-drawer-lang-sep" aria-hidden="true">·</span>
-        <span class="lang-option active" data-lang="fr" onclick="switchLang('FR','🇫🇷'); closeMobileNav();">🇫🇷 Français</span>
-        <span class="lang-option" data-lang="en" onclick="switchLang('EN','🇬🇧'); closeMobileNav();">🇬🇧 English</span>
-        <span class="nav-drawer-curr-label" aria-hidden="true">·</span>
-        <span class="currency-option active" data-currency="eur" onclick="switchCurrency('eur'); closeMobileNav();">EUR</span>
+        <span class="lang-option" data-lang="fr" onclick="switchLang('FR','🇫🇷'); closeMobileNav();">🇫🇷 Français</span>
+        <span class="lang-option active" data-lang="en" onclick="switchLang('EN','🇬🇧'); closeMobileNav();">🇬🇧 English</span>
   </div>
   <ul>
     <li><a href="/depot-express.html" onclick="closeMobileNav(); plausible('Depot-Dossier', {props: {source: 'nav'}})" data-i18n="nav_drawer_depot">📤 Submit my case</a></li>
@@ -194,16 +187,15 @@
         <span data-i18n-html="hero_title">Flight Europe-Africa<br>delayed or cancelled?<br></span>
         <span class="neon" data-i18n="hero_title_neon" id="hero-ab-headline">Get up to €600 back</span>
       </h1>
-      <p class="hero-subhead" data-i18n="hero_subhead" id="hero-ab-subhead">We take from airlines, we give back to diaspora families. Your Europe ⇄ Africa routes — delay, cancellation or overbooking: we go get the money they owe you.</p>
+      <p class="hero-subhead" data-i18n-html="hero_subhead" id="hero-ab-subhead"><span class='hero-slogan'>We take from airlines, we give back to diaspora families.</span> <span class='hero-subhead-extra'>Your Europe ⇄ Africa routes — delay, cancellation or overbooking: we go get the money they owe you.</span></p>
 
-      <p class="hero-desc" data-i18n-html="hero_desc"><strong>€0 if we lose. 25% only if you win.</strong> No upfront cost, ever.</p>
+      <!-- Puces « promesses » — la réassurance paiement affichée fièrement en badges (geste Wave/LemFi), pas enterrée dans une phrase. Câblées i18n pour ne pas être écrasées. -->
+      <ul class="hero-promises" data-i18n-html="hero_promises" aria-label="Nos garanties : jamais d’avance, jamais de carte bancaire, c’est nous qui vous payons sur votre compte"><li>🚫 No upfront cost</li><li>💳 No card details</li><li>💶 We pay you</li></ul>
 
       <!-- CTA unique : WhatsApp -->
       <div class="hero-entry hero-entry--wa-first">
         <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20%21%20Mon%20vol%20a%20%C3%A9t%C3%A9%20retard%C3%A9%20ou%20annul%C3%A9%20%E2%80%94%20ai-je%20droit%20%C3%A0%20une%20indemnit%C3%A9%20%28jusqu%27%C3%A0%20600%20%E2%82%AC%29%20%3F%0A%E2%9C%88%EF%B8%8F%20N%C2%B0%20de%20vol%20%3A%0A%F0%9F%93%85%20Date%20%3A" target="_blank" rel="noopener" class="hero-entry-btn primary hero-entry-btn--xl" data-i18n="hero_btn_wa" id="hero-wa-link" onclick="plausible('WhatsApp-CTA', {props: {source: 'hero'}})">💰 See what I'm owed — up to €600</a>
-        <p class="hero-entry-hint" data-i18n="hero_entry_hint">Check, file and sign your claim on WhatsApp · no long form · we call you back in your language · free, no commitment</p>
-        <span class="hero-entry-badge" data-i18n="hero_entry_badge">📲 Whole claim on WhatsApp — nothing to fill in</span>
-        <a href="#funnel-box" class="hero-entry-link-secondary" id="btn-calc-hero" onclick="scrollToCalcWithAnimation(event); return false;" data-i18n="hero_btn_calc">Estimate online — no WhatsApp, no Meta (2 min) →</a>
+        <p class="hero-entry-hint" data-i18n="hero_entry_hint">📲 It all happens on WhatsApp, nothing to fill in · we call you back in your language · free, no commitment</p>
       </div>
 
       <!-- Aperçu animé : la vraie séquence WhatsApp (client écrit → carte → scan → verdict) -->
@@ -212,8 +204,9 @@
           <span class="wa-typedemo-avatar">R</span>
           <span class="wa-typedemo-name">Robin des Airs</span>
           <span class="wa-typedemo-online" data-i18n="wa_online">● online</span>
+          <span class="wa-demo-tag" data-i18n="wa_demo_tag">Example</span>
         </span>
-        <span class="sr-only" data-i18n="hero_wa_demo_sr">Example of a WhatsApp conversation: you send your flight number then a photo of your boarding pass; Robin reads the flight, confirms eligibility and the amount — up to €600 per passenger. Robin notes the 25% success fee only (€0 if we don't win, no upfront cost), expertise on Europe–Africa flights (Dakar, Abidjan, Bamako) and that he replies in Wolof, Bambara, Lingala or French.</span>
+        <span class="sr-only" data-i18n="hero_wa_demo_sr">Example WhatsApp conversation: Ama sends her flight number then a photo of her boarding pass; Robin reads the flight and explains this delay may entitle her to compensation, up to €600 per passenger (depending on distance and cause), with a free no-commitment check. Robin charges 25% on success only (€0 if we don't win, no upfront fee, no card needed), notes that every passenger in a family counts, specialises in Europe–Africa flights (Accra, Lagos, Abidjan) and that an adviser can call back in Twi, Yoruba or Pidgin. Last step: sign the mandate.</span>
         <span class="wa-chat" id="wa-chat" aria-hidden="true"></span>
         <span class="wa-typedemo-meta wa-chatdemo-foot" data-i18n="hero_wa_demo_foot">We speak your language · reply in minutes →</span>
       </a>
@@ -247,7 +240,7 @@
         <summary data-i18n="hero_more_summary">Contact, languages &amp; privacy</summary>
         <p class="hero-wa-direct">
           <a href="https://wa.me/33756863630" target="_blank" rel="noopener" class="hero-wa-link">💬 WhatsApp <strong>+33</strong> 7&nbsp;56&nbsp;86&nbsp;36&nbsp;30</a>
-          <span class="hero-wa-note" data-i18n="hero_wa_note">Reply in French, Wolof or English — whatever you prefer.</span>
+          <span class="hero-wa-note" data-i18n="hero_wa_note">On WhatsApp in English · we call you back in Twi, Yoruba or Pidgin if you prefer 📞</span>
         </p>
         <p class="hero-lang-line">
           <span data-i18n="hero_lang_line">Service available in: French, English, Wolof, Bambara, Soninké, Peul (Pulaar), Dioula, Swahili, Lingala, Twi, Yoruba.</span>
@@ -284,7 +277,7 @@
           <button type="button" class="btn-calc btn-calc--wa" onclick="openShortWhatsApp()" data-i18n="funnel_short_submit">Send and find out if I'm owed compensation →</button>
           <p class="wa-rgpd-hint wa-rgpd-hint--compact funnel-short-wa-rgpd" data-i18n-html="wa_rgpd_hint_short">Meta service — <a href="/politique-confidentialite.html#whatsapp-meta">data &amp; alternatives</a></p>
         </div>
-        <button type="button" class="funnel-simulator-btn" id="link-diagnostic-detail" data-i18n="funnel_detail_link">Calculate exact amount (5 steps) →</button>
+        <button type="button" class="funnel-simulator-btn" id="link-diagnostic-detail" data-i18n="funnel_detail_link">Estimate online, no WhatsApp (5 steps) →</button>
       </div>
 
       <!-- ══ DIAGNOSTIC DÉTAILLÉ (5 étapes) — masqué par défaut ══ -->
@@ -577,12 +570,12 @@
           </div>
           <div class="res-calc-detail" id="res-calc-detail" style="display:none;">—</div>
           <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(0,229,160,0.13);">
-            <div style="font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;" data-i18n="res_raison_label">Reason given by the airline:</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.62);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;" data-i18n="res_raison_label">Reason given by the airline:</div>
             <div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.7);" id="res-raison-txt">—</div>
             <div style="font-size:10px;color:var(--neon-b);margin-top:3px;" id="res-raison-note"></div>
           </div>
           <div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(0,229,160,0.13);">
-            <div style="font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">La Promesse Robin</div>
+            <div style="font-size:10px;color:rgba(255,255,255,0.62);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">La Promesse Robin</div>
             <ul style="font-size:11px;color:rgba(255,255,255,0.7);line-height:1.6;margin:0;padding-left:18px;">
               <li style="margin-bottom:6px;" data-i18n-html="promise_p1"><strong style="color:rgba(255,255,255,0.9);">25% only, on success.</strong> Other services often take 35% to 50%.</li>
               <li style="margin-bottom:6px;" data-i18n-html="promise_p2"><strong style="color:rgba(255,255,255,0.9);">Zero risk:</strong> no upfront cost, no case fees. <strong>If we don't win, you pay nothing.</strong></li>
@@ -600,7 +593,7 @@
            onclick="plausible('WhatsApp-CTA', {props: {source: 'simulator-result'}})">
           <span id="sticky-cta-amount">RÉCUPÉRER MON INDEMNITÉ →</span>
         </a>
-        <p style="text-align:center;font-size:10px;color:rgba(255,255,255,0.35);margin-top:6px;" data-i18n="result_free_note">Free if we don't win · WhatsApp reply within 24h</p>
+        <p style="text-align:center;font-size:10px;color:rgba(255,255,255,0.62);margin-top:6px;" data-i18n="result_free_note">Free if we don't win · WhatsApp reply within 24h</p>
 
         <button class="back-btn" style="margin-top:8px;" onclick="restartFunnel()" data-i18n="funnel_restart">↺ Start over</button>
       </div>
@@ -633,6 +626,17 @@
 
     </div><!-- /funnel-box -->
 
+  </div>
+</section>
+
+<!-- ═══════ BARRE DE CONFIANCE (sous le pli) ═══════ -->
+<!-- Pré-lancement : autorité (cadre légal) + garanties + early-access assumé.
+     AUCUN chiffre client / note / logo presse tant que non vérifiable (= pratique trompeuse).
+     Câblée i18n (trust_lead, trust_grid) pour ne pas être écrasée. -->
+<section id="trust-band" aria-label="Garanties et cadre légal">
+  <div class="trust-band-wrap reveal">
+    <p class="trust-band-lead" data-i18n-html="trust_lead">🚀 <strong>Now launching</strong> — be among the first diaspora families to claim back what airlines owe you.</p>
+    <ul class="trust-grid" data-i18n-html="trust_grid"><li class='trust-cell'><span class='trust-ico' aria-hidden='true'>⚖️</span><span class='trust-txt'><strong>European law EC 261/2004</strong>The regulation airlines must respect — the same one the market leaders use.</span></li><li class='trust-cell'><span class='trust-ico' aria-hidden='true'>🛡️</span><span class='trust-txt'><strong>€0 if we lose</strong>No upfront cost, no card details — we’re the ones who pay you.</span></li><li class='trust-cell'><span class='trust-ico' aria-hidden='true'>🔒</span><span class='trust-txt'><strong>Your data protected</strong>GDPR — never resold, deleted on request.</span></li><li class='trust-cell'><span class='trust-ico' aria-hidden='true'>🗣️</span><span class='trust-txt'><strong>We speak your language</strong>Wolof, Bambara, Lingala… and 14 days to withdraw, free of charge.</span></li></ul>
   </div>
 </section>
 
@@ -775,7 +779,7 @@
       </div>
       <button class="testi-arrow" onclick="slideTestis(1)" aria-label="Suivant">→</button>
     </div>
-    <p style="margin-top:18px;font-size:12px;color:rgba(255,255,255,0.55);text-align:center" data-i18n-html="testi_source">Source: <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32004R0261" target="_blank" rel="noopener external" style="color:rgba(255,255,255,0.75);text-decoration:underline">Regulation (EC) No 261/2004 of the European Parliament and of the Council</a> · scale articles 4, 5 and 7</p>
+    <p style="margin-top:18px;font-size:12px;color:rgba(255,255,255,0.62);text-align:center" data-i18n-html="testi_source">Source: <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32004R0261" target="_blank" rel="noopener external" style="color:rgba(255,255,255,0.75);text-decoration:underline">Regulation (EC) No 261/2004 of the European Parliament and of the Council</a> · scale articles 4, 5 and 7</p>
   </div>
 </section>
 
@@ -842,12 +846,12 @@
       <h2 class="section-title" style="color:white;" data-i18n-html="section_founder_title">20 years behind the scenes.<br><span style="color:var(--neon-b);">I've seen what they hide.</span></h2>
     </div>
 
-    <div style="border-left:3px solid var(--neon-b);padding:18px 24px;margin-bottom:28px;background:rgba(0,229,160,0.04);border-radius:0 8px 8px 0;">
+    <div style="border:1px solid rgba(0,229,160,0.28);padding:18px 24px;margin-bottom:28px;background:rgba(0,229,160,0.05);border-radius:12px;">
       <p style="font-size:18px;line-height:1.75;color:white;font-style:italic;font-weight:500;" data-i18n="founder_quote">"They charge you for the extra kilo. The second bag. The window seat. But when it's their turn to pay, delay, cancellation, overbooking, there's nobody on the line."</p>
     </div>
 
     <p style="font-size:15px;line-height:1.75;color:rgba(255,255,255,0.75);max-width:640px;margin:0 auto 20px;" data-i18n-html="founder_story_short">20 years in aviation, always the same excuses. Robin builds a solid case and supports you in French, Wolof, Bambara. We win or you pay nothing.</p>
-    <p style="text-align:center;font-size:12px;color:rgba(255,255,255,0.4);font-style:italic;" data-i18n="founder_signature">The founder · 20 years in aviation · EU Regulation 261/2004 specialist</p>
+    <p style="text-align:center;font-size:12px;color:rgba(255,255,255,0.62);font-style:italic;" data-i18n="founder_signature">The founder · 20 years in aviation · EU Regulation 261/2004 specialist</p>
   </div>
 </section>
 
@@ -866,7 +870,7 @@
           <div class="faq-toggle">+</div>
         </div>
         <div class="faq-answer">
-          <div class="faq-answer-inner"></div>
+          <div class="faq-answer-inner" data-i18n-html="faq_1_a"><p style="margin-bottom:14px;"><strong>Success fee: 25% commission</strong>, payable only if we recover compensation for you — otherwise you pay nothing. You receive <strong>75% net</strong> of the amount collected.</p><p style="margin-bottom:14px;font-size:13px;color:var(--gray);line-height:1.8;"><strong>Our priority: long-haul flights (&gt; 3,500 km).</strong> €600 compensation → you get <strong>€450</strong> net.</p><p style="margin-bottom:10px;font-size:13px;">Family of 4 on Paris–Dakar? 4 × €600 = €2,400 gross → <strong>€1,800 net</strong> for you. This commission never changes, even if your case goes to court.</p><p style="margin-bottom:0;font-size:12px;color:var(--gray);line-height:1.7;">Note: short haul (&lt; 1,500 km) → €250 → <strong>€188</strong> net. Medium (1,500–3,500 km) → €400 → <strong>€300</strong> net.</p></div>
         </div>
       </div>
 
@@ -876,7 +880,7 @@
           <div class="faq-toggle">+</div>
         </div>
         <div class="faq-answer">
-          <div class="faq-answer-inner"></div>
+          <div class="faq-answer-inner" data-i18n-html="faq_2_a"><p>It depends on how responsive the airline is. Three possible scenarios:</p><p><strong>The airline cooperates (60% of cases)</strong> — after receiving our technical file (proof of delay, official weather reports, legal analysis), the airline recognises your right and pays. Timeline: 4 to 12 weeks. This is the most common outcome.</p><p><strong>The airline resists (30% of cases)</strong> — it invokes "extraordinary circumstances". We counter with our weather evidence and air traffic data. We refer your case to the Tourism and Travel Ombudsman. Recommendation within 90 days. In most cases the airline follows and pays. Total: 3 to 5 months.</p><p><strong>The airline persists (under 10%)</strong> — we take the case to court at our expense and risk. Total: 5 to 8 months.</p><p>In all cases our commission stays 25%. If we recover nothing, you pay nothing. We keep you updated via WhatsApp.</p></div>
         </div>
       </div>
 
@@ -886,7 +890,7 @@
           <div class="faq-toggle">+</div>
         </div>
         <div class="faq-answer">
-          <div class="faq-answer-inner"></div>
+          <div class="faq-answer-inner" data-i18n-html="faq_3_a">No. The voucher goes back to the airline if you don't use it — and it often has an expiry date. Its value is almost always less than the €600 cash you're entitled to. Don't sign anything and contact us first. Cash doesn't expire.</div>
         </div>
       </div>
 
@@ -896,7 +900,7 @@
           <div class="faq-toggle">+</div>
         </div>
         <div class="faq-answer">
-          <div class="faq-answer-inner"></div>
+          <div class="faq-answer-inner" data-i18n-html="faq_4_a">That's their favourite excuse. Our file includes official aviation weather reports (METAR, TAF) for departure and arrival airports. We compare with all flights that took off in the same time window. If other planes could fly that day — and they often did — we have the proof. <a href="/meteo-dossier-indemnite.html">Learn more: Weather and claims (TAF, METAR…)</a></div>
         </div>
       </div>
 
@@ -906,7 +910,7 @@
           <div class="faq-toggle">+</div>
         </div>
         <div class="faq-answer">
-          <div class="faq-answer-inner"></div>
+          <div class="faq-answer-inner" data-i18n-html="faq_5_a">Yes. An initial refusal is never final — it's often the start of negotiation. 80% of eligible passengers give up after that first refusal, and that's exactly what the airline hopes. We take over the case, add our technical evidence, and resubmit with an argument the airline can't ignore. If they persist, we go to the ombudsman then to court. Fees are included in our commission: you pay nothing extra.</div>
         </div>
       </div>
 
@@ -916,7 +920,7 @@
           <div class="faq-toggle">+</div>
         </div>
         <div class="faq-answer">
-          <div class="faq-answer-inner"></div>
+          <div class="faq-answer-inner" data-i18n-html="faq_6_a">We pay you. We will never ask for your bank details on WhatsApp. Once your case is accepted, and when funds are received from the airline, we request your bank details via email or a secure form and transfer your share within 5 working days. We never ask you for money — no card, no advance.</div>
         </div>
       </div>
 
@@ -926,7 +930,7 @@
           <div class="faq-toggle">+</div>
         </div>
         <div class="faq-answer">
-          <div class="faq-answer-inner"></div>
+          <div class="faq-answer-inner" data-i18n-html="faq_7_a">Yes. It's the last flight (final leg) that sets the amount: total distance and delay at final arrival. If you missed a connection because of a delay on your first flight, you're eligible. Select "with connection" in the checker — we handle the rest.</div>
         </div>
       </div>
 
@@ -936,7 +940,7 @@
           <div class="faq-toggle">+</div>
         </div>
         <div class="faq-answer">
-          <div class="faq-answer-inner"></div>
+          <div class="faq-answer-inner" data-i18n-html="faq_8_a">No — and that's our strength. We review every case for free before accepting it. If your chances are low, we tell you honestly rather than waste your time. We only take on cases we're confident we can win. If we don't take your case, we explain why and advise you on alternatives.</div>
         </div>
       </div>
 
@@ -946,7 +950,7 @@
           <div class="faq-toggle">+</div>
         </div>
         <div class="faq-answer">
-          <div class="faq-answer-inner"></div>
+          <div class="faq-answer-inner" data-i18n-html="faq_9_a">Yes. You have a 14-day right of withdrawal from signing the mandate — no reason and no fee. In practice, we start working on your case right after signature (with your agreement) so we don’t lose time. If you withdraw within 14 days, you pay nothing — any work already done is on us. If your case succeeds before the 14 days end (rare but possible) and you haven’t withdrawn, the commission applies normally. This is a legal right (French Consumer Code, art. L221-18). A simple WhatsApp message or an email to expert@robindesairs.eu is enough.</div>
         </div>
       </div>
 
@@ -977,7 +981,7 @@
       <div class="footer-logo">ROBIN <span>des Airs</span></div>
       <p class="footer-tagline" data-i18n="footer_tagline">Air claim · Diaspora specialist · Fixed price · No win no fee</p>
       <p class="footer-address">Robin des Airs · 66 avenue des Champs-Élysées, Paris 🇫🇷</p>
-      <p style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:10px;font-style:italic;" data-i18n-html="footer_slogan">"Robin takes from the airlines,<br>gives back to our families."</p>
+      <p style="font-size:11px;color:rgba(255,255,255,0.62);margin-top:10px;font-style:italic;" data-i18n-html="footer_slogan">"Robin takes from the airlines,<br>gives back to our families."</p>
     </div>
     <div class="footer-col">
       <h3 class="footer-col-heading" data-i18n="footer_nav">Navigation</h3>
@@ -1003,9 +1007,6 @@
         <li><a href="/meteo-dossier-indemnite.html" data-i18n="footer_meteo">Weather &amp; case file (TAF, METAR…)</a></li>
         <li><a href="/pourquoi-si-peu-reclament.html" data-i18n="footer_why_few">Why so few claim their compensation?</a></li>
         <li><a href="/depot-express.html" data-i18n="footer_depot_online">Online form</a></li>
-        <li><a href="/llms.txt" data-i18n="footer_ai_docs">AI documentation (llms.txt)</a></li>
-        <li><a href="/llms-full.txt" data-i18n="footer_ai_index">Full URL index (llms-full.txt)</a></li>
-        <li><a href="/crm" rel="nofollow" data-i18n="footer_crm">CRM — team access</a></li>
       </ul>
     </div>
     <div class="footer-col">
@@ -1014,7 +1015,6 @@
         <li><a href="/cgv.html" data-i18n="footer_cgv">Terms (T&amp;Cs)</a></li>
         <li><a href="/politique-confidentialite.html" data-i18n="footer_privacy">Privacy policy</a></li>
         <li><a href="/mandat.html" data-i18n="footer_mandate">Letter of authority (sign online)</a></li>
-        <li><a href="/documents/mandat-fr.html?print=1" target="_blank" rel="noopener" data-i18n="footer_mandat_pdf">Mandate PDF (FR)</a></li>
         <li><a href="/droit-retractation.html" data-i18n="footer_withdrawal">Right of withdrawal</a></li>
       </ul>
     </div>
@@ -1025,7 +1025,6 @@
         <li><a href="/suivi-dossier.html" data-i18n="footer_track">📋 Where's my case?</a></li>
         <li><a href="mailto:expert@robindesairs.eu">expert@robindesairs.eu</a></li>
         <li>66 avenue des Champs-Élysées, Paris 🇫🇷</li>
-        <li><a href="#faq">FAQ</a></li>
         <li class="footer-crisis" data-i18n-html="footer_crisis"><strong>Crisis line (multiple cancelled flights)</strong> — open only during a crisis: <a href="tel:+33189628969">01 89 62 89 69</a></li>
       </ul>
     </div>
@@ -1034,11 +1033,17 @@
     <p data-i18n="footer_vol_examples_disclaimer">The flight examples shown are for information only. Eligibility and the amount of compensation depend on the conditions set out in Regulation (EC) No 261/2004 (substantial delay, cancellation or denied boarding, applicable circumstances), with compensation of up to €600 per passenger depending on the flight distance.</p>
     <p id="footer-vol-ticker-data" data-i18n="footer_vol_ticker_data_note">Strip: up to 10 latest impacted flights (cancellation or 3h+ arrival delay) on Europe ↔ Africa routes, refreshed via AeroDataBox (French hubs + key African airports). If none qualify today, a message is shown — no fictional examples. Up to €600 if EU 261 applies. Click a pill to pre-fill the form.</p>
     <p data-i18n="footer_no_legal_advice">Nothing on this site is legal advice or a guarantee of outcome; eligibility and amounts can only be confirmed after an individual review of your case.</p>
-    <p id="footer-currency-hint" class="footer-currency-hint" style="display:none;margin-top:12px;font-size:11px;color:rgba(255,255,255,0.45);line-height:1.5;"></p>
+    <p id="footer-currency-hint" class="footer-currency-hint" style="display:none;margin-top:12px;font-size:11px;color:rgba(255,255,255,0.62);line-height:1.5;"></p>
   </div>
   <div class="footer-bottom">
     <div class="footer-legal" data-i18n="footer_copyright">© 2026 Robin des Airs — 66 av. des Champs-Élysées, 75008 Paris · Air passenger claims · Serving our communities and our families</div>
     <div class="footer-reg" data-i18n-html="footer_reg">Based on Regulation EU 261/2004<br>Data protected · GDPR compliant</div>
+  </div>
+  <!-- Liens techniques/internes : discrets (crawlers IA + équipe), hors des colonnes grand public -->
+  <div class="footer-microlinks">
+    <a href="/llms.txt" data-i18n="footer_ai_docs">AI documentation (llms.txt)</a>
+    <a href="/llms-full.txt" data-i18n="footer_ai_index">Full URL index</a>
+    <a href="/crm" rel="nofollow" data-i18n="footer_crm">Team area</a>
   </div>
 </footer>
 
