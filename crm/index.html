@@ -2822,12 +2822,12 @@ function loadServerPieces(ref){
     .then(function(j){
       var list = (j && j.pieces) || [];
       if(!list.length){ wrap.innerHTML = '<p class="crm-doc-empty">Aucune pièce déposée par le client (le client n’a pas encore envoyé ses documents).</p>'; return; }
-      wrap.innerHTML = '<div class="crm-doc-list">' + list.map(function(p){
+      wrap.innerHTML = '<p style="font-size:11px;color:var(--text3,#9CA3AF);margin:0 0 8px">☑️ Cochées = incluses dans le « 📦 Dossier complet ». Décochez les pièces à exclure.</p><div class="crm-doc-list">' + list.map(function(p){
         var src = p.source === 'bot' ? 'WhatsApp' : 'Dépôt web';
         var when = p.ts ? new Date(p.ts).toLocaleDateString('fr-FR') : '';
         var who = p.passenger ? ' <span class="crm-doc-who">— ' + escHtml(p.passenger) + '</span>' : '';
         var fn = p.filename ? (' · ' + escHtml(p.filename)) : '';
-        return '<div class="crm-doc-row"><div><div class="crm-doc-name">' + serverPieceLabel(p) + who + '</div>'
+        return '<div class="crm-doc-row"><label style="display:flex;align-items:center;margin-right:8px" title="Inclure dans le dossier complet"><input type="checkbox" class="crm-piece-pick" data-key="' + escHtml(p.key || '') + '" checked></label><div style="flex:1"><div class="crm-doc-name">' + serverPieceLabel(p) + who + '</div>'
           + '<div class="crm-doc-meta">' + src + (when?(' · '+when):'') + fn + '</div></div>'
           + '<div class="crm-doc-actions"><a class="btn btn-sm btn-primary" href="' + p.url + '" target="_blank" rel="noopener">Ouvrir</a> <a class="btn btn-sm" href="' + p.url + '&dl=1" download>Télécharger</a></div></div>';
       }).join('') + '</div>';
@@ -3194,9 +3194,14 @@ function crmToggleEligibilite(id){
  *  toutes les pièces) prêt à envoyer à la compagnie. Auth CRM via crmApiFetch. */
 async function crmGenererDossierPdf(id){
   if(!requireCrmAgent()) return;
+  var boxes = document.querySelectorAll('.crm-piece-pick');
+  var payload = { r: id };
+  // Si l'onglet Pièces a été ouvert (cases rendues), on n'envoie QUE les pièces cochées.
+  // Sinon (pas de cases) : pas de filtre → toutes les pièces.
+  if(boxes.length){ payload.keys = Array.prototype.slice.call(boxes).filter(function(c){return c.checked;}).map(function(c){return c.getAttribute('data-key');}).filter(Boolean); }
   showCrmToast('Génération du dossier complet… (quelques secondes)');
   try{
-    const r = await crmApiFetch('/api/crm-dossier-pdf?r='+encodeURIComponent(id));
+    const r = await crmApiFetch('/api/crm-dossier-pdf', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
     if(!r.ok){ var j={}; try{ j=await r.json(); }catch(_e){} throw new Error(j.error||('HTTP '+r.status)); }
     const blob = await r.blob();
     const url = URL.createObjectURL(blob);

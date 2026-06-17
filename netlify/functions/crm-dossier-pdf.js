@@ -41,7 +41,10 @@ exports.handler = async (event) => {
   if (!auth.ok) return J(401, { error: auth.error || 'Accès CRM requis' });
 
   const q = event.queryStringParameters || {};
-  const ref = String(q.r || q.ref || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 64);
+  let body = {}; if (event.httpMethod === 'POST') { try { body = JSON.parse(event.body || '{}'); } catch (_) {} }
+  // Pièces cochées dans le CRM. null (paramètre absent) = toutes les pièces ; [] = aucune.
+  const selectedKeys = Array.isArray(body.keys) ? new Set(body.keys.map(String)) : null;
+  const ref = String(q.r || q.ref || body.r || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 64);
   if (!ref) return J(400, { error: 'r (référence) requis' });
 
   try {
@@ -117,11 +120,12 @@ exports.handler = async (event) => {
     // ── 3) PIÈCES (web p/ref/ + WhatsApp wa/phone/) ──
     let sharp = null; try { sharp = require('sharp'); } catch (_) { sharp = null; }
     const pieces = getBlobStore(event, 'pieces');
-    const keys = [];
+    let keys = [];
     if (pieces) {
       try { const web = await pieces.list({ prefix: 'p/' + ref + '/' }); (web.blobs || []).forEach((b) => keys.push(b.key)); } catch (_) {}
       if (phoneKey) { try { const bot = await pieces.list({ prefix: 'wa/' + phoneKey + '/' }); (bot.blobs || []).forEach((b) => keys.push(b.key)); } catch (_) {} }
     }
+    if (selectedKeys) keys = keys.filter((k) => selectedKeys.has(k)); // CRM : ne garder que les pièces cochées
     for (const key of keys) {
       try {
         const res = await pieces.getWithMetadata(key, { type: 'arrayBuffer' });
