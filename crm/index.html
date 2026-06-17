@@ -3804,10 +3804,31 @@ async function syncCrmNow(auto) {
 }
 
 window.addEventListener('online', function() { syncCrmNow(true); });
+/* Rafraîchissement LIVE : tire périodiquement les dossiers depuis Airtable (nouveaux dossiers du
+ * bot, statuts changés par les routines) et re-rend. Sûr : on saute si une fiche est ouverte, s'il
+ * y a des modifs locales non synchronisées (sinon on les écraserait), hors-ligne, onglet caché, ou
+ * sync déjà en cours. Le merge est non destructif (pièces/historique/co-passagers locaux préservés). */
+var _liveTimer = null;
+async function crmLiveRefresh() {
+  if (_syncInFlight || document.hidden || !navigator.onLine) return;
+  var dOpen = document.getElementById('modalDetail');
+  var nOpen = document.getElementById('modalNew');
+  if ((dOpen && dOpen.style.display === 'flex') || (nOpen && nOpen.style.display === 'flex')) return; // ne pas perturber une fiche en cours d'édition
+  try { if ((readCrmSyncQueue() || []).length) return; } catch (e) {} // modifs locales en attente → on laisse la sync les pousser d'abord
+  _syncInFlight = true;
+  try {
+    var r = await pullAllFromAirtable(); // merge + render() si imports
+    if (r && r.imported) setCrmSyncBanner('🔄 ' + r.imported + ' dossier(s) actualisé(s) depuis Airtable', 'ok');
+  } catch (e) { /* silencieux : on réessaie au prochain tick */ }
+  finally { _syncInFlight = false; }
+}
 window.addEventListener('DOMContentLoaded', function() {
   updateSyncButton();
   setTimeout(function() { syncCrmNow(true); }, 1200);
+  setTimeout(crmLiveRefresh, 3000);                // 1er pull Airtable peu après le chargement
+  _liveTimer = setInterval(crmLiveRefresh, 60000); // puis toutes les 60 s
 });
+document.addEventListener('visibilitychange', function() { if (!document.hidden) crmLiveRefresh(); }); // retour sur l'onglet → pull immédiat
 
 /** Ouvre la modale de gestion des sauvegardes */
 async function openBackupModal() {
