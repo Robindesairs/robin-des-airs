@@ -103,7 +103,9 @@ function closeMobileNav() {
   document.getElementById('nav-burger').classList.remove('open');
 }
 document.addEventListener('click', e => {
-  if (!e.target.closest('nav') && !e.target.closest('.nav-drawer')) closeMobileNav();
+  // Le bouton ☰ (#nav-burger) n'est PAS dans un <nav> : sans cette exclusion, le clic
+  // d'ouverture bulle jusqu'ici et referme le drawer aussitôt (course de handlers).
+  if (!e.target.closest('#nav-burger') && !e.target.closest('.nav-drawer')) closeMobileNav();
 });
 
 /* ═══ LANG SELECTOR ═══ */
@@ -1812,13 +1814,14 @@ function toggleEscaleVol3() {
         { who: 'client', delay: 900,  hold: 1300, cls: 'wa-msg--bp', html: PASS.fr },
         { who: 'robin',  delay: 450,  hold: 1500, cls: 'wa-scan', html: '🔎 Je lis votre carte…' },
         { who: 'robin',  delay: 400,  hold: 1700, html: '✓ C\'est bien votre vol : <b>AF718</b> · <b>Paris → Dakar</b>' },
-        { who: 'robin',  typing: 1000, hold: 2600, cls: 'wa-msg--verdict', html: '✅ Bonne nouvelle : ce retard peut donner droit à <span class="wa-verdict-amt">jusqu\'à 600 €</span> / passager <span class="wa-aside">(selon la distance et la cause)</span>' },
+        { who: 'robin',  typing: 1000, hold: 2600, cls: 'wa-msg--verdict', html: '✅ Ce retard peut donner droit à <span class="wa-verdict-amt">jusqu\'à 600 €</span> / passager <span class="wa-aside">(selon distance et cause)</span>' },
         { who: 'robin',  delay: 400,  hold: 2000, html: 'On vérifie <b>gratuitement</b>, sans engagement 🔎' },
         { who: 'client', delay: 600,  hold: 1100, html: 'Et ça me coûte combien ? 😅' },
-        { who: 'robin',  typing: 1100, hold: 2700, html: '<b>Rien si on perd.</b> Si on gagne, 25 % — aucune avance, pas de carte bancaire 🤝' },
-        { who: 'robin',  typing: 900,  hold: 2400, html: 'Vous voyagiez en famille ? <b>Chaque passager compte</b>, même les enfants 👨‍👩‍👧‍👦' },
-        { who: 'robin',  typing: 1100, hold: 2800, html: '🌍 Spécialistes <b>Europe–Afrique</b> : Dakar, Abidjan, Bamako… et on vous <b>rappelle</b> en wolof, bambara ou lingala si vous préférez 📞' },
-        { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 Dernière étape : <b>signer le mandat</b> (votre feu vert pour agir) — je m\'occupe de tout 💪' }
+        { who: 'robin',  typing: 1100, hold: 2600, html: '<b>Rien si on perd.</b> Si on gagne, 25 % — aucune avance 🤝' },
+        { who: 'robin',  typing: 850,  hold: 2200, html: 'En famille ? <b>Chaque passager compte</b>, même les enfants 👨‍👩‍👧‍👦' },
+        { who: 'robin',  typing: 900,  hold: 1600, html: '🌍 Spécialistes <b>Europe–Afrique</b> : Dakar, Abidjan, Bamako…' },
+        { who: 'robin',  delay: 350,  hold: 2400, html: 'On vous <b>rappelle</b> en wolof, bambara ou lingala si besoin 📞' },
+        { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 Dernière étape : <b>signer le mandat</b> — je m\'occupe de tout 💪' }
       ]; },
       en: function () { return [
         { who: 'client', delay: 400,  hold: 1100, sender: 'Ama', html: 'BA081 delayed 5 h, I\'m so upset 😤' },
@@ -1826,13 +1829,14 @@ function toggleEscaleVol3() {
         { who: 'client', delay: 900,  hold: 1300, cls: 'wa-msg--bp', html: PASS.en },
         { who: 'robin',  delay: 450,  hold: 1500, cls: 'wa-scan', html: '🔎 Reading your pass…' },
         { who: 'robin',  delay: 400,  hold: 1700, html: '✓ That\'s your flight: <b>BA081</b> · <b>London → Accra</b>' },
-        { who: 'robin',  typing: 1000, hold: 2600, cls: 'wa-msg--verdict', html: '✅ Good news: this delay may entitle you to <span class="wa-verdict-amt">up to €600</span> / passenger <span class="wa-aside">(depending on distance and cause)</span>' },
+        { who: 'robin',  typing: 1000, hold: 2600, cls: 'wa-msg--verdict', html: '✅ This delay may entitle you to <span class="wa-verdict-amt">up to €600</span> / passenger <span class="wa-aside">(distance &amp; cause apply)</span>' },
         { who: 'robin',  delay: 400,  hold: 2000, html: 'We check <b>for free</b>, no commitment 🔎' },
         { who: 'client', delay: 600,  hold: 1100, html: 'And what does it cost me? 😅' },
-        { who: 'robin',  typing: 1100, hold: 2700, html: '<b>Nothing if we lose.</b> If we win, 25 % — no upfront fee, no card needed 🤝' },
-        { who: 'robin',  typing: 900,  hold: 2400, html: 'Travelling as a family? <b>Every passenger counts</b> — even the kids 👨‍👩‍👧‍👦' },
-        { who: 'robin',  typing: 1100, hold: 2800, html: '🌍 <b>Europe–Africa</b> specialists: Accra, Lagos, Abidjan… and we <b>call you back</b> in Twi, Yoruba or Pidgin if you prefer 📞' },
-        { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 Last step: <b>sign the mandate</b> (your green light to act) — I\'ll handle the rest 💪' }
+        { who: 'robin',  typing: 1100, hold: 2600, html: '<b>Nothing if we lose.</b> If we win, 25 % — no upfront fee 🤝' },
+        { who: 'robin',  typing: 850,  hold: 2200, html: 'As a family? <b>Every passenger counts</b> — even the kids 👨‍👩‍👧‍👦' },
+        { who: 'robin',  typing: 900,  hold: 1600, html: '🌍 <b>Europe–Africa</b> specialists: Accra, Lagos, Abidjan…' },
+        { who: 'robin',  delay: 350,  hold: 2400, html: 'We <b>call you back</b> in Twi, Yoruba or Pidgin if you like 📞' },
+        { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 Last step: <b>sign the mandate</b> — I\'ll handle the rest 💪' }
       ]; }
     };
 

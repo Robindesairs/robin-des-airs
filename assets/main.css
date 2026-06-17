@@ -1085,7 +1085,9 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
   /* Conversation : fenêtre un peu plus courte (140px) pour financer l'air — c'est une BOUCLE,
    * tous les messages défilent quand même (aucun perdu). */
   #hero .wa-typedemo { max-width: 500px; margin: 4px 0 10px; }
-  #hero .wa-chat     { min-height: 140px; max-height: 140px; }
+  /* (Bloc desktop ≥1081px) 165px au lieu de 140 : la mini carte d'embarquement (~148px)
+   * était rognée par la fenêtre. Masque haut réduit pour ne pas faner l'en-tête de la carte. */
+  #hero .wa-chat     { min-height: 165px; max-height: 165px; -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 18px); mask-image: linear-gradient(to bottom, transparent 0, #000 18px); }
 
   #hero .hero-stats { margin-top: 10px; padding-top: 10px; }                        /* dans C */
 }
