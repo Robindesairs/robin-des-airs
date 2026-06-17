@@ -22,6 +22,7 @@
     .need li{margin:3px 0}
     label.drop{display:block;border:2px dashed var(--green);border-radius:12px;padding:22px 14px;text-align:center;cursor:pointer;background:var(--green-tint);color:#06603c;font-weight:700}
     label.drop small{display:block;color:var(--muted);font-weight:400;margin-top:4px;font-size:12px}
+    label.drop.drag{background:#d4f3e6;border-color:#06603c;color:#044d30}
     input[type=file]{display:none}
     .files{list-style:none;padding:0;margin:12px 0 0}
     .files li{display:flex;align-items:center;gap:8px;font-size:13px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;margin:6px 0;background:#fff}
@@ -48,7 +49,7 @@
         <li>🎫 Votre <b>carte d'embarquement</b> ou votre <b>e-billet</b> (confirmation de réservation)</li>
       </ul>
       <label class="drop" for="fileInput">📷 Ajouter mes documents
-        <small>Photos ou PDF — vous pouvez en sélectionner plusieurs</small>
+        <small>Photos ou PDF — sélectionnez-en plusieurs, ou glissez-les ici (ordinateur)</small>
       </label>
       <input type="file" id="fileInput" accept="image/*,application/pdf" multiple>
       <ul class="files" id="fileList"></ul>
@@ -73,8 +74,8 @@
     const sendBtn = document.getElementById('sendBtn');
     const errBox = document.getElementById('errBox');
     function showErr(m){ errBox.style.display = 'block'; errBox.textContent = m; }
-    fileInput.addEventListener('change', () => {
-      for (const f of fileInput.files) {
+    function addFiles(files) {
+      for (const f of files) {
         if (f.size > MAX) { showErr('« ' + f.name + ' » dépasse 4 Mo — reprenez la photo en qualité standard.'); continue; }
         const li = document.createElement('li');
         li.innerHTML = '📄 <span>' + f.name + '</span><span class="st up">en attente</span>';
@@ -82,8 +83,15 @@
         queue.push({ file: f, li, sent: false });
       }
       sendBtn.disabled = queue.length === 0 || !REF;
-      fileInput.value = '';
-    });
+    }
+    fileInput.addEventListener('change', () => { addFiles(fileInput.files); fileInput.value = ''; });
+    // Glisser-déposer (ordinateur) : la zone .drop accepte aussi les fichiers lâchés dessus.
+    const dropZone = document.querySelector('label.drop');
+    ['dragenter', 'dragover'].forEach((ev) => dropZone.addEventListener(ev, (e) => { e.preventDefault(); e.stopPropagation(); dropZone.classList.add('drag'); }));
+    ['dragleave', 'dragend'].forEach((ev) => dropZone.addEventListener(ev, (e) => { e.preventDefault(); e.stopPropagation(); dropZone.classList.remove('drag'); }));
+    dropZone.addEventListener('drop', (e) => { e.preventDefault(); e.stopPropagation(); dropZone.classList.remove('drag'); const dt = e.dataTransfer; if (dt && dt.files && dt.files.length) addFiles(dt.files); });
+    // empêche le navigateur d'ouvrir un fichier lâché à côté de la zone
+    ['dragover', 'drop'].forEach((ev) => document.addEventListener(ev, (e) => { if (!dropZone.contains(e.target)) e.preventDefault(); }));
     function toB64(file){ return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1]); r.onerror = rej; r.readAsDataURL(file); }); }
     sendBtn.addEventListener('click', async () => {
       if (!REF) { showErr('Réf. de dossier manquante dans le lien.'); return; }
