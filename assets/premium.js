@@ -130,32 +130,10 @@
     });
   }
 
-  /* ── 5. FAQ — hauteur animée en JS (plus fluide que max-height fixe) ── */
-  document.querySelectorAll('.faq-question').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var item   = btn.closest('.faq-item');
-      var answer = item && item.querySelector('.faq-answer');
-      var inner  = answer && answer.querySelector('.faq-answer-inner');
-      if (!answer || !inner) return;
-
-      var isOpen = btn.classList.contains('open');
-
-      /* Ferme tous */
-      document.querySelectorAll('.faq-question.open').forEach(function (ob) {
-        if (ob === btn) return;
-        ob.classList.remove('open');
-        var a = ob.closest('.faq-item').querySelector('.faq-answer');
-        if (a) a.style.maxHeight = '0px';
-      });
-
-      if (isOpen) {
-        btn.classList.remove('open');
-        answer.style.maxHeight = '0px';
-      } else {
-        btn.classList.add('open');
-        answer.style.maxHeight = inner.offsetHeight + 'px';
-      }
-    });
-  });
+  /* ── 5. FAQ ──
+     L'ouverture/fermeture est gérée par toggleFaq() (assets/index-page.js),
+     câblé en dur via onclick="toggleFaq(this)" sur chaque .faq-question.
+     Ne PAS rebinder ici : un second listener entrait en course avec l'inline
+     (ouvrait puis refermait dans le même clic → FAQ qui ne s'ouvrait jamais). */
 
 })();
