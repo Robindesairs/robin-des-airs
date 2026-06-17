@@ -1470,6 +1470,7 @@ function crmSyncLabelObjects() {
     delete CRM_SOURCE_LABELS[k];
   });
   Object.assign(STATUT_LABELS, b.statutLabels);
+  if(!STATUT_LABELS.NON_ELIGIBLE) STATUT_LABELS.NON_ELIGIBLE = (getCrmUiLang()==='en' ? 'Not eligible' : 'Non éligible');
   Object.assign(PIECES_CAT_LABELS, b.piecesCat);
   Object.assign(CRM_SOURCE_LABELS, b.sourceLabels);
   populateStatutFilter();
@@ -2546,6 +2547,7 @@ function openDetail(id){
     </div>`).join('')}
     <div class="detail-row"><span class="detail-label">Source acquisition</span><span class="detail-val">${escHtml(CRM_SOURCE_LABELS[effSource]||effSource)}</span></div>
     <div class="detail-row"><span class="detail-label">Statut</span><span class="detail-val" style="display:flex;flex-wrap:wrap;align-items:center;gap:6px"><span class="badge s-${d.statut}">${STATUT_LABELS[d.statut]||d.statut}</span>${d.date_statut?`<span style="color:#6B7280;font-size:13px">depuis le ${d.date_statut}</span>`:''}${d.statut==='PAYE'&&d.date_paiement?`<span style="color:#007A4C;font-size:13px;font-weight:600">· paiement ${d.date_paiement}</span>`:''}</span></div>
+    <div class="detail-row" style="border:none"><span class="detail-label">Éligibilité CE 261</span><span class="detail-val"><button type="button" class="btn btn-sm" onclick="crmToggleEligibilite('${id}')">${d.statut==='NON_ELIGIBLE'?'✅ Repasser ce dossier en éligible':'🚫 Marquer non éligible (après appel)'}</button></span></div>
     <div class="section-title">Actions — mise en demeure CE 261</div>
     <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px">
       <button type="button" class="btn btn-primary btn-sm" onclick="crmGenerateClaim('${id}')">⚖️ Générer la mise en demeure (PDF)</button>
@@ -3160,6 +3162,31 @@ function crmMarkLrarSent(id){
   persistCrmDb();
   render(); openDetail(id);
   showCrmToast('Dossier en « LRAR envoyée » — relances armées (J+15 / J+30 / J+62).');
+}
+
+/** Toggle éligibilité (après appel) : bascule le statut ELIGIBLE ⇄ NON_ELIGIBLE.
+ * NON_ELIGIBLE est un statut de clôture (cf. PRESC_CLOS) ; on mémorise le statut précédent
+ * pour pouvoir ré-éligibiliser sans perdre la position dans le parcours. Persisté + synchro Airtable. */
+function crmToggleEligibilite(id){
+  if(!requireCrmAgent()) return;
+  const d=DB.find(x=>x.id===id); if(!d) return;
+  const ag=getCrmAgent()||'Agent non renseigné';
+  if(d.statut==='NON_ELIGIBLE'){
+    const restore=d.statut_avant_inelig||'ELIGIBLE';
+    if(!confirm('Repasser ce dossier en ÉLIGIBLE ?\n\nIl reprend le statut « '+(STATUT_LABELS[restore]||restore)+' ».')) return;
+    const prev=d.statut;
+    d.statut=restore; d.statut_avant_inelig=null; d.date_statut=today();
+    crmAuditEvent(d, 'Repassé en éligible', 'Statut : '+(STATUT_LABELS[prev]||prev)+' → '+(STATUT_LABELS[restore]||restore)+' · décidé par '+ag);
+  } else {
+    if(!confirm('Marquer ce dossier NON ÉLIGIBLE (CE 261) ?\n\nLe dossier est clôturé comme non éligible (ex. compagnie non-UE à l’arrivée en Europe, retard < 3 h). Réversible.')) return;
+    const prev=d.statut;
+    d.statut_avant_inelig=prev;
+    d.statut='NON_ELIGIBLE'; d.date_statut=today();
+    crmAuditEvent(d, 'Marqué NON ÉLIGIBLE', 'Statut : '+(STATUT_LABELS[prev]||prev)+' → Non éligible · décidé par '+ag);
+  }
+  persistCrmDb();
+  render(); openDetail(id);
+  showCrmToast(d.statut==='NON_ELIGIBLE' ? 'Dossier marqué non éligible.' : 'Dossier repassé en éligible.');
 }
 
 function genLettre(id){
