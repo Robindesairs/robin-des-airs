@@ -21,7 +21,7 @@
  * Sécurité de nom : accents translittérés, caractères non alphanumériques retirés.
  */
 
-const PREFIXES = { mandat: 'Mandat', med: 'MiseEnDemeure' };
+const PREFIXES = { mandat: 'Mandat', med: 'MiseEnDemeure', dossier: 'Dossier' };
 
 function toAscii(s) {
   return String(s == null ? '' : s)

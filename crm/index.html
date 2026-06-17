@@ -2551,6 +2551,7 @@ function openDetail(id){
     <div class="section-title">Actions — mise en demeure CE 261</div>
     <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px">
       <button type="button" class="btn btn-primary btn-sm" onclick="crmGenerateClaim('${id}')">⚖️ Générer la mise en demeure (PDF)</button>
+      <button type="button" class="btn btn-sm" onclick="crmGenererDossierPdf('${id}')">📦 Dossier complet (1 PDF à envoyer)</button>
       <button type="button" class="btn btn-sm" onclick="crmMarkLrarSent('${id}')">📮 Marquer « LRAR envoyée » → armer relances</button>
     </div>
     <p style="font-size:11px;color:#9CA3AF;margin:0 0 4px;line-height:1.5">Génère le PDF depuis Airtable (synchronisez le dossier au préalable). « LRAR envoyée » fixe la date du jour et arme les jalons J+15 / J+30 / J+62. <strong>Aucun envoi automatique</strong> : vous validez et expédiez vous-même.</p>
@@ -3187,6 +3188,22 @@ function crmToggleEligibilite(id){
   persistCrmDb();
   render(); openDetail(id);
   showCrmToast(d.statut==='NON_ELIGIBLE' ? 'Dossier marqué non éligible.' : 'Dossier repassé en éligible.');
+}
+
+/** Génère et ouvre le DOSSIER COMPLET — 1 seul PDF (page de garde bilingue + mandat signé +
+ *  toutes les pièces) prêt à envoyer à la compagnie. Auth CRM via crmApiFetch. */
+async function crmGenererDossierPdf(id){
+  if(!requireCrmAgent()) return;
+  showCrmToast('Génération du dossier complet… (quelques secondes)');
+  try{
+    const r = await crmApiFetch('/api/crm-dossier-pdf?r='+encodeURIComponent(id));
+    if(!r.ok){ var j={}; try{ j=await r.json(); }catch(_e){} throw new Error(j.error||('HTTP '+r.status)); }
+    const blob = await r.blob();
+    const url = URL.createObjectURL(blob);
+    window.open(url,'_blank','noopener');
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 120000);
+    showCrmToast('Dossier complet prêt ✅ — onglet ouvert, vous pouvez l’enregistrer/envoyer.');
+  }catch(e){ showCrmToast('Erreur dossier complet : '+(e && e.message ? e.message : e)); }
 }
 
 function genLettre(id){
