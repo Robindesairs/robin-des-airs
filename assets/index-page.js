@@ -1807,30 +1807,32 @@ function toggleEscaleVol3() {
     // La cliente porte un prénom africain (reco sous-agent CQ) : Aminata (FR) / Ama (EN, diaspora anglophone).
     var STEPS_BY_LANG = {
       fr: function () { return [
-        { who: 'client', delay: 400,  hold: 1100, sender: 'Aminata', html: 'AF718 retardé 5 h au départ 😤' },
-        { who: 'robin',  typing: 1300, hold: 1200, html: '5 h de retard, c\'est rageant 😤 Envoyez-moi juste une <b>photo de votre carte d\'embarquement</b>, je lis le vol tout seul 📸' },
+        { who: 'client', delay: 400,  hold: 1100, sender: 'Aminata', html: 'AF718 retardé 5 h, je suis dégoûtée 😤' },
+        { who: 'robin',  typing: 1300, hold: 1200, html: 'C\'est rageant 😤 Envoyez-moi juste une <b>photo de votre carte d\'embarquement</b> 📸' },
         { who: 'client', delay: 900,  hold: 1300, cls: 'wa-msg--bp', html: PASS.fr },
-        { who: 'robin',  delay: 450,  hold: 1700, cls: 'wa-scan', html: '🔎 Lecture de la carte…' },
-        { who: 'robin',  delay: 400,  hold: 1900, html: '📄 Lu sur votre carte : <b>AF718</b> · <b>Paris → Dakar</b> ✓' },
-        { who: 'robin',  typing: 1000, hold: 2800, cls: 'wa-msg--verdict', html: '⏱️ Vol vérifié : <b>5 h 12</b> de retard à l\'arrivée<br>✅ Éligible — <span class="wa-verdict-amt">jusqu\'à 600 €</span> / passager' },
-        { who: 'robin',  typing: 1000, hold: 2600, html: 'Et je prépare déjà votre mandat — <b>pas de long formulaire</b> chez nous, j\'ai presque toutes vos infos 💪' },
-        { who: 'client', delay: 600,  hold: 1100, html: 'C\'est combien, vous ? 🤔' },
-        { who: 'robin',  typing: 1100, hold: 2700, html: '<b>25 % au succès</b>, c\'est tout. Si on ne récupère rien, vous payez <b>0 €</b> — aucune avance 🤝 <span class="wa-aside">(d\'autres prennent 35 à 50 %)</span>' },
-        { who: 'robin',  typing: 1100, hold: 2600, html: '🌍 Spécialistes <b>Europe–Afrique</b> : on connaît Dakar, Abidjan, Bamako… et on vous répond en <b>wolof, bambara, lingala…</b>' },
-        { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 <b>Vous n\'avez plus qu\'à signer</b> — je m\'occupe du reste 💪' }
+        { who: 'robin',  delay: 450,  hold: 1500, cls: 'wa-scan', html: '🔎 Je lis votre carte…' },
+        { who: 'robin',  delay: 400,  hold: 1700, html: '✓ C\'est bien votre vol : <b>AF718</b> · <b>Paris → Dakar</b>' },
+        { who: 'robin',  typing: 1000, hold: 2600, cls: 'wa-msg--verdict', html: '✅ Bonne nouvelle : ce retard peut donner droit à <span class="wa-verdict-amt">jusqu\'à 600 €</span> / passager <span class="wa-aside">(selon la distance et la cause)</span>' },
+        { who: 'robin',  delay: 400,  hold: 2000, html: 'On vérifie <b>gratuitement</b>, sans engagement 🔎' },
+        { who: 'client', delay: 600,  hold: 1100, html: 'Et ça me coûte combien ? 😅' },
+        { who: 'robin',  typing: 1100, hold: 2700, html: '<b>Rien si on perd.</b> Si on gagne, 25 % — aucune avance, pas de carte bancaire 🤝' },
+        { who: 'robin',  typing: 900,  hold: 2400, html: 'Vous voyagiez en famille ? <b>Chaque passager compte</b>, même les enfants 👨‍👩‍👧‍👦' },
+        { who: 'robin',  typing: 1100, hold: 2800, html: '🌍 Spécialistes <b>Europe–Afrique</b> : Dakar, Abidjan, Bamako… et on vous <b>rappelle</b> en wolof, bambara ou lingala si vous préférez 📞' },
+        { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 Dernière étape : <b>signer le mandat</b> (votre feu vert pour agir) — je m\'occupe de tout 💪' }
       ]; },
       en: function () { return [
-        { who: 'client', delay: 400,  hold: 1100, sender: 'Ama', html: 'BA081 delayed 5 h at departure 😤' },
-        { who: 'robin',  typing: 1300, hold: 1200, html: '5 h delayed, that\'s maddening 😤 Just send me a <b>photo of your boarding pass</b>, I\'ll read the flight myself 📸' },
+        { who: 'client', delay: 400,  hold: 1100, sender: 'Ama', html: 'BA081 delayed 5 h, I\'m so upset 😤' },
+        { who: 'robin',  typing: 1300, hold: 1200, html: 'That\'s maddening 😤 Just send me a <b>photo of your boarding pass</b> 📸' },
         { who: 'client', delay: 900,  hold: 1300, cls: 'wa-msg--bp', html: PASS.en },
-        { who: 'robin',  delay: 450,  hold: 1700, cls: 'wa-scan', html: '🔎 Reading the pass…' },
-        { who: 'robin',  delay: 400,  hold: 1900, html: '📄 From your pass: <b>BA081</b> · <b>London → Accra</b> ✓' },
-        { who: 'robin',  typing: 1000, hold: 2800, cls: 'wa-msg--verdict', html: '⏱️ Flight checked: <b>5 h 12</b> late on arrival<br>✅ Eligible — <span class="wa-verdict-amt">up to €600</span> / passenger' },
-        { who: 'robin',  typing: 1000, hold: 2600, html: 'And I\'m already getting your claim ready — <b>no long form</b> with us, I\'ve got almost everything 💪' },
-        { who: 'client', delay: 600,  hold: 1100, html: 'And what\'s your cut? 🤔' },
-        { who: 'robin',  typing: 1100, hold: 2700, html: '<b>25% on success</b>, that\'s it. If we recover nothing, you pay <b>€0</b> — no upfront fee 🤝 <span class="wa-aside">(others charge 35–50%)</span>' },
-        { who: 'robin',  typing: 1100, hold: 2600, html: '🌍 <b>Europe–Africa</b> specialists: we know Accra, Lagos, Abidjan… and we reply in <b>Twi, Yoruba, Pidgin…</b>' },
-        { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 <b>You just sign</b> — I\'ll take care of the rest 💪' }
+        { who: 'robin',  delay: 450,  hold: 1500, cls: 'wa-scan', html: '🔎 Reading your pass…' },
+        { who: 'robin',  delay: 400,  hold: 1700, html: '✓ That\'s your flight: <b>BA081</b> · <b>London → Accra</b>' },
+        { who: 'robin',  typing: 1000, hold: 2600, cls: 'wa-msg--verdict', html: '✅ Good news: this delay may entitle you to <span class="wa-verdict-amt">up to €600</span> / passenger <span class="wa-aside">(depending on distance and cause)</span>' },
+        { who: 'robin',  delay: 400,  hold: 2000, html: 'We check <b>for free</b>, no commitment 🔎' },
+        { who: 'client', delay: 600,  hold: 1100, html: 'And what does it cost me? 😅' },
+        { who: 'robin',  typing: 1100, hold: 2700, html: '<b>Nothing if we lose.</b> If we win, 25 % — no upfront fee, no card needed 🤝' },
+        { who: 'robin',  typing: 900,  hold: 2400, html: 'Travelling as a family? <b>Every passenger counts</b> — even the kids 👨‍👩‍👧‍👦' },
+        { who: 'robin',  typing: 1100, hold: 2800, html: '🌍 <b>Europe–Africa</b> specialists: Accra, Lagos, Abidjan… and we <b>call you back</b> in Twi, Yoruba or Pidgin if you prefer 📞' },
+        { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 Last step: <b>sign the mandate</b> (your green light to act) — I\'ll handle the rest 💪' }
       ]; }
     };
 
@@ -1839,12 +1841,12 @@ function toggleEscaleVol3() {
       fr: {
         foot: 'On parle votre langue · réponse en quelques minutes →',
         aria: 'Aperçu d\'une conversation WhatsApp avec Robin — cliquer pour ouvrir',
-        sr: 'Exemple de conversation WhatsApp : Aminata envoie son numéro de vol puis une photo de sa carte d\'embarquement ; Robin lit le vol, confirme l\'éligibilité et l\'indemnité — jusqu\'à 600 € par passager. Robin précise sa commission de 25 % au succès seulement (0 € si on ne gagne pas, aucune avance), son expertise des vols Europe–Afrique (Dakar, Abidjan, Bamako) et qu\'il répond en wolof, bambara, lingala ou français.'
+        sr: 'Exemple de conversation WhatsApp : Aminata envoie son numéro de vol puis une photo de sa carte d\'embarquement ; Robin lit le vol et indique que ce retard peut donner droit à une indemnité, jusqu\'à 600 € par passager (selon la distance et la cause), avec une vérification gratuite et sans engagement. Robin précise sa commission de 25 % au succès seulement (0 € si on ne gagne pas, aucune avance, pas de carte bancaire), que chaque passager d\'une même famille compte, son expertise des vols Europe–Afrique (Dakar, Abidjan, Bamako) et qu\'un conseiller peut rappeler en wolof, bambara ou lingala. Dernière étape : signer le mandat.'
       },
       en: {
         foot: 'We speak your language · reply in minutes →',
         aria: 'Preview of a WhatsApp conversation with Robin — tap to open',
-        sr: 'Example WhatsApp conversation: Ama sends her flight number then a photo of her boarding pass; Robin reads the flight, confirms eligibility and the amount — up to €600 per passenger. Robin charges 25% on success only (€0 if we don\'t win, no upfront fee), specialises in Europe–Africa flights (Accra, Lagos, Abidjan) and replies in Twi, Yoruba, Pidgin or English.'
+        sr: 'Example WhatsApp conversation: Ama sends her flight number then a photo of her boarding pass; Robin reads the flight and explains this delay may entitle her to compensation, up to €600 per passenger (depending on distance and cause), with a free no-commitment check. Robin charges 25% on success only (€0 if we don\'t win, no upfront fee, no card needed), notes that every passenger in a family counts, specialises in Europe–Africa flights (Accra, Lagos, Abidjan) and that an adviser can call back in Twi, Yoruba or Pidgin. Last step: sign the mandate.'
       }
     };
 
