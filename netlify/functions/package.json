@@ -4,8 +4,8 @@
   "description": "Deps dédiées aux fonctions (zip Netlify) — @netlify/blobs doit être résolu ici si le bundle racine échoue",
   "dependencies": {
     "@netlify/blobs": "^8.1.0",
+    "jimp": "^0.22.12",
     "pdf-lib": "^1.17.1",
-    "pdfkit": "^0.18.0",
-    "sharp": "^0.33.5"
+    "pdfkit": "^0.18.0"
   }
 }

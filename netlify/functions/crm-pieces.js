@@ -78,16 +78,17 @@ exports.handler = async (event) => {
       // Image : redimensionnée (toujours servable, EXIF redressé, HEIC→JPEG si le binaire sharp le supporte).
       // En téléchargement, on tente l'original s'il tient sous le plafond, sinon on retombe sur la version réduite.
       if (/^image\//.test(mime) && !(wantDownload && buf.length <= SAFE_BYTES)) {
-        let sharp = null;
-        try { sharp = require('sharp'); } catch (_) { sharp = null; }
-        if (sharp) {
+        let Jimp = null;
+        try { Jimp = require('jimp'); } catch (_) { Jimp = null; }
+        if (Jimp) {
           try {
-            buf = await sharp(buf, { failOn: 'none' }).rotate()
-              .resize({ width: 1600, height: 1600, fit: 'inside', withoutEnlargement: true })
-              .jpeg({ quality: 78 }).toBuffer();
+            const im = await Jimp.read(buf);
+            if (im.bitmap.width > 1600 || im.bitmap.height > 1600) im.scaleToFit(1600, 1600);
+            im.quality(78);
+            buf = await im.getBufferAsync(Jimp.MIME_JPEG);
             mime = 'image/jpeg';
             if (!/\.jpe?g$/i.test(name)) name = name.replace(/\.[a-z0-9]+$/i, '') + '.jpg';
-          } catch (_) { /* format non décodable (ex. HEIC sans support) → on garde l'original */ }
+          } catch (_) { /* format non décodable (ex. HEIC) → on garde l'original */ }
         }
       }
 

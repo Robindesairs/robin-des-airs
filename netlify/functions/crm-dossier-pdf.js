@@ -118,7 +118,7 @@ exports.handler = async (event) => {
     } catch (_) {}
 
     // ── 3) PIÈCES (web p/ref/ + WhatsApp wa/phone/) ──
-    let sharp = null; try { sharp = require('sharp'); } catch (_) { sharp = null; }
+    let Jimp = null; try { Jimp = require('jimp'); } catch (_) { Jimp = null; }
     const pieces = getBlobStore(event, 'pieces');
     let keys = [];
     if (pieces) {
@@ -134,9 +134,12 @@ exports.handler = async (event) => {
         const mime = String(md.mime || '').toLowerCase();
         const lab = pieceLabel(md.kind, md.filename || key.split('/').pop());
         let buf = Buffer.from(res.data);
-        if (/^image\//.test(mime) || (!/pdf/.test(mime) && sharp)) {
-          if (!sharp) continue;
-          const jpg = await sharp(buf, { failOn: 'none' }).rotate().resize({ width: 1500, height: 1500, fit: 'inside', withoutEnlargement: true }).jpeg({ quality: 72 }).toBuffer();
+        if (/^image\//.test(mime) || (!/pdf/.test(mime) && Jimp)) {
+          if (!Jimp) continue;
+          const im = await Jimp.read(buf);
+          if (im.bitmap.width > 1500 || im.bitmap.height > 1500) im.scaleToFit(1500, 1500);
+          im.quality(72);
+          const jpg = await im.getBufferAsync(Jimp.MIME_JPEG);
           const img = await out.embedJpg(jpg);
           const pg = out.addPage(A4);
           pg.drawText(`${lab.fr} / ${lab.en}${md.passenger ? ' — ' + md.passenger : ''}`, { x: 50, y: 805, size: 11, font: bold, color: navy });
