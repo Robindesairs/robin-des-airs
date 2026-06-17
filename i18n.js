@@ -102,6 +102,7 @@ window.I18N = (function() {
       testi_name_8: "Cas type — famille annulation",
       testi_source: "Source : <a href=\"https://eur-lex.europa.eu/legal-content/FR/TXT/?uri=CELEX%3A32004R0261\" target=\"_blank\" rel=\"noopener external\" style=\"color:rgba(255,255,255,0.75);text-decoration:underline\">Règlement (CE) n° 261/2004 du Parlement européen et du Conseil</a> · barème articles 4, 5 et 7",
       footer_slogan: "\"Robin prend aux compagnies,<br>rend à nos familles.\"",
+      footer_trust: "SASU Robin des Airs — immatriculation en cours<br>0 € d'avance · 25 % au succès · vous gardez 75 %",
       footer_guide_heading: "Guide du Voyageur",
       footer_blog: "Blog — guides et articles",
       footer_jurisprudence: "Jurisprudence CJUE (CE 261)",
@@ -120,7 +121,7 @@ window.I18N = (function() {
       footer_track: "📋 Où en est mon dossier ?",
       footer_crisis: "<!-- Vérifier que le numéro est actif avant lancement, sinon supprimer --><strong>Ligne crise (plusieurs vols annulés)</strong> — ouverte uniquement en période de crise : <a href=\"tel:+33189628969\">01 89 62 89 69</a>",
       footer_copyright: "© 2026 Robin des Airs — 66 av. des Champs-Élysées, 75008 Paris · Réclamation aérienne · Au service de nos communautés et de nos familles",
-      footer_reg: "Fondé sur le Règlement CE 261/2004<br>Données protégées · RGPD conforme",
+      footer_reg: "Données protégées · RGPD conforme",
       funnel_back: "← Retour",
       funnel_restart: "↺ Recommencer le diagnostic",
       calc_see_amount: "Voir mon indemnité →",
@@ -518,6 +519,7 @@ window.I18N = (function() {
       testi_name_8: "Typical case — family cancellation",
       testi_source: "Source: <a href=\"https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32004R0261\" target=\"_blank\" rel=\"noopener external\" style=\"color:rgba(255,255,255,0.75);text-decoration:underline\">Regulation (EC) No 261/2004 of the European Parliament and of the Council</a> · scale articles 4, 5 and 7",
       footer_slogan: "\"Robin takes from the airlines,<br>gives back to our families.\"",
+      footer_trust: "Robin des Airs (SASU) — registration in progress<br>No upfront fee · 25% on success · you keep 75%",
       footer_guide_heading: "Traveler's Guide",
       footer_blog: "Blog — guides & articles",
       footer_jurisprudence: "CJEU case law (EU 261)",
@@ -536,7 +538,7 @@ window.I18N = (function() {
       footer_track: "📋 Where's my case?",
       footer_crisis: "<strong>Crisis line (multiple cancelled flights)</strong> — open only during a crisis: <a href=\"tel:+33189628969\">01 89 62 89 69</a>",
       footer_copyright: "© 2026 Robin des Airs — 66 av. des Champs-Élysées, 75008 Paris · Air passenger claims · Serving our communities and our families",
-      footer_reg: "Based on Regulation EU 261/2004<br>Data protected · GDPR compliant",
+      footer_reg: "Data protected · GDPR compliant",
       funnel_back: "← Back",
       funnel_restart: "↺ Start over",
       calc_see_amount: "See my compensation →",
@@ -1181,6 +1183,15 @@ window.I18N = (function() {
     }
     var logo = document.getElementById('nav-logo-home');
     if (logo) logo.href = onEn ? '/en' : '/';
+    // Indicateur du sélecteur 🌐 (code + drapeau + option active) synchronisé avec la langue réelle,
+    // pour que la page anglaise figée n'affiche pas « FR » au chargement (et inversement).
+    var codeEl = document.getElementById('current-lang-code');
+    if (codeEl) codeEl.textContent = currentLang.toUpperCase();
+    var flagEl = document.getElementById('current-flag');
+    if (flagEl) flagEl.textContent = currentLang === 'en' ? '🇬🇧' : '🇫🇷';
+    document.querySelectorAll('.lang-option').forEach(function (o) {
+      o.classList.toggle('active', o.getAttribute('data-lang') === currentLang);
+    });
   }
 
   function setLang(code) {
