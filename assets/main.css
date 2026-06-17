@@ -1156,7 +1156,8 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 .wa-bp-ap small { font-size: 8px; color: #8a94a3; margin-top: 3px; text-transform: uppercase; letter-spacing: .04em; }
 .wa-bp-arrow { color: var(--neon-ink); font-size: 12px; }
 .wa-bp-foot { margin-top: 8px; padding-top: 7px; border-top: 1px dashed #e1e6ee; }
-.wa-bp-bars { height: 18px; width: 86px; align-self: center; border-radius: 1px; opacity: .85; background: repeating-linear-gradient(90deg,#1c2733 0 2px,transparent 2px 3px,#1c2733 3px 4px,transparent 4px 7px); }
+.wa-bp-foot-fields { display: flex; gap: 14px; }
+.wa-bp-bars { height: 18px; width: 70px; align-self: center; border-radius: 1px; opacity: .85; background: repeating-linear-gradient(90deg,#1c2733 0 2px,transparent 2px 3px,#1c2733 3px 4px,transparent 4px 7px); }
 .wa-scan { position: relative; overflow: hidden; white-space: nowrap; max-width: 100%; }
 .wa-scan::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg,transparent,rgba(0,200,122,.28),transparent); transform: translateX(-100%); animation: waScan 1.1s linear infinite; }
 @keyframes waScan { to { transform: translateX(100%); } }

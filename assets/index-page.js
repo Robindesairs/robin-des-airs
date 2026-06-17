@@ -1791,14 +1791,17 @@ function toggleEscaleVol3() {
         + '</span>'
         + '<span class="wa-bp-route"><span class="wa-bp-ap"><b>' + o.fromC + '</b><small>' + o.fromN + '</small></span><span class="wa-bp-arrow" aria-hidden="true">✈</span><span class="wa-bp-ap"><b>' + o.toC + '</b><small>' + o.toN + '</small></span></span>'
         + '<span class="wa-bp-row wa-bp-foot">'
-          + '<span class="wa-bp-field"><span class="wa-bp-l">' + o.lFlight + '</span><span class="wa-bp-v">' + o.flight + '</span></span>'
+          + '<span class="wa-bp-foot-fields">'
+            + '<span class="wa-bp-field"><span class="wa-bp-l">' + o.lFlight + '</span><span class="wa-bp-v">' + o.flight + '</span></span>'
+            + '<span class="wa-bp-field"><span class="wa-bp-l">' + o.lDep + '</span><span class="wa-bp-v">' + o.dep + '</span></span>'
+          + '</span>'
           + '<span class="wa-bp-bars" aria-hidden="true"></span>'
         + '</span>'
       + '</span>';
     }
     var PASS = {
-      fr: boardingPass({ aria: 'Carte d\'embarquement (exemple)', kicker: 'Carte d\'embarquement', lPax: 'Passager', pax: 'AMINATA DIALLO', lSeat: 'Siège', seat: '23A', fromC: 'CDG', fromN: 'Paris', toC: 'DKR', toN: 'Dakar', lFlight: 'Vol', flight: 'AF718' }),
-      en: boardingPass({ aria: 'Boarding pass (example)', kicker: 'Boarding pass', lPax: 'Passenger', pax: 'AMA MENSAH', lSeat: 'Seat', seat: '23A', fromC: 'LHR', fromN: 'London', toC: 'ACC', toN: 'Accra', lFlight: 'Flight', flight: 'BA081' })
+      fr: boardingPass({ aria: 'Carte d\'embarquement (exemple)', kicker: 'Carte d\'embarquement', lPax: 'Passager', pax: 'AMINATA DIALLO', lSeat: 'Siège', seat: '23A', fromC: 'CDG', fromN: 'Paris', toC: 'DKR', toN: 'Dakar', lFlight: 'Vol', flight: 'AF718', lDep: 'Départ', dep: '19:40' }),
+      en: boardingPass({ aria: 'Boarding pass (example)', kicker: 'Boarding pass', lPax: 'Passenger', pax: 'AMA MENSAH', lSeat: 'Seat', seat: '23A', fromC: 'LHR', fromN: 'London', toC: 'ACC', toN: 'Accra', lFlight: 'Flight', flight: 'BA081', lDep: 'Departure', dep: '19:40' })
     };
 
     // La cliente porte un prénom africain (reco sous-agent CQ) : Aminata (FR) / Ama (EN, diaspora anglophone).
