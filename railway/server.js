@@ -1085,8 +1085,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
 
   // T1.2 — Demande de rappel humain : à tout moment (hors étapes documents qui ont leur propre "appel"),
   // "appel" flague le dossier pour la liste « À rappeler » du Bureau et rassure le client.
-  if (id === 'appel' || ((lower === 'appel' || lower === 'rappel' || lower === 'rappelez-moi' || lower === 'rappeler')
-      && !(s && (s.step === 'doc_boarding' || s.step === 'doc_eticket')))) {
+  if (id === 'appel' || ((lower === 'appel' || lower.includes('rappel') || lower.includes('besoin d'))
+      && !(s && (s.step === 'doc_boarding' || s.step === 'doc_eticket')))) { // WATI renvoie souvent le LIBELLÉ du bouton (« Besoin d'aide » / « Être rappelé »), pas l'id → on matche aussi le texte
     upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now(), lastClientAt: Date.now() });
     notifyCallbackWanted(phone, s, 'a demandé à être rappelé');
     return send(phone, `📞 *C'est noté !* Un vrai conseiller Robin des Airs — un humain, pas un robot 🙂 — vous rappelle très vite.\n\n👉 On vous appelle depuis le *+33 7 56 86 36 30* : enregistrez-le tout de suite sous « *Robin des Airs* » pour reconnaître l'appel et *décrocher* (sinon il s'affiche comme un numéro inconnu).\n\n🔒 C'est bien nous, jamais une arnaque : *0 € tant qu'on ne gagne pas*, et on ne vous demandera jamais de payer au téléphone.\n\nPas dispo ? Répondez ici quand vous voulez, ou écrivez *go* pour reprendre. 🙏`, cfg);
