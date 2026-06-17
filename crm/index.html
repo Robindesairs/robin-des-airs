@@ -2828,7 +2828,7 @@ function loadServerPieces(ref){
         var fn = p.filename ? (' · ' + escHtml(p.filename)) : '';
         return '<div class="crm-doc-row"><div><div class="crm-doc-name">' + serverPieceLabel(p) + who + '</div>'
           + '<div class="crm-doc-meta">' + src + (when?(' · '+when):'') + fn + '</div></div>'
-          + '<div class="crm-doc-actions"><a class="btn btn-sm btn-primary" href="' + p.url + '" target="_blank" rel="noopener">Ouvrir</a></div></div>';
+          + '<div class="crm-doc-actions"><a class="btn btn-sm btn-primary" href="' + p.url + '" target="_blank" rel="noopener">Ouvrir</a> <a class="btn btn-sm" href="' + p.url + '&dl=1" download>Télécharger</a></div></div>';
       }).join('') + '</div>';
     })
     .catch(function(e){

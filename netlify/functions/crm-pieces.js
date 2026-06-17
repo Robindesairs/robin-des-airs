@@ -67,17 +67,44 @@ exports.handler = async (event) => {
       if (!verifyToken(key, String(q.t || ''))) return J(401, { error: 'lien expiré ou invalide' });
       const res = await pieces.getWithMetadata(key, { type: 'arrayBuffer' });
       if (!res || !res.data) return J(404, { error: 'pièce introuvable' });
-      const mime = (res.metadata && res.metadata.mime) || 'application/octet-stream';
-      const name = key.split('/').pop() || 'piece';
+      let mime = (res.metadata && res.metadata.mime) || 'application/octet-stream';
+      let buf = Buffer.from(res.data);
+      let name = key.split('/').pop() || 'piece';
+      const wantDownload = q.dl === '1';
+      // Plafond de réponse d'une fonction Netlify ≈ 6 Mo (base64 inclus). Au-delà → réponse tronquée
+      // = image cassée. On vise < ~5,2 Mo binaire. Les images sont donc redimensionnées pour l'AFFICHAGE.
+      const SAFE_BYTES = 5_200_000;
+
+      // Image : redimensionnée (toujours servable, EXIF redressé, HEIC→JPEG si le binaire sharp le supporte).
+      // En téléchargement, on tente l'original s'il tient sous le plafond, sinon on retombe sur la version réduite.
+      if (/^image\//.test(mime) && !(wantDownload && buf.length <= SAFE_BYTES)) {
+        let sharp = null;
+        try { sharp = require('sharp'); } catch (_) { sharp = null; }
+        if (sharp) {
+          try {
+            buf = await sharp(buf, { failOn: 'none' }).rotate()
+              .resize({ width: 1600, height: 1600, fit: 'inside', withoutEnlargement: true })
+              .jpeg({ quality: 78 }).toBuffer();
+            mime = 'image/jpeg';
+            if (!/\.jpe?g$/i.test(name)) name = name.replace(/\.[a-z0-9]+$/i, '') + '.jpg';
+          } catch (_) { /* format non décodable (ex. HEIC sans support) → on garde l'original */ }
+        }
+      }
+
+      const b64 = buf.toString('base64');
+      // Garde-fou final : si ça dépasse encore le plafond (gros PDF, image non redimensionnable), message clair.
+      if (b64.length > 5_900_000) {
+        return J(413, { error: 'Fichier trop volumineux pour l’aperçu en ligne. Demandez au client de renvoyer une photo (pas un fichier).' });
+      }
       return {
         statusCode: 200,
         headers: {
           'Content-Type': mime,
-          'Content-Disposition': `inline; filename="${name}"`,
+          'Content-Disposition': `${wantDownload ? 'attachment' : 'inline'}; filename="${name}"`,
           'Cache-Control': 'private, no-store',
           ...corsHeaders(),
         },
-        body: Buffer.from(res.data).toString('base64'),
+        body: b64,
         isBase64Encoded: true,
       };
     }
