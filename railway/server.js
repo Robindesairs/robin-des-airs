@@ -919,6 +919,18 @@ async function askOcrConfirm(phone, s, cfg, mediaUrl) {
   if (pp && (pp.name || pp.dob)) {
     const minor = pp.dob ? isMinorAt(pp.dob, s.date) : false;
     const expired = pp.expiry ? isExpired(pp.expiry) : false;
+    // Rafale multi-passagers (e-billet : noms déjà connus) → on rattache la pièce PAR NOM et on
+    // l'enregistre SANS écran de confirmation. Sinon, 4 photos envoyées d'un coup relancent la
+    // confirmation du passager 1 à chaque fois (le doc_idx n'avance qu'après un « C'est correct »).
+    const _att = pp.name ? attributeId(s, pp.name) : { confident: false, idx: -1 };
+    if (s.pax > 1 && _att.confident && _att.idx >= 0) {
+      const cur = s.passengers[_att.idx] || {};
+      s.passengers[_att.idx] = { ...cur, name: cur.name || pp.name, dob: pp.dob || cur.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || cur.adresse || '', viaPhoto: true, idReceived: true };
+      await setState(phone, s);
+      const got = (s.passengers || []).filter((p) => p && p.idReceived).length;
+      await send(phone, `✅ Pièce de *${cur.name || pp.name}* reçue (${got}/${s.pax})${minor ? ' · 👶 mineur·e, signature parentale' : ''}${expired ? ' · ⚠️ expirée, un conseiller vérifie' : ''}.`, cfg);
+      return nextPassport(phone, s, cfg);
+    }
     s.doc_pending = { name: pp.name || '', dob: pp.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || '', viaPhoto: true };
     s.step = 'doc_pass_confirm';
     await setState(phone, s);
@@ -2105,7 +2117,7 @@ async function askMandant(phone, s, cfg) {
   // 1 seul passager → c'est forcément lui le contact, pas de question → adresse puis finalisation.
   if (s.pax <= 1) { s.mandant_idx = 0; await setState(phone, s); return askAddressOrFinalize(phone, s, cfg); }
   s.step = 'doc_mandant'; await setState(phone, s);
-  const names = (s.passengers || []).slice(0, s.pax).map((p, i) => p.name || `Passager ${i + 1}`);
+  const names = Array.from({ length: s.pax }, (_, i) => paxName(s, i)); // résout passengers[i].name → s.names[i] (e-billet) → « Passager i » : affiche le vrai nom quand on l'a
   // On ne demande PAS « qui signe » (tout le monde signe son mandat) — juste à qui est ce WhatsApp (le contact du dossier).
   await send(phone, `✅ Pièces collectées ! Une dernière chose.\n\n📱 *À qui appartient ce numéro WhatsApp ?*\n_(la personne qui suit le dossier — chaque passager signera son propre mandat, peu importe lequel.)_`, cfg);
   if (names.length <= 3) {
