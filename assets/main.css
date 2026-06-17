@@ -905,6 +905,7 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 .nav-drawer.open { display: block; animation: fstepIn 0.2s ease; }
 .nav-drawer-lang {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
   padding: 12px 14px 14px;
@@ -3982,5 +3983,74 @@ span.flatpickr-weekday { color: rgba(255,255,255,0.45); font-size: 10px; font-we
   #hero { padding-bottom: 12px; }
   .hero-wrap { padding-bottom: 8px; }
   #la-loi { padding-top: 28px; }
+}
+
+/* ════════════════════════════════════════════════════
+   Suggestion de langue selon le navigateur (bandeau bas d'écran, non bloquant)
+   Injecté par assets/index-page.js. Non forcé : propose, ne redirige jamais.
+════════════════════════════════════════════════════ */
+.rda-lang-suggest {
+  position: fixed;
+  left: 16px; right: 16px;
+  margin: 0 auto;
+  width: fit-content;
+  max-width: min(560px, calc(100vw - 32px));
+  bottom: max(14px, env(safe-area-inset-bottom, 14px));
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px 10px 16px;
+  background: #0B1F3A;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.30);
+  font-size: 13px;
+  line-height: 1.35;
+  animation: rdaLangIn 0.28s ease both;
+}
+@keyframes rdaLangIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.rda-lang-suggest-txt { color: rgba(255, 255, 255, 0.92); }
+.rda-lang-suggest-cta {
+  flex: 0 0 auto;
+  background: var(--neon-b, #00C87A);
+  color: #06231a;
+  font-weight: 800;
+  text-decoration: none;
+  padding: 7px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+.rda-lang-suggest-cta:hover { filter: brightness(1.06); }
+.rda-lang-suggest-x {
+  flex: 0 0 auto;
+  background: transparent;
+  border: 0;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px 2px;
+}
+.rda-lang-suggest-x:hover { color: #fff; }
+@media (max-width: 480px) {
+  .rda-lang-suggest { flex-wrap: wrap; gap: 8px 10px; }
+  .rda-lang-suggest-txt { flex: 1 1 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rda-lang-suggest { animation: none; }
+}
+
+/* Sélecteur de langue 🌐 plus repérable sur mobile (le switch FR/EN doit se voir) */
+@media (max-width: 1080px) {
+  .diaspora-bar-actions .lang-btn-wrap {
+    background: rgba(255, 255, 255, 0.10);
+    border-color: rgba(255, 255, 255, 0.38);
+    padding: 5px 9px;
+  }
 }
 
