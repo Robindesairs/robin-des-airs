@@ -992,7 +992,7 @@ async function finNonEligible(phone, reasonText, cfg) {
 
 // ─── Responder IA hors-tunnel (inline) ─────────────────────────────────────────
 const AI = (() => {
-  const SENSITIVE = /(avocat|tribunal|proc[e\u00e8]s|plainte|litige|rembours|parler\s+[\u00e0a]\s+(quelqu|un humain|une personne|un conseiller|un agent)|un (vrai )?humain|[\u00eae]tre rappel|rappelez)/i;
+  const SENSITIVE = /(avocat|tribunal|proc[e\u00e8]s|plainte|litige|rembours|parler\s+[\u00e0a]\s+(quelqu|un humain|une personne|un conseiller|un agent)|un (vrai )?humain|[\u00eae]tre rappel|rappelez|rappel|contact|joindre|rejoindre|injoignable)/i;
   const FAQ = /(arnaque|escroc|fiable|s[\u00e9e]rieux|confiance|garantie|combien|c'?est quoi|fonctionne|(\u00e7|c|s)a\s*marche|(\u00e7a|ca)\s*(co\u00fbte|coute)|\bco[u\u00fb]te?\b|cher|\bprix\b|tarif|gratuit|frais|commission|payer|paiement|montant|euros?|\u20ac|orange\s*money|wave|mobile\s*money|virement|d[\u00e9e]lai|temps|long|semaine|mois|attente|quand|rembours|\bdroit\b|\u00e9ligib|document|passeport|carte|donn[\u00e9e]es|rgpd|s[\u00e9e]curis|comment|pourquoi)/i;
   function isClientQuestion(text) { const t = (text || '').trim(); if (!t || /^\d+$/.test(t) || t.length < 5) return false; if (t.includes('?')) return true; return FAQ.test(t); }
   function isSensitive(text) { return SENSITIVE.test(text || ''); }
@@ -1130,7 +1130,9 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   try {
     const { isClientQuestion, isSensitive, answerClientQuestion } = AI;
     const FREE = ['m_vol', 'm_date', 'm_route', 'm_dep', 'm_arr', 'm_stop_arr', 'm_pnr', 'leg_count', 'leg_input', 'esc_dep', 'esc_via', 'esc_arr', 'esc_vol', 'names', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob', 'doc_adresse'];
-    const looks = !id && (FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input));
+    // Une intention claire « parler à un humain / être contacté / rappel » est analysée PARTOUT
+    // (même en plein tunnel et sans « ? ») → on ne redemande pas bêtement l'étape en cours.
+    const looks = !id && (isSensitive(input) || (FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input)));
     if (looks) {
       if (isSensitive(input)) { upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now(), lastClientAt: Date.now() }); notifyCallbackWanted(phone, s, `question sensible : « ${String(input).slice(0, 80)} »`); await send(phone, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nÉcrivez *go* pour continuer votre dossier.`, cfg); return; }
       const r = await answerClientQuestion(input, process.env.OPENAI_API_KEY);
