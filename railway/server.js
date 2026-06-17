@@ -129,9 +129,10 @@ async function snapshotDurable() {
     if (!_durableSafe) return;
     const secret = (process.env.WATI_WEBHOOK_SECRET || '').trim(); if (!secret) return;
     const cap = (m) => [...m.entries()].slice(-5000);
+    const capDedup = () => { const now = Date.now(); return [...DEDUP.entries()].filter(([, t]) => now - t < 600000).slice(-5000); }; // dédup inbound durable (fenêtre 10 min) → survit aux redeploys
     await fetch('https://robindesairs.eu/api/bot-state', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ secret, leads: cap(LEADS), state: cap(STATE), dossiers: cap(DOSSIERS) }),
+      body: JSON.stringify({ secret, leads: cap(LEADS), state: cap(STATE), dossiers: cap(DOSSIERS), dedup: capDedup() }),
       signal: AbortSignal.timeout(15000),
     });
   } catch (e) { console.error('snapshotDurable', e.message); }
@@ -147,6 +148,7 @@ setInterval(snapshotDurable, 60000); // toutes les 60 s (best-effort)
     for (const [k, v] of (d.leads || [])) if (!LEADS.has(k)) LEADS.set(k, v);
     for (const [k, v] of (d.state || [])) if (!STATE.has(k)) STATE.set(k, v);
     for (const [k, v] of (d.dossiers || [])) if (!DOSSIERS.has(k)) DOSSIERS.set(k, v);
+    { const now = Date.now(); for (const [k, v] of (d.dedup || [])) if (!DEDUP.has(k) && now - v < 600000) DEDUP.set(k, v); } // restaure la dédup inbound → un webhook rejoué après un redeploy n'est pas re-traité (anti-doublon)
     _durableSafe = true; // lecture réussie (même vide) → l'état RAM reflète le durable → snapshot autorisé
     console.log(`♻️ Restauré depuis Blobs : ${LEADS.size} leads · ${STATE.size} sessions · ${DOSSIERS.size} dossiers`);
   } catch (e) { console.error('restoreDurable', e.message); }
@@ -203,6 +205,8 @@ function markEngagedLead(phone, s) {
     vol: (s && s.vol) || (cur && cur.vol) || '',
     route: (s && s.route) || (cur && cur.route) || '',
     incident: (s && s.incident_libelle) || (cur && cur.incident) || '',
+    perPax: (s && s.perPax != null) ? s.perPax : (cur && cur.perPax), // pour des relances cohérentes avec le montant vu au récap
+    flightVerdict: (s && s.flightVerdict) || (cur && cur.flightVerdict) || '',
   };
   if (!cur || !cur.engagedAt) patch.engagedAt = Date.now(); // ancre la relance sur le 1er engagement
   upsertLead(phone, patch);
@@ -899,7 +903,9 @@ function missingDocsText(s) {
     else miss.push(`une *preuve de voyage par passager* : une *carte d'embarquement* pour chacun, ou un seul *e-billet* qui les liste tous`);
   }
   if (miss.length) return `📎 Il manque encore : ${miss.join(' et ')}.`;
-  return fillTpl(pickRV(s.ref || '', 'DOC_COMPLET'), { REF: s.ref || '', TOTAL: (600 * (s.pax || 1)) + ' €', NOM: firstNameOf(s) }) || `🎉 Toutes vos pièces sont là, merci ! Notre équipe prend le relais.`;
+  const v = s.flightVerdict;
+  if (v === 'hors_champ' || v === 'sous_seuil') return `✅ Toutes vos pièces sont là, merci ${firstNameOf(s)} ! Le dossier ${s.ref || ''} est complet. Un expert confirme le *montant exact* (vérification gratuite) et on lance la réclamation — 0 € si on ne gagne pas.`;
+  return fillTpl(pickRV(s.ref || '', 'DOC_COMPLET'), { REF: s.ref || '', TOTAL: montantReel(s) + ' €', NOM: firstNameOf(s) }) || `🎉 Toutes vos pièces sont là, merci ! Notre équipe prend le relais.`;
 }
 
 // Pièce expirée (date d'expiration passée) ?
@@ -1115,12 +1121,12 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
         if (tk.incident === 'annulation') {
           f.incident = 'annulation'; f.incident_libelle = 'Annulation'; f.step = 'annul_delai';
           await setState(phone, f);
-          await send(phone, `✅ C'est noté — votre *vol ${tk.vol}*${dStr} a été *annulé*. 🎯`, cfg);
+          await send(phone, `✅ C'est noté — votre *vol ${tk.vol}*${dStr} a été *annulé*.`, cfg);
           return sendAnnulDelai(phone, f, cfg);
         }
         f.step = 'q_corr'; f.incident = 'retard'; f.incident_libelle = 'Retard +3h'; f.duree_retard = '+3h';
         await setState(phone, f);
-        return sendButtons(phone, { body: `✅ C'est noté — votre *vol ${tk.vol}*${dStr} a été *retardé*. 🎯\nCe type de vol Europe ↔ Afrique est *souvent éligible* jusqu'à *600 € par passager*. 🎉\n\nPour ne rien oublier : ce vol faisait-il partie d'une *correspondance* (un autre vol juste avant ou juste après) ?`, buttons: [{ id: 'corr_direct', text: '✈️ Non, vol direct' }, { id: 'corr_escale', text: '🔄 Oui, correspondance' }] }, cfg);
+        return sendButtons(phone, { body: `✅ C'est noté — votre *vol ${tk.vol}*${dStr} a été *retardé*.\nCe type de vol Europe ↔ Afrique est *souvent éligible* jusqu'à *600 € par passager*.\n\nPour ne rien oublier : ce vol faisait-il partie d'une *correspondance* (un autre vol juste avant ou juste après) ?`, buttons: [{ id: 'corr_direct', text: '✈️ Non, vol direct' }, { id: 'corr_escale', text: '🔄 Oui, correspondance' }] }, cfg);
       }
     }
   }
@@ -1237,13 +1243,13 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       // Escale = on POUSSE LA PHOTO d'abord (l'e-billet contient tous les segments → extraction en 1 coup).
       // La saisie manuelle leg par leg ne reste qu'en repli (bouton « Saisir à la main » → leg_count).
       s.type_vol = 'escale'; s.legs = []; s.legIdx = 0; s.step = 'scan'; await setState(phone, s);
-      return sendButtons(phone, { body: `${bar('scan')}\n🎉 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (*${montantNet(s.pax)} € nets*, 75 %). 🤝\n\n🔄 Le plus simple : une *photo* de votre *e-billet* (confirmation de réservation) — il contient *tous vos vols d'un coup*, correspondance incluse. Je lis tout, vous ne tapez rien.\n🎫 Pas d'e-billet ? Vos *cartes d'embarquement* aussi (une par vol).`, buttons: [{ id: 'scan_photo', text: '📸 Envoyer une photo' }, { id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
+      return sendButtons(phone, { body: `${bar('scan')}\n💰 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (*${montantNet(s.pax)} € nets*, 75 %). 🤝\n\n🔄 Le plus simple : une *photo* de votre *e-billet* (confirmation de réservation) — il contient *tous vos vols d'un coup*, correspondance incluse. Je lis tout, vous ne tapez rien.\n🎫 Pas d'e-billet ? Vos *cartes d'embarquement* aussi (une par vol).`, buttons: [{ id: 'scan_photo', text: '📸 Envoyer une photo' }, { id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
     }
     if (n === '1' || lower.includes('direct')) s.type_vol = 'direct';
     else return sendButtons(phone, { body: `${bar('type_vol')}\n✈️ Vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg);
     s.step = 'scan'; await setState(phone, s);
     // Un seul message (motivation + scan) → réponse immédiate, pas de délai où les taps s'entrecroisent.
-    return sendButtons(phone, { body: `${bar('scan')}\n🎉 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (*${montantNet(s.pax)} € nets*, 75 %). Robin prélève 25 % *uniquement* si vous gagnez. 🤝\n\n⚡ Envoyez une *photo* de votre carte d'embarquement ou e-billet — je lis le vol automatiquement.${s.pax > 1 ? `\n👥 (une carte suffit pour le vol)` : ''}\n📄 _Votre mandat et le dossier pour la compagnie sont prêts plus vite._\n\n📎 *Envoyez la photo*, ou choisissez 👇`, buttons: [{ id: 'scan_photo', text: '📸 Envoyer une photo' }, { id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
+    return sendButtons(phone, { body: `${bar('scan')}\n💰 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (*${montantNet(s.pax)} € nets*, 75 %). Robin prélève 25 % *uniquement* si vous gagnez. 🤝\n\n⚡ Envoyez une *photo* de votre carte d'embarquement ou e-billet — je lis le vol automatiquement.${s.pax > 1 ? `\n👥 (une carte suffit pour le vol)` : ''}\n📄 _Votre mandat et le dossier pour la compagnie sont prêts plus vite._\n\n📎 *Envoyez la photo*, ou choisissez 👇`, buttons: [{ id: 'scan_photo', text: '📸 Envoyer une photo' }, { id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
   }
   // ── Correspondance « rapide » (raccourci bandeau) : vol déjà connu, on demande juste s'il y en avait un autre ──
   if (s.step === 'q_corr') {
@@ -1368,7 +1374,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
     }
     if (id === 'scan_photo' || lower.includes('envoyer une photo') || lower.includes('envoie une photo')) {
-      return send(phone, `👍 Parfait ! Appuyez sur 📎 (ou 📷) en bas et envoyez la *photo* de votre *e-billet* (il contient tous vos vols) — ou de votre *carte d'embarquement*. Je lis tout. 🔒`, cfg);
+      return send(phone, `👍 C'est noté — appuyez sur 📎 (ou 📷) en bas et envoyez la *photo* de votre *e-billet* (il contient tous vos vols) — ou de votre *carte d'embarquement*. Je lis tout. 🔒`, cfg);
     }
     if (id === 'scan_manuel' || lower.includes('manuel') || lower.includes('manuelle') || lower.includes('saisir')) {
       if (s.type_vol === 'escale') return askEscDep(phone, s, cfg, `🔄 Pas de souci, on le fait ensemble — une question à la fois.`);
@@ -1623,7 +1629,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     s.passengers = s.passengers || [];
     if (mediaUrl) { return askOcrConfirm(phone, s, cfg, mediaUrl); }
     if (id === 'doc_photo' || lower.includes('envoyer ma photo') || lower.includes('ma photo')) {
-      return send(phone, `👍 Parfait ! Appuyez sur 📎 (ou 📷) en bas et choisissez la *photo* de la pièce — *passeport, CNI ou carte de séjour*. On lit le nom et la date automatiquement. 🔒`, cfg);
+      return send(phone, `👍 C'est noté — appuyez sur 📎 (ou 📷) en bas et choisissez la *photo* de la pièce — *passeport, CNI ou carte de séjour*. On lit le nom et la date automatiquement. 🔒`, cfg);
     }
     if (id === 'doc_passer' || lower.includes('envoie après') || lower.includes('passer')) {
       const _nm = (s.passengers[s.doc_idx] && s.passengers[s.doc_idx].name) || (s.names && s.names[s.doc_idx]) || '';
@@ -1684,7 +1690,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (idx >= 0 && idx < s.pax) {
       s.mandant_idx = idx; await setState(phone, s);
       const chosen = s.passengers[idx] || {};
-      await send(phone, `✅ Parfait — c'est *${chosen.name || `Passager ${idx + 1}`}* qui suit le dossier.`, cfg);
+      await send(phone, `✅ C'est noté — c'est *${chosen.name || `Passager ${idx + 1}`}* qui suit le dossier.`, cfg);
       return askAddressOrFinalize(phone, s, cfg);
     }
     return askMandant(phone, s, cfg);
@@ -1782,12 +1788,12 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     }
     if (id === 'frais_non' || lower.includes('pas de frais') || lower.includes('aucun frais') || lower === 'non') {
       markFraisAnswered(phone); s.step = 'done'; await setState(phone, s);
-      return send(phone, `Parfait, c'est noté ✅ On part avec votre indemnité. Si un reçu refait surface plus tard, envoyez-le, on l'ajoute. 🤝`, cfg);
+      return send(phone, `C'est noté ✅ On part avec votre indemnité. Si un reçu refait surface plus tard, envoyez-le, on l'ajoute. 🤝`, cfg);
     }
     if (id === 'frais_fini' || lower.includes("c'est tout") || lower.includes('cest tout') || lower.includes('termin') || lower.includes('fini')) {
       markFraisAnswered(phone); s.step = 'done'; await setState(phone, s);
       const tot = fraisTotal(s);
-      return send(phone, `Parfait ✅ On joint vos reçus à votre réclamation${tot !== '—' ? ` (≈ ${tot} de frais, en plus de l'indemnité)` : ''}. Merci ! 🤝`, cfg);
+      return send(phone, `C'est noté ✅ On joint vos reçus à votre réclamation${tot !== '—' ? ` (≈ ${tot} de frais, en plus de l'indemnité)` : ''}. Merci ! 🤝`, cfg);
     }
     if (id === 'frais_oui' || lower.includes('envoi') || lower.includes('reçu') || lower.includes('recu') || lower.startsWith('oui')) {
       return send(phone, `👍 Envoyez une *photo* de chaque reçu (hôtel, repas, taxi…). Ces montants vous reviennent *en plus* de l'indemnité. Même flou, même plusieurs — envoyez juste ce que vous avez vraiment payé.`, cfg);
@@ -2127,10 +2133,13 @@ async function finaliser(phone, s, cfg) {
   const nom = (pax[0] && pax[0].name) || (s.names && s.names[0]) || '—';
   s.minorsCount = pax.filter(p => p && p.minor).length;
   s.ref = genRef(); s.mandat_url = buildMandatUrl(s, phone); s.step = 'done'; await setState(phone, s);
+  const st = docsStatus(s); // titre HONNÊTE : « Dossier complet » seulement si toutes les pièces sont là (sinon le msg suivant se contredisait)
+  const titre = st.complete ? '🎉 *Dossier complet !*' : '✅ *Récapitulatif enregistré*';
+  const docsNote = st.complete ? '' : `\n\n${missingDocsText(s)}`;
   // Lead à relancer tant que le mandat n'est pas signé (nudge 2h/8h/22h dans la fenêtre 24h)
-  upsertLead(phone, { ref: s.ref, mandatUrl: s.mandat_url, mandatSentAt: Date.now(), lastClientAt: Date.now(), pax: s.pax || 1, name: firstNameOf(s), signed: false, completed: true, nudges: [] });
+  upsertLead(phone, { ref: s.ref, mandatUrl: s.mandat_url, mandatSentAt: Date.now(), lastClientAt: Date.now(), pax: s.pax || 1, name: firstNameOf(s), perPax: s.perPax, flightVerdict: s.flightVerdict || '', signed: false, completed: true, nudges: [] });
   const minorNote = s.minorsCount ? `\n👶 ${s.minorsCount} mineur·s : signature d'un parent/tuteur requise (un expert vous guide).` : '';
-  await send(phone, `${bar('done')}\n🎉 *Dossier complet !* Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n${montantLine(s)}${minorNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % au succès uniquement · 🔒 aucune info bancaire.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_\n\n👉 *Signez ici :*\n${s.mandat_url}\n\nSans votre signature, on ne peut pas agir en votre nom. ${STOP_FOOTER}`, cfg);
+  await send(phone, `${bar('done')}\n${titre} Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % au succès uniquement · 🔒 aucune info bancaire.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_\n\n👉 *Signez ici :*\n${s.mandat_url}\n\nSans votre signature, on ne peut pas agir en votre nom. ${STOP_FOOTER}`, cfg);
   // CRM : la fiche Airtable est désormais créée par la synchro DIRECTE (storeDossierDurable →
   // /api/dossier-store → syncNewDossierToAirtable, statut « Signature en attente »). Le webhook
   // Make ci-dessous n'est plus qu'un hook OPTIONNEL pour d'éventuelles automatisations externes :
@@ -2442,9 +2451,17 @@ app.post('/api/mandat-signed', (req, res) => {
 const RELANCE_THRESHOLDS_H = [2, 8, 22];   // dossier finalisé, mandat envoyé, pas signé
 const ENGAGED_THRESHOLDS_H = [3, 14, 22];  // dossier engagé : reprise (3h), rappel (14h), dernière chance avant fermeture (22h)
 const _H = 3600000;
+// Montant à afficher dans une relance, dérivé du lead (perPax/verdict capturés au récap/finalisation).
+// hors_champ/sous_seuil → null = pas de chiffre ferme (cohérent avec « montant à confirmer » vu dans le tunnel).
+function leadTotal(lead) {
+  if (lead && (lead.flightVerdict === 'hors_champ' || lead.flightVerdict === 'sous_seuil')) return null;
+  const per = (lead && Number(lead.perPax) > 0) ? Number(lead.perPax) : 600;
+  return (per * ((lead && lead.pax) || 1)) + ' €';
+}
 function relanceText(n, lead) {
   const url = lead.mandatUrl || ('https://robindesairs.eu/mandat.html?r=' + encodeURIComponent(lead.ref || ''));
-  const total = (600 * (lead.pax || 1)) + ' €';
+  const total = leadTotal(lead);
+  if (!total) return `Il ne reste qu'une signature pour lancer votre dossier ${lead.ref}. Un expert confirme le montant exact (vérification gratuite). 👉 ${url}\n0 € si on ne gagne pas.`;
   const key = n === 2 ? 'RELANCE_2H' : n === 8 ? 'RELANCE_8H' : 'RELANCE_22H';
   const txt = fillTpl(pickRV(lead.ref || lead.phone, key), { REF: lead.ref || '', TOTAL: total, URL: url, NOM: lead.name || '' });
   return txt || `Il ne reste qu'une signature pour votre dossier ${lead.ref}. 👉 ${url}\n0 € si on ne gagne pas.`;
@@ -2455,11 +2472,13 @@ function engGroup(step) {
   if (step === 'doc_boarding') return 'BOARDING';        // carte d'embarquement → souvent perdue (l'e-billet suffit)
   if (step === 'doc_eticket') return 'ETICKET';          // e-billet → introuvable (spams/Booking/agence)
   if (step === 'doc_cert') return 'CERT';                // certificat → ils croient devoir l'attendre (c'est optionnel)
-  if (step && /^doc_/.test(step)) return 'PASS';         // pièce d'identité / saisie (doc_pass, doc_name, doc_dob, doc_mandant…)
+  if (step === 'doc_mandant' || step === 'doc_adresse') return null; // pièces déjà collectées → reprise générique (PAS « il ne manque qu'une pièce d'identité »)
+  if (step && /^doc_/.test(step)) return 'PASS';         // pièce d'identité / saisie (doc_pass, doc_name, doc_dob…)
   return null;                                           // étape inconnue → message de reprise générique
 }
 function relanceTextEngaged(n, lead, step) {
-  const total = (600 * (lead.pax || 1)) + ' €';
+  const total = leadTotal(lead);
+  if (!total) return `On a commencé votre dossier — appuyez sur *Reprendre* 👇 pour le finaliser (un expert confirme le montant exact, 0 € si on ne gagne pas), ou *Rappel* 📞. 🙏`;
   let key;
   if (n >= 22) { key = 'ENG_EDGE'; }                       // dernière relance avant fermeture de la fenêtre → urgence courte (peu importe l'étape)
   else { const g = engGroup(step); const suffix = n <= 3 ? '_1' : '_2'; key = g ? ('ENG_' + g + suffix) : ('RELANCE_ENGAGED' + suffix); }
@@ -2503,7 +2522,7 @@ async function maybeSendHsmRelance(lead, k, now, cfg) {
     const params = [
       { name: '1', value: lead.name || 'à vous' },
       { name: '2', value: tripLabel(lead) || lead.vol || 'votre vol' },
-      { name: '3', value: (600 * (lead.pax || 1)) + ' €' },
+      { name: '3', value: leadTotal(lead) || 'à confirmer' },
     ];
     const r = await watiSendTemplate(lead.phone, HSM_RELANCE[idx].name, params, cfg);
     if (r && r.ok) {
@@ -2512,7 +2531,10 @@ async function maybeSendHsmRelance(lead, k, now, cfg) {
     }
   } catch (e) { console.error('maybeSendHsmRelance', e.message); }
 }
+let _relancesRunning = false; // verrou anti-ré-entrance : un run lent (> 15 min) ne doit pas chevaucher le suivant → sinon deux runs lisent le même lead avant marquage et envoient 2× la relance
 async function runRelances() {
+  if (_relancesRunning) return;
+  _relancesRunning = true;
   try {
     const cfg = watiCfg(); if (!cfg) return;
     const now = Date.now();
@@ -2568,6 +2590,7 @@ async function runRelances() {
       lead.nudges = nudges.concat(due); LEADS.set(k, lead); persistLeads();
     }
   } catch (e) { console.error('runRelances', e.message); }
+  finally { _relancesRunning = false; }
 }
 setInterval(runRelances, 15 * 60 * 1000); // toutes les 15 min
 

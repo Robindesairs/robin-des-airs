@@ -24,7 +24,7 @@ exports.handler = async (event) => {
 
   if (event.httpMethod === 'GET') {
     if (expected && !safeEqualString(headerSecret, expected)) return { statusCode: 401, headers: H, body: JSON.stringify({ error: 'unauthorized' }) };
-    const snap = (await store.get('snapshot', { type: 'json' }).catch(() => null)) || { leads: [], state: [], dossiers: [] };
+    const snap = (await store.get('snapshot', { type: 'json' }).catch(() => null)) || { leads: [], state: [], dossiers: [], dedup: [] };
     return { statusCode: 200, headers: H, body: JSON.stringify(snap) };
   }
 
@@ -32,7 +32,7 @@ exports.handler = async (event) => {
     let b; try { b = JSON.parse(event.body || '{}'); } catch { return { statusCode: 400, headers: H, body: JSON.stringify({ error: 'bad json' }) }; }
     if (expected && !safeEqualString(String(b.secret || '').trim(), expected)) return { statusCode: 401, headers: H, body: JSON.stringify({ error: 'unauthorized' }) };
     const arr = (x) => (Array.isArray(x) ? x.slice(-5000) : []);
-    const snap = { leads: arr(b.leads), state: arr(b.state), dossiers: arr(b.dossiers), ts: new Date().toISOString() };
+    const snap = { leads: arr(b.leads), state: arr(b.state), dossiers: arr(b.dossiers), dedup: arr(b.dedup), ts: new Date().toISOString() };
     await store.setJSON('snapshot', snap);
     return { statusCode: 200, headers: H, body: JSON.stringify({ ok: true, leads: snap.leads.length, state: snap.state.length, dossiers: snap.dossiers.length }) };
   }

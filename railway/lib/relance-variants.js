@@ -134,7 +134,7 @@ const RV = {
   "Merci de votre confiance, {NOM}. Le dossier {REF} est complet, on prend la suite. Vous pourriez toucher jusqu'à {TOTAL}, et vous n'avez aucune avance à faire : si on ne gagne pas, c'est 0€.",
   "Tout est en ordre {NOM}. Vos documents pour le dossier {REF} sont validés. On engage la procédure pour un montant qui peut atteindre {TOTAL}. À partir de là, on défend vos droits à votre place.",
   "C'est confirmé {NOM}, on a tout reçu. Le dossier {REF} est entre nos mains. On lance la réclamation auprès de la compagnie, pour un montant qui peut aller jusqu'à {TOTAL}. Je vous préviens à chaque avancée.",
-  "Bravo {NOM}, le dossier {REF} est complet. Vous avez fait votre part, maintenant c'est à nous de jouer. On réclame jusqu'à {TOTAL}, et si on ne gagne pas, vous ne payez rien. Vous pouvez être tranquille.",
+  "C'est bon {NOM}, votre dossier {REF} est complet. À nous de jouer maintenant : on réclame jusqu'à {TOTAL}, et si on ne gagne pas, vous ne payez rien.",
   "Bien reçu et validé, merci {NOM}. Votre dossier {REF} démarre officiellement. On prend tout en charge face à la compagnie, pour un montant qui peut aller jusqu'à {TOTAL}. Je vous tiens au courant.",
   "On a toutes les pièces, {NOM}. Le dossier {REF} est lancé. On va se battre pour récupérer jusqu'à {TOTAL} en votre nom. Et rassurez-vous : si on ne gagne pas, c'est 0€ pour vous."
  ],
@@ -158,7 +158,7 @@ const RV = {
   "Pour que votre dossier {REF} passe sans accroc, il me faut une photo bien nette 📸 Celle-là est {PB} et risque d'être refusée. À plat, en pleine lumière, les 4 coins visibles, et c'est parfait. Merci 🙏",
   "J'aimerais vous éviter que la compagnie vous renvoie le document. La photo est {PB}, du coup elle est dure à valider. Vous pourriez m'en renvoyer une plus nette ? À plat, en pleine lumière, les 4 coins visibles. Ça sécurise {REF}.",
   "On y est presque sur {REF} ! Le seul hic, c'est que la photo est {PB} et qu'elle pourrait être rejetée. Un dernier petit effort : reprenez-la à plat, bien éclairée, les 4 coins dans le cadre. Merci pour votre patience 🙏",
-  "Votre dossier {REF} mérite le meilleur. Là, la photo est {PB}, et la compagnie est plutôt exigeante sur la lisibilité. Vous pourriez me la renvoyer nette ? Document à plat, pleine lumière, les 4 coins visibles. Comme ça, plus rien ne nous bloque.",
+  "La photo est {PB}, et la compagnie est exigeante sur la lisibilité. Pourriez-vous me la renvoyer nette ? Document à plat, en pleine lumière, les 4 coins visibles — comme ça plus rien ne bloque {REF}.",
   "Pas d'inquiétude {NOM}, on règle ça vite ! La photo est {PB} : pour qu'elle passe du premier coup, posez le document à plat, en pleine lumière, et vérifiez qu'on voit bien les 4 coins. Merci, ça protège {REF} 🙏"
  ]
 };
