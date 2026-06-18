@@ -2069,9 +2069,16 @@ function renderRappelList(leads){
       var reason = l.wantsCall ? '📞 Rappel demandé' : (l.reason==='mandat_non_signe'?'Mandat non signé':(l.reason==='abandon_avant_signature'?'Abandon avant signature':'Fenêtre 24h fermée'));
       var sub=[l.vol,l.route,l.incident].filter(Boolean).map(escHtml).join(' · ');
       var age=(l.ageHours!=null)?(l.ageHours<24?l.ageHours+'h':Math.round(l.ageHours/24)+'j'):'';
+      // Numéro en clair (à composer dans OnOff/un poste) + clic qui ouvre la FICHE complète si un
+      // dossier existe pour cette réf → toutes les infos déjà saisies sous les yeux avant d'appeler.
+      var telTxt = tel ? '+'+tel.replace(/^33(\d)/,'33 $1') : '';
+      var ref = String(l.ref||'');
+      var hasDossier = !!(ref && typeof DB!=='undefined' && DB.some(function(d){return d.id===ref;}));
+      var openAttr = hasDossier ? ' onclick="openDetail(\''+ref.replace(/'/g,'')+'\')" style="flex:1;min-width:0;cursor:pointer" title="Ouvrir la fiche complète du dossier"' : ' style="flex:1;min-width:0"';
       return '<div class="rappel-card'+(l.wantsCall?' rappel-urgent':'')+'">'
-        +'<div style="flex:1;min-width:0"><div class="rappel-name">'+nom+(l.pax>1?' ×'+l.pax:'')+'</div>'
+        +'<div'+openAttr+'><div class="rappel-name">'+nom+(l.pax>1?' ×'+l.pax:'')+(hasDossier?' <span style="font-size:11px;color:var(--green);font-weight:700">↗ fiche</span>':'')+'</div>'
         +'<div class="rappel-sub">'+(sub||'—')+'</div>'
+        +(telTxt?'<div class="rappel-sub" style="font-variant-numeric:tabular-nums;color:var(--text);font-weight:600">📱 '+telTxt+'</div>':'')
         +'<div class="rappel-meta">'+reason+(age?' · il y a '+age:'')+(l.montant?' · jusqu’à '+l.montant+' €':'')+'</div></div>'
         +'<div class="rappel-actions">'
         +(tel?'<a class="rappel-btn call" href="tel:+'+tel+'">📞 Appeler</a><a class="rappel-btn wa" href="https://wa.me/'+tel+'" target="_blank" rel="noopener">💬 WhatsApp</a>':'')
