@@ -883,6 +883,16 @@ const nmTITLE = new Set(['m', 'mr', 'mme', 'mrs', 'ms', 'mstr', 'chd', 'inf', 'd
 const nmSYN = { mohamed: 'mohammed', mohammed: 'mohammed', muhammad: 'mohammed', cheikh: 'cheikh', cheick: 'cheikh', sheikh: 'cheikh', aissatou: 'aissata', aissata: 'aissata', ousmane: 'ousmane', ousman: 'ousmane', abdoulaye: 'abdoulaye', abdallah: 'abdoulaye', bah: 'ba' };
 function nmSyn(t) { return nmSYN[t] || t; }
 function nmStrip(x) { return String(x || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+// Écart RÉEL de nom (billet vs passeport) : ignore accents, casse, ordre des prénoms et 2e prénom en plus.
+function _nameToks(x) { return nmStrip(x).replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim().split(' ').filter(Boolean).sort(); }
+function nameDiffers(a, b) {
+  const ta = _nameToks(a), tb = _nameToks(b);
+  if (!ta.length || !tb.length) return false;                 // un des deux manque → pas de comparaison
+  if (ta.join(' ') === tb.join(' ')) return false;            // identique (ordre/accents ignorés)
+  const sa = new Set(ta), sb = new Set(tb);
+  if (ta.every((t) => sb.has(t)) || tb.every((t) => sa.has(t))) return false; // l'un inclus dans l'autre (2e prénom en plus)
+  return true;                                                // écart réel → à vérifier
+}
 function nmLev(a, b) { const m = a.length, n = b.length; if (!m) return n; if (!n) return m; const d = [...Array(m + 1)].map((_, i) => [i, ...Array(n).fill(0)]); for (let j = 0; j <= n; j++) d[0][j] = j; for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++) d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); return d[m][n]; }
 function nmTok(a, b) { a = nmSyn(a); b = nmSyn(b); if (a === b) return 1; if (a.length >= 4 && b.length >= 4 && (a.includes(b) || b.includes(a))) return 0.85; if (a.length >= 4 && b.length >= 4 && nmLev(a, b) <= 2) return 0.6; if ((a.length === 1 && b[0] === a) || (b.length === 1 && a[0] === b)) return 0.4; return 0; }
 function nmBest(d, p) { let m = 0; for (const x of d) for (const y of p) { const s = nmTok(x, y); if (s > m) m = s; } return m; }
@@ -957,8 +967,11 @@ async function askOcrConfirm(phone, s, cfg, mediaUrl) {
     const _att = pp.name ? attributeId(s, pp.name) : { confident: false, idx: -1 };
     if (s.pax > 1 && _att.confident && _att.idx >= 0) {
       const cur = s.passengers[_att.idx] || {};
-      s.passengers[_att.idx] = { ...cur, name: cur.name || pp.name, dob: pp.dob || cur.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || cur.adresse || '', viaPhoto: true, idReceived: true };
+      const _billet = cur.name || '';
+      const _mismatch = !!(_billet && pp.name && nameDiffers(_billet, pp.name));
+      s.passengers[_att.idx] = { ...cur, name: cur.name || pp.name, nameId: pp.name || cur.nameId || '', nameMismatch: _mismatch, dob: pp.dob || cur.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || cur.adresse || '', viaPhoto: true, idReceived: true };
       await setState(phone, s);
+      if (_mismatch) { try { notifyOwnerWhatsApp('', `⚠️ Écart de nom${s.ref ? ' [' + s.ref + ']' : ''} : billet « ${_billet} » / passeport « ${pp.name} » — à vérifier (poste pièces).`).catch(() => {}); } catch (_) {} }
       const got = (s.passengers || []).filter((p) => p && p.idReceived).length;
       await send(phone, `✅ Pièce de *${cur.name || pp.name}* reçue (${got}/${s.pax})${minor ? ' · 👶 mineur·e, signature parentale' : ''}${expired ? ' · ⚠️ expirée, un conseiller vérifie' : ''}.`, cfg);
       return nextPassport(phone, s, cfg);
@@ -1714,7 +1727,10 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       const a = e.name ? attributeId(s, e.name) : { idx: -1, confident: false };
       const idx = (a.confident && a.idx >= 0) ? a.idx : s.doc_idx;
       const cur = s.passengers[idx] || {};
-      s.passengers[idx] = { ...cur, ...e, name: cur.name || e.name, idReceived: true }; // garde le nom de l'e-billet, ajoute DDN/pièce
+      const _billet = cur.name || '';
+      const _mismatch = !!(_billet && e.name && nameDiffers(_billet, e.name));
+      s.passengers[idx] = { ...cur, ...e, name: cur.name || e.name, nameId: e.name || cur.nameId || '', nameMismatch: _mismatch, idReceived: true }; // garde le nom de l'e-billet, ajoute DDN/pièce + nom passeport à part
+      if (_mismatch) { try { notifyOwnerWhatsApp(phone, `⚠️ Écart de nom${s.ref ? ' [' + s.ref + ']' : ''} : billet « ${_billet} » / passeport « ${e.name} » — à vérifier (poste pièces).`).catch(() => {}); } catch (_) {} }
       // Attribution incertaine sur un dossier MULTI-passagers → rattachée par défaut au passager courant.
       // On prévient l'owner pour vérification manuelle (cas demandé par Climbie).
       if (s.pax > 1 && !(a.confident && a.idx >= 0)) {
