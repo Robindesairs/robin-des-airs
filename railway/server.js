@@ -14,6 +14,7 @@
 
 const express = require('express');
 const { pickVariant } = require('./lib/bot-variants');
+const { lookupFlightRoutes } = require('./lib/flight-routes');
 const { SYSTEM_PROMPT: FAQ_SYSTEM_PROMPT, FAQ_KNOWLEDGE } = require('./lib/faq-hors-tunnel');
 const { pickRV, fillTpl } = require('./lib/relance-variants');
 const { extractEticketMulti: extractEticketMultiLib, pdfToImages: pdfToImagesLib } = require('./lib/extract-eticket');
@@ -1738,8 +1739,17 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       if (tooOld(s.date)) { return finNonEligible(phone,pickVariant(phone, 'PRESCRIPTION_5ANS'), cfg); }
       const ok = `✅ Vol du *${d}* — le *${dateEnLettres(d)}*.`;
       if (s.route) return gotoPnr(phone, s, cfg, ok);
-      // Pas de route (ni scan ni saisie) → on tente de la RETROUVER depuis le n° de vol (AeroDataBox).
+      // Pas de route (ni scan ni saisie) → on tente de la RETROUVER depuis le n° de vol.
       await send(phone, ok, cfg);
+      // 1. Dict statique (prioritaire — zéro latence, gère les milk-runs)
+      const staticRoutes = lookupFlightRoutes(s.vol);
+      if (staticRoutes && staticRoutes.length) {
+        if (staticRoutes[0].airline && !s.compagnie) s.compagnie = staticRoutes[0].airline;
+        s._routeSource = 'static';
+        s._verdict = { verdict: 'a_verifier', covered: null, route: staticRoutes[0].route, airline: staticRoutes[0].airline };
+        if (staticRoutes.length === 1) { s.route = staticRoutes[0].route; return askRouteConfirm(phone, s, cfg); }
+        return askRouteChoice(phone, staticRoutes, s, cfg);
+      }
       const legsInfo = await resolveLegs(s.vol, s.date);
       if (legsInfo && legsInfo.airline && !s.compagnie) s.compagnie = legsInfo.airline;
       const stops = (legsInfo && legsInfo.stops) || [];
