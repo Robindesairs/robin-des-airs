@@ -1277,13 +1277,13 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // MSG3 — ROUTE : qualification CE 261 en 1 tap (le voyage touche-t-il l'Europe ?).
   // Le détail ville-par-ville n'est demandé QUE pour une correspondance (steps esc_*).
   if (s.step === 'route_zone') {
-    const n = normInput(input, ['commence', 'arrive', 'ni']);
+    const n = normInput(input, ['commence', 'arriv', 'ni']); // « arriv » (pas « arrive ») : « arrivée » ne contient PAS « arrive » à cause de l'accent é
     if (id === 'rz_dep' || n === '1' || lower.includes('commence') || /d[ée]part|d[ée]coll|\bpar[st]?\b/.test(lower)) {
       s.route_type = 'af_eu'; s.europeTouch = 'depart'; s.step = 'incident'; await setState(phone, s);
       await send(phone, `✅ Vol au *départ d'Europe* : vous êtes couvert(e) par le CE 261/2004 — *quelle que soit la compagnie*. 👍`, cfg);
       return sendIncident(phone, s, cfg);
     }
-    if (id === 'rz_arr' || n === '2' || lower.includes('arrive')) {
+    if (id === 'rz_arr' || n === '2' || lower.includes('arriv') || lower.includes('atterr')) {
       s.route_type = 'af_eu'; s.europeTouch = 'arrivee'; s.step = 'incident'; await setState(phone, s);
       await send(phone, `✅ Vol à *l'arrivée en Europe* : couvert *si la compagnie est européenne* (Air France, Brussels, TAP…). Sinon, un expert vérifie un autre recours — on garde votre dossier dans tous les cas. 👍`, cfg);
       return sendIncident(phone, s, cfg);
