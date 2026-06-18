@@ -1286,10 +1286,10 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // MSG4b — ANNULATION : règle des 14 jours de préavis (art. 5 CE 261). Pré-filtre AVANT le n° de vol.
   // Le critère légal = écart NOTIFICATION → date du vol, pas « le vol est dans +/- 14 j à partir d'aujourd'hui ».
   if (s.step === 'annul_delai') {
-    const n = normInput(input, ['ou moins', 'plus de', 'sais']); // mots-clés NON chevauchants (« 14 jours » est dans les 2 boutons)
-    if (n === '2' || lower.includes('plus de 14')) { await clearState(phone); return finNonEligible(phone, pickVariant(phone, 'STOP_ANNUL_14J'), cfg); }
+    const n = normInput(input, ['moins de', 'ou plus', 'sais']); // mots-clés NON chevauchants (« 14 jours » est dans les 2 boutons)
+    if (n === '2' || lower.includes('ou plus') || lower.includes('plus de 14') || lower.includes('14 ou plus')) { await clearState(phone); return finNonEligible(phone, pickVariant(phone, 'STOP_ANNUL_14J'), cfg); }
     if (n === '3' || lower.includes('sais') || lower.includes('souviens') || lower.includes('aucune idée')) { s.annul_preavis = 'inconnu'; s.escalade = s.escalade || 'preavis_inconnu'; await send(phone, pickVariant(phone, 'ANNUL_PREAVIS_INCONNU'), cfg); return continueAnnul(phone, s, cfg); }
-    if (n === '1' || lower.includes('ou moins') || lower.includes('moins de 14') || lower.includes('14')) { s.annul_preavis = '<=14j'; await send(phone, pickVariant(phone, 'REACTION_ANNULATION'), cfg); return continueAnnul(phone, s, cfg); }
+    if (n === '1' || lower.includes('moins de 14') || lower.includes('moins de') || lower.includes('moins')) { s.annul_preavis = '<14j'; await send(phone, pickVariant(phone, 'REACTION_ANNULATION'), cfg); return continueAnnul(phone, s, cfg); }
     await send(phone, `🙂 Je n'ai pas bien compris. Touchez un des boutons ci-dessous 👇`, cfg); return sendAnnulDelai(phone, s, cfg);
   }
   if (s.step === 'duree') {
@@ -1982,7 +1982,7 @@ async function sendIncident(phone, s, cfg) { s.step = 'incident'; await setState
 // PAS sur « aujourd'hui → vol » (qui serait juridiquement faux).
 async function sendAnnulDelai(phone, s, cfg) {
   s.step = 'annul_delai'; await setState(phone, s);
-  return sendButtons(phone, { body: `${bar('incident')}\n📅 Pour une *annulation*, c'est le *moment où on vous a prévenu(e)* qui compte.\n\nQuand la compagnie a annoncé l'annulation, votre vol était dans *14 jours ou moins* ou *plus de 14 jours* ?`, buttons: [{ text: '🟢 14 jours ou moins' }, { text: '🔴 Plus de 14 jours' }, { text: '🤔 Je ne sais plus' }] }, cfg);
+  return sendButtons(phone, { body: `${bar('incident')}\n📅 Pour une *annulation*, c'est le *moment où on vous a prévenu(e)* qui compte.\n\nQuand la compagnie a annoncé l'annulation, votre vol était dans *moins de 14 jours* ou *14 jours ou plus* ?`, buttons: [{ text: '🟢 Moins de 14 jours' }, { text: '🔴 14 jours ou plus' }, { text: '🤔 Je ne sais plus' }] }, cfg);
 }
 
 // Suite après le gate annulation : reprend le flux normal (estimation → passagers),
