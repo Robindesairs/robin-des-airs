@@ -512,9 +512,10 @@ async function resolveRouteViaLLM(vol) {
   try {
     const prompt = `Tu identifies le trajet HABITUEL d'un numéro de vol commercial régulier. Vol : "${v}".
 Réponds UNIQUEMENT en JSON : {"dep":"","arr":"","airline":"","sur":false}
-- dep / arr : codes IATA 3 lettres des aéroports de départ et d'arrivée habituels de CE numéro de vol.
-- airline : nom de la compagnie (déduit du préfixe IATA, ex. AC = Air Canada, AF = Air France).
-- sur : true UNIQUEMENT si tu connais CE vol précis avec CERTITUDE. Au moindre doute → sur:false et dep/arr vides. NE DEVINE JAMAIS un aéroport.`;
+- dep / arr : codes IATA 3 lettres des aéroports de départ et d'arrivée habituels de CE numéro de vol. TOUJOURS renseigner dep et arr avec ta meilleure estimation — même si tu n'es pas certain.
+- airline : nom de la compagnie (déduit du préfixe IATA, ex. SN = Brussels Airlines, AF = Air France).
+- sur : true si tu es certain de ce trajet précis, false sinon.
+Si le numéro de vol n'existe pas du tout ou est ambigu au point de ne pas pouvoir proposer de trajet plausible, laisser dep et arr vides.`;
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST', signal: AbortSignal.timeout(12000),
       headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
@@ -525,7 +526,7 @@ Réponds UNIQUEMENT en JSON : {"dep":"","arr":"","airline":"","sur":false}
     const p = JSON.parse(data.choices[0].message.content);
     const dep = String(p.dep || '').toUpperCase().replace(/[^A-Z]/g, '');
     const arr = String(p.arr || '').toUpperCase().replace(/[^A-Z]/g, '');
-    if (p.sur !== true || dep.length !== 3 || arr.length !== 3 || dep === arr) return null;
+    if (dep.length !== 3 || arr.length !== 3 || dep === arr) return null;
     return { dep, arr, airline: String(p.airline || '').trim(), route: `${dep} → ${arr}` };
   } catch (_) { return null; }
 }
