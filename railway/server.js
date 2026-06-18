@@ -505,29 +505,40 @@ async function fetchFlightVerdict(vol, date, typeVol) {
 // (1) le modèle ne devine PAS — flag « sur », sinon on renvoie null ; (2) la route est TOUJOURS
 // reconfirmée par le client (askRouteConfirm) → c'est une SUGGESTION, jamais un fait imposé ;
 // (3) l'appelant pose un verdict « a_verifier » → l'éligibilité reste tranchée par l'expert, pas par l'IA.
+// Résout les routes POSSIBLES d'un n° de vol via LLM (GPT-4o).
+// Retourne un tableau de 1-3 routes [{dep,arr,airline,route}] ou null.
+// Plusieurs routes quand le vol opère un "milk run" (ex. SN277 = BRU→ACC→LFW → 3 options).
 async function resolveRouteViaLLM(vol) {
   const key = process.env.OPENAI_API_KEY;
   const v = String(vol || '').toUpperCase().replace(/\s+/g, '');
   if (!key || !/^[A-Z0-9]{3,8}$/.test(v)) return null;
   try {
-    const prompt = `Tu identifies le trajet HABITUEL d'un numéro de vol commercial régulier. Vol : "${v}".
-Réponds UNIQUEMENT en JSON : {"dep":"","arr":"","airline":"","sur":false}
-- dep / arr : codes IATA 3 lettres des aéroports de départ et d'arrivée habituels de CE numéro de vol. TOUJOURS renseigner dep et arr avec ta meilleure estimation — même si tu n'es pas certain.
-- airline : nom de la compagnie (déduit du préfixe IATA, ex. SN = Brussels Airlines, AF = Air France).
-- sur : true si tu es certain de ce trajet précis, false sinon.
-Si le numéro de vol n'existe pas du tout ou est ambigu au point de ne pas pouvoir proposer de trajet plausible, laisser dep et arr vides.`;
+    const prompt = `Tu identifies les trajets POSSIBLES d'un numéro de vol commercial régulier. Vol : "${v}".
+Réponds UNIQUEMENT en JSON : {"routes":[{"dep":"","arr":"","airline":""}],"sur":false}
+- routes : tableau de 1 à 3 objets. Chaque objet = un tronçon possible (dep/arr = codes IATA 3 lettres).
+  * Si le vol est direct A→B : 1 seul objet.
+  * Si le vol fait une ou deux escales (ex. BRU→ACC→LFW) : liste TOUS les tronçons opérés + le trajet complet.
+    Exemple BRU→ACC→LFW : [{"dep":"BRU","arr":"ACC"},{"dep":"ACC","arr":"LFW"},{"dep":"BRU","arr":"LFW"}]
+  * Toujours renseigner ta meilleure estimation même si tu n'es pas certain.
+  * Si le vol n'existe pas ou est totalement inconnu, renvoyer routes:[].
+- airline : nom de la compagnie (ex. SN = Brussels Airlines).
+- sur : true si certain du routing, false sinon.`;
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST', signal: AbortSignal.timeout(12000),
       headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 80, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: prompt }] }),
+      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 160, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: prompt }] }),
     });
     if (!res.ok) return null;
     const data = await res.json(); if (!data.choices) return null;
     const p = JSON.parse(data.choices[0].message.content);
-    const dep = String(p.dep || '').toUpperCase().replace(/[^A-Z]/g, '');
-    const arr = String(p.arr || '').toUpperCase().replace(/[^A-Z]/g, '');
-    if (dep.length !== 3 || arr.length !== 3 || dep === arr) return null;
-    return { dep, arr, airline: String(p.airline || '').trim(), route: `${iataLabel(dep)} → ${iataLabel(arr)}` };
+    const airline = String(p.airline || '').trim();
+    const routes = (Array.isArray(p.routes) ? p.routes : []).map((r) => {
+      const dep = String(r.dep || '').toUpperCase().replace(/[^A-Z]/g, '');
+      const arr = String(r.arr || '').toUpperCase().replace(/[^A-Z]/g, '');
+      if (dep.length !== 3 || arr.length !== 3 || dep === arr) return null;
+      return { dep, arr, airline, route: `${iataLabel(dep)} → ${iataLabel(arr)}` };
+    }).filter(Boolean).slice(0, 3);
+    return routes.length ? routes : null;
   } catch (_) { return null; }
 }
 // Résout les TRONÇONS du vol via AeroDataBox (flight-info renvoie un tableau de legs). Un vol multi-stop
@@ -1363,7 +1374,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // ⚠️ Jamais intercepté si c'est une réponse interactive (bouton/liste) : replyId présent → flux prioritaire
   try {
     const { isClientQuestion, isSensitive, answerClientQuestion } = AI;
-    const FREE = ['m_vol', 'm_date', 'm_route', 'm_dep', 'm_arr', 'm_stop_arr', 'm_pnr', 'leg_count', 'leg_input', 'esc_dep', 'esc_via', 'esc_arr', 'esc_vol', 'names', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob', 'doc_adresse'];
+    const FREE = ['m_vol', 'm_date', 'm_route', 'm_route_choice', 'm_dep', 'm_arr', 'm_stop_arr', 'm_pnr', 'leg_count', 'leg_input', 'esc_dep', 'esc_via', 'esc_arr', 'esc_vol', 'names', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob', 'doc_adresse'];
     // Une intention claire « parler à un humain / être contacté / rappel » est analysée PARTOUT
     // (même en plein tunnel et sans « ? ») → on ne redemande pas bêtement l'étape en cours.
     const looks = !id && (isSensitive(input) || (FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input)));
@@ -1732,8 +1743,13 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       const legsInfo = await resolveLegs(s.vol, s.date);
       if (legsInfo && legsInfo.airline && !s.compagnie) s.compagnie = legsInfo.airline;
       const stops = (legsInfo && legsInfo.stops) || [];
-      // Vol MULTI-ESCALES (ex. Orly → Cotonou → Abidjan) → on PROPOSE les arrêts (où êtes-vous descendu ?).
-      if (stops.length >= 3) { s.routeStops = stops; await setState(phone, s); return askStopArr(phone, s, cfg); }
+      // Vol MULTI-ESCALES (ex. BRU→ACC→LFW) → boutons de choix de tronçon (max 3).
+      if (stops.length >= 3) {
+        const segs = [];
+        for (let i = 0; i < stops.length - 1; i++) segs.push({ dep: stops[i].code, arr: stops[i + 1].code, airline: legsInfo.airline || '', route: `${stops[i].label} → ${stops[i + 1].label}` });
+        if (stops.length === 3) segs.push({ dep: stops[0].code, arr: stops[2].code, airline: legsInfo.airline || '', route: `${stops[0].label} → ${stops[2].label}` }); // trajet complet
+        return askRouteChoice(phone, segs.slice(0, 3), s, cfg);
+      }
       // Vol simple A → B retrouvé → confirmation 1 tap.
       if (stops.length === 2) {
         s.route = `${stops[0].label} → ${stops[1].label}`;
@@ -1748,20 +1764,42 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
         s._verdict = vFallback;
         return askRouteConfirm(phone, s, cfg);
       }
-      // AeroDataBox muet (vol ancien) → dernier recours : OpenAI propose le trajet habituel du n° de vol.
-      // Toujours reconfirmé par le client ; verdict « a_verifier » → l'expert tranche l'éligibilité.
-      const llm = await resolveRouteViaLLM(s.vol);
-      if (llm && llm.route) {
-        s.route = llm.route; if (llm.airline && !s.compagnie) s.compagnie = llm.airline;
+      // AeroDataBox muet (vol ancien) → dernier recours : OpenAI propose les tronçons du n° de vol.
+      // 1 route → confirmation 1 tap ; 2-3 routes → boutons de choix.
+      const llmRoutes = await resolveRouteViaLLM(s.vol);
+      if (llmRoutes && llmRoutes.length) {
+        if (llmRoutes[0].airline && !s.compagnie) s.compagnie = llmRoutes[0].airline;
         s._routeSource = 'llm';
-        s._verdict = { verdict: 'a_verifier', covered: null, route: llm.route, airline: llm.airline };
-        return askRouteConfirm(phone, s, cfg);
+        if (llmRoutes.length === 1) {
+          s.route = llmRoutes[0].route;
+          s._verdict = { verdict: 'a_verifier', covered: null, route: llmRoutes[0].route, airline: llmRoutes[0].airline };
+          return askRouteConfirm(phone, s, cfg);
+        }
+        return askRouteChoice(phone, llmRoutes, s, cfg);
       }
       // Vol vraiment non retrouvé → on demande le trajet en 2 questions imagées (décollage 🛫 / atterrissage 🛬).
       return askDepCity(phone, s, cfg);
     }
     if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim()), cfg);
     return send(phone, `Date non reconnue. Format JJ/MM/AAAA (ex. 15/03/2026) :`, cfg);
+  }
+  // Choix du tronçon parmi 2-3 options (milk-run ou LLM multi-routes).
+  if (s.step === 'm_route_choice') {
+    const choices = s.routeChoices || [];
+    let picked = null;
+    for (let i = 0; i < choices.length; i++) {
+      if (id === `rc_${i}` || input.trim() === String(i + 1)) { picked = choices[i]; break; }
+    }
+    if (!picked) {
+      const buttons = choices.map((r, i) => ({ id: `rc_${i}`, text: r.route.slice(0, 20) }));
+      return sendButtons(phone, { body: `✈️ Touchez votre trajet pour *${s.vol}* :`, buttons }, cfg);
+    }
+    s.route = picked.route;
+    if (picked.airline && !s.compagnie) s.compagnie = picked.airline;
+    s._verdict = { verdict: 'a_verifier', covered: null, route: picked.route, airline: picked.airline || '' };
+    delete s.routeChoices;
+    await setState(phone, s);
+    return gotoPnr(phone, s, cfg, `✅ Trajet : *${s.route}*`);
   }
   // Confirmation du trajet retrouvé automatiquement (AeroDataBox) — 1 tap, ou correction manuelle.
   if (s.step === 'm_route_confirm') {
@@ -2185,6 +2223,14 @@ async function estimationPuisPax(phone, s, cfg) { s.step = 'nb_pax'; await setSt
 async function askRouteConfirm(phone, s, cfg) {
   s.step = 'm_route_confirm'; await setState(phone, s);
   return sendButtons(phone, { body: `✈️ J'ai retrouvé votre trajet : *${s.route}*${s.compagnie ? ` (${s.compagnie})` : ''}.\nC'est bien ça ?`, buttons: [{ id: 'route_ok', text: '✅ Oui, c\'est ça' }, { id: 'route_fix', text: '✏️ Corriger' }] }, cfg);
+}
+// Boutons de choix de tronçon (milk-run ou LLM multi-routes). Max 3 boutons WATI.
+async function askRouteChoice(phone, routes, s, cfg) {
+  s.step = 'm_route_choice';
+  s.routeChoices = routes.slice(0, 3);
+  await setState(phone, s);
+  const buttons = s.routeChoices.map((r, i) => ({ id: `rc_${i}`, text: r.route.slice(0, 20) }));
+  return sendButtons(phone, { body: `✈️ Quel était votre trajet exact pour *${s.vol}* ?`, buttons }, cfg);
 }
 // Demande du PNR (factorisé : utilisé après date+route, après confirmation/saisie du trajet).
 async function gotoPnr(phone, s, cfg, prefix) {
