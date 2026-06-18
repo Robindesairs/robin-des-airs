@@ -2059,6 +2059,13 @@ async function loadRappelView(){
   if(!data || !data.ok){ rv.innerHTML='<div class="rappel-empty">📞 File « À rappeler » indisponible — connexion CRM requise, ou aucun lead à rappeler pour l’instant.</div>'; return; }
   renderRappelList(data.leads||[]);
 }
+// Drapeau + nom de la langue choisie (le label reste lisible même si le drapeau ne rend pas sous Windows).
+var RAPPEL_LANGS={fr:['🇫🇷','Français'],en:['🇬🇧','English'],wo:['🇸🇳','Wolof'],mnk:['🇬🇲','Mandinka'],twi:['🇬🇭','Twi'],yo:['🇳🇬','Yoruba'],ff:['🇬🇳','Peul']};
+function langueBadge(code){ if(!code) return ''; var l=RAPPEL_LANGS[code]||['🌍',String(code).toUpperCase()];
+  return '<span style="display:inline-block;margin-left:8px;font-size:11px;font-weight:600;color:#1D4ED8;background:#EFF4FF;border-radius:8px;padding:1px 7px;vertical-align:middle" title="Langue choisie par le client">'+l[0]+' '+l[1]+'</span>'; }
+// Âge : 1re heure = minutes ; au-delà = heures + minutes (ex. « 1h 15min »).
+function fmtRappelAge(min){ if(min==null||isNaN(min)) return ''; min=Math.max(0,Math.round(min));
+  if(min<60) return min+' min'; var h=Math.floor(min/60), m=min%60; return h+'h'+(m?' '+m+'min':''); }
 function renderRappelList(leads){
   var rv=document.getElementById('rappel-view'); if(!rv) return;
   if(!leads.length){ rv.innerHTML='<div class="rappel-empty">✅ Personne à rappeler — tout le monde a été contacté.</div>'; return; }
@@ -2068,7 +2075,7 @@ function renderRappelList(leads){
       var nom=escHtml((String(l.name||'').trim())||'(sans nom)');
       var reason = l.wantsCall ? '📞 Rappel demandé' : (l.reason==='mandat_non_signe'?'Mandat non signé':(l.reason==='abandon_avant_signature'?'Abandon avant signature':'Fenêtre 24h fermée'));
       var sub=[l.vol,l.route,l.incident].filter(Boolean).map(escHtml).join(' · ');
-      var age=(l.ageHours!=null)?(l.ageHours<24?l.ageHours+'h':Math.round(l.ageHours/24)+'j'):'';
+      var age=fmtRappelAge(l.ageMin!=null?l.ageMin:(l.ageHours!=null?l.ageHours*60:null));
       // Numéro en clair (à composer dans OnOff/un poste) + clic qui ouvre la FICHE complète si un
       // dossier existe pour cette réf → toutes les infos déjà saisies sous les yeux avant d'appeler.
       var telTxt = tel ? '+'+tel.replace(/^33(\d)/,'33 $1') : '';
@@ -2076,7 +2083,7 @@ function renderRappelList(leads){
       var hasDossier = !!(ref && typeof DB!=='undefined' && DB.some(function(d){return d.id===ref;}));
       var openAttr = hasDossier ? ' onclick="openDetail(\''+ref.replace(/'/g,'')+'\')" style="flex:1;min-width:0;cursor:pointer" title="Ouvrir la fiche complète du dossier"' : ' style="flex:1;min-width:0"';
       return '<div class="rappel-card'+(l.wantsCall?' rappel-urgent':'')+'">'
-        +'<div'+openAttr+'><div class="rappel-name">'+nom+(l.pax>1?' ×'+l.pax:'')+(hasDossier?' <span style="font-size:11px;color:var(--green);font-weight:700">↗ fiche</span>':'')+'</div>'
+        +'<div'+openAttr+'><div class="rappel-name">'+nom+(l.pax>1?' ×'+l.pax:'')+langueBadge(l.langue)+(hasDossier?' <span style="font-size:11px;color:var(--green);font-weight:700">↗ fiche</span>':'')+'</div>'
         +'<div class="rappel-sub">'+(sub||'—')+'</div>'
         +(telTxt?'<div class="rappel-sub" style="font-variant-numeric:tabular-nums;color:var(--text);font-weight:600">📱 '+telTxt+'</div>':'')
         +'<div class="rappel-meta">'+reason+(age?' · il y a '+age:'')+(l.montant?' · jusqu’à '+l.montant+' €':'')+'</div></div>'

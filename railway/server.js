@@ -222,6 +222,7 @@ function markEngagedLead(phone, s) {
     incident: (s && s.incident_libelle) || (cur && cur.incident) || '',
     perPax: (s && s.perPax != null) ? s.perPax : (cur && cur.perPax), // pour des relances cohérentes avec le montant vu au récap
     flightVerdict: (s && s.flightVerdict) || (cur && cur.flightVerdict) || '',
+    langue: (s && s.langue_code) || (cur && cur.langue) || '', // langue choisie → drapeau dans « À rappeler » (l'agent sait quelle langue parler)
   };
   if (!cur || !cur.engagedAt) patch.engagedAt = Date.now(); // ancre la relance sur le 1er engagement
   upsertLead(phone, patch);
@@ -1159,7 +1160,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // "appel" flague le dossier pour la liste « À rappeler » du Bureau et rassure le client.
   if (id === 'appel' || ((lower === 'appel' || lower.includes('rappel') || lower.includes('besoin d'))
       && !(s && (s.step === 'doc_boarding' || s.step === 'doc_eticket')))) { // WATI renvoie souvent le LIBELLÉ du bouton (« Besoin d'aide » / « Être rappelé »), pas l'id → on matche aussi le texte
-    upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now(), lastClientAt: Date.now() });
+    upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now(), lastClientAt: Date.now(), ...(s && s.langue_code ? { langue: s.langue_code } : {}) });
     notifyCallbackWanted(phone, s, 'a demandé à être rappelé');
     return send(phone, `📞 *C'est noté !* Un vrai conseiller Robin des Airs — un humain, pas un robot 🙂 — vous rappelle très vite.\n\n👉 On vous appelle depuis le *+33 7 56 86 36 30* : enregistrez-le tout de suite sous « *Robin des Airs* » pour reconnaître l'appel et *décrocher* (sinon il s'affiche comme un numéro inconnu).\n\n🔒 C'est bien nous, jamais une arnaque : *0 € tant qu'on ne gagne pas*, et on ne vous demandera jamais de payer au téléphone.\n\nPas dispo ? Répondez ici quand vous voulez, ou écrivez *go* pour reprendre. 🙏`, cfg);
   }
@@ -2522,7 +2523,8 @@ app.get('/api/leads-a-rappeler', (req, res) => {
       incident: lead.incident || '', pax: lead.pax || 1, montant: 600 * (lead.pax || 1), ref: lead.ref || '',
       stage: lead.completed ? 'completed' : 'engaged',
       reason: lead.wantsCall ? 'rappel_demande' : (lead.completed ? 'mandat_non_signe' : 'abandon_avant_signature'),
-      wantsCall: !!lead.wantsCall, since, ageHours: Math.max(0, Math.round((now - since) / 3600000)),
+      langue: lead.langue || '',
+      wantsCall: !!lead.wantsCall, since, ageHours: Math.max(0, Math.round((now - since) / 3600000)), ageMin: Math.max(0, Math.round((now - since) / 60000)),
     });
   }
   out.sort((a, b) => (Number(b.wantsCall) - Number(a.wantsCall)) || (a.since - b.since)); // rappels demandés d'abord, puis les plus anciens
