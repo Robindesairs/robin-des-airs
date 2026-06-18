@@ -969,6 +969,8 @@ function fhours(f){
   if(f.sta||f.eta) bits.push('arr '+(t(f.sta)||'—')+'→<b>'+(t(f.eta)||'—')+'</b>');
   return bits.length ? bits.join(' · ')+' <span class="z">UTC</span>' : '';
 }
+// Date du vol JJ/MM/AAAA à partir d'un ISO 'AAAA-MM-JJ' (sinon la valeur telle quelle).
+function fdateR(d){ if(!d) return ''; const m=String(d).slice(0,10).match(/^(\d{4})-(\d{2})-(\d{2})$/); return m ? m[3]+'/'+m[2]+'/'+m[1] : String(d); }
 function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 // Comparateur « même fenêtre » → ligne + mini-déroulant documentant chaque vol (n°, heure, état).
 function fenetreHtml(v, kLabel, sumPrefix){
@@ -1204,12 +1206,14 @@ function renderRadar(){
     REAL.radar.slice(0,8).forEach(f=>{
       const cancel = f.kind==='cancel';
       const hrs = fhours(f);
+      const dt = fdateR(f.date); // date du vol — sinon impossible de situer le vol (prescription, rapprochement dossier)
+      const meta = [dt?('📅 <b>'+dt+'</b>'):'', hrs].filter(Boolean).join(' · ');
       const el=document.createElement('div'); el.className='r';
       const eqd = f.enquete&&f.enquete.extraordinaire ? `<span class="enq-dot ${f.enquete.extraordinaire==='NON'?'ok':f.enquete.extraordinaire==='OUI'?'bad':'warn'}" title="${f.enquete.extraordinaire==='NON'?'Indemnisable (non extraordinaire)':f.enquete.extraordinaire==='OUI'?'Risque exonération (extraordinaire)':'À confirmer'}">⚖</span>` : (f.rebookWatch ? `<span class="enq-dot warn" title="Annulation à l'avance — réacheminement à surveiller">🗓️</span>` : '');
       const vreco = f.enquete&&f.enquete.procedure&&f.enquete.procedure.reco;
       const vchip = vreco==='LANCER' ? '<span class="verdict-chip go" title="Feu vert : lancer la procédure">LANCER</span>'
                   : vreco==='PRUDENCE' ? '<span class="verdict-chip warn" title="Prudence — valider juriste">PRUDENCE</span>' : '';
-      el.innerHTML=`<span class="fl">${f.fl}</span><span class="rt">${f.r}${eqd}${vchip}${f.reg?`<span class="reg">${f.reg}</span>`:''}${hrs?`<span class="hrs">${hrs}</span>`:''}</span>
+      el.innerHTML=`<span class="fl">${f.fl}</span><span class="rt">${f.r}${eqd}${vchip}${f.reg?`<span class="reg">${f.reg}</span>`:''}${meta?`<span class="hrs">${meta}</span>`:''}</span>
         <span class="bd ${cancel?'cancel':'delay'}">${cancel?'ANNULÉ':(f.detail||'retard')}</span>
         <span class="eu">${f.eu} €</span>`;
       radarEl.appendChild(el);
