@@ -500,6 +500,35 @@ async function fetchFlightVerdict(vol, date, typeVol) {
     return (j && j.ok) ? j : null;
   } catch (_) { return null; }
 }
+// Dernier recours quand AeroDataBox n'a pas la route (vol trop ancien = hors fenêtre de données) :
+// on demande à OpenAI le trajet HABITUEL du numéro de vol (info publique stable). Garde-fous :
+// (1) le modèle ne devine PAS — flag « sur », sinon on renvoie null ; (2) la route est TOUJOURS
+// reconfirmée par le client (askRouteConfirm) → c'est une SUGGESTION, jamais un fait imposé ;
+// (3) l'appelant pose un verdict « a_verifier » → l'éligibilité reste tranchée par l'expert, pas par l'IA.
+async function resolveRouteViaLLM(vol) {
+  const key = process.env.OPENAI_API_KEY;
+  const v = String(vol || '').toUpperCase().replace(/\s+/g, '');
+  if (!key || !/^[A-Z0-9]{3,8}$/.test(v)) return null;
+  try {
+    const prompt = `Tu identifies le trajet HABITUEL d'un numéro de vol commercial régulier. Vol : "${v}".
+Réponds UNIQUEMENT en JSON : {"dep":"","arr":"","airline":"","sur":false}
+- dep / arr : codes IATA 3 lettres des aéroports de départ et d'arrivée habituels de CE numéro de vol.
+- airline : nom de la compagnie (déduit du préfixe IATA, ex. AC = Air Canada, AF = Air France).
+- sur : true UNIQUEMENT si tu connais CE vol précis avec CERTITUDE. Au moindre doute → sur:false et dep/arr vides. NE DEVINE JAMAIS un aéroport.`;
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST', signal: AbortSignal.timeout(12000),
+      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 80, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: prompt }] }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json(); if (!data.choices) return null;
+    const p = JSON.parse(data.choices[0].message.content);
+    const dep = String(p.dep || '').toUpperCase().replace(/[^A-Z]/g, '');
+    const arr = String(p.arr || '').toUpperCase().replace(/[^A-Z]/g, '');
+    if (p.sur !== true || dep.length !== 3 || arr.length !== 3 || dep === arr) return null;
+    return { dep, arr, airline: String(p.airline || '').trim(), route: `${dep} → ${arr}` };
+  } catch (_) { return null; }
+}
 // Résout les TRONÇONS du vol via AeroDataBox (flight-info renvoie un tableau de legs). Un vol multi-stop
 // sous le même n° (ex. ORY→COO→ABJ) revient en plusieurs lignes → on les CHAÎNE en arrêts ordonnés.
 // Évite de faire taper la route au client (pas d'e-billet/carte) ; toujours CONFIRMÉ ensuite (jamais imposé).
@@ -1634,6 +1663,15 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       if (vFallback && vFallback.route && /→/.test(vFallback.route)) {
         s.route = vFallback.route; if (vFallback.airline && !s.compagnie) s.compagnie = vFallback.airline;
         s._verdict = vFallback;
+        return askRouteConfirm(phone, s, cfg);
+      }
+      // AeroDataBox muet (vol ancien) → dernier recours : OpenAI propose le trajet habituel du n° de vol.
+      // Toujours reconfirmé par le client ; verdict « a_verifier » → l'expert tranche l'éligibilité.
+      const llm = await resolveRouteViaLLM(s.vol);
+      if (llm && llm.route) {
+        s.route = llm.route; if (llm.airline && !s.compagnie) s.compagnie = llm.airline;
+        s._routeSource = 'llm';
+        s._verdict = { verdict: 'a_verifier', covered: null, route: llm.route, airline: llm.airline };
         return askRouteConfirm(phone, s, cfg);
       }
       // Vol vraiment non retrouvé → on demande le trajet en 2 questions imagées (décollage 🛫 / atterrissage 🛬).
