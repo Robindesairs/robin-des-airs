@@ -344,12 +344,12 @@ function genererMandatBilinguePdf(record) {
 
       sectionTitle(fr ? 'Conditions essentielles' : 'Key terms');
       const terms = fr ? [
-        'Double régime (Art. 1 & 1 bis) : mandat de représentation (art. 1984 C. civ.) par défaut, et option de cession de créance à titre de recouvrement (art. 1321) que Robin des Airs peut lever pour le contentieux.',
+        'Double régime — mandat de représentation (art. 1984 C. civ.) par défaut (Article 1), et option de cession de créance à titre de recouvrement (option Article 1 bis ; cession Article 5 bis ; art. 1321 C. civ.) que Robin des Airs peut lever pour le contentieux.',
         'Honoraires : 25% TTC, uniquement en cas de succès (No Win No Fee), sur l\'ensemble des sommes recouvrées (indemnité, frais, préjudices). Aucun frais si échec.',
         'Versement de votre part nette (75%) sous 48h ouvrées après encaissement.',
         'Durée : 24 mois. Droit de rétractation : 14 jours (contact@robindesairs.eu).',
       ] : [
-        'Two-tier regime (Art. 1 & 1 bis): a representation mandate (art. 1984 French Civil Code) by default, and an option to assign the claim for recovery purposes (art. 1321) that Robin des Airs may exercise for litigation.',
+        'Two-tier regime — a representation mandate (art. 1984 French Civil Code) by default (Article 1), and an option to assign the claim for recovery purposes (option Article 1 bis; assignment Article 5 bis; art. 1321) that Robin des Airs may exercise for litigation.',
         'Fee: 25% incl. tax, only if successful (No Win No Fee), on all sums recovered (compensation, expenses, damages). No fee if unsuccessful.',
         'Payment of your net share (75%) within 48 business hours after collection.',
         'Term: 24 months. Right of withdrawal: 14 days (contact@robindesairs.eu).',

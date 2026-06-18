@@ -241,7 +241,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="doc-logo-line">
     <div>
       <div class="doc-logo">Robin <em>des Airs</em></div>
-      <div style="font-size:11px;color:var(--muted);margin-top:4px">Service de réclamation · Vols Europe–Afrique · No Win No Fee</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">Service de réclamation spécialisé · Vols Europe–Afrique · 0 € si on ne gagne pas</div>
     </div>
     <div class="doc-ref">
       <div>Réf. : <strong id="dRef">—</strong></div>
@@ -395,11 +395,11 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     <div class="field-row duo">
       <div>
         <label>Départ initial</label>
-        <input type="text" id="dep" placeholder="Paris CDG">
+        <input type="text" id="dep" placeholder="Paris CDG" oninput="updateParties()">
       </div>
       <div>
         <label>Destination finale</label>
-        <input type="text" id="arr" placeholder="Banjul BJL">
+        <input type="text" id="arr" placeholder="Banjul BJL" oninput="updateParties()">
       </div>
     </div>
   </div>
@@ -1262,7 +1262,13 @@ function updateParties() {
   const pax = paxCount||1;
   let vol;
   if (flightMode === 'connecting') { vol = legsSummary() || '—'; }
-  else { vol = document.getElementById('fnum').value||VOL||'—'; }
+  else {
+    // Ligne claire : date · n° de vol · route
+    const dfn = (document.getElementById('fnum').value || VOL || '').trim();
+    const ddate = document.getElementById('fdate').value;
+    const droute = [document.getElementById('dep').value.trim(), document.getElementById('arr').value.trim()].filter(Boolean).join(' → ');
+    vol = [ddate ? frDate(ddate) : '', dfn, droute].filter(Boolean).join(' · ') || '—';
+  }
   const nm = (fn||ln) ? (fn+' '+ln).trim()+(pax>1?` + ${pax-1} autre(s)`:'') : '—';
   document.getElementById('pMandant').textContent = nm;
   document.getElementById('pVol').textContent     = vol;

@@ -148,7 +148,7 @@ input.err,textarea.err,select.err{border-color:var(--red)!important;background:v
 .trust-item{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--muted);font-weight:600}
 /* SUCCÈS */
 .success-screen{display:none;background:var(--paper);border:1px solid var(--border);border-top:4px solid var(--green);border-radius:12px;padding:60px 40px;text-align:center}
-.success-icon{width:72px;height:72px;background:var(--green);border-radius:50%;color:var(--navy);font-size:32px;font-weight:900;line-height:72px;margin:0 auto 20px;box-shadow:0 4px 12px rgba(0,200,122,.3)}
+.success-icon{width:92px;height:92px;background:radial-gradient(circle at 50% 38%,var(--green-bright),var(--green));border-radius:50%;color:#fff;font-size:44px;font-weight:900;line-height:92px;margin:0 auto 22px;box-shadow:0 0 0 9px var(--green-tint),0 10px 24px rgba(0,200,122,.32);animation:seal-pop .5s cubic-bezier(.23,1,.32,1) both}
 .success-title{font-family:'Montserrat',sans-serif;font-size:28px;font-weight:900;color:var(--navy);margin-bottom:12px}
 .success-ref{font-family:'DM Mono',monospace;font-size:13px;color:var(--muted);background:var(--green-tint);border:1px solid #B8DDC9;padding:10px 20px;display:inline-block;margin:10px 0 20px;border-radius:6px;font-weight:600}
 .success-ref strong{color:var(--green-deep)}
@@ -157,6 +157,35 @@ input.err,textarea.err,select.err{border-color:var(--red)!important;background:v
 .sstep:last-child{border-bottom:none}
 .sstep strong{color:var(--navy)}
 .snum{width:28px;height:28px;min-width:28px;background:var(--green);color:var(--navy);border-radius:50%;font-size:12px;display:flex;align-items:center;justify-content:center;font-weight:800;margin-top:1px}
+/* SUCCÈS — blocs enrichis (preuve, rassurance, contact, croissance) */
+@keyframes seal-pop{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
+.success-screen{max-width:520px;margin:0 auto}
+.success-screen:focus{outline:none}
+h1.success-title{margin:0 auto 10px}
+.success-kicker{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--green-deep);font-weight:700;margin-bottom:10px}
+.success-tagline{font-family:'Montserrat',sans-serif;font-weight:800;font-size:14.5px;line-height:1.45;color:var(--green-deep);max-width:440px;margin:14px auto 0;padding:8px 0 8px 13px;border-left:3px solid var(--green);text-align:left}
+.success-tagline span{color:var(--navy)}
+.success-warn{max-width:440px;margin:16px auto 0;background:#FFF7ED;border:1px solid #FED7AA;border-radius:8px;padding:12px 16px;font-size:12.5px;line-height:1.6;color:#9A3412;text-align:left;display:none}
+.success-warn strong{color:#7C2D12}
+.success-block{max-width:440px;margin:16px auto 0;text-align:left;border:1px solid var(--border);border-radius:10px;padding:16px 18px;background:var(--paper)}
+.success-block.tint{background:var(--green-tint);border-color:#B8DDC9;border-left:3px solid var(--green-deep);border-radius:0 10px 10px 0}
+.sb-label{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;color:var(--green-deep);margin-bottom:8px}
+.sb-meta{font-size:12.5px;line-height:1.85;color:var(--text)}
+.sb-meta strong{color:var(--navy)}
+.sb-note{font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.65}
+.success-cta{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:13px 20px;border-radius:8px;font-family:'Montserrat',sans-serif;font-weight:800;font-size:14px;text-decoration:none}
+.success-cta.full{width:100%}
+.success-cta.wa{background:#1FAF54;color:#fff;box-shadow:0 4px 12px rgba(31,175,84,.28)}
+.success-cta.nav{background:var(--navy);color:#fff;box-shadow:0 4px 12px rgba(11,31,58,.18)}
+.success-cta.ghost{background:#fff;color:var(--navy);border:1.5px solid var(--border)}
+.success-cta.wa:hover{background:#198F45}.success-cta.nav:hover{background:var(--navy-soft)}.success-cta.ghost:hover{border-color:var(--green);background:var(--green-tint)}
+.success-signoff{font-size:13px;color:var(--text);font-style:italic;margin:22px auto 4px;max-width:440px}
+.success-signoff b{color:var(--navy);font-style:normal}
+.success-screen a.back-link{display:inline-block;min-height:44px;padding:12px 16px;color:#007A4D;font-weight:700;font-size:13px;text-decoration:underline}
+.hero-seal{max-width:440px;margin:24px auto 0;padding:18px 18px 4px;border-top:1px solid var(--border-soft);text-align:center}
+.hero-seal-mark{font-family:'Montserrat',sans-serif;font-size:18px;font-weight:900;color:var(--navy);letter-spacing:.5px;text-transform:uppercase}
+.hero-seal-mark em{font-style:normal;color:var(--green-deep);font-weight:800}
+.hero-seal-sub{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-top:6px}
 @media(max-width:600px){
   .page{padding:20px 12px 60px}
   .doc-header,.doc-section{padding:20px 20px}
@@ -178,7 +207,19 @@ details.mandat-full>summary:hover{background:#EFF9F4}
 details.mandat-full>summary::-webkit-details-marker{display:none}
 details.mandat-full>summary::after{content:'▾';margin-left:auto}
 details.mandat-full[open]>summary{margin-bottom:12px}
-@media print{details.mandat-full{display:block}details.mandat-full>summary{display:none}}
+@media print{
+  /* N'imprimer QUE le mandat rempli (parties + texte complet + signature), même depuis l'écran de succès. */
+  body{background:#fff !important}
+  body *{visibility:hidden !important}
+  #mandatForm,#mandatForm *{visibility:visible !important}
+  #mandatForm{display:block !important;position:absolute;left:0;top:0;width:100%;margin:0;padding:0}
+  details.mandat-full{display:block !important}
+  details.mandat-full>summary{display:none}
+  #successScreen{display:none !important}
+  /* Masquer l'interface interactive (boutons, aide à signer) — on garde le contenu du mandat et la signature. */
+  #btnAddPax,.btn-submit,.success-cta,.sig-clear,#sigPh{display:none !important;visibility:hidden !important}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 .lang-pill-top{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.7);text-decoration:none;border:1px solid rgba(201,169,110,.4);padding:4px 10px;margin-right:6px}
 </style>
   <script src="/assets/pre-launch.js" defer></script>
@@ -187,7 +228,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
 <div class="topbar">
   <a href="/" style="text-decoration:none;color:inherit"><div class="brand">Robin <em>des</em> Airs</div></a>
   <div style="display:flex;align-items:center;gap:8px">
-    <a href="/mandat.html" class="lang-pill-top" onclick="this.href='/mandat.html'+location.search">FR</a>
+    <a href="/mandat.html" class="lang-pill-top">FR</a>
     <a href="/documents-3-tiers.html" class="lang-pill-top">3 tiers</a>
     <div class="doc-badge">Representation mandate · EU 261/2004</div>
   </div>
@@ -200,7 +241,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="doc-logo-line">
     <div>
       <div class="doc-logo">Robin <em>des Airs</em></div>
-      <div style="font-size:11px;color:var(--muted);margin-top:4px">Claims service · Europe–Africa flights · No win no fee</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">Specialised claims service · Europe–Africa flights · No win, no fee</div>
     </div>
     <div class="doc-ref">
       <div>Ref.: <strong id="dRef">—</strong></div>
@@ -216,29 +257,29 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="amount-hero">
     <div class="amount-col">
       <div class="amount-tag">Statutory compensation (gross)</div>
-      <div class="amount-num" id="hGross">Up to €600</div>
-      <div class="amount-sub">Max. scale — Regulation (EC) No 261/2004</div>
+      <div class="amount-num" id="hGross">Jusqu'à 600 €</div>
+      <div class="amount-sub">Barème max. Regulation (EC) No 261/2004</div>
     </div>
     <div class="amount-div"></div>
     <div class="amount-col">
-      <div class="amount-tag">✅ Estimated net*</div>
-      <div class="amount-num net" id="hNet">Up to €450</div>
+      <div class="amount-tag">✅ Net estimé*</div>
+      <div class="amount-num net" id="hNet">Jusqu'à 450 €</div>
       <div class="amount-sub">After RDA fee (25% on success only)</div>
-      <div class="formula-box" id="hFormula">Example on success: €600 − €150 = €450</div>
+      <div class="formula-box" id="hFormula">Exemple si succès : 600 € − 150 € = 450 €</div>
     </div>
   </div>
-  <div class="amount-reserve">*Estimate. <strong>€0 to pay if we recover nothing.</strong> Final amount depends on your flight's eligibility (Regulation (EC) No 261/2004).</div>
+  <div class="amount-reserve">*Estimation. <strong>0 € à payer si nous ne récupérons rien.</strong> Montant final selon l'éligibilité de votre vol (CE 261/2004).</div>
   <!-- PARTIES -->
   <div class="sec-title">👥 The parties</div>
   <div class="parties-grid">
     <div class="partie-box" data-label="Client (you)">
       <div class="partie-name" id="pMandant">—</div>
-      <div class="partie-detail">Affected passenger(s)<br>Flight: <span id="pVol">—</span></div>
+      <div class="partie-detail">Affected passenger(s)<br>Flight: <span id="pVol">—</span><br>Adresse : <span id="pAddr">—</span></div>
     </div>
     <div class="partie-box" data-label="Representative">
       <div class="partie-name">Robin des Airs</div>
       <div class="partie-detail">
-        SASU in the course of registration (Paris Trade & Companies Register)<br>
+        SASU en cours d'immatriculation au RCS de Paris<br>
         EU 261/2004 claims service<br>
         66 av. des Champs-Élysées — 75008 Paris<br>
         contact@robindesairs.eu<br>
@@ -257,7 +298,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       <div class="ferr" id="fnErr">Required</div>
     </div>
     <div>
-      <label>Last name <span class="req">*</span></label>
+      <label>Nom <span class="req">*</span></label>
       <input type="text" id="ln" placeholder="DUPONT" oninput="updateParties()">
       <div class="ferr" id="lnErr">Required</div>
     </div>
@@ -266,12 +307,12 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     <div>
       <label>WhatsApp <span class="req">*</span></label>
       <div class="wa-phone-row">
-        <input type="text" id="wa-indicatif" class="wa-indicatif-select" list="pays-list" aria-label="Country or dialing code" placeholder="Country or +code" autocomplete="off" oninput="syncWa()" value="🇫🇷 France +33">
+        <input type="text" id="wa-indicatif" class="wa-indicatif-select" list="pays-list" aria-label="Pays ou indicatif" placeholder="Pays ou +indicatif" autocomplete="off" oninput="syncWa()" value="🇫🇷 France +33">
         <datalist id="pays-list"></datalist>
         <input type="tel" id="wa-national" class="wa-national-input" inputmode="numeric" autocomplete="tel-national" placeholder="6 12 34 56 78" oninput="syncWa()">
       </div>
       <input type="hidden" id="wa">
-      <div class="ferr" id="waErr">Enter your country and WhatsApp number</div>
+      <div class="ferr" id="waErr">Indiquez votre pays et votre numéro WhatsApp</div>
     </div>
     <div>
       <label>Your case tracking</label>
@@ -289,7 +330,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   </div>
   <div class="field-row">
     <label>Full postal address <span class="req">*</span></label>
-    <textarea id="addr" placeholder="12 rue de la Paix&#10;75001 Paris — France" rows="3"></textarea>
+    <textarea id="addr" placeholder="12 rue de la Paix&#10;75001 Paris — France" rows="3" oninput="updateParties()"></textarea>
     <div class="ferr" id="addrErr">Address required for the mandate</div>
   </div>
   <div style="font-size:12px;color:var(--text);font-style:italic;padding:10px 14px;background:var(--green-tint);border-left:3px solid var(--green-deep);border-radius:0 6px 6px 0;margin-top:4px">
@@ -298,28 +339,17 @@ details.mandat-full[open]>summary{margin-bottom:12px}
 </div>
 <!-- VOL CONCERNÉ -->
 <div class="doc-section">
-  <div class="sec-title">✈️ The flight concerned</div>
+  <div class="sec-title">✈️ Le vol concerné</div>
+  <!-- Communs au voyage : compagnie, PNR, incident -->
   <div class="field-row tri">
     <div>
       <label>Airline (on the ticket) <span class="req">*</span></label>
       <input type="text" id="cie" placeholder="Brussels Airlines" class="ro">
-      <div class="ferr" id="cieErr">Airline required</div>
-    </div>
-    <div>
-      <label>Flight number <span class="req">*</span></label>
-      <input type="text" id="fnum" placeholder="SN271" class="ro" oninput="updateParties()">
-      <div class="ferr" id="fnumErr">Flight number required</div>
+      <div class="ferr" id="cieErr">Compagnie requise</div>
     </div>
     <div>
       <label>PNR / Booking</label>
       <input type="text" id="pnr" placeholder="ABC123" class="ro">
-    </div>
-  </div>
-  <div class="field-row duo">
-    <div>
-      <label>Flight date <span class="req">*</span></label>
-      <input type="date" id="fdate">
-      <div class="ferr" id="fdErr">Date required</div>
     </div>
     <div>
       <label>Incident <span class="req">*</span></label>
@@ -332,26 +362,64 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       <div class="ferr" id="incErr">Selection required</div>
     </div>
   </div>
-  <div class="field-row duo">
-    <div>
-      <label>Initial departure</label>
-      <input type="text" id="dep" placeholder="Paris CDG">
+
+  <!-- Choix : vol direct ou avec correspondance(s) -->
+  <div class="field-row" style="margin-bottom:10px">
+    <label>Votre trajet <span class="req">*</span></label>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <label style="flex:1;min-width:150px;display:flex;align-items:center;gap:9px;margin:0;padding:11px 14px;border:1.5px solid var(--green);border-radius:8px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--text)">
+        <input type="radio" name="flightType" id="flightTypeDirect" value="direct" checked onchange="toggleFlightMode()" style="width:17px;height:17px;cursor:pointer;accent-color:var(--green-deep)">
+        Vol direct
+      </label>
+      <label style="flex:1;min-width:150px;display:flex;align-items:center;gap:9px;margin:0;padding:11px 14px;border:1.5px solid var(--green);border-radius:8px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--text)">
+        <input type="radio" name="flightType" id="flightTypeConnecting" value="connecting" onchange="toggleFlightMode()" style="width:17px;height:17px;cursor:pointer;accent-color:var(--green-deep)">
+        Avec correspondance(s)
+      </label>
     </div>
-    <div>
-      <label>Final destination</label>
-      <input type="text" id="arr" placeholder="Banjul BJL">
+  </div>
+
+  <!-- MODE DIRECT -->
+  <div id="flightDirect">
+    <div class="field-row duo">
+      <div>
+        <label>N° de vol <span class="req">*</span></label>
+        <input type="text" id="fnum" placeholder="SN271" class="ro" oninput="updateParties()">
+        <div class="ferr" id="fnumErr">N° de vol requis</div>
+      </div>
+      <div>
+        <label>Flight date <span class="req">*</span></label>
+        <input type="date" id="fdate" oninput="updateParties()">
+        <div class="ferr" id="fdErr">Date required</div>
+      </div>
+    </div>
+    <div class="field-row duo">
+      <div>
+        <label>Initial departure</label>
+        <input type="text" id="dep" placeholder="Paris CDG">
+      </div>
+      <div>
+        <label>Final destination</label>
+        <input type="text" id="arr" placeholder="Banjul BJL">
+      </div>
     </div>
   </div>
-  <div class="field-row">
-    <label>Connection(s) <span style="text-transform:none;letter-spacing:0;color:var(--muted)">— stopover(s) and flight number(s), if your journey had any</span></label>
-    <input type="text" id="connecting" placeholder="E.g.: Brussels stopover — flights SN271 then SN204">
-    <div style="font-size:11px;color:var(--muted);margin-top:4px;font-style:italic">💡 For a journey under a single booking, compensation is calculated on the <strong>final destination</strong> and the <strong>total distance</strong> — the connection is covered.</div>
+
+  <!-- MODE CORRESPONDANCE(S) -->
+  <div id="flightConnecting" style="display:none">
+    <div style="font-size:12px;color:var(--text);font-style:italic;padding:10px 14px;background:var(--green-tint);border-left:3px solid var(--green-deep);border-radius:0 6px 6px 0;margin-bottom:12px">
+      💡 Ajoutez chaque vol de votre voyage, dans l'ordre. <strong>Chaque ligne a sa propre date</strong> — utile si un vol de nuit part un jour et arrive le lendemain. L'indemnité se calcule sur la <strong>destination finale</strong> et la <strong>distance totale</strong> ; la correspondance est couverte.
+    </div>
+    <div id="legsContainer"></div>
+    <button type="button" id="btnAddLeg" onclick="addLeg()" style="margin-top:4px;width:100%;padding:11px 14px;background:var(--paper);border:1.5px dashed var(--green);font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;color:var(--green-deep);cursor:pointer;text-align:center;border-radius:6px;transition:background .2s,border-color .2s" onmouseover="this.style.background='var(--green-tint)';this.style.borderColor='var(--green-deep)'" onmouseout="this.style.background='var(--paper)';this.style.borderColor='var(--green)'">
+      ➕ Ajouter un vol
+    </button>
+    <div class="ferr" id="legsErr" style="margin-top:6px">Indiquez le n° de vol et la date de chaque tronçon</div>
   </div>
-  <div class="field-row">
-    <label>Flight operated by <span style="text-transform:none;letter-spacing:0;color:var(--muted)">— actual carrier, if different from the ticket (codeshare)</span></label>
-    <input type="text" id="operatedby" placeholder="E.g.: flight AF545 actually operated by KLM">
-    <div style="font-size:11px;color:var(--muted);margin-top:4px;font-style:italic">💡 Compensation is owed by the airline that <strong>actually operated</strong> the flight, not the one printed on the ticket.</div>
-  </div>
+
+  <!-- Champ « Vol opéré par / codeshare » retiré du formulaire client : trop technique (personne ne sait le remplir).
+       L'équipe détermine le transporteur réel à partir du n° de vol. Le payload envoie operatedBy='' (lecture optionnelle). -->
+  <!-- Résumé texte des correspondances (rempli automatiquement en mode correspondance) — rétro-compatibilité backend -->
+  <input type="hidden" id="connecting">
   <!-- Compteur passagers caché — géré par JS -->
   <input type="hidden" id="pax" value="1">
   <div id="paxNames"></div>
@@ -425,13 +493,13 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   </div>
   <div class="clause">
     <span class="cnum">Article 2 — Term</span>
-    <div class="plain">💡 <strong>In plain terms:</strong> The mandate lasts 24 months. It can be ended by either side in the event of a serious problem (15 days' notice). And if the amicable steps lead nowhere, you may end it freely.</div>
-    The mandate runs <strong>24 months</strong> from signature. It may be terminated by email for <strong>serious breach, fraud or persistent non-cooperation</strong>, with 15 days' notice. In addition, once the <strong>amicable phase has been exhausted without result</strong> and no court proceedings have been started, the Client may <strong>terminate freely (for convenience)</strong> by email, on 15 days' notice, at no cost.
+    <div class="plain">💡 <strong>In plain terms:</strong> The mandate lasts 24 months. It can be ended by either side in the event of a serious problem (15 days' notice). Et si les démarches amiables n'aboutissent pas, vous pouvez y mettre fin librement.</div>
+    The mandate runs <strong>24 months</strong> from signature. It may be terminated by email for <strong>serious breach, fraud or persistent non-cooperation</strong>, with 15 days' notice. En outre, lorsque la <strong>phase amiable a été épuisée sans résultat</strong> et qu'aucune procédure judiciaire n'a été engagée, le Mandant peut <strong>résilier librement (pour convenance)</strong> par email, avec un préavis de 15 jours, sans frais.
   </div>
   <div class="clause">
     <span class="cnum">Article 3 — Exclusivity & anti-circumvention</span>
     <div class="plain">💡 <strong>In plain terms:</strong> In the meantime, do not entrust the same case to anyone else and do not negotiate alone with the airline without telling us.</div>
-    This mandate is <strong>exclusive</strong>. The Client shall not assign the same case elsewhere nor negotiate with the airline for the same incident <strong>without prior notice to Robin des Airs</strong>. Only an agreement made <strong>in bad faith, for the sole purpose of avoiding the commission</strong> due to Robin des Airs makes the Client liable for that commission&nbsp;; a good-faith step by the Client carries no penalty.
+    Le présent mandat est <strong>exclusif</strong>. Pendant sa durée, le Mandant s'engage à ne pas confier le même dossier à un tiers ni à négocier directement avec la compagnie pour le même incident <strong>sans en informer préalablement Robin des Airs</strong>. Seul un accord conclu <strong>de mauvaise foi, dans le seul but d'éluder la commission</strong> due à Robin des Airs, engage la responsabilité du Mandant et le laisse redevable de cette commission&nbsp;; une démarche de bonne foi du Mandant n'entraîne aucune pénalité.
   </div>
   <div class="clause hi">
     <span class="cnum">Article 4 — Fees · No win, no fee</span>
@@ -507,26 +575,26 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="clause">
     <span class="cnum">Article 8 — Client obligations</span>
     <div class="plain">💡 <strong>In plain terms:</strong> Give us accurate information, let us know if the airline contacts you, and do not cash anything without telling us.</div>
-    The Client shall: (i) provide accurate information; (ii) send documents promptly; (iii) notify Robin des Airs within <strong>24h of airline contact</strong>; (iv) not accept airline payment without notice; (v) not act in parallel without written consent. The Client <strong>warrants the accuracy and truthfulness</strong> of the information and documents provided and <strong>is liable for the harm</strong> caused to Robin des Airs by knowingly or grossly inaccurate or incomplete information&nbsp;; it reimburses, where applicable, the costs wrongly incurred as a result. The Client further warrants that the claim has not been the subject of <strong>any prior assignment, settlement, waiver or payment</strong>, that the same claim is <strong>not already entrusted to a third party</strong> nor the subject of pending proceedings, and that it is the <strong>sole holder</strong> of it (or duly authorised). It <strong>holds Robin des Airs harmless from the direct consequences</strong> of any breach of these warranties and <strong>remits any sums unduly received</strong>, this obligation being limited to direct damage attributable to the Client's breach.
+    The Client shall: (i) provide accurate information; (ii) send documents promptly; (iii) notify Robin des Airs within <strong>24h of airline contact</strong>; (iv) not accept airline payment without notice; (v) not act in parallel without written consent. The Client <strong>warrants the accuracy and truthfulness</strong> of the information and documents provided and <strong>is liable for the harm</strong> caused to Robin des Airs by knowingly or grossly inaccurate or incomplete information&nbsp;; it reimburses, where applicable, the costs wrongly incurred as a result. The Client further warrants that the claim has not been the subject of <strong>any prior assignment, settlement, waiver or payment</strong>, that the same claim is <strong>not already entrusted to a third party</strong> nor the subject of pending proceedings, and that it is the <strong>sole holder</strong> of it (or duly authorised). It <strong>holds Robin des Airs harmless from the direct consequences</strong> of any breach of these warranties and <strong>remits any sums unduly received</strong>, this obligation being limited to direct damage attributable to the Client's breach. <strong>Tout document falsifié, contrefait ou sciemment trompeur</strong> transmis par le Mandant entraîne l'<strong>annulation immédiate et de plein droit du dossier</strong>&nbsp;; Robin des Airs se réserve le droit d'engager toute action utile, y compris <strong>pénale du chef d'usage de faux</strong> (article 441-1 du Code pénal), et de conserver les frais déjà engagés.
   </div>
   <div class="clause le">
     <span class="cnum">Article 9 — 14-day withdrawal & immediate start</span>
     <div class="plain">💡 <strong>In plain terms:</strong> You can change your mind within 14 days, with no fee and no reason required.</div>
-    Under French consumer law, the Client has <strong>14 calendar days to withdraw</strong>, <strong>without giving any reason and free of charge</strong>. This right may be exercised by any unambiguous statement — for example by email to <strong>contact@robindesairs.eu</strong> with « I withdraw — Ref. [case number] », or using the <strong>model withdrawal form below</strong>.
+    Conformément aux articles L. 221-18 et suivants du Code de la consommation, le Mandant dispose d'un <strong>délai de rétractation de 14 jours calendaires</strong> à compter de la signature, <strong>sans avoir à se justifier et sans frais</strong>. Il peut exercer ce droit par toute déclaration dénuée d'ambiguïté — par exemple en envoyant un email à <strong>contact@robindesairs.eu</strong> avec la mention « Je me rétracte — Réf. [numéro de dossier] », ou en utilisant le <strong>formulaire-type de rétractation ci-dessous</strong>.
     <br><br>
-    If the Client requests <strong>immediate performance before 14 days end</strong> (box below), Robin des Airs may start without waiting. <strong>If the Client withdraws within that period, and consistent with the « No Win No Fee » principle, no amount is due</strong>, including for services already performed; the claim is <strong>reassigned to the Client by operation of law</strong>.
+    Conformément à l'article L. 221-25 du Code de la consommation, si le Mandant demande expressément l'<strong>exécution immédiate du mandat avant l'expiration du délai de 14 jours</strong> (case cochée ci-dessous), Robin des Airs est autorisée à débuter les démarches sans attendre. <strong>En cas de rétractation dans ce délai, et conformément au principe « No Win No Fee », aucune somme n'est due par le Mandant</strong>, y compris au titre des démarches déjà accomplies ; la créance lui est <strong>rétrocédée de plein droit</strong>.
     <div style="margin-top:14px;border:1px dashed var(--border);border-radius:8px;padding:14px 16px;background:var(--green-tint);font-size:12px;line-height:1.7">
-      <strong style="text-transform:uppercase;letter-spacing:.08em;font-size:10.5px;color:var(--green-deep)">Model withdrawal form</strong>
-      <div style="color:var(--muted);margin:2px 0 8px">(complete and return only if you wish to withdraw)</div>
-      To <strong>Robin des Airs</strong>, 66 avenue des Champs-Élysées, 75008 Paris, France — <strong>contact@robindesairs.eu</strong>:<br>
-      I hereby give notice that I withdraw from the <strong>representation mandate</strong> for the flight-compensation claim below:
+      <strong style="text-transform:uppercase;letter-spacing:.08em;font-size:10.5px;color:var(--green-deep)">Formulaire-type de rétractation</strong>
+      <div style="color:var(--muted);margin:2px 0 8px">(à compléter et à renvoyer uniquement si vous souhaitez vous rétracter)</div>
+      À l'attention de <strong>Robin des Airs</strong>, 66 avenue des Champs-Élysées, 75008 Paris — <strong>contact@robindesairs.eu</strong> :<br>
+      Je vous notifie par la présente ma rétractation du <strong>mandat de représentation</strong> portant sur la réclamation d'indemnisation aérienne ci-dessous :
       <ul style="margin:6px 0 0;padding-left:18px">
-        <li>Mandate signed on: …………………………</li>
-        <li>Case reference: …………………………</li>
-        <li>Client's name: …………………………</li>
-        <li>Client's address: …………………………</li>
-        <li>Signature (only if this form is notified on paper): …………………………</li>
-        <li>Date: …………………………</li>
+        <li>Mandat signé le : …………………………</li>
+        <li>Référence du dossier : …………………………</li>
+        <li>Nom du Mandant : …………………………</li>
+        <li>Adresse du Mandant : …………………………</li>
+        <li>Signature (uniquement en cas de notification sur papier) : …………………………</li>
+        <li>Date : …………………………</li>
       </ul>
     </div>
   </div>
@@ -538,7 +606,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="clause">
     <span class="cnum">Article 10 — Confidentiality & GDPR</span>
     <div class="plain">💡 <strong>In plain terms:</strong> Your data is used only for your case. Never resold.</div>
-    Personal data is used only for case management, not sold. Under the GDPR the Client has the rights of <strong>access, rectification, erasure, restriction, portability and objection</strong>, and the right to withdraw consent, by writing to <strong>expert@robindesairs.eu</strong>; the Client may also lodge a complaint with the CNIL. Full details (purposes, retention periods, processors) are in the <a href="politique-confidentialite.html" target="_blank" rel="noopener">Privacy Policy</a>.
+    Les données personnelles collectées sont utilisées exclusivement pour la gestion du dossier. Elles ne sont pas revendues. Conformément au RGPD, le Mandant dispose des droits d'<strong>accès, de rectification, d'effacement, de limitation, de portabilité et d'opposition</strong>, ainsi que du droit de retirer son consentement, en écrivant à <strong>expert@robindesairs.eu</strong> ; il peut également saisir la <strong>CNIL</strong>. Les modalités complètes (finalités, durées de conservation, sous-traitants) figurent dans la <a href="politique-confidentialite.html" target="_blank" rel="noopener">Politique de confidentialité</a>.
   </div>
   <div class="clause">
     <span class="cnum">Article 11 — Governing law, severability & disputes</span>
@@ -560,7 +628,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       I have read and accept the <strong>representation mandate</strong> (summary above, full details above). I authorise <strong>Robin des Airs</strong> to recover my flight compensation on my behalf and I <strong>assign my claim to it for recovery purposes</strong> (Article 5 bis).<br>
       <strong>No fee if the case fails.</strong> 25% commission on success only.<br>
       <span style="font-size:12px;color:var(--muted);">
-        Exclusive 24 months · Withdrawal possible within 14 days by email · <a href="politique-confidentialite.html" target="_blank" rel="noopener">GDPR — Privacy Policy</a>
+        Exclusivité 24 mois · Rétractation possible sous 14 jours par email · <a href="politique-confidentialite.html" target="_blank" rel="noopener">RGPD — Politique de confidentialité</a>
       </span>
     </p>
   </div>
@@ -569,13 +637,13 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="single-check" onclick="document.getElementById('eligCheck').checked=!document.getElementById('eligCheck').checked;calcProgress()">
     <input type="checkbox" id="eligCheck" onclick="event.stopPropagation();calcProgress()">
     <p>
-      <strong>I understand that my compensation is not guaranteed.</strong> The amount shown is an <strong>estimate</strong> that depends on my <strong>flight's eligibility</strong> under Regulation (EC) No 261/2004 (delay ≥ 3 h at final destination, distance, no extraordinary circumstances) and on <strong>actual payment by the airline</strong>.<br>
+      <strong>J'ai compris : le montant est une estimation</strong> (jusqu'à 600 € selon l'éligibilité de mon vol), <strong>pas une garantie</strong>.<br>
       <span style="font-size:12px;color:var(--muted);">
-        Robin des Airs is bound by a best-efforts obligation — no guarantee of result.
+        Et comme c'est sans avance, je ne paie rien si on ne récupère rien. 🤝
       </span>
     </p>
   </div>
-  <div class="ferr" id="eligErr" style="font-size:13px">Please tick this box to confirm you have understood.</div>
+  <div class="ferr" id="eligErr" style="font-size:13px">Veuillez cocher cette case pour confirmer que vous avez compris.</div>
   <!-- CASE 2 — Démarrage immédiat (optionnelle mais recommandée) -->
   <div class="single-check" style="background:var(--green-tint);border-color:var(--green)" onclick="document.getElementById('startNow').checked=!document.getElementById('startNow').checked">
     <input type="checkbox" id="startNow" onclick="event.stopPropagation()">
@@ -612,20 +680,20 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   </div>
   <p style="font-size:13px;color:var(--muted);margin-bottom:8px">Draw your signature below (finger or mouse):</p>
   <div class="sig-area" id="sigArea">
-    <canvas id="sigCanvas" width="680" height="120"></canvas>
+    <canvas id="sigCanvas" width="680" height="120" role="img" aria-label="Zone de signature manuscrite — tracez votre signature au doigt ou à la souris"></canvas>
     <div class="sig-ph" id="sigPh">✍️ Tap here to sign</div>
     <div class="sig-clear" id="sigClear" onclick="clearSig(event)">✕ Start over</div>
   </div>
-  <div class="ferr" id="sigErr">Your signature is required to sign the mandate</div>
+  <div class="ferr" id="sigErr">Votre signature est requise pour valider le mandat</div>
   <div style="margin-top:20px;border:1px solid var(--border);border-left:3px solid var(--green-deep);border-radius:0 8px 8px 0;padding:16px 18px;background:var(--green-tint)">
     <div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--green-deep);font-weight:700;margin-bottom:8px">Acceptance by the Representative — Robin des Airs</div>
     <p style="font-size:12px;line-height:1.7;color:var(--text);margin:0">
       Robin des Airs <strong>accepts this mandate and the assignment of claim</strong> (Article 5 bis) and confirms handling from the opening of the file — the representative's acceptance is thus <strong>concurrent</strong> with the Client's signature.<br>
-      Authorised representative&nbsp;: <strong>Robin des Airs, SASU in the course of registration (Paris Trade & Companies Register) — EU 261/2004 claims service</strong> · Case ref.&nbsp;: <strong id="sigRdaRef">—</strong> · Accepted on&nbsp;: <strong id="sigRdaDate">—</strong>
+      Authorised representative&nbsp;: <strong>Robin des Airs, SASU en cours d'immatriculation au RCS de Paris — EU 261/2004 claims service</strong> · Case ref.&nbsp;: <strong id="sigRdaRef">—</strong> · Accepted on&nbsp;: <strong id="sigRdaDate">—</strong>
     </p>
   </div>
   <button class="btn-submit" id="btnSub" onclick="submitMandat()">
-    Confirm and sign my mandate →
+    Valider et signer mon mandat →
   </button>
 </div>
 <div class="trust-bar">
@@ -637,22 +705,75 @@ details.mandat-full[open]>summary{margin-bottom:12px}
 </div>
 </div><!-- fin mandatForm -->
 <!-- ÉCRAN SUCCÈS -->
-<div class="success-screen" id="successScreen">
-  <div class="success-icon">✓</div>
-  <div class="success-title">Mandate signed!</div>
-  <p style="color:var(--text);font-size:14px;max-width:440px;margin:0 auto">
-    Your case is officially open. Robin des Airs takes over immediately.
+<div class="success-screen" id="successScreen" role="status" aria-live="polite" tabindex="-1">
+  <div class="success-kicker">Mandat signé · CE 261/2004</div>
+  <div class="success-icon" aria-hidden="true">✓</div>
+  <h1 class="success-title" id="sTitle">C'est fait !</h1>
+  <p style="color:var(--text);font-size:14.5px;max-width:460px;margin:0 auto;line-height:1.6" id="sLead">
+    Votre dossier est officiellement ouvert. <strong>Vous n'êtes plus seul·e face à la compagnie</strong> — à partir de maintenant, c'est nous qui écrivons, relançons et nous battons pour votre indemnité (<strong>jusqu'à 600&nbsp;€</strong>). Rien à avancer, rien à craindre.
   </p>
-  <div class="success-ref">Reference: <strong id="sRef">—</strong></div>
-  <div class="success-ref" style="margin-top:8px">📱 Tracked via WhatsApp — Robin des Airs handles correspondence with the airline for you.</div>
-  <div class="success-steps">
-    <div class="sstep"><div class="snum">1</div><div><strong>WhatsApp confirmation within 24h</strong><br>Full summary + tracking number.</div></div>
-    <div class="sstep"><div class="snum">2</div><div><strong>Formal notice within 48h</strong><br>Official letter sent to the airline.</div></div>
-    <div class="sstep"><div class="snum">3</div><div><strong>Real-time tracking</strong><br>Follow progress: robindesairs.eu/suivi</div></div>
-    <div class="sstep"><div class="snum">4</div><div><strong>Payment to your IBAN within 48h</strong><br>As soon as funds are collected, your net share (75%) is paid to you.</div></div>
+  <p class="success-tagline">On prend aux compagnies, on rend aux familles.<br><span>Aujourd'hui, votre famille en fait partie.</span></p>
+
+  <div class="success-warn" id="sWarn" role="alert">
+    ⏳ Votre signature est bien enregistrée. La confirmation de l'ouverture du dossier est <strong>en cours</strong> — si vous ne recevez pas notre message sous 1&nbsp;h, écrivez-nous sur WhatsApp avec votre référence ci-dessous.
   </div>
-  <div style="margin-top:32px">
-    <a href="https://robindesairs.eu" style="color:var(--green-deep);font-size:13px;text-decoration:none;border-bottom:1px solid var(--green);font-weight:600">Back to robindesairs.eu →</a>
+
+  <div class="success-ref" style="margin-top:18px">Votre référence : <strong id="sRef">—</strong></div>
+
+  <div class="success-block">
+    <div class="sb-label"><span aria-hidden="true">📄</span> Votre exemplaire</div>
+    <div class="sb-meta">
+      Mandat de représentation <strong>+ cession de créance</strong> (art. 5 bis)<br>
+      Signé le <strong id="sWhen">—</strong> à <strong id="sWhere">—</strong> · version <strong>2026-06-v1</strong>
+    </div>
+    <a class="success-cta nav full" id="sPdf" href="#" onclick="window.print();return false;" style="margin-top:12px">Enregistrer / imprimer mon mandat</a>
+    <div class="sb-note">Gardez votre référence. Un récapitulatif complet vous est aussi envoyé par e-mail et sur WhatsApp.</div>
+  </div>
+
+  <div class="success-block tint">
+    <div class="sb-meta">
+      <span aria-hidden="true">✅</span> <strong>0&nbsp;€ à avancer</strong>, jamais — aucune carte, aucune commission sans résultat.<br>
+      <span aria-hidden="true">✅</span> Nous réclamons <strong>jusqu'à 600&nbsp;€ par passager</strong>. En cas de succès vous gardez <strong>75&nbsp;% net</strong> ; 0&nbsp;€ si nous échouons.<br>
+      <span aria-hidden="true">✅</span> <strong>Vous pouvez changer d'avis pendant 14&nbsp;jours</strong>, jusqu'au <strong id="sRetract">—</strong>, sans frais : un e-mail à contact@robindesairs.eu suffit.
+    </div>
+  </div>
+
+  <div class="success-block">
+    <div class="sb-label"><span aria-hidden="true">💬</span> Votre contact direct</div>
+    <div class="sb-meta">Une personne de l'équipe vous suit jusqu'au virement. Écrivez-nous à tout moment — réponses <strong>en français</strong>.</div>
+    <a class="success-cta wa full" id="sWa" href="https://wa.me/33756863630" target="_blank" rel="noopener" style="margin-top:12px">Écrire sur WhatsApp</a>
+    <div class="sb-note">Vous préférez de vive voix ? <strong>Demandez un rappel</strong> — on peut vous appeler en français, wolof, bambara ou lingala.</div>
+  </div>
+
+  <div class="success-block tint" id="sCoPax" style="display:none">
+    <div class="sb-label"><span aria-hidden="true">👨‍👩‍👧‍👦</span> Vos co-passagers</div>
+    <div class="sb-meta">Vous voyagiez à <strong id="sPaxN">—</strong> sur ce vol ? <strong>Chaque passager a droit à sa propre indemnité de 600&nbsp;€.</strong> Ajoutez-les en un message, on s'occupe du reste.</div>
+    <a class="success-cta nav full" id="sCoPaxBtn" href="https://wa.me/33756863630" target="_blank" rel="noopener" style="margin-top:12px">Ajouter mes co-passagers</a>
+  </div>
+
+  <div class="success-steps">
+    <div class="sstep"><div class="snum">1</div><div><strong>Confirmation WhatsApp — en cours</strong><br>Récapitulatif complet + votre contact dédié, sous 24&nbsp;h.</div></div>
+    <div class="sstep"><div class="snum">2</div><div><strong>Mise en demeure — rédaction lancée</strong><br>Courrier officiel envoyé à la compagnie sous 48&nbsp;h.</div></div>
+    <div class="sstep"><div class="snum">3</div><div><strong>Suivi à chaque étape</strong><br>On vous tient au courant — vous n'attendez jamais dans le noir.</div></div>
+    <div class="sstep"><div class="snum">4</div><div><strong>Votre argent sur votre compte</strong><br>Dès que la compagnie paie, on vous reverse votre part (75&nbsp;% net) sous 48&nbsp;h.</div></div>
+  </div>
+
+  <div class="success-block">
+    <div class="sb-label"><span aria-hidden="true">🛋️</span> Un proche a vécu la même galère ?</div>
+    <div class="sb-meta">Parrainez-le : pour chaque dossier gagné, vous recevez un <strong>accès salon (lounge)</strong> dans un aéroport au choix, valable 1&nbsp;an. Sans limite.</div>
+    <a class="success-cta ghost full" id="sParrain" href="/parrainage.html" style="margin-top:12px">Parrainer un proche →</a>
+  </div>
+
+  <div class="sb-note" id="sSigners" style="max-width:440px;margin:16px auto 0;text-align:left"></div>
+  <div class="sb-note" style="max-width:440px;margin:6px auto 0;text-align:left"><span aria-hidden="true">🔒</span> Données enregistrées (nom, contact, vol, signature) utilisées <strong>uniquement</strong> pour votre dossier, jamais revendues — RGPD. Accès / suppression : expert@robindesairs.eu.</div>
+
+  <p class="success-signoff" id="sSignoff">Reposez-vous — on prend le relais. <b>— L'équipe Robin des Airs</b></p>
+  <div class="hero-seal">
+    <div class="hero-seal-mark">Robin <em>des Airs</em></div>
+    <div class="hero-seal-sub">Votre allié face aux compagnies · On se bat pour vous</div>
+  </div>
+  <div style="margin-top:12px">
+    <a class="back-link" href="https://robindesairs.eu">Back to robindesairs.eu →</a>
   </div>
 </div>
 </div><!-- fin page -->
@@ -676,7 +797,10 @@ function applyDossierEmailUI() {
 }
 // ── URL PARAMS ───────────────────────────────────────────────────
 const P = new URLSearchParams(window.location.search);
-let REF   = P.get('ref')       || ('RDA-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + Math.random().toString(36).substring(2,6).toUpperCase());
+// ?r= (lien court du bot) = la VRAIE réf du dossier. On l'utilise directement comme REF,
+// pour que la signature soit rattachée au bon dossier MÊME si le fetch dossier échoue.
+// La réf courte aléatoire n'est qu'un dernier recours (accès direct sans aucun lien).
+let REF   = P.get('ref')       || P.get('r')       || ('RDA-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + (Math.random().toString(36).substring(2,10) + '00000000').substring(0,8).toUpperCase());
 const WA_PREFILL = P.get('phone') || P.get('whatsapp') || P.get('wa') || P.get('waId') || '';
 const PAXN  = parseInt(P.get('pax')) || 1;
 const VOL   = P.get('vol')       || '';
@@ -757,12 +881,13 @@ async function fetchAndApplyDossier() {
     const res = await fetch(api + '/api/dossier?r=' + encodeURIComponent(ref), { credentials: 'omit' });
     if (res.ok) { applyDossier(await res.json()); return; }
   } catch (_) { /* fetch échoué → la page reste utilisable, saisie manuelle */ }
-  // Both sources failed although a ?r= link was provided: we cannot let a mandate be
-  // signed without an identified flight (the assigned claim would be undeterminable).
-  // Warn the Client and force manual entry of the airline and flight number.
+  // Les deux sources ont échoué alors qu'un lien ?r= était fourni : on ne peut pas
+  // laisser signer un mandat sans vol identifié (créance indéterminable). On prévient
+  // et on force la saisie manuelle de la compagnie et du n° de vol.
   warnDossierUnavailable();
 }
 function warnDossierUnavailable() {
+  // déjà rempli (cas rare où une autre source a peuplé les champs) → ne pas alerter
   const cie = document.getElementById('cie'), fnum = document.getElementById('fnum');
   if (cie && cie.value.trim() && fnum && fnum.value.trim()) return;
   if (!document.getElementById('dossierWarnBar')) {
@@ -771,10 +896,11 @@ function warnDossierUnavailable() {
     bar.setAttribute('role', 'alert');
     bar.style.cssText =
       'background:var(--red-bg);border:1px solid var(--red-border);color:var(--red);padding:12px 16px;margin:12px 24px 0;font-size:13px;border-radius:6px;font-weight:600';
-    bar.textContent = 'We could not load your case automatically. Please check and complete the airline and flight number below before signing.';
+    bar.textContent = 'Nous n’avons pas pu charger automatiquement votre dossier. Vérifiez et complétez la compagnie et le n° de vol ci-dessous avant de signer.';
     const page = document.querySelector('.page');
     if (page) page.insertBefore(bar, page.firstChild);
   }
+  // champs rendus clairement éditables (la classe .ro n'est que cosmétique)
   [cie, fnum].forEach(el => { if (el) el.classList.remove('ro'); });
 }
 function applyDossier(d) {
@@ -926,9 +1052,9 @@ function updateAmounts() {
     window.MANDAT_INDEMNITE_PER_PAX || 600
   );
   const brut = perPax*pax, net = Math.round(brut*.75), com = brut-net;
-  document.getElementById('hGross').textContent  = 'Up to €'+brut.toLocaleString('en-GB');
-  document.getElementById('hNet').textContent    = 'Up to €'+net.toLocaleString('en-GB');
-  document.getElementById('hFormula').textContent= `Example on success: €${brut.toLocaleString('en-GB')} − €${com.toLocaleString('en-GB')} = €${net.toLocaleString('en-GB')}`;
+  document.getElementById('hGross').textContent  = "Jusqu'à "+brut.toLocaleString('fr-FR')+' €';
+  document.getElementById('hNet').textContent    = "Jusqu'à "+net.toLocaleString('fr-FR')+' €';
+  document.getElementById('hFormula').textContent= `Exemple si succès : ${brut.toLocaleString('fr-FR')} € − ${com.toLocaleString('fr-FR')} € = ${net.toLocaleString('fr-FR')} €`;
   updateParties();
 }
 // ── CHAMPS PASSAGERS ─────────────────────────────────────────────
@@ -1066,15 +1192,82 @@ function getPassengersData() {
   });
   return data;
 }
+// ── VOL : direct / correspondance(s) ─────────────────────────────
+let flightMode = 'direct';            // 'direct' | 'connecting'
+let flightLegs = [];                  // [{fnum,date,dep,arr}]
+function emptyLeg(){ return { fnum:'', date:'', dep:'', arr:'' }; }
+function frDate(iso){ try{ const [y,m,d]=iso.split('-'); return `${d}/${m}/${y}`; }catch(e){ return iso||''; } }
+function toggleFlightMode(){
+  flightMode = document.getElementById('flightTypeConnecting')?.checked ? 'connecting' : 'direct';
+  const d = document.getElementById('flightDirect');
+  const c = document.getElementById('flightConnecting');
+  if (flightMode === 'connecting'){
+    if (d) d.style.display='none'; if (c) c.style.display='block';
+    if (flightLegs.length === 0){ flightLegs = [emptyLeg(), emptyLeg()]; renderLegs(); }
+  } else {
+    if (d) d.style.display='block'; if (c) c.style.display='none';
+  }
+  updateParties();
+}
+function addLeg(){
+  flightLegs.push(emptyLeg()); renderLegs();
+  setTimeout(()=>{ const r=document.querySelectorAll('.leg-row'); r[r.length-1]?.scrollIntoView({behavior:'smooth',block:'center'}); }, 60);
+}
+function removeLeg(i){ if (flightLegs.length<=1) return; flightLegs.splice(i,1); renderLegs(); updateParties(); }
+function syncLegsFromDom(){
+  document.querySelectorAll('.leg-row').forEach((row)=>{
+    const i = +row.dataset.idx;
+    if (i<0 || i>=flightLegs.length) return;
+    flightLegs[i] = {
+      fnum: row.querySelector('.leg-fnum')?.value.trim() || '',
+      date: row.querySelector('.leg-date')?.value || '',
+      dep:  row.querySelector('.leg-dep')?.value.trim() || '',
+      arr:  row.querySelector('.leg-arr')?.value.trim() || '',
+    };
+  });
+}
+function onLegInput(){ syncLegsFromDom(); updateParties(); }
+function renderLegs(){
+  const cont = document.getElementById('legsContainer'); if (!cont) return;
+  cont.innerHTML = flightLegs.map((leg,i)=>{
+    const tag = i===0 ? 'Vol 1 — départ' : (i===flightLegs.length-1 ? `Vol ${i+1} — arrivée finale` : `Vol ${i+1}`);
+    const rm  = flightLegs.length>1 ? `<button type="button" onclick="removeLeg(${i})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;font-weight:600;padding:2px 4px">✕ retirer</button>` : '';
+    return `<div class="leg-row" data-idx="${i}" style="border:1px solid var(--border,#E2E6EE);border-radius:8px;padding:14px;margin-bottom:10px;background:var(--bg-soft,#F7F8FA)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--green-deep);font-weight:700">${tag}</span>${rm}
+      </div>
+      <div class="field-row duo">
+        <div><label>N° de vol <span class="req">*</span></label><input type="text" class="leg-fnum ro" value="${(leg.fnum||'').replace(/"/g,'&quot;')}" placeholder="AF718" oninput="onLegInput()"></div>
+        <div><label>Date de ce vol <span class="req">*</span></label><input type="date" class="leg-date" value="${leg.date||''}" oninput="onLegInput()"></div>
+      </div>
+      <div class="field-row duo">
+        <div><label>Départ</label><input type="text" class="leg-dep" value="${(leg.dep||'').replace(/"/g,'&quot;')}" placeholder="ex. CDG / Paris"></div>
+        <div><label>Arrivée</label><input type="text" class="leg-arr" value="${(leg.arr||'').replace(/"/g,'&quot;')}" placeholder="ex. DSS / Dakar"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function legsSummary(){
+  syncLegsFromDom();
+  return flightLegs.filter(l=>l.fnum||l.dep||l.arr).map(l=>{
+    const route = (l.dep||l.arr) ? ` ${l.dep||'?'}→${l.arr||'?'}` : '';
+    const d = l.date ? ` (${frDate(l.date)})` : '';
+    return `${l.fnum||'?'}${route}${d}`;
+  }).join(' ; ');
+}
 // ── PARTIES ──────────────────────────────────────────────────────
 function updateParties() {
   const fn = document.getElementById('fn').value.trim();
   const ln = document.getElementById('ln').value.trim();
   const pax = paxCount||1;
-  const vol = document.getElementById('fnum').value||VOL||'—';
+  let vol;
+  if (flightMode === 'connecting') { vol = legsSummary() || '—'; }
+  else { vol = document.getElementById('fnum').value||VOL||'—'; }
   const nm = (fn||ln) ? (fn+' '+ln).trim()+(pax>1?` + ${pax-1} autre(s)`:'') : '—';
   document.getElementById('pMandant').textContent = nm;
   document.getElementById('pVol').textContent     = vol;
+  const addrEl = document.getElementById('pAddr');
+  if (addrEl){ const a=(document.getElementById('addr')?.value||'').trim().replace(/\s*\n\s*/g,', '); addrEl.textContent = a || '—'; }
   document.getElementById('declarant').textContent= (fn||ln) ? (fn+' '+ln).trim() : '—';
 }
 // ── CHECK UNIQUE ─────────────────────────────────────────────────
@@ -1342,13 +1535,30 @@ function showE(id,eId,show) {
 function validate() {
   let ok = true;
   [['fn','fnErr'],['ln','lnErr'],['wa-national','waErr'],['addr','addrErr'],
-   ['cie','cieErr'],['fnum','fnumErr'],
-   ['fdate','fdErr'],['inc','incErr'],['sigCity','sigCityErr']
+   ['cie','cieErr'],['inc','incErr'],['sigCity','sigCityErr']
   ].forEach(([id,e])=>{
     const empty=!document.getElementById(id)?.value.trim();
     showE(id,e,empty);
     if(empty) ok=false;
   });
+  // Vol : validation selon le mode (direct = 1 vol ; correspondance = chaque tronçon)
+  if (flightMode === 'connecting') {
+    syncLegsFromDom();
+    const legsOk = flightLegs.length>0 && flightLegs.every(l=>l.fnum.trim() && l.date);
+    document.querySelectorAll('.leg-row').forEach((row)=>{
+      const i=+row.dataset.idx, leg=flightLegs[i]||{};
+      row.querySelector('.leg-fnum')?.classList.toggle('err', !leg.fnum?.trim());
+      row.querySelector('.leg-date')?.classList.toggle('err', !leg.date);
+    });
+    const le=document.getElementById('legsErr'); if (le) le.style.display = legsOk?'none':'block';
+    if (!legsOk) ok=false;
+  } else {
+    [['fnum','fnumErr'],['fdate','fdErr']].forEach(([id,e])=>{
+      const empty=!document.getElementById(id)?.value.trim();
+      showE(id,e,empty);
+      if(empty) ok=false;
+    });
+  }
   // WhatsApp : exiger indicatif (pays) + numéro → un numéro international valide
   const waFull = (document.getElementById('wa')?.value || '').trim();
   if (!/^\+\d{7,15}$/.test(waFull)) {
@@ -1399,6 +1609,23 @@ function submitMandat() {
   }
   const btn = document.getElementById('btnSub');
   btn.disabled=true; btn.innerHTML='⏳ Sending…';
+  // ── Données vol selon le mode (rétro-compat : flightNum/flightDate/dep/arr/connecting toujours fournis) ──
+  let _flightNum, _flightDate, _depA, _arrA, _connecting, _legs = null;
+  if (flightMode === 'connecting') {
+    syncLegsFromDom();
+    _legs = flightLegs.map(l=>({ flightNum:l.fnum, flightDate:l.date, depAirport:l.dep, arrAirport:l.arr }));
+    _flightNum  = flightLegs.map(l=>l.fnum).filter(Boolean).join(' / ');
+    _flightDate = flightLegs[0]?.date || '';
+    _depA       = flightLegs[0]?.dep || '';
+    _arrA       = flightLegs[flightLegs.length-1]?.arr || '';
+    _connecting = legsSummary();
+  } else {
+    _flightNum  = document.getElementById('fnum').value.trim();
+    _flightDate = document.getElementById('fdate').value;
+    _depA       = document.getElementById('dep').value.trim();
+    _arrA       = document.getElementById('arr').value.trim();
+    _connecting = document.getElementById('connecting')?.value.trim() || '';
+  }
   const payload = {
     ref:       REF,
     firstName: document.getElementById('fn').value.trim(),
@@ -1415,16 +1642,18 @@ function submitMandat() {
     mandataireAcceptedAt: new Date().toISOString(),
     airline:   document.getElementById('cie').value.trim(),
     operatedBy: document.getElementById('operatedby')?.value.trim() || '',
-    flightNum: document.getElementById('fnum').value.trim(),
-    flightDate:document.getElementById('fdate').value,
+    flightNum: _flightNum,
+    flightDate:_flightDate,
     pnr:       document.getElementById('pnr').value.trim(),
     incident:  document.getElementById('inc').value,
     pax:       paxCount,
     passengerNames: getNames(),
     passengersData: getPassengersData(),
-    depAirport:document.getElementById('dep').value.trim(),
-    arrAirport:document.getElementById('arr').value.trim(),
-    connecting: document.getElementById('connecting')?.value.trim() || '',
+    depAirport:_depA,
+    arrAirport:_arrA,
+    connecting: _connecting,
+    flightMode: flightMode,
+    flightLegs: _legs,
     signCity:  document.getElementById('sigCity').value.trim(),
     signDate:  document.getElementById('sigDate').value,
     signatureImg: document.getElementById('sigCanvas').toDataURL('image/png'),
@@ -1439,17 +1668,65 @@ function submitMandat() {
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify(payload),
   })
-  .then(()=>showSuccess())
-  .catch(()=>showSuccess());
+  .then(r=>showSuccess(payload, !!(r && r.ok)))
+  .catch(()=>showSuccess(payload, false));
 }
-function showSuccess() {
+function fmtDateLongFR(d){ try{ return d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}); }catch(e){ return ''; } }
+function showSuccess(payload, ok) {
+  payload = payload || {};
   document.getElementById('mandatForm').style.display='none';
-  document.getElementById('successScreen').style.display='block';
+  const ss = document.getElementById('successScreen');
+  ss.style.display='block';
   document.getElementById('sRef').textContent = REF;
-  const se = document.getElementById('sEmail');
-  if (se) se.textContent = clientEmailForRef(REF) || '—';
+  // Titre + signature chaleureuse personnalisés (prénom)
+  const fnRaw = (payload.firstName || document.getElementById('fn')?.value || '').trim();
+  const fn = fnRaw ? fnRaw.split(/\s+/)[0] : '';
+  const tEl = document.getElementById('sTitle');
+  if (tEl) tEl.textContent = fn ? ('C’est fait, ' + fn + ' !') : 'C’est fait !';
+  const soEl = document.getElementById('sSignoff');
+  if (soEl) {
+    soEl.textContent = fn ? ('Reposez-vous, ' + fn + ' — on prend le relais. ') : 'Reposez-vous — on prend le relais. ';
+    const b = document.createElement('b'); b.textContent = '— L’équipe Robin des Airs'; soEl.appendChild(b);
+  }
+  // Preuve : date/heure + ville de signature + date butoir de rétractation (J+14)
+  let signedAt = new Date();
+  if (payload.signedAt) { const d = new Date(payload.signedAt); if (!isNaN(d.getTime())) signedAt = d; }
+  const whenEl = document.getElementById('sWhen');
+  if (whenEl) { let h=''; try{ h=' à '+signedAt.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); }catch(e){} whenEl.textContent = fmtDateLongFR(signedAt) + h; }
+  const whereEl = document.getElementById('sWhere');
+  if (whereEl) whereEl.textContent = (payload.signCity || document.getElementById('sigCity')?.value || 'Paris');
+  const retract = new Date(signedAt.getTime()); retract.setDate(retract.getDate()+14);
+  const retEl = document.getElementById('sRetract'); if (retEl) retEl.textContent = fmtDateLongFR(retract);
+  // Liens pré-remplis (PDF + WhatsApp)
+  const pdfEl = document.getElementById('sPdf');
+  if (pdfEl) pdfEl.onclick = function (e) { e.preventDefault(); window.print(); }; // imprime le mandat REMPLI (cette page), plus l'ancien template vierge
+  const waBase = 'https://wa.me/33756863630?text=';
+  const waEl = document.getElementById('sWa');
+  if (waEl) waEl.href = waBase + encodeURIComponent('Bonjour Robin des Airs, je viens de signer mon mandat (réf. ' + REF + '). Je confirme mon dossier.');
+  // Co-passagers (si plusieurs sur le vol)
+  const px = parseInt(payload.pax || paxCount || 1, 10) || 1;
+  const co = document.getElementById('sCoPax');
+  if (co) co.style.display = (px > 1) ? 'block' : 'none';
+  if (px > 1) {
+    const pn = document.getElementById('sPaxN'); if (pn) pn.textContent = px;
+    const cob = document.getElementById('sCoPaxBtn');
+    if (cob) cob.href = waBase + encodeURIComponent('Bonjour Robin des Airs, j’ai signé le mandat (réf. ' + REF + '). Nous étions ' + px + ' sur le même vol — je veux ajouter les autres passagers à la réclamation.');
+  }
+  // Signataires (preuve de complétude pour un dossier groupe)
+  let names = [];
+  if (payload.passengerNames && payload.passengerNames.length) names = payload.passengerNames;
+  else if (typeof getNames === 'function') { try { names = getNames(); } catch(e){} }
+  const sgEl = document.getElementById('sSigners');
+  if (sgEl && names.length) {
+    sgEl.innerHTML = '<span aria-hidden="true">🖊️</span> <strong>Signataire' + (names.length>1?'s':'') + ' :</strong> ';
+    sgEl.appendChild(document.createTextNode(names.join(' · ')));
+  }
+  // Confirmation serveur incertaine → bandeau d'attente honnête (ne pas affirmer un succès non garanti)
+  const w = document.getElementById('sWarn');
+  if (w) w.style.display = (ok === false) ? 'block' : 'none';
   document.getElementById('pgBar').style.width='100%';
   window.scrollTo({top:0,behavior:'smooth'});
+  try { ss.focus(); } catch(e){}
 }
 </script>
 </body>
