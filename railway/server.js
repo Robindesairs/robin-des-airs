@@ -1033,7 +1033,14 @@ function isRealDate(dd, mm, yyyy) {
 // Saisie libre → 'JJ/MM/AAAA' normalisé si c'est une vraie date, sinon null.
 // century : préfixe pour les années à 2 chiffres ('20' vol, '19' naissance).
 function parseDateInput(input, century) {
-  const m = String(input || '').match(/(\d{1,2})[\/\-. ](\d{1,2})[\/\-. ](\d{2,4})/);
+  const raw = String(input || '');
+  let m = raw.match(/(\d{1,2})[\/\-. ](\d{1,2})[\/\-. ](\d{2,4})/);
+  if (!m) {
+    // Sans séparateur : JJMMAAAA (8 chiffres collés) ou JJMMAA (6). Bornes pour ne pas découper un
+    // autre nombre (n° de vol, PNR…). On accepte donc « 15032026 » comme « 15/03/2026 ».
+    const tok = raw.match(/(?<!\d)(\d{8}|\d{6})(?!\d)/);
+    if (tok) { const d = tok[1]; m = [tok[0], d.slice(0, 2), d.slice(2, 4), d.slice(4)]; }
+  }
   if (!m) return null;
   if (m[3].length === 3) return null; // « 15/03/202 » = année tronquée, pas une date
   const yy = m[3].length === 2 ? (century || '20') + m[3] : m[3];
