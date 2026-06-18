@@ -55,66 +55,48 @@ const ROUTES = {
   AF787:  [{ dep:'COO', arr:'CDG', route:'Cotonou → Paris', airline:'Air France' }],
 
   // ─── BRUSSELS AIRLINES (SN) ─────────────────────────────────────────────────
-  // Dakar — direct
-  AF201:  [{ dep:'BRU', arr:'DSS', route:'Bruxelles → Dakar', airline:'Brussels Airlines' }],
-  AF202:  [{ dep:'DSS', arr:'BRU', route:'Dakar → Bruxelles', airline:'Brussels Airlines' }],
-  SN201:  [{ dep:'BRU', arr:'DSS', route:'Bruxelles → Dakar', airline:'Brussels Airlines' }],
-  SN202:  [{ dep:'DSS', arr:'BRU', route:'Dakar → Bruxelles', airline:'Brussels Airlines' }],
-  // Banjul
-  SN203:  [{ dep:'BRU', arr:'BJL', route:'Bruxelles → Banjul', airline:'Brussels Airlines' }],
-  SN204:  [{ dep:'BJL', arr:'BRU', route:'Banjul → Bruxelles', airline:'Brussels Airlines' }],
-  // Accra + Lomé (milk-run)
+  // Règle : on n'inscrit que les routes VÉRIFIÉES. Les autres tombent sur AeroDataBox/LLM.
+  // Changer le numéro incorrect → supprimer l'entrée (ne pas garder un mauvais numéro).
+
+  // Dakar → Banjul (milk-run BRU→DSS→BJL, confirmé flightera/aviability)
+  SN203:  [
+    { dep:'BRU', arr:'DSS', route:'Bruxelles → Dakar',  airline:'Brussels Airlines' },
+    { dep:'DSS', arr:'BJL', route:'Dakar → Banjul',      airline:'Brussels Airlines' },
+    { dep:'BRU', arr:'BJL', route:'Bruxelles → Banjul',  airline:'Brussels Airlines' },
+  ],
+  SN204:  [
+    { dep:'BJL', arr:'DSS', route:'Banjul → Dakar',       airline:'Brussels Airlines' },
+    { dep:'DSS', arr:'BRU', route:'Dakar → Bruxelles',    airline:'Brussels Airlines' },
+    { dep:'BJL', arr:'BRU', route:'Banjul → Bruxelles',   airline:'Brussels Airlines' },
+  ],
+
+  // Accra + Lomé (milk-run BRU→ACC→LFW, confirmé par test prod)
   SN277:  [
     { dep:'BRU', arr:'ACC', route:'Bruxelles → Accra', airline:'Brussels Airlines' },
-    { dep:'ACC', arr:'LFW', route:'Accra → Lomé', airline:'Brussels Airlines' },
-    { dep:'BRU', arr:'LFW', route:'Bruxelles → Lomé', airline:'Brussels Airlines' },
+    { dep:'ACC', arr:'LFW', route:'Accra → Lomé',       airline:'Brussels Airlines' },
+    { dep:'BRU', arr:'LFW', route:'Bruxelles → Lomé',   airline:'Brussels Airlines' },
   ],
   SN278:  [
-    { dep:'LFW', arr:'ACC', route:'Lomé → Accra', airline:'Brussels Airlines' },
-    { dep:'ACC', arr:'BRU', route:'Accra → Bruxelles', airline:'Brussels Airlines' },
-    { dep:'LFW', arr:'BRU', route:'Lomé → Bruxelles', airline:'Brussels Airlines' },
+    { dep:'LFW', arr:'ACC', route:'Lomé → Accra',          airline:'Brussels Airlines' },
+    { dep:'ACC', arr:'BRU', route:'Accra → Bruxelles',     airline:'Brussels Airlines' },
+    { dep:'LFW', arr:'BRU', route:'Lomé → Bruxelles',      airline:'Brussels Airlines' },
   ],
-  // Lagos
-  SN281:  [{ dep:'BRU', arr:'LOS', route:'Bruxelles → Lagos', airline:'Brussels Airlines' }],
-  SN282:  [{ dep:'LOS', arr:'BRU', route:'Lagos → Bruxelles', airline:'Brussels Airlines' }],
-  // Abuja
-  SN283:  [{ dep:'BRU', arr:'ABV', route:'Bruxelles → Abuja', airline:'Brussels Airlines' }],
-  SN284:  [{ dep:'ABV', arr:'BRU', route:'Abuja → Bruxelles', airline:'Brussels Airlines' }],
-  // Bamako
-  SN285:  [{ dep:'BRU', arr:'BKO', route:'Bruxelles → Bamako', airline:'Brussels Airlines' }],
-  SN286:  [{ dep:'BKO', arr:'BRU', route:'Bamako → Bruxelles', airline:'Brussels Airlines' }],
-  // Cotonou + Abidjan (milk-run)
+
+  // Cotonou + Abidjan (milk-run BRU→COO→ABJ, structure réseau connue)
   SN287:  [
     { dep:'BRU', arr:'COO', route:'Bruxelles → Cotonou', airline:'Brussels Airlines' },
-    { dep:'COO', arr:'ABJ', route:'Cotonou → Abidjan', airline:'Brussels Airlines' },
+    { dep:'COO', arr:'ABJ', route:'Cotonou → Abidjan',   airline:'Brussels Airlines' },
     { dep:'BRU', arr:'ABJ', route:'Bruxelles → Abidjan', airline:'Brussels Airlines' },
   ],
   SN288:  [
-    { dep:'ABJ', arr:'COO', route:'Abidjan → Cotonou', airline:'Brussels Airlines' },
-    { dep:'COO', arr:'BRU', route:'Cotonou → Bruxelles', airline:'Brussels Airlines' },
-    { dep:'ABJ', arr:'BRU', route:'Abidjan → Bruxelles', airline:'Brussels Airlines' },
+    { dep:'ABJ', arr:'COO', route:'Abidjan → Cotonou',    airline:'Brussels Airlines' },
+    { dep:'COO', arr:'BRU', route:'Cotonou → Bruxelles',  airline:'Brussels Airlines' },
+    { dep:'ABJ', arr:'BRU', route:'Abidjan → Bruxelles',  airline:'Brussels Airlines' },
   ],
-  // Douala
-  SN279:  [{ dep:'BRU', arr:'DLA', route:'Bruxelles → Douala', airline:'Brussels Airlines' }],
-  SN280:  [{ dep:'DLA', arr:'BRU', route:'Douala → Bruxelles', airline:'Brussels Airlines' }],
-  // Kinshasa
-  SN419:  [{ dep:'BRU', arr:'FIH', route:'Bruxelles → Kinshasa', airline:'Brussels Airlines' }],
-  SN420:  [{ dep:'FIH', arr:'BRU', route:'Kinshasa → Bruxelles', airline:'Brussels Airlines' }],
-  // Lubumbashi
-  SN421:  [{ dep:'BRU', arr:'FBM', route:'Bruxelles → Lubumbashi', airline:'Brussels Airlines' }],
-  SN422:  [{ dep:'FBM', arr:'BRU', route:'Lubumbashi → Bruxelles', airline:'Brussels Airlines' }],
-  // Bujumbura
-  SN411:  [{ dep:'BRU', arr:'BJM', route:'Bruxelles → Bujumbura', airline:'Brussels Airlines' }],
-  SN412:  [{ dep:'BJM', arr:'BRU', route:'Bujumbura → Bruxelles', airline:'Brussels Airlines' }],
-  // Kigali
-  SN413:  [{ dep:'BRU', arr:'KGL', route:'Bruxelles → Kigali', airline:'Brussels Airlines' }],
-  SN414:  [{ dep:'KGL', arr:'BRU', route:'Kigali → Bruxelles', airline:'Brussels Airlines' }],
-  // Nairobi
-  SN401:  [{ dep:'BRU', arr:'NBO', route:'Bruxelles → Nairobi', airline:'Brussels Airlines' }],
-  SN402:  [{ dep:'NBO', arr:'BRU', route:'Nairobi → Bruxelles', airline:'Brussels Airlines' }],
-  // Entebbe
-  SN403:  [{ dep:'BRU', arr:'EBB', route:'Bruxelles → Entebbe', airline:'Brussels Airlines' }],
-  SN404:  [{ dep:'EBB', arr:'BRU', route:'Entebbe → Bruxelles', airline:'Brussels Airlines' }],
+
+  // Kinshasa (confirmé flightaware BEL357/358)
+  SN357:  [{ dep:'BRU', arr:'FIH', route:'Bruxelles → Kinshasa', airline:'Brussels Airlines' }],
+  SN358:  [{ dep:'FIH', arr:'BRU', route:'Kinshasa → Bruxelles', airline:'Brussels Airlines' }],
 
   // ─── KLM (KL) ───────────────────────────────────────────────────────────────
   KL571:  [{ dep:'AMS', arr:'ABJ', route:'Amsterdam → Abidjan', airline:'KLM' }],
