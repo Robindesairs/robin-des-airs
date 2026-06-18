@@ -1969,7 +1969,7 @@ async function sendRoute(phone, s, cfg) {
 // trajet est récupérée ensuite (scan e-billet/carte, ou saisie vol) — jamais redemandée pour qualifier.
 async function askRouteZone(phone, s, cfg) {
   s.step = 'route_zone'; await setState(phone, s);
-  return sendButtons(phone, { body: `${bar('route')}\n🗺️ Pour vérifier vos droits, votre voyage :\n\n🛫 *part d'Europe* (vous décollez d'un aéroport européen)\n🛬 *arrive en Europe* (vous atterrissez dans un aéroport européen)\n🌍 *ni l'un ni l'autre* (ex. entre deux pays d'Afrique)\n\n_💡 Vol entièrement en Europe (ex. Paris→Rome) → choisissez « Départ d'Europe ». Une escale en Europe compte aussi._`, buttons: [
+  return sendButtons(phone, { body: `${bar('route')}\n🗺️ Pour vérifier vos droits, votre voyage :\n\n🛫 *part d'Europe* (vous décollez d'un aéroport européen)\n🛬 *arrive en Europe* (vous atterrissez dans un aéroport européen)\n🌍 *ni l'un ni l'autre* (ex. entre deux pays d'Afrique)\n\n_💡 Europe → Afrique (ex. Strasbourg ou Paris → Dakar) = « Départ d'Europe ». Afrique → Europe = « Arrivée en Europe ». Même si vous allez en Afrique, ce qui compte c'est d'où vous décollez. Une escale en Europe compte aussi._`, buttons: [
     { id: 'rz_dep', text: '🛫 Départ d\'Europe' },
     { id: 'rz_arr', text: '🛬 Arrivée en Europe' },
     { id: 'rz_non', text: '🌍 Aucun des deux' },
