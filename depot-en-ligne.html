@@ -4,6 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dépôt sécurisé de vos pièces — Robin des Airs</title>
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://robindesairs.eu/depot-en-ligne.html">
+  <meta property="og:title" content="Dépôt sécurisé de vos pièces — Robin des Airs">
+  <meta property="og:description" content="Transmettez vos documents en toute sécurité, connexion chiffrée. Robin des Airs s'occupe de votre indemnité de vol (CE 261).">
+  <meta property="og:image" content="https://robindesairs.eu/robin-des-airs-og-1200x630-v2.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Dépôt sécurisé de vos pièces — Robin des Airs">
+  <meta name="twitter:description" content="Transmettez vos documents en toute sécurité, connexion chiffrée.">
+  <meta name="twitter:image" content="https://robindesairs.eu/robin-des-airs-og-1200x630-v2.jpg">
   <link rel="icon" href="/favicon.png" type="image/png">
   <meta name="robots" content="noindex,nofollow">
   <style>
@@ -61,12 +72,14 @@
       <div class="big">✅</div>
       <h1>Merci, c'est bien reçu !</h1>
       <p class="need">Vos pièces sont enregistrées dans votre dossier. Notre équipe prend le relais et vous appellera depuis le <b>+33 7 56 86 36 30</b> (enregistrez-le sous « Robin des Airs »). 🏹</p>
+      <p style="margin-top:16px"><a id="suiviLink" href="#" style="display:inline-block;color:#047857;font-weight:700;text-decoration:none;border:1.5px solid var(--border);border-radius:10px;padding:12px 18px;font-size:14px">📊 Suivre l'avancement de mon dossier →</a></p>
     </div>
   </div>
   <script>
     const P = new URLSearchParams(location.search);
     const REF = (P.get('r') || P.get('ref') || '').trim();
     document.getElementById('refLine').textContent = REF ? ('Dossier : ' + REF) : 'Lien invalide — réf. manquante';
+    if (REF) { const sv = document.getElementById('suiviLink'); if (sv) sv.href = '/suivi-dossier.html?r=' + encodeURIComponent(REF); }
     const MAX = 4 * 1024 * 1024; // 4 Mo / fichier (plafond serveur)
     const queue = [];
     const fileInput = document.getElementById('fileInput');

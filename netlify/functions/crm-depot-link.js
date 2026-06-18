@@ -88,6 +88,11 @@ exports.handler = async (event) => {
   return {
     statusCode: 200,
     headers: HEADERS,
-    body: JSON.stringify({ ok: true, ref, link: `${SITE}/depot-en-ligne.html?r=${encodeURIComponent(ref)}` }),
+    body: JSON.stringify({
+      ok: true,
+      ref,
+      link: `${SITE}/depot-en-ligne.html?r=${encodeURIComponent(ref)}`,
+      suiviLink: `${SITE}/suivi-dossier.html?r=${encodeURIComponent(ref)}`,
+    }),
   };
 };

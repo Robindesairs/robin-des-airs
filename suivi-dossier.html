@@ -4,29 +4,93 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Où en est mon dossier ? — Robin des Airs</title>
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://robindesairs.eu/suivi-dossier.html">
+  <meta property="og:title" content="Où en est mon dossier ? — Robin des Airs">
+  <meta property="og:description" content="Suivez l'avancement de votre indemnisation de vol en temps réel. Robin des Airs — CE 261.">
+  <meta property="og:image" content="https://robindesairs.eu/robin-des-airs-og-1200x630-v2.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Où en est mon dossier ? — Robin des Airs">
+  <meta name="twitter:description" content="Suivez l'avancement de votre indemnisation de vol en temps réel.">
+  <meta name="twitter:image" content="https://robindesairs.eu/robin-des-airs-og-1200x630-v2.jpg">
   <link rel="icon" href="/favicon.png" type="image/png">
   <link rel="apple-touch-icon" href="/favicon.png">
-  <meta name="description" content="Suivez l'avancement de votre dossier de réclamation aérienne. Échanges par WhatsApp ou email.">
+  <meta name="description" content="Suivez l'avancement de votre dossier de réclamation aérienne en temps réel. Échanges par WhatsApp ou email.">
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.webmanifest">
+  <meta name="theme-color" content="#0B1F3A">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Mon dossier">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
   <style>
     *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
     :root{--navy:#0B1F3A;--neon:#00C87A;--neon-dark:#047857;--white:#fff;--off:#F7F8FA;--text:#1a2436;--gray:#6B7A90;--border:#E2E6EE}
-    body{font-family:'Montserrat',sans-serif;background:var(--off);color:var(--text);line-height:1.7;min-height:100vh}
-    .top-bar{background:var(--navy);padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
+    body{font-family:'Montserrat',sans-serif;background:var(--off);color:var(--text);line-height:1.7;min-height:100vh;min-height:100dvh}
+    .top-bar{background:var(--navy);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;padding-top:max(14px,env(safe-area-inset-top))}
     .top-logo{font-weight:900;font-size:15px;color:white;text-decoration:none}.top-logo span{color:#00E5A0}
     .back{color:rgba(255,255,255,0.8);font-size:13px;font-weight:600;text-decoration:none}.back:hover{color:white}
-    .wrap{max-width:560px;margin:0 auto;padding:40px 24px 80px}
-    h1{font-size:26px;font-weight:900;color:var(--navy);margin-bottom:12px}
-    .sub{font-size:15px;color:var(--gray);margin-bottom:28px}
-    .card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:28px 24px;margin-bottom:24px;box-shadow:0 2px 16px rgba(11,31,58,0.04)}
-    .card p{margin-bottom:12px;font-size:14px}
-    .card p:last-child{margin-bottom:0}
-    .btn-wa{display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:18px 28px;background:#25D366;color:white;font-weight:800;font-size:14px;letter-spacing:0.5px;border-radius:12px;text-decoration:none;transition:transform 0.2s,box-shadow 0.2s}
-    .btn-wa:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,211,102,0.35)}
+    .wrap{max-width:560px;margin:0 auto;padding:32px 20px 80px}
+    h1{font-size:24px;font-weight:900;color:var(--navy);margin-bottom:6px;letter-spacing:-.5px}
+    .sub{font-size:14px;color:var(--gray);margin-bottom:24px}
+    .card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:22px 20px;margin-bottom:16px;box-shadow:0 2px 16px rgba(11,31,58,0.05)}
+    .btn-wa{display:inline-flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px 24px;background:#25D366;color:white;font-weight:800;font-size:14px;letter-spacing:0.3px;border-radius:12px;text-decoration:none;transition:transform 0.15s,box-shadow 0.15s;border:none;cursor:pointer}
+    .btn-wa:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(37,211,102,0.32)}
+    .btn-ghost{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 22px;background:#fff;color:var(--navy);font-weight:700;font-size:13px;border-radius:12px;text-decoration:none;border:1.5px solid var(--border);margin-top:10px;transition:border-color .15s}
+    .btn-ghost:hover{border-color:var(--neon)}
     .steps{list-style:none;margin:16px 0 0}
     .steps li{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;font-size:13px;color:var(--text)}
     .steps li .num{width:26px;height:26px;flex-shrink:0;border-radius:50%;background:var(--neon);color:var(--navy);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center}
+
+    /* ---- Statut / éligibilité ---- */
+    .hello{font-size:22px;font-weight:900;color:var(--navy);margin-bottom:2px}
+    .status-eyebrow{font-size:11px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;color:var(--neon-dark);margin-bottom:6px}
+    .status-label{font-size:20px;font-weight:900;color:var(--navy);margin-bottom:6px}
+    .status-desc{font-size:14px;color:var(--gray)}
+    .status-card.terminal{background:#FFF6F4;border-color:#F3C9BE}
+    .status-card.terminal .status-eyebrow{color:#B4471F}
+    .status-card.paid{background:#EFFCF5;border-color:#A8E9C9}
+    .status-card.paid .status-eyebrow{color:var(--neon-dark)}
+
+    /* ---- Timeline ---- */
+    .tl{list-style:none;margin:6px 0 0;position:relative}
+    .tl li{display:flex;gap:14px;position:relative;padding-bottom:20px}
+    .tl li:last-child{padding-bottom:0}
+    .tl li::before{content:'';position:absolute;left:13px;top:26px;bottom:-2px;width:2px;background:var(--border)}
+    .tl li:last-child::before{display:none}
+    .tl li.done::before,.tl li.current::before{background:var(--neon)}
+    .dot{width:28px;height:28px;flex-shrink:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;border:2px solid var(--border);background:#fff;color:var(--gray);z-index:1}
+    .tl li.done .dot{background:var(--neon);border-color:var(--neon);color:#062b1d}
+    .tl li.current .dot{background:var(--navy);border-color:var(--navy);color:#fff;box-shadow:0 0 0 4px rgba(0,200,122,.18)}
+    .tl-label{font-size:14px;font-weight:700;color:var(--navy);padding-top:3px}
+    .tl li.future .tl-label{color:var(--gray);font-weight:600}
+    .tl li.current .tl-label{color:var(--navy)}
+    .tl-now{display:inline-block;margin-left:8px;font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#fff;background:var(--neon-dark);border-radius:6px;padding:2px 7px;vertical-align:middle}
+
+    /* ---- Montant ---- */
+    .money{background:var(--navy);color:#fff;border:none}
+    .money .m-eyebrow{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:4px}
+    .money .m-amt{font-size:34px;font-weight:900;color:#00E5A0;line-height:1.1}
+    .money .m-note{font-size:12px;color:rgba(255,255,255,.65);margin-top:6px}
+
+    /* ---- Vol ---- */
+    .vol-row{display:flex;justify-content:space-between;gap:12px;font-size:13px;padding:7px 0;border-bottom:1px solid var(--border)}
+    .vol-row:last-child{border-bottom:none}
+    .vol-row .k{color:var(--gray)}
+    .vol-row .v{color:var(--navy);font-weight:700;text-align:right}
+
+    .updated{font-size:11.5px;color:var(--gray);text-align:center;margin-top:14px}
+    .updated .live{color:var(--neon-dark);font-weight:700}
+    .skeleton{height:14px;border-radius:6px;background:linear-gradient(90deg,#eef1f5 25%,#e3e8ef 50%,#eef1f5 75%);background-size:200% 100%;animation:sh 1.3s infinite}
+    @keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
+    .hide{display:none!important}
+    .install{display:none;align-items:center;gap:10px;background:#EAF8F1;border:1px solid #BfE9D4;border-radius:12px;padding:12px 14px;margin-bottom:16px;font-size:12.5px;color:var(--navy)}
+    .install button{margin-left:auto;background:var(--neon-dark);color:#fff;border:none;border-radius:8px;padding:8px 12px;font-weight:700;font-size:12px;cursor:pointer;font-family:inherit;white-space:nowrap}
+    .err{font-size:13px;color:#B4471F;background:#FFF6F4;border:1px solid #F3C9BE;border-radius:12px;padding:14px 16px;margin-bottom:16px}
   </style>
 </head>
 <body>
@@ -35,23 +99,217 @@
     <a href="/" class="back">← Retour</a>
   </div>
   <div class="wrap">
-    <h1>Où en est mon dossier ?</h1>
-    <p class="sub">Vous avez déjà déposé un dossier et vous voulez un point d'avancement ? Écrivez-nous sur WhatsApp — nous revenons vers vous dans les meilleurs délais.</p>
 
-    <div class="card">
-      <p><strong>Le plus simple :</strong> envoyez-nous un message sur WhatsApp avec votre <strong>nom</strong> et, si vous l'avez, le <strong>numéro de vol</strong> ou la date du dépôt. Nous vous donnons le statut de votre dossier tout de suite.</p>
-      <ul class="steps">
-        <li><span class="num">1</span> Ouvrez WhatsApp ci-dessous</li>
-        <li><span class="num">2</span> Un message est déjà rédigé : « Où en est mon dossier ? »</li>
-        <li><span class="num">3</span> Ajoutez votre nom (et vol si vous voulez), envoyez</li>
-      </ul>
+    <!-- ====== MODE SUIVI (avec ?r=) ====== -->
+    <div id="tracker" class="hide">
+      <div id="install" class="install">
+        📲 Ajoutez « Mon dossier » à votre écran d'accueil pour le retrouver en un geste.
+        <button id="installBtn" type="button">Ajouter</button>
+      </div>
+
+      <h1 class="hello" id="hello">Votre dossier</h1>
+      <p class="sub" id="subline">Voici l'avancement de votre demande d'indemnisation.</p>
+
+      <div id="errBox" class="err hide"></div>
+
+      <div class="card status-card" id="statusCard">
+        <div class="status-eyebrow" id="stEyebrow">Statut actuel</div>
+        <div class="status-label"><span class="skeleton" style="display:inline-block;width:60%"></span></div>
+        <div class="status-desc" id="stDesc"></div>
+      </div>
+
+      <div class="card" id="timelineCard">
+        <ul class="tl" id="tl"></ul>
+      </div>
+
+      <div class="card money hide" id="moneyCard">
+        <div class="m-eyebrow">Ce que vous recevez à la fin</div>
+        <div class="m-amt" id="mAmt">—</div>
+        <div class="m-note" id="mNote"></div>
+      </div>
+
+      <div class="card hide" id="volCard"></div>
+
+      <a id="waBtn" class="btn-wa" href="#">💬 Une question sur mon dossier ?</a>
+      <a id="depotBtn" class="btn-ghost hide" href="#">📎 Envoyer mes pièces (carte d'embarquement, passeport)</a>
+
+      <p class="updated" id="updated"></p>
     </div>
 
-    <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20des%20Airs%20%21%20O%C3%B9%20en%20est%20mon%20dossier%20%3F%0A%0ANom%20%3A%20%0ANum%C3%A9ro%20de%20vol%20%28optionnel%29%20%3A%20%0ADate%20du%20d%C3%A9p%C3%B4t%20%28optionnel%29%20%3A%20" class="btn-wa">
-      💬 Demander le suivi sur WhatsApp
-    </a>
+    <!-- ====== MODE SANS RÉFÉRENCE (fallback historique) ====== -->
+    <div id="fallback" class="hide">
+      <h1>Où en est mon dossier ?</h1>
+      <p class="sub">Vous avez déjà déposé un dossier et vous voulez un point d'avancement ? Écrivez-nous sur WhatsApp — nous revenons vers vous dans les meilleurs délais.</p>
+      <div class="card">
+        <p style="font-size:14px;margin-bottom:12px"><strong>Le plus simple :</strong> envoyez-nous un message sur WhatsApp avec votre <strong>nom</strong> et, si vous l'avez, le <strong>numéro de vol</strong> ou la date du dépôt. Nous vous donnons le statut de votre dossier tout de suite.</p>
+        <ul class="steps">
+          <li><span class="num">1</span> Ouvrez WhatsApp ci-dessous</li>
+          <li><span class="num">2</span> Un message est déjà rédigé : « Où en est mon dossier ? »</li>
+          <li><span class="num">3</span> Ajoutez votre nom (et vol si vous voulez), envoyez</li>
+        </ul>
+      </div>
+      <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20des%20Airs%20%21%20O%C3%B9%20en%20est%20mon%20dossier%20%3F%0A%0ANom%20%3A%20%0ANum%C3%A9ro%20de%20vol%20%28optionnel%29%20%3A%20%0ADate%20du%20d%C3%A9p%C3%B4t%20%28optionnel%29%20%3A%20" class="btn-wa">💬 Demander le suivi sur WhatsApp</a>
+      <p style="font-size:12px;color:var(--gray);margin-top:20px;text-align:center;">Vous pouvez aussi nous écrire à <a href="mailto:expert@robindesairs.eu" style="color:var(--neon-dark);font-weight:600;">expert@robindesairs.eu</a> avec l'objet « Suivi dossier ».</p>
+    </div>
 
-    <p style="font-size:12px;color:var(--gray);margin-top:20px;text-align:center;">Vous pouvez aussi nous écrire à <a href="mailto:expert@robindesairs.eu" style="color:var(--neon-dark);font-weight:600;">expert@robindesairs.eu</a> avec l'objet « Suivi dossier ».</p>
   </div>
+
+  <script>
+  (function () {
+    var WA = 'https://wa.me/33756863630';
+    var P = new URLSearchParams(location.search);
+    var REF = (P.get('r') || P.get('ref') || '').trim();
+    var DEMO = P.has('demo');
+    var DEMO_SCENARIO = (P.get('demo') || '1').toLowerCase();
+    var LAST_REF_KEY = 'rda_last_ref';
+
+    // Mémorise la réf : ainsi la PWA installée (start_url sans ?r=) rouvre LE bon dossier.
+    try {
+      if (REF) localStorage.setItem(LAST_REF_KEY, REF);
+      else if (!DEMO) { var saved = localStorage.getItem(LAST_REF_KEY); if (saved) REF = saved; }
+    } catch (e) {}
+
+    var $ = function (id) { return document.getElementById(id); };
+    function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+    function euro(n){ return Number(n).toLocaleString('fr-FR') + ' €'; }
+
+    // Aucune référence → mode contact historique.
+    if (!REF && !DEMO) { $('fallback').classList.remove('hide'); return; }
+    $('tracker').classList.remove('hide');
+
+    var CACHE_KEY = 'rda_suivi_' + (REF || 'demo');
+
+    var TL = ['Dossier reçu','Mandat signé','Réclamation envoyée','Relances en cours','Médiation / justice','Indemnité versée'];
+    var DEMO_BASE = { ok:true, ref:'DEMO', prenom:'Awa', timeline:TL, vol:'AF718', date:'12/03/2026', route:'Dakar → Paris', compagnie:'Air France', pax:4, montantNet:1800, montantBrut:2400, depotLink:'/depot-en-ligne.html?r=DEMO' };
+    function demoData() {
+      var s = {
+        debut:       { statut:'ELIGIBLE',     etape:0, terminal:null, statutLabel:'Dossier en préparation', statutDesc:'Votre dossier est éligible. Envoyez vos pièces pour qu’on lance la réclamation.' },
+        '1':         { statut:'LRAR_ENVOYEE', etape:2, terminal:null, statutLabel:'Réclamation envoyée', statutDesc:'Votre réclamation a été envoyée à Air France. Le délai légal de réponse court — nous relançons automatiquement si besoin.' },
+        reclamation: { statut:'LRAR_ENVOYEE', etape:2, terminal:null, statutLabel:'Réclamation envoyée', statutDesc:'Votre réclamation a été envoyée à Air France. Le délai légal de réponse court — nous relançons automatiquement si besoin.' },
+        relance:     { statut:'RELANCE_1',    etape:3, terminal:null, statutLabel:'Relance envoyée', statutDesc:'Sans réponse de la compagnie, nous l’avons relancée.' },
+        escalade:    { statut:'MEDIATION',    etape:4, terminal:null, statutLabel:'Escalade : médiation', statutDesc:'La compagnie tarde : nous portons le dossier devant l’instance compétente.' },
+        paye:        { statut:'PAYE',         etape:5, terminal:null, statutLabel:'Indemnité versée', statutDesc:'Bonne nouvelle : votre indemnité a été versée. Merci de votre confiance !' },
+        refus:       { statut:'REFUSE_DEFINITIF', etape:-1, terminal:'refus', statutLabel:'Réponse de la compagnie', statutDesc:'La compagnie a opposé un refus. Écrivez-nous : on vous explique les recours possibles.' }
+      };
+      var pick = s[DEMO_SCENARIO] || s['1'];
+      var d = {}; for (var k in DEMO_BASE) d[k] = DEMO_BASE[k]; for (var k2 in pick) d[k2] = pick[k2];
+      return d;
+    }
+
+    function render(d, fromCache) {
+      if (!d || !d.ok) { showError(); return; }
+      $('errBox').classList.add('hide');
+
+      $('hello').textContent = d.prenom ? ('Bonjour ' + d.prenom) : 'Votre dossier';
+      $('subline').textContent = "Voici l'avancement de votre demande d'indemnisation.";
+
+      // Carte statut
+      var sc = $('statusCard');
+      sc.className = 'card status-card';
+      $('stEyebrow').textContent = 'Statut actuel';
+      sc.querySelector('.status-label').textContent = d.statutLabel || 'En cours';
+      $('stDesc').textContent = d.statutDesc || '';
+      if (d.statut === 'PAYE') { sc.classList.add('paid'); $('stEyebrow').textContent = '🎉 Terminé'; }
+      else if (d.terminal) { sc.classList.add('terminal'); $('stEyebrow').textContent = 'Information'; }
+
+      // Timeline (l'étape « Médiation / justice » n'apparaît que si atteinte)
+      var tl = $('tl'); tl.innerHTML = '';
+      var labels = d.timeline || TL;
+      var cur = typeof d.etape === 'number' ? d.etape : 0;
+      // L'étape « Médiation / justice » (4) n'apparaît QUE si le dossier y est réellement
+      // (statut médiation/contentieux). Un dossier payé directement ne l'affiche pas.
+      var visible = cur === 4 ? [0,1,2,3,4,5] : [0,1,2,3,5];
+      if (d.terminal) { $('timelineCard').classList.add('hide'); }
+      else {
+        $('timelineCard').classList.remove('hide');
+        visible.forEach(function (i) {
+          var state = i < cur ? 'done' : (i === cur ? 'current' : 'future');
+          if (cur === 5) state = 'done';
+          var li = document.createElement('li');
+          li.className = state;
+          var dotInner = state === 'done' ? '✓' : '';
+          li.innerHTML = '<span class="dot">' + dotInner + '</span>' +
+            '<span class="tl-label">' + esc(labels[i] || '') +
+            (state === 'current' ? '<span class="tl-now">en cours</span>' : '') + '</span>';
+          tl.appendChild(li);
+        });
+      }
+
+      // Montant net (jamais sur un statut terminal : on ne promet pas un montant après refus/prescription)
+      if (d.montantNet && !d.terminal) {
+        $('moneyCard').classList.remove('hide');
+        $('mAmt').textContent = euro(d.montantNet);
+        var note = d.statut === 'PAYE' ? 'Indemnité versée — somme nette pour vous.' : 'Somme nette estimée pour vous, frais déjà déduits (vous ne payez rien si on échoue).';
+        if (d.montantBrut && d.montantBrut > d.montantNet) note += ' Indemnité brute : ' + euro(d.montantBrut) + '.';
+        $('mNote').textContent = note;
+      } else { $('moneyCard').classList.add('hide'); }
+
+      // Vol
+      var rows = [];
+      if (d.vol) rows.push(['Vol', d.vol + (d.compagnie ? ' · ' + d.compagnie : '')]);
+      if (d.route) rows.push(['Trajet', d.route]);
+      if (d.date) rows.push(['Date', d.date]);
+      if (d.pax && d.pax > 1) rows.push(['Passagers', d.pax + ' (dossier famille)']);
+      if (rows.length) {
+        $('volCard').classList.remove('hide');
+        $('volCard').innerHTML = rows.map(function (r) {
+          return '<div class="vol-row"><span class="k">' + esc(r[0]) + '</span><span class="v">' + esc(r[1]) + '</span></div>';
+        }).join('');
+      } else { $('volCard').classList.add('hide'); }
+
+      // CTA WhatsApp pré-rempli
+      var msg = 'Bonjour Robin des Airs ! Une question sur mon dossier' + (d.ref && d.ref !== 'DEMO' ? ' (réf. ' + d.ref + ')' : '') + '.';
+      $('waBtn').href = WA + '?text=' + encodeURIComponent(msg);
+
+      // Bouton dépôt de pièces si dossier au tout début
+      if (!d.terminal && typeof cur === 'number' && cur <= 1 && d.depotLink && d.depotLink !== '#') {
+        $('depotBtn').classList.remove('hide');
+        $('depotBtn').href = d.depotLink;
+      } else { $('depotBtn').classList.add('hide'); }
+
+      var when = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+      $('updated').innerHTML = fromCache
+        ? 'Hors-ligne — dernière mise à jour enregistrée.'
+        : '<span class="live">● en direct</span> · mis à jour à ' + when;
+    }
+
+    function showError() {
+      $('errBox').classList.remove('hide');
+      $('errBox').textContent = "Nous n'arrivons pas à charger ce dossier. Vérifiez votre lien, ou écrivez-nous sur WhatsApp.";
+      ['statusCard','timelineCard','moneyCard','volCard'].forEach(function (id) { $(id).classList.add('hide'); });
+      $('waBtn').href = WA + '?text=' + encodeURIComponent('Bonjour, je veux suivre mon dossier' + (REF ? ' (réf. ' + REF + ')' : '') + '.');
+    }
+
+    function load() {
+      if (DEMO) { render(demoData(), false); return; }
+      // Affiche immédiatement le cache (offline-first), puis rafraîchit.
+      try { var c = localStorage.getItem(CACHE_KEY); if (c) render(JSON.parse(c), true); } catch (e) {}
+      fetch('/api/suivi-dossier?r=' + encodeURIComponent(REF), { headers: { 'Accept': 'application/json' } })
+        .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+        .then(function (d) { render(d, false); try { localStorage.setItem(CACHE_KEY, JSON.stringify(d)); } catch (e) {} })
+        .catch(function () { try { if (!localStorage.getItem(CACHE_KEY)) showError(); } catch (e) { showError(); } });
+    }
+
+    load();
+    if (!DEMO) {
+      window.addEventListener('focus', load);
+      setInterval(function () { if (document.visibilityState === 'visible') load(); }, 60000);
+    }
+
+    // PWA : enregistrement du service worker + invite « ajouter à l'écran d'accueil ».
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () { navigator.serviceWorker.register('/service-worker.js').catch(function () {}); });
+    }
+    var deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', function (e) {
+      e.preventDefault(); deferredPrompt = e;
+      if (!matchMedia('(display-mode: standalone)').matches) $('install').style.display = 'flex';
+    });
+    $('installBtn').addEventListener('click', function () {
+      $('install').style.display = 'none';
+      if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; }
+    });
+  })();
+  </script>
 </body>
 </html>
