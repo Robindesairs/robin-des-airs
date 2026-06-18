@@ -934,6 +934,32 @@ function applyDossier(d) {
     } else if (d.dob && dobs[0] && !dobs[0].value) { dobs[0].value = d.dob; }
   };
   fillPax();
+  // Vol avec correspondance : si le dossier décrit ≥2 segments (legs structurés OU route à ≥3
+  // escales), basculer la page en mode « correspondance » et pré-remplir chaque vol. Sinon le mode
+  // connecting démarre avec des segments vides → « Vol concerné : — ». Répare aussi les anciens
+  // dossiers sans tableau legs en dérivant les segments de la route + des n° « AF718 + HC302 ».
+  try {
+    const frToIso = (v) => { const p = String(v || '').split('/'); return p.length === 3 ? `${p[2]}-${p[1]}-${p[0]}` : (String(v || '').match(/^\d{4}-\d{2}-\d{2}$/) ? v : ''); };
+    const isoDate = frToIso(d.date);
+    let legs = [];
+    if (Array.isArray(d.legs) && d.legs.length >= 2) {
+      legs = d.legs.map((l, i) => ({ fnum: l.fnum || l.vol || '', date: frToIso(l.date) || (i === 0 ? isoDate : ''), dep: l.dep || '', arr: l.arr || '' }));
+    } else {
+      const stops = String(d.route || '').split(/→|->|—|\bvia\b/i).map((x) => x.trim()).filter(Boolean);
+      if (stops.length >= 3) {
+        const nums = String(d.vol || '').split(/[+/,;]|\bet\b/i).map((x) => x.trim()).filter(Boolean);
+        for (let i = 0; i < stops.length - 1; i++) legs.push({ fnum: nums[i] || '', date: i === 0 ? isoDate : '', dep: stops[i], arr: stops[i + 1] });
+      }
+    }
+    if (legs.length >= 2 && flightMode !== 'connecting') {
+      flightLegs = legs; flightMode = 'connecting';
+      const rc = document.getElementById('flightTypeConnecting'); if (rc) rc.checked = true;
+      const rd = document.getElementById('flightTypeDirect'); if (rd) rd.checked = false;
+      const dd = document.getElementById('flightDirect'); if (dd) dd.style.display = 'none';
+      const cc = document.getElementById('flightConnecting'); if (cc) cc.style.display = 'block';
+      renderLegs();
+    }
+  } catch (_) {}
   try { updateAmounts(); } catch (_) {}
   try { updateParties(); } catch (_) {}
   try { if (typeof calcProgress === 'function') calcProgress(); } catch (_) {}

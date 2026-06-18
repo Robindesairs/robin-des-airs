@@ -395,11 +395,11 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     <div class="field-row duo">
       <div>
         <label>Initial departure</label>
-        <input type="text" id="dep" placeholder="Paris CDG">
+        <input type="text" id="dep" placeholder="Paris CDG" oninput="updateParties()">
       </div>
       <div>
         <label>Final destination</label>
-        <input type="text" id="arr" placeholder="Banjul BJL">
+        <input type="text" id="arr" placeholder="Banjul BJL" oninput="updateParties()">
       </div>
     </div>
   </div>
@@ -934,6 +934,32 @@ function applyDossier(d) {
     } else if (d.dob && dobs[0] && !dobs[0].value) { dobs[0].value = d.dob; }
   };
   fillPax();
+  // Vol avec correspondance : si le dossier décrit ≥2 segments (legs structurés OU route à ≥3
+  // escales), basculer la page en mode « correspondance » et pré-remplir chaque vol. Sinon le mode
+  // connecting démarre avec des segments vides → « Flight: — ». Répare aussi les anciens
+  // dossiers sans tableau legs en dérivant les segments de la route + des n° « AF718 + HC302 ».
+  try {
+    const frToIso = (v) => { const p = String(v || '').split('/'); return p.length === 3 ? `${p[2]}-${p[1]}-${p[0]}` : (String(v || '').match(/^\d{4}-\d{2}-\d{2}$/) ? v : ''); };
+    const isoDate = frToIso(d.date);
+    let legs = [];
+    if (Array.isArray(d.legs) && d.legs.length >= 2) {
+      legs = d.legs.map((l, i) => ({ fnum: l.fnum || l.vol || '', date: frToIso(l.date) || (i === 0 ? isoDate : ''), dep: l.dep || '', arr: l.arr || '' }));
+    } else {
+      const stops = String(d.route || '').split(/→|->|—|\bvia\b/i).map((x) => x.trim()).filter(Boolean);
+      if (stops.length >= 3) {
+        const nums = String(d.vol || '').split(/[+/,;]|\bet\b/i).map((x) => x.trim()).filter(Boolean);
+        for (let i = 0; i < stops.length - 1; i++) legs.push({ fnum: nums[i] || '', date: i === 0 ? isoDate : '', dep: stops[i], arr: stops[i + 1] });
+      }
+    }
+    if (legs.length >= 2 && flightMode !== 'connecting') {
+      flightLegs = legs; flightMode = 'connecting';
+      const rc = document.getElementById('flightTypeConnecting'); if (rc) rc.checked = true;
+      const rd = document.getElementById('flightTypeDirect'); if (rd) rd.checked = false;
+      const dd = document.getElementById('flightDirect'); if (dd) dd.style.display = 'none';
+      const cc = document.getElementById('flightConnecting'); if (cc) cc.style.display = 'block';
+      renderLegs();
+    }
+  } catch (_) {}
   try { updateAmounts(); } catch (_) {}
   try { updateParties(); } catch (_) {}
   try { if (typeof calcProgress === 'function') calcProgress(); } catch (_) {}
@@ -1262,7 +1288,13 @@ function updateParties() {
   const pax = paxCount||1;
   let vol;
   if (flightMode === 'connecting') { vol = legsSummary() || '—'; }
-  else { vol = document.getElementById('fnum').value||VOL||'—'; }
+  else {
+    // Ligne claire : date · n° de vol · route
+    const dfn = (document.getElementById('fnum').value || VOL || '').trim();
+    const ddate = document.getElementById('fdate').value;
+    const droute = [document.getElementById('dep').value.trim(), document.getElementById('arr').value.trim()].filter(Boolean).join(' → ');
+    vol = [ddate ? frDate(ddate) : '', dfn, droute].filter(Boolean).join(' · ') || '—';
+  }
   const nm = (fn||ln) ? (fn+' '+ln).trim()+(pax>1?` + ${pax-1} autre(s)`:'') : '—';
   document.getElementById('pMandant').textContent = nm;
   document.getElementById('pVol').textContent     = vol;
