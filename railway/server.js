@@ -16,7 +16,7 @@ const express = require('express');
 const { pickVariant } = require('./lib/bot-variants');
 const { SYSTEM_PROMPT: FAQ_SYSTEM_PROMPT, FAQ_KNOWLEDGE } = require('./lib/faq-hors-tunnel');
 const { pickRV, fillTpl } = require('./lib/relance-variants');
-const { extractEticketMulti: extractEticketMultiLib } = require('./lib/extract-eticket');
+const { extractEticketMulti: extractEticketMultiLib, pdfToImages: pdfToImagesLib } = require('./lib/extract-eticket');
 // Prénom du signataire, joliment capitalisé pour l'affichage (les noms sont stockés en MAJUSCULES) :
 // « CLIMBIE » → « Climbie », « jean-pierre » → « Jean-Pierre », « n'goran » → « N'Goran ».
 function titleCaseName(x) { return String(x || '').toLowerCase().replace(/(^|[\s\-'])([a-zà-ÿ])/g, (m, sep, c) => sep + c.toUpperCase()); }
@@ -637,12 +637,33 @@ function buildMandatUrl(s, phone) {
 }
 
 // ─── OCR (Vision) ────────────────────────────────────────────────────────────
+// Récupère une pièce et la rend lisible par gpt-4o (Vision). Si c'est un PDF (passeport/carte
+// d'embarquement scannés en PDF, fréquent), on rastérise la 1ʳᵉ page via mupdf — gpt-4o ne lit PAS
+// un PDF étiqueté image. Renvoie { b64, mime } ou null. Accepte image ET PDF, comme l'e-billet.
+async function fetchAsImageB64(mediaUrl, cfg) {
+  if (!mediaUrl) return null;
+  try {
+    const r = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {}, signal: AbortSignal.timeout(20000) });
+    if (!r.ok) return null;
+    const ct = (r.headers.get('content-type') || '').toLowerCase();
+    const buf = Buffer.from(await r.arrayBuffer());
+    const hash = crypto.createHash('sha256').update(buf).digest('hex'); // anti-doublon sur les octets ORIGINAUX
+    const isPdf = ct.includes('pdf') || (buf.length > 4 && buf.slice(0, 5).toString('latin1') === '%PDF-');
+    if (isPdf) {
+      const pages = await pdfToImagesLib(buf, { maxPages: 1 });
+      if (pages && pages[0]) return { b64: pages[0].toString('base64'), mime: 'image/png', hash };
+      return null; // PDF illisible (mupdf indispo) → l'appelant gère l'échec (photo illisible)
+    }
+    const m = ct.match(/image\/(jpeg|png|webp|gif)/);
+    return { b64: buf.toString('base64'), mime: m ? m[0] : 'image/jpeg', hash };
+  } catch (_) { return null; }
+}
 async function ocrBoardingPass(mediaUrl, cfg) {
   const key = process.env.OPENAI_API_KEY; if (!key || !mediaUrl) return null;
   try {
-    const imgRes = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {}, signal: AbortSignal.timeout(20000) });
-    if (!imgRes.ok) return null;
-    const b64 = Buffer.from(await imgRes.arrayBuffer()).toString('base64');
+    const media = await fetchAsImageB64(mediaUrl, cfg);
+    if (!media) return null;
+    const b64 = media.b64;
     const prompt = `Tu lis une carte d'embarquement / e-billet d'avion. Réponds UNIQUEMENT en JSON :
 {"vol":"","compagnie":"","date":"","pnr":"","depart":"","arrivee":"","nom":""}
 Règles STRICTES :
@@ -655,7 +676,7 @@ Règles STRICTES :
 - Champ inconnu = "". Ne JAMAIS inventer.`;
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST', signal: AbortSignal.timeout(45000), headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 300, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${b64}` } }] }] }),
+      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 300, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: `data:${media.mime};base64,${b64}` } }] }] }),
     });
     const data = await res.json(); if (!data.choices) return null;
     const p = JSON.parse(data.choices[0].message.content);
@@ -776,9 +797,9 @@ async function askSens(phone, s, cfg) {
 async function ocrPassport(mediaUrl, cfg) {
   const key = process.env.OPENAI_API_KEY; if (!key || !mediaUrl) return null;
   try {
-    const imgRes = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {}, signal: AbortSignal.timeout(20000) });
-    if (!imgRes.ok) return null;
-    const b64 = Buffer.from(await imgRes.arrayBuffer()).toString('base64');
+    const media = await fetchAsImageB64(mediaUrl, cfg);
+    if (!media) return null;
+    const b64 = media.b64;
     const prompt = `Tu lis une pièce d'identité (PASSEPORT, carte nationale d'identité, titre de séjour, carte de résident…) — utilise aussi la zone MRZ en bas si présente. Réponds UNIQUEMENT en JSON :
 {"nom":"","prenom":"","date_naissance":"","date_expiration":"","adresse":""}
 Règles :
@@ -790,7 +811,7 @@ Règles :
 - Champ inconnu = "". Ne JAMAIS inventer.`;
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST', signal: AbortSignal.timeout(45000), headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 200, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${b64}` } }] }] }),
+      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 200, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: `data:${media.mime};base64,${b64}` } }] }] }),
     });
     const data = await res.json(); if (!data.choices) return null;
     const p = JSON.parse(data.choices[0].message.content);
@@ -816,11 +837,10 @@ async function classifyDoc(mediaUrl, cfg) {
   if (!mediaUrl) return FALLBACK;
   if (!key) return { ...FALLBACK, _unavailable: true, _reason: 'no_key' }; // pas de clé → on ne fait PAS semblant d'avoir classé
   try {
-    const imgRes = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {}, signal: AbortSignal.timeout(20000) });
-    if (!imgRes.ok) return FALLBACK;
-    const buf = Buffer.from(await imgRes.arrayBuffer());
-    const hash = crypto.createHash('sha256').update(buf).digest('hex'); // anti-doublon (même fichier renvoyé)
-    const b64 = buf.toString('base64');
+    const media = await fetchAsImageB64(mediaUrl, cfg);
+    if (!media) return FALLBACK;
+    const hash = media.hash; // anti-doublon (même fichier renvoyé)
+    const b64 = media.b64;
     const prompt = `Tu classes une photo/capture envoyée par un passager, et tu juges sa QUALITÉ (une pièce illisible peut être refusée par la compagnie). Réponds UNIQUEMENT en JSON :
 {"kind":"identite|voyage|frais|autre","nom":"","voyageType":"ebooking|carte|","lisible":true,"probleme":"","montant":null,"devise":""}
 - "identite" : passeport, carte nationale d'identité (CNI), titre de séjour. Mets dans "nom" le NOM et prénom lus (MAJUSCULES).
@@ -832,7 +852,7 @@ async function classifyDoc(mediaUrl, cfg) {
 Champ inconnu = "". Ne JAMAIS inventer un nom si la photo est illisible.`;
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST', signal: AbortSignal.timeout(45000), headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 140, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${b64}` } }] }] }),
+      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 140, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: `data:${media.mime};base64,${b64}` } }] }] }),
     });
     const data = await res.json(); if (!data.choices) return FALLBACK;
     const p = JSON.parse(data.choices[0].message.content);
