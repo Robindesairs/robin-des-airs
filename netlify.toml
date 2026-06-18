@@ -94,10 +94,11 @@
   schedule = "35 7 * * *"
 
 # Sofia — prospection d'agences partenaires (OpenStreetMap + Instagram) chaque lundi 7h40 UTC.
-# Démarre par Dakar (SN), Abidjan (CI), Banjul (GM) : OSM (agences physiques) + IG (hashtags,
-# WhatsApp en légende). Filtre les compagnies aériennes, dédoublonne contre le CRM → liste
-# « à contacter » + brief WhatsApp. Import CRM opt-in (?save=1). Lecture seule live pour le bureau.
-# Cadence hebdo = alignée sur le quota IG (30 hashtags / 7 j).
+# ROTATION sur tout le corridor (11 pays, Maroc exclu) : un GROUPE par semaine → cycle complet en
+# 4 semaines (cf. agency-prospector COUNTRY_ROTATION) ; ?pays=XX force une cible. OSM (agences
+# physiques) + IG (hashtags, WhatsApp en légende). Filtre les compagnies aériennes, dédoublonne
+# contre le CRM → liste « à contacter » + brief WhatsApp. Import CRM opt-in (?save=1). Lecture seule
+# live pour le bureau. Rotation calibrée pour rester sous le timeout ET le quota IG (30 hashtags/7j).
 [functions."sofia-prospect"]
   schedule = "40 7 * * 1"
 

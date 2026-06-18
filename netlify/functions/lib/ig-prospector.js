@@ -19,11 +19,20 @@
 const { normPhone, normName, COUNTRY_NAMES } = require('./agency-prospector');
 
 // Hashtags ciblés par pays (sans #, minuscules — format attendu par ig_hashtag_search).
-// Restreint volontairement (quota 30/7j). On démarre par SN / CI / GM.
+// Quota 30 hashtags / 7 j → la rotation hebdo de Sofia (≤3 pays/run, cf. agency-prospector
+// COUNTRY_ROTATION) garde chaque run sous le quota tout en couvrant tout le corridor en 4 semaines.
 const IG_HASHTAGS = {
   SN: { ville: 'Dakar', tags: ['agencedevoyagedakar', 'voyagedakar', 'agencevoyagesenegal', 'billetaviondakar'] },
   CI: { ville: 'Abidjan', tags: ['agencedevoyageabidjan', 'voyageabidjan', 'agencevoyagecotedivoire', 'billetavionabidjan'] },
   GM: { ville: 'Banjul', tags: ['gambiatravel', 'travelagencygambia', 'banjultravel', 'gambiatours'] },
+  ML: { ville: 'Bamako', tags: ['agencedevoyagebamako', 'voyagebamako', 'agencevoyagemali'] },
+  CM: { ville: 'Douala', tags: ['agencedevoyagedouala', 'voyagecameroun', 'agencevoyagecameroun'] },
+  CG: { ville: 'Brazzaville', tags: ['agencedevoyagebrazzaville', 'voyagecongo', 'billetavionbrazzaville'] },
+  CD: { ville: 'Kinshasa', tags: ['agencedevoyagekinshasa', 'voyagekinshasa', 'agencevoyagerdc'] },
+  KE: { ville: 'Nairobi', tags: ['travelagencynairobi', 'nairobitravel', 'kenyatravel'] },
+  ZA: { ville: 'Johannesburg', tags: ['travelagencyjohannesburg', 'joburgtravel', 'southafricatravel'] },
+  MQ: { ville: 'Fort-de-France', tags: ['agencedevoyagemartinique', 'voyagemartinique', 'billetavionmartinique'] },
+  GP: { ville: 'Pointe-à-Pitre', tags: ['agencedevoyageguadeloupe', 'voyageguadeloupe', 'billetavionguadeloupe'] },
 };
 
 /** Pays demandés → liste {pays, ville, tag} à interroger (défaut SN+CI+GM). */

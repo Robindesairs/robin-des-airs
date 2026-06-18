@@ -216,7 +216,7 @@ async function store(event, payload) {
 }
 
 /** Recalcule la liste de prospects (OpenStreetMap + Instagram), dédup + dédup CRM. */
-async function compute(paysArg, event, src) {
+async function compute(effectivePays, event, src) {
   const useOsm = !src || src === 'osm' || src === 'both';
   const useIg = !src || src === 'ig' || src === 'both';
   const existing = await fetchExistingAgencies();
@@ -283,6 +283,9 @@ exports.handler = async (event) => {
   try { body = JSON.parse(event.body || '{}'); } catch (_) {}
   const q = event.queryStringParameters || {};
   const paysArg = (q.pays || body.pays || '').split(',').map((s) => s.trim().toUpperCase()).filter(Boolean);
+  // Sans ?pays explicite (cron hebdo) → groupe de rotation de la semaine. Sofia « visite » ainsi
+  // TOUS les pays du corridor sur un cycle de 4 semaines, sans dépasser le timeout ni le quota IG.
+  const effectivePays = paysArg.length ? paysArg : P.rotationPays();
   const src = (q.src || body.src || '').toLowerCase().trim() || null; // 'osm' | 'ig' | 'both' (défaut both)
 
   const fullRun = isNetlifyScheduled(event) || verifyInternalSecret(event, body).ok;
@@ -294,7 +297,7 @@ exports.handler = async (event) => {
     const stored = await loadStored(event);
     if (stored) return { statusCode: 200, headers: HEADERS, body: JSON.stringify({ ok: true, cached: true, ...stored }) };
     try {
-      const payload = await compute(paysArg, event, src);
+      const payload = await compute(effectivePays, event, src);
       await store(event, payload);
       return { statusCode: 200, headers: HEADERS, body: JSON.stringify({ ok: true, ...payload }) };
     } catch (e) {
@@ -304,7 +307,7 @@ exports.handler = async (event) => {
 
   // Run complet (cron / secret).
   let payload;
-  try { payload = await compute(paysArg, event, src); }
+  try { payload = await compute(effectivePays, event, src); }
   catch (e) { return { statusCode: 502, headers: HEADERS, body: JSON.stringify({ ok: false, error: e.message }) }; }
   await store(event, payload);
 

@@ -18,9 +18,33 @@ const TARGET_CITIES = {
   SN: [{ ville: 'Dakar', lat: 14.6928, lng: -17.4467, radius: 11000 }],
   CI: [{ ville: 'Abidjan', lat: 5.3599, lng: -4.0083, radius: 13000 }],
   GM: [{ ville: 'Serrekunda / Banjul', lat: 13.4399, lng: -16.6781, radius: 15000 }],
+  // Corridor diaspora élargi (destinations radar/pubs). Coords = centre-ville (les agences sont en
+  // ville, pas à l'aéroport). Maroc VOLONTAIREMENT exclu (conflit easyJet). Couvert par rotation.
+  ML: [{ ville: 'Bamako', lat: 12.6392, lng: -8.0029, radius: 13000 }],
+  CM: [{ ville: 'Douala', lat: 4.0483, lng: 9.7043, radius: 14000 }],
+  CG: [{ ville: 'Brazzaville', lat: -4.2634, lng: 15.2429, radius: 12000 }],
+  CD: [{ ville: 'Kinshasa', lat: -4.3276, lng: 15.3136, radius: 18000 }],
+  KE: [{ ville: 'Nairobi', lat: -1.2864, lng: 36.8172, radius: 15000 }],
+  ZA: [{ ville: 'Johannesburg', lat: -26.2041, lng: 28.0473, radius: 18000 }],
+  MQ: [{ ville: 'Fort-de-France', lat: 14.6042, lng: -61.0667, radius: 10000 }],
+  GP: [{ ville: 'Pointe-à-Pitre', lat: 16.2333, lng: -61.5333, radius: 12000 }],
 };
-const COUNTRY_NAMES = { SN: 'Sénégal', CI: 'Côte d’Ivoire', GM: 'Gambie' };
-const COUNTRY_FLAG = { SN: '🇸🇳', CI: '🇨🇮', GM: '🇬🇲' };
+const COUNTRY_NAMES = { SN: 'Sénégal', CI: 'Côte d’Ivoire', GM: 'Gambie', ML: 'Mali', CM: 'Cameroun', CG: 'Congo', CD: 'RD Congo', KE: 'Kenya', ZA: 'Afrique du Sud', MQ: 'Martinique', GP: 'Guadeloupe' };
+const COUNTRY_FLAG = { SN: '🇸🇳', CI: '🇨🇮', GM: '🇬🇲', ML: '🇲🇱', CM: '🇨🇲', CG: '🇨🇬', CD: '🇨🇩', KE: '🇰🇪', ZA: '🇿🇦', MQ: '🇲🇶', GP: '🇬🇵' };
+
+// « Visiter tous les pays du corridor » SANS casser le timeout (Overpass séquentiel) ni le quota
+// Instagram (30 hashtags / 7 j) : on couvre UN groupe par run hebdo → cycle complet en 4 semaines.
+// Le cron (lundi) avance d'un cran chaque semaine ; ?pays=XX force une cible précise à la demande.
+const COUNTRY_ROTATION = [
+  ['SN', 'GM', 'ML'],   // semaine 0 — Ouest francophone (cœur historique)
+  ['CI', 'CM', 'CG'],   // semaine 1 — Golfe de Guinée / Centre
+  ['CD', 'KE', 'ZA'],   // semaine 2 — Centre / Est / Sud
+  ['MQ', 'GP'],         // semaine 3 — Antilles françaises
+];
+function rotationPays(ts) {
+  const week = Math.floor((Number(ts) || Date.now()) / (7 * 24 * 3600 * 1000));
+  return COUNTRY_ROTATION[((week % COUNTRY_ROTATION.length) + COUNTRY_ROTATION.length) % COUNTRY_ROTATION.length];
+}
 
 /** Requête Overpass QL pour une ville (agences de voyage + bureaux d'agents de voyage). */
 function buildOverpassQL(city) {
@@ -166,6 +190,8 @@ module.exports = {
   filterNew,
   sortProspects,
   citiesFor,
+  COUNTRY_ROTATION,
+  rotationPays,
   normName,
   normPhone,
 };
