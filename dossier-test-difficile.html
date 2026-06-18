@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dossier de TEST — cas difficile (Robin des Airs)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap">
+<style>
+  :root{--navy:#0B1F3A;--green:#00C87A;--green-ink:#047857;--line:#E2E6EE;--muted:#6B7280;--ink:#16202e;--paper:#fff;}
+  *{box-sizing:border-box}
+  body{margin:0;background:#ECEFF3;color:var(--ink);font-family:'Montserrat',sans-serif;padding:28px 14px 80px;line-height:1.5}
+  .wrap{max-width:560px;margin:0 auto}
+  h1{font-size:20px;font-weight:900;color:var(--navy);margin:0 0 4px}
+  .sub{font-size:13px;color:var(--muted);margin:0 0 18px}
+  .brief{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:22px;font-size:13px}
+  .brief h2{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--green-ink);margin:0 0 8px}
+  .brief table{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}
+  .brief th,.brief td{border:1px solid var(--line);padding:6px 8px;text-align:left}
+  .brief th{background:var(--navy);color:#fff;font-weight:700}
+  .flag{color:#b45309;font-weight:800}
+  .ok{color:var(--green-ink);font-weight:700}
+  .doc-label{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--green-ink);font-weight:700;margin:26px 0 8px}
+  .spec{position:relative;overflow:hidden}
+  .spec::after{content:'SPÉCIMEN · TEST';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-22deg);font-family:'DM Mono',monospace;font-size:34px;font-weight:700;color:rgba(11,31,58,.07);letter-spacing:.15em;pointer-events:none;white-space:nowrap}
+  /* ── e-billet ── */
+  .eb{background:#fff;border:1px solid var(--line);border-radius:12px;padding:0;overflow:hidden}
+  .eb-h{background:var(--navy);color:#fff;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+  .eb-h b{font-size:14px;letter-spacing:.04em}
+  .eb-h small{font-size:11px;opacity:.85}
+  .eb-b{padding:14px 16px}
+  .eb-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px dashed var(--line)}
+  .eb-row .l{color:var(--muted)}
+  .eb-row .v{font-weight:700;color:var(--navy)}
+  .eb-seg{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:10px 0;background:#F7F9FB}
+  .eb-seg .tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--green-ink);font-weight:700}
+  .eb-seg .route{display:flex;align-items:center;justify-content:space-between;margin:6px 0}
+  .eb-seg .ap b{font-size:20px;font-weight:900;color:var(--navy)}
+  .eb-seg .ap small{display:block;font-size:10px;color:var(--muted)}
+  .eb-seg .mid{color:var(--green-ink)}
+  .eb-seg .when{font-size:11px;color:#475569;font-weight:600}
+  .eb-pax{font-size:13px;padding:4px 0}
+  .eb-pax b{color:var(--navy)}
+  /* ── carte d'embarquement ── */
+  .bp{background:#fff;border:1px solid #E7EBF0;border-radius:14px;position:relative;box-shadow:0 6px 18px rgba(11,31,58,.10);overflow:hidden}
+  .bp::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(var(--green),#00A968)}
+  .bp-h{display:flex;justify-content:space-between;align-items:center;padding:13px 16px 9px 20px}
+  .bp-h .b{font-weight:800;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--navy)}
+  .bp-h .tag{font-size:9px;font-weight:800;text-transform:uppercase;color:var(--green-ink);background:#E7F8F0;border:1px solid #BFF0DC;padding:3px 8px;border-radius:99px}
+  .bp-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;padding:6px 20px 10px}
+  .bp-f .l{font-size:8.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+  .bp-f .v{font-size:14px;font-weight:800;color:var(--navy)}
+  .bp-route{display:flex;align-items:center;justify-content:space-between;padding:4px 20px 12px}
+  .bp-route .ap b{font-size:22px;font-weight:900;color:var(--navy)}
+  .bp-route .ap small{display:block;font-size:10px;color:var(--muted)}
+  .bp-bars{height:40px;margin:0 20px 16px;background:repeating-linear-gradient(90deg,var(--navy) 0 2px,transparent 2px 4px,var(--navy) 4px 5px,transparent 5px 8px);opacity:.85;border-radius:2px}
+  /* ── pièces d'identité ── */
+  .id{background:linear-gradient(135deg,#fbfdff,#eef3f8);border:1px solid #d6dee8;border-radius:12px;padding:14px 16px}
+  .id.cni{background:linear-gradient(135deg,#fffdf6,#f3efe2);border-color:#e3dcc6}
+  .id-h{display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--navy);margin-bottom:10px}
+  .id-h .em{font-size:10px;color:var(--muted);font-weight:600}
+  .id-body{display:flex;gap:14px}
+  .id-photo{width:64px;height:80px;border-radius:6px;background:repeating-linear-gradient(45deg,#cbd5e1 0 6px,#dbe2ea 6px 12px);flex:0 0 auto;display:flex;align-items:flex-end;justify-content:center;color:#94a3b8;font-size:9px;font-family:'DM Mono',monospace;padding-bottom:4px}
+  .id-fields{flex:1}
+  .id-f{margin-bottom:6px}
+  .id-f .l{font-size:8.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  .id-f .v{font-size:14px;font-weight:800;color:var(--navy)}
+  .id-sig{margin-top:8px;font-family:'Brush Script MT','Segoe Script',cursive;font-size:20px;color:#1e3a5f;border-top:1px dashed var(--line);padding-top:4px}
+  .mrz{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.5px;color:#1f2937;background:#fff;border:1px solid var(--line);border-radius:6px;padding:6px 8px;margin-top:10px;word-break:break-all;line-height:1.6}
+  .note{font-size:11px;color:#94a3b8;text-align:center;margin:30px 0 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🧪 Dossier de TEST — cas difficile</h1>
+  <p class="sub">Données 100 % fictives. À screenshoter pièce par pièce pour tester l'OCR du bot, la détection d'écart de nom, la correspondance sur 2 jours et la détection de mineur.</p>
+
+  <div class="brief">
+    <h2>Le scénario</h2>
+    <b>Paris → Bamako via Dakar</b>, vol de nuit sur <b>2 jours</b> (départ 12/06 soir, arrivée 13/06), <b>correspondance</b> à Dakar. PNR <b>X4K2QM</b>. 4 passagers, documents mixtes.
+    <table>
+      <tr><th>Passager</th><th>Billet</th><th>Pièce</th><th>Attendu</th></tr>
+      <tr><td>Aminata</td><td>AMINATA DIALLO</td><td>Passeport : DIALLO / AMINATA</td><td class="ok">OK (ordre)</td></tr>
+      <tr><td>Mamadou</td><td>MAMADOU <b>DIALO</b></td><td>CNI : DIALLO / MAMADOU</td><td class="flag">⚠️ écart</td></tr>
+      <tr><td>Fatoumata</td><td>FATOUMATA DIALLO</td><td>Passeport : DIALLO / FATOUMATA AÏCHA · née 2012</td><td class="ok">OK + 👶 mineure</td></tr>
+      <tr><td>Ibrahim(a)</td><td><b>IBRAHIMA</b> TRAORE</td><td>Passeport : TRAORÉ / IBRAHIM</td><td class="flag">⚠️ écart</td></tr>
+    </table>
+  </div>
+
+  <!-- ════ DOC A — E-BILLET GROUPE ════ -->
+  <div class="doc-label">Doc A — E-billet / confirmation (groupe, 2 vols)</div>
+  <div class="eb spec">
+    <div class="eb-h"><b>✈ CONFIRMATION DE RÉSERVATION</b><small>PNR X4K2QM</small></div>
+    <div class="eb-b">
+      <div class="eb-row"><span class="l">Référence (PNR)</span><span class="v">X4K2QM</span></div>
+      <div class="eb-row"><span class="l">Émis le</span><span class="v">02/05/2026</span></div>
+
+      <div class="eb-seg">
+        <span class="tag">Vol 1 — 1ᵉʳ tronçon</span>
+        <div class="route"><span class="ap"><b>CDG</b><small>Paris</small></span><span class="mid">✈</span><span class="ap" style="text-align:right"><b>DSS</b><small>Dakar</small></span></div>
+        <div class="when">AF718 · Air France · <b>Départ 12/06/2026 23:40</b> → Arrivée 13/06/2026 05:55</div>
+      </div>
+      <div class="eb-seg">
+        <span class="tag">Vol 2 — dernier tronçon · correspondance Dakar</span>
+        <div class="route"><span class="ap"><b>DSS</b><small>Dakar</small></span><span class="mid">✈</span><span class="ap" style="text-align:right"><b>BKO</b><small>Bamako</small></span></div>
+        <div class="when">HC302 · Air Sénégal · <b>Départ 13/06/2026 08:30</b> → Arrivée 13/06/2026 10:15</div>
+      </div>
+
+      <div style="font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:8px 0 2px">Passagers</div>
+      <div class="eb-pax">1. <b>DIALLO / AMINATA</b> — Adulte</div>
+      <div class="eb-pax">2. <b>DIALO / MAMADOU</b> — Adulte</div>
+      <div class="eb-pax">3. <b>DIALLO / FATOUMATA</b> — Enfant (14 ans)</div>
+      <div class="eb-pax">4. <b>TRAORE / IBRAHIMA</b> — Adulte</div>
+    </div>
+  </div>
+
+  <!-- ════ DOC B — CARTE D'EMBARQUEMENT MAMADOU (typo) ════ -->
+  <div class="doc-label">Doc B — Carte d'embarquement (Mamadou, vol 1)</div>
+  <div class="bp spec">
+    <div class="bp-h"><span class="b">✈ Carte d'embarquement</span><span class="tag">Air France</span></div>
+    <div class="bp-grid">
+      <div class="bp-f"><div class="l">Passager</div><div class="v">MAMADOU DIALO</div></div>
+      <div class="bp-f" style="text-align:right"><div class="l">Siège</div><div class="v">18C</div></div>
+      <div class="bp-f"><div class="l">Vol</div><div class="v">AF718</div></div>
+      <div class="bp-f" style="text-align:right"><div class="l">Départ</div><div class="v">12/06/2026 23:40</div></div>
+    </div>
+    <div class="bp-route"><span class="ap"><b>CDG</b><small>Paris</small></span><span class="mid" style="color:var(--green-ink)">✈</span><span class="ap" style="text-align:right"><b>DSS</b><small>Dakar</small></span></div>
+    <div class="bp-bars"></div>
+  </div>
+
+  <!-- ════ DOC C — PASSEPORT AMINATA ════ -->
+  <div class="doc-label">Doc C — Passeport (Aminata)</div>
+  <div class="id spec">
+    <div class="id-h"><span>🛂 Passeport — République du Sénégal</span><span class="em">Type P</span></div>
+    <div class="id-body">
+      <div class="id-photo">PHOTO</div>
+      <div class="id-fields">
+        <div class="id-f"><div class="l">Nom</div><div class="v">DIALLO</div></div>
+        <div class="id-f"><div class="l">Prénoms</div><div class="v">AMINATA</div></div>
+        <div class="id-f"><div class="l">Date de naissance</div><div class="v">04/08/1989</div></div>
+        <div class="id-f"><div class="l">N° passeport</div><div class="v">A0 234 5678</div></div>
+        <div class="id-sig">Aminata Diallo</div>
+      </div>
+    </div>
+    <div class="mrz">P&lt;SENDIALLO&lt;&lt;AMINATA&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>A02345678&lt;4SEN8908045F3008012&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;06</div>
+  </div>
+
+  <!-- ════ DOC D — CNI MAMADOU ════ -->
+  <div class="doc-label">Doc D — Carte nationale d'identité (Mamadou)</div>
+  <div class="id cni spec">
+    <div class="id-h"><span>🪪 Carte Nationale d'Identité</span><span class="em">CEDEAO</span></div>
+    <div class="id-body">
+      <div class="id-photo">PHOTO</div>
+      <div class="id-fields">
+        <div class="id-f"><div class="l">Nom</div><div class="v">DIALLO</div></div>
+        <div class="id-f"><div class="l">Prénoms</div><div class="v">MAMADOU</div></div>
+        <div class="id-f"><div class="l">Date de naissance</div><div class="v">17/11/1985</div></div>
+        <div class="id-f"><div class="l">N° CNI</div><div class="v">1 8511 1985 00471</div></div>
+        <div class="id-sig">M. Diallo</div>
+      </div>
+    </div>
+    <div class="mrz">IDSENDIALLO&lt;&lt;MAMADOU&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>1851119850047&lt;8511179M3011152SEN&lt;&lt;&lt;&lt;&lt;&lt;&lt;6</div>
+  </div>
+
+  <!-- ════ DOC E — PASSEPORT FATOUMATA (mineure, 2e prénom) ════ -->
+  <div class="doc-label">Doc E — Passeport (Fatoumata, mineure)</div>
+  <div class="id spec">
+    <div class="id-h"><span>🛂 Passeport — République du Mali</span><span class="em">Type P</span></div>
+    <div class="id-body">
+      <div class="id-photo">PHOTO</div>
+      <div class="id-fields">
+        <div class="id-f"><div class="l">Nom</div><div class="v">DIALLO</div></div>
+        <div class="id-f"><div class="l">Prénoms</div><div class="v">FATOUMATA AÏCHA</div></div>
+        <div class="id-f"><div class="l">Date de naissance</div><div class="v">14/03/2012</div></div>
+        <div class="id-f"><div class="l">N° passeport</div><div class="v">B1 998 0042</div></div>
+        <div class="id-sig">F. Diallo</div>
+      </div>
+    </div>
+    <div class="mrz">P&lt;MLIDIALLO&lt;&lt;FATOUMATA&lt;AICHA&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>B19980042&lt;7MLI1203145F3203145&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;02</div>
+  </div>
+
+  <!-- ════ DOC F — PASSEPORT IBRAHIM (prénom différent) ════ -->
+  <div class="doc-label">Doc F — Passeport (Ibrahim)</div>
+  <div class="id spec">
+    <div class="id-h"><span>🛂 Passeport — République du Mali</span><span class="em">Type P</span></div>
+    <div class="id-body">
+      <div class="id-photo">PHOTO</div>
+      <div class="id-fields">
+        <div class="id-f"><div class="l">Nom</div><div class="v">TRAORÉ</div></div>
+        <div class="id-f"><div class="l">Prénoms</div><div class="v">IBRAHIM</div></div>
+        <div class="id-f"><div class="l">Date de naissance</div><div class="v">22/01/1991</div></div>
+        <div class="id-f"><div class="l">N° passeport</div><div class="v">B2 047 1188</div></div>
+        <div class="id-sig">I. Traoré</div>
+      </div>
+    </div>
+    <div class="mrz">P&lt;MLITRAORE&lt;&lt;IBRAHIM&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br>B20471188&lt;3MLI9101225M3101225&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;08</div>
+  </div>
+
+  <p class="note">SPÉCIMENS DE TEST — données fictives, aucune valeur officielle. Usage interne : test OCR / parcours Robin des Airs.</p>
+</div>
+</body>
+</html>
