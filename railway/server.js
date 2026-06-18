@@ -701,7 +701,7 @@ function applyEticket(s, e) {
   if (e.pnr && !s.pnr) s.pnr = e.pnr;
   if (e.route && !s.route) s.route = e.route;
   if (e.escale && !s.type_vol) s.type_vol = 'escale';
-  if (e.segments && e.segments.length > 1 && !(s.legs && s.legs.length)) s.legs = e.segments.map((x) => ({ vol: x.vol, dep: x.depart, arr: x.arrivee }));
+  if (e.segments && e.segments.length > 1 && !(s.legs && s.legs.length)) s.legs = e.segments.map((x) => ({ vol: x.vol, dep: x.depart, arr: x.arrivee, date: x.date || '' }));
   if (e.passengers && e.passengers.length) {
     s.names = s.names || []; s.passengers = s.passengers || [];
     e.passengers.forEach((p, i) => {
@@ -725,7 +725,7 @@ function setEticketFields(s, e) {
   if (e.pnr) s.pnr = e.pnr;
   if (e.route) s.route = e.route;
   if (e.escale) s.type_vol = s.type_vol || 'escale';
-  if (e.segments && e.segments.length > 1) s.legs = e.segments.map((x) => ({ vol: x.vol, dep: x.depart, arr: x.arrivee }));
+  if (e.segments && e.segments.length > 1) s.legs = e.segments.map((x) => ({ vol: x.vol, dep: x.depart, arr: x.arrivee, date: x.date || '' }));
   if (e.passengers && e.passengers.length) {
     s.names = s.names || []; s.passengers = s.passengers || [];
     e.passengers.forEach((p, i) => {
@@ -749,7 +749,7 @@ function applyTrajet(s, t) {
   if (t.date) s.date = t.date;
   if (t.route) s.route = t.route;
   s.type_vol = t.escale ? 'escale' : 'direct';
-  if (t.segments && t.segments.length > 1) s.legs = t.segments.map((x) => ({ vol: x.vol, dep: x.depart, arr: x.arrivee }));
+  if (t.segments && t.segments.length > 1) s.legs = t.segments.map((x) => ({ vol: x.vol, dep: x.depart, arr: x.arrivee, date: x.date || '' }));
   else delete s.legs;
 }
 // Carte de confirmation du scan (affiche le nb de pages lues + invite à en envoyer d'autres).
