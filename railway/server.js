@@ -1468,7 +1468,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     }
     const n = normInput(input, ['oui', 'corriger']);
     if (n === '1' || lower.includes('oui')) {
-      delete s.scan_pages; delete s._scanWarn;
+      delete s.scan_pages; delete s._scanWarn; s.scanConfirmed = true; // déjà confirmé ici (e-billet) → pas de 2e confirmation au récap
       if (needYear(s.date)) { s.step = 'annee'; await setState(phone, s); return askYear(phone, s, cfg); }
       if (s.date && !isValidStoredDate(s.date)) { const bad = s.date; s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, DATE_INVALIDE(bad), cfg); }
       if (inFuture(s.date)) { s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, FUTURE_JOKE, cfg); }
@@ -2133,6 +2133,12 @@ async function apresVol(phone, s, cfg) {
   // Plus de question mineurs : l'âge vient du passeport / de la date de naissance (étape documents).
   s.names = s.names || [];
   await applyFlightVerdict(phone, s, cfg); // vérifie le vol direct → ajuste montant + message (best-effort)
+  // E-billet déjà confirmé (vol + route + passagers vus à l'écran scan_confirm) → le récap serait un
+  // DOUBLON (« pourquoi confirmer 2 fois ? »). On enchaîne direct sur les pièces ; nextPassport rappelle déjà le montant.
+  if (s.scanConfirmed) {
+    s.scanConfirmed = false;
+    return startDocuments(phone, s, cfg);
+  }
   return sendRecap(phone, s, cfg);
 }
 async function askName(phone, s, cfg) {
@@ -2216,7 +2222,10 @@ async function finaliser(phone, s, cfg) {
   // Lead à relancer tant que le mandat n'est pas signé (nudge 2h/8h/22h dans la fenêtre 24h)
   upsertLead(phone, { ref: s.ref, mandatUrl: s.mandat_url, mandatSentAt: Date.now(), lastClientAt: Date.now(), pax: s.pax || 1, name: firstNameOf(s), perPax: s.perPax, flightVerdict: s.flightVerdict || '', signed: false, completed: true, nudges: [] });
   const minorNote = s.minorsCount ? `\n👶 ${s.minorsCount} mineur·s : signature d'un parent/tuteur requise (un expert vous guide).` : '';
-  await send(phone, `${bar('done')}\n${titre} Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % au succès uniquement · aucune info bancaire.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_\n\n👉 *Signez ici :*\n${s.mandat_url}\n\nSans votre signature, on ne peut pas agir en votre nom. ${STOP_FOOTER}`, cfg);
+  // Message 1 — le récap (sans le lien). Message 2 — le lien SEUL, court, qui ne se replie
+  // jamais derrière « Lire la suite » sur mobile et déclenche l'aperçu cliquable WhatsApp.
+  await send(phone, `${bar('done')}\n${titre} Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % au succès uniquement · aucune info bancaire.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_`, cfg);
+  await send(phone, `👉 *Signez ici* (2 min) :\n${s.mandat_url}\n\nSans votre signature, on ne peut pas agir en votre nom. ${STOP_FOOTER}`, cfg);
   // CRM : la fiche Airtable est désormais créée par la synchro DIRECTE (storeDossierDurable →
   // /api/dossier-store → syncNewDossierToAirtable, statut « Signature en attente »). Le webhook
   // Make ci-dessous n'est plus qu'un hook OPTIONNEL pour d'éventuelles automatisations externes :
