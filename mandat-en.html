@@ -39,7 +39,7 @@
   --border-soft:#F1F2F4;
   --ink:#0B1F3A;
   --text:#374151;
-  --muted:#6B7A90;
+  --muted:#51607A;
   --red:#DC2626;
   --red-bg:#FEF2F2;
   --red-border:#FECACA;
@@ -85,16 +85,16 @@ body{background:var(--bg);font-family:'Montserrat',sans-serif;color:var(--text);
 .partie-box{border:1px solid var(--border);padding:18px 20px;position:relative;border-radius:8px;background:var(--bg-soft)}
 .partie-box::before{content:attr(data-label);position:absolute;top:-9px;left:14px;background:var(--bg-soft);font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--green-deep);padding:0 6px;font-weight:700}
 .partie-name{font-family:'Montserrat',sans-serif;font-size:16px;font-weight:800;color:var(--navy);margin-bottom:8px}
-.partie-detail{font-size:12px;color:var(--muted);line-height:1.8}
+.partie-detail{font-size:12.5px;color:var(--text);font-weight:500;line-height:1.8}
 /* SECTION TITRE */
 .sec-title{font-family:'Montserrat',sans-serif;font-size:17px;font-weight:800;color:var(--navy);padding-bottom:10px;border-bottom:2px solid var(--green);margin-bottom:20px;display:flex;align-items:center;gap:8px}
 /* CHAMPS */
 .field-row{margin-bottom:16px}
 .field-row.duo{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .field-row.tri{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}
-label{display:block;font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:var(--muted);margin-bottom:6px;font-weight:600}
+label{display:block;font-family:'DM Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#4B5563;margin-bottom:6px;font-weight:600}
 label .req{color:var(--red);margin-left:2px}
-input,select,textarea{width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:'Montserrat',sans-serif;font-size:13px;color:var(--ink);transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;border-radius:6px}
+input,select,textarea{width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:'Montserrat',sans-serif;font-size:16px;color:var(--ink);transition:border-color .2s,box-shadow .2s;-webkit-appearance:none;border-radius:6px}
 .wa-phone-row{display:flex;gap:8px;align-items:stretch}
 .wa-phone-row .wa-indicatif-select{width:auto;flex:0 0 auto;max-width:50%}
 .wa-phone-row .wa-national-input{flex:1 1 auto;width:auto}
@@ -104,7 +104,7 @@ textarea{resize:vertical;min-height:72px}
 .ferr{color:var(--red);font-size:11px;margin-top:4px;display:none;font-weight:600}
 input.err,textarea.err,select.err{border-color:var(--red)!important;background:var(--red-bg)}
 /* CLAUSES */
-.clause{padding:14px 18px;border-left:3px solid var(--border);margin:12px 0;font-size:13px;line-height:1.75;color:var(--text);border-radius:0 6px 6px 0;background:var(--bg-soft)}
+.clause{padding:14px 18px;border-left:3px solid var(--border);margin:12px 0;font-size:14px;font-weight:500;line-height:1.75;color:#2B3648;border-radius:0 6px 6px 0;background:var(--bg-soft)}
 .clause strong{color:var(--navy)}
 .cnum{font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--green-deep);margin-bottom:5px;display:block;font-weight:700}
 .clause.hi{background:var(--green-tint);border-color:var(--green)}
@@ -118,7 +118,7 @@ input.err,textarea.err,select.err{border-color:var(--red)!important;background:v
 .fee-table tr:last-child td{border-bottom:none}
 .fee-table .em{font-weight:700;color:var(--green-deep)}
 /* DÉCLARATION */
-.declaration-box{background:var(--green-tint);border:1px solid #B8DDC9;border-radius:8px;padding:18px 20px;margin:20px 0;font-size:13px;line-height:1.75;color:var(--text)}
+.declaration-box{background:var(--green-tint);border:1px solid #B8DDC9;border-radius:8px;padding:18px 20px;margin:20px 0;font-size:13px;font-weight:500;line-height:1.75;color:#2B3648}
 .declaration-box strong{color:var(--navy)}
 /* SEUL CHECK UNIQUE */
 .single-check{display:flex;align-items:flex-start;gap:14px;padding:16px 18px;border:1.5px solid var(--border);background:var(--bg-soft);border-radius:8px;margin:16px 0;cursor:pointer;transition:border-color .2s,background .2s}
@@ -127,7 +127,7 @@ input.err,textarea.err,select.err{border-color:var(--red)!important;background:v
 .single-check input[type=checkbox]:checked{background:var(--green-deep);border-color:var(--green-deep)}
 .single-check input[type=checkbox]:checked::after{content:"";position:absolute;left:7px;top:3px;width:6px;height:11px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg)}
 .single-check:has(input[type=checkbox]:checked){border-color:var(--green-deep);background:var(--green-tint)}
-.single-check p{font-size:13px;line-height:1.7;color:var(--text)}
+.single-check p{font-size:13px;font-weight:500;line-height:1.7;color:var(--text)}
 .single-check p strong{color:var(--navy)}
 /* EMAIL DOSSIER TECHNIQUE */
 .email-tech-note{font-size:12px;line-height:1.75;color:var(--text);padding:14px 18px;background:var(--green-tint);border:1px solid #B8DDC9;border-left:3px solid var(--green-deep);border-radius:0 6px 6px 0;margin:10px 0 0}
@@ -942,13 +942,16 @@ function applyDossier(d) {
     const frToIso = (v) => { const p = String(v || '').split('/'); return p.length === 3 ? `${p[2]}-${p[1]}-${p[0]}` : (String(v || '').match(/^\d{4}-\d{2}-\d{2}$/) ? v : ''); };
     const isoDate = frToIso(d.date);
     let legs = [];
+    // Date par défaut sur CHAQUE segment (= date de départ) : sinon le 2ᵉ segment d'un vol de nuit
+    // reste vide et validate() (date requise par leg) BLOQUE tout dossier correspondance. Le client
+    // ajuste seulement le segment J+1 si besoin (l'encart « vol de nuit » l'invite).
     if (Array.isArray(d.legs) && d.legs.length >= 2) {
-      legs = d.legs.map((l, i) => ({ fnum: l.fnum || l.vol || '', date: frToIso(l.date) || (i === 0 ? isoDate : ''), dep: l.dep || '', arr: l.arr || '' }));
+      legs = d.legs.map((l) => ({ fnum: l.fnum || l.vol || '', date: frToIso(l.date) || isoDate, dep: l.dep || '', arr: l.arr || '' }));
     } else {
       const stops = String(d.route || '').split(/→|->|—|\bvia\b/i).map((x) => x.trim()).filter(Boolean);
       if (stops.length >= 3) {
         const nums = String(d.vol || '').split(/[+/,;]|\bet\b/i).map((x) => x.trim()).filter(Boolean);
-        for (let i = 0; i < stops.length - 1; i++) legs.push({ fnum: nums[i] || '', date: i === 0 ? isoDate : '', dep: stops[i], arr: stops[i + 1] });
+        for (let i = 0; i < stops.length - 1; i++) legs.push({ fnum: nums[i] || '', date: isoDate, dep: stops[i], arr: stops[i + 1] });
       }
     }
     if (legs.length >= 2 && flightMode !== 'connecting') {
@@ -1230,8 +1233,11 @@ function toggleFlightMode(){
   if (flightMode === 'connecting'){
     if (d) d.style.display='none'; if (c) c.style.display='block';
     if (flightLegs.length === 0){ flightLegs = [emptyLeg(), emptyLeg()]; renderLegs(); }
+    // on quitte le mode direct → vider ses champs pour ne pas laisser de valeurs fantômes cachées
+    ['fnum','fdate','dep','arr','connecting'].forEach(id=>{ const e=document.getElementById(id); if(e) e.value=''; });
   } else {
     if (d) d.style.display='block'; if (c) c.style.display='none';
+    flightLegs = [];   // on quitte le mode correspondance → pas de legs fantômes ignorés mais persistants
   }
   updateParties();
 }
@@ -1276,7 +1282,7 @@ function renderLegs(){
 function legsSummary(){
   syncLegsFromDom();
   return flightLegs.filter(l=>l.fnum||l.dep||l.arr).map(l=>{
-    const route = (l.dep||l.arr) ? ` ${l.dep||'?'}→${l.arr||'?'}` : '';
+    const route = (l.dep||l.arr) ? ` ${l.dep||'?'} → ${l.arr||'?'}` : '';
     const d = l.date ? ` (${frDate(l.date)})` : '';
     return `${l.fnum||'?'}${route}${d}`;
   }).join(' ; ');
