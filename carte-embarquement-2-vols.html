@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carte d'embarquement — 2 vols (correspondance) · Robin des Airs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap">
+<style>
+  :root{
+    --navy:#0B1F3A; --green:#00C87A; --green-deep:#00A968; --green-ink:#047857;
+    --line:#E2E6EE; --muted:#6B7280; --soft:#F7F9FB;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:grid;place-items:center;gap:14px;
+       background:radial-gradient(120% 120% at 50% 0%,#F3F6FA 0%,#E7ECF2 100%);
+       font-family:'Montserrat',sans-serif;padding:30px 16px}
+
+  /* ── Carte d'embarquement ── */
+  .bp{width:min(440px,96vw);background:#fff;border-radius:20px;position:relative;
+      box-shadow:0 22px 60px rgba(11,31,58,.20);border:1px solid #E7EBF0;overflow:hidden}
+  .bp::before{content:'';position:absolute;left:0;top:0;bottom:0;width:6px;
+      background:linear-gradient(var(--green),var(--green-deep))}
+  /* encoches latérales façon ticket */
+  .bp::after{content:'';position:absolute;left:-9px;right:-9px;top:50%;height:18px;
+      background:radial-gradient(circle at 9px 9px,transparent 9px,#fff 9px) left/18px 18px repeat-x,
+                radial-gradient(circle at 9px 9px,transparent 9px,#fff 9px) right/18px 18px repeat-x;
+      pointer-events:none;opacity:0}
+
+  .bp-head{display:flex;align-items:center;justify-content:space-between;padding:17px 20px 13px 24px}
+  .bp-brand{display:flex;align-items:center;gap:9px;font-weight:800;color:var(--navy);
+            font-size:12.5px;letter-spacing:.05em;text-transform:uppercase}
+  .bp-brand .plane{color:var(--green-ink);font-size:15px}
+  .bp-tag{font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;
+          color:var(--green-ink);background:#E7F8F0;border:1px solid #BFF0DC;padding:5px 10px;border-radius:999px;white-space:nowrap}
+
+  .bp-pax{display:flex;justify-content:space-between;gap:16px;padding:6px 24px 15px;border-bottom:1px dashed var(--line)}
+  .fld .l{display:block;font-size:9px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+  .fld .v{display:block;font-size:15px;font-weight:800;color:var(--navy)}
+  .fld.right{text-align:right}
+
+  .seg{padding:15px 24px 16px}
+  .seg-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px;gap:10px}
+  .seg-label{font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+  .seg-label.count{color:var(--green-ink)}
+  .seg-badge{font-size:9px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#fff;
+             background:var(--green-ink);padding:4px 9px;border-radius:6px;white-space:nowrap}
+
+  .route{display:flex;align-items:center;gap:12px}
+  .ap{display:flex;flex-direction:column}
+  .ap b{font-size:27px;font-weight:900;color:var(--navy);line-height:.95;letter-spacing:.01em}
+  .ap small{font-size:11px;color:var(--muted);font-weight:600;margin-top:4px}
+  .ap.to{text-align:right;margin-left:auto}
+  .mid{flex:1;display:flex;flex-direction:column;align-items:center;min-width:54px}
+  .mid .plane{font-size:14px;color:var(--green-ink);line-height:1;margin-bottom:1px}
+  .mid .ln{width:100%;height:2px;border-radius:2px;
+           background:repeating-linear-gradient(90deg,#CBD5E1 0 6px,transparent 6px 10px)}
+
+  .seg-foot{display:flex;gap:26px;margin-top:11px}
+  .meta .l{font-size:8.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+  .meta .v{font-size:13px;font-weight:800;color:var(--navy);margin-top:2px}
+
+  .layover{display:flex;align-items:center;gap:9px;padding:8px 24px;background:var(--soft);
+           border-top:1px dashed var(--line);border-bottom:1px dashed var(--line);
+           font-size:11px;color:#475569;font-weight:700}
+  .layover .dot{width:7px;height:7px;border-radius:50%;background:var(--green-ink);flex:0 0 auto}
+  .layover small{color:var(--muted);font-weight:600}
+
+  .bp-bottom{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:15px 24px 18px}
+  .bars{flex:1;height:46px;border-radius:3px;
+        background:repeating-linear-gradient(90deg,var(--navy) 0 2px,transparent 2px 4px,var(--navy) 4px 5px,transparent 5px 9px,var(--navy) 9px 12px,transparent 12px 14px);
+        opacity:.88}
+  .pnr{text-align:right;flex:0 0 auto}
+  .pnr .l{font-size:8.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+  .pnr .v{font-size:15px;font-weight:900;color:var(--navy);letter-spacing:.12em;margin-top:2px}
+
+  .note{width:min(440px,96vw);font-size:11px;line-height:1.5;color:#8A96A8;text-align:center;margin:0}
+  .note b{color:#5B6B80}
+</style>
+</head>
+<body>
+
+  <div class="bp" role="img" aria-label="Carte d'embarquement exemple à deux vols : Aminata Diallo, Paris (CDG) vers Dakar (DKR) sur le vol AF718, correspondance à Dakar, puis Dakar (DKR) vers Bamako (BKO) sur le vol HC302 — le dernier tronçon détermine l'indemnité.">
+    <div class="bp-head">
+      <div class="bp-brand"><span class="plane">✈</span> Carte d'embarquement</div>
+      <div class="bp-tag">Correspondance · 2 vols</div>
+    </div>
+
+    <div class="bp-pax">
+      <div class="fld"><span class="l">Passager</span><span class="v">AMINATA DIALLO</span></div>
+      <div class="fld right"><span class="l">Sièges</span><span class="v">23A · 12C</span></div>
+    </div>
+
+    <!-- Vol 1 -->
+    <div class="seg">
+      <div class="seg-top"><span class="seg-label">Vol 1 — 1ᵉʳ tronçon</span></div>
+      <div class="route">
+        <div class="ap from"><b>CDG</b><small>Paris</small></div>
+        <div class="mid"><span class="plane">✈</span><span class="ln"></span></div>
+        <div class="ap to"><b>DKR</b><small>Dakar</small></div>
+      </div>
+      <div class="seg-foot">
+        <div class="meta"><div class="l">Vol</div><div class="v">AF718</div></div>
+        <div class="meta"><div class="l">Départ</div><div class="v">19:40</div></div>
+        <div class="meta"><div class="l">Arrivée</div><div class="v">23:55</div></div>
+      </div>
+    </div>
+
+    <div class="layover"><span class="dot"></span> Correspondance à Dakar <small>· 1 h 25 d'escale</small></div>
+
+    <!-- Vol 2 -->
+    <div class="seg">
+      <div class="seg-top">
+        <span class="seg-label count">Vol 2 — dernier tronçon</span>
+        <span class="seg-badge">Ce vol compte</span>
+      </div>
+      <div class="route">
+        <div class="ap from"><b>DKR</b><small>Dakar</small></div>
+        <div class="mid"><span class="plane">✈</span><span class="ln"></span></div>
+        <div class="ap to"><b>BKO</b><small>Bamako</small></div>
+      </div>
+      <div class="seg-foot">
+        <div class="meta"><div class="l">Vol</div><div class="v">HC302</div></div>
+        <div class="meta"><div class="l">Départ</div><div class="v">01:20</div></div>
+        <div class="meta"><div class="l">Arrivée</div><div class="v">03:05</div></div>
+      </div>
+    </div>
+
+    <div class="bp-bottom">
+      <div class="bars" aria-hidden="true"></div>
+      <div class="pnr"><div class="l">Réservation</div><div class="v">RDXA28</div></div>
+    </div>
+  </div>
+
+  <p class="note">Maquette illustrative — <b>nom fictif</b>, aucune date calendaire, code-barres décoratif.<br>
+  Le <b>dernier tronçon</b> (Vol 2) détermine l'indemnité : distance totale du trajet + retard à l'arrivée finale.</p>
+
+</body>
+</html>

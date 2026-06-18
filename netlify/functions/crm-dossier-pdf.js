@@ -166,10 +166,12 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: {
+        ...corsHeaders(),
+        // APRÈS corsHeaders() : sinon son « Content-Type: application/json » écrasait application/pdf
+        // → le navigateur affichait les octets du PDF en texte au lieu de l'ouvrir.
         'Content-Type': 'application/pdf',
         'Content-Disposition': `${q.dl === '1' ? 'attachment' : 'inline'}; filename="${filename}"`,
         'Cache-Control': 'private, no-store',
-        ...corsHeaders(),
       },
       body: b64out,
       isBase64Encoded: true,

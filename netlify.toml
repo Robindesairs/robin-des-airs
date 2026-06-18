@@ -19,6 +19,11 @@
 [functions."ad-watch"]
   schedule = "*/10 * * * *"
 
+# RGPD : purge auto des pièces déposées (passeport/CNI, carte, e-billet) 30 j après
+# « Payé client » ou Éligibilité « Non ». Mandat CONSERVÉ. DRY-RUN tant que RGPD_PURGE_ENABLED=1 absent.
+[functions."rgpd-purge-pieces"]
+  schedule = "0 4 * * *"
+
 # AeroDataBox : seul le scan manuel radar-vols-v2 → /.netlify/functions/radar reste actif.
 # Crons désactivés (quota). Réactiver : RADAR_BACKGROUND_API=1 + décommenter les schedule ci-dessous.
 

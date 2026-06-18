@@ -158,6 +158,12 @@ function build() {
   // --- <html lang="fr"> → "en"
   html = html.replace(/(<html\b[^>]*\blang=")fr("[^>]*>)/i, (_m, a, b) => a + 'en' + b);
 
+  // --- Indicateur du sélecteur 🌐 figé en EN (i18n.js le resynchronise aussi au runtime,
+  //     ceci évite juste un flash « FR » au premier rendu de la page anglaise).
+  html = html.replace(/(id="current-lang-code"[^>]*>)FR(<)/i, (_m, a, b) => a + 'EN' + b);
+  html = html.replace(/class="lang-option active" data-lang="fr"/g, 'class="lang-option" data-lang="fr"');
+  html = html.replace(/class="lang-option" data-lang="en"/g, 'class="lang-option active" data-lang="en"');
+
   // --- <title>
   const enTitle = tr('page_title');
   if (enTitle) html = html.replace(/<title>[\s\S]*?<\/title>/, '<title>' + escapeHtml(enTitle) + '</title>');

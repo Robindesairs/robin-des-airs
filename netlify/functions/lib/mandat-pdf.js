@@ -171,11 +171,20 @@ function genererMandatPdf(record) {
     sectionTitle('Le vol concerné');
     kv('Compagnie (billet)', record.airline);
     if (record.operatedBy) kv('Opéré par (réel)', record.operatedBy);
-    kv('N° de vol', record.flightNum);
-    kv('Date du vol', record.flightDate);
+    const legsFr = Array.isArray(record.flightLegs) ? record.flightLegs.filter((l) => l && (l.flightNum || l.depAirport || l.arrAirport)) : [];
+    if (legsFr.length) {
+      kv('Type de trajet', 'Avec correspondance(s) — ' + legsFr.length + ' vols');
+      legsFr.forEach((leg, i) => {
+        const r = [leg.depAirport, leg.arrAirport].filter(Boolean).join(' -> ');
+        kv('Vol ' + (i + 1), [leg.flightNum, r, leg.flightDate].filter(Boolean).join(' · ') || '—');
+      });
+    } else {
+      kv('N° de vol', record.flightNum);
+      kv('Date du vol', record.flightDate);
+    }
     kv('PNR', record.pnr);
     kv('Itinéraire', [record.depAirport, record.arrAirport].filter(Boolean).join(' -> ') || record.route);
-    if (record.connecting) kv('Correspondance(s)', record.connecting);
+    if (!legsFr.length && record.connecting) kv('Correspondance(s)', record.connecting);
     kv('Incident', INCIDENT_LABEL[record.incident] || record.incident);
     doc.moveDown(0.4);
 
@@ -316,11 +325,20 @@ function genererMandatBilinguePdf(record) {
       sectionTitle(fr ? 'Le vol concerné' : 'The flight concerned');
       kv(fr ? 'Compagnie (billet)' : 'Airline (ticket)', record.airline);
       if (record.operatedBy) kv(fr ? 'Opéré par (réel)' : 'Operated by (actual)', record.operatedBy);
-      kv(fr ? 'N° de vol' : 'Flight no.', record.flightNum);
-      kv(fr ? 'Date du vol' : 'Flight date', record.flightDate);
+      const legsBi = Array.isArray(record.flightLegs) ? record.flightLegs.filter((l) => l && (l.flightNum || l.depAirport || l.arrAirport)) : [];
+      if (legsBi.length) {
+        kv(fr ? 'Type de trajet' : 'Trip type', (fr ? 'Avec correspondance(s) — ' : 'With connection(s) — ') + legsBi.length + (fr ? ' vols' : ' flights'));
+        legsBi.forEach((leg, i) => {
+          const r = [leg.depAirport, leg.arrAirport].filter(Boolean).join(' -> ');
+          kv((fr ? 'Vol ' : 'Flight ') + (i + 1), [leg.flightNum, r, leg.flightDate].filter(Boolean).join(' · ') || '—');
+        });
+      } else {
+        kv(fr ? 'N° de vol' : 'Flight no.', record.flightNum);
+        kv(fr ? 'Date du vol' : 'Flight date', record.flightDate);
+      }
       kv('PNR', record.pnr);
       kv(fr ? 'Itinéraire' : 'Itinerary', [record.depAirport, record.arrAirport].filter(Boolean).join(' -> ') || record.route);
-      if (record.connecting) kv(fr ? 'Correspondance(s)' : 'Connection(s)', record.connecting);
+      if (!legsBi.length && record.connecting) kv(fr ? 'Correspondance(s)' : 'Connection(s)', record.connecting);
       kv(fr ? 'Incident' : 'Disruption', (fr ? INCIDENT_LABEL : INCIDENT_LABEL_EN)[record.incident] || record.incident);
       doc.moveDown(0.4);
 

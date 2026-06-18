@@ -31,6 +31,25 @@ function splitName(name) {
   return { prenom: parts[0], nom: parts.slice(1).join(' ') };
 }
 
+/**
+ * Co-passagers (tous les passagers SAUF le mandant) → texte multiligne pour Airtable.
+ * Cœur du support « famille diaspora » : un dossier = N passagers, le principal dans
+ * Nom/Prénom Passager, les autres ici. Vide si dossier mono-passager.
+ */
+function coPassagersText(dossier) {
+  const list = Array.isArray(dossier && dossier.passengers) ? dossier.passengers : [];
+  if (list.length <= 1) return '';
+  const norm = (s) => String(s || '').trim().toLowerCase().replace(/\s+/g, ' ');
+  const main = norm(dossier && dossier.name);
+  let others = list.filter((p) => p && p.name && norm(p.name) !== main);
+  if (others.length === list.length) others = list.slice(1); // mandant non identifié par nom → on retire le 1er
+  return others.map((p) => {
+    const nm = String((p && p.name) || '').trim();
+    const dob = String((p && p.dob) || '').trim();
+    return nm ? (dob ? `${nm} (né(e) le ${dob})` : nm) : '';
+  }).filter(Boolean).join('\n');
+}
+
 /** Montant → nombre sûr (Airtable attend un nombre), sinon undefined (champ omis). */
 function indemniteNumber(v) {
   if (v == null) return undefined;
@@ -82,6 +101,8 @@ async function syncNewDossierToAirtable(dossier) {
       if (vol && !cur[L.vol]) patch[L.vol] = vol;
       if (compagnie && !cur[L.compagnie]) patch[L.compagnie] = compagnie;
       if (pnr && !cur[L.pnr]) patch[L.pnr] = pnr;
+      const coP = coPassagersText(dossier);
+      if (coP && !cur[L.coPassagers]) patch[L.coPassagers] = coP;
       if (Object.keys(patch).length) {
         try { await airtablePatch(cfg, rec.id, patch); return { ok: true, action: 'repaired', recordId: rec.id, patched: Object.keys(patch).length }; }
         catch (e) { return { ok: false, error: 'patch: ' + e.message }; }
@@ -103,6 +124,7 @@ async function syncNewDossierToAirtable(dossier) {
       incident: incidentLabel(dossier),
       indemnite: indemniteNumber(dossier.indemnite),
       route,
+      coPassagers: coPassagersText(dossier),
       statutSuivi: cfg.statutSignatureAttente, // « Signature en attente » : mandat prêt, pas encore signé
       remarques: `Dossier complété via bot WhatsApp le ${new Date().toISOString().slice(0, 10)} — en attente de signature.`,
     });
@@ -114,4 +136,4 @@ async function syncNewDossierToAirtable(dossier) {
   }
 }
 
-module.exports = { syncNewDossierToAirtable, splitName, indemniteNumber };
+module.exports = { syncNewDossierToAirtable, splitName, indemniteNumber, coPassagersText };

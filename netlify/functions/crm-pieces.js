@@ -70,6 +70,14 @@ exports.handler = async (event) => {
       let mime = (res.metadata && res.metadata.mime) || 'application/octet-stream';
       let buf = Buffer.from(res.data);
       let name = key.split('/').pop() || 'piece';
+      // Repli mime : si la métadonnée manque, déduire le type des octets magiques
+      // (sinon « application/octet-stream » → certains navigateurs affichent les octets en texte).
+      if (mime === 'application/octet-stream' && buf.length > 12) {
+        if (buf[0] === 0xFF && buf[1] === 0xD8) mime = 'image/jpeg';
+        else if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4E && buf[3] === 0x47) mime = 'image/png';
+        else if (buf.slice(0, 4).toString('latin1') === '%PDF') mime = 'application/pdf';
+        else if (buf.slice(0, 4).toString('latin1') === 'RIFF' && buf.slice(8, 12).toString('latin1') === 'WEBP') mime = 'image/webp';
+      }
       const wantDownload = q.dl === '1';
       // Plafond de réponse d'une fonction Netlify ≈ 6 Mo (base64 inclus). Au-delà → réponse tronquée
       // = image cassée. On vise < ~5,2 Mo binaire. Les images sont donc redimensionnées pour l'AFFICHAGE.
@@ -100,10 +108,12 @@ exports.handler = async (event) => {
       return {
         statusCode: 200,
         headers: {
+          ...corsHeaders(),
+          // APRÈS corsHeaders() : sinon son « Content-Type: application/json » écrasait le vrai type
+          // du fichier → le navigateur affichait les octets de l'image en texte (bouillie JFIF).
           'Content-Type': mime,
           'Content-Disposition': `${wantDownload ? 'attachment' : 'inline'}; filename="${name}"`,
           'Cache-Control': 'private, no-store',
-          ...corsHeaders(),
         },
         body: b64,
         isBase64Encoded: true,

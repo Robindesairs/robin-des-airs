@@ -32,6 +32,7 @@ function airtableCfg() {
     trajet: col('AIRTABLE_COL_TRAJET', 'Trajet'),
     statutSuivi: col('AIRTABLE_COL_STATUT_SUIVI', 'Statut du Dossier Suivi'),
     remarques: col('AIRTABLE_COL_REMARQUES', 'Remarques'),
+    coPassagers: col('AIRTABLE_COL_CO_PASSAGERS', 'Co-passagers'),
     montantClient: col('AIRTABLE_COL_MONTANT_CLIENT', 'Montant Client'),
     raisonCompagnie: col('AIRTABLE_COL_RAISON_COMPAGNIE', 'Raison compagnie'),
   };
@@ -110,6 +111,7 @@ function recordFromAirtableFields(cfg, fields) {
     route,
     statutSuivi: get(L.statutSuivi, cfg.fStatutSuivi),
     remarques: get(L.remarques, cfg.fRemarques),
+    coPassagers: get(L.coPassagers),
     montantClient: get(L.montantClient),
     raisonCompagnie: get(L.raisonCompagnie),
   };
@@ -325,6 +327,7 @@ function dossierToAirtableFields(cfg, dossier) {
   if (dossier.route) f[L.itineraire] = dossier.route;
   if (dossier.statutSuivi) f[L.statutSuivi] = dossier.statutSuivi;
   if (dossier.remarques) f[L.remarques] = dossier.remarques;
+  if (dossier.coPassagers) f[L.coPassagers] = dossier.coPassagers;
   return f;
 }
 

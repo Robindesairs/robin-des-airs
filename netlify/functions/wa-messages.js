@@ -5,7 +5,7 @@
  */
 
 const { checkCrmAccess } = require('./lib/crm-access');
-const { listWaMessages, normalizeWaPhone } = require('./lib/wa-convo-store');
+const { appendWaMessage, listWaMessages, normalizeWaPhone } = require('./lib/wa-convo-store');
 const { canSendWhatsApp } = require('./lib/whatsapp-send-core');
 
 const { corsHeaders } = require('./lib/auth-config');
@@ -18,6 +18,28 @@ const HEADERS = {
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') {
     return { statusCode: 204, headers: HEADERS, body: '' };
+  }
+
+  // POST = append d'un message depuis le bot Railway (secret partagé) — AVANT l'auth CRM
+  // (le bot n'a pas de session CRM). Sert à mirrorer le SORTANT du bot dans l'historique.
+  if (event.httpMethod === 'POST') {
+    let body;
+    try { body = JSON.parse(event.body || '{}'); } catch { return { statusCode: 400, headers: HEADERS, body: JSON.stringify({ error: 'JSON invalide' }) }; }
+    const secret = String(body.secret || event.headers['x-bot-secret'] || '').trim();
+    const expected = (process.env.WATI_WEBHOOK_SECRET || '').trim();
+    if (!expected || secret !== expected) {
+      return { statusCode: 401, headers: HEADERS, body: JSON.stringify({ error: 'secret invalide' }) };
+    }
+    if (!body.phone || !body.text) {
+      return { statusCode: 400, headers: HEADERS, body: JSON.stringify({ error: 'phone et text requis' }) };
+    }
+    const r = await appendWaMessage(event, body.phone, {
+      role: body.role === 'user' ? 'user' : 'assistant',
+      text: body.text,
+      source: body.source || 'bot',
+      by: body.by || null,
+    });
+    return { statusCode: r && r.ok ? 200 : 500, headers: HEADERS, body: JSON.stringify(r || { ok: false }) };
   }
 
   const auth = checkCrmAccess(event);

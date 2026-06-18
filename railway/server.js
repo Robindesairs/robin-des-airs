@@ -51,7 +51,22 @@ function watiCfg() {
   const channel = (process.env.WATI_CHANNEL_PHONE || process.env.WHATSAPP_CONTACT_NUMBER || '33756863630').replace(/\D/g, '');
   return { token, base, channel };
 }
-async function appendWaMessage() {} // no-op (compat — historique léger ci-dessous)
+// Mirror le message SORTANT du bot vers le store conversation Netlify (« robin-wa ») que lit le CRM.
+// L'ENTRANT est déjà loggé côté Netlify (webhook WATI) → on ne mirror QUE le sortant (anti-doublon).
+// Best-effort + fire-and-forget : n'impacte jamais la réponse au client.
+async function appendWaMessage(phone, text, source) {
+  try {
+    const t = String(text || '').trim();
+    if (!phone || !t) return;
+    const secret = (process.env.WATI_WEBHOOK_SECRET || '').trim();
+    await fetch('https://robindesairs.eu/api/wa-messages', {
+      method: 'POST',
+      signal: AbortSignal.timeout(8000),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone, role: 'assistant', text: t.slice(0, 4096), source: source || 'bot', secret }),
+    });
+  } catch (_) {}
+}
 
 // ─── Historique léger des conversations (panneau « WhatsApp » du Bureau) ──────
 // RAM uniquement, capé : assez pour montrer « les dernières conversations » sans
@@ -248,7 +263,14 @@ function montantTotal(pax = 1) { return 600 * pax; }
 function montantNet(pax = 1) { return Math.round(600 * pax * 0.75); }
 // Montant RÉEL après vérification du vol (s.perPax issu de /api/flight-verdict ; 600 par défaut = accroche subsaharienne).
 function perPaxOf(s) { const p = s && Number(s.perPax); return (p && p > 0) ? p : 600; }
-function montantReel(s) { return perPaxOf(s) * ((s && s.pax) || 1); }
+// Passagers indemnisables = total MOINS les bébés EXPLICITEMENT gratuits (art. 3§3 CE261 : voyage gratuit = exclu).
+// Par défaut on INCLUT (bébé payant OU tarif inconnu) ; on n'exclut QUE le bébé marqué gratuit. Minimum 1.
+function claimablePax(s) {
+  const pax = (s && s.pax) || 1;
+  const free = (s && Array.isArray(s.passengers) ? s.passengers : []).filter((p) => p && p.gratuit).length;
+  return Math.max(1, pax - free);
+}
+function montantReel(s) { return perPaxOf(s) * claimablePax(s); }
 function montantNetReel(s) { return Math.round(montantReel(s) * 0.75); }
 // Ligne montant à afficher (récap/done) selon le verdict vol.
 function montantLine(s) {
@@ -302,6 +324,7 @@ function matchLang(input) {
 // ─── Envoi texte / liste / boutons (plomberie éprouvée + clip + debug) ─────────
 async function send(phone, text, cfg) {
   recordConvo(phone, 'out', text); // historique léger pour le Bureau
+  appendWaMessage(phone, text, 'bot'); // mirror SORTANT → store conversation CRM (fire-and-forget)
   if (!cfg) { console.error('v8 send IGNORÉ — watiCfg null (WATI_API_TOKEN/WATI_API_BASE manquant)'); return; }
   const wa = normalizeWatiPhone(phone);
   const mask = wa.length > 6 ? wa.slice(0, 4) + '***' + wa.slice(-2) : wa;
@@ -331,6 +354,7 @@ async function sendButtons(phone, config, cfg) {
   const body    = isArr ? '👇' : (config.body || '');
   const footer  = isArr ? undefined : config.footer;
   const buttons = isArr ? config : (config.buttons || []);
+  if (body && body !== '👇') appendWaMessage(phone, body, 'bot'); // mirror SORTANT (corps des boutons) → store conversation CRM
   const wa = normalizeWatiPhone(phone);
   const qs = new URLSearchParams({ whatsappNumber: wa, channelPhoneNumber: cfg.channel });
   const fallbackText = (body && body !== '👇' ? body + '\n\n' : '') + buttons.map((b, i) => `${i + 1} — ${b.text}`).join('\n');
@@ -433,7 +457,13 @@ async function isDuplicateMessage(id, hasId, windowMs) {
 
 // ─── Utilitaires ────────────────────────────────────────────────────────────────
 // Réf = jeton aléatoire (crypto) non énumérable : agit comme "lien magique" pour /api/dossier (données perso).
-function genRef() { const d = new Date(); return `RDA-${d.toISOString().slice(0,10).replace(/-/g,'')}-${crypto.randomBytes(9).toString('hex').toUpperCase()}`; }
+function genRef() {
+  const d = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  // Réf COURTE pour le client mais INDEVINABLE : 5 octets de hasard (~40 bits) → 8 caractères base36.
+  // (Le lien mandat.html?r=REF ouvre le dossier sans mot de passe → la réf doit rester non énumérable.)
+  const rand = crypto.randomBytes(5).readUIntBE(0, 5).toString(36).toUpperCase().padStart(8, '0');
+  return `RDA-${d}-${rand}`;
+}
 function normInput(raw, options) { const t = (raw || '').trim().toLowerCase(); if (/^\d+$/.test(t)) return t; const i = options.findIndex(o => t.includes(o.toLowerCase())); return i >= 0 ? String(i + 1) : t; }
 const AIRLINES = { AF: 'Air France', SN: 'Brussels Airlines', TP: 'TAP Air Portugal', AT: 'Royal Air Maroc', HC: 'Air Sénégal', KQ: 'Kenya Airways', ET: 'Ethiopian Airlines', EK: 'Emirates', TK: 'Turkish Airlines', KL: 'KLM', LH: 'Lufthansa', IB: 'Iberia', EJU: 'easyJet', U2: 'easyJet', FR: 'Ryanair', TO: 'Transavia', KP: 'ASKY', DN: 'Senegal Airlines' };
 function deduceAirline(vol) { const m = (vol || '').toUpperCase().match(/^([A-Z]{2,3})\d/); return (m && AIRLINES[m[1]]) || ''; }
@@ -594,7 +624,7 @@ function buildMandatUrl(s, phone) {
     route: s.route || '', depAirport: _routeParts[0] || '', arrAirport: _routeParts[_routeParts.length - 1] || '', motif: s.incident_libelle || '', incident: _incidentCode, pax: s.pax || 1, indemnite: perPaxOf(s),
     // Vérification vol (AeroDataBox) — destinée à l'équipe qui rappelle / au calcul de la lettre.
     flightVerdict: s.flightVerdict || '', flightChecked: !!s.flightChecked, flightDelayMin: (s.flightDelayMin != null ? s.flightDelayMin : ''), distanceKm: s.distanceKm || '',
-    aVerifierExpert: ['a_verifier', 'hors_champ', 'sous_seuil'].includes(s.flightVerdict) || s.type_vol === 'escale',
+    aVerifierExpert: ['a_verifier', 'hors_champ', 'sous_seuil'].includes(s.flightVerdict) || s.type_vol === 'escale' || (s.passengers || []).some((p) => p && p.bebe && !p.gratuit), // bébé inclus sans tarif confirmé → l'expert vérifie l'INF payé (art. 3§3)
     lang: s.langue_code || 'fr',
     passengers: (s.passengers || []).slice(0, s.pax || 1).map(p => ({ name: cleanName((p && p.name) || ''), dob: toISODate((p && p.dob) || '') })),
     cid: phone || '', lsa: new Date().toISOString(), source: 'wati-bot-v8',
@@ -676,6 +706,7 @@ function applyEticket(s, e) {
       const cur = s.passengers[i] || {};
       if (!cur.name && p.name) cur.name = p.name;
       if (!cur.dob && p.dob) cur.dob = p.dob;
+      if (p.bebe) cur.bebe = true; if (p.gratuit) cur.gratuit = true; // bébé / gratuité (art. 3§3)
       s.passengers[i] = cur;
     });
     if (!s.pax) s.pax = e.passengers.length;
@@ -699,6 +730,7 @@ function setEticketFields(s, e) {
       const cur = s.passengers[i] || {}; cur.name = p.name; if (!cur.dob && p.dob) cur.dob = p.dob;
       // Mineur si le billet l'étiquette « Enfant/Bébé » (p.minor, sans DDN) OU si la DDN lue le confirme.
       if (p.minor || (cur.dob && isMinorAt(cur.dob, s.date))) cur.minor = true;
+      if (p.bebe) cur.bebe = true; if (p.gratuit) cur.gratuit = true; // bébé / gratuité (art. 3§3)
       s.passengers[i] = cur;
     });
     // Billet de GROUPE : si le billet liste PLUS de passagers que déclaré, on remonte le compte (jamais en silence → sinon des passagers tombent du mandat).
@@ -1100,6 +1132,23 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const _l = LEADS.get(leadKey(phone)) || {};
     notifyOwnerWhatsApp(phone, `🖊️ « Déjà signé » déclaré par le client (${_l.ref || phone}) → relances STOPPÉES${okMark ? '' : ' (lead introuvable)'}. ⚠️ À VÉRIFIER : si le mandat n'est pas réellement signé (webhook manqué), relancer manuellement.`).catch(() => {});
     return send(phone, `Merci ! ✅ On arrête les rappels. Si jamais votre signature n'était pas encore arrivée chez nous, un conseiller vous le dira — sinon, votre dossier suit son cours. 🙏`, cfg);
+  }
+
+  // « J'ai déjà tout envoyé » (bouton du rappel pièces post-signature) : on stoppe le rappel, on rassure,
+  // et on signale au bureau pour vérification humaine (les dépôts via le lien web ne remontent pas au bot).
+  if (id === 'pieces_ok' || lower.includes('tout envoyé') || lower.includes('tout envoye')) {
+    const _k = leadKey(phone); const _l = LEADS.get(_k); if (_l) { _l.piecesPending = false; _l.lastClientAt = Date.now(); LEADS.set(_k, _l); persistLeads(); }
+    notifyOwnerWhatsApp(phone, `📎 « Déjà tout envoyé » déclaré (${(_l && _l.ref) || phone}) → rappel pièces STOPPÉ. ⚠️ À VÉRIFIER côté bureau : confirmer que CNI + preuve de voyage par passager sont bien là.`).catch(() => {});
+    return send(phone, `Parfait, merci ! 🙏 On vérifie de notre côté que tout est complet. S'il manquait quoi que ce soit, un conseiller vous le dira — sinon votre dossier suit son cours. ✅`, cfg);
+  }
+
+  // « Déposer mes pièces » (bouton du rappel pièces) : on renvoie le lien sécurisé.
+  if (id === 'depot' || lower === 'déposer mes pièces' || lower === 'deposer mes pieces') {
+    const _l = LEADS.get(leadKey(phone)) || {};
+    const _ref = _l.ref || (s && s.ref) || '';
+    const _url = 'https://robindesairs.eu/depot-en-ligne.html?r=' + encodeURIComponent(_ref);
+    upsertLead(phone, { lastClientAt: Date.now() });
+    return send(phone, `📎 Parfait. Déposez vos pièces (*pièce d'identité* + *carte d'embarquement* ou *e-billet*) en toute sécurité ici 👇\n${_url}\n\nVous pouvez aussi *m'envoyer les photos directement ici*. 🙏`, cfg);
   }
 
   // T1.3 — « Plus tard » : le client veut reprendre plus tard. Son tap a déjà rouvert la fenêtre 24h (gratuit) ;
@@ -2049,7 +2098,7 @@ async function applyFlightVerdict(phone, s, cfg) {
   if (v.verdict === 'eligible') {
     s.perPax = (v.perPax && v.perPax > 0) ? v.perPax : 600;
     await setState(phone, s);
-    return send(phone, `✅ *Bonne nouvelle !* ${v.proofLine || 'Votre vol est éligible.'}\nVous pouvez prétendre à *${montantReel(s)} €*${s.pax > 1 ? ` au total (${s.pax} passagers)` : ''} — soit *${montantNetReel(s)} € nets* pour vous. 🎉`, cfg);
+    return send(phone, `✅ *Bonne nouvelle !* ${v.proofLine || 'Votre vol est éligible.'}\nVous pouvez prétendre à *${montantReel(s)} €*${claimablePax(s) > 1 ? ` au total (${claimablePax(s)} passagers)` : ''} — soit *${montantNetReel(s)} € nets* pour vous. 🎉`, cfg);
   }
   s.perPax = 0; // sortie douce : pas de montant ferme affiché
   await setState(phone, s);
@@ -2151,7 +2200,7 @@ async function finaliser(phone, s, cfg) {
   // Lead à relancer tant que le mandat n'est pas signé (nudge 2h/8h/22h dans la fenêtre 24h)
   upsertLead(phone, { ref: s.ref, mandatUrl: s.mandat_url, mandatSentAt: Date.now(), lastClientAt: Date.now(), pax: s.pax || 1, name: firstNameOf(s), perPax: s.perPax, flightVerdict: s.flightVerdict || '', signed: false, completed: true, nudges: [] });
   const minorNote = s.minorsCount ? `\n👶 ${s.minorsCount} mineur·s : signature d'un parent/tuteur requise (un expert vous guide).` : '';
-  await send(phone, `${bar('done')}\n${titre} Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % au succès uniquement · aucune info bancaire.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_\n\n👉 *Signez ici :*\n${s.mandat_url}\n\nSans votre signature, on ne peut pas agir en votre nom. ${STOP_FOOTER}`, cfg);
+  await send(phone, `${bar('done')}\n${titre} Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % au succès uniquement · aucune info bancaire.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_\n\n👉 *Signez ici :*\n${s.mandat_url}\n\nSans votre signature, on ne peut pas agir en votre nom. ${STOP_FOOTER}`, cfg);
   // CRM : la fiche Airtable est désormais créée par la synchro DIRECTE (storeDossierDurable →
   // /api/dossier-store → syncNewDossierToAirtable, statut « Signature en attente »). Le webhook
   // Make ci-dessous n'est plus qu'un hook OPTIONNEL pour d'éventuelles automatisations externes :
@@ -2207,6 +2256,19 @@ async function triggerFraisCollection(lead) {
     const s = await getState(lead.phone); if (!s.ref && lead.ref) s.ref = lead.ref;
     await sendFraisRequest(lead.phone, s, cfg);
   } catch (e) { console.error('triggerFraisCollection', e.message); }
+}
+
+// Arme (sans rien envoyer maintenant) UN rappel « pièces » différé, déclenché par la signature.
+// Le message post-signature demande déjà les pièces ; ce flag permet 1 SEULE relance à +5h dans la
+// fenêtre 24h si le dossier est encore incomplet côté bot. Source de vérité = docsStatus(état bot).
+async function armPiecesReminder(lead) {
+  try {
+    if (!lead || !lead.phone || lead.piecesAskedAt) return;   // invalide ou déjà armé (webhook rejoué)
+    const s = STATE.get(leadKey(lead.phone));
+    if (!s) return;                                           // pas d'état dossier → on ne devine pas (le bureau relance)
+    if (docsStatus(s).complete) return;                       // déjà complet côté bot → aucun rappel nécessaire
+    upsertLead(lead.phone, { piecesPending: true, piecesAskedAt: Date.now() });
+  } catch (e) { console.error('armPiecesReminder', e.message); }
 }
 
 // reprise d'étape (T1) — renvoie l'écran courant
@@ -2454,6 +2516,7 @@ app.post('/api/mandat-signed', (req, res) => {
   const marked = markLeadSigned(b.ref || '') || markLeadSigned(b.phone || b.waId || '');
   console.log('mandat signe ref=' + (b.ref || '?') + ' marked=' + marked);
   if (lead && lead.phone) triggerFraisCollection(lead).catch(() => {}); // propose l'envoi des reçus de frais (Art. 8/9), best-effort
+  if (lead && lead.phone) armPiecesReminder(lead).catch(() => {}); // arme 1 rappel pièces différé si le dossier est incomplet (best-effort)
   if (!marked) notifyOwnerWhatsApp(b.phone || b.waId || '', `⚠️ Signature reçue (ref=${b.ref || '?'} · tel=${b.phone || b.waId || '?'}) mais LEAD INTROUVABLE → relances NON stoppées. À vérifier / arrêter manuellement.`).catch(() => {}); // fin de l'échec silencieux
   res.json({ ok: true, marked });
 });
@@ -2462,6 +2525,7 @@ app.post('/api/mandat-signed', (req, res) => {
 //     puis dernière chance à 22h, juste avant la fermeture) — toutes dans la fenêtre WhatsApp 24h gratuite. ──
 const RELANCE_THRESHOLDS_H = [2, 8, 22];   // dossier finalisé, mandat envoyé, pas signé
 const ENGAGED_THRESHOLDS_H = [3, 14, 22];  // dossier engagé : reprise (3h), rappel (14h), dernière chance avant fermeture (22h)
+const PIECES_REMINDER_H = Number(process.env.PIECES_REMINDER_H) || 5; // signé mais pièces incomplètes → 1 rappel DOUX à +5h (fenêtre 24h ; pilotable en recette)
 const _H = 3600000;
 // Montant à afficher dans une relance, dérivé du lead (perPax/verdict capturés au récap/finalisation).
 // hors_champ/sous_seuil → null = pas de chiffre ferme (cohérent avec « montant à confirmer » vu dans le tunnel).
@@ -2554,7 +2618,7 @@ async function runRelances() {
       if (!lead) continue;
       const anchorAge = lead.mandatSentAt || lead.engagedAt || 0;
       // Purge : signé, ou trop vieux (30 j) — qu'il soit finalisé ou seulement engagé.
-      if ((lead.signed && !lead.fraisPending) || (anchorAge && now - anchorAge > 30 * 24 * _H)) { LEADS.delete(k); persistLeads(); continue; }
+      if ((lead.signed && !lead.fraisPending && !lead.piecesPending) || (anchorAge && now - anchorAge > 30 * 24 * _H)) { LEADS.delete(k); persistLeads(); continue; }
       // Fenêtre WhatsApp 24h (envoi gratuit) fermée → on n'écrit plus en texte libre ; le dossier reste
       // dans « À rappeler ». On tente une relance par TEMPLATE approuvé (payant, OFF par défaut) pour
       // le ramener dans la conversation ; son tap rouvre la fenêtre et le flux reprend.
@@ -2567,6 +2631,22 @@ async function runRelances() {
           const txt = fillTpl(pickRV(lead.phone, 'RELANCE_FRAIS'), {}) || `💶 Petit rappel : vos reçus (taxi, hôtel, repas…) partent dans notre 1er envoi si on les a aujourd'hui. Une photo suffit 📷 — ou « Pas de frais ». On peut aussi les ajouter plus tard.`;
           try { await sendButtons(lead.phone, { body: txt, buttons: [{ id: 'frais_non', text: '❌ Pas de frais' }] }, cfg); console.log('relance frais -> ' + (lead.ref || lead.phone)); } catch (_) {}
           lead.nudges = nudges.concat('frais'); lead.fraisPending = false; LEADS.set(k, lead); persistLeads();
+        }
+        continue; // signé → jamais de relance signature
+      }
+      // Relance PIÈCES : signé mais dossier incomplet → 1 SEUL rappel DOUX à +5h, dans la fenêtre 24h.
+      // On pose une QUESTION (« vous nous avez déjà tout envoyé ? ») avec échappatoire, jamais une
+      // affirmation « il manque X » : les dépôts via le lien web ne remontent pas à l'état du bot.
+      if (lead.signed && lead.piecesPending) {
+        const hP = (now - (lead.piecesAskedAt || now)) / _H;
+        if (hP >= PIECES_REMINDER_H && !nudges.includes('pieces')) {
+          const sp = STATE.get(k);
+          if (sp && docsStatus(sp).complete) { lead.piecesPending = false; LEADS.set(k, lead); persistLeads(); continue; } // complété entre-temps (canal bot) → rien
+          const url = 'https://robindesairs.eu/depot-en-ligne.html?r=' + encodeURIComponent(lead.ref || '');
+          const nm = lead.name ? ' ' + String(lead.name).split(/\s+/)[0] : '';
+          const txt = `📎 Petit point sur votre dossier ${lead.ref || ''}${nm ? ',' + nm : ''}.\n\nPour qu'on lance la réclamation au plus vite, il nous faut, *pour chaque passager* : une *pièce d'identité* et votre *carte d'embarquement* (ou *e-billet*).\n\nVous nous avez *déjà tout envoyé* ? Parfait — dites-le-nous d'un tap, on vérifie de notre côté. Sinon, déposez vos pièces ici 👇\n${url}`;
+          try { await sendButtons(lead.phone, { body: txt, buttons: [{ id: 'pieces_ok', text: '✅ J\'ai déjà tout envoyé' }, { id: 'depot', text: '📎 Déposer mes pièces' }] }, cfg); console.log('relance pieces -> ' + (lead.ref || lead.phone)); } catch (_) {}
+          lead.nudges = nudges.concat('pieces'); lead.piecesPending = false; LEADS.set(k, lead); persistLeads();
         }
         continue; // signé → jamais de relance signature
       }

@@ -274,7 +274,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="parties-grid">
     <div class="partie-box" data-label="Le Mandant (vous)">
       <div class="partie-name" id="pMandant">—</div>
-      <div class="partie-detail">Passager(s) lésé(s)<br>Vol concerné : <span id="pVol">—</span></div>
+      <div class="partie-detail">Passager(s) lésé(s)<br>Vol concerné : <span id="pVol">—</span><br>Adresse : <span id="pAddr">—</span></div>
     </div>
     <div class="partie-box" data-label="Le Mandataire">
       <div class="partie-name">Robin des Airs</div>
@@ -330,7 +330,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   </div>
   <div class="field-row">
     <label>Adresse postale complète <span class="req">*</span></label>
-    <textarea id="addr" placeholder="12 rue de la Paix&#10;75001 Paris — France" rows="3"></textarea>
+    <textarea id="addr" placeholder="12 rue de la Paix&#10;75001 Paris — France" rows="3" oninput="updateParties()"></textarea>
     <div class="ferr" id="addrErr">Adresse requise pour le mandat</div>
   </div>
   <div style="font-size:12px;color:var(--text);font-style:italic;padding:10px 14px;background:var(--green-tint);border-left:3px solid var(--green-deep);border-radius:0 6px 6px 0;margin-top:4px">
@@ -340,6 +340,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
 <!-- VOL CONCERNÉ -->
 <div class="doc-section">
   <div class="sec-title">✈️ Le vol concerné</div>
+  <!-- Communs au voyage : compagnie, PNR, incident -->
   <div class="field-row tri">
     <div>
       <label>Compagnie (sur le billet) <span class="req">*</span></label>
@@ -347,20 +348,8 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       <div class="ferr" id="cieErr">Compagnie requise</div>
     </div>
     <div>
-      <label>N° de vol <span class="req">*</span></label>
-      <input type="text" id="fnum" placeholder="SN271" class="ro" oninput="updateParties()">
-      <div class="ferr" id="fnumErr">N° de vol requis</div>
-    </div>
-    <div>
       <label>PNR / Réservation</label>
       <input type="text" id="pnr" placeholder="ABC123" class="ro">
-    </div>
-  </div>
-  <div class="field-row duo">
-    <div>
-      <label>Date du vol <span class="req">*</span></label>
-      <input type="date" id="fdate">
-      <div class="ferr" id="fdErr">Date requise</div>
     </div>
     <div>
       <label>Incident <span class="req">*</span></label>
@@ -373,26 +362,64 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       <div class="ferr" id="incErr">Sélection requise</div>
     </div>
   </div>
-  <div class="field-row duo">
-    <div>
-      <label>Départ initial</label>
-      <input type="text" id="dep" placeholder="Paris CDG">
+
+  <!-- Choix : vol direct ou avec correspondance(s) -->
+  <div class="field-row" style="margin-bottom:10px">
+    <label>Votre trajet <span class="req">*</span></label>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <label style="flex:1;min-width:150px;display:flex;align-items:center;gap:9px;margin:0;padding:11px 14px;border:1.5px solid var(--green);border-radius:8px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--text)">
+        <input type="radio" name="flightType" id="flightTypeDirect" value="direct" checked onchange="toggleFlightMode()" style="width:17px;height:17px;cursor:pointer;accent-color:var(--green-deep)">
+        Vol direct
+      </label>
+      <label style="flex:1;min-width:150px;display:flex;align-items:center;gap:9px;margin:0;padding:11px 14px;border:1.5px solid var(--green);border-radius:8px;cursor:pointer;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;letter-spacing:0;text-transform:none;color:var(--text)">
+        <input type="radio" name="flightType" id="flightTypeConnecting" value="connecting" onchange="toggleFlightMode()" style="width:17px;height:17px;cursor:pointer;accent-color:var(--green-deep)">
+        Avec correspondance(s)
+      </label>
     </div>
-    <div>
-      <label>Destination finale</label>
-      <input type="text" id="arr" placeholder="Banjul BJL">
+  </div>
+
+  <!-- MODE DIRECT -->
+  <div id="flightDirect">
+    <div class="field-row duo">
+      <div>
+        <label>N° de vol <span class="req">*</span></label>
+        <input type="text" id="fnum" placeholder="SN271" class="ro" oninput="updateParties()">
+        <div class="ferr" id="fnumErr">N° de vol requis</div>
+      </div>
+      <div>
+        <label>Date du vol <span class="req">*</span></label>
+        <input type="date" id="fdate" oninput="updateParties()">
+        <div class="ferr" id="fdErr">Date requise</div>
+      </div>
+    </div>
+    <div class="field-row duo">
+      <div>
+        <label>Départ initial</label>
+        <input type="text" id="dep" placeholder="Paris CDG">
+      </div>
+      <div>
+        <label>Destination finale</label>
+        <input type="text" id="arr" placeholder="Banjul BJL">
+      </div>
     </div>
   </div>
-  <div class="field-row">
-    <label>Correspondance(s) <span style="text-transform:none;letter-spacing:0;color:var(--muted)">— escale(s) et n° de vol(s), si votre voyage en comportait</span></label>
-    <input type="text" id="connecting" placeholder="Ex. : escale Bruxelles — vols SN271 puis SN204">
-    <div style="font-size:11px;color:var(--muted);margin-top:4px;font-style:italic">💡 Pour un voyage sous une même réservation, l'indemnité se calcule sur la <strong>destination finale</strong> et la <strong>distance totale</strong> — la correspondance est couverte.</div>
+
+  <!-- MODE CORRESPONDANCE(S) -->
+  <div id="flightConnecting" style="display:none">
+    <div style="font-size:12px;color:var(--text);font-style:italic;padding:10px 14px;background:var(--green-tint);border-left:3px solid var(--green-deep);border-radius:0 6px 6px 0;margin-bottom:12px">
+      💡 Ajoutez chaque vol de votre voyage, dans l'ordre. <strong>Chaque ligne a sa propre date</strong> — utile si un vol de nuit part un jour et arrive le lendemain. L'indemnité se calcule sur la <strong>destination finale</strong> et la <strong>distance totale</strong> ; la correspondance est couverte.
+    </div>
+    <div id="legsContainer"></div>
+    <button type="button" id="btnAddLeg" onclick="addLeg()" style="margin-top:4px;width:100%;padding:11px 14px;background:var(--paper);border:1.5px dashed var(--green);font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;color:var(--green-deep);cursor:pointer;text-align:center;border-radius:6px;transition:background .2s,border-color .2s" onmouseover="this.style.background='var(--green-tint)';this.style.borderColor='var(--green-deep)'" onmouseout="this.style.background='var(--paper)';this.style.borderColor='var(--green)'">
+      ➕ Ajouter un vol
+    </button>
+    <div class="ferr" id="legsErr" style="margin-top:6px">Indiquez le n° de vol et la date de chaque tronçon</div>
   </div>
-  <div class="field-row">
-    <label>Vol opéré par <span style="text-transform:none;letter-spacing:0;color:var(--muted)">— transporteur réel, si différent du billet (partage de code / codeshare)</span></label>
-    <input type="text" id="operatedby" placeholder="Ex. : vol AF545 réellement opéré par KLM">
-    <div style="font-size:11px;color:var(--muted);margin-top:4px;font-style:italic">💡 L'indemnité est due par la compagnie qui a <strong>réellement opéré</strong> le vol, pas celle inscrite sur le billet.</div>
-  </div>
+
+  <!-- Champ « Vol opéré par / codeshare » retiré du formulaire client : trop technique (personne ne sait le remplir).
+       L'équipe détermine le transporteur réel à partir du n° de vol. Le payload envoie operatedBy='' (lecture optionnelle). -->
+  <!-- Résumé texte des correspondances (rempli automatiquement en mode correspondance) — rétro-compatibilité backend -->
+  <input type="hidden" id="connecting">
   <!-- Compteur passagers caché — géré par JS -->
   <input type="hidden" id="pax" value="1">
   <div id="paxNames"></div>
@@ -610,9 +637,9 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="single-check" onclick="document.getElementById('eligCheck').checked=!document.getElementById('eligCheck').checked;calcProgress()">
     <input type="checkbox" id="eligCheck" onclick="event.stopPropagation();calcProgress()">
     <p>
-      <strong>Je comprends que mon indemnité n'est pas garantie.</strong> Le montant affiché est une <strong>estimation</strong> qui dépend de l'<strong>éligibilité de mon vol</strong> au règlement CE 261/2004 (retard ≥ 3 h à destination finale, distance, absence de circonstance extraordinaire) et du <strong>paiement effectif par la compagnie</strong>.<br>
+      <strong>J'ai compris : le montant est une estimation</strong> (jusqu'à 600 € selon l'éligibilité de mon vol), <strong>pas une garantie</strong>.<br>
       <span style="font-size:12px;color:var(--muted);">
-        Robin des Airs est tenue à une obligation de moyens — aucune garantie de résultat.
+        Et comme c'est sans avance, je ne paie rien si on ne récupère rien. 🤝
       </span>
     </p>
   </div>
@@ -770,7 +797,10 @@ function applyDossierEmailUI() {
 }
 // ── URL PARAMS ───────────────────────────────────────────────────
 const P = new URLSearchParams(window.location.search);
-let REF   = P.get('ref')       || ('RDA-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + Math.random().toString(36).substring(2,6).toUpperCase());
+// ?r= (lien court du bot) = la VRAIE réf du dossier. On l'utilise directement comme REF,
+// pour que la signature soit rattachée au bon dossier MÊME si le fetch dossier échoue.
+// La réf courte aléatoire n'est qu'un dernier recours (accès direct sans aucun lien).
+let REF   = P.get('ref')       || P.get('r')       || ('RDA-' + new Date().toISOString().slice(0,10).replace(/-/g,'') + '-' + (Math.random().toString(36).substring(2,10) + '00000000').substring(0,8).toUpperCase());
 const WA_PREFILL = P.get('phone') || P.get('whatsapp') || P.get('wa') || P.get('waId') || '';
 const PAXN  = parseInt(P.get('pax')) || 1;
 const VOL   = P.get('vol')       || '';
@@ -1162,15 +1192,82 @@ function getPassengersData() {
   });
   return data;
 }
+// ── VOL : direct / correspondance(s) ─────────────────────────────
+let flightMode = 'direct';            // 'direct' | 'connecting'
+let flightLegs = [];                  // [{fnum,date,dep,arr}]
+function emptyLeg(){ return { fnum:'', date:'', dep:'', arr:'' }; }
+function frDate(iso){ try{ const [y,m,d]=iso.split('-'); return `${d}/${m}/${y}`; }catch(e){ return iso||''; } }
+function toggleFlightMode(){
+  flightMode = document.getElementById('flightTypeConnecting')?.checked ? 'connecting' : 'direct';
+  const d = document.getElementById('flightDirect');
+  const c = document.getElementById('flightConnecting');
+  if (flightMode === 'connecting'){
+    if (d) d.style.display='none'; if (c) c.style.display='block';
+    if (flightLegs.length === 0){ flightLegs = [emptyLeg(), emptyLeg()]; renderLegs(); }
+  } else {
+    if (d) d.style.display='block'; if (c) c.style.display='none';
+  }
+  updateParties();
+}
+function addLeg(){
+  flightLegs.push(emptyLeg()); renderLegs();
+  setTimeout(()=>{ const r=document.querySelectorAll('.leg-row'); r[r.length-1]?.scrollIntoView({behavior:'smooth',block:'center'}); }, 60);
+}
+function removeLeg(i){ if (flightLegs.length<=1) return; flightLegs.splice(i,1); renderLegs(); updateParties(); }
+function syncLegsFromDom(){
+  document.querySelectorAll('.leg-row').forEach((row)=>{
+    const i = +row.dataset.idx;
+    if (i<0 || i>=flightLegs.length) return;
+    flightLegs[i] = {
+      fnum: row.querySelector('.leg-fnum')?.value.trim() || '',
+      date: row.querySelector('.leg-date')?.value || '',
+      dep:  row.querySelector('.leg-dep')?.value.trim() || '',
+      arr:  row.querySelector('.leg-arr')?.value.trim() || '',
+    };
+  });
+}
+function onLegInput(){ syncLegsFromDom(); updateParties(); }
+function renderLegs(){
+  const cont = document.getElementById('legsContainer'); if (!cont) return;
+  cont.innerHTML = flightLegs.map((leg,i)=>{
+    const tag = i===0 ? 'Vol 1 — départ' : (i===flightLegs.length-1 ? `Vol ${i+1} — arrivée finale` : `Vol ${i+1}`);
+    const rm  = flightLegs.length>1 ? `<button type="button" onclick="removeLeg(${i})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;font-weight:600;padding:2px 4px">✕ retirer</button>` : '';
+    return `<div class="leg-row" data-idx="${i}" style="border:1px solid var(--border,#E2E6EE);border-radius:8px;padding:14px;margin-bottom:10px;background:var(--bg-soft,#F7F8FA)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--green-deep);font-weight:700">${tag}</span>${rm}
+      </div>
+      <div class="field-row duo">
+        <div><label>N° de vol <span class="req">*</span></label><input type="text" class="leg-fnum ro" value="${(leg.fnum||'').replace(/"/g,'&quot;')}" placeholder="AF718" oninput="onLegInput()"></div>
+        <div><label>Date de ce vol <span class="req">*</span></label><input type="date" class="leg-date" value="${leg.date||''}" oninput="onLegInput()"></div>
+      </div>
+      <div class="field-row duo">
+        <div><label>Départ</label><input type="text" class="leg-dep" value="${(leg.dep||'').replace(/"/g,'&quot;')}" placeholder="ex. CDG / Paris"></div>
+        <div><label>Arrivée</label><input type="text" class="leg-arr" value="${(leg.arr||'').replace(/"/g,'&quot;')}" placeholder="ex. DSS / Dakar"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function legsSummary(){
+  syncLegsFromDom();
+  return flightLegs.filter(l=>l.fnum||l.dep||l.arr).map(l=>{
+    const route = (l.dep||l.arr) ? ` ${l.dep||'?'}→${l.arr||'?'}` : '';
+    const d = l.date ? ` (${frDate(l.date)})` : '';
+    return `${l.fnum||'?'}${route}${d}`;
+  }).join(' ; ');
+}
 // ── PARTIES ──────────────────────────────────────────────────────
 function updateParties() {
   const fn = document.getElementById('fn').value.trim();
   const ln = document.getElementById('ln').value.trim();
   const pax = paxCount||1;
-  const vol = document.getElementById('fnum').value||VOL||'—';
+  let vol;
+  if (flightMode === 'connecting') { vol = legsSummary() || '—'; }
+  else { vol = document.getElementById('fnum').value||VOL||'—'; }
   const nm = (fn||ln) ? (fn+' '+ln).trim()+(pax>1?` + ${pax-1} autre(s)`:'') : '—';
   document.getElementById('pMandant').textContent = nm;
   document.getElementById('pVol').textContent     = vol;
+  const addrEl = document.getElementById('pAddr');
+  if (addrEl){ const a=(document.getElementById('addr')?.value||'').trim().replace(/\s*\n\s*/g,', '); addrEl.textContent = a || '—'; }
   document.getElementById('declarant').textContent= (fn||ln) ? (fn+' '+ln).trim() : '—';
 }
 // ── CHECK UNIQUE ─────────────────────────────────────────────────
@@ -1438,13 +1535,30 @@ function showE(id,eId,show) {
 function validate() {
   let ok = true;
   [['fn','fnErr'],['ln','lnErr'],['wa-national','waErr'],['addr','addrErr'],
-   ['cie','cieErr'],['fnum','fnumErr'],
-   ['fdate','fdErr'],['inc','incErr'],['sigCity','sigCityErr']
+   ['cie','cieErr'],['inc','incErr'],['sigCity','sigCityErr']
   ].forEach(([id,e])=>{
     const empty=!document.getElementById(id)?.value.trim();
     showE(id,e,empty);
     if(empty) ok=false;
   });
+  // Vol : validation selon le mode (direct = 1 vol ; correspondance = chaque tronçon)
+  if (flightMode === 'connecting') {
+    syncLegsFromDom();
+    const legsOk = flightLegs.length>0 && flightLegs.every(l=>l.fnum.trim() && l.date);
+    document.querySelectorAll('.leg-row').forEach((row)=>{
+      const i=+row.dataset.idx, leg=flightLegs[i]||{};
+      row.querySelector('.leg-fnum')?.classList.toggle('err', !leg.fnum?.trim());
+      row.querySelector('.leg-date')?.classList.toggle('err', !leg.date);
+    });
+    const le=document.getElementById('legsErr'); if (le) le.style.display = legsOk?'none':'block';
+    if (!legsOk) ok=false;
+  } else {
+    [['fnum','fnumErr'],['fdate','fdErr']].forEach(([id,e])=>{
+      const empty=!document.getElementById(id)?.value.trim();
+      showE(id,e,empty);
+      if(empty) ok=false;
+    });
+  }
   // WhatsApp : exiger indicatif (pays) + numéro → un numéro international valide
   const waFull = (document.getElementById('wa')?.value || '').trim();
   if (!/^\+\d{7,15}$/.test(waFull)) {
@@ -1495,6 +1609,23 @@ function submitMandat() {
   }
   const btn = document.getElementById('btnSub');
   btn.disabled=true; btn.innerHTML='⏳ Envoi en cours...';
+  // ── Données vol selon le mode (rétro-compat : flightNum/flightDate/dep/arr/connecting toujours fournis) ──
+  let _flightNum, _flightDate, _depA, _arrA, _connecting, _legs = null;
+  if (flightMode === 'connecting') {
+    syncLegsFromDom();
+    _legs = flightLegs.map(l=>({ flightNum:l.fnum, flightDate:l.date, depAirport:l.dep, arrAirport:l.arr }));
+    _flightNum  = flightLegs.map(l=>l.fnum).filter(Boolean).join(' / ');
+    _flightDate = flightLegs[0]?.date || '';
+    _depA       = flightLegs[0]?.dep || '';
+    _arrA       = flightLegs[flightLegs.length-1]?.arr || '';
+    _connecting = legsSummary();
+  } else {
+    _flightNum  = document.getElementById('fnum').value.trim();
+    _flightDate = document.getElementById('fdate').value;
+    _depA       = document.getElementById('dep').value.trim();
+    _arrA       = document.getElementById('arr').value.trim();
+    _connecting = document.getElementById('connecting')?.value.trim() || '';
+  }
   const payload = {
     ref:       REF,
     firstName: document.getElementById('fn').value.trim(),
@@ -1511,16 +1642,18 @@ function submitMandat() {
     mandataireAcceptedAt: new Date().toISOString(),
     airline:   document.getElementById('cie').value.trim(),
     operatedBy: document.getElementById('operatedby')?.value.trim() || '',
-    flightNum: document.getElementById('fnum').value.trim(),
-    flightDate:document.getElementById('fdate').value,
+    flightNum: _flightNum,
+    flightDate:_flightDate,
     pnr:       document.getElementById('pnr').value.trim(),
     incident:  document.getElementById('inc').value,
     pax:       paxCount,
     passengerNames: getNames(),
     passengersData: getPassengersData(),
-    depAirport:document.getElementById('dep').value.trim(),
-    arrAirport:document.getElementById('arr').value.trim(),
-    connecting: document.getElementById('connecting')?.value.trim() || '',
+    depAirport:_depA,
+    arrAirport:_arrA,
+    connecting: _connecting,
+    flightMode: flightMode,
+    flightLegs: _legs,
     signCity:  document.getElementById('sigCity').value.trim(),
     signDate:  document.getElementById('sigDate').value,
     signatureImg: document.getElementById('sigCanvas').toDataURL('image/png'),

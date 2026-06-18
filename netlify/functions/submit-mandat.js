@@ -536,7 +536,7 @@ async function sendMandatWhatsappCopy(record, pdfBuffer) {
   const ref = record.ref || record.cert_id || 'dossier';
   const suffixe = String(ref).replace(/[^A-Za-z0-9]/g, '').slice(-4).toUpperCase();
   const fileName = suffixe ? `Mandat-Robin-des-Airs-${suffixe}.pdf` : 'Mandat-Robin-des-Airs.pdf';
-  const caption = `✅ Mandat signé — merci de votre confiance ! (réf. ${ref})\n\nVotre dossier passe entre les mains de notre équipe. *0 € si on ne gagne pas*, 25 % uniquement si vous êtes indemnisé. Voici votre copie à conserver.\n\n📎 *Pour accélérer votre dossier*, envoyez-nous ici les justificatifs que vous avez sous la main :\n• votre *carte d'embarquement* ou votre *e-billet* (confirmation de réservation)\n• une *pièce d'identité* pour chaque passager (si ce n'est pas déjà fait)\n\n🔒 Vous préférez tout déposer en une fois sur un *lien sécurisé* (vos pièces ne passent pas par la conversation) ?\n👉 https://robindesairs.eu/depot-en-ligne.html?r=${ref}\n\n📞 *Un expert va vous appeler* depuis le *+33 7 56 86 36 30*. Enregistrez ce numéro sous « *Robin des Airs* » pour reconnaître notre appel. 🏹\n\nL'équipe Robin des Airs`;
+  const caption = `✅ Mandat signé — merci de votre confiance ! (réf. ${ref})\n\nVotre dossier passe entre les mains de notre équipe. *0 € si on ne gagne pas*, 25 % uniquement si vous êtes indemnisé. Voici votre copie à conserver.\n\n📎 *Pour traiter votre dossier au plus vite*, il nous faut, pour chaque passager :\n• votre *carte d'embarquement* ou votre *e-billet* (confirmation de réservation)\n• une *pièce d'identité*\n\n✅ Si vous nous avez *déjà envoyé* ces pièces, c'est parfait — rien à faire de votre côté, on s'occupe du reste.\nSinon, transmettez-les ici, ou déposez-les en une fois sur votre *lien sécurisé* (vos pièces ne passent pas par la conversation) 👉 https://robindesairs.eu/depot-en-ligne.html?r=${ref}\n\n📞 *Un expert va vous appeler* depuis le *+33 7 56 86 36 30*. Enregistrez ce numéro sous « *Robin des Airs* » pour reconnaître notre appel. 🏹\n\nL'équipe Robin des Airs`;
   try {
     return await watiSendFile(record.whatsapp, pdfBuffer, fileName, caption);
   } catch (e) {
@@ -644,6 +644,13 @@ exports.handler = async (event) => {
     depAirport: body.depAirport || '',
     arrAirport: body.arrAirport || '',
     connecting: body.connecting || '',
+    flightMode: body.flightMode || 'direct',
+    flightLegs: Array.isArray(body.flightLegs) ? body.flightLegs.map((l) => ({
+      flightNum: String((l && l.flightNum) || ''),
+      flightDate: String((l && l.flightDate) || ''),
+      depAirport: String((l && l.depAirport) || ''),
+      arrAirport: String((l && l.arrAirport) || ''),
+    })).filter((l) => l.flightNum || l.depAirport || l.arrAirport) : null,
     signCity: body.signCity || '',
     signDate: body.signDate || '',
     signatureImg: body.signatureImg || '',
@@ -661,6 +668,8 @@ exports.handler = async (event) => {
     record.airline, record.operatedBy, record.flightNum, record.flightDate, record.pnr,
     record.incident, String(record.pax), record.depAirport, record.arrAirport, record.connecting,
     String(record.cessionCreance), String(record.mandataireAccepted), record.mandat_version,
+    // Acquittements scellés dans l'empreinte → l'état coché des cases est prouvable et inaltérable
+    String(record.eligibilityAcknowledged), String(record.startNow), String(record.coPassAgreement),
     record.signed_at, record.signatureImg || '', JSON.stringify(record.passengersData || []),
   ].join('|'));
 

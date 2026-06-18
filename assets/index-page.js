@@ -1812,8 +1812,8 @@ function toggleEscaleVol3() {
       fr: function () { return [
         { who: 'client', delay: 400,  hold: 1100, sender: 'Aminata', html: 'AF718 retardé 5 h, je suis dégoûtée 😤' },
         { who: 'robin',  typing: 1300, hold: 1200, html: 'C\'est rageant 😤 Envoyez-moi juste une <b>photo de votre carte d\'embarquement</b> 📸' },
-        { who: 'client', delay: 900,  hold: 1300, cls: 'wa-msg--bp', html: PASS.fr },
-        { who: 'robin',  delay: 450,  hold: 1500, cls: 'wa-scan', html: '🔎 Je lis votre carte…' },
+        { who: 'client', delay: 900,  hold: 4000, cls: 'wa-msg--bp', html: PASS.fr },
+        { who: 'robin',  delay: 450,  hold: 2400, cls: 'wa-scan', html: '🔎 Je lis votre carte…' },
         { who: 'robin',  delay: 400,  hold: 1700, html: '✓ C\'est bien votre vol : <b>AF718</b> · <b>Paris → Dakar</b>' },
         { who: 'robin',  typing: 1000, hold: 2600, cls: 'wa-msg--verdict', html: '✅ Ce retard peut donner droit à <span class="wa-verdict-amt">jusqu\'à 600 €</span> / passager <span class="wa-aside">(selon distance et cause)</span>' },
         { who: 'robin',  delay: 400,  hold: 2000, html: 'On vérifie <b>gratuitement</b>, sans engagement 🔎' },
@@ -1827,8 +1827,8 @@ function toggleEscaleVol3() {
       en: function () { return [
         { who: 'client', delay: 400,  hold: 1100, sender: 'Ama', html: 'BA081 delayed 5 h, I\'m so upset 😤' },
         { who: 'robin',  typing: 1300, hold: 1200, html: 'That\'s maddening 😤 Just send me a <b>photo of your boarding pass</b> 📸' },
-        { who: 'client', delay: 900,  hold: 1300, cls: 'wa-msg--bp', html: PASS.en },
-        { who: 'robin',  delay: 450,  hold: 1500, cls: 'wa-scan', html: '🔎 Reading your pass…' },
+        { who: 'client', delay: 900,  hold: 4000, cls: 'wa-msg--bp', html: PASS.en },
+        { who: 'robin',  delay: 450,  hold: 2400, cls: 'wa-scan', html: '🔎 Reading your pass…' },
         { who: 'robin',  delay: 400,  hold: 1700, html: '✓ That\'s your flight: <b>BA081</b> · <b>London → Accra</b>' },
         { who: 'robin',  typing: 1000, hold: 2600, cls: 'wa-msg--verdict', html: '✅ This delay may entitle you to <span class="wa-verdict-amt">up to €600</span> / passenger <span class="wa-aside">(distance &amp; cause apply)</span>' },
         { who: 'robin',  delay: 400,  hold: 2000, html: 'We check <b>for free</b>, no commitment 🔎' },
@@ -1957,4 +1957,92 @@ function toggleEscaleVol3() {
     });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
+
+/* ════════════════════════════════════════════════════
+   Suggestion de langue selon le NAVIGATEUR — bandeau discret, non forcé.
+   • Signal = navigator.languages (la langue de l'appareil), PAS la géoloc IP → SEO-safe.
+   • Compare à la langue RÉELLEMENT rendue (I18N.getLang : tient compte du choix mémorisé,
+     pas seulement de <html lang>). Si elles diffèrent, propose l'autre langue.
+   • Aucune redirection forcée. Choix mémorisé → ne réapparaît plus une fois fermé/suivi.
+   • Actif sur index.html ET /index-en.html (les deux chargent ce fichier via home-loader.js).
+════════════════════════════════════════════════════ */
+(function () {
+  var KEY = 'rda_lang_suggest'; // 'acted' | 'dismissed'
+  function ready(fn) {
+    if (window.robinWhenDomReady) window.robinWhenDomReady(fn);
+    else if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
+    else fn();
+  }
+
+  ready(function () {
+    try { if (localStorage.getItem(KEY)) return; } catch (e) {}
+
+    // Langue réellement affichée (choix mémorisé inclus), pas seulement le <html lang> statique.
+    var isEnPage = false;
+    try {
+      isEnPage = /^\/en\/?$/i.test(location.pathname || '') ||
+        (document.documentElement.getAttribute('lang') || '').toLowerCase() === 'en';
+    } catch (e1) {}
+    var effLang = (window.I18N && typeof window.I18N.getLang === 'function')
+      ? window.I18N.getLang()
+      : (isEnPage ? 'en' : 'fr');
+
+    // Préférence navigateur : 1re entrée de la liste qui est « fr… » ou « en… ».
+    var prefers = '';
+    try {
+      var list = (navigator.languages && navigator.languages.length)
+        ? navigator.languages : [navigator.language || ''];
+      for (var i = 0; i < list.length; i++) {
+        var l = String(list[i] || '').toLowerCase();
+        if (l.indexOf('en') === 0) { prefers = 'en'; break; }
+        if (l.indexOf('fr') === 0) { prefers = 'fr'; break; }
+      }
+    } catch (e2) {}
+
+    if (!prefers || prefers === effLang) return; // déjà dans la bonne langue, ou langue inconnue
+
+    var toEn = prefers === 'en';
+    var href = (toEn ? '/en' : '/') + (location.hash || '');
+    var msg  = toEn ? 'This site is also available in English.' : 'Ce site est aussi disponible en français.';
+    var cta  = toEn ? 'View in English →' : 'Voir en français →';
+    var xlbl = toEn ? 'Dismiss' : 'Fermer';
+
+    var bar = document.createElement('div');
+    bar.className = 'rda-lang-suggest';
+    bar.setAttribute('role', 'region');
+    bar.setAttribute('aria-label', toEn ? 'Language suggestion' : 'Suggestion de langue');
+
+    var txt = document.createElement('span');
+    txt.className = 'rda-lang-suggest-txt';
+    txt.textContent = msg; // pas d'emoji-drapeau (cassés sous Windows) — cf. convention SVG du site
+
+    var link = document.createElement('a');
+    link.className = 'rda-lang-suggest-cta';
+    link.href = href;
+    link.textContent = cta;
+
+    var x = document.createElement('button');
+    x.type = 'button';
+    x.className = 'rda-lang-suggest-x';
+    x.setAttribute('aria-label', xlbl);
+    x.textContent = '✕';
+
+    bar.appendChild(txt);
+    bar.appendChild(link);
+    bar.appendChild(x);
+
+    function memo(v) { try { localStorage.setItem(KEY, v); } catch (e) {} }
+    link.addEventListener('click', function () {
+      try { localStorage.setItem('robin_lang', toEn ? 'en' : 'fr'); } catch (e) {}
+      memo('acted'); // on laisse la navigation suivre son cours
+    });
+    x.addEventListener('click', function (ev) {
+      ev.preventDefault();
+      memo('dismissed');
+      if (bar.parentNode) bar.parentNode.removeChild(bar);
+    });
+
+    document.body.appendChild(bar);
+  });
 })();

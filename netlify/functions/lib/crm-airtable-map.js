@@ -128,8 +128,18 @@ function crmDossierToAirtableDossier(d) {
 }
 
 /** Enregistrement Airtable (champs nommés) → squelette dossier CRM */
+/** « Co-passagers » Airtable (multiligne « Prénom NOM (né(e) le …) ») → [{prenom,nom}] pour le CRM front. */
+function parseCoPax(text) {
+  return String(text || '')
+    .split(/\r?\n/)
+    .map((s) => s.replace(/\s*\(.*\)\s*$/, '').trim()) // retire le « (né(e) le …) » en fin de ligne
+    .filter(Boolean)
+    .map((line) => { const p = line.split(/\s+/); return p.length > 1 ? { prenom: p[0], nom: p.slice(1).join(' ') } : { prenom: '', nom: p[0] || '' }; });
+}
+
 function airtableRecordToCrmDossier(data) {
   if (!data || !data.ref) return null;
+  const _coPax = parseCoPax(data.coPassagers);
   const parts = String(data.name || `${data.prenom || ''} ${data.nom || ''}`).trim().split(/\s+/);
   const prenom = data.prenom || (parts.length > 1 ? parts[0] : parts[0] || '');
   const nom = data.nom || (parts.length > 1 ? parts.slice(1).join(' ').toUpperCase() : '');
@@ -162,9 +172,9 @@ function airtableRecordToCrmDossier(data) {
     tel: wa.tel,
     email: data.email || `${String(data.ref).toLowerCase()}@robindesairs.eu`,
     adresse: data.address || '',
-    adultes: 1,
+    adultes: 1 + _coPax.length,
     bebes: 0,
-    coPassagers: [],
+    coPassagers: _coPax,
     vols: [
       {
         comp: data.compagnie || '—',

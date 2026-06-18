@@ -103,7 +103,7 @@
 <body>
   <div class="wrap">
     <h1>Choisir un radar</h1>
-    <p class="sub">Trois versions différentes — clique sur la carte pour ouvrir. Les liens <strong>locaux</strong> fonctionnent avec un serveur dans le dossier du site (ex. <code style="font-size:11px">python3 -m http.server 8000</code>).</p>
+    <p class="sub">Deux versions différentes — clique sur la carte pour ouvrir. Les liens <strong>locaux</strong> fonctionnent avec un serveur dans le dossier du site (ex. <code style="font-size:11px">python3 -m http.server 8000</code>).</p>
 
     <div class="grid" role="list">
       <!-- 1 -->
@@ -118,19 +118,8 @@
       </a>
 
       <!-- 2 -->
-      <a class="card" href="radar-v3.html" role="listitem">
-        <div class="card-num">2</div>
-        <h2>Radar System V3</h2>
-        <p>Interface sombre type « dashboard », style system v3 final, stats et contrôles compacts.</p>
-        <div class="links">
-          <strong>Local</strong><code id="l2"></code>
-          <strong>Production</strong><code id="p2"></code>
-        </div>
-      </a>
-
-      <!-- 3 -->
       <a class="card" href="radar-direct.html" role="listitem">
-        <div class="card-num">3</div>
+        <div class="card-num">2</div>
         <h2>Command Center / Elite Africa</h2>
         <p>Vue sombre « command center », stats colorées, outils rapides.</p>
         <div class="links">
@@ -152,8 +141,6 @@
       var base = isFile ? '' : o;
       document.getElementById('l1').textContent = (isFile ? '(Ouvre via serveur local) ' : '') + (isFile ? 'http://localhost:8000/radar-vols-v2.html' : base + '/radar-vols-v2');
       document.getElementById('p1').textContent = 'https://robindesairs.eu/radar-vols-v2';
-      document.getElementById('l2').textContent = (isFile ? 'http://localhost:8000/radar-v3.html' : base + '/radar-v3.html');
-      document.getElementById('p2').textContent = 'https://robindesairs.eu/radar-v3.html';
       document.getElementById('l3').textContent = (isFile ? 'http://localhost:8000/radar-direct.html' : base + '/radar-direct.html');
       document.getElementById('p3').textContent = 'https://robindesairs.eu/radar-direct.html';
     })();
