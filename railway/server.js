@@ -608,24 +608,82 @@ function cleanCity(input) {
 // Correspondance IATA → nom de ville (pour humaniser les routes du fallback LLM).
 // Priorité : corridors Afrique ↔ Europe exploités par les compagnies cibles (AF/SN/KL/AT/HC…).
 const IATA_CITY = {
-  // Europe
-  CDG:'Paris', ORY:'Paris (Orly)', BRU:'Bruxelles', AMS:'Amsterdam', LHR:'Londres', LGW:'Londres (Gatwick)',
-  LIS:'Lisbonne', MAD:'Madrid', FCO:'Rome', MXP:'Milan', IST:'Istanbul', DXB:'Dubaï',
-  LYS:'Lyon', MRS:'Marseille', NCE:'Nice', BOD:'Bordeaux', TLS:'Toulouse', NTE:'Nantes',
-  FRA:'Francfort', MUC:'Munich', VIE:'Vienne', ZRH:'Zurich', GVA:'Genève', BCN:'Barcelone',
+  // France
+  CDG:'Paris', ORY:'Paris (Orly)', LYS:'Lyon', MRS:'Marseille', NCE:'Nice', BOD:'Bordeaux',
+  TLS:'Toulouse', NTE:'Nantes', SXB:'Strasbourg', MLH:'Bâle-Mulhouse', LIL:'Lille',
+  RNS:'Rennes', CLY:'Calvi', AJA:'Ajaccio', BIA:'Bastia',
+  // Benelux & Îles Brit.
+  BRU:'Bruxelles', CRL:'Bruxelles (Charleroi)', AMS:'Amsterdam', EIN:'Eindhoven',
+  LHR:'Londres', LGW:'Londres (Gatwick)', STN:'Londres (Stansted)', LTN:'Londres (Luton)',
+  LCY:'Londres (City)', MAN:'Manchester', BHX:'Birmingham', EDI:'Édimbourg', GLA:'Glasgow',
+  BRS:'Bristol', DUB:'Dublin',
+  // Europe centrale & du Nord
+  FRA:'Francfort', MUC:'Munich', BER:'Berlin', DUS:'Düsseldorf', HAM:'Hambourg',
+  CGN:'Cologne', STR:'Stuttgart', NUE:'Nuremberg',
+  VIE:'Vienne', ZRH:'Zurich', GVA:'Genève', BSL:'Bâle',
+  OSL:'Oslo', ARN:'Stockholm', CPH:'Copenhague', HEL:'Helsinki',
+  LIS:'Lisbonne', OPO:'Porto', MAD:'Madrid', BCN:'Barcelone', VLC:'Valence',
+  FCO:'Rome', MXP:'Milan', VCE:'Venise', NAP:'Naples', ATH:'Athènes',
+  WAW:'Varsovie', PRG:'Prague', BUD:'Budapest', SOF:'Sofia', OTP:'Bucarest',
+  // Moyen-Orient & Asie (hubs de correspondance diaspora)
+  IST:'Istanbul', SAW:'Istanbul (Sabiha)', DXB:'Dubaï', AUH:'Abu Dhabi',
+  DOH:'Doha', BAH:'Bahreïn', AMM:'Amman', BEY:'Beyrouth', CAI:'Le Caire',
+  // Afrique du Nord (Maghreb)
+  CMN:'Casablanca', RAK:'Marrakech', AGA:'Agadir', TNG:'Tanger', FEZ:'Fès',
+  TUN:'Tunis', SFA:'Sfax', MIR:'Monastir',
+  ALG:'Alger', ORN:'Oran', AAE:'Annaba', TLM:'Tlemcen',
+  TIP:'Tripoli', BEN:'Benghazi', SEB:'Sebha',
   // Afrique de l'Ouest
-  DSS:'Dakar', DKR:'Dakar (Yoff)', ABJ:'Abidjan', ACC:'Accra', LOS:'Lagos', BKO:'Bamako',
-  OUA:'Ouagadougou', COO:'Cotonou', NIM:'Niamey', LFW:'Lomé', CKY:'Conakry', BJL:'Banjul',
-  ABV:'Abuja', KAN:'Kano', FNA:'Freetown', ROB:'Monrovia',
+  DSS:'Dakar', DKR:'Dakar (Yoff)', ZIG:'Ziguinchor',
+  ABJ:'Abidjan', BYK:'Bouaké',
+  ACC:'Accra', KMS:'Kumasi',
+  LOS:'Lagos', ABV:'Abuja', KAN:'Kano', PHC:'Port Harcourt', ENU:'Enugu',
+  BKO:'Bamako', KYS:'Kayes',
+  OUA:'Ouagadougou', BOY:'Bobo-Dioulasso',
+  COO:'Cotonou',
+  LFW:'Lomé',
+  NIM:'Niamey',
+  CKY:'Conakry', FIG:'Fria',
+  BJL:'Banjul',
+  OXB:'Bissau',
+  RAI:'Praia', SID:'Sal (Cap-Vert)',
+  NKC:'Nouakchott',
+  FNA:'Freetown',
+  ROB:'Monrovia',
   // Afrique centrale
-  DLA:'Douala', NSI:'Yaoundé', FIH:'Kinshasa', FBM:'Lubumbashi', BZV:'Brazzaville',
-  PNR:'Pointe-Noire', LBV:'Libreville', SSG:'Malabo', BGF:'Bangui', NDJ:'N\'Djamena',
-  // Afrique de l'Est & Australe
-  NBO:'Nairobi', EBB:'Entebbe', DAR:'Dar es Salaam', JNB:'Johannesburg', CPT:'Le Cap',
-  BJM:'Bujumbura', KGL:'Kigali', MPM:'Maputo', ADD:'Addis-Abeba',
-  // Océan Indien & Maghreb
-  TNR:'Antananarivo', RUN:'La Réunion', MRU:'Maurice', HAH:'Moroni', CMN:'Casablanca',
-  TUN:'Tunis', ALG:'Alger', ORN:'Oran',
+  DLA:'Douala', NSI:'Yaoundé', GOU:'Garoua', MVR:'Maroua',
+  FIH:'Kinshasa', FBM:'Lubumbashi', MNO:'Manono',
+  BZV:'Brazzaville', PNR:'Pointe-Noire',
+  LBV:'Libreville',
+  SSG:'Malabo', BSG:'Bata',
+  BGF:'Bangui',
+  NDJ:'N\'Djamena',
+  TMS:'São Tomé',
+  LAD:'Luanda', VHC:'Saurimo', SVP:'Kuito',
+  // Afrique de l'Est
+  NBO:'Nairobi', MBA:'Mombasa', KIS:'Kisumu',
+  EBB:'Entebbe',
+  DAR:'Dar es Salaam', ZNZ:'Zanzibar', JRO:'Kilimandjaro',
+  ADD:'Addis-Abeba', DIR:'Dire Dawa', GMB:'Gambela',
+  BJM:'Bujumbura',
+  KGL:'Kigali',
+  JIB:'Djibouti',
+  ASM:'Asmara',
+  HGA:'Hargeisa', MGQ:'Mogadiscio',
+  // Afrique Australe
+  JNB:'Johannesburg', CPT:'Le Cap', DUR:'Durban', PLZ:'Port Elizabeth',
+  HRE:'Harare', BUQ:'Bulawayo',
+  LUN:'Lusaka', NLA:'Ndola',
+  MPM:'Maputo', BEW:'Beira',
+  WDH:'Windhoek',
+  GBE:'Gaborone',
+  MTS:'Manzini',
+  // Océan Indien
+  TNR:'Antananarivo', MJN:'Mahajanga', TMM:'Tamatave', DIE:'Diégo-Suarez',
+  RUN:'La Réunion', DZA:'Dzaoudzi (Mayotte)',
+  MRU:'Maurice',
+  HAH:'Moroni', AJN:'Anjouan', NWA:'Mohéli',
+  SEZ:'Mahé (Seychelles)', PRI:'Praslin',
 };
 function iataLabel(code) { return IATA_CITY[String(code || '').toUpperCase()] || code; }
 
