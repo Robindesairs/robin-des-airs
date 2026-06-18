@@ -1744,7 +1744,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       // est MÉMORISÉ (s._verdict) pour ne pas rappeler l'API à l'étape éligibilité.
       const vFallback = await fetchFlightVerdict(s.vol, s.date, 'direct');
       if (vFallback && vFallback.route && /→/.test(vFallback.route)) {
-        s.route = vFallback.route; if (vFallback.airline && !s.compagnie) s.compagnie = vFallback.airline;
+        s.route = vFallback.route.replace(/\b([A-Z]{3})\b/g, (m) => iataLabel(m)); if (vFallback.airline && !s.compagnie) s.compagnie = vFallback.airline;
         s._verdict = vFallback;
         return askRouteConfirm(phone, s, cfg);
       }
