@@ -527,7 +527,7 @@ Si le numéro de vol n'existe pas du tout ou est ambigu au point de ne pas pouvo
     const dep = String(p.dep || '').toUpperCase().replace(/[^A-Z]/g, '');
     const arr = String(p.arr || '').toUpperCase().replace(/[^A-Z]/g, '');
     if (dep.length !== 3 || arr.length !== 3 || dep === arr) return null;
-    return { dep, arr, airline: String(p.airline || '').trim(), route: `${dep} → ${arr}` };
+    return { dep, arr, airline: String(p.airline || '').trim(), route: `${iataLabel(dep)} → ${iataLabel(arr)}` };
   } catch (_) { return null; }
 }
 // Résout les TRONÇONS du vol via AeroDataBox (flight-info renvoie un tableau de legs). Un vol multi-stop
@@ -605,6 +605,30 @@ function cleanCity(input) {
   if (c.length === 3 && /^[a-z]{3}$/i.test(c) && c !== c.toLowerCase()) return c.toUpperCase(); // « DSS », « Cdg » = code aéroport
   return c.charAt(0).toUpperCase() + c.slice(1);
 }
+// Correspondance IATA → nom de ville (pour humaniser les routes du fallback LLM).
+// Priorité : corridors Afrique ↔ Europe exploités par les compagnies cibles (AF/SN/KL/AT/HC…).
+const IATA_CITY = {
+  // Europe
+  CDG:'Paris', ORY:'Paris (Orly)', BRU:'Bruxelles', AMS:'Amsterdam', LHR:'Londres', LGW:'Londres (Gatwick)',
+  LIS:'Lisbonne', MAD:'Madrid', FCO:'Rome', MXP:'Milan', IST:'Istanbul', DXB:'Dubaï',
+  LYS:'Lyon', MRS:'Marseille', NCE:'Nice', BOD:'Bordeaux', TLS:'Toulouse', NTE:'Nantes',
+  FRA:'Francfort', MUC:'Munich', VIE:'Vienne', ZRH:'Zurich', GVA:'Genève', BCN:'Barcelone',
+  // Afrique de l'Ouest
+  DSS:'Dakar', DKR:'Dakar (Yoff)', ABJ:'Abidjan', ACC:'Accra', LOS:'Lagos', BKO:'Bamako',
+  OUA:'Ouagadougou', COO:'Cotonou', NIM:'Niamey', LFW:'Lomé', CKY:'Conakry', BJL:'Banjul',
+  ABV:'Abuja', KAN:'Kano', FNA:'Freetown', ROB:'Monrovia',
+  // Afrique centrale
+  DLA:'Douala', NSI:'Yaoundé', FIH:'Kinshasa', FBM:'Lubumbashi', BZV:'Brazzaville',
+  PNR:'Pointe-Noire', LBV:'Libreville', SSG:'Malabo', BGF:'Bangui', NDJ:'N\'Djamena',
+  // Afrique de l'Est & Australe
+  NBO:'Nairobi', EBB:'Entebbe', DAR:'Dar es Salaam', JNB:'Johannesburg', CPT:'Le Cap',
+  BJM:'Bujumbura', KGL:'Kigali', MPM:'Maputo', ADD:'Addis-Abeba',
+  // Océan Indien & Maghreb
+  TNR:'Antananarivo', RUN:'La Réunion', MRU:'Maurice', HAH:'Moroni', CMN:'Casablanca',
+  TUN:'Tunis', ALG:'Alger', ORN:'Oran',
+};
+function iataLabel(code) { return IATA_CITY[String(code || '').toUpperCase()] || code; }
+
 // Villes proposées en liste cliquable (max 9 + « Autre » : WhatsApp plafonne à 10 lignes).
 // Départ/arrivée = corridor Afrique ↔ Europe (campagnes Dakar/Abidjan, diaspora FR/BE) ; escale = hubs.
 const VILLES_COURANTES = [
