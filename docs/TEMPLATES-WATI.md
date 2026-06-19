@@ -231,6 +231,38 @@ On prend aux compagnies, on rend aux familles
 - **Échantillons** : `Awa` · `RDA-20260605-9XQK3M7P`
 - **Déclenchement** : par le TEMPS (ex. J+30 / J+60 de silence côté compagnie), PAS par un changement de statut → à câbler dans les relances / legal-daily, pas dans crm-status-notify. Contre le reproche concurrent « injoignable/lenteur » ([[benchmark-avis-concurrents-differentiation]]).
 
+### B11 — `mediation_engagee` (escalade : saisine du médiateur, AVANT tribunal)
+- **Catégorie** : UTILITY · fr · variables `{{1}}` prénom · `{{2}}` réf
+- **Corps** :
+  ```
+  Bonjour {{1}}, votre dossier {{2}} passe à l'étape supérieure : on saisit le médiateur (un tiers officiel et gratuit) pour faire bouger la compagnie avant toute action en justice.
+
+  C'est une étape normale et un bon levier. Vous n'avez rien à faire ni à avancer — on s'occupe de tout et on vous tient au courant.
+  ```
+- **Footer** : `On prend aux compagnies, on rend aux familles` · **Échantillons** : `Awa` · `RDA-20260605-9XQK3M7P`
+
+### B12 — `action_tribunal` (on engage l'action en justice)
+- **Catégorie** : UTILITY · fr · variables `{{1}}` prénom · `{{2}}` réf
+- **Corps** :
+  ```
+  Bonjour {{1}}, on passe à la vitesse supérieure pour votre dossier {{2}} : la compagnie n'a pas cédé, alors on engage une action en justice pour récupérer votre indemnité.
+
+  Toujours 0 € à avancer, on porte le dossier jusqu'au bout. La justice prend du temps, mais on reste à vos côtés et on vous informe à chaque étape.
+  ```
+- **Footer** : `On prend aux compagnies, on rend aux familles` · **Échantillons** : `Awa` · `RDA-20260605-9XQK3M7P`
+
+### B13 — `cloture_sans_tribunal` (on ne poursuit PAS au tribunal — clôture honnête)
+- **Catégorie** : UTILITY · fr · variables `{{1}}` prénom · `{{2}}` réf
+- **Corps** :
+  ```
+  Bonjour {{1}}, après analyse de votre dossier {{2}}, aller jusqu'au tribunal n'offre pas assez de chances d'aboutir pour le justifier. On préfère être honnêtes : on s'arrête ici.
+
+  Comme convenu, vous ne payez rien — 0 € si on ne gagne pas. Merci de votre confiance 🙏 Au moindre nouveau vol concerné, on est là.
+  ```
+- **Footer** : `On prend aux compagnies, on rend aux familles` · **Échantillons** : `Awa` · `RDA-20260605-9XQK3M7P`
+
+> B11/B12/B13 **affinent** `escalade_procedure` (qui regroupait médiateur+tribunal) : médiation → tribunal OUI → ou clôture sans tribunal. Mapping statut : `Médiation`→`mediation_engagee` · `Contentieux/Tribunal`→`action_tribunal` · `Clôturé sans suite judiciaire`→`cloture_sans_tribunal`. (Recommandé d'utiliser ces 3 plutôt que l'ancien fourre-tout.)
+
 ### B9 — `dossier_refuse` (clôture : la compagnie refuse et on ne poursuit pas)
 - **Catégorie** : UTILITY · fr
 - **Corps** :
