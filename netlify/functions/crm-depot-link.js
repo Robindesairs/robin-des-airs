@@ -93,6 +93,7 @@ exports.handler = async (event) => {
       ref,
       link: `${SITE}/depot-en-ligne.html?r=${encodeURIComponent(ref)}`,
       suiviLink: `${SITE}/suivi-dossier.html?r=${encodeURIComponent(ref)}`,
+      ribLink: `${SITE}/rib.html?r=${encodeURIComponent(ref)}`,
     }),
   };
 };

@@ -201,18 +201,22 @@ On prend aux compagnies, on rend aux familles
 - **Footer** : `On prend aux compagnies, on rend aux familles`
 - **Échantillons** : `Awa` · `RDA-260614-1234` · `net=450 €`
 
-### B8 — `demande_rib` (dossier accepté → collecte/confirmation du RIB avant virement)
+### B8 — `demande_rib` (dossier accepté → collecte du RIB via page sécurisée)
 - **Catégorie** : UTILITY · fr
-- **Corps** :
+- **Corps** (`{{3}}` = lien `rib.html?r=<jeton>`) :
   ```
   Bonne nouvelle {{1}} ✅ votre dossier {{2}} a été accepté, votre indemnité est en route.
 
-  Pour vous verser votre part ({{3}}), il nous faut votre RIB (un IBAN à votre nom). Envoyez-le ici, en photo ou par écrit — on procède au virement dès réception.
+  Pour recevoir votre virement, indiquez le compte (IBAN à votre nom) où vous verser votre part, en 30 secondes et en sécurité :
+
+  {{3}}
+
+  Vos coordonnées bancaires sont chiffrées et ne servent qu'à votre virement.
   ```
-- **Boutons** (Quick Reply) : `Envoyer mon RIB` · `Être rappelé(e)`
 - **Footer** : `On prend aux compagnies, on rend aux familles`
-- **Échantillons** : `Awa` · `RDA-260614-1234` · `net=450 €`
-- **Note** : le RIB est déjà demandé dans le mandat (champ IBAN) → ce template sert à **confirmer/corriger** avant virement, ou à le collecter s'il manque. À placer AVANT `paiement_en_cours` dans la séquence.
+- **Échantillons** : `Awa` · `RDA-260614-1234` · `https://robindesairs.eu/rib.html?r=RDA-260614-ABC123`
+- **Canal** : `rib.html?r=<jeton>` → POST `/api/rib-submit` (valide l'IBAN par clé mod-97, stocke `rib/<ref>` dans le store 'pieces', notifie l'équipe avec IBAN MASQUÉ). Le lien est fourni par `crm-depot-link` (champ `ribLink`).
+- **Note** : le RIB n'est PAS collecté dans le mandat → cette page est le **seul** canal de collecte. Saisie validée (clé de contrôle) = zéro virement perdu. Câblage envoi (param `{{3}}`=ribLink) à brancher dans crm-status-notify après approbation Meta.
 
 ### B9 — `dossier_refuse` (clôture : la compagnie refuse et on ne poursuit pas)
 - **Catégorie** : UTILITY · fr
