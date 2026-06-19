@@ -35,7 +35,7 @@ const RV = {
   "Juste un petit mot avant ce soir. La fenêtre pour lancer votre dossier {REF} se referme dans quelques heures. Vous n'avez qu'à signer ici : {URL}\n0€ si on ne gagne pas.",
   "Cette indemnisation, autant qu'elle vous revienne plutôt qu'elle reste à la compagnie. Votre dossier {REF} peut vous rapporter jusqu'à {TOTAL}. La signature prend une minute : {URL}\n0€ si on ne gagne pas.",
   "Dernière occasion aujourd'hui pour votre dossier {REF}. Après ce soir, on repart de zéro. Vous validez en un clic ici : {URL}\nRien à avancer : on se rémunère seulement si on gagne (commission de 25%).",
-  "On y est presque. Il ne manque que votre signature pour défendre votre dossier {REF}, qui peut vous rapporter jusqu'à {TOTAL}. Le lien reste actif encore quelques heures : {URL}",
+  "On y est presque. Il ne manque que votre signature pour faire avancer votre dossier {REF}, qui peut vous rapporter jusqu'à {TOTAL}. Le lien reste actif encore quelques heures : {URL}",
   "Avant de clôturer votre dossier {REF} ce soir, je tenais à vous laisser une dernière chance. Signez ici, et on se charge du reste : {URL}\n0€ si on ne gagne pas.",
   "Cet argent peut vous revenir, pas rester chez la compagnie. Vous pouvez récupérer jusqu'à {TOTAL} avec le dossier {REF}. C'est le dernier moment pour signer : {URL}\n0€ si on ne gagne pas.",
   "La journée touche à sa fin et votre dossier {REF} attend toujours votre feu vert. Un clic, et on lance la démarche : {URL}\nCommission de 25% seulement si on gagne.",
@@ -77,7 +77,7 @@ const RV = {
  "ENG_PASS_2": [
   "{NOM}, il ne reste qu'une *photo de pièce d'identité* pour boucler votre dossier {VOL}. Passeport, CNI ou titre de séjour — au choix. Appuyez sur *Reprendre* 👇 pour l'envoyer (jusqu'à {TOTAL}, 0 € si on ne gagne pas), ou *Rappel* 📞 si besoin d'un coup de main.",
   "Votre dossier {VOL} est presque prêt {NOM} — il n'attend que votre pièce d'identité. Une photo et on prend le relais (jusqu'à {TOTAL}). Appuyez sur *Reprendre* 👇, ou *Rappel* 📞 si vous ne savez pas comment l'envoyer.",
-  "On garde votre place {NOM}. Pour défendre votre dossier {VOL}, on a juste besoin d'une pièce d'identité (jamais revendue, uniquement pour la réclamation). Appuyez sur *Reprendre* 👇 pour l'envoyer, ou *Rappel* 📞 et on s'en occupe ensemble."
+  "On garde votre place {NOM}. Pour faire avancer votre dossier {VOL}, on a juste besoin d'une pièce d'identité (jamais revendue, uniquement pour la réclamation). Appuyez sur *Reprendre* 👇 pour l'envoyer, ou *Rappel* 📞 et on s'en occupe ensemble."
  ],
  "ENG_BOARDING_1": [
   "Bonjour {NOM}, carte d'embarquement perdue pour le vol {VOL} ? Aucun souci, c'est fréquent — d'autres preuves font l'affaire : votre *e-billet*, une *confirmation de réservation*, ou même une *étiquette de bagage*. On peut lancer votre dossier (jusqu'à {TOTAL}, 0 € si on ne gagne pas). Appuyez sur *Reprendre* 👇, ou *Rappel* 📞 et on trouve une solution ensemble.",
@@ -124,7 +124,7 @@ const RV = {
   "Encore un petit effort et c'est bon : il nous manque la pièce d'identité de {NOMS} et votre carte d'embarquement (ou e-billet). Après ça, on s'occupe de tout pour le dossier {REF}.",
   "Votre demande avance. Pour ne pas bloquer le dossier {REF}, on a besoin de la pièce d'identité de {NOMS} et de votre carte d'embarquement (ou e-billet). Vous pouvez tout nous envoyer ici.",
   "Plus que deux pièces et on est bons pour le dossier {REF} : la pièce d'identité de {NOMS} et votre carte d'embarquement (ou e-billet). On reste à vos côtés jusqu'au bout.",
-  "Pour défendre au mieux votre dossier {REF}, transmettez-nous la pièce d'identité de {NOMS} et votre carte d'embarquement (ou e-billet). Aucun frais d'avance, on n'est payés qu'en cas de succès."
+  "Pour faire avancer au mieux votre dossier {REF}, transmettez-nous la pièce d'identité de {NOMS} et votre carte d'embarquement (ou e-billet). Aucun frais d'avance, on n'est payés qu'en cas de succès."
  ],
  "DOC_COMPLET": [
   "Merci {NOM}, c'est bon : votre dossier {REF} est complet. On prend le relais à partir de maintenant. On va réclamer jusqu'à {TOTAL} pour vous, et s'il n'y a rien à la fin, vous ne payez rien. On s'occupe de tout.",
@@ -132,7 +132,7 @@ const RV = {
   "Votre dossier {REF} est complet, {NOM}. Vous pouvez souffler, le plus pénible est derrière vous. On s'occupe de réclamer jusqu'à {TOTAL} en votre nom. Et pour rappel : si on ne gagne pas, vous ne payez rien.",
   "Bien reçu {NOM}, on a tout ce qu'il faut. Votre dossier {REF} passe maintenant entre nos mains. On part réclamer jusqu'à {TOTAL}. Dès qu'on a du nouveau, je reviens vers vous.",
   "Merci de votre confiance, {NOM}. Le dossier {REF} est complet, on prend la suite. Vous pourriez toucher jusqu'à {TOTAL}, et vous n'avez aucune avance à faire : si on ne gagne pas, c'est 0€.",
-  "Tout est en ordre {NOM}. Vos documents pour le dossier {REF} sont validés. On engage la procédure pour un montant qui peut atteindre {TOTAL}. À partir de là, on défend vos droits à votre place.",
+  "Tout est en ordre {NOM}. Vos documents pour le dossier {REF} sont validés. On lance la réclamation pour un montant qui peut atteindre {TOTAL}. À partir de là, on fait valoir vos droits auprès de la compagnie.",
   "C'est confirmé {NOM}, on a tout reçu. Le dossier {REF} est entre nos mains. On lance la réclamation auprès de la compagnie, pour un montant qui peut aller jusqu'à {TOTAL}. Je vous préviens à chaque avancée.",
   "C'est bon {NOM}, votre dossier {REF} est complet. À nous de jouer maintenant : on réclame jusqu'à {TOTAL}, et si on ne gagne pas, vous ne payez rien.",
   "Bien reçu et validé, merci {NOM}. Votre dossier {REF} démarre officiellement. On prend tout en charge face à la compagnie, pour un montant qui peut aller jusqu'à {TOTAL}. Je vous tiens au courant.",

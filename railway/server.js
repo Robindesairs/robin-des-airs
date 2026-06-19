@@ -2371,7 +2371,7 @@ async function applyFlightVerdict(phone, s, cfg) {
   if (v.verdict === 'eligible') {
     s.perPax = (v.perPax && v.perPax > 0) ? v.perPax : 600;
     await setState(phone, s);
-    return send(phone, `✅ *Bonne nouvelle !* ${v.proofLine || 'Votre vol est éligible.'}\nVous pouvez prétendre à *${montantReel(s)} €*${claimablePax(s) > 1 ? ` au total (${claimablePax(s)} passagers)` : ''} — soit *${montantNetReel(s)} € nets* pour vous.`, cfg);
+    return send(phone, `✅ *Bonne nouvelle !* ${v.proofLine || 'Selon nos critères, votre vol est a priori éligible (notre équipe confirme).'}\nVous pouvez prétendre à *${montantReel(s)} €*${claimablePax(s) > 1 ? ` au total (${claimablePax(s)} passagers)` : ''} — soit *${montantNetReel(s)} € nets* pour vous.`, cfg);
   }
   s.perPax = 0; // sortie douce : pas de montant ferme affiché
   await setState(phone, s);

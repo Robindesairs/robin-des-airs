@@ -57,7 +57,7 @@ const VARIANTS = {
     `Votre place était réservée. Votre billet était là. Et pourtant ils vous ont laissé sur le carreau. Ce qu'on vous a fait subir a un nom et un prix légal. Et on est de votre côté — 0€ si on ne gagne pas.`,
     `Sur le moment, un refus d'embarquement c'est surtout ce sentiment d'impuissance — de pas pouvoir faire grand chose. Mais après, la loi protège. Dites-nous ce qui s'est passé, on regarde ce à quoi vous avez droit.`,
     `Franchement, c'est une humiliation. Et elle n'aurait jamais dû arriver — votre billet était en règle, vous aviez fait ce qu'il fallait. La compagnie a peut-être une dette envers vous. On va la faire valoir.`,
-    `Ils ont choisi votre siège pour combler leur propre erreur de gestion. Vous n'êtes pas une variable d'ajustement. Vous avez des droits, et on est là pour les défendre. ✊`,
+    `Ils ont choisi votre siège pour combler leur propre erreur de gestion. Vous n'êtes pas une variable d'ajustement. Vous avez des droits, et on est là pour les faire valoir. ✊`,
     `Des heures de préparation, un billet payé — et on vous laisse au sol. Ce temps gâché, ça mérite réparation. On prend votre dossier en main maintenant. 🛫`,
     `Ils ont survendu des sièges et c'est vous qui trinquez. Ça, c'est vraiment pas normal. Mais la loi est de votre côté — et on est là pour que ça ne reste pas sans suite.`,
     `Les compagnies comptent souvent sur votre silence après un refus. Billet en main, porte fermée — c'est exactement pour ça que le règlement CE 261 existe. On avance ensemble, et c'est 0€ si on ne gagne rien. 🤝`,
