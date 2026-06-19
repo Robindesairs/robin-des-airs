@@ -218,6 +218,19 @@ On prend aux compagnies, on rend aux familles
 - **Canal** : `rib.html?r=<jeton>` → POST `/api/rib-submit` (valide l'IBAN par clé mod-97, stocke `rib/<ref>` dans le store 'pieces', notifie l'équipe avec IBAN MASQUÉ). Le lien est fourni par `crm-depot-link` (champ `ribLink`).
 - **Note** : le RIB n'est PAS collecté dans le mandat → cette page est le **seul** canal de collecte. Saisie validée (clé de contrôle) = zéro virement perdu. Câblage envoi (param `{{3}}`=ribLink) à brancher dans crm-status-notify après approbation Meta.
 
+### B10 — `dossier_en_cours` (point de patience pendant une longue attente)
+- **Catégorie** : UTILITY · fr
+- **Corps** :
+  ```
+  Bonjour {{1}}, un point sur votre dossier {{2}} : il suit son cours. La compagnie prend son temps pour répondre — c'est fréquent, et ce n'est pas un mauvais signe.
+
+  On reste mobilisés et on relance ce qu'il faut. Vous n'avez rien à faire : dès qu'il y a du nouveau, on revient vers vous. Merci de votre patience 🙏
+  ```
+- **Boutons** (optionnel, Quick Reply) : `Être rappelé(e)`
+- **Footer** : `On prend aux compagnies, on rend aux familles`
+- **Échantillons** : `Awa` · `RDA-20260605-9XQK3M7P`
+- **Déclenchement** : par le TEMPS (ex. J+30 / J+60 de silence côté compagnie), PAS par un changement de statut → à câbler dans les relances / legal-daily, pas dans crm-status-notify. Contre le reproche concurrent « injoignable/lenteur » ([[benchmark-avis-concurrents-differentiation]]).
+
 ### B9 — `dossier_refuse` (clôture : la compagnie refuse et on ne poursuit pas)
 - **Catégorie** : UTILITY · fr
 - **Corps** :
