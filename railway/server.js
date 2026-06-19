@@ -208,6 +208,20 @@ function fraisTotal(s) {
   const parts = Object.entries(by).map(([d, v]) => `${Math.round(v * 100) / 100} ${d}`);
   return parts.length ? parts.join(' + ') : '—';
 }
+// Récap détaillé des frais (Art. 8/9) poste par poste + total par devise.
+// La compagnie rembourse sur reçus DÉTAILLÉS (pas un montant global) → cet état chiffré
+// se joint à la réclamation. Sert au client (transparence) ET à l'équipe (à recopier dans la mise en demeure).
+const FRAIS_LABEL = { hotel: '🏨 Hôtel', repas: '🍽️ Repas', taxi: '🚕 Taxi/VTC', transport: '🚆 Transport', parking: '🅿️ Parking', autre: '🧾 Frais' };
+function fraisRecap(s) {
+  const list = (s.fraisList || []).filter(Boolean);
+  if (!list.length) return '';
+  const lines = list.map((f, i) => {
+    const lab = FRAIS_LABEL[f.categorie] || FRAIS_LABEL.autre;
+    const amt = f.montant ? `${Math.round(f.montant * 100) / 100}${f.devise ? ' ' + f.devise : ''}` : 'montant à relire';
+    return `${i + 1}. ${lab} — ${amt}`;
+  });
+  return `${lines.join('\n')}\n— — —\n*Total : ${fraisTotal(s)}*`;
+}
 // Lead « partiel » : le client a engagé un dossier (vol connu au récap) mais n'a pas encore tout finalisé.
 // On le relance dans la fenêtre 24h WhatsApp (gratuite) ; s'il décroche, il bascule en « à rappeler » (Bureau).
 function markEngagedLead(phone, s) {
@@ -972,10 +986,10 @@ async function classifyDoc(mediaUrl, cfg) {
     const hash = media.hash; // anti-doublon (même fichier renvoyé)
     const b64 = media.b64;
     const prompt = `Tu classes une photo/capture envoyée par un passager, et tu juges sa QUALITÉ (une pièce illisible peut être refusée par la compagnie). Réponds UNIQUEMENT en JSON :
-{"kind":"identite|voyage|frais|autre","nom":"","voyageType":"ebooking|carte|","lisible":true,"probleme":"","montant":null,"devise":""}
+{"kind":"identite|voyage|frais|autre","nom":"","voyageType":"ebooking|carte|","lisible":true,"probleme":"","montant":null,"devise":"","categorie":""}
 - "identite" : passeport, carte nationale d'identité (CNI), titre de séjour. Mets dans "nom" le NOM et prénom lus (MAJUSCULES).
 - "voyage" : preuve de voyage. voyageType="ebooking" si CONFIRMATION DE RÉSERVATION / e-billet / itinéraire (liste souvent PLUSIEURS passagers et/ou PLUSIEURS vols). voyageType="carte" si CARTE D'EMBARQUEMENT (un seul passager / un seul vol).
-- "frais" : reçu, facture ou ticket d'une DÉPENSE liée à la perturbation du vol (hôtel, taxi/VTC, repas/restaurant, transport, parking). PAS un billet d'avion ni une réservation de vol. Pour un "frais", lis le MONTANT TOTAL payé → "montant" (nombre seul, ex 84.50 ; sinon null) et la DEVISE → "devise" (EUR, XOF/FCFA, MAD, GMD, USD, GBP… si visible, sinon "").
+- "frais" : reçu, facture ou ticket d'une DÉPENSE liée à la perturbation du vol (hôtel, taxi/VTC, repas/restaurant, transport, parking). PAS un billet d'avion ni une réservation de vol. Pour un "frais", lis le MONTANT TOTAL payé → "montant" (nombre seul, ex 84.50 ; sinon null), la DEVISE → "devise" (EUR, XOF/FCFA, MAD, GMD, USD, GBP… si visible, sinon "") et la CATÉGORIE → "categorie" : "hotel" | "repas" | "taxi" | "transport" | "parking" | "autre".
 - "autre" : tout le reste.
 - "lisible" : false si la photo est FLOUE, SOMBRE, COUPÉE, avec REFLET, ou si les informations clés (nom, n° de pièce) ne sont pas lisibles avec certitude. Sinon true.
 - "probleme" : si lisible=false, un mot : "flou" | "sombre" | "coupé" | "reflet" | "illisible".
@@ -988,7 +1002,8 @@ Champ inconnu = "". Ne JAMAIS inventer un nom si la photo est illisible.`;
     const p = JSON.parse(data.choices[0].message.content);
     const montant = typeof p.montant === 'number' ? p.montant : (parseFloat(String(p.montant == null ? '' : p.montant).replace(',', '.').replace(/[^\d.]/g, '')) || null);
     const devise = String(p.devise || '').toUpperCase().replace(/FCFA|CFA/g, 'XOF').replace(/€|EURO/g, 'EUR').replace(/[^A-Z]/g, '').slice(0, 6);
-    return { kind: ['identite', 'voyage', 'frais', 'autre'].includes(p.kind) ? p.kind : 'autre', nom: (p.nom || '').toUpperCase().trim(), voyageType: p.voyageType || '', lisible: p.lisible !== false, probleme: p.probleme || '', montant, devise, hash };
+    const categorie = String(p.categorie || '').toLowerCase().replace(/[^a-z]/g, '').slice(0, 12);
+    return { kind: ['identite', 'voyage', 'frais', 'autre'].includes(p.kind) ? p.kind : 'autre', nom: (p.nom || '').toUpperCase().trim(), voyageType: p.voyageType || '', lisible: p.lisible !== false, probleme: p.probleme || '', montant, devise, categorie, hash };
   } catch (e) { return { ...FALLBACK, _unavailable: true, _reason: 'api_error' }; } // API en panne/timeout → ne pas classer en silence
 }
 
@@ -2074,7 +2089,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       const montant = d && d.montant ? d.montant : null;
       const devise = d && d.devise ? d.devise : '';
       s.fraisList = s.fraisList || [];
-      s.fraisList.push({ montant, devise, hash: (d && d.hash) || null, at: Date.now() });
+      s.fraisList.push({ montant, devise, categorie: (d && d.categorie) || '', hash: (d && d.hash) || null, at: Date.now() });
       // Montant lu mais devise inconnue → on demande la monnaie (1 fois), sinon on enregistre tel quel.
       if (montant && !devise) {
         s.fraisAwaitDevise = s.fraisList.length - 1; await setState(phone, s);
@@ -2093,6 +2108,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (id === 'frais_fini' || lower.includes("c'est tout") || lower.includes('cest tout') || lower.includes('termin') || lower.includes('fini')) {
       markFraisAnswered(phone); s.step = 'done'; await setState(phone, s);
       const tot = fraisTotal(s);
+      const recap = fraisRecap(s);
+      if (recap) notifyOwnerWhatsApp(phone, `🧾 *Frais à joindre — Dossier ${s.ref || '?'}* (Art. 8/9, à détailler dans la réclamation)\n${recap}`).catch(() => {});
       return send(phone, `C'est noté ✅ On joint vos reçus à votre réclamation${tot !== '—' ? ` (≈ ${tot} de frais, en plus de l'indemnité)` : ''}. Merci ! 🤝`, cfg);
     }
     if (id === 'frais_oui' || lower.includes('envoi') || lower.includes('reçu') || lower.includes('recu') || lower.startsWith('oui')) {
@@ -2136,10 +2153,19 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
         if (d.voyageType === 'carte') addCarteName(s, d.nom);
         ack = d.voyageType === 'ebooking' ? `✅ Confirmation de réservation reçue — elle couvre *tout le voyage et tous les passagers*. 👍` : `✅ Carte d'embarquement reçue${d.nom ? ` (${titleCaseName(d.nom.split(/\s+/)[0])})` : ''}. 👍`;
       } else if (d.kind === 'frais') {
-        // Reçu de dépense (hôtel/taxi/repas…) envoyé hors de l'étape frais → on le compte et on le signale (Art. 8/9 CE261).
-        s.fraisCount = (s.fraisCount || 0) + 1;
-        ack = `🧾 Reçu de frais bien reçu — on le joint à votre réclamation (hôtel, taxi, repas… remboursables au titre des art. 8 & 9). 👍`;
-        notifyOwnerWhatsApp(phone, `🧾 Dossier ${s.ref || '?'} : reçu de frais reçu (#${s.fraisCount}) — à joindre à la réclamation (Art. 8/9).`).catch(() => {});
+        // Reçu de dépense (hôtel/taxi/repas…) envoyé hors de l'étape frais → on le CHIFFRE aussi (Art. 8/9 CE261).
+        s.fraisHashes = s.fraisHashes || [];
+        if (d.hash && s.fraisHashes.includes(d.hash)) {
+          ack = `🔁 Ce reçu est *déjà dans votre dossier* — pas besoin de le renvoyer. 👍`;
+        } else {
+          if (d.hash) s.fraisHashes.push(d.hash);
+          s.fraisCount = (s.fraisCount || 0) + 1;
+          s.fraisList = s.fraisList || [];
+          s.fraisList.push({ montant: d.montant || null, devise: d.devise || '', categorie: d.categorie || '', hash: d.hash || null, at: Date.now() });
+          const lu = d.montant ? ` — *${d.montant}${d.devise ? ' ' + d.devise : ''}*` : '';
+          ack = `🧾 Reçu de frais bien reçu${lu} — on le joint à votre réclamation (hôtel, taxi, repas… remboursables, art. 8 & 9). 👍`;
+          notifyOwnerWhatsApp(phone, `🧾 Dossier ${s.ref || '?'} : reçu de frais (#${s.fraisCount})${lu}. Total ≈ ${fraisTotal(s)} (Art. 8/9).`).catch(() => {});
+        }
       } else { ack = `✅ Document bien reçu, merci. 🙏 Notre équipe l'ajoute à votre dossier.`; }
       await setState(phone, s);
       return send(phone, `${ack}\n\n${missingDocsText(s)}`, cfg);
@@ -2501,7 +2527,7 @@ async function finaliser(phone, s, cfg) {
 const FRAIS_BTNS = [{ id: 'frais_oui', text: '📷 Envoyer reçus' }, { id: 'frais_non', text: '❌ Pas de frais' }];
 async function sendFraisRequest(phone, s, cfg) {
   s.step = 'frais'; s.fraisAsked = true; await setState(phone, s);
-  return sendButtons(phone, { body: `💶 *Une dernière chose qui peut vous rapporter plus*\n\nEn plus de votre indemnité, la compagnie doit aussi *rembourser les frais* que ce vol vous a coûtés : hôtel, repas, taxi/transport, billet de remplacement, appels… 📲\n\nOn envoie votre réclamation *sous 24 h* — pour qu'on *joigne vos reçus dès le 1er envoi*, envoyez-les aujourd'hui. Reçu plus tard ? Aucun souci, on les réclame en complément. 🤝\n\n👉 *Une photo de chaque reçu suffit* (frais raisonnables, un justificatif par dépense).\n_🔒 Reçu lu par un outil automatique (IA) pour votre dossier — voir robindesairs.eu/politique-confidentialite._`, buttons: FRAIS_BTNS }, cfg);
+  return sendButtons(phone, { body: `💶 *Une dernière chose qui peut vous rapporter plus*\n\nEn plus de votre indemnité, la compagnie doit *rembourser les frais* que ce vol vous a coûtés.\n\n📋 *La règle (CE 261, art. 9)* — quand le vol traîne, la compagnie vous doit :\n• 🍽️ *repas & boissons* selon la distance — *2 h* (≤ 1 500 km), *3 h* (1 500–3 500 km), *4 h* au-delà de *3 500 km* (la plupart des vols Europe ↔ Afrique)\n• 🏨 *hôtel + transport* — si vous avez dû *dormir sur place*\n• 📞 vos *appels*\n\n🎟️ *La compagnie vous a donné un bon* (repas, hôtel) ? Envoyez-le aussi : il *prouve le retard* et *ne réduit pas* votre indemnité. Si vous avez payé plus que le bon, gardez le reçu — on réclame la différence.\n\n🎫 *Gardez chaque reçu* (hôtel, repas, taxi, billet de remplacement…) : ces montants vous reviennent *en plus* de l'indemnité.\n\nOn envoie votre réclamation *sous 24 h* — pour qu'on *joigne vos reçus dès le 1ᵉʳ envoi*, envoyez-les *aujourd'hui*. Un reçu plus tard ? On le réclame en complément. 🤝\n\n👉 *Une photo de chaque reçu suffit* (un justificatif par dépense).\n_🔒 Reçu lu par un outil automatique (IA) pour votre dossier — voir robindesairs.eu/politique-confidentialite._`, buttons: FRAIS_BTNS }, cfg);
 }
 // Déclenché par le webhook de signature — best-effort : n'impacte JAMAIS la réponse webhook.
 async function triggerFraisCollection(lead) {

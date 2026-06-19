@@ -41,6 +41,10 @@
     .st.ok{color:var(--green)} .st.err{color:#c0392b} .st.up{color:var(--muted)}
     button.go{width:100%;background:var(--green);color:#fff;border:0;border-radius:10px;padding:15px;font-size:16px;font-weight:800;cursor:pointer;margin-top:14px}
     button.go:disabled{opacity:.5;cursor:not-allowed}
+    .bonus{background:#fff7e6;border:1px solid #f0d48a;border-radius:10px;padding:13px 14px;font-size:13px;line-height:1.6;margin:14px 0;color:#7a5b00}
+    .bonus b{color:#5c4400}
+    .bonus .rule{margin:8px 0 0;padding-left:2px}
+    .bonus .rule li{margin:2px 0;list-style:none}
     .rgpd{font-size:11.5px;color:var(--muted);margin-top:14px;line-height:1.6}
     .done{display:none;text-align:center;padding:24px}
     .done .big{font-size:42px}
@@ -58,7 +62,16 @@
       <ul class="need" id="needList">
         <li>🛂 Une <b>pièce d'identité</b> par passager (passeport, CNI, titre de séjour)</li>
         <li>🎫 Votre <b>carte d'embarquement</b> ou votre <b>e-billet</b> (confirmation de réservation)</li>
+        <li>🧾 Vos <b>reçus de frais</b> (hôtel, repas, taxi…) — remboursés <b>en plus</b> de l'indemnité</li>
       </ul>
+      <div class="bonus">
+        💶 <b>N'oubliez pas vos frais — c'est de l'argent en plus pour vous.</b> Quand un vol traîne, la compagnie doit aussi vous rembourser (CE 261, art. 9) :
+        <ul class="rule">
+          <li>🍽️ <b>repas &amp; boissons</b> selon la distance — 2 h (≤ 1 500 km), 3 h (1 500–3 500 km), <b>4 h au-delà de 3 500 km</b> (la plupart des vols Europe ↔ Afrique)</li>
+          <li>🏨 <b>hôtel + transport</b> — si vous avez dû dormir sur place</li>
+        </ul>
+        📷 Photographiez <b>chaque reçu</b> et ajoutez-le ici : on l'envoie avec votre réclamation <b>sous 24 h</b>. Faites-le <b>aujourd'hui</b> pour qu'il parte dès le 1<sup>er</sup> envoi.
+      </div>
       <label class="drop" for="fileInput">📷 Ajouter mes documents
         <small>Photos ou PDF — sélectionnez-en plusieurs, ou glissez-les ici (ordinateur)</small>
       </label>
