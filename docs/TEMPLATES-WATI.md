@@ -351,4 +351,75 @@ Balaie Airtable, détecte un **changement** de « Statut du Dossier Suivi » et 
 | `rappel_programme` | UTILITY | rappel tél planifié | — |
 | `parrainage` | MARKETING | après paiement | Partager (URL) |
 
+---
+
+## B. PROSPECTION AGENCES — Sofia · catégorie **MARKETING**
+
+> Premier contact hors-fenêtre avec une agence de voyage partenaire potentielle.
+> Bouton Quick Reply = tap entrant → ouvre la fenêtre 24 h → Sofia (bureau) ou humain reprend.
+> Kill-switch : `SOFIA_OUTREACH=1` sur Netlify (laisser à 0 tant que templates non approuvés).
+> Code : `netlify/functions/sofia-prospect.js` → `sendOutreach()` · tracking Blobs `sofia/outreach/<phone>`.
+> Commission d'apport à mentionner dans le contrat agence (après immatriculation SASU + SIREN).
+
+### B1 — `sofia_agence_partenariat_fr` (version française — SN/CI/ML/CM/CG/CD/MQ/GP)
+- **Catégorie** : MARKETING · **Langue** : fr
+- **Header** (texte) : `Partenariat Robin des Airs ✈️`
+- **Corps** :
+  ```
+  Bonjour {{1}} 👋
+
+Je suis Sofia de *Robin des Airs*.
+
+Vous aidez vos clients à voyager — nous, on récupère leur argent quand le vol les laisse tomber : jusqu'à *600 €* par passager (CE 261/2004), *sans frais si on ne gagne pas*.
+
+On propose un partenariat avec *commission d'apport* : vous recommandez, on gère tout.
+
+Intéressé(e) ? Tapez *OUI* 👇
+  ```
+- **Footer** : `On prend aux compagnies, on rend aux familles`
+- **Bouton** : Quick Reply · label `Intéressé(e) !` · payload `SOFIA_PARTNER_OUI`
+- **Variable `{{1}}`** : nom de l'agence · exemple `Agence Diallo Voyages`
+
+### B2 — `sofia_agence_partenariat_en` (version anglaise — GM/KE/ZA)
+- **Catégorie** : MARKETING · **Langue** : en
+- **Header** (texte) : `Partnership — Robin des Airs ✈️`
+- **Corps** :
+  ```
+  Hi {{1}} 👋
+
+I'm Sofia from *Robin des Airs*.
+
+You help clients travel — we recover their money when flights fail them: up to *€600* per passenger (EU Regulation 261/2004), *no win, no fee*.
+
+We offer a referral partnership with commission: you recommend, we handle everything.
+
+Interested? Reply *YES* 👇
+  ```
+- **Footer** : `Robin des Airs — fight for your rights`
+- **Bouton** : Quick Reply · label `Interested!` · payload `SOFIA_PARTNER_YES`
+- **Variable `{{1}}`** : agency name · exemple `Banjul Travel Agency`
+
+---
+
+## Tableau récapitulatif (mise à jour)
+
+| Nom template | Catégorie | Usage | Boutons |
+|---|---|---|---|
+| `relance_dossier_a_finaliser` | MARKETING | relance principale J+1/J+2 | Reprendre · Rappel · Plus tard |
+| `relance_derniere_chance` | MARKETING | relance J+4 | Reprendre · Plus tard |
+| `sofia_agence_partenariat_fr` | MARKETING | prospection agence (FR) | Intéressé(e) ! |
+| `sofia_agence_partenariat_en` | MARKETING | prospection agence (EN) | Interested! |
+| `dossier_recu` | UTILITY | dossier enregistré | — |
+| `mandat_signe` | UTILITY | mandat signé | — |
+| `reclamation_envoyee` | UTILITY | réclamation envoyée compagnie | — |
+| `relance_compagnie` | UTILITY | mise en demeure envoyée | — |
+| `reponse_compagnie_accord` | UTILITY | compagnie accepte | Rappel |
+| `escalade_procedure` | UTILITY | médiateur / contentieux | — |
+| `paiement_en_cours` | UTILITY | indemnité obtenue | — |
+| `piece_manquante` | UTILITY | pièce/carte/e-billet manquant | Envoyer · Rappel |
+| `photo_a_reprendre` | UTILITY | photo illisible | Renvoyer |
+| `dossier_lien_depot` | UTILITY | lien de dépôt carte+passeport (CRM) | — |
+| `rappel_programme` | UTILITY | rappel tél planifié | — |
+| `parrainage` | MARKETING | après paiement | Partager (URL) |
+
 *Robin des Airs — templates WhatsApp WATI/Meta · voir aussi `WHATSAPP-AUTO.md`, `railway/lib/relance-variants.js`.*

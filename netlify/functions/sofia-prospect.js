@@ -216,7 +216,7 @@ async function store(event, payload) {
 }
 
 /** Recalcule la liste de prospects (OpenStreetMap + Instagram), dédup + dédup CRM. */
-async function compute(effectivePays, event, src) {
+async function compute(pays, event, src) {
   const useOsm = !src || src === 'osm' || src === 'both';
   const useIg = !src || src === 'ig' || src === 'both';
   const existing = await fetchExistingAgencies();
@@ -225,7 +225,7 @@ async function compute(effectivePays, event, src) {
 
   // Source 1 : OpenStreetMap (agences physiques)
   if (useOsm) {
-    for (const city of P.citiesFor(paysArg)) {
+    for (const city of P.citiesFor(pays)) {
       try {
         const data = await overpassFetch(P.buildOverpassQL(city));
         const parsed = P.parseElements(data.elements || [], { ville: city.ville, pays: city.pays }).map((p) => ({ ...p, source: 'osm' }));
@@ -240,7 +240,7 @@ async function compute(effectivePays, event, src) {
   // Source 2 : Instagram (hashtags) — token Meta existant
   let igError = null;
   if (useIg) {
-    const ig = await fetchInstagram(paysArg, event);
+    const ig = await fetchInstagram(pays, event);
     igError = ig.error || null;
     all = all.concat(ig.prospects || []);
   }
@@ -260,6 +260,48 @@ async function compute(effectivePays, event, src) {
     contactables: news.filter((p) => p.contactable).length,
     prospects: news,
   };
+}
+
+/**
+ * Envoie un template HSM WATI à chaque agence avec un n° de téléphone.
+ * Suivi dans Blobs : sofia/outreach/<phone> — jamais de double contact.
+ * Kill-switch : SOFIA_OUTREACH=1 (off par défaut, activer après approbation Meta).
+ */
+async function sendOutreach(prospects, event) {
+  const watiBase = (process.env.WATI_BASE || '').replace(/\/+$/, '');
+  const watiToken = (process.env.WATI_TOKEN || '').trim();
+  if (!watiBase || !watiToken) return { sent: 0, error: 'WATI non configuré' };
+  if (!blobs) return { sent: 0, error: 'Blobs non disponible' };
+  if (blobs.connectLambda && event) blobs.connectLambda(event);
+  const bStore = blobs.getStore(STORE);
+
+  let sent = 0;
+  const errors = [];
+  for (const p of prospects) {
+    const phone = P.normPhone(p.phone || '').replace(/^\+/, '');
+    if (!phone || phone.length < 8) continue;
+    // Ne re-contacter jamais une agence déjà contactée
+    const bKey = `sofia/outreach/${phone}`;
+    try { const prev = await bStore.get(bKey, { type: 'json' }); if (prev && prev.date) continue; } catch (_) {}
+    const lang = P.langFor(p.pays);
+    const tplName = P.OUTREACH_TEMPLATE[lang];
+    const agencyName = (p.name || 'Madame, Monsieur').slice(0, 40);
+    try {
+      const r = await fetch(`${watiBase}/api/v1/sendTemplateMessage?whatsappNumber=${phone}`, {
+        method: 'POST',
+        headers: { Authorization: watiToken, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ template_name: tplName, broadcast_name: 'sofia_agences', parameters: [{ name: '1', value: agencyName }] }),
+      });
+      if (r.ok) {
+        await bStore.setJSON(bKey, { date: new Date().toISOString(), name: p.name, pays: p.pays, template: tplName });
+        sent++;
+      } else {
+        const txt = await r.text().catch(() => '');
+        errors.push(`${p.name}: HTTP ${r.status} — ${txt.slice(0, 80)}`);
+      }
+    } catch (e) { errors.push(`${p.name}: ${e.message}`); }
+  }
+  return { sent, ...(errors.length ? { errors: errors.slice(0, 5) } : {}) };
 }
 
 function todayLabel() {
@@ -320,12 +362,21 @@ exports.handler = async (event) => {
     saved = res.saved;
   }
 
+  // Outreach WhatsApp vers les agences (SOFIA_OUTREACH=1 + templates Meta approuvés).
+  // OFF par défaut — activer sur Netlify une fois les templates validés par Meta.
+  let outreach = null;
+  if (process.env.SOFIA_OUTREACH === '1') {
+    const contactables = payload.prospects.filter((p) => p.contactable && p.phone);
+    outreach = await sendOutreach(contactables, event);
+  }
+
   const force = q.force === '1' || body.force === true;
   let callmebot = { ok: false, reason: 'skipped' };
   let message = null;
   if (payload.totalNouveau > 0 || force) {
     message = ownerBrief(payload, todayLabel(), saved);
+    if (outreach && outreach.sent > 0) message += `\n📲 ${outreach.sent} agence(s) contactée(s) par WhatsApp`;
     callmebot = await sendCallMeBot(message);
   }
-  return { statusCode: 200, headers: HEADERS, body: JSON.stringify({ ok: true, totalNouveau: payload.totalNouveau, cibles: payload.cibles, saved, briefSent: !!message, callmebot }) };
+  return { statusCode: 200, headers: HEADERS, body: JSON.stringify({ ok: true, totalNouveau: payload.totalNouveau, cibles: payload.cibles, saved, outreach, briefSent: !!message, callmebot }) };
 };

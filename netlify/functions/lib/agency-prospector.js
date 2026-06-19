@@ -29,8 +29,11 @@ const TARGET_CITIES = {
   MQ: [{ ville: 'Fort-de-France', lat: 14.6042, lng: -61.0667, radius: 10000 }],
   GP: [{ ville: 'Pointe-à-Pitre', lat: 16.2333, lng: -61.5333, radius: 12000 }],
 };
-const COUNTRY_NAMES = { SN: 'Sénégal', CI: 'Côte d’Ivoire', GM: 'Gambie', ML: 'Mali', CM: 'Cameroun', CG: 'Congo', CD: 'RD Congo', KE: 'Kenya', ZA: 'Afrique du Sud', MQ: 'Martinique', GP: 'Guadeloupe' };
-const COUNTRY_FLAG = { SN: '🇸🇳', CI: '🇨🇮', GM: '🇬🇲', ML: '🇲🇱', CM: '🇨🇲', CG: '🇨🇬', CD: '🇨🇩', KE: '🇰🇪', ZA: '🇿🇦', MQ: '🇲🇶', GP: '🇬🇵' };
+const COUNTRY_NAMES = { SN: ‘Sénégal’, CI: ‘Côte d’Ivoire’, GM: ‘Gambie’, ML: ‘Mali’, CM: ‘Cameroun’, CG: ‘Congo’, CD: ‘RD Congo’, KE: ‘Kenya’, ZA: ‘Afrique du Sud’, MQ: ‘Martinique’, GP: ‘Guadeloupe’ };
+const COUNTRY_FLAG = { SN: ‘🇸🇳’, CI: ‘🇨🇮’, GM: ‘🇬🇲’, ML: ‘🇲🇱’, CM: ‘🇨🇲’, CG: ‘🇨🇬’, CD: ‘🇨🇩’, KE: ‘🇰🇪’, ZA: ‘🇿🇦’, MQ: ‘🇲🇶’, GP: ‘🇬🇵’ };
+const COUNTRY_LANG = { SN: ‘fr’, CI: ‘fr’, GM: ‘en’, ML: ‘fr’, CM: ‘fr’, CG: ‘fr’, CD: ‘fr’, KE: ‘en’, ZA: ‘en’, MQ: ‘fr’, GP: ‘fr’ };
+function langFor(pays) { return COUNTRY_LANG[String(pays || ‘’).toUpperCase()] || ‘fr’; }
+const OUTREACH_TEMPLATE = { fr: ‘sofia_agence_partenariat_fr’, en: ‘sofia_agence_partenariat_en’ };
 
 // « Visiter tous les pays du corridor » SANS casser le timeout (Overpass séquentiel) ni le quota
 // Instagram (30 hashtags / 7 j) : on couvre UN groupe par run hebdo → cycle complet en 4 semaines.
@@ -183,6 +186,8 @@ module.exports = {
   TARGET_CITIES,
   COUNTRY_NAMES,
   COUNTRY_FLAG,
+  COUNTRY_LANG,
+  OUTREACH_TEMPLATE,
   buildOverpassQL,
   isAirlineOffice,
   parseElements,
@@ -190,6 +195,7 @@ module.exports = {
   filterNew,
   sortProspects,
   citiesFor,
+  langFor,
   COUNTRY_ROTATION,
   rotationPays,
   normName,
