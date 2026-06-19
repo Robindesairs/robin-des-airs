@@ -755,15 +755,9 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   </div>
 
   <div class="success-block tint" id="sFrais">
-    <div class="sb-label"><span aria-hidden="true">💶</span> Vos frais = de l'argent en plus</div>
-    <div class="sb-meta">
-      Ce vol vous a coûté un <strong>repas</strong>, un <strong>hôtel</strong>, un <strong>taxi</strong> ? La compagnie doit vous le <strong>rembourser en plus</strong> de l'indemnité (CE 261, art. 9) :<br>
-      <span aria-hidden="true">🍽️</span> <strong>repas &amp; boissons</strong> selon la distance — 2 h (≤ 1 500 km), 3 h (1 500–3 500 km), <strong>4 h au-delà de 3 500 km</strong> (la plupart des vols Europe ↔ Afrique)<br>
-      <span aria-hidden="true">🏨</span> <strong>hôtel + transport</strong> si vous avez dû dormir sur place<br>
-      <span aria-hidden="true">🎟️</span> <strong>La compagnie vous a donné un bon</strong> (repas, hôtel) ? Envoyez-le aussi : il prouve le retard et <strong>ne réduit pas</strong> votre indemnité. Si vous avez payé plus que le bon, gardez le reçu — on réclame la différence.<br>
-      <span aria-hidden="true">📷</span> Gardez <strong>chaque reçu</strong> et envoyez-nous une photo : on les joint à votre réclamation, qui part <strong>sous 24&nbsp;h</strong>. Faites-le <strong>aujourd'hui</strong> pour qu'ils partent dès le 1<sup>er</sup> envoi.
-    </div>
-    <a class="success-cta wa full" id="sFraisBtn" href="https://wa.me/33756863630" target="_blank" rel="noopener" style="margin-top:12px">Envoyer mes reçus de frais</a>
+    <div class="sb-label"><span aria-hidden="true">💶</span> Vous avez dépensé à cause du retard ?</div>
+    <div class="sb-meta">Un <strong>repas</strong>, un <strong>taxi</strong>, une <strong>nuit d'hôtel</strong> payés à cause de ce vol ? Cet argent vous revient <strong>en plus</strong> de votre indemnité. <strong>Gardez vos tickets</strong> : envoyez-nous une photo, on s'occupe de tout réclamer pour vous.</div>
+    <a class="success-cta wa full" id="sFraisBtn" href="https://wa.me/33756863630" target="_blank" rel="noopener" style="margin-top:12px">Envoyer mes tickets</a>
   </div>
 
   <div class="success-steps">
@@ -1765,9 +1759,9 @@ function showSuccess(payload, ok) {
     const cob = document.getElementById('sCoPaxBtn');
     if (cob) cob.href = waBase + encodeURIComponent('Bonjour Robin des Airs, j’ai signé le mandat (réf. ' + REF + '). Nous étions ' + px + ' sur le même vol — je veux ajouter les autres passagers à la réclamation.');
   }
-  // Frais Art. 9 : CTA WhatsApp pour envoyer les reçus (hôtel/repas/taxi…), pré-rempli avec la référence
+  // Dépenses Art. 9 : CTA WhatsApp pour envoyer les tickets (hôtel/repas/taxi…), pré-rempli avec la référence
   const fb = document.getElementById('sFraisBtn');
-  if (fb) fb.href = waBase + encodeURIComponent('Bonjour Robin des Airs, j’ai signé le mandat (réf. ' + REF + '). Je vous envoie mes reçus de frais (hôtel, repas, taxi…) à joindre à ma réclamation.');
+  if (fb) fb.href = waBase + encodeURIComponent('Bonjour Robin des Airs, j’ai signé le mandat (réf. ' + REF + '). Je vous envoie mes tickets de dépenses (repas, taxi, hôtel) à joindre à ma réclamation.');
   // Signataires (preuve de complétude pour un dossier groupe)
   let names = [];
   if (payload.passengerNames && payload.passengerNames.length) names = payload.passengerNames;
