@@ -184,9 +184,10 @@
     function demoData() {
       var s = {
         debut:       { statut:'ELIGIBLE',     etape:0, terminal:null, statutLabel:'Dossier en préparation', statutDesc:'Votre dossier est éligible. Envoyez vos pièces pour qu’on lance la réclamation.' },
-        '1':         { statut:'LRAR_ENVOYEE', etape:2, terminal:null, statutLabel:'Réclamation envoyée', statutDesc:'Votre réclamation a été envoyée à Air France. Le délai légal de réponse court — nous relançons automatiquement si besoin.' },
-        reclamation: { statut:'LRAR_ENVOYEE', etape:2, terminal:null, statutLabel:'Réclamation envoyée', statutDesc:'Votre réclamation a été envoyée à Air France. Le délai légal de réponse court — nous relançons automatiquement si besoin.' },
+        '1':         { statut:'RECLAMATION_ENVOYEE', etape:2, terminal:null, statutLabel:'Réclamation envoyée', statutDesc:'Votre réclamation a été envoyée à Air France. Le délai légal de réponse court — nous relançons si besoin.' },
+        reclamation: { statut:'RECLAMATION_ENVOYEE', etape:2, terminal:null, statutLabel:'Réclamation envoyée', statutDesc:'Votre réclamation a été envoyée à Air France. Le délai légal de réponse court — nous relançons si besoin.' },
         relance:     { statut:'RELANCE_1',    etape:3, terminal:null, statutLabel:'Relance envoyée', statutDesc:'Sans réponse de la compagnie, nous l’avons relancée.' },
+        demeure:     { statut:'LRAR_ENVOYEE', etape:3, terminal:null, statutLabel:'Mise en demeure envoyée', statutDesc:'Sans réponse, nous avons envoyé une mise en demeure formelle à Air France.' },
         escalade:    { statut:'MEDIATION',    etape:4, terminal:null, statutLabel:'Escalade : médiation', statutDesc:'La compagnie tarde : nous portons le dossier devant l’instance compétente.' },
         paye:        { statut:'PAYE',         etape:5, terminal:null, statutLabel:'Indemnité versée', statutDesc:'Bonne nouvelle : votre indemnité a été versée. Merci de votre confiance !' },
         refus:       { statut:'REFUSE_DEFINITIF', etape:-1, terminal:'refus', statutLabel:'Réponse de la compagnie', statutDesc:'La compagnie a opposé un refus. Écrivez-nous : on vous explique les recours possibles.' }
