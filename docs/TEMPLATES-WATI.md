@@ -201,6 +201,31 @@ On prend aux compagnies, on rend aux familles
 - **Footer** : `On prend aux compagnies, on rend aux familles`
 - **Échantillons** : `Awa` · `RDA-260614-1234` · `net=450 €`
 
+### B8 — `demande_rib` (dossier accepté → collecte/confirmation du RIB avant virement)
+- **Catégorie** : UTILITY · fr
+- **Corps** :
+  ```
+  Bonne nouvelle {{1}} ✅ votre dossier {{2}} a été accepté, votre indemnité est en route.
+
+  Pour vous verser votre part ({{3}}), il nous faut votre RIB (un IBAN à votre nom). Envoyez-le ici, en photo ou par écrit — on procède au virement dès réception.
+  ```
+- **Boutons** (Quick Reply) : `Envoyer mon RIB` · `Être rappelé(e)`
+- **Footer** : `On prend aux compagnies, on rend aux familles`
+- **Échantillons** : `Awa` · `RDA-260614-1234` · `net=450 €`
+- **Note** : le RIB est déjà demandé dans le mandat (champ IBAN) → ce template sert à **confirmer/corriger** avant virement, ou à le collecter s'il manque. À placer AVANT `paiement_en_cours` dans la séquence.
+
+### B9 — `dossier_refuse` (clôture : la compagnie refuse et on ne poursuit pas)
+- **Catégorie** : UTILITY · fr
+- **Corps** :
+  ```
+  Bonjour {{1}}, une nouvelle moins agréable au sujet de votre dossier {{2}} : la compagnie a refusé l'indemnisation, et les chances d'aboutir ne justifient pas d'aller plus loin.
+
+  Comme promis, vous ne payez rien — 0 € si on ne gagne pas, c'est notre principe. Merci de votre confiance 🙏 Au moindre nouveau vol retardé ou annulé, on est là.
+  ```
+- **Footer** : `On prend aux compagnies, on rend aux familles`
+- **Échantillons** : `Awa` · `RDA-260614-1234`
+- **Note** : ≠ `escalade_procedure` (= refus MAIS on continue le combat). B9 = clôture définitive sans suite.
+
 ---
 
 ## C. PIÈCES MANQUANTES · catégorie **UTILITY**
@@ -360,6 +385,8 @@ Balaie Airtable, détecte un **changement** de « Statut du Dossier Suivi » et 
 | `LRAR envoyée` | `reclamation_envoyee` |
 | `Relance 1` / `Relance 2` | `relance_compagnie` |
 | `Médiation` / `Contentieux` | `escalade_procedure` |
+| `Accord compagnie` / `Accepté` | `demande_rib` (collecte RIB avant virement) |
+| `Refusé` / `Clôturé sans suite` | `dossier_refuse` |
 | `Payé client` / `Payé` / `Indemnisé` | `paiement_en_cours` |
 
 - **Activer** : `CRM_STATUS_TEMPLATES=1` (Netlify) **+** décommenter `[functions."crm-status-notify"]` dans `netlify.toml`
