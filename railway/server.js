@@ -611,9 +611,12 @@ function toISODate(d) { const m = (d || '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4}
 function cleanName(n) { n = (n || '').trim(); if (n.includes('/')) { const [a, b] = n.split('/'); return `${(b||'').trim()} ${(a||'').trim()}`.trim(); } return n; }
 // Ville tapée librement (parcours correspondance guidé) : « dakar » → « Dakar », « dss » → « DSS ».
 // '' = saisie inutilisable (vide, nombre, trop long) → on repose la question.
+// Mots courants qui ne sont PAS des villes (évite que « merci » devienne une ville de départ).
+const _NON_CITY = new Set(['merci','thanks','thank','super','parfait','cool','ok','oui','non','bonjour','bonsoir','hello','allo','allô','salut','bye','rien','bien','aide','help','stop','suite','go','fin','bravo','voilà','voila','reçu','recu','compris','entendu','exact','tout','rien','stp','svp']);
 function cleanCity(input) {
   const c = String(input || '').replace(/[«»"]/g, '').replace(/\s+/g, ' ').trim();
   if (c.length < 2 || c.length > 40 || /^\d+$/.test(c) || /^\[/.test(c) || !/[a-zà-öø-ÿ]/i.test(c)) return '';
+  if (_NON_CITY.has(c.toLowerCase())) return '';
   if (c.length === 3 && /^[a-z]{3}$/i.test(c) && c !== c.toLowerCase()) return c.toUpperCase(); // « DSS », « Cdg » = code aéroport
   return c.charAt(0).toUpperCase() + c.slice(1);
 }
@@ -1296,6 +1299,13 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now(), lastClientAt: Date.now(), ...(s && s.langue_code ? { langue: s.langue_code } : {}) });
     notifyCallbackWanted(phone, s, 'a demandé à être rappelé');
     return send(phone, `📞 *C'est noté !* Un vrai conseiller Robin des Airs — un humain, pas un robot 🙂 — vous rappelle très vite.\n\n👉 On vous appelle depuis le *+33 7 56 86 36 30* : enregistrez-le tout de suite sous « *Robin des Airs* » pour reconnaître l'appel et *décrocher* (sinon il s'affiche comme un numéro inconnu).\n\n🔒 *0 € tant qu'on ne gagne pas* — si on obtient votre indemnité, on prend 25 % de frais de succès, le reste (75 %) est pour vous.\n\nPas dispo ? Répondez ici quand vous voulez, ou écrivez *go* pour reprendre. 🙏`, cfg);
+  }
+
+  // T1.1b — Phrases sociales pures (merci, super, 👍…) : accusé poli, jamais parsé comme donnée.
+  // Sans ce garde, « merci » passait dans cityPick → cleanCity → accepté comme ville de départ.
+  if (!id && !mediaUrl && /^(merci+|thank(s| you)?|super|parfait|cool+|d'?accord|ça marche|ca marche|ok merci|bien merci|bravo|voilà|voila|reçu|recu|compris|entendu|👍+|🙏+)(\s*[!.🙏👍])*$/i.test(lower)) {
+    const hasFlow = s && s.step && !['accueil', 'done', 'non_eligible'].includes(s.step);
+    return send(phone, `De rien 🙏${hasFlow ? '\n\nTapez *go* quand vous voulez reprendre.' : ''}`, cfg);
   }
 
   // Vol jugé NON éligible (session terminale) : les boutons 'autre_vol' (1113), 'go' (1114) et 'appel'
