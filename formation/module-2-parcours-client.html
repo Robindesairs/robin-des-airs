@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 2 — Le parcours client · Académie Robin des Airs</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&family=Sacramento&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#13211c; --ink-soft:#41524a; --ink-faint:#6a786f;
+    --navy:#0B1F3A; --sapin:#0a3d2e; --sapin-2:#0c5038;
+    --green:#047857; --green-vivid:#00C87A; --green-bright:#00E5A0;
+    --gold:#cdac72; --gold-ink:#8a6d2f;
+    --paper:#fbfdfb; --surface:#ffffff; --surface-2:#f1f6f3;
+    --line:#e3ece7; --line-strong:#d2ded7;
+    --danger:#9f2d24; --danger-bg:#fdf4f3; --danger-line:#f0cdc8;
+    --maxw:min(940px,92vw); --read:68ch;
+    --r:18px; --r-sm:12px;
+    --shadow:0 1px 2px rgba(13,40,30,.04),0 12px 32px -18px rgba(13,40,30,.22);
+    --ease:cubic-bezier(.2,.8,.2,1);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Plus Jakarta Sans",system-ui,sans-serif;
+    font-size:clamp(16px,.6vw + 14.6px,18px); line-height:1.68;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  .wrap{max-width:var(--maxw); margin-inline:auto; padding-inline:clamp(20px,4vw,40px)}
+  h1,h2,h3,h4{font-family:"Bricolage Grotesque",sans-serif; line-height:1.05; letter-spacing:-.02em; text-wrap:balance; margin:0}
+  p{margin:0 0 1em; max-width:var(--read); text-wrap:pretty}
+  strong{font-weight:700; color:var(--ink)}
+  a{color:var(--green)}
+
+  /* COVER */
+  .cover{
+    position:relative; overflow:hidden; color:#eaf3ee;
+    background:
+      radial-gradient(120% 90% at 88% -10%, rgba(0,229,160,.16), transparent 55%),
+      radial-gradient(90% 80% at 6% 110%, rgba(205,172,114,.14), transparent 60%),
+      linear-gradient(155deg,#0a3d2e 0%, #093024 46%, #0B1F3A 100%);
+  }
+  .cover::after{content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(90deg,transparent,rgba(255,255,255,.04) 50%,transparent); mix-blend-mode:screen}
+  .cover .wrap{position:relative; padding-block:clamp(40px,7vw,78px)}
+  .brandline{display:flex; align-items:center; gap:11px; font-weight:800; letter-spacing:.02em}
+  .brandline .bow{display:grid; place-items:center; width:38px; height:38px; border-radius:11px; font-size:19px; background:linear-gradient(135deg,var(--green-bright),var(--green-vivid)); color:#06281d; box-shadow:0 8px 22px -10px rgba(0,229,160,.7)}
+  .brandline .nm{font-size:1.05rem}
+  .brandline .nm span{color:var(--green-bright)}
+  .kicker{margin:clamp(28px,5vw,46px) 0 14px; display:inline-flex; align-items:center; gap:10px; font-size:.74rem; font-weight:700; letter-spacing:.26em; text-transform:uppercase; color:var(--gold)}
+  .kicker::before{content:""; width:30px; height:1px; background:linear-gradient(90deg,transparent,var(--gold))}
+  .cover h1{font-size:clamp(2.6rem,7.4vw,4.9rem); font-weight:700; color:#fff; letter-spacing:-.035em; margin:0 0 .12em}
+  .cover h1 em{font-style:normal; color:var(--green-bright)}
+  .cover .lede{font-size:clamp(1.05rem,1.4vw,1.32rem); color:#bfd6cb; max-width:34ch; font-weight:500; margin:0}
+  .meta{display:flex; flex-wrap:wrap; gap:10px; margin-top:clamp(26px,4vw,36px)}
+  .chip{display:inline-flex; align-items:center; gap:8px; padding:9px 15px; border-radius:999px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); font-size:.84rem; font-weight:600; color:#dcebe3; backdrop-filter:blur(2px)}
+  .chip b{color:var(--green-bright); font-weight:700}
+  .sig{margin-top:clamp(34px,5vw,50px); padding-top:26px; display:flex; align-items:flex-end; gap:18px; border-top:1px solid rgba(255,255,255,.13); flex-wrap:wrap}
+  .sig .ink{font-family:"Sacramento",cursive; color:#fff; font-size:clamp(2.6rem,6vw,3.7rem); line-height:.8; text-shadow:0 2px 18px rgba(0,229,160,.25)}
+  .sig .who{font-size:.8rem; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); font-weight:700}
+  .sig .who small{display:block; letter-spacing:.04em; text-transform:none; color:#9fb6ab; font-weight:500; margin-top:3px; font-size:.86rem}
+
+  /* SECTIONS */
+  section{padding-block:clamp(34px,5vw,58px); border-bottom:1px solid var(--line)}
+  section:last-of-type{border-bottom:0}
+  .sechead{display:flex; align-items:baseline; gap:16px; margin-bottom:22px}
+  .sechead .no{font-family:"Bricolage Grotesque",sans-serif; font-weight:700; font-size:clamp(1.1rem,1.4vw,1.3rem); color:var(--gold-ink); flex:none; font-variant-numeric:tabular-nums}
+  .sechead h2{font-size:clamp(1.5rem,3.2vw,2.2rem); color:var(--sapin); font-weight:700}
+  .seclead{font-size:1.06rem; color:var(--ink-soft); max-width:var(--read)}
+
+  .goals{padding-block:clamp(36px,5vw,52px)}
+  .goal-list{list-style:none; padding:0; margin:0; display:grid; gap:12px; counter-reset:g}
+  .goal-list li{counter-increment:g; position:relative; padding:16px 18px 16px 58px; border-radius:var(--r-sm); background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow); font-weight:500}
+  .goal-list li::before{content:counter(g); position:absolute; left:14px; top:50%; translate:0 -50%; width:30px; height:30px; display:grid; place-items:center; border-radius:9px; background:linear-gradient(135deg,#e9f7f0,#d7f0e5); color:var(--green); font-weight:800; font-size:.92rem; font-family:"Bricolage Grotesque",sans-serif}
+
+  /* FLOW / timeline */
+  .flow{list-style:none; margin:20px 0 4px; padding:0; position:relative}
+  .flow li{position:relative; padding:0 0 24px 60px}
+  .flow li:last-child{padding-bottom:0}
+  .flow li::before{content:""; position:absolute; left:18px; top:8px; bottom:-8px; width:2px; background:var(--line-strong)}
+  .flow li:last-child::before{display:none}
+  .flow .n{position:absolute; left:0; top:0; width:38px; height:38px; border-radius:50%; display:grid; place-items:center; background:linear-gradient(135deg,#e9f7f0,#d7f0e5); color:var(--green); font-weight:800; font-family:"Bricolage Grotesque",sans-serif; border:2px solid #fff; box-shadow:var(--shadow); z-index:1}
+  .flow h4{font-size:1.06rem; color:var(--sapin); margin:5px 0 4px}
+  .flow p{margin:0 0 8px; font-size:.96rem; color:var(--ink-soft); max-width:var(--read)}
+  .tag{display:inline-block; font-size:.72rem; font-weight:700; letter-spacing:.02em; border-radius:999px; padding:3px 11px}
+  .tag.you{color:var(--green); background:#e9f7f0; border:1px solid #cde9d9}
+  .tag.bot{color:var(--navy); background:#e7eef6; border:1px solid #cdddee}
+  .tag.team{color:var(--gold-ink); background:#fff7e9; border:1px solid #f1dcae}
+
+  /* DOC cards */
+  .docs{display:grid; grid-template-columns:repeat(auto-fit,minmax(248px,1fr)); gap:14px; margin:18px 0}
+  .doc{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:18px 20px; box-shadow:var(--shadow)}
+  .doc .dh{display:flex; align-items:center; gap:10px; margin-bottom:8px}
+  .doc .di{font-size:1.6rem; line-height:1}
+  .doc h4{font-size:1.02rem; color:var(--sapin)}
+  .doc p{font-size:.92rem; color:var(--ink-soft); margin:0 0 10px; max-width:none}
+  .doc .chk{list-style:none; margin:0; padding:0; font-size:.86rem; display:grid; gap:5px}
+  .doc .chk li{position:relative; padding-left:20px; line-height:1.4}
+  .doc .chk li .m{position:absolute; left:0; font-weight:800}
+  .doc .chk .y{color:var(--green)} .doc .chk .x{color:var(--danger)}
+
+  .devise{font-family:"Bricolage Grotesque",sans-serif; font-weight:700; color:var(--sapin); font-size:clamp(1.25rem,2.4vw,1.7rem); letter-spacing:-.02em; line-height:1.2; max-width:24ch; margin:.2em 0 .6em}
+  .devise em{font-style:normal; color:var(--green)}
+
+  .promise{margin:24px 0; padding:clamp(20px,3vw,28px); border-radius:var(--r); background:linear-gradient(160deg,#0a3d2e,#0c5038); color:#e9f5ef; box-shadow:var(--shadow)}
+  .promise h3{color:#fff; font-size:1.16rem; margin-bottom:14px; display:flex; align-items:center; gap:10px}
+  .promise ul{list-style:none; margin:0; padding:0; display:grid; gap:11px}
+  .promise li{display:flex; gap:12px; align-items:flex-start; line-height:1.5}
+  .promise li b{color:var(--green-bright)}
+  .promise .mk{flex:none; margin-top:1px; color:#06281d; background:var(--green-bright); width:22px;height:22px;border-radius:7px;display:grid;place-items:center;font-size:.8rem;font-weight:800}
+
+  .callout{margin:20px 0; padding:18px 20px; border-radius:var(--r-sm); background:var(--surface-2); border:1px solid var(--line-strong)}
+  .callout.warn{background:#fff9ec; border-color:#f1dcae}
+  .callout.warn b{color:var(--gold-ink)}
+  .callout.bad{background:var(--danger-bg); border-color:var(--danger-line)}
+  .callout.bad b{color:var(--danger)}
+  .callout p:last-child{margin-bottom:0}
+  .callout .ic{font-weight:800; margin-right:6px}
+
+  .checklist{list-style:none; margin:16px 0; padding:0; display:grid; gap:10px}
+  .checklist li{position:relative; padding:13px 16px 13px 46px; background:var(--surface); border:1px solid var(--line); border-radius:var(--r-sm); box-shadow:var(--shadow); font-size:.96rem}
+  .checklist li::before{content:"?"; position:absolute; left:13px; top:50%; translate:0 -50%; width:24px; height:24px; display:grid; place-items:center; border-radius:7px; background:#eef6f1; color:var(--green); font-weight:800; font-family:"Bricolage Grotesque",sans-serif}
+
+  .scripts{display:grid; gap:14px; margin:20px 0}
+  .scrx{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:18px 20px; box-shadow:var(--shadow)}
+  .scrx .role{font-size:.82rem; font-weight:700; letter-spacing:.01em; color:var(--danger); margin-bottom:12px; display:flex; align-items:center; gap:8px}
+  .scrx .role .dot{flex:none; width:7px;height:7px;border-radius:50%;background:var(--danger)}
+  .line{display:flex; gap:12px; align-items:baseline; padding:7px 0}
+  .line + .line{border-top:1px dashed var(--line-strong)}
+  .lang{flex:none; width:30px; font-size:.66rem; font-weight:800; letter-spacing:.06em; padding:3px 0; text-align:center; border-radius:6px}
+  .lang.wo{background:#d7f0e5; color:var(--green)}
+  .lang.fr{background:#eef2f5; color:var(--ink-faint)}
+  .line .txt{margin:0}
+  .line.wo .txt{font-weight:600; color:var(--sapin); font-size:1.04rem}
+  .line.fr .txt{color:var(--ink-soft); font-size:.92rem}
+
+  .memo{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin:18px 0}
+  .memo div{background:var(--surface); border:1px solid var(--line); border-radius:var(--r-sm); padding:16px; box-shadow:var(--shadow)}
+  .memo .v{font-family:"Bricolage Grotesque",sans-serif; font-weight:800; font-size:1.32rem; color:var(--sapin); letter-spacing:-.02em}
+  .memo .k{font-size:.82rem; color:var(--ink-faint); margin-top:2px}
+
+  .q{margin:14px 0; counter-increment:q}
+  .qlist{counter-reset:q}
+  .q .qq{font-weight:600; display:flex; gap:12px}
+  .q .qq::before{content:"Q" counter(q); flex:none; font-family:"Bricolage Grotesque",sans-serif; font-weight:800; color:var(--gold-ink)}
+  details.ans{margin-top:22px; background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:4px 20px; box-shadow:var(--shadow)}
+  details.ans summary{cursor:pointer; font-weight:700; color:var(--green); padding:14px 0; list-style:none}
+  details.ans summary::-webkit-details-marker{display:none}
+  details.ans summary::before{content:"▸ "; color:var(--gold-ink)}
+  details.ans[open] summary::before{content:"▾ "}
+  details.ans ol{margin:0 0 14px; padding-left:20px; display:grid; gap:8px}
+
+  .foot{background:var(--sapin); color:#cfe2d8; text-align:center; border:0}
+  .foot .wrap{padding-block:clamp(34px,5vw,52px)}
+  .foot .ink{font-family:"Sacramento",cursive; color:#fff; font-size:2.6rem; line-height:.9}
+  .foot .who{font-size:.76rem; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); font-weight:700; margin-top:6px}
+  .foot .tiny{font-size:.78rem; color:#88a89a; margin-top:18px}
+  .next{max-width:var(--read); margin:0 auto 26px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12); border-radius:var(--r); padding:20px}
+  .next .role{color:var(--green-bright); font-weight:700; font-size:.8rem; letter-spacing:.14em; text-transform:uppercase}
+  .next h3{color:#fff; font-size:1.25rem; margin:6px 0 8px}
+  .next p{color:#bcd2c7; margin:0 auto; max-width:none}
+
+  .em-green{color:var(--green); font-weight:700}
+  .em-gold{color:var(--gold-ink); font-weight:700}
+
+  .anim .rv{opacity:0; transform:translateY(16px); will-change:opacity,transform}
+  .anim .rv.in{opacity:1; transform:none; transition:opacity .7s var(--ease), transform .7s var(--ease)}
+  @media (prefers-reduced-motion:reduce){ .anim .rv,.anim .rv.in{opacity:1!important; transform:none!important; transition:none} html{scroll-behavior:auto} }
+
+  @media print{
+    *{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+    body{font-size:10.6pt}
+    .rv{opacity:1!important; transform:none!important}
+    .cover{padding:0}
+    section{break-inside:avoid-page} .scrx,.doc,.promise,.memo div,.checklist li,details.ans{break-inside:avoid}
+    details.ans{padding-block:6px}
+    details.ans > ol{display:block!important}
+    details.ans summary::before{content:"✔ "}
+  }
+  @page{margin:14mm}
+</style>
+<script>if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('anim');}</script>
+</head>
+<body>
+
+<!-- COVER -->
+<header class="cover">
+  <div class="wrap">
+    <div class="brandline rv"><span class="bow">🏹</span><span class="nm">Robin des Airs<span> · Académie</span></span></div>
+    <div class="kicker rv">Formation Agent téléphone · Sénégal</div>
+    <h1 class="rv">Module 2<br><em>Le parcours client</em></h1>
+    <p class="lede rv">Du premier message WhatsApp à l'indemnité versée — et ton rôle à chaque étape.</p>
+    <div class="meta">
+      <span class="chip rv">Marché <b>Sénégal · Wolof</b></span>
+      <span class="chip rv">Durée <b>~1h30</b></span>
+      <span class="chip rv">Suite du <b>Module 1</b></span>
+    </div>
+    <div class="sig rv"><div class="ink">Climbié</div><div class="who">Climbié Kodjo<small>Fondateur — Robin des Airs</small></div></div>
+  </div>
+</header>
+
+<main>
+  <!-- OBJECTIFS -->
+  <div class="goals wrap">
+    <div class="seclead rv" style="margin-bottom:18px"><strong style="color:var(--sapin)">À la fin de ce module, tu sauras 👇</strong></div>
+    <ol class="goal-list rv">
+      <li>Suivre les <strong>6 étapes du parcours</strong> et savoir <strong>où tu interviens</strong>.</li>
+      <li>Collecter les <strong>3 bonnes pièces</strong> (billet, carte d'embarquement, passeport) et reconnaître une <strong>bonne photo</strong>.</li>
+      <li>Vérifier un dossier (<strong>l'IA pré-vérifie, toi tu confirmes</strong>) et demander une reprise <strong>poliment</strong>.</li>
+      <li>Rassurer sur le <strong>mandat</strong> (0 €, rétractation) et sur le <strong>RIB</strong> (jamais sur WhatsApp).</li>
+      <li>Répondre aux <strong>6 objections</strong> les plus fréquentes — en wolof.</li>
+    </ol>
+  </div>
+
+  <div class="wrap">
+
+    <!-- 1 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">01</span><h2>La carte du parcours</h2></div>
+      <p class="seclead">Un dossier suit toujours les mêmes 6 étapes. Repère bien où c'est <strong>toi</strong> qui agis.</p>
+      <ol class="flow">
+        <li><span class="n">1</span><h4>Le client écrit sur WhatsApp</h4><p>Le robot pose les questions (n° de vol, trajet) et fait un premier diagnostic d'éligibilité. En français.</p><span class="tag bot">🤖 Le bot</span></li>
+        <li><span class="n">2</span><h4>Tu rappelles &amp; tu rassures</h4><p>Tu reprends la main : tu mets en confiance, tu réponds aux questions, tu débloques. En wolof si besoin.</p><span class="tag you">🎧 Toi</span></li>
+        <li><span class="n">3</span><h4>Collecte des pièces</h4><p>Tu aides le client à envoyer ses 3 documents (billet, carte d'embarquement, passeport).</p><span class="tag you">🎧 Toi + client</span></li>
+        <li><span class="n">4</span><h4>Vérification &amp; mandat signé</h4><p>L'IA pré-vérifie, l'équipe confirme. Le client signe le mandat en ligne (0 €).</p><span class="tag team">⚙️ Équipe</span></li>
+        <li><span class="n">5</span><h4>On réclame à la compagnie</h4><p>Réclamation envoyée, puis relances et médiation si besoin. Le client n'a rien à faire.</p><span class="tag team">⚙️ Équipe</span></li>
+        <li><span class="n">6</span><h4>Indemnité versée</h4><p>L'argent arrive sur le compte du client. C'est le moment de demander un avis Google.</p><span class="tag you">🎧 Toi (clôture)</span></li>
+      </ol>
+    </section>
+
+    <!-- 2 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">02</span><h2>Étape 1 : le dépôt sur WhatsApp</h2></div>
+      <p>Avant ton appel, le client a déjà discuté avec le <strong>robot</strong> sur WhatsApp. Le robot a capté :</p>
+      <ul class="checklist">
+        <li>Le <strong>numéro de vol</strong> → le robot propose le <strong>trajet</strong> (départ → arrivée).</li>
+        <li>Un <strong>diagnostic d'éligibilité</strong> : retard ≥ 3h ? distance ? juridiction ? moins de 5 ans ?</li>
+        <li>Si c'est <strong>potentiellement éligible</strong> → le robot demande les pièces.</li>
+      </ul>
+      <p style="margin-bottom:0"><strong>Ton rôle ici :</strong> tu interviens quand le client <strong>doute, bloque ou abandonne</strong>. Un appel humain en wolof relance un dossier qui se serait perdu. Tu es le <span class="em-green">filet de sécurité</span> du parcours.</p>
+    </section>
+
+    <!-- 3 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">03</span><h2>Les 3 pièces à collecter</h2></div>
+      <p class="seclead">Sans ces documents, pas de dossier. Ton job : les obtenir, lisibles et complets.</p>
+      <div class="docs">
+        <div class="doc">
+          <div class="dh"><span class="di">🎫</span><h4>Le billet / la réservation</h4></div>
+          <p>Montre le <strong>trajet</strong>, la <strong>date</strong>, le <strong>numéro de réservation</strong> et <strong>tous les passagers</strong> du voyage.</p>
+          <ul class="chk"><li><span class="m y">✓</span>e-billet, e-mail de la compagnie ou de l'agence</li><li><span class="m x">✕</span>une simple capture floue d'un SMS</li></ul>
+        </div>
+        <div class="doc">
+          <div class="dh"><span class="di">🪪</span><h4>La carte d'embarquement</h4></div>
+          <p>Prouve que le client a <strong>bien pris le vol</strong>. C'est la preuve la plus forte.</p>
+          <ul class="chk"><li><span class="m y">✓</span>papier OU version dans l'appli de la compagnie</li><li><span class="m x">✕</span>jetée ? → on la retrouve (voir astuce ci-dessous)</li></ul>
+        </div>
+        <div class="doc">
+          <div class="dh"><span class="di">🛂</span><h4>Le passeport</h4></div>
+          <p>Sert à l'<strong>identité</strong> et au <strong>mandat</strong>. On l'utilise <strong>uniquement</strong> pour le dossier et on le protège.</p>
+          <ul class="chk"><li><span class="m y">✓</span>page photo entière, nette</li><li><span class="m x">✕</span>jamais diffusé en clair à l'extérieur</li></ul>
+        </div>
+      </div>
+
+      <div class="callout"><p style="margin-bottom:0">📸 <strong>Une bonne photo :</strong> document <strong>entier</strong> dans le cadre, <strong>bien éclairé</strong>, <strong>texte net</strong>, posé <strong>à plat</strong>, sans doigt sur le texte. <strong>À éviter :</strong> flou, coupé, reflet, trop sombre.</p></div>
+      <div class="callout warn"><p style="margin-bottom:0"><span class="ic">💡</span><b>Astuce « carte d'embarquement perdue » :</b> ne bloque jamais le client. On peut souvent la retrouver dans l'<strong>appli de la compagnie</strong> ou l'<strong>e-mail d'enregistrement</strong>. À défaut, le billet + une preuve de voyage peut suffire — on cherche toujours une solution.</p></div>
+      <div class="callout"><p style="margin-bottom:0">🧾 <strong>Bonus (frais Art. 9) :</strong> si le client a été bloqué longtemps et a payé <strong>repas ou hôtel</strong>, qu'il garde ses <strong>reçus</strong> : c'est une preuve en plus qui <strong>ne réduit pas</strong> l'indemnité. (Détails au Module 3.)</p></div>
+    </section>
+
+    <!-- 4 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">04</span><h2>Vérifier un dossier</h2></div>
+      <div class="promise" style="background:linear-gradient(160deg,#0B1F3A,#0a3d2e)">
+        <h3>⚖️ La règle d'or</h3>
+        <p style="color:#dcebe3;max-width:none;margin:0">L'<strong style="color:#fff">IA pré-vérifie</strong> les pièces, mais c'est <strong style="color:var(--green-bright)">un humain qui confirme</strong>. <strong style="color:#fff">Jamais l'IA seule</strong> sur des documents légaux.</p>
+      </div>
+      <p>Avant de valider, vérifie 4 choses :</p>
+      <ul class="checklist">
+        <li>La <strong>photo est-elle lisible</strong> (entière, nette) ?</li>
+        <li>Le <strong>nom</strong> est-il le <strong>même</strong> sur le passeport ET le billet ?</li>
+        <li>Le <strong>vol</strong> correspond-il bien à celui annoncé ?</li>
+        <li><strong>Tous les passagers</strong> du dossier ont-ils leurs pièces ?</li>
+      </ul>
+      <p><strong>Si une pièce est mauvaise :</strong> on demande une reprise — <strong>poliment</strong>, en expliquant <strong>pourquoi</strong>. Ex. : « La photo est un peu floue, peux-tu la reprendre à plat avec plus de lumière ? 🙏 »</p>
+      <div class="callout warn"><p style="margin-bottom:0"><span class="ic">⏱️</span><b>Délai 24h des deux côtés :</b> l'équipe valide en <strong>moins de 24h</strong>, et le client renvoie une pièce rejetée en <strong>moins de 24h</strong>. Un dossier qui avance vite est un dossier qui aboutit.</p></div>
+    </section>
+
+    <!-- 5 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">05</span><h2>Le mandat (la signature)</h2></div>
+      <p class="seclead">C'est l'autorisation qui permet à Robin des Airs de <strong>réclamer l'indemnité au nom du client</strong> auprès de la compagnie.</p>
+      <p>Comment le présenter et rassurer :</p>
+      <ul class="checklist">
+        <li>Ce <strong>n'est pas</strong> un engagement à payer : c'est nous qui faisons les démarches. <strong>0 €.</strong></li>
+        <li>Signature <strong>en ligne</strong>, simple, depuis le téléphone (on envoie le lien).</li>
+        <li>Le client garde un <strong>droit de rétractation de 14 jours</strong>.</li>
+      </ul>
+      <div class="callout bad"><p style="margin-bottom:0"><span class="ic">🚫</span><b>Rappel ligne rouge (Module 1) :</b> tu ne donnes <strong>pas de conseil juridique</strong> sur les clauses du mandat. Question juridique pointue → « notre équipe vous l'explique ». Tu <strong>n'es pas avocate.</strong></p></div>
+    </section>
+
+    <!-- 6 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">06</span><h2>Le RIB (coordonnées bancaires)</h2></div>
+      <div class="callout bad"><p style="margin-bottom:0"><span class="ic">🔒</span><b>JAMAIS le RIB sur WhatsApp.</b> Et jamais tant que le dossier n'est pas gagné. Si quelqu'un demande un RIB sur WhatsApp, ce n'est pas nous.</p></div>
+      <p><strong>Quand alors ?</strong> Une fois le dossier <strong>accepté</strong>, puis quand les <strong>fonds sont reçus</strong> de la compagnie → on demande le RIB via un <strong>lien sécurisé</strong> (formulaire), et on vire la part du client <strong>sous 5 jours ouvrés</strong>.</p>
+      <p style="margin-bottom:0"><strong>La phrase anti-arnaque à dire :</strong> <span class="em-green">« On ne vous demandera jamais votre RIB sur WhatsApp, ni d'argent. C'est nous qui vous payons. »</span></p>
+    </section>
+
+    <!-- 7 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">07</span><h2>Les 6 objections difficiles</h2></div>
+      <div class="callout"><p style="margin-bottom:0">Réponses de base — adapte avec ton wolof naturel. Reste <strong>calme et clair</strong> : l'objection, c'est juste une question déguisée.</p></div>
+      <div class="scripts">
+        <div class="scrx">
+          <div class="role"><span class="dot"></span>« C'est trop beau… c'est une arnaque »</div>
+          <div class="line wo"><span class="lang wo">WO</span><p class="txt">« Du arnaque. Xaalis bi ci <b>sa</b> compte lay dem, te doo fey dara lu mu mën a doon. »</p></div>
+          <div class="line fr"><span class="lang fr">FR</span><p class="txt">« Ce n'est pas une arnaque. L'argent va sur votre compte, et vous ne payez rien quoi qu'il arrive. »</p></div>
+        </div>
+        <div class="scrx">
+          <div class="role"><span class="dot"></span>« Pourquoi vous prenez 25 % ? »</div>
+          <div class="line wo"><span class="lang wo">WO</span><p class="txt">« 25 % bi mooy sunu liggéey : nuy def yëf yépp ci sa wàll. Bu fekkee jotunu dara, doo fey dara. »</p></div>
+          <div class="line fr"><span class="lang fr">FR</span><p class="txt">« Les 25 %, c'est notre travail : on fait tout à votre place. Et si on ne récupère rien, vous ne payez rien. »</p></div>
+        </div>
+        <div class="scrx">
+          <div class="role"><span class="dot"></span>« Je n'ai plus ma carte d'embarquement »</div>
+          <div class="line wo"><span class="lang wo">WO</span><p class="txt">« Bul jëf. Mën nanu ko wut ci appli compagnie bi walla ci email enregistrement bi. »</p></div>
+          <div class="line fr"><span class="lang fr">FR</span><p class="txt">« Pas de souci. On peut la retrouver dans l'appli de la compagnie ou dans l'e-mail d'enregistrement. »</p></div>
+        </div>
+        <div class="scrx">
+          <div class="role"><span class="dot"></span>« J'ai peur pour mon passeport »</div>
+          <div class="line wo"><span class="lang wo">WO</span><p class="txt">« Sa passeport, ci sa dossier rekk lanu koy jëfandikoo, danu koy aar, du génn ci mbedd. »</p></div>
+          <div class="line fr"><span class="lang fr">FR</span><p class="txt">« Votre passeport, on l'utilise uniquement pour votre dossier, on le protège, il n'est pas diffusé publiquement. »</p></div>
+        </div>
+        <div class="scrx">
+          <div class="role"><span class="dot"></span>« Ça va prendre combien de temps ? »</div>
+          <div class="line wo"><span class="lang wo">WO</span><p class="txt">« Bu compagnie bi déggoo gaaw, ñaari–ñetti weer ; bu dëgëree, mën na yagg. Waaye yaw doo def dara, danu lay xamal. »</p></div>
+          <div class="line fr"><span class="lang fr">FR</span><p class="txt">« Si la compagnie coopère, 2 à 3 mois ; si elle résiste, ça peut être plus long. Mais vous ne faites rien, on vous tient au courant. »</p></div>
+        </div>
+        <div class="scrx">
+          <div class="role"><span class="dot"></span>« La compagnie m'a proposé un bon d'achat »</div>
+          <div class="line wo"><span class="lang wo">WO</span><p class="txt">« Bul nangu bon d'achat bi ! Am nga droit ci xaalis (cash), du bon. Bàyyil nu ko, danu lay jotal sa indemnité. »</p></div>
+          <div class="line fr"><span class="lang fr">FR</span><p class="txt">« N'acceptez pas le bon d'achat ! Vous avez droit à de l'argent (cash), pas à un bon. Laissez-nous faire, on récupère votre indemnité. »</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">08</span><h2>Mémo à connaître par cœur</h2></div>
+      <div class="memo">
+        <div><div class="v">6 étapes</div><div class="k">du WhatsApp au paiement</div></div>
+        <div><div class="v">3 pièces</div><div class="k">billet · carte d'embarq. · passeport</div></div>
+        <div><div class="v">IA → 👤</div><div class="k">l'IA pré-vérifie, l'humain confirme</div></div>
+        <div><div class="v">24 h</div><div class="k">délai des deux côtés</div></div>
+        <div><div class="v">RIB ≠ WhatsApp</div><div class="k">lien sécurisé, après le gain</div></div>
+        <div><div class="v">14 j · 0 €</div><div class="k">rétractation · jamais d'avance</div></div>
+      </div>
+    </section>
+
+    <!-- 9 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">09</span><h2>Quiz de validation</h2></div>
+      <p class="seclead">Réponds sans regarder. Puis ouvre les corrigés.</p>
+      <div class="qlist">
+        <div class="q"><div class="qq">Quelles sont les <strong>3 pièces</strong> de base à collecter ?</div></div>
+        <div class="q"><div class="qq">Le client a jeté sa carte d'embarquement. Tu le <strong>bloques</strong> ?</div></div>
+        <div class="q"><div class="qq">Le client veut te donner son <strong>RIB sur WhatsApp</strong>. Que fais-tu ?</div></div>
+        <div class="q"><div class="qq">L'IA affiche « dossier OK ». Tu valides <strong>directement</strong> ?</div></div>
+        <div class="q"><div class="qq">Le nom sur le <strong>passeport ≠</strong> le nom sur le <strong>billet</strong>. Problème ?</div></div>
+        <div class="q"><div class="qq">La compagnie propose un <strong>bon d'achat</strong> de 600 €. Le client accepte ?</div></div>
+        <div class="q"><div class="qq">Combien de temps a le client pour <strong>renvoyer une pièce</strong> rejetée ?</div></div>
+        <div class="q"><div class="qq">Le client a un droit de <strong>rétractation</strong> de combien de jours ?</div></div>
+      </div>
+      <details class="ans">
+        <summary>Voir les réponses</summary>
+        <ol>
+          <li>Le <strong>billet/réservation</strong>, la <strong>carte d'embarquement</strong>, le <strong>passeport</strong>.</li>
+          <li><strong>Non, jamais.</strong> On cherche une solution (appli compagnie, e-mail d'enregistrement) — souvent récupérable.</li>
+          <li>On ne collecte <strong>jamais</strong> le RIB sur WhatsApp. On explique qu'on le demandera plus tard, par <strong>lien sécurisé</strong>, après le gain.</li>
+          <li><strong>Non</strong> — l'IA pré-vérifie, mais c'est toujours un <strong>humain</strong> qui confirme.</li>
+          <li><strong>Oui, à vérifier</strong> (faute de frappe ? nom de jeune fille ?). Le nom doit correspondre avant d'aller plus loin.</li>
+          <li><strong>Non</strong> — il a droit au <strong>cash</strong> ; un bon d'achat peut lui faire perdre son indemnité. On gère.</li>
+          <li><strong>Moins de 24h</strong> (délai des deux côtés).</li>
+          <li><strong>14 jours.</strong></li>
+        </ol>
+      </details>
+    </section>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="next rv">
+      <div class="role">▶ Prochaine étape</div>
+      <h3>Module 3 — Suivi, relances &amp; paiement</h3>
+      <p>Comment suivre un dossier, quand et comment relancer, l'étape « payé », et obtenir un avis Google au bon moment.</p>
+    </div>
+    <div class="ink">Climbié</div>
+    <div class="who">Climbié Kodjo — Fondateur</div>
+    <div class="tiny">Document interne Robin des Airs · Académie · Module 2 — ne pas diffuser aux clients.</div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var els = [].slice.call(document.querySelectorAll('.rv'));
+    function reveal(e){ e.classList.add('in'); }
+    if(!document.documentElement.classList.contains('anim') || !('IntersectionObserver' in window)){ els.forEach(reveal); return; }
+    var cover = document.querySelectorAll('.cover .rv');
+    cover.forEach(function(e,i){ e.style.transitionDelay=(i*70)+'ms'; });
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ cover.forEach(reveal); }); });
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ reveal(en.target); io.unobserve(en.target); } });
+    },{rootMargin:'0px 0px -8% 0px', threshold:.06});
+    els.forEach(function(e){ if(!e.closest('.cover')) io.observe(e); });
+    setTimeout(function(){ els.forEach(reveal); }, 1500);
+    addEventListener('pageshow', function(){ els.forEach(reveal); });
+  })();
+  addEventListener('beforeprint', function(){ document.querySelectorAll('details.ans').forEach(function(d){ d.open = true; }); });
+</script>
+</body>
+</html>

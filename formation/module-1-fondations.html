@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 1 — Fondations · Académie Robin des Airs</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&family=Sacramento&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#13211c; --ink-soft:#41524a; --ink-faint:#6a786f;
+    --navy:#0B1F3A; --sapin:#0a3d2e; --sapin-2:#0c5038;
+    --green:#047857; --green-vivid:#00C87A; --green-bright:#00E5A0;
+    --gold:#cdac72; --gold-ink:#8a6d2f;
+    --paper:#fbfdfb; --surface:#ffffff; --surface-2:#f1f6f3;
+    --line:#e3ece7; --line-strong:#d2ded7;
+    --danger:#9f2d24; --danger-bg:#fdf4f3; --danger-line:#f0cdc8;
+    --maxw:min(940px,92vw); --read:68ch;
+    --r:18px; --r-sm:12px;
+    --shadow:0 1px 2px rgba(13,40,30,.04),0 12px 32px -18px rgba(13,40,30,.22);
+    --ease:cubic-bezier(.2,.8,.2,1);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Plus Jakarta Sans",system-ui,sans-serif;
+    font-size:clamp(16px,.6vw + 14.6px,18px); line-height:1.68;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+  }
+  .wrap{max-width:var(--maxw); margin-inline:auto; padding-inline:clamp(20px,4vw,40px)}
+  h1,h2,h3,h4{font-family:"Bricolage Grotesque",sans-serif; line-height:1.05; letter-spacing:-.02em; text-wrap:balance; margin:0}
+  p{margin:0 0 1em; max-width:var(--read); text-wrap:pretty}
+  strong{font-weight:700; color:var(--ink)}
+  a{color:var(--green)}
+
+  /* ---------- COVER ---------- */
+  .cover{
+    position:relative; overflow:hidden; color:#eaf3ee;
+    background:
+      radial-gradient(120% 90% at 88% -10%, rgba(0,229,160,.16), transparent 55%),
+      radial-gradient(90% 80% at 6% 110%, rgba(205,172,114,.14), transparent 60%),
+      linear-gradient(155deg,#0a3d2e 0%, #093024 46%, #0B1F3A 100%);
+  }
+  .cover::after{ /* hairline grain of light */
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.04) 50%,transparent);
+    mix-blend-mode:screen;
+  }
+  .cover .wrap{position:relative; padding-block:clamp(40px,7vw,78px)}
+  .brandline{display:flex; align-items:center; gap:11px; font-weight:800; letter-spacing:.02em}
+  .brandline .bow{
+    display:grid; place-items:center; width:38px; height:38px; border-radius:11px; font-size:19px;
+    background:linear-gradient(135deg,var(--green-bright),var(--green-vivid)); color:#06281d;
+    box-shadow:0 8px 22px -10px rgba(0,229,160,.7);
+  }
+  .brandline .nm{font-size:1.05rem}
+  .brandline .nm span{color:var(--green-bright)}
+  .kicker{
+    margin:clamp(28px,5vw,46px) 0 14px; display:inline-flex; align-items:center; gap:10px;
+    font-size:.74rem; font-weight:700; letter-spacing:.26em; text-transform:uppercase; color:var(--gold);
+  }
+  .kicker::before{content:""; width:30px; height:1px; background:linear-gradient(90deg,transparent,var(--gold))}
+  .cover h1{
+    font-size:clamp(2.9rem,8.4vw,5.4rem); font-weight:700; color:#fff; letter-spacing:-.035em;
+    margin:0 0 .12em;
+  }
+  .cover h1 em{font-style:normal; color:var(--green-bright)}
+  .cover .lede{
+    font-size:clamp(1.05rem,1.4vw,1.32rem); color:#bfd6cb; max-width:34ch; font-weight:500; margin:0;
+  }
+  .meta{
+    display:flex; flex-wrap:wrap; gap:10px; margin-top:clamp(26px,4vw,36px);
+  }
+  .chip{
+    display:inline-flex; align-items:center; gap:8px; padding:9px 15px; border-radius:999px;
+    background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14);
+    font-size:.84rem; font-weight:600; color:#dcebe3; backdrop-filter:blur(2px);
+  }
+  .chip b{color:var(--green-bright); font-weight:700}
+  /* signature */
+  .sig{
+    margin-top:clamp(34px,5vw,50px); padding-top:26px; display:flex; align-items:flex-end; gap:18px;
+    border-top:1px solid rgba(255,255,255,.13); flex-wrap:wrap;
+  }
+  .sig .ink{font-family:"Sacramento",cursive; color:#fff; font-size:clamp(2.6rem,6vw,3.7rem); line-height:.8;
+    text-shadow:0 2px 18px rgba(0,229,160,.25)}
+  .sig .who{font-size:.8rem; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); font-weight:700}
+  .sig .who small{display:block; letter-spacing:.04em; text-transform:none; color:#9fb6ab; font-weight:500; margin-top:3px; font-size:.86rem}
+
+  /* ---------- SECTIONS ---------- */
+  section{padding-block:clamp(34px,5vw,58px); border-bottom:1px solid var(--line)}
+  section:last-of-type{border-bottom:0}
+  .sechead{display:flex; align-items:baseline; gap:16px; margin-bottom:22px}
+  .sechead .no{
+    font-family:"Bricolage Grotesque",sans-serif; font-weight:700; font-size:clamp(1.1rem,1.4vw,1.3rem);
+    color:var(--gold-ink); flex:none; font-variant-numeric:tabular-nums;
+  }
+  .sechead h2{font-size:clamp(1.55rem,3.2vw,2.25rem); color:var(--sapin); font-weight:700}
+  .seclead{font-size:1.06rem; color:var(--ink-soft); max-width:var(--read)}
+
+  /* objectives */
+  .goals{padding-block:clamp(36px,5vw,52px)}
+  .goals .seclead{margin-bottom:20px}
+  .goal-list{list-style:none; padding:0; margin:0; display:grid; gap:12px; counter-reset:g}
+  .goal-list li{
+    counter-increment:g; position:relative; padding:16px 18px 16px 58px; border-radius:var(--r-sm);
+    background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow); font-weight:500;
+  }
+  .goal-list li::before{
+    content:counter(g); position:absolute; left:14px; top:50%; translate:0 -50%;
+    width:30px; height:30px; display:grid; place-items:center; border-radius:9px;
+    background:linear-gradient(135deg,#e9f7f0,#d7f0e5); color:var(--green); font-weight:800; font-size:.92rem;
+    font-family:"Bricolage Grotesque",sans-serif;
+  }
+
+  .lead-tag{font-weight:700; color:var(--sapin)}
+  .devise{
+    font-family:"Bricolage Grotesque",sans-serif; font-weight:700; color:var(--sapin);
+    font-size:clamp(1.3rem,2.6vw,1.9rem); letter-spacing:-.02em; line-height:1.18; max-width:18ch; margin:.2em 0 .6em;
+  }
+  .devise em{font-style:normal; color:var(--green)}
+
+  /* promise callout */
+  .promise{
+    margin:24px 0; padding:clamp(20px,3vw,28px); border-radius:var(--r);
+    background:linear-gradient(160deg,#0a3d2e,#0c5038); color:#e9f5ef; box-shadow:var(--shadow);
+  }
+  .promise h3{color:#fff; font-size:1.18rem; margin-bottom:14px; display:flex; align-items:center; gap:10px}
+  .promise ul{list-style:none; margin:0; padding:0; display:grid; gap:11px}
+  .promise li{display:flex; gap:12px; align-items:flex-start; line-height:1.5}
+  .promise li b{color:var(--green-bright)}
+  .promise .mk{flex:none; margin-top:1px; color:#06281d; background:var(--green-bright); width:22px;height:22px;border-radius:7px;display:grid;place-items:center;font-size:.8rem;font-weight:800}
+
+  /* tables */
+  .tbl{width:100%; border-collapse:separate; border-spacing:0; margin:18px 0; font-size:.96rem; box-shadow:var(--shadow); border-radius:var(--r-sm); overflow:hidden; border:1px solid var(--line)}
+  .tbl th,.tbl td{padding:13px 16px; text-align:left; vertical-align:top; border-bottom:1px solid var(--line)}
+  .tbl thead th{background:var(--sapin); color:#eaf3ee; font-weight:700; font-size:.84rem; letter-spacing:.02em}
+  .tbl tbody tr:nth-child(even){background:var(--surface-2)}
+  .tbl tbody tr:last-child td{border-bottom:0}
+  .tbl td b,.tbl td strong{color:var(--sapin)}
+  .amount{font-family:"Bricolage Grotesque",sans-serif; font-weight:800; color:var(--green); white-space:nowrap}
+
+  .callout{
+    margin:20px 0; padding:18px 20px; border-radius:var(--r-sm); background:var(--surface-2);
+    border:1px solid var(--line-strong);
+  }
+  .callout.warn{background:#fff9ec; border-color:#f1dcae}
+  .callout.warn b{color:var(--gold-ink)}
+  .callout p:last-child{margin-bottom:0}
+  .callout .ic{font-weight:800; margin-right:6px}
+
+  /* wolof scripts */
+  .scripts{display:grid; gap:14px; margin:20px 0}
+  .scrx{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:18px 20px; box-shadow:var(--shadow)}
+  .scrx .role{font-size:.78rem; font-weight:700; letter-spacing:.04em; color:var(--gold-ink); text-transform:uppercase; margin-bottom:12px; display:flex; align-items:center; gap:8px}
+  .scrx .role .dot{width:7px;height:7px;border-radius:50%;background:var(--gold)}
+  .line{display:flex; gap:12px; align-items:baseline; padding:7px 0}
+  .line + .line{border-top:1px dashed var(--line-strong)}
+  .lang{flex:none; width:30px; font-size:.66rem; font-weight:800; letter-spacing:.06em; padding:3px 0; text-align:center; border-radius:6px}
+  .lang.wo{background:#d7f0e5; color:var(--green)}
+  .lang.fr{background:#eef2f5; color:var(--ink-faint)}
+  .line .txt{margin:0}
+  .line.wo .txt{font-weight:600; color:var(--sapin); font-size:1.04rem}
+  .line.fr .txt{color:var(--ink-soft); font-size:.92rem}
+
+  /* red line */
+  .redline{background:linear-gradient(180deg,#fffafa,var(--danger-bg)); border-color:var(--danger-line)!important}
+  .redline .sechead h2{color:var(--danger)}
+  .redline .sechead .no{color:var(--danger)}
+  .twocol{display:grid; gap:16px; grid-template-columns:1fr; margin:18px 0}
+  @media(min-width:720px){.twocol{grid-template-columns:1fr 1fr}}
+  .perm{padding:18px 20px; border-radius:var(--r); border:1px solid; box-shadow:var(--shadow)}
+  .perm h4{font-size:1rem; margin-bottom:12px; display:flex; align-items:center; gap:8px}
+  .perm ul{margin:0; padding:0; list-style:none; display:grid; gap:9px; font-size:.95rem}
+  .perm li{position:relative; padding-left:26px; line-height:1.45}
+  .perm li .m{position:absolute; left:0; top:0; font-weight:800}
+  .perm.yes{background:#f2faf5; border-color:#cde9d9}
+  .perm.yes h4{color:var(--green)} .perm.yes li .m{color:var(--green)}
+  .perm.no{background:#fdf4f3; border-color:var(--danger-line)}
+  .perm.no h4{color:var(--danger)} .perm.no li .m{color:var(--danger)}
+  .vocab{margin-top:6px; padding:16px 18px; border-radius:var(--r-sm); background:#fff; border:1px solid var(--danger-line)}
+  .vocab b{color:var(--danger)} .vocab .ok{color:var(--green); font-weight:700}
+
+  /* memo numbers */
+  .memo{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin:18px 0}
+  .memo div{background:var(--surface); border:1px solid var(--line); border-radius:var(--r-sm); padding:16px; box-shadow:var(--shadow)}
+  .memo .v{font-family:"Bricolage Grotesque",sans-serif; font-weight:800; font-size:1.5rem; color:var(--sapin); letter-spacing:-.02em}
+  .memo .k{font-size:.82rem; color:var(--ink-faint); margin-top:2px}
+
+  /* quiz */
+  .q{margin:14px 0; counter-increment:q}
+  .qlist{counter-reset:q}
+  .q .qq{font-weight:600; display:flex; gap:12px}
+  .q .qq::before{content:"Q" counter(q); flex:none; font-family:"Bricolage Grotesque",sans-serif; font-weight:800; color:var(--gold-ink)}
+  details.ans{margin-top:22px; background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:4px 20px; box-shadow:var(--shadow)}
+  details.ans summary{cursor:pointer; font-weight:700; color:var(--green); padding:14px 0; list-style:none}
+  details.ans summary::-webkit-details-marker{display:none}
+  details.ans summary::before{content:"▸ "; color:var(--gold-ink)}
+  details.ans[open] summary::before{content:"▾ "}
+  details.ans ol{margin:0 0 14px; padding-left:20px; display:grid; gap:8px}
+
+  /* footer */
+  .foot{background:var(--sapin); color:#cfe2d8; text-align:center; border:0}
+  .foot .wrap{padding-block:clamp(34px,5vw,52px)}
+  .foot .ink{font-family:"Sacramento",cursive; color:#fff; font-size:2.6rem; line-height:.9}
+  .foot .who{font-size:.76rem; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); font-weight:700; margin-top:6px}
+  .foot .tiny{font-size:.78rem; color:#88a89a; margin-top:18px}
+  .next{max-width:var(--read); margin:0 auto; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12); border-radius:var(--r); padding:20px; margin-bottom:26px}
+  .next .role{color:var(--green-bright); font-weight:700; font-size:.8rem; letter-spacing:.14em; text-transform:uppercase}
+  .next h3{color:#fff; font-size:1.25rem; margin:6px 0 8px}
+  .next p{color:#bcd2c7; margin:0 auto; max-width:none}
+
+  .em-green{color:var(--green); font-weight:700}
+  .em-gold{color:var(--gold-ink); font-weight:700}
+
+  /* reveal — visible by default; only hidden when .anim is set (JS + motion allowed) */
+  .anim .rv{opacity:0; transform:translateY(16px); will-change:opacity,transform}
+  .anim .rv.in{opacity:1; transform:none; transition:opacity .7s var(--ease), transform .7s var(--ease)}
+  @media (prefers-reduced-motion:reduce){ .anim .rv,.anim .rv.in{opacity:1!important; transform:none!important; transition:none} html{scroll-behavior:auto} }
+
+  @media print{
+    *{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+    body{font-size:10.6pt}
+    .rv{opacity:1!important; transform:none!important}
+    .cover{padding:0}
+    section{break-inside:avoid-page} .scrx,.perm,.promise,.tbl,.memo div,details.ans{break-inside:avoid}
+    /* show quiz answers in the printed/PDF handout */
+    details.ans{padding-block:6px}
+    details.ans > ol{display:block!important}
+    details.ans summary::before{content:"✔ "}
+  }
+  @page{margin:14mm}
+</style>
+<script>if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('anim');}</script>
+</head>
+<body>
+
+<!-- ============ COVER ============ -->
+<header class="cover">
+  <div class="wrap">
+    <div class="brandline rv">
+      <span class="bow">🏹</span>
+      <span class="nm">Robin des Airs<span> · Académie</span></span>
+    </div>
+
+    <div class="kicker rv">Programme de formation · Agent téléphone</div>
+    <h1 class="rv">Module 1<br><em>Fondations</em></h1>
+    <p class="lede rv">Le métier, le règlement CE261, et l'art de rassurer un client — en wolof.</p>
+
+    <div class="meta">
+      <span class="chip rv">Marché <b>Sénégal · Wolof</b></span>
+      <span class="chip rv">Durée <b>~1h30</b></span>
+      <span class="chip rv">Niveau <b>Débutant</b></span>
+    </div>
+
+    <div class="sig rv">
+      <div class="ink">Climbié</div>
+      <div class="who">Climbié Kodjo<small>Fondateur — Robin des Airs</small></div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- OBJECTIFS -->
+  <div class="goals wrap">
+    <div class="seclead rv" style="margin-bottom:18px"><strong style="color:var(--sapin)">À la fin de ce module, tu sauras 👇</strong></div>
+    <ol class="goal-list rv">
+      <li>Expliquer en 2 phrases <strong>ce que fait Robin des Airs</strong> et pourquoi on existe.</li>
+      <li>Comprendre <strong>le règlement CE261</strong> (les droits du passager) à un niveau utile au téléphone.</li>
+      <li>Connaître <strong>ton rôle exact</strong> — et ce que tu n'as <strong>pas</strong> le droit de faire.</li>
+      <li>Mener un <strong>appel en wolof</strong> : saluer, rassurer, expliquer le « 0&nbsp;€ d'avance ».</li>
+      <li>Réciter par cœur <strong>les chiffres clés</strong> (250 / 400 / 600, 3h, 5 ans, 25&nbsp;%).</li>
+    </ol>
+  </div>
+
+  <div class="wrap">
+
+    <!-- 1 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">01</span><h2>Bienvenue chez Robin des Airs</h2></div>
+      <p class="seclead">Notre raison d'être tient en une phrase :</p>
+      <p class="devise">On prend aux compagnies, <em>on rend aux familles.</em></p>
+      <p><strong>Le problème qu'on résout.</strong> Quand un avion a un gros retard, est annulé, ou que le passager est refusé à l'embarquement, <strong>la compagnie aérienne lui doit de l'argent</strong> (c'est la loi européenne). Mais les compagnies ne le disent jamais, les démarches sont longues, et les gens ne connaissent pas leurs droits.</p>
+      <p><strong>Notre métier.</strong> On récupère cet argent <strong>à la place du client</strong>, sans qu'il ait à se battre.</p>
+
+      <div class="promise">
+        <h3>🤝 Notre promesse — à répéter à chaque client</h3>
+        <ul>
+          <li><span class="mk">✓</span><span><b>0&nbsp;€ d'avance.</b> Jamais de carte bancaire, jamais d'argent demandé.</span></li>
+          <li><span class="mk">✓</span><span>On prend <b>25&nbsp;%</b> seulement <b>si on gagne</b>. Le client garde <b>75&nbsp;%</b>.</span></li>
+          <li><span class="mk">✓</span><span><b>Si on ne récupère rien, le client ne paie rien.</b> Zéro risque pour lui.</span></li>
+        </ul>
+      </div>
+
+      <p><strong>Pourquoi le Sénégal & la diaspora.</strong> Les vols <strong>Dakar&nbsp;↔&nbsp;Europe</strong> sont longs et souvent retardés, et les familles voyagent beaucoup. Or personne ne leur a jamais dit qu'elles avaient droit à 600&nbsp;€. C'est là qu'on est utiles — et qu'on parle <strong>leur langue</strong>.</p>
+    </section>
+
+    <!-- 2 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">02</span><h2>Ton rôle : l'experte qui rassure au téléphone</h2></div>
+      <p><strong>Notre force face aux concurrents :</strong> les autres sociétés sont <strong>injoignables</strong> (robots, e-mails sans réponse). Nous, <span class="em-green">un humain décroche — et parle wolof.</span> C'est ça, ta valeur.</p>
+      <p>Concrètement, tu&nbsp;:</p>
+      <table class="tbl">
+        <tbody>
+          <tr><td><strong>Rappelles</strong> les clients après leur dépôt</td><td>tu prends contact, tu mets en confiance</td></tr>
+          <tr><td><strong>Rassures</strong></td><td>« non, ce n'est pas une arnaque »</td></tr>
+          <tr><td><strong>Réponds</strong> aux questions</td><td>simplement, avec patience</td></tr>
+          <tr><td><strong>Aides à compléter</strong> le dossier</td><td>billet, passeport, carte d'embarquement</td></tr>
+          <tr><td><strong>Fais le suivi</strong> & demandes un <strong>avis Google</strong></td><td>au bon moment (voir Module 3)</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warn">
+        <p><span class="ic">⚠️</span><b>Comment marche la langue (très important).</b></p>
+        <p>Le <strong>dépôt du dossier se fait en français</strong>, sur WhatsApp (notre robot). <strong>Toi, tu rappelles en wolof</strong> pour mettre en confiance et débloquer.</p>
+        <p style="margin-bottom:0">❌ On ne dit <strong>jamais</strong> au client « WhatsApp vous répondra en wolof » — c'est faux. Le wolof, c'est <strong>toi, au téléphone</strong>.</p>
+      </div>
+      <p style="margin-bottom:0"><strong>Ce que tu n'es PAS :</strong> ni avocate, ni juriste (voir section&nbsp;06 — c'est capital). Tu es une <span class="em-green">spécialiste de la récupération d'indemnités</span> (« recouvrement »).</p>
+    </section>
+
+    <!-- 3 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">03</span><h2>Le produit en clair : le règlement CE261</h2></div>
+      <p class="seclead">C'est la <strong>loi européenne</strong> qui oblige les compagnies à indemniser le passager.</p>
+
+      <h3 style="color:var(--sapin);font-size:1.05rem;margin:22px 0 6px">Les 3 montants <span style="font-weight:500;color:var(--ink-faint);font-size:.85rem">(par personne)</span></h3>
+      <table class="tbl">
+        <thead><tr><th>Distance du vol</th><th>Indemnité</th></tr></thead>
+        <tbody>
+          <tr><td>Court — ≤ 1 500 km</td><td><span class="amount">250 €</span></td></tr>
+          <tr><td>Moyen — 1 500 à 3 500 km</td><td><span class="amount">400 €</span></td></tr>
+          <tr><td>Long — &gt; 3 500 km</td><td><span class="amount">600 €</span></td></tr>
+        </tbody>
+      </table>
+      <div class="callout">
+        <p style="margin-bottom:0">🇸🇳 <strong>Pour le Sénégal :</strong> <strong>Dakar&nbsp;↔&nbsp;Paris ≈ 4 200 km</strong> = long-courrier = <span class="amount">600&nbsp;€</span>. La plupart des vols Dakar–Europe sont au <strong>palier maximum</strong>.</p>
+      </div>
+
+      <h3 style="color:var(--sapin);font-size:1.05rem;margin:24px 0 6px">Quand le passager a droit</h3>
+      <p>Le vol doit avoir eu <strong>l'un</strong> de ces problèmes : <strong>retard ≥ 3h</strong> à l'arrivée, <strong>annulation</strong> (prévenu &lt; 14 jours avant), ou <strong>refus d'embarquement</strong> (surbooking).</p>
+      <p><strong>ET</strong> le vol doit être couvert : au <strong>départ d'un aéroport de l'UE</strong> (toute compagnie), ou à l'<strong>arrivée dans l'UE sur une compagnie européenne</strong> — ex. <strong>Dakar → Paris sur Air France</strong> ✅.</p>
+      <p><strong>ET</strong> : pas une <strong>« circonstance extraordinaire »</strong> (tempête, grève externe…), et le vol date de <strong>moins de 5 ans</strong> (sinon « prescrit », trop tard).</p>
+
+      <div class="promise" style="background:linear-gradient(160deg,#0B1F3A,#0a3d2e)">
+        <h3>👨‍👩‍👧‍👦 Plusieurs personnes dans le dossier</h3>
+        <p style="color:#dcebe3;max-width:none;margin:0">Chaque passager a droit à <strong style="color:var(--green-bright)">son</strong> indemnité. Une famille de <strong style="color:#fff">4 adultes</strong> sur un Dakar–Paris retardé = <strong style="color:var(--green-bright)">4 × 600 = 2 400 €</strong>. → Toujours demander <strong style="color:#fff">combien de personnes</strong> voyageaient sur le même billet.</p>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">04</span><h2>Le client sénégalais : qui il est, ce qu'il ressent</h2></div>
+      <p>Soit il vit en Europe et rentre voir la famille, soit il est au Sénégal et voyage vers l'Europe. Souvent <strong>diaspora</strong>. Voici ses peurs — et comment les désamorcer&nbsp;:</p>
+      <table class="tbl">
+        <thead><tr><th>Ce qu'il pense</th><th>Ta réponse</th></tr></thead>
+        <tbody>
+          <tr><td>« C'est une arnaque »</td><td>« 0&nbsp;€ d'avance, l'argent va sur <b>votre</b> compte, on prend notre part <b>après</b> seulement. »</td></tr>
+          <tr><td>« Je vais devoir avancer »</td><td>« Vous ne payez <b>rien</b>. Si on ne gagne pas, vous ne devez rien. »</td></tr>
+          <tr><td>« C'est compliqué »</td><td>« C'est nous qui faisons <b>tout</b>. Vous, vous envoyez juste vos documents. »</td></tr>
+          <tr><td>« Je n'y connais rien »</td><td>« C'est normal, c'est <b>notre métier</b>. On s'occupe de tout pour vous. »</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-bottom:0">Ce qui crée la confiance : la <strong>teranga</strong> (chaleur, hospitalité), parler <strong>sa langue</strong>, prendre le temps de <strong>saluer</strong>, et la <strong>clarté</strong> sur l'argent.</p>
+    </section>
+
+    <!-- 5 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">05</span><h2>Scripts d'appel en wolof</h2></div>
+      <div class="callout"><p style="margin-bottom:0">Ce sont des <strong>bases</strong>. Tu parles wolof mieux que ce document — <strong>adapte avec tes mots naturels</strong> de Dakar (mélanger un peu de français est normal).</p></div>
+
+      <div class="scripts">
+        <div class="scrx">
+          <div class="role"><span class="dot"></span>a · Ouverture — toujours saluer avant d'aller au but</div>
+          <div class="line wo"><span class="lang wo">WO</span><p class="txt">« Asalaa maalekum ! Naka nga def ? Ana waa kër ga ? Maa ngi tudd [Prénom], maa ngi jóge <b>Robin des Airs</b>. »</p></div>
+          <div class="line fr"><span class="lang fr">FR</span><p class="txt">« Bonjour ! Comment allez-vous ? Comment va la famille ? Je m'appelle [Prénom], j'appelle de Robin des Airs. »</p></div>
+        </div>
+
+        <div class="scrx">
+          <div class="role"><span class="dot"></span>b · Présenter Robin des Airs</div>
+          <div class="line wo"><span class="lang wo">WO</span><p class="txt">« Robin des Airs mooy entreprise bu di dimbali ñi seen avion yéex walla ñu annuler ko, ngir ñu jot seen xaalis ci compagnie bi. »</p></div>
+          <div class="line fr"><span class="lang fr">FR</span><p class="txt">« Robin des Airs est une entreprise qui aide les gens dont l'avion a été retardé ou annulé, à récupérer leur argent auprès de la compagnie. »</p></div>
+        </div>
+
+        <div class="scrx">
+          <div class="role"><span class="dot"></span>c · Le « 0 € d'avance » & les 25 % — le plus important</div>
+          <div class="line wo"><span class="lang wo">WO</span><p class="txt">« Doo fey dara ci sa bopp. Bu fekkee danu jot xaalis bi, danu jël 25 %, yaw nga jël 75 %. Bu fekkee jotunu dara, doo fey dara. »</p></div>
+          <div class="line fr"><span class="lang fr">FR</span><p class="txt">« Vous ne payez rien de votre poche. Si on récupère l'argent, on prend 25 %, vous gardez 75 %. Si on ne récupère rien, vous ne payez rien. »</p></div>
+        </div>
+
+        <div class="scrx">
+          <div class="role"><span class="dot"></span>d · Rassurer « ce n'est pas une arnaque »</div>
+          <div class="line wo"><span class="lang wo">WO</span><p class="txt">« Du arnaque. Danuy liggéeyal sa droit, te xaalis bi, ci <b>sa</b> compte lay dem, du ci sunu bopp. »</p></div>
+          <div class="line fr"><span class="lang fr">FR</span><p class="txt">« Ce n'est pas une arnaque. On travaille pour votre droit, et l'argent ira sur votre compte, pas chez nous. »</p></div>
+        </div>
+
+        <div class="scrx">
+          <div class="role"><span class="dot"></span>e · Annoncer l'éligibilité — toujours avec prudence</div>
+          <div class="line wo"><span class="lang wo">WO</span><p class="txt">« Ci li nga ma wax, sa vol bi <b>mën na am</b> indemnité, waaye danu koy seetlu bu baax balaa nu la ko wóoral. »</p></div>
+          <div class="line fr"><span class="lang fr">FR</span><p class="txt">« D'après ce que vous me dites, votre vol <b>pourrait</b> avoir droit à une indemnité, mais on va bien vérifier avant de vous le confirmer. »</p></div>
+          <div class="line"><span class="lang" style="background:#fdeceb;color:var(--danger)">⚠️</span><p class="txt" style="color:var(--danger);font-size:.9rem;margin:0">Jamais « vous allez <b>sûrement</b> gagner ». Toujours « <b>peut-être / on vérifie</b> ».</p></div>
+        </div>
+
+        <div class="scrx">
+          <div class="role"><span class="dot"></span>f · Clôture + demande d'avis (si l'échange s'est bien passé)</div>
+          <div class="line wo"><span class="lang wo">WO</span><p class="txt">« Jërëjëf ci sa kéwél. Su la neexoon, mën nga nu bind benn avis ci Google, dafay dimbali nu lool. Damay yónnee la lien bi. »</p></div>
+          <div class="line fr"><span class="lang fr">FR</span><p class="txt">« Merci pour votre confiance. Si ça vous a plu, vous pouvez nous laisser un avis sur Google, ça nous aide beaucoup. Je vous envoie le lien. »</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 RED LINE -->
+    <section class="redline rv" style="border-radius:var(--r);padding-inline:clamp(18px,3vw,30px);border:1px solid var(--danger-line);margin-block:8px">
+      <div class="sechead"><span class="no">06</span><h2>La ligne rouge — à ne jamais franchir</h2></div>
+      <p class="seclead"><strong>Pourquoi c'est vital :</strong> en France, donner des « consultations juridiques » payantes ou se faire passer pour un avocat est <strong>interdit</strong>. Si on franchit la ligne, on risque gros. On reste dans notre métier : <strong>le recouvrement</strong>.</p>
+      <div class="twocol">
+        <div class="perm yes">
+          <h4>✅ Tu peux</h4>
+          <ul>
+            <li><span class="m">✓</span>Dire si un dossier est <strong>éligible ou non</strong>, et <strong>pourquoi</strong>.</li>
+            <li><span class="m">✓</span>Donner les <strong>montants</strong> et expliquer le <strong>règlement</strong>.</li>
+            <li><span class="m">✓</span>Dire « <strong>potentiellement</strong> éligible, <strong>on vérifie</strong> ».</li>
+          </ul>
+        </div>
+        <div class="perm no">
+          <h4>❌ Tu ne dois jamais</h4>
+          <ul>
+            <li><span class="m">✕</span>Te présenter comme <strong>avocate</strong> ou <strong>juriste</strong>.</li>
+            <li><span class="m">✕</span><strong>Garantir</strong> que le client va gagner.</li>
+            <li><span class="m">✕</span>Donner un <strong>avis juridique sur mesure</strong>.</li>
+            <li><span class="m">✕</span>Demander <strong>argent / RIB sur WhatsApp / « don »</strong>.</li>
+            <li><span class="m">✕</span>Dire qu'on <strong>représente au tribunal</strong> — c'est un <strong>avocat partenaire</strong> qui prend le relais (à nos frais).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="vocab">
+        <p style="margin-bottom:6px">🗣️ <b>Le bon vocabulaire :</b> <span class="ok">« spécialiste du recouvrement »</span>, « notre équipe », « on vérifie », « potentiellement ».</p>
+        <p style="margin-bottom:0"><b>À bannir :</b> « juriste », « je vous garantis », « avis juridique », « je vous représente au tribunal ». Une question hors CE261 (divorce, autre litige) → « ça, il faut voir avec un avocat ».</p>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">07</span><h2>Mémo à connaître par cœur</h2></div>
+      <div class="memo">
+        <div><div class="v">250 · 400 · 600</div><div class="k">€ selon la distance</div></div>
+        <div><div class="v">600 €</div><div class="k">Dakar–Paris (~4 200 km)</div></div>
+        <div><div class="v">3 h</div><div class="k">retard mini à l'arrivée</div></div>
+        <div><div class="v">14 j</div><div class="k">préavis annulation</div></div>
+        <div><div class="v">5 ans</div><div class="k">prescription maximum</div></div>
+        <div><div class="v">25 / 75</div><div class="k">% nous / % client · 0 € d'avance</div></div>
+      </div>
+    </section>
+
+    <!-- 8 QUIZ -->
+    <section class="rv">
+      <div class="sechead"><span class="no">08</span><h2>Quiz de validation</h2></div>
+      <p class="seclead">Réponds sans regarder. Puis ouvre les corrigés.</p>
+      <div class="qlist">
+        <div class="q"><div class="qq">Dakar → Paris sur Air France, arrivé <strong>4h</strong> en retard. Éligible ? Quel montant ?</div></div>
+        <div class="q"><div class="qq">Le client demande « je dois payer combien tout de suite ? » — que réponds-tu ?</div></div>
+        <div class="q"><div class="qq">Vrai ou faux : « Je peux dire <em>je vous garantis vos 600 €</em>. »</div></div>
+        <div class="q"><div class="qq">Une famille de <strong>3 adultes</strong> sur le même vol retardé (palier 600). Total ?</div></div>
+        <div class="q"><div class="qq">Le client demande de l'aide pour un <strong>divorce</strong>. Que fais-tu ?</div></div>
+        <div class="q"><div class="qq">Le vol date de <strong>6 ans</strong>. Éligible ?</div></div>
+        <div class="q"><div class="qq">En wolof, dis la phrase du « 0 € d'avance ».</div></div>
+        <div class="q"><div class="qq">Quand demandes-tu un avis Google ?</div></div>
+      </div>
+      <details class="ans">
+        <summary>Voir les réponses</summary>
+        <ol>
+          <li><strong>Oui</strong> — retard ≥ 3h + Air France (compagnie UE) ; ~4 200 km = <strong>600 €</strong>.</li>
+          <li>« <strong>Rien.</strong> 0 € d'avance, on prend notre part seulement si on gagne. »</li>
+          <li><strong>Faux</strong> — jamais de garantie. On dit « <strong>potentiellement</strong>, on vérifie ».</li>
+          <li><strong>3 × 600 = 1 800 €.</strong></li>
+          <li>« Ça, ce n'est pas notre domaine, <strong>il faut voir avec un avocat</strong>. » On ne s'en occupe pas.</li>
+          <li><strong>Non</strong> — plus de 5 ans = prescrit.</li>
+          <li>« Doo fey dara ci sa bopp. Bu fekkee danu jot xaalis bi, danu jël 25 %, yaw nga jël 75 %. »</li>
+          <li><strong>Après un échange positif</strong> (ou quand le client est <strong>payé</strong>) — jamais après un refus.</li>
+        </ol>
+      </details>
+    </section>
+
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="next rv">
+      <div class="role">▶ Prochaine étape</div>
+      <h3>Module 2 — Le parcours client de A à Z</h3>
+      <p>Le dépôt WhatsApp, les documents à collecter (billet, passeport, carte d'embarquement), comment vérifier un dossier, et les premières objections difficiles.</p>
+    </div>
+    <div class="ink">Climbié</div>
+    <div class="who">Climbié Kodjo — Fondateur</div>
+    <div class="tiny">Document interne Robin des Airs · Académie · Module 1 — ne pas diffuser aux clients.</div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var els = [].slice.call(document.querySelectorAll('.rv'));
+    function reveal(e){ e.classList.add('in'); }
+    // No animation mode (no .anim class, no IO support) -> everything already visible via CSS default
+    if(!document.documentElement.classList.contains('anim') || !('IntersectionObserver' in window)){
+      els.forEach(reveal); return;
+    }
+    // cover items animate immediately, staggered
+    var cover = document.querySelectorAll('.cover .rv');
+    cover.forEach(function(e,i){ e.style.transitionDelay=(i*70)+'ms'; });
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ cover.forEach(reveal); }); });
+    // sections reveal as they enter the viewport
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ reveal(en.target); io.unobserve(en.target); } });
+    },{rootMargin:'0px 0px -8% 0px', threshold:.06});
+    els.forEach(function(e){ if(!e.closest('.cover')) io.observe(e); });
+    // failsafe: never leave content hidden (headless renderers, hidden tabs, slow JS)
+    setTimeout(function(){ els.forEach(reveal); }, 1500);
+    addEventListener('pageshow', function(){ els.forEach(reveal); });
+  })();
+  // open quiz answers when printing / exporting to PDF
+  addEventListener('beforeprint', function(){ document.querySelectorAll('details.ans').forEach(function(d){ d.open = true; }); });
+</script>
+</body>
+</html>
