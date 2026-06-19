@@ -35,6 +35,7 @@
       </div>
     </div>
 
+    <!-- Étape 1 : saisie -->
     <section class="panel" id="form" aria-labelledby="pTitle">
       <h2 id="pTitle">💸 Où verser votre part&nbsp;?</h2>
       <p class="sub">Recopiez votre IBAN tel qu'il figure sur votre RIB. On vérifie qu'il est valide avant l'envoi.</p>
@@ -42,6 +43,7 @@
       <div class="field">
         <label for="titulaire">Titulaire du compte <span class="opt">(nom et prénom)</span></label>
         <input class="input" id="titulaire" type="text" autocomplete="name" placeholder="Ex. Awa Diop" maxlength="120">
+        <div class="hint idle">Le compte doit être <b>à votre nom</b>.</div>
       </div>
 
       <div class="field">
@@ -50,16 +52,36 @@
         <div class="hint idle" id="ibanHint">Tel qu'il apparaît sur votre relevé bancaire.</div>
       </div>
 
-      <div class="field">
-        <label for="bic">BIC <span class="opt">(facultatif)</span></label>
-        <input class="input mono" id="bic" type="text" autocapitalize="characters" spellcheck="false" placeholder="Ex. BNPAFRPP" maxlength="11">
+      <div class="field" id="bicField">
+        <label for="bic">BIC / SWIFT <span class="opt" id="bicOpt">(facultatif)</span></label>
+        <input class="input mono" id="bic" type="text" autocapitalize="characters" spellcheck="false" placeholder="Ex. BNPAFRPP" maxlength="11" aria-describedby="bicHint">
+        <div class="hint idle" id="bicHint"></div>
       </div>
 
+      <div class="note" id="nonSepaNote" style="display:none">🌍 <b>Compte hors zone euro.</b> Le virement est international : les <b>frais de virement et le change sont à votre charge</b> (déduits de votre part, voir CGV). Le <b>BIC/SWIFT est obligatoire</b>.</div>
+
       <div class="errbox" id="errBox"></div>
-      <button class="btn" id="sendBtn" disabled>Valider mon RIB</button>
+      <button class="btn" id="sendBtn" disabled>Vérifier mon RIB →</button>
       <p class="rgpd"><span>🔒</span><span>Vos coordonnées bancaires sont transmises de façon chiffrée et utilisées <b>uniquement</b> pour vous verser votre indemnité. Jamais revendues, jamais un prélèvement — RGPD.</span></p>
     </section>
 
+    <!-- Étape 2 : confirmation -->
+    <section class="panel" id="review" style="display:none" aria-labelledby="rTitle">
+      <h2 id="rTitle">✅ Vérifiez avant d'envoyer</h2>
+      <p class="sub">C'est sur ce compte qu'on virera votre argent. Un seul caractère faux = virement perdu — relisez bien.</p>
+      <dl class="recap">
+        <div class="row"><dt>Titulaire</dt><dd id="rTit">—</dd></div>
+        <div class="row"><dt>IBAN</dt><dd class="mono" id="rIban">—</dd></div>
+        <div class="row" id="rBicRow" style="display:none"><dt>BIC</dt><dd class="mono" id="rBic">—</dd></div>
+      </dl>
+      <div class="note" id="rSepaNote" style="display:none">🌍 Compte hors zone euro : frais de virement international + change <b>à votre charge</b> (voir CGV).</div>
+      <label class="confirm"><input type="checkbox" id="confirmChk"> <span>Je confirme que ces informations sont exactes et que ce compte est <b>à mon nom</b>.</span></label>
+      <div class="errbox" id="errBox2"></div>
+      <button class="btn" id="confirmBtn" disabled>Confirmer et envoyer</button>
+      <button class="btn-back" id="editBtn" type="button">← Modifier</button>
+    </section>
+
+    <!-- Étape 3 : succès -->
     <section class="panel done" id="doneCard" role="status" aria-live="polite">
       <div class="seal" aria-hidden="true">✓</div>
       <h2>RIB bien reçu, merci&nbsp;!</h2>
@@ -75,12 +97,17 @@
     const REF = (P.get('r') || P.get('ref') || '').trim();
     document.getElementById('refLine').textContent = REF || 'lien invalide';
 
+    // Zone SEPA (codes pays ISO en tête d'IBAN). Hors liste = virement international.
+    const SEPA = new Set(['AD','AT','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','FR','GB','GI','GR','HR','HU','IE','IS','IT','LI','LT','LU','LV','MC','MT','NL','NO','PL','PT','RO','SE','SI','SK','SM','VA']);
+
     const titulaire = document.getElementById('titulaire');
     const ibanEl = document.getElementById('iban');
     const bicEl = document.getElementById('bic');
     const hint = document.getElementById('ibanHint');
+    const bicHint = document.getElementById('bicHint');
+    const bicOpt = document.getElementById('bicOpt');
+    const nonSepaNote = document.getElementById('nonSepaNote');
     const sendBtn = document.getElementById('sendBtn');
-    const errBox = document.getElementById('errBox');
 
     function normIban(raw){ return String(raw||'').toUpperCase().replace(/[^A-Z0-9]/g,''); }
     function validIban(raw){
@@ -94,18 +121,30 @@
       return rem===1;
     }
     function fmtIban(raw){ return normIban(raw).replace(/(.{4})/g,'$1 ').trim(); }
+    function isSepa(raw){ return SEPA.has(normIban(raw).slice(0,2)); }
+    function validBic(raw){ const s=String(raw||'').toUpperCase().replace(/[^A-Z0-9]/g,''); return /^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/.test(s); }
 
     function refresh(){
       const raw = ibanEl.value;
       const s = normIban(raw);
       const ok = validIban(raw);
+      const sepa = isSepa(raw);
+      const bicOk = validBic(bicEl.value);
       ibanEl.classList.toggle('ok', ok);
       ibanEl.classList.toggle('bad', s.length >= 15 && !ok);
       if (!s){ hint.className='hint idle'; hint.textContent="Tel qu'il apparaît sur votre relevé bancaire."; }
       else if (ok){ hint.className='hint ok'; hint.textContent='✓ IBAN valide'; }
       else if (s.length < 15){ hint.className='hint idle'; hint.textContent='Continuez la saisie…'; }
       else { hint.className='hint bad'; hint.textContent='IBAN incorrect — vérifiez chaque caractère.'; }
-      sendBtn.disabled = !(REF && ok && titulaire.value.trim().length >= 2);
+
+      // BIC obligatoire si IBAN valide et HORS SEPA
+      const bicRequired = ok && !sepa;
+      nonSepaNote.style.display = bicRequired ? 'block' : 'none';
+      bicOpt.textContent = bicRequired ? '(obligatoire)' : '(facultatif)';
+      if (bicRequired && bicEl.value && !bicOk){ bicEl.classList.add('bad'); bicHint.className='hint bad'; bicHint.textContent='BIC invalide (8 ou 11 caractères).'; }
+      else { bicEl.classList.remove('bad'); bicHint.className='hint idle'; bicHint.textContent=''; }
+
+      sendBtn.disabled = !(REF && ok && titulaire.value.trim().length >= 2 && (!bicRequired || bicOk));
     }
 
     ibanEl.addEventListener('input', () => {
@@ -115,13 +154,39 @@
       refresh();
     });
     titulaire.addEventListener('input', refresh);
-    bicEl.addEventListener('input', () => { bicEl.value = bicEl.value.toUpperCase().replace(/[^A-Z0-9]/g,''); });
+    bicEl.addEventListener('input', () => { bicEl.value = bicEl.value.toUpperCase().replace(/[^A-Z0-9]/g,''); refresh(); });
 
-    function showErr(m){ errBox.style.display='block'; errBox.textContent = m; }
+    function showErr(box, m){ box.style.display='block'; box.textContent = m; }
 
-    sendBtn.addEventListener('click', async () => {
-      if (!REF) { showErr('Référence de dossier manquante dans le lien.'); return; }
-      sendBtn.disabled = true; const lbl = sendBtn.textContent; sendBtn.textContent = 'Envoi en cours…'; errBox.style.display='none';
+    // Étape 1 → 2 : écran de confirmation (pas d'envoi encore)
+    const review = document.getElementById('review');
+    const form = document.getElementById('form');
+    const confirmChk = document.getElementById('confirmChk');
+    const confirmBtn = document.getElementById('confirmBtn');
+    const errBox2 = document.getElementById('errBox2');
+
+    sendBtn.addEventListener('click', () => {
+      if (sendBtn.disabled) return;
+      document.getElementById('rTit').textContent = titulaire.value.trim();
+      document.getElementById('rIban').textContent = fmtIban(ibanEl.value);
+      const hasBic = bicEl.value.trim().length >= 8;
+      document.getElementById('rBicRow').style.display = hasBic ? 'flex' : 'none';
+      if (hasBic) document.getElementById('rBic').textContent = bicEl.value.trim();
+      document.getElementById('rSepaNote').style.display = (validIban(ibanEl.value) && !isSepa(ibanEl.value)) ? 'block' : 'none';
+      confirmChk.checked = false; confirmBtn.disabled = true; errBox2.style.display='none';
+      form.style.display='none'; review.style.display='block';
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+    document.getElementById('editBtn').addEventListener('click', () => {
+      review.style.display='none'; form.style.display='block';
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+    confirmChk.addEventListener('change', () => { confirmBtn.disabled = !confirmChk.checked; });
+
+    // Étape 2 → envoi réel
+    confirmBtn.addEventListener('click', async () => {
+      if (confirmBtn.disabled) return;
+      confirmBtn.disabled = true; const lbl = confirmBtn.textContent; confirmBtn.textContent = 'Envoi en cours…'; errBox2.style.display='none';
       try {
         const r = await fetch('/api/rib-submit', {
           method:'POST', headers:{'Content-Type':'application/json'},
@@ -130,16 +195,16 @@
         const j = await r.json().catch(() => ({}));
         if (r.ok && j.ok) {
           document.getElementById('doneIban').textContent = j.iban_masque || fmtIban(ibanEl.value);
-          document.getElementById('form').style.display='none';
+          review.style.display='none';
           document.getElementById('doneCard').style.display='block';
           window.scrollTo({top:0,behavior:'smooth'});
         } else {
-          showErr(j.error || "Échec de l'envoi, réessayez.");
-          sendBtn.disabled = false; sendBtn.textContent = lbl;
+          showErr(errBox2, j.error || "Échec de l'envoi, réessayez.");
+          confirmBtn.disabled = false; confirmBtn.textContent = lbl;
         }
       } catch (e) {
-        showErr('Erreur réseau, réessayez.');
-        sendBtn.disabled = false; sendBtn.textContent = 'Réessayer';
+        showErr(errBox2, 'Erreur réseau, réessayez.');
+        confirmBtn.disabled = false; confirmBtn.textContent = 'Réessayer';
       }
     });
 
