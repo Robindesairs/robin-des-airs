@@ -15,6 +15,10 @@ faq:
 
 Brussels Airlines est la compagnie nationale belge, membre du groupe Lufthansa (Star Alliance). Elle opère le réseau africain le plus dense au départ de Bruxelles (BRU) : Congo-Kinshasa, Lagos, Abidjan, Dakar, Accra, Lomé, Douala, Nairobi, Entebbe… C'est la porte d'entrée de l'Europe pour une large partie de la diaspora congolaise, ivoirienne et ouest-africaine.
 
+## Brussels Airlines annule beaucoup de vols
+
+Brussels Airlines affiche l'un des taux d'annulation les plus élevés d'Europe : **plus de 7% de ses vols internationaux sont annulés** sur une journée type. La ligne Dakar-Bruxelles (SN206) est régulièrement touchée, tout comme les routes vers Kinshasa et Lagos. Ces annulations génèrent des droits à indemnité — souvent ignorés parce que la compagnie ne les communique pas spontanément.
+
 ## Compagnie belge = UE = toujours éligible dans les deux sens
 
 Brussels Airlines étant enregistrée en Belgique, **tous ses vols sont couverts** par le CE 261/2004 — aller comme retour :
