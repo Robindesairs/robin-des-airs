@@ -1,18 +1,21 @@
 /**
  * lib/dossier-state.js — Machine à états AVAL des dossiers (P0-3).
  *
- * Source de vérité UNIQUE et DÉTERMINISTE du cycle de vie post-mandat :
- *   MANDAT_SIGNE → (mise en demeure) → LRAR_ENVOYEE → RELANCE_1 (J+15) →
- *   RELANCE_2 (J+30) → MEDIATION (J+62) → CONTENTIEUX … PAYE
+ * Source de vérité UNIQUE et DÉTERMINISTE du cycle de vie post-mandat
+ * (cadence amiable-first, décidée 19/06/2026) :
+ *   MANDAT_SIGNE → (réclamation amiable) → RECLAMATION_ENVOYEE →
+ *   RELANCE_1 (J+30) → (mise en demeure AR24) LRAR_ENVOYEE (J+45) →
+ *   MEDIATION (J+15 après LRAR ≈ J+60) → CONTENTIEUX (J+90) … PAYE
  *
  * Lib PURE : aucun I/O, aucun effet de bord. Réutilisable par :
  *   - le futur cron de relances (file « actions dues »),
  *   - generate-claim.js (statut attendu),
  *   - le CRM (mêmes jalons que renderJalons côté client).
  *
- * Les offsets relances sont comptés en jours À PARTIR DE LA DATE LRAR (envoi de
- * la mise en demeure), alignés sur crm/index.html (J+15 / J+30 / J+62) et sur
- * l'enum crm-airtable-map.js.
+ * Ancrage des offsets : 'reclam' (date réclamation) pour relance/mise en demeure,
+ * 'lrar' (date mise en demeure) pour la médiation.
+ * ⚠️ À RÉALIGNER quand l'aval sera branché : crm/index.html (jalons J+15/J+30/J+62
+ * hérités de l'ancienne cadence) + crm-airtable-map.js (ajouter RECLAMATION_ENVOYEE).
  */
 
 'use strict';
@@ -23,9 +26,10 @@ const STATUTS = {
   ELIGIBLE: 'ELIGIBLE',
   SIGNATURE_ATTENTE: 'SIGNATURE_ATTENTE', // amont : aucune action AVAL (pas dans SCHEDULE)
   MANDAT_SIGNE: 'MANDAT_SIGNE',
-  LRAR_ENVOYEE: 'LRAR_ENVOYEE',
-  RELANCE_1: 'RELANCE_1',
-  RELANCE_2: 'RELANCE_2',
+  RECLAMATION_ENVOYEE: 'RECLAMATION_ENVOYEE', // réclamation amiable (gratuite) envoyée à la compagnie
+  LRAR_ENVOYEE: 'LRAR_ENVOYEE',               // = mise en demeure (AR24) envoyée
+  RELANCE_1: 'RELANCE_1',                      // relance gratuite après la réclamation
+  RELANCE_2: 'RELANCE_2',                      // conservé (compat) — plus utilisé dans la nouvelle cadence
   MEDIATION: 'MEDIATION',
   CONTENTIEUX: 'CONTENTIEUX',
   PAYE: 'PAYE',
@@ -44,42 +48,48 @@ const TERMINAL = new Set([
 ]);
 
 /**
- * Plan des transitions automatiques.
- * - offsetFromLrar : jours après la date LRAR où l'action est due (null = due immédiatement).
- * - next : statut cible une fois l'action effectuée.
- * - kind : type d'action (pour router l'automate / l'UI).
+ * Plan des transitions automatiques (cadence amiable-first, décidée 19/06/2026).
+ *   MANDAT_SIGNE →(immédiat) réclamation amiable→ RECLAMATION_ENVOYEE
+ *   →(J+30 réclam) relance gratuite→ RELANCE_1
+ *   →(J+45 réclam) MISE EN DEMEURE (AR24)→ LRAR_ENVOYEE
+ *   →(J+15 LRAR ≈ J+60) médiation / NEB→ MEDIATION →(manuel) CONTENTIEUX
+ * - anchor : 'reclam' (date réclamation) ou 'lrar' (date mise en demeure) ; absent = immédiat.
+ * - offset : jours après la date d'ancrage où l'action est due.
+ * - next : statut cible une fois l'action effectuée. - kind : type d'action (route automate/UI).
+ * Pourquoi amiable d'abord : moins cher (le recommandé payant ne part que sur les dossiers qui
+ * résistent), non agressif, et les médiateurs/NEB EXIGENT une tentative amiable préalable.
+ * Prescription 5 ans → le délai n'est pas un risque.
  */
 const SCHEDULE = {
   [STATUTS.MANDAT_SIGNE]: {
-    kind: 'send_med',
-    label: 'Générer et envoyer la mise en demeure',
-    next: STATUTS.LRAR_ENVOYEE,
-    offsetFromLrar: null,        // due dès le mandat signé (pas de date LRAR encore)
-    immediate: true,
+    kind: 'send_reclamation',
+    label: 'Envoyer la réclamation amiable à la compagnie',
+    next: STATUTS.RECLAMATION_ENVOYEE,
+    immediate: true,             // dès le mandat signé
   },
-  [STATUTS.LRAR_ENVOYEE]: {
-    kind: 'relance_1',
-    label: 'Relance 1 (J+15)',
+  [STATUTS.RECLAMATION_ENVOYEE]: {
+    kind: 'relance_compagnie',
+    label: 'Relance gratuite (J+30)',
     next: STATUTS.RELANCE_1,
-    offsetFromLrar: 15,
+    anchor: 'reclam', offset: 30,
   },
   [STATUTS.RELANCE_1]: {
-    kind: 'relance_2',
-    label: 'Relance 2 (J+30)',
-    next: STATUTS.RELANCE_2,
-    offsetFromLrar: 30,
+    kind: 'send_med',
+    label: 'Mise en demeure — AR24 (J+45)',
+    next: STATUTS.LRAR_ENVOYEE,
+    anchor: 'reclam', offset: 45,
   },
-  [STATUTS.RELANCE_2]: {
+  [STATUTS.LRAR_ENVOYEE]: {
     kind: 'mediation',
-    label: 'Médiation / saisine NEB (J+62)',
+    label: 'Médiation / saisine NEB (J+15 après la mise en demeure)',
     next: STATUTS.MEDIATION,
-    offsetFromLrar: 62,
+    anchor: 'lrar', offset: 15,
   },
   [STATUTS.MEDIATION]: {
     kind: 'mediation_followup',
     label: 'Suivi médiation — décision go/no-go contentieux',
     next: STATUTS.CONTENTIEUX,
-    offsetFromLrar: 62,          // référence ; pas d'auto-avancement (humain décide)
+    anchor: 'lrar', offset: 15,  // référence ; pas d'auto-avancement (humain décide)
     manual: true,
   },
 };
@@ -156,6 +166,7 @@ function isTerminal(statut) {
 function nextAction(dossier, nowIso) {
   const statut = (dossier && dossier.statut) || '';
   const lrar = (dossier && dossier.lrar) || null;
+  const reclam = (dossier && dossier.reclam) || null;
   const now = nowYmd(nowIso);
 
   const base = {
@@ -182,8 +193,8 @@ function nextAction(dossier, nowIso) {
   base.nextStatut = plan.next;
   base.manual = !!plan.manual;
 
-  // Action due immédiatement (ex. envoyer la mise en demeure dès mandat signé)
-  if (plan.immediate || plan.offsetFromLrar == null) {
+  // Action due immédiatement (ex. envoyer la réclamation dès mandat signé)
+  if (plan.immediate || plan.offset == null) {
     base.dueDate = null;
     base.overdue = true;       // à traiter sans attendre
     base.daysUntilDue = 0;
@@ -191,14 +202,15 @@ function nextAction(dossier, nowIso) {
     return base;
   }
 
-  // Actions relances : nécessitent la date LRAR
-  if (!lrar) {
-    base.needsLrarDate = true;
-    base.actionable = false;   // impossible de planifier sans date d'envoi
+  // Actions planifiées : ancrées sur la date de réclamation OU de mise en demeure (LRAR)
+  const anchorDate = plan.anchor === 'lrar' ? lrar : reclam;
+  if (!anchorDate) {
+    base.needsLrarDate = true;   // nom conservé (compat) = « date d'ancrage manquante »
+    base.actionable = false;     // impossible de planifier sans date d'ancrage
     return base;
   }
 
-  base.dueDate = addDays(lrar, plan.offsetFromLrar);
+  base.dueDate = addDays(anchorDate, plan.offset);
   base.daysUntilDue = diffDays(now, base.dueDate); // négatif = en retard
   base.overdue = base.daysUntilDue != null && base.daysUntilDue <= 0;
   base.actionable = !plan.manual && base.overdue;
@@ -237,10 +249,9 @@ function advance(dossier, nowIso) {
   const a = nextAction(dossier, now);
   if (!a.nextStatut || a.manual) return null;
   const patch = { statut: a.nextStatut, date_statut: now };
-  // Au passage à LRAR_ENVOYEE, fixer la date LRAR si absente (= date d'envoi)
-  if (a.nextStatut === STATUTS.LRAR_ENVOYEE && !(dossier && dossier.lrar)) {
-    patch.lrar = now;
-  }
+  // Au passage à RECLAMATION_ENVOYEE → date réclamation ; à LRAR_ENVOYEE → date mise en demeure.
+  if (a.nextStatut === STATUTS.RECLAMATION_ENVOYEE && !(dossier && dossier.reclam)) patch.reclam = now;
+  if (a.nextStatut === STATUTS.LRAR_ENVOYEE && !(dossier && dossier.lrar)) patch.lrar = now;
   return patch;
 }
 

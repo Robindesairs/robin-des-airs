@@ -91,7 +91,7 @@ Ouvrir le dossier (réf. `RDA-…`) et repérer :
    - Un dossier `hors_champ` ou `sous_seuil` : le dire franchement, proposer la vérification gratuite, **ne pas annoncer un montant ferme**.
 
 5. **Transparence du suivi** — antidote au silence.
-   - Annoncer les étapes : *« on envoie la mise en demeure, la compagnie a ~2 mois pour répondre, on vous tient au courant, vous n'avez rien à faire. »*
+   - Annoncer les étapes : *« on envoie d'abord la réclamation à la compagnie ; si elle ne répond pas, on passe à la mise en demeure puis au médiateur. Ça peut prendre quelques mois, on vous tient au courant à chaque étape, et vous n'avez rien à faire. »*
 
 6. **Option agence physique** — pour les clients méfiants ou peu à l'aise.
    - *« Si vous préférez être accompagné en personne, on a une agence partenaire près de chez vous ; la commission y est de 30 % au lieu de 25 %. »*

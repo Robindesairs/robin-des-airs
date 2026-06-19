@@ -301,9 +301,9 @@
 1. **Qualification** (le bot WhatsApp ou vous) : vol, date, incident, nombre de passagers.
 2. **Mandat signé** : le client nous autorise à agir en son nom (signature électronique, valeur légale eIDAS).
 3. **Appel de confirmation** (VOUS) : vérifier, rassurer, compléter (voir Module 8).
-4. **Mise en demeure** : lettre officielle envoyée à la compagnie en son nom.
-5. **Réponse / relances** : la compagnie a ~2 mois ; on relance.
-6. **Escalade** si besoin : médiation, puis procédure judiciaire (à nos frais).
+4. **Réclamation amiable** : 1ère demande envoyée à la compagnie (gratuite). Beaucoup de dossiers se règlent dès là.
+5. **Relance puis mise en demeure** : sans réponse, relance gratuite à ~J+30, puis **mise en demeure** (lettre officielle/AR24) à ~J+45.
+6. **Escalade** si besoin : médiation (~2 semaines après la mise en demeure), puis procédure judiciaire si c'est rentable (à nos frais).
 7. **Paiement** : on encaisse, on prélève 25 %, on reverse le net au client (souvent **Mobile Money** : Wave, Orange Money, MoMo).
 
 **Le mandat — ce qu'il dit (à savoir expliquer simplement) :**
@@ -323,9 +323,9 @@
 1. **Qualification** (WhatsApp bot or you): flight, date, incident, number of passengers.
 2. **Signed mandate:** the client authorises us to act in their name (e-signature, legally valid under eIDAS).
 3. **Confirmation call (YOU):** verify, reassure, complete (see Module 8).
-4. **Formal notice (mise en demeure):** official letter sent to the airline in their name.
-5. **Response / follow-ups:** the airline has ~2 months; we chase.
-6. **Escalation** if needed: mediation, then court (at our expense).
+4. **Amicable claim:** first request sent to the airline (free). Many cases settle right here.
+5. **Follow-up then formal notice:** if no reply, a free reminder at ~D+30, then a **formal notice (mise en demeure)** at ~D+45.
+6. **Escalation** if needed: mediation (~2 weeks after the formal notice), then court if worthwhile (at our expense).
 7. **Payment:** we collect, take 25%, pay the net to the client (often **Mobile Money**: Wave, Orange Money, MoMo).
 
 **The mandate — what it says (explain it simply):**
