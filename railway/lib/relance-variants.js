@@ -130,7 +130,7 @@ const RV = {
   "Merci {NOM}, c'est bon : votre dossier {REF} est complet. On prend le relais à partir de maintenant. On va réclamer jusqu'à {TOTAL} pour vous, et s'il n'y a rien à la fin, vous ne payez rien. On s'occupe de tout.",
   "C'est noté {NOM}. On a bien reçu toutes vos pièces pour le dossier {REF}. On lance la démarche auprès de la compagnie, pour un montant qui peut aller jusqu'à {TOTAL}. Je vous tiens au courant à chaque étape.",
   "Votre dossier {REF} est complet, {NOM}. Vous pouvez souffler, le plus pénible est derrière vous. On s'occupe de réclamer jusqu'à {TOTAL} en votre nom. Et pour rappel : si on ne gagne pas, vous ne payez rien.",
-  "Parfait {NOM}, on a tout ce qu'il faut. Votre dossier {REF} passe maintenant entre nos mains. On part réclamer jusqu'à {TOTAL}. Dès qu'on a du nouveau, je reviens vers vous.",
+  "Bien reçu {NOM}, on a tout ce qu'il faut. Votre dossier {REF} passe maintenant entre nos mains. On part réclamer jusqu'à {TOTAL}. Dès qu'on a du nouveau, je reviens vers vous.",
   "Merci de votre confiance, {NOM}. Le dossier {REF} est complet, on prend la suite. Vous pourriez toucher jusqu'à {TOTAL}, et vous n'avez aucune avance à faire : si on ne gagne pas, c'est 0€.",
   "Tout est en ordre {NOM}. Vos documents pour le dossier {REF} sont validés. On engage la procédure pour un montant qui peut atteindre {TOTAL}. À partir de là, on défend vos droits à votre place.",
   "C'est confirmé {NOM}, on a tout reçu. Le dossier {REF} est entre nos mains. On lance la réclamation auprès de la compagnie, pour un montant qui peut aller jusqu'à {TOTAL}. Je vous préviens à chaque avancée.",

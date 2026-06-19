@@ -122,7 +122,7 @@ const VARIANTS = {
 
   // Confirmation après scan réussi du billet
   SCAN_REUSSI: [
-    `Parfait, j'ai tout ce qu'il me faut. On gagne du temps — et franchement, vous en avez déjà perdu assez. 🙏`,
+    `Voilà, j'ai tout ce qu'il me faut. On gagne du temps — et franchement, vous en avez déjà perdu assez. 🙏`,
     `Votre billet est entre de bonnes mains. J'ai tout, on démarre. 📋`,
     `Bonne nouvelle : tout est là. J'ai lu votre billet directement — zéro dictée, zéro ressaisie. 👌`,
     `Un scan et c'est bon. Vous n'avez rien à me dicter — je pars avec ce que j'ai. ✅`,

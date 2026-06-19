@@ -698,6 +698,8 @@ const IATA_CITY = {
   SEZ:'Mahé (Seychelles)', PRI:'Praslin',
 };
 function iataLabel(code) { return IATA_CITY[String(code || '').toUpperCase()] || code; }
+// Remplace les codes IATA 3 lettres d'une route texte par les noms de ville (« DSS → CDG » → « Dakar → Paris »).
+function humanizeRoute(r) { return r ? String(r).replace(/\b([A-Z]{3})\b/g, (m) => iataLabel(m)) : r; }
 
 // Villes proposées en liste cliquable (max 9 + « Autre » : WhatsApp plafonne à 10 lignes).
 // Départ/arrivée = corridor Afrique ↔ Europe (campagnes Dakar/Abidjan, diaspora FR/BE) ; escale = hubs.
@@ -845,7 +847,7 @@ function applyEticket(s, e) {
   if (e.compagnie && !s.compagnie) s.compagnie = e.compagnie;
   if (e.date && !s.date) s.date = e.date;
   if (e.pnr && !s.pnr) s.pnr = e.pnr;
-  if (e.route && !s.route) s.route = e.route;
+  if (e.route && !s.route) s.route = humanizeRoute(e.route);
   if (e.escale && !s.type_vol) s.type_vol = 'escale';
   if (e.segments && e.segments.length > 1 && !(s.legs && s.legs.length)) s.legs = e.segments.map((x) => ({ vol: x.vol, dep: x.depart, arr: x.arrivee, date: x.date || '' }));
   if (e.passengers && e.passengers.length) {
@@ -869,7 +871,7 @@ function setEticketFields(s, e) {
   if (e.compagnie) s.compagnie = e.compagnie;
   if (e.date) s.date = e.date;
   if (e.pnr) s.pnr = e.pnr;
-  if (e.route) s.route = e.route;
+  if (e.route) s.route = humanizeRoute(e.route);
   if (e.escale) s.type_vol = s.type_vol || 'escale';
   if (e.segments && e.segments.length > 1) s.legs = e.segments.map((x) => ({ vol: x.vol, dep: x.depart, arr: x.arrivee, date: x.date || '' }));
   if (e.passengers && e.passengers.length) {
@@ -893,7 +895,7 @@ function applyTrajet(s, t) {
   if (!t) return;
   if (t.vol) s.vol = t.vol;
   if (t.date) s.date = t.date;
-  if (t.route) s.route = t.route;
+  if (t.route) s.route = humanizeRoute(t.route);
   s.type_vol = t.escale ? 'escale' : 'direct';
   if (t.segments && t.segments.length > 1) s.legs = t.segments.map((x) => ({ vol: x.vol, dep: x.depart, arr: x.arrivee, date: x.date || '' }));
   else delete s.legs;
@@ -916,7 +918,7 @@ async function scanConfirmCard(phone, s, cfg) {
 async function askSens(phone, s, cfg) {
   s.step = 'scan_sens'; await setState(phone, s);
   const t = s.trajets || []; const a = t[0] || {}, r = t[1] || {};
-  return sendButtons(phone, { body: `📑 Votre billet contient un *aller* et un *retour*.\nQuel vol a connu le problème (retard / annulation) ?\n\n🛫 *Aller* — ${a.route || '—'}${a.date ? ` · ${a.date}` : ''}\n🛬 *Retour* — ${r.route || '—'}${r.date ? ` · ${r.date}` : ''}`, buttons: [{ id: 'sens_aller', text: '🛫 L\'aller' }, { id: 'sens_retour', text: '🛬 Le retour' }] }, cfg);
+  return sendButtons(phone, { body: `📑 Votre billet contient un *aller* et un *retour*.\nQuel vol a connu le problème (retard / annulation) ?\n\n🛫 *Aller* — ${humanizeRoute(a.route) || '—'}${a.date ? ` · ${a.date}` : ''}\n🛬 *Retour* — ${humanizeRoute(r.route) || '—'}${r.date ? ` · ${r.date}` : ''}`, buttons: [{ id: 'sens_aller', text: '🛫 L\'aller' }, { id: 'sens_retour', text: '🛬 Le retour' }] }, cfg);
 }
 // OCR passeport / CNI : lit nom + prénom + date de naissance (la magie aussi sur le passeport).
 async function ocrPassport(mediaUrl, cfg) {
@@ -1095,7 +1097,7 @@ function missingDocsText(s) {
   if (miss.length) return `📎 Il manque encore : ${miss.join(' et ')}.`;
   const v = s.flightVerdict;
   if (v === 'hors_champ' || v === 'sous_seuil') return `✅ Toutes vos pièces sont là, merci ${firstNameOf(s)} ! Le dossier ${s.ref || ''} est complet. Un expert confirme le *montant exact* (vérification gratuite) et on lance la réclamation — 0 € si on ne gagne pas.`;
-  return fillTpl(pickRV(s.ref || '', 'DOC_COMPLET'), { REF: s.ref || '', TOTAL: montantReel(s) + ' €', NOM: firstNameOf(s) }) || `🎉 Toutes vos pièces sont là, merci ! Notre équipe prend le relais.`;
+  return fillTpl(pickRV(s.ref || '', 'DOC_COMPLET'), { REF: s.ref || '', TOTAL: montantReel(s) + ' €', NOM: firstNameOf(s) }) || `✅ Toutes vos pièces sont là, merci ! Notre équipe prend le relais.`;
 }
 
 // Pièce expirée (date d'expiration passée) ?
@@ -1318,7 +1320,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (id === 'pieces_ok' || lower.includes('tout envoyé') || lower.includes('tout envoye')) {
     const _k = leadKey(phone); const _l = LEADS.get(_k); if (_l) { _l.piecesPending = false; _l.lastClientAt = Date.now(); LEADS.set(_k, _l); persistLeads(); }
     notifyOwnerWhatsApp(phone, `📎 « Déjà tout envoyé » déclaré (${(_l && _l.ref) || phone}) → rappel pièces STOPPÉ. ⚠️ À VÉRIFIER côté bureau : confirmer que CNI + preuve de voyage par passager sont bien là.`).catch(() => {});
-    return send(phone, `Parfait, merci ! 🙏 On vérifie de notre côté que tout est complet. S'il manquait quoi que ce soit, un conseiller vous le dira — sinon votre dossier suit son cours. ✅`, cfg);
+    return send(phone, `C'est noté, merci ! 🙏 On vérifie de notre côté que tout est complet. S'il manquait quoi que ce soit, un conseiller vous le dira — sinon votre dossier suit son cours. ✅`, cfg);
   }
 
   // « Déposer mes pièces » (bouton du rappel pièces) : on renvoie le lien sécurisé.
@@ -1327,7 +1329,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const _ref = _l.ref || (s && s.ref) || '';
     const _url = 'https://robindesairs.eu/depot-en-ligne.html?r=' + encodeURIComponent(_ref);
     upsertLead(phone, { lastClientAt: Date.now() });
-    return send(phone, `📎 Parfait. Déposez vos pièces (*pièce d'identité* + *carte d'embarquement* ou *e-billet*) en toute sécurité ici 👇\n${_url}\n\nVous pouvez aussi *m'envoyer les photos directement ici*. 🙏`, cfg);
+    return send(phone, `📎 Très bien. Déposez vos pièces (*pièce d'identité* + *carte d'embarquement* ou *e-billet*) en toute sécurité ici 👇\n${_url}\n\nVous pouvez aussi *m'envoyer les photos directement ici*. 🙏`, cfg);
   }
 
   // T1.3 — « Plus tard » : le client veut reprendre plus tard. Son tap a déjà rouvert la fenêtre 24h (gratuit) ;
@@ -1489,7 +1491,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     else return sendButtons(phone, { body: `${bar('type_vol')}\n✈️ Vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg);
     s.step = 'scan'; await setState(phone, s);
     // Un seul message (motivation + scan) → réponse immédiate, pas de délai où les taps s'entrecroisent.
-    return sendButtons(phone, { body: `${bar('scan')}\n💰 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (*${montantNet(s.pax)} € nets*, 75 %). Robin prélève 25 % *uniquement* si vous gagnez.\n\nEnvoyez une *photo* de votre carte d'embarquement ou e-billet — je lis le vol automatiquement.${s.pax > 1 ? `\n(une carte suffit pour le vol)` : ''}\n_Votre mandat et le dossier pour la compagnie sont prêts plus vite._\n\n📎 *Envoyez la photo*, ou choisissez ci-dessous`, buttons: [{ id: 'scan_photo', text: '📸 Envoyer une photo' }, { id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
+    return sendButtons(phone, { body: `${bar('scan')}\n💰 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (*${montantNet(s.pax)} € nets*, 75 %). Robin prélève 25 % *uniquement* si vous gagnez.\n\nEnvoyez une *photo* de votre carte d'embarquement ou e-billet — je lis le vol automatiquement.${s.pax > 1 ? `\n(une carte suffit pour le vol)` : ''}\n_Votre mandat et le dossier pour la compagnie sont prêts plus vite._\n_🔒 Document lu par un outil automatique (IA) pour pré-remplir votre dossier — voir robindesairs.eu/politique-confidentialite._\n\n📎 *Envoyez la photo*, ou choisissez ci-dessous`, buttons: [{ id: 'scan_photo', text: '📸 Envoyer une photo' }, { id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
   }
   // ── Correspondance « rapide » (raccourci bandeau) : vol déjà connu, on demande juste s'il y en avait un autre ──
   if (s.step === 'q_corr') {
@@ -2333,7 +2335,7 @@ async function applyFlightVerdict(phone, s, cfg) {
   if (v.verdict === 'eligible') {
     s.perPax = (v.perPax && v.perPax > 0) ? v.perPax : 600;
     await setState(phone, s);
-    return send(phone, `✅ *Bonne nouvelle !* ${v.proofLine || 'Votre vol est éligible.'}\nVous pouvez prétendre à *${montantReel(s)} €*${claimablePax(s) > 1 ? ` au total (${claimablePax(s)} passagers)` : ''} — soit *${montantNetReel(s)} € nets* pour vous. 🎉`, cfg);
+    return send(phone, `✅ *Bonne nouvelle !* ${v.proofLine || 'Votre vol est éligible.'}\nVous pouvez prétendre à *${montantReel(s)} €*${claimablePax(s) > 1 ? ` au total (${claimablePax(s)} passagers)` : ''} — soit *${montantNetReel(s)} € nets* pour vous.`, cfg);
   }
   s.perPax = 0; // sortie douce : pas de montant ferme affiché
   await setState(phone, s);
@@ -2425,7 +2427,7 @@ async function askAddressOrFinalize(phone, s, cfg) {
   s.step = 'doc_adresse'; await setState(phone, s);
   return send(phone, `📍 *Dernière question !* Votre *adresse postale complète* ? _(numéro, rue, code postal, ville, pays)_\nC'est l'adresse qui figure sur le mandat, où la compagnie doit vous répondre.`, cfg);
 }
-async function gotoBoarding(phone, s, cfg) { s.step = 'doc_boarding'; await setState(phone, s); return send(phone, `🎫 Carte d'embarquement\nEnvoyez-en une photo pour le vol concerné.\n📧 Pas de carte ? Un e-billet, une confirmation de réservation ou une étiquette de bagage fonctionnent aussi.\n✏️ *passer* · 📞 *appel* si tout perdu, on trouve une solution.`, cfg); }
+async function gotoBoarding(phone, s, cfg) { s.step = 'doc_boarding'; await setState(phone, s); return send(phone, `🎫 Carte d'embarquement\nEnvoyez-en une photo pour le vol concerné.\n📧 Pas de carte ? Un e-billet, une confirmation de réservation ou une étiquette de bagage fonctionnent aussi.\n_🔒 Lu par un outil automatique (IA) pour pré-remplir votre dossier — voir robindesairs.eu/politique-confidentialite._\n✏️ *passer* · 📞 *appel* si tout perdu, on trouve une solution.`, cfg); }
 async function gotoEticket(phone, s, cfg) { s.step = 'doc_eticket'; await setState(phone, s); return send(phone, `📧 Confirmation de réservation (e-billet)\nEnvoyez une capture (pensez aux spams / appli Booking).\n✏️ *passer* · 📞 *appel*.`, cfg); }
 async function gotoCert(phone, s, cfg) { s.step = 'doc_cert'; await setState(phone, s); return send(phone, `📄 Certificat de retard/annulation (optionnel)\nSi la compagnie vous en a remis un, envoyez-le.\n✏️ Tapez *passer* si vous n'en avez pas (cas fréquent).`, cfg); }
 
@@ -2489,7 +2491,7 @@ async function finaliser(phone, s, cfg) {
 const FRAIS_BTNS = [{ id: 'frais_oui', text: '📷 Envoyer reçus' }, { id: 'frais_non', text: '❌ Pas de frais' }];
 async function sendFraisRequest(phone, s, cfg) {
   s.step = 'frais'; s.fraisAsked = true; await setState(phone, s);
-  return sendButtons(phone, { body: `💶 *Une dernière chose qui peut vous rapporter plus*\n\nEn plus de votre indemnité, la compagnie doit aussi *rembourser les frais* que ce vol vous a coûtés : hôtel, repas, taxi/transport, billet de remplacement, appels… 📲\n\nOn envoie votre réclamation *sous 24 h* — pour qu'on *joigne vos reçus dès le 1er envoi*, envoyez-les aujourd'hui. Reçu plus tard ? Aucun souci, on les réclame en complément. 🤝\n\n👉 *Une photo de chaque reçu suffit* (frais raisonnables, un justificatif par dépense).`, buttons: FRAIS_BTNS }, cfg);
+  return sendButtons(phone, { body: `💶 *Une dernière chose qui peut vous rapporter plus*\n\nEn plus de votre indemnité, la compagnie doit aussi *rembourser les frais* que ce vol vous a coûtés : hôtel, repas, taxi/transport, billet de remplacement, appels… 📲\n\nOn envoie votre réclamation *sous 24 h* — pour qu'on *joigne vos reçus dès le 1er envoi*, envoyez-les aujourd'hui. Reçu plus tard ? Aucun souci, on les réclame en complément. 🤝\n\n👉 *Une photo de chaque reçu suffit* (frais raisonnables, un justificatif par dépense).\n_🔒 Reçu lu par un outil automatique (IA) pour votre dossier — voir robindesairs.eu/politique-confidentialite._`, buttons: FRAIS_BTNS }, cfg);
 }
 // Déclenché par le webhook de signature — best-effort : n'impacte JAMAIS la réponse webhook.
 async function triggerFraisCollection(lead) {
@@ -2889,7 +2891,7 @@ async function runRelances() {
           if (sp && docsStatus(sp).complete) { lead.piecesPending = false; LEADS.set(k, lead); persistLeads(); continue; } // complété entre-temps (canal bot) → rien
           const url = 'https://robindesairs.eu/depot-en-ligne.html?r=' + encodeURIComponent(lead.ref || '');
           const nm = lead.name ? ' ' + String(lead.name).split(/\s+/)[0] : '';
-          const txt = `📎 Petit point sur votre dossier ${lead.ref || ''}${nm ? ',' + nm : ''}.\n\nPour qu'on lance la réclamation au plus vite, il nous faut, *pour chaque passager* : une *pièce d'identité* et votre *carte d'embarquement* (ou *e-billet*).\n\nVous nous avez *déjà tout envoyé* ? Parfait — dites-le-nous d'un tap, on vérifie de notre côté. Sinon, déposez vos pièces ici 👇\n${url}`;
+          const txt = `📎 Petit point sur votre dossier ${lead.ref || ''}${nm ? ',' + nm : ''}.\n\nPour qu'on lance la réclamation au plus vite, il nous faut, *pour chaque passager* : une *pièce d'identité* et votre *carte d'embarquement* (ou *e-billet*).\n\nVous nous avez *déjà tout envoyé* ? Très bien — dites-le-nous d'un tap, on vérifie de notre côté. Sinon, déposez vos pièces ici 👇\n${url}`;
           try { await sendButtons(lead.phone, { body: txt, buttons: [{ id: 'pieces_ok', text: '✅ J\'ai déjà tout envoyé' }, { id: 'depot', text: '📎 Déposer mes pièces' }] }, cfg); console.log('relance pieces -> ' + (lead.ref || lead.phone)); } catch (_) {}
           lead.nudges = nudges.concat('pieces'); lead.piecesPending = false; LEADS.set(k, lead); persistLeads();
         }
