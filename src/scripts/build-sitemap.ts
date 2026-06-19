@@ -10,6 +10,9 @@ import { getAllSlugs } from '../services/blogService';
 
 const SITE_URL = 'https://robindesairs.eu';
 const OUT_PATH = path.join(process.cwd(), 'sitemap.xml');
+// Alias FR sous le motif `sitemap-XX.xml` : GSC bloque parfois le `sitemap.xml` « par défaut »
+// dans un état « Impossible de récupérer » coincé ; un nom de langue se soumet proprement.
+const FR_PATH = path.join(process.cwd(), 'sitemap-fr.xml');
 const INDEX_PATH = path.join(process.cwd(), 'sitemap-index.xml');
 const BLOG_DIR = path.join(process.cwd(), 'blog');
 const LASTMOD = new Date().toISOString().slice(0, 10);
@@ -19,7 +22,7 @@ const LASTMOD = new Date().toISOString().slice(0, 10);
  * à chaque build avec un lastmod frais, sinon Google ne re-crawle pas les
  * sub-sitemaps même s'ils changent (cause typique de pages non découvertes).
  */
-const SUB_SITEMAPS = ['sitemap.xml', 'sitemap-en.xml', 'sitemap-de.xml', 'sitemap-es.xml'];
+const SUB_SITEMAPS = ['sitemap.xml', 'sitemap-fr.xml', 'sitemap-en.xml', 'sitemap-de.xml', 'sitemap-es.xml'];
 
 function writeSitemapIndex(): void {
   const items = SUB_SITEMAPS.map(
@@ -86,7 +89,8 @@ function main(): void {
 ${urls.map((u) => `  <url><loc>${u.loc}</loc><lastmod>${LASTMOD}</lastmod><changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`).join('\n')}
 </urlset>`;
   fs.writeFileSync(OUT_PATH, xml, 'utf-8');
-  console.log(`[build:sitemap] ${OUT_PATH} écrit (${urls.length} URLs).`);
+  fs.writeFileSync(FR_PATH, xml, 'utf-8'); // alias FR identique (contourne le blocage GSC sur sitemap.xml)
+  console.log(`[build:sitemap] ${OUT_PATH} + sitemap-fr.xml écrits (${urls.length} URLs).`);
   writeSitemapIndex();
 }
 
