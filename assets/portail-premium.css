@@ -1,21 +1,21 @@
 /* ───────────────────────────────────────────────────────────────────────────
-   Portail client — Robin des Airs · style premium « Wave » partagé
-   Pages : depot-en-ligne.html (dépôt des pièces) · rib.html (collecte du RIB)
-   Direction : navy profond + vert Wave vif, carte qui « lève » dans le hero,
-   chaleureux et rassurant (passeports + IBAN), mobile-first, contraste AA.
+   Portail client — Robin des Airs · style partagé (aligné sur suivi-dossier)
+   Pages : depot-en-ligne.html · rib.html  (+ réutilisable ailleurs)
+   Bannière : barre navy fine (logo + Retour) comme la page de suivi, puis
+   contenu sur fond clair + carte premium. Mobile-first, contraste AA.
    Pas de halo/shimmer/texte-dégradé (charte marque).
 ─────────────────────────────────────────────────────────────────────────── */
 :root{
-  --navy:#0B1F3A; --navy2:#0d2445; --navy3:#13315a;
+  --navy:#0B1F3A; --navy2:#0d2445;
   --neon:#00C87A; --neon-b:#00E5A0; --neon-dark:#009960; --neon-ink:#047857;
   --ink:#0B1F3A; --ink-soft:#34465c; --muted:#62718a;
-  --line:#e3e9f1; --line-2:#d3dce7;
-  --bg:#eef2f7; --surface:#ffffff; --surface-2:#f5f8fb;
+  --line:#E2E6EE; --line-2:#d3dce7;
+  --bg:#F7F8FA; --surface:#ffffff; --surface-2:#f5f8fb;
   --green-tint:#e8f7f0; --green-line:#bfe6d3;
   --danger:#c0392b; --danger-bg:#fdecea;
-  --radius:18px; --radius-sm:12px; --radius-pill:999px;
-  --shadow-card:0 24px 60px -28px rgba(11,31,58,.42), 0 3px 10px -3px rgba(11,31,58,.10);
-  --shadow-btn:0 12px 26px -10px rgba(0,200,122,.6);
+  --radius:16px; --radius-sm:12px; --radius-pill:999px;
+  --shadow-card:0 2px 16px rgba(11,31,58,.06);
+  --shadow-btn:0 12px 26px -12px rgba(0,200,122,.55);
   --ease:cubic-bezier(.22,1,.36,1);
   --font:'Montserrat',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
   --mono:'DM Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -24,54 +24,51 @@
 html{-webkit-text-size-adjust:100%}
 body{
   margin:0; font-family:var(--font); color:var(--ink);
-  background:var(--bg); line-height:1.55;
+  background:var(--bg); line-height:1.6;
   -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
 }
 
-/* ── Hero navy ───────────────────────────────────────────────────────────── */
-.hero{
-  position:relative; overflow:hidden; color:#fff;
-  background:linear-gradient(157deg, var(--navy) 0%, var(--navy2) 55%, var(--navy3) 100%);
-  padding:26px 20px 78px;
+/* ── Barre du haut (identique à suivi-dossier) ───────────────────────────── */
+.topbar{
+  background:var(--navy); display:flex; align-items:center; justify-content:space-between;
+  padding:14px 20px; padding-top:max(14px, env(safe-area-inset-top));
 }
-.hero::after{ /* keyline néon nette en bas du hero (pas un halo) */
-  content:''; position:absolute; left:0; right:0; bottom:0; height:3px;
-  background:linear-gradient(90deg, var(--neon-dark), var(--neon-b), var(--neon-dark));
+.topbar .logo{font-weight:800; font-size:16px; color:#fff; text-decoration:none; letter-spacing:-.01em}
+.topbar .logo .accent{color:var(--neon-b)}
+.topbar .logo .bow{font-weight:400}
+.topbar .back{color:rgba(255,255,255,.8); font-size:13px; font-weight:600; text-decoration:none; transition:color .15s}
+.topbar .back:hover{color:#fff}
+
+/* ── Conteneur + en-tête de page (fond clair) ────────────────────────────── */
+.shell{max-width:540px; margin:0 auto; padding:26px 16px 56px}
+.pagehead{margin-bottom:18px; animation:rise .4s var(--ease) both}
+.pagehead h1{
+  font-size:clamp(23px, 6vw, 28px); font-weight:800; letter-spacing:-.025em; color:var(--navy);
+  margin:0 0 7px; text-wrap:balance; line-height:1.16;
 }
-.brandbar{display:flex; align-items:center; gap:9px; font-weight:800; font-size:17px; letter-spacing:-.01em}
-.brandbar .mark{color:#fff}
-.brandbar .accent{color:var(--neon-b)}
-.brandbar .bow{font-weight:400}
-.hero h1{
-  font-size:clamp(23px, 6.4vw, 30px); font-weight:800; letter-spacing:-.025em;
-  margin:22px 0 8px; text-wrap:balance; line-height:1.15;
-}
-.hero .lead{color:#cdd9ea; font-size:15px; max-width:34ch; margin:0}
-.hero .lead b{color:#fff; font-weight:700}
+.pagehead .lead{color:var(--ink-soft); font-size:15px; margin:0; max-width:42ch}
+.pagehead .lead b{color:var(--navy); font-weight:700}
 .ref-chip{
-  display:inline-flex; align-items:center; gap:7px; margin-top:16px;
-  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16);
-  border-radius:var(--radius-pill); padding:6px 13px; font-size:12px; color:#dbe6f3;
+  display:inline-flex; align-items:center; gap:7px; margin-top:14px;
+  background:#fff; border:1px solid var(--line-2); border-radius:var(--radius-pill);
+  padding:6px 13px; font-size:12px; color:var(--ink-soft);
 }
-.ref-chip b{font-family:var(--mono); font-weight:500; color:#fff; letter-spacing:.3px}
-.trust{display:flex; flex-wrap:wrap; gap:7px; margin-top:16px}
+.ref-chip b{font-family:var(--mono); font-weight:500; color:var(--navy); letter-spacing:.3px}
+.trust{display:flex; flex-wrap:wrap; gap:7px; margin-top:14px}
 .trust span{
   display:inline-flex; align-items:center; gap:6px;
-  background:rgba(0,229,160,.13); border:1px solid rgba(0,229,160,.28);
-  color:#a9f1d4; border-radius:var(--radius-pill); padding:5px 11px; font-size:12px; font-weight:600;
+  background:var(--green-tint); border:1px solid var(--green-line); color:var(--neon-ink);
+  border-radius:var(--radius-pill); padding:5px 11px; font-size:12px; font-weight:600;
 }
 
-/* ── Carte formulaire (lève dans le hero) ────────────────────────────────── */
-.shell{max-width:540px; margin:0 auto; padding:0 16px 56px}
+/* ── Carte formulaire ────────────────────────────────────────────────────── */
 .panel{
-  position:relative; margin-top:-58px;
   background:var(--surface); border:1px solid var(--line);
   border-radius:var(--radius); box-shadow:var(--shadow-card);
-  padding:22px 20px 24px;
-  animation:rise .5s var(--ease) both;
+  padding:22px 20px 24px; animation:rise .45s var(--ease) both;
 }
-@keyframes rise{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none}}
-.panel h2{font-size:19px; font-weight:800; letter-spacing:-.02em; margin:2px 0 6px}
+@keyframes rise{from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:none}}
+.panel h2{font-size:19px; font-weight:800; letter-spacing:-.02em; margin:2px 0 6px; color:var(--navy)}
 .panel .sub{color:var(--ink-soft); font-size:14.5px; margin:0 0 4px}
 
 /* ── Checklist « à déposer » ─────────────────────────────────────────────── */
@@ -85,7 +82,7 @@ body{
 .need .ic{flex:0 0 26px; height:26px; border-radius:8px; display:grid; place-items:center; font-size:15px;
   background:var(--green-tint); color:var(--neon-ink)}
 
-/* ── Bonus / encart chaleureux ───────────────────────────────────────────── */
+/* ── Encart chaleureux ───────────────────────────────────────────────────── */
 .note{
   margin:14px 0 0; border-radius:var(--radius-sm); padding:13px 15px;
   background:var(--green-tint); border:1px solid var(--green-line);
@@ -104,7 +101,7 @@ body{
 .drop .plus{
   width:46px; height:46px; border-radius:14px; display:grid; place-items:center; font-size:22px;
   background:linear-gradient(135deg, var(--neon-b), var(--neon)); color:var(--navy); margin-bottom:6px;
-  box-shadow:0 8px 18px -8px rgba(0,200,122,.6);
+  box-shadow:0 8px 18px -8px rgba(0,200,122,.55);
 }
 .drop small{display:block; color:var(--muted); font-weight:400; font-size:12.5px}
 .drop:hover, .drop.drag{border-color:var(--neon); background:var(--green-tint)}
@@ -147,7 +144,7 @@ body{
   transition:transform .16s var(--ease), background .16s, box-shadow .16s;
   display:inline-flex; align-items:center; justify-content:center; gap:9px;
 }
-.btn:hover:not(:disabled){background:var(--neon-b); transform:translateY(-2px); box-shadow:0 18px 32px -12px rgba(0,200,122,.62)}
+.btn:hover:not(:disabled){background:var(--neon-b); transform:translateY(-2px); box-shadow:0 18px 32px -12px rgba(0,200,122,.6)}
 .btn:active:not(:disabled){transform:translateY(0)}
 .btn:disabled{background:#cfd8e2; color:#8d9aab; box-shadow:none; cursor:not-allowed}
 
@@ -162,7 +159,7 @@ body{
 .done .seal{
   width:74px; height:74px; border-radius:50%; margin:6px auto 16px; display:grid; place-items:center;
   background:linear-gradient(135deg, var(--neon-b), var(--neon)); color:#fff; font-size:34px; font-weight:900;
-  box-shadow:0 0 0 8px var(--green-tint), 0 14px 28px -10px rgba(0,200,122,.55);
+  box-shadow:0 0 0 8px var(--green-tint), 0 14px 28px -10px rgba(0,200,122,.5);
   animation:pop .5s var(--ease) both;
 }
 @keyframes pop{from{transform:scale(.6); opacity:0} to{transform:scale(1); opacity:1}}
@@ -186,11 +183,10 @@ body{
 .signoff b{color:var(--ink-soft); font-weight:700}
 
 @media (max-width:380px){
-  .hero{padding:22px 16px 74px}
-  .shell{padding:0 12px 48px}
+  .shell{padding:22px 12px 48px}
   .panel{padding:20px 16px}
 }
 @media (prefers-reduced-motion:reduce){
-  .panel,.done .seal{animation:none}
-  .btn,.input,.drop,.done .cta-link{transition:none}
+  .pagehead,.panel,.done .seal{animation:none}
+  .btn,.input,.drop,.done .cta-link,.topbar .back{transition:none}
 }
