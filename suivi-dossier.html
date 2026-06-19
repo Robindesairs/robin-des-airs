@@ -179,7 +179,7 @@
 
     var CACHE_KEY = 'rda_suivi_' + (REF || 'demo');
 
-    var TL = ['Dossier reçu','Mandat signé','Réclamation envoyée','Relances en cours','Médiation / justice','Indemnité versée'];
+    var TL = ['Dossier reçu','Mandat signé','Réclamation envoyée','Relances en cours','Médiation','Tribunal','Indemnité versée'];
     var DEMO_BASE = { ok:true, ref:'DEMO', prenom:'Awa', timeline:TL, vol:'AF718', date:'12/03/2026', route:'Dakar → Paris', compagnie:'Air France', pax:4, montantNet:1800, montantBrut:2400, depotLink:'/depot-en-ligne.html?r=DEMO' };
     function demoData() {
       var s = {
@@ -188,8 +188,9 @@
         reclamation: { statut:'RECLAMATION_ENVOYEE', etape:2, terminal:null, statutLabel:'Réclamation envoyée', statutDesc:'Votre réclamation a été envoyée à Air France. Le délai légal de réponse court — nous relançons si besoin.' },
         relance:     { statut:'RELANCE_1',    etape:3, terminal:null, statutLabel:'Relance envoyée', statutDesc:'Sans réponse de la compagnie, nous l’avons relancée.' },
         demeure:     { statut:'LRAR_ENVOYEE', etape:3, terminal:null, statutLabel:'Mise en demeure envoyée', statutDesc:'Sans réponse, nous avons envoyé une mise en demeure formelle à Air France.' },
-        escalade:    { statut:'MEDIATION',    etape:4, terminal:null, statutLabel:'Escalade : médiation', statutDesc:'La compagnie tarde : nous portons le dossier devant l’instance compétente.' },
-        paye:        { statut:'PAYE',         etape:5, terminal:null, statutLabel:'Indemnité versée', statutDesc:'Bonne nouvelle : votre indemnité a été versée. Merci de votre confiance !' },
+        escalade:    { statut:'MEDIATION',    etape:4, terminal:null, statutLabel:'Médiation', statutDesc:'La compagnie tarde : nous avons saisi le médiateur pour faire valoir vos droits, avant le tribunal.' },
+        tribunal:    { statut:'CONTENTIEUX',  etape:5, terminal:null, statutLabel:'Tribunal', statutDesc:'Nous portons votre dossier devant le tribunal pour obtenir votre indemnité.' },
+        paye:        { statut:'PAYE',         etape:6, terminal:null, statutLabel:'Indemnité versée', statutDesc:'Bonne nouvelle : votre indemnité a été versée. Merci de votre confiance !' },
         refus:       { statut:'REFUSE_DEFINITIF', etape:-1, terminal:'refus', statutLabel:'Réponse de la compagnie', statutDesc:'La compagnie a opposé un refus. Écrivez-nous : on vous explique les recours possibles.' }
       };
       var pick = s[DEMO_SCENARIO] || s['1'];
@@ -217,15 +218,15 @@
       var tl = $('tl'); tl.innerHTML = '';
       var labels = d.timeline || TL;
       var cur = typeof d.etape === 'number' ? d.etape : 0;
-      // L'étape « Médiation / justice » (4) n'apparaît QUE si le dossier y est réellement
-      // (statut médiation/contentieux). Un dossier payé directement ne l'affiche pas.
-      var visible = cur === 4 ? [0,1,2,3,4,5] : [0,1,2,3,5];
+      // Les étapes « Médiation » (4) et « Tribunal » (5) n'apparaissent QUE si atteintes
+      // (un dossier réglé à l'amiable ou payé directement ne les affiche pas).
+      var visible = cur === 5 ? [0,1,2,3,4,5,6] : (cur === 4 ? [0,1,2,3,4,6] : [0,1,2,3,6]);
       if (d.terminal) { $('timelineCard').classList.add('hide'); }
       else {
         $('timelineCard').classList.remove('hide');
         visible.forEach(function (i) {
           var state = i < cur ? 'done' : (i === cur ? 'current' : 'future');
-          if (cur === 5) state = 'done';
+          if (cur === 6) state = 'done';
           var li = document.createElement('li');
           li.className = state;
           var dotInner = state === 'done' ? '✓' : '';

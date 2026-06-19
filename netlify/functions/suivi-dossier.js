@@ -24,7 +24,7 @@ const H = {
 };
 
 // Jalons visibles côté client (chemin « heureux »). L'escalade (4) ne s'affiche que si atteinte.
-const TIMELINE = ['Dossier reçu', 'Mandat signé', 'Réclamation envoyée', 'Relances en cours', 'Médiation / justice', 'Indemnité versée'];
+const TIMELINE = ['Dossier reçu', 'Mandat signé', 'Réclamation envoyée', 'Relances en cours', 'Médiation', 'Tribunal', 'Indemnité versée'];
 
 // Statut interne (code CRM) → présentation client : étape sur la timeline + libellé + phrase rassurante.
 // terminal: 'refus' | 'abandon' | 'prescrit' sort du chemin heureux (carte dédiée côté front).
@@ -37,9 +37,9 @@ const CLIENT_STATUS = {
   LRAR_ENVOYEE:     { etape: 3, terminal: null,       label: 'Mise en demeure envoyée',     desc: 'Sans réponse, nous avons envoyé une mise en demeure formelle à la compagnie.' },
   RELANCE_1:        { etape: 3, terminal: null,       label: 'Relance envoyée',             desc: 'Sans réponse de la compagnie, nous l’avons relancée.' },
   RELANCE_2:        { etape: 3, terminal: null,       label: 'Relance ferme envoyée',       desc: 'Nous avons envoyé une relance ferme à la compagnie.' },
-  MEDIATION:        { etape: 4, terminal: null,       label: 'Escalade : médiation',        desc: 'La compagnie tarde : nous portons le dossier devant l’instance compétente.' },
-  CONTENTIEUX:      { etape: 4, terminal: null,       label: 'Procédure engagée',           desc: 'Nous engageons la procédure pour faire valoir vos droits.' },
-  PAYE:             { etape: 5, terminal: null,       label: 'Indemnité versée',            desc: 'Bonne nouvelle : votre indemnité a été versée. Merci de votre confiance !' },
+  MEDIATION:        { etape: 4, terminal: null,       label: 'Médiation',                   desc: 'La compagnie tarde : nous avons saisi le médiateur pour faire valoir vos droits, avant le tribunal.' },
+  CONTENTIEUX:      { etape: 5, terminal: null,       label: 'Tribunal',                    desc: 'Nous portons votre dossier devant le tribunal pour obtenir votre indemnité.' },
+  PAYE:             { etape: 6, terminal: null,       label: 'Indemnité versée',            desc: 'Bonne nouvelle : votre indemnité a été versée. Merci de votre confiance !' },
   REFUSE_DEFINITIF: { etape: -1, terminal: 'refus',   label: 'Réponse de la compagnie',     desc: 'La compagnie a opposé un refus. Écrivez-nous : on vous explique les recours possibles.' },
   ABANDON:          { etape: -1, terminal: 'abandon', label: 'Dossier en pause',            desc: 'Votre dossier est en pause. Écrivez-nous pour le relancer.' },
   PRESCRIT:         { etape: -1, terminal: 'prescrit',label: 'Délai dépassé',               desc: 'Le délai légal de 5 ans est dépassé pour ce vol.' },
