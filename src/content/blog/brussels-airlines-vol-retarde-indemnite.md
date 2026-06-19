@@ -51,6 +51,17 @@ Toutes les routes africaines de Brussels Airlines dépassent les 3 500 km → pa
 
 Famille de 4 sur Bruxelles-Kinshasa retardée de 4h : 4 × 600€ = 2 400€ brut, **1 800€ nets** après commission Robin de 25%.
 
+## Pourquoi ne pas utiliser le formulaire Brussels Airlines directement
+
+Brussels Airlines propose un formulaire de réclamation sur son site. Problème : il vous demande de choisir votre "relation avec le passager" parmi Agent de voyage, Avocat ou Membre de la famille — aucune option pour un particulier qui réclame seul. Et pour cause : ce formulaire est conçu pour être facile à ignorer.
+
+**Ce que Robin des Airs fait à la place :**
+- Envoi d'une réclamation formelle par courrier avec le mandat signé
+- Brussels Airlines ne peut pas balayer une lettre recommandée sous le tapis
+- Si refus : escalade vers le médiateur belge ou les juridictions françaises
+
+Les compagnies paient beaucoup plus facilement quand elles reçoivent une demande structurée d'un mandataire — pas un formulaire web qu'un stagiaire peut archiver sans répondre.
+
 ## Délais de réclamation
 
 Vous avez **2 ans** (loi belge applicable) à **5 ans** (loi française si le contrat a des liens avec la France) pour réclamer. N'attendez pas — les preuves disparaissent.
