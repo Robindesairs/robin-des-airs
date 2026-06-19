@@ -72,20 +72,23 @@ On prend aux compagnies, on rend aux familles
 > Bouton **Quick Reply** obligatoire : c'est le tap qui rouvre la fenêtre et redonne la main au bot.
 > Mapper le payload : `Reprendre`→ reprise flux · `Rappel`→ liste « À rappeler » bureau · `Plus tard`→ T1.3.
 
-### A1 — `relance_dossier_a_finaliser` (relance principale, J+1 à J+2)
+### A1 — `relance_dossier_a_finaliser` (relance principale, ton humoristique — version live 19/06/2026)
 - **Catégorie** : MARKETING · **Langue** : fr
-- **Header** (texte) : `Votre dossier est presque prêt ✈️`
+- **Header** (texte) : `Petit oubli, gros chèque`
 - **Corps** :
   ```
-  Bonjour {{1}} 👋
+  Bonjour {{1}} 👋 votre vol {{2}} est loin... mais votre dossier, lui, fait la sieste depuis hier 😴
 
-  Votre dossier d'indemnisation pour le vol {{2}} est presque complet — il ne manque qu'une étape pour réclamer jusqu'à {{3}}.
+  2 minutes de votre temps contre jusqu'à {{3}} qui vous reviennent : avouez que le taux horaire est joli. Et c'est nous qui faisons tout le reste.
 
-  On s'occupe de tout, et si on ne gagne pas, vous ne payez rien. On reprend là où vous vous étiez arrêté ?
+  La seule contente que vous laissiez tomber, c'est la compagnie. On ne va pas lui faire ce plaisir, si ? 0 € si on ne gagne pas.
+
+  On reprend où vous vous étiez arrêté(e) ?
   ```
 - **Footer** : `On prend aux compagnies, on rend aux familles`
 - **Boutons** (Quick Reply) : `Reprendre mon dossier` · `Être rappelé(e)`
 - **Échantillons** : `{{1}}=Awa` · `{{2}}=AF718` · `{{3}}=600 €`
+> Angle = effort/récompense (« 2 min vs 600 € »), généré par concile copywriting (4 sous-agents). Footer + boutons SANS emoji (refus Meta) ; emojis OK dans le corps.
 
 ### A2 — `relance_preuve_sociale` (2ᵉ relance, angle « autres passagers »)
 - **Catégorie** : MARKETING · fr
@@ -271,6 +274,46 @@ On prend aux compagnies, on rend aux familles
 - **Footer** : `On prend aux compagnies, on rend aux familles`
 - **Boutons** (CTA URL) : `Partager Robin des Airs` → `https://robindesairs.eu`
 - **Échantillons** : `Awa`
+
+---
+
+## E. FRAIS / DÉPENSES — relance post-signature · catégorie **UTILITY**
+
+> Relance hors-fenêtre pour les clients SIGNÉS, afin de récupérer leurs reçus de dépenses
+> (repas/hôtel/taxi, art. 9 CE261), remboursables EN PLUS de l'indemnité. Le tap d'un bouton
+> rouvre la fenêtre 24 h → le bot collecte les reçus. ⚠️ NON encore câblé dans `runRelances`
+> (à brancher après approbation Meta : timing « J+1 lendemain matin » + routage des boutons).
+> Voir mémoire `frais-art9-seuils-recap`.
+
+### E1 — `relance_frais_j1_fr` · UTILITY · fr
+- **Corps** (une seule variable `{{1}}` = prénom) :
+  ```
+  Bonjour {{1}}
+
+  Votre dossier est bien en cours chez Robin des Airs.
+
+  Une question pour compléter votre réclamation : avez-vous payé un repas, un taxi ou une nuit d'hôtel à cause de ce vol ? Ces dépenses peuvent vous revenir en plus de votre indemnité.
+
+  Si oui, gardez vos tickets — répondez ici et on vous dit comment les envoyer.
+  ```
+- **Boutons** (Quick Reply, sans emoji) : `J'ai des tickets` · `Pas de dépenses`
+- **Footer** : `On prend aux compagnies, on rend aux familles`
+- **Échantillon** : `{{1}}=Awa`
+
+### E2 — `relance_frais_j1_en` · UTILITY · en
+- **Corps** :
+  ```
+  Hello {{1}}
+
+  Your compensation claim is being handled by Robin des Airs.
+
+  One quick question to complete your file: did you pay for a meal, a taxi or a hotel night because of this flight? These costs can be refunded on top of your compensation.
+
+  If so, keep your receipts — reply here and we'll tell you how to send them.
+  ```
+- **Boutons** (Quick Reply) : `I have receipts` · `No expenses`
+- **Footer** : `On prend aux compagnies, on rend aux familles`
+- **Échantillon** : `{{1}}=Awa`
 
 ---
 
