@@ -12,70 +12,64 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="/favicon.png" type="image/png">
   <meta name="robots" content="noindex,nofollow">
-  <style>
-    :root{--navy:#0b1f3a;--green:#047857;--green-tint:#e8f7f0;--border:#d7dde5;--muted:#5b6b80;--bg:#f7f8fa;--text:#0b1f3a}
-    *{box-sizing:border-box}
-    body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:var(--bg);color:var(--text)}
-    header{background:var(--navy);color:#fff;padding:18px 16px}
-    header b{font-size:18px}
-    header .sub{color:#7fe3b6;font-size:12px}
-    .wrap{max-width:520px;margin:0 auto;padding:18px 16px 60px}
-    .card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;margin:14px 0}
-    h1{font-size:19px;margin:6px 0 4px}
-    .ref{font-size:12px;color:var(--muted)}
-    .lock{display:inline-flex;align-items:center;gap:6px;background:var(--green-tint);color:#06603c;border-radius:20px;padding:5px 12px;font-size:12px;font-weight:700;margin:8px 0}
-    .intro{font-size:14px;line-height:1.6;margin:10px 0 4px}
-    label.fld{display:block;font-size:13px;font-weight:700;color:var(--navy);margin:14px 0 5px}
-    label.fld span{font-weight:400;color:var(--muted)}
-    input{width:100%;border:1.5px solid var(--border);border-radius:9px;padding:12px 12px;font-size:16px;font-family:inherit;color:var(--text);background:#fff}
-    input:focus{outline:none;border-color:var(--green)}
-    input.iban{font-family:'DM Mono',ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.5px}
-    input.ok{border-color:var(--green);background:var(--green-tint)}
-    input.bad{border-color:#c0392b;background:#fdecea}
-    .hint{font-size:12px;margin-top:5px;min-height:16px}
-    .hint.ok{color:#06603c} .hint.bad{color:#c0392b} .hint.idle{color:var(--muted)}
-    button.go{width:100%;background:var(--green);color:#fff;border:0;border-radius:10px;padding:15px;font-size:16px;font-weight:800;cursor:pointer;margin-top:18px}
-    button.go:disabled{opacity:.5;cursor:not-allowed}
-    .rgpd{font-size:11.5px;color:var(--muted);margin-top:14px;line-height:1.6}
-    .err-box{display:none;background:#fdecea;color:#c0392b;border-radius:8px;padding:10px;font-size:13px;margin-top:10px}
-    .done{display:none;text-align:center;padding:24px}
-    .done .big{font-size:42px}
-    .done .iban{font-family:'DM Mono',ui-monospace,monospace;font-weight:700;color:var(--navy);background:var(--green-tint);border:1px solid #B8DDC9;border-radius:6px;padding:8px 14px;display:inline-block;margin:10px 0}
-  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/portail-premium.css">
 </head>
 <body>
-  <header><b>Robin des Airs</b> 🏹<div class="sub">Coordonnées bancaires — versement de votre indemnité</div></header>
-  <div class="wrap">
-    <div class="card" id="form">
-      <h1>💸 Où verser votre indemnité ?</h1>
-      <div class="ref" id="refLine">Dossier : —</div>
-      <div class="lock">🔒 Connexion chiffrée · usage unique : votre virement</div>
-      <p class="intro">Bonne nouvelle : votre indemnité a été obtenue. Indiquez le compte (à votre nom) où vous verser votre part — on s'occupe du virement.</p>
-
-      <label class="fld" for="titulaire">Titulaire du compte <span>(nom et prénom)</span></label>
-      <input id="titulaire" type="text" autocomplete="name" placeholder="Ex. Awa Diop" maxlength="120">
-
-      <label class="fld" for="iban">IBAN</label>
-      <input id="iban" class="iban" type="text" inputmode="latin" autocapitalize="characters" spellcheck="false" placeholder="FR76 3000 1000 ..." maxlength="42">
-      <div class="hint idle" id="ibanHint">Recopiez l'IBAN tel qu'il figure sur votre RIB.</div>
-
-      <label class="fld" for="bic">BIC <span>(facultatif)</span></label>
-      <input id="bic" type="text" autocapitalize="characters" spellcheck="false" placeholder="Ex. BNPAFRPP" maxlength="11">
-
-      <div class="err-box" id="errBox"></div>
-      <button class="go" id="sendBtn" disabled>Valider mon RIB</button>
-      <p class="rgpd">🔒 Vos coordonnées bancaires sont transmises de façon chiffrée (HTTPS), conservées chiffrées et utilisées <b>uniquement</b> pour vous verser votre indemnité. Jamais revendues, jamais utilisées pour un prélèvement — RGPD.</p>
+  <header class="hero">
+    <div class="brandbar"><span class="mark">Robin <span class="accent">des Airs</span></span> <span class="bow">🏹</span></div>
+    <h1>Votre indemnité est prête à partir.</h1>
+    <p class="lead">Indiquez le compte à <b>votre nom</b> — on s'occupe du virement.</p>
+    <div class="ref-chip">Dossier <b id="refLine">—</b></div>
+    <div class="trust">
+      <span>🔒 Chiffré</span>
+      <span>🇪🇺 RGPD</span>
+      <span>🚫 Jamais de prélèvement</span>
     </div>
-    <div class="card done" id="doneCard">
-      <div class="big">✅</div>
-      <h1>RIB bien reçu, merci !</h1>
-      <p class="intro">Nous avons enregistré le compte <span class="iban" id="doneIban">—</span>. Votre part sera virée sur ce compte. Notre équipe vous confirme l'envoi sur WhatsApp. 🏹</p>
-    </div>
-  </div>
+  </header>
+
+  <main class="shell">
+    <section class="panel" id="form" aria-labelledby="pTitle">
+      <h2 id="pTitle">💸 Où verser votre part&nbsp;?</h2>
+      <p class="sub">Recopiez votre IBAN tel qu'il figure sur votre RIB. On vérifie qu'il est valide avant l'envoi.</p>
+
+      <div class="field">
+        <label for="titulaire">Titulaire du compte <span class="opt">(nom et prénom)</span></label>
+        <input class="input" id="titulaire" type="text" autocomplete="name" placeholder="Ex. Awa Diop" maxlength="120">
+      </div>
+
+      <div class="field">
+        <label for="iban">IBAN</label>
+        <input class="input mono" id="iban" type="text" inputmode="latin" autocapitalize="characters" spellcheck="false" placeholder="FR76 3000 1000 …" maxlength="42" aria-describedby="ibanHint">
+        <div class="hint idle" id="ibanHint">Tel qu'il apparaît sur votre relevé bancaire.</div>
+      </div>
+
+      <div class="field">
+        <label for="bic">BIC <span class="opt">(facultatif)</span></label>
+        <input class="input mono" id="bic" type="text" autocapitalize="characters" spellcheck="false" placeholder="Ex. BNPAFRPP" maxlength="11">
+      </div>
+
+      <div class="errbox" id="errBox"></div>
+      <button class="btn" id="sendBtn" disabled>Valider mon RIB</button>
+      <p class="rgpd"><span>🔒</span><span>Vos coordonnées bancaires sont transmises de façon chiffrée et utilisées <b>uniquement</b> pour vous verser votre indemnité. Jamais revendues, jamais un prélèvement — RGPD.</span></p>
+    </section>
+
+    <section class="panel done" id="doneCard" role="status" aria-live="polite">
+      <div class="seal" aria-hidden="true">✓</div>
+      <h2>RIB bien reçu, merci&nbsp;!</h2>
+      <p>Nous verserons votre part sur le compte</p>
+      <div class="data" id="doneIban">—</div>
+      <p>Notre équipe vous confirme l'envoi sur WhatsApp.</p>
+      <p class="signoff">Reposez-vous — on s'occupe du reste. <b>— L'équipe Robin des Airs 🏹</b></p>
+    </section>
+  </main>
+
   <script>
     const P = new URLSearchParams(location.search);
     const REF = (P.get('r') || P.get('ref') || '').trim();
-    document.getElementById('refLine').textContent = REF ? ('Dossier : ' + REF) : 'Lien invalide — réf. manquante';
+    document.getElementById('refLine').textContent = REF || 'lien invalide';
 
     const titulaire = document.getElementById('titulaire');
     const ibanEl = document.getElementById('iban');
@@ -103,18 +97,17 @@
       const ok = validIban(raw);
       ibanEl.classList.toggle('ok', ok);
       ibanEl.classList.toggle('bad', s.length >= 15 && !ok);
-      if (!s){ hint.className='hint idle'; hint.textContent="Recopiez l'IBAN tel qu'il figure sur votre RIB."; }
-      else if (ok){ hint.className='hint ok'; hint.textContent='IBAN valide ✓'; }
+      if (!s){ hint.className='hint idle'; hint.textContent="Tel qu'il apparaît sur votre relevé bancaire."; }
+      else if (ok){ hint.className='hint ok'; hint.textContent='✓ IBAN valide'; }
       else if (s.length < 15){ hint.className='hint idle'; hint.textContent='Continuez la saisie…'; }
       else { hint.className='hint bad'; hint.textContent='IBAN incorrect — vérifiez chaque caractère.'; }
       sendBtn.disabled = !(REF && ok && titulaire.value.trim().length >= 2);
     }
 
     ibanEl.addEventListener('input', () => {
-      const pos = ibanEl.selectionStart, before = ibanEl.value;
+      const atEnd = ibanEl.selectionStart === ibanEl.value.length;
       ibanEl.value = fmtIban(ibanEl.value);
-      // garde le curseur à peu près au bon endroit
-      if (pos === before.length) ibanEl.selectionStart = ibanEl.selectionEnd = ibanEl.value.length;
+      if (atEnd) ibanEl.selectionStart = ibanEl.selectionEnd = ibanEl.value.length;
       refresh();
     });
     titulaire.addEventListener('input', refresh);
@@ -124,7 +117,7 @@
 
     sendBtn.addEventListener('click', async () => {
       if (!REF) { showErr('Référence de dossier manquante dans le lien.'); return; }
-      sendBtn.disabled = true; sendBtn.textContent = 'Envoi en cours…'; errBox.style.display='none';
+      sendBtn.disabled = true; const lbl = sendBtn.textContent; sendBtn.textContent = 'Envoi en cours…'; errBox.style.display='none';
       try {
         const r = await fetch('/api/rib-submit', {
           method:'POST', headers:{'Content-Type':'application/json'},
@@ -137,8 +130,8 @@
           document.getElementById('doneCard').style.display='block';
           window.scrollTo({top:0,behavior:'smooth'});
         } else {
-          showErr(j.error || 'Échec de l\'envoi, réessayez.');
-          sendBtn.disabled = false; sendBtn.textContent = 'Réessayer';
+          showErr(j.error || "Échec de l'envoi, réessayez.");
+          sendBtn.disabled = false; sendBtn.textContent = lbl;
         }
       } catch (e) {
         showErr('Erreur réseau, réessayez.');
