@@ -15,6 +15,7 @@ const OUT_PATH = path.join(process.cwd(), 'sitemap.xml');
 const FR_PATH = path.join(process.cwd(), 'sitemap-fr.xml');
 const INDEX_PATH = path.join(process.cwd(), 'sitemap-index.xml');
 const BLOG_DIR = path.join(process.cwd(), 'blog');
+const DEST_DIR = path.join(process.cwd(), 'destinations');
 const LASTMOD = new Date().toISOString().slice(0, 10);
 
 /**
@@ -53,6 +54,16 @@ function getAllBlogSlugs(): string[] {
   return Array.from(mdSlugs).sort();
 }
 
+/** Auto-découverte des pages /destinations/*.html (évite d'oublier des destinations). */
+function getDestinationPages(): Array<{ loc: string; changefreq: string; priority: string }> {
+  if (!fs.existsSync(DEST_DIR)) return [];
+  return fs
+    .readdirSync(DEST_DIR)
+    .filter((f) => f.endsWith('.html') && f !== 'index.html')
+    .sort()
+    .map((f) => ({ loc: `${SITE_URL}/destinations/${f}`, changefreq: 'monthly', priority: '0.7' }));
+}
+
 function main(): void {
   const slugs = getAllBlogSlugs();
   const staticPages: Array<{ loc: string; changefreq: string; priority: string }> = [
@@ -73,17 +84,17 @@ function main(): void {
     { loc: SITE_URL + '/blog/', changefreq: 'weekly', priority: '0.9' },
     { loc: SITE_URL + '/nos-tarifs.html', changefreq: 'monthly', priority: '0.7' },
     { loc: SITE_URL + '/parrainage.html', changefreq: 'monthly', priority: '0.6' },
-    { loc: SITE_URL + '/destinations/dakar.html', changefreq: 'monthly', priority: '0.7' },
-    { loc: SITE_URL + '/destinations/abidjan.html', changefreq: 'monthly', priority: '0.7' },
-    { loc: SITE_URL + '/destinations/bamako.html', changefreq: 'monthly', priority: '0.7' },
-    { loc: SITE_URL + '/destinations/kinshasa.html', changefreq: 'monthly', priority: '0.7' },
+    { loc: SITE_URL + '/a-propos.html', changefreq: 'monthly', priority: '0.6' },
+    { loc: SITE_URL + '/jurisprudence-ce261.html', changefreq: 'monthly', priority: '0.7' },
   ];
+  // Destinations : auto-découvertes (toutes les /destinations/*.html, plus de liste en dur)
+  const destPages = getDestinationPages();
   const blogUrls = slugs.map((slug) => ({
     loc: `${SITE_URL}/blog/${slug}.html`,
     changefreq: 'monthly' as const,
     priority: '0.8',
   }));
-  const urls = [...staticPages, ...blogUrls];
+  const urls = [...staticPages, ...destPages, ...blogUrls];
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.map((u) => `  <url><loc>${u.loc}</loc><lastmod>${LASTMOD}</lastmod><changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`).join('\n')}
