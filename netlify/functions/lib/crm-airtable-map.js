@@ -10,6 +10,7 @@ const CRM_STATUT_TO_AT = {
   // repliait « Signature en attente » sur ELIGIBLE puis le ré-écrivait en « Documents en cours ».
   SIGNATURE_ATTENTE: 'Signature en attente',
   MANDAT_SIGNE: 'Mandat signé',
+  RECLAMATION_ENVOYEE: 'Réclamation envoyée',
   LRAR_ENVOYEE: 'LRAR envoyée',
   RELANCE_1: 'Relance 1',
   RELANCE_2: 'Relance 2',
