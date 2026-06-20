@@ -127,6 +127,10 @@ exports.handler = async (event) => {
     const ref = String(q.r || q.ref || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 64);
     if (!ref) return J(400, { error: 'r (référence) requis' });
 
+    // Statuts de qualification (valider/rejeter) — doc unique par dossier (status/<ref>).
+    let statusMap = {};
+    try { statusMap = (await pieces.get('status/' + ref, { type: 'json' })) || {}; } catch (_) {}
+
     // Dossier : résout le n° de tel (pièces WhatsApp) ET, si un seul passager, fournit son
     // nom pour étiqueter les pièces d'identité d'anciens dépôts (où le nom n'était pas stocké).
     let phoneKey = '', dossier = null;
@@ -170,6 +174,8 @@ exports.handler = async (event) => {
         filename,
         ts: md.ts || (m ? new Date(Number(m[1])).toISOString() : ''),
         url: `/api/crm-pieces?k=${encodeURIComponent(key)}&t=${encodeURIComponent(makeToken(key))}`,
+        status: (statusMap[key] && statusMap[key].status) || '',
+        statusReason: (statusMap[key] && statusMap[key].reason) || '',
       };
     };
 
