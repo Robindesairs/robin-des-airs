@@ -543,6 +543,32 @@ body.game-mode #gameView { display:block; }
         <div class="panel-b" id="rappelBody"><div style="padding:14px 16px;color:var(--white-40);font-size:.8rem">Connexion CRM requise pour afficher les dossiers à rappeler.</div></div>
       </div>
 
+      <div class="panel" id="piecesPanel">
+        <div class="panel-h"><span class="t">📎 Pièces d'un dossier</span><span class="mini-src demo" id="piecesSrc">RÉF&nbsp;?</span></div>
+        <div class="panel-b" style="padding:14px 16px">
+          <div style="display:flex;gap:8px;margin-bottom:10px">
+            <input id="piecesRef" placeholder="Réf dossier (ex : RDA-…)" onkeydown="if(event.key==='Enter')loadPieces()" style="flex:1;background:var(--sky-card-2);border:1px solid var(--sky-border);border-radius:9px;color:#fff;padding:8px 11px;font-size:.82rem">
+            <button onclick="loadPieces()" style="background:var(--sky-card);border:1px solid var(--sky-border);border-radius:9px;color:#fff;padding:8px 14px;font-size:.82rem;cursor:pointer">Charger</button>
+          </div>
+          <div id="piecesList"><div style="color:var(--white-40);font-size:.8rem">Saisis une réf et clique « Charger » pour voir les pièces reçues.</div></div>
+          <div id="piecesAdd" style="display:none;margin-top:12px;border-top:1px solid var(--sky-border);padding-top:12px">
+            <div style="font-size:.78rem;color:var(--white-70);margin-bottom:7px">➕ Ajouter une pièce (arrivée hors-bot)</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <select id="pieceCat" style="background:var(--sky-card-2);border:1px solid var(--sky-border);border-radius:9px;color:#fff;padding:7px 10px;font-size:.8rem">
+                <option value="identite">Passeport / CNI</option>
+                <option value="carte-embarquement">Carte d'embarquement</option>
+                <option value="ebillet">E-billet / réservation</option>
+                <option value="certificat">Certificat de retard</option>
+                <option value="frais">Reçu de frais</option>
+                <option value="autre">Autre</option>
+              </select>
+              <input type="file" id="pieceFile" accept="image/*,application/pdf" style="font-size:.78rem;color:var(--white-70);flex:1;min-width:120px">
+              <button onclick="uploadPiece()" style="background:#0f6e56;border:1px solid #1d9e75;border-radius:9px;color:#fff;padding:7px 14px;font-size:.8rem;cursor:pointer">Enregistrer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="panel">
         <div class="panel-h"><span class="t">📤 Relances &amp; notifs WhatsApp</span><span class="mini-src demo" id="tplSrc">EN ATTENTE</span></div>
         <div class="panel-b" id="tplBody"><div style="padding:14px 16px;color:var(--white-40);font-size:.8rem">Connexion CRM requise.</div></div>
@@ -1718,6 +1744,68 @@ function renderRenta(){
 
 /* ============ COUCHE DONNÉES RÉELLES ============ */
 // Récupère du JSON sur un endpoint /api/* avec timeout ; renvoie null si indisponible (→ repli démo).
+/* ===== Pièces d'un dossier (réel — Blobs via /api/crm-pieces ; upload + qualification) ===== */
+let _piecesRef='';
+function _crmCode(){ try{ return sessionStorage.getItem('rda_crm_code')||''; }catch(_e){ return ''; } }
+function piecesBadge(s){
+  if(s==='valide') return '<span style="color:#2ec78f">✓ validée</span>';
+  if(s==='rejete') return '<span style="color:#ff7a7a">✗ rejetée</span>';
+  return '<span style="color:var(--white-40)">à vérifier</span>';
+}
+async function loadPieces(){
+  const ref=(document.getElementById('piecesRef').value||'').trim();
+  if(!ref) return;
+  _piecesRef=ref;
+  document.getElementById('piecesSrc').textContent='…';
+  const d=await jget('/api/crm-pieces?r='+encodeURIComponent(ref));
+  renderPieces(d);
+}
+function renderPieces(d){
+  const list=document.getElementById('piecesList');
+  const add=document.getElementById('piecesAdd');
+  const src=document.getElementById('piecesSrc');
+  if(!d){ list.innerHTML='<div style="color:var(--white-40);font-size:.8rem">Non connecté ou réf inconnue.</div>'; src.textContent='—'; add.style.display='none'; return; }
+  src.textContent=(d.count||0)+' pièce(s)';
+  add.style.display='block';
+  if(!d.pieces||!d.pieces.length){ list.innerHTML='<div style="color:var(--white-40);font-size:.8rem">Aucune pièce reçue pour ce dossier.</div>'; return; }
+  list.innerHTML=d.pieces.map(function(p){
+    const isImg=!/\.pdf$/i.test(p.filename||'')&&(/\.(jpe?g|png|webp|gif|heic)$/i.test(p.filename||'')||/identite|embarq|certif|frais/i.test(p.category||''));
+    const thumb=isImg
+      ? '<a href="'+p.url+'" target="_blank" rel="noopener" title="Ouvrir"><img src="'+p.url+'" loading="lazy" style="width:54px;height:54px;object-fit:cover;border-radius:8px;border:1px solid var(--sky-border);background:var(--sky-card-2)" onerror="this.style.opacity=.25"></a>'
+      : '<a href="'+p.url+'" target="_blank" rel="noopener" title="Ouvrir" style="width:54px;height:54px;display:flex;align-items:center;justify-content:center;border:1px solid var(--sky-border);border-radius:8px;font-size:1.5rem;background:var(--sky-card-2);text-decoration:none">📄</a>';
+    return '<div style="display:flex;gap:11px;align-items:center;padding:9px 0;border-bottom:1px solid var(--sky-border)">'+
+      thumb+
+      '<div style="flex:1;min-width:0">'+
+        '<div style="font-size:.82rem;color:#fff">'+esc(p.category||'AUTRE')+(p.passenger?(' · '+esc(p.passenger)):'')+'</div>'+
+        '<div style="font-size:.7rem;color:var(--white-40);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(p.filename||'')+' · '+esc(p.source||'')+'</div>'+
+        '<div style="font-size:.72rem;margin-top:2px">'+piecesBadge(p.status)+(p.statusReason?(' — '+esc(p.statusReason)):'')+'</div>'+
+      '</div>'+
+      '<div style="display:flex;gap:5px">'+
+        '<button onclick="setPieceStatus(this.dataset.k,\'valide\')" data-k="'+esc(p.key)+'" title="Valider" style="background:var(--sky-card);border:1px solid #1d9e75;color:#2ec78f;border-radius:8px;padding:6px 10px;cursor:pointer">✓</button>'+
+        '<button onclick="setPieceStatus(this.dataset.k,\'rejete\')" data-k="'+esc(p.key)+'" title="Rejeter" style="background:var(--sky-card);border:1px solid #a33;color:#ff7a7a;border-radius:8px;padding:6px 10px;cursor:pointer">✗</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+async function setPieceStatus(key,status){
+  let reason='';
+  if(status==='rejete'){ reason=prompt('Motif du rejet (ex : photo floue, document coupé) :'); if(reason===null) return; }
+  try{
+    const r=await fetch('/api/crm-piece-status',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CRM-Code':_crmCode()},body:JSON.stringify({ref:_piecesRef,key:key,status:status,reason:reason||''})});
+    if(r.ok) loadPieces(); else alert('Échec : HTTP '+r.status);
+  }catch(e){ alert('Erreur réseau'); }
+}
+async function uploadPiece(){
+  const inp=document.getElementById('pieceFile'); const f=inp.files&&inp.files[0];
+  if(!f){ alert('Choisissez un fichier.'); return; }
+  if(f.size>4*1024*1024){ alert('Fichier trop volumineux (max 4 Mo).'); return; }
+  const cat=document.getElementById('pieceCat').value;
+  const b64=await new Promise(function(res,rej){ const rd=new FileReader(); rd.onload=function(){ res(String(rd.result).split(',')[1]||''); }; rd.onerror=rej; rd.readAsDataURL(f); });
+  try{
+    const r=await fetch('/api/crm-piece-upload',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CRM-Code':_crmCode()},body:JSON.stringify({ref:_piecesRef,filename:f.name,mime:f.type,dataBase64:b64,cat:cat})});
+    if(r.ok){ inp.value=''; loadPieces(); } else { const j=await r.json().catch(function(){return{};}); alert('Échec : '+(j.error||r.status)); }
+  }catch(e){ alert('Erreur réseau'); }
+}
 async function jget(path, ms=6500){
   const ctrl = new AbortController(); const to = setTimeout(()=>ctrl.abort(), ms);
   const headers={ 'Accept':'application/json' };
