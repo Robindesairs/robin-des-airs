@@ -987,7 +987,7 @@ async function classifyDoc(mediaUrl, cfg) {
     const b64 = media.b64;
     const prompt = `Tu classes une photo/capture envoyée par un passager, et tu juges sa QUALITÉ (une pièce illisible peut être refusée par la compagnie). Réponds UNIQUEMENT en JSON :
 {"kind":"identite|voyage|frais|autre","nom":"","voyageType":"ebooking|carte|","lisible":true,"probleme":"","montant":null,"devise":"","categorie":""}
-- "identite" : passeport, carte nationale d'identité (CNI), titre de séjour. Mets dans "nom" le NOM et prénom lus (MAJUSCULES).
+- "identite" : passeport, carte nationale d'identité (CNI), titre de séjour. Mets dans "nom" le PRÉNOM puis le NOM de famille, dans cet ordre (ex : "AMINATA DIALLO"), en MAJUSCULES.
 - "voyage" : preuve de voyage. voyageType="ebooking" si CONFIRMATION DE RÉSERVATION / e-billet / itinéraire (liste souvent PLUSIEURS passagers et/ou PLUSIEURS vols). voyageType="carte" si CARTE D'EMBARQUEMENT (un seul passager / un seul vol).
 - "frais" : reçu, facture ou ticket d'une DÉPENSE liée à la perturbation du vol (hôtel, taxi/VTC, repas/restaurant, transport, parking). PAS un billet d'avion ni une réservation de vol. Pour un "frais", lis le MONTANT TOTAL payé → "montant" (nombre seul, ex 84.50 ; sinon null), la DEVISE → "devise" (EUR, XOF/FCFA, MAD, GMD, USD, GBP… si visible, sinon "") et la CATÉGORIE → "categorie" : "hotel" | "repas" | "taxi" | "transport" | "parking" | "autre".
 - "autre" : tout le reste.
@@ -1949,7 +1949,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       await send(phone, `👍 C'est noté${_nm ? `, on garde la place de *${_nm}*` : ''}. ℹ️ Mais sa pièce (passeport, CNI ou carte de séjour) reste *indispensable* pour la réclamation — envoyez-la dès que vous pouvez. 🔒`, cfg);
       return nextPassport(phone, s, cfg);
     }
-    if (id === 'doc_saisir' || lower.includes('saisir') || lower.includes('manuel') || lower.includes('tape')) { s.step = 'doc_name'; await setState(phone, s); return send(phone, `👤 *Passager ${s.doc_idx + 1}* — Nom et prénom ?\n_(ex : Aminata Diallo)_\nℹ️ On note le nom, mais la *photo* de sa pièce (passeport, CNI ou carte de séjour) restera nécessaire pour la réclamation. 🔒`, cfg); }
+    if (id === 'doc_saisir' || lower.includes('saisir') || lower.includes('manuel') || lower.includes('tape')) { s.step = 'doc_name'; await setState(phone, s); return send(phone, `👤 *Passager ${s.doc_idx + 1}* — Prénom et nom ?\n_(ex : Aminata Diallo)_\nℹ️ On note le nom, mais la *photo* de sa pièce (passeport, CNI ou carte de séjour) restera nécessaire pour la réclamation. 🔒`, cfg); }
     return sendButtons(phone, { body: `🛂 Envoyez la *photo* de la pièce, ou :`, buttons: [...(((s.passengers[s.doc_idx] && s.passengers[s.doc_idx].name) || (s.names && s.names[s.doc_idx])) ? [] : [{ id: 'doc_saisir', text: '✍️ Saisir à la main' }]), { id: 'doc_passer', text: '⏭️ Je l\'envoie après' }] }, cfg);
   }
   if (s.step === 'doc_pass_confirm') {
@@ -1987,7 +1987,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     }
     if (id === 'doc_saisir' || lower.includes('saisir') || lower.includes('manuel')) {
       delete s.doc_pending; s.step = 'doc_name'; await setState(phone, s);
-      return send(phone, `👤 *Passager ${s.doc_idx + 1}* — Nom et prénom ?\n_(ex : Aminata Diallo)_`, cfg);
+      return send(phone, `👤 *Passager ${s.doc_idx + 1}* — Prénom et nom ?\n_(ex : Aminata Diallo)_`, cfg);
     }
     return sendButtons(phone, [{ id: 'pass_ok', text: '✅ C\'est correct' }, { id: 'pass_fix', text: '✏️ Corriger' }], cfg);
   }
@@ -2023,7 +2023,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (s.step === 'doc_name') {
     if (mediaUrl) return askOcrConfirm(phone, s, cfg, mediaUrl); // il envoie finalement la pièce → on la lit
     if (input.length >= 3 && !/^\d+$/.test(input) && !/^\[/.test(input)) { s.passengers = s.passengers || []; s.passengers[s.doc_idx] = { name: input.toUpperCase() }; s.step = 'doc_dob'; await setState(phone, s); return send(phone, `📅 *Date de naissance* de ${input} ? _(JJ/MM/AAAA)_`, cfg); }
-    return send(phone, `Nom trop court. Renvoyez nom et prénom :`, cfg);
+    return send(phone, `Nom trop court. Renvoyez prénom et nom :`, cfg);
   }
   if (s.step === 'doc_dob') {
     if (mediaUrl) return askOcrConfirm(phone, s, cfg, mediaUrl); // pareil : la photo de la pièce vaut mieux que la saisie
