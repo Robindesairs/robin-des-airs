@@ -767,6 +767,12 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     <div class="sstep"><div class="snum">4</div><div><strong>Votre argent sur votre compte</strong><br>Dès que la compagnie paie, on vous reverse votre part (75&nbsp;% net) sous 48&nbsp;h.</div></div>
   </div>
 
+  <div class="success-block tint" id="sMemeVol">
+    <div class="sb-label"><span aria-hidden="true">✈️</span> Vous n'étiez pas seul·e sur ce vol</div>
+    <div class="sb-meta">Sur un vol retardé ou annulé, <strong>chaque passager a droit à sa propre indemnité</strong> (jusqu'à 600&nbsp;€). Partagez dans votre <strong>groupe WhatsApp du voyage</strong> — pour chaque dossier gagné grâce à vous, vous gagnez un <strong>accès salon (lounge)</strong>.</div>
+    <a class="success-cta wa full" id="sMemeVolBtn" href="https://wa.me/" target="_blank" rel="noopener" style="margin-top:12px">📣 Partager à mes co-passagers</a>
+  </div>
+
   <div class="success-block">
     <div class="sb-label"><span aria-hidden="true">🛋️</span> Un proche a vécu la même galère ?</div>
     <div class="sb-meta">Parrainez-le : pour chaque dossier gagné, vous recevez un <strong>accès salon (lounge)</strong> dans un aéroport au choix, valable 1&nbsp;an. Sans limite.</div>
@@ -1762,6 +1768,14 @@ function showSuccess(payload, ok) {
   // Dépenses Art. 9 : CTA WhatsApp pour envoyer les tickets (hôtel/repas/taxi…), pré-rempli avec la référence
   const fb = document.getElementById('sFraisBtn');
   if (fb) fb.href = waBase + encodeURIComponent('Bonjour Robin des Airs, j’ai signé le mandat (réf. ' + REF + '). Je vous envoie mes tickets de dépenses (repas, taxi, hôtel) à joindre à ma réclamation.');
+  // « Même vol » : message FORWARDABLE vers le groupe WhatsApp du voyage → acquisition de nouveaux dossiers (wa.me sans numéro = le client choisit son groupe)
+  const mv = document.getElementById('sMemeVolBtn');
+  if (mv) {
+    const fnumEl = document.getElementById('fnum');
+    const volTxt = (fnumEl && fnumEl.value.trim()) || VOL || '';
+    const volPart = volTxt ? ('le vol ' + volTxt) : 'votre vol';
+    mv.href = 'https://wa.me/?text=' + encodeURIComponent('✈️ Vous étiez sur ' + volPart + ' ? S\'il a été retardé ou annulé, vous pouvez récupérer jusqu\'à 600 € par passager, 0 € d\'avance, avec Robin des Airs. Écrivez-leur 👉 https://wa.me/33756863630');
+  }
   // Signataires (preuve de complétude pour un dossier groupe)
   let names = [];
   if (payload.passengerNames && payload.passengerNames.length) names = payload.passengerNames;
