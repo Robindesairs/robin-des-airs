@@ -1450,11 +1450,22 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     }
     // Une intention claire « parler à un humain / être contacté / rappel » est analysée PARTOUT
     // (même en plein tunnel et sans « ? ») → on ne redemande pas bêtement l'étape en cours.
-    const looks = !id && (isSensitive(input) || (FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input)));
+    // Après signature : le client n'est plus dans un tunnel à compléter → dès qu'il écrit librement,
+    // l'IA prend le relais (au lieu de re-poser une étape). On EXCLUT les étapes de SAISIE libre (FREE,
+    // ex. saisie manuelle du nom/date) pour ne pas avaler une vraie donnée, et les photos/boutons
+    // continuent d'alimenter la collecte des pièces & reçus (mediaUrl/id non touchés).
+    // Borné au step 'done' (post-signature idle) : un NOUVEAU dossier (autre_vol → clearState) repart
+    // sur un step de tunnel ≠ 'done' → le relais IA ne s'y déclenche pas et le nouveau flux est normal.
+    const isSigned = (LEADS.get(leadKey(phone)) || {}).signed === true;
+    const signedFreeChat = isSigned && s.step === 'done' && !id && !mediaUrl && !!(input && input.trim());
+    const looks = !id && (isSensitive(input) || signedFreeChat || (FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input)));
     if (looks) {
       if (isSensitive(input)) { upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now(), lastClientAt: Date.now() }); notifyCallbackWanted(phone, s, `question sensible : « ${String(input).slice(0, 80)} »`); await send(phone, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nÉcrivez *go* pour continuer votre dossier.`, cfg); return; }
       const r = await answerClientQuestion(input, process.env.OPENAI_API_KEY);
-      await sendButtons(phone, { body: (r || `🤖 Je suis l'assistant IA de Robin des Airs.`) + `\n\n👉 *Démarrez* ci-dessous 👇`, buttons: [{ text: '📋 Démarrer' }, { text: '📞 Être rappelé' }] }, cfg);
+      // Client signé : portes de sortie claires → déposer ses pièces, ouvrir un NOUVEAU dossier, ou un humain.
+      const footer = isSigned ? `\n\n👉 Une autre question ? Écrivez-moi. Ou choisissez 👇` : `\n\n👉 *Démarrez* ci-dessous 👇`;
+      const btns = isSigned ? [{ id: 'depot', text: '📎 Déposer mes pièces' }, { id: 'autre_vol', text: '✈️ Nouveau dossier' }, { id: 'appel', text: '📞 Être rappelé' }] : [{ text: '📋 Démarrer' }, { text: '📞 Être rappelé' }];
+      await sendButtons(phone, { body: (r || `🤖 Je suis l'assistant IA de Robin des Airs.`) + footer, buttons: btns }, cfg);
       return;
     }
   } catch (e) {}
