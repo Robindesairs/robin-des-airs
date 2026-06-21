@@ -4,6 +4,7 @@
 
 const crypto = require('crypto');
 const { getCrmAuthConfig } = require('./auth-config');
+const { safeEqualString } = require('./safe-compare');
 
 const COOKIE_NAME = 'rda_crm';
 
@@ -59,7 +60,7 @@ function checkCrmAccess(event) {
     event.headers?.['x-crm-code'] ||
     event.headers?.['X-CRM-Code'];
 
-  if (provided && provided === cfg.accessCode) return { ok: true, configured: true };
+  if (provided && safeEqualString(provided, cfg.accessCode)) return { ok: true, configured: true };
   if (verifyCrmSessionCookie(event)) return { ok: true, configured: true };
 
   return { ok: false, error: 'Non autorisé', configured: true };
