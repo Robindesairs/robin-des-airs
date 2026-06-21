@@ -2472,7 +2472,7 @@ async function nextPassport(phone, s, cfg) {
   s.step = 'doc_pass'; await setState(phone, s);
   // Intro au 1er passager : on RAPPELLE d'abord ce que le client touche (le chiffre rassure et justifie
   // l'effort), PUIS on demande la pièce d'identité — qui ne sert qu'à réclamer en son nom auprès de la compagnie.
-  const intro = s.doc_idx === 0 ? `✅ *On y est presque — votre dossier tient la route.*\n${montantLine(s)}\n\n📁 *Dernière étape* avant de lancer la réclamation *en votre nom* : une pièce d'identité par passager. 🔒\n\n` : '';
+  const intro = s.doc_idx === 0 ? `✅ *On y est presque* — plus qu'une étape avant de lancer votre réclamation.\n${montantLine(s)}\n\n` : '';
   // En-tête : passagers déjà traités (✅) ou reportés (⏳) — nom affiché s'il est connu (e-billet / pièce lue)
   let done = '';
   for (let i = 0; i < s.doc_idx; i++) {
@@ -2484,7 +2484,8 @@ async function nextPassport(phone, s, cfg) {
   // Nom du passager courant : connu seulement si e-billet scanné (sinon lu sur la pièce). Conditionnel.
   const curName = (s.passengers && s.passengers[s.doc_idx] && s.passengers[s.doc_idx].name) || (s.names && s.names[s.doc_idx]) || '';
   const who = curName ? ` — *${curName}*` : '';
-  return sendButtons(phone, { body: `${bar('documents')}\n${intro}${header}🛂 *Passager ${s.doc_idx + 1} sur ${s.pax}*${who}\n📸 *Le plus simple* : une *photo* de sa pièce d'identité — *passeport, CNI ou carte de séjour*. On lit le nom et la date *automatiquement*. ⏱️ *10 secondes et c'est réglé !*\nℹ️ Cette pièce est *indispensable* pour réclamer en son nom — classée *directement dans votre dossier*.\n🔒 Lecture *automatique (IA)* à seule fin de pré-remplir votre dossier (voir robindesairs.eu/politique-confidentialite) · transmission *sécurisée*, *jamais revendue*.`, buttons: [{ id: 'doc_photo', text: '📸 Envoyer ma photo' }, ...(curName ? [] : [{ id: 'doc_saisir', text: '✍️ Saisir à la main' }]), { id: 'doc_passer', text: '⏭️ Je l\'envoie après' }] }, cfg);
+  const passLine = s.pax > 1 ? `🛂 *Passager ${s.doc_idx + 1} sur ${s.pax}*${who}\n` : `🛂 *Pièce d'identité*${who}\n`;
+  return sendButtons(phone, { body: `${bar('documents')}\n${intro}${header}${passLine}📸 Pour réclamer auprès de la compagnie, il faut *prouver l'identité du passager*. Envoyez une *photo* de sa pièce — *passeport, carte d'identité ou carte de séjour*.\nOn lit seulement le *nom* et la *date de naissance* pour remplir le dossier.\n_ℹ️ Lecture par un outil automatique (IA) ; pièce conservée dans votre dossier et utilisée *uniquement pour votre réclamation*, jamais à d'autres fins — robindesairs.eu/politique-confidentialite._`, buttons: [{ id: 'doc_photo', text: '📸 Envoyer ma photo' }, ...(curName ? [] : [{ id: 'doc_saisir', text: '✍️ Saisir à la main' }]), { id: 'doc_passer', text: '⏭️ Je l\'envoie après' }] }, cfg);
 }
 async function askMandant(phone, s, cfg) {
   // 1 seul passager → c'est forcément lui le contact, pas de question → adresse puis finalisation.
