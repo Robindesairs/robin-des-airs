@@ -1499,14 +1499,14 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       && !(s && (s.step === 'doc_boarding' || s.step === 'doc_eticket')))) { // WATI renvoie souvent le LIBELLÉ du bouton (« Besoin d'aide » / « Être rappelé »), pas l'id → on matche aussi le texte
     upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now(), lastClientAt: Date.now(), ...(s && s.langue_code ? { langue: s.langue_code } : {}) });
     notifyCallbackWanted(phone, s, 'a demandé à être rappelé');
-    return send(phone, `📞 *C'est noté !* Un vrai conseiller Robin des Airs — un humain, pas un robot 🙂 — vous rappelle très vite.\n\n👉 On vous appelle depuis le *+33 7 56 86 36 30* : enregistrez-le tout de suite sous « *Robin des Airs* » pour reconnaître l'appel et *décrocher* (sinon il s'affiche comme un numéro inconnu).\n\n🔒 *0 € tant qu'on ne gagne pas* — si on obtient votre indemnité, on prend 25 % de frais de succès, le reste (75 %) est pour vous.\n\nPas dispo ? Répondez ici quand vous voulez, ou écrivez *go* pour reprendre. 🙏`, cfg);
+    return send(phone, L(s, `📞 *Got it!* A real Robin des Airs advisor — a human, not a robot 🙂 — will call you back very soon.\n\n👉 We call from *+33 7 56 86 36 30*: save it now as "*Robin des Airs*" so you recognise the call and *pick up* (otherwise it shows as an unknown number).\n\n🔒 *€0 unless we win* — if we obtain your compensation we take a 25% success fee, the rest (75%) is yours.\n\nNot available? Reply here whenever you like, or type *go* to resume. 🙏`, `📞 *C'est noté !* Un vrai conseiller Robin des Airs — un humain, pas un robot 🙂 — vous rappelle très vite.\n\n👉 On vous appelle depuis le *+33 7 56 86 36 30* : enregistrez-le tout de suite sous « *Robin des Airs* » pour reconnaître l'appel et *décrocher* (sinon il s'affiche comme un numéro inconnu).\n\n🔒 *0 € tant qu'on ne gagne pas* — si on obtient votre indemnité, on prend 25 % de frais de succès, le reste (75 %) est pour vous.\n\nPas dispo ? Répondez ici quand vous voulez, ou écrivez *go* pour reprendre. 🙏`), cfg);
   }
 
   // T1.1b — Phrases sociales pures (merci, super, 👍…) : accusé poli, jamais parsé comme donnée.
   // Sans ce garde, « merci » passait dans cityPick → cleanCity → accepté comme ville de départ.
   if (!id && !mediaUrl && /^(merci+|thank(s| you)?|super|parfait|cool+|d'?accord|ça marche|ca marche|ok merci|bien merci|bravo|voilà|voila|reçu|recu|compris|entendu|👍+|🙏+)(\s*[!.🙏👍])*$/i.test(lower)) {
     const hasFlow = s && s.step && !['accueil', 'done', 'non_eligible'].includes(s.step);
-    return send(phone, `De rien 🙏${hasFlow ? '\n\nTapez *go* quand vous voulez reprendre.' : ''}`, cfg);
+    return send(phone, L(s, `You're welcome 🙏${hasFlow ? '\n\nType *go* whenever you want to resume.' : ''}`, `De rien 🙏${hasFlow ? '\n\nTapez *go* quand vous voulez reprendre.' : ''}`), cfg);
   }
 
   // Vol jugé NON éligible (session terminale) : les boutons 'autre_vol' (1113), 'go' (1114) et 'appel'
@@ -1523,7 +1523,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const okMark = markLeadSigned(phone);
     const _l = LEADS.get(leadKey(phone)) || {};
     notifyOwnerWhatsApp(phone, `🖊️ « Déjà signé » déclaré par le client (${_l.ref || phone}) → relances STOPPÉES${okMark ? '' : ' (lead introuvable)'}. ⚠️ À VÉRIFIER : si le mandat n'est pas réellement signé (webhook manqué), relancer manuellement.`).catch(() => {});
-    return send(phone, `Merci ! ✅ On arrête les rappels. Si jamais votre signature n'était pas encore arrivée chez nous, un conseiller vous le dira — sinon, votre dossier suit son cours. 🙏`, cfg);
+    return send(phone, L(s, `Thank you! ✅ We'll stop the reminders. If your signature hadn't reached us yet, an advisor will let you know — otherwise your case moves forward. 🙏`, `Merci ! ✅ On arrête les rappels. Si jamais votre signature n'était pas encore arrivée chez nous, un conseiller vous le dira — sinon, votre dossier suit son cours. 🙏`), cfg);
   }
 
   // « J'ai déjà tout envoyé » (bouton du rappel pièces post-signature) : on stoppe le rappel, on rassure,
@@ -1551,7 +1551,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const _patch = { lastClientAt: Date.now() };
     if (!_l.completed) _patch.nudges = ['e3', 'e14']; // engagé : ne garde que la dernière relance « bord de fenêtre »
     upsertLead(phone, _patch);
-    return send(phone, `👍 C'est noté${nm ? ' ' + nm : ''} — je garde votre dossier au chaud, on ne le ferme pas. Reprenez quand vous voulez en écrivant *go*. Je vous ferai juste un petit rappel plus tard, sans insister. 🙏`, cfg);
+    return send(phone, L(s, `👍 Got it${nm ? ' ' + nm : ''} — I'm keeping your case safe, we won't close it. Resume whenever you like by typing *go*. I'll just send a gentle reminder later, no pressure. 🙏`, `👍 C'est noté${nm ? ' ' + nm : ''} — je garde votre dossier au chaud, on ne le ferme pas. Reprenez quand vous voulez en écrivant *go*. Je vous ferai juste un petit rappel plus tard, sans insister. 🙏`), cfg);
   }
 
   // T1.5 — Vol cliqué dans le bandeau « vols éligibles » du site (premier contact) ──────────────
@@ -1610,7 +1610,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const signedFreeChat = isSigned && s.step === 'done' && !id && !mediaUrl && !!(input && input.trim());
     const looks = !id && (isSensitive(input) || signedFreeChat || (FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input)));
     if (looks) {
-      if (isSensitive(input)) { upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now(), lastClientAt: Date.now() }); notifyCallbackWanted(phone, s, `question sensible : « ${String(input).slice(0, 80)} »`); await send(phone, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nÉcrivez *go* pour continuer votre dossier.`, cfg); return; }
+      if (isSensitive(input)) { upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now(), lastClientAt: Date.now() }); notifyCallbackWanted(phone, s, `question sensible : « ${String(input).slice(0, 80)} »`); await send(phone, L(s, `I'm passing your request to a Robin des Airs advisor. 🙏\nType *go* to continue your case.`, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nÉcrivez *go* pour continuer votre dossier.`), cfg); return; }
       const r = await answerClientQuestion(input, process.env.OPENAI_API_KEY);
       // Client signé : portes de sortie claires → déposer ses pièces, ouvrir un NOUVEAU dossier, ou un humain.
       const footer = isSigned ? `\n\n👉 Une autre question ? Écrivez-moi. Ou choisissez 👇` : `\n\n👉 *Démarrez* ci-dessous 👇`;
@@ -1789,7 +1789,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     s.vol = s.legs.map((l) => l.vol).filter(Boolean).join(' + ') || s.vol || '';
     s.compagnie = deduceAirline(s.legs[s.legs.length - 1] && s.legs[s.legs.length - 1].vol) || deduceAirline(s.legs[0] && s.legs[0].vol) || s.compagnie || '';
     s.step = 'm_date'; await setState(phone, s);
-    return send(phone, `📅 Date du *premier vol* ? _(ex : 15/03/2026)_`, cfg);
+    return send(phone, L(s, `📅 Date of the *first flight*? _(e.g. 15/03/2026)_`, `📅 Date du *premier vol* ? _(ex : 15/03/2026)_`), cfg);
   }
 
   // ── Correspondance : combien de vols, puis chaque segment, puis ordre automatique ──
@@ -1817,7 +1817,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     s.vol = ordered.map((l) => l.vol).filter(Boolean).join(' + ') || s.vol || '';
     s.compagnie = deduceAirline(ordered[ordered.length - 1] && ordered[ordered.length - 1].vol) || deduceAirline(ordered[0] && ordered[0].vol) || s.compagnie || '';
     s.step = 'm_date'; await setState(phone, s);
-    return send(phone, `📅 Date du *premier vol* ? _(ex : 15/03/2026)_`, cfg);
+    return send(phone, L(s, `📅 Date of the *first flight*? _(e.g. 15/03/2026)_`, `📅 Date du *premier vol* ? _(ex : 15/03/2026)_`), cfg);
   }
 
   // MSG8 — SCAN (e-billet / carte — accepte PLUSIEURS pages photographiées)
@@ -1860,21 +1860,23 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
           s.point_chute = chute; s.escalade = s.escalade || 'troncon_europe_manquant'; s.step = 'scan'; await setState(phone, s);
           const r = humanizeRoute(d.route) || `${d.depart || '?'} → ${d.arrivee || '?'}`;
           const ville = chute ? `*${iataLabel(chute)}*${IATA_CITY[chute] ? ` (${chute})` : ''}` : 'votre escale';
-          return sendButtons(phone, { body: `⚠️ Ce vol *${r}* s'arrête à ${ville} — il ne touche pas encore l'Europe.\n\nVous avez atterri à ${ville} : *quel vol vous a ensuite ramené(e) en Europe ?* C'est lui qui ouvre vos droits et désigne la compagnie à réclamer.\n\n📎 Envoyez la *2ᵉ carte d'embarquement* (le vol depuis ${ville}), votre *e-billet* (il contient tous les vols), ou l'*étiquette bagage* de votre valise.\n\n_Carte perdue ? Écrivez le n° du vol depuis ${ville}, on le fait à la main._`, buttons: [{ id: 'scan_manuel', text: `✏️ Saisir le vol depuis ${chute || 'l\'escale'}` }] }, cfg);
+          return sendButtons(phone, { body: L(s,
+            `⚠️ This flight *${r}* stops in ${ville} — it doesn't reach Europe yet.\n\nYou landed in ${ville}: *which flight then brought you back to Europe?* That's the one that opens your rights and names the airline to claim from.\n\n📎 Send the *2nd boarding pass* (the flight from ${ville}), your *e-ticket* (it has all the flights), or your suitcase's *baggage tag*.\n\n_Lost the pass? Type the flight number from ${ville}, we'll do it by hand._`,
+            `⚠️ Ce vol *${r}* s'arrête à ${ville} — il ne touche pas encore l'Europe.\n\nVous avez atterri à ${ville} : *quel vol vous a ensuite ramené(e) en Europe ?* C'est lui qui ouvre vos droits et désigne la compagnie à réclamer.\n\n📎 Envoyez la *2ᵉ carte d'embarquement* (le vol depuis ${ville}), votre *e-billet* (il contient tous les vols), ou l'*étiquette bagage* de votre valise.\n\n_Carte perdue ? Écrivez le n° du vol depuis ${ville}, on le fait à la main._`), buttons: [{ id: 'scan_manuel', text: L(s, `✏️ Type the flight from ${chute || 'the stop'}`, `✏️ Saisir le vol depuis ${chute || 'l\'escale'}`) }] }, cfg);
         }
         if (d.allerRetour && d.trajets && d.trajets.length > 1) { s.trajets = d.trajets; await setState(phone, s); return askSens(phone, s, cfg); }
         s.step = 'scan_confirm'; await setState(phone, s); return scanConfirmCard(phone, s, cfg);
       }
-      delete s.scan_pages; await send(phone, `😕 Je n'ai pas réussi à lire ce document (PDF protégé, image trop sombre ou coupée…). Réessayez avec une *capture d'écran nette*, ou faisons-le à la main — ça prend 2 min. 👇\n\n💡 *Carte d'embarquement perdue ?* L'*étiquette bagage* collée sur votre valise (celle de la soute) fait aussi l'affaire : elle prouve votre voyage et porte votre n° de vol. 📸 Envoyez-la, on s'occupe du reste.`, cfg);
+      delete s.scan_pages; await send(phone, L(s, `😕 I couldn't read this document (protected PDF, image too dark or cropped…). Try again with a *clear screenshot*, or let's do it by hand — it takes 2 min. 👇\n\n💡 *Lost your boarding pass?* The *baggage tag* on your suitcase (the checked one) works too: it proves your trip and carries your flight number. 📸 Send it, we'll handle the rest.`, `😕 Je n'ai pas réussi à lire ce document (PDF protégé, image trop sombre ou coupée…). Réessayez avec une *capture d'écran nette*, ou faisons-le à la main — ça prend 2 min. 👇\n\n💡 *Carte d'embarquement perdue ?* L'*étiquette bagage* collée sur votre valise (celle de la soute) fait aussi l'affaire : elle prouve votre voyage et porte votre n° de vol. 📸 Envoyez-la, on s'occupe du reste.`), cfg);
       if (s.type_vol === 'escale') return askEscDep(phone, s, cfg);
-      s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
+      s.step = 'm_vol'; await setState(phone, s); return send(phone, L(s, `📝 Flight number? _(e.g. AF718, AT540)_`, `📝 Numéro de vol ? _(ex. AF718, AT540)_`), cfg);
     }
     if (id === 'scan_photo' || lower.includes('envoyer une photo') || lower.includes('envoie une photo')) {
-      return send(phone, `👍 C'est noté — appuyez sur 📎 (ou 📷) en bas et envoyez la *photo* de votre *e-billet* (il contient tous vos vols), de votre *carte d'embarquement*, ou même de l'*étiquette bagage* collée sur votre valise. Je lis tout. 🔒`, cfg);
+      return send(phone, L(s, `👍 Got it — tap 📎 (or 📷) below and send a *photo* of your *e-ticket* (it has all your flights), your *boarding pass*, or even the *baggage tag* on your suitcase. I read everything. 🔒`, `👍 C'est noté — appuyez sur 📎 (ou 📷) en bas et envoyez la *photo* de votre *e-billet* (il contient tous vos vols), de votre *carte d'embarquement*, ou même de l'*étiquette bagage* collée sur votre valise. Je lis tout. 🔒`), cfg);
     }
     if (id === 'scan_manuel' || lower.includes('manuel') || lower.includes('manuelle') || lower.includes('saisir')) {
       if (s.type_vol === 'escale') return askEscDep(phone, s, cfg, `🔄 Pas de souci, on le fait ensemble — une question à la fois.`);
-      s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
+      s.step = 'm_vol'; await setState(phone, s); return send(phone, L(s, `📝 Flight number? _(e.g. AF718, AT540)_`, `📝 Numéro de vol ? _(ex. AF718, AT540)_`), cfg);
     }
     return sendButtons(phone, { body: `📎 Envoyez une *photo* (ou le *PDF*) de votre e-billet. _Plusieurs pages ? Envoyez-les une par une, je les assemble._\n\n_🔒 En envoyant ce document, vous acceptez qu'il soit lu par un outil automatique (IA) pour pré-remplir votre dossier — robindesairs.eu/politique-confidentialite._`, buttons: [{ id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
   }
@@ -1919,7 +1921,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (n === '1' || lower.includes('vol')) { s.step = 'fix_vol'; await setState(phone, s); return send(phone, `✈️ Vol actuel : *${s.vol || '—'}*\nTapez simplement le *bon numéro* 👇 _(ex. AF718)_`, cfg); }
     if (n === '2' || lower.includes('date')) { s.step = 'fix_date'; await setState(phone, s); return send(phone, `📅 Date actuelle : *${s.date || '—'}*\nTapez simplement la *bonne date* 👇 _(JJ/MM/AAAA)_`, cfg); }
     if (n === '3' || lower.includes('nom')) {
-      if (s.pax > 1) { s.step = 'fix_nom_which'; await setState(phone, s); return send(phone, `✏️ Quel passager corriger ? Indiquez son *numéro* (1 à ${s.pax}).`, cfg); }
+      if (s.pax > 1) { s.step = 'fix_nom_which'; await setState(phone, s); return send(phone, L(s, `✏️ Which passenger to fix? Enter their *number* (1 to ${s.pax}).`, `✏️ Quel passager corriger ? Indiquez son *numéro* (1 à ${s.pax}).`), cfg); }
       s.step = 'fix_nom'; await setState(phone, s); return send(phone, `👤 Nom actuel : *${(s.names && s.names[0]) || '—'}*\nTapez simplement le *bon nom complet* 👇`, cfg);
     }
     if (n === '4' || lower.includes('trajet') || lower.includes('route')) { s.step = 'fix_route'; await setState(phone, s); return send(phone, `🗺️ Trajet actuel : *${s.route || '—'}*\nTapez simplement le *bon trajet* 👇 _(ex. CDG → DSS)_`, cfg); }
@@ -1952,7 +1954,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       return afterFix(phone, s, cfg);
     }
     if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim()), cfg);
-    return send(phone, `Date non reconnue. Format JJ/MM/AAAA :`, cfg);
+    return send(phone, L(s, `Date not recognised. Format DD/MM/YYYY:`, `Date non reconnue. Format JJ/MM/AAAA :`), cfg);
   }
   if (s.step === 'fix_nom') {
     if (input.length >= 3 && !/^\d+$/.test(input)) { s.names = s.names || []; s.names[s.fix_name_idx || 0] = input.toUpperCase(); s.fix_name_idx = 0; await setState(phone, s); return afterFix(phone, s, cfg); }
@@ -1984,7 +1986,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (/^m_(vol|date|route|pnr)$/.test(s.step) && mediaUrl) { s.step = 'scan'; await setState(phone, s); return handleMessage(phone, text, cfg, mediaUrl, replyId, true); }
   if (s.step === 'm_vol') {
     const vol = input.toUpperCase().replace(/\s+/g, '');
-    if (/^[A-Z0-9]{3,8}$/.test(vol)) { s.vol = vol; s.compagnie = deduceAirline(vol) || s.compagnie || ''; s.step = 'm_date'; await setState(phone, s); return send(phone, `✅ Vol ${vol}${s.compagnie ? ' — ' + s.compagnie : ''}\n\n📅 Date du vol ? _(ex. 15/03/2026)_`, cfg); }
+    if (/^[A-Z0-9]{3,8}$/.test(vol)) { s.vol = vol; s.compagnie = deduceAirline(vol) || s.compagnie || ''; s.step = 'm_date'; await setState(phone, s); return send(phone, L(s, `✅ Flight ${vol}${s.compagnie ? ' — ' + s.compagnie : ''}\n\n📅 Flight date? _(e.g. 15/03/2026)_`, `✅ Vol ${vol}${s.compagnie ? ' — ' + s.compagnie : ''}\n\n📅 Date du vol ? _(ex. 15/03/2026)_`), cfg); }
     return send(phone, `Numéro non reconnu (ex. AF718). Renvoyez-le :`, cfg);
   }
   if (s.step === 'm_date') {
@@ -2047,7 +2049,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       return askDepCity(phone, s, cfg);
     }
     if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim()), cfg);
-    return send(phone, `Date non reconnue. Format JJ/MM/AAAA (ex. 15/03/2026) :`, cfg);
+    return send(phone, L(s, `Date not recognised. Format DD/MM/YYYY (e.g. 15/03/2026):`, `Date non reconnue. Format JJ/MM/AAAA (ex. 15/03/2026) :`), cfg);
   }
   // Choix du tronçon parmi 2-3 options (milk-run ou LLM multi-routes).
   if (s.step === 'm_route_choice') {
@@ -2131,7 +2133,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (s.step === 'names_confirm') {
     const n = normInput(input, ['confirmer', 'corriger']);
     if (n === '1' || lower.includes('confirm')) { return sendMineurs(phone, s, cfg); }
-    if (n === '2' || lower.includes('corrig')) { s.step = 'names_fix_which'; await setState(phone, s); return send(phone, `✏️ Quel passager corriger ? Indiquez son *numéro* (1 à ${s.pax}).`, cfg); }
+    if (n === '2' || lower.includes('corrig')) { s.step = 'names_fix_which'; await setState(phone, s); return send(phone, L(s, `✏️ Which passenger to fix? Enter their *number* (1 to ${s.pax}).`, `✏️ Quel passager corriger ? Indiquez son *numéro* (1 à ${s.pax}).`), cfg); }
     return showNamesConfirm(phone, s, cfg);
   }
   if (s.step === 'names_fix_which') {
@@ -2344,7 +2346,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (id === 'frais_oui' || lower.includes('envoi') || lower.includes('reçu') || lower.includes('recu') || lower.startsWith('oui')) {
       return send(phone, `👍 Envoyez une *photo* de chaque reçu (hôtel, repas, taxi…). Ces montants vous reviennent *en plus* de l'indemnité. Même flou, même plusieurs — envoyez juste ce que vous avez vraiment payé.`, cfg);
     }
-    return sendButtons(phone, { body: `💶 Des frais à cause de ce vol (hôtel, repas, taxi…) ? Ils vous sont remboursés *en plus* de l'indemnité — envoyez une *photo* du reçu, ou :`, buttons: [{ id: 'frais_non', text: '❌ Pas de frais' }] }, cfg);
+    return sendButtons(phone, { body: L(s, `💶 Any expenses because of this flight (hotel, meals, taxi…)? They're reimbursed *on top of* the compensation — send a *photo* of the receipt, or:`, `💶 Des frais à cause de ce vol (hôtel, repas, taxi…) ? Ils vous sont remboursés *en plus* de l'indemnité — envoyez une *photo* du reçu, ou :`), buttons: [{ id: 'frais_non', text: L(s, '❌ No expenses', '❌ Pas de frais') }] }, cfg);
   }
 
   if (s.step === 'done') {
@@ -2816,7 +2818,7 @@ async function relancerEtape(phone, s, cfg) {
     case 'recap': return sendRecap(phone, s, cfg);
     case 'names': return askName(phone, s, cfg);
     case 'm_route_confirm': return s.route ? sendButtons(phone, { body: `✈️ Votre trajet était *${s.route}* ?`, buttons: [{ id: 'route_ok', text: '✅ Oui' }, { id: 'route_fix', text: '✏️ Corriger' }] }, cfg) : send(phone, `🗺️ Quel était le *trajet* ? _(ex : Dakar → Paris)_`, cfg);
-    case 'm_vol': return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
+    case 'm_vol': return send(phone, L(s, `📝 Flight number? _(e.g. AF718, AT540)_`, `📝 Numéro de vol ? _(ex. AF718, AT540)_`), cfg);
     case 'm_date': return send(phone, `📅 Date du vol ? _(ex. 15/03/2026)_`, cfg);
     case 'm_route': return send(phone, `🗺️ Quel était le *trajet* ? _(ex : Dakar → Paris, ou DSS → CDG)_`, cfg);
     case 'm_dep': return askDepCity(phone, s, cfg);
