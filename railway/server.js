@@ -488,6 +488,14 @@ function deduceAirline(vol) { const m = (vol || '').toUpperCase().match(/^([A-Z]
 // européenne (Art. 3 §1 b). Au DÉPART d'Europe, peu importe la compagnie → cette liste ne s'applique pas.
 const UE_CARRIERS = new Set(['AF', 'KL', 'SN', 'TP', 'LH', 'IB', 'U2', 'EJU', 'FR', 'TO', 'HV', 'LX', 'OS', 'EW', 'AZ', 'A3', 'SK', 'AY', 'LO', 'VY', 'DY', 'EN', 'WK', 'WF', 'IG']);
 function isCarrierUE(code) { return UE_CARRIERS.has(String(code || '').toUpperCase().replace(/\s+/g, '')); }
+// Aéroports EUROPÉENS (UE + EEE + Suisse + Royaume-Uni) — sert à dériver le « sens » d'une jambe
+// (part d'Europe vs arrive en Europe) sur un ALLER-RETOUR, où chaque trajet touche l'Europe par un bout.
+const EU_AIRPORTS = new Set([
+  'CDG', 'ORY', 'LYS', 'MRS', 'NCE', 'BOD', 'TLS', 'NTE', 'SXB', 'MLH', 'LIL', 'RNS', 'CLY', 'AJA', 'BIA',
+  'BRU', 'CRL', 'AMS', 'EIN', 'LHR', 'LGW', 'STN', 'LTN', 'LCY', 'MAN', 'BHX', 'EDI', 'GLA', 'BRS', 'DUB',
+  'FRA', 'MUC', 'BER', 'DUS', 'HAM', 'CGN', 'STR', 'NUE', 'VIE', 'ZRH', 'GVA', 'BSL', 'OSL', 'ARN', 'CPH', 'HEL',
+  'LIS', 'OPO', 'MAD', 'BCN', 'VLC', 'FCO', 'MXP', 'VCE', 'NAP', 'ATH', 'WAW', 'PRG', 'BUD', 'SOF', 'OTP']);
+function isEUAirport(code) { return EU_AIRPORTS.has(String(code || '').toUpperCase().trim()); }
 // Code IATA (préfixe) d'un n° de vol : « AF703 » → « AF », « U24023 » → « U2 », « EJU8704 » → « EJU ».
 // Le désignateur IATA fait 2 caractères ; on n'accepte 3 caractères QUE si c'est un code connu (ex. EJU),
 // sinon le {2,3} gourmand avalerait un chiffre (« AF703 » → « AF7 »).
@@ -982,6 +990,15 @@ function applyTrajet(s, t) {
   s.type_vol = t.escale ? 'escale' : 'direct';
   if (t.segments && t.segments.length > 1) s.legs = t.segments.map((x) => ({ vol: x.vol, dep: x.depart, arr: x.arrivee, date: x.date || '' }));
   else delete s.legs;
+  // Aller-retour : l'éligibilité dépend du SENS de la jambe choisie. On (re)dérive europeTouch de CETTE
+  // jambe (l'aller part d'Europe → couvert ; le retour arrive en Europe → dépend du transporteur effectif),
+  // on reprend SON « opéré par », puis on recalcule le drapeau hors-UE pour la bonne jambe.
+  s.operePar = t.operePar || '';
+  const dep = (t.segments && t.segments[0] && t.segments[0].depart) || '';
+  const arr = (t.segments && t.segments.length ? t.segments[t.segments.length - 1].arrivee : '') || '';
+  if (isEUAirport(arr) && !isEUAirport(dep)) s.europeTouch = 'arrivee';
+  else if (isEUAirport(dep) && !isEUAirport(arr)) s.europeTouch = 'depart';
+  markOperateurEffectif(s, { vol: s.vol, operePar: s.operePar });
 }
 // Carte de confirmation du scan (affiche le nb de pages lues + invite à en envoyer d'autres).
 async function scanConfirmCard(phone, s, cfg) {
