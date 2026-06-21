@@ -1837,17 +1837,17 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
           s.point_chute = chute; s.escalade = s.escalade || 'troncon_europe_manquant'; s.step = 'scan'; await setState(phone, s);
           const r = humanizeRoute(d.route) || `${d.depart || '?'} → ${d.arrivee || '?'}`;
           const ville = chute ? `*${iataLabel(chute)}*${IATA_CITY[chute] ? ` (${chute})` : ''}` : 'votre escale';
-          return sendButtons(phone, { body: `⚠️ Ce vol *${r}* s'arrête à ${ville} — il ne touche pas encore l'Europe.\n\nVous avez atterri à ${ville} : *quel vol vous a ensuite ramené(e) en Europe ?* C'est lui qui ouvre vos droits et désigne la compagnie à réclamer.\n\n📎 Envoyez la *2ᵉ carte d'embarquement* (le vol depuis ${ville}) — ou mieux, votre *e-billet* (il contient tous les vols).\n\n_Carte perdue ? Écrivez le n° du vol depuis ${ville}, on le fait à la main._`, buttons: [{ id: 'scan_manuel', text: `✏️ Saisir le vol depuis ${chute || 'l\'escale'}` }] }, cfg);
+          return sendButtons(phone, { body: `⚠️ Ce vol *${r}* s'arrête à ${ville} — il ne touche pas encore l'Europe.\n\nVous avez atterri à ${ville} : *quel vol vous a ensuite ramené(e) en Europe ?* C'est lui qui ouvre vos droits et désigne la compagnie à réclamer.\n\n📎 Envoyez la *2ᵉ carte d'embarquement* (le vol depuis ${ville}), votre *e-billet* (il contient tous les vols), ou l'*étiquette bagage* de votre valise.\n\n_Carte perdue ? Écrivez le n° du vol depuis ${ville}, on le fait à la main._`, buttons: [{ id: 'scan_manuel', text: `✏️ Saisir le vol depuis ${chute || 'l\'escale'}` }] }, cfg);
         }
         if (d.allerRetour && d.trajets && d.trajets.length > 1) { s.trajets = d.trajets; await setState(phone, s); return askSens(phone, s, cfg); }
         s.step = 'scan_confirm'; await setState(phone, s); return scanConfirmCard(phone, s, cfg);
       }
-      delete s.scan_pages; await send(phone, `😕 Je n'ai pas réussi à lire ce document (PDF protégé, image trop sombre ou coupée…). Réessayez avec une *capture d'écran nette*, ou faisons-le à la main — ça prend 2 min. 👇`, cfg);
+      delete s.scan_pages; await send(phone, `😕 Je n'ai pas réussi à lire ce document (PDF protégé, image trop sombre ou coupée…). Réessayez avec une *capture d'écran nette*, ou faisons-le à la main — ça prend 2 min. 👇\n\n💡 *Carte d'embarquement perdue ?* L'*étiquette bagage* collée sur votre valise (celle de la soute) fait aussi l'affaire : elle prouve votre voyage et porte votre n° de vol. 📸 Envoyez-la, on s'occupe du reste.`, cfg);
       if (s.type_vol === 'escale') return askEscDep(phone, s, cfg);
       s.step = 'm_vol'; await setState(phone, s); return send(phone, `📝 Numéro de vol ? _(ex. AF718, AT540)_`, cfg);
     }
     if (id === 'scan_photo' || lower.includes('envoyer une photo') || lower.includes('envoie une photo')) {
-      return send(phone, `👍 C'est noté — appuyez sur 📎 (ou 📷) en bas et envoyez la *photo* de votre *e-billet* (il contient tous vos vols) — ou de votre *carte d'embarquement*. Je lis tout. 🔒`, cfg);
+      return send(phone, `👍 C'est noté — appuyez sur 📎 (ou 📷) en bas et envoyez la *photo* de votre *e-billet* (il contient tous vos vols), de votre *carte d'embarquement*, ou même de l'*étiquette bagage* collée sur votre valise. Je lis tout. 🔒`, cfg);
     }
     if (id === 'scan_manuel' || lower.includes('manuel') || lower.includes('manuelle') || lower.includes('saisir')) {
       if (s.type_vol === 'escale') return askEscDep(phone, s, cfg, `🔄 Pas de souci, on le fait ensemble — une question à la fois.`);
