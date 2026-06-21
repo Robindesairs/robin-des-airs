@@ -469,7 +469,9 @@ async function notifyMandatSignedByEmail(record, pdfBuffer, pdfBilingueBuffer) {
     result.team = { skipped: true, reason: 'no MANDAT_NOTIFY_EMAIL' };
   }
 
-  const clientEmail = (record.email || '').trim();
+  // Email perso du client en PRIORITÉ (saisi sur le mandat) → le vrai passager reçoit la confirmation,
+  // même si le WhatsApp n'est pas le sien. À défaut, on retombe sur l'adresse technique (comportement antérieur).
+  const clientEmail = (record.contactEmail || '').trim() || (record.email || '').trim();
   if (isValidClientEmail(clientEmail)) {
     const replyTo = (process.env.MANDAT_EMAIL_REPLY_TO || 'expert@robindesairs.eu').trim();
     const clientContent = buildClientMandatEmailContent(record);
