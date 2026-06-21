@@ -57,6 +57,7 @@
 /api/owner-alert             /.netlify/functions/owner-alert             200
 /api/bot-state               /.netlify/functions/bot-state               200
 /api/depot-upload            /.netlify/functions/depot-upload            200
+/api/rib-submit              /.netlify/functions/rib-submit              200
 /api/flight-verdict          /.netlify/functions/flight-verdict          200
 /api/radar-eligible-registry /.netlify/functions/radar-eligible-registry 200
 /api/radar-today             /.netlify/functions/radar-today             200
