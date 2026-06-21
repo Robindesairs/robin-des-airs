@@ -691,6 +691,10 @@ exports.handler = async (event) => {
       const store = blobs.getStore(STORE_NAME);
       const phoneKey = phone.replace(/\D/g, '');
       await store.setJSON(`sig/${phoneKey}/${ref}`, record);
+      // Marqueur de signature PAR RÉF (atomique, sans race) : c'est CE que /api/is-signed lit
+      // en priorité pour annuler une relance « signez ». Indépendant de l'__index agrégé (qui
+      // peut perdre une entrée si deux signatures s'entrecroisent) et de la génération PDF.
+      try { await store.setJSON(`signed/${ref}`, { ref, signed_at: ts, cert_id: certId }); } catch (_) {}
 
       let index = [];
       try { index = await store.getJSON('__index') || []; } catch { index = []; }
