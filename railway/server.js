@@ -784,10 +784,40 @@ function buildMandatUrl(s, phone) {
 // Récupère une pièce et la rend lisible par gpt-4o (Vision). Si c'est un PDF (passeport/carte
 // d'embarquement scannés en PDF, fréquent), on rastérise la 1ʳᵉ page via mupdf — gpt-4o ne lit PAS
 // un PDF étiqueté image. Renvoie { b64, mime } ou null. Accepte image ET PDF, comme l'e-billet.
+// ─── SSRF guard pour les médias ───────────────────────────────────────────────
+// Le mediaUrl provient du payload webhook WATI. On (1) BLOQUE les cibles internes
+// (métadonnées cloud 169.254.169.254, réseau interne Railway, localhost) pour qu'un
+// payload malveillant ne puisse pas pivoter dans l'infra, et (2) n'attache le token
+// WATI qu'aux hôtes WATI de confiance → un hôte arbitraire ne peut jamais récupérer
+// le Bearer (anti-exfiltration). En dev/test, WATI_API_BASE pointe sur 127.0.0.1 :
+// l'hôte de base configuré est alors traité comme de confiance, la simulation marche.
+function mediaFetchHeaders(rawUrl, cfg) {
+  let u;
+  try { u = new URL(String(rawUrl || '')); } catch { return null; }
+  if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;
+  const host = (u.hostname || '').toLowerCase().replace(/^\[|\]$/g, '');
+  if (!host) return null;
+  let baseHost = '';
+  try { baseHost = cfg && cfg.base ? new URL(cfg.base).hostname.toLowerCase().replace(/^\[|\]$/g, '') : ''; } catch {}
+  // Hôtes WATI de confiance → seuls habilités à recevoir le token (eu-api.wati.io, live-mt-server.wati.io…)
+  const trusted = host === 'wati.io' || host.endsWith('.wati.io') || (baseHost && host === baseHost);
+  if (trusted) return { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {} };
+  // Hôte NON de confiance : on bloque tout ce qui est interne/privé, sinon fetch SANS token.
+  const m172 = host.match(/^172\.(\d{1,3})\./);
+  const isPrivateV4 = /^127\./.test(host) || /^10\./.test(host) || /^192\.168\./.test(host) ||
+    /^169\.254\./.test(host) || /^0\./.test(host) || (m172 && +m172[1] >= 16 && +m172[1] <= 31);
+  const isPrivateV6 = host.includes(':') && (host === '::1' || host === '::' || /^(fe80|fc|fd)/.test(host));
+  const isPrivateName = host === 'localhost' || host.endsWith('.localhost') || host.endsWith('.internal') || host.endsWith('.local');
+  const isRawNumeric = /^\d+$/.test(host) || /^0x/i.test(host); // IP encodée (ex. 2130706433 = 127.0.0.1) → on refuse
+  if (isPrivateV4 || isPrivateV6 || isPrivateName || isRawNumeric) return null;
+  return { headers: {} };
+}
 async function fetchAsImageB64(mediaUrl, cfg) {
   if (!mediaUrl) return null;
   try {
-    const r = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {}, signal: AbortSignal.timeout(20000) });
+    const mh = mediaFetchHeaders(mediaUrl, cfg);
+    if (!mh) return null; // SSRF : hôte interne/illégal refusé (jamais de fetch+token vers une cible non-WATI)
+    const r = await fetch(mediaUrl, { headers: mh.headers, signal: AbortSignal.timeout(20000) });
     if (!r.ok) return null;
     const ct = (r.headers.get('content-type') || '').toLowerCase();
     const buf = Buffer.from(await r.arrayBuffer());
@@ -844,7 +874,9 @@ async function extractEticketPages(mediaUrls, cfg) {
   try {
     const parts = [];
     for (const u of urls) {
-      const r = await fetch(u, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {}, signal: AbortSignal.timeout(20000) });
+      const mh = mediaFetchHeaders(u, cfg);
+      if (!mh) continue; // SSRF : hôte interne/illégal ignoré
+      const r = await fetch(u, { headers: mh.headers, signal: AbortSignal.timeout(20000) });
       if (!r.ok) continue;
       const mime = (r.headers.get('content-type') || '').split(';')[0].trim();
       parts.push({ bytes: Buffer.from(await r.arrayBuffer()), mime });
@@ -1256,7 +1288,9 @@ const AI = (() => {
 async function archivePiece(phone, kind, mediaUrl, cfg, passenger) {
   try {
     if (!phone || !mediaUrl) return;
-    const r = await fetch(mediaUrl, { headers: cfg ? { Authorization: `Bearer ${cfg.token}` } : {}, signal: AbortSignal.timeout(20000) });
+    const mh = mediaFetchHeaders(mediaUrl, cfg);
+    if (!mh) return; // SSRF : hôte interne/illégal refusé
+    const r = await fetch(mediaUrl, { headers: mh.headers, signal: AbortSignal.timeout(20000) });
     if (!r.ok) return;
     const mime = (r.headers.get('content-type') || 'image/jpeg').split(';')[0].trim();
     const buf = Buffer.from(await r.arrayBuffer());
@@ -2741,7 +2775,8 @@ app.get('/api/dossier', (req, res) => {
 app.get('/api/leads-a-rappeler', (req, res) => {
   const secret = (req.query.s || req.headers['x-secret'] || req.headers['x-wati-secret'] || '').toString().trim();
   const expected = (process.env.WATI_WEBHOOK_SECRET || process.env.CRM_ACCESS_CODE || '').trim();
-  if (expected && !safeEq(secret, expected)) return res.status(401).json({ ok: false, error: 'secret invalide' });
+  if (!expected) return res.status(503).json({ ok: false, error: 'service indisponible' }); // fail-closed : jamais d'accès sans secret configuré
+  if (!safeEq(secret, expected)) return res.status(401).json({ ok: false, error: 'secret invalide' });
   const now = Date.now();
   const WIN = 24 * 3600000;
   const out = [];
@@ -2768,7 +2803,8 @@ app.get('/api/leads-a-rappeler', (req, res) => {
 app.get('/api/recent-conversations', (req, res) => {
   const secret = (req.query.s || req.headers['x-secret'] || req.headers['x-wati-secret'] || '').toString().trim();
   const expected = (process.env.WATI_WEBHOOK_SECRET || process.env.CRM_ACCESS_CODE || '').trim();
-  if (expected && !safeEq(secret, expected)) return res.status(401).json({ ok: false, error: 'secret invalide' });
+  if (!expected) return res.status(503).json({ ok: false, error: 'service indisponible' }); // fail-closed : jamais d'accès sans secret configuré
+  if (!safeEq(secret, expected)) return res.status(401).json({ ok: false, error: 'secret invalide' });
   const limit = Math.min(30, Math.max(1, parseInt(req.query.limit, 10) || 8));
   const conversations = [...CONVOS.values()]
     .filter(c => c.msgs && c.msgs.length)
@@ -2805,7 +2841,8 @@ app.post('/api/mandat-signed', (req, res) => {
   const b = req.body || {};
   const secret = (b.secret || req.query.s || req.headers['x-secret'] || '').toString().trim();
   const expected = (process.env.WATI_WEBHOOK_SECRET || '').trim();
-  if (expected && !safeEq(secret, expected)) return res.status(401).json({ error: 'secret invalide' });
+  if (!expected) return res.status(503).json({ error: 'service indisponible' }); // fail-closed
+  if (!safeEq(secret, expected)) return res.status(401).json({ error: 'secret invalide' });
   const lead = findLead(b.ref || '') || findLead(b.phone || b.waId || '');
   const marked = markLeadSigned(b.ref || '') || markLeadSigned(b.phone || b.waId || '');
   console.log('mandat signe ref=' + (b.ref || '?') + ' marked=' + marked);

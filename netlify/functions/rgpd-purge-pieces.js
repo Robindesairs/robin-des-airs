@@ -18,6 +18,7 @@
 const { airtableCfg, airtableListRecords, airtablePatch } = require('./lib/airtable-robin');
 const { getBlobStore } = require('./lib/netlify-blobs-store');
 const { corsHeaders } = require('./lib/auth-config');
+const { safeEqualString } = require('./lib/safe-compare');
 
 const J = (code, obj) => ({ statusCode: code, headers: { ...corsHeaders(), 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }, body: JSON.stringify(obj) });
 
@@ -41,7 +42,7 @@ exports.handler = async (event) => {
     const q = event.queryStringParameters || {};
     const secret = String(q.s || event.headers['x-secret'] || '').trim();
     const expected = (process.env.WATI_WEBHOOK_SECRET || '').trim();
-    if (!expected || secret !== expected) return J(401, { error: 'secret invalide' });
+    if (!expected || !safeEqualString(secret, expected)) return J(401, { error: 'secret invalide' });
     if (q.commit === '1') commit = true;
     if (q.dry === '1') commit = false;
   }

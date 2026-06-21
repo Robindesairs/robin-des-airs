@@ -9,6 +9,7 @@ const { appendWaMessage, listWaMessages, normalizeWaPhone } = require('./lib/wa-
 const { canSendWhatsApp } = require('./lib/whatsapp-send-core');
 
 const { corsHeaders } = require('./lib/auth-config');
+const { safeEqualString } = require('./lib/safe-compare');
 
 const HEADERS = {
   ...corsHeaders(),
@@ -27,7 +28,7 @@ exports.handler = async (event) => {
     try { body = JSON.parse(event.body || '{}'); } catch { return { statusCode: 400, headers: HEADERS, body: JSON.stringify({ error: 'JSON invalide' }) }; }
     const secret = String(body.secret || event.headers['x-bot-secret'] || '').trim();
     const expected = (process.env.WATI_WEBHOOK_SECRET || '').trim();
-    if (!expected || secret !== expected) {
+    if (!expected || !safeEqualString(secret, expected)) {
       return { statusCode: 401, headers: HEADERS, body: JSON.stringify({ error: 'secret invalide' }) };
     }
     if (!body.phone || !body.text) {

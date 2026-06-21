@@ -14,27 +14,13 @@ const { isProduction, allowInsecureAuth, allowAgencyCodeOnly } = require('./auth
 const { verifyPassword, hashPassword } = require('./password-hash');
 const { safeEqualString } = require('./safe-compare');
 
-/** Dev local uniquement si ALLOW_INSECURE_AUTH=true */
+/** Dev local uniquement si ALLOW_INSECURE_AUTH=true. AUCUNE crédential d'agence réelle en clair ici (repo public) → DEMO seulement ; les vraies agences passent par AGENCY_ACCOUNTS (env, passHash) ou STATIC_AGENCIES (passHash). */
 const DEV_FALLBACK = [
   {
     code: 'DEMO',
     pass: 'demo',
     name: 'Agence Démo',
     airtableMatch: 'DEMO',
-  },
-  {
-    code: 'GSA-KMS-001',
-    pass: 'kombo2026',
-    name: 'Kombo Travel Services',
-    airtableMatch: 'GSA-KMS-001',
-  },
-  {
-    code: 'SEYMAN-001',
-    pass: 'seyman2026',
-    name: 'Seyman Travel',
-    airtableMatch: 'SEYMAN-001',
-    commissionGmd: 3800,
-    partnerSignedAt: '2026-06-01',
   },
 ];
 
@@ -66,11 +52,11 @@ function normalizeAccount(a) {
   };
 }
 
-/** Agences permanentes — toujours actives en prod */
+/** Agences permanentes — toujours actives en prod. JAMAIS de mot de passe en clair (repo public) : passHash scrypt uniquement. */
 const STATIC_AGENCIES = [
   {
     code: 'SEYMAN-001',
-    pass: 'seyman2026',
+    passHash: 'scrypt:9263bd357098f8e6609835cdc2937b89:e76c068915d6e20c41239b510d548272d92b002640017745a22d7f6f9325d81e',
     name: 'Seyman Travel',
     airtableMatch: 'SEYMAN-001',
     commissionGmd: 3800,

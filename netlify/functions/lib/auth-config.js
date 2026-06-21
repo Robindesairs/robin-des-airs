@@ -44,7 +44,7 @@ function getCrmAuthConfig() {
   const accessCode = (process.env.CRM_ACCESS_CODE || '').trim();
   const authSecret = (process.env.CRM_AUTH_SECRET || '').trim();
   if (accessCode && authSecret) return { accessCode, authSecret };
-  if (!isProduction() || allowInsecureAuth()) {
+  if (allowInsecureAuth()) {
     const devCode = accessCode || 'robin-dakar';
     return { accessCode: devCode, authSecret: authSecret || devCode, insecure: true };
   }
@@ -54,7 +54,7 @@ function getCrmAuthConfig() {
 function getAgencyAuthSecret() {
   const s = (process.env.AGENCY_AUTH_SECRET || process.env.CRM_AUTH_SECRET || '').trim();
   if (s) return s;
-  if (!isProduction() || allowInsecureAuth()) {
+  if (allowInsecureAuth()) {
     return (process.env.CRM_ACCESS_CODE || 'robin-dakar-agency-dev').trim();
   }
   return '';

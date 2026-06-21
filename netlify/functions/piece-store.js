@@ -10,7 +10,7 @@ const { safeEqualString } = require('./lib/safe-compare');
 let attachPieceToDossier = null;
 try { ({ attachPieceToDossier } = require('./lib/airtable-attach')); } catch (e) {}
 
-const H = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type' };
+const H = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://robindesairs.eu', 'Access-Control-Allow-Headers': 'Content-Type' };
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: H, body: '' };
@@ -19,7 +19,8 @@ exports.handler = async (event) => {
   let b; try { b = JSON.parse(event.body || '{}'); } catch { return { statusCode: 400, headers: H, body: JSON.stringify({ error: 'bad json' }) }; }
 
   const expected = (process.env.WATI_WEBHOOK_SECRET || '').trim();
-  if (expected && !safeEqualString(String(b.secret || '').trim(), expected)) return { statusCode: 401, headers: H, body: JSON.stringify({ error: 'unauthorized' }) };
+  if (!expected) return { statusCode: 503, headers: H, body: JSON.stringify({ error: 'service indisponible' }) }; // fail-closed
+  if (!safeEqualString(String(b.secret || '').trim(), expected)) return { statusCode: 401, headers: H, body: JSON.stringify({ error: 'unauthorized' }) };
 
   const phoneKey = String(b.phone || '').replace(/\D/g, '').slice(0, 20);
   const mime = String(b.mime || '').toLowerCase();

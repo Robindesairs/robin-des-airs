@@ -5,6 +5,7 @@
 
 const { checkCrmAccess } = require('./lib/crm-access');
 const { corsHeaders } = require('./lib/auth-config');
+const { safeEqualString } = require('./lib/safe-compare');
 const { airtableCfg, airtableFindByRef } = require('./lib/airtable-robin');
 let blobsLib = null; try { blobsLib = require('./lib/netlify-blobs-store'); } catch (e) {}
 
@@ -49,7 +50,7 @@ exports.handler = async (event) => {
   const code = String(body.code || '').trim();
   const ref = String(body.ref || body.id || '').trim();
 
-  if (code !== expected) {
+  if (!safeEqualString(code, expected)) {
     return { statusCode: 403, headers: HEADERS, body: JSON.stringify({ error: 'Code suppression incorrect' }) };
   }
   if (!ref) {

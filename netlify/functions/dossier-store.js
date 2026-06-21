@@ -23,7 +23,8 @@ exports.handler = async (event) => {
   let b; try { b = JSON.parse(event.body || '{}'); } catch { return { statusCode: 400, headers: H, body: JSON.stringify({ error: 'bad json' }) }; }
 
   const secret = (process.env.WATI_WEBHOOK_SECRET || '').trim();
-  if (secret && !safeEqualString(String(b.secret || '').trim(), secret)) return { statusCode: 401, headers: H, body: JSON.stringify({ error: 'unauthorized' }) };
+  if (!secret) return { statusCode: 503, headers: H, body: JSON.stringify({ error: 'service indisponible' }) }; // fail-closed
+  if (!safeEqualString(String(b.secret || '').trim(), secret)) return { statusCode: 401, headers: H, body: JSON.stringify({ error: 'unauthorized' }) };
 
   const ref = String(b.ref || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 64);
   if (!ref || !b.dossier || typeof b.dossier !== 'object') return { statusCode: 400, headers: H, body: JSON.stringify({ error: 'ref + dossier requis' }) };

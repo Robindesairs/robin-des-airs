@@ -29,7 +29,7 @@ exports.handler = async (event) => {
   const secret = (process.env.WATI_WEBHOOK_SECRET || process.env.MANDAT_SIGNED_WEBHOOK_SECRET || process.env.CRM_ACCESS_CODE || '').trim();
 
   try {
-    const url = base + '/api/leads-a-rappeler?s=' + encodeURIComponent(secret);
+    const url = base + '/api/leads-a-rappeler'; // secret en en-tête x-secret (ci-dessous), jamais en query (fuite dans les logs)
     const ctrl = new AbortController();
     const to = setTimeout(() => ctrl.abort(), 7000);
     const r = await fetch(url, { headers: { 'x-secret': secret, Accept: 'application/json' }, signal: ctrl.signal });

@@ -23,7 +23,8 @@ exports.handler = async (event) => {
   const q = event.queryStringParameters || {};
   const secret = String(q.s || '').trim();
   const expected = (process.env.WATI_WEBHOOK_SECRET || '').trim();
-  if (expected && !safeEqualString(secret, expected)) return J(401, { error: 'unauthorized' });
+  if (!expected) return J(503, { error: 'service indisponible (secret non configuré)' }); // fail-closed : jamais d'accès public aux passeports
+  if (!safeEqualString(secret, expected)) return J(401, { error: 'unauthorized' });
 
   const pieces = getBlobStore(event, 'pieces');
   if (!pieces) return J(500, { error: 'store indisponible' });

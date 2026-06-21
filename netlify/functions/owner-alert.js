@@ -18,7 +18,8 @@ exports.handler = async (event) => {
   let b; try { b = JSON.parse(event.body || '{}'); } catch { return { statusCode: 400, headers: H, body: JSON.stringify({ error: 'bad json' }) }; }
 
   const expected = (process.env.WATI_WEBHOOK_SECRET || '').trim();
-  if (expected && !safeEqualString(String(b.secret || '').trim(), expected)) {
+  if (!expected) return { statusCode: 503, headers: H, body: JSON.stringify({ error: 'service indisponible' }) }; // fail-closed
+  if (!safeEqualString(String(b.secret || '').trim(), expected)) {
     return { statusCode: 401, headers: H, body: JSON.stringify({ error: 'unauthorized' }) };
   }
 

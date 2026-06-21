@@ -19,7 +19,7 @@ async function fromRailway(limit) {
   const base = (process.env.RAILWAY_BOT_URL || 'https://robin-bot-v8-production.up.railway.app').replace(/\/$/, '');
   const secret = (process.env.WATI_WEBHOOK_SECRET || process.env.MANDAT_SIGNED_WEBHOOK_SECRET || process.env.CRM_ACCESS_CODE || '').trim();
   if (!secret) return null;
-  const url = `${base}/api/recent-conversations?limit=${encodeURIComponent(limit)}&s=${encodeURIComponent(secret)}`;
+  const url = `${base}/api/recent-conversations?limit=${encodeURIComponent(limit)}`; // secret en en-tête x-secret (ci-dessous), jamais en query
   const ctrl = new AbortController();
   const to = setTimeout(() => ctrl.abort(), 7000);
   try {

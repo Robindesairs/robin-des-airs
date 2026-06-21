@@ -12,7 +12,14 @@ const { getBlobStore } = require('./lib/netlify-blobs-store');
 let attachPieceToDossier = null;
 try { ({ attachPieceToDossier } = require('./lib/airtable-attach')); } catch (e) {}
 
-const H = { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type' };
+// CORS : on autorise UNIQUEMENT le site (apex + www), jamais '*' → un site tiers ne peut pas
+// faire poster un dépôt forgé via le navigateur d'un visiteur. Le jeton-réf reste le bearer principal.
+const SITE_ORIGINS = ['https://robindesairs.eu', 'https://www.robindesairs.eu'];
+const corsFor = (event) => {
+  const o = String((event && event.headers && (event.headers.origin || event.headers.Origin)) || '').trim();
+  const allow = SITE_ORIGINS.includes(o) ? o : 'https://robindesairs.eu';
+  return { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': allow, Vary: 'Origin', 'Access-Control-Allow-Headers': 'Content-Type' };
+};
 
 // Type de pièce : « kind » envoyé par la page, sinon déduit du nom de fichier (passeport/carte…).
 function inferKind(explicit, filename) {
@@ -23,6 +30,7 @@ function inferKind(explicit, filename) {
 }
 
 exports.handler = async (event) => {
+  const H = corsFor(event);
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: H, body: '' };
   if (event.httpMethod !== 'POST') return { statusCode: 405, headers: H, body: JSON.stringify({ error: 'POST only' }) };
 

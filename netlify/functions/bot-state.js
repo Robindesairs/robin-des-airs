@@ -18,6 +18,7 @@ exports.handler = async (event) => {
 
   const expected = (process.env.WATI_WEBHOOK_SECRET || '').trim();
   const headerSecret = (event.headers?.['x-bot-secret'] || event.headers?.['X-Bot-Secret'] || '').trim();
+  if (!expected) return { statusCode: 503, headers: H, body: JSON.stringify({ error: 'service indisponible' }) }; // fail-closed (GET+POST)
 
   const store = getBlobStore(event, 'bot-state');
   if (!store) return { statusCode: 500, headers: H, body: JSON.stringify({ error: 'store indisponible' }) };
