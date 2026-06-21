@@ -314,7 +314,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       <div class="wa-phone-row">
         <input type="text" id="wa-indicatif" class="wa-indicatif-select" list="pays-list" aria-label="Pays ou indicatif" placeholder="Pays ou +indicatif" autocomplete="off" oninput="syncWa()" value="🇫🇷 France +33">
         <datalist id="pays-list"></datalist>
-        <input type="tel" id="wa-national" class="wa-national-input" inputmode="numeric" autocomplete="tel-national" placeholder="6 12 34 56 78" oninput="syncWa()">
+        <input type="tel" id="wa-national" class="wa-national-input" inputmode="numeric" autocomplete="tel-national" placeholder="06 12 34 56 78" oninput="syncWa()">
       </div>
       <input type="hidden" id="wa">
       <div class="ferr" id="waErr">Indiquez votre pays et votre numéro WhatsApp</div>
@@ -338,7 +338,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       <label>📞 Votre numéro habituel pour vous joindre <span class="req">*</span></label>
       <div class="wa-phone-row">
         <input type="text" id="rap-indicatif" class="wa-indicatif-select" list="pays-list" aria-label="Pays ou indicatif" placeholder="Pays ou +indicatif" autocomplete="off" oninput="syncRap(true)" value="🇫🇷 France +33">
-        <input type="tel" id="rap-national" class="wa-national-input" inputmode="numeric" autocomplete="tel-national" placeholder="6 12 34 56 78" oninput="syncRap(true)">
+        <input type="tel" id="rap-national" class="wa-national-input" inputmode="numeric" autocomplete="tel-national" placeholder="06 12 34 56 78" oninput="syncRap(true)">
       </div>
       <input type="hidden" id="tel-rappel">
       <div class="ferr" id="telRappelErr">Indiquez le numéro où l'on peut vous joindre</div>
@@ -1574,24 +1574,63 @@ const COUNTRIES = [
   ['🇶🇦','Qatar','974'],['🇰🇼','Koweït','965'],['🇱🇧','Liban','961'],['🇹🇷','Turquie','90'],
   ['🇨🇳','Chine','86'],['🇮🇳','Inde','91'],['🇧🇷','Brésil','55'],
 ];
+// ── Téléphone : NSN = numéro national SANS le 0 de tête (format international) + longueurs par pays ──
+function nsn(s){ return String(s || '').replace(/[^\d]/g, '').replace(/^0+/, ''); }
+// Longueur attendue du numéro national (sans indicatif ni 0), en intervalle [min,max] pour rester robuste.
+const NSN_LEN = {
+  '33':[9,9],   // France (= 10 chiffres avec le 0)
+  '221':[9,9],  // Sénégal
+  '212':[9,9],  // Maroc
+  '237':[9,9],  // Cameroun
+  '233':[9,9],  // Ghana
+  '241':[8,8],  // Gabon
+  '225':[8,10], // Côte d'Ivoire (8 → 10 depuis 2021)
+  '234':[8,11], // Nigeria
+  '243':[9,9],  // RDC
+  '32':[8,9],   // Belgique
+  '34':[9,9],   // Espagne
+  '41':[9,9],   // Suisse
+  '44':[9,10],  // Royaume-Uni
+  '49':[10,11], // Allemagne
+  '1':[10,10],  // US / Canada (pas de 0)
+};
+function phoneCode(indEl){ const m = String(indEl && indEl.value || '').match(/\+\s*(\d{1,4})/); return m ? m[1] : ''; }
+// '' si OK, sinon : 'pays' | 'numero' | 'fr' | 'len'
+function phoneIssue(indId, natId){
+  const code = phoneCode(document.getElementById(indId));
+  const n = nsn(document.getElementById(natId) && document.getElementById(natId).value);
+  if (!code) return 'pays';
+  if (!n) return 'numero';
+  const r = NSN_LEN[code] || [7, 12];
+  if (n.length < r[0] || n.length > r[1]) return code === '33' ? 'fr' : 'len';
+  return '';
+}
+function phoneMsg(issue){
+  if (issue === 'pays')   return 'Choisissez le pays (indicatif).';
+  if (issue === 'numero') return 'Indiquez le numéro.';
+  if (issue === 'fr')     return 'Numéro français : 10 chiffres (ex. 06 12 34 56 78).';
+  if (issue === 'len')    return 'Vérifiez le nombre de chiffres du numéro.';
+  return '';
+}
 function buildPaysList(){
   const dl = document.getElementById('pays-list');
   if (dl) dl.innerHTML = COUNTRIES.map(c => `<option value="${c[0]} ${c[1]} +${c[2]}"></option>`).join('');
 }
 function syncWa(){
   const ind = document.getElementById('wa-indicatif');
-  const nat = (document.getElementById('wa-national')?.value || '').replace(/[^\d]/g,'');
+  const raw = (document.getElementById('wa-national')?.value || '');
+  const nat = nsn(raw);
   const hid = document.getElementById('wa');
   if (!hid) return;
   const m = String(ind ? ind.value : '').match(/\+\s*(\d{1,4})/);
   const code = m ? m[1] : '';
   hid.value = (code && nat) ? '+' + code + nat : '';
-  // Pré-remplit le « numéro habituel » (indicatif + national) avec le WhatsApp tant que le client ne l'a pas édité.
+  // Pré-remplit le « numéro habituel » avec le WhatsApp — on copie la saisie TELLE QUELLE (0 compris) tant que non édité.
   const rapHid = document.getElementById('tel-rappel');
   if (rapHid && !rapHid.dataset.edited) {
     const ri = document.getElementById('rap-indicatif'); const rn = document.getElementById('rap-national');
     if (ri && ind) ri.value = ind.value;
-    if (rn) rn.value = nat;
+    if (rn) rn.value = raw;
     syncRap(false);
   }
   checkRapSame();
@@ -1599,7 +1638,7 @@ function syncWa(){
 // Numéro habituel de rappel : indicatif + national → numéro international complet (champ caché tel-rappel).
 function syncRap(userEdited){
   const ind = document.getElementById('rap-indicatif');
-  const nat = (document.getElementById('rap-national')?.value || '').replace(/[^\d]/g, '');
+  const nat = nsn(document.getElementById('rap-national')?.value);
   const hid = document.getElementById('tel-rappel');
   if (!hid) return;
   if (userEdited) hid.dataset.edited = '1';
@@ -1623,7 +1662,7 @@ function setWaFull(full){
   if (!ind || !nat) return;
   const codes = COUNTRIES.map(c => c[2]).sort((a,b) => b.length - a.length);
   const m = codes.find(c => d.startsWith(c));
-  if (m){ const c = COUNTRIES.find(x => x[2] === m); ind.value = c ? `${c[0]} ${c[1]} +${c[2]}` : `+${m}`; nat.value = d.slice(m.length); }
+  if (m){ const c = COUNTRIES.find(x => x[2] === m); ind.value = c ? `${c[0]} ${c[1]} +${c[2]}` : `+${m}`; const local = d.slice(m.length); nat.value = (m === '1' || !local) ? local : ('0' + local); } // 0 d'affichage réajouté (sauf +1)
   else { nat.value = d.replace(/^0+/,''); }   // indicatif non reconnu → garde la valeur courante
   syncWa();
 }
@@ -1661,16 +1700,16 @@ function validate() {
     });
   }
   // WhatsApp : exiger indicatif (pays) + numéro → un numéro international valide
-  const waFull = (document.getElementById('wa')?.value || '').trim();
-  if (!/^\+\d{7,15}$/.test(waFull)) {
+  const waIssue = phoneIssue('wa-indicatif', 'wa-national');
+  if (waIssue) {
     document.getElementById('wa-national')?.classList.add('err');
-    const we = document.getElementById('waErr'); if (we) we.style.display = 'block';
+    const we = document.getElementById('waErr'); if (we) { we.textContent = phoneMsg(waIssue); we.style.display = 'block'; }
     ok = false;
   }
-  const rapFull = (document.getElementById('tel-rappel')?.value || '').trim();
-  if (!/^\+\d{7,15}$/.test(rapFull)) {
+  const rapIssue = phoneIssue('rap-indicatif', 'rap-national');
+  if (rapIssue) {
     document.getElementById('rap-national')?.classList.add('err');
-    const re = document.getElementById('telRappelErr'); if (re) re.style.display = 'block';
+    const re = document.getElementById('telRappelErr'); if (re) { re.textContent = phoneMsg(rapIssue); re.style.display = 'block'; }
     ok = false;
   }
   // Validation passagers — nom obligatoire (le statut mineur est déduit automatiquement de la date de naissance)
