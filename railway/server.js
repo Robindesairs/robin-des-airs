@@ -354,8 +354,38 @@ function detectLang(text) {
 // Variante : choisit une variante de ton FR (pickVariant) en français, mais renvoie un texte EN fixe en anglais.
 function LV(s, phone, key, en) { return isEN(s) ? en : pickVariant(phone, key); }
 
+// ─── Traduction à l'envoi (EN only) ────────────────────────────────────────────
+// Les messages FR encore codés en dur (non passés par L()) sont traduits FR→EN à la volée
+// pour le client anglophone. Cache mémoire (sature vite → rapide), repli sur le FR si l'API
+// échoue (jamais bloquant). Les francophones ne déclenchent JAMAIS de traduction (zéro latence/coût).
+const TR_CACHE = new Map();
+function phoneIsEN(phone) { try { const st = STATE.get(String(phone || '').replace(/\D/g, '')); return !!(st && st.langue_code === 'en'); } catch (_) { return false; } }
+async function translateEN(text) {
+  const t = String(text == null ? '' : text);
+  if (!t.trim() || t === '👇') return t;
+  if (TR_CACHE.has(t)) return TR_CACHE.get(t);
+  const key = process.env.OPENAI_API_KEY;
+  if (!key) return t;
+  try {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST', signal: AbortSignal.timeout(7000),
+      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'gpt-4o-mini', max_tokens: 900, temperature: 0, messages: [
+        { role: 'system', content: 'You translate WhatsApp messages from French to English for a flight-compensation assistant (Robin des Airs). If the text is ALREADY English, return it unchanged. Keep EXACTLY: every *asterisk* (WhatsApp bold), every _underscore_ (italics), every emoji, all URLs, phone numbers, reference codes (e.g. RDA-...), flight numbers, amounts and currency symbols (€), and all line breaks. Translate naturally and concisely. Output ONLY the message text — no quotes, no notes.' },
+        { role: 'user', content: t },
+      ] }),
+    });
+    const data = await res.json().catch(() => ({}));
+    const out = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+    const en = (out && String(out).trim()) || t;
+    TR_CACHE.set(t, en);
+    return en;
+  } catch (_) { return t; }
+}
+
 // ─── Envoi texte / liste / boutons (plomberie éprouvée + clip + debug) ─────────
 async function send(phone, text, cfg) {
+  if (phoneIsEN(phone)) text = await translateEN(text); // client EN : traduit le FR non-L() à la volée
   recordConvo(phone, 'out', text); // historique léger pour le Bureau
   appendWaMessage(phone, text, 'bot'); // mirror SORTANT → store conversation CRM (fire-and-forget)
   if (!cfg) { console.error('v8 send IGNORÉ — watiCfg null (WATI_API_TOKEN/WATI_API_BASE manquant)'); return; }
@@ -384,9 +414,13 @@ async function sendButtons(phone, config, cfg) {
   if (!cfg) return;
   // Accepte : {body, footer, buttons:[]} OU directement un tableau [{id,text}]
   const isArr = Array.isArray(config);
-  const body    = isArr ? '👇' : (config.body || '');
+  let body    = isArr ? '👇' : (config.body || '');
   const footer  = isArr ? undefined : config.footer;
-  const buttons = isArr ? config : (config.buttons || []);
+  let buttons = isArr ? config : (config.buttons || []);
+  if (phoneIsEN(phone)) { // client EN : traduit corps + libellés des boutons
+    if (body && body !== '👇') body = await translateEN(body);
+    buttons = await Promise.all(buttons.map(async (b) => ({ ...b, text: await translateEN(b.text) })));
+  }
   if (body && body !== '👇') appendWaMessage(phone, body, 'bot'); // mirror SORTANT (corps des boutons) → store conversation CRM
   const wa = normalizeWatiPhone(phone);
   const qs = new URLSearchParams({ whatsappNumber: wa, channelPhoneNumber: cfg.channel });
@@ -404,6 +438,11 @@ async function sendButtons(phone, config, cfg) {
 }
 async function sendList(phone, { header, body, footer, buttonText, items, lang }, cfg) {
   if (!cfg) return;
+  if (phoneIsEN(phone)) { // client EN : traduit corps + titres des lignes
+    if (body) body = await translateEN(body);
+    if (header) header = await translateEN(header);
+    items = await Promise.all((items || []).map(async (i) => ({ ...i, title: await translateEN(i.title), description: i.description ? await translateEN(i.description) : i.description })));
+  }
   const wa = normalizeWatiPhone(phone);
   const numHint = lang === 'en' ? `\n\n👉 Reply with the *number*.` : `\n\n👉 Répondez avec le *numéro*.`;
   const rows = items.map((i, idx) => ({ id: i.id || String(idx + 1), title: clip(i.title, 24), description: clip(i.description || '', 72) }));
