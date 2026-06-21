@@ -1103,7 +1103,7 @@ async function scanConfirmCard(phone, s, cfg) {
   const dateLine = s.date ? `${s.date}${isValidStoredDate(s.date) ? ` (${dateEnLettres(s.date)})` : ''}` : '—';
   return sendButtons(phone, { body: L(s,
     `${header}${pageLine}\n\n✈️ Flight: ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date: ${dateLine}\n🎫 PNR: ${s.pnr || '—'}\n🗺️ Route: ${s.route || '—'}${claimLine}${paxLine}${opNote}\n\n_E-ticket with several pages? Send them, I'll complete it._\nIs everything correct?`,
-    `${header}${pageLine}\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${dateLine}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ Trajet : ${s.route || '—'}${claimLine}${paxLine}${opNote}\n\n_E-billet en plusieurs pages ? Envoyez-les, je complète._\nTout est correct ?`), buttons: [{ text: L(s, '✅ Yes', '✅ Oui') }, { text: L(s, '✏️ Fix', '✏️ Corriger') }] }, cfg);
+    `${header}${pageLine}\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${dateLine}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ Trajet : ${s.route || '—'}${claimLine}${paxLine}${opNote}\n\n_E-billet en plusieurs pages ? Envoyez-les, je complète._\nTout est correct ?`), buttons: [{ id: 'scan_ok', text: L(s, '✅ Yes', '✅ Oui') }, { id: 'scan_fix', text: L(s, '✏️ Fix', '✏️ Corriger') }] }, cfg);
 }
 // Aller-retour détecté → on demande quel vol a été perturbé (l'e-billet ne dit pas ce qui a foiré).
 async function askSens(phone, s, cfg) {
@@ -1675,9 +1675,9 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // MSG4 — INCIDENT
   if (s.step === 'incident') {
     const n = normInput(input, ['retard', 'annulation', 'refus']);
-    if (n === '1' || lower.includes('retard')) { s.step = 'duree'; await setState(phone, s); return sendButtons(phone, { body: pickVariant(phone, 'REACTION_RETARD'), buttons: [{ text: '✅ Plus de 3 heures' }, { text: '❌ Moins de 3h' }, { text: '🤔 Je ne sais plus' }] }, cfg); }
-    if (n === '2' || lower.includes('annul')) { s.incident = 'annulation'; s.incident_libelle = 'Annulation'; return sendAnnulDelai(phone, s, cfg); }
-    if (n === '3' || lower.includes('refus') || lower.includes('embarq')) { s.incident = 'refus'; s.incident_libelle = "Refus d'embarquement"; await setState(phone, s); await send(phone, pickVariant(phone, 'REACTION_REFUS'), cfg); return estimationPuisPax(phone, s, cfg); }
+    if (id === 'inc_retard' || n === '1' || lower.includes('retard') || lower.includes('delay')) { s.step = 'duree'; await setState(phone, s); return sendButtons(phone, { body: LV(s, phone, 'REACTION_RETARD', `😟 So sorry your flight was delayed. Was the delay *on arrival* more than 3 hours?`), buttons: [{ id: 'dur_plus', text: L(s, '✅ More than 3 hours', '✅ Plus de 3 heures') }, { id: 'dur_moins', text: L(s, '❌ Less than 3h', '❌ Moins de 3h') }, { id: 'dur_inconnu', text: L(s, '🤔 Not sure', '🤔 Je ne sais plus') }] }, cfg); }
+    if (id === 'inc_annul' || n === '2' || lower.includes('annul') || lower.includes('cancel')) { s.incident = 'annulation'; s.incident_libelle = 'Annulation'; return sendAnnulDelai(phone, s, cfg); }
+    if (id === 'inc_refus' || n === '3' || lower.includes('refus') || lower.includes('embarq') || lower.includes('denied') || lower.includes('boarding')) { s.incident = 'refus'; s.incident_libelle = "Refus d'embarquement"; await setState(phone, s); await send(phone, LV(s, phone, 'REACTION_REFUS', `😟 Denied boarding gives strong rights under EC 261. Let's check what you're owed.`), cfg); return estimationPuisPax(phone, s, cfg); }
     return redispatch('incident'); // si état avancé → re-dispatch
   }
   // MSG4b — ANNULATION : règle des 14 jours de préavis (art. 5 CE 261). Pré-filtre AVANT le n° de vol.
@@ -1691,10 +1691,10 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   }
   if (s.step === 'duree') {
     const n = normInput(input, ['plus de 3', 'moins de 3', 'sais']);
-    if (n === '1' || lower.includes('plus de 3')) { s.incident = 'retard'; s.incident_libelle = 'Retard +3h'; s.duree_retard = '+3h'; return estimationPuisPax(phone, s, cfg); }
-    if (n === '2' || lower.includes('moins de 3')) { return finNonEligible(phone,pickVariant(phone, 'STOP_MOINS_3H'), cfg); }
-    if (n === '3' || lower.includes('sais') || lower.includes('souviens')) { s.incident = 'retard'; s.incident_libelle = 'Retard (à vérifier)'; s.duree_retard = 'inconnue'; s.escalade = s.escalade || 'duree_inconnue'; await send(phone, pickVariant(phone, 'DUREE_INCONNUE'), cfg); return estimationPuisPax(phone, s, cfg); }
-    return sendButtons(phone, { body: `🙂 Touchez un bouton : votre retard à l'arrivée était-il de plus de 3 heures ?`, buttons: [{ text: '✅ Plus de 3 heures' }, { text: '❌ Moins de 3h' }, { text: '🤔 Je ne sais plus' }] }, cfg);
+    if (id === 'dur_plus' || n === '1' || lower.includes('plus de 3') || lower.includes('more than 3')) { s.incident = 'retard'; s.incident_libelle = 'Retard +3h'; s.duree_retard = '+3h'; return estimationPuisPax(phone, s, cfg); }
+    if (id === 'dur_moins' || n === '2' || lower.includes('moins de 3') || lower.includes('less than 3')) { return finNonEligible(phone,pickVariant(phone, 'STOP_MOINS_3H'), cfg); }
+    if (id === 'dur_inconnu' || n === '3' || lower.includes('sais') || lower.includes('souviens') || lower.includes('not sure')) { s.incident = 'retard'; s.incident_libelle = 'Retard (à vérifier)'; s.duree_retard = 'inconnue'; s.escalade = s.escalade || 'duree_inconnue'; await send(phone, LV(s, phone, 'DUREE_INCONNUE', `👍 No worries — we'll check the airline's records for you.`), cfg); return estimationPuisPax(phone, s, cfg); }
+    return sendButtons(phone, { body: L(s, `🙂 Tap a button: was your arrival delay more than 3 hours?`, `🙂 Touchez un bouton : votre retard à l'arrivée était-il de plus de 3 heures ?`), buttons: [{ id: 'dur_plus', text: L(s, '✅ More than 3 hours', '✅ Plus de 3 heures') }, { id: 'dur_moins', text: L(s, '❌ Less than 3h', '❌ Moins de 3h') }, { id: 'dur_inconnu', text: L(s, '🤔 Not sure', '🤔 Je ne sais plus') }] }, cfg);
   }
 
   // MSG5 — PASSAGERS
@@ -1891,7 +1891,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       await setState(phone, s); return scanConfirmCard(phone, s, cfg);
     }
     const n = normInput(input, ['oui', 'corriger']);
-    if (n === '1' || lower.includes('oui')) {
+    if (id === 'scan_ok' || n === '1' || lower.includes('oui') || lower.includes('yes')) {
       delete s.scan_pages; delete s._scanWarn; s.scanConfirmed = true; // déjà confirmé ici (e-billet) → pas de 2e confirmation au récap
       if (needYear(s.date)) { s.step = 'annee'; await setState(phone, s); return askYear(phone, s, cfg); }
       if (s.date && !isValidStoredDate(s.date)) { const bad = s.date; s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, DATE_INVALIDE(bad), cfg); }
@@ -2162,8 +2162,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // MSG12 — RÉCAP
   if (s.step === 'recap') {
     const n = normInput(input, ['correct', 'modifier']);
-    if (n === '1' || lower.includes('correct')) { s.step = 'documents'; s.doc_idx = 0; await setState(phone, s); return startDocuments(phone, s, cfg); }
-    if (n === '2' || lower.includes('modifier')) { s.fix_return = 'recap'; await setState(phone, s); return goCorrection(phone, s, cfg); }
+    if (id === 'recap_ok' || n === '1' || lower.includes('correct')) { s.step = 'documents'; s.doc_idx = 0; await setState(phone, s); return startDocuments(phone, s, cfg); }
+    if (id === 'recap_fix' || n === '2' || lower.includes('modifier') || lower.includes('edit')) { s.fix_return = 'recap'; await setState(phone, s); return goCorrection(phone, s, cfg); }
     return sendRecap(phone, s, cfg);
   }
 
@@ -2454,7 +2454,7 @@ async function askRouteZone(phone, s, cfg) {
     { id: 'rz_non', text: L(s, '🌍 Neither', '🌍 Aucun des deux') },
   ] }, cfg);
 }
-async function sendIncident(phone, s, cfg) { s.step = 'incident'; await setState(phone, s); await sendButtons(phone, { body: L(s, `${bar('incident')}\n✈️ Tell us what happened with your flight. We're here to help.`, `${bar('incident')}\n✈️ Racontez-nous ce qui s'est passé avec votre vol. On est là pour vous aider.`), buttons: [{ text: L(s, '⏱️ Arrival delay', '⏱️ Retard arrivée') }, { text: L(s, '❌ Cancellation', '❌ Annulation') }, { text: L(s, '🚫 Denied boarding', "🚫 Refus d'embarq.") }] }, cfg); }
+async function sendIncident(phone, s, cfg) { s.step = 'incident'; await setState(phone, s); await sendButtons(phone, { body: L(s, `${bar('incident')}\n✈️ Tell us what happened with your flight. We're here to help.`, `${bar('incident')}\n✈️ Racontez-nous ce qui s'est passé avec votre vol. On est là pour vous aider.`), buttons: [{ id: 'inc_retard', text: L(s, '⏱️ Arrival delay', '⏱️ Retard arrivée') }, { id: 'inc_annul', text: L(s, '❌ Cancellation', '❌ Annulation') }, { id: 'inc_refus', text: L(s, '🚫 Denied boarding', "🚫 Refus d'embarq.") }] }, cfg); }
 
 // Gate ANNULATION — la règle des 14 jours de préavis (art. 5 CE 261), posée AVANT le n° de vol.
 // Ancré sur « quand on vous a prévenu(e), le vol était dans combien de temps » (notification → vol),
@@ -2591,7 +2591,7 @@ async function sendRecap(phone, s, cfg) {
   const dateLine = s.date ? `${s.date}${isValidStoredDate(s.date) ? ` (${dateEnLettres(s.date)})` : ''}` : '—';
   await sendButtons(phone, { body: L(s,
     `${bar('recap')}\n📋 *Summary — please confirm*\n\n👥 ${s.pax} passenger${s.pax > 1 ? 's' : ''}\n_Names at the next step (ID or typing)_\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}${claimLineR}\n🎫 PNR: ${s.pnr || '—'}\n🗺️ ${s.route || '—'}\n📅 ${dateLine} — ${s.incident_libelle || '—'}\n🛤️ ${s.type_vol === 'escale' ? 'With layover' : 'Direct'}\n${montantLine(s)}`,
-    `${bar('recap')}\n📋 *Récapitulatif — confirmez svp*\n\n👥 ${s.pax} passager${s.pax > 1 ? 's' : ''}\n_Identités à l'étape suivante (pièce d'identité ou saisie)_\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}${claimLineR}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ ${s.route || '—'}\n📅 ${dateLine} — ${s.incident_libelle || '—'}\n🛤️ ${s.type_vol === 'escale' ? 'Avec escale' : 'Direct'}\n${montantLine(s)}`), buttons: [{ text: L(s, '✅ All correct', '✅ Tout est correct') }, { text: L(s, '✏️ Edit', '✏️ Modifier') }] }, cfg);
+    `${bar('recap')}\n📋 *Récapitulatif — confirmez svp*\n\n👥 ${s.pax} passager${s.pax > 1 ? 's' : ''}\n_Identités à l'étape suivante (pièce d'identité ou saisie)_\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}${claimLineR}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ ${s.route || '—'}\n📅 ${dateLine} — ${s.incident_libelle || '—'}\n🛤️ ${s.type_vol === 'escale' ? 'Avec escale' : 'Direct'}\n${montantLine(s)}`), buttons: [{ id: 'recap_ok', text: L(s, '✅ All correct', '✅ Tout est correct') }, { id: 'recap_fix', text: L(s, '✏️ Edit', '✏️ Modifier') }] }, cfg);
 }
 
 // Vérifie le vol (vols DIRECTS uniquement) et adapte montant + message. Idempotent, best-effort.
