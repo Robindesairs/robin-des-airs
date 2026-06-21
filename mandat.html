@@ -320,25 +320,18 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       <div class="ferr" id="waErr">Indiquez votre pays et votre numéro WhatsApp</div>
     </div>
     <div>
-      <label>Suivi de votre dossier</label>
+      <label>✉️ Email <span style="color:var(--muted);font-weight:500">(facultatif)</span></label>
       <input type="hidden" id="em">
-      <div class="email-tech-note" id="emailTechNote">
-        📱 <strong>Vous êtes suivi par WhatsApp</strong> — un expert vous accompagne jusqu'au versement de votre indemnité.
-        <span style="display:block;margin-top:6px">
-          💬 Une question ? Écrivez-nous sur <a href="https://wa.me/33756863630" target="_blank" rel="noopener" style="color:var(--green-deep);font-weight:700;text-decoration:none">WhatsApp</a>.
-        </span>
-        <span style="display:block;margin-top:8px;font-size:12px;color:var(--muted)">
-          🔒 Robin des Airs gère seul la correspondance avec la compagnie aérienne — vous n'avez rien à faire.
-        </span>
-      </div>
+      <input type="email" id="em-perso" autocomplete="email" placeholder="vous@exemple.com">
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5">Pour vous prévenir si on n'arrive pas à vous joindre par téléphone.</div>
     </div>
   </div>
   <div class="field-row">
     <label class="check" style="display:flex;align-items:flex-start;gap:9px;cursor:pointer;font-weight:600;margin:0">
       <input type="checkbox" id="sameNum" checked onchange="toggleRap()" style="margin-top:3px;flex:none">
-      <span>📞 C'est le <strong>même numéro que mon WhatsApp</strong> pour m'appeler.</span>
+      <span>📞 <strong>On peut me joindre sur ce numéro WhatsApp.</strong></span>
     </label>
-    <div style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5">Décochez si vous écrivez d'un numéro <strong>temporaire ou étranger</strong> (puce de voyage), ou <strong>pour quelqu'un d'autre</strong> → vous indiquerez le numéro habituel du passager.</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5">Décochez <strong>seulement si</strong> ce WhatsApp n'est pas votre numéro habituel (puce de voyage, numéro étranger) ou si vous remplissez <strong>pour quelqu'un d'autre</strong>.</div>
   </div>
   <div class="field-row" id="rapBlock" style="display:none">
     <label>📞 Numéro habituel pour vous appeler <span class="req">*</span></label>
@@ -348,11 +341,6 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     </div>
     <input type="hidden" id="tel-rappel">
     <div class="ferr" id="telRappelErr">Indiquez le numéro habituel du passager</div>
-  </div>
-  <div class="field-row">
-    <label>✉️ Email <span style="color:var(--muted);font-weight:500">(facultatif)</span></label>
-    <input type="email" id="em-perso" autocomplete="email" placeholder="vous@exemple.com">
-    <div style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5">Pour vous prévenir si on n'arrive pas à vous joindre par téléphone.</div>
   </div>
   <div class="field-row">
     <label>Adresse postale complète <span class="req">*</span></label>
