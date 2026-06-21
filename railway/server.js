@@ -520,6 +520,9 @@ function markOperateurEffectif(s, e) {
   if (eff) s.operateur_code = eff;
   s.operateurNonUe = !!(s.europeTouch === 'arrivee' && eff && !isCarrierUE(eff));
   if (s.operateurNonUe) s.escalade = s.escalade || 'operateur_non_ue';
+  // Destinataire de la réclamation = le transporteur EFFECTIF (Art. 2 b : c'est l'opérateur du vol qui
+  // est redevable). Sur une correspondance, c'est la compagnie du tronçon qui ramène en Europe.
+  s.compagnie_reclamation = (eff && AIRLINES[eff]) || s.compagnie || eff || '';
 }
 // Décide le transporteur EFFECTIF à partir de TOUTES les sources, par ordre de fiabilité décroissante :
 //   1) « opéré par » lu sur l'e-billet (le plus sûr, obligation légale d'affichage) ;
@@ -553,6 +556,7 @@ async function enrichOperatingFromAero(s) {
     if (!row) return false;
     const d = decideOperatingCarrier({ vol: v, ticketOperePar: '', apiCarrierIata: row.airlineIata, codeshareStatus: row.codeshareStatus });
     s.operateur_code = d.effective || s.operateur_code || '';
+    s.compagnie_reclamation = (s.operateur_code && AIRLINES[s.operateur_code]) || s.compagnie || s.operateur_code || '';
     if (d.source === 'aerodatabox' && d.effective && !isCarrierUE(d.effective)) {
       s.operateurNonUe = true; s.operateurAVerifier = false; s.escalade = s.escalade || 'operateur_non_ue';
     } else if (d.codeshareUnknown) {
@@ -1061,7 +1065,10 @@ async function scanConfirmCard(phone, s, cfg) {
     : s.operateurAVerifier
       ? `\n\nℹ️ Ce vol à l'arrivée en Europe est un *vol en partage de code* (code-share). Un expert vérifie *gratuitement* quelle compagnie l'opère réellement, pour confirmer vos droits — *on garde votre dossier dans tous les cas*. 🤝`
       : '';
-  return sendButtons(phone, { body: `${header}${pageLine}\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date ? `${s.date}${isValidStoredDate(s.date) ? ` (${dateEnLettres(s.date)})` : ''}` : '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ Trajet : ${s.route || '—'}${paxLine}${opNote}\n\n_E-billet en plusieurs pages ? Envoyez-les, je complète._\nTout est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg);
+  // Compagnie débitrice (= transporteur effectif) — affichée quand le dossier est couvert, utile surtout sur
+  // une correspondance où ce n'est pas la compagnie du 1er vol. Tue en cas de doute (la note explique alors).
+  const claimLine = (!s.operateurNonUe && !s.operateurAVerifier && s.compagnie_reclamation) ? `\n📮 Réclamation auprès de : *${s.compagnie_reclamation}*` : '';
+  return sendButtons(phone, { body: `${header}${pageLine}\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date ? `${s.date}${isValidStoredDate(s.date) ? ` (${dateEnLettres(s.date)})` : ''}` : '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ Trajet : ${s.route || '—'}${claimLine}${paxLine}${opNote}\n\n_E-billet en plusieurs pages ? Envoyez-les, je complète._\nTout est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg);
 }
 // Aller-retour détecté → on demande quel vol a été perturbé (l'e-billet ne dit pas ce qui a foiré).
 async function askSens(phone, s, cfg) {
@@ -2508,7 +2515,8 @@ async function sendMineurs(phone, s, cfg) {
 async function sendRecap(phone, s, cfg) {
   s.step = 'recap'; await setState(phone, s);
   try { markEngagedLead(phone, s); } catch (_) {} // dossier relançable dès que le vol est connu (récupère les abandons avant signature)
-  await sendButtons(phone, { body: `${bar('recap')}\n📋 *Récapitulatif — confirmez svp*\n\n👥 ${s.pax} passager${s.pax > 1 ? 's' : ''}\n_Identités à l'étape suivante (pièce d'identité ou saisie)_\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date ? `${s.date}${isValidStoredDate(s.date) ? ` (${dateEnLettres(s.date)})` : ''}` : '—'} — ${s.incident_libelle || '—'}\n🛤️ ${s.type_vol === 'escale' ? 'Avec escale' : 'Direct'}\n${montantLine(s)}`, buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Modifier' }] }, cfg);
+  const claimLineR = (!s.operateurNonUe && !s.operateurAVerifier && s.compagnie_reclamation) ? `\n📮 Réclamation auprès de : *${s.compagnie_reclamation}*` : '';
+  await sendButtons(phone, { body: `${bar('recap')}\n📋 *Récapitulatif — confirmez svp*\n\n👥 ${s.pax} passager${s.pax > 1 ? 's' : ''}\n_Identités à l'étape suivante (pièce d'identité ou saisie)_\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}${claimLineR}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date ? `${s.date}${isValidStoredDate(s.date) ? ` (${dateEnLettres(s.date)})` : ''}` : '—'} — ${s.incident_libelle || '—'}\n🛤️ ${s.type_vol === 'escale' ? 'Avec escale' : 'Direct'}\n${montantLine(s)}`, buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Modifier' }] }, cfg);
 }
 
 // Vérifie le vol (vols DIRECTS uniquement) et adapte montant + message. Idempotent, best-effort.
