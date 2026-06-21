@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Module 2 — The Client Journey · Robin des Airs Academy</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&family=Sacramento&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#13211c; --ink-soft:#41524a; --ink-faint:#6a786f;
+    --navy:#0B1F3A; --sapin:#0a3d2e; --sapin-2:#0c5038;
+    --green:#047857; --green-vivid:#00C87A; --green-bright:#00E5A0;
+    --gold:#cdac72; --gold-ink:#8a6d2f;
+    --paper:#fbfdfb; --surface:#ffffff; --surface-2:#f1f6f3;
+    --line:#e3ece7; --line-strong:#d2ded7;
+    --danger:#9f2d24; --danger-bg:#fdf4f3; --danger-line:#f0cdc8;
+    --maxw:min(940px,92vw); --read:68ch;
+    --r:18px; --r-sm:12px;
+    --shadow:0 1px 2px rgba(13,40,30,.04),0 12px 32px -18px rgba(13,40,30,.22);
+    --ease:cubic-bezier(.2,.8,.2,1);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:"Plus Jakarta Sans",system-ui,sans-serif; font-size:clamp(16px,.6vw + 14.6px,18px); line-height:1.68; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility}
+  .wrap{max-width:var(--maxw); margin-inline:auto; padding-inline:clamp(20px,4vw,40px)}
+  h1,h2,h3,h4{font-family:"Bricolage Grotesque",sans-serif; line-height:1.05; letter-spacing:-.02em; text-wrap:balance; margin:0}
+  p{margin:0 0 1em; max-width:var(--read); text-wrap:pretty}
+  strong{font-weight:700; color:var(--ink)}
+  a{color:var(--green)}
+
+  .cover{position:relative; overflow:hidden; color:#eaf3ee; background:radial-gradient(120% 90% at 88% -10%, rgba(0,229,160,.16), transparent 55%),radial-gradient(90% 80% at 6% 110%, rgba(205,172,114,.14), transparent 60%),linear-gradient(155deg,#0a3d2e 0%, #093024 46%, #0B1F3A 100%)}
+  .cover::after{content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(90deg,transparent,rgba(255,255,255,.04) 50%,transparent); mix-blend-mode:screen}
+  .cover .wrap{position:relative; padding-block:clamp(40px,7vw,78px)}
+  .brandline{display:flex; align-items:center; gap:11px; font-weight:800; letter-spacing:.02em}
+  .brandline .bow{display:grid; place-items:center; width:38px; height:38px; border-radius:11px; font-size:19px; background:linear-gradient(135deg,var(--green-bright),var(--green-vivid)); color:#06281d; box-shadow:0 8px 22px -10px rgba(0,229,160,.7)}
+  .brandline .nm{font-size:1.05rem}
+  .brandline .nm span{color:var(--green-bright)}
+  .kicker{margin:clamp(28px,5vw,46px) 0 14px; display:inline-flex; align-items:center; gap:10px; font-size:.74rem; font-weight:700; letter-spacing:.22em; text-transform:uppercase; color:var(--gold)}
+  .kicker::before{content:""; width:30px; height:1px; background:linear-gradient(90deg,transparent,var(--gold))}
+  .cover h1{font-size:clamp(2.5rem,7vw,4.7rem); font-weight:700; color:#fff; letter-spacing:-.035em; margin:0 0 .12em}
+  .cover h1 em{font-style:normal; color:var(--green-bright)}
+  .cover .lede{font-size:clamp(1.05rem,1.4vw,1.32rem); color:#bfd6cb; max-width:36ch; font-weight:500; margin:0}
+  .meta{display:flex; flex-wrap:wrap; gap:10px; margin-top:clamp(26px,4vw,36px)}
+  .chip{display:inline-flex; align-items:center; gap:8px; padding:9px 15px; border-radius:999px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.14); font-size:.84rem; font-weight:600; color:#dcebe3; backdrop-filter:blur(2px)}
+  .chip b{color:var(--green-bright); font-weight:700}
+  .sig{margin-top:clamp(34px,5vw,50px); padding-top:26px; display:flex; align-items:flex-end; gap:18px; border-top:1px solid rgba(255,255,255,.13); flex-wrap:wrap}
+  .sig .ink{font-family:"Sacramento",cursive; color:#fff; font-size:clamp(2.6rem,6vw,3.7rem); line-height:.8; text-shadow:0 2px 18px rgba(0,229,160,.25)}
+  .sig .who{font-size:.8rem; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); font-weight:700}
+  .sig .who small{display:block; letter-spacing:.04em; text-transform:none; color:#9fb6ab; font-weight:500; margin-top:3px; font-size:.86rem}
+
+  section{padding-block:clamp(34px,5vw,58px); border-bottom:1px solid var(--line)}
+  section:last-of-type{border-bottom:0}
+  .sechead{display:flex; align-items:baseline; gap:16px; margin-bottom:22px}
+  .sechead .no{font-family:"Bricolage Grotesque",sans-serif; font-weight:700; font-size:clamp(1.1rem,1.4vw,1.3rem); color:var(--gold-ink); flex:none; font-variant-numeric:tabular-nums}
+  .sechead h2{font-size:clamp(1.5rem,3.2vw,2.2rem); color:var(--sapin); font-weight:700}
+  .seclead{font-size:1.06rem; color:var(--ink-soft); max-width:var(--read)}
+
+  .goals{padding-block:clamp(36px,5vw,52px)}
+  .goal-list{list-style:none; padding:0; margin:0; display:grid; gap:12px; counter-reset:g}
+  .goal-list li{counter-increment:g; position:relative; padding:16px 18px 16px 58px; border-radius:var(--r-sm); background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow); font-weight:500}
+  .goal-list li::before{content:counter(g); position:absolute; left:14px; top:50%; translate:0 -50%; width:30px; height:30px; display:grid; place-items:center; border-radius:9px; background:linear-gradient(135deg,#e9f7f0,#d7f0e5); color:var(--green); font-weight:800; font-size:.92rem; font-family:"Bricolage Grotesque",sans-serif}
+
+  .flow{list-style:none; margin:20px 0 4px; padding:0; position:relative}
+  .flow li{position:relative; padding:0 0 24px 60px}
+  .flow li:last-child{padding-bottom:0}
+  .flow li::before{content:""; position:absolute; left:18px; top:8px; bottom:-8px; width:2px; background:var(--line-strong)}
+  .flow li:last-child::before{display:none}
+  .flow .n{position:absolute; left:0; top:0; width:38px; height:38px; border-radius:50%; display:grid; place-items:center; background:linear-gradient(135deg,#e9f7f0,#d7f0e5); color:var(--green); font-weight:800; font-family:"Bricolage Grotesque",sans-serif; border:2px solid #fff; box-shadow:var(--shadow); z-index:1}
+  .flow h4{font-size:1.06rem; color:var(--sapin); margin:5px 0 4px}
+  .flow p{margin:0 0 8px; font-size:.96rem; color:var(--ink-soft); max-width:var(--read)}
+  .tag{display:inline-block; font-size:.72rem; font-weight:700; letter-spacing:.02em; border-radius:999px; padding:3px 11px}
+  .tag.you{color:var(--green); background:#e9f7f0; border:1px solid #cde9d9}
+  .tag.bot{color:var(--navy); background:#e7eef6; border:1px solid #cdddee}
+  .tag.team{color:var(--gold-ink); background:#fff7e9; border:1px solid #f1dcae}
+
+  .docs{display:grid; grid-template-columns:repeat(auto-fit,minmax(248px,1fr)); gap:14px; margin:18px 0}
+  .doc{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:18px 20px; box-shadow:var(--shadow)}
+  .doc .dh{display:flex; align-items:center; gap:10px; margin-bottom:8px}
+  .doc .di{font-size:1.6rem; line-height:1}
+  .doc h4{font-size:1.02rem; color:var(--sapin)}
+  .doc p{font-size:.92rem; color:var(--ink-soft); margin:0 0 10px; max-width:none}
+  .doc .chk{list-style:none; margin:0; padding:0; font-size:.86rem; display:grid; gap:5px}
+  .doc .chk li{position:relative; padding-left:20px; line-height:1.4}
+  .doc .chk li .m{position:absolute; left:0; font-weight:800}
+  .doc .chk .y{color:var(--green)} .doc .chk .x{color:var(--danger)}
+
+  .promise{margin:24px 0; padding:clamp(20px,3vw,28px); border-radius:var(--r); background:linear-gradient(160deg,#0a3d2e,#0c5038); color:#e9f5ef; box-shadow:var(--shadow)}
+  .promise h3{color:#fff; font-size:1.16rem; margin-bottom:14px; display:flex; align-items:center; gap:10px}
+
+  .callout{margin:20px 0; padding:18px 20px; border-radius:var(--r-sm); background:var(--surface-2); border:1px solid var(--line-strong)}
+  .callout.warn{background:#fff9ec; border-color:#f1dcae}
+  .callout.warn b{color:var(--gold-ink)}
+  .callout.bad{background:var(--danger-bg); border-color:var(--danger-line)}
+  .callout.bad b{color:var(--danger)}
+  .callout p:last-child{margin-bottom:0}
+  .callout .ic{font-weight:800; margin-right:6px}
+
+  .checklist{list-style:none; margin:16px 0; padding:0; display:grid; gap:10px}
+  .checklist li{position:relative; padding:13px 16px 13px 46px; background:var(--surface); border:1px solid var(--line); border-radius:var(--r-sm); box-shadow:var(--shadow); font-size:.96rem}
+  .checklist li::before{content:"?"; position:absolute; left:13px; top:50%; translate:0 -50%; width:24px; height:24px; display:grid; place-items:center; border-radius:7px; background:#eef6f1; color:var(--green); font-weight:800; font-family:"Bricolage Grotesque",sans-serif}
+
+  .scripts{display:grid; gap:14px; margin:20px 0}
+  .scrx{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:18px 20px; box-shadow:var(--shadow)}
+  .scrx .role{font-size:.82rem; font-weight:700; color:var(--danger); margin-bottom:12px; display:flex; align-items:center; gap:8px}
+  .scrx .role .dot{flex:none; width:7px;height:7px;border-radius:50%;background:var(--danger)}
+  .line{display:flex; gap:12px; align-items:baseline; padding:7px 0}
+  .line + .line{border-top:1px dashed var(--line-strong)}
+  .lang{flex:none; width:30px; font-size:.66rem; font-weight:800; letter-spacing:.06em; padding:3px 0; text-align:center; border-radius:6px}
+  .lang.en{background:#e7eef6; color:var(--navy)}
+  .lang.wo{background:#d7f0e5; color:var(--green)}
+  .line .txt{margin:0}
+  .line.en .txt{font-weight:600; color:var(--sapin); font-size:1.04rem}
+  .line.wo .txt{color:var(--ink-soft); font-size:.96rem}
+
+  .memo{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin:18px 0}
+  .memo div{background:var(--surface); border:1px solid var(--line); border-radius:var(--r-sm); padding:16px; box-shadow:var(--shadow)}
+  .memo .v{font-family:"Bricolage Grotesque",sans-serif; font-weight:800; font-size:1.32rem; color:var(--sapin); letter-spacing:-.02em}
+  .memo .k{font-size:.82rem; color:var(--ink-faint); margin-top:2px}
+
+  .q{margin:14px 0; counter-increment:q}
+  .qlist{counter-reset:q}
+  .q .qq{font-weight:600; display:flex; gap:12px}
+  .q .qq::before{content:"Q" counter(q); flex:none; font-family:"Bricolage Grotesque",sans-serif; font-weight:800; color:var(--gold-ink)}
+  details.ans{margin-top:22px; background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:4px 20px; box-shadow:var(--shadow)}
+  details.ans summary{cursor:pointer; font-weight:700; color:var(--green); padding:14px 0; list-style:none}
+  details.ans summary::-webkit-details-marker{display:none}
+  details.ans summary::before{content:"▸ "; color:var(--gold-ink)}
+  details.ans[open] summary::before{content:"▾ "}
+  details.ans ol{margin:0 0 14px; padding-left:20px; display:grid; gap:8px}
+
+  .foot{background:var(--sapin); color:#cfe2d8; text-align:center; border:0}
+  .foot .wrap{padding-block:clamp(34px,5vw,52px)}
+  .foot .ink{font-family:"Sacramento",cursive; color:#fff; font-size:2.6rem; line-height:.9}
+  .foot .who{font-size:.76rem; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); font-weight:700; margin-top:6px}
+  .foot .tiny{font-size:.78rem; color:#88a89a; margin-top:18px}
+  .next{max-width:var(--read); margin:0 auto 26px; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12); border-radius:var(--r); padding:20px}
+  .next .role{color:var(--green-bright); font-weight:700; font-size:.8rem; letter-spacing:.14em; text-transform:uppercase}
+  .next h3{color:#fff; font-size:1.25rem; margin:6px 0 8px}
+  .next p{color:#bcd2c7; margin:0 auto; max-width:none}
+
+  .em-green{color:var(--green); font-weight:700}
+
+  .anim .rv{opacity:0; transform:translateY(16px); will-change:opacity,transform}
+  .anim .rv.in{opacity:1; transform:none; transition:opacity .7s var(--ease), transform .7s var(--ease)}
+  @media (prefers-reduced-motion:reduce){ .anim .rv,.anim .rv.in{opacity:1!important; transform:none!important; transition:none} html{scroll-behavior:auto} }
+
+  @media print{
+    *{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+    body{font-size:10.6pt}
+    .rv{opacity:1!important; transform:none!important}
+    .cover{padding:0}
+    section{break-inside:avoid-page} .scrx,.doc,.promise,.memo div,.checklist li,details.ans{break-inside:avoid}
+    details.ans{padding-block:6px}
+    details.ans > ol{display:block!important}
+    details.ans summary::before{content:"✔ "}
+  }
+  @page{margin:14mm}
+</style>
+<script>if(!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('anim');}</script>
+</head>
+<body>
+
+<header class="cover">
+  <div class="wrap">
+    <div class="brandline rv"><span class="bow">🏹</span><span class="nm">Robin des Airs<span> · Academy</span></span></div>
+    <div class="kicker rv">Phone Agent Training · Nigeria · Ghana · Uganda · Gambia</div>
+    <h1 class="rv">Module 2<br><em>The client journey</em></h1>
+    <p class="lede rv">From the first WhatsApp message to the paid compensation — and your role at every step.</p>
+    <div class="meta">
+      <span class="chip rv">Languages <b>English &amp; Wolof</b></span>
+      <span class="chip rv">Rights <b>EU261 + UK261</b></span>
+      <span class="chip rv">Follows <b>Module 1</b></span>
+    </div>
+    <div class="sig rv"><div class="ink">Climbié</div><div class="who">Climbié Kodjo<small>Founder — Robin des Airs</small></div></div>
+  </div>
+</header>
+
+<main>
+  <div class="goals wrap">
+    <div class="seclead rv" style="margin-bottom:18px"><strong style="color:var(--sapin)">By the end of this module, you'll be able to 👇</strong></div>
+    <ol class="goal-list rv">
+      <li>Follow the <strong>6 steps of the journey</strong> and know <strong>where you step in</strong>.</li>
+      <li>Collect the <strong>3 right documents</strong> (ticket, boarding pass, passport) and recognise a <strong>good photo</strong>.</li>
+      <li>Check a file (<strong>AI pre-checks, you confirm</strong>) and ask for a re-take <strong>politely</strong>.</li>
+      <li>Reassure on the <strong>mandate</strong> (£0 / €0, 14-day withdrawal) and on <strong>bank details</strong> (never on WhatsApp).</li>
+      <li>Answer the <strong>6 most common objections</strong> — in English and Wolof.</li>
+    </ol>
+  </div>
+
+  <div class="wrap">
+
+    <!-- 1 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">01</span><h2>The journey map</h2></div>
+      <p class="seclead">Every file follows the same 6 steps. Spot clearly where <strong>you</strong> are the one who acts.</p>
+      <ol class="flow">
+        <li><span class="n">1</span><h4>The client writes on WhatsApp</h4><p>The bot asks the questions (flight number, route) and runs a first eligibility check. In English.</p><span class="tag bot">🤖 The bot</span></li>
+        <li><span class="n">2</span><h4>You call back &amp; reassure</h4><p>You take over: build trust, answer questions, unblock. In Wolof if needed (esp. Gambia).</p><span class="tag you">🎧 You</span></li>
+        <li><span class="n">3</span><h4>Collect the documents</h4><p>You help the client send their 3 documents (ticket, boarding pass, passport).</p><span class="tag you">🎧 You + client</span></li>
+        <li><span class="n">4</span><h4>Verification &amp; signed mandate</h4><p>The AI pre-checks, the team confirms. The client signs the mandate online (£0 / €0).</p><span class="tag team">⚙️ Team</span></li>
+        <li><span class="n">5</span><h4>We claim from the airline</h4><p>Claim sent, then follow-ups and mediation if needed. The client does nothing.</p><span class="tag team">⚙️ Team</span></li>
+        <li><span class="n">6</span><h4>Compensation paid</h4><p>The money lands in the client's account. Time to ask for a Google review.</p><span class="tag you">🎧 You (closing)</span></li>
+      </ol>
+    </section>
+
+    <!-- 2 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">02</span><h2>Step 1: the WhatsApp submission</h2></div>
+      <p>Before your call, the client has already chatted with the <strong>bot</strong> on WhatsApp. The bot captured:</p>
+      <ul class="checklist">
+        <li>The <strong>flight number</strong> → the bot proposes the <strong>route</strong> (departure → arrival).</li>
+        <li>A first <strong>eligibility check</strong>: delay ≥ 3h? distance? jurisdiction? within the time limit?</li>
+        <li>If <strong>potentially eligible</strong> → the bot asks for the documents.</li>
+      </ul>
+      <p style="margin-bottom:0"><strong>Your role here:</strong> you step in when the client <strong>doubts, stalls or drops off</strong>. A human call in Wolof revives a file that would have been lost. You are the <span class="em-green">safety net</span> of the journey.</p>
+    </section>
+
+    <!-- 3 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">03</span><h2>The 3 documents to collect</h2></div>
+      <p class="seclead">No documents, no file. Your job: get them — legible and complete.</p>
+      <div class="docs">
+        <div class="doc">
+          <div class="dh"><span class="di">🎫</span><h4>The ticket / booking</h4></div>
+          <p>Shows the <strong>route</strong>, the <strong>date</strong>, the <strong>booking reference</strong> and <strong>all passengers</strong>.</p>
+          <ul class="chk"><li><span class="m y">✓</span>e-ticket, airline or agency e-mail</li><li><span class="m x">✕</span>a blurry screenshot of a text</li></ul>
+        </div>
+        <div class="doc">
+          <div class="dh"><span class="di">🪪</span><h4>The boarding pass</h4></div>
+          <p>Proves the client <strong>actually took the flight</strong>. The strongest proof.</p>
+          <ul class="chk"><li><span class="m y">✓</span>paper OR the version in the airline's app</li><li><span class="m x">✕</span>thrown away? → we recover it (tip below)</li></ul>
+        </div>
+        <div class="doc">
+          <div class="dh"><span class="di">🛂</span><h4>The passport</h4></div>
+          <p>For <strong>identity</strong> and the <strong>mandate</strong>. Used <strong>only</strong> for the file, and protected.</p>
+          <ul class="chk"><li><span class="m y">✓</span>full photo page, sharp</li><li><span class="m x">✕</span>never shared publicly</li></ul>
+        </div>
+      </div>
+      <div class="callout"><p style="margin-bottom:0">📸 <strong>A good photo:</strong> the <strong>whole</strong> document in frame, <strong>well lit</strong>, <strong>sharp text</strong>, laid <strong>flat</strong>, no finger on the text. <strong>Avoid:</strong> blur, cropped, glare, too dark.</p></div>
+      <div class="callout warn"><p style="margin-bottom:0"><span class="ic">💡</span><b>"Lost boarding pass" tip:</b> never block the client. It can often be recovered from the <strong>airline's app</strong> or the <strong>check-in e-mail</strong>. Failing that, the ticket + proof of travel can be enough — always look for a solution.</p></div>
+      <div class="callout"><p style="margin-bottom:0">🧾 <strong>Bonus (care expenses):</strong> if the client was stuck a long time and paid for <strong>hotel, taxi or meals</strong>, tell them to keep the <strong>receipts</strong> — that money comes back <strong>on top</strong> of the compensation, and it does <strong>not</strong> reduce it. (More in Module 3.)</p></div>
+    </section>
+
+    <!-- 4 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">04</span><h2>Checking a file</h2></div>
+      <div class="promise" style="background:linear-gradient(160deg,#0B1F3A,#0a3d2e)">
+        <h3>⚖️ The golden rule</h3>
+        <p style="color:#dcebe3;max-width:none;margin:0">The <strong style="color:#fff">AI pre-checks</strong> the documents, but <strong style="color:var(--green-bright)">a human confirms</strong>. <strong style="color:#fff">Never the AI alone</strong> on legal documents.</p>
+      </div>
+      <p>Before you validate, check 4 things:</p>
+      <ul class="checklist">
+        <li>Is the <strong>photo legible</strong> (whole, sharp)?</li>
+        <li>Is the <strong>name the same</strong> on the passport AND the ticket?</li>
+        <li>Does the <strong>flight</strong> match the one announced?</li>
+        <li>Do <strong>all passengers</strong> on the file have their documents?</li>
+      </ul>
+      <p><strong>If a document is bad:</strong> ask for a re-take — <strong>politely</strong>, explaining <strong>why</strong>. E.g.: "The photo is a bit blurry, could you re-take it flat with more light? 🙏"</p>
+      <div class="callout warn"><p style="margin-bottom:0"><span class="ic">⏱️</span><b>24h SLA both sides:</b> the team validates in <strong>under 24h</strong>, and the client re-sends a rejected document in <strong>under 24h</strong>. A file that moves fast is a file that pays out.</p></div>
+    </section>
+
+    <!-- 5 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">05</span><h2>The mandate (the signature)</h2></div>
+      <p class="seclead">It's the authorisation that lets Robin des Airs <strong>claim the compensation in the client's name</strong> from the airline.</p>
+      <p>How to present it and reassure:</p>
+      <ul class="checklist">
+        <li>It is <strong>not</strong> a commitment to pay: we do the work. <strong>£0 / €0.</strong></li>
+        <li><strong>Online</strong> signature, simple, from the phone (we send the link).</li>
+        <li>The client keeps a <strong>14-day withdrawal right</strong>.</li>
+      </ul>
+      <div class="callout bad"><p style="margin-bottom:0"><span class="ic">🚫</span><b>Red-line reminder (Module 1):</b> you give <strong>no legal advice</strong> on the mandate's clauses. A pointed legal question → "our team will explain it." You are <strong>not a lawyer.</strong></p></div>
+    </section>
+
+    <!-- 6 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">06</span><h2>Bank details</h2></div>
+      <div class="callout bad"><p style="margin-bottom:0"><span class="ic">🔒</span><b>NEVER bank details on WhatsApp.</b> And never before the claim is won. If anyone asks for bank details on WhatsApp, it's not us.</p></div>
+      <p><strong>So when?</strong> Once the file is <strong>accepted</strong>, then once the <strong>funds are received</strong> from the airline → we ask for the bank details via a <strong>secure link</strong> (form), and we transfer the client's share <strong>within 5 working days</strong>.</p>
+      <p style="margin-bottom:0"><strong>The anti-scam line to say:</strong> <span class="em-green">"We will never ask for your bank details on WhatsApp, nor for money. We are the ones who pay you."</span></p>
+    </section>
+
+    <!-- 7 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">07</span><h2>The 6 tricky objections</h2></div>
+      <div class="callout"><p style="margin-bottom:0">Base answers — adapt with your own words. Stay <strong>calm and clear</strong>: an objection is just a question in disguise. (Wolof line for Gambian / Wolof-speaking clients.)</p></div>
+      <div class="scripts">
+        <div class="scrx">
+          <div class="role"><span class="dot"></span>"Too good to be true… it's a scam"</div>
+          <div class="line en"><span class="lang en">EN</span><p class="txt">"It's not a scam. The money goes into <b>your</b> account, and you pay nothing whatever happens."</p></div>
+          <div class="line wo"><span class="lang wo">WO</span><p class="txt">« Du arnaque. Xaalis bi ci <b>sa</b> compte lay dem, te doo fey dara lu mu mën a doon. »</p></div>
+        </div>
+        <div class="scrx">
+          <div class="role"><span class="dot"></span>"Why do you take 25%?"</div>
+          <div class="line en"><span class="lang en">EN</span><p class="txt">"The 25% is our work: we do everything for you. And if we recover nothing, you pay nothing."</p></div>
+          <div class="line wo"><span class="lang wo">WO</span><p class="txt">« 25 % bi mooy sunu liggéey : nuy def yëf yépp ci sa wàll. Bu fekkee jotunu dara, doo fey dara. »</p></div>
+        </div>
+        <div class="scrx">
+          <div class="role"><span class="dot"></span>"I lost my boarding pass"</div>
+          <div class="line en"><span class="lang en">EN</span><p class="txt">"No worries. We can recover it from the airline's app or your check-in e-mail."</p></div>
+          <div class="line wo"><span class="lang wo">WO</span><p class="txt">« Bul jëf. Mën nanu ko wut ci appli compagnie bi walla ci email enregistrement bi. »</p></div>
+        </div>
+        <div class="scrx">
+          <div class="role"><span class="dot"></span>"I'm worried about my passport"</div>
+          <div class="line en"><span class="lang en">EN</span><p class="txt">"Your passport is used only for your file, we protect it, it is never shared publicly."</p></div>
+          <div class="line wo"><span class="lang wo">WO</span><p class="txt">« Sa passeport, ci sa dossier rekk lanu koy jëfandikoo, danu koy aar, du génn ci mbedd. »</p></div>
+        </div>
+        <div class="scrx">
+          <div class="role"><span class="dot"></span>"How long will it take?"</div>
+          <div class="line en"><span class="lang en">EN</span><p class="txt">"If the airline cooperates, 2–3 months; if it resists, longer. But you do nothing — we keep you posted."</p></div>
+          <div class="line wo"><span class="lang wo">WO</span><p class="txt">« Bu compagnie bi déggoo gaaw, ñaari–ñetti weer ; bu dëgëree, mën na yagg. Waaye yaw doo def dara, danu lay xamal. »</p></div>
+        </div>
+        <div class="scrx">
+          <div class="role"><span class="dot"></span>"The airline offered me a voucher"</div>
+          <div class="line en"><span class="lang en">EN</span><p class="txt">"Don't accept the voucher! You're entitled to cash, not a voucher. Leave it to us, we'll recover your compensation."</p></div>
+          <div class="line wo"><span class="lang wo">WO</span><p class="txt">« Bul nangu bon d'achat bi ! Am nga droit ci xaalis (cash), du bon. Bàyyil nu ko, danu lay jotal sa indemnité. »</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">08</span><h2>Memo — know it by heart</h2></div>
+      <div class="memo">
+        <div><div class="v">6 steps</div><div class="k">from WhatsApp to payment</div></div>
+        <div><div class="v">3 documents</div><div class="k">ticket · boarding pass · passport</div></div>
+        <div><div class="v">AI → 👤</div><div class="k">AI pre-checks, the human confirms</div></div>
+        <div><div class="v">24 h</div><div class="k">SLA both sides</div></div>
+        <div><div class="v">Bank ≠ WhatsApp</div><div class="k">secure link, after the win</div></div>
+        <div><div class="v">14 d · £0</div><div class="k">withdrawal · never any advance</div></div>
+      </div>
+    </section>
+
+    <!-- 9 -->
+    <section class="rv">
+      <div class="sechead"><span class="no">09</span><h2>Check your knowledge</h2></div>
+      <p class="seclead">Answer without looking. Then open the key.</p>
+      <div class="qlist">
+        <div class="q"><div class="qq">What are the <strong>3 core documents</strong> to collect?</div></div>
+        <div class="q"><div class="qq">The client threw away their boarding pass. Do you <strong>block</strong> them?</div></div>
+        <div class="q"><div class="qq">The client wants to give you their <strong>bank details on WhatsApp</strong>. What do you do?</div></div>
+        <div class="q"><div class="qq">The AI shows "file OK." Do you validate <strong>straight away</strong>?</div></div>
+        <div class="q"><div class="qq">The name on the <strong>passport ≠</strong> the name on the <strong>ticket</strong>. A problem?</div></div>
+        <div class="q"><div class="qq">The airline offers a <strong>£520 voucher</strong>. Should the client accept?</div></div>
+        <div class="q"><div class="qq">How long does the client have to <strong>re-send</strong> a rejected document?</div></div>
+        <div class="q"><div class="qq">The client has a <strong>withdrawal</strong> right of how many days?</div></div>
+      </div>
+      <details class="ans">
+        <summary>Show the answer key</summary>
+        <ol>
+          <li>The <strong>ticket/booking</strong>, the <strong>boarding pass</strong>, the <strong>passport</strong>.</li>
+          <li><strong>No, never.</strong> Look for a solution (airline app, check-in e-mail) — it's often recoverable.</li>
+          <li><strong>Never</strong> collect bank details on WhatsApp. Explain we'll ask later, via a <strong>secure link</strong>, after the win.</li>
+          <li><strong>No</strong> — the AI pre-checks, but a <strong>human</strong> always confirms.</li>
+          <li><strong>Yes, to check</strong> (typo? maiden name?). The name must match before going further.</li>
+          <li><strong>No</strong> — they're entitled to <strong>cash</strong>; a voucher can make them lose their compensation. We handle it.</li>
+          <li><strong>Under 24h</strong> (SLA both sides).</li>
+          <li><strong>14 days.</strong></li>
+        </ol>
+      </details>
+    </section>
+
+  </div>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="next rv">
+      <div class="role">▶ Next step</div>
+      <h3>Module 3 — Tracking, follow-ups &amp; payment</h3>
+      <p>How to track a file, when and how to follow up, the "paid" stage, and getting a Google review at the right moment.</p>
+    </div>
+    <div class="ink">Climbié</div>
+    <div class="who">Climbié Kodjo — Founder</div>
+    <div class="tiny">Robin des Airs internal document · Academy · Module 2 — not for clients.</div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var els = [].slice.call(document.querySelectorAll('.rv'));
+    function reveal(e){ e.classList.add('in'); }
+    if(!document.documentElement.classList.contains('anim') || !('IntersectionObserver' in window)){ els.forEach(reveal); return; }
+    var cover = document.querySelectorAll('.cover .rv');
+    cover.forEach(function(e,i){ e.style.transitionDelay=(i*70)+'ms'; });
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ cover.forEach(reveal); }); });
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ reveal(en.target); io.unobserve(en.target); } });
+    },{rootMargin:'0px 0px -8% 0px', threshold:.06});
+    els.forEach(function(e){ if(!e.closest('.cover')) io.observe(e); });
+    setTimeout(function(){ els.forEach(reveal); }, 1500);
+    addEventListener('pageshow', function(){ els.forEach(reveal); });
+  })();
+  addEventListener('beforeprint', function(){ document.querySelectorAll('details.ans').forEach(function(d){ d.open = true; }); });
+</script>
+</body>
+</html>

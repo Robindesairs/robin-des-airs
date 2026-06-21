@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Confirmation de réservation — AF6892</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Helvetica Neue', Arial, sans-serif; background: #eef0f3; color: #1a1a2e; padding: 28px; }
+  .ticket { max-width: 720px; margin: 0 auto; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 6px 24px rgba(0,0,0,.10); }
+  .top { background: #002157; color: #fff; padding: 22px 28px; display: flex; justify-content: space-between; align-items: center; }
+  .top .brand { font-size: 22px; font-weight: 800; letter-spacing: .5px; }
+  .top .brand small { display:block; font-weight:400; font-size:11px; opacity:.8; letter-spacing:2px; }
+  .top .doc { text-align: right; font-size: 12px; line-height: 1.5; }
+  .pnr { padding: 18px 28px; background: #f4b400; color:#002157; display:flex; justify-content:space-between; font-weight:700; }
+  .pnr .ref { font-size: 24px; letter-spacing: 4px; }
+  .section { padding: 20px 28px; border-bottom: 1px solid #eceef1; }
+  .section h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: #7a8190; margin-bottom: 12px; }
+  .leg { display: flex; align-items: center; gap: 18px; }
+  .leg .city { flex: 1; }
+  .leg .city .code { font-size: 30px; font-weight: 800; color:#002157; }
+  .leg .city .name { font-size: 12px; color:#555; }
+  .leg .city .time { font-size: 15px; font-weight: 600; margin-top:4px; }
+  .leg .arrow { color:#f4b400; font-size: 22px; }
+  .flight-row { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px 28px; font-size: 13px; }
+  .flight-row b { color:#002157; }
+  .operated { margin-top: 14px; padding: 10px 14px; background: #fff5f5; border-left: 4px solid #d23; border-radius: 4px; font-size: 13px; color:#a11; font-weight:600; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 9px 6px; border-bottom: 1px solid #eceef1; }
+  th { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color:#7a8190; }
+  .foot { padding: 16px 28px; font-size: 11px; color: #8a909c; }
+</style>
+</head>
+<body>
+  <div class="ticket">
+    <div class="top">
+      <div class="brand">AIR FRANCE<small>VOTRE VOYAGE — CONFIRMATION</small></div>
+      <div class="doc">
+        e-Ticket : 057-2148809321<br>
+        Émis le : 12/02/2026<br>
+        Agence : AIR FRANCE DIRECT
+      </div>
+    </div>
+
+    <div class="pnr">
+      <span>Référence de réservation (PNR)</span>
+      <span class="ref">RJ8KQE</span>
+    </div>
+
+    <div class="section">
+      <h3>Vol — Aller</h3>
+      <div class="leg">
+        <div class="city">
+          <div class="code">CDG</div>
+          <div class="name">Paris — Charles de Gaulle (France)</div>
+          <div class="time">10 h 30 · 01/03/2026</div>
+        </div>
+        <div class="arrow">✈</div>
+        <div class="city" style="text-align:right;">
+          <div class="code">NBO</div>
+          <div class="name">Nairobi — Jomo Kenyatta (Kenya)</div>
+          <div class="time">20 h 15 · 01/03/2026</div>
+        </div>
+      </div>
+      <div class="flight-row">
+        <span><b>Vol :</b> AF 6891</span>
+        <span><b>Classe :</b> Economy (V)</span>
+        <span><b>Durée :</b> 8 h 45</span>
+        <span><b>Bagages :</b> 1 × 23 kg</span>
+      </div>
+      <div class="operated">✱ Vol AF6891 opéré par / operated by KENYA AIRWAYS (KQ)</div>
+    </div>
+
+    <div class="section">
+      <h3>Vol — Retour</h3>
+      <div class="leg">
+        <div class="city">
+          <div class="code">NBO</div>
+          <div class="name">Nairobi — Jomo Kenyatta (Kenya)</div>
+          <div class="time">23 h 55 · 14/03/2026</div>
+        </div>
+        <div class="arrow">✈</div>
+        <div class="city" style="text-align:right;">
+          <div class="code">CDG</div>
+          <div class="name">Paris — Charles de Gaulle (France)</div>
+          <div class="time">06 h 40 · 15/03/2026</div>
+        </div>
+      </div>
+      <div class="flight-row">
+        <span><b>Vol :</b> AF 6892</span>
+        <span><b>Classe :</b> Economy (V)</span>
+        <span><b>Durée :</b> 8 h 45</span>
+        <span><b>Bagages :</b> 1 × 23 kg</span>
+      </div>
+      <div class="operated">✱ Vol AF6892 opéré par / operated by KENYA AIRWAYS (KQ)</div>
+    </div>
+
+    <div class="section">
+      <h3>Passagers</h3>
+      <table>
+        <thead><tr><th>Nom</th><th>Type</th><th>N° de billet</th></tr></thead>
+        <tbody>
+          <tr><td>DIALLO / Aminata Mme</td><td>Adulte (ADT)</td><td>057-2148809321</td></tr>
+          <tr><td>DIALLO / Ousmane M.</td><td>Adulte (ADT)</td><td>057-2148809322</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="foot">
+      Document électronique — à présenter à l'enregistrement avec une pièce d'identité valide.
+      Conditions tarifaires : non remboursable, modifiable avec frais. Air France, SkyTeam.
+    </div>
+  </div>
+</body>
+</html>
