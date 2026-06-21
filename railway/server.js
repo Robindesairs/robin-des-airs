@@ -290,11 +290,12 @@ function montantReel(s) { return perPaxOf(s) * claimablePax(s); }
 function montantNetReel(s) { return Math.round(montantReel(s) * 0.75); }
 // Ligne montant à afficher (récap/done) selon le verdict vol.
 function montantLine(s) {
+  const en = isEN(s);
   const v = s && s.flightVerdict;
-  if (v === 'hors_champ' || v === 'sous_seuil') return `💰 Montant à confirmer par un expert _(vérification gratuite)_`;
+  if (v === 'hors_champ' || v === 'sous_seuil') return en ? `💰 Amount to be confirmed by an expert _(free check)_` : `💰 Montant à confirmer par un expert _(vérification gratuite)_`;
   const verified = !!(s && s.flightChecked) && v === 'eligible';
-  const prefix = verified ? '' : 'Jusqu’à ';
-  return `💰 ${prefix}*${montantReel(s)} €* — vous gardez *${montantNetReel(s)} € nets* (75 %)`;
+  if (en) return `💰 ${verified ? '' : 'Up to '}*€${montantReel(s)}* — you keep *€${montantNetReel(s)} net* (75%)`;
+  return `💰 ${verified ? '' : 'Jusqu’à '}*${montantReel(s)} €* — vous gardez *${montantNetReel(s)} € nets* (75 %)`;
 }
 
 // ─── Stats choc (rotation MSG1) ───────────────────────────────────────────────
@@ -336,6 +337,14 @@ function matchLang(input) {
   if (/^\d+$/.test(t)) { const arr = Object.values(LANGS); const i = parseInt(t) - 1; if (arr[i]) return arr[i]; }
   return null;
 }
+// ─── i18n bot (MVP happy-path) ─────────────────────────────────────────────────
+// L(s, en, fr) : co-localise les deux langues au point d'envoi. Le FR reste la valeur par défaut
+// (zéro régression) ; on ne renvoie l'anglais QUE si le client a choisi « English ». Tant qu'un message
+// n'est pas traduit, il reste en français — la bascule se fait message par message, sans tout réécrire.
+function isEN(s) { return !!(s && s.langue_code === 'en'); }
+function L(s, en, fr) { return isEN(s) ? en : fr; }
+// Variante : choisit une variante de ton FR (pickVariant) en français, mais renvoie un texte EN fixe en anglais.
+function LV(s, phone, key, en) { return isEN(s) ? en : pickVariant(phone, key); }
 
 // ─── Envoi texte / liste / boutons (plomberie éprouvée + clip + debug) ─────────
 async function send(phone, text, cfg) {
@@ -1072,26 +1081,29 @@ async function scanConfirmCard(phone, s, cfg) {
   await enrichOperatingFromAero(s); // vol entrant sans « opéré par » sur le billet → on interroge AeroDataBox (best-effort)
   const pages = (s.scan_pages || []).length;
   const noms = (s.names || []).filter(Boolean);
-  const paxLine = !noms.length ? `\n_(votre identité sera lue sur le passeport, plus tard)_`
-    : noms.length < (s.pax || 1) ? `\n👤 ${noms.join(', ')} _(les identités des autres passagers viendront de leurs passeports)_`
-    : `\n👥 ${noms.length} passager(s) : ${noms.join(', ')}`;
-  const pageLine = pages > 1 ? `\n📄 ${pages} pages lues` : '';
+  const paxLine = !noms.length ? L(s, `\n_(your name will be read from your passport, later)_`, `\n_(votre identité sera lue sur le passeport, plus tard)_`)
+    : noms.length < (s.pax || 1) ? L(s, `\n👤 ${noms.join(', ')} _(the other passengers' names will come from their passports)_`, `\n👤 ${noms.join(', ')} _(les identités des autres passagers viendront de leurs passeports)_`)
+    : L(s, `\n👥 ${noms.length} passenger(s): ${noms.join(', ')}`, `\n👥 ${noms.length} passager(s) : ${noms.join(', ')}`);
+  const pageLine = pages > 1 ? L(s, `\n📄 ${pages} pages read`, `\n📄 ${pages} pages lues`) : '';
   // Lecture douteuse/incomplète → on NE claironne PAS « réussi », on invite à vérifier (un caractère faux = rejet compagnie).
   const header = s._scanWarn
-    ? `⚠️ J'ai lu votre billet, mais l'image était *difficile à lire*. Vérifiez bien le *n° de vol* et le *PNR* ci-dessous 👇`
-    : pickVariant(phone, 'SCAN_REUSSI');
+    ? L(s, `⚠️ I read your ticket, but the image was *hard to read*. Please double-check the *flight number* and *PNR* below 👇`, `⚠️ J'ai lu votre billet, mais l'image était *difficile à lire*. Vérifiez bien le *n° de vol* et le *PNR* ci-dessous 👇`)
+    : LV(s, phone, 'SCAN_REUSSI', `✅ I've read your ticket 👇`);
   // Code-share détecté sur un vol ENTRANT en Europe opéré par une compagnie hors-UE : le CE261 ne s'applique
   // pas automatiquement → on prévient sans fermer le dossier (un expert vérifie un autre recours).
-  const opName = (s.operateur_code && AIRLINES[s.operateur_code]) || s.compagnie || 'une compagnie hors-UE';
+  const opName = (s.operateur_code && AIRLINES[s.operateur_code]) || s.compagnie || L(s, 'a non-EU airline', 'une compagnie hors-UE');
   const opNote = s.operateurNonUe
-    ? `\n\nℹ️ Vol *opéré par ${opName}* (compagnie hors-UE) à l'arrivée en Europe : l'indemnisation européenne ne s'applique pas *automatiquement*. Un expert vérifie *gratuitement* un autre recours — *on garde votre dossier dans tous les cas*. 🤝`
+    ? L(s, `\n\nℹ️ Flight *operated by ${opName}* (non-EU airline) arriving in Europe: EU compensation does not apply *automatically*. An expert checks *free of charge* for another option — *we keep your case either way*. 🤝`, `\n\nℹ️ Vol *opéré par ${opName}* (compagnie hors-UE) à l'arrivée en Europe : l'indemnisation européenne ne s'applique pas *automatiquement*. Un expert vérifie *gratuitement* un autre recours — *on garde votre dossier dans tous les cas*. 🤝`)
     : s.operateurAVerifier
-      ? `\n\nℹ️ Ce vol à l'arrivée en Europe est un *vol en partage de code* (code-share). Un expert vérifie *gratuitement* quelle compagnie l'opère réellement, pour confirmer vos droits — *on garde votre dossier dans tous les cas*. 🤝`
+      ? L(s, `\n\nℹ️ This flight arriving in Europe is a *codeshare*. An expert checks *free of charge* which airline actually operates it, to confirm your rights — *we keep your case either way*. 🤝`, `\n\nℹ️ Ce vol à l'arrivée en Europe est un *vol en partage de code* (code-share). Un expert vérifie *gratuitement* quelle compagnie l'opère réellement, pour confirmer vos droits — *on garde votre dossier dans tous les cas*. 🤝`)
       : '';
   // Compagnie débitrice (= transporteur effectif) — affichée quand le dossier est couvert, utile surtout sur
   // une correspondance où ce n'est pas la compagnie du 1er vol. Tue en cas de doute (la note explique alors).
-  const claimLine = (!s.operateurNonUe && !s.operateurAVerifier && s.compagnie_reclamation) ? `\n📮 Réclamation auprès de : *${s.compagnie_reclamation}*` : '';
-  return sendButtons(phone, { body: `${header}${pageLine}\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date ? `${s.date}${isValidStoredDate(s.date) ? ` (${dateEnLettres(s.date)})` : ''}` : '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ Trajet : ${s.route || '—'}${claimLine}${paxLine}${opNote}\n\n_E-billet en plusieurs pages ? Envoyez-les, je complète._\nTout est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg);
+  const claimLine = (!s.operateurNonUe && !s.operateurAVerifier && s.compagnie_reclamation) ? L(s, `\n📮 Claim filed against: *${s.compagnie_reclamation}*`, `\n📮 Réclamation auprès de : *${s.compagnie_reclamation}*`) : '';
+  const dateLine = s.date ? `${s.date}${isValidStoredDate(s.date) ? ` (${dateEnLettres(s.date)})` : ''}` : '—';
+  return sendButtons(phone, { body: L(s,
+    `${header}${pageLine}\n\n✈️ Flight: ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date: ${dateLine}\n🎫 PNR: ${s.pnr || '—'}\n🗺️ Route: ${s.route || '—'}${claimLine}${paxLine}${opNote}\n\n_E-ticket with several pages? Send them, I'll complete it._\nIs everything correct?`,
+    `${header}${pageLine}\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${dateLine}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ Trajet : ${s.route || '—'}${claimLine}${paxLine}${opNote}\n\n_E-billet en plusieurs pages ? Envoyez-les, je complète._\nTout est correct ?`), buttons: [{ text: L(s, '✅ Yes', '✅ Oui') }, { text: L(s, '✏️ Fix', '✏️ Corriger') }] }, cfg);
 }
 // Aller-retour détecté → on demande quel vol a été perturbé (l'e-billet ne dit pas ce qui a foiré).
 async function askSens(phone, s, cfg) {
@@ -1615,6 +1627,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (!L) return sendLangue(phone, s, cfg);
     s.langue = `${L.flag} ${L.label}`; s.langue_code = L.code;
     if (L.africaine) { s.escalade = 'langue_africaine'; await send(phone, `${L.natif}\n📱 +33 7 56 86 36 30\n\n🤝 Votre dossier est entre de bonnes mains.\n📞 Un expert parlant votre langue *vous appellera* pour vous accompagner.\nEn attendant, je continue à vous guider en français. 👇`, cfg); }
+    else if (L.code === 'en') { await send(phone, `Perfect — I'll assist you in English. 🇬🇧\nLet's check together what compensation you may be owed, *up to €600 per passenger*. 👇`, cfg); }
     await setState(phone, s); return askRouteZone(phone, s, cfg);
   }
 
@@ -1624,17 +1637,17 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const n = normInput(input, ['commence', 'arriv', 'ni']); // « arriv » (pas « arrive ») : « arrivée » ne contient PAS « arrive » à cause de l'accent é
     if (id === 'rz_dep' || n === '1' || lower.includes('commence') || /d[ée]part|d[ée]coll|\bpar[st]?\b/.test(lower)) {
       s.route_type = 'af_eu'; s.europeTouch = 'depart'; s.step = 'incident'; await setState(phone, s);
-      await send(phone, `✅ Vol au *départ d'Europe* : vous êtes couvert(e) par le CE 261/2004 — *quelle que soit la compagnie*. 👍`, cfg);
+      await send(phone, L(s, `✅ Flight *departing from Europe*: you're covered by EC 261/2004 — *whatever the airline*. 👍`, `✅ Vol au *départ d'Europe* : vous êtes couvert(e) par le CE 261/2004 — *quelle que soit la compagnie*. 👍`), cfg);
       return sendIncident(phone, s, cfg);
     }
     if (id === 'rz_arr' || n === '2' || lower.includes('arriv') || lower.includes('atterr')) {
       s.route_type = 'af_eu'; s.europeTouch = 'arrivee'; s.step = 'incident'; await setState(phone, s);
-      await send(phone, `✅ Vol à *l'arrivée en Europe* : couvert *si la compagnie est européenne* (Air France, Brussels, TAP…). Sinon, un expert vérifie un autre recours — on garde votre dossier dans tous les cas. 👍`, cfg);
+      await send(phone, L(s, `✅ Flight *arriving in Europe*: covered *if the airline is European* (Air France, Brussels, TAP…). Otherwise an expert checks another option — we keep your case either way. 👍`, `✅ Vol à *l'arrivée en Europe* : couvert *si la compagnie est européenne* (Air France, Brussels, TAP…). Sinon, un expert vérifie un autre recours — on garde votre dossier dans tous les cas. 👍`), cfg);
       return sendIncident(phone, s, cfg);
     }
     if (id === 'rz_non' || n === '3' || lower.includes('ni l') || lower === 'ni' || lower.includes('aucun')) {
       await clearState(phone);
-      return finNonEligible(phone, `😔 Si votre vol ne *part pas* d'Europe et n'*arrive pas* en Europe, il n'entre pas dans la loi européenne CE 261/2004.\n\n❓ En cas d'erreur (une escale en Europe compte !), écrivez *go*.`, cfg);
+      return finNonEligible(phone, L(s, `😔 If your flight neither *departs from* nor *arrives in* Europe, it doesn't fall under EU law EC 261/2004.\n\n❓ If that's a mistake (a layover in Europe counts!), type *go*.`, `😔 Si votre vol ne *part pas* d'Europe et n'*arrive pas* en Europe, il n'entre pas dans la loi européenne CE 261/2004.\n\n❓ En cas d'erreur (une escale en Europe compte !), écrivez *go*.`), cfg);
     }
     return askRouteZone(phone, s, cfg);
   }
@@ -1696,7 +1709,9 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       // Escale = on POUSSE LA PHOTO d'abord (l'e-billet contient tous les segments → extraction en 1 coup).
       // La saisie manuelle leg par leg ne reste qu'en repli (bouton « Saisir à la main » → leg_count).
       s.type_vol = 'escale'; s.legs = []; s.legIdx = 0; s.step = 'scan'; await setState(phone, s);
-      return sendButtons(phone, { body: `${bar('scan')}\n💰 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (*${montantNet(s.pax)} € nets*, 75 %). 🤝\n\n🔄 Le plus simple : une *photo* de votre *e-billet* (confirmation de réservation) — il contient *tous vos vols d'un coup*, correspondance incluse. Je lis tout, vous ne tapez rien.\n🎫 Pas d'e-billet ? Vos *cartes d'embarquement* aussi (une par vol).`, buttons: [{ id: 'scan_photo', text: '📸 Envoyer une photo' }, { id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
+      return sendButtons(phone, { body: L(s,
+        `${bar('scan')}\n💰 ${s.pax} passenger${s.pax > 1 ? 's' : ''} = up to *€${montantTotal(s.pax)}* (*€${montantNet(s.pax)} net*, 75%). 🤝\n\n🔄 Easiest: a *photo* of your *e-ticket* (booking confirmation) — it has *all your flights at once*, connections included. I read everything, you type nothing.\n🎫 No e-ticket? Your *boarding passes* work too (one per flight).`,
+        `${bar('scan')}\n💰 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (*${montantNet(s.pax)} € nets*, 75 %). 🤝\n\n🔄 Le plus simple : une *photo* de votre *e-billet* (confirmation de réservation) — il contient *tous vos vols d'un coup*, correspondance incluse. Je lis tout, vous ne tapez rien.\n🎫 Pas d'e-billet ? Vos *cartes d'embarquement* aussi (une par vol).`), buttons: [{ id: 'scan_photo', text: L(s, '📸 Send a photo', '📸 Envoyer une photo') }, { id: 'scan_manuel', text: L(s, '✏️ Type it in', '✏️ Saisir à la main') }] }, cfg);
     }
     if (n === '1' || lower.includes('direct')) s.type_vol = 'direct';
     else return sendButtons(phone, { body: `${bar('type_vol')}\n✈️ Vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg);
@@ -2421,13 +2436,15 @@ async function sendRoute(phone, s, cfg) {
 // trajet est récupérée ensuite (scan e-billet/carte, ou saisie vol) — jamais redemandée pour qualifier.
 async function askRouteZone(phone, s, cfg) {
   s.step = 'route_zone'; await setState(phone, s);
-  return sendButtons(phone, { body: `${bar('route')}\n🗺️ Pour vérifier vos droits, votre voyage :\n\n🛫 *part d'Europe* (vous décollez d'un aéroport européen)\n🛬 *arrive en Europe* (vous atterrissez dans un aéroport européen)\n🌍 *ni l'un ni l'autre* (ex. entre deux pays d'Afrique)\n\n_💡 Europe → Afrique (ex. Strasbourg ou Paris → Dakar) = « Départ d'Europe ». Afrique → Europe = « Arrivée en Europe ». Même si vous allez en Afrique, ce qui compte c'est d'où vous décollez. Une escale en Europe compte aussi._`, buttons: [
-    { id: 'rz_dep', text: '🛫 Départ d\'Europe' },
-    { id: 'rz_arr', text: '🛬 Arrivée en Europe' },
-    { id: 'rz_non', text: '🌍 Aucun des deux' },
+  return sendButtons(phone, { body: L(s,
+    `${bar('route')}\n🗺️ To check your rights, your trip:\n\n🛫 *departs from Europe* (you take off from a European airport)\n🛬 *arrives in Europe* (you land at a European airport)\n🌍 *neither* (e.g. between two African countries)\n\n_💡 Europe → Africa (e.g. Paris → Dakar) = "Departs from Europe". Africa → Europe = "Arrives in Europe". What matters is where you take off. A layover in Europe also counts._`,
+    `${bar('route')}\n🗺️ Pour vérifier vos droits, votre voyage :\n\n🛫 *part d'Europe* (vous décollez d'un aéroport européen)\n🛬 *arrive en Europe* (vous atterrissez dans un aéroport européen)\n🌍 *ni l'un ni l'autre* (ex. entre deux pays d'Afrique)\n\n_💡 Europe → Afrique (ex. Strasbourg ou Paris → Dakar) = « Départ d'Europe ». Afrique → Europe = « Arrivée en Europe ». Même si vous allez en Afrique, ce qui compte c'est d'où vous décollez. Une escale en Europe compte aussi._`), buttons: [
+    { id: 'rz_dep', text: L(s, '🛫 Departs Europe', '🛫 Départ d\'Europe') },
+    { id: 'rz_arr', text: L(s, '🛬 Arrives in Europe', '🛬 Arrivée en Europe') },
+    { id: 'rz_non', text: L(s, '🌍 Neither', '🌍 Aucun des deux') },
   ] }, cfg);
 }
-async function sendIncident(phone, s, cfg) { s.step = 'incident'; await setState(phone, s); await sendButtons(phone, { body: `${bar('incident')}\n✈️ Racontez-nous ce qui s'est passé avec votre vol. On est là pour vous aider.`, buttons: [{ text: '⏱️ Retard arrivée' }, { text: '❌ Annulation' }, { text: "🚫 Refus d'embarq." }] }, cfg); }
+async function sendIncident(phone, s, cfg) { s.step = 'incident'; await setState(phone, s); await sendButtons(phone, { body: L(s, `${bar('incident')}\n✈️ Tell us what happened with your flight. We're here to help.`, `${bar('incident')}\n✈️ Racontez-nous ce qui s'est passé avec votre vol. On est là pour vous aider.`), buttons: [{ text: L(s, '⏱️ Arrival delay', '⏱️ Retard arrivée') }, { text: L(s, '❌ Cancellation', '❌ Annulation') }, { text: L(s, '🚫 Denied boarding', "🚫 Refus d'embarq.") }] }, cfg); }
 
 // Gate ANNULATION — la règle des 14 jours de préavis (art. 5 CE 261), posée AVANT le n° de vol.
 // Ancré sur « quand on vous a prévenu(e), le vol était dans combien de temps » (notification → vol),
@@ -2558,8 +2575,11 @@ async function sendMineurs(phone, s, cfg) {
 async function sendRecap(phone, s, cfg) {
   s.step = 'recap'; await setState(phone, s);
   try { markEngagedLead(phone, s); } catch (_) {} // dossier relançable dès que le vol est connu (récupère les abandons avant signature)
-  const claimLineR = (!s.operateurNonUe && !s.operateurAVerifier && s.compagnie_reclamation) ? `\n📮 Réclamation auprès de : *${s.compagnie_reclamation}*` : '';
-  await sendButtons(phone, { body: `${bar('recap')}\n📋 *Récapitulatif — confirmez svp*\n\n👥 ${s.pax} passager${s.pax > 1 ? 's' : ''}\n_Identités à l'étape suivante (pièce d'identité ou saisie)_\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}${claimLineR}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ ${s.route || '—'}\n📅 ${s.date ? `${s.date}${isValidStoredDate(s.date) ? ` (${dateEnLettres(s.date)})` : ''}` : '—'} — ${s.incident_libelle || '—'}\n🛤️ ${s.type_vol === 'escale' ? 'Avec escale' : 'Direct'}\n${montantLine(s)}`, buttons: [{ text: '✅ Tout est correct' }, { text: '✏️ Modifier' }] }, cfg);
+  const claimLineR = (!s.operateurNonUe && !s.operateurAVerifier && s.compagnie_reclamation) ? L(s, `\n📮 Claim filed against: *${s.compagnie_reclamation}*`, `\n📮 Réclamation auprès de : *${s.compagnie_reclamation}*`) : '';
+  const dateLine = s.date ? `${s.date}${isValidStoredDate(s.date) ? ` (${dateEnLettres(s.date)})` : ''}` : '—';
+  await sendButtons(phone, { body: L(s,
+    `${bar('recap')}\n📋 *Summary — please confirm*\n\n👥 ${s.pax} passenger${s.pax > 1 ? 's' : ''}\n_Names at the next step (ID or typing)_\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}${claimLineR}\n🎫 PNR: ${s.pnr || '—'}\n🗺️ ${s.route || '—'}\n📅 ${dateLine} — ${s.incident_libelle || '—'}\n🛤️ ${s.type_vol === 'escale' ? 'With layover' : 'Direct'}\n${montantLine(s)}`,
+    `${bar('recap')}\n📋 *Récapitulatif — confirmez svp*\n\n👥 ${s.pax} passager${s.pax > 1 ? 's' : ''}\n_Identités à l'étape suivante (pièce d'identité ou saisie)_\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}${claimLineR}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ ${s.route || '—'}\n📅 ${dateLine} — ${s.incident_libelle || '—'}\n🛤️ ${s.type_vol === 'escale' ? 'Avec escale' : 'Direct'}\n${montantLine(s)}`), buttons: [{ text: L(s, '✅ All correct', '✅ Tout est correct') }, { text: L(s, '✏️ Edit', '✏️ Modifier') }] }, cfg);
 }
 
 // Vérifie le vol (vols DIRECTS uniquement) et adapte montant + message. Idempotent, best-effort.
@@ -2578,7 +2598,9 @@ async function applyFlightVerdict(phone, s, cfg) {
   if (v.verdict === 'eligible') {
     s.perPax = (v.perPax && v.perPax > 0) ? v.perPax : 600;
     await setState(phone, s);
-    return send(phone, `✅ *Bonne nouvelle !* ${v.proofLine || 'Selon nos critères, votre vol est a priori éligible (notre équipe confirme).'}\nVous pouvez prétendre à *${montantReel(s)} €*${claimablePax(s) > 1 ? ` au total (${claimablePax(s)} passagers)` : ''} — soit *${montantNetReel(s)} € nets* pour vous.`, cfg);
+    return send(phone, L(s,
+      `✅ *Good news!* ${isEN(s) ? 'Based on our criteria, your flight looks eligible (our team confirms).' : (v.proofLine || '')}\nYou may claim *€${montantReel(s)}*${claimablePax(s) > 1 ? ` in total (${claimablePax(s)} passengers)` : ''} — that's *€${montantNetReel(s)} net* for you.`,
+      `✅ *Bonne nouvelle !* ${v.proofLine || 'Selon nos critères, votre vol est a priori éligible (notre équipe confirme).'}\nVous pouvez prétendre à *${montantReel(s)} €*${claimablePax(s) > 1 ? ` au total (${claimablePax(s)} passagers)` : ''} — soit *${montantNetReel(s)} € nets* pour vous.`), cfg);
   }
   s.perPax = 0; // sortie douce : pas de montant ferme affiché
   await setState(phone, s);
