@@ -2470,7 +2470,9 @@ async function continueAnnul(phone, s, cfg) {
 }
 async function sendPax(phone, s, cfg) {
   s.step = 'nb_pax'; await setState(phone, s);
-  await sendList(phone, { body: `${bar('nb_pax')}\n👥 Combien de passagers réclament sur ce vol ?`, buttonText: 'Nombre ▾', items: [
+  await sendList(phone, { body: L(s, `${bar('nb_pax')}\n👥 How many passengers are claiming on this flight?`, `${bar('nb_pax')}\n👥 Combien de passagers réclament sur ce vol ?`), buttonText: L(s, 'Number ▾', 'Nombre ▾'), items: isEN(s) ? [
+    { title: '1 passenger', description: '€600' }, { title: '2 passengers', description: '€1,200' }, { title: '3 passengers', description: '€1,800' }, { title: '4 passengers', description: '€2,400' }, { title: '5 passengers', description: '€3,000' }, { title: '6 or more', description: 'We handle your group' },
+  ] : [
     { title: '1 passager', description: '600 €' }, { title: '2 passagers', description: '1 200 €' }, { title: '3 passagers', description: '1 800 €' }, { title: '4 passagers', description: '2 400 €' }, { title: '5 passagers', description: '3 000 €' }, { title: '6 ou plus', description: 'On gère votre groupe' },
   ] }, cfg);
 }
