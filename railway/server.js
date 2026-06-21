@@ -394,14 +394,15 @@ async function sendButtons(phone, config, cfg) {
     }
   } catch (e) { await send(phone, fallbackText, cfg); }
 }
-async function sendList(phone, { header, body, footer, buttonText, items }, cfg) {
+async function sendList(phone, { header, body, footer, buttonText, items, lang }, cfg) {
   if (!cfg) return;
   const wa = normalizeWatiPhone(phone);
+  const numHint = lang === 'en' ? `\n\n👉 Reply with the *number*.` : `\n\n👉 Répondez avec le *numéro*.`;
   const rows = items.map((i, idx) => ({ id: i.id || String(idx + 1), title: clip(i.title, 24), description: clip(i.description || '', 72) }));
   // ✅ Vraie liste cliquable = endpoint v3 "active conversation" avec type:"list"
   //    (le /api/v1/sendInteractiveListMessage rend toujours en texte — confirmé support WATI).
   let host; try { host = new URL(cfg.base).origin; } catch { host = cfg.base; }
-  const textFallback = () => send(phone, (header ? `*${header}*\n\n` : '') + body + '\n\n' + items.map((it, idx) => `${NUMEMO[idx] || (idx + 1 + '.')} ${it.title}`).join('\n') + `\n\n👉 Répondez avec le *numéro*.`, cfg);
+  const textFallback = () => send(phone, (header ? `*${header}*\n\n` : '') + body + '\n\n' + items.map((it, idx) => `${NUMEMO[idx] || (idx + 1 + '.')} ${it.title}`).join('\n') + numHint, cfg);
   try {
     const res = await fetch(`${host}/api/ext/v3/conversations/messages/interactive`, {
       method: 'POST', signal: AbortSignal.timeout(12000), headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
@@ -448,9 +449,10 @@ async function watiSendTemplate(phone, templateName, parameters, cfg) {
 // WATI ne rend pas les listes interactives sur ce compte (elles arrivent en texte).
 // → on envoie un choix numéroté clair, et les handlers acceptent le numéro OU le mot-clé.
 const NUMEMO = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
-async function sendChoices(phone, { body, items, footer }, cfg) {
+async function sendChoices(phone, { body, items, footer, lang }, cfg) {
   const lines = items.map((it, i) => `${NUMEMO[i] || (i + 1 + '.')} ${it.title}${it.description ? ` — _${it.description}_` : ''}`).join('\n');
-  await send(phone, `${body}\n\n${lines}\n\n👉 Répondez avec le *numéro* (ex. 1)${footer ? `\n${footer}` : ''}`, cfg);
+  const hint = lang === 'en' ? `\n\n👉 Reply with the *number* (e.g. 1)` : `\n\n👉 Répondez avec le *numéro* (ex. 1)`;
+  await send(phone, `${body}\n\n${lines}${hint}${footer ? `\n${footer}` : ''}`, cfg);
 }
 
 // ─── État ──────────────────────────────────────────────────────────────────────
@@ -1531,7 +1533,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (id === 'pieces_ok' || lower.includes('tout envoyé') || lower.includes('tout envoye')) {
     const _k = leadKey(phone); const _l = LEADS.get(_k); if (_l) { _l.piecesPending = false; _l.lastClientAt = Date.now(); LEADS.set(_k, _l); persistLeads(); }
     notifyOwnerWhatsApp(phone, `📎 « Déjà tout envoyé » déclaré (${(_l && _l.ref) || phone}) → rappel pièces STOPPÉ. ⚠️ À VÉRIFIER côté bureau : confirmer que CNI + preuve de voyage par passager sont bien là.`).catch(() => {});
-    return send(phone, `C'est noté, merci ! 🙏 On vérifie de notre côté que tout est complet. S'il manquait quoi que ce soit, un conseiller vous le dira — sinon votre dossier suit son cours. ✅`, cfg);
+    return send(phone, L(s, `Got it, thank you! 🙏 We'll check on our side that everything is complete. If anything is missing, an advisor will tell you — otherwise your case moves forward. ✅`, `C'est noté, merci ! 🙏 On vérifie de notre côté que tout est complet. S'il manquait quoi que ce soit, un conseiller vous le dira — sinon votre dossier suit son cours. ✅`), cfg);
   }
 
   // « Déposer mes pièces » (bouton du rappel pièces) : on renvoie le lien sécurisé.
@@ -1540,7 +1542,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const _ref = _l.ref || (s && s.ref) || '';
     const _url = 'https://robindesairs.eu/depot-en-ligne.html?r=' + encodeURIComponent(_ref);
     upsertLead(phone, { lastClientAt: Date.now() });
-    return send(phone, `📎 Très bien. Déposez vos pièces (*pièce d'identité* + *carte d'embarquement* ou *e-billet*) en toute sécurité ici 👇\n${_url}\n\nVous pouvez aussi *m'envoyer les photos directement ici*. 🙏`, cfg);
+    return send(phone, L(s, `📎 Great. Upload your documents (*ID* + *boarding pass* or *e-ticket*) securely here 👇\n${_url}\n\nYou can also *send me the photos directly here*. 🙏`, `📎 Très bien. Déposez vos pièces (*pièce d'identité* + *carte d'embarquement* ou *e-billet*) en toute sécurité ici 👇\n${_url}\n\nVous pouvez aussi *m'envoyer les photos directement ici*. 🙏`), cfg);
   }
 
   // T1.3 — « Plus tard » : le client veut reprendre plus tard. Son tap a déjà rouvert la fenêtre 24h (gratuit) ;
@@ -1574,7 +1576,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
         if (tk.incident === 'annulation') {
           f.incident = 'annulation'; f.incident_libelle = 'Annulation'; f.step = 'annul_delai';
           await setState(phone, f);
-          await send(phone, `✅ C'est noté — votre *vol ${tk.vol}*${dStr} a été *annulé*.`, cfg);
+          await send(phone, L(s, `✅ Got it — your *flight ${tk.vol}*${dStr} was *cancelled*.`, `✅ C'est noté — votre *vol ${tk.vol}*${dStr} a été *annulé*.`), cfg);
           return sendAnnulDelai(phone, f, cfg);
         }
         f.step = 'q_corr'; f.incident = 'retard'; f.incident_libelle = 'Retard +3h'; f.duree_retard = '+3h';
@@ -1930,14 +1932,14 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   }
   if (s.step === 'fix_nom_which') {
     const i = parseInt((input.match(/\d+/) || [])[0]);
-    if (i >= 1 && i <= s.pax) { s.fix_name_idx = i - 1; s.step = 'fix_nom'; await setState(phone, s); return send(phone, `👤 *Passager ${i}* (actuel : ${(s.names && s.names[i - 1]) || '—'})\nTapez le *bon nom complet* 👇`, cfg); }
+    if (i >= 1 && i <= s.pax) { s.fix_name_idx = i - 1; s.step = 'fix_nom'; await setState(phone, s); return send(phone, L(s, `👤 *Passenger ${i}* (current: ${(s.names && s.names[i - 1]) || '—'})\nType the *correct full name* 👇`, `👤 *Passager ${i}* (actuel : ${(s.names && s.names[i - 1]) || '—'})\nTapez le *bon nom complet* 👇`), cfg); }
     return send(phone, L(s, `Enter a number between 1 and ${s.pax}:`, `Indiquez un numéro entre 1 et ${s.pax} :`), cfg);
   }
   if (s.step === 'fix_pnr') {
     if (lower === 'passer' || lower === 'non' || lower === 'skip') { s.pnr = ''; await setState(phone, s); return afterFix(phone, s, cfg); }
     const pnr = input.toUpperCase().replace(/[^A-Z0-9]/g, '');
     if (/^[A-Z0-9]{5,8}$/.test(pnr) && /[A-Z]/.test(pnr)) { s.pnr = pnr; await setState(phone, s); return afterFix(phone, s, cfg); }
-    return send(phone, `🎫 Le PNR fait 5 à 8 caractères avec des *lettres* (ex : *TFSCBC*). Réessayez, ou tapez *passer*.`, cfg);
+    return send(phone, L(s, `🎫 The PNR is 5 to 8 characters with *letters* (e.g. *TFSCBC*). Try again, or type *skip*.`, `🎫 Le PNR fait 5 à 8 caractères avec des *lettres* (ex : *TFSCBC*). Réessayez, ou tapez *passer*.`), cfg);
   }
   if (s.step === 'fix_vol') {
     const vol = input.toUpperCase().replace(/\s+/g, '');
@@ -1971,7 +1973,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (year) {
       const d = `${s.date.replace(/\/$/, '')}/${year}`;
       if (!isValidStoredDate(d)) { s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, DATE_INVALIDE(d), cfg); }
-      if (inFuture(d)) { await send(phone, `😄 ${year} ? Ce vol n'a pas encore eu lieu — on réclame pour un vol *déjà passé* ! Choisissez la bonne année 👇`, cfg); return askYear(phone, s, cfg); }
+      if (inFuture(d)) { await send(phone, L(s, `😄 ${year}? That flight hasn't happened yet — we claim for a flight *already past*! Pick the correct year 👇`, `😄 ${year} ? Ce vol n'a pas encore eu lieu — on réclame pour un vol *déjà passé* ! Choisissez la bonne année 👇`), cfg); return askYear(phone, s, cfg); }
       s.date = d;
       if (tooOld(s.date)) { return finNonEligible(phone,pickVariant(phone, 'PRESCRIPTION_5ANS'), cfg); }
       await setState(phone, s);
@@ -2121,7 +2123,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (lower === 'passer' || lower === 'non' || lower === 'skip') { await setState(phone, s); return apresVol(phone, s, cfg); }
     const pnr = input.toUpperCase().replace(/[^A-Z0-9]/g, '');
     if (/^[A-Z0-9]{5,8}$/.test(pnr)) { s.pnr = pnr; await setState(phone, s); return apresVol(phone, s, cfg); }
-    return send(phone, `🎫 Le PNR fait 5 à 8 caractères (lettres/chiffres), ex : *TFSCBC*. Réessayez, ou tapez *passer*.`, cfg);
+    return send(phone, L(s, `🎫 The PNR is 5 to 8 characters (letters/digits), e.g. *TFSCBC*. Try again, or type *skip*.`, `🎫 Le PNR fait 5 à 8 caractères (lettres/chiffres), ex : *TFSCBC*. Réessayez, ou tapez *passer*.`), cfg);
   }
 
   // MSG9 — NOMS (un par un)
@@ -2273,7 +2275,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (mediaUrl) { await send(phone, L(s, `✅ Boarding pass received!`, `✅ Carte d'embarquement reçue !`), cfg); return gotoEticket(phone, s, cfg); }
     if (lower === 'passer' || lower === 'skip') { s.docs_pending = true; return gotoEticket(phone, s, cfg); }
     if (lower === 'appel' || lower === 'call') { s.escalade = 'document_perdu'; upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now() }); notifyCallbackWanted(phone, s, 'documents perdus (carte d\'embarquement)'); await send(phone, L(s, `📞 Don't worry — an expert helps you find your documents. Keep the conversation open.\n\n${STOP_FOOTER}`, `📞 Pas de panique — un expert vous aide à retrouver vos documents. Laissez la conversation ouverte.\n\n${STOP_FOOTER}`), cfg); return gotoEticket(phone, s, cfg); }
-    return send(phone, `🎫 Envoyez la carte d'embarquement, ou *passer*, ou *appel* si vous avez tout perdu.`, cfg);
+    return send(phone, L(s, `🎫 Send the boarding pass, or *skip*, or *call* if you've lost everything.`, `🎫 Envoyez la carte d'embarquement, ou *passer*, ou *appel* si vous avez tout perdu.`), cfg);
   }
   if (s.step === 'doc_eticket') {
     if (mediaUrl) {
@@ -2284,12 +2286,12 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     }
     if (lower === 'passer' || lower === 'skip') { s.docs_pending = true; return gotoCert(phone, s, cfg); }
     if (lower === 'appel' || lower === 'call') { s.escalade = 'document_perdu'; upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now() }); notifyCallbackWanted(phone, s, 'documents perdus (e-billet)'); await send(phone, L(s, `📞 An expert helps you recover your e-ticket. Keep the conversation open.\n\n${STOP_FOOTER}`, `📞 Un expert vous aide à récupérer votre e-billet. Laissez la conversation ouverte.\n\n${STOP_FOOTER}`), cfg); return gotoCert(phone, s, cfg); }
-    return send(phone, `📧 Envoyez l'e-billet (pensez aux spams/Booking), ou *passer*, ou *appel*.`, cfg);
+    return send(phone, L(s, `📧 Send the e-ticket (check spam/Booking), or *skip*, or *call*.`, `📧 Envoyez l'e-billet (pensez aux spams/Booking), ou *passer*, ou *appel*.`), cfg);
   }
   if (s.step === 'doc_cert') {
     if (mediaUrl) { await send(phone, L(s, `✅ Certificate received — it speeds up your case!`, `✅ Certificat reçu — ça accélère votre dossier !`), cfg); return finaliser(phone, s, cfg); }
     if (lower === 'passer' || lower === 'non' || lower === 'skip' || lower === 'no') { return finaliser(phone, s, cfg); }
-    return send(phone, `📄 Envoyez le certificat de retard (optionnel), ou tapez *passer*.`, cfg);
+    return send(phone, L(s, `📄 Send the delay certificate (optional), or type *skip*.`, `📄 Envoyez le certificat de retard (optionnel), ou tapez *passer*.`), cfg);
   }
 
   // FRAIS (Art. 8 & 9) — proposé après signature : on collecte les reçus, on LIT le montant + la devise,
@@ -2344,7 +2346,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       return send(phone, L(s, `Got it ✅ We attach your receipts to your claim${tot !== '—' ? ` (≈ ${tot} in expenses, on top of the compensation)` : ''}. Thank you! 🤝`, `C'est noté ✅ On joint vos reçus à votre réclamation${tot !== '—' ? ` (≈ ${tot} de frais, en plus de l'indemnité)` : ''}. Merci ! 🤝`), cfg);
     }
     if (id === 'frais_oui' || lower.includes('envoi') || lower.includes('reçu') || lower.includes('recu') || lower.startsWith('oui')) {
-      return send(phone, `👍 Envoyez une *photo* de chaque reçu (hôtel, repas, taxi…). Ces montants vous reviennent *en plus* de l'indemnité. Même flou, même plusieurs — envoyez juste ce que vous avez vraiment payé.`, cfg);
+      return send(phone, L(s, `👍 Send a *photo* of each receipt (hotel, meals, taxi…). These amounts come back to you *on top of* the compensation. Even blurry, even several — just send what you actually paid.`, `👍 Envoyez une *photo* de chaque reçu (hôtel, repas, taxi…). Ces montants vous reviennent *en plus* de l'indemnité. Même flou, même plusieurs — envoyez juste ce que vous avez vraiment payé.`), cfg);
     }
     return sendButtons(phone, { body: L(s, `💶 Any expenses because of this flight (hotel, meals, taxi…)? They're reimbursed *on top of* the compensation — send a *photo* of the receipt, or:`, `💶 Des frais à cause de ce vol (hôtel, repas, taxi…) ? Ils vous sont remboursés *en plus* de l'indemnité — envoyez une *photo* du reçu, ou :`), buttons: [{ id: 'frais_non', text: L(s, '❌ No expenses', '❌ Pas de frais') }] }, cfg);
   }
@@ -2472,7 +2474,7 @@ async function continueAnnul(phone, s, cfg) {
 }
 async function sendPax(phone, s, cfg) {
   s.step = 'nb_pax'; await setState(phone, s);
-  await sendList(phone, { body: L(s, `${bar('nb_pax')}\n👥 How many passengers are claiming on this flight?`, `${bar('nb_pax')}\n👥 Combien de passagers réclament sur ce vol ?`), buttonText: L(s, 'Number ▾', 'Nombre ▾'), items: isEN(s) ? [
+  await sendList(phone, { body: L(s, `${bar('nb_pax')}\n👥 How many passengers are claiming on this flight?`, `${bar('nb_pax')}\n👥 Combien de passagers réclament sur ce vol ?`), buttonText: L(s, 'Number ▾', 'Nombre ▾'), lang: isEN(s) ? 'en' : 'fr', items: isEN(s) ? [
     { title: '1 passenger', description: '€600' }, { title: '2 passengers', description: '€1,200' }, { title: '3 passengers', description: '€1,800' }, { title: '4 passengers', description: '€2,400' }, { title: '5 passengers', description: '€3,000' }, { title: '6 or more', description: 'We handle your group' },
   ] : [
     { title: '1 passager', description: '600 €' }, { title: '2 passagers', description: '1 200 €' }, { title: '3 passagers', description: '1 800 €' }, { title: '4 passagers', description: '2 400 €' }, { title: '5 passagers', description: '3 000 €' }, { title: '6 ou plus', description: 'On gère votre groupe' },
@@ -2481,11 +2483,11 @@ async function sendPax(phone, s, cfg) {
 async function askYear(phone, s, cfg) {
   s.step = 'annee'; await setState(phone, s);
   const ys = recentYears();
-  await sendList(phone, { header: 'Année du vol', body: `${bar('annee')}\n📅 Votre billet indique le *${s.date}* mais ne précise pas l'année.\nC'était quelle année ?`, buttonText: 'Année ▾', items: ys.map(y => ({ title: String(y) })).concat([{ title: `Avant ${ys[ys.length - 1]}` }]) }, cfg);
+  await sendList(phone, { header: L(s, 'Flight year', 'Année du vol'), body: L(s, `${bar('annee')}\n📅 Your ticket shows *${s.date}* but doesn't specify the year.\nWhich year was it?`, `${bar('annee')}\n📅 Votre billet indique le *${s.date}* mais ne précise pas l'année.\nC'était quelle année ?`), buttonText: L(s, 'Year ▾', 'Année ▾'), lang: isEN(s) ? 'en' : 'fr', items: ys.map(y => ({ title: String(y) })).concat([{ title: L(s, `Before ${ys[ys.length - 1]}`, `Avant ${ys[ys.length - 1]}`) }]) }, cfg);
 }
 async function goCorrection(phone, s, cfg) {
   s.step = 'correction'; await setState(phone, s);
-  await sendList(phone, { header: L(s, 'Fix', 'Corriger'), body: L(s, `✏️ What would you like to fix?`, `✏️ Que souhaitez-vous corriger ?`), buttonText: L(s, 'Fix ▾', 'Corriger ▾'), items: isEN(s) ? [
+  await sendList(phone, { header: L(s, 'Fix', 'Corriger'), body: L(s, `✏️ What would you like to fix?`, `✏️ Que souhaitez-vous corriger ?`), buttonText: L(s, 'Fix ▾', 'Corriger ▾'), lang: isEN(s) ? 'en' : 'fr', items: isEN(s) ? [
     { title: '✈️ Flight', description: s.vol || '—' },
     { title: '📅 Date', description: s.date || '—' },
     { title: '👤 Name', description: (s.names && s.names[0]) || '—' },
@@ -2524,7 +2526,7 @@ async function askRouteChoice(phone, routes, s, cfg) {
 // Demande du PNR (factorisé : utilisé après date+route, après confirmation/saisie du trajet).
 async function gotoPnr(phone, s, cfg, prefix) {
   s.step = 'm_pnr'; await setState(phone, s);
-  return send(phone, `${prefix ? prefix + '\n\n' : ''}🎫 Quel est votre *numéro de réservation* (PNR) ?\nC'est un code de 6 lettres/chiffres, sur votre billet ou votre email de confirmation _(ex : TFSCBC)_.\n✏️ Tapez *passer* si vous ne l'avez pas.`, cfg);
+  return send(phone, L(s, `${prefix ? prefix + '\n\n' : ''}🎫 What's your *booking reference* (PNR)?\nIt's a 6-character code (letters/digits), on your ticket or confirmation email _(e.g. TFSCBC)_.\n✏️ Type *skip* if you don't have it.`, `${prefix ? prefix + '\n\n' : ''}🎫 Quel est votre *numéro de réservation* (PNR) ?\nC'est un code de 6 lettres/chiffres, sur votre billet ou votre email de confirmation _(ex : TFSCBC)_.\n✏️ Tapez *passer* si vous ne l'avez pas.`), cfg);
 }
 // Trajet direct (repli quand AeroDataBox n'a pas trouvé) : 2 questions imagées, listes cliquables + Autre.
 async function askDepCity(phone, s, cfg, prefix) {
@@ -2576,7 +2578,7 @@ async function buildEscLegs(phone, s, cfg, arrCity) {
   s.escCities = c; s.route = c.join(' → ');
   s.legs = c.slice(0, -1).map((dep, i) => ({ vol: '', dep, arr: c[i + 1] }));
   s.legCount = s.legs.length; s.legIdx = 0; s.step = 'esc_vol'; await setState(phone, s);
-  return send(phone, `✅ Trajet : *${s.route}*\n\n✈️ Numéro du vol *${s.legs[0].dep} → ${s.legs[0].arr}* ? _(ex : AT540, sur votre billet)_\n✏️ Tapez *passer* si vous ne l'avez plus.`, cfg);
+  return send(phone, L(s, `✅ Route: *${s.route}*\n\n✈️ Number of flight *${s.legs[0].dep} → ${s.legs[0].arr}*? _(e.g. AT540, on your ticket)_\n✏️ Type *skip* if you no longer have it.`, `✅ Trajet : *${s.route}*\n\n✈️ Numéro du vol *${s.legs[0].dep} → ${s.legs[0].arr}* ? _(ex : AT540, sur votre billet)_\n✏️ Tapez *passer* si vous ne l'avez plus.`), cfg);
 }
 // Raccourci bandeau : passagers connus → si direct, vol+date sont déjà là (vérif éligibilité + récap) ;
 // si correspondance, on bascule sur le flux escale standard pour collecter les segments.
@@ -2707,7 +2709,7 @@ async function askMandant(phone, s, cfg) {
 async function askAddressOrFinalize(phone, s, cfg) {
   const m = (s.passengers || [])[s.mandant_idx || 0] || {};
   if (m.adresse && m.adresse.trim().length >= 8) {
-    await send(phone, `📍 Adresse trouvée sur votre pièce : *${m.adresse}*\n_(utilisée pour le mandat — corrigeable au moment de signer.)_`, cfg);
+    await send(phone, L(s, `📍 Address found on your ID: *${m.adresse}*\n_(used for the authority form — editable when you sign.)_`, `📍 Adresse trouvée sur votre pièce : *${m.adresse}*\n_(utilisée pour le mandat — corrigeable au moment de signer.)_`), cfg);
     return finaliser(phone, s, cfg);
   }
   s.step = 'doc_adresse'; await setState(phone, s);
@@ -2819,14 +2821,14 @@ async function relancerEtape(phone, s, cfg) {
     case 'esc_via': return askEscVia(phone, s, cfg, (s.escCities || []).length >= 2);
     case 'esc_more': return sendButtons(phone, { body: `Y avait-il une *autre escale* ?`, buttons: [{ id: 'esc_oui', text: '🔄 Oui, une autre' }, { id: 'esc_non', text: '➡️ Non' }] }, cfg);
     case 'esc_arr': return askEscArr(phone, s, cfg);
-    case 'esc_vol': { const l = (s.legs || [])[s.legIdx || 0]; if (l) return send(phone, `✈️ Numéro du vol *${l.dep} → ${l.arr}* ? _(ex : AT540)_\n✏️ Tapez *passer* si vous ne l'avez plus.`, cfg); return askEscDep(phone, s, cfg); }
+    case 'esc_vol': { const l = (s.legs || [])[s.legIdx || 0]; if (l) return send(phone, L(s, `✈️ Number of flight *${l.dep} → ${l.arr}*? _(e.g. AT540)_\n✏️ Type *skip* if you no longer have it.`, `✈️ Numéro du vol *${l.dep} → ${l.arr}* ? _(ex : AT540)_\n✏️ Tapez *passer* si vous ne l'avez plus.`), cfg); return askEscDep(phone, s, cfg); }
     case 'mineurs': return sendMineurs(phone, s, cfg);
     case 'recap': return sendRecap(phone, s, cfg);
     case 'names': return askName(phone, s, cfg);
-    case 'm_route_confirm': return s.route ? sendButtons(phone, { body: `✈️ Votre trajet était *${s.route}* ?`, buttons: [{ id: 'route_ok', text: '✅ Oui' }, { id: 'route_fix', text: '✏️ Corriger' }] }, cfg) : send(phone, `🗺️ Quel était le *trajet* ? _(ex : Dakar → Paris)_`, cfg);
+    case 'm_route_confirm': return s.route ? sendButtons(phone, { body: L(s, `✈️ Was your route *${s.route}*?`, `✈️ Votre trajet était *${s.route}* ?`), buttons: [{ id: 'route_ok', text: L(s, '✅ Yes', '✅ Oui') }, { id: 'route_fix', text: L(s, '✏️ Fix', '✏️ Corriger') }] }, cfg) : send(phone, L(s, `🗺️ What was the *route*? _(e.g. Dakar → Paris)_`, `🗺️ Quel était le *trajet* ? _(ex : Dakar → Paris)_`), cfg);
     case 'm_vol': return send(phone, L(s, `📝 Flight number? _(e.g. AF718, AT540)_`, `📝 Numéro de vol ? _(ex. AF718, AT540)_`), cfg);
-    case 'm_date': return send(phone, `📅 Date du vol ? _(ex. 15/03/2026)_`, cfg);
-    case 'm_route': return send(phone, `🗺️ Quel était le *trajet* ? _(ex : Dakar → Paris, ou DSS → CDG)_`, cfg);
+    case 'm_date': return send(phone, L(s, `📅 Flight date? _(e.g. 15/03/2026)_`, `📅 Date du vol ? _(ex. 15/03/2026)_`), cfg);
+    case 'm_route': return send(phone, L(s, `🗺️ What was the *route*? _(e.g. Dakar → Paris, or DSS → CDG)_`, `🗺️ Quel était le *trajet* ? _(ex : Dakar → Paris, ou DSS → CDG)_`), cfg);
     case 'm_dep': return askDepCity(phone, s, cfg);
     case 'm_arr': return askArrCity(phone, s, cfg);
     case 'm_stop_arr': return (s.routeStops && s.routeStops.length) ? askStopArr(phone, s, cfg) : askDepCity(phone, s, cfg);
@@ -2838,7 +2840,7 @@ async function relancerEtape(phone, s, cfg) {
     case 'doc_eticket': return gotoEticket(phone, s, cfg);
     case 'doc_cert': return gotoCert(phone, s, cfg);
     case 'frais': return sendFraisRequest(phone, s, cfg);
-    default: return send(phone, `On reprend 👇 Répondez à la dernière question, ou tapez *nouveau* pour recommencer.`, cfg);
+    default: return send(phone, L(s, `Let's resume 👇 Answer the last question, or type *new* to start over.`, `On reprend 👇 Répondez à la dernière question, ou tapez *nouveau* pour recommencer.`), cfg);
   }
 }
 
