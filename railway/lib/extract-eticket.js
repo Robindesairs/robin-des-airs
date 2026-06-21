@@ -16,7 +16,7 @@
 const PROMPT = `Tu lis un E-BILLET / une CONFIRMATION DE RÉSERVATION d'avion (souvent PLUSIEURS passagers, et parfois un ALLER + un RETOUR).
 Extrais TOUTES les informations nécessaires à un mandat de réclamation. Réponds UNIQUEMENT en JSON, ce schéma exact :
 {"lisible":true,"confidence":1.0,"multi_pnr":false,"compagnie":"","pnr":"","numero_billet":"","aller_retour":false,
- "trajets":[{"sens":"aller","date":"","depart":"","arrivee":"","segments":[{"vol":"","depart":"","arrivee":"","date":"","operateur":""}]}],
+ "trajets":[{"sens":"aller","date":"","depart":"","arrivee":"","segments":[{"vol":"","depart":"","arrivee":"","date":"","heure":"","operateur":""}]}],
  "passagers":[{"nom":"","prenom":"","date_naissance":"","type":"","gratuit":false}]}
 Règles STRICTES :
 - lisible / confidence : si le document est trop FLOU, SOMBRE, COUPÉ, incliné ou compressé pour lire les champs clés (n° de vol, PNR, noms) avec CERTITUDE → lisible=false, confidence basse (≤0.4) et laisse VIDES les champs incertains. NE DEVINE JAMAIS un n° de vol "probable" pour remplir : mieux vaut vide que faux.
@@ -28,7 +28,8 @@ Règles STRICTES :
    • Une CORRESPONDANCE (escale) reste DANS LE MÊME trajet, MÊME si le vol suivant part le LENDEMAIN (escale de NUIT — fréquent sur les retours d'Afrique : ex. Dakar→Casablanca le soir puis Casablanca→Paris le lendemain matin = UN SEUL trajet).
    • Un RETOUR = on REVIENT vers le point de départ initial (la destination du retour = le départ de l'aller), en général plusieurs JOURS plus tard → trajet SÉPARÉ. sens="aller" pour le 1er, "retour" pour le retour.
 - aller_retour : true s'il y a un trajet aller ET un trajet retour.
-- segments : dans l'ordre, chacun avec vol (MAJUSCULES sans espace, ex. AF718), depart/arrivee (IATA 3 lettres), date du segment.
+- segments : TOUS les tronçons, chacun avec vol (MAJUSCULES sans espace, ex. AF718), depart/arrivee (IATA 3 lettres), date du segment. ⚠️ Une MÊME carte d'embarquement / un MÊME billet peut contenir PLUSIEURS tronçons (2 ou 3 : ex. DKR→CMN→CDG) — liste-les TOUS, n'en oublie aucun.
+- heure : heure de DÉPART du tronçon au format HH:MM sur 24h, si elle est imprimée (aide à remettre les vols dans l'ordre). Sinon "". Ne devine jamais.
 - operateur : UNIQUEMENT si le billet indique EXPLICITEMENT que ce segment est « opéré par / operated by / vol opéré par / realizado por / durchgeführt von » une compagnie DIFFÉRENTE de celle du numéro de vol (cas CODE-SHARE). Renvoie alors le CODE IATA 2 lettres de la compagnie qui OPÈRE RÉELLEMENT ce vol (ex. « AF703 — operated by Kenya Airways » → "KQ" ; « KL567 operated by Kenya Airways » → "KQ"). Si la mention « opéré par » nomme la MÊME compagnie que le numéro de vol, ou s'il n'y a AUCUNE mention « opéré par », laisse "" (le transporteur est alors celui du numéro de vol). Ne DEVINE jamais un opérateur.
 - date : "JJ/MM/AAAA" si l'année est imprimée, sinon "JJ/MM". NE JAMAIS deviner ni inventer l'année.
 - passagers : TOUS les passagers nommés. nom = nom de famille en MAJUSCULES ; prenom = prénom(s) (souvent "NOM / Prénom"). date_naissance SEULEMENT si imprimée (JJ/MM/AAAA), sinon "".
@@ -44,6 +45,25 @@ function iata(x) { x = String(x || '').trim(); const m = x.toUpperCase().match(/
 // On reste STRICT : si le modèle renvoie un nom plutôt qu'un code, on retourne "" (pas de faux positif qui
 // disqualifierait un dossier à tort). Le préfixe du n° de vol prend alors le relais côté serveur.
 function opCode(x) { const m = String(x || '').toUpperCase().replace(/\s+/g, '').match(/^[0-9A-Z]{2}$/); return m ? m[0] : ''; }
+function hhmm(x) { const m = String(x || '').trim().match(/^(\d{1,2})[:hH.](\d{2})$/); if (!m) return ''; const h = +m[1], mi = +m[2]; return (h < 24 && mi < 60) ? `${String(h).padStart(2, '0')}:${m[2]}` : ''; }
+// Remet les tronçons d'un trajet DANS L'ORDRE par chaînage d'aéroports (arrivée d'un vol = départ du suivant)
+// → robuste à l'ordre d'envoi (cartes inversées) ET aux escales de nuit (≠ tri par heure seule). Si non
+// chaînable proprement (aéroport manquant, boucle), on garde l'ordre d'origine (on n'invente rien).
+function chainSegments(segs) {
+  if (!Array.isArray(segs) || segs.length < 2) return segs;
+  const norm = (x) => String(x || '').toUpperCase().trim();
+  if (segs.some((l) => !norm(l.depart) || !norm(l.arrivee))) return segs;
+  const start = segs.find((l) => !segs.some((o) => o !== l && norm(o.arrivee) === norm(l.depart)));
+  if (!start) return segs;
+  const chain = [start]; let rem = segs.filter((l) => l !== start);
+  while (rem.length) {
+    const last = chain[chain.length - 1];
+    const next = rem.find((l) => norm(l.depart) === norm(last.arrivee));
+    if (!next) return segs;
+    chain.push(next); rem = rem.filter((l) => l !== next);
+  }
+  return chain;
+}
 function dateNorm(x) {
   x = String(x || '').trim();
   let m = x.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
@@ -63,6 +83,7 @@ function paxName(x) {
 // Un trajet = UNE direction (aller OU retour), avec ses segments chaînés.
 function tripFromSegments(segs, fb) {
   fb = fb || {};
+  segs = chainSegments(segs); // remet les tronçons dans l'ordre (cartes envoyées à l'envers, multi-routes sur 1 billet)
   const depart = (segs[0] && segs[0].depart) || iata(fb.depart) || '';
   const arrivee = (segs.length ? segs[segs.length - 1].arrivee : '') || iata(fb.arrivee) || '';
   let route = '';
@@ -95,7 +116,7 @@ function groupFlatSegments(segs) {
 
 function normalize(raw) {
   raw = raw || {};
-  const normSeg = (s) => ({ vol: up(s.vol), depart: iata(s.depart), arrivee: iata(s.arrivee), date: dateNorm(s.date), operateur: opCode(s.operateur) });
+  const normSeg = (s) => ({ vol: up(s.vol), depart: iata(s.depart), arrivee: iata(s.arrivee), date: dateNorm(s.date), heure: hhmm(s.heure), operateur: opCode(s.operateur) });
   let trajets = [];
   if (Array.isArray(raw.trajets) && raw.trajets.length) {
     trajets = raw.trajets.map((t) => {

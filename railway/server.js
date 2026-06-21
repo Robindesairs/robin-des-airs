@@ -17,7 +17,7 @@ const { pickVariant } = require('./lib/bot-variants');
 const { lookupFlightRoutes } = require('./lib/flight-routes');
 const { SYSTEM_PROMPT: FAQ_SYSTEM_PROMPT, FAQ_KNOWLEDGE } = require('./lib/faq-hors-tunnel');
 const { pickRV, fillTpl } = require('./lib/relance-variants');
-const { extractEticketMulti: extractEticketMultiLib, pdfToImages: pdfToImagesLib } = require('./lib/extract-eticket');
+const { extractEticketMulti: extractEticketMultiLib, pdfToImages: pdfToImagesLib, normalize: normalizeEticket } = require('./lib/extract-eticket');
 // Prénom du signataire, joliment capitalisé pour l'affichage (les noms sont stockés en MAJUSCULES) :
 // « CLIMBIE » → « Climbie », « jean-pierre » → « Jean-Pierre », « n'goran » → « N'Goran ».
 function titleCaseName(x) { return String(x || '').toLowerCase().replace(/(^|[\s\-'])([a-zà-ÿ])/g, (m, sep, c) => sep + c.toUpperCase()); }
@@ -935,12 +935,13 @@ async function ocrBoardingPass(mediaUrl, cfg) {
     const media = await fetchAsImageB64(mediaUrl, cfg);
     if (!media) return null;
     const b64 = media.b64;
-    const prompt = `Tu lis une carte d'embarquement / e-billet d'avion. Réponds UNIQUEMENT en JSON :
-{"vol":"","compagnie":"","date":"","pnr":"","depart":"","arrivee":"","nom":"","operateur":""}
+    const prompt = `Tu lis une CARTE D'EMBARQUEMENT, un E-BILLET ou une ÉTIQUETTE DE BAGAGE d'avion (les trois portent les mêmes infos ; l'étiquette bagage = aussi une PREUVE de voyage). Réponds UNIQUEMENT en JSON :
+{"vol":"","compagnie":"","date":"","pnr":"","depart":"","arrivee":"","nom":"","operateur":"","segments":[{"vol":"","depart":"","arrivee":"","date":"","heure":"","operateur":""}]}
 Règles STRICTES :
-- vol : numéro de vol en MAJUSCULES sans espace (ex. EJU7273, AF718).
+- vol : numéro de vol en MAJUSCULES sans espace (ex. EJU7273, AF718) — celui du 1er tronçon.
 - compagnie : nom complet (déduis du code IATA si besoin).
-- operateur : UNIQUEMENT si la carte indique EXPLICITEMENT « opéré par / operated by » une compagnie DIFFÉRENTE de celle du numéro de vol (code-share). Renvoie le CODE IATA 2 lettres de la compagnie qui OPÈRE réellement le vol (ex. « AF703 operated by Kenya Airways » → "KQ"). Aucune mention « opéré par », ou même compagnie → "". Ne devine JAMAIS.
+- segments : ⚠️ un MÊME document porte SOUVENT PLUSIEURS tronçons (2 ou 3 : ex. DKR→CMN→CDG, ou une étiquette bagage qui suit tout le trajet). Liste-les TOUS ici, dans l'ordre, chacun avec vol / depart / arrivee (IATA 3 lettres) / date (JJ/MM ou JJ/MM/AAAA) / heure de départ (HH:MM si imprimée, sinon "") / operateur. S'il n'y a qu'un seul vol, mets ce seul tronçon. Ne devine jamais un tronçon absent.
+- operateur : par tronçon, UNIQUEMENT si « opéré par / operated by » une compagnie DIFFÉRENTE du numéro de vol (code-share) → CODE IATA 2 lettres de la compagnie qui OPÈRE (ex. « AF703 operated by Kenya Airways » → "KQ"). Sinon "". Ne devine JAMAIS.
 - date : "JJ/MM" si l'année N'EST PAS imprimée sur le document ; "JJ/MM/AAAA" UNIQUEMENT si l'année est réellement écrite. NE JAMAIS deviner ni inventer l'année (les cartes d'embarquement n'ont souvent pas l'année).
 - pnr : référence de réservation (libellés possibles : PNR, Booking ref, Réf, Record locator, Confirmation) — 5 à 8 caractères ALPHANUMÉRIQUES, souvent près d'un code-barres. Cherche-la attentivement. Si vraiment absente, "".
 - depart / arrivee : codes IATA 3 lettres.
@@ -948,22 +949,25 @@ Règles STRICTES :
 - Champ inconnu = "". Ne JAMAIS inventer.`;
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST', signal: AbortSignal.timeout(45000), headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 300, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: `data:${media.mime};base64,${b64}` } }] }] }),
+      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 700, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: `data:${media.mime};base64,${b64}` } }] }] }),
     });
     const data = await res.json(); if (!data.choices) return null;
     const p = JSON.parse(data.choices[0].message.content);
-    const vol = (p.vol || '').toUpperCase().replace(/\s+/g, '');
-    const route = (p.depart && p.arrivee) ? `${p.depart} → ${p.arrivee}` : '';
-    const pnr = (p.pnr || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
     // Nom lu sur la carte → pré-remplit le passager 1 (le PASSEPORT reste la pièce qui fait foi, demandé ensuite).
     let nomRaw = (p.nom || '').toUpperCase().trim();
     nomRaw = nomRaw.replace(/\s+(MRS|MR|MS|MME|MLLE|MSTR|CHD|INF)\.?$/, '');          // titre séparé : « DIALLO/AMINATA MRS »
     nomRaw = nomRaw.replace(/^(.+\/.+?)(MRS|MSTR|CHD|INF)$/, '$1');                   // titre GDS collé : « DIALLO/AMINATAMRS » (pas MR/MS : trop de vrais noms finissent ainsi)
     const nom = cleanName(nomRaw);
-    // « opéré par » lu sur la carte (code-share) → code IATA 2 lettres STRICT (un nom = ignoré, pas de faux positif).
-    const opRaw = String(p.operateur || '').toUpperCase().replace(/[^0-9A-Z]/g, '');
-    const operePar = /^[0-9A-Z]{2}$/.test(opRaw) ? opRaw : '';
-    return { vol, compagnie: p.compagnie || deduceAirline(vol), date: p.date || '', pnr: /^[A-Z0-9]{5,8}$/.test(pnr) ? pnr : '', route, operePar, passengers: (nom && nom.length >= 3) ? [{ name: nom }] : [] };
+    // Un MÊME document (carte/e-billet/étiquette bagage) peut porter 2-3 tronçons → on reconstruit via
+    // normalize() (chaînage par aéroport + heure + route + code-share), comme l'e-billet. Repli mono-tronçon.
+    let segs = Array.isArray(p.segments) ? p.segments.filter((x) => x && (x.vol || x.depart || x.arrivee)) : [];
+    if (!segs.length && (p.vol || p.depart || p.arrivee)) segs = [{ vol: p.vol, depart: p.depart, arrivee: p.arrivee, date: p.date, heure: p.heure, operateur: p.operateur }];
+    if (!segs.length) return null;
+    const norm = normalizeEticket({ compagnie: p.compagnie || '', pnr: p.pnr || '', segments: segs });
+    if (!norm || !norm.vol) return null;
+    if (!norm.compagnie) norm.compagnie = deduceAirline(norm.vol) || '';
+    norm.passengers = (nom && nom.length >= 3) ? [{ name: nom }] : [];
+    return norm;
   } catch (e) { return null; }
 }
 // ── E-billet / confirmation de réservation : extraction COMPLÈTE (vol+route+date+PNR+NOMS) ──
