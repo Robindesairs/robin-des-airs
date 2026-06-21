@@ -343,6 +343,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       <input type="hidden" id="tel-rappel">
       <div class="ferr" id="telRappelErr">Indiquez le numéro où l'on peut vous joindre</div>
       <div style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5">Vous écrivez depuis un numéro <strong>temporaire ou étranger</strong> (puce de voyage), ou <strong>pour quelqu'un d'autre</strong> ? Indiquez ici le <strong>numéro habituel</strong> où joindre le passager.</div>
+      <div id="rapSame" style="display:none;font-size:11px;color:#92660A;background:#FFF7E0;border:1px solid #F0D27A;border-left:3px solid #E6A700;border-radius:0 6px 6px 0;padding:7px 10px;margin-top:6px;line-height:1.5">⚠️ <strong>C'est le même numéro que votre WhatsApp.</strong> Vérifiez qu'on peut <strong>vraiment vous y joindre</strong> (pas une puce temporaire de voyage). Sinon, corrigez-le ci-dessus.</div>
     </div>
     <div>
       <label>✉️ Email <span style="color:var(--muted);font-weight:500">(facultatif)</span></label>
@@ -1593,6 +1594,7 @@ function syncWa(){
     if (rn) rn.value = nat;
     syncRap(false);
   }
+  checkRapSame();
 }
 // Numéro habituel de rappel : indicatif + national → numéro international complet (champ caché tel-rappel).
 function syncRap(userEdited){
@@ -1604,6 +1606,14 @@ function syncRap(userEdited){
   const m = String(ind ? ind.value : '').match(/\+\s*(\d{1,4})/);
   const code = m ? m[1] : '';
   hid.value = (code && nat) ? '+' + code + nat : '';
+  checkRapSame();
+}
+// Petit triangle jaune ⚠️ quand le numéro de rappel est IDENTIQUE au WhatsApp → inviter à vérifier la joignabilité.
+function checkRapSame(){
+  const r = (document.getElementById('tel-rappel')?.value || '').trim();
+  const w = (document.getElementById('wa')?.value || '').trim();
+  const el = document.getElementById('rapSame');
+  if (el) el.style.display = (r && w && r === w) ? 'block' : 'none';
 }
 // Pré-remplissage depuis ?phone= → découpe indicatif + numéro local.
 function setWaFull(full){
