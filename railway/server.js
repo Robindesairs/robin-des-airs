@@ -1818,11 +1818,14 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
         // Voyage INCOMPLET : le client a indiqué que son trajet touche l'Europe, mais aucun vol lu ne touche
         // un aéroport européen → il manque le tronçon vers/depuis l'Europe (2e carte perdue, e-billet partiel).
         // On ne fige PAS un verdict sur un voyage tronqué (compagnie débitrice = celle du vol d'entrée en UE).
+        // PRINCIPE : on ne réclame le tronçon manquant que s'il n'y a qu'UN SEUL vol. Dès qu'un 2e vol est
+        // ajouté, on PRÉSUME que le trajet touche l'Europe et on avance (évite un faux blocage quand le vrai
+        // aéroport européen n'est pas dans notre liste, ou mal lu par l'OCR).
         const legsNow = (s.legs && s.legs.length) ? s.legs.map((l) => ({ dep: l.dep, arr: l.arr }))
           : (d.depart && d.arrivee) ? [{ dep: d.depart, arr: d.arrivee }] : [];
         const attendEurope = s.route_type === 'af_eu' || s.europeTouch === 'arrivee' || s.europeTouch === 'depart';
         const toucheEurope = legsNow.some((l) => isEUAirport(l.dep) || isEUAirport(l.arr));
-        if (attendEurope && legsNow.length && !toucheEurope) {
+        if (attendEurope && legsNow.length === 1 && !toucheEurope) {
           s.escalade = s.escalade || 'troncon_europe_manquant'; s.step = 'scan'; await setState(phone, s);
           const r = humanizeRoute(d.route) || `${d.depart || '?'} → ${d.arrivee || '?'}`;
           return sendButtons(phone, { body: `⚠️ Ce vol *${r}* ne touche pas l'Europe — il manque le vol qui vous a *ramené(e) en Europe* (la correspondance).\n\nC'est *ce vol-là* qui ouvre vos droits et désigne la compagnie à réclamer. 📎 Envoyez la *2ᵉ carte d'embarquement* — ou mieux, votre *e-billet* (il contient tous les vols).\n\n_Carte perdue ? Pas de souci, on le fait à la main._`, buttons: [{ id: 'scan_manuel', text: '✏️ Saisir le vol Europe' }] }, cfg);

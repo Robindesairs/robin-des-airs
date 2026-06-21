@@ -54,5 +54,14 @@ if (attendEurope && !toucheEurope) {
 } else {
   console.log('   ❌ détection ratée');
 }
+console.log('\n═══ CAS 3 — 2 VOLS, AÉROPORT EUROPÉEN HORS LISTE (ex. Palma PMI) → ON NE BLOQUE PLUS ═══');
+console.log('Principe : dès qu\'un 2e vol est ajouté, on présume que ça touche l\'Europe (anti-faux-blocage).\n');
+const legs2 = [{ dep: 'DKR', arr: 'CMN' }, { dep: 'CMN', arr: 'PMI' }]; // PMI (Palma) = vrai aéroport UE, ABSENT de notre liste
+const attendE3 = true;
+const touche3 = legs2.some((l) => isEUAirport(l.dep) || isEUAirport(l.arr)); // false (PMI non listé)
+const bloque3 = attendE3 && legs2.length === 1 && !touche3;                  // length===2 → false
+console.log('   vols : DKR→CMN + CMN→PMI | PMI reconnu européen ?', isEUAirport('PMI'), '| nb vols :', legs2.length);
+console.log('   ' + (!bloque3 ? '✅ Le bot NE bloque PAS (2 vols = on fait confiance), même si PMI n\'est pas dans la liste.' : '❌ bloque à tort'));
+
 console.log('\n' + '═'.repeat(70));
 process.exit(0);
