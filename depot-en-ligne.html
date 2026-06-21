@@ -55,6 +55,7 @@
       </label>
       <ul class="files" id="fileList"></ul>
       <div class="errbox" id="errBox"></div>
+      <div class="errbox" id="waFallback" style="display:none"></div>
       <button class="btn" id="sendBtn" disabled>Envoyer mes pièces</button>
       <p class="rgpd"><span>🔒</span><span>Transmission chiffrée (HTTPS), pièces conservées chiffrées et utilisées <b>uniquement</b> pour réclamer votre indemnité. Jamais revendues. Suppression possible à tout moment — RGPD.</span></p>
     </section>
@@ -82,7 +83,7 @@
     function showErr(m){ errBox.style.display = 'block'; errBox.textContent = m; }
     function addFiles(files) {
       for (const f of files) {
-        if (f.size > MAX) { showErr('« ' + f.name + ' » dépasse 4 Mo — reprenez la photo en qualité standard.'); continue; }
+        // On accepte tout : les photos sont optimisées au moment de l'envoi (voir compressImage).
         const li = document.createElement('li');
         li.innerHTML = '<span class="fi" aria-hidden="true">📄</span><span class="nm">' + f.name + '</span><span class="st up">en attente</span>';
         fileList.appendChild(li);
@@ -98,17 +99,55 @@
     dropZone.addEventListener('drop', (e) => { e.preventDefault(); e.stopPropagation(); dropZone.classList.remove('drag'); const dt = e.dataTransfer; if (dt && dt.files && dt.files.length) addFiles(dt.files); });
     ['dragover', 'drop'].forEach((ev) => document.addEventListener(ev, (e) => { if (!dropZone.contains(e.target)) e.preventDefault(); }));
     function toB64(file){ return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(',')[1]); r.onerror = rej; r.readAsDataURL(file); }); }
+    // Compresse/redimensionne une photo DANS le navigateur pour passer sous la limite serveur (4 Mo).
+    async function compressImage(file){
+      if (!file.type || !file.type.startsWith('image/')) return file;
+      let bitmap; try { bitmap = await createImageBitmap(file); } catch(e){ return file; }
+      const maxDim = 2000;
+      let w = bitmap.width, h = bitmap.height;
+      if (w > maxDim || h > maxDim){ const s = Math.min(maxDim / w, maxDim / h); w = Math.round(w * s); h = Math.round(h * s); }
+      const canvas = document.createElement('canvas'); canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(bitmap, 0, 0, w, h);
+      if (bitmap.close) bitmap.close();
+      for (const q of [0.8, 0.7, 0.6, 0.5, 0.4]){
+        const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', q));
+        if (blob && blob.size <= MAX) return blob;
+      }
+      const last = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.35));
+      return last || file;
+    }
+    // Filet de sécurité : si une pièce ne passe pas (trop lourde / format non géré), on propose WhatsApp.
+    let waShown = false;
+    function showWaFallback(){
+      const box = document.getElementById('waFallback');
+      box.style.display = 'block';
+      if (waShown) return; waShown = true;
+      box.textContent = '📎 Une pièce est trop lourde ou dans un format non géré ici. Pas de souci : envoyez-la directement sur WhatsApp, on l\'ajoute à votre dossier. ';
+      const a = document.createElement('a');
+      a.href = 'https://wa.me/33756863630?text=' + encodeURIComponent('Bonjour Robin des Airs, réf. ' + REF + ' — je vous envoie une pièce trop lourde pour le formulaire.');
+      a.target = '_blank'; a.rel = 'noopener';
+      a.textContent = '📲 Envoyer sur WhatsApp';
+      a.style.cssText = 'display:inline-block;margin-top:8px;font-weight:700;text-decoration:underline';
+      box.appendChild(a);
+    }
     sendBtn.addEventListener('click', async () => {
       if (!REF) { showErr('Réf. de dossier manquante dans le lien.'); return; }
       sendBtn.disabled = true; sendBtn.textContent = 'Envoi en cours…';
       let okAll = true;
       for (const item of queue) {
         if (item.sent) continue;
-        const st = item.li.querySelector('.st'); st.className = 'st up'; st.textContent = 'envoi…';
+        const st = item.li.querySelector('.st'); st.className = 'st up'; st.textContent = 'préparation…';
         try {
-          const dataBase64 = await toB64(item.file);
-          const r = await fetch('/api/depot-upload', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ref: REF, filename: item.file.name, mime: item.file.type || 'application/octet-stream', dataBase64 }) });
+          let data = item.file;
+          if (item.file.type && item.file.type.startsWith('image/')) { st.textContent = 'optimisation…'; data = await compressImage(item.file); }
+          if (data.size > MAX) { st.className = 'st err'; st.textContent = '✗ trop lourd'; okAll = false; showWaFallback(); continue; }
+          st.className = 'st up'; st.textContent = 'envoi…';
+          const compressed = data !== item.file;
+          const filename = compressed ? (item.file.name.replace(/\.(heic|heif|png|webp|jpe?g)$/i, '') + '.jpg') : item.file.name;
+          const dataBase64 = await toB64(data);
+          const r = await fetch('/api/depot-upload', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ref: REF, filename: filename, mime: data.type || item.file.type || 'application/octet-stream', dataBase64 }) });
           if (r.ok) { st.className = 'st ok'; st.textContent = '✓ envoyé'; item.sent = true; }
+          else if (r.status === 413) { st.className = 'st err'; st.textContent = '✗ trop lourd'; okAll = false; showWaFallback(); }
           else { const j = await r.json().catch(() => ({})); st.className = 'st err'; st.textContent = '✗ échec'; okAll = false; showErr(j.error || 'Échec de l\'envoi, réessayez.'); }
         } catch (e) { st.className = 'st err'; st.textContent = '✗ échec'; okAll = false; showErr('Erreur réseau, réessayez.'); }
       }
