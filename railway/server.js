@@ -2180,8 +2180,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       await send(phone, L(s, `👍 Got it${_nm ? `, we keep *${_nm}*'s spot` : ''}. ℹ️ But their ID (passport, national ID or residence permit) remains *essential* for the claim — send it as soon as you can. 🔒`, `👍 C'est noté${_nm ? `, on garde la place de *${_nm}*` : ''}. ℹ️ Mais sa pièce (passeport, CNI ou carte de séjour) reste *indispensable* pour la réclamation — envoyez-la dès que vous pouvez. 🔒`), cfg);
       return nextPassport(phone, s, cfg);
     }
-    if (id === 'doc_saisir' || lower.includes('saisir') || lower.includes('manuel') || lower.includes('tape')) { s.step = 'doc_name'; await setState(phone, s); return send(phone, `👤 *Passager ${s.doc_idx + 1}* — Prénom et nom ?\n_(ex : Aminata Diallo)_\nℹ️ On note le nom, mais la *photo* de sa pièce (passeport, CNI ou carte de séjour) restera nécessaire pour la réclamation. 🔒`, cfg); }
-    return sendButtons(phone, { body: `🛂 Envoyez la *photo* de la pièce, ou :`, buttons: [...(((s.passengers[s.doc_idx] && s.passengers[s.doc_idx].name) || (s.names && s.names[s.doc_idx])) ? [] : [{ id: 'doc_saisir', text: '✍️ Saisir à la main' }]), { id: 'doc_passer', text: '⏭️ Je l\'envoie après' }] }, cfg);
+    if (id === 'doc_saisir' || lower.includes('saisir') || lower.includes('manuel') || lower.includes('tape') || lower.includes('type')) { s.step = 'doc_name'; await setState(phone, s); return send(phone, L(s, `👤 *Passenger ${s.doc_idx + 1}* — First and last name?\n_(e.g. Aminata Diallo)_\nℹ️ We note the name, but a *photo* of their ID (passport, national ID or residence permit) will still be needed for the claim. 🔒`, `👤 *Passager ${s.doc_idx + 1}* — Prénom et nom ?\n_(ex : Aminata Diallo)_\nℹ️ On note le nom, mais la *photo* de sa pièce (passeport, CNI ou carte de séjour) restera nécessaire pour la réclamation. 🔒`), cfg); }
+    return sendButtons(phone, { body: L(s, `🛂 Send the *photo* of the ID, or:`, `🛂 Envoyez la *photo* de la pièce, ou :`), buttons: [...(((s.passengers[s.doc_idx] && s.passengers[s.doc_idx].name) || (s.names && s.names[s.doc_idx])) ? [] : [{ id: 'doc_saisir', text: L(s, '✍️ Type it in', '✍️ Saisir à la main') }]), { id: 'doc_passer', text: L(s, '⏭️ I\'ll send it later', '⏭️ Je l\'envoie après') }] }, cfg);
   }
   if (s.step === 'doc_pass_confirm') {
     s.passengers = s.passengers || [];
@@ -2214,11 +2214,11 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     }
     if (id === 'doc_photo' || lower.includes('photo') || lower.includes('renvo') || lower.includes('nouv')) {
       s.step = 'doc_pass'; await setState(phone, s);
-      return send(phone, `📸 Envoyez la photo de la pièce d'identité du passager ${s.doc_idx + 1}.`, cfg);
+      return send(phone, L(s, `📸 Send the photo of passenger ${s.doc_idx + 1}'s ID.`, `📸 Envoyez la photo de la pièce d'identité du passager ${s.doc_idx + 1}.`), cfg);
     }
     if (id === 'doc_saisir' || lower.includes('saisir') || lower.includes('manuel')) {
       delete s.doc_pending; s.step = 'doc_name'; await setState(phone, s);
-      return send(phone, `👤 *Passager ${s.doc_idx + 1}* — Prénom et nom ?\n_(ex : Aminata Diallo)_`, cfg);
+      return send(phone, L(s, `👤 *Passenger ${s.doc_idx + 1}* — First and last name?\n_(e.g. Aminata Diallo)_`, `👤 *Passager ${s.doc_idx + 1}* — Prénom et nom ?\n_(ex : Aminata Diallo)_`), cfg);
     }
     return sendButtons(phone, [{ id: 'pass_ok', text: '✅ C\'est correct' }, { id: 'pass_fix', text: '✏️ Corriger' }], cfg);
   }
@@ -2236,7 +2236,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (idx >= 0 && idx < s.pax) {
       s.mandant_idx = idx; await setState(phone, s);
       const chosen = s.passengers[idx] || {};
-      await send(phone, `✅ C'est noté — c'est *${chosen.name || `Passager ${idx + 1}`}* qui suit le dossier.`, cfg);
+      await send(phone, L(s, `✅ Got it — *${chosen.name || `Passenger ${idx + 1}`}* is following the case.`, `✅ C'est noté — c'est *${chosen.name || `Passager ${idx + 1}`}* qui suit le dossier.`), cfg);
       return askAddressOrFinalize(phone, s, cfg);
     }
     return askMandant(phone, s, cfg);
@@ -2249,30 +2249,30 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       const m = s.passengers[i] || {}; m.adresse = adr; s.passengers[i] = m; await setState(phone, s);
       return finaliser(phone, s, cfg);
     }
-    return send(phone, `📍 Indiquez votre *adresse complète* : numéro, rue, code postal, ville, pays _(ex : 12 rue des Lilas, 75011 Paris, France)_ :`, cfg);
+    return send(phone, L(s, `📍 Enter your *full address*: number, street, postcode, city, country _(e.g. 12 Lilac Street, 75011 Paris, France)_:`, `📍 Indiquez votre *adresse complète* : numéro, rue, code postal, ville, pays _(ex : 12 rue des Lilas, 75011 Paris, France)_ :`), cfg);
   }
   if (s.step === 'doc_name') {
     if (mediaUrl) return askOcrConfirm(phone, s, cfg, mediaUrl); // il envoie finalement la pièce → on la lit
-    if (input.length >= 3 && !/^\d+$/.test(input) && !/^\[/.test(input)) { s.passengers = s.passengers || []; s.passengers[s.doc_idx] = { name: input.toUpperCase() }; s.step = 'doc_dob'; await setState(phone, s); return send(phone, `📅 *Date de naissance* de ${input} ? _(JJ/MM/AAAA)_`, cfg); }
-    return send(phone, `Nom trop court. Renvoyez prénom et nom :`, cfg);
+    if (input.length >= 3 && !/^\d+$/.test(input) && !/^\[/.test(input)) { s.passengers = s.passengers || []; s.passengers[s.doc_idx] = { name: input.toUpperCase() }; s.step = 'doc_dob'; await setState(phone, s); return send(phone, L(s, `📅 *Date of birth* of ${input}? _(DD/MM/YYYY)_`, `📅 *Date de naissance* de ${input} ? _(JJ/MM/AAAA)_`), cfg); }
+    return send(phone, L(s, `Name too short. Send first and last name again:`, `Nom trop court. Renvoyez prénom et nom :`), cfg);
   }
   if (s.step === 'doc_dob') {
     if (mediaUrl) return askOcrConfirm(phone, s, cfg, mediaUrl); // pareil : la photo de la pièce vaut mieux que la saisie
     const dob = parseDateInput(input, '19');
     if (dob) {
-      if (inFuture(dob)) return send(phone, `🤔 Cette date de naissance est dans le futur. Renvoyez-la au format JJ/MM/AAAA _(ex. 05/09/2012)_ :`, cfg);
+      if (inFuture(dob)) return send(phone, L(s, `🤔 That date of birth is in the future. Send it again in DD/MM/YYYY format _(e.g. 05/09/2012)_:`, `🤔 Cette date de naissance est dans le futur. Renvoyez-la au format JJ/MM/AAAA _(ex. 05/09/2012)_ :`), cfg);
       const minor = isMinorAt(dob, s.date);
       const p = s.passengers[s.doc_idx] || {}; p.dob = dob; p.minor = minor; p.idDeferred = true; s.passengers[s.doc_idx] = p; // nom+DDN notés, mais la PHOTO de la pièce reste à envoyer
-      await send(phone, `✅ ${p.name || ('Passager ' + (s.doc_idx + 1))} — né·e le *${dob}* (${dateEnLettres(dob)})${minor ? ' 👶 _(mineur·e : signature parentale requise)_' : ''}\n📸 _Sa pièce d'identité (passeport ou carte d'identité) reste à envoyer — indispensable pour réclamer auprès de la compagnie._`, cfg);
+      await send(phone, L(s, `✅ ${p.name || ('Passenger ' + (s.doc_idx + 1))} — born *${dob}* (${dateEnLettres(dob)})${minor ? ' 👶 _(minor: parental signature required)_' : ''}\n📸 _Their ID (passport or national ID) is still to be sent — essential to claim from the airline._`, `✅ ${p.name || ('Passager ' + (s.doc_idx + 1))} — né·e le *${dob}* (${dateEnLettres(dob)})${minor ? ' 👶 _(mineur·e : signature parentale requise)_' : ''}\n📸 _Sa pièce d'identité (passeport ou carte d'identité) reste à envoyer — indispensable pour réclamer auprès de la compagnie._`), cfg);
       s.doc_idx++; await setState(phone, s); return nextPassport(phone, s, cfg);
     }
     if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim()), cfg);
-    return send(phone, `Date non reconnue. Format JJ/MM/AAAA (ex. 05/09/2012) :`, cfg);
+    return send(phone, L(s, `Date not recognised. Format DD/MM/YYYY (e.g. 05/09/2012):`, `Date non reconnue. Format JJ/MM/AAAA (ex. 05/09/2012) :`), cfg);
   }
   if (s.step === 'doc_boarding') {
-    if (mediaUrl) { await send(phone, `✅ Carte d'embarquement reçue !`, cfg); return gotoEticket(phone, s, cfg); }
-    if (lower === 'passer') { s.docs_pending = true; return gotoEticket(phone, s, cfg); }
-    if (lower === 'appel') { s.escalade = 'document_perdu'; upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now() }); notifyCallbackWanted(phone, s, 'documents perdus (carte d\'embarquement)'); await send(phone, `📞 Pas de panique — un expert vous aide à retrouver vos documents. Laissez la conversation ouverte.\n\n${STOP_FOOTER}`, cfg); return gotoEticket(phone, s, cfg); }
+    if (mediaUrl) { await send(phone, L(s, `✅ Boarding pass received!`, `✅ Carte d'embarquement reçue !`), cfg); return gotoEticket(phone, s, cfg); }
+    if (lower === 'passer' || lower === 'skip') { s.docs_pending = true; return gotoEticket(phone, s, cfg); }
+    if (lower === 'appel' || lower === 'call') { s.escalade = 'document_perdu'; upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now() }); notifyCallbackWanted(phone, s, 'documents perdus (carte d\'embarquement)'); await send(phone, L(s, `📞 Don't worry — an expert helps you find your documents. Keep the conversation open.\n\n${STOP_FOOTER}`, `📞 Pas de panique — un expert vous aide à retrouver vos documents. Laissez la conversation ouverte.\n\n${STOP_FOOTER}`), cfg); return gotoEticket(phone, s, cfg); }
     return send(phone, `🎫 Envoyez la carte d'embarquement, ou *passer*, ou *appel* si vous avez tout perdu.`, cfg);
   }
   if (s.step === 'doc_eticket') {
@@ -2282,13 +2282,13 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       const lu = (e && (e.pnr || (e.passengers && e.passengers.length))) ? ` _(${[e.vol, e.pnr && 'PNR ' + e.pnr, e.passengers && e.passengers.length && `${e.passengers.length} passager(s)`].filter(Boolean).join(' · ')})_` : '';
       await send(phone, e ? `✅ E-billet reçu !${lu}` : `✅ Document bien reçu — notre équipe le vérifiera et l'ajoute à votre dossier. 🙏`, cfg); return gotoCert(phone, s, cfg);
     }
-    if (lower === 'passer') { s.docs_pending = true; return gotoCert(phone, s, cfg); }
-    if (lower === 'appel') { s.escalade = 'document_perdu'; upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now() }); notifyCallbackWanted(phone, s, 'documents perdus (e-billet)'); await send(phone, `📞 Un expert vous aide à récupérer votre e-billet. Laissez la conversation ouverte.\n\n${STOP_FOOTER}`, cfg); return gotoCert(phone, s, cfg); }
+    if (lower === 'passer' || lower === 'skip') { s.docs_pending = true; return gotoCert(phone, s, cfg); }
+    if (lower === 'appel' || lower === 'call') { s.escalade = 'document_perdu'; upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now() }); notifyCallbackWanted(phone, s, 'documents perdus (e-billet)'); await send(phone, L(s, `📞 An expert helps you recover your e-ticket. Keep the conversation open.\n\n${STOP_FOOTER}`, `📞 Un expert vous aide à récupérer votre e-billet. Laissez la conversation ouverte.\n\n${STOP_FOOTER}`), cfg); return gotoCert(phone, s, cfg); }
     return send(phone, `📧 Envoyez l'e-billet (pensez aux spams/Booking), ou *passer*, ou *appel*.`, cfg);
   }
   if (s.step === 'doc_cert') {
-    if (mediaUrl) { await send(phone, `✅ Certificat reçu — ça accélère votre dossier !`, cfg); return finaliser(phone, s, cfg); }
-    if (lower === 'passer' || lower === 'non') { return finaliser(phone, s, cfg); }
+    if (mediaUrl) { await send(phone, L(s, `✅ Certificate received — it speeds up your case!`, `✅ Certificat reçu — ça accélère votre dossier !`), cfg); return finaliser(phone, s, cfg); }
+    if (lower === 'passer' || lower === 'non' || lower === 'skip' || lower === 'no') { return finaliser(phone, s, cfg); }
     return send(phone, `📄 Envoyez le certificat de retard (optionnel), ou tapez *passer*.`, cfg);
   }
 
@@ -2711,11 +2711,11 @@ async function askAddressOrFinalize(phone, s, cfg) {
     return finaliser(phone, s, cfg);
   }
   s.step = 'doc_adresse'; await setState(phone, s);
-  return send(phone, `📍 *Dernière question !* Votre *adresse postale complète* ? _(numéro, rue, code postal, ville, pays)_\nC'est l'adresse qui figure sur le mandat, où la compagnie doit vous répondre.`, cfg);
+  return send(phone, L(s, `📍 *Last question!* Your *full postal address*? _(number, street, postcode, city, country)_\nIt's the address on the authority form, where the airline must reply to you.`, `📍 *Dernière question !* Votre *adresse postale complète* ? _(numéro, rue, code postal, ville, pays)_\nC'est l'adresse qui figure sur le mandat, où la compagnie doit vous répondre.`), cfg);
 }
-async function gotoBoarding(phone, s, cfg) { s.step = 'doc_boarding'; await setState(phone, s); return send(phone, `🎫 Carte d'embarquement\nEnvoyez-en une photo pour le vol concerné.\n📧 Pas de carte ? Un e-billet, une confirmation de réservation ou une étiquette de bagage fonctionnent aussi.\n_🔒 Lu par un outil automatique (IA) pour pré-remplir votre dossier — voir robindesairs.eu/politique-confidentialite._\n✏️ *passer* · 📞 *appel* si tout perdu, on trouve une solution.`, cfg); }
-async function gotoEticket(phone, s, cfg) { s.step = 'doc_eticket'; await setState(phone, s); return send(phone, `📧 Confirmation de réservation (e-billet)\nEnvoyez une capture (pensez aux spams / appli Booking).\n✏️ *passer* · 📞 *appel*.`, cfg); }
-async function gotoCert(phone, s, cfg) { s.step = 'doc_cert'; await setState(phone, s); return send(phone, `📄 Certificat de retard/annulation (optionnel)\nSi la compagnie vous en a remis un, envoyez-le.\n✏️ Tapez *passer* si vous n'en avez pas (cas fréquent).`, cfg); }
+async function gotoBoarding(phone, s, cfg) { s.step = 'doc_boarding'; await setState(phone, s); return send(phone, L(s, `🎫 Boarding pass\nSend a photo for the affected flight.\n📧 No pass? An e-ticket, a booking confirmation or a baggage tag work too.\n_🔒 Read by an automated tool (AI) to pre-fill your file — see robindesairs.eu/politique-confidentialite._\n✏️ *skip* · 📞 *call* if all lost, we'll find a solution.`, `🎫 Carte d'embarquement\nEnvoyez-en une photo pour le vol concerné.\n📧 Pas de carte ? Un e-billet, une confirmation de réservation ou une étiquette de bagage fonctionnent aussi.\n_🔒 Lu par un outil automatique (IA) pour pré-remplir votre dossier — voir robindesairs.eu/politique-confidentialite._\n✏️ *passer* · 📞 *appel* si tout perdu, on trouve une solution.`), cfg); }
+async function gotoEticket(phone, s, cfg) { s.step = 'doc_eticket'; await setState(phone, s); return send(phone, L(s, `📧 Booking confirmation (e-ticket)\nSend a screenshot (check spam / the Booking app).\n✏️ *skip* · 📞 *call*.`, `📧 Confirmation de réservation (e-billet)\nEnvoyez une capture (pensez aux spams / appli Booking).\n✏️ *passer* · 📞 *appel*.`), cfg); }
+async function gotoCert(phone, s, cfg) { s.step = 'doc_cert'; await setState(phone, s); return send(phone, L(s, `📄 Delay/cancellation certificate (optional)\nIf the airline gave you one, send it.\n✏️ Type *skip* if you don't have one (common).`, `📄 Certificat de retard/annulation (optionnel)\nSi la compagnie vous en a remis un, envoyez-le.\n✏️ Tapez *passer* si vous n'en avez pas (cas fréquent).`), cfg); }
 
 // MSG14 — RGPD + mandat + reçu + clôture
 async function finaliser(phone, s, cfg) {
@@ -2734,7 +2734,7 @@ async function finaliser(phone, s, cfg) {
   await send(phone, L(s,
     `${bar('done')}\n${titre} Ref. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nLast step: *your signature* (2 min).\n✅ €0 upfront — 25% on success only · no bank details.\n_Your data is used only for your claim, never sold. Privacy & T&Cs: robindesairs.eu/cgv_`,
     `${bar('done')}\n${titre} Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % au succès uniquement · aucune info bancaire.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_`), cfg);
-  await send(phone, `👉 *Signez ici* (2 min) :\n${s.mandat_url}\n\nSans votre signature, on ne peut pas agir en votre nom. ${STOP_FOOTER}`, cfg);
+  await send(phone, L(s, `👉 *Sign here* (2 min):\n${s.mandat_url}\n\nWithout your signature, we can't act on your behalf. ${STOP_FOOTER}`, `👉 *Signez ici* (2 min) :\n${s.mandat_url}\n\nSans votre signature, on ne peut pas agir en votre nom. ${STOP_FOOTER}`), cfg);
   // CRM : la fiche Airtable est désormais créée par la synchro DIRECTE (storeDossierDurable →
   // /api/dossier-store → syncNewDossierToAirtable, statut « Signature en attente »). Le webhook
   // Make ci-dessous n'est plus qu'un hook OPTIONNEL pour d'éventuelles automatisations externes :
@@ -2833,7 +2833,7 @@ async function relancerEtape(phone, s, cfg) {
     case 'm_pnr': return gotoPnr(phone, s, cfg);
     case 'doc_pass': case 'doc_pass_confirm': case 'doc_dob': case 'doc_name': return nextPassport(phone, s, cfg);
     case 'doc_mandant': return askMandant(phone, s, cfg);
-    case 'doc_adresse': return send(phone, `📍 *Dernière question !* Votre *adresse postale complète* ? _(numéro, rue, code postal, ville, pays)_`, cfg);
+    case 'doc_adresse': return send(phone, L(s, `📍 *Last question!* Your *full postal address*? _(number, street, postcode, city, country)_`, `📍 *Dernière question !* Votre *adresse postale complète* ? _(numéro, rue, code postal, ville, pays)_`), cfg);
     case 'doc_boarding': return gotoBoarding(phone, s, cfg);
     case 'doc_eticket': return gotoEticket(phone, s, cfg);
     case 'doc_cert': return gotoCert(phone, s, cfg);
