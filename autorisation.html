@@ -333,23 +333,26 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       </div>
     </div>
   </div>
-  <div class="field-row duo">
-    <div>
-      <label>📞 Votre numéro habituel pour vous joindre <span class="req">*</span></label>
-      <div class="wa-phone-row">
-        <input type="text" id="rap-indicatif" class="wa-indicatif-select" list="pays-list" aria-label="Pays ou indicatif" placeholder="Pays ou +indicatif" autocomplete="off" oninput="syncRap(true)" value="🇫🇷 France +33">
-        <input type="tel" id="rap-national" class="wa-national-input" inputmode="numeric" autocomplete="tel-national" placeholder="06 12 34 56 78" oninput="syncRap(true)">
-      </div>
-      <input type="hidden" id="tel-rappel">
-      <div class="ferr" id="telRappelErr">Indiquez le numéro où l'on peut vous joindre</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5">Vous écrivez depuis un numéro <strong>temporaire ou étranger</strong> (puce de voyage), ou <strong>pour quelqu'un d'autre</strong> ? Indiquez ici le <strong>numéro habituel</strong> où joindre le passager.</div>
-      <div id="rapSame" style="display:none;font-size:11px;color:#92660A;background:#FFF7E0;border:1px solid #F0D27A;border-left:3px solid #E6A700;border-radius:0 6px 6px 0;padding:7px 10px;margin-top:6px;line-height:1.5">⚠️ <strong>C'est le même numéro que votre WhatsApp.</strong> Vérifiez qu'on peut <strong>vraiment vous y joindre</strong> (pas une puce temporaire de voyage). Sinon, corrigez-le ci-dessus.</div>
+  <div class="field-row">
+    <label class="check" style="display:flex;align-items:flex-start;gap:9px;cursor:pointer;font-weight:600;margin:0">
+      <input type="checkbox" id="sameNum" checked onchange="toggleRap()" style="margin-top:3px;flex:none">
+      <span>📞 C'est le <strong>même numéro que mon WhatsApp</strong> pour m'appeler.</span>
+    </label>
+    <div style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5">Décochez si vous écrivez d'un numéro <strong>temporaire ou étranger</strong> (puce de voyage), ou <strong>pour quelqu'un d'autre</strong> → vous indiquerez le numéro habituel du passager.</div>
+  </div>
+  <div class="field-row" id="rapBlock" style="display:none">
+    <label>📞 Numéro habituel pour vous appeler <span class="req">*</span></label>
+    <div class="wa-phone-row">
+      <input type="text" id="rap-indicatif" class="wa-indicatif-select" list="pays-list" aria-label="Pays ou indicatif" placeholder="Pays ou +indicatif" autocomplete="off" oninput="syncRap(true)" value="🇫🇷 France +33">
+      <input type="tel" id="rap-national" class="wa-national-input" inputmode="numeric" autocomplete="tel-national" placeholder="06 12 34 56 78" oninput="syncRap(true)">
     </div>
-    <div>
-      <label>✉️ Email <span style="color:var(--muted);font-weight:500">(facultatif)</span></label>
-      <input type="email" id="em-perso" autocomplete="email" placeholder="vous@exemple.com">
-      <div style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5">Pour vous prévenir si on n'arrive pas à vous joindre par téléphone.</div>
-    </div>
+    <input type="hidden" id="tel-rappel">
+    <div class="ferr" id="telRappelErr">Indiquez le numéro habituel du passager</div>
+  </div>
+  <div class="field-row">
+    <label>✉️ Email <span style="color:var(--muted);font-weight:500">(facultatif)</span></label>
+    <input type="email" id="em-perso" autocomplete="email" placeholder="vous@exemple.com">
+    <div style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5">Pour vous prévenir si on n'arrive pas à vous joindre par téléphone.</div>
   </div>
   <div class="field-row">
     <label>Adresse postale complète <span class="req">*</span></label>
@@ -1625,15 +1628,6 @@ function syncWa(){
   const m = String(ind ? ind.value : '').match(/\+\s*(\d{1,4})/);
   const code = m ? m[1] : '';
   hid.value = (code && nat) ? '+' + code + nat : '';
-  // Pré-remplit le « numéro habituel » avec le WhatsApp — on copie la saisie TELLE QUELLE (0 compris) tant que non édité.
-  const rapHid = document.getElementById('tel-rappel');
-  if (rapHid && !rapHid.dataset.edited) {
-    const ri = document.getElementById('rap-indicatif'); const rn = document.getElementById('rap-national');
-    if (ri && ind) ri.value = ind.value;
-    if (rn) rn.value = raw;
-    syncRap(false);
-  }
-  checkRapSame();
 }
 // Numéro habituel de rappel : indicatif + national → numéro international complet (champ caché tel-rappel).
 function syncRap(userEdited){
@@ -1645,14 +1639,12 @@ function syncRap(userEdited){
   const m = String(ind ? ind.value : '').match(/\+\s*(\d{1,4})/);
   const code = m ? m[1] : '';
   hid.value = (code && nat) ? '+' + code + nat : '';
-  checkRapSame();
 }
-// Petit triangle jaune ⚠️ quand le numéro de rappel est IDENTIQUE au WhatsApp → inviter à vérifier la joignabilité.
-function checkRapSame(){
-  const r = (document.getElementById('tel-rappel')?.value || '').trim();
-  const w = (document.getElementById('wa')?.value || '').trim();
-  const el = document.getElementById('rapSame');
-  if (el) el.style.display = (r && w && r === w) ? 'block' : 'none';
+// Case « même numéro que mon WhatsApp » : décochée → on révèle le champ « numéro habituel ».
+function toggleRap(){
+  const same = document.getElementById('sameNum');
+  const block = document.getElementById('rapBlock');
+  if (block) block.style.display = (same && same.checked) ? 'none' : 'block';
 }
 // Pré-remplissage depuis ?phone= → découpe indicatif + numéro local.
 function setWaFull(full){
@@ -1674,7 +1666,7 @@ function showE(id,eId,show) {
 }
 function validate() {
   let ok = true;
-  [['fn','fnErr'],['ln','lnErr'],['wa-national','waErr'],['rap-national','telRappelErr'],['addr','addrErr'],
+  [['fn','fnErr'],['ln','lnErr'],['wa-national','waErr'],['addr','addrErr'],
    ['cie','cieErr'],['inc','incErr'],['sigCity','sigCityErr']
   ].forEach(([id,e])=>{
     const empty=!document.getElementById(id)?.value.trim();
@@ -1706,11 +1698,13 @@ function validate() {
     const we = document.getElementById('waErr'); if (we) { we.textContent = phoneMsg(waIssue); we.style.display = 'block'; }
     ok = false;
   }
-  const rapIssue = phoneIssue('rap-indicatif', 'rap-national');
-  if (rapIssue) {
-    document.getElementById('rap-national')?.classList.add('err');
-    const re = document.getElementById('telRappelErr'); if (re) { re.textContent = phoneMsg(rapIssue); re.style.display = 'block'; }
-    ok = false;
+  if (!document.getElementById('sameNum')?.checked) {
+    const rapIssue = phoneIssue('rap-indicatif', 'rap-national');
+    if (rapIssue) {
+      document.getElementById('rap-national')?.classList.add('err');
+      const re = document.getElementById('telRappelErr'); if (re) { re.textContent = phoneMsg(rapIssue); re.style.display = 'block'; }
+      ok = false;
+    }
   }
   // Validation passagers — nom obligatoire (le statut mineur est déduit automatiquement de la date de naissance)
   document.querySelectorAll('.pax-row').forEach((row) => {
@@ -1777,7 +1771,7 @@ function submitMandat() {
     firstName: document.getElementById('fn').value.trim(),
     lastName:  document.getElementById('ln').value.trim(),
     whatsapp:  document.getElementById('wa').value.trim(),
-    contactPhone: (document.getElementById('tel-rappel')?.value || '').trim(),
+    contactPhone: (document.getElementById('sameNum')?.checked ? (document.getElementById('wa')?.value || '') : (document.getElementById('tel-rappel')?.value || '')).trim(),
     contactEmail: (document.getElementById('em-perso')?.value || '').trim(),
     email:     clientEmailForRef(REF) || document.getElementById('em').value.trim(),
     address:   document.getElementById('addr').value.trim(),
