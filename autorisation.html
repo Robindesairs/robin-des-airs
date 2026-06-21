@@ -343,8 +343,9 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     <div class="ferr" id="telRappelErr">Indiquez le numéro habituel du passager</div>
   </div>
   <div class="field-row">
-    <label>Adresse postale complète <span class="req">*</span></label>
-    <textarea id="addr" placeholder="12 rue de la Paix&#10;75001 Paris — France" rows="3" oninput="updateParties()"></textarea>
+    <label>Adresse postale <span class="req">*</span></label>
+    <div style="font-size:12px;color:#667;margin:-2px 0 6px">Quartier, ville et pays suffisent — <strong>pas besoin</strong> de code postal ni de numéro de rue.</div>
+    <textarea id="addr" placeholder="Ex. : Médina, Dakar — Sénégal&#10;(ou : 12 rue de la Paix, 75001 Paris — France)" rows="3" oninput="updateParties()"></textarea>
     <div class="ferr" id="addrErr">Adresse requise pour le mandat</div>
   </div>
   <div style="font-size:12px;color:var(--text);font-style:italic;padding:10px 14px;background:var(--green-tint);border-left:3px solid var(--green-deep);border-radius:0 6px 6px 0;margin-top:4px">
@@ -1756,6 +1757,7 @@ function submitMandat() {
   }
   const payload = {
     ref:       REF,
+    lang:      (document.documentElement.lang || 'fr'),
     firstName: document.getElementById('fn').value.trim(),
     lastName:  document.getElementById('ln').value.trim(),
     whatsapp:  document.getElementById('wa').value.trim(),

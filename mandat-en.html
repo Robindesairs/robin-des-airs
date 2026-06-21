@@ -343,8 +343,9 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     <div class="ferr" id="telRappelErr">Enter the passenger's usual number</div>
   </div>
   <div class="field-row">
-    <label>Full postal address <span class="req">*</span></label>
-    <textarea id="addr" placeholder="12 rue de la Paix&#10;75001 Paris — France" rows="3" oninput="updateParties()"></textarea>
+    <label>Postal address <span class="req">*</span></label>
+    <div style="font-size:12px;color:#667;margin:-2px 0 6px">District, city and country are enough — <strong>no need</strong> for a postal code or street number.</div>
+    <textarea id="addr" placeholder="e.g. Médina, Dakar — Senegal&#10;(or: 12 rue de la Paix, 75001 Paris — France)" rows="3" oninput="updateParties()"></textarea>
     <div class="ferr" id="addrErr">Address required for the mandate</div>
   </div>
   <div style="font-size:12px;color:var(--text);font-style:italic;padding:10px 14px;background:var(--green-tint);border-left:3px solid var(--green-deep);border-radius:0 6px 6px 0;margin-top:4px">
