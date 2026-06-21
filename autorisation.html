@@ -335,10 +335,14 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   </div>
   <div class="field-row duo">
     <div>
-      <label>📞 Numéro où l'on peut vous appeler <span class="req">*</span></label>
-      <input type="tel" id="tel-rappel" inputmode="tel" autocomplete="tel" placeholder="+221 77 123 45 67" oninput="this.dataset.edited='1'">
-      <div class="ferr" id="telRappelErr">Indiquez un numéro où l'on peut vous joindre</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5">Si vous écrivez d'un <strong>numéro étranger</strong>, ou <strong>pour quelqu'un d'autre</strong>, mettez ici le numéro où joindre le passager concerné.</div>
+      <label>📞 Votre numéro habituel pour vous joindre <span class="req">*</span></label>
+      <div class="wa-phone-row">
+        <input type="text" id="rap-indicatif" class="wa-indicatif-select" list="pays-list" aria-label="Pays ou indicatif" placeholder="Pays ou +indicatif" autocomplete="off" oninput="syncRap(true)" value="🇫🇷 France +33">
+        <input type="tel" id="rap-national" class="wa-national-input" inputmode="numeric" autocomplete="tel-national" placeholder="6 12 34 56 78" oninput="syncRap(true)">
+      </div>
+      <input type="hidden" id="tel-rappel">
+      <div class="ferr" id="telRappelErr">Indiquez le numéro où l'on peut vous joindre</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5">Vous écrivez depuis un numéro <strong>temporaire ou étranger</strong> (puce de voyage), ou <strong>pour quelqu'un d'autre</strong> ? Indiquez ici le <strong>numéro habituel</strong> où joindre le passager.</div>
     </div>
     <div>
       <label>✉️ Email <span style="color:var(--muted);font-weight:500">(facultatif)</span></label>
@@ -1581,9 +1585,25 @@ function syncWa(){
   const m = String(ind ? ind.value : '').match(/\+\s*(\d{1,4})/);
   const code = m ? m[1] : '';
   hid.value = (code && nat) ? '+' + code + nat : '';
-  // Pré-remplit le « numéro de rappel » avec le WhatsApp tant que le client ne l'a pas édité lui-même.
-  const rap = document.getElementById('tel-rappel');
-  if (rap && !rap.dataset.edited && hid.value) rap.value = hid.value;
+  // Pré-remplit le « numéro habituel » (indicatif + national) avec le WhatsApp tant que le client ne l'a pas édité.
+  const rapHid = document.getElementById('tel-rappel');
+  if (rapHid && !rapHid.dataset.edited) {
+    const ri = document.getElementById('rap-indicatif'); const rn = document.getElementById('rap-national');
+    if (ri && ind) ri.value = ind.value;
+    if (rn) rn.value = nat;
+    syncRap(false);
+  }
+}
+// Numéro habituel de rappel : indicatif + national → numéro international complet (champ caché tel-rappel).
+function syncRap(userEdited){
+  const ind = document.getElementById('rap-indicatif');
+  const nat = (document.getElementById('rap-national')?.value || '').replace(/[^\d]/g, '');
+  const hid = document.getElementById('tel-rappel');
+  if (!hid) return;
+  if (userEdited) hid.dataset.edited = '1';
+  const m = String(ind ? ind.value : '').match(/\+\s*(\d{1,4})/);
+  const code = m ? m[1] : '';
+  hid.value = (code && nat) ? '+' + code + nat : '';
 }
 // Pré-remplissage depuis ?phone= → découpe indicatif + numéro local.
 function setWaFull(full){
@@ -1605,7 +1625,7 @@ function showE(id,eId,show) {
 }
 function validate() {
   let ok = true;
-  [['fn','fnErr'],['ln','lnErr'],['wa-national','waErr'],['tel-rappel','telRappelErr'],['addr','addrErr'],
+  [['fn','fnErr'],['ln','lnErr'],['wa-national','waErr'],['rap-national','telRappelErr'],['addr','addrErr'],
    ['cie','cieErr'],['inc','incErr'],['sigCity','sigCityErr']
   ].forEach(([id,e])=>{
     const empty=!document.getElementById(id)?.value.trim();
@@ -1635,6 +1655,12 @@ function validate() {
   if (!/^\+\d{7,15}$/.test(waFull)) {
     document.getElementById('wa-national')?.classList.add('err');
     const we = document.getElementById('waErr'); if (we) we.style.display = 'block';
+    ok = false;
+  }
+  const rapFull = (document.getElementById('tel-rappel')?.value || '').trim();
+  if (!/^\+\d{7,15}$/.test(rapFull)) {
+    document.getElementById('rap-national')?.classList.add('err');
+    const re = document.getElementById('telRappelErr'); if (re) re.style.display = 'block';
     ok = false;
   }
   // Validation passagers — nom obligatoire (le statut mineur est déduit automatiquement de la date de naissance)
