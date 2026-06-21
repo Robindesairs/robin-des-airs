@@ -42,15 +42,17 @@ const attendEurope = s2.route_type === 'af_eu' || s2.europeTouch === 'arrivee' |
 const toucheEurope = legsNow.some((l) => isEUAirport(l.dep) || isEUAirport(l.arr));
 console.log('   vol lu :', carte.route, '| touche l\'Europe ?', toucheEurope, '| Europe attendue ?', attendEurope);
 if (attendEurope && !toucheEurope) {
-  console.log('   ✅ Le bot N\'AFFICHE PAS de verdict (il ne dira pas « non couvert » sur un voyage tronqué).');
+  const chute = carte.arrivee; // point de chute = là où la carte atterrit (CMN)
+  console.log('   ✅ Le bot trouve le POINT DE CHUTE =', chute, '(Casablanca) et ancre la question dessus.');
   console.log('   📱 Message du bot :\n');
-  const r = carte.route;
-  console.log(['⚠️ Ce vol *' + r + '* ne touche pas l\'Europe — il manque le vol qui vous a *ramené(e) en Europe* (la correspondance).',
+  console.log(['⚠️ Ce vol *' + carte.route + '* s\'arrête à *Casablanca* (CMN) — il ne touche pas encore l\'Europe.',
     '',
-    'C\'est *ce vol-là* qui ouvre vos droits et désigne la compagnie à réclamer. 📎 Envoyez la *2ᵉ carte d\'embarquement* — ou mieux, votre *e-billet* (il contient tous les vols).',
+    'Vous avez atterri à *Casablanca* (CMN) : *quel vol vous a ensuite ramené(e) en Europe ?* C\'est lui qui ouvre vos droits et désigne la compagnie à réclamer.',
     '',
-    '_Carte perdue ? Pas de souci, on le fait à la main._'].map((l) => '      ' + l).join('\n'));
-  console.log('\n   [Bouton : ✏️ Saisir le vol Europe]  → saisie manuelle du vol d\'entrée si la 2e carte est perdue.');
+    '📎 Envoyez la *2ᵉ carte d\'embarquement* (le vol depuis *Casablanca*) — ou mieux, votre *e-billet*.',
+    '',
+    '_Carte perdue ? Écrivez le n° du vol depuis Casablanca, on le fait à la main._'].map((l) => '      ' + l).join('\n'));
+  console.log('\n   [Bouton : ✏️ Saisir le vol depuis ' + chute + ']');
 } else {
   console.log('   ❌ détection ratée');
 }

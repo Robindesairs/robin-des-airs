@@ -1826,9 +1826,14 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
         const attendEurope = s.route_type === 'af_eu' || s.europeTouch === 'arrivee' || s.europeTouch === 'depart';
         const toucheEurope = legsNow.some((l) => isEUAirport(l.dep) || isEUAirport(l.arr));
         if (attendEurope && legsNow.length === 1 && !toucheEurope) {
-          s.escalade = s.escalade || 'troncon_europe_manquant'; s.step = 'scan'; await setState(phone, s);
+          // Le bot trouve TOUJOURS le « point de chute » = l'aéroport où ce vol atterrit (le hub de
+          // correspondance, ici CMN/Casablanca). On ancre la question dessus : depuis ce point, quel vol a
+          // ramené en Europe. On le mémorise pour pré-remplir le DÉPART du vol suivant (saisie ou scan).
+          const chute = (legsNow[legsNow.length - 1] || {}).arr || d.arrivee || '';
+          s.point_chute = chute; s.escalade = s.escalade || 'troncon_europe_manquant'; s.step = 'scan'; await setState(phone, s);
           const r = humanizeRoute(d.route) || `${d.depart || '?'} → ${d.arrivee || '?'}`;
-          return sendButtons(phone, { body: `⚠️ Ce vol *${r}* ne touche pas l'Europe — il manque le vol qui vous a *ramené(e) en Europe* (la correspondance).\n\nC'est *ce vol-là* qui ouvre vos droits et désigne la compagnie à réclamer. 📎 Envoyez la *2ᵉ carte d'embarquement* — ou mieux, votre *e-billet* (il contient tous les vols).\n\n_Carte perdue ? Pas de souci, on le fait à la main._`, buttons: [{ id: 'scan_manuel', text: '✏️ Saisir le vol Europe' }] }, cfg);
+          const ville = chute ? `*${iataLabel(chute)}*${IATA_CITY[chute] ? ` (${chute})` : ''}` : 'votre escale';
+          return sendButtons(phone, { body: `⚠️ Ce vol *${r}* s'arrête à ${ville} — il ne touche pas encore l'Europe.\n\nVous avez atterri à ${ville} : *quel vol vous a ensuite ramené(e) en Europe ?* C'est lui qui ouvre vos droits et désigne la compagnie à réclamer.\n\n📎 Envoyez la *2ᵉ carte d'embarquement* (le vol depuis ${ville}) — ou mieux, votre *e-billet* (il contient tous les vols).\n\n_Carte perdue ? Écrivez le n° du vol depuis ${ville}, on le fait à la main._`, buttons: [{ id: 'scan_manuel', text: `✏️ Saisir le vol depuis ${chute || 'l\'escale'}` }] }, cfg);
         }
         if (d.allerRetour && d.trajets && d.trajets.length > 1) { s.trajets = d.trajets; await setState(phone, s); return askSens(phone, s, cfg); }
         s.step = 'scan_confirm'; await setState(phone, s); return scanConfirmCard(phone, s, cfg);
