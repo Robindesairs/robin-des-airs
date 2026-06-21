@@ -483,6 +483,36 @@ function genRef() {
 function normInput(raw, options) { const t = (raw || '').trim().toLowerCase(); if (/^\d+$/.test(t)) return t; const i = options.findIndex(o => t.includes(o.toLowerCase())); return i >= 0 ? String(i + 1) : t; }
 const AIRLINES = { AF: 'Air France', SN: 'Brussels Airlines', TP: 'TAP Air Portugal', AT: 'Royal Air Maroc', HC: 'Air Sénégal', KQ: 'Kenya Airways', ET: 'Ethiopian Airlines', EK: 'Emirates', TK: 'Turkish Airlines', KL: 'KLM', LH: 'Lufthansa', IB: 'Iberia', EJU: 'easyJet', U2: 'easyJet', FR: 'Ryanair', TO: 'Transavia', KP: 'ASKY', DN: 'Senegal Airlines' };
 function deduceAirline(vol) { const m = (vol || '').toUpperCase().match(/^([A-Z]{2,3})\d/); return (m && AIRLINES[m[1]]) || ''; }
+// Transporteurs EFFECTIFS européens (UE + EEE/Suisse, couverts par le CE261). Sert UNIQUEMENT au cas
+// « vol ENTRANT en Europe » : il n'est couvert que si la compagnie qui OPÈRE réellement le vol est
+// européenne (Art. 3 §1 b). Au DÉPART d'Europe, peu importe la compagnie → cette liste ne s'applique pas.
+const UE_CARRIERS = new Set(['AF', 'KL', 'SN', 'TP', 'LH', 'IB', 'U2', 'EJU', 'FR', 'TO', 'HV', 'LX', 'OS', 'EW', 'AZ', 'A3', 'SK', 'AY', 'LO', 'VY', 'DY', 'EN', 'WK', 'WF', 'IG']);
+function isCarrierUE(code) { return UE_CARRIERS.has(String(code || '').toUpperCase().replace(/\s+/g, '')); }
+// Code IATA (préfixe) d'un n° de vol : « AF703 » → « AF », « U24023 » → « U2 », « EJU8704 » → « EJU ».
+// Le désignateur IATA fait 2 caractères ; on n'accepte 3 caractères QUE si c'est un code connu (ex. EJU),
+// sinon le {2,3} gourmand avalerait un chiffre (« AF703 » → « AF7 »).
+function carrierCode(vol) {
+  const v = String(vol || '').toUpperCase().replace(/\s+/g, '');
+  const m3 = v.match(/^([0-9A-Z]{3})\d/); if (m3 && AIRLINES[m3[1]]) return m3[1];
+  const m2 = v.match(/^([0-9A-Z]{2})\d/); return m2 ? m2[1] : '';
+}
+// Transporteur EFFECTIF : le « opéré par » (code-share) lu sur l'e-billet s'il existe, SINON le préfixe
+// du vol qui ARRIVE (dernier segment d'un retour à escale). C'est LUI qui décide de l'éligibilité entrante.
+function effectiveCarrier(s, e) {
+  const op = (e && e.operePar) || (s && s.operePar) || '';
+  if (op) return op.toUpperCase();
+  const vol = (e && e.vol) || (s && s.vol) || '';
+  const last = String(vol).split('+').pop().trim(); // « AF703 + AF704 » → dernier segment
+  return carrierCode(last);
+}
+// Sur un vol ENTRANT en Europe, marque le dossier si le transporteur effectif est HORS-UE (code-share inclus).
+// On NE FERME PAS le dossier (un expert vérifie un autre recours) : on pose juste un drapeau + escalade.
+function markOperateurEffectif(s, e) {
+  const eff = effectiveCarrier(s, e);
+  if (eff) s.operateur_code = eff;
+  s.operateurNonUe = !!(s.europeTouch === 'arrivee' && eff && !isCarrierUE(eff));
+  if (s.operateurNonUe) s.escalade = s.escalade || 'operateur_non_ue';
+}
 // Trajet compact : départ → destination FINALE, sans les escales (« Dakar → Casa → Paris » → « Dakar → Paris »).
 // Gère l'aller-retour (départ = arrivée) en prenant la dernière ville DISTINCTE de l'origine.
 function routeShort(route) {
@@ -894,6 +924,7 @@ function applyEticket(s, e) {
   if (!e) return;
   if (e.vol && !s.vol) s.vol = e.vol;
   if (e.compagnie && !s.compagnie) s.compagnie = e.compagnie;
+  if (e.operePar && !s.operePar) s.operePar = e.operePar; // transporteur effectif lu sur le billet (code-share)
   if (e.date && !s.date) s.date = e.date;
   if (e.pnr && !s.pnr) s.pnr = e.pnr;
   if (e.route && !s.route) s.route = humanizeRoute(e.route);
@@ -911,6 +942,7 @@ function applyEticket(s, e) {
     });
     if (!s.pax) s.pax = e.passengers.length;
   }
+  markOperateurEffectif(s, e); // code-share « opéré par » → transporteur effectif + drapeau hors-UE si vol entrant
 }
 // Étape SCAN : on relit TOUTES les pages à chaque nouvelle photo → la lecture est complète, on écrase
 // les champs e-billet (les corrections manuelles viennent APRÈS, via le menu de correction).
@@ -918,6 +950,7 @@ function setEticketFields(s, e) {
   if (!e) return;
   if (e.vol) s.vol = e.vol;
   if (e.compagnie) s.compagnie = e.compagnie;
+  if (e.operePar) s.operePar = e.operePar; // transporteur effectif lu sur le billet (code-share)
   if (e.date) s.date = e.date;
   if (e.pnr) s.pnr = e.pnr;
   if (e.route) s.route = humanizeRoute(e.route);
@@ -938,6 +971,7 @@ function setEticketFields(s, e) {
   }
   // Signal qualité pour la carte de confirmation : lecture douteuse ou incomplète → on prévient au lieu de claironner « réussi ».
   s._scanWarn = (e.lisible === false) || (typeof e.confidence === 'number' && e.confidence < 0.5) || !(e.vol && (e.route || e.depart) && (e.date || e.pnr));
+  markOperateurEffectif(s, e); // code-share « opéré par » → transporteur effectif + drapeau hors-UE si vol entrant
 }
 // Bascule l'état sur un trajet précis (aller OU retour) choisi par le client.
 function applyTrajet(s, t) {
@@ -961,7 +995,11 @@ async function scanConfirmCard(phone, s, cfg) {
   const header = s._scanWarn
     ? `⚠️ J'ai lu votre billet, mais l'image était *difficile à lire*. Vérifiez bien le *n° de vol* et le *PNR* ci-dessous 👇`
     : pickVariant(phone, 'SCAN_REUSSI');
-  return sendButtons(phone, { body: `${header}${pageLine}\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date ? `${s.date}${isValidStoredDate(s.date) ? ` (${dateEnLettres(s.date)})` : ''}` : '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ Trajet : ${s.route || '—'}${paxLine}\n\n_E-billet en plusieurs pages ? Envoyez-les, je complète._\nTout est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg);
+  // Code-share détecté sur un vol ENTRANT en Europe opéré par une compagnie hors-UE : le CE261 ne s'applique
+  // pas automatiquement → on prévient sans fermer le dossier (un expert vérifie un autre recours).
+  const opName = (s.operateur_code && AIRLINES[s.operateur_code]) || s.compagnie || 'une compagnie hors-UE';
+  const opNote = s.operateurNonUe ? `\n\nℹ️ Vol *opéré par ${opName}* (compagnie hors-UE) à l'arrivée en Europe : l'indemnisation européenne ne s'applique pas *automatiquement*. Un expert vérifie *gratuitement* un autre recours — *on garde votre dossier dans tous les cas*. 🤝` : '';
+  return sendButtons(phone, { body: `${header}${pageLine}\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date ? `${s.date}${isValidStoredDate(s.date) ? ` (${dateEnLettres(s.date)})` : ''}` : '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ Trajet : ${s.route || '—'}${paxLine}${opNote}\n\n_E-billet en plusieurs pages ? Envoyez-les, je complète._\nTout est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg);
 }
 // Aller-retour détecté → on demande quel vol a été perturbé (l'e-billet ne dit pas ce qui a foiré).
 async function askSens(phone, s, cfg) {

@@ -16,7 +16,7 @@
 const PROMPT = `Tu lis un E-BILLET / une CONFIRMATION DE RÉSERVATION d'avion (souvent PLUSIEURS passagers, et parfois un ALLER + un RETOUR).
 Extrais TOUTES les informations nécessaires à un mandat de réclamation. Réponds UNIQUEMENT en JSON, ce schéma exact :
 {"lisible":true,"confidence":1.0,"multi_pnr":false,"compagnie":"","pnr":"","numero_billet":"","aller_retour":false,
- "trajets":[{"sens":"aller","date":"","depart":"","arrivee":"","segments":[{"vol":"","depart":"","arrivee":"","date":""}]}],
+ "trajets":[{"sens":"aller","date":"","depart":"","arrivee":"","segments":[{"vol":"","depart":"","arrivee":"","date":"","operateur":""}]}],
  "passagers":[{"nom":"","prenom":"","date_naissance":"","type":"","gratuit":false}]}
 Règles STRICTES :
 - lisible / confidence : si le document est trop FLOU, SOMBRE, COUPÉ, incliné ou compressé pour lire les champs clés (n° de vol, PNR, noms) avec CERTITUDE → lisible=false, confidence basse (≤0.4) et laisse VIDES les champs incertains. NE DEVINE JAMAIS un n° de vol "probable" pour remplir : mieux vaut vide que faux.
@@ -29,6 +29,7 @@ Règles STRICTES :
    • Un RETOUR = on REVIENT vers le point de départ initial (la destination du retour = le départ de l'aller), en général plusieurs JOURS plus tard → trajet SÉPARÉ. sens="aller" pour le 1er, "retour" pour le retour.
 - aller_retour : true s'il y a un trajet aller ET un trajet retour.
 - segments : dans l'ordre, chacun avec vol (MAJUSCULES sans espace, ex. AF718), depart/arrivee (IATA 3 lettres), date du segment.
+- operateur : UNIQUEMENT si le billet indique EXPLICITEMENT que ce segment est « opéré par / operated by / vol opéré par / realizado por / durchgeführt von » une compagnie DIFFÉRENTE de celle du numéro de vol (cas CODE-SHARE). Renvoie alors le CODE IATA 2 lettres de la compagnie qui OPÈRE RÉELLEMENT ce vol (ex. « AF703 — operated by Kenya Airways » → "KQ" ; « KL567 operated by Kenya Airways » → "KQ"). Si la mention « opéré par » nomme la MÊME compagnie que le numéro de vol, ou s'il n'y a AUCUNE mention « opéré par », laisse "" (le transporteur est alors celui du numéro de vol). Ne DEVINE jamais un opérateur.
 - date : "JJ/MM/AAAA" si l'année est imprimée, sinon "JJ/MM". NE JAMAIS deviner ni inventer l'année.
 - passagers : TOUS les passagers nommés. nom = nom de famille en MAJUSCULES ; prenom = prénom(s) (souvent "NOM / Prénom"). date_naissance SEULEMENT si imprimée (JJ/MM/AAAA), sinon "".
 - type : le TYPE de passager s'il est indiqué (colonne "Type", ou mention à côté du nom) → renvoie "adulte", "enfant" ou "bebe". Indices : Adulte/Adult/ADT → "adulte" ; Enfant/Child/CHD/CNN → "enfant" ; Bébé/Bebe/Infant/INF/Nourrisson → "bebe". Si rien d'indiqué, "".
@@ -39,6 +40,10 @@ Règles STRICTES :
 // ── Normalisation (pure) ──────────────────────────────────────────────────────
 function up(x) { return String(x || '').toUpperCase().replace(/\s+/g, ''); }
 function iata(x) { x = String(x || '').trim(); const m = x.toUpperCase().match(/\b[A-Z]{3}\b/); return m ? m[0] : x; }
+// Code transporteur EFFECTIF (« opéré par ») : un code IATA compagnie = 2 caractères (ex. AF, KQ, U2, 3O).
+// On reste STRICT : si le modèle renvoie un nom plutôt qu'un code, on retourne "" (pas de faux positif qui
+// disqualifierait un dossier à tort). Le préfixe du n° de vol prend alors le relais côté serveur.
+function opCode(x) { const m = String(x || '').toUpperCase().replace(/\s+/g, '').match(/^[0-9A-Z]{2}$/); return m ? m[0] : ''; }
 function dateNorm(x) {
   x = String(x || '').trim();
   let m = x.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
@@ -65,7 +70,11 @@ function tripFromSegments(segs, fb) {
   if (!route && depart && arrivee) route = `${depart} → ${arrivee}`;
   const vol = segs.length > 1 ? segs.map((s) => s.vol).filter(Boolean).join(' + ') : ((segs[0] && segs[0].vol) || up(fb.vol) || '');
   const date = (segs[0] && segs[0].date) || dateNorm(fb.date) || '';
-  return { sens: String(fb.sens || '').toLowerCase(), date, depart, arrivee, route, vol, escale: segs.length > 1, segments: segs };
+  // Transporteur EFFECTIF du trajet (code-share) : on prend l'opérateur du DERNIER segment (celui qui ARRIVE,
+  // = le vol entrant en Europe sur un retour), sinon le premier opérateur explicite rencontré. "" si aucun.
+  const operePar = (segs.length && segs[segs.length - 1].operateur)
+    || (segs.find((x) => x.operateur) || {}).operateur || '';
+  return { sens: String(fb.sens || '').toLowerCase(), date, depart, arrivee, route, vol, operePar, escale: segs.length > 1, segments: segs };
 }
 // Écart en JOURS entre deux dates "JJ/MM/AAAA" (0 si l'une n'a pas d'année → on ne coupe pas au doute).
 function _ymd(d) { const m = String(d || '').match(/^(\d{2})\/(\d{2})\/(\d{4})$/); return m ? new Date(+m[3], +m[2] - 1, +m[1]) : null; }
@@ -86,7 +95,7 @@ function groupFlatSegments(segs) {
 
 function normalize(raw) {
   raw = raw || {};
-  const normSeg = (s) => ({ vol: up(s.vol), depart: iata(s.depart), arrivee: iata(s.arrivee), date: dateNorm(s.date) });
+  const normSeg = (s) => ({ vol: up(s.vol), depart: iata(s.depart), arrivee: iata(s.arrivee), date: dateNorm(s.date), operateur: opCode(s.operateur) });
   let trajets = [];
   if (Array.isArray(raw.trajets) && raw.trajets.length) {
     trajets = raw.trajets.map((t) => {
@@ -129,6 +138,7 @@ function normalize(raw) {
   // Champs racine = trajet principal (aller, par défaut) → compat avec le tunnel existant ; + trajets[] pour aller/retour.
   return {
     vol: main.vol, compagnie: String(raw.compagnie || '').trim(), date: main.date, pnr: reference, billet, refType: pnr ? 'pnr' : (billet ? 'billet' : ''),
+    operePar: main.operePar || '', // code IATA du transporteur EFFECTIF si « opéré par » lu sur le billet (code-share), sinon ""
     depart: main.depart, arrivee: main.arrivee, route: main.route, escale: main.escale, segments: main.segments,
     allerRetour: trajets.length > 1, trajets,
     passengers, pax: passengers.length || 0,
