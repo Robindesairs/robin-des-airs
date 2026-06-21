@@ -1315,7 +1315,7 @@ async function askOcrConfirm(phone, s, cfg, mediaUrl) {
       await setState(phone, s);
       if (_mismatch) { try { notifyOwnerWhatsApp('', `⚠️ Écart de nom${s.ref ? ' [' + s.ref + ']' : ''} : billet « ${_billet} » / passeport « ${pp.name} » — à vérifier (poste pièces).`).catch(() => {}); } catch (_) {} }
       const got = (s.passengers || []).filter((p) => p && p.idReceived).length;
-      await send(phone, `✅ Pièce de *${cur.name || pp.name}* reçue (${got}/${s.pax})${minor ? ' · 👶 mineur·e, signature parentale' : ''}${expired ? ' · ⚠️ expirée, un conseiller vérifie' : ''}.`, cfg);
+      await send(phone, L(s, `✅ ID of *${cur.name || pp.name}* received (${got}/${s.pax})${minor ? ' · 👶 minor, parental signature' : ''}${expired ? ' · ⚠️ expired, an advisor checks' : ''}.`, `✅ Pièce de *${cur.name || pp.name}* reçue (${got}/${s.pax})${minor ? ' · 👶 mineur·e, signature parentale' : ''}${expired ? ' · ⚠️ expirée, un conseiller vérifie' : ''}.`), cfg);
       return nextPassport(phone, s, cfg);
     }
     s.doc_pending = { name: pp.name || '', dob: pp.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || '', viaPhoto: true };
@@ -1335,7 +1335,7 @@ async function askOcrConfirm(phone, s, cfg, mediaUrl) {
     // OCR échoué → pièce illisible
     s.step = 'doc_pass';
     await setState(phone, s);
-    return send(phone, `😕 Je n'arrive pas à lire cette pièce (photo un peu sombre ou floue ?). Pas de souci, ça arrive 🙏 Réessayez avec une meilleure photo, ou tapez *saisir* pour entrer le nom et la date de naissance.`, cfg);
+    return send(phone, L(s, `😕 I can't read this document (photo a bit dark or blurry?). No worries, it happens 🙏 Try again with a clearer photo, or type *type* to enter the name and date of birth.`, `😕 Je n'arrive pas à lire cette pièce (photo un peu sombre ou floue ?). Pas de souci, ça arrive 🙏 Réessayez avec une meilleure photo, ou tapez *saisir* pour entrer le nom et la date de naissance.`), cfg);
   }
 }
 
@@ -1467,7 +1467,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (id === 'autre_vol' || lower === 'autre vol' || lower === 'un autre vol' || lower === 'vérifier un autre vol') { await clearState(phone); return sendAccueil(phone, cfg); }
   if (['go', 'menu', 'start', 'reprendre', 'continuer', 'suite', 'bonjour', 'hello', 'hi', 'salut'].includes(lower) || id === 'menu') {
     const cur = await getState(phone);
-    if (cur && cur.step && cur.step !== 'accueil' && cur.step !== 'done' && cur.step !== 'non_eligible') { await send(phone, `👋 Re-bonjour ! On reprend votre dossier là où vous vous étiez arrêté.`, cfg); return relancerEtape(phone, cur, cfg); }
+    if (cur && cur.step && cur.step !== 'accueil' && cur.step !== 'done' && cur.step !== 'non_eligible') { await send(phone, L(cur, `👋 Welcome back! Let's pick up your case right where you left off.`, `👋 Re-bonjour ! On reprend votre dossier là où vous vous étiez arrêté.`), cfg); return relancerEtape(phone, cur, cfg); }
     await clearState(phone); return sendAccueil(phone, cfg);
   }
 
@@ -1738,14 +1738,14 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       s.type_vol = 'direct'; await setState(phone, s);
       return sendPax(phone, s, cfg); // passagers → vérif éligibilité (vol+date déjà connus) → récap
     }
-    return sendButtons(phone, { body: `Ce vol faisait-il partie d'une *correspondance* (un autre vol juste avant ou juste après) ?`, buttons: [{ id: 'corr_direct', text: '✈️ Non, vol direct' }, { id: 'corr_escale', text: '🔄 Oui, correspondance' }] }, cfg);
+    return sendButtons(phone, { body: L(s, `Was this flight part of a *connection* (another flight just before or just after)?`, `Ce vol faisait-il partie d'une *correspondance* (un autre vol juste avant ou juste après) ?`), buttons: [{ id: 'corr_direct', text: L(s, '✈️ No, direct flight', '✈️ Non, vol direct') }, { id: 'corr_escale', text: L(s, '🔄 Yes, a connection', '🔄 Oui, correspondance') }] }, cfg);
   }
   // ── Correspondance GUIDÉE ville par ville : départ → escale(s) → arrivée finale → n° des vols ──
   // Une photo envoyée en plein milieu = le client tend son e-billet → on bascule sur le scan (il lit tout d'un coup).
   if (/^esc_/.test(s.step) && mediaUrl) { s.step = 'scan'; await setState(phone, s); return handleMessage(phone, text, cfg, mediaUrl, replyId, true); }
   if (s.step === 'esc_dep') {
     const pk = cityPick(input, id, VILLES_COURANTES);
-    if (pk && pk.autre) return send(phone, `✏️ Tapez le nom de votre ville de *départ* _(ex : Cotonou)_ :`, cfg);
+    if (pk && pk.autre) return send(phone, L(s, `✏️ Type the name of your *departure* city _(e.g. Cotonou)_:`, `✏️ Tapez le nom de votre ville de *départ* _(ex : Cotonou)_ :`), cfg);
     if (!pk) return askEscDep(phone, s, cfg);
     s.escCities = [pk.city]; await setState(phone, s);
     await send(phone, `✅ Départ : *${pk.city}*`, cfg);
@@ -1753,7 +1753,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   }
   if (s.step === 'esc_via') {
     const pk = cityPick(input, id, VILLES_HUBS);
-    if (pk && pk.autre) return send(phone, `✏️ Tapez le nom de la ville d'*escale* _(ex : Nairobi)_ :`, cfg);
+    if (pk && pk.autre) return send(phone, L(s, `✏️ Type the name of the *layover* city _(e.g. Nairobi)_:`, `✏️ Tapez le nom de la ville d'*escale* _(ex : Nairobi)_ :`), cfg);
     if (!pk) return askEscVia(phone, s, cfg, (s.escCities || []).length >= 2);
     s.escCities = s.escCities || []; s.escCities.push(pk.city);
     if (s.escCities.length >= 4) return askEscArr(phone, s, cfg, `✅ Escale : *${pk.city}*`);
@@ -1767,7 +1767,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   }
   if (s.step === 'esc_arr') {
     const pk = cityPick(input, id, VILLES_COURANTES);
-    if (pk && pk.autre) return send(phone, `✏️ Tapez le nom de votre ville d'*arrivée finale* _(ex : Toulouse)_ :`, cfg);
+    if (pk && pk.autre) return send(phone, L(s, `✏️ Type the name of your *final arrival* city _(e.g. Toulouse)_:`, `✏️ Tapez le nom de votre ville d'*arrivée finale* _(ex : Toulouse)_ :`), cfg);
     if (!pk) return askEscArr(phone, s, cfg);
     const city = pk.city;
     // Arrivée = départ → aller-retour confondu : on ne décrit que le voyage qui a eu le problème.
@@ -1918,14 +1918,14 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // ── MENU DE CORRECTION (champ par champ) ──────────────────────────────────
   if (s.step === 'correction') {
     const n = normInput(input, ['vol', 'date', 'nom', 'trajet', 'pnr']);
-    if (n === '1' || lower.includes('vol')) { s.step = 'fix_vol'; await setState(phone, s); return send(phone, `✈️ Vol actuel : *${s.vol || '—'}*\nTapez simplement le *bon numéro* 👇 _(ex. AF718)_`, cfg); }
-    if (n === '2' || lower.includes('date')) { s.step = 'fix_date'; await setState(phone, s); return send(phone, `📅 Date actuelle : *${s.date || '—'}*\nTapez simplement la *bonne date* 👇 _(JJ/MM/AAAA)_`, cfg); }
+    if (n === '1' || lower.includes('vol') || lower.includes('flight')) { s.step = 'fix_vol'; await setState(phone, s); return send(phone, L(s, `✈️ Current flight: *${s.vol || '—'}*\nJust type the *correct number* 👇 _(e.g. AF718)_`, `✈️ Vol actuel : *${s.vol || '—'}*\nTapez simplement le *bon numéro* 👇 _(ex. AF718)_`), cfg); }
+    if (n === '2' || lower.includes('date')) { s.step = 'fix_date'; await setState(phone, s); return send(phone, L(s, `📅 Current date: *${s.date || '—'}*\nJust type the *correct date* 👇 _(DD/MM/YYYY)_`, `📅 Date actuelle : *${s.date || '—'}*\nTapez simplement la *bonne date* 👇 _(JJ/MM/AAAA)_`), cfg); }
     if (n === '3' || lower.includes('nom')) {
       if (s.pax > 1) { s.step = 'fix_nom_which'; await setState(phone, s); return send(phone, L(s, `✏️ Which passenger to fix? Enter their *number* (1 to ${s.pax}).`, `✏️ Quel passager corriger ? Indiquez son *numéro* (1 à ${s.pax}).`), cfg); }
-      s.step = 'fix_nom'; await setState(phone, s); return send(phone, `👤 Nom actuel : *${(s.names && s.names[0]) || '—'}*\nTapez simplement le *bon nom complet* 👇`, cfg);
+      s.step = 'fix_nom'; await setState(phone, s); return send(phone, L(s, `👤 Current name: *${(s.names && s.names[0]) || '—'}*\nJust type the *correct full name* 👇`, `👤 Nom actuel : *${(s.names && s.names[0]) || '—'}*\nTapez simplement le *bon nom complet* 👇`), cfg);
     }
-    if (n === '4' || lower.includes('trajet') || lower.includes('route')) { s.step = 'fix_route'; await setState(phone, s); return send(phone, `🗺️ Trajet actuel : *${s.route || '—'}*\nTapez simplement le *bon trajet* 👇 _(ex. CDG → DSS)_`, cfg); }
-    if (n === '5' || lower.includes('pnr') || lower.includes('réserv') || lower.includes('reserv')) { s.step = 'fix_pnr'; await setState(phone, s); return send(phone, `🎫 PNR actuel : *${s.pnr || '—'}*\nTapez le *bon numéro de réservation* (6 caractères, lettres + chiffres) 👇, ou *passer*.`, cfg); }
+    if (n === '4' || lower.includes('trajet') || lower.includes('route')) { s.step = 'fix_route'; await setState(phone, s); return send(phone, L(s, `🗺️ Current route: *${s.route || '—'}*\nJust type the *correct route* 👇 _(e.g. CDG → DSS)_`, `🗺️ Trajet actuel : *${s.route || '—'}*\nTapez simplement le *bon trajet* 👇 _(ex. CDG → DSS)_`), cfg); }
+    if (n === '5' || lower.includes('pnr') || lower.includes('réserv') || lower.includes('reserv') || lower.includes('booking')) { s.step = 'fix_pnr'; await setState(phone, s); return send(phone, L(s, `🎫 Current PNR: *${s.pnr || '—'}*\nType the *correct booking reference* (6 characters, letters + digits) 👇, or *skip*.`, `🎫 PNR actuel : *${s.pnr || '—'}*\nTapez le *bon numéro de réservation* (6 caractères, lettres + chiffres) 👇, ou *passer*.`), cfg); }
     return goCorrection(phone, s, cfg);
   }
   if (s.step === 'fix_nom_which') {
@@ -2467,7 +2467,7 @@ async function sendAnnulDelai(phone, s, cfg) {
 // Suite après le gate annulation : reprend le flux normal (estimation → passagers),
 // ou la branche « ticker » (vol déjà prérempli par un lien du site) → question correspondance.
 async function continueAnnul(phone, s, cfg) {
-  if (s.fromTicker) { s.step = 'q_corr'; await setState(phone, s); return sendButtons(phone, { body: `Ce vol faisait-il partie d'une *correspondance* (un autre vol juste avant ou juste après) ?`, buttons: [{ id: 'corr_direct', text: '✈️ Non, vol direct' }, { id: 'corr_escale', text: '🔄 Oui, correspondance' }] }, cfg); }
+  if (s.fromTicker) { s.step = 'q_corr'; await setState(phone, s); return sendButtons(phone, { body: L(s, `Was this flight part of a *connection* (another flight just before or just after)?`, `Ce vol faisait-il partie d'une *correspondance* (un autre vol juste avant ou juste après) ?`), buttons: [{ id: 'corr_direct', text: L(s, '✈️ No, direct flight', '✈️ Non, vol direct') }, { id: 'corr_escale', text: L(s, '🔄 Yes, a connection', '🔄 Oui, correspondance') }] }, cfg); }
   return estimationPuisPax(phone, s, cfg);
 }
 async function sendPax(phone, s, cfg) {
@@ -2485,7 +2485,13 @@ async function askYear(phone, s, cfg) {
 }
 async function goCorrection(phone, s, cfg) {
   s.step = 'correction'; await setState(phone, s);
-  await sendList(phone, { header: 'Corriger', body: `✏️ Que souhaitez-vous corriger ?`, buttonText: 'Corriger ▾', items: [
+  await sendList(phone, { header: L(s, 'Fix', 'Corriger'), body: L(s, `✏️ What would you like to fix?`, `✏️ Que souhaitez-vous corriger ?`), buttonText: L(s, 'Fix ▾', 'Corriger ▾'), items: isEN(s) ? [
+    { title: '✈️ Flight', description: s.vol || '—' },
+    { title: '📅 Date', description: s.date || '—' },
+    { title: '👤 Name', description: (s.names && s.names[0]) || '—' },
+    { title: '🗺️ Route', description: s.route || '—' },
+    { title: '🎫 PNR', description: s.pnr || '—' },
+  ] : [
     { title: '✈️ Vol', description: s.vol || '—' },
     { title: '📅 Date', description: s.date || '—' },
     { title: '👤 Nom', description: (s.names && s.names[0]) || '—' },
@@ -2803,7 +2809,7 @@ async function armPiecesReminder(lead) {
 async function relancerEtape(phone, s, cfg) {
   switch (s.step) {
     case 'langue': return sendLangue(phone, s, cfg);
-    case 'q_corr': return sendButtons(phone, { body: `Ce vol faisait-il partie d'une *correspondance* (un autre vol juste avant ou juste après) ?`, buttons: [{ id: 'corr_direct', text: '✈️ Non, vol direct' }, { id: 'corr_escale', text: '🔄 Oui, correspondance' }] }, cfg);
+    case 'q_corr': return sendButtons(phone, { body: L(s, `Was this flight part of a *connection* (another flight just before or just after)?`, `Ce vol faisait-il partie d'une *correspondance* (un autre vol juste avant ou juste après) ?`), buttons: [{ id: 'corr_direct', text: L(s, '✈️ No, direct flight', '✈️ Non, vol direct') }, { id: 'corr_escale', text: L(s, '🔄 Yes, a connection', '🔄 Oui, correspondance') }] }, cfg);
     case 'route': return sendRoute(phone, s, cfg);
     case 'route_zone': return askRouteZone(phone, s, cfg);
     case 'incident': return sendIncident(phone, s, cfg);
