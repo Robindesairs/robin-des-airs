@@ -521,6 +521,46 @@ function markOperateurEffectif(s, e) {
   s.operateurNonUe = !!(s.europeTouch === 'arrivee' && eff && !isCarrierUE(eff));
   if (s.operateurNonUe) s.escalade = s.escalade || 'operateur_non_ue';
 }
+// Décide le transporteur EFFECTIF à partir de TOUTES les sources, par ordre de fiabilité décroissante :
+//   1) « opéré par » lu sur l'e-billet (le plus sûr, obligation légale d'affichage) ;
+//   2) opérateur renvoyé par AeroDataBox s'il DIFFÈRE du code marketing du n° de vol (= vrai code-share) ;
+//   3) codeshareStatus = « IsCodeshared » sans opérateur exploitable → on sait que c'est un code-share
+//      mais pas qui opère → drapeau « à vérifier » (l'humain tranche), sans rien affirmer.
+// Renvoie { effective, source, codeshareUnknown }. PURE (aucun réseau) → testable hors-ligne.
+function decideOperatingCarrier({ vol, ticketOperePar, apiCarrierIata, codeshareStatus }) {
+  const marketing = carrierCode(vol);
+  const ticket = String(ticketOperePar || '').toUpperCase().replace(/\s+/g, '');
+  if (ticket) return { effective: ticket, source: 'eticket', codeshareUnknown: false };
+  const api = String(apiCarrierIata || '').toUpperCase().replace(/\s+/g, '');
+  if (api && api !== marketing) return { effective: api, source: 'aerodatabox', codeshareUnknown: false };
+  if (String(codeshareStatus || '').toLowerCase() === 'iscodeshared') return { effective: marketing, source: 'marketing', codeshareUnknown: true };
+  return { effective: marketing || '', source: 'marketing', codeshareUnknown: false };
+}
+// Enrichit l'état via AeroDataBox UNIQUEMENT quand c'est utile et sûr : vol ENTRANT en Europe + AUCUN
+// « opéré par » lu sur le billet. Best-effort (timeout court, n'échoue jamais le tunnel). Met à jour le
+// transporteur effectif (verdict exact si l'API donne l'opérateur) ou pose `operateurAVerifier` (code-share
+// détecté, opérateur inconnu). Renvoie true si l'état a changé.
+async function enrichOperatingFromAero(s) {
+  try {
+    if (s.europeTouch !== 'arrivee' || s.operePar) return false; // pas entrant, ou déjà tranché par le billet
+    const v = String(s.vol || '').split('+').pop().trim(); // jambe qui arrive (dernier segment)
+    const ymd = toISODate(s.date);
+    if (!carrierCode(v) || !ymd) return false;
+    const res = await fetch(`https://robindesairs.eu/api/flight-info?flight=${encodeURIComponent(v)}&date=${encodeURIComponent(ymd)}`, { signal: AbortSignal.timeout(6000) });
+    if (!res.ok) return false;
+    const data = await res.json().catch(() => null);
+    const row = Array.isArray(data) ? data[0] : null;
+    if (!row) return false;
+    const d = decideOperatingCarrier({ vol: v, ticketOperePar: '', apiCarrierIata: row.airlineIata, codeshareStatus: row.codeshareStatus });
+    s.operateur_code = d.effective || s.operateur_code || '';
+    if (d.source === 'aerodatabox' && d.effective && !isCarrierUE(d.effective)) {
+      s.operateurNonUe = true; s.operateurAVerifier = false; s.escalade = s.escalade || 'operateur_non_ue';
+    } else if (d.codeshareUnknown) {
+      s.operateurAVerifier = true; s.escalade = s.escalade || 'codeshare_a_verifier';
+    } else return false;
+    return true;
+  } catch (_) { return false; }
+}
 // Trajet compact : départ → destination FINALE, sans les escales (« Dakar → Casa → Paris » → « Dakar → Paris »).
 // Gère l'aller-retour (départ = arrivée) en prenant la dernière ville DISTINCTE de l'origine.
 function routeShort(route) {
@@ -1002,6 +1042,7 @@ function applyTrajet(s, t) {
 }
 // Carte de confirmation du scan (affiche le nb de pages lues + invite à en envoyer d'autres).
 async function scanConfirmCard(phone, s, cfg) {
+  await enrichOperatingFromAero(s); // vol entrant sans « opéré par » sur le billet → on interroge AeroDataBox (best-effort)
   const pages = (s.scan_pages || []).length;
   const noms = (s.names || []).filter(Boolean);
   const paxLine = !noms.length ? `\n_(votre identité sera lue sur le passeport, plus tard)_`
@@ -1015,7 +1056,11 @@ async function scanConfirmCard(phone, s, cfg) {
   // Code-share détecté sur un vol ENTRANT en Europe opéré par une compagnie hors-UE : le CE261 ne s'applique
   // pas automatiquement → on prévient sans fermer le dossier (un expert vérifie un autre recours).
   const opName = (s.operateur_code && AIRLINES[s.operateur_code]) || s.compagnie || 'une compagnie hors-UE';
-  const opNote = s.operateurNonUe ? `\n\nℹ️ Vol *opéré par ${opName}* (compagnie hors-UE) à l'arrivée en Europe : l'indemnisation européenne ne s'applique pas *automatiquement*. Un expert vérifie *gratuitement* un autre recours — *on garde votre dossier dans tous les cas*. 🤝` : '';
+  const opNote = s.operateurNonUe
+    ? `\n\nℹ️ Vol *opéré par ${opName}* (compagnie hors-UE) à l'arrivée en Europe : l'indemnisation européenne ne s'applique pas *automatiquement*. Un expert vérifie *gratuitement* un autre recours — *on garde votre dossier dans tous les cas*. 🤝`
+    : s.operateurAVerifier
+      ? `\n\nℹ️ Ce vol à l'arrivée en Europe est un *vol en partage de code* (code-share). Un expert vérifie *gratuitement* quelle compagnie l'opère réellement, pour confirmer vos droits — *on garde votre dossier dans tous les cas*. 🤝`
+      : '';
   return sendButtons(phone, { body: `${header}${pageLine}\n\n✈️ Vol : ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 Date : ${s.date ? `${s.date}${isValidStoredDate(s.date) ? ` (${dateEnLettres(s.date)})` : ''}` : '—'}\n🎫 PNR : ${s.pnr || '—'}\n🗺️ Trajet : ${s.route || '—'}${paxLine}${opNote}\n\n_E-billet en plusieurs pages ? Envoyez-les, je complète._\nTout est correct ?`, buttons: [{ text: '✅ Oui' }, { text: '✏️ Corriger' }] }, cfg);
 }
 // Aller-retour détecté → on demande quel vol a été perturbé (l'e-billet ne dit pas ce qui a foiré).

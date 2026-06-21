@@ -111,6 +111,11 @@ function mapAdbRow(row) {
     distance: distance != null ? distance : undefined,
     status: status ? String(status) : '',
     airline: row.airline?.name || row.airline?.iata || row.operator || '',
+    // Transporteur EFFECTIF (code-share) : AeroDataBox donne le code IATA de la compagnie du vol PHYSIQUE
+    // et un codeshareStatus (« IsOperator » / « IsCodeshared » / « Unknown »). Sert à détecter un vol
+    // entrant opéré par une compagnie hors-UE même quand l'e-billet n'écrit pas « opéré par ».
+    airlineIata: String(row.airline?.iata || '').toUpperCase().replace(/\s/g, '').slice(0, 3),
+    codeshareStatus: String(row.codeshareStatus || '').trim(),
   };
 }
 
