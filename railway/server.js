@@ -475,9 +475,9 @@ async function isDuplicateMessage(id, hasId, windowMs) {
 // Réf = jeton aléatoire (crypto) non énumérable : agit comme "lien magique" pour /api/dossier (données perso).
 function genRef() {
   const d = new Date().toISOString().slice(0, 10).replace(/-/g, '');
-  // Réf COURTE pour le client mais INDEVINABLE : 5 octets de hasard (~40 bits) → 8 caractères base36.
-  // (Le lien mandat.html?r=REF ouvre le dossier sans mot de passe → la réf doit rester non énumérable.)
-  const rand = crypto.randomBytes(5).readUIntBE(0, 5).toString(36).toUpperCase().padStart(8, '0');
+  // Réf INDEVINABLE : 16 octets de hasard (128 bits) en base36. Le lien mandat.html?r=REF ouvre le
+  // dossier (données perso) sans mot de passe → la réf doit être impossible à énumérer ou bruteforcer.
+  const rand = BigInt('0x' + crypto.randomBytes(16).toString('hex')).toString(36).toUpperCase();
   return `RDA-${d}-${rand}`;
 }
 function normInput(raw, options) { const t = (raw || '').trim().toLowerCase(); if (/^\d+$/.test(t)) return t; const i = options.findIndex(o => t.includes(o.toLowerCase())); return i >= 0 ? String(i + 1) : t; }
@@ -1405,6 +1405,15 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   try {
     const { isClientQuestion, isSensitive, answerClientQuestion } = AI;
     const FREE = ['m_vol', 'm_date', 'm_route', 'm_route_choice', 'm_dep', 'm_arr', 'm_stop_arr', 'm_pnr', 'leg_count', 'leg_input', 'esc_dep', 'esc_via', 'esc_arr', 'esc_vol', 'names', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob', 'doc_adresse'];
+    // Filet « client paumé » : phrases de blocage/aide qui ne sont JAMAIS une réponse d'étape
+    // valide → on ne re-pose pas bêtement l'étape, on propose Reprendre / Recommencer / Humain.
+    const stuckNorm = lower.normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const looksStuck = !id && /\b(compren|compris|bloqu|perdu|aide|help|au secours|marche pas|fonctionne pas|arrive pas|c.?est quoi|comment (ca|on|je)|refaire|depuis le debut|recommenc)/.test(stuckNorm);
+    const enTunnel = s.step && !['accueil', 'langue', 'done', 'non_eligible'].includes(s.step);
+    if (looksStuck && !isSensitive(input)) {
+      await sendButtons(phone, { body: `🙂 Pas de souci, je suis là. On reprend où vous en étiez, on recommence à zéro, ou un conseiller vous rappelle. 👇`, buttons: enTunnel ? [{ id: 'menu', text: '▶️ Reprendre' }, { text: '🔄 Recommencer' }, { id: 'appel', text: '📞 Être rappelé' }] : [{ text: '📋 Démarrer' }, { id: 'appel', text: '📞 Être rappelé' }] }, cfg);
+      return;
+    }
     // Une intention claire « parler à un humain / être contacté / rappel » est analysée PARTOUT
     // (même en plein tunnel et sans « ? ») → on ne redemande pas bêtement l'étape en cours.
     const looks = !id && (isSensitive(input) || (FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input)));
