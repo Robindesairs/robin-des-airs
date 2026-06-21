@@ -343,6 +343,14 @@ function matchLang(input) {
 // n'est pas traduit, il reste en français — la bascule se fait message par message, sans tout réécrire.
 function isEN(s) { return !!(s && s.langue_code === 'en'); }
 function L(s, en, fr) { return isEN(s) ? en : fr; }
+// Détection de langue au 1er contact (haute précision : ne renvoie 'en' QUE sur des mots sans ambiguïté,
+// absents du français → un francophone n'est JAMAIS détecté anglophone par erreur). '' = français par défaut.
+// Sert quand le client vient du site anglais (message pré-rempli EN) ou écrit en anglais.
+function detectLang(text) {
+  const t = String(text || '').toLowerCase();
+  if (/\b(hello|my flight|delayed|cancell?ed|compensation|boarding|denied|refund|i want to|i had a|claim my|start my claim)\b/.test(t)) return 'en';
+  return '';
+}
 // Variante : choisit une variante de ton FR (pickVariant) en français, mais renvoie un texte EN fixe en anglais.
 function LV(s, phone, key, en) { return isEN(s) ? en : pickVariant(phone, key); }
 
@@ -1470,7 +1478,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (['go', 'menu', 'start', 'reprendre', 'continuer', 'suite', 'bonjour', 'hello', 'hi', 'salut'].includes(lower) || id === 'menu') {
     const cur = await getState(phone);
     if (cur && cur.step && cur.step !== 'accueil' && cur.step !== 'done' && cur.step !== 'non_eligible') { await send(phone, L(cur, `👋 Welcome back! Let's pick up your case right where you left off.`, `👋 Re-bonjour ! On reprend votre dossier là où vous vous étiez arrêté.`), cfg); return relancerEtape(phone, cur, cfg); }
-    await clearState(phone); return sendAccueil(phone, cfg);
+    await clearState(phone); return sendAccueil(phone, cfg, (lower === 'hello' || lower === 'hi') ? 'en' : detectLang(input));
   }
 
   let s = await getState(phone);
@@ -1623,13 +1631,21 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   } catch (e) {}
 
   // ACCUEIL (MSG1)
-  if (s.step === 'accueil' || !s.step) return sendAccueil(phone, cfg);
+  if (s.step === 'accueil' || !s.step) return sendAccueil(phone, cfg, detectLang(input));
 
   // Bouton MSG1 « Vérifier mon indemnité » / « Commencer / Démarrer »
   if (s.step === 'go_langue') { return sendLangue(phone, s, cfg); }
 
   // MSG2 — LANGUE
   if (s.step === 'langue') {
+    // Anglais DÉJÀ détecté au 1er contact (visiteur du site anglais) ET l'entrée n'est pas une sélection
+    // de langue explicite → on SAUTE le menu et on démarre directement en anglais. (Le client peut quand
+    // même choisir une autre langue : matchLang/ri attrapent alors la sélection et on passe outre ce saut.)
+    if (s.langue_code === 'en' && listRowIdx(id) < 0 && !matchLang(input)) {
+      s.langue = '🇬🇧 English'; await setState(phone, s);
+      await send(phone, `Perfect — I'll assist you in English. 🇬🇧\nLet's check what compensation you may be owed, *up to €600 per passenger*. 👇`, cfg);
+      return askRouteZone(phone, s, cfg);
+    }
     // Matching par ID WATI liste ("0-N") si disponible, sinon par texte/flag
     const ri = listRowIdx(id);
     const langArr = Object.values(LANGS);
@@ -2423,10 +2439,15 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
 }
 
 // ─── Émetteurs d'écran ───────────────────────────────────────────────────────
-async function sendAccueil(phone, cfg) {
-  await sendButtons(phone, { body: `${bar('accueil')}\n👋 Bienvenue chez *Robin des Airs* 🏹\n_Je suis l'assistant Robin des Airs, je vous accompagne pas à pas._\n\n${pickVariant(phone, 'ACCUEIL_EMPATHIE')}\n\nNous, c'est notre métier : on défend les passagers des vols Afrique ↔ Europe.\n\n✈️ La loi CE 261/2004 vous donne droit à une indemnité pouvant aller *jusqu'à 600 € par personne*.\n\n*0 € si on ne gagne pas.* Aucun risque pour vous.\n\nVoyons ensemble si une indemnité vous revient. 👇`, footer: 'CE 261/2004', buttons: [{ text: '🚀 Mon indemnité' }] }, cfg);
-  // _sid = session ID unique par parcours (timestamp base36) — isole le dedup step+contenu
-  await setState(phone, { step: 'langue', phone, _sid: Date.now().toString(36) });
+async function sendAccueil(phone, cfg, lang) {
+  const en = lang === 'en';
+  await sendButtons(phone, { body: en
+    ? `${bar('accueil')}\n👋 Welcome to *Robin des Airs* 🏹\n_I'm the Robin des Airs assistant, I'll guide you step by step._\n\nDefending passengers on Africa ↔ Europe flights is what we do.\n\n✈️ EU law EC 261/2004 entitles you to compensation of *up to €600 per person*.\n\n*€0 if we don't win.* No risk for you.\n\nLet's see together what you may be owed. 👇`
+    : `${bar('accueil')}\n👋 Bienvenue chez *Robin des Airs* 🏹\n_Je suis l'assistant Robin des Airs, je vous accompagne pas à pas._\n\n${pickVariant(phone, 'ACCUEIL_EMPATHIE')}\n\nNous, c'est notre métier : on défend les passagers des vols Afrique ↔ Europe.\n\n✈️ La loi CE 261/2004 vous donne droit à une indemnité pouvant aller *jusqu'à 600 € par personne*.\n\n*0 € si on ne gagne pas.* Aucun risque pour vous.\n\nVoyons ensemble si une indemnité vous revient. 👇`,
+    footer: 'CE 261/2004', buttons: [{ text: en ? '🚀 My compensation' : '🚀 Mon indemnité' }] }, cfg);
+  // _sid = session ID unique par parcours (timestamp base36) — isole le dedup step+contenu.
+  // langue_code mémorisé si détecté (site anglais) → le menu langue sera sauté à l'étape suivante.
+  await setState(phone, { step: 'langue', phone, langue_code: en ? 'en' : '', _sid: Date.now().toString(36) });
 }
 async function sendLangue(phone, s, cfg) {
   s.step = 'langue'; await setState(phone, s);
