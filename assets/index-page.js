@@ -755,7 +755,7 @@ function openShortWhatsApp() {
   var body = String(vol).trim();
   var msg;
   if (!body) {
-    msg = get('wa_eligibility_prefill') || 'Bonjour Robin ! Je veux vérifier si mon vol est éligible.\nNuméro de vol :\nDate :';
+    msg = get('wa_eligibility_prefill') || 'Bonjour Robin ! Je veux vérifier si mon vol est éligible.';
   } else {
     var tpl = get('short_submit_wa_template');
     if (tpl && String(tpl).indexOf('{vol}') !== -1) {
