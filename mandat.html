@@ -759,7 +759,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="success-block tint" id="sFrais">
     <div class="sb-label"><span aria-hidden="true">💶</span> Vous avez dépensé à cause du retard ?</div>
     <div class="sb-meta">Un <strong>repas</strong>, un <strong>taxi</strong>, une <strong>nuit d'hôtel</strong> payés à cause de ce vol ? Cet argent vous revient <strong>en plus</strong> de votre indemnité. <strong>Gardez vos tickets</strong> : envoyez-nous une photo, on s'occupe de tout réclamer pour vous.</div>
-    <a class="success-cta wa full" id="sFraisBtn" href="https://wa.me/33756863630" target="_blank" rel="noopener" style="margin-top:12px">Envoyer mes tickets</a>
+    <a class="success-cta wa full" id="sFraisBtn" href="/depot-en-ligne.html" target="_blank" rel="noopener" style="margin-top:12px">Envoyer mes tickets</a>
   </div>
 
   <div class="success-steps">
@@ -1769,7 +1769,7 @@ function showSuccess(payload, ok) {
   }
   // Dépenses Art. 9 : CTA WhatsApp pour envoyer les tickets (hôtel/repas/taxi…), pré-rempli avec la référence
   const fb = document.getElementById('sFraisBtn');
-  if (fb) fb.href = waBase + encodeURIComponent('Bonjour Robin des Airs, j’ai signé le mandat (réf. ' + REF + '). Je vous envoie mes tickets de dépenses (repas, taxi, hôtel) à joindre à ma réclamation.');
+  if (fb) fb.href = '/depot-en-ligne.html?r=' + encodeURIComponent(REF);
   // « Même vol » : message FORWARDABLE vers le groupe WhatsApp du voyage → acquisition de nouveaux dossiers (wa.me sans numéro = le client choisit son groupe)
   const mv = document.getElementById('sMemeVolBtn');
   if (mv) {
