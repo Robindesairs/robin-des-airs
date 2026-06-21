@@ -1513,16 +1513,23 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // T1 — menu / reset — tolérant aux fautes : accents ignorés, ponctuation retirée,
   // « recommencer » même mal tapé (recommencé / recomence / recommenc…), + mots courts.
   const resetNorm = lower.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\w\s]/g, '').trim();
-  if (['nouveau', 'new', 'reset', 'recommencer', 'annuler', 'stop'].includes(resetNorm) || resetNorm.startsWith('recommenc')) { await clearState(phone); return sendAccueil(phone, cfg); }
+  // Langue de l'accueil/reset : détectée sur le message, sinon on GARDE la langue courante du client
+  // (un « recommencer » ne doit pas refaire retomber un anglophone en français).
+  const _curLang = ((STATE.get(phone.replace(/\D/g, '')) || {}).langue_code) || '';
+  const _accLang = (lower === 'hello' || lower === 'hi') ? 'en' : (detectLang(input) || _curLang);
+  if (['nouveau', 'new', 'reset', 'recommencer', 'annuler', 'stop'].includes(resetNorm) || resetNorm.startsWith('recommenc')) { await clearState(phone); return sendAccueil(phone, cfg, _accLang); }
   // « ✈️ Vérifier un autre vol » (relance après vol non éligible) → on repart à neuf sur le tunnel.
-  if (id === 'autre_vol' || lower === 'autre vol' || lower === 'un autre vol' || lower === 'vérifier un autre vol') { await clearState(phone); return sendAccueil(phone, cfg); }
+  if (id === 'autre_vol' || lower === 'autre vol' || lower === 'un autre vol' || lower === 'vérifier un autre vol') { await clearState(phone); return sendAccueil(phone, cfg, _accLang); }
   if (['go', 'menu', 'start', 'reprendre', 'continuer', 'suite', 'bonjour', 'hello', 'hi', 'salut'].includes(lower) || id === 'menu') {
     const cur = await getState(phone);
     if (cur && cur.step && cur.step !== 'accueil' && cur.step !== 'done' && cur.step !== 'non_eligible') { await send(phone, L(cur, `👋 Welcome back! Let's pick up your case right where you left off.`, `👋 Re-bonjour ! On reprend votre dossier là où vous vous étiez arrêté.`), cfg); return relancerEtape(phone, cur, cfg); }
-    await clearState(phone); return sendAccueil(phone, cfg, (lower === 'hello' || lower === 'hi') ? 'en' : detectLang(input));
+    await clearState(phone); return sendAccueil(phone, cfg, _accLang);
   }
 
   let s = await getState(phone);
+  // Anglais COLLANT : tout message clairement anglais bascule (et garde) le client en EN → la couche de
+  // traduction prend alors le relais sur tous les messages restés codés en français en dur.
+  if (!isEN(s) && detectLang(input) === 'en') { s.langue_code = 'en'; s.langue = '🇬🇧 English'; await setState(phone, s); }
 
   // Archive durable de TOUTE pièce envoyée (image/PDF) → Blobs, best-effort, ne bloque pas le flux.
   // Clé par téléphone (la réf n'existe pas encore en collecte) ; la récupération résout réf→tel.
@@ -1672,7 +1679,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   } catch (e) {}
 
   // ACCUEIL (MSG1)
-  if (s.step === 'accueil' || !s.step) return sendAccueil(phone, cfg, detectLang(input));
+  if (s.step === 'accueil' || !s.step) return sendAccueil(phone, cfg, _accLang);
 
   // Bouton MSG1 « Vérifier mon indemnité » / « Commencer / Démarrer »
   if (s.step === 'go_langue') { return sendLangue(phone, s, cfg); }
