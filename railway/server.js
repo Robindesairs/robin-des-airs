@@ -504,9 +504,24 @@ function carrierCode(vol) {
   const m3 = v.match(/^([0-9A-Z]{3})\d/); if (m3 && AIRLINES[m3[1]]) return m3[1];
   const m2 = v.match(/^([0-9A-Z]{2})\d/); return m2 ? m2[1] : '';
 }
-// Transporteur EFFECTIF : le « opéré par » (code-share) lu sur l'e-billet s'il existe, SINON le préfixe
-// du vol qui ARRIVE (dernier segment d'un retour à escale). C'est LUI qui décide de l'éligibilité entrante.
+// Tronçon PERTINENT pour l'éligibilité = celui qui touche l'Europe DANS LE BON SENS (l'entrée pour un vol
+// entrant, la sortie pour un vol sortant). On le cherche par AÉROPORT, donc l'ordre des cartes/segments
+// n'a aucune importance (cartes d'embarquement envoyées à l'envers → même résultat). Renvoie null sinon.
+function relevantLeg(segs, europeTouch) {
+  if (!Array.isArray(segs) || !segs.length) return null;
+  const dep = (l) => l.depart || l.dep, arr = (l) => l.arrivee || l.arr;
+  if (europeTouch === 'arrivee') return segs.find((l) => isEUAirport(arr(l)) && !isEUAirport(dep(l))) || null;
+  if (europeTouch === 'depart') return segs.find((l) => isEUAirport(dep(l)) && !isEUAirport(arr(l))) || null;
+  return null;
+}
+// Transporteur EFFECTIF : (1) le tronçon qui touche l'Europe — son « opéré par » code-share, sinon le préfixe
+// de SON vol (indépendant de l'ordre) ; (2) à défaut de segments, le « opéré par » global ; (3) sinon le
+// préfixe du dernier vol. C'est LUI qui décide de l'éligibilité entrante et du destinataire de la réclamation.
 function effectiveCarrier(s, e) {
+  const segs = (e && Array.isArray(e.segments) && e.segments.length) ? e.segments
+    : (s && Array.isArray(s.legs) && s.legs.length) ? s.legs : null;
+  const rl = relevantLeg(segs, s && s.europeTouch);
+  if (rl) { const op = (rl.operateur || carrierCode(rl.vol) || '').toUpperCase(); if (op) return op; }
   const op = (e && e.operePar) || (s && s.operePar) || '';
   if (op) return op.toUpperCase();
   const vol = (e && e.vol) || (s && s.vol) || '';
@@ -985,7 +1000,7 @@ function applyEticket(s, e) {
   if (e.pnr && !s.pnr) s.pnr = e.pnr;
   if (e.route && !s.route) s.route = humanizeRoute(e.route);
   if (e.escale && !s.type_vol) s.type_vol = 'escale';
-  if (e.segments && e.segments.length > 1 && !(s.legs && s.legs.length)) s.legs = e.segments.map((x) => ({ vol: x.vol, dep: x.depart, arr: x.arrivee, date: x.date || '' }));
+  if (e.segments && e.segments.length > 1 && !(s.legs && s.legs.length)) s.legs = e.segments.map((x) => ({ vol: x.vol, dep: x.depart, arr: x.arrivee, date: x.date || '', operateur: x.operateur || '' }));
   if (e.passengers && e.passengers.length) {
     s.names = s.names || []; s.passengers = s.passengers || [];
     e.passengers.forEach((p, i) => {
@@ -1011,7 +1026,7 @@ function setEticketFields(s, e) {
   if (e.pnr) s.pnr = e.pnr;
   if (e.route) s.route = humanizeRoute(e.route);
   if (e.escale) s.type_vol = s.type_vol || 'escale';
-  if (e.segments && e.segments.length > 1) s.legs = e.segments.map((x) => ({ vol: x.vol, dep: x.depart, arr: x.arrivee, date: x.date || '' }));
+  if (e.segments && e.segments.length > 1) s.legs = e.segments.map((x) => ({ vol: x.vol, dep: x.depart, arr: x.arrivee, date: x.date || '', operateur: x.operateur || '' }));
   if (e.passengers && e.passengers.length) {
     s.names = s.names || []; s.passengers = s.passengers || [];
     e.passengers.forEach((p, i) => {
@@ -1036,7 +1051,7 @@ function applyTrajet(s, t) {
   if (t.date) s.date = t.date;
   if (t.route) s.route = humanizeRoute(t.route);
   s.type_vol = t.escale ? 'escale' : 'direct';
-  if (t.segments && t.segments.length > 1) s.legs = t.segments.map((x) => ({ vol: x.vol, dep: x.depart, arr: x.arrivee, date: x.date || '' }));
+  if (t.segments && t.segments.length > 1) s.legs = t.segments.map((x) => ({ vol: x.vol, dep: x.depart, arr: x.arrivee, date: x.date || '', operateur: x.operateur || '' }));
   else delete s.legs;
   // Aller-retour : l'éligibilité dépend du SENS de la jambe choisie. On (re)dérive europeTouch de CETTE
   // jambe (l'aller part d'Europe → couvert ; le retour arrive en Europe → dépend du transporteur effectif),
@@ -1046,7 +1061,7 @@ function applyTrajet(s, t) {
   const arr = (t.segments && t.segments.length ? t.segments[t.segments.length - 1].arrivee : '') || '';
   if (isEUAirport(arr) && !isEUAirport(dep)) s.europeTouch = 'arrivee';
   else if (isEUAirport(dep) && !isEUAirport(arr)) s.europeTouch = 'depart';
-  markOperateurEffectif(s, { vol: s.vol, operePar: s.operePar });
+  markOperateurEffectif(s, { vol: s.vol, operePar: s.operePar, segments: t.segments });
 }
 // Carte de confirmation du scan (affiche le nb de pages lues + invite à en envoyer d'autres).
 async function scanConfirmCard(phone, s, cfg) {
@@ -1800,6 +1815,18 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
           d = { ...d, passengers: [] }; // noms déjà fusionnés → setEticketFields n'y touche plus
         }
         setEticketFields(s, d); s.travelProof = (d.passengers && d.passengers.length) ? 'ebooking' : (s.travelProof || (d._carte ? 'carte' : 'scan'));
+        // Voyage INCOMPLET : le client a indiqué que son trajet touche l'Europe, mais aucun vol lu ne touche
+        // un aéroport européen → il manque le tronçon vers/depuis l'Europe (2e carte perdue, e-billet partiel).
+        // On ne fige PAS un verdict sur un voyage tronqué (compagnie débitrice = celle du vol d'entrée en UE).
+        const legsNow = (s.legs && s.legs.length) ? s.legs.map((l) => ({ dep: l.dep, arr: l.arr }))
+          : (d.depart && d.arrivee) ? [{ dep: d.depart, arr: d.arrivee }] : [];
+        const attendEurope = s.route_type === 'af_eu' || s.europeTouch === 'arrivee' || s.europeTouch === 'depart';
+        const toucheEurope = legsNow.some((l) => isEUAirport(l.dep) || isEUAirport(l.arr));
+        if (attendEurope && legsNow.length && !toucheEurope) {
+          s.escalade = s.escalade || 'troncon_europe_manquant'; s.step = 'scan'; await setState(phone, s);
+          const r = humanizeRoute(d.route) || `${d.depart || '?'} → ${d.arrivee || '?'}`;
+          return sendButtons(phone, { body: `⚠️ Ce vol *${r}* ne touche pas l'Europe — il manque le vol qui vous a *ramené(e) en Europe* (la correspondance).\n\nC'est *ce vol-là* qui ouvre vos droits et désigne la compagnie à réclamer. 📎 Envoyez la *2ᵉ carte d'embarquement* — ou mieux, votre *e-billet* (il contient tous les vols).\n\n_Carte perdue ? Pas de souci, on le fait à la main._`, buttons: [{ id: 'scan_manuel', text: '✏️ Saisir le vol Europe' }] }, cfg);
+        }
         if (d.allerRetour && d.trajets && d.trajets.length > 1) { s.trajets = d.trajets; await setState(phone, s); return askSens(phone, s, cfg); }
         s.step = 'scan_confirm'; await setState(phone, s); return scanConfirmCard(phone, s, cfg);
       }
