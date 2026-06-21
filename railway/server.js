@@ -1012,7 +1012,7 @@ function applyEticket(s, e) {
   if (e.date && !s.date) s.date = e.date;
   if (e.pnr && !s.pnr) s.pnr = e.pnr;
   if (e.route && !s.route) s.route = humanizeRoute(e.route);
-  if (e.escale && !s.type_vol) s.type_vol = 'escale';
+  if (e.escale || (e.segments && e.segments.length > 1)) s.type_vol = 'escale'; // OCR fait foi : 2+ vols lus = correspondance → écrase un « vol sec » déclaré par erreur
   if (e.segments && e.segments.length > 1 && !(s.legs && s.legs.length)) s.legs = e.segments.map((x) => ({ vol: x.vol, dep: x.depart, arr: x.arrivee, date: x.date || '', operateur: x.operateur || '' }));
   if (e.passengers && e.passengers.length) {
     s.names = s.names || []; s.passengers = s.passengers || [];
@@ -1038,7 +1038,7 @@ function setEticketFields(s, e) {
   if (e.date) s.date = e.date;
   if (e.pnr) s.pnr = e.pnr;
   if (e.route) s.route = humanizeRoute(e.route);
-  if (e.escale) s.type_vol = s.type_vol || 'escale';
+  if (e.escale || (e.segments && e.segments.length > 1)) s.type_vol = 'escale'; // OCR fait foi : 2+ vols lus = correspondance → écrase un « vol sec » déclaré par erreur (l'aller-retour est recadré ensuite par applyTrajet)
   if (e.segments && e.segments.length > 1) s.legs = e.segments.map((x) => ({ vol: x.vol, dep: x.depart, arr: x.arrivee, date: x.date || '', operateur: x.operateur || '' }));
   if (e.passengers && e.passengers.length) {
     s.names = s.names || []; s.passengers = s.passengers || [];
@@ -1483,6 +1483,14 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     let _pax = '';
     if (_kind === 'identite') { try { const idx = missingIdIndices(s)[0]; _pax = paxName(s, idx == null ? 0 : idx); } catch (_) {} }
     archivePiece(phone, _kind, mediaUrl, cfg, _pax).catch(() => {});
+    // La carte/billet DIT TOUJOURS VRAI : une photo envoyée à une étape qui n'attend PAS de document précis
+    // (choix direct/escale, route, incident, récap, correction, non-éligible…) est TOUJOURS traitée comme un
+    // document de vol → OCR. On exclut les étapes qui consomment déjà une photo : scan*, pièces doc_*,
+    // correspondance guidée esc_/m_, reçus de frais, justificatif post-signature (done). s.pax requis = déjà dans le tunnel.
+    const MEDIA_OWN_STEP = /^(scan|doc_|esc_|m_)/;
+    if (s.pax && s.step && !MEDIA_OWN_STEP.test(s.step) && !['done', 'frais'].includes(s.step)) {
+      s.step = 'scan'; await setState(phone, s); return handleMessage(phone, text, cfg, mediaUrl, replyId, true);
+    }
   }
 
   // T1.2 — Demande de rappel humain : à tout moment (hors étapes documents qui ont leur propre "appel"),
@@ -2656,20 +2664,22 @@ async function nextPassport(phone, s, cfg) {
   s.step = 'doc_pass'; await setState(phone, s);
   // Intro au 1er passager : on RAPPELLE d'abord ce que le client touche (le chiffre rassure et justifie
   // l'effort), PUIS on demande la pièce d'identité — qui ne sert qu'à réclamer en son nom auprès de la compagnie.
-  const intro = s.doc_idx === 0 ? `✅ *On y est presque* — plus qu'une étape avant de lancer votre réclamation.\n${montantLine(s)}\n\n` : '';
+  const intro = s.doc_idx === 0 ? L(s, `✅ *Almost there* — one last step before we file your claim.\n${montantLine(s)}\n\n`, `✅ *On y est presque* — plus qu'une étape avant de lancer votre réclamation.\n${montantLine(s)}\n\n`) : '';
   // En-tête : passagers déjà traités (✅) ou reportés (⏳) — nom affiché s'il est connu (e-billet / pièce lue)
   let done = '';
   for (let i = 0; i < s.doc_idx; i++) {
     const p = (s.passengers && s.passengers[i]) || {};
-    const nm = p.name || (s.names && s.names[i]) || `Passager ${i + 1}`;
-    done += p.idReceived ? `✅ ${i + 1}. ${nm}\n` : `⏳ ${i + 1}. ${nm} — _pièce à envoyer_\n`;
+    const nm = p.name || (s.names && s.names[i]) || L(s, `Passenger ${i + 1}`, `Passager ${i + 1}`);
+    done += p.idReceived ? `✅ ${i + 1}. ${nm}\n` : L(s, `⏳ ${i + 1}. ${nm} — _ID to send_\n`, `⏳ ${i + 1}. ${nm} — _pièce à envoyer_\n`);
   }
   const header = done ? `${done}\n` : '';
   // Nom du passager courant : connu seulement si e-billet scanné (sinon lu sur la pièce). Conditionnel.
   const curName = (s.passengers && s.passengers[s.doc_idx] && s.passengers[s.doc_idx].name) || (s.names && s.names[s.doc_idx]) || '';
   const who = curName ? ` — *${curName}*` : '';
-  const passLine = s.pax > 1 ? `🛂 *Passager ${s.doc_idx + 1} sur ${s.pax}*${who}\n` : `🛂 *Pièce d'identité*${who}\n`;
-  return sendButtons(phone, { body: `${bar('documents')}\n${intro}${header}${passLine}📸 Pour réclamer auprès de la compagnie, il faut *prouver l'identité du passager*. Envoyez une *photo* de sa pièce — *passeport, carte d'identité ou carte de séjour*.\nOn lit seulement le *nom* et la *date de naissance* pour remplir le dossier.\n_ℹ️ Lecture par un outil automatique (IA) ; pièce conservée dans votre dossier et utilisée *uniquement pour votre réclamation*, jamais à d'autres fins — robindesairs.eu/politique-confidentialite._`, buttons: [{ id: 'doc_photo', text: '📸 Envoyer ma photo' }, ...(curName ? [] : [{ id: 'doc_saisir', text: '✍️ Saisir à la main' }]), { id: 'doc_passer', text: '⏭️ Je l\'envoie après' }] }, cfg);
+  const passLine = s.pax > 1 ? L(s, `🛂 *Passenger ${s.doc_idx + 1} of ${s.pax}*${who}\n`, `🛂 *Passager ${s.doc_idx + 1} sur ${s.pax}*${who}\n`) : L(s, `🛂 *ID document*${who}\n`, `🛂 *Pièce d'identité*${who}\n`);
+  return sendButtons(phone, { body: L(s,
+    `${bar('documents')}\n${intro}${header}${passLine}📸 To claim from the airline, we must *prove the passenger's identity*. Send a *photo* of their ID — *passport, national ID or residence permit*.\nWe only read the *name* and *date of birth* to fill the file.\n_ℹ️ Read by an automated tool (AI); the document is kept in your file and used *only for your claim*, never for anything else — robindesairs.eu/politique-confidentialite._`,
+    `${bar('documents')}\n${intro}${header}${passLine}📸 Pour réclamer auprès de la compagnie, il faut *prouver l'identité du passager*. Envoyez une *photo* de sa pièce — *passeport, carte d'identité ou carte de séjour*.\nOn lit seulement le *nom* et la *date de naissance* pour remplir le dossier.\n_ℹ️ Lecture par un outil automatique (IA) ; pièce conservée dans votre dossier et utilisée *uniquement pour votre réclamation*, jamais à d'autres fins — robindesairs.eu/politique-confidentialite._`), buttons: [{ id: 'doc_photo', text: L(s, '📸 Send my photo', '📸 Envoyer ma photo') }, ...(curName ? [] : [{ id: 'doc_saisir', text: L(s, '✍️ Type it in', '✍️ Saisir à la main') }]), { id: 'doc_passer', text: L(s, '⏭️ I\'ll send it later', '⏭️ Je l\'envoie après') }] }, cfg);
 }
 async function askMandant(phone, s, cfg) {
   // 1 seul passager → c'est forcément lui le contact, pas de question → adresse puis finalisation.
@@ -2677,7 +2687,7 @@ async function askMandant(phone, s, cfg) {
   s.step = 'doc_mandant'; await setState(phone, s);
   const names = Array.from({ length: s.pax }, (_, i) => paxName(s, i)); // résout passengers[i].name → s.names[i] (e-billet) → « Passager i » : affiche le vrai nom quand on l'a
   // On ne demande PAS « qui signe » (tout le monde signe son mandat) — juste à qui est ce WhatsApp (le contact du dossier).
-  await send(phone, `✅ Pièces collectées ! Une dernière chose.\n\n📱 *À qui appartient ce numéro WhatsApp ?*\n_(la personne qui suit le dossier — chaque passager signera son propre mandat, peu importe lequel.)_`, cfg);
+  await send(phone, L(s, `✅ Documents collected! One last thing.\n\n📱 *Whose WhatsApp number is this?*\n_(the person following the case — each passenger signs their own authority form, whichever it is.)_`, `✅ Pièces collectées ! Une dernière chose.\n\n📱 *À qui appartient ce numéro WhatsApp ?*\n_(la personne qui suit le dossier — chaque passager signera son propre mandat, peu importe lequel.)_`), cfg);
   if (names.length <= 3) {
     return sendButtons(phone, names.map((nm, i) => ({ id: `mdt_${i}`, text: clip(nm, 20) })), cfg);
   }
@@ -2704,14 +2714,16 @@ async function finaliser(phone, s, cfg) {
   s.minorsCount = pax.filter(p => p && p.minor).length;
   s.ref = genRef(); s.mandat_url = buildMandatUrl(s, phone); s.step = 'done'; await setState(phone, s);
   const st = docsStatus(s); // titre HONNÊTE : « Dossier complet » seulement si toutes les pièces sont là (sinon le msg suivant se contredisait)
-  const titre = st.complete ? '✅ *Dossier complet !*' : '✅ *Récapitulatif enregistré*';
+  const titre = st.complete ? L(s, '✅ *Your file is complete!*', '✅ *Dossier complet !*') : L(s, '✅ *Summary saved*', '✅ *Récapitulatif enregistré*');
   const docsNote = st.complete ? '' : `\n\n${missingDocsText(s)}`;
   // Lead à relancer tant que le mandat n'est pas signé (nudge 2h/8h/22h dans la fenêtre 24h)
   upsertLead(phone, { ref: s.ref, mandatUrl: s.mandat_url, mandatSentAt: Date.now(), lastClientAt: Date.now(), pax: s.pax || 1, name: firstNameOf(s), perPax: s.perPax, flightVerdict: s.flightVerdict || '', signed: false, completed: true, nudges: [] });
-  const minorNote = s.minorsCount ? `\n👶 ${s.minorsCount} mineur·s : signature d'un parent/tuteur requise (un expert vous guide).` : '';
+  const minorNote = s.minorsCount ? L(s, `\n👶 ${s.minorsCount} minor(s): a parent/guardian's signature is required (an expert guides you).`, `\n👶 ${s.minorsCount} mineur·s : signature d'un parent/tuteur requise (un expert vous guide).`) : '';
   // Message 1 — le récap (sans le lien). Message 2 — le lien SEUL, court, qui ne se replie
   // jamais derrière « Lire la suite » sur mobile et déclenche l'aperçu cliquable WhatsApp.
-  await send(phone, `${bar('done')}\n${titre} Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % au succès uniquement · aucune info bancaire.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_`, cfg);
+  await send(phone, L(s,
+    `${bar('done')}\n${titre} Ref. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nLast step: *your signature* (2 min).\n✅ €0 upfront — 25% on success only · no bank details.\n_Your data is used only for your claim, never sold. Privacy & T&Cs: robindesairs.eu/cgv_`,
+    `${bar('done')}\n${titre} Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${s.incident_libelle || '—'}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % au succès uniquement · aucune info bancaire.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_`), cfg);
   await send(phone, `👉 *Signez ici* (2 min) :\n${s.mandat_url}\n\nSans votre signature, on ne peut pas agir en votre nom. ${STOP_FOOTER}`, cfg);
   // CRM : la fiche Airtable est désormais créée par la synchro DIRECTE (storeDossierDurable →
   // /api/dossier-store → syncNewDossierToAirtable, statut « Signature en attente »). Le webhook
