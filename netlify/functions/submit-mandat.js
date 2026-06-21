@@ -135,6 +135,8 @@ async function patchAirtableSigned(record) {
   const incidentLabel = INCIDENT_AT[record.incident] || record.incident || '';
   const remarquesExtra = [
     signedNote,
+    record.contactPhone ? `📞 RAPPEL: ${record.contactPhone}` : '',
+    record.contactEmail ? `✉️ Email perso: ${record.contactEmail}` : '',
     addr ? `Adresse: ${addr}` : '',
     record.email ? `Email: ${record.email}` : '',
     (record.passengerNames && record.passengerNames.length) ? `Passagers: ${record.passengerNames.join(', ')}` : '',
@@ -319,6 +321,8 @@ function buildTeamMandatEmailContent(record) {
     ['Signé le', record.signed_at || '—'],
     ['Passager', name],
     ['WhatsApp', record.whatsapp || '—'],
+    ['📞 Numéro de rappel', record.contactPhone || record.whatsapp || '—'],
+    ['Email perso', record.contactEmail || '—'],
     ['Email client', record.email || '—'],
     ['Adresse', record.address || '—'],
     ['Vol', record.flightNum || '—'],
@@ -623,6 +627,8 @@ exports.handler = async (event) => {
     firstName: body.firstName || '',
     lastName: body.lastName || '',
     whatsapp: phone,
+    contactPhone: (body.contactPhone || '').trim(),
+    contactEmail: (body.contactEmail || '').trim(),
     email: (body.email || '').trim() || clientEmailForRef(ref),
     address: body.address || '',
     startNow: !!body.startNow,
