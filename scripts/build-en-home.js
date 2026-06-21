@@ -202,6 +202,17 @@ function build() {
   });
   html = r2.html;
 
+  // --- WhatsApp : texte pré-rempli FR → EN ---------------------------------
+  // Le bot détecte la langue sur le 1er message. En servant un texte ANGLAIS depuis /en, le bot démarre
+  // directement en anglais (mots "Hello/my flight/delayed/cancelled/compensation" reconnus côté bot).
+  const WA_PREFILL_FR_TO_EN = [
+    ['text=Bonjour%20Robin%20!%20Je%20veux%20lancer%20mon%20dossier.',
+      'text=' + encodeURIComponent('Hello Robin! I want to start my claim.')],
+    ['text=Bonjour%20Robin%20%21%20Mon%20vol%20a%20%C3%A9t%C3%A9%20retard%C3%A9%20ou%20annul%C3%A9%20%E2%80%94%20ai-je%20droit%20%C3%A0%20une%20indemnit%C3%A9%20%28jusqu%27%C3%A0%20600%20%E2%82%AC%29%20%3F%0A%E2%9C%88%EF%B8%8F%20N%C2%B0%20de%20vol%20%3A%0A%F0%9F%93%85%20Date%20%3A',
+      'text=' + encodeURIComponent('Hello Robin! My flight was delayed or cancelled — am I entitled to compensation (up to €600)?\n✈️ Flight no.:\n📅 Date:')],
+  ];
+  for (const [fr, en] of WA_PREFILL_FR_TO_EN) html = html.split(fr).join(en);
+
   // --- Bandeau « fichier généré »
   const banner = '<!-- ⚠️ FICHIER GÉNÉRÉ par scripts/build-en-home.js — NE PAS ÉDITER À LA MAIN.\n'
     + '     Source : index.html + dico EN de i18n.js. Régénérer : node scripts/build-en-home.js -->\n';
