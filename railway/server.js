@@ -932,7 +932,8 @@ function buildMandatUrl(s, phone) {
     cid: phone || '', lsa: new Date().toISOString(), source: 'wati-bot-v8',
   };
   if (s.ref) { DOSSIERS.set(s.ref, dossier); persistDossiers(); storeDossierDurable(s.ref, dossier).catch(() => {}); }
-  return `https://robindesairs.eu/mandat.html?r=${encodeURIComponent(s.ref || '')}`;
+  const _page = isEN(s) ? 'mandat-en.html' : 'mandat.html'; // client anglophone → mandat traduit
+  return `https://robindesairs.eu/${_page}?r=${encodeURIComponent(s.ref || '')}`;
 }
 
 // ─── OCR (Vision) ────────────────────────────────────────────────────────────
@@ -3144,7 +3145,7 @@ function leadTotal(lead) {
   return (per * ((lead && lead.pax) || 1)) + ' €';
 }
 function relanceText(n, lead) {
-  const url = lead.mandatUrl || ('https://robindesairs.eu/mandat.html?r=' + encodeURIComponent(lead.ref || ''));
+  const url = lead.mandatUrl || ('https://robindesairs.eu/' + (lead.langue === 'en' ? 'mandat-en.html' : 'mandat.html') + '?r=' + encodeURIComponent(lead.ref || ''));
   const total = leadTotal(lead);
   if (!total) return `Il ne reste qu'une signature pour lancer votre dossier ${lead.ref}. Un expert confirme le montant exact (vérification gratuite). 👉 ${url}\n0 € si on ne gagne pas.`;
   const key = n === 2 ? 'RELANCE_2H' : n === 8 ? 'RELANCE_8H' : 'RELANCE_22H';
