@@ -1665,8 +1665,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const ri = listRowIdx(id); // 0=Afrique↔EU, 1=EU↔EU, 2=Départ/arr EU, 3=Autre
     const n = normInput(input, ['afrique', 'europe ↔', 'départ', 'autre']);
     if (ri === 0 || n === '1' || (lower.includes('afrique') && lower.includes('europe'))) { s.route_type = 'af_eu'; }
-    else if (ri === 1 || n === '2' || (lower.includes('europe') && !lower.includes('afrique') && !lower.includes('départ') && !lower.includes('arrivée'))) { s.route_type = 'eu_eu'; await send(phone, `🇪🇺 Les vols intra-européens sont couverts par le CE 261 ✅\nNotre spécialité c'est Afrique ↔ Europe, mais on continue.`, cfg); }
-    else if (ri === 2 || n === '3' || (lower.includes('départ') && !lower.includes('retard'))) { s.route_type = 'mixte'; await send(phone, `🛫 Un départ ou une arrivée en Europe peut être éligible. Vérifions ensemble. ✅`, cfg); }
+    else if (ri === 1 || n === '2' || (lower.includes('europe') && !lower.includes('afrique') && !lower.includes('départ') && !lower.includes('arrivée'))) { s.route_type = 'eu_eu'; await send(phone, L(s, `🇪🇺 Intra-European flights are covered by EC 261 ✅\nOur specialty is Africa ↔ Europe, but let's continue.`, `🇪🇺 Les vols intra-européens sont couverts par le CE 261 ✅\nNotre spécialité c'est Afrique ↔ Europe, mais on continue.`), cfg); }
+    else if (ri === 2 || n === '3' || (lower.includes('départ') && !lower.includes('retard'))) { s.route_type = 'mixte'; await send(phone, L(s, `🛫 A departure from or arrival in Europe can be eligible. Let's check together. ✅`, `🛫 Un départ ou une arrivée en Europe peut être éligible. Vérifions ensemble. ✅`), cfg); }
     else if (ri === 3 || n === '4' || lower.includes('autre')) { return finNonEligible(phone,`😔 Votre vol ne semble pas couvert par la loi européenne.\n\nLe CE 261/2004 s'applique aux vols au départ/à l'arrivée d'un aéroport européen, ou opérés par une compagnie européenne.\n\n❓ Si erreur, écrivez *go* pour choisir une autre route.`, cfg); }
     else return redispatch('route'); // si l'état a avancé → re-dispatch, sinon silence
     s.step = 'incident'; await setState(phone, s); return sendIncident(phone, s, cfg);
@@ -1701,19 +1701,19 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (s.step === 'nb_pax') {
     const n = parseInt(normInput(input, ['1 passager', '2 passager', '3 passager', '4 passager', '5 passager', '6 ou plus']));
     if (n >= 1 && n <= 5) { s.pax = n; s.names = []; if (s.fromTicker) { await setState(phone, s); return afterPaxFromTicker(phone, s, cfg); } s.step = 'type_vol'; await setState(phone, s); return sendButtons(phone, { body: `${bar('type_vol')}\n✈️ C'était un vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg); }
-    if (n >= 6 || lower.includes('6 ou plus') || lower.includes('plus')) { s.step = 'nb_pax_exact'; await setState(phone, s); return send(phone, `${bar('nb_pax')}\n👥 *Combien de passagers en tout ?*\nIndiquez le nombre total (ex. 8). On gère votre groupe directement ici. 🤝`, cfg); }
-    await send(phone, `🙂 Je n'ai pas bien compris. Choisissez le nombre de passagers ci-dessous 👇`, cfg); return sendPax(phone, s, cfg);
+    if (n >= 6 || lower.includes('6 ou plus') || lower.includes('plus') || lower.includes('more')) { s.step = 'nb_pax_exact'; await setState(phone, s); return send(phone, L(s, `${bar('nb_pax')}\n👥 *How many passengers in total?*\nEnter the total number (e.g. 8). We handle your group right here. 🤝`, `${bar('nb_pax')}\n👥 *Combien de passagers en tout ?*\nIndiquez le nombre total (ex. 8). On gère votre groupe directement ici. 🤝`), cfg); }
+    await send(phone, L(s, `🙂 I didn't quite get that. Pick the number of passengers below 👇`, `🙂 Je n'ai pas bien compris. Choisissez le nombre de passagers ci-dessous 👇`), cfg); return sendPax(phone, s, cfg);
   }
   if (s.step === 'nb_pax_exact') {
     const m = input.match(/\d{1,2}/); const n = m ? parseInt(m[0]) : 0;
-    if (n >= 1 && n <= 30) { s.pax = n; s.names = []; if (s.fromTicker) { await setState(phone, s); return afterPaxFromTicker(phone, s, cfg); } s.step = 'type_vol'; await setState(phone, s); return sendButtons(phone, { body: `${bar('type_vol')}\n✅ ${n} passagers — potentiellement *${montantTotal(n)} €*.\n\n✈️ C'était un vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg); }
-    return send(phone, `Indiquez le *nombre total* de passagers en chiffres (ex. 8) :`, cfg);
+    if (n >= 1 && n <= 30) { s.pax = n; s.names = []; if (s.fromTicker) { await setState(phone, s); return afterPaxFromTicker(phone, s, cfg); } s.step = 'type_vol'; await setState(phone, s); return sendButtons(phone, { body: L(s, `${bar('type_vol')}\n✅ ${n} passengers — potentially *€${montantTotal(n)}*.\n\n✈️ Was it a direct flight or with layover(s)?`, `${bar('type_vol')}\n✅ ${n} passagers — potentiellement *${montantTotal(n)} €*.\n\n✈️ C'était un vol direct ou avec escale(s) ?`), buttons: [{ id: 'type_direct', text: L(s, '✈️ Direct flight', '✈️ Vol direct') }, { id: 'type_escale', text: L(s, '🔄 With layover', '🔄 Avec escale') }] }, cfg); }
+    return send(phone, L(s, `Enter the *total number* of passengers in digits (e.g. 8):`, `Indiquez le *nombre total* de passagers en chiffres (ex. 8) :`), cfg);
   }
 
   // MSG6 — TYPE VOL → MSG7 motivation → scan
   if (s.step === 'type_vol') {
     const n = normInput(input, ['direct', 'escale']);
-    if (n === '2' || lower.includes('escale')) {
+    if (id === 'type_escale' || n === '2' || lower.includes('escale') || lower.includes('layover') || lower.includes('connection')) {
       // Escale = on POUSSE LA PHOTO d'abord (l'e-billet contient tous les segments → extraction en 1 coup).
       // La saisie manuelle leg par leg ne reste qu'en repli (bouton « Saisir à la main » → leg_count).
       s.type_vol = 'escale'; s.legs = []; s.legIdx = 0; s.step = 'scan'; await setState(phone, s);
@@ -1721,8 +1721,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
         `${bar('scan')}\n💰 ${s.pax} passenger${s.pax > 1 ? 's' : ''} = up to *€${montantTotal(s.pax)}* (*€${montantNet(s.pax)} net*, 75%). 🤝\n\n🔄 Easiest: a *photo* of your *e-ticket* (booking confirmation) — it has *all your flights at once*, connections included. I read everything, you type nothing.\n🎫 No e-ticket? Your *boarding passes* work too (one per flight).`,
         `${bar('scan')}\n💰 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (*${montantNet(s.pax)} € nets*, 75 %). 🤝\n\n🔄 Le plus simple : une *photo* de votre *e-billet* (confirmation de réservation) — il contient *tous vos vols d'un coup*, correspondance incluse. Je lis tout, vous ne tapez rien.\n🎫 Pas d'e-billet ? Vos *cartes d'embarquement* aussi (une par vol).`), buttons: [{ id: 'scan_photo', text: L(s, '📸 Send a photo', '📸 Envoyer une photo') }, { id: 'scan_manuel', text: L(s, '✏️ Type it in', '✏️ Saisir à la main') }] }, cfg);
     }
-    if (n === '1' || lower.includes('direct')) s.type_vol = 'direct';
-    else return sendButtons(phone, { body: `${bar('type_vol')}\n✈️ Vol direct ou avec escale(s) ?`, buttons: [{ text: '✈️ Vol direct' }, { text: '🔄 Avec escale' }] }, cfg);
+    if (id === 'type_direct' || n === '1' || lower.includes('direct')) s.type_vol = 'direct';
+    else return sendButtons(phone, { body: L(s, `${bar('type_vol')}\n✈️ Direct flight or with layover(s)?`, `${bar('type_vol')}\n✈️ Vol direct ou avec escale(s) ?`), buttons: [{ id: 'type_direct', text: L(s, '✈️ Direct flight', '✈️ Vol direct') }, { id: 'type_escale', text: L(s, '🔄 With layover', '🔄 Avec escale') }] }, cfg);
     s.step = 'scan'; await setState(phone, s);
     // Un seul message (motivation + scan) → réponse immédiate, pas de délai où les taps s'entrecroisent.
     return sendButtons(phone, { body: `${bar('scan')}\n📸 *Envoyez une photo* de votre carte d'embarquement ou e-billet — je retrouve votre vol tout seul, rien à retaper.${s.pax > 1 ? `\n(une seule carte suffit pour le vol)` : ''}\n\n💰 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €*. Vous gardez *75 %* (jusqu'à *${montantNet(s.pax)} €*), Robin prend *25 %* — et seulement *en cas d'indemnisation*. Rien à avancer.\n\nVotre billet sert juste à *identifier le vol*, rien d'autre — et plus tôt je l'ai, plus tôt votre demande part.\n\n_ℹ️ En envoyant la photo, vous acceptez qu'elle soit lue par un outil automatique (IA) pour préparer votre dossier — robindesairs.eu/politique-confidentialite._\n\n📎 *Envoyez la photo*, ou choisissez ci-dessous`, buttons: [{ id: 'scan_photo', text: '📸 Envoyer une photo' }, { id: 'scan_manuel', text: '✏️ Saisir à la main' }] }, cfg);
@@ -1931,7 +1931,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (s.step === 'fix_nom_which') {
     const i = parseInt((input.match(/\d+/) || [])[0]);
     if (i >= 1 && i <= s.pax) { s.fix_name_idx = i - 1; s.step = 'fix_nom'; await setState(phone, s); return send(phone, `👤 *Passager ${i}* (actuel : ${(s.names && s.names[i - 1]) || '—'})\nTapez le *bon nom complet* 👇`, cfg); }
-    return send(phone, `Indiquez un numéro entre 1 et ${s.pax} :`, cfg);
+    return send(phone, L(s, `Enter a number between 1 and ${s.pax}:`, `Indiquez un numéro entre 1 et ${s.pax} :`), cfg);
   }
   if (s.step === 'fix_pnr') {
     if (lower === 'passer' || lower === 'non' || lower === 'skip') { s.pnr = ''; await setState(phone, s); return afterFix(phone, s, cfg); }
@@ -1942,7 +1942,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (s.step === 'fix_vol') {
     const vol = input.toUpperCase().replace(/\s+/g, '');
     if (/^[A-Z0-9]{3,8}$/.test(vol)) { s.vol = vol; s.compagnie = deduceAirline(vol) || s.compagnie || ''; await setState(phone, s); return afterFix(phone, s, cfg); }
-    return send(phone, `Numéro non reconnu (ex. AF718). Renvoyez-le :`, cfg);
+    return send(phone, L(s, `Number not recognised (e.g. AF718). Send it again:`, `Numéro non reconnu (ex. AF718). Renvoyez-le :`), cfg);
   }
   if (s.step === 'fix_date') {
     const d = parseDateInput(input, '20');
@@ -1958,7 +1958,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   }
   if (s.step === 'fix_nom') {
     if (input.length >= 3 && !/^\d+$/.test(input)) { s.names = s.names || []; s.names[s.fix_name_idx || 0] = input.toUpperCase(); s.fix_name_idx = 0; await setState(phone, s); return afterFix(phone, s, cfg); }
-    return send(phone, `Nom trop court. Renvoyez le nom complet :`, cfg);
+    return send(phone, L(s, `Name too short. Send the full name again:`, `Nom trop court. Renvoyez le nom complet :`), cfg);
   }
   if (s.step === 'fix_route') {
     if (input.length >= 3) { s.route = input.replace(/->/g, '→').trim(); await setState(phone, s); return afterFix(phone, s, cfg); }
@@ -1987,7 +1987,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (s.step === 'm_vol') {
     const vol = input.toUpperCase().replace(/\s+/g, '');
     if (/^[A-Z0-9]{3,8}$/.test(vol)) { s.vol = vol; s.compagnie = deduceAirline(vol) || s.compagnie || ''; s.step = 'm_date'; await setState(phone, s); return send(phone, L(s, `✅ Flight ${vol}${s.compagnie ? ' — ' + s.compagnie : ''}\n\n📅 Flight date? _(e.g. 15/03/2026)_`, `✅ Vol ${vol}${s.compagnie ? ' — ' + s.compagnie : ''}\n\n📅 Date du vol ? _(ex. 15/03/2026)_`), cfg); }
-    return send(phone, `Numéro non reconnu (ex. AF718). Renvoyez-le :`, cfg);
+    return send(phone, L(s, `Number not recognised (e.g. AF718). Send it again:`, `Numéro non reconnu (ex. AF718). Renvoyez-le :`), cfg);
   }
   if (s.step === 'm_date') {
     const d = parseDateInput(input, '20');
@@ -2139,11 +2139,11 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (s.step === 'names_fix_which') {
     const i = parseInt((input.match(/\d+/) || [])[0]);
     if (i >= 1 && i <= s.pax) { s.fix_name_idx = i - 1; s.step = 'names_fix_one'; await setState(phone, s); return send(phone, `👤 *Passager ${i}* (actuel : ${s.names[i - 1] || '—'})\n\nTapez simplement le *bon nom complet* 👇\n_(ex : Aminata Diallo)_`, cfg); }
-    return send(phone, `Indiquez un numéro entre 1 et ${s.pax} :`, cfg);
+    return send(phone, L(s, `Enter a number between 1 and ${s.pax}:`, `Indiquez un numéro entre 1 et ${s.pax} :`), cfg);
   }
   if (s.step === 'names_fix_one') {
     if (input.length >= 3 && !/^\d+$/.test(input)) { s.names[s.fix_name_idx] = input.toUpperCase(); await setState(phone, s); return showNamesConfirm(phone, s, cfg); }
-    return send(phone, `Nom trop court. Renvoyez le nom complet :`, cfg);
+    return send(phone, L(s, `Name too short. Send the full name again:`, `Nom trop court. Renvoyez le nom complet :`), cfg);
   }
 
   // MSG11 — MINEURS
@@ -2151,11 +2151,11 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const n = normInput(input, ['majeur', 'mineur', 'tous majeurs', 'des mineurs']);
     if (s.pax === 1) {
       if (n === '1' || lower.includes('majeur')) { s.mineurs = []; await setState(phone, s); return sendRecap(phone, s, cfg); }
-      if (n === '2' || lower.includes('mineur')) { s.minorsPresent = true; s.minorSelf = true; await setState(phone, s); await send(phone, `👶 Bien noté. L'indemnité d'un mineur est bien due — le *mandat est signé par son parent ou tuteur légal* (on vous guide à l'étape finale, rien à avancer). On continue 👇`, cfg); return sendRecap(phone, s, cfg); }
+      if (n === '2' || lower.includes('mineur') || lower.includes('minor')) { s.minorsPresent = true; s.minorSelf = true; await setState(phone, s); await send(phone, L(s, `👶 Noted. A minor's compensation is still due — the *authority form is signed by their parent or legal guardian* (we guide you at the final step, nothing to pay upfront). Let's continue 👇`, `👶 Bien noté. L'indemnité d'un mineur est bien due — le *mandat est signé par son parent ou tuteur légal* (on vous guide à l'étape finale, rien à avancer). On continue 👇`), cfg); return sendRecap(phone, s, cfg); }
       return sendButtons(phone, { body: `${bar('mineurs')}\n👤 Êtes-vous majeur(e) (18+) ?`, buttons: [{ text: '✅ Oui, majeur(e)' }, { text: '👶 Non, mineur(e)' }] }, cfg);
     }
     if (n === '1' || lower.includes('tous majeurs')) { s.minorsPresent = false; await setState(phone, s); return sendRecap(phone, s, cfg); }
-    if (n === '2' || lower.includes('mineur')) { s.minorsPresent = true; await setState(phone, s); return send(phone, `👶 Bien noté — il y a des mineurs. La signature d'un parent/tuteur sera requise pour eux (on s'en occupe avec vous via les passeports). On continue 👇`, cfg).then(() => sendRecap(phone, s, cfg)); }
+    if (n === '2' || lower.includes('mineur') || lower.includes('minor')) { s.minorsPresent = true; await setState(phone, s); return send(phone, L(s, `👶 Noted — there are minors. A parent/guardian's signature will be required for them (we handle it with you via the passports). Let's continue 👇`, `👶 Bien noté — il y a des mineurs. La signature d'un parent/tuteur sera requise pour eux (on s'en occupe avec vous via les passeports). On continue 👇`), cfg).then(() => sendRecap(phone, s, cfg)); }
     return sendMineurs(phone, s, cfg);
   }
 
@@ -2172,12 +2172,12 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     s.passengers = s.passengers || [];
     if (mediaUrl) { return askOcrConfirm(phone, s, cfg, mediaUrl); }
     if (id === 'doc_photo' || lower.includes('envoyer ma photo') || lower.includes('ma photo')) {
-      return send(phone, `👍 C'est noté — appuyez sur 📎 (ou 📷) en bas et choisissez la *photo* de la pièce — *passeport, CNI ou carte de séjour*. On lit le nom et la date automatiquement. 🔒`, cfg);
+      return send(phone, L(s, `👍 Got it — tap 📎 (or 📷) below and choose the *photo* of the ID — *passport, national ID or residence permit*. We read the name and date automatically. 🔒`, `👍 C'est noté — appuyez sur 📎 (ou 📷) en bas et choisissez la *photo* de la pièce — *passeport, CNI ou carte de séjour*. On lit le nom et la date automatiquement. 🔒`), cfg);
     }
     if (id === 'doc_passer' || lower.includes('envoie après') || lower.includes('passer')) {
       const _nm = (s.passengers[s.doc_idx] && s.passengers[s.doc_idx].name) || (s.names && s.names[s.doc_idx]) || '';
       s.passengers[s.doc_idx] = { skipped: true }; s.docs_pending = true; s.doc_idx++; await setState(phone, s);
-      await send(phone, `👍 C'est noté${_nm ? `, on garde la place de *${_nm}*` : ''}. ℹ️ Mais sa pièce (passeport, CNI ou carte de séjour) reste *indispensable* pour la réclamation — envoyez-la dès que vous pouvez. 🔒`, cfg);
+      await send(phone, L(s, `👍 Got it${_nm ? `, we keep *${_nm}*'s spot` : ''}. ℹ️ But their ID (passport, national ID or residence permit) remains *essential* for the claim — send it as soon as you can. 🔒`, `👍 C'est noté${_nm ? `, on garde la place de *${_nm}*` : ''}. ℹ️ Mais sa pièce (passeport, CNI ou carte de séjour) reste *indispensable* pour la réclamation — envoyez-la dès que vous pouvez. 🔒`), cfg);
       return nextPassport(phone, s, cfg);
     }
     if (id === 'doc_saisir' || lower.includes('saisir') || lower.includes('manuel') || lower.includes('tape')) { s.step = 'doc_name'; await setState(phone, s); return send(phone, `👤 *Passager ${s.doc_idx + 1}* — Prénom et nom ?\n_(ex : Aminata Diallo)_\nℹ️ On note le nom, mais la *photo* de sa pièce (passeport, CNI ou carte de séjour) restera nécessaire pour la réclamation. 🔒`, cfg); }
