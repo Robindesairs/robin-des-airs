@@ -1283,8 +1283,10 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     }
   };
 
-  // T1 — menu / reset
-  if (['nouveau', 'new', 'reset', '/reset', 'recommencer'].includes(lower)) { await clearState(phone); return sendAccueil(phone, cfg); }
+  // T1 — menu / reset — tolérant aux fautes : accents ignorés, ponctuation retirée,
+  // « recommencer » même mal tapé (recommencé / recomence / recommenc…), + mots courts.
+  const resetNorm = lower.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^\w\s]/g, '').trim();
+  if (['nouveau', 'new', 'reset', 'recommencer', 'annuler', 'stop'].includes(resetNorm) || resetNorm.startsWith('recommenc')) { await clearState(phone); return sendAccueil(phone, cfg); }
   // « ✈️ Vérifier un autre vol » (relance après vol non éligible) → on repart à neuf sur le tunnel.
   if (id === 'autre_vol' || lower === 'autre vol' || lower === 'un autre vol' || lower === 'vérifier un autre vol') { await clearState(phone); return sendAccueil(phone, cfg); }
   if (['go', 'menu', 'start', 'reprendre', 'continuer', 'suite', 'bonjour', 'hello', 'hi', 'salut'].includes(lower) || id === 'menu') {
