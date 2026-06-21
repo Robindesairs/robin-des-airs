@@ -1338,7 +1338,9 @@ function missingDocsText(s) {
   if (miss.length) return `📎 Il manque encore : ${miss.join(' et ')}.`;
   const v = s.flightVerdict;
   if (v === 'hors_champ' || v === 'sous_seuil') return `✅ Toutes vos pièces sont là, merci ${firstNameOf(s)} ! Le dossier ${s.ref || ''} est complet. Un expert confirme le *montant exact* (vérification gratuite) et on lance la réclamation — 0 € si on ne gagne pas.`;
-  return fillTpl(pickRV(s.ref || '', 'DOC_COMPLET'), { REF: s.ref || '', TOTAL: montantReel(s) + ' €', NOM: firstNameOf(s) }) || `✅ Toutes vos pièces sont là, merci ! Notre équipe prend le relais.`;
+  // Accusé LÉGER seulement : la confirmation terminale (« on prend le relais », rappel, lien) est
+  // envoyée UNE SEULE FOIS, par la légende du mandat à la signature (submit-mandat.js). Pas de doublon ici.
+  return `✅ Toutes vos pièces sont là, merci ${firstNameOf(s)} ! Votre dossier *${s.ref || ''}* est au complet. 🙏`;
 }
 
 // Pièce expirée (date d'expiration passée) ?
