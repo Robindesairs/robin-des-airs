@@ -1684,10 +1684,10 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // Le critère légal = écart NOTIFICATION → date du vol, pas « le vol est dans +/- 14 j à partir d'aujourd'hui ».
   if (s.step === 'annul_delai') {
     const n = normInput(input, ['moins de', 'ou plus', 'sais']); // mots-clés NON chevauchants (« 14 jours » est dans les 2 boutons)
-    if (n === '2' || lower.includes('ou plus') || lower.includes('plus de 14') || lower.includes('14 ou plus')) { return finNonEligible(phone,pickVariant(phone, 'STOP_ANNUL_14J'), cfg); }
-    if (n === '3' || lower.includes('sais') || lower.includes('souviens') || lower.includes('aucune idée')) { s.annul_preavis = 'inconnu'; s.escalade = s.escalade || 'preavis_inconnu'; await send(phone, pickVariant(phone, 'ANNUL_PREAVIS_INCONNU'), cfg); return continueAnnul(phone, s, cfg); }
-    if (n === '1' || lower.includes('moins de 14') || lower.includes('moins de') || lower.includes('moins')) { s.annul_preavis = '<14j'; await send(phone, pickVariant(phone, 'REACTION_ANNULATION'), cfg); return continueAnnul(phone, s, cfg); }
-    await send(phone, `🙂 Je n'ai pas bien compris. Touchez un des boutons ci-dessous 👇`, cfg); return sendAnnulDelai(phone, s, cfg);
+    if (id === 'pre_plus14' || n === '2' || lower.includes('ou plus') || lower.includes('plus de 14') || lower.includes('14 ou plus') || lower.includes('14 days or more') || lower.includes('more than 14')) { return finNonEligible(phone,pickVariant(phone, 'STOP_ANNUL_14J'), cfg); }
+    if (id === 'pre_inconnu' || n === '3' || lower.includes('sais') || lower.includes('souviens') || lower.includes('aucune idée') || lower.includes('not sure')) { s.annul_preavis = 'inconnu'; s.escalade = s.escalade || 'preavis_inconnu'; await send(phone, LV(s, phone, 'ANNUL_PREAVIS_INCONNU', `👍 No worries — we'll check the airline's notice records for you.`), cfg); return continueAnnul(phone, s, cfg); }
+    if (id === 'pre_moins14' || n === '1' || lower.includes('moins de 14') || lower.includes('moins de') || lower.includes('moins') || lower.includes('less than 14')) { s.annul_preavis = '<14j'; await send(phone, LV(s, phone, 'REACTION_ANNULATION', `😟 A late cancellation gives strong rights. Let's check your compensation.`), cfg); return continueAnnul(phone, s, cfg); }
+    await send(phone, L(s, `🙂 I didn't quite get that. Tap one of the buttons below 👇`, `🙂 Je n'ai pas bien compris. Touchez un des boutons ci-dessous 👇`), cfg); return sendAnnulDelai(phone, s, cfg);
   }
   if (s.step === 'duree') {
     const n = normInput(input, ['plus de 3', 'moins de 3', 'sais']);
@@ -2461,7 +2461,7 @@ async function sendIncident(phone, s, cfg) { s.step = 'incident'; await setState
 // PAS sur « aujourd'hui → vol » (qui serait juridiquement faux).
 async function sendAnnulDelai(phone, s, cfg) {
   s.step = 'annul_delai'; await setState(phone, s);
-  return sendButtons(phone, { body: `${bar('incident')}\n📅 Pour une *annulation*, c'est le *moment où on vous a prévenu(e)* qui compte.\n\nQuand la compagnie a annoncé l'annulation, votre vol était dans *moins de 14 jours* ou *14 jours ou plus* ?`, buttons: [{ text: '🟢 Moins de 14 jours' }, { text: '🔴 14 jours ou plus' }, { text: '🤔 Je ne sais plus' }] }, cfg);
+  return sendButtons(phone, { body: L(s, `${bar('incident')}\n📅 For a *cancellation*, what matters is *when you were told*.\n\nWhen the airline announced the cancellation, was your flight *less than 14 days* away or *14 days or more*?`, `${bar('incident')}\n📅 Pour une *annulation*, c'est le *moment où on vous a prévenu(e)* qui compte.\n\nQuand la compagnie a annoncé l'annulation, votre vol était dans *moins de 14 jours* ou *14 jours ou plus* ?`), buttons: [{ id: 'pre_moins14', text: L(s, '🟢 Less than 14 days', '🟢 Moins de 14 jours') }, { id: 'pre_plus14', text: L(s, '🔴 14 days or more', '🔴 14 jours ou plus') }, { id: 'pre_inconnu', text: L(s, '🤔 Not sure', '🤔 Je ne sais plus') }] }, cfg);
 }
 
 // Suite après le gate annulation : reprend le flux normal (estimation → passagers),
@@ -2501,7 +2501,7 @@ async function afterFix(phone, s, cfg) {
   if (s.fix_return === 'recap') return sendRecap(phone, s, cfg);
   return showScanConfirm(phone, s, cfg);
 }
-async function estimationPuisPax(phone, s, cfg) { s.step = 'nb_pax'; await setState(phone, s); await send(phone, pickVariant(phone, 'ESTIMATION_QUALIFICATION'), cfg); return sendPax(phone, s, cfg); }
+async function estimationPuisPax(phone, s, cfg) { s.step = 'nb_pax'; await setState(phone, s); await send(phone, LV(s, phone, 'ESTIMATION_QUALIFICATION', `👍 Good — this type of flight is often eligible. Let's estimate what you're owed.`), cfg); return sendPax(phone, s, cfg); }
 // Confirmation 1 tap du trajet retrouvé automatiquement (flight-info ou flight-verdict).
 async function askRouteConfirm(phone, s, cfg) {
   s.step = 'm_route_confirm'; await setState(phone, s);
