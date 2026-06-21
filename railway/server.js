@@ -921,10 +921,11 @@ async function ocrBoardingPass(mediaUrl, cfg) {
     if (!media) return null;
     const b64 = media.b64;
     const prompt = `Tu lis une carte d'embarquement / e-billet d'avion. Réponds UNIQUEMENT en JSON :
-{"vol":"","compagnie":"","date":"","pnr":"","depart":"","arrivee":"","nom":""}
+{"vol":"","compagnie":"","date":"","pnr":"","depart":"","arrivee":"","nom":"","operateur":""}
 Règles STRICTES :
 - vol : numéro de vol en MAJUSCULES sans espace (ex. EJU7273, AF718).
 - compagnie : nom complet (déduis du code IATA si besoin).
+- operateur : UNIQUEMENT si la carte indique EXPLICITEMENT « opéré par / operated by » une compagnie DIFFÉRENTE de celle du numéro de vol (code-share). Renvoie le CODE IATA 2 lettres de la compagnie qui OPÈRE réellement le vol (ex. « AF703 operated by Kenya Airways » → "KQ"). Aucune mention « opéré par », ou même compagnie → "". Ne devine JAMAIS.
 - date : "JJ/MM" si l'année N'EST PAS imprimée sur le document ; "JJ/MM/AAAA" UNIQUEMENT si l'année est réellement écrite. NE JAMAIS deviner ni inventer l'année (les cartes d'embarquement n'ont souvent pas l'année).
 - pnr : référence de réservation (libellés possibles : PNR, Booking ref, Réf, Record locator, Confirmation) — 5 à 8 caractères ALPHANUMÉRIQUES, souvent près d'un code-barres. Cherche-la attentivement. Si vraiment absente, "".
 - depart / arrivee : codes IATA 3 lettres.
@@ -944,7 +945,10 @@ Règles STRICTES :
     nomRaw = nomRaw.replace(/\s+(MRS|MR|MS|MME|MLLE|MSTR|CHD|INF)\.?$/, '');          // titre séparé : « DIALLO/AMINATA MRS »
     nomRaw = nomRaw.replace(/^(.+\/.+?)(MRS|MSTR|CHD|INF)$/, '$1');                   // titre GDS collé : « DIALLO/AMINATAMRS » (pas MR/MS : trop de vrais noms finissent ainsi)
     const nom = cleanName(nomRaw);
-    return { vol, compagnie: p.compagnie || deduceAirline(vol), date: p.date || '', pnr: /^[A-Z0-9]{5,8}$/.test(pnr) ? pnr : '', route, passengers: (nom && nom.length >= 3) ? [{ name: nom }] : [] };
+    // « opéré par » lu sur la carte (code-share) → code IATA 2 lettres STRICT (un nom = ignoré, pas de faux positif).
+    const opRaw = String(p.operateur || '').toUpperCase().replace(/[^0-9A-Z]/g, '');
+    const operePar = /^[0-9A-Z]{2}$/.test(opRaw) ? opRaw : '';
+    return { vol, compagnie: p.compagnie || deduceAirline(vol), date: p.date || '', pnr: /^[A-Z0-9]{5,8}$/.test(pnr) ? pnr : '', route, operePar, passengers: (nom && nom.length >= 3) ? [{ name: nom }] : [] };
   } catch (e) { return null; }
 }
 // ── E-billet / confirmation de réservation : extraction COMPLÈTE (vol+route+date+PNR+NOMS) ──
