@@ -1756,6 +1756,7 @@ function submitMandat() {
   }
   const payload = {
     ref:       REF,
+    lang:      (document.documentElement.lang || 'fr'),
     firstName: document.getElementById('fn').value.trim(),
     lastName:  document.getElementById('ln').value.trim(),
     whatsapp:  document.getElementById('wa').value.trim(),

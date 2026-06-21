@@ -542,7 +542,9 @@ async function sendMandatWhatsappCopy(record, pdfBuffer) {
   const ref = record.ref || record.cert_id || 'dossier';
   const suffixe = String(ref).replace(/[^A-Za-z0-9]/g, '').slice(-4).toUpperCase();
   const fileName = suffixe ? `Mandat-Robin-des-Airs-${suffixe}.pdf` : 'Mandat-Robin-des-Airs.pdf';
-  const caption = `✅ Mandat signé — merci de votre confiance ! (réf. ${ref})\n\nVotre dossier passe entre les mains de notre équipe. *0 € si on ne gagne pas*, 25 % uniquement si vous êtes indemnisé. Voici votre copie à conserver.\n\n📎 *Pour traiter votre dossier au plus vite*, il nous faut, pour chaque passager :\n• votre *carte d'embarquement* ou votre *e-billet* (confirmation de réservation)\n• une *pièce d'identité*\n\n✅ Si vous nous avez *déjà envoyé* ces pièces, c'est parfait — rien à faire de votre côté, on s'occupe du reste.\nSinon, transmettez-les ici, ou déposez-les en une fois sur votre *lien sécurisé* (vos pièces ne passent pas par la conversation) 👉 https://robindesairs.eu/depot-en-ligne.html?r=${ref}\n\n📞 *Un expert va vous appeler* depuis le *+33 7 56 86 36 30*. Enregistrez ce numéro sous « *Robin des Airs* » pour reconnaître notre appel. 🏹\n\nL'équipe Robin des Airs`;
+  const caption = (record.lang === 'en')
+    ? `✅ Mandate signed — thank you for your trust! (ref. ${ref})\n\nYour case is now in the hands of our team. *€0 if we don't win*, 25% only if you are compensated. Here is your copy to keep.\n\n📎 *To process your case as fast as possible*, for each passenger we need:\n• your *boarding pass* or your *e-ticket* (booking confirmation)\n• a *photo ID*\n\n✅ If you have *already sent* these documents, you're all set — nothing to do on your side, we handle the rest.\nOtherwise, send them here, or upload them in one go via your *secure link* (your documents never go through the chat) 👉 https://robindesairs.eu/depot-en-ligne.html?r=${ref}\n\n📞 *An expert will call you* from *+33 7 56 86 36 30*. Save this number as "*Robin des Airs*" to recognise our call. 🏹\n\nThe Robin des Airs team`
+    : `✅ Mandat signé — merci de votre confiance ! (réf. ${ref})\n\nVotre dossier passe entre les mains de notre équipe. *0 € si on ne gagne pas*, 25 % uniquement si vous êtes indemnisé. Voici votre copie à conserver.\n\n📎 *Pour traiter votre dossier au plus vite*, il nous faut, pour chaque passager :\n• votre *carte d'embarquement* ou votre *e-billet* (confirmation de réservation)\n• une *pièce d'identité*\n\n✅ Si vous nous avez *déjà envoyé* ces pièces, c'est parfait — rien à faire de votre côté, on s'occupe du reste.\nSinon, transmettez-les ici, ou déposez-les en une fois sur votre *lien sécurisé* (vos pièces ne passent pas par la conversation) 👉 https://robindesairs.eu/depot-en-ligne.html?r=${ref}\n\n📞 *Un expert va vous appeler* depuis le *+33 7 56 86 36 30*. Enregistrez ce numéro sous « *Robin des Airs* » pour reconnaître notre appel. 🏹\n\nL'équipe Robin des Airs`;
   try {
     return await watiSendFile(record.whatsapp, pdfBuffer, fileName, caption);
   } catch (e) {
@@ -629,6 +631,7 @@ exports.handler = async (event) => {
     firstName: body.firstName || '',
     lastName: body.lastName || '',
     whatsapp: phone,
+    lang: (body.lang === 'en' ? 'en' : 'fr'), // langue de la page de signature (mandat-en.html → légende WhatsApp EN)
     contactPhone: (body.contactPhone || '').trim(),
     contactEmail: (body.contactEmail || '').trim(),
     email: (body.email || '').trim() || clientEmailForRef(ref),
