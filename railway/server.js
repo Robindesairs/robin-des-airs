@@ -3150,5 +3150,14 @@ process.on('uncaughtException', (err) => {
   try { notifyOwnerWhatsApp('', '🔴 Bot v8 — uncaughtException : ' + (err && err.message)).catch(() => {}); } catch (_) {}
 });
 
+// Fonctions PURES exposées pour les tests (logique éligibilité / transporteur effectif / réclamation).
+// N'altère pas le runtime : le serveur démarre toujours via app.listen ci-dessous.
+module.exports = {
+  AIRLINES, UE_CARRIERS, EU_AIRPORTS,
+  isCarrierUE, isEUAirport, carrierCode, deduceAirline,
+  effectiveCarrier, markOperateurEffectif, decideOperatingCarrier,
+  applyTrajet, setEticketFields, applyEticket,
+};
+
 const PORT = parseInt(process.env.PORT || '3000', 10);
 app.listen(PORT, () => { console.log('\ud83e\udd16 Robin des Airs Bot v8 — Railway — port ' + PORT); });
