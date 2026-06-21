@@ -2311,12 +2311,12 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // Adresse du contact (dernière question) — saisie manuelle si non lue sur le passeport.
   if (s.step === 'doc_adresse') {
     const adr = input.trim();
-    if (adr.length >= 8 && /[a-zà-ÿ]/i.test(adr) && !/^\d+$/.test(adr)) {
+    if (adr.length >= 5 && /[a-zà-ÿ]/i.test(adr) && !/^\d+$/.test(adr)) {
       s.passengers = s.passengers || []; const i = s.mandant_idx || 0;
       const m = s.passengers[i] || {}; m.adresse = adr; s.passengers[i] = m; await setState(phone, s);
       return finaliser(phone, s, cfg);
     }
-    return send(phone, L(s, `📍 Enter your *full address*: number, street, postcode, city, country _(e.g. 12 Lilac Street, 75011 Paris, France)_:`, `📍 Indiquez votre *adresse complète* : numéro, rue, code postal, ville, pays _(ex : 12 rue des Lilas, 75011 Paris, France)_ :`), cfg);
+    return send(phone, L(s, `📍 A bit more, please — at least your *city and country* _(e.g. Médina, Dakar, Senegal)_:`, `📍 Un peu plus, svp — au moins votre *ville et pays* _(ex : Médina, Dakar, Sénégal)_ :`), cfg);
   }
   if (s.step === 'doc_name') {
     if (mediaUrl) return askOcrConfirm(phone, s, cfg, mediaUrl); // il envoie finalement la pièce → on la lit
@@ -2778,12 +2778,12 @@ async function askMandant(phone, s, cfg) {
 // Adresse du contact : prise du passeport si lue, sinon demandée (DERNIÈRE question), puis finalisation.
 async function askAddressOrFinalize(phone, s, cfg) {
   const m = (s.passengers || [])[s.mandant_idx || 0] || {};
-  if (m.adresse && m.adresse.trim().length >= 8) {
+  if (m.adresse && m.adresse.trim().length >= 5) {
     await send(phone, L(s, `📍 Address found on your ID: *${m.adresse}*\n_(used for the authority form — editable when you sign.)_`, `📍 Adresse trouvée sur votre pièce : *${m.adresse}*\n_(utilisée pour le mandat — corrigeable au moment de signer.)_`), cfg);
     return finaliser(phone, s, cfg);
   }
   s.step = 'doc_adresse'; await setState(phone, s);
-  return send(phone, L(s, `📍 *Last question!* Your *full postal address*? _(number, street, postcode, city, country)_\nIt's the address on the authority form, where the airline must reply to you.`, `📍 *Dernière question !* Votre *adresse postale complète* ? _(numéro, rue, code postal, ville, pays)_\nC'est l'adresse qui figure sur le mandat, où la compagnie doit vous répondre.`), cfg);
+  return send(phone, L(s, `📍 *Last question!* Your *postal address*? District, city and country are enough — no postcode or street number needed. _(e.g. Médina, Dakar, Senegal)_\nIt's the address on the authority form, where the airline must reply to you.`, `📍 *Dernière question !* Votre *adresse postale* ? Quartier, ville et pays suffisent — pas besoin de code postal ni de numéro de rue. _(ex : Médina, Dakar, Sénégal)_\nC'est l'adresse qui figure sur le mandat, où la compagnie doit vous répondre.`), cfg);
 }
 async function gotoBoarding(phone, s, cfg) { s.step = 'doc_boarding'; await setState(phone, s); return send(phone, L(s, `🎫 Boarding pass\nSend a photo for the affected flight.\n📧 No pass? An e-ticket, a booking confirmation or a baggage tag work too.\n_🔒 Read by an automated tool (AI) to pre-fill your file — see robindesairs.eu/politique-confidentialite._\n✏️ *skip* · 📞 *call* if all lost, we'll find a solution.`, `🎫 Carte d'embarquement\nEnvoyez-en une photo pour le vol concerné.\n📧 Pas de carte ? Un e-billet, une confirmation de réservation ou une étiquette de bagage fonctionnent aussi.\n_🔒 Lu par un outil automatique (IA) pour pré-remplir votre dossier — voir robindesairs.eu/politique-confidentialite._\n✏️ *passer* · 📞 *appel* si tout perdu, on trouve une solution.`), cfg); }
 async function gotoEticket(phone, s, cfg) { s.step = 'doc_eticket'; await setState(phone, s); return send(phone, L(s, `📧 Booking confirmation (e-ticket)\nSend a screenshot (check spam / the Booking app).\n✏️ *skip* · 📞 *call*.`, `📧 Confirmation de réservation (e-billet)\nEnvoyez une capture (pensez aux spams / appli Booking).\n✏️ *passer* · 📞 *appel*.`), cfg); }
@@ -2905,7 +2905,7 @@ async function relancerEtape(phone, s, cfg) {
     case 'm_pnr': return gotoPnr(phone, s, cfg);
     case 'doc_pass': case 'doc_pass_confirm': case 'doc_dob': case 'doc_name': return nextPassport(phone, s, cfg);
     case 'doc_mandant': return askMandant(phone, s, cfg);
-    case 'doc_adresse': return send(phone, L(s, `📍 *Last question!* Your *full postal address*? _(number, street, postcode, city, country)_`, `📍 *Dernière question !* Votre *adresse postale complète* ? _(numéro, rue, code postal, ville, pays)_`), cfg);
+    case 'doc_adresse': return send(phone, L(s, `📍 *Last question!* Your *postal address*? District, city and country are enough — no postcode needed. _(e.g. Médina, Dakar, Senegal)_`, `📍 *Dernière question !* Votre *adresse postale* ? Quartier, ville et pays suffisent — pas besoin de code postal. _(ex : Médina, Dakar, Sénégal)_`), cfg);
     case 'doc_boarding': return gotoBoarding(phone, s, cfg);
     case 'doc_eticket': return gotoEticket(phone, s, cfg);
     case 'doc_cert': return gotoCert(phone, s, cfg);
