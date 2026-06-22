@@ -1103,6 +1103,7 @@ function sofiaProspectsHtml(){
   const igNote=S0.igError?`<div class="pm-empty" style="font-style:normal">📸 Instagram indisponible : ${String(S0.igError).slice(0,90)}</div>`:'';
   return `<h4>Prospection agences — ${fmt(S0.totalNouveau||S0.prospects.length)} à contacter (${S0.contactables||0} avec coordonnées)</h4><div class="pm-empty" style="font-style:normal">${cibles}${src?' · '+src:''}</div>${rows}${more}${igNote}`;
 }
+const LBTN='font-size:.78em;padding:5px 10px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.06);color:inherit;border-radius:7px;cursor:pointer';
 function posteLegal(taux){
   const L=REAL.legal;
   const head=`<h4>Dossiers juridiques (réel)</h4>${pmStat('Dossiers gagnés',fmt(S.gagnes))}${pmStat('Dossiers engagés',fmt(Math.max(S.total-S.gagnes,0)))}${pmStat('Taux de réussite',taux+'%')}`;
@@ -1118,14 +1119,18 @@ function posteLegal(taux){
     const sub=[it.compagnie, it.dueLabel, it.payeur&&it.payeur!=='inconnue'?'payeur '+it.payeur:'', it.neb?('NEB: '+it.neb):''].filter(Boolean).join(' · ');
     const al=it.alerte?`<div class="pm-fsub" style="color:var(--amber)">⚠️ ${it.alerte.message}</div>`:'';
     const det=it.detail?`<div class="pm-fsub">${it.detail}</div>`:'';
+    const act = it.ref ? `<div style="margin-top:7px;display:flex;gap:6px;flex-wrap:wrap">`+
+        `<button style="${LBTN}" onclick="legalGenMed('${it.ref}')">📄 Générer la MED</button>`+
+        `<button style="${LBTN}" onclick="legalDraft('${it.ref}')">📦 Brouillon compagnie</button>`+
+      `</div>` : '';
     return `<div class="pm-flight"><span class="fl">${URG_ICON[it.urgence]||'⚪'} ${it.ref||'—'}</span><span class="rt">${it.name||''}</span>`+
       `<span class="bd ${it.urgence==='rouge'?'cancel':'delay'}">${it.action}</span>`+(it.montant?`<span class="eu">${String(it.montant).replace(/[^\d]/g,'')||'600'} €</span>`:'')+
-      (sub?`<div class="pm-fsub">${sub}</div>`:'')+det+al+`</div>`;
+      (sub?`<div class="pm-fsub">${sub}</div>`:'')+det+al+act+`</div>`;
   }).join('');
   const more=L.items.length>14?`<div class="pm-empty" style="font-style:normal">… +${L.items.length-14} autre(s)</div>`:'';
   const body=L.items.length?`<h4>File d'actions (du plus urgent au moins urgent)</h4>${rows}${more}`:`<div class="pm-empty">✅ Aucune action urgente — pipeline à jour.</div>`;
   const foot=`<div class="pm-empty" style="font-style:normal">Human-in-the-loop : Me Lefèvre prépare la liste ; aucun envoi automatique à une compagnie. Brief WhatsApp quotidien (9h30).</div>`;
-  return head+synth+body+foot;
+  return head+synth+body+`<div id="legalOut" style="margin-top:12px"></div>`+foot;
 }
 // Yanis — veille concurrents (Ad Library + diff prix + SEO), données réelles /api/concurrents-watch
 function concEsc(s){return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
@@ -1747,6 +1752,52 @@ function renderRenta(){
 /* ===== Pièces d'un dossier (réel — Blobs via /api/crm-pieces ; upload + qualification) ===== */
 let _piecesRef='';
 function _crmCode(){ try{ return sessionStorage.getItem('rda_crm_code')||''; }catch(_e){ return ''; } }
+// ── Poste Me Lefèvre : actions aval (génération MED + brouillon compagnie) ─────
+// Aucun envoi : on génère la mise en demeure (PDF) et on prépare le package compagnie
+// en MODE BROUILLON. Le dépôt reste manuel (copier le package). Auth = X-CRM-Code.
+function _legalEsc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function _legalOut(html){ const el=document.getElementById('legalOut'); if(el) el.innerHTML=html; }
+function _b64toBlob(b64,type){ const bin=atob(b64); const a=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i); return new Blob([a],{type:type||'application/octet-stream'}); }
+async function _legalPost(path,ref){
+  const r=await fetch(path,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CRM-Code':_crmCode()},body:JSON.stringify({ref:ref})});
+  return r.json();
+}
+async function legalGenMed(ref){
+  _legalOut(`<div class="pm-empty" style="font-style:normal">⏳ Génération de la mise en demeure — ${_legalEsc(ref)}…</div>`);
+  try{
+    const j=await _legalPost('/api/generate-claim',ref);
+    if(!j||!j.ok){ _legalOut(`<div class="pm-fsub" style="color:var(--amber)">⚠️ ${_legalEsc((j&&j.error)||'erreur')}</div>`); return; }
+    const url=URL.createObjectURL(_b64toBlob(j.pdfBase64,'application/pdf'));
+    const al=j.eligibiliteAlerte?`<div class="pm-fsub" style="color:var(--amber)">${j.eligibiliteAlerte.niveau==='bloquant'?'🛑':'⚠️'} ${_legalEsc(j.eligibiliteAlerte.message)}</div>`:'';
+    _legalOut(`<h4>📄 Mise en demeure prête — ${_legalEsc(ref)}</h4>`+
+      `<div class="pm-fsub">${_legalEsc(j.airline||'')} · ${_legalEsc(String(j.montant||''))} € · canal ${_legalEsc(j.channel||'?')}${j.exigerCash?' · cash exigé':''}${j.neb?' · NEB '+_legalEsc(j.neb):''}</div>`+al+
+      `<div style="margin-top:7px"><a href="${url}" target="_blank" rel="noopener">📄 Ouvrir le PDF de la mise en demeure</a></div>`+
+      `<div class="pm-empty" style="font-style:normal">Statut Airtable inchangé — vous validez puis envoyez. Pièce d'identité du passager requise avant tout envoi.</div>`);
+  }catch(e){ _legalOut(`<div class="pm-fsub" style="color:var(--amber)">⚠️ ${_legalEsc(e.message)}</div>`); }
+}
+async function legalDraft(ref){
+  _legalOut(`<div class="pm-empty" style="font-style:normal">⏳ Préparation du package compagnie — ${_legalEsc(ref)}…</div>`);
+  try{
+    const j=await _legalPost('/api/submit-claim-to-airline',ref);
+    if(!j||!j.ok){ _legalOut(`<div class="pm-fsub" style="color:var(--amber)">⚠️ ${_legalEsc((j&&j.error)||'erreur')}</div>`); return; }
+    const p=j.package||{}; window._lastPkg=p;
+    const pj=(p.attachments||[]).map(a=>`• ${_legalEsc(a.filename)} (${Math.round((a.bytes||0)/1024)} Ko)`).join('<br>')||'—';
+    const block=p.blocker?`<div class="pm-fsub" style="color:var(--amber)">⚠️ ${_legalEsc(p.blocker)}</div>`:`<div class="pm-fsub" style="color:var(--neon,#00C87A)">✅ Canal email prêt à l'envoi</div>`;
+    const elig=p.eligibiliteAlerte?`<div class="pm-fsub" style="color:var(--amber)">${p.eligibiliteAlerte.niveau==='bloquant'?'🛑':'⚠️'} ${_legalEsc(p.eligibiliteAlerte.message)}</div>`:'';
+    _legalOut(`<h4>📦 Brouillon compagnie — ${_legalEsc(ref)}</h4>`+
+      `<div class="pm-fsub"><b>Destinataire :</b> ${_legalEsc(p.recipient||'—')} <span style="opacity:.7">(${_legalEsc(p.recipientType||'')})</span></div>`+
+      `<div class="pm-fsub"><b>Objet :</b> ${_legalEsc(p.subject||'')}</div>`+block+elig+
+      `<div class="pm-fsub"><b>Pièces jointes :</b><br>${pj}</div>`+
+      `<textarea readonly style="width:100%;height:190px;margin-top:7px;font-size:.82em;background:rgba(0,0,0,.25);color:inherit;border:1px solid rgba(255,255,255,.18);border-radius:7px;padding:8px">${_legalEsc(p.bodyText||'')}</textarea>`+
+      `<div style="margin-top:7px"><button style="${LBTN}" onclick="legalCopyPkg()">📋 Copier le package (dépôt manuel)</button></div>`+
+      `<div class="pm-empty" style="font-style:normal">Aucun envoi automatique. Copiez ce texte + joignez les pièces sur le canal de la compagnie.</div>`);
+  }catch(e){ _legalOut(`<div class="pm-fsub" style="color:var(--amber)">⚠️ ${_legalEsc(e.message)}</div>`); }
+}
+function legalCopyPkg(){
+  const p=window._lastPkg; if(!p) return;
+  const txt=`À : ${p.recipient||''}\nObjet : ${p.subject||''}\n\n${p.bodyText||''}\n\nPièces à joindre : ${(p.attachments||[]).map(a=>a.filename).join(', ')}`;
+  navigator.clipboard.writeText(txt).then(()=>{ const el=document.getElementById('legalOut'); if(el){ const n=document.createElement('div'); n.className='pm-fsub'; n.style.color='var(--neon,#00C87A)'; n.textContent='✅ Package copié dans le presse-papier.'; el.appendChild(n); } }).catch(()=>{});
+}
 function piecesBadge(s){
   if(s==='valide') return '<span style="color:#2ec78f">✓ validée</span>';
   if(s==='rejete') return '<span style="color:#ff7a7a">✗ rejetée</span>';

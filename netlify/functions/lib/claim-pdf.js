@@ -63,7 +63,7 @@ function genererClaimPdf(c) {
     doc.moveTo(left, 30).lineTo(left + 26, 42).lineWidth(3).stroke(NEON);
     doc.polygon([left + 26, 42], [left + 18, 37], [left + 20, 46]).fill(NEON);
     doc.fillColor('white').fontSize(19).font('Helvetica-Bold').text('Robin des Airs', left + 34, 28);
-    doc.fillColor(NEON_B).fontSize(9).font('Helvetica').text('Service juridique — Indemnisation aérienne CE 261/2004', left + 35, 52);
+    doc.fillColor(NEON_B).fontSize(9).font('Helvetica').text('Service recouvrement — Indemnisation aérienne CE 261/2004', left + 35, 52);
     doc.rect(0, headerH, W, 3).fill(NEON);
     doc.y = headerH + 24;
 
@@ -93,12 +93,13 @@ function genererClaimPdf(c) {
     }
     para(`Conformément à l'instruction de paiement irrévocable et à la cession de créance figurant au mandat, le règlement doit intervenir exclusivement sur le compte bancaire désigné par Robin des Airs ; tout paiement effectué directement au passager n'est pas libératoire à notre égard.`);
     para(`Nous vous mettons en demeure de procéder au règlement dans un délai de ${delai} jours à compter de la réception des présentes. Nous vous demandons également de nous communiquer la cause précise de l'irrégularité et une attestation/certificat de retard.`);
-    para(`À défaut de règlement satisfaisant dans ce délai, nous saisirons l'organisme national de contrôle compétent${c.neb ? ` (${c.neb})` : ''} et/ou engagerons toute action judiciaire utile, à vos frais et risques.`);
+    para(`À défaut de règlement satisfaisant dans ce délai, nous saisirons l'organisme national de contrôle compétent${c.neb ? ` (${c.neb})` : ''} et transmettrons le dossier à notre avocat partenaire et/ou au médiateur compétent (Médiation Tourisme et Voyage).`);
+    para(`Conformément à l'article R. 124-4 du Code de procédure civile, nous vous précisons que les sommes réclamées au présent stade amiable n'ont pas de caractère exécutoire et que vous conservez la faculté d'en contester le bien-fondé.`);
     para(`Dans l'attente, nous vous prions d'agréer, Madame, Monsieur, l'expression de nos salutations distinguées.`);
 
     doc.moveDown(0.3);
     ensure(40);
-    doc.fillColor(NAVY).fontSize(10).font('Helvetica-Bold').text('Robin des Airs — Service juridique CE 261/2004', left, doc.y, { width: contentW });
+    doc.fillColor(NAVY).fontSize(10).font('Helvetica-Bold').text('Robin des Airs — Service recouvrement CE 261/2004', left, doc.y, { width: contentW });
     doc.fillColor(GRAY).fontSize(9).font('Helvetica').text('Mandataire du passager — contact@robindesairs.eu', { width: contentW });
 
     // Pied de page
