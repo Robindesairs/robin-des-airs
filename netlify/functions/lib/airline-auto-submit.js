@@ -107,7 +107,9 @@ function buildBodyText(data, claim, airline) {
     'ainsi que la mise en demeure détaillée.' + cash,
     '',
     `À défaut de paiement sous ${claim.delaiJours} jours, nous saisirons l'organisme national compétent` +
-      (claim.neb ? ` (${claim.neb})` : '') + ' puis les juridictions compétentes.',
+      (claim.neb ? ` (${claim.neb})` : '') + ' et transmettrons le dossier à notre avocat partenaire et/ou au médiateur compétent.',
+    '',
+    "Conformément à l'article R. 124-4 du Code de procédure civile, les sommes réclamées au présent stade amiable n'ont pas de caractère exécutoire et peuvent être contestées.",
     '',
     'Merci de n\'utiliser que cette adresse pour toute correspondance relative à ce dossier.',
     '',

@@ -102,6 +102,9 @@ exports.handler = async (event) => {
     conversion: (airline && airline.conversion) || 'inconnue',
     art9Note,
     delaiJours: 14,
+    // Régime amiable par défaut = MANDAT (Art. 1 bis du mandat : un seul régime par instance).
+    // Passer 'cession' uniquement quand l'option de cession est levée pour le contentieux.
+    regime: (body.regime === 'cession' ? 'cession' : 'mandat'),
   };
 
   let pdf;

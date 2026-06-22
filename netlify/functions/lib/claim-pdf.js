@@ -49,6 +49,9 @@ function genererClaimPdf(c) {
     const bottom = doc.page.height - 70;
     const delai = c.delaiJours || 14;
     const montant = c.montant || 600;
+    // RÉGIME UNIQUE PAR INSTANCE (mandat.html Art. 1 bis) : 'mandat' pour la phase amiable (défaut),
+    // 'cession' UNIQUEMENT quand l'option de cession est levée (contentieux). Jamais les deux à la fois.
+    const regime = c.regime === 'cession' ? 'cession' : 'mandat';
 
     function ensure(h) { if (doc.y + h > bottom) doc.addPage(); }
     function para(txt, opts = {}) {
@@ -83,7 +86,9 @@ function genererClaimPdf(c) {
 
     // Corps
     para(`Madame, Monsieur,`);
-    para(`Agissant en qualité de mandataire de ${c.passengerName || 'notre mandant'}, passager(s) du vol ${c.vol || '—'} du ${c.dateVol || '—'} (réservation ${c.pnr || '—'}${c.route ? `, ${c.route}` : ''}), nous vous notifions la présente mise en demeure. Le mandat de représentation et la cession de créance correspondants sont à votre disposition.`);
+    para(regime === 'cession'
+      ? `Robin des Airs, cessionnaire de la créance d'indemnisation de ${c.passengerName || 'notre cédant'}, passager(s) du vol ${c.vol || '—'} du ${c.dateVol || '—'} (réservation ${c.pnr || '—'}${c.route ? `, ${c.route}` : ''}), vous notifie la présente mise en demeure. Conformément à l'article 1324 du Code civil, la présente vaut notification de la cession de créance consentie à notre profit ; l'acte de cession est à votre disposition.`
+      : `Agissant en qualité de mandataire de ${c.passengerName || 'notre mandant'}, passager(s) du vol ${c.vol || '—'} du ${c.dateVol || '—'} (réservation ${c.pnr || '—'}${c.route ? `, ${c.route}` : ''}) qui demeure titulaire de sa créance, nous vous notifions la présente mise en demeure. Le mandat de représentation correspondant est à votre disposition.`);
     para(`Ce vol ${incidentPhrase(c.incident)}. Au titre de l'article 7 du Règlement (CE) n° 261/2004, le passager a droit à l'indemnisation forfaitaire de ${montant} € par personne. La charge de la preuve d'une éventuelle circonstance extraordinaire exonératoire vous incombe (art. 5§3 ; CJUE).`);
     if (c.exigerCash) {
       para(`Le passager exige le paiement en numéraire (virement bancaire) et refuse expressément tout bon d'achat, avoir ou miles : conformément à l'article 7§3 du Règlement, une compensation en nature suppose son accord signé, qu'il ne donne pas.`);
@@ -91,7 +96,9 @@ function genererClaimPdf(c) {
     if (c.art9Note) {
       para(`Prise en charge (art. 8 et 9) : ${c.art9Note}`);
     }
-    para(`Conformément à l'instruction de paiement irrévocable et à la cession de créance figurant au mandat, le règlement doit intervenir exclusivement sur le compte bancaire désigné par Robin des Airs ; tout paiement effectué directement au passager n'est pas libératoire à notre égard.`);
+    para(regime === 'cession'
+      ? `À compter de la présente notification (art. 1324 du Code civil), seul le paiement effectué entre les mains de Robin des Airs, cessionnaire, est libératoire ; tout règlement direct au passager ne vous libère pas de votre obligation. Le paiement doit intervenir exclusivement sur le compte bancaire désigné par Robin des Airs.`
+      : `Le passager a donné instruction irrévocable que l'indemnité soit réglée exclusivement entre les mains de Robin des Airs, sur le compte bancaire qu'elle désigne, conformément à l'instruction de paiement figurant au mandat.`);
     para(`Nous vous mettons en demeure de procéder au règlement dans un délai de ${delai} jours à compter de la réception des présentes. Nous vous demandons également de nous communiquer la cause précise de l'irrégularité et une attestation/certificat de retard.`);
     para(`À défaut de règlement satisfaisant dans ce délai, nous saisirons l'organisme national de contrôle compétent${c.neb ? ` (${c.neb})` : ''} et transmettrons le dossier à notre avocat partenaire et/ou au médiateur compétent (Médiation Tourisme et Voyage).`);
     para(`Conformément à l'article R. 124-4 du Code de procédure civile, nous vous précisons que les sommes réclamées au présent stade amiable n'ont pas de caractère exécutoire et que vous conservez la faculté d'en contester le bien-fondé.`);
@@ -100,7 +107,7 @@ function genererClaimPdf(c) {
     doc.moveDown(0.3);
     ensure(40);
     doc.fillColor(NAVY).fontSize(10).font('Helvetica-Bold').text('Robin des Airs — Service recouvrement CE 261/2004', left, doc.y, { width: contentW });
-    doc.fillColor(GRAY).fontSize(9).font('Helvetica').text('Mandataire du passager — contact@robindesairs.eu', { width: contentW });
+    doc.fillColor(GRAY).fontSize(9).font('Helvetica').text(`${regime === 'cession' ? 'Cessionnaire de la créance' : 'Mandataire du passager'} — contact@robindesairs.eu`, { width: contentW });
 
     // Pied de page
     const piedH = 40;
