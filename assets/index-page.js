@@ -1819,7 +1819,8 @@ function toggleEscaleVol3() {
         { who: 'robin',  delay: 400,  hold: 2000, html: 'On vérifie <b>gratuitement</b>, sans engagement 🔎' },
         { who: 'client', delay: 600,  hold: 1100, html: 'Et ça me coûte combien ? 😅' },
         { who: 'robin',  typing: 1100, hold: 2600, html: '<b>Rien si on perd.</b> Si on gagne, 25 % — aucune avance 🤝' },
-        { who: 'robin',  typing: 850,  hold: 2200, html: 'En famille ? <b>Chaque passager compte</b>, même les enfants 👨‍👩‍👧‍👦' },
+        { who: 'client', delay: 600,  hold: 1300, html: 'Et si nous sommes 4 ? 👨‍👩‍👧‍👦' },
+        { who: 'robin',  typing: 1000, hold: 2600, cls: 'wa-msg--verdict', html: '✅ Ça marche pour toute la famille : <b>chaque passager compte</b>, même les enfants — une famille de 4, c\'est <span class="wa-verdict-amt">jusqu\'à 2 400 €</span>' },
         { who: 'robin',  typing: 900,  hold: 1600, html: '🌍 Spécialistes <b>Europe–Afrique</b> : Dakar, Abidjan, Bamako…' },
         { who: 'robin',  delay: 350,  hold: 2400, html: 'On vous <b>rappelle</b> en wolof, bambara ou lingala si besoin 📞' },
         { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 Dernière étape : <b>signer le mandat</b> — je m\'occupe de tout 💪' }
@@ -1834,7 +1835,8 @@ function toggleEscaleVol3() {
         { who: 'robin',  delay: 400,  hold: 2000, html: 'We check <b>for free</b>, no commitment 🔎' },
         { who: 'client', delay: 600,  hold: 1100, html: 'And what does it cost me? 😅' },
         { who: 'robin',  typing: 1100, hold: 2600, html: '<b>Nothing if we lose.</b> If we win, 25 % — no upfront fee 🤝' },
-        { who: 'robin',  typing: 850,  hold: 2200, html: 'As a family? <b>Every passenger counts</b> — even the kids 👨‍👩‍👧‍👦' },
+        { who: 'client', delay: 600,  hold: 1300, html: 'And if there are 4 of us? 👨‍👩‍👧‍👦' },
+        { who: 'robin',  typing: 1000, hold: 2600, cls: 'wa-msg--verdict', html: '✅ It works for the whole family: <b>every passenger counts</b>, even the kids — a family of 4 means <span class="wa-verdict-amt">up to €2,400</span>' },
         { who: 'robin',  typing: 900,  hold: 1600, html: '🌍 <b>Europe–Africa</b> specialists: Accra, Lagos, Abidjan…' },
         { who: 'robin',  delay: 350,  hold: 2400, html: 'We <b>call you back</b> in Twi, Yoruba or Pidgin if you like 📞' },
         { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 Last step: <b>sign the mandate</b> — I\'ll handle the rest 💪' }
@@ -1846,12 +1848,12 @@ function toggleEscaleVol3() {
       fr: {
         foot: 'On parle votre langue · réponse en quelques minutes →',
         aria: 'Aperçu d\'une conversation WhatsApp avec Robin — cliquer pour ouvrir',
-        sr: 'Exemple de conversation WhatsApp : Aminata envoie son numéro de vol puis une photo de sa carte d\'embarquement ; Robin lit le vol et indique que ce retard peut donner droit à une indemnité, jusqu\'à 600 € par passager (selon la distance et la cause), avec une vérification gratuite et sans engagement. Robin précise sa commission de 25 % au succès seulement (0 € si on ne gagne pas, aucune avance, pas de carte bancaire), que chaque passager d\'une même famille compte, son expertise des vols Europe–Afrique (Dakar, Abidjan, Bamako) et qu\'un conseiller peut rappeler en wolof, bambara ou lingala. Dernière étape : signer le mandat.'
+        sr: 'Exemple de conversation WhatsApp : Aminata envoie son numéro de vol puis une photo de sa carte d\'embarquement ; Robin lit le vol et indique que ce retard peut donner droit à une indemnité, jusqu\'à 600 € par passager (selon la distance et la cause), avec une vérification gratuite et sans engagement. Robin précise sa commission de 25 % au succès seulement (0 € si on ne gagne pas, aucune avance, pas de carte bancaire), que chaque passager d\'une même famille compte (une famille de 4 peut obtenir jusqu\'à 2 400 €), son expertise des vols Europe–Afrique (Dakar, Abidjan, Bamako) et qu\'un conseiller peut rappeler en wolof, bambara ou lingala. Dernière étape : signer le mandat.'
       },
       en: {
         foot: 'We speak your language · reply in minutes →',
         aria: 'Preview of a WhatsApp conversation with Robin — tap to open',
-        sr: 'Example WhatsApp conversation: Ama sends her flight number then a photo of her boarding pass; Robin reads the flight and explains this delay may entitle her to compensation, up to €600 per passenger (depending on distance and cause), with a free no-commitment check. Robin charges 25% on success only (€0 if we don\'t win, no upfront fee, no card needed), notes that every passenger in a family counts, specialises in Europe–Africa flights (Accra, Lagos, Abidjan) and that an adviser can call back in Twi, Yoruba or Pidgin. Last step: sign the mandate.'
+        sr: 'Example WhatsApp conversation: Ama sends her flight number then a photo of her boarding pass; Robin reads the flight and explains this delay may entitle her to compensation, up to €600 per passenger (depending on distance and cause), with a free no-commitment check. Robin charges 25% on success only (€0 if we don\'t win, no upfront fee, no card needed), notes that every passenger in a family counts (a family of 4 can get up to €2,400), specialises in Europe–Africa flights (Accra, Lagos, Abidjan) and that an adviser can call back in Twi, Yoruba or Pidgin. Last step: sign the mandate.'
       }
     };
 
