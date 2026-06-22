@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dépôt sécurisé de vos pièces — Robin des Airs</title>
+  <title>Dépôt sécurisé de vos pièces, Robin des Airs</title>
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://robindesairs.eu/depot-en-ligne.html">
-  <meta property="og:title" content="Dépôt sécurisé de vos pièces — Robin des Airs">
+  <meta property="og:title" content="Dépôt sécurisé de vos pièces, Robin des Airs">
   <meta property="og:description" content="Transmettez vos documents en toute sécurité, connexion chiffrée. Robin des Airs s'occupe de votre indemnité de vol (CE 261).">
   <meta property="og:image" content="https://robindesairs.eu/robin-des-airs-og-1200x630-v2.jpg">
   <meta name="twitter:card" content="summary_large_image">
@@ -26,8 +26,8 @@
   <main class="shell">
     <div class="pagehead">
       <h1>Vos pièces, en sécurité.</h1>
-      <p class="lead">Quelques photos et votre dossier est complet — <b>on prend le relais</b>.</p>
-      <div class="ref-chip">Dossier <b id="refLine">—</b></div>
+      <p class="lead">Quelques photos et votre dossier est complet, <b>on prend le relais</b>.</p>
+      <div class="ref-chip">Dossier <b id="refLine"> </b></div>
       <div class="trust">
         <span>🔒 Lien privé chiffré</span>
         <span>🇪🇺 RGPD</span>
@@ -42,22 +42,22 @@
       <ul class="need" id="needList">
         <li><span class="ic" aria-hidden="true">🛂</span><span>Une <b>pièce d'identité</b> par passager (passeport, CNI ou titre de séjour)</span></li>
         <li><span class="ic" aria-hidden="true">🎫</span><span>Votre <b>carte d'embarquement</b> ou votre <b>e-billet</b> (confirmation de réservation)</span></li>
-        <li><span class="ic" aria-hidden="true">🧾</span><span>Vos <b>tickets de dépenses</b> (repas, taxi, hôtel) — récupérés <b>en plus</b> de l'indemnité</span></li>
+        <li><span class="ic" aria-hidden="true">🧾</span><span>Vos <b>tickets de dépenses</b> (repas, taxi, hôtel), récupérés <b>en plus</b> de l'indemnité</span></li>
       </ul>
 
-      <div class="note">💶 <b>Vous avez dépensé à cause du retard&nbsp;?</b> Un repas, un taxi, une nuit d'hôtel payés à cause de ce vol vous reviennent <b>en plus</b> de votre indemnité. Photographiez chaque ticket et ajoutez-le ici — on s'occupe de tout réclamer pour vous.</div>
+      <div class="note">💶 <b>Vous avez dépensé à cause du retard&nbsp;?</b> Un repas, un taxi, une nuit d'hôtel payés à cause de ce vol vous reviennent <b>en plus</b> de votre indemnité. Photographiez chaque ticket et ajoutez-le ici, on s'occupe de tout réclamer pour vous.</div>
 
       <label class="drop" for="fileInput">
         <span class="plus" aria-hidden="true">＋</span>
         Ajouter mes documents
-        <small>Photos ou PDF — plusieurs à la fois, ou glissez-les ici (ordinateur)</small>
+        <small>Photos ou PDF, plusieurs à la fois, ou glissez-les ici (ordinateur)</small>
         <input type="file" id="fileInput" accept="image/*,application/pdf" multiple>
       </label>
       <ul class="files" id="fileList"></ul>
       <div class="errbox" id="errBox"></div>
       <div class="errbox" id="waFallback" style="display:none"></div>
       <button class="btn" id="sendBtn" disabled>Envoyer mes pièces</button>
-      <p class="rgpd"><span>🔒</span><span>Transmission chiffrée (HTTPS), pièces conservées chiffrées et utilisées <b>uniquement</b> pour réclamer votre indemnité. Jamais revendues. Suppression possible à tout moment — RGPD.</span></p>
+      <p class="rgpd"><span>🔒</span><span>Transmission chiffrée (HTTPS), pièces conservées chiffrées et utilisées <b>uniquement</b> pour réclamer votre indemnité. Jamais revendues. Suppression possible à tout moment, RGPD.</span></p>
     </section>
 
     <section class="panel done" id="doneCard" role="status" aria-live="polite">
@@ -65,7 +65,7 @@
       <h2>C'est bien reçu&nbsp;!</h2>
       <p>Vos pièces sont enregistrées dans votre dossier. Notre équipe prend le relais et vous appellera depuis le <b>+33 7 56 86 36 30</b> (enregistrez-le sous « Robin des Airs »).</p>
       <a class="cta-link" id="suiviLink" href="#">📊 Suivre l'avancement de mon dossier →</a>
-      <p class="signoff">Reposez-vous — on prend le relais. <b>— L'équipe Robin des Airs 🏹</b></p>
+      <p class="signoff">Reposez-vous, on prend le relais. <b> L'équipe Robin des Airs 🏹</b></p>
     </section>
   </main>
 
@@ -124,7 +124,7 @@
       if (waShown) return; waShown = true;
       box.textContent = '📎 Une pièce est trop lourde ou dans un format non géré ici. Pas de souci : envoyez-la directement sur WhatsApp, on l\'ajoute à votre dossier. ';
       const a = document.createElement('a');
-      a.href = 'https://wa.me/33756863630?text=' + encodeURIComponent('Bonjour Robin des Airs, réf. ' + REF + ' — je vous envoie une pièce trop lourde pour le formulaire.');
+      a.href = 'https://wa.me/33756863630?text=' + encodeURIComponent('Bonjour Robin des Airs, réf. ' + REF + ', je vous envoie une pièce trop lourde pour le formulaire.');
       a.target = '_blank'; a.rel = 'noopener';
       a.textContent = '📲 Envoyer sur WhatsApp';
       a.style.cssText = 'display:inline-block;margin-top:8px;font-weight:700;text-decoration:underline';

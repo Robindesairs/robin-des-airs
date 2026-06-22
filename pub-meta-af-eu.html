@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Robin des Airs — Publicités Meta (Afrique → Europe)</title>
+  <title>Robin des Airs, Publicités Meta (Afrique → Europe)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;0,9..40,900&display=swap" rel="stylesheet"/>
@@ -49,7 +49,7 @@
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 
   <script type="text/babel" data-presets="react" data-source="pub/ad-brand.jsx">
-// Robin des Airs — Meta Ads atoms (flat fintech charter)
+// Robin des Airs, Meta Ads atoms (flat fintech charter)
 // Flat, premium-minimal · solid green / navy starry · DM Sans.
 // 9:16 · 1080×1920, Meta safe zones. Target: Afrique → Europe passengers.
 
@@ -196,10 +196,10 @@ function WAGlyph({ size = 40, color = AD.green }) {
 }
 
 // ─── Mandatory Meta filter pill (on every creative) ────────
-// "Vol vers l'Europe — retard ou annulation ?" — pre-qualifies the audience.
+// "Vol vers l'Europe, retard ou annulation ?", pre-qualifies the audience.
 function FilterPill({ tone = 'dark', label }) {
   const light = tone === 'light'; // on green bg
-  const text = label || 'Vol vers l’Europe — retard ou annulation\u202f?';
+  const text = label || 'Vol vers l’Europe, retard ou annulation\u202f?';
   return (
     <div style={{
       display: 'inline-flex', alignItems: 'center', gap: 14,
@@ -274,7 +274,7 @@ function AdLogo({ color = '#fff', mark = AD.green, upper = false }) {
   );
 }
 
-// ─── Ad frame — 1080×1920 with Meta safe zones ─────────────
+// ─── Ad frame, 1080×1920 with Meta safe zones ─────────────
 function AdFrame({ bg, children, footer, header,
                    starfield = false, starSeed = 7, arc = null, decor = null,
                    logoUpper = false }) {
@@ -328,14 +328,14 @@ Object.assign(window, {
   </script>
 
   <script type="text/babel" data-presets="react" data-source="pub/ads.jsx">
-// Robin des Airs — 5 Meta Story ad creatives (1080×1920)
+// Robin des Airs, 5 Meta Story ad creatives (1080×1920)
 // Afrique → Europe targeting · Meta-compliant (question/«jusqu'à»/«si éligible»,
 // mandatory filter line, no «garanti», no «votre vol A du retard»).
 
 // Mandatory filter / pre-qualifier line (every creative carries it).
 const FILTER = {
-  fr: 'Vol vers l’Europe — retard ou annulation\u202f?',
-  en: 'Flight to Europe — delayed or cancelled?',
+  fr: 'Vol vers l’Europe, retard ou annulation\u202f?',
+  en: 'Flight to Europe, delayed or cancelled?',
 };
 
 // Shared layout atoms (uniquely named to avoid global style collisions).
@@ -363,17 +363,17 @@ function Money({ amount = '600', symbol = '€', pos = 'after', size = 340,
   );
 }
 
-// ═══ CRÉA 1 — Le montant qui frappe (vert) ═════════════════
+// ═══ CRÉA 1, Le montant qui frappe (vert) ═════════════════
 function Crea1({ lang = 'fr' }) {
   const c = lang === 'en' ? {
     upto: 'up to', per: 'per passenger', elig: '(if eligible)',
     law: 'It’s EU law.', notscam: 'Not a scam.',
-    t1: '25% — that’s all.', t2: '€0 if we don’t win.',
+    t1: '25%, that’s all.', t2: '€0 if we don’t win.',
     cta: 'Check on WhatsApp', sub: 'Free check · reply in under 3 min', pos: 'before',
   } : {
     upto: 'Jusqu’à', per: 'par passager', elig: '(si éligible)',
     law: 'C’est la loi européenne.', notscam: 'Pas une arnaque.',
-    t1: '25\u202f% — c’est tout.', t2: '0\u202f€ si on ne gagne pas.',
+    t1: '25\u202f%, c’est tout.', t2: '0\u202f€ si on ne gagne pas.',
     cta: 'Vérifier sur WhatsApp', sub: 'Vérification gratuite · réponse en moins de 3\u202fmin', pos: 'after',
   };
   return (
@@ -405,7 +405,7 @@ function Crea1({ lang = 'fr' }) {
   );
 }
 
-// ═══ CRÉA 2 — Comparaison Robin vs concurrent (split) ══════
+// ═══ CRÉA 2, Comparaison Robin vs concurrent (split) ══════
 function Crea2({ lang = 'fr' }) {
   const c = lang === 'en' ? {
     on: 'On €600 of compensation:', robin: 'ROBIN', others: 'OTHERS',
@@ -478,7 +478,7 @@ function Crea2({ lang = 'fr' }) {
   );
 }
 
-// ═══ CRÉA 3 — Famille diaspora (navy étoilé + arc) ═════════
+// ═══ CRÉA 3, Famille diaspora (navy étoilé + arc) ═════════
 function Crea3({ lang = 'fr' }) {
   const c = lang === 'en' ? {
     you: 'Travelling as 4?', brut: 'Up to €2,400 gross', net: 'net for you',
@@ -516,18 +516,18 @@ function Crea3({ lang = 'fr' }) {
   );
 }
 
-// ═══ CRÉA 4 — Urgence aéroport (navy étoilé + avion) ═══════
+// ═══ CRÉA 4, Urgence aéroport (navy étoilé + avion) ═══════
 function Crea4({ lang = 'fr' }) {
   const c = lang === 'en' ? {
     eyebrow: '✈\uFE0F  Still waiting at the gate?',
     lead: 'Your delay could be worth', upto: 'up to', per: 'per person',
-    elig: '(if eligible — EC 261)',
+    elig: '(if eligible, EC 261)',
     rows: ['3 minutes on WhatsApp.', '€0 if we don’t win.'],
     cta: 'This is my turn', pos: 'before',
   } : {
     eyebrow: '✈\uFE0F  Encore en train d’attendre\u202f?',
     lead: 'Votre retard peut valoir', upto: 'jusqu’à', per: 'par personne',
-    elig: '(si éligible — CE 261)',
+    elig: '(si éligible, CE 261)',
     rows: ['3 minutes sur WhatsApp.', '0\u202f€ si on ne gagne pas.'],
     cta: 'C’est mon tour', pos: 'after',
   };
@@ -565,7 +565,7 @@ function Crea4({ lang = 'fr' }) {
   );
 }
 
-// ═══ CRÉA 5 — Route Afrique → Europe (minimaliste) ═════════
+// ═══ CRÉA 5, Route Afrique → Europe (minimaliste) ═════════
 function Crea5({ lang = 'fr' }) {
   const c = lang === 'en' ? {
     route: 'Africa → Europe', poss: 'Possible compensation',
@@ -614,7 +614,7 @@ Object.assign(window, { Money, Crea1, Crea2, Crea3, Crea4, Crea5 });
   <script type="text/babel" data-presets="react" data-source="pub/design-canvas.jsx">
 
 /* BEGIN USAGE */
-// DesignCanvas.jsx — Figma-ish design canvas wrapper
+// DesignCanvas.jsx, Figma-ish design canvas wrapper
 // Warm gray grid bg + Sections + Artboards + PostIt notes.
 // Exports (to window): DesignCanvas, DCSection, DCArtboard, DCPostIt.
 // Artboards are reorderable (grip-drag), deletable, labels/titles are
@@ -630,7 +630,7 @@ Object.assign(window, { Money, Crea1, Crea2, Crea3, Crea4, Crea5 });
 //     </DCSection>
 //   </DesignCanvas>
 //
-// Artboards are static design frames, not scroll regions — never use
+// Artboards are static design frames, not scroll regions, never use
 // height: 100% + overflow: auto/scroll on inner elements; size each artboard
 // to fit its content (explicit pixel height, or let it grow).
 /* END USAGE */
@@ -693,7 +693,7 @@ if (typeof document !== 'undefined' && !document.getElementById('dc-styles')) {
     '  font:inherit;transition:background .12s,color .12s}',
     '.dc-expand:hover,.dc-kebab:hover{background:rgba(0,0,0,.06);color:#2a251f}',
     // Slot hosting an open menu floats above later siblings (which otherwise
-    // paint on top — same z-index:auto, later DOM order) so the popup isn't
+    // paint on top, same z-index:auto, later DOM order) so the popup isn't
     // clipped by the next card.
     '[data-dc-slot]:has(.dc-menu){z-index:10}',
     '.dc-menu{position:absolute;top:100%;right:0;margin-top:4px;background:#fff;border-radius:8px;',
@@ -707,18 +707,16 @@ if (typeof document !== 'undefined' && !document.getElementById('dc-styles')) {
     '.dc-menu .dc-danger:hover{background:rgba(201,100,66,.1)}',
     // Chrome (titles / labels / buttons) counter-scales against the viewport
     // zoom so it stays a constant on-screen size. --dc-inv-zoom is set by
-    // DCViewport on every transform update and inherits to all descendants —
-    // any overlay inside the world (e.g. a TweaksPanel on an artboard) can use
+    // DCViewport on every transform update and inherits to all descendants    // any overlay inside the world (e.g. a TweaksPanel on an artboard) can use
     // it the same way.
     //
     // The header uses transform:scale (out-of-flow, so layout impact doesn't
     // matter) with its world-space width set to card-width / inv-zoom so that
-    // after counter-scaling its on-screen width exactly matches the card's —
-    // that's what lets the container query + text-overflow behave against the
+    // after counter-scaling its on-screen width exactly matches the card's    // that's what lets the container query + text-overflow behave against the
     // card's visible edge at every zoom level.
     //
     // The section head uses CSS zoom instead of transform so its layout box
-    // grows with the counter-scale, pushing the card row down — otherwise the
+    // grows with the counter-scale, pushing the card row down, otherwise the
     // constant-screen-size title would overflow into the (shrinking) world-
     // space gap and overlap the artboard headers at low zoom.
     '.dc-header{width:calc((100% + 4px) / var(--dc-inv-zoom,1));',
@@ -742,14 +740,14 @@ function dcFlatten(children) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// DesignCanvas — stateful wrapper around the pan/zoom viewport.
+// DesignCanvas, stateful wrapper around the pan/zoom viewport.
 // Owns runtime state (per-section order, renamed titles/labels, hidden
 // artboards, focused artboard). Order/titles/labels/hidden persist to a
 // .design-canvas.state.json
 // sidecar next to the HTML. Reads go via plain fetch() so the saved
 // arrangement is visible anywhere the HTML + sidecar are served together
 // (omelette preview, direct link, downloaded zip). Writes go through the
-// host's window.omelette bridge — editing requires the omelette runtime.
+// host's window.omelette bridge, editing requires the omelette runtime.
 // Focus is ephemeral.
 // ─────────────────────────────────────────────────────────────
 const DC_STATE_FILE = '.design-canvas.state.json';
@@ -807,7 +805,7 @@ function DesignCanvas({ children, minScale, maxScale, style }) {
       const aid = ab.props.id ?? ab.props.label;
       if (aid) abs.push([aid, ab]);
     });
-    // hidden is scoped to one source revision — when the agent regenerates
+    // hidden is scoped to one source revision, when the agent regenerates
     // (artboard-ID set changes), prior deletes don't apply to new content.
     const srcKey = abs.map(([k]) => k).join('\x1f');
     const hidden = persisted.srcKey === srcKey ? (persisted.hidden || []) : [];
@@ -861,7 +859,7 @@ function DesignCanvas({ children, minScale, maxScale, style }) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// DCViewport — transform-based pan/zoom (internal)
+// DCViewport, transform-based pan/zoom (internal)
 //
 // Input mapping (Figma-style):
 //   • trackpad pinch  → zoom   (ctrlKey wheel; Safari gesture* events)
@@ -870,8 +868,7 @@ function DesignCanvas({ children, minScale, maxScale, style }) {
 //   • middle-drag / primary-drag-on-bg → pan
 //
 // Transform state lives in a ref and is written straight to the DOM
-// (translate3d + will-change) so wheel ticks don't go through React —
-// keeps pans at 60fps on dense canvases.
+// (translate3d + will-change) so wheel ticks don't go through React// keeps pans at 60fps on dense canvases.
 // ─────────────────────────────────────────────────────────────
 function DCViewport({ children, minScale = 0.1, maxScale = 8, style = {} }) {
   const vpRef = React.useRef(null);
@@ -892,7 +889,7 @@ function DCViewport({ children, minScale = 0.1, maxScale = 8, style = {} }) {
     // Exposed for zoom-invariant chrome (labels, buttons, TweaksPanel).
     el.style.setProperty('--dc-inv-zoom', String(1 / scale));
     // Keep the host toolbar's % readout in sync with the canvas scale. Pan
-    // ticks leave scale unchanged — skip the cross-frame post for those.
+    // ticks leave scale unchanged, skip the cross-frame post for those.
     if (lastPostedScale.current !== scale) {
       lastPostedScale.current = scale;
       window.parent.postMessage({ type: '__dc_zoom', scale }, '*');
@@ -933,7 +930,7 @@ function DCViewport({ children, minScale = 0.1, maxScale = 8, style = {} }) {
       const k = next / t.scale;
       // --dc-inv-zoom consumers (.dc-sectionhead's CSS zoom, each section's
       // marginBottom) reflow on every scale change, vertically shifting the
-      // world layout — so a world point mathematically pinned under the cursor
+      // world layout, so a world point mathematically pinned under the cursor
       // drifts as you zoom (content creeps up on zoom-in, down on zoom-out).
       // Anchor the DOM element under the cursor instead: record its screen Y,
       // apply the transform + --dc-inv-zoom, then cancel whatever vertical
@@ -968,16 +965,16 @@ function DCViewport({ children, minScale = 0.1, maxScale = 8, style = {} }) {
 
     const onWheel = (e) => {
       e.preventDefault();
-      if (isGesturing) return; // Safari: gesture* owns the pinch — discard concurrent wheels
+      if (isGesturing) return; // Safari: gesture* owns the pinch, discard concurrent wheels
       if ((e.ctrlKey || e.metaKey) && !isMouseWheel(e)) {
         // trackpad pinch, or ctrl/cmd + smooth-scroll mouse. Notched
         // wheels fall through to the fixed-step branch below.
         zoomAt(e.clientX, e.clientY, Math.exp(-e.deltaY * 0.01));
       } else if (isMouseWheel(e)) {
-        // notched mouse wheel — fixed-ratio step per click
+        // notched mouse wheel, fixed-ratio step per click
         zoomAt(e.clientX, e.clientY, Math.exp(-Math.sign(e.deltaY) * 0.18));
       } else {
-        // trackpad two-finger scroll — pan
+        // trackpad two-finger scroll, pan
         tf.current.x -= e.deltaX;
         tf.current.y -= e.deltaY;
         apply();
@@ -987,7 +984,7 @@ function DCViewport({ children, minScale = 0.1, maxScale = 8, style = {} }) {
     // Safari sends native gesture* events for trackpad pinch with a smooth
     // e.scale; preferring these over the ctrl+wheel fallback gives a much
     // better feel there. No-ops on other browsers. Safari also fires
-    // ctrlKey wheel events during the same pinch — isGesturing makes
+    // ctrlKey wheel events during the same pinch, isGesturing makes
     // onWheel drop those entirely so they neither zoom nor pan.
     let gsBase = 1;
     let isGesturing = false;
@@ -1024,7 +1021,7 @@ function DCViewport({ children, minScale = 0.1, maxScale = 8, style = {} }) {
     };
 
     // Host-driven zoom (toolbar % menu). Zooms around viewport centre so the
-    // visible midpoint stays fixed — matching the host's iframe-zoom feel.
+    // visible midpoint stays fixed, matching the host's iframe-zoom feel.
     const onHostMsg = (e) => {
       const d = e.data;
       if (d && d.type === '__dc_set_zoom' && typeof d.scale === 'number') {
@@ -1035,7 +1032,7 @@ function DCViewport({ children, minScale = 0.1, maxScale = 8, style = {} }) {
         // fires on the iframe's native 'load', which for canvases with
         // images/fonts is after our mount-time announce, so re-announce.
         // Clear the pan-tick guard so apply() re-posts the current scale
-        // even if it's unchanged — the host just reset dcScale to 1.
+        // even if it's unchanged, the host just reset dcScale to 1.
         window.parent.postMessage({ type: '__dc_present' }, '*');
         lastPostedScale.current = undefined;
         apply();
@@ -1110,7 +1107,7 @@ function DCViewport({ children, minScale = 0.1, maxScale = 8, style = {} }) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// DCSection — editable title + h-row of artboards in persisted order
+// DCSection, editable title + h-row of artboards in persisted order
 // ─────────────────────────────────────────────────────────────
 function DCSection({ id, title, subtitle, children, gap = 48 }) {
   const ctx = React.useContext(DCCtx);
@@ -1134,7 +1131,7 @@ function DCSection({ id, title, subtitle, children, gap = 48 }) {
   const byId = Object.fromEntries(artboards.map((a) => [a.props.id ?? a.props.label, a]));
 
   // marginBottom counter-scales so the on-screen gap between sections stays
-  // constant — otherwise at low zoom the (world-space) gap collapses while
+  // constant, otherwise at low zoom the (world-space) gap collapses while
   // the screen-constant sectionhead below it doesn't, and the title reads as
   // belonging to the section above. paddingBottom below is just enough for
   // the 24px artboard-header (abs-positioned above each card) plus ~8px, so
@@ -1168,7 +1165,7 @@ function DCSection({ id, title, subtitle, children, gap = 48 }) {
   );
 }
 
-// DCArtboard — marker; rendered by DCArtboardFrame via DCSection.
+// DCArtboard, marker; rendered by DCArtboardFrame via DCSection.
 function DCArtboard() { return null; }
 
 // Per-artboard export (kind: 'png' | 'html'). Both paths share the same
@@ -1184,7 +1181,7 @@ async function dcExport(node, w, h, name, kind) {
   })).catch(() => url);
 
   // Collect @font-face rules. ss.cssRules throws SecurityError on
-  // cross-origin sheets (e.g. fonts.googleapis.com) — in that case fetch
+  // cross-origin sheets (e.g. fonts.googleapis.com), in that case fetch
   // the CSS text directly (those endpoints send ACAO:*) and regex-extract
   // the blocks. @import and @media/@supports are walked so nested
   // @font-face rules aren't missed.
@@ -1270,7 +1267,7 @@ async function dcExport(node, w, h, name, kind) {
     return save(new Blob([html], { type: 'text/html' }), 'html');
   }
 
-  // PNG: the SVG's own width/height must be the output resolution — an
+  // PNG: the SVG's own width/height must be the output resolution, an
   // <img>-loaded SVG rasterizes at its intrinsic size, so sizing it at 1×
   // and ctx.scale()-ing up would just upscale a 1× bitmap. viewBox maps the
   // w×h foreignObject onto the px·w × px·h SVG canvas so the browser renders
@@ -1300,7 +1297,7 @@ function DCArtboardFrame({ sectionId, artboard, label, order, onRename, onReorde
   const [confirming, setConfirming] = React.useState(false);
 
   // ⋯ menu: close on any outside pointerdown. Two-click delete lives inside
-  // the menu — first click arms the row, second commits; closing disarms.
+  // the menu, first click arms the row, second commits; closing disarms.
   React.useEffect(() => {
     if (!menuOpen) { setConfirming(false); return; }
     const off = (e) => { if (!menuRef.current || !menuRef.current.contains(e.target)) setMenuOpen(false); };
@@ -1323,7 +1320,7 @@ function DCArtboardFrame({ sectionId, artboard, label, order, onRename, onReorde
     e.preventDefault(); e.stopPropagation();
     const me = ref.current;
     // translateX is applied in local (pre-scale) space but pointer deltas and
-    // getBoundingClientRect().left are screen-space — divide by the viewport's
+    // getBoundingClientRect().left are screen-space, divide by the viewport's
     // current scale so the dragged card tracks the cursor at any zoom level.
     const scale = me.getBoundingClientRect().width / me.offsetWidth || 1;
     const peers = Array.from(document.querySelectorAll(`[data-dc-section="${sectionId}"] [data-dc-slot]`));
@@ -1420,7 +1417,7 @@ function DCArtboardFrame({ sectionId, artboard, label, order, onRename, onReorde
   );
 }
 
-// Inline rename — commits on blur or Enter.
+// Inline rename, commits on blur or Enter.
 function DCEditable({ value, onChange, style, tag = 'span', onClick }) {
   const T = tag;
   return (
@@ -1434,7 +1431,7 @@ function DCEditable({ value, onChange, style, tag = 'span', onClick }) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// Focus mode — overlay one artboard; ←/→ within section, ↑/↓ across
+// Focus mode, overlay one artboard; ←/→ within section, ↑/↓ across
 // sections, Esc or backdrop click to exit.
 // ─────────────────────────────────────────────────────────────
 function DCFocusOverlay({ entry, sectionMeta, sectionOrder }) {
@@ -1449,7 +1446,7 @@ function DCFocusOverlay({ entry, sectionMeta, sectionOrder }) {
 
   const go = (d) => { const n = peers[(idx + d + peers.length) % peers.length]; if (n) ctx.setFocus(`${sectionId}/${n}`); };
   const goSection = (d) => {
-    // Sections whose artboards are all deleted have slotIds:[] — step past
+    // Sections whose artboards are all deleted have slotIds:[], step past
     // them to the next non-empty section so ↑/↓ doesn't dead-end.
     const n = sectionOrder.length;
     for (let i = 1; i < n; i++) {
@@ -1532,7 +1529,7 @@ function DCFocusOverlay({ entry, sectionMeta, sectionOrder }) {
             borderRadius: 16, fontSize: 20, cursor: 'pointer', lineHeight: 1, transition: 'background .12s' }}>×</button>
       </div>
 
-      {/* card centered, label + index below — only the card itself stops
+      {/* card centered, label + index below, only the card itself stops
           propagation so any backdrop click (including the margins around
           the card) exits focus */}
       <div
@@ -1567,7 +1564,7 @@ function DCFocusOverlay({ entry, sectionMeta, sectionOrder }) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// Post-it — absolute-positioned sticky note
+// Post-it, absolute-positioned sticky note
 // ─────────────────────────────────────────────────────────────
 function DCPostIt({ children, top, left, right, bottom, rotate = -2, width = 180 }) {
   return (
@@ -1638,11 +1635,11 @@ Object.assign(window, { DesignCanvas, DCSection, DCArtboard, DCPostIt });
 //     );
 //   }
 //
-// TweakRadio is the segmented control for 2–3 short options (auto-falls-back to
+// TweakRadio is the segmented control for 2-3 short options (auto-falls-back to
 // TweakSelect past ~16/~10 chars per label); reach for TweakSelect directly when
 // options are many or long. For color tweaks always curate 3-4 options rather than
-// a free picker; an option can also be a whole 2–5 color palette (the stored value
-// is the array). The Tweak* controls are a floor, not a ceiling — build custom
+// a free picker; an option can also be a whole 2-5 color palette (the stored value
+// is the array). The Tweak* controls are a floor, not a ceiling, build custom
 // controls inside the panel if a tweak calls for UI they don't cover.
 /* END USAGE */
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1771,7 +1768,7 @@ function useTweaks(defaults) {
     setValues((prev) => ({ ...prev, ...edits }));
     window.parent.postMessage({ type: '__edit_mode_set_keys', edits }, '*');
     // Same-window signal so in-page listeners (deck-stage rail thumbnails)
-    // can react — the parent message only reaches the host, not peers.
+    // can react, the parent message only reaches the host, not peers.
     window.dispatchEvent(new CustomEvent('tweakchange', { detail: edits }));
   }, []);
   return [values, setTweak];
@@ -1779,7 +1776,7 @@ function useTweaks(defaults) {
 
 // ── TweaksPanel ─────────────────────────────────────────────────────────────
 // Floating shell. Registers the protocol listener BEFORE announcing
-// availability — if the announce ran first, the host's activate could land
+// availability, if the announce ran first, the host's activate could land
 // before our handler exists and the toolbar toggle would silently no-op.
 // The close button posts __edit_mode_dismissed so the host's toolbar toggle
 // flips off in lockstep; the host echoes __deactivate_edit_mode back which
@@ -1923,20 +1920,20 @@ function TweakRadio({ label, value, options, onChange }) {
   const trackRef = React.useRef(null);
   const [dragging, setDragging] = React.useState(false);
   // The active value is read by pointer-move handlers attached for the lifetime
-  // of a drag — ref it so a stale closure doesn't fire onChange for every move.
+  // of a drag, ref it so a stale closure doesn't fire onChange for every move.
   const valueRef = React.useRef(value);
   valueRef.current = value;
 
   // Segments wrap mid-word once per-segment width runs out. The track is
   // ~248px (280 panel − 28 body pad − 4 seg pad), each button loses 12px
-  // to its own padding, and 11.5px system-ui averages ~6.3px/char — so 2
+  // to its own padding, and 11.5px system-ui averages ~6.3px/char, so 2
   // options fit ~16 chars each, 3 fit ~10. Past that (or >3 options), fall
   // back to a dropdown rather than wrap.
   const labelLen = (o) => String(typeof o === 'object' ? o.label : o).length;
   const maxLen = options.reduce((m, o) => Math.max(m, labelLen(o)), 0);
   const fitsAsSegments = maxLen <= ({ 2: 16, 3: 10 }[options.length] ?? 0);
   if (!fitsAsSegments) {
-    // <select> emits strings — map back to the original option value so the
+    // <select> emits strings, map back to the original option value so the
     // fallback stays type-preserving (numbers, booleans) like the segment path.
     const resolve = (s) => {
       const m = options.find((o) => String(typeof o === 'object' ? o.value : o) === s);
@@ -2048,7 +2045,7 @@ function TweakNumber({ label, value, min, max, step = 1, unit = '', onChange }) 
   );
 }
 
-// Relative-luminance contrast pick — checkmarks drawn over a swatch need to
+// Relative-luminance contrast pick, checkmarks drawn over a swatch need to
 // read on both #111 and #fafafa without per-option configuration. Hex input
 // only (#rgb / #rrggbb); named or rgb()/hsl() colors fall through to "light".
 function __twkIsLight(hex) {
@@ -2068,8 +2065,8 @@ const __TwkCheck = ({ light }) => (
   </svg>
 );
 
-// TweakColor — curated color/palette picker. Each option is either a single
-// hex string or an array of 1-5 hex strings; the card adapts — a lone color
+// TweakColor, curated color/palette picker. Each option is either a single
+// hex string or an array of 1-5 hex strings; the card adapts, a lone color
 // renders solid, a palette renders colors[0] as the hero (left ~2/3) with the
 // rest stacked in a sharp column on the right. onChange emits the
 // option in the shape it was passed (string stays string, array stays array).
@@ -2146,7 +2143,7 @@ Object.assign(window, {
       { id: 'c5', Comp: Crea5, label: 'Créa 5 · Route minimaliste', labelEn: 'Ad 5 · Minimal route',  file: 'ad_af_eu_1E_route_minimal.png' },
     ];
 
-    // 2×3 contact sheet — scaled thumbnails of all 5 creatives + filenames.
+    // 2×3 contact sheet, scaled thumbnails of all 5 creatives + filenames.
     function ContactSheet({ lang }) {
       const cell = 480, scale = cell / 1080, thumbH = Math.round(1920 * scale);
       return (
@@ -2181,7 +2178,7 @@ Object.assign(window, {
       );
     }
 
-    // Mode ?mode=export — PNG 1080×1920 plein cadre pour Meta (pas le canvas zoomé).
+    // Mode ?mode=export, PNG 1080×1920 plein cadre pour Meta (pas le canvas zoomé).
     function exportBtnStyle(primary) {
       return {
         padding: '10px 16px', borderRadius: 10, border: 'none', cursor: 'pointer',
@@ -2234,12 +2231,12 @@ Object.assign(window, {
           fontFamily: 'DM Sans, system-ui, sans-serif', padding: '24px 20px 48px',
         }}>
           <h1 style={{ margin: '0 0 8px', fontSize: 22, fontWeight: 800 }}>
-            Robin des Airs — Export Meta 1080×1920
+            Robin des Airs, Export Meta 1080×1920
           </h1>
           <p style={{ margin: '0 0 20px', color: 'rgba(255,255,255,0.65)', fontSize: 14, maxWidth: 640, lineHeight: 1.5 }}>
             {fr
-              ? 'Télécharge chaque PNG puis importe dans Ads Manager. Fond plein écran — pas de canvas zoomé.'
-              : 'Download each PNG then upload to Ads Manager. Full-bleed — not the zoomed design canvas.'}
+              ? 'Télécharge chaque PNG puis importe dans Ads Manager. Fond plein écran, pas de canvas zoomé.'
+              : 'Download each PNG then upload to Ads Manager. Full-bleed, not the zoomed design canvas.'}
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 28 }}>
             <button type="button" onClick={exportAll} disabled={!!busy} style={exportBtnStyle(true)}>

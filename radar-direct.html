@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <title>ROBIN DES AIRS — Command Center / Elite Africa</title>
+    <title>ROBIN DES AIRS, Command Center / Elite Africa</title>
     <style>
         :root { --red: #e74c3c; --green: #2ecc71; --purple: #8e44ad; --orange: #e67e22; --blue: #3498db; --dark-bg: #0f0f0f; --card-bg: #1a1a1a; --border: #333; }
         body { background-color: var(--dark-bg); color: #fff; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 20px; }
@@ -37,7 +37,7 @@
 
     <div class="header">
         <div class="logo">🏹 ROBIN DES AIRS : SUIVI EN DIRECT</div>
-        <div style="color: #aaa; font-size: 14px;">Départs Paris Orly — tous les vols</div>
+        <div style="color: #aaa; font-size: 14px;">Départs Paris Orly, tous les vols</div>
     </div>
 
     <div class="stats-container">
@@ -50,7 +50,7 @@
             <div id="total-cash" class="stat-value val-green">0 €</div>
         </div>
         <div style="align-self: flex-end; color: #666; font-size: 12px; margin-bottom: 10px;">
-            <span id="scan-status">0 vols éligibles détectés</span> — MAJ : <span id="last-update">--:--</span>
+            <span id="scan-status">0 vols éligibles détectés</span> MAJ : <span id="last-update">--:--</span>
         </div>
     </div>
 
@@ -109,8 +109,8 @@
         return isNaN(d.getTime()) ? '--:--' : (d.getUTCHours()+'').padStart(2,'0') + 'h' + (d.getUTCMinutes()+'').padStart(2,'0');
     }
     function getArrival(f) {
-        if (f.landedAtZulu && f.landedAtZulu !== '—') return '🏁 ' + fmt(f.landedAtZulu);
-        if (f.estimatedArrival && f.estimatedArrival !== '—') return '🕒 ' + fmt(f.estimatedArrival);
+        if (f.landedAtZulu && f.landedAtZulu !== ', ') return '🏁 ' + fmt(f.landedAtZulu);
+        if (f.estimatedArrival && f.estimatedArrival !== ', ') return '🕒 ' + fmt(f.estimatedArrival);
         return fmt(f.scheduledArrival) || '--:--';
     }
     function requestNotif() {
@@ -153,10 +153,10 @@
                 if (crit) criticalCount++;
                 if (f.eligible && (f.color === 'RED' || f.color === 'ORANGE') && !f.surveillanceRetour) totalCash += 450;
                 var rowClass = crit ? 'row-critical' : '';
-                var indemnite = (f.eligible && (f.color === 'RED' || f.color === 'ORANGE' || f.color === 'YELLOW')) ? ((f.color === 'RED' || f.color === 'ORANGE') ? '600 €' : 'POTENTIEL 600€') : '—';
-                var delay = f.cancelled ? '—' : (f.delayMinutes != null ? f.delayMinutes + ' min' : '—');
-                var loi = f.eligible ? '<span class="badge-eligible">Loi EU 261 OK ✅</span>' : '—';
-                list.innerHTML += '<tr class="' + rowClass + '"><td><b>' + (f.flight || '—') + '</b></td><td>' + (f.airline || '—') + '</td><td>' + (f.dep || '—') + ' ➔ ' + (f.arr || '—') + '</td><td>' + (f.scheduledDeparture || '—') + '</td><td>' + (f.estimatedDeparture || '—') + '</td><td>' + getArrival(f) + '</td><td><b>' + delay + '</b></td><td style="color:var(--green)">' + indemnite + '</td><td>' + loi + '</td><td><a href="#" style="color:var(--blue);font-size:11px">PUB</a></td></tr>';
+                var indemnite = (f.eligible && (f.color === 'RED' || f.color === 'ORANGE' || f.color === 'YELLOW')) ? ((f.color === 'RED' || f.color === 'ORANGE') ? '600 €' : 'POTENTIEL 600€') : ', ';
+                var delay = f.cancelled ? ', ' : (f.delayMinutes != null ? f.delayMinutes + ' min' : ', ');
+                var loi = f.eligible ? '<span class="badge-eligible">Loi EU 261 OK ✅</span>' : ', ';
+                list.innerHTML += '<tr class="' + rowClass + '"><td><b>' + (f.flight || ', ') + '</b></td><td>' + (f.airline || ', ') + '</td><td>' + (f.dep || ', ') + ' ➔ ' + (f.arr || ', ') + '</td><td>' + (f.scheduledDeparture || ', ') + '</td><td>' + (f.estimatedDeparture || ', ') + '</td><td>' + getArrival(f) + '</td><td><b>' + delay + '</b></td><td style="color:var(--green)">' + indemnite + '</td><td>' + loi + '</td><td><a href="#" style="color:var(--blue);font-size:11px">PUB</a></td></tr>';
             });
             document.getElementById('count-critical').textContent = criticalCount;
             document.getElementById('total-cash').textContent = totalCash + ' €';

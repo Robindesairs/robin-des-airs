@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Statistiques — Robin des Airs · Compagnies & routes les plus en retard</title>
+<title>Statistiques, Robin des Airs · Compagnies & routes les plus en retard</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="robin-des-airs-logo-profil-1024.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -100,7 +100,7 @@ tr.row:hover td { background: rgba(255,255,255,0.03); }
     <span><span class="name">Robin <em>des Airs</em></span><br><span class="sub">Statistiques retards</span></span>
   </a>
   <div class="topbar-right">
-    <span class="refresh-meta" id="meta">—</span>
+    <span class="refresh-meta" id="meta"> </span>
     <a class="navlink" href="bureau.html">← Bureau</a>
     <a class="navlink" href="radar.html">Radar</a>
     <a class="navlink" href="crm/">CRM</a>
@@ -122,15 +122,15 @@ tr.row:hover td { background: rgba(255,255,255,0.03); }
   </div>
 
   <div class="pulse-bar" id="pulse">
-    <div class="pulse-cell"><div class="pulse-label">Vols éligibles</div><div class="pulse-value gold" id="k-total">—</div><div class="pulse-sub">sur la période</div></div>
-    <div class="pulse-cell" style="--accent:var(--red)"><div class="pulse-label">Annulés</div><div class="pulse-value red" id="k-cancel">—</div><div class="pulse-sub">vols supprimés</div></div>
-    <div class="pulse-cell" style="--accent:var(--amber)"><div class="pulse-label">Retard ≥ 3 h</div><div class="pulse-value amber" id="k-delay">—</div><div class="pulse-sub">indemnisables</div></div>
-    <div class="pulse-cell" style="--accent:var(--blue)"><div class="pulse-label">Compagnies</div><div class="pulse-value blue" id="k-airlines">—</div><div class="pulse-sub">distinctes</div></div>
-    <div class="pulse-cell" style="--accent:var(--blue)"><div class="pulse-label">Routes</div><div class="pulse-value blue" id="k-routes">—</div><div class="pulse-sub">distinctes</div></div>
-    <div class="pulse-cell" style="--accent:var(--green)"><div class="pulse-label">Potentiel indicatif</div><div class="pulse-value green" id="k-eur">—</div><div class="pulse-sub">600 € × vols</div></div>
+    <div class="pulse-cell"><div class="pulse-label">Vols éligibles</div><div class="pulse-value gold" id="k-total"> </div><div class="pulse-sub">sur la période</div></div>
+    <div class="pulse-cell" style="--accent:var(--red)"><div class="pulse-label">Annulés</div><div class="pulse-value red" id="k-cancel"> </div><div class="pulse-sub">vols supprimés</div></div>
+    <div class="pulse-cell" style="--accent:var(--amber)"><div class="pulse-label">Retard ≥ 3 h</div><div class="pulse-value amber" id="k-delay"> </div><div class="pulse-sub">indemnisables</div></div>
+    <div class="pulse-cell" style="--accent:var(--blue)"><div class="pulse-label">Compagnies</div><div class="pulse-value blue" id="k-airlines"> </div><div class="pulse-sub">distinctes</div></div>
+    <div class="pulse-cell" style="--accent:var(--blue)"><div class="pulse-label">Routes</div><div class="pulse-value blue" id="k-routes"> </div><div class="pulse-sub">distinctes</div></div>
+    <div class="pulse-cell" style="--accent:var(--green)"><div class="pulse-label">Potentiel indicatif</div><div class="pulse-value green" id="k-eur"> </div><div class="pulse-sub">600 € × vols</div></div>
   </div>
 
-  <div class="section-h"><h2>Activité radar</h2><span class="tag" id="tl-range">—</span><span class="line"></span></div>
+  <div class="section-h"><h2>Activité radar</h2><span class="tag" id="tl-range"> </span><span class="line"></span></div>
   <div class="panel"><div class="spark" id="spark"></div></div>
 
   <div class="cols">
@@ -154,14 +154,14 @@ tr.row:hover td { background: rgba(255,255,255,0.03); }
     </div>
   </div>
 
-  <p class="note" id="note">Données : registre permanent des vols éligibles (radar-monitor). « Potentiel indicatif » = 600 € × nombre de vols, une borne haute non garantie servant à prioriser — pas un montant réellement dû.</p>
+  <p class="note" id="note">Données : registre permanent des vols éligibles (radar-monitor). « Potentiel indicatif » = 600 € × nombre de vols, une borne haute non garantie servant à prioriser, pas un montant réellement dû.</p>
 </div>
 
 <script>
 const CODE_KEY = 'rda_crm_offline_code_v1';
 function crmCode(){ return localStorage.getItem(CODE_KEY) || 'robin-dakar'; }
-function fmt(n){ return (n==null||isNaN(n)) ? '—' : Number(n).toLocaleString('fr-FR'); }
-function eur(n){ if(n==null||isNaN(n)) return '—'; if(n>=1000000) return (n/1000000).toFixed(1).replace('.0','')+' M€'; if(n>=1000) return Math.round(n/1000)+' k€'; return n+' €'; }
+function fmt(n){ return (n==null||isNaN(n)) ? ', ' : Number(n).toLocaleString('fr-FR'); }
+function eur(n){ if(n==null||isNaN(n)) return ', '; if(n>=1000000) return (n/1000000).toFixed(1).replace('.0','')+' M€'; if(n>=1000) return Math.round(n/1000)+' k€'; return n+' €'; }
 const $ = (id)=>document.getElementById(id);
 
 let currentDays = 90;
@@ -209,7 +209,7 @@ function render(d){
 function rowHtml(i, name, code, a, max, showCode){
   const w = Math.round(a.total/max*100);
   const cancelHeavy = a.cancelled > a.total*0.25;
-  const avg = a.avgDelayMin ? (a.avgDelayMin+' min') : '—';
+  const avg = a.avgDelayMin ? (a.avgDelayMin+' min') : ', ';
   const avgPill = a.avgDelayMin>=300 ? 'pill red' : a.avgDelayMin>=180 ? 'pill amber' : '';
   return '<tr class="row">'
     + '<td class="rank">'+(i+1)+'</td>'
@@ -237,7 +237,7 @@ function esc(s){ return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&l
 function promptCode(){
   const c = prompt('Code d\'accès CRM requis pour les statistiques :');
   if (c){ localStorage.setItem(CODE_KEY, c.trim()); load(currentDays); }
-  else { $('t-airlines').innerHTML = '<tr><td colspan="6" class="state">Accès refusé — code CRM requis.</td></tr>'; }
+  else { $('t-airlines').innerHTML = '<tr><td colspan="6" class="state">Accès refusé, code CRM requis.</td></tr>'; }
 }
 
 document.getElementById('period').addEventListener('click', e=>{ const b=e.target.closest('button'); if(b) load(+b.dataset.d); });

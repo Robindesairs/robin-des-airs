@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Générateur Stories AF Afrique — Robin des Airs</title>
+<title>Générateur Stories AF Afrique, Robin des Airs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -36,7 +36,7 @@ h1{font-size:1.3rem;font-weight:900;letter-spacing:-0.02em;margin-bottom:4px}
 </style>
 </head>
 <body>
-<h1>Générateur Pubs Stories — Escales Air France Afrique</h1>
+<h1>Générateur Pubs Stories, Escales Air France Afrique</h1>
 <p class="sub">Format <strong>9:16 · 1080×1920 px</strong> · 4 formats × toutes escales · Français + Anglais · Prêt Meta/Instagram</p>
 
 <div class="tabs">
@@ -54,7 +54,7 @@ h1{font-size:1.3rem;font-weight:900;letter-spacing:-0.02em;margin-bottom:4px}
 </div>
 
 <div class="actions">
-  <button class="btn-batch" id="btn-all" onclick="downloadAll()">⬇ TOUT TÉLÉCHARGER — toutes villes × 4 formats</button>
+  <button class="btn-batch" id="btn-all" onclick="downloadAll()">⬇ TOUT TÉLÉCHARGER, toutes villes × 4 formats</button>
   <button class="btn-ghost" onclick="dlCurrentCity()">↓ Cette ville seulement (4 formats)</button>
 </div>
 <p class="progress" id="progress">Génération en cours…</p>
@@ -259,8 +259,8 @@ function drawFamille(canvas, city, lang) {
   drawStars(ctx);
 
   const badgeTxt = lang === 'fr'
-    ? `✈️ Vol ${city.name} → l'Europe — retard ou annulation ?`
-    : `✈️ Flight ${city.name} → Europe — delayed or cancelled?`;
+    ? `✈️ Vol ${city.name} → l'Europe, retard ou annulation ?`
+    : `✈️ Flight ${city.name} → Europe, delayed or cancelled?`;
   drawBadge(ctx, badgeTxt, true);
 
   // Headline
@@ -298,8 +298,8 @@ function drawRoute(canvas, city, lang) {
   drawStars(ctx);
 
   const badgeTxt = lang === 'fr'
-    ? `✈️ Vol ${city.name} → l'Europe — retard ou annulation ?`
-    : `✈️ Flight ${city.name} → Europe — delayed or cancelled?`;
+    ? `✈️ Vol ${city.name} → l'Europe, retard ou annulation ?`
+    : `✈️ Flight ${city.name} → Europe, delayed or cancelled?`;
   drawBadge(ctx, badgeTxt, true);
 
   // Route headline
@@ -366,8 +366,8 @@ function drawUrgence(canvas, city, lang) {
   drawStars(ctx);
 
   const badgeTxt = lang === 'fr'
-    ? `✈️ Vol ${city.name} → l'Europe — retard ou annulation ?`
-    : `✈️ Flight ${city.name} → Europe — delayed or cancelled?`;
+    ? `✈️ Vol ${city.name} → l'Europe, retard ou annulation ?`
+    : `✈️ Flight ${city.name} → Europe, delayed or cancelled?`;
   drawBadge(ctx, badgeTxt, true);
 
   // Headline
@@ -398,7 +398,7 @@ function drawUrgence(canvas, city, lang) {
   txt(ctx, '600 €', 840, 220, 900, GREEN);
 
   txt(ctx, lang==='fr' ? 'par personne' : 'per person', 900, 40, 700, '#fff');
-  txt(ctx, lang==='fr' ? '(si éligible — CE 261)' : '(if eligible — EC 261)', 952, 24, 400, 'rgba(255,255,255,0.5)');
+  txt(ctx, lang==='fr' ? '(si éligible, CE 261)' : '(if eligible, EC 261)', 952, 24, 400, 'rgba(255,255,255,0.5)');
 
   // Bullets
   ctx.save();
@@ -423,8 +423,8 @@ function drawLoi(canvas, city, lang) {
   drawGreenBg(ctx);
 
   const badgeTxt = lang === 'fr'
-    ? `✈️ Vol ${city.name} → l'Europe — retard ou annulation ?`
-    : `✈️ Flight ${city.name} → Europe — delayed or cancelled?`;
+    ? `✈️ Vol ${city.name} → l'Europe, retard ou annulation ?`
+    : `✈️ Flight ${city.name} → Europe, delayed or cancelled?`;
   drawBadge(ctx, badgeTxt, false);
 
   txt(ctx, lang==='fr' ? "JUSQU'À" : 'UP TO', 350, 24, 800, 'rgba(255,255,255,0.75)');
@@ -455,7 +455,7 @@ function drawLoi(canvas, city, lang) {
 
   divider(ctx, 906);
 
-  txt(ctx, lang==='fr' ? "25 % — c'est tout." : "25% — that's it.", 968, 32, 700, '#fff');
+  txt(ctx, lang==='fr' ? "25 %, c'est tout." : "25%, that's it.", 968, 32, 700, '#fff');
   txt(ctx, lang==='fr' ? '0 € si on ne gagne pas.' : "0€ if we don't win.", 1018, 32, 700, '#fff');
 
   drawCTA(ctx, lang==='fr' ? 'Vérifier sur WhatsApp' : 'Verify on WhatsApp', false);
@@ -503,12 +503,12 @@ async function dlCurrentCity() {
   const prog = document.getElementById('progress');
   prog.style.display = 'block';
   for (let i = 0; i < 4; i++) {
-    prog.textContent = `Génération ${i+1}/4 — ${currentCity.name}…`;
+    prog.textContent = `Génération ${i+1}/4, ${currentCity.name}…`;
     const name = `${FORMAT_NAMES[i]}_${currentCity.code}_${currentCity.name.replace(/[^a-zA-Z]/g,'_')}.png`;
     await dlCanvas(document.getElementById(CVS[i]), name);
     await new Promise(r => setTimeout(r, 250));
   }
-  prog.textContent = `✅ ${currentCity.name} — 4 fichiers téléchargés.`;
+  prog.textContent = `✅ ${currentCity.name}, 4 fichiers téléchargés.`;
 }
 
 async function downloadAll() {
@@ -523,14 +523,14 @@ async function downloadAll() {
   const total = cities.length * 4;
   for (const city of cities) {
     for (let i = 0; i < 4; i++) {
-      prog.textContent = `Génération ${++done}/${total} — ${FORMAT_NAMES[i]} · ${city.name}…`;
+      prog.textContent = `Génération ${++done}/${total}, ${FORMAT_NAMES[i]} · ${city.name}…`;
       DRAWS[i](offCanvas, city, currentLang);
       const name = `${FORMAT_NAMES[i]}_${city.code}_${city.name.replace(/[^a-zA-Z]/g,'_')}.png`;
       await dlCanvas(offCanvas, name);
       await new Promise(r => setTimeout(r, 300));
     }
   }
-  prog.textContent = `✅ Terminé — ${total} fichiers téléchargés.`;
+  prog.textContent = `✅ Terminé, ${total} fichiers téléchargés.`;
   btn.disabled = false;
 }
 

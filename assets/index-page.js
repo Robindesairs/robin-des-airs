@@ -1,5 +1,5 @@
 /* ════════════════════════════════════════════════════
-   ROBIN DES AIRS — Full JS (DB/PFX via flights-db.js)
+   ROBIN DES AIRS, Full JS (DB/PFX via flights-db.js)
 ════════════════════════════════════════════════════ */
 
 function robinWhenDomReady(fn) {
@@ -11,7 +11,7 @@ window.robinWhenDomReady = robinWhenDomReady;
 const COMMISSION_RATE = 0.25; /* 25% no win no fee */
 const WHATSAPP_NUMBER = '33756863630';
 window.WHATSAPP_NUMBER = WHATSAPP_NUMBER;
-/** Lien WhatsApp fiable (mobile + texte long) — api.whatsapp.com préserve mieux le message que wa.me sur certains appareils */
+/** Lien WhatsApp fiable (mobile + texte long), api.whatsapp.com préserve mieux le message que wa.me sur certains appareils */
 function buildWhatsAppSendUrl(messageText) {
   var num = String(typeof WHATSAPP_NUMBER !== 'undefined' ? WHATSAPP_NUMBER : '33756863630').replace(/\D/g, '');
   var t = String(messageText || '');
@@ -28,18 +28,18 @@ function openWhatsAppSendUrl(url) {
   var w = window.open(url, '_blank', 'noopener,noreferrer');
   if (!w || w.closed) window.location.href = url;
 }
-const DLABEL = { 600:'Long-courrier · +3 500 km', 400:'Moyen-courrier · 1 500–3 500 km', 250:'Court-courrier · <1 500 km' };
-const DISTANCE_LINE = { 600:'Vol Long-Courrier (>3 500 km) → Indemnité de 600€', 400:'Vol Moyen-Courrier (1 500–3 500 km) → Indemnité de 400€', 250:'Vol Court-Courrier (<1 500 km) → Indemnité de 250€' };
+const DLABEL = { 600:'Long-courrier · +3 500 km', 400:'Moyen-courrier · 1 500-3 500 km', 250:'Court-courrier · <1 500 km' };
+const DISTANCE_LINE = { 600:'Vol Long-Courrier (>3 500 km) → Indemnité de 600€', 400:'Vol Moyen-Courrier (1 500-3 500 km) → Indemnité de 400€', 250:'Vol Court-Courrier (<1 500 km) → Indemnité de 250€' };
 function applyDistanceLineCurrency(el) {
   if (!el || !window.I18N || typeof I18N.applyCurrencyWalk !== 'function' || !I18N.getCurrency) return;
   if (I18N.getCurrency() !== 'eur') I18N.applyCurrencyWalk(el);
 }
-/* Destinations couvertes à 600€ (long-courrier) — base site + SEO meta */
-/* Destinations 600€ (long-courrier) — base site + SEO meta */
+/* Destinations couvertes à 600€ (long-courrier), base site + SEO meta */
+/* Destinations 600€ (long-courrier), base site + SEO meta */
 const DESTINATIONS_600 = { ABJ:'Abidjan', ABV:'Abuja', ACC:'Accra', ADD:'Addis-Abeba', TNR:'Antananarivo', BKO:'Bamako', BGF:'Bangui', BJL:'Banjul', BZV:'Brazzaville', BJM:'Bujumbura', CKY:'Conakry', COO:'Cotonou', DSS:'Dakar', DAR:'Dar es Salaam', JIB:'Djibouti', DLA:'Douala', EBB:'Entebbe', FNA:'Freetown', JNB:'Johannesburg', KGL:'Kigali', JRO:'Arusha', FIH:'Kinshasa', LOS:'Lagos', CPT:'Le Cap', LBV:'Libreville', LFW:'Lomé', LAD:'Luanda', SSG:'Malabo', MRU:'Île Maurice', ROB:'Monrovia', NDJ:'Ndjamena', NBO:'Nairobi', NIM:'Niamey', OUA:'Ouagadougou', PHC:'Port Harcourt', RUN:'La Réunion', WDH:'Windhoek', NSI:'Yaoundé', ZNZ:'Zanzibar' };
 /* Aéroport → Ville (pour affichage Départ | Arrivée) */
 const AIRPORT_CITY = { CDG:'Paris', ORY:'Paris', LYS:'Lyon', MRS:'Marseille', NCE:'Nice', TLS:'Toulouse', BOD:'Bordeaux', NTE:'Nantes', LIS:'Lisbonne', OPO:'Porto', MAD:'Madrid', BCN:'Barcelone', FCO:'Rome', NAP:'Naples', MXP:'Milan', VIE:'Vienne', BRU:'Bruxelles', AMS:'Amsterdam', FRA:'Francfort', MUC:'Munich', LHR:'Londres', DUB:'Dublin', GVA:'Genève', ADD:'Addis-Abeba', ABJ:'Abidjan', BKO:'Bamako', DKR:'Dakar', DLA:'Douala', LBV:'Libreville', NIM:'Niamey', OUA:'Ouagadougou', LFW:'Lomé', COO:'Cotonou', DSS:'Dakar', NDJ:'Ndjamena', BGF:'Bangui', BZV:'Brazzaville', FIH:'Kinshasa', JNB:'Johannesburg', CPT:'Le Cap', CMN:'Casablanca', ALG:'Alger', TUN:'Tunis', CAI:'Le Caire', NBO:'Nairobi', LAG:'Lagos', NKC:'Nouakchott', TIP:'Tripoli', PTP:'Pointe-à-Pitre', FDF:'Fort-de-France', CAY:'Cayenne', DOH:'Doha', DXB:'Dubaï', IST:'Istanbul', NRT:'Tokyo', MIA:'Miami', CRL:'Charleroi', NSI:'Yaoundé' };
-/* Même grille — noms affichés en anglais (bandeau vols, langue EN) */
+/* Même grille, noms affichés en anglais (bandeau vols, langue EN) */
 const AIRPORT_CITY_EN = { CDG:'Paris', ORY:'Paris', LYS:'Lyon', MRS:'Marseille', NCE:'Nice', TLS:'Toulouse', BOD:'Bordeaux', NTE:'Nantes', LIS:'Lisbon', OPO:'Porto', MAD:'Madrid', BCN:'Barcelona', FCO:'Rome', NAP:'Naples', MXP:'Milan', VIE:'Vienna', BRU:'Brussels', AMS:'Amsterdam', FRA:'Frankfurt', MUC:'Munich', LHR:'London', DUB:'Dublin', GVA:'Geneva', ADD:'Addis Ababa', ABJ:'Abidjan', BKO:'Bamako', DKR:'Dakar', DLA:'Douala', LBV:'Libreville', NIM:'Niamey', OUA:'Ouagadougou', LFW:'Lomé', COO:'Cotonou', DSS:'Dakar', NDJ:'Ndjamena', BGF:'Bangui', BZV:'Brazzaville', FIH:'Kinshasa', JNB:'Johannesburg', CPT:'Cape Town', CMN:'Casablanca', ALG:'Algiers', TUN:'Tunis', CAI:'Cairo', NBO:'Nairobi', LAG:'Lagos', NKC:'Nouakchott', TIP:'Tripoli', PTP:'Pointe-à-Pitre', FDF:'Fort-de-France', CAY:'Cayenne', DOH:'Doha', DXB:'Dubai', IST:'Istanbul', NRT:'Tokyo', MIA:'Miami', CRL:'Charleroi', NSI:'Yaoundé' };
 const ROUTE_AMOUNT = {};
 var _routeAmountBuilt = false;
@@ -69,12 +69,12 @@ const VILLES_OPTIONS = [
 ];
 
 const RAISON_LABELS = {
-  meteo: { t:'Météo / Conditions climatiques', n:'⚡ Invoquée souvent à tort — notre dossier METAR le démontre dans 80% des cas.' },
+  meteo: { t:'Météo / Conditions climatiques', n:'⚡ Invoquée souvent à tort, notre dossier METAR le démontre dans 80% des cas.' },
   technique: { t:'Problème technique / Panne', n:'🔧 Défaillance technique ? La compagnie reste responsable de l\'entretien.' },
   greve: { t:'Grève', n:'✊ Si grève interne à la compagnie : indemnisation due. Grève externe : cas par cas.' },
-  securite: { t:'Raison de sécurité', n:'🛡️ Motif légitime possible — mais souvent invoqué abusivement.' },
+  securite: { t:'Raison de sécurité', n:'🛡️ Motif légitime possible, mais souvent invoqué abusivement.' },
   sansraison: { t:'Aucune explication donnée', n:'⚠️ Sans justification valide, la loi CE 261 s\'applique pleinement.' },
-  nesaispas: { t:'Non précisé', n:'💡 Peu importe — votre droit à l\'indemnisation ne dépend pas de la raison.' },
+  nesaispas: { t:'Non précisé', n:'💡 Peu importe, votre droit à l\'indemnisation ne dépend pas de la raison.' },
 };
 
 /* ── State ── */
@@ -376,7 +376,7 @@ function volTickerRenderList(list) {
   var tA = get('vol_ticker_annul');
   var titleRaw = get('vol_ticker_chip_title');
   var titleAttrBase = String(titleRaw).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
-  /* Jusqu’à 9 vols impactés (tri date décroissante — les plus récents remplacent les anciens côté API). */
+  /* Jusqu’à 9 vols impactés (tri date décroissante, les plus récents remplacent les anciens côté API). */
   var picked = volTickerSortRowsByDateDesc(list).slice(0, VOL_TICKER_MAX_CHIPS);
   var en = window.I18N && window.I18N.getLang && window.I18N.getLang() === 'en';
   var sepDot = ' · ';
@@ -740,7 +740,7 @@ function goWaDirect() {
   openWhatsAppSendUrl(buildWhatsAppSendUrl('[FR] Bonjour Robin des Airs !\n\nJe souhaite vous parler directement.\n\nMon prénom :\nMon vol :\nCe qui s\'est passé :\n'));
 }
 
-/* ═══ PARCOURS RAPIDE — ouverture WhatsApp directe (pas d’étape téléphone) ═══ */
+/* ═══ PARCOURS RAPIDE, ouverture WhatsApp directe (pas d’étape téléphone) ═══ */
 function goToShortStep() {
   var el1 = document.getElementById('step-short-1');
   if (el1) el1.style.display = 'block';
@@ -1170,7 +1170,7 @@ function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
 
   const motifTxt = { retard:'Retard +3h', annulation:'Annulation', surbook:"Refus d'embarquement", correspondance:"J'ai raté ma correspondance à cause d'un retard" }[S.motif] || '';
   const match    = DB[(volRef || '').toUpperCase()];
-  var routeStr   = '—';
+  var routeStr   = ', ';
   if (match && match.r) {
     var parts = match.r.split('→');
     var depIata = (parts[0] || '').trim();
@@ -1209,7 +1209,7 @@ function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
   document.getElementById('res-raison-note').textContent = raisonInfo.n;
 
   var flightNumberInput = document.getElementById('flight_number');
-  var flightNum = (flightNumberInput && flightNumberInput.value && flightNumberInput.value.trim()) ? flightNumberInput.value.trim().toUpperCase() : (volRef || '—');
+  var flightNum = (flightNumberInput && flightNumberInput.value && flightNumberInput.value.trim()) ? flightNumberInput.value.trim().toUpperCase() : (volRef || ', ');
   var waMsg = 'Bonjour Robin ! Je viens de faire le diagnostic sur votre site.\nMon vol : ' + flightNum + '\nDate : ' + (dateStr || '') + '\nJe suis éligible et je veux lancer mon dossier.';
   var waHref = buildWhatsAppSendUrl(waMsg);
   var stickyWa = document.getElementById('sticky-wa-cta');
@@ -1239,7 +1239,7 @@ function doCalc(dist, paxVal, volRef, dateStr, vol1Str) {
           prescWarn.textContent = '⏳ Attention : il vous reste environ ' + remainMonths + ' mois pour agir avant prescription (délai légal 3 ans).';
         } else if (remainMonths <= 0) {
           prescWarn.style.display = 'block';
-          prescWarn.textContent = '⚠️ Ce vol pourrait être prescrit (3 ans). Contactez-nous pour vérification — des exceptions existent.';
+          prescWarn.textContent = '⚠️ Ce vol pourrait être prescrit (3 ans). Contactez-nous pour vérification, des exceptions existent.';
         } else {
           prescWarn.style.display = 'none';
         }
@@ -1318,7 +1318,7 @@ function flash(id) {
 
 /* Dépôt dossier → page dédiée dossier.html */
 
-/* ═══ SLIDER TÉMOIGNAGES — groupes de 3 ═══ */
+/* ═══ SLIDER TÉMOIGNAGES, groupes de 3 ═══ */
 let currentSlide = 0;
 const TESTI_GROUPS = 2;
 
@@ -1452,16 +1452,16 @@ robinWhenDomReady(() => {
       if (eb) window.flatpickr(eb, Object.assign({}, fpOpt));
     }
 
-    // Tom Select — Aéroports Départ / Arrivée : liste complète au chargement + recherche API à 2 caractères
+    // Tom Select, Aéroports Départ / Arrivée : liste complète au chargement + recherche API à 2 caractères
     if (typeof TomSelect !== 'undefined') {
       var airportSearchApi = (typeof window.AIRPORT_SEARCH_API !== 'undefined' && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : (window.location.origin + '/.netlify/functions/airport-search');
       var airportsRaw = window.AIRPORTS_DATA && window.AIRPORTS_DATA.length ? window.AIRPORTS_DATA : [
-        { value: 'CDG', text: 'Paris — CDG', city: 'Paris' }, { value: 'ORY', text: 'Paris — ORY', city: 'Paris' },
-        { value: 'DSS', text: 'Dakar — DSS', city: 'Dakar' }, { value: 'LYS', text: 'Lyon — LYS', city: 'Lyon' },
-        { value: 'MRS', text: 'Marseille — MRS', city: 'Marseille' }, { value: 'CMN', text: 'Casablanca — CMN', city: 'Casablanca' },
-        { value: 'BRU', text: 'Bruxelles — BRU', city: 'Bruxelles' }
+        { value: 'CDG', text: 'Paris, CDG', city: 'Paris' }, { value: 'ORY', text: 'Paris, ORY', city: 'Paris' },
+        { value: 'DSS', text: 'Dakar, DSS', city: 'Dakar' }, { value: 'LYS', text: 'Lyon, LYS', city: 'Lyon' },
+        { value: 'MRS', text: 'Marseille, MRS', city: 'Marseille' }, { value: 'CMN', text: 'Casablanca, CMN', city: 'Casablanca' },
+        { value: 'BRU', text: 'Bruxelles, BRU', city: 'Bruxelles' }
       ];
-      var allAirportsOptions = airportsRaw.map(function(a) { return { value: a.value, text: a.text || (a.city + ' — ' + a.value) }; });
+      var allAirportsOptions = airportsRaw.map(function(a) { return { value: a.value, text: a.text || (a.city + ', ' + a.value) }; });
       var aopts = {
         options: allAirportsOptions,
         valueField: 'value',
@@ -1486,7 +1486,7 @@ robinWhenDomReady(() => {
             return;
           }
           var q = encodeURIComponent(query);
-          var staticList = airportsRaw.map(function(a) { return { value: a.value, text: a.text || (a.city + ' — ' + a.value) }; }).filter(function(a) {
+          var staticList = airportsRaw.map(function(a) { return { value: a.value, text: a.text || (a.city + ', ' + a.value) }; }).filter(function(a) {
             var s = (a.text + ' ' + a.value).toLowerCase();
             return s.indexOf(query.toLowerCase()) !== -1;
           });
@@ -1642,7 +1642,7 @@ robinWhenDomReady(() => {
                 flightStatusEl.textContent = 'Indemnité potentielle confirmée';
               } else {
                 flightStatusEl.className = 'flight-status';
-                flightStatusEl.textContent = 'Vol trouvé — Départ et arrivée renseignés';
+                flightStatusEl.textContent = 'Vol trouvé, Départ et arrivée renseignés';
               }
             }).catch(function(err) {
               console.error('flight-info fetch error:', err);
@@ -1654,16 +1654,16 @@ robinWhenDomReady(() => {
       }
     }
 
-    // Tom Select — Escale : Vol 1, 2, 3 (villes départ/arrivée — liste complète comme vol direct)
+    // Tom Select, Escale : Vol 1, 2, 3 (villes départ/arrivée, liste complète comme vol direct)
     if (typeof TomSelect !== 'undefined') {
       var airportSearchApiEscale = (typeof window.AIRPORT_SEARCH_API !== 'undefined' && window.AIRPORT_SEARCH_API) ? window.AIRPORT_SEARCH_API : (window.location.origin + '/.netlify/functions/airport-search');
       var airportsRawEscale = window.AIRPORTS_DATA && window.AIRPORTS_DATA.length ? window.AIRPORTS_DATA : [
-        { value: 'CDG', text: 'Paris — CDG', city: 'Paris' }, { value: 'ORY', text: 'Paris — ORY', city: 'Paris' },
-        { value: 'DSS', text: 'Dakar — DSS', city: 'Dakar' }, { value: 'LYS', text: 'Lyon — LYS', city: 'Lyon' },
-        { value: 'MRS', text: 'Marseille — MRS', city: 'Marseille' }, { value: 'CMN', text: 'Casablanca — CMN', city: 'Casablanca' },
-        { value: 'BRU', text: 'Bruxelles — BRU', city: 'Bruxelles' }
+        { value: 'CDG', text: 'Paris, CDG', city: 'Paris' }, { value: 'ORY', text: 'Paris, ORY', city: 'Paris' },
+        { value: 'DSS', text: 'Dakar, DSS', city: 'Dakar' }, { value: 'LYS', text: 'Lyon, LYS', city: 'Lyon' },
+        { value: 'MRS', text: 'Marseille, MRS', city: 'Marseille' }, { value: 'CMN', text: 'Casablanca, CMN', city: 'Casablanca' },
+        { value: 'BRU', text: 'Bruxelles, BRU', city: 'Bruxelles' }
       ];
-      var allAirportsOptionsEscale = airportsRawEscale.map(function(a) { return { value: a.value, text: a.text || (a.city + ' — ' + a.value) }; });
+      var allAirportsOptionsEscale = airportsRawEscale.map(function(a) { return { value: a.value, text: a.text || (a.city + ', ' + a.value) }; });
       var tsVilleOpts = {
         options: allAirportsOptionsEscale,
         valueField: 'value',
@@ -1688,7 +1688,7 @@ robinWhenDomReady(() => {
             return;
           }
           var q = encodeURIComponent(query);
-          var staticList = airportsRawEscale.map(function(a) { return { value: a.value, text: a.text || (a.city + ' — ' + a.value) }; }).filter(function(a) {
+          var staticList = airportsRawEscale.map(function(a) { return { value: a.value, text: a.text || (a.city + ', ' + a.value) }; }).filter(function(a) {
             var s = (a.text + ' ' + a.value).toLowerCase();
             return s.indexOf(qLower) !== -1;
           });
@@ -1818,12 +1818,12 @@ function toggleEscaleVol3() {
         { who: 'robin',  typing: 1000, hold: 2600, cls: 'wa-msg--verdict', html: '✅ Ce retard peut donner droit à <span class="wa-verdict-amt">jusqu\'à 600 €</span> / passager <span class="wa-aside">(selon distance et cause)</span>' },
         { who: 'robin',  delay: 400,  hold: 2000, html: 'On vérifie <b>gratuitement</b>, sans engagement 🔎' },
         { who: 'client', delay: 600,  hold: 1100, html: 'Et ça me coûte combien ? 😅' },
-        { who: 'robin',  typing: 1100, hold: 2600, html: '<b>Rien si on perd.</b> Si on gagne, 25 % — aucune avance 🤝' },
+        { who: 'robin',  typing: 1100, hold: 2600, html: '<b>Rien si on perd.</b> Si on gagne, 25 %, aucune avance 🤝' },
         { who: 'client', delay: 600,  hold: 1300, html: 'Et si nous sommes 4 ? 👨‍👩‍👧‍👦' },
-        { who: 'robin',  typing: 1000, hold: 2600, cls: 'wa-msg--verdict', html: '✅ Ça marche pour toute la famille : <b>chaque passager compte</b>, même les enfants — une famille de 4, c\'est <span class="wa-verdict-amt">jusqu\'à 2 400 €</span>' },
-        { who: 'robin',  typing: 900,  hold: 1600, html: '🌍 Spécialistes <b>Europe–Afrique</b> : Dakar, Abidjan, Bamako…' },
+        { who: 'robin',  typing: 1000, hold: 2600, cls: 'wa-msg--verdict', html: '✅ Ça marche pour toute la famille : <b>chaque passager compte</b>, même les enfants, une famille de 4, c\'est <span class="wa-verdict-amt">jusqu\'à 2 400 €</span>' },
+        { who: 'robin',  typing: 900,  hold: 1600, html: '🌍 Spécialistes <b>Europe-Afrique</b> : Dakar, Abidjan, Bamako…' },
         { who: 'robin',  delay: 350,  hold: 2400, html: 'On vous <b>rappelle</b> en wolof, bambara ou lingala si besoin 📞' },
-        { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 Dernière étape : <b>signer le mandat</b> — je m\'occupe de tout 💪' }
+        { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 Dernière étape : <b>signer le mandat</b> je m\'occupe de tout 💪' }
       ]; },
       en: function () { return [
         { who: 'client', delay: 400,  hold: 1100, sender: 'Ama', html: 'BA081 delayed 5 h, I\'m so upset 😤' },
@@ -1834,12 +1834,12 @@ function toggleEscaleVol3() {
         { who: 'robin',  typing: 1000, hold: 2600, cls: 'wa-msg--verdict', html: '✅ This delay may entitle you to <span class="wa-verdict-amt">up to €600</span> / passenger <span class="wa-aside">(distance &amp; cause apply)</span>' },
         { who: 'robin',  delay: 400,  hold: 2000, html: 'We check <b>for free</b>, no commitment 🔎' },
         { who: 'client', delay: 600,  hold: 1100, html: 'And what does it cost me? 😅' },
-        { who: 'robin',  typing: 1100, hold: 2600, html: '<b>Nothing if we lose.</b> If we win, 25 % — no upfront fee 🤝' },
+        { who: 'robin',  typing: 1100, hold: 2600, html: '<b>Nothing if we lose.</b> If we win, 25 %, no upfront fee 🤝' },
         { who: 'client', delay: 600,  hold: 1300, html: 'And if there are 4 of us? 👨‍👩‍👧‍👦' },
-        { who: 'robin',  typing: 1000, hold: 2600, cls: 'wa-msg--verdict', html: '✅ It works for the whole family: <b>every passenger counts</b>, even the kids — a family of 4 means <span class="wa-verdict-amt">up to €2,400</span>' },
-        { who: 'robin',  typing: 900,  hold: 1600, html: '🌍 <b>Europe–Africa</b> specialists: Accra, Lagos, Abidjan…' },
+        { who: 'robin',  typing: 1000, hold: 2600, cls: 'wa-msg--verdict', html: '✅ It works for the whole family: <b>every passenger counts</b>, even the kids, a family of 4 means <span class="wa-verdict-amt">up to €2,400</span>' },
+        { who: 'robin',  typing: 900,  hold: 1600, html: '🌍 <b>Europe-Africa</b> specialists: Accra, Lagos, Abidjan…' },
         { who: 'robin',  delay: 350,  hold: 2400, html: 'We <b>call you back</b> in Twi, Yoruba or Pidgin if you like 📞' },
-        { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 Last step: <b>sign the mandate</b> — I\'ll handle the rest 💪' }
+        { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 Last step: <b>sign the mandate</b> I\'ll handle the rest 💪' }
       ]; }
     };
 
@@ -1847,13 +1847,13 @@ function toggleEscaleVol3() {
     var META = {
       fr: {
         foot: 'On parle votre langue · réponse en quelques minutes →',
-        aria: 'Aperçu d\'une conversation WhatsApp avec Robin — cliquer pour ouvrir',
-        sr: 'Exemple de conversation WhatsApp : Aminata envoie son numéro de vol puis une photo de sa carte d\'embarquement ; Robin lit le vol et indique que ce retard peut donner droit à une indemnité, jusqu\'à 600 € par passager (selon la distance et la cause), avec une vérification gratuite et sans engagement. Robin précise sa commission de 25 % au succès seulement (0 € si on ne gagne pas, aucune avance, pas de carte bancaire), que chaque passager d\'une même famille compte (une famille de 4 peut obtenir jusqu\'à 2 400 €), son expertise des vols Europe–Afrique (Dakar, Abidjan, Bamako) et qu\'un conseiller peut rappeler en wolof, bambara ou lingala. Dernière étape : signer le mandat.'
+        aria: 'Aperçu d\'une conversation WhatsApp avec Robin, cliquer pour ouvrir',
+        sr: 'Exemple de conversation WhatsApp : Aminata envoie son numéro de vol puis une photo de sa carte d\'embarquement ; Robin lit le vol et indique que ce retard peut donner droit à une indemnité, jusqu\'à 600 € par passager (selon la distance et la cause), avec une vérification gratuite et sans engagement. Robin précise sa commission de 25 % au succès seulement (0 € si on ne gagne pas, aucune avance, pas de carte bancaire), que chaque passager d\'une même famille compte (une famille de 4 peut obtenir jusqu\'à 2 400 €), son expertise des vols Europe-Afrique (Dakar, Abidjan, Bamako) et qu\'un conseiller peut rappeler en wolof, bambara ou lingala. Dernière étape : signer le mandat.'
       },
       en: {
         foot: 'We speak your language · reply in minutes →',
-        aria: 'Preview of a WhatsApp conversation with Robin — tap to open',
-        sr: 'Example WhatsApp conversation: Ama sends her flight number then a photo of her boarding pass; Robin reads the flight and explains this delay may entitle her to compensation, up to €600 per passenger (depending on distance and cause), with a free no-commitment check. Robin charges 25% on success only (€0 if we don\'t win, no upfront fee, no card needed), notes that every passenger in a family counts (a family of 4 can get up to €2,400), specialises in Europe–Africa flights (Accra, Lagos, Abidjan) and that an adviser can call back in Twi, Yoruba or Pidgin. Last step: sign the mandate.'
+        aria: 'Preview of a WhatsApp conversation with Robin, tap to open',
+        sr: 'Example WhatsApp conversation: Ama sends her flight number then a photo of her boarding pass; Robin reads the flight and explains this delay may entitle her to compensation, up to €600 per passenger (depending on distance and cause), with a free no-commitment check. Robin charges 25% on success only (€0 if we don\'t win, no upfront fee, no card needed), notes that every passenger in a family counts (a family of 4 can get up to €2,400), specialises in Europe-Africa flights (Accra, Lagos, Abidjan) and that an adviser can call back in Twi, Yoruba or Pidgin. Last step: sign the mandate.'
       }
     };
 
@@ -1962,7 +1962,7 @@ function toggleEscaleVol3() {
 })();
 
 /* ════════════════════════════════════════════════════
-   Suggestion de langue selon le NAVIGATEUR — bandeau discret, non forcé.
+   Suggestion de langue selon le NAVIGATEUR, bandeau discret, non forcé.
    • Signal = navigator.languages (la langue de l'appareil), PAS la géoloc IP → SEO-safe.
    • Compare à la langue RÉELLEMENT rendue (I18N.getLang : tient compte du choix mémorisé,
      pas seulement de <html lang>). Si elles diffèrent, propose l'autre langue.
@@ -2017,7 +2017,7 @@ function toggleEscaleVol3() {
 
     var txt = document.createElement('span');
     txt.className = 'rda-lang-suggest-txt';
-    txt.textContent = msg; // pas d'emoji-drapeau (cassés sous Windows) — cf. convention SVG du site
+    txt.textContent = msg; // pas d'emoji-drapeau (cassés sous Windows), cf. convention SVG du site
 
     var link = document.createElement('a');
     link.className = 'rda-lang-suggest-cta';

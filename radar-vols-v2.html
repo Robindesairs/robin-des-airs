@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Robin des Airs — Radar Vols v3</title>
+<title>Robin des Airs, Radar Vols v3</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="/favicon.png" type="image/png">
 <style>
@@ -158,7 +158,7 @@ tbody tr.row-pinned-ticker{outline:2px solid var(--gold);outline-offset:-2px}
 .radar-visu-mild{background:#FEF9E7;color:#7D6608}.radar-visu-mild .radar-visu-dot{background:#F1C40F}
 .radar-visu-ok{background:#D5F5E3;color:#145A32}.radar-visu-ok .radar-visu-dot{background:#27AE60}
 .pub-wa-preview{white-space:pre-wrap;font-size:12px;line-height:1.45;background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px;margin:10px 0;max-height:180px;overflow:auto}
-/* Priority — anti-strobe : uniquement les NOUVEAUX clignotent */
+/* Priority, anti-strobe : uniquement les NOUVEAUX clignotent */
 .prio-tag{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px}
 .prio-urgent{background:#FADBD8;color:#922B21;border:1px solid #F1948A}
 .prio-urgent-new{background:#FADBD8;color:#922B21;border:1px solid #F1948A;animation:blink .8s infinite}
@@ -253,7 +253,7 @@ tbody tr.row-pinned-ticker{outline:2px solid var(--gold);outline-offset:-2px}
 .sec-title{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin:14px 0 8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
 #radar-loading{margin:10px 0;padding:12px;text-align:center;color:var(--text2);font-size:12px}
 
-/* ── 🆕 Vue CARTES (lisible) — vue par défaut du radar ────── */
+/* ── 🆕 Vue CARTES (lisible), vue par défaut du radar ────── */
 :root{--radar-muted:var(--text2)}
 .view-bar{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
 .view-toggle{display:inline-flex;border:1.5px solid var(--border);border-radius:var(--r2);overflow:hidden}
@@ -309,7 +309,7 @@ body.rv-cards .tcard{display:none}
 <!-- ── Top bar ────────────────────────────────────────────── -->
 <div class="topbar">
   <div>
-    <div class="brand">ROBIN <span>des Airs</span> — Radar Vols</div>
+    <div class="brand">ROBIN <span>des Airs</span> Radar Vols</div>
     <div class="brand-sub" id="radar-brand-sub">Europe ↔ Afrique · 390+ liaisons · 9 portes EU · 44 destinations · Score CE 261 · Actualisation auto</div>
   </div>
   <div class="top-right">
@@ -324,7 +324,7 @@ body.rv-cards .tcard{display:none}
 
 <!-- ── Bandeau urgent ──────────────────────────────────────── -->
 <div id="urgent-banner">
-  🔴 <span id="urgent-banner-msg">Vols urgents détectés — action immédiate requise</span>
+  🔴 <span id="urgent-banner-msg">Vols urgents détectés, action immédiate requise</span>
   <button onclick="document.getElementById('urgent-banner').style.display='none'">Masquer</button>
 </div>
 
@@ -332,22 +332,22 @@ body.rv-cards .tcard{display:none}
   <div id="radar-api-alert" role="alert" hidden></div>
   <div id="data-source-badge" style="display:none;font-size:11px;color:var(--text2);margin-bottom:8px"></div>
   <details class="radar-tools">
-  <summary>⚙️ Scan manuel &amp; veille — sources, hubs aller / retour</summary>
+  <summary>⚙️ Scan manuel &amp; veille, sources, hubs aller / retour</summary>
   <div class="radar-tools-body">
   <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap" role="group" aria-label="Source des données">
-    <button type="button" class="btn btn-sm radar-source-btn" id="src-snapshot" data-mode="snapshot" title="Snapshot 8h (10 vols impactés) — alimente aussi le bandeau accueil">☀️ Cache matin</button>
+    <button type="button" class="btn btn-sm radar-source-btn" id="src-snapshot" data-mode="snapshot" title="Snapshot 8h (10 vols impactés), alimente aussi le bandeau accueil">☀️ Cache matin</button>
     <button type="button" class="btn btn-sm radar-source-btn active" id="src-live" data-mode="live">📡 Scan live</button>
-    <button type="button" class="btn btn-sm btn-primary" id="btn-scan-all" title="Scanne tous les hubs un par un — départs ET arrivées fusionnés dans le tableau">🌍 Tout scanner (départs + arrivées)</button>
+    <button type="button" class="btn btn-sm btn-primary" id="btn-scan-all" title="Scanne tous les hubs un par un, départs ET arrivées fusionnés dans le tableau">🌍 Tout scanner (départs + arrivées)</button>
   </div>
 
   <div id="radar-server-veille-panel" style="margin-bottom:12px;padding:10px 12px;background:#E8F5EE;border:1px solid #A8D5BC;border-radius:var(--r)">
     <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:6px">
       <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#1B5E3B">Veille serveur</span>
       <label style="font-size:12px;display:flex;align-items:center;gap:6px;cursor:pointer">
-        <input type="checkbox" id="veille-server-aller"> Aller 8h–18h
+        <input type="checkbox" id="veille-server-aller"> Aller 8h-18h
       </label>
       <label style="font-size:12px;display:flex;align-items:center;gap:6px;cursor:pointer">
-        <input type="checkbox" id="veille-server-return"> Retour 18h–3h
+        <input type="checkbox" id="veille-server-return"> Retour 18h-3h
       </label>
       <button type="button" class="btn btn-sm btn-primary" id="btn-veille-server-save">Enregistrer</button>
       <button type="button" class="btn btn-sm" id="btn-veille-server-clear" title="Efface les horodatages scans serveur">🗑 Historique</button>
@@ -360,7 +360,7 @@ body.rv-cards .tcard{display:none}
 
   <!-- Aller : sélection hub puis scan explicite -->
   <div style="margin-bottom:10px;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
-    <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center" role="group" aria-label="Scan aller — départs Europe">
+    <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center" role="group" aria-label="Scan aller, départs Europe">
       <span style="font-size:11px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Aller</span>
       <button type="button" class="btn btn-sm radar-zone-btn active" data-zone="paris_cdg" data-groups="1">Paris CDG</button>
       <button type="button" class="btn btn-sm radar-zone-btn" data-zone="paris_ory" data-groups="18">Paris Orly</button>
@@ -372,15 +372,15 @@ body.rv-cards .tcard{display:none}
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px">
       <button type="button" class="btn btn-primary btn-sm" id="btn-aller-scan">▶ Scanner ce hub maintenant</button>
-      <button type="button" class="btn btn-sm radar-source-btn" id="btn-aller-auto">🔁 Veille aller (8h–18h / 2h)</button>
+      <button type="button" class="btn btn-sm radar-source-btn" id="btn-aller-auto">🔁 Veille aller (8h-18h / 2h)</button>
       <span id="aller-scan-status" style="font-size:11px;color:var(--text2);flex:1;min-width:200px"></span>
     </div>
     <p style="margin:0;font-size:10px;color:var(--text3)">Choisir un hub puis lancer le scan (Scan live ou démo). Sous chaque bouton : <strong>dernier scan</strong> (heure Paris).</p>
   </div>
 
-  <!-- Retour : 1 hub à la fois → scan API (18h–03h, décalage 5 min en auto) -->
+  <!-- Retour : 1 hub à la fois → scan API (18h-03h, décalage 5 min en auto) -->
   <div style="margin-bottom:10px;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
-    <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center" role="group" aria-label="Scan retour — arrivées Europe">
+    <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center" role="group" aria-label="Scan retour, arrivées Europe">
       <span style="font-size:11px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Retour</span>
       <button type="button" class="btn btn-sm radar-return-btn" data-return="paris">Paris CDG</button>
       <button type="button" class="btn btn-sm radar-return-btn" data-return="ory">Paris Orly</button>
@@ -392,10 +392,10 @@ body.rv-cards .tcard{display:none}
     </div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px">
       <button type="button" class="btn btn-primary btn-sm" id="btn-return-scan">▶ Scanner ce hub maintenant</button>
-      <button type="button" class="btn btn-sm radar-source-btn" id="btn-return-auto">🔁 Veille auto (18h–3h)</button>
+      <button type="button" class="btn btn-sm radar-source-btn" id="btn-return-auto">🔁 Veille auto (18h-3h)</button>
       <span id="return-scan-status" style="font-size:11px;color:var(--text2);flex:1;min-width:200px"></span>
     </div>
-    <p style="margin:0 0 6px;font-size:10px;color:var(--text3)">Sous chaque bouton : <strong>dernier scan</strong> (heure Paris). Scan manuel et veille auto = <strong>uniquement la zone sélectionnée</strong> (ex. Rome·Milan = FCO puis MXP, +5 min). Veille : un hub /30 min, décalé. Créneau 18h–03h.</p>
+    <p style="margin:0 0 6px;font-size:10px;color:var(--text3)">Sous chaque bouton : <strong>dernier scan</strong> (heure Paris). Scan manuel et veille auto = <strong>uniquement la zone sélectionnée</strong> (ex. Rome·Milan = FCO puis MXP, +5 min). Veille : un hub /30 min, décalé. Créneau 18h-03h.</p>
     <div id="return-watch-panel" style="padding:8px 10px;background:#FEF9E7;border:1px solid #F6C847;border-radius:8px;font-size:12px">
       <strong style="display:block;margin-bottom:4px;color:#7D6608">⚠️ Retours à surveiller</strong>
       <p style="margin:0;font-size:12px;color:var(--text3)">Lancez un scan retour pour alimenter cette liste.</p>
@@ -461,7 +461,7 @@ body.rv-cards .tcard{display:none}
           <button type="button" data-view="cards" class="active">🃏 Cartes</button>
           <button type="button" data-view="table">📋 Tableau détaillé</button>
         </div>
-        <span style="font-size:11px;color:var(--text2)">Trié par gravité — urgents et plus gros retards en haut. 🔍 détail · 💬 WhatsApp · 📣 pub.</span>
+        <span style="font-size:11px;color:var(--text2)">Trié par gravité, urgents et plus gros retards en haut. 🔍 détail · 💬 WhatsApp · 📣 pub.</span>
       </div>
       <div id="radar-cards"></div>
       <div class="tcard">
@@ -487,7 +487,7 @@ body.rv-cards .tcard{display:none}
     <div class="tab-pane" id="t-eligible" style="padding:14px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
         <div>
-          <div style="font-size:12px;color:var(--text2);margin-bottom:8px">Vols confirmés CE 261 — retard ≥ 3h ou annulation non extraordinaire</div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:8px">Vols confirmés CE 261, retard ≥ 3h ou annulation non extraordinaire</div>
           <div style="display:flex;gap:6px;flex-wrap:wrap">
             <span style="font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px;background:#FDEBD0;color:#784212;border:1px solid #F0B27A" id="elig-todo-count">🟠 À contacter : 0</span>
             <span style="font-size:10px;font-weight:700;padding:2px 10px;border-radius:20px;background:#D6EAF8;color:#1A5276;border:1px solid #AED6F1" id="elig-inprogress-count">🔵 En cours : 0</span>
@@ -499,7 +499,7 @@ body.rv-cards .tcard{display:none}
           <button type="button" class="btn btn-sm" id="btn-clear-elig" title="La liste serveur n'est jamais vidée">ℹ️</button>
         </div>
       </div>
-      <p id="elig-registry-note" style="font-size:11px;color:var(--text2);margin:0 0 10px">Mine d'or — enregistrement automatique au scan (liste permanente serveur).</p>
+      <p id="elig-registry-note" style="font-size:11px;color:var(--text2);margin:0 0 10px">Mine d'or, enregistrement automatique au scan (liste permanente serveur).</p>
       <div id="elig-pub-banner" aria-label="Bandeau pub Meta vers page d'accueil"></div>
       <div id="elig-list"></div>
     </div>
@@ -552,7 +552,7 @@ body.rv-cards .tcard{display:none}
       <!-- Budget slider -->
       <label style="font-size:11px;font-weight:700;color:var(--text2);display:block;margin-bottom:6px">
         Budget journalier : <span id="budget-disp" style="color:var(--navy);font-weight:800">10 €</span>
-        <span style="color:var(--text3);font-weight:400"> — portée estimée : <span id="budget-reach">~200 personnes</span></span>
+        <span style="color:var(--text3);font-weight:400"> portée estimée : <span id="budget-reach">~200 personnes</span></span>
       </label>
       <input type="range" id="budget-sl" min="5" max="100" value="10" step="5"
         style="width:100%;accent-color:var(--green);margin-bottom:14px">

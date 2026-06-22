@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title data-i18n="page.title">Espace partenaire — Robin des Airs</title>
+<title data-i18n="page.title">Espace partenaire, Robin des Airs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -267,7 +267,7 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
   <div class="login-card">
     <div class="login-logo">ROBIN <em>des Airs</em></div>
     <div class="login-sub" data-i18n="login.title">Espace Partenaire</div>
-    <div class="login-demo-note" id="login-demo-banner" hidden data-i18n="login.demo">Mode démo — code agence uniquement</div>
+    <div class="login-demo-note" id="login-demo-banner" hidden data-i18n="login.demo">Mode démo, code agence uniquement</div>
     <div class="login-error" id="loginError" data-i18n="login.err">Code ou mot de passe incorrect</div>
     <label class="login-label" for="loginCode" data-i18n="login.code">Code agence</label>
     <input class="login-input" id="loginCode" type="text" placeholder="GSA-KMS-001" autocomplete="off" />
@@ -285,7 +285,7 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
 <nav>
   <a href="/espace-agence.html" class="nav-logo"><div class="plane-icon">✈</div><span>ROBIN <em>des Airs</em></span></a>
   <div class="nav-right">
-    <span class="badge-agence" id="agencyBadge">—</span>
+    <span class="badge-agence" id="agencyBadge"> </span>
     <button type="button" class="btn-nav" onclick="doLogout()" data-i18n="nav.logout">Déconnexion</button>
     </div>
     </nav>
@@ -298,7 +298,7 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
     <div class="stat-cell"><div class="stat-label" data-i18n="kpi.submitted">Dossiers soumis</div><div class="stat-value" id="kpi-total">0</div><div class="stat-sub" data-i18n="kpi.submitted.sub">Depuis inscription</div></div>
     <div class="stat-cell"><div class="stat-label" data-i18n="kpi.active">En cours</div><div class="stat-value" id="kpi-encours">0</div><div class="stat-sub" data-i18n="kpi.active.sub">Actifs + attente</div></div>
     <div class="stat-cell"><div class="stat-label" data-i18n="kpi.won">Gagnés</div><div class="stat-value green" id="kpi-gagnes">0</div><div class="stat-sub" data-i18n="kpi.won.sub">Indemnisations</div></div>
-    <div class="stat-cell"><div class="stat-label" data-i18n="kpi.comm">Commissions</div><div class="stat-value gold" id="kpi-commissions">—</div><div class="stat-sub" id="kpi-comm-sub" data-i18n="kpi.comm.sub">par passager gagné</div></div>
+    <div class="stat-cell"><div class="stat-label" data-i18n="kpi.comm">Commissions</div><div class="stat-value gold" id="kpi-commissions"> </div><div class="stat-sub" id="kpi-comm-sub" data-i18n="kpi.comm.sub">par passager gagné</div></div>
   </div>
   <p class="sync-status" id="agency-sync-status"></p>
       </div>
@@ -312,7 +312,7 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
 <div class="agent-coach" id="agent-coach" hidden>
   <div class="agent-coach-inner">
     <ul>
-      <li data-i18n="agent.tip1">Pas d'email client — Robin crée ref@robindesairs.eu</li>
+      <li data-i18n="agent.tip1">Pas d'email client, Robin crée ref@robindesairs.eu</li>
       <li data-i18n="agent.tip2">Billet vendu = pré-enregistrement avant le vol</li>
       <li data-i18n="agent.tip3">Joignez l'e-billet pour un traitement plus rapide</li>
     </ul>
@@ -346,7 +346,7 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
         <input type="hidden" id="f-probleme" value="" />
         <input type="hidden" id="f-compagnie" value="" />
 
-        <!-- STEP 1 — PASSENGERS -->
+        <!-- STEP 1, PASSENGERS -->
         <div class="form-section">
           <div class="section-label">Passengers</div>
           <div class="form-row" style="align-items:end">
@@ -362,10 +362,10 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
           <p style="font-size:0.72rem;color:var(--white-40);margin-top:6px;line-height:1.5">3,800 GMD per compensated passenger · paid within 48h after Robin collects</p>
         </div>
 
-        <!-- STEP 2 — PASSENGER INFO -->
+        <!-- STEP 2, PASSENGER INFO -->
         <div class="form-section">
           <div class="section-label">Passenger</div>
-          <div class="auto-note">✓ No email required — Robin creates <strong>ref@robindesairs.eu</strong> automatically</div>
+          <div class="auto-note">✓ No email required, Robin creates <strong>ref@robindesairs.eu</strong> automatically</div>
           <div class="form-row">
             <div class="form-group"><label>Last name</label><input type="text" id="f-nom" autocomplete="family-name" /></div>
             <div class="form-group"><label>First name</label><input type="text" id="f-prenom" autocomplete="given-name" /></div>
@@ -396,7 +396,7 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
           </div>
         </div>
 
-        <!-- STEP 3 — FLIGHT -->
+        <!-- STEP 3, FLIGHT -->
         <div class="form-section">
           <div class="section-label">Flight</div>
           <div class="form-row">
@@ -441,7 +441,7 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
             </div>
           </div>
 
-          <!-- VOL 2 — toggle + smart chain -->
+          <!-- VOL 2, toggle + smart chain -->
           <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--sky-border)">
             <label style="display:flex;align-items:center;gap:10px;font-size:0.85rem;color:var(--white-70);cursor:pointer;user-select:none">
               <input type="checkbox" id="toggle-vol2" style="accent-color:var(--gold);width:16px;height:16px;flex-shrink:0" />
@@ -462,7 +462,7 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
           </div>
         </div>
 
-        <!-- STEP 4 — INCIDENT -->
+        <!-- STEP 4, INCIDENT -->
         <div class="form-section">
           <div class="section-label">Disruption</div>
           <div class="incident-grid">
@@ -475,13 +475,13 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
           <div class="form-group" style="margin-top:8px"><label>Notes</label><textarea id="f-notes" rows="3" placeholder="Useful details: delay duration, reason given by airline, expenses advanced (taxi / hotel / meals)…"></textarea></div>
         </div>
 
-        <!-- STEP 5 — DOCUMENTS -->
+        <!-- STEP 5, DOCUMENTS -->
         <div class="form-section">
-          <div class="section-label">Documents — add as many as needed</div>
+          <div class="section-label">Documents, add as many as needed</div>
           <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()" style="cursor:pointer">
             <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png,.webp" multiple style="display:none" />
             <div>📎 <span>E-ticket, boarding pass, passport(s), invoices (taxi / hotel / meals)</span></div>
-            <div style="font-size:0.72rem;color:var(--white-40);margin-top:6px">Tap to add — repeat to stack multiple files</div>
+            <div style="font-size:0.72rem;color:var(--white-40);margin-top:6px">Tap to add, repeat to stack multiple files</div>
           </div>
           <div id="uploadedFilesList" style="margin-top:10px;display:flex;flex-direction:column;gap:6px"></div>
         </div>
@@ -496,8 +496,8 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
         <div class="commission-amount" id="commission-sidebar-amount">3 800 GMD</div>
         <div class="commission-sub" id="commission-sidebar-sub" data-i18n="pricing.per_pax">par passager indemnisé</div>
         <p id="commission-tier-banner" style="font-size:0.68rem;line-height:1.45;color:var(--gold-soft);margin:8px 0 0;padding-top:8px;border-top:1px solid rgba(255,255,255,.08)"></p>
-        <div class="commission-row"><span class="label" data-i18n="pricing.client">Net client</span><span class="value" id="pricing-client">—</span></div>
-        <div class="commission-row"><span class="label" data-i18n="pricing.indemnity">Indemnité</span><span class="value gold" id="pricing-indemnity">—</span></div>
+        <div class="commission-row"><span class="label" data-i18n="pricing.client">Net client</span><span class="value" id="pricing-client"> </span></div>
+        <div class="commission-row"><span class="label" data-i18n="pricing.indemnity">Indemnité</span><span class="value gold" id="pricing-indemnity"> </span></div>
       </div>
       <div class="steps-card">
         <div class="steps-title" data-i18n="steps.title">Comment ça marche</div>
@@ -544,9 +544,9 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
   <div class="dossiers-section">
     <div class="section-heading" style="margin-bottom:1.5rem" data-i18n="comm.title">Commissions</div>
     <div class="stats-bar" style="margin-bottom:2rem">
-      <div class="stat-cell"><div class="stat-label" data-i18n="comm.total">Total gagné</div><div class="stat-value gold" id="comm-total">—</div></div>
-      <div class="stat-cell"><div class="stat-label" data-i18n="comm.pending">En attente</div><div class="stat-value" id="comm-pending">—</div></div>
-      <div class="stat-cell"><div class="stat-label" data-i18n="comm.paid">Versé</div><div class="stat-value green" id="comm-paid">—</div></div>
+      <div class="stat-cell"><div class="stat-label" data-i18n="comm.total">Total gagné</div><div class="stat-value gold" id="comm-total"> </div></div>
+      <div class="stat-cell"><div class="stat-label" data-i18n="comm.pending">En attente</div><div class="stat-value" id="comm-pending"> </div></div>
+      <div class="stat-cell"><div class="stat-label" data-i18n="comm.paid">Versé</div><div class="stat-value green" id="comm-paid"> </div></div>
         </div>
     <div class="table-wrap">
         <table>
@@ -572,13 +572,13 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
           <a href="/documents/mandat-fr.html?print=1" class="mandat-preview-link" target="_blank" rel="noopener" data-i18n="mandat.pdf_fr">Mandat PDF (FR) ↓</a>
         </p>
         <p style="margin-top:0.65rem;font-size:0.78rem" data-i18n="mandat.preview_hint">Ouvre le mandat CE 261 dans un nouvel onglet, prérempli avec le formulaire en cours.</p>
-        <p style="margin-top:1rem;font-size:0.8rem;font-weight:600;color:var(--gold)" data-i18n="bareme.title">Barème CE 261 — 3 paliers</p>
+        <p style="margin-top:1rem;font-size:0.8rem;font-weight:600;color:var(--gold)" data-i18n="bareme.title">Barème CE 261, 3 paliers</p>
         <p style="margin-top:0.5rem;display:flex;flex-wrap:wrap;gap:8px">
           <a href="/bareme-ce261-fr.html" class="mandat-preview-link" target="_blank" rel="noopener" data-i18n="bareme.link_fr">250 / 400 / 600 € ↗</a>
           <a href="/ce261-brackets-en.html" class="mandat-preview-link" target="_blank" rel="noopener" data-i18n="bareme.link_en">Brackets (EN) ↗</a>
           <a href="/partner-agreement-fr.html" class="mandat-preview-link" target="_blank" rel="noopener" data-i18n="legal.partner_fr">Contrat agence ↗</a>
         </p>
-        <p style="margin-top:1rem;font-size:0.8rem;font-weight:600;color:var(--gold)" data-i18n="comm.tiers.title">Commission agence — 3 paliers</p>
+        <p style="margin-top:1rem;font-size:0.8rem;font-weight:600;color:var(--gold)" data-i18n="comm.tiers.title">Commission agence, 3 paliers</p>
         <p style="margin-top:0.5rem;display:flex;flex-wrap:wrap;gap:8px">
           <a href="/paliers-commission-agence-fr.html" class="mandat-preview-link" target="_blank" rel="noopener" data-i18n="comm.tiers.link_fr">3 800 → 3 400 → 3 000 GMD ↗</a>
           <a href="/paliers-commission-agence-en.html" class="mandat-preview-link" target="_blank" rel="noopener" data-i18n="comm.tiers.link_en">Brochure (EN) ↗</a>
@@ -607,7 +607,7 @@ td .passager-sub { font-size: 0.72rem; color: var(--white-40); }
 <script src="/assets/agence-commission-tiers.js"></script>
 <script src="/assets/agence-portal.js"></script>
 <script>
-// ─── Multi-fichiers — empile les fichiers à chaque sélection ─────────────────
+// ─── Multi-fichiers, empile les fichiers à chaque sélection ─────────────────
 window.__agencyFiles = [];
 (function uploadUI(){
   var zone = document.getElementById('uploadZone');
@@ -641,7 +641,7 @@ window.__agencyFiles = [];
   window.removeFile = function() { window.__agencyFiles = []; render(); };
 })();
 
-// ─── fillRoute — clic sur chip "BJL → CDG" remplit les champs ──────────────
+// ─── fillRoute, clic sur chip "BJL → CDG" remplit les champs ──────────────
 window.fillRoute = function(from, to) {
   var d  = document.getElementById('f-depart');
   var a  = document.getElementById('f-arrivee');
@@ -671,7 +671,7 @@ window.fillRoute = function(from, to) {
   }
 })();
 
-// ─── Compteur commission dynamique — N passagers × 3 800 GMD ────────────────
+// ─── Compteur commission dynamique, N passagers × 3 800 GMD ────────────────
 (function paxCommissionPreview(){
   var input = document.getElementById('f-nb-passagers');
   var out   = document.getElementById('pax-commission-preview');

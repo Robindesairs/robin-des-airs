@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Générateur de pub — Robin des Airs (Meta 1:1)</title>
+  <title>Générateur de pub, Robin des Airs (Meta 1:1)</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -170,7 +170,7 @@
 <body>
   <div class="wrap">
     <h1>Générateur de pub Meta</h1>
-    <p class="sub"><strong>Feed 1:1 · 1080×1080 px</strong> — Modèles inspirés de vos créas AF718 (simple bleu / famille vert).</p>
+    <p class="sub"><strong>Feed 1:1 · 1080×1080 px</strong> Modèles inspirés de vos créas AF718 (simple bleu / famille vert).</p>
 
     <div class="panel" style="margin-bottom:16px;padding:14px 20px">
       <h2 style="margin-bottom:10px">Langue de la créa</h2>
@@ -184,14 +184,14 @@
       <div class="panel">
         <h2>Modèle</h2>
         <div class="radios">
-          <label><input type="radio" name="tpl" value="simple" checked> Bleu — 1 personne (450&nbsp;€ nets)</label>
-          <label><input type="radio" name="tpl" value="famille"> Vert — famille (calcul détaillé)</label>
+          <label><input type="radio" name="tpl" value="simple" checked> Bleu, 1 personne (450&nbsp;€ nets)</label>
+          <label><input type="radio" name="tpl" value="famille"> Vert, famille (calcul détaillé)</label>
         </div>
 
         <h2 style="margin-top:20px">Type de pub</h2>
         <div class="radios">
           <label><input type="radio" name="admode" value="generic" checked> Générique (pas de date ni pays sur la créa)</label>
-          <label><input type="radio" name="admode" value="targeted"> Ciblée — vol précis (date + pays)</label>
+          <label><input type="radio" name="admode" value="targeted"> Ciblée, vol précis (date + pays)</label>
         </div>
 
         <div id="targeted-block" style="display:none;margin-top:4px">
@@ -260,7 +260,7 @@
       </div>
 
       <div class="preview-box">
-        <p>Aperçu (mise à l’échelle — fichier = 1080 px)</p>
+        <p>Aperçu (mise à l’échelle, fichier = 1080 px)</p>
         <canvas id="canvas-export" width="1080" height="1080" aria-label="Aperçu créa pub"></canvas>
         <div class="actions">
           <button type="button" class="btn-primary" id="btn-dl">Télécharger PNG</button>
@@ -369,10 +369,10 @@
       flightDateFmt: flightDateFmt,
       countryLine: countryLine,
       airline: document.getElementById('airline').value.trim() || (lang === 'en' ? 'Airline' : 'Compagnie'),
-      flight: document.getElementById('flight').value.trim() || '—',
+      flight: document.getElementById('flight').value.trim() || ', ',
       flag: document.getElementById('flag').value.trim() || '✈️',
-      from: document.getElementById('from').value.trim() || '—',
-      to: document.getElementById('to').value.trim() || '—',
+      from: document.getElementById('from').value.trim() || ', ',
+      to: document.getElementById('to').value.trim() || ', ',
       legal: legal,
       pax: pax,
       commission: comm,

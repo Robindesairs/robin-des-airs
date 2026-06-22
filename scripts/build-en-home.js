@@ -39,9 +39,9 @@ const CANONICAL_EN = 'https://robindesairs.eu/en';
 /* og:title / og:description / twitter:* n'ont pas de clé dédiée dans i18n.js :
  * traductions fidèles des valeurs FR de index.html (mêmes chiffres, même ton que le dico EN). */
 const SOCIAL_EN = {
-  'og:title':            "Flight to Africa delayed or cancelled? Up to €600 — Robin des Airs",
+  'og:title':            "Flight to Africa delayed or cancelled? Up to €600, Robin des Airs",
   'og:description':      "Paris-Dakar, Paris-Abidjan delayed or cancelled? Get up to €600 per passenger (EU 261). €0 if we don't win. WhatsApp reply in 2 min.",
-  'twitter:title':       "Robin des Airs — EU 261 compensation, Europe–Africa",
+  'twitter:title':       "Robin des Airs, EU 261 compensation, Europe-Africa",
   'twitter:description': "Air justice for Africa. Up to €600 per passenger, 25% only after success.",
 };
 
@@ -218,7 +218,7 @@ function build() {
   for (const [fr, en] of WA_PREFILL_FR_TO_EN) html = html.split(fr).join(en);
 
   // --- Bandeau « fichier généré »
-  const banner = '<!-- ⚠️ FICHIER GÉNÉRÉ par scripts/build-en-home.js — NE PAS ÉDITER À LA MAIN.\n'
+  const banner = '<!-- ⚠️ FICHIER GÉNÉRÉ par scripts/build-en-home.js : NE PAS ÉDITER À LA MAIN.\n'
     + '     Source : index.html + dico EN de i18n.js. Régénérer : node scripts/build-en-home.js -->\n';
   html = html.replace(/^<!DOCTYPE html>\s*\n?/i, '<!DOCTYPE html>\n' + banner);
 

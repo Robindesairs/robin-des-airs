@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Où en est mon dossier ? — Robin des Airs</title>
+  <title>Où en est mon dossier ? Robin des Airs</title>
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://robindesairs.eu/suivi-dossier.html">
-  <meta property="og:title" content="Où en est mon dossier ? — Robin des Airs">
-  <meta property="og:description" content="Suivez l'avancement de votre indemnisation de vol en temps réel. Robin des Airs — CE 261.">
+  <meta property="og:title" content="Où en est mon dossier ? Robin des Airs">
+  <meta property="og:description" content="Suivez l'avancement de votre indemnisation de vol en temps réel. Robin des Airs, CE 261.">
   <meta property="og:image" content="https://robindesairs.eu/robin-des-airs-og-1200x630-v2.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Où en est mon dossier ? — Robin des Airs">
+  <meta name="twitter:title" content="Où en est mon dossier ? Robin des Airs">
   <meta name="twitter:description" content="Suivez l'avancement de votre indemnisation de vol en temps réel.">
   <meta name="twitter:image" content="https://robindesairs.eu/robin-des-airs-og-1200x630-v2.jpg">
   <link rel="icon" href="/favicon.png" type="image/png">
@@ -124,7 +124,7 @@
 
       <div class="card money hide" id="moneyCard">
         <div class="m-eyebrow">Ce que vous recevez à la fin</div>
-        <div class="m-amt" id="mAmt">—</div>
+        <div class="m-amt" id="mAmt"> </div>
         <div class="m-note" id="mNote"></div>
       </div>
 
@@ -139,7 +139,7 @@
     <!-- ====== MODE SANS RÉFÉRENCE (fallback historique) ====== -->
     <div id="fallback" class="hide">
       <h1>Où en est mon dossier ?</h1>
-      <p class="sub">Vous avez déjà déposé un dossier et vous voulez un point d'avancement ? Écrivez-nous sur WhatsApp — nous revenons vers vous dans les meilleurs délais.</p>
+      <p class="sub">Vous avez déjà déposé un dossier et vous voulez un point d'avancement ? Écrivez-nous sur WhatsApp, nous revenons vers vous dans les meilleurs délais.</p>
       <div class="card">
         <p style="font-size:14px;margin-bottom:12px"><strong>Le plus simple :</strong> envoyez-nous un message sur WhatsApp avec votre <strong>nom</strong> et, si vous l'avez, le <strong>numéro de vol</strong> ou la date du dépôt. Nous vous donnons le statut de votre dossier tout de suite.</p>
         <ul class="steps">
@@ -184,8 +184,8 @@
     function demoData() {
       var s = {
         debut:       { statut:'ELIGIBLE',     etape:0, terminal:null, statutLabel:'Dossier en préparation', statutDesc:'Votre dossier est éligible. Envoyez vos pièces pour qu’on lance la réclamation.' },
-        '1':         { statut:'RECLAMATION_ENVOYEE', etape:2, terminal:null, statutLabel:'Réclamation envoyée', statutDesc:'Votre réclamation a été envoyée à Air France. Le délai légal de réponse court — nous relançons si besoin.' },
-        reclamation: { statut:'RECLAMATION_ENVOYEE', etape:2, terminal:null, statutLabel:'Réclamation envoyée', statutDesc:'Votre réclamation a été envoyée à Air France. Le délai légal de réponse court — nous relançons si besoin.' },
+        '1':         { statut:'RECLAMATION_ENVOYEE', etape:2, terminal:null, statutLabel:'Réclamation envoyée', statutDesc:'Votre réclamation a été envoyée à Air France. Le délai légal de réponse court, nous relançons si besoin.' },
+        reclamation: { statut:'RECLAMATION_ENVOYEE', etape:2, terminal:null, statutLabel:'Réclamation envoyée', statutDesc:'Votre réclamation a été envoyée à Air France. Le délai légal de réponse court, nous relançons si besoin.' },
         relance:     { statut:'RELANCE_1',    etape:3, terminal:null, statutLabel:'Relance envoyée', statutDesc:'Sans réponse de la compagnie, nous l’avons relancée.' },
         demeure:     { statut:'LRAR_ENVOYEE', etape:3, terminal:null, statutLabel:'Mise en demeure envoyée', statutDesc:'Sans réponse, nous avons envoyé une mise en demeure formelle à Air France.' },
         escalade:    { statut:'MEDIATION',    etape:4, terminal:null, statutLabel:'Médiation', statutDesc:'La compagnie tarde : nous avons saisi le médiateur pour faire valoir vos droits, avant le tribunal.' },
@@ -241,7 +241,7 @@
       if (d.montantNet && !d.terminal) {
         $('moneyCard').classList.remove('hide');
         $('mAmt').textContent = euro(d.montantNet);
-        var note = d.statut === 'PAYE' ? 'Indemnité versée — somme nette pour vous.' : 'Somme nette estimée pour vous, frais déjà déduits (vous ne payez rien si on échoue).';
+        var note = d.statut === 'PAYE' ? 'Indemnité versée, somme nette pour vous.' : 'Somme nette estimée pour vous, frais déjà déduits (vous ne payez rien si on échoue).';
         if (d.montantBrut && d.montantBrut > d.montantNet) note += ' Indemnité brute : ' + euro(d.montantBrut) + '.';
         $('mNote').textContent = note;
       } else { $('moneyCard').classList.add('hide'); }
@@ -271,7 +271,7 @@
 
       var when = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
       $('updated').innerHTML = fromCache
-        ? 'Hors-ligne — dernière mise à jour enregistrée.'
+        ? 'Hors-ligne, dernière mise à jour enregistrée.'
         : '<span class="live">● en direct</span> · mis à jour à ' + when;
     }
 

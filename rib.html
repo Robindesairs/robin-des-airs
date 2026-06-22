@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vos coordonnées bancaires — Robin des Airs</title>
+  <title>Vos coordonnées bancaires, Robin des Airs</title>
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://robindesairs.eu/rib.html">
-  <meta property="og:title" content="Vos coordonnées bancaires — Robin des Airs">
+  <meta property="og:title" content="Vos coordonnées bancaires, Robin des Airs">
   <meta property="og:description" content="Indiquez l'IBAN où verser votre indemnité. Connexion chiffrée, usage unique : votre virement.">
   <meta property="og:image" content="https://robindesairs.eu/robin-des-airs-og-1200x630-v2.jpg">
   <meta name="twitter:card" content="summary_large_image">
@@ -26,8 +26,8 @@
   <main class="shell">
     <div class="pagehead">
       <h1>Votre indemnité est prête à partir.</h1>
-      <p class="lead">Indiquez le compte à <b>votre nom</b> — on s'occupe du virement.</p>
-      <div class="ref-chip">Dossier <b id="refLine">—</b></div>
+      <p class="lead">Indiquez le compte à <b>votre nom</b> on s'occupe du virement.</p>
+      <div class="ref-chip">Dossier <b id="refLine"> </b></div>
       <div class="trust">
         <span>🔒 Chiffré</span>
         <span>🇪🇺 RGPD</span>
@@ -62,17 +62,17 @@
 
       <div class="errbox" id="errBox"></div>
       <button class="btn" id="sendBtn" disabled>Vérifier mon RIB →</button>
-      <p class="rgpd"><span>🔒</span><span>Vos coordonnées bancaires sont transmises de façon chiffrée et utilisées <b>uniquement</b> pour vous verser votre indemnité. Jamais revendues, jamais un prélèvement — RGPD.</span></p>
+      <p class="rgpd"><span>🔒</span><span>Vos coordonnées bancaires sont transmises de façon chiffrée et utilisées <b>uniquement</b> pour vous verser votre indemnité. Jamais revendues, jamais un prélèvement, RGPD.</span></p>
     </section>
 
     <!-- Étape 2 : confirmation -->
     <section class="panel" id="review" style="display:none" aria-labelledby="rTitle">
       <h2 id="rTitle">✅ Vérifiez avant d'envoyer</h2>
-      <p class="sub">C'est sur ce compte qu'on virera votre argent. Un seul caractère faux = virement perdu — relisez bien.</p>
+      <p class="sub">C'est sur ce compte qu'on virera votre argent. Un seul caractère faux = virement perdu, relisez bien.</p>
       <dl class="recap">
-        <div class="row"><dt>Titulaire</dt><dd id="rTit">—</dd></div>
-        <div class="row"><dt>IBAN</dt><dd class="mono" id="rIban">—</dd></div>
-        <div class="row" id="rBicRow" style="display:none"><dt>BIC</dt><dd class="mono" id="rBic">—</dd></div>
+        <div class="row"><dt>Titulaire</dt><dd id="rTit"> </dd></div>
+        <div class="row"><dt>IBAN</dt><dd class="mono" id="rIban"> </dd></div>
+        <div class="row" id="rBicRow" style="display:none"><dt>BIC</dt><dd class="mono" id="rBic"> </dd></div>
       </dl>
       <div class="note" id="rSepaNote" style="display:none">🌍 Compte hors zone euro : frais de virement international + change <b>à votre charge</b> (voir CGV).</div>
       <label class="confirm"><input type="checkbox" id="confirmChk"> <span>Je confirme que ces informations sont exactes et que ce compte est <b>à mon nom</b>.</span></label>
@@ -86,9 +86,9 @@
       <div class="seal" aria-hidden="true">✓</div>
       <h2>RIB bien reçu, merci&nbsp;!</h2>
       <p>Nous verserons votre part sur le compte</p>
-      <div class="data" id="doneIban">—</div>
+      <div class="data" id="doneIban"> </div>
       <p>Notre équipe vous confirme l'envoi sur WhatsApp.</p>
-      <p class="signoff">Reposez-vous — on s'occupe du reste. <b>— L'équipe Robin des Airs 🏹</b></p>
+      <p class="signoff">Reposez-vous, on s'occupe du reste. <b> L'équipe Robin des Airs 🏹</b></p>
     </section>
   </main>
 
@@ -135,7 +135,7 @@
       if (!s){ hint.className='hint idle'; hint.textContent="Tel qu'il apparaît sur votre relevé bancaire."; }
       else if (ok){ hint.className='hint ok'; hint.textContent='✓ IBAN valide'; }
       else if (s.length < 15){ hint.className='hint idle'; hint.textContent='Continuez la saisie…'; }
-      else { hint.className='hint bad'; hint.textContent='IBAN incorrect — vérifiez chaque caractère.'; }
+      else { hint.className='hint bad'; hint.textContent='IBAN incorrect, vérifiez chaque caractère.'; }
 
       // BIC obligatoire si IBAN valide et HORS SEPA
       const bicRequired = ok && !sepa;

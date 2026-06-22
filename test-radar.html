@@ -68,7 +68,7 @@
             statusDiv.className = 'ok';
 
             flights.slice(0, 5).forEach(function(f) {
-                resDiv.innerHTML += '<div class="vol-card"><b>Vol</b> ' + (f.flight || '—') + ' | ' + (f.dep || '—') + ' → ' + (f.arr || '—') + ' | Retard : ' + (f.delayMinutes != null ? f.delayMinutes : '—') + ' min | ' + (f.eligible ? 'Loi EU 261 ✅' : '') + '</div>';
+                resDiv.innerHTML += '<div class="vol-card"><b>Vol</b> ' + (f.flight || ', ') + ' | ' + (f.dep || ', ') + ' → ' + (f.arr || ', ') + ' | Retard : ' + (f.delayMinutes != null ? f.delayMinutes : ', ') + ' min | ' + (f.eligible ? 'Loi EU 261 ✅' : '') + '</div>';
             });
             if (flights.length > 5) {
                 resDiv.innerHTML += '<p style="margin-top:12px;color:#888;">… et ' + (flights.length - 5) + ' autre(s) vol(s).</p>';

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ciblage Dakar — pin corrigé</title>
+<title>Ciblage Dakar, pin corrigé</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <style>
   html,body{margin:0;height:100%;font-family:system-ui,sans-serif}
@@ -18,10 +18,10 @@
 </head>
 <body>
 <div class="panel">
-  <h3>🎯 Ciblage Dakar — publication ce soir</h3>
-  <div><span class="dot new"></span><b>Pin retenu</b> — DSS Blaise Diagne (Diass)<br>14.67 / -17.0731 · rayon <b>3 km</b><br>aéroport réel → voyageurs de passage</div>
+  <h3>🎯 Ciblage Dakar, publication ce soir</h3>
+  <div><span class="dot new"></span><b>Pin retenu</b> DSS Blaise Diagne (Diass)<br>14.67 / -17.0731 · rayon <b>3 km</b><br>aéroport réel → voyageurs de passage</div>
   <hr style="border:none;border-top:1px solid #eee;margin:8px 0">
-  <div><span class="dot old"></span><b>À éviter</b> — point intérieur 14.6708 / -16.9533<br>~15 km à l'est de l'aéroport → mord sur les villages</div>
+  <div><span class="dot old"></span><b>À éviter</b> point intérieur 14.6708 / -16.9533<br>~15 km à l'est de l'aéroport → mord sur les villages</div>
   <hr style="border:none;border-top:1px solid #eee;margin:8px 0">
   <div style="color:#666">Rayon 3 km : assez large pour le volume (zone vide autour de Diass), sans toucher les résidents.</div>
 </div>
@@ -35,7 +35,7 @@
 
   // pin retenu : aéroport DSS, 3 km
   L.circle(GOOD,{radius:3000,color:'#16a34a',fillColor:'#16a34a',fillOpacity:.14}).addTo(map);
-  L.marker(GOOD).addTo(map).bindPopup('<b>Pin RETENU</b><br>Aéroport DSS Blaise Diagne (Diass)<br>14.67 / -17.0731 — rayon 3 km');
+  L.marker(GOOD).addTo(map).bindPopup('<b>Pin RETENU</b><br>Aéroport DSS Blaise Diagne (Diass)<br>14.67 / -17.0731, rayon 3 km');
 
   // point à éviter
   L.circle(BAD,{radius:3000,color:'#e11d48',fillColor:'#e11d48',fillOpacity:.10,dashArray:'4 6'}).addTo(map);

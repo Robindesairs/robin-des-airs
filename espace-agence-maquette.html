@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAQUETTE — Espace agence Robin des Airs</title>
+<title>MAQUETTE, Espace agence Robin des Airs</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-/* ═══ MAQUETTE STATIQUE — ne pas déployer en prod ═══ */
+/* ═══ MAQUETTE STATIQUE, ne pas déployer en prod ═══ */
 :root {
   --navy:#0D1E38; --navy-light:#142844; --navy-mid:#1A3355;
   --green:#3DDFA8; --green-dark:#00C27A; --green-glow:rgba(61,223,168,.15);
@@ -154,7 +154,7 @@ body { font-family:Inter,sans-serif; background:#1a1a2e; color:var(--navy); }
 <div class="maquette-frame">
 
 <!-- ═══════════════════════════════════════════════════════════ -->
-<!-- VUE 1 — CONNEXION -->
+<!-- VUE 1, CONNEXION -->
 <!-- ═══════════════════════════════════════════════════════════ -->
 <section id="screen-login" class="screen active">
   <header class="locale-toolbar">
@@ -182,7 +182,7 @@ body { font-family:Inter,sans-serif; background:#1a1a2e; color:var(--navy); }
       </div>
       <div class="login-logo">ROBIN <span>des Airs</span></div>
       <h2>Espace Partenaire</h2>
-      <p class="sub">Dossiers synchronisés avec Airtable — Robin traite vos réclamations CE 261.</p>
+      <p class="sub">Dossiers synchronisés avec Airtable, Robin traite vos réclamations CE 261.</p>
       <input type="text" placeholder="Code agence (ex: GSA-KMS-001)" value="GSA-KMS-001">
       <input type="password" placeholder="Mot de passe">
       <button type="button" class="btn-signin">Se connecter →</button>
@@ -191,7 +191,7 @@ body { font-family:Inter,sans-serif; background:#1a1a2e; color:var(--navy); }
 </section>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
-<!-- VUE 2 — DASHBOARD -->
+<!-- VUE 2, DASHBOARD -->
 <!-- ═══════════════════════════════════════════════════════════ -->
 <section id="screen-dashboard" class="screen">
   <header class="locale-toolbar">
@@ -226,7 +226,7 @@ body { font-family:Inter,sans-serif; background:#1a1a2e; color:var(--navy); }
     <main class="main">
       <div class="page-header">
         <h1>Tableau de bord</h1>
-        <p>Vue d'ensemble — source Airtable · Dernière synchro : 17:45</p>
+        <p>Vue d'ensemble, source Airtable · Dernière synchro : 17:45</p>
       </div>
       <div class="kpi-row">
         <div class="kpi-card"><div class="kpi-label">Soumis</div><div class="kpi-value">12</div></div>
@@ -240,7 +240,7 @@ body { font-family:Inter,sans-serif; background:#1a1a2e; color:var(--navy); }
 </section>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
-<!-- VUE 3 — NOUVEAU DOSSIER (cœur UX) -->
+<!-- VUE 3, NOUVEAU DOSSIER (cœur UX) -->
 <!-- ═══════════════════════════════════════════════════════════ -->
 <section id="screen-nouveau" class="screen">
   <header class="locale-toolbar">
@@ -266,13 +266,13 @@ body { font-family:Inter,sans-serif; background:#1a1a2e; color:var(--navy); }
     <main class="main">
       <div class="page-header">
         <h1>Nouveau dossier</h1>
-        <p>Déposez un dossier en 1 min — <strong>pas d'email</strong> : Robin crée ref@robindesairs.eu</p>
+        <p>Déposez un dossier en 1 min, <strong>pas d'email</strong> : Robin crée ref@robindesairs.eu</p>
       </div>
 
       <div class="form-card">
         <!-- ÉTAPE 1 -->
         <div class="form-step">
-          <div class="form-step-label">1 — Passager</div>
+          <div class="form-step-label">1, Passager</div>
           <div class="form-row">
             <div class="form-group"><label>Nom</label><input value="KODJO"></div>
             <div class="form-group"><label>Prénom</label><input value="Amadou"></div>
@@ -280,13 +280,13 @@ body { font-family:Inter,sans-serif; background:#1a1a2e; color:var(--navy); }
           <div class="form-group">
             <label>Téléphone WhatsApp</label>
             <input value="+220 700 00 00">
-            <p class="form-hint">✓ Pas d'email à saisir — généré côté serveur (clientEmailForRef)</p>
+            <p class="form-hint">✓ Pas d'email à saisir, généré côté serveur (clientEmailForRef)</p>
           </div>
         </div>
 
         <!-- ÉTAPE 2 -->
         <div class="form-step">
-          <div class="form-step-label">2 — Vol</div>
+          <div class="form-step-label">2, Vol</div>
           <div class="form-row">
             <div class="form-group"><label>PNR (6)</label><input class="input-pnr" value="AB1C2D"></div>
             <div class="form-group"><label>Vol</label><input value="AF718"></div>
@@ -310,7 +310,7 @@ body { font-family:Inter,sans-serif; background:#1a1a2e; color:var(--navy); }
 
         <!-- ÉTAPE 3 -->
         <div class="form-step">
-          <div class="form-step-label">3 — Situation</div>
+          <div class="form-step-label">3, Situation</div>
           <div class="issue-chips">
             <button type="button" class="issue-chip">⏳ Billet vendu</button>
             <button type="button" class="issue-chip">Retard +3h</button>
@@ -345,7 +345,7 @@ body { font-family:Inter,sans-serif; background:#1a1a2e; color:var(--navy); }
       <div class="spec-note">
         <strong>Pour l'agent code :</strong> reproduire cette structure dans <code>espace-agence.html</code>.
         Logique dans <code>agence-portal.js</code> (chips, escale, POST sans email).
-        API <code>POST /api/agency-dossiers</code> — retirer <code>email</code> des champs requis, email via <code>clientEmailForRef(ref)</code>.
+        API <code>POST /api/agency-dossiers</code> retirer <code>email</code> des champs requis, email via <code>clientEmailForRef(ref)</code>.
       </div>
     </main>
   </div>

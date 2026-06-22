@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Vérification des fonctions Netlify — Robin des Airs</title>
+  <title>Vérification des fonctions Netlify, Robin des Airs</title>
   <style>
     body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
     h1 { font-size: 1.25rem; }
@@ -53,7 +53,7 @@
           if (ct.indexOf('json') !== -1) data = await res.json().catch(function() { return null; });
           var ok = t.check(res, data);
           div.className = 'fn ' + (ok ? 'ok' : 'err');
-          div.innerHTML = '<strong>' + t.name + '</strong><small>' + (ok ? 'OK ' : 'Échec ') + res.status + (data && data.error ? ' — ' + data.error : '') + '</small>';
+          div.innerHTML = '<strong>' + t.name + '</strong><small>' + (ok ? 'OK ' : 'Échec ') + res.status + (data && data.error ? ', ' + data.error : '') + '</small>';
         } catch (e) {
           div.className = 'fn err';
           div.innerHTML = '<strong>' + t.name + '</strong><small>Erreur: ' + (e.message || e) + '</small>';

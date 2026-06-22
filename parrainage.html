@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="/favicon.png" type="image/png">
-<title>Parrainage Robin des Airs — Gagnez un accès salon lounge aéroport</title>
-<meta name="description" content="Parrainez un proche dont le vol a été retardé ou annulé. Gagnez un accès salon lounge VIP aéroport (CDG, ORY, Dakar, Abidjan, Bamako…) valable 1 an — Programme de parrainage Robin des Airs.">
-<meta property="og:title" content="Parrainez et volez en salon lounge — Robin des Airs">
+<title>Parrainage Robin des Airs, Gagnez un accès salon lounge aéroport</title>
+<meta name="description" content="Parrainez un proche dont le vol a été retardé ou annulé. Gagnez un accès salon lounge VIP aéroport (CDG, ORY, Dakar, Abidjan, Bamako…) valable 1 an, Programme de parrainage Robin des Airs.">
+<meta property="og:title" content="Parrainez et volez en salon lounge, Robin des Airs">
 <meta property="og:description" content="Un proche a eu un vol retardé Europe ↔ Afrique ? Recommandez Robin des Airs. Pour chaque dossier gagné, vous recevez un accès salon VIP valable 1 an.">
 <meta property="og:url" content="https://robindesairs.eu/parrainage">
 <meta property="og:type" content="website">
@@ -229,23 +229,23 @@ footer a:hover { color:var(--green-mid); }
 .counter-label { font-size:11px; color:rgba(255,255,255,0.4); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-top:3px; display:block; }
 
 /* ─────────────────────────────────────────────────────────────
-   ANIMATIONS — GSAP + ScrollTrigger (voir <script> en bas)
+   ANIMATIONS, GSAP + ScrollTrigger (voir <script> en bas)
    ───────────────────────────────────────────────────────────── */
 html { scroll-behavior: smooth; }
 
 /* Hero content au-dessus du canvas particles */
 .hero > *:not(canvas) { position: relative; z-index: 2; }
 
-/* 3D tilt — contexte perspective sur les cartes */
+/* 3D tilt, contexte perspective sur les cartes */
 .step, .proof-card, .why-card { transform-style: preserve-3d; }
 
-/* Counter strip — lueur verte au déclenchement */
+/* Counter strip, lueur verte au déclenchement */
 .counter-strip.active .counter-num {
   text-shadow: 0 0 22px rgba(0,229,160,.50);
   transition: text-shadow .6s ease;
 }
 
-/* prefers-reduced-motion — tout désactivé */
+/* prefers-reduced-motion, tout désactivé */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
@@ -301,19 +301,19 @@ html { scroll-behavior: smooth; }
 <section class="hero">
   <div class="hero-badge">🎁 Sans limite · Sans avance · Sans risque</div>
   <h1>Parrainez un proche.<br><span id="volez" style="display:inline-block;will-change:transform">Volez</span> en <span>salon lounge</span>.</h1>
-  <p class="hero-sub">Votre frère, votre cousine, votre collègue — si son vol Europe ↔ Afrique a été retardé ou annulé, parrainez-le et gagnez un accès salon VIP aéroport.</p>
+  <p class="hero-sub">Votre frère, votre cousine, votre collègue, si son vol Europe ↔ Afrique a été retardé ou annulé, parrainez-le et gagnez un accès salon VIP aéroport.</p>
 
   <div class="lounge-reward">
     <div class="icon">🛋️</div>
     <div class="label">1 accès salon lounge</div>
-    <div class="sublabel">valeur ~60–80 € · offert par Robin des Airs</div>
+    <div class="sublabel">valeur ~60-80 € · offert par Robin des Airs</div>
     <div class="validity">⏳ Valable 1 an dès réception</div>
   </div>
 
   <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
     <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20parrainer%20un%20proche%20dont%20le%20vol%20Europe%20%E2%86%94%20Afrique%20a%20%C3%A9t%C3%A9%20retard%C3%A9%20ou%20annul%C3%A9.%20Pouvez-vous%20m%27aider%20%3F" target="_blank" rel="noopener" class="hero-wa" onclick="plausible('Parrainage-WA', {props: {source: 'hero'}})">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      👋 Parrainer maintenant — recevoir mon lounge
+      👋 Parrainer maintenant, recevoir mon lounge
     </a>
     <a href="#form" style="font-size:12px;color:rgba(255,255,255,0.4);text-decoration:none;">ou remplir le formulaire ↓</a>
   </div>
@@ -327,7 +327,7 @@ html { scroll-behavior: smooth; }
     <div class="step">
       <div class="step-num">1</div>
       <h3>Envoyez le nom de votre proche</h3>
-      <p>Dites-nous sur WhatsApp : "Je parraine [Prénom], son vol Paris–Dakar a été retardé." C'est tout.</p>
+      <p>Dites-nous sur WhatsApp : "Je parraine [Prénom], son vol Paris-Dakar a été retardé." C'est tout.</p>
       <span class="step-arrow">→</span>
     </div>
     <div class="step">
@@ -348,21 +348,21 @@ html { scroll-behavior: smooth; }
 <section class="proof-section">
   <div class="proof-inner">
     <h2 class="section-title">Ils ont parrainé. Ils ont volé en lounge.</h2>
-    <p class="section-sub">Paris · Dakar · Abidjan · Kinshasa — ils nous font confiance</p>
+    <p class="section-sub">Paris · Dakar · Abidjan · Kinshasa, ils nous font confiance</p>
     <div class="proof-grid">
       <div class="proof-card">
-        <p class="proof-text">"J'ai parrainé ma cousine pour son vol Air France annulé CDG–DSS. 3 mois après, j'ai reçu mon bon lounge sur WhatsApp. Je l'ai utilisé au Salon Paris avant de partir à Dakar. Franchement c'est top."</p>
-        <div class="proof-name">Mamadou S. — Paris 18e</div>
-        <div class="proof-detail">Parrain · Salon CDG utilisé — mars 2026</div>
+        <p class="proof-text">"J'ai parrainé ma cousine pour son vol Air France annulé CDG-DSS. 3 mois après, j'ai reçu mon bon lounge sur WhatsApp. Je l'ai utilisé au Salon Paris avant de partir à Dakar. Franchement c'est top."</p>
+        <div class="proof-name">Mamadou S., Paris 18e</div>
+        <div class="proof-detail">Parrain · Salon CDG utilisé, mars 2026</div>
       </div>
       <div class="proof-card">
         <p class="proof-text">"Mon frère avait un retard Corsair de 6h sur Abidjan. Je l'ai envoyé chez Robin. Ils ont tout géré. 4 mois après, lui il a eu 400 € et moi j'ai eu mon bon lounge ORY. Je suis passé en Business à l'embarquement !"</p>
-        <div class="proof-name">Kouamé A. — Ivry-sur-Seine</div>
-        <div class="proof-detail">Parrain · Salon Orly utilisé — janvier 2026</div>
+        <div class="proof-name">Kouamé A., Ivry-sur-Seine</div>
+        <div class="proof-detail">Parrain · Salon Orly utilisé, janvier 2026</div>
       </div>
       <div class="proof-card">
         <p class="proof-text">"J'avais pas cru que ça marcherait vraiment. J'ai parrainé 3 personnes de ma famille pour des vols Brussels Airlines vers Kinshasa. 3 bons lounge reçus. J'en ai gardé 2, j'ai offert le dernier à ma maman."</p>
-        <div class="proof-name">Patient M. — Bruxelles</div>
+        <div class="proof-name">Patient M., Bruxelles</div>
         <div class="proof-detail">Parrain × 3 · Salon BRU · novembre 2025</div>
       </div>
     </div>
@@ -379,7 +379,7 @@ html { scroll-behavior: smooth; }
     <p class="section-sub">Vous voyagez sur ces routes ? Le salon vous attend.</p>
     <div class="airports-cols">
       <div class="airport-group">
-        <h4>🇫🇷 🇧🇪 Europe — Départ</h4>
+        <h4>🇫🇷 🇧🇪 Europe, Départ</h4>
         <div class="airport-list">
           <div class="airport-item"><div class="airport-code">CDG</div><div><div class="airport-name">Paris Charles de Gaulle</div><div class="airport-country">France</div></div></div>
           <div class="airport-item"><div class="airport-code">ORY</div><div><div class="airport-name">Paris Orly</div><div class="airport-country">France</div></div></div>
@@ -391,7 +391,7 @@ html { scroll-behavior: smooth; }
         </div>
       </div>
       <div class="airport-group">
-        <h4>🌍 Afrique — Destinations</h4>
+        <h4>🌍 Afrique, Destinations</h4>
         <div class="airport-list">
           <div class="airport-item"><div class="airport-code">DSS</div><div><div class="airport-name">Dakar Blaise Diagne</div><div class="airport-country">Sénégal</div></div></div>
           <div class="airport-item"><div class="airport-code">ABJ</div><div><div class="airport-name">Abidjan Félix Houphouët-Boigny</div><div class="airport-country">Côte d'Ivoire</div></div></div>
@@ -420,8 +420,8 @@ html { scroll-behavior: smooth; }
     <div class="why-card">
       <span class="why-icon">🛋️</span>
       <div>
-        <h4>Valeur réelle ~60–80 €</h4>
-        <p>Boissons, snacks, wifi haut débit, douches et espace calme — l'expérience Business Class à l'embarquement.</p>
+        <h4>Valeur réelle ~60-80 €</h4>
+        <p>Boissons, snacks, wifi haut débit, douches et espace calme, l'expérience Business Class à l'embarquement.</p>
       </div>
     </div>
     <div class="why-card">
@@ -442,7 +442,7 @@ html { scroll-behavior: smooth; }
       <span class="why-icon">🛡️</span>
       <div>
         <h4>Zéro risque pour votre proche</h4>
-        <p>Aucune avance, aucun risque. On prend 25 % uniquement si on gagne — exemple : 400 € d'indemnité → votre filleul reçoit <strong>300 €</strong>, Robin prend 100 €. Si on perd : 0 € à payer.</p>
+        <p>Aucune avance, aucun risque. On prend 25 % uniquement si on gagne, exemple : 400 € d'indemnité → votre filleul reçoit <strong>300 €</strong>, Robin prend 100 €. Si on perd : 0 € à payer.</p>
       </div>
     </div>
   </div>
@@ -451,7 +451,7 @@ html { scroll-behavior: smooth; }
 <!-- FORM -->
 <section class="form-section" id="form">
   <h2 class="section-title">Déposer un parrainage</h2>
-  <p class="section-sub">5 champs — on s'occupe du reste</p>
+  <p class="section-sub">5 champs, on s'occupe du reste</p>
 
   <div class="form-card">
     <div class="form-group-title">Vous (parrain / marraine)</div>
@@ -484,7 +484,7 @@ html { scroll-behavior: smooth; }
       <div><label class="opt">Date du vol <em>(optionnel)</em></label><input type="date" id="f-date"></div>
     </div>
 
-    <button class="form-btn" onclick="submitParrainage()">Envoyer — je veux mon accès lounge →</button>
+    <button class="form-btn" onclick="submitParrainage()">Envoyer, je veux mon accès lounge →</button>
     <p class="form-legal">Robin des Airs contactera votre filleul pour vérifier son éligibilité. Données traitées conformément au RGPD. Le bon lounge est envoyé uniquement si le dossier est gagné.</p>
   </div>
 
@@ -524,11 +524,11 @@ html { scroll-behavior: smooth; }
     </div>
     <div class="faq-item" onclick="this.classList.toggle('open')">
       <div class="faq-q">Mon filleul doit-il payer quelque chose ? <span class="faq-arrow">&#9662;</span></div>
-      <div class="faq-a">Non. Robin des Airs ne prélève sa commission (25 %) que si le dossier est gagné — et uniquement sur l'indemnité récupérée. Exemple concret : vol annulé → indemnité 400 € → filleul reçoit 300 €, Robin prend 100 €. Si on perd : 0 € à payer pour tout le monde.</div>
+      <div class="faq-a">Non. Robin des Airs ne prélève sa commission (25 %) que si le dossier est gagné, et uniquement sur l'indemnité récupérée. Exemple concret : vol annulé → indemnité 400 € → filleul reçoit 300 €, Robin prend 100 €. Si on perd : 0 € à payer pour tout le monde.</div>
     </div>
     <div class="faq-item" onclick="this.classList.toggle('open')">
       <div class="faq-q">Quels vols sont éligibles pour mon filleul ? <span class="faq-arrow">&#9662;</span></div>
-      <div class="faq-a">Tous les vols au départ de l'UE ou opérés par une compagnie européenne, avec un retard de plus de 3 heures, une annulation ou un refus d'embarquement. La prescription est de 3 ans — un vol de 2023 peut encore être réclamé, agissez maintenant.</div>
+      <div class="faq-a">Tous les vols au départ de l'UE ou opérés par une compagnie européenne, avec un retard de plus de 3 heures, une annulation ou un refus d'embarquement. La prescription est de 3 ans, un vol de 2023 peut encore être réclamé, agissez maintenant.</div>
     </div>
   </div>
 </section>
@@ -536,7 +536,7 @@ html { scroll-behavior: smooth; }
 <!-- CTA FINAL -->
 <div style="background:var(--navy);padding:52px 24px;text-align:center">
   <p style="font-weight:900;font-size:20px;color:#fff;margin-bottom:8px">Prêt à parrainer ?</p>
-  <p style="font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:22px">30 secondes sur WhatsApp — on s'occupe de tout le reste pour votre proche.</p>
+  <p style="font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:22px">30 secondes sur WhatsApp, on s'occupe de tout le reste pour votre proche.</p>
   <a href="https://wa.me/33756863630?text=Bonjour%20Robin%20!%20Je%20veux%20parrainer%20un%20proche%20dont%20le%20vol%20Europe%20%E2%86%94%20Afrique%20a%20%C3%A9t%C3%A9%20retard%C3%A9%20ou%20annul%C3%A9." target="_blank" rel="noopener" class="hero-wa" style="display:inline-flex;margin:0 auto;" onclick="plausible('Parrainage-WA', {props: {source: 'cta-final'}})">
     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
     Parrainer maintenant
@@ -557,7 +557,7 @@ html { scroll-behavior: smooth; }
     <h3>Parrainage envoyé !</h3>
     <p>Nous contactons votre filleul dans les prochaines heures. Votre bon lounge sera envoyé par WhatsApp dès que son dossier sera gagné.</p>
     <div class="code-box" id="refCode">PAR-0000</div>
-    <p style="font-size:11px;color:var(--gray);margin-bottom:16px">Votre code de suivi — conservez-le</p>
+    <p style="font-size:11px;color:var(--gray);margin-bottom:16px">Votre code de suivi, conservez-le</p>
     <button onclick="document.getElementById('modal').classList.remove('show')">Fermer</button>
   </div>
 </div>
@@ -671,7 +671,7 @@ function submitParrainage() {
   var rm = window.matchMedia('(prefers-reduced-motion:reduce)').matches;
   gsap.registerPlugin(ScrollTrigger);
 
-  /* ── 1. CANVAS PARTICLES — ciel étoilé dans le hero ─────── */
+  /* ── 1. CANVAS PARTICLES, ciel étoilé dans le hero ─────── */
   !function () {
     var hero = document.querySelector('.hero');
     var cv = document.createElement('canvas');
@@ -715,13 +715,13 @@ function submitParrainage() {
     .from('.lounge-reward',         {opacity:0, scale:.78, duration:.80, ease:'back.out(1.7)'}, '-=.3')
     .from('.hero > div:last-child', {opacity:0, y:24, duration:.50}, '-=.2');
 
-  /* Lounge card — respiration lumineuse */
+  /* Lounge card, respiration lumineuse */
   gsap.to('.lounge-reward', {
     boxShadow:'0 0 50px 14px rgba(0,229,160,.26)',
     duration:2.2, repeat:-1, yoyo:true, ease:'sine.inOut', delay:2.4
   });
 
-  /* ── 3. COUNTER STRIP — glow au scroll ──────────────────── */
+  /* ── 3. COUNTER STRIP, glow au scroll ──────────────────── */
   ScrollTrigger.create({
     trigger:'.counter-strip', start:'top 88%',
     onEnter:function(){ document.querySelector('.counter-strip').classList.add('active'); }
@@ -735,7 +735,7 @@ function submitParrainage() {
     });
   });
 
-  /* ── 5. STEPS — montée 3D avec perspective ──────────────── */
+  /* ── 5. STEPS, montée 3D avec perspective ──────────────── */
   gsap.from('.step', {
     scrollTrigger:{trigger:'.steps', start:'top 76%'},
     opacity:0, y:70, scale:.88, rotateX:16,
@@ -754,7 +754,7 @@ function submitParrainage() {
     opacity:0, y:28, duration:.6, ease:'power2.out'
   });
 
-  /* ── 7. AIRPORTS — cascade depuis la gauche ─────────────── */
+  /* ── 7. AIRPORTS, cascade depuis la gauche ─────────────── */
   document.querySelectorAll('.airport-group').forEach(function(grp) {
     gsap.from(grp.querySelector('h4'), {
       scrollTrigger:{trigger:grp, start:'top 80%'},
