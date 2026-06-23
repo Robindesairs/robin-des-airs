@@ -1805,7 +1805,7 @@ function toggleEscaleVol3() {
     }
     var PASS = {
       fr: boardingPass({ aria: 'Carte d\'embarquement (exemple)', kicker: 'Carte d\'embarquement', lPax: 'Passager', pax: 'AMINATA DIALLO', lSeat: 'Siège', seat: '23A', fromC: 'CDG', fromN: 'Paris', toC: 'DSS', toN: 'Dakar', lFlight: 'Vol', flight: 'AF718', lDep: 'Départ', dep: '19:40' }),
-      en: boardingPass({ aria: 'Boarding pass (example)', kicker: 'Boarding pass', lPax: 'Passenger', pax: 'AMA MENSAH', lSeat: 'Seat', seat: '23A', fromC: 'LHR', fromN: 'London', toC: 'ACC', toN: 'Accra', lFlight: 'Flight', flight: 'BA081', lDep: 'Departure', dep: '19:40' })
+      en: boardingPass({ aria: 'Boarding pass (example)', kicker: 'Boarding pass', lPax: 'Passenger', pax: 'AMA MENSAH', lSeat: 'Seat', seat: '23A', fromC: 'BRU', fromN: 'Brussels', toC: 'ACC', toN: 'Accra', lFlight: 'Flight', flight: 'SN277', lDep: 'Departure', dep: '12:00' })
     };
 
     // La cliente porte un prénom africain (reco sous-agent CQ) : Aminata (FR) / Ama (EN, diaspora anglophone).
@@ -1824,11 +1824,11 @@ function toggleEscaleVol3() {
         { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 Dernière étape : <b>signez</b>, je m\'occupe de tout 💪' }
       ]; },
       en: function () { return [
-        { who: 'client', delay: 400,  hold: 1100, sender: 'Ama', html: 'BA081 delayed 5 h, I\'m so upset 😤' },
+        { who: 'client', delay: 400,  hold: 1100, sender: 'Ama', html: 'SN277 delayed 5 h, I\'m so upset 😤' },
         { who: 'robin',  typing: 1300, hold: 1200, html: 'That\'s maddening 😤 Just send me a <b>photo of your boarding pass</b> 📸' },
         { who: 'client', delay: 900,  hold: 4000, cls: 'wa-msg--bp', html: PASS.en },
         { who: 'robin',  delay: 450,  hold: 2000, cls: 'wa-scan', html: '🔎 Reading your pass…' },
-        { who: 'robin',  typing: 1100, hold: 3400, cls: 'wa-msg--verdict', html: '✓ I can see your flight: <b>BA081 · London → Accra</b> — this delay may entitle you to <span class="wa-verdict-amt">up to €600</span> / passenger' },
+        { who: 'robin',  typing: 1100, hold: 3400, cls: 'wa-msg--verdict', html: '✓ I can see your flight: <b>SN277 · Brussels → Accra</b> — this delay may entitle you to <span class="wa-verdict-amt">up to €600</span> / passenger' },
         { who: 'client', delay: 600,  hold: 1100, html: 'And what does it cost me? 😅' },
         { who: 'robin',  typing: 1200, hold: 3200, html: 'We check <b>for free, no commitment</b>. Nothing if we lose — <b>25 %</b> only if we win, no upfront fee, no card needed 🤝' },
         { who: 'client', delay: 600,  hold: 1300, html: 'And if there are 4 of us? 👨‍👩‍👧‍👦' },
