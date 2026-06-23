@@ -343,7 +343,7 @@ function matchLang(input) {
 // (zéro régression) ; on ne renvoie l'anglais QUE si le client a choisi « English ». Tant qu'un message
 // n'est pas traduit, il reste en français — la bascule se fait message par message, sans tout réécrire.
 function isEN(s) { return !!(s && s.langue_code === 'en'); }
-function L(s, en, fr) { return isEN(s) ? en : fr; }
+function L(s, en, fr) { return fr; }
 // Variante LEAD (relances) : le lead porte sa langue (lead.langue / lead.langue_code === 'en').
 // Permet des relances bilingues EN DUR — zéro dépendance à la traduction GPT à l'envoi.
 function leadEN(lead) { return !!(lead && (lead.langue === 'en' || lead.langue_code === 'en')); }
