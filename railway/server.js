@@ -1186,13 +1186,14 @@ async function ocrPassport(mediaUrl, cfg) {
     if (!media) return null;
     const b64 = media.b64;
     const prompt = `Tu lis une pièce d'identité (PASSEPORT, carte nationale d'identité, titre de séjour, carte de résident…) — utilise aussi la zone MRZ en bas si présente. Réponds UNIQUEMENT en JSON :
-{"nom":"","prenom":"","date_naissance":"","date_expiration":"","adresse":""}
+{"nom":"","prenom":"","date_naissance":"","date_expiration":"","adresse":"","sexe":""}
 Règles :
 - nom : nom de famille en MAJUSCULES.
 - prenom : prénom(s).
 - date_naissance : format JJ/MM/AAAA. Convertis depuis la MRZ (AAMMJJ) si besoin, en déduisant le siècle logiquement (une naissance est dans le passé).
 - date_expiration : date de fin de validité, format JJ/MM/AAAA (depuis la MRZ ou le champ imprimé). Si absente, "".
 - adresse : champ "Adresse", "Domicile" ou "Address" visible sur la page (hors MRZ). Recopie tel quel sur une seule ligne. Si absent, "".
+- sexe : "M" ou "F" (champ "Sexe"/"Sex", ou la lettre de la MRZ : M, F ou X). Si X ou inconnu, "".
 - Champ inconnu = "". Ne JAMAIS inventer.`;
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST', signal: AbortSignal.timeout(45000), headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
@@ -1204,7 +1205,9 @@ Règles :
     const dob = (p.date_naissance || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/) ? p.date_naissance : '';
     const expiry = (p.date_expiration || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/) ? p.date_expiration : '';
     const adresse = (p.adresse || '').trim();
-    return { name, dob, expiry, adresse };
+    const sx = (p.sexe || '').trim().toUpperCase().charAt(0);
+    const sexe = (sx === 'M' || sx === 'F') ? sx : '';
+    return { name, dob, expiry, adresse, sexe };
   } catch (e) { return null; }
 }
 
@@ -1385,14 +1388,14 @@ async function askOcrConfirm(phone, s, cfg, mediaUrl) {
       const cur = s.passengers[_att.idx] || {};
       const _billet = cur.name || '';
       const _mismatch = !!(_billet && pp.name && nameDiffers(_billet, pp.name));
-      s.passengers[_att.idx] = { ...cur, name: cur.name || pp.name, nameId: pp.name || cur.nameId || '', nameMismatch: _mismatch, dob: pp.dob || cur.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || cur.adresse || '', viaPhoto: true, idReceived: true };
+      s.passengers[_att.idx] = { ...cur, name: cur.name || pp.name, nameId: pp.name || cur.nameId || '', nameMismatch: _mismatch, dob: pp.dob || cur.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || cur.adresse || '', sexe: pp.sexe || cur.sexe || '', viaPhoto: true, idReceived: true };
       await setState(phone, s);
       if (_mismatch) { try { notifyOwnerWhatsApp('', `⚠️ Écart de nom${s.ref ? ' [' + s.ref + ']' : ''} : billet « ${_billet} » / passeport « ${pp.name} » — à vérifier (poste pièces).`).catch(() => {}); } catch (_) {} }
       const got = (s.passengers || []).filter((p) => p && p.idReceived).length;
       await send(phone, L(s, `✅ ID of *${cur.name || pp.name}* received (${got}/${s.pax})${minor ? ' · 👶 minor, parental signature' : ''}${expired ? ' · ⚠️ expired, an advisor checks' : ''}.`, `✅ Pièce de *${cur.name || pp.name}* reçue (${got}/${s.pax})${minor ? ' · 👶 mineur·e, signature parentale' : ''}${expired ? ' · ⚠️ expirée, un conseiller vérifie' : ''}.`), cfg);
       return nextPassport(phone, s, cfg);
     }
-    s.doc_pending = { name: pp.name || '', dob: pp.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || '', viaPhoto: true };
+    s.doc_pending = { name: pp.name || '', dob: pp.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || '', sexe: pp.sexe || '', viaPhoto: true };
     s.step = 'doc_pass_confirm';
     await setState(phone, s);
     const lines = (isEN(s) ? [
@@ -2387,7 +2390,9 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       if (inFuture(dob)) return send(phone, L(s, `🤔 That date of birth is in the future. Send it again in DD/MM/YYYY format _(e.g. 05/09/2012)_:`, `🤔 Cette date de naissance est dans le futur. Renvoyez-la au format JJ/MM/AAAA _(ex. 05/09/2012)_ :`), cfg);
       const minor = isMinorAt(dob, s.date);
       const p = s.passengers[s.doc_idx] || {}; p.dob = dob; p.minor = minor; p.idDeferred = true; s.passengers[s.doc_idx] = p; // nom+DDN notés, mais la PHOTO de la pièce reste à envoyer
-      await send(phone, L(s, `✅ ${p.name || ('Passenger ' + (s.doc_idx + 1))} — born *${dob}* (${dateEnLettres(dob)})${minor ? ' 👶 _(minor: parental signature required)_' : ''}\n📸 _Their ID (passport or national ID) is still to be sent — essential to claim from the airline._`, `✅ ${p.name || ('Passager ' + (s.doc_idx + 1))} — né·e le *${dob}* (${dateEnLettres(dob)})${minor ? ' 👶 _(mineur·e : signature parentale requise)_' : ''}\n📸 _Sa pièce d'identité (passeport ou carte d'identité) reste à envoyer — indispensable pour réclamer auprès de la compagnie._`), cfg);
+      const _ne = p.sexe === 'F' ? 'née' : p.sexe === 'M' ? 'né' : 'né·e';        // accord si le sexe est connu (lu sur la pièce), sinon inclusif
+      const _min = p.sexe === 'F' ? 'mineure' : p.sexe === 'M' ? 'mineur' : 'mineur·e';
+      await send(phone, L(s, `✅ ${p.name || ('Passenger ' + (s.doc_idx + 1))} — born *${dob}* (${dateEnLettres(dob)})${minor ? ' 👶 _(minor: parental signature required)_' : ''}\n📸 _Their ID (passport or national ID) is still to be sent — essential to claim from the airline._`, `✅ ${p.name || ('Passager ' + (s.doc_idx + 1))} — ${_ne} le *${dob}* (${dateEnLettres(dob)})${minor ? ` 👶 _(${_min} : signature parentale requise)_` : ''}\n📸 _Sa pièce d'identité (passeport ou carte d'identité) reste à envoyer — indispensable pour réclamer auprès de la compagnie._`), cfg);
       s.doc_idx++; await setState(phone, s); return nextPassport(phone, s, cfg);
     }
     if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim(), isEN(s)), cfg);
@@ -2836,12 +2841,12 @@ async function askMandant(phone, s, cfg) {
 // Adresse du contact : prise du passeport si lue, sinon demandée (DERNIÈRE question), puis finalisation.
 async function askAddressOrFinalize(phone, s, cfg) {
   const m = (s.passengers || [])[s.mandant_idx || 0] || {};
+  // Adresse PRISE SUR LA PIÈCE (OCR), jamais demandée au client. Si absente, on finalise quand même
+  // (champ adresse vide = non bloquant ; l'adresse figure de toute façon sur la pièce d'identité).
   if (m.adresse && m.adresse.trim().length >= 5) {
     await send(phone, L(s, `📍 Address found on your ID: *${m.adresse}*\n_(used for the authority form — editable when you sign.)_`, `📍 Adresse trouvée sur votre pièce : *${m.adresse}*\n_(utilisée pour le mandat — corrigeable au moment de signer.)_`), cfg);
-    return finaliser(phone, s, cfg);
   }
-  s.step = 'doc_adresse'; await setState(phone, s);
-  return send(phone, L(s, `📍 *Last question!* Your *postal address*? District, city and country are enough — no postcode or street number needed. _(e.g. Médina, Dakar, Senegal)_\nIt's the address on the authority form, where the airline must reply to you.`, `📍 *Dernière question !* Votre *adresse postale* ? Quartier, ville et pays suffisent — pas besoin de code postal ni de numéro de rue. _(ex : Médina, Dakar, Sénégal)_\nC'est l'adresse qui figure sur le mandat, où la compagnie doit vous répondre.`), cfg);
+  return finaliser(phone, s, cfg);
 }
 async function gotoBoarding(phone, s, cfg) { s.step = 'doc_boarding'; await setState(phone, s); return send(phone, L(s, `🎫 Boarding pass\nSend a photo for the affected flight.\n📧 No pass? An e-ticket, a booking confirmation or a baggage tag work too.\n_🔒 Read by an automated tool (AI) to pre-fill your file — see robindesairs.eu/politique-confidentialite._\n✏️ *skip* · 📞 *call* if all lost, we'll find a solution.`, `🎫 Carte d'embarquement\nEnvoyez-en une photo pour le vol concerné.\n📧 Pas de carte ? Un e-billet, une confirmation de réservation ou une étiquette de bagage fonctionnent aussi.\n_🔒 Lu par un outil automatique (IA) pour pré-remplir votre dossier — voir robindesairs.eu/politique-confidentialite._\n✏️ *passer* · 📞 *appel* si tout perdu, on trouve une solution.`), cfg); }
 async function gotoEticket(phone, s, cfg) { s.step = 'doc_eticket'; await setState(phone, s); return send(phone, L(s, `📧 Booking confirmation (e-ticket)\nSend a screenshot (check spam / the Booking app).\n✏️ *skip* · 📞 *call*.`, `📧 Confirmation de réservation (e-billet)\nEnvoyez une capture (pensez aux spams / appli Booking).\n✏️ *passer* · 📞 *appel*.`), cfg); }
