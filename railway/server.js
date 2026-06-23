@@ -431,28 +431,36 @@ async function send(phone, text, cfg) {
 }
 async function sendButtons(phone, config, cfg) {
   if (!cfg) return;
-  // Accepte : {body, footer, buttons:[]} OU directement un tableau [{id,text}]
   const isArr = Array.isArray(config);
   let body    = isArr ? '👇' : (config.body || '');
   const footer  = isArr ? undefined : config.footer;
   let buttons = isArr ? config : (config.buttons || []);
-  if (phoneIsEN(phone)) { // client EN : traduit le corps, boutons restent FR (emojis universels + matching fiable)
+  if (phoneIsEN(phone)) {
     if (body && body !== '👇') body = await translateEN(body);
+    buttons = await Promise.all(buttons.map(async (b) => ({ ...b, text: await translateEN(b.text) })));
   }
-  if (body && body !== '👇') appendWaMessage(phone, body, 'bot'); // mirror SORTANT (corps des boutons) → store conversation CRM
+  if (body && body !== '👇') appendWaMessage(phone, body, 'bot');
   const wa = normalizeWatiPhone(phone);
-  const qs = new URLSearchParams({ whatsappNumber: wa, channelPhoneNumber: cfg.channel });
-  const fallbackText = (body && body !== '👇' ? body + '\n\n' : '') + buttons.map((b, i) => `${i + 1} — ${b.text}`).join('\n');
+  const textFallback = () => send(phone, (body && body !== '👇' ? body + '\n\n' : '') + buttons.map((b, i) => `${i + 1} — ${b.text}`).join('\n'), cfg);
+  // v3 API avec IDs → le handler matche sur id ('recap_ok') au lieu du texte traduit
+  let host; try { host = new URL(cfg.base).origin; } catch { host = cfg.base; }
   try {
-    const res = await fetch(`${cfg.base}/api/v1/sendInteractiveButtonsMessage?${qs}`, {
+    const res = await fetch(`${host}/api/ext/v3/conversations/messages/interactive`, {
       method: 'POST', signal: AbortSignal.timeout(12000), headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ body, footer: footer || '🏹 Robin des Airs', buttons: buttons.slice(0, 3).map(b => ({ text: clip(b.text, 20) })) }),
+      body: JSON.stringify({
+        target: wa,
+        type: 'button',
+        button_message: {
+          body: body || '👇',
+          footer: footer || '🏹 Robin des Airs',
+          buttons: buttons.slice(0, 3).map(b => ({ type: 'reply', reply: { id: b.id || b.text, title: clip(b.text, 20) } })),
+        },
+      }),
     });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok || data.result === false || data.error || data.ok === false) {
-      await send(phone, fallbackText, cfg);
-    }
-  } catch (e) { await send(phone, fallbackText, cfg); }
+    const failed = !res.ok || data.result === false || data.error || data.ok === false || data.success === false;
+    if (failed) await textFallback();
+  } catch (e) { await textFallback(); }
 }
 async function sendList(phone, { header, body, footer, buttonText, items, lang }, cfg) {
   if (!cfg) return;
