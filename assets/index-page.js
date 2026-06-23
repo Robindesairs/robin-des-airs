@@ -1965,6 +1965,7 @@ function toggleEscaleVol3() {
    • Actif sur index.html ET /index-en.html (les deux chargent ce fichier via home-loader.js).
 ════════════════════════════════════════════════════ */
 (function () {
+  return; // Bandeau de suggestion de langue RETIRÉ (demande fondateur, juin 2026) — ne plus créer la pastille
   var KEY = 'rda_lang_suggest'; // 'acted' | 'dismissed'
   function ready(fn) {
     if (window.robinWhenDomReady) window.robinWhenDomReady(fn);
