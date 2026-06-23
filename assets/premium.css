@@ -530,18 +530,18 @@ button.vol-ticker-chip,
   /* « Dézoom » hero (juin 2026) : tout le hero doit tenir dans l'écran sans scroller.
      Le header ne fait que ~44px → on récupère l'air excédentaire au-dessus du titre,
      on resserre les coutures et on raccourcit la fenêtre de conversation (boucle = rien perdu). */
-  #hero { padding-top: 84px; }                       /* était 150px — ~40px d'air suffisent (header ~44px) */
-  #hero .hero-title { line-height: 1.1; margin-bottom: 10px; }   /* était 18px */
+  #hero { padding-top: 60px; }                       /* header fixe ~44px + air (re-resserré juin 2026, le contenu hero avait regrossi → débordait) */
+  #hero .hero-title { line-height: 1.1; margin-bottom: 8px; }
   #hero .hero-subhead {
     font-size: 15px;
-    line-height: 1.5;
+    line-height: 1.45;
     color: var(--navy);
     opacity: 0.9;
-    margin: 0 0 16px 0;                              /* était 26px */
+    margin: 0 0 12px 0;
   }
-  #hero .hero-entry { margin-bottom: 14px; }          /* resserre vers la démo (était 22px) */
-  #hero .wa-chat { min-height: 128px; max-height: 128px; }  /* fenêtre conversation plus courte (était 165px) */
-  #hero .hero-stats { margin-top: 8px; padding-top: 8px; }   /* était 16/16 */
+  #hero .hero-entry { margin-bottom: 10px; }
+  #hero .wa-chat { min-height: 104px; max-height: 104px; }  /* fenêtre conversation (resserrée depuis 165px) */
+  #hero .hero-stats { margin-top: 6px; padding-top: 6px; }
 
   /* La famille reste BIEN VISIBLE (verdict concile : un vrai visage = signal
      de confiance n°1). On garde juste un fondu LÉGER du bord gauche pour
