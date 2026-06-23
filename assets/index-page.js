@@ -500,6 +500,7 @@ function volTickerRenderEmpty() {
 }
 /** Bandeau : données live /api/vol-ticker uniquement ; message honnête si aucun vol éligible. */
 window.refreshVolTicker = function () {
+  if (!document.getElementById('vol-ticker')) return; // ticker retiré du bandeau → no-op (zéro erreur)
   volTickerRenderLoading();
   function fetchRadar() {
     volTickerFetchRadar(function (data) {

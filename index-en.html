@@ -69,7 +69,6 @@
 <div class="diaspora-bar">
   <div class="diaspora-bar-inner diaspora-bar-inner--stack">
     <span class="sr-only" data-i18n="diaspora_bar_flags_aria">Diaspora: Cameroon, Comoros, Côte d’Ivoire, Madagascar, Mali, Nigeria, DR Congo, Senegal, and all of Africa.</span>
-    <span id="vol-ticker-sr" class="sr-only" data-i18n="vol_ticker_sr">Strip of Europe-Africa and Africa-Europe flights with 3h+ arrival delay or cancellation. Up to €600 if EU 261 applies. Click a pill to pre-fill the form.</span>
 
     <div class="diaspora-bar-head">
       <!-- Petit logo (marque = confiance pour un service argent/juridique), couleurs adaptées au navy -->
@@ -106,18 +105,7 @@
       </div>
     </div>
 
-    <div class="diaspora-bar-track" id="vol-ticker" role="region" aria-labelledby="vol-ticker-sr" aria-describedby="footer-vol-ticker-data">
-      <div class="vol-ticker vol-ticker--diaspora-slot">
-        <div class="vol-ticker-inner vol-ticker-inner--track">
-          <div class="vol-ticker-viewport vol-ticker-viewport--track">
-            <div class="vol-ticker-rail" id="vol-ticker-rail">
-              <div class="vol-ticker-group" id="vol-ticker-g1"></div>
-              <div class="vol-ticker-group" id="vol-ticker-g2" aria-hidden="true"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Ticker vols retiré (juin 2026) : le message « aucun vol détecté » était négatif en haut de page. On garde l'identité diaspora (drapeaux + « On parle votre langue »). -->
     <!-- Actions remontées dans le bandeau (langue + menu ☰), nav séparée supprimée pour aérer le haut -->
     <div class="diaspora-bar-actions">
       <div class="lang-dropdown" id="lang-dropdown" style="position:relative;">
@@ -1016,7 +1004,6 @@
   </div>
   <div class="footer-disclaimer" role="note" aria-label="Informations et limites de responsabilité">
     <p data-i18n="footer_vol_examples_disclaimer">The flight examples shown are for information only. Eligibility and the amount of compensation depend on the conditions set out in Regulation (EC) No 261/2004 (substantial delay, cancellation or denied boarding, applicable circumstances), with compensation of up to €600 per passenger depending on the flight distance.</p>
-    <p id="footer-vol-ticker-data" data-i18n="footer_vol_ticker_data_note">Strip: up to 10 latest impacted flights (cancellation or 3h+ arrival delay) on Europe ↔ Africa routes, refreshed via AeroDataBox (French hubs + key African airports). If none qualify today, a message is shown, no fictional examples. Up to €600 if EU 261 applies. Click a pill to pre-fill the form.</p>
     <p data-i18n="footer_no_legal_advice">Nothing on this site is legal advice or a guarantee of outcome; eligibility and amounts can only be confirmed after an individual review of your case.</p>
     <p id="footer-currency-hint" class="footer-currency-hint" style="display:none;margin-top:12px;font-size:11px;color:rgba(255,255,255,0.62);line-height:1.5;"></p>
   </div>
