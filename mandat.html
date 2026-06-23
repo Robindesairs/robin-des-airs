@@ -634,14 +634,14 @@ details.mandat-full[open]>summary{margin-bottom:12px}
 <div class="doc-section">
   <div class="sec-title">✅ Déclaration & Consentement</div>
   <div class="declaration-box">
-    Je soussigné(e) <strong id="declarant"> </strong>, déclare sur l'honneur avoir bien été passager(e) sur le vol indiqué à la date mentionnée, et avoir subi le préjudice déclaré (retard, annulation ou refus d'embarquement).
+    Je soussigné(e) <strong id="declarant"> </strong>, déclare sur l'honneur avoir bien été passager(e) sur le vol indiqué à la date mentionnée, et avoir subi le préjudice déclaré (retard, annulation ou refus d'embarquement). Chaque passager majeur signe en son nom propre ; pour un passager mineur, son représentant légal indique son nom et signe en son nom.
   </div>
   <!-- CASE 1, Mandat principal -->
   <div class="single-check" onclick="toggleMainCheck()">
     <input type="checkbox" id="mainCheck" onclick="event.stopPropagation()">
     <p>
-      J'ai lu et j'accepte le <strong>mandat de représentation</strong> (résumé ci-dessus, détail complet ci-dessus). J'autorise <strong>Robin des Airs</strong> à récupérer mon indemnité aérienne en mon nom et je lui <strong>cède ma créance aux fins de recouvrement</strong> (Article 5 bis).<br>
-      <strong>Aucun frais si le dossier échoue.</strong> Commission de 25% uniquement en cas de succès.<br>
+      Le ou les signataires majeurs déclarent avoir lu et accepter le <strong>mandat de représentation</strong> (résumé et détail complet ci-dessus), autorisent <strong>Robin des Airs</strong> à récupérer leur indemnité aérienne en leur nom et lui <strong>cèdent leur créance aux fins de recouvrement</strong> (Article 5 bis). La signature de chacun ci-dessous vaut acceptation et cession en son nom propre ; pour un passager mineur, le parent signataire consent en son nom.<br>
+      <strong>Aucun frais si le dossier échoue.</strong> Commission de 25 % TTC uniquement en cas de succès.<br>
       <span style="font-size:12px;color:var(--muted);">
         Exclusivité 24 mois · Rétractation possible sous 14 jours par email · <a href="politique-confidentialite.html" target="_blank" rel="noopener">RGPD, Politique de confidentialité</a>
       </span>
@@ -652,10 +652,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="single-check" onclick="document.getElementById('eligCheck').checked=!document.getElementById('eligCheck').checked;calcProgress()">
     <input type="checkbox" id="eligCheck" onclick="event.stopPropagation();calcProgress()">
     <p>
-      <strong>J'ai compris : le montant est une estimation</strong> (jusqu'à 600 € selon l'éligibilité de mon vol), <strong>pas une garantie</strong>.<br>
-      <span style="font-size:12px;color:var(--muted);">
-        Et comme c'est sans avance, je ne paie rien si on ne récupère rien. 🤝
-      </span>
+      <strong>J'ai compris : le montant est une estimation</strong> (jusqu'à 600 € par passager selon l'éligibilité du vol), <strong>pas une garantie</strong>.
     </p>
   </div>
   <div class="ferr" id="eligErr" style="font-size:13px">Veuillez cocher cette case pour confirmer que vous avez compris.</div>
@@ -663,9 +660,9 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="single-check" style="background:var(--green-tint);border-color:var(--green)" onclick="document.getElementById('startNow').checked=!document.getElementById('startNow').checked">
     <input type="checkbox" id="startNow" onclick="event.stopPropagation()">
     <p>
-      <strong>Je demande le démarrage immédiat de mon dossier</strong>, sans attendre l'expiration du délai de rétractation de 14 jours.<br>
+      <strong>Chaque signataire demande le démarrage immédiat de son dossier</strong>, sans attendre l'expiration du délai de rétractation de 14 jours.<br>
       <span style="font-size:12px;color:var(--muted);">
-        Recommandé, Robin des Airs peut agir dès maintenant en mon nom. (Art. L.221-25 Code conso.)
+        Recommandé, Robin des Airs peut agir dès maintenant en son nom. (Art. L.221-25 Code conso.)
       </span>
     </p>
   </div>
