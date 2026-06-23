@@ -1737,7 +1737,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       await sendButtons(phone, { body: (r || L(s, `🤖 I'm the Robin des Airs AI assistant.`, `🤖 Je suis l'assistant IA de Robin des Airs.`)) + footer, buttons: btns }, cfg);
       return;
     }
-  } catch (e) {}
+  } catch (e) { console.warn('[v8 T2-fallback] IA error, continuing to step handler:', e.message || e); }
 
   // ACCUEIL (MSG1)
   if (s.step === 'accueil' || !s.step) return sendAccueil(phone, cfg, _accLang);
@@ -1795,7 +1795,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     else if (ri === 1 || n === '2' || (lower.includes('europe') && !lower.includes('afrique') && !lower.includes('départ') && !lower.includes('arrivée'))) { s.route_type = 'eu_eu'; await send(phone, L(s, `🇪🇺 Intra-European flights are covered by EC 261 ✅\nOur specialty is Africa ↔ Europe, but let's continue.`, `🇪🇺 Les vols intra-européens sont couverts par le CE 261 ✅\nNotre spécialité c'est Afrique ↔ Europe, mais on continue.`), cfg); }
     else if (ri === 2 || n === '3' || (lower.includes('départ') && !lower.includes('retard'))) { s.route_type = 'mixte'; await send(phone, L(s, `🛫 A departure from or arrival in Europe can be eligible. Let's check together. ✅`, `🛫 Un départ ou une arrivée en Europe peut être éligible. Vérifions ensemble. ✅`), cfg); }
     else if (ri === 3 || n === '4' || lower.includes('autre')) { return finNonEligible(phone, L(s, `😔 Your flight doesn't appear to be covered by EU law.\n\nEC 261/2004 applies to flights departing from / arriving at a European airport, or operated by a European airline.\n\n❓ If that's a mistake, type *go* to pick another route.`, `😔 Votre vol ne semble pas couvert par la loi européenne.\n\nLe CE 261/2004 s'applique aux vols au départ/à l'arrivée d'un aéroport européen, ou opérés par une compagnie européenne.\n\n❓ Si erreur, écrivez *go* pour choisir une autre route.`), cfg); }
-    else return redispatch('route'); // si l'état a avancé → re-dispatch, sinon silence
+    else { const rd = await redispatch('route'); if (rd !== undefined) return rd; await send(phone, L(s, `🙂 I didn't quite get that. Choose from the list below 👇`, `🙂 Je n'ai pas bien compris. Choisissez dans la liste ci-dessous 👇`), cfg); return sendRoute(phone, s, cfg); }
     s.step = 'incident'; await setState(phone, s); return sendIncident(phone, s, cfg);
   }
 
@@ -1805,7 +1805,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (id === 'inc_retard' || n === '1' || lower.includes('retard') || lower.includes('delay')) { s.step = 'duree'; await setState(phone, s); return sendButtons(phone, { body: LV(s, phone, 'REACTION_RETARD', `😟 So sorry your flight was delayed. Was the delay *on arrival* more than 3 hours?`), buttons: [{ id: 'dur_plus', text: L(s, '✅ More than 3 hours', '✅ Plus de 3 heures') }, { id: 'dur_moins', text: L(s, '❌ Less than 3h', '❌ Moins de 3h') }, { id: 'dur_inconnu', text: L(s, '🤔 Not sure', '🤔 Je ne sais plus') }] }, cfg); }
     if (id === 'inc_annul' || n === '2' || lower.includes('annul') || lower.includes('cancel')) { s.incident = 'annulation'; s.incident_libelle = 'Annulation'; return sendAnnulDelai(phone, s, cfg); }
     if (id === 'inc_refus' || n === '3' || lower.includes('refus') || lower.includes('embarq') || lower.includes('denied') || lower.includes('boarding')) { s.incident = 'refus'; s.incident_libelle = "Refus d'embarquement"; await setState(phone, s); await send(phone, LV(s, phone, 'REACTION_REFUS', `😟 Denied boarding gives strong rights under EC 261. Let's check what you're owed.`), cfg); return estimationPuisPax(phone, s, cfg); }
-    return redispatch('incident'); // si état avancé → re-dispatch
+    { const rd = await redispatch('incident'); if (rd !== undefined) return rd; await send(phone, L(s, `🙂 Tap the button that matches your situation 👇`, `🙂 Touchez le bouton qui correspond à votre situation 👇`), cfg); return sendIncident(phone, s, cfg); }
   }
   // MSG4b — ANNULATION : règle des 14 jours de préavis (art. 5 CE 261). Pré-filtre AVANT le n° de vol.
   // Le critère légal = écart NOTIFICATION → date du vol, pas « le vol est dans +/- 14 j à partir d'aujourd'hui ».
