@@ -344,6 +344,17 @@ function matchLang(input) {
 // n'est pas traduit, il reste en français — la bascule se fait message par message, sans tout réécrire.
 function isEN(s) { return !!(s && s.langue_code === 'en'); }
 function L(s, en, fr) { return fr; }
+// Filet anti-boucle : si le bot re-pose la même question 3× → proposer aide/rappel au lieu de boucler.
+async function stuckHelp(phone, s, cfg) {
+  if (s._stuckStep !== s.step) { s._stuckStep = s.step; s._stuck = 0; }
+  s._stuck++;
+  if (s._stuck >= 3) {
+    s._stuck = 0; await setState(phone, s);
+    await sendButtons(phone, { body: L(s, `🙂 Looks like you're stuck — no worries, I'm here. 👇`, `🙂 Vous semblez bloqué(e) — pas de souci, je suis là pour vous aider. 👇`), buttons: [{ id: 'menu', text: '▶️ Reprendre' }, { id: 'recommencer', text: '🔄 Recommencer' }, { id: 'appel', text: '📞 Être rappelé' }] }, cfg);
+    return true;
+  }
+  return false;
+}
 // Variante LEAD (relances) : le lead porte sa langue (lead.langue / lead.langue_code === 'en').
 // Permet des relances bilingues EN DUR — zéro dépendance à la traduction GPT à l'envoi.
 function leadEN(lead) { return !!(lead && (lead.langue === 'en' || lead.langue_code === 'en')); }
@@ -1784,6 +1795,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       await clearState(phone);
       return finNonEligible(phone, L(s, `😔 If your flight neither *departs from* nor *arrives in* Europe, it doesn't fall under EU law EC 261/2004.\n\n❓ If that's a mistake (a layover in Europe counts!), type *go*.`, `😔 Si votre vol ne *part pas* d'Europe et n'*arrive pas* en Europe, il n'entre pas dans la loi européenne CE 261/2004.\n\n❓ En cas d'erreur (une escale en Europe compte !), écrivez *go*.`), cfg);
     }
+    if (await stuckHelp(phone, s, cfg)) return;
     return askRouteZone(phone, s, cfg);
   }
   // MSG3 — ROUTE (LEGACY : sessions déjà engagées sur l'ancienne question abstraite)
@@ -1795,7 +1807,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     else if (ri === 1 || n === '2' || (lower.includes('europe') && !lower.includes('afrique') && !lower.includes('départ') && !lower.includes('arrivée'))) { s.route_type = 'eu_eu'; await send(phone, L(s, `🇪🇺 Intra-European flights are covered by EC 261 ✅\nOur specialty is Africa ↔ Europe, but let's continue.`, `🇪🇺 Les vols intra-européens sont couverts par le CE 261 ✅\nNotre spécialité c'est Afrique ↔ Europe, mais on continue.`), cfg); }
     else if (ri === 2 || n === '3' || (lower.includes('départ') && !lower.includes('retard'))) { s.route_type = 'mixte'; await send(phone, L(s, `🛫 A departure from or arrival in Europe can be eligible. Let's check together. ✅`, `🛫 Un départ ou une arrivée en Europe peut être éligible. Vérifions ensemble. ✅`), cfg); }
     else if (ri === 3 || n === '4' || lower.includes('autre')) { return finNonEligible(phone, L(s, `😔 Your flight doesn't appear to be covered by EU law.\n\nEC 261/2004 applies to flights departing from / arriving at a European airport, or operated by a European airline.\n\n❓ If that's a mistake, type *go* to pick another route.`, `😔 Votre vol ne semble pas couvert par la loi européenne.\n\nLe CE 261/2004 s'applique aux vols au départ/à l'arrivée d'un aéroport européen, ou opérés par une compagnie européenne.\n\n❓ Si erreur, écrivez *go* pour choisir une autre route.`), cfg); }
-    else { const rd = await redispatch('route'); if (rd !== undefined) return rd; await send(phone, L(s, `🙂 I didn't quite get that. Choose from the list below 👇`, `🙂 Je n'ai pas bien compris. Choisissez dans la liste ci-dessous 👇`), cfg); return sendRoute(phone, s, cfg); }
+    else { const rd = await redispatch('route'); if (rd !== undefined) return rd; if (await stuckHelp(phone, s, cfg)) return; await send(phone, L(s, `🙂 I didn't quite get that. Choose from the list below 👇`, `🙂 Je n'ai pas bien compris. Choisissez dans la liste ci-dessous 👇`), cfg); return sendRoute(phone, s, cfg); }
     s.step = 'incident'; await setState(phone, s); return sendIncident(phone, s, cfg);
   }
 
@@ -1805,7 +1817,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (id === 'inc_retard' || n === '1' || lower.includes('retard') || lower.includes('delay')) { s.step = 'duree'; await setState(phone, s); return sendButtons(phone, { body: LV(s, phone, 'REACTION_RETARD', `😟 So sorry your flight was delayed. Was the delay *on arrival* more than 3 hours?`), buttons: [{ id: 'dur_plus', text: L(s, '✅ More than 3 hours', '✅ Plus de 3 heures') }, { id: 'dur_moins', text: L(s, '❌ Less than 3h', '❌ Moins de 3h') }, { id: 'dur_inconnu', text: L(s, '🤔 Not sure', '🤔 Je ne sais plus') }] }, cfg); }
     if (id === 'inc_annul' || n === '2' || lower.includes('annul') || lower.includes('cancel')) { s.incident = 'annulation'; s.incident_libelle = 'Annulation'; return sendAnnulDelai(phone, s, cfg); }
     if (id === 'inc_refus' || n === '3' || lower.includes('refus') || lower.includes('embarq') || lower.includes('denied') || lower.includes('boarding')) { s.incident = 'refus'; s.incident_libelle = "Refus d'embarquement"; await setState(phone, s); await send(phone, LV(s, phone, 'REACTION_REFUS', `😟 Denied boarding gives strong rights under EC 261. Let's check what you're owed.`), cfg); return estimationPuisPax(phone, s, cfg); }
-    { const rd = await redispatch('incident'); if (rd !== undefined) return rd; await send(phone, L(s, `🙂 Tap the button that matches your situation 👇`, `🙂 Touchez le bouton qui correspond à votre situation 👇`), cfg); return sendIncident(phone, s, cfg); }
+    { const rd = await redispatch('incident'); if (rd !== undefined) return rd; if (await stuckHelp(phone, s, cfg)) return; await send(phone, L(s, `🙂 Tap the button that matches your situation 👇`, `🙂 Touchez le bouton qui correspond à votre situation 👇`), cfg); return sendIncident(phone, s, cfg); }
   }
   // MSG4b — ANNULATION : règle des 14 jours de préavis (art. 5 CE 261). Pré-filtre AVANT le n° de vol.
   // Le critère légal = écart NOTIFICATION → date du vol, pas « le vol est dans +/- 14 j à partir d'aujourd'hui ».
@@ -2005,7 +2017,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       if (s.type_vol === 'escale') return askEscDep(phone, s, cfg, `🔄 Pas de souci, on le fait ensemble — une question à la fois.`);
       s.step = 'm_vol'; await setState(phone, s); return send(phone, L(s, `📝 Flight number? _(e.g. AF718, AT540)_`, `📝 Numéro de vol ? _(ex. AF718, AT540)_`), cfg);
     }
-    return sendButtons(phone, { body: L(s, `📎 Send a *photo* (or the *PDF*) of your e-ticket. _Several pages? Send them one by one, I'll put them together._\n\n_🔒 By sending this document, you agree it will be read by an automated tool (AI) to pre-fill your file — robindesairs.eu/politique-confidentialite._`, `📎 Envoyez une *photo* (ou le *PDF*) de votre e-billet. _Plusieurs pages ? Envoyez-les une par une, je les assemble._\n\n_🔒 En envoyant ce document, vous acceptez qu'il soit lu par un outil automatique (IA) pour pré-remplir votre dossier — robindesairs.eu/politique-confidentialite._`), buttons: [{ id: 'scan_manuel', text: L(s, '✏️ Type it in', '✏️ Saisir à la main') }] }, cfg);
+    if (await stuckHelp(phone, s, cfg)) return;
+    return sendButtons(phone, { body: L(s, `📎 Send a *photo* (or the *PDF*) of your e-ticket. _Several pages? Send them one by one, I'll put them together._\n\n_🔒 By sending this document, you agree it will be read by an automated tool (AI) to pre-fill your file — robindesairs.eu/politique-confidentialite._`, `📎 Envoyez une *photo* (ou le *PDF*) de votre e-billet. _Plusieurs pages ? Envoyez-les une par une, je les assemble._\n\n_🔒 En envoyant ce document, vous acceptez qu'il soit lu par un outil automatique (IA) pour pré-remplir votre dossier — robindesairs.eu/politique-confidentialite._`), buttons: [{ id: 'scan_photo', text: L(s, '📸 Send a photo', '📸 Envoyer une photo') }, { id: 'scan_manuel', text: L(s, '✏️ Type it in', '✏️ Saisir à la main') }] }, cfg);
   }
   if (s.step === 'scan_confirm') {
     if (mediaUrl) {                                                       // page SUPPLÉMENTAIRE d'un e-billet multi-pages
@@ -2546,7 +2559,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       L(s, `✍️ Another claim? Type *new*.`, `✍️ Un autre dossier ? Écrivez *nouveau*.`), cfg);
   }
 
-  // Incompris
+  // Incompris — après 3 échecs au même step → proposer aide/rappel
+  if (await stuckHelp(phone, s, cfg)) return;
   return sendButtons(phone, { body: L(s, `I didn't quite get that 🙂 Let's pick up where you left off 👇`, `Je n'ai pas compris 🙂 Reprenez où on s'était arrêté 👇`), buttons: [{ id: 'menu', text: L(s, '▶️ Resume', '▶️ Reprendre') }, { id: 'appel', text: L(s, '📞 Get a callback', '📞 Être rappelé') }] }, cfg);
 }
 
