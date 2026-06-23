@@ -1758,7 +1758,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const L = (ri >= 0 && langArr[ri]) ? langArr[ri] : matchLang(input);
     if (!L) return sendLangue(phone, s, cfg);
     s.langue = `${L.flag} ${L.label}`; s.langue_code = L.code;
-    if (L.africaine) { s.escalade = 'langue_africaine'; await send(phone, `${L.natif}\n📱 +33 7 56 86 36 30\n\n🤝 Votre dossier est entre de bonnes mains.\n📞 Un expert parlant votre langue *vous appellera* pour vous accompagner.\nEn attendant, je continue à vous guider en français. 👇`, cfg); }
+    if (L.africaine) { s.escalade = 'langue_africaine'; await send(phone, `${L.natif}\n\n📞 *Un conseiller qui parle ${L.label} vous rappellera* pour vous accompagner *dans votre langue* — au *+33 7 56 86 36 30* (enregistrez-le sous « Robin des Airs » pour décrocher).\n\n💬 En attendant, *moi l'assistant je continue ici en français* (je ne parle pas encore ${L.label} 🙏). On démarre votre dossier tout de suite, sans attendre l'appel. 👇`, cfg); }
     else if (L.code === 'en') { await send(phone, `Perfect — I'll assist you in English. 🇬🇧\nLet's check together what compensation you may be owed, *up to €600 per passenger*. 👇`, cfg); }
     await setState(phone, s); return askRouteZone(phone, s, cfg);
   }
