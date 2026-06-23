@@ -10,12 +10,14 @@
  *   - Un numéro douteux vaut mieux absent (AeroDataBox/LLM prennent le relais).
  *   - Un milk-run mal listé est pire qu'absent (boutons faux = client perdu).
  *   - Mettre à jour à chaque changement de saison IATA (mars et octobre).
+ *
+ * Dernière mise à jour : juin 2026 (saison été IATA S26)
  */
 
 const ROUTES = {
 
   // ─── AIR FRANCE (AF) ────────────────────────────────────────────────────────
-  // Source : flightera.net AF718 + AF702 confirmés
+  // Source : flightera.net + flightaware.com + airportia.com
 
   // Dakar (les deux numéros coexistent selon le jour)
   AF718:  [{ dep:'DSS', arr:'CDG', route:'Dakar → Paris',   airline:'Air France' }],
@@ -25,13 +27,89 @@ const ROUTES = {
   AF702:  [{ dep:'CDG', arr:'ABJ', route:'Paris → Abidjan', airline:'Air France' }],
   AF703:  [{ dep:'ABJ', arr:'CDG', route:'Abidjan → Paris', airline:'Air France' }],
 
-  // AF700 = Cotonou (PAS Dakar) — ne pas confondre
+  // Cotonou (AF700 = Cotonou, PAS Dakar — ne pas confondre)
   AF700:  [{ dep:'CDG', arr:'COO', route:'Paris → Cotonou', airline:'Air France' }],
   AF701:  [{ dep:'COO', arr:'CDG', route:'Cotonou → Paris', airline:'Air France' }],
 
+  // Douala (source : flightaware AFR946/947)
+  AF946:  [{ dep:'CDG', arr:'DLA', route:'Paris → Douala',  airline:'Air France' }],
+  AF947:  [{ dep:'DLA', arr:'CDG', route:'Douala → Paris',  airline:'Air France' }],
+
+  // Libreville (source : flightmapper AF926, seul nonstop CDG-LBV)
+  AF926:  [{ dep:'CDG', arr:'LBV', route:'Paris → Libreville', airline:'Air France' }],
+  AF977:  [{ dep:'LBV', arr:'CDG', route:'Libreville → Paris', airline:'Air France' }],
+
+  // Bamako (source : flightmapper AF520/521 — vérifier suspension Sahel)
+  AF520:  [{ dep:'CDG', arr:'BKO', route:'Paris → Bamako',  airline:'Air France' }],
+  AF521:  [{ dep:'BKO', arr:'CDG', route:'Bamako → Paris',  airline:'Air France' }],
+
+  // Conakry (source : airportia AF592 CDG→CKY)
+  AF592:  [{ dep:'CDG', arr:'CKY', route:'Paris → Conakry', airline:'Air France' }],
+  AF598:  [{ dep:'CKY', arr:'CDG', route:'Conakry → Paris', airline:'Air France' }],
+
+  // Bangui → Yaoundé (milk-run, source : flightera AF775 CDG→BGF→NSI)
+  AF775:  [
+    { dep:'CDG', arr:'BGF', route:'Paris → Bangui',     airline:'Air France' },
+    { dep:'BGF', arr:'NSI', route:'Bangui → Yaoundé',   airline:'Air France' },
+    { dep:'CDG', arr:'NSI', route:'Paris → Yaoundé',    airline:'Air France' },
+  ],
+  AF776:  [
+    { dep:'NSI', arr:'BGF', route:'Yaoundé → Bangui',   airline:'Air France' },
+    { dep:'BGF', arr:'CDG', route:'Bangui → Paris',     airline:'Air France' },
+    { dep:'NSI', arr:'CDG', route:'Yaoundé → Paris',    airline:'Air France' },
+  ],
+
+  // Kinshasa + Brazzaville (milk-run triangle, source : flightera AF722/736)
+  AF722:  [
+    { dep:'CDG', arr:'FIH', route:'Paris → Kinshasa',       airline:'Air France' },
+    { dep:'CDG', arr:'BZV', route:'Paris → Brazzaville',    airline:'Air France' },
+    { dep:'FIH', arr:'BZV', route:'Kinshasa → Brazzaville', airline:'Air France' },
+  ],
+  AF736:  [
+    { dep:'BZV', arr:'CDG', route:'Brazzaville → Paris',    airline:'Air France' },
+    { dep:'FIH', arr:'CDG', route:'Kinshasa → Paris',       airline:'Air France' },
+    { dep:'BZV', arr:'FIH', route:'Brazzaville → Kinshasa', airline:'Air France' },
+  ],
+
+  // Antananarivo / Madagascar (source : flightmapper AF934, seul nonstop)
+  AF934:  [{ dep:'CDG', arr:'TNR', route:'Paris → Antananarivo', airline:'Air France' }],
+  AF935:  [{ dep:'TNR', arr:'CDG', route:'Antananarivo → Paris', airline:'Air France' }],
+
+  // Nairobi (source : flightaware AFR814, quotidien)
+  AF814:  [{ dep:'CDG', arr:'NBO', route:'Paris → Nairobi', airline:'Air France' }],
+  AF815:  [{ dep:'NBO', arr:'CDG', route:'Nairobi → Paris', airline:'Air France' }],
+
+  // Johannesburg (source : flightaware AFR990)
+  AF990:  [{ dep:'CDG', arr:'JNB', route:'Paris → Johannesburg', airline:'Air France' }],
+  AF991:  [{ dep:'JNB', arr:'CDG', route:'Johannesburg → Paris', airline:'Air France' }],
+
+  // Lagos (source : flightaware AFR148, quotidien)
+  AF148:  [{ dep:'CDG', arr:'LOS', route:'Paris → Lagos',   airline:'Air France' }],
+  AF149:  [{ dep:'LOS', arr:'CDG', route:'Lagos → Paris',   airline:'Air France' }],
+
+  // Ouagadougou (source : flightaware AFR548 — vérifier suspension Sahel)
+  AF548:  [{ dep:'CDG', arr:'OUA', route:'Paris → Ouagadougou', airline:'Air France' }],
+  AF549:  [{ dep:'OUA', arr:'CDG', route:'Ouagadougou → Paris', airline:'Air France' }],
+
+  // N'Djamena (source : flightera AF878, milk-run via Abuja certains jours)
+  AF878:  [{ dep:'CDG', arr:'NDJ', route:'Paris → N\'Djamena', airline:'Air France' }],
+  AF879:  [{ dep:'NDJ', arr:'CDG', route:'N\'Djamena → Paris', airline:'Air France' }],
+
+  // Niamey → Lomé (milk-run, source : flightmapper AF306 — vérifier suspension Sahel)
+  AF306:  [
+    { dep:'CDG', arr:'NIM', route:'Paris → Niamey', airline:'Air France' },
+    { dep:'NIM', arr:'LFW', route:'Niamey → Lomé',  airline:'Air France' },
+    { dep:'CDG', arr:'LFW', route:'Paris → Lomé',   airline:'Air France' },
+  ],
+  AF307:  [
+    { dep:'LFW', arr:'NIM', route:'Lomé → Niamey',  airline:'Air France' },
+    { dep:'NIM', arr:'CDG', route:'Niamey → Paris',  airline:'Air France' },
+    { dep:'LFW', arr:'CDG', route:'Lomé → Paris',    airline:'Air France' },
+  ],
+
 
   // ─── BRUSSELS AIRLINES (SN) ─────────────────────────────────────────────────
-  // Source : test prod (SN277/278) + aviability.com (SN203/204) + flightaware BEL357
+  // Source : test prod + flightaware + flightconnections.com + airportia
 
   // Bruxelles → Dakar → Banjul (milk-run)
   SN203:  [
@@ -57,7 +135,7 @@ const ROUTES = {
     { dep:'LFW', arr:'BRU', route:'Lomé → Bruxelles',      airline:'Brussels Airlines' },
   ],
 
-  // Bruxelles → Cotonou → Abidjan (milk-run, structure réseau connue)
+  // Bruxelles → Cotonou → Abidjan (milk-run)
   SN287:  [
     { dep:'BRU', arr:'COO', route:'Bruxelles → Cotonou', airline:'Brussels Airlines' },
     { dep:'COO', arr:'ABJ', route:'Cotonou → Abidjan',   airline:'Brussels Airlines' },
@@ -72,6 +150,31 @@ const ROUTES = {
   // Kinshasa (source : flightaware BEL357/358)
   SN357:  [{ dep:'BRU', arr:'FIH', route:'Bruxelles → Kinshasa', airline:'Brussels Airlines' }],
   SN358:  [{ dep:'FIH', arr:'BRU', route:'Kinshasa → Bruxelles', airline:'Brussels Airlines' }],
+
+  // Douala → Yaoundé (milk-run, source : flightera SN369 BRU→DLA→NSI)
+  SN369:  [
+    { dep:'BRU', arr:'DLA', route:'Bruxelles → Douala',  airline:'Brussels Airlines' },
+    { dep:'DLA', arr:'NSI', route:'Douala → Yaoundé',    airline:'Brussels Airlines' },
+    { dep:'BRU', arr:'NSI', route:'Bruxelles → Yaoundé', airline:'Brussels Airlines' },
+  ],
+  SN370:  [
+    { dep:'NSI', arr:'DLA', route:'Yaoundé → Douala',    airline:'Brussels Airlines' },
+    { dep:'DLA', arr:'BRU', route:'Douala → Bruxelles',  airline:'Brussels Airlines' },
+    { dep:'NSI', arr:'BRU', route:'Yaoundé → Bruxelles', airline:'Brussels Airlines' },
+  ],
+
+  // Kigali (source : flightconnections SN465/467/491)
+  SN465:  [{ dep:'BRU', arr:'KGL', route:'Bruxelles → Kigali',  airline:'Brussels Airlines' }],
+  SN466:  [{ dep:'KGL', arr:'BRU', route:'Kigali → Bruxelles',  airline:'Brussels Airlines' }],
+  SN467:  [{ dep:'BRU', arr:'KGL', route:'Bruxelles → Kigali',  airline:'Brussels Airlines' }],
+
+  // Entebbe / Ouganda (source : airportia SN455)
+  SN455:  [{ dep:'BRU', arr:'EBB', route:'Bruxelles → Entebbe', airline:'Brussels Airlines' }],
+  SN456:  [{ dep:'EBB', arr:'BRU', route:'Entebbe → Bruxelles', airline:'Brussels Airlines' }],
+
+  // Nairobi (source : flightsfrom.com SN481/482)
+  SN481:  [{ dep:'BRU', arr:'NBO', route:'Bruxelles → Nairobi', airline:'Brussels Airlines' }],
+  SN482:  [{ dep:'NBO', arr:'BRU', route:'Nairobi → Bruxelles', airline:'Brussels Airlines' }],
 
 
   // ─── KLM (KL) ───────────────────────────────────────────────────────────────
@@ -95,7 +198,7 @@ const ROUTES = {
 
 
   // ─── ROYAL AIR MAROC (AT) ───────────────────────────────────────────────────
-  // Source : airportia.com AT501/503 (Dakar) + AT533/532 (Abidjan)
+  // Source : airportia.com + flightera.net
 
   // Dakar (plusieurs fréquences hebdomadaires = plusieurs numéros)
   AT501:  [{ dep:'CMN', arr:'DSS', route:'Casablanca → Dakar',    airline:'Royal Air Maroc' }],
