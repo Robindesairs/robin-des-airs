@@ -436,31 +436,27 @@ async function sendButtons(phone, config, cfg) {
   const footer  = isArr ? undefined : config.footer;
   let buttons = isArr ? config : (config.buttons || []);
   if (phoneIsEN(phone)) {
+    // Client EN : on traduit le CORPS, mais les libellés des boutons restent en FR (emojis universels).
+    // → au tap, WATI renvoie le libellé FR : le matching des handlers (texte/numéro/mot-clé) reste fiable.
     if (body && body !== '👇') body = await translateEN(body);
-    buttons = await Promise.all(buttons.map(async (b) => ({ ...b, text: await translateEN(b.text) })));
   }
   if (body && body !== '👇') appendWaMessage(phone, body, 'bot');
   const wa = normalizeWatiPhone(phone);
   const textFallback = () => send(phone, (body && body !== '👇' ? body + '\n\n' : '') + buttons.map((b, i) => `${i + 1} — ${b.text}`).join('\n'), cfg);
-  // v3 API avec IDs → le handler matche sur id ('recap_ok') au lieu du texte traduit
-  let host; try { host = new URL(cfg.base).origin; } catch { host = cfg.base; }
+  // ⚠️ Ce compte WATI ne rend PAS l'interactif v3 (cf. sendList → texte). L'endpoint v1
+  // sendInteractiveButtonsMessage, lui, rend de VRAIS boutons cliquables (prod depuis ~2 mois).
+  // Ne pas rebasculer vers v3 sans avoir vérifié que les boutons s'affichent vraiment.
+  const qs = new URLSearchParams({ whatsappNumber: wa, channelPhoneNumber: cfg.channel });
   try {
-    const res = await fetch(`${host}/api/ext/v3/conversations/messages/interactive`, {
+    const res = await fetch(`${cfg.base}/api/v1/sendInteractiveButtonsMessage?${qs}`, {
       method: 'POST', signal: AbortSignal.timeout(12000), headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        target: wa,
-        type: 'button',
-        button_message: {
-          body: body || '👇',
-          footer: footer || '🏹 Robin des Airs',
-          buttons: buttons.slice(0, 3).map(b => ({ type: 'reply', reply: { id: b.id || b.text, title: clip(b.text, 20) } })),
-        },
-      }),
+      body: JSON.stringify({ body: body || '👇', footer: footer || '🏹 Robin des Airs', buttons: buttons.slice(0, 3).map(b => ({ text: clip(b.text, 20) })) }),
     });
     const data = await res.json().catch(() => ({}));
     const failed = !res.ok || data.result === false || data.error || data.ok === false || data.success === false;
+    await saveInteractiveDebug({ fn: 'sendButtons-v1', status: res.status, failed, resp: data });
     if (failed) await textFallback();
-  } catch (e) { await textFallback(); }
+  } catch (e) { await saveInteractiveDebug({ fn: 'sendButtons-v1', error: e.message }); await textFallback(); }
 }
 async function sendList(phone, { header, body, footer, buttonText, items, lang }, cfg) {
   if (!cfg) return;
@@ -1103,6 +1099,9 @@ function applyEticket(s, e) {
     });
     if (!s.pax) s.pax = e.passengers.length;
   }
+  deriveEuropeTouch(s,
+    (e.segments && e.segments[0] && e.segments[0].depart) || e.depart || '',
+    (e.segments && e.segments.length ? e.segments[e.segments.length - 1].arrivee : '') || e.arrivee || '');
   markOperateurEffectif(s, e); // code-share « opéré par » → transporteur effectif + drapeau hors-UE si vol entrant
 }
 // Étape SCAN : on relit TOUTES les pages à chaque nouvelle photo → la lecture est complète, on écrase
@@ -1132,7 +1131,21 @@ function setEticketFields(s, e) {
   }
   // Signal qualité pour la carte de confirmation : lecture douteuse ou incomplète → on prévient au lieu de claironner « réussi ».
   s._scanWarn = (e.lisible === false) || (typeof e.confidence === 'number' && e.confidence < 0.5) || !(e.vol && (e.route || e.depart) && (e.date || e.pnr));
+  // Sens Europe dérivé de la route lue (aller-retour affiné ensuite par applyTrajet).
+  deriveEuropeTouch(s,
+    (e.segments && e.segments[0] && e.segments[0].depart) || e.depart || '',
+    (e.segments && e.segments.length ? e.segments[e.segments.length - 1].arrivee : '') || e.arrivee || '');
   markOperateurEffectif(s, e); // code-share « opéré par » → transporteur effectif + drapeau hors-UE si vol entrant
+}
+// Dérive le SENS Europe (départ/arrivée) + route_type à partir des aéroports d'un trajet.
+// Remplace l'ancienne question route_zone : le sens vient désormais de la VRAIE route lue
+// (scan/e-billet), sur tous les chemins — pas seulement l'aller-retour (cf. applyTrajet).
+function deriveEuropeTouch(s, dep, arr) {
+  dep = String(dep || '').toUpperCase().trim(); arr = String(arr || '').toUpperCase().trim();
+  if (!dep && !arr) return;
+  if (isEUAirport(arr) && !isEUAirport(dep)) s.europeTouch = 'arrivee';
+  else if (isEUAirport(dep) && !isEUAirport(arr)) s.europeTouch = 'depart';
+  if (isEUAirport(dep) || isEUAirport(arr)) s.route_type = s.route_type || 'af_eu';
 }
 // Bascule l'état sur un trajet précis (aller OU retour) choisi par le client.
 function applyTrajet(s, t) {
@@ -1749,9 +1762,9 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     // de langue explicite → on SAUTE le menu et on démarre directement en anglais. (Le client peut quand
     // même choisir une autre langue : matchLang/ri attrapent alors la sélection et on passe outre ce saut.)
     if (s.langue_code === 'en' && listRowIdx(id) < 0 && !matchLang(input)) {
-      s.langue = '🇬🇧 English'; await setState(phone, s);
+      s.langue = '🇬🇧 English'; s.route_type = 'af_eu'; await setState(phone, s);
       await send(phone, `Perfect — I'll assist you in English. 🇬🇧\nLet's check what compensation you may be owed, *up to €600 per passenger*. 👇`, cfg);
-      return askRouteZone(phone, s, cfg);
+      return sendIncident(phone, s, cfg);
     }
     // Matching par ID WATI liste ("0-N") si disponible, sinon par texte/flag
     const ri = listRowIdx(id);
@@ -1761,7 +1774,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     s.langue = `${L.flag} ${L.label}`; s.langue_code = L.code;
     if (L.africaine) { s.escalade = 'langue_africaine'; await send(phone, `${L.natif}\n\n💬 *Moi l'assistant, je prépare votre dossier ici en français* (je ne parle pas encore ${L.label} 🙏) — on avance ensemble, étape par étape.\n\n📞 Et *à la fin, ${L.agent} vous rappellera dans votre langue*, au *+33 7 56 86 36 30* (enregistrez-le sous « ${L.agent} – Robin des Airs » pour reconnaître son appel). 👇`, cfg); }
     else if (L.code === 'en') { await send(phone, `Perfect — I'll assist you in English. 🇬🇧\nLet's check together what compensation you may be owed, *up to €600 per passenger*. 👇`, cfg); }
-    await setState(phone, s); return askRouteZone(phone, s, cfg);
+    s.route_type = 'af_eu'; await setState(phone, s); return sendIncident(phone, s, cfg);
   }
 
   // MSG3 — ROUTE : qualification CE 261 en 1 tap (le voyage touche-t-il l'Europe ?).
@@ -2564,7 +2577,7 @@ async function sendAccueil(phone, cfg, lang) {
 }
 async function sendLangue(phone, s, cfg) {
   s.step = 'langue'; await setState(phone, s);
-  await sendList(phone, { header: '🌍 Votre langue', body: `${bar('langue')}\n🌍 Dans quelle langue souhaitez-vous être accompagné(e) ?\n\nChez Robin des Airs, nous parlons votre langue — il est toujours plus facile de s'expliquer dans sa langue maternelle. 🤝\n\n_In which language would you like to be assisted?_\n\n🔜 D'autres langues arrivent bientôt.`, buttonText: '🌍 Choisir', items: [
+  await sendList(phone, { header: '🌍 Votre langue', body: `${bar('langue')}\n🌍 Dans quelle langue souhaitez-vous être accompagné(e) ?\n_In which language would you like to be assisted?_`, buttonText: '🌍 Choisir', items: [
     { title: '🇫🇷 Français', description: 'Européenne' }, { title: '🇬🇧 English', description: 'Européenne' },
     { title: '🇸🇳 Wolof', description: 'Africaine' }, { title: '🇬🇲 Mandinka', description: 'Africaine' }, { title: '🇬🇭 Twi', description: 'Africaine' },
     { title: '🇳🇬 Yoruba', description: 'Africaine' }, { title: '🇬🇳 Peul / Fulfulde', description: 'Africaine' },
@@ -2583,8 +2596,8 @@ async function sendRoute(phone, s, cfg) {
 async function askRouteZone(phone, s, cfg) {
   s.step = 'route_zone'; await setState(phone, s);
   return sendButtons(phone, { body: L(s,
-    `${bar('route')}\n🗺️ To check your rights, your trip:\n\n🛫 *departs from Europe* (you take off from a European airport)\n🛬 *arrives in Europe* (you land at a European airport)\n🌍 *neither* (e.g. between two African countries)\n\n_💡 Europe → Africa (e.g. Paris → Dakar) = "Departs from Europe". Africa → Europe = "Arrives in Europe". What matters is where you take off. A layover in Europe also counts._`,
-    `${bar('route')}\n🗺️ Pour vérifier vos droits, votre voyage :\n\n🛫 *part d'Europe* (vous décollez d'un aéroport européen)\n🛬 *arrive en Europe* (vous atterrissez dans un aéroport européen)\n🌍 *ni l'un ni l'autre* (ex. entre deux pays d'Afrique)\n\n_💡 Europe → Afrique (ex. Strasbourg ou Paris → Dakar) = « Départ d'Europe ». Afrique → Europe = « Arrivée en Europe ». Même si vous allez en Afrique, ce qui compte c'est d'où vous décollez. Une escale en Europe compte aussi._`), buttons: [
+    `${bar('route')}\n🗺️ Does your trip touch Europe — at departure or arrival?`,
+    `${bar('route')}\n🗺️ Votre vol touche-t-il l'Europe, au départ ou à l'arrivée ?`), buttons: [
     { id: 'rz_dep', text: L(s, '🛫 Departs Europe', '🛫 Départ d\'Europe') },
     { id: 'rz_arr', text: L(s, '🛬 Arrives in Europe', '🛬 Arrivée en Europe') },
     { id: 'rz_non', text: L(s, '🌍 Neither', '🌍 Aucun des deux') },
@@ -2831,14 +2844,9 @@ async function askMandant(phone, s, cfg) {
   }
   return sendList(phone, { header: L(s, 'This WhatsApp number', 'Ce numéro WhatsApp'), body: L(s, 'Who does this number belong to?', 'À qui appartient ce numéro ?'), buttonText: L(s, 'Choose', 'Choisir'), items: names.map((nm, i) => ({ id: `mdt_${i}`, title: clip(nm, 24), description: L(s, `Passenger ${i + 1}`, `Passager ${i + 1}`) })) }, cfg);
 }
-// Adresse du contact : prise du passeport si lue, sinon demandée (DERNIÈRE question), puis finalisation.
+// Adresse JAMAIS gérée dans le bot : ni demandée, ni affichée. Elle est lue en SILENCE sur la pièce
+// (OCR) pour pré-remplir le mandat, et reste corrigeable au moment de la signature.
 async function askAddressOrFinalize(phone, s, cfg) {
-  const m = (s.passengers || [])[s.mandant_idx || 0] || {};
-  // Adresse PRISE SUR LA PIÈCE (OCR), jamais demandée au client. Si absente, on finalise quand même
-  // (champ adresse vide = non bloquant ; l'adresse figure de toute façon sur la pièce d'identité).
-  if (m.adresse && m.adresse.trim().length >= 5) {
-    await send(phone, L(s, `📍 Address found on your ID: *${m.adresse}*\n_(used for the authority form — editable when you sign.)_`, `📍 Adresse trouvée sur votre pièce : *${m.adresse}*\n_(utilisée pour le mandat — corrigeable au moment de signer.)_`), cfg);
-  }
   return finaliser(phone, s, cfg);
 }
 async function gotoBoarding(phone, s, cfg) { s.step = 'doc_boarding'; await setState(phone, s); return send(phone, L(s, `🎫 Boarding pass\nSend a photo for the affected flight.\n📧 No pass? An e-ticket, a booking confirmation or a baggage tag work too.\n_🔒 Read by an automated tool (AI) to pre-fill your file — see robindesairs.eu/politique-confidentialite._\n✏️ *skip* · 📞 *call* if all lost, we'll find a solution.`, `🎫 Carte d'embarquement\nEnvoyez-en une photo pour le vol concerné.\n📧 Pas de carte ? Un e-billet, une confirmation de réservation ou une étiquette de bagage fonctionnent aussi.\n_🔒 Lu par un outil automatique (IA) pour pré-remplir votre dossier — voir robindesairs.eu/politique-confidentialite._\n✏️ *passer* · 📞 *appel* si tout perdu, on trouve une solution.`), cfg); }
