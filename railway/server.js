@@ -292,9 +292,9 @@ function montantNetReel(s) { return Math.round(montantReel(s) * 0.75); }
 // Ligne montant à afficher (récap/done) selon le verdict vol.
 function montantLine(s) {
   const v = s && s.flightVerdict;
-  if (v === 'hors_champ' || v === 'sous_seuil') return `💰 Montant à confirmer par un expert _(vérification gratuite)_`;
+  if (v === 'hors_champ' || v === 'sous_seuil') return L(s, `💰 Amount to be confirmed by an expert _(free check)_`, `💰 Montant à confirmer par un expert _(vérification gratuite)_`);
   const verified = !!(s && s.flightChecked) && v === 'eligible';
-  return `💰 ${verified ? '' : "Jusqu'à "}*${montantReel(s)} €* — vous gardez *${montantNetReel(s)} € nets* (75 %)`;
+  return L(s, `💰 ${verified ? '' : 'Up to '}*€${montantReel(s)}* — you keep *€${montantNetReel(s)} net* (75%)`, `💰 ${verified ? '' : "Jusqu'à "}*${montantReel(s)} €* — vous gardez *${montantNetReel(s)} € nets* (75 %)`);
 }
 
 // ─── Stats choc (rotation MSG1) ───────────────────────────────────────────────
@@ -341,14 +341,14 @@ function matchLang(input) {
 // (zéro régression) ; on ne renvoie l'anglais QUE si le client a choisi « English ». Tant qu'un message
 // n'est pas traduit, il reste en français — la bascule se fait message par message, sans tout réécrire.
 function isEN(s) { return !!(s && s.langue_code === 'en'); }
-function L(s, en, fr) { return fr; }
+function L(s, en, fr) { return (s && s.langue_code === 'en') ? en : fr; }
 // Filet anti-boucle : si le bot re-pose la même question 3× → proposer aide/rappel au lieu de boucler.
 async function stuckHelp(phone, s, cfg) {
   if (s._stuckStep !== s.step) { s._stuckStep = s.step; s._stuck = 0; }
   s._stuck++;
   if (s._stuck >= 3) {
     s._stuck = 0; await setState(phone, s);
-    await sendButtons(phone, { body: L(s, `🙂 Looks like you're stuck — no worries, I'm here. 👇`, `🙂 Vous semblez bloqué(e) — pas de souci, je suis là pour vous aider. 👇`), buttons: [{ id: 'menu', text: '▶️ Reprendre' }, { id: 'recommencer', text: '🔄 Recommencer' }, { id: 'appel', text: '📞 Être rappelé' }] }, cfg);
+    await sendButtons(phone, { body: L(s, `🙂 Looks like you're stuck — no worries, I'm here. 👇`, `🙂 Vous semblez bloqué(e) — pas de souci, je suis là pour vous aider. 👇`), buttons: [{ id: 'menu', text: L(s, '▶️ Resume', '▶️ Reprendre') }, { id: 'recommencer', text: L(s, '🔄 Start over', '🔄 Recommencer') }, { id: 'appel', text: L(s, '📞 Get a callback', '📞 Être rappelé') }] }, cfg);
     return true;
   }
   return false;
@@ -360,7 +360,10 @@ function LL(lead, en, fr) { return leadEN(lead) ? en : fr; }
 // Libellé d'incident localisé pour l'affichage client (récap / confirmation).
 // incident_libelle est stocké en FR (pour le CRM) → traduire à l'affichage si la session est EN.
 function incidentLabel(s) {
-  return (s && s.incident_libelle) || '—';
+  const fr = (s && s.incident_libelle) || '—';
+  if (!(s && s.langue_code === 'en')) return fr;
+  const map = { 'Retard +3h': 'Delay +3h', 'Retard (à vérifier)': 'Delay (to verify)', 'Annulation': 'Cancellation', "Refus d'embarquement": 'Denied boarding' };
+  return map[fr] || fr;
 }
 // Détection de langue au 1er contact (haute précision : ne renvoie 'en' QUE sur des mots sans ambiguïté,
 // absents du français → un francophone n'est JAMAIS détecté anglophone par erreur). '' = français par défaut.
@@ -371,7 +374,7 @@ function detectLang(text) {
   return '';
 }
 // Variante : choisit une variante de ton FR (pickVariant) en français, mais renvoie un texte EN fixe en anglais.
-function LV(s, phone, key, en) { return pickVariant(phone, key); }
+function LV(s, phone, key, en) { return (s && s.langue_code === 'en' && en) ? en : pickVariant(phone, key); }
 
 // ─── Traduction à l'envoi (EN only) ────────────────────────────────────────────
 // Les messages FR encore codés en dur (non passés par L()) sont traduits FR→EN à la volée
@@ -404,7 +407,7 @@ async function translateEN(text) {
 
 // ─── Envoi texte / liste / boutons (plomberie éprouvée + clip + debug) ─────────
 async function send(phone, text, cfg) {
-  if (phoneIsEN(phone)) text = await translateEN(text); // client EN : traduit le FR non-L() à la volée
+  // Anglais EN DUR : tout le texte EN vient de L()/LV() (plus de traduction GPT runtime).
   recordConvo(phone, 'out', text); // historique léger pour le Bureau
   appendWaMessage(phone, text, 'bot'); // mirror SORTANT → store conversation CRM (fire-and-forget)
   if (!cfg) { console.error('v8 send IGNORÉ — watiCfg null (WATI_API_TOKEN/WATI_API_BASE manquant)'); return; }
@@ -435,11 +438,7 @@ async function sendButtons(phone, config, cfg) {
   let body    = isArr ? '👇' : (config.body || '');
   const footer  = isArr ? undefined : config.footer;
   let buttons = isArr ? config : (config.buttons || []);
-  if (phoneIsEN(phone)) {
-    // Client EN : on traduit le CORPS, mais les libellés des boutons restent en FR (emojis universels).
-    // → au tap, WATI renvoie le libellé FR : le matching des handlers (texte/numéro/mot-clé) reste fiable.
-    if (body && body !== '👇') body = await translateEN(body);
-  }
+  // Anglais EN DUR : body + libellés viennent déjà de L() (plus de traduction GPT runtime).
   if (body && body !== '👇') appendWaMessage(phone, body, 'bot');
   const wa = normalizeWatiPhone(phone);
   const textFallback = () => send(phone, (body && body !== '👇' ? body + '\n\n' : '') + buttons.map((b, i) => `${i + 1} — ${b.text}`).join('\n'), cfg);
@@ -460,12 +459,7 @@ async function sendButtons(phone, config, cfg) {
 }
 async function sendList(phone, { header, body, footer, buttonText, items, lang }, cfg) {
   if (!cfg) return;
-  if (phoneIsEN(phone)) { // client EN : traduit corps + titres des lignes + bouton
-    if (body) body = await translateEN(body);
-    if (header) header = await translateEN(header);
-    if (buttonText) buttonText = await translateEN(buttonText);
-    items = await Promise.all((items || []).map(async (i) => ({ ...i, title: await translateEN(i.title), description: i.description ? await translateEN(i.description) : i.description })));
-  }
+  // Anglais EN DUR : header/body/items viennent déjà de L() (plus de traduction GPT runtime).
   const wa = normalizeWatiPhone(phone);
   const numHint = lang === 'en' ? `\n\n👉 Reply with the *number*.` : `\n\n👉 Répondez avec le *numéro*.`;
   const rows = items.map((i, idx) => ({ id: i.id || String(idx + 1), title: clip(i.title, 24), description: clip(i.description || '', 72) }));
@@ -921,7 +915,8 @@ function cityPick(input, id, cities) {
   return c ? { city: c } : null;
 }
 async function sendCityList(phone, { header, body }, cities, cfg) {
-  return sendList(phone, { header, body, buttonText: 'Ville ▾', items: cities.map((c) => ({ title: c.v, description: c.d })).concat([{ id: 'ville_autre', title: '✏️ Autre ville', description: 'Tapez son nom' }]) }, cfg);
+  const en = phoneIsEN(phone);
+  return sendList(phone, { header, body, buttonText: en ? 'City ▾' : 'Ville ▾', items: cities.map((c) => ({ title: c.v, description: c.d })).concat([{ id: 'ville_autre', title: en ? '✏️ Other city' : '✏️ Autre ville', description: en ? 'Type its name' : 'Tapez son nom' }]) }, cfg);
 }
 // Stockage DURABLE du dossier sur Netlify Blobs (survit aux redémarrages Railway).
 // Fire-and-forget : le serveur Railway étant persistant, le POST se termine en arrière-plan.
@@ -1372,17 +1367,18 @@ function attributeId(s, nom) {
 }
 // Formate la liste des pièces manquantes (texte WhatsApp)
 function missingDocsText(s) {
+  const en = !!(s && s.langue_code === 'en');
   const st = docsStatus(s); const miss = [];
-  if (st.missingId.length) miss.push(`la *pièce d'identité* de *${st.missingId.join('*, *')}*`);
+  if (st.missingId.length) miss.push(en ? `the *ID* of *${st.missingId.join('*, *')}*` : `la *pièce d'identité* de *${st.missingId.join('*, *')}*`);
   if (!st.travelProofOk) {
-    if ((s.pax || 1) <= 1) miss.push(`votre *carte d'embarquement* ou *e-billet*`);
-    else if (st.missingTravel.length && st.missingTravel.length < s.pax) miss.push(`la *preuve de voyage* de *${st.missingTravel.join('*, *')}* — sa *carte d'embarquement*, ou un *e-billet* qui liste tout le monde`);
-    else miss.push(`une *preuve de voyage par passager* : une *carte d'embarquement* pour chacun, ou un seul *e-billet* qui les liste tous`);
+    if ((s.pax || 1) <= 1) miss.push(en ? `your *boarding pass* or *e-ticket*` : `votre *carte d'embarquement* ou *e-billet*`);
+    else if (st.missingTravel.length && st.missingTravel.length < s.pax) miss.push(en ? `the *proof of travel* of *${st.missingTravel.join('*, *')}* — their *boarding pass*, or an *e-ticket* listing everyone` : `la *preuve de voyage* de *${st.missingTravel.join('*, *')}* — sa *carte d'embarquement*, ou un *e-billet* qui liste tout le monde`);
+    else miss.push(en ? `a *proof of travel per passenger*: a *boarding pass* for each, or a single *e-ticket* listing them all` : `une *preuve de voyage par passager* : une *carte d'embarquement* pour chacun, ou un seul *e-billet* qui les liste tous`);
   }
-  if (miss.length) return `📎 Il manque encore : ${miss.join(' et ')}.`;
+  if (miss.length) return en ? `📎 Still missing: ${miss.join(' and ')}.` : `📎 Il manque encore : ${miss.join(' et ')}.`;
   const v = s.flightVerdict;
-  if (v === 'hors_champ' || v === 'sous_seuil') return `✅ Toutes vos pièces sont là, merci ${firstNameOf(s)} ! Le dossier ${s.ref || ''} est complet. Un expert confirme le *montant exact* (vérification gratuite) et on lance la réclamation — 0 € si on ne gagne pas.`;
-  return `✅ Toutes vos pièces sont là, merci ${firstNameOf(s)} ! Votre dossier *${s.ref || ''}* est au complet. 🙏`;
+  if (v === 'hors_champ' || v === 'sous_seuil') return en ? `✅ All your documents are in, thanks ${firstNameOf(s)}! File ${s.ref || ''} is complete. An expert confirms the *exact amount* (free check) and we file the claim — €0 if we don't win.` : `✅ Toutes vos pièces sont là, merci ${firstNameOf(s)} ! Le dossier ${s.ref || ''} est complet. Un expert confirme le *montant exact* (vérification gratuite) et on lance la réclamation — 0 € si on ne gagne pas.`;
+  return en ? `✅ All your documents are in, thanks ${firstNameOf(s)}! Your file *${s.ref || ''}* is complete. 🙏` : `✅ Toutes vos pièces sont là, merci ${firstNameOf(s)} ! Votre dossier *${s.ref || ''}* est au complet. 🙏`;
 }
 
 // Pièce expirée (date d'expiration passée) ?
@@ -1463,7 +1459,9 @@ function isValidStoredDate(d) { const m = (d || '').match(/^(\d{1,2})\/(\d{1,2})
 const MOIS_FR = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
 // '15/03/2026' → '15 mars 2026' (confirmation lisible, lève les inversions JJ/MM).
 function dateEnLettres(d) { const m = (d || '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); if (!m) return d || ''; const j = +m[1]; return `${j === 1 ? '1er' : j} ${MOIS_FR[+m[2] - 1]} ${m[3]}`; }
-const DATE_INVALIDE = (txt) => `🤔 *${txt}* n'existe pas dans le calendrier (vérifiez le jour et le mois).\nRenvoyez la date au format *JJ/MM/AAAA* _(ex. 15/03/2026 pour le 15 mars 2026)_ :`;
+const DATE_INVALIDE = (txt, en) => en
+  ? `🤔 *${txt}* doesn't exist on the calendar (check the day and month).\nSend the date again as *DD/MM/YYYY* _(e.g. 15/03/2026 for 15 March 2026)_:`
+  : `🤔 *${txt}* n'existe pas dans le calendrier (vérifiez le jour et le mois).\nRenvoyez la date au format *JJ/MM/AAAA* _(ex. 15/03/2026 pour le 15 mars 2026)_ :`;
 function tooOld(dateStr) { const m = (dateStr || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); if (!m) return false; const d = new Date(+m[3], +m[2] - 1, +m[1]); return (Date.now() - d.getTime()) > 5 * 365.25 * 864e5; }
 // Date sans année (ex. "15/07") → il faut demander l'année (ne jamais la deviner).
 function needYear(d) { return /^\d{1,2}\/\d{1,2}$/.test((d || '').trim()); }
@@ -1479,7 +1477,9 @@ function isMinorAt(dob, flightDateStr) {
   if (ref.getMonth() < birth.getMonth() || (ref.getMonth() === birth.getMonth() && ref.getDate() < birth.getDate())) age--;
   return age < 18;
 }
-const FUTURE_JOKE = () => `😄 Là vous voyagez dans le futur ! Ce vol n'a pas encore eu lieu — on ne peut réclamer que pour un vol *déjà passé*. 🪄\n\nDonnez-moi la *vraie* date du vol (JJ/MM/AAAA) :`;
+const FUTURE_JOKE = (en) => en
+  ? `😄 You're traveling in the future! This flight hasn't happened yet — we can only claim for a flight *already in the past*. 🪄\n\nGive me the *real* flight date (DD/MM/YYYY):`
+  : `😄 Là vous voyagez dans le futur ! Ce vol n'a pas encore eu lieu — on ne peut réclamer que pour un vol *déjà passé*. 🪄\n\nDonnez-moi la *vraie* date du vol (JJ/MM/AAAA) :`;
 function recentYears() { const base = new Date().getFullYear(); return [base, base - 1, base - 2, base - 3, base - 4]; }
 
 const STOP_FOOTER = '_L\'équipe Robin des Airs 🏹_';
@@ -1895,14 +1895,14 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (pk && pk.autre) return send(phone, L(s, `✏️ Type the name of the *layover* city _(e.g. Nairobi)_:`, `✏️ Tapez le nom de la ville d'*escale* _(ex : Nairobi)_ :`), cfg);
     if (!pk) return askEscVia(phone, s, cfg, (s.escCities || []).length >= 2);
     s.escCities = s.escCities || []; s.escCities.push(pk.city);
-    if (s.escCities.length >= 4) return askEscArr(phone, s, cfg, `✅ Escale : *${pk.city}*`);
+    if (s.escCities.length >= 4) return askEscArr(phone, s, cfg, L(s, `✅ Stop: *${pk.city}*`, `✅ Escale : *${pk.city}*`));
     s.step = 'esc_more'; await setState(phone, s);
-    return sendButtons(phone, { body: `✅ Escale : *${pk.city}*\n\nY avait-il une *autre escale* ?`, buttons: [{ id: 'esc_oui', text: '🔄 Oui, une autre' }, { id: 'esc_non', text: '➡️ Non' }] }, cfg);
+    return sendButtons(phone, { body: L(s, `✅ Stop: *${pk.city}*\n\nWas there *another stop*?`, `✅ Escale : *${pk.city}*\n\nY avait-il une *autre escale* ?`), buttons: [{ id: 'esc_oui', text: L(s, '🔄 Yes, another', '🔄 Oui, une autre') }, { id: 'esc_non', text: L(s, '➡️ No', '➡️ Non') }] }, cfg);
   }
   if (s.step === 'esc_more') {
     if (id === 'esc_non' || /^non/.test(lower)) return askEscArr(phone, s, cfg);
     if (id === 'esc_oui' || /^oui/.test(lower)) return askEscVia(phone, s, cfg, true);
-    return sendButtons(phone, { body: `Y avait-il une *autre escale* ?`, buttons: [{ id: 'esc_oui', text: '🔄 Oui, une autre' }, { id: 'esc_non', text: '➡️ Non' }] }, cfg);
+    return sendButtons(phone, { body: L(s, `Was there *another stop*?`, `Y avait-il une *autre escale* ?`), buttons: [{ id: 'esc_oui', text: L(s, '🔄 Yes, another', '🔄 Oui, une autre') }, { id: 'esc_non', text: L(s, '➡️ No', '➡️ Non') }] }, cfg);
   }
   if (s.step === 'esc_arr') {
     const pk = cityPick(input, id, VILLES_COURANTES);
@@ -2087,13 +2087,13 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (s.step === 'fix_date') {
     const d = parseDateInput(input, '20');
     if (d) {
-      if (inFuture(d)) return send(phone, FUTURE_JOKE(), cfg);
+      if (inFuture(d)) return send(phone, FUTURE_JOKE(s.langue_code === 'en'), cfg);
       if (tooOld(d)) { return finNonEligible(phone, L(s, PRESCRIPTION_5ANS_EN, pickVariant(phone, 'PRESCRIPTION_5ANS')), cfg); }
       s.date = d; await setState(phone, s);
       await send(phone, L(s, `✅ Date corrected: *${d}* — *${dateEnLettres(d)}*.`, `✅ Date corrigée : *${d}* — le *${dateEnLettres(d)}*.`), cfg);
       return afterFix(phone, s, cfg);
     }
-    if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim()), cfg);
+    if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim(), s.langue_code === 'en'), cfg);
     return send(phone, L(s, `Date not recognised. Format DD/MM/YYYY:`, `Date non reconnue. Format JJ/MM/AAAA :`), cfg);
   }
   if (s.step === 'fix_nom') {
@@ -2132,7 +2132,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (s.step === 'm_date') {
     const d = parseDateInput(input, '20');
     if (d) {
-      if (inFuture(d)) return send(phone, FUTURE_JOKE(), cfg);
+      if (inFuture(d)) return send(phone, FUTURE_JOKE(s.langue_code === 'en'), cfg);
       s.date = d;
       if (tooOld(s.date)) { return finNonEligible(phone, L(s, PRESCRIPTION_5ANS_EN, pickVariant(phone, 'PRESCRIPTION_5ANS')), cfg); }
       const ok = `✅ Vol du *${d}* — le *${dateEnLettres(d)}*.`;
@@ -2188,7 +2188,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       // Vol vraiment non retrouvé → on demande le trajet en 2 questions imagées (décollage 🛫 / atterrissage 🛬).
       return askDepCity(phone, s, cfg);
     }
-    if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim()), cfg);
+    if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim(), s.langue_code === 'en'), cfg);
     return send(phone, L(s, `Date not recognised. Format DD/MM/YYYY (e.g. 15/03/2026):`, `Date non reconnue. Format JJ/MM/AAAA (ex. 15/03/2026) :`), cfg);
   }
   // Choix du tronçon parmi 2-3 options (milk-run ou LLM multi-routes).
@@ -2278,7 +2278,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   }
   if (s.step === 'names_fix_which') {
     const i = parseInt((input.match(/\d+/) || [])[0]);
-    if (i >= 1 && i <= s.pax) { s.fix_name_idx = i - 1; s.step = 'names_fix_one'; await setState(phone, s); return send(phone, `👤 *Passager ${i}* (actuel : ${s.names[i - 1] || '—'})\n\nTapez simplement le *bon nom complet* 👇\n_(ex : Aminata Diallo)_`, cfg); }
+    if (i >= 1 && i <= s.pax) { s.fix_name_idx = i - 1; s.step = 'names_fix_one'; await setState(phone, s); return send(phone, L(s, `👤 *Passenger ${i}* (current: ${s.names[i - 1] || '—'})\n\nJust type the *correct full name* 👇\n_(e.g. Aminata Diallo)_`, `👤 *Passager ${i}* (actuel : ${s.names[i - 1] || '—'})\n\nTapez simplement le *bon nom complet* 👇\n_(ex : Aminata Diallo)_`), cfg); }
     return send(phone, L(s, `Enter a number between 1 and ${s.pax}:`, `Indiquez un numéro entre 1 et ${s.pax} :`), cfg);
   }
   if (s.step === 'names_fix_one') {
@@ -2350,7 +2350,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     }
     if (fix) {
       delete s.doc_pending; s.step = 'doc_pass'; await setState(phone, s);
-      return sendButtons(phone, [{ id: 'doc_photo', text: '📸 Nouvelle photo' }, { id: 'doc_saisir', text: '✏️ Saisir manuellement' }], cfg);
+      return sendButtons(phone, [{ id: 'doc_photo', text: L(s, '📸 New photo', '📸 Nouvelle photo') }, { id: 'doc_saisir', text: L(s, '✏️ Type manually', '✏️ Saisir manuellement') }], cfg);
     }
     if (id === 'doc_photo' || lower.includes('photo') || lower.includes('renvo') || lower.includes('nouv')) {
       s.step = 'doc_pass'; await setState(phone, s);
@@ -2360,7 +2360,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       delete s.doc_pending; s.step = 'doc_name'; await setState(phone, s);
       return send(phone, L(s, `👤 *Passenger ${s.doc_idx + 1}* — First and last name?\n_(e.g. Aminata Diallo)_`, `👤 *Passager ${s.doc_idx + 1}* — Prénom et nom ?\n_(ex : Aminata Diallo)_`), cfg);
     }
-    return sendButtons(phone, [{ id: 'pass_ok', text: '✅ C\'est correct' }, { id: 'pass_fix', text: '✏️ Corriger' }], cfg);
+    return sendButtons(phone, [{ id: 'pass_ok', text: L(s, '✅ Correct', '✅ C\'est correct') }, { id: 'pass_fix', text: L(s, '✏️ Edit', '✏️ Corriger') }], cfg);
   }
   if (s.step === 'doc_mandant') {
     s.passengers = s.passengers || [];
@@ -2408,7 +2408,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       await send(phone, L(s, `✅ ${p.name || ('Passenger ' + (s.doc_idx + 1))} — born *${dob}* (${dateEnLettres(dob)})${minor ? ' 👶 _(minor: parental signature required)_' : ''}\n📸 _Their ID (passport or national ID) is still to be sent — essential to claim from the airline._`, `✅ ${p.name || ('Passager ' + (s.doc_idx + 1))} — ${_ne} le *${dob}* (${dateEnLettres(dob)})${minor ? ` 👶 _(${_min} : signature parentale requise)_` : ''}\n📸 _Sa pièce d'identité (passeport ou carte d'identité) reste à envoyer — indispensable pour réclamer auprès de la compagnie._`), cfg);
       s.doc_idx++; await setState(phone, s); return nextPassport(phone, s, cfg);
     }
-    if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim()), cfg);
+    if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim(), s.langue_code === 'en'), cfg);
     return send(phone, L(s, `Date not recognised. Format DD/MM/YYYY (e.g. 05/09/2012):`, `Date non reconnue. Format JJ/MM/AAAA (ex. 05/09/2012) :`), cfg);
   }
   if (s.step === 'doc_boarding') {
@@ -2622,7 +2622,7 @@ async function continueAnnul(phone, s, cfg) {
 async function sendPax(phone, s, cfg) {
   s.step = 'nb_pax'; await setState(phone, s);
   await sendList(phone, { body: L(s, `${bar('nb_pax')}\n👥 How many passengers are claiming on this flight?`, `${bar('nb_pax')}\n👥 Combien de passagers réclament sur ce vol ?`), buttonText: L(s, 'Number ▾', 'Nombre ▾'), items: [
-    { title: '1 passager', description: "jusqu'à 600 €" }, { title: '2 passagers', description: "jusqu'à 1 200 €" }, { title: '3 passagers', description: "jusqu'à 1 800 €" }, { title: '4 passagers', description: "jusqu'à 2 400 €" }, { title: '5 passagers', description: "jusqu'à 3 000 €" }, { title: '6 ou plus', description: 'On gère votre groupe' },
+    { title: L(s, '1 passenger', '1 passager'), description: "jusqu'à 600 €" }, { title: L(s, '2 passengers', '2 passagers'), description: "jusqu'à 1 200 €" }, { title: L(s, '3 passengers', '3 passagers'), description: "jusqu'à 1 800 €" }, { title: L(s, '4 passengers', '4 passagers'), description: "jusqu'à 2 400 €" }, { title: L(s, '5 passengers', '5 passagers'), description: "jusqu'à 3 000 €" }, { title: L(s, '6 or more', '6 ou plus'), description: L(s, 'We handle your group', 'On gère votre groupe') },
   ] }, cfg);
 }
 async function askYear(phone, s, cfg) {
@@ -2800,7 +2800,7 @@ async function askName(phone, s, cfg) {
 async function showNamesConfirm(phone, s, cfg) {
   s.step = 'names_confirm'; await setState(phone, s);
   const list = (s.names || []).slice(0, s.pax).map((n, i) => `✅ ${i + 1}. ${n || '—'}`).join('\n');
-  return sendButtons(phone, { body: `${bar('names')}\n👥 *Les ${s.pax} passagers :*\n${list}\n\nTout est correct ?`, buttons: [{ text: '✅ Confirmer' }, { text: '✏️ Corriger nom' }] }, cfg);
+  return sendButtons(phone, { body: L(s, `${bar('names')}\n👥 *The ${s.pax} passengers:*\n${list}\n\nIs everything correct?`, `${bar('names')}\n👥 *Les ${s.pax} passagers :*\n${list}\n\nTout est correct ?`), buttons: [{ text: L(s, '✅ Confirm', '✅ Confirmer') }, { text: L(s, '✏️ Fix a name', '✏️ Corriger nom') }] }, cfg);
 }
 
 // Documents
@@ -2952,7 +2952,7 @@ async function relancerEtape(phone, s, cfg) {
     case 'nb_pax': return sendPax(phone, s, cfg);
     case 'esc_dep': return askEscDep(phone, s, cfg);
     case 'esc_via': return askEscVia(phone, s, cfg, (s.escCities || []).length >= 2);
-    case 'esc_more': return sendButtons(phone, { body: `Y avait-il une *autre escale* ?`, buttons: [{ id: 'esc_oui', text: '🔄 Oui, une autre' }, { id: 'esc_non', text: '➡️ Non' }] }, cfg);
+    case 'esc_more': return sendButtons(phone, { body: L(s, `Was there *another stop*?`, `Y avait-il une *autre escale* ?`), buttons: [{ id: 'esc_oui', text: L(s, '🔄 Yes, another', '🔄 Oui, une autre') }, { id: 'esc_non', text: L(s, '➡️ No', '➡️ Non') }] }, cfg);
     case 'esc_arr': return askEscArr(phone, s, cfg);
     case 'esc_vol': { const l = (s.legs || [])[s.legIdx || 0]; if (l) return send(phone, L(s, `✈️ Number of flight *${l.dep} → ${l.arr}*? _(e.g. AT540)_\n✏️ Type *skip* if you no longer have it.`, `✈️ Numéro du vol *${l.dep} → ${l.arr}* ? _(ex : AT540)_\n✏️ Tapez *passer* si vous ne l'avez plus.`), cfg); return askEscDep(phone, s, cfg); }
     case 'mineurs': return sendMineurs(phone, s, cfg);
@@ -3098,7 +3098,7 @@ app.post('/api/wati-webhook', async (req, res) => {
     // Sérialisé par numéro : les messages d'un même client se traitent dans l'ordre, un par un.
     enqueue(phone, () => handleMessage(phone, text, cfg, mediaUrl, replyId).catch(e => {
       console.error('bot error', e.message, e.stack);
-      if (cfg) return send(phone, 'Une erreur est survenue. Écrivez *go* pour continuer votre dossier.', cfg).catch(() => {});
+      if (cfg) return send(phone, phoneIsEN(phone) ? 'Something went wrong. Type *go* to continue your file.' : 'Une erreur est survenue. Écrivez *go* pour continuer votre dossier.', cfg).catch(() => {});
     }));
   }
 });
