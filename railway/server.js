@@ -1561,11 +1561,17 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     await clearState(phone); return sendAccueil(phone, cfg, _accLang);
   }
   // Bascule de langue À LA VOLÉE (FR ⇄ EN) — le client tape « français » / « english » / « FR » / « EN »
-  // à n'importe quelle étape pour changer. Matcher STRICT (ÉGALITÉ exacte du message normalisé) : on ne
-  // réutilise PAS matchLang (qui matche « fr »/« en » en sous-chaîne → collisionnerait avec « frais »,
-  // « enfant »…). À l'accueil/langue, c'est le menu 🌍 qui gère le choix → on n'intercepte pas.
+  // ou une phrase « je veux parler en français » / « I want to speak French » etc.
+  // À l'accueil/langue, c'est le menu 🌍 qui gère le choix → on n'intercepte pas.
   const _langSwitch = ['francais', 'french', 'fr'].includes(resetNorm) ? 'fr'
-                    : ['anglais', 'english', 'en'].includes(resetNorm) ? 'en' : '';
+                    : ['anglais', 'english', 'en'].includes(resetNorm) ? 'en'
+                    : /\b(parler|parlez|continuer?|repondre?|ecrire?|communiquer)\b.*(francais|français)\b/.test(resetNorm) ? 'fr'
+                    : /\b(parler|parlez|continuer?|repondre?|ecrire?|communiquer)\b.*(anglais|english)\b/.test(resetNorm) ? 'en'
+                    : /\b(speak|talk|switch|continue)\b.*(french|francais|français)\b/i.test(resetNorm) ? 'fr'
+                    : /\b(speak|talk|switch|continue)\b.*(english)\b/i.test(resetNorm) ? 'en'
+                    : /\b(en francais|en français)\b/.test(resetNorm) ? 'fr'
+                    : /\b(in english)\b/.test(resetNorm) ? 'en'
+                    : '';
   if (_langSwitch) {
     const cur = await getState(phone);
     if (cur && cur.step && !['accueil', 'langue', 'go_langue'].includes(cur.step)) {
