@@ -8,7 +8,7 @@ faq:
   - q: "La compagnie a refusé ma demande. Je peux quand même obtenir les 600€ ?"
     a: "Oui, dans la majorité des cas. Beaucoup de refus sont fondés sur des motifs **vagues** (météo, circonstances extraordinaires) que la compagnie ne peut pas prouver précisément. Robin reprend les dossiers refusés à la même commission de 25 %."
   - q: "Combien de temps pour récupérer après un refus initial ?"
-    a: "En moyenne 4-6 mois supplémentaires : mise en demeure (1 mois), médiation MTV (3 mois), tribunal si nécessaire (3-6 mois). Robin gère tout sans frais à votre charge."
+    a: "En moyenne 4-6 mois supplémentaires : mise en demeure (1 mois), médiation MTV (3 mois), tribunal via un avocat partenaire si nécessaire (3-6 mois). Robin coordonne l'ensemble sans frais à votre charge."
   - q: "J'ai 5 ans pour réclamer, même après un refus ?"
     a: "Oui. Le délai de prescription en France est de **5 ans** après le vol (art. 2224 du Code civil). Un refus ne réduit pas ce délai. Vous pouvez nous confier un dossier refusé même 4 ans plus tard."
 ---

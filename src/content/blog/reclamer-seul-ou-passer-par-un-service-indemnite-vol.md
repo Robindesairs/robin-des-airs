@@ -24,7 +24,7 @@ Vous savez que vous avez droit à une indemnité. Vous hésitez entre réclamer 
 **Avantages :**
 - 0€ si on ne gagne pas
 - Dossier béton dès le départ (preuves météo METAR, comparaison vols)
-- Escalade automatique (mise en demeure → médiation → tribunal)
+- Escalade automatique (mise en demeure → médiation → avocat partenaire si tribunal)
 - Suivi WhatsApp sans rien faire
 - Délai moyen : 4-12 semaines
 
