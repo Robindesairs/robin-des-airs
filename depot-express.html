@@ -3,32 +3,634 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Déposer mon dossier (express), Robin des Airs</title>
+  <title>Déposer mon dossier (sans WhatsApp), Robin des Airs</title>
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://robindesairs.eu/depot-express.html">
   <meta property="og:title" content="Déposer mon dossier, Robin des Airs">
-  <meta property="og:description" content="Déposez votre dossier de vol retardé ou annulé en quelques minutes. 0 € si on ne gagne pas (CE 261).">
+  <meta property="og:description" content="Déposez votre dossier de vol retardé ou annulé en quelques minutes, directement sur le site. 0 € si on ne gagne pas (CE 261).">
   <meta property="og:image" content="https://robindesairs.eu/robin-des-airs-og-1200x630-v2.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Déposer mon dossier, Robin des Airs">
-  <meta name="twitter:description" content="Déposez votre dossier en quelques minutes. 0 € si on ne gagne pas.">
+  <meta name="twitter:description" content="Déposez votre dossier en quelques minutes, sans WhatsApp. 0 € si on ne gagne pas.">
   <meta name="twitter:image" content="https://robindesairs.eu/robin-des-airs-og-1200x630-v2.jpg">
-  <meta http-equiv="refresh" content="0; url=/autorisation.html">
-  <script>
-    (function () {
-      var target = "/autorisation.html" + (window.location.search || "") + (window.location.hash || "");
-      window.location.replace(target);
-    })();
-  </script>
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/portail-premium.css">
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; display: grid; place-items: center; min-height: 100vh; background: #f7f8fa; color: #0b1f3a; }
-    a { color: #047857; font-weight: 700; }
+    /* ── Compléments scopés à ce wizard (mêmes tokens que portail-premium.css) ── */
+    .wa-banner{
+      display:flex; align-items:center; gap:9px; flex-wrap:wrap;
+      margin:14px 0 2px; padding:9px 13px;
+      background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius-pill);
+      font-size:13px; color:var(--ink-soft);
+    }
+    .wa-banner a{color:var(--neon-ink); font-weight:700; text-decoration:none; white-space:nowrap}
+    .wa-banner a:hover{text-decoration:underline}
+
+    /* Barre de progression */
+    .progress{margin:4px 0 18px}
+    .progress .track{height:7px; border-radius:var(--radius-pill); background:var(--line); overflow:hidden}
+    .progress .fill{height:100%; width:33%; border-radius:var(--radius-pill);
+      background:linear-gradient(90deg,var(--neon),var(--neon-b)); transition:width .35s var(--ease)}
+    .progress .lbl{margin-top:8px; font-size:12.5px; font-weight:700; color:var(--muted)}
+    .progress .lbl b{color:var(--navy)}
+
+    .step{animation:rise .35s var(--ease) both}
+    .step[hidden]{display:none}
+    .step h2{font-size:19px; font-weight:800; letter-spacing:-.02em; margin:2px 0 4px; color:var(--navy)}
+    .step .sub{color:var(--ink-soft); font-size:14px; margin:0 0 6px}
+
+    /* Boutons de choix (type d'incident, etc.) — cibles tactiles ≥44px */
+    .choice{display:flex; flex-direction:column; gap:9px; margin:12px 0 2px}
+    .choice button{
+      display:flex; align-items:center; gap:11px; width:100%;
+      min-height:54px; padding:12px 15px; text-align:left;
+      background:var(--surface); border:1.5px solid var(--line); border-radius:var(--radius-sm);
+      font:inherit; font-size:14.5px; font-weight:600; color:var(--navy); cursor:pointer;
+      transition:border-color .15s, background .15s, transform .1s;
+    }
+    .choice button .ic{flex:0 0 30px; height:30px; border-radius:9px; display:grid; place-items:center;
+      font-size:16px; background:var(--green-tint)}
+    .choice button .tx small{display:block; font-weight:500; font-size:12.5px; color:var(--muted); margin-top:1px}
+    .choice button:hover{border-color:var(--neon); background:var(--green-tint)}
+    .choice button:focus-visible{outline:none; border-color:var(--neon); box-shadow:0 0 0 4px rgba(0,200,122,.16)}
+    .choice button[aria-pressed="true"]{border-color:var(--neon-dark); background:var(--green-tint);
+      box-shadow:0 0 0 1px var(--neon-dark) inset}
+    .choice button[aria-pressed="true"] .ic{background:var(--neon); color:#06351f}
+
+    /* Bascule n° de vol ↔ trajet */
+    .seg{display:flex; gap:6px; margin:4px 0 2px; background:var(--surface-2);
+      border:1px solid var(--line); border-radius:var(--radius-pill); padding:4px}
+    .seg button{flex:1; min-height:38px; border:0; background:transparent; border-radius:var(--radius-pill);
+      font:inherit; font-size:13px; font-weight:700; color:var(--muted); cursor:pointer; transition:.15s}
+    .seg button[aria-pressed="true"]{background:#fff; color:var(--navy); box-shadow:var(--shadow-card)}
+
+    .row2{display:flex; gap:10px}
+    .row2 .field{flex:1; min-width:0}
+
+    /* Liste dynamique des noms de passagers */
+    .pax-names{display:flex; flex-direction:column; gap:8px; margin-top:6px}
+    .stepper{display:flex; align-items:center; gap:10px}
+    .stepper button{width:44px; height:44px; flex:0 0 44px; border:1.5px solid var(--line);
+      background:var(--surface); border-radius:var(--radius-sm); font-size:22px; font-weight:700;
+      color:var(--navy); cursor:pointer; line-height:1; transition:.15s}
+    .stepper button:hover{border-color:var(--neon); background:var(--green-tint)}
+    .stepper .count{font-size:20px; font-weight:800; color:var(--navy); min-width:28px; text-align:center}
+
+    /* Canvas de signature (repris de mandat.html) */
+    .sig-area{margin-top:8px; border:1.5px dashed var(--line-2); border-radius:var(--radius-sm);
+      background:#fff; min-height:128px; display:grid; place-items:center; position:relative; cursor:crosshair;
+      touch-action:none; overflow:hidden}
+    .sig-area .ph{color:var(--muted); font-size:13.5px; text-align:center; padding:0 16px; pointer-events:none}
+    .sig-area canvas{display:none; touch-action:none}
+    .sig-clear{display:none; position:absolute; top:8px; right:8px; z-index:2;
+      border:1px solid var(--line); background:#fff; border-radius:var(--radius-pill);
+      font-size:12px; font-weight:700; color:var(--ink-soft); padding:5px 11px; cursor:pointer}
+    .sig-clear:hover{border-color:var(--danger); color:var(--danger)}
+
+    .confirm a{color:var(--neon-ink); font-weight:700; text-decoration:underline}
+    .err-inline{display:none; color:var(--danger); font-size:12.5px; font-weight:600; margin-top:6px}
+    .err-inline.show{display:block}
+    .submit-err{display:none; margin-top:14px; background:var(--danger-bg); color:var(--danger);
+      border:1px solid #f3c6c0; border-radius:var(--radius-sm); padding:11px 13px; font-size:13.5px; font-weight:600}
+    .submit-err.show{display:block}
+    .submit-err a{color:var(--danger); font-weight:800}
   </style>
-  <script src="/assets/pre-launch.js" defer></script>
 </head>
 <body>
-  <p>Redirection vers le dépôt express…<br><a href="/autorisation.html">Cliquez ici si rien ne se passe</a>.</p>
+  <header class="topbar">
+    <a class="logo" href="/">Robin <span class="accent">des Airs</span> <span class="bow">🏹</span></a>
+    <a class="back" href="/">← Retour</a>
+  </header>
+
+  <main class="shell">
+    <div class="pagehead">
+      <h1>Votre dossier, en quelques minutes.</h1>
+      <p class="lead">Pas besoin de WhatsApp. Répondez à <b>3 étapes simples</b>, signez, c'est parti.</p>
+      <!-- WhatsApp : voie alternative, discrète, placée sous le titre (pas dominante) -->
+      <div class="wa-banner">
+        <span>💬 Vous préférez WhatsApp&nbsp;? On s'occupe de tout là-bas</span>
+        <a href="https://wa.me/33756863630" target="_blank" rel="noopener">→ wa.me/33756863630</a>
+      </div>
+    </div>
+
+    <!-- ───────────── Formulaire (wizard) ───────────── -->
+    <section class="panel" id="wizard" aria-labelledby="stepTitle">
+      <div class="progress" aria-hidden="false">
+        <div class="track"><div class="fill" id="progFill"></div></div>
+        <div class="lbl">Étape <b id="progNum">1</b> sur 3 — <span id="progName">Votre vol</span></div>
+      </div>
+
+      <!-- ÉTAPE 1 — Votre vol -->
+      <div class="step" id="step1" role="group" aria-labelledby="s1t">
+        <h2 id="s1t">✈️ Votre vol</h2>
+        <p class="sub">Donnez-nous le vol concerné. Un numéro de vol suffit, sinon le trajet.</p>
+
+        <div class="seg" role="group" aria-label="Identifier le vol par">
+          <button type="button" id="modeFlight" aria-pressed="true">N° de vol</button>
+          <button type="button" id="modeRoute" aria-pressed="false">Trajet (villes)</button>
+        </div>
+
+        <!-- Mode n° de vol -->
+        <div id="paneFlight">
+          <div class="field">
+            <label for="flightNum">Numéro de vol</label>
+            <input class="input mono" id="flightNum" type="text" inputmode="text" autocomplete="off"
+                   placeholder="ex. AF 719" aria-describedby="flightNumHint">
+            <div class="hint idle" id="flightNumHint">Il est sur votre billet (ex. AF719, SN204).</div>
+          </div>
+        </div>
+
+        <!-- Mode trajet -->
+        <div id="paneRoute" hidden>
+          <div class="row2">
+            <div class="field">
+              <label for="depAirport">Départ</label>
+              <input class="input" id="depAirport" type="text" autocomplete="off" placeholder="ex. Dakar">
+            </div>
+            <div class="field">
+              <label for="arrAirport">Arrivée</label>
+              <input class="input" id="arrAirport" type="text" autocomplete="off" placeholder="ex. Paris">
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="flightDate">Date du vol</label>
+          <input class="input" id="flightDate" type="date" aria-describedby="flightDateHint">
+          <div class="hint idle" id="flightDateHint">La date prévue du départ.</div>
+        </div>
+
+        <fieldset style="border:0;padding:0;margin:16px 0 0">
+          <legend style="font-size:13px;font-weight:700;color:var(--navy);padding:0;margin-bottom:2px">Que s'est-il passé&nbsp;?</legend>
+          <div class="choice" id="incidentChoice" role="group" aria-label="Type d'incident">
+            <button type="button" data-incident="delay" aria-pressed="false">
+              <span class="ic" aria-hidden="true">⏱️</span>
+              <span class="tx">Retard à l'arrivée (3 h ou plus)<small>Vous êtes arrivé avec au moins 3 h de retard</small></span>
+            </button>
+            <button type="button" data-incident="cancel" aria-pressed="false">
+              <span class="ic" aria-hidden="true">🚫</span>
+              <span class="tx">Vol annulé<small>Votre vol n'a pas eu lieu</small></span>
+            </button>
+            <button type="button" data-incident="denied" aria-pressed="false">
+              <span class="ic" aria-hidden="true">🛑</span>
+              <span class="tx">Refus d'embarquement<small>Surbooking : on vous a refusé l'embarquement</small></span>
+            </button>
+          </div>
+          <div class="err-inline" id="incidentErr">Choisissez ce qui s'est passé.</div>
+        </fieldset>
+
+        <button class="btn" type="button" id="next1" style="margin-top:18px">Continuer →</button>
+      </div>
+
+      <!-- ÉTAPE 2 — Passagers & contact -->
+      <div class="step" id="step2" hidden role="group" aria-labelledby="s2t">
+        <h2 id="s2t">👪 Passagers &amp; contact</h2>
+        <p class="sub">Qui était sur ce vol, et comment vous joindre.</p>
+
+        <div class="field">
+          <label>Nombre de passagers</label>
+          <div class="stepper" role="group" aria-label="Nombre de passagers">
+            <button type="button" id="paxMinus" aria-label="Retirer un passager">−</button>
+            <span class="count" id="paxCount" aria-live="polite">1</span>
+            <button type="button" id="paxPlus" aria-label="Ajouter un passager">+</button>
+          </div>
+          <div class="hint idle">Comptez chaque personne ayant un billet (y compris un bébé avec billet).</div>
+        </div>
+
+        <div class="field">
+          <label>Nom de chaque passager</label>
+          <div class="pax-names" id="paxNames"></div>
+        </div>
+
+        <hr style="border:0;border-top:1px solid var(--line);margin:20px 0 4px">
+
+        <div class="field">
+          <label for="contactName">Votre nom complet</label>
+          <input class="input" id="contactName" type="text" autocomplete="name" placeholder="Prénom Nom"
+                 aria-describedby="contactNameErr">
+          <div class="err-inline" id="contactNameErr">Indiquez votre prénom et votre nom.</div>
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input class="input" id="email" type="email" inputmode="email" autocomplete="email"
+                 placeholder="vous@email.com" aria-describedby="emailErr">
+          <div class="err-inline" id="emailErr">Vérifiez votre adresse email.</div>
+        </div>
+        <div class="field">
+          <label for="phone">Téléphone de rappel</label>
+          <input class="input" id="phone" type="tel" inputmode="tel" autocomplete="tel"
+                 placeholder="+33 6 12 34 56 78" aria-describedby="phoneErr">
+          <div class="hint idle">Un expert vous appellera depuis le +33 7 56 86 36 30.</div>
+          <div class="err-inline" id="phoneErr">Indiquez un numéro où vous joindre (8 chiffres min.).</div>
+        </div>
+
+        <button class="btn" type="button" id="next2" style="margin-top:18px">Continuer →</button>
+        <button class="btn-back" type="button" id="back2">← Précédent</button>
+      </div>
+
+      <!-- ÉTAPE 3 — Signature -->
+      <div class="step" id="step3" hidden role="group" aria-labelledby="s3t">
+        <h2 id="s3t">✍️ Vérifiez et signez</h2>
+        <p class="sub">Un dernier regard, puis signez pour nous autoriser à réclamer votre indemnité.</p>
+
+        <dl class="recap" id="recap"><!-- rempli par JS --></dl>
+
+        <div class="field" style="margin-top:18px">
+          <label id="sigLabel">Votre signature</label>
+          <div class="sig-area" id="sigArea" role="application" aria-labelledby="sigLabel"
+               aria-describedby="sigHint" tabindex="0">
+            <span class="ph" id="sigPh">Signez ici avec votre doigt ou la souris</span>
+            <canvas id="sigCanvas" width="680" height="120"
+                    aria-label="Zone de signature manuscrite"></canvas>
+            <button type="button" class="sig-clear" id="sigClear">Effacer</button>
+          </div>
+          <div class="hint idle" id="sigHint">Tracez votre signature dans le cadre.</div>
+        </div>
+
+        <label class="confirm">
+          <input type="checkbox" id="ckMandat">
+          <span>J'accepte les <b>conditions du mandat</b> de représentation : Robin des Airs réclame mon indemnité en mon nom (<b>0 €</b> si on ne gagne pas, <b>25 %</b> seulement en cas de succès).</span>
+        </label>
+        <label class="confirm">
+          <input type="checkbox" id="ckRgpd">
+          <span>J'ai lu et j'accepte la <a href="/politique-confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a>.</span>
+        </label>
+
+        <div class="submit-err" id="submitErr" role="alert"></div>
+
+        <button class="btn" type="button" id="signBtn" style="margin-top:16px" disabled>Signer et envoyer</button>
+        <button class="btn-back" type="button" id="back3">← Précédent</button>
+
+        <p class="rgpd" style="margin-top:14px"><span>🔒</span><span>Transmission chiffrée (HTTPS). Signature horodatée et scellée (preuve eIDAS). Rétractation possible sous 14 jours. RGPD.</span></p>
+      </div>
+    </section>
+
+    <!-- ───────────── Écran de succès ───────────── -->
+    <section class="panel done" id="doneCard" role="status" aria-live="polite">
+      <div class="seal" aria-hidden="true">✓</div>
+      <h2>C'est signé&nbsp;!</h2>
+      <p>Votre mandat est enregistré. Dernière étape : ajoutez vos pièces (pièce d'identité + carte d'embarquement ou e-billet) et votre dossier sera complet.</p>
+      <div class="data" id="doneRef"></div>
+      <a class="cta-link" id="goPieces" href="#">📎 Ajouter mes pièces maintenant →</a>
+      <p class="signoff">On prend le relais. <b>L'équipe Robin des Airs 🏹</b></p>
+    </section>
+  </main>
+
+  <script>
+  (function () {
+    'use strict';
+
+    // ── Référence dossier : aléatoire 128 bits (crypto.getRandomValues), format type bot RDA-<date>-<base36> ──
+    function genRef() {
+      var d = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+      var bytes = new Uint8Array(16); // 128 bits
+      (window.crypto || window.msCrypto).getRandomValues(bytes);
+      // base36 à partir des octets (indevinable)
+      var s = '';
+      for (var i = 0; i < bytes.length; i++) s += ('0' + bytes[i].toString(16)).slice(-2);
+      var b36 = '';
+      // convertit le hex en base36 par tranches pour rester compact
+      for (var j = 0; j < bytes.length; j += 4) {
+        b36 += parseInt(s.substr(j * 2, 8), 16).toString(36);
+      }
+      return 'RDA-' + d + '-' + b36.toUpperCase();
+    }
+    // Si on arrive avec une réf existante (lien repris), on la garde ; sinon on en génère une.
+    var P = new URLSearchParams(location.search);
+    var REF = (P.get('r') || P.get('ref') || '').trim() || genRef();
+
+    // ── État du wizard ──
+    var state = {
+      step: 1,
+      mode: 'flight',          // 'flight' | 'route'
+      incident: '',            // 'delay' | 'cancel' | 'denied'
+      pax: 1,
+      names: [''],
+    };
+    var INCIDENT_LABEL = { delay: 'Retard +3 h', cancel: 'Annulation', denied: 'Refus d\'embarquement' };
+
+    var $ = function (id) { return document.getElementById(id); };
+
+    // ── Progression ──
+    var STEP_NAMES = { 1: 'Votre vol', 2: 'Passagers & contact', 3: 'Signature' };
+    function renderProgress() {
+      $('progFill').style.width = (state.step / 3 * 100) + '%';
+      $('progNum').textContent = state.step;
+      $('progName').textContent = STEP_NAMES[state.step];
+    }
+    function goStep(n) {
+      state.step = n;
+      [1, 2, 3].forEach(function (i) { $('step' + i).hidden = (i !== n); });
+      renderProgress();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // focus sur le titre de l'étape (annonce lecteur d'écran)
+      var t = $('step' + n).querySelector('h2');
+      if (t) { t.setAttribute('tabindex', '-1'); t.focus({ preventScroll: true }); }
+      if (n === 3) buildRecap();
+    }
+
+    // ── Bascule n° de vol / trajet ──
+    function setMode(m) {
+      state.mode = m;
+      $('modeFlight').setAttribute('aria-pressed', String(m === 'flight'));
+      $('modeRoute').setAttribute('aria-pressed', String(m === 'route'));
+      $('paneFlight').hidden = (m !== 'flight');
+      $('paneRoute').hidden = (m !== 'route');
+    }
+    $('modeFlight').addEventListener('click', function () { setMode('flight'); });
+    $('modeRoute').addEventListener('click', function () { setMode('route'); });
+
+    // ── Choix d'incident ──
+    Array.prototype.forEach.call($('incidentChoice').querySelectorAll('button'), function (b) {
+      b.addEventListener('click', function () {
+        state.incident = b.getAttribute('data-incident');
+        Array.prototype.forEach.call($('incidentChoice').querySelectorAll('button'), function (x) {
+          x.setAttribute('aria-pressed', String(x === b));
+        });
+        $('incidentErr').classList.remove('show');
+      });
+    });
+
+    // ── Passagers (stepper + noms dynamiques) ──
+    function renderPaxNames() {
+      var wrap = $('paxNames');
+      // préserve les valeurs déjà saisies
+      var current = Array.prototype.map.call(wrap.querySelectorAll('input'), function (i) { return i.value; });
+      wrap.innerHTML = '';
+      for (var i = 0; i < state.pax; i++) {
+        var input = document.createElement('input');
+        input.className = 'input';
+        input.type = 'text';
+        input.autocomplete = 'off';
+        input.placeholder = (i === 0 ? 'Passager 1 (vous) — Prénom Nom' : 'Passager ' + (i + 1) + ' — Prénom Nom');
+        input.setAttribute('aria-label', 'Nom du passager ' + (i + 1));
+        input.value = current[i] || state.names[i] || '';
+        wrap.appendChild(input);
+      }
+    }
+    function setPax(n) {
+      state.pax = Math.max(1, Math.min(9, n));
+      $('paxCount').textContent = state.pax;
+      renderPaxNames();
+    }
+    $('paxMinus').addEventListener('click', function () { setPax(state.pax - 1); });
+    $('paxPlus').addEventListener('click', function () { setPax(state.pax + 1); });
+
+    function collectNames() {
+      return Array.prototype.map.call($('paxNames').querySelectorAll('input'), function (i) {
+        return i.value.trim();
+      }).filter(Boolean);
+    }
+
+    // ── Validations ──
+    function isEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e) && e.length <= 254; }
+    function isPhone(p) { return (p.replace(/\D/g, '').length >= 8); }
+
+    // Étape 1
+    $('next1').addEventListener('click', function () {
+      var ok = true;
+      if (state.mode === 'flight') {
+        if (!$('flightNum').value.trim()) {
+          $('flightNum').classList.add('bad');
+          $('flightNumHint').className = 'hint bad'; $('flightNumHint').textContent = 'Indiquez votre numéro de vol (ou passez en « Trajet »).';
+          ok = false;
+        } else { $('flightNum').classList.remove('bad'); $('flightNumHint').className = 'hint idle'; }
+      } else {
+        var dep = $('depAirport').value.trim(), arr = $('arrAirport').value.trim();
+        if (!dep || !arr) { $('depAirport').classList.toggle('bad', !dep); $('arrAirport').classList.toggle('bad', !arr); ok = false; }
+        else { $('depAirport').classList.remove('bad'); $('arrAirport').classList.remove('bad'); }
+      }
+      if (!$('flightDate').value) {
+        $('flightDate').classList.add('bad'); $('flightDateHint').className = 'hint bad'; $('flightDateHint').textContent = 'Indiquez la date du vol.'; ok = false;
+      } else { $('flightDate').classList.remove('bad'); $('flightDateHint').className = 'hint idle'; }
+      if (!state.incident) { $('incidentErr').classList.add('show'); ok = false; }
+      if (ok) goStep(2);
+    });
+
+    // Étape 2
+    $('back2').addEventListener('click', function () { goStep(1); });
+    $('next2').addEventListener('click', function () {
+      var ok = true;
+      var nm = $('contactName').value.trim();
+      if (nm.split(/\s+/).filter(Boolean).length < 2) { $('contactName').classList.add('bad'); $('contactNameErr').classList.add('show'); ok = false; }
+      else { $('contactName').classList.remove('bad'); $('contactNameErr').classList.remove('show'); }
+      if (!isEmail($('email').value.trim())) { $('email').classList.add('bad'); $('emailErr').classList.add('show'); ok = false; }
+      else { $('email').classList.remove('bad'); $('emailErr').classList.remove('show'); }
+      if (!isPhone($('phone').value.trim())) { $('phone').classList.add('bad'); $('phoneErr').classList.add('show'); ok = false; }
+      else { $('phone').classList.remove('bad'); $('phoneErr').classList.remove('show'); }
+      if (ok) { state.names = collectNames(); goStep(3); }
+    });
+    $('back3').addEventListener('click', function () { goStep(2); });
+
+    // ── Récapitulatif (étape 3) ──
+    function row(dt, dd, mono) {
+      return '<div class="row"><dt>' + dt + '</dt><dd' + (mono ? ' class="mono"' : '') + '>' + dd + '</dd></div>';
+    }
+    function esc(s) { return String(s == null ? '' : s).replace(/[<>&]/g, function (c) { return c === '<' ? '&lt;' : c === '>' ? '&gt;' : '&amp;'; }); }
+    function buildRecap() {
+      var names = collectNames();
+      var vol = state.mode === 'flight'
+        ? esc($('flightNum').value.trim()) || '—'
+        : (esc($('depAirport').value.trim()) + ' → ' + esc($('arrAirport').value.trim()));
+      var date = $('flightDate').value || '—';
+      var html = '';
+      html += row('Vol', vol, true);
+      html += row('Date', esc(date));
+      html += row('Incident', esc(INCIDENT_LABEL[state.incident] || '—'));
+      html += row('Passager' + (state.pax > 1 ? 's' : ''), names.length ? esc(names.join(', ')) : (state.pax + ' passager(s)'));
+      html += row('Contact', esc($('contactName').value.trim()) + ' · ' + esc($('email').value.trim()));
+      $('recap').innerHTML = html;
+    }
+
+    // ── Canvas de signature (repris de mandat.html) ──
+    var sigStarted = false;
+    (function initSig() {
+      var area = $('sigArea'), canvas = $('sigCanvas'), ctx = canvas.getContext('2d');
+      var ph = $('sigPh'), cl = $('sigClear');
+      var drawing = false;
+      function activate() {
+        if (sigStarted) return;
+        canvas.style.display = 'block'; ph.style.display = 'none'; cl.style.display = 'block';
+        canvas.width = Math.min(area.offsetWidth - 4, 680);
+        canvas.height = 124;
+        ctx.strokeStyle = '#0B1F3A'; ctx.lineWidth = 2.4; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      }
+      area.addEventListener('click', function () { activate(); });
+      area.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); } });
+      function getP(e) {
+        var r = canvas.getBoundingClientRect();
+        return e.touches ? { x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top }
+                         : { x: e.clientX - r.left, y: e.clientY - r.top };
+      }
+      canvas.addEventListener('mousedown', function (e) { drawing = true; sigStarted = true; ctx.beginPath(); var p = getP(e); ctx.moveTo(p.x, p.y); });
+      canvas.addEventListener('mousemove', function (e) { if (!drawing) return; var p = getP(e); ctx.lineTo(p.x, p.y); ctx.stroke(); refreshSignState(); });
+      canvas.addEventListener('mouseup', function () { drawing = false; refreshSignState(); });
+      canvas.addEventListener('mouseleave', function () { drawing = false; });
+      canvas.addEventListener('touchstart', function (e) { e.preventDefault(); drawing = true; sigStarted = true; ctx.beginPath(); var p = getP(e); ctx.moveTo(p.x, p.y); }, { passive: false });
+      canvas.addEventListener('touchmove', function (e) { e.preventDefault(); if (!drawing) return; var p = getP(e); ctx.lineTo(p.x, p.y); ctx.stroke(); }, { passive: false });
+      canvas.addEventListener('touchend', function () { drawing = false; refreshSignState(); });
+      cl.addEventListener('click', function (e) {
+        e.stopPropagation();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        sigStarted = false; canvas.style.display = 'none';
+        ph.style.display = 'block'; cl.style.display = 'none';
+        refreshSignState();
+      });
+    })();
+
+    function hasSignature() {
+      if (!sigStarted) return false;
+      var c = $('sigCanvas');
+      try {
+        var d = c.getContext('2d').getImageData(0, 0, c.width, c.height).data;
+        for (var i = 3; i < d.length; i += 4) if (d[i] > 0) return true;
+      } catch (e) { return sigStarted; }
+      return false;
+    }
+
+    // ── Activation du bouton « Signer et envoyer » (signature + 2 cases) ──
+    function refreshSignState() {
+      var ready = hasSignature() && $('ckMandat').checked && $('ckRgpd').checked;
+      $('signBtn').disabled = !ready;
+    }
+    $('ckMandat').addEventListener('change', refreshSignState);
+    $('ckRgpd').addEventListener('change', refreshSignState);
+
+    // ── Soumission : même endpoint et même contrat que mandat.html ──
+    $('signBtn').addEventListener('click', function () {
+      if ($('signBtn').disabled) return;
+      var names = collectNames();
+      var contactFull = $('contactName').value.trim();
+      var parts = contactFull.split(/\s+/).filter(Boolean);
+      var firstName = parts.shift() || '';
+      var lastName = parts.join(' ');
+      var nowIso = new Date().toISOString();
+      var phone = $('phone').value.trim();
+
+      var flightNum = state.mode === 'flight' ? $('flightNum').value.trim() : '';
+      var depA = state.mode === 'route' ? $('depAirport').value.trim() : '';
+      var arrA = state.mode === 'route' ? $('arrAirport').value.trim() : '';
+
+      // Contrat IDENTIQUE à mandat.html (clés attendues par netlify/functions/submit-mandat.js)
+      var payload = {
+        ref: REF,
+        lang: 'fr',
+        firstName: firstName,
+        lastName: lastName,
+        whatsapp: phone,            // n° de rappel = identifiant requis (le backend exige `whatsapp`)
+        contactPhone: phone,
+        contactEmail: $('email').value.trim(),
+        email: $('email').value.trim(),
+        address: '',
+        startNow: true,
+        eligibilityAcknowledged: true,
+        coPassAgreement: state.pax > 1,
+        cessionCreance: true,
+        mandataireAccepted: true,
+        mandataireName: 'Robin des Airs, Service recouvrement CE 261/2004',
+        mandataireAcceptedAt: nowIso,
+        airline: state.mode === 'route' ? (depA + ' → ' + arrA) : '',   // mode trajet → identifie la créance (sinon flightNum) et passe la validation serveur
+        operatedBy: '',
+        flightNum: flightNum,
+        flightDate: $('flightDate').value,
+        pnr: '',
+        incident: state.incident,
+        pax: state.pax,
+        passengerNames: names,
+        passengersData: names.map(function (n) { return { name: n }; }),
+        depAirport: depA,
+        arrAirport: arrA,
+        connecting: '',
+        flightMode: 'direct',
+        flightLegs: null,
+        signCity: '',
+        signDate: $('flightDate').value ? nowIso.slice(0, 10) : '',
+        signatureImg: $('sigCanvas').toDataURL('image/png'),
+        source: 'depot-express.html',
+        signedAt: nowIso,
+        mandatVersion: 'web-express-v1',
+        watiConversationId: phone,
+        linkSentAt: '',
+      };
+
+      var btn = $('signBtn');
+      btn.disabled = true; btn.textContent = 'Envoi…';
+      $('submitErr').classList.remove('show');
+
+      // Canal de secours (sans WhatsApp) : on crée d'abord le dossier côté serveur — depot-create
+      // génère un ref indevinable et écrit m/<ref> — PUIS on signe (submit-mandat passe sa gate anti-forge).
+      var depotPayload = {
+        name: contactFull,
+        phone: phone,
+        email: $('email').value.trim(),
+        flightNum: flightNum,
+        route: (depA && arrA) ? (depA + ' → ' + arrA) : '',
+        dep: depA, arr: arrA,
+        date: $('flightDate').value,
+        incident: state.incident,
+        pax: state.pax,
+        passengers: names.map(function (n) { return { name: n }; }),
+      };
+
+      fetch('/api/depot-create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(depotPayload),
+      })
+      .then(function (r) {
+        return r.json().catch(function () { return {}; }).then(function (j) {
+          if (!r.ok || !j.ref) throw new Error((j && j.error) || 'Création du dossier impossible.');
+          return j.ref;
+        });
+      })
+      .then(function (serverRef) {
+        REF = serverRef;             // on adopte le ref généré côté serveur (indevinable)
+        payload.ref = serverRef;
+        return fetch('/api/submit-mandat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+      })
+      .then(function (r) {
+        if (r && r.ok) { showSuccess(); return; }
+        return r.json().catch(function () { return {}; }).then(function (j) {
+          throw new Error((j && j.error) || ('Erreur ' + (r ? r.status : '')));
+        });
+      })
+      .catch(function (e) {
+        btn.disabled = false; btn.textContent = 'Signer et envoyer';
+        var box = $('submitErr');
+        box.innerHTML = '⚠️ ' + esc(e.message || 'Envoi impossible.') +
+          ' Réessayez, ou écrivez-nous : <a href="mailto:contact@robindesairs.eu?subject=' +
+          encodeURIComponent('Dépôt en ligne — réf. ' + REF) + '">contact@robindesairs.eu</a>' +
+          ' · <a href="https://wa.me/33756863630" target="_blank" rel="noopener">WhatsApp</a>';
+        box.classList.add('show');
+      });
+    });
+
+    function showSuccess() {
+      $('wizard').style.display = 'none';
+      var pieces = '/depot-en-ligne.html?r=' + encodeURIComponent(REF);
+      $('doneRef').textContent = 'Référence : ' + REF;
+      $('goPieces').href = pieces;
+      var dc = $('doneCard');
+      dc.style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Redirection automatique vers le dépôt des pièces (laisse le temps de lire l'écran de succès)
+      setTimeout(function () { window.location.href = pieces; }, 2600);
+    }
+
+    // ── Init ──
+    setMode('flight');
+    setPax(1);
+    renderProgress();
+  })();
+  </script>
 </body>
 </html>
