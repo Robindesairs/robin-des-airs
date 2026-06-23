@@ -1815,12 +1815,12 @@ function toggleEscaleVol3() {
         { who: 'robin',  typing: 1300, hold: 1200, html: 'C\'est rageant 😤 Envoyez-moi une <b>photo de votre carte d\'embarquement</b> 📸' },
         { who: 'client', delay: 900,  hold: 4000, cls: 'wa-msg--bp', html: PASS.fr },
         { who: 'robin',  delay: 450,  hold: 2000, cls: 'wa-scan', html: '🔎 Je lis votre carte…' },
-        { who: 'robin',  typing: 1100, hold: 3400, cls: 'wa-msg--verdict', html: '✓ Je vois votre vol : <b>AF718 · Paris → Dakar</b> — ce retard peut ouvrir droit à <span class="wa-verdict-amt">jusqu\'à 600 €</span> / passager <span class="wa-aside">(selon distance et cause)</span>' },
+        { who: 'robin',  typing: 1100, hold: 3400, cls: 'wa-msg--verdict', html: '✓ Je vois votre vol : <b>AF718 · Paris → Dakar</b> — ce retard peut ouvrir droit à <span class="wa-verdict-amt">jusqu\'à 600 €</span> / passager' },
         { who: 'client', delay: 600,  hold: 1100, html: 'Et ça me coûte combien ? 😅' },
         { who: 'robin',  typing: 1200, hold: 3200, html: 'On vérifie <b>gratuitement, sans engagement</b>. Rien si on perd — <b>25 %</b> seulement si on gagne, aucune avance, pas de carte bancaire 🤝' },
         { who: 'client', delay: 600,  hold: 1300, html: 'Et si nous sommes 4 ? 👨‍👩‍👧‍👦' },
         { who: 'robin',  typing: 1000, hold: 2600, cls: 'wa-msg--verdict', html: '✅ Toute la famille compte, même les enfants → une famille de 4, c\'est <span class="wa-verdict-amt">jusqu\'à 2 400 €</span>' },
-        { who: 'robin',  typing: 900,  hold: 2400, html: '🌍 Dakar, Lagos, Accra… on vous <b>rappelle</b> en <b>wolof, yoruba, twi</b>… 📞' },
+        { who: 'robin',  typing: 900,  hold: 2400, html: '🌍 Dakar, Bamako, Conakry… on vous <b>rappelle</b> en <b>wolof, mandinka, peul</b>… 📞' },
         { who: 'robin',  delay: 350,  typing: 800, hold: 3200, html: '👉 Dernière étape : <b>signez</b>, je m\'occupe de tout 💪' }
       ]; },
       en: function () { return [
@@ -1828,7 +1828,7 @@ function toggleEscaleVol3() {
         { who: 'robin',  typing: 1300, hold: 1200, html: 'That\'s maddening 😤 Just send me a <b>photo of your boarding pass</b> 📸' },
         { who: 'client', delay: 900,  hold: 4000, cls: 'wa-msg--bp', html: PASS.en },
         { who: 'robin',  delay: 450,  hold: 2000, cls: 'wa-scan', html: '🔎 Reading your pass…' },
-        { who: 'robin',  typing: 1100, hold: 3400, cls: 'wa-msg--verdict', html: '✓ I can see your flight: <b>BA081 · London → Accra</b> — this delay may entitle you to <span class="wa-verdict-amt">up to €600</span> / passenger <span class="wa-aside">(distance &amp; cause apply)</span>' },
+        { who: 'robin',  typing: 1100, hold: 3400, cls: 'wa-msg--verdict', html: '✓ I can see your flight: <b>BA081 · London → Accra</b> — this delay may entitle you to <span class="wa-verdict-amt">up to €600</span> / passenger' },
         { who: 'client', delay: 600,  hold: 1100, html: 'And what does it cost me? 😅' },
         { who: 'robin',  typing: 1200, hold: 3200, html: 'We check <b>for free, no commitment</b>. Nothing if we lose — <b>25 %</b> only if we win, no upfront fee, no card needed 🤝' },
         { who: 'client', delay: 600,  hold: 1300, html: 'And if there are 4 of us? 👨‍👩‍👧‍👦' },
@@ -1843,7 +1843,7 @@ function toggleEscaleVol3() {
       fr: {
         foot: 'On parle votre langue · réponse en quelques minutes →',
         aria: 'Aperçu d\'une conversation WhatsApp avec Robin, cliquer pour ouvrir',
-        sr: 'Exemple de conversation WhatsApp : Aminata envoie son numéro de vol puis une photo de sa carte d\'embarquement ; Robin lit le vol et indique que ce retard peut donner droit à une indemnité, jusqu\'à 600 € par passager (selon la distance et la cause), avec une vérification gratuite et sans engagement. Robin précise sa commission de 25 % au succès seulement (0 € si on ne gagne pas, aucune avance, pas de carte bancaire), que chaque passager d\'une même famille compte (une famille de 4 peut obtenir jusqu\'à 2 400 €), son expertise des vols Europe-Afrique (Dakar, Lagos, Accra) et qu\'un conseiller peut rappeler en wolof, yoruba ou twi. Dernière étape : signer le mandat.'
+        sr: 'Exemple de conversation WhatsApp : Aminata envoie son numéro de vol puis une photo de sa carte d\'embarquement ; Robin lit le vol et indique que ce retard peut donner droit à une indemnité, jusqu\'à 600 € par passager (selon la distance et la cause), avec une vérification gratuite et sans engagement. Robin précise sa commission de 25 % au succès seulement (0 € si on ne gagne pas, aucune avance, pas de carte bancaire), que chaque passager d\'une même famille compte (une famille de 4 peut obtenir jusqu\'à 2 400 €), son expertise des vols Europe-Afrique (Dakar, Bamako, Conakry) et qu\'un conseiller peut rappeler en wolof, mandinka ou peul. Dernière étape : signer le mandat.'
       },
       en: {
         foot: 'We speak your language · reply in minutes →',
