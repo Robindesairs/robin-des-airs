@@ -558,7 +558,7 @@ window.I18N = (function() {
       diaspora_bar_flags_aria: "Diaspora: Cameroon, Comoros, Côte d’Ivoire, Madagascar, Mali, Nigeria, DR Congo, Senegal, and all of Africa.",
       diaspora_flags_more: "+ all of Africa",
       vol_ticker_sr: "Strip of Europe-Africa and Africa-Europe flights with 3h+ arrival delay or cancellation. Up to €600 if EU 261 applies. Click a pill to pre-fill the form.",
-      vol_ticker_label: "We speak your language, Wolof, Bambara, Fula, Dioula… and more",
+      vol_ticker_label: "We speak your language: Twi, Yoruba, Pidgin… and many more",
       vol_ticker_label_short: "We speak your language",
       vol_ticker_ops_link: "Control tower",
       vol_ticker_retard: "Delayed",
