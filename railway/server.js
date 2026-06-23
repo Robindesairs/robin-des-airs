@@ -315,11 +315,11 @@ function hashStr(s) { let h = 0; for (const c of String(s || 'x')) h = (h * 31 +
 const LANGS = {
   'français': { code: 'fr', flag: '🇫🇷', label: 'Français', africaine: false },
   'english':  { code: 'en', flag: '🇬🇧', label: 'English', africaine: false },
-  'wolof':    { code: 'wo', flag: '🇸🇳', label: 'Wolof', africaine: true, natif: 'Dëkk sa Wolof, bëgg na la wax — expert bi dafa xam Wolof, dafa di la woote. 🤝' },
-  'mandinka': { code: 'mnk', flag: '🇬🇲', label: 'Mandinka', africaine: true, natif: 'I be Mandinka kan na — expert do bena i ye Mandinka fo. 🤝' },
-  'twi':      { code: 'twi', flag: '🇬🇭', label: 'Twi', africaine: true, natif: 'Yɛka Twi — ɔbenfoɔ bi a ɔka Twi bɛfrɛ wo. 🤝' },
-  'yoruba':   { code: 'yo', flag: '🇳🇬', label: 'Yoruba', africaine: true, natif: 'A nsọ Yoruba — amoye kan tó ń sọ Yoruba yóò pè ọ. 🤝' },
-  'peul':     { code: 'ff', flag: '🇬🇳', label: 'Peul / Fulfulde', africaine: true, natif: 'Eɗen haala Pulaar — annduɗo haalata Pulaar maa noddu maa. 🤝' },
+  'wolof':    { code: 'wo', flag: '🇸🇳', label: 'Wolof', africaine: true, agent: 'Fatou', natif: 'Dëkk sa Wolof, bëgg na la wax — expert bi dafa xam Wolof, dafa di la woote. 🤝' },
+  'mandinka': { code: 'mnk', flag: '🇬🇲', label: 'Mandinka', africaine: true, agent: 'Binta', natif: 'I be Mandinka kan na — expert do bena i ye Mandinka fo. 🤝' },
+  'twi':      { code: 'twi', flag: '🇬🇭', label: 'Twi', africaine: true, agent: 'Ama', natif: 'Yɛka Twi — ɔbenfoɔ bi a ɔka Twi bɛfrɛ wo. 🤝' },
+  'yoruba':   { code: 'yo', flag: '🇳🇬', label: 'Yoruba', africaine: true, agent: 'Yetunde', natif: 'A nsọ Yoruba — amoye kan tó ń sọ Yoruba yóò pè ọ. 🤝' },
+  'peul':     { code: 'ff', flag: '🇬🇳', label: 'Peul / Fulfulde', africaine: true, agent: 'Mariama', natif: 'Eɗen haala Pulaar — annduɗo haalata Pulaar maa noddu maa. 🤝' },
 };
 const FLAG_LANG = { '🇫🇷': 'fr', '🇬🇧': 'en', '🇸🇳': 'wo', '🇬🇲': 'mnk', '🇬🇭': 'twi', '🇳🇬': 'yo', '🇬🇳': 'ff' };
 function matchLang(input) {
@@ -1758,7 +1758,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const L = (ri >= 0 && langArr[ri]) ? langArr[ri] : matchLang(input);
     if (!L) return sendLangue(phone, s, cfg);
     s.langue = `${L.flag} ${L.label}`; s.langue_code = L.code;
-    if (L.africaine) { s.escalade = 'langue_africaine'; await send(phone, `${L.natif}\n\n📞 *Un conseiller qui parle ${L.label} vous rappellera* pour vous accompagner *dans votre langue* — au *+33 7 56 86 36 30* (enregistrez-le sous « Robin des Airs » pour décrocher).\n\n💬 En attendant, *moi l'assistant je continue ici en français* (je ne parle pas encore ${L.label} 🙏). On démarre votre dossier tout de suite, sans attendre l'appel. 👇`, cfg); }
+    if (L.africaine) { s.escalade = 'langue_africaine'; await send(phone, `${L.natif}\n\n📞 *${L.agent}, qui parle ${L.label}, vous rappellera* pour vous accompagner *dans votre langue* — au *+33 7 56 86 36 30* (enregistrez-le sous « Robin des Airs » pour décrocher).\n\n💬 En attendant, *moi l'assistant, je prépare votre dossier ici en français* (je ne parle pas encore ${L.label} 🙏). 👇`, cfg); }
     else if (L.code === 'en') { await send(phone, `Perfect — I'll assist you in English. 🇬🇧\nLet's check together what compensation you may be owed, *up to €600 per passenger*. 👇`, cfg); }
     await setState(phone, s); return askRouteZone(phone, s, cfg);
   }
