@@ -3763,6 +3763,7 @@ button:focus-visible,
 .hero-entry-btn.secondary:hover { border-color: var(--neon-dark); background: rgba(0,200,122,0.35); color: var(--navy); box-shadow: 0 2px 12px rgba(0,200,122,0.2); }
 .testi-viewport { width: 100%; }
 .testi-track { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+@media (max-width: 768px) { .testi-track { grid-template-columns: 1fr; gap: 14px; } }
 .testi-nav { display: flex; justify-content: center; align-items: center; gap: 16px; margin-top: 24px; }
 .testi-arrow {
   width: 40px; height: 40px; border-radius: 50%; border: 1.5px solid var(--border); background: white;
