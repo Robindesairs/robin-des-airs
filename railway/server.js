@@ -315,7 +315,7 @@ function hashStr(s) { let h = 0; for (const c of String(s || 'x')) h = (h * 31 +
 const LANGS = {
   'français': { code: 'fr', flag: '🇫🇷', label: 'Français', africaine: false },
   'english':  { code: 'en', flag: '🇬🇧', label: 'English', africaine: false },
-  'wolof':    { code: 'wo', flag: '🇸🇳', label: 'Wolof', africaine: true, agent: 'Fatou', natif: 'Dëkk sa Wolof, bëgg na la wax — expert bi dafa xam Wolof, dafa di la woote. 🤝' },
+  'wolof':    { code: 'wo', flag: '🇸🇳', label: 'Wolof', africaine: true, agent: 'Sokhna', natif: 'Dëkk sa Wolof, bëgg na la wax — expert bi dafa xam Wolof, dafa di la woote. 🤝' },
   'mandinka': { code: 'mnk', flag: '🇬🇲', label: 'Mandinka', africaine: true, agent: 'Binta', natif: 'I be Mandinka kan na — expert do bena i ye Mandinka fo. 🤝' },
   'twi':      { code: 'twi', flag: '🇬🇭', label: 'Twi', africaine: true, agent: 'Ama', natif: 'Yɛka Twi — ɔbenfoɔ bi a ɔka Twi bɛfrɛ wo. 🤝' },
   'yoruba':   { code: 'yo', flag: '🇳🇬', label: 'Yoruba', africaine: true, agent: 'Yetunde', natif: 'A nsọ Yoruba — amoye kan tó ń sọ Yoruba yóò pè ọ. 🤝' },
