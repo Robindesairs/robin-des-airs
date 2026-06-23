@@ -54,7 +54,7 @@ Sauf si la compagnie prouve qu'elle vous a informé ≥ 14 jours avant **ET** pr
 
 Les compagnies proposent souvent un **bon d'achat "esprit de Noël"** de 100-200€ pour clore le dossier. Refusez : c'est nettement moins que les 600€ légaux. Voir : [Bon d'achat piège](/blog/bon-achat-compagnie-aerienne-piege.html).
 
-## Famille en voyage de Noël = jackpot
+## Famille en voyage de Noël : le calcul
 
 Famille de 5 sur Paris-Dakar retardé de 5h le 24 décembre : 5 × 600€ = **3 000€ brut**, **2 250€ nets** après commission Robin.
 

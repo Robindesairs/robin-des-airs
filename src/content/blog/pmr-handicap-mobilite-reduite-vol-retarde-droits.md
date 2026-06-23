@@ -44,7 +44,7 @@ Plus l'accompagnant (souvent un membre de la famille) qui voyage avec eux : son 
 
 ## Préjudice supplémentaire (Convention de Montréal)
 
-Si le retard cause un préjudice spécifique au handicap (médicaments inaccessibles, fatigue extrême, rendez-vous médical manqué), la **Convention de Montréal 1999** permet de réclamer jusqu'à **environ 8 000€** pour préjudice réel — en plus du CE 261.
+Si le retard cause un préjudice spécifique au handicap (médicaments inaccessibles, fatigue extrême, rendez-vous médical manqué), la **Convention de Montréal 1999** permet de réclamer jusqu'à **environ 6 300€** (5 346 DTS) pour préjudice réel — en plus du CE 261.
 
 Cas typique : un patient dialysé qui rate sa séance suite à un retard → préjudice médical documenté → demande Montréal cumulable.
 

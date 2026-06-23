@@ -33,7 +33,7 @@ En plus de l'indemnité CE 261 forfaitaire, vous pouvez réclamer (via Conventio
 - **Logement non récupéré** : nuit d'hôtel d'urgence, frais réels
 - **Documents universitaires manqués** : inscription, validation, jury de rattrapage
 
-Plafond Convention Montréal : ~8 000€ pour préjudice prouvé.
+Plafond Convention Montréal : ~6 300€ (5 346 DTS) pour préjudice prouvé.
 
 ## Cas typique : vol Paris-Dakar retardé en sens retour pour rentrée
 

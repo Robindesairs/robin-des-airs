@@ -42,7 +42,7 @@ Tous ces vols > 3 500 km → **600€ par passager** si retard ≥ 3h.
 
 Le CE 261 (600€) **ne couvre pas** le préjudice professionnel direct (contrat perdu, réunion stratégique manquée). Pour ça, deux options :
 
-1. **Convention de Montréal 1999** : jusqu'à ~8 000€ pour préjudice prouvé
+1. **Convention de Montréal 1999** : jusqu'à ~6 300€ (5 346 DTS) pour préjudice prouvé
 2. **Assurance voyage professionnelle** (souvent fournie par l'employeur ou la CB premium)
 
 Les deux sont cumulables avec le CE 261.

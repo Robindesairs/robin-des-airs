@@ -8,9 +8,9 @@ faq:
   - q: "Je n'ai plus ma carte d'embarquement, ai-je perdu mon droit ?"
     a: "Non. La carte n'est **pas obligatoire**. Ce qui compte : la confirmation de réservation, l'historique de l'app compagnie, le relevé bancaire ou tout document prouvant que vous avez bien voyagé."
   - q: "La compagnie peut-elle me fournir un duplicata ?"
-    a: "Oui. La compagnie archive les manifestes passagers au moins 3 ans. Envoyez une demande écrite avec votre **code de réservation** (6 caractères) → elle peut générer un duplicata ou une attestation."
+    a: "Oui. La compagnie archive les manifestes passagers pendant plusieurs années. Envoyez une demande écrite avec votre **code de réservation** (6 caractères) → elle peut générer un duplicata ou une attestation."
   - q: "Combien de temps pour réclamer si je n'ai rien gardé ?"
-    a: "Vous avez **3 ans** après le vol pour réclamer en France. Même sans aucun document personnel, Robin peut reconstituer le dossier via Flightradar24, METAR et le manifeste de la compagnie."
+    a: "Vous avez **5 ans** après le vol pour réclamer en France (art. 2224 du Code civil). Même sans aucun document personnel, Robin peut reconstituer le dossier via Flightradar24, METAR et le manifeste de la compagnie."
 ---
 
 La carte d'embarquement est la preuve la plus directe que vous avez bien voyagé sur le vol concerné. Mais si vous l'avez perdue (jetée à l'arrivée, lavée dans une poche, perdue dans le déménagement), **votre droit à l'indemnité CE 261 ne disparaît pas**. Voici comment récupérer la preuve et obtenir vos 600€.
@@ -66,11 +66,11 @@ Nom du passager : [...]
 
 Cordialement,
 
-La compagnie est tenue d'archiver les données passagers au moins 3 ans (durée de prescription CE 261). Elle peut donc retrouver votre voyage.
+La compagnie est tenue d'archiver les données passagers pendant plusieurs années (au moins la durée de prescription, soit 5 ans en France). Elle peut donc retrouver votre voyage.
 
-## Délai prescription : 3 ans
+## Délai prescription : 5 ans en France
 
-Vous avez **3 ans** après le vol pour réclamer une indemnité CE 261 en France. Donc même un vol de 2024 reste réclamable en 2026 — la perte de la carte d'embarquement entre-temps n'est pas un obstacle.
+Vous avez **5 ans** après le vol pour réclamer une indemnité CE 261 en France (art. 2224 du Code civil). Donc même un vol de 2021 reste réclamable en 2026 — la perte de la carte d'embarquement entre-temps n'est pas un obstacle.
 
 ## Cas typique chez Robin
 

@@ -47,11 +47,11 @@ Si votre vol part de Bordeaux (BOD) et qu'il y a grève à Paris (CDG), votre vo
 
 ## Délai prescription
 
-Vous avez **3 ans** pour réclamer une indemnité CE 261 — même un vol grève de 2023 ou 2024 reste réclamable en 2026 si vous n'avez rien fait.
+Vous avez **5 ans** pour réclamer une indemnité CE 261 en France (art. 2224 du Code civil) — même un vol grève de 2021 ou 2022 reste réclamable en 2026 si vous n'avez rien fait.
 
 ## Robin des Airs et les dossiers grève
 
-90% des dossiers grève contrôleurs gagnés chez Robin — parce que les compagnies envoient des refus génériques sans preuve d'impact direct.
+La majorité des dossiers grève contrôleurs aboutissent favorablement — parce que les compagnies envoient des refus génériques sans preuve d'impact direct.
 
 → [Vérifier mon vol grève](https://robindesairs.eu/#funnel-box)
 → [WhatsApp direct](https://wa.me/33756863630)

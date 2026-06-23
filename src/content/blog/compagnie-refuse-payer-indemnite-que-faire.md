@@ -6,11 +6,11 @@ slug: compagnie-refuse-payer-indemnite-que-faire
 image_url: /og-blog.png
 faq:
   - q: "La compagnie a refusé ma demande. Je peux quand même obtenir les 600€ ?"
-    a: "Oui, dans 70-90 % des cas. Beaucoup de refus sont fondés sur des motifs **vagues** (météo, circonstances extraordinaires) que la compagnie ne peut pas prouver précisément. Robin reprend les dossiers refusés à la même commission de 25 %."
+    a: "Oui, dans la majorité des cas. Beaucoup de refus sont fondés sur des motifs **vagues** (météo, circonstances extraordinaires) que la compagnie ne peut pas prouver précisément. Robin reprend les dossiers refusés à la même commission de 25 %."
   - q: "Combien de temps pour récupérer après un refus initial ?"
     a: "En moyenne 4-6 mois supplémentaires : mise en demeure (1 mois), médiation MTV (3 mois), tribunal si nécessaire (3-6 mois). Robin gère tout sans frais à votre charge."
-  - q: "J'ai 3 ans pour réclamer, même après un refus ?"
-    a: "Oui. Le délai de prescription en France est de **3 ans** après le vol. Un refus ne réduit pas ce délai. Vous pouvez nous confier un dossier refusé même 2 ans plus tard."
+  - q: "J'ai 5 ans pour réclamer, même après un refus ?"
+    a: "Oui. Le délai de prescription en France est de **5 ans** après le vol (art. 2224 du Code civil). Un refus ne réduit pas ce délai. Vous pouvez nous confier un dossier refusé même 4 ans plus tard."
 ---
 
 Vous avez réclamé votre indemnité CE 261, et la compagnie a répondu : "Désolé, circonstances extraordinaires", "Votre demande a été examinée et rejetée", ou pire — **pas de réponse depuis 3 mois**. Voici exactement quoi faire.
@@ -23,7 +23,7 @@ La compagnie cite presque toujours un motif vague. Demandez-lui le détail préc
 - Quelles preuves apporte-t-elle ?
 - En quoi cette circonstance était **inévitable** malgré toutes mesures raisonnables ?
 
-90% du temps, la compagnie ne peut pas répondre précisément. C'est déjà un signe que votre dossier est défendable.
+La plupart du temps, la compagnie ne peut pas répondre précisément. C'est déjà un signe que votre dossier est défendable.
 
 ## Étape 2 — Vérifier avec des preuves indépendantes
 
@@ -48,7 +48,7 @@ Cette étape règle 30 % des dossiers — la compagnie cède pour éviter le con
 
 ## Étape 4 — Saisine du médiateur
 
-En France : **Médiateur Tourisme et Voyage (MTV)** ou **Médiation des Communications Électroniques (MCE)** selon le cas. Dépôt en ligne, gratuit pour vous, contraignant pour la compagnie qui est tenue d'y participer si elle est affiliée.
+En France : **Médiateur Tourisme et Voyage (MTV)**. Dépôt en ligne, gratuit pour vous. La compagnie affiliée est tenue de participer au processus de médiation (l'avis rendu n'est pas juridiquement contraignant, mais il fait pression).
 
 Délai moyen : 2-4 mois. Taux de succès : ~60 %.
 
@@ -56,7 +56,7 @@ Délai moyen : 2-4 mois. Taux de succès : ~60 %.
 
 Si la médiation échoue, vous pouvez saisir :
 
-- **Tribunal de proximité** pour les litiges < 10 000€
+- **Tribunal judiciaire** (chambre de proximité) pour les litiges ≤ 5 000€
 - **Procédure européenne de petite créance** pour les vols intra-UE
 - Avocat spécialisé pour les gros dossiers (famille nombreuse, plusieurs vols)
 
@@ -64,7 +64,7 @@ Délai : 6-18 mois. Frais : ~50-150€, remboursés si vous gagnez.
 
 ## Ou laissez Robin des Airs faire tout
 
-Vous nous transférez le refus → on monte un dossier technique avec preuves météo, jurisprudence et historique → on négocie → si refus persistant, on va au médiateur puis au tribunal, **à nos frais**. Vous ne payez que si on gagne (25%).
+Vous nous transférez le refus → on monte un dossier technique avec preuves météo, jurisprudence et historique → on négocie → si refus persistant, on saisit le médiateur, et si la médiation échoue, on transmet le dossier à un avocat partenaire pour le tribunal. **Vous ne payez que si on gagne (25 %).**
 
 Voir aussi : [Réclamer seul ou via service](/blog/reclamer-seul-ou-passer-par-un-service-indemnite-vol.html), [Médiation aérienne obligatoire 2026](/blog/mediation-aerienne-obligatoire-2026.html).
 

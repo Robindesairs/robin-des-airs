@@ -25,7 +25,7 @@ Si vous signez le bon comme "règlement définitif", vous perdez votre droit à 
 1. Ne répondez pas directement à la compagnie
 2. Transférez-nous le message sur WhatsApp
 3. Ne signez rien
-4. Laissez Robin négocier — vous toucherez vos 600€ en cash
+4. Laissez Robin négocier — si votre vol est éligible, vous toucherez votre indemnité en cash
 
 Un de nos clients avait reçu un bon de 300€ d'Air France. Il nous a contacté avant de l'accepter. Résultat : 450€ cash virés sur son compte. Voir aussi : [Réclamer seul ou passer par un service](/blog/reclamer-seul-ou-passer-par-un-service-indemnite-vol.html), [Que faire à l'aéroport quand votre vol est retardé](/blog/que-faire-aeroport-vol-retarde.html).
 

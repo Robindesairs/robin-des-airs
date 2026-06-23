@@ -6,7 +6,7 @@ slug: vol-annule-meteo-circonstances-extraordinaires-recours
 image_url: /og-blog.png
 faq:
   - q: "La compagnie a invoqué la météo. C'est automatiquement valable ?"
-    a: "Non. La compagnie doit prouver que **votre vol précis** ne pouvait pas opérer ET qu'elle a pris toutes les mesures raisonnables. Si d'autres vols ont décollé/atterri le même jour, l'argument tombe dans 80 % des cas."
+    a: "Non. La compagnie doit prouver que **votre vol précis** ne pouvait pas opérer ET qu'elle a pris toutes les mesures raisonnables. Si d'autres vols ont décollé/atterri le même jour, l'argument tombe dans la plupart des cas."
   - q: "Quelles preuves vérifier ?"
     a: "1) METAR/TAF officiels (bulletins météo aéroport). 2) Flightradar24 : autres vols du jour. 3) Tweets officiels de l'aéroport. 4) Présence d'autres avions de la même compagnie ce jour-là."
   - q: "L'harmattan ou la mousson sont-ils des circonstances extraordinaires ?"

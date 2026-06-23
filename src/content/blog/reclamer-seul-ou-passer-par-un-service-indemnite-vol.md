@@ -17,7 +17,7 @@ Vous savez que vous avez droit à une indemnité. Vous hésitez entre réclamer 
 - Vous devrez relancer, argumenter, citer les articles de loi
 - Si elle persiste, vous devrez saisir le médiateur (MTV) puis éventuellement le tribunal
 - Le délai moyen quand on réclame seul : 6-18 mois
-- 80% des passagers qui réclament seul abandonnent après le premier refus
+- Beaucoup de passagers qui réclament seul abandonnent après le premier refus
 
 ## Passer par Robin : avantages et inconvénients
 
@@ -35,7 +35,7 @@ Vous savez que vous avez droit à une indemnité. Vous hésitez entre réclamer 
 
 Réclamer seul et obtenir 600€ en 12 mois avec beaucoup d'efforts et un risque d'abandon ? Ou confier à Robin, toucher 450€ en 4-12 semaines sans rien faire ?
 
-Pour la majorité des gens — surtout les familles avec 2, 3, 4 passagers et des montants de 1 200-2 400€ en jeu — le gain de temps et la certitude du résultat valent largement les 25%.
+Pour la majorité des gens — surtout les familles avec 2, 3, 4 passagers et des montants de 1 200-2 400€ en jeu — le gain de temps et la tranquillité valent largement les 25%.
 
 → [Lancer mon dossier en 3 minutes](https://robindesairs.eu/#funnel-box)
 → [WhatsApp direct](https://wa.me/33756863630)

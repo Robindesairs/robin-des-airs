@@ -6,7 +6,7 @@ slug: vol-retarde-conakry-paris-indemnite
 image_url: /og-blog.png
 ---
 
-La route Paris → Conakry (FNA, 4 482 km) dessert la diaspora guinéenne, principalement via Air France. C'est un vol long-courrier > 3 500 km = 600€ d'indemnité par passager.
+La route Paris → Conakry (CKY, 4 482 km) dessert la diaspora guinéenne, principalement via Air France. C'est un vol long-courrier > 3 500 km = 600€ d'indemnité par passager.
 
 ## Air France : seule option européenne directe
 
@@ -14,7 +14,7 @@ Air France est la principale compagnie UE opérant des vols directs CDG → Cona
 
 ## Les retards typiques
 
-Conakry-Gbessia (FNA) est un aéroport avec des capacités limitées. Les retards sont fréquents, souvent liés à des problèmes de rotation d'avion ou de maintenance. Les compagnies invoquent la "météo tropicale" mais les bulletins METAR de Conakry montrent rarement des conditions interdisant les décollages/atterrissages.
+Conakry-Gbessia (CKY) est un aéroport avec des capacités limitées. Les retards sont fréquents, souvent liés à des problèmes de rotation d'avion ou de maintenance. Les compagnies invoquent la "météo tropicale" mais les bulletins METAR de Conakry montrent rarement des conditions interdisant les décollages/atterrissages.
 
 ## Délai de prescription : 5 ans
 

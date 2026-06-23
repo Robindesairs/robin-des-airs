@@ -69,7 +69,7 @@ C'est le document central. Disponible en français sur le portail **e-Justice de
 
 ## Robin des Airs gère ça pour vous
 
-Vous nous transférez le dossier → on monte la procédure → on dépose le formulaire A → on suit jusqu'au paiement. **Aucun frais à votre charge.** Vous payez 25% uniquement si on récupère vos 600€.
+Vous nous transférez le dossier → on prépare toutes les pièces et, si une procédure judiciaire est nécessaire, un avocat partenaire dépose le formulaire A et suit jusqu'au paiement. **Aucun frais à votre charge.** Vous payez 25% uniquement si on récupère vos 600€.
 
 Voir : [Compagnie refuse de payer](/blog/compagnie-refuse-payer-indemnite-que-faire.html), [Médiation tourisme MTV](/blog/saisir-mediateur-mtv-tourisme-voyage.html).
 

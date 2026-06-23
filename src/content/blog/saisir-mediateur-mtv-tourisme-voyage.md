@@ -70,12 +70,12 @@ Données 2025 : **~60 %** des dossiers MTV se concluent par un versement total o
 
 Vous pouvez ensuite :
 - Engager la **procédure européenne de petite créance** ([guide](/blog/formulaire-petite-creance-europeenne-vol-retarde.html))
-- Saisir le **tribunal de proximité** en France
+- Saisir le **tribunal judiciaire** en France
 - Mandater Robin des Airs qui prend en charge toute la procédure
 
 ## Robin des Airs et le MTV
 
-Nous saisissons le MTV à votre place, avec un dossier technique solide (jurisprudence, METAR/TAF, calcul d'arrivée précis). Notre taux de succès post-MTV : **plus de 85 %**.
+Nous saisissons le MTV à votre place, avec un dossier technique solide (jurisprudence, METAR/TAF, calcul d'arrivée précis).
 
 Voir : [Médiation aérienne obligatoire 2026](/blog/mediation-aerienne-obligatoire-2026.html), [Compagnie refuse de payer](/blog/compagnie-refuse-payer-indemnite-que-faire.html).
 

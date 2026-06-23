@@ -41,7 +41,7 @@ Les compagnies envoient souvent des lettres avec :
 - Des termes techniques (ex: "panne du système de conditionnement d'air")
 - Une mention "circonstance extraordinaire"
 
-**Rien de tout cela ne suffit.** Robin des Airs conteste systématiquement ces refus — dans 80-90% des cas de "panne technique", l'indemnité est due.
+**Rien de tout cela ne suffit.** Robin des Airs conteste systématiquement ces refus — dans la grande majorité des cas de "panne technique", l'indemnité est due.
 
 ## Combien de temps pour réclamer ?
 

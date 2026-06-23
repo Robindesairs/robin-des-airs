@@ -68,7 +68,7 @@ Si la compagnie n'a pas pris **toutes** les mesures raisonnables, l'indemnité r
 
 Pour un déroutement :
 - **CE 261** : indemnité forfaitaire (600€)
-- **Frais réels** : remboursement bus/taxi/hôtel (Convention de Montréal, plafond ~8 000€)
+- **Frais réels** : remboursement bus/taxi/hôtel (Convention de Montréal, plafond ~6 300€ soit 5 346 DTS)
 - **Code du tourisme** si voyage organisé : perte de jouissance
 
 Tout est cumulable.

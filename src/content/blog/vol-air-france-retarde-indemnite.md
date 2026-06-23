@@ -28,7 +28,7 @@ Les routes Paris → Dakar (AF718/AF720), Paris → Abidjan (AF552/AF702), Paris
 
 Quand vous réclamez, Air France invoque souvent des "circonstances extraordinaires" — météo, grève du contrôle aérien — pour refuser de payer. Mais un problème technique n'est pas une circonstance extraordinaire selon la jurisprudence européenne (arrêt Wallentin-Hermann, CJUE 2008). Et pour la météo, si d'autres avions ont décollé le même jour, l'argument ne tient pas.
 
-Chez Robin des Airs, chaque dossier inclut les bulletins météo officiels (METAR/TAF) et l'analyse des vols des autres compagnies au même moment. C'est ce qui nous permet d'afficher un taux de réussite de 9 dossiers sur 10.
+Chez Robin des Airs, chaque dossier inclut les bulletins météo officiels (METAR/TAF) et l'analyse des vols des autres compagnies au même moment — des preuves concrètes qui font la différence.
 
 ## Combien vous touchez concrètement
 
@@ -38,7 +38,7 @@ Exemple : famille de 4 passagers, vol AF718 CDG → DSS retardé de 4h30. Indemn
 
 ## Comment lancer votre dossier
 
-Envoyez vos cartes d'embarquement sur WhatsApp. En 3 minutes c'est fait. On s'occupe de tout : mise en demeure, relances, médiation, tribunal si nécessaire.
+Envoyez vos cartes d'embarquement sur WhatsApp. En 3 minutes c'est fait. On s'occupe du recouvrement amiable : mise en demeure, relances, médiation. Si le dossier nécessite un passage au tribunal, un avocat partenaire prend le relais.
 
 Délai de prescription : 5 ans. Si votre vol Air France a été retardé depuis 2021, vous pouvez encore réclamer.
 

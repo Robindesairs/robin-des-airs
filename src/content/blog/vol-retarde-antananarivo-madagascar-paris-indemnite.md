@@ -15,7 +15,7 @@ faq:
 
 Antananarivo (TNR), capitale de Madagascar, est reliée à Paris par Air France et Air Madagascar. La diaspora malgache en France est estimée à plus de 100 000 personnes, principalement en Île-de-France. La route Paris-Madagascar est l'une des plus longues vers l'Afrique — ce qui signifie le palier d'indemnité maximum.
 
-## Distance record : 9 000 km = 600€ garanti
+## Distance record : 9 000 km = 600€ par passager
 
 Paris CDG → Antananarivo TNR : ~9 000 km. C'est l'une des routes africaines les plus longues depuis Paris. Largement au-dessus des 3 500 km → **600€ par passager** quelle que soit la distance exacte.
 

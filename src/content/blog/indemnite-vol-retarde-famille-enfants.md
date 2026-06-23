@@ -37,7 +37,7 @@ Le point clé : payer les seules taxes d'aéroport **n'est pas** « voyager grat
 
 Un tribunal français a déjà jugé qu'un enfant transporté *sans aucun billet* n'était pas indemnisable (Cour de cassation, 6 janvier 2021) — mais cette décision visait précisément le cas « zéro billet, zéro paiement ». Dès qu'un billet existe et que des taxes ont été réglées, l'argument ne tient plus. Dans le doute, ne tranchez pas vous-même : avec notre principe **« pas d'indemnité, pas de frais »**, inclure votre bébé dans la demande ne vous coûte rien — au pire la compagnie refuse cette ligne, au mieux c'est 250 à 600 € de plus pour la famille.
 
-## Le calcul pour votre famille (vol > 3 500 km, retard ≥ 4h)
+## Le calcul pour votre famille (vol > 3 500 km, retard ≥ 3h)
 
 | Famille | Brut | Robin 25% | Vous recevez |
 |---------|------|-----------|-------------|

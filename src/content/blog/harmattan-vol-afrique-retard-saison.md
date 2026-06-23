@@ -52,7 +52,7 @@ Parfois, l'avion ne peut pas atterrir à Bamako à cause de l'harmattan et est d
 
 ## Statistiques Robin des Airs
 
-Sur 100 dossiers "harmattan" reçus depuis 3 ans : **72 ont été gagnés**. La compagnie invoque la météo mais ne prouve presque jamais l'impact direct.
+La majorité des dossiers "harmattan" aboutissent favorablement. La compagnie invoque la météo mais ne prouve presque jamais l'impact direct sur le vol précis.
 
 ## Famille diaspora pendant l'harmattan
 

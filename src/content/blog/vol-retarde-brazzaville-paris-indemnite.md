@@ -35,7 +35,7 @@ Ces deux capitales sont séparées par 4 km de fleuve Congo mais ce sont deux pa
 - **Brazzaville BZV** → Congo-Brazzaville → principalement Air France
 - **Kinshasa FIH** → République Démocratique du Congo → Brussels Airlines, Air France
 
-Si votre billet mentionne BZV, votre dossier concerne Brazzaville. Si c'est FIH ou NLK, c'est Kinshasa.
+Si votre billet mentionne BZV, votre dossier concerne Brazzaville. Si c'est FIH, c'est Kinshasa.
 
 ## Retards fréquents sur la ligne
 

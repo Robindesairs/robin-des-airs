@@ -77,7 +77,7 @@ Sur **une famille de 4** voyageant ensemble (souvent le cas pour les voyages dia
 
 ## Bonus : zéro frais cachés
 
-Aucun frais de dossier. Aucune TVA ajoutée. Aucun coût en cas de tribunal (on prend tout en charge). **Vous payez seulement si on gagne**, et c'est **25 % de ce qu'on récupère pour vous**.
+Aucun frais de dossier. Aucune TVA ajoutée. Si le dossier va au tribunal, un avocat partenaire prend le relais — sans frais supplémentaires pour vous. **Vous payez seulement si on gagne**, et c'est **25 % de ce qu'on récupère pour vous**.
 
 ## Notre engagement
 

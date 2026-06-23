@@ -40,7 +40,7 @@ C'est l'**agence ou le tour-opérateur** qui est votre interlocuteur — pas la 
 
 - **"Bon d'achat" du tour-opérateur** : ne signez rien comme "règlement définitif" — vous perdriez vos droits CE 261
 - **"Force majeure"** invoquée par le tour-opérateur : l'argument vaut pour lui, mais **pas pour la compagnie** au sens CE 261 (sauf circonstance extraordinaire prouvée)
-- **Délai de prescription** : 2 ans pour le Code du tourisme, **3 ans** pour le CE 261
+- **Délai de prescription** : 2 ans pour le Code du tourisme, **5 ans** pour le CE 261 en France (art. 2224 du Code civil)
 
 ## Robin des Airs ne fait que le CE 261
 

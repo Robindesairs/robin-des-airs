@@ -23,7 +23,7 @@ Ces 600€ sont dus **automatiquement**, indépendamment du préjudice moral. Vo
 En cas de souffrance morale exceptionnelle (rater l'enterrement de votre mère, par exemple), vous pouvez ajouter une demande au titre de la **Convention de Montréal 1999** :
 
 - Préjudice réel **prouvé**
-- Plafond ~**1 600€ par passager** (1 288 DTS)
+- Plafond ~**6 300€ par passager** (5 346 DTS)
 
 Pour cela, il faut documenter :
 

@@ -23,7 +23,7 @@ TAP étant enregistrée au Portugal (UE), **tous ses vols sont couverts** par le
 - Vol Dakar → Lisbonne retardé → éligible ✅ (avantage vs Ethiopian, Turkish)
 - Vol Paris → Lisbonne → Abidjan → éligible ✅ (billet unique, distance totale)
 
-## Routes africaines TAP depuis Lisbonne (toutes 600€)
+## Routes africaines TAP depuis Lisbonne
 
 | Route | Distance | Indemnité |
 |---|---|---|

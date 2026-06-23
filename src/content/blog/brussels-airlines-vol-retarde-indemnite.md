@@ -68,7 +68,7 @@ Les compagnies paient beaucoup plus facilement quand elles reçoivent une demand
 
 ## Délais de réclamation
 
-Vous avez **2 ans** (loi belge applicable) à **5 ans** (loi française si le contrat a des liens avec la France) pour réclamer. N'attendez pas — les preuves disparaissent.
+Le délai de prescription dépend du droit applicable : **1 an en droit belge** (prescription courte applicable aux actions en responsabilité aérienne), jusqu'à **5 ans en droit français** (art. 2224 du Code civil) si le contrat a des liens suffisants avec la France. N'attendez pas — les preuves disparaissent.
 
 Voir aussi : [KLM vol retardé](/blog/klm-vol-retarde-indemnite.html), [Kinshasa-Bruxelles retard](/blog/vol-retarde-kinshasa-bruxelles-indemnite.html), [Réglementation CE 261](/blog/reglementation-ce261-resume.html).
 
