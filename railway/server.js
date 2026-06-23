@@ -1565,6 +1565,24 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (cur && cur.step && cur.step !== 'accueil' && cur.step !== 'done' && cur.step !== 'non_eligible') { await send(phone, L(cur, `👋 Welcome back! Let's pick up your case right where you left off.`, `👋 Re-bonjour ! On reprend votre dossier là où vous vous étiez arrêté.`), cfg); return relancerEtape(phone, cur, cfg); }
     await clearState(phone); return sendAccueil(phone, cfg, _accLang);
   }
+  // Bascule de langue À LA VOLÉE (FR ⇄ EN) — le client tape « français » / « english » / « FR » / « EN »
+  // à n'importe quelle étape pour changer. Matcher STRICT (ÉGALITÉ exacte du message normalisé) : on ne
+  // réutilise PAS matchLang (qui matche « fr »/« en » en sous-chaîne → collisionnerait avec « frais »,
+  // « enfant »…). À l'accueil/langue, c'est le menu 🌍 qui gère le choix → on n'intercepte pas.
+  const _langSwitch = ['francais', 'french', 'fr'].includes(resetNorm) ? 'fr'
+                    : ['anglais', 'english', 'en'].includes(resetNorm) ? 'en' : '';
+  if (_langSwitch) {
+    const cur = await getState(phone);
+    if (cur && cur.step && !['accueil', 'langue', 'go_langue'].includes(cur.step)) {
+      if (cur.langue_code !== _langSwitch) {
+        cur.langue_code = _langSwitch;
+        cur.langue = _langSwitch === 'en' ? '🇬🇧 English' : '🇫🇷 Français';
+        await setState(phone, cur);
+        await send(phone, _langSwitch === 'en' ? `✅ Done — I'll continue in English. 🇬🇧` : `✅ C'est noté — je continue en français. 🇫🇷`, cfg);
+      }
+      return relancerEtape(phone, cur, cfg);
+    }
+  }
 
   let s = await getState(phone);
   // Anglais COLLANT : tout message clairement anglais bascule (et garde) le client en EN → la couche de
