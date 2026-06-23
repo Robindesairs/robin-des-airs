@@ -291,12 +291,10 @@ function montantReel(s) { return perPaxOf(s) * claimablePax(s); }
 function montantNetReel(s) { return Math.round(montantReel(s) * 0.75); }
 // Ligne montant à afficher (récap/done) selon le verdict vol.
 function montantLine(s) {
-  const en = isEN(s);
   const v = s && s.flightVerdict;
-  if (v === 'hors_champ' || v === 'sous_seuil') return en ? `💰 Amount to be confirmed by an expert _(free check)_` : `💰 Montant à confirmer par un expert _(vérification gratuite)_`;
+  if (v === 'hors_champ' || v === 'sous_seuil') return `💰 Montant à confirmer par un expert _(vérification gratuite)_`;
   const verified = !!(s && s.flightChecked) && v === 'eligible';
-  if (en) return `💰 ${verified ? '' : 'Up to '}*€${montantReel(s)}* — you keep *€${montantNetReel(s)} net* (75%)`;
-  return `💰 ${verified ? '' : 'Jusqu’à '}*${montantReel(s)} €* — vous gardez *${montantNetReel(s)} € nets* (75 %)`;
+  return `💰 ${verified ? '' : "Jusqu'à "}*${montantReel(s)} €* — vous gardez *${montantNetReel(s)} € nets* (75 %)`;
 }
 
 // ─── Stats choc (rotation MSG1) ───────────────────────────────────────────────
@@ -362,14 +360,7 @@ function LL(lead, en, fr) { return leadEN(lead) ? en : fr; }
 // Libellé d'incident localisé pour l'affichage client (récap / confirmation).
 // incident_libelle est stocké en FR (pour le CRM) → traduire à l'affichage si la session est EN.
 function incidentLabel(s) {
-  const fr = (s && s.incident_libelle) || '';
-  if (!isEN(s)) return fr || '—';
-  switch (s && s.incident) {
-    case 'annulation': return 'Cancellation';
-    case 'refus': return 'Denied boarding';
-    case 'retard': return (s.duree_retard === 'inconnue') ? 'Delay (to confirm)' : 'Delay +3h';
-    default: return fr || '—';
-  }
+  return (s && s.incident_libelle) || '—';
 }
 // Détection de langue au 1er contact (haute précision : ne renvoie 'en' QUE sur des mots sans ambiguïté,
 // absents du français → un francophone n'est JAMAIS détecté anglophone par erreur). '' = français par défaut.
@@ -380,7 +371,7 @@ function detectLang(text) {
   return '';
 }
 // Variante : choisit une variante de ton FR (pickVariant) en français, mais renvoie un texte EN fixe en anglais.
-function LV(s, phone, key, en) { return isEN(s) ? en : pickVariant(phone, key); }
+function LV(s, phone, key, en) { return pickVariant(phone, key); }
 
 // ─── Traduction à l'envoi (EN only) ────────────────────────────────────────────
 // Les messages FR encore codés en dur (non passés par L()) sont traduits FR→EN à la volée
@@ -466,9 +457,10 @@ async function sendButtons(phone, config, cfg) {
 }
 async function sendList(phone, { header, body, footer, buttonText, items, lang }, cfg) {
   if (!cfg) return;
-  if (phoneIsEN(phone)) { // client EN : traduit corps + titres des lignes
+  if (phoneIsEN(phone)) { // client EN : traduit corps + titres des lignes + bouton
     if (body) body = await translateEN(body);
     if (header) header = await translateEN(header);
+    if (buttonText) buttonText = await translateEN(buttonText);
     items = await Promise.all((items || []).map(async (i) => ({ ...i, title: await translateEN(i.title), description: i.description ? await translateEN(i.description) : i.description })));
   }
   const wa = normalizeWatiPhone(phone);
@@ -1361,23 +1353,16 @@ function attributeId(s, nom) {
 // Formate la liste des pièces manquantes (texte WhatsApp)
 function missingDocsText(s) {
   const st = docsStatus(s); const miss = [];
-  const en = isEN(s);
-  if (st.missingId.length) miss.push(en ? `the *photo ID* of *${st.missingId.join('*, *')}*` : `la *pièce d'identité* de *${st.missingId.join('*, *')}*`);
+  if (st.missingId.length) miss.push(`la *pièce d'identité* de *${st.missingId.join('*, *')}*`);
   if (!st.travelProofOk) {
-    if ((s.pax || 1) <= 1) miss.push(en ? `your *boarding pass* or *e-ticket*` : `votre *carte d'embarquement* ou *e-billet*`);
-    else if (st.missingTravel.length && st.missingTravel.length < s.pax) miss.push(en ? `the *travel proof* of *${st.missingTravel.join('*, *')}* — their *boarding pass*, or an *e-ticket* listing everyone` : `la *preuve de voyage* de *${st.missingTravel.join('*, *')}* — sa *carte d'embarquement*, ou un *e-billet* qui liste tout le monde`);
-    else miss.push(en ? `a *travel proof per passenger*: a *boarding pass* for each, or a single *e-ticket* listing them all` : `une *preuve de voyage par passager* : une *carte d'embarquement* pour chacun, ou un seul *e-billet* qui les liste tous`);
+    if ((s.pax || 1) <= 1) miss.push(`votre *carte d'embarquement* ou *e-billet*`);
+    else if (st.missingTravel.length && st.missingTravel.length < s.pax) miss.push(`la *preuve de voyage* de *${st.missingTravel.join('*, *')}* — sa *carte d'embarquement*, ou un *e-billet* qui liste tout le monde`);
+    else miss.push(`une *preuve de voyage par passager* : une *carte d'embarquement* pour chacun, ou un seul *e-billet* qui les liste tous`);
   }
-  if (miss.length) return en ? `📎 Still missing: ${miss.join(' and ')}.` : `📎 Il manque encore : ${miss.join(' et ')}.`;
+  if (miss.length) return `📎 Il manque encore : ${miss.join(' et ')}.`;
   const v = s.flightVerdict;
-  if (v === 'hors_champ' || v === 'sous_seuil') return en
-    ? `✅ All your documents are here, thank you ${firstNameOf(s)}! File ${s.ref || ''} is complete. An expert confirms the *exact amount* (free check) and we file the claim — €0 if we don't win.`
-    : `✅ Toutes vos pièces sont là, merci ${firstNameOf(s)} ! Le dossier ${s.ref || ''} est complet. Un expert confirme le *montant exact* (vérification gratuite) et on lance la réclamation — 0 € si on ne gagne pas.`;
-  // Accusé LÉGER seulement : la confirmation terminale (« on prend le relais », rappel, lien) est
-  // envoyée UNE SEULE FOIS, par la légende du mandat à la signature (submit-mandat.js). Pas de doublon ici.
-  return en
-    ? `✅ All your documents are here, thank you ${firstNameOf(s)}! Your file *${s.ref || ''}* is complete. 🙏`
-    : `✅ Toutes vos pièces sont là, merci ${firstNameOf(s)} ! Votre dossier *${s.ref || ''}* est au complet. 🙏`;
+  if (v === 'hors_champ' || v === 'sous_seuil') return `✅ Toutes vos pièces sont là, merci ${firstNameOf(s)} ! Le dossier ${s.ref || ''} est complet. Un expert confirme le *montant exact* (vérification gratuite) et on lance la réclamation — 0 € si on ne gagne pas.`;
+  return `✅ Toutes vos pièces sont là, merci ${firstNameOf(s)} ! Votre dossier *${s.ref || ''}* est au complet. 🙏`;
 }
 
 // Pièce expirée (date d'expiration passée) ?
@@ -1409,21 +1394,14 @@ async function askOcrConfirm(phone, s, cfg, mediaUrl) {
     s.doc_pending = { name: pp.name || '', dob: pp.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || '', sexe: pp.sexe || '', viaPhoto: true };
     s.step = 'doc_pass_confirm';
     await setState(phone, s);
-    const lines = (isEN(s) ? [
-      `📋 *Passenger ${i}/${s.pax} — I read:*`,
-      `👤 ${pp.name || '—'}`,
-      pp.dob ? `🎂 Born ${pp.dob}` : '',
-      minor ? `👶 *Minor* — parental signature required` : '',
-      expired ? `⚠️ *Expired* document (${pp.expiry}). We continue, an advisor will check.` : '',
-      `\nIs this the right person?`,
-    ] : [
+    const lines = [
       `📋 *Passager ${i}/${s.pax} — j'ai lu :*`,
       `👤 ${pp.name || '—'}`,
       pp.dob ? `🎂 Né(e) le ${pp.dob}` : '',
       minor ? `👶 *Mineur·e* — signature parentale requise` : '',
       expired ? `⚠️ Pièce *expirée* (${pp.expiry}). On continue, un conseiller vérifiera.` : '',
       `\nC'est bien cette personne ?`,
-    ]).filter(Boolean).join('\n');
+    ].filter(Boolean).join('\n');
     await send(phone, lines, cfg);
     return sendButtons(phone, [{ id: 'pass_ok', text: L(s, '✅ Correct', '✅ C\'est correct') }, { id: 'pass_fix', text: L(s, '✏️ Edit', '✏️ Corriger') }], cfg);
   } else {
@@ -1465,9 +1443,7 @@ function isValidStoredDate(d) { const m = (d || '').match(/^(\d{1,2})\/(\d{1,2})
 const MOIS_FR = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
 // '15/03/2026' → '15 mars 2026' (confirmation lisible, lève les inversions JJ/MM).
 function dateEnLettres(d) { const m = (d || '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); if (!m) return d || ''; const j = +m[1]; return `${j === 1 ? '1er' : j} ${MOIS_FR[+m[2] - 1]} ${m[3]}`; }
-const DATE_INVALIDE = (txt, en) => en
-  ? `🤔 *${txt}* isn't a valid date on the calendar (check the day and month).\nResend the date as *DD/MM/YYYY* _(e.g. 15/03/2026 for 15 March 2026)_:`
-  : `🤔 *${txt}* n'existe pas dans le calendrier (vérifiez le jour et le mois).\nRenvoyez la date au format *JJ/MM/AAAA* _(ex. 15/03/2026 pour le 15 mars 2026)_ :`;
+const DATE_INVALIDE = (txt) => `🤔 *${txt}* n'existe pas dans le calendrier (vérifiez le jour et le mois).\nRenvoyez la date au format *JJ/MM/AAAA* _(ex. 15/03/2026 pour le 15 mars 2026)_ :`;
 function tooOld(dateStr) { const m = (dateStr || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); if (!m) return false; const d = new Date(+m[3], +m[2] - 1, +m[1]); return (Date.now() - d.getTime()) > 5 * 365.25 * 864e5; }
 // Date sans année (ex. "15/07") → il faut demander l'année (ne jamais la deviner).
 function needYear(d) { return /^\d{1,2}\/\d{1,2}$/.test((d || '').trim()); }
@@ -1483,9 +1459,7 @@ function isMinorAt(dob, flightDateStr) {
   if (ref.getMonth() < birth.getMonth() || (ref.getMonth() === birth.getMonth() && ref.getDate() < birth.getDate())) age--;
   return age < 18;
 }
-const FUTURE_JOKE = (en) => en
-  ? `😄 Now you're time-travelling! This flight hasn't happened yet — we can only claim for a flight that has *already taken place*. 🪄\n\nGive me the *real* flight date (DD/MM/YYYY):`
-  : `😄 Là vous voyagez dans le futur ! Ce vol n'a pas encore eu lieu — on ne peut réclamer que pour un vol *déjà passé*. 🪄\n\nDonnez-moi la *vraie* date du vol (JJ/MM/AAAA) :`;
+const FUTURE_JOKE = () => `😄 Là vous voyagez dans le futur ! Ce vol n'a pas encore eu lieu — on ne peut réclamer que pour un vol *déjà passé*. 🪄\n\nDonnez-moi la *vraie* date du vol (JJ/MM/AAAA) :`;
 function recentYears() { const base = new Date().getFullYear(); return [base, base - 1, base - 2, base - 3, base - 4]; }
 
 const STOP_FOOTER = '_L\'équipe Robin des Airs 🏹_';
@@ -2034,8 +2008,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (id === 'scan_ok' || n === '1' || lower.includes('oui') || lower.includes('yes')) {
       delete s.scan_pages; delete s._scanWarn; s.scanConfirmed = true; // déjà confirmé ici (e-billet) → pas de 2e confirmation au récap
       if (needYear(s.date)) { s.step = 'annee'; await setState(phone, s); return askYear(phone, s, cfg); }
-      if (s.date && !isValidStoredDate(s.date)) { const bad = s.date; s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, DATE_INVALIDE(bad, isEN(s)), cfg); }
-      if (inFuture(s.date)) { s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, FUTURE_JOKE(isEN(s)), cfg); }
+      if (s.date && !isValidStoredDate(s.date)) { const bad = s.date; s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, DATE_INVALIDE(bad), cfg); }
+      if (inFuture(s.date)) { s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, FUTURE_JOKE(), cfg); }
       if (tooOld(s.date)) { return finNonEligible(phone, L(s, PRESCRIPTION_5ANS_EN, pickVariant(phone, 'PRESCRIPTION_5ANS')), cfg); }
       return apresVol(phone, s, cfg);
     }
@@ -2064,7 +2038,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       if (s.pax > 1) { s.step = 'fix_nom_which'; await setState(phone, s); return send(phone, L(s, `✏️ Which passenger to fix? Enter their *number* (1 to ${s.pax}).`, `✏️ Quel passager corriger ? Indiquez son *numéro* (1 à ${s.pax}).`), cfg); }
       s.step = 'fix_nom'; await setState(phone, s); return send(phone, L(s, `👤 Current name: *${(s.names && s.names[0]) || '—'}*\nJust type the *correct full name* 👇`, `👤 Nom actuel : *${(s.names && s.names[0]) || '—'}*\nTapez simplement le *bon nom complet* 👇`), cfg);
     }
-    if (n === '4' || lower.includes('trajet') || lower.includes('route')) { s.step = 'fix_route'; await setState(phone, s); return send(phone, L(s, `🗺️ Current route: *${s.route || '—'}*\nJust type the *correct route* 👇 _(e.g. CDG → DSS)_`, `🗺️ Trajet actuel : *${s.route || '—'}*\nTapez simplement le *bon trajet* 👇 _(ex. CDG → DSS)_`), cfg); }
+    if (n === '4' || lower.includes('trajet') || lower.includes('route')) { s.step = 'fix_route'; await setState(phone, s); return send(phone, L(s, `🗺️ Current route: *${s.route || '—'}*\nJust type the *correct route* 👇 _(e.g. Paris - Dakar)_`, `🗺️ Trajet actuel : *${s.route || '—'}*\nTapez simplement le *bon trajet* 👇 _(ex. Paris - Dakar)_`), cfg); }
     if (n === '5' || lower.includes('pnr') || lower.includes('réserv') || lower.includes('reserv') || lower.includes('booking')) { s.step = 'fix_pnr'; await setState(phone, s); return send(phone, L(s, `🎫 Current PNR: *${s.pnr || '—'}*\nType the *correct booking reference* (6 characters, letters + digits) 👇, or *skip*.`, `🎫 PNR actuel : *${s.pnr || '—'}*\nTapez le *bon numéro de réservation* (6 caractères, lettres + chiffres) 👇, ou *passer*.`), cfg); }
     return goCorrection(phone, s, cfg);
   }
@@ -2087,13 +2061,13 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (s.step === 'fix_date') {
     const d = parseDateInput(input, '20');
     if (d) {
-      if (inFuture(d)) return send(phone, FUTURE_JOKE(isEN(s)), cfg);
+      if (inFuture(d)) return send(phone, FUTURE_JOKE(), cfg);
       if (tooOld(d)) { return finNonEligible(phone, L(s, PRESCRIPTION_5ANS_EN, pickVariant(phone, 'PRESCRIPTION_5ANS')), cfg); }
       s.date = d; await setState(phone, s);
       await send(phone, L(s, `✅ Date corrected: *${d}* — *${dateEnLettres(d)}*.`, `✅ Date corrigée : *${d}* — le *${dateEnLettres(d)}*.`), cfg);
       return afterFix(phone, s, cfg);
     }
-    if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim(), isEN(s)), cfg);
+    if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim()), cfg);
     return send(phone, L(s, `Date not recognised. Format DD/MM/YYYY:`, `Date non reconnue. Format JJ/MM/AAAA :`), cfg);
   }
   if (s.step === 'fix_nom') {
@@ -2102,7 +2076,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   }
   if (s.step === 'fix_route') {
     if (input.length >= 3) { s.route = input.replace(/->/g, '→').trim(); await setState(phone, s); return afterFix(phone, s, cfg); }
-    return send(phone, L(s, `Route too short (e.g. CDG → DSS):`, `Trajet trop court (ex. CDG → DSS) :`), cfg);
+    return send(phone, L(s, `Route too short (e.g. Paris - Dakar):`, `Trajet trop court (ex. Paris - Dakar) :`), cfg);
   }
   // Année manquante (carte sans année) → on la demande, jamais deviner
   if (s.step === 'annee') {
@@ -2110,7 +2084,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const year = m ? m[1] : null;
     if (year) {
       const d = `${s.date.replace(/\/$/, '')}/${year}`;
-      if (!isValidStoredDate(d)) { s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, DATE_INVALIDE(d, isEN(s)), cfg); }
+      if (!isValidStoredDate(d)) { s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, DATE_INVALIDE(d), cfg); }
       if (inFuture(d)) { await send(phone, L(s, `😄 ${year}? That flight hasn't happened yet — we claim for a flight *already past*! Pick the correct year 👇`, `😄 ${year} ? Ce vol n'a pas encore eu lieu — on réclame pour un vol *déjà passé* ! Choisissez la bonne année 👇`), cfg); return askYear(phone, s, cfg); }
       s.date = d;
       if (tooOld(s.date)) { return finNonEligible(phone, L(s, PRESCRIPTION_5ANS_EN, pickVariant(phone, 'PRESCRIPTION_5ANS')), cfg); }
@@ -2132,7 +2106,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   if (s.step === 'm_date') {
     const d = parseDateInput(input, '20');
     if (d) {
-      if (inFuture(d)) return send(phone, FUTURE_JOKE(isEN(s)), cfg);
+      if (inFuture(d)) return send(phone, FUTURE_JOKE(), cfg);
       s.date = d;
       if (tooOld(s.date)) { return finNonEligible(phone, L(s, PRESCRIPTION_5ANS_EN, pickVariant(phone, 'PRESCRIPTION_5ANS')), cfg); }
       const ok = `✅ Vol du *${d}* — le *${dateEnLettres(d)}*.`;
@@ -2188,7 +2162,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       // Vol vraiment non retrouvé → on demande le trajet en 2 questions imagées (décollage 🛫 / atterrissage 🛬).
       return askDepCity(phone, s, cfg);
     }
-    if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim(), isEN(s)), cfg);
+    if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim()), cfg);
     return send(phone, L(s, `Date not recognised. Format DD/MM/YYYY (e.g. 15/03/2026):`, `Date non reconnue. Format JJ/MM/AAAA (ex. 15/03/2026) :`), cfg);
   }
   // Choix du tronçon parmi 2-3 options (milk-run ou LLM multi-routes).
@@ -2408,7 +2382,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       await send(phone, L(s, `✅ ${p.name || ('Passenger ' + (s.doc_idx + 1))} — born *${dob}* (${dateEnLettres(dob)})${minor ? ' 👶 _(minor: parental signature required)_' : ''}\n📸 _Their ID (passport or national ID) is still to be sent — essential to claim from the airline._`, `✅ ${p.name || ('Passager ' + (s.doc_idx + 1))} — ${_ne} le *${dob}* (${dateEnLettres(dob)})${minor ? ` 👶 _(${_min} : signature parentale requise)_` : ''}\n📸 _Sa pièce d'identité (passeport ou carte d'identité) reste à envoyer — indispensable pour réclamer auprès de la compagnie._`), cfg);
       s.doc_idx++; await setState(phone, s); return nextPassport(phone, s, cfg);
     }
-    if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim(), isEN(s)), cfg);
+    if (/\d{1,2}[\/\-. ]\d{1,2}[\/\-. ]\d{2,4}/.test(input)) return send(phone, DATE_INVALIDE(input.trim()), cfg);
     return send(phone, L(s, `Date not recognised. Format DD/MM/YYYY (e.g. 05/09/2012):`, `Date non reconnue. Format JJ/MM/AAAA (ex. 05/09/2012) :`), cfg);
   }
   if (s.step === 'doc_boarding') {
@@ -2621,26 +2595,18 @@ async function continueAnnul(phone, s, cfg) {
 }
 async function sendPax(phone, s, cfg) {
   s.step = 'nb_pax'; await setState(phone, s);
-  await sendList(phone, { body: L(s, `${bar('nb_pax')}\n👥 How many passengers are claiming on this flight?`, `${bar('nb_pax')}\n👥 Combien de passagers réclament sur ce vol ?`), buttonText: L(s, 'Number ▾', 'Nombre ▾'), lang: isEN(s) ? 'en' : 'fr', items: isEN(s) ? [
-    { title: '1 passenger', description: '€600' }, { title: '2 passengers', description: '€1,200' }, { title: '3 passengers', description: '€1,800' }, { title: '4 passengers', description: '€2,400' }, { title: '5 passengers', description: '€3,000' }, { title: '6 or more', description: 'We handle your group' },
-  ] : [
+  await sendList(phone, { body: L(s, `${bar('nb_pax')}\n👥 How many passengers are claiming on this flight?`, `${bar('nb_pax')}\n👥 Combien de passagers réclament sur ce vol ?`), buttonText: L(s, 'Number ▾', 'Nombre ▾'), items: [
     { title: '1 passager', description: '600 €' }, { title: '2 passagers', description: '1 200 €' }, { title: '3 passagers', description: '1 800 €' }, { title: '4 passagers', description: '2 400 €' }, { title: '5 passagers', description: '3 000 €' }, { title: '6 ou plus', description: 'On gère votre groupe' },
   ] }, cfg);
 }
 async function askYear(phone, s, cfg) {
   s.step = 'annee'; await setState(phone, s);
   const ys = recentYears();
-  await sendList(phone, { header: L(s, 'Flight year', 'Année du vol'), body: L(s, `${bar('annee')}\n📅 Your ticket shows *${s.date}* but doesn't specify the year.\nWhich year was it?`, `${bar('annee')}\n📅 Votre billet indique le *${s.date}* mais ne précise pas l'année.\nC'était quelle année ?`), buttonText: L(s, 'Year ▾', 'Année ▾'), lang: isEN(s) ? 'en' : 'fr', items: ys.map(y => ({ title: String(y) })).concat([{ title: L(s, `Before ${ys[ys.length - 1]}`, `Avant ${ys[ys.length - 1]}`) }]) }, cfg);
+  await sendList(phone, { header: L(s, 'Flight year', 'Année du vol'), body: L(s, `${bar('annee')}\n📅 Your ticket shows *${s.date}* but doesn't specify the year.\nWhich year was it?`, `${bar('annee')}\n📅 Votre billet indique le *${s.date}* mais ne précise pas l'année.\nC'était quelle année ?`), buttonText: L(s, 'Year ▾', 'Année ▾'), items: ys.map(y => ({ title: String(y) })).concat([{ title: `Avant ${ys[ys.length - 1]}` }]) }, cfg);
 }
 async function goCorrection(phone, s, cfg) {
   s.step = 'correction'; await setState(phone, s);
-  await sendList(phone, { header: L(s, 'Fix', 'Corriger'), body: L(s, `✏️ What would you like to fix?`, `✏️ Que souhaitez-vous corriger ?`), buttonText: L(s, 'Fix ▾', 'Corriger ▾'), lang: isEN(s) ? 'en' : 'fr', items: isEN(s) ? [
-    { title: '✈️ Flight', description: s.vol || '—' },
-    { title: '📅 Date', description: s.date || '—' },
-    { title: '👤 Name', description: (s.names && s.names[0]) || '—' },
-    { title: '🗺️ Route', description: s.route || '—' },
-    { title: '🎫 PNR', description: s.pnr || '—' },
-  ] : [
+  await sendList(phone, { header: L(s, 'Fix', 'Corriger'), body: L(s, `✏️ What would you like to fix?`, `✏️ Que souhaitez-vous corriger ?`), buttonText: L(s, 'Fix ▾', 'Corriger ▾'), items: [
     { title: '✈️ Vol', description: s.vol || '—' },
     { title: '📅 Date', description: s.date || '—' },
     { title: '👤 Nom', description: (s.names && s.names[0]) || '—' },
@@ -2974,7 +2940,7 @@ async function relancerEtape(phone, s, cfg) {
     case 'm_route_confirm': return s.route ? sendButtons(phone, { body: L(s, `✈️ Was your route *${s.route}*?`, `✈️ Votre trajet était *${s.route}* ?`), buttons: [{ id: 'route_ok', text: L(s, '✅ Yes', '✅ Oui') }, { id: 'route_fix', text: L(s, '✏️ Fix', '✏️ Corriger') }] }, cfg) : send(phone, L(s, `🗺️ What was the *route*? _(e.g. Dakar → Paris)_`, `🗺️ Quel était le *trajet* ? _(ex : Dakar → Paris)_`), cfg);
     case 'm_vol': return send(phone, L(s, `📝 Flight number? _(e.g. AF718, AT540)_`, `📝 Numéro de vol ? _(ex. AF718, AT540)_`), cfg);
     case 'm_date': return send(phone, L(s, `📅 Flight date? _(e.g. 15/03/2026)_`, `📅 Date du vol ? _(ex. 15/03/2026)_`), cfg);
-    case 'm_route': return send(phone, L(s, `🗺️ What was the *route*? _(e.g. Dakar → Paris, or DSS → CDG)_`, `🗺️ Quel était le *trajet* ? _(ex : Dakar → Paris, ou DSS → CDG)_`), cfg);
+    case 'm_route': return send(phone, L(s, `🗺️ What was the *route*? _(e.g. Dakar - Paris)_`, `🗺️ Quel était le *trajet* ? _(ex : Dakar - Paris)_`), cfg);
     case 'm_dep': return askDepCity(phone, s, cfg);
     case 'm_arr': return askArrCity(phone, s, cfg);
     case 'm_stop_arr': return (s.routeStops && s.routeStops.length) ? askStopArr(phone, s, cfg) : askDepCity(phone, s, cfg);
