@@ -436,9 +436,8 @@ async function sendButtons(phone, config, cfg) {
   let body    = isArr ? '👇' : (config.body || '');
   const footer  = isArr ? undefined : config.footer;
   let buttons = isArr ? config : (config.buttons || []);
-  if (phoneIsEN(phone)) { // client EN : traduit corps + libellés des boutons
+  if (phoneIsEN(phone)) { // client EN : traduit le corps, boutons restent FR (emojis universels + matching fiable)
     if (body && body !== '👇') body = await translateEN(body);
-    buttons = await Promise.all(buttons.map(async (b) => ({ ...b, text: await translateEN(b.text) })));
   }
   if (body && body !== '👇') appendWaMessage(phone, body, 'bot'); // mirror SORTANT (corps des boutons) → store conversation CRM
   const wa = normalizeWatiPhone(phone);
