@@ -1804,7 +1804,7 @@ function toggleEscaleVol3() {
       + '</span>';
     }
     var PASS = {
-      fr: boardingPass({ aria: 'Carte d\'embarquement (exemple)', kicker: 'Carte d\'embarquement', lPax: 'Passager', pax: 'AMINATA DIALLO', lSeat: 'Siège', seat: '23A', fromC: 'CDG', fromN: 'Paris', toC: 'DKR', toN: 'Dakar', lFlight: 'Vol', flight: 'AF718', lDep: 'Départ', dep: '19:40' }),
+      fr: boardingPass({ aria: 'Carte d\'embarquement (exemple)', kicker: 'Carte d\'embarquement', lPax: 'Passager', pax: 'AMINATA DIALLO', lSeat: 'Siège', seat: '23A', fromC: 'CDG', fromN: 'Paris', toC: 'DSS', toN: 'Dakar', lFlight: 'Vol', flight: 'AF718', lDep: 'Départ', dep: '19:40' }),
       en: boardingPass({ aria: 'Boarding pass (example)', kicker: 'Boarding pass', lPax: 'Passenger', pax: 'AMA MENSAH', lSeat: 'Seat', seat: '23A', fromC: 'LHR', fromN: 'London', toC: 'ACC', toN: 'Accra', lFlight: 'Flight', flight: 'BA081', lDep: 'Departure', dep: '19:40' })
     };
 
