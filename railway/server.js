@@ -1758,7 +1758,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const L = (ri >= 0 && langArr[ri]) ? langArr[ri] : matchLang(input);
     if (!L) return sendLangue(phone, s, cfg);
     s.langue = `${L.flag} ${L.label}`; s.langue_code = L.code;
-    if (L.africaine) { s.escalade = 'langue_africaine'; await send(phone, `${L.natif}\n\n📞 *${L.agent}, qui parle ${L.label}, vous rappellera* pour vous accompagner *dans votre langue* — au *+33 7 56 86 36 30* (enregistrez-le sous « Robin des Airs » pour décrocher).\n\n💬 En attendant, *moi l'assistant, je prépare votre dossier ici en français* (je ne parle pas encore ${L.label} 🙏). 👇`, cfg); }
+    if (L.africaine) { s.escalade = 'langue_africaine'; await send(phone, `${L.natif}\n\n💬 *Moi l'assistant, je prépare votre dossier ici en français* (je ne parle pas encore ${L.label} 🙏) — on avance ensemble, étape par étape.\n\n📞 Et *à la fin, ${L.agent} vous rappellera dans votre langue* — au *+33 7 56 86 36 30* (enregistrez-le sous « Robin des Airs » pour décrocher). 👇`, cfg); }
     else if (L.code === 'en') { await send(phone, `Perfect — I'll assist you in English. 🇬🇧\nLet's check together what compensation you may be owed, *up to €600 per passenger*. 👇`, cfg); }
     await setState(phone, s); return askRouteZone(phone, s, cfg);
   }
@@ -3184,6 +3184,19 @@ app.post('/api/mandat-signed', (req, res) => {
   console.log('mandat signe ref=' + (b.ref || '?') + ' marked=' + marked);
   if (lead && lead.phone) triggerFraisCollection(lead).catch(() => {}); // propose l'envoi des reçus de frais (Art. 8/9), best-effort
   if (lead && lead.phone) armPiecesReminder(lead).catch(() => {}); // arme 1 rappel pièces différé si le dossier est incomplet (best-effort)
+  // « À la fin de la conversation » : le mandat signé = LE moment où l'on prévient qu'un conseiller natif doit
+  // rappeler le client dans sa langue africaine (le bot a continué en français). Source = lead.langue (code menu).
+  // → fire-once, langues africaines uniquement, + mise en tête de « À rappeler » du Bureau (wantsCall).
+  if (lead && lead.phone && lead.langue) {
+    try {
+      const La = Object.values(LANGS).find((v) => v.africaine && v.code === lead.langue);
+      if (La) {
+        const nm = lead.name ? String(lead.name).split(/\s+/)[0] : (lead.phone || '');
+        upsertLead(lead.phone, { wantsCall: true, wantsCallAt: Date.now(), callLangue: La.label, callAgent: La.agent });
+        notifyOwnerWhatsApp(lead.phone, `📞 *RAPPEL LANGUE — ${La.agent} (${La.label})*\n${nm} a *signé* son mandat (${lead.ref || lead.phone}) et avait choisi le *${La.label}*.\n→ *${La.agent}* doit le rappeler *dans sa langue*. Tél ${lead.phone}. (en tête de « À rappeler » du Bureau)`).catch(() => {});
+      }
+    } catch (_) {}
+  }
   if (!marked) notifyOwnerWhatsApp(b.phone || b.waId || '', `⚠️ Signature reçue (ref=${b.ref || '?'} · tel=${b.phone || b.waId || '?'}) mais LEAD INTROUVABLE → relances NON stoppées. À vérifier / arrêter manuellement.`).catch(() => {}); // fin de l'échec silencieux
   res.json({ ok: true, marked });
 });
