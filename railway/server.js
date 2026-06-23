@@ -317,9 +317,9 @@ const LANGS = {
   'english':  { code: 'en', flag: '🇬🇧', label: 'English', africaine: false },
   'wolof':    { code: 'wo', flag: '🇸🇳', label: 'Wolof', africaine: true, agent: 'Sokhna', natif: 'Dëkk sa Wolof, bëgg na la wax — expert bi dafa xam Wolof, dafa di la woote. 🤝' },
   'mandinka': { code: 'mnk', flag: '🇬🇲', label: 'Mandinka', africaine: true, agent: 'Binta', natif: 'I be Mandinka kan na — expert do bena i ye Mandinka fo. 🤝' },
-  'twi':      { code: 'twi', flag: '🇬🇭', label: 'Twi', africaine: true, agent: 'Ama', natif: 'Yɛka Twi — ɔbenfoɔ bi a ɔka Twi bɛfrɛ wo. 🤝' },
+  'twi':      { code: 'twi', flag: '🇬🇭', label: 'Twi', africaine: true, agent: 'Abena', natif: 'Yɛka Twi — ɔbenfoɔ bi a ɔka Twi bɛfrɛ wo. 🤝' },
   'yoruba':   { code: 'yo', flag: '🇳🇬', label: 'Yoruba', africaine: true, agent: 'Yetunde', natif: 'A nsọ Yoruba — amoye kan tó ń sọ Yoruba yóò pè ọ. 🤝' },
-  'peul':     { code: 'ff', flag: '🇬🇳', label: 'Peul / Fulfulde', africaine: true, agent: 'Mariama', natif: 'Eɗen haala Pulaar — annduɗo haalata Pulaar maa noddu maa. 🤝' },
+  'peul':     { code: 'ff', flag: '🇬🇳', label: 'Peul / Fulfulde', africaine: true, agent: 'Djenabou', natif: 'Eɗen haala Pulaar — annduɗo haalata Pulaar maa noddu maa. 🤝' },
 };
 const FLAG_LANG = { '🇫🇷': 'fr', '🇬🇧': 'en', '🇸🇳': 'wo', '🇬🇲': 'mnk', '🇬🇭': 'twi', '🇳🇬': 'yo', '🇬🇳': 'ff' };
 function matchLang(input) {
