@@ -1826,6 +1826,12 @@ function showSuccess(payload, ok) {
   document.getElementById('mandatForm').style.display='none';
   const ss = document.getElementById('successScreen');
   ss.style.display='block';
+  gtag('event', 'conversion', {
+    'send_to': 'AW-18269983535/jWR7CKuQjsUcEK-m54dE',
+    'value': 150.0,
+    'currency': 'EUR',
+    'transaction_id': REF
+  });
   document.getElementById('sRef').textContent = REF;
   // Titre + signature chaleureuse personnalisés (prénom)
   const fnRaw = (payload.firstName || document.getElementById('fn')?.value || '').trim();
