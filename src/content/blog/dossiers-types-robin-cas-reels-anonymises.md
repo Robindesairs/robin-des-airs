@@ -81,7 +81,7 @@ Voici 8 cas représentatifs traités par Robin des Airs ces 18 derniers mois. No
 
 ## Confidentialité
 
-Tous nos clients signent un mandat de représentation. Aucune donnée nominative n'est partagée sans accord. Les chiffres ci-dessus sont issus de cas anonymisés à des fins pédagogiques.
+Tous nos clients signent un contrat de cession de créance. Aucune donnée nominative n'est partagée sans accord. Les chiffres ci-dessus sont issus de cas anonymisés à des fins pédagogiques.
 
 Voir : [Pourquoi choisir Robin](/blog/pourquoi-choisir-robin-des-airs-difference.html), [Réclamer seul ou via service](/blog/reclamer-seul-ou-passer-par-un-service-indemnite-vol.html).
 

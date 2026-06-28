@@ -1,4 +1,4 @@
-# Message 1 — Envoi du mandat (REWRITE)
+# Message 1 — Envoi du contrat de cession de créance (REWRITE)
 
 **Quand l'envoyer :** Après réception des pièces justificatives, dossier constitué
 **À adapter :** [Prénom], [N° de Vol], [Lien Yousign], [600€]
@@ -18,7 +18,7 @@ Dès que c'est fait, j'attaque pour récupérer vos [600€]. 🚀
 ---
 
 ## Rationale Message 1
-- "Autorisation simple" remplace "mandat" — le mot est immédiatement compréhensible par un locuteur francophone non-juridique, sans notion légale à décoder
+- "Autorisation simple" / "accord écrit" est le terme de vulgarisation utilisé À L'ORAL dans ce message d'accroche pour rester compréhensible par un locuteur non-juridique. ⚠️ Le document juridique sous-jacent est désormais un **contrat de cession de créance** (et non plus un « mandat ») : à valider que cette vulgarisation reste fidèle à la nature du document signé.
 - "Ça ne vous coûte rien" + "vous pouvez l'annuler en 14 jours" répondent directement à la méfiance vis-à-vis des engagements cachés, avant que le client ne se pose la question
 - "Pour que je puisse agir en votre nom face à la compagnie" explique le pourquoi du document en une demi-phrase, sans jargon
 - L'ouverture sobre ("j'ai tout vérifié") remplace "Bonne nouvelle" qui sonnait creux — elle signale la compétence et le soin apporté au dossier

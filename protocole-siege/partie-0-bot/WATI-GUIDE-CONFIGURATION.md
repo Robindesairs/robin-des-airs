@@ -335,7 +335,7 @@ Parmi les passagers suivants, y a-t-il des *mineurs* (moins de 18 ans) ?
 
 {{liste_bullets}}
 
-⚖️ Obligation légale pour préparer le bon mandat.
+⚖️ Obligation légale pour préparer le bon contrat de cession de créance.
 🟢🟢🟢🟢🟢🟢🟢
 ```
 - **Bouton 1 :** `Non, tous majeurs` → **Next : STEP 7b**
@@ -347,7 +347,7 @@ Parmi les passagers suivants, y a-t-il des *mineurs* (moins de 18 ans) ?
 - **Type :** Réponse libre (texte)
 - **Texte :**
 ```
-📧 *Pour vous envoyer le mandat et le suivi du dossier*
+📧 *Pour vous envoyer le contrat de cession et le suivi du dossier*
 
 Quelle est votre adresse email ?
 _(Ex. : prenom@gmail.com)_
@@ -360,7 +360,7 @@ _(Ex. : prenom@gmail.com)_
 - **Type :** Réponse libre (texte)
 - **Texte :**
 ```
-📮 *Adresse postale* (pour le mandat officiel)
+📮 *Adresse postale* (pour le contrat de cession officiel)
 
 Rue, ville et pays —
 ou *ville + pays* si vous préférez.
@@ -413,7 +413,7 @@ Prochaine étape : *2 minutes* pour l'activer. ⬇️
 
 ---
 
-### ✅ FIN B — Lien mandat (+3 à 5 secondes)
+### ✅ FIN B — Lien du contrat de cession (+3 à 5 secondes)
 - **Type :** Message texte (pas de bouton)
 - **Délai :** 3 secondes
 - **Auto Next :** ✅ OUI → vers FIN C (délai 30 secondes)
@@ -421,8 +421,8 @@ Prochaine étape : *2 minutes* pour l'activer. ⬇️
 ```
 ✅ *Dossier {{ref_dossier}} enregistré.*
 
-Pour que Robin des Airs représente *{{nom_principal}}*
-auprès de *{{compagnie}}*, signez votre *mandat de représentation*.
+Pour que Robin des Airs recouvre l'indemnité de *{{nom_principal}}*
+auprès de *{{compagnie}}*, signez votre *contrat de cession de créance*.
 
 📋 Lisible avant signature — *aucune info bancaire à cette étape.*
 

@@ -20,7 +20,7 @@
 | Type d'incident (Retard/Annulation/Surbooking/Correspondance ratée) | Partielle | Oui | Insuffisant — voir §2 |
 | Photo carte d'embarquement | Oui — extrait compagnie, route, date | Oui | Garder, c'est le meilleur élément du flow |
 | Année du vol | Oui — critère prescription 3 ans | Oui | Garder |
-| Mineurs | Aucune qualification | Oui — mandat adapté | Garder |
+| Mineurs | Aucune qualification | Oui — contrat de cession adapté | Garder |
 
 ### Ce qui n'est PAS demandé et devrait l'être
 
@@ -34,7 +34,7 @@ Pour le type d'incident "Retard", le bot ne demande pas "combien d'heures de ret
 Le bot ne pose pas la question de base : "La compagnie vous a-t-elle invoqué la météo, une grève ATC ou un cas de force majeure ?" Ce n'est pas éliminatoire (Robin conteste ces arguments, comme l'indique la FAQ §5), mais c'est une information qui change le montage du dossier et l'anticipation du client. Le collecter tôt évite une surprise à l'étape 4.
 
 **Données manquantes pour le dossier (voir §4)**  
-- Adresse postale du client (mandat de représentation)
+- Adresse postale du client (contrat de cession de créance)
 - Email (système proxy emails + notifications)
 - Numéro de billet (différent du PNR — nécessaire pour certaines compagnies)
 
@@ -170,7 +170,7 @@ Après la fin du bot, voici l'état des données disponibles :
 | Type d'incident | Oui | Étape 3 | Mais sans durée pour retard |
 | Langue préférée vocaux | Oui | Étape 2b | |
 | Numéro WhatsApp client | Oui | Méta-donnée API | |
-| **Adresse postale** | **NON** | — | Nécessaire pour mandat |
+| **Adresse postale** | **NON** | — | Nécessaire pour contrat de cession |
 | **Email** | **NON** | — | Nécessaire proxy email + notifications |
 | **Durée du retard** | **NON** (si retard) | — | Critère d'éligibilité clé |
 | Circonstances invoquées par compagnie | Non | — | Optionnel mais utile |
@@ -181,14 +181,14 @@ Après la fin du bot, voici l'état des données disponibles :
 **Données capturées par le bot seul : 11 sur 16 champs identifiés**  
 Qualification score : **~68 %**
 
-Les 5 données manquantes (adresse, email, durée retard, circonstances, numéro de billet) doivent toutes être demandées manuellement par l'humain à l'étape 4. L'adresse et l'email sont des bloquants pour la signature du mandat et le démarrage des notifications. Leur absence rallonge le temps-à-dossier-complet et augmente le risque d'abandon entre étape 4 et signature.
+Les 5 données manquantes (adresse, email, durée retard, circonstances, numéro de billet) doivent toutes être demandées manuellement par l'humain à l'étape 4. L'adresse et l'email sont des bloquants pour la signature du contrat de cession et le démarrage des notifications. Leur absence rallonge le temps-à-dossier-complet et augmente le risque d'abandon entre étape 4 et signature.
 
 ### Recommandation : ajouter deux questions avant le récap final
 
 **Après l'étape 7 (mineurs) et avant le message de fin :**
 
 ```
-Pour envoyer votre mandat et vous tenir informé à chaque étape,
+Pour envoyer votre contrat de cession et vous tenir informé à chaque étape,
 j'ai besoin de deux dernières informations :
 
 📧 Votre adresse email :
@@ -202,7 +202,7 @@ Puis, une fois l'email reçu :
 (Ville et pays suffisent si vous préférez)
 ```
 
-Note : demander "ville et pays suffisent si vous préférez" réduit la friction tout en permettant d'avoir au minimum les données nécessaires pour le mandat. L'adresse complète peut être récupérée à la signature du mandat si le client hésite à la donner sur WhatsApp.
+Note : demander "ville et pays suffisent si vous préférez" réduit la friction tout en permettant d'avoir au minimum les données nécessaires pour le contrat de cession. L'adresse complète peut être récupérée à la signature du contrat de cession si le client hésite à la donner sur WhatsApp.
 
 ---
 
@@ -293,7 +293,7 @@ Déjà *+1 200 familles* indemnisées depuis l'Afrique.
 
 ### Priorité 2 — Collecter email et adresse avant le récap final
 
-**Impact :** le dossier remis à l'humain à l'étape 4 est complet. La signature du mandat peut être envoyée sans un aller-retour supplémentaire pour récupérer ces données. Le temps-à-mandat-signé diminue. Le taux d'abandon entre étape 4 et signature diminue.
+**Impact :** le dossier remis à l'humain à l'étape 4 est complet. La signature du contrat de cession peut être envoyée sans un aller-retour supplémentaire pour récupérer ces données. Le temps-à-contrat-signé diminue. Le taux d'abandon entre étape 4 et signature diminue.
 
 **Action :** Insérer deux questions après l'étape 7 (mineurs). Format texte libre pour l'email, texte libre avec option "ville + pays suffisent" pour l'adresse.
 
@@ -311,10 +311,10 @@ Déjà *+1 200 familles* indemnisées depuis l'Afrique.
 
 | Gap | Type | Impact | Effort correction | Priorité |
 |---|---|---|---|---|
-| URL signature 404 | Bug bloquant | Zéro conversion mandat | Faible | CRITIQUE |
+| URL signature 404 | Bug bloquant | Zéro conversion contrat de cession | Faible | CRITIQUE |
 | Durée de retard non demandée | Qualification manquante | Dossiers inéligibles créés | Faible | Haute |
 | Email non collecté | Donnée manquante | Friction étape 4 + paiement | Faible | Haute |
-| Adresse non collectée | Donnée manquante | Friction mandat | Faible | Haute |
+| Adresse non collectée | Donnée manquante | Friction contrat de cession | Faible | Haute |
 | Pas de gate géographique UE/non-UE | Qualification manquante | Rejets tardifs, expérience dégradée | Moyenne | Haute |
 | Étape "On continue ?" inutile | Friction pure | Légère déperdition | Très faible | Moyenne |
 | Double question direct/correspondance | Redondance | Confusion légère | Faible | Basse |

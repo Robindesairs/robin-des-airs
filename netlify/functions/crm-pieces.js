@@ -16,6 +16,7 @@ const crypto = require('crypto');
 const { getBlobStore } = require('./lib/netlify-blobs-store');
 const { checkCrmAccess } = require('./lib/crm-access');
 const { getCrmAuthConfig, corsHeaders } = require('./lib/auth-config');
+const { airtableCfg, airtableFindByRef } = require('./lib/airtable-robin');
 
 const J = (code, obj) => ({
   statusCode: code,
@@ -188,7 +189,31 @@ exports.handler = async (event) => {
     }
 
     items.sort((a, b) => String(a.ts).localeCompare(String(b.ts)));
-    return J(200, { ref, count: items.length, pieces: items });
+
+    // Statut de purge RGPD (visible dans le CRM) — best-effort : si Airtable indispo/quota, pas de badge (ne casse rien).
+    let purge = null;
+    try {
+      const cfg = airtableCfg();
+      if (cfg) {
+        const recs = await airtableFindByRef(cfg, ref);
+        const f = (recs && recs[0] && recs[0].fields) || null;
+        if (f) {
+          const purged = f['Pièces purgées (RGPD)'];
+          const terminal = f[cfg.labels.statutSuivi] === 'Payé client' || f['Éligibilité'] === 'Non';
+          if (purged) {
+            purge = { state: 'purgé', date: String(purged).slice(0, 10) };
+          } else if (terminal) {
+            const grace = (parseInt(process.env.RGPD_PURGE_GRACE_DAYS, 10) || 30) * 86400000;
+            const lastMod = Date.parse(f['Last Modified Time'] || '') || 0;
+            const due = lastMod ? lastMod + grace : 0;
+            const daysLeft = due ? Math.ceil((due - Date.now()) / 86400000) : null;
+            purge = { state: (daysLeft != null && daysLeft > 0) ? 'programmée' : 'imminente', date: due ? new Date(due).toISOString().slice(0, 10) : '', daysLeft };
+          }
+        }
+      }
+    } catch (_) { purge = null; }
+
+    return J(200, { ref, count: items.length, pieces: items, purge });
   } catch (e) {
     return J(500, { error: e.message });
   }

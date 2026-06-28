@@ -60,11 +60,11 @@ Famille de 4 sur Bruxelles-Kinshasa retardée de 4h : 4 × 600€ = 2 400€ bru
 Brussels Airlines propose un formulaire de réclamation sur son site. Problème : il vous demande de choisir votre "relation avec le passager" parmi Agent de voyage, Avocat ou Membre de la famille — aucune option pour un particulier qui réclame seul. Et pour cause : ce formulaire est conçu pour être facile à ignorer.
 
 **Ce que Robin des Airs fait à la place :**
-- Envoi d'une réclamation formelle par courrier avec le mandat signé
+- Envoi d'une réclamation formelle par courrier avec le contrat de cession signé
 - Brussels Airlines ne peut pas balayer une lettre recommandée sous le tapis
 - Si refus : escalade vers le médiateur belge ou les juridictions françaises
 
-Les compagnies paient beaucoup plus facilement quand elles reçoivent une demande structurée d'un mandataire — pas un formulaire web qu'un stagiaire peut archiver sans répondre.
+Les compagnies paient beaucoup plus facilement quand elles reçoivent une demande structurée d'un cessionnaire de la créance — pas un formulaire web qu'un stagiaire peut archiver sans répondre.
 
 ## Délais de réclamation
 

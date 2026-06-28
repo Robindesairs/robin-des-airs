@@ -15,7 +15,7 @@ Responsable mise à jour: `________________`
 ### Conversion
 
 - Dossiers ouverts: `_____`
-- Dossiers complets (pièces + mandat): `_____`
+- Dossiers complets (pièces + contrat de cession de créance): `_____`
 - Dossiers envoyés compagnie: `_____`
 - Dossiers gagnés: `_____`
 - Taux prospect identifié -> dossier ouvert: `_____ %`

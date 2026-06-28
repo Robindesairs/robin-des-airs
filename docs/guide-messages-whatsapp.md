@@ -50,7 +50,7 @@ Correspondance étape → pastilles remplies :
 | 4 | Type de vol (direct/escale) |
 | 5 | Scan document(s) + collecte vol |
 | 6 | Vol, date, mineurs |
-| 7 | Récap, documents justificatifs, RGPD, mandat |
+| 7 | Récap, documents justificatifs, RGPD, contrat de cession |
 | 8 | Dossier complet |
 
 C'est une **promesse** (effet Zeigarnik façon Duolingo) : le cerveau déteste abandonner une tâche commencée. Chaque message « rapide » sert à faire avancer cette barre.
@@ -121,7 +121,7 @@ Vos infos de vol sont enregistrées. Il ne reste que quelques détails et votre 
 Encore quelques pièces et on lance la réclamation contre la compagnie. On y est presque.
 ```
 
-3. **Avant le mandat (dans MSG 14)** (la conversion finale) — intégrée au récap de clôture :
+3. **Avant le contrat de cession (dans MSG 14)** (la conversion finale) — intégrée au récap de clôture :
 ```
 🙌 Bravo, vous avez tout fait !
 
@@ -143,8 +143,8 @@ Il ne reste qu'une signature de 2 minutes pour nous autoriser à récupérer vot
 
 L'encouragement est un **investissement en messages** : il doit se payer en conversion.
 
-- **KPI roi inchangé** : taux MSG 1 → mandat signé (cible > 12-15 %). La v10 doit le faire **monter**, sinon retirer les transitions dédiées.
-- **Drop-off par étape** : comparer v8 vs v10 sur les 3 jointures (scan, docs, mandat) — c'est là que les transitions dédiées doivent réduire l'abandon.
+- **KPI roi inchangé** : taux MSG 1 → contrat de cession signé (cible > 12-15 %). La v10 doit le faire **monter**, sinon retirer les transitions dédiées.
+- **Drop-off par étape** : comparer v8 vs v10 sur les 3 jointures (scan, docs, contrat de cession) — c'est là que les transitions dédiées doivent réduire l'abandon.
 - **Garde-fou** : si l'ajout des 3 transitions dédiées **augmente** l'abandon (lassitude > motivation), les repasser en ligne intégrée. Tester A/B avant de généraliser.
 
 ---
@@ -164,7 +164,7 @@ L'encouragement est un **investissement en messages** : il doit se payer en conv
 11. **MSG 11** — Mineurs (sélection par nom)
 12. **MSG 12** — Récap modifiable (7 champs)
 13. **MSG 13** — Documents justificatifs (passeport, carte, e-billet, certificat)
-14. **MSG 14** — RGPD + mandat + dossier reçu + clôture humaine
+14. **MSG 14** — RGPD + contrat de cession + dossier reçu + clôture humaine
 
 **Convention de ton :** vouvoiement, chaleureux mais pro, 1 à 3 emojis fonctionnels par message, phrases courtes, montants en gras, une décision par écran (boutons, pas « tapez 1/2/3 »). On parle d'argent **dû au client**, jamais de « frais ».
 
@@ -281,7 +281,7 @@ En attendant, je continue à vous guider en français. 👇
 
 **4. ⚠️ À éviter :**
 - Afficher 9 langues puis répondre dans une seule sans la micro-phrase native : trahison de promesse.
-- Traduire automatiquement tout le flux (mandat, indemnité mal traduits) → aberrations juridiques.
+- Traduire automatiquement tout le flux (contrat de cession, indemnité mal traduits) → aberrations juridiques.
 
 **5. 📊 Indicateur de succès :** **< 8 % d'abandon** sur cet écran. Pour les langues africaines, suivre le **taux d'aboutissement après bascule FR** (sinon la charge humaine explose). Suivre la répartition réelle des langues.
 
@@ -526,7 +526,7 @@ Le montant et le net sont **calculés** : `total = 600 × nb_pax`, `net = 75 % d
 **4. ⚠️ À éviter :**
 - Annoncer « 25 % » avant le net : déclenche le réflexe « commission ».
 - Présenter les 25 % comme un « frais » : c'est une **commission au succès**.
-- Cacher la commission : la transparence ici fait signer le mandat plus tard.
+- Cacher la commission : la transparence ici fait signer le contrat de cession plus tard.
 
 **5. 📊 Indicateur de succès :** **passage vers le scan (MSG 8) > 75 %**. Comparer le drop-off selon le montant (les petits montants décrochent-ils plus ?).
 
@@ -660,7 +660,7 @@ Déclenché **uniquement** pour les passagers dont le nom n'a pas été lu au sc
 
 **v10 — fil rouge :** *Réagir + Situer.* C'est l'étape la plus répétitive (un nom après l'autre) — donc la plus à risque d'effet « formulaire froid ». Le « merci 🙏 » + le compteur « 2 sur 3 » à chaque confirmation maintiennent la sensation d'avancer plutôt que de subir. Sur le **dernier** passager, basculer le compteur en encouragement : *« ✅ Dernier passager enregistré — c'était la partie la plus longue, bravo ! »*.
 
-**2. 🎯 Objectif :** récupérer les noms manquants, un par un, avec validation — le nom exact (tel que passeport) est juridiquement essentiel au mandat.
+**2. 🎯 Objectif :** récupérer les noms manquants, un par un, avec validation — le nom exact (tel que passeport) est juridiquement essentiel au contrat de cession.
 
 **3. 🧠 Pourquoi ce ton :**
 - Un passager à la fois minimise l'effort perçu.
@@ -772,7 +772,7 @@ Chaque sélection : `✅ DIALLO Moussa marqué comme mineur. Sélectionnez un au
 ```
 👶 Passager mineur voyageant seul — signature parentale requise.
 
-La loi exige qu'un parent ou tuteur légal signe le mandat de représentation pour un mineur.
+La loi exige qu'un parent ou tuteur légal signe le contrat de cession de créance pour un mineur.
 
 Nous allons traiter ce dossier avec vous directement.
 
@@ -781,17 +781,17 @@ Nous allons traiter ce dossier avec vous directement.
 _L'équipe Robin des Airs_
 ```
 
-**2. 🎯 Objectif :** identifier les mineurs — le mandat doit alors être signé par le représentant légal.
+**2. 🎯 Objectif :** identifier les mineurs — le contrat de cession doit alors être signé par le représentant légal.
 
 **3. 🧠 Pourquoi ce ton :**
-- La sélection **par nom** rattache chaque mineur à son mandat (pas de réconciliation manuelle).
+- La sélection **par nom** rattache chaque mineur à son contrat de cession (pas de réconciliation manuelle).
 - Micro-justification (« la loi exige ») rend la question non intrusive.
 
 **4. ⚠️ À éviter :**
 - Demander la date de naissance complète : trop intrusif, binaire mineur/majeur suffit.
-- Oublier ce point : un mandat de mineur signé par le mineur est nul.
+- Oublier ce point : un contrat de cession de mineur signé par le mineur est nul.
 
-**5. 📊 Indicateur de succès :** **réponse > 95 %**. KPI aval : mandats mineurs signés par le représentant légal (pas de rejet pour vice de signature).
+**5. 📊 Indicateur de succès :** **réponse > 95 %**. KPI aval : contrats de cession de mineurs signés par le représentant légal (pas de rejet pour vice de signature).
 
 ---
 
@@ -825,7 +825,7 @@ _L'équipe Robin des Airs_
 ```
 *(les 7 champs du récap = passagers/noms, vol, route, date, incident, type de vol, montant — montant et type recalculés/édités via les autres champs ; le menu expose les 5 entrées éditables directement.)*
 
-**2. 🎯 Objectif :** donner le **contrôle final** avant l'étape engageante (documents + mandat) et garantir l'exactitude juridique.
+**2. 🎯 Objectif :** donner le **contrôle final** avant l'étape engageante (documents + contrat de cession) et garantir l'exactitude juridique.
 
 **3. 🧠 Pourquoi ce ton :**
 - Le récap rend l'utilisateur **co-auteur** (effet IKEA) : il valide, il s'engage.
@@ -933,7 +933,7 @@ _L'équipe Robin des Airs_
 
 ---
 
-## MSG 14 — RGPD + Mandat + clôture humaine
+## MSG 14 — RGPD + Contrat de cession + clôture humaine
 
 **1. RGPD (juste avant le lien)**
 
@@ -949,7 +949,7 @@ En continuant, vous acceptez notre :
 • Conditions Générales de Vente : robindesairs.eu/cgv.html
 ```
 
-**Récap + annonce mandat (v10 — transition dédiée n°3, intégrée) :**
+**Récap + annonce contrat de cession (v10 — transition dédiée n°3, intégrée) :**
 ```
 🟢🟢🟢🟢🟢🟢🟢⚪
 
@@ -964,15 +964,15 @@ En continuant, vous acceptez notre :
 Il ne reste qu'une signature de 2 minutes pour nous autoriser à récupérer votre argent. 🤝
 ```
 
-**v10 — fil rouge :** *Réagir + Situer.* « Bravo, vous avez tout fait ! » récompense l'effort accompli juste avant l'unique action qui compte (la signature). On présente le mandat non comme une corvée de plus mais comme la **dernière** action — et la seule qui débloque l'argent.
+**v10 — fil rouge :** *Réagir + Situer.* « Bravo, vous avez tout fait ! » récompense l'effort accompli juste avant l'unique action qui compte (la signature). On présente le contrat de cession non comme une corvée de plus mais comme la **dernière** action — et la seule qui débloque l'argent.
 
-**Lien mandat pré-rempli (URL générée avec ref, nom, vol, date, compagnie, motif, nb pax, paxlist) :**
+**Lien contrat de cession pré-rempli (URL générée avec ref, nom, vol, date, compagnie, motif, nb pax, paxlist) :**
 ```
 🟢🟢🟢🟢🟢🟢🟢🟢
 
 ✅ Dossier RDA-20260530-XXXX
 
-Signez votre mandat de représentation (lisible avant signature).
+Signez votre contrat de cession de créance (lisible avant signature).
 Aucune information bancaire demandée à cette étape.
 
 👉 https://robindesairs.eu/mandat.html?ref=...&name=...&vol=...
@@ -1004,20 +1004,20 @@ L'IA ouvre le dossier. L'humain le gagne. 🏹
 ```
 Statut final : `complet` (ou `docs_en_attente` si passeport sauté / carte manquante).
 
-**2. 🎯 Objectif :** consentement RGPD/CGV + **signature du mandat** (la conversion finale, à valeur juridique et économique), puis rassurer par le passage à un humain.
+**2. 🎯 Objectif :** consentement RGPD/CGV + **signature du contrat de cession de créance** (la conversion finale, à valeur juridique et économique), puis rassurer par le passage à un humain.
 
 **3. 🧠 Pourquoi ce ton :**
 - RGPD placé **juste avant le lien**, formulé en bénéfice (« votre vie privée d'abord »), pas en jargon.
-- Mandat **pré-rempli, 2 min, aucune info bancaire** : abaisse la barrière.
+- Contrat de cession **pré-rempli, 2 min, aucune info bancaire** : abaisse la barrière.
 - « L'IA ouvre, l'humain gagne » = renversement de promesse qui distingue d'un « bot d'arnaque ».
 
 **4. ⚠️ À éviter :**
 - Noyer le consentement dans un pavé juridique.
-- Demander de re-saisir les infos dans le mandat (il DOIT être pré-rempli).
+- Demander de re-saisir les infos dans le contrat de cession (il DOIT être pré-rempli).
 - Laisser le silence après signature.
 - Cacher les 25 % : transparence jusqu'au bout.
 
-**5. 📊 Indicateur de succès :** **LE KPI roi — taux de signature du mandat** parmi ceux qui atteignent MSG 14 (> 75 %). Mesurer le délai envoi → signature et le taux de rétractation (proche de 0).
+**5. 📊 Indicateur de succès :** **LE KPI roi — taux de signature du contrat de cession** parmi ceux qui atteignent MSG 14 (> 75 %). Mesurer le délai envoi → signature et le taux de rétractation (proche de 0).
 
 ---
 
@@ -1125,11 +1125,11 @@ _L'équipe Robin des Airs_
 | MSG 7 | Motivation → scan | > 75 % |
 | MSG 8 | Succès OCR (≤ 3 essais) | > 90 % |
 | MSG 13 | Pièces minimales complètes | > 70 % |
-| **MSG 14** | **Signature du mandat** | **> 75 %** |
+| **MSG 14** | **Signature du contrat de cession** | **> 75 %** |
 | T3 | Réactivation relances | > 25 % |
-| Global | **Conversion bout-en-bout** (MSG 1 → mandat signé) | > 12-15 % |
+| Global | **Conversion bout-en-bout** (MSG 1 → contrat de cession signé) | > 12-15 % |
 
-**Le seul chiffre qui compte vraiment :** le taux MSG 1 → mandat signé. Tout le reste sert à diagnostiquer où ce chiffre fuit.
+**Le seul chiffre qui compte vraiment :** le taux MSG 1 → contrat de cession signé. Tout le reste sert à diagnostiquer où ce chiffre fuit.
 
 ---
 
@@ -1146,4 +1146,4 @@ _L'équipe Robin des Airs_
 3. **Le « 0 € si on perd » est répété** (MSG 1, 7, 14). Argument anti-défiance, présent à chaque friction.
 4. **L'humain est un produit, pas un fallback.** « L'IA ouvre, l'humain gagne » rassure plus que toute automatisation.
 5. **Tester en conditions réelles** : 3G lente, petit écran, noms à particules/accents.
-6. **L'encouragement est un investissement, pas une décoration (v10).** Il ne se justifie que s'il fait monter le taux MSG 1 → mandat signé. Intégrer en ligne par défaut, n'ajouter un écran qu'aux 3 jointures de friction max, et A/B tester avant de généraliser. Si une transition dédiée augmente l'abandon, la repasser en ligne intégrée.
+6. **L'encouragement est un investissement, pas une décoration (v10).** Il ne se justifie que s'il fait monter le taux MSG 1 → contrat de cession signé. Intégrer en ligne par défaut, n'ajouter un écran qu'aux 3 jointures de friction max, et A/B tester avant de généraliser. Si une transition dédiée augmente l'abandon, la repasser en ligne intégrée.

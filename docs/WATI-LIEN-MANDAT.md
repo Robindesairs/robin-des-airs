@@ -1,6 +1,6 @@
-# Lien Wati / Make → mandat prérempli
+# Lien Wati / Make → contrat de cession prérempli
 
-Le mandat à faire signer est **toujours** la page :
+Le contrat de cession de créance à faire signer est **toujours** la page :
 
 **`https://robindesairs.eu/mandat.html`**
 
@@ -13,7 +13,7 @@ Ajoutez des **paramètres de requête** (query string). Dans **Make**, encodez c
 | **`ref`** | **Référence dossier identique** au champ Airtable utilisé par `submit-mandat` (ex. `RDA-20260515-1234-ABC12D`). Sans elle, la mise à jour Airtable peut s’appuyer sur le **numéro WhatsApp** si une seule ligne correspond. |
 | **`phone`** ou **`whatsapp`** ou **`wa`** | Préremplit le champ WhatsApp (indicatif inclus, ex. `+33612345678`). |
 | **`name`** | Nom complet ; la page sépare prénom / nom. |
-| **`email`** | Adresse **technique du dossier** : en pratique `référence_en_minuscules@robindesairs.eu` (colonne Airtable **Email**, créée par `clientEmailForRef`). Le mandat l’affiche et l’explique ; le client n’a pas à la saisir. |
+| **`email`** | Adresse **technique du dossier** : en pratique `référence_en_minuscules@robindesairs.eu` (colonne Airtable **Email**, créée par `clientEmailForRef`). Le contrat de cession l’affiche et l’explique ; le client n’a pas à la saisir. |
 | **`address`** | Adresse postale. |
 | **`vol`** | Numéro de vol (ex. `AF718`). |
 | **`date`** | Date au format **`JJ/MM/AAAA`**. |
@@ -40,7 +40,7 @@ https://robindesairs.eu/mandat.html?ref={{encodeURL(2.`Référence Dossier`)}}&p
 |------------------|---------------|------|
 | **Référence Dossier** | `ref` | Doit correspondre au champ utilisé par `submit-mandat` pour retrouver la ligne. |
 | **Numéro WhatsApp** | `phone` | Indicatif international recommandé (`+33…`). |
-| **Prénom Passager** + **Nom Passager** | `name` | Concaténés avec `concat(...; " "; ...)` pour que le mandat remplisse prénom / nom. |
+| **Prénom Passager** + **Nom Passager** | `name` | Concaténés avec `concat(...; " "; ...)` pour que le contrat de cession remplisse prénom / nom. |
 | **Email** | `email` | |
 | **Adresse domicile** | `address` | |
 | **Numéro de vol** | `vol` | |
@@ -49,7 +49,7 @@ https://robindesairs.eu/mandat.html?ref={{encodeURL(2.`Référence Dossier`)}}&p
 | **PNR (Référence réservation)** | `pnr` | |
 | **Compagnie Aérienne** | `compagnie` | |
 | **Type d'incident** | `motif` | Texte ou mots-clés (retard / annulation / surbooking) pour le type d’incident. |
-| **Montant de l'indemnité** | `indemnite` | Souvent `250`, `400` ou `600` (brut CE 261 affiché sur le mandat). Si vous stockez plutôt le net client dans **Montant Client**, adaptez le champ dans la formule. |
+| **Montant de l'indemnité** | `indemnite` | Souvent `250`, `400` ou `600` (brut CE 261 affiché sur le contrat de cession). Si vous stockez plutôt le net client dans **Montant Client**, adaptez le champ dans la formule. |
 
 **Colonnes utiles ailleurs mais pas dans ce lien** (pas de paramètre mandat dédié) : *Date Dossier*, *Montant Client*, *Commission RDA (30%)*, *Commission Agence*, *Agence Partenaire*, *Statut Dossier*, *Remarques*, *Date de naissance*, *Statut Mineur*, *Nom Représentant Légal*, *Numéro de billet*, *Heure d'arrivée réelle*, *Raison compagnie*, pièces jointes (*Copie Passeport / CI*, *Carte d'embarquement*, *Mandat de Représentation signé*), *Statut du Dossier Suivi*, *IBAN / paiement*, *Sexe*, *Date expiration passeport / CNI*. Elles restent dans Airtable ; la signature met à jour d’autres champs via `submit-mandat` + webhook.
 
@@ -73,13 +73,13 @@ Collez la formule de la section **Base Robin des Airs** ci-dessus.
 
 ### 4) Wati
 
-Message du type : `Signez votre mandat (2 min) : {{3.mandat_url}}` en adaptant le numéro du module *Set variable*.
+Message du type : `Signez votre contrat de cession de créance (2 min) : {{3.mandat_url}}` en adaptant le numéro du module *Set variable*.
 
 ### 5) Après signature
 
 `submit-mandat` cherche par **`ref`**, sinon par **WhatsApp**. Les variables Netlify doivent pointer vers les champs **Référence Dossier** et **Numéro WhatsApp** (ou équivalent) de votre base.
 
-**Emails** (vous + client si email renseigné sur le mandat) : **`docs/NOTIFICATIONS-MANDAT-EMAIL.md`** (`RESEND_API_KEY` + `MANDAT_NOTIFY_EMAIL`).
+**Emails** (vous + client si email renseigné sur le contrat de cession) : **`docs/NOTIFICATIONS-MANDAT-EMAIL.md`** (`RESEND_API_KEY` + `MANDAT_NOTIFY_EMAIL`).
 
 ## Déjà branché côté site
 

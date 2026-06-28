@@ -23,8 +23,8 @@ Formules:
 
 - Prospects identifies prevus = `prospect_anonyme x taux A->B`
 - Dossiers en cours prevus = `prospects identifies x taux B->C`
-- Mandats signes prevus = `dossiers en cours x taux C->D`
-- Dossiers gagnes prevus = `mandats signes x taux D->E`
+- Contrats de cession signes prevus = `dossiers en cours x taux C->D`
+- Dossiers gagnes prevus = `contrats de cession signes x taux D->E`
 
 ## 3) Prevision CA / marge
 

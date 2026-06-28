@@ -10,7 +10,7 @@
 Madame, Monsieur,
 
 Je fais suite à mon courriel du [Date Jour 0] resté sans réponse.  
-Le dossier de mon mandant est complet et le retard est techniquement confirmé par nos services. Merci de nous indiquer l'état d'avancement du virement de 600 € sous 48h.
+Le dossier de mon client (le passager) est complet et le retard est techniquement confirmé par nos services. Merci de nous indiquer l'état d'avancement du virement de 600 € sous 48h.
 
 Cordialement,  
 L'équipe Robin des Airs

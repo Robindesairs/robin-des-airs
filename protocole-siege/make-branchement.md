@@ -86,7 +86,7 @@ En Make, ça se fait avec un **Router** à plusieurs branches : chaque branche a
 - **Subject (identique à chaque envoi) :**  
   `Indemnisation EU261 — {{pnr}} — {{nom}} {{prenom}} — Vol {{vol}}`  
 - **Body :** copier le corps depuis les fichiers `jour-00-salve-initiale.md`, `jour-10-relance-1.md`, etc., en remplaçant les placeholders par les variables Make (`{{pnr}}`, `{{nom}}`, `{{prenom}}`, `{{vol}}`, `{{date_vol}}`, `{{type_incident}}`, `{{heures}}`, `{{alias_proxy}}`, `{{date_ouverture}}` selon le cas).  
-- **Pièces jointes (JOUR 0 uniquement) :** mandat signé + pièce d’identité (URL ou fichier depuis Google Drive / Dropbox selon ton setup).
+- **Pièces jointes (JOUR 0 uniquement) :** contrat de cession signé + pièce d’identité (URL ou fichier depuis Google Drive / Dropbox selon ton setup).
 
 ### 3.6 Mise à jour du dossier après envoi
 - **Module :** `Google Sheets` > **Update a Row** (ou **Data Store** > **Update a record**).  

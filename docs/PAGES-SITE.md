@@ -25,16 +25,16 @@ Dernière mise à jour : mai 2026. URLs publiques sans `.html` quand une règle 
 
 ---
 
-## Légal & mandats
+## Légal & contrats de cession
 
 | URL | Fichier | Utilité |
 |-----|---------|---------|
 | `/cgv` | `cgv.html` | Conditions générales de vente. |
 | `/politique-confidentialite` | `politique-confidentialite.html` | RGPD, WhatsApp/Meta, cookies. |
 | `/droit-retractation` | `droit-retractation.html` | Droit de rétractation 14 jours. |
-| `/mandat` | `mandat.html` | Mandat de représentation (FR). |
-| `/mandat-en.html` | `mandat-en.html` | Mandat passager **anglais**. |
-| `/documents/mandat-fr` | `documents/mandat-fr.html` | Mandat FR (version document / impression). |
+| `/mandat` | `mandat.html` | Contrat de cession de créance (FR). |
+| `/mandat-en.html` | `mandat-en.html` | Contrat de cession passager **anglais**. |
+| `/documents/mandat-fr` | `documents/mandat-fr.html` | Contrat de cession FR (version document / impression). |
 | `/mandat-representation` | → `mandat.html` | Ancienne URL (redirection 301). |
 
 ---

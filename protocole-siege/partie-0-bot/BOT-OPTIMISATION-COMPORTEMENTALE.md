@@ -323,7 +323,7 @@ _(Date antérieure à 2021 ? Tapez la date complète : ex. 15/03/2019)_
 
 Il reste *2 étapes rapides* :
 
-1️⃣ *Signature du mandat* — page sécurisée *Robin des Airs*, puis votre signature :
+1️⃣ *Signature du contrat de cession* — page sécurisée *Robin des Airs*, puis votre signature :
 https://robindesairs.eu/sign/4ljU2K7IIFh3BQ
 
 2️⃣ *Justificatifs en photos* sur ce fil : *passeport ou CNI lisible* + *carte d'embarquement* ou confirmation *si nécessaire*.
@@ -373,7 +373,7 @@ Prochaine étape : 2 minutes pour l'activer.
 ```
 *Pour que votre dossier parte aujourd'hui :*
 
-*1. Signez le mandat maintenant* (2 min, sécurisé) :
+*1. Signez le contrat de cession maintenant* (2 min, sécurisé) :
 https://robindesairs.eu/mandat.html?ref=RDA-20260515-E448&...
 
 Sans signature, nous ne pouvons pas agir en votre nom.
@@ -447,9 +447,9 @@ Votre dossier vous attend :
 
 ---
 
-### Template R3 — Abandon après récap final (mandat non signé)
+### Template R3 — Abandon après récap final (contrat de cession non signé)
 
-**Déclencheur :** Le client a reçu le récap et le lien de mandat mais n'a pas signé depuis plus de 24 heures.
+**Déclencheur :** Le client a reçu le récap et le lien du contrat de cession mais n'a pas signé depuis plus de 24 heures.
 
 **Mécanisme comportemental :** Sentiment de possession (le dossier "existe déjà", il suffit de le valider) + urgence douce + réduction de l'anxiété sur la sécurité du lien (rassurer sur l'authenticité).
 
@@ -458,7 +458,7 @@ Votre dossier *RDA-20260515-E448* est prêt.
 Il attend votre signature.
 
 Nos experts ne peuvent pas agir
-tant que le mandat n'est pas signé —
+tant que le contrat de cession n'est pas signé —
 *c'est la seule chose qui manque.*
 
 Lien officiel Robin des Airs (2 min) :
@@ -481,7 +481,7 @@ _L'équipe Robin_
 | Étape 4 — Vérification OCR | Mettre le nom en premier, supprimer note inline | Identification personnelle, lecture mobile | MOYENNE |
 | Étape 5 — Année | Réduire à 1 exemple de format, fusionner cas edge | Réduction charge cognitive | MOYENNE |
 | Fin bot — Récap | Splitter en 2 messages (célébration + actions) | Séparation récompense/tâche, priorisation | CRITIQUE |
-| Lien mandat | Corriger l'URL (bug 404 documenté) | Conversion directe | CRITIQUE |
+| Lien du contrat de cession | Corriger l'URL (bug 404 documenté) | Conversion directe | CRITIQUE |
 | Réengagement R1 | Créer template abandon étapes 1-2 | Effet Zeigarnik, urgence prescription | HAUTE |
 | Réengagement R2 | Créer template abandon OCR | Réduction friction perçue | HAUTE |
 | Réengagement R3 | Créer template abandon signature | Sentiment de possession, rassurance | HAUTE |

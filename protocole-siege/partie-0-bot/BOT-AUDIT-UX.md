@@ -146,7 +146,7 @@ Cela contextualise la demande de document avant qu'elle soit posée.
 **Corrections prioritaires :**
 
 *Dans l'accueil (étape 1), ajouter une ligne :*
-> "📜 *Agence mandataire enregistrée* — SIRET XXX — Opère selon le Règlement (CE) 261/2004."
+> "📜 *Service de recouvrement enregistré* — SIRET XXX — Opère selon le Règlement (CE) 261/2004."
 
 *Dans le message OCR (étape 3b), ajouter :*
 > "🔒 Votre photo est chiffrée et n'est accessible qu'à votre gestionnaire de dossier."
@@ -267,21 +267,21 @@ Ces labels sont clairs et bien formulés. Pas de changement recommandé.
 5. **Indication de sécurité sur la photo** avant l'envoi OCR
 6. **Lien vers site public** avec pages légales accessibles dès l'accueil (pas seulement la politique de confidentialité en fin)
 
-### Cadrage du lien de signature (mandat)
+### Cadrage du lien de signature (contrat de cession)
 
 Le lien de signature est l'action la plus à risque de perçue-comme-arnaque dans tout le flow. Un lien externe demandant une "signature" après un échange WhatsApp déclenche les signaux d'alarme appris.
 
 **Cadrage actuel :**
-> "Signature du mandat — page sécurisée Robin des Airs, puis votre signature"
+> "Signature du contrat de cession — page sécurisée Robin des Airs, puis votre signature"
 
 **Problèmes :**
 - "Page sécurisée" sans explication de ce que ça signifie n'est pas rassurant — les arnaques disent aussi "page sécurisée"
-- Le mot "mandat" est juridique et peut faire peur (signature d'un engagement financier flou)
+- Les termes juridiques ("contrat de cession de créance") peuvent faire peur (signature d'un engagement financier flou)
 - L'URL courte `/sign/xxxx` ressemble à un lien raccourci d'arnaque
 
 **Cadrage recommandé :**
 
-> "1️⃣ *Votre mandat légal* — ce document vous autorise à agir en votre nom auprès d'easyJet. Vous pouvez le lire en entier avant de signer.
+> "1️⃣ *Votre contrat de cession de créance* — ce document permet à Robin des Airs de recouvrer votre indemnité auprès d'easyJet, à titre de recouvrement (vous restez bénéficiaire). Vous pouvez le lire en entier avant de signer.
 > 
 > Signature sur notre site officiel *robindesairs.eu* :
 > [lien avec URL complète visible, pas raccourcie]
@@ -358,7 +358,7 @@ Ces trois actions ont des niveaux d'effort et d'urgence très différents. Les r
 
 > ✅ *Parfait — dossier enregistré.*
 > 
-> Pour que Robin des Airs agisse légalement en votre nom auprès d'easyJet, vous devez signer un *mandat de représentation*.
+> Pour que Robin des Airs recouvre légalement votre indemnité auprès d'easyJet, vous devez signer un *contrat de cession de créance*.
 > 
 > Ce document est lisible en entier avant signature. Aucune information bancaire demandée.
 > 
@@ -475,7 +475,7 @@ Ces trois actions ont des niveaux d'effort et d'urgence très différents. Les r
 
 > Il reste 2 étapes rapides :
 > 
-> 1️⃣ Signature du mandat — page sécurisée Robin des Airs, puis votre signature :
+> 1️⃣ Signature du contrat de cession — page sécurisée Robin des Airs, puis votre signature :
 > https://robindesairs.eu/sign/4ljU2K7IIFh3BQ
 > 
 > 2️⃣ Justificatifs en photos sur ce fil : passeport ou CNI lisible + carte d'embarquement ou confirmation si nécessaire.
@@ -486,7 +486,7 @@ Ces trois actions ont des niveaux d'effort et d'urgence très différents. Les r
 
 > ✅ *Dossier RDA-20260515-E448 enregistré.*
 > 
-> Pour que Robin des Airs représente M. SAMIR DRIDI auprès d'easyJet, il faut signer un *mandat de représentation*.
+> Pour que Robin des Airs recouvre l'indemnité de M. SAMIR DRIDI auprès d'easyJet, il faut signer un *contrat de cession de créance*.
 > 
 > Ce document explique exactement ce que vous nous autorisez à faire. Vous pouvez le lire avant de signer.
 > 
@@ -497,7 +497,7 @@ Ces trois actions ont des niveaux d'effort et d'urgence très différents. Les r
 
 **Changements :**
 - Dossier nommé avec le nom du passager : personnalisation rassurante
-- Explication de ce qu'est un mandat (pas un chèque en blanc)
+- Explication de ce qu'est un contrat de cession de créance (pas un chèque en blanc)
 - "Vous pouvez le lire avant de signer" : empowerment, anti-arnaque
 - "Aucune information bancaire" : désactive le signal d'alarme le plus fort
 - URL complète visible (pas raccourcie) : signe de transparence
@@ -543,7 +543,7 @@ Ces trois actions ont des niveaux d'effort et d'urgence très différents. Les r
 - Taux de clic sur le lien de signature — cible : >50% des dossiers ouverts
 - Taux de signature complète — cible : >40% des dossiers ouverts
 - Point d'abandon principal (étape à identifier par analytics WATI)
-- Délai médian entre ouverture du dossier et signature du mandat — cible : <30 minutes
+- Délai médian entre ouverture du dossier et signature du contrat de cession — cible : <30 minutes
 
 ---
 

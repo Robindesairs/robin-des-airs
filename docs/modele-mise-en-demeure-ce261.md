@@ -1,6 +1,7 @@
 # Modèle de mise en demeure CE 261/2004 — Robin des Airs
 
 > Modèle interne paramétrable. Remplacer les `[CHAMPS]`. ⚠️ À faire relire par le juriste avant envoi (recommandé en LRAR).
+> ⚠️ **Mandat vs cession — à valider :** le document signé par le client est désormais un **contrat de cession de créance à titre de recouvrement, à opposabilité différée**. La cession n'est **notifiée à la compagnie qu'au stade contentieux** (art. 1324 C. civ.) — cette mise en demeure restant pré-contentieuse (médiation préalable), Robin y intervient **pour le compte du** passager (cédant) sans encore notifier la cession. Faire confirmer au juriste l'intitulé exact de la pièce jointe et la formulation d'habilitation, et le moment de bascule vers la notification de cession.
 > Montant selon la distance : ≤1500 km = **250 €** · 1500-3500 km (ou intra-UE >1500) = **400 €** · >3500 km = **600 €**.
 
 ---
@@ -19,7 +20,7 @@
 
 Madame, Monsieur,
 
-Nous intervenons en qualité de **mandataire** de **[NOM(S) PASSAGER(S)]** (mandat de représentation ci-joint), passager(s) du vol **[N° VOL]** opéré par **[COMPAGNIE]** le **[DATE VOL]**, reliant **[AÉROPORT DÉPART]** à **[AÉROPORT ARRIVÉE]**.
+Nous intervenons **pour le compte de** **[NOM(S) PASSAGER(S)]**, qui nous a/ont habilités à gérer sa/leur demande (justificatif d'habilitation signé ci-joint), passager(s) du vol **[N° VOL]** opéré par **[COMPAGNIE]** le **[DATE VOL]**, reliant **[AÉROPORT DÉPART]** à **[AÉROPORT ARRIVÉE]**.
 
 Ce vol a subi **[un retard de plus de 3 heures à l'arrivée / une annulation / un refus d'embarquement]**, ouvrant droit à l'indemnité forfaitaire prévue par les **articles 5 et 7 du Règlement (CE) n° 261/2004**.
 

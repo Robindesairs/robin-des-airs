@@ -138,11 +138,12 @@ On prend aux compagnies, on rend aux familles
 - **Footer** : `On prend aux compagnies, on rend aux familles`
 - **Échantillons** : `Awa` · `RDA-260614-1234` · `600 €`
 
-### B2 — `mandat_signe` (confirmation signature mandat)
+### B2 — `mandat_signe` (confirmation signature du contrat de cession)
+> ⚠️ Identifiant de template Meta `mandat_signe` **inchangé** (enregistré chez Meta) ; seul le corps évolue.
 - **Catégorie** : UTILITY · fr
 - **Corps** :
   ```
-  Merci {{1}} 🙏 Votre mandat pour le dossier {{2}} est bien signé.
+  Merci {{1}} 🙏 Votre contrat de cession de créance pour le dossier {{2}} est bien signé.
 
   Votre réclamation est désormais entre nos mains : on engage la démarche auprès de la compagnie pour récupérer jusqu'à {{3}}. Rappel : 0 € à payer, on se rémunère uniquement en cas de succès (commission 25 %).
   ```
@@ -216,7 +217,7 @@ On prend aux compagnies, on rend aux familles
 - **Footer** : `On prend aux compagnies, on rend aux familles`
 - **Échantillons** : `Awa` · `RDA-260614-1234` · `https://robindesairs.eu/rib.html?r=RDA-260614-ABC123`
 - **Canal** : `rib.html?r=<jeton>` → POST `/api/rib-submit` (valide l'IBAN par clé mod-97, stocke `rib/<ref>` dans le store 'pieces', notifie l'équipe avec IBAN MASQUÉ). Le lien est fourni par `crm-depot-link` (champ `ribLink`).
-- **Note** : le RIB n'est PAS collecté dans le mandat → cette page est le **seul** canal de collecte. Saisie validée (clé de contrôle) = zéro virement perdu. Câblage envoi (param `{{3}}`=ribLink) à brancher dans crm-status-notify après approbation Meta.
+- **Note** : le RIB n'est PAS collecté dans le contrat de cession → cette page est le **seul** canal de collecte. Saisie validée (clé de contrôle) = zéro virement perdu. Câblage envoi (param `{{3}}`=ribLink) à brancher dans crm-status-notify après approbation Meta.
 
 ### B10 — `dossier_en_cours` (point de patience pendant une longue attente)
 - **Catégorie** : UTILITY · fr
@@ -458,7 +459,7 @@ Balaie Airtable, détecte un **changement** de « Statut du Dossier Suivi » et 
 | `relance_preuve_sociale` | MARKETING | relance J+2 | Reprendre · Rappel |
 | `relance_derniere_chance` | MARKETING | relance J+4 | Reprendre · Plus tard |
 | `dossier_recu` | UTILITY | dossier enregistré | — |
-| `mandat_signe` | UTILITY | mandat signé | — |
+| `mandat_signe` | UTILITY | contrat de cession signé | — |
 | `reclamation_envoyee` | UTILITY | réclamation envoyée compagnie | — |
 | `relance_compagnie` | UTILITY | mise en demeure envoyée | — |
 | `reponse_compagnie_accord` | UTILITY | compagnie accepte | Rappel |
@@ -469,6 +470,8 @@ Balaie Airtable, détecte un **changement** de « Statut du Dossier Suivi » et 
 | `dossier_lien_depot` | UTILITY | lien de dépôt carte+passeport (CRM) | — |
 | `rappel_programme` | UTILITY | rappel tél planifié | — |
 | `parrainage` | MARKETING | après paiement | Partager (URL) |
+
+> Note : l'**identifiant** de template Meta `mandat_signe` reste inchangé (enregistré chez Meta) ; seul son corps a été reformulé en « contrat de cession de créance ».
 
 ---
 
@@ -529,7 +532,7 @@ Interested? Reply *YES* 👇
 | `sofia_agence_partenariat_fr` | MARKETING | prospection agence (FR) | Intéressé(e) ! |
 | `sofia_agence_partenariat_en` | MARKETING | prospection agence (EN) | Interested! |
 | `dossier_recu` | UTILITY | dossier enregistré | — |
-| `mandat_signe` | UTILITY | mandat signé | — |
+| `mandat_signe` | UTILITY | contrat de cession signé | — |
 | `reclamation_envoyee` | UTILITY | réclamation envoyée compagnie | — |
 | `relance_compagnie` | UTILITY | mise en demeure envoyée | — |
 | `reponse_compagnie_accord` | UTILITY | compagnie accepte | Rappel |

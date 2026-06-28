@@ -25,7 +25,7 @@
 🟢🟢🟢🟢🟢🟢🟢  Étape 5 — Année du vol
 🟢🟢🟢🟢🟢🟢🟢  Étape 6 — Confirmation passagers
 🟢🟢🟢🟢🟢🟢🟢  Étape 7 — Mineurs ?
-🟢🟢🟢🟢🟢🟢🟢  Fin bot — Récap + lien mandat + demande pièces
+🟢🟢🟢🟢🟢🟢🟢  Fin bot — Récap + lien contrat de cession + demande pièces
 ```
 
 ---
@@ -176,13 +176,13 @@ Parmi les passagers suivants, y a-t-il des mineurs (moins de 18 ans) ?
 
 • *M. SAMIR DRIDI*
 
-⚖️ Obligation légale pour préparer le bon mandat de signature.
+⚖️ Obligation légale pour préparer le bon contrat de cession de créance.
 🟢🟢🟢🟢🟢🟢🟢
 ```
 
 *(Boutons : Non, tous majeurs / Oui, il y a des mineurs)*
 
-### [FIN BOT — Récap + mandat + pièces]
+### [FIN BOT — Récap + contrat de cession + pièces]
 
 ```
 🎉 *Dossier prêt à être déposé !*
@@ -204,7 +204,7 @@ Parmi les passagers suivants, y a-t-il des mineurs (moins de 18 ans) ?
 
 Il reste *2 étapes rapides* :
 
-1️⃣ *Signature du mandat* — page sécurisée *Robin des Airs*, puis votre signature :
+1️⃣ *Signature du contrat de cession* — page sécurisée *Robin des Airs*, puis votre signature :
 https://robindesairs.eu/sign/4ljU2K7IIFh3BQ
 
 2️⃣ *Justificatifs en photos* sur ce fil : *passeport ou CNI lisible* + *carte d'embarquement* ou confirmation *si nécessaire*.
@@ -231,7 +231,7 @@ https://robindesairs.eu/sign/4ljU2K7IIFh3BQ
 - ✅ Vérification données OCR avant de continuer (évite erreurs)
 - ✅ Résolution de l'année ambiguë (carte d'embarquement sans année)
 - ✅ Question langue après vol confirmé (conforme protocole)
-- ✅ Question mineurs pour mandat légal adapté
+- ✅ Question mineurs pour contrat de cession adapté
 - ✅ Référence dossier auto-générée (RDA-AAAAMMJJ-XXXX)
 
 ---

@@ -236,7 +236,7 @@ Votre vol ne relève pas de CE 261/2004 — ce règlement ne s'applique qu'aux r
 10. C'est un peu comme un billet expiré sans qu'on le sache : passé 5 ans, la loi ne permet plus d'ouvrir un dossier — même si la compagnie était clairement en tort. Je suis désolé de vous l'apprendre à ce stade. Date mal saisie ? Tapez menu, une vérification rapide ne coûte rien. 😞
 
 ## CLOTURE_POST_SIGNATURE
-1. Mandat reçu. Et on mesure ce que vous venez de faire — vous nous confiez quelque chose qui vous appartient, et ça, on ne l'oublie pas.
+1. Contrat de cession reçu. Et on mesure ce que vous venez de faire — vous nous confiez quelque chose qui vous appartient, et ça, on ne l'oublie pas.
 
 Promesse concrète : on vous tient au courant, on ne lâche pas, et si ça n'aboutit pas, vous ne nous devez rien. Si la compagnie paie, vous gardez 75 %. Notre part, on la mérite seulement si on a gagné. 💪
 2. C'est parti. Le bot a fait ce qu'il pouvait — maintenant c'est à des vraies personnes de prendre le relais.
@@ -254,7 +254,7 @@ On avance ensemble — 0 € si ça ne passe pas, 25 % le jour où ça passe.
 L'équipe reprend le dossier, fait face à la compagnie et vous tient au courant au fur et à mesure.
 
 0 € si on ne gagne pas. 25 % le jour où une indemnisation est obtenue pour vous. On se bat pour vous. 🤝
-5. C'est fait. Mandat signé, dossier ouvert.
+5. C'est fait. Contrat de cession signé, dossier ouvert.
 
 À partir de là, c'est Robin des Airs qui affronte la compagnie — plus vous. Vous avez déjà vécu la galère du vol, laissez-nous gérer la suite.
 
@@ -274,7 +274,7 @@ Vous n'avancez pas un centime. Si la compagnie paie, vous gardez 75 %. Sinon : 0
 L'équipe va éplucher chaque détail, rédiger la réclamation et tenir tête à la compagnie si elle résiste — et elles résistent souvent.
 
 Vous n'avancez rien. Si on obtient quelque chose pour vous, on prend 25 %. Sinon, c'est 0 €, sans discussion. 🏹
-9. Mandat reçu. ✅ Votre dossier n'est plus entre vos mains — il est entre les nôtres.
+9. Contrat de cession reçu. ✅ Votre dossier n'est plus entre vos mains — il est entre les nôtres.
 
 On prend le relais face à la compagnie. Pas d'avance à faire, pas de démarche à gérer de votre côté.
 

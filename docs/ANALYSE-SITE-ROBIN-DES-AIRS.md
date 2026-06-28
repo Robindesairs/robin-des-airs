@@ -17,7 +17,7 @@
 | **suivi-dossier.html** | Où en est mon dossier |
 | **guide-whatsapp.html** | Guide envoi par WhatsApp |
 | **choix-reclamation.html** | Choix type réclamation |
-| **mandat-representation.html** | Explication mandat |
+| **mandat-representation.html** | Explication contrat de cession de créance |
 | **politique-confidentialite.html** | RGPD, responsable, adresse (66 av. Champs-Élysées) |
 | **droit-retractation.html** | Droit de rétractation 14 jours |
 | **cgv.html** | Conditions générales |
@@ -75,7 +75,7 @@
 2. **Funnel intégré** : calculateur sur l’accueil (motif → raison → trajet → verdict) avec CTA WhatsApp.
 3. **Blog SEO** : 20+ articles avec bons titres/meta, maillage interne possible, CTAs.
 4. **Multilingue** : 6 langues (FR, EN, ES, NL, PT, DE) + mention Wolof, Bambara, etc.
-5. **Légal** : CGV, confidentialité, mandat, rétractation, adresse siège.
+5. **Légal** : CGV, confidentialité, contrat de cession de créance, rétractation, adresse siège.
 6. **APIs** : Amadeus (flight-info, airport-search), radar, WhatsApp, Gemini (OCR).
 7. **Accessibilité** : skip link, structure sémantique, contraste (navy + vert).
 

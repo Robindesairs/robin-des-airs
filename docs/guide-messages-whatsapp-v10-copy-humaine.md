@@ -185,7 +185,7 @@ Ces photos rendent votre réclamation plus solide. Et rappel : **0 €** si on n
 
 ---
 
-## MSG 14 — Mandat + clôture humaine (conversion finale)
+## MSG 14 — Contrat de cession + clôture humaine (conversion finale)
 
 > ⚖️ *Corrigé : « l'argent que la compagnie pourrait vous devoir » (au lieu de « qui vous est dû ») + excuse pré-signature trimée.*
 
@@ -194,12 +194,12 @@ Ces photos rendent votre réclamation plus solide. Et rappel : **0 €** si on n
 
 Il reste une dernière étape, très simple : votre signature. Elle nous autorise à réclamer en votre nom, auprès de la compagnie, l'argent qu'elle pourrait vous devoir — *jusqu'à 600 €*. 2 minutes, et vous remettez les choses à leur place. ✍️
 
-[ Signer mon mandat ]
+[ Signer mon contrat de cession ]
 ```
 
 **Après signature :**
 ```
-Mandat reçu, c'est noté. ✅ Votre dossier passe entre les mains de notre équipe.
+Contrat de cession reçu, c'est noté. ✅ Votre dossier passe entre les mains de notre équipe.
 
 À partir d'ici, c'est nous qui parlons à la compagnie, plus vous. Vous n'avez plus rien à avancer :
 • *0 €* si nous ne gagnons pas.
@@ -360,5 +360,5 @@ Votre dossier reste ouvert. Vous le reprenez quand vous le sentez, à votre ryth
 
 1. **Montants dynamiques** : « jusqu'à 1 200 € » / « 900 € nets » doivent être branchés sur le **nombre réel de passagers** (× 600 €), jamais en dur.
 2. **Prescription « 5 ans »** : faire confirmer par le juriste selon la juridiction (cf. mémoire `mandat-cession-creance-opposabilite` : France = 5 ans, Maroc barème ≠).
-3. **A/B test** : comparer cette copy v10 humaine vs v8 sur le KPI roi **MSG 1 → mandat signé**, et surveiller le drop-off MSG 4 (l'empathie ne doit pas ralentir la qualification).
+3. **A/B test** : comparer cette copy v10 humaine vs v8 sur le KPI roi **MSG 1 → contrat de cession signé**, et surveiller le drop-off MSG 4 (l'empathie ne doit pas ralentir la qualification).
 4. **Implémentation** : `wati-webhook-v8.js` (source) + `server.js` régénéré (Railway) + `test-bot-v8.js`.

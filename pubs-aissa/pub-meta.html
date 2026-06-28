@@ -372,7 +372,7 @@ function Crea1({ lang = 'fr' }) {
   } : {
     upto: 'Jusqu’à', per: 'par passager', elig: '(si éligible)',
     law: 'C’est la loi européenne.', notscam: 'Pas une arnaque.',
-    t1: '25\u202f% — c’est tout.', t2: '0\u202f€ si on ne gagne pas.',
+    t1: '25\u202f% — c’est tout.', t2: '0\u202f€ sans résultat.',
     cta: 'Vérifier sur WhatsApp', sub: 'Vérification gratuite · réponse en moins de 3\u202fmin', pos: 'after',
   };
   return (
@@ -412,7 +412,7 @@ function Crea2({ lang = 'fr' }) {
     calc: 'Do the math.', cta: 'WhatsApp Robin',
   } : {
     on: 'Sur 600\u202f€ d’indemnité\u202f:', robin: 'ROBIN', others: 'AUTRES',
-    keep: 'Vous gardez', r1: '25\u202f%', r2: 'si on gagne', o1: 'Jusqu’à 50\u202f%', o2: 'si procès',
+    keep: 'Vous gardez', r1: '25\u202f%', r2: 'en cas de succès', o1: 'Jusqu’à 50\u202f%', o2: 'si procès',
     calc: 'Faites le calcul.', cta: 'WhatsApp Robin',
   };
   const colStyle = { display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: 6 };
@@ -482,12 +482,12 @@ function Crea3({ lang = 'fr' }) {
   const c = lang === 'en' ? {
     you: 'Travelling as 4?', brut: 'Up to €2,400 gross', net: 'net for you',
     nets: '~€1,800', elig: '(if eligible)',
-    kids: 'Children and babies count.', terms: '25%. €0 if we lose.',
+    kids: 'Children and babies count.', terms: '25%. €0 if no result.',
     cta: 'Claim on WhatsApp', pos: 'before',
   } : {
     you: 'Vous êtes 4\u202f?', brut: 'Jusqu’à 2\u202f400\u202f€ brut', net: 'nets pour vous',
     nets: '~1\u202f800', elig: '(si éligible)',
-    kids: 'Enfants et bébés comptent.', terms: '25\u202f%. 0\u202f€ si on perd.',
+    kids: 'Enfants et bébés comptent.', terms: '25\u202f%. 0\u202f€ sans résultat.',
     cta: 'Réclamer sur WhatsApp', pos: 'after',
   };
   return (
@@ -527,7 +527,7 @@ function Crea4({ lang = 'fr' }) {
     eyebrow: '✈\uFE0F  Encore en train d’attendre\u202f?',
     lead: 'Votre retard peut valoir', upto: 'jusqu’à', per: 'par personne',
     elig: '(si éligible — CE 261)',
-    rows: ['3 minutes sur WhatsApp.', '0\u202f€ si on ne gagne pas.'],
+    rows: ['3 minutes sur WhatsApp.', '0\u202f€ sans résultat.'],
     cta: 'C’est mon tour', pos: 'after',
   };
   return (

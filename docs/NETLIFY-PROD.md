@@ -109,7 +109,7 @@ Option incident : dans le single-select **Type d'incident**, ajouter
 
 Activer **Netlify Blobs** (Storage) pour l’historique CRM WhatsApp **et** le robot agence.
 
-## 4. Mandats signés
+## 4. Contrats de cession signés
 
 | Variable | Description |
 |----------|-------------|

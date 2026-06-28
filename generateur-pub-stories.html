@@ -283,7 +283,7 @@ function drawFamille(canvas, city, lang) {
   divider(ctx, 908);
 
   txt(ctx, lang==='fr' ? 'Enfants et bébés comptent.' : 'Kids and babies count.', 960, 30, 600, '#fff');
-  txt(ctx, lang==='fr' ? '25 %. 0 € si on perd.' : '25%. 0€ if we lose.', 1010, 30, 700, GREEN);
+  txt(ctx, lang==='fr' ? '25 %. 0 € sans résultat.' : '25%. 0€ with no result.', 1010, 30, 700, GREEN);
 
   drawCTA(ctx, lang==='fr' ? 'Réclamer sur WhatsApp' : 'Claim on WhatsApp', true);
   drawFooter(ctx, false);
@@ -408,7 +408,7 @@ function drawUrgence(canvas, city, lang) {
   ctx.textBaseline = 'alphabetic';
   const bx = W/2 - 220;
   ctx.fillText(lang==='fr' ? '•  3 minutes sur WhatsApp.' : '•  3 minutes on WhatsApp.', bx, 1020);
-  ctx.fillText(lang==='fr' ? '•  0 € si on ne gagne pas.' : "•  0€ if we don't win.", bx, 1066);
+  ctx.fillText(lang==='fr' ? '•  0 € sans résultat.' : "•  0€ if we recover nothing.", bx, 1066);
   ctx.restore();
 
   drawCTA(ctx, lang==='fr' ? "C'est mon tour" : "It's my turn", true);
@@ -456,7 +456,7 @@ function drawLoi(canvas, city, lang) {
   divider(ctx, 906);
 
   txt(ctx, lang==='fr' ? "25 %, c'est tout." : "25%, that's it.", 968, 32, 700, '#fff');
-  txt(ctx, lang==='fr' ? '0 € si on ne gagne pas.' : "0€ if we don't win.", 1018, 32, 700, '#fff');
+  txt(ctx, lang==='fr' ? '0 € sans résultat.' : "0€ if we recover nothing.", 1018, 32, 700, '#fff');
 
   drawCTA(ctx, lang==='fr' ? 'Vérifier sur WhatsApp' : 'Verify on WhatsApp', false);
 

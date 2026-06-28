@@ -1377,7 +1377,7 @@ function missingDocsText(s) {
   }
   if (miss.length) return en ? `📎 Still missing: ${miss.join(' and ')}.` : `📎 Il manque encore : ${miss.join(' et ')}.`;
   const v = s.flightVerdict;
-  if (v === 'hors_champ' || v === 'sous_seuil') return en ? `✅ All your documents are in, thanks ${firstNameOf(s)}! File ${s.ref || ''} is complete. An expert confirms the *exact amount* (free check) and we file the claim — €0 if we don't win.` : `✅ Toutes vos pièces sont là, merci ${firstNameOf(s)} ! Le dossier ${s.ref || ''} est complet. Un expert confirme le *montant exact* (vérification gratuite) et on lance la réclamation — 0 € si on ne gagne pas.`;
+  if (v === 'hors_champ' || v === 'sous_seuil') return en ? `✅ All your documents are in, thanks ${firstNameOf(s)}! File ${s.ref || ''} is complete. An expert confirms the *exact amount* (free check) and we file the claim — €0 if we recover nothing.` : `✅ Toutes vos pièces sont là, merci ${firstNameOf(s)} ! Le dossier ${s.ref || ''} est complet. Un expert confirme le *montant exact* (vérification gratuite) et on lance la réclamation — 0 € si vous ne touchez rien.`;
   return en ? `✅ All your documents are in, thanks ${firstNameOf(s)}! Your file *${s.ref || ''}* is complete. 🙏` : `✅ Toutes vos pièces sont là, merci ${firstNameOf(s)} ! Votre dossier *${s.ref || ''}* est au complet. 🙏`;
 }
 
@@ -1500,7 +1500,7 @@ async function finNonEligible(phone, reasonText, cfg) {
   const footer = L(_st, `_The Robin des Airs team 🏹_`, STOP_FOOTER);
   await send(phone, `${reasonText}\n\n${footer}`, cfg);
   return sendButtons(phone, {
-    body: L(_st, `💡 This flight isn't eligible — but it's rarely a family's only trip.\n\nOne flight in ten is delayed or cancelled, and you can claim *up to 5 years back*. Think of your recent trips: a *3h+* delay on arrival, a cancellation, denied boarding = *up to €600 per passenger*. €0 if we don't win.\n\n✈️ Shall we check another flight?`, pickVariant(phone, 'RELANCE_AUTRE_VOL')),
+    body: L(_st, `💡 This flight isn't eligible — but it's rarely a family's only trip.\n\nOne flight in ten is delayed or cancelled, and you can claim *up to 5 years back*. Think of your recent trips: a *3h+* delay on arrival, a cancellation, denied boarding = *up to €600 per passenger*. €0 if we recover nothing.\n\n✈️ Shall we check another flight?`, pickVariant(phone, 'RELANCE_AUTRE_VOL')),
     buttons: [{ id: 'autre_vol', text: L(_st, '✈️ Check another flight', '✈️ Vérifier un autre vol') }, { id: 'appel', text: L(_st, '📞 Get a callback', '📞 Être rappelé') }],
   }, cfg);
 }
@@ -1629,7 +1629,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       && !(s && (s.step === 'doc_boarding' || s.step === 'doc_eticket')))) { // WATI renvoie souvent le LIBELLÉ du bouton (« Besoin d'aide » / « Être rappelé »), pas l'id → on matche aussi le texte
     upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now(), lastClientAt: Date.now(), ...(s && s.langue_code ? { langue: s.langue_code } : {}) });
     notifyCallbackWanted(phone, s, 'a demandé à être rappelé');
-    return send(phone, L(s, `📞 *Got it!* A real Robin des Airs advisor — a human, not a robot 🙂 — will call you back very soon.\n\n👉 We call from *+33 7 56 86 36 30*: save it now as "*Robin des Airs*" so you recognise the call and *pick up* (otherwise it shows as an unknown number).\n\n🔒 *€0 unless we win* — if we obtain your compensation we take a 25% success fee, the rest (75%) is yours.\n\nNot available? Reply here whenever you like, or type *go* to resume. 🙏`, `📞 *C'est noté !* Un vrai conseiller Robin des Airs — un humain, pas un robot 🙂 — vous rappelle très vite.\n\n👉 On vous appelle depuis le *+33 7 56 86 36 30* : enregistrez-le tout de suite sous « *Robin des Airs* » pour reconnaître l'appel et *décrocher* (sinon il s'affiche comme un numéro inconnu).\n\n🔒 *0 € tant qu'on ne gagne pas* — si on obtient votre indemnité, on prend 25 % de frais de succès, le reste (75 %) est pour vous.\n\nPas dispo ? Répondez ici quand vous voulez, ou écrivez *go* pour reprendre. 🙏`), cfg);
+    return send(phone, L(s, `📞 *Got it!* A real Robin des Airs advisor — a human, not a robot 🙂 — will call you back very soon.\n\n👉 We call from *+33 7 56 86 36 30*: save it now as "*Robin des Airs*" so you recognise the call and *pick up* (otherwise it shows as an unknown number).\n\n🔒 *€0 unless you get paid* — if we obtain your compensation we take a flat 25% fee, all-in (nothing else), the rest (75%) is yours.\n\nNot available? Reply here whenever you like, or type *go* to resume. 🙏`, `📞 *C'est noté !* Un vrai conseiller Robin des Airs — un humain, pas un robot 🙂 — vous rappelle très vite.\n\n👉 On vous appelle depuis le *+33 7 56 86 36 30* : enregistrez-le tout de suite sous « *Robin des Airs* » pour reconnaître l'appel et *décrocher* (sinon il s'affiche comme un numéro inconnu).\n\n🔒 *0 € tant que vous n'avez rien touché* — si on obtient votre indemnité, on prend 25 % fixe, tout compris (rien d'autre), le reste (75 %) est pour vous.\n\nPas dispo ? Répondez ici quand vous voulez, ou écrivez *go* pour reprendre. 🙏`), cfg);
   }
 
   // T1.1b — Phrases sociales pures (merci, super, 👍…) : accusé poli, jamais parsé comme donnée.
@@ -1857,14 +1857,14 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       // La saisie manuelle leg par leg ne reste qu'en repli (bouton « Saisir à la main » → leg_count).
       s.type_vol = 'escale'; s.legs = []; s.legIdx = 0; s.step = 'scan'; await setState(phone, s);
       return sendButtons(phone, { body: L(s,
-        `${bar('scan')}\n📸 Send a *photo* of your *e-ticket* — it has *all your flights at once*, connections included. I find everything, you type nothing.\n🎫 No e-ticket? Your *boarding passes* work too (one per flight).\n\n💰 ${s.pax} passenger${s.pax > 1 ? 's' : ''} = up to *€${montantTotal(s.pax)}* (you keep *75%*, i.e. *€${montantNet(s.pax)}*). Nothing upfront, *€0 if we don't win*.\n\n_ℹ️ Photo read by an automated tool (AI) to prepare your file — robindesairs.eu/politique-confidentialite_`,
-        `${bar('scan')}\n📸 Envoyez une *photo* de votre *e-billet* — il contient *tous vos vols d'un coup*, correspondance incluse. Je retrouve tout, vous ne tapez rien.\n🎫 Pas d'e-billet ? Vos *cartes d'embarquement* aussi (une par vol).\n\n💰 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (vous gardez *75 %*, soit *${montantNet(s.pax)} €*). Rien à avancer, *0 € si on ne gagne pas*.\n\n_ℹ️ Photo lue par un outil automatique (IA) pour préparer votre dossier — robindesairs.eu/politique-confidentialite_`), buttons: [{ id: 'scan_photo', text: L(s, '📸 Send a photo', '📸 Envoyer une photo') }, { id: 'scan_manuel', text: L(s, '✏️ Type it in', '✏️ Saisir à la main') }] }, cfg);
+        `${bar('scan')}\n📸 Send a *photo* of your *e-ticket* — it has *all your flights at once*, connections included. I find everything, you type nothing.\n🎫 No e-ticket? Your *boarding passes* work too (one per flight).\n\n💰 ${s.pax} passenger${s.pax > 1 ? 's' : ''} = up to *€${montantTotal(s.pax)}* (you keep *75%*, i.e. *€${montantNet(s.pax)}*). Nothing upfront, *€0 if we recover nothing*.\n\n_ℹ️ Photo read by an automated tool (AI) to prepare your file — robindesairs.eu/politique-confidentialite_`,
+        `${bar('scan')}\n📸 Envoyez une *photo* de votre *e-billet* — il contient *tous vos vols d'un coup*, correspondance incluse. Je retrouve tout, vous ne tapez rien.\n🎫 Pas d'e-billet ? Vos *cartes d'embarquement* aussi (une par vol).\n\n💰 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (vous gardez *75 %*, soit *${montantNet(s.pax)} €*). Rien à avancer, *0 € si vous ne touchez rien*.\n\n_ℹ️ Photo lue par un outil automatique (IA) pour préparer votre dossier — robindesairs.eu/politique-confidentialite_`), buttons: [{ id: 'scan_photo', text: L(s, '📸 Send a photo', '📸 Envoyer une photo') }, { id: 'scan_manuel', text: L(s, '✏️ Type it in', '✏️ Saisir à la main') }] }, cfg);
     }
     if (id === 'type_direct' || n === '1' || lower.includes('direct')) s.type_vol = 'direct';
     else return sendButtons(phone, { body: L(s, `${bar('type_vol')}\n✈️ Direct flight or with layover(s)?`, `${bar('type_vol')}\n✈️ Vol direct ou avec escale(s) ?`), buttons: [{ id: 'type_direct', text: L(s, '✈️ Direct flight', '✈️ Vol direct') }, { id: 'type_escale', text: L(s, '🔄 With layover', '🔄 Avec escale') }] }, cfg);
     s.step = 'scan'; await setState(phone, s);
     // Un seul message (motivation + scan) → réponse immédiate, pas de délai où les taps s'entrecroisent.
-    return sendButtons(phone, { body: L(s, `${bar('scan')}\n📸 Send a *photo* of your boarding pass or e-ticket — I'll find your flight on my own.\n\n💰 ${s.pax} passenger${s.pax > 1 ? 's' : ''} = up to *€${montantTotal(s.pax)}* (you keep *75%*, i.e. *€${montantNet(s.pax)}*). Nothing upfront, *€0 if we don't win*.\n\n_ℹ️ Photo read by an automated tool (AI) to prepare your file — robindesairs.eu/politique-confidentialite_\n\n📎 Send the photo, or:`, `${bar('scan')}\n📸 Envoyez une *photo* de votre carte d'embarquement ou e-billet — je retrouve votre vol tout seul.\n\n💰 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (vous gardez *75 %*, soit *${montantNet(s.pax)} €*). Rien à avancer, *0 € si on ne gagne pas*.\n\n_ℹ️ Photo lue par un outil automatique (IA) pour préparer votre dossier — robindesairs.eu/politique-confidentialite_\n\n📎 Envoyez la photo, ou :`), buttons: [{ id: 'scan_photo', text: L(s, '📸 Send a photo', '📸 Envoyer une photo') }, { id: 'scan_manuel', text: L(s, '✏️ Type it in', '✏️ Saisir à la main') }] }, cfg);
+    return sendButtons(phone, { body: L(s, `${bar('scan')}\n📸 Send a *photo* of your boarding pass or e-ticket — I'll find your flight on my own.\n\n💰 ${s.pax} passenger${s.pax > 1 ? 's' : ''} = up to *€${montantTotal(s.pax)}* (you keep *75%*, i.e. *€${montantNet(s.pax)}*). Nothing upfront, *€0 if we recover nothing*.\n\n_ℹ️ Photo read by an automated tool (AI) to prepare your file — robindesairs.eu/politique-confidentialite_\n\n📎 Send the photo, or:`, `${bar('scan')}\n📸 Envoyez une *photo* de votre carte d'embarquement ou e-billet — je retrouve votre vol tout seul.\n\n💰 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (vous gardez *75 %*, soit *${montantNet(s.pax)} €*). Rien à avancer, *0 € si vous ne touchez rien*.\n\n_ℹ️ Photo lue par un outil automatique (IA) pour préparer votre dossier — robindesairs.eu/politique-confidentialite_\n\n📎 Envoyez la photo, ou :`), buttons: [{ id: 'scan_photo', text: L(s, '📸 Send a photo', '📸 Envoyer une photo') }, { id: 'scan_manuel', text: L(s, '✏️ Type it in', '✏️ Saisir à la main') }] }, cfg);
   }
   // ── Correspondance « rapide » (raccourci bandeau) : vol déjà connu, on demande juste s'il y en avait un autre ──
   if (s.step === 'q_corr') {
@@ -2291,7 +2291,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const n = normInput(input, ['majeur', 'mineur', 'tous majeurs', 'des mineurs']);
     if (s.pax === 1) {
       if (n === '1' || lower.includes('majeur') || lower.includes('adult')) { s.mineurs = []; await setState(phone, s); return sendRecap(phone, s, cfg); }
-      if (n === '2' || lower.includes('mineur') || lower.includes('minor')) { s.minorsPresent = true; s.minorSelf = true; await setState(phone, s); await send(phone, L(s, `👶 Noted. A minor's compensation is still due — the *authority form is signed by their parent or legal guardian* (we guide you at the final step, nothing to pay upfront). Let's continue 👇`, `👶 Bien noté. L'indemnité d'un mineur est bien due — le *mandat est signé par son parent ou tuteur légal* (on vous guide à l'étape finale, rien à avancer). On continue 👇`), cfg); return sendRecap(phone, s, cfg); }
+      if (n === '2' || lower.includes('mineur') || lower.includes('minor')) { s.minorsPresent = true; s.minorSelf = true; await setState(phone, s); await send(phone, L(s, `👶 Noted. A minor's compensation is still due — the *claim-assignment contract is signed by their parent or legal guardian* (we guide you at the final step, nothing to pay upfront). Let's continue 👇`, `👶 Bien noté. L'indemnité d'un mineur est bien due — le *contrat de cession est signé par son parent ou tuteur légal* (on vous guide à l'étape finale, rien à avancer). On continue 👇`), cfg); return sendRecap(phone, s, cfg); }
       return sendButtons(phone, { body: L(s, `${bar('mineurs')}\n👤 Are you an adult (18+)?`, `${bar('mineurs')}\n👤 Êtes-vous majeur(e) (18+) ?`), buttons: [{ text: L(s, '✅ Yes, adult', '✅ Oui, majeur(e)') }, { text: L(s, '👶 No, a minor', '👶 Non, mineur(e)') }] }, cfg);
     }
     if (n === '1' || lower.includes('tous majeurs') || lower.includes('all adults')) { s.minorsPresent = false; await setState(phone, s); return sendRecap(phone, s, cfg); }
@@ -2568,8 +2568,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
 async function sendAccueil(phone, cfg, lang) {
   const en = lang === 'en';
   await sendButtons(phone, { body: en
-    ? `${bar('accueil')}\n👋 Welcome to *Robin des Airs* 🏹\n_I'm the Robin des Airs assistant, I'll guide you step by step._\n\nDefending passengers on Africa ↔ Europe flights is what we do.\n\n✈️ EU law EC 261/2004 entitles you to compensation of *up to €600 per person*.\n\n*€0 if we don't win.* No risk for you.\n\nLet's see together what you may be owed. 👇`
-    : `${bar('accueil')}\n👋 Bienvenue chez *Robin des Airs* 🏹\n_Je suis l'assistant Robin des Airs, je vous accompagne pas à pas._\n\n${pickVariant(phone, 'ACCUEIL_EMPATHIE')}\n\nNous, c'est notre métier : on défend les passagers des vols Afrique ↔ Europe.\n\n✈️ La loi CE 261/2004 vous donne droit à une indemnité pouvant aller *jusqu'à 600 € par personne*.\n\n*0 € si on ne gagne pas.* Aucun risque pour vous.\n\nVoyons ensemble si une indemnité vous revient. 👇`,
+    ? `${bar('accueil')}\n👋 Welcome to *Robin des Airs* 🏹\n_I'm the Robin des Airs assistant, I'll guide you step by step._\n\nDefending passengers on Africa ↔ Europe flights is what we do.\n\n✈️ EU law EC 261/2004 entitles you to compensation of *up to €600 per person*.\n\n*€0 if we recover nothing.* No risk for you.\n\nLet's see together what you may be owed. 👇`
+    : `${bar('accueil')}\n👋 Bienvenue chez *Robin des Airs* 🏹\n_Je suis l'assistant Robin des Airs, je vous accompagne pas à pas._\n\n${pickVariant(phone, 'ACCUEIL_EMPATHIE')}\n\nNous, c'est notre métier : on défend les passagers des vols Afrique ↔ Europe.\n\n✈️ La loi CE 261/2004 vous donne droit à une indemnité pouvant aller *jusqu'à 600 € par personne*.\n\n*0 € si vous ne touchez rien.* Aucun risque pour vous.\n\nVoyons ensemble si une indemnité vous revient. 👇`,
     footer: 'CE 261/2004', buttons: [{ text: en ? '🚀 My compensation' : '🚀 Mon indemnité' }] }, cfg);
   // _sid = session ID unique par parcours (timestamp base36) — isole le dedup step+contenu.
   // langue_code mémorisé si détecté (site anglais) → le menu langue sera sauté à l'étape suivante.
@@ -2838,7 +2838,7 @@ async function askMandant(phone, s, cfg) {
   s.step = 'doc_mandant'; await setState(phone, s);
   const names = Array.from({ length: s.pax }, (_, i) => paxName(s, i)); // résout passengers[i].name → s.names[i] (e-billet) → « Passager i » : affiche le vrai nom quand on l'a
   // On ne demande PAS « qui signe » (tout le monde signe son mandat) — juste à qui est ce WhatsApp (le contact du dossier).
-  await send(phone, L(s, `✅ Documents collected! One last thing.\n\n📱 *Whose WhatsApp number is this?*\n_(the person following the case — each passenger signs their own authority form, whichever it is.)_`, `✅ Pièces collectées ! Une dernière chose.\n\n📱 *À qui appartient ce numéro WhatsApp ?*\n_(la personne qui suit le dossier — chaque passager signera son propre mandat, peu importe lequel.)_`), cfg);
+  await send(phone, L(s, `✅ Documents collected! One last thing.\n\n📱 *Whose WhatsApp number is this?*\n_(the person following the case — each passenger signs their own claim-assignment contract, whichever it is.)_`, `✅ Pièces collectées ! Une dernière chose.\n\n📱 *À qui appartient ce numéro WhatsApp ?*\n_(la personne qui suit le dossier — chaque passager signera son propre contrat de cession, peu importe lequel.)_`), cfg);
   if (names.length <= 3) {
     return sendButtons(phone, names.map((nm, i) => ({ id: `mdt_${i}`, text: clip(nm, 20) })), cfg);
   }
@@ -2868,8 +2868,8 @@ async function finaliser(phone, s, cfg) {
   // Message 1 — le récap (sans le lien). Message 2 — le lien SEUL, court, qui ne se replie
   // jamais derrière « Lire la suite » sur mobile et déclenche l'aperçu cliquable WhatsApp.
   await send(phone, L(s,
-    `${bar('done')}\n${titre} Ref. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${incidentLabel(s)}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nLast step: *your signature* (2 min).\n✅ €0 upfront — 25% on success only · no bank details.\n_Your data is used only for your claim, never sold. Privacy & T&Cs: robindesairs.eu/cgv_`,
-    `${bar('done')}\n${titre} Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${incidentLabel(s)}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % au succès uniquement · aucune info bancaire.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_`), cfg);
+    `${bar('done')}\n${titre} Ref. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${incidentLabel(s)}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nLast step: *your signature* (2 min).\n✅ €0 upfront — 25% on success only · no bank details.\n💸 Paid even without a EU bank account: bank transfer, Wave, Orange Money… or cash pickup.\n_Your data is used only for your claim, never sold. Privacy & T&Cs: robindesairs.eu/cgv_`,
+    `${bar('done')}\n${titre} Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${incidentLabel(s)}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % fixe, tout compris, au succès uniquement · aucune info bancaire.\n💸 Payé même sans compte bancaire en Europe : virement, Wave, Orange Money… ou retrait en espèces.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_`), cfg);
   await send(phone, L(s, `👉 *Sign here* (2 min):\n${s.mandat_url}\n\nWithout your signature, we can't act on your behalf. ${STOP_FOOTER}`, `👉 *Signez ici* (2 min) :\n${s.mandat_url}\n\nSans votre signature, on ne peut pas agir en votre nom. ${STOP_FOOTER}`), cfg);
   // CRM : la fiche Airtable est désormais créée par la synchro DIRECTE (storeDossierDurable →
   // /api/dossier-store → syncNewDossierToAirtable, statut « Signature en attente »). Le webhook
@@ -3227,14 +3227,14 @@ function relanceText(n, lead) {
   if (leadEN(lead)) {
     const nm = lead.name ? ' ' + String(lead.name).split(/\s+/)[0] : '';
     const amt = total ? ` We claim up to *${total}* for you` : '';
-    if (n === 2) return `Just one signature left to start your file *${lead.ref}*${nm}.${amt} — *€0 if we don't win*. 👉 *Sign here* (2 min):\n${url}`;
-    if (n === 8) return `Your file *${lead.ref}* is ready${nm ? ',' + nm : ''} — only *your signature* is missing (2 min).${amt}, *€0 if we don't win*. 👉\n${url}`;
-    return `Last step for your file *${lead.ref}*: *your signature*. After that we handle everything.${amt}, *€0 if we don't win*. 👉\n${url}`;
+    if (n === 2) return `Just one signature left to start your file *${lead.ref}*${nm}.${amt} — *€0 if we recover nothing*. 👉 *Sign here* (2 min):\n${url}`;
+    if (n === 8) return `Your file *${lead.ref}* is ready${nm ? ',' + nm : ''} — only *your signature* is missing (2 min).${amt}, *€0 if we recover nothing*. 👉\n${url}`;
+    return `Last step for your file *${lead.ref}*: *your signature*. After that we handle everything.${amt}, *€0 if we recover nothing*. 👉\n${url}`;
   }
-  if (!total) return `Il ne reste qu'une signature pour lancer votre dossier ${lead.ref}. Un expert confirme le montant exact (vérification gratuite). 👉 ${url}\n0 € si on ne gagne pas.`;
+  if (!total) return `Il ne reste qu'une signature pour lancer votre dossier ${lead.ref}. Un expert confirme le montant exact (vérification gratuite). 👉 ${url}\n0 € si vous ne touchez rien.`;
   const key = n === 2 ? 'RELANCE_2H' : n === 8 ? 'RELANCE_8H' : 'RELANCE_22H';
   const txt = fillTpl(pickRV(lead.ref || lead.phone, key), { REF: lead.ref || '', TOTAL: total, URL: url, NOM: lead.name || '' });
-  return txt || `Il ne reste qu'une signature pour votre dossier ${lead.ref}. 👉 ${url}\n0 € si on ne gagne pas.`;
+  return txt || `Il ne reste qu'une signature pour votre dossier ${lead.ref}. 👉 ${url}\n0 € si vous ne touchez rien.`;
 }
 // Groupe de message selon l'étape où le client a décroché → on adresse la cause probable de l'arrêt.
 function engGroup(step) {
@@ -3251,16 +3251,16 @@ function relanceTextEngaged(n, lead, step) {
   // EN : messages EN DUR (aucune dépendance GPT). FR : variantes habituelles.
   if (leadEN(lead)) {
     const nm = lead.name ? ' ' + String(lead.name).split(/\s+/)[0] : '';
-    const amt = total ? ` (up to *${total}*, *€0 if we don't win*)` : ` (an expert confirms the exact amount, *€0 if we don't win*)`;
+    const amt = total ? ` (up to *${total}*, *€0 if we recover nothing*)` : ` (an expert confirms the exact amount, *€0 if we recover nothing*)`;
     if (n >= 22) return `Last chance before your file closes${nm ? ',' + nm : ''} — 2 min to finish${amt}. Tap *Resume* 👇, or *Call* 📞.`;
     return `We've started your file${nm ? ',' + nm : ''} — tap *Resume* 👇 to finish it${amt}, or *Call* 📞. 🙏`;
   }
-  if (!total) return `On a commencé votre dossier — appuyez sur *Reprendre* 👇 pour le finaliser (un expert confirme le montant exact, 0 € si on ne gagne pas), ou *Rappel* 📞. 🙏`;
+  if (!total) return `On a commencé votre dossier — appuyez sur *Reprendre* 👇 pour le finaliser (un expert confirme le montant exact, 0 € si vous ne touchez rien), ou *Rappel* 📞. 🙏`;
   let key;
   if (n >= 22) { key = 'ENG_EDGE'; }                       // dernière relance avant fermeture de la fenêtre → urgence courte (peu importe l'étape)
   else { const g = engGroup(step); const suffix = n <= 3 ? '_1' : '_2'; key = g ? ('ENG_' + g + suffix) : ('RELANCE_ENGAGED' + suffix); }
   const txt = fillTpl(pickRV(lead.phone, key), { NOM: lead.name || '', VOL: tripLabel(lead), TOTAL: total });
-  return txt || `On a commencé votre dossier — appuyez sur *Reprendre* 👇 pour le finaliser (jusqu'à ${total}, 0 € si on ne gagne pas), ou *Rappel* 📞. 🙏`;
+  return txt || `On a commencé votre dossier — appuyez sur *Reprendre* 👇 pour le finaliser (jusqu'à ${total}, 0 € si vous ne touchez rien), ou *Rappel* 📞. 🙏`;
 }
 // Vérif durable « déjà signé ? » via l'endpoint Netlify — SOURCE DE VÉRITÉ indépendante du webhook.
 // Best-effort + timeout : toute erreur → false → on relance normalement (jamais de blocage, jamais pire).

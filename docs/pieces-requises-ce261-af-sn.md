@@ -8,7 +8,7 @@
 ## 1. Le socle (tout dossier, quelle que soit la compagnie)
 
 **Par passager :**
-- ✅ **Mandat de représentation signé** — un par passager (signature du **représentant légal** si mineur). *Indispensable* : sans lui, on ne peut pas agir.
+- ✅ **Contrat de cession de créance signé** — un par passager (signature du **représentant légal** si mineur). *Indispensable* : sans lui, on ne peut pas agir.
 - ✅ **Pièce d'identité** (passeport ou CNI) — pour chaque passager (identité + versement de l'indemnité).
 
 **Pour le groupe (un seul document peut suffire) :**
@@ -20,7 +20,7 @@
 - 📊 **Preuve du retard** (capture FlightAware / Flightera : prévu vs réel).
 - 🧾 **Reçus de frais** (taxi, hôtel, repas) si remboursement de frais réclamé en plus.
 
-> 👉 **Réponse à « faut-il toutes les cartes d'embarquement ? » : NON.** Mandats + identités (chacun) + **une** preuve de réservation du groupe = dossier recevable. Les cartes renforcent mais ne sont pas toutes obligatoires. Les compagnies disposent du **manifeste passagers** et peuvent vérifier qui était à bord.
+> 👉 **Réponse à « faut-il toutes les cartes d'embarquement ? » : NON.** Contrats de cession + identités (chacun) + **une** preuve de réservation du groupe = dossier recevable. Les cartes renforcent mais ne sont pas toutes obligatoires. Les compagnies disposent du **manifeste passagers** et peuvent vérifier qui était à bord.
 
 ### ⚖️ Jurisprudence clé — la carte d'embarquement n'est PAS exigible
 
@@ -58,7 +58,7 @@ Le flux est cohérent avec ces exigences :
 - **1 carte scannée OU l'e-billet du groupe** suffit pour le vol.
 - **Noms** des autres passagers saisis au clavier (aucune carte requise).
 - **Passeports** collectés un par un (option « passer » = envoi ultérieur par email).
-- **Mandats** signés via le lien (un par passager).
+- **Contrats de cession de créance** signés via le lien (un par passager).
 
 → Une carte d'embarquement manquante **n'est jamais bloquante**.
 

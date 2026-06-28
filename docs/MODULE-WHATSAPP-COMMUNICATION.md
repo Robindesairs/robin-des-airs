@@ -6,7 +6,7 @@ Objectif : **réduire la friction** (clics, boutons, listes) tout en gardant la 
 
 | Fonction | Description |
 |----------|-------------|
-| **Menu d’accueil** (tunnel activé) | 3 boutons : **Carte vol** · **N° de vol** · **Parcours** (formulaire mandat étape par étape). |
+| **Menu d’accueil** (tunnel activé) | 3 boutons : **Carte vol** · **N° de vol** · **Parcours** (formulaire contrat de cession de créance étape par étape). |
 | **Oui / Non** | Boutons ✅ Oui / ❌ Non (IDs `robin_oui` / `robin_non`) aux étapes clés (passagers, correspondance, PNR, téléphone, etc.). |
 | **Nombre de passagers** | Liste interactive : 1 à 6 + **7 ou plus** → saisie manuelle 7–20. |
 | **Date du vol** | Après choix du nombre de passagers : boutons **Oui** / **Autre date** (`date_edit`). |

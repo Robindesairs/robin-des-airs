@@ -1,6 +1,6 @@
 # Scénario Make complet — Du webhook à l’AR24
 
-Ce document décrit le scénario Make **du début à la fin** : réception du dossier, vérifications, construction du mandat, confirmations email + SMS, préparation du dossier AR24.
+Ce document décrit le scénario Make **du début à la fin** : réception du dossier, vérifications, construction du contrat de cession de créance, confirmations email + SMS, préparation du dossier AR24.
 
 ---
 
@@ -10,12 +10,12 @@ Ce document décrit le scénario Make **du début à la fin** : réception du do
 |---|-------------|------|
 | 1 | **Webhooks** — Custom webhook | Recevoir le POST du formulaire (données + fichiers) |
 | 12 | **Set multiple variables** | Dériver : nom complet, trajet, liste passagers, date FR, motif FR/EN, indemnité, URL de base |
-| 3 | **Set variable** | Construire l’URL complète du mandat (avec paramètres encodés) |
-| 4 | **Gmail / Email** | Envoyer la confirmation email au client (avec lien mandat) |
+| 3 | **Set variable** | Construire l’URL complète du contrat de cession (avec paramètres encodés) |
+| 4 | **Gmail / Email** | Envoyer la confirmation email au client (avec lien du contrat de cession) |
 | 5 | **Twilio** (ou autre SMS) | Envoyer la confirmation SMS au client |
 | 6 | **Google Drive** — Create a folder | Créer le dossier client (ex. `AR24_[PNR]_[NOM]_[VOL]`) |
-| 7 | **Google Drive** — Upload | Déposer mise en demeure, mandat (ou lien), cartes d’embarquement, pièces d’identité |
-| (optionnel) | **HTTP** + outil PDF | Générer le PDF du mandat à partir de l’URL |
+| 7 | **Google Drive** — Upload | Déposer mise en demeure, contrat de cession (ou lien), cartes d’embarquement, pièces d’identité |
+| (optionnel) | **HTTP** + outil PDF | Générer le PDF du contrat de cession à partir de l’URL |
 
 À la fin, le dossier Drive contient tout le nécessaire pour l’envoi AR24 (recommandé). L’envoi AR24 lui‑même (La Poste, etc.) peut être fait manuellement ou via une intégration partenaire si vous en avez une.
 
@@ -26,7 +26,7 @@ Ce document décrit le scénario Make **du début à la fin** : réception du do
 - Un scénario Make avec **Webhooks** activé.
 - Connexions configurées : **Gmail** (ou SMTP), **Twilio** (ou autre pour SMS), **Google Drive**.
 - L’URL du webhook est bien celle renseignée dans **depot-en-ligne.html** (voir **CONFIGURER-WEBHOOK-MAKE.md**).
-- Base URL du site (ex. `https://robindesairs.eu`) pour construire le lien du mandat.
+- Base URL du site (ex. `https://robindesairs.eu`) pour construire le lien du contrat de cession.
 
 ---
 
@@ -53,7 +53,7 @@ Champs reçus (à utiliser dans les modules suivants) :
 
 ## Module 12 — Set multiple variables
 
-Créer un module **Set variable** (ou **Tools — Set multiple variables**) pour préparer les valeurs dérivées utilisées dans l’URL du mandat et les emails. *Chez vous ce bloc est le **module 12** ; adaptez les numéros dans les formules ci‑dessous si besoin.*
+Créer un module **Set variable** (ou **Tools — Set multiple variables**) pour préparer les valeurs dérivées utilisées dans l’URL du contrat de cession et les emails. *Chez vous ce bloc est le **module 12** ; adaptez les numéros dans les formules ci‑dessous si besoin.*
 
 | Variable | Formule / valeur (dans Make, mappez depuis le module 1 = Webhook) |
 |----------|-----------------------------------------------------------|
@@ -90,9 +90,9 @@ Exemple **paxlist** (2 passagers supplémentaires) :
 
 ---
 
-## Module 3 — Set variable : URL du mandat
+## Module 3 — Set variable : URL du contrat de cession
 
-Créer **une variable** `mandat_url` contenant l’URL complète du mandat, avec **tous les paramètres encodés** (espaces en `%20`, `&` en `%26`, etc.). Make propose souvent une fonction **encodeURIComponent** dans les expressions.
+Créer **une variable** `mandat_url` contenant l’URL complète du contrat de cession, avec **tous les paramètres encodés** (espaces en `%20`, `&` en `%26`, etc.). Make propose souvent une fonction **encodeURIComponent** dans les expressions.
 
 Formule type (à adapter à la syntaxe Make). **Toutes les variables name, phone, vol, date_fr, route, motif_fr, motif_en, paxlist, nbpax, indemnite, base_url viennent du module 12** — utilisez `{{12.xxx}}` :
 
@@ -129,7 +129,7 @@ https://robindesairs.eu/mandat.html?name={{12.name}}&phone={{12.phone}}&address=
 
 - **To :** `{{1.email}}`
 - **Subject :** `Dossier reçu — Robin des Airs`
-- **Content (exemple).** *Date = module 12. Lien mandat = module **15** (`{{15.mandat_url}}`).*
+- **Content (exemple).** *Date = module 12. Lien du contrat de cession = module **15** (`{{15.mandat_url}}`).*
 
 ```
 Bonjour {{1.prenom}},
@@ -142,7 +142,7 @@ Récapitulatif :
 - Compagnie : {{1.compagnie}}
 - PNR : {{1.pnr}}
 
-Votre mandat de représentation (prérempli avec vos informations) est consultable ici :
+Votre contrat de cession de créance (prérempli avec vos informations) est consultable ici :
 {{15.mandat_url}}
 
 Nous traitons votre dossier et vous tiendrons informé(e) par email et SMS.
@@ -152,9 +152,9 @@ L'équipe Robin des Airs
 66 avenue des Champs-Élysées, 75008 Paris
 ```
 
-→ Dans Make le lien mandat vient du **module 15** : `{{15.mandat_url}}`.
+→ Dans Make le lien du contrat de cession vient du **module 15** : `{{15.mandat_url}}`.
 
-- Si vous générez un PDF du mandat en amont, vous pouvez joindre ce PDF au lieu (ou en plus) du lien.
+- Si vous générez un PDF du contrat de cession en amont, vous pouvez joindre ce PDF au lieu (ou en plus) du lien.
 
 ---
 
@@ -204,12 +204,12 @@ Faire un **test avec 2 ou 3 passagers** et une exécution Make pour voir exactem
 | Fichier à déposer | Source (mapping) | Nom du fichier suggéré |
 |------------------|------------------|-------------------------|
 | **Mise en demeure** | Texte ou document généré (voir ci‑dessous) | `Mise_en_demeure_{{1.pnr}}_{{1.leg1_vol}}.pdf` |
-| **Mandat signé** (à récupérer obligatoirement) | `{{1.mandat_signature_file}}` — fichier image de la signature envoyé par le formulaire (webhook module 1) | `Mandat_signe_{{1.pnr}}.png` (ou `.pdf` si vous convertissez) |
-| **Mandat** (PDF prérempli, optionnel) | PDF généré depuis `{{15.mandat_url}}` si vous voulez aussi le mandat texte dans le dossier | `Mandat_{{1.pnr}}.pdf` |
+| **Contrat de cession signé** (à récupérer obligatoirement) | `{{1.mandat_signature_file}}` — fichier image de la signature envoyé par le formulaire (webhook module 1) | `Mandat_signe_{{1.pnr}}.png` (ou `.pdf` si vous convertissez) |
+| **Contrat de cession** (PDF prérempli, optionnel) | PDF généré depuis `{{15.mandat_url}}` si vous voulez aussi le contrat de cession texte dans le dossier | `Mandat_{{1.pnr}}.pdf` |
 | **Toutes les cartes d’embarquement** | `{{1.file_boarding}}`, puis si plusieurs : `{{1.file_boarding 2}}`, `{{1.file_boarding 3}}`… ou Iterator sur l’array | `Carte_embarquement_{{1.pnr}}_1.pdf`, `_2.pdf`, … |
 | **Tous les passeports / pièces d’identité** | `{{1.file_id}}`, puis si plusieurs : `{{1.file_id 2}}`, … ou Iterator sur l’array | `Piece_identite_{{1.pnr}}_1.pdf`, `_2.pdf`, … |
 
-- **Mandat signé :** le formulaire envoie la signature du mandat dans `mandat_signature_file` (image PNG). Il faut **obligatoirement** l’uploader dans le dossier Drive (ex. `Mandat_signe_{{1.pnr}}.png`) pour en garder une copie. Optionnellement vous pouvez aussi générer le PDF du mandat depuis `{{15.mandat_url}}` et l’uploader.
+- **Contrat de cession signé :** le formulaire envoie la signature du contrat de cession dans `mandat_signature_file` (image PNG). Il faut **obligatoirement** l’uploader dans le dossier Drive (ex. `Mandat_signe_{{1.pnr}}.png`) pour en garder une copie. Optionnellement vous pouvez aussi générer le PDF du contrat de cession depuis `{{15.mandat_url}}` et l’uploader.
 - Pour la **mise en demeure** : créer d’abord le contenu (voir modèle ci‑dessous), puis le convertir en PDF, puis l’uploader dans ce dossier.
 
 ### Modèle de mise en demeure (texte)
@@ -241,9 +241,9 @@ Remplacer les variables `{{...}}` par les champs Make (PNR, vol, nom, prénom, e
 
 ---
 
-## Optionnel — Générer le PDF du mandat
+## Optionnel — Générer le PDF du contrat de cession
 
-Pour avoir un **PDF du mandat** prérempli (sans signature client) à mettre dans le dossier AR24 et/ou en pièce jointe à l’email :
+Pour avoir un **PDF du contrat de cession** prérempli (sans signature client) à mettre dans le dossier AR24 et/ou en pièce jointe à l’email :
 
 1. **HTTP — Make a request** : GET `{{15.mandat_url}}` (module 15) → récupérer le HTML.
 2. Puis utiliser un module **Convert HTML to PDF** (ou service externe) avec ce HTML pour obtenir un fichier PDF.
@@ -268,10 +268,10 @@ Alternative : certains services (ex. PDF shift, DocRaptor) acceptent une URL dir
    ↓
 6. Google Drive — Create a folder
    ↓
-7a. [Optionnel] HTTP + Convert HTML to PDF → mandat
+7a. [Optionnel] HTTP + Convert HTML to PDF → contrat de cession
 7b. Créer le document de mise en demeure (texte + conversion PDF)
 7c. Google Drive — Upload a file (mise en demeure)
-7d. Google Drive — Upload a file (mandat signé : `{{1.mandat_signature_file}}` — obligatoire)
+7d. Google Drive — Upload a file (contrat de cession signé : `{{1.mandat_signature_file}}` — obligatoire)
 7e. Google Drive — Upload a file (file_boarding)
 7f. Google Drive — Upload a file (file_id)
 ```
@@ -280,7 +280,7 @@ Alternative : certains services (ex. PDF shift, DocRaptor) acceptent une URL dir
 
 ## Gestion des erreurs (recommandations)
 
-- **Router** après le webhook : si `mandat_signed` ≠ 1, vous pouvez envoyer un email différent (« Merci, pensez à signer le mandat ») ou ne pas envoyer le lien mandat.
+- **Router** après le webhook : si `mandat_signed` ≠ 1, vous pouvez envoyer un email différent (« Merci, pensez à signer le contrat de cession ») ou ne pas envoyer le lien du contrat de cession.
 - **Router** après le module 12 (Set variables) : si un champ obligatoire (ex. `email`, `leg1_vol`) est vide, éviter d’envoyer l’email/SMS ou envoyer un message d’erreur à l’équipe interne uniquement.
 - En cas d’échec d’upload Drive : configurer un **resume** ou une **alerte** pour ne pas perdre le dossier.
 
@@ -293,15 +293,15 @@ Alternative : certains services (ex. PDF shift, DocRaptor) acceptent une URL dir
 | `prenom`, `nom` | name, email, dossier, mise en demeure |
 | `email` | Envoi confirmation email |
 | `whatsapp` | Envoi SMS (format international) |
-| `adresse` | Paramètre `address` du mandat |
+| `adresse` | Paramètre `address` du contrat de cession |
 | `leg1_vol`, `leg2_vol`… | vol, route, objet AR24 |
 | `leg1_dep`, `leg1_arr`… | route (trajet) |
-| `date_vol` | date_fr (mandat, email) |
+| `date_vol` | date_fr (contrat de cession, email) |
 | `motif` | motif_fr, motif_en |
-| `pnr` | mandat, dossier, mise en demeure |
-| `compagnie` | mandat, email |
+| `pnr` | contrat de cession, dossier, mise en demeure |
+| `compagnie` | contrat de cession, email |
 | `nb_passagers`, `pax1_prenom`, `pax1_nom`… | nbpax, paxlist |
 | `file_boarding`, `file_id` | Upload dans le dossier AR24 |
 | `dossier_nom` | Nom du dossier Drive (optionnel) |
 
-Une fois ce scénario en place, chaque soumission du formulaire déclenche : vérifications dérivées → URL mandat → confirmation email + SMS → création du dossier Drive et dépôt des pièces pour l’AR24.
+Une fois ce scénario en place, chaque soumission du formulaire déclenche : vérifications dérivées → URL contrat de cession → confirmation email + SMS → création du dossier Drive et dépôt des pièces pour l’AR24.

@@ -3,7 +3,7 @@
 **Statut :** v2 appliquée dans ce dépôt le 19/05/2026  
 **Remplace :** messages verbatim de `FLOW-BOT-INTAKE.md` (capture 23/05/2026)  
 **Audits sources :** `BOT-AUDIT-UX.md`, `BOT-AUDIT-QUALIFICATION.md`, `BOT-OPTIMISATION-COMPORTEMENTALE.md`  
-**Lien mandat :** `docs/WATI-LIEN-MANDAT.md` — **jamais** `https://robindesairs.eu/sign/...` (404)
+**Lien du contrat de cession :** `docs/WATI-LIEN-MANDAT.md` — **jamais** `https://robindesairs.eu/sign/...` (404)
 
 ---
 
@@ -13,7 +13,7 @@
 |---|--------|----------|
 | 1 | Remplacer l’URL finale par `{{mandat_url}}` (Make → `mandat.html?ref=...`) | P0 |
 | 2 | Supprimer l’étape « On continue ? » (fusion 2c → 3) | P0 |
-| 3 | Découper le message final en **3 messages** (A récap → B mandat → C pièces, +30 s) | P0 |
+| 3 | Découper le message final en **3 messages** (A récap → B contrat de cession → C pièces, +30 s) | P0 |
 | 4 | Ajouter question **durée retard** si incident = Retard | P1 |
 | 5 | Ajouter **gate Europe** après accueil (1bis) | P1 |
 | 6 | Message **confiance** avant OCR (étape 3b) | P1 |
@@ -296,7 +296,7 @@ Parmi les passagers suivants, y a-t-il des mineurs (moins de 18 ans) ?
 
 {{liste_bullets}}
 
-⚖️ Obligation légale pour préparer le bon mandat de signature.
+⚖️ Obligation légale pour préparer le bon contrat de cession de créance.
 🟢🟢🟢🟢🟢🟢🟢
 ```
 
@@ -305,7 +305,7 @@ Parmi les passagers suivants, y a-t-il des mineurs (moins de 18 ans) ?
 ### [ÉTAPE 7b — Email] — NOUVEAU
 
 ```
-📧 *Pour vous envoyer le mandat et le suivi du dossier*
+📧 *Pour vous envoyer le contrat de cession et le suivi du dossier*
 
 Quelle est votre adresse email ?
 (Ex. : prenom@gmail.com)
@@ -316,7 +316,7 @@ Quelle est votre adresse email ?
 ### [ÉTAPE 7c — Adresse] — NOUVEAU
 
 ```
-📮 *Adresse postale* (pour le mandat officiel)
+📮 *Adresse postale* (pour le contrat de cession officiel)
 
 Rue, ville et pays — ou *ville + pays* si vous préférez.
 ```
@@ -362,13 +362,13 @@ Prochaine étape : *2 minutes* pour l'activer.
 
 ---
 
-### [FIN B — Mandat seul] — +3 à 5 secondes
+### [FIN B — Contrat de cession seul] — +3 à 5 secondes
 
 ```
 ✅ *Dossier {{ref_dossier}} enregistré.*
 
-Pour que Robin des Airs représente *{{nom_principal}}* auprès de *{{compagnie}}*,
-signez votre *mandat de représentation* (lisible avant signature).
+Pour que Robin des Airs recouvre l'indemnité de *{{nom_principal}}* auprès de *{{compagnie}}*,
+signez votre *contrat de cession de créance* (lisible avant signature).
 
 *Aucune information bancaire n'est demandée à cette étape.*
 
@@ -446,14 +446,14 @@ Votre dossier vous attend :
 
 *(Bouton : Reprendre la saisie)*
 
-### R3 — Mandat non signé (>24 h)
+### R3 — Contrat de cession non signé (>24 h)
 
 ```
 Votre dossier *{{ref_dossier}}* est prêt.
 Il attend votre signature.
 
 Nos experts ne peuvent pas agir
-tant que le mandat n'est pas signé —
+tant que le contrat de cession n'est pas signé —
 *c'est la seule chose qui manque.*
 
 Lien officiel Robin des Airs (2 min) :

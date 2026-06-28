@@ -318,27 +318,27 @@
       return {
         legalLine: function (legal, comm) { return 'Legal payout ' + fmtEuro(legal) + ' · ' + comm + '% fee'; },
         netPerPerson: 'NET · PER PERSON',
-        zeroIfLose: '€0 if we lose',
+        zeroIfLose: '€0 if no result',
         flightOn: function (d) { return 'Flight on ' + d; },
         legalPer: 'Legal payout / pax',
         yourShare: function (pct) { return 'Your share (' + pct + '%)'; },
         perPersonSuffix: ' / pax',
         passengers: function (n) { return '× ' + n + ' passenger' + (n > 1 ? 's' : ''); },
         familyGets: 'Family receives',
-        netsZero: 'net · €0 if we lose'
+        netsZero: 'net · €0 if no result'
       };
     }
     return {
       legalLine: function (legal, comm) { return 'Indemnité légale ' + fmtEuro(legal) + ' \u00d7 ' + comm + '% comm.'; },
       netPerPerson: 'NETS · PAR PERSONNE',
-      zeroIfLose: '0 € si on perd',
+      zeroIfLose: '0 € sans résultat',
       flightOn: function (d) { return 'Vol du ' + d; },
       legalPer: 'Indemnité légale / pers.',
       yourShare: function (pct) { return 'Votre part (' + pct + '%)'; },
       perPersonSuffix: ' / pers.',
       passengers: function (n) { return '\u00d7 ' + n + ' personne' + (n > 1 ? 's' : ''); },
       familyGets: 'Famille reçoit',
-      netsZero: 'nets · 0 € si on perd'
+      netsZero: 'nets · 0 € sans résultat'
     };
   }
 

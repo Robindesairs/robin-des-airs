@@ -71,7 +71,7 @@ Données 2025 : **~60 %** des dossiers MTV se concluent par un versement total o
 Vous pouvez ensuite :
 - Engager la **procédure européenne de petite créance** ([guide](/blog/formulaire-petite-creance-europeenne-vol-retarde.html))
 - Saisir le **tribunal judiciaire** en France
-- Mandater Robin des Airs qui prend en charge toute la procédure
+- Confier votre dossier à Robin des Airs (contrat de cession de créance) qui prend en charge toute la procédure
 
 ## Robin des Airs et le MTV
 

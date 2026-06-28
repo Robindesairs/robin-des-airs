@@ -16,7 +16,7 @@
 
   "passagers": [
     {
-      "rang": "number (1 = passager principal / signataire du mandat)",
+      "rang": "number (1 = passager principal / signataire du contrat de cession)",
       "prenom": "string",
       "nom": "string",
       "email": "string | null",

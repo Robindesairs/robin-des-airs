@@ -100,7 +100,7 @@ En dehors des 24 h, seuls les **templates** approuvés par Meta peuvent être en
 | Envoi de templates hors 24 h (J+7, J+15, etc.) | Oui | Avec des **templates** pré-approuvés par Meta (ex. « Bonjour {1}, point sur votre dossier : {2} »). |
 | Pièces / RIB via lien sécurisé | Oui | Envoi d’un message avec lien (formulaire sécurisé) ; pas d’envoi de fichiers sensibles par WhatsApp. |
 
-En résumé : les étapes 1–3 en automatique avec boutons, l’humain à l’étape 4, puis mix templates (suivis) + réponses manuelles (mandat, RIB, résultat), c’est supporté par l’API WhatsApp.
+En résumé : les étapes 1–3 en automatique avec boutons, l’humain à l’étape 4, puis mix templates (suivis) + réponses manuelles (contrat de cession, RIB, résultat), c’est supporté par l’API WhatsApp.
 
 ---
 

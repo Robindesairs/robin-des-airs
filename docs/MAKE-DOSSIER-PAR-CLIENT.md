@@ -10,7 +10,7 @@ Quand un client envoie le formulaire :
 
 | Page | Ce qui est envoyé | Destination |
 |------|-------------------|-------------|
-| **Dépôt en ligne** (`depot-en-ligne.html`) | Formulaire + **fichiers** (carte d’embarquement, pièce d’identité, signatures mandat/SEPA) en `multipart/form-data` | Webhook Make.com |
+| **Dépôt en ligne** (`depot-en-ligne.html`) | Formulaire + **fichiers** (carte d’embarquement, pièce d’identité, signatures contrat de cession/SEPA) en `multipart/form-data` | Webhook Make.com |
 | **Dépôt express** (`depot-express.html`) | Prénom, WhatsApp, trajet, **1 fichier** (photo vol) | Webhook Make.com |
 | **Formulaire dossier** (`dossier.html`) | Données en **JSON uniquement** (pas de fichiers envoyés au webhook) | Webhook Make.com |
 
@@ -28,7 +28,7 @@ Donc **les vrais fichiers** (carte d’embarquement, passeport, etc.) sont envoy
 **Fichiers / images**  
 - `file_boarding` — carte(s) d’embarquement (plusieurs possibles si plusieurs passagers, même nom de champ)
 - `file_id` — pièce(s) d’identité (passeport, etc.)
-- `mandat_signature_file` — **fichier** image de la signature du mandat (PNG, signé sur le formulaire) — à utiliser dans Make comme les autres fichiers (`.data`)
+- `mandat_signature_file` — **fichier** image de la signature du contrat de cession (PNG, signé sur le formulaire) — à utiliser dans Make comme les autres fichiers (`.data`)
 - `sepa_signature_file` — **fichier** image de la signature SEPA (PNG), si fournie
 
 ### Dépôt express (`depot-express.html`)
@@ -84,12 +84,12 @@ Pour **chaque** fichier à sauvegarder :
 - **Contenu du fichier** : mappez le champ reçu du webhook qui contient le fichier (ex. sortie du module Webhook → `file_boarding`, `file_id`, `file_longest_flight`).  
   Si Make propose un type « Binary » ou « File », utilisez-le pour le contenu.
 
-Pour les **signatures** (mandat, SEPA) : ce sont des Data URL (image en base64). Vous pouvez soit :
+Pour les **signatures** (contrat de cession, SEPA) : ce sont des Data URL (image en base64). Vous pouvez soit :
 - les enregistrer telles quelles dans un fichier texte (ex. `mandat_signature.txt`),  
 soit  
 - ajouter un module pour décoder le base64 et créer une image (si Make le permet), puis l’uploader dans le même dossier.
 
-Répétez le module « Upload a file » pour chaque type de fichier (boarding, id, signature mandat, signature SEPA, etc.) en utilisant le **même** dossier (ID de l’étape 3).
+Répétez le module « Upload a file » pour chaque type de fichier (boarding, id, signature contrat de cession, signature SEPA, etc.) en utilisant le **même** dossier (ID de l’étape 3).
 
 ### Étape 5 — Ligne dans un Google Sheet (recommandé)
 

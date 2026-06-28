@@ -527,7 +527,7 @@ function CoverA() { // vert — montant
           <span style={{ fontFamily: AD.font, fontWeight: 500, fontSize: 40 }}>/ passager</span>
         </div>
         <div style={{ marginTop: 12, fontFamily: AD.font, fontWeight: 500, fontSize: 30, color: 'rgba(255,255,255,0.92)' }}>
-          Vérification gratuite sur WhatsApp&nbsp;·&nbsp;0&#8239;€ si on ne gagne pas
+          Vérification gratuite sur WhatsApp&nbsp;·&nbsp;0&#8239;€ sans résultat
         </div>
       </div>
     </CoverShell>
@@ -618,7 +618,7 @@ function PostLaunch() {
       <div style={{ marginTop: 48, display: 'flex', flexDirection: 'column', gap: 24 }}>
         <Bullet strong>Jusqu’à 600&#8239;€ par passager (CE&nbsp;261)</Bullet>
         <Bullet>Vérification gratuite en 2 minutes</Bullet>
-        <Bullet>25&#8239;% seulement si on gagne · 0&#8239;€ sinon</Bullet>
+        <Bullet>25&#8239;% seulement en cas de succès · 0&#8239;€ sinon</Bullet>
       </div>
     </PostShell>
   );
@@ -664,7 +664,7 @@ function PostEtapes() {
           </div>
         ))}
       </div>
-      <div style={{ marginTop: 50, fontFamily: AD.font, fontWeight: 600, fontSize: 42, color: AD.green }}>0&#8239;€ si on ne gagne pas.</div>
+      <div style={{ marginTop: 50, fontFamily: AD.font, fontWeight: 600, fontSize: 42, color: AD.green }}>0&#8239;€ sans résultat.</div>
     </PostShell>
   );
 }
@@ -690,7 +690,7 @@ function PostRetro() {
   );
 }
 
-// 5 · 0€ si on perd (réassurance)
+// 5 · 0€ sans résultat (réassurance)
 function PostZero() {
   return (
     <PostShell bg={GREEN_BG_S}
@@ -698,7 +698,7 @@ function PostZero() {
       <div style={{ fontFamily: AD.font, fontWeight: 600, fontSize: 46, letterSpacing: -0.5, color: 'rgba(255,255,255,0.92)' }}>Pas d’avance. Pas de risque.</div>
       <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <BigEuro n="0" size={380} color="#fff"/>
-        <span style={{ fontFamily: AD.font, fontWeight: 500, fontSize: 56, marginTop: -6 }}>si on ne gagne pas.</span>
+        <span style={{ fontFamily: AD.font, fontWeight: 500, fontSize: 56, marginTop: -6 }}>sans résultat.</span>
       </div>
       <div style={{ marginTop: 44, fontFamily: AD.font, fontWeight: 600, fontSize: 44, letterSpacing: -0.5, maxWidth: 820, lineHeight: 1.25 }}>
         25&#8239;% seulement en cas de succès. C’est tout.
@@ -712,7 +712,7 @@ const POSTS = [
   { id: 'p-montant', name: 'Post · 600€',                 Comp: PostMontant, file: 'post_600.png' },
   { id: 'p-etapes', name: 'Post · Comment ça marche',     Comp: PostEtapes,  file: 'post_etapes.png' },
   { id: 'p-retro', name: 'Post · Rétroactif 5 ans',       Comp: PostRetro,   file: 'post_retro_5ans.png' },
-  { id: 'p-zero', name: 'Post · 0€ si on perd',           Comp: PostZero,    file: 'post_zero_risque.png' },
+  { id: 'p-zero', name: 'Post · 0€ sans résultat',           Comp: PostZero,    file: 'post_zero_risque.png' },
 ];
 
 Object.assign(window, { CoverShell, COVERS, PostShell, POSTS, BigEuro, Bullet });

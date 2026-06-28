@@ -1,4 +1,6 @@
-# Mandat passager — documents sur le site
+# Contrat de cession de créance passager — documents sur le site
+
+> Vocabulaire affiché au client : « contrat de cession de créance ». Les **noms de fichiers et de routes** ci-dessous (`mandat.html`, `documents/mandat-fr.html`, `mandat-fr.pdf`, `npm run mandat:pdf`) restent **inchangés** (techniques, ne pas renommer).
 
 ## URLs (production)
 
@@ -27,7 +29,7 @@ Produit `documents/mandat-fr.pdf`. Ensuite, remplacer les redirections `302` dan
 
 ## Liens ajoutés
 
-- Barre du mandat en ligne (`mandat.html`)
+- Barre du contrat de cession en ligne (`mandat.html`)
 - Espace agence → Aide / documents
 - `delais-dates-ce261-fr.html`
 - Pied de page `index.html`

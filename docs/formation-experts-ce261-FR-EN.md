@@ -299,14 +299,14 @@
 ### 🇫🇷 Français
 **Le parcours d'un dossier (cycle de vie) :**
 1. **Qualification** (le bot WhatsApp ou vous) : vol, date, incident, nombre de passagers.
-2. **Mandat signé** : le client nous autorise à agir en son nom (signature électronique, valeur légale eIDAS).
+2. **Contrat de cession de créance signé** : le client nous autorise à agir en son nom (signature électronique, valeur légale eIDAS).
 3. **Appel de confirmation** (VOUS) : vérifier, rassurer, compléter (voir Module 8).
 4. **Réclamation amiable** : 1ère demande envoyée à la compagnie (gratuite). Beaucoup de dossiers se règlent dès là.
 5. **Relance puis mise en demeure** : sans réponse, relance gratuite à ~J+30, puis **mise en demeure** (lettre officielle/AR24) à ~J+45.
 6. **Escalade** si besoin : médiation (~2 semaines après la mise en demeure), puis procédure judiciaire si c'est rentable (à nos frais).
 7. **Paiement** : on encaisse, on prélève 25 %, on reverse le net au client (souvent **Mobile Money** : Wave, Orange Money, MoMo).
 
-**Le mandat — ce qu'il dit (à savoir expliquer simplement) :**
+**Le contrat de cession de créance — ce qu'il dit (à savoir expliquer simplement) :**
 - Le client nous autorise à réclamer **en son nom**.
 - **0 € d'avance** ; **25 % au succès** seulement (30 % en agence).
 - Droit de **rétractation 14 jours**.
@@ -321,14 +321,14 @@
 ### 🇬🇧 English
 **The case lifecycle:**
 1. **Qualification** (WhatsApp bot or you): flight, date, incident, number of passengers.
-2. **Signed mandate:** the client authorises us to act in their name (e-signature, legally valid under eIDAS).
+2. **Signed claim-assignment contract:** the client authorises us to act in their name (e-signature, legally valid under eIDAS).
 3. **Confirmation call (YOU):** verify, reassure, complete (see Module 8).
 4. **Amicable claim:** first request sent to the airline (free). Many cases settle right here.
 5. **Follow-up then formal notice:** if no reply, a free reminder at ~D+30, then a **formal notice (mise en demeure)** at ~D+45.
 6. **Escalation** if needed: mediation (~2 weeks after the formal notice), then court if worthwhile (at our expense).
 7. **Payment:** we collect, take 25%, pay the net to the client (often **Mobile Money**: Wave, Orange Money, MoMo).
 
-**The mandate — what it says (explain it simply):**
+**The claim-assignment contract — what it says (explain it simply):**
 - The client authorises us to claim **in their name**.
 - **€0 upfront**; **25% on success** only (30% via agency).
 - **14-day** right of withdrawal.
@@ -356,7 +356,7 @@
 - **Identité du vol :** n° de vol, date, et surtout **direct ou correspondance ?** (le client clique souvent « direct » alors qu'il y a un 2ᵉ vol, ex. Dakar→Paris→Strasbourg). Noter tous les segments + **billet unique ou séparé**.
 - **Annulation : +14 j / −14 j ?** (question que le bot ne pose pas).
 - **Retard ≥ 3 h à l'arrivée** confirmé.
-- **Nom du mandat = nom du passeport** (attention noms de jeune fille).
+- **Nom du contrat de cession = nom du passeport** (attention noms de jeune fille).
 - **Nombre de passagers** (chacun a droit à son indemnité).
 - **Pièces** présentes et lisibles.
 - **Moyen de paiement** (Mobile Money).
@@ -372,7 +372,7 @@
 - **Flight identity:** flight number, date, and above all **direct or connection?** (clients often pick "direct" when there is a second flight, e.g. Dakar→Paris→Strasbourg). Note all segments + **single or separate tickets**.
 - **Cancellation: more/less than 14 days' notice?** (the bot doesn't ask).
 - **Arrival delay ≥ 3 h** confirmed.
-- **Mandate name = passport name** (watch maiden names).
+- **Claim-assignment contract name = passport name** (watch maiden names).
 - **Number of passengers** (each is entitled).
 - **Documents** present and legible.
 - **Payment method** (Mobile Money).
@@ -493,7 +493,7 @@
 | Circonstance extraordinaire | Extraordinary circumstance | Événement hors contrôle exonérant la compagnie / event beyond control exempting the airline |
 | Réacheminement | Re-routing | Autre vol vers la destination / alternative flight to destination |
 | Refus d'embarquement | Denied boarding | Surbooking involontaire / involuntary overbooking |
-| Mandat | Mandate | Autorisation d'agir au nom du client / authorisation to act for the client |
+| Contrat de cession de créance | Claim-assignment contract | Contrat par lequel le client cède sa créance à Robin des Airs, à titre de recouvrement, pour réclamer en son nom (le client reste bénéficiaire à 75 %) / contract by which the client assigns their claim to Robin des Airs, for recovery purposes, to claim on their behalf (the client remains 75% beneficiary) |
 | Prescription | Limitation period | Délai légal pour réclamer / legal deadline to claim |
 | PNR | PNR | Référence de réservation / booking reference |
 

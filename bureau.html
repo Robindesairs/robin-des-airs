@@ -611,6 +611,77 @@ body.game-mode #gameView { display:block; }
         <div class="panel-b" style="padding:1rem 1.2rem" id="socialBody"></div>
       </div>
 
+      <!-- VEILLE SOCIALE · lead-hunting à la main -->
+      <div class="panel" id="veillePanel">
+        <div class="panel-h"><span class="t">🎯 Veille sociale · leads</span><span class="tag" style="font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--white-40);border:1px solid var(--sky-border);padding:3px 9px;border-radius:20px">petite échelle</span></div>
+        <div class="panel-b" style="padding:1rem 1.2rem">
+          <div style="font-size:.74rem;color:var(--white-40);margin-bottom:.8rem;line-height:1.5">Ouvre les commentaires d'une compagnie → repère un passager lésé → adapte un message → logge-le. ⚠️ À la main, ~5-10/jour, jamais 2× le même texte.</div>
+
+          <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--white-70);margin:.2rem 0 .5rem">1 · Veille (commentaires)</div>
+          <div id="veilleLinks" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.9rem"></div>
+
+          <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:#caa45a;margin:.2rem 0 .3rem">Concurrents · clients déçus → leads</div>
+          <div style="font-size:.68rem;color:#caa45a;margin-bottom:.45rem;line-height:1.4">⚠️ Ne JAMAIS dénigrer ni nommer le concurrent. Réponds factuel + utile (template « Client déçu » plus bas).</div>
+          <div id="veilleConc" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.1rem"></div>
+
+          <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--white-70);margin:.2rem 0 .5rem">2 · Message perso (à adapter)</div>
+          <div style="display:flex;gap:8px;margin-bottom:8px">
+            <input id="vsPrenom" placeholder="Prénom" style="flex:1;background:var(--sky-card-2);border:1px solid var(--sky-border);border-radius:9px;color:#fff;padding:7px 10px;font-size:.8rem">
+            <input id="vsVol" placeholder="Vol (ex : AF718)" style="flex:1;background:var(--sky-card-2);border:1px solid var(--sky-border);border-radius:9px;color:#fff;padding:7px 10px;font-size:.8rem">
+          </div>
+          <div id="vsTpls" style="display:flex;flex-direction:column;gap:8px;margin-bottom:1.1rem"></div>
+
+          <div style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--white-70);margin:.2rem 0 .5rem">3 · Mes leads sociaux</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+            <input id="vsLeadName" placeholder="@ ou nom" onkeydown="if(event.key==='Enter')vsAddLead()" style="flex:2;min-width:90px;background:var(--sky-card-2);border:1px solid var(--sky-border);border-radius:9px;color:#fff;padding:7px 10px;font-size:.8rem">
+            <input id="vsLeadVol" placeholder="Vol" onkeydown="if(event.key==='Enter')vsAddLead()" style="flex:1;min-width:55px;background:var(--sky-card-2);border:1px solid var(--sky-border);border-radius:9px;color:#fff;padding:7px 10px;font-size:.8rem">
+            <select id="vsLeadPlat" style="background:var(--sky-card-2);border:1px solid var(--sky-border);border-radius:9px;color:#fff;padding:7px 10px;font-size:.8rem"><option>FB</option><option>IG</option></select>
+            <button onclick="vsAddLead()" style="background:#0f6e56;border:1px solid #1d9e75;border-radius:9px;color:#fff;padding:7px 12px;font-size:.8rem;cursor:pointer">Ajouter</button>
+          </div>
+          <div id="vsLeads"></div>
+        </div>
+      </div>
+      <script>
+      (function(){
+        var WA='https://wa.me/33756863630';
+        var AIRLINES=[['Air France','airfrance','airfrance'],['Brussels Airlines','brusselsairlines','brusselsairlines'],['Kenya Airways','Kenya Airways','kenyaairways'],['Ethiopian','Ethiopian Airlines','flyethiopian'],['Air Sénégal','Fly Air Sénégal','flyairsenegal'],['ASKY','ASKY Airlines','asky_airlines'],['Corsair','Corsair compagnie aérienne','flycorsair'],['Air Côte d\'Ivoire','Air Côte d\'Ivoire Officiel','aircotedivoire'],['Royal Air Maroc','Royal Air Maroc','royalairmaroc'],['Jeune Afrique','Jeune Afrique','jeuneafrique']];
+        function fbUrl(q){ if(q==='airfrance')return 'https://www.facebook.com/airfrance'; if(q==='brusselsairlines')return 'https://www.facebook.com/brusselsairlines'; return 'https://www.facebook.com/search/pages/?q='+encodeURIComponent(q); }
+        function mkLink(href,label,color){ var a=document.createElement('a'); a.href=href; a.target='_blank'; a.rel='noopener'; a.textContent=label; a.style.cssText='font-size:.64rem;font-weight:700;text-decoration:none;color:'+color+';padding:1px 5px;border:1px solid '+color+'55;border-radius:5px'; return a; }
+        var lc=document.getElementById('veilleLinks');
+        function chipFor(a,brd){ var chip=document.createElement('span'); chip.style.cssText='display:inline-flex;align-items:center;gap:5px;background:var(--sky-card-2);border:1px solid '+(brd||'var(--sky-border)')+';border-radius:20px;padding:4px 9px'; var nm=document.createElement('span'); nm.textContent=a[0]; nm.style.cssText='font-size:.74rem;color:#fff'; chip.appendChild(nm); chip.appendChild(mkLink(fbUrl(a[1]),'FB','#5b8def')); if(a[2]) chip.appendChild(mkLink('https://www.instagram.com/'+a[2]+'/','IG','#d6699a')); return chip; }
+        if(lc) AIRLINES.forEach(function(a){ lc.appendChild(chipFor(a)); });
+        var CONC=[['AirHelp','AirHelp','airhelp'],['Flightright','Flightright','flightright'],['AirAdvisor','AirAdvisor',null],['Vol-Retardé.fr','Vol Retardé',null],['Skycop','Skycop',null],['EUclaim','EUclaim',null]];
+        var cc=document.getElementById('veilleConc');
+        if(cc) CONC.forEach(function(a){ cc.appendChild(chipFor(a,'#caa45a44')); });
+        var TPLS=[
+          {l:'Accroche',t:'Bonjour {p}, j\'ai vu votre message au sujet du vol {v}. Si le retard a dépassé 3h à l\'arrivée (ou annulation / refus d\'embarquement), vous avez peut-être droit à une indemnité jusqu\'à 600€ par passager, selon éligibilité. On vérifie gratuitement, 0€ d\'avance — écrivez-nous sur WhatsApp : '+WA+' · Robin des Airs 🕊️'},
+          {l:'Court',t:'Bonjour {p}, votre vol {v} a été perturbé ? Vous avez peut-être droit à une indemnité (jusqu\'à 600€/passager, selon éligibilité). On s\'occupe de tout, 0€ d\'avance. WhatsApp : '+WA},
+          {l:'Famille',t:'Bonjour {p}, désolé pour ce vol {v} compliqué. Si vous voyagiez en famille, chaque passager éligible compte — l\'indemnité peut vite monter (jusqu\'à 600€/personne, selon éligibilité). On vérifie gratuitement sur WhatsApp : '+WA+' 🕊️'},
+          {l:'Client déçu (concurrent — sans le nommer)',t:'Bonjour {p}, si votre dossier d\'indemnisation pour le vol {v} est resté sans réponse ou bloqué, on peut le réexaminer gratuitement. 25% fixe, 0€ d\'avance, jusqu\'à 600€ par passager selon éligibilité. Écrivez-nous : '+WA+' · Robin des Airs 🕊️'}
+        ];
+        function fill(t){ var p=(document.getElementById('vsPrenom').value||'{prénom}'); var v=(document.getElementById('vsVol').value||'{vol}'); return t.replace(/\{p\}/g,p).replace(/\{v\}/g,v); }
+        var tc=document.getElementById('vsTpls');
+        if(tc) TPLS.forEach(function(o){
+          var box=document.createElement('div'); box.style.cssText='background:var(--sky-card-2);border:1px solid var(--sky-border);border-radius:10px;padding:9px 11px';
+          var lab=document.createElement('div'); lab.textContent=o.l; lab.style.cssText='font-size:.63rem;text-transform:uppercase;letter-spacing:.05em;color:var(--white-40);margin-bottom:5px';
+          var txt=document.createElement('div'); txt.style.cssText='font-size:.78rem;color:var(--white-70);line-height:1.45;margin-bottom:7px'; txt.textContent=fill(o.t);
+          var btn=document.createElement('button'); btn.textContent='Copier'; btn.style.cssText='background:var(--sky-card);border:1px solid var(--sky-border);border-radius:8px;color:#fff;padding:5px 12px;font-size:.76rem;cursor:pointer';
+          btn.onclick=function(){ navigator.clipboard.writeText(fill(o.t)); btn.textContent='Copié ✓'; setTimeout(function(){btn.textContent='Copier';},1400); };
+          box.appendChild(lab); box.appendChild(txt); box.appendChild(btn); box._r=function(){txt.textContent=fill(o.t);}; tc.appendChild(box);
+        });
+        ['vsPrenom','vsVol'].forEach(function(id){ var e=document.getElementById(id); if(e) e.addEventListener('input',function(){ if(tc) Array.prototype.forEach.call(tc.children,function(c){ if(c._r)c._r(); }); }); });
+        var KEY='rda_social_leads', STAT=['Repéré','Contacté','A répondu','Dossier ✅'], COL=['var(--white-40)','#caa45a','#5ab0ca','#1d9e75'];
+        function load(){ try{return JSON.parse(localStorage.getItem(KEY))||[];}catch(e){return [];} }
+        function save(a){ try{localStorage.setItem(KEY,JSON.stringify(a));}catch(e){} }
+        function esc(s){ return String(s).replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c];}); }
+        window.vsAddLead=function(){ var n=document.getElementById('vsLeadName').value.trim(); if(!n)return; var v=document.getElementById('vsLeadVol').value.trim(), p=document.getElementById('vsLeadPlat').value, a=load(); a.unshift({n:n,v:v,p:p,s:0}); save(a); document.getElementById('vsLeadName').value='';document.getElementById('vsLeadVol').value=''; render(); };
+        window.vsCycle=function(i){ var a=load(); if(a[i]){a[i].s=(a[i].s+1)%STAT.length; save(a); render();} };
+        window.vsDel=function(i){ var a=load(); a.splice(i,1); save(a); render(); };
+        function render(){ var c=document.getElementById('vsLeads'); if(!c)return; var a=load(); if(!a.length){ c.innerHTML='<div style="color:var(--white-40);font-size:.78rem">Aucun lead social pour l\'instant.</div>'; return; } c.innerHTML=''; a.forEach(function(l,i){ var row=document.createElement('div'); row.style.cssText='display:flex;align-items:center;gap:8px;padding:7px 0;border-top:1px solid var(--sky-border)'; row.innerHTML='<span style="font-size:.68rem;background:var(--sky-card-2);border:1px solid var(--sky-border);border-radius:6px;padding:2px 6px">'+l.p+'</span><span style="flex:1;font-size:.8rem;color:#fff">'+esc(l.n)+(l.v?' <span style="color:var(--white-40)">· '+esc(l.v)+'</span>':'')+'</span>'; var b=document.createElement('button'); b.textContent=STAT[l.s]; b.style.cssText='background:none;border:1px solid '+COL[l.s]+';color:'+COL[l.s]+';border-radius:20px;padding:3px 9px;font-size:.72rem;cursor:pointer'; b.onclick=function(){vsCycle(i);}; var x=document.createElement('button'); x.textContent='✕'; x.style.cssText='background:none;border:none;color:var(--white-40);cursor:pointer;font-size:.85rem'; x.onclick=function(){vsDel(i);}; row.appendChild(b); row.appendChild(x); c.appendChild(row); }); }
+        render();
+      })();
+      </script>
+
       <div class="panel">
         <div class="panel-h"><span class="t">Fil d'activité</span><span class="tag" style="font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--white-40);border:1px solid var(--sky-border);padding:3px 9px;border-radius:20px">temps réel</span></div>
         <div class="panel-b" id="feed"></div>
@@ -1811,6 +1882,12 @@ async function loadPieces(){
   const d=await jget('/api/crm-pieces?r='+encodeURIComponent(ref));
   renderPieces(d);
 }
+function purgeBanner(pg){
+  if(!pg) return '';
+  if(pg.state==='purgé') return '<div style="margin:4px 0 10px;padding:8px 11px;border-radius:9px;background:rgba(29,158,117,.12);border:1px solid #1d9e7555;color:#7fe0bd;font-size:.76rem">✅ Pièces purgées le '+esc(pg.date)+' (RGPD) · seul le mandat est conservé.</div>';
+  if(pg.state==='imminente') return '<div style="margin:4px 0 10px;padding:8px 11px;border-radius:9px;background:rgba(200,90,90,.14);border:1px solid #c85a5a66;color:#ffb3b3;font-size:.76rem">⏳ Purge en cours — pièces supprimées à la prochaine exécution (~4h).</div>';
+  return '<div style="margin:4px 0 10px;padding:8px 11px;border-radius:9px;background:rgba(202,164,90,.13);border:1px solid #caa45a55;color:#e7c98a;font-size:.76rem">🕒 Purge programmée le '+esc(pg.date)+(pg.daysLeft!=null?(' · dans '+pg.daysLeft+' j'):'')+' (RGPD).</div>';
+}
 function renderPieces(d){
   const list=document.getElementById('piecesList');
   const add=document.getElementById('piecesAdd');
@@ -1818,8 +1895,9 @@ function renderPieces(d){
   if(!d){ list.innerHTML='<div style="color:var(--white-40);font-size:.8rem">Non connecté ou réf inconnue.</div>'; src.textContent=', '; add.style.display='none'; return; }
   src.textContent=(d.count||0)+' pièce(s)';
   add.style.display='block';
-  if(!d.pieces||!d.pieces.length){ list.innerHTML='<div style="color:var(--white-40);font-size:.8rem">Aucune pièce reçue pour ce dossier.</div>'; return; }
-  list.innerHTML=d.pieces.map(function(p){
+  const pb=purgeBanner(d.purge);
+  if(!d.pieces||!d.pieces.length){ list.innerHTML=pb+'<div style="color:var(--white-40);font-size:.8rem">Aucune pièce reçue pour ce dossier.</div>'; return; }
+  list.innerHTML=pb+d.pieces.map(function(p){
     const isImg=!/\.pdf$/i.test(p.filename||'')&&(/\.(jpe?g|png|webp|gif|heic)$/i.test(p.filename||'')||/identite|embarq|certif|frais/i.test(p.category||''));
     const thumb=isImg
       ? '<a href="'+p.url+'" target="_blank" rel="noopener" title="Ouvrir"><img src="'+p.url+'" loading="lazy" style="width:54px;height:54px;object-fit:cover;border-radius:8px;border:1px solid var(--sky-border);background:var(--sky-card-2)" onerror="this.style.opacity=.25"></a>'

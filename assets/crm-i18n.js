@@ -101,12 +101,12 @@
       ELIGIBLE: joinLines([
         'Bonjour ' + p + ',',
         'Bonne nouvelle : votre situation sur ' + vol + ' entre dans le cadre d’une réclamation CE 261.',
-        'Prochaine étape : vous recevrez le mandat à signer (YouSign).',
+        'Prochaine étape : vous recevrez le contrat de cession à signer (YouSign).',
         'Des questions ? Répondez à ce message.'
       ]),
       MANDAT_SIGNE: joinLines([
         'Bonjour ' + p + ',',
-        'Merci, votre mandat est bien signé.',
+        'Merci, votre contrat de cession est bien signé.',
         'Nous préparons la mise en demeure (LRAR) adressée à la compagnie.',
         'Nous vous tiendrons informé(e) dès l’envoi.'
       ]),
@@ -221,12 +221,12 @@
       ELIGIBLE: joinLines([
         'Hello ' + p + ',',
         'Good news: your situation on ' + vol + ' falls under EU261 compensation.',
-        'Next step: you’ll receive the mandate to sign (YouSign).',
+        'Next step: you’ll receive the claim-assignment contract to sign (YouSign).',
         'Any questions? Reply to this message.'
       ]),
       MANDAT_SIGNE: joinLines([
         'Hello ' + p + ',',
-        'Thank you — your mandate is signed.',
+        'Thank you — your claim-assignment contract is signed.',
         'We’re preparing the formal notice (LRAR) to the airline.',
         'We’ll keep you posted as soon as it’s sent.'
       ]),

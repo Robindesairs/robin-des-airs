@@ -21,8 +21,8 @@
 ## Traitement 2 — Gestion dossiers clients CE 261
 
 - Finalité: traitement réclamation, représentation et suivi.
-- Base légale: exécution contractuelle (mandat + CGV).
-- Données: identité, contact, vol, justificatifs, mandat signé.
+- Base légale: exécution contractuelle (contrat de cession de créance + CGV).
+- Données: identité, contact, vol, justificatifs, contrat de cession de créance signé.
 - Destinataires: équipe interne, compagnies aériennes, sous-traitants autorisés.
 - Durée conservation: `_____` (ex: durée contractuelle + obligations légales).
 - Mesures sécurité: accès limité, stockage sécurisé, contrôle exports.

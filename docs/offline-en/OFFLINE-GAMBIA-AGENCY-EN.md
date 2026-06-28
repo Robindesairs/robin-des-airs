@@ -91,7 +91,7 @@ CE 261 statutory brackets (€250 / €400 / €600) are **separate** from agenc
 2. **New case** — form → Airtable  
 3. **Ticket sold, no incident yet** — status *awaiting incident*  
 4. **My cases** — refresh from Airtable  
-5. **Passenger** — separate **passenger mandate** (`mandat-en.html`); Robin handles airline after mandate signed  
+5. **Passenger** — separate **passenger claim-assignment contract** (`mandat-en.html`); Robin handles airline after claim-assignment contract signed  
 
 ---
 
@@ -182,13 +182,13 @@ Same Airtable as web portal.
 ## 9. Partner agreement — main articles (summary)
 
 **Art. 1 — Purpose**  
-Non-exclusive referral under EU 261/2004. Robin: no win no fee for passenger after mandate. Agency keeps normal travel services.
+Non-exclusive referral under EU 261/2004. Robin: no win no fee for passenger after claim-assignment contract. Agency keeps normal travel services.
 
 **Art. 2 — Commission**  
 Paid per **winning passenger** at tier on signing date, **for life**. 48h after Robin receives cleared compensation. Nothing if case fails.
 
 **Art. 3 — Files**  
-Agency submits via portal; helps passenger sign mandate; Robin leads airline claim.
+Agency submits via portal; helps passenger sign claim-assignment contract; Robin leads airline claim.
 
 **Art. 4 — Agency duties**  
 Good-faith data; inform passenger; alert Robin if airline/passenger contacts agency on same incident; use portal when possible.
@@ -197,7 +197,7 @@ Good-faith data; inform passenger; alert Robin if airline/passenger contacts age
 Diligent processing; status updates; commission when due.
 
 **Practical**  
-No passenger personal email required in portal — Robin creates case email. Agency may still help with mandate on WhatsApp.
+No passenger personal email required in portal — Robin creates case email. Agency may still help with the claim-assignment contract on WhatsApp.
 
 ---
 
@@ -210,7 +210,7 @@ No passenger personal email required in portal — Robin creates case email. Age
 | Partner portal | `/espace-agence.html` |
 | CE 261 brackets | `/ce261-brackets-en.html` |
 | CE 261 deadlines | `/ce261-date-deadlines-en.html` |
-| Passenger mandate | `/mandat-en.html` |
+| Passenger claim-assignment contract | `/mandat-en.html` |
 | API sign contract | `POST /api/submit-partner-agreement` |
 
 ---

@@ -96,7 +96,7 @@ Non — et c'est ce qui fait notre force. On analyse chaque dossier gratuitement
 
 ## 12. ↩️ Est-ce que je peux me rétracter ?
 
-Oui. Vous disposez d'un droit de rétractation de 14 jours à compter de la signature du mandat — sans justification et sans frais.
+Oui. Vous disposez d'un droit de rétractation de 14 jours à compter de la signature du contrat de cession de créance — sans justification et sans frais.
 
 Concrètement : nous commençons à travailler sur votre dossier dès la signature, avec votre accord, pour ne pas perdre de temps. Si vous vous rétractez pendant les 14 jours, vous ne payez rien — le travail déjà effectué est à notre charge.
 

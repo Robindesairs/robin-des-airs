@@ -49,7 +49,7 @@ Mapping statuts CRM → colonne **Statut du Dossier Suivi** : voir `netlify/func
 
 ---
 
-## 3. Netlify → Airtable (mandat, scripts)
+## 3. Netlify → Airtable (contrat de cession, scripts)
 
 ### Signature mandat (`submit-mandat`)
 

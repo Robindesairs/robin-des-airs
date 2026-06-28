@@ -10,7 +10,7 @@ faq:
   - q: "Le vol a été annulé 5 jours avant le mariage. Quels droits ?"
     a: "Annulation < 14 jours = indemnité **600€ par passager** automatique + réacheminement gratuit OBLIGATOIRE OU remboursement intégral du billet."
   - q: "Qui réclame pour les enfants et les personnes âgées du groupe ?"
-    a: "Un membre de la famille majeur peut centraliser via un **mandat de représentation**. Robin gère cette centralisation pour vous — un seul interlocuteur pour 20 personnes."
+    a: "Un membre de la famille majeur peut centraliser via un **contrat de cession de créance**. Robin gère cette centralisation pour vous — un seul interlocuteur pour 20 personnes."
 ---
 
 Les mariages traditionnels sont des événements majeurs dans la diaspora africaine — toute la famille voyage, souvent à 10, 15 ou 20 personnes. Quand le vol est retardé ou annulé, c'est tout le groupe qui est impacté. Mais c'est aussi **toute la famille qui peut toucher l'indemnité**.
@@ -80,7 +80,7 @@ Voir : [Voyage organisé](/blog/voyage-organise-package-vol-retarde-droits.html)
 
 ## Famille élargie — qui réclame ?
 
-Chaque adulte peut réclamer pour lui-même. Pour les enfants, c'est le parent. Pour les personnes âgées non autonomes administrativement, on peut centraliser via un mandataire (souvent un fils/fille majeur en France).
+Chaque adulte peut réclamer pour lui-même. Pour les enfants, c'est le parent. Pour les personnes âgées non autonomes administrativement, on peut centraliser via un proche habilité (souvent un fils/fille majeur en France).
 
 Robin gère la centralisation pour vous.
 

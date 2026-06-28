@@ -25,7 +25,7 @@ STEP 7b     Email
 STEP 7c     Adresse
 STEP 7d     Langue  ← EN DERNIER
 FIN A       Récap
-FIN B       Mandat (+3 à 5 s)
+FIN B       Contrat de cession (+3 à 5 s)
 FIN C       Pièces (+30 s)
 ```
 
@@ -369,7 +369,7 @@ Parmi les passagers suivants, y a-t-il des *mineurs* (moins de 18 ans) ?
 
 {{liste_bullets}}
 
-⚖️ Obligation légale pour préparer le bon mandat de signature.
+⚖️ Obligation légale pour préparer le bon contrat de cession de créance.
 🟢🟢🟢🟢🟢🟢🟢
 ```
 
@@ -382,7 +382,7 @@ Parmi les passagers suivants, y a-t-il des *mineurs* (moins de 18 ans) ?
 ### STEP 7b — Email
 
 ```
-📧 *Pour vous envoyer le mandat et le suivi du dossier*
+📧 *Pour vous envoyer le contrat de cession et le suivi du dossier*
 
 Quelle est votre adresse email ?
 _(Ex. : prenom@gmail.com)_
@@ -397,7 +397,7 @@ _(Ex. : prenom@gmail.com)_
 ### STEP 7c — Adresse
 
 ```
-📮 *Adresse postale* (pour le mandat officiel)
+📮 *Adresse postale* (pour le contrat de cession officiel)
 
 Rue, ville et pays —
 ou *ville + pays* si vous préférez.
@@ -456,13 +456,13 @@ Prochaine étape : *2 minutes* pour l'activer. ⬇️
 
 ---
 
-### FIN B — Lien mandat *(+3 à 5 secondes)*
+### FIN B — Lien du contrat de cession *(+3 à 5 secondes)*
 
 ```
 ✅ *Dossier {{ref_dossier}} enregistré.*
 
-Pour que Robin des Airs représente *{{nom_principal}}*
-auprès de *{{compagnie}}*, signez votre *mandat de représentation*.
+Pour que Robin des Airs recouvre l'indemnité de *{{nom_principal}}*
+auprès de *{{compagnie}}*, signez votre *contrat de cession de créance*.
 
 📋 Lisible avant signature — *aucune info bancaire à cette étape.*
 
@@ -535,14 +535,14 @@ Votre dossier vous attend :
 ```
 *(Bouton : Reprendre la saisie)*
 
-### R3 — Mandat non signé (>24h)
+### R3 — Contrat de cession non signé (>24h)
 
 ```
 Votre dossier *{{ref_dossier}}* est prêt.
 Il attend votre signature.
 
 Nos experts ne peuvent pas agir
-tant que le mandat n'est pas signé.
+tant que le contrat de cession n'est pas signé.
 
 Lien officiel Robin des Airs (2 min) :
 {{mandat_url}}

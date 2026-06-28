@@ -19,6 +19,7 @@ function buildWhatsAppSendUrl(messageText) {
   return 'https://api.whatsapp.com/send?phone=' + encodeURIComponent(num) + '&text=' + encodeURIComponent(t);
 }
 function openWhatsAppSendUrl(url) {
+  fireWaConversion();
   var ua = typeof navigator !== 'undefined' ? navigator.userAgent || '' : '';
   var isMobile = /Android|iPhone|iPad|iPod|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua);
   if (isMobile) {
@@ -27,6 +28,28 @@ function openWhatsAppSendUrl(url) {
   }
   var w = window.open(url, '_blank', 'noopener,noreferrer');
   if (!w || w.closed) window.location.href = url;
+}
+/* Google Ads — conversion « Clic WhatsApp » (compte Robin des Airs, AW-18269983535) */
+function fireWaConversion() {
+  try {
+    if (typeof gtag === 'function') {
+      gtag('event', 'conversion', {
+        'send_to': 'AW-18269983535/J_ZJCOaSkcYcEK-m54dE',
+        'value': 1.0,
+        'currency': 'EUR'
+      });
+    }
+  } catch (e) {}
+}
+/* Délégation : tout clic sur un lien WhatsApp vers le bot (wa.me/<num> ou api.whatsapp.com/send?phone=) compte une conversion.
+   Exclut les liens de partage sans numéro (wa.me/?text=). */
+if (typeof document !== 'undefined') {
+  document.addEventListener('click', function (ev) {
+    var a = ev.target && ev.target.closest ? ev.target.closest('a[href]') : null;
+    if (!a) return;
+    var href = a.getAttribute('href') || '';
+    if (/(wa\.me\/\d|api\.whatsapp\.com\/send\?phone=\d)/.test(href)) fireWaConversion();
+  }, true);
 }
 const DLABEL = { 600:'Long-courrier · +3 500 km', 400:'Moyen-courrier · 1 500-3 500 km', 250:'Court-courrier · <1 500 km' };
 const DISTANCE_LINE = { 600:'Vol Long-Courrier (>3 500 km) → Indemnité de 600€', 400:'Vol Moyen-Courrier (1 500-3 500 km) → Indemnité de 400€', 250:'Vol Court-Courrier (<1 500 km) → Indemnité de 250€' };
@@ -1817,7 +1840,7 @@ function toggleEscaleVol3() {
         { who: 'robin',  delay: 450,  hold: 2000, cls: 'wa-scan', html: '🔎 Je lis votre carte…' },
         { who: 'robin',  typing: 1100, hold: 3400, cls: 'wa-msg--verdict', html: '✓ Je vois votre vol : <b>AF718 · Paris → Dakar</b> — ce retard peut ouvrir droit à <span class="wa-verdict-amt">jusqu\'à 600 €</span> / passager' },
         { who: 'client', delay: 600,  hold: 1100, html: 'Et ça me coûte combien ? 😅' },
-        { who: 'robin',  typing: 1200, hold: 3200, html: 'On vérifie <b>gratuitement, sans engagement</b>. Rien si on perd — <b>25 %</b> seulement si on gagne, aucune avance, pas de carte bancaire 🤝' },
+        { who: 'robin',  typing: 1200, hold: 3200, html: 'On vérifie <b>gratuitement, sans engagement</b>. Rien sans résultat — <b>25 %</b> seulement en cas de succès, aucune avance, pas de carte bancaire 🤝' },
         { who: 'client', delay: 600,  hold: 1300, html: 'Et si nous sommes 4 ? 👨‍👩‍👧‍👦' },
         { who: 'robin',  typing: 1000, hold: 2600, cls: 'wa-msg--verdict', html: '✅ Toute la famille compte, même les enfants → une famille de 4, c\'est <span class="wa-verdict-amt">jusqu\'à 2 400 €</span>' },
         { who: 'robin',  typing: 900,  hold: 2400, html: '🌍 Dakar, Bamako, Conakry… on vous <b>rappelle</b> en <b>wolof, mandinka, peul</b>… 📞' },
@@ -1830,7 +1853,7 @@ function toggleEscaleVol3() {
         { who: 'robin',  delay: 450,  hold: 2000, cls: 'wa-scan', html: '🔎 Reading your pass…' },
         { who: 'robin',  typing: 1100, hold: 3400, cls: 'wa-msg--verdict', html: '✓ I can see your flight: <b>SN277 · Brussels → Accra</b> — this delay may entitle you to <span class="wa-verdict-amt">up to €600</span> / passenger' },
         { who: 'client', delay: 600,  hold: 1100, html: 'And what does it cost me? 😅' },
-        { who: 'robin',  typing: 1200, hold: 3200, html: 'We check <b>for free, no commitment</b>. Nothing if we lose — <b>25 %</b> only if we win, no upfront fee, no card needed 🤝' },
+        { who: 'robin',  typing: 1200, hold: 3200, html: 'We check <b>for free, no commitment</b>. Nothing with no result — <b>25 %</b> only if we win, no upfront fee, no card needed 🤝' },
         { who: 'client', delay: 600,  hold: 1300, html: 'And if there are 4 of us? 👨‍👩‍👧‍👦' },
         { who: 'robin',  typing: 1000, hold: 2600, cls: 'wa-msg--verdict', html: '✅ The whole family counts, even the kids → a family of 4 means <span class="wa-verdict-amt">up to €2,400</span>' },
         { who: 'robin',  typing: 900,  hold: 2400, html: '🌍 Accra, Lagos, Banjul… we <b>call you back</b> in <b>Twi, Yoruba, Mandinka</b>… 📞' },
@@ -1843,7 +1866,7 @@ function toggleEscaleVol3() {
       fr: {
         foot: 'On parle votre langue · réponse en quelques minutes →',
         aria: 'Aperçu d\'une conversation WhatsApp avec Robin, cliquer pour ouvrir',
-        sr: 'Exemple de conversation WhatsApp : Aminata envoie son numéro de vol puis une photo de sa carte d\'embarquement ; Robin lit le vol et indique que ce retard peut donner droit à une indemnité, jusqu\'à 600 € par passager (selon la distance et la cause), avec une vérification gratuite et sans engagement. Robin précise sa commission de 25 % au succès seulement (0 € si on ne gagne pas, aucune avance, pas de carte bancaire), que chaque passager d\'une même famille compte (une famille de 4 peut obtenir jusqu\'à 2 400 €), son expertise des vols Europe-Afrique (Dakar, Bamako, Conakry) et qu\'un conseiller peut rappeler en wolof, mandinka ou peul. Dernière étape : signer le mandat.'
+        sr: 'Exemple de conversation WhatsApp : Aminata envoie son numéro de vol puis une photo de sa carte d\'embarquement ; Robin lit le vol et indique que ce retard peut donner droit à une indemnité, jusqu\'à 600 € par passager (selon la distance et la cause), avec une vérification gratuite et sans engagement. Robin précise sa commission de 25 % au succès seulement (0 € sans résultat, aucune avance, pas de carte bancaire), que chaque passager d\'une même famille compte (une famille de 4 peut obtenir jusqu\'à 2 400 €), son expertise des vols Europe-Afrique (Dakar, Bamako, Conakry) et qu\'un conseiller peut rappeler en wolof, mandinka ou peul. Dernière étape : signer le mandat.'
       },
       en: {
         foot: 'We speak your language · reply in minutes →',

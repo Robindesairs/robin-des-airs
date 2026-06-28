@@ -1,6 +1,6 @@
-# Fiche de poste — Conseiller·ère « Appel de confirmation » (post-signature mandat)
+# Fiche de poste — Conseiller·ère « Appel de confirmation » (post-signature du contrat de cession)
 
-**Mission en une phrase :** rappeler chaque client juste après la signature de son mandat, dans sa langue, pour **sécuriser la confiance**, **vérifier les informations que le bot ne peut pas trancher seul**, et **compléter le dossier** — afin qu'il soit propre, complet et gagnable.
+**Mission en une phrase :** rappeler chaque client juste après la signature de son contrat de cession de créance, dans sa langue, pour **sécuriser la confiance**, **vérifier les informations que le bot ne peut pas trancher seul**, et **compléter le dossier** — afin qu'il soit propre, complet et gagnable.
 
 > Numéro à utiliser : **+33 7 56 86 36 30** — demander au client de l'enregistrer sous « **Robin des Airs** ».
 > Modèle : 0 € d'avance, **25 % de commission au succès uniquement** (30 % si dossier monté en agence physique).
@@ -8,13 +8,13 @@
 ---
 
 ## 1. Quand appeler
-- **Idéalement dans les 2 h** suivant la signature du mandat (à chaud = meilleure confiance).
+- **Idéalement dans les 2 h** suivant la signature du contrat de cession (à chaud = meilleure confiance).
 - Au plus tard **sous 24 h**.
 - Priorité absolue aux dossiers marqués **`aVerifierExpert = true`** (voir §4) et aux **gros montants / groupes**.
 
 ## 2. Avant de décrocher — préparer l'appel (2 min)
 Ouvrir le dossier (réf. `RDA-…`) et repérer :
-- Nom du mandant + nombre de passagers, montant estimé.
+- Nom du cédant (client signataire) + nombre de passagers, montant estimé.
 - **Vol, date, route, compagnie**.
 - Le **verdict automatique** du bot : `flightVerdict` = `eligible` / `sous_seuil` / `hors_champ` / `a_verifier`.
 - Le flag **`aVerifierExpert`** (correspondance, hors champ, sous seuil, ou vol non vérifié).
@@ -24,7 +24,7 @@ Ouvrir le dossier (réf. `RDA-…`) et repérer :
 ## 3. Structure de l'appel (≈ 3–5 min)
 
 **a) Ouverture — prouver que c'est réel et humain**
-> « Bonjour [Prénom], c'est [Nom] de Robin des Airs, je vous appelle suite à votre mandat signé ce [matin] pour votre vol [n° / route]. »
+> « Bonjour [Prénom], c'est [Nom] de Robin des Airs, je vous appelle suite à votre contrat de cession signé ce [matin] pour votre vol [n° / route]. »
 - Se présenter, parler **dans sa langue**, ton chaleureux. → C'est déjà 50 % de l'anti-arnaque.
 
 **b) Vérifications (cœur du poste — voir §4).**
@@ -46,7 +46,7 @@ Ouvrir le dossier (réf. `RDA-…`) et repérer :
 - [ ] **Sens du vol** (départ Europe ou départ Afrique) — décisif pour la couverture (voir §4.5).
 
 ### 4.2 Cohérence du dossier
-- [ ] Nom sur le mandat = **nom exact du passeport/CNI** (attention noms de jeune fille, ordre prénom/nom).
+- [ ] Nom sur le contrat de cession = **nom exact du passeport/CNI** (attention noms de jeune fille, ordre prénom/nom).
 - [ ] Route et nombre de passagers cohérents.
 - [ ] Date du vol plausible (ni futur, ni prescrit > 5 ans).
 
@@ -115,5 +115,5 @@ Ouvrir le dossier (réf. `RDA-…`) et repérer :
 ---
 
 ### Rappel du partage des rôles
-**Le bot** fait le volume vite (qualification, scan, mandat, montant pour les vols directs vérifiés).
+**Le bot** fait le volume vite (qualification, scan, contrat de cession, montant pour les vols directs vérifiés).
 **Vous (l'humain)** rattrapez ce que le bot ne peut pas trancher (correspondances, langue locale, doutes) et **scellez la confiance**. C'est vous qui faites la différence sur ce marché.
