@@ -6,6 +6,8 @@ slug: vol-retarde-abidjan-paris-indemnite
 image_url: /og-blog.png
 ---
 
+**Jusqu'à 600 € par passager** sont peut-être à récupérer sur votre vol Abidjan–Paris retardé de 3 h ou plus. On vérifie gratuitement votre éligibilité, qui dépend de la compagnie et du sens du vol, 0 € d'avance.
+
 La route Paris ↔ Abidjan est une des lignes phares d'Air France vers l'Afrique de l'Ouest. Avec 4 714 km de distance, tout retard de plus de 3h ouvre droit au palier maximum : 600€ par passager.
 
 ## Les compagnies sur la ligne

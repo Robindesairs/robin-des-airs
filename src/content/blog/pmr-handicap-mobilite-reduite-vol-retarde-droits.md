@@ -13,6 +13,8 @@ faq:
     a: "Documenter (photos, témoignages), demander une attestation écrite, saisir l'aéroport (prestataire d'assistance) + DGAC. Préjudice cumulable avec l'indemnité CE 261 via Convention de Montréal."
 ---
 
+**Jusqu'à 600 € par passager**, en situation de handicap ou de mobilité réduite, restent à réclamer en cas de retard de 3 h ou plus. On vérifie gratuitement vos droits, 0 € d'avance.
+
 Les passagers à mobilité réduite (PMR), handicapés, malades chroniques ou âgés bénéficient de **droits renforcés** à l'aéroport. En cas de retard ou d'annulation, deux protections se cumulent : le **règlement CE 1107/2006** (assistance) et le **règlement CE 261/2004** (indemnité).
 
 ## Qu'est-ce qu'un PMR au sens légal

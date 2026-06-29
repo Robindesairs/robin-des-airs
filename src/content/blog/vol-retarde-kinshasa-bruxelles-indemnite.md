@@ -6,6 +6,8 @@ slug: vol-retarde-kinshasa-bruxelles-indemnite
 image_url: /og-blog.png
 ---
 
+**Jusqu'à 600 € par passager** sont peut-être à récupérer sur votre vol Kinshasa–Bruxelles retardé de 3 h ou plus. On vérifie gratuitement votre éligibilité, qui dépend de la compagnie et du sens du vol, 0 € d'avance.
+
 La route Bruxelles ↔ Kinshasa est l'une des plus importantes pour la diaspora congolaise en Europe. Avec plus de 6 200 km, c'est un vol long-courrier qui ouvre droit au maximum : 600€ par passager en cas de retard de plus de 3h.
 
 ## Les compagnies

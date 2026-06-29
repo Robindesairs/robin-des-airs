@@ -13,6 +13,8 @@ faq:
     a: "Vous avez **5 ans** après le vol pour réclamer en France (art. 2224 du Code civil). Même sans aucun document personnel, Robin peut reconstituer le dossier via Flightradar24, METAR et le manifeste de la compagnie."
 ---
 
+**Jusqu'à 600 € par passager** restent à votre portée même sans votre carte d'embarquement, qui n'est pas indispensable pour réclamer. On vérifie gratuitement votre dossier, 0 € d'avance.
+
 La carte d'embarquement est la preuve la plus directe que vous avez bien voyagé sur le vol concerné. Mais si vous l'avez perdue (jetée à l'arrivée, lavée dans une poche, perdue dans le déménagement), **votre droit à l'indemnité CE 261 ne disparaît pas**. Voici comment récupérer la preuve et obtenir vos 600€.
 
 ## La carte d'embarquement n'est pas obligatoire

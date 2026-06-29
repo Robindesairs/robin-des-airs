@@ -13,6 +13,8 @@ faq:
     a: "Oui. Si votre heure d'arrivée réelle (ouverture des portes) dépasse l'heure prévue de 3h ou plus, vous avez droit à l'indemnité. La compagnie ne peut pas manipuler l'heure affichée pour éviter de payer."
 ---
 
+**L'arrêt Folkerts peut vous valoir jusqu'à 600 € par passager** en fixant le retard sur l'heure réelle d'arrivée à destination finale. On vérifie gratuitement ce que cela change pour vous, 0 € d'avance.
+
 Les compagnies aériennes utilisent parfois un argument subtil pour éviter de payer les indemnités CE261 : elles comptent l'heure d'atterrissage (roues au sol) comme "heure d'arrivée" plutôt que l'heure à laquelle vous pouvez réellement descendre de l'avion. La Cour de Justice de l'UE a tranché cette question dans l'arrêt Germanwings (2014), confirmant un principe posé dans l'arrêt Folkerts (2013).
 
 ## L'arrêt Germanwings (CJUE, 4 septembre 2014, affaire C-452/13)

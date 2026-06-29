@@ -6,6 +6,8 @@ slug: royal-air-maroc-vol-retarde-indemnite
 image_url: /og-blog.png
 ---
 
+**Au départ d'Europe, jusqu'à 600 € par passager** peuvent vous revenir si votre vol Royal Air Maroc a eu 3 h de retard ou plus. Au départ du Maroc, Royal Air Maroc étant une compagnie non européenne, l'indemnité n'est en principe pas due : on vérifie gratuitement votre cas, 0 € d'avance.
+
 Royal Air Maroc (RAM) est la compagnie nationale marocaine. Elle opère de nombreuses lignes entre la France et le Maroc (Paris-CDG → CMN, ORY → RAK, etc.). Mais attention : RAM n'est pas une compagnie européenne. Cela change vos droits.
 
 ## Au départ de l'UE : éligible

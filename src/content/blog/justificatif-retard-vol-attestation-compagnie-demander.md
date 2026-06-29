@@ -13,6 +13,8 @@ faq:
     a: "1) Relancer par mail à J+30. 2) Mise en demeure recommandé AR. 3) Saisir le médiateur MTV. Robin gère ces étapes à votre place et utilise des **preuves indépendantes** (Flightradar24, METAR) en parallèle."
 ---
 
+**Une attestation de retard peut sécuriser jusqu'à 600 € par passager.** On vous aide à l'obtenir et on vérifie gratuitement votre éligibilité, 0 € d'avance.
+
 Un **justificatif de retard** est une attestation écrite par la compagnie aérienne qui confirme officiellement le retard de votre vol — son ampleur, sa cause éventuelle, l'heure réelle d'arrivée. Indispensable pour :
 
 - Justifier une absence professionnelle ou scolaire

@@ -13,6 +13,8 @@ faq:
     a: "Les compagnies invoquent souvent cet argument pour éviter de payer. Mais pannes techniques récurrentes, sous-effectifs ou retards de rotation ne sont **pas** des circonstances extraordinaires selon la CJUE. Robin des Airs conteste systématiquement."
 ---
 
+**Vol Brussels Airlines retardé de 3h ou plus, annulé ou surbooké ? Vous pouvez réclamer jusqu'à 600 € par passager.** Compagnie européenne, donc vos vols Afrique ⇄ Europe sont couverts dans les deux sens. Vérification gratuite, 0 € d'avance.
+
 Brussels Airlines est la compagnie nationale belge, membre du groupe Lufthansa (Star Alliance). Elle opère le réseau africain le plus dense au départ de Bruxelles (BRU) : Congo-Kinshasa, Lagos, Abidjan, Dakar, Accra, Lomé, Douala, Nairobi, Entebbe… C'est la porte d'entrée de l'Europe pour une large partie de la diaspora congolaise, ivoirienne et ouest-africaine.
 
 ## Brussels Airlines annule beaucoup de vols

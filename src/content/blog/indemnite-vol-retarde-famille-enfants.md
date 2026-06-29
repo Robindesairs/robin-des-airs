@@ -15,6 +15,8 @@ faq:
     a: "Ne tranchez pas vous-même. Envoyez-nous le billet et la réservation : nous vérifions s'il y a un billet « infant » et des taxes réglées. Et comme nous fonctionnons sans frais en cas d'échec, inclure votre bébé dans la demande ne vous coûte jamais rien."
 ---
 
+**Vous voyagez en famille ? Chaque passager compte — une famille de 4 peut réclamer jusqu'à 2 400 €.** Voici comment vos enfants, et même les bébés avec un billet, ouvrent droit à indemnité. Vérification gratuite, 0 € d'avance.
+
 Beaucoup de familles de la diaspora voyagent à 3, 4, 5 passagers ou plus. Et beaucoup ignorent que chaque passager ayant un billet a droit à sa propre indemnité.
 
 ## La loi ne fait pas de distinction d'âge

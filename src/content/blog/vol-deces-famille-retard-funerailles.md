@@ -6,6 +6,8 @@ slug: vol-deces-famille-retard-funerailles
 image_url: /og-blog.png
 ---
 
+**Jusqu'à 600 € par passager** peuvent vous revenir si votre vol a été retardé de 3 h ou plus, même dans ces circonstances douloureuses. On s'occupe des démarches avec délicatesse : vérification gratuite, 0 € d'avance.
+
 C'est la situation la plus douloureuse : un proche décède au pays, vous prenez un vol d'urgence pour les funérailles, et la compagnie vous fait rater l'enterrement avec un retard de 6h ou une annulation tardive. Que faire ?
 
 ## Vos droits CE 261 sont les mêmes

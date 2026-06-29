@@ -13,6 +13,8 @@ faq:
     a: "Oui. Billet unique avec départ Paris (UE) → couvert pour tout le trajet CDG→IST→NBO. Distance totale ≈ 6 800 km → **600€ par passager**."
 ---
 
+**Votre vol Nairobi–Paris retardé de 3 h peut vous valoir jusqu'à 600 € par passager.** On vérifie gratuitement votre éligibilité, qui dépend de la compagnie et du sens du vol, 0 € d'avance.
+
 Nairobi (NBO) est le hub de l'Afrique de l'Est et l'une des destinations africaines les plus fréquentées depuis Paris. Kenya Airways opère un vol direct, et plusieurs compagnies proposent des correspondances. Les droits CE261 varient fortement selon la compagnie choisie.
 
 ## Les options Paris-Nairobi et leur couverture CE261

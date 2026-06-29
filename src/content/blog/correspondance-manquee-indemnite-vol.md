@@ -6,6 +6,8 @@ slug: correspondance-manquee-indemnite-vol
 image_url: /og-blog.png
 ---
 
+**Correspondance ratée à cause d'un retard ? Vous pouvez réclamer jusqu'à 600 € par passager**, selon votre retard à l'arrivée finale. On vérifie gratuitement, 0 € d'avance.
+
 Vous aviez une correspondance à Paris-CDG, Amsterdam, ou Bruxelles. Le premier vol est arrivé en retard. Vous avez manqué le second. Vous êtes arrivé à destination avec 5, 8, 12 heures de retard. Qui paie ?
 
 ## C'est le retard à l'arrivée finale qui compte

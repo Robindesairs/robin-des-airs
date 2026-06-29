@@ -13,6 +13,8 @@ faq:
     a: "Oui. Le délai de prescription en France est de **5 ans** après le vol (art. 2224 du Code civil). Un refus ne réduit pas ce délai. Vous pouvez nous confier un dossier refusé même 4 ans plus tard."
 ---
 
+**De 250 à 600 € par passager** restent à récupérer même quand la compagnie refuse d'abord de payer. On relance pour vous au succès, vérification gratuite et 0 € d'avance.
+
 Vous avez réclamé votre indemnité CE 261, et la compagnie a répondu : "Désolé, circonstances extraordinaires", "Votre demande a été examinée et rejetée", ou pire — **pas de réponse depuis 3 mois**. Voici exactement quoi faire.
 
 ## Étape 1 — Identifier le vrai motif

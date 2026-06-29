@@ -13,6 +13,8 @@ faq:
     a: "Non. Mauritania Airlines est non-UE, départ hors UE → CE 261 ne s'applique pas. Seuls Air France et Brussels Airlines au retour ouvrent les droits."
 ---
 
+**De 250 à 600 € par passager** sont peut-être à récupérer sur votre vol Nouakchott–Paris retardé de 3 h ou plus. On vérifie gratuitement votre éligibilité, qui dépend de la compagnie et du sens du vol, 0 € d'avance.
+
 Nouakchott (NKC) accueille principalement Air France, Royal Air Maroc et Mauritania Airlines en provenance d'Europe. La ligne est sensible aux vents de sable (harmattan) qui peuvent retarder voire annuler les vols.
 
 ## Paris → Nouakchott : éligible CE 261

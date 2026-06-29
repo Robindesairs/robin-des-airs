@@ -6,6 +6,8 @@ slug: voyage-organise-package-vol-retarde-droits
 image_url: /og-blog.png
 ---
 
+**Jusqu'à 600 € par passager** restent à réclamer même lorsque le vol fait partie d'un voyage organisé tout compris. On vérifie gratuitement vos droits, 0 € d'avance.
+
 Vous avez acheté un **voyage organisé** — un forfait combinant au moins deux services touristiques (vol + hôtel par exemple) — auprès d'un opérateur unique. Si le vol est retardé ou annulé, vos droits sont **doublement protégés** : par le règlement européen CE 261 et par le Code du tourisme français.
 
 ## Qu'est-ce qu'un "voyage organisé" au sens légal

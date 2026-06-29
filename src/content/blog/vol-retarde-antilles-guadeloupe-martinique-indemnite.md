@@ -6,6 +6,8 @@ slug: vol-retarde-antilles-guadeloupe-martinique-indemnite
 image_url: /og-blog.png
 ---
 
+**Jusqu'à 600 € par passager** sont à réclamer sur vos vols Antilles–Guadeloupe–Martinique retardés de 3 h et plus, départ France couvert dans les deux sens. Vérification gratuite, 0 € d'avance.
+
 Les routes Paris → Pointe-à-Pitre (6 772 km) et Paris → Fort-de-France (6 854 km) sont des vols long-courrier couverts par le CE 261/2004. Indemnité maximale : 600€ par passager.
 
 ## Les compagnies qui opèrent

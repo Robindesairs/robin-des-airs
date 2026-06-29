@@ -6,6 +6,8 @@ slug: vol-ramadan-aid-tabaski-retard-droits
 image_url: /og-blog.png
 ---
 
+**Jusqu'à 600 € par passager** peuvent vous revenir si votre vol pendant ces fêtes a été retardé de 3 h ou plus. On vérifie gratuitement votre éligibilité, qui dépend de la compagnie et du sens du vol, 0 € d'avance.
+
 Pendant le **Ramadan**, l'**Aïd el-Fitr** et la **Tabaski (Aïd el-Kebir)**, des millions de musulmans de la diaspora voyagent pour retrouver leur famille au pays ou recevoir les leurs en Europe. Les vols sont chargés, les retards fréquents — mais vos droits CE 261 ne changent pas d'un iota.
 
 ## Aucune exception religieuse dans le CE 261

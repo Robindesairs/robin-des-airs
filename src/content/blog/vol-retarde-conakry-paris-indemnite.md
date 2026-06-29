@@ -6,6 +6,8 @@ slug: vol-retarde-conakry-paris-indemnite
 image_url: /og-blog.png
 ---
 
+**Jusqu'à 600 € par passager** pourraient vous attendre après un retard de 3 h sur votre vol Conakry–Paris. On vérifie gratuitement votre éligibilité, qui dépend de la compagnie et du sens du vol, 0 € d'avance.
+
 La route Paris → Conakry (CKY, 4 482 km) dessert la diaspora guinéenne, principalement via Air France. C'est un vol long-courrier > 3 500 km = 600€ d'indemnité par passager.
 
 ## Air France : seule option européenne directe

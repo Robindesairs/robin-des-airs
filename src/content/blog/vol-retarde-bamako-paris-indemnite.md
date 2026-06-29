@@ -6,6 +6,8 @@ slug: vol-retarde-bamako-paris-indemnite
 image_url: /og-blog.png
 ---
 
+**Votre vol Bamako–Paris retardé de 3 h peut vous valoir jusqu'à 600 € par passager.** On vérifie gratuitement votre éligibilité, qui dépend de la compagnie et du sens du vol, 0 € d'avance.
+
 La route Paris ↔ Bamako (4 170 km) dessert une diaspora malienne très présente en France, notamment en Île-de-France. Air France opère la ligne quotidiennement avec les vols AF732/AF733.
 
 ## Air France : seule compagnie UE directe

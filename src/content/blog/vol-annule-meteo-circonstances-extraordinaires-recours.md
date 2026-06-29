@@ -13,6 +13,8 @@ faq:
     a: "**Non**. Ce sont des phénomènes **récurrents et prévisibles** — les compagnies doivent les anticiper (équipement, planning). Voir [Harmattan vol Afrique](/blog/harmattan-vol-afrique-retard-saison.html)."
 ---
 
+**Selon la cause réelle, jusqu'à 600 € par passager** peuvent parfois être réclamés même quand la compagnie invoque la météo. C'est au cas par cas : on vérifie gratuitement, 0 € d'avance.
+
 "Désolé, votre vol est annulé en raison de mauvaises conditions météorologiques. Circonstance extraordinaire — aucune indemnité due." C'est la réponse type des compagnies. Elle est **vraie dans 20 % des cas** seulement. Voici comment vérifier et contester.
 
 ## Ce que dit la loi

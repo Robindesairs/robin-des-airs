@@ -13,6 +13,8 @@ faq:
     a: "Oui. Corsair est française (UE) → éligible aller ET retour. Distance LBV-ORY ≈ 5 600 km → **600€ par passager**."
 ---
 
+**Jusqu'à 600 € par passager** pourraient vous attendre après un retard de 3 h sur votre vol Libreville–Paris. Votre éligibilité dépend de la compagnie et du sens du vol : on la vérifie gratuitement, 0 € d'avance.
+
 Libreville (LBV) est la capitale du Gabon. La diaspora gabonaise en France est relativement concentrée (Île-de-France, Bordeaux) et les liens avec le pays restent forts. Les vols Paris-Libreville sont opérés par Air France, Corsair et Brussels Airlines — toutes des compagnies européennes. Bonne nouvelle : la protection CE261 est maximale sur cette route.
 
 ## Toutes les compagnies sur Paris-Libreville sont UE

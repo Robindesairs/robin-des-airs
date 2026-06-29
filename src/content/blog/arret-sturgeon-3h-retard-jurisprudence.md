@@ -13,6 +13,8 @@ faq:
     a: "Non. Si le retard à l'arrivée finale est < 3h, pas d'indemnité — même si le décollage était en retard. Seul l'arrivée compte."
 ---
 
+**Grâce à l'arrêt Sturgeon, un retard de 3 h et plus ouvre droit de 250 à 600 € par passager.** On vérifie gratuitement si votre vol est concerné, 0 € d'avance.
+
 Le **règlement CE 261/2004** prévoit explicitement l'indemnité en cas d'annulation. Mais pour les retards, le texte est ambigu. Sans la jurisprudence européenne, des millions de passagers retardés de 4, 6 ou 10h n'auraient jamais touché un centime. L'arrêt **Sturgeon de 2009** a tout changé.
 
 ## Le contexte de l'arrêt

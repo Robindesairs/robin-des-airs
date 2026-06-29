@@ -13,6 +13,8 @@ faq:
     a: "Oui. Brussels Airlines est belge (UE) → **éligible dans les deux sens** BRU↔NSI. Distance ≈ 5 400 km → **600€ par passager**."
 ---
 
+**Un retard de 3 h sur votre vol Yaoundé–Paris peut valoir jusqu'à 600 € par passager.** On vérifie gratuitement votre éligibilité, qui dépend de la compagnie et du sens du vol, 0 € d'avance.
+
 Yaoundé (NSI — Yaoundé-Nsimalen) est la capitale politique du Cameroun. À ne pas confondre avec Douala (DLA), la capitale économique, qui dispose de son propre aéroport. Les deux villes sont desservies depuis Paris et Bruxelles, et les droits CE261 sont identiques sur les deux routes.
 
 ## Yaoundé et Douala : même montant, deux aéroports

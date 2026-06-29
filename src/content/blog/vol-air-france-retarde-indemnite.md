@@ -6,6 +6,8 @@ slug: vol-air-france-retarde-indemnite
 image_url: /og-blog.png
 ---
 
+**Jusqu'à 600 € par passager** sont à réclamer auprès d'Air France dès 3 h de retard, dans les deux sens du voyage. Vérification gratuite, 0 € d'avance.
+
 Air France opère des milliers de vols par semaine depuis Paris-CDG et Orly. Et comme toute compagnie, elle accumule les retards — parfois de plusieurs heures sur les lignes long-courrier vers l'Afrique, les DOM-TOM et l'océan Indien.
 
 ## Ce que dit la loi

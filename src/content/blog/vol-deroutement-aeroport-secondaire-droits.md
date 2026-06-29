@@ -6,6 +6,8 @@ slug: vol-deroutement-aeroport-secondaire-droits
 image_url: /og-blog.png
 ---
 
+**Jusqu'à 600 € par passager** restent à réclamer quand votre vol est dérouté vers un aéroport secondaire. On vérifie gratuitement vos droits, frais de transfert compris, 0 € d'avance.
+
 Votre vol Paris-Bamako devait atterrir à Bamako, mais l'avion a été dérouté sur Abidjan ou Dakar à cause de la météo ou d'un problème technique. Le règlement CE 261 prévoit des droits spécifiques pour ce cas — et la compagnie a souvent intérêt à les "oublier".
 
 ## Le déroutement vu par la loi

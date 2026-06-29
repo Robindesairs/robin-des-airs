@@ -13,6 +13,8 @@ faq:
     a: "Seules les compagnies **adhérentes** au dispositif. La plupart le sont (Air France, KLM, Brussels Airlines, Royal Air Maroc, etc.). Liste à jour sur mtv.travel."
 ---
 
+**De 250 à 600 € par passager** peuvent être obtenus en passant par le médiateur Tourisme et Voyage. On gère cette étape pour vous au succès, vérification gratuite et 0 € d'avance.
+
 Depuis 2026, la **médiation est obligatoire** avant tout recours au tribunal pour un litige aérien. L'organisme principal en France est le **Médiateur Tourisme et Voyage (MTV)**. Voici comment le saisir efficacement.
 
 ## Avant de saisir le MTV : 2 conditions

@@ -13,6 +13,8 @@ faq:
     a: "Oui. KLM est compagnie européenne, donc **éligible dans les deux sens** — contrairement à Kenya Airways qui ne couvre que les vols départ UE."
 ---
 
+**Vol KLM retardé de 3h ou plus, annulé ou surbooké ? Vous pouvez réclamer jusqu'à 600 € par passager.** Compagnie européenne : vos vols vers et depuis l'Afrique sont couverts. 0 € d'avance, 0 € si rien n'est récupéré.
+
 KLM Royal Dutch Airlines opère un large réseau Afrique depuis Amsterdam (AMS) : Lagos, Accra, Kigali, Entebbe, Nairobi, Le Cap, Johannesburg, etc. Beaucoup de voyageurs francophones passent par AMS pour rejoindre l'Afrique, surtout depuis Lille, Bruxelles ou Lyon.
 
 ## KLM = compagnie européenne, donc toujours éligible

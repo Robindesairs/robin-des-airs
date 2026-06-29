@@ -42,6 +42,39 @@ ${items}
  * Liste tous les articles publiés dans /blog/ — qu'ils aient un .md source
  * (pipeline normal) ou qu'ils soient des HTML autonomes (legacy).
  */
+// Doublons d'URL redirigés en 301 vers leur version canonique (cf. _redirects) :
+// on les EXCLUT du sitemap pour ne pas demander à Google d'indexer une URL qui redirige.
+const REDIRECTED_SLUGS = new Set<string>([
+  'air-cote-d-ivoire-vol-retarde-indemnite',
+  'air-cote-divoire-vol-retarde-indemnite',
+  'arret-folkerts-correspondance-cjue',
+  'correspondance-ratee-a-qui-reclamer-ce261-folkerts',
+  'arret-wallentin-hermann-panne-technique-cjue',
+  'reforme-ce261-2026-ce-qui-change-droits-passagers',
+  'reforme-reglement-ce261-2026-droits-passagers-afrique',
+  'lettre-mise-en-demeure-compagnie-aerienne-modele',
+  'preuve-retard-vol-documents-conserver',
+  'antananarivo-madagascar-paris-indemnite',
+]);
+
+// Pages-villes à faible ROI diaspora passées en noindex (X-Robots-Tag via _headers) :
+// sorties du sitemap pour concentrer le budget de crawl sur les routes fortes.
+const NOINDEX_SLUGS = new Set<string>([
+  'vol-retarde-addis-abeba-paris-indemnite', 'vol-retarde-alger-paris-indemnite',
+  'vol-retarde-amsterdam-accra-indemnite', 'vol-retarde-amsterdam-lagos-indemnite',
+  'vol-retarde-amsterdam-nairobi-indemnite', 'vol-retarde-bujumbura-paris-indemnite',
+  'vol-retarde-cap-vert-paris-indemnite', 'vol-retarde-casablanca-paris-indemnite',
+  'vol-retarde-dar-es-salaam-paris-indemnite', 'vol-retarde-djibouti-paris-indemnite',
+  'vol-retarde-frankfurt-abidjan-indemnite', 'vol-retarde-freetown-paris-indemnite',
+  'vol-retarde-ile-maurice-paris-indemnite', 'vol-retarde-johannesburg-paris-indemnite',
+  'vol-retarde-kampala-paris-indemnite', 'vol-retarde-lisbonne-dakar-indemnite',
+  'vol-retarde-luanda-paris-indemnite', 'vol-retarde-madrid-dakar-indemnite',
+  'vol-retarde-maputo-paris-indemnite', 'vol-retarde-milan-lagos-indemnite',
+  'vol-retarde-montreal-paris-indemnite', 'vol-retarde-new-york-paris-indemnite',
+  'vol-retarde-rome-nairobi-indemnite', 'vol-retarde-stockholm-accra-indemnite',
+  'vol-retarde-tunis-paris-indemnite',
+]);
+
 function getAllBlogSlugs(): string[] {
   const mdSlugs = new Set(getAllSlugs());
   if (fs.existsSync(BLOG_DIR)) {
@@ -51,6 +84,8 @@ function getAllBlogSlugs(): string[] {
       mdSlugs.add(f.replace(/\.html$/, ''));
     }
   }
+  for (const s of REDIRECTED_SLUGS) mdSlugs.delete(s);
+  for (const s of NOINDEX_SLUGS) mdSlugs.delete(s);
   return Array.from(mdSlugs).sort();
 }
 

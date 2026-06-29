@@ -13,6 +13,8 @@ faq:
     a: "En cas d'annulation depuis un aéroport UE : **600€ par passager** + remboursement du billet OU réacheminement. Si la compagnie vous prévient moins de 14 jours avant, l'indemnité est due sauf circonstance extraordinaire prouvée."
 ---
 
+**Vol Air Côte d'Ivoire retardé de 3h ou plus, ou annulé ? Selon votre trajet, jusqu'à 600 € par passager.** Au départ d'Europe, c'est couvert ; au départ d'Abidjan, Air Côte d'Ivoire n'étant pas européenne, l'indemnité n'est en principe pas due. On vérifie gratuitement votre cas.
+
 Air Côte d'Ivoire (HF) est la compagnie nationale ivoirienne, créée en 2012, opérant principalement la liaison Abidjan (ABJ) ↔ Paris Charles-de-Gaulle. Pour la diaspora ivoirienne en France — l'une des plus importantes d'Afrique de l'Ouest — c'est souvent le lien direct avec le pays.
 
 ## Règle de base : la compagnie est ivoirienne, pas européenne

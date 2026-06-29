@@ -13,6 +13,8 @@ faq:
     a: "Oui. Brussels Airlines est belge (UE). Votre trajet Paris→Bruxelles→Cotonou sur billet unique = couvert intégralement. Distance BRU-COO ≈ 4 900 km → **600€**."
 ---
 
+**Un retard de 3 h sur votre vol Cotonou–Paris peut valoir jusqu'à 600 € par passager.** On vérifie gratuitement votre éligibilité, qui dépend de la compagnie et du sens du vol, 0 € d'avance.
+
 Cotonou (COO) est la capitale économique du Bénin et la principale porte d'entrée aérienne du pays. La diaspora béninoise est concentrée en Île-de-France, en Normandie et dans le Sud. Les vols Paris-Cotonou passent principalement par Air France (direct) ou Brussels Airlines (via Bruxelles).
 
 ## Les compagnies sur Paris-Cotonou et leur couverture CE261

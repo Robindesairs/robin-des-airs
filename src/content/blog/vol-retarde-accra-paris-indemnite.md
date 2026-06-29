@@ -13,6 +13,8 @@ faq:
     a: "Oui. Brussels Airlines est belge (UE) → éligible aller et retour BRU↔ACC. Distance ≈ 5 300 km → **600€ par passager**."
 ---
 
+**Jusqu'à 600 € par passager** pourraient vous revenir après un retard de 3 h sur votre vol Accra–Paris. Votre éligibilité dépend de la compagnie et du sens du vol : on la vérifie gratuitement, 0 € d'avance.
+
 Accra (ACC) est la capitale du Ghana et l'un des hubs aériens les plus actifs d'Afrique de l'Ouest. La diaspora ghanéenne est présente en France et en Belgique. Il n'existe pas de vol direct Paris-Accra — la route passe principalement par KLM (via Amsterdam) ou Brussels Airlines (via Bruxelles). Bonne nouvelle : ces deux compagnies sont européennes et couvrent les deux sens.
 
 ## Les options Paris-Accra et leur couverture CE261

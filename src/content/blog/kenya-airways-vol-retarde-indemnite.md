@@ -13,6 +13,8 @@ faq:
     a: "Oui, si billet unique depuis Paris. Le CE 261 couvre l'ensemble du trajet sur billet unique au départ de l'UE. C'est confirmé par l'arrêt Wegener (CJUE 2018)."
 ---
 
+**Vol Kenya Airways retardé de 3h ou plus, ou annulé ? Selon votre trajet, jusqu'à 600 € par passager.** Au départ d'Europe, c'est couvert ; au départ de Nairobi, Kenya Airways n'étant pas européenne, l'indemnité n'est en principe pas due. On vérifie gratuitement votre cas.
+
 Kenya Airways (KQ) relie Paris Charles-de-Gaulle à Nairobi (NBO) en vol direct, et offre des connexions vers l'Afrique de l'Est et centrale depuis son hub de Nairobi. Pour la diaspora kényane, congolaise, ougandaise ou rwandaise, c'est souvent l'option la plus directe depuis Paris.
 
 ## Kenya Airways = compagnie non-UE

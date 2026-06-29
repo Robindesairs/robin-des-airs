@@ -13,6 +13,8 @@ faq:
     a: "Non. Avoir un rapport technique ne prouve pas que c'est une circonstance extraordinaire. La compagnie doit prouver que la panne était **imprévisible** ET qu'elle a pris **toutes les mesures raisonnables** pour éviter le retard."
 ---
 
+**L'arrêt Wallentin-Hermann peut vous valoir jusqu'à 600 € par passager** en écartant la panne technique comme excuse de la compagnie. On vérifie gratuitement votre cas, 0 € d'avance.
+
 Quand votre vol est retardé, la première réponse de la compagnie est souvent : "raisons techniques". C'est l'argument préféré des compagnies pour invoquer les "circonstances extraordinaires" du CE261 et éviter de payer. La CJUE a répondu clairement à cette stratégie en 2008.
 
 ## L'arrêt Wallentin-Hermann (CJUE, 22 décembre 2008, affaire C-549/07)

@@ -19,6 +19,8 @@ faq:
     a: "Peut-être pas. Les pannes techniques ne sont généralement pas des circonstances extraordinaires (arrêt Wallentin-Hermann, CJUE). Robin des Airs conteste systématiquement ces refus."
 ---
 
+**Votre vol Air Sénégal a été retardé de 3h ou plus, ou annulé ? Selon votre trajet, vous pouvez réclamer jusqu'à 600 € par passager.** Au départ d'Europe (ex. Paris → Dakar), c'est couvert ; au départ du Sénégal, Air Sénégal n'étant pas européenne, l'indemnité n'est en principe pas due. On vérifie gratuitement votre cas, 0 € d'avance.
+
 Air Sénégal (HC) est la compagnie nationale sénégalaise, relancée en 2018 sous le label « Sénégal Airlines ». Elle opère principalement la liaison Dakar (DSS) ↔ Paris Charles-de-Gaulle (CDG) et dessert plusieurs destinations africaines. Pour la diaspora sénégalaise en France, c'est souvent le choix par préférence nationale — mais les droits varient fortement selon le sens du vol.
 
 ## Quelle loi s'applique sur un vol Air Sénégal ?

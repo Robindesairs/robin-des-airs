@@ -6,6 +6,8 @@ slug: greve-controleurs-aeriens-ete-2026-retards
 image_url: /og-blog.png
 ---
 
+**Selon la cause exacte du retard, jusqu'à 600 € par passager** peuvent parfois être réclamés malgré une grève des contrôleurs. C'est au cas par cas : on vérifie gratuitement votre éligibilité, 0 € d'avance.
+
 L'été 2026 a vu plusieurs mouvements de grève des contrôleurs aériens en France (DGAC), en Italie, en Belgique et en Espagne — avec des centaines de vols retardés ou annulés. Avez-vous droit à l'indemnité CE 261 ? Réponse précise.
 
 ## La règle générale

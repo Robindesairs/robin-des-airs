@@ -13,6 +13,8 @@ faq:
     a: "Si annulation < 14 jours avant : **600€ par passager** (distance > 3 500 km) + remboursement ou réacheminement. TAP = UE = eligible depuis Lisbonne et depuis Abidjan au retour."
 ---
 
+**Jusqu'à 600 € par passager** peuvent vous revenir avec TAP Air Portugal, compagnie européenne couverte dans les deux sens, dès 3 h de retard. Vérification gratuite et 0 € d'avance.
+
 TAP Air Portugal est la compagnie nationale du Portugal, membre de Star Alliance. Elle dessert un large réseau africain depuis son hub de Lisbonne (LIS), notamment les pays lusophones (Angola, Mozambique, Cap-Vert, Guinée-Bissau, São Tomé) mais aussi plusieurs destinations francophones (Dakar, Abidjan, Lomé, Cotonou, Accra, Lagos). Pour la diaspora africaine passant par Paris, TAP offre souvent une connexion Paris-Lisbonne-Afrique.
 
 ## Compagnie portugaise = UE = toujours éligible dans les deux sens

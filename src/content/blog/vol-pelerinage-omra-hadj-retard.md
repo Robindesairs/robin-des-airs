@@ -6,6 +6,8 @@ slug: vol-pelerinage-omra-hadj-retard
 image_url: /og-blog.png
 ---
 
+**Jusqu'à 600 € par passager** restent à réclamer si votre vol de pèlerinage a été retardé de 3 h ou plus. On vérifie gratuitement votre éligibilité, qui dépend de la compagnie et du sens du vol, 0 € d'avance.
+
 Chaque année, des millions de pèlerins partent d'Europe pour l'Omra (mineure) ou le Hadj (majeur) en Arabie Saoudite. Les vols sont organisés en groupes par des opérateurs spécialisés, souvent avec des compagnies non-européennes (Saudia, EgyptAir, Royal Air Maroc, Turkish Airlines). Retards et annulations sont fréquents — surtout en fin de Ramadan et en pic de Hadj.
 
 ## Vos droits CE 261 dépendent du sens et de la compagnie

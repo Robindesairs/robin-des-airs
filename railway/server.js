@@ -1670,7 +1670,21 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const _ref = _l.ref || (s && s.ref) || '';
     const _url = 'https://robindesairs.eu/depot-en-ligne.html?r=' + encodeURIComponent(_ref);
     upsertLead(phone, { lastClientAt: Date.now() });
-    return send(phone, L(s, `📎 Great. Upload your documents (*ID* + *boarding pass* or *e-ticket*) securely here 👇\n${_url}\n\nYou can also *send me the photos directly here*. 🙏`, `📎 Très bien. Déposez vos pièces (*pièce d'identité* + *carte d'embarquement* ou *e-billet*) en toute sécurité ici 👇\n${_url}\n\nVous pouvez aussi *m'envoyer les photos directement ici*. 🙏`), cfg);
+    return send(phone, L(s, `📎 Great. Upload your documents (*ID* + *boarding pass* or *e-ticket*) securely here 👇\n${_url}\n\nYou can also *send me the photos directly here*. 🙏\n\n🔒 Your ID is used *only* to claim your money and pay it to the right name. You can *hide the line of numbers at the bottom* — we only need your name + photo. Deleted 30 days after settlement. GDPR.`, `📎 Très bien. Déposez vos pièces (*pièce d'identité* + *carte d'embarquement* ou *e-billet*) en toute sécurité ici 👇\n${_url}\n\nVous pouvez aussi *m'envoyer les photos directement ici*. 🙏\n\n🔒 La pièce sert *uniquement* à réclamer votre argent et à vous le verser au bon nom. Vous pouvez *cacher la bande de chiffres en bas* — on n'a besoin que du nom + photo. Supprimée 30 j après règlement. RGPD.`), cfg);
+  }
+
+  // Préférence de versement (posée à la signature, juste avant les pièces) : 1 tap → on stocke la préférence.
+  // Le détail (IBAN / numéro) se prend au versement (rib.html). FR + EN.
+  if (id === 'pay_iban' || id === 'pay_waveom' || id === 'pay_mtn') {
+    const pref = id === 'pay_iban' ? 'Virement bancaire' : id === 'pay_waveom' ? 'Wave / Orange Money' : 'MTN MoMo';
+    if (s) { s.payout_pref = pref; await setState(phone, s); }
+    upsertLead(phone, { payoutPref: pref, lastClientAt: Date.now() });
+    notifyOwnerWhatsApp(phone, `💸 Préférence de versement : *${pref}* (${(s && s.ref) || phone}).`).catch(() => {});
+    const next = L(s, `Next step to start your file: a photo of your *ID* — it's what proves the money comes back to *you*.`, `Prochaine étape pour lancer votre dossier : une photo de votre *pièce d'identité* — c'est elle qui prouve que l'argent revient bien à *vous*.`);
+    const ack = id === 'pay_iban'
+      ? L(s, `🏦 Noted — *bank transfer*. We'll ask for your IBAN at payout time. 🙏\n${next}`, `🏦 Noté — *virement bancaire*. On vous demandera votre IBAN au moment du versement. 🙏\n${next}`)
+      : L(s, `📱 Noted — *${pref}*. We'll ask for your number at payout time. 🙏\n${next}`, `📱 Noté — *${pref}*. On vous demandera votre numéro au moment du versement. 🙏\n${next}`);
+    return send(phone, ack, cfg);
   }
 
   // T1.3 — « Plus tard » : le client veut reprendre plus tard. Son tap a déjà rouvert la fenêtre 24h (gratuit) ;
@@ -2868,8 +2882,8 @@ async function finaliser(phone, s, cfg) {
   // Message 1 — le récap (sans le lien). Message 2 — le lien SEUL, court, qui ne se replie
   // jamais derrière « Lire la suite » sur mobile et déclenche l'aperçu cliquable WhatsApp.
   await send(phone, L(s,
-    `${bar('done')}\n${titre} Ref. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${incidentLabel(s)}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nLast step: *your signature* (2 min).\n✅ €0 upfront — 25% on success only · no bank details.\n💸 Paid even without a EU bank account: bank transfer, Wave, Orange Money… or cash pickup.\n_Your data is used only for your claim, never sold. Privacy & T&Cs: robindesairs.eu/cgv_`,
-    `${bar('done')}\n${titre} Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${incidentLabel(s)}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % fixe, tout compris, au succès uniquement · aucune info bancaire.\n💸 Payé même sans compte bancaire en Europe : virement, Wave, Orange Money… ou retrait en espèces.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_`), cfg);
+    `${bar('done')}\n${titre} Ref. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${incidentLabel(s)}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nLast step: *your signature* (2 min).\n✅ €0 upfront — 25% on success only · no bank details.\n💸 Paid even without a EU bank account: bank transfer, Wave, Orange Money or MTN MoMo — 75% net, all-inclusive.\n_Your data is used only for your claim, never sold. Privacy & T&Cs: robindesairs.eu/cgv_`,
+    `${bar('done')}\n${titre} Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${incidentLabel(s)}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % fixe, tout compris, au succès uniquement · aucune info bancaire.\n💸 Payé même sans compte bancaire en Europe : virement, Wave, Orange Money ou MTN MoMo — 75 % net, tout compris.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_`), cfg);
   await send(phone, L(s, `👉 *Sign here* (2 min):\n${s.mandat_url}\n\nWithout your signature, we can't act on your behalf. ${STOP_FOOTER}`, `👉 *Signez ici* (2 min) :\n${s.mandat_url}\n\nSans votre signature, on ne peut pas agir en votre nom. ${STOP_FOOTER}`), cfg);
   // CRM : la fiche Airtable est désormais créée par la synchro DIRECTE (storeDossierDurable →
   // /api/dossier-store → syncNewDossierToAirtable, statut « Signature en attente »). Le webhook
@@ -2938,6 +2952,26 @@ async function armPiecesReminder(lead) {
     if (docsStatus(s).complete) return;                       // déjà complet côté bot → aucun rappel nécessaire
     upsertLead(lead.phone, { piecesPending: true, piecesAskedAt: Date.now() });
   } catch (e) { console.error('armPiecesReminder', e.message); }
+}
+
+// Préférence de versement — posée à la signature (réassurance « votre argent », juste avant les pièces).
+// On ne capture QUE la préférence (1 tap) ; le détail (IBAN / numéro) se prend au versement (rib.html). FR + EN.
+async function sendPayoutPreference(lead) {
+  try {
+    if (!lead || !lead.phone || lead.payoutAskedAt) return;   // fire-once (webhook rejoué)
+    const cfg = watiCfg(); if (!cfg) return;
+    upsertLead(lead.phone, { payoutAskedAt: Date.now() });
+    const s = await getState(lead.phone); if (!s.ref && lead.ref) s.ref = lead.ref;
+    await sendButtons(lead.phone, {
+      body: L(s, `🎉 It's signed, thank you for your trust! We handle everything to recover your money — you pay nothing upfront. How would you like to receive it?\n_(just your preference — no bank details needed right now)_`,
+                 `🎉 C'est signé, merci de votre confiance ! On s'occupe de tout pour récupérer votre argent — vous n'avancez rien. Comment préférez-vous le recevoir ?\n_(juste votre préférence — pas besoin de vos coordonnées maintenant)_`),
+      buttons: [
+        { id: 'pay_waveom', text: 'Wave / Orange Money' },
+        { id: 'pay_mtn', text: 'MTN MoMo' },
+        { id: 'pay_iban', text: L(s, 'Bank transfer', 'Virement bancaire') },
+      ],
+    }, cfg);
+  } catch (e) { console.error('sendPayoutPreference', e.message); }
 }
 
 // reprise d'étape (T1) — renvoie l'écran courant
@@ -3188,6 +3222,7 @@ app.post('/api/mandat-signed', (req, res) => {
   const lead = findLead(b.ref || '') || findLead(b.phone || b.waId || '');
   const marked = markLeadSigned(b.ref || '') || markLeadSigned(b.phone || b.waId || '');
   console.log('mandat signe ref=' + (b.ref || '?') + ' marked=' + marked);
+  if (lead && lead.phone) sendPayoutPreference(lead).catch(() => {}); // préférence de versement (réassurance « votre argent ») — juste avant les pièces
   if (lead && lead.phone) triggerFraisCollection(lead).catch(() => {}); // propose l'envoi des reçus de frais (Art. 8/9), best-effort
   if (lead && lead.phone) armPiecesReminder(lead).catch(() => {}); // arme 1 rappel pièces différé si le dossier est incomplet (best-effort)
   // « À la fin de la conversation » : le mandat signé = LE moment où l'on prévient qu'un conseiller natif doit

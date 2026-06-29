@@ -13,6 +13,8 @@ faq:
     a: "Partiellement. Air Madagascar est malgache (non-UE) → couvert **seulement depuis Paris** (départ UE). Le vol retour Antananarivo→Paris sur Air Madagascar n'est pas couvert par le CE261."
 ---
 
+**De 250 à 600 € par passager** sont peut-être à réclamer sur votre vol Antananarivo–Paris retardé de 3 h ou plus. On vérifie gratuitement votre éligibilité, qui dépend de la compagnie et du sens du vol, 0 € d'avance.
+
 Antananarivo (TNR), capitale de Madagascar, est reliée à Paris par Air France et Air Madagascar. La diaspora malgache en France est estimée à plus de 100 000 personnes, principalement en Île-de-France. La route Paris-Madagascar est l'une des plus longues vers l'Afrique — ce qui signifie le palier d'indemnité maximum.
 
 ## Distance record : 9 000 km = 600€ par passager

@@ -6,6 +6,8 @@ slug: que-faire-aeroport-vol-retarde
 image_url: /og-blog.png
 ---
 
+**Votre vol est retardé ? Les bons réflexes maintenant peuvent valoir jusqu'à 600 € par passager.** Voici exactement quoi faire à l'aéroport pour sécuriser votre indemnité. Vérification gratuite ensuite, 0 € d'avance.
+
 Votre vol est affiché "retardé" sur le panneau. La frustration monte. Voici les 6 réflexes à avoir immédiatement.
 
 ## 1. Gardez votre carte d'embarquement

@@ -6,6 +6,8 @@ slug: combien-temps-reclamer-indemnite-vol
 image_url: /og-blog.png
 ---
 
+**Votre vol date d'il y a 1, 2 ou 3 ans ? Il n'est sans doute pas trop tard — jusqu'à 600 € par passager.** En France, vous avez souvent plusieurs années pour réclamer. On vérifie gratuitement, 0 € d'avance.
+
 Beaucoup de passagers pensent qu'il est "trop tard" pour réclamer un vol retardé il y a 1, 2 ou 3 ans. En réalité, en droit français, le délai de prescription est de 5 ans.
 
 ## 5 ans en France

@@ -13,6 +13,8 @@ faq:
     a: "Très souvent oui. La saison des pluies est **prévisible** chaque année — pas une circonstance extraordinaire. La compagnie doit prouver l'impact direct sur votre vol précis."
 ---
 
+**Jusqu'à 600 € par passager** pourraient vous revenir après un retard de 3 h sur votre vol Niamey–Paris. Votre éligibilité dépend de la compagnie et du sens du vol : on la vérifie gratuitement, 0 € d'avance.
+
 Niamey (NIM) n'a plus de vol direct quotidien depuis Paris depuis la suspension d'Air France à certaines périodes. La plupart des voyageurs passent par Casablanca (Royal Air Maroc), Bruxelles (Brussels Airlines) ou Istanbul (Turkish Airlines).
 
 ## Paris → Niamey : couvert au départ

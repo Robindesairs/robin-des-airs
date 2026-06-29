@@ -13,6 +13,8 @@ faq:
     a: "Décision moyenne sous **90 jours** après la réponse de la compagnie. Plus rapide qu'un tribunal classique. Décision exécutoire dans toute l'UE."
 ---
 
+**De 250 à 600 € par passager** peuvent être réclamés via la procédure européenne de petite créance. On vous accompagne au succès, vérification gratuite et 0 € d'avance.
+
 Quand la médiation échoue et que la compagnie persiste à refuser, vous pouvez saisir directement un tribunal. Pour les litiges inférieurs à 5 000€ et transfrontaliers (compagnie basée dans un autre pays UE que le vôtre), la **procédure européenne de petite créance** est faite pour ça : rapide, écrite, peu coûteuse.
 
 ## Qu'est-ce que c'est exactement

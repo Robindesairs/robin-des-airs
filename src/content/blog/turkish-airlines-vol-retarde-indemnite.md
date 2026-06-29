@@ -13,6 +13,8 @@ faq:
     a: "Non. Turkish Airlines n'est pas UE, et le vol **départ d'Istanbul (hors-UE)** → pas couvert par le CE 261. Seul le vol Paris → Istanbul l'est."
 ---
 
+**Au départ d'Europe avec Turkish Airlines, vous pouvez réclamer jusqu'à 600 € par passager** en cas de retard de 3 h et plus. Au départ de la Turquie, compagnie non européenne = en principe pas d'indemnité ; on vérifie votre éligibilité gratuitement, 0 € d'avance.
+
 Turkish Airlines (TK) est l'une des compagnies les plus utilisées par la diaspora africaine en France pour les connexions via Istanbul (IST). Dakar, Abidjan, Lagos, Douala, Kinshasa, Nairobi — beaucoup de ces destinations sont accessibles en un seul transit par IST. Mais les règles CE 261 ne s'appliquent pas de la même façon qu'avec Air France ou Brussels Airlines.
 
 ## La règle décisive : Turkish Airlines n'est pas UE

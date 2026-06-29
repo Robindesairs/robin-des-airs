@@ -13,6 +13,8 @@ faq:
     a: "Non. Brazzaville (BZV, Congo-Brazzaville) et Kinshasa (FIH, RDC) sont deux pays différents avec deux aéroports différents, même si les villes sont voisines. Vérifiez bien votre aéroport de destination."
 ---
 
+**De 250 à 600 € par passager** sont peut-être à récupérer sur votre vol Brazzaville–Paris retardé de 3 h ou plus. Votre éligibilité dépend de la compagnie et du sens du vol : on la vérifie gratuitement, 0 € d'avance.
+
 Brazzaville (BZV) est la capitale de la République du Congo (Congo-Brazzaville), à ne pas confondre avec Kinshasa, capitale de la République Démocratique du Congo (RDC), située juste en face du fleuve. La diaspora congolaise (Congo-B) est importante en France, principalement en Île-de-France. Air France assure la liaison principale Paris-Brazzaville.
 
 ## Air France : compagnie UE, deux sens couverts

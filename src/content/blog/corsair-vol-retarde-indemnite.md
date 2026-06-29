@@ -6,6 +6,8 @@ slug: corsair-vol-retarde-indemnite
 image_url: /og-blog.png
 ---
 
+**Votre vol Corsair a été retardé de 3h ou plus, annulé ou surbooké ? Vous pouvez réclamer jusqu'à 600 € par passager.** Corsair étant une compagnie française, vos vols Afrique ⇄ Europe sont couverts dans les deux sens. 0 € d'avance, 0 € si rien n'est récupéré — vérification gratuite en 2 minutes.
+
 Corsair International est une compagnie française qui dessert principalement les DOM-TOM (Guadeloupe, Martinique, Réunion, Mayotte) et l'Afrique de l'Ouest (Dakar, Abidjan, Bamako). En tant que compagnie européenne, tous ses vols sont couverts par le CE 261/2004 — dans les deux sens.
 
 ## Pourquoi Corsair est souvent en retard

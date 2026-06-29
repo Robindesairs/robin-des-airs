@@ -13,6 +13,8 @@ faq:
     a: "La majorité des voyageurs Paris-Lomé passent par Brussels Airlines (via BRU) ou d'autres connexions UE. Dans tous les cas, le billet unique depuis Paris est couvert par le CE261."
 ---
 
+**De 250 à 600 € par passager** sont peut-être à réclamer sur votre vol Lomé–Paris retardé de 3 h et plus. On vérifie gratuitement votre éligibilité, qui dépend de la compagnie et du sens du vol, 0 € d'avance.
+
 Lomé (LFW) est la capitale du Togo. La diaspora togolaise est nombreuse en France, notamment en Île-de-France et en Normandie. Il n'existe pas de vol direct Paris-Lomé — la route passe principalement par Brussels Airlines (via Bruxelles) ou d'autres compagnies en correspondance.
 
 ## Brussels Airlines : la route principale Paris-Lomé

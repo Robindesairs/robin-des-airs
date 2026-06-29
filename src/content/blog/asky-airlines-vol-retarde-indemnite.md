@@ -13,6 +13,8 @@ faq:
     a: "Si votre billet part d'un aéroport UE (Paris, Bruxelles…) jusqu'à votre destination finale africaine via Lomé, sur un seul billet : **couvert intégralement**. C'est la distance totale CDG→destination finale qui compte."
 ---
 
+**Vol ASKY Airlines retardé de 3h ou plus, ou annulé ? Selon votre trajet, jusqu'à 600 € par passager.** Au départ d'Europe, c'est couvert ; au départ de Lomé ou d'une autre escale africaine, ASKY n'étant pas européenne, l'indemnité n'est en principe pas due. Vérification gratuite, 0 € d'avance.
+
 ASKY Airlines est une compagnie panafricaine basée à Lomé (LFW, Togo), opérée en partenariat avec Ethiopian Airlines. Elle dessert plus de 20 destinations en Afrique de l'Ouest et Centrale depuis son hub de Lomé. Pour les voyageurs européens, ASKY est souvent la connexion finale après un vol Bruxelles ou Paris vers Lomé, puis vers leur ville de destination en Afrique.
 
 ## ASKY = compagnie non-UE : règle clé

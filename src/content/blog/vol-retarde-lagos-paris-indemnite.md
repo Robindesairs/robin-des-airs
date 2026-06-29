@@ -13,6 +13,8 @@ faq:
     a: "Non. Ethiopian n'est pas UE, et le départ de Lagos n'est pas en UE. **Seulement le vol aller Paris→Lagos sur Ethiopian serait couvert** (départ UE)."
 ---
 
+**Un retard de 3 h sur votre vol Lagos–Paris peut valoir jusqu'à 600 € par passager.** On vérifie gratuitement votre éligibilité, qui dépend de la compagnie et du sens du vol, 0 € d'avance.
+
 Lagos (LOS) est la capitale économique du Nigeria et l'une des plus grandes villes africaines. La diaspora nigériane en France est la troisième d'Afrique subsaharienne. Les liaisons Paris-Lagos sont opérées par plusieurs compagnies, et les droits CE261 varient selon laquelle vous avez choisie.
 
 ## Paris → Lagos : toujours couvert

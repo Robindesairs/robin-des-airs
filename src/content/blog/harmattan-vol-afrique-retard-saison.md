@@ -6,6 +6,8 @@ slug: harmattan-vol-afrique-retard-saison
 image_url: /og-blog.png
 ---
 
+**Vol Afrique ⇄ Europe perturbé pendant la saison de l'harmattan ? Selon la cause exacte du retard, vous pouvez avoir droit jusqu'à 600 € par passager.** On vérifie gratuitement si votre retard ouvre droit à indemnité, 0 € d'avance.
+
 De **décembre à mars**, l'**harmattan** — un vent sec et chargé de sable venu du Sahara — souffle sur l'Afrique de l'Ouest et réduit la visibilité dans les aéroports : Dakar, Bamako, Niamey, Nouakchott, Ouagadougou. Conséquence : retards, déroutements, annulations. L'indemnité CE 261 est-elle due ?
 
 ## L'harmattan = circonstance extraordinaire ?

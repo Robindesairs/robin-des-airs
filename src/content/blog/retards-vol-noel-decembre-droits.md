@@ -6,6 +6,8 @@ slug: retards-vol-noel-decembre-droits
 image_url: /og-blog.png
 ---
 
+**Jusqu'à 600 € par passager** restent à réclamer même pour un vol de Noël retardé de 3 h ou plus. On vérifie gratuitement vos droits, 0 € d'avance.
+
 Décembre est le mois où le trafic aérien explose : retours diaspora pour les fêtes, vacances scolaires, météo capricieuse. Les retards et annulations sont fréquents — mais **vos droits CE 261 restent les mêmes**, voire plus défendables en période de pointe.
 
 ## L'indemnité ne change pas pour Noël

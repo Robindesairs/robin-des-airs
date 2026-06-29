@@ -6,6 +6,8 @@ slug: greve-air-france-indemnite-vol-retarde
 image_url: /og-blog.png
 ---
 
+**Vol Air France touché par une grève ? Vous pouvez avoir droit jusqu'à 600 € par passager.** La grève du personnel de la compagnie n'est pas toujours une excuse valable — contrairement à la grève des contrôleurs aériens. On vérifie gratuitement votre cas.
+
 À chaque grève Air France, la même question revient : "Mon vol est retardé/annulé à cause de la grève — ai-je droit à une indemnité ?"
 
 ## Grève interne = indemnité due

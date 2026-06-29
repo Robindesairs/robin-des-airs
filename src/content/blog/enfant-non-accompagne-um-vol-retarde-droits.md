@@ -13,6 +13,8 @@ faq:
     a: "Défaut grave de la compagnie. Documentez (témoignages, vidéos, heures) → réclamation **préjudice moral** via Convention de Montréal **en plus** des 600€ CE 261. Robin oriente vers un avocat si nécessaire."
 ---
 
+**Jusqu'à 600 € pour votre enfant voyageant seul** si son vol a été retardé de 3 h ou plus : l'indemnité lui revient comme à tout passager. On vérifie gratuitement, 0 € d'avance.
+
 De nombreuses familles de la diaspora envoient leurs enfants en vacances au pays d'origine ou les ramènent en France via le service **UM (Unaccompanied Minor)** des compagnies. C'est un service payant qui implique une **responsabilité renforcée** de la compagnie. Si le vol est retardé, les droits sont les mêmes — et souvent l'enjeu est plus stressant.
 
 ## Le service UM expliqué

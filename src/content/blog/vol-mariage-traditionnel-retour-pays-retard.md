@@ -13,6 +13,8 @@ faq:
     a: "Un membre de la famille majeur peut centraliser via un **contrat de cession de créance**. Robin gère cette centralisation pour vous — un seul interlocuteur pour 20 personnes."
 ---
 
+**Jusqu'à 600 € par passager** peuvent vous revenir si votre vol vers ou depuis le pays a été retardé de 3 h ou plus. On vérifie gratuitement votre éligibilité, qui dépend de la compagnie et du sens du vol, 0 € d'avance.
+
 Les mariages traditionnels sont des événements majeurs dans la diaspora africaine — toute la famille voyage, souvent à 10, 15 ou 20 personnes. Quand le vol est retardé ou annulé, c'est tout le groupe qui est impacté. Mais c'est aussi **toute la famille qui peut toucher l'indemnité**.
 
 ## L'indemnité par passager — pas par famille

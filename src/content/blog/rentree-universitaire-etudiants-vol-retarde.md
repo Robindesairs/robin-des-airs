@@ -6,6 +6,8 @@ slug: rentree-universitaire-etudiants-vol-retarde
 image_url: /og-blog.png
 ---
 
+**De 250 à 600 € par passager** peuvent revenir aux étudiants dont le vol de rentrée a été retardé de 3 h ou plus. On vérifie gratuitement votre éligibilité, 0 € d'avance.
+
 Chaque rentrée universitaire (septembre-octobre), des milliers d'étudiants africains rejoignent leurs facs en France, Belgique, Suisse. Les vols sont chargés, les retards fréquents — et pour un étudiant, rater la première semaine de cours ou un rendez-vous administratif (préfecture, OFII, logement) peut avoir des conséquences réelles.
 
 ## Indemnité CE 261 — comme tout passager

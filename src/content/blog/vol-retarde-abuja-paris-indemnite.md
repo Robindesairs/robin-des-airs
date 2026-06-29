@@ -13,6 +13,8 @@ faq:
     a: "Oui. Air France est française (UE) → **éligible dans les deux sens** ABV↔CDG. 600€ par passager."
 ---
 
+**Un retard de 3 h sur votre vol Abuja–Paris peut valoir jusqu'à 600 € par passager.** On vérifie gratuitement votre éligibilité, qui dépend de la compagnie et du sens du vol, 0 € d'avance.
+
 Abuja (ABV — Nnamdi Azikiwe International Airport) est la capitale fédérale du Nigeria. À distinguer de Lagos (LOS), la capitale économique. La diaspora nigériane en France utilise les deux aéroports selon sa région d'origine. Les vols Paris-Abuja passent par Air France (direct ou via connexion) ou par des compagnies en correspondance.
 
 ## Abuja ≠ Lagos : deux aéroports, mêmes droits

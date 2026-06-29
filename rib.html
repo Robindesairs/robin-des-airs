@@ -12,11 +12,11 @@
 </script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vos coordonnées bancaires, Robin des Airs</title>
+  <title>Comment recevoir votre indemnité, Robin des Airs</title>
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://robindesairs.eu/rib.html">
-  <meta property="og:title" content="Vos coordonnées bancaires, Robin des Airs">
-  <meta property="og:description" content="Indiquez l'IBAN où verser votre indemnité. Connexion chiffrée, usage unique : votre virement.">
+  <meta property="og:title" content="Comment recevoir votre indemnité, Robin des Airs">
+  <meta property="og:description" content="Virement, Wave, Orange Money ou MTN MoMo. 75 % net, tout compris. Connexion chiffrée, usage unique : votre versement.">
   <meta property="og:image" content="https://robindesairs.eu/robin-des-airs-og-1200x630-v2.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="/favicon.png" type="image/png">
@@ -25,6 +25,28 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/portail-premium.css">
+  <style>
+    /* Sélecteur de mode de versement — ordre IBAN → Wave → OM → MTN (tous 75 % net, frais pour Robin) */
+    .modes{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 10px}
+    .mode-chip{display:inline-flex;align-items:center;gap:6px;padding:10px 13px;border:1.5px solid #d7dee8;border-radius:12px;
+      background:#fff;color:#1b2733;font:600 14px/1 Montserrat,system-ui,sans-serif;cursor:pointer;transition:.15s}
+    .mode-chip:hover{border-color:#9fb0c4}
+    .mode-chip.is-active{border-color:#047857;background:#ecfdf5;color:#047857;box-shadow:0 0 0 3px rgba(4,120,87,.12)}
+    /* Pastille de marque (emplacement du futur logo officiel) */
+    .op-dot{width:18px;height:18px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;
+      flex:0 0 auto;font:800 9px/1 Montserrat,system-ui,sans-serif;color:#fff;letter-spacing:.02em}
+    .mode-chip[data-mode="iban"] .op-dot{background:#334155}
+    .mode-chip[data-mode="wave"] .op-dot{background:#1ec8ff}
+    .mode-chip[data-mode="om"]   .op-dot{background:#ff7900}
+    .mode-chip[data-mode="mtn"]  .op-dot{background:#ffcb05;color:#1b2733}
+    .logos-note{margin:-4px 0 12px;font:500 11.5px/1.4 Montserrat,system-ui,sans-serif;color:#9aa7b8}
+    .proof{margin:0 0 14px;font:600 13px/1.4 Montserrat,system-ui,sans-serif;color:#047857}
+    .mode-group[hidden]{display:none}
+    /* Avertissement fort « vérifiez votre numéro » (mobile money) */
+    .warn{margin:10px 0 2px;padding:11px 13px;border:1.5px solid #f0b429;background:#fff8e6;border-radius:11px;
+      font:500 13.5px/1.5 Montserrat,system-ui,sans-serif;color:#7a4b00}
+    .warn b{color:#7a4b00}
+  </style>
 </head>
 <body>
   <header class="topbar">
@@ -35,7 +57,7 @@
   <main class="shell">
     <div class="pagehead">
       <h1>Votre indemnité est prête à partir.</h1>
-      <p class="lead">Indiquez le compte à <b>votre nom</b> on s'occupe du virement.</p>
+      <p class="lead">Choisissez <b>comment</b> recevoir votre part. On s'occupe du versement.</p>
       <div class="ref-chip">Dossier <b id="refLine"> </b></div>
       <div class="trust">
         <span>🔒 Chiffré</span>
@@ -44,47 +66,67 @@
       </div>
     </div>
 
-    <!-- Étape 1 : saisie -->
+    <!-- Étape 1 : choix du mode + saisie -->
     <section class="panel" id="form" aria-labelledby="pTitle">
-      <h2 id="pTitle">💸 Où verser votre part&nbsp;?</h2>
-      <p class="sub">Recopiez votre IBAN tel qu'il figure sur votre RIB. On vérifie qu'il est valide avant l'envoi.</p>
+      <h2 id="pTitle">💸 Comment recevoir votre part&nbsp;?</h2>
+      <p class="sub">Vous recevez votre <b>part nette (75&nbsp;%), tout compris</b> : quel que soit le mode, <b>les frais de transfert sont pour nous</b>, votre part n'est pas rognée.</p>
 
-      <div class="field">
-        <label for="titulaire">Titulaire du compte <span class="opt">(nom et prénom)</span></label>
-        <input class="input" id="titulaire" type="text" autocomplete="name" placeholder="Ex. Awa Diop" maxlength="120">
-        <div class="hint idle">Le compte doit être <b>à votre nom</b>.</div>
+      <div class="modes" role="tablist" aria-label="Mode de versement">
+        <button type="button" class="mode-chip is-active" data-mode="iban" aria-selected="true"><span class="op-dot">€</span> Virement (IBAN)</button>
+        <button type="button" class="mode-chip" data-mode="wave" aria-selected="false"><span class="op-dot">W</span> Wave</button>
+        <button type="button" class="mode-chip" data-mode="om" aria-selected="false"><span class="op-dot">OM</span> Orange Money</button>
+        <button type="button" class="mode-chip" data-mode="mtn" aria-selected="false"><span class="op-dot">MTN</span> MTN MoMo</button>
+      </div>
+      <p class="logos-note">Logos officiels (Wave, Orange Money, MTN) à intégrer après validation marque.</p>
+      <p class="proof">✅ Quel que soit le mode : versement <b>avec preuve</b> (justificatif d'envoi).</p>
+
+      <!-- Groupe IBAN -->
+      <div class="mode-group" id="g-iban">
+        <div class="field">
+          <label for="titulaire">Titulaire du compte <span class="opt">(nom et prénom)</span></label>
+          <input class="input" id="titulaire" type="text" autocomplete="name" placeholder="Ex. Awa Diop" maxlength="120">
+          <div class="hint idle">Le compte doit être <b>à votre nom</b>.</div>
+        </div>
+        <div class="field">
+          <label for="iban">IBAN</label>
+          <input class="input mono" id="iban" type="text" inputmode="latin" autocapitalize="characters" spellcheck="false" placeholder="FR76 3000 1000 …" maxlength="42" aria-describedby="ibanHint">
+          <div class="hint idle" id="ibanHint">Tel qu'il apparaît sur votre relevé bancaire.</div>
+        </div>
+        <div class="field" id="bicField">
+          <label for="bic">BIC / SWIFT <span class="opt" id="bicOpt">(facultatif)</span></label>
+          <input class="input mono" id="bic" type="text" autocapitalize="characters" spellcheck="false" placeholder="Ex. BNPAFRPP" maxlength="11" aria-describedby="bicHint">
+          <div class="hint idle" id="bicHint"></div>
+        </div>
+        <div class="note" id="nonSepaNote" style="display:none">🌍 <b>Compte hors zone euro.</b> Virement international : le <b>BIC/SWIFT est obligatoire</b>. Les frais sont à notre charge.</div>
       </div>
 
-      <div class="field">
-        <label for="iban">IBAN</label>
-        <input class="input mono" id="iban" type="text" inputmode="latin" autocapitalize="characters" spellcheck="false" placeholder="FR76 3000 1000 …" maxlength="42" aria-describedby="ibanHint">
-        <div class="hint idle" id="ibanHint">Tel qu'il apparaît sur votre relevé bancaire.</div>
+      <!-- Groupe mobile money (Wave / Orange Money / MTN MoMo) -->
+      <div class="mode-group" id="g-momo" hidden>
+        <div class="field">
+          <label for="momoName">Nom du bénéficiaire <span class="opt">(le titulaire du compte <b id="opName">Wave</b>)</span></label>
+          <input class="input" id="momoName" type="text" autocomplete="name" placeholder="Ex. Awa Diop" maxlength="120">
+          <div class="hint idle">Exactement le nom enregistré sur le compte.</div>
+        </div>
+        <div class="field">
+          <label for="momoPhone">Numéro <span id="opName2">Wave</span></label>
+          <input class="input mono" id="momoPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+221 77 123 45 67" maxlength="22" aria-describedby="phoneHint">
+          <div class="hint idle" id="phoneHint">Avec l'indicatif pays (ex. +221, +225, +223).</div>
+        </div>
+        <div class="warn">⚠️ <b>Vérifiez chaque chiffre.</b> Sur le mobile money, un numéro faux = argent envoyé à un inconnu, <b>irrécupérable</b>. Avant d'envoyer, on vérifie que le <b>nom affiché correspond au vôtre</b>.</div>
       </div>
-
-      <div class="field" id="bicField">
-        <label for="bic">BIC / SWIFT <span class="opt" id="bicOpt">(facultatif)</span></label>
-        <input class="input mono" id="bic" type="text" autocapitalize="characters" spellcheck="false" placeholder="Ex. BNPAFRPP" maxlength="11" aria-describedby="bicHint">
-        <div class="hint idle" id="bicHint"></div>
-      </div>
-
-      <div class="note" id="nonSepaNote" style="display:none">🌍 <b>Compte hors zone euro.</b> Le virement est international : les <b>frais de virement et le change sont à votre charge</b> (déduits de votre part, voir CGV). Le <b>BIC/SWIFT est obligatoire</b>.</div>
 
       <div class="errbox" id="errBox"></div>
-      <button class="btn" id="sendBtn" disabled>Vérifier mon RIB →</button>
-      <p class="rgpd"><span>🔒</span><span>Vos coordonnées bancaires sont transmises de façon chiffrée et utilisées <b>uniquement</b> pour vous verser votre indemnité. Jamais revendues, jamais un prélèvement, RGPD.</span></p>
+      <button class="btn" id="sendBtn" disabled>Vérifier →</button>
+      <p class="rgpd"><span>🔒</span><span>Vos coordonnées sont transmises de façon chiffrée et utilisées <b>uniquement</b> pour vous verser votre indemnité. Jamais revendues, jamais un prélèvement, RGPD.</span></p>
     </section>
 
     <!-- Étape 2 : confirmation -->
     <section class="panel" id="review" style="display:none" aria-labelledby="rTitle">
       <h2 id="rTitle">✅ Vérifiez avant d'envoyer</h2>
-      <p class="sub">C'est sur ce compte qu'on virera votre argent. Un seul caractère faux = virement perdu, relisez bien.</p>
-      <dl class="recap">
-        <div class="row"><dt>Titulaire</dt><dd id="rTit"> </dd></div>
-        <div class="row"><dt>IBAN</dt><dd class="mono" id="rIban"> </dd></div>
-        <div class="row" id="rBicRow" style="display:none"><dt>BIC</dt><dd class="mono" id="rBic"> </dd></div>
-      </dl>
-      <div class="note" id="rSepaNote" style="display:none">🌍 Compte hors zone euro : frais de virement international + change <b>à votre charge</b> (voir CGV).</div>
-      <label class="confirm"><input type="checkbox" id="confirmChk"> <span>Je confirme que ces informations sont exactes et que ce compte est <b>à mon nom</b>.</span></label>
+      <p class="sub">C'est ainsi qu'on vous versera votre argent. Un seul caractère faux = versement perdu, relisez bien.</p>
+      <dl class="recap" id="recapList"></dl>
+      <div class="note" id="rSepaNote" style="display:none">🌍 Compte hors zone euro : virement international (frais à notre charge).</div>
+      <label class="confirm"><input type="checkbox" id="confirmChk"> <span>Je confirme que ces informations sont exactes et que ce compte/numéro est <b>à mon nom</b>.</span></label>
       <div class="errbox" id="errBox2"></div>
       <button class="btn" id="confirmBtn" disabled>Confirmer et envoyer</button>
       <button class="btn-back" id="editBtn" type="button">← Modifier</button>
@@ -93,9 +135,9 @@
     <!-- Étape 3 : succès -->
     <section class="panel done" id="doneCard" role="status" aria-live="polite">
       <div class="seal" aria-hidden="true">✓</div>
-      <h2>RIB bien reçu, merci&nbsp;!</h2>
-      <p>Nous verserons votre part sur le compte</p>
-      <div class="data" id="doneIban"> </div>
+      <h2>Bien reçu, merci&nbsp;!</h2>
+      <p id="doneLead">Nous verserons votre part&nbsp;:</p>
+      <div class="data" id="doneDest"> </div>
       <p>Notre équipe vous confirme l'envoi sur WhatsApp.</p>
       <p class="signoff">Reposez-vous, on s'occupe du reste. <b> L'équipe Robin des Airs 🏹</b></p>
     </section>
@@ -106,17 +148,19 @@
     const REF = (P.get('r') || P.get('ref') || '').trim();
     document.getElementById('refLine').textContent = REF || 'lien invalide';
 
+    // Libellé opérateur par mode mobile money
+    const OP = { wave:'Wave', om:'Orange Money', mtn:'MTN MoMo' };
+    const MOMO = new Set(['wave','om','mtn']);
+    let mode = 'iban';
+
     // Zone SEPA (codes pays ISO en tête d'IBAN). Hors liste = virement international.
     const SEPA = new Set(['AD','AT','BE','BG','CH','CY','CZ','DE','DK','EE','ES','FI','FR','GB','GI','GR','HR','HU','IE','IS','IT','LI','LT','LU','LV','MC','MT','NL','NO','PL','PT','RO','SE','SI','SK','SM','VA']);
 
-    const titulaire = document.getElementById('titulaire');
-    const ibanEl = document.getElementById('iban');
-    const bicEl = document.getElementById('bic');
-    const hint = document.getElementById('ibanHint');
-    const bicHint = document.getElementById('bicHint');
-    const bicOpt = document.getElementById('bicOpt');
-    const nonSepaNote = document.getElementById('nonSepaNote');
-    const sendBtn = document.getElementById('sendBtn');
+    const $ = (id) => document.getElementById(id);
+    const titulaire = $('titulaire'), ibanEl = $('iban'), bicEl = $('bic');
+    const hint = $('ibanHint'), bicHint = $('bicHint'), bicOpt = $('bicOpt'), nonSepaNote = $('nonSepaNote');
+    const momoName = $('momoName'), momoPhone = $('momoPhone');
+    const sendBtn = $('sendBtn');
 
     function normIban(raw){ return String(raw||'').toUpperCase().replace(/[^A-Z0-9]/g,''); }
     function validIban(raw){
@@ -132,28 +176,44 @@
     function fmtIban(raw){ return normIban(raw).replace(/(.{4})/g,'$1 ').trim(); }
     function isSepa(raw){ return SEPA.has(normIban(raw).slice(0,2)); }
     function validBic(raw){ const s=String(raw||'').toUpperCase().replace(/[^A-Z0-9]/g,''); return /^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$/.test(s); }
+    function phoneDigits(raw){ return String(raw||'').replace(/[^0-9]/g,''); }
+
+    // Bascule de mode
+    document.querySelectorAll('.mode-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        mode = chip.dataset.mode;
+        document.querySelectorAll('.mode-chip').forEach(c => {
+          const on = c === chip;
+          c.classList.toggle('is-active', on);
+          c.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        $('g-iban').hidden = (mode !== 'iban');
+        $('g-momo').hidden = !MOMO.has(mode);
+        if (MOMO.has(mode)){ $('opName').textContent = OP[mode]; $('opName2').textContent = OP[mode]; }
+        refresh();
+      });
+    });
 
     function refresh(){
-      const raw = ibanEl.value;
-      const s = normIban(raw);
-      const ok = validIban(raw);
-      const sepa = isSepa(raw);
-      const bicOk = validBic(bicEl.value);
-      ibanEl.classList.toggle('ok', ok);
-      ibanEl.classList.toggle('bad', s.length >= 15 && !ok);
-      if (!s){ hint.className='hint idle'; hint.textContent="Tel qu'il apparaît sur votre relevé bancaire."; }
-      else if (ok){ hint.className='hint ok'; hint.textContent='✓ IBAN valide'; }
-      else if (s.length < 15){ hint.className='hint idle'; hint.textContent='Continuez la saisie…'; }
-      else { hint.className='hint bad'; hint.textContent='IBAN incorrect, vérifiez chaque caractère.'; }
-
-      // BIC obligatoire si IBAN valide et HORS SEPA
-      const bicRequired = ok && !sepa;
-      nonSepaNote.style.display = bicRequired ? 'block' : 'none';
-      bicOpt.textContent = bicRequired ? '(obligatoire)' : '(facultatif)';
-      if (bicRequired && bicEl.value && !bicOk){ bicEl.classList.add('bad'); bicHint.className='hint bad'; bicHint.textContent='BIC invalide (8 ou 11 caractères).'; }
-      else { bicEl.classList.remove('bad'); bicHint.className='hint idle'; bicHint.textContent=''; }
-
-      sendBtn.disabled = !(REF && ok && titulaire.value.trim().length >= 2 && (!bicRequired || bicOk));
+      let ok = false;
+      if (mode === 'iban'){
+        const raw = ibanEl.value, s = normIban(raw), vi = validIban(raw), sepa = isSepa(raw), bicOk = validBic(bicEl.value);
+        ibanEl.classList.toggle('ok', vi);
+        ibanEl.classList.toggle('bad', s.length >= 15 && !vi);
+        if (!s){ hint.className='hint idle'; hint.textContent="Tel qu'il apparaît sur votre relevé bancaire."; }
+        else if (vi){ hint.className='hint ok'; hint.textContent='✓ IBAN valide'; }
+        else if (s.length < 15){ hint.className='hint idle'; hint.textContent='Continuez la saisie…'; }
+        else { hint.className='hint bad'; hint.textContent='IBAN incorrect, vérifiez chaque caractère.'; }
+        const bicRequired = vi && !sepa;
+        nonSepaNote.style.display = bicRequired ? 'block' : 'none';
+        bicOpt.textContent = bicRequired ? '(obligatoire)' : '(facultatif)';
+        if (bicRequired && bicEl.value && !bicOk){ bicEl.classList.add('bad'); bicHint.className='hint bad'; bicHint.textContent='BIC invalide (8 ou 11 caractères).'; }
+        else { bicEl.classList.remove('bad'); bicHint.className='hint idle'; bicHint.textContent=''; }
+        ok = vi && titulaire.value.trim().length >= 2 && (!bicRequired || bicOk);
+      } else if (MOMO.has(mode)){
+        ok = momoName.value.trim().length >= 2 && phoneDigits(momoPhone.value).length >= 8;
+      }
+      sendBtn.disabled = !(REF && ok);
     }
 
     ibanEl.addEventListener('input', () => {
@@ -164,48 +224,60 @@
     });
     titulaire.addEventListener('input', refresh);
     bicEl.addEventListener('input', () => { bicEl.value = bicEl.value.toUpperCase().replace(/[^A-Z0-9]/g,''); refresh(); });
+    [momoName, momoPhone].forEach(el => el.addEventListener('input', refresh));
 
     function showErr(box, m){ box.style.display='block'; box.textContent = m; }
+    function row(dt, dd, mono){ return `<div class="row"><dt>${dt}</dt><dd class="${mono?'mono':''}">${dd}</dd></div>`; }
 
-    // Étape 1 → 2 : écran de confirmation (pas d'envoi encore)
-    const review = document.getElementById('review');
-    const form = document.getElementById('form');
-    const confirmChk = document.getElementById('confirmChk');
-    const confirmBtn = document.getElementById('confirmBtn');
-    const errBox2 = document.getElementById('errBox2');
+    const review = $('review'), form = $('form');
+    const confirmChk = $('confirmChk'), confirmBtn = $('confirmBtn'), errBox2 = $('errBox2');
+
+    // Construit la charge utile + le récap selon le mode
+    function buildPayload(){
+      if (mode === 'iban'){
+        const p = { ref:REF, mode:'iban', titulaire:titulaire.value.trim(), iban:normIban(ibanEl.value), bic:bicEl.value.trim() };
+        p._recap = row('Mode','🏦 Virement (IBAN)') + row('Titulaire', p.titulaire) + row('IBAN', fmtIban(ibanEl.value), true) + (p.bic.length>=8 ? row('BIC', p.bic, true) : '');
+        p._dest = fmtIban(ibanEl.value);
+        p._sepa = !isSepa(ibanEl.value);
+        return p;
+      }
+      // mobile money (wave / om / mtn)
+      const p = { ref:REF, mode, operateur:OP[mode], beneficiaire:momoName.value.trim(), phone:momoPhone.value.trim() };
+      p._recap = row('Mode', `📱 ${OP[mode]}`) + row('Bénéficiaire', p.beneficiaire) + row('Numéro', p.phone, true);
+      p._dest = `${OP[mode]} · ${p.phone}`;
+      return p;
+    }
+    let payload = null;
 
     sendBtn.addEventListener('click', () => {
       if (sendBtn.disabled) return;
-      document.getElementById('rTit').textContent = titulaire.value.trim();
-      document.getElementById('rIban').textContent = fmtIban(ibanEl.value);
-      const hasBic = bicEl.value.trim().length >= 8;
-      document.getElementById('rBicRow').style.display = hasBic ? 'flex' : 'none';
-      if (hasBic) document.getElementById('rBic').textContent = bicEl.value.trim();
-      document.getElementById('rSepaNote').style.display = (validIban(ibanEl.value) && !isSepa(ibanEl.value)) ? 'block' : 'none';
+      payload = buildPayload();
+      $('recapList').innerHTML = payload._recap;
+      $('rSepaNote').style.display = payload._sepa ? 'block' : 'none';
       confirmChk.checked = false; confirmBtn.disabled = true; errBox2.style.display='none';
       form.style.display='none'; review.style.display='block';
       window.scrollTo({top:0,behavior:'smooth'});
     });
-    document.getElementById('editBtn').addEventListener('click', () => {
+    $('editBtn').addEventListener('click', () => {
       review.style.display='none'; form.style.display='block';
       window.scrollTo({top:0,behavior:'smooth'});
     });
     confirmChk.addEventListener('change', () => { confirmBtn.disabled = !confirmChk.checked; });
 
-    // Étape 2 → envoi réel
     confirmBtn.addEventListener('click', async () => {
-      if (confirmBtn.disabled) return;
+      if (confirmBtn.disabled || !payload) return;
       confirmBtn.disabled = true; const lbl = confirmBtn.textContent; confirmBtn.textContent = 'Envoi en cours…'; errBox2.style.display='none';
+      const { _recap, _dest, _sepa, ...body } = payload;
       try {
         const r = await fetch('/api/rib-submit', {
           method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ ref: REF, titulaire: titulaire.value.trim(), iban: normIban(ibanEl.value), bic: bicEl.value.trim() })
+          body: JSON.stringify(body)
         });
         const j = await r.json().catch(() => ({}));
         if (r.ok && j.ok) {
-          document.getElementById('doneIban').textContent = j.iban_masque || fmtIban(ibanEl.value);
+          $('doneDest').textContent = j.iban_masque || _dest;
           review.style.display='none';
-          document.getElementById('doneCard').style.display='block';
+          $('doneCard').style.display='block';
           window.scrollTo({top:0,behavior:'smooth'});
         } else {
           showErr(errBox2, j.error || "Échec de l'envoi, réessayez.");

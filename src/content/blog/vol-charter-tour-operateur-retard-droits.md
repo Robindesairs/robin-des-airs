@@ -6,6 +6,8 @@ slug: vol-charter-tour-operateur-retard-droits
 image_url: /og-blog.png
 ---
 
+**Jusqu'à 600 € par passager** restent à réclamer sur un vol charter retardé de 3 h ou plus, même réservé via un tour-opérateur. On vérifie gratuitement vos droits, 0 € d'avance.
+
 Un vol charter est un vol affrété par un tour-opérateur (TUI, FRAM, Marmara, Look Voyages, Nouvelles Frontières, etc.) pour une destination spécifique, généralement en package vacances. Quand il est retardé, vos droits **se cumulent** : ceux du CE 261 et ceux du Code du tourisme.
 
 ## 1er recours — Le CE 261/2004 contre la compagnie aérienne

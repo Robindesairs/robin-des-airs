@@ -104,3 +104,15 @@
 /droit-retractation          /droit-retractation.html          200
 
 /blog/arret-airhelp-sas-greve-preavis%C3%A9e-cjue /blog/arret-airhelp-sas-greve-preavisee-cjue 301
+
+# --- Dédoublonnage SEO (29/06/2026) : variantes d'URL → version canonique (forcé car le fichier existe) ---
+/blog/air-cote-d-ivoire-vol-retarde-indemnite.html              /blog/air-cote-ivoire-vol-retarde-indemnite.html              301!
+/blog/air-cote-divoire-vol-retarde-indemnite.html               /blog/air-cote-ivoire-vol-retarde-indemnite.html              301!
+/blog/arret-folkerts-correspondance-cjue.html                   /blog/arret-folkerts-heure-arrivee-ce261.html                 301!
+/blog/correspondance-ratee-a-qui-reclamer-ce261-folkerts.html   /blog/correspondance-manquee-indemnite-vol.html               301!
+/blog/arret-wallentin-hermann-panne-technique-cjue.html         /blog/arret-wallentin-hermann-panne-technique.html            301!
+/blog/reforme-ce261-2026-ce-qui-change-droits-passagers.html    /blog/reforme-ce261-2026-nouveaux-droits.html                 301!
+/blog/reforme-reglement-ce261-2026-droits-passagers-afrique.html /blog/reforme-ce261-2026-nouveaux-droits.html                301!
+/blog/lettre-mise-en-demeure-compagnie-aerienne-modele.html     /blog/mise-en-demeure-compagnie-aerienne-ce261.html           301!
+/blog/preuve-retard-vol-documents-conserver.html                /blog/preuves-retard-vol-conserver-indemnite.html             301!
+/blog/vol-retarde-antananarivo-madagascar-paris-indemnite.html  /blog/vol-retarde-antananarivo-paris-indemnite.html  301!

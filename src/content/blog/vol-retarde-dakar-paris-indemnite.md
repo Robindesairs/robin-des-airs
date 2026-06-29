@@ -6,6 +6,8 @@ slug: vol-retarde-dakar-paris-indemnite
 image_url: /og-blog.png
 ---
 
+**Jusqu'à 600 € par passager** sont peut-être à réclamer sur votre vol Dakar–Paris retardé de 3 h et plus. On vérifie gratuitement votre éligibilité, qui dépend de la compagnie et du sens du vol, 0 € d'avance.
+
 La route Paris ↔ Dakar est l'une des plus fréquentées par la diaspora sénégalaise. Plusieurs compagnies la desservent : Air France, Corsair, Air Sénégal, Transavia. Et les retards ne sont pas rares.
 
 ## Paris → Dakar : toujours éligible

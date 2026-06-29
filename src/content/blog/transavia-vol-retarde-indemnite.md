@@ -6,6 +6,8 @@ slug: transavia-vol-retarde-indemnite
 image_url: /og-blog.png
 ---
 
+**Entre 250 et 600 € par passager** vous attendent peut-être après un retard Transavia de 3 h ou plus, à l'aller comme au retour. On vérifie votre éligibilité gratuitement, 0 € d'avance.
+
 Transavia (France et Holland) est soumis au règlement européen CE 261 pour les vols au départ ou à destination de l'UE.
 
 **Vos droits** : Si votre vol Transavia arrive avec plus de 3 heures de retard (selon la distance), vous pouvez prétendre à 250€, 400€ ou 600€ par passager. Même règle en cas d'annulation moins de 14 jours avant le départ sans circonstances extraordinaires, ou de correspondance manquée imputable à Transavia.

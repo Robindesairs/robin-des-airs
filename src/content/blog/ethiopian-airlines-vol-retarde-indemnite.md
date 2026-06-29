@@ -13,6 +13,8 @@ faq:
     a: "Oui, si la correspondance est manquée à cause d'un retard depuis Paris. Le CE 261 couvre **l'ensemble du voyage** sur billet unique depuis l'UE (arrêt Wegener, CJUE 2018)."
 ---
 
+**Vol Ethiopian Airlines retardé de 3h ou plus, ou annulé ? Selon votre trajet, jusqu'à 600 € par passager.** Au départ d'Europe, c'est couvert ; au départ d'Addis-Abeba, Ethiopian n'étant pas européenne, l'indemnité n'est en principe pas due. Vérification gratuite, 0 € d'avance.
+
 Ethiopian Airlines (ET) est la plus grande compagnie africaine par le réseau. Elle relie l'Europe à plus de 60 destinations africaines via son hub d'Addis Abeba (ADD). Pour la diaspora francophone, c'est souvent la connexion vers l'Afrique de l'Est, l'Afrique centrale et même certaines destinations ouest-africaines.
 
 ## Règle clé : ce qui compte, c'est le départ

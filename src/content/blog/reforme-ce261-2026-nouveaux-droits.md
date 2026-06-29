@@ -13,6 +13,8 @@ faq:
     a: "L'accord a été trouvé en 2026 mais la transposition dans les droits nationaux et la publication officielle prendront jusqu'à **fin 2027**. D'ici là, le CE261/2004 actuel s'applique intégralement."
 ---
 
+**Le seuil des 3 h et les montants de 250 à 600 € par passager sont maintenus** par la réforme CE261 2026. On vérifie gratuitement vos droits actuels, 0 € d'avance.
+
 Le CE261/2004, qui protège les passagers aériens européens depuis plus de 20 ans, était en cours de révision depuis plusieurs années. En 2026, un accord politique a finalement été trouvé entre le Parlement européen et le Conseil de l'UE. Voici ce qui change — et ce qui ne change pas.
 
 ## Ce qui est maintenu (victoire des passagers)

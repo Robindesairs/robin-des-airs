@@ -6,6 +6,8 @@ slug: vol-annule-indemnite-600-euros
 image_url: /og-blog.png
 ---
 
+**Jusqu'à 600 € par passager** sont à réclamer quand votre vol est annulé sans préavis suffisant. On vérifie gratuitement votre éligibilité, 0 € d'avance.
+
 Une annulation de vol est stressante. Mais la loi européenne vous protège et vous donne droit à une compensation.
 
 ## Les conditions

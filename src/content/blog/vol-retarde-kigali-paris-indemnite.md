@@ -13,6 +13,8 @@ faq:
     a: "Oui. Brussels Airlines est belge (UE) → **éligible dans les deux sens** KGL↔BRU. 600€ par passager."
 ---
 
+**Votre vol Kigali–Paris retardé de 3 h peut vous valoir jusqu'à 600 € par passager.** On vérifie gratuitement votre éligibilité, qui dépend de la compagnie et du sens du vol, 0 € d'avance.
+
 Kigali (KGL) est la capitale du Rwanda, l'une des villes africaines à la croissance la plus rapide. La diaspora rwandaise en Europe est notamment présente en Belgique et en France. Les vols Paris-Kigali passent principalement par Brussels Airlines (via Bruxelles) ou KLM (via Amsterdam).
 
 ## Les options Paris-Kigali et leur couverture

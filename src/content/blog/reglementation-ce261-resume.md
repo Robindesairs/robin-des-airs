@@ -6,6 +6,8 @@ slug: reglementation-ce261-resume
 image_url: /og-blog.png
 ---
 
+**De 250 à 600 € par passager** : voilà ce que le règlement CE261 prévoit en cas de retard de 3 h, d'annulation ou de surbooking. On vérifie gratuitement votre éligibilité, 0 € d'avance.
+
 Le règlement (CE) n° 261/2004 harmonise les droits des passagers aériens dans l'Union européenne.
 
 **Champs d'application** : Vol au départ d'un aéroport de l'UE (quelle que soit la compagnie) ou vol à destination de l'UE opéré par une compagnie européenne. La France et tous les États membres l'appliquent.

@@ -13,6 +13,8 @@ faq:
     a: "Oui. Brussels Airlines est compagnie **UE** → CE 261 éligible **dans les deux sens**. Distance ~4 700 km > 3 500 km → **600€ par passager**."
 ---
 
+**Jusqu'à 600 € par passager** peuvent vous revenir après un retard de 3 h sur vos vols Banjul–Bruxelles ou Banjul–Barcelone. On vérifie gratuitement votre éligibilité, qui dépend de la compagnie et du sens du vol, 0 € d'avance.
+
 Banjul (BJL) est la capitale de la Gambie et n'a **aucun vol direct depuis Paris**. La diaspora gambienne en Europe rejoint le pays principalement par **Bruxelles**, **Barcelone**, **Lisbonne** ou **Londres**. Voici les routes et vos droits CE 261 selon votre point de départ européen.
 
 ## Pas de vol direct Paris-Banjul

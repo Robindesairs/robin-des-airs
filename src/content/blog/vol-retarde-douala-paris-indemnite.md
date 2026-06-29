@@ -6,6 +6,8 @@ slug: vol-retarde-douala-paris-indemnite
 image_url: /og-blog.png
 ---
 
+**De 250 à 600 € par passager** pourraient vous revenir après un retard de 3 h sur votre vol Douala–Paris. Votre éligibilité dépend de la compagnie et du sens du vol : on la vérifie gratuitement, 0 € d'avance.
+
 Le Cameroun est desservi par Air France via deux aéroports : Douala (DLA, 5 174 km) et Yaoundé Nsimalen (NSI, 5 192 km). Les deux sont des vols long-courrier ouvrant droit à 600€ par passager.
 
 ## Air France vs Camair-Co

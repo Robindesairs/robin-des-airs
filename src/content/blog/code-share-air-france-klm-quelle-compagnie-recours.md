@@ -13,6 +13,8 @@ faq:
     a: "Ce ping-pong est fréquent. Adressez-vous **directement à la compagnie opératrice** (celle de l'avion). Robin tranche et pousse le dossier au bon endroit sans aller-retour."
 ---
 
+**De 250 à 600 € par passager** restent à réclamer même quand votre billet mêle Air France et KLM en partage de code. On identifie pour vous la compagnie à viser et on vérifie votre éligibilité gratuitement, 0 € d'avance.
+
 Air France et KLM appartiennent au même groupe et font régulièrement des **vols en code-share** : vous achetez un billet "Air France AF8000" mais l'avion est en réalité opéré par KLM. Ou inversement. Si le vol est retardé, qui vous doit l'indemnité ?
 
 ## Règle CE 261 : c'est la compagnie **opératrice** qui paie

@@ -120,3 +120,55 @@
 
 /sitemap.xsl
   Content-Type: application/xml; charset=utf-8
+
+# === SEO 29/06/2026 : pages-villes faible ROI diaspora → noindex (budget de crawl) ===
+/blog/vol-retarde-addis-abeba-paris-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-alger-paris-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-amsterdam-accra-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-amsterdam-lagos-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-amsterdam-nairobi-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-bujumbura-paris-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-cap-vert-paris-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-casablanca-paris-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-dar-es-salaam-paris-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-djibouti-paris-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-frankfurt-abidjan-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-freetown-paris-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-ile-maurice-paris-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-johannesburg-paris-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-kampala-paris-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-lisbonne-dakar-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-luanda-paris-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-madrid-dakar-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-maputo-paris-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-milan-lagos-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-montreal-paris-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-new-york-paris-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-rome-nairobi-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-stockholm-accra-indemnite.html
+  X-Robots-Tag: noindex, follow
+/blog/vol-retarde-tunis-paris-indemnite.html
+  X-Robots-Tag: noindex, follow

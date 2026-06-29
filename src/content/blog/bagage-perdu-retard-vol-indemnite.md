@@ -13,6 +13,8 @@ faq:
     a: "Saisissez le Médiateur Tourisme et Voyage ([MTV](/blog/saisir-mediateur-mtv-tourisme-voyage.html)) ou un avocat. Robin gère le volet CE 261 (600€ vol retardé) ; pour le bagage seul, vous devez réclamer vous-même ou via un avocat spécialisé."
 ---
 
+**Jusqu'à 600 € par passager** peuvent s'ajouter à l'indemnisation de votre bagage lorsque votre vol a aussi été retardé de 3 h ou plus. On vérifie gratuitement vos droits, 0 € d'avance.
+
 Votre vol a été retardé ou annulé — c'est le CE 261. Mais si en plus votre bagage est **perdu, abîmé ou arrivé en retard**, c'est une **autre indemnisation**, sous un autre texte juridique : la **Convention de Montréal de 1999**.
 
 ## CE 261 vs Convention de Montréal

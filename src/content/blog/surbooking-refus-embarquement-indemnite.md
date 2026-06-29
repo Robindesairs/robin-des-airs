@@ -6,6 +6,8 @@ slug: surbooking-refus-embarquement-indemnite
 image_url: /og-blog.png
 ---
 
+**De 250 à 600 € par passager** vous reviennent en cas de surbooking ou de refus d'embarquement contre votre gré. On vérifie gratuitement votre éligibilité, 0 € d'avance.
+
 Vous êtes à la porte d'embarquement. Vous avez votre carte d'embarquement, votre passeport, vous êtes à l'heure. Et on vous dit : "Désolé, l'avion est complet." Surbooking. C'est légal — mais vous avez des droits.
 
 ## Ce qu'est le surbooking

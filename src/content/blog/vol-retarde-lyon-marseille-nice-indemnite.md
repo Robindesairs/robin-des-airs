@@ -6,6 +6,8 @@ slug: vol-retarde-lyon-marseille-nice-indemnite
 image_url: /og-blog.png
 ---
 
+**Jusqu'à 600 € par passager** sont à réclamer sur vos vols au départ de Lyon, Marseille ou Nice retardés de 3 h et plus, départ France couvert dans les deux sens. Vérification gratuite, 0 € d'avance.
+
 Le règlement CE 261 s'applique à tout vol au départ d'un aéroport de l'Union européenne, pas seulement Paris CDG ou Orly.
 
 **Lyon-Saint-Exupéry, Marseille-Provence, Nice Côte d'Azur** : Vol retardé ou annulé au départ de ces aéroports vous donne les mêmes droits qu'un vol Paris : indemnité 250€, 400€ ou 600€ selon la distance, plus assistance (repas, hébergement si nécessaire). Toulouse, Bordeaux, Nantes, Strasbourg, etc. : idem.

@@ -6,6 +6,8 @@ slug: business-class-premium-vol-retarde-droits
 image_url: /og-blog.png
 ---
 
+**Jusqu'à 600 € par passager**, en business comme en premium, restent à réclamer si votre vol a eu 3 h de retard ou plus. Vérification gratuite, 0 € d'avance.
+
 Vous voyagez en **business class**, **premium economy** ou **première** sur Paris-Dakar, Paris-Abidjan ou Paris-Yaoundé, et votre vol est retardé. Vous pensez peut-être que l'indemnité dépend du tarif du billet. **Non.** Le CE 261 est forfaitaire — même montant pour tous, peu importe le prix payé.
 
 ## Indemnité forfaitaire — pas proportionnelle au tarif

@@ -6,6 +6,8 @@ slug: vol-retarde-ryanair-indemnite
 image_url: /og-blog.png
 ---
 
+**De 250 à 600 € par passager** peuvent vous revenir après un retard Ryanair de 3 h et plus, à l'aller comme au retour. On s'occupe de tout, vérification gratuite et 0 € d'avance.
+
 Ryanair est une compagnie européenne : le règlement CE 261 s'applique à ses vols au départ ou à destination de l'UE.
 
 **Mêmes règles que les compagnies classiques** : Retard ≥ 3h à l'arrivée (quelle que soit la distance) → indemnité 250€, 400€ ou 600€ selon la distance du vol. Annulation sous 14 jours sans circonstances extraordinaires → même indemnité. Correspondance manquée à cause du premier vol → indemnité selon la distance du trajet total.
