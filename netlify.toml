@@ -44,6 +44,11 @@
 [functions."radar-veille-config"]
   timeout = 10
 
+# Puppeteer + Chromium = cold start ~3-5s + render ~2s. 26 s = max plan standard.
+[functions."render-mandat-pdf"]
+  timeout = 26
+  included_files = ["node_modules/@sparticuz/chromium/**"]
+
 # Malik réveillé — surveillance vols + alertes (Telegram/email/CallMeBot).
 # Cadence ciblée ~12 runs/jour (matin + après-midi EU + soirée Afrique) ≈ 700 req/j (plan ULTRA OK).
 [functions."radar-monitor"]

@@ -43,6 +43,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.99.0",
     "@netlify/blobs": "^8.1.0",
+    "@sparticuz/chromium": "^149.0.0",
     "amadeus": "^11.0.0",
     "better-sqlite3": "^12.6.2",
     "cheerio": "^1.2.0",
@@ -51,7 +52,8 @@
     "gray-matter": "^4.0.3",
     "jimp": "^0.22.12",
     "marked": "^15.0.12",
-    "pdf-lib": "^1.17.1"
+    "pdf-lib": "^1.17.1",
+    "puppeteer-core": "^25.2.1"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.13",
