@@ -766,13 +766,22 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       <input type="text" id="sigDate" class="ro" readonly>
     </div>
   </div>
-  <p style="font-size:13px;color:var(--muted);margin-bottom:8px">Tracez votre signature ci-dessous (doigt ou souris) :</p>
-  <div class="sig-area" id="sigArea">
-    <canvas id="sigCanvas" width="680" height="120" role="img" aria-label="Zone de signature manuscrite, tracez votre signature au doigt ou à la souris"></canvas>
-    <div class="sig-ph" id="sigPh">✍️ Appuyez ici pour signer</div>
-    <div class="sig-clear" id="sigClear" onclick="clearSig(event)">✕ Recommencer</div>
+  <!-- Bandeau Yousign : informe le client de la redirection -->
+  <div style="margin-bottom:14px;padding:16px 18px;background:var(--green-tint);border:1px solid var(--green-deep);border-left:4px solid var(--green-deep);border-radius:0 8px 8px 0">
+    <div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--green-deep);font-weight:700;margin-bottom:6px">Signature électronique sécurisée</div>
+    <p style="font-size:13px;line-height:1.6;color:var(--text);margin:0">
+      Après validation, vous serez redirigé·e vers <strong>Yousign</strong> (prestataire certifié eIDAS) pour <strong>relire votre contrat et signer électroniquement</strong>. Vous reviendrez ensuite ici sur l'écran de confirmation. <strong>Aucune saisie manuscrite n'est requise</strong>.
+    </p>
   </div>
-  <div class="ferr" id="sigErr">Votre signature est requise pour valider le contrat</div>
+  <!-- Canvas signature historique — masqué (remplacé par Yousign). Conservé pour compatibilité JS. -->
+  <div id="canvasSignSection" style="display:none" aria-hidden="true">
+    <div class="sig-area" id="sigArea">
+      <canvas id="sigCanvas" width="680" height="120" aria-label="Zone de signature désactivée — utilisation de Yousign"></canvas>
+      <div class="sig-ph" id="sigPh">✍️ Appuyez ici pour signer</div>
+      <div class="sig-clear" id="sigClear" onclick="clearSig(event)">✕ Recommencer</div>
+    </div>
+    <div class="ferr" id="sigErr">Votre signature est requise pour valider le contrat</div>
+  </div>
   <div style="margin-top:20px;border:1px solid var(--border);border-left:3px solid var(--green-deep);border-radius:0 8px 8px 0;padding:16px 18px;background:var(--green-tint)">
     <div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--green-deep);font-weight:700;margin-bottom:8px">Acceptation du Cessionnaire, Robin des Airs</div>
     <p style="font-size:12px;line-height:1.7;color:var(--text);margin:0">
@@ -781,7 +790,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     </p>
   </div>
   <button class="btn-submit" id="btnSub" onclick="submitMandat()">
-    Valider et signer mon contrat →
+    Continuer vers la signature électronique →
   </button>
 </div>
 <div class="trust-bar">
@@ -1661,10 +1670,10 @@ function clearSig(e) {
   document.getElementById('sigClear').style.display='none';
 }
 function hasSig() {
-  if (!started) return false;
-  const d = document.getElementById('sigCanvas').getContext('2d').getImageData(0,0,680,120).data;
-  for (let i=3;i<d.length;i+=4) if(d[i]>0) return true;
-  return false;
+  // Mode Yousign : la signature ne se fait plus sur le canvas mais après
+  // redirection vers yousign.app. On bypass donc la validation canvas
+  // pour ne pas bloquer le bouton "Continuer vers la signature électronique".
+  return true;
 }
 // ── PROGRESSION ──────────────────────────────────────────────────
 function initProgress() {
@@ -1978,13 +1987,81 @@ function submitMandat() {
     watiConversationId: CID,
     linkSentAt: LSA,
   };
+  // ── NOUVEAU FLOW Yousign ──────────────────────────────────────────
+  // 1) Enregistrer le dossier dans le CRM (existant)
+  // 2) Générer le PDF du mandat rempli (Puppeteer côté serveur)
+  // 3) Créer la signature_request Yousign avec ce PDF
+  // 4) Rediriger le client vers le signing_url Yousign
+  // En sortie de Yousign, ?signed=1 ramène ici et affiche l'écran "C'est fait !"
+  // Si une étape échoue, on retombe sur l'ancien flow showSuccess pour ne pas
+  // perdre le dossier (le CRM a déjà reçu les données à l'étape 1).
   fetch('/api/submit-mandat', {
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify(payload),
   })
-  .then(r=>showSuccess(payload, !!(r && r.ok)))
-  .catch(()=>showSuccess(payload, false));
+  .then(r => (r && r.json) ? r.json().catch(()=>({ok:false})) : {ok:false})
+  .then(crmRes => {
+    btn.innerHTML = '⏳ Génération de votre contrat PDF...';
+    return fetch('/api/render-mandat-pdf', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        r: payload.ref,
+        n: payload.lastName,
+        fn: payload.firstName,
+        v: payload.flightNum,
+        d: payload.flightDate,
+        dep: payload.depAirport,
+        arr: payload.arrAirport,
+        c: payload.airline,
+        pnr: payload.pnr,
+        email: payload.email,
+        phone: payload.whatsapp,
+        addr: payload.address,
+        indemnite: '600',
+      }),
+    }).then(r => r.json()).then(pdfRes => ({crmRes, pdfRes}));
+  })
+  .then(({crmRes, pdfRes}) => {
+    if (!pdfRes || !pdfRes.ok || !pdfRes.pdf_base64) {
+      throw new Error('PDF generation failed: ' + (pdfRes && pdfRes.error || 'unknown'));
+    }
+    btn.innerHTML = '⏳ Préparation Yousign...';
+    return fetch('/api/yousign-init', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        first_name: payload.firstName,
+        last_name: payload.lastName,
+        email: payload.email,
+        phone: payload.whatsapp,
+        label: 'Mandat Robin des Airs — ' + payload.lastName + ' ' + payload.firstName + ' — vol ' + (payload.flightNum || '—'),
+        pdf_base64: pdfRes.pdf_base64,
+        signature_page: 3,
+        signature_x: 150,
+        signature_y: 700,
+      }),
+    }).then(r => r.json());
+  })
+  .then(yousignRes => {
+    if (!yousignRes || !yousignRes.signing_url) {
+      throw new Error('Yousign URL absent: ' + (yousignRes && yousignRes.error || 'unknown'));
+    }
+    btn.innerHTML = '✓ Redirection vers Yousign...';
+    window.location.href = yousignRes.signing_url;
+  })
+  .catch(err => {
+    console.error('[Yousign flow] error:', err);
+    // Fallback : on affiche l'écran succès même si Yousign a échoué — le CRM
+    // a au moins reçu les données. Le client peut nous écrire sur WhatsApp.
+    btn.disabled = false;
+    btn.innerHTML = '⚠ Une erreur est survenue';
+    setTimeout(() => {
+      alert("La signature électronique n'a pas pu être préparée. Vos informations sont enregistrées : vous serez recontacté·e sur WhatsApp pour finaliser. Réf : " + (payload.ref || ''));
+      showSuccess(payload, false);
+    }, 300);
+  });
 }
 function fmtDateLongFR(d){ try{ return d.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'}); }catch(e){ return ''; } }
 function showSuccess(payload, ok) {
