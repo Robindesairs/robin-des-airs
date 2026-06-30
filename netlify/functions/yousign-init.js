@@ -139,7 +139,27 @@ exports.handler = async (event) => {
     // Origin de retour configurable : MANDAT_BASE_URL (sandbox/prod) ou fallback robindesairs.eu
     const returnOrigin = (process.env.MANDAT_BASE_URL || "https://robindesairs.eu").replace(/\/+$/, "");
     const successUrl = `${returnOrigin}/mandat.html?signed=1&ref=${encodeURIComponent(signatureRequestId)}`;
-    const cancelUrl = `${returnOrigin}/mandat.html?cancelled=1&ref=${encodeURIComponent(signatureRequestId)}`;
+
+    // Yousign trial/sandbox refuse redirect_urls : "subscription.status_not_compatible".
+    // On les ajoute uniquement si pas en sandbox (override possible via YOUSIGN_FORCE_REDIRECTS=1).
+    const isSandbox = /sandbox/i.test(baseUrl);
+    const forceRedirects = process.env.YOUSIGN_FORCE_REDIRECTS === "1";
+    const allowRedirects = !isSandbox || forceRedirects;
+
+    const signerBody = {
+      info: {
+        first_name: firstName,
+        last_name: lastName,
+        email,
+        phone_number: phone || undefined,
+        locale: "fr",
+      },
+      signature_level: "electronic_signature",
+      signature_authentication_mode: "no_otp",
+    };
+    if (allowRedirects) {
+      signerBody.redirect_urls = { success: successUrl };
+    }
 
     const signerRes = await fetch(`${baseUrl}/signature_requests/${signatureRequestId}/signers`, {
       method: "POST",
@@ -147,20 +167,7 @@ exports.handler = async (event) => {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        info: {
-          first_name: firstName,
-          last_name: lastName,
-          email,
-          phone_number: phone || undefined,
-          locale: "fr",
-        },
-        signature_level: "electronic_signature",
-        signature_authentication_mode: "no_otp",
-        redirect_urls: {
-          success: successUrl,
-        },
-      }),
+      body: JSON.stringify(signerBody),
     });
 
     if (!signerRes.ok) {
