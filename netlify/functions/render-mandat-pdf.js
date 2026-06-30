@@ -29,7 +29,8 @@
  *   MANDAT_BASE_URL  (optionnel — défaut https://robindesairs.eu)
  */
 
-const chromium = require("@sparticuz/chromium");
+// @sparticuz/chromium est un ES Module → import() dynamique en CommonJS.
+// puppeteer-core est CommonJS → require() classique.
 const puppeteer = require("puppeteer-core");
 const { checkRateLimit } = require("./lib/rate-limit");
 
@@ -96,6 +97,8 @@ exports.handler = async (event) => {
 
   let browser = null;
   try {
+    const chromiumMod = await import("@sparticuz/chromium");
+    const chromium = chromiumMod.default || chromiumMod;
     browser = await puppeteer.launch({
       args: chromium.args,
       defaultViewport: { width: 1280, height: 1800 },
