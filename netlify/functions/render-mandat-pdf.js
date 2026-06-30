@@ -138,13 +138,15 @@ exports.handler = async (event) => {
     // Laisser le temps aux scripts inline (i18n, autofill via params, SVG drapeaux) de se stabiliser
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
-    const pdfBuffer = await page.pdf({
+    // page.pdf() en puppeteer-core v25 retourne Uint8Array, pas Buffer.
+    // Buffer.from() pour avoir un vrai Buffer Node → toString("base64") OK.
+    const pdfUint8 = await page.pdf({
       format: "A4",
       printBackground: true,
       margin: { top: "14mm", right: "12mm", bottom: "16mm", left: "12mm" },
       preferCSSPageSize: false,
     });
-
+    const pdfBuffer = Buffer.from(pdfUint8);
     const pdfBase64 = pdfBuffer.toString("base64");
 
     return json(200, {
