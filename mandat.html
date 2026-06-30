@@ -2084,7 +2084,9 @@ function submitMandat() {
         first_name: split.first,
         last_name: split.last,
         email: p.email,
-        phone: '', // pas de téléphone par co-passager pour l'instant
+        // Mode "même téléphone" diaspora : le co-passager reprend le numéro
+        // WhatsApp du cédant principal pour recevoir l'OTP SMS sur le tel familial.
+        phone: payload.whatsapp,
       });
     });
     return fetch('/api/yousign-init', {

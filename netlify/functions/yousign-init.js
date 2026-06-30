@@ -169,6 +169,18 @@ exports.handler = async (event) => {
       // 2a) Créer le signataire
       const successUrl = `${returnOrigin}/mandat.html?signed=1&ref=${encodeURIComponent(signatureRequestId)}&signer=${i + 1}&total=${signers.length}`;
 
+      // Niveau et mode d'auth configurables via env (fallback no_otp si pas de phone)
+      // Défaut prod : AES + OTP SMS (eIDAS art. 26, charge inversée vs compagnie).
+      // Sandbox / désactivable via YOUSIGN_SIGNATURE_LEVEL=electronic_signature
+      //                          + YOUSIGN_AUTH_MODE=no_otp.
+      const envLevel = process.env.YOUSIGN_SIGNATURE_LEVEL || "advanced_electronic_signature";
+      const envAuthMode = process.env.YOUSIGN_AUTH_MODE || "otp_sms";
+      // Fallback no_otp si on demande otp_sms mais qu'on n'a pas de numéro de tel
+      // → évite l'erreur "phone_number required" pour un signataire sans tel
+      const useOtpSms = envAuthMode === "otp_sms" && !!s.phone;
+      const authMode = useOtpSms ? "otp_sms" : (envAuthMode === "otp_sms" ? "no_otp" : envAuthMode);
+      const sigLevel = useOtpSms ? envLevel : "electronic_signature";
+
       const signerBody = {
         info: {
           first_name: s.first_name,
@@ -177,8 +189,8 @@ exports.handler = async (event) => {
           phone_number: s.phone || undefined,
           locale: "fr",
         },
-        signature_level: "electronic_signature",
-        signature_authentication_mode: "no_otp",
+        signature_level: sigLevel,
+        signature_authentication_mode: authMode,
       };
       if (allowRedirects) {
         signerBody.redirect_urls = { success: successUrl };
