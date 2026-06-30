@@ -159,8 +159,6 @@ exports.handler = async (event) => {
         signature_authentication_mode: "no_otp",
         redirect_urls: {
           success: successUrl,
-          cancel: cancelUrl,
-          error: cancelUrl,
         },
       }),
     });
