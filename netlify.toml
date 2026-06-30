@@ -11,9 +11,12 @@
   node_bundler = "nft"
   # Timeout synchrone max 26 s (plan standard). Valeur 60 dans ce fichier fait echouer le deploy.
 
-# Relais Gemini après ~20s sans réponse humaine (traitement toutes les minutes)
-[functions."whatsapp-gemini-fallback"]
-  schedule = "* * * * *"
+# ⚠️ DÉSACTIVÉ 30/06/2026 — cron toutes les minutes = 43 200 invocations/mois.
+# Bot principal vit sur Railway (server.js), ce filet Netlify n'est plus utilisé
+# et a cramé le quota Functions Free fin juin 2026. À réactiver UNIQUEMENT si
+# Plan Pro Netlify + besoin confirmé.
+# [functions."whatsapp-gemini-fallback"]
+#   schedule = "* * * * *"
 
 # ad-watch : arrête la pub si vol décollé ou 6h écoulées
 [functions."ad-watch"]
