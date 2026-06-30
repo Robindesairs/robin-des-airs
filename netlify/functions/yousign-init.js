@@ -216,6 +216,34 @@ exports.handler = async (event) => {
 
       // 2b) Placer la zone signature : signataires empilés verticalement (80 px d'écart)
       // pour qu'ils ne se chevauchent pas sur le PDF. Page 1 par défaut.
+      const fieldY = sigY + i * 80;
+
+      // Label statique "Signature de Prénom Nom" — 18 px au-dessus de la zone
+      // pour que le PDF montre visuellement qui signe où, même avant signature.
+      // Si l'API Yousign refuse le type "text" pour cette config, on log juste
+      // un warning et on continue (la zone signature elle-même est obligatoire).
+      try {
+        const labelRes = await fetch(`${baseUrl}/signature_requests/${signatureRequestId}/documents/${documentId}/fields`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            type: "text",
+            page: sigPage,
+            x: sigX,
+            y: Math.max(20, fieldY - 18),
+            width: 220,
+            height: 14,
+            content: `Signature de ${s.first_name} ${s.last_name}`.trim(),
+          }),
+        });
+        if (!labelRes.ok) {
+          const errTxt = await labelRes.text();
+          console.warn(`[yousign-init] label text signer ${i + 1} ignored:`, errTxt.slice(0, 200));
+        }
+      } catch (e) {
+        console.warn(`[yousign-init] label text signer ${i + 1} error:`, e.message);
+      }
+
       const fieldRes = await fetch(`${baseUrl}/signature_requests/${signatureRequestId}/documents/${documentId}/fields`, {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
@@ -224,7 +252,7 @@ exports.handler = async (event) => {
           signer_id: signerId,
           page: sigPage,
           x: sigX,
-          y: sigY + i * 80,
+          y: fieldY,
           width: 200,
           height: 60,
         }),
