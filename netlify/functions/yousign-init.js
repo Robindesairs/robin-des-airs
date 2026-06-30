@@ -214,32 +214,30 @@ exports.handler = async (event) => {
       });
     }
 
-    // 3) Récupérer lien de signature
-    const linkRes = await fetch(`${baseUrl}/signature_requests/${signatureRequestId}/signers/${signerId}/signing_links`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({}),
+    // 3) Récupérer le signature_link via GET sur le signer (Yousign v3 ne l'expose
+    //    qu'après activation, dans le payload du signer — pas via /signing_links)
+    const linkRes = await fetch(`${baseUrl}/signature_requests/${signatureRequestId}/signers/${signerId}`, {
+      method: "GET",
+      headers: { Authorization: `Bearer ${apiKey}` },
     });
 
     if (!linkRes.ok) {
       const errTxt = await linkRes.text();
       return json(502, {
-        error: "Echec creation signing_link YouSign",
+        error: "Echec lecture signer YouSign (post-activation)",
         signature_request_id: signatureRequestId,
         signer_id: signerId,
         details: errTxt.slice(0, 600),
       });
     }
     const linkJson = await linkRes.json();
-    const signingUrl = linkJson?.url || linkJson?.link;
+    const signingUrl = linkJson?.signature_link || linkJson?.url || linkJson?.link;
     if (!signingUrl) {
       return json(502, {
-        error: "Lien de signature YouSign absent",
+        error: "signature_link YouSign absent du payload signer",
         signature_request_id: signatureRequestId,
         signer_id: signerId,
+        signer_keys: Object.keys(linkJson || {}),
       });
     }
 
