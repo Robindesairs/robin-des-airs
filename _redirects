@@ -53,6 +53,7 @@
 /api/is-signed               /.netlify/functions/is-signed               200
 /api/render-mandat-pdf       /.netlify/functions/render-mandat-pdf       200
 /api/yousign-init            /.netlify/functions/yousign-init            200
+/api/yousign-webhook         /.netlify/functions/yousign-webhook         200
 /api/mandat-pdf              /.netlify/functions/mandat-pdf-get          200
 /api/piece-store             /.netlify/functions/piece-store             200
 /api/pieces                  /.netlify/functions/pieces                  200
