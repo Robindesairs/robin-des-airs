@@ -10,6 +10,24 @@
 
   gtag('config', 'AW-18269983535');
 </script>
+<!-- Meta Pixel -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','1563661872042064');
+fbq('track','PageView');
+document.addEventListener('click',function(e){
+  var t=e.target;var a=t&&t.closest?t.closest('a[href*="wa.me"],a[href*="whatsapp.com"]'):null;
+  if(a){try{fbq('track','Lead',{content_name:'whatsapp_click'});}catch(_){}}
+},true);
+</script>
+<noscript><img height="1" width="1" style="display:none" alt=""
+src="https://www.facebook.com/tr?id=1563661872042064&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel -->
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" href="/favicon.png" type="image/png">
@@ -127,8 +145,13 @@
     <div class="legal-block">
       <h2>Article 5, Prix, rémunération et modalités financières</h2>
       <p><strong>Principe « no win no fee » :</strong> en l'absence de versement effectif d'une indemnité ou d'un montant pécuniaire au titre du dossier par le transporteur (ou par tout tiers débiteur identifié dans le contrat de cession), <strong>aucune commission ni honoraire n'est dû</strong> au Prestataire par le Client, sous réserve des dispositions relatives à la rétractation après exécution anticipée (article 12).</p>
-      <p><strong>Commission de succès :</strong> lorsqu'une indemnité ou somme est effectivement perçue par le Prestataire ou affectée au dossier dans les conditions du contrat de cession, la rémunération du Prestataire est fixée à <strong>25 % (vingt-cinq pour cent) TTC du montant brut</strong> ainsi recouvré, telle que communiquée au Client avant signature du contrat de cession (montant net après commission précisé sur le site, calculateur ou proposition écrite).</p>
-      <p>Cette commission est <strong>inchangée</strong> que la solution intervienne à l'amiable, après médiation ou par voie judiciaire, sauf accord écrit contraire entre les parties.</p>
+      <p><strong>Commission de succès — double tarif transparent :</strong> lorsqu'une indemnité ou somme est effectivement perçue par le Prestataire ou affectée au dossier dans les conditions du contrat de cession, la rémunération du Prestataire est fixée selon la phase de traitement :</p>
+      <ul>
+        <li><strong>Phase amiable</strong> (réclamation directe et médiation préalable) : <strong>25 % (vingt-cinq pour cent) TTC du montant brut</strong> recouvré ; le Client perçoit 75 % nets.</li>
+        <li><strong>Phase contentieuse</strong> (procédure judiciaire engagée par l'avocat partenaire après échec amiable) : <strong>50 % (cinquante pour cent) TTC du montant brut</strong> recouvré ; le Client perçoit 50 % nets. Cette majoration couvre les frais d'avocat, d'huissier, de greffe et de procédure intégralement avancés par le Prestataire.</li>
+      </ul>
+      <p><strong>Accord exprès préalable obligatoire en phase contentieuse :</strong> avant tout passage en procédure judiciaire, le Prestataire informe le Client par message électronique (WhatsApp et/ou email) du basculement de taux applicable (50 %) et obtient son <strong>accord exprès</strong> par retour de message. À défaut d'accord exprès du Client, le dossier est clôturé sans frais et la créance lui est rétrocédée de plein droit.</p>
+      <p>Le détail de cette grille tarifaire est rappelé dans le contrat de cession (article 4) que le Client signe avant tout engagement.</p>
       <p><strong>Aucun prélèvement sur carte bancaire</strong> n'est effectué pour rémunérer le Prestataire : la commission est prélevée par compensation sur les fonds encaissés pour le compte du Client avant reversement du solde net, conformément au contrat de cession.</p>
       <p>Les paliers d'indemnité légale (250 €, 400 €, 600 € selon distance et conditions) sont fixés par le CE 261 ; le montant effectivement obtenu peut différer en fonction des faits et de la négociation.</p>
     </div>
@@ -207,8 +230,14 @@
     <div class="legal-block">
       <h2>Article 13, Règlement des litiges et médiation</h2>
       <p>En cas de réclamation relative aux présentes CGV ou à l'exécution du contrat de cession, le Client est invité à contacter en priorité le Prestataire à <a href="mailto:expert@robindesairs.eu">expert@robindesairs.eu</a> ou via les canaux indiqués sur le site.</p>
-      <p>Conformément aux articles L.611-1 et R.612-1 et suivants du Code de la consommation, le Client consommateur a la possibilité de recourir <strong>gratuitement</strong> à un <strong>médiateur de la consommation</strong> en vue de la résolution amiable du litige, après démarche préalable écrite auprès du Prestataire restée infructueuse dans un délai raisonnable.</p>
-      <p>Les coordonnées du ou des médiateur(s) auxquels le Prestataire a adhéré seront <strong>tenues à jour sur le site</strong> ou communiquées sur demande. À défaut d'adhésion formelle à une instance au moment de la consultation des présentes, le Client peut s'orienter vers la plateforme européenne de règlement en ligne des litiges : <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener">https://ec.europa.eu/consumers/odr</a>.</p>
+      <p>Conformément aux articles L.611-1 et suivants et R.612-1 et suivants du Code de la consommation, le Client consommateur a la possibilité de recourir <strong>gratuitement</strong> à un <strong>médiateur de la consommation</strong> en vue de la résolution amiable du litige, après démarche préalable écrite auprès du Prestataire restée infructueuse dans un délai raisonnable.</p>
+      <p><strong>Médiateur désigné :</strong> le Prestataire adhère à la <strong>Médiation du Tourisme et du Voyage (MTV)</strong>, médiateur de la consommation référencé par la Commission d'évaluation et de contrôle de la médiation de la consommation (CECMC).</p>
+      <ul>
+        <li>Site : <a href="https://www.mtv.travel" target="_blank" rel="noopener">https://www.mtv.travel</a></li>
+        <li>Adresse postale : MTV Médiation Tourisme Voyage, BP 80303, 75823 Paris Cedex 17</li>
+        <li>Saisine en ligne : <a href="https://www.mtv.travel" target="_blank" rel="noopener">www.mtv.travel</a></li>
+      </ul>
+      <p>Le Client peut également s'orienter vers la <strong>plateforme européenne de règlement en ligne des litiges (RLL)</strong> : <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener">https://ec.europa.eu/consumers/odr</a>.</p>
       <p>Les litiges relatifs au transport aérien peuvent également relever de mécanismes sectoriels (par exemple saisine d'un médiateur du tourisme et du voyage lorsque les conditions d'admissibilité sont remplies) : le Prestataire informe le Client des voies pertinentes selon le dossier.</p>
     </div>
 

@@ -261,7 +261,7 @@ try { ({ notifyOwnerWhatsApp } = require('./lib/owner-notify')); } catch (_) {}
 
 // ─── Barre 8 pastilles ───────────────────────────────────────────────────────
 const PROGRESS = {
-  accueil: 0, langue: 0,
+  accueil: 0, langue: 0, consent_cgu: 0, consent_rgpd: 0,
   route: 1, route_zone: 1,
   incident: 2, duree: 2, annul_delai: 2,
   nb_pax: 3, nb_pax_exact: 3,
@@ -1705,6 +1705,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // Garde-fou : uniquement tant qu'aucun vol n'est saisi et avant le tunnel détaillé (jamais en plein dossier),
   // et jamais sur un tap bouton/liste (id présent → flux interactif prioritaire).
   {
+    // SECU : 'consent_cgu' retiré de EARLY pour empêcher le bypass du gate RGPD via lien ticker (audit Code Reviewer 30/06/2026)
     const EARLY = ['accueil', 'go_langue', 'langue', 'route', 'route_zone', 'incident', 'duree', 'annul_delai'];
     if (!id && !s.vol && (!s.step || EARLY.includes(s.step))) {
       const tk = parseTickerFlight(input);
@@ -1778,7 +1779,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     if (s.langue_code === 'en' && listRowIdx(id) < 0 && !matchLang(input)) {
       s.langue = '🇬🇧 English'; s.route_type = 'af_eu'; await setState(phone, s);
       await send(phone, `Perfect — I'll assist you in English. 🇬🇧\nLet's check what compensation you may be owed, *up to €600 per passenger*. 👇`, cfg);
-      return sendIncident(phone, s, cfg);
+      return sendConsentCgu(phone, s, cfg);
     }
     // Matching par ID WATI liste ("0-N") si disponible, sinon par texte/flag
     const ri = listRowIdx(id);
@@ -1788,7 +1789,50 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     s.langue = `${L.flag} ${L.label}`; s.langue_code = L.code;
     if (L.africaine) { s.escalade = 'langue_africaine'; await send(phone, `${L.natif}\n\n💬 *Moi l'assistant, je prépare votre dossier ici en français* (je ne parle pas encore ${L.label} 🙏) — on avance ensemble, étape par étape.\n\n📞 Et *à la fin, ${L.agent} vous rappellera dans votre langue*, au *+33 7 56 86 36 30* (enregistrez-le sous « ${L.agent} – Robin des Airs » pour reconnaître son appel). 👇`, cfg); }
     else if (L.code === 'en') { await send(phone, `Perfect — I'll assist you in English. 🇬🇧\nLet's check together what compensation you may be owed, *up to €600 per passenger*. 👇`, cfg); }
-    s.route_type = 'af_eu'; await setState(phone, s); return sendIncident(phone, s, cfg);
+    s.route_type = 'af_eu'; await setState(phone, s); return sendConsentCgu(phone, s, cfg);
+  }
+
+  // GATE 1/2 : CGU uniquement (CJUE Planet49 C-673/17 : consentements distincts pour finalités distinctes).
+  if (s.step === 'consent_cgu') {
+    const accept = id === 'cgu_accept' || /^(j[' ]?accept|i accept|accept|yes|oui|ok|d['’ ]?accord|agree)$/i.test(lower.trim());
+    const refuse = id === 'cgu_refuse' || /^(refus|decline|non|no|refuse)$/i.test(lower.trim());
+    if (accept) {
+      s.cgu_accepted = true;
+      s.cgu_accepted_at = Date.now();
+      await setState(phone, s);
+      return sendConsentRgpd(phone, s, cfg);
+    }
+    if (refuse) {
+      await clearState(phone);
+      return send(phone, L(s,
+        '🙏 We understand. Without accepting our Terms (CGU), we cannot process your case.\n\nIf you change your mind, type *go* to start over.',
+        '🙏 On comprend. Sans accepter les CGU, on ne peut pas traiter votre dossier.\n\nSi vous changez d\'avis, écrivez *go* pour recommencer.'), cfg);
+    }
+    if (await stuckHelp(phone, s, cfg)) return;
+    return sendConsentCgu(phone, s, cfg);
+  }
+
+  // GATE 2/2 : RGPD séparé (CJUE Planet49 : consentement spécifique au traitement des données).
+  if (s.step === 'consent_rgpd') {
+    const accept = id === 'rgpd_accept' || /^(j[' ]?accept|i accept|accept|yes|oui|ok|d['’ ]?accord|agree)$/i.test(lower.trim());
+    const refuse = id === 'rgpd_refuse' || /^(refus|decline|non|no|refuse)$/i.test(lower.trim());
+    if (accept) {
+      s.rgpd_accepted = true;
+      s.rgpd_accepted_at = Date.now();
+      await setState(phone, s);
+      await send(phone, L(s,
+        '✅ Thanks! Both consents recorded. Let\'s continue with your case. 👇',
+        '✅ Merci ! Vos deux acceptations sont enregistrées. On continue avec votre dossier. 👇'), cfg);
+      return sendIncident(phone, s, cfg);
+    }
+    if (refuse) {
+      await clearState(phone);
+      return send(phone, L(s,
+        '🙏 We understand. Without accepting our Privacy Policy (GDPR), we cannot process your data.\n\nIf you change your mind, type *go* to start over.',
+        '🙏 On comprend. Sans accepter la politique de confidentialité (RGPD), on ne peut pas traiter vos données.\n\nSi vous changez d\'avis, écrivez *go* pour recommencer.'), cfg);
+    }
+    if (await stuckHelp(phone, s, cfg)) return;
+    return sendConsentRgpd(phone, s, cfg);
   }
 
   // MSG3 — ROUTE : qualification CE 261 en 1 tap (le voyage touche-t-il l'Europe ?).
@@ -1871,14 +1915,14 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       // La saisie manuelle leg par leg ne reste qu'en repli (bouton « Saisir à la main » → leg_count).
       s.type_vol = 'escale'; s.legs = []; s.legIdx = 0; s.step = 'scan'; await setState(phone, s);
       return sendButtons(phone, { body: L(s,
-        `${bar('scan')}\n📸 Send a *photo* of your *e-ticket* — it has *all your flights at once*, connections included. I find everything, you type nothing.\n🎫 No e-ticket? Your *boarding passes* work too (one per flight).\n\n💰 ${s.pax} passenger${s.pax > 1 ? 's' : ''} = up to *€${montantTotal(s.pax)}* (you keep *75%*, i.e. *€${montantNet(s.pax)}*). Nothing upfront, *€0 if we recover nothing*.\n\n_ℹ️ Photo read by an automated tool (AI) to prepare your file — robindesairs.eu/politique-confidentialite_`,
-        `${bar('scan')}\n📸 Envoyez une *photo* de votre *e-billet* — il contient *tous vos vols d'un coup*, correspondance incluse. Je retrouve tout, vous ne tapez rien.\n🎫 Pas d'e-billet ? Vos *cartes d'embarquement* aussi (une par vol).\n\n💰 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (vous gardez *75 %*, soit *${montantNet(s.pax)} €*). Rien à avancer, *0 € si vous ne touchez rien*.\n\n_ℹ️ Photo lue par un outil automatique (IA) pour préparer votre dossier — robindesairs.eu/politique-confidentialite_`), buttons: [{ id: 'scan_photo', text: L(s, '📸 Send a photo', '📸 Envoyer une photo') }, { id: 'scan_manuel', text: L(s, '✏️ Type it in', '✏️ Saisir à la main') }] }, cfg);
+        `${bar('scan')}\n📸 Send a *photo* of your *e-ticket* — it has *all your flights at once*, connections included. I find everything, you type nothing.\n🎫 No e-ticket? Your *boarding passes* work too (one per flight).\n\n💰 Up to *€${montantTotal(s.pax)}* per passenger. *Up to 75% for you*. Nothing upfront.\n\n_ℹ️ Automatic reading by AI._`,
+        `${bar('scan')}\n📸 Envoyez une *photo* de votre *e-billet* — il contient *tous vos vols d'un coup*, correspondance incluse. Je retrouve tout, vous ne tapez rien.\n🎫 Pas d'e-billet ? Vos *cartes d'embarquement* aussi (une par vol).\n\n💰 Jusqu'à *${montantTotal(s.pax)} €* par passager. *Jusqu'à 75 % pour vous*. Rien à avancer.\n\n_ℹ️ Lecture automatique par IA._`), buttons: [{ id: 'scan_photo', text: L(s, '📸 Send a photo', '📸 Envoyer une photo') }, { id: 'scan_manuel', text: L(s, '✏️ Type it in', '✏️ Saisir à la main') }] }, cfg);
     }
     if (id === 'type_direct' || n === '1' || lower.includes('direct')) s.type_vol = 'direct';
     else return sendButtons(phone, { body: L(s, `${bar('type_vol')}\n✈️ Direct flight or with layover(s)?`, `${bar('type_vol')}\n✈️ Vol direct ou avec escale(s) ?`), buttons: [{ id: 'type_direct', text: L(s, '✈️ Direct flight', '✈️ Vol direct') }, { id: 'type_escale', text: L(s, '🔄 With layover', '🔄 Avec escale') }] }, cfg);
     s.step = 'scan'; await setState(phone, s);
     // Un seul message (motivation + scan) → réponse immédiate, pas de délai où les taps s'entrecroisent.
-    return sendButtons(phone, { body: L(s, `${bar('scan')}\n📸 Send a *photo* of your boarding pass or e-ticket — I'll find your flight on my own.\n\n💰 ${s.pax} passenger${s.pax > 1 ? 's' : ''} = up to *€${montantTotal(s.pax)}* (you keep *75%*, i.e. *€${montantNet(s.pax)}*). Nothing upfront, *€0 if we recover nothing*.\n\n_ℹ️ Photo read by an automated tool (AI) to prepare your file — robindesairs.eu/politique-confidentialite_\n\n📎 Send the photo, or:`, `${bar('scan')}\n📸 Envoyez une *photo* de votre carte d'embarquement ou e-billet — je retrouve votre vol tout seul.\n\n💰 ${s.pax} passager${s.pax > 1 ? 's' : ''} = jusqu'à *${montantTotal(s.pax)} €* (vous gardez *75 %*, soit *${montantNet(s.pax)} €*). Rien à avancer, *0 € si vous ne touchez rien*.\n\n_ℹ️ Photo lue par un outil automatique (IA) pour préparer votre dossier — robindesairs.eu/politique-confidentialite_\n\n📎 Envoyez la photo, ou :`), buttons: [{ id: 'scan_photo', text: L(s, '📸 Send a photo', '📸 Envoyer une photo') }, { id: 'scan_manuel', text: L(s, '✏️ Type it in', '✏️ Saisir à la main') }] }, cfg);
+    return sendButtons(phone, { body: L(s, `${bar('scan')}\n📸 Send a *photo* of your billet — I'll handle everything.\n\n💰 Up to *€${montantTotal(s.pax)}* per passenger. *Up to 75% for you*. Nothing upfront.\n\n_ℹ️ Automatic reading by AI._\n\n📎 Send the photo, or:`, `${bar('scan')}\n📸 Envoyez une *photo* de votre billet — je m'occupe de tout.\n\n💰 Jusqu'à *${montantTotal(s.pax)} €* par passager. *Jusqu'à 75 % pour vous*. Rien à avancer.\n\n_ℹ️ Lecture automatique par IA._\n\n📎 Envoyez la photo, ou :`), buttons: [{ id: 'scan_photo', text: L(s, '📸 Send a photo', '📸 Envoyer une photo') }, { id: 'scan_manuel', text: L(s, '✏️ Type it in', '✏️ Saisir à la main') }] }, cfg);
   }
   // ── Correspondance « rapide » (raccourci bandeau) : vol déjà connu, on demande juste s'il y en avait un autre ──
   if (s.step === 'q_corr') {
@@ -2597,6 +2641,35 @@ async function sendLangue(phone, s, cfg) {
     { title: '🇳🇬 Yoruba', description: 'Africaine' }, { title: '🇬🇳 Peul / Fulfulde', description: 'Africaine' },
   ] }, cfg);
 }
+// GATE 1/2 — Consentement aux CGU (acceptation contractuelle uniquement).
+// CJUE Planet49 C-673/17 : consentements distincts pour finalités distinctes.
+async function sendConsentCgu(phone, s, cfg) {
+  s.step = 'consent_cgu'; await setState(phone, s);
+  return sendButtons(phone, {
+    body: L(s,
+      `${bar('consent_cgu')}\n📋 *Step 1/2 — Terms of use*\n\nPlease accept our *Terms (CGU)* to use the service.\n\n👉 Tap the link to read: https://robindesairs.eu/cgv.html`,
+      `${bar('consent_cgu')}\n📋 *Étape 1/2 , Conditions générales*\n\nMerci d'accepter nos *Conditions Générales (CGU)* pour utiliser le service.\n\n👉 Cliquez sur le lien pour les lire : https://robindesairs.eu/cgv.html`),
+    buttons: [
+      { id: 'cgu_accept', text: L(s, "✅ I accept CGU", "✅ J'accepte les CGU") },
+      { id: 'cgu_refuse', text: L(s, "❌ I refuse", '❌ Je refuse') },
+    ],
+  }, cfg);
+}
+
+// GATE 2/2 — Consentement RGPD distinct (traitement des données personnelles).
+// Stocké séparément : s.rgpd_accepted_at pour preuve en cas de litige.
+async function sendConsentRgpd(phone, s, cfg) {
+  s.step = 'consent_rgpd'; await setState(phone, s);
+  return sendButtons(phone, {
+    body: L(s,
+      `${bar('consent_rgpd')}\n🔒 *Step 2/2 — Privacy Policy (GDPR)*\n\nPlease accept our *Privacy Policy* — your data is used *only* to handle your case, never sold.\n\n👉 Tap the link to read: https://robindesairs.eu/politique-confidentialite.html\n\nYou can withdraw your consent anytime by typing *stop*.`,
+      `${bar('consent_rgpd')}\n🔒 *Étape 2/2 , Politique de confidentialité (RGPD)*\n\nMerci d'accepter notre *politique de confidentialité* , vos données servent *uniquement* à gérer votre dossier, jamais revendues.\n\n👉 Cliquez sur le lien pour la lire : https://robindesairs.eu/politique-confidentialite.html\n\nVous pouvez retirer votre consentement à tout moment en tapant *stop*.`),
+    buttons: [
+      { id: 'rgpd_accept', text: L(s, "✅ I accept GDPR", "✅ J'accepte le RGPD") },
+      { id: 'rgpd_refuse', text: L(s, "❌ I refuse", '❌ Je refuse') },
+    ],
+  }, cfg);
+}
 // LEGACY (sessions en cours uniquement) : ancienne question route abstraite — remplacée par askRouteZone (1 tap).
 async function sendRoute(phone, s, cfg) {
   s.step = 'route'; await setState(phone, s);
@@ -2978,6 +3051,8 @@ async function sendPayoutPreference(lead) {
 async function relancerEtape(phone, s, cfg) {
   switch (s.step) {
     case 'langue': return sendLangue(phone, s, cfg);
+    case 'consent_cgu': return sendConsentCgu(phone, s, cfg);
+    case 'consent_rgpd': return sendConsentRgpd(phone, s, cfg);
     case 'q_corr': return sendButtons(phone, { body: L(s, `Was this flight part of a *connection* (another flight just before or just after)?`, `Ce vol faisait-il partie d'une *correspondance* (un autre vol juste avant ou juste après) ?`), buttons: [{ id: 'corr_direct', text: L(s, '✈️ No, direct flight', '✈️ Non, vol direct') }, { id: 'corr_escale', text: L(s, '🔄 Yes, a connection', '🔄 Oui, correspondance') }] }, cfg);
     case 'route': return sendRoute(phone, s, cfg);
     case 'route_zone': return askRouteZone(phone, s, cfg);

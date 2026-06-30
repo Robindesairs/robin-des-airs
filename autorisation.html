@@ -10,6 +10,24 @@
 
   gtag('config', 'AW-18269983535');
 </script>
+<!-- Meta Pixel -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','1563661872042064');
+fbq('track','PageView');
+document.addEventListener('click',function(e){
+  var t=e.target;var a=t&&t.closest?t.closest('a[href*="wa.me"],a[href*="whatsapp.com"]'):null;
+  if(a){try{fbq('track','Lead',{content_name:'whatsapp_click'});}catch(_){}}
+},true);
+</script>
+<noscript><img height="1" width="1" style="display:none" alt=""
+src="https://www.facebook.com/tr?id=1563661872042064&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel -->
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="/favicon.png" type="image/png">
@@ -328,10 +346,11 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     <div class="ferr" id="waErr">Indiquez votre pays et votre numéro WhatsApp</div>
   </div>
   <div class="field-row">
-    <label>✉️ Email <span style="color:var(--muted);font-weight:500">(facultatif)</span></label>
+    <label>✉️ Email <span class="req">*</span></label>
     <input type="hidden" id="em">
-    <input type="email" id="em-perso" autocomplete="email" placeholder="vous@exemple.com">
-    <div style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5">Pour vous prévenir si on n'arrive pas à vous joindre par téléphone.</div>
+    <input type="email" id="em-perso" autocomplete="email" placeholder="vous@exemple.com" required oninput="clearErr('emErr')">
+    <div class="ferr" id="emErr">Email requis pour la validité du contrat (signature électronique, art. 26 IDAS)</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5">Indispensable pour confirmer votre signature et vous tenir informé de votre dossier.</div>
   </div>
   <div class="field-row">
     <label class="check" style="display:flex;align-items:flex-start;gap:9px;cursor:pointer;font-weight:600;margin:0">
@@ -521,8 +540,16 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   </div>
   <div class="clause hi">
     <span class="cnum">Article 4, Honoraires · No Win, No Fee</span>
-    <div class="plain">💡 <strong>En clair&nbsp;:</strong> On prend 25 % seulement si on récupère de l'argent. Vous touchez 75 %. Si nous ne récupérons rien, vous ne payez rien et la créance vous revient.</div>
-    La cession étant consentie à titre de recouvrement, le <strong>prix de la rétrocession au Cédant</strong> (sa part nette) est fixé à <strong>75 % des sommes effectivement recouvrées</strong> au titre du dossier&nbsp;; Robin des Airs conserve à titre de rémunération <strong>25 % TTC du montant effectivement encaissé</strong>, <strong>uniquement en cas de succès</strong>. Cette répartition s'applique à <strong>l'ensemble des sommes recouvrées</strong> (indemnité forfaitaire, remboursements, frais et préjudices liés à l'Incident). En cas d'échec ou de non-recouvrement, <strong>aucune somme n'est due</strong> par le Cédant, aucune avance n'est exigée à aucun stade, et la créance lui est <strong>rétrocédée de plein droit</strong> («&nbsp;No Win No Fee&nbsp;»).
+    <div class="plain">💡 <strong>En clair&nbsp;:</strong> On prend <strong>25 %</strong> en phase amiable (vous touchez 75 %), ou <strong>50 %</strong> si on doit aller au tribunal (vous touchez 50 %). Tout ça <strong>seulement</strong> en cas de succès. Si nous ne récupérons rien, vous ne payez rien et la créance vous revient. Avant tout passage au tribunal, on vous prévient et on attend votre accord exprès.</div>
+    La cession étant consentie à titre de recouvrement, la rémunération de Robin des Airs est fixée comme suit, <strong>uniquement en cas de succès</strong>&nbsp;:
+    <br><br>
+    <strong>(i) Phase amiable (réclamation directe et médiation)</strong>&nbsp;: Robin des Airs conserve <strong>25&nbsp;% TTC</strong> du montant effectivement encaissé&nbsp;; le Cédant perçoit <strong>75&nbsp;% nets</strong>.
+    <br><br>
+    <strong>(ii) Phase contentieuse (procédure judiciaire engagée par un avocat partenaire)</strong>&nbsp;: Robin des Airs conserve <strong>50&nbsp;% TTC</strong> du montant effectivement encaissé&nbsp;; le Cédant perçoit <strong>50&nbsp;% nets</strong>. Cette majoration couvre les frais d'avocat partenaire, d'huissier, de greffe et de plateforme judiciaire, intégralement avancés par Robin des Airs.
+    <br><br>
+    <strong>Accord exprès préalable</strong>&nbsp;: avant tout passage en phase contentieuse, Robin des Airs informe le Cédant par WhatsApp et/ou email du changement de taux applicable (50&nbsp;%) et obtient son <strong>accord exprès</strong> par retour de message. À défaut d'accord du Cédant, le dossier est clôturé sans frais et la créance lui est rétrocédée de plein droit.
+    <br><br>
+    Ces taux s'appliquent à <strong>l'ensemble des sommes recouvrées au titre de l'indemnité du Cédant</strong> (indemnité forfaitaire art. 7, remboursements et prise en charge art. 8 et 9, préjudice complémentaire art. 12). <strong>L'article 700 du Code de procédure civile, les dépens et les intérêts moratoires</strong> alloués par le juge sont conservés en intégralité par Robin des Airs et son avocat partenaire selon convention, et ne sont pas inclus dans la base de calcul du Cédant. En cas d'échec ou de non-recouvrement, <strong>aucune somme n'est due</strong> par le Cédant, aucune avance n'est exigée à aucun stade, et la créance lui est <strong>rétrocédée de plein droit</strong> («&nbsp;No Win No Fee&nbsp;»).
     <br><br>
     La répartition s'applique également à <strong>toute compensation en nature</strong> (bon d'achat, avoir, miles…) acceptée au titre du dossier, calculée sur sa valeur&nbsp;; le Cédant s'engage à ne pas accepter une telle compensation sans l'accord de Robin des Airs. Le Cédant <strong>exige le paiement en numéraire (virement)</strong> et <strong>refuse expressément, dès à présent, tout bon d'achat, avoir, miles ou autre service</strong> proposé en lieu et place&nbsp;: conformément à l'<strong>article 7§3 du Règlement (CE) n° 261/2004</strong>, une compensation en nature suppose l'accord signé du passager, que le Cédant ne donne pas.
   </div>
@@ -531,12 +558,21 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     <div class="plain">💡 <strong>En clair&nbsp;:</strong> Les frais d'avocat et de justice sont pour nous. Vous n'avancez jamais d'argent.</div>
     Robin des Airs prend en charge <strong>100% des frais d'avocat, de greffe, d'huissier et de procédure judiciaire TTC</strong> liés au traitement du dossier. Le Cédant n'avance aucune somme à quelque stade que ce soit. Robin des Airs se réserve le droit de <strong>sélectionner librement les dossiers</strong> qu'elle estime viables avant d'engager une procédure judiciaire. Les sommes éventuellement allouées au titre des <strong>frais de procédure (article 700 du Code de procédure civile, dépens)</strong> restent acquises à Robin des Airs, qui en a fait l'avance&nbsp;; les <strong>intérêts</strong> suivent le sort de la créance cédée (Article 1).
   </div>
+  <div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:var(--green-deep);font-weight:700;margin:14px 0 6px">Phase amiable (25 %)</div>
   <table class="fee-table">
-    <tr><th>Distance du vol</th><th>Indemnité légale / pax</th><th>Commission RDA (25%)</th><th>Net client</th></tr>
+    <tr><th>Distance du vol</th><th>Indemnité légale / pax</th><th>Commission RDA (25 %)</th><th>Net client (75 %)</th></tr>
     <tr><td>≤ 1 500 km</td><td>250 €</td><td>62,50 €</td><td class="em">187,50 €</td></tr>
     <tr><td>1 500-3 500 km (Maghreb, ex. Maroc)</td><td>400 €</td><td>100 €</td><td class="em">300 €</td></tr>
     <tr><td>&gt; 3 500 km (Afrique subsaharienne)</td><td>600 €</td><td>150 €</td><td class="em">450 €</td></tr>
   </table>
+  <div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:var(--green-deep);font-weight:700;margin:14px 0 6px">Phase contentieuse (50 %) , après accord exprès du Cédant</div>
+  <table class="fee-table">
+    <tr><th>Distance du vol</th><th>Indemnité légale / pax</th><th>Commission RDA (50 %)</th><th>Net client (50 %)</th></tr>
+    <tr><td>≤ 1 500 km</td><td>250 €</td><td>125 €</td><td class="em">125 €</td></tr>
+    <tr><td>1 500-3 500 km (Maghreb, ex. Maroc)</td><td>400 €</td><td>200 €</td><td class="em">200 €</td></tr>
+    <tr><td>&gt; 3 500 km (Afrique subsaharienne)</td><td>600 €</td><td>300 €</td><td class="em">300 €</td></tr>
+  </table>
+  <div style="font-size:11px;color:var(--muted);font-style:italic;margin:6px 0 14px">Note&nbsp;: l'article 700 du CPC, les dépens et les intérêts moratoires alloués par le juge restent acquis à Robin des Airs et à son avocat partenaire (Article 4.1). Ils ne sont pas inclus dans la base de calcul du Cédant.</div>
   <div class="clause pro">
     <span class="cnum">Article 5, Paiement, reversement des 75 % & protection du Cédant</span>
     <div class="plain">💡 <strong>En clair&nbsp;:</strong> La compagnie paie sur NOTRE compte, jamais le vôtre. On vous reverse vos 75 % sous 48 h une fois l'argent vraiment encaissé.</div>
@@ -1191,13 +1227,22 @@ function renderAllPassengers() {
             oninput="updateParties();buildCoPassChecks()">
         </div>
         <div>
-          <label>Date de naissance</label>
+          <label>Date de naissance <span class="req">*</span></label>
           <input type="date" class="pdob" value="${pre.dob||''}"
             style="width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:'Montserrat',sans-serif;font-size:13px;border-radius:6px;color:var(--ink)"
-            onchange="checkMinorAge(this, ${i})">
-          <div style="font-size:10px;color:var(--muted);margin-top:3px;font-style:italic">Permet de détecter automatiquement les passagers mineurs</div>
+            onchange="checkMinorAge(this, ${i});buildCoPassChecks()">
+          <div style="font-size:10px;color:var(--muted);margin-top:3px;font-style:italic">Obligatoire pour identifier précisément chaque cédant (cession de créance, art. 1321 C. civ.)</div>
         </div>
       </div>
+      ${i > 0 ? `
+      <div class="pemail-block" id="pemailBlock${i}" style="${isMinor?'display:none':'display:block'};margin-bottom:12px">
+        <label>✉️ Email du passager ${i+1} <span class="req">*</span></label>
+        <input type="email" class="pemail" data-idx="${i}" value="${pre.email||''}" placeholder="email du passager ${i+1}"
+          style="width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:'Montserrat',sans-serif;font-size:13px;border-radius:6px;color:var(--ink)"
+          oninput="updateParties()">
+        <div style="font-size:10px;color:var(--muted);margin-top:3px;font-style:italic">Chaque adulte signe individuellement et reçoit une copie du contrat à son email.</div>
+      </div>
+      ` : ''}
       <div class="pminor-badge" id="minorBadge${i}" style="${isMinor?'display:flex':'display:none'};align-items:center;gap:8px;padding:8px 12px;background:var(--red-bg);border:1px solid var(--red-border);border-radius:6px">
         <span style="font-size:16px">👶</span>
         <span style="font-size:12px;color:var(--navy);font-family:'Montserrat',sans-serif"><strong style="font-weight:700">Passager mineur</strong> (moins de 18 ans), un représentant légal co-signe automatiquement.</span>
@@ -1252,12 +1297,16 @@ function getPassengersData() {
     };
     if (i === 0) {
       // Passager 1 = signataire principal (canvas principal)
+      // Email principal pris depuis le champ #em-perso
+      entry.email = (document.getElementById('em-perso')?.value || '').trim();
       try {
         const c = document.getElementById('sigCanvas');
         if (c && started) entry.signatureImg = c.toDataURL('image/png');
       } catch (e) {}
     } else {
-      // Co-passagers : signature individuelle + nom du représentant légal si mineur
+      // Co-passagers : email individuel + signature + nom du représentant légal si mineur
+      const emailInput = row.querySelector('.pemail');
+      entry.email = (emailInput?.value || '').trim();
       if (coSigData[i]) entry.signatureImg = coSigData[i];
       if ((coRepData[i] || '').trim()) entry.legalRepName = coRepData[i].trim();
     }
@@ -1673,12 +1722,21 @@ function showE(id,eId,show) {
 function validate() {
   let ok = true;
   [['fn','fnErr'],['ln','lnErr'],['wa-national','waErr'],['addr','addrErr'],
+   ['em-perso','emErr'],
    ['cie','cieErr'],['inc','incErr'],['sigCity','sigCityErr']
   ].forEach(([id,e])=>{
     const empty=!document.getElementById(id)?.value.trim();
     showE(id,e,empty);
     if(empty) ok=false;
   });
+  // Validation format email principal
+  const emEl = document.getElementById('em-perso');
+  if (emEl && emEl.value.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emEl.value.trim())) {
+    emEl.classList.add('err');
+    const emErr = document.getElementById('emErr');
+    if (emErr) { emErr.textContent = "Format d'email invalide"; emErr.style.display = 'block'; }
+    ok = false;
+  }
   // Vol : validation selon le mode (direct = 1 vol ; correspondance = chaque tronçon)
   if (flightMode === 'connecting') {
     syncLegsFromDom();
@@ -1712,14 +1770,37 @@ function validate() {
       ok = false;
     }
   }
-  // Validation passagers, nom obligatoire (le statut mineur est déduit automatiquement de la date de naissance)
-  document.querySelectorAll('.pax-row').forEach((row) => {
+  // Validation passagers : nom + date de naissance + email (par adulte, hors signataire principal)
+  document.querySelectorAll('.pax-row').forEach((row, idx) => {
     const nameInp = row.querySelector('.pnif');
     if (!nameInp?.value.trim()) {
       nameInp?.classList.add('err');
       ok = false;
     } else {
       nameInp?.classList.remove('err');
+    }
+    // Date de naissance obligatoire pour chaque passager (identification cession, art. 1321 CC)
+    const dobInp = row.querySelector('.pdob');
+    if (!dobInp?.value) {
+      dobInp?.classList.add('err');
+      ok = false;
+    } else {
+      dobInp?.classList.remove('err');
+    }
+    // Email obligatoire pour chaque co-passager adulte (signature électronique IDAS art. 26)
+    if (idx > 0) {
+      const isMinor = isMinorFromDob(dobInp?.value || '');
+      if (!isMinor) {
+        const pemailInp = row.querySelector('.pemail');
+        const pemailVal = (pemailInp?.value || '').trim();
+        const emailOk = pemailVal && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(pemailVal);
+        if (!emailOk) {
+          pemailInp?.classList.add('err');
+          ok = false;
+        } else {
+          pemailInp?.classList.remove('err');
+        }
+      }
     }
   });
   const allCo = allCoPassChecked();
@@ -1834,6 +1915,7 @@ function showSuccess(payload, ok) {
       'transaction_id': REF
     });
   } catch(e) {}
+  try { fbq('track','Lead',{content_name:'mandat_signe',value:150.0,currency:'EUR'}); } catch(e) {}
   document.getElementById('sRef').textContent = REF;
   // Titre + signature chaleureuse personnalisés (prénom)
   const fnRaw = (payload.firstName || document.getElementById('fn')?.value || '').trim();

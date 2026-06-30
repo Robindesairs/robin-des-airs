@@ -10,7 +10,7 @@ const VARIANTS = {
 
   // Message d'accueil empathique affiché dès l'entrée dans le bot
   ACCUEIL_EMPATHIE: [
-    `Un vol en retard ou annulé, c'est une vraie galère — et non, ce n'est pas « normal », même si les compagnies font comme si. Bonne nouvelle : la loi européenne est de votre côté, et c'est là qu'on intervient. 🏹`,
+    `Un vol en retard ou annulé, c'est une vraie galère. Bonne nouvelle : la loi européenne est de votre côté, et c'est là qu'on intervient. 🏹`,
     `Y'a des vols qui se passent sans problème. Et puis y'a les autres — ceux qu'on n'oublie pas pour de mauvaises raisons. Si vous êtes là, c'est probablement que le vôtre fait partie de la deuxième catégorie.`,
     `Attendre sans info, regarder les heures défiler, sentir qu'on ne maîtrise rien… un vol qui foire, c'est aussi ça : une vraie impuissance. On ne minimise pas ce que vous avez traversé.`,
     `Un retard, une annulation : du stress que vous n'avez pas choisi, et une compagnie qui fait souvent comme si de rien n'était. C'est précisément là qu'on entre en jeu. 🤝`,
@@ -115,7 +115,7 @@ const VARIANTS = {
     `On a regardé votre vol. Il pourrait ouvrir droit à jusqu'à 600 € par passager. Rien à avancer, jamais. On ne touche quelque chose que si on gagne.`,
     `Votre dossier mérite vraiment qu'on creuse. ✅ La réglementation européenne prévoit jusqu'à 600 € par passager dans votre cas. Notre commission ? 25 % seulement si on obtient gain de cause — pas avant.`,
     `Ce que la compagnie pourrait vous devoir, ça peut atteindre 600 € par passager si le dossier aboutit. On vérifie, on réclame, et si ça ne marche pas — vous ne nous devez rien.`,
-    `La compagnie vous a fait perdre du temps. Et peut-être de l'argent aussi. La loi prévoit jusqu'à 600 € dans ce type de situation. Nous, on prend 25 % au succès — sinon, 0 €.`,
+    `Jusqu'à 600 € : c'est ce que la loi peut prévoir quand une compagnie vous fait perdre du temps — retard, annulation, surbooking. Selon votre vol, vous pourriez y avoir droit. On s'occupe de tout pour vous, sans avance : commission uniquement en cas de succès, sinon 0 €.`,
     `Ce retard n'aurait vraiment pas dû arriver. La loi prévoit jusqu'à 600 € dans votre situation, et on avance tout le travail. Rien si le dossier n'aboutit pas. Et si vous étiez en famille, chaque passager compte — les montants s'additionnent.`,
     `Votre vol pourrait vous donner droit à jusqu'à 600 € par passager. On prend tout en charge — et si on ne gagne pas, vous ne payez rien. On tente ? 💪`,
   ],
