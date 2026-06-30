@@ -136,6 +136,11 @@ exports.handler = async (event) => {
     if (!documentId) return json(502, { error: "ID document YouSign absent", signature_request_id: signatureRequestId });
 
     // 2) Créer un signataire
+    // Origin de retour configurable : MANDAT_BASE_URL (sandbox/prod) ou fallback robindesairs.eu
+    const returnOrigin = (process.env.MANDAT_BASE_URL || "https://robindesairs.eu").replace(/\/+$/, "");
+    const successUrl = `${returnOrigin}/mandat.html?signed=1&ref=${encodeURIComponent(signatureRequestId)}`;
+    const cancelUrl = `${returnOrigin}/mandat.html?cancelled=1&ref=${encodeURIComponent(signatureRequestId)}`;
+
     const signerRes = await fetch(`${baseUrl}/signature_requests/${signatureRequestId}/signers`, {
       method: "POST",
       headers: {
@@ -152,6 +157,11 @@ exports.handler = async (event) => {
         },
         signature_level: "electronic_signature",
         signature_authentication_mode: "no_otp",
+        redirect_urls: {
+          success: successUrl,
+          cancel: cancelUrl,
+          error: cancelUrl,
+        },
       }),
     });
 
