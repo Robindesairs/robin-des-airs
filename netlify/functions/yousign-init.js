@@ -214,36 +214,116 @@ exports.handler = async (event) => {
       const signerId = signerJson.id;
       if (!signerId) return json(502, { error: `ID signer ${i + 1} YouSign absent`, signature_request_id: signatureRequestId });
 
-      // 2b) Placer la zone signature : signataires empilés verticalement (80 px d'écart)
-      // pour qu'ils ne se chevauchent pas sur le PDF. Page 1 par défaut.
-      const fieldY = sigY + i * 80;
+      // 2b) Placer le bloc complet de chaque signataire :
+      // [3 cases à cocher (2 obligatoires + 1 optionnelle)]
+      // [label "Signature de Prénom Nom"]
+      // [zone signature 200x60]
+      // Chaque bloc = ~160 px de haut, signataires empilés sur la page.
+      const blockTop = sigY + i * 160;
+      const cb1Y = blockTop;
+      const cb2Y = blockTop + 18;
+      const cb3Y = blockTop + 36;
+      const labelY = blockTop + 62;
+      const fieldY = blockTop + 80;
 
-      // Label statique "Signature de Prénom Nom" — 18 px au-dessus de la zone
-      // pour que le PDF montre visuellement qui signe où, même avant signature.
-      // Si l'API Yousign refuse le type "text" pour cette config, on log juste
-      // un warning et on continue (la zone signature elle-même est obligatoire).
-      try {
-        const labelRes = await fetch(`${baseUrl}/signature_requests/${signatureRequestId}/documents/${documentId}/fields`, {
-          method: "POST",
-          headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-          body: JSON.stringify({
-            type: "text",
-            page: sigPage,
-            x: sigX,
-            y: Math.max(20, fieldY - 18),
-            width: 220,
-            height: 14,
-            content: `Signature de ${s.first_name} ${s.last_name}`.trim(),
-          }),
-        });
-        if (!labelRes.ok) {
-          const errTxt = await labelRes.text();
-          console.warn(`[yousign-init] label text signer ${i + 1} ignored:`, errTxt.slice(0, 200));
+      // Helper pour poster un field, avec catch silencieux pour les optionnels
+      async function postField(body, label) {
+        try {
+          const r = await fetch(`${baseUrl}/signature_requests/${signatureRequestId}/documents/${documentId}/fields`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
+          if (!r.ok) {
+            const errTxt = await r.text();
+            console.warn(`[yousign-init] field ${label} signer ${i + 1} ignored:`, errTxt.slice(0, 200));
+            return false;
+          }
+          return true;
+        } catch (e) {
+          console.warn(`[yousign-init] field ${label} signer ${i + 1} error:`, e.message);
+          return false;
         }
-      } catch (e) {
-        console.warn(`[yousign-init] label text signer ${i + 1} error:`, e.message);
       }
 
+      // Case 1 — OBLIGATOIRE : lecture acceptation mandat
+      await postField({
+        type: "checkbox",
+        signer_id: signerId,
+        page: sigPage,
+        x: sigX,
+        y: cb1Y,
+        width: 14,
+        height: 14,
+        optional: false,
+        name: `lu_accepte_${i + 1}`,
+      }, "checkbox lu_accepte");
+      await postField({
+        type: "text",
+        page: sigPage,
+        x: sigX + 20,
+        y: cb1Y + 1,
+        width: 360,
+        height: 12,
+        content: "J'ai lu et accepte le mandat de cession de creance Robin des Airs",
+      }, "label lu_accepte");
+
+      // Case 2 — OBLIGATOIRE : autorisation reversement compte
+      await postField({
+        type: "checkbox",
+        signer_id: signerId,
+        page: sigPage,
+        x: sigX,
+        y: cb2Y,
+        width: 14,
+        height: 14,
+        optional: false,
+        name: `autorisation_reversement_${i + 1}`,
+      }, "checkbox autorisation");
+      await postField({
+        type: "text",
+        page: sigPage,
+        x: sigX + 20,
+        y: cb2Y + 1,
+        width: 360,
+        height: 12,
+        content: "J'autorise Robin des Airs a percevoir et reverser l'indemnite",
+      }, "label autorisation");
+
+      // Case 3 — OPTIONNELLE : renonciation droit de rétractation 14j
+      await postField({
+        type: "checkbox",
+        signer_id: signerId,
+        page: sigPage,
+        x: sigX,
+        y: cb3Y,
+        width: 14,
+        height: 14,
+        optional: true,
+        name: `renonciation_retractation_${i + 1}`,
+      }, "checkbox renonciation");
+      await postField({
+        type: "text",
+        page: sigPage,
+        x: sigX + 20,
+        y: cb3Y + 1,
+        width: 380,
+        height: 12,
+        content: "(Facultatif) Je renonce a mon droit de retractation 14j pour demarrage immediat",
+      }, "label renonciation");
+
+      // Label "Signature de Prénom Nom"
+      await postField({
+        type: "text",
+        page: sigPage,
+        x: sigX,
+        y: labelY,
+        width: 220,
+        height: 12,
+        content: `Signature de ${s.first_name} ${s.last_name}`.trim(),
+      }, "label signature");
+
+      // Zone signature (obligatoire — bloquante si échoue)
       const fieldRes = await fetch(`${baseUrl}/signature_requests/${signatureRequestId}/documents/${documentId}/fields`, {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
