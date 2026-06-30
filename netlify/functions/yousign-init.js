@@ -82,9 +82,25 @@ exports.handler = async (event) => {
     return json(400, { error: "PDF base64 invalide", details: String(e.message || e) });
   }
 
+  // Position par défaut : PAGE 1 en haut à droite → le client ouvre le lien
+  // et voit "Signer ici" direct, pas besoin de scroller le contrat.
   const sigPage = Number.isFinite(+payload.signature_page) ? +payload.signature_page : 1;
-  const sigX = Number.isFinite(+payload.signature_x) ? +payload.signature_x : 350;
-  const sigY = Number.isFinite(+payload.signature_y) ? +payload.signature_y : 650;
+  const sigX = Number.isFinite(+payload.signature_x) ? +payload.signature_x : 380;
+  const sigY = Number.isFinite(+payload.signature_y) ? +payload.signature_y : 120;
+
+  // Multi-signataires : payload.signers = [{first_name, last_name, email, phone}, ...]
+  // Si absent, fallback sur le signataire unique des champs first_name/last_name/email/phone.
+  const signers = Array.isArray(payload.signers) && payload.signers.length > 0
+    ? payload.signers.filter(s => s && s.email).map(s => ({
+        first_name: String(s.first_name || "").trim() || "Client",
+        last_name: String(s.last_name || "").trim() || "Robin",
+        email: String(s.email || "").trim(),
+        phone: normalizePhone(s.phone || ""),
+      }))
+    : [{ first_name: firstName, last_name: lastName, email, phone }];
+
+  if (signers.length === 0) return json(400, { error: "Aucun signataire valide (email requis)" });
+  if (signers.length > 6) return json(400, { error: "Maximum 6 signataires par dossier" });
 
   try {
     // 1) Créer une demande de signature
@@ -135,10 +151,9 @@ exports.handler = async (event) => {
     const documentId = docJson.id;
     if (!documentId) return json(502, { error: "ID document YouSign absent", signature_request_id: signatureRequestId });
 
-    // 2) Créer un signataire
+    // 2) Créer N signataires (1 par adulte) + placer 1 zone signature par signataire
     // Origin de retour configurable : MANDAT_BASE_URL (sandbox/prod) ou fallback robindesairs.eu
     const returnOrigin = (process.env.MANDAT_BASE_URL || "https://robindesairs.eu").replace(/\/+$/, "");
-    const successUrl = `${returnOrigin}/mandat.html?signed=1&ref=${encodeURIComponent(signatureRequestId)}`;
 
     // Yousign trial/sandbox refuse redirect_urls : "subscription.status_not_compatible".
     // On les ajoute uniquement si pas en sandbox (override possible via YOUSIGN_FORCE_REDIRECTS=1).
@@ -146,70 +161,83 @@ exports.handler = async (event) => {
     const forceRedirects = process.env.YOUSIGN_FORCE_REDIRECTS === "1";
     const allowRedirects = !isSandbox || forceRedirects;
 
-    const signerBody = {
-      info: {
-        first_name: firstName,
-        last_name: lastName,
-        email,
-        phone_number: phone || undefined,
-        locale: "fr",
-      },
-      signature_level: "electronic_signature",
-      signature_authentication_mode: "no_otp",
-    };
-    if (allowRedirects) {
-      signerBody.redirect_urls = { success: successUrl };
-    }
+    const createdSigners = [];
 
-    const signerRes = await fetch(`${baseUrl}/signature_requests/${signatureRequestId}/signers`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(signerBody),
-    });
+    for (let i = 0; i < signers.length; i++) {
+      const s = signers[i];
 
-    if (!signerRes.ok) {
-      const errTxt = await signerRes.text();
-      return json(502, {
-        error: "Echec creation signer YouSign",
-        signature_request_id: signatureRequestId,
-        details: errTxt.slice(0, 600),
+      // 2a) Créer le signataire
+      const successUrl = `${returnOrigin}/mandat.html?signed=1&ref=${encodeURIComponent(signatureRequestId)}&signer=${i + 1}&total=${signers.length}`;
+
+      const signerBody = {
+        info: {
+          first_name: s.first_name,
+          last_name: s.last_name,
+          email: s.email,
+          phone_number: s.phone || undefined,
+          locale: "fr",
+        },
+        signature_level: "electronic_signature",
+        signature_authentication_mode: "no_otp",
+      };
+      if (allowRedirects) {
+        signerBody.redirect_urls = { success: successUrl };
+      }
+
+      const signerRes = await fetch(`${baseUrl}/signature_requests/${signatureRequestId}/signers`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify(signerBody),
+      });
+      if (!signerRes.ok) {
+        const errTxt = await signerRes.text();
+        return json(502, {
+          error: `Echec creation signer ${i + 1}/${signers.length} YouSign`,
+          signature_request_id: signatureRequestId,
+          signer_email: s.email,
+          details: errTxt.slice(0, 600),
+        });
+      }
+      const signerJson = await signerRes.json();
+      const signerId = signerJson.id;
+      if (!signerId) return json(502, { error: `ID signer ${i + 1} YouSign absent`, signature_request_id: signatureRequestId });
+
+      // 2b) Placer la zone signature : signataires empilés verticalement (80 px d'écart)
+      // pour qu'ils ne se chevauchent pas sur le PDF. Page 1 par défaut.
+      const fieldRes = await fetch(`${baseUrl}/signature_requests/${signatureRequestId}/documents/${documentId}/fields`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "signature",
+          signer_id: signerId,
+          page: sigPage,
+          x: sigX,
+          y: sigY + i * 80,
+          width: 200,
+          height: 60,
+        }),
+      });
+      if (!fieldRes.ok) {
+        const errTxt = await fieldRes.text();
+        return json(502, {
+          error: `Echec placement champ signature ${i + 1} YouSign`,
+          signature_request_id: signatureRequestId,
+          signer_id: signerId,
+          details: errTxt.slice(0, 600),
+        });
+      }
+
+      createdSigners.push({
+        index: i + 1,
+        signer_id: signerId,
+        first_name: s.first_name,
+        last_name: s.last_name,
+        email: s.email,
       });
     }
-    const signerJson = await signerRes.json();
-    const signerId = signerJson.id;
-    if (!signerId) return json(502, { error: "ID signer YouSign absent", signature_request_id: signatureRequestId });
 
-    // 2bis) Placer la zone de signature sur le PDF
-    const fieldRes = await fetch(`${baseUrl}/signature_requests/${signatureRequestId}/documents/${documentId}/fields`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        type: "signature",
-        signer_id: signerId,
-        page: sigPage,
-        x: sigX,
-        y: sigY,
-        width: 200,
-        height: 60,
-      }),
-    });
-
-    if (!fieldRes.ok) {
-      const errTxt = await fieldRes.text();
-      return json(502, {
-        error: "Echec placement champ signature YouSign",
-        signature_request_id: signatureRequestId,
-        document_id: documentId,
-        signer_id: signerId,
-        details: errTxt.slice(0, 600),
-      });
-    }
+    // signerId pour rétro-compatibilité (premier signataire = principal)
+    const signerId = createdSigners[0].signer_id;
 
     // 2ter) Activer la signature_request (sinon reste en draft → signing_link KO)
     const activateRes = await fetch(`${baseUrl}/signature_requests/${signatureRequestId}/activate`, {
@@ -229,40 +257,46 @@ exports.handler = async (event) => {
       });
     }
 
-    // 3) Récupérer le signature_link via GET sur le signer (Yousign v3 ne l'expose
-    //    qu'après activation, dans le payload du signer — pas via /signing_links)
-    const linkRes = await fetch(`${baseUrl}/signature_requests/${signatureRequestId}/signers/${signerId}`, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${apiKey}` },
-    });
+    // 3) Récupérer le signature_link de chaque signataire via GET signer
+    //    (Yousign v3 ne l'expose qu'après activation, dans le payload du signer)
+    for (const sg of createdSigners) {
+      const linkRes = await fetch(`${baseUrl}/signature_requests/${signatureRequestId}/signers/${sg.signer_id}`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${apiKey}` },
+      });
+      if (!linkRes.ok) {
+        const errTxt = await linkRes.text();
+        return json(502, {
+          error: `Echec lecture signer ${sg.index} YouSign (post-activation)`,
+          signature_request_id: signatureRequestId,
+          signer_id: sg.signer_id,
+          details: errTxt.slice(0, 600),
+        });
+      }
+      const linkJson = await linkRes.json();
+      sg.signing_url = linkJson?.signature_link || linkJson?.url || linkJson?.link || "";
+      if (!sg.signing_url) {
+        return json(502, {
+          error: `signature_link absent pour signataire ${sg.index}`,
+          signature_request_id: signatureRequestId,
+          signer_id: sg.signer_id,
+          signer_keys: Object.keys(linkJson || {}),
+        });
+      }
+    }
 
-    if (!linkRes.ok) {
-      const errTxt = await linkRes.text();
-      return json(502, {
-        error: "Echec lecture signer YouSign (post-activation)",
-        signature_request_id: signatureRequestId,
-        signer_id: signerId,
-        details: errTxt.slice(0, 600),
-      });
-    }
-    const linkJson = await linkRes.json();
-    const signingUrl = linkJson?.signature_link || linkJson?.url || linkJson?.link;
-    if (!signingUrl) {
-      return json(502, {
-        error: "signature_link YouSign absent du payload signer",
-        signature_request_id: signatureRequestId,
-        signer_id: signerId,
-        signer_keys: Object.keys(linkJson || {}),
-      });
-    }
+    const signingUrl = createdSigners[0].signing_url; // 1er signataire = principal
 
     return json(200, {
       ok: true,
       provider: "yousign",
       signature_request_id: signatureRequestId,
       document_id: documentId,
+      // Rétro-compat champs principaux (1er signataire)
       signer_id: signerId,
       signing_url: signingUrl,
+      // Nouveau : tableau complet des signataires + URLs
+      signers: createdSigners,
     });
   } catch (e) {
     return json(500, { error: "Erreur serveur YouSign", details: String(e && e.message ? e.message : e) });

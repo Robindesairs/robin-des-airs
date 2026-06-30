@@ -370,7 +370,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   </div>
   <div class="field-row">
     <label>Adresse postale <span class="req">*</span></label>
-    <div style="font-size:12px;color:#667;margin:-2px 0 6px">Quartier, ville et pays suffisent, <strong>pas besoin</strong> de code postal ni de numéro de rue.</div>
+    <div style="font-size:12px;color:#667;margin:-2px 0 6px"><strong>Adresse la plus complète possible</strong> (numéro, rue, code postal, ville, pays) — requise pour identifier le cédant (cession de créance, art. 1321 C. civ.). Si vous n'avez ni numéro ni code postal, indiquez au minimum <strong>quartier, ville et pays</strong>.</div>
     <textarea id="addr" placeholder="Ex. : Médina, Dakar, Sénégal&#10;(ou : 12 rue de la Paix, 75001 Paris, France)" rows="3" oninput="updateParties()"></textarea>
     <div class="ferr" id="addrErr">Adresse requise pour le contrat</div>
   </div>
@@ -934,10 +934,40 @@ window.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('mandatForm');
     if (form) form.style.display = 'none';
     if (signed) {
+      const ref = P.get('ref') || REF || '—';
+      const signerIdx = parseInt(P.get('signer') || '1', 10);
+      const totalSigners = parseInt(P.get('total') || '1', 10);
+
+      // ── Multi-signataires : si pas encore le dernier, on propose
+      //    de passer le téléphone au signataire suivant.
+      if (signerIdx < totalSigners) {
+        const storeKey = 'yousign_signers_' + ref;
+        let signersList = [];
+        try { signersList = JSON.parse(localStorage.getItem(storeKey) || '[]'); } catch (_) {}
+        const next = signersList.find(function (s) { return s.index === signerIdx + 1; });
+        if (next && next.signing_url) {
+          const wrap = document.createElement('div');
+          wrap.style.cssText = 'max-width:520px;margin:80px auto;padding:32px 28px;background:#fff;border:1px solid var(--border);border-radius:12px;text-align:center;font-family:Inter,system-ui,sans-serif';
+          wrap.innerHTML =
+            '<div style="font-family:\'DM Mono\',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.2em;color:var(--green-deep);font-weight:700;margin-bottom:14px">Signature ' + signerIdx + '/' + totalSigners + ' validée</div>' +
+            '<div style="font-size:48px;line-height:1;margin-bottom:18px">📲</div>' +
+            '<h1 style="font-size:24px;font-weight:800;margin:0 0 14px;color:var(--text)">Au tour de <span style="color:var(--green-deep)">' + (next.first_name || '') + ' ' + (next.last_name || '') + '</span></h1>' +
+            '<p style="font-size:14px;line-height:1.6;color:var(--muted);margin:0 0 22px">Passez le téléphone à la personne ci-dessus. Elle peut signer directement, depuis ce téléphone.</p>' +
+            '<button id="btnNextSigner" style="width:100%;background:var(--green);color:var(--navy);border:none;padding:16px 24px;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;border-radius:8px;cursor:pointer">Signer maintenant (' + (signerIdx + 1) + '/' + totalSigners + ') →</button>' +
+            '<p style="font-size:11px;color:var(--muted);margin:18px 0 0;line-height:1.5">Vous pouvez aussi envoyer le lien à votre proche par email — Yousign le lui a déjà envoyé.</p>';
+          document.body.appendChild(wrap);
+          document.getElementById('btnNextSigner').onclick = function () {
+            window.location.href = next.signing_url;
+          };
+          return; // skip successScreen
+        }
+        // Si on n'a pas l'URL du suivant (localStorage perdu), on tombe sur successScreen
+      }
+
+      // ── Tous signataires OK (ou single) : écran "C'est fait !"
       const ss = document.getElementById('successScreen');
       if (!ss) return;
       ss.style.display = 'block';
-      const ref = P.get('ref') || REF || '—';
       const sRef = document.getElementById('sRef');
       if (sRef) sRef.textContent = ref;
       const sWhen = document.getElementById('sWhen');
@@ -950,8 +980,9 @@ window.addEventListener('DOMContentLoaded', () => {
         sRetract.textContent = d.toLocaleDateString('fr-FR');
       }
       try { ss.scrollIntoView({ behavior: 'smooth' }); } catch (_) {}
-      // Conversion Pixel Meta (Lead) si présent
       try { if (window.fbq) fbq('track', 'Lead', { content_name: 'mandat-signe-yousign' }); } catch (_) {}
+      // Nettoyage localStorage des URLs signataires (déjà utilisées)
+      try { localStorage.removeItem('yousign_signers_' + ref); } catch (_) {}
     } else if (cancelled) {
       // Bandeau d'info : retour signataire qui a annulé dans Yousign
       const bar = document.createElement('div');
@@ -2028,25 +2059,63 @@ function submitMandat() {
       throw new Error('PDF generation failed: ' + (pdfRes && pdfRes.error || 'unknown'));
     }
     btn.innerHTML = '⏳ Préparation Yousign...';
+    // ── Construction de la liste des signataires (1 par adulte) ──
+    // Le 1er passager (cédant principal) = fn/ln + em-perso (déjà saisis).
+    // Les autres = name + email .pemail individuel (mémoire #12).
+    // On exclut les mineurs (couverts par autorisation parentale, pas par signature directe).
+    function splitName(full) {
+      const parts = String(full || '').trim().split(/\s+/);
+      if (parts.length === 0) return { first: '', last: '' };
+      if (parts.length === 1) return { first: parts[0], last: '' };
+      return { first: parts[0], last: parts.slice(1).join(' ') };
+    }
+    const adults = [{
+      first_name: payload.firstName,
+      last_name: payload.lastName,
+      email: payload.email,
+      phone: payload.whatsapp,
+    }];
+    (payload.passengersData || []).forEach(function (p, idx) {
+      if (idx === 0) return; // principal déjà dans adults[0]
+      if (p.minor) return;   // mineur exclu
+      if (!p.email) return;  // pas d'email → on saute (sera signé via autorisation parent)
+      const split = splitName(p.name);
+      adults.push({
+        first_name: split.first,
+        last_name: split.last,
+        email: p.email,
+        phone: '', // pas de téléphone par co-passager pour l'instant
+      });
+    });
     return fetch('/api/yousign-init', {
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
+        // Rétro-compat 1er signataire (pour fallback éventuel)
         first_name: payload.firstName,
         last_name: payload.lastName,
         email: payload.email,
         phone: payload.whatsapp,
+        // Nouveau : liste complète des adultes signataires
+        signers: adults,
         label: 'Mandat Robin des Airs — ' + payload.lastName + ' ' + payload.firstName + ' — vol ' + (payload.flightNum || '—'),
         pdf_base64: pdfRes.pdf_base64,
-        signature_page: 3,
-        signature_x: 150,
-        signature_y: 700,
+        // Zone signature page 1 en haut à droite : visible direct, pas de scroll
+        signature_page: 1,
+        signature_x: 380,
+        signature_y: 120,
       }),
     }).then(r => r.json());
   })
   .then(yousignRes => {
     if (!yousignRes || !yousignRes.signing_url) {
       throw new Error('Yousign URL absent: ' + (yousignRes && yousignRes.error || 'unknown'));
+    }
+    // Multi-signataires : stocker les URLs des autres signataires pour relais après chaque signature
+    if (yousignRes.signers && yousignRes.signers.length > 1 && yousignRes.signature_request_id) {
+      try {
+        localStorage.setItem('yousign_signers_' + yousignRes.signature_request_id, JSON.stringify(yousignRes.signers));
+      } catch (_) {}
     }
     btn.innerHTML = '✓ Redirection vers Yousign...';
     window.location.href = yousignRes.signing_url;
