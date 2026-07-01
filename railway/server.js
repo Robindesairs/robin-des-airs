@@ -2668,7 +2668,7 @@ async function sendConsentCgu(phone, s, cfg) {
       `📋 *Before you start*\n\nTo use Robin des Airs, please accept:\n\n📖 *Our terms of service*\n👉 https://robindesairs.eu/cgv.html\n\n🔒 *Our privacy policy* (your data is used *only* to handle your case, never sold)\n👉 https://robindesairs.eu/politique-confidentialite.html\n\nTap below to accept both and start.`,
       `📋 *Avant de commencer*\n\nPour utiliser Robin des Airs, merci d'accepter :\n\n📖 *Nos conditions générales*\n👉 https://robindesairs.eu/cgv.html\n\n🔒 *Notre politique de confidentialité* (vos données servent *uniquement* à traiter votre dossier, jamais revendues)\n👉 https://robindesairs.eu/politique-confidentialite.html\n\nCliquez ci-dessous pour accepter les deux et démarrer.`),
     buttons: [
-      { id: 'cgu_accept', text: L(s, "✅ Accept & continue", "✅ J'accepte et je continue") },
+      { id: 'cgu_accept', text: L(s, "✅ I accept", "✅ J'accepte") },
       { id: 'cgu_refuse', text: L(s, "❌ Refuse", '❌ Refuser') },
     ],
   }, cfg);
