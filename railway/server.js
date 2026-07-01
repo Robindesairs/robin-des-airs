@@ -2087,6 +2087,23 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       if (s.type_vol === 'escale') return askEscDep(phone, s, cfg, `🔄 Pas de souci, on le fait ensemble — une question à la fois.`);
       s.step = 'm_vol'; await setState(phone, s); return send(phone, L(s, `📝 Flight number? _(e.g. AF718, AT540)_`, `📝 Numéro de vol ? _(ex. AF718, AT540)_`), cfg);
     }
+    // Filet défensif : si l'utilisateur tape un numéro de vol au format standard
+    // (2-3 lettres + 2-5 chiffres) alors qu'on est encore au step scan, on l'accepte
+    // directement comme s'il avait cliqué "Saisir à la main" puis tapé son numéro.
+    // Cas typique : l'utilisateur clique "Saisir à la main" mais tape son n° trop vite
+    // avant que le state m_vol soit persisté côté serveur (race Blobs / WATI).
+    if (!id && !mediaUrl) {
+      const candidate = input.toUpperCase().replace(/\s+/g, '');
+      if (/^[A-Z]{2,3}\d{2,5}$/.test(candidate)) {
+        s.vol = candidate;
+        s.compagnie = deduceAirline(candidate) || s.compagnie || '';
+        s.step = 'm_date';
+        await setState(phone, s);
+        return send(phone, L(s,
+          `✅ Flight ${candidate}${s.compagnie ? ' — ' + s.compagnie : ''}\n\n📅 Flight date? _(e.g. 15/03/2026)_`,
+          `✅ Vol ${candidate}${s.compagnie ? ' — ' + s.compagnie : ''}\n\n📅 Date du vol ? _(ex. 15/03/2026)_`), cfg);
+      }
+    }
     if (await stuckHelp(phone, s, cfg)) return;
     return sendButtons(phone, { body: L(s, `📎 Send a *photo* (or the *PDF*) of your e-ticket. _Several pages? Send them one by one, I'll put them together._\n\n_🔒 By sending this document, you agree it will be read by an automated tool (AI) to pre-fill your file — robindesairs.eu/politique-confidentialite._`, `📎 Envoyez une *photo* (ou le *PDF*) de votre e-billet. _Plusieurs pages ? Envoyez-les une par une, je les assemble._\n\n_🔒 En envoyant ce document, vous acceptez qu'il soit lu par un outil automatique (IA) pour pré-remplir votre dossier — robindesairs.eu/politique-confidentialite._`), buttons: [{ id: 'scan_photo', text: L(s, '📸 Send a photo', '📸 Envoyer une photo') }, { id: 'scan_manuel', text: L(s, '✏️ Type it in', '✏️ Saisir à la main') }] }, cfg);
   }
