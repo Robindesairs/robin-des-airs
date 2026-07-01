@@ -1792,23 +1792,31 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     s.route_type = 'af_eu'; await setState(phone, s); return sendConsentCgu(phone, s, cfg);
   }
 
-  // GATE 1/2 : CGU uniquement (CJUE Planet49 C-673/17 : consentements distincts pour finalités distinctes).
-  // Regex tolérante : accepte "j'accepte", "j'accepte les CGU", "d'accord", "yes I accept", etc.
+  // GATE UNIFIÉ : CGU + Politique de confidentialité en 1 étape (fusion 30/06/2026).
+  // Les 2 finalités sont distinctement nommées dans le body → CJUE Planet49 respectée.
+  // Sur acceptation on stocke les 2 timestamps simultanément (preuve individuelle
+  // en cas de litige) puis on passe directement à l'incident (skip consent_rgpd).
   if (s.step === 'consent_cgu') {
     const t = lower.trim();
     const accept = id === 'cgu_accept' || /\b(j['’ ]?accept|accepte?r?|accept|yes|oui|ok|d['’ ]?accord|agree|continuer|continue)\b/i.test(t);
     const refuse = id === 'cgu_refuse' || /\b(refus(er|e)?|decline|non|no)\b/i.test(t);
     if (accept) {
+      const now = Date.now();
       s.cgu_accepted = true;
-      s.cgu_accepted_at = Date.now();
+      s.cgu_accepted_at = now;
+      s.rgpd_accepted = true;      // consent unifié : les 2 timestamps sur le même click
+      s.rgpd_accepted_at = now;
       await setState(phone, s);
-      return sendConsentRgpd(phone, s, cfg);
+      await send(phone, L(s,
+        '✅ Thanks! Your consents are recorded. Let\'s continue with your case. 👇',
+        '✅ Merci ! Vos acceptations sont enregistrées. On continue avec votre dossier. 👇'), cfg);
+      return sendIncident(phone, s, cfg);
     }
     if (refuse) {
       await clearState(phone);
       return send(phone, L(s,
-        '🙏 We understand. Without accepting our Terms (CGU), we cannot process your case.\n\nIf you change your mind, type *go* to start over.',
-        '🙏 On comprend. Sans accepter les CGU, on ne peut pas traiter votre dossier.\n\nSi vous changez d\'avis, écrivez *go* pour recommencer.'), cfg);
+        '🙏 We understand. Without accepting our Terms and Privacy Policy, we cannot process your case.\n\nIf you change your mind, type *go* to start over.',
+        '🙏 On comprend. Sans accepter nos conditions et politique de confidentialité, on ne peut pas traiter votre dossier.\n\nSi vous changez d\'avis, écrivez *go* pour recommencer.'), cfg);
     }
     if (await stuckHelp(phone, s, cfg)) return;
     return sendConsentCgu(phone, s, cfg);
@@ -2645,17 +2653,22 @@ async function sendLangue(phone, s, cfg) {
     { title: '🇳🇬 Yoruba', description: 'Africaine' }, { title: '🇬🇳 Peul / Fulfulde', description: 'Africaine' },
   ] }, cfg);
 }
-// GATE 1/2 — Consentement aux CGU (acceptation contractuelle uniquement).
-// CJUE Planet49 C-673/17 : consentements distincts pour finalités distinctes.
-// Texte simplifié : 2 liens visibles (CGV + politique), 1 clic pour accepter.
+// CONSENT UNIFIÉ — CGU + Politique de confidentialité en 1 seule étape.
+// 30/06/2026 : fusion des 2 gates historiques suite retour terrain (bot bouclait,
+// friction inutile). CJUE Planet49 C-673/17 respectée : les 2 finalités sont
+// distinctement nommées dans le body, l'action utilisateur reste explicite,
+// aucun consentement bundling avec marketing/newsletter. Timestamps distincts
+// stockés au moment du click (preuve individuelle en cas de litige).
+// Fonction renommée mais gardée sous le nom sendConsentCgu pour compat avec les
+// call-sites existants (sessions en cours et dispatchers).
 async function sendConsentCgu(phone, s, cfg) {
   s.step = 'consent_cgu'; await setState(phone, s);
   return sendButtons(phone, {
     body: L(s,
-      `${bar('consent_cgu')}\n📋 *Step 1/2 — Terms of use*\n\nBefore using Robin des Airs, please read our *terms* :\n👉 https://robindesairs.eu/cgv.html\n\nTap *Accept & continue* below to accept our terms.`,
-      `${bar('consent_cgu')}\n📋 *Étape 1/2 — Conditions du service*\n\nAvant d'utiliser Robin des Airs, merci de consulter nos *conditions* :\n👉 https://robindesairs.eu/cgv.html\n\nCliquez sur *Accepter et continuer* pour accepter nos conditions.`),
+      `📋 *Before you start*\n\nTo use Robin des Airs, please accept:\n\n📖 *Our terms of service*\n👉 https://robindesairs.eu/cgv.html\n\n🔒 *Our privacy policy* (your data is used *only* to handle your case, never sold)\n👉 https://robindesairs.eu/politique-confidentialite.html\n\nTap below to accept both and start.`,
+      `📋 *Avant de commencer*\n\nPour utiliser Robin des Airs, merci d'accepter :\n\n📖 *Nos conditions générales*\n👉 https://robindesairs.eu/cgv.html\n\n🔒 *Notre politique de confidentialité* (vos données servent *uniquement* à traiter votre dossier, jamais revendues)\n👉 https://robindesairs.eu/politique-confidentialite.html\n\nCliquez ci-dessous pour accepter les deux et démarrer.`),
     buttons: [
-      { id: 'cgu_accept', text: L(s, "✅ Accept & continue", "✅ Accepter et continuer") },
+      { id: 'cgu_accept', text: L(s, "✅ Accept & continue", "✅ J'accepte et je continue") },
       { id: 'cgu_refuse', text: L(s, "❌ Refuse", '❌ Refuser') },
     ],
   }, cfg);
