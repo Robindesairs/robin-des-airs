@@ -16,7 +16,7 @@
 const PROMPT = `Tu lis un E-BILLET / une CONFIRMATION DE RÉSERVATION d'avion (souvent PLUSIEURS passagers, et parfois un ALLER + un RETOUR).
 Extrais TOUTES les informations nécessaires à un mandat de réclamation. Réponds UNIQUEMENT en JSON, ce schéma exact :
 {"lisible":true,"confidence":1.0,"multi_pnr":false,"compagnie":"","pnr":"","numero_billet":"","aller_retour":false,
- "trajets":[{"sens":"aller","date":"","depart":"","arrivee":"","segments":[{"vol":"","depart":"","arrivee":"","date":"","heure":"","operateur":""}]}],
+ "trajets":[{"sens":"aller","date":"","depart":"","arrivee":"","ville_depart":"","ville_arrivee":"","segments":[{"vol":"","depart":"","arrivee":"","ville_depart":"","ville_arrivee":"","date":"","heure":"","operateur":""}]}],
  "passagers":[{"nom":"","prenom":"","date_naissance":"","type":"","gratuit":false}]}
 Règles STRICTES :
 - lisible / confidence : si le document est trop FLOU, SOMBRE, COUPÉ, incliné ou compressé pour lire les champs clés (n° de vol, PNR, noms) avec CERTITUDE → lisible=false, confidence basse (≤0.4) et laisse VIDES les champs incertains. NE DEVINE JAMAIS un n° de vol "probable" pour remplir : mieux vaut vide que faux.
@@ -29,6 +29,7 @@ Règles STRICTES :
    • Un RETOUR = on REVIENT vers le point de départ initial (la destination du retour = le départ de l'aller), en général plusieurs JOURS plus tard → trajet SÉPARÉ. sens="aller" pour le 1er, "retour" pour le retour.
 - aller_retour : true s'il y a un trajet aller ET un trajet retour.
 - segments : TOUS les tronçons, chacun avec vol (MAJUSCULES sans espace, ex. AF718), depart/arrivee (IATA 3 lettres), date du segment. ⚠️ Une MÊME carte d'embarquement / un MÊME billet peut contenir PLUSIEURS tronçons (2 ou 3 : ex. DKR→CMN→CDG) — liste-les TOUS, n'en oublie aucun.
+- ville_depart / ville_arrivee (par segment ET par trajet) : le NOM DE LA VILLE tel qu'il est IMPRIMÉ sur le billet, à côté ou au-dessus du code IATA. Exemples : "Paris", "Casablanca", "Dakar", "Le Cap", "Rome". NE JAMAIS deviner : si la ville n'est PAS écrite en clair sur le billet (seul le code IATA apparaît), laisse "". Utile pour l'affichage client (préféré au code aéroport nu). Ne mets JAMAIS le nom d'aéroport (« Charles de Gaulle », « Mohammed V ») — seulement la VILLE.
 - heure : heure de DÉPART du tronçon au format HH:MM sur 24h, si elle est imprimée (aide à remettre les vols dans l'ordre). Sinon "". Ne devine jamais.
 - operateur : UNIQUEMENT si le billet indique EXPLICITEMENT que ce segment est « opéré par / operated by / vol opéré par / realizado por / durchgeführt von » une compagnie DIFFÉRENTE de celle du numéro de vol (cas CODE-SHARE). Renvoie alors le CODE IATA 2 lettres de la compagnie qui OPÈRE RÉELLEMENT ce vol (ex. « AF703 — operated by Kenya Airways » → "KQ" ; « KL567 operated by Kenya Airways » → "KQ"). Si la mention « opéré par » nomme la MÊME compagnie que le numéro de vol, ou s'il n'y a AUCUNE mention « opéré par », laisse "" (le transporteur est alors celui du numéro de vol). Ne DEVINE jamais un opérateur.
 - date : "JJ/MM/AAAA" si l'année est imprimée, sinon "JJ/MM". NE JAMAIS deviner ni inventer l'année.
@@ -80,22 +81,35 @@ function paxName(x) {
   return [prenom, nom].filter(Boolean).join(' ').toUpperCase().replace(/\s+/g, ' ').trim();
 }
 
+// Nettoyage doux d'un nom de ville tel qu'imprimé sur le billet (garde la casse, coupe les espaces).
+function cleanCity(x) { return String(x || '').trim().replace(/\s+/g, ' '); }
 // Un trajet = UNE direction (aller OU retour), avec ses segments chaînés.
 function tripFromSegments(segs, fb) {
   fb = fb || {};
   segs = chainSegments(segs); // remet les tronçons dans l'ordre (cartes envoyées à l'envers, multi-routes sur 1 billet)
   const depart = (segs[0] && segs[0].depart) || iata(fb.depart) || '';
   const arrivee = (segs.length ? segs[segs.length - 1].arrivee : '') || iata(fb.arrivee) || '';
+  const ville_depart = (segs[0] && segs[0].ville_depart) || cleanCity(fb.ville_depart) || '';
+  const ville_arrivee = (segs.length ? segs[segs.length - 1].ville_arrivee : '') || cleanCity(fb.ville_arrivee) || '';
+  // Helper : préférer la ville imprimée sur le billet, sinon le code IATA nu (mappé côté serveur par IATA_CITY).
+  const label = (seg, which) => (seg[`ville_${which}`] || seg[which] || '').trim();
   let route = '';
-  if (segs.length) { const ap = []; segs.forEach((l, i) => { if (i === 0 && l.depart) ap.push(l.depart); if (l.arrivee) ap.push(l.arrivee); }); route = ap.filter(Boolean).join(' → '); }
-  if (!route && depart && arrivee) route = `${depart} → ${arrivee}`;
+  if (segs.length) {
+    const ap = [];
+    segs.forEach((l, i) => {
+      if (i === 0) { const dep = label(l, 'depart'); if (dep) ap.push(dep); }
+      const arr = label(l, 'arrivee'); if (arr) ap.push(arr);
+    });
+    route = ap.filter(Boolean).join(' → ');
+  }
+  if (!route && depart && arrivee) route = `${ville_depart || depart} → ${ville_arrivee || arrivee}`;
   const vol = segs.length > 1 ? segs.map((s) => s.vol).filter(Boolean).join(' + ') : ((segs[0] && segs[0].vol) || up(fb.vol) || '');
   const date = (segs[0] && segs[0].date) || dateNorm(fb.date) || '';
   // Transporteur EFFECTIF du trajet (code-share) : on prend l'opérateur du DERNIER segment (celui qui ARRIVE,
   // = le vol entrant en Europe sur un retour), sinon le premier opérateur explicite rencontré. "" si aucun.
   const operePar = (segs.length && segs[segs.length - 1].operateur)
     || (segs.find((x) => x.operateur) || {}).operateur || '';
-  return { sens: String(fb.sens || '').toLowerCase(), date, depart, arrivee, route, vol, operePar, escale: segs.length > 1, segments: segs };
+  return { sens: String(fb.sens || '').toLowerCase(), date, depart, arrivee, ville_depart, ville_arrivee, route, vol, operePar, escale: segs.length > 1, segments: segs };
 }
 // Écart en JOURS entre deux dates "JJ/MM/AAAA" (0 si l'une n'a pas d'année → on ne coupe pas au doute).
 function _ymd(d) { const m = String(d || '').match(/^(\d{2})\/(\d{2})\/(\d{4})$/); return m ? new Date(+m[3], +m[2] - 1, +m[1]) : null; }
@@ -116,13 +130,22 @@ function groupFlatSegments(segs) {
 
 function normalize(raw) {
   raw = raw || {};
-  const normSeg = (s) => ({ vol: up(s.vol), depart: iata(s.depart), arrivee: iata(s.arrivee), date: dateNorm(s.date), heure: hhmm(s.heure), operateur: opCode(s.operateur) });
+  const normSeg = (s) => ({
+    vol: up(s.vol),
+    depart: iata(s.depart),
+    arrivee: iata(s.arrivee),
+    ville_depart: cleanCity(s.ville_depart),
+    ville_arrivee: cleanCity(s.ville_arrivee),
+    date: dateNorm(s.date),
+    heure: hhmm(s.heure),
+    operateur: opCode(s.operateur),
+  });
   let trajets = [];
   if (Array.isArray(raw.trajets) && raw.trajets.length) {
     trajets = raw.trajets.map((t) => {
       let segs = (Array.isArray(t.segments) ? t.segments : []).map(normSeg).filter((x) => x.vol || x.depart || x.arrivee);
-      if (!segs.length && (t.vol || t.depart || t.arrivee)) segs = [normSeg({ vol: t.vol, depart: t.depart, arrivee: t.arrivee, date: t.date })];
-      return tripFromSegments(segs, { sens: t.sens, depart: t.depart, arrivee: t.arrivee, date: t.date, vol: t.vol });
+      if (!segs.length && (t.vol || t.depart || t.arrivee)) segs = [normSeg({ vol: t.vol, depart: t.depart, arrivee: t.arrivee, ville_depart: t.ville_depart, ville_arrivee: t.ville_arrivee, date: t.date })];
+      return tripFromSegments(segs, { sens: t.sens, depart: t.depart, arrivee: t.arrivee, ville_depart: t.ville_depart, ville_arrivee: t.ville_arrivee, date: t.date, vol: t.vol });
     }).filter((t) => t.depart || t.arrivee || t.vol);
   }
   if (!trajets.length) {
