@@ -1198,13 +1198,8 @@ async function askSens(phone, s, cfg) {
   return sendButtons(phone, { body: L(s, `📑 Your ticket has an *outbound* and a *return*.\nWhich flight had the problem (delay / cancellation)?\n\n🛫 *Outbound* — ${humanizeRoute(a.route) || '—'}${a.date ? ` · ${a.date}` : ''}\n🛬 *Return* — ${humanizeRoute(r.route) || '—'}${r.date ? ` · ${r.date}` : ''}`, `📑 Votre billet contient un *aller* et un *retour*.\nQuel vol a connu le problème (retard / annulation) ?\n\n🛫 *Aller* — ${humanizeRoute(a.route) || '—'}${a.date ? ` · ${a.date}` : ''}\n🛬 *Retour* — ${humanizeRoute(r.route) || '—'}${r.date ? ` · ${r.date}` : ''}`), buttons: [{ id: 'sens_aller', text: L(s, '🛫 Outbound', '🛫 L\'aller') }, { id: 'sens_retour', text: L(s, '🛬 Return', '🛬 Le retour') }] }, cfg);
 }
 // OCR passeport / CNI : lit nom + prénom + date de naissance (la magie aussi sur le passeport).
-async function ocrPassport(mediaUrl, cfg) {
-  const key = process.env.OPENAI_API_KEY; if (!key || !mediaUrl) return null;
-  try {
-    const media = await fetchAsImageB64(mediaUrl, cfg);
-    if (!media) return null;
-    const b64 = media.b64;
-    const prompt = `Tu lis une pièce d'identité (PASSEPORT, carte nationale d'identité, titre de séjour, carte de résident…) — utilise aussi la zone MRZ en bas si présente. Réponds UNIQUEMENT en JSON :
+// Prompt commun aux 2 moteurs (Claude + GPT-4o) : pièce d'identité (passeport/CNI/titre de séjour).
+const _OCR_PASSPORT_PROMPT = `Tu lis une pièce d'identité (PASSEPORT, carte nationale d'identité, titre de séjour, carte de résident…) — utilise aussi la zone MRZ en bas si présente. Réponds UNIQUEMENT en JSON :
 {"nom":"","prenom":"","date_naissance":"","date_expiration":"","adresse":"","sexe":""}
 Règles :
 - nom : nom de famille en MAJUSCULES.
@@ -1214,20 +1209,71 @@ Règles :
 - adresse : champ "Adresse", "Domicile" ou "Address" visible sur la page (hors MRZ). Recopie tel quel sur une seule ligne. Si absent, "".
 - sexe : "M" ou "F" (champ "Sexe"/"Sex", ou la lettre de la MRZ : M, F ou X). Si X ou inconnu, "".
 - Champ inconnu = "". Ne JAMAIS inventer.`;
+
+function _normalizePassportOcr(p) {
+  if (!p) return null;
+  const name = [p.prenom, p.nom].filter(Boolean).join(' ').toUpperCase().trim();
+  const dob = (p.date_naissance || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/) ? p.date_naissance : '';
+  const expiry = (p.date_expiration || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/) ? p.date_expiration : '';
+  const adresse = (p.adresse || '').trim();
+  const sx = (p.sexe || '').trim().toUpperCase().charAt(0);
+  const sexe = (sx === 'M' || sx === 'F') ? sx : '';
+  return { name, dob, expiry, adresse, sexe };
+}
+
+async function _ocrPassportClaude(media) {
+  const key = process.env.ANTHROPIC_API_KEY; if (!key) return null;
+  try {
+    const model = process.env.PASSPORT_CLAUDE_MODEL || 'claude-sonnet-4-5-20250929';
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST', signal: AbortSignal.timeout(45000),
+      headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+      body: JSON.stringify({
+        model, max_tokens: 400, temperature: 0,
+        messages: [{ role: 'user', content: [
+          { type: 'image', source: { type: 'base64', media_type: media.mime || 'image/jpeg', data: media.b64 } },
+          { type: 'text', text: _OCR_PASSPORT_PROMPT },
+        ] }],
+      }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const txt = (data.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('\n');
+    const m = txt.match(/\{[\s\S]*\}/);
+    if (!m) return null;
+    return _normalizePassportOcr(JSON.parse(m[0]));
+  } catch (_) { return null; }
+}
+
+async function _ocrPassportGpt(media) {
+  const key = process.env.OPENAI_API_KEY; if (!key) return null;
+  try {
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST', signal: AbortSignal.timeout(45000), headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 200, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: `data:${media.mime};base64,${b64}` } }] }] }),
+      method: 'POST', signal: AbortSignal.timeout(45000),
+      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 200, temperature: 0, response_format: { type: 'json_object' },
+        messages: [{ role: 'user', content: [
+          { type: 'text', text: _OCR_PASSPORT_PROMPT },
+          { type: 'image_url', image_url: { url: `data:${media.mime};base64,${media.b64}` } },
+        ] }],
+      }),
     });
     const data = await res.json(); if (!data.choices) return null;
-    const p = JSON.parse(data.choices[0].message.content);
-    const name = [p.prenom, p.nom].filter(Boolean).join(' ').toUpperCase().trim();
-    const dob = (p.date_naissance || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/) ? p.date_naissance : '';
-    const expiry = (p.date_expiration || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/) ? p.date_expiration : '';
-    const adresse = (p.adresse || '').trim();
-    const sx = (p.sexe || '').trim().toUpperCase().charAt(0);
-    const sexe = (sx === 'M' || sx === 'F') ? sx : '';
-    return { name, dob, expiry, adresse, sexe };
-  } catch (e) { return null; }
+    return _normalizePassportOcr(JSON.parse(data.choices[0].message.content));
+  } catch (_) { return null; }
+}
+
+// OCR pièce d'identité : Claude Sonnet en primary (meilleur sur MRZ et passeports non-EU),
+// GPT-4o en fallback si Claude echoue OU renvoie vide (nom+dob absents).
+async function ocrPassport(mediaUrl, cfg) {
+  if (!mediaUrl) return null;
+  const media = await fetchAsImageB64(mediaUrl, cfg);
+  if (!media) return null;
+  const claude = await _ocrPassportClaude(media);
+  if (claude && (claude.name || claude.dob)) return claude;
+  const gpt = await _ocrPassportGpt(media);
+  if (gpt && (gpt.name || gpt.dob)) return gpt;
+  return claude || gpt || null; // dernier recours : renvoie ce qu'on a (peut-etre partiel)
 }
 
 // ─── Classifieur : une photo envoyée = pièce d'identité, preuve de voyage, ou autre ──
