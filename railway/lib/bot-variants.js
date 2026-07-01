@@ -115,7 +115,7 @@ const VARIANTS = {
     `On a regardé votre vol. Il pourrait ouvrir droit à jusqu'à 600 € par passager. Rien à avancer, jamais. On ne touche quelque chose que si on gagne.`,
     `Votre dossier mérite vraiment qu'on creuse. ✅ La réglementation européenne prévoit jusqu'à 600 € par passager dans votre cas. Notre commission ? 25 % seulement si on obtient gain de cause — pas avant.`,
     `Ce que la compagnie pourrait vous devoir, ça peut atteindre 600 € par passager si le dossier aboutit. On vérifie, on réclame, et si ça ne marche pas — vous ne nous devez rien.`,
-    `Jusqu'à 600 € : c'est ce que la loi peut prévoir quand une compagnie vous fait perdre du temps — retard, annulation, surbooking. Selon votre vol, vous pourriez y avoir droit. On s'occupe de tout pour vous, sans avance : commission uniquement en cas de succès, sinon 0 €.`,
+    `Jusqu'à 600 € par passager — c'est ce que la loi peut vous devoir. On s'occupe de tout, sans avance. 0 € si on ne gagne pas.`,
     `Ce retard n'aurait vraiment pas dû arriver. La loi prévoit jusqu'à 600 € dans votre situation, et on avance tout le travail. Rien si le dossier n'aboutit pas. Et si vous étiez en famille, chaque passager compte — les montants s'additionnent.`,
     `Votre vol pourrait vous donner droit à jusqu'à 600 € par passager. On prend tout en charge — et si on ne gagne pas, vous ne payez rien. On tente ? 💪`,
   ],
