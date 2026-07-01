@@ -937,7 +937,7 @@ function buildMandatUrl(s, phone) {
     name: cleanName(mandant.name || (s.names && s.names[0]) || s.nom || ''),
     dob: toISODate(mandant.dob || ''),
     address: mandant.adresse || '',
-    vol: s.vol || '', date: s.date || '', pnr: s.pnr || '', compagnie: s.compagnie || '',
+    vol: s.vol || '', date: s.date || '', pnr: s.pnr || '', billet: s.billet || '', compagnie: s.compagnie || '',
     route: s.route || '', depAirport: _routeParts[0] || '', arrAirport: _routeParts[_routeParts.length - 1] || '', motif: s.incident_libelle || '', incident: _incidentCode, pax: s.pax || 1, indemnite: perPaxOf(s),
     // Vol avec correspondance : on transporte les segments structurés pour que la page mandat
     // bascule en mode « correspondance » et pré-remplisse chaque vol (sinon « Vol concerné : — »).
@@ -1108,6 +1108,7 @@ function setEticketFields(s, e) {
   if (e.operePar) s.operePar = e.operePar; // transporteur effectif lu sur le billet (code-share)
   if (e.date) s.date = e.date;
   if (e.pnr) s.pnr = e.pnr;
+  if (e.billet) s.billet = e.billet; // n° billet electronique (13 chiffres, ex. 057-1234567890)
   if (e.route) s.route = humanizeRoute(e.route);
   if (e.escale || (e.segments && e.segments.length > 1)) s.type_vol = 'escale'; // OCR fait foi : 2+ vols lus = correspondance → écrase un « vol sec » déclaré par erreur (l'aller-retour est recadré ensuite par applyTrajet)
   if (e.segments && e.segments.length > 1) s.legs = e.segments.map((x) => ({ vol: x.vol, dep: x.depart, arr: x.arrivee, date: x.date || '', operateur: x.operateur || '' }));

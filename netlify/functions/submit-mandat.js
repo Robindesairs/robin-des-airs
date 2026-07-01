@@ -71,6 +71,10 @@ function airtableCfg() {
     fVol: (process.env.AIRTABLE_F_NUMERO_VOL || 'fldcVnS4B86eZntjr').trim(),
     fDateVol: (process.env.AIRTABLE_F_DATE_VOL || 'flduDNEC3osPnTMAv').trim(),
     fPnr: (process.env.AIRTABLE_F_PNR || 'fld7scWE20q3DRPUa').trim(),
+    // Champ optionnel : n° billet electronique (13 chiffres, ex 057-1234567890). Facultatif — le mapping
+    // n'est fait que si l'env var AIRTABLE_F_NUMERO_BILLET est fournie (permet de creer le champ dans
+    // Airtable puis d'activer le mapping en une seule variable, sans redeploiement de code).
+    fBillet: (process.env.AIRTABLE_F_NUMERO_BILLET || '').trim(),
     fIncident: (process.env.AIRTABLE_F_TYPE_INCIDENT || 'fldci5VnHb0HpOoKL').trim(),
     fItineraire: (process.env.AIRTABLE_F_ITINERAIRE || 'fldtCISegQZ58Yvrl').trim(),
     fMandatPdf: (process.env.AIRTABLE_F_MANDAT_PDF || 'fldynALd43y4YYcxz').trim(), // champ pièce jointe « Mandat de Représentation signé »
@@ -151,6 +155,7 @@ async function patchAirtableSigned(record) {
   const fd = flightDateForAirtable(record.flightDate);
   if (cfg.fDateVol && fd) common[cfg.fDateVol] = fd;
   if (cfg.fPnr && record.pnr) common[cfg.fPnr] = String(record.pnr).trim().toUpperCase();
+  if (cfg.fBillet && record.billet) common[cfg.fBillet] = String(record.billet).trim();
   if (cfg.fIncident && incidentLabel) common[cfg.fIncident] = incidentLabel;
   if (cfg.fItineraire && itin) common[cfg.fItineraire] = itin;
   if (cfg.fWa && phone) common[cfg.fWa] = phone;

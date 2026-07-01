@@ -393,6 +393,10 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       <input type="text" id="pnr" placeholder="ABC123" class="ro">
     </div>
     <div>
+      <label>N° billet (optionnel)</label>
+      <input type="text" id="billet" placeholder="057-1234567890" class="ro">
+    </div>
+    <div>
       <label>Incident <span class="req">*</span></label>
       <select id="inc">
         <option value=""> Sélectionnez , </option>
@@ -972,6 +976,7 @@ const DATE  = P.get('date')      || '';
 const CIE   = P.get('compagnie') || '';
 const INC   = P.get('incident')  || '';
 const PNR   = P.get('pnr')       || '';
+const BILLET = P.get('billet')   || ''; // N° billet électronique (13 chiffres) — optionnel
 const NOMS  = P.get('noms')      ? decodeURIComponent(P.get('noms')).split(',') : [];
 const SRC   = P.get('source')    || 'web';
 const CID   = P.get('cid')       || '';   // ID conversation WhatsApp (liant identité)
@@ -1079,6 +1084,7 @@ window.addEventListener('DOMContentLoaded', () => {
   if (VOL)  document.getElementById('fnum').value = VOL;
   if (CIE)  document.getElementById('cie').value  = CIE;
   if (PNR)  document.getElementById('pnr').value  = PNR;
+  if (BILLET) { const bEl = document.getElementById('billet'); if (bEl) bEl.value = BILLET; }
   if (WA_PREFILL) setWaFull(decodeURIComponent(WA_PREFILL));
   if (DATE) {
     const p = DATE.split('/');
@@ -1152,6 +1158,7 @@ function applyDossier(d) {
   if (d.address) setIfEmpty('addr', d.address);
   if (d.phone && typeof setWaFull === 'function') { const w = document.getElementById('wa-national'); if (w && !w.value.trim()) setWaFull(String(d.phone)); }
   setIfEmpty('fnum', d.vol); setIfEmpty('cie', d.compagnie); setIfEmpty('pnr', d.pnr);
+  if (d.billet) setIfEmpty('billet', d.billet);
   setIfEmpty('dep', d.depAirport); setIfEmpty('arr', d.arrAirport);
   // Incident → liste déroulante #inc (code delay/cancel/denied)
   { const ie = document.getElementById('inc');
@@ -2055,6 +2062,7 @@ function submitMandat() {
     flightNum: _flightNum,
     flightDate:_flightDate,
     pnr:       document.getElementById('pnr').value.trim(),
+    billet:    (document.getElementById('billet')?.value || '').trim(),
     incident:  document.getElementById('inc').value,
     pax:       paxCount,
     passengerNames: getNames(),
