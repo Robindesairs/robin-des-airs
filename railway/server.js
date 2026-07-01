@@ -1006,13 +1006,7 @@ async function fetchAsImageB64(mediaUrl, cfg) {
     return { b64: buf.toString('base64'), mime: m ? m[0] : 'image/jpeg', hash };
   } catch (_) { return null; }
 }
-async function ocrBoardingPass(mediaUrl, cfg) {
-  const key = process.env.OPENAI_API_KEY; if (!key || !mediaUrl) return null;
-  try {
-    const media = await fetchAsImageB64(mediaUrl, cfg);
-    if (!media) return null;
-    const b64 = media.b64;
-    const prompt = `Tu lis une CARTE D'EMBARQUEMENT, un E-BILLET ou une ÉTIQUETTE DE BAGAGE d'avion (les trois portent les mêmes infos ; l'étiquette bagage = aussi une PREUVE de voyage). Réponds UNIQUEMENT en JSON :
+const _OCR_BOARDING_PROMPT = `Tu lis une CARTE D'EMBARQUEMENT, un E-BILLET ou une ÉTIQUETTE DE BAGAGE d'avion (les trois portent les mêmes infos ; l'étiquette bagage = aussi une PREUVE de voyage). Réponds UNIQUEMENT en JSON :
 {"vol":"","compagnie":"","date":"","pnr":"","depart":"","arrivee":"","nom":"","operateur":"","segments":[{"vol":"","depart":"","arrivee":"","date":"","heure":"","operateur":""}]}
 Règles STRICTES :
 - vol : numéro de vol en MAJUSCULES sans espace (ex. EJU7273, AF718) — celui du 1er tronçon.
@@ -1024,12 +1018,54 @@ Règles STRICTES :
 - depart / arrivee : codes IATA 3 lettres.
 - nom : nom du passager tel qu'imprimé (souvent "NOM/PRENOM" ou "NOM PRENOM", en MAJUSCULES). Si illisible ou absent, "".
 - Champ inconnu = "". Ne JAMAIS inventer.`;
+
+async function _ocrBoardingClaude(media) {
+  const key = process.env.ANTHROPIC_API_KEY; if (!key) return null;
+  try {
+    const model = process.env.BOARDING_CLAUDE_MODEL || 'claude-sonnet-4-5-20250929';
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST', signal: AbortSignal.timeout(45000),
+      headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+      body: JSON.stringify({ model, max_tokens: 900, temperature: 0,
+        messages: [{ role: 'user', content: [
+          { type: 'image', source: { type: 'base64', media_type: media.mime || 'image/jpeg', data: media.b64 } },
+          { type: 'text', text: _OCR_BOARDING_PROMPT },
+        ] }] }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    const txt = (data.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('\n');
+    const m = txt.match(/\{[\s\S]*\}/);
+    return m ? JSON.parse(m[0]) : null;
+  } catch (_) { return null; }
+}
+
+async function _ocrBoardingGpt(media) {
+  const key = process.env.OPENAI_API_KEY; if (!key) return null;
+  try {
     const res = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST', signal: AbortSignal.timeout(45000), headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 700, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: `data:${media.mime};base64,${b64}` } }] }] }),
+      method: 'POST', signal: AbortSignal.timeout(45000),
+      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 700, temperature: 0, response_format: { type: 'json_object' },
+        messages: [{ role: 'user', content: [
+          { type: 'text', text: _OCR_BOARDING_PROMPT },
+          { type: 'image_url', image_url: { url: `data:${media.mime};base64,${media.b64}` } },
+        ] }] }),
     });
     const data = await res.json(); if (!data.choices) return null;
-    const p = JSON.parse(data.choices[0].message.content);
+    return JSON.parse(data.choices[0].message.content);
+  } catch (_) { return null; }
+}
+
+// OCR carte d'embarquement / e-billet / etiquette bagage : Claude primary + GPT-4o fallback.
+async function ocrBoardingPass(mediaUrl, cfg) {
+  if (!mediaUrl) return null;
+  const media = await fetchAsImageB64(mediaUrl, cfg);
+  if (!media) return null;
+  let p = await _ocrBoardingClaude(media);
+  if (!p || !(p.vol || p.pnr || (p.segments && p.segments.length))) p = await _ocrBoardingGpt(media);
+  if (!p) return null;
+  try {
     // Nom lu sur la carte → pré-remplit le passager 1 (le PASSEPORT reste la pièce qui fait foi, demandé ensuite).
     let nomRaw = (p.nom || '').toUpperCase().trim();
     nomRaw = nomRaw.replace(/\s+(MRS|MR|MS|MME|MLLE|MSTR|CHD|INF)\.?$/, '');          // titre séparé : « DIALLO/AMINATA MRS »
@@ -1045,7 +1081,7 @@ Règles STRICTES :
     if (!norm.compagnie) norm.compagnie = deduceAirline(norm.vol) || '';
     norm.passengers = (nom && nom.length >= 3) ? [{ name: nom }] : [];
     return norm;
-  } catch (e) { return null; }
+  } catch (_) { return null; }
 }
 // ── E-billet / confirmation de réservation : extraction COMPLÈTE (vol+route+date+PNR+NOMS) ──
 // PDF → Claude (bloc document) ; image(s) → gpt-4o. Accepte PLUSIEURS pages (e-billet photographié)
