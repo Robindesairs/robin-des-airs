@@ -106,18 +106,10 @@ const VARIANTS = {
     `C'est normal de ne plus savoir exactement. 🙂 Ce qui tranchera, c'est l'*avis d'annulation* que la compagnie vous a envoyé — on le récupérera avec vos pièces. On poursuit pour l'instant.`,
   ],
 
-  // Message affiché quand le vol semble éligible et qu'on présente l'estimation
+  // Message affiché quand le vol semble éligible et qu'on présente l'estimation.
+  // Une seule variante : formulation courte + directe (décision fondateur 01/07/2026).
   ESTIMATION_QUALIFICATION: [
-    `Ce que vous avez vécu, c'est vraiment pas normal. Et la loi peut parfois le chiffrer — jusqu'à 600 € selon votre situation. On prend le dossier en main à votre place. Rien à payer si on ne gagne pas.`,
-    `Vous avez encaissé cette galère — autant vérifier si vous pouvez récupérer quelque chose. Jusqu'à 600 € dans certains cas, c'est ce que la loi européenne prévoit. Et si ça n'aboutit pas, vous ne nous devez rien. C'est notre engagement.`,
-    `Votre vol pourrait vous valoir jusqu'à 600 € — c'est pas du marketing, c'est le règlement européen CE 261. 💡 Si le dossier échoue, vous ne nous devez rien du tout.`,
-    `Votre situation, elle correspond bien à ce que la loi protège. Ça peut aller jusqu'à 600 € par personne. On s'occupe de tout de notre côté — vous n'avancez rien, vous ne risquez rien. 🙌`,
-    `On a regardé votre vol. Il pourrait ouvrir droit à jusqu'à 600 € par passager. Rien à avancer, jamais. On ne touche quelque chose que si on gagne.`,
-    `Votre dossier mérite vraiment qu'on creuse. ✅ La réglementation européenne prévoit jusqu'à 600 € par passager dans votre cas. Notre commission ? 25 % seulement si on obtient gain de cause — pas avant.`,
-    `Ce que la compagnie pourrait vous devoir, ça peut atteindre 600 € par passager si le dossier aboutit. On vérifie, on réclame, et si ça ne marche pas — vous ne nous devez rien.`,
     `Jusqu'à 600 € par passager — c'est ce que vous pouvez récupérer. On s'occupe de tout, sans avance. 0 € si on ne gagne pas.`,
-    `Ce retard n'aurait vraiment pas dû arriver. La loi prévoit jusqu'à 600 € dans votre situation, et on avance tout le travail. Rien si le dossier n'aboutit pas. Et si vous étiez en famille, chaque passager compte — les montants s'additionnent.`,
-    `Votre vol pourrait vous donner droit à jusqu'à 600 € par passager. On prend tout en charge — et si on ne gagne pas, vous ne payez rien. On tente ? 💪`,
   ],
 
   // Confirmation après scan réussi du billet
