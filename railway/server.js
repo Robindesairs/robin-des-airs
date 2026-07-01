@@ -1793,9 +1793,11 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   }
 
   // GATE 1/2 : CGU uniquement (CJUE Planet49 C-673/17 : consentements distincts pour finalités distinctes).
+  // Regex tolérante : accepte "j'accepte", "j'accepte les CGU", "d'accord", "yes I accept", etc.
   if (s.step === 'consent_cgu') {
-    const accept = id === 'cgu_accept' || /^(j[' ]?accept|i accept|accept|yes|oui|ok|d['’ ]?accord|agree)$/i.test(lower.trim());
-    const refuse = id === 'cgu_refuse' || /^(refus|decline|non|no|refuse)$/i.test(lower.trim());
+    const t = lower.trim();
+    const accept = id === 'cgu_accept' || /\b(j['’ ]?accept|accepte?r?|accept|yes|oui|ok|d['’ ]?accord|agree|continuer|continue)\b/i.test(t);
+    const refuse = id === 'cgu_refuse' || /\b(refus(er|e)?|decline|non|no)\b/i.test(t);
     if (accept) {
       s.cgu_accepted = true;
       s.cgu_accepted_at = Date.now();
@@ -1813,9 +1815,11 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   }
 
   // GATE 2/2 : RGPD séparé (CJUE Planet49 : consentement spécifique au traitement des données).
+  // Regex tolérante : idem CGU pour cohérence UX.
   if (s.step === 'consent_rgpd') {
-    const accept = id === 'rgpd_accept' || /^(j[' ]?accept|i accept|accept|yes|oui|ok|d['’ ]?accord|agree)$/i.test(lower.trim());
-    const refuse = id === 'rgpd_refuse' || /^(refus|decline|non|no|refuse)$/i.test(lower.trim());
+    const t = lower.trim();
+    const accept = id === 'rgpd_accept' || /\b(j['’ ]?accept|accepte?r?|accept|yes|oui|ok|d['’ ]?accord|agree|acc[eè]der|access)\b/i.test(t);
+    const refuse = id === 'rgpd_refuse' || /\b(refus(er|e)?|decline|non|no)\b/i.test(t);
     if (accept) {
       s.rgpd_accepted = true;
       s.rgpd_accepted_at = Date.now();
@@ -2643,15 +2647,16 @@ async function sendLangue(phone, s, cfg) {
 }
 // GATE 1/2 — Consentement aux CGU (acceptation contractuelle uniquement).
 // CJUE Planet49 C-673/17 : consentements distincts pour finalités distinctes.
+// Texte simplifié : 2 liens visibles (CGV + politique), 1 clic pour accepter.
 async function sendConsentCgu(phone, s, cfg) {
   s.step = 'consent_cgu'; await setState(phone, s);
   return sendButtons(phone, {
     body: L(s,
-      `${bar('consent_cgu')}\n📋 *Step 1/2 — Terms of use*\n\nPlease accept our *Terms (CGU)* to use the service.\n\n👉 Tap the link to read: https://robindesairs.eu/cgv.html`,
-      `${bar('consent_cgu')}\n📋 *Étape 1/2 , Conditions générales*\n\nMerci d'accepter nos *Conditions Générales (CGU)* pour utiliser le service.\n\n👉 Cliquez sur le lien pour les lire : https://robindesairs.eu/cgv.html`),
+      `${bar('consent_cgu')}\n📋 *Step 1/2 — Terms of use*\n\nBefore using Robin des Airs, please read our *terms* :\n👉 https://robindesairs.eu/cgv.html\n\nTap *Accept & continue* below to accept our terms.`,
+      `${bar('consent_cgu')}\n📋 *Étape 1/2 — Conditions du service*\n\nAvant d'utiliser Robin des Airs, merci de consulter nos *conditions* :\n👉 https://robindesairs.eu/cgv.html\n\nCliquez sur *Accepter et continuer* pour accepter nos conditions.`),
     buttons: [
-      { id: 'cgu_accept', text: L(s, "✅ I accept CGU", "✅ J'accepte les CGU") },
-      { id: 'cgu_refuse', text: L(s, "❌ I refuse", '❌ Je refuse') },
+      { id: 'cgu_accept', text: L(s, "✅ Accept & continue", "✅ Accepter et continuer") },
+      { id: 'cgu_refuse', text: L(s, "❌ Refuse", '❌ Refuser') },
     ],
   }, cfg);
 }
@@ -2662,11 +2667,11 @@ async function sendConsentRgpd(phone, s, cfg) {
   s.step = 'consent_rgpd'; await setState(phone, s);
   return sendButtons(phone, {
     body: L(s,
-      `${bar('consent_rgpd')}\n🔒 *Step 2/2 — Privacy Policy (GDPR)*\n\nPlease accept our *Privacy Policy* — your data is used *only* to handle your case, never sold.\n\n👉 Tap the link to read: https://robindesairs.eu/politique-confidentialite.html\n\nYou can withdraw your consent anytime by typing *stop*.`,
-      `${bar('consent_rgpd')}\n🔒 *Étape 2/2 , Politique de confidentialité (RGPD)*\n\nMerci d'accepter notre *politique de confidentialité* , vos données servent *uniquement* à gérer votre dossier, jamais revendues.\n\n👉 Cliquez sur le lien pour la lire : https://robindesairs.eu/politique-confidentialite.html\n\nVous pouvez retirer votre consentement à tout moment en tapant *stop*.`),
+      `${bar('consent_rgpd')}\n🔒 *Step 2/2 — Privacy Policy*\n\nYour data is used *only* to handle your case, never sold. Please read our *privacy policy* :\n👉 https://robindesairs.eu/politique-confidentialite.html\n\nTap *Access the service* below to accept and start.`,
+      `${bar('consent_rgpd')}\n🔒 *Étape 2/2 — Politique de confidentialité*\n\nVos données servent *uniquement* à gérer votre dossier, jamais revendues. Merci de consulter notre *politique de confidentialité* :\n👉 https://robindesairs.eu/politique-confidentialite.html\n\nCliquez sur *Accéder au service* pour accepter et démarrer.`),
     buttons: [
-      { id: 'rgpd_accept', text: L(s, "✅ I accept GDPR", "✅ J'accepte le RGPD") },
-      { id: 'rgpd_refuse', text: L(s, "❌ I refuse", '❌ Je refuse') },
+      { id: 'rgpd_accept', text: L(s, "✅ Access the service", "✅ Accéder au service") },
+      { id: 'rgpd_refuse', text: L(s, "❌ Refuse", '❌ Refuser') },
     ],
   }, cfg);
 }
