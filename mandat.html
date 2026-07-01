@@ -1647,7 +1647,15 @@ function buildCoPassChecks() {
   const sec  = document.getElementById('coPassSection');
   const cont = document.getElementById('coPassChecks');
   if (!sec || !cont) return;
-  const coPax = data.slice(1);               // passagers 2..N
+  // Mode Yousign : chaque adulte signe electroniquement via son propre lien
+  // (multi-signer meme telephone ou email separe). Le canvas manuscrit des
+  // co-passagers est donc masque en permanence — Yousign gere l'individualisation.
+  sec.style.display = 'none';
+  cont.innerHTML = '';
+  return;
+  // -- Code legacy conserve pour reference : block canvas si Yousign coupe --
+  // eslint-disable-next-line no-unreachable
+  const coPax = data.slice(1);
   if ((paxCount || 1) <= 1 || coPax.length === 0) {
     sec.style.display = 'none';
     cont.innerHTML = '';
@@ -1712,17 +1720,9 @@ function buildCoPassChecks() {
   });
 }
 function allCoPassChecked() {
-  const data = getPassengersData();
-  if ((paxCount || 1) <= 1) return true;
-  const coPax = data.slice(1);
-  if (coPax.length === 0) return true;
-  for (let k = 0; k < coPax.length; k++) {
-    const idx = k + 1;
-    const canvas = document.querySelector('.co-sig-canvas[data-idx="' + idx + '"]');
-    const signed = (canvas && canvasHasInk(canvas)) || !!coSigData[idx];
-    if (!signed) return false;
-    if (coPax[k].minor && !((coRepData[idx] || '').trim())) return false;
-  }
+  // Mode Yousign : la signature multi-passager se fait via des liens individuels
+  // Yousign (multi-signer). Le canvas manuscrit des co-pax n'est plus utilise —
+  // on renvoie true pour ne pas bloquer la validation du form.
   return true;
 }
 // ── SIGNATURE ────────────────────────────────────────────────
