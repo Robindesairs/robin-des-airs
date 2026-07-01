@@ -1320,17 +1320,7 @@ function warnOpenAIClassifyOff() {
   console.error('🔴 OPENAI_API_KEY absente → lecture/classification automatique des documents DÉSACTIVÉE (pièces acceptées mais non lues).');
   try { if (typeof notifyOwnerWhatsApp === 'function') notifyOwnerWhatsApp('', '🔴 Bot: OPENAI_API_KEY absente → lecture auto des pièces (passeport / e-billet / carte / reçus) DÉSACTIVÉE. Les documents sont reçus mais NON classés/lus. Configure la clé sur Railway.').catch(() => {}); } catch (_) {}
 }
-async function classifyDoc(mediaUrl, cfg) {
-  const FALLBACK = { kind: 'autre', nom: '', voyageType: '', lisible: true, probleme: '' };
-  const key = process.env.OPENAI_API_KEY;
-  if (!mediaUrl) return FALLBACK;
-  if (!key) return { ...FALLBACK, _unavailable: true, _reason: 'no_key' }; // pas de clé → on ne fait PAS semblant d'avoir classé
-  try {
-    const media = await fetchAsImageB64(mediaUrl, cfg);
-    if (!media) return FALLBACK;
-    const hash = media.hash; // anti-doublon (même fichier renvoyé)
-    const b64 = media.b64;
-    const prompt = `Tu classes une photo/capture envoyée par un passager, et tu juges sa QUALITÉ (une pièce illisible peut être refusée par la compagnie). Réponds UNIQUEMENT en JSON :
+const _CLASSIFY_PROMPT = `Tu classes une photo/capture envoyée par un passager, et tu juges sa QUALITÉ (une pièce illisible peut être refusée par la compagnie). Réponds UNIQUEMENT en JSON :
 {"kind":"identite|voyage|frais|autre","nom":"","voyageType":"ebooking|carte|","lisible":true,"probleme":"","montant":null,"devise":"","categorie":""}
 - "identite" : passeport, carte nationale d'identité (CNI), titre de séjour. Mets dans "nom" le PRÉNOM puis le NOM de famille, dans cet ordre (ex : "AMINATA DIALLO"), en MAJUSCULES.
 - "voyage" : preuve de voyage. voyageType="ebooking" si CONFIRMATION DE RÉSERVATION / e-billet / itinéraire (liste souvent PLUSIEURS passagers et/ou PLUSIEURS vols). voyageType="carte" si CARTE D'EMBARQUEMENT (un seul passager / un seul vol).
@@ -1339,17 +1329,60 @@ async function classifyDoc(mediaUrl, cfg) {
 - "lisible" : false si la photo est FLOUE, SOMBRE, COUPÉE, avec REFLET, ou si les informations clés (nom, n° de pièce) ne sont pas lisibles avec certitude. Sinon true.
 - "probleme" : si lisible=false, un mot : "flou" | "sombre" | "coupé" | "reflet" | "illisible".
 Champ inconnu = "". Ne JAMAIS inventer un nom si la photo est illisible.`;
-    const res = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST', signal: AbortSignal.timeout(45000), headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 140, temperature: 0, response_format: { type: 'json_object' }, messages: [{ role: 'user', content: [{ type: 'text', text: prompt }, { type: 'image_url', image_url: { url: `data:${media.mime};base64,${b64}` } }] }] }),
+
+async function _classifyDocClaude(media) {
+  const key = process.env.ANTHROPIC_API_KEY; if (!key) return null;
+  try {
+    const model = process.env.CLASSIFY_CLAUDE_MODEL || 'claude-sonnet-4-5-20250929';
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST', signal: AbortSignal.timeout(45000),
+      headers: { 'x-api-key': key, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+      body: JSON.stringify({ model, max_tokens: 300, temperature: 0,
+        messages: [{ role: 'user', content: [
+          { type: 'image', source: { type: 'base64', media_type: media.mime || 'image/jpeg', data: media.b64 } },
+          { type: 'text', text: _CLASSIFY_PROMPT },
+        ] }] }),
     });
-    const data = await res.json(); if (!data.choices) return FALLBACK;
-    const p = JSON.parse(data.choices[0].message.content);
-    const montant = typeof p.montant === 'number' ? p.montant : (parseFloat(String(p.montant == null ? '' : p.montant).replace(',', '.').replace(/[^\d.]/g, '')) || null);
-    const devise = String(p.devise || '').toUpperCase().replace(/FCFA|CFA/g, 'XOF').replace(/€|EURO/g, 'EUR').replace(/[^A-Z]/g, '').slice(0, 6);
-    const categorie = String(p.categorie || '').toLowerCase().replace(/[^a-z]/g, '').slice(0, 12);
-    return { kind: ['identite', 'voyage', 'frais', 'autre'].includes(p.kind) ? p.kind : 'autre', nom: (p.nom || '').toUpperCase().trim(), voyageType: p.voyageType || '', lisible: p.lisible !== false, probleme: p.probleme || '', montant, devise, categorie, hash };
-  } catch (e) { return { ...FALLBACK, _unavailable: true, _reason: 'api_error' }; } // API en panne/timeout → ne pas classer en silence
+    if (!res.ok) return null;
+    const data = await res.json();
+    const txt = (data.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('\n');
+    const m = txt.match(/\{[\s\S]*\}/);
+    return m ? JSON.parse(m[0]) : null;
+  } catch (_) { return null; }
+}
+
+async function _classifyDocGpt(media) {
+  const key = process.env.OPENAI_API_KEY; if (!key) return null;
+  try {
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST', signal: AbortSignal.timeout(45000),
+      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'gpt-4o', max_tokens: 140, temperature: 0, response_format: { type: 'json_object' },
+        messages: [{ role: 'user', content: [
+          { type: 'text', text: _CLASSIFY_PROMPT },
+          { type: 'image_url', image_url: { url: `data:${media.mime};base64,${media.b64}` } },
+        ] }] }),
+    });
+    const data = await res.json(); if (!data.choices) return null;
+    return JSON.parse(data.choices[0].message.content);
+  } catch (_) { return null; }
+}
+
+// Classifieur type de document (identite / voyage / frais / autre) : Claude primary + GPT-4o fallback.
+async function classifyDoc(mediaUrl, cfg) {
+  const FALLBACK = { kind: 'autre', nom: '', voyageType: '', lisible: true, probleme: '' };
+  if (!mediaUrl) return FALLBACK;
+  if (!process.env.ANTHROPIC_API_KEY && !process.env.OPENAI_API_KEY) return { ...FALLBACK, _unavailable: true, _reason: 'no_key' };
+  const media = await fetchAsImageB64(mediaUrl, cfg);
+  if (!media) return FALLBACK;
+  const hash = media.hash;
+  let p = await _classifyDocClaude(media);
+  if (!p || !p.kind) p = await _classifyDocGpt(media);
+  if (!p) return { ...FALLBACK, _unavailable: true, _reason: 'api_error' };
+  const montant = typeof p.montant === 'number' ? p.montant : (parseFloat(String(p.montant == null ? '' : p.montant).replace(',', '.').replace(/[^\d.]/g, '')) || null);
+  const devise = String(p.devise || '').toUpperCase().replace(/FCFA|CFA/g, 'XOF').replace(/€|EURO/g, 'EUR').replace(/[^A-Z]/g, '').slice(0, 6);
+  const categorie = String(p.categorie || '').toLowerCase().replace(/[^a-z]/g, '').slice(0, 12);
+  return { kind: ['identite', 'voyage', 'frais', 'autre'].includes(p.kind) ? p.kind : 'autre', nom: (p.nom || '').toUpperCase().trim(), voyageType: p.voyageType || '', lisible: p.lisible !== false, probleme: p.probleme || '', montant, devise, categorie, hash };
 }
 
 // ─── État des pièces (déterministe) : quel passager n'a pas sa pièce ? preuve de voyage ? ──
