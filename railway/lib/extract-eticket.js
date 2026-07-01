@@ -34,6 +34,17 @@ Règles STRICTES :
 - operateur : UNIQUEMENT si le billet indique EXPLICITEMENT que ce segment est « opéré par / operated by / vol opéré par / realizado por / durchgeführt von » une compagnie DIFFÉRENTE de celle du numéro de vol (cas CODE-SHARE). Renvoie alors le CODE IATA 2 lettres de la compagnie qui OPÈRE RÉELLEMENT ce vol (ex. « AF703 — operated by Kenya Airways » → "KQ" ; « KL567 operated by Kenya Airways » → "KQ"). Si la mention « opéré par » nomme la MÊME compagnie que le numéro de vol, ou s'il n'y a AUCUNE mention « opéré par », laisse "" (le transporteur est alors celui du numéro de vol). Ne DEVINE jamais un opérateur.
 - date : "JJ/MM/AAAA" si l'année est imprimée, sinon "JJ/MM". NE JAMAIS deviner ni inventer l'année.
 - passagers : TOUS les passagers nommés. nom = nom de famille en MAJUSCULES ; prenom = prénom(s) (souvent "NOM / Prénom"). date_naissance SEULEMENT si imprimée (JJ/MM/AAAA), sinon "".
+- ⚠️ TITRES DE COURTOISIE : SUPPRIME TOUJOURS les titres du nom et du prénom (ils ne font PAS partie de l'identité). Titres à IGNORER (toutes graphies, avec ou sans point, majuscules ou minuscules) :
+   • FR : M / M. / MR / MR. / MONSIEUR / MME / MME. / MADAME / MLLE / MLLE. / MADEMOISELLE / DR / DR. / DOCTEUR / PR / PR. / PROF / PROFESSEUR / ME / MAÎTRE
+   • EN : MR / MR. / MRS / MRS. / MS / MS. / MISS / MASTER / MSTR / SIR / MADAM / DR / DR. / DOCTOR / PROF / PROF.
+   • ES/PT : SR / SR. / SRA / SRA. / SRTA / SEÑOR / SEÑORA / SEÑORITA / SENHOR / SENHORA
+   • DE : HERR / FRAU / DR. / PROF.
+   Exemples :
+   • billet « ASIAMAH MRS COMFORT » → nom="ASIAMAH", prenom="COMFORT" (SANS "MRS")
+   • billet « M. DIALLO Mamadou » → nom="DIALLO", prenom="Mamadou"
+   • billet « Mrs Sarah SMITH » → nom="SMITH", prenom="Sarah"
+   • billet « Dr Aicha BAH » → nom="BAH", prenom="Aicha"
+- ⚠️ DATE PAR SEGMENT : chaque tronçon a sa PROPRE date (ex. Dakar→Casa le 15/06, puis Casa→Paris le 16/06 le lendemain matin — escale de NUIT fréquente sur les retours d'Afrique). Lis la date SPÉCIFIQUE de CHAQUE segment sur le billet — NE COPIE PAS la date du 1er segment sur les suivants. Si la date d'un segment n'est PAS imprimée séparément, laisse "" (mieux que faux).
 - type : le TYPE de passager s'il est indiqué (colonne "Type", ou mention à côté du nom) → renvoie "adulte", "enfant" ou "bebe". Indices : Adulte/Adult/ADT → "adulte" ; Enfant/Child/CHD/CNN → "enfant" ; Bébé/Bebe/Infant/INF/Nourrisson → "bebe". Si rien d'indiqué, "".
 - gratuit : true UNIQUEMENT si le billet indique EXPLICITEMENT que ce passager voyage à titre GRATUIT (tarif 0, « gratuit », « free of charge / FOC », bébé sur les genoux SANS aucun tarif ni taxe). Un bébé/INF avec un tarif OU des taxes, même faibles → false. Dans le doute → false (on réclame).
 - Plusieurs images/pages d'un MÊME billet : FUSIONNE en UN seul résultat ; ne liste chaque passager qu'UNE fois (pas de doublon entre pages).
@@ -73,11 +84,22 @@ function dateNorm(x) {
   if (m) return `${m[1].padStart(2, '0')}/${m[2].padStart(2, '0')}`;
   return '';
 }
+// Filet defensif : supprime les titres de courtoisie meme si l'IA en laisse un traîner
+// (ASIAMAH MRS COMFORT → ASIAMAH COMFORT ; M. DIALLO Mamadou → DIALLO Mamadou).
+// Tolérant sur la casse, les points, les accents, les espaces multiples.
+const _TITLE_RE = /(?:^|\s|\.)(?:M(?:R|ME|LLE|\.)|MR|MR\.|MRS|MRS\.|MS|MS\.|MISS|MADAM|MADAME|MADEMOISELLE|MASTER|MSTR|SIR|SR|SR\.|SRA|SRA\.|SRTA|SEÑOR|SEÑORA|SEÑORITA|SENHOR|SENHORA|HERR|FRAU|MONSIEUR|DR|DR\.|DOCTEUR|DOCTOR|PR|PR\.|PROF|PROF\.|PROFESSEUR|MAÎTRE|MAITRE|ME)(?=\s|\.|$)/gi;
+function stripTitles(x) {
+  return String(x || '')
+    .replace(_TITLE_RE, ' ')
+    .replace(/\s+/g, ' ')
+    .replace(/\s*\.\s*/g, ' ')
+    .trim();
+}
 // {nom, prenom} → "PRENOM NOM" en MAJUSCULES. Gère aussi "NOM / Prénom" collé dans `nom`.
 function paxName(x) {
   if (!x) return '';
-  let nom = String(x.nom || '').trim(), prenom = String(x.prenom || '').trim();
-  if (!prenom && nom.includes('/')) { const [a, b] = nom.split('/'); nom = (a || '').trim(); prenom = (b || '').trim(); }
+  let nom = stripTitles(String(x.nom || '').trim()), prenom = stripTitles(String(x.prenom || '').trim());
+  if (!prenom && nom.includes('/')) { const [a, b] = nom.split('/'); nom = stripTitles((a || '').trim()); prenom = stripTitles((b || '').trim()); }
   return [prenom, nom].filter(Boolean).join(' ').toUpperCase().replace(/\s+/g, ' ').trim();
 }
 
