@@ -2409,7 +2409,19 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       return nextPassport(phone, s, cfg);
     }
     if (id === 'doc_saisir' || lower.includes('saisir') || lower.includes('manuel') || lower.includes('tape') || lower.includes('type')) { s.step = 'doc_name'; await setState(phone, s); return send(phone, L(s, `👤 *Passenger ${s.doc_idx + 1}* — First and last name?\n_(e.g. Aminata Diallo)_\nℹ️ We note the name, but a *photo* of their ID (passport, national ID or residence permit) will still be needed for the claim. 🔒`, `👤 *Passager ${s.doc_idx + 1}* — Prénom et nom ?\n_(ex : Aminata Diallo)_\nℹ️ On note le nom, mais la *photo* de sa pièce (passeport, CNI ou carte de séjour) restera nécessaire pour la réclamation. 🔒`), cfg); }
-    return sendButtons(phone, { body: L(s, `🛂 Send the *photo* of the ID, or:`, `🛂 Envoyez la *photo* de la pièce, ou :`), buttons: [...(((s.passengers[s.doc_idx] && s.passengers[s.doc_idx].name) || (s.names && s.names[s.doc_idx])) ? [] : [{ id: 'doc_saisir', text: L(s, '✍️ Type it in', '✍️ Saisir à la main') }]), { id: 'doc_passer', text: L(s, '⏭️ I\'ll send it later', '⏭️ Je l\'envoie après') }] }, cfg);
+    {
+      const nameKnown = !!((s.passengers[s.doc_idx] && s.passengers[s.doc_idx].name) || (s.names && s.names[s.doc_idx]));
+      const buttons = [
+        ...(nameKnown ? [] : [{ id: 'doc_saisir', text: L(s, '✍️ Type it in', '✍️ Saisir à la main') }]),
+        { id: 'doc_passer', text: L(s, '⏭️ I\'ll send it later', '⏭️ Je l\'envoie après') },
+      ];
+      // Message adapté selon les options : si un seul bouton (nom déjà connu), pas de "ou :" orphelin.
+      const body = nameKnown
+        ? L(s, `🛂 Send a *photo* of the ID (passport, national ID or residence permit). You can also send it later 👇`,
+             `🛂 Envoyez une *photo* de la pièce (passeport, CNI ou carte de séjour). Vous pouvez aussi l'envoyer plus tard 👇`)
+        : L(s, `🛂 Send the *photo* of the ID, or:`, `🛂 Envoyez la *photo* de la pièce, ou :`);
+      return sendButtons(phone, { body, buttons }, cfg);
+    }
   }
   if (s.step === 'doc_pass_confirm') {
     s.passengers = s.passengers || [];
