@@ -2037,7 +2037,11 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
       let d = await extractEticketPages(s.scan_pages, cfg);              // relit TOUTES les pages d'un coup → fusion
       if (!d || !d.vol) { const bp = await ocrBoardingPass(mediaUrl, cfg); if (bp && bp.vol) { d = bp; d._carte = true; } } // repli carte d'embarquement (image)
       if (d && d.multiPNR) { delete s.scan_pages; await setState(phone, s); return sendButtons(phone, { body: L(s, `📑 I saw *several bookings* (different PNRs) on this image. To avoid mixing them up, send them *one by one* (one photo per booking), starting with the flight that had the problem.`, `📑 J'ai vu *plusieurs réservations* (PNR différents) sur cette image. Pour ne pas les mélanger, envoyez-les *une par une* (une photo par réservation), en commençant par le vol qui a eu le problème.`), buttons: [{ id: 'scan_manuel', text: L(s, '✏️ Type it in', '✏️ Saisir à la main') }] }, cfg); }
-      if (d && d.vol) {
+      // Acceptation permissive : on avance dès qu'on a un signal utile (n° vol OU route lue OU PNR OU billet
+      // OU passagers), meme sans le vol. Le client complete/corrige a l'ecran scan_confirm ; c'est bien plus
+      // fluide qu'un rejet global "je n'ai pas reussi a lire" quand l'OCR a lu 3/4 des champs sur un doc clair.
+      const hasUsefulData = d && (d.vol || d.route || d.pnr || d.billet || (d.passengers && d.passengers.length));
+      if (hasUsefulData) {
         // Carte d'embarquement : 1 nom par carte → on FUSIONNE dans la liste (une 2e carte = le passager
         // suivant, jamais d'écrasement du 1er). L'étape documents demandera son passeport EN PREMIER, par son nom.
         if (d._carte && d.passengers && d.passengers.length) {
