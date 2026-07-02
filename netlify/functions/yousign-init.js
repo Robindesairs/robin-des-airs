@@ -246,6 +246,12 @@ exports.handler = async (event) => {
         }
       }
 
+      // Cases 1/2/3 : libellés VOLONTAIREMENT courts et renvoyants ("ci-dessus") — le contrat
+      // imprimé (déclaration + case de consentement) porte déjà le détail complet (taux, CGV,
+      // sur l'honneur...). Ne PAS y remettre les chiffres/texte en entier : ça créerait un doublon
+      // de contenu avec des formulations différentes sur la même page, source de confusion.
+      // Chaque case est liée à signer_id : l'attribution ("qui a coché quoi") est correcte même si
+      // le texte imprimé plus bas utilise une formulation générique ("Chaque signataire").
       // Case 1 — OBLIGATOIRE : lecture acceptation mandat
       await postField({
         type: "checkbox",
@@ -265,7 +271,7 @@ exports.handler = async (event) => {
         y: cb1Y + 1,
         width: 360,
         height: 12,
-        content: "J'accepte le contrat de cession (75% amiable / 55% contentieux) et les CGV",
+        content: "Je confirme accepter ce contrat de cession et les CGV (voir conditions ci-dessus)",
       }, "label lu_accepte");
 
       // Case 2 — OBLIGATOIRE : autorisation reversement compte
@@ -287,7 +293,7 @@ exports.handler = async (event) => {
         y: cb2Y + 1,
         width: 360,
         height: 12,
-        content: "Sur l'honneur : passager du vol indique, perturbation subie ou en cours",
+        content: "Je confirme ma déclaration sur l'honneur (ci-dessus)",
       }, "label declaration honneur");
 
       // Case 3 — OPTIONNELLE : renonciation droit de rétractation 14j
