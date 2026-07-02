@@ -212,8 +212,8 @@ function genererMandatPdf(record) {
       doc.fillColor(TEXT).fontSize(8.5).font('Helvetica').text(t, left + 16, y - 1, { width: contentW - 16 });
       doc.y = Math.max(doc.y, y + 13);
     };
-    consent(true, "Déclaration sur l'honneur : avoir été passager(e) du vol indiqué, à la date mentionnée, et avoir subi le préjudice déclaré.");
-    consent(true, "Lecture et acceptation du contrat de cession de créance pure et simple ; cession de la créance à Robin des Airs, qui l'acquiert en son nom propre (Articles 1 et 5 bis).");
+    consent(true, "Déclaration sur l'honneur : être ou avoir été passager(e) du vol indiqué (réservation confirmée) et subir ou avoir subi la perturbation déclarée ; si le vol est en cours, la cession porte sur la créance à naître (Articles 1 et 7 quater) — engagement d'embarquer et de conserver la carte d'embarquement.");
+    consent(true, "Lecture et acceptation du contrat de cession pure et simple ET des CGV ; cession de la créance à Robin des Airs (Articles 1 et 5 bis), acceptation expresse des deux taux (75 % amiable / 55 % contentieux — Article 4) et de la conduite du dossier par le Cessionnaire (Article 1 bis). Mineur : mandat spécial du parent (Article 9 bis).");
     consent(record.eligibilityAcknowledged !== false, "Compréhension : l'indemnité n'est pas garantie — obligation de moyens, sous réserve d'éligibilité (CE 261/2004) et de paiement effectif par la compagnie.");
     consent(!!record.startNow, "Demande de démarrage immédiat du dossier, sans attendre le délai de rétractation de 14 jours (Art. L.221-25 C. conso.).");
     if ((record.pax || 1) > 1) consent(!!record.coPassAgreement, "Accord de tous les co-passagers (et du représentant légal pour chaque passager mineur).");

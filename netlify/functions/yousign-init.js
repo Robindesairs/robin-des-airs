@@ -265,7 +265,7 @@ exports.handler = async (event) => {
         y: cb1Y + 1,
         width: 360,
         height: 12,
-        content: "J'ai lu et accepte le mandat de cession de creance Robin des Airs",
+        content: "J'accepte le contrat de cession (75% amiable / 55% contentieux) et les CGV",
       }, "label lu_accepte");
 
       // Case 2 — OBLIGATOIRE : autorisation reversement compte
@@ -278,8 +278,8 @@ exports.handler = async (event) => {
         width: 14,
         height: 14,
         optional: false,
-        name: `autorisation_reversement_${i + 1}`,
-      }, "checkbox autorisation");
+        name: `declaration_honneur_${i + 1}`,
+      }, "checkbox declaration honneur");
       await postField({
         type: "text",
         page: sigPage,
@@ -287,8 +287,8 @@ exports.handler = async (event) => {
         y: cb2Y + 1,
         width: 360,
         height: 12,
-        content: "J'autorise Robin des Airs a percevoir et reverser l'indemnite",
-      }, "label autorisation");
+        content: "Sur l'honneur : passager du vol indique, perturbation subie ou en cours",
+      }, "label declaration honneur");
 
       // Case 3 — OPTIONNELLE : renonciation droit de rétractation 14j
       await postField({
@@ -300,8 +300,8 @@ exports.handler = async (event) => {
         width: 14,
         height: 14,
         optional: true,
-        name: `renonciation_retractation_${i + 1}`,
-      }, "checkbox renonciation");
+        name: `demarrage_immediat_${i + 1}`,
+      }, "checkbox demarrage immediat");
       await postField({
         type: "text",
         page: sigPage,
@@ -309,8 +309,8 @@ exports.handler = async (event) => {
         y: cb3Y + 1,
         width: 380,
         height: 12,
-        content: "(Facultatif) Je renonce a mon droit de retractation 14j pour demarrage immediat",
-      }, "label renonciation");
+        content: "(Facultatif) Je demande le demarrage immediat, sans attendre les 14 j (L.221-25)",
+      }, "label demarrage immediat");
 
       // Label "Signature de Prénom Nom"
       await postField({
