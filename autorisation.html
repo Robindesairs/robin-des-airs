@@ -1575,7 +1575,10 @@ function getPassengersData() {
 let flightMode = 'direct';            // 'direct' | 'connecting'
 let flightLegs = [];                  // [{fnum,date,dep,arr}]
 function emptyLeg(){ return { fnum:'', date:'', dep:'', arr:'' }; }
-function frDate(iso){ try{ const [y,m,d]=iso.split('-'); return `${d}/${m}/${y}`; }catch(e){ return iso||''; } }
+// Convertit une date ISO "AAAA-MM-JJ" -> "JJ/MM/AAAA". Si la valeur n'est PAS au format ISO
+// (ex. déjà "JJ/MM/AAAA", comme #fdate qui est un champ texte formaté à la saisie), on la
+// retourne telle quelle plutôt que de produire "undefined/undefined/..." (bug vu en prod).
+function frDate(iso){ const m = String(iso||'').match(/^(\d{4})-(\d{2})-(\d{2})$/); return m ? `${m[3]}/${m[2]}/${m[1]}` : String(iso||''); }
 function toggleFlightMode(){
   flightMode = document.getElementById('flightTypeConnecting')?.checked ? 'connecting' : 'direct';
   const d = document.getElementById('flightDirect');
@@ -1661,9 +1664,11 @@ function updateParties() {
   else {
     // Ligne claire : date · n° de vol · route
     const dfn = (document.getElementById('fnum').value || VOL || '').trim();
-    const ddate = document.getElementById('fdate').value;
+    // #fdate est un champ texte déjà saisi/formaté en JJ/MM/AAAA (autoFmtDate) — PAS un input
+    // ISO natif : pas de conversion frDate() ici (contrairement à leg.date, qui lui est ISO).
+    const ddate = document.getElementById('fdate').value.trim();
     const droute = [document.getElementById('dep').value.trim(), document.getElementById('arr').value.trim()].filter(Boolean).join(' → ');
-    vol = [ddate ? frDate(ddate) : '', dfn, droute].filter(Boolean).join(' · ') || ', ';
+    vol = [ddate, dfn, droute].filter(Boolean).join(' · ') || ', ';
   }
   const nm = (fn||ln) ? (fn+' '+ln).trim()+(pax>1?` + ${pax-1} autre(s)`:'') : ', ';
   document.getElementById('pMandant').textContent = nm;
