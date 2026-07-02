@@ -43,10 +43,12 @@ function getAgencyTrialCode() {
 function getCrmAuthConfig() {
   const accessCode = (process.env.CRM_ACCESS_CODE || '').trim();
   const authSecret = (process.env.CRM_AUTH_SECRET || '').trim();
-  if (accessCode && authSecret) return { accessCode, authSecret };
+  // 2ᵉ facteur (TOTP) optionnel — CRM_TOTP_SECRET absent = pas de 2FA (rollout progressif).
+  const totpSecret = (process.env.CRM_TOTP_SECRET || '').trim();
+  if (accessCode && authSecret) return { accessCode, authSecret, totpSecret };
   if (allowInsecureAuth()) {
     const devCode = accessCode || 'robin-dakar';
-    return { accessCode: devCode, authSecret: authSecret || devCode, insecure: true };
+    return { accessCode: devCode, authSecret: authSecret || devCode, totpSecret, insecure: true };
   }
   return null;
 }

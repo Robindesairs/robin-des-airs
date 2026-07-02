@@ -303,6 +303,10 @@
     <form id="crm-gate-form" autocomplete="on">
       <label class="sr-only" for="crm-code">Code d’accès</label>
       <input type="password" id="crm-code" name="crm-code" placeholder="Code d’accès" autocomplete="current-password" required autofocus>
+      <div id="crm-gate-totp-wrap" style="display:none">
+        <label class="sr-only" for="crm-gate-totp">Code de vérification</label>
+        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" id="crm-gate-totp" name="crm-gate-totp" placeholder="Code à 6 chiffres (app. d’authentification)" autocomplete="one-time-code" style="margin-top:8px">
+      </div>
       <button type="submit" class="btn btn-primary" style="width:100%">Entrer</button>
     </form>
   </div>
@@ -608,10 +612,13 @@ async function crmAuthStatus() {
 
 async function crmUnlock() {
   const input = document.getElementById('crm-code');
+  const totpWrap = document.getElementById('crm-gate-totp-wrap');
+  const totpInput = document.getElementById('crm-gate-totp');
   const submitBtn = document.querySelector('#crm-gate-form button[type="submit"]');
   const err = document.getElementById('crm-gate-err');
   err.classList.remove('show');
   const code = (input && input.value) ? input.value.trim() : '';
+  const totp = (totpInput && totpInput.value) ? totpInput.value.trim() : '';
   if (!code) {
     err.textContent = crmT('gate_wrong_code');
     err.classList.add('show');
@@ -647,13 +654,20 @@ async function crmUnlock() {
       method: 'POST',
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code }),
+      body: JSON.stringify(totp ? { code, totp } : { code }),
       signal: ctrl.signal
     });
     clearTimeout(t);
     const j = await r.json().catch(() => ({}));
     if (j.ok) {
       openAndRemember();
+      return;
+    }
+    if (j.needTotp) {
+      if (totpWrap) totpWrap.style.display = 'block';
+      if (totpInput) { totpInput.focus(); }
+      err.textContent = j.error || 'Code de vérification requis (application d’authentification).';
+      err.classList.add('show');
       return;
     }
     err.textContent = (j.error || crmT('gate_wrong_code')) + ' — Sur Netlify, vérifiez la variable CRM_ACCESS_CODE (souvent robin-dakar).';

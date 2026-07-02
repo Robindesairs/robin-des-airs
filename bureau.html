@@ -1505,10 +1505,16 @@ async function crmLogin(){
   const code = prompt('Code d’accès CRM :');
   if(!code || !code.trim()) return;
   try{
-    const r = await fetch('/api/crm-auth', { method:'POST', credentials:'same-origin', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: code.trim() }) });
-    const j = await r.json().catch(()=>({}));
+    let r = await fetch('/api/crm-auth', { method:'POST', credentials:'same-origin', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: code.trim() }) });
+    let j = await r.json().catch(()=>({}));
+    if(!r.ok && j && j.needTotp){
+      const totp = prompt('Code de vérification (application d’authentification, 6 chiffres) :');
+      if(!totp || !totp.trim()) return;
+      r = await fetch('/api/crm-auth', { method:'POST', credentials:'same-origin', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ code: code.trim(), totp: totp.trim() }) });
+      j = await r.json().catch(()=>({}));
+    }
     if(r.ok && j && j.ok){ try{ sessionStorage.setItem('rda_crm_code', code.trim()); }catch(_e){} updateCrmBtn(true); location.reload(); }
-    else { alert('Code CRM incorrect ou refusé.'); }
+    else { alert((j && j.error) || 'Code CRM incorrect ou refusé.'); }
   }catch(e){ alert('Connexion impossible : '+(e&&e.message||e)); }
 }
 async function loadRappels(){

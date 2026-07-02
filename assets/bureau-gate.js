@@ -66,6 +66,10 @@
       '<form id="bureau-gate-form">' +
       '<label for="bureau-gate-code">Code d’accès</label>' +
       '<input id="bureau-gate-code" name="code" type="password" autocomplete="current-password" required placeholder="Code équipe">' +
+      '<div id="bureau-gate-totp-wrap" style="display:none">' +
+      '<label for="bureau-gate-totp">Code de vérification</label>' +
+      '<input id="bureau-gate-totp" name="totp" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="Code à 6 chiffres">' +
+      '</div>' +
       '<button type="submit" id="bureau-gate-submit">Entrer</button>' +
       '<p class="rg-err" id="bureau-gate-err" role="alert"></p>' +
       '</form>' +
@@ -80,9 +84,12 @@
       err.textContent = message;
       err.classList.add('visible');
     }
+    var totpWrap = document.getElementById('bureau-gate-totp-wrap');
+    var totpInput = document.getElementById('bureau-gate-totp');
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var code = (document.getElementById('bureau-gate-code').value || '').trim();
+      var totp = (totpInput && totpInput.value) ? totpInput.value.trim() : '';
       if (!code) return;
       btn.disabled = true;
       err.classList.remove('visible');
@@ -90,7 +97,7 @@
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: code }),
+        body: JSON.stringify(totp ? { code: code, totp: totp } : { code: code }),
       })
         .then(function (r) {
           return r.json().then(function (d) { return { ok: r.ok, data: d }; });
@@ -100,6 +107,14 @@
             // Mémorise le code pour l'auth par en-tête (résiste au blocage des cookies).
             try { sessionStorage.setItem('rda_crm_code', code); } catch (e) {}
             unlockPage();
+            return;
+          }
+          if (res.data && res.data.needTotp) {
+            if (totpWrap) totpWrap.style.display = 'block';
+            if (totpInput) totpInput.focus();
+            err.textContent = res.data.error || 'Code de vérification requis (application d’authentification).';
+            err.classList.add('visible');
+            btn.disabled = false;
             return;
           }
           err.textContent =

@@ -83,6 +83,10 @@
       '<form id="radar-gate-form">' +
       '<label for="radar-gate-code">Code d’accès</label>' +
       '<input id="radar-gate-code" name="code" type="password" autocomplete="current-password" required placeholder="Code équipe">' +
+      '<div id="radar-gate-totp-wrap" style="display:none">' +
+      '<label for="radar-gate-totp">Code de vérification</label>' +
+      '<input id="radar-gate-totp" name="totp" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="Code à 6 chiffres">' +
+      '</div>' +
       '<button type="submit" id="radar-gate-submit">Entrer</button>' +
       '<p class="rg-err" id="radar-gate-err" role="alert"></p>' +
       '</form>' +
@@ -97,9 +101,12 @@
       err.textContent = message;
       err.classList.add('visible');
     }
+    var totpWrap = document.getElementById('radar-gate-totp-wrap');
+    var totpInput = document.getElementById('radar-gate-totp');
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var code = (document.getElementById('radar-gate-code').value || '').trim();
+      var totp = (totpInput && totpInput.value) ? totpInput.value.trim() : '';
       if (!code) return;
       btn.disabled = true;
       err.classList.remove('visible');
@@ -107,7 +114,7 @@
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: code }),
+        body: JSON.stringify(totp ? { code: code, totp: totp } : { code: code }),
       })
         .then(function (r) {
           return r.json().then(function (d) {
@@ -118,6 +125,14 @@
           if (res.ok && res.data && res.data.ok) {
             unlockPage();
             window.dispatchEvent(new CustomEvent('radar-gate-unlocked'));
+            return;
+          }
+          if (res.data && res.data.needTotp) {
+            if (totpWrap) totpWrap.style.display = 'block';
+            if (totpInput) totpInput.focus();
+            err.textContent = res.data.error || 'Code de vérification requis (application d’authentification).';
+            err.classList.add('visible');
+            btn.disabled = false;
             return;
           }
           err.textContent =

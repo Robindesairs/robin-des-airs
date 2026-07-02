@@ -8,6 +8,7 @@ const crypto = require('crypto');
 const { getCrmAuthConfig, corsHeaders } = require('./lib/auth-config');
 const { checkRateLimit } = require('./lib/rate-limit');
 const { safeEqualString } = require('./lib/safe-compare');
+const { verifyTotp } = require('./lib/totp');
 
 const COOKIE_NAME = 'rda_crm';
 const MAX_AGE_SEC = 60 * 60 * 24 * 7;
@@ -117,18 +118,29 @@ exports.handler = async (event) => {
     if (!rl.ok) return rl.response;
 
     const code = typeof body.code === 'string' ? body.code.trim() : '';
-    if (safeEqualString(code, cfg.accessCode)) {
-      const token = makeToken();
-      return json(
-        200,
-        { ok: true },
-        {
-          'Set-Cookie': `${COOKIE_NAME}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${MAX_AGE_SEC}${secure}`,
-        }
-      );
+    if (!safeEqualString(code, cfg.accessCode)) {
+      return json(401, { ok: false, error: 'Code incorrect.' });
     }
 
-    return json(401, { ok: false, error: 'Code incorrect.' });
+    // 2ᵉ facteur (TOTP, type Google Authenticator) — requis dès que CRM_TOTP_SECRET est configuré.
+    if (cfg.totpSecret) {
+      const totp = typeof body.totp === 'string' ? body.totp.trim() : '';
+      if (!totp) {
+        return json(401, { ok: false, needTotp: true, error: 'Code de vérification requis.' });
+      }
+      if (!verifyTotp(cfg.totpSecret, totp)) {
+        return json(401, { ok: false, needTotp: true, error: 'Code de vérification incorrect.' });
+      }
+    }
+
+    const token = makeToken();
+    return json(
+      200,
+      { ok: true },
+      {
+        'Set-Cookie': `${COOKIE_NAME}=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${MAX_AGE_SEC}${secure}`,
+      }
+    );
   }
 
   return json(405, { ok: false, error: 'Méthode non autorisée.' });
