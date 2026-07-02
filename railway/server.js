@@ -1236,14 +1236,17 @@ async function askSens(phone, s, cfg) {
 // OCR passeport / CNI : lit nom + prénom + date de naissance (la magie aussi sur le passeport).
 // Prompt commun aux 2 moteurs (Claude + GPT-4o) : pièce d'identité (passeport/CNI/titre de séjour).
 const _OCR_PASSPORT_PROMPT = `Tu lis une pièce d'identité (PASSEPORT, carte nationale d'identité, titre de séjour, carte de résident…) — utilise aussi la zone MRZ en bas si présente. Réponds UNIQUEMENT en JSON :
-{"nom":"","prenom":"","date_naissance":"","date_expiration":"","adresse":"","sexe":""}
+{"nom":"","prenom":"","date_naissance":"","lieu_naissance":"","date_expiration":"","adresse":"","sexe":"","type_piece":"","face":""}
 Règles :
 - nom : nom de famille en MAJUSCULES.
 - prenom : prénom(s).
 - date_naissance : format JJ/MM/AAAA. Convertis depuis la MRZ (AAMMJJ) si besoin, en déduisant le siècle logiquement (une naissance est dans le passé).
+- lieu_naissance : champ "Lieu de naissance" / "Place of birth" (ville, et pays si indiqué). Recopie tel quel. Si absent, "".
 - date_expiration : date de fin de validité, format JJ/MM/AAAA (depuis la MRZ ou le champ imprimé). Si absente, "".
 - adresse : champ "Adresse", "Domicile" ou "Address" visible sur la page (hors MRZ). Recopie tel quel sur une seule ligne. Si absent, "".
 - sexe : "M" ou "F" (champ "Sexe"/"Sex", ou la lettre de la MRZ : M, F ou X). Si X ou inconnu, "".
+- type_piece : "passeport", "cni" (carte nationale d'identité), "titre_sejour" ou "" si incertain.
+- face : pour une CNI, "recto" (face avec la photo du titulaire), "verso" (face arrière : adresse et/ou MRZ), ou "deux" si les deux faces sont visibles sur l'image. Pour un passeport : "recto".
 - Champ inconnu = "". Ne JAMAIS inventer.`;
 
 function _normalizePassportOcr(p) {
@@ -1254,7 +1257,10 @@ function _normalizePassportOcr(p) {
   const adresse = (p.adresse || '').trim();
   const sx = (p.sexe || '').trim().toUpperCase().charAt(0);
   const sexe = (sx === 'M' || sx === 'F') ? sx : '';
-  return { name, dob, expiry, adresse, sexe };
+  const lieuNaissance = (p.lieu_naissance || '').trim();
+  const docType = ['passeport', 'cni', 'titre_sejour'].includes((p.type_piece || '').trim().toLowerCase()) ? (p.type_piece || '').trim().toLowerCase() : '';
+  const face = ['recto', 'verso', 'deux'].includes((p.face || '').trim().toLowerCase()) ? (p.face || '').trim().toLowerCase() : '';
+  return { name, dob, expiry, adresse, sexe, lieuNaissance, docType, face };
 }
 
 async function _ocrPassportClaude(media) {
@@ -1505,6 +1511,21 @@ function isExpired(dateStr) { const m = (dateStr || '').match(/(\d{1,2})\/(\d{1,
 async function askOcrConfirm(phone, s, cfg, mediaUrl) {
   const i = s.doc_idx + 1;
   const pp = await ocrPassport(mediaUrl, cfg);
+  // ── Verso de CNI attendu ? On rattache cette photo au passager en attente (le verso d'une
+  // vieille CNI n'a souvent ni nom ni photo → l'OCR classique échouerait). MRZ du verso lisible
+  // → on complète lieu/adresse au passage.
+  if (s.cni_verso_for != null && (!pp || !pp.name || pp.docType === 'cni')) {
+    const vi = s.cni_verso_for;
+    const vp = (s.passengers || [])[vi];
+    if (vp) {
+      s.passengers[vi] = { ...vp, cniVerso: true, adresse: (pp && pp.adresse) || vp.adresse || '', lieuNaissance: (pp && pp.lieuNaissance) || vp.lieuNaissance || '' };
+      s.cni_verso_for = null;
+      await setState(phone, s);
+      await send(phone, L(s, `✅ Back of *${vp.name || 'the'}* ID card received — the card is complete. 🙏`, `✅ Verso de la carte de *${vp.name || ''}* reçu — la pièce est complète. 🙏`), cfg);
+      return nextPassport(phone, s, cfg);
+    }
+    s.cni_verso_for = null; await setState(phone, s);
+  }
   if (pp && (pp.name || pp.dob)) {
     const minor = pp.dob ? isMinorAt(pp.dob, s.date) : false;
     const expired = pp.expiry ? isExpired(pp.expiry) : false;
@@ -1516,11 +1537,15 @@ async function askOcrConfirm(phone, s, cfg, mediaUrl) {
       const cur = s.passengers[_att.idx] || {};
       const _billet = cur.name || '';
       const _mismatch = !!(_billet && pp.name && nameDiffers(_billet, pp.name));
-      s.passengers[_att.idx] = { ...cur, name: cur.name || pp.name, nameId: pp.name || cur.nameId || '', nameMismatch: _mismatch, dob: pp.dob || cur.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || cur.adresse || '', sexe: pp.sexe || cur.sexe || '', viaPhoto: true, idReceived: true };
+      s.passengers[_att.idx] = { ...cur, name: cur.name || pp.name, nameId: pp.name || cur.nameId || '', nameMismatch: _mismatch, dob: pp.dob || cur.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || cur.adresse || '', sexe: pp.sexe || cur.sexe || '', lieuNaissance: pp.lieuNaissance || cur.lieuNaissance || '', docType: pp.docType || cur.docType || '', cniVerso: (pp.docType === 'cni' && (pp.face === 'verso' || pp.face === 'deux')) || cur.cniVerso || false, viaPhoto: true, idReceived: true };
       await setState(phone, s);
       if (_mismatch) { try { notifyOwnerWhatsApp('', `⚠️ Écart de nom${s.ref ? ' [' + s.ref + ']' : ''} : billet « ${_billet} » / passeport « ${pp.name} » — à vérifier (poste pièces).`).catch(() => {}); } catch (_) {} }
       const got = (s.passengers || []).filter((p) => p && p.idReceived).length;
       await send(phone, L(s, `✅ ID of *${cur.name || pp.name}* received (${got}/${s.pax})${minor ? ' · 👶 minor, parental signature' : ''}${expired ? ' · ⚠️ expired, an advisor checks' : ''}.`, `✅ Pièce de *${cur.name || pp.name}* reçue (${got}/${s.pax})${minor ? ' · 👶 mineur·e, signature parentale' : ''}${expired ? ' · ⚠️ expirée, un conseiller vérifie' : ''}.`), cfg);
+      if (pp.docType === 'cni' && pp.face === 'recto' && !s.passengers[_att.idx].cniVerso) {
+        s.cni_verso_for = _att.idx; await setState(phone, s);
+        return send(phone, L(s, `📸 One more thing: it's a *national ID card* — please also send a photo of the *back* (the other side).`, `📸 Petit détail : c'est une *carte d'identité* — envoyez aussi une photo du *verso* (l'autre face), s'il vous plaît.`), cfg);
+      }
       return nextPassport(phone, s, cfg);
     }
     // Solo : le nom lu correspond au billet (ou pas de nom au billet) → on enregistre SANS écran de confirmation
@@ -1529,18 +1554,22 @@ async function askOcrConfirm(phone, s, cfg, mediaUrl) {
     if ((s.pax || 1) <= 1 && pp.name && (!_soloBillet || !nameDiffers(_soloBillet, pp.name))) {
       s.passengers = s.passengers || [];
       const cur0 = s.passengers[0] || {};
-      s.passengers[0] = { ...cur0, name: cur0.name || pp.name, nameId: pp.name, dob: pp.dob || cur0.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || cur0.adresse || '', sexe: pp.sexe || cur0.sexe || '', viaPhoto: true, idReceived: true };
+      s.passengers[0] = { ...cur0, name: cur0.name || pp.name, nameId: pp.name, dob: pp.dob || cur0.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || cur0.adresse || '', sexe: pp.sexe || cur0.sexe || '', lieuNaissance: pp.lieuNaissance || cur0.lieuNaissance || '', docType: pp.docType || cur0.docType || '', cniVerso: (pp.docType === 'cni' && (pp.face === 'verso' || pp.face === 'deux')) || cur0.cniVerso || false, viaPhoto: true, idReceived: true };
       await setState(phone, s);
       await send(phone, L(s, `✅ ID of *${pp.name}* received${minor ? ' · 👶 minor, parental signature' : ''}${expired ? ' · ⚠️ expired, an advisor checks' : ''}.`, `✅ Pièce de *${pp.name}* reçue${minor ? ' · 👶 mineur·e, signature parentale' : ''}${expired ? ' · ⚠️ expirée, un conseiller vérifie' : ''}.`), cfg);
+      if (pp.docType === 'cni' && pp.face === 'recto' && !s.passengers[0].cniVerso) {
+        s.cni_verso_for = 0; await setState(phone, s);
+        return send(phone, L(s, `📸 One more thing: it's a *national ID card* — please also send a photo of the *back* (the other side).`, `📸 Petit détail : c'est une *carte d'identité* — envoyez aussi une photo du *verso* (l'autre face), s'il vous plaît.`), cfg);
+      }
       return nextPassport(phone, s, cfg);
     }
-    s.doc_pending = { name: pp.name || '', dob: pp.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || '', sexe: pp.sexe || '', viaPhoto: true };
+    s.doc_pending = { name: pp.name || '', dob: pp.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || '', sexe: pp.sexe || '', lieuNaissance: pp.lieuNaissance || '', docType: pp.docType || '', cniVerso: (pp.docType === 'cni' && (pp.face === 'verso' || pp.face === 'deux')) || false, viaPhoto: true };
     s.step = 'doc_pass_confirm';
     await setState(phone, s);
     const lines = [
       `📋 *Passager ${i}/${s.pax} — j'ai lu :*`,
       `👤 ${pp.name || '—'}`,
-      pp.dob ? `🎂 Né(e) le ${pp.dob}` : '',
+      pp.dob ? `🎂 Né(e) le ${pp.dob}${pp.lieuNaissance ? ` à ${pp.lieuNaissance}` : ''}` : (pp.lieuNaissance ? `📍 Né(e) à ${pp.lieuNaissance}` : ''),
       minor ? `👶 *Mineur·e* — signature parentale requise` : '',
       expired ? `⚠️ Pièce *expirée* (${pp.expiry}). On continue, un conseiller vérifiera.` : '',
       `\nC'est bien cette personne ?`,
@@ -2037,7 +2066,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   // MSG4 — INCIDENT
   if (s.step === 'incident') {
     const n = normInput(input, ['retard', 'annulation', 'refus']);
-    if (id === 'inc_retard' || n === '1' || lower.includes('retard') || lower.includes('delay')) { s.step = 'duree'; await setState(phone, s); return sendButtons(phone, { body: L(s, `😟 Sorry about this delay. On arrival, was it *more or less than 3 hours*?`, `😟 Désolé pour ce retard. À l'arrivée, il était de *plus ou moins de 3 heures* ?`), buttons: [{ id: 'dur_plus', text: L(s, '✅ More than 3 hours', '✅ Plus de 3 heures') }, { id: 'dur_moins', text: L(s, '❌ Less than 3h', '❌ Moins de 3h') }, { id: 'dur_inconnu', text: L(s, '🤔 Not sure', '🤔 Je ne sais plus') }] }, cfg); }
+    if (id === 'inc_retard' || n === '1' || lower.includes('retard') || lower.includes('delay')) { s.step = 'duree'; await setState(phone, s); return sendButtons(phone, { body: L(s, `😟 Sorry about this delay. At your *final destination*, was the delay — or the *announced* delay — *3 hours or more*?\n\n_Flight not landed yet? Tap "Not sure/in flight": we track the actual arrival for you._`, `😟 Désolé pour ce retard. À l'arrivée *à destination finale*, le retard était-il — ou est-il *annoncé* — de *3 heures ou plus* ?\n\n_Vol pas encore arrivé ? Touchez « Pas sûr / en vol » : on suit l'arrivée réelle pour vous._`), buttons: [{ id: 'dur_plus', text: L(s, '✅ 3h or more', '✅ 3 h ou plus') }, { id: 'dur_moins', text: L(s, '❌ Less than 3h', '❌ Moins de 3 h') }, { id: 'dur_inconnu', text: L(s, '⏳ Not sure/in flight', '⏳ Pas sûr / en vol') }] }, cfg); }
     if (id === 'inc_annul' || n === '2' || lower.includes('annul') || lower.includes('cancel')) { s.incident = 'annulation'; s.incident_libelle = 'Annulation'; return sendAnnulDelai(phone, s, cfg); }
     if (id === 'inc_refus' || n === '3' || lower.includes('refus') || lower.includes('embarq') || lower.includes('denied') || lower.includes('boarding')) { s.incident = 'refus'; s.incident_libelle = "Refus d'embarquement"; await setState(phone, s); await send(phone, LV(s, phone, 'REACTION_REFUS', `😟 Denied boarding gives strong rights under EC 261. Let's check what you're owed.`), cfg); return estimationPuisPax(phone, s, cfg); }
     { const rd = await redispatch('incident'); if (rd !== undefined) return rd; if (await stuckHelp(phone, s, cfg)) return; await send(phone, L(s, `🙂 Tap the button that matches your situation 👇`, `🙂 Touchez le bouton qui correspond à votre situation 👇`), cfg); return sendIncident(phone, s, cfg); }
@@ -2054,11 +2083,11 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   }
   if (s.step === 'duree') {
     const n = normInput(input, ['plus de 3', 'moins de 3', 'sais']);
-    if (id === 'dur_plus' || n === '1' || lower.includes('plus de 3') || lower.includes('more than 3')) { s.incident = 'retard'; s.incident_libelle = 'Retard +3h'; s.duree_retard = '+3h'; return estimationPuisPax(phone, s, cfg); }
+    if (id === 'dur_plus' || n === '1' || lower.includes('plus de 3') || lower.includes('more than 3') || lower.includes('ou plus') || lower.includes('or more')) { s.incident = 'retard'; s.incident_libelle = 'Retard +3h'; s.duree_retard = '+3h'; return estimationPuisPax(phone, s, cfg); }
     if (id === 'dur_moins' || n === '2' || lower.includes('moins de 3') || lower.includes('less than 3')) { return finNonEligible(phone, L(s, STOP_MOINS_3H_EN, pickVariant(phone, 'STOP_MOINS_3H')), cfg); }
-    if (id === 'dur_inconnu' || n === '3' || lower.includes('sais') || lower.includes('souviens') || lower.includes('not sure')) { s.incident = 'retard'; s.incident_libelle = 'Retard (à vérifier)'; s.duree_retard = 'inconnue'; s.escalade = s.escalade || 'duree_inconnue'; await send(phone, LV(s, phone, 'DUREE_INCONNUE', `👍 No worries — we'll check the airline's records for you.`), cfg); return estimationPuisPax(phone, s, cfg); }
+    if (id === 'dur_inconnu' || n === '3' || lower.includes('sais') || lower.includes('souviens') || lower.includes('not sure') || lower.includes('en vol') || lower.includes('pas arriv') || lower.includes('in flight') || lower.includes('pas sûr') || lower.includes('pas sur')) { s.incident = 'retard'; s.incident_libelle = 'Retard (à vérifier)'; s.duree_retard = 'inconnue'; s.escalade = s.escalade || 'duree_inconnue'; await send(phone, LV(s, phone, 'DUREE_INCONNUE', `👍 No worries — we'll check the airline's records for you.`), cfg); return estimationPuisPax(phone, s, cfg); }
     if (await stuckHelp(phone, s, cfg)) return;
-    return sendButtons(phone, { body: L(s, `🙂 Tap a button: was your arrival delay more than 3 hours?`, `🙂 Touchez un bouton : votre retard à l'arrivée était-il de plus de 3 heures ?`), buttons: [{ id: 'dur_plus', text: L(s, '✅ More than 3 hours', '✅ Plus de 3 heures') }, { id: 'dur_moins', text: L(s, '❌ Less than 3h', '❌ Moins de 3h') }, { id: 'dur_inconnu', text: L(s, '🤔 Not sure', '🤔 Je ne sais plus') }] }, cfg);
+    return sendButtons(phone, { body: L(s, `🙂 Tap a button: at your final destination, was the delay (or announced delay) 3 hours or more?`, `🙂 Touchez un bouton : à l'arrivée finale, le retard (constaté ou annoncé) était-il de 3 heures ou plus ?`), buttons: [{ id: 'dur_plus', text: L(s, '✅ 3h or more', '✅ 3 h ou plus') }, { id: 'dur_moins', text: L(s, '❌ Less than 3h', '❌ Moins de 3 h') }, { id: 'dur_inconnu', text: L(s, '⏳ Not sure/in flight', '⏳ Pas sûr / en vol') }] }, cfg);
   }
 
   // MSG5 — PASSAGERS
@@ -2618,6 +2647,10 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
         notifyOwnerWhatsApp(phone, `⚠️ Dossier ${s.ref || phone} : pièce d'identité lue « ${e.name || '?'} » attribuée PAR DÉFAUT au passager ${idx + 1}/${s.pax} (rapprochement par nom non certain). À vérifier/réattribuer à la main.`).catch(() => {});
       }
       delete s.doc_pending; await setState(phone, s);
+      if (e.docType === 'cni' && !e.cniVerso) {
+        s.cni_verso_for = idx; await setState(phone, s);
+        return send(phone, L(s, `📸 One more thing: it's a *national ID card* — please also send a photo of the *back* (the other side).`, `📸 Petit détail : c'est une *carte d'identité* — envoyez aussi une photo du *verso* (l'autre face), s'il vous plaît.`), cfg);
+      }
       return nextPassport(phone, s, cfg); // avance vers le prochain passager sans pièce (garde-fou dans nextPassport)
     }
     if (fix) {

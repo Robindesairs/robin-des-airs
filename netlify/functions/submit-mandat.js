@@ -382,6 +382,19 @@ function buildClientMandatEmailContent(record) {
     '• Mise en demeure à la compagnie sous 48 h',
     '• Suivi : https://robindesairs.eu/suivi-dossier.html',
     '',
+    '🚀 Boostez votre dossier (2 min, recommandé) :',
+    'Certaines compagnies (Air France, Ryanair…) exigent que le passager réclame lui-même une première fois avant tout tiers. Pour verrouiller votre dossier, envoyez le message ci-dessous à la compagnie DEPUIS VOTRE adresse email (via son formulaire « réclamations » ou l\'email de son service client), sans rien y changer :',
+    '──────────────────────────',
+    `Objet : Réclamation — Règlement (CE) n° 261/2004 — vol ${vol} du ${date}`,
+    '',
+    'Madame, Monsieur,',
+    `Passager du vol ${vol} du ${date}${pnr !== '—' ? ` (réservation ${pnr})` : ''}, je vous demande, pour moi-même et les passagers de ma réservation, le versement de l'indemnité forfaitaire prévue à l'article 7 du Règlement (CE) n° 261/2004 à la suite de la perturbation subie sur ce vol, ainsi que, le cas échéant, le remboursement des frais engagés (art. 9, sur justificatifs).`,
+    'Je demande un paiement en numéraire (virement bancaire), à l\'exclusion de tout avoir, bon d\'achat ou miles (art. 7§3 du Règlement).',
+    'Sans réponse favorable sous 14 jours, je poursuivrai le recouvrement par tout moyen utile.',
+    `Cordialement, ${hello}`,
+    '──────────────────────────',
+    'Rien d\'autre à faire ensuite : nous prenons le relais quoi qu\'il arrive.',
+    '',
     'Droit de rétractation : 14 jours — contact@robindesairs.eu (objet : Je me rétracte — Réf. ' + ref + ')',
     '',
     'Questions : expert@robindesairs.eu — WhatsApp +33 7 56 86 36 30',
@@ -406,13 +419,26 @@ ${pnr !== '—' ? `<tr><td style="padding:8px 12px;color:#666;font-size:13px">PN
 <li>Mise en demeure à la compagnie sous 48 h</li>
 <li><a href="https://robindesairs.eu/suivi-dossier.html">Suivre mon dossier</a></li>
 </ul>
+<div style="margin:18px 0;padding:14px 16px;background:#EFF9F4;border-left:4px solid #00C87A;border-radius:0 8px 8px 0">
+<p style="margin:0 0 8px;font-size:14px"><strong>🚀 Boostez votre dossier (2 min, recommandé)</strong></p>
+<p style="margin:0 0 10px;font-size:13px;color:#333">Certaines compagnies (Air France, Ryanair…) exigent que le passager réclame lui-même une première fois avant tout tiers. Pour verrouiller votre dossier, envoyez le message ci-dessous à la compagnie <strong>depuis votre adresse email</strong> (via son formulaire « réclamations » ou l'email de son service client), sans rien y changer :</p>
+<div style="padding:10px 12px;background:#fff;border:1px dashed #B8DDC9;border-radius:6px;font-size:12.5px;color:#222;line-height:1.6">
+<em>Objet : Réclamation — Règlement (CE) n° 261/2004 — vol ${escapeHtml(vol)} du ${escapeHtml(date)}</em><br><br>
+Madame, Monsieur,<br>
+Passager du vol ${escapeHtml(vol)} du ${escapeHtml(date)}${pnr !== '—' ? ` (réservation ${escapeHtml(pnr)})` : ''}, je vous demande, pour moi-même et les passagers de ma réservation, le versement de l'indemnité forfaitaire prévue à l'article 7 du Règlement (CE) n° 261/2004 à la suite de la perturbation subie sur ce vol, ainsi que, le cas échéant, le remboursement des frais engagés (art. 9, sur justificatifs).<br>
+Je demande un paiement en numéraire (virement bancaire), à l'exclusion de tout avoir, bon d'achat ou miles (art. 7§3 du Règlement).<br>
+Sans réponse favorable sous 14 jours, je poursuivrai le recouvrement par tout moyen utile.<br>
+Cordialement, ${escapeHtml(hello)}
+</div>
+<p style="margin:10px 0 0;font-size:12px;color:#555">Rien d'autre à faire ensuite : nous prenons le relais quoi qu'il arrive.</p>
+</div>
 <p style="font-size:13px;color:#555">Rétractation possible sous 14 jours : <a href="mailto:contact@robindesairs.eu?subject=${encodeURIComponent('Rétractation — Réf. ' + ref)}">contact@robindesairs.eu</a></p>
 <p style="font-size:13px">Questions : <a href="mailto:expert@robindesairs.eu">expert@robindesairs.eu</a> — <a href="https://wa.me/33756863630">WhatsApp</a></p>
 <p style="margin-top:24px;font-size:12px;color:#888">Robin des Airs — Votre droit, notre mission.</p>
 </body></html>`;
 
   return {
-    subject: `Confirmation — mandat signé — ${ref}`,
+    subject: `Confirmation — contrat de cession signé — ${ref}`,
     text,
     html,
   };
