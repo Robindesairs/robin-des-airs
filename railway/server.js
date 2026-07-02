@@ -1241,9 +1241,10 @@ Règles :
 - nom : nom de famille en MAJUSCULES.
 - prenom : prénom(s).
 - date_naissance : format JJ/MM/AAAA. Convertis depuis la MRZ (AAMMJJ) si besoin, en déduisant le siècle logiquement (une naissance est dans le passé).
-- lieu_naissance : champ "Lieu de naissance" / "Place of birth" (ville, et pays si indiqué). Recopie tel quel. Si absent, "".
+- lieu_naissance : UNIQUEMENT le champ explicitement étiqueté "Lieu de naissance" / "Place of birth" / "Né(e) à" (ville, et pays si indiqué). Recopie tel quel. Si aucun champ n'est étiqueté ainsi, mets "" — ne prends JAMAIS une ville de l'adresse ou du domicile.
 - date_expiration : date de fin de validité, format JJ/MM/AAAA (depuis la MRZ ou le champ imprimé). Si absente, "".
-- adresse : champ "Adresse", "Domicile" ou "Address" visible sur la page (hors MRZ). Recopie tel quel sur une seule ligne. Si absent, "".
+- adresse : UNIQUEMENT le champ explicitement étiqueté "Adresse", "Domicile" ou "Address" (hors MRZ). Recopie tel quel sur une seule ligne. Si absent, "".
+- ATTENTION : lieu_naissance et adresse sont deux champs DIFFÉRENTS — ne mets jamais la même ville dans les deux sauf si les deux champs étiquetés l'indiquent vraiment. Une ville sans étiquette claire = "".
 - sexe : "M" ou "F" (champ "Sexe"/"Sex", ou la lettre de la MRZ : M, F ou X). Si X ou inconnu, "".
 - type_piece : "passeport", "cni" (carte nationale d'identité), "titre_sejour" ou "" si incertain.
 - face : pour une CNI, "recto" (face avec la photo du titulaire), "verso" (face arrière : adresse et/ou MRZ), ou "deux" si les deux faces sont visibles sur l'image. Pour un passeport : "recto".
@@ -1257,7 +1258,9 @@ function _normalizePassportOcr(p) {
   const adresse = (p.adresse || '').trim();
   const sx = (p.sexe || '').trim().toUpperCase().charAt(0);
   const sexe = (sx === 'M' || sx === 'F') ? sx : '';
-  const lieuNaissance = (p.lieu_naissance || '').trim();
+  let lieuNaissance = (p.lieu_naissance || '').trim();
+  // Garde-fou anti-confusion : lieu identique à l'adresse complète = très probablement l'adresse recopiée → on vide.
+  if (lieuNaissance && adresse && lieuNaissance.toLowerCase() === adresse.toLowerCase()) lieuNaissance = '';
   const docType = ['passeport', 'cni', 'titre_sejour'].includes((p.type_piece || '').trim().toLowerCase()) ? (p.type_piece || '').trim().toLowerCase() : '';
   const face = ['recto', 'verso', 'deux'].includes((p.face || '').trim().toLowerCase()) ? (p.face || '').trim().toLowerCase() : '';
   return { name, dob, expiry, adresse, sexe, lieuNaissance, docType, face };
