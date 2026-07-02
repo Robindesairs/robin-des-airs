@@ -115,7 +115,7 @@ function genererMandatPdf(record) {
     doc.y = headerH + 22;
 
     // ── Titre ──
-    doc.fillColor(NAVY).fontSize(18).font('Helvetica-Bold').text('Mandat de Représentation — copie signée', left, doc.y, { width: contentW, align: 'center' });
+    doc.fillColor(NAVY).fontSize(18).font('Helvetica-Bold').text('Contrat de Cession de Créance — copie signée', left, doc.y, { width: contentW, align: 'center' });
     doc.moveDown(0.6);
 
     // ── Certificat de signature électronique (eIDAS) — piste de preuve détaillée ──
@@ -144,8 +144,8 @@ function genererMandatPdf(record) {
     doc.fillColor(NAVY).fontSize(8.5).font('Helvetica-Bold').text('Journal de preuve', left, doc.y); doc.moveDown(0.2);
     [
       record.link_sent_at ? `Mandat transmis au signataire — ${fmtDate(record.link_sent_at)}` : null,
-      `Document consulté et signé par le Mandant — ${fmtDate(record.signed_at)}`,
-      `Acceptation du Mandataire (Robin des Airs) — ${fmtDate(record.mandataireAcceptedAt || record.signed_at)}`,
+      `Document consulté et signé par le Cédant — ${fmtDate(record.signed_at)}`,
+      `Acceptation du Cessionnaire (Robin des Airs) — ${fmtDate(record.mandataireAcceptedAt || record.signed_at)}`,
     ].filter(Boolean).forEach((e) => {
       ensure(13); const y = doc.y;
       doc.fillColor(NEON).fontSize(8.5).font('Helvetica-Bold').text('•', left, y);
@@ -159,11 +159,11 @@ function genererMandatPdf(record) {
 
     // ── Parties ──
     sectionTitle('Les parties');
-    kv('Le Mandant', [record.firstName, record.lastName].filter(Boolean).join(' ') || '—');
+    kv('Le Cédant', [record.firstName, record.lastName].filter(Boolean).join(' ') || '—');
     kv('Adresse', record.address);
     kv('WhatsApp', record.whatsapp);
     kv('Email dossier', record.email);
-    kv('Le Mandataire', 'Robin des Airs — Service juridique CE 261/2004');
+    kv('Le Cessionnaire', 'Robin des Airs — Service recouvrement CE 261/2004');
     kv('', '66 av. des Champs-Élysées, Paris · contact@robindesairs.eu');
     doc.moveDown(0.4);
 
@@ -213,7 +213,7 @@ function genererMandatPdf(record) {
       doc.y = Math.max(doc.y, y + 13);
     };
     consent(true, "Déclaration sur l'honneur : avoir été passager(e) du vol indiqué, à la date mentionnée, et avoir subi le préjudice déclaré.");
-    consent(true, "Lecture et acceptation du mandat de représentation ; cession de la créance aux fins de recouvrement (Article 5 bis).");
+    consent(true, "Lecture et acceptation du contrat de cession de créance pure et simple ; cession de la créance à Robin des Airs, qui l'acquiert en son nom propre (Articles 1 et 5 bis).");
     consent(record.eligibilityAcknowledged !== false, "Compréhension : l'indemnité n'est pas garantie — obligation de moyens, sous réserve d'éligibilité (CE 261/2004) et de paiement effectif par la compagnie.");
     consent(!!record.startNow, "Demande de démarrage immédiat du dossier, sans attendre le délai de rétractation de 14 jours (Art. L.221-25 C. conso.).");
     if ((record.pax || 1) > 1) consent(!!record.coPassAgreement, "Accord de tous les co-passagers (et du représentant légal pour chaque passager mineur).");
@@ -249,9 +249,9 @@ function genererMandatPdf(record) {
     const ay = doc.y;
     doc.rect(left, ay, contentW, 38).fill(OFF);
     doc.rect(left, ay, 3, 38).fill(NEON);
-    doc.fillColor(NAVY).fontSize(9).font('Helvetica-Bold').text('Acceptation du Mandataire — Robin des Airs', left + 14, ay + 8);
+    doc.fillColor(NAVY).fontSize(9).font('Helvetica-Bold').text('Acceptation du Cessionnaire — Robin des Airs', left + 14, ay + 8);
     doc.fillColor(GRAY).fontSize(8.5).font('Helvetica')
-      .text(`${record.mandataireName || 'Robin des Airs — Service juridique CE 261/2004'} · le ${fmtDate(record.mandataireAcceptedAt || record.signed_at)}`, left + 14, ay + 22);
+      .text(`${record.mandataireName || 'Robin des Airs — Service recouvrement CE 261/2004'} · le ${fmtDate(record.mandataireAcceptedAt || record.signed_at)}`, left + 14, ay + 22);
     doc.y = ay + 50;
 
     // ── Pied de page ──
@@ -314,11 +314,11 @@ function genererMandatBilinguePdf(record) {
     function renderBody(lang) {
       const fr = lang === 'fr';
       sectionTitle(fr ? 'Les parties' : 'The parties');
-      kv(fr ? 'Le Mandant' : 'The Client', [record.firstName, record.lastName].filter(Boolean).join(' ') || '—');
+      kv(fr ? 'Le Cédant' : 'The Assignor', [record.firstName, record.lastName].filter(Boolean).join(' ') || '—');
       kv(fr ? 'Adresse' : 'Address', record.address);
       kv('WhatsApp', record.whatsapp);
       kv(fr ? 'Email dossier' : 'Case email', record.email);
-      kv(fr ? 'Le Mandataire' : 'The Agent', 'Robin des Airs — Service juridique CE 261/2004');
+      kv(fr ? 'Le Cessionnaire' : 'The Assignee', 'Robin des Airs — Service recouvrement CE 261/2004');
       kv('', '66 av. des Champs-Élysées, Paris · contact@robindesairs.eu');
       doc.moveDown(0.4);
 
@@ -344,15 +344,15 @@ function genererMandatBilinguePdf(record) {
 
       sectionTitle(fr ? 'Conditions essentielles' : 'Key terms');
       const terms = fr ? [
-        'Double régime — mandat de représentation (art. 1984 C. civ.) par défaut (Article 1), et option de cession de créance à titre de recouvrement (option Article 1 bis ; cession Article 5 bis ; art. 1321 C. civ.) que Robin des Airs peut lever pour le contentieux.',
-        'Honoraires : 25% TTC, uniquement en cas de succès (No Win No Fee), sur l\'ensemble des sommes recouvrées (indemnité, frais, préjudices). Aucun frais si échec.',
-        'Versement de votre part nette (75%) sous 48h ouvrées après encaissement.',
-        'Durée : 24 mois. Droit de rétractation : 14 jours (contact@robindesairs.eu).',
+        'Cession de créance pure et simple (articles 1321 et suivants du Code civil) : le Cédant vend sa créance CE 261/2004 à Robin des Airs, qui l\'acquiert en son nom propre et la recouvre pour son propre compte (Articles 1 et 5 bis). La créance d\'un passager mineur n\'est pas cédée : mandat spécial d\'encaissement aux mêmes conditions (Article 9 bis).',
+        'Prix de cession variable (No Win No Fee) : 75% du montant recouvré en phase amiable, 55% en phase contentieuse, 0 € si rien n\'est recouvré — la créance est alors rétrocédée de plein droit. Aucun frais, aucune avance, jamais.',
+        'Versement de votre prix de cession sous 5 jours ouvrés après encaissement effectif.',
+        'Durée : 18 mois (résiliation libre après 12 mois sans assignation). Droit de rétractation : 14 jours (contact@robindesairs.eu).',
       ] : [
-        'Two-tier regime — a representation mandate (art. 1984 French Civil Code) by default (Article 1), and an option to assign the claim for recovery purposes (option Article 1 bis; assignment Article 5 bis; art. 1321) that Robin des Airs may exercise for litigation.',
-        'Fee: 25% incl. tax, only if successful (No Win No Fee), on all sums recovered (compensation, expenses, damages). No fee if unsuccessful.',
-        'Payment of your net share (75%) within 48 business hours after collection.',
-        'Term: 24 months. Right of withdrawal: 14 days (contact@robindesairs.eu).',
+        'Outright assignment of claim (articles 1321 et seq. French Civil Code): the Assignor sells their EC 261/2004 claim to Robin des Airs, which acquires it in its own name and recovers it for its own account (Articles 1 and 5 bis). A minor passenger\'s claim is not assigned: special collection mandate on identical terms (Article 9 bis).',
+        'Variable assignment price (No Win No Fee): 75% of the amount recovered amicably, 55% if court proceedings are needed, €0 if nothing is recovered — the claim is then re-assigned by operation of law. No fees, no advance, ever.',
+        'Payment of your assignment price within 5 business days of effective collection.',
+        'Term: 18 months (free termination after 12 months without court filing). Right of withdrawal: 14 days (contact@robindesairs.eu).',
       ];
       terms.forEach((t) => {
         ensure(28);
@@ -405,13 +405,13 @@ function genererMandatBilinguePdf(record) {
     doc.y = cy + 84;
 
     // ── Version française (fait foi) ──
-    doc.fillColor(NAVY).fontSize(15).font('Helvetica-Bold').text('Mandat de Représentation — version française (fait foi)', left, doc.y, { width: contentW, align: 'center' });
+    doc.fillColor(NAVY).fontSize(15).font('Helvetica-Bold').text('Contrat de Cession de Créance — version française (fait foi)', left, doc.y, { width: contentW, align: 'center' });
     doc.moveDown(0.5);
     renderBody('fr');
 
     // ── Version anglaise (traduction) ──
     doc.addPage();
-    doc.fillColor(NAVY).fontSize(15).font('Helvetica-Bold').text('Representation Mandate — English version (courtesy translation)', left, doc.y, { width: contentW, align: 'center' });
+    doc.fillColor(NAVY).fontSize(15).font('Helvetica-Bold').text('Assignment of Claim — English version (courtesy translation)', left, doc.y, { width: contentW, align: 'center' });
     doc.fillColor(GRAY).fontSize(8.5).font('Helvetica-Oblique').text('Faithful translation of the French instrument above. The signed French version prevails.', left, doc.y + 2, { width: contentW, align: 'center' });
     doc.moveDown(0.8);
     renderBody('en');
@@ -443,9 +443,9 @@ function genererMandatBilinguePdf(record) {
     const ay = doc.y;
     doc.rect(left, ay, contentW, 38).fill(OFF);
     doc.rect(left, ay, 3, 38).fill(NEON);
-    doc.fillColor(NAVY).fontSize(9).font('Helvetica-Bold').text('Acceptation du Mandataire · Agent\'s acceptance — Robin des Airs', left + 14, ay + 8);
+    doc.fillColor(NAVY).fontSize(9).font('Helvetica-Bold').text('Acceptation du Cessionnaire · Assignee\'s acceptance — Robin des Airs', left + 14, ay + 8);
     doc.fillColor(GRAY).fontSize(8.5).font('Helvetica')
-      .text(`${record.mandataireName || 'Robin des Airs — Service juridique CE 261/2004'} · le / on ${fmtDate(record.mandataireAcceptedAt || record.signed_at)}`, left + 14, ay + 22);
+      .text(`${record.mandataireName || 'Robin des Airs — Service recouvrement CE 261/2004'} · le / on ${fmtDate(record.mandataireAcceptedAt || record.signed_at)}`, left + 14, ay + 22);
     doc.y = ay + 50;
 
     // ── Pied de page ──

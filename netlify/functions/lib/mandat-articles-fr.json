@@ -4,74 +4,87 @@
   "items": [
     {
       "type": "article",
-      "title": "Article 1 — Objet, double régime et adresse email du dossier",
+      "title": "Article 1, Objet et régime de cession",
       "plain": [
-        "En clair : Vous chargez Robin des Airs de récupérer l'argent que la compagnie vous doit. On agit d'abord en votre nom — ça garde l'accès à la médiation. Vol avec correspondance ? C'est l'arrivée finale qui compte — c'est couvert.",
-        "En clair : Pour gérer votre dossier, Robin des Airs ouvre une adresse email dédiée qui reçoit les réponses de la compagnie. C'est nous qui nous en occupons de A à Z — vous, vous êtes simplement suivi par WhatsApp.",
-        "En clair : Votre mandat existe en français et en anglais (même document). Vous signez une fois ; si la compagnie est étrangère, on lui présente la version anglaise — mais c'est toujours votre version française signée qui fait foi."
+        "En clair : Vous vendez votre créance à Robin des Airs, qui devient propriétaire du dossier et le recouvre en son nom propre. Le prix de votre créance dépend de ce qui est effectivement récupéré (75 % du recouvré en amiable, 55 % si tribunal, 0 € si rien). Vol avec correspondance ? C'est l'arrivée finale qui compte, et c'est couvert.",
+        "En clair : Pour gérer votre dossier, Robin des Airs ouvre une adresse email dédiée qui reçoit les réponses de la compagnie. C'est nous qui nous en occupons de A à Z , vous, vous êtes simplement suivi par WhatsApp.",
+        "En clair : Votre contrat existe en français et en anglais (même document). Vous signez une fois ; si la compagnie est étrangère, on lui présente la version anglaise, mais c'est toujours votre version française signée qui fait foi."
       ],
       "body": [
-        "Le Mandant confie à Robin des Airs une mission exclusive de recouvrement, au titre du Règlement (CE) n° 261/2004, de l'indemnisation forfaitaire (art. 7) ainsi que du remboursement des frais engagés, de la prise en charge due (art. 8 et 9) et, le cas échéant, du préjudice complémentaire (art. 12) liés au retard, à l'annulation ou au refus d'embarquement, par toute voie amiable, administrative, judiciaire ou arbitrale.",
-        "Vols avec correspondance. Lorsque le voyage comporte une ou plusieurs correspondances sous une même réservation, le mandat couvre l'ensemble du voyage : l'indemnisation est déterminée par la destination finale et la distance totale, le retard étant apprécié à l'arrivée à la destination finale (CJUE, 26 février 2013, Folkerts, C-11/11).",
-        "Cette mission s'exerce selon un double régime : (1) un mandat de représentation (art. 1984 C. civ.) qui s'applique par défaut dès la signature — Robin des Airs agissant au nom du Mandant, qui conserve la qualité de créancier, ce régime préservant notamment l'accès du Mandant, en sa qualité de consommateur, à la médiation ; et (2) une option de cession de créance à titre de recouvrement que Robin des Airs peut lever dans les conditions de l'Article 1 bis (modalités : Article 5 bis).",
-        "Pour les besoins du traitement du dossier, Robin des Airs crée une adresse email technique unique, composée de la référence du mandat en minuscules suivie de « @robindesairs.eu » (ex. : ref@robindesairs.eu). Cette adresse constitue l'adresse de référence du dossier pour l'ensemble des échanges avec la compagnie aérienne, ses représentants, ses conseils, ses intermédiaires et, plus généralement, tout tiers intervenant dans le cadre du recouvrement. Robin des Airs en assure seul l'administration et la gestion exclusive.",
-        "Le Mandant autorise expressément Robin des Airs à créer et exploiter, pour la durée du mandat, cette adresse et à l'utiliser pour toute correspondance utile au traitement du dossier, y compris les mises en demeure et actes de procédure. Robin des Airs conserve les accès, copies et pièces issus de ces échanges afin d'assurer la traçabilité du dossier.",
-        "Le Mandant reconnaît que Robin des Airs pourra également utiliser, si la procédure l'exige, l'adresse email personnelle du Mandant communiquée dans le présent mandat ou ultérieurement.",
-        "Le suivi opérationnel avec le Mandant peut notamment être assuré via WhatsApp ou tout autre canal de communication convenu entre les parties, sans caractère exclusif de ces canaux pour la notification d'informations importantes.",
-        "Langue. Le présent mandat constitue un instrument bilingue établi en français et en anglais, le texte français étant la seule version faisant foi. Le Mandant accepte cet instrument dans ses deux versions et autorise Robin des Airs à établir, produire et opposer la version anglaise (ou une traduction fidèle dans la langue de la compagnie) à la compagnie aérienne, à ses représentants et à tout tiers intervenant dans le recouvrement. La version anglaise n'a aucune valeur juridique autonome ; en cas de divergence, l'original français signé prévaut. La signature du Mandant couvre l'instrument dans ses deux langues."
+        "Le présent acte est un CONTRAT DE CESSION DE CRÉANCE PURE ET SIMPLE (articles 1321 et suivants du Code civil). Le Cédant (le passager) cède à Robin des Airs (le Cessionnaire), qui acquiert en son nom propre et pour son propre compte, sa créance née ou à naître au titre du Règlement (CE) n° 261/2004 : indemnité forfaitaire (art. 7), remboursements et prise en charge (art. 8 et 9) et, le cas échéant, préjudice complémentaire (art. 12), liée au retard, à l'annulation ou au refus d'embarquement objet du présent acte (l'« Incident »).",
+        "Transfert de propriété et de risque. La cession opère transfert intégral de la créance au Cessionnaire : à compter de la signature, Robin des Airs en est seul propriétaire, l'exerce en son nom, assume seule l'aléa du recouvrement et supporte sans recours contre le Cédant l'ensemble des frais engagés (avocat, huissier, greffe, plateforme). Le Cédant ne supporte aucun frais et ne peut être appelé en garantie de l'insuccès.",
+        "Prix de cession. Le prix de cession est variable et aléatoire (articles 1108 et 1964 du Code civil), indexé sur le montant effectivement encaissé par le Cessionnaire : il est défini à l'Article 4. Le Cédant accepte expressément ce caractère aléatoire : si aucune somme n'est recouvrée, le prix est nul et le Cédant ne peut prétendre à aucune somme.",
+        "Transparence sur l'aléa et évaluation éclairée du Cédant. Le Cédant déclare expressément avoir reçu, préalablement à la signature, les éléments d'information lui permettant d'évaluer souverainement l'aléa du recouvrement, notamment : (i) la distance du vol et le montant forfaitaire CE 261/2004 potentiellement dû ; (ii) le taux moyen de recouvrement historique du Cessionnaire pour la compagnie concernée (« matrice compagnies », mise à disposition sur simple demande et publiée sur robindesairs.eu/transparence) ; (iii) les causes principales d'échec connues (insolvabilité, prescription, circonstances extraordinaires, juridiction non-UE) ; (iv) la durée moyenne de procédure (12 à 24 mois). Le Cédant reconnaît avoir disposé du temps nécessaire à cette évaluation et ne pas s'être engagé sous la pression. Cette information sincère et complète exclut tout vice du consentement, lésion ou défaut de cause au sens de l'article 1131 du Code civil.",
+        "Créance contestée — transfert d'aléa (absence de retrait litigieux). La créance cédée présente un caractère incertain et contesté : son existence et son quantum sont susceptibles d'être discutés par le débiteur (le transporteur aérien). Ce caractère incertain fonde le prix variable et aléatoire (Article 4) et le transfert intégral de l'aléa au Cessionnaire. En revanche, aucun procès n'étant pendant à la date de la cession et aucune contestation sur le fond du droit n'ayant été élevée en justice, la créance n'est pas litigieuse au sens des articles 1699 et 1700 du Code civil : le transporteur débiteur cédé ne dispose d'aucune faculté de retrait litigieux (Article 5 bis).",
+        "Réalité économique du transfert (rejet de la requalification en mandat). La qualification de cession — et non de mandat — repose sur la réalité économique de l'opération, seul critère souverainement retenu par le juge : (i) le Cessionnaire agit en son nom propre et pour son propre compte, et non au nom du Cédant ; (ii) il supporte seul et sans recours l'intégralité de l'aléa et des frais (Articles 4, 4.1 et 5 bis), le Cédant ne pouvant jamais être appelé en garantie de l'insuccès ni tenu d'aucune avance ; (iii) la cession est notifiée au débiteur cédé (Articles 1 bis et 6), ce qu'un mandat de recouvrement n'emporte pas ; (iv) le Cédant perd la maîtrise du dossier (clause de non-instruction, Article 1 bis). Ces éléments caractérisent un véritable transfert de propriété de la créance et excluent la qualification de mandat.",
+        "Correspondances. Lorsque le voyage comporte une ou plusieurs correspondances sous une même réservation, la cession couvre l'ensemble du voyage : l'indemnisation est déterminée par la destination finale et la distance totale, le retard étant apprécié à l'arrivée à la destination finale (CJUE, 26 février 2013, Folkerts, C-11/11).",
+        "Adresse email du dossier. Robin des Airs crée une adresse email technique dédiée (référence du dossier suivie de « @robindesairs.eu » , ex. : ref@robindesairs.eu) constituant l'adresse de référence pour l'ensemble des échanges avec la compagnie, ses représentants et tout tiers ; Robin des Airs en assure seul l'administration. Le Cédant autorise expressément sa création et son exploitation pour la durée du contrat, y compris pour les mises en demeure et actes de procédure, et conserve les accès, copies et pièces afin d'assurer la traçabilité du dossier. Le suivi opérationnel avec le Cédant peut être assuré via WhatsApp ou tout autre canal convenu, sans caractère exclusif.",
+        "Langue. Le présent contrat est un instrument bilingue établi en français et en anglais, la version française étant la seule faisant foi. Le Cédant autorise Robin des Airs à établir, produire et opposer la version anglaise (ou une traduction fidèle) à la compagnie et à tout tiers. En cas de divergence, l'original français signé prévaut. La signature couvre l'instrument dans ses deux langues."
       ]
     },
     {
       "type": "article",
-      "title": "Article 1 bis — Option d'exercice : mandat ou cession",
+      "title": "Article 1 bis, Notification de la cession et indépendance d'action",
       "plain": [
-        "En clair : Tant qu'on règle à l'amiable, vous restez propriétaire de votre dossier. Si on doit aller au tribunal, on bascule pour agir plus efficacement."
+        "En clair : À partir de la signature, Robin des Airs devient propriétaire de la créance et agit en son nom propre du début à la fin. La cession est notifiée à la compagnie dès la première mise en demeure : à partir de là, la compagnie ne peut plus payer qu'à nous. Si l'affaire va au tribunal, c'est toujours un avocat qui plaide."
       ],
       "body": [
-        "Le présent acte emporte, dès la signature, mandat de représentation (Article 1, régime par défaut) et promesse de cession de la créance née ou à naître (Article 5 bis). Tant que Robin des Airs n'a pas levé l'option de cession, le Mandant demeure seul titulaire de la créance et Robin des Airs agit en qualité de mandataire.",
-        "Robin des Airs peut lever l'option de cession à tout moment, dans l'intérêt du recouvrement, notamment pour engager une procédure judiciaire, une mesure d'exécution ou former opposition à un paiement. À la levée de l'option, la cession prend effet entre les parties (art. 1321 C. civ.) et devient opposable à la compagnie aérienne à compter de sa notification (art. 1324 C. civ.) ; Robin des Airs agit alors en son nom propre, en qualité de cessionnaire.",
-        "Discipline procédurale. Le régime applicable est arrêté avant l'acte de procédure concerné et notifié à la compagnie ; Robin des Airs n'invoque qu'un seul régime par instance afin de préserver sa qualité à agir. En pratique : mandat pour la phase amiable et la médiation, cession (option levée) pour la phase contentieuse.",
-        "Cette faculté est stipulée dans l'intérêt du Mandant : elle préserve son accès à la médiation tout en permettant à Robin des Airs d'agir efficacement en justice. Elle ne modifie ni la commission (Article 4), ni le droit de rétractation (Article 9), ni l'obligation de reverser au Mandant sa part nette (75 %)."
+        "Effet immédiat. La cession produit ses effets entre les parties dès la signature (art. 1321 C. civ.). Le Cessionnaire est, à compter de cette date, seul titulaire de la créance et agit exclusivement en son nom propre et pour son propre compte à tous les stades (réclamation, mise en demeure, médiation éventuelle, procédure judiciaire), sans représenter le Cédant.",
+        "Notification immédiate au transporteur. La cession est notifiée au transporteur (débiteur cédé) dès le premier acte formel de recouvrement (réclamation officielle ou mise en demeure adressée par le Cessionnaire ou son avocat), conformément à l'article 1324 du Code civil. À compter de cette notification, seul le paiement effectué entre les mains du Cessionnaire est libératoire.",
+        "Clause de non-instruction. La créance étant la propriété du Cessionnaire, le Cédant ne peut donner aucune instruction au Cessionnaire quant au choix de la juridiction, à la stratégie procédurale, à l'opportunité ou aux modalités d'une transaction, ni au moment du dépôt de l'assignation. Le Cessionnaire conduit seul le dossier dans son propre intérêt économique. Le Cédant est tenu informé des étapes clés à titre de courtoisie, sans que cette information ne constitue une consultation ni un mandat.",
+        "Représentation en justice par avocat. Le Cessionnaire n'exerce aucune activité réservée aux avocats et ne se présente jamais seul devant une juridiction. Toute procédure judiciaire est obligatoirement conduite par un avocat inscrit à un barreau, mandaté par le Cessionnaire à ses frais exclusifs, qui assure seul la représentation et la plaidoirie."
       ]
     },
     {
       "type": "article",
-      "title": "Article 2 — Durée",
+      "title": "Article 2, Durée et facultés de résiliation",
       "plain": [
-        "En clair : Le mandat dure 24 mois. Il peut être arrêté de part et d'autre en cas de problème grave (préavis 15 jours)."
+        "En clair : Le contrat dure 18 mois. Il peut être arrêté à tout moment en cas de problème grave (préavis 15 jours). Et si on n'a toujours pas saisi le tribunal après 12 mois, vous pouvez y mettre fin librement, sans frais."
       ],
       "body": [
-        "Le mandat est consenti pour 24 mois à compter de la signature. Cette durée est nécessaire pour traiter les dossiers complexes incluant relances, médiation et procédure judiciaire si nécessaire. Il peut être résilié par email à tout moment en cas de faute grave, fraude avérée ou non-coopération persistante de l'une des parties, avec un préavis de 15 jours."
+        "Le présent contrat est consenti pour 18 mois à compter de la signature. Cette durée tient compte des délais réels de traitement (relances, négociation, et le cas échéant procédure judiciaire). Il peut être résilié par email à tout moment :",
+        "(i) Résiliation pour faute : en cas de faute grave, fraude avérée ou non-coopération persistante de l'une des parties, avec un préavis de 15 jours.",
+        "(ii) Résiliation libre pour convenance (Cédant) après épuisement de la phase amiable : lorsque la phase amiable a été épuisée sans résultat et qu'aucune procédure judiciaire n'a été engagée, le Cédant peut résilier librement par email, avec un préavis de 15 jours, sans frais.",
+        "(iii) Résiliation libre pour convenance (Cédant) après 12 mois sans assignation : à l'expiration d'un délai de 12 mois à compter de la signature, et tant qu'aucune assignation n'a été déposée par le Cessionnaire ou son avocat, le Cédant peut résilier librement par email, avec un préavis de 15 jours, sans frais ni indemnité.",
+        "Dans tous les cas de résiliation, la créance est rétrocédée de plein droit au Cédant (Article 5 bis) et le Cessionnaire supporte seul les frais déjà engagés, sans recours."
       ]
     },
     {
       "type": "article",
-      "title": "Article 3 — Exclusivité & Anti-contournement",
+      "title": "Article 3, Exclusivité & Anti-contournement",
       "plain": [
         "En clair : Pendant ce temps, ne confiez pas le même dossier à quelqu'un d'autre et ne négociez pas seul avec la compagnie sans nous prévenir."
       ],
       "body": [
-        "Le présent mandat est exclusif. Pendant sa durée, le Mandant s'engage à ne pas confier le même dossier à un tiers ni à négocier directement avec la compagnie pour le même incident sans en informer préalablement Robin des Airs. Tout accord conclu en violation de cette clause engage la responsabilité du Mandant, qui restera redevable de la commission convenue."
+        "Le présent contrat est exclusif. La créance étant cédée à Robin des Airs (Article 1) et n'appartenant plus au Cédant à compter de la signature, ce dernier s'engage, pendant la durée du contrat, à ne pas céder à un tiers cette même créance dont il n'est plus titulaire, ni à négocier directement avec la compagnie pour le même Incident sans en informer préalablement Robin des Airs. Seul un accord conclu de mauvaise foi, dans le seul but de contourner la cession, engage la responsabilité du Cédant ; ce dernier devra alors reverser au Cessionnaire l'intégralité des sommes perçues de la compagnie, à charge pour le Cessionnaire de lui verser le prix de cession (Article 4). Une démarche de bonne foi du Cédant n'entraîne aucune pénalité."
       ]
     },
     {
       "type": "article",
-      "title": "Article 4 — Honoraires · No Win, No Fee",
+      "title": "Article 4, Prix de cession variable (aléatoire) · No Win, No Fee",
       "plain": [
-        "En clair : On prend 25 % seulement si on récupère de l'argent. Si on ne gagne rien, vous ne payez rien."
+        "En clair : Robin des Airs vous achète votre créance à un prix variable qui dépend de ce qui est récupéré : vous recevez 75 % du recouvré si on règle à l'amiable, 55 % si on doit aller au tribunal, 0 € si rien n'est récupéré. Les deux taux sont acceptés dès la signature, sans nouvel accord ultérieur. Si rien n'est récupéré, vous ne devez rien et la créance vous revient."
       ],
       "body": [
-        "Robin des Airs perçoit une commission de 25% TTC du montant effectivement encaissé, uniquement en cas de succès. Cette commission s'applique à l'ensemble des sommes recouvrées au titre du dossier — indemnité forfaitaire, remboursements, frais et préjudices liés à l'incident. En cas d'échec ou de non-recouvrement, aucun frais n'est dû. Aucune avance n'est exigée à aucun stade. La commission s'applique également à toute compensation en nature (bon d'achat, avoir, miles…) acceptée au titre du dossier, calculée sur sa valeur ; le Mandant s'engage à ne pas accepter une telle compensation sans l'accord de Robin des Airs. Le Mandant exige le paiement en numéraire (virement) et refuse expressément, dès à présent, tout bon d'achat, avoir, miles ou autre service proposé en lieu et place : conformément à l'article 7§3 du Règlement (CE) n° 261/2004, une compensation en nature suppose l'accord signé du passager, que le Mandant ne donne pas."
+        "Caractère aléatoire (art. 1108 et 1964 C. civ.). Le Cédant accepte expressément que le prix de cession soit variable et aléatoire, déterminé en fonction d'un événement futur incertain : le montant effectivement encaissé par le Cessionnaire au titre de la créance cédée. Cette qualification résulte du caractère incertain et contesté de la créance (Article 1) et reflète le transfert intégral à Robin des Airs de l'aléa économique du recouvrement.",
+        "Barème du prix de cession (acceptés dès la signature, sans nouvel accord ultérieur) :",
+        "(i) Recouvrement en phase amiable ou pré-contentieuse (réclamation à la compagnie, mise en demeure du Cessionnaire ou de son avocat, négociation pré-judiciaire) : Prix de cession versé au Cédant : 75 % du montant effectivement encaissé par le Cessionnaire. Le Cessionnaire conserve 25 % à titre de marge sur l'opération de cession. Exemple : sur 600 € encaissés, le Cédant reçoit 450 € et le Cessionnaire conserve 150 €. (ii) Recouvrement en phase contentieuse (assignation devant la juridiction compétente par l'avocat partenaire du Cessionnaire) : Prix de cession versé au Cédant : 55 % du montant effectivement encaissé par le Cessionnaire. Le Cessionnaire conserve 45 %. Cet écart reflète l'aléa procédural accru et la charge intégrale des frais (avocat, huissier, greffe, plateforme), supportée seule par le Cessionnaire sans recours contre le Cédant. Exemple : sur 600 € encaissés, le Cédant reçoit 330 € et le Cessionnaire conserve 270 €.",
+        "Application des deux taux : préavis 7 jours et faculté de résiliation libre avant assignation. Le Cédant reconnaît avoir pris connaissance des deux taux (75 % amiable / 55 % contentieux) avant la signature du présent contrat et les accepte tous deux dès la signature. Le passage de l'un à l'autre résulte de la décision du Cessionnaire, qui apprécie souverainement l'opportunité du contentieux (Article 1 bis, clause de non-instruction).",
+        "Toutefois, afin de préserver une parfaite information du Cédant et d'écarter toute critique tirée d'une modification unilatérale du contrat (article R. 212-1, 3° du Code de la consommation), aucune assignation n'est déposée avant l'expiration d'un délai de 7 jours calendaires à compter d'une notification écrite au Cédant (WhatsApp ET email), précisant : l'échec de la phase amiable et le passage envisagé en contentieux ; le nouveau taux de 55 % qui s'appliquera mécaniquement à l'encaissement contentieux ; la faculté pour le Cédant de résilier librement le présent contrat par simple email avant l'expiration de ce délai, sans frais ni indemnité, la créance lui étant alors rétrocédée de plein droit (Articles 2 et 5 bis). À défaut de résiliation dans ce délai de 7 jours, le Cessionnaire est libre de déposer l'assignation sans nouvel accord du Cédant, le taux de 55 % s'appliquant alors mécaniquement.",
+        "Absence de prix dû en cas d'échec. En cas de non-recouvrement, le prix de cession est nul : aucune somme n'est due par le Cédant, aucune avance n'est exigée à aucun stade, et la créance lui est rétrocédée de plein droit (Article 5 bis). Le Cessionnaire supporte seul les frais engagés à fonds perdus (« No Win No Fee »).",
+        "Contrepartie sérieuse en toute hypothèse (absence de prix dérisoire). Le prix de cession est déterminable par référence à un événement futur (articles 1591 et 1592 C. civ.) ; son éventuelle valeur nulle en cas d'échec constitue l'essence même de l'aléa licitement accepté (article 1964 C. civ.), et non un défaut ou une vileté de prix. En contrepartie de la cession, le Cédant reçoit en toute hypothèse et dès la signature une valeur réelle et immédiate : la prise en charge intégrale du risque et de la totalité des frais de recouvrement (avocat, huissier, greffe, plateforme), l'immunité de tout recours en cas d'échec, et l'engagement de diligences immédiates. Cette contrepartie exclut toute nullité pour prix dérisoire ou défaut de contrepartie (article 1169 C. civ.).",
+        "Sommes incluses et exclues du prix. Le barème ci-dessus s'applique exclusivement à l'indemnité forfaitaire (art. 7), aux remboursements et prise en charge (art. 8 et 9) et au préjudice complémentaire (art. 12) effectivement encaissés. L'article 700 du Code de procédure civile, les dépens et les intérêts moratoires alloués par le juge restent intégralement acquis au Cessionnaire et à son avocat (ils rémunèrent le risque et les frais procéduraux qu'il a supportés seul) et ne sont pas inclus dans la base de calcul du prix dû au Cédant.",
+        "Compensation en nature. Le barème s'applique également à toute compensation en nature (bon d'achat, avoir, miles…) acceptée par le Cessionnaire dans le cadre du recouvrement, calculée sur sa valeur. Le Cédant exige le paiement en numéraire (virement) et refuse expressément, dès à présent, tout bon d'achat, avoir, miles ou autre service proposé en lieu et place : conformément à l'article 7§3 du Règlement (CE) n° 261/2004, une compensation en nature suppose l'accord signé du passager, que le Cédant ne donne pas."
       ]
     },
     {
       "type": "article",
-      "title": "Article 4.1 — Frais Judiciaires",
+      "title": "Article 4.1, Frais procéduraux à la charge exclusive du Cessionnaire",
       "plain": [
-        "En clair : Les frais d'avocat et de justice sont pour nous. Vous n'avancez jamais d'argent."
+        "En clair : Tous les frais sont pour nous. Vous n'avancez jamais rien, et si on perd, on ne peut pas vous les réclamer."
       ],
       "body": [
-        "Robin des Airs prend en charge 100% des frais d'avocat, de greffe, d'huissier et de procédure judiciaire TTC liés au traitement du dossier. Le Mandant n'avance aucune somme à quelque stade que ce soit. Robin des Airs se réserve le droit de sélectionner librement les dossiers qu'elle estime viables avant d'engager une procédure judiciaire. Les sommes éventuellement allouées au titre des frais de procédure (article 700 du Code de procédure civile, dépens) restent acquises à Robin des Airs, qui en a fait l'avance ; les intérêts suivent le sort de la créance (Article 5 bis)."
+        "Robin des Airs prend en charge 100 % des frais d'avocat, de greffe, d'huissier, de plateforme et de procédure judiciaire TTC liés au recouvrement de la créance acquise. Ces frais sont supportés par le Cessionnaire seul, sans recours d'aucune sorte contre le Cédant, y compris en cas d'échec total ou partiel du recouvrement. Robin des Airs se réserve le droit de sélectionner librement les dossiers qu'elle estime viables avant d'engager une procédure judiciaire (Article 1 bis, clause de non-instruction). Les sommes éventuellement allouées au titre des frais de procédure (article 700 du Code de procédure civile, dépens) et les intérêts moratoires restent acquises au Cessionnaire et à son avocat, en contrepartie de l'aléa et des frais qu'ils ont supportés seuls."
       ]
     },
     {
@@ -79,9 +92,9 @@
       "rows": [
         [
           "Distance du vol",
-          "Indemnité légale / pax",
-          "Commission RDA (25%)",
-          "Net client"
+          "Montant encaissé / pax",
+          "Marge cessionnaire (25 %)",
+          "Prix de cession (75 %)"
         ],
         [
           "≤ 1 500 km",
@@ -90,7 +103,7 @@
           "187,50 €"
         ],
         [
-          "1 500 – 3 500 km (Maghreb — ex. Maroc)",
+          "1 500-3 500 km (Afrique du Nord)",
           "400 €",
           "100 €",
           "300 €"
@@ -104,149 +117,214 @@
       ]
     },
     {
-      "type": "article",
-      "title": "Article 5 — Paiement & Protection du Mandant",
-      "plain": [
-        "En clair : La compagnie paie sur NOTRE compte, jamais le vôtre. On vous reverse vos 75 % sous 48 h une fois l'argent vraiment encaissé."
-      ],
-      "body": [
-        "Le Mandant donne instruction expresse et irrévocable à la compagnie aérienne de verser toute indemnité, tout remboursement et toute somme due exclusivement sur le compte bancaire désigné par Robin des Airs, à l'exclusion de tout autre compte, y compris celui du Mandant. Robin des Airs reverse au Mandant sa part nette (75%) sur l'IBAN communiqué dans ce mandat dans un délai de 48 heures ouvrées à compter de l'encaissement effectif et irrévocable des fonds (virement SEPA crédité, sans réserve ni rétrofacturation). Si la compagnie verse directement au Mandant, celui-ci s'engage à reverser sans délai la commission de 25% à Robin des Airs."
+      "type": "table",
+      "rows": [
+        [
+          "Distance du vol",
+          "Montant encaissé / pax",
+          "Marge cessionnaire (45 %)",
+          "Prix de cession (55 %)"
+        ],
+        [
+          "≤ 1 500 km",
+          "250 €",
+          "112,50 €",
+          "137,50 €"
+        ],
+        [
+          "1 500-3 500 km (Afrique du Nord)",
+          "400 €",
+          "180 €",
+          "220 €"
+        ],
+        [
+          "> 3 500 km (Afrique subsaharienne)",
+          "600 €",
+          "270 €",
+          "330 €"
+        ]
       ]
     },
     {
       "type": "article",
-      "title": "Article 5.1 — Reversement, Mandant injoignable & fonds non réclamés",
+      "title": "Article 5, Encaissement et versement du prix de cession",
       "plain": [
-        "En clair : Vos 75 % restent à vous. Si on n'arrive pas à vous joindre ou sans RIB valide, on garde l'argent à votre disposition et on continue de vous chercher — jamais pour nous."
+        "En clair : La compagnie paie sur le compte de Robin des Airs (qui est propriétaire de la créance). On vous verse votre prix de cession (75 % ou 55 % du recouvré) sous 48 h après encaissement effectif."
       ],
       "body": [
-        "Le solde net (75 %) revenant au Mandant demeure sa propriété. Si le reversement ne peut intervenir faute de coordonnées bancaires valides et/ou d'impossibilité de joindre le Mandant, les fonds sont conservés et tenus à sa disposition par Robin des Airs, identifiés comme fonds détenus pour son compte, et ne constituent ni un produit ni un revenu de Robin des Airs. Robin des Airs effectue des diligences raisonnables de contact (WhatsApp, courriel, téléphone puis, en cas d'échec, courrier recommandé à la dernière adresse communiquée), le Mandant s'engageant à tenir ses coordonnées à jour. À défaut de réponse utile dans un délai de six (6) mois à compter de la première sollicitation de reversement, Robin des Airs pourra mettre le Mandant en demeure de recevoir les fonds (art. 1345 C. civ.) puis se libérer par consignation de la somme auprès de la Caisse des dépôts et consignations (art. 1345-1 C. civ.). Le droit du Mandant au reversement se prescrit par cinq (5) ans (art. 2224 C. civ.). Le reversement demeure subordonné aux vérifications d'identité et de conformité (LCB-FT)."
+        "La créance étant la propriété du Cessionnaire dès la signature (Article 1) et la cession étant notifiée au transporteur dès le premier acte formel de recouvrement (Article 1 bis), seul le paiement effectué sur le compte bancaire dédié du Cessionnaire est libératoire. Le Cédant donne instruction expresse et irrévocable à la compagnie aérienne de verser toute indemnité, tout remboursement et toute somme due exclusivement sur le compte bancaire dédié désigné par Robin des Airs, à l'exclusion de tout autre compte, y compris celui du Cédant. Les sommes encaissées constituent le produit du recouvrement de la créance acquise par le Cessionnaire ; elles servent de base au calcul du prix de cession dû au Cédant (Article 4).",
+        "Le Cessionnaire verse au Cédant son prix de cession (75 % du recouvré en amiable, 55 % en contentieux — Article 4) sur l'IBAN communiqué dans le présent contrat dans un délai de 5 jours ouvrés à compter de l'encaissement effectif et irrévocable des fonds (virement SEPA crédité, sans réserve ni rétrofacturation). À défaut d'IBAN en zone SEPA, le versement s'effectue par tout moyen convenu avec le Cédant — Wave, Orange Money ou MTN Mobile Money — selon les coordonnées qu'il communique ; les frais de transfert et de change éventuels sont à la charge du Cessionnaire, de sorte que le prix de cession ne soit pas diminué. Si la compagnie verse, en violation de la notification de cession, directement entre les mains du Cédant, ce dernier s'engage à reverser sans délai au Cessionnaire l'intégralité de la somme perçue, le Cessionnaire lui versant ensuite le prix de cession dû."
       ]
     },
     {
       "type": "article",
-      "title": "Article 5 bis — Cession de créance aux fins de recouvrement (créance née ou à naître)",
+      "title": "Article 5.1, Cédant injoignable & prix de cession non versé",
       "plain": [
-        "En clair : Pour sécuriser le recouvrement, vous nous cédez votre créance le temps de la récupérer. Si ça échoue, elle vous revient."
+        "En clair : Votre prix de cession vous est dû. Si on n'arrive pas à vous joindre ou sans coordonnées valides, on conserve la somme à votre disposition et on continue de vous chercher."
       ],
       "body": [
-        "En exécution de l'option de l'Article 1 bis, le Mandant consent à céder à Robin des Airs, à titre de recouvrement, la créance d'indemnisation née ou à naître qu'il détient à l'encontre de la compagnie aérienne — le transporteur aérien effectif ayant réellement réalisé le vol (art. 2 b) du Règlement), quel que soit le numéro de vol commercial ou la compagnie de commercialisation (vols en partage de code / codeshare) — au titre du Règlement (CE) n° 261/2004 pour le vol identifié au présent acte (l'« Incident »), en ce compris l'indemnité forfaitaire (art. 7), les remboursements et frais (art. 8 et 9), le préjudice complémentaire (art. 12), intérêts, pénalités et accessoires.",
-        "Cette cession est consentie à titre de recouvrement : Robin des Airs en assure l'encaissement en qualité de cessionnaire et reverse au Mandant sa part nette (75 %) dans les conditions de l'Article 5, déduction faite de la seule commission de l'Article 4. Elle ne modifie ni le caractère « No Win No Fee », ni le droit de rétractation de l'Article 9.",
-        "Conformément aux articles 1321 à 1326 du Code civil, la cession prend effet entre les parties à la levée de l'option (Article 1 bis) et porte sur une créance déterminable (parties, vol, date, fondement CE 261/2004). Elle est opposable à la compagnie aérienne (débiteur cédé) à compter de sa notification au sens de l'article 1324 du Code civil ; la mise en demeure adressée par Robin des Airs vaut notification de la cession.",
-        "En conséquence, à compter de cette notification, seul le paiement effectué entre les mains de Robin des Airs est libératoire ; Robin des Airs est habilité à agir en recouvrement en son nom propre, par toute voie amiable, administrative, judiciaire ou arbitrale. Le Mandant garantit l'existence de la créance et déclare qu'elle n'a fait l'objet d'aucune cession, transaction ni paiement antérieur. À l'extinction du mandat sans recouvrement, ou en cas de rétractation dans le délai de l'Article 9, la créance est rétrocédée de plein droit au Mandant.",
-        "Clause de continuité. Si la cession est prohibée, refusée ou déclarée inopposable — notamment par les conditions générales de transport du transporteur — le mandat de représentation subsiste de plein droit et Robin des Airs agit alors au nom et pour le compte du Mandant sur le fondement des articles 1984 et suivants du Code civil, le Mandant demeurant titulaire de la créance. L'instruction de paiement de l'Article 5 reste applicable."
+        "Le prix de cession dû au Cédant (Article 4) constitue une dette du Cessionnaire envers le Cédant dès l'encaissement effectif des fonds. Si le versement ne peut intervenir faute de coordonnées bancaires valides et/ou d'impossibilité de joindre le Cédant, la somme est conservée et tenue à sa disposition par le Cessionnaire, identifiée comme prix de cession dû et exigible. Le Cessionnaire effectue des diligences raisonnables de contact (WhatsApp, courriel, téléphone puis, en cas d'échec, courrier recommandé à la dernière adresse communiquée), le Cédant s'engageant à tenir ses coordonnées à jour (téléphone, email, WhatsApp et adresse postale). Frais de recherche : en cas de manquement du Cédant à cette obligation de mise à jour, les frais raisonnables et justifiés réellement engagés par le Cessionnaire pour le retrouver (courriers recommandés, enquête d'adresse) sont déductibles du prix de cession dû, dans la limite de 30 € et sur justificatifs ; cette déduction ne constitue ni une avance ni un frais en cas d'échec au sens de l'Article 4. À défaut de réponse utile dans un délai de six (6) mois à compter de la première sollicitation de versement, le Cessionnaire pourra mettre le Cédant en demeure de recevoir la somme (art. 1345 C. civ.) puis se libérer par consignation auprès de la Caisse des dépôts et consignations (art. 1345-1 C. civ.). Le droit du Cédant au versement du prix de cession se prescrit par cinq (5) ans (art. 2224 C. civ.). Le versement demeure subordonné aux vérifications d'identité et de conformité (LCB-FT)."
       ]
     },
     {
       "type": "article",
-      "title": "Article 5 ter — Inopposabilité des clauses d'incessibilité",
+      "title": "Article 5 bis, Modalités de la cession, absence de retrait litigieux et rétrocession",
       "plain": [
-        "En clair : Si la compagnie prétend que vous n'aviez pas le droit de nous céder le dossier, c'est faux : la justice européenne l'a tranché."
+        "En clair : Vous vendez votre créance à Robin des Airs, qui en devient propriétaire dès la signature. La compagnie est avertie dès la première mise en demeure. Si rien n'est récupéré ou si vous vous rétractez dans les 14 jours, la créance vous revient automatiquement."
       ],
       "body": [
-        "Le Mandant déclare avoir connaissance des conditions générales de transport de la compagnie. Toute clause des conditions générales de transport interdisant ou limitant la cession de la créance d'indemnisation due au titre du Règlement (CE) n° 261/2004 est inopposable : la Cour de justice de l'Union européenne a jugé qu'une telle clause est contraire à l'article 15 du Règlement (CJUE, 3e ch., 29 février 2024, Eventmedia c/ Air Europa, C-11/23). En conséquence, la compagnie aérienne ne saurait opposer une telle clause à la cession consentie à Robin des Airs (Article 5 bis)."
+        "Objet et étendue de la cession. Le Cédant cède pleinement et définitivement à Robin des Airs la créance d'indemnisation née ou à naître qu'il détient à l'encontre du transporteur aérien effectif ayant réalisé le vol (art. 2 b) du Règlement), quel que soit le numéro de vol commercial ou la compagnie de commercialisation (partage de code / codeshare), au titre du Règlement (CE) n° 261/2004 pour l'Incident, en ce compris l'indemnité forfaitaire (art. 7), les remboursements et frais (art. 8 et 9), le préjudice complémentaire (art. 12), intérêts, pénalités et accessoires. La créance d'un passager mineur n'entre pas dans la cession : elle fait l'objet du mandat spécial d'encaissement prévu à l'Article 9 bis.",
+        "Effet entre les parties. Conformément aux articles 1321 à 1326 du Code civil, la cession prend effet entre les parties dès la signature et porte sur une créance déterminable (parties, vol, date, fondement CE 261/2004). Le Cessionnaire devient seul titulaire de la créance et l'exerce en son nom propre.",
+        "Opposabilité au transporteur (immédiate). La cession devient opposable au transporteur (débiteur cédé) au sens de l'article 1324 du Code civil dès le premier acte formel de recouvrement adressé au transporteur par le Cessionnaire ou son avocat (réclamation officielle ou mise en demeure), lequel vaut notification de la cession. À compter de cette notification, seul le paiement effectué entre les mains du Cessionnaire est libératoire, et le Cessionnaire agit en recouvrement en son nom propre et pour son propre compte, par toute voie amiable, administrative, judiciaire ou arbitrale.",
+        "Absence de droit litigieux et de retrait (art. 1699 et 1700 C. civ.). Aux termes de l'article 1700 du Code civil, une chose n'est litigieuse que « dès qu'il y a procès et contestation sur le fond du droit ». À la date de la signature, aucune instance n'est pendante au sujet de la créance cédée et aucune contestation sur le fond n'a été élevée en justice : la créance, simplement incertaine et contestée, n'est pas litigieuse au sens de ces textes et le transporteur débiteur cédé ne peut exercer aucun retrait litigieux (art. 1699 C. civ.). La qualification de cession — et non de mandat — résulte de la réalité économique de l'opération (Article 1 : action en nom propre, transfert intégral de l'aléa et des frais, notification au débiteur, clause de non-instruction), et non d'une étiquette formelle.",
+        "Prix réel de la cession — stipulation subsidiaire (pour le seul cas où un retrait litigieux serait néanmoins jugé recevable). À titre surabondant, si une juridiction devait, contre l'analyse qui précède, juger un retrait litigieux recevable, les parties conviennent irréfragablement entre elles que le « prix réel de la cession » est forfaitairement fixé au montant suivant, correspondant à la valeur économique que les parties ont assignée à la créance à la signature : 75 % du montant forfaitaire CE 261/2004 applicable au vol (250 €, 400 € ou 600 € selon la distance), par passager cédant ; majoré des frais et loyaux coûts justifiés exposés par le Cessionnaire (frais d'avocat, d'huissier, de greffe, de plateforme judiciaire) ; et des intérêts au taux légal à compter de la signature. Cette détermination forfaitaire fait obstacle à toute fixation du prix à un montant inférieur, notamment en raison du caractère variable du prix de cession (Article 4) : le caractère aléatoire du prix régit la relation Cédant-Cessionnaire et n'est pas opposable au débiteur cédé exerçant le retrait litigieux. Toute fixation contraire serait inopposable au Cédant et au Cessionnaire.",
+        "Garantie de sincérité et rétrocession. Le Cédant garantit la sincérité des éléments déclarés (identité, réservation confirmée, vol et date concernés) et, si la créance est déjà née à la signature, son existence ; si la créance est à naître (perturbation en cours à la signature), il ne garantit pas la survenance de l'événement ouvrant droit à indemnisation (arrivée finale retardée de 3 heures ou plus), cet aléa étant intégralement transféré au Cessionnaire. Il déclare que la créance n'a fait l'objet d'aucune cession, transaction ni paiement antérieur. Le Cédant ne garantit ni la solvabilité du débiteur ni l'issue du recouvrement, dont l'aléa est intégralement transféré au Cessionnaire (Article 1). À l'extinction du contrat sans recouvrement, en cas de clôture pour irrécouvrabilité (Article 7 quater), ou en cas de rétractation dans le délai de l'Article 9, la créance est rétrocédée de plein droit au Cédant, sans frais ni indemnité de part et d'autre."
       ]
     },
     {
       "type": "article",
-      "title": "Article 6 — Clause Non Libératoire pour la Compagnie Aérienne",
+      "title": "Article 5 ter, Validité de la cession et inopposabilité des clauses d'incessibilité",
       "plain": [
-        "En clair : Si la compagnie vous paie directement pour nous contourner, elle nous doit quand même le paiement."
+        "En clair : La justice européenne a tranché deux fois récemment : (1) la cession de créance CE 261 est parfaitement valable et la compagnie ne peut l'interdire dans ses CGT ; (2) la cession ne change rien à la compétence des tribunaux, donc Robin des Airs peut agir devant le tribunal compétent comme l'aurait fait le passager."
       ],
       "body": [
-        "Tout paiement effectué directement par la compagnie aérienne au Mandant ne libère pas la compagnie de ses obligations envers Robin des Airs, mandataire exclusif désigné par acte signé. Robin des Airs notifie expressément la compagnie, dès la mise en demeure, que le seul paiement libératoire valable est celui effectué sur le compte bancaire de Robin des Airs.",
-        "En conséquence : (i) tout règlement opéré directement au Mandant en violation de cette instruction sera réputé non libératoire à l'égard de Robin des Airs ; (ii) la compagnie demeurera redevable du paiement auprès du mandataire ; (iii) Robin des Airs se réserve le droit d'engager toute action en recouvrement, y compris judiciaire, à l'encontre de la compagnie aérienne. Cette stipulation constitue une instruction de paiement irrévocable au sens des articles 1984 et suivants du Code civil et s'appuie sur la cession de créance de l'Article 5 bis (articles 1321 à 1324 du Code civil) ; elle est opposable à la compagnie aérienne et à tout tiers à compter de la notification qui leur en est faite."
+        "Validité de la cession et compétence du Cessionnaire (CJUE, 9 octobre 2025, Lufthansa c/ AirHelp, C-551/24). La Cour de justice de l'Union européenne a jugé que la cession d'une créance d'indemnisation au titre du Règlement (CE) n° 261/2004 est parfaitement licite et que la cession n'a aucune incidence en tant que telle sur la détermination de la juridiction compétente : le cessionnaire peut invoquer les mêmes chefs de compétence que le cédant, et notamment l'article 7§1 du Règlement Bruxelles I bis (lieu de fourniture du service = aéroport de départ ou d'arrivée du vol, CJUE Rehder C-204/08).",
+        "Inopposabilité des clauses d'incessibilité (CJUE, 6 février 2025, Eventmedia c/ Air Europa, C-11/23). Le Cédant déclare avoir connaissance des conditions générales de transport de la compagnie. Toute clause des conditions générales de transport interdisant ou limitant la cession de la créance d'indemnisation due au titre du Règlement (CE) n° 261/2004 est inopposable, comme contraire à l'article 15 du Règlement (CJUE, 6 février 2025, Eventmedia Soluciones c/ Air Europa Líneas Aéreas, C-11/23). En conséquence, la compagnie aérienne ne saurait opposer une telle clause à la cession consentie à Robin des Airs (Articles 1 et 5 bis)."
       ]
     },
     {
       "type": "article",
-      "title": "Article 7 — Obligations de Robin des Airs",
+      "title": "Article 5 quater, Inopposabilité des clauses procédurales restrictives au cessionnaire",
       "plain": [
-        "En clair : On traite votre dossier avec sérieux, on vous tient informé, on vous paie vite et on protège vos données."
+        "En clair : Si la compagnie sort une clause de ses CGT pour imposer un délai d'attente ou empêcher la cession, on la conteste : ces clauses ne nous sont pas opposables."
       ],
       "body": [
-        "Robin des Airs s'engage à : (i) instruire le dossier avec diligence ; (ii) informer le Mandant à chaque étape clé ; (iii) reverser les sommes dans les 48h ouvrées après encaissement effectif et irrévocable ; (iv) notifier expressément la compagnie aérienne de l'existence du présent mandat et de l'instruction de paiement exclusif ; (v) protéger les données personnelles conformément au RGPD."
+        "Le Cessionnaire, agissant en son nom propre comme titulaire de la créance cédée (Article 1), n'est pas lié par les clauses des conditions générales de transport qui (i) subordonneraient la recevabilité d'une réclamation au titre du Règlement (CE) n° 261/2004 à un délai d'attente préalable, (ii) restreindraient le droit du passager de se faire représenter, (iii) limiteraient la cession de la créance, (iv) exigeraient qu'une réclamation émane personnellement du passager préalablement à toute démarche d'un tiers ou d'un cessionnaire, ou (v) imposeraient que le paiement soit effectué exclusivement entre les mains du passager nonobstant la cession notifiée. Ces clauses sont inopposables au regard du caractère impératif du Règlement (article 15) et, s'agissant des clauses limitant la cessibilité, de la jurisprudence CJUE, 6 février 2025, Eventmedia Soluciones c/ Air Europa, C-11/23.",
+        "Clauses attributives de juridiction (CJUE, 18 novembre 2020, Ryanair c/ DelayFix, C-519/19). Une clause attributive de juridiction insérée dans le contrat de transport conclu entre le passager et la compagnie n'est pas opposable au Cessionnaire, tiers à ce contrat, qui n'y a pas consenti ; une telle clause, non négociée individuellement, est au surplus susceptible d'être déclarée abusive. Le Cessionnaire saisit donc librement les juridictions désignées à l'Article 11."
       ]
     },
     {
       "type": "article",
-      "title": "Article 7 bis — Responsabilité & obligation de moyens",
+      "title": "Article 6, Clause non libératoire pour la compagnie aérienne",
       "plain": [
-        "En clair : On s'engage à tout faire pour gagner, mais aucun service ne peut garantir le résultat. Si on commet une erreur, notre responsabilité est plafonnée."
+        "En clair : Une fois la cession notifiée (dès la première mise en demeure), si la compagnie vous paie directement pour nous contourner, elle nous doit quand même le paiement."
       ],
       "body": [
-        "Robin des Airs est tenue d'une obligation de moyens et ne garantit pas l'obtention de l'indemnisation. Sauf faute lourde ou dol, sa responsabilité est limitée aux dommages directs et plafonnée au montant de la commission effectivement perçue sur le dossier. Robin des Airs n'est pas responsable des retards, refus ou décisions de la compagnie aérienne, des juridictions ou des médiateurs."
+        "À compter de la notification de la cession au transporteur (Article 1 bis et Article 5 bis — notification effectuée dès le premier acte formel de recouvrement), tout paiement effectué directement par la compagnie aérienne au Cédant ne libère pas la compagnie de ses obligations envers Robin des Airs, cessionnaire. Robin des Airs notifie expressément à la compagnie, dès la première mise en demeure, que le seul paiement libératoire valable est celui effectué sur son compte bancaire dédié.",
+        "En conséquence : (i) tout règlement opéré directement au Cédant en violation de cette instruction, postérieurement à la notification, sera réputé non libératoire à l'égard de Robin des Airs ; (ii) la compagnie demeurera redevable du paiement auprès du Cessionnaire ; (iii) Robin des Airs se réserve le droit d'engager toute action en recouvrement, y compris judiciaire, à l'encontre de la compagnie aérienne. Cette stipulation s'appuie sur la cession de créance (articles 1321 à 1324 du Code civil) et est opposable au transporteur à compter de la notification qui lui en est faite."
       ]
     },
     {
       "type": "article",
-      "title": "Article 7 ter — Sous-traitance & intervenants",
+      "title": "Article 7, Obligations du Cessionnaire",
       "plain": [
-        "En clair : On peut confier votre dossier à un avocat (à nos frais) ; pour ça on doit pouvoir lui transmettre vos pièces — vous nous y autorisez."
+        "En clair : On instruit votre dossier avec sérieux, on vous tient informé, on vous verse votre prix de cession vite et on protège vos données."
       ],
       "body": [
-        "Robin des Airs peut, à son initiative et à ses frais (Article 4.1), confier tout ou partie de l'exécution à des avocats, auxiliaires de justice ou prestataires techniques de son choix, agissant pour son compte ; aucune relation contractuelle directe n'est créée entre eux et le Mandant du seul fait du mandat. Le Mandant consent expressément à ce que Robin des Airs communique aux avocats et tiers strictement nécessaires les données et pièces du dossier, aux seules fins du recouvrement, dans le respect du RGPD et de la Politique de confidentialité. Robin des Airs demeure responsable de la bonne exécution de la prestation à l'égard du Mandant."
+        "Robin des Airs s'engage à : (i) instruire le dossier avec diligence et à ses frais exclusifs ; (ii) informer le Cédant à chaque étape clé à titre de courtoisie ; (iii) verser le prix de cession dû au Cédant (Article 4) dans les 5 jours ouvrés après encaissement effectif et irrévocable ; (iv) notifier la cession à la compagnie aérienne dès le premier acte formel de recouvrement (Article 1 bis) ; (v) protéger les données personnelles conformément au RGPD."
       ]
     },
     {
       "type": "article",
-      "title": "Article 7 quater — Clôture pour irrécouvrabilité",
+      "title": "Article 7 bis, Responsabilité & obligation de moyens",
       "plain": [
-        "En clair : Si le dossier est manifestement perdu d'avance, on peut l'arrêter — vous ne payez rien."
+        "En clair : On s'engage à tout faire pour récupérer votre dû, mais aucun service ne peut garantir le résultat. Si on commet une erreur, notre responsabilité est plafonnée."
       ],
       "body": [
-        "Robin des Airs peut mettre fin au dossier par notification motivée s'il apparaît, après analyse, que la réclamation est manifestement irrécouvrable (notamment insolvabilité du transporteur, prescription, absence de fondement au regard du Règlement). Cette clôture n'ouvre droit à aucune indemnité de part et d'autre et, conformément au principe « No Win No Fee », aucune somme n'est due par le Mandant ; la créance, si une option de cession avait été levée, lui est rétrocédée de plein droit."
+        "Robin des Airs est tenue d'une obligation de moyens et ne garantit pas l'obtention de l'indemnisation. Sauf faute lourde ou dol, sa responsabilité est limitée aux dommages directs et plafonnée au plus élevé des trois montants suivants, afin d'écarter toute critique tirée d'un plafond manifestement insuffisant (article R. 212-1, 6° du Code de la consommation) : la marge effectivement conservée par le Cessionnaire sur le dossier (différence entre la somme encaissée et le prix de cession versé au Cédant — Article 4) ; trois (3) fois le prix de cession dû au Cédant au titre du dossier ; un plancher de 500 €. Robin des Airs n'est pas responsable des retards, refus ou décisions de la compagnie aérienne, des juridictions ou des médiateurs."
       ]
     },
     {
       "type": "article",
-      "title": "Article 8 — Obligations du Mandant",
+      "title": "Article 7 ter, Sous-traitance & intervenants",
+      "plain": [
+        "En clair : On peut confier votre dossier à un avocat (à nos frais) ; pour ça on doit pouvoir lui transmettre vos pièces, vous nous y autorisez."
+      ],
+      "body": [
+        "Robin des Airs peut, à son initiative et à ses frais (Article 4.1), confier tout ou partie de l'exécution à des avocats, auxiliaires de justice ou prestataires techniques de son choix, agissant pour son compte ; aucune relation contractuelle directe n'est créée entre eux et le Cédant du seul fait du contrat. Le Cédant consent expressément à ce que Robin des Airs communique aux avocats et tiers strictement nécessaires les données et pièces du dossier, aux seules fins du recouvrement, dans le respect du RGPD et de la Politique de confidentialité. Robin des Airs demeure responsable de la bonne exécution de la prestation à l'égard du Cédant."
+      ]
+    },
+    {
+      "type": "article",
+      "title": "Article 7 quater, Clôture pour irrécouvrabilité",
+      "plain": [
+        "En clair : Si le dossier est manifestement voué à l'échec, on peut l'arrêter, vous ne payez rien."
+      ],
+      "body": [
+        "Robin des Airs peut mettre fin au dossier par notification motivée s'il apparaît, après analyse, que la réclamation est manifestement irrécouvrable (notamment insolvabilité du transporteur, prescription, absence de fondement au regard du Règlement) ou que la créance n'est pas née (notamment retard finalement résorbé sous le seuil de 3 heures à l'arrivée à destination finale, ou passager non présenté à l'embarquement hors annulation). Cette clôture n'ouvre droit à aucune indemnité de part et d'autre et, conformément au principe « No Win No Fee », aucune somme n'est due par le Cédant ; la créance lui est rétrocédée de plein droit."
+      ]
+    },
+    {
+      "type": "article",
+      "title": "Article 8, Obligations du Cédant",
       "plain": [
         "En clair : Donnez-nous des infos exactes, prévenez-nous si la compagnie vous contacte, et n'encaissez rien sans nous le dire."
       ],
       "body": [
-        "Le Mandant s'engage à : (i) fournir des informations exactes et complètes ; (ii) transmettre tout document utile dans les meilleurs délais ; (iii) informer Robin des Airs de tout contact ou offre de la compagnie aérienne dans les 24h ; (iv) ne pas accepter ni encaisser aucun paiement de la compagnie sans en aviser Robin des Airs ; (v) ne pas agir en parallèle sur le même dossier sans accord préalable écrit. Le Mandant garantit l'exactitude et la sincérité des informations et documents fournis et répond du préjudice causé à Robin des Airs par des informations sciemment ou grossièrement inexactes ou incomplètes ; il rembourse, le cas échéant, les frais engagés à tort de ce fait. Le Mandant garantit en outre que la créance n'a fait l'objet d'aucune cession, transaction, renonciation ni paiement antérieur, que la même réclamation n'est pas déjà confiée à un tiers ni l'objet d'une procédure pendante, et qu'il en est seul titulaire (ou dûment habilité). Il tient Robin des Airs indemne des conséquences directes d'un manquement à ces garanties et reverse les sommes indûment perçues, cette obligation étant limitée aux préjudices directs imputables au manquement du Mandant."
+        "Le Cédant s'engage à : (i) fournir des informations exactes et complètes ; (ii) transmettre tout document utile dans les meilleurs délais ; (iii) informer Robin des Airs de tout contact ou offre de la compagnie aérienne dans les 24h ; (iv) ne pas accepter ni encaisser aucun paiement de la compagnie sans en aviser Robin des Airs ; (v) ne pas agir en parallèle sur le même dossier sans accord préalable écrit. Le Cédant garantit l'exactitude et la sincérité des informations et documents fournis et répond du préjudice causé à Robin des Airs par des informations sciemment ou grossièrement inexactes ou incomplètes ; il rembourse, le cas échéant, les frais engagés à tort de ce fait. Le Cédant garantit en outre que la créance n'a fait l'objet d'aucune cession, transaction, renonciation ni paiement antérieur, que la même réclamation n'est pas déjà confiée à un tiers ni l'objet d'une procédure pendante, et qu'il en est seul titulaire (ou dûment habilité). Il tient Robin des Airs indemne des conséquences directes d'un manquement à ces garanties et reverse les sommes indûment perçues, cette obligation étant limitée aux préjudices directs imputables au manquement du Cédant. Tout document falsifié, contrefait ou sciemment trompeur transmis par le Cédant entraîne l'annulation immédiate et de plein droit du dossier ; Robin des Airs se réserve le droit d'engager toute action utile, y compris pénale du chef d'usage de faux (article 441-1 du Code pénal), et de conserver les frais déjà engagés."
       ]
     },
     {
       "type": "article",
-      "title": "Article 9 — Droit de rétractation (14 jours) & Démarrage immédiat",
+      "title": "Article 9, Droit de rétractation (14 jours) & Démarrage immédiat",
       "plain": [
-        "En clair : Vous pouvez changer d'avis sous 14 jours, sans frais ni justification."
+        "En clair : Vous pouvez changer d'avis sous 14 jours, sans frais ni justification. La créance vous revient automatiquement."
       ],
       "body": [
-        "Conformément aux articles L. 221-18 et suivants du Code de la consommation, le Mandant dispose d'un délai de rétractation de 14 jours calendaires à compter de la signature, sans pénalité. Il suffit d'envoyer un email à contact@robindesairs.eu avec la mention « Je me rétracte — Réf. [numéro de dossier] ».",
-        "Conformément à l'article L. 221-25 du Code de la consommation, si le Mandant demande expressément l'exécution immédiate du mandat avant l'expiration du délai de 14 jours (case cochée ci-dessous), Robin des Airs est autorisée à débuter les démarches sans attendre. En cas de rétractation ultérieure dans ce délai, le Mandant reconnaît que les prestations déjà accomplies seront dues au prorata — étant précisé qu'aucune somme ne sera exigible avant encaissement effectif de l'indemnité (principe No Win No Fee)."
+        "Conformément aux articles L. 221-18 et suivants du Code de la consommation, le Cédant dispose d'un délai de rétractation de 14 jours calendaires à compter de la signature, sans avoir à se justifier et sans frais. Il peut exercer ce droit par toute déclaration dénuée d'ambiguïté, par exemple par email à contact@robindesairs.eu avec la mention « Je me rétracte, Réf. [numéro de dossier] », ou via le formulaire-type ci-dessous.",
+        "Conformément à l'article L. 221-25 du Code de la consommation, si le Cédant demande expressément l'exécution immédiate du contrat avant l'expiration du délai de 14 jours (case cochée ci-dessous), Robin des Airs est autorisée à débuter les démarches sans attendre. En cas de rétractation dans ce délai, et conformément au principe « No Win No Fee », aucune somme n'est due par le Cédant, y compris au titre des démarches déjà accomplies ; la créance lui est rétrocédée de plein droit.",
+        "Articulation avec la notification au transporteur (rétractation après notification de la cession). Si le Cédant exerce son droit de rétractation après que le Cessionnaire a notifié la cession au transporteur (Article 1 bis), le Cessionnaire : notifie sans délai au transporteur, par LRAR, la rétractation et la rétrocession de la créance au Cédant ; jusqu'à réception de cette notification par le transporteur, tout paiement effectué entre les mains du Cessionnaire demeure libératoire ; le Cessionnaire reverse intégralement au Cédant toute somme ainsi encaissée, sans déduction de la moindre commission ni de frais ; à compter de la réception de cette notification par le transporteur, ce dernier est tenu de payer directement au Cédant redevenu titulaire de la créance. Le Cédant est informé que cette notification au transporteur est effectuée à l'initiative et aux frais du Cessionnaire, sans recours contre lui, afin de garantir l'opposabilité de la rétrocession. Formulaire-type de rétractation (à compléter et à renvoyer uniquement si vous souhaitez vous rétracter) À l'attention de Robin des Airs, 66 avenue des Champs-Élysées, 75008 Paris, contact@robindesairs.eu :",
+        "Je vous notifie par la présente ma rétractation du contrat de cession de créance portant sur la réclamation d'indemnisation aérienne ci-dessous : Contrat signé le : ………………………… Référence du dossier : ………………………… Nom du Cédant : ………………………… Adresse du Cédant : ………………………… Signature (uniquement en cas de notification sur papier) : ………………………… Date : …………………………"
       ]
     },
     {
       "type": "article",
-      "title": "Article 9 bis — Passagers mineurs",
+      "title": "Article 9 bis, Passagers mineurs — mandat spécial d'encaissement (la part du mineur n'est pas cédée)",
       "plain": [
-        "En clair : Pour un enfant mineur, c'est le parent ou le tuteur qui signe à sa place."
+        "En clair : La créance d'un enfant mineur n'est pas vendue (cela pourrait exiger l'accord du juge des tutelles). À la place, le parent donne mandat à Robin des Airs de la réclamer et de l'encaisser au nom de l'enfant, aux mêmes conditions : 0 € d'avance, même part nette (75 % amiable / 55 % contentieux, 100 % des frais pour nous). Le parent signe seul pour l'enfant."
       ],
       "body": [
-        "Pour tout passager mineur, le représentant légal signe seul, en son nom et au nom du mineur ; le mineur ne signe pas. Le représentant légal déclare exercer l'autorité parentale (ou la qualité de tuteur) sur le mineur et s'engage personnellement aux termes du présent mandat, y compris quant à la cession de créance (Article 5 bis)."
+        "Exclusion de la cession. Par exception aux Articles 1 et 5 bis, la créance d'indemnisation d'un passager mineur n'est pas cédée au Cessionnaire. Aucun acte de disposition n'est ainsi accompli sur le patrimoine du mineur, ce qui écarte par construction toute discussion fondée sur l'article 387-1 du Code civil (autorisation préalable du juge des tutelles).",
+        "Mandat spécial d'encaissement (acte d'administration). Pour la part du mineur, le représentant légal, agissant dans le cadre de l'administration légale (articles 382 et suivants du Code civil) — la perception d'une créance indemnitaire constituant un acte d'administration qu'il peut accomplir seul, sans autorisation du juge des tutelles —, donne à Robin des Airs un mandat spécial de réclamer, poursuivre et encaisser avec effet libératoire l'indemnité due au mineur au titre du Règlement (CE) n° 261/2004, au nom et pour le compte du mineur représenté. Toute procédure judiciaire relative à la part du mineur est conduite par un avocat inscrit à un barreau, le mineur y étant représenté par son représentant légal.",
+        "Protection des droits du mineur. Robin des Airs réclame pour le mineur le paiement intégral de l'indemnité forfaitaire due. Elle ne transige pas au nom du mineur et ne renonce à aucun de ses droits (actes soumis à l'autorisation du juge des tutelles, art. 387-1 C. civ.) : à défaut de paiement intégral amiable, la voie contentieuse est appréciée dans les conditions du contrat.",
+        "Conditions financières identiques (No Win No Fee). La rémunération de Robin des Airs sur la part du mineur suit le barème de l'Article 4 : 25 % des sommes encaissées en phase amiable, 45 % en phase contentieuse, 0 € si rien n'est recouvré ; le solde (75 % / 55 %) est versé au représentant légal ès qualités, pour le compte du mineur, dans les conditions de l'Article 5. Aucune avance ni aucun frais ne sont dus. Les fonds encaissés pour le compte du mineur transitent par le compte dédié du Cessionnaire, l'activité de recouvrement amiable pour le compte d'autrui étant exercée conformément aux articles L. 124-1 et suivants et R. 124-1 et suivants du Code des procédures civiles d'exécution.",
+        "Signature et garantie de pouvoir. Pour tout passager mineur, le représentant légal signe seul, en son nom et au nom du mineur ; le mineur ne signe pas. Le représentant légal déclare et garantit exercer l'autorité parentale (ou la qualité de tuteur) sur le mineur ; il tient Robin des Airs indemne des conséquences directes d'une déclaration inexacte sur son pouvoir de représentation, dans la limite des sommes qu'il a perçues au titre de la part du mineur."
       ]
     },
     {
       "type": "article",
-      "title": "Article 10 — Confidentialité & RGPD",
+      "title": "Article 10, Confidentialité & RGPD",
       "plain": [
         "En clair : Vos données servent uniquement à votre dossier. Jamais revendues."
       ],
       "body": [
-        "Les données personnelles collectées sont utilisées exclusivement pour la gestion du dossier. Elles ne sont pas revendues. Conformément au RGPD, le Mandant dispose d'un droit d'accès, de rectification et de suppression en contactant contact@robindesairs.eu."
+        "Les données personnelles collectées sont utilisées exclusivement pour la gestion du dossier. Elles ne sont pas revendues. Conformément au RGPD, le Cédant dispose des droits d'accès, de rectification, d'effacement, de limitation, de portabilité et d'opposition, ainsi que du droit de retirer son consentement, en écrivant à expert@robindesairs.eu ; il peut également saisir la CNIL. Les modalités complètes (finalités, durées de conservation, sous-traitants) figurent dans la Politique de confidentialité."
       ]
     },
     {
       "type": "article",
-      "title": "Article 11 — Loi applicable, divisibilité & litiges",
+      "title": "Article 10 bis, Formation par voie électronique, preuve et date certaine",
       "plain": [
-        "En clair : Droit français. En cas de litige, on cherche d'abord une solution à l'amiable."
+        "En clair : Le contrat est signé en ligne dans les règles (relecture complète avant signature, code de confirmation, copie envoyée par email). Le dossier de preuve Yousign (identité, horodatage, journal complet) vaut preuve de votre signature et de sa date — personne ne peut prétendre que le contrat n'existe pas ou qu'il a été signé « après coup »."
       ],
       "body": [
-        "Le présent mandat est soumis au droit français. En cas de litige, les parties privilégient une résolution amiable dans les 30 jours. À défaut d'accord, le différend est soumis aux juridictions compétentes. Divisibilité : si une stipulation du présent mandat est jugée nulle ou inopposable, les autres conservent leur plein effet, la stipulation concernée étant réputée non écrite ou réduite dans la mesure permise par la loi. Survie : la fin du mandat ne met pas fin aux stipulations qui, par leur nature, survivent — notamment confidentialité et données personnelles, obligation de reverser la commission en cas de paiement postérieur au titre de l'incident, propriété intellectuelle, responsabilité et règlement des litiges."
+        "Formation du contrat à distance. Le présent contrat est conclu par voie électronique dans les conditions des articles 1125 à 1127-2 du Code civil : le Cédant a eu accès à l'intégralité des stipulations avant signature, a pu vérifier le détail de son engagement et corriger d'éventuelles erreurs, puis a confirmé son acceptation. Conformément à l'article L. 221-13 du Code de la consommation, la confirmation du contrat conclu, comprenant l'ensemble de ses stipulations et l'information sur le droit de rétractation (Article 9), est fournie au Cédant sur support durable (email avec le contrat signé en pièce jointe) immédiatement après la signature.",
+        "Signature électronique et convention de preuve (art. 1366 à 1368 C. civ.). Le contrat est signé au moyen d'une signature électronique avancée (article 26 du Règlement eIDAS n° 910/2014) délivrée par un prestataire certifié (Yousign), avec vérification de l'identité du signataire (email et code de confirmation à usage unique) et horodatage qualifié. Les parties conviennent, à titre de convention de preuve, que le dossier de preuve établi par le prestataire (identification du signataire, adresses de contact, horodatages, journal d'audit, certificat de signature) fait preuve entre elles de l'identité des signataires, de l'intégrité du document, du consentement et de sa date, sauf preuve contraire. L'écrit électronique ainsi établi a la même force probante que l'écrit sur support papier (art. 1366 C. civ.) et toute copie qui en est issue constitue une copie fiable (art. 1379 C. civ.).",
+        "Date certaine et antériorité de la cession. L'horodatage qualifié du dossier de preuve établit que la cession est antérieure à tout acte de recouvrement, à toute mise en demeure et à toute instance engagés par le Cessionnaire. Le Cessionnaire conserve le dossier de preuve pendant toute la durée du contrat et les délais de prescription applicables, et peut le produire en justice pour justifier de sa qualité à agir et de la date de la cession."
+      ]
+    },
+    {
+      "type": "article",
+      "title": "Article 11, Loi applicable, juridictions & litiges",
+      "plain": [
+        "En clair : Droit français. Si on doit aller au tribunal contre la compagnie, c'est le tribunal de commerce de Paris (procédure rapide). Si vous avez un litige avec nous, c'est le tribunal de votre lieu de résidence (protection consommateur)."
+      ],
+      "body": [
+        "Le présent contrat est soumis au droit français. En cas de litige, les parties privilégient une résolution amiable dans les 30 jours.",
+        "Élection de juridiction : Litiges entre Robin des Airs et le transporteur aérien (recouvrement de la créance cédée) : compétence au choix du Cessionnaire, conformément à la liberté reconnue par CJUE, 9 oct. 2025, Lufthansa c/ AirHelp, C-551/24 et l'article 7§1 du Règlement Bruxelles I bis, entre : le Tribunal de commerce du lieu de départ du vol (lieu de fourniture du service au sens CJUE Rehder C-204/08) ; le Tribunal de commerce du lieu d'arrivée du vol (idem) ; le Tribunal de commerce du siège français du transporteur (le cas échéant) ; à défaut ou pour les transporteurs hors UE, le Tribunal de commerce de Paris en application des articles L. 721-3 et L. 721-5 du Code de commerce et de l'article 46 du Code de procédure civile. Le Cédant reconnaît que la cession transmet la créance, non la qualité de consommateur du Cédant : à compter de la signature, le rapport entre le Cessionnaire et le transporteur est purement commercial (CJUE, 9 oct. 2025, C-551/24, précité). La compétence des tribunaux de commerce est ainsi pleinement justifiée.",
+        "Cohérence des protections consommateur et de la cession. Les facultés de rétractation (Article 9) et de résiliation libre (Article 2), ainsi que la rétrocession de plein droit qui les accompagne, sont des protections d'ordre public imposées par le Code de la consommation au bénéfice du Cédant. Leur présence est sans incidence sur la réalité du transfert de propriété opéré entre la signature et une éventuelle rétrocession, et ne saurait être interprétée comme révélant un mandat : jusqu'à leur exercice, le Cessionnaire demeure seul titulaire de la créance et agit en son nom propre. Litiges entre Robin des Airs et le Cédant (consommateur) : compétence du tribunal du lieu de résidence du Cédant ou du lieu de l'exécution du contrat, conformément à l'article R. 631-3 du Code de la consommation, sans qu'aucune clause attributive de compétence ne puisse y déroger. Médiation de la consommation préalable : avant tout recours juridictionnel entre Robin des Airs et le Cédant, ce dernier peut saisir gratuitement la Médiation du Tourisme et du Voyage (MTV), médiateur désigné par le Prestataire (cf. CGV article 13).",
+        "Divisibilité : si une stipulation du présent contrat est jugée nulle ou inopposable, les autres conservent leur plein effet, la stipulation concernée étant réputée non écrite ou réduite dans la mesure permise par la loi.",
+        "Survie : la fin du contrat ne met pas fin aux stipulations qui, par leur nature, survivent, notamment confidentialité et données personnelles, obligation du Cédant de reverser au Cessionnaire toute somme reçue directement de la compagnie après notification de la cession, propriété intellectuelle, responsabilité et règlement des litiges."
       ]
     }
   ]

@@ -70,7 +70,7 @@ AirHelp : suivi principalement via l'application et l'email. Pas de ligne télé
 
 Pour les dossiers en contentieux (refus compagnie, médiation, passage au tribunal via un avocat partenaire) :
 
-- Robin garde la **même commission de 25 %**, sans supplément contentieux
+- Robin affiche **25 % en amiable et 45 % en contentieux** (frais de justice inclus), sans frais cachés
 - AirHelp passe à **50 %**
 
 Si votre dossier est compliqué (route hors UE, compagnie africaine, circonstances extraordinaires contestées), la différence devient encore plus importante.

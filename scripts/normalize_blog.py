@@ -63,7 +63,7 @@ LANG_CONFIG: dict[str, dict] = {
             "Cet article présente une synthèse pédagogique de la réglementation en vigueur (règlement CE 261/2004, "
             "Convention de Montréal, jurisprudence CJUE) à la date de publication. Il ne constitue pas un conseil "
             "juridique personnalisé ni une consultation d'avocat. Pour l'évaluation de votre situation individuelle, "
-            "contactez Robin des Airs (mandat de représentation) ou un avocat spécialisé en droit aérien. "
+            "contactez Robin des Airs (rachat de votre créance — cession, art. 1321 C. civ.) ou un avocat spécialisé en droit aérien. "
             "Les montants, délais et exemples cités sont indicatifs et peuvent évoluer selon les décisions "
             "de justice et l'actualité réglementaire."
         ),

@@ -31,7 +31,7 @@ Votre vol :
 Ce qui se passe maintenant :
 Sous 24h, nous envoyons une mise en demeure officielle à la compagnie. Vous n'avez rien à faire — on gère de A à Z. Vous recevrez une notification à chaque étape.
 
-Votre mandat de représentation :
+Votre contrat de cession de créance :
 Consultable et signable ici → ${v.lienMandat}
 
 Rappel — notre engagement :

@@ -51,7 +51,8 @@ function genererClaimPdf(c) {
     const montant = c.montant || 600;
     // RÉGIME UNIQUE PAR INSTANCE (mandat.html Art. 1 bis) : 'mandat' pour la phase amiable (défaut),
     // 'cession' UNIQUEMENT quand l'option de cession est levée (contentieux). Jamais les deux à la fois.
-    const regime = c.regime === 'cession' ? 'cession' : 'mandat';
+    // Défaut = cession (modèle courant depuis le 26/06) ; 'mandat' réservé aux dossiers legacy signés sous l'ancien modèle.
+    const regime = c.regime === 'mandat' ? 'mandat' : 'cession';
 
     function ensure(h) { if (doc.y + h > bottom) doc.addPage(); }
     function para(txt, opts = {}) {

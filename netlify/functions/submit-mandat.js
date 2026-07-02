@@ -348,7 +348,7 @@ function buildTeamMandatEmailContent(record) {
     `<tr><td style="padding:6px 12px 6px 0;color:#666;font-size:13px;vertical-align:top">${k}</td><td style="padding:6px 0;font-size:13px"><strong>${escapeHtml(v)}</strong></td></tr>`
   ).join('');
   const html = `<!DOCTYPE html><html><body style="font-family:system-ui,sans-serif;color:#111;max-width:560px">
-<p style="margin:0 0 16px">Un mandat de représentation vient d’être <strong>signé</strong> sur robindesairs.eu.</p>
+<p style="margin:0 0 16px">Un contrat de cession de créance vient d’être <strong>signé</strong> sur robindesairs.eu.</p>
 <table style="border-collapse:collapse">${htmlRows}</table>
 <p style="margin:20px 0 0;font-size:12px;color:#888">Robin des Airs — notification automatique</p>
 </body></html>`;
@@ -369,7 +369,7 @@ function buildClientMandatEmailContent(record) {
   const text = [
     `Bonjour ${hello},`,
     '',
-    'Nous avons bien enregistré la signature de votre mandat de représentation Robin des Airs.',
+    'Nous avons bien enregistré la signature de votre contrat de cession de créance Robin des Airs.',
     '',
     `Référence dossier : ${ref}`,
     `Vol : ${vol} — ${date}`,

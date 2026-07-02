@@ -104,7 +104,7 @@ exports.handler = async (event) => {
     delaiJours: 14,
     // Régime amiable par défaut = MANDAT (Art. 1 bis du mandat : un seul régime par instance).
     // Passer 'cession' uniquement quand l'option de cession est levée pour le contentieux.
-    regime: (body.regime === 'cession' ? 'cession' : 'mandat'),
+    regime: (body.regime === 'mandat' ? 'mandat' : 'cession'),
   };
 
   let pdf;

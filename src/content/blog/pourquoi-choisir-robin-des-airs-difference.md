@@ -1,18 +1,18 @@
 ---
 title: "Pourquoi choisir Robin des Airs : ce qui nous différencie"
 meta_title: "Pourquoi Robin des Airs : appel direct, WhatsApp, 8 langues, 25 %"
-meta_description: "Ce qui rend Robin des Airs différent : suivi téléphonique humain, WhatsApp 7j/7, 8 langues dont wolof/bambara/lingala, commission unique 25 %, spécialiste diaspora."
+meta_description: "Ce qui rend Robin des Airs différent : suivi téléphonique humain, WhatsApp 7j/7, 8 langues dont wolof/bambara/lingala, commission 25 % en amiable (45 % si procès), spécialiste diaspora."
 slug: pourquoi-choisir-robin-des-airs-difference
 image_url: /og-blog.png
 faq:
   - q: "Quelle est la commission de Robin des Airs ?"
-    a: "**25 % unique** sur succès. Sur 600€ d'indemnité, vous gardez 450€ nets. AirHelp prend 35-50 %, Flightright 30 % + TVA, Skycop 30-40 % → Robin laisse le plus dans votre poche."
+    a: "**25 % en amiable** sur succès (45 % si procédure judiciaire, frais de justice inclus). Sur 600€ d'indemnité réglée à l'amiable, vous gardez 450€ nets. AirHelp prend 35-50 %, Flightright 30 % + TVA, Skycop 30-40 % → Robin laisse le plus dans votre poche."
   - q: "En quelles langues puis-je échanger ?"
     a: "**8 langues** : français, anglais, wolof, bambara, soninké, peul, lingala, créole. C'est unique parmi les services d'indemnisation européens."
   - q: "Puis-je appeler directement ?"
     a: "Oui : **+33 7 56 86 36 30** (France, lundi-samedi). Vous parlez à une vraie personne — pas un robot. Et WhatsApp est ouvert 7j/7 au même numéro."
   - q: "Et si on échoue à récupérer l'indemnité ?"
-    a: "Vous payez **0€**. La commission de 25 % est prise uniquement sur le montant récupéré. Pas de frais cachés, pas de TVA en plus, pas de \"supplément contentieux\" comme chez certains concurrents."
+    a: "Vous payez **0€**. La commission de 25 % est prise uniquement sur le montant récupéré. Pas de frais cachés, pas de TVA en plus. Si un procès est nécessaire, le taux passe à 45 % — frais d'avocat et de justice intégralement pris en charge, jamais d'avance."
 ---
 
 Il existe une dizaine de services d'indemnisation aérienne sur le marché européen. Robin des Airs n'est pas le plus connu — mais c'est le seul **conçu pour la diaspora africaine** vivant en Europe. Voici les 4 différences concrètes.
@@ -56,7 +56,7 @@ Quand vous expliquez votre situation à un agent qui parle votre langue, vous ga
 
 **Aucun concurrent européen** ne propose ce panel africain.
 
-## 4. Commission unique : 25 %, point final
+## 4. Commission claire : 25 % amiable / 45 % procès, 0 € si échec
 
 - AirHelp : 35-50 %
 - Flightright : 30 % + TVA
