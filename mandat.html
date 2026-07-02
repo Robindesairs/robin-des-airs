@@ -1951,31 +1951,83 @@ function calcProgress() {
   document.getElementById('pgBar').style.width = Math.round(n/8*100)+'%';
 }
 // ── WhatsApp : indicatif (drapeau) + numéro → #wa caché (numéro complet) ──
-// Liste pays (drapeau, nom, indicatif), champ recherchable. Tout indicatif non listé
-// reste possible : le client tape « +XXX » directement (filet de sécurité universel).
-const COUNTRIES = [
-  ['🇸🇳','Sénégal','221'],['🇲🇱','Mali','223'],['🇧🇫','Burkina Faso','226'],['🇳🇪','Niger','227'],
-  ['🇹🇬','Togo','228'],['🇧🇯','Bénin','229'],['🇨🇮','Côte d\'Ivoire','225'],['🇬🇳','Guinée','224'],
-  ['🇬🇲','Gambie','220'],['🇬🇼','Guinée-Bissau','245'],['🇲🇷','Mauritanie','222'],['🇸🇱','Sierra Leone','232'],
-  ['🇱🇷','Liberia','231'],['🇨🇻','Cap-Vert','238'],['🇬🇭','Ghana','233'],['🇳🇬','Nigeria','234'],
-  ['🇨🇲','Cameroun','237'],['🇹🇩','Tchad','235'],['🇨🇫','Centrafrique','236'],['🇬🇦','Gabon','241'],
-  ['🇨🇬','Congo','242'],['🇨🇩','RDC','243'],['🇬🇶','Guinée équatoriale','240'],['🇸🇹','Sao Tomé','239'],
-  ['🇦🇴','Angola','244'],['🇲🇦','Maroc','212'],['🇩🇿','Algérie','213'],['🇹🇳','Tunisie','216'],
-  ['🇱🇾','Libye','218'],['🇪🇬','Égypte','20'],['🇸🇩','Soudan','249'],['🇲🇿','Mozambique','258'],
-  ['🇰🇪','Kenya','254'],['🇹🇿','Tanzanie','255'],['🇺🇬','Ouganda','256'],['🇷🇼','Rwanda','250'],
-  ['🇧🇮','Burundi','257'],['🇪🇹','Éthiopie','251'],['🇸🇴','Somalie','252'],['🇩🇯','Djibouti','253'],
-  ['🇲🇬','Madagascar','261'],['🇲🇺','Maurice','230'],['🇰🇲','Comores','269'],['🇿🇦','Afrique du Sud','27'],
-  ['🇿🇲','Zambie','260'],['🇿🇼','Zimbabwe','263'],['🇧🇼','Botswana','267'],['🇳🇦','Namibie','264'],
-  ['🇲🇼','Malawi','265'],
-  ['🇫🇷','France','33'],['🇧🇪','Belgique','32'],['🇨🇭','Suisse','41'],['🇬🇧','Royaume-Uni','44'],
-  ['🇵🇹','Portugal','351'],['🇪🇸','Espagne','34'],['🇮🇹','Italie','39'],['🇩🇪','Allemagne','49'],
-  ['🇳🇱','Pays-Bas','31'],['🇱🇺','Luxembourg','352'],['🇮🇪','Irlande','353'],['🇸🇪','Suède','46'],
-  ['🇳🇴','Norvège','47'],['🇩🇰','Danemark','45'],['🇫🇮','Finlande','358'],['🇦🇹','Autriche','43'],
-  ['🇵🇱','Pologne','48'],['🇬🇷','Grèce','30'],
-  ['🇺🇸','États-Unis / Canada','1'],['🇦🇪','Émirats','971'],['🇸🇦','Arabie Saoudite','966'],
-  ['🇶🇦','Qatar','974'],['🇰🇼','Koweït','965'],['🇱🇧','Liban','961'],['🇹🇷','Turquie','90'],
-  ['🇨🇳','Chine','86'],['🇮🇳','Inde','91'],['🇧🇷','Brésil','55'],
+// Liste pays (drapeau calculé, nom, indicatif), champ recherchable et EXHAUSTIVE (~200 pays,
+// Afrique et Europe en tête car cœur de la diaspora, reste du monde ensuite — la recherche
+// rend l'ordre secondaire de toute façon). Tout indicatif non listé reste possible : le
+// client peut toujours taper « +XXX » directement (filet de sécurité universel).
+function flagEmoji(iso2){ return String.fromCodePoint(...[...String(iso2||'').toUpperCase()].map(c=>127397+c.charCodeAt(0))); }
+const COUNTRIES_RAW = [
+  // Afrique de l'Ouest
+  ['SN','Sénégal','221'],['ML','Mali','223'],['BF','Burkina Faso','226'],['NE','Niger','227'],
+  ['TG','Togo','228'],['BJ','Bénin','229'],['CI','Côte d\'Ivoire','225'],['GN','Guinée','224'],
+  ['GM','Gambie','220'],['GW','Guinée-Bissau','245'],['MR','Mauritanie','222'],['SL','Sierra Leone','232'],
+  ['LR','Liberia','231'],['CV','Cap-Vert','238'],['GH','Ghana','233'],['NG','Nigeria','234'],
+  // Afrique centrale
+  ['CM','Cameroun','237'],['TD','Tchad','235'],['CF','Centrafrique','236'],['GA','Gabon','241'],
+  ['CG','Congo','242'],['CD','RDC','243'],['GQ','Guinée équatoriale','240'],['ST','Sao Tomé-et-Principe','239'],
+  ['AO','Angola','244'],
+  // Afrique du Nord
+  ['MA','Maroc','212'],['DZ','Algérie','213'],['TN','Tunisie','216'],['LY','Libye','218'],
+  ['EG','Égypte','20'],['SD','Soudan','249'],['SS','Soudan du Sud','211'],
+  // Afrique de l'Est
+  ['MZ','Mozambique','258'],['KE','Kenya','254'],['TZ','Tanzanie','255'],['UG','Ouganda','256'],
+  ['RW','Rwanda','250'],['BI','Burundi','257'],['ET','Éthiopie','251'],['ER','Érythrée','291'],
+  ['SO','Somalie','252'],['DJ','Djibouti','253'],['SC','Seychelles','248'],
+  // Afrique australe / de l'océan Indien
+  ['MG','Madagascar','261'],['MU','Maurice','230'],['KM','Comores','269'],['ZA','Afrique du Sud','27'],
+  ['ZM','Zambie','260'],['ZW','Zimbabwe','263'],['BW','Botswana','267'],['NA','Namibie','264'],
+  ['MW','Malawi','265'],['LS','Lesotho','266'],['SZ','Eswatini','268'],
+  // Europe de l'Ouest
+  ['FR','France','33'],['BE','Belgique','32'],['CH','Suisse','41'],['GB','Royaume-Uni','44'],
+  ['PT','Portugal','351'],['ES','Espagne','34'],['IT','Italie','39'],['DE','Allemagne','49'],
+  ['NL','Pays-Bas','31'],['LU','Luxembourg','352'],['IE','Irlande','353'],['MC','Monaco','377'],
+  ['AD','Andorre','376'],['MT','Malte','356'],['SM','Saint-Marin','378'],['VA','Vatican','379'],
+  ['LI','Liechtenstein','423'],
+  // Europe du Nord
+  ['SE','Suède','46'],['NO','Norvège','47'],['DK','Danemark','45'],['FI','Finlande','358'],
+  ['IS','Islande','354'],
+  // Europe centrale / de l'Est
+  ['AT','Autriche','43'],['PL','Pologne','48'],['CZ','Tchéquie','420'],['SK','Slovaquie','421'],
+  ['HU','Hongrie','36'],['RO','Roumanie','40'],['BG','Bulgarie','359'],['UA','Ukraine','380'],
+  ['BY','Biélorussie','375'],['MD','Moldavie','373'],['LT','Lituanie','370'],['LV','Lettonie','371'],
+  ['EE','Estonie','372'],['RU','Russie','7'],
+  // Europe du Sud / Balkans
+  ['GR','Grèce','30'],['CY','Chypre','357'],['HR','Croatie','385'],['SI','Slovénie','386'],
+  ['RS','Serbie','381'],['BA','Bosnie-Herzégovine','387'],['ME','Monténégro','382'],
+  ['MK','Macédoine du Nord','389'],['AL','Albanie','355'],['XK','Kosovo','383'],
+  // Moyen-Orient
+  ['AE','Émirats arabes unis','971'],['SA','Arabie Saoudite','966'],['QA','Qatar','974'],
+  ['KW','Koweït','965'],['BH','Bahreïn','973'],['OM','Oman','968'],['YE','Yémen','967'],
+  ['LB','Liban','961'],['JO','Jordanie','962'],['SY','Syrie','963'],['IQ','Irak','964'],
+  ['IL','Israël','972'],['PS','Palestine','970'],['IR','Iran','98'],['TR','Turquie','90'],
+  // Asie centrale / Caucase
+  ['KZ','Kazakhstan','7'],['UZ','Ouzbékistan','998'],['AZ','Azerbaïdjan','994'],
+  ['GE','Géorgie','995'],['AM','Arménie','374'],
+  // Asie du Sud
+  ['IN','Inde','91'],['PK','Pakistan','92'],['BD','Bangladesh','880'],['LK','Sri Lanka','94'],
+  ['NP','Népal','977'],['AF','Afghanistan','93'],
+  // Asie de l'Est
+  ['CN','Chine','86'],['JP','Japon','81'],['KR','Corée du Sud','82'],['TW','Taïwan','886'],
+  ['HK','Hong Kong','852'],['MN','Mongolie','976'],
+  // Asie du Sud-Est
+  ['VN','Vietnam','84'],['TH','Thaïlande','66'],['ID','Indonésie','62'],['MY','Malaisie','60'],
+  ['SG','Singapour','65'],['PH','Philippines','63'],['MM','Birmanie','95'],['KH','Cambodge','855'],
+  ['LA','Laos','856'],
+  // Océanie
+  ['AU','Australie','61'],['NZ','Nouvelle-Zélande','64'],['FJ','Fidji','679'],['PG','Papouasie-Nouvelle-Guinée','675'],
+  // Amérique du Nord
+  ['US','États-Unis / Canada','1'],['MX','Mexique','52'],
+  // Amérique centrale / Caraïbes
+  ['GT','Guatemala','502'],['BZ','Belize','501'],['SV','Salvador','503'],['HN','Honduras','504'],
+  ['NI','Nicaragua','505'],['CR','Costa Rica','506'],['PA','Panama','507'],['CU','Cuba','53'],
+  ['HT','Haïti','509'],['DO','République dominicaine','1'],['JM','Jamaïque','1'],['TT','Trinité-et-Tobago','1'],
+  ['BS','Bahamas','1'],
+  // Amérique du Sud
+  ['BR','Brésil','55'],['AR','Argentine','54'],['CL','Chili','56'],['CO','Colombie','57'],
+  ['PE','Pérou','51'],['VE','Venezuela','58'],['EC','Équateur','593'],['BO','Bolivie','591'],
+  ['PY','Paraguay','595'],['UY','Uruguay','598'],['GY','Guyana','592'],['SR','Suriname','597'],
 ];
+const COUNTRIES = COUNTRIES_RAW.map(([iso,name,code]) => [flagEmoji(iso), name, code]);
 // ── Téléphone : NSN = numéro national SANS le 0 de tête (format international) + longueurs par pays ──
 function nsn(s){ return String(s || '').replace(/[^\d]/g, '').replace(/^0+/, ''); }
 // Longueur attendue du numéro national (sans indicatif ni 0), en intervalle [min,max] pour rester robuste.
