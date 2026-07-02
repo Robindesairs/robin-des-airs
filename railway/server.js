@@ -1701,7 +1701,7 @@ async function archivePiece(phone, kind, mediaUrl, cfg, passenger) {
     });
   } catch (e) { console.error('archivePiece', e.message); }
 }
-async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
+async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, referral) {
   const input = (text || '').trim();
   const lower = input.toLowerCase();
   const id = replyId || ''; // id du bouton/liste envoyé par WATI (ex: 'pass_ok', 'mdt_0'…)
@@ -1713,7 +1713,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     const fresh = await getState(phone);
     if (fresh && fresh.step !== currentStep) {
       console.log(`[v8 redispatch] ${phone}: ${currentStep}→${fresh.step} pour "${input.slice(0,30)}"`);
-      return handleMessage(phone, text, cfg, mediaUrl, replyId, true);
+      return handleMessage(phone, text, cfg, mediaUrl, replyId, true, referral);
     }
   };
 
@@ -1937,7 +1937,13 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
     // sur un step de tunnel ≠ 'done' → le relais IA ne s'y déclenche pas et le nouveau flux est normal.
     const isSigned = (LEADS.get(leadKey(phone)) || {}).signed === true;
     const signedFreeChat = isSigned && s.step === 'done' && !id && !mediaUrl && !!(input && input.trim());
-    const looks = !id && (isSensitive(input) || signedFreeChat || (FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input)));
+    // Tout premier contact (step 'accueil'/absent) : un message générique venu d'un clic pub
+    // (Facebook/Instagram « Click-to-WhatsApp ») contient souvent un « ? » (ex. « Puis-je en
+    // savoir plus ? ») → isClientQuestion() l'avalait à tort dans le filet IA hors-contexte,
+    // au lieu de laisser filer vers sendAccueil(). isSensitive reste actif (demande explicite
+    // d'humain/avocat dès le 1er message → escalade légitime même à l'accueil).
+    const isFreshContact = !s.step || s.step === 'accueil';
+    const looks = !id && (isSensitive(input) || signedFreeChat || (!isFreshContact && (FREE.includes(s.step) ? input.includes('?') : isClientQuestion(input))));
     if (looks) {
       if (isSensitive(input)) { upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now(), lastClientAt: Date.now() }); notifyCallbackWanted(phone, s, `question sensible : « ${String(input).slice(0, 80)} »`); await send(phone, L(s, `I'm passing your request to a Robin des Airs advisor. 🙏\nType *go* to continue your case.`, `Je transmets votre demande à un conseiller Robin des Airs. 🙏\nÉcrivez *go* pour continuer votre dossier.`), cfg); return; }
       const r = await answerClientQuestion(input, process.env.OPENAI_API_KEY);
@@ -1950,7 +1956,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried) {
   } catch (e) { console.warn('[v8 T2-fallback] IA error, continuing to step handler:', e.message || e); }
 
   // ACCUEIL (MSG1)
-  if (s.step === 'accueil' || !s.step) return sendAccueil(phone, cfg, _accLang);
+  if (s.step === 'accueil' || !s.step) return sendAccueil(phone, cfg, _accLang, referral);
 
   // Bouton MSG1 « Vérifier mon indemnité » / « Commencer / Démarrer »
   if (s.step === 'go_langue') { return sendLangue(phone, s, cfg); }
@@ -2911,11 +2917,19 @@ async function resumeTicker(phone, s, cfg) {
 }
 
 // ─── Émetteurs d'écran ───────────────────────────────────────────────────────
-async function sendAccueil(phone, cfg, lang) {
+async function sendAccueil(phone, cfg, lang, referral) {
   const en = lang === 'en';
+  // Contact venu d'un clic « Click-to-WhatsApp » sur une pub Meta (Facebook OU Instagram — même
+  // objet referral côté WhatsApp Business API, pas de distinction de plateforme à faire ici) :
+  // on rattache l'accueil à la pub plutôt que de laisser le 1er message paraître déconnecté.
+  const adLine = referral && (referral.headline || referral.body)
+    ? (en
+        ? `\n📣 _Following up on the ad you clicked (“${(referral.headline || referral.body || '').slice(0, 80)}”)._`
+        : `\n📣 _Suite à la publicité sur laquelle vous avez cliqué (« ${(referral.headline || referral.body || '').slice(0, 80)} »)._`)
+    : '';
   await sendButtons(phone, { body: en
-    ? `${bar('accueil')}\n👋 Welcome to *Robin des Airs* 🏹\n_I'm the Robin des Airs assistant, I'll guide you step by step._\n\nDefending passengers on Africa ↔ Europe flights is what we do.\n\n✈️ EU law EC 261/2004 entitles you to *up to €600 per person* :\n• 🇪🇺 *Departure from Europe* → any airline\n• 🌍 *Arrival in Europe (from outside)* → EU airline only\n\n*€0 if we recover nothing.* No risk for you.\n\nLet's see together what you may be owed. 👇`
-    : `${bar('accueil')}\n👋 Bienvenue chez *Robin des Airs* 🏹\n_Je suis l'assistant Robin des Airs, je vous accompagne pas à pas._\n\n${pickVariant(phone, 'ACCUEIL_EMPATHIE')}\n\nNous, c'est notre métier : on défend les passagers des vols Afrique ↔ Europe.\n\n✈️ La loi CE 261/2004 vous donne droit à *jusqu'à 600 € par personne* :\n• 🇪🇺 *Départ d'Europe* → toutes compagnies\n• 🌍 *Arrivée en Europe (départ hors)* → uniquement compagnie européenne\n\n*0 € si vous ne touchez rien.* Aucun risque pour vous.\n\nVoyons ensemble si une indemnité vous revient. 👇`,
+    ? `${bar('accueil')}\n👋 Welcome to *Robin des Airs* 🏹\n_I'm the Robin des Airs assistant, I'll guide you step by step._${adLine}\n\nDefending passengers on Africa ↔ Europe flights is what we do.\n\n✈️ EU law EC 261/2004 entitles you to *up to €600 per person* :\n• 🇪🇺 *Departure from Europe* → any airline\n• 🌍 *Arrival in Europe (from outside)* → EU airline only\n\n*€0 if we recover nothing.* No risk for you.\n\nLet's see together what you may be owed. 👇`
+    : `${bar('accueil')}\n👋 Bienvenue chez *Robin des Airs* 🏹\n_Je suis l'assistant Robin des Airs, je vous accompagne pas à pas._${adLine}\n\n${pickVariant(phone, 'ACCUEIL_EMPATHIE')}\n\nNous, c'est notre métier : on défend les passagers des vols Afrique ↔ Europe.\n\n✈️ La loi CE 261/2004 vous donne droit à *jusqu'à 600 € par personne* :\n• 🇪🇺 *Départ d'Europe* → toutes compagnies\n• 🌍 *Arrivée en Europe (départ hors)* → uniquement compagnie européenne\n\n*0 € si vous ne touchez rien.* Aucun risque pour vous.\n\nVoyons ensemble si une indemnité vous revient. 👇`,
     footer: 'CE 261/2004', buttons: [{ text: en ? '🚀 My compensation' : '🚀 Mon indemnité' }] }, cfg);
   // _sid = session ID unique par parcours (timestamp base36) — isole le dedup step+contenu.
   // langue_code mémorisé si détecté (site anglais) → le menu langue sera sauté à l'étape suivante.
@@ -3394,6 +3408,24 @@ async function relancerEtape(phone, s, cfg) {
   }
 }
 
+// Referral « Click-to-WhatsApp » (clic sur une pub Meta — Facebook OU Instagram, l'objet
+// est identique pour les deux placements côté WhatsApp Business API). WATI relaie le format
+// Cloud API tel quel dans la plupart des cas (item.referral), mais aussi parfois aplati en
+// camelCase/snake_case directement sur l'item selon la version du connecteur → on couvre les
+// deux formes. N'apparaît que sur le TOUT PREMIER message d'une conversation ouverte via pub.
+function extractReferral(item) {
+  const r = (item && typeof item.referral === 'object' && item.referral)
+    || (item && item.data && typeof item.data.referral === 'object' && item.data.referral)
+    || null;
+  const headline = (r && (r.headline || r.title)) || item.headline || item.adHeadline || '';
+  const body = (r && r.body) || item.adBody || '';
+  const sourceUrl = (r && (r.source_url || r.sourceUrl)) || item.sourceUrl || item.source_url || '';
+  const sourceType = (r && (r.source_type || r.sourceType)) || item.sourceType || item.source_type || '';
+  const sourceId = (r && (r.source_id || r.sourceId)) || item.sourceId || item.source_id || '';
+  const ctwaClid = (r && (r.ctwa_clid || r.ctwaClid)) || item.ctwaClid || item.ctwa_clid || '';
+  if (!headline && !body && !sourceUrl && !sourceId && !ctwaClid) return null;
+  return { headline, body, sourceUrl, sourceType, sourceId, ctwaClid };
+}
 // ─── Extraction entrant + handler (identiques à la prod) ──────────────────────
 function extractInbound(payload) {
   const list = []; const seen = new Set();
@@ -3420,7 +3452,7 @@ function extractInbound(payload) {
     const realId = item.whatsappMessageId || item.whatsapp_message_id || item.id || item.messageId || null;
     const key = realId || `${phone}|${String(text).trim()}`;
     if (seen.has(key)) return; seen.add(key);
-    list.push({ phone, text: String(text || '').slice(0, 4096), mediaUrl, dedupId: key, hasId: !!realId, interactive: !!(listReply || btnReply), replyId: replyId || '' });
+    list.push({ phone, text: String(text || '').slice(0, 4096), mediaUrl, dedupId: key, hasId: !!realId, interactive: !!(listReply || btnReply), replyId: replyId || '', referral: extractReferral(item) });
   };
   if (Array.isArray(payload)) { payload.forEach(push); return list; }
   push(payload);
@@ -3495,7 +3527,7 @@ app.post('/api/wati-webhook', async (req, res) => {
   const cfg = watiCfg(); const items = extractInbound(body);
   saveInboundDebug(JSON.stringify(body), items);
   res.json({ ok: true, processed: items.length }); // répondre WATI tout de suite
-  for (const { phone, text, mediaUrl, dedupId, hasId, replyId } of items) {
+  for (const { phone, text, mediaUrl, dedupId, hasId, replyId, referral } of items) {
     if (!phone) continue;
     if (hasId && memSeen(dedupId)) continue;
     if (hasId && await isDuplicateMessage(dedupId, true)) continue;
@@ -3510,10 +3542,13 @@ app.post('/api/wati-webhook', async (req, res) => {
       }
       upsertLead(phone, _p);
     }
+    // Attribution pub (Facebook ET Instagram — même objet referral côté WhatsApp Business API) :
+    // mémorisée pour le Bureau, uniquement au tout premier message qui la porte.
+    if (referral) { upsertLead(phone, { referral, referralAt: Date.now() }); console.log('📣 referral ad', (phone.length > 6 ? phone.slice(0, 4) + '***' + phone.slice(-2) : phone), referral.sourceType || '?', (referral.headline || referral.body || '').slice(0, 60)); }
     recordConvo(phone, 'in', mediaUrl && !String(text || '').trim() ? '[pièce jointe]' : text); // historique léger pour le Bureau
     console.log('📩 inbound', (phone.length > 6 ? phone.slice(0, 4) + '***' + phone.slice(-2) : phone), 'len', String(text || '').length, mediaUrl ? '+media' : '', cfg ? '' : '⚠️cfgNULL');
     // Sérialisé par numéro : les messages d'un même client se traitent dans l'ordre, un par un.
-    enqueue(phone, () => handleMessage(phone, text, cfg, mediaUrl, replyId).catch(e => {
+    enqueue(phone, () => handleMessage(phone, text, cfg, mediaUrl, replyId, false, referral).catch(e => {
       console.error('bot error', e.message, e.stack);
       if (cfg) return send(phone, phoneIsEN(phone) ? 'Something went wrong. Type *go* to continue your file.' : 'Une erreur est survenue. Écrivez *go* pour continuer votre dossier.', cfg).catch(() => {});
     }));
