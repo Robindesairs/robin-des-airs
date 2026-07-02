@@ -880,7 +880,7 @@ Chaque signataire ci-dessous <span id="declarant" style="display:none"> </span>d
     <div class="sb-label"><span aria-hidden="true">📄</span> Votre exemplaire</div>
     <div class="sb-meta">
       Contrat de cession de créance <strong>pure et simple</strong> (art. 1 et 5 bis)<br>
-      Signé le <strong id="sWhen"> </strong> à <strong id="sWhere"> </strong> · version <strong>2026-06-v1</strong>
+      Signé le <strong id="sWhen"> </strong> à <strong id="sWhere"> </strong> · version <strong id="sVer"> </strong>
     </div>
     <a class="success-cta nav full" id="sPdf" href="#" onclick="window.print();return false;" style="margin-top:12px">Enregistrer / imprimer mon contrat</a>
     <div class="sb-note">📸 <strong>Faites une capture d'écran de cette page</strong> (ou enregistrez le PDF) et gardez votre référence, c'est votre preuve. Un récapitulatif vous est aussi envoyé sur WhatsApp et par e-mail.<br>📱 <strong>Conseil :</strong> chaque passager fait idéalement sa réclamation <strong>depuis son propre téléphone</strong>, pour qu'on puisse le joindre directement.</div>
@@ -889,7 +889,7 @@ Chaque signataire ci-dessous <span id="declarant" style="display:none"> </span>d
   <div class="success-block tint">
     <div class="sb-meta">
       <span aria-hidden="true">✅</span> <strong>0&nbsp;€ à avancer</strong>, jamais, aucune carte, aucun prélèvement si rien n'est récupéré.<br>
-      <span aria-hidden="true">✅</span> Nous réclamons <strong>jusqu'à 600&nbsp;€ par passager</strong>. En cas de succès vous gardez <strong>75&nbsp;% net</strong> ; 0&nbsp;€ si nous échouons.<br>
+      <span aria-hidden="true">✅</span> Nous réclamons <strong>jusqu'à 600&nbsp;€ par passager</strong>. En cas de succès vous gardez <strong>75&nbsp;% net en amiable</strong> (55&nbsp;% si procès, frais de justice inclus) ; 0&nbsp;€ si nous échouons.<br>
       <span aria-hidden="true">✅</span> <strong>Vous pouvez changer d'avis pendant 14&nbsp;jours</strong>, jusqu'au <strong id="sRetract"> </strong>, sans frais : un e-mail à contact@robindesairs.eu suffit.
     </div>
   </div>
@@ -903,7 +903,7 @@ Chaque signataire ci-dessous <span id="declarant" style="display:none"> </span>d
 
   <div class="success-block tint" id="sCoPax" style="display:none">
     <div class="sb-label"><span aria-hidden="true">👨‍👩‍👧‍👦</span> Vos co-passagers</div>
-    <div class="sb-meta">Vous voyagiez à <strong id="sPaxN"> </strong> sur ce vol ? <strong>Chaque passager a droit à sa propre indemnité de 600&nbsp;€.</strong> Ajoutez-les en un message, on s'occupe du reste.</div>
+    <div class="sb-meta">Vous voyagiez à <strong id="sPaxN"> </strong> sur ce vol ? <strong>Chaque passager peut prétendre à sa propre indemnité (jusqu'à 600&nbsp;€).</strong> Ajoutez-les en un message, on s'occupe du reste.</div>
     <a class="success-cta nav full" id="sCoPaxBtn" href="https://wa.me/33756863630" target="_blank" rel="noopener" style="margin-top:12px">Ajouter mes co-passagers</a>
   </div>
 
@@ -915,9 +915,9 @@ Chaque signataire ci-dessous <span id="declarant" style="display:none"> </span>d
 
   <div class="success-steps">
     <div class="sstep"><div class="snum">1</div><div><strong>Confirmation WhatsApp, en cours</strong><br>Récapitulatif complet + votre contact dédié, sous 24&nbsp;h.</div></div>
-    <div class="sstep"><div class="snum">2</div><div><strong>Mise en demeure, rédaction lancée</strong><br>Courrier officiel envoyé à la compagnie sous 48&nbsp;h.</div></div>
+    <div class="sstep"><div class="snum">2</div><div><strong>Mise en demeure, rédaction lancée</strong><br>Courrier officiel envoyé à la compagnie — sous 48&nbsp;h si vous avez demandé le démarrage immédiat, sinon après vos 14&nbsp;jours de rétractation.</div></div>
     <div class="sstep"><div class="snum">3</div><div><strong>Suivi à chaque étape</strong><br>On vous tient au courant, vous n'attendez jamais dans le noir.</div></div>
-    <div class="sstep"><div class="snum">4</div><div><strong>Votre argent sur votre compte</strong><br>Dès que la compagnie paie, on vous reverse votre part (75&nbsp;% net) sous 48&nbsp;h.</div></div>
+    <div class="sstep"><div class="snum">4</div><div><strong>Votre argent sur votre compte</strong><br>Dès que la compagnie paie, on vous verse votre part (75&nbsp;% en amiable, 55&nbsp;% si procès) sous 48&nbsp;h.</div></div>
   </div>
 
   <div class="success-block tint" id="sMemeVol">
@@ -1034,6 +1034,10 @@ window.addEventListener('DOMContentLoaded', () => {
       if (sWhen) sWhen.textContent = new Date().toLocaleString('fr-FR');
       const sWhere = document.getElementById('sWhere');
       if (sWhere) sWhere.textContent = 'à distance (signature électronique Yousign)';
+      // Version du contrat AFFICHÉE = celle du code (MANDAT_VERSION), plus jamais codée en dur
+      // (une version périmée affichée sur la preuve du client = incohérence exploitable).
+      const sVer = document.getElementById('sVer');
+      if (sVer && typeof MANDAT_VERSION !== 'undefined') sVer.textContent = MANDAT_VERSION;
       const sRetract = document.getElementById('sRetract');
       if (sRetract) {
         const d = new Date(); d.setDate(d.getDate() + 14);
@@ -2496,6 +2500,8 @@ function showSuccess(payload, ok) {
   if (whenEl) { let h=''; try{ h=' à '+signedAt.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); }catch(e){} whenEl.textContent = fmtDateLongFR(signedAt) + h; }
   const whereEl = document.getElementById('sWhere');
   if (whereEl) whereEl.textContent = (payload.signCity || document.getElementById('sigCity')?.value || 'Paris');
+  const verEl = document.getElementById('sVer');
+  if (verEl && typeof MANDAT_VERSION !== 'undefined') verEl.textContent = MANDAT_VERSION;
   const retract = new Date(signedAt.getTime()); retract.setDate(retract.getDate()+14);
   const retEl = document.getElementById('sRetract'); if (retEl) retEl.textContent = fmtDateLongFR(retract);
   // Liens pré-remplis (PDF + WhatsApp)
