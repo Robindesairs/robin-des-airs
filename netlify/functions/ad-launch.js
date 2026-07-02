@@ -30,8 +30,49 @@
  */
 
 const { getAirportCoords } = require('./lib/airport-coords');
+const { checkCrmAccess } = require('./lib/crm-access');
 
 const META_API = 'https://graph.facebook.com/v19.0';
+
+/**
+ * Hashes des visuels DÉJÀ UPLOADÉS sur le compte pub Meta (act_983003804718563).
+ * Ce ne sont PAS des secrets (simples identifiants d'images du compte) — codés en dur
+ * pour contourner la limite AWS Lambda 4 Ko sur les variables d'env (les META_AD_HASH_*
+ * avaient été rescopées « builds only » → invisibles au runtime → ad-launch cassé).
+ * Une variable d'env du même nom, si présente au runtime, garde la priorité.
+ */
+const DEFAULT_HASHES = {
+  META_AD_HASH_URGENCE_STORY:  '605932e6bb4ef6601bcc2f05dc2a388a',
+  META_AD_HASH_FR_FEED:        '8e998b4750fd0f308838a1b72d4a987c',
+  META_AD_HASH_URGENCE_SQUARE: 'a64419c4e0dfabd6bb718e4f5a0855ef',
+  META_AD_HASH_SOCIAL_PROOF:   '27f61d80279e3825682ae4ba6e773d52',
+  META_AD_HASH_EN_FEED:        '0c4c3a2424afedb61ad1ac0a27a8a058',
+  META_AD_HASH_EN_SQUARE:      '0c4c3a2424afedb61ad1ac0a27a8a058',
+};
+function hashEnv() {
+  const merged = { ...DEFAULT_HASHES };
+  for (const k of Object.keys(DEFAULT_HASHES)) {
+    if ((process.env[k] || '').trim()) merged[k] = process.env[k].trim();
+  }
+  return merged;
+}
+
+/**
+ * Rayon geofencing PAR AÉROPORT (référentiel campagnes validé) :
+ * dense (aéroport en ville) = 2 km pour limiter les résidents ;
+ * semi-rural / rural (aéroport isolé) = 3 km pour gagner du volume sans toucher de villages.
+ */
+const RADIUS_KM = {
+  DSS: 3, ABJ: 2, BJL: 3, BKO: 3, CKY: 3, OUA: 2, NIM: 3, COO: 2, LFW: 2,
+  NKC: 3, ACC: 2, LOS: 2, OXB: 3, FNA: 3, ROB: 3, DLA: 2, NSI: 3, LBV: 2,
+  BZV: 2, FIH: 3, PNR: 3, CMN: 3, NBO: 3, JNB: 3, ABV: 3, NDJ: 3,
+};
+function radiusForAirport(iata, body) {
+  const fromBody = parseFloat(body && body.radiusKm);
+  if (fromBody > 0 && fromBody <= 10) return fromBody;
+  if (RADIUS_KM[iata]) return RADIUS_KM[iata];
+  return parseFloat(process.env.META_AD_RADIUS_KM || '2') || 2;
+}
 
 /** Aéroports francophones */
 const FR_AIRPORTS = new Set([
@@ -117,6 +158,13 @@ exports.handler = async (event) => {
     return { statusCode: 403, body: 'Forbidden' };
   }
 
+  // Auth CRM obligatoire : cet endpoint DÉPENSE de l'argent (campagne Meta réelle).
+  // Un simple check d'Origin est forgeable server-to-server → session rda_crm ou X-CRM-Code.
+  const auth = checkCrmAccess(event);
+  if (!auth.ok) {
+    return { statusCode: 401, body: JSON.stringify({ error: auth.error || 'Non autorisé (session CRM requise)' }) };
+  }
+
   let body = {};
   try { body = JSON.parse(event.body || '{}'); } catch { /* ignore */ }
 
@@ -166,7 +214,7 @@ exports.handler = async (event) => {
   }
 
   const lang    = getLang(airport);
-  const hashes  = getHashes(lang, process.env);
+  const hashes  = getHashes(lang, hashEnv());
   const msgText = getMsg(lang, coords.city, body);
 
   if (!hashes.feedSite && !hashes.squareWa && !hashes.storyWa) {
@@ -178,8 +226,10 @@ exports.handler = async (event) => {
   const dailyBudget  = budgetEuros
     ? Math.round(budgetEuros * 100)
     : parseInt(process.env.META_AD_BUDGET_PER_INCIDENT || process.env.META_AD_DAILY_BUDGET_CENTS || '300', 10);
-  const radiusKm    = parseFloat(process.env.META_AD_RADIUS_KM || '2');
-  const durationHours = body.durationHours && body.durationHours > 0 ? body.durationHours : 6;
+  const radiusKm    = radiusForAirport(airport, body);
+  // Durée : le radar passe la fenêtre réelle (ex: jusqu'au départ du vol de réacheminement
+  // J+1) — plafond 48 h de sécurité ; défaut 6 h si non fournie.
+  const durationHours = Math.min(48, body.durationHours && body.durationHours > 0 ? body.durationHours : 6);
   const nowSec      = Math.floor(Date.now() / 1000);
   const endSec      = nowSec + Math.round(durationHours * 3600);
 
@@ -316,11 +366,17 @@ exports.handler = async (event) => {
         campaignId: campaign.id,
         adSetId:    adSet.id,
         airport,
+        city:       coords.city,
+        lang,
         vol:        body.vol      || '',
         dep:        body.dep      || '',
         arr:        body.arr      || '',
+        statut:     body.statut   || '',
+        budgetEuros: dailyBudget / 100,
+        radiusKm,
+        durationHours,
         launchedAt: Date.now(),
-        endsAt:     Date.now() + 6 * 3600 * 1000,
+        endsAt:     endSec * 1000, // fin réelle (= durée demandée, ex. départ du vol J+1)
       });
     } catch (e) {
       console.warn('[ad-launch] Blobs store failed:', e.message);
@@ -339,8 +395,9 @@ exports.handler = async (event) => {
         ads,
         formats: ads.map(a => a.label),
         radius: `${radiusKm} km`,
-        budget: `${(dailyBudget / 100).toFixed(2)} €/jour`,
-        endsAt: new Date(Date.now() + 6 * 3600 * 1000).toISOString(),
+        budget: `${(dailyBudget / 100).toFixed(2)} € (total campagne)`,
+        durationHours,
+        endsAt: new Date(endSec * 1000).toISOString(),
       }),
     };
   } catch (err) {

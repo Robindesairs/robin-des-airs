@@ -76,6 +76,31 @@ const HUB_ICAO = {
   MXP: 'LIMC',
   ZRH: 'LSZH',
   GVA: 'LSGG',
+  // Hubs AFRICAINS scannables depuis le radar (côté départ = là où Robin fait ses pubs
+  // géofencées : passagers bloqués À l'aéroport africain → pub rayon → WhatsApp).
+  DSS: 'GOBD', // Dakar Blaise Diagne
+  ABJ: 'DIAP', // Abidjan Port-Bouët
+  BJL: 'GBYD', // Banjul Yundum
+  BKO: 'GABS', // Bamako Sénou
+  CKY: 'GUCY', // Conakry
+  LFW: 'DXXX', // Lomé
+  COO: 'DBBB', // Cotonou
+  OUA: 'DFFD', // Ouagadougou
+  NIM: 'DRRN', // Niamey
+  NKC: 'GQNO', // Nouakchott Oumtounsy
+  DLA: 'FKKD', // Douala
+  NSI: 'FKYS', // Yaoundé Nsimalen
+  ACC: 'DGAA', // Accra
+  LOS: 'DNMM', // Lagos
+  ABV: 'DNAA', // Abuja
+  LBV: 'FOOL', // Libreville
+  BZV: 'FCBB', // Brazzaville
+  PNR: 'FCPP', // Pointe-Noire
+  FIH: 'FZAA', // Kinshasa
+  FNA: 'GFLL', // Freetown Lungi
+  OXB: 'GGOV', // Bissau
+  NDJ: 'FTTJ', // N'Djaména
+  CMN: 'GMMN', // Casablanca (transit ouest-africain)
 };
 
 /**
@@ -126,12 +151,23 @@ function resolveReturnWindows(dayYmd, returnSlot) {
   return all;
 }
 
+/** Résout un paramètre `group` : numéro de groupe historique OU codes IATA directs
+ *  (ex: "DSS" ou "LFW,COO") — hubs africains scannables sans numéro de groupe,
+ *  tant que l'aéroport est connu (ICAO map ou base 42 hubs). */
+function resolveHubGroup(raw) {
+  const key = String(raw || '').trim();
+  if (!key) return null;
+  const hubs = HUB_GROUPS[key];
+  if (hubs) return hubs.slice();
+  const tokens = key.toUpperCase().split(/[\s,;]+/).filter(Boolean);
+  if (tokens.length && tokens.every((t) => /^[A-Z]{3}$/.test(t) && (HUB_ICAO[t] || AFRICA_42_SET.has(t)))) {
+    return tokens.slice(0, 4); // max 4 hubs par requête (anti-timeout 26 s)
+  }
+  return null;
+}
+
 function parseHubGroup(event) {
-  const raw = String(event.queryStringParameters?.group || '').trim();
-  if (!raw) return null;
-  const hubs = HUB_GROUPS[raw];
-  if (!hubs) return null;
-  return hubs.slice();
+  return resolveHubGroup(event.queryStringParameters?.group);
 }
 
 /** ICAO → IATA (AeroDataBox renvoie souvent icaoV2 sans iata sur departure/arrival). */
@@ -1146,7 +1182,7 @@ async function runGroupScan(rapidKey, { group, scanMode, hub, returnSlot }) {
   const allRaw = [];
   const arrivalRaw = [];
   const groupKey = String(group || '').trim();
-  const groupHubs = HUB_GROUPS[groupKey];
+  const groupHubs = resolveHubGroup(groupKey);
   if (!groupHubs || !groupHubs.length) {
     throw new Error(`Groupe hub inconnu: ${groupKey}`);
   }
@@ -1338,6 +1374,28 @@ exports.handler = async (event) => {
       payload.scan = payload.scan || {};
       payload.scan.hubs = scanHubs;
       payload.scan.group = String(event.queryStringParameters?.group || '').trim();
+    }
+
+    // 💰 JACKPOT : pour chaque ANNULATION, chercher le réacheminement (prochaine occurrence
+    // du même n° de vol, souvent J+1) — c'est la fenêtre pub de Robin (passagers bloqués
+    // jusqu'au départ du vol de remplacement). Cap 3 annulations par scan (anti-timeout),
+    // cache Blobs 12 h par vol annulé (voir lib/radar-reschedule.js).
+    try {
+      const cancelledFlights = (payload.flights || []).filter((f) => f.cancelled).slice(0, 3);
+      if (cancelledFlights.length) {
+        let rsStore = null;
+        try {
+          const blobs = require('@netlify/blobs');
+          if (blobs.connectLambda && event) blobs.connectLambda(event);
+          rsStore = blobs.getStore('radar-reschedule');
+        } catch (_) { rsStore = null; }
+        const { enrichCancellationReschedule } = require('./lib/radar-reschedule');
+        for (const f of cancelledFlights) {
+          try { await enrichCancellationReschedule(f, rsStore); } catch (_) {}
+        }
+      }
+    } catch (rsErr) {
+      console.warn('radar reschedule enrich:', rsErr.message);
     }
 
     try {

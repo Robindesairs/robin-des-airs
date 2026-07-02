@@ -378,6 +378,20 @@
   let LAST_SCAN_ZONE_KEY = null;
   var SCAN_LOCK = false;
   var ZONE_LABELS = {
+    // Afrique — là où Robin fait ses pubs géofencées (hub sélectionné = aéroport ciblé)
+    dss: 'Dakar',
+    abj: 'Abidjan',
+    bjl: 'Banjul',
+    bko: 'Bamako',
+    cky: 'Conakry',
+    golfe: 'Lomé · Cotonou',
+    sahel: 'Ouaga · Niamey',
+    cmr: 'Douala · Yaoundé',
+    acc: 'Accra',
+    los: 'Lagos',
+    nkc: 'Nouakchott',
+    afrique_ouest: 'Ouest express (DSS+ABJ+BJL+BKO)',
+    // Europe
     paris_cdg: 'Paris CDG',
     paris_ory: 'Paris Orly',
     bru: 'Bruxelles',
@@ -385,6 +399,12 @@
     eu_south_it: 'Rome · Milan',
     eu_south_ib: 'Lisbonne · Madrid · Barcelone',
     frankfurt: 'Francfort',
+  };
+  // Rayon pub par aéroport (affichage — la vérité est côté ad-launch.js) :
+  // dense = 2 km (limite les résidents), semi-rural/rural = 3 km (volume).
+  var PUB_RADIUS_KM = {
+    DSS: 3, ABJ: 2, BJL: 3, BKO: 3, CKY: 3, OUA: 2, NIM: 3, COO: 2, LFW: 2,
+    NKC: 3, ACC: 2, LOS: 2, DLA: 2, NSI: 3, LBV: 2, BZV: 2, FIH: 3, PNR: 3,
   };
   function zoneLabel(key) {
     return ZONE_LABELS[String(key || '').trim()] || String(key || 'Hub');
@@ -617,7 +637,8 @@
 
   function statusVisuHtml(v) {
     if (v.statut === 'ANNULE') {
-      return '<div class="radar-visu radar-visu-cancel" title="Vol annulé"><span class="radar-visu-dot"></span><span>Annulé</span></div>';
+      var rs = v.rescheduledTo ? ' · 🔄 ' + v.rescheduledTo : '';
+      return '<div class="radar-visu radar-visu-cancel" title="Vol annulé' + (v.rescheduledTo ? ' — réacheminé ' + v.rescheduledTo : '') + '"><span class="radar-visu-dot"></span><span>Annulé' + rs + '</span></div>';
     }
     if (v.statut === 'RETARD' && v.retardMin >= 180) {
       return '<div class="radar-visu radar-visu-crit" title="Retard ≥ 3h"><span class="radar-visu-dot"></span><span>3h+</span></div>';
@@ -844,6 +865,12 @@
       trackerUrl: f.trackerUrl || '',
       statusFr: f.statusFr || '',
       surveillanceRetour: !!f.surveillanceRetour,
+      // 💰 Réacheminement après annulation (posé par le backend, lib/radar-reschedule.js)
+      rescheduledTo: f.rescheduledTo || null,             // ex: "demain 14h35"
+      rescheduledAtLocal: f.rescheduledAtLocal || null,   // heure programmée du vol de remplacement
+      rescheduledDayOffset: f.rescheduledDayOffset != null ? f.rescheduledDayOffset : null,
+      rescheduledRoute: f.rescheduledRoute || null,
+      nextFlightFound: !!f.nextFlightFound,
       dataSource: 'aerodatabox'
     };
     vol.id = volStableId(vol);
@@ -1320,6 +1347,17 @@
   }
 
   function initZoneButtons() {
+    // Boot : initialise les groupes depuis le bouton hub ACTIF (défaut = Dakar, Afrique-first),
+    // au lieu de l'ancien défaut figé '1' (CDG).
+    var activeBtn = document.querySelector('.radar-zone-btn.active');
+    if (activeBtn && !window.__RADAR_HUB_GROUPS__) {
+      var bootGroups = String(activeBtn.getAttribute('data-groups') || '').split(',').map(function (x) { return x.trim(); }).filter(Boolean);
+      if (bootGroups.length) {
+        window.__RADAR_HUB_GROUPS__ = bootGroups;
+        window.__RADAR_HUB_GROUP__ = bootGroups[0];
+        LAST_SCAN_ZONE_KEY = String(activeBtn.getAttribute('data-zone') || '').trim() || null;
+      }
+    }
     window.__RADAR_HUB_GROUP__ = window.__RADAR_HUB_GROUP__ || '1';
     document.querySelectorAll('.radar-zone-btn').forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -1568,6 +1606,7 @@
   }
 
   function renderRadar() {
+    renderJackpot(); // 💰 annulations épinglées en haut, hors filtres
     var rows = filteredVols();
     var tbody = document.getElementById('radar-tbody');
     if (!tbody) return;
@@ -2048,6 +2087,44 @@
     }).join('');
   }
 
+  /** Aéroport africain ciblé par la pub pour un vol donné (départ AF prioritaire). */
+  function pubAirportFor(v) {
+    if (!v) return null;
+    if (AF_IATA_SET.has(v.dep)) return v.dep; // AF→EU : passagers bloqués à l'aéroport AF de départ
+    if (AF_IATA_SET.has(v.arr)) return v.arr; // EU→AF : cible comm. = l'arrivée africaine
+    return v.arr || v.dep || null;
+  }
+
+  /**
+   * 💰 Fenêtre pub en heures : jusqu'au DÉPART du vol de réacheminement si connu
+   * (annulation reprogrammée, souvent J+1 = le jackpot), sinon 12 h (annulé sans
+   * réacheminement trouvé) ou 6 h (retard). Clamp [1h, 48h].
+   */
+  function computePubWindowHours(v) {
+    if (!v) return 6;
+    if (v.statut === 'ANNULE') {
+      if (v.rescheduledAtLocal) {
+        var ms = Date.parse(String(v.rescheduledAtLocal).replace(' ', 'T'));
+        if (!isNaN(ms)) {
+          var h = (ms - Date.now()) / 3600000;
+          if (h >= 1) return Math.min(48, Math.round(h * 10) / 10);
+        }
+      }
+      return 12; // annulé, réacheminement inconnu → fenêtre large par défaut
+    }
+    return 6; // retard → l'avion finit par partir, ad-watch coupe au décollage
+  }
+
+  function pubWindowLabel(v) {
+    var h = computePubWindowHours(v);
+    var end = new Date(Date.now() + h * 3600000);
+    var opts = { hour: '2-digit', minute: '2-digit' };
+    var endTxt = end.toLocaleTimeString('fr-FR', opts);
+    var tomorrow = end.getDate() !== new Date().getDate();
+    return (h >= 10 ? Math.round(h) : h) + ' h — arrêt auto ' + (tomorrow ? 'demain ' : '') + endTxt +
+      (v && v.statut === 'ANNULE' && v.rescheduledTo ? ' (départ du vol de remplacement)' : '');
+  }
+
   function openPub(id) {
     var v = findVolById(id);
     if (!v) return;
@@ -2056,10 +2133,16 @@
     if (info) {
       info.textContent =
         v.vol + ' · ' + v.dep + ' → ' + v.arr + ' · ' + (v.dateLabel || '—') + ' · ' +
-        (v.statut === 'ANNULE' ? '🔴 Annulé' : '🟠 Retard ' + retardH(v.retardMin));
+        (v.statut === 'ANNULE' ? '🔴 Annulé' + (v.rescheduledTo ? ' · 🔄 reporté ' + v.rescheduledTo : '') : '🟠 Retard ' + retardH(v.retardMin));
     }
+    var ap = pubAirportFor(v);
     var cityEl = document.getElementById('pub-city-label');
-    if (cityEl) cityEl.textContent = (v.af_ville || v.arr || '?');
+    // Ville CIBLÉE par la pub = l'aéroport AFRICAIN (pas l'autre bout de la route).
+    if (cityEl) cityEl.textContent = (ap ? airportLabel(ap) : (v.af_ville || v.arr || '?')) + (ap ? ' (' + ap + ')' : '');
+    var radiusEl = document.getElementById('pub-radius-label');
+    if (radiusEl) radiusEl.textContent = (PUB_RADIUS_KM[ap] || 2) + ' km';
+    var durEl = document.getElementById('pub-duration-label');
+    if (durEl) durEl.textContent = pubWindowLabel(v);
     var waBtn = document.getElementById('btn-wa-fallback');
     if (waBtn) waBtn.onclick = function () { openGenericWaPub(v); };
     var st = document.getElementById('pub-status');
@@ -2083,6 +2166,15 @@
     if (reach) reach.textContent = '~' + Math.round(val / 0.05).toLocaleString('fr-FR') + ' personnes';
   }
 
+  /** En-têtes + cookie session CRM pour les endpoints pub (ils dépensent de l'argent). */
+  function adFetchInit(payload) {
+    var headers = { 'Content-Type': 'application/json' };
+    try { var c = sessionStorage.getItem('rda_crm_code'); if (c) headers['X-CRM-Code'] = c; } catch (_) {}
+    var init = { method: payload ? 'POST' : 'GET', credentials: 'include', headers: headers };
+    if (payload) init.body = JSON.stringify(payload);
+    return init;
+  }
+
   function lancerPub() {
     if (!currentPubVol) return;
     var v = currentPubVol;
@@ -2091,21 +2183,14 @@
     var budget = parseInt((document.getElementById('budget-sl') || {}).value || '10', 10);
 
     // Toujours cibler l'aéroport africain (où sont les passagers qui attendent)
-    // EU→AF : passagers bloqués côté EU, mais la cible comm. est l'arrivée AF
-    // AF→EU : passagers bloqués à l'aéroport AF de départ → cibler le départ
-    var airport = AF_IATA_SET.has(v.arr)
-      ? v.arr  // EU→AF : arrivée est africaine (DSS, ABJ…)
-      : AF_IATA_SET.has(v.dep)
-        ? v.dep // AF→EU : départ est africain → les passagers attendent là
-        : v.arr || v.dep; // fallback
+    var airport = pubAirportFor(v);
+    // 💰 Fenêtre réelle : jusqu'au départ du vol de réacheminement si connu (jackpot J+1)
+    var durationHours = computePubWindowHours(v);
 
     if (btn) { btn.disabled = true; btn.textContent = '⏳ Publication…'; }
     if (st)  { st.style.display = 'block'; st.style.background = '#FFF8E1'; st.style.color = '#7B5800'; st.textContent = 'Envoi vers Meta Ads…'; }
 
-    fetch('/.netlify/functions/ad-launch', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+    fetch('/.netlify/functions/ad-launch', adFetchInit({
         airport: airport,
         vol:       v.vol       || '',
         dep:       v.dep       || '',
@@ -2114,8 +2199,8 @@
         statut:    v.statut    || 'RETARD',
         dateLabel: v.dateLabel || '',
         budget:    budget,
-      }),
-    })
+        durationHours: durationHours,
+    }))
     .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); })
     .then(function (res) {
       if (btn) { btn.disabled = false; btn.textContent = '🚀 Lancer sur Meta'; }
@@ -2147,6 +2232,7 @@
           chargerStats(cid, statsDiv);
           setInterval(function () { chargerStats(cid, statsDiv); }, 60000);
         }
+        renderActiveAds(); // la nouvelle campagne apparaît aussitôt dans « Pubs en cours »
       } else if (res.data && res.data.duplicate) {
         // Doublon détecté (rotation aircraft)
         var dup = res.data;
@@ -2170,7 +2256,7 @@
   }
 
   function chargerStats(campaignId, el) {
-    fetch('/.netlify/functions/ad-stats?campaignId=' + campaignId)
+    fetch('/.netlify/functions/ad-stats?campaignId=' + campaignId, adFetchInit())
       .then(function (r) { return r.json(); })
       .then(function (s) {
         if (!s.ok || !el) return;
@@ -2195,11 +2281,7 @@
   function arreterPub(campaignId, btn) {
     if (!campaignId) return;
     if (btn) { btn.disabled = true; btn.textContent = '⏳ Arrêt en cours…'; }
-    fetch('/.netlify/functions/ad-stop', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ campaignId: campaignId }),
-    })
+    fetch('/.netlify/functions/ad-stop', adFetchInit({ campaignId: campaignId }))
     .then(function (r) { return r.json(); })
     .then(function (d) {
       if (btn) {
@@ -2213,10 +2295,77 @@
           btn.textContent = '❌ Erreur — réessayer';
         }
       }
+      renderActiveAds();
     })
     .catch(function () {
       if (btn) { btn.disabled = false; btn.textContent = '❌ Erreur réseau'; }
     });
+  }
+
+  /* ══ 💰 JACKPOT — annulations (réacheminement = fenêtre pub) ══════════════ */
+  function renderJackpot() {
+    var panel = document.getElementById('jackpot-panel');
+    if (!panel) return;
+    var cancelled = VOLS.filter(function (v) { return v.statut === 'ANNULE'; });
+    if (!cancelled.length) { panel.hidden = true; panel.innerHTML = ''; return; }
+    panel.hidden = false;
+    panel.innerHTML =
+      '<div style="padding:12px 14px;background:linear-gradient(135deg,#FFF8E1,#FFF3CD);border:2px solid #C9A84C;border-radius:10px">' +
+      '<div style="font-size:12px;font-weight:800;color:#7B5800;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">💰 Jackpot — vols annulés (' + cancelled.length + ')</div>' +
+      cancelled.map(function (v) {
+        var ap = pubAirportFor(v);
+        var resch = v.rescheduledTo
+          ? '🔄 Réacheminé : <strong style="color:#B7950B">' + v.rescheduledTo + '</strong>' + (v.rescheduledRoute ? ' <span style="color:#7B5800">(' + v.rescheduledRoute + ')</span>' : '')
+          : (v.nextFlightFound === false ? '🔎 Réacheminement introuvable (vol suivant non trouvé sur 3 jours)' : '🔎 Réacheminement : relancez un scan live pour interroger l\'API');
+        return (
+          '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 10px;background:#fff;border:1px solid #E8D28A;border-radius:8px;margin-bottom:6px">' +
+            '<div style="min-width:220px">' +
+              '<div style="font-weight:800;color:var(--navy,#0B1F3A);font-size:13px">🔴 ' + v.vol + ' · ' + v.dep + ' → ' + v.arr + ' <span style="font-weight:600;color:#7B5800">' + (v.dateLabel || '') + '</span></div>' +
+              '<div style="font-size:12px;margin-top:2px">' + resch + '</div>' +
+              '<div style="font-size:11px;color:#7B5800;margin-top:2px">Fenêtre pub : ' + pubWindowLabel(v) + ' · cible ' + (ap || '?') + ' rayon ' + (PUB_RADIUS_KM[ap] || 2) + ' km</div>' +
+            '</div>' +
+            '<button class="radar-btn radar-btn-gold" style="font-weight:800" onclick="window.__radarOpenPub(&quot;' + v.id + '&quot;)">📣 Pub jusqu\'au départ</button>' +
+          '</div>'
+        );
+      }).join('') +
+      '</div>';
+  }
+
+  /* ══ 📣 Campagnes Meta EN COURS (panneau permanent, refresh 60 s) ═════════ */
+  function renderActiveAds() {
+    var panel = document.getElementById('active-ads-panel');
+    if (!panel) return;
+    fetch('/.netlify/functions/ad-active?_=' + Date.now(), adFetchInit())
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d || !d.ok || !d.campaigns || !d.campaigns.length) { panel.hidden = true; panel.innerHTML = ''; return; }
+        panel.hidden = false;
+        panel.innerHTML =
+          '<div style="padding:12px 14px;background:#E8F5E9;border:2px solid #66BB6A;border-radius:10px">' +
+          '<div style="font-size:12px;font-weight:800;color:#1B5E20;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">📣 Pubs en cours (' + d.campaigns.length + ')</div>' +
+          d.campaigns.map(function (c) {
+            var ends = c.endsAt ? new Date(Number(c.endsAt)) : null;
+            var endTxt = ends ? (ends.getDate() !== new Date().getDate() ? 'demain ' : '') + ends.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '?';
+            var stats = (c.spend != null)
+              ? '📊 ' + (c.spend || 0).toFixed(2) + ' € dépensés · ' + (c.reach || 0).toLocaleString('fr-FR') + ' touchés · ' + (c.clicks || 0) + ' clics' + (c.waConvos ? ' · <strong style="color:#25D366">' + c.waConvos + ' 💬 WA</strong>' : '')
+              : '⏳ Stats Meta en attente (review 15-30 min)';
+            return (
+              '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 10px;background:#fff;border:1px solid #A5D6A7;border-radius:8px;margin-bottom:6px">' +
+                '<div style="min-width:220px">' +
+                  '<div style="font-weight:800;color:#1B5E20;font-size:13px">🟢 ' + (c.city || c.airport || '?') + (c.vol ? ' · vol ' + c.vol : '') + (c.dep && c.arr ? ' (' + c.dep + '→' + c.arr + ')' : '') + '</div>' +
+                  '<div style="font-size:11px;color:#2E7D32;margin-top:2px">' + (c.budgetEuros ? c.budgetEuros.toFixed(0) + ' € · ' : '') + 'rayon ' + (c.radiusKm || '?') + ' km · arrêt auto ' + endTxt + '</div>' +
+                  '<div style="font-size:11px;margin-top:2px">' + stats + '</div>' +
+                '</div>' +
+                '<button class="radar-btn" style="background:#FFEBEE;color:#B71C1C;border:1px solid #FFCDD2;font-weight:800" data-stop-cid="' + c.campaignId + '">⏹ Arrêter</button>' +
+              '</div>'
+            );
+          }).join('') +
+          '</div>';
+        panel.querySelectorAll('[data-stop-cid]').forEach(function (b) {
+          b.addEventListener('click', function () { arreterPub(b.getAttribute('data-stop-cid'), b); });
+        });
+      })
+      .catch(function () { /* silencieux (pas de session / offline) */ });
   }
 
   function switchTab(el, id) {
@@ -2519,6 +2668,10 @@
 
   initZoneButtons();
 
+  // 📣 Campagnes Meta en cours : panneau permanent, refresh 60 s.
+  renderActiveAds();
+  setInterval(renderActiveAds, 60000);
+
   document.getElementById('r-search') && (document.getElementById('r-search').oninput = renderRadar);
   document.getElementById('r-sens') && (document.getElementById('r-sens').onchange = renderRadar);
 
@@ -2551,6 +2704,7 @@
   window.openPub = openPub;
   window.updBudget = updBudget;
   window.lancerPub = lancerPub;
+  window.renderActiveAds = renderActiveAds;
 
   setInterval(function () {
     countdownSec = Math.max(0, countdownSec - 1);

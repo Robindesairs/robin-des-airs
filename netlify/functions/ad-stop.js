@@ -6,11 +6,18 @@
  */
 
 const { getStore } = require('@netlify/blobs');
+const { checkCrmAccess } = require('./lib/crm-access');
 
 const META_API = 'https://graph.facebook.com/v19.0';
 
 exports.handler = async (event) => {
   if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
+
+  // Auth CRM : pilote des campagnes réelles (même exigence qu'ad-launch).
+  const auth = checkCrmAccess(event);
+  if (!auth.ok) {
+    return { statusCode: 401, body: JSON.stringify({ error: auth.error || 'Non autorisé (session CRM requise)' }) };
+  }
 
   let body = {};
   try { body = JSON.parse(event.body || '{}'); } catch { /* ignore */ }

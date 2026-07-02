@@ -73,8 +73,11 @@ exports.handler = async (event) => {
     const ageMs      = now - launchedAt;
     let   reason     = null;
 
-    // Règle 2 : 6h écoulées
-    if (ageMs >= MAX_AGE_MS) {
+    // Règle 2 : fin de fenêtre. endsAt (posé par ad-launch = durée réellement demandée,
+    // ex. jusqu'au départ du vol de réacheminement J+1) prime sur le vieux couperet 6 h.
+    if (meta.endsAt && Number(meta.endsAt) > 0) {
+      if (now >= Number(meta.endsAt)) reason = 'expired_window';
+    } else if (ageMs >= MAX_AGE_MS) {
       reason = 'expired_6h';
     }
 

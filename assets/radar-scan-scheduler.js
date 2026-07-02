@@ -40,6 +40,23 @@
 
   /** Liste unifiée des hubs (aller + retour appariés par groupe) pour le scan global. */
   var ALL_HUBS = [
+    // Afrique d'abord (là où Robin fait ses pubs géofencées) — hub: null = pas de scan retour
+    // (le mode retour = arrivées côté EU, sans objet pour un aéroport africain).
+    { label: 'Dakar', zone: 'dss', group: 'DSS', hub: null },
+    { label: 'Abidjan', zone: 'abj', group: 'ABJ', hub: null },
+    { label: 'Banjul', zone: 'bjl', group: 'BJL', hub: null },
+    { label: 'Bamako', zone: 'bko', group: 'BKO', hub: null },
+    { label: 'Conakry', zone: 'cky', group: 'CKY', hub: null },
+    { label: 'Lomé', zone: 'golfe', group: 'LFW', hub: null },
+    { label: 'Cotonou', zone: 'golfe', group: 'COO', hub: null },
+    { label: 'Ouagadougou', zone: 'sahel', group: 'OUA', hub: null },
+    { label: 'Niamey', zone: 'sahel', group: 'NIM', hub: null },
+    { label: 'Douala', zone: 'cmr', group: 'DLA', hub: null },
+    { label: 'Yaoundé', zone: 'cmr', group: 'NSI', hub: null },
+    { label: 'Accra', zone: 'acc', group: 'ACC', hub: null },
+    { label: 'Lagos', zone: 'los', group: 'LOS', hub: null },
+    { label: 'Nouakchott', zone: 'nkc', group: 'NKC', hub: null },
+    // Europe
     { label: 'Paris CDG', zone: 'paris_cdg', group: '1', hub: 'CDG' },
     { label: 'Paris Orly', zone: 'paris_ory', group: '18', hub: 'ORY' },
     { label: 'Bruxelles', zone: 'bru', group: '5', hub: 'BRU' },
@@ -480,11 +497,12 @@
       .__radarRunAllerScan(h.zone, [h.group], { merge: !replace })
       .then(function () {
         if (window.__radarMarkHubScanned) window.__radarMarkHubScanned('aller', h.zone);
-        if (!window.__radarFetchReturnHub) return 0;
+        // Hubs africains (h.hub = null) : pas de scan retour (mode retour = arrivées côté EU).
+        if (!h.hub || !window.__radarFetchReturnHub) return 0;
         return window.__radarFetchReturnHub(h.hub, h.group).catch(function () { return 0; });
       })
       .then(function () {
-        if (window.__radarMarkHubScanned) window.__radarMarkHubScanned('return', h.hub);
+        if (h.hub && window.__radarMarkHubScanned) window.__radarMarkHubScanned('return', h.hub);
         if (window.__radarRenderReturnWatch) window.__radarRenderReturnWatch();
       });
   }

@@ -333,13 +333,53 @@ body.rv-cards .tcard{display:none}
 <div class="app">
   <div id="radar-api-alert" role="alert" hidden></div>
   <div id="data-source-badge" style="display:none;font-size:11px;color:var(--text2);margin-bottom:8px"></div>
+
+  <!-- ══ HUBS — toujours visibles, Afrique d'abord (là où Robin fait ses pubs géofencées) ══ -->
+  <div id="hub-bar" style="margin-bottom:12px;padding:12px 14px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
+    <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center" role="group" aria-label="Hubs Afrique, départs et arrivées côté africain">
+      <span style="font-size:11px;color:#7B5800;font-weight:800;text-transform:uppercase;letter-spacing:.05em">🌍 Afrique · mes pubs</span>
+      <button type="button" class="btn btn-sm radar-zone-btn active" data-zone="dss" data-groups="DSS">Dakar</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="abj" data-groups="ABJ">Abidjan</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="bjl" data-groups="BJL">Banjul</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="bko" data-groups="BKO">Bamako</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="cky" data-groups="CKY">Conakry</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="golfe" data-groups="LFW,COO">Lomé · Cotonou</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="sahel" data-groups="OUA,NIM">Ouaga · Niamey</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="cmr" data-groups="DLA,NSI">Douala · Yaoundé</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="acc" data-groups="ACC">Accra</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="los" data-groups="LOS">Lagos</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="nkc" data-groups="NKC">Nouakchott</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="afrique_ouest" data-groups="DSS,ABJ,BJL,BKO" title="Dakar + Abidjan + Banjul + Bamako en un scan">⭐ Ouest express</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center" role="group" aria-label="Hubs Europe, départs Europe vers Afrique">
+      <span style="font-size:11px;color:var(--text2);font-weight:800;text-transform:uppercase;letter-spacing:.05em">🇪🇺 Europe</span>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="paris_cdg" data-groups="1">Paris CDG</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="paris_ory" data-groups="18">Paris Orly</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="bru" data-groups="5">Bruxelles</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="ams" data-groups="6">Amsterdam</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="eu_south_it" data-groups="13,14">Rome · Milan</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="eu_south_ib" data-groups="7,15,16">Lisbonne · Madrid · Barcelone</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="frankfurt" data-groups="17">Francfort</button>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <button type="button" class="btn btn-primary btn-sm" id="btn-aller-scan">▶ Scanner ce hub maintenant</button>
+      <button type="button" class="btn btn-sm btn-primary" id="btn-scan-all" title="Scanne tous les hubs un par un, départs ET arrivées fusionnés dans le tableau">🌍 Tout scanner</button>
+      <span id="aller-scan-status" style="font-size:11px;color:var(--text2);flex:1;min-width:200px"></span>
+    </div>
+  </div>
+
+  <!-- ══ 💰 JACKPOT — annulations avec réacheminement (fenêtre pub = jusqu'au départ du vol de remplacement) ══ -->
+  <div id="jackpot-panel" hidden style="margin-bottom:12px"></div>
+
+  <!-- ══ 📣 Campagnes Meta EN COURS (lancées depuis le radar) ══ -->
+  <div id="active-ads-panel" hidden style="margin-bottom:12px"></div>
+
   <details class="radar-tools">
-  <summary>⚙️ Scan manuel &amp; veille, sources, hubs aller / retour</summary>
+  <summary>⚙️ Veille auto, sources, scan retour (arrivées Europe)</summary>
   <div class="radar-tools-body">
   <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap" role="group" aria-label="Source des données">
     <button type="button" class="btn btn-sm radar-source-btn" id="src-snapshot" data-mode="snapshot" title="Snapshot 8h (10 vols impactés), alimente aussi le bandeau accueil">☀️ Cache matin</button>
     <button type="button" class="btn btn-sm radar-source-btn active" id="src-live" data-mode="live">📡 Scan live</button>
-    <button type="button" class="btn btn-sm btn-primary" id="btn-scan-all" title="Scanne tous les hubs un par un, départs ET arrivées fusionnés dans le tableau">🌍 Tout scanner (départs + arrivées)</button>
   </div>
 
   <div id="radar-server-veille-panel" style="margin-bottom:12px;padding:10px 12px;background:#E8F5EE;border:1px solid #A8D5BC;border-radius:var(--r)">
@@ -360,24 +400,13 @@ body.rv-cards .tcard{display:none}
     <span id="veille-server-status" style="display:block;margin-top:6px;font-size:11px;color:var(--text2)"></span>
   </div>
 
-  <!-- Aller : sélection hub puis scan explicite -->
+  <!-- Veille aller (navigateur) — les hubs aller sont désormais dans la barre visible en haut -->
   <div style="margin-bottom:10px;padding:10px 12px;background:var(--card);border:1px solid var(--border);border-radius:var(--r)">
-    <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center" role="group" aria-label="Scan aller, départs Europe">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
       <span style="font-size:11px;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Aller</span>
-      <button type="button" class="btn btn-sm radar-zone-btn active" data-zone="paris_cdg" data-groups="1">Paris CDG</button>
-      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="paris_ory" data-groups="18">Paris Orly</button>
-      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="bru" data-groups="5">Bruxelles</button>
-      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="ams" data-groups="6">Amsterdam</button>
-      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="eu_south_it" data-groups="13,14">Rome · Milan</button>
-      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="eu_south_ib" data-groups="7,15,16">Lisbonne · Madrid · Barcelone</button>
-      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="frankfurt" data-groups="17">Francfort</button>
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px">
-      <button type="button" class="btn btn-primary btn-sm" id="btn-aller-scan">▶ Scanner ce hub maintenant</button>
       <button type="button" class="btn btn-sm radar-source-btn" id="btn-aller-auto">🔁 Veille aller (8h-18h / 2h)</button>
-      <span id="aller-scan-status" style="font-size:11px;color:var(--text2);flex:1;min-width:200px"></span>
+      <span style="font-size:10px;color:var(--text3)">Le hub scanné par la veille = celui sélectionné dans la barre du haut.</span>
     </div>
-    <p style="margin:0;font-size:10px;color:var(--text3)">Choisir un hub puis lancer le scan (Scan live ou démo). Sous chaque bouton : <strong>dernier scan</strong> (heure Paris).</p>
   </div>
 
   <!-- Retour : 1 hub à la fois → scan API (18h-03h, décalage 5 min en auto) -->
@@ -546,14 +575,14 @@ body.rv-cards .tcard{display:none}
 
       <!-- Ciblage prévu -->
       <div style="font-size:11px;color:var(--text2);margin-bottom:10px;line-height:1.6">
-        <strong>Ciblage automatique :</strong> géofencing <span id="pub-city-label" style="color:var(--navy);font-weight:700"></span> · rayon 2 km autour de l’aéroport<br>
-        <strong>Formats :</strong> Story Instagram · Feed Facebook · Carré WhatsApp<br>
-        <strong>Durée :</strong> 24h (auto-pause)
+        <strong>Ciblage automatique :</strong> géofencing <span id="pub-city-label" style="color:var(--navy);font-weight:700"></span> · rayon <span id="pub-radius-label">2-3 km</span> autour de l’aéroport (Facebook + Instagram)<br>
+        <strong>Formats :</strong> Story · Feed · Carré — tous en Click-to-WhatsApp<br>
+        <strong>Fenêtre :</strong> <span id="pub-duration-label" style="color:var(--navy);font-weight:700">6 h (auto-stop)</span>
       </div>
 
       <!-- Budget slider -->
       <label style="font-size:11px;font-weight:700;color:var(--text2);display:block;margin-bottom:6px">
-        Budget journalier : <span id="budget-disp" style="color:var(--navy);font-weight:800">10 €</span>
+        Budget total campagne : <span id="budget-disp" style="color:var(--navy);font-weight:800">10 €</span>
         <span style="color:var(--text3);font-weight:400"> portée estimée : <span id="budget-reach">~200 personnes</span></span>
       </label>
       <input type="range" id="budget-sl" min="5" max="100" value="10" step="5"
