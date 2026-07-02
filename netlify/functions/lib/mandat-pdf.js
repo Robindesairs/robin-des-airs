@@ -221,13 +221,24 @@ function genererMandatPdf(record) {
 
     // ── Signatures ──
     sectionTitle('Signature(s)');
+    // Adresse de chaque cédant (art. 1321 C. civ.) : dédoublonnée pour ne pas répéter la même
+    // adresse à chaque passager d'une même famille — « Même adresse que {premier passager} ».
+    const addrSeen = new Map(); // adresse normalisée → nom du 1er passager qui la porte
     passengers.forEach((p, i) => {
-      ensure(96);
+      ensure(110);
       const y = doc.y;
       doc.fillColor(NAVY).fontSize(9.5).font('Helvetica-Bold')
         .text(`${p.name || 'Passager ' + (i + 1)}${p.minor ? ' (mineur)' : ''}${i === 0 ? ' — signataire principal' : ''}`, left, y);
       if (p.legalRepName) {
         doc.fillColor(GRAY).fontSize(8.5).font('Helvetica').text(`Représentant légal : ${p.legalRepName}`, left, doc.y + 2);
+      }
+      const pAddr = (p.adresse || (i === 0 ? record.address : '') || '').trim();
+      if (pAddr) {
+        const key = pAddr.toLowerCase().replace(/\s+/g, ' ');
+        const firstName = addrSeen.get(key);
+        const addrLine = firstName ? `Adresse : même que ${firstName}` : `Adresse : ${pAddr}`;
+        if (!firstName) addrSeen.set(key, p.name || `Passager ${i + 1}`);
+        doc.fillColor(GRAY).fontSize(8).font('Helvetica').text(addrLine, left, doc.y + 2, { width: 240 });
       }
       const boxY = doc.y + 6;
       doc.rect(left, boxY, 240, 70).strokeColor(BORDER).lineWidth(1).stroke();
@@ -418,13 +429,22 @@ function genererMandatBilinguePdf(record) {
 
     // ── Signature(s) — instrument bilingue (une seule fois) ──
     sectionTitle('Signature(s) — instrument bilingue · bilingual instrument');
+    const addrSeenBi = new Map();
     passengers.forEach((p, i) => {
-      ensure(96);
+      ensure(110);
       const y = doc.y;
       doc.fillColor(NAVY).fontSize(9.5).font('Helvetica-Bold')
         .text(`${p.name || 'Passager ' + (i + 1)}${p.minor ? ' (mineur / minor)' : ''}${i === 0 ? ' — signataire principal / main signatory' : ''}`, left, y);
       if (p.legalRepName) {
         doc.fillColor(GRAY).fontSize(8.5).font('Helvetica').text(`Représentant légal / Legal representative : ${p.legalRepName}`, left, doc.y + 2);
+      }
+      const pAddrBi = (p.adresse || (i === 0 ? record.address : '') || '').trim();
+      if (pAddrBi) {
+        const keyBi = pAddrBi.toLowerCase().replace(/\s+/g, ' ');
+        const firstNameBi = addrSeenBi.get(keyBi);
+        const addrLineBi = firstNameBi ? `Adresse / Address : same as · même que ${firstNameBi}` : `Adresse / Address : ${pAddrBi}`;
+        if (!firstNameBi) addrSeenBi.set(keyBi, p.name || `Passager ${i + 1}`);
+        doc.fillColor(GRAY).fontSize(8).font('Helvetica').text(addrLineBi, left, doc.y + 2, { width: 240 });
       }
       const boxY = doc.y + 6;
       doc.rect(left, boxY, 240, 70).strokeColor(BORDER).lineWidth(1).stroke();

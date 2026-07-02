@@ -743,6 +743,30 @@ exports.handler = async (event) => {
     }
   }
 
+  // Met à jour le dossier (store 'mandats') avec les données FRAÎCHEMENT saisies par le client
+  // (adresse par passager notamment) : le navigateur appelle /api/render-mandat-pdf juste après
+  // cette requête, qui recharge mandat.html?r=REF à neuf (Puppeteer) et relit ce dossier — sans
+  // cette mise à jour, le PDF signé via Yousign porterait les adresses connues du bot à l'OUVERTURE
+  // du dossier (souvent aucune, pour les co-passagers), pas celles tapées à l'instant par le client.
+  if (netlifyBlobsModule) {
+    try {
+      const blobs = netlifyBlobsModule;
+      if (blobs.connectLambda && event) blobs.connectLambda(event);
+      const mStore = blobs.getStore('mandats');
+      const existing = (await mStore.get('m/' + ref, { type: 'json' })) || {};
+      const existingPax = Array.isArray(existing.passengers) ? existing.passengers : [];
+      const freshPax = record.passengersData.length ? record.passengersData : existingPax;
+      const mergedPassengers = freshPax.map((p, i) => ({
+        name: (p && p.name) || (existingPax[i] && existingPax[i].name) || '',
+        dob: (p && p.dob) || (existingPax[i] && existingPax[i].dob) || '',
+        adresse: (p && p.adresse) || (existingPax[i] && existingPax[i].adresse) || '',
+      }));
+      await mStore.setJSON('m/' + ref, { ...existing, address: record.address || existing.address || '', passengers: mergedPassengers, _ts: new Date().toISOString() });
+    } catch (e) {
+      console.error('submit-mandat: mise à jour dossier (adresses passagers) échouée:', e.message);
+    }
+  }
+
   let airtableResult = { skipped: true };
   try {
     airtableResult = await patchAirtableSigned(record);

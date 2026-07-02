@@ -239,6 +239,7 @@ details.mandat-full>summary:hover{background:#EFF9F4}
 details.mandat-full>summary::-webkit-details-marker{display:none}
 details.mandat-full>summary::after{content:'▾';margin-left:auto}
 details.mandat-full[open]>summary{margin-bottom:12px}
+.addr-summary-print{display:none}
 @media print{
   /* N'imprimer QUE le mandat rempli (parties + texte complet + signature), même depuis l'écran de succès. */
   body{background:#fff !important}
@@ -250,6 +251,10 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   #successScreen{display:none !important}
   /* Masquer l'interface interactive (boutons, aide à signer), on garde le contenu du mandat et la signature. */
   #btnAddPax,.btn-submit,.success-cta,.sig-clear,#sigPh{display:none !important;visibility:hidden !important}
+  /* Adresses des co-passagers : le résumé dédoublonné remplace les champs de saisie bruts
+     (menu « même adresse que » notamment, qui n'a aucun sens imprimé). */
+  .paddr-block{display:none !important}
+  .addr-summary-print{display:block !important;visibility:visible !important}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
@@ -318,6 +323,10 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       </div>
     </div>
   </div>
+  <!-- Résumé des adresses de TOUS les cédants (groupe) : visible uniquement à l'impression/PDF
+       (le contrat signé doit identifier chaque cédant, art. 1321 C. civ.), avec dédoublonnage
+       automatique si plusieurs passagers partagent la même adresse — voir buildAddressSummaryForPrint(). -->
+  <div id="addrSummaryPrint" class="addr-summary-print"></div>
 </div>
 <!-- INFORMATIONS PERSONNELLES -->
 <div class="doc-section">
@@ -370,7 +379,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="field-row">
     <label>Adresse postale <span class="req">*</span></label>
     <div style="font-size:12px;color:#667;margin:-2px 0 6px"><strong>Adresse la plus complète possible</strong> (numéro, rue, code postal, ville, pays) — requise pour identifier le cédant (cession de créance, art. 1321 C. civ.). Si vous n'avez ni numéro ni code postal, indiquez au minimum <strong>quartier, ville et pays</strong>.</div>
-    <textarea id="addr" placeholder="Ex. : Médina, Dakar, Sénégal&#10;(ou : 12 rue de la Paix, 75001 Paris, France)" rows="3" oninput="updateParties()"></textarea>
+    <textarea id="addr" placeholder="Ex. : Médina, Dakar, Sénégal&#10;(ou : 12 rue de la Paix, 75001 Paris, France)" rows="3" oninput="updateParties();refreshAddrReuseOptions()"></textarea>
     <div class="ferr" id="addrErr">Adresse requise pour le contrat</div>
   </div>
   <div style="font-size:12px;color:var(--text);font-style:italic;padding:10px 14px;background:var(--green-tint);border-left:3px solid var(--green-deep);border-radius:0 6px 6px 0;margin-top:4px">
@@ -1148,10 +1157,11 @@ function applyDossier(d) {
   // Passagers (noms + dates de naissance)
   if (d.pax && d.pax !== paxCount) { paxCount = d.pax; const pe = document.getElementById('pax'); if (pe) pe.value = paxCount; renderAllPassengers(); }
   const fillPax = () => {
-    const nifs = [...document.querySelectorAll('.pnif')], dobs = [...document.querySelectorAll('.pdob')];
+    const nifs = [...document.querySelectorAll('.pnif')], dobs = [...document.querySelectorAll('.pdob')], addrs = [...document.querySelectorAll('.paddr')];
     if (Array.isArray(d.passengers) && d.passengers.length) {
-      d.passengers.forEach((p, i) => { if (p && p.name && nifs[i] && !nifs[i].value) nifs[i].value = p.name; if (p && p.dob && dobs[i] && !dobs[i].value) dobs[i].value = p.dob; });
+      d.passengers.forEach((p, i) => { if (p && p.name && nifs[i] && !nifs[i].value) nifs[i].value = p.name; if (p && p.dob && dobs[i] && !dobs[i].value) dobs[i].value = p.dob; if (p && p.adresse && addrs[i] && !addrs[i].value) addrs[i].value = p.adresse; });
     } else if (d.dob && dobs[0] && !dobs[0].value) { dobs[0].value = d.dob; }
+    refreshAddrReuseOptions();
   };
   fillPax();
   // Vol avec correspondance : si le dossier décrit ≥2 segments (legs structurés OU route à ≥3
@@ -1346,6 +1356,7 @@ function renderAllPassengers() {
       dob:   row.querySelector('.pdob')?.value || '',
       birth: row.querySelector('.pbirth')?.value || '',
       email: row.querySelector('.pemail')?.value || '',
+      addr:  row.querySelector('.paddr')?.value || '',
     });
   });
   c.innerHTML = '';
@@ -1363,6 +1374,7 @@ function renderAllPassengers() {
     const safeDob   = esc(pre.dob||'');
     const safeBirth = esc(pre.birth||'');
     const safeEmail = esc(pre.email||'');
+    const safeAddr  = esc(pre.addr||'');
     div.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <span style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--green-deep);font-weight:700">
@@ -1374,7 +1386,7 @@ function renderAllPassengers() {
         <div>
           <label>Prénom NOM <span class="req">*</span></label>
           <input type="text" class="pnif" placeholder="Ex : Fatou DIALLO" value="${safeName}"
-            oninput="updateParties();buildCoPassChecks()">
+            oninput="updateParties();buildCoPassChecks();refreshAddrReuseOptions()">
         </div>
         <div>
           <label>Date de naissance <span class="req">*</span></label>
@@ -1398,6 +1410,17 @@ function renderAllPassengers() {
           oninput="updateParties()">
         <div style="font-size:10px;color:var(--muted);margin-top:3px;font-style:italic">Chaque adulte signe individuellement et reçoit une copie du contrat à son email.</div>
       </div>
+      <div class="paddr-block" id="paddrBlock${i}" style="${isMinor?'display:none':'display:block'};margin-bottom:12px">
+        <label>📍 Adresse du passager ${i+1} <span class="req">*</span></label>
+        <select class="paddr-reuse" data-idx="${i}" onchange="reuseAddrFor(${i}, this.value)"
+          style="width:100%;padding:9px 12px;margin-bottom:6px;border:1.5px solid var(--border);background:var(--paper);font-family:'Montserrat',sans-serif;font-size:12.5px;border-radius:6px;color:var(--ink)">
+          <option value="">— Sa propre adresse (à saisir ci-dessous) —</option>
+        </select>
+        <textarea class="paddr" data-idx="${i}" rows="2" placeholder="Ex. : Médina, Dakar, Sénégal"
+          style="width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:'Montserrat',sans-serif;font-size:13px;border-radius:6px;color:var(--ink)"
+          oninput="updateParties();refreshAddrReuseOptions()">${safeAddr}</textarea>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px;font-style:italic">Requise pour identifier ce passager comme cédant (cession de créance, art. 1321 C. civ.). Même adresse que quelqu'un d'autre ? Choisissez-le ci-dessus.</div>
+      </div>
       ` : ''}
       <div class="pminor-badge" id="minorBadge${i}" style="${isMinor?'display:flex':'display:none'};align-items:center;gap:8px;padding:8px 12px;background:var(--red-bg);border:1px solid var(--red-border);border-radius:6px">
         <span style="font-size:16px">👶</span>
@@ -1407,6 +1430,66 @@ function renderAllPassengers() {
     c.appendChild(div);
   }
   buildCoPassChecks();
+  refreshAddrReuseOptions();
+}
+// ── Adresse des co-passagers : réutiliser l'adresse d'un autre passager déjà saisie,
+// plutôt que de la retaper (et pour que le contrat ne la répète pas bêtement — dédoublonnage
+// à l'impression, cf. mandat-pdf.js). Le menu se reconstruit à chaque frappe d'adresse.
+function getAllAddresses() {
+  const list = [{ idx: 0, name: (document.getElementById('fn')?.value.trim() || 'Passager 1'), addr: (document.getElementById('addr')?.value || '').trim() }];
+  document.querySelectorAll('.pax-row').forEach((row, i) => {
+    if (i === 0) return;
+    const nm = row.querySelector('.pnif')?.value.trim() || ('Passager ' + (i + 1));
+    const ad = row.querySelector('.paddr')?.value.trim() || '';
+    list.push({ idx: i, name: nm, addr: ad });
+  });
+  return list;
+}
+function refreshAddrReuseOptions() {
+  const all = getAllAddresses();
+  document.querySelectorAll('.paddr-reuse').forEach((sel) => {
+    const myIdx = parseInt(sel.dataset.idx, 10);
+    const current = sel.value;
+    const opts = ['<option value="">— Sa propre adresse (à saisir ci-dessous) —</option>'];
+    all.forEach((p) => {
+      if (p.idx === myIdx || !p.addr) return;
+      const label = 'Même adresse que ' + (p.name || ('Passager ' + (p.idx + 1)));
+      opts.push(`<option value="${p.idx}">${label.replace(/</g, '&lt;')}</option>`);
+    });
+    sel.innerHTML = opts.join('');
+    if ([...sel.options].some((o) => o.value === current)) sel.value = current;
+  });
+  buildAddressSummaryForPrint(all);
+}
+function escHtml(v) { return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+// Résumé imprimable des adresses de TOUS les cédants (groupe), dédoublonné : si plusieurs
+// passagers partagent la même adresse, elle n'apparaît qu'UNE fois avec leurs noms groupés
+// (ex. « Aïda, Moussa : Dakar, Sénégal ») au lieu d'être répétée bêtement à chaque ligne.
+function buildAddressSummaryForPrint(all) {
+  const el = document.getElementById('addrSummaryPrint');
+  if (!el) return;
+  const list = (all || getAllAddresses()).filter((p) => p.addr);
+  if (!list.length) { el.innerHTML = ''; return; }
+  const groups = new Map(); // adresse normalisée → { addr, names[] }
+  list.forEach((p) => {
+    const key = p.addr.trim().toLowerCase().replace(/\s+/g, ' ');
+    if (!groups.has(key)) groups.set(key, { addr: p.addr.trim(), names: [] });
+    groups.get(key).names.push(p.name || ('Passager ' + (p.idx + 1)));
+  });
+  const lines = [...groups.values()].map((g) =>
+    `<div style="margin-bottom:2px"><strong>${escHtml(g.names.join(', '))}</strong>&nbsp;: ${escHtml(g.addr)}</div>`);
+  el.innerHTML =
+    '<div style="font-family:\'DM Mono\',monospace;font-size:8.5px;text-transform:uppercase;letter-spacing:.15em;color:#047857;font-weight:700;margin:6px 0 4px">Adresses des passagers cédants</div>'
+    + lines.join('');
+}
+function reuseAddrFor(idx, sourceIdxStr) {
+  const row = document.querySelectorAll('.pax-row')[idx];
+  const ta = row?.querySelector('.paddr');
+  if (!ta) return;
+  if (sourceIdxStr === '') { refreshAddrReuseOptions(); return; } // "sa propre adresse" → on laisse tel quel, éditable
+  const src = getAllAddresses().find((p) => String(p.idx) === String(sourceIdxStr));
+  if (src) { ta.value = src.addr; updateParties(); }
+  refreshAddrReuseOptions();
 }
 function isMinorFromDob(dobStr) {
   if (!dobStr) return false;
@@ -1454,16 +1537,18 @@ function getPassengersData() {
     };
     if (i === 0) {
       // Passager 1 = signataire principal (canvas principal)
-      // Email principal pris depuis le champ #em-perso
+      // Email principal pris depuis le champ #em-perso ; adresse depuis #addr (déjà collectée plus haut)
       entry.email = (document.getElementById('em-perso')?.value || '').trim();
+      entry.adresse = (document.getElementById('addr')?.value || '').trim();
       try {
         const c = document.getElementById('sigCanvas');
         if (c && started) entry.signatureImg = c.toDataURL('image/png');
       } catch (e) {}
     } else {
-      // Co-passagers : email individuel + signature + nom du représentant légal si mineur
+      // Co-passagers : email individuel + adresse individuelle (ou reprise d'un autre passager) + signature + nom du représentant légal si mineur
       const emailInput = row.querySelector('.pemail');
       entry.email = (emailInput?.value || '').trim();
+      entry.adresse = (row.querySelector('.paddr')?.value || '').trim();
       if (coSigData[i]) entry.signatureImg = coSigData[i];
       if ((coRepData[i] || '').trim()) entry.legalRepName = coRepData[i].trim();
     }
@@ -1977,6 +2062,15 @@ function validate() {
           ok = false;
         } else {
           pemailInp?.classList.remove('err');
+        }
+        // Adresse obligatoire pour identifier ce passager comme cédant (Article 1, art. 1321 C. civ.)
+        const paddrInp = row.querySelector('.paddr');
+        const paddrVal = (paddrInp?.value || '').trim();
+        if (paddrVal.length < 4) {
+          paddrInp?.classList.add('err');
+          ok = false;
+        } else {
+          paddrInp?.classList.remove('err');
         }
       }
     }
