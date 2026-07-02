@@ -346,12 +346,12 @@ function genererMandatBilinguePdf(record) {
       const terms = fr ? [
         'Cession de créance pure et simple (articles 1321 et suivants du Code civil) : le Cédant vend sa créance CE 261/2004 à Robin des Airs, qui l\'acquiert en son nom propre et la recouvre pour son propre compte (Articles 1 et 5 bis). La créance d\'un passager mineur n\'est pas cédée : mandat spécial d\'encaissement aux mêmes conditions (Article 9 bis).',
         'Prix de cession variable (No Win No Fee) : 75% du montant recouvré en phase amiable, 55% en phase contentieuse, 0 € si rien n\'est recouvré — la créance est alors rétrocédée de plein droit. Aucun frais, aucune avance, jamais.',
-        'Versement de votre prix de cession sous 5 jours ouvrés après encaissement effectif.',
+        'Versement de votre prix de cession sous 48 h après encaissement effectif et irrévocable.',
         'Durée : 18 mois (résiliation libre après 12 mois sans assignation). Droit de rétractation : 14 jours (contact@robindesairs.eu).',
       ] : [
         'Outright assignment of claim (articles 1321 et seq. French Civil Code): the Assignor sells their EC 261/2004 claim to Robin des Airs, which acquires it in its own name and recovers it for its own account (Articles 1 and 5 bis). A minor passenger\'s claim is not assigned: special collection mandate on identical terms (Article 9 bis).',
         'Variable assignment price (No Win No Fee): 75% of the amount recovered amicably, 55% if court proceedings are needed, €0 if nothing is recovered — the claim is then re-assigned by operation of law. No fees, no advance, ever.',
-        'Payment of your assignment price within 5 business days of effective collection.',
+        'Payment of your assignment price within 48 h of effective, irrevocable collection.',
         'Term: 18 months (free termination after 12 months without court filing). Right of withdrawal: 14 days (contact@robindesairs.eu).',
       ];
       terms.forEach((t) => {
