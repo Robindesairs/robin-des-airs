@@ -128,8 +128,16 @@ input,select,textarea{width:100%;padding:11px 14px;border:1.5px solid var(--bord
    (plus de rond ni de coche visibles → « on dirait que ça ne clique pas »). On restaure le natif. */
 input[type=radio],input[type=checkbox]{width:auto;height:auto;min-height:0;padding:0;margin:0;border:0;border-radius:0;background:none;-webkit-appearance:auto;appearance:auto;box-shadow:none;accent-color:var(--green-deep)}
 .wa-phone-row{display:flex;gap:8px;align-items:stretch}
-.wa-phone-row .wa-indicatif-select{width:auto;flex:0 0 auto;max-width:50%}
+.pays-pick-wrap{position:relative;flex:0 0 auto;max-width:50%}
+.pays-pick-wrap .wa-indicatif-select{width:100%}
 .wa-phone-row .wa-national-input{flex:1 1 auto;width:auto}
+/* Menu pays custom : remplace <datalist>, non fiable sur Safari iOS (n'affiche aucune
+   suggestion cliquable — champ figé sur la valeur par défaut "France"). */
+.pays-dd{display:none;position:absolute;top:calc(100% + 4px);left:0;z-index:40;background:#fff;border:1.5px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.16);max-height:240px;overflow-y:auto;min-width:230px}
+.pays-dd.open{display:block}
+.pays-dd-item{padding:9px 12px;font-size:13.5px;cursor:pointer;white-space:nowrap;font-family:'Montserrat',sans-serif}
+.pays-dd-item:hover{background:var(--green-tint)}
+.pays-dd-empty{padding:9px 12px;font-size:12.5px;color:var(--muted);font-style:italic}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(0,200,122,.15)}
 input.ro{background:var(--green-tint);border-color:#B8DDC9;color:var(--green-deep);font-weight:600}
 textarea{resize:vertical;min-height:72px}
@@ -346,8 +354,10 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="field-row">
     <label>WhatsApp <span class="req">*</span></label>
     <div class="wa-phone-row">
-      <input type="text" id="wa-indicatif" class="wa-indicatif-select" list="pays-list" aria-label="Pays ou indicatif" placeholder="Pays ou +indicatif" autocomplete="off" oninput="syncWa()" value="🇫🇷 France +33">
-      <datalist id="pays-list"></datalist>
+      <div class="pays-pick-wrap">
+        <input type="text" id="wa-indicatif" class="wa-indicatif-select" aria-label="Pays ou indicatif" placeholder="Pays ou +indicatif" autocomplete="off" onfocus="openPaysDD('wa-indicatif','wa-indicatif-dd')" oninput="filterPaysDD('wa-indicatif','wa-indicatif-dd');syncWa()" value="🇫🇷 France +33">
+        <div class="pays-dd" id="wa-indicatif-dd"></div>
+      </div>
       <input type="tel" id="wa-national" class="wa-national-input" inputmode="numeric" autocomplete="tel-national" placeholder="06 12 34 56 78" oninput="syncWa()">
     </div>
     <input type="hidden" id="wa">
@@ -370,7 +380,10 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="field-row" id="rapBlock" style="display:none">
     <label>📞 Numéro habituel pour vous appeler <span class="req">*</span></label>
     <div class="wa-phone-row">
-      <input type="text" id="rap-indicatif" class="wa-indicatif-select" list="pays-list" aria-label="Pays ou indicatif" placeholder="Pays ou +indicatif" autocomplete="off" oninput="syncRap(true)" value="🇫🇷 France +33">
+      <div class="pays-pick-wrap">
+        <input type="text" id="rap-indicatif" class="wa-indicatif-select" aria-label="Pays ou indicatif" placeholder="Pays ou +indicatif" autocomplete="off" onfocus="openPaysDD('rap-indicatif','rap-indicatif-dd')" oninput="filterPaysDD('rap-indicatif','rap-indicatif-dd');syncRap(true)" value="🇫🇷 France +33">
+        <div class="pays-dd" id="rap-indicatif-dd"></div>
+      </div>
       <input type="tel" id="rap-national" class="wa-national-input" inputmode="numeric" autocomplete="tel-national" placeholder="06 12 34 56 78" oninput="syncRap(true)">
     </div>
     <input type="hidden" id="tel-rappel">
@@ -1086,7 +1099,6 @@ window.addEventListener('DOMContentLoaded', () => {
   renderAllPassengers();
   updateAmounts();
   updateParties();
-  buildPaysList();
   initSig();
   initProgress();
   applyLegacyUrlParams();
@@ -1945,10 +1957,53 @@ function phoneMsg(issue){
   if (issue === 'len')    return 'Vérifiez le nombre de chiffres du numéro.';
   return '';
 }
-function buildPaysList(){
-  const dl = document.getElementById('pays-list');
-  if (dl) dl.innerHTML = COUNTRIES.map(c => `<option value="${c[0]} ${c[1]} +${c[2]}"></option>`).join('');
+// Menu pays custom (remplace l'ancienne <datalist>, invisible/non cliquable sur Safari iOS —
+// gros risque pour cette niche diaspora en majorité sur iPhone). Marche pareil partout :
+// on tape pour filtrer (nom ou indicatif), on clique une ligne pour choisir.
+let paysDDActive = null; // id du menu actuellement ouvert (pour le clic extérieur)
+function normPays(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+function renderPaysDD(inputId, ddId, query){
+  const dd = document.getElementById(ddId);
+  if (!dd) return;
+  const q = normPays(query);
+  const qDigits = String(query||'').replace(/\D/g,'');
+  const list = !q ? COUNTRIES : COUNTRIES.filter(c => normPays(c[1]).includes(q) || (qDigits && c[2].startsWith(qDigits)));
+  dd.innerHTML = list.length
+    ? list.map(c => `<div class="pays-dd-item" onclick="selectPays('${inputId}','${ddId}','${c[0]}','${c[1].replace(/'/g,"\\'")}','${c[2]}')">${c[0]} ${c[1]} <span style="color:var(--muted)">+${c[2]}</span></div>`).join('')
+    : '<div class="pays-dd-empty">Aucun pays trouvé — vous pouvez taper directement +indicatif</div>';
 }
+function openPaysDD(inputId, ddId){
+  // Ouverture (clic/focus) : toujours la liste COMPLÈTE, pas filtrée par la valeur déjà
+  // présente (sinon le champ pré-rempli "France +33" masque tous les autres pays au 1er clic).
+  paysDDActive = ddId;
+  renderPaysDD(inputId, ddId, '');
+  document.getElementById(ddId)?.classList.add('open');
+}
+function filterPaysDD(inputId, ddId){
+  // Frappe au clavier : filtre en direct sur ce qui est tapé.
+  paysDDActive = ddId;
+  renderPaysDD(inputId, ddId, document.getElementById(inputId)?.value || '');
+  document.getElementById(ddId)?.classList.add('open');
+}
+function selectPays(inputId, ddId, flag, name, code){
+  const input = document.getElementById(inputId);
+  if (input) input.value = `${flag} ${name} +${code}`;
+  document.getElementById(ddId)?.classList.remove('open');
+  paysDDActive = null;
+  if (inputId === 'wa-indicatif') syncWa(); else if (inputId === 'rap-indicatif') syncRap(true);
+}
+document.addEventListener('click', function(e){
+  if (paysDDActive && !e.target.closest('.pays-pick-wrap')) {
+    document.getElementById(paysDDActive)?.classList.remove('open');
+    paysDDActive = null;
+  }
+});
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape' && paysDDActive) {
+    document.getElementById(paysDDActive)?.classList.remove('open');
+    paysDDActive = null;
+  }
+});
 function syncWa(){
   const ind = document.getElementById('wa-indicatif');
   const raw = (document.getElementById('wa-national')?.value || '');
