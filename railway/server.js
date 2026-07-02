@@ -1235,20 +1235,20 @@ async function askSens(phone, s, cfg) {
 }
 // OCR passeport / CNI : lit nom + prénom + date de naissance (la magie aussi sur le passeport).
 // Prompt commun aux 2 moteurs (Claude + GPT-4o) : pièce d'identité (passeport/CNI/titre de séjour).
-const _OCR_PASSPORT_PROMPT = `Tu lis une pièce d'identité (PASSEPORT, carte nationale d'identité, titre de séjour, carte de résident…) — utilise aussi la zone MRZ en bas si présente. Réponds UNIQUEMENT en JSON :
+const _OCR_PASSPORT_PROMPT = `Tu lis une pièce d'identité (PASSEPORT, carte nationale d'identité, titre de séjour, carte de résident…) — utilise aussi la zone MRZ en bas si présente. La pièce peut être rédigée UNIQUEMENT EN ANGLAIS (ex. passeports nigérian, ghanéen, gambien, sierra-léonais, libérien) ou bilingue français/anglais (ex. cartes CEDEAO/ECOWAS) : les libellés anglais ci-dessous sont donc à traiter EXACTEMENT comme leurs équivalents français, pas comme un repli en cas d'échec. Réponds UNIQUEMENT en JSON :
 {"nom":"","prenom":"","date_naissance":"","lieu_naissance":"","date_expiration":"","adresse":"","sexe":"","type_piece":"","face":""}
-Règles :
-- nom : nom de famille en MAJUSCULES.
-- prenom : prénom(s).
-- date_naissance : format JJ/MM/AAAA. Convertis depuis la MRZ (AAMMJJ) si besoin, en déduisant le siècle logiquement (une naissance est dans le passé).
-- lieu_naissance : UNIQUEMENT le champ explicitement étiqueté "Lieu de naissance" / "Place of birth" / "Né(e) à" (ville, et pays si indiqué). Recopie tel quel. Si aucun champ n'est étiqueté ainsi, mets "" — ne prends JAMAIS une ville de l'adresse ou du domicile.
-- date_expiration : date de fin de validité, format JJ/MM/AAAA (depuis la MRZ ou le champ imprimé). Si absente, "".
-- adresse : UNIQUEMENT le champ explicitement étiqueté "Adresse", "Domicile" ou "Address" (hors MRZ). Recopie tel quel sur une seule ligne. Si absent, "".
+Règles (libellé FR / EN équivalent) :
+- nom : nom de famille en MAJUSCULES. Champ "Nom" / "Surname" / "Name" / "Last name".
+- prenom : prénom(s). Champ "Prénom(s)" / "Given name(s)" / "First name(s)" / "Forename(s)".
+- date_naissance : format JJ/MM/AAAA. Champ "Né(e) le" / "Date de naissance" / "Date of birth" / "DOB". Convertis depuis la MRZ (AAMMJJ) si besoin, en déduisant le siècle logiquement (une naissance est dans le passé).
+- lieu_naissance : UNIQUEMENT le champ explicitement étiqueté "Lieu de naissance" / "Né(e) à" / "Place of birth" / "Birth place" (ville, et pays si indiqué). Recopie tel quel. Si aucun champ n'est étiqueté ainsi, mets "" — ne prends JAMAIS une ville de l'adresse ou du domicile.
+- date_expiration : date de fin de validité, format JJ/MM/AAAA. Champ "Date d'expiration" / "Valable jusqu'au" / "Date of expiry" / "Expiration date" / "Valid until" (depuis la MRZ ou le champ imprimé). Si absente, "".
+- adresse : UNIQUEMENT le champ explicitement étiqueté "Adresse" / "Domicile" / "Address" / "Residential address" (hors MRZ). Recopie tel quel sur une seule ligne. Si absent, "".
 - ATTENTION : lieu_naissance et adresse sont deux champs DIFFÉRENTS — ne mets jamais la même ville dans les deux sauf si les deux champs étiquetés l'indiquent vraiment. Une ville sans étiquette claire = "".
-- sexe : "M" ou "F" (champ "Sexe"/"Sex", ou la lettre de la MRZ : M, F ou X). Si X ou inconnu, "".
-- type_piece : "passeport", "cni" (carte nationale d'identité), "titre_sejour" ou "" si incertain.
-- face : pour une CNI, "recto" (face avec la photo du titulaire), "verso" (face arrière : adresse et/ou MRZ), ou "deux" si les deux faces sont visibles sur l'image. Pour un passeport : "recto".
-- Champ inconnu = "". Ne JAMAIS inventer.`;
+- sexe : "M" ou "F". Champ "Sexe" / "Sex" / "Gender", ou la lettre de la MRZ : M, F ou X. Si X ou inconnu, "".
+- type_piece : "passeport" (Passport), "cni" (carte nationale d'identité / National ID Card / Identity Card), "titre_sejour" (titre de séjour / Residence permit / Residence card) ou "" si incertain.
+- face : pour une CNI, "recto" (face avec la photo du titulaire / front), "verso" (face arrière : adresse et/ou MRZ / back), ou "deux" si les deux faces sont visibles sur l'image. Pour un passeport : "recto".
+- Champ inconnu = "". Ne JAMAIS inventer, y compris si le document est entièrement en anglais.`;
 
 function _normalizePassportOcr(p) {
   if (!p) return null;
