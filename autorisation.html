@@ -1169,10 +1169,24 @@ function applyDossier(d) {
   // Passagers (noms + dates de naissance)
   if (d.pax && d.pax !== paxCount) { paxCount = d.pax; const pe = document.getElementById('pax'); if (pe) pe.value = paxCount; renderAllPassengers(); }
   const fillPax = () => {
-    const nifs = [...document.querySelectorAll('.pnif')], dobs = [...document.querySelectorAll('.pdob')], addrs = [...document.querySelectorAll('.paddr')];
+    // Requête PAR LIGNE (pas par liste globale de classe) : .pprenom/.pnom n'existent que pour
+    // les co-passagers (i>0), donc une liste globale serait décalée d'un cran par rapport à
+    // d.passengers (0-indexé, principal inclus). Le principal (i=0) n'a pas de nom ici — déjà
+    // pré-rempli plus haut sur #fn/#ln.
+    const rows = document.querySelectorAll('.pax-row');
     if (Array.isArray(d.passengers) && d.passengers.length) {
-      d.passengers.forEach((p, i) => { if (p && p.name && nifs[i] && !nifs[i].value) nifs[i].value = p.name; if (p && p.dob && dobs[i] && !dobs[i].value) dobs[i].value = p.dob; if (p && p.adresse && addrs[i] && !addrs[i].value) addrs[i].value = p.adresse; });
-    } else if (d.dob && dobs[0] && !dobs[0].value) { dobs[0].value = d.dob; }
+      d.passengers.forEach((p, i) => {
+        const row = rows[i]; if (!row || !p) return;
+        if (i > 0 && p.name) {
+          const pIn = row.querySelector('.pprenom'), nIn = row.querySelector('.pnom');
+          if (pIn && nIn && !pIn.value && !nIn.value) { const sp = splitFullName(p.name); pIn.value = sp.prenom; nIn.value = sp.nom; }
+        }
+        const dobIn = row.querySelector('.pdob'); if (p.dob && dobIn && !dobIn.value) dobIn.value = p.dob;
+        const addrIn = row.querySelector('.paddr'); if (p.adresse && addrIn && !addrIn.value) addrIn.value = p.adresse;
+      });
+    } else if (d.dob) {
+      const dobIn0 = rows[0]?.querySelector('.pdob'); if (dobIn0 && !dobIn0.value) dobIn0.value = d.dob;
+    }
     refreshAddrReuseOptions();
   };
   fillPax();
@@ -1292,8 +1306,12 @@ function applyLegacyUrlParams() {
   if (listRaw) {
     const names = decodeURIComponent(listRaw).split(',').map(s => s.trim()).filter(Boolean);
     if (names.length) {
-      document.querySelectorAll('.pnif').forEach((inp, i) => {
-        if (names[i]) inp.value = names[i];
+      const rows = document.querySelectorAll('.pax-row');
+      names.forEach((full, i) => {
+        if (i === 0) { const sp0 = splitFullName(full); setIfEmpty('fn', sp0.prenom); setIfEmpty('ln', sp0.nom); return; }
+        const row = rows[i]; if (!row) return;
+        const pIn = row.querySelector('.pprenom'), nIn = row.querySelector('.pnom');
+        if (pIn && nIn && !pIn.value && !nIn.value) { const sp = splitFullName(full); pIn.value = sp.prenom; nIn.value = sp.nom; }
       });
       updateParties();
       buildCoPassChecks();
@@ -1364,11 +1382,12 @@ function renderAllPassengers() {
   const saved = [];
   document.querySelectorAll('.pax-row').forEach((row, i) => {
     saved.push({
-      name:  row.querySelector('.pnif')?.value || '',
-      dob:   row.querySelector('.pdob')?.value || '',
-      birth: row.querySelector('.pbirth')?.value || '',
-      email: row.querySelector('.pemail')?.value || '',
-      addr:  row.querySelector('.paddr')?.value || '',
+      prenom: row.querySelector('.pprenom')?.value || '',
+      nom:    row.querySelector('.pnom')?.value || '',
+      dob:    row.querySelector('.pdob')?.value || '',
+      birth:  row.querySelector('.pbirth')?.value || '',
+      email:  row.querySelector('.pemail')?.value || '',
+      addr:   row.querySelector('.paddr')?.value || '',
     });
   });
   c.innerHTML = '';
@@ -1382,7 +1401,8 @@ function renderAllPassengers() {
     const esc = (v) => String(v == null ? '' : v)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-    const safeName  = esc(pre.name||'');
+    const safePrenom = esc(pre.prenom||'');
+    const safeNom    = esc(pre.nom||'');
     const safeDob   = esc(pre.dob||'');
     const safeBirth = esc(pre.birth||'');
     const safeEmail = esc(pre.email||'');
@@ -1394,18 +1414,29 @@ function renderAllPassengers() {
         </span>
         ${i > 0 ? `<button type="button" onclick="removePassenger(${i})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:2px 6px" title="Supprimer ce passager">✕ Retirer</button>` : ''}
       </div>
+      ${i === 0 ? `
+      <div style="font-size:12px;color:var(--muted);background:var(--bg-soft);border:1px dashed var(--border);border-radius:6px;padding:9px 12px;margin-bottom:12px">
+        👤 Votre identité (prénom, nom) est celle saisie plus haut, section « Vos coordonnées ».
+      </div>
+      ` : `
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
         <div>
-          <label>Prénom NOM <span class="req">*</span></label>
-          <input type="text" class="pnif" placeholder="Ex : Fatou DIALLO" value="${safeName}"
+          <label>Prénom <span class="req">*</span></label>
+          <input type="text" class="pprenom" placeholder="Ex : Fatou" value="${safePrenom}"
             oninput="updateParties();buildCoPassChecks();refreshAddrReuseOptions()">
         </div>
         <div>
-          <label>Date de naissance <span class="req">*</span></label>
-          <input type="date" class="pdob" value="${safeDob}"
-            style="width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:'Montserrat',sans-serif;font-size:13px;border-radius:6px;color:var(--ink)"
-            onchange="checkMinorAge(this, ${i});buildCoPassChecks()">
+          <label>Nom <span class="req">*</span></label>
+          <input type="text" class="pnom" placeholder="Ex : DIALLO" value="${safeNom}"
+            oninput="updateParties();buildCoPassChecks();refreshAddrReuseOptions()">
         </div>
+      </div>
+      ` }
+      <div style="margin-bottom:12px">
+        <label>Date de naissance <span class="req">*</span></label>
+        <input type="date" class="pdob" value="${safeDob}"
+          style="width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:'Montserrat',sans-serif;font-size:13px;border-radius:6px;color:var(--ink)"
+          onchange="checkMinorAge(this, ${i});buildCoPassChecks()">
       </div>
       <div style="margin-bottom:12px">
         <label>Lieu de naissance <span class="req">*</span></label>
@@ -1451,7 +1482,7 @@ function getAllAddresses() {
   const list = [{ idx: 0, name: (document.getElementById('fn')?.value.trim() || 'Passager 1'), addr: (document.getElementById('addr')?.value || '').trim() }];
   document.querySelectorAll('.pax-row').forEach((row, i) => {
     if (i === 0) return;
-    const nm = row.querySelector('.pnif')?.value.trim() || ('Passager ' + (i + 1));
+    const nm = paxFullName(row, i) || ('Passager ' + (i + 1));
     const ad = row.querySelector('.paddr')?.value.trim() || '';
     list.push({ idx: i, name: nm, addr: ad });
   });
@@ -1503,6 +1534,27 @@ function reuseAddrFor(idx, sourceIdxStr) {
   if (src) { ta.value = src.addr; updateParties(); }
   refreshAddrReuseOptions();
 }
+// Nom du passager idx : le principal (0) utilise #fn/#ln (section « Vos coordonnées », déjà
+// dissociés) — pas de champ nom dupliqué dans sa carte « Passager 1 ». Les co-passagers (>0)
+// ont leurs propres champs Prénom/Nom séparés dans leur carte.
+function paxFullName(row, idx) {
+  if (idx === 0) {
+    const fn = document.getElementById('fn')?.value.trim() || '';
+    const ln = document.getElementById('ln')?.value.trim() || '';
+    return [fn, ln].filter(Boolean).join(' ');
+  }
+  const prenom = row?.querySelector('.pprenom')?.value.trim() || '';
+  const nom = row?.querySelector('.pnom')?.value.trim() || '';
+  return [prenom, nom].filter(Boolean).join(' ');
+}
+// Découpe un nom combiné ("Fatou DIALLO", venant du bot/dossier ou d'un lien ?noms=) en
+// {prenom, nom} pour pré-remplir les 2 champs séparés — 1er mot = prénom, reste = nom.
+function splitFullName(full) {
+  const parts = String(full || '').trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return { prenom: '', nom: '' };
+  if (parts.length === 1) return { prenom: parts[0], nom: '' };
+  return { prenom: parts[0], nom: parts.slice(1).join(' ') };
+}
 function isMinorFromDob(dobStr) {
   if (!dobStr) return false;
   const dob = new Date(dobStr);
@@ -1541,8 +1593,13 @@ function buildPaxFields(pax, pre) {
   // Pre-fill names
   if (pre && pre.length) {
     setTimeout(() => {
-      document.querySelectorAll('.pnif').forEach((inp, i) => {
-        if (pre[i]) inp.value = pre[i];
+      const rows = document.querySelectorAll('.pax-row');
+      pre.forEach((full, i) => {
+        if (!full) return;
+        if (i === 0) { const sp0 = splitFullName(full); const fnEl = document.getElementById('fn'), lnEl = document.getElementById('ln'); if (fnEl && !fnEl.value) fnEl.value = sp0.prenom; if (lnEl && !lnEl.value) lnEl.value = sp0.nom; return; }
+        const row = rows[i]; if (!row) return;
+        const pIn = row.querySelector('.pprenom'), nIn = row.querySelector('.pnom');
+        if (pIn && nIn) { const sp = splitFullName(full); pIn.value = sp.prenom; nIn.value = sp.nom; }
       });
     }, 50);
   }
@@ -1550,14 +1607,14 @@ function buildPaxFields(pax, pre) {
 }
 function getNames() {
   const n = [];
-  document.querySelectorAll('.pnif').forEach(el => { if (el.value.trim()) n.push(el.value.trim()); });
+  document.querySelectorAll('.pax-row').forEach((row, i) => { const nm = paxFullName(row, i); if (nm) n.push(nm); });
   return n;
 }
 function getPassengersData() {
   const data = [];
   document.querySelectorAll('.pax-row').forEach((row, i) => {
     const entry = {
-      name:  row.querySelector('.pnif')?.value?.trim() || '',
+      name:  paxFullName(row, i),
       dob:   row.querySelector('.pdob')?.value || '',
       birth: row.querySelector('.pbirth')?.value?.trim() || '',
       minor: isMinorFromDob(row.querySelector('.pdob')?.value || ''),
@@ -2102,12 +2159,11 @@ function validate() {
   }
   // Validation passagers : nom + date de naissance + email (par adulte, hors signataire principal)
   document.querySelectorAll('.pax-row').forEach((row, idx) => {
-    const nameInp = row.querySelector('.pnif');
-    if (!nameInp?.value.trim()) {
-      nameInp?.classList.add('err');
-      ok = false;
-    } else {
-      nameInp?.classList.remove('err');
+    // Le principal (idx 0) n'a pas de champ nom ici : déjà validé sur #fn/#ln plus haut.
+    if (idx > 0) {
+      const prenomInp = row.querySelector('.pprenom'), nomInp = row.querySelector('.pnom');
+      if (!prenomInp?.value.trim()) { prenomInp?.classList.add('err'); ok = false; } else { prenomInp?.classList.remove('err'); }
+      if (!nomInp?.value.trim()) { nomInp?.classList.add('err'); ok = false; } else { nomInp?.classList.remove('err'); }
     }
     // Date de naissance obligatoire pour chaque passager (identification cession, art. 1321 CC)
     const dobInp = row.querySelector('.pdob');
