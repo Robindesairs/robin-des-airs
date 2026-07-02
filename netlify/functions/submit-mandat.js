@@ -379,7 +379,11 @@ function buildClientMandatEmailContent(record) {
     '',
     'Prochaines étapes :',
     '• Confirmation de votre dossier sous 24 h (WhatsApp ou email)',
-    '• Mise en demeure à la compagnie sous 48 h',
+    // L.221-25 C. conso : sans demande EXPRESSE de démarrage immédiat (case startNow), aucune
+    // démarche active pendant le délai de rétractation de 14 jours — la promesse doit suivre.
+    record.startNow
+      ? '• Mise en demeure à la compagnie sous 48 h (démarrage immédiat demandé)'
+      : '• Mise en demeure à la compagnie après votre délai de rétractation de 14 jours (répondez-nous si vous souhaitez démarrer avant)',
     '• Suivi : https://robindesairs.eu/suivi-dossier.html',
     '',
     '🚀 Boostez votre dossier (2 min, recommandé) :',
@@ -416,7 +420,7 @@ ${pnr !== '—' ? `<tr><td style="padding:8px 12px;color:#666;font-size:13px">PN
 <p><strong>Prochaines étapes</strong></p>
 <ul style="margin:0 0 16px;padding-left:20px;font-size:14px">
 <li>Confirmation de votre dossier sous 24 h</li>
-<li>Mise en demeure à la compagnie sous 48 h</li>
+<li>${record.startNow ? 'Mise en demeure à la compagnie sous 48 h (démarrage immédiat demandé)' : 'Mise en demeure à la compagnie après votre délai de rétractation de 14 jours (répondez-nous si vous souhaitez démarrer avant)'}</li>
 <li><a href="https://robindesairs.eu/suivi-dossier.html">Suivre mon dossier</a></li>
 </ul>
 <div style="margin:18px 0;padding:14px 16px;background:#EFF9F4;border-left:4px solid #00C87A;border-radius:0 8px 8px 0">

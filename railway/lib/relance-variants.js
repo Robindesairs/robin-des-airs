@@ -32,16 +32,20 @@ const RV = {
   "{NOM}, votre place dans le dossier est réservée, comme pour les autres passagers qu'on accompagne. Il ne manque plus que votre signature : {URL}"
  ],
  "RELANCE_22H": [
-  "Juste un petit mot avant ce soir. La fenêtre pour lancer votre dossier ({VOL}) se referme dans quelques heures. Vous n'avez qu'à signer ici : {URL}\n0€ si vous ne touchez rien.",
+  // ⚖️ Conformité (revue avocat) : AUCUNE fausse urgence ni fausse clôture ici. La seule
+  // contrainte réelle et donc mentionnable : la fenêtre WhatsApp de 24 h se ferme ce soir
+  // (on ne pourra plus écrire au client ici). Le dossier N'EST PAS clôturé, le lien RESTE
+  // valable — l'affirmer autrement = pratique commerciale trompeuse (art. L.121-2 C. conso).
+  "Juste un petit mot avant ce soir : passé minuit, on ne pourra plus vous écrire ici (fenêtre WhatsApp de 24 h). Votre lien reste valable, vous n'avez qu'à signer : {URL}\n0€ si vous ne touchez rien.",
   "Cette indemnisation, autant qu'elle vous revienne plutôt qu'elle reste à la compagnie. Votre dossier pour le vol {VOL} peut vous rapporter jusqu'à {TOTAL}. La signature prend une minute : {URL}\n0€ si vous ne touchez rien.",
-  "Dernière occasion aujourd'hui pour votre dossier ({VOL}). Après ce soir, on repart de zéro. Vous validez en un clic ici : {URL}\nRien à avancer : on se rémunère seulement quand vous touchez votre argent (commission de 25%).",
-  "On y est presque. Il ne manque que votre signature pour faire avancer votre dossier ({VOL}), qui peut vous rapporter jusqu'à {TOTAL}. Le lien reste actif encore quelques heures : {URL}",
-  "Avant de clôturer votre dossier ({VOL}) ce soir, je tenais à vous laisser une dernière chance. Signez ici, et on se charge du reste : {URL}\n0€ si vous ne touchez rien.",
-  "Cet argent peut vous revenir, pas rester chez la compagnie. Vous pouvez récupérer jusqu'à {TOTAL} avec le dossier du vol {VOL}. C'est le dernier moment pour signer : {URL}\n0€ si vous ne touchez rien.",
-  "La journée touche à sa fin et votre dossier ({VOL}) attend toujours votre feu vert. Un clic, et on lance la démarche : {URL}\nCommission de 25% seulement quand vous touchez votre argent.",
-  "Je n'aimerais pas que vous passiez à côté d'une indemnisation qui peut aller jusqu'à {TOTAL}. La fenêtre se referme bientôt pour le dossier du vol {VOL}. Tout se règle ici, en une minute : {URL}",
+  "Dernier message de notre part aujourd'hui pour votre dossier ({VOL}) — après ce soir, on ne pourra plus vous relancer ici, mais votre lien reste valable. Vous validez en un clic : {URL}\nRien à avancer : on se rémunère seulement quand vous touchez votre argent (25 % en amiable).",
+  "On y est presque. Il ne manque que votre signature pour faire avancer votre dossier ({VOL}), qui peut vous rapporter jusqu'à {TOTAL}. Le lien reste actif : {URL}",
+  "Avant la fin de la journée, je tenais à vous faire un dernier rappel pour votre dossier ({VOL}). Signez ici, et on se charge du reste : {URL}\n0€ si vous ne touchez rien.",
+  "Cet argent peut vous revenir, pas rester chez la compagnie. Vous pouvez récupérer jusqu'à {TOTAL} avec le dossier du vol {VOL}. Le meilleur moment pour signer, c'est maintenant : {URL}\n0€ si vous ne touchez rien.",
+  "La journée touche à sa fin et votre dossier ({VOL}) attend toujours votre feu vert. Un clic, et on lance la démarche : {URL}\n25 % en amiable, prélevés seulement quand vous touchez votre argent.",
+  "Je n'aimerais pas que vous passiez à côté d'une indemnisation qui peut aller jusqu'à {TOTAL}. C'est notre dernier message ici pour le dossier du vol {VOL} (fenêtre WhatsApp) — votre lien, lui, reste actif. Tout se règle en une minute : {URL}",
   "Un dernier petit rappel pour ce soir. Votre dossier ({VOL}) est prêt, il n'attend plus que votre signature : {URL}\nSi vous ne touchez rien, vous ne payez rien.",
-  "Encore quelques heures pour réclamer ce qui peut vous revenir. Ne laissez pas la compagnie l'emporter sans rien faire. Signez votre dossier ({VOL}) ici : {URL}\n0€ si vous ne touchez rien."
+  "Ce qui peut vous revenir ne devrait pas rester chez la compagnie. Signez votre dossier ({VOL}) quand vous voulez, le lien reste valable : {URL}\n0€ si vous ne touchez rien."
  ],
  "RELANCE_ENGAGED_1": [
   "Bonjour {NOM}, on a bien commencé votre dossier pour le vol {VOL}, il ne reste qu'une étape pour viser jusqu'à {TOTAL}. On reprend là où vous vous étiez arrêté ? 👇 Appuyez sur *Reprendre* — et si vous ne touchez rien, vous ne payez rien. Une question ? *Rappel* 📞 et on vous appelle.",
@@ -110,9 +114,12 @@ const RV = {
   "On finalise votre dossier {VOL}, {NOM} ? Le certificat est optionnel, pas besoin de l'attendre. Appuyez sur *Reprendre* 👇 puis *passer* (jusqu'à {TOTAL}, 0 € si vous ne touchez rien), ou *Rappel* 📞 pour qu'on vous guide."
  ],
  "ENG_EDGE": [
-  "{NOM}, votre dossier {VOL} se referme bientôt. Après ça, on devra vous rappeler par téléphone. Encore quelques minutes pour le finaliser et viser jusqu'à {TOTAL} (0 € si vous ne touchez rien). 👇 Reprenez ou demandez un rappel ci-dessous.",
-  "Dernière chance aujourd'hui pour votre dossier {VOL} {NOM}. La fenêtre se referme dans quelques heures — un seul geste suffit pour viser jusqu'à {TOTAL}. 👇",
-  "{NOM}, on ne voudrait pas perdre le fil de votre dossier {VOL}. Il reste peu de temps aujourd'hui pour le finaliser (jusqu'à {TOTAL}, rien à avancer). Répondez-nous juste en dessous 👇"
+  // ⚖️ Même règle que RELANCE_22H : seule la fermeture de la fenêtre WhatsApp 24 h est réelle
+  // (après, on ne peut plus écrire ici — seulement rappeler par téléphone). Le dossier ne se
+  // ferme PAS ; l'affirmer = pratique commerciale trompeuse (art. L.121-2 C. conso).
+  "{NOM}, après ce soir on ne pourra plus vous écrire ici (fenêtre WhatsApp de 24 h) — seulement vous rappeler par téléphone. Encore quelques minutes pour finaliser votre dossier {VOL} et viser jusqu'à {TOTAL} (0 € si vous ne touchez rien). 👇 Reprenez ou demandez un rappel ci-dessous.",
+  "Dernier message d'aujourd'hui pour votre dossier {VOL} {NOM} — passé ce soir, on ne pourra plus vous relancer ici. Votre dossier reste ouvert : un seul geste suffit pour viser jusqu'à {TOTAL}. 👇",
+  "{NOM}, on ne voudrait pas perdre le fil de votre dossier {VOL} : après ce soir, on ne pourra plus vous écrire sur WhatsApp (il faudra nous recontacter). Finalisez-le en quelques minutes (jusqu'à {TOTAL}, rien à avancer). Répondez-nous juste en dessous 👇"
  ],
  "DOC_MANQUANT": [
   "Il nous manque encore deux choses pour avancer : une pièce d'identité de {NOMS} et votre carte d'embarquement (ou le e-billet). Dès qu'on a ça, on lance le dossier {REF}.",
