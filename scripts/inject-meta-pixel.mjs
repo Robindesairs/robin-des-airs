@@ -1,43 +1,29 @@
 #!/usr/bin/env node
 /**
- * Injecte le Pixel Meta dans le <head> des pages PUBLIQUES (marketing + tunnel).
- * - Dry-run par défaut : liste ce qui serait modifié, sans rien écrire.
- *   Lancer pour de vrai : `node scripts/inject-meta-pixel.mjs --commit`
- * - Idempotent : saute toute page contenant déjà "Meta Pixel".
+ * Injecte le CHARGEUR DE CONSENTEMENT (/assets/consent.js) dans le <head> des pages
+ * PUBLIQUES. Depuis la mise en conformité CNIL/ePrivacy (juillet 2026), le pixel Meta
+ * et la balise Google Ads ne sont PLUS injectés en dur : ils sont chargés uniquement
+ * APRÈS consentement, par assets/consent.js. Ce script pose donc le <script consent.js>,
+ * jamais les traceurs eux-mêmes.
+ *
+ * ⚠️ NE JAMAIS réintroduire le pixel brut ici : ce serait un dépôt de traceur sans
+ *    consentement (manquement art. 82 loi Informatique & Libertés / ePrivacy).
+ *
+ * - Dry-run par défaut ; `node scripts/inject-meta-pixel.mjs --commit` pour écrire.
+ * - Idempotent : saute toute page contenant déjà "/assets/consent.js".
  * - Exclut back-office / outils / tests / previews (DENY ci-dessous).
- * - Place le pixel juste après le bloc Google gtag s'il existe, sinon après <head>.
  *
- * ⚠️ L'ID est un PLACEHOLDER : __META_PIXEL_ID__  → faire un find/replace global
- *    une fois l'ID réel connu (un seul remplacement couvre tout le site).
- *
- * Le blog (blog/, en/blog, de/blog, es/blog) est GÉNÉRÉ → il est patché séparément
- * dans le générateur (src/scripts/build-blog.ts), pas par ce script.
+ * Le blog FR racine (blog/) est GÉNÉRÉ → le tag consent.js est posé dans le générateur
+ * (src/scripts/build-blog.ts), pas par ce script.
  */
 import { readFileSync, writeFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 
 const COMMIT = process.argv.includes('--commit');
 
-export const PIXEL_ID = '1563661872042064';
-
-// Snippet canonique. PageView + écouteur global de clic WhatsApp -> Lead.
-export const PIXEL_SNIPPET = `<!-- Meta Pixel -->
-<script>
-!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init','${PIXEL_ID}');
-fbq('track','PageView');
-document.addEventListener('click',function(e){
-  var t=e.target;var a=t&&t.closest?t.closest('a[href*="wa.me"],a[href*="whatsapp.com"]'):null;
-  if(a){try{fbq('track','Lead',{content_name:'whatsapp_click'});}catch(_){}}
-},true);
-</script>
-<noscript><img height="1" width="1" style="display:none" alt=""
-src="https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1"/></noscript>
-<!-- End Meta Pixel -->
+// Tag canonique : charge la bannière de consentement + les traceurs gatés (assets/consent.js).
+export const PIXEL_SNIPPET = `<!-- Traceurs publicitaires (Meta Pixel + Google Ads) : chargés UNIQUEMENT après consentement, cf. /assets/consent.js -->
+<script defer src="/assets/consent.js"></script>
 `;
 
 // Chemins exclus (back-office, outils internes, tests, maquettes, previews, exports).
@@ -69,14 +55,8 @@ function classify(path) {
 }
 
 function inject(html) {
-  if (/Meta Pixel/.test(html)) return { html, changed: false, reason: 'déjà présent' };
-  // 1) après le bloc gtag (src googletagmanager… puis le </script> de config)
-  const gtag = html.match(/<script[^>]*googletagmanager\.com\/gtag[\s\S]*?<\/script>\s*<script>[\s\S]*?<\/script>/i);
-  if (gtag) {
-    const idx = html.indexOf(gtag[0]) + gtag[0].length;
-    return { html: html.slice(0, idx) + '\n' + PIXEL_SNIPPET + html.slice(idx), changed: true, reason: 'après gtag' };
-  }
-  // 2) sinon juste après l'ouverture <head>
+  if (/\/assets\/consent\.js/.test(html)) return { html, changed: false, reason: 'déjà présent' };
+  // Juste après l'ouverture <head> (le plus tôt possible pour afficher la bannière).
   const head = html.match(/<head[^>]*>/i);
   if (head) {
     const idx = html.indexOf(head[0]) + head[0].length;
