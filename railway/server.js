@@ -3643,17 +3643,21 @@ function relanceText(n, lead) {
   const url = lead.mandatUrl || ('https://robindesairs.eu/' + (lead.langue === 'en' ? 'mandat-en.html' : 'mandat.html') + '?r=' + encodeURIComponent(lead.ref || ''));
   const total = leadTotal(lead);
   // EN : messages EN DUR par palier (aucune dépendance GPT). FR : variantes habituelles.
+  // Route/compagnie plutôt que la référence brute du dossier (illisible, ex. RDA-20260702-2JVM...) :
+  // plus parlant pour le destinataire, et cohérent avec les relances "engagé" (relanceTextEngaged)
+  // qui utilisent déjà {VOL} de la même façon.
+  const tripLbl = tripLabel(lead) || (lead && lead.ref) || 'concerné';
   if (leadEN(lead)) {
     const nm = lead.name ? ' ' + String(lead.name).split(/\s+/)[0] : '';
     const amt = total ? ` We claim up to *${total}* for you` : '';
-    if (n === 2) return `Just one signature left to start your file *${lead.ref}*${nm}.${amt} — *€0 if we recover nothing*. 👉 *Sign here* (2 min):\n${url}`;
-    if (n === 8) return `Your file *${lead.ref}* is ready${nm ? ',' + nm : ''} — only *your signature* is missing (2 min).${amt}, *€0 if we recover nothing*. 👉\n${url}`;
-    return `Last step for your file *${lead.ref}*: *your signature*. After that we handle everything.${amt}, *€0 if we recover nothing*. 👉\n${url}`;
+    if (n === 2) return `Just one signature left to start your file for *${tripLbl}*${nm}.${amt} — *€0 if we recover nothing*. 👉 *Sign here* (2 min):\n${url}`;
+    if (n === 8) return `Your file for *${tripLbl}* is ready${nm ? ',' + nm : ''} — only *your signature* is missing (2 min).${amt}, *€0 if we recover nothing*. 👉\n${url}`;
+    return `Last step for your file for *${tripLbl}*: *your signature*. After that we handle everything.${amt}, *€0 if we recover nothing*. 👉\n${url}`;
   }
-  if (!total) return `Il ne reste qu'une signature pour lancer votre dossier ${lead.ref}. Un expert confirme le montant exact (vérification gratuite). 👉 ${url}\n0 € si vous ne touchez rien.`;
+  if (!total) return `Il ne reste qu'une signature pour lancer votre dossier (vol ${tripLbl}). Un expert confirme le montant exact (vérification gratuite). 👉 ${url}\n0 € si vous ne touchez rien.`;
   const key = n === 2 ? 'RELANCE_2H' : n === 8 ? 'RELANCE_8H' : 'RELANCE_22H';
-  const txt = fillTpl(pickRV(lead.ref || lead.phone, key), { REF: lead.ref || '', TOTAL: total, URL: url, NOM: lead.name || '' });
-  return txt || `Il ne reste qu'une signature pour votre dossier ${lead.ref}. 👉 ${url}\n0 € si vous ne touchez rien.`;
+  const txt = fillTpl(pickRV(lead.ref || lead.phone, key), { REF: lead.ref || '', VOL: tripLbl, TOTAL: total, URL: url, NOM: lead.name || '' });
+  return txt || `Il ne reste qu'une signature pour votre dossier (vol ${tripLbl}). 👉 ${url}\n0 € si vous ne touchez rien.`;
 }
 // Groupe de message selon l'étape où le client a décroché → on adresse la cause probable de l'arrêt.
 function engGroup(step) {

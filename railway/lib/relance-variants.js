@@ -4,16 +4,16 @@
  */
 const RV = {
  "RELANCE_2H": [
-  "Bonjour, il vous reste juste une étape sur votre dossier {REF} : votre signature, ça prend 2 min. Vous pourriez toucher jusqu'à {TOTAL}, et si vous ne touchez rien, vous ne payez rien 👉 {URL}",
-  "Petit rappel : votre contrat de cession {REF} est prêt, il manque juste votre signature. À la clé, jusqu'à {TOTAL} — et zéro frais si vous ne touchez rien 👉 {URL}",
-  "Vous y êtes presque. Il ne reste qu'à signer pour qu'on lance votre réclamation {REF}. 2 minutes suffisent, jusqu'à {TOTAL} possibles, et rien à payer si ça n'aboutit pas 👉 {URL}",
-  "Ce serait dommage de passer à côté de votre indemnisation. Un seul geste : signer le contrat de cession {REF} pour viser jusqu'à {TOTAL}. C'est l'affaire de 2 minutes 👉 {URL}",
-  "Vous êtes toujours là ? Votre dossier {REF} est complet, il ne manque que votre signature. Aucun risque de votre côté : rien à payer si vous ne touchez rien, et jusqu'à {TOTAL} en jeu 👉 {URL}",
-  "Juste un petit rappel : votre signature suffit à débloquer la réclamation {REF}. 2 min, et vous pourriez récupérer jusqu'à {TOTAL}. Si vous ne touchez rien, c'est gratuit 👉 {URL}",
-  "Votre indemnisation {REF} est à un clic. Vous signez le contrat de cession, on s'occupe de tout le reste. Jusqu'à {TOTAL} possibles, et zéro frais si ça n'aboutit pas 👉 {URL}",
-  "De notre côté, tout est prêt pour {REF}. Il ne manque plus que votre signature pour viser jusqu'à {TOTAL}. 2 min, et rien à payer si vous ne touchez rien 👉 {URL}",
-  "Ne laissez pas votre dossier {REF} dormir. Une signature suffit à l'activer et à viser jusqu'à {TOTAL}. Et rassurez-vous : si vous ne touchez rien, vous ne payez rien 👉 {URL}",
-  "Plus qu'un petit pas pour {REF}. Votre signature lance toute la procédure. 2 minutes pour viser jusqu'à {TOTAL}, et zéro frais si vous ne touchez rien 👉 {URL}"
+  "Bonjour, il vous reste juste une étape sur votre dossier ({VOL}) : votre signature, ça prend 2 min. Vous pourriez toucher jusqu'à {TOTAL}, et si vous ne touchez rien, vous ne payez rien 👉 {URL}",
+  "Petit rappel : votre contrat de cession pour le vol {VOL} est prêt, il manque juste votre signature. À la clé, jusqu'à {TOTAL} — et zéro frais si vous ne touchez rien 👉 {URL}",
+  "Vous y êtes presque. Il ne reste qu'à signer pour qu'on lance votre réclamation ({VOL}). 2 minutes suffisent, jusqu'à {TOTAL} possibles, et rien à payer si ça n'aboutit pas 👉 {URL}",
+  "Ce serait dommage de passer à côté de votre indemnisation. Un seul geste : signer le contrat de cession pour le vol {VOL} pour viser jusqu'à {TOTAL}. C'est l'affaire de 2 minutes 👉 {URL}",
+  "Vous êtes toujours là ? Votre dossier ({VOL}) est complet, il ne manque que votre signature. Aucun risque de votre côté : rien à payer si vous ne touchez rien, et jusqu'à {TOTAL} en jeu 👉 {URL}",
+  "Juste un petit rappel : votre signature suffit à débloquer la réclamation pour le vol {VOL}. 2 min, et vous pourriez récupérer jusqu'à {TOTAL}. Si vous ne touchez rien, c'est gratuit 👉 {URL}",
+  "Votre indemnisation ({VOL}) est à un clic. Vous signez le contrat de cession, on s'occupe de tout le reste. Jusqu'à {TOTAL} possibles, et zéro frais si ça n'aboutit pas 👉 {URL}",
+  "De notre côté, tout est prêt pour le vol {VOL}. Il ne manque plus que votre signature pour viser jusqu'à {TOTAL}. 2 min, et rien à payer si vous ne touchez rien 👉 {URL}",
+  "Ne laissez pas votre dossier ({VOL}) dormir. Une signature suffit à l'activer et à viser jusqu'à {TOTAL}. Et rassurez-vous : si vous ne touchez rien, vous ne payez rien 👉 {URL}",
+  "Plus qu'un petit pas pour votre vol {VOL}. Votre signature lance toute la procédure. 2 minutes pour viser jusqu'à {TOTAL}, et zéro frais si vous ne touchez rien 👉 {URL}"
  ],
  "RELANCE_FRAIS": [
   "💶 Petit rappel : vos reçus (taxi, hôtel, repas, billet…) partent dans notre 1er envoi si on les a aujourd'hui. Une photo suffit 📷 — ou appuyez sur « Pas de frais ». (Aucun souci si c'est pour plus tard : on peut aussi les ajouter ensuite.)",
@@ -32,16 +32,16 @@ const RV = {
   "{NOM}, votre place dans le dossier est réservée, comme pour les autres passagers qu'on accompagne. Il ne manque plus que votre signature : {URL}"
  ],
  "RELANCE_22H": [
-  "Juste un petit mot avant ce soir. La fenêtre pour lancer votre dossier {REF} se referme dans quelques heures. Vous n'avez qu'à signer ici : {URL}\n0€ si vous ne touchez rien.",
-  "Cette indemnisation, autant qu'elle vous revienne plutôt qu'elle reste à la compagnie. Votre dossier {REF} peut vous rapporter jusqu'à {TOTAL}. La signature prend une minute : {URL}\n0€ si vous ne touchez rien.",
-  "Dernière occasion aujourd'hui pour votre dossier {REF}. Après ce soir, on repart de zéro. Vous validez en un clic ici : {URL}\nRien à avancer : on se rémunère seulement quand vous touchez votre argent (commission de 25%).",
-  "On y est presque. Il ne manque que votre signature pour faire avancer votre dossier {REF}, qui peut vous rapporter jusqu'à {TOTAL}. Le lien reste actif encore quelques heures : {URL}",
-  "Avant de clôturer votre dossier {REF} ce soir, je tenais à vous laisser une dernière chance. Signez ici, et on se charge du reste : {URL}\n0€ si vous ne touchez rien.",
-  "Cet argent peut vous revenir, pas rester chez la compagnie. Vous pouvez récupérer jusqu'à {TOTAL} avec le dossier {REF}. C'est le dernier moment pour signer : {URL}\n0€ si vous ne touchez rien.",
-  "La journée touche à sa fin et votre dossier {REF} attend toujours votre feu vert. Un clic, et on lance la démarche : {URL}\nCommission de 25% seulement quand vous touchez votre argent.",
-  "Je n'aimerais pas que vous passiez à côté d'une indemnisation qui peut aller jusqu'à {TOTAL}. La fenêtre se referme bientôt pour le dossier {REF}. Tout se règle ici, en une minute : {URL}",
-  "Un dernier petit rappel pour ce soir. Votre dossier {REF} est prêt, il n'attend plus que votre signature : {URL}\nSi vous ne touchez rien, vous ne payez rien.",
-  "Encore quelques heures pour réclamer ce qui peut vous revenir. Ne laissez pas la compagnie l'emporter sans rien faire. Signez votre dossier {REF} ici : {URL}\n0€ si vous ne touchez rien."
+  "Juste un petit mot avant ce soir. La fenêtre pour lancer votre dossier ({VOL}) se referme dans quelques heures. Vous n'avez qu'à signer ici : {URL}\n0€ si vous ne touchez rien.",
+  "Cette indemnisation, autant qu'elle vous revienne plutôt qu'elle reste à la compagnie. Votre dossier pour le vol {VOL} peut vous rapporter jusqu'à {TOTAL}. La signature prend une minute : {URL}\n0€ si vous ne touchez rien.",
+  "Dernière occasion aujourd'hui pour votre dossier ({VOL}). Après ce soir, on repart de zéro. Vous validez en un clic ici : {URL}\nRien à avancer : on se rémunère seulement quand vous touchez votre argent (commission de 25%).",
+  "On y est presque. Il ne manque que votre signature pour faire avancer votre dossier ({VOL}), qui peut vous rapporter jusqu'à {TOTAL}. Le lien reste actif encore quelques heures : {URL}",
+  "Avant de clôturer votre dossier ({VOL}) ce soir, je tenais à vous laisser une dernière chance. Signez ici, et on se charge du reste : {URL}\n0€ si vous ne touchez rien.",
+  "Cet argent peut vous revenir, pas rester chez la compagnie. Vous pouvez récupérer jusqu'à {TOTAL} avec le dossier du vol {VOL}. C'est le dernier moment pour signer : {URL}\n0€ si vous ne touchez rien.",
+  "La journée touche à sa fin et votre dossier ({VOL}) attend toujours votre feu vert. Un clic, et on lance la démarche : {URL}\nCommission de 25% seulement quand vous touchez votre argent.",
+  "Je n'aimerais pas que vous passiez à côté d'une indemnisation qui peut aller jusqu'à {TOTAL}. La fenêtre se referme bientôt pour le dossier du vol {VOL}. Tout se règle ici, en une minute : {URL}",
+  "Un dernier petit rappel pour ce soir. Votre dossier ({VOL}) est prêt, il n'attend plus que votre signature : {URL}\nSi vous ne touchez rien, vous ne payez rien.",
+  "Encore quelques heures pour réclamer ce qui peut vous revenir. Ne laissez pas la compagnie l'emporter sans rien faire. Signez votre dossier ({VOL}) ici : {URL}\n0€ si vous ne touchez rien."
  ],
  "RELANCE_ENGAGED_1": [
   "Bonjour {NOM}, on a bien commencé votre dossier pour le vol {VOL}, il ne reste qu'une étape pour viser jusqu'à {TOTAL}. On reprend là où vous vous étiez arrêté ? 👇 Appuyez sur *Reprendre* — et si vous ne touchez rien, vous ne payez rien. Une question ? *Rappel* 📞 et on vous appelle.",
