@@ -1504,8 +1504,23 @@ function isMinorFromDob(dobStr) {
 function checkMinorAge(input, idx) {
   const row = document.querySelectorAll('.pax-row')[idx];
   if (!row) return;
+  const isMinor = isMinorFromDob(input.value);
   const badge = row.querySelector('.pminor-badge');
-  if (badge) badge.style.display = isMinorFromDob(input.value) ? 'flex' : 'none';
+  if (badge) badge.style.display = isMinor ? 'flex' : 'none';
+  // Email/adresse ne concernent que les adultes (mineur = mandat du parent, Art. 9 bis) —
+  // ces blocs sont créés display:block/none au rendu initial (dob pas encore connue) : on les
+  // remet à jour ici si la date de naissance change APRÈS coup (sinon ils restent visibles à
+  // tort, avec un astérisque requis trompeur, même si la validation les ignore déjà pour un mineur).
+  const emailBlock = row.querySelector('.pemail-block');
+  if (emailBlock) emailBlock.style.display = isMinor ? 'none' : 'block';
+  const addrBlock = row.querySelector('.paddr-block');
+  if (addrBlock) addrBlock.style.display = isMinor ? 'none' : 'block';
+  if (isMinor) {
+    const pemailInp = row.querySelector('.pemail'); if (pemailInp) pemailInp.classList.remove('err');
+    const paddrInp = row.querySelector('.paddr'); if (paddrInp) paddrInp.classList.remove('err');
+  } else {
+    refreshAddrReuseOptions();
+  }
   buildCoPassChecks();
 }
 function buildPaxFields(pax, pre) {
