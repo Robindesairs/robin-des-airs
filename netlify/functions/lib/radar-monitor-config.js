@@ -33,6 +33,29 @@ const AFRICA_EVENING_HUBS = [
 ];
 
 /**
+ * Extension Afrique de l'Est + australe + océan Indien — auto-scannée au tier
+ * SECONDAIRE (cadence ~45 min, radar-monitor-hot2) pour élargir la couverture sans
+ * saturer le quota AeroDataBox. Désactivable en posant MONITOR_HUBS_SECONDARY.
+ */
+const AFRICA_EAST_SOUTH_HUBS = [
+  'NBO', // Nairobi
+  'ADD', // Addis-Abeba
+  'DAR', // Dar es Salaam
+  'EBB', // Entebbe (Kampala)
+  'KGL', // Kigali
+  'JRO', // Kilimandjaro
+  'ZNZ', // Zanzibar
+  'JNB', // Johannesburg
+  'CPT', // Le Cap
+  'HRE', // Harare
+  'WDH', // Windhoek
+  'TNR', // Antananarivo
+  'MRU', // Maurice
+  'MPM', // Maputo
+  'LAD', // Luanda
+];
+
+/**
  * Hubs à scanner pour le monitor temps-réel.
  * Priorité env var MONITOR_HUBS (ex: "DSS,ABJ") → fallback AFRICA_EVENING_HUBS.
  */
@@ -62,7 +85,15 @@ function getSecondaryHubs() {
       .map((h) => h.trim().toUpperCase().slice(0, 3))
       .filter((h) => h.length === 3 && !primary.has(h));
   }
-  return AFRICA_EVENING_HUBS.filter((h) => !primary.has(h) && h !== 'DKR');
+  // Défaut = (reste de l'Ouest/Centrale) + (Est/Australe/Océan Indien), moins les prioritaires,
+  // moins DKR (Dakar-Yoff fermé). Dédupliqué.
+  const merged = AFRICA_EVENING_HUBS.concat(AFRICA_EAST_SOUTH_HUBS);
+  const seen = new Set();
+  return merged.filter((h) => {
+    if (h === 'DKR' || primary.has(h) || seen.has(h)) return false;
+    seen.add(h);
+    return true;
+  });
 }
 
 /** Bandeau matin — hubs prioritaires (conso API maîtrisée). */

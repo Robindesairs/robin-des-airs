@@ -391,6 +391,10 @@
     los: 'Lagos',
     nkc: 'Nouakchott',
     afrique_ouest: 'Ouest express (DSS+ABJ+BJL+BKO)',
+    reg_ouest: 'Afrique de l’Ouest',
+    reg_centrale: 'Afrique centrale',
+    reg_est: 'Afrique de l’Est',
+    reg_sud: 'Australe · Océan Indien',
     // Europe
     paris_cdg: 'Paris CDG',
     paris_ory: 'Paris Orly',
@@ -2095,10 +2099,23 @@
     return v.arr || v.dep || null;
   }
 
+  /** Reconstruit un timestamp (ms, UTC) depuis une date YYYY-MM-DD + une heure "HH:MM" (Zulu). */
+  function dateHhmmToMs(dateYmd, hhmm) {
+    if (!dateYmd || !hhmm || hhmm === '—') return null;
+    var m = String(hhmm).match(/(\d{1,2}):(\d{2})/);
+    if (!m) return null;
+    var ms = Date.parse(dateYmd + 'T' + ('0' + m[1]).slice(-2) + ':' + m[2] + ':00Z');
+    return isNaN(ms) ? null : ms;
+  }
+
   /**
-   * 💰 Fenêtre pub en heures : jusqu'au DÉPART du vol de réacheminement si connu
-   * (annulation reprogrammée, souvent J+1 = le jackpot), sinon 12 h (annulé sans
-   * réacheminement trouvé) ou 6 h (retard). Clamp [1h, 48h].
+   * 💰 Fenêtre pub en heures = jusqu'au DÉPART réel/estimé (stratégie : la pub tourne
+   * tant que les passagers sont bloqués à l'aéroport, et s'étire avec le retard).
+   *  - ANNULÉ : jusqu'au départ du vol de réacheminement (souvent J+1 = jackpot),
+   *    sinon 12 h par défaut.
+   *  - RETARD : jusqu'au départ ESTIMÉ (heure prévue + retard) ; l'avion finit par
+   *    partir → ad-watch coupe au décollage. Plancher 2 h (« on démarre ~2 h avant »),
+   *    plafond 48 h.
    */
   function computePubWindowHours(v) {
     if (!v) return 6;
@@ -2112,7 +2129,18 @@
       }
       return 12; // annulé, réacheminement inconnu → fenêtre large par défaut
     }
-    return 6; // retard → l'avion finit par partir, ad-watch coupe au décollage
+    // RETARD : viser le départ estimé (etd), sinon prévu (std) + retard.
+    var depMs = dateHhmmToMs(v.date, v.etd);
+    if (depMs == null && v.std && v.retardMin) {
+      var stdMs = dateHhmmToMs(v.date, v.std);
+      if (stdMs != null) depMs = stdMs + Number(v.retardMin) * 60000;
+    }
+    if (depMs != null) {
+      var hr = (depMs - Date.now()) / 3600000;
+      if (hr >= 0.5) return Math.min(48, Math.max(2, Math.round(hr * 10) / 10));
+    }
+    if (v.retardMin) return Math.min(48, Math.max(2, Number(v.retardMin) / 60 + 1));
+    return 6;
   }
 
   function pubWindowLabel(v) {
@@ -2164,6 +2192,15 @@
     var reach = document.getElementById('budget-reach');
     if (disp) disp.textContent = val + ' €';
     if (reach) reach.textContent = '~' + Math.round(val / 0.05).toLocaleString('fr-FR') + ' personnes';
+    // Surligne le preset correspondant (5/10/15) s'il matche exactement.
+    document.querySelectorAll('.budget-preset').forEach(function (b) {
+      b.classList.toggle('budget-preset-active', parseInt(b.getAttribute('data-budget'), 10) === val);
+    });
+  }
+  function setBudget(val) {
+    var sl = document.getElementById('budget-sl');
+    if (sl) sl.value = String(val);
+    updBudget();
   }
 
   /** En-têtes + cookie session CRM pour les endpoints pub (ils dépensent de l'argent). */
@@ -2193,6 +2230,8 @@
     fetch('/.netlify/functions/ad-launch', adFetchInit({
         airport: airport,
         vol:       v.vol       || '',
+        airline:   v.comp      || '',
+        airlineIata: v.airlineIata || '',
         dep:       v.dep       || '',
         arr:       v.arr       || '',
         retardMin: v.retardMin || 0,
@@ -2270,10 +2309,11 @@
         el.style.display = 'block';
         el.innerHTML =
           '📊 <strong>' + spend.toFixed(2) + ' €</strong> dépensés · ' +
-          '<strong>' + (s.reach || 0).toLocaleString('fr-FR') + '</strong> personnes touchées · ' +
-          '<strong>' + cpm.toFixed(2) + ' €</strong> CPM · ' +
+          '<strong>' + (s.impressions || 0).toLocaleString('fr-FR') + '</strong> impressions · ' +
+          '<strong>' + (s.reach || 0).toLocaleString('fr-FR') + '</strong> personnes · ' +
           '<strong>' + (s.clicks || 0) + '</strong> clics' +
-          (s.waConvos > 0 ? ' · <strong style="color:#25D366">' + s.waConvos + ' 💬 WA</strong>' : '');
+          (s.waConvos > 0 ? ' · <strong style="color:#25D366">' + s.waConvos + ' 💬 demandes WA</strong>' : '') +
+          ' · CPM ' + cpm.toFixed(2) + ' €';
       })
       .catch(function () { /* silencieux si pas encore de données */ });
   }
@@ -2302,33 +2342,51 @@
     });
   }
 
-  /* ══ 💰 JACKPOT — annulations (réacheminement = fenêtre pub) ══════════════ */
+  /* ══ 💰 OPPORTUNITÉS — annulations (jackpot) + gros retards, remontées en haut ══ */
+  function oppRowHtml(v, gold) {
+    var ap = pubAirportFor(v);
+    var head = gold
+      ? '🔴 ' + v.vol + ' · ' + v.dep + ' → ' + v.arr
+      : '🟠 ' + v.vol + ' · ' + v.dep + ' → ' + v.arr + ' · <span style="color:#B45309">' + retardH(v.retardMin) + ' de retard</span>';
+    var line2 = gold
+      ? (v.rescheduledTo
+          ? '🔄 Réacheminé : <strong style="color:#B7950B">' + v.rescheduledTo + '</strong>' + (v.rescheduledRoute ? ' <span style="color:#7B5800">(' + v.rescheduledRoute + ')</span>' : '')
+          : (v.nextFlightFound === false ? '🔎 Réacheminement introuvable (vol suivant non trouvé sur 3 j)' : '🔎 Réacheminement : relancez un scan live'))
+      : '🛫 Départ estimé ' + (v.etd && v.etd !== '—' ? v.etd : '?') + ' — passagers à l\'aéroport';
+    var brd = gold ? '#E8D28A' : '#FCD9A5';
+    var btnCls = gold ? 'radar-btn radar-btn-gold' : 'radar-btn';
+    var btnStyle = gold ? 'font-weight:800' : 'font-weight:800;background:#FB923C;color:#fff;border:none';
+    return (
+      '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 10px;background:#fff;border:1px solid ' + brd + ';border-radius:8px;margin-bottom:6px">' +
+        '<div style="min-width:220px">' +
+          '<div style="font-weight:800;color:var(--navy,#0B1F3A);font-size:13px">' + head + ' <span style="font-weight:600;color:#7B5800">' + (v.dateLabel || '') + '</span></div>' +
+          '<div style="font-size:12px;margin-top:2px">' + line2 + '</div>' +
+          '<div style="font-size:11px;color:#7B5800;margin-top:2px">Fenêtre pub : ' + pubWindowLabel(v) + ' · cible ' + (ap || '?') + ' rayon ' + (PUB_RADIUS_KM[ap] || 2) + ' km</div>' +
+        '</div>' +
+        '<button class="' + btnCls + '" style="' + btnStyle + '" onclick="window.__radarOpenPub(&quot;' + v.id + '&quot;)">📣 Pub jusqu\'au départ</button>' +
+      '</div>'
+    );
+  }
   function renderJackpot() {
     var panel = document.getElementById('jackpot-panel');
     if (!panel) return;
     var cancelled = VOLS.filter(function (v) { return v.statut === 'ANNULE'; });
-    if (!cancelled.length) { panel.hidden = true; panel.innerHTML = ''; return; }
+    // Gros retards = cible stratégique (passagers encore à l'aéroport) : ≥ 2 h, non annulés.
+    var bigDelays = VOLS.filter(function (v) { return v.statut === 'RETARD' && Number(v.retardMin) >= 120; })
+      .sort(function (a, b) { return Number(b.retardMin) - Number(a.retardMin); });
+    if (!cancelled.length && !bigDelays.length) { panel.hidden = true; panel.innerHTML = ''; return; }
     panel.hidden = false;
-    panel.innerHTML =
-      '<div style="padding:12px 14px;background:linear-gradient(135deg,#FFF8E1,#FFF3CD);border:2px solid #C9A84C;border-radius:10px">' +
-      '<div style="font-size:12px;font-weight:800;color:#7B5800;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">💰 Jackpot — vols annulés (' + cancelled.length + ')</div>' +
-      cancelled.map(function (v) {
-        var ap = pubAirportFor(v);
-        var resch = v.rescheduledTo
-          ? '🔄 Réacheminé : <strong style="color:#B7950B">' + v.rescheduledTo + '</strong>' + (v.rescheduledRoute ? ' <span style="color:#7B5800">(' + v.rescheduledRoute + ')</span>' : '')
-          : (v.nextFlightFound === false ? '🔎 Réacheminement introuvable (vol suivant non trouvé sur 3 jours)' : '🔎 Réacheminement : relancez un scan live pour interroger l\'API');
-        return (
-          '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 10px;background:#fff;border:1px solid #E8D28A;border-radius:8px;margin-bottom:6px">' +
-            '<div style="min-width:220px">' +
-              '<div style="font-weight:800;color:var(--navy,#0B1F3A);font-size:13px">🔴 ' + v.vol + ' · ' + v.dep + ' → ' + v.arr + ' <span style="font-weight:600;color:#7B5800">' + (v.dateLabel || '') + '</span></div>' +
-              '<div style="font-size:12px;margin-top:2px">' + resch + '</div>' +
-              '<div style="font-size:11px;color:#7B5800;margin-top:2px">Fenêtre pub : ' + pubWindowLabel(v) + ' · cible ' + (ap || '?') + ' rayon ' + (PUB_RADIUS_KM[ap] || 2) + ' km</div>' +
-            '</div>' +
-            '<button class="radar-btn radar-btn-gold" style="font-weight:800" onclick="window.__radarOpenPub(&quot;' + v.id + '&quot;)">📣 Pub jusqu\'au départ</button>' +
-          '</div>'
-        );
-      }).join('') +
-      '</div>';
+    var html = '<div style="padding:12px 14px;background:linear-gradient(135deg,#FFF8E1,#FFF3CD);border:2px solid #C9A84C;border-radius:10px">';
+    if (cancelled.length) {
+      html += '<div style="font-size:12px;font-weight:800;color:#7B5800;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px">💰 Jackpot — vols annulés (' + cancelled.length + ')</div>' +
+        cancelled.map(function (v) { return oppRowHtml(v, true); }).join('');
+    }
+    if (bigDelays.length) {
+      html += '<div style="font-size:12px;font-weight:800;color:#B45309;text-transform:uppercase;letter-spacing:.05em;margin:' + (cancelled.length ? '10px' : '0') + ' 0 8px">🟠 Gros retards ≥ 2 h (' + bigDelays.length + ')</div>' +
+        bigDelays.map(function (v) { return oppRowHtml(v, false); }).join('');
+    }
+    html += '</div>';
+    panel.innerHTML = html;
   }
 
   /* ══ 📣 Campagnes Meta EN COURS (panneau permanent, refresh 60 s) ═════════ */
@@ -2347,7 +2405,7 @@
             var ends = c.endsAt ? new Date(Number(c.endsAt)) : null;
             var endTxt = ends ? (ends.getDate() !== new Date().getDate() ? 'demain ' : '') + ends.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '?';
             var stats = (c.spend != null)
-              ? '📊 ' + (c.spend || 0).toFixed(2) + ' € dépensés · ' + (c.reach || 0).toLocaleString('fr-FR') + ' touchés · ' + (c.clicks || 0) + ' clics' + (c.waConvos ? ' · <strong style="color:#25D366">' + c.waConvos + ' 💬 WA</strong>' : '')
+              ? '📊 ' + (c.spend || 0).toFixed(2) + ' € · ' + (c.impressions || 0).toLocaleString('fr-FR') + ' impressions · ' + (c.reach || 0).toLocaleString('fr-FR') + ' pers. · ' + (c.clicks || 0) + ' clics' + (c.waConvos ? ' · <strong style="color:#25D366">' + c.waConvos + ' 💬 demandes WA</strong>' : '')
               : '⏳ Stats Meta en attente (review 15-30 min)';
             return (
               '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 10px;background:#fff;border:1px solid #A5D6A7;border-radius:8px;margin-bottom:6px">' +
@@ -2654,6 +2712,9 @@
     pubLangSel.addEventListener('change', refreshPubPreview);
   }
   document.getElementById('budget-sl') && document.getElementById('budget-sl').addEventListener('input', updBudget);
+  document.querySelectorAll('.budget-preset').forEach(function (b) {
+    b.addEventListener('click', function () { setBudget(parseInt(b.getAttribute('data-budget'), 10) || 10); });
+  });
   document.querySelectorAll('.pub-platform').forEach(function (p) {
     p.addEventListener('click', function () { p.classList.toggle('selected'); });
   });

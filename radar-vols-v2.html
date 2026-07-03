@@ -160,6 +160,8 @@ tbody tr.row-pinned-ticker{outline:2px solid var(--gold);outline-offset:-2px}
 .radar-visu-mild{background:#FEF9E7;color:#7D6608}.radar-visu-mild .radar-visu-dot{background:#F1C40F}
 .radar-visu-ok{background:#D5F5E3;color:#145A32}.radar-visu-ok .radar-visu-dot{background:#27AE60}
 .pub-wa-preview{white-space:pre-wrap;font-size:12px;line-height:1.45;background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px;margin:10px 0;max-height:180px;overflow:auto}
+.budget-preset{flex:1;font-weight:700}
+.budget-preset-active{background:var(--green,#007A4C)!important;color:#fff!important;border-color:var(--green,#007A4C)!important}
 /* Priority, anti-strobe : uniquement les NOUVEAUX clignotent */
 .prio-tag{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px}
 .prio-urgent{background:#FADBD8;color:#922B21;border:1px solid #F1948A}
@@ -350,6 +352,13 @@ body.rv-cards .tcard{display:none}
       <button type="button" class="btn btn-sm radar-zone-btn" data-zone="los" data-groups="LOS">Lagos</button>
       <button type="button" class="btn btn-sm radar-zone-btn" data-zone="nkc" data-groups="NKC">Nouakchott</button>
       <button type="button" class="btn btn-sm radar-zone-btn" data-zone="afrique_ouest" data-groups="DSS,ABJ,BJL,BKO" title="Dakar + Abidjan + Banjul + Bamako en un scan">⭐ Ouest express</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center" role="group" aria-label="Régions africaines (scan groupé)">
+      <span style="font-size:11px;color:#7B5800;font-weight:800;text-transform:uppercase;letter-spacing:.05em">🌍 Régions</span>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="reg_ouest" data-groups="af_west1,af_west2,af_west3,af_west4" title="Toute l'Afrique de l'Ouest">Afrique de l’Ouest</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="reg_centrale" data-groups="af_central1,af_central2,af_central3" title="Cameroun, Gabon, Congo, RDC, Angola, Tchad…">Afrique centrale</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="reg_est" data-groups="af_east1,af_east2,af_east3" title="Kenya, Éthiopie, Tanzanie, Ouganda, Rwanda, Djibouti…">Afrique de l’Est</button>
+      <button type="button" class="btn btn-sm radar-zone-btn" data-zone="reg_sud" data-groups="af_indian,af_south" title="Afrique australe + océan Indien (Afrique du Sud, Madagascar, Maurice…)">Australe · Océan Indien</button>
     </div>
     <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap;align-items:center" role="group" aria-label="Hubs Europe, départs Europe vers Afrique">
       <span style="font-size:11px;color:var(--text2);font-weight:800;text-transform:uppercase;letter-spacing:.05em">🇪🇺 Europe</span>
@@ -580,13 +589,21 @@ body.rv-cards .tcard{display:none}
         <strong>Fenêtre :</strong> <span id="pub-duration-label" style="color:var(--navy);font-weight:700">6 h (auto-stop)</span>
       </div>
 
-      <!-- Budget slider -->
+      <!-- Budget : presets sûrs (clic) + réglage fin -->
       <label style="font-size:11px;font-weight:700;color:var(--text2);display:block;margin-bottom:6px">
         Budget total campagne : <span id="budget-disp" style="color:var(--navy);font-weight:800">10 €</span>
         <span style="color:var(--text3);font-weight:400"> portée estimée : <span id="budget-reach">~200 personnes</span></span>
       </label>
+      <div id="budget-presets" style="display:flex;gap:8px;margin-bottom:10px">
+        <button type="button" class="btn btn-sm budget-preset" data-budget="5">5 €</button>
+        <button type="button" class="btn btn-sm budget-preset budget-preset-active" data-budget="10">10 €</button>
+        <button type="button" class="btn btn-sm budget-preset" data-budget="15">15 €</button>
+      </div>
       <input type="range" id="budget-sl" min="5" max="100" value="10" step="5"
         style="width:100%;accent-color:var(--green);margin-bottom:14px">
+      <!-- Aperçu du texte de la pub (varie selon compagnie / retard) -->
+      <div style="font-size:10px;color:var(--text3);margin-bottom:4px">Texte de la pub :</div>
+      <div id="pub-wa-preview" style="background:#F0F7FF;border:1px solid #CFE3FA;border-radius:8px;padding:8px 10px;font-size:11px;color:#1a3a5c;line-height:1.5;margin-bottom:12px;white-space:pre-wrap"></div>
 
       <!-- Status retour API -->
       <div id="pub-status" style="display:none;border-radius:var(--r2);padding:10px 12px;font-size:12px;font-weight:600;margin-bottom:8px"></div>

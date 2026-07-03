@@ -21,6 +21,7 @@ const AFRICA_42_HUBS = [
   'CPT', 'CKY', 'COO', 'DSS', 'DAR', 'JIB', 'DLA', 'EBB', 'FNA', 'GOM', 'JNB',
   'KGL', 'JRO', 'FIH', 'LOS', 'LBV', 'LFW', 'LAD', 'SSG', 'MPM', 'MRU', 'MBA',
   'NDJ', 'NBO', 'NIM', 'OUA', 'PNR', 'PHC', 'WDH', 'NSI', 'ZNZ', 'FBM', 'HRE',
+  'NKC', 'ROB', // Nouakchott + Monrovia (Afrique de l'Ouest, routes diaspora réelles)
 ];
 const AFRICA_42_SET = new Set(AFRICA_42_HUBS);
 
@@ -101,6 +102,30 @@ const HUB_ICAO = {
   OXB: 'GGOV', // Bissau
   NDJ: 'FTTJ', // N'Djaména
   CMN: 'GMMN', // Casablanca (transit ouest-africain)
+  ROB: 'GLRB', // Monrovia
+  SSG: 'FGSL', // Malabo
+  LAD: 'FNLU', // Luanda
+  BGF: 'FEFF', // Bangui
+  // Afrique de l'Est & Corne
+  NBO: 'HKJK', // Nairobi
+  ADD: 'HAAB', // Addis-Abeba
+  DAR: 'HTDA', // Dar es Salaam
+  EBB: 'HUEN', // Entebbe (Kampala)
+  KGL: 'HRYR', // Kigali
+  JRO: 'HTKJ', // Kilimandjaro
+  ZNZ: 'HTZA', // Zanzibar
+  MBA: 'HKMO', // Mombasa
+  JIB: 'HDAM', // Djibouti
+  // Océan Indien & Afrique australe
+  TNR: 'FMMI', // Antananarivo
+  MRU: 'FIMP', // Maurice
+  MPM: 'FQMA', // Maputo
+  JNB: 'FAOR', // Johannesburg
+  CPT: 'FACT', // Le Cap
+  WDH: 'FYWH', // Windhoek
+  HRE: 'FVHA', // Harare
+  LUN: 'FLKK', // Lusaka
+  DUR: 'FALE', // Durban
 };
 
 /**
@@ -130,6 +155,20 @@ const HUB_GROUPS = {
   '17': ['FRA'],
   // Paris Orly seul — Corsair (SS) + AF/Transavia Orly → Afrique subsaharienne.
   '18': ['ORY'],
+  // ─── Régions AFRICAINES (≤4 hubs / groupe = anti-timeout 26 s) ───
+  // Côté départ africain = là où Robin fait ses pubs géofencées.
+  af_west1: ['DSS', 'ABJ', 'BJL', 'BKO'],
+  af_west2: ['CKY', 'LFW', 'COO', 'OUA'],
+  af_west3: ['NIM', 'NKC', 'ACC', 'LOS'],
+  af_west4: ['ABV', 'OXB', 'FNA', 'ROB'],
+  af_central1: ['DLA', 'NSI', 'LBV', 'BZV'],
+  af_central2: ['FIH', 'PNR', 'NDJ', 'SSG'],
+  af_central3: ['LAD', 'BGF'],
+  af_east1: ['NBO', 'ADD', 'DAR', 'EBB'],
+  af_east2: ['KGL', 'JRO', 'ZNZ', 'MBA'],
+  af_east3: ['JIB'],
+  af_indian: ['TNR', 'MRU', 'MPM'],
+  af_south: ['JNB', 'CPT', 'WDH', 'HRE'],
 };
 
 

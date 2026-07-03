@@ -128,6 +128,35 @@ function retardLabel(min) {
   return h > 0 ? (h + 'h' + (m > 0 ? String(m).padStart(2,'0') : '')) : (m + 'min');
 }
 
+/**
+ * Nom lisible de la compagnie à partir du code IATA (2 lettres) du n° de vol,
+ * ou de body.airline si déjà fourni. Sert à décliner la créa « Vol {compagnie}
+ * annulé ? » par transporteur (AF, Brussels, TAP…). Maroc (AT) volontairement absent
+ * (hors niche). Inconnu → '' (message générique).
+ */
+const AIRLINE_NAMES = {
+  AF: 'Air France', SN: 'Brussels Airlines', TP: 'TAP Air Portugal', LH: 'Lufthansa',
+  LX: 'Swiss', OS: 'Austrian', KL: 'KLM', IB: 'Iberia', UX: 'Air Europa', SS: 'Corsair',
+  TO: 'Transavia', A5: 'HOP', ET: 'Ethiopian Airlines', KQ: 'Kenya Airways',
+  SA: 'South African', WB: 'RwandAir', HC: 'Air Sénégal', KP: 'ASKY', W3: 'Arik',
+  DT: 'TAAG Angola', ME: 'MEA', TU: 'Tunisair', BJ: 'Nouvelair',
+};
+function airlineName(body) {
+  const explicit = String(body.airline || '').trim();
+  if (explicit && !/^[A-Z0-9]{2}$/i.test(explicit)) return explicit; // déjà un nom
+  const iata = String(body.airlineIata || explicit || (body.vol || '').slice(0, 2)).toUpperCase();
+  return AIRLINE_NAMES[iata] || '';
+}
+
+/** Barème CE 261 par distance orthodromique (km) : 250 / 400 / 600 €. */
+function montantCe261(distanceKm) {
+  const d = Number(distanceKm) || 0;
+  if (d > 3500) return 600;
+  if (d >= 1500) return 400;
+  if (d > 0) return 250;
+  return 600; // défaut niche Afrique↔Europe long-courrier
+}
+
 function getMsg(lang, city, body) {
   const vol      = body.vol      || '';
   const dep      = body.dep      || '';
@@ -135,16 +164,19 @@ function getMsg(lang, city, body) {
   const retard   = retardLabel(body.retardMin);
   const statut   = body.statut   || 'RETARD';
   const annule   = statut === 'ANNULE';
-  const volLine  = vol ? `Vol ${vol}` : 'Votre vol';
+  const cie      = airlineName(body);          // ex: "Air France"
+  const montant  = montantCe261(body.distanceKm);
   const routeLine = (dep && arr) ? ` ${dep}→${arr}` : (city ? ` depuis ${city}` : '');
-  const delayLine = annule ? ' a été annulé' : (retard ? ` accuse ${retard} de retard` : ' est impacté');
 
   if (lang === 'EN') {
-    const enVol   = vol ? `Flight ${vol}` : 'Your flight';
+    const enVol   = cie ? `Your ${cie} flight` : (vol ? `Flight ${vol}` : 'Your flight');
     const enDelay = annule ? ' has been cancelled' : (retard ? ` is delayed by ${retard}` : ' is impacted');
-    return `✈️ ${enVol}${routeLine}${enDelay}. EU Regulation EC 261 may entitle you to up to €600 per passenger. Free 2-minute check — 0€ if we lose.`;
+    return `✈️ ${enVol}${routeLine}${enDelay}? EU Regulation EC 261 may entitle you to up to €${montant} per passenger. Free 2-minute check on WhatsApp — €0 if we recover nothing.`;
   }
-  return `✈️ ${volLine}${routeLine}${delayLine}. Le règlement CE 261 peut vous donner droit à jusqu'à 600 € par passager. Vérification gratuite en 2 min — 0 € si on perd.`;
+  // FR : mène par la compagnie quand connue (« Vol Air France annulé ? »).
+  const frVol   = cie ? `Vol ${cie}` : (vol ? `Vol ${vol}` : 'Votre vol');
+  const delayLine = annule ? ' annulé' : (retard ? ` retardé de ${retard}` : ' impacté');
+  return `✈️ ${frVol}${routeLine}${delayLine} ? Le règlement CE 261 peut vous donner droit à jusqu'à ${montant} € par passager. Vérification gratuite en 2 min sur WhatsApp — 0 € si on ne récupère rien.`;
 }
 
 exports.handler = async (event) => {
@@ -368,6 +400,7 @@ exports.handler = async (event) => {
         airport,
         city:       coords.city,
         lang,
+        airline:    airlineName(body) || '',
         vol:        body.vol      || '',
         dep:        body.dep      || '',
         arr:        body.arr      || '',
