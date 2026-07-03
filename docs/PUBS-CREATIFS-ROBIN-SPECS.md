@@ -175,7 +175,7 @@ Robin vous obtient :
 **Bouton** : 💬 Je choisis le cash
 
 **Caption :**
-Le bon d'achat est un piège. Il vaut moins que votre droit légal et il expire. Robin des Airs récupère votre indemnité en cash : jusqu'à 600€ par passager, 25% de commission fixe. → Ne signez rien avant de nous contacter.
+Le bon d'achat est un piège. Il vaut moins que votre droit légal et il expire. Robin des Airs récupère votre indemnité en cash : jusqu'à 600€ par passager, 25% de commission au succès (0€ sans résultat). → Ne signez rien avant de nous contacter.
 
 ---
 

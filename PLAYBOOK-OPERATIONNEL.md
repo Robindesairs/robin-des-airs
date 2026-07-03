@@ -112,7 +112,7 @@ Le passager arrive par l'un de ces canaux :
 >
 > 👥 [X] passagers = **[montant brut]€ brut**
 > 💰 Vous recevez **[montant net]€ nets** (75%)
-> 📋 Robin prend 25% — c'est tout. Même en cas de procès.
+> 📋 Robin prend 25% en amiable, 40% seulement si procès (frais d'avocat inclus) — annoncé d'avance.
 > ❌ Si on ne gagne pas : 0€ de frais.
 >
 > Pour lancer votre dossier, j'ai besoin de :
@@ -182,7 +182,7 @@ Le passager arrive par l'un de ces canaux :
 > ✅ Robin réclame votre argent à la compagnie
 > ✅ Vous recevez 75% nets ([montant]€)
 > ✅ Si on ne récupère rien, vous ne payez rien
-> ✅ 25% de commission, jamais plus, même si ça va au tribunal
+> ✅ 25% de commission en amiable, 40% seulement au tribunal (frais d'avocat inclus)
 >
 > La signature prend 30 secondes. Dès que c'est signé, on envoie la réclamation.
 
@@ -280,7 +280,7 @@ Pièces jointes :
 
 Dans l'attente de votre règlement,
 
-Robin des Airs — SAS
+Robin des Airs — SASU
 66 avenue des Champs-Élysées, 75008 Paris
 SIREN [SIREN] — expert@robindesairs.eu
 ```
@@ -450,16 +450,16 @@ représentation et de cession de créance signé le [date] par [nom du mandant],
 la créance d'indemnisation relative au vol [n° de vol] du [date] nous a été
 cédée de plein droit à la date du [date J+60].
 
-En conséquence, SAS Robin des Airs (SIREN [SIREN]) est désormais seule
+En conséquence, SASU Robin des Airs (SIREN [SIREN]) est désormais seule
 créancière de l'indemnité de [montant]€ due au titre du CE 261/2004.
 
-Tout paiement doit être effectué à l'ordre de SAS Robin des Airs.
+Tout paiement doit être effectué à l'ordre de SASU Robin des Airs.
 
 Pièces jointes :
 - Contrat de mandat et de cession (article [X])
 - Preuves des mises en demeure restées sans suite
 
-SAS Robin des Airs
+SASU Robin des Airs
 66 avenue des Champs-Élysées, 75008 Paris
 SIREN [SIREN]
 ```
