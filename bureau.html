@@ -555,12 +555,14 @@ body.game-mode #gameView { display:block; }
             <div style="font-size:.78rem;color:var(--white-70);margin-bottom:7px">➕ Ajouter une pièce (arrivée hors-bot)</div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
               <select id="pieceCat" style="background:var(--sky-card-2);border:1px solid var(--sky-border);border-radius:9px;color:#fff;padding:7px 10px;font-size:.8rem">
-                <option value="identite">Passeport / CNI</option>
+                <option value="identite">Pièce d'identité</option>
                 <option value="carte-embarquement">Carte d'embarquement</option>
-                <option value="ebillet">E-billet / réservation</option>
-                <option value="certificat">Certificat de retard</option>
-                <option value="frais">Reçu de frais</option>
+                <option value="ebillet">E-billet</option>
+                <option value="frais">Reçu / ticket</option>
                 <option value="autre">Autre</option>
+              </select>
+              <select id="piecePax" style="background:var(--sky-card-2);border:1px solid var(--sky-border);border-radius:9px;color:#fff;padding:7px 10px;font-size:.8rem">
+                <option value="">Général</option>
               </select>
               <input type="file" id="pieceFile" accept="image/*,application/pdf" style="font-size:.78rem;color:var(--white-70);flex:1;min-width:120px">
               <button onclick="uploadPiece()" style="background:#0f6e56;border:1px solid #1d9e75;border-radius:9px;color:#fff;padding:7px 14px;font-size:.8rem;cursor:pointer">Enregistrer</button>
@@ -741,7 +743,7 @@ body.game-mode #gameView { display:block; }
      <div id="stations"></div>
    </div>
    <div class="game-legend">
-     CLIC SUR UN PERSO → OUVRE SON OUTIL &nbsp;·&nbsp; <b>DOSSIER GAGNÉ</b> &amp; <b>MANDAT SIGNÉ</b> = 🎉 + SON + SCORE
+     CLIC SUR UN PERSO → OUVRE SON OUTIL &nbsp;·&nbsp; <b>DOSSIER GAGNÉ</b> &amp; <b>CESSION SIGNÉE</b> = 🎉 + SON + SCORE
    </div>
  </div><!-- /#gameView -->
 
@@ -787,7 +789,7 @@ const DOCK = [
     {ic:"🎨",l:"Générateur pub",u:"/generateur-pub.html"},{ic:"📱",l:"Générateur stories",u:"/generateur-pub-stories.html"},
     {ic:"🎁",l:"Parrainage",u:"/parrainage"},{ic:"💸",l:"Nos tarifs",u:"/nos-tarifs.html"} ]},
   { g:"Légal & CE261", items:[
-    {ic:"⚖️",l:"Mandat FR",u:"/mandat"},{ic:"📏",l:"Barème CE261",u:"/bareme-ce261-fr.html"},
+    {ic:"⚖️",l:"Cession FR",u:"/mandat"},{ic:"📏",l:"Barème CE261",u:"/bareme-ce261-fr.html"},
     {ic:"⏳",l:"Délais & dates",u:"/delais-dates-ce261-fr.html"},{ic:"📜",l:"CGV",u:"/cgv"},
     {ic:"🔒",l:"Confidentialité",u:"/politique-confidentialite"} ]},
   { g:"Système & contenu", items:[
@@ -1450,7 +1452,7 @@ async function loadWaConversations(){
 
 /* ============ À RAPPELER (dossiers où la fenêtre WhatsApp 24h s'est fermée / rappel demandé) ============ */
 function rappelReason(r){
-  return {rappel_demande:'📞 Rappel demandé', mandat_non_signe:'✍️ Mandat non signé', abandon_avant_signature:'⏸️ Arrêté avant signature'}[r] || r || '';
+  return {rappel_demande:'📞 Rappel demandé', mandat_non_signe:'✍️ Cession non signée', abandon_avant_signature:'⏸️ Arrêté avant signature'}[r] || r || '';
 }
 function renderRappels(leads){
   const body=document.getElementById('rappelBody'); if(!body) return;
@@ -1880,17 +1882,46 @@ function piecesBadge(s){
   if(s==='rejete') return '<span style="color:#ff7a7a">✗ rejetée</span>';
   return '<span style="color:var(--white-40)">à vérifier</span>';
 }
+let _piecesDossier=null;
 async function loadPieces(){
   const ref=(document.getElementById('piecesRef').value||'').trim();
   if(!ref) return;
   _piecesRef=ref;
   document.getElementById('piecesSrc').textContent='…';
-  const d=await jget('/api/crm-pieces?r='+encodeURIComponent(ref));
+  const [d,doss]=await Promise.all([
+    jget('/api/crm-pieces?r='+encodeURIComponent(ref)),
+    jget('/api/dossier-get?r='+encodeURIComponent(ref))
+  ]);
+  _piecesDossier=doss||null;
+  fillPassengerSelect(doss);
   renderPieces(d);
+}
+function paxNames(doss){
+  if(!doss) return [];
+  if(Array.isArray(doss.passengers)&&doss.passengers.length)
+    return doss.passengers.map(function(p){return (p&&p.name||'').trim();}).filter(Boolean);
+  const solo=(doss.name||'').trim();
+  return solo?[solo]:[];
+}
+function fillPassengerSelect(doss){
+  const sel=document.getElementById('piecePax'); if(!sel) return;
+  const names=paxNames(doss);
+  sel.innerHTML='<option value="">Général</option>'+names.map(function(n){return '<option value="'+esc(n)+'">'+esc(n)+'</option>';}).join('');
+}
+function cessionHeader(ref){
+  const url='/api/mandat-pdf?r='+encodeURIComponent(ref);
+  return '<div style="display:flex;gap:11px;align-items:center;padding:9px 0;margin-bottom:6px;border-bottom:1px solid var(--sky-border)">'+
+    '<a href="'+url+'" target="_blank" rel="noopener" title="Ouvrir la cession signée" style="width:54px;height:54px;display:flex;align-items:center;justify-content:center;border:1px solid #1d9e75;border-radius:8px;font-size:1.5rem;background:var(--sky-card-2);text-decoration:none">⚖️</a>'+
+    '<div style="flex:1;min-width:0">'+
+      '<div style="font-size:.82rem;color:#fff">Contrat de cession signé</div>'+
+      '<div style="font-size:.7rem;color:var(--white-40)">PDF de la cession de créance (copie signée du client)</div>'+
+    '</div>'+
+    '<a href="'+url+'" target="_blank" rel="noopener" style="background:var(--sky-card);border:1px solid #1d9e75;color:#2ec78f;border-radius:8px;padding:6px 11px;cursor:pointer;text-decoration:none;font-size:.8rem">⬇ Télécharger</a>'+
+  '</div>';
 }
 function purgeBanner(pg){
   if(!pg) return '';
-  if(pg.state==='purgé') return '<div style="margin:4px 0 10px;padding:8px 11px;border-radius:9px;background:rgba(29,158,117,.12);border:1px solid #1d9e7555;color:#7fe0bd;font-size:.76rem">✅ Pièces purgées le '+esc(pg.date)+' (RGPD) · seul le mandat est conservé.</div>';
+  if(pg.state==='purgé') return '<div style="margin:4px 0 10px;padding:8px 11px;border-radius:9px;background:rgba(29,158,117,.12);border:1px solid #1d9e7555;color:#7fe0bd;font-size:.76rem">✅ Pièces purgées le '+esc(pg.date)+' (RGPD) · seule la cession est conservée.</div>';
   if(pg.state==='imminente') return '<div style="margin:4px 0 10px;padding:8px 11px;border-radius:9px;background:rgba(200,90,90,.14);border:1px solid #c85a5a66;color:#ffb3b3;font-size:.76rem">⏳ Purge en cours — pièces supprimées à la prochaine exécution (~4h).</div>';
   return '<div style="margin:4px 0 10px;padding:8px 11px;border-radius:9px;background:rgba(202,164,90,.13);border:1px solid #caa45a55;color:#e7c98a;font-size:.76rem">🕒 Purge programmée le '+esc(pg.date)+(pg.daysLeft!=null?(' · dans '+pg.daysLeft+' j'):'')+' (RGPD).</div>';
 }
@@ -1901,7 +1932,7 @@ function renderPieces(d){
   if(!d){ list.innerHTML='<div style="color:var(--white-40);font-size:.8rem">Non connecté ou réf inconnue.</div>'; src.textContent=', '; add.style.display='none'; return; }
   src.textContent=(d.count||0)+' pièce(s)';
   add.style.display='block';
-  const pb=purgeBanner(d.purge);
+  const pb=purgeBanner(d.purge)+cessionHeader(_piecesRef);
   if(!d.pieces||!d.pieces.length){ list.innerHTML=pb+'<div style="color:var(--white-40);font-size:.8rem">Aucune pièce reçue pour ce dossier.</div>'; return; }
   list.innerHTML=pb+d.pieces.map(function(p){
     const isImg=!/\.pdf$/i.test(p.filename||'')&&(/\.(jpe?g|png|webp|gif|heic)$/i.test(p.filename||'')||/identite|embarq|certif|frais/i.test(p.category||''));
@@ -1911,7 +1942,7 @@ function renderPieces(d){
     return '<div style="display:flex;gap:11px;align-items:center;padding:9px 0;border-bottom:1px solid var(--sky-border)">'+
       thumb+
       '<div style="flex:1;min-width:0">'+
-        '<div style="font-size:.82rem;color:#fff">'+esc(p.category||'AUTRE')+(p.passenger?(' · '+esc(p.passenger)):'')+'</div>'+
+        '<div style="font-size:.82rem;color:#fff">'+esc(p.category||'AUTRE')+' · '+(p.passenger?esc(p.passenger):'Général')+'</div>'+
         '<div style="font-size:.7rem;color:var(--white-40);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(p.filename||'')+' · '+esc(p.source||'')+'</div>'+
         '<div style="font-size:.72rem;margin-top:2px">'+piecesBadge(p.status)+(p.statusReason?(', '+esc(p.statusReason)):'')+'</div>'+
       '</div>'+
@@ -1935,9 +1966,11 @@ async function uploadPiece(){
   if(!f){ alert('Choisissez un fichier.'); return; }
   if(f.size>4*1024*1024){ alert('Fichier trop volumineux (max 4 Mo).'); return; }
   const cat=document.getElementById('pieceCat').value;
+  const paxEl=document.getElementById('piecePax');
+  const passenger=(paxEl&&paxEl.value||'').trim();
   const b64=await new Promise(function(res,rej){ const rd=new FileReader(); rd.onload=function(){ res(String(rd.result).split(',')[1]||''); }; rd.onerror=rej; rd.readAsDataURL(f); });
   try{
-    const r=await fetch('/api/crm-piece-upload',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CRM-Code':_crmCode()},body:JSON.stringify({ref:_piecesRef,filename:f.name,mime:f.type,dataBase64:b64,cat:cat})});
+    const r=await fetch('/api/crm-piece-upload',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json','X-CRM-Code':_crmCode()},body:JSON.stringify({ref:_piecesRef,filename:f.name,mime:f.type,dataBase64:b64,cat:cat,passenger:passenger})});
     if(r.ok){ inp.value=''; loadPieces(); } else { const j=await r.json().catch(function(){return{};}); alert('Échec : '+(j.error||r.status)); }
   }catch(e){ alert('Erreur réseau'); }
 }
