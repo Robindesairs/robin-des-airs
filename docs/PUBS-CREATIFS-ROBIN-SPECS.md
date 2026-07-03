@@ -52,7 +52,7 @@ Faites le calcul.
 **Bouton** : 💬 WhatsApp Robin
 
 **Caption :**
-Les autres prennent jusqu'à 50% si votre dossier va au tribunal, plus des frais à part. Robin : 25% en amiable, 45% seulement au tribunal — frais d'avocat inclus, annoncé d'avance. → 3 min sur WhatsApp et c'est réglé.
+Les autres prennent jusqu'à 50% si votre dossier va au tribunal, plus des frais à part. Robin : 25% en amiable, 40% seulement au tribunal — frais d'avocat inclus, annoncé d'avance. → 3 min sur WhatsApp et c'est réglé.
 
 ---
 
@@ -227,7 +227,7 @@ Robin : 25%, c'est tout.
 **Bouton** : 💬 C'est mon tour
 
 **Caption :**
-Aminata a récupéré 1 350€ pour sa famille (3 passagers, vol Paris-Dakar retardé de 5h). Elle ne savait pas qu'elle avait le droit. Vous non plus peut-être ? Robin des Airs : 25% au succès en amiable (45% si tribunal), 0€ si on perd. → WhatsApp maintenant.
+Aminata a récupéré 1 350€ pour sa famille (3 passagers, vol Paris-Dakar retardé de 5h). Elle ne savait pas qu'elle avait le droit. Vous non plus peut-être ? Robin des Airs : 25% au succès en amiable (40% si tribunal), 0€ si on perd. → WhatsApp maintenant.
 
 ---
 

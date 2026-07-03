@@ -40,7 +40,7 @@ Le footer affiche une « Ligne crise » : **01 89 62 89 69**. Vérifier que ce n
 - Témoignage David T. : 461€ → 450€.
 - Témoignage Oumar A. : 181€ → 225€.
 - Blog bon d’achat : 461€ → 450€.
-- Slogan hero : « 25% en amiable, 45% seulement au tribunal (frais d'avocat inclus) — annoncé d'avance. »
+- Slogan hero : « 25% en amiable, 40% seulement au tribunal (frais d'avocat inclus) — annoncé d'avance. »
 - Tableau comparatif : fourchettes « Variable · 300€ à 450€ selon offre et procès » pour les concurrents.
 - CGV : mention Phase 2 / cession de créance à J+60 ; Article 1 avec placeholder SIREN.
 - Footer : © 2026 Robin des Airs (sans SASU jusqu’à immatriculation définitive).
