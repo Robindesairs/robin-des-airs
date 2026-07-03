@@ -691,9 +691,9 @@ body.game-mode #gameView { display:block; }
         <div class="panel-h"><span class="t">📇 Contact interne</span><span class="tag" style="font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--white-40);border:1px solid var(--sky-border);padding:3px 9px;border-radius:20px">équipe</span></div>
         <div class="panel-b" style="padding:1rem 1.2rem">
           <div style="display:flex;flex-direction:column;gap:.55rem">
-            <a href="mailto:skodjo124@hotmail.com" style="display:flex;align-items:center;gap:.6rem;text-decoration:none;color:inherit">
+            <a href="mailto:expert@robindesairs.eu" style="display:flex;align-items:center;gap:.6rem;text-decoration:none;color:inherit">
               <span style="font-size:1.1rem">📧</span>
-              <span><b>skodjo124@hotmail.com</b><br><span style="font-size:.72rem;color:var(--white-40)">Email, contact responsable</span></span>
+              <span><b>expert@robindesairs.eu</b><br><span style="font-size:.72rem;color:var(--white-40)">Email, contact responsable</span></span>
             </a>
             <div style="display:flex;align-items:center;gap:.6rem">
               <span style="font-size:1.1rem">💬</span>
@@ -741,7 +741,7 @@ body.game-mode #gameView { display:block; }
      <div id="stations"></div>
    </div>
    <div class="game-legend">
-     CLIC SUR UN PERSO → OUVRE SON OUTIL &nbsp;·&nbsp; <b>DOSSIER GAGNÉ</b> &amp; <b>MANDAT SIGNÉ</b> = 🎉 + SON + SCORE
+     CLIC SUR UN PERSO → OUVRE SON OUTIL &nbsp;·&nbsp; <b>DOSSIER GAGNÉ</b> &amp; <b>CESSION SIGNÉE</b> = 🎉 + SON + SCORE
    </div>
  </div><!-- /#gameView -->
 
@@ -946,7 +946,7 @@ const OBJECTIVES = [
   { t:"🎯 20 conversations → 6 dossiers / mois", pct:0 },
   { t:"🎯 Taux ≥ 60 % · mise en demeure < 5 j", pct: Math.min(100, Math.round(S.gagnes/Math.max(S.total,1)*100)) },
   { t:"🎯 55 agences actives (≈ +3 / mois)", pct: Math.min(100, Math.round(S.agences/55*100)) },
-  { t:"🎯 Reversement < 48 h · trésorerie positive", pct:100 },
+  { t:"🎯 Reversement < 5 j ouvrés · trésorerie positive", pct:100 },
   { t:"🎯 0 dossier oublié · satisfaction ≥ 4,5/5", pct:100 },
   { t:"🎯 60 €/mois → 20 conv. WhatsApp · CPL ≤ 3 €", pct:0 },
   { t:`🎯 Seuil : ${RENTA.seuil} dossier gagné / mois`, pct: Math.min(100, Math.round(S.gagnes/RENTA.seuil*100)) },
@@ -1890,7 +1890,7 @@ async function loadPieces(){
 }
 function purgeBanner(pg){
   if(!pg) return '';
-  if(pg.state==='purgé') return '<div style="margin:4px 0 10px;padding:8px 11px;border-radius:9px;background:rgba(29,158,117,.12);border:1px solid #1d9e7555;color:#7fe0bd;font-size:.76rem">✅ Pièces purgées le '+esc(pg.date)+' (RGPD) · seul le mandat est conservé.</div>';
+  if(pg.state==='purgé') return '<div style="margin:4px 0 10px;padding:8px 11px;border-radius:9px;background:rgba(29,158,117,.12);border:1px solid #1d9e7555;color:#7fe0bd;font-size:.76rem">✅ Pièces purgées le '+esc(pg.date)+' (RGPD) · seule la cession est conservée.</div>';
   if(pg.state==='imminente') return '<div style="margin:4px 0 10px;padding:8px 11px;border-radius:9px;background:rgba(200,90,90,.14);border:1px solid #c85a5a66;color:#ffb3b3;font-size:.76rem">⏳ Purge en cours — pièces supprimées à la prochaine exécution (~4h).</div>';
   return '<div style="margin:4px 0 10px;padding:8px 11px;border-radius:9px;background:rgba(202,164,90,.13);border:1px solid #caa45a55;color:#e7c98a;font-size:.76rem">🕒 Purge programmée le '+esc(pg.date)+(pg.daysLeft!=null?(' · dans '+pg.daysLeft+' j'):'')+' (RGPD).</div>';
 }

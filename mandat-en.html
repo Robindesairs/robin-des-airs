@@ -104,8 +104,16 @@ input,select,textarea{width:100%;padding:11px 14px;border:1.5px solid var(--bord
    (plus de rond ni de coche visibles → « on dirait que ça ne clique pas »). On restaure le natif. */
 input[type=radio],input[type=checkbox]{width:auto;height:auto;min-height:0;padding:0;margin:0;border:0;border-radius:0;background:none;-webkit-appearance:auto;appearance:auto;box-shadow:none;accent-color:var(--green-deep)}
 .wa-phone-row{display:flex;gap:8px;align-items:stretch}
-.wa-phone-row .wa-indicatif-select{width:auto;flex:0 0 auto;max-width:50%}
+.pays-pick-wrap{position:relative;flex:0 0 auto;max-width:50%}
+.pays-pick-wrap .wa-indicatif-select{width:100%}
 .wa-phone-row .wa-national-input{flex:1 1 auto;width:auto}
+/* Menu pays custom : remplace <datalist>, non fiable sur Safari iOS (n'affiche aucune
+   suggestion cliquable — champ figé sur la valeur par défaut "France"). */
+.pays-dd{display:none;position:absolute;top:calc(100% + 4px);left:0;z-index:40;background:#fff;border:1.5px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.16);max-height:240px;overflow-y:auto;min-width:230px}
+.pays-dd.open{display:block}
+.pays-dd-item{padding:9px 12px;font-size:13.5px;cursor:pointer;white-space:nowrap;font-family:'Montserrat',sans-serif}
+.pays-dd-item:hover{background:var(--green-tint)}
+.pays-dd-empty{padding:9px 12px;font-size:12.5px;color:var(--muted);font-style:italic}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(0,200,122,.15)}
 input.ro{background:var(--green-tint);border-color:#B8DDC9;color:var(--green-deep);font-weight:600}
 textarea{resize:vertical;min-height:72px}
@@ -208,13 +216,14 @@ h1.success-title{margin:0 auto 10px}
 .signing-summary{background:#EFF9F4;border:1.5px solid #00C87A;border-radius:10px;padding:18px 20px;margin-bottom:14px}
 .signing-summary .ss-title{font-weight:800;color:#0B1F3A;font-size:15px;margin-bottom:10px}
 .signing-summary ul{margin:0;padding-left:20px}
-.signing-summary li{font-size:13px;line-height:1.7;color:#1a2436;margin-bottom:5px}
+.signing-summary li{font-size:14.5px;line-height:1.7;color:#1a2436;margin-bottom:7px}
 .signing-summary .ss-note{font-size:12px;color:#047857;font-style:italic;margin-top:10px;margin-bottom:0}
 details.mandat-full>summary{cursor:pointer;list-style:none;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#047857;background:#F7F8FA;border:1px solid #E2E6EE;border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:8px}
 details.mandat-full>summary:hover{background:#EFF9F4}
 details.mandat-full>summary::-webkit-details-marker{display:none}
 details.mandat-full>summary::after{content:'▾';margin-left:auto}
 details.mandat-full[open]>summary{margin-bottom:12px}
+.addr-summary-print{display:none}
 @media print{
   /* N'imprimer QUE le mandat rempli (parties + texte complet + signature), même depuis l'écran de succès. */
   body{background:#fff !important}
@@ -226,6 +235,10 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   #successScreen{display:none !important}
   /* Masquer l'interface interactive (boutons, aide à signer), on garde le contenu du mandat et la signature. */
   #btnAddPax,.btn-submit,.success-cta,.sig-clear,#sigPh{display:none !important;visibility:hidden !important}
+  /* Adresses des co-passagers : le résumé dédoublonné remplace les champs de saisie bruts
+     (menu « même adresse que » notamment, qui n'a aucun sens imprimé). */
+  .paddr-block{display:none !important}
+  .addr-summary-print{display:block !important;visibility:visible !important}
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 .lang-pill-top{font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.7);text-decoration:none;border:1px solid rgba(201,169,110,.4);padding:4px 10px;margin-right:6px}
@@ -258,7 +271,6 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     </div>
   </div>
   <div class="doc-title">Assignment-of-Claim Agreement</div>
-  <div class="doc-subtitle">Cession de créance née ou à naître, à titre de recouvrement (art. 1321 C. civ.) · CE 261/2004</div>
 </div>
 <!-- HÉRO MONTANT -->
 <div class="doc-section">
@@ -273,7 +285,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       <div class="amount-tag">✅ Net estimé*</div>
       <div class="amount-num net" id="hNet">Jusqu'à 450 €</div>
       <div class="amount-sub">dans votre poche</div>
-      <div class="formula-box" id="hFormula">Exemple si succès : 600 € − 150 € (notre 25 %) = 450 €</div>
+      <div class="formula-box" id="hFormula">Exemple : sur 600 € recouvrés, vous recevez 450 € (prix de cession 75 % du recouvré, amiable)</div>
     </div>
   </div>
   <div class="amount-reserve">*Estimation. <strong>0 € à payer si nous ne récupérons rien.</strong> Montant final selon l'éligibilité de votre vol (CE 261/2004).</div>
@@ -295,6 +307,10 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       </div>
     </div>
   </div>
+  <!-- Résumé des adresses de TOUS les cédants (groupe) : visible uniquement à l'impression/PDF
+       (le contrat signé doit identifier chaque cédant, art. 1321 C. civ.), avec dédoublonnage
+       automatique si plusieurs passagers partagent la même adresse — voir buildAddressSummaryForPrint(). -->
+  <div id="addrSummaryPrint" class="addr-summary-print"></div>
 </div>
 <!-- INFORMATIONS PERSONNELLES -->
 <div class="doc-section">
@@ -314,8 +330,10 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="field-row">
     <label>WhatsApp <span class="req">*</span></label>
     <div class="wa-phone-row">
-      <input type="text" id="wa-indicatif" class="wa-indicatif-select" list="pays-list" aria-label="Pays ou indicatif" placeholder="Pays ou +indicatif" autocomplete="off" oninput="syncWa()" value="🇫🇷 France +33">
-      <datalist id="pays-list"></datalist>
+      <div class="pays-pick-wrap">
+        <input type="text" id="wa-indicatif" class="wa-indicatif-select" aria-label="Pays ou indicatif" placeholder="Pays ou +indicatif" autocomplete="off" onfocus="openPaysDD('wa-indicatif','wa-indicatif-dd')" oninput="filterPaysDD('wa-indicatif','wa-indicatif-dd');syncWa()" value="🇫🇷 France +33">
+        <div class="pays-dd" id="wa-indicatif-dd"></div>
+      </div>
       <input type="tel" id="wa-national" class="wa-national-input" inputmode="numeric" autocomplete="tel-national" placeholder="06 12 34 56 78" oninput="syncWa()">
     </div>
     <input type="hidden" id="wa">
@@ -325,7 +343,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     <label>✉️ Email <span class="req">*</span></label>
     <input type="hidden" id="em">
     <input type="email" id="em-perso" autocomplete="email" placeholder="vous@exemple.com" required oninput="clearErr('emErr')">
-    <div class="ferr" id="emErr">Email requis pour la validité du contrat (signature électronique, art. 26 IDAS)</div>
+    <div class="ferr" id="emErr">Email requis pour la validité du contrat (signature électronique eIDAS — votre lien de signature personnel y est envoyé)</div>
     <div style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5">Indispensable pour confirmer votre signature et vous tenir informé de votre dossier.</div>
   </div>
   <div class="field-row">
@@ -338,7 +356,10 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="field-row" id="rapBlock" style="display:none">
     <label>📞 Numéro habituel pour vous appeler <span class="req">*</span></label>
     <div class="wa-phone-row">
-      <input type="text" id="rap-indicatif" class="wa-indicatif-select" list="pays-list" aria-label="Pays ou indicatif" placeholder="Pays ou +indicatif" autocomplete="off" oninput="syncRap(true)" value="🇫🇷 France +33">
+      <div class="pays-pick-wrap">
+        <input type="text" id="rap-indicatif" class="wa-indicatif-select" aria-label="Pays ou indicatif" placeholder="Pays ou +indicatif" autocomplete="off" onfocus="openPaysDD('rap-indicatif','rap-indicatif-dd')" oninput="filterPaysDD('rap-indicatif','rap-indicatif-dd');syncRap(true)" value="🇫🇷 France +33">
+        <div class="pays-dd" id="rap-indicatif-dd"></div>
+      </div>
       <input type="tel" id="rap-national" class="wa-national-input" inputmode="numeric" autocomplete="tel-national" placeholder="06 12 34 56 78" oninput="syncRap(true)">
     </div>
     <input type="hidden" id="tel-rappel">
@@ -346,12 +367,12 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   </div>
   <div class="field-row">
     <label>Adresse postale <span class="req">*</span></label>
-    <div style="font-size:12px;color:#667;margin:-2px 0 6px">Quartier, ville et pays suffisent, <strong>pas besoin</strong> de code postal ni de numéro de rue.</div>
-    <textarea id="addr" placeholder="Ex. : Médina, Dakar, Sénégal&#10;(ou : 12 rue de la Paix, 75001 Paris, France)" rows="3" oninput="updateParties()"></textarea>
+    <div style="font-size:12px;color:#667;margin:-2px 0 6px"><strong>Adresse la plus complète possible</strong> (numéro, rue, code postal, ville, pays) — requise pour identifier le cédant (cession de créance, art. 1321 C. civ.). Si vous n'avez ni numéro ni code postal, indiquez au minimum <strong>quartier, ville et pays</strong>.</div>
+    <textarea id="addr" placeholder="Ex. : Médina, Dakar, Sénégal&#10;(ou : 12 rue de la Paix, 75001 Paris, France)" rows="3" oninput="updateParties();refreshAddrReuseOptions()"></textarea>
     <div class="ferr" id="addrErr">Address required for the agreement</div>
   </div>
   <div style="font-size:12px;color:var(--text);font-style:italic;padding:10px 14px;background:var(--green-tint);border-left:3px solid var(--green-deep);border-radius:0 6px 6px 0;margin-top:4px">
-    💶 Your bank details will be collected later for payment of your net share (75%) within 5 business days after collection.
+    💶 Vos coordonnées bancaires seront collectées ultérieurement pour le versement de votre <strong>prix de cession (75&nbsp;% du recouvré en amiable, 60&nbsp;% en contentieux)</strong> sous 5 jours ouvrés après encaissement effectif.
   </div>
 </div>
 <!-- VOL CONCERNÉ -->
@@ -367,6 +388,10 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     <div>
       <label>PNR / Booking</label>
       <input type="text" id="pnr" placeholder="ABC123" class="ro">
+    </div>
+    <div>
+      <label>N° billet (optionnel)</label>
+      <input type="text" id="billet" placeholder="057-1234567890" class="ro">
     </div>
     <div>
       <label>Incident <span class="req">*</span></label>
@@ -405,8 +430,9 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       </div>
       <div>
         <label>Flight date <span class="req">*</span></label>
-        <input type="date" id="fdate" oninput="updateParties()">
-        <div class="ferr" id="fdErr">Date required</div>
+        <input type="text" id="fdate" inputmode="numeric" maxlength="10" placeholder="JJ/MM/AAAA" autocomplete="off"
+               oninput="autoFmtDate(this); updateParties()">
+        <div class="ferr" id="fdErr">Date required (format JJ/MM/AAAA)</div>
       </div>
     </div>
     <div class="field-row duo">
@@ -457,28 +483,32 @@ details.mandat-full[open]>summary{margin-bottom:12px}
 </div>
 <!-- CLAUSES DU CONTRAT DE CESSION -->
 <div class="doc-section">
-  <div class="sec-title">⚖️ Terms of the assignment-of-claim agreement (for collection purposes)</div>
+  <div class="sec-title">⚖️ Conditions du contrat de cession de créance</div>
   <div class="signing-summary">
     <div class="ss-title">📝 Ce que vous signez, l'essentiel</div>
     <ul>
-      <li>You instruct <strong>Robin des Airs</strong> to recover your compensation (up to €600) <strong>and</strong> your expenses.</li>
-      <li><strong>25 % seulement si on récupère. Sinon 0 €</strong> aucune avance à aucun stade.</li>
-      <li>You receive <strong>75% net</strong>, paid within 5 business days after collection.</li>
-      <li>The airline pays <strong>into the Robin des Airs account</strong> (never yours).</li>
-      <li>Exclusive 24 months · <strong>14-day withdrawal</strong> free of charge · connections covered.</li>
+      <li>💶 <strong>450&nbsp;€ sur 600&nbsp;€</strong> dans votre poche si on récupère à l'amiable (75&nbsp;%), versés sous 5 jours ouvrés — 0&nbsp;€ d'avance, jamais. <span style="font-size:11px;color:#5b6b82">(Barème complet selon la phase&nbsp;: Article&nbsp;4)</span></li>
+      <li>🛡️ <strong>Rien récupéré = rien payé</strong>&nbsp;: 0&nbsp;€ de votre poche, et votre créance vous revient automatiquement.</li>
+      <li>🤝 Concrètement, vous nous <strong>vendez votre créance</strong> (jusqu'à 600&nbsp;€ par passager)&nbsp;: Robin des Airs devient propriétaire du dossier et se bat en son propre nom — la compagnie paie sur notre compte, <strong>vous n'avez plus rien à gérer</strong>.</li>
+      <li>📅 Exclusif <strong>18 mois</strong> (résiliation libre après 12 mois si pas d'assignation) · <strong>rétractation 14 jours</strong> sans frais · correspondances couvertes.</li>
     </ul>
     <p class="ss-note">The full agreement, in plain language, is right below, nothing to pay to read it 🙂</p>
   </div>
   <details class="mandat-full">
     <summary>📄 Read the full agreement (all the terms)</summary>
   <div class="clause le">
-    <span class="cnum">Article 1, Purpose, assignment regime and case email address</span>
-    <div class="plain">💡 <strong>In plain terms:</strong> You entrust Robin des Airs with recovering the money the airline owes you, by assigning it your claim so that it collects it in your place. You remain the beneficiary (you receive 75%) and you keep your consumer status, hence access to mediation. Connecting flight? It is the final arrival that counts, and it is covered.</div>
-    This instrument is an <strong>ASSIGNMENT-OF-CLAIM AGREEMENT</strong> granted <strong>FOR COLLECTION PURPOSES ONLY</strong> (Articles 1321 et seq. of the French Civil Code). The <strong>Assignor</strong> (the passenger) assigns to Robin des Airs (the <strong>Assignee</strong>), for collection purposes, its born or future claim under <strong>Regulation (EC) No 261/2004</strong> fixed compensation (art. 7), reimbursements and care (arts. 8 and 9) and, where applicable, further damage (art. 12) arising from the delay, cancellation or denied boarding that is the subject of this instrument (the «&nbsp;Incident&nbsp;»).
+    <span class="cnum">Article 1, Objet et régime de cession</span>
+    <div class="plain">💡 <strong>In plain terms:</strong> Vous <strong>vendez votre créance</strong> à Robin des Airs, qui devient propriétaire du dossier et le recouvre en son nom propre. Le prix de votre créance dépend de ce qui est effectivement récupéré (75&nbsp;% du recouvré en amiable, 60&nbsp;% si tribunal, 0&nbsp;€ si rien). Vol avec correspondance ? C'est l'arrivée finale qui compte, et c'est couvert.</div>
+    Le présent acte est un <strong>CONTRAT DE CESSION DE CRÉANCE PURE ET SIMPLE</strong> (articles 1321 et suivants du Code civil). Le <strong>Cédant</strong> (le passager) cède à Robin des Airs (le <strong>Cessionnaire</strong>), qui acquiert <strong>en son nom propre et pour son propre compte</strong>, sa créance née ou à naître au titre du <strong>Règlement (CE) n° 261/2004</strong>&nbsp;: indemnité forfaitaire (art. 7), remboursements et prise en charge (art. 8 et 9) et, le cas échéant, préjudice complémentaire (art. 12), liée au retard, à l'annulation ou au refus d'embarquement objet du présent acte (l'«&nbsp;Incident&nbsp;»).
     <br><br>
-    <strong>Assignment for collection purposes</strong> (and not a full outright sale-assignment). Robin des Airs collects as assignee and pays the Assignor its net share (75%) under the terms of Article 5. The claim is neither acquired definitively for value, nor resold: the economic value recovered remains allocated to the Assignor, subject only to deduction of the fee (Article 4).
+    <strong>Transfert de propriété et de risque.</strong> La cession opère <strong>transfert intégral de la créance</strong> au Cessionnaire&nbsp;: à compter de la signature, Robin des Airs en est seul propriétaire, l'exerce en son nom, assume seule l'aléa du recouvrement et <strong>supporte sans recours contre le Cédant</strong> l'ensemble des frais engagés (avocat, huissier, greffe, plateforme). Le Cédant ne supporte aucun frais et ne peut être appelé en garantie de l'insuccès.
     <br><br>
-    <strong>Deferred enforceability, preservation of mediation.</strong> Between the parties, the assignment takes effect upon signature (art. 1321 French Civil Code). However, it is <strong>NOT notified to the carrier</strong> for as long as the amicable phase and consumer mediation have not been conducted: during that phase, Robin des Airs acts <strong>ON BEHALF OF THE ASSIGNOR</strong>, who <strong>EXPRESSLY RETAINS CONSUMER STATUS</strong> and access to consumer mediation (arts. L.611-1 et seq. of the French Consumer Code). The assignment is made enforceable against the carrier (assigned debtor) only by its notification (art. 1324 French Civil Code), which occurs only at the litigation stage, after failure of mediation (Article 5 bis).
+    <strong>Prix de cession.</strong> Le prix de cession est <strong>variable et aléatoire</strong> (articles 1108 et 1964 du Code civil), indexé sur le montant effectivement encaissé par le Cessionnaire&nbsp;: il est défini à l'<strong>Article 4</strong>. Le Cédant accepte expressément ce caractère aléatoire&nbsp;: si aucune somme n'est recouvrée, le prix est nul et le Cédant ne peut prétendre à aucune somme.
+    <br><br>
+    <strong>Transparence sur l'aléa et évaluation éclairée du Cédant.</strong> Le Cédant <strong>déclare expressément avoir reçu, préalablement à la signature</strong>, les éléments d'information lui permettant d'évaluer souverainement l'aléa du recouvrement, notamment&nbsp;: (i) la <strong>distance du vol</strong> et le <strong>montant forfaitaire CE&nbsp;261/2004</strong> potentiellement dû&nbsp;; (ii) le <strong>taux moyen de recouvrement</strong> historique du Cessionnaire pour la compagnie concernée (« matrice compagnies », mise à disposition sur simple demande et publiée sur <strong>robindesairs.eu/transparence</strong>)&nbsp;; (iii) les <strong>causes principales d'échec</strong> connues (insolvabilité, prescription, circonstances extraordinaires, juridiction non-UE)&nbsp;; (iv) la <strong>durée moyenne de procédure</strong> (12 à 24 mois). Le Cédant reconnaît avoir disposé du temps nécessaire à cette évaluation et ne pas s'être engagé sous la pression. Cette information sincère et complète exclut tout vice du consentement, lésion ou défaut de cause au sens de l'article 1131 du Code civil.
+    <br><br>
+    <strong>Créance contestée — transfert d'aléa (absence de retrait litigieux).</strong> La créance cédée présente un caractère <strong>incertain et contesté</strong>&nbsp;: son existence et son quantum sont susceptibles d'être discutés par le débiteur (le transporteur aérien). Ce caractère incertain fonde le prix variable et aléatoire (Article 4) et le transfert intégral de l'aléa au Cessionnaire. En revanche, <strong>aucun procès n'étant pendant à la date de la cession</strong> et aucune contestation sur le fond du droit n'ayant été élevée en justice, la créance n'est <strong>pas litigieuse au sens des articles 1699 et 1700 du Code civil</strong>&nbsp;: le transporteur débiteur cédé <strong>ne dispose d'aucune faculté de retrait litigieux</strong> (Article 5 bis).
+    <br><br><strong>Réalité économique du transfert (rejet de la requalification en mandat).</strong> La qualification de cession — et non de mandat — repose sur la <strong>réalité économique de l'opération</strong>, seul critère souverainement retenu par le juge&nbsp;: (i) le Cessionnaire agit <strong>en son nom propre et pour son propre compte</strong>, et non au nom du Cédant&nbsp;; (ii) il <strong>supporte seul et sans recours</strong> l'intégralité de l'aléa et des frais (Articles 4 et 5 bis), le Cédant ne pouvant jamais être appelé en garantie de l'insuccès ni tenu d'aucune avance&nbsp;; (iii) la cession est <strong>notifiée au débiteur cédé</strong> (Articles 1 bis et 6), ce qu'un mandat de recouvrement n'emporte pas&nbsp;; (iv) le Cédant <strong>perd la maîtrise du dossier</strong> (clause de non-instruction, Article 1 bis). Ces éléments caractérisent un <strong>véritable transfert de propriété</strong> de la créance et excluent la qualification de mandat.
     <br><br>
     <strong>Connections.</strong> Where the journey includes one or more connections under a <strong>single booking</strong>, the assignment covers <strong>the entire journey</strong>&nbsp;: compensation is determined by the <strong>final destination</strong> and the <strong>total distance</strong>, the delay being assessed at <strong>arrival at the final destination</strong> (CJEU, 26 February 2013, <em>Folkerts</em>, C-11/11).
     <br><br>
@@ -490,148 +520,156 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     <strong>Language.</strong> This agreement is a <strong>bilingual instrument</strong> drawn up in <strong>French and English</strong>, the <strong>French version being the only authoritative one</strong>. The Assignor authorises Robin des Airs to <strong>establish, produce and rely on the English version</strong> (or a faithful translation) before the airline and any third party. In the event of any discrepancy, <strong>the signed French original prevails</strong>. The signature covers the instrument in both languages.
   </div>
   <div class="clause le">
-    <span class="cnum">Article 1 bis, Recovery phases and notification of the assignment</span>
-    <div class="plain">💡 <strong>In plain terms:</strong> As long as we settle amicably and in mediation, we act for you, without disclosing the assignment to the airline: you remain a consumer. If we have to go to court, we then notify the assignment and it is <strong>always a lawyer</strong> who pleads, Robin des Airs never pleads alone.</div>
-    The assignment (Article 1) is granted <strong>upon signature between the parties</strong>, but its enforceability against the carrier is organised in two stages, in the sole interest of the Assignor&nbsp;:
+    <span class="cnum">Article 1 bis, Notification de la cession et indépendance d'action</span>
+    <div class="plain">💡 <strong>In plain terms:</strong> À partir de la signature, Robin des Airs devient propriétaire de la créance et agit <strong>en son nom propre</strong> du début à la fin. La cession est notifiée à la compagnie dès la première mise en demeure&nbsp;: à partir de là, la compagnie ne peut plus payer qu'à nous. Si l'affaire va au tribunal, c'est toujours un avocat qui plaide.</div>
+    <strong>Effet immédiat.</strong> La cession produit ses effets <strong>entre les parties dès la signature</strong> (art. 1321 C. civ.). The Assignee est, à compter de cette date, <strong>seul titulaire</strong> de la créance et agit <strong>exclusivement en son nom propre et pour son propre compte</strong> à tous les stades (réclamation, mise en demeure, médiation éventuelle, procédure judiciaire), sans représenter le Cédant.
     <br><br>
-    <strong>(1) Amicable phase and mediation, assignment NOT notified.</strong> Robin des Airs presents, follows up and pursues the claim <strong>ON BEHALF OF THE ASSIGNOR</strong> with the airline and then, where applicable, with the competent consumer mediation body (mandatory prior mediation, Decree No 2025-772 of 5 August 2025). The Assignor retains consumer status and access to mediation&nbsp;; the assignment is not notified to the carrier during this phase.
+    <strong>Notification immédiate au transporteur.</strong> La cession est <strong>notifiée au transporteur (débiteur cédé) dès le premier acte formel</strong> de recouvrement (réclamation officielle ou mise en demeure adressée par le Cessionnaire ou son avocat), conformément à l'<strong>article 1324 du Code civil</strong>. À compter de cette notification, <strong>seul le paiement effectué entre les mains du Cessionnaire est libératoire</strong>.
     <br><br>
-    <strong>(2) Litigation phase, notification of the assignment.</strong> If mediation fails, Robin des Airs notifies the assignment to the carrier (art. 1324 French Civil Code)&nbsp;; from that notification, only payment made into the hands of Robin des Airs is discharging, and Robin des Airs acts in its own name, as assignee, for contentious recovery.
+    <strong>Clause de non-instruction.</strong> La créance étant la propriété du Cessionnaire, le Cédant <strong>ne peut donner aucune instruction</strong> au Cessionnaire quant au choix de la juridiction, à la stratégie procédurale, à l'opportunité ou aux modalités d'une transaction, ni au moment du dépôt de l'assignation. The Assignee conduit seul le dossier dans son propre intérêt économique et apprécie librement la viabilité des dossiers avant d'engager une procédure judiciaire. Le Cédant est tenu informé des étapes clés à titre de courtoisie, sans que cette information ne constitue une consultation ni un mandat.
     <br><br>
-    <strong>Procedural discipline.</strong> The regime enforceable against the carrier is fixed and notified before the relevant act&nbsp;; Robin des Airs invokes <strong>only one regime per instance</strong> in order to preserve its standing to act.
-    <br><br>
-    <strong>Representation in court by a lawyer.</strong> Robin des Airs carries out no activity reserved to lawyers and <strong>never appears alone before a court</strong>. <strong>Any judicial proceedings are necessarily conducted by a lawyer registered with a bar</strong>, appointed for that purpose, who alone ensures representation and pleading. The sole purpose of the assignment is to <strong>secure recovery</strong> and in no way to allow Robin des Airs to plead in person.
-    <br><br>
-    This arrangement changes neither the fee (Article 4), nor the withdrawal right (Article 9), nor the obligation to pay the Assignor its net share (75%).
+    <strong>Représentation en justice par avocat.</strong> The Assignee n'exerce aucune activité réservée aux avocats et <strong>ne se présente jamais seul devant une juridiction</strong>. <strong>Toute procédure judiciaire est obligatoirement conduite par un avocat inscrit à un barreau</strong>, mandaté par le Cessionnaire à ses frais exclusifs, qui assure seul la représentation et la plaidoirie.
   </div>
   <div class="clause">
-    <span class="cnum">Article 2, Term</span>
-    <div class="plain">💡 <strong>In plain terms:</strong> The agreement lasts 24 months. It can be ended by either side in the event of a serious problem (15 days' notice). And if the amicable steps do not succeed, you may freely terminate it.</div>
-    This agreement is granted for <strong>24 months</strong> from signature. This term is necessary to handle complex cases involving follow-ups, mediation and court proceedings if needed. It may be terminated by email at any time in the event of <strong>serious breach, established fraud or persistent non-cooperation</strong> by one of the parties, with 15 days' notice. In addition, where the <strong>amicable phase has been exhausted without result</strong> and no court proceedings have been brought, the Assignor may <strong>freely terminate (for convenience)</strong> by email, with 15 days' notice, free of charge&nbsp;; the claim is then <strong>automatically re-assigned</strong> to it (Article 5 bis).
+    <span class="cnum">Article 2, Durée et facultés de résiliation</span>
+    <div class="plain">💡 <strong>In plain terms:</strong> Le contrat dure <strong>18 mois</strong>. Il peut être arrêté à tout moment en cas de problème grave (préavis 15 jours). Et si on n'a toujours pas saisi le tribunal après 12 mois, vous pouvez y mettre fin librement, sans frais.</div>
+    Le présent contrat est consenti pour <strong>18 mois</strong> à compter de la signature. Cette durée tient compte des délais réels de traitement (relances, négociation, et le cas échéant procédure judiciaire). Il peut être résilié par email à tout moment&nbsp;:
+    <br><br>
+    <strong>(i) Résiliation pour faute&nbsp;:</strong> en cas de <strong>faute grave, fraude avérée ou non-coopération persistante</strong> de l'une des parties, avec un préavis de 15 jours.
+    <br><br>
+    <strong>(ii) Résiliation libre pour convenance (Cédant) après épuisement de la phase amiable&nbsp;:</strong> lorsque la <strong>phase amiable a été épuisée sans résultat</strong> et qu'aucune procédure judiciaire n'a été engagée, le Cédant peut <strong>résilier librement</strong> par email, avec un préavis de 15 jours, sans frais.
+    <br><br>
+    <strong>(iii) Résiliation libre pour convenance (Cédant) après 12 mois sans assignation&nbsp;:</strong> à l'expiration d'un délai de <strong>12 mois</strong> à compter de la signature, et <strong>tant qu'aucune assignation n'a été déposée</strong> par le Cessionnaire ou son avocat, le Cédant peut <strong>résilier librement</strong> par email, avec un préavis de 15 jours, sans frais ni indemnité.
+    <br><br>
+    Dans tous les cas de résiliation, la créance est <strong>rétrocédée de plein droit</strong> au Cédant (Article 5 bis) et le Cessionnaire supporte seul les frais déjà engagés, sans recours.
   </div>
   <div class="clause">
     <span class="cnum">Article 3, Exclusivity & anti-circumvention</span>
     <div class="plain">💡 <strong>In plain terms:</strong> In the meantime, do not entrust the same case to anyone else and do not negotiate alone with the airline without telling us.</div>
-    This agreement is <strong>exclusive</strong>. As the claim is assigned to Robin des Airs (Article 1), the Assignor undertakes, for the term of the agreement, <strong>not to assign or entrust the same case to a third party</strong>, nor to negotiate directly with the airline for the same Incident <strong>without first informing Robin des Airs</strong>. Only an agreement entered into <strong>in bad faith, for the sole purpose of evading the fee</strong> due to Robin des Airs, engages the Assignor's liability and leaves it liable for that fee&nbsp;; a good-faith step by the Assignor entails no penalty.
+    Le présent contrat est <strong>exclusif</strong>. La créance étant cédée à Robin des Airs (Article 1) et n'appartenant plus au Cédant à compter de la signature, ce dernier s'engage, pendant la durée du contrat, à <strong>ne pas céder à un tiers</strong> cette même créance dont il n'est plus titulaire, ni à <strong>négocier directement avec la compagnie</strong> pour le même Incident <strong>sans en informer préalablement Robin des Airs</strong>. Seul un accord conclu <strong>de mauvaise foi, dans le seul but de contourner la cession</strong>, engage la responsabilité du Cédant&nbsp;; ce dernier devra alors reverser au Cessionnaire <strong>l'intégralité des sommes perçues</strong> de la compagnie, à charge pour le Cessionnaire de lui verser le prix de cession (Article 4). Une démarche de bonne foi du Cédant n'entraîne aucune pénalité.
   </div>
   <div class="clause hi">
-    <span class="cnum">Article 4, Fees · No Win, No Fee</span>
-    <div class="plain">💡 <strong>In plain terms:</strong> On prend <strong>25 %</strong> en phase amiable et négociation (vous touchez 75 %), ou <strong>40 %</strong> si on doit aller au tribunal (vous touchez 60 %). Tout ça <strong>seulement</strong> en cas de succès. Si nous ne récupérons rien, vous ne payez rien et la créance vous revient. Avant tout dépôt au tribunal, on vous prévient par WhatsApp et email.</div>
-    La cession étant consentie à titre de recouvrement, la rémunération de Robin des Airs est fixée comme suit, <strong>uniquement en cas de succès</strong>&nbsp;:
+    <span class="cnum">Article 4, Prix de cession variable (aléatoire) · No Win, No Fee</span>
+    <div class="plain">💡 <strong>In plain terms:</strong> Robin des Airs vous <strong>achète votre créance</strong> à un <strong>prix variable</strong> qui dépend de ce qui est récupéré&nbsp;: vous recevez <strong>75 %</strong> du recouvré si on règle à l'amiable, <strong>60 %</strong> si on doit aller au tribunal, <strong>0 €</strong> si rien n'est récupéré. Les deux taux sont acceptés dès la signature, sans nouvel accord ultérieur. Si rien n'est récupéré, vous ne devez rien et la créance vous revient.</div>
+    <strong>Caractère aléatoire (art. 1108 et 1964 C. civ.).</strong> Le Cédant accepte expressément que le prix de cession soit <strong>variable et aléatoire</strong>, déterminé en fonction d'un événement futur incertain&nbsp;: le montant effectivement encaissé par le Cessionnaire au titre de la créance cédée. Cette qualification résulte du caractère incertain et contesté de la créance (Article 1) et reflète le transfert intégral à Robin des Airs de l'<strong>aléa économique du recouvrement</strong>.
     <br><br>
-    <strong>(i) Phase amiable et négociation pré-contentieuse</strong> (réclamation directe à la compagnie aérienne, mise en demeure officielle par l'avocat partenaire, négociation avec les conseils de la compagnie)&nbsp;:
+    <strong>Barème du prix de cession (acceptés dès la signature, sans nouvel accord ultérieur)</strong>&nbsp;:
+    <br><br>
+    <strong>(i) Recouvrement en phase amiable ou pré-contentieuse</strong> (réclamation à la compagnie, mise en demeure du Cessionnaire ou de son avocat, négociation pré-judiciaire)&nbsp;:
     <ul>
-      <li><strong>Robin des Airs</strong> conserve <strong>25&nbsp;% TTC</strong> du montant effectivement encaissé.</li>
-      <li><strong>The Assignor (you)</strong> perçoit <strong>75&nbsp;% nets</strong> versés sous 48&nbsp;h après encaissement effectif.</li>
-      <li><em>Exemple : sur 600&nbsp;€ recouvrés, <strong>150&nbsp;€ reviennent à Robin des Airs</strong> et <strong>450&nbsp;€ vous sont versés</strong>.</em></li>
+      <li><strong>Prix de cession versé au Cédant&nbsp;: 75&nbsp;%</strong> du montant effectivement encaissé par le Cessionnaire.</li>
+      <li>The Assignee conserve <strong>25&nbsp;%</strong> à titre de marge sur l'opération de cession.</li>
+      <li><em>Exemple : sur 600&nbsp;€ encaissés, le Cédant reçoit <strong>450&nbsp;€</strong> et le Cessionnaire conserve <strong>150&nbsp;€</strong>.</em></li>
     </ul>
-    <strong>(ii) Phase contentieuse</strong> (procédure judiciaire , assignation devant la juridiction compétente par l'avocat partenaire , engagée après échec des négociations pré-contentieuses)&nbsp;:
+    <strong>(ii) Recouvrement en phase contentieuse</strong> (assignation devant la juridiction compétente par l'avocat partenaire du Cessionnaire)&nbsp;:
     <ul>
-      <li><strong>Robin des Airs</strong> conserve <strong>40&nbsp;% TTC</strong> du montant effectivement encaissé. Cette majoration couvre intégralement les frais d'avocat partenaire, d'huissier, de greffe et de plateforme judiciaire, tous avancés par Robin des Airs.</li>
-      <li><strong>The Assignor (you)</strong> perçoit <strong>60&nbsp;% nets</strong> versés sous 48&nbsp;h après encaissement effectif.</li>
-      <li><em>Exemple : sur 600&nbsp;€ recouvrés, <strong>270&nbsp;€ reviennent à Robin des Airs</strong> et <strong>330&nbsp;€ vous sont versés</strong>.</em></li>
+      <li><strong>Prix de cession versé au Cédant&nbsp;: 60&nbsp;%</strong> du montant effectivement encaissé par le Cessionnaire.</li>
+      <li>The Assignee conserve <strong>40&nbsp;%</strong>. Cet écart reflète l'<strong>aléa procédural accru</strong> et la charge intégrale des frais (avocat, huissier, greffe, plateforme), supportée seule par le Cessionnaire sans recours contre le Cédant.</li>
+      <li><em>Exemple : sur 600&nbsp;€ encaissés, le Cédant reçoit <strong>330&nbsp;€</strong> et le Cessionnaire conserve <strong>270&nbsp;€</strong>.</em></li>
     </ul>
+    <br>
+    <strong>Application des deux taux : préavis 7 jours et faculté de résiliation libre avant assignation.</strong> Le Cédant reconnaît avoir pris connaissance des deux taux (75&nbsp;% amiable / 60&nbsp;% contentieux) <strong>avant la signature</strong> du présent contrat et les accepte <strong>tous deux dès la signature</strong>. Le passage de l'un à l'autre résulte de la décision du Cessionnaire, qui apprécie souverainement l'opportunité du contentieux (Article 1 bis, clause de non-instruction).
     <br><br>
-    <strong>Information préalable au passage en contentieux</strong>&nbsp;: le Cédant reconnaît avoir pris connaissance de la double tarification (25&nbsp;% / 40&nbsp;%) avant la signature des présentes et consent à l'application automatique du taux de 40&nbsp;% en cas de passage en phase contentieuse, sans qu'un nouvel accord ne soit requis. Robin des Airs s'engage néanmoins à <strong>informer le Cédant par WhatsApp et/ou email avant tout dépôt d'assignation</strong>. Le Cédant conserve à tout moment la faculté de mettre fin au dossier dans les conditions de l'article 9 (droit de rétractation) ou de l'article 2 (résiliation amiable après épuisement de la phase amiable).
+    Toutefois, afin de préserver une parfaite information du Cédant et d'écarter toute critique tirée d'une modification unilatérale du contrat (article R. 212-1, 3° du Code de la consommation), <strong>aucune assignation n'est déposée avant l'expiration d'un délai de 7 jours calendaires</strong> à compter d'une <strong>notification écrite</strong> au Cédant (WhatsApp ET email), précisant&nbsp;:
+    <ul>
+      <li>l'<strong>échec de la phase amiable</strong> et le passage envisagé en contentieux&nbsp;;</li>
+      <li>le <strong>nouveau taux de 60&nbsp;%</strong> qui s'appliquera mécaniquement à l'encaissement contentieux&nbsp;;</li>
+      <li>la <strong>faculté pour le Cédant de résilier librement</strong> le présent contrat par simple email avant l'expiration de ce délai, <strong>sans frais ni indemnité</strong>, la créance lui étant alors <strong>rétrocédée de plein droit</strong> (Articles 2 et 5 bis).
+      </li>
+    </ul>
+    À défaut de résiliation dans ce délai de 7 jours, le Cessionnaire est <strong>libre de déposer l'assignation</strong> sans nouvel accord du Cédant, le taux de 60&nbsp;% s'appliquant alors mécaniquement.
     <br><br>
-    Ces taux s'appliquent à <strong>l'ensemble des sommes recouvrées au titre de l'indemnité du Cédant</strong> (indemnité forfaitaire art. 7, remboursements et prise en charge art. 8 et 9, préjudice complémentaire art. 12). <strong>L'article 700 du Code de procédure civile, les dépens et les intérêts moratoires</strong> alloués par le juge sont conservés en intégralité par Robin des Airs et son avocat partenaire selon convention, et ne sont pas inclus dans la base de calcul du Cédant. En cas d'échec ou de non-recouvrement, <strong>aucune somme n'est due</strong> par le Cédant, aucune avance n'est exigée à aucun stade, et la créance lui est <strong>rétrocédée de plein droit</strong> («&nbsp;No Win No Fee&nbsp;»).
+    <strong>Absence de prix dû en cas d'échec.</strong> En cas de non-recouvrement, le prix de cession est <strong>nul</strong>&nbsp;: aucune somme n'est due par le Cédant, aucune avance n'est exigée à aucun stade, et la créance lui est <strong>rétrocédée de plein droit</strong> (Article 5 bis). The Assignee supporte seul les frais engagés à fonds perdus (« <strong>No Win No Fee</strong> »).
+    <br><br><strong>Contrepartie sérieuse en toute hypothèse (absence de prix dérisoire).</strong> Le prix de cession est <strong>déterminable</strong> par référence à un événement futur (articles 1591 et 1592 C. civ.)&nbsp;; son éventuelle valeur nulle en cas d'échec constitue l'<strong>essence même de l'aléa</strong> licitement accepté (article 1964 C. civ.), et non un défaut ou une vileté de prix. En contrepartie de la cession, le Cédant reçoit <strong>en toute hypothèse et dès la signature</strong> une <strong>valeur réelle et immédiate</strong>&nbsp;: la prise en charge intégrale du risque et de la totalité des frais de recouvrement (avocat, huissier, greffe, plateforme), l'immunité de tout recours en cas d'échec, et l'engagement de diligences immédiates. Cette contrepartie exclut toute nullité pour prix dérisoire ou défaut de contrepartie (article 1169 C. civ.).
     <br><br>
-    The split also applies to <strong>any compensation in kind</strong> (voucher, credit note, miles…) accepted for the case, calculated on its value&nbsp;; the Assignor undertakes not to accept such compensation without the agreement of Robin des Airs. The Assignor <strong>requires payment in cash (bank transfer)</strong> and <strong>expressly refuses, as of now, any voucher, credit note, miles or other service</strong> offered in lieu thereof&nbsp;: under <strong>Article 7(3) of Regulation (EC) No 261/2004</strong>, compensation in kind requires the passenger's signed agreement, which the Assignor does not give.
+    <strong>Sommes incluses et exclues du prix.</strong> Le barème ci-dessus s'applique exclusivement à l'<strong>indemnité forfaitaire</strong> (art. 7), aux <strong>remboursements et prise en charge</strong> (art. 8 et 9) et au <strong>préjudice complémentaire</strong> (art. 12) effectivement encaissés. L'<strong>article 700 du Code de procédure civile</strong>, les <strong>dépens</strong> et les <strong>intérêts moratoires</strong> alloués par le juge restent <strong>intégralement acquis au Cessionnaire et à son avocat</strong> (ils rémunèrent le risque et les frais procéduraux qu'il a supportés seul) et ne sont pas inclus dans la base de calcul du prix dû au Cédant.
+    <br><br>
+    <strong>Compensation en nature.</strong> Le barème s'applique également à toute compensation en nature (bon d'achat, avoir, miles…) acceptée par le Cessionnaire dans le cadre du recouvrement, calculée sur sa valeur. Le Cédant <strong>exige le paiement en numéraire (virement)</strong> et <strong>refuse expressément, dès à présent, tout bon d'achat, avoir, miles ou autre service</strong> proposé en lieu et place&nbsp;: conformément à l'<strong>article 7§3 du Règlement (CE) n° 261/2004</strong>, une compensation en nature suppose l'accord signé du passager, que le Cédant ne donne pas.
   </div>
-  <div class="clause le">
-    <span class="cnum">Article 4.1, Legal costs</span>
-    <div class="plain">💡 <strong>In plain terms:</strong> Lawyer and court costs are on us. You never pay anything upfront.</div>
-    Robin des Airs covers <strong>100% of lawyer, registry, bailiff and court-procedure costs incl. VAT</strong> linked to handling the case. The Assignor pays nothing upfront at any stage. Robin des Airs reserves the right to <strong>freely select the cases</strong> it considers viable before bringing court proceedings. Any sums awarded as <strong>procedural costs (Article 700 of the French Code of Civil Procedure, court costs)</strong> remain acquired by Robin des Airs, which advanced them&nbsp;; <strong>interest</strong> follows the fate of the assigned claim (Article 1).
-  </div>
-  <div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:var(--green-deep);font-weight:700;margin:14px 0 6px">Phase amiable (25 %)</div>
+  <div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:var(--green-deep);font-weight:700;margin:14px 0 6px">Recouvrement amiable — Prix de cession 75 %</div>
   <table class="fee-table">
-    <tr><th>Distance du vol</th><th>Indemnité légale / pax</th><th>Commission RDA (25 %)</th><th>Net client (75 %)</th></tr>
+    <tr><th>Distance du vol</th><th>Montant encaissé / pax</th><th>Marge cessionnaire (25 %)</th><th>Prix de cession (75 %)</th></tr>
     <tr><td>≤ 1 500 km</td><td>250 €</td><td>62,50 €</td><td class="em">187,50 €</td></tr>
     <tr><td>1 500-3 500 km (Afrique du Nord)</td><td>400 €</td><td>100 €</td><td class="em">300 €</td></tr>
     <tr><td>&gt; 3,500 km (Sub-Saharan Africa)</td><td>600 €</td><td>150 €</td><td class="em">450 €</td></tr>
   </table>
-  <div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:var(--green-deep);font-weight:700;margin:14px 0 6px">Phase contentieuse (40 %) , après accord exprès du Cédant</div>
+  <div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.18em;color:var(--green-deep);font-weight:700;margin:14px 0 6px">Recouvrement contentieux — Prix de cession 60 % (acceptés dès la signature, sans nouvel accord)</div>
   <table class="fee-table">
-    <tr><th>Distance du vol</th><th>Indemnité légale / pax</th><th>Commission RDA (40 %)</th><th>Net client (60 %)</th></tr>
+    <tr><th>Distance du vol</th><th>Montant encaissé / pax</th><th>Marge cessionnaire (40 %)</th><th>Prix de cession (60 %)</th></tr>
     <tr><td>≤ 1 500 km</td><td>250 €</td><td>112,50 €</td><td class="em">137,50 €</td></tr>
     <tr><td>1 500-3 500 km (Afrique du Nord)</td><td>400 €</td><td>180 €</td><td class="em">220 €</td></tr>
     <tr><td>&gt; 3,500 km (Sub-Saharan Africa)</td><td>600 €</td><td>270 €</td><td class="em">330 €</td></tr>
   </table>
-  <div style="font-size:11px;color:var(--muted);font-style:italic;margin:6px 0 14px">Note&nbsp;: l'article 700 du CPC, les dépens et les intérêts moratoires alloués par le juge restent acquis à Robin des Airs et à son avocat partenaire (Article 4.1). Ils ne sont pas inclus dans la base de calcul du Cédant.</div>
+  <div style="font-size:11px;color:var(--muted);font-style:italic;margin:6px 0 14px">Note&nbsp;: l'article 700 du CPC, les dépens et les intérêts moratoires alloués par le juge restent intégralement acquis au Cessionnaire et à son avocat (Article 4), en contrepartie de l'aléa et des frais qu'ils ont supportés seuls. Ils ne sont pas inclus dans la base de calcul du prix de cession.</div>
   <div class="clause pro">
-    <span class="cnum">Article 5, Payment, reimbursement of the 75% & protection of the Assignor</span>
-    <div class="plain">💡 <strong>In plain terms:</strong> The airline pays into OUR account, never yours. We pay you your 75% within 5 business days once the money is actually collected.</div>
-    The Assignor gives the airline an <strong>express and irrevocable</strong> instruction to pay any compensation, reimbursement and sum due <strong>exclusively into the dedicated bank account designated by Robin des Airs</strong>, to the exclusion of any other account, including the Assignor's. As the assignment is granted for collection purposes, the sums thus collected are <strong>held on behalf of the Assignor</strong>, subject only to deduction of the fee (Article 4), and do not constitute income of Robin des Airs beyond that fee.
+    <span class="cnum">Article 5, Encaissement et versement du prix de cession</span>
+    <div class="plain">💡 <strong>In plain terms:</strong> La compagnie paie sur le compte de Robin des Airs (qui est propriétaire de la créance). On vous verse votre prix de cession (75&nbsp;% ou 60&nbsp;% du recouvré) sous 5 jours ouvrés après encaissement effectif.</div>
+    La créance étant la propriété du Cessionnaire dès la signature (Article 1) et la cession étant notifiée au transporteur dès le premier acte formel de recouvrement (Article 1 bis), <strong>seul le paiement effectué sur le compte bancaire dédié du Cessionnaire est libératoire</strong>. Le Cédant donne instruction <strong>expresse et irrévocable</strong> à la compagnie aérienne de verser toute indemnité, tout remboursement et toute somme due <strong>exclusivement sur le compte bancaire dédié désigné par Robin des Airs</strong>, à l'exclusion de tout autre compte, y compris celui du Cédant. Les sommes encaissées constituent le <strong>produit du recouvrement de la créance acquise par le Cessionnaire</strong>&nbsp;; elles servent de base au calcul du prix de cession dû au Cédant (Article 4).
     <br><br>
-    Robin des Airs reverse au Cédant sa part nette (75%) sur l'IBAN communiqué dans le présent contrat dans un délai de <strong>5 jours ouvrés à compter de l'encaissement effectif et irrévocable</strong> des fonds (virement SEPA crédité, sans réserve ni rétrofacturation). <strong>À défaut d'IBAN en zone SEPA</strong>, le reversement s'effectue par tout moyen convenu avec le Cédant — <strong>Wave, Orange Money ou MTN Mobile Money</strong> — selon les coordonnées qu'il communique&nbsp;; les <strong>frais de transfert et de change éventuels sont à la charge de Robin des Airs</strong>, de sorte que la part nette (75&nbsp;%) du Cédant n'en soit pas diminuée (<strong>75&nbsp;% net, tout compris</strong>). <strong>Le Cédant choisit son mode de reversement parmi ces options</strong>&nbsp;; les coordonnées correspondantes (IBAN ou numéro mobile money) sont indiquées au présent contrat ou, à défaut, communiquées <strong>au moment du versement</strong>. Si la compagnie verse directement au Cédant, celui-ci s'engage à reverser sans délai la commission de 25% à Robin des Airs.
-  </div>
-  <div class="clause pro">
-    <span class="cnum">Article 5.1, Reimbursement, unreachable Assignor &amp; unclaimed funds</span>
-    <div class="plain">💡 <strong>In plain terms:</strong> Vos 75 % restent à vous. Si on n'arrive pas à vous joindre ou sans RIB valide, on garde l'argent à votre disposition et on continue de vous chercher, jamais pour nous.</div>
-    The net balance (75%) owed to the Assignor <strong>remains its property</strong>. If reimbursement cannot take place for want of valid bank details and/or because the Assignor cannot be reached, the funds are <strong>kept and held at its disposal</strong> by Robin des Airs, identified as funds held on its behalf, and constitute neither a product nor income of Robin des Airs. Robin des Airs makes <strong>reasonable efforts</strong> to make contact (WhatsApp, email, telephone then, failing that, <strong>registered letter</strong> to the last address provided), the Assignor undertaking to <strong>keep its contact details up to date</strong> (telephone, email, WhatsApp and postal address). <strong>Search costs&nbsp;:</strong> in the event of breach by the Assignor of this update obligation, the <strong>reasonable and justified costs</strong> actually incurred by Robin des Airs to locate it (registered letters, address search) are <strong>deductible from the sole sums held on its behalf</strong>, <strong>up to a limit of €30</strong> and <strong>on supporting evidence</strong>&nbsp;; this deduction applies only where <strong>recovered funds</strong> are held at its disposal and <strong>constitutes neither an advance nor a fee in the event of failure</strong> within the meaning of Article 4. Failing a useful response within <strong>six (6) months</strong> from the first reimbursement request, Robin des Airs may <strong>give the Assignor formal notice to receive the funds (art. 1345 French Civil Code)</strong> then <strong>discharge itself by depositing</strong> the sum with the <strong>Caisse des dépôts et consignations (art. 1345-1 French Civil Code)</strong>. The Assignor's right to reimbursement is <strong>time-barred after five (5) years (art. 2224 French Civil Code)</strong>. Reimbursement remains subject to identity and compliance checks (AML-CFT).
+    The Assignee verse au Cédant son <strong>prix de cession</strong> (75&nbsp;% du recouvré en amiable, 60&nbsp;% en contentieux — Article 4) sur l'IBAN communiqué dans le présent contrat dans un délai de <strong>5 jours ouvrés à compter de l'encaissement effectif et irrévocable</strong> des fonds (virement SEPA crédité, sans réserve ni rétrofacturation), sous réserve des vérifications d'identité et de conformité (LCB-FT). <strong>À défaut d'IBAN en zone SEPA</strong>, le versement s'effectue par tout moyen convenu avec le Cédant — <strong>Wave, Orange Money ou MTN Mobile Money</strong> — selon les coordonnées qu'il communique&nbsp;; les <strong>frais de transfert et de change éventuels sont à la charge du Cessionnaire</strong>, de sorte que le prix de cession ne soit pas diminué. Si la compagnie verse, en violation de la notification de cession, directement entre les mains du Cédant, ce dernier s'engage à <strong>reverser sans délai au Cessionnaire l'intégralité de la somme perçue</strong>, le Cessionnaire lui versant ensuite le prix de cession dû.
+    <br><br>
+    <strong>Cédant injoignable.</strong> Le prix de cession <strong>reste intégralement dû</strong>&nbsp;: la somme est conservée à la disposition du Cédant et versée dès contact rétabli, dans les conditions de l'<strong>article 6 bis des CGV</strong> (diligences de contact, mise en demeure et consignation art. 1345 s. C. civ., prescription de 5 ans). Le Cédant s'engage à tenir ses coordonnées à jour.
   </div>
   <div class="clause le">
-    <span class="cnum">Article 5 bis, Terms of the assignment, notification and re-assignment</span>
-    <div class="plain">💡 <strong>In plain terms:</strong> You assign us your claim so that we recover it. We only disclose it to the airline when going to court. If it fails, the claim reverts to you automatically.</div>
-    <strong>Subject of the assignment.</strong> The Assignor <strong>assigns to Robin des Airs, for collection purposes</strong>, the <strong>born or future compensation claim</strong> it holds against the <strong>operating air carrier</strong> that performed the flight (art. 2(b) of the Regulation), regardless of the commercial flight number or marketing carrier (<strong>codeshare</strong>), under <strong>Regulation (EC) No 261/2004</strong> for the Incident, including the <strong>fixed compensation</strong> (art. 7), <strong>reimbursements and expenses</strong> (arts. 8 and 9), <strong>further damage</strong> (art. 12), interest, penalties and ancillary amounts.
+    <span class="cnum">Article 5 bis, Modalités de la cession, absence de retrait litigieux et rétrocession</span>
+    <div class="plain">💡 <strong>In plain terms:</strong> Vous vendez votre créance à Robin des Airs, qui en devient propriétaire dès la signature. La compagnie est avertie dès la première mise en demeure. Si rien n'est récupéré ou si vous vous rétractez dans les 14 jours, la créance vous revient automatiquement.</div>
+    <strong>Objet et étendue de la cession.</strong> Le Cédant <strong>cède pleinement et définitivement</strong> à Robin des Airs la <strong>créance d'indemnisation née ou à naître</strong> qu'il détient à l'encontre du <strong>transporteur aérien effectif</strong> ayant réalisé le vol (art. 2 b) du Règlement), quel que soit le numéro de vol commercial ou la compagnie de commercialisation (<strong>partage de code / codeshare</strong>), au titre du <strong>Règlement (CE) n° 261/2004</strong> pour l'Incident, en ce compris l'<strong>indemnité forfaitaire</strong> (art. 7), les <strong>remboursements et frais</strong> (art. 8 et 9), le <strong>préjudice complémentaire</strong> (art. 12), intérêts, pénalités et accessoires. <strong>La créance d'un passager mineur n'entre pas dans la cession</strong>&nbsp;: elle fait l'objet du <strong>mandat spécial d'encaissement</strong> prévu à l'<strong>Article 9 bis</strong>.
     <br><br>
-    <strong>Effect between the parties.</strong> Under <strong>Articles 1321 to 1326 of the French Civil Code</strong>, the assignment takes effect <strong>between the parties upon signature</strong> and covers a <strong>determinable claim</strong> (parties, flight, date, EU&nbsp;261/2004 basis).
+    <strong>Effect between the parties.</strong> Under <strong>Articles 1321 to 1326 of the French Civil Code</strong>, the assignment takes effect <strong>between the parties upon signature</strong> and covers a <strong>determinable claim</strong> (parties, flight, date, EU&nbsp;261/2004 basis). The Assignee devient <strong>seul titulaire</strong> de la créance et l'exerce en son nom propre.
     <br><br>
-    <strong>Enforceability against the carrier (deferred).</strong> The assignment is <strong>enforceable against the carrier (assigned debtor) from its notification</strong> within the meaning of <strong>Article 1324 of the French Civil Code</strong>. This notification occurs only <strong>at the litigation stage, after failure of mediation</strong> (Article 1 bis)&nbsp;; the formal notice or the writ of summons sent at that stage by Robin des Airs <strong>constitutes notification of the assignment</strong>. From that notification, <strong>only payment made into the hands of Robin des Airs is discharging</strong>, and Robin des Airs is entitled to <strong>pursue recovery in its own name</strong>, by any amicable, administrative, judicial or arbitral means.
+    <strong>Opposabilité au transporteur (immédiate).</strong> La cession devient <strong>opposable au transporteur (débiteur cédé)</strong> au sens de l'<strong>article 1324 du Code civil</strong> <strong>dès le premier acte formel de recouvrement</strong> adressé au transporteur par le Cessionnaire ou son avocat (réclamation officielle ou mise en demeure), lequel <strong>vaut notification de la cession</strong>. À compter de cette notification, <strong>seul le paiement effectué entre les mains du Cessionnaire est libératoire</strong>, et le Cessionnaire agit en recouvrement <strong>en son nom propre et pour son propre compte</strong>, par toute voie amiable, administrative, judiciaire ou arbitrale.
     <br><br>
-    <strong>Collection-purposes character.</strong> The assignment is granted <strong>solely for collection purposes</strong>&nbsp;: Robin des Airs collects as assignee and <strong>pays the Assignor its net share (75%)</strong> under the terms of Article 5, less only the fee (Article 4). It changes neither the <strong>«&nbsp;No Win No Fee&nbsp;»</strong> character, nor the withdrawal right (Article 9), nor the <strong>consumer status</strong> of the Assignor maintained until notification.
+    <strong>Absence de droit litigieux et de retrait (art. 1699 et 1700 C. civ.).</strong> Aux termes de l'article 1700 du Code civil, une chose n'est litigieuse que «&nbsp;dès qu'il y a procès et contestation sur le fond du droit&nbsp;». À la date de la signature, <strong>aucune instance n'est pendante</strong> au sujet de la créance cédée et aucune contestation sur le fond n'a été élevée en justice&nbsp;: la créance, simplement <strong>incertaine et contestée</strong>, n'est <strong>pas litigieuse</strong> au sens de ces textes et le transporteur débiteur cédé <strong>ne peut exercer aucun retrait litigieux</strong> (art. 1699 C. civ.). La qualification de cession — et non de mandat — résulte de la <strong>réalité économique de l'opération</strong> (Article 1&nbsp;: action en nom propre, transfert intégral de l'aléa et des frais, notification au débiteur, clause de non-instruction), et non d'une étiquette formelle.
     <br><br>
-    <strong>Warranty and re-assignment.</strong> The Assignor <strong>warrants the existence</strong> of the claim and declares that it has not been the subject of any prior assignment, settlement or payment. Upon expiry of the agreement without recovery, in the event of closure for irrecoverability, or upon withdrawal within the Article 9 period, the claim is <strong>automatically re-assigned</strong> to the Assignor.
+    <strong>Prix réel de la cession — stipulation subsidiaire (pour le seul cas où un retrait litigieux serait néanmoins jugé recevable).</strong> À titre surabondant, si une juridiction devait, contre l'analyse qui précède, juger un retrait litigieux recevable, les parties conviennent <strong>irréfragablement entre elles</strong> que le « prix réel de la cession » est <strong>forfaitairement fixé</strong> au montant suivant, correspondant à la valeur économique que les parties ont assignée à la créance à la signature&nbsp;:
+    <ul>
+      <li><strong>75&nbsp;% du montant forfaitaire CE 261/2004</strong> applicable au vol (250&nbsp;€, 400&nbsp;€ ou 600&nbsp;€ selon la distance), par passager cédant&nbsp;;</li>
+      <li><strong>majoré des frais et loyaux coûts justifiés</strong> exposés par le Cessionnaire (frais d'avocat, d'huissier, de greffe, de plateforme judiciaire)&nbsp;;</li>
+      <li><strong>et des intérêts au taux légal</strong> à compter de la signature.</li>
+    </ul>
+    Cette détermination forfaitaire fait obstacle à toute fixation du prix à un montant inférieur, notamment en raison du caractère variable du prix de cession (Article 4)&nbsp;: le caractère aléatoire du prix régit la relation Cédant-Cessionnaire et n'est pas opposable au débiteur cédé exerçant le retrait litigieux. Toute fixation contraire serait inopposable au Cédant et au Cessionnaire.
     <br><br>
-    <strong>Continuity clause.</strong> If the assignment is, for any reason whatsoever, prohibited, refused or held unenforceable, Robin des Airs then acts <strong>in the name and on behalf of the Assignor</strong> on the basis of a <strong>recovery mandate (Articles 1984 et seq. of the French Civil Code)</strong>, the Assignor remaining the holder of the claim. The payment instruction in Article 5 continues to apply.
+    <strong>Garantie de sincérité et rétrocession.</strong> Le Cédant <strong>garantit la sincérité des éléments déclarés</strong> (identité, réservation confirmée, vol et date concernés) et, si la créance est <strong>déjà née</strong> à la signature, son existence&nbsp;; si la créance est <strong>à naître</strong> (perturbation en cours à la signature), il <strong>ne garantit pas la survenance</strong> de l'événement ouvrant droit à indemnisation (arrivée finale retardée de 3 heures ou plus), cet aléa étant intégralement transféré au Cessionnaire. Il déclare que la créance n'a fait l'objet d'aucune cession, transaction ni paiement antérieur. Le Cédant <strong>ne garantit ni la solvabilité du débiteur ni l'issue du recouvrement</strong>, dont l'aléa est intégralement transféré au Cessionnaire (Article 1). À l'extinction du contrat sans recouvrement, en cas de clôture pour irrécouvrabilité (Article 7 quater), ou en cas de rétractation dans le délai de l'Article 9, la créance est <strong>rétrocédée de plein droit</strong> au Cédant, sans frais ni indemnité de part et d'autre.
   </div>
   <div class="clause le">
-    <span class="cnum">Article 5 ter, Unenforceability of non-assignment clauses</span>
-    <div class="plain">💡 <strong>In plain terms:</strong> If the airline claims you were not allowed to assign the case to us, that is false: the European courts have settled it.</div>
-    The Assignor declares awareness of the airline's general conditions of carriage. <strong>Any clause of the general conditions of carriage prohibiting or restricting the assignment of the compensation claim due under Regulation (EC) No 261/2004 is unenforceable</strong>&nbsp;: the Court of Justice of the European Union has held that such a clause is <strong>contrary to Article 15 of the Regulation</strong> (CJEU, <strong>6 February 2025, Eventmedia Soluciones v Air Europa Líneas Aéreas, C-11/23</strong>). Accordingly, the airline may not rely on such a clause against the assignment granted to Robin des Airs (Articles 1 and 5 bis).
+    <span class="cnum">Article 5 ter, Validité de la cession et inopposabilité des clauses d'incessibilité</span>
+    <div class="plain">💡 <strong>In plain terms:</strong> La justice européenne a tranché deux fois récemment : (1) la cession de créance CE 261 est parfaitement valable et la compagnie ne peut l'interdire dans ses CGT ; (2) la cession ne change rien à la compétence des tribunaux, donc Robin des Airs peut agir devant le tribunal compétent comme l'aurait fait le passager.</div>
+    <strong>Validité de la cession et compétence du Cessionnaire (CJUE, 9 octobre 2025, Lufthansa c/ AirHelp, C-551/24).</strong> La Cour de justice de l'Union européenne a jugé que la cession d'une créance d'indemnisation au titre du Règlement (CE) n°&nbsp;261/2004 est <strong>parfaitement licite</strong> et que <strong>la cession n'a aucune incidence en tant que telle sur la détermination de la juridiction compétente</strong>&nbsp;: le cessionnaire peut invoquer les mêmes chefs de compétence que le cédant, et notamment l'article 7§1 du Règlement Bruxelles I bis (lieu de fourniture du service&nbsp;= aéroport de départ ou d'arrivée du vol, CJUE Rehder C-204/08).
+    <br><br>
+    <strong>Inopposabilité des clauses d'incessibilité (CJUE, 6 février 2025, Eventmedia c/ Air Europa, C-11/23).</strong> Le Cédant déclare avoir connaissance des conditions générales de transport de la compagnie. <strong>Toute clause des conditions générales de transport interdisant ou limitant la cession de la créance d'indemnisation due au titre du Règlement (CE) n° 261/2004 est inopposable</strong>, comme contraire à l'article 15 du Règlement (CJUE, 6 février 2025, Eventmedia Soluciones c/ Air Europa Líneas Aéreas, C-11/23). En conséquence, la compagnie aérienne ne saurait opposer une telle clause à la cession consentie à Robin des Airs (Articles 1 et 5 bis).
   </div>
   <div class="clause le">
-    <span class="cnum">Article 5 quater, Claim on behalf of the Assignor & position on the carrier's conditions</span>
-    <div class="plain">💡 <strong>In plain terms:</strong> In the amicable phase and in mediation, we act for you, as your representative. If the airline wants to impose a waiting period on you or prevent you from being represented, we challenge that clause&nbsp;; and you can always claim yourself, without changing anything in our agreement.</div>
-    <strong>As long as the assignment is not notified</strong> (Article 1 bis), Robin des Airs <strong>presents, follows up and pursues the claim</strong> under <strong>Regulation (EC) No 261/2004</strong> <strong>ON BEHALF OF THE ASSIGNOR</strong>, with the airline and the competent consumer mediation body. The Assignor <strong>retains consumer status</strong>. The acts performed on its behalf are <strong>deemed to emanate from the Assignor itself</strong>.
+    <span class="cnum">Article 5 quater, Inopposabilité des clauses procédurales restrictives au cessionnaire</span>
+    <div class="plain">💡 <strong>In plain terms:</strong> Si la compagnie sort une clause de ses CGT pour imposer un délai d'attente ou empêcher la cession, on la conteste : ces clauses ne nous sont pas opposables.</div>
+    The Assignee, agissant en son nom propre comme titulaire de la créance cédée (Article 1), <strong>n'est pas lié par les clauses des conditions générales de transport</strong> qui (i) subordonneraient la recevabilité d'une réclamation au titre du Règlement (CE) n° 261/2004 à un <strong>délai d'attente préalable</strong>, (ii) restreindraient le droit du passager de se faire représenter, (iii) limiteraient la cession de la créance, (iv) exigeraient qu'une <strong>réclamation émane personnellement du passager</strong> préalablement à toute démarche d'un tiers ou d'un cessionnaire, ou (v) imposeraient que le <strong>paiement soit effectué exclusivement entre les mains du passager</strong> nonobstant la cession notifiée. Ces clauses sont inopposables au regard du <strong>caractère impératif du Règlement (article 15)</strong> et, s'agissant des clauses limitant la cessibilité, de la jurisprudence <strong>CJUE, 6 février 2025, Eventmedia Soluciones c/ Air Europa, C-11/23</strong>.
     <br><br>
-    A claim presented <strong>on behalf of the Assignor</strong> by its representative <strong>does not constitute the request of a third party</strong> acting on its own account, but its own request expressed through the representative of its choice.
-    <br><br>
-    The Assignor <strong>considers</strong> that any clause of the carrier's general conditions making the admissibility of its claim subject to a <strong>prior waiting period</strong>, or restricting its right to be assisted or represented by the representative of its choice, <strong>is unenforceable against it</strong>, having regard to the <strong>mandatory character of the Regulation (Article 15)</strong> and, the Assignor having consumer status, to the <strong>prohibition of unfair terms (Article L. 212-1 of the French Consumer Code)</strong>. The Assignor empowers Robin des Airs to <strong>uphold this position</strong> before the carrier and, where applicable, before any court.
-    <br><br>
-    The Assignor <strong>retains the option to present its claim itself</strong> to the carrier, in particular to meet a prior procedural requirement, <strong>without the exercise of that option affecting this agreement</strong>, which remains fully in force&nbsp;; Robin des Airs then handles the follow-up on its behalf.
+    <strong>Clauses attributives de juridiction (CJUE, 18 novembre 2020, Ryanair c/ DelayFix, C-519/19).</strong> Une clause attributive de juridiction insérée dans le contrat de transport conclu entre le passager et la compagnie <strong>n'est pas opposable au Cessionnaire</strong>, tiers à ce contrat, qui n'y a pas consenti&nbsp;; une telle clause, non négociée individuellement, est au surplus susceptible d'être déclarée <strong>abusive</strong>. The Assignee saisit donc librement les juridictions désignées à l'Article 11.
   </div>
   <div class="clause pro">
     <span class="cnum" style="color:var(--red)">Article 6, Non-release clause for the airline</span>
-    <div class="plain">💡 <strong>In plain terms:</strong> Once the assignment is notified, if the airline pays you directly to bypass us, it still owes us the payment.</div>
-    <strong>From the notification of the assignment to the carrier</strong> (Article 5 bis), <strong>any payment made directly by the airline to the Assignor does not release the airline from its obligations</strong> towards Robin des Airs, assignee. Robin des Airs expressly notifies the airline, from the contentious formal notice, that the <strong>only valid discharging payment</strong> is the one made into its bank account.
+    <div class="plain">💡 <strong>In plain terms:</strong> Une fois la cession notifiée (dès la première mise en demeure), si la compagnie vous paie directement pour nous contourner, elle nous doit quand même le paiement.</div>
+    <strong>À compter de la notification de la cession au transporteur</strong> (Article 1 bis et Article 5 bis — notification effectuée dès le premier acte formel de recouvrement), <strong>tout paiement effectué directement par la compagnie aérienne au Cédant ne libère pas la compagnie de ses obligations</strong> envers Robin des Airs, cessionnaire. Robin des Airs notifie expressément à la compagnie, dès la première mise en demeure, que le <strong>seul paiement libératoire valable</strong> est celui effectué sur son compte bancaire dédié.
     <br><br>
-    Accordingly: (i) any payment made directly to the Assignor in breach of this instruction, after the notification, is deemed <strong>not discharging towards Robin des Airs</strong>; (ii) the airline remains liable for payment to the assignee; (iii) Robin des Airs reserves the right to pursue any recovery action, including in court, against the airline. This stipulation relies on the <strong>assignment of claim</strong> (Articles 1321 to 1324 of the French Civil Code) and is enforceable against the carrier <strong>from the notification</strong> given to it. Before that notification, the exclusive payment instruction in Article 5 remains enforceable against the Assignor under this agreement.
+    En conséquence : (i) tout règlement opéré directement au Cédant en violation de cette instruction, postérieurement à la notification, sera réputé <strong>non libératoire à l'égard de Robin des Airs</strong> ; (ii) la compagnie demeurera redevable du paiement auprès du Cessionnaire ; (iii) Robin des Airs se réserve le droit d'engager toute action en recouvrement, y compris judiciaire, à l'encontre de la compagnie aérienne. Cette stipulation s'appuie sur la <strong>cession de créance</strong> (articles 1321 à 1324 du Code civil) et est opposable au transporteur à compter de la notification qui lui en est faite.
   </div>
   <div class="clause">
-    <span class="cnum">Article 7, Obligations of Robin des Airs</span>
-    <div class="plain">💡 <strong>In plain terms:</strong> We handle your case seriously, keep you informed, pay you quickly and protect your data.</div>
-    Robin des Airs undertakes to: (i) handle the case diligently; (ii) inform the Assignor at each key stage; (iii) pay the sums within 5 business days after effective and irrevocable collection; (iv) expressly notify the airline of the existence of this agreement and of the exclusive payment instruction; (v) protect personal data in accordance with the GDPR.
-  </div>
-  <div class="clause">
-    <span class="cnum">Article 7 bis, Liability & best-efforts obligation</span>
-    <div class="plain">💡 <strong>In plain terms:</strong> On s'engage à tout faire pour récupérer votre dû, mais aucun service ne peut garantir le résultat. Si on commet une erreur, notre responsabilité est plafonnée.</div>
-    Robin des Airs is bound by a <strong>best-efforts (obligation de moyens) obligation</strong> and does not guarantee that compensation will be obtained. Except in the event of gross negligence or wilful misconduct, its liability is limited to <strong>direct damages</strong> and <strong>capped at the amount of the fee</strong> actually received on the case. Robin des Airs is not liable for the delays, refusals or decisions of the airline, the courts or the mediators.
-  </div>
-  <div class="clause">
-    <span class="cnum">Article 7 ter, Subcontracting &amp; service providers</span>
-    <div class="plain">💡 <strong>In plain terms:</strong> On peut confier votre dossier à un avocat (à nos frais) ; pour ça on doit pouvoir lui transmettre vos pièces, vous nous y autorisez.</div>
-    Robin des Airs may, <strong>at its own initiative and expense</strong> (Article 4.1), entrust all or part of the performance to <strong>lawyers, judicial officers or technical service providers</strong> of its choice, acting <strong>on its behalf</strong>; no direct contractual relationship is created between them and the Assignor by the mere fact of the agreement. The Assignor <strong>expressly consents</strong> to Robin des Airs sharing with the strictly necessary lawyers and third parties the case data and documents, <strong>solely for recovery purposes</strong>, in compliance with the <strong>GDPR</strong> and the Privacy Policy. Robin des Airs remains responsible for the proper performance of the service towards the Assignor.
+    <span class="cnum">Article 7, Obligations du Cessionnaire</span>
+    <div class="plain">💡 <strong>In plain terms:</strong> On instruit votre dossier avec sérieux, on vous tient informé, on vous verse votre prix de cession vite et on protège vos données.</div>
+    Robin des Airs s'engage à : (i) instruire le dossier avec diligence et à ses frais exclusifs ; (ii) informer le Cédant à chaque étape clé à titre de courtoisie ; (iii) verser le prix de cession dû au Cédant (Article 4) sous 5 jours ouvrés après encaissement effectif et irrévocable ; (iv) notifier la cession à la compagnie aérienne dès le premier acte formel de recouvrement (Article 1 bis) ; (v) protéger les données personnelles conformément au RGPD.
+    <br><br>
+    <strong>Responsabilité (obligation de moyens).</strong> Robin des Airs ne garantit pas l'obtention de l'indemnisation. Sauf faute lourde ou dol, sa responsabilité est limitée aux <strong>dommages directs</strong> et plafonnée au <strong>plus élevé</strong> de&nbsp;: la marge conservée sur le dossier, <strong>trois fois le prix de cession</strong> dû, ou un <strong>plancher de 500&nbsp;€</strong> (art. R. 212-1, 6° C. conso). Elle ne répond pas des décisions de la compagnie ou des juridictions.
+    <br><br>
+    <strong>Intervenants.</strong> Robin des Airs peut confier tout ou partie de l'exécution à des <strong>avocats ou prestataires</strong> agissant pour son compte, à ses frais exclusifs (Article 4)&nbsp;; le Cédant <strong>consent</strong> à la transmission des pièces strictement nécessaires, aux seules fins du recouvrement (RGPD, Politique de confidentialité). Robin des Airs demeure responsable de la bonne exécution à l'égard du Cédant.
   </div>
   <div class="clause">
     <span class="cnum">Article 7 quater, Closure for irrecoverability</span>
     <div class="plain">💡 <strong>In plain terms:</strong> Si le dossier est manifestement voué à l'échec, on peut l'arrêter, vous ne payez rien.</div>
-    Robin des Airs may end the case by reasoned notification if it appears, after analysis, that the claim is <strong>manifestly irrecoverable</strong> (in particular carrier insolvency, time-bar, lack of basis under the Regulation). Such closure <strong>gives rise to no indemnity</strong> on either side and, under the « No Win No Fee » principle, <strong>no sum is due</strong> by the Assignor; the claim is <strong>automatically re-assigned</strong> to it.
+    Robin des Airs peut mettre fin au dossier par notification motivée s'il apparaît, après analyse, que la réclamation est <strong>manifestement irrécouvrable</strong> (notamment insolvabilité du transporteur, prescription, absence de fondement au regard du Règlement) ou que la <strong>créance n'est pas née</strong> (notamment retard finalement résorbé sous le seuil de 3 heures à l'arrivée à destination finale, ou passager non présenté à l'embarquement hors annulation). Such closure <strong>gives rise to no indemnity</strong> on either side and, under the « No Win No Fee » principle, <strong>no sum is due</strong> by the Assignor; the claim is <strong>automatically re-assigned</strong> to it.
   </div>
   <div class="clause">
     <span class="cnum">Article 8, Obligations of the Assignor</span>
     <div class="plain">💡 <strong>In plain terms:</strong> Give us accurate information, let us know if the airline contacts you, and do not cash anything without telling us.</div>
-    The Assignor undertakes to: (i) provide accurate and complete information; (ii) send any useful document as soon as possible; (iii) inform Robin des Airs of <strong>any contact or offer from the airline within 24h</strong>; (iv) not accept or cash any payment from the airline without notifying Robin des Airs; (v) not act in parallel on the same case without prior written consent. The Assignor <strong>warrants the accuracy and truthfulness</strong> of the information and documents provided and <strong>is liable for the harm</strong> caused to Robin des Airs by knowingly or grossly inaccurate or incomplete information&nbsp;; it reimburses, where applicable, the costs wrongly incurred as a result. The Assignor further warrants that the claim has not been the subject of <strong>any prior assignment, settlement, waiver or payment</strong>, that the same claim is <strong>not already entrusted to a third party</strong> nor the subject of pending proceedings, and that it is the <strong>sole holder</strong> of it (or duly authorised). It <strong>holds Robin des Airs harmless from the direct consequences</strong> of any breach of these warranties and <strong>remits any sums unduly received</strong>, this obligation being limited to direct damage attributable to the Assignor's breach. <strong>Any falsified, counterfeit or knowingly misleading document</strong> sent by the Assignor entails the <strong>immediate and automatic cancellation of the case</strong>&nbsp;; Robin des Airs reserves the right to bring any appropriate action, including <strong>criminal action for use of forgery</strong> (Article 441-1 of the French Criminal Code), and to retain the costs already incurred.
+    Le Cédant s'engage à : (i) fournir des informations <strong>exactes et sincères</strong> et transmettre les documents utiles ; (ii) signaler à Robin des Airs <strong>tout contact, offre ou paiement de la compagnie sous 24&nbsp;h</strong>, sans rien encaisser ni conclure sans l'en aviser ; (iii) ne pas agir en parallèle sur le même dossier. Il garantit être <strong>seul titulaire</strong> de la créance, laquelle n'a fait l'objet d'<strong>aucune cession, transaction ni paiement antérieur</strong> et n'est pas déjà confiée à un tiers. Le détail des obligations, garanties et conséquences d'un manquement — y compris <strong>document falsifié</strong> (annulation du dossier, art. 441-1 C. pén.) — figure à l'<strong>article 4 des CGV</strong>, que le Cédant accepte.
   </div>
   <div class="clause le">
     <span class="cnum">Article 9, Right of withdrawal (14 days) & immediate start</span>
@@ -639,6 +677,14 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     Under Articles L. 221-18 et seq. of the French Consumer Code, the Assignor has a <strong>14-calendar-day withdrawal period</strong> from signature, <strong>without having to give reasons and free of charge</strong>. It may exercise this right by any unambiguous statement, for example by email to <strong>contact@robindesairs.eu</strong> with the wording « I withdraw, Ref. [case number] », or via the <strong>model form below</strong>.
     <br><br>
     Under Article L. 221-25 of the French Consumer Code, if the Assignor expressly requests <strong>immediate performance of the agreement before the end of the 14-day period</strong> (box ticked below), Robin des Airs is authorised to begin the steps without waiting. <strong>In the event of withdrawal within that period, and under the « No Win No Fee » principle, no sum is due by the Assignor</strong>, including for steps already taken; the claim is <strong>automatically re-assigned</strong> to it.
+    <br><br>
+    <strong>Articulation avec la notification au transporteur (rétractation après notification de la cession).</strong> Si le Cédant exerce son droit de rétractation <strong>après</strong> que le Cessionnaire a notifié la cession au transporteur (Article 1 bis), le Cessionnaire&nbsp;:
+    <ul>
+      <li><strong>notifie sans délai au transporteur, par LRAR</strong>, la rétractation et la rétrocession de la créance au Cédant&nbsp;;</li>
+      <li><strong>jusqu'à réception</strong> de cette notification par le transporteur, tout paiement effectué entre les mains du Cessionnaire <strong>demeure libératoire</strong>&nbsp;; le Cessionnaire reverse intégralement au Cédant toute somme ainsi encaissée, sans déduction de la moindre commission ni de frais&nbsp;;</li>
+      <li>à compter de la réception de cette notification par le transporteur, ce dernier est tenu de payer <strong>directement au Cédant</strong> redevenu titulaire de la créance.</li>
+    </ul>
+    Le Cédant est informé que cette notification au transporteur est <strong>effectuée à l'initiative et aux frais du Cessionnaire</strong>, sans recours contre lui, afin de garantir l'opposabilité de la rétrocession.
     <div style="margin-top:14px;border:1px dashed var(--border);border-radius:8px;padding:14px 16px;background:var(--green-tint);font-size:12px;line-height:1.7">
       <strong style="text-transform:uppercase;letter-spacing:.08em;font-size:10.5px;color:var(--green-deep)">Model withdrawal form</strong>
       <div style="color:var(--muted);margin:2px 0 8px">(to be completed and returned only if you wish to withdraw)</div>
@@ -655,14 +701,31 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     </div>
   </div>
   <div class="clause">
-    <span class="cnum">Article 9 bis, Minor passengers</span>
-    <div class="plain">💡 <strong>In plain terms:</strong> For a minor child, it is the parent or guardian who signs on their behalf.</div>
-    For any minor passenger, <strong>the legal representative signs alone</strong>, in their own name and on behalf of the minor&nbsp;; the minor does not sign. The legal representative declares that they hold <strong>parental authority</strong> (or the status of guardian) over the minor and <strong>undertakes personally</strong> under the terms of this agreement, including as to the assignment of claim (Article 5 bis).
+    <span class="cnum">Article 9 bis, Passagers mineurs — mandat spécial d'encaissement (la part du mineur n'est pas cédée)</span>
+    <div class="plain">💡 <strong>In plain terms:</strong> La créance d'un enfant mineur n'est <strong>pas vendue</strong> (cela pourrait exiger l'accord du juge des tutelles). À la place, le parent donne <strong>mandat</strong> à Robin des Airs de la réclamer et de l'encaisser au nom de l'enfant, aux <strong>mêmes conditions</strong>&nbsp;: 0&nbsp;€ d'avance, même part nette (75&nbsp;% amiable / 60&nbsp;% contentieux, 100&nbsp;% des frais pour nous). Le parent signe seul pour l'enfant.</div>
+    <strong>Exclusion de la cession.</strong> Par exception aux Articles 1 et 5 bis, la créance d'indemnisation d'un <strong>passager mineur n'est pas cédée</strong> au Cessionnaire. Aucun acte de disposition n'est ainsi accompli sur le patrimoine du mineur, ce qui écarte <strong>par construction</strong> toute discussion fondée sur l'article 387-1 du Code civil (autorisation préalable du juge des tutelles).
+    <br><br>
+    <strong>Mandat spécial d'encaissement (acte d'administration).</strong> Pour la part du mineur, le représentant légal, agissant dans le cadre de l'<strong>administration légale</strong> (articles 382 et suivants du Code civil) — la perception d'une créance indemnitaire constituant un <strong>acte d'administration</strong> qu'il peut accomplir seul, sans autorisation du juge des tutelles —, donne à Robin des Airs un <strong>mandat spécial</strong> de réclamer, poursuivre et <strong>encaisser avec effet libératoire</strong> l'indemnité due au mineur au titre du Règlement (CE) n° 261/2004, <strong>au nom et pour le compte du mineur représenté</strong>. Toute procédure judiciaire relative à la part du mineur est conduite par un <strong>avocat inscrit à un barreau</strong>, le mineur y étant représenté par son représentant légal.
+    <br><br>
+    <strong>Protection des droits du mineur.</strong> Robin des Airs réclame pour le mineur le <strong>paiement intégral</strong> de l'indemnité forfaitaire due. Elle <strong>ne transige pas au nom du mineur et ne renonce à aucun de ses droits</strong> (actes soumis à l'autorisation du juge des tutelles, art. 387-1 C. civ.)&nbsp;: à défaut de paiement intégral amiable, la voie contentieuse est appréciée dans les conditions du contrat.
+    <br><br>
+    <strong>Conditions financières identiques (No Win No Fee).</strong> La rémunération de Robin des Airs sur la part du mineur suit le <strong>barème de l'Article 4</strong>&nbsp;: <strong>25&nbsp;%</strong> des sommes encaissées en phase amiable, <strong>40&nbsp;%</strong> en phase contentieuse, <strong>0&nbsp;€</strong> si rien n'est recouvré&nbsp;; le solde (<strong>75&nbsp;% / 60&nbsp;%</strong>) est versé au représentant légal <strong>ès qualités, pour le compte du mineur</strong>, dans les conditions de l'Article 5. Aucune avance ni aucun frais ne sont dus. Les fonds encaissés pour le compte du mineur transitent par le <strong>compte dédié</strong> du Cessionnaire, l'activité de recouvrement amiable pour le compte d'autrui étant exercée conformément aux <strong>articles L. 124-1 et suivants et R. 124-1 et suivants du Code des procédures civiles d'exécution</strong>.
+    <br><br>
+    <strong>Signature et garantie de pouvoir.</strong> Pour tout passager mineur, <strong>le représentant légal signe seul</strong>, en son nom et au nom du mineur&nbsp;; le mineur ne signe pas. Le représentant légal <strong>déclare et garantit</strong> exercer l'autorité parentale (ou la qualité de tuteur) sur le mineur&nbsp;; il tient Robin des Airs indemne des conséquences directes d'une déclaration inexacte sur son pouvoir de représentation, dans la limite des sommes qu'il a perçues au titre de la part du mineur.
   </div>
   <div class="clause">
     <span class="cnum">Article 10, Confidentiality & GDPR</span>
     <div class="plain">💡 <strong>In plain terms:</strong> Your data is used only for your case. Never resold.</div>
     The personal data collected is used exclusively for managing the case. It is not resold. Under the GDPR, the Assignor has the rights of <strong>access, rectification, erasure, restriction, portability and objection</strong>, as well as the right to withdraw consent, by writing to <strong>expert@robindesairs.eu</strong> ; it may also refer the matter to the <strong>CNIL</strong> (French data-protection authority). The full terms (purposes, retention periods, processors) are set out in the <a href="politique-confidentialite.html" target="_blank" rel="noopener">Politique de confidentialité</a>.
+  </div>
+  <div class="clause le">
+    <span class="cnum">Article 10 bis, Formation par voie électronique, preuve et date certaine</span>
+    <div class="plain">💡 <strong>In plain terms:</strong> Le contrat est signé en ligne dans les règles (relecture complète avant signature, lien de signature personnel reçu par email, copie envoyée par email). Le dossier de preuve (identité, horodatage, empreinte du document, journal complet) vaut preuve de votre signature et de sa date — personne ne peut prétendre que le contrat n'existe pas ou qu'il a été signé « après coup ».</div>
+    <strong>Formation du contrat à distance.</strong> Le présent contrat est conclu par voie électronique dans les conditions des <strong>articles 1125 à 1127-2 du Code civil</strong>&nbsp;: le Cédant a eu accès à l'<strong>intégralité des stipulations</strong> avant signature, a pu vérifier le détail de son engagement et corriger d'éventuelles erreurs, puis a confirmé son acceptation. Conformément à l'<strong>article L. 221-13 du Code de la consommation</strong>, la <strong>confirmation du contrat conclu</strong>, comprenant l'ensemble de ses stipulations et l'information sur le droit de rétractation (Article 9), est fournie au Cédant <strong>sur support durable</strong> (email avec le contrat signé en pièce jointe) immédiatement après la signature.
+    <br><br>
+    <strong>Signature électronique et convention de preuve (art. 1366 à 1368 C. civ. ; art. 25 du Règlement eIDAS n° 910/2014).</strong> Le contrat est signé au moyen d'une <strong>signature électronique</strong> dont l'effet juridique et la recevabilité comme preuve <strong>ne peuvent être refusés au seul motif de sa forme électronique</strong> (art. 25 eIDAS). Le procédé, opéré via un <strong>prestataire de services de confiance</strong> (Yousign), associe&nbsp;: un <strong>lien de signature personnel et confidentiel</strong> adressé à l'adresse email du signataire (réception, consultation et activation journalisées), l'<strong>horodatage</strong> de chaque étape, un <strong>sceau d'intégrité</strong> du document signé (empreinte cryptographique) et un <strong>dossier de preuve</strong> établi par le prestataire (transmission du lien, consultation, signature, empreinte d'adresse IP, appareil). Les parties conviennent, à titre de <strong>convention de preuve</strong>, que ce <strong>dossier de preuve</strong> fait <strong>preuve entre elles</strong> de l'identité des signataires, de l'intégrité du document, du consentement et de sa date, sauf preuve contraire. Robin des Airs peut, en complément, recourir à un <strong>prestataire de signature avancée</strong> (art. 26 eIDAS), sans que cela conditionne la validité du présent contrat. L'écrit électronique ainsi établi a la <strong>même force probante que l'écrit sur support papier</strong> (art. 1366 C. civ.) et toute copie qui en est issue constitue une <strong>copie fiable</strong> (art. 1379 C. civ.).
+    <br><br>
+    <strong>Date certaine et antériorité de la cession.</strong> L'horodatage du dossier de preuve, corroboré par l'empreinte SHA-256 du document, établit que la cession est <strong>antérieure à tout acte de recouvrement, à toute mise en demeure et à toute instance</strong> engagés par le Cessionnaire. The Assignee conserve le dossier de preuve pendant toute la durée du contrat et les délais de prescription applicables, et peut le <strong>produire en justice</strong> pour justifier de sa qualité à agir et de la date de la cession.
   </div>
   <div class="clause">
     <span class="cnum">Article 11, Loi applicable, juridictions & litiges</span>
@@ -671,14 +734,23 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     <br><br>
     <strong>Élection de juridiction&nbsp;:</strong>
     <ul>
-      <li><strong>Litiges entre Robin des Airs et le transporteur aérien</strong> (recouvrement de la créance cédée) : compétence exclusive du <strong>Tribunal de commerce de Paris</strong>, en application des articles L. 721-3 et L. 721-5 du Code de commerce (cession entre commerçants). Cette juridiction est retenue pour sa rapidité et sa spécialisation, dans l'intérêt commun des parties.</li>
+      <li><strong>Litiges entre Robin des Airs et le transporteur aérien</strong> (recouvrement de la créance cédée) : compétence au <strong>choix du Cessionnaire</strong>, conformément à la liberté reconnue par <strong>CJUE, 9 oct. 2025, Lufthansa c/ AirHelp, C-551/24</strong> et l'article 7§1 du Règlement Bruxelles I bis, entre&nbsp;:
+        <ul>
+          <li>le <strong>Tribunal de commerce du lieu de départ</strong> du vol (lieu de fourniture du service au sens CJUE Rehder C-204/08)&nbsp;;</li>
+          <li>le <strong>Tribunal de commerce du lieu d'arrivée</strong> du vol (idem)&nbsp;;</li>
+          <li>le <strong>Tribunal de commerce du siège français</strong> du transporteur (le cas échéant)&nbsp;;</li>
+          <li>à défaut ou pour les transporteurs hors UE, le <strong>Tribunal de commerce de Paris</strong> en application des articles L. 721-3 et L. 721-5 du Code de commerce et de l'article 46 du Code de procédure civile.</li>
+        </ul>
+        Le Cédant reconnaît que la cession transmet la créance, <strong>non la qualité de consommateur</strong> du Cédant&nbsp;: à compter de la signature, le rapport entre le Cessionnaire et le transporteur est <strong>purement commercial</strong> (CJUE, 9 oct. 2025, C-551/24, précité). La compétence des tribunaux de commerce est ainsi pleinement justifiée.
+        <br><br><strong>Cohérence des protections consommateur et de la cession.</strong> Les facultés de <strong>rétractation</strong> (Article 9) et de <strong>résiliation libre</strong> (Article 2), ainsi que la <strong>rétrocession de plein droit</strong> qui les accompagne, sont des protections d'ordre public imposées par le Code de la consommation au bénéfice du Cédant. Leur présence est <strong>sans incidence sur la réalité du transfert de propriété</strong> opéré entre la signature et une éventuelle rétrocession, et <strong>ne saurait être interprétée comme révélant un mandat</strong>&nbsp;: jusqu'à leur exercice, le Cessionnaire demeure seul titulaire de la créance et agit en son nom propre.
+      </li>
       <li><strong>Litiges entre Robin des Airs et le Cédant</strong> (consommateur) : compétence du <strong>tribunal du lieu de résidence du Cédant</strong> ou du lieu de l'exécution du contrat, conformément à l'article R. 631-3 du Code de la consommation, sans qu'aucune clause attributive de compétence ne puisse y déroger.</li>
     </ul>
     <strong>Médiation de la consommation préalable&nbsp;:</strong> avant tout recours juridictionnel entre Robin des Airs et le Cédant, ce dernier peut saisir gratuitement la <strong>Médiation du Tourisme et du Voyage (MTV)</strong>, médiateur désigné par le Prestataire (cf. CGV article 13).
     <br><br>
     <strong>Divisibilité&nbsp;:</strong> si une stipulation du présent contrat est jugée nulle ou inopposable, les autres <strong>conservent leur plein effet</strong>, la stipulation concernée étant réputée non écrite ou réduite dans la mesure permise par la loi.
     <br><br>
-    <strong>Survie&nbsp;:</strong> la fin du contrat ne met pas fin aux stipulations which, by their nature, survive, in particular <strong>confidentiality and personal data</strong>, the <strong>obligation to remit the commission</strong> in the event of a later payment in connection with the incident, <strong>intellectual property</strong>, <strong>liability</strong> and <strong>dispute resolution</strong>.
+    <strong>Survie&nbsp;:</strong> la fin du contrat ne met pas fin aux stipulations qui, par leur nature, survivent, notamment <strong>confidentialité et données personnelles</strong>, <strong>obligation du Cédant de reverser au Cessionnaire toute somme reçue directement de la compagnie</strong> après notification de la cession, <strong>propriété intellectuelle</strong>, <strong>responsabilité</strong> et <strong>règlement des litiges</strong>.
   </div>
   </details>
 </div>
@@ -686,28 +758,16 @@ details.mandat-full[open]>summary{margin-bottom:12px}
 <div class="doc-section">
   <div class="sec-title">✅ Declaration & consent</div>
   <div class="declaration-box">
-    I, the undersigned <strong id="declarant"> </strong>, declare that I was a passenger on the stated flight and suffered the declared harm (delay, cancellation or denied boarding). Each adult passenger signs in their own name; for a minor passenger, their legal representative states their name and signs on their behalf.
+Chaque signataire ci-dessous <span id="declarant" style="display:none"> </span>déclare sur l'honneur être <strong>passager(e) du vol indiqué</strong> (réservation confirmée) et subir/avoir subi la perturbation déclarée. <strong>Vol en cours&nbsp;?</strong> Retard final sous 3&nbsp;h = <strong>rien dû</strong> (Art. 7 quater)&nbsp;; chaque signataire s'engage à <strong>embarquer</strong> et à garder sa <strong>carte d'embarquement</strong>.
   </div>
   <!-- CASE 1, Contrat de cession principal -->
   <div class="single-check" onclick="toggleMainCheck()">
     <input type="checkbox" id="mainCheck" onclick="event.stopPropagation()">
     <p>
-      Each adult signatory declares having read and accepted the <strong>assignment-of-claim agreement</strong> (summary and full details above), authorises <strong>Robin des Airs</strong> to recover their flight compensation and <strong>assigns it their claim for collection purposes</strong> (Articles 1 and 5 bis). Each person's signature below constitutes acceptance and assignment in their own name; for a minor passenger, the signing parent consents on their behalf.<br>
-      <strong>No fee if the case fails.</strong> 25% commission incl. VAT on success only.<br>
-      <span style="font-size:12px;color:var(--muted);">
-        Exclusive 24 months · Withdrawal possible within 14 days by email · <a href="politique-confidentialite.html" target="_blank" rel="noopener">GDPR, Privacy Policy</a>
-      </span>
+      Chaque signataire a lu le contrat et <strong>cède sa créance à Robin des Airs</strong> (Articles 1 et 5 bis), en acceptant les <strong>deux taux</strong> (75&nbsp;% amiable / 60&nbsp;% contentieux — Art. 4) et les <strong><a href="cgv.html" target="_blank" rel="noopener">CGV</a></strong>. <strong>Aucune avance</strong>&nbsp;; rien récupéré = rien dû. Le montant est une <strong>estimation</strong> (jusqu'à 600&nbsp;€/passager selon l'éligibilité), <strong>pas une garantie</strong>. <span style="font-size:12px;color:var(--muted);">(Mineur&nbsp;: le parent signe et <strong>s'engage personnellement</strong> sur sa qualité de représentant légal, Art. 9 bis · rétractation 14 j · <a href="politique-confidentialite.html" target="_blank" rel="noopener">RGPD</a>)</span>
     </p>
   </div>
   <div class="ferr" id="checkErr" style="font-size:13px">Please tick this box to validate the agreement.</div>
-  <!-- CASE 1 bis, Reconnaissance d'éligibilité (obligatoire) -->
-  <div class="single-check" onclick="document.getElementById('eligCheck').checked=!document.getElementById('eligCheck').checked;calcProgress()">
-    <input type="checkbox" id="eligCheck" onclick="event.stopPropagation();calcProgress()">
-    <p>
-      <strong>Each signatory understands that the amount is an estimate</strong> (up to €600 per passenger depending on the flight's eligibility), <strong>not a guarantee</strong>.
-    </p>
-  </div>
-  <div class="ferr" id="eligErr" style="font-size:13px">Please tick this box to confirm you have understood.</div>
   <!-- CASE 2, Démarrage immédiat (optionnelle mais recommandée) -->
   <div class="single-check" style="background:var(--green-tint);border-color:var(--green)" onclick="document.getElementById('startNow').checked=!document.getElementById('startNow').checked">
     <input type="checkbox" id="startNow" onclick="event.stopPropagation()">
@@ -742,13 +802,22 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       <input type="text" id="sigDate" class="ro" readonly>
     </div>
   </div>
-  <p style="font-size:13px;color:var(--muted);margin-bottom:8px">Draw your signature below (finger or mouse):</p>
-  <div class="sig-area" id="sigArea">
-    <canvas id="sigCanvas" width="680" height="120" role="img" aria-label="Zone de signature manuscrite, tracez votre signature au doigt ou à la souris"></canvas>
-    <div class="sig-ph" id="sigPh">✍️ Tap here to sign</div>
-    <div class="sig-clear" id="sigClear" onclick="clearSig(event)">✕ Start over</div>
+  <!-- Bandeau Yousign : informe le client de la redirection -->
+  <div style="margin-bottom:14px;padding:16px 18px;background:var(--green-tint);border:1px solid var(--green-deep);border-left:4px solid var(--green-deep);border-radius:0 8px 8px 0">
+    <div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--green-deep);font-weight:700;margin-bottom:6px">Signature électronique sécurisée</div>
+    <p style="font-size:13px;line-height:1.6;color:var(--text);margin:0">
+      Après validation, vous serez redirigé·e vers <strong>Yousign</strong> (prestataire certifié eIDAS) pour <strong>relire votre contrat et signer électroniquement</strong>. Vous reviendrez ensuite ici sur l'écran de confirmation. <strong>Aucune saisie manuscrite n'est requise</strong>.
+    </p>
   </div>
-  <div class="ferr" id="sigErr">Your signature is required to validate the agreement</div>
+  <!-- Canvas signature historique — masqué (remplacé par Yousign). Conservé pour compatibilité JS. -->
+  <div id="canvasSignSection" style="display:none" aria-hidden="true">
+    <div class="sig-area" id="sigArea">
+      <canvas id="sigCanvas" width="680" height="120" aria-label="Zone de signature désactivée — utilisation de Yousign"></canvas>
+      <div class="sig-ph" id="sigPh">✍️ Tap here to sign</div>
+      <div class="sig-clear" id="sigClear" onclick="clearSig(event)">✕ Start over</div>
+    </div>
+    <div class="ferr" id="sigErr">Your signature is required to validate the agreement</div>
+  </div>
   <div style="margin-top:20px;border:1px solid var(--border);border-left:3px solid var(--green-deep);border-radius:0 8px 8px 0;padding:16px 18px;background:var(--green-tint)">
     <div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--green-deep);font-weight:700;margin-bottom:8px">Acceptance by the Assignee, Robin des Airs</div>
     <p style="font-size:12px;line-height:1.7;color:var(--text);margin:0">
@@ -757,7 +826,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     </p>
   </div>
   <button class="btn-submit" id="btnSub" onclick="submitMandat()">
-    Confirm and sign my agreement →
+    Continuer vers la signature électronique →
   </button>
 </div>
 <div class="trust-bar">
@@ -786,8 +855,8 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="success-block">
     <div class="sb-label"><span aria-hidden="true">📄</span> Votre exemplaire</div>
     <div class="sb-meta">
-      Assignment-of-claim agreement <strong>for collection purposes</strong> (arts. 1 and 5 bis)<br>
-      Signé le <strong id="sWhen"> </strong> à <strong id="sWhere"> </strong> · version <strong>2026-06-v1</strong>
+      Contrat de cession de créance <strong>pure et simple</strong> (art. 1 et 5 bis)<br>
+      Signé le <strong id="sWhen"> </strong> à <strong id="sWhere"> </strong> · version <strong id="sVer"> </strong>
     </div>
     <a class="success-cta nav full" id="sPdf" href="#" onclick="window.print();return false;" style="margin-top:12px">Save / print my agreement</a>
     <div class="sb-note">📸 <strong>Faites une capture d'écran de cette page</strong> (ou enregistrez le PDF) et gardez votre référence, c'est votre preuve. Un récapitulatif vous est aussi envoyé sur WhatsApp et par e-mail.<br>📱 <strong>Conseil :</strong> chaque passager fait idéalement sa réclamation <strong>depuis son propre téléphone</strong>, pour qu'on puisse le joindre directement.</div>
@@ -795,8 +864,8 @@ details.mandat-full[open]>summary{margin-bottom:12px}
 
   <div class="success-block tint">
     <div class="sb-meta">
-      <span aria-hidden="true">✅</span> <strong>0&nbsp;€ à avancer</strong>, jamais, aucune carte, aucune commission sans résultat.<br>
-      <span aria-hidden="true">✅</span> Nous réclamons <strong>jusqu'à 600&nbsp;€ par passager</strong>. En cas de succès vous gardez <strong>75&nbsp;% net</strong> ; 0&nbsp;€ si nous échouons.<br>
+      <span aria-hidden="true">✅</span> <strong>0&nbsp;€ à avancer</strong>, jamais, aucune carte, aucun prélèvement si rien n'est récupéré.<br>
+      <span aria-hidden="true">✅</span> Nous réclamons <strong>jusqu'à 600&nbsp;€ par passager</strong>. En cas de succès vous gardez <strong>75&nbsp;% net en amiable</strong> (60&nbsp;% si procès, frais de justice inclus) ; 0&nbsp;€ si nous échouons.<br>
       <span aria-hidden="true">✅</span> <strong>Vous pouvez changer d'avis pendant 14&nbsp;jours</strong>, jusqu'au <strong id="sRetract"> </strong>, sans frais : un e-mail à contact@robindesairs.eu suffit.
     </div>
   </div>
@@ -810,7 +879,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
 
   <div class="success-block tint" id="sCoPax" style="display:none">
     <div class="sb-label"><span aria-hidden="true">👨‍👩‍👧‍👦</span> Vos co-passagers</div>
-    <div class="sb-meta">Vous voyagiez à <strong id="sPaxN"> </strong> sur ce vol ? <strong>Chaque passager a droit à sa propre indemnité de 600&nbsp;€.</strong> Ajoutez-les en un message, on s'occupe du reste.</div>
+    <div class="sb-meta">Vous voyagiez à <strong id="sPaxN"> </strong> sur ce vol ? <strong>Chaque passager peut prétendre à sa propre indemnité (jusqu'à 600&nbsp;€).</strong> Ajoutez-les en un message, on s'occupe du reste.</div>
     <a class="success-cta nav full" id="sCoPaxBtn" href="https://wa.me/33756863630" target="_blank" rel="noopener" style="margin-top:12px">Ajouter mes co-passagers</a>
   </div>
 
@@ -822,9 +891,9 @@ details.mandat-full[open]>summary{margin-bottom:12px}
 
   <div class="success-steps">
     <div class="sstep"><div class="snum">1</div><div><strong>Confirmation WhatsApp, en cours</strong><br>Récapitulatif complet + votre contact dédié, sous 24&nbsp;h.</div></div>
-    <div class="sstep"><div class="snum">2</div><div><strong>Mise en demeure, rédaction lancée</strong><br>Courrier officiel envoyé à la compagnie sous 48&nbsp;h.</div></div>
+    <div class="sstep"><div class="snum">2</div><div><strong>Mise en demeure, rédaction lancée</strong><br>Courrier officiel envoyé à la compagnie — sous 48&nbsp;h si vous avez demandé le démarrage immédiat, sinon après vos 14&nbsp;jours de rétractation.</div></div>
     <div class="sstep"><div class="snum">3</div><div><strong>Suivi à chaque étape</strong><br>On vous tient au courant, vous n'attendez jamais dans le noir.</div></div>
-    <div class="sstep"><div class="snum">4</div><div><strong>Votre argent sur votre compte</strong><br>Dès que la compagnie paie, on vous reverse votre part (75&nbsp;% net) sous 48&nbsp;h.</div></div>
+    <div class="sstep"><div class="snum">4</div><div><strong>Votre argent sur votre compte</strong><br>Dès que la compagnie paie, on vous verse votre part (75&nbsp;% en amiable, 60&nbsp;% si procès) sous 5 jours ouvrés.</div></div>
   </div>
 
   <div class="success-block tint" id="sMemeVol">
@@ -883,13 +952,89 @@ const DATE  = P.get('date')      || '';
 const CIE   = P.get('compagnie') || '';
 const INC   = P.get('incident')  || '';
 const PNR   = P.get('pnr')       || '';
+const BILLET = P.get('billet')   || ''; // N° billet électronique (13 chiffres) — optionnel
 const NOMS  = P.get('noms')      ? decodeURIComponent(P.get('noms')).split(',') : [];
 const SRC   = P.get('source')    || 'web';
 const CID   = P.get('cid')       || '';   // ID conversation WhatsApp (liant identité)
 const LSA   = P.get('lsa')       || '';   // horodatage d'envoi du lien (preuve de délivrance)
-const MANDAT_VERSION = '2026-06-v1';        // version du texte de mandat accepté
+const MANDAT_VERSION = '2026-07-v4-sans-1699-mineurs-mandat';  // v4 : v3 + retrait 1699 déclaré inapplicable (1700, pré-contentieux) + prix réel = stipulation subsidiaire + réalité économique anti-requalif + anti-prix dérisoire (1169/1591/1964) + mineurs = mandat spécial d'encaissement (382 s., exclusion cession, fin garantie 2321) + signature à chaud : déclaration & garantie adaptées créance à naître, clôture créance non née + Art.5quater élargi (réclamation perso, paiement direct, DelayFix C-519/19) + Art.10bis formation électronique/convention de preuve/date certaine
 // ── INIT ─────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
+  // Retour depuis Yousign post-signature : on saute direct sur l'écran succès.
+  // Yousign renvoie ?signed=1&ref=<signature_request_id> après signature.
+  // ?cancelled=1 = signataire a cliqué "Annuler" dans Yousign.
+  (function handleYousignReturn() {
+    const signed = P.get('signed') === '1';
+    const cancelled = P.get('cancelled') === '1';
+    if (!signed && !cancelled) return;
+    const form = document.getElementById('mandatForm');
+    if (form) form.style.display = 'none';
+    if (signed) {
+      const ref = P.get('ref') || REF || '—';
+      const signerIdx = parseInt(P.get('signer') || '1', 10);
+      const totalSigners = parseInt(P.get('total') || '1', 10);
+
+      // ── Multi-signataires : si pas encore le dernier, on propose
+      //    de passer le téléphone au signataire suivant.
+      if (signerIdx < totalSigners) {
+        const storeKey = 'yousign_signers_' + ref;
+        let signersList = [];
+        try { signersList = JSON.parse(localStorage.getItem(storeKey) || '[]'); } catch (_) {}
+        const next = signersList.find(function (s) { return s.index === signerIdx + 1; });
+        if (next && next.signing_url) {
+          const wrap = document.createElement('div');
+          wrap.style.cssText = 'max-width:520px;margin:80px auto;padding:32px 28px;background:#fff;border:1px solid var(--border);border-radius:12px;text-align:center;font-family:Inter,system-ui,sans-serif';
+          wrap.innerHTML =
+            '<div style="font-family:\'DM Mono\',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.2em;color:var(--green-deep);font-weight:700;margin-bottom:14px">Signature ' + signerIdx + '/' + totalSigners + ' validée</div>' +
+            '<div style="font-size:48px;line-height:1;margin-bottom:18px">📲</div>' +
+            '<h1 style="font-size:24px;font-weight:800;margin:0 0 14px;color:var(--text)">Au tour de <span style="color:var(--green-deep)">' + (next.first_name || '') + ' ' + (next.last_name || '') + '</span></h1>' +
+            '<p style="font-size:14px;line-height:1.6;color:var(--muted);margin:0 0 22px">Passez le téléphone à la personne ci-dessus. Elle peut signer directement, depuis ce téléphone.</p>' +
+            '<button id="btnNextSigner" style="width:100%;background:var(--green);color:var(--navy);border:none;padding:16px 24px;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;border-radius:8px;cursor:pointer">Signer maintenant (' + (signerIdx + 1) + '/' + totalSigners + ') →</button>' +
+            '<p style="font-size:11px;color:var(--muted);margin:18px 0 0;line-height:1.5">Vous pouvez aussi envoyer le lien à votre proche par email — Yousign le lui a déjà envoyé.</p>';
+          document.body.appendChild(wrap);
+          document.getElementById('btnNextSigner').onclick = function () {
+            window.location.href = next.signing_url;
+          };
+          return; // skip successScreen
+        }
+        // Si on n'a pas l'URL du suivant (localStorage perdu), on tombe sur successScreen
+      }
+
+      // ── Tous signataires OK (ou single) : écran "C'est fait !"
+      const ss = document.getElementById('successScreen');
+      if (!ss) return;
+      ss.style.display = 'block';
+      const sRef = document.getElementById('sRef');
+      if (sRef) sRef.textContent = ref;
+      const sWhen = document.getElementById('sWhen');
+      if (sWhen) sWhen.textContent = new Date().toLocaleString('fr-FR');
+      const sWhere = document.getElementById('sWhere');
+      if (sWhere) sWhere.textContent = 'à distance (signature électronique Yousign)';
+      // Version du contrat AFFICHÉE = celle du code (MANDAT_VERSION), plus jamais codée en dur
+      // (une version périmée affichée sur la preuve du client = incohérence exploitable).
+      const sVer = document.getElementById('sVer');
+      if (sVer && typeof MANDAT_VERSION !== 'undefined') sVer.textContent = MANDAT_VERSION;
+      const sRetract = document.getElementById('sRetract');
+      if (sRetract) {
+        const d = new Date(); d.setDate(d.getDate() + 14);
+        sRetract.textContent = d.toLocaleDateString('en-GB');
+      }
+      try { ss.scrollIntoView({ behavior: 'smooth' }); } catch (_) {}
+      try { if (window.fbq) fbq('track', 'Lead', { content_name: 'mandat-signe-yousign' }); } catch (_) {}
+      // Nettoyage localStorage des URLs signataires (déjà utilisées)
+      try { localStorage.removeItem('yousign_signers_' + ref); } catch (_) {}
+    } else if (cancelled) {
+      // Bandeau d'info : retour signataire qui a annulé dans Yousign
+      const bar = document.createElement('div');
+      bar.setAttribute('role', 'status');
+      bar.style.cssText = 'background:#fff4e0;border:1px solid #ffc56b;color:#8a5300;padding:12px 16px;margin:12px 24px 0;font-size:13px;border-radius:6px;font-weight:600';
+      bar.textContent = 'Signature annulée. Reprenez quand vous voulez — vos informations sont conservées.';
+      const page = document.querySelector('.page');
+      if (page) page.insertBefore(bar, page.firstChild);
+      if (form) form.style.display = '';
+    }
+  })();
+
   (async function verifyMandatLink() {
     const sig = P.get('sig');
     if (!sig) return;
@@ -919,10 +1064,11 @@ window.addEventListener('DOMContentLoaded', () => {
   if (VOL)  document.getElementById('fnum').value = VOL;
   if (CIE)  document.getElementById('cie').value  = CIE;
   if (PNR)  document.getElementById('pnr').value  = PNR;
+  if (BILLET) { const bEl = document.getElementById('billet'); if (bEl) bEl.value = BILLET; }
   if (WA_PREFILL) setWaFull(decodeURIComponent(WA_PREFILL));
   if (DATE) {
     const p = DATE.split('/');
-    if (p.length===3) document.getElementById('fdate').value = `${p[2]}-${p[1]}-${p[0]}`;
+    if (p.length===3) document.getElementById('fdate').value = `${p[0].padStart(2,'0')}/${p[1].padStart(2,'0')}/${p[2]}`;
   }
   if (INC) {
     const s = document.getElementById('inc');
@@ -933,7 +1079,6 @@ window.addEventListener('DOMContentLoaded', () => {
   renderAllPassengers();
   updateAmounts();
   updateParties();
-  buildPaysList();
   initSig();
   initProgress();
   applyLegacyUrlParams();
@@ -992,21 +1137,37 @@ function applyDossier(d) {
   if (d.address) setIfEmpty('addr', d.address);
   if (d.phone && typeof setWaFull === 'function') { const w = document.getElementById('wa-national'); if (w && !w.value.trim()) setWaFull(String(d.phone)); }
   setIfEmpty('fnum', d.vol); setIfEmpty('cie', d.compagnie); setIfEmpty('pnr', d.pnr);
+  if (d.billet) setIfEmpty('billet', d.billet);
   setIfEmpty('dep', d.depAirport); setIfEmpty('arr', d.arrAirport);
   // Incident → liste déroulante #inc (code delay/cancel/denied)
   { const ie = document.getElementById('inc');
     let code = d.incident || '';
     if (!code && d.motif) { const m = String(d.motif).toLowerCase(); code = /retard|delay/.test(m) ? 'delay' : /annul|cancel/.test(m) ? 'cancel' : /refus|denied|embarq/.test(m) ? 'denied' : ''; }
     if (ie && code && !ie.value) ie.value = code; }
-  if (d.date) { const p = String(d.date).split('/'); if (p.length === 3) { const el = document.getElementById('fdate'); if (el && !el.value) el.value = `${p[2]}-${p[1]}-${p[0]}`; } }
+  if (d.date) { const p = String(d.date).split('/'); if (p.length === 3) { const el = document.getElementById('fdate'); if (el && !el.value) el.value = `${p[0].padStart(2,'0')}/${p[1].padStart(2,'0')}/${p[2]}`; } }
   if (d.indemnite) window.MANDAT_INDEMNITE_PER_PAX = d.indemnite;
   // Passagers (noms + dates de naissance)
   if (d.pax && d.pax !== paxCount) { paxCount = d.pax; const pe = document.getElementById('pax'); if (pe) pe.value = paxCount; renderAllPassengers(); }
   const fillPax = () => {
-    const nifs = [...document.querySelectorAll('.pnif')], dobs = [...document.querySelectorAll('.pdob')];
+    // Requête PAR LIGNE (pas par liste globale de classe) : .pprenom/.pnom n'existent que pour
+    // les co-passagers (i>0), donc une liste globale serait décalée d'un cran par rapport à
+    // d.passengers (0-indexé, principal inclus). Le principal (i=0) n'a pas de nom ici — déjà
+    // pré-rempli plus haut sur #fn/#ln.
+    const rows = document.querySelectorAll('.pax-row');
     if (Array.isArray(d.passengers) && d.passengers.length) {
-      d.passengers.forEach((p, i) => { if (p && p.name && nifs[i] && !nifs[i].value) nifs[i].value = p.name; if (p && p.dob && dobs[i] && !dobs[i].value) dobs[i].value = p.dob; });
-    } else if (d.dob && dobs[0] && !dobs[0].value) { dobs[0].value = d.dob; }
+      d.passengers.forEach((p, i) => {
+        const row = rows[i]; if (!row || !p) return;
+        if (i > 0 && p.name) {
+          const pIn = row.querySelector('.pprenom'), nIn = row.querySelector('.pnom');
+          if (pIn && nIn && !pIn.value && !nIn.value) { const sp = splitFullName(p.name); pIn.value = sp.prenom; nIn.value = sp.nom; }
+        }
+        const dobIn = row.querySelector('.pdob'); if (p.dob && dobIn && !dobIn.value) dobIn.value = p.dob;
+        const addrIn = row.querySelector('.paddr'); if (p.adresse && addrIn && !addrIn.value) addrIn.value = p.adresse;
+      });
+    } else if (d.dob) {
+      const dobIn0 = rows[0]?.querySelector('.pdob'); if (dobIn0 && !dobIn0.value) dobIn0.value = d.dob;
+    }
+    refreshAddrReuseOptions();
   };
   fillPax();
   // Vol avec correspondance : si le dossier décrit ≥2 segments (legs structurés OU route à ≥3
@@ -1125,8 +1286,12 @@ function applyLegacyUrlParams() {
   if (listRaw) {
     const names = decodeURIComponent(listRaw).split(',').map(s => s.trim()).filter(Boolean);
     if (names.length) {
-      document.querySelectorAll('.pnif').forEach((inp, i) => {
-        if (names[i]) inp.value = names[i];
+      const rows = document.querySelectorAll('.pax-row');
+      names.forEach((full, i) => {
+        if (i === 0) { const sp0 = splitFullName(full); setIfEmpty('fn', sp0.prenom); setIfEmpty('ln', sp0.nom); return; }
+        const row = rows[i]; if (!row) return;
+        const pIn = row.querySelector('.pprenom'), nIn = row.querySelector('.pnom');
+        if (pIn && nIn && !pIn.value && !nIn.value) { const sp = splitFullName(full); pIn.value = sp.prenom; nIn.value = sp.nom; }
       });
       updateParties();
       buildCoPassChecks();
@@ -1197,10 +1362,12 @@ function renderAllPassengers() {
   const saved = [];
   document.querySelectorAll('.pax-row').forEach((row, i) => {
     saved.push({
-      name:  row.querySelector('.pnif')?.value || '',
-      dob:   row.querySelector('.pdob')?.value || '',
-      birth: row.querySelector('.pbirth')?.value || '',
-      email: row.querySelector('.pemail')?.value || '',
+      prenom: row.querySelector('.pprenom')?.value || '',
+      nom:    row.querySelector('.pnom')?.value || '',
+      dob:    row.querySelector('.pdob')?.value || '',
+      birth:  row.querySelector('.pbirth')?.value || '',
+      email:  row.querySelector('.pemail')?.value || '',
+      addr:   row.querySelector('.paddr')?.value || '',
     });
   });
   c.innerHTML = '';
@@ -1214,10 +1381,12 @@ function renderAllPassengers() {
     const esc = (v) => String(v == null ? '' : v)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-    const safeName  = esc(pre.name||'');
+    const safePrenom = esc(pre.prenom||'');
+    const safeNom    = esc(pre.nom||'');
     const safeDob   = esc(pre.dob||'');
     const safeBirth = esc(pre.birth||'');
     const safeEmail = esc(pre.email||'');
+    const safeAddr  = esc(pre.addr||'');
     div.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <span style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--green-deep);font-weight:700">
@@ -1225,18 +1394,29 @@ function renderAllPassengers() {
         </span>
         ${i > 0 ? `<button type="button" onclick="removePassenger(${i})" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;padding:2px 6px" title="Supprimer ce passager">✕ Retirer</button>` : ''}
       </div>
+      ${i === 0 ? `
+      <div style="font-size:12px;color:var(--muted);background:var(--bg-soft);border:1px dashed var(--border);border-radius:6px;padding:9px 12px;margin-bottom:12px">
+        👤 Votre identité (prénom, nom) est celle saisie plus haut, section « Vos coordonnées ».
+      </div>
+      ` : `
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
         <div>
-          <label>First name NOM <span class="req">*</span></label>
-          <input type="text" class="pnif" placeholder="Ex : Fatou DIALLO" value="${safeName}"
-            oninput="updateParties();buildCoPassChecks()">
+          <label>First name <span class="req">*</span></label>
+          <input type="text" class="pprenom" placeholder="Ex : Fatou" value="${safePrenom}"
+            oninput="updateParties();buildCoPassChecks();refreshAddrReuseOptions()">
         </div>
         <div>
-          <label>Date de naissance <span class="req">*</span></label>
-          <input type="date" class="pdob" value="${safeDob}"
-            style="width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:'Montserrat',sans-serif;font-size:13px;border-radius:6px;color:var(--ink)"
-            onchange="checkMinorAge(this, ${i});buildCoPassChecks()">
+          <label>Nom <span class="req">*</span></label>
+          <input type="text" class="pnom" placeholder="Ex : DIALLO" value="${safeNom}"
+            oninput="updateParties();buildCoPassChecks();refreshAddrReuseOptions()">
         </div>
+      </div>
+      ` }
+      <div style="margin-bottom:12px">
+        <label>Date de naissance <span class="req">*</span></label>
+        <input type="date" class="pdob" value="${safeDob}"
+          style="width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:'Montserrat',sans-serif;font-size:13px;border-radius:6px;color:var(--ink)"
+          onchange="checkMinorAge(this, ${i});buildCoPassChecks()">
       </div>
       <div style="margin-bottom:12px">
         <label>Lieu de naissance <span class="req">*</span></label>
@@ -1253,6 +1433,17 @@ function renderAllPassengers() {
           oninput="updateParties()">
         <div style="font-size:10px;color:var(--muted);margin-top:3px;font-style:italic">Chaque adulte signe individuellement et reçoit une copie du contrat à son email.</div>
       </div>
+      <div class="paddr-block" id="paddrBlock${i}" style="${isMinor?'display:none':'display:block'};margin-bottom:12px">
+        <label>📍 Adresse du passager ${i+1} <span class="req">*</span></label>
+        <select class="paddr-reuse" data-idx="${i}" onchange="reuseAddrFor(${i}, this.value)"
+          style="width:100%;padding:9px 12px;margin-bottom:6px;border:1.5px solid var(--border);background:var(--paper);font-family:'Montserrat',sans-serif;font-size:12.5px;border-radius:6px;color:var(--ink)">
+          <option value="">— Sa propre adresse (à saisir ci-dessous) —</option>
+        </select>
+        <textarea class="paddr" data-idx="${i}" rows="2" placeholder="Ex. : Médina, Dakar, Sénégal"
+          style="width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:'Montserrat',sans-serif;font-size:13px;border-radius:6px;color:var(--ink)"
+          oninput="updateParties();refreshAddrReuseOptions()">${safeAddr}</textarea>
+        <div style="font-size:10px;color:var(--muted);margin-top:3px;font-style:italic">Requise pour identifier ce passager comme cédant (cession de créance, art. 1321 C. civ.). Même adresse que quelqu'un d'autre ? Choisissez-le ci-dessus.</div>
+      </div>
       ` : ''}
       <div class="pminor-badge" id="minorBadge${i}" style="${isMinor?'display:flex':'display:none'};align-items:center;gap:8px;padding:8px 12px;background:var(--red-bg);border:1px solid var(--red-border);border-radius:6px">
         <span style="font-size:16px">👶</span>
@@ -1262,6 +1453,87 @@ function renderAllPassengers() {
     c.appendChild(div);
   }
   buildCoPassChecks();
+  refreshAddrReuseOptions();
+}
+// ── Adresse des co-passagers : réutiliser l'adresse d'un autre passager déjà saisie,
+// plutôt que de la retaper (et pour que le contrat ne la répète pas bêtement — dédoublonnage
+// à l'impression, cf. mandat-pdf.js). Le menu se reconstruit à chaque frappe d'adresse.
+function getAllAddresses() {
+  const list = [{ idx: 0, name: (document.getElementById('fn')?.value.trim() || 'Passager 1'), addr: (document.getElementById('addr')?.value || '').trim() }];
+  document.querySelectorAll('.pax-row').forEach((row, i) => {
+    if (i === 0) return;
+    const nm = paxFullName(row, i) || ('Passager ' + (i + 1));
+    const ad = row.querySelector('.paddr')?.value.trim() || '';
+    list.push({ idx: i, name: nm, addr: ad });
+  });
+  return list;
+}
+function refreshAddrReuseOptions() {
+  const all = getAllAddresses();
+  document.querySelectorAll('.paddr-reuse').forEach((sel) => {
+    const myIdx = parseInt(sel.dataset.idx, 10);
+    const current = sel.value;
+    const opts = ['<option value="">— Sa propre adresse (à saisir ci-dessous) —</option>'];
+    all.forEach((p) => {
+      if (p.idx === myIdx || !p.addr) return;
+      const label = 'Même adresse que ' + (p.name || ('Passager ' + (p.idx + 1)));
+      opts.push(`<option value="${p.idx}">${label.replace(/</g, '&lt;')}</option>`);
+    });
+    sel.innerHTML = opts.join('');
+    if ([...sel.options].some((o) => o.value === current)) sel.value = current;
+  });
+  buildAddressSummaryForPrint(all);
+}
+function escHtml(v) { return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+// Résumé imprimable des adresses de TOUS les cédants (groupe), dédoublonné : si plusieurs
+// passagers partagent la même adresse, elle n'apparaît qu'UNE fois avec leurs noms groupés
+// (ex. « Aïda, Moussa : Dakar, Sénégal ») au lieu d'être répétée bêtement à chaque ligne.
+function buildAddressSummaryForPrint(all) {
+  const el = document.getElementById('addrSummaryPrint');
+  if (!el) return;
+  const list = (all || getAllAddresses()).filter((p) => p.addr);
+  if (!list.length) { el.innerHTML = ''; return; }
+  const groups = new Map(); // adresse normalisée → { addr, names[] }
+  list.forEach((p) => {
+    const key = p.addr.trim().toLowerCase().replace(/\s+/g, ' ');
+    if (!groups.has(key)) groups.set(key, { addr: p.addr.trim(), names: [] });
+    groups.get(key).names.push(p.name || ('Passager ' + (p.idx + 1)));
+  });
+  const lines = [...groups.values()].map((g) =>
+    `<div style="margin-bottom:2px"><strong>${escHtml(g.names.join(', '))}</strong>&nbsp;: ${escHtml(g.addr)}</div>`);
+  el.innerHTML =
+    '<div style="font-family:\'DM Mono\',monospace;font-size:8.5px;text-transform:uppercase;letter-spacing:.15em;color:#047857;font-weight:700;margin:6px 0 4px">Adresses des passagers cédants</div>'
+    + lines.join('');
+}
+function reuseAddrFor(idx, sourceIdxStr) {
+  const row = document.querySelectorAll('.pax-row')[idx];
+  const ta = row?.querySelector('.paddr');
+  if (!ta) return;
+  if (sourceIdxStr === '') { refreshAddrReuseOptions(); return; } // "sa propre adresse" → on laisse tel quel, éditable
+  const src = getAllAddresses().find((p) => String(p.idx) === String(sourceIdxStr));
+  if (src) { ta.value = src.addr; updateParties(); }
+  refreshAddrReuseOptions();
+}
+// Nom du passager idx : le principal (0) utilise #fn/#ln (section « Vos coordonnées », déjà
+// dissociés) — pas de champ nom dupliqué dans sa carte « Passager 1 ». Les co-passagers (>0)
+// ont leurs propres champs First name/Nom séparés dans leur carte.
+function paxFullName(row, idx) {
+  if (idx === 0) {
+    const fn = document.getElementById('fn')?.value.trim() || '';
+    const ln = document.getElementById('ln')?.value.trim() || '';
+    return [fn, ln].filter(Boolean).join(' ');
+  }
+  const prenom = row?.querySelector('.pprenom')?.value.trim() || '';
+  const nom = row?.querySelector('.pnom')?.value.trim() || '';
+  return [prenom, nom].filter(Boolean).join(' ');
+}
+// Découpe un nom combiné ("Fatou DIALLO", venant du bot/dossier ou d'un lien ?noms=) en
+// {prenom, nom} pour pré-remplir les 2 champs séparés — 1er mot = prénom, reste = nom.
+function splitFullName(full) {
+  const parts = String(full || '').trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return { prenom: '', nom: '' };
+  if (parts.length === 1) return { prenom: parts[0], nom: '' };
+  return { prenom: parts[0], nom: parts.slice(1).join(' ') };
 }
 function isMinorFromDob(dobStr) {
   if (!dobStr) return false;
@@ -1276,8 +1548,23 @@ function isMinorFromDob(dobStr) {
 function checkMinorAge(input, idx) {
   const row = document.querySelectorAll('.pax-row')[idx];
   if (!row) return;
+  const isMinor = isMinorFromDob(input.value);
   const badge = row.querySelector('.pminor-badge');
-  if (badge) badge.style.display = isMinorFromDob(input.value) ? 'flex' : 'none';
+  if (badge) badge.style.display = isMinor ? 'flex' : 'none';
+  // Email/adresse ne concernent que les adultes (mineur = mandat du parent, Art. 9 bis) —
+  // ces blocs sont créés display:block/none au rendu initial (dob pas encore connue) : on les
+  // remet à jour ici si la date de naissance change APRÈS coup (sinon ils restent visibles à
+  // tort, avec un astérisque requis trompeur, même si la validation les ignore déjà pour un mineur).
+  const emailBlock = row.querySelector('.pemail-block');
+  if (emailBlock) emailBlock.style.display = isMinor ? 'none' : 'block';
+  const addrBlock = row.querySelector('.paddr-block');
+  if (addrBlock) addrBlock.style.display = isMinor ? 'none' : 'block';
+  if (isMinor) {
+    const pemailInp = row.querySelector('.pemail'); if (pemailInp) pemailInp.classList.remove('err');
+    const paddrInp = row.querySelector('.paddr'); if (paddrInp) paddrInp.classList.remove('err');
+  } else {
+    refreshAddrReuseOptions();
+  }
   buildCoPassChecks();
 }
 function buildPaxFields(pax, pre) {
@@ -1286,8 +1573,13 @@ function buildPaxFields(pax, pre) {
   // Pre-fill names
   if (pre && pre.length) {
     setTimeout(() => {
-      document.querySelectorAll('.pnif').forEach((inp, i) => {
-        if (pre[i]) inp.value = pre[i];
+      const rows = document.querySelectorAll('.pax-row');
+      pre.forEach((full, i) => {
+        if (!full) return;
+        if (i === 0) { const sp0 = splitFullName(full); const fnEl = document.getElementById('fn'), lnEl = document.getElementById('ln'); if (fnEl && !fnEl.value) fnEl.value = sp0.prenom; if (lnEl && !lnEl.value) lnEl.value = sp0.nom; return; }
+        const row = rows[i]; if (!row) return;
+        const pIn = row.querySelector('.pprenom'), nIn = row.querySelector('.pnom');
+        if (pIn && nIn) { const sp = splitFullName(full); pIn.value = sp.prenom; nIn.value = sp.nom; }
       });
     }, 50);
   }
@@ -1295,30 +1587,32 @@ function buildPaxFields(pax, pre) {
 }
 function getNames() {
   const n = [];
-  document.querySelectorAll('.pnif').forEach(el => { if (el.value.trim()) n.push(el.value.trim()); });
+  document.querySelectorAll('.pax-row').forEach((row, i) => { const nm = paxFullName(row, i); if (nm) n.push(nm); });
   return n;
 }
 function getPassengersData() {
   const data = [];
   document.querySelectorAll('.pax-row').forEach((row, i) => {
     const entry = {
-      name:  row.querySelector('.pnif')?.value?.trim() || '',
+      name:  paxFullName(row, i),
       dob:   row.querySelector('.pdob')?.value || '',
       birth: row.querySelector('.pbirth')?.value?.trim() || '',
       minor: isMinorFromDob(row.querySelector('.pdob')?.value || ''),
     };
     if (i === 0) {
       // Passager 1 = signataire principal (canvas principal)
-      // Email principal pris depuis le champ #em-perso
+      // Email principal pris depuis le champ #em-perso ; adresse depuis #addr (déjà collectée plus haut)
       entry.email = (document.getElementById('em-perso')?.value || '').trim();
+      entry.adresse = (document.getElementById('addr')?.value || '').trim();
       try {
         const c = document.getElementById('sigCanvas');
         if (c && started) entry.signatureImg = c.toDataURL('image/png');
       } catch (e) {}
     } else {
-      // Co-passagers : email individuel + signature + nom du représentant légal si mineur
+      // Co-passagers : email individuel + adresse individuelle (ou reprise d'un autre passager) + signature + nom du représentant légal si mineur
       const emailInput = row.querySelector('.pemail');
       entry.email = (emailInput?.value || '').trim();
+      entry.adresse = (row.querySelector('.paddr')?.value || '').trim();
       if (coSigData[i]) entry.signatureImg = coSigData[i];
       if ((coRepData[i] || '').trim()) entry.legalRepName = coRepData[i].trim();
     }
@@ -1330,7 +1624,10 @@ function getPassengersData() {
 let flightMode = 'direct';            // 'direct' | 'connecting'
 let flightLegs = [];                  // [{fnum,date,dep,arr}]
 function emptyLeg(){ return { fnum:'', date:'', dep:'', arr:'' }; }
-function frDate(iso){ try{ const [y,m,d]=iso.split('-'); return `${d}/${m}/${y}`; }catch(e){ return iso||''; } }
+// Convertit une date ISO "AAAA-MM-JJ" -> "JJ/MM/AAAA". Si la valeur n'est PAS au format ISO
+// (ex. déjà "JJ/MM/AAAA", comme #fdate qui est un champ texte formaté à la saisie), on la
+// retourne telle quelle plutôt que de produire "undefined/undefined/..." (bug vu en prod).
+function frDate(iso){ const m = String(iso||'').match(/^(\d{4})-(\d{2})-(\d{2})$/); return m ? `${m[3]}/${m[2]}/${m[1]}` : String(iso||''); }
 function toggleFlightMode(){
   flightMode = document.getElementById('flightTypeConnecting')?.checked ? 'connecting' : 'direct';
   const d = document.getElementById('flightDirect');
@@ -1393,6 +1690,20 @@ function legsSummary(){
   }).join(' ; ');
 }
 // ── PARTIES ──────────────────────────────────────────────────────
+// Auto-format d'une saisie date : ajoute les / a la volee (12032026 -> 12/03/2026).
+// Rapide sur mobile (clavier numerique, aucune ouverture de calendrier natif lent).
+function autoFmtDate(el) {
+  if (!el) return;
+  let v = String(el.value || '').replace(/\D/g, '').slice(0, 8);
+  if (v.length >= 5) el.value = v.slice(0, 2) + '/' + v.slice(2, 4) + '/' + v.slice(4);
+  else if (v.length >= 3) el.value = v.slice(0, 2) + '/' + v.slice(2);
+  else el.value = v;
+}
+// Convertit "JJ/MM/AAAA" -> "AAAA-MM-JJ" (ISO) pour compat backend. Retourne "" si invalide.
+function dateFrToIso(s) {
+  const m = String(s || '').match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  return m ? `${m[3]}-${m[2]}-${m[1]}` : '';
+}
 function updateParties() {
   const fn = document.getElementById('fn').value.trim();
   const ln = document.getElementById('ln').value.trim();
@@ -1402,9 +1713,11 @@ function updateParties() {
   else {
     // Ligne claire : date · n° de vol · route
     const dfn = (document.getElementById('fnum').value || VOL || '').trim();
-    const ddate = document.getElementById('fdate').value;
+    // #fdate est un champ texte déjà saisi/formaté en JJ/MM/AAAA (autoFmtDate) — PAS un input
+    // ISO natif : pas de conversion frDate() ici (contrairement à leg.date, qui lui est ISO).
+    const ddate = document.getElementById('fdate').value.trim();
     const droute = [document.getElementById('dep').value.trim(), document.getElementById('arr').value.trim()].filter(Boolean).join(' → ');
-    vol = [ddate ? frDate(ddate) : '', dfn, droute].filter(Boolean).join(' · ') || ', ';
+    vol = [ddate, dfn, droute].filter(Boolean).join(' · ') || ', ';
   }
   const nm = (fn||ln) ? (fn+' '+ln).trim()+(pax>1?` + ${pax-1} autre(s)`:'') : ', ';
   document.getElementById('pMandant').textContent = nm;
@@ -1480,7 +1793,15 @@ function buildCoPassChecks() {
   const sec  = document.getElementById('coPassSection');
   const cont = document.getElementById('coPassChecks');
   if (!sec || !cont) return;
-  const coPax = data.slice(1);               // passagers 2..N
+  // Mode Yousign : chaque adulte signe electroniquement via son propre lien
+  // (multi-signer meme telephone ou email separe). Le canvas manuscrit des
+  // co-passagers est donc masque en permanence — Yousign gere l'individualisation.
+  sec.style.display = 'none';
+  cont.innerHTML = '';
+  return;
+  // -- Code legacy conserve pour reference : block canvas si Yousign coupe --
+  // eslint-disable-next-line no-unreachable
+  const coPax = data.slice(1);
   if ((paxCount || 1) <= 1 || coPax.length === 0) {
     sec.style.display = 'none';
     cont.innerHTML = '';
@@ -1545,17 +1866,9 @@ function buildCoPassChecks() {
   });
 }
 function allCoPassChecked() {
-  const data = getPassengersData();
-  if ((paxCount || 1) <= 1) return true;
-  const coPax = data.slice(1);
-  if (coPax.length === 0) return true;
-  for (let k = 0; k < coPax.length; k++) {
-    const idx = k + 1;
-    const canvas = document.querySelector('.co-sig-canvas[data-idx="' + idx + '"]');
-    const signed = (canvas && canvasHasInk(canvas)) || !!coSigData[idx];
-    if (!signed) return false;
-    if (coPax[k].minor && !((coRepData[idx] || '').trim())) return false;
-  }
+  // Mode Yousign : la signature multi-passager se fait via des liens individuels
+  // Yousign (multi-signer). Le canvas manuscrit des co-pax n'est plus utilise —
+  // on renvoie true pour ne pas bloquer la validation du form.
   return true;
 }
 // ── SIGNATURE ────────────────────────────────────────────────
@@ -1596,10 +1909,10 @@ function clearSig(e) {
   document.getElementById('sigClear').style.display='none';
 }
 function hasSig() {
-  if (!started) return false;
-  const d = document.getElementById('sigCanvas').getContext('2d').getImageData(0,0,680,120).data;
-  for (let i=3;i<d.length;i+=4) if(d[i]>0) return true;
-  return false;
+  // Mode Yousign : la signature ne se fait plus sur le canvas mais après
+  // redirection vers yousign.app. On bypass donc la validation canvas
+  // pour ne pas bloquer le bouton "Continuer vers la signature électronique".
+  return true;
 }
 // ── PROGRESSION ──────────────────────────────────────────────────
 function initProgress() {
@@ -1615,35 +1928,86 @@ function calcProgress() {
   if (document.getElementById('fdate')?.value) n++;
   if (document.getElementById('inc')?.value)   n++;
   if (document.getElementById('mainCheck')?.checked) n++;
-  if (document.getElementById('eligCheck')?.checked) n++;
-  document.getElementById('pgBar').style.width = Math.round(n/9*100)+'%';
+  document.getElementById('pgBar').style.width = Math.round(n/8*100)+'%';
 }
 // ── WhatsApp : indicatif (drapeau) + numéro → #wa caché (numéro complet) ──
-// Liste pays (drapeau, nom, indicatif), champ recherchable. Tout indicatif non listé
-// reste possible : le client tape « +XXX » directement (filet de sécurité universel).
-const COUNTRIES = [
-  ['🇸🇳','Sénégal','221'],['🇲🇱','Mali','223'],['🇧🇫','Burkina Faso','226'],['🇳🇪','Niger','227'],
-  ['🇹🇬','Togo','228'],['🇧🇯','Bénin','229'],['🇨🇮','Côte d\'Ivoire','225'],['🇬🇳','Guinée','224'],
-  ['🇬🇲','Gambie','220'],['🇬🇼','Guinée-Bissau','245'],['🇲🇷','Mauritanie','222'],['🇸🇱','Sierra Leone','232'],
-  ['🇱🇷','Liberia','231'],['🇨🇻','Cap-Vert','238'],['🇬🇭','Ghana','233'],['🇳🇬','Nigeria','234'],
-  ['🇨🇲','Cameroun','237'],['🇹🇩','Tchad','235'],['🇨🇫','Centrafrique','236'],['🇬🇦','Gabon','241'],
-  ['🇨🇬','Congo','242'],['🇨🇩','RDC','243'],['🇬🇶','Guinée équatoriale','240'],['🇸🇹','Sao Tomé','239'],
-  ['🇦🇴','Angola','244'],['🇲🇦','Maroc','212'],['🇩🇿','Algérie','213'],['🇹🇳','Tunisie','216'],
-  ['🇱🇾','Libye','218'],['🇪🇬','Égypte','20'],['🇸🇩','Soudan','249'],['🇲🇿','Mozambique','258'],
-  ['🇰🇪','Kenya','254'],['🇹🇿','Tanzanie','255'],['🇺🇬','Ouganda','256'],['🇷🇼','Rwanda','250'],
-  ['🇧🇮','Burundi','257'],['🇪🇹','Éthiopie','251'],['🇸🇴','Somalie','252'],['🇩🇯','Djibouti','253'],
-  ['🇲🇬','Madagascar','261'],['🇲🇺','Maurice','230'],['🇰🇲','Comores','269'],['🇿🇦','Afrique du Sud','27'],
-  ['🇿🇲','Zambie','260'],['🇿🇼','Zimbabwe','263'],['🇧🇼','Botswana','267'],['🇳🇦','Namibie','264'],
-  ['🇲🇼','Malawi','265'],
-  ['🇫🇷','France','33'],['🇧🇪','Belgique','32'],['🇨🇭','Suisse','41'],['🇬🇧','Royaume-Uni','44'],
-  ['🇵🇹','Portugal','351'],['🇪🇸','Espagne','34'],['🇮🇹','Italie','39'],['🇩🇪','Allemagne','49'],
-  ['🇳🇱','Pays-Bas','31'],['🇱🇺','Luxembourg','352'],['🇮🇪','Irlande','353'],['🇸🇪','Suède','46'],
-  ['🇳🇴','Norvège','47'],['🇩🇰','Danemark','45'],['🇫🇮','Finlande','358'],['🇦🇹','Autriche','43'],
-  ['🇵🇱','Pologne','48'],['🇬🇷','Grèce','30'],
-  ['🇺🇸','États-Unis / Canada','1'],['🇦🇪','Émirats','971'],['🇸🇦','Arabie Saoudite','966'],
-  ['🇶🇦','Qatar','974'],['🇰🇼','Koweït','965'],['🇱🇧','Liban','961'],['🇹🇷','Turquie','90'],
-  ['🇨🇳','Chine','86'],['🇮🇳','Inde','91'],['🇧🇷','Brésil','55'],
+// Liste pays (drapeau calculé, nom, indicatif), champ recherchable et EXHAUSTIVE (~200 pays,
+// Afrique et Europe en tête car cœur de la diaspora, reste du monde ensuite — la recherche
+// rend l'ordre secondaire de toute façon). Tout indicatif non listé reste possible : le
+// client peut toujours taper « +XXX » directement (filet de sécurité universel).
+function flagEmoji(iso2){ return String.fromCodePoint(...[...String(iso2||'').toUpperCase()].map(c=>127397+c.charCodeAt(0))); }
+const COUNTRIES_RAW = [
+  // Afrique de l'Ouest
+  ['SN','Sénégal','221'],['ML','Mali','223'],['BF','Burkina Faso','226'],['NE','Niger','227'],
+  ['TG','Togo','228'],['BJ','Bénin','229'],['CI','Côte d\'Ivoire','225'],['GN','Guinée','224'],
+  ['GM','Gambie','220'],['GW','Guinée-Bissau','245'],['MR','Mauritanie','222'],['SL','Sierra Leone','232'],
+  ['LR','Liberia','231'],['CV','Cap-Vert','238'],['GH','Ghana','233'],['NG','Nigeria','234'],
+  // Afrique centrale
+  ['CM','Cameroun','237'],['TD','Tchad','235'],['CF','Centrafrique','236'],['GA','Gabon','241'],
+  ['CG','Congo','242'],['CD','RDC','243'],['GQ','Guinée équatoriale','240'],['ST','Sao Tomé-et-Principe','239'],
+  ['AO','Angola','244'],
+  // Afrique du Nord
+  ['MA','Maroc','212'],['DZ','Algérie','213'],['TN','Tunisie','216'],['LY','Libye','218'],
+  ['EG','Égypte','20'],['SD','Soudan','249'],['SS','Soudan du Sud','211'],
+  // Afrique de l'Est
+  ['MZ','Mozambique','258'],['KE','Kenya','254'],['TZ','Tanzanie','255'],['UG','Ouganda','256'],
+  ['RW','Rwanda','250'],['BI','Burundi','257'],['ET','Éthiopie','251'],['ER','Érythrée','291'],
+  ['SO','Somalie','252'],['DJ','Djibouti','253'],['SC','Seychelles','248'],
+  // Afrique australe / de l'océan Indien
+  ['MG','Madagascar','261'],['MU','Maurice','230'],['KM','Comores','269'],['ZA','Afrique du Sud','27'],
+  ['ZM','Zambie','260'],['ZW','Zimbabwe','263'],['BW','Botswana','267'],['NA','Namibie','264'],
+  ['MW','Malawi','265'],['LS','Lesotho','266'],['SZ','Eswatini','268'],
+  // Europe de l'Ouest
+  ['FR','France','33'],['BE','Belgique','32'],['CH','Suisse','41'],['GB','Royaume-Uni','44'],
+  ['PT','Portugal','351'],['ES','Espagne','34'],['IT','Italie','39'],['DE','Allemagne','49'],
+  ['NL','Pays-Bas','31'],['LU','Luxembourg','352'],['IE','Irlande','353'],['MC','Monaco','377'],
+  ['AD','Andorre','376'],['MT','Malte','356'],['SM','Saint-Marin','378'],['VA','Vatican','379'],
+  ['LI','Liechtenstein','423'],
+  // Europe du Nord
+  ['SE','Suède','46'],['NO','Norvège','47'],['DK','Danemark','45'],['FI','Finlande','358'],
+  ['IS','Islande','354'],
+  // Europe centrale / de l'Est
+  ['AT','Autriche','43'],['PL','Pologne','48'],['CZ','Tchéquie','420'],['SK','Slovaquie','421'],
+  ['HU','Hongrie','36'],['RO','Roumanie','40'],['BG','Bulgarie','359'],['UA','Ukraine','380'],
+  ['BY','Biélorussie','375'],['MD','Moldavie','373'],['LT','Lituanie','370'],['LV','Lettonie','371'],
+  ['EE','Estonie','372'],['RU','Russie','7'],
+  // Europe du Sud / Balkans
+  ['GR','Grèce','30'],['CY','Chypre','357'],['HR','Croatie','385'],['SI','Slovénie','386'],
+  ['RS','Serbie','381'],['BA','Bosnie-Herzégovine','387'],['ME','Monténégro','382'],
+  ['MK','Macédoine du Nord','389'],['AL','Albanie','355'],['XK','Kosovo','383'],
+  // Moyen-Orient
+  ['AE','Émirats arabes unis','971'],['SA','Arabie Saoudite','966'],['QA','Qatar','974'],
+  ['KW','Koweït','965'],['BH','Bahreïn','973'],['OM','Oman','968'],['YE','Yémen','967'],
+  ['LB','Liban','961'],['JO','Jordanie','962'],['SY','Syrie','963'],['IQ','Irak','964'],
+  ['IL','Israël','972'],['PS','Palestine','970'],['IR','Iran','98'],['TR','Turquie','90'],
+  // Asie centrale / Caucase
+  ['KZ','Kazakhstan','7'],['UZ','Ouzbékistan','998'],['AZ','Azerbaïdjan','994'],
+  ['GE','Géorgie','995'],['AM','Arménie','374'],
+  // Asie du Sud
+  ['IN','Inde','91'],['PK','Pakistan','92'],['BD','Bangladesh','880'],['LK','Sri Lanka','94'],
+  ['NP','Népal','977'],['AF','Afghanistan','93'],
+  // Asie de l'Est
+  ['CN','Chine','86'],['JP','Japon','81'],['KR','Corée du Sud','82'],['TW','Taïwan','886'],
+  ['HK','Hong Kong','852'],['MN','Mongolie','976'],
+  // Asie du Sud-Est
+  ['VN','Vietnam','84'],['TH','Thaïlande','66'],['ID','Indonésie','62'],['MY','Malaisie','60'],
+  ['SG','Singapour','65'],['PH','Philippines','63'],['MM','Birmanie','95'],['KH','Cambodge','855'],
+  ['LA','Laos','856'],
+  // Océanie
+  ['AU','Australie','61'],['NZ','Nouvelle-Zélande','64'],['FJ','Fidji','679'],['PG','Papouasie-Nouvelle-Guinée','675'],
+  // Amérique du Nord
+  ['US','États-Unis / Canada','1'],['MX','Mexique','52'],
+  // Amérique centrale / Caraïbes
+  ['GT','Guatemala','502'],['BZ','Belize','501'],['SV','Salvador','503'],['HN','Honduras','504'],
+  ['NI','Nicaragua','505'],['CR','Costa Rica','506'],['PA','Panama','507'],['CU','Cuba','53'],
+  ['HT','Haïti','509'],['DO','République dominicaine','1'],['JM','Jamaïque','1'],['TT','Trinité-et-Tobago','1'],
+  ['BS','Bahamas','1'],
+  // Amérique du Sud
+  ['BR','Brésil','55'],['AR','Argentine','54'],['CL','Chili','56'],['CO','Colombie','57'],
+  ['PE','Pérou','51'],['VE','Venezuela','58'],['EC','Équateur','593'],['BO','Bolivie','591'],
+  ['PY','Paraguay','595'],['UY','Uruguay','598'],['GY','Guyana','592'],['SR','Suriname','597'],
 ];
+const COUNTRIES = COUNTRIES_RAW.map(([iso,name,code]) => [flagEmoji(iso), name, code]);
 // ── Téléphone : NSN = numéro national SANS le 0 de tête (format international) + longueurs par pays ──
 function nsn(s){ return String(s || '').replace(/[^\d]/g, '').replace(/^0+/, ''); }
 // Longueur attendue du numéro national (sans indicatif ni 0), en intervalle [min,max] pour rester robuste.
@@ -1682,10 +2046,53 @@ function phoneMsg(issue){
   if (issue === 'len')    return 'Vérifiez le nombre de chiffres du numéro.';
   return '';
 }
-function buildPaysList(){
-  const dl = document.getElementById('pays-list');
-  if (dl) dl.innerHTML = COUNTRIES.map(c => `<option value="${c[0]} ${c[1]} +${c[2]}"></option>`).join('');
+// Menu pays custom (remplace l'ancienne <datalist>, invisible/non cliquable sur Safari iOS —
+// gros risque pour cette niche diaspora en majorité sur iPhone). Marche pareil partout :
+// on tape pour filtrer (nom ou indicatif), on clique une ligne pour choisir.
+let paysDDActive = null; // id du menu actuellement ouvert (pour le clic extérieur)
+function normPays(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
+function renderPaysDD(inputId, ddId, query){
+  const dd = document.getElementById(ddId);
+  if (!dd) return;
+  const q = normPays(query);
+  const qDigits = String(query||'').replace(/\D/g,'');
+  const list = !q ? COUNTRIES : COUNTRIES.filter(c => normPays(c[1]).includes(q) || (qDigits && c[2].startsWith(qDigits)));
+  dd.innerHTML = list.length
+    ? list.map(c => `<div class="pays-dd-item" onclick="selectPays('${inputId}','${ddId}','${c[0]}','${c[1].replace(/'/g,"\\'")}','${c[2]}')">${c[0]} ${c[1]} <span style="color:var(--muted)">+${c[2]}</span></div>`).join('')
+    : '<div class="pays-dd-empty">Aucun pays trouvé — vous pouvez taper directement +indicatif</div>';
 }
+function openPaysDD(inputId, ddId){
+  // Ouverture (clic/focus) : toujours la liste COMPLÈTE, pas filtrée par la valeur déjà
+  // présente (sinon le champ pré-rempli "France +33" masque tous les autres pays au 1er clic).
+  paysDDActive = ddId;
+  renderPaysDD(inputId, ddId, '');
+  document.getElementById(ddId)?.classList.add('open');
+}
+function filterPaysDD(inputId, ddId){
+  // Frappe au clavier : filtre en direct sur ce qui est tapé.
+  paysDDActive = ddId;
+  renderPaysDD(inputId, ddId, document.getElementById(inputId)?.value || '');
+  document.getElementById(ddId)?.classList.add('open');
+}
+function selectPays(inputId, ddId, flag, name, code){
+  const input = document.getElementById(inputId);
+  if (input) input.value = `${flag} ${name} +${code}`;
+  document.getElementById(ddId)?.classList.remove('open');
+  paysDDActive = null;
+  if (inputId === 'wa-indicatif') syncWa(); else if (inputId === 'rap-indicatif') syncRap(true);
+}
+document.addEventListener('click', function(e){
+  if (paysDDActive && !e.target.closest('.pays-pick-wrap')) {
+    document.getElementById(paysDDActive)?.classList.remove('open');
+    paysDDActive = null;
+  }
+});
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape' && paysDDActive) {
+    document.getElementById(paysDDActive)?.classList.remove('open');
+    paysDDActive = null;
+  }
+});
 function syncWa(){
   const ind = document.getElementById('wa-indicatif');
   const raw = (document.getElementById('wa-national')?.value || '');
@@ -1784,12 +2191,11 @@ function validate() {
   }
   // Validation passagers : nom + date de naissance + email (par adulte, hors signataire principal)
   document.querySelectorAll('.pax-row').forEach((row, idx) => {
-    const nameInp = row.querySelector('.pnif');
-    if (!nameInp?.value.trim()) {
-      nameInp?.classList.add('err');
-      ok = false;
-    } else {
-      nameInp?.classList.remove('err');
+    // Le principal (idx 0) n'a pas de champ nom ici : déjà validé sur #fn/#ln plus haut.
+    if (idx > 0) {
+      const prenomInp = row.querySelector('.pprenom'), nomInp = row.querySelector('.pnom');
+      if (!prenomInp?.value.trim()) { prenomInp?.classList.add('err'); ok = false; } else { prenomInp?.classList.remove('err'); }
+      if (!nomInp?.value.trim()) { nomInp?.classList.add('err'); ok = false; } else { nomInp?.classList.remove('err'); }
     }
     // Date de naissance obligatoire pour chaque passager (identification cession, art. 1321 CC)
     const dobInp = row.querySelector('.pdob');
@@ -1820,6 +2226,15 @@ function validate() {
         } else {
           pemailInp?.classList.remove('err');
         }
+        // Adresse obligatoire pour identifier ce passager comme cédant (Article 1, art. 1321 C. civ.)
+        const paddrInp = row.querySelector('.paddr');
+        const paddrVal = (paddrInp?.value || '').trim();
+        if (paddrVal.length < 4) {
+          paddrInp?.classList.add('err');
+          ok = false;
+        } else {
+          paddrInp?.classList.remove('err');
+        }
       }
     }
   });
@@ -1840,9 +2255,6 @@ function validate() {
   const checked = document.getElementById('mainCheck').checked;
   document.getElementById('checkErr').style.display = checked?'none':'block';
   if(!checked) ok=false;
-  const eligOk = document.getElementById('eligCheck').checked;
-  document.getElementById('eligErr').style.display = eligOk?'none':'block';
-  if(!eligOk) ok=false;
   const hs = hasSig();
   document.getElementById('sigErr').style.display = hs?'none':'block';
   if(!hs) ok=false;
@@ -1868,7 +2280,8 @@ function submitMandat() {
     _connecting = legsSummary();
   } else {
     _flightNum  = document.getElementById('fnum').value.trim();
-    _flightDate = document.getElementById('fdate').value;
+    // Champ fdate est en JJ/MM/AAAA -> on convertit en AAAA-MM-JJ pour le backend.
+    _flightDate = dateFrToIso(document.getElementById('fdate').value) || document.getElementById('fdate').value;
     _depA       = document.getElementById('dep').value.trim();
     _arrA       = document.getElementById('arr').value.trim();
     _connecting = document.getElementById('connecting')?.value.trim() || '';
@@ -1884,7 +2297,7 @@ function submitMandat() {
     email:     clientEmailForRef(REF) || document.getElementById('em').value.trim(),
     address:   document.getElementById('addr').value.trim(),
     startNow:  document.getElementById('startNow').checked,
-    eligibilityAcknowledged: document.getElementById('eligCheck').checked,
+    eligibilityAcknowledged: document.getElementById('mainCheck').checked,
     coPassAgreement: allCoPassChecked(),
     cessionCreance: true,
     mandataireAccepted: true,
@@ -1895,6 +2308,7 @@ function submitMandat() {
     flightNum: _flightNum,
     flightDate:_flightDate,
     pnr:       document.getElementById('pnr').value.trim(),
+    billet:    (document.getElementById('billet')?.value || '').trim(),
     incident:  document.getElementById('inc').value,
     pax:       paxCount,
     passengerNames: getNames(),
@@ -1913,13 +2327,121 @@ function submitMandat() {
     watiConversationId: CID,
     linkSentAt: LSA,
   };
+  // ── NOUVEAU FLOW Yousign ──────────────────────────────────────────
+  // 1) Enregistrer le dossier dans le CRM (existant)
+  // 2) Générer le PDF du mandat rempli (Puppeteer côté serveur)
+  // 3) Créer la signature_request Yousign avec ce PDF
+  // 4) Rediriger le client vers le signing_url Yousign
+  // En sortie de Yousign, ?signed=1 ramène ici et affiche l'écran "C'est fait !"
+  // Si une étape échoue, on retombe sur l'ancien flow showSuccess pour ne pas
+  // perdre le dossier (le CRM a déjà reçu les données à l'étape 1).
   fetch('/api/submit-mandat', {
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify(payload),
   })
-  .then(r=>showSuccess(payload, !!(r && r.ok)))
-  .catch(()=>showSuccess(payload, false));
+  .then(r => (r && r.json) ? r.json().catch(()=>({ok:false})) : {ok:false})
+  .then(crmRes => {
+    btn.innerHTML = '⏳ Génération de votre contrat PDF...';
+    return fetch('/api/render-mandat-pdf', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        r: payload.ref,
+        n: payload.lastName,
+        fn: payload.firstName,
+        v: payload.flightNum,
+        d: payload.flightDate,
+        dep: payload.depAirport,
+        arr: payload.arrAirport,
+        c: payload.airline,
+        pnr: payload.pnr,
+        email: payload.email,
+        phone: payload.whatsapp,
+        addr: payload.address,
+        indemnite: '600',
+      }),
+    }).then(r => r.json()).then(pdfRes => ({crmRes, pdfRes}));
+  })
+  .then(({crmRes, pdfRes}) => {
+    if (!pdfRes || !pdfRes.ok || !pdfRes.pdf_base64) {
+      throw new Error('PDF generation failed: ' + (pdfRes && pdfRes.error || 'unknown'));
+    }
+    btn.innerHTML = '⏳ Préparation Yousign...';
+    // ── Construction de la liste des signataires (1 par adulte) ──
+    // Le 1er passager (cédant principal) = fn/ln + em-perso (déjà saisis).
+    // Les autres = name + email .pemail individuel (mémoire #12).
+    // On exclut les mineurs (couverts par autorisation parentale, pas par signature directe).
+    function splitName(full) {
+      const parts = String(full || '').trim().split(/\s+/);
+      if (parts.length === 0) return { first: '', last: '' };
+      if (parts.length === 1) return { first: parts[0], last: '' };
+      return { first: parts[0], last: parts.slice(1).join(' ') };
+    }
+    const adults = [{
+      first_name: payload.firstName,
+      last_name: payload.lastName,
+      email: payload.email,
+      phone: payload.whatsapp,
+    }];
+    (payload.passengersData || []).forEach(function (p, idx) {
+      if (idx === 0) return; // principal déjà dans adults[0]
+      if (p.minor) return;   // mineur exclu
+      if (!p.email) return;  // pas d'email → on saute (sera signé via autorisation parent)
+      const split = splitName(p.name);
+      adults.push({
+        first_name: split.first,
+        last_name: split.last,
+        email: p.email,
+        // Mode "même téléphone" diaspora : le co-passager reprend le numéro
+        // WhatsApp du cédant principal pour recevoir l'OTP SMS sur le tel familial.
+        phone: payload.whatsapp,
+      });
+    });
+    return fetch('/api/yousign-init', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        // Rétro-compat 1er signataire (pour fallback éventuel)
+        first_name: payload.firstName,
+        last_name: payload.lastName,
+        email: payload.email,
+        phone: payload.whatsapp,
+        // Nouveau : liste complète des adultes signataires
+        signers: adults,
+        label: 'Mandat Robin des Airs — ' + payload.lastName + ' ' + payload.firstName + ' — vol ' + (payload.flightNum || '—'),
+        pdf_base64: pdfRes.pdf_base64,
+        // Zone signature page 1 en haut à droite : visible direct, pas de scroll
+        signature_page: 1,
+        signature_x: 380,
+        signature_y: 120,
+      }),
+    }).then(r => r.json());
+  })
+  .then(yousignRes => {
+    if (!yousignRes || !yousignRes.signing_url) {
+      throw new Error('Yousign URL absent: ' + (yousignRes && yousignRes.error || 'unknown'));
+    }
+    // Multi-signataires : stocker les URLs des autres signataires pour relais après chaque signature
+    if (yousignRes.signers && yousignRes.signers.length > 1 && yousignRes.signature_request_id) {
+      try {
+        localStorage.setItem('yousign_signers_' + yousignRes.signature_request_id, JSON.stringify(yousignRes.signers));
+      } catch (_) {}
+    }
+    btn.innerHTML = '✓ Redirection vers Yousign...';
+    window.location.href = yousignRes.signing_url;
+  })
+  .catch(err => {
+    console.error('[Yousign flow] error:', err);
+    // Fallback : on affiche l'écran succès même si Yousign a échoué — le CRM
+    // a au moins reçu les données. Le client peut nous écrire sur WhatsApp.
+    btn.disabled = false;
+    btn.innerHTML = '⚠ Une erreur est survenue';
+    setTimeout(() => {
+      alert("La signature électronique n'a pas pu être préparée. Vos informations sont enregistrées : vous serez recontacté·e sur WhatsApp pour finaliser. Réf : " + (payload.ref || ''));
+      showSuccess(payload, false);
+    }, 300);
+  });
 }
 function fmtDateLongFR(d){ try{ return d.toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'}); }catch(e){ return ''; } }
 function showSuccess(payload, ok) {
@@ -1954,6 +2476,8 @@ function showSuccess(payload, ok) {
   if (whenEl) { let h=''; try{ h=' à '+signedAt.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); }catch(e){} whenEl.textContent = fmtDateLongFR(signedAt) + h; }
   const whereEl = document.getElementById('sWhere');
   if (whereEl) whereEl.textContent = (payload.signCity || document.getElementById('sigCity')?.value || 'Paris');
+  const verEl = document.getElementById('sVer');
+  if (verEl && typeof MANDAT_VERSION !== 'undefined') verEl.textContent = MANDAT_VERSION;
   const retract = new Date(signedAt.getTime()); retract.setDate(retract.getDate()+14);
   const retEl = document.getElementById('sRetract'); if (retEl) retEl.textContent = fmtDateLongFR(retract);
   // Liens pré-remplis (PDF + WhatsApp)
