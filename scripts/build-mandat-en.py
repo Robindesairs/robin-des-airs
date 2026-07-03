@@ -267,7 +267,7 @@ NEW_PAIRS2 = [
     ("📝 Ce que vous signez — l'essentiel", "📝 What you are signing — the essentials"),
     ("Vous chargez <strong>Robin des Airs</strong> de récupérer votre indemnité (jusqu'à 600 €) <strong>et</strong> vos frais.",
      "You instruct <strong>Robin des Airs</strong> to recover your compensation (up to €600) <strong>and</strong> your expenses."),
-    ("<strong>25 % seulement si on récupère. Sinon 0 €</strong> — aucune avance, même au tribunal.",
+    ("<strong>25 % seulement si on récupère. Sinon 0 €</strong> — aucune avance à aucun stade.",
      "<strong>25% only if we recover. Otherwise €0</strong> — nothing upfront, even in court."),
     ("Vous touchez <strong>75 % nets</strong>, versés sous 48 h après encaissement.",
      "You receive <strong>75% net</strong>, paid within 48 hours after collection."),
