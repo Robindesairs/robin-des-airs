@@ -555,6 +555,9 @@ function genRef() {
   const rand = BigInt('0x' + crypto.randomBytes(16).toString('hex')).toString(36).toUpperCase();
   return `RDA-${d}-${rand}`;
 }
+// Numéro de dossier COURT pour l'affichage CLIENT (le ref long reste le jeton du lien + la clé CRM ; jamais montré au client).
+// « RDA-20260703-4X8K2M9P… » → « RDA-4X8K2M ». Le court est un préfixe du long → le bureau le retrouve par recherche.
+function shortRef(ref) { const p = String(ref || '').split('-'); return (p.length >= 3 && p[2]) ? `RDA-${p[2].slice(0, 6).toUpperCase()}` : String(ref || ''); }
 function normInput(raw, options) { const t = (raw || '').trim().toLowerCase(); if (/^\d+$/.test(t)) return t; const i = options.findIndex(o => t.includes(o.toLowerCase())); return i >= 0 ? String(i + 1) : t; }
 const AIRLINES = { AF: 'Air France', SN: 'Brussels Airlines', TP: 'TAP Air Portugal', AT: 'Royal Air Maroc', HC: 'Air Sénégal', KQ: 'Kenya Airways', ET: 'Ethiopian Airlines', EK: 'Emirates', TK: 'Turkish Airlines', KL: 'KLM', LH: 'Lufthansa', IB: 'Iberia', EJU: 'easyJet', U2: 'easyJet', FR: 'Ryanair', TO: 'Transavia', KP: 'ASKY', DN: 'Senegal Airlines' };
 function deduceAirline(vol) { const m = (vol || '').toUpperCase().match(/^([A-Z]{2,3})\d/); return (m && AIRLINES[m[1]]) || ''; }
@@ -1502,8 +1505,8 @@ function missingDocsText(s) {
   }
   if (miss.length) return en ? `📎 Still missing: ${miss.join(' and ')}.` : `📎 Il manque encore : ${miss.join(' et ')}.`;
   const v = s.flightVerdict;
-  if (v === 'hors_champ' || v === 'sous_seuil') return en ? `✅ All your documents are in, thanks ${firstNameOf(s)}! File ${s.ref || ''} is complete. An expert confirms the *exact amount* (free check) and we file the claim — €0 if we recover nothing.` : `✅ Toutes vos pièces sont là, merci ${firstNameOf(s)} ! Le dossier ${s.ref || ''} est complet. Un expert confirme le *montant exact* (vérification gratuite) et on lance la réclamation — 0 € si vous ne touchez rien.`;
-  return en ? `✅ All your documents are in, thanks ${firstNameOf(s)}! Your file *${s.ref || ''}* is complete. 🙏` : `✅ Toutes vos pièces sont là, merci ${firstNameOf(s)} ! Votre dossier *${s.ref || ''}* est au complet. 🙏`;
+  if (v === 'hors_champ' || v === 'sous_seuil') return en ? `✅ All your documents are in, thanks ${firstNameOf(s)}! File ${shortRef(s.ref)} is complete. An expert confirms the *exact amount* (free check) and we file the claim — €0 if we recover nothing.` : `✅ Toutes vos pièces sont là, merci ${firstNameOf(s)} ! Le dossier ${shortRef(s.ref)} est complet. Un expert confirme le *montant exact* (vérification gratuite) et on lance la réclamation — 0 € si vous ne touchez rien.`;
+  return en ? `✅ All your documents are in, thanks ${firstNameOf(s)}! Your file *${shortRef(s.ref)}* is complete. 🙏` : `✅ Toutes vos pièces sont là, merci ${firstNameOf(s)} ! Votre dossier *${shortRef(s.ref)}* est au complet. 🙏`;
 }
 
 // Pièce expirée (date d'expiration passée) ?
@@ -2844,7 +2847,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
       if (d.lisible === false && d.kind !== 'autre') {
         const pb = { flou: 'un peu floue', sombre: 'trop sombre', 'coupé': 'coupée', reflet: 'avec un reflet' }[d.probleme] || 'difficile à lire';
         const pbEn = { flou: 'a bit blurry', sombre: 'too dark', 'coupé': 'cropped', reflet: 'has glare' }[d.probleme] || 'hard to read';
-        return send(phone, L(s, `😕 The photo is ${pbEn} and the airline may reject it. Please resend it flat, in good light, with all 4 corners visible. 📸`, fillTpl(pickRV(s.ref || '', 'PHOTO_QUALITE'), { NOM: firstNameOf(s), PB: pb, REF: s.ref || '' }) || `😕 La photo est ${pb} et risque d'être refusée par la compagnie. Renvoyez-la à plat, en pleine lumière, les 4 coins visibles. 📸`), cfg);
+        return send(phone, L(s, `😕 The photo is ${pbEn} and the airline may reject it. Please resend it flat, in good light, with all 4 corners visible. 📸`, fillTpl(pickRV(s.ref || '', 'PHOTO_QUALITE'), { NOM: firstNameOf(s), PB: pb, REF: shortRef(s.ref) }) || `😕 La photo est ${pb} et risque d'être refusée par la compagnie. Renvoyez-la à plat, en pleine lumière, les 4 coins visibles. 📸`), cfg);
       }
       let ack;
       if (d.kind === 'identite') {
@@ -2888,7 +2891,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
     const _st = docsStatus(s);
     const _url = `https://robindesairs.eu/depot-en-ligne.html?r=${encodeURIComponent(s.ref)}`;
     // Dossier complet : la para DOC_COMPLET nomme déjà la réf (on ne la répète pas). Sinon, on confirme l'enregistrement.
-    const _lead = _st.complete ? '' : L(s, `✅ *File ${s.ref} saved.*\n\n`, `✅ *Dossier ${s.ref} bien enregistré.*\n\n`);
+    const _lead = _st.complete ? '' : L(s, `✅ *File ${shortRef(s.ref)} saved.*\n\n`, `✅ *Dossier ${shortRef(s.ref)} bien enregistré.*\n\n`);
     const _pieces = _st.complete
       ? L(s, `📎 *One more supporting document?* (expense receipt, hotel, taxi…)\nSend it here, or via your secure link 👉\n${_url}`, `📎 *Un justificatif en plus ?* (reçu de frais, hôtel, taxi…)\nEnvoyez-le ici, ou sur votre lien sécurisé 👉\n${_url}`)
       : L(s, `📎 *Send your documents* here, or via your secure link 👉\n${_url}`, `📎 *Envoyez vos pièces* ici, ou sur votre lien sécurisé 👉\n${_url}`);
@@ -3265,8 +3268,8 @@ async function finaliser(phone, s, cfg) {
   // Message 1 — le récap (sans le lien). Message 2 — le lien SEUL, court, qui ne se replie
   // jamais derrière « Lire la suite » sur mobile et déclenche l'aperçu cliquable WhatsApp.
   await send(phone, L(s,
-    `${bar('done')}\n${titre} Ref. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${incidentLabel(s)}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nLast step: *your signature* (2 min).\n✅ €0 upfront — 25% on success (40% if court action, legal fees included) · no bank details.\n💸 Paid even without a EU bank account: bank transfer, Wave, Orange Money or MTN MoMo — 75% net if settled amicably.\n_Your data is used only for your claim, never sold. Privacy & T&Cs: robindesairs.eu/cgv_`,
-    `${bar('done')}\n${titre} Réf. *${s.ref}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${incidentLabel(s)}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % au succès en amiable (40 % si procès, frais d'avocat inclus) · aucune info bancaire.\n💸 Payé même sans compte bancaire en Europe : virement, Wave, Orange Money ou MTN MoMo — 75 % net en amiable.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_`), cfg);
+    `${bar('done')}\n${titre} Ref. *${shortRef(s.ref)}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${incidentLabel(s)}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nLast step: *your signature* (2 min).\n✅ €0 upfront — 25% on success (40% if court action, legal fees included) · no bank details.\n💸 Paid even without a EU bank account: bank transfer, Wave, Orange Money or MTN MoMo — 75% net if settled amicably.\n_Your data is used only for your claim, never sold. Privacy & T&Cs: robindesairs.eu/cgv_`,
+    `${bar('done')}\n${titre} Réf. *${shortRef(s.ref)}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${incidentLabel(s)}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % au succès en amiable (40 % si procès, frais d'avocat inclus) · aucune info bancaire.\n💸 Payé même sans compte bancaire en Europe : virement, Wave, Orange Money ou MTN MoMo — 75 % net en amiable.\n_Vos données servent uniquement à votre réclamation, jamais revendues. Confidentialité & CGV : robindesairs.eu/cgv_`), cfg);
   await send(phone, L(s, `👉 *Sign here* (2 min):\n${s.mandat_url}\n\nWithout your signature, we can't claim your compensation. ${STOP_FOOTER}`, `👉 *Signez ici* (2 min) :\n${s.mandat_url}\n\nSans votre signature, on ne peut pas réclamer votre indemnité. ${STOP_FOOTER}`), cfg);
   // CRM : la fiche Airtable est désormais créée par la synchro DIRECTE (storeDossierDurable →
   // /api/dossier-store → syncNewDossierToAirtable, statut « Signature en attente »). Le webhook
@@ -3584,7 +3587,7 @@ app.get('/api/leads-a-rappeler', (req, res) => {
     const since = lead.wantsCall ? (lead.wantsCallAt || anchor) : anchor;
     out.push({
       phone: lead.phone || '', name: lead.name || '', vol: lead.vol || '', route: lead.route || '',
-      incident: lead.incident || '', pax: lead.pax || 1, montant: 600 * (lead.pax || 1), ref: lead.ref || '',
+      incident: lead.incident || '', pax: lead.pax || 1, montant: 600 * (lead.pax || 1), ref: lead.ref || '', refCourt: shortRef(lead.ref || ''),
       stage: lead.completed ? 'completed' : 'engaged',
       reason: lead.wantsCall ? 'rappel_demande' : (lead.completed ? 'mandat_non_signe' : 'abandon_avant_signature'),
       langue: lead.langue || '',
@@ -3693,7 +3696,7 @@ function relanceText(n, lead) {
   }
   if (!total) return `Il ne reste qu'une signature pour lancer votre dossier (vol ${tripLbl}). Un expert confirme le montant exact (vérification gratuite). 👉 ${url}\n0 € si vous ne touchez rien.`;
   const key = n === 2 ? 'RELANCE_2H' : n === 8 ? 'RELANCE_8H' : 'RELANCE_22H';
-  const txt = fillTpl(pickRV(lead.ref || lead.phone, key), { REF: lead.ref || '', VOL: tripLbl, TOTAL: total, URL: url, NOM: lead.name || '' });
+  const txt = fillTpl(pickRV(lead.ref || lead.phone, key), { REF: shortRef(lead.ref), VOL: tripLbl, TOTAL: total, URL: url, NOM: lead.name || '' });
   return txt || `Il ne reste qu'une signature pour votre dossier (vol ${tripLbl}). 👉 ${url}\n0 € si vous ne touchez rien.`;
 }
 // Groupe de message selon l'étape où le client a décroché → on adresse la cause probable de l'arrêt.
@@ -3808,8 +3811,8 @@ async function runRelances() {
           const url = 'https://robindesairs.eu/depot-en-ligne.html?r=' + encodeURIComponent(lead.ref || '');
           const nm = lead.name ? ' ' + String(lead.name).split(/\s+/)[0] : '';
           const txt = leadEN(lead)
-            ? `📎 Quick update on your file ${lead.ref || ''}${nm ? ',' + nm : ''}.\n\nTo start the claim as fast as possible, for *each passenger* we need: a *photo ID* and your *boarding pass* (or *e-ticket*).\n\nHave you *already sent everything*? Great — tell us with one tap, we'll check on our side. Otherwise, upload your documents here 👇\n${url}`
-            : `📎 Petit point sur votre dossier ${lead.ref || ''}${nm ? ',' + nm : ''}.\n\nPour qu'on lance la réclamation au plus vite, il nous faut, *pour chaque passager* : une *pièce d'identité* et votre *carte d'embarquement* (ou *e-billet*).\n\nVous nous avez *déjà tout envoyé* ? Très bien — dites-le-nous d'un tap, on vérifie de notre côté. Sinon, déposez vos pièces ici 👇\n${url}`;
+            ? `📎 Quick update on your file ${shortRef(lead.ref)}${nm ? ',' + nm : ''}.\n\nTo start the claim as fast as possible, for *each passenger* we need: a *photo ID* and your *boarding pass* (or *e-ticket*).\n\nHave you *already sent everything*? Great — tell us with one tap, we'll check on our side. Otherwise, upload your documents here 👇\n${url}`
+            : `📎 Petit point sur votre dossier ${shortRef(lead.ref)}${nm ? ',' + nm : ''}.\n\nPour qu'on lance la réclamation au plus vite, il nous faut, *pour chaque passager* : une *pièce d'identité* et votre *carte d'embarquement* (ou *e-billet*).\n\nVous nous avez *déjà tout envoyé* ? Très bien — dites-le-nous d'un tap, on vérifie de notre côté. Sinon, déposez vos pièces ici 👇\n${url}`;
           try { await sendButtons(lead.phone, { body: txt, buttons: [{ id: 'pieces_ok', text: LL(lead, '✅ Already sent everything', '✅ J\'ai déjà tout envoyé') }, { id: 'depot', text: LL(lead, '📎 Upload my documents', '📎 Déposer mes pièces') }] }, cfg); console.log('relance pieces -> ' + (lead.ref || lead.phone)); } catch (_) {}
           lead.nudges = nudges.concat('pieces'); lead.piecesPending = false; LEADS.set(k, lead); persistLeads();
         }
