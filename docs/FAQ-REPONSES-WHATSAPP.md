@@ -10,7 +10,7 @@ Robin prend 25% uniquement si on gagne. Vous recevez 75% nets.
 
 Notre spécialité : les vols long-courrier (> 3 500 km). Indemnité 600€ → vous touchez 450€ nets.
 
-Famille de 4 sur un Paris-Dakar ? 4 × 600€ = 2 400€ brut → 1 800€ nets pour vous. Cette part de 25 % s'applique en phase amiable ; si le dossier va jusqu'au tribunal, elle passe à 45 % (frais d'avocat et de procédure inclus, avancés par nous). Dans tous les cas : 0 € d'avance, et rien à payer si nous ne récupérons pas.
+Famille de 4 sur un Paris-Dakar ? 4 × 600€ = 2 400€ brut → 1 800€ nets pour vous. Cette part de 25 % s'applique en phase amiable ; si le dossier va jusqu'au tribunal, elle passe à 40 % (frais d'avocat et de procédure inclus, avancés par nous). Dans tous les cas : 0 € d'avance, et rien à payer si nous ne récupérons pas.
 
 À noter : vol court (< 1 500 km) → 250€ → 188€ nets. Vol moyen (1 500–3 500 km) → 400€ → 300€ nets.
 
@@ -26,7 +26,7 @@ Famille de 4 sur un Paris-Dakar ? 4 × 600€ = 2 400€ brut → 1 800€ nets 
 
 **La compagnie persiste (moins de 10% des cas)** — même après le médiateur, elle refuse. On saisit le tribunal à nos frais et à nos risques. Délai total : 5 à 8 mois.
 
-Notre commission est de 25% en phase amiable et en médiation ; si nous devons saisir le tribunal, elle passe à 45% (frais d'avocat et de procédure avancés par nous). Et si on ne récupère rien, vous ne payez rien. On vous tient informé à chaque étape par WhatsApp.
+Notre commission est de 25% en phase amiable et en médiation ; si nous devons saisir le tribunal, elle passe à 40% (frais d'avocat et de procédure avancés par nous). Et si on ne récupère rien, vous ne payez rien. On vous tient informé à chaque étape par WhatsApp.
 
 ---
 
@@ -60,7 +60,7 @@ Parce qu'on ne fonctionne pas comme eux. Nos concurrents ont des bureaux dans 15
 
 Robin est une structure légère, spécialisée sur les routes que nous connaissons par cœur. Pas de bureaux dans 30 pays, pas de chatbot à maintenir, pas de publicité télévisée. On parle directement à nos clients sur WhatsApp, on monte des dossiers techniques solides, et on ne prend que les dossiers qu'on est confiants de gagner.
 
-Résultat : nos coûts sont bas, alors notre commission l'est aussi. 25% en phase amiable, 45% seulement si le dossier va au tribunal (frais d'avocat et de procédure inclus, avancés par nous).
+Résultat : nos coûts sont bas, alors notre commission l'est aussi. 25% en phase amiable, 40% seulement si le dossier va au tribunal (frais d'avocat et de procédure inclus, avancés par nous).
 
 Sur un Paris-Dakar en famille de 4, vous gardez 1 800€. Chez les autres, c'est 1 200€ à 1 560€.
 
