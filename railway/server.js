@@ -1659,7 +1659,7 @@ async function finNonEligible(phone, reasonText, cfg) {
   const footer = L(_st, `_The Robin des Airs team 🏹_`, STOP_FOOTER);
   await send(phone, `${reasonText}\n\n${footer}`, cfg);
   return sendButtons(phone, {
-    body: L(_st, `💡 This flight isn't eligible — but it's rarely a family's only trip.\n\nOne flight in ten is delayed or cancelled, and you can claim *up to 5 years back*. Think of your recent trips: a *3h+* delay on arrival, a cancellation, denied boarding = *up to €600 per passenger*. €0 if we recover nothing.\n\n✈️ Shall we check another flight?`, pickVariant(phone, 'RELANCE_AUTRE_VOL')),
+    body: L(_st, `💡 This flight isn't eligible, but it's rarely a family's only trip.\n\nOne flight in ten is delayed or cancelled, and you can claim *up to 5 years back*. Think of your recent trips: a *3h+* delay on arrival, a cancellation, denied boarding = *up to €600 per passenger*. €0 if we recover nothing.\n\n✈️ Shall we check another flight?`, pickVariant(phone, 'RELANCE_AUTRE_VOL')),
     buttons: [{ id: 'autre_vol', text: L(_st, '✈️ Check another flight', '✈️ Vérifier un autre vol') }, { id: 'appel', text: L(_st, '📞 Get a callback', '📞 Être rappelé') }],
   }, cfg);
 }
@@ -1727,7 +1727,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
   // 'annuler' retiré du reset destructif : collision avec un vol *annulé* (le client parle de son vol, pas d'un reset).
   if (id === 'recommencer' || ['nouveau', 'new', 'reset', 'recommencer', 'stop'].includes(resetNorm) || resetNorm.startsWith('recommenc') || resetNorm.startsWith('start over')) { await clearState(phone); return sendAccueil(phone, cfg, _accLang); }
   // « ✈️ Vérifier un autre vol » (relance après vol non éligible) → on repart à neuf sur le tunnel.
-  if (id === 'autre_vol' || lower === 'autre vol' || lower === 'un autre vol' || lower === 'vérifier un autre vol') { await clearState(phone); return sendAccueil(phone, cfg, _accLang); }
+  // Texte tronqué par WATI (« ✈️ Vérifier un autre vol » → « ✈️ Vérifier un autre ») + id parfois non renvoyé (boutons v1) → correspondance TOLÉRANTE (sinon ça bouclait sur l'écran non-éligible).
+  if (id === 'autre_vol' || lower.includes('autre vol') || lower.includes('vérifier un autre') || lower.includes('verifier un autre') || lower.includes('check another') || lower.includes('another flight') || lower.includes('nouveau dossier') || lower.includes('new claim')) { await clearState(phone); return sendAccueil(phone, cfg, _accLang); }
   if (['go', 'menu', 'start', 'reprendre', 'continuer', 'suite', 'bonjour', 'hello', 'hi', 'salut'].includes(lower) || id === 'menu') {
     const cur = await getState(phone);
     if (cur && cur.step && cur.step !== 'accueil' && cur.step !== 'done' && cur.step !== 'non_eligible') { await send(phone, L(cur, `👋 Welcome back! Let's pick up your case right where you left off.`, `👋 Re-bonjour ! On reprend votre dossier là où vous vous étiez arrêté.`), cfg); return relancerEtape(phone, cur, cfg); }
@@ -1958,28 +1959,24 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
   // ACCUEIL (MSG1)
   if (s.step === 'accueil' || !s.step) return sendAccueil(phone, cfg, _accLang, referral);
 
-  // Bouton MSG1 « Vérifier mon indemnité » / « Commencer / Démarrer »
-  if (s.step === 'go_langue') { return sendLangue(phone, s, cfg); }
+  // Bouton MSG1 « Vérifier mon indemnité » / « Commencer / Démarrer » → menu langue RETIRÉ, on va direct au consentement.
+  if (s.step === 'go_langue') { s.langue = s.langue || '🇫🇷 Français'; s.route_type = 'af_eu'; await setState(phone, s); return sendConsentCgu(phone, s, cfg); }
 
-  // MSG2 — LANGUE
+  // MSG2 — LANGUE : le MENU est retiré (friction inutile, mal placé). Par défaut français ; anglais si détecté
+  // au 1er contact. On honore quand même une langue TAPÉE explicitement (« wolof », « english »…) pour garder
+  // le rappel dans la langue (niche diaspora) — sans jamais afficher de menu. Puis on passe au consentement.
   if (s.step === 'langue') {
-    // Anglais DÉJÀ détecté au 1er contact (visiteur du site anglais) ET l'entrée n'est pas une sélection
-    // de langue explicite → on SAUTE le menu et on démarre directement en anglais. (Le client peut quand
-    // même choisir une autre langue : matchLang/ri attrapent alors la sélection et on passe outre ce saut.)
-    if (s.langue_code === 'en' && listRowIdx(id) < 0 && !matchLang(input)) {
-      s.langue = '🇬🇧 English'; s.route_type = 'af_eu'; await setState(phone, s);
-      await send(phone, `Perfect — I'll assist you in English. 🇬🇧\nLet's check what compensation you may be owed, *up to €600 per passenger*. 👇`, cfg);
-      return sendConsentCgu(phone, s, cfg);
-    }
-    // Matching par ID WATI liste ("0-N") si disponible, sinon par texte/flag
     const ri = listRowIdx(id);
     const langArr = Object.values(LANGS);
-    const L = (ri >= 0 && langArr[ri]) ? langArr[ri] : matchLang(input);
-    if (!L) return sendLangue(phone, s, cfg);
-    s.langue = `${L.flag} ${L.label}`; s.langue_code = L.code;
-    if (L.africaine) { s.escalade = 'langue_africaine'; await send(phone, `${L.natif}\n\n💬 *Moi l'assistant, je prépare votre dossier ici en français* (je ne parle pas encore ${L.label} 🙏) — on avance ensemble, étape par étape.\n\n📞 Et *à la fin, ${L.agent} vous rappellera dans votre langue*, au *+33 7 56 86 36 30* (enregistrez-le sous « ${L.agent} – Robin des Airs » pour reconnaître son appel). 👇`, cfg); }
-    else if (L.code === 'en') { await send(phone, `Perfect — I'll assist you in English. 🇬🇧\nLet's check together what compensation you may be owed, *up to €600 per passenger*. 👇`, cfg); }
-    s.route_type = 'af_eu'; await setState(phone, s); return sendConsentCgu(phone, s, cfg);
+    const explicit = (ri >= 0 && langArr[ri]) ? langArr[ri] : matchLang(input); // langue explicitement tapée/sélectionnée
+    if (explicit) {
+      s.langue = `${explicit.flag} ${explicit.label}`; s.langue_code = explicit.code;
+      if (explicit.africaine) { s.escalade = 'langue_africaine'; await send(phone, `${explicit.natif}\n\n💬 *Moi l'assistant, je prépare votre dossier ici en français* (je ne parle pas encore ${explicit.label} 🙏) — on avance ensemble, étape par étape.\n\n📞 Et *à la fin, ${explicit.agent} vous rappellera dans votre langue*, au *+33 7 56 86 36 30* (enregistrez-le sous « ${explicit.agent} – Robin des Airs » pour reconnaître son appel). 👇`, cfg); }
+      else if (explicit.code === 'en') { await send(phone, `Perfect — I'll assist you in English. 🇬🇧\nLet's check together what compensation you may be owed, *up to €600 per passenger*. 👇`, cfg); }
+    } else if (s.langue_code === 'en') { s.langue = '🇬🇧 English'; }
+    else { s.langue = '🇫🇷 Français'; if (!s.langue_code) s.langue_code = 'fr'; }
+    s.route_type = 'af_eu'; await setState(phone, s);
+    return sendConsentCgu(phone, s, cfg);
   }
 
   // GATE UNIFIÉ : CGU + Politique de confidentialité en 1 étape (fusion 30/06/2026).
@@ -1988,8 +1985,11 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
   // en cas de litige) puis on passe directement à l'incident (skip consent_rgpd).
   if (s.step === 'consent_cgu') {
     const t = lower.trim();
-    const accept = id === 'cgu_accept' || /\b(j['’ ]?accept|accepte?r?|accept|yes|oui|ok|d['’ ]?accord|agree|continuer|continue)\b/i.test(t);
-    const refuse = id === 'cgu_refuse' || /\b(refus(er|e)?|decline|non|no)\b/i.test(t);
+    // Détection par TEXTE (le compte WATI ne renvoie pas toujours l'id du bouton). On accepte « J'accepte »/« accept »,
+    // et « oui/ok/non » SEULEMENT si c'est tout le message (sinon un ancien bouton « Oui, correspondance » / « Non, vol direct »
+    // / « Refus d'embarquement » resté affiché serait lu à tort comme accepter/refuser le consentement).
+    const accept = id === 'cgu_accept' || /accept|agree/i.test(t) || /^(oui|ok|d['’ ]?accord|yes|go|continuer?|continue)[\s!.]*$/i.test(t);
+    const refuse = id === 'cgu_refuse' || /\brefuser?\b|decline/i.test(t) || /^(non|no)[\s!.]*$/i.test(t);
     if (accept) {
       const now = Date.now();
       s.cgu_accepted = true;
@@ -2010,6 +2010,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
         '🙏 On comprend. Sans accepter nos conditions et politique de confidentialité, on ne peut pas traiter votre dossier.\n\nSi vous changez d\'avis, écrivez *go* pour recommencer.'), cfg);
     }
     if (await stuckHelp(phone, s, cfg)) return;
+    // Entrée non reconnue (ou ancien bouton tapé) → message CLAIR au lieu de ré-afficher le consentement en silence (qui donnait l'impression de boucler).
+    await send(phone, L(s, `👆 To continue, just tap *I accept* below — it's a one-time step. 🙏`, `👆 Pour continuer, cliquez simplement sur *J'accepte* ci-dessous — c'est à faire une seule fois. 🙏`), cfg);
     return sendConsentCgu(phone, s, cfg);
   }
 
@@ -2017,8 +2019,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
   // Regex tolérante : idem CGU pour cohérence UX.
   if (s.step === 'consent_rgpd') {
     const t = lower.trim();
-    const accept = id === 'rgpd_accept' || /\b(j['’ ]?accept|accepte?r?|accept|yes|oui|ok|d['’ ]?accord|agree|acc[eè]der|access)\b/i.test(t);
-    const refuse = id === 'rgpd_refuse' || /\b(refus(er|e)?|decline|non|no)\b/i.test(t);
+    const accept = id === 'rgpd_accept' || /accept|agree|acc[eè]der|access/i.test(t) || /^(oui|ok|d['’ ]?accord|yes|go)[\s!.]*$/i.test(t);
+    const refuse = id === 'rgpd_refuse' || /\brefuser?\b|decline/i.test(t) || /^(non|no)[\s!.]*$/i.test(t);
     if (accept) {
       s.rgpd_accepted = true;
       s.rgpd_accepted_at = Date.now();
@@ -2928,8 +2930,8 @@ async function sendAccueil(phone, cfg, lang, referral) {
         : `\n📣 _Suite à la publicité sur laquelle vous avez cliqué (« ${(referral.headline || referral.body || '').slice(0, 80)} »)._`)
     : '';
   await sendButtons(phone, { body: en
-    ? `${bar('accueil')}\n👋 Welcome to *Robin des Airs* 🏹\n_I'm the Robin des Airs assistant, I'll guide you step by step._${adLine}\n\nDefending passengers on Africa ↔ Europe flights is what we do.\n\n✈️ EU law EC 261/2004 entitles you to *up to €600 per person* :\n• 🇪🇺 *Departure from Europe* → any airline\n• 🌍 *Arrival in Europe (from outside)* → EU airline only\n\n*€0 if we recover nothing.* No risk for you.\n\nLet's see together what you may be owed. 👇`
-    : `${bar('accueil')}\n👋 Bienvenue chez *Robin des Airs* 🏹\n_Je suis l'assistant Robin des Airs, je vous accompagne pas à pas._${adLine}\n\n${pickVariant(phone, 'ACCUEIL_EMPATHIE')}\n\nNous, c'est notre métier : on défend les passagers des vols Afrique ↔ Europe.\n\n✈️ La loi CE 261/2004 vous donne droit à *jusqu'à 600 € par personne* :\n• 🇪🇺 *Départ d'Europe* → toutes compagnies\n• 🌍 *Arrivée en Europe (départ hors)* → uniquement compagnie européenne\n\n*0 € si vous ne touchez rien.* Aucun risque pour vous.\n\nVoyons ensemble si une indemnité vous revient. 👇`,
+    ? `${bar('accueil')}\n👋 Welcome to *Robin des Airs* 🏹\n_I'm the Robin des Airs assistant, I'll guide you step by step._${adLine}\n\nDefending passengers on Africa ↔ Europe flights is what we do.\n\n✈️ EU law EC 261/2004 entitles you to *up to €600 per person* :\n• 🇪🇺 *Departure from Europe* → any airline\n• 🌍 *Arrival in Europe (from a country outside Europe)* → EU airline only\n\n*€0 if we recover nothing.* We handle everything.\n\nLet's see together what you may be owed. 👇`
+    : `${bar('accueil')}\n👋 Bienvenue chez *Robin des Airs* 🏹\n_Je suis l'assistant Robin des Airs, je vous accompagne pas à pas._${adLine}\n\n${pickVariant(phone, 'ACCUEIL_EMPATHIE')}\n\nNous, c'est notre métier : on défend les passagers des vols Afrique ↔ Europe.\n\n✈️ La loi CE 261/2004 vous donne droit à *jusqu'à 600 € par personne* :\n• 🇪🇺 *Départ d'Europe* → toutes compagnies\n• 🌍 *Arrivée en Europe (au départ d'un pays hors Europe)* → uniquement compagnie européenne\n\n*0 € si vous ne touchez rien.* On s'occupe de tout.\n\nVoyons ensemble si une indemnité vous revient. 👇`,
     footer: 'CE 261/2004', buttons: [{ text: en ? '🚀 My compensation' : '🚀 Mon indemnité' }] }, cfg);
   // _sid = session ID unique par parcours (timestamp base36) — isole le dedup step+contenu.
   // langue_code mémorisé si détecté (site anglais) → le menu langue sera sauté à l'étape suivante.
@@ -3358,7 +3360,7 @@ async function sendPayoutPreference(lead) {
 // reprise d'étape (T1) — renvoie l'écran courant
 async function relancerEtape(phone, s, cfg) {
   switch (s.step) {
-    case 'langue': return sendLangue(phone, s, cfg);
+    case 'langue': case 'go_langue': return sendConsentCgu(phone, s, cfg); // menu langue retiré → reprise = consentement
     case 'consent_cgu': return sendConsentCgu(phone, s, cfg);
     case 'consent_rgpd': return sendConsentRgpd(phone, s, cfg);
     case 'q_corr': return sendButtons(phone, { body: L(s, `Was this flight part of a *connection* (another flight just before or just after)?`, `Ce vol faisait-il partie d'une *correspondance* (un autre vol juste avant ou juste après) ?`), buttons: [{ id: 'corr_direct', text: L(s, '✈️ No, direct flight', '✈️ Non, vol direct') }, { id: 'corr_escale', text: L(s, '🔄 Yes, a connection', '🔄 Oui, correspondance') }] }, cfg);
