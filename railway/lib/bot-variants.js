@@ -109,7 +109,7 @@ const VARIANTS = {
   // Message affiché quand le vol semble éligible et qu'on présente l'estimation.
   // Une seule variante : formulation courte + directe (décision fondateur 01/07/2026).
   ESTIMATION_QUALIFICATION: [
-    `Jusqu'à 600 € par passager — c'est ce que vous pouvez récupérer. On s'occupe de tout, sans avance. 0 € si on ne gagne pas.`,
+    `Jusqu'à 600 € par passager, c'est ce que vous pouvez récupérer. On s'occupe de tout, sans avance. 0 € si on ne gagne pas.`,
   ],
 
   // Confirmation après scan réussi du billet

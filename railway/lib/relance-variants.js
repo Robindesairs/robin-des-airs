@@ -74,9 +74,9 @@ const RV = {
   "On ne voudrait pas que vous laissiez filer votre indemnisation {NOM}. Votre récap {VOL} (jusqu'à {TOTAL}) attend juste votre feu vert. Appuyez sur *Reprendre* 👇, ou *Rappel* 📞 pour la moindre question."
  ],
  "ENG_PASS_1": [
-  "Bonjour {NOM}, il ne manque qu'une *pièce d'identité* pour lancer votre dossier {VOL} (jusqu'à {TOTAL}). C'est obligatoire pour réclamer en votre nom — et vos données ne servent qu'à ça, jamais revendues. Une simple photo (passeport, CNI ou titre de séjour) suffit. Vous ne l'avez pas sous la main ? *Rappel* 📞, on s'arrange. Sinon, appuyez sur *Reprendre* 👇.",
+  "Bonjour {NOM}, il ne manque qu'une *pièce d'identité* pour lancer votre dossier {VOL} (jusqu'à {TOTAL}). C'est obligatoire pour réclamer votre indemnité — et vos données ne servent qu'à ça, jamais revendues. Une simple photo (passeport, CNI ou titre de séjour) suffit. Vous ne l'avez pas sous la main ? *Rappel* 📞, on s'arrange. Sinon, appuyez sur *Reprendre* 👇.",
   "{NOM}, votre dossier {VOL} attend juste votre *pièce d'identité*. Une photo nette suffit, et c'est protégé — uniquement pour votre réclamation (jusqu'à {TOTAL}, 0 € si vous ne touchez rien). Un souci pour l'envoyer ou la retrouver ? *Rappel* 📞 et on vous guide. Pour reprendre, appuyez sur *Reprendre* 👇.",
-  "On est à deux doigts de lancer votre dossier {VOL}, {NOM} ! Il nous faut juste une *pièce d'identité* (obligatoire pour agir en votre nom auprès de la compagnie). C'est sécurisé et confidentiel. Appuyez sur *Reprendre* 👇 pour envoyer la photo, ou *Rappel* 📞 si vous préférez qu'on vous aide. Jusqu'à {TOTAL} à la clé."
+  "On est à deux doigts de lancer votre dossier {VOL}, {NOM} ! Il nous faut juste une *pièce d'identité* (obligatoire pour réclamer votre indemnité auprès de la compagnie). C'est sécurisé et confidentiel. Appuyez sur *Reprendre* 👇 pour envoyer la photo, ou *Rappel* 📞 si vous préférez qu'on vous aide. Jusqu'à {TOTAL} à la clé."
  ],
  "ENG_PASS_2": [
   "{NOM}, il ne reste qu'une *photo de pièce d'identité* pour boucler votre dossier {VOL}. Passeport, CNI ou titre de séjour — au choix. Appuyez sur *Reprendre* 👇 pour l'envoyer (jusqu'à {TOTAL}, 0 € si vous ne touchez rien), ou *Rappel* 📞 si besoin d'un coup de main.",
@@ -136,14 +136,14 @@ const RV = {
  "DOC_COMPLET": [
   "Merci {NOM}, c'est bon : votre dossier {REF} est complet. On prend le relais à partir de maintenant. On va réclamer jusqu'à {TOTAL} pour vous, et s'il n'y a rien à la fin, vous ne payez rien. On s'occupe de tout.",
   "C'est noté {NOM}. On a bien reçu toutes vos pièces pour le dossier {REF}. On lance la démarche auprès de la compagnie, pour un montant qui peut aller jusqu'à {TOTAL}. Je vous tiens au courant à chaque étape.",
-  "Votre dossier {REF} est complet, {NOM}. Vous pouvez souffler, le plus pénible est derrière vous. On s'occupe de réclamer jusqu'à {TOTAL} en votre nom. Et pour rappel : si vous ne touchez rien, vous ne payez rien.",
+  "Votre dossier {REF} est complet, {NOM}. Vous pouvez souffler, le plus pénible est derrière vous. On s'occupe de réclamer jusqu'à {TOTAL} pour vous. Et pour rappel : si vous ne touchez rien, vous ne payez rien.",
   "Bien reçu {NOM}, on a tout ce qu'il faut. Votre dossier {REF} passe maintenant entre nos mains. On part réclamer jusqu'à {TOTAL}. Dès qu'on a du nouveau, je reviens vers vous.",
   "Merci de votre confiance, {NOM}. Le dossier {REF} est complet, on prend la suite. Vous pourriez toucher jusqu'à {TOTAL}, et vous n'avez aucune avance à faire : si vous ne touchez rien, c'est 0€.",
   "Tout est en ordre {NOM}. Vos documents pour le dossier {REF} sont validés. On lance la réclamation pour un montant qui peut atteindre {TOTAL}. À partir de là, on fait valoir vos droits auprès de la compagnie.",
   "C'est confirmé {NOM}, on a tout reçu. Le dossier {REF} est entre nos mains. On lance la réclamation auprès de la compagnie, pour un montant qui peut aller jusqu'à {TOTAL}. Je vous préviens à chaque avancée.",
   "C'est bon {NOM}, votre dossier {REF} est complet. À nous de jouer maintenant : on réclame jusqu'à {TOTAL}, et si vous ne touchez rien, vous ne payez rien.",
   "Bien reçu et validé, merci {NOM}. Votre dossier {REF} démarre officiellement. On prend tout en charge face à la compagnie, pour un montant qui peut aller jusqu'à {TOTAL}. Je vous tiens au courant.",
-  "On a toutes les pièces, {NOM}. Le dossier {REF} est lancé. On va se battre pour récupérer jusqu'à {TOTAL} en votre nom. Et rassurez-vous : si vous ne touchez rien, c'est 0€ pour vous."
+  "On a toutes les pièces, {NOM}. Le dossier {REF} est lancé. On va se battre pour récupérer jusqu'à {TOTAL} pour vous. Et rassurez-vous : si vous ne touchez rien, c'est 0€ pour vous."
  ],
  "DOC_RECU_PIECE": [
   "C'est bon, j'ai bien reçu la pièce d'identité de {NOM} 🙏 Je continue et je reviens vers vous très vite.",
