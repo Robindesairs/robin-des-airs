@@ -2493,7 +2493,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
     return send(phone, L(s, `Date not recognised. Format DD/MM/YYYY:`, `Date non reconnue. Format JJ/MM/AAAA :`), cfg);
   }
   if (s.step === 'fix_nom') {
-    if (input.length >= 3 && !/^\d+$/.test(input)) { s.names = s.names || []; s.names[s.fix_name_idx || 0] = input.toUpperCase(); s.fix_name_idx = 0; await setState(phone, s); return afterFix(phone, s, cfg); }
+    if (input.length >= 3 && !/^\d+$/.test(input)) { s.names = s.names || []; const _fi = s.fix_name_idx || 0; const _nmU = input.toUpperCase(); s.names[_fi] = _nmU; if (s.passengers && s.passengers[_fi]) s.passengers[_fi].name = _nmU; /* sync : sinon paxName() garde l'ancien (p.name prioritaire) */ s.fix_name_idx = 0; await setState(phone, s); return afterFix(phone, s, cfg); }
     return send(phone, L(s, `Name too short. Send the full name again:`, `Nom trop court. Renvoyez le nom complet :`), cfg);
   }
   if (s.step === 'fix_route') {
@@ -2687,7 +2687,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
     return send(phone, L(s, `Enter a number between 1 and ${s.pax}:`, `Indiquez un numéro entre 1 et ${s.pax} :`), cfg);
   }
   if (s.step === 'names_fix_one') {
-    if (input.length >= 3 && !/^\d+$/.test(input)) { s.names[s.fix_name_idx] = input.toUpperCase(); await setState(phone, s); return showNamesConfirm(phone, s, cfg); }
+    if (input.length >= 3 && !/^\d+$/.test(input)) { const _fi = s.fix_name_idx; const _nmU = input.toUpperCase(); s.names[_fi] = _nmU; if (s.passengers && s.passengers[_fi]) s.passengers[_fi].name = _nmU; /* sync passengers.name sinon paxName() garde l'ancien */ await setState(phone, s); return showNamesConfirm(phone, s, cfg); }
     return send(phone, L(s, `Name too short. Send the full name again:`, `Nom trop court. Renvoyez le nom complet :`), cfg);
   }
 
