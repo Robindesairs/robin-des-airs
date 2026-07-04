@@ -1474,11 +1474,24 @@ function addCarteName(s, name) {
   s.carteNames = s.carteNames || [];
   if (!s.carteNames.includes(n)) s.carteNames.push(n);
 }
+// 👶 Un mineur ne fournit PAS de pièce d'identité (couvert par son représentant légal — comme Flightright).
+//    Statut mineur connu via l'e-billet (p.minor) ou la date de naissance lue sur une pièce.
+function isMinorPax(p, s) {
+  return !!(p && (p.minor || (p.dob && s && s.date && isMinorAt(p.dob, s.date))));
+}
+// Nombre de passagers qui doivent réellement fournir une pièce (hors mineurs) — dénominateur « X/… ».
+function idExpectedCount(s) {
+  const pax = s.pax || ((s.passengers && s.passengers.length) || 1);
+  let n = 0;
+  for (let i = 0; i < pax; i++) { if (!isMinorPax((s.passengers || [])[i] || {}, s)) n++; }
+  return n || pax;
+}
 function docsStatus(s) {
   const pax = s.pax || ((s.passengers && s.passengers.length) || 1);
   const missingId = [];
   for (let i = 0; i < pax; i++) {
     const p = (s.passengers || [])[i] || {};
+    if (isMinorPax(p, s)) continue; // 👶 mineur : pièce d'identité NON requise
     const provided = !!(p && !p.skipped && p.idReceived); // SEULE une vraie photo de pièce compte — un nom/DDN (e-billet ou saisie) ne remplace PAS la CNI/passeport
     if (!provided) missingId.push(paxName(s, i));
   }
@@ -1498,7 +1511,7 @@ function docsStatus(s) {
 // Indices des passagers SANS pièce d'identité
 function missingIdIndices(s) {
   const pax = s.pax || ((s.passengers && s.passengers.length) || 1); const out = [];
-  for (let i = 0; i < pax; i++) { const p = (s.passengers || [])[i] || {}; if (!(p && !p.skipped && p.idReceived)) out.push(i); }
+  for (let i = 0; i < pax; i++) { const p = (s.passengers || [])[i] || {}; if (isMinorPax(p, s)) continue; if (!(p && !p.skipped && p.idReceived)) out.push(i); }
   return out;
 }
 // ─── Moteur d'attribution pièce→passager (robuste, SANS jamais demander au client) ──
@@ -1615,7 +1628,7 @@ async function askOcrConfirm(phone, s, cfg, mediaUrl) {
       await setState(phone, s);
       if (_mismatch) { try { notifyOwnerWhatsApp('', `⚠️ Écart de nom${s.ref ? ' [' + s.ref + ']' : ''} : billet « ${_billet} » / passeport « ${pp.name} » — à vérifier (poste pièces).`).catch(() => {}); } catch (_) {} }
       const got = (s.passengers || []).filter((p) => p && p.idReceived).length;
-      await send(phone, L(s, `✅ ID of *${cur.name || pp.name}* received (${got}/${s.pax})${minor ? ' · 👶 minor, parental signature' : ''}${expired ? ' · ⚠️ expired, an advisor checks' : ''}.`, `✅ Pièce de *${cur.name || pp.name}* reçue (${got}/${s.pax})${minor ? ' · 👶 mineur·e, signature parentale' : ''}${expired ? ' · ⚠️ expirée, un conseiller vérifie' : ''}.`), cfg);
+      await send(phone, L(s, `✅ ID of *${cur.name || pp.name}* received (${got}/${idExpectedCount(s)})${minor ? ' · 👶 minor, parental signature' : ''}${expired ? ' · ⚠️ expired, an advisor checks' : ''}.`, `✅ Pièce de *${cur.name || pp.name}* reçue (${got}/${idExpectedCount(s)})${minor ? ' · 👶 mineur·e, signature parentale' : ''}${expired ? ' · ⚠️ expirée, un conseiller vérifie' : ''}.`), cfg);
       if (pp.docType === 'cni' && pp.face === 'recto' && !s.passengers[_att.idx].cniVerso) {
         s.cni_verso_for = _att.idx; await setState(phone, s);
         return send(phone, L(s, `📸 One more thing: it's a *national ID card* — please also send a photo of the *back* (the other side).`, `📸 Petit détail : c'est une *carte d'identité* — envoyez aussi une photo du *verso* (l'autre face), s'il vous plaît.`), cfg);
@@ -3302,7 +3315,7 @@ async function startDocuments(phone, s, cfg) {
 }
 async function nextPassport(phone, s, cfg) {
   // Sauter les passagers déjà traités (pièce reçue / saisie / passée) — robuste si les photos arrivent dans le désordre.
-  while (s.doc_idx < s.pax) { const p = (s.passengers || [])[s.doc_idx] || {}; if (p.skipped || p.idReceived || p.idDeferred) s.doc_idx++; else break; } // un dob (e-billet/saisie) ne saute PLUS la demande de photo
+  while (s.doc_idx < s.pax) { const p = (s.passengers || [])[s.doc_idx] || {}; if (p.skipped || p.idReceived || p.idDeferred || isMinorPax(p, s)) s.doc_idx++; else break; } // un dob (e-billet/saisie) ne saute PLUS la demande de photo ; 👶 mineur = pièce non requise → on passe
   if (s.doc_idx >= s.pax) { return askMandant(phone, s, cfg); }
   s.step = 'doc_pass'; await setState(phone, s);
   // Intro au 1er passager : on RAPPELLE d'abord ce que le client touche (le chiffre rassure et justifie
@@ -3313,6 +3326,7 @@ async function nextPassport(phone, s, cfg) {
   for (let i = 0; i < s.doc_idx; i++) {
     const p = (s.passengers && s.passengers[i]) || {};
     const nm = p.name || (s.names && s.names[i]) || L(s, `Passenger ${i + 1}`, `Passager ${i + 1}`);
+    if (isMinorPax(p, s)) { done += L(s, `👶 ${i + 1}. ${nm} — _minor, no ID needed_\n`, `👶 ${i + 1}. ${nm} — _mineur, pièce non requise_\n`); continue; }
     done += p.idReceived ? `✅ ${i + 1}. ${nm}\n` : L(s, `⏳ ${i + 1}. ${nm} — _ID to send_\n`, `⏳ ${i + 1}. ${nm} — _pièce à envoyer_\n`);
   }
   const header = done ? `${done}\n` : '';
