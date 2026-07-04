@@ -3153,7 +3153,7 @@ async function sendDejaGere(phone, s, cfg) {
   return sendButtons(phone, { body: L(s,
     `⚖️ One quick check before we start.\n\nFor *this flight*, is your claim already handled by *someone else* (another company, a lawyer, or a court case)?`,
     `⚖️ Une vérification rapide avant de commencer.\n\nPour *ce vol*, votre dossier est-il déjà géré par *quelqu'un d'autre* (une autre société, un avocat, ou une procédure au tribunal) ?`),
-    buttons: [{ id: 'deja_non', text: L(s, '✅ No, I start here', '✅ Non, je commence ici') }, { id: 'deja_oui', text: L(s, '⚠️ Yes', '⚠️ Oui') }] }, cfg);
+    buttons: [{ id: 'deja_non', text: L(s, '✅ No, I start here', '✅ Non, je commence') }, { id: 'deja_oui', text: L(s, '⚠️ Yes', '⚠️ Oui') }] }, cfg);
 }
 async function sendIncident(phone, s, cfg) { if (!s.deja_gere_asked) return sendDejaGere(phone, s, cfg); s.step = 'incident'; await setState(phone, s); await sendButtons(phone, { body: L(s, `${bar('incident')}\n✈️ Tell us what happened with your flight.`, `${bar('incident')}\n✈️ Racontez-nous ce qui s'est passé avec votre vol.`), buttons: [{ id: 'inc_retard', text: L(s, '⏱️ Arrival delay', '⏱️ Retard arrivée') }, { id: 'inc_annul', text: L(s, '❌ Cancellation', '❌ Annulation') }, { id: 'inc_refus', text: L(s, '🚫 Denied boarding', "🚫 Refus d'embarq.") }] }, cfg); }
 
@@ -3418,8 +3418,8 @@ async function askAddressOrFinalize(phone, s, cfg) {
 async function askEmail(phone, s, cfg) {
   s.step = 'ask_email'; await setState(phone, s);
   return send(phone, L(s,
-    `📧 *Your email?* We'll send your signed contract there.\n✏️ Type it — or, *if you don't have an email*, type *skip*.`,
-    `📧 *Votre email ?* On vous y enverra votre contrat signé.\n✏️ Écrivez-le — ou, *si vous n'avez pas d'email*, tapez *passer*.`), cfg);
+    `📧 *Last question — your email?* We'll send your signed contract there.\n✏️ Type it — or, *if you don't have an email*, type *skip*.`,
+    `📧 *Dernière question — votre email ?* On vous y enverra votre contrat signé.\n✏️ Écrivez-le — ou, *si vous n'avez pas d'email*, tapez *passer*.`), cfg);
 }
 async function gotoBoarding(phone, s, cfg) { s.step = 'doc_boarding'; await setState(phone, s); return send(phone, L(s, `🎫 Boarding pass\nSend a photo for the affected flight.\n📧 No pass? An e-ticket, a booking confirmation or a baggage tag work too.\n_🔒 Read by an automated tool (AI) to pre-fill your file — see robindesairs.eu/politique-confidentialite._\n✏️ *skip* · 📞 *call* if all lost, we'll find a solution.`, `🎫 Carte d'embarquement\nEnvoyez-en une photo pour le vol concerné.\n📧 Pas de carte ? Un e-billet, une confirmation de réservation ou une étiquette de bagage fonctionnent aussi.\n_🔒 Lu par un outil automatique (IA) pour pré-remplir votre dossier — voir robindesairs.eu/politique-confidentialite._\n✏️ *passer* · 📞 *appel* si tout perdu, on trouve une solution.`), cfg); }
 async function gotoEticket(phone, s, cfg) { s.step = 'doc_eticket'; await setState(phone, s); return send(phone, L(s, `📧 Booking confirmation (e-ticket)\nSend a screenshot (check spam / the Booking app).\n✏️ *skip* · 📞 *call*.`, `📧 Confirmation de réservation (e-billet)\nEnvoyez une capture (pensez aux spams / appli Booking).\n✏️ *passer* · 📞 *appel*.`), cfg); }
