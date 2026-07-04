@@ -993,32 +993,29 @@ window.addEventListener('DOMContentLoaded', () => {
         try { signersList = JSON.parse(localStorage.getItem(storeKey) || '[]'); } catch (_) {}
         const others = signersList.filter(function (s) { return s.index > 1 && s.signing_url; });
         if (others.length) {
-          const rows = others.map(function (s) {
-            const nom = ((s.first_name || '') + ' ' + (s.last_name || '')).trim() || ('Passager ' + s.index);
-            const msg = encodeURIComponent('Voici ton lien pour signer le contrat Robin des Airs (indemnisation de notre vol) 👉 ' + s.signing_url);
-            return '<div style="display:flex;align-items:center;gap:10px;padding:12px 0;border-top:1px solid var(--border)">' +
-              '<div style="flex:1;min-width:0;text-align:left"><div style="font-size:14px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + nom + '</div><div style="font-size:11px;color:var(--muted)">Doit signer depuis son téléphone</div></div>' +
-              '<a href="https://wa.me/?text=' + msg + '" target="_blank" rel="noopener" style="background:#25D366;color:#fff;text-decoration:none;padding:9px 14px;border-radius:8px;font-size:13px;font-weight:700;white-space:nowrap">📲 Partager</a>' +
-              '<button data-link="' + s.signing_url + '" class="copyLink" style="background:#f1f2f4;border:1px solid var(--border);border-radius:8px;padding:9px 11px;font-size:13px;cursor:pointer" title="Copier le lien">🔗</button>' +
-            '</div>';
-          }).join('');
-          const wrap = document.createElement('div');
-          wrap.style.cssText = 'max-width:520px;margin:64px auto;padding:32px 28px;background:#fff;border:1px solid var(--border);border-radius:12px;font-family:Inter,system-ui,sans-serif';
-          wrap.innerHTML =
-            '<div style="text-align:center"><div style="font-size:48px;line-height:1;margin-bottom:14px">✍️</div>' +
-            '<h1 style="font-size:23px;font-weight:800;margin:0 0 10px;color:var(--text)">Vous avez signé ✓</h1>' +
-            '<p style="font-size:14px;line-height:1.6;color:var(--muted);margin:0 0 8px">Il reste <strong>' + others.length + '</strong> passager(s) à signer. Envoyez à chacun son lien — <strong>chacun signe depuis son propre téléphone</strong>.</p></div>' +
-            rows +
-            '<p style="font-size:11px;color:var(--muted);margin:18px 0 0;text-align:center;line-height:1.5">Le dossier sera complet une fois que tout le monde aura signé. 🙏</p>';
-          document.body.appendChild(wrap);
-          wrap.querySelectorAll('.copyLink').forEach(function (b) {
-            b.onclick = function () {
-              const l = b.getAttribute('data-link');
-              if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(l).then(function () { b.textContent = '✓'; setTimeout(function () { b.textContent = '🔗'; }, 1500); }).catch(function () { window.prompt('Copiez le lien :', l); });
-              } else { window.prompt('Copiez le lien :', l); }
-            };
+          const payload = others.map(function (s) {
+            return { n: ((s.first_name || '') + ' ' + (s.last_name || '')).trim() || ('Passager ' + s.index), u: s.signing_url };
           });
+          let oneLink = '';
+          try { oneLink = location.origin + '/signer.html?d=' + encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(payload))))); } catch (_) { oneLink = ''; }
+          const names = payload.map(function (p) { return p.n; }).join(', ');
+          const waMsg = encodeURIComponent('✍️ Merci de signer notre contrat Robin des Airs (indemnisation du vol). Ouvre ce lien, choisis ton nom et signe depuis ton téléphone 👉 ' + oneLink);
+          const wrap = document.createElement('div');
+          wrap.style.cssText = 'max-width:520px;margin:64px auto;padding:32px 28px;background:#fff;border:1px solid var(--border);border-radius:12px;font-family:Inter,system-ui,sans-serif;text-align:center';
+          wrap.innerHTML =
+            '<div style="font-size:48px;line-height:1;margin-bottom:14px">✍️</div>' +
+            '<h1 style="font-size:23px;font-weight:800;margin:0 0 10px;color:var(--text)">Vous avez signé ✓</h1>' +
+            '<p style="font-size:14px;line-height:1.6;color:var(--muted);margin:0 0 18px">Il reste <strong>' + others.length + '</strong> passager(s) à signer : <strong style="color:var(--text)">' + names + '</strong>.<br>Partagez-leur <strong>ce lien unique</strong> — chacun choisira son nom et signera depuis son propre téléphone.</p>' +
+            '<a id="shareOne" href="https://wa.me/?text=' + waMsg + '" target="_blank" rel="noopener" style="display:block;background:#25D366;color:#fff;text-decoration:none;padding:15px 20px;border-radius:10px;font-size:15px;font-weight:800;margin-bottom:10px">📲 Partager le lien sur WhatsApp</a>' +
+            '<button id="copyOne" style="width:100%;background:#f1f2f4;border:1px solid var(--border);border-radius:10px;padding:12px;font-size:13px;cursor:pointer;color:var(--text)">🔗 Copier le lien</button>' +
+            '<p style="font-size:11px;color:var(--muted);margin:18px 0 0;line-height:1.5">Le dossier sera complet une fois que tout le monde aura signé. 🙏</p>';
+          document.body.appendChild(wrap);
+          const cp = document.getElementById('copyOne');
+          if (cp) cp.onclick = function () {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              navigator.clipboard.writeText(oneLink).then(function () { cp.textContent = '✓ Lien copié'; setTimeout(function () { cp.textContent = '🔗 Copier le lien'; }, 1600); }).catch(function () { window.prompt('Copiez le lien :', oneLink); });
+            } else { window.prompt('Copiez le lien :', oneLink); }
+          };
           return; // skip successScreen
         }
         // localStorage perdu → on tombe sur successScreen (le principal a au moins signé)

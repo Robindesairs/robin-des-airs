@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Signer votre contrat — Robin des Airs</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,'Segoe UI',Roboto,system-ui,sans-serif;background:#0B1F3A;color:#0B1F3A;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px}
+  .card{max-width:460px;width:100%;background:#fff;border-radius:16px;padding:30px 26px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+  .logo{font-weight:900;letter-spacing:.5px;font-size:15px;color:#0B1F3A;text-align:center;margin-bottom:4px}
+  .logo span{color:#047857}
+  .eyebrow{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.2em;color:#047857;font-weight:700;text-align:center;margin:14px 0 6px}
+  h1{font-size:22px;font-weight:800;text-align:center;margin-bottom:8px}
+  .sub{font-size:14px;line-height:1.6;color:#51607A;text-align:center;margin-bottom:22px}
+  .who{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:#F7F8FA;border:1.5px solid #E2E6EE;border-radius:10px;padding:15px 16px;margin-bottom:10px;cursor:pointer;font-size:15px;font-weight:700;color:#0B1F3A;text-align:left;transition:border-color .15s,background .15s}
+  .who:hover{border-color:#00C87A;background:#EFF9F4}
+  .who .arrow{color:#047857;font-weight:800;flex:none}
+  .note{font-size:11.5px;color:#8a94a6;text-align:center;margin-top:16px;line-height:1.5}
+  .err{background:#FEF2F2;border:1px solid #FECACA;color:#9A3412;border-radius:10px;padding:14px 16px;font-size:13.5px;line-height:1.6;text-align:center}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">ROBIN <span>DES AIRS</span></div>
+    <div id="content"></div>
+  </div>
+<script>
+(function () {
+  var c = document.getElementById('content');
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; }); }
+  function fail(msg){ c.innerHTML = '<div class="err">' + esc(msg) + '</div><div class="note">Un souci ? Écrivez-nous sur WhatsApp au +33 7 56 86 36 30.</div>'; }
+  var list = [];
+  try {
+    var d = new URLSearchParams(location.search).get('d') || '';
+    if (!d) throw new Error('no d');
+    var json = decodeURIComponent(escape(atob(decodeURIComponent(d))));
+    list = JSON.parse(json);
+  } catch (e) { list = []; }
+  if (!Array.isArray(list) || !list.length) {
+    fail("Ce lien de signature n'est pas valide ou a expiré. Demandez à la personne qui vous l'a envoyé de le renvoyer.");
+  } else {
+    var rows = list.filter(function(s){ return s && s.u; }).map(function (s) {
+      return '<button class="who" data-u="' + esc(s.u) + '"><span>' + (esc(s.n) || 'Signer') + '</span><span class="arrow">Signer →</span></button>';
+    }).join('');
+    c.innerHTML =
+      '<div class="eyebrow">Contrat de cession — CE 261/2004</div>' +
+      '<h1>Qui êtes-vous ?</h1>' +
+      '<p class="sub">Touchez <strong>votre nom</strong> pour relire et signer votre contrat, depuis ce téléphone.</p>' +
+      rows +
+      '<div class="note">Chaque personne signe la sienne. Signature électronique certifiée (Yousign).</div>';
+    Array.prototype.forEach.call(c.querySelectorAll('.who'), function (b) {
+      b.addEventListener('click', function () {
+        var u = b.getAttribute('data-u');
+        if (u) window.location.href = u;
+      });
+    });
+  }
+})();
+</script>
+</body>
+</html>
