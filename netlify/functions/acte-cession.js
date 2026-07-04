@@ -52,7 +52,9 @@ exports.handler = async (event) => {
     const mandats = getBlobStore(event, 'mandats');
     const dossier = (mandats && (await mandats.get('m/' + ref, { type: 'json' }))) || {};
 
-    const showAddress = /^(1|true|oui|yes)$/i.test(String(q.adresse || q.address || ''));
+    // Identification complète des cédants PAR DÉFAUT (nom + DDN + lieu + adresse) → cession
+    // plus solide (art. 1321-1322). Version allégée sans adresse : ?adresse=0.
+    const showAddress = !/^(0|false|non|no|off)$/i.test(String(q.adresse || q.address || ''));
     const pdf = await genererActeCessionPdf({
       ref,
       certId: signed.cert_id || '',
