@@ -218,8 +218,9 @@ function fraisRecap(s) {
   if (!list.length) return '';
   const lines = list.map((f, i) => {
     const lab = FRAIS_LABEL[f.categorie] || FRAIS_LABEL.autre;
-    const amt = f.montant ? `${Math.round(f.montant * 100) / 100}${f.devise ? ' ' + f.devise : ''}` : 'montant à relire';
-    return `${i + 1}. ${lab} — ${amt}`;
+    const amt = f.montant ? `${Math.round(f.montant * 100) / 100}${f.devise ? ' ' + f.devise : ''}${f.deviseInferred ? ' (supposé)' : ''}` : 'montant à relire';
+    const extra = [f.etablissement, f.date, f.num_ticket ? `n°${f.num_ticket}` : ''].filter(Boolean).join(' · ');
+    return `${i + 1}. ${lab} — ${amt}${extra ? `\n    ${extra}` : ''}`;
   });
   return `${lines.join('\n')}\n— — —\n*Total : ${fraisTotal(s)}*`;
 }
@@ -1333,14 +1334,36 @@ function warnOpenAIClassifyOff() {
   try { if (typeof notifyOwnerWhatsApp === 'function') notifyOwnerWhatsApp('', '🔴 Bot: OPENAI_API_KEY absente → lecture auto des pièces (passeport / e-billet / carte / reçus) DÉSACTIVÉE. Les documents sont reçus mais NON classés/lus. Configure la clé sur Railway.').catch(() => {}); } catch (_) {}
 }
 const _CLASSIFY_PROMPT = `Tu classes une photo/capture envoyée par un passager, et tu juges sa QUALITÉ (une pièce illisible peut être refusée par la compagnie). Réponds UNIQUEMENT en JSON :
-{"kind":"identite|voyage|frais|autre","nom":"","voyageType":"ebooking|carte|","lisible":true,"probleme":"","montant":null,"devise":"","categorie":""}
+{"kind":"identite|voyage|frais|autre","nom":"","voyageType":"ebooking|carte|","lisible":true,"probleme":"","montant":null,"devise":"","categorie":"","etablissement":"","num_ticket":"","date":"","ville":""}
 - "identite" : passeport, carte nationale d'identité (CNI), titre de séjour. Mets dans "nom" le PRÉNOM puis le NOM de famille, dans cet ordre (ex : "AMINATA DIALLO"), en MAJUSCULES.
 - "voyage" : preuve de voyage. voyageType="ebooking" si CONFIRMATION DE RÉSERVATION / e-billet / itinéraire (liste souvent PLUSIEURS passagers et/ou PLUSIEURS vols). voyageType="carte" si CARTE D'EMBARQUEMENT (un seul passager / un seul vol).
-- "frais" : reçu, facture ou ticket d'une DÉPENSE liée à la perturbation du vol (hôtel, taxi/VTC, repas/restaurant, transport, parking). PAS un billet d'avion ni une réservation de vol. Pour un "frais", lis le MONTANT TOTAL payé → "montant" (nombre seul, ex 84.50 ; sinon null), la DEVISE → "devise" (EUR, XOF/FCFA, MAD, GMD, USD, GBP… si visible, sinon "") et la CATÉGORIE → "categorie" : "hotel" | "repas" | "taxi" | "transport" | "parking" | "autre".
+- "frais" : reçu, facture ou ticket d'une DÉPENSE liée à la perturbation du vol (hôtel, taxi/VTC, repas/restaurant, transport, parking). PAS un billet d'avion ni une réservation de vol. Pour un "frais", lis le MONTANT TOTAL payé → "montant" (nombre seul, ex 84.50 ; sinon null), la DEVISE → "devise" (EUR, XOF/FCFA, MAD, GMD, USD, GBP… si visible, sinon "") et la CATÉGORIE → "categorie" : "hotel" | "repas" | "taxi" | "transport" | "parking" | "autre". Extrais aussi, SI VISIBLES (sinon ""): le NOM DU COMMERÇANT / de l'établissement → "etablissement" ; le NUMÉRO de ticket / transaction / facture → "num_ticket" ; la DATE du reçu (format JJ/MM/AAAA) → "date" ; la VILLE du commerce → "ville".
 - "autre" : tout le reste.
 - "lisible" : false si la photo est FLOUE, SOMBRE, COUPÉE, avec REFLET, ou si les informations clés (nom, n° de pièce) ne sont pas lisibles avec certitude. Sinon true.
 - "probleme" : si lisible=false, un mot : "flou" | "sombre" | "coupé" | "reflet" | "illisible".
 Champ inconnu = "". Ne JAMAIS inventer un nom si la photo est illisible.`;
+
+// Inférence « grosso modo » de la devise à partir de la ville du reçu (quand la devise n'est pas imprimée).
+const CITY_CCY = {
+  paris:'EUR', lyon:'EUR', marseille:'EUR', toulouse:'EUR', lille:'EUR', bordeaux:'EUR', nantes:'EUR', nice:'EUR', strasbourg:'EUR', montpellier:'EUR', roissy:'EUR', orly:'EUR',
+  bruxelles:'EUR', brussels:'EUR', luxembourg:'EUR', madrid:'EUR', barcelone:'EUR', barcelona:'EUR', lisbonne:'EUR', lisbon:'EUR', porto:'EUR', rome:'EUR', milan:'EUR', francfort:'EUR', frankfurt:'EUR', amsterdam:'EUR', dublin:'EUR', athenes:'EUR',
+  londres:'GBP', london:'GBP', geneve:'CHF', zurich:'CHF',
+  dakar:'XOF', abidjan:'XOF', bamako:'XOF', lome:'XOF', ouagadougou:'XOF', cotonou:'XOF', niamey:'XOF', bissau:'XOF',
+  douala:'XAF', yaounde:'XAF', libreville:'XAF', brazzaville:'XAF', bangui:'XAF', ndjamena:'XAF', malabo:'XAF', bata:'XAF',
+  casablanca:'MAD', rabat:'MAD', marrakech:'MAD',
+  banjul:'GMD', conakry:'GNF', kinshasa:'CDF', lubumbashi:'CDF', lagos:'NGN', abuja:'NGN', accra:'GHS', nairobi:'KES', 'addis-abeba':'ETB', 'addis abeba':'ETB', praia:'CVE', moroni:'KMF', lusaka:'ZMW', nouakchott:'MRU',
+};
+function ccyFromCity(v) { const k = String(v || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim(); return CITY_CCY[k] || null; }
+// Clé sémantique d'un reçu pour la dédup (indépendante du zoom/recadrage) : n° ticket + date, sinon montant+devise+date+établissement.
+function fraisKey(f) {
+  if (!f) return '';
+  const d = String(f.date || '').replace(/\s/g, '');
+  const num = String(f.num_ticket || '').replace(/\s/g, '').toLowerCase();
+  if (num && d) return 'n:' + num + '|' + d;
+  if (num && f.montant != null) return 'n:' + num + '|m:' + f.montant;
+  if (f.montant != null && d) return 'm:' + f.montant + '|' + String(f.devise || '') + '|' + d + '|' + String(f.etablissement || '').toLowerCase().replace(/\s/g, '').slice(0, 16);
+  return '';
+}
 
 async function _classifyDocClaude(media) {
   const key = process.env.ANTHROPIC_API_KEY; if (!key) return null;
@@ -1392,9 +1415,15 @@ async function classifyDoc(mediaUrl, cfg) {
   if (!p || !p.kind) p = await _classifyDocGpt(media);
   if (!p) return { ...FALLBACK, _unavailable: true, _reason: 'api_error' };
   const montant = typeof p.montant === 'number' ? p.montant : (parseFloat(String(p.montant == null ? '' : p.montant).replace(',', '.').replace(/[^\d.]/g, '')) || null);
-  const devise = String(p.devise || '').toUpperCase().replace(/FCFA|CFA/g, 'XOF').replace(/€|EURO/g, 'EUR').replace(/[^A-Z]/g, '').slice(0, 6);
+  let devise = String(p.devise || '').toUpperCase().replace(/FCFA|CFA/g, 'XOF').replace(/€|EURO/g, 'EUR').replace(/[^A-Z]/g, '').slice(0, 6);
   const categorie = String(p.categorie || '').toLowerCase().replace(/[^a-z]/g, '').slice(0, 12);
-  return { kind: ['identite', 'voyage', 'frais', 'autre'].includes(p.kind) ? p.kind : 'autre', nom: (p.nom || '').toUpperCase().trim(), voyageType: p.voyageType || '', lisible: p.lisible !== false, probleme: p.probleme || '', montant, devise, categorie, hash };
+  const etablissement = String(p.etablissement || '').trim().slice(0, 60);
+  const num_ticket = String(p.num_ticket || '').trim().replace(/\s+/g, '').slice(0, 40);
+  const dateTicket = String(p.date || '').trim().slice(0, 20);
+  const ville = String(p.ville || '').trim().slice(0, 40);
+  let deviseInferred = false;
+  if (!devise && ville) { const g = ccyFromCity(ville); if (g) { devise = g; deviseInferred = true; } }
+  return { kind: ['identite', 'voyage', 'frais', 'autre'].includes(p.kind) ? p.kind : 'autre', nom: (p.nom || '').toUpperCase().trim(), voyageType: p.voyageType || '', lisible: p.lisible !== false, probleme: p.probleme || '', montant, devise, deviseInferred, categorie, etablissement, num_ticket, date: dateTicket, ville, hash };
 }
 
 // ─── État des pièces (déterministe) : quel passager n'a pas sa pièce ? preuve de voyage ? ──
@@ -2791,18 +2820,22 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
         return sendButtons(phone, { body: `${_ackD}\n\n${L(s, 'An expense receipt (hotel, taxi, meals…)? Send the photo, otherwise:', 'Un reçu de frais (hôtel, taxi, repas…) ? Envoyez la photo, sinon :')}`, buttons: [{ id: 'frais_fini', text: L(s, '✅ That\'s all', '✅ C\'est tout') }] }, cfg);
       }
       s.fraisHashes = s.fraisHashes || [];
-      // Anti-doublon : même reçu (fichier identique) déjà reçu → on ne le compte pas 2×.
-      if (d && d.hash && s.fraisHashes.includes(d.hash)) {
+      s.fraisKeys = s.fraisKeys || [];
+      // Anti-doublon : même fichier (hash des octets) OU même reçu logique (n° ticket + date, ou montant+devise+date).
+      // La clé logique rattrape un même ticket re-photographié / zoomé / recadré (hash différent, mêmes infos).
+      const _fkey = fraisKey(d);
+      if ((d && d.hash && s.fraisHashes.includes(d.hash)) || (_fkey && s.fraisKeys.includes(_fkey))) {
         await setState(phone, s);
         return sendButtons(phone, { body: L(s, `🔁 This receipt is *already in your file* — no need to resend it. *Another* receipt? Otherwise:`, `🔁 Ce reçu est *déjà dans votre dossier* — pas besoin de le renvoyer. Un *autre* reçu ? Sinon :`), buttons: [{ id: 'frais_fini', text: L(s, '✅ That\'s all', '✅ C\'est tout') }] }, cfg);
       }
       if (d && d.hash) s.fraisHashes.push(d.hash);
+      if (_fkey) s.fraisKeys.push(_fkey);
       s.fraisCount = (s.fraisCount || 0) + 1;
       markFraisAnswered(phone); // le client a répondu → plus de relance frais
       const montant = d && d.montant ? d.montant : null;
       const devise = d && d.devise ? d.devise : '';
       s.fraisList = s.fraisList || [];
-      s.fraisList.push({ montant, devise, categorie: (d && d.categorie) || '', hash: (d && d.hash) || null, at: Date.now() });
+      s.fraisList.push({ montant, devise, deviseInferred: !!(d && d.deviseInferred), categorie: (d && d.categorie) || '', etablissement: (d && d.etablissement) || '', num_ticket: (d && d.num_ticket) || '', date: (d && d.date) || '', ville: (d && d.ville) || '', hash: (d && d.hash) || null, at: Date.now() });
       // Montant lu mais devise inconnue → on demande la monnaie (1 fois), sinon on enregistre tel quel.
       if (montant && !devise) {
         s.fraisAwaitDevise = s.fraisList.length - 1; await setState(phone, s);
@@ -2810,7 +2843,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
         return send(phone, L(s, `✅ Receipt saved — I read *${montant}*. In which *currency*? (e.g. *€*, *FCFA*, *dirham*, *dalasi*)`, `✅ Reçu enregistré — j'ai lu *${montant}*. Dans quelle *monnaie* ? (ex. *€*, *FCFA*, *dirham*, *dalasi*)`), cfg);
       }
       await setState(phone, s);
-      const lu = montant ? ` — *${montant}${devise ? ' ' + devise : ''}*` : '';
+      const lu = montant ? ` — *${montant}${devise ? ' ' + devise : ''}*${(d && d.deviseInferred) ? L(s, ' (assumed)', ' (supposé)') : ''}` : '';
       notifyOwnerWhatsApp(phone, `🧾 Dossier ${s.ref || '?'} : reçu frais #${s.fraisCount}${lu}. Total ≈ ${fraisTotal(s)} (Art. 8/9).`).catch(() => {});
       return sendButtons(phone, { body: L(s, `✅ Got it${lu} — added to your file 🙏 It's an amount that *comes back to you on top of* the compensation.\nAnother receipt (taxi, meal, hotel…)? Send the photo, otherwise:`, `✅ Bien reçu${lu} — ajouté à votre dossier 🙏 C'est un montant qui *vous revient en plus* de l'indemnité.\nUn autre reçu (taxi, repas, hôtel…) ? Envoyez la photo, sinon :`), buttons: [{ id: 'frais_fini', text: L(s, '✅ That\'s all', '✅ C\'est tout') }] }, cfg);
     }
