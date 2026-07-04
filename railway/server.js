@@ -991,6 +991,7 @@ function buildMandatUrl(s, phone) {
     aVerifierExpert: ['a_verifier', 'hors_champ', 'sous_seuil'].includes(s.flightVerdict) || s.type_vol === 'escale' || (s.passengers || []).some((p) => p && p.bebe && !p.gratuit), // bébé inclus sans tarif confirmé → l'expert vérifie l'INF payé (art. 3§3)
     lang: s.langue_code || 'fr',
     passengers: (s.passengers || []).slice(0, s.pax || 1).map(p => ({ name: cleanName((p && p.name) || ''), dob: toISODate((p && p.dob) || ''), birth: (p && (p.lieuNaissance || p.birth)) || '', adresse: (p && p.adresse) || '' })),
+    email: (s.email || '').trim(), // email FACULTATIF collecté par le bot → pré-remplit #em-perso du contrat
     cid: phone || '', lsa: new Date().toISOString(), source: 'wati-bot-v8',
   };
   if (s.ref) { DOSSIERS.set(s.ref, dossier); persistDossiers(); storeDossierDurable(s.ref, dossier).catch(() => {}); }
@@ -2003,7 +2004,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
   // ⚠️ Jamais intercepté si c'est une réponse interactive (bouton/liste) : replyId présent → flux prioritaire
   try {
     const { isClientQuestion, isSensitive, answerClientQuestion } = AI;
-    const FREE = ['m_vol', 'm_date', 'm_route', 'm_route_choice', 'm_dep', 'm_arr', 'm_stop_arr', 'm_pnr', 'leg_count', 'leg_input', 'esc_dep', 'esc_via', 'esc_arr', 'esc_vol', 'names', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob', 'doc_adresse'];
+    const FREE = ['m_vol', 'm_date', 'm_route', 'm_route_choice', 'm_dep', 'm_arr', 'm_stop_arr', 'm_pnr', 'leg_count', 'leg_input', 'esc_dep', 'esc_via', 'esc_arr', 'esc_vol', 'names', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob', 'doc_adresse', 'ask_email'];
     // Filet « client paumé » : phrases de blocage/aide qui ne sont JAMAIS une réponse d'étape
     // valide → on ne re-pose pas bêtement l'étape, on propose Reprendre / Recommencer / Humain.
     const stuckNorm = lower.normalize('NFD').replace(/[̀-ͯ]/g, '');
@@ -2813,6 +2814,14 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
     }
     return send(phone, L(s, `📍 A bit more, please — at least your *city and country* _(e.g. Médina, Dakar, Senegal)_:`, `📍 Un peu plus, svp — au moins votre *ville et pays* _(ex : Médina, Dakar, Sénégal)_ :`), cfg);
   }
+  // Email (dernière question, FACULTATIVE) : pré-remplit le contrat + permet la copie durable du contrat signé.
+  if (s.step === 'ask_email') {
+    s.email_asked = true;
+    const m = String(text || '').match(/[^\s@]+@[^\s@]+\.[^\s@]+/); // 1er email valide trouvé dans le message
+    s.email = m ? m[0].trim() : ''; // « passer » / rien de valide → on continue sans (facultatif, jamais bloquant)
+    await setState(phone, s);
+    return finaliser(phone, s, cfg);
+  }
   if (s.step === 'doc_name') {
     if (mediaUrl) return askOcrConfirm(phone, s, cfg, mediaUrl); // il envoie finalement la pièce → on la lit
     if (input.length >= 3 && !/^\d+$/.test(input) && !/^\[/.test(input)) { s.passengers = s.passengers || []; s.passengers[s.doc_idx] = { name: input.toUpperCase() }; s.step = 'doc_dob'; await setState(phone, s); return send(phone, L(s, `📅 *Date of birth* of ${input}? _(DD/MM/YYYY)_`, `📅 *Date de naissance* de ${input} ? _(JJ/MM/AAAA)_`), cfg); }
@@ -3389,12 +3398,21 @@ async function askMandant(phone, s, cfg) {
 async function askAddressOrFinalize(phone, s, cfg) {
   return finaliser(phone, s, cfg);
 }
+// Dernière question, FACULTATIVE : l'email. Posée une seule fois (flag email_asked), au point de
+// passage unique (finaliser). Sert à pré-remplir le contrat + envoyer la copie signée. Skippable.
+async function askEmail(phone, s, cfg) {
+  s.step = 'ask_email'; await setState(phone, s);
+  return send(phone, L(s,
+    `📧 *Last thing* — your *email*? We'll send your signed contract there _(optional)_.\n✏️ Type it, or *skip*.`,
+    `📧 *Dernière chose* — votre *email* ? On vous y enverra votre contrat signé _(facultatif)_.\n✏️ Écrivez-le, ou tapez *passer*.`), cfg);
+}
 async function gotoBoarding(phone, s, cfg) { s.step = 'doc_boarding'; await setState(phone, s); return send(phone, L(s, `🎫 Boarding pass\nSend a photo for the affected flight.\n📧 No pass? An e-ticket, a booking confirmation or a baggage tag work too.\n_🔒 Read by an automated tool (AI) to pre-fill your file — see robindesairs.eu/politique-confidentialite._\n✏️ *skip* · 📞 *call* if all lost, we'll find a solution.`, `🎫 Carte d'embarquement\nEnvoyez-en une photo pour le vol concerné.\n📧 Pas de carte ? Un e-billet, une confirmation de réservation ou une étiquette de bagage fonctionnent aussi.\n_🔒 Lu par un outil automatique (IA) pour pré-remplir votre dossier — voir robindesairs.eu/politique-confidentialite._\n✏️ *passer* · 📞 *appel* si tout perdu, on trouve une solution.`), cfg); }
 async function gotoEticket(phone, s, cfg) { s.step = 'doc_eticket'; await setState(phone, s); return send(phone, L(s, `📧 Booking confirmation (e-ticket)\nSend a screenshot (check spam / the Booking app).\n✏️ *skip* · 📞 *call*.`, `📧 Confirmation de réservation (e-billet)\nEnvoyez une capture (pensez aux spams / appli Booking).\n✏️ *passer* · 📞 *appel*.`), cfg); }
 async function gotoCert(phone, s, cfg) { s.step = 'doc_cert'; await setState(phone, s); return send(phone, L(s, `📄 Delay/cancellation certificate (optional)\nIf the airline gave you one, send it.\n✏️ Type *skip* if you don't have one (common).`, `📄 Certificat de retard/annulation (optionnel)\nSi la compagnie vous en a remis un, envoyez-le.\n✏️ Tapez *passer* si vous n'en avez pas (cas fréquent).`), cfg); }
 
 // MSG14 — RGPD + mandat + reçu + clôture
 async function finaliser(phone, s, cfg) {
+  if (!s.email_asked) return askEmail(phone, s, cfg); // dernière question facultative avant le contrat
   const pax = s.passengers || [];
   const nom = (pax[0] && pax[0].name) || (s.names && s.names[0]) || '—';
   s.minorsCount = pax.filter(p => p && p.minor).length;

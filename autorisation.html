@@ -1152,6 +1152,7 @@ function applyDossier(d) {
     setIfEmpty('fn', fn); setIfEmpty('ln', ln);
   }
   if (d.address) setIfEmpty('addr', d.address);
+  if (d.email) setIfEmpty('em-perso', d.email); // email collecté par le bot → pré-rempli (facultatif)
   if (d.phone && typeof setWaFull === 'function') { const w = document.getElementById('wa-national'); if (w && !w.value.trim()) setWaFull(String(d.phone)); }
   setIfEmpty('fnum', d.vol); setIfEmpty('cie', d.compagnie); setIfEmpty('pnr', d.pnr);
   if (d.billet) setIfEmpty('billet', d.billet);
