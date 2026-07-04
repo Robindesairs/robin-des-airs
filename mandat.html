@@ -224,7 +224,12 @@ details.mandat-full>summary::-webkit-details-marker{display:none}
 details.mandat-full>summary::after{content:'▾';margin-left:auto}
 details.mandat-full[open]>summary{margin-bottom:12px}
 .addr-summary-print{display:none}
+.print-hd{display:none}
 @media print{
+  /* Option 1 (essentiel-first) : page 1 = parties + résumé « ce que vous signez » + signature (placée par Yousign).
+     Les articles détaillés (l'équivalent des CGV) démarrent sur une page neuve → page de signature propre. */
+  details.mandat-full{page-break-before:always}
+  .print-hd{display:block !important;visibility:visible !important;font-family:'Montserrat',sans-serif;font-weight:800;font-size:15px;color:#047857;border-bottom:2px solid #047857;padding-bottom:6px;margin:0 0 14px}
   /* N'imprimer QUE le mandat rempli (parties + texte complet + signature), même depuis l'écran de succès. */
   body{background:#fff !important}
   body *{visibility:hidden !important}
@@ -493,10 +498,11 @@ details.mandat-full[open]>summary{margin-bottom:12px}
       <li>📞 Un <strong>vrai expert vous suit</strong> jusqu'au virement — <strong>joignable</strong>, avec un rappel <strong>dans votre langue</strong> : français, wolof, mandinka, twi, yoruba, peul, anglais… <em>et d'autres à venir</em>.</li>
       <li>📅 Exclusif <strong>18 mois</strong> (résiliation libre après 12 mois si pas d'assignation) · <strong>rétractation 14 jours</strong> sans frais · correspondances couvertes.</li>
     </ul>
-    <p class="ss-note">Le contrat complet, en langage clair, est juste en dessous, rien à payer pour le lire 🙂</p>
+    <p class="ss-note">Les <strong>conditions détaillées</strong> du contrat, en langage clair, sont juste en dessous — rien à payer pour les lire 🙂</p>
   </div>
   <details class="mandat-full">
-    <summary>📄 Lire le contrat complet (toutes les conditions)</summary>
+    <summary>📄 Conditions détaillées du contrat (le texte complet, en langage clair)</summary>
+    <div class="print-hd">CONDITIONS DÉTAILLÉES DU CONTRAT DE CESSION DE CRÉANCE</div>
   <div class="clause le">
     <span class="cnum">Article 1, Objet et régime de cession</span>
     <div class="plain">💡 <strong>En clair&nbsp;:</strong> Vous <strong>vendez votre créance</strong> à Robin des Airs, qui devient propriétaire du dossier et le recouvre en son nom propre. Le prix de votre créance dépend de ce qui est effectivement récupéré (75&nbsp;% du recouvré en amiable, 60&nbsp;% si tribunal, 0&nbsp;€ si rien). Vol avec correspondance ? C'est l'arrivée finale qui compte, et c'est couvert.</div>
