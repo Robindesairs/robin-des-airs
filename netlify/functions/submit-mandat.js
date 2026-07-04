@@ -16,7 +16,7 @@ let genererMandatPdf = null, genererMandatBilinguePdf = null;
 try { ({ genererMandatPdf, genererMandatBilinguePdf } = require('./lib/mandat-pdf')); } catch (e) { console.error('submit-mandat: mandat-pdf indisponible:', e.message); }
 let watiSendFile = null, watiCfg = null;
 try { ({ watiSendFile, watiCfg } = require('./lib/wati-api')); } catch (e) { /* WhatsApp optionnel */ }
-// Convention de nom « côté compagnie » : Mandat-NOM-Prénom-VOL-CODE.pdf (lib/doc-filename)
+// Convention de nom « côté compagnie » : Contrat-Cession-NOM-Prénom-VOL-CODE.pdf (lib/doc-filename)
 let nomFichierCompagnie = null, codeFromRef = null;
 try { ({ nomFichierCompagnie, codeFromRef } = require('./lib/doc-filename')); } catch (e) {}
 
@@ -213,10 +213,10 @@ async function attachMandatToAirtable(record) {
   const recs = await airtableFindByRef(cfg, ref);
   if (!recs.length) return { skipped: true, reason: 'fiche introuvable' };
   const url = `https://robindesairs.eu/api/mandat-pdf?r=${encodeURIComponent(ref)}&bilingue=1`;
-  // Nom propre « côté compagnie » : Mandat-NOM-Prénom-VOL-CODE.pdf (sinon repli sur la réf).
+  // Nom propre « côté compagnie » : Contrat-Cession-NOM-Prénom-VOL-CODE.pdf (sinon repli sur la réf).
   const filename = (nomFichierCompagnie
     ? nomFichierCompagnie({ nom: record.lastName, prenom: record.firstName, vol: record.flightNum, ref }, 'mandat')
-    : `Mandat-Robin-des-Airs-${ref.replace(/[^A-Za-z0-9_-]/g, '_')}.pdf`);
+    : `Contrat-Cession-Robin-des-Airs-${ref.replace(/[^A-Za-z0-9_-]/g, '_')}.pdf`);
   const updates = recs.map((rec) => ({ id: rec.id, fields: { [cfg.fMandatPdf]: [{ url, filename }] } }));
   const pr = await fetch(`https://api.airtable.com/v0/${cfg.base}/${cfg.table}`, {
     method: 'PATCH', headers: atHeaders(cfg.key), body: JSON.stringify({ records: updates }),
@@ -494,7 +494,7 @@ async function notifyMandatSignedByEmail(record, pdfBuffer, pdfBilingueBuffer) {
     }
     if (pdfBilingueBuffer) {
       teamAttachments.push({
-        filename: `Mandat-bilingue-FR-EN-${(record.ref || 'mandat').replace(/[^a-zA-Z0-9_-]/g, '_')}.pdf`,
+        filename: `Contrat-Cession-bilingue-FR-EN-${(record.ref || 'mandat').replace(/[^a-zA-Z0-9_-]/g, '_')}.pdf`,
         content: pdfBilingueBuffer.toString('base64'),
       });
     }
@@ -520,7 +520,7 @@ async function notifyMandatSignedByEmail(record, pdfBuffer, pdfBilingueBuffer) {
     };
     if (pdfBuffer) {
       const suffixe = (record.ref || '').replace(/[^A-Za-z0-9]/g, '').slice(-4).toUpperCase();
-      const filename = suffixe ? `Mandat-Robin-des-Airs-${suffixe}.pdf` : 'Mandat-Robin-des-Airs.pdf';
+      const filename = suffixe ? `Contrat-Cession-Robin-des-Airs-${suffixe}.pdf` : 'Contrat-Cession-Robin-des-Airs.pdf';
       clientPayload.attachments = [{ filename, content: pdfBuffer.toString('base64') }];
     }
     result.client = await sendResendEmail(apiKey, clientPayload);
@@ -576,7 +576,7 @@ async function sendMandatWhatsappCopy(record, pdfBuffer) {
   }
   const ref = record.ref || record.cert_id || 'dossier';
   const suffixe = String(ref).replace(/[^A-Za-z0-9]/g, '').slice(-4).toUpperCase();
-  const fileName = suffixe ? `Mandat-Robin-des-Airs-${suffixe}.pdf` : 'Mandat-Robin-des-Airs.pdf';
+  const fileName = suffixe ? `Contrat-Cession-Robin-des-Airs-${suffixe}.pdf` : 'Contrat-Cession-Robin-des-Airs.pdf';
   const caption = (record.lang === 'en')
     ? `✅ Mandate signed — thank you for your trust! (ref. ${ref})\n\nYour case is now in the hands of our team. *€0 if we don't win*, 25% only if you are compensated. Here is your copy to keep.\n\n📎 *To process your case as fast as possible*, for each passenger we need:\n• your *boarding pass* or your *e-ticket* (booking confirmation)\n• a *photo ID*\n\n✅ *If you've already sent everything, ignore this message* — nothing to do on your side. Once your file is *checked, we get back to you*.\nNot sent yet? Send them here, or upload them in one go via your *secure link* (your documents never go through the chat) 👉 https://robindesairs.eu/depot-en-ligne.html?r=${ref}\n\n📞 *An expert will call you* from *+33 7 56 86 36 30*. Save this number as "*Robin des Airs*" to recognise our call. 🏹\n\nThe Robin des Airs team`
     : `✅ Mandat signé — merci de votre confiance ! (réf. ${ref})\n\nVotre dossier passe entre les mains de notre équipe. *0 € si on ne gagne pas*, 25 % uniquement si vous êtes indemnisé. Voici votre copie à conserver.\n\n📎 *Pour traiter votre dossier au plus vite*, il nous faut, pour chaque passager :\n• votre *carte d'embarquement* ou votre *e-billet* (confirmation de réservation)\n• une *pièce d'identité*\n\n✅ *Si vous avez déjà tout envoyé, ignorez ce message* — rien à faire de votre côté. Une fois votre dossier *vérifié, nous revenons vers vous*.\nPas encore envoyé ? Transmettez-les ici, ou déposez-les en une fois sur votre *lien sécurisé* (vos pièces ne passent pas par la conversation) 👉 https://robindesairs.eu/depot-en-ligne.html?r=${ref}\n\n📞 *Un expert va vous appeler* depuis le *+33 7 56 86 36 30*. Enregistrez ce numéro sous « *Robin des Airs* » pour reconnaître notre appel. 🏹\n\nL'équipe Robin des Airs`;

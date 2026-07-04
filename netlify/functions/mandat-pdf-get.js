@@ -29,7 +29,7 @@ exports.handler = async (event) => {
     const key = bilingue ? 'pdf-bilingue/' + ref : 'pdf/' + ref;
     const b64 = await st.get(key, { type: 'text' });
     if (!b64) return J(404, { error: bilingue ? 'PDF bilingue non archivé pour cette référence' : 'PDF non archivé pour cette référence' });
-    const filename = bilingue ? `Mandat-bilingue-FR-EN-${ref}.pdf` : `Mandat-Robin-des-Airs-${ref}.pdf`;
+    const filename = bilingue ? `Contrat-Cession-bilingue-FR-EN-${ref}.pdf` : `Contrat-Cession-Robin-des-Airs-${ref}.pdf`;
     return {
       statusCode: 200,
       headers: {

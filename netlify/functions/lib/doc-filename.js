@@ -5,7 +5,7 @@
  * Format décidé par panel de 5 sous-agents (gestionnaire compagnie, juridique,
  * RGPD, marque, robustesse) :
  *     <Type>-<NOM>-<Prénom>-<VOL>-<CODE>.pdf
- *   ex.  Mandat-NDIAYE-Awa-AF1234-A3F2.pdf
+ *   ex.  Contrat-Cession-NDIAYE-Awa-AF1234-A3F2.pdf
  *        MiseEnDemeure-NDIAYE-Awa-AF1234-A3F2.pdf
  *
  * Raisons :
@@ -21,7 +21,9 @@
  * Sécurité de nom : accents translittérés, caractères non alphanumériques retirés.
  */
 
-const PREFIXES = { mandat: 'Mandat', med: 'MiseEnDemeure', dossier: 'Dossier' };
+// Préfixe « côté compagnie » : JAMAIS « Mandat » (le modèle est une CESSION — un fichier
+// intitulé « Mandat-… » dans la boîte de la compagnie = munition pour requalifier en mandat).
+const PREFIXES = { mandat: 'Contrat-Cession', med: 'MiseEnDemeure', dossier: 'Dossier' };
 
 function toAscii(s) {
   return String(s == null ? '' : s)
