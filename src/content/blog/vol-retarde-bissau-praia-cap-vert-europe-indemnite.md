@@ -38,7 +38,7 @@ Le règlement CE 261/2004 prévoit une indemnité **forfaitaire**, indépendante
 | 1 500 à 3 500 km | 400 € |
 | Plus de 3 500 km | 600 € |
 
-Praia → Lisbonne, c'est environ 2 900 km : la fourchette **400 €** est souvent en jeu. Bissau → Lisbonne dépasse 3 500 km : la fourchette **600 €** peut alors entrer dans le calcul. Pour une famille de quatre personnes, l'addition peut vite atteindre plusieurs milliers d'euros — d'où l'intérêt de tout vérifier.
+Praia → Lisbonne, c'est environ 2 900 km, et Bissau → Lisbonne environ 3 400 km : la fourchette **400 €** est souvent en jeu. Si votre billet unique se poursuit au-delà de Lisbonne (Paris, Bruxelles, Genève…), la distance totale peut dépasser 3 500 km et faire entrer la fourchette **600 €** dans le calcul. Pour une famille de quatre personnes, l'addition peut vite atteindre plusieurs milliers d'euros — d'où l'intérêt de tout vérifier.
 
 ## La correspondance à Lisbonne compte
 

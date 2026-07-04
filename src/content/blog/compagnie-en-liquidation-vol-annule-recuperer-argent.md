@@ -21,7 +21,7 @@ En 2026, plusieurs transporteurs ont cessé leur activité ou sont entrés en pr
 
 Quand un vol tourne mal avec une compagnie en difficulté, plusieurs montants peuvent être en jeu. Ils ne se réclament pas de la même façon.
 
-**1. L'indemnité forfaitaire CE 261/2004.** Elle sanctionne l'annulation ou le gros retard. Selon la distance, elle peut donner droit à 250 €, 400 € ou jusqu'à 600 € par passager. Elle n'a rien à voir avec le prix du billet : c'est une indemnité punitive, forfaitaire. Voir la différence détaillée dans [Remboursement du billet vs indemnité CE 261](/blog/remboursement-billet-vs-indemnite-ce261.html).
+**1. L'indemnité forfaitaire CE 261/2004.** Elle sanctionne l'annulation ou le gros retard. Selon la distance, elle peut donner droit à 250 €, 400 € ou jusqu'à 600 € par passager. Elle n'a rien à voir avec le prix du billet : c'est une indemnité forfaitaire et dissuasive. Voir la différence détaillée dans [Remboursement du billet vs indemnité CE 261](/blog/remboursement-billet-vs-indemnite-ce261.html).
 
 **2. Le remboursement du billet.** C'est le prix que vous avez payé pour un vol qui n'a pas eu lieu. Ce n'est pas une indemnité : c'est la restitution de votre argent.
 
