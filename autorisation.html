@@ -974,30 +974,54 @@ window.addEventListener('DOMContentLoaded', () => {
       const signerIdx = parseInt(P.get('signer') || '1', 10);
       const totalSigners = parseInt(P.get('total') || '1', 10);
 
-      // ── Multi-signataires : si pas encore le dernier, on propose
-      //    de passer le téléphone au signataire suivant.
-      if (signerIdx < totalSigners) {
+      // ── Co-signataire (pas le principal) qui vient de signer depuis SON propre lien → simple merci.
+      if (signerIdx > 1) {
+        const wrapT = document.createElement('div');
+        wrapT.style.cssText = 'max-width:520px;margin:80px auto;padding:32px 28px;background:#fff;border:1px solid var(--border);border-radius:12px;text-align:center;font-family:Inter,system-ui,sans-serif';
+        wrapT.innerHTML =
+          '<div style="font-size:48px;line-height:1;margin-bottom:18px">✅</div>' +
+          '<h1 style="font-size:24px;font-weight:800;margin:0 0 12px;color:var(--text)">Signature enregistrée</h1>' +
+          '<p style="font-size:14px;line-height:1.6;color:var(--muted);margin:0">Merci, votre signature est bien prise en compte. Vous serez tenu·e informé·e de votre dossier. 🙏</p>';
+        document.body.appendChild(wrapT);
+        return;
+      }
+      // ── Le PRINCIPAL a signé et il reste des co-signataires → écran de PARTAGE des liens.
+      //    Fini le « passer le téléphone » : chaque adulte signe depuis SON propre téléphone (preuve individuelle).
+      if (totalSigners > 1) {
         const storeKey = 'yousign_signers_' + ref;
         let signersList = [];
         try { signersList = JSON.parse(localStorage.getItem(storeKey) || '[]'); } catch (_) {}
-        const next = signersList.find(function (s) { return s.index === signerIdx + 1; });
-        if (next && next.signing_url) {
+        const others = signersList.filter(function (s) { return s.index > 1 && s.signing_url; });
+        if (others.length) {
+          const rows = others.map(function (s) {
+            const nom = ((s.first_name || '') + ' ' + (s.last_name || '')).trim() || ('Passager ' + s.index);
+            const msg = encodeURIComponent('Voici ton lien pour signer le contrat Robin des Airs (indemnisation de notre vol) 👉 ' + s.signing_url);
+            return '<div style="display:flex;align-items:center;gap:10px;padding:12px 0;border-top:1px solid var(--border)">' +
+              '<div style="flex:1;min-width:0;text-align:left"><div style="font-size:14px;font-weight:700;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + nom + '</div><div style="font-size:11px;color:var(--muted)">Doit signer depuis son téléphone</div></div>' +
+              '<a href="https://wa.me/?text=' + msg + '" target="_blank" rel="noopener" style="background:#25D366;color:#fff;text-decoration:none;padding:9px 14px;border-radius:8px;font-size:13px;font-weight:700;white-space:nowrap">📲 Partager</a>' +
+              '<button data-link="' + s.signing_url + '" class="copyLink" style="background:#f1f2f4;border:1px solid var(--border);border-radius:8px;padding:9px 11px;font-size:13px;cursor:pointer" title="Copier le lien">🔗</button>' +
+            '</div>';
+          }).join('');
           const wrap = document.createElement('div');
-          wrap.style.cssText = 'max-width:520px;margin:80px auto;padding:32px 28px;background:#fff;border:1px solid var(--border);border-radius:12px;text-align:center;font-family:Inter,system-ui,sans-serif';
+          wrap.style.cssText = 'max-width:520px;margin:64px auto;padding:32px 28px;background:#fff;border:1px solid var(--border);border-radius:12px;font-family:Inter,system-ui,sans-serif';
           wrap.innerHTML =
-            '<div style="font-family:\'DM Mono\',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.2em;color:var(--green-deep);font-weight:700;margin-bottom:14px">Signature ' + signerIdx + '/' + totalSigners + ' validée</div>' +
-            '<div style="font-size:48px;line-height:1;margin-bottom:18px">📲</div>' +
-            '<h1 style="font-size:24px;font-weight:800;margin:0 0 14px;color:var(--text)">Au tour de <span style="color:var(--green-deep)">' + (next.first_name || '') + ' ' + (next.last_name || '') + '</span></h1>' +
-            '<p style="font-size:14px;line-height:1.6;color:var(--muted);margin:0 0 22px">Passez le téléphone à la personne ci-dessus. Elle peut signer directement, depuis ce téléphone.</p>' +
-            '<button id="btnNextSigner" style="width:100%;background:var(--green);color:var(--navy);border:none;padding:16px 24px;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;border-radius:8px;cursor:pointer">Signer maintenant (' + (signerIdx + 1) + '/' + totalSigners + ') →</button>' +
-            '<p style="font-size:11px;color:var(--muted);margin:18px 0 0;line-height:1.5">Vous pouvez aussi envoyer le lien à votre proche par email — Yousign le lui a déjà envoyé.</p>';
+            '<div style="text-align:center"><div style="font-size:48px;line-height:1;margin-bottom:14px">✍️</div>' +
+            '<h1 style="font-size:23px;font-weight:800;margin:0 0 10px;color:var(--text)">Vous avez signé ✓</h1>' +
+            '<p style="font-size:14px;line-height:1.6;color:var(--muted);margin:0 0 8px">Il reste <strong>' + others.length + '</strong> passager(s) à signer. Envoyez à chacun son lien — <strong>chacun signe depuis son propre téléphone</strong>.</p></div>' +
+            rows +
+            '<p style="font-size:11px;color:var(--muted);margin:18px 0 0;text-align:center;line-height:1.5">Le dossier sera complet une fois que tout le monde aura signé. 🙏</p>';
           document.body.appendChild(wrap);
-          document.getElementById('btnNextSigner').onclick = function () {
-            window.location.href = next.signing_url;
-          };
+          wrap.querySelectorAll('.copyLink').forEach(function (b) {
+            b.onclick = function () {
+              const l = b.getAttribute('data-link');
+              if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(l).then(function () { b.textContent = '✓'; setTimeout(function () { b.textContent = '🔗'; }, 1500); }).catch(function () { window.prompt('Copiez le lien :', l); });
+              } else { window.prompt('Copiez le lien :', l); }
+            };
+          });
           return; // skip successScreen
         }
-        // Si on n'a pas l'URL du suivant (localStorage perdu), on tombe sur successScreen
+        // localStorage perdu → on tombe sur successScreen (le principal a au moins signé)
       }
 
       // ── Tous signataires OK (ou single) : écran "C'est fait !"
