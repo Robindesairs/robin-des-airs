@@ -978,6 +978,8 @@ function buildMandatUrl(s, phone) {
   const dossier = {
     ref: s.ref || '', phone: phone || '',
     name: cleanName(mandant.nameId || mandant.name || (s.names && s.names[0]) || s.nom || ''),
+    prenom: cleanName((mandant.prenomId || '').split(/\s+/)[0] || ''), // 1er prénom seulement (OCR passeport, sépare Nom/Prénom FR ou EN)
+    nom: cleanName(mandant.nomId || ''), // nom de famille exact (OCR — gère les noms composés, pas de devinette)
     dob: toISODate(mandant.dob || ''),
     birth: mandant.lieuNaissance || mandant.birth || '',
     address: mandant.adresse || '',
@@ -990,7 +992,7 @@ function buildMandatUrl(s, phone) {
     flightVerdict: s.flightVerdict || '', flightChecked: !!s.flightChecked, flightDelayMin: (s.flightDelayMin != null ? s.flightDelayMin : ''), distanceKm: s.distanceKm || '',
     aVerifierExpert: ['a_verifier', 'hors_champ', 'sous_seuil'].includes(s.flightVerdict) || s.type_vol === 'escale' || (s.passengers || []).some((p) => p && p.bebe && !p.gratuit), // bébé inclus sans tarif confirmé → l'expert vérifie l'INF payé (art. 3§3)
     lang: s.langue_code || 'fr',
-    passengers: (s.passengers || []).slice(0, s.pax || 1).map(p => ({ name: cleanName((p && (p.nameId || p.name)) || ''), dob: toISODate((p && p.dob) || ''), birth: (p && (p.lieuNaissance || p.birth)) || '', adresse: (p && p.adresse) || '' })),
+    passengers: (s.passengers || []).slice(0, s.pax || 1).map(p => ({ name: cleanName((p && (p.nameId || p.name)) || ''), prenom: cleanName(((p && p.prenomId) || '').split(/\s+/)[0] || ''), nom: cleanName((p && p.nomId) || ''), dob: toISODate((p && p.dob) || ''), birth: (p && (p.lieuNaissance || p.birth)) || '', adresse: (p && p.adresse) || '' })),
     email: (s.email || '').trim(), // email FACULTATIF collecté par le bot → pré-remplit #em-perso du contrat
     cid: phone || '', lsa: new Date().toISOString(), source: 'wati-bot-v8',
   };
@@ -1297,7 +1299,12 @@ Règles (libellé FR / EN équivalent) :
 
 function _normalizePassportOcr(p) {
   if (!p) return null;
-  const name = [p.prenom, p.nom].filter(Boolean).join(' ').toUpperCase().trim();
+  // On GARDE nom et prénom SÉPARÉS (le passeport les sépare : « Nom/Surname » vs « Prénom/Given names »,
+  // FR ou EN). Ils partent jusqu'au contrat → chacun dans la bonne case, sans devinette (gère aussi les
+  // noms composés). `name` reste le combiné « PRÉNOM NOM » pour l'affichage / le rapprochement e-billet.
+  const prenom = (p.prenom || '').toUpperCase().trim();
+  const nom = (p.nom || '').toUpperCase().trim();
+  const name = [prenom, nom].filter(Boolean).join(' ').trim();
   const dob = (p.date_naissance || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/) ? p.date_naissance : '';
   const expiry = (p.date_expiration || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/) ? p.date_expiration : '';
   const adresse = (p.adresse || '').trim();
@@ -1308,7 +1315,7 @@ function _normalizePassportOcr(p) {
   if (lieuNaissance && adresse && lieuNaissance.toLowerCase() === adresse.toLowerCase()) lieuNaissance = '';
   const docType = ['passeport', 'cni', 'titre_sejour'].includes((p.type_piece || '').trim().toLowerCase()) ? (p.type_piece || '').trim().toLowerCase() : '';
   const face = ['recto', 'verso', 'deux'].includes((p.face || '').trim().toLowerCase()) ? (p.face || '').trim().toLowerCase() : '';
-  return { name, dob, expiry, adresse, sexe, lieuNaissance, docType, face };
+  return { name, prenom, nom, dob, expiry, adresse, sexe, lieuNaissance, docType, face };
 }
 
 async function _ocrPassportClaude(media) {
@@ -1626,7 +1633,7 @@ async function askOcrConfirm(phone, s, cfg, mediaUrl) {
       const cur = s.passengers[_att.idx] || {};
       const _billet = cur.name || '';
       const _mismatch = !!(_billet && pp.name && nameDiffers(_billet, pp.name));
-      s.passengers[_att.idx] = { ...cur, name: cur.name || pp.name, nameId: pp.name || cur.nameId || '', nameMismatch: _mismatch, dob: pp.dob || cur.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || cur.adresse || '', sexe: pp.sexe || cur.sexe || '', lieuNaissance: pp.lieuNaissance || cur.lieuNaissance || '', docType: pp.docType || cur.docType || '', cniVerso: (pp.docType === 'cni' && (pp.face === 'verso' || pp.face === 'deux')) || cur.cniVerso || false, viaPhoto: true, idReceived: true };
+      s.passengers[_att.idx] = { ...cur, name: cur.name || pp.name, nameId: pp.name || cur.nameId || '', prenomId: pp.prenom || cur.prenomId || '', nomId: pp.nom || cur.nomId || '', nameMismatch: _mismatch, dob: pp.dob || cur.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || cur.adresse || '', sexe: pp.sexe || cur.sexe || '', lieuNaissance: pp.lieuNaissance || cur.lieuNaissance || '', docType: pp.docType || cur.docType || '', cniVerso: (pp.docType === 'cni' && (pp.face === 'verso' || pp.face === 'deux')) || cur.cniVerso || false, viaPhoto: true, idReceived: true };
       await setState(phone, s);
       if (_mismatch) { try { notifyOwnerWhatsApp('', `⚠️ Écart de nom${s.ref ? ' [' + s.ref + ']' : ''} : billet « ${_billet} » / passeport « ${pp.name} » — à vérifier (poste pièces).`).catch(() => {}); } catch (_) {} }
       const got = (s.passengers || []).filter((p) => p && p.idReceived).length;
@@ -1640,7 +1647,7 @@ async function askOcrConfirm(phone, s, cfg, mediaUrl) {
     // Solo (ou attribution multi non certaine) → ÉCRAN DE CONFIRMATION (le client vérifie nom + DDN
     // + lieu de naissance, et corrige si besoin). Décision fondateur 04/07 : on garde ce tap pour que
     // l'identité du cédant soit vérifiée (cession, art. 1321-1322) — surtout le lieu de naissance.
-    s.doc_pending = { name: pp.name || '', dob: pp.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || '', sexe: pp.sexe || '', lieuNaissance: pp.lieuNaissance || '', docType: pp.docType || '', cniVerso: (pp.docType === 'cni' && (pp.face === 'verso' || pp.face === 'deux')) || false, viaPhoto: true };
+    s.doc_pending = { name: pp.name || '', prenomId: pp.prenom || '', nomId: pp.nom || '', dob: pp.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || '', sexe: pp.sexe || '', lieuNaissance: pp.lieuNaissance || '', docType: pp.docType || '', cniVerso: (pp.docType === 'cni' && (pp.face === 'verso' || pp.face === 'deux')) || false, viaPhoto: true };
     s.step = 'doc_pass_confirm';
     await setState(phone, s);
     const lines = [

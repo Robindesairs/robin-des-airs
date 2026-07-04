@@ -1149,10 +1149,13 @@ function applyDossier(d) {
   const setIfEmpty = (id, val) => { const el = document.getElementById(id); if (el && val && !String(el.value || '').trim()) el.value = val; };
   if (d.ref) { REF = d.ref; const dr = document.getElementById('dRef'); if (dr) dr.textContent = REF; applyDossierEmailUI(); }
   // Identité du signataire (nom déjà nettoyé "PRENOM NOM" côté bot)
-  if (d.name) {
+  if (d.prenom || d.nom) {
+    // Nom/prénom SÉPARÉS lus sur le passeport (OCR, FR ou EN) → chacun dans sa case, sans devinette (gère les noms composés).
+    setIfEmpty('fn', d.prenom || ''); setIfEmpty('ln', d.nom || '');
+  } else if (d.name) {
     let fn = '', ln = '';
     if (d.name.includes('/')) { const [a, b] = d.name.split('/'); ln = (a || '').trim(); fn = (b || '').trim(); }
-    else { const p = d.name.trim().split(/\s+/); fn = p[0] || ''; ln = p.slice(1).join(' '); }
+    else { const p = d.name.trim().split(/\s+/); fn = p[0] || ''; ln = p[p.length - 1] || ''; } // fallback : 1er mot = prénom, dernier = nom
     setIfEmpty('fn', fn); setIfEmpty('ln', ln);
   }
   if (d.address) setIfEmpty('addr', d.address);
@@ -1179,9 +1182,12 @@ function applyDossier(d) {
     if (Array.isArray(d.passengers) && d.passengers.length) {
       d.passengers.forEach((p, i) => {
         const row = rows[i]; if (!row || !p) return;
-        if (i > 0 && p.name) {
+        if (i > 0 && (p.prenom || p.nom || p.name)) {
           const pIn = row.querySelector('.pprenom'), nIn = row.querySelector('.pnom');
-          if (pIn && nIn && !pIn.value && !nIn.value) { const sp = splitFullName(p.name); pIn.value = sp.prenom; nIn.value = sp.nom; }
+          if (pIn && nIn && !pIn.value && !nIn.value) {
+            const sp = (p.prenom || p.nom) ? { prenom: p.prenom || '', nom: p.nom || '' } : splitFullName(p.name);
+            pIn.value = sp.prenom; nIn.value = sp.nom;
+          }
         }
         const dobIn = row.querySelector('.pdob'); if (p.dob && dobIn && !dobIn.value) dobIn.value = p.dob;
         const birthIn = row.querySelector('.pbirth'); if (p.birth && birthIn && !birthIn.value) birthIn.value = p.birth;
