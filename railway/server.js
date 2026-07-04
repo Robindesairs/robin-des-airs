@@ -2085,7 +2085,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
       await send(phone, L(s,
         '✅ Thanks! Your consents are recorded. Let\'s continue with your case. 👇',
         '✅ Merci ! Vos acceptations sont enregistrées. On continue avec votre dossier. 👇'), cfg);
-      if (s.pendingTicker) { delete s.pendingTicker; return resumeTicker(phone, s, cfg); } // vol prérempli (ticker) : on reprend APRÈS le consentement
+      if (s.pendingTicker) { return resumeTicker(phone, s, cfg); } // vol prérempli (ticker) : on reprend APRÈS le consentement (resumeTicker consomme pendingTicker + pose le filtre déjà-géré)
       return sendIncident(phone, s, cfg);
     }
     if (refuse) {
@@ -2157,6 +2157,26 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
     else if (ri === 3 || n === '4' || lower.includes('autre')) { return finNonEligible(phone, L(s, `😔 Your flight doesn't appear to be covered by EU law.\n\nEC 261/2004 applies to flights departing from / arriving at a European airport, or operated by a European airline.\n\n❓ If that's a mistake, type *go* to pick another route.`, `😔 Votre vol ne semble pas couvert par la loi européenne.\n\nLe CE 261/2004 s'applique aux vols au départ/à l'arrivée d'un aéroport européen, ou opérés par une compagnie européenne.\n\n❓ Si erreur, écrivez *go* pour choisir une autre route.`), cfg); }
     else { const rd = await redispatch('route'); if (rd !== undefined) return rd; if (await stuckHelp(phone, s, cfg)) return; await send(phone, L(s, `🙂 I didn't quite get that. Choose from the list below 👇`, `🙂 Je n'ai pas bien compris. Choisissez dans la liste ci-dessous 👇`), cfg); return sendRoute(phone, s, cfg); }
     s.step = 'incident'; await setState(phone, s); return sendIncident(phone, s, cfg);
+  }
+
+  // FILTRE — Dossier déjà géré par un tiers (anti double-cession + retrait litigieux) ?
+  //   Non → on continue ; Oui → on NE prend PAS en cession (escalade humain, décliner/mandat).
+  if (s.step === 'deja_gere') {
+    const t = lower.trim();
+    const oui = id === 'deja_oui' || /\b(oui|yes)\b/.test(t) || (t.includes('oui') && !t.includes('non'));
+    s.deja_gere_asked = true;
+    if (oui) {
+      s.deja_gere = true; s.escalade = s.escalade || 'deja_gere_tiers'; await setState(phone, s);
+      try { notifyOwnerWhatsApp(phone, `⚠️ Dossier ${s.ref || phone} : le client déclare que ce vol est DÉJÀ géré par un tiers (autre société / avocat / procédure). NE PAS prendre en cession → décliner ou basculer en mandat. À vérifier.`).catch(() => {}); } catch (_) {}
+      await send(phone, L(s,
+        `🙏 Thanks for telling us. If your flight is already handled elsewhere, we usually *cannot take it as an assignment*. A colleague will check your case and call you back at *+33 7 56 86 36 30*. We can still continue for now, with no commitment. 👇`,
+        `🙏 Merci de nous l'avoir dit. Si votre vol est déjà géré ailleurs, on ne peut en général *pas le prendre en cession*. Un conseiller va vérifier votre dossier et vous rappellera au *+33 7 56 86 36 30*. On peut quand même continuer pour l'instant, sans engagement. 👇`), cfg);
+      if (s.pendingTicker) return resumeTicker(phone, s, cfg);
+      return sendIncident(phone, s, cfg);
+    }
+    s.deja_gere = false; await setState(phone, s);
+    if (s.pendingTicker) return resumeTicker(phone, s, cfg);
+    return sendIncident(phone, s, cfg);
   }
 
   // MSG4 — INCIDENT
@@ -3016,6 +3036,9 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
 // Reprise du flux « ticker » (vol prérempli par un lien du site) APRÈS le gate consentement, ou directement
 // si le consentement était déjà donné. Annulation → gate 14 jours ; retard → question correspondance.
 async function resumeTicker(phone, s, cfg) {
+  // Filtre anti double-cession aussi sur le chemin radar/ticker (posé une seule fois).
+  if (!s.deja_gere_asked) { s.pendingTicker = true; await setState(phone, s); return sendDejaGere(phone, s, cfg); }
+  if (s.pendingTicker) { delete s.pendingTicker; await setState(phone, s); }
   const dStr = s.date ? L(s, ` on *${s.date}*`, ` du *${s.date}*`) : '';
   if (s.incident === 'annulation') {
     s.step = 'annul_delai'; s.incident_libelle = 'Annulation'; await setState(phone, s);
@@ -3108,7 +3131,17 @@ async function askRouteZone(phone, s, cfg) {
     { id: 'rz_non', text: L(s, '🌍 Neither', '🌍 Aucun des deux') },
   ] }, cfg);
 }
-async function sendIncident(phone, s, cfg) { s.step = 'incident'; await setState(phone, s); await sendButtons(phone, { body: L(s, `${bar('incident')}\n✈️ Tell us what happened with your flight.`, `${bar('incident')}\n✈️ Racontez-nous ce qui s'est passé avec votre vol.`), buttons: [{ id: 'inc_retard', text: L(s, '⏱️ Arrival delay', '⏱️ Retard arrivée') }, { id: 'inc_annul', text: L(s, '❌ Cancellation', '❌ Annulation') }, { id: 'inc_refus', text: L(s, '🚫 Denied boarding', "🚫 Refus d'embarq.") }] }, cfg); }
+// FILTRE anti double-cession : « ce vol est-il déjà géré par un tiers ? » — posé UNE fois,
+// juste avant l'incident (point d'entrée unique du dossier). Protège la cession (art. 1321 :
+// on ne cède pas ce qu'on a déjà cédé) et écarte le retrait litigieux (créance déjà en procès).
+async function sendDejaGere(phone, s, cfg) {
+  s.step = 'deja_gere'; await setState(phone, s);
+  return sendButtons(phone, { body: L(s,
+    `⚖️ One quick check before we start.\n\nFor *this flight*, is your claim already handled by *someone else* (another company, a lawyer, or a court case)?`,
+    `⚖️ Une vérification rapide avant de commencer.\n\nPour *ce vol*, votre dossier est-il déjà géré par *quelqu'un d'autre* (une autre société, un avocat, ou une procédure au tribunal) ?`),
+    buttons: [{ id: 'deja_non', text: L(s, '✅ No, I start here', '✅ Non, je commence ici') }, { id: 'deja_oui', text: L(s, '⚠️ Yes', '⚠️ Oui') }] }, cfg);
+}
+async function sendIncident(phone, s, cfg) { if (!s.deja_gere_asked) return sendDejaGere(phone, s, cfg); s.step = 'incident'; await setState(phone, s); await sendButtons(phone, { body: L(s, `${bar('incident')}\n✈️ Tell us what happened with your flight.`, `${bar('incident')}\n✈️ Racontez-nous ce qui s'est passé avec votre vol.`), buttons: [{ id: 'inc_retard', text: L(s, '⏱️ Arrival delay', '⏱️ Retard arrivée') }, { id: 'inc_annul', text: L(s, '❌ Cancellation', '❌ Annulation') }, { id: 'inc_refus', text: L(s, '🚫 Denied boarding', "🚫 Refus d'embarq.") }] }, cfg); }
 
 // Gate ANNULATION — la règle des 14 jours de préavis (art. 5 CE 261), posée AVANT le n° de vol.
 // Ancré sur « quand on vous a prévenu(e), le vol était dans combien de temps » (notification → vol),
