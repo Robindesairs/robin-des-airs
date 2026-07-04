@@ -105,7 +105,6 @@ exports.handler = async (event) => {
   const sigPage = wantsLast ? pageCount : Math.max(1, Math.min(+rawSigPage, pageCount));
   // sigX borné pour que le bloc (label le plus large = sigX+400) tienne dans une page A4 (~596 pt).
   const sigX = Number.isFinite(+payload.signature_x) ? +payload.signature_x : 150;
-  const sigY = Number.isFinite(+payload.signature_y) ? +payload.signature_y : 150;
 
   // Mode TEST sandbox : en sandbox, Yousign EXIGE que l'email du signataire appartienne à l'orga
   // (les vrais emails clients / placeholders techniques sont refusés à l'activation). Si
@@ -134,6 +133,13 @@ exports.handler = async (event) => {
 
   if (signers.length === 0) return json(400, { error: "Aucun signataire" });
   if (signers.length > 6) return json(400, { error: "Maximum 6 signataires par dossier" });
+
+  // sigY : placer le(s) bloc(s) signature EN BAS de la dernière page (le client signe après avoir tout lu).
+  // On empile vers le HAUT selon le nombre de signataires pour que le dernier finisse près du bas (~780 pt
+  // sur une A4 de 842) sans déborder. 1 signataire → ~640 ; borné à 60 mini pour rester dans la page.
+  const sigY = Number.isFinite(+payload.signature_y)
+    ? +payload.signature_y
+    : Math.max(60, 640 - (signers.length - 1) * 160);
 
   try {
     // 1) Créer une demande de signature
