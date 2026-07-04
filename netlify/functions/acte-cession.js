@@ -52,10 +52,12 @@ exports.handler = async (event) => {
     const mandats = getBlobStore(event, 'mandats');
     const dossier = (mandats && (await mandats.get('m/' + ref, { type: 'json' }))) || {};
 
+    const showAddress = /^(1|true|oui|yes)$/i.test(String(q.adresse || q.address || ''));
     const pdf = await genererActeCessionPdf({
       ref,
       certId: signed.cert_id || '',
       signedAt: signed.signed_at,
+      showAddress,
       passengers: Array.isArray(dossier.passengers) && dossier.passengers.length
         ? dossier.passengers.map((p) => ({
             name: p.name || '',
@@ -63,8 +65,9 @@ exports.handler = async (event) => {
             birth: p.birth || p.lieuNaissance || '',
             minor: !!p.minor,
             legalRepName: p.legalRepName || '',
+            adresse: p.adresse || p.address || '',
           }))
-        : [{ name: dossier.name || '' }],
+        : [{ name: dossier.name || '', adresse: dossier.address || '' }],
       name: dossier.name || '',
       airline: dossier.compagnie || dossier.airline || '',
       flightNum: dossier.vol || dossier.flightNum || '',

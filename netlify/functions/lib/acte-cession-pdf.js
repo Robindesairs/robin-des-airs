@@ -167,6 +167,7 @@ function genererActeCessionPdf(d) {
       const nomTxt = p.name || '—';
       const infoBits = [];
       if (p.dob) infoBits.push(`né(e) le / born ${p.dob}${p.birth ? ` à / in ${p.birth}` : ''}`);
+      if (d.showAddress && p.adresse) infoBits.push(`domicile / address : ${String(p.adresse).replace(/\s*\n\s*/g, ', ')}`);
       const sigTxt = p.minor
         ? `Mineur(e), représenté(e) par ${p.legalRepName || 'son représentant légal'} / Minor, rep. by ${p.legalRepName || 'legal guardian'} — signé élec. le ${sigFr}`
         : `Signé électroniquement le ${sigFr} / Signed electronically on ${sigEn}`;
