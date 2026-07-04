@@ -2707,7 +2707,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
     s.passengers = s.passengers || [];
     if (mediaUrl) { return askOcrConfirm(phone, s, cfg, mediaUrl); }
     if (id === 'doc_photo' || lower.includes('envoyer ma photo') || lower.includes('ma photo')) {
-      return send(phone, L(s, `👍 Got it — tap 📎 (or 📷) below and choose the *photo* of the ID — *passport, national ID or residence permit*. We read the name and date automatically. 🔒`, `👍 C'est noté — appuyez sur 📎 (ou 📷) en bas et choisissez la *photo* de la pièce — *passeport, CNI ou carte de séjour*. On lit le nom et la date automatiquement. 🔒`), cfg);
+      return send(phone, L(s, `👍 Got it — tap 📎 (or 📷) and choose the *photo* of the ID (*passport, national ID or residence permit*). We read everything *automatically* — nothing to type. 🔒`, `👍 C'est noté — appuyez sur 📎 (ou 📷) et choisissez la *photo* de la pièce (*passeport, CNI ou carte de séjour*). On lit tout *automatiquement* — rien à taper. 🔒`), cfg);
     }
     if (id === 'doc_passer' || lower.includes('envoie après') || lower.includes('passer')) {
       const _nm = (s.passengers[s.doc_idx] && s.passengers[s.doc_idx].name) || (s.names && s.names[s.doc_idx]) || '';
@@ -3382,8 +3382,8 @@ async function nextPassport(phone, s, cfg) {
   const who = curName ? ` — *${curName}*` : '';
   const passLine = s.pax > 1 ? L(s, `🛂 *Passenger ${s.doc_idx + 1} of ${s.pax}*${who}\n`, `🛂 *Passager ${s.doc_idx + 1} sur ${s.pax}*${who}\n`) : L(s, `🛂 *ID document*${who}\n`, `🛂 *Pièce d'identité*${who}\n`);
   return sendButtons(phone, { body: L(s,
-    `${bar('documents')}\n${intro}${header}${passLine}📸 To claim your compensation, send a *photo* of your ID (*passport, national ID or residence permit*). We only read the *name* and *date of birth*.\n_ℹ️ Read by an AI, kept for your file only — robindesairs.eu/politique-confidentialite_`,
-    `${bar('documents')}\n${intro}${header}${passLine}📸 Pour réclamer votre indemnité, envoyez une *photo* de votre pièce (*passeport, CNI ou carte de séjour*). On lit juste le *nom* et la *date de naissance*.\n_ℹ️ Lue par une IA, conservée pour votre seul dossier — robindesairs.eu/politique-confidentialite_`), buttons: [{ id: 'doc_photo', text: L(s, '📸 Send my photo', '📸 Envoyer ma photo') }, ...(curName ? [] : [{ id: 'doc_saisir', text: L(s, '✍️ Type it in', '✍️ Saisir à la main') }]), { id: 'doc_passer', text: L(s, '⏭️ I\'ll send it later', '⏭️ Je l\'envoie après') }] }, cfg);
+    `${bar('documents')}\n${intro}${header}${passLine}📸 Just send a *photo* of your ID (*passport, national ID or residence permit*) — *no form to fill in*, we read everything *automatically* for you. You save time.\n_🔒 Kept for your file only — robindesairs.eu/politique-confidentialite_`,
+    `${bar('documents')}\n${intro}${header}${passLine}📸 Envoyez simplement une *photo* de votre pièce (*passeport, CNI ou carte de séjour*) — *pas de formulaire à remplir*, on lit tout *automatiquement* pour vous. Vous gagnez du temps.\n_🔒 Conservée pour votre seul dossier — robindesairs.eu/politique-confidentialite_`), buttons: [{ id: 'doc_photo', text: L(s, '📸 Send my photo', '📸 Envoyer ma photo') }, ...(curName ? [] : [{ id: 'doc_saisir', text: L(s, '✍️ Type it in', '✍️ Saisir à la main') }]), { id: 'doc_passer', text: L(s, '⏭️ I\'ll send it later', '⏭️ Je l\'envoie après') }] }, cfg);
 }
 async function askMandant(phone, s, cfg) {
   // 1 seul passager → c'est forcément lui le contact, pas de question → adresse puis finalisation.
