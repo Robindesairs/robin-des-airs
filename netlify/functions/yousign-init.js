@@ -84,11 +84,28 @@ exports.handler = async (event) => {
     return json(400, { error: "PDF base64 invalide", details: String(e.message || e) });
   }
 
-  // Position par défaut : PAGE 1 en haut à droite → le client ouvre le lien
-  // et voit "Signer ici" direct, pas besoin de scroller le contrat.
-  const sigPage = Number.isFinite(+payload.signature_page) ? +payload.signature_page : 1;
-  const sigX = Number.isFinite(+payload.signature_x) ? +payload.signature_x : 380;
-  const sigY = Number.isFinite(+payload.signature_y) ? +payload.signature_y : 120;
+  // Nombre de pages du PDF (pdf-lib) → on place la signature sur la DERNIÈRE page,
+  // APRÈS le contrat : le signataire lit tout le document, puis signe (aligné sur le
+  // message « prenez le temps de le relire, puis signez »). Fallback page 1 si échec.
+  let pageCount = 1;
+  try {
+    const { PDFDocument } = require("pdf-lib");
+    const doc = await PDFDocument.load(pdfBuffer, { updateMetadata: false });
+    pageCount = doc.getPageCount() || 1;
+  } catch (e) {
+    console.warn("[yousign-init] comptage de pages échoué, fallback page 1:", e.message);
+  }
+
+  // Position de la zone signature. Défaut : DERNIÈRE page (signature_page='last' ou absent).
+  // Un numéro explicite reste possible (borné au nombre de pages réel).
+  const rawSigPage = payload.signature_page;
+  const wantsLast = rawSigPage === undefined || rawSigPage === null
+    || String(rawSigPage).toLowerCase() === "last"
+    || !Number.isFinite(+rawSigPage);
+  const sigPage = wantsLast ? pageCount : Math.max(1, Math.min(+rawSigPage, pageCount));
+  // sigX borné pour que le bloc (label le plus large = sigX+400) tienne dans une page A4 (~596 pt).
+  const sigX = Number.isFinite(+payload.signature_x) ? +payload.signature_x : 150;
+  const sigY = Number.isFinite(+payload.signature_y) ? +payload.signature_y : 150;
 
   // Multi-signataires : payload.signers = [{first_name, last_name, email, phone}, ...]
   // Si absent, fallback sur le signataire unique. Email optionnel (SES) : placeholder technique si absent.

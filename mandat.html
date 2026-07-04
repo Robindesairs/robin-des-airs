@@ -225,11 +225,18 @@ details.mandat-full>summary::after{content:'▾';margin-left:auto}
 details.mandat-full[open]>summary{margin-bottom:12px}
 .addr-summary-print{display:none}
 .print-hd{display:none}
+.sig-space-print{display:none}
 @media print{
-  /* Option 1 (essentiel-first) : page 1 = parties + résumé « ce que vous signez » + signature (placée par Yousign).
-     Les articles détaillés (l'équivalent des CGV) démarrent sur une page neuve → page de signature propre. */
+  /* Option 1 (essentiel-first) : page 1 = parties + résumé « ce que vous signez ».
+     Les articles détaillés (l'équivalent des CGV) démarrent sur une page neuve. */
   details.mandat-full{page-break-before:always}
   .print-hd{display:block !important;visibility:visible !important;font-family:'Montserrat',sans-serif;font-weight:800;font-size:15px;color:#047857;border-bottom:2px solid #047857;padding-bottom:6px;margin:0 0 14px}
+  /* Signature APRÈS le contrat : la section signature démarre sur une page neuve (dernière page),
+     où Yousign appose la signature. Bandeau de redirection (écran) masqué dans le PDF signé. */
+  #sigSection{page-break-before:always}
+  .web-only-banner{display:none !important;visibility:hidden !important}
+  .sig-space-print{display:block !important;visibility:visible !important;min-height:120px;margin:8px 0 18px;border:1.5px dashed #94a3b8;border-radius:8px;background:#fff;position:relative}
+  .sig-space-label{position:absolute;top:8px;left:12px;font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:#64748b;font-weight:700}
   /* N'imprimer QUE le mandat rempli (parties + texte complet + signature), même depuis l'écran de succès. */
   body{background:#fff !important}
   body *{visibility:hidden !important}
@@ -783,8 +790,11 @@ Chaque signataire ci-dessous <span id="declarant" style="display:none"> </span>d
   </div>
 </div>
 <!-- SIGNATURE -->
-<div class="doc-section">
+<div class="doc-section" id="sigSection">
   <div class="sec-title">🖊️ Signature électronique</div>
+  <!-- Espace signature du/des Cédant(s) : visible à l'impression uniquement. La signature Yousign
+       est apposée ici (dernière page, après le contrat). À l'écran, on montre le bandeau de redirection. -->
+  <div class="sig-space-print"><span class="sig-space-label">Signature du/des Cédant(s) — passager(s)</span></div>
   <div class="field-row duo">
     <div>
       <label>Fait à (ville) <span class="req">*</span></label>
@@ -796,8 +806,8 @@ Chaque signataire ci-dessous <span id="declarant" style="display:none"> </span>d
       <input type="text" id="sigDate" class="ro" readonly>
     </div>
   </div>
-  <!-- Bandeau Yousign : informe le client de la redirection -->
-  <div style="margin-bottom:14px;padding:16px 18px;background:var(--green-tint);border:1px solid var(--green-deep);border-left:4px solid var(--green-deep);border-radius:0 8px 8px 0">
+  <!-- Bandeau Yousign : informe le client de la redirection (écran uniquement, masqué dans le PDF signé) -->
+  <div class="web-only-banner" style="margin-bottom:14px;padding:16px 18px;background:var(--green-tint);border:1px solid var(--green-deep);border-left:4px solid var(--green-deep);border-radius:0 8px 8px 0">
     <div style="font-family:'DM Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:.2em;color:var(--green-deep);font-weight:700;margin-bottom:6px">Signature électronique sécurisée</div>
     <p style="font-size:13px;line-height:1.6;color:var(--text);margin:0">
       Après validation, vous serez redirigé·e vers <strong>Yousign</strong> (prestataire certifié eIDAS) pour <strong>relire votre contrat et signer électroniquement</strong>. Vous reviendrez ensuite ici sur l'écran de confirmation. <strong>Aucune saisie manuscrite n'est requise</strong>.
@@ -2446,10 +2456,9 @@ function submitMandat() {
         signers: adults,
         label: 'Mandat Robin des Airs — ' + payload.lastName + ' ' + payload.firstName + ' — vol ' + (payload.flightNum || '—'),
         pdf_base64: pdfRes.pdf_base64,
-        // Zone signature page 1 en haut à droite : visible direct, pas de scroll
-        signature_page: 1,
-        signature_x: 380,
-        signature_y: 120,
+        // Zone signature sur la DERNIÈRE page (après le contrat) : le signataire relit tout, puis signe.
+        // yousign-init compte les pages du PDF et place le bloc sur la dernière (défaut si 'last').
+        signature_page: 'last',
       }),
     }).then(r => r.json());
   })
