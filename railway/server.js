@@ -1810,7 +1810,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
     const _lDone = LEADS.get(leadKey(phone)) || {};
     if (cur && cur.step === 'done' && _lDone.completed && !_lDone.signed && (cur.mandat_url || _lDone.mandatUrl)) {
       const _u = cur.mandat_url || _lDone.mandatUrl;
-      return send(phone, L(cur, `👉 *Sign here* (2 min):\n${_u}\n\nWithout your signature, we can't claim your compensation.`, `👉 *Signez ici* (2 min) :\n${_u}\n\nSans votre signature, on ne peut pas réclamer votre indemnité.`), cfg);
+      return send(phone, L(cur, `✅ *Your contract is ready* — we pre-filled it with your details. Take your time to read it, then sign:\n${_u}\n\nWithout your signature, we can't claim your compensation.`, `✅ *Votre contrat est prêt* — on l'a pré-rempli avec vos infos. Prenez le temps de le relire, puis signez :\n${_u}\n\nSans votre signature, on ne peut pas réclamer votre indemnité.`), cfg);
     }
     await clearState(phone); return sendAccueil(phone, cfg, _accLang);
   }
@@ -3432,7 +3432,7 @@ async function finaliser(phone, s, cfg) {
   await send(phone, L(s,
     `${bar('done')}\n${titre} Ref. *${shortRef(s.ref)}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${incidentLabel(s)}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nLast step: *your signature* (2 min).\n✅ €0 upfront — 25% on success (40% if court action, legal fees included) · no bank details.\n💸 Paid even without a EU bank account: bank transfer, Wave, Orange Money or MTN MoMo.`,
     `${bar('done')}\n${titre} Réf. *${shortRef(s.ref)}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${incidentLabel(s)}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % au succès en amiable (40 % si procès, frais d'avocat inclus) · aucune info bancaire.\n💸 Payé même sans compte bancaire en Europe : virement, Wave, Orange Money ou MTN MoMo.`), cfg);
-  await send(phone, L(s, `👉 *Sign here* (2 min):\n${s.mandat_url}\n\nWithout your signature, we can't claim your compensation. ${STOP_FOOTER}`, `👉 *Signez ici* (2 min) :\n${s.mandat_url}\n\nSans votre signature, on ne peut pas réclamer votre indemnité. ${STOP_FOOTER}`), cfg);
+  await send(phone, L(s, `✅ *Your contract is ready* — we pre-filled it with your details. Take your time to read it, then sign:\n${s.mandat_url}\n\nWithout your signature, we can't claim your compensation. ${STOP_FOOTER}`, `✅ *Votre contrat est prêt* — on l'a pré-rempli avec vos infos. Prenez le temps de le relire, puis signez :\n${s.mandat_url}\n\nSans votre signature, on ne peut pas réclamer votre indemnité. ${STOP_FOOTER}`), cfg);
   // CRM : la fiche Airtable est désormais créée par la synchro DIRECTE (storeDossierDurable →
   // /api/dossier-store → syncNewDossierToAirtable, statut « Signature en attente »). Le webhook
   // Make ci-dessous n'est plus qu'un hook OPTIONNEL pour d'éventuelles automatisations externes :
