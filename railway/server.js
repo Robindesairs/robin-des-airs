@@ -208,6 +208,45 @@ function fraisTotal(s) {
   const parts = Object.entries(by).map(([d, v]) => `${Math.round(v * 100) / 100} ${d}`);
   return parts.length ? parts.join(' + ') : '—';
 }
+// Conversion des frais en EUR pour le CRM. Zone franc & assimilés = PARITÉS FIXES OFFICIELLES (arrimées à l'euro,
+// ne bougent jamais) ; devises flottantes (MAD, NGN, GHS, KES, GBP, USD…) = taux du JOUR via API gratuite (cache 6 h).
+const EUR_PEG = { EUR: 1, XOF: 655.957, XAF: 655.957, KMF: 491.96775, CVE: 110.265 };
+let _fxCache = null; // { at, rates } — rates[CUR] = nb d'unités pour 1 EUR
+async function fxRatesEUR() {
+  if (_fxCache && (Date.now() - _fxCache.at) < 6 * 3600 * 1000) return _fxCache.rates;
+  let rates = { ...EUR_PEG };
+  try {
+    const res = await fetch('https://open.er-api.com/v6/latest/EUR', { signal: AbortSignal.timeout(8000) });
+    const data = await res.json();
+    if (data && data.result === 'success' && data.rates) rates = { ...data.rates, ...EUR_PEG }; // les parités fixes priment
+  } catch (_) { /* API indispo → on garde au moins les parités fixes */ }
+  _fxCache = { at: Date.now(), rates };
+  return rates;
+}
+// { byCur:{XOF:15000,…}, eur:number|null, approx:bool (au moins une devise flottante), missing:[CUR non convertibles] }
+async function fraisEUR(s) {
+  const by = {};
+  for (const f of (s.fraisList || [])) { if (!f || !f.montant) continue; const d = (f.devise || '?').toUpperCase(); by[d] = (by[d] || 0) + f.montant; }
+  const rates = await fxRatesEUR();
+  let eur = 0, approx = false; const missing = [];
+  for (const [d, v] of Object.entries(by)) {
+    const r = rates[d];
+    if (!r) { missing.push(d); continue; }
+    eur += v / r;
+    if (!(d in EUR_PEG)) approx = true;
+  }
+  const converted = Object.keys(by).length - missing.length;
+  return { byCur: by, eur: converted > 0 ? Math.round(eur * 100) / 100 : null, approx, missing };
+}
+// Ligne récap CRM : total par devise + total converti en euros.
+async function fraisEurLine(s) {
+  const fx = await fraisEUR(s);
+  if (fx.eur == null && !fx.missing.length) return '';
+  const bits = [];
+  if (fx.eur != null) bits.push(`💶 *≈ ${fx.eur} €*${fx.approx ? ' (taux du jour, estimatif)' : ''}`);
+  if (fx.missing.length) bits.push(`⚠️ non converti : ${fx.missing.join(', ')}`);
+  return bits.length ? '\n' + bits.join(' · ') : '';
+}
 // Récap détaillé des frais (Art. 8/9) poste par poste + total par devise.
 // La compagnie rembourse sur reçus DÉTAILLÉS (pas un montant global) → cet état chiffré
 // se joint à la réclamation. Sert au client (transparence) ET à l'équipe (à recopier dans la mise en demeure).
@@ -2855,7 +2894,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
       markFraisAnswered(phone); s.step = 'done'; await setState(phone, s);
       const tot = fraisTotal(s);
       const recap = fraisRecap(s);
-      if (recap) notifyOwnerWhatsApp(phone, `🧾 *Frais à joindre — Dossier ${s.ref || '?'}* (Art. 8/9, à détailler dans la réclamation)\n${recap}`).catch(() => {});
+      const eurLine = await fraisEurLine(s);
+      if (recap) notifyOwnerWhatsApp(phone, `🧾 *Frais à joindre — Dossier ${s.ref || '?'}* (Art. 8/9, à détailler dans la réclamation)\n${recap}${eurLine}`).catch(() => {});
       return send(phone, L(s, `Got it ✅ We attach your receipts to your claim${tot !== '—' ? ` (≈ ${tot} in expenses, on top of the compensation)` : ''}. Thank you! 🤝`, `C'est noté ✅ On joint vos reçus à votre réclamation${tot !== '—' ? ` (≈ ${tot} de frais, en plus de l'indemnité)` : ''}. Merci ! 🤝`), cfg);
     }
     if (id === 'frais_oui' || lower.includes('envoi') || lower.includes('reçu') || lower.includes('recu') || lower.startsWith('oui')) {
