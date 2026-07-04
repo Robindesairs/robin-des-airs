@@ -977,7 +977,7 @@ function buildMandatUrl(s, phone) {
   const _incidentCode = { retard: 'delay', annulation: 'cancel', refus: 'denied' }[s.incident] || '';
   const dossier = {
     ref: s.ref || '', phone: phone || '',
-    name: cleanName(mandant.name || (s.names && s.names[0]) || s.nom || ''),
+    name: cleanName(mandant.nameId || mandant.name || (s.names && s.names[0]) || s.nom || ''),
     dob: toISODate(mandant.dob || ''),
     birth: mandant.lieuNaissance || mandant.birth || '',
     address: mandant.adresse || '',
@@ -990,7 +990,7 @@ function buildMandatUrl(s, phone) {
     flightVerdict: s.flightVerdict || '', flightChecked: !!s.flightChecked, flightDelayMin: (s.flightDelayMin != null ? s.flightDelayMin : ''), distanceKm: s.distanceKm || '',
     aVerifierExpert: ['a_verifier', 'hors_champ', 'sous_seuil'].includes(s.flightVerdict) || s.type_vol === 'escale' || (s.passengers || []).some((p) => p && p.bebe && !p.gratuit), // bébé inclus sans tarif confirmé → l'expert vérifie l'INF payé (art. 3§3)
     lang: s.langue_code || 'fr',
-    passengers: (s.passengers || []).slice(0, s.pax || 1).map(p => ({ name: cleanName((p && p.name) || ''), dob: toISODate((p && p.dob) || ''), birth: (p && (p.lieuNaissance || p.birth)) || '', adresse: (p && p.adresse) || '' })),
+    passengers: (s.passengers || []).slice(0, s.pax || 1).map(p => ({ name: cleanName((p && (p.nameId || p.name)) || ''), dob: toISODate((p && p.dob) || ''), birth: (p && (p.lieuNaissance || p.birth)) || '', adresse: (p && p.adresse) || '' })),
     email: (s.email || '').trim(), // email FACULTATIF collecté par le bot → pré-remplit #em-perso du contrat
     cid: phone || '', lsa: new Date().toISOString(), source: 'wati-bot-v8',
   };
