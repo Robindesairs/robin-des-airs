@@ -107,6 +107,15 @@ exports.handler = async (event) => {
   const sigX = Number.isFinite(+payload.signature_x) ? +payload.signature_x : 150;
   const sigY = Number.isFinite(+payload.signature_y) ? +payload.signature_y : 150;
 
+  // Mode TEST sandbox : en sandbox, Yousign EXIGE que l'email du signataire appartienne à l'orga
+  // (les vrais emails clients / placeholders techniques sont refusés à l'activation). Si
+  // YOUSIGN_SANDBOX_EMAIL est défini ET qu'on est en sandbox, on force l'email de tous les
+  // signataires vers cet email d'orga → l'activation passe, on peut tester tout le parcours.
+  // En PROD (base non-sandbox), ce bloc est inerte : les vrais emails clients sont utilisés.
+  const _isSandbox = /sandbox/i.test(baseUrl);
+  const sandboxSignerEmail = (_isSandbox && process.env.YOUSIGN_SANDBOX_EMAIL)
+    ? String(process.env.YOUSIGN_SANDBOX_EMAIL).trim() : "";
+
   // Multi-signataires : payload.signers = [{first_name, last_name, email, phone}, ...]
   // Si absent, fallback sur le signataire unique. Email optionnel (SES) : placeholder technique si absent.
   const rawSigners = Array.isArray(payload.signers) && payload.signers.length > 0
@@ -118,7 +127,7 @@ exports.handler = async (event) => {
     return {
       first_name: String(s.first_name || "").trim() || "Client",
       last_name: String(s.last_name || "").trim() || "Robin",
-      email: EMAIL_RE.test(em) ? em : techEmail(ph, idx),
+      email: sandboxSignerEmail || (EMAIL_RE.test(em) ? em : techEmail(ph, idx)),
       phone: ph,
     };
   });
