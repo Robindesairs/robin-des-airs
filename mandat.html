@@ -340,11 +340,11 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     <div class="ferr" id="waErr">Indiquez votre pays et votre numéro WhatsApp</div>
   </div>
   <div class="field-row">
-    <label>✉️ Email <span class="req">*</span></label>
+    <label>✉️ Email <span style="color:var(--muted);font-weight:400">(facultatif)</span></label>
     <input type="hidden" id="em">
-    <input type="email" id="em-perso" autocomplete="email" placeholder="vous@exemple.com" required oninput="clearErr('emErr')">
-    <div class="ferr" id="emErr">Email requis pour la validité du contrat (signature électronique eIDAS — votre lien de signature personnel y est envoyé)</div>
-    <div style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5">Indispensable pour confirmer votre signature et vous tenir informé de votre dossier.</div>
+    <input type="email" id="em-perso" autocomplete="email" placeholder="vous@exemple.com (facultatif)" oninput="clearErr('emErr')">
+    <div class="ferr" id="emErr">Format d'email invalide</div>
+    <div style="font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5">Facultatif — on peut vous envoyer votre lien de signature et votre copie par WhatsApp. Un email permet de recevoir aussi une copie par mail.</div>
   </div>
   <div class="field-row">
     <label class="check" style="display:flex;align-items:flex-start;gap:9px;cursor:pointer;font-weight:600;margin:0">
@@ -1427,8 +1427,8 @@ function renderAllPassengers() {
       </div>
       ${i > 0 ? `
       <div class="pemail-block" id="pemailBlock${i}" style="${isMinor?'display:none':'display:block'};margin-bottom:12px">
-        <label>✉️ Email du passager ${i+1} <span class="req">*</span></label>
-        <input type="email" class="pemail" data-idx="${i}" value="${safeEmail}" placeholder="email du passager ${i+1}"
+        <label>✉️ Email du passager ${i+1} <span style="color:var(--muted);font-weight:400">(facultatif)</span></label>
+        <input type="email" class="pemail" data-idx="${i}" value="${safeEmail}" placeholder="email du passager ${i+1} (facultatif)"
           style="width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:'Montserrat',sans-serif;font-size:13px;border-radius:6px;color:var(--ink)"
           oninput="updateParties()">
         <div style="font-size:10px;color:var(--muted);margin-top:3px;font-style:italic">Chaque adulte signe individuellement et reçoit une copie du contrat à son email.</div>
@@ -2141,7 +2141,6 @@ function showE(id,eId,show) {
 function validate() {
   let ok = true;
   [['fn','fnErr'],['ln','lnErr'],['wa-national','waErr'],['addr','addrErr'],
-   ['em-perso','emErr'],
    ['cie','cieErr'],['inc','incErr'],['sigCity','sigCityErr']
   ].forEach(([id,e])=>{
     const empty=!document.getElementById(id)?.value.trim();
@@ -2213,14 +2212,14 @@ function validate() {
     } else {
       birthInp?.classList.remove('err');
     }
-    // Email obligatoire pour chaque co-passager adulte (signature électronique IDAS art. 26)
+    // Email OPTIONNEL pour chaque co-passager adulte (SES : lien de signature livré par WhatsApp).
+    // Si un email est fourni, on valide seulement son format.
     if (idx > 0) {
       const isMinor = isMinorFromDob(dobInp?.value || '');
       if (!isMinor) {
         const pemailInp = row.querySelector('.pemail');
         const pemailVal = (pemailInp?.value || '').trim();
-        const emailOk = pemailVal && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(pemailVal);
-        if (!emailOk) {
+        if (pemailVal && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(pemailVal)) {
           pemailInp?.classList.add('err');
           ok = false;
         } else {
