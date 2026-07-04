@@ -1487,6 +1487,7 @@ function getAllAddresses() {
 }
 function refreshAddrReuseOptions() {
   const all = getAllAddresses();
+  const principal = all.find((p) => p.idx === 0);
   document.querySelectorAll('.paddr-reuse').forEach((sel) => {
     const myIdx = parseInt(sel.dataset.idx, 10);
     const current = sel.value;
@@ -1497,9 +1498,32 @@ function refreshAddrReuseOptions() {
       opts.push(`<option value="${p.idx}">${label.replace(/</g, '&lt;')}</option>`);
     });
     sel.innerHTML = opts.join('');
-    if ([...sel.options].some((o) => o.value === current)) sel.value = current;
+    const myTa = document.querySelectorAll('.pax-row')[myIdx]?.querySelector('.paddr');
+    const myVal = myTa ? myTa.value.trim() : '';
+    // Réconcilie : si l'adresse a été tapée à la main et ne correspond PLUS à la source
+    // choisie dans le menu, on bascule ce passager en « adresse propre » (le menu ne doit
+    // jamais afficher « même adresse que X » alors que l'adresse est différente).
+    if (myIdx > 0 && current) {
+      const chosen = all.find((p) => String(p.idx) === current);
+      if (chosen && chosen.addr && myVal && myVal !== chosen.addr.trim()) sel.dataset.own = '1';
+    }
+    if (!sel.dataset.own && [...sel.options].some((o) => o.value === current)) sel.value = current;
+    // ── DÉFAUT « même adresse que le principal » (niche famille) + reflet honnête du menu.
+    //    Co-passager (idx>0) qui n'a PAS explicitement choisi « adresse propre » :
+    //      • pas d'adresse (ni saisie, ni extraite de sa pièce) → on reprend celle du principal ;
+    //      • adresse déjà là qui correspond à un autre cédant → on affiche « Même adresse que X ».
+    //    Reste modifiable à tout moment via « Sa propre adresse » dans le menu.
+    if (myIdx > 0 && !sel.dataset.own && principal && principal.addr) {
+      if (!myVal && [...sel.options].some((o) => o.value === '0')) {
+        sel.value = '0';
+        if (myTa) myTa.value = principal.addr;
+      } else if (myVal && !sel.value) {
+        const match = all.find((p) => p.idx !== myIdx && p.addr && p.addr.trim() === myVal);
+        if (match && [...sel.options].some((o) => o.value === String(match.idx))) sel.value = String(match.idx);
+      }
+    }
   });
-  buildAddressSummaryForPrint(all);
+  buildAddressSummaryForPrint(getAllAddresses());
 }
 function escHtml(v) { return String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 // Résumé imprimable des adresses de TOUS les cédants (groupe), dédoublonné : si plusieurs
@@ -1525,8 +1549,16 @@ function buildAddressSummaryForPrint(all) {
 function reuseAddrFor(idx, sourceIdxStr) {
   const row = document.querySelectorAll('.pax-row')[idx];
   const ta = row?.querySelector('.paddr');
+  const sel = row?.querySelector('.paddr-reuse');
   if (!ta) return;
-  if (sourceIdxStr === '') { refreshAddrReuseOptions(); return; } // "sa propre adresse" → on laisse tel quel, éditable
+  if (sourceIdxStr === '') {
+    // « Sa propre adresse » : on vide pour qu'il saisisse la sienne et on mémorise ce choix
+    // (dataset.own) pour ne PLUS re-remettre automatiquement l'adresse du principal.
+    if (sel) sel.dataset.own = '1';
+    ta.value = '';
+    updateParties(); refreshAddrReuseOptions(); return;
+  }
+  if (sel) delete sel.dataset.own;
   const src = getAllAddresses().find((p) => String(p.idx) === String(sourceIdxStr));
   if (src) { ta.value = src.addr; updateParties(); }
   refreshAddrReuseOptions();
