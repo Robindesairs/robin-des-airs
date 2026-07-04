@@ -331,7 +331,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     <label>WhatsApp <span class="req">*</span></label>
     <div class="wa-phone-row">
       <div class="pays-pick-wrap">
-        <input type="text" id="wa-indicatif" class="wa-indicatif-select" aria-label="Pays ou indicatif" placeholder="Pays ou +indicatif" autocomplete="off" onfocus="openPaysDD('wa-indicatif','wa-indicatif-dd')" oninput="filterPaysDD('wa-indicatif','wa-indicatif-dd');syncWa()" value="🇫🇷 France +33">
+        <input type="text" id="wa-indicatif" class="wa-indicatif-select" aria-label="Pays ou indicatif" placeholder="Pays ou +indicatif" autocomplete="off" onfocus="this.select();openPaysDD('wa-indicatif','wa-indicatif-dd')" oninput="filterPaysDD('wa-indicatif','wa-indicatif-dd');syncWa()" value="🇫🇷 France +33">
         <div class="pays-dd" id="wa-indicatif-dd"></div>
       </div>
       <input type="tel" id="wa-national" class="wa-national-input" inputmode="numeric" autocomplete="tel-national" placeholder="06 12 34 56 78" oninput="syncWa()">
@@ -357,7 +357,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
     <label>📞 Numéro habituel pour vous appeler <span class="req">*</span></label>
     <div class="wa-phone-row">
       <div class="pays-pick-wrap">
-        <input type="text" id="rap-indicatif" class="wa-indicatif-select" aria-label="Pays ou indicatif" placeholder="Pays ou +indicatif" autocomplete="off" onfocus="openPaysDD('rap-indicatif','rap-indicatif-dd')" oninput="filterPaysDD('rap-indicatif','rap-indicatif-dd');syncRap(true)" value="🇫🇷 France +33">
+        <input type="text" id="rap-indicatif" class="wa-indicatif-select" aria-label="Pays ou indicatif" placeholder="Pays ou +indicatif" autocomplete="off" onfocus="this.select();openPaysDD('rap-indicatif','rap-indicatif-dd')" oninput="filterPaysDD('rap-indicatif','rap-indicatif-dd');syncRap(true)" value="🇫🇷 France +33">
         <div class="pays-dd" id="rap-indicatif-dd"></div>
       </div>
       <input type="tel" id="rap-national" class="wa-national-input" inputmode="numeric" autocomplete="tel-national" placeholder="06 12 34 56 78" oninput="syncRap(true)">
@@ -487,7 +487,7 @@ details.mandat-full[open]>summary{margin-bottom:12px}
   <div class="signing-summary">
     <div class="ss-title">📝 Ce que vous signez, l'essentiel</div>
     <ul>
-      <li>💶 <strong>450&nbsp;€ sur 600&nbsp;€</strong> dans votre poche si on récupère à l'amiable (75&nbsp;%), versés sous 5 jours ouvrés — 0&nbsp;€ d'avance, jamais. <span style="font-size:11px;color:#5b6b82">(Barème complet selon la phase&nbsp;: Article&nbsp;4)</span></li>
+      <li>💶 <strong>450&nbsp;€ sur 600&nbsp;€</strong> dans votre poche si on récupère à l'amiable (75&nbsp;%) — rien à avancer.</li>
       <li>🛡️ <strong>Rien récupéré = rien payé</strong>&nbsp;: 0&nbsp;€ de votre poche, et votre créance vous revient automatiquement.</li>
       <li>🤝 Concrètement, vous nous <strong>vendez votre créance</strong> (jusqu'à 600&nbsp;€ par passager)&nbsp;: Robin des Airs devient propriétaire du dossier et se bat en son propre nom — la compagnie paie sur notre compte, <strong>vous n'avez plus rien à gérer</strong>.</li>
       <li>📅 Exclusif <strong>18 mois</strong> (résiliation libre après 12 mois si pas d'assignation) · <strong>rétractation 14 jours</strong> sans frais · correspondances couvertes.</li>
@@ -1432,13 +1432,6 @@ function renderAllPassengers() {
         <div style="font-size:10px;color:var(--muted);margin-top:3px;font-style:italic">Ville et pays figurant sur le passeport ou la pièce d'identité. Obligatoire pour identifier précisément le cédant (cession de créance, art. 1321 et 1322 C. civ.). Extrait automatiquement de votre pièce d'identité.</div>
       </div>
       ${i > 0 ? `
-      <div class="pemail-block" id="pemailBlock${i}" style="${isMinor?'display:none':'display:block'};margin-bottom:12px">
-        <label>✉️ Email du passager ${i+1} <span style="color:var(--muted);font-weight:400">(facultatif)</span></label>
-        <input type="email" class="pemail" data-idx="${i}" value="${safeEmail}" placeholder="email du passager ${i+1} (facultatif)"
-          style="width:100%;padding:11px 14px;border:1.5px solid var(--border);background:var(--paper);font-family:'Montserrat',sans-serif;font-size:13px;border-radius:6px;color:var(--ink)"
-          oninput="updateParties()">
-        <div style="font-size:10px;color:var(--muted);margin-top:3px;font-style:italic">Chaque adulte signe individuellement et reçoit une copie du contrat à son email.</div>
-      </div>
       <div class="paddr-block" id="paddrBlock${i}" style="${isMinor?'display:none':'display:block'};margin-bottom:12px">
         <label>📍 Adresse du passager ${i+1} <span class="req">*</span></label>
         <select class="paddr-reuse" data-idx="${i}" onchange="reuseAddrFor(${i}, this.value)"
@@ -2045,7 +2038,8 @@ const COUNTRIES_RAW = [
   ['PE','Pérou','51'],['VE','Venezuela','58'],['EC','Équateur','593'],['BO','Bolivie','591'],
   ['PY','Paraguay','595'],['UY','Uruguay','598'],['GY','Guyana','592'],['SR','Suriname','597'],
 ];
-const COUNTRIES = COUNTRIES_RAW.map(([iso,name,code]) => [flagEmoji(iso), name, code]);
+const COUNTRIES = COUNTRIES_RAW.map(([iso,name,code]) => [flagEmoji(iso), name, code])
+  .sort((a, b) => a[1].localeCompare(b[1], 'fr')); // ordre alphabétique (nom du pays)
 // ── Téléphone : NSN = numéro national SANS le 0 de tête (format international) + longueurs par pays ──
 function nsn(s){ return String(s || '').replace(/[^\d]/g, '').replace(/^0+/, ''); }
 // Longueur attendue du numéro national (sans indicatif ni 0), en intervalle [min,max] pour rester robuste.
@@ -2419,16 +2413,16 @@ function submitMandat() {
       phone: payload.whatsapp,
     }];
     (payload.passengersData || []).forEach(function (p, idx) {
-      if (idx === 0) return; // principal déjà dans adults[0]
-      if (p.minor) return;   // mineur exclu
-      if (!p.email) return;  // pas d'email → on saute (sera signé via autorisation parent)
+      if (idx === 0) return;   // principal déjà dans adults[0]
+      if (p.minor) return;     // mineur exclu (signé par le représentant légal)
+      if (!p.name) return;     // pas de nom → pas un signataire valide
       const split = splitName(p.name);
       adults.push({
         first_name: split.first,
         last_name: split.last,
-        email: p.email,
-        // Mode "même téléphone" diaspora : le co-passager reprend le numéro
-        // WhatsApp du cédant principal pour recevoir l'OTP SMS sur le tel familial.
+        // Plus d'email co-passager : Yousign génère un placeholder technique (SES, lien par WhatsApp).
+        email: p.email || '',
+        // Mode "même téléphone" diaspora : le co-passager reprend le numéro WhatsApp du cédant principal.
         phone: payload.whatsapp,
       });
     });
