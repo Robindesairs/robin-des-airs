@@ -1,0 +1,8 @@
+# Le bot est reconstruit sur Railway (npm install depuis package.json).
+# On n'uploade QUE le code source — pas les caches/dépendances locales.
+node_modules/
+.netlify/
+.DS_Store
+*.log
+npm-debug.log*
+test-*.js
