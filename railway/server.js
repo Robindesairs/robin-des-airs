@@ -3397,9 +3397,20 @@ async function askMandant(phone, s, cfg) {
   }
   return sendList(phone, { header: L(s, 'This WhatsApp number', 'Ce numéro WhatsApp'), body: L(s, 'Who does this number belong to?', 'À qui appartient ce numéro ?'), buttonText: L(s, 'Choose', 'Choisir'), items: names.map((nm, i) => ({ id: `mdt_${i}`, title: clip(nm, 24), description: L(s, `Passenger ${i + 1}`, `Passager ${i + 1}`) })) }, cfg);
 }
-// Adresse JAMAIS gérée dans le bot : ni demandée, ni affichée. Elle est lue en SILENCE sur la pièce
-// (OCR) pour pré-remplir le mandat, et reste corrigeable au moment de la signature.
+// Adresse du cédant principal = champ OBLIGATOIRE sur le contrat (identification du cédant, art. 1321 C. civ.).
+// Elle est lue en SILENCE sur la pièce (CNI / carte de séjour) — mais un PASSEPORT n'en porte pas.
+// Décision 04/07 (option B) : si l'OCR ne l'a pas trouvée, on la DEMANDE ici (1 question, conditionnelle)
+// pour que le contrat arrive 100 % pré-rempli → le client n'a plus qu'à relire et signer. Les adresses
+// des co-passagers restent gérées sur la page contrat (réutilisation « même adresse que » en 1 clic).
 async function askAddressOrFinalize(phone, s, cfg) {
+  const mi = s.mandant_idx || 0;
+  const adr = String(((s.passengers && s.passengers[mi]) || {}).adresse || '').trim();
+  if (adr.length < 5) { // OCR n'a rien trouvé (cas passeport) → on la demande une fois
+    s.step = 'doc_adresse'; await setState(phone, s);
+    return send(phone, L(s,
+      `📍 *Your postal address?* District, city and country are enough — no postcode needed. _(e.g. Médina, Dakar, Senegal)_`,
+      `📍 *Votre adresse postale ?* Quartier, ville et pays suffisent — pas besoin de code postal. _(ex : Médina, Dakar, Sénégal)_`), cfg);
+  }
   return finaliser(phone, s, cfg);
 }
 // Dernière question, FACULTATIVE : l'email. Posée une seule fois (flag email_asked), au point de
@@ -3552,7 +3563,7 @@ async function relancerEtape(phone, s, cfg) {
     case 'm_pnr': return gotoPnr(phone, s, cfg);
     case 'doc_pass': case 'doc_pass_confirm': case 'doc_dob': case 'doc_name': return nextPassport(phone, s, cfg);
     case 'doc_mandant': return askMandant(phone, s, cfg);
-    case 'doc_adresse': return send(phone, L(s, `📍 *Last question!* Your *postal address*? District, city and country are enough — no postcode needed. _(e.g. Médina, Dakar, Senegal)_`, `📍 *Dernière question !* Votre *adresse postale* ? Quartier, ville et pays suffisent — pas besoin de code postal. _(ex : Médina, Dakar, Sénégal)_`), cfg);
+    case 'doc_adresse': return send(phone, L(s, `📍 *Your postal address?* District, city and country are enough — no postcode needed. _(e.g. Médina, Dakar, Senegal)_`, `📍 *Votre adresse postale ?* Quartier, ville et pays suffisent — pas besoin de code postal. _(ex : Médina, Dakar, Sénégal)_`), cfg);
     case 'doc_boarding': return gotoBoarding(phone, s, cfg);
     case 'doc_eticket': return gotoEticket(phone, s, cfg);
     case 'doc_cert': return gotoCert(phone, s, cfg);
