@@ -1975,7 +1975,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
     if (explicit) {
       s.langue = `${explicit.flag} ${explicit.label}`; s.langue_code = explicit.code;
       if (explicit.africaine) { s.escalade = 'langue_africaine'; await send(phone, `${explicit.natif}\n\n💬 *Moi l'assistant, je prépare votre dossier ici en français* (je ne parle pas encore ${explicit.label} 🙏) — on avance ensemble, étape par étape.\n\n📞 Et *à la fin, ${explicit.agent} vous rappellera dans votre langue*, au *+33 7 56 86 36 30* (enregistrez-le sous « ${explicit.agent} – Robin des Airs » pour reconnaître son appel). 👇`, cfg); }
-      else if (explicit.code === 'en') { await send(phone, `Perfect — I'll assist you in English. 🇬🇧\nLet's check together what compensation you may be owed, *up to €600 per passenger*. 👇`, cfg); }
+      else if (explicit.code === 'en') { await send(phone, `Perfect — from now on we'll talk in English. 🇬🇧\nWe'll check together what you may be owed, *up to €600 per passenger*.\n\n💬 _At any time, just type *go* to start or resume your case._ 👇`, cfg); }
+      else if (explicit.code === 'fr') { await send(phone, `Parfait — on continue en français. 🇫🇷\nOn regarde ensemble ce qui peut vous revenir, *jusqu'à 600 € par passager*.\n\n💬 _À tout moment, tapez *go* pour démarrer ou reprendre votre dossier._ 👇`, cfg); }
     } else if (s.langue_code === 'en') { s.langue = '🇬🇧 English'; }
     else { s.langue = '🇫🇷 Français'; if (!s.langue_code) s.langue_code = 'fr'; }
     s.route_type = 'af_eu'; await setState(phone, s);
