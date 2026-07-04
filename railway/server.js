@@ -310,7 +310,7 @@ const PROGRESS = {
   esc_dep: 5, esc_via: 5, esc_more: 5, esc_arr: 5, esc_vol: 5,
   annee: 6, mineurs: 6, mineurs_which: 6,
   correction: 6, fix_vol: 6, fix_date: 6, fix_nom: 6, fix_route: 6,
-  recap: 7, documents: 7, doc_pass: 7, doc_pass_confirm: 7, doc_mandant: 7, doc_adresse: 7, doc_name: 7, doc_dob: 7, doc_boarding: 7, doc_eticket: 7, doc_cert: 7, rgpd: 7,
+  recap: 7, documents: 7, doc_pass: 7, doc_pass_confirm: 7, doc_mandant: 7, doc_adresse: 7, doc_birth: 7, doc_name: 7, doc_dob: 7, doc_boarding: 7, doc_eticket: 7, doc_cert: 7, rgpd: 7,
   done: 8,
 };
 function bar(step) { const n = PROGRESS[step] ?? 0; return '🟢'.repeat(n) + '⚪'.repeat(8 - n); }
@@ -1637,21 +1637,9 @@ async function askOcrConfirm(phone, s, cfg, mediaUrl) {
       }
       return nextPassport(phone, s, cfg);
     }
-    // Solo : le nom lu correspond au billet (ou pas de nom au billet) → on enregistre SANS écran de confirmation
-    // (le multi-pax confiant le fait déjà — on harmonise pour retirer un tap de friction inutile). Un écart de nom garde la confirmation.
-    const _soloBillet = (s.passengers && s.passengers[0] && s.passengers[0].name) || (s.names && s.names[0]) || '';
-    if ((s.pax || 1) <= 1 && pp.name && (!_soloBillet || !nameDiffers(_soloBillet, pp.name))) {
-      s.passengers = s.passengers || [];
-      const cur0 = s.passengers[0] || {};
-      s.passengers[0] = { ...cur0, name: cur0.name || pp.name, nameId: pp.name, dob: pp.dob || cur0.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || cur0.adresse || '', sexe: pp.sexe || cur0.sexe || '', lieuNaissance: pp.lieuNaissance || cur0.lieuNaissance || '', docType: pp.docType || cur0.docType || '', cniVerso: (pp.docType === 'cni' && (pp.face === 'verso' || pp.face === 'deux')) || cur0.cniVerso || false, viaPhoto: true, idReceived: true };
-      await setState(phone, s);
-      await send(phone, L(s, `✅ ID of *${pp.name}* received${minor ? ' · 👶 minor, parental signature' : ''}${expired ? ' · ⚠️ expired, an advisor checks' : ''}.`, `✅ Pièce de *${pp.name}* reçue${minor ? ' · 👶 mineur·e, signature parentale' : ''}${expired ? ' · ⚠️ expirée, un conseiller vérifie' : ''}.`), cfg);
-      if (pp.docType === 'cni' && pp.face === 'recto' && !s.passengers[0].cniVerso) {
-        s.cni_verso_for = 0; await setState(phone, s);
-        return send(phone, L(s, `📸 One more thing: it's a *national ID card* — please also send a photo of the *back* (the other side).`, `📸 Petit détail : c'est une *carte d'identité* — envoyez aussi une photo du *verso* (l'autre face), s'il vous plaît.`), cfg);
-      }
-      return nextPassport(phone, s, cfg);
-    }
+    // Solo (ou attribution multi non certaine) → ÉCRAN DE CONFIRMATION (le client vérifie nom + DDN
+    // + lieu de naissance, et corrige si besoin). Décision fondateur 04/07 : on garde ce tap pour que
+    // l'identité du cédant soit vérifiée (cession, art. 1321-1322) — surtout le lieu de naissance.
     s.doc_pending = { name: pp.name || '', dob: pp.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || '', sexe: pp.sexe || '', lieuNaissance: pp.lieuNaissance || '', docType: pp.docType || '', cniVerso: (pp.docType === 'cni' && (pp.face === 'verso' || pp.face === 'deux')) || false, viaPhoto: true };
     s.step = 'doc_pass_confirm';
     await setState(phone, s);
@@ -2004,7 +1992,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
   // ⚠️ Jamais intercepté si c'est une réponse interactive (bouton/liste) : replyId présent → flux prioritaire
   try {
     const { isClientQuestion, isSensitive, answerClientQuestion } = AI;
-    const FREE = ['m_vol', 'm_date', 'm_route', 'm_route_choice', 'm_dep', 'm_arr', 'm_stop_arr', 'm_pnr', 'leg_count', 'leg_input', 'esc_dep', 'esc_via', 'esc_arr', 'esc_vol', 'names', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob', 'doc_adresse', 'ask_email'];
+    const FREE = ['m_vol', 'm_date', 'm_route', 'm_route_choice', 'm_dep', 'm_arr', 'm_stop_arr', 'm_pnr', 'leg_count', 'leg_input', 'esc_dep', 'esc_via', 'esc_arr', 'esc_vol', 'names', 'mineurs_which', 'fix_vol', 'fix_date', 'fix_nom', 'fix_route', 'fix_pnr', 'fix_nom_which', 'names_fix_which', 'names_fix_one', 'doc_name', 'doc_dob', 'doc_adresse', 'doc_birth', 'ask_email'];
     // Filet « client paumé » : phrases de blocage/aide qui ne sont JAMAIS une réponse d'étape
     // valide → on ne re-pose pas bêtement l'étape, on propose Reprendre / Recommencer / Humain.
     const stuckNorm = lower.normalize('NFD').replace(/[̀-ͯ]/g, '');
@@ -2058,8 +2046,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
     if (explicit) {
       s.langue = `${explicit.flag} ${explicit.label}`; s.langue_code = explicit.code;
       if (explicit.africaine) { s.escalade = 'langue_africaine'; await send(phone, `${explicit.natif}\n\n💬 *Moi l'assistant, je prépare votre dossier ici en français* (je ne parle pas encore ${explicit.label} 🙏) — on avance ensemble, étape par étape.\n\n📞 Et *à la fin, ${explicit.agent} vous rappellera dans votre langue*, au *+33 7 56 86 36 30* (enregistrez-le sous « ${explicit.agent} – Robin des Airs » pour reconnaître son appel). 👇`, cfg); }
-      else if (explicit.code === 'en') { await send(phone, `Perfect — from now on we'll talk in English. 🇬🇧\nWe'll check together what you may be owed, *up to €600 per passenger*.\n\n💬 _At any time, just type *go* to start or resume your case._ 👇`, cfg); }
-      else if (explicit.code === 'fr') { await send(phone, `Parfait — on continue en français. 🇫🇷\nOn regarde ensemble ce qui peut vous revenir, *jusqu'à 600 € par passager*.\n\n💬 _À tout moment, tapez *go* pour démarrer ou reprendre votre dossier._ 👇`, cfg); }
+      else if (explicit.code === 'en') { await send(phone, `Perfect — from now on we'll talk in English. 🇬🇧\nWe'll check together what you may be owed.\n\n💬 _At any time, just type *go* to start or resume your case._ 👇`, cfg); }
+      else if (explicit.code === 'fr') { await send(phone, `Parfait — on continue en français. 🇫🇷\nOn regarde ensemble ce qui peut vous revenir.\n\n💬 _À tout moment, tapez *go* pour démarrer ou reprendre votre dossier._ 👇`, cfg); }
     } else if (s.langue_code === 'en') { s.langue = '🇬🇧 English'; }
     else { s.langue = '🇫🇷 Français'; if (!s.langue_code) s.langue_code = 'fr'; }
     s.route_type = 'af_eu'; await setState(phone, s);
@@ -2769,6 +2757,12 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
         s.cni_verso_for = idx; await setState(phone, s);
         return send(phone, L(s, `📸 One more thing: it's a *national ID card* — please also send a photo of the *back* (the other side).`, `📸 Petit détail : c'est une *carte d'identité* — envoyez aussi une photo du *verso* (l'autre face), s'il vous plaît.`), cfg);
       }
+      // Lieu de naissance manquant (l'OCR ne l'a pas lu) → on le DEMANDE (identité du cédant, art. 1322).
+      const _recPax = s.passengers[idx] || {};
+      if (!_recPax.lieuNaissance && !_recPax.minor && !_recPax.skipped) {
+        s.birth_idx = idx; s.step = 'doc_birth'; await setState(phone, s);
+        return send(phone, L(s, `📍 Last detail for *${_recPax.name || 'this passenger'}* — *place of birth*? _(city + country, e.g. Dakar, Senegal — to identify you as assignor)_`, `📍 Dernier détail pour *${_recPax.name || 'ce passager'}* — son *lieu de naissance* ? _(ville + pays, ex : Dakar, Sénégal — pour vous identifier comme cédant)_`), cfg);
+      }
       return nextPassport(phone, s, cfg); // avance vers le prochain passager sans pièce (garde-fou dans nextPassport)
     }
     if (fix) {
@@ -2805,6 +2799,16 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
     return askMandant(phone, s, cfg);
   }
   // Adresse du contact (dernière question) — saisie manuelle si non lue sur le passeport.
+  // Lieu de naissance saisi (fallback quand l'OCR ne l'a pas lu) → on le stocke et on reprend la collecte.
+  if (s.step === 'doc_birth') {
+    const b = input.trim();
+    if (b.length >= 3 && /[a-zà-ÿ]/i.test(b) && !/^\d+$/.test(b)) {
+      s.passengers = s.passengers || []; const bi = s.birth_idx || 0;
+      const bp = s.passengers[bi] || {}; bp.lieuNaissance = b; s.passengers[bi] = bp; delete s.birth_idx; await setState(phone, s);
+      return nextPassport(phone, s, cfg);
+    }
+    return send(phone, L(s, `📍 A bit more — your *city and country of birth* _(e.g. Dakar, Senegal)_:`, `📍 Un peu plus — la *ville et le pays de naissance* _(ex : Dakar, Sénégal)_ :`), cfg);
+  }
   if (s.step === 'doc_adresse') {
     const adr = input.trim();
     if (adr.length >= 5 && /[a-zà-ÿ]/i.test(adr) && !/^\d+$/.test(adr)) {
@@ -3056,7 +3060,7 @@ async function resumeTicker(phone, s, cfg) {
     return sendAnnulDelai(phone, s, cfg);
   }
   s.step = 'q_corr'; s.incident = 'retard'; s.incident_libelle = 'Retard +3h'; s.duree_retard = '+3h'; await setState(phone, s);
-  return sendButtons(phone, { body: L(s, `✅ Got it — your *flight ${s.vol}*${dStr} was *delayed*.\nThis kind of Europe ↔ Africa flight is *often eligible*, up to *€600 per passenger*.\n\nJust to be thorough: was this flight part of a *connection* (another flight just before or just after)?`, `✅ C'est noté — votre *vol ${s.vol}*${dStr} a été *retardé*.\nCe type de vol Europe ↔ Afrique est *souvent éligible* jusqu'à *600 € par passager*.\n\nPour ne rien oublier : ce vol faisait-il partie d'une *correspondance* (un autre vol juste avant ou juste après) ?`), buttons: [{ id: 'corr_direct', text: L(s, '✈️ No, direct flight', '✈️ Non, vol direct') }, { id: 'corr_escale', text: L(s, '🔄 Yes, a connection', '🔄 Oui, correspondance') }] }, cfg);
+  return sendButtons(phone, { body: L(s, `✅ Got it — your *flight ${s.vol}*${dStr} was *delayed*.\nThis kind of Europe ↔ Africa flight is *often eligible*.\n\nJust to be thorough: was this flight part of a *connection* (another flight just before or just after)?`, `✅ C'est noté — votre *vol ${s.vol}*${dStr} a été *retardé*.\nCe type de vol Europe ↔ Afrique est *souvent éligible*.\n\nPour ne rien oublier : ce vol faisait-il partie d'une *correspondance* (un autre vol juste avant ou juste après) ?`), buttons: [{ id: 'corr_direct', text: L(s, '✈️ No, direct flight', '✈️ Non, vol direct') }, { id: 'corr_escale', text: L(s, '🔄 Yes, a connection', '🔄 Oui, correspondance') }] }, cfg);
 }
 
 // ─── Émetteurs d'écran ───────────────────────────────────────────────────────
@@ -3363,7 +3367,7 @@ async function nextPassport(phone, s, cfg) {
   s.step = 'doc_pass'; await setState(phone, s);
   // Intro au 1er passager : on RAPPELLE d'abord ce que le client touche (le chiffre rassure et justifie
   // l'effort), PUIS on demande la pièce d'identité — qui ne sert qu'à réclamer en son nom auprès de la compagnie.
-  const intro = s.doc_idx === 0 ? L(s, `✅ *Almost there* — last step before we file your claim.\n${montantLine(s)}\n\n`, `✅ *On y est presque* — dernière étape avant de lancer votre réclamation.\n${montantLine(s)}\n\n`) : '';
+  const intro = s.doc_idx === 0 ? L(s, `✅ *Almost there* — last step before we file your claim.\n\n`, `✅ *On y est presque* — dernière étape avant de lancer votre réclamation.\n\n`) : '';
   // En-tête : passagers déjà traités (✅) ou reportés (⏳) — nom affiché s'il est connu (e-billet / pièce lue)
   let done = '';
   for (let i = 0; i < s.doc_idx; i++) {
