@@ -2836,6 +2836,22 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
       }
       // monnaie non reconnue → on laisse les boutons/handlers ci-dessous gérer
     }
+    // Correction : le client retape un montant (« 45 », « 45,50 € », « 12000 fcfa ») → on met à jour le DERNIER reçu.
+    if (!mediaUrl && !id && s.fraisAwaitDevise == null && (s.fraisList || []).length) {
+      const at = String(text || '').trim();
+      const mnum = at.match(/^(\d{1,7}(?:[.,]\d{1,2})?)\s*(€|eur|euros?|fcfa|cfa|xof|xaf|mad|dirhams?|dalasis?|gmd|£|gbp|\$|usd|dollars?)?\.?$/i);
+      if (mnum) {
+        const it = s.fraisList[s.fraisList.length - 1];
+        const val = parseFloat(mnum[1].replace(',', '.'));
+        if (it && val) {
+          it.montant = val;
+          const dv = parseDevise(at); if (dv) it.devise = dv;
+          await setState(phone, s);
+          notifyOwnerWhatsApp(phone, `✏️ Dossier ${s.ref || '?'} : montant corrigé par le client → ${val}${it.devise ? ' ' + it.devise : ''}. Total ≈ ${fraisTotal(s)}.`).catch(() => {});
+          return sendButtons(phone, { body: L(s, `✅ Corrected: *${val}${it.devise ? ' ' + it.devise : ''}*. Another receipt? Otherwise:`, `✅ Corrigé : *${val}${it.devise ? ' ' + it.devise : ''}*. Un autre reçu ? Sinon :`), buttons: [{ id: 'frais_fini', text: L(s, '✅ That\'s all', '✅ C\'est tout') }] }, cfg);
+        }
+      }
+    }
     if (mediaUrl) {
       const d = await classifyDoc(mediaUrl, cfg);
       // Une PIÈCE D'IDENTITÉ ou une PREUVE DE VOYAGE envoyée pendant l'étape frais n'est PAS un reçu :
@@ -2883,8 +2899,10 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
       }
       await setState(phone, s);
       const lu = montant ? ` — *${montant}${devise ? ' ' + devise : ''}*${(d && d.deviseInferred) ? L(s, ' (assumed)', ' (supposé)') : ''}` : '';
+      const dt = (d && d.date) ? ` · ${d.date}` : '';
+      const fix = montant ? L(s, `\n_If the amount is wrong, just retype it._`, `\n_Si le montant est faux, réécrivez-le._`) : '';
       notifyOwnerWhatsApp(phone, `🧾 Dossier ${s.ref || '?'} : reçu frais #${s.fraisCount}${lu}. Total ≈ ${fraisTotal(s)} (Art. 8/9).`).catch(() => {});
-      return sendButtons(phone, { body: L(s, `✅ Got it${lu} — added to your file 🙏 It's an amount that *comes back to you on top of* the compensation.\nAnother receipt (taxi, meal, hotel…)? Send the photo, otherwise:`, `✅ Bien reçu${lu} — ajouté à votre dossier 🙏 C'est un montant qui *vous revient en plus* de l'indemnité.\nUn autre reçu (taxi, repas, hôtel…) ? Envoyez la photo, sinon :`), buttons: [{ id: 'frais_fini', text: L(s, '✅ That\'s all', '✅ C\'est tout') }] }, cfg);
+      return sendButtons(phone, { body: L(s, `✅ Got it${lu}${dt} — added to your file 🙏 It's an amount that *comes back to you on top of* the compensation.${fix}\nAnother receipt (taxi, meal, hotel…)? Send the photo, otherwise:`, `✅ Bien reçu${lu}${dt} — ajouté à votre dossier 🙏 C'est un montant qui *vous revient en plus* de l'indemnité.${fix}\nUn autre reçu (taxi, repas, hôtel…) ? Envoyez la photo, sinon :`), buttons: [{ id: 'frais_fini', text: L(s, '✅ That\'s all', '✅ C\'est tout') }] }, cfg);
     }
     if (id === 'frais_non' || lower.includes('pas de frais') || lower.includes('aucun frais') || lower === 'non') {
       markFraisAnswered(phone); s.step = 'done'; await setState(phone, s);
