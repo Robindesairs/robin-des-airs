@@ -65,8 +65,10 @@ exports.handler = async (event) => {
   const lastName = String(payload.last_name || "").trim() || "Robin";
   const email = String(payload.email || "").trim();
   const phone = normalizePhone(payload.phone || "");
-
-  if (!email) return json(400, { error: "Email requis pour YouSign" });
+  // SES + livraison WhatsApp : l'email n'est plus obligatoire. Yousign exige un email dans la fiche signataire,
+  // mais avec delivery_mode "none" rien n'y est envoyé → si le signataire n'a pas d'email, placeholder technique.
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const techEmail = (ph, idx) => `sign-${idx}-${String(ph || "").replace(/\D/g, "") || "x"}@robindesairs.eu`;
 
   const dossierLabel = String(payload.label || "Dossier Robin des Airs").trim();
 
@@ -89,17 +91,22 @@ exports.handler = async (event) => {
   const sigY = Number.isFinite(+payload.signature_y) ? +payload.signature_y : 120;
 
   // Multi-signataires : payload.signers = [{first_name, last_name, email, phone}, ...]
-  // Si absent, fallback sur le signataire unique des champs first_name/last_name/email/phone.
-  const signers = Array.isArray(payload.signers) && payload.signers.length > 0
-    ? payload.signers.filter(s => s && s.email).map(s => ({
-        first_name: String(s.first_name || "").trim() || "Client",
-        last_name: String(s.last_name || "").trim() || "Robin",
-        email: String(s.email || "").trim(),
-        phone: normalizePhone(s.phone || ""),
-      }))
+  // Si absent, fallback sur le signataire unique. Email optionnel (SES) : placeholder technique si absent.
+  const rawSigners = Array.isArray(payload.signers) && payload.signers.length > 0
+    ? payload.signers
     : [{ first_name: firstName, last_name: lastName, email, phone }];
+  const signers = rawSigners.map((s, idx) => {
+    const ph = normalizePhone(s.phone || "");
+    const em = String(s.email || "").trim();
+    return {
+      first_name: String(s.first_name || "").trim() || "Client",
+      last_name: String(s.last_name || "").trim() || "Robin",
+      email: EMAIL_RE.test(em) ? em : techEmail(ph, idx),
+      phone: ph,
+    };
+  });
 
-  if (signers.length === 0) return json(400, { error: "Aucun signataire valide (email requis)" });
+  if (signers.length === 0) return json(400, { error: "Aucun signataire" });
   if (signers.length > 6) return json(400, { error: "Maximum 6 signataires par dossier" });
 
   try {
@@ -169,12 +176,12 @@ exports.handler = async (event) => {
       // 2a) Créer le signataire
       const successUrl = `${returnOrigin}/mandat.html?signed=1&ref=${encodeURIComponent(signatureRequestId)}&signer=${i + 1}&total=${signers.length}`;
 
-      // Niveau et mode d'auth configurables via env (fallback no_otp si pas de phone)
-      // Défaut prod : AES + OTP SMS (eIDAS art. 26, charge inversée vs compagnie).
-      // Sandbox / désactivable via YOUSIGN_SIGNATURE_LEVEL=electronic_signature
-      //                          + YOUSIGN_AUTH_MODE=no_otp.
-      const envLevel = process.env.YOUSIGN_SIGNATURE_LEVEL || "advanced_electronic_signature";
-      const envAuthMode = process.env.YOUSIGN_AUTH_MODE || "otp_sms";
+      // Niveau et mode d'auth configurables via env.
+      // Défaut : SES (signature simple) + no_otp — décision fondateur 04/07 : signature simple, pas de code SMS,
+      // lien livré par WhatsApp (delivery_mode "none"), aligné sur le standard concurrents (AirHelp/Flightright).
+      // Pour repasser en AES + OTP SMS (art. 26) : YOUSIGN_SIGNATURE_LEVEL=advanced_electronic_signature + YOUSIGN_AUTH_MODE=otp_sms.
+      const envLevel = process.env.YOUSIGN_SIGNATURE_LEVEL || "electronic_signature";
+      const envAuthMode = process.env.YOUSIGN_AUTH_MODE || "no_otp";
       // Fallback no_otp si on demande otp_sms mais qu'on n'a pas de numéro de tel
       // → évite l'erreur "phone_number required" pour un signataire sans tel
       const useOtpSms = envAuthMode === "otp_sms" && !!s.phone;
