@@ -50,7 +50,7 @@ L'arrêt **Wegener (CJUE, 2018)** le confirme : un vol de correspondance hors-UE
 
 Famille de 5 sur Paris-Nairobi via Addis, retardée de 4h à l'arrivée : 5 × 600€ = 3 000€ brut, **2 250€ nets** après commission Robin de 25%.
 
-Voir aussi : [KLM vol retardé](/blog/klm-vol-retarde-indemnite.html), [Correspondance manquée](/blog/correspondance-manquee-indemnite-vol.html), [CE261 billet unique non-UE](/en/blog/wegener-single-ticket-non-eu-cjeu-ruling.html).
+Voir aussi : [KLM vol retardé](/blog/klm-vol-retarde-indemnite.html), [Correspondance manquée](/blog/correspondance-manquee-indemnite-vol.html), [CE261 billet unique non-UE](/blog/arret-wegener-billet-unique-non-ue-cjue.html).
 
 → [Vérifier mon vol Ethiopian Airlines](https://robindesairs.eu/#funnel-box)
 → [WhatsApp direct](https://wa.me/33756863630)

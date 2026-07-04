@@ -42,7 +42,7 @@ L'agence de voyage est votre interlocuteur principal en cas de package. Robin g�
 
 ## Pic de demande = retards accrus
 
-Pendant le **Hadj (Dhul Hijjah)** et la **fin du Ramadan**, le trafic aérien vers Djeddah est saturé. Les compagnies invoquent souvent "circonstances extraordinaires" → mais une **saturation prévisible** n'est **pas** une circonstance extraordinaire au sens de la jurisprudence CJUE. Voir : [Circonstances extraordinaires](/blog/circonstances-extraordinaires-ce261-liste.html).
+Pendant le **Hadj (Dhul Hijjah)** et la **fin du Ramadan**, le trafic aérien vers Djeddah est saturé. Les compagnies invoquent souvent "circonstances extraordinaires" → mais une **saturation prévisible** n'est **pas** une circonstance extraordinaire au sens de la jurisprudence CJUE. Voir : [Circonstances extraordinaires](/blog/circonstances-extraordinaires-ce261.html).
 
 ## Pèlerins en groupe = indemnité groupée
 

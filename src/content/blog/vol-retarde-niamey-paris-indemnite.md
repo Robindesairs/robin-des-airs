@@ -34,7 +34,7 @@ Beaucoup de voyageurs choisissent une compagnie moins chère via un hub non euro
 
 ## Saison des pluies (juillet-septembre)
 
-Les retards sur Niamey augmentent significativement en saison des pluies. La compagnie invoque souvent les "circonstances extraordinaires" (météo), mais c'est à elle de prouver l'impact réel sur **votre vol précis** — pas une excuse générale. Voir : [Circonstances extraordinaires](/blog/circonstances-extraordinaires-ce261-liste.html).
+Les retards sur Niamey augmentent significativement en saison des pluies. La compagnie invoque souvent les "circonstances extraordinaires" (météo), mais c'est à elle de prouver l'impact réel sur **votre vol précis** — pas une excuse générale. Voir : [Circonstances extraordinaires](/blog/circonstances-extraordinaires-ce261.html).
 
 Service en français, haoussa, zarma-songhaï.
 

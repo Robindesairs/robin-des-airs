@@ -54,7 +54,7 @@ Le retard doit être d'au moins **3h à l'heure d'arrivée à destination finale
 
 Famille de 4 Paris → Nairobi via IST, retardée de 4h : 4 × 600€ = 2 400€ brut, **1 800€ nets** après commission Robin de 25%.
 
-Voir aussi : [Ethiopian Airlines vol retardé](/blog/ethiopian-airlines-vol-retarde-indemnite.html), [Correspondance manquée](/blog/correspondance-manquee-indemnite-vol.html), [CE261 billet unique non-UE](/en/blog/wegener-single-ticket-non-eu-cjeu-ruling.html).
+Voir aussi : [Ethiopian Airlines vol retardé](/blog/ethiopian-airlines-vol-retarde-indemnite.html), [Correspondance manquée](/blog/correspondance-manquee-indemnite-vol.html), [CE261 billet unique non-UE](/blog/arret-wegener-billet-unique-non-ue-cjue.html).
 
 → [Vérifier mon vol Turkish Airlines](https://robindesairs.eu/#funnel-box)
 → [WhatsApp direct](https://wa.me/33756863630)

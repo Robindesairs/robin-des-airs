@@ -35,7 +35,7 @@ Les vents de sable et la mauvaise visibilité sont des causes classiques de reta
 - Si d'autres avions ont décollé/atterri ce jour-là, l'excuse météo tombe
 - Robin des Airs récupère les rapports METAR/TAF officiels pour vérifier
 
-Voir : [Météo et dossier vol retardé](/blog/circonstances-extraordinaires-ce261-liste.html).
+Voir : [Météo et dossier vol retardé](/blog/circonstances-extraordinaires-ce261.html).
 
 ## Compagnies sur la ligne
 

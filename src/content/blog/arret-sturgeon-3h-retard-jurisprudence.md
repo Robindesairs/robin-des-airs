@@ -33,7 +33,7 @@ Raison invoquée : sinon, les compagnies pourraient échapper systématiquement 
 
 - **Retard ≥ 3h** : 250€ / 400€ / 600€ selon distance
 - **Retard ≥ 5h** : possibilité d'abandonner le vol et d'obtenir un remboursement intégral du billet
-- L'indemnité reste due **sauf circonstances extraordinaires** (voir [Circonstances extraordinaires](/blog/circonstances-extraordinaires-ce261-liste.html))
+- L'indemnité reste due **sauf circonstances extraordinaires** (voir [Circonstances extraordinaires](/blog/circonstances-extraordinaires-ce261.html))
 
 ## Le retard se calcule à l'**arrivée**, pas au décollage
 
