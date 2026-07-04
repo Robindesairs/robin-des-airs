@@ -1965,9 +1965,9 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
   // Bouton MSG1 « Vérifier mon indemnité » / « Commencer / Démarrer » → menu langue RETIRÉ, on va direct au consentement.
   if (s.step === 'go_langue') { s.langue = s.langue || '🇫🇷 Français'; s.route_type = 'af_eu'; await setState(phone, s); return sendConsentCgu(phone, s, cfg); }
 
-  // MSG2 — LANGUE : le MENU est retiré (friction inutile, mal placé). Par défaut français ; anglais si détecté
-  // au 1er contact. On honore quand même une langue TAPÉE explicitement (« wolof », « english »…) pour garder
-  // le rappel dans la langue (niche diaspora) — sans jamais afficher de menu. Puis on passe au consentement.
+  // MSG2 — LANGUE : l'accueil (sendAccueil) propose 2 BOUTONS DRAPEAUX 🇫🇷 Français / 🇬🇧 English (réintroduit 04/07).
+  // Le clic revient en TEXTE ("🇫🇷 Français"/"🇬🇧 English") → matchLang le détecte par drapeau. On honore aussi une langue
+  // TAPÉE explicitement (« wolof », « english »…) pour le rappel dans la langue (niche diaspora). Défaut FR. Puis consentement.
   if (s.step === 'langue') {
     const ri = listRowIdx(id);
     const langArr = Object.values(LANGS);
