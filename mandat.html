@@ -1581,7 +1581,9 @@ function splitFullName(full) {
   const parts = String(full || '').trim().split(/\s+/).filter(Boolean);
   if (!parts.length) return { prenom: '', nom: '' };
   if (parts.length === 1) return { prenom: parts[0], nom: '' };
-  return { prenom: parts[0], nom: parts.slice(1).join(' ') };
+  // Convention "PRÉNOM(S) NOM" (prénom d'abord, nom en dernier — cf assemblage OCR/billet) :
+  // NOM = dernier mot, PRÉNOM(S) = tout le reste. Corrige les prénoms composés (2e prénom → prénom, pas nom).
+  return { prenom: parts.slice(0, -1).join(' '), nom: parts[parts.length - 1] };
 }
 function isMinorFromDob(dobStr) {
   if (!dobStr) return false;
@@ -2418,10 +2420,11 @@ function submitMandat() {
     // Les autres = name + email .pemail individuel (mémoire #12).
     // On exclut les mineurs (couverts par autorisation parentale, pas par signature directe).
     function splitName(full) {
-      const parts = String(full || '').trim().split(/\s+/);
+      const parts = String(full || '').trim().split(/\s+/).filter(Boolean);
       if (parts.length === 0) return { first: '', last: '' };
       if (parts.length === 1) return { first: parts[0], last: '' };
-      return { first: parts[0], last: parts.slice(1).join(' ') };
+      // NOM = dernier mot, PRÉNOM(S) = le reste (convention "PRÉNOM NOM").
+      return { first: parts.slice(0, -1).join(' '), last: parts[parts.length - 1] };
     }
     const adults = [{
       first_name: payload.firstName,
