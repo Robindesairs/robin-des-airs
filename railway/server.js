@@ -2894,8 +2894,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
       markFraisAnswered(phone); s.step = 'done'; await setState(phone, s);
       const tot = fraisTotal(s);
       const recap = fraisRecap(s);
-      const eurLine = await fraisEurLine(s);
-      if (recap) notifyOwnerWhatsApp(phone, `🧾 *Frais à joindre — Dossier ${s.ref || '?'}* (Art. 8/9, à détailler dans la réclamation)\n${recap}${eurLine}`).catch(() => {});
+      // Conversion EUR volontairement PAS envoyée sur WhatsApp (vérifiée tranquillement côté CRM). fraisEUR() reste dispo pour le bureau.
+      if (recap) notifyOwnerWhatsApp(phone, `🧾 *Frais à joindre — Dossier ${s.ref || '?'}* (Art. 8/9, à détailler dans la réclamation)\n${recap}`).catch(() => {});
       return send(phone, L(s, `Got it ✅ We attach your receipts to your claim${tot !== '—' ? ` (≈ ${tot} in expenses, on top of the compensation)` : ''}. Thank you! 🤝`, `C'est noté ✅ On joint vos reçus à votre réclamation${tot !== '—' ? ` (≈ ${tot} de frais, en plus de l'indemnité)` : ''}. Merci ! 🤝`), cfg);
     }
     if (id === 'frais_oui' || lower.includes('envoi') || lower.includes('reçu') || lower.includes('recu') || lower.startsWith('oui')) {
