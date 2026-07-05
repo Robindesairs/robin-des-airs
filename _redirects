@@ -43,6 +43,7 @@
 /api/stats-flights-aggregated /.netlify/functions/stats-flights-aggregated 200
 /api/submit-claim-to-airline /.netlify/functions/submit-claim-to-airline 200
 /api/leads-a-rappeler        /.netlify/functions/leads-a-rappeler        200
+/api/lead-action             /.netlify/functions/lead-action             200
 /api/meta-stats              /.netlify/functions/meta-stats              200
 /api/instagram-stats         /.netlify/functions/instagram-stats         200
 /api/facebook-scheduled      /.netlify/functions/facebook-scheduled      200
