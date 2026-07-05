@@ -2400,6 +2400,7 @@ function openDetail(id){
     <div class="section-title">Actions — mise en demeure CE 261</div>
     <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px">
       <button type="button" class="btn btn-primary btn-sm" onclick="crmGenerateClaim('${id}')">⚖️ Générer la mise en demeure (PDF)</button>
+      <button type="button" class="btn btn-sm" onclick="crmNotificationCession('${id}')">📨 Notification de cession (PDF)</button>
       <button type="button" class="btn btn-sm" onclick="crmGenererDossierPdf('${id}')">📦 Dossier complet (1 PDF à envoyer)</button>
       <button type="button" class="btn btn-sm" onclick="crmMarkLrarSent('${id}')">📮 Marquer « LRAR envoyée » → armer relances</button>
     </div>
@@ -3066,6 +3067,26 @@ async function crmGenererDossierPdf(id){
     setTimeout(function(){ URL.revokeObjectURL(url); }, 120000);
     showCrmToast('Dossier complet prêt ✅ — onglet ouvert, vous pouvez l’enregistrer/envoyer.');
   }catch(e){ showCrmToast('Erreur dossier complet : '+(e && e.message ? e.message : e)); }
+}
+
+/** Notification de cession de créance (courrier à la compagnie, art. 1324) — PDF déterministe via
+ *  /api/notification-creance. Exige la signature du contrat (409 sinon). Auth CRM via crmApiFetch. */
+async function crmNotificationCession(id){
+  if(!requireCrmAgent()) return;
+  showCrmToast('Génération de la notification de cession…');
+  try{
+    const r = await crmApiFetch('/api/notification-creance?r='+encodeURIComponent(id), { method:'GET' });
+    if(!r.ok){
+      var j={}; try{ j=await r.json(); }catch(_e){}
+      if(r.status===409){ showCrmToast('Notification indisponible : le contrat de cession n’est pas encore signé pour ce dossier.'); return; }
+      throw new Error(j.error||('HTTP '+r.status));
+    }
+    const blob = await r.blob();
+    const url = URL.createObjectURL(blob);
+    window.open(url,'_blank','noopener');
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 120000);
+    showCrmToast('Notification de cession prête ✅ — onglet ouvert, à valider puis envoyer.');
+  }catch(e){ showCrmToast('Erreur notification : '+(e && e.message ? e.message : e)); }
 }
 
 function genLettre(id){
