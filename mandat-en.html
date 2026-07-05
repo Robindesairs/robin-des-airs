@@ -988,7 +988,7 @@ window.addEventListener('DOMContentLoaded', () => {
           wrap.innerHTML =
             '<div style="font-family:\'DM Mono\',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.2em;color:var(--green-deep);font-weight:700;margin-bottom:14px">Signature ' + signerIdx + '/' + totalSigners + ' validée</div>' +
             '<div style="font-size:48px;line-height:1;margin-bottom:18px">📲</div>' +
-            '<h1 style="font-size:24px;font-weight:800;margin:0 0 14px;color:var(--text)">Au tour de <span style="color:var(--green-deep)">' + (next.first_name || '') + ' ' + (next.last_name || '') + '</span></h1>' +
+            '<h1 style="font-size:24px;font-weight:800;margin:0 0 14px;color:var(--text)">Au tour de <span style="color:var(--green-deep)">' + escHtml((next.first_name || '') + ' ' + (next.last_name || '')) + '</span></h1>' +
             '<p style="font-size:14px;line-height:1.6;color:var(--muted);margin:0 0 22px">Passez le téléphone à la personne ci-dessus. Elle peut signer directement, depuis ce téléphone.</p>' +
             '<button id="btnNextSigner" style="width:100%;background:var(--green);color:var(--navy);border:none;padding:16px 24px;font-size:14px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;border-radius:8px;cursor:pointer">Signer maintenant (' + (signerIdx + 1) + '/' + totalSigners + ') →</button>' +
             '<p style="font-size:11px;color:var(--muted);margin:18px 0 0;line-height:1.5">Vous pouvez aussi envoyer le lien à votre proche par email — Yousign le lui a déjà envoyé.</p>';

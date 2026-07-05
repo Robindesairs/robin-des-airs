@@ -988,7 +988,7 @@ window.addEventListener('DOMContentLoaded', () => {
         try { signersList = JSON.parse(localStorage.getItem(storeKey) || '[]'); } catch (_) {}
         const next = signersList.find(function (s) { return s.index === signerIdx + 1 && s.signing_url; });
         if (next) {
-          const nextName = ((next.first_name || '') + ' ' + (next.last_name || '')).trim() || ('Passager ' + next.index);
+          const nextName = escHtml(((next.first_name || '') + ' ' + (next.last_name || '')).trim() || ('Passager ' + next.index));
           // Lien de secours (pour un absent) = tous les signataires restants, index > celui-ci.
           const remaining = signersList.filter(function (s) { return s.index > signerIdx && s.signing_url; });
           const payload = remaining.map(function (s) { return { n: ((s.first_name || '') + ' ' + (s.last_name || '')).trim() || ('Passager ' + s.index), u: s.signing_url }; });

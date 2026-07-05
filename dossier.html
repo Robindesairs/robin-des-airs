@@ -1060,12 +1060,12 @@
     function render(items, q) {
       const safeQ = (q || '').replace(/"/g, '&quot;');
       if (!items.length) {
-        list.innerHTML = `<div class="ac-item fallback" data-value="${safeQ}">Utiliser "${q}"</div>`;
+        list.innerHTML = `<div class="ac-item fallback" data-value="${safeQ}">Utiliser "${escapeHtml(q)}"</div>`;
         openList();
         return;
       }
       list.innerHTML = items.map((it, idx) => (
-        `<div class="ac-item" data-idx="${idx}">${it.label}</div>`
+        `<div class="ac-item" data-idx="${idx}">${escapeHtml(it.label)}</div>`
       )).join('');
       openList();
     }
@@ -1772,7 +1772,7 @@
         div.className='file-item';
         const kb = (f.size/1024).toFixed(0);
         const size = kb>1024 ? (kb/1024).toFixed(1)+' Mo' : kb+' Ko';
-        div.innerHTML = `<span>📎 ${f.name}</span><span class="fsize">${size}</span>`;
+        div.innerHTML = `<span>📎 ${escapeHtml(f.name)}</span><span class="fsize">${size}</span>`;
         list.appendChild(div);
       });
     }
@@ -2012,8 +2012,8 @@
 
   // ============ RECAP ============
   function buildRecap(){
-    const g = id => document.getElementById(id).value || ', ';
-    const motif = document.querySelector('input[name=motif]:checked')?.value || ', ';
+    const g = id => escapeHtml(document.getElementById(id).value || ', ');
+    const motif = escapeHtml(document.querySelector('input[name=motif]:checked')?.value || ', ');
     document.getElementById('recap-vol').innerHTML = `
       <dt>Vol</dt><dd>${g('vol')}</dd>
       <dt>Compagnie</dt><dd>${g('compagnie')}</dd>
@@ -2025,8 +2025,8 @@
     const paxBlocks = document.querySelectorAll('.passenger-block');
     let paxHtml='';
     paxBlocks.forEach((b,i)=>{
-      const p = b.querySelector('input[name*="[prenom]"]').value;
-      const n = b.querySelector('input[name*="[nom]"]').value;
+      const p = escapeHtml(b.querySelector('input[name*="[prenom]"]').value);
+      const n = escapeHtml(b.querySelector('input[name*="[nom]"]').value);
       const statut = b.querySelector('input[name*="[statut]"]:checked')?.value || 'majeur';
       const statutLabel = statut === 'mineur' ? '🧒 Mineur' : '👤 Majeur';
       paxHtml += `<dt>#${i+1}</dt><dd>${p} ${n}<br><span style="color:var(--earth);font-size:13px">${statutLabel}</span></dd>`;

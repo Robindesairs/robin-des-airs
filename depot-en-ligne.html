@@ -88,7 +88,7 @@
       for (const f of files) {
         // On accepte tout : les photos sont optimisées au moment de l'envoi (voir compressImage).
         const li = document.createElement('li');
-        li.innerHTML = '<span class="fi" aria-hidden="true">📄</span><span class="nm">' + f.name + '</span><span class="st up">en attente</span>';
+        li.innerHTML = '<span class="fi" aria-hidden="true">📄</span><span class="nm">' + String(f.name||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span><span class="st up">en attente</span>';
         fileList.appendChild(li);
         queue.push({ file: f, li, sent: false });
       }

@@ -221,7 +221,7 @@
     [momoName, momoPhone].forEach(el => el.addEventListener('input', refresh));
 
     function showErr(box, m){ box.style.display='block'; box.textContent = m; }
-    function row(dt, dd, mono){ return `<div class="row"><dt>${dt}</dt><dd class="${mono?'mono':''}">${dd}</dd></div>`; }
+    function row(dt, dd, mono){ const e = s => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); return `<div class="row"><dt>${e(dt)}</dt><dd class="${mono?'mono':''}">${e(dd)}</dd></div>`; }
 
     const review = $('review'), form = $('form');
     const confirmChk = $('confirmChk'), confirmBtn = $('confirmBtn'), errBox2 = $('errBox2');
