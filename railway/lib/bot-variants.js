@@ -8,18 +8,9 @@
 
 const VARIANTS = {
 
-  // Message d'accueil empathique affiché dès l'entrée dans le bot
+  // Message d'accueil empathique — VERROUILLÉ sur une accroche unique (décision fondateur 05/07 : plus de variantes).
   ACCUEIL_EMPATHIE: [
     `Un vol en retard ou annulé, c'est une vraie galère. Bonne nouvelle : la loi européenne est de votre côté, et c'est là qu'on intervient. 🏹`,
-    `Y'a des vols qui se passent sans problème. Et puis y'a les autres — ceux qu'on n'oublie pas pour de mauvaises raisons. Si vous êtes là, c'est probablement que le vôtre fait partie de la deuxième catégorie.`,
-    `Attendre sans info, regarder les heures défiler, sentir qu'on ne maîtrise rien… un vol qui foire, c'est aussi ça : une vraie impuissance. On ne minimise pas ce que vous avez traversé.`,
-    `Un retard, une annulation : du stress que vous n'avez pas choisi, et une compagnie qui fait souvent comme si de rien n'était. C'est précisément là qu'on entre en jeu. 🤝`,
-    `Vous étiez peut-être pressé de rentrer, ou attendu à l'arrivée — et un retard a tout décalé. Voyons ensemble ce que la loi vous permet de récupérer. ✈️`,
-    `Rater une correspondance, poireauter des heures en salle d'attente, apprendre à la dernière minute que votre vol n'existe plus… ça épuise, honnêtement. On est là parce que le silence des compagnies, c'est pas une réponse suffisante.`,
-    `Un vol en retard ou annulé, ça chamboule tout. Les plans, l'énergie, parfois des heures sans explication. Vous n'aviez pas à vivre ça — et on le sait.`,
-    `Quand un vol tombe à l'eau, c'est rarement juste un petit contretemps. Parfois c'est une réunion ratée, un retour chez des proches repoussé, des heures de stress que personne ne reconnaît vraiment. On comprend.`,
-    `Vous avez peut-être perdu des heures, manqué quelque chose d'important, ou juste encaissé sans rien dire. Quelle que soit la situation — elle n'était probablement pas normale. Peut-être qu'il est temps d'y regarder de plus près. ✈️`,
-    `Attendre dans un aéroport sans savoir pourquoi, sans que quelqu'un vous parle vraiment — c'est épuisant d'une façon que peu de gens saisissent s'ils ne l'ont pas vécu. Vous n'étiez pas seul à traverser ça.`,
   ],
 
   // Réaction après que l'utilisateur déclare un retard
