@@ -158,14 +158,17 @@
   <!-- Photo hero : famille africaine qui prépare son voyage (Pexels #4546018, Ketut Subiyanto, licence libre, usage commercial OK).
        Recadrée 1920x1280 sur les 3 visages. Angle diaspora = cœur de cible. -->
   <div class="hero-bg-visual" aria-hidden="true">
-    <img
-      src="/assets/images/hero-famille-diaspora.jpg"
-      alt="Famille africaine souriante préparant son voyage, droits des passagers et indemnisation des vols Europe-Afrique"
-      width="1920"
-      height="1500"
-      decoding="async"
-      fetchpriority="high"
-    >
+    <picture>
+      <source type="image/webp" srcset="/assets/images/hero-famille-mobile.webp 1080w, /assets/images/hero-famille-diaspora.webp 1920w" sizes="100vw">
+      <img
+        src="/assets/images/hero-famille-diaspora.jpg"
+        alt="Famille africaine souriante préparant son voyage, droits des passagers et indemnisation des vols Europe-Afrique"
+        width="1920"
+        height="1500"
+        decoding="async"
+        fetchpriority="high"
+      >
+    </picture>
   </div>
 
   <div class="hero-wrap">
@@ -1200,6 +1203,6 @@ function openWhatsAppQrFromHero(e) {
 })();
 </script>
 
-<script src="/assets/premium.js"></script>
+<script defer src="/assets/premium.js"></script>
 </body>
 </html>
