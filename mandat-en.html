@@ -2410,7 +2410,7 @@ function submitMandat() {
         phone: payload.whatsapp,
         // Nouveau : liste complète des adultes signataires
         signers: adults,
-        label: 'Mandat Robin des Airs — ' + payload.lastName + ' ' + payload.firstName + ' — vol ' + (payload.flightNum || '—'),
+        label: 'Claim assignment — Robin des Airs — ' + payload.lastName + ' ' + payload.firstName + ' — flight ' + (payload.flightNum || '—'),
         pdf_base64: pdfRes.pdf_base64,
         // Zone signature page 1 en haut à droite : visible direct, pas de scroll
         signature_page: 1,

@@ -2472,7 +2472,7 @@ function submitMandat() {
         // Réf du dossier : permet au webhook Yousign (signature terminée) de retrouver LE dossier,
         // basculer son statut en « Contrat signé » et classer le PDF signé par réf.
         ref: REF,
-        label: 'Mandat Robin des Airs — ' + payload.lastName + ' ' + payload.firstName + ' — vol ' + (payload.flightNum || '—'),
+        label: 'Contrat de cession Robin des Airs — ' + payload.lastName + ' ' + payload.firstName + ' — vol ' + (payload.flightNum || '—'),
         pdf_base64: pdfRes.pdf_base64,
         // Zone signature sur la DERNIÈRE page (après le contrat) : le signataire relit tout, puis signe.
         // yousign-init compte les pages du PDF et place le bloc sur la dernière (défaut si 'last').
