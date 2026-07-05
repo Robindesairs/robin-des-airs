@@ -2411,7 +2411,7 @@ function submitMandat() {
         pnr: payload.pnr,
         email: payload.email,
         phone: payload.whatsapp,
-        addr: payload.address,
+        address: payload.address,
         indemnite: '600',
       }),
     }).then(r => r.json()).then(pdfRes => ({crmRes, pdfRes}));
