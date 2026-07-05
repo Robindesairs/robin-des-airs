@@ -11,7 +11,7 @@
     BROUILLON: 'Brouillon',
     ELIGIBLE: 'Éligible',
     SIGNATURE_ATTENTE: 'Signature en attente',
-    MANDAT_SIGNE: 'Mandat signé',
+    MANDAT_SIGNE: 'Contrat signé',
     LRAR_ENVOYEE: 'LRAR envoyée',
     RELANCE_1: 'Relance 1',
     RELANCE_2: 'Relance 2',
@@ -41,7 +41,7 @@
   var PC_FR = {
     EMBARQUEMENT: 'Carte embarquement / billet',
     IDENTITE: 'CNI / passeport',
-    MANDAT: 'Mandat signé',
+    MANDAT: 'Contrat signé',
     RIB: 'RIB',
     LRAR_PREUVE: 'Preuve envoi LRAR / AR',
     ECHANGE_COMPAGNIE: 'Échanges compagnie',

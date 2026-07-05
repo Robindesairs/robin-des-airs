@@ -9,7 +9,7 @@ const CRM_STATUT_TO_AT = {
   // Indispensable pour un aller-retour SANS perte : sans cette clé, l'import Airtable
   // repliait « Signature en attente » sur ELIGIBLE puis le ré-écrivait en « Documents en cours ».
   SIGNATURE_ATTENTE: 'Signature en attente',
-  MANDAT_SIGNE: 'Mandat signé',
+  MANDAT_SIGNE: 'Contrat signé',
   RECLAMATION_ENVOYEE: 'Réclamation envoyée',
   LRAR_ENVOYEE: 'LRAR envoyée',
   RELANCE_1: 'Relance 1',

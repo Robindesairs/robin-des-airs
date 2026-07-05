@@ -22,7 +22,7 @@
 const COMPAGNIE_PAYE = new Set(['Payé', 'Indemnisé', 'Indemnité reçue']); // compagnie a payé → reversement client dû
 const CLIENT_PAYE = new Set(['Payé client', 'Clôturé payé']); // déjà reversé → clos
 const WON = new Set([...COMPAGNIE_PAYE, ...CLIENT_PAYE]);
-const ENGAGED = new Set(['Mandat signé', 'LRAR envoyée', 'Documents en cours', 'Médiation', 'Contentieux']);
+const ENGAGED = new Set(['Contrat signé', 'LRAR envoyée', 'Documents en cours', 'Médiation', 'Contentieux']);
 
 function intEnv(name, def) {
   const v = parseInt(String(process.env[name] || '').trim(), 10);

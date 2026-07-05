@@ -42,7 +42,7 @@ function prenom(r) { return (r.prenom || 'à vous').trim(); }
 
 // Statut « Statut du Dossier Suivi » → template + paramètres. Statuts absents = pas de notif auto.
 const STATUS_TEMPLATES = {
-  'Mandat signé':  (r) => ({ name: tpl('mandat_signe'),        params: P([prenom(r), r.ref, eur(brut(r))]) }),
+  'Contrat signé':  (r) => ({ name: tpl('mandat_signe'),        params: P([prenom(r), r.ref, eur(brut(r))]) }),
   'LRAR envoyée':  (r) => ({ name: tpl('reclamation_envoyee'), params: P([prenom(r), voyage(r)]) }),
   'Relance 1':     (r) => ({ name: tpl('relance_compagnie'),   params: P([r.ref, prenom(r)]) }),
   'Relance 2':     (r) => ({ name: tpl('relance_compagnie'),   params: P([r.ref, prenom(r)]) }),

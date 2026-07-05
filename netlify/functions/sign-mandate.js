@@ -132,7 +132,7 @@ exports.handler = async (event) => {
       cert_id: certId,
       signed_at: ts,
       doc_hash: doc_hash,
-      message: 'Mandat signé avec succès — conservez votre certificat.',
+      message: 'Contrat signé avec succès — conservez votre certificat.',
     }),
   };
 };

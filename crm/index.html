@@ -997,7 +997,7 @@ const CRM_DEMO_DOSSIERS = [
      {id:'p1',cat:'MANDAT',filename:'Mandat_Yousign.pdf',added:'2026-01-10',sizeKb:142,dataUrl:null},
      {id:'p2',cat:'RIB',filename:'RIB_aminata.pdf',added:'2026-01-11',sizeKb:88,dataUrl:null},
      {id:'p3',cat:'LRAR_PREUVE',filename:'AR_LRAR_1A002.pdf',added:'2026-01-12',sizeKb:210,dataUrl:null}
-   ],events:[{date:'2026-01-10',action:'Mandat signé (YouSign)',meta:''},{date:'2026-01-12',action:'LRAR envoyée',meta:'Réf. AR 1A002'},{date:'2026-01-28',action:'Paiement reçu + reversé',meta:'600€ encaissés — 450€ reversés'}]},
+   ],events:[{date:'2026-01-10',action:'Contrat signé (YouSign)',meta:''},{date:'2026-01-12',action:'LRAR envoyée',meta:'Réf. AR 1A002'},{date:'2026-01-28',action:'Paiement reçu + reversé',meta:'600€ encaissés — 450€ reversés'}]},
   {id:'RDA-260201-1002',statut:'LRAR_ENVOYEE',priorite:'HAUTE',date:'2026-02-01',date_statut:'2026-02-03',date_paiement:null,source:'tiktok_ad',lrar:'2026-02-03',
    prenom:'Kofi',nom:'ASANTE',indicatif:'+33',tel:'7 98 76 54 32',email:'rda-260201-1002@robindesairs.eu',adresse:'18 avenue Kléber, 75116 Paris',adultes:3,bebes:1,coPassagers:[{prenom:'Ama',nom:'ASANTE'},{prenom:'Kwame',nom:'ASANTE'}],
    vols:[{comp:'Air France',vol:'AF 704',date:'2026-01-10',dep:'CDG',arr:'DLA',pnr:'ZK9PLM',inc:'ANNULATION'}],
@@ -1012,15 +1012,15 @@ const CRM_DEMO_DOSSIERS = [
   {id:'RDA-251205-1004',statut:'CONTENTIEUX',priorite:'HAUTE',date:'2025-12-05',date_statut:'2026-01-10',date_paiement:null,source:'referral',lrar:'2025-12-08',
    prenom:'Jean-Baptiste',nom:'KOUASSI',indicatif:'+32',tel:'47 123 456',email:'rda-251205-1004@robindesairs.eu',adresse:'Rue de la Loi 100, 1040 Bruxelles',adultes:1,bebes:0,coPassagers:[],
    vols:[{comp:'Brussels Airlines',vol:'SN 401',date:'2025-10-14',dep:'BRU',arr:'FIH',pnr:'PQ7RST',inc:'ANNULATION'},{comp:'Brussels Airlines',vol:'SN 403',date:'2025-10-15',dep:'FIH',arr:'BRU',pnr:'PQ7RST',inc:'CORRESPONDANCE_MANQUEE'}],
-   palier:600,events:[{date:'2025-12-05',action:'Mandat signé',meta:''},{date:'2025-12-08',action:'LRAR envoyée',meta:''},{date:'2025-12-25',action:'Refus compagnie',meta:'Circonstances extraordinaires'},{date:'2026-01-10',action:'Contentieux ouvert',meta:'Tribunal de Commerce Paris'}]},
+   palier:600,events:[{date:'2025-12-05',action:'Contrat signé',meta:''},{date:'2025-12-08',action:'LRAR envoyée',meta:''},{date:'2025-12-25',action:'Refus compagnie',meta:'Circonstances extraordinaires'},{date:'2026-01-10',action:'Contentieux ouvert',meta:'Tribunal de Commerce Paris'}]},
   {id:'RDA-260301-1005',statut:'MANDAT_SIGNE',priorite:'BASSE',date:'2026-03-01',date_statut:'2026-03-01',date_paiement:null,source:'whatsapp',lrar:null,
    prenom:'Marie',nom:'BATUMELO',indicatif:'+33',tel:'6 77 88 99 00',email:'rda-260301-1005@robindesairs.eu',adresse:'12 cours Gambetta, 33000 Bordeaux',adultes:1,bebes:1,coPassagers:[],
    vols:[{comp:'Air France',vol:'AF 732',date:'2026-02-18',dep:'CDG',arr:'BKO',pnr:'GH2IJK',inc:'RETARD'}],
-   palier:600,events:[{date:'2026-03-01',action:'Mandat signé (YouSign)',meta:'Bébé présent — non indemnisé'}]},
+   palier:600,events:[{date:'2026-03-01',action:'Contrat signé (YouSign)',meta:'Bébé présent — non indemnisé'}]},
   {id:'RDA-251020-1006',statut:'MEDIATION',priorite:'STANDARD',date:'2025-10-20',date_statut:'2026-01-08',date_paiement:null,source:'whatsapp',lrar:'2025-11-07',
    prenom:'Ibrahim',nom:'SY',indicatif:'+33',tel:'6 11 22 33 44',email:'rda-251020-1006@robindesairs.eu',adresse:'8 rue des Peupliers, 94200 Ivry-sur-Seine',adultes:1,bebes:0,coPassagers:[],
    vols:[{comp:'Air France',vol:'AF 596',date:'2025-09-12',dep:'CDG',arr:'ABJ',pnr:'LMN45K',inc:'RETARD'}],
-   palier:600,events:[{date:'2025-10-20',action:'Dossier créé',meta:''},{date:'2025-11-01',action:'Mandat signé',meta:''},{date:'2025-11-07',action:'LRAR envoyée',meta:''},{date:'2025-11-22',action:'Relance 1 (J+15)',meta:''},{date:'2025-12-07',action:'Relance 2 (J+30)',meta:''},{date:'2026-01-08',action:'Saisine médiateur (J+62)',meta:''}]},
+   palier:600,events:[{date:'2025-10-20',action:'Dossier créé',meta:''},{date:'2025-11-01',action:'Contrat signé',meta:''},{date:'2025-11-07',action:'LRAR envoyée',meta:''},{date:'2025-11-22',action:'Relance 1 (J+15)',meta:''},{date:'2025-12-07',action:'Relance 2 (J+30)',meta:''},{date:'2026-01-08',action:'Saisine médiateur (J+62)',meta:''}]},
 ];
 let DB = [];
 if (/\bdemo=1\b/.test(location.search) || (function(){ try { return localStorage.getItem('rda_crm_demo')==='1'; } catch(e){ return false; } })()) {
@@ -2019,7 +2019,7 @@ var KANBAN_COLS = [
   {label:'Nouveau lead', st:['BROUILLON']},
   {label:'Docs / éligible', st:['ELIGIBLE']},
   {label:'Signature en attente', st:['SIGNATURE_ATTENTE']},
-  {label:'Mandat signé', st:['MANDAT_SIGNE']},
+  {label:'Contrat signé', st:['MANDAT_SIGNE']},
   {label:'Mise en demeure', st:['LRAR_ENVOYEE']},
   {label:'Relances', st:['RELANCE_1','RELANCE_2']},
   {label:'Médiateur / Cession', st:['MEDIATION','MEDIATEUR','CESSION_ACTIVEE']},

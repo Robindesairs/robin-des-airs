@@ -8,7 +8,7 @@ describe('crm-airtable-map', () => {
   });
 
   it('maps airtable statut to crm code', () => {
-    expect(airtableStatutToCrm('Mandat signé')).toBe('MANDAT_SIGNE');
+    expect(airtableStatutToCrm('Contrat signé')).toBe('MANDAT_SIGNE');
     expect(airtableStatutToCrm('')).toBe('ELIGIBLE');
   });
 });

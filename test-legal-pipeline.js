@@ -30,16 +30,16 @@ function ok(name, cond, extra) { assert.ok(cond, `${name} ${extra || ''}`); cons
 
 console.log('\n— evaluateDossier (cas unitaires) —');
 
-// 1. Mandat signé récent (J+2) → préparer MED, vert
-let it = evaluateDossier({ ref: 'RDA-1', name: 'Awa Sow', statut: 'Mandat signé', vol: 'AF718', compagnie: 'Air France', route: 'Dakar (DSS) → Paris (CDG)', dateVol: daysAgo(40), dateDossier: daysAgo(2) }, ctx);
+// 1. Contrat signé récent (J+2) → préparer MED, vert
+let it = evaluateDossier({ ref: 'RDA-1', name: 'Awa Sow', statut: 'Contrat signé', vol: 'AF718', compagnie: 'Air France', route: 'Dakar (DSS) → Paris (CDG)', dateVol: daysAgo(40), dateDossier: daysAgo(2) }, ctx);
 ok('signé J+2 = vert + MED à préparer', it.urgence === 'vert' && /Préparer la mise en demeure/.test(it.action), JSON.stringify(it.action));
 
-// 2. Mandat signé J+8 → SLA dépassé → rouge
-it = evaluateDossier({ ref: 'RDA-2', statut: 'Mandat signé', vol: 'AF718', dateVol: daysAgo(60), dateDossier: daysAgo(8) }, ctx);
+// 2. Contrat signé J+8 → SLA dépassé → rouge
+it = evaluateDossier({ ref: 'RDA-2', statut: 'Contrat signé', vol: 'AF718', dateVol: daysAgo(60), dateDossier: daysAgo(8) }, ctx);
 ok('signé J+8 = rouge (SLA 5j dépassé)', it.urgence === 'rouge', it.urgence);
 
-// 3. Mandat signé + MED déjà générée (remarque) → orange, "envoyer"
-it = evaluateDossier({ ref: 'RDA-3', statut: 'Mandat signé', vol: 'AF718', dateVol: daysAgo(60), dateDossier: daysAgo(3), remarques: `MED générée ${daysAgo(1)} — à valider` }, ctx);
+// 3. Contrat signé + MED déjà générée (remarque) → orange, "envoyer"
+it = evaluateDossier({ ref: 'RDA-3', statut: 'Contrat signé', vol: 'AF718', dateVol: daysAgo(60), dateDossier: daysAgo(3), remarques: `MED générée ${daysAgo(1)} — à valider` }, ctx);
 ok('signé + MED générée = orange + envoyer', it.urgence === 'orange' && /Envoyer la mise en demeure/.test(it.action), it.action);
 
 // 4. LRAR envoyée, MED il y a 5 j → suivi, vert (cadence dérivée de dossier-state : J+15/30/62)
@@ -69,12 +69,12 @@ ok('Refus = rouge (escalade NEB)', it.urgence === 'rouge' && /Escalade NEB/.test
 
 // 9. Prescription imminente (vol il y a ~5 ans - 30 j) → rouge + mention prescription
 const presVol = new Date(NOW.getTime()); presVol.setUTCFullYear(presVol.getUTCFullYear() - 5); presVol.setUTCDate(presVol.getUTCDate() + 30);
-it = evaluateDossier({ ref: 'RDA-9', statut: 'Mandat signé', vol: 'AF718', dateVol: presVol.toISOString().slice(0, 10), dateDossier: daysAgo(1) }, ctx);
+it = evaluateDossier({ ref: 'RDA-9', statut: 'Contrat signé', vol: 'AF718', dateVol: presVol.toISOString().slice(0, 10), dateDossier: daysAgo(1) }, ctx);
 ok('prescription <90j = rouge', it.urgence === 'rouge', it.urgence);
 ok('prescription dans le détail', /[Pp]rescription/.test(it.detail) && it.prescription.joursRestants <= T.prescriptionAlertDays, JSON.stringify(it.prescription));
 
 // 10. Non-UE au départ d'Afrique → alerte bloquant éligibilité
-it = evaluateDossier({ ref: 'RDA-10', statut: 'Mandat signé', vol: 'TK500', compagnie: 'Turkish Airlines', route: 'Dakar (DSS) → Istanbul (IST)', dateVol: daysAgo(30), dateDossier: daysAgo(8) }, ctx);
+it = evaluateDossier({ ref: 'RDA-10', statut: 'Contrat signé', vol: 'TK500', compagnie: 'Turkish Airlines', route: 'Dakar (DSS) → Istanbul (IST)', dateVol: daysAgo(30), dateDossier: daysAgo(8) }, ctx);
 ok('non-UE départ Afrique = alerte bloquant', it.alerte && it.alerte.niveau === 'bloquant', JSON.stringify(it.alerte));
 ok('non-UE bloquant n’est pas escaladé en rouge', it.urgence !== 'rouge', it.urgence);
 
@@ -85,10 +85,10 @@ ok('Signature en attente = null (amont)', evaluateDossier({ ref: 'RDA-12', statu
 
 console.log('\n— buildLegalQueue (file + tri + exclusions) —');
 const records = [
-  { ref: 'RDA-A', statut: 'Mandat signé', vol: 'AF718', dateVol: daysAgo(40), dateDossier: daysAgo(2) },
+  { ref: 'RDA-A', statut: 'Contrat signé', vol: 'AF718', dateVol: daysAgo(40), dateDossier: daysAgo(2) },
   { ref: 'RDA-B', statut: 'LRAR envoyée', vol: 'AF718', dateVol: daysAgo(200), dateDossier: daysAgo(90), remarques: `MED générée ${daysAgo(70)}` },
   { ref: 'RDA-C', statut: 'Payé client', vol: 'AF718' },
-  { ref: 'RDA-TEST-1', name: 'Test Démo', statut: 'Mandat signé', vol: 'AF718', dateVol: daysAgo(60), dateDossier: daysAgo(9) },
+  { ref: 'RDA-TEST-1', name: 'Test Démo', statut: 'Contrat signé', vol: 'AF718', dateVol: daysAgo(60), dateDossier: daysAgo(9) },
   { ref: 'RDA-D', name: 'exemple', statut: 'LRAR envoyée', vol: 'AF718', dateVol: daysAgo(60), dateDossier: daysAgo(20) },
 ];
 const q = buildLegalQueue(records, ctx);

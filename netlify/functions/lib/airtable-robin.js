@@ -52,7 +52,7 @@ function airtableCfg() {
     fPnr: (process.env.AIRTABLE_F_PNR || '').trim() || labels.pnr,
     fIncident: (process.env.AIRTABLE_F_TYPE_INCIDENT || '').trim() || labels.incident,
     fItineraire: (process.env.AIRTABLE_F_ITINERAIRE || '').trim() || labels.itineraire,
-    statutMandatSigne: (process.env.AIRTABLE_STATUT_SUIVI_MANDAT_SIGNE || 'Mandat signé').trim(),
+    statutMandatSigne: (process.env.AIRTABLE_STATUT_SUIVI_MANDAT_SIGNE || 'Contrat signé').trim(),
     statutMandatAEnvoyer: (process.env.AIRTABLE_STATUT_MANDAT_A_ENVOYER || 'Mandat à envoyer').trim(),
     statutSignatureAttente: (process.env.AIRTABLE_STATUT_SIGNATURE_ATTENTE || 'Signature en attente').trim(),
   };

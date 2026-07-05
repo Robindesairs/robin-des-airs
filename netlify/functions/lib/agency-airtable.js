@@ -43,7 +43,7 @@ const AT_STATUT_TO_AGENCY = {
   'Documents en cours': 'en-cours',
   'Mandat à envoyer': 'nouveau',
   'Signature en attente': 'en-cours',
-  'Mandat signé': 'en-cours',
+  'Contrat signé': 'en-cours',
   'LRAR envoyée': 'en-cours',
   'Relance 1': 'en-cours',
   'Relance 2': 'en-cours',

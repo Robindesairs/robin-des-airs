@@ -34,7 +34,7 @@ const HEADERS = {
 const WON = new Set(['Payé client', 'Indemnisé', 'Indemnité reçue', 'Clôturé payé', 'Payé']);
 // statuts indiquant un dossier engagé EN COURS (hors gagnés, pour ne pas double-compter)
 const ENGAGED = new Set([
-  'Mandat signé', 'LRAR envoyée', 'Documents en cours', 'Médiation', 'Contentieux',
+  'Contrat signé', 'LRAR envoyée', 'Documents en cours', 'Médiation', 'Contentieux',
 ]);
 
 async function fetchAll(table) {

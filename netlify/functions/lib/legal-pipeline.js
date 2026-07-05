@@ -8,7 +8,7 @@
  *
  * Cycle de vie (statuts « Statut du Dossier Suivi », cf. bureau-stats / morning-report) :
  *   Signature en attente / Mandat à envoyer  → AMONT (Robin/Léa) — pas encore Me Lefèvre
- *   Mandat signé                             → MISE EN DEMEURE à préparer (SLA < 5 j)
+ *   Contrat signé                             → MISE EN DEMEURE à préparer (SLA < 5 j)
  *   Documents en cours                       → pièces manquantes (relancer le client)
  *   LRAR envoyée                             → relance compagnie → escalade NEB → contentieux
  *   Médiation / Contentieux                  → suivi de procédure
@@ -142,7 +142,7 @@ function evaluateDossier(d, ctx) {
   // ── Action selon le statut ──
   let action = '', detail = '', urgence = 'vert', joursDepuis = null, dueLabel = '';
 
-  if (statut === 'Mandat signé') {
+  if (statut === 'Contrat signé') {
     joursDepuis = daysBetween(dateDossier, now);
     const ageOk = joursDepuis != null;
     const medFaite = !!medDate;
@@ -153,8 +153,8 @@ function evaluateDossier(d, ctx) {
     } else {
       action = 'Préparer la mise en demeure CE 261';
       detail = ageOk
-        ? `Mandat signé depuis ${joursDepuis} j — SLA ${T.medSlaDays} j.`
-        : `Mandat signé — générer la MED (SLA ${T.medSlaDays} j).`;
+        ? `Contrat signé depuis ${joursDepuis} j — SLA ${T.medSlaDays} j.`
+        : `Contrat signé — générer la MED (SLA ${T.medSlaDays} j).`;
       urgence = ageOk && joursDepuis > T.medSlaDays ? 'rouge' : ageOk && joursDepuis >= T.medSlaDays - 1 ? 'orange' : 'vert';
     }
     dueLabel = ageOk ? `J+${joursDepuis} / SLA ${T.medSlaDays} j` : `SLA ${T.medSlaDays} j`;

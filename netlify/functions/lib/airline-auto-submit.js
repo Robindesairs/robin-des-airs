@@ -224,7 +224,7 @@ async function prepareClaimPackage(ref, event) {
   if (!airline) blocker = 'Compagnie inconnue dans le référentiel (airlines-claims.js) — dépôt manuel.';
   else if (!isEmail) blocker = 'Dépôt manuel requis (formulaire web, pas de scraping).';
   else if (!recipient) blocker = "Canal email mais aucune adresse de réclamation connue — à compléter dans airlines-claims.js.";
-  else if (!mandat) blocker = 'Mandat signé introuvable (pdf/{ref}) — signature requise avant envoi à la compagnie.';
+  else if (!mandat) blocker = 'Contrat signé introuvable (pdf/{ref}) — signature requise avant envoi à la compagnie.';
 
   // Idempotence : déjà envoyé ?
   let alreadySent = false;

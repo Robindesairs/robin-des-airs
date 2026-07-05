@@ -143,7 +143,7 @@ async function fetchMandateStats(yesterdayYmd) {
     if (!yesterdayRecs || !pipelineRecs) return null;
 
     const signedYesterday = yesterdayRecs.filter(
-      r => r.fields['Statut du Dossier Suivi'] === 'Mandat signé'
+      r => r.fields['Statut du Dossier Suivi'] === 'Contrat signé'
     ).length;
 
     let pipelineGross = 0, pipelineRobin = 0;

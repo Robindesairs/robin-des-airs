@@ -24,7 +24,7 @@ const H = {
 };
 
 // Jalons visibles côté client (chemin « heureux »). L'escalade (4) ne s'affiche que si atteinte.
-const TIMELINE = ['Dossier reçu', 'Mandat signé', 'Réclamation envoyée', 'Relances en cours', 'Médiation', 'Tribunal', 'Indemnité versée'];
+const TIMELINE = ['Dossier reçu', 'Contrat signé', 'Réclamation envoyée', 'Relances en cours', 'Médiation', 'Tribunal', 'Indemnité versée'];
 
 // Statut interne (code CRM) → présentation client : étape sur la timeline + libellé + phrase rassurante.
 // terminal: 'refus' | 'abandon' | 'prescrit' sort du chemin heureux (carte dédiée côté front).
@@ -32,7 +32,7 @@ const CLIENT_STATUS = {
   BROUILLON:        { etape: 0, terminal: null,       label: 'Dossier reçu',                desc: 'Nous avons bien reçu votre dossier. Prochaine étape : la signature de votre mandat.' },
   ELIGIBLE:         { etape: 0, terminal: null,       label: 'Dossier en préparation',      desc: 'Votre dossier est éligible. Nous réunissons les pièces avant d’écrire à la compagnie.' },
   SIGNATURE_ATTENTE:{ etape: 0, terminal: null,       label: 'En attente de signature',     desc: 'Il ne manque que votre signature pour lancer la réclamation.' },
-  MANDAT_SIGNE:     { etape: 1, terminal: null,       label: 'Mandat signé',                desc: 'Votre mandat est signé. Nous préparons la réclamation à la compagnie.' },
+  MANDAT_SIGNE:     { etape: 1, terminal: null,       label: 'Contrat signé',                desc: 'Votre mandat est signé. Nous préparons la réclamation à la compagnie.' },
   RECLAMATION_ENVOYEE:{ etape: 2, terminal: null,     label: 'Réclamation envoyée',         desc: 'Votre réclamation a été envoyée à la compagnie. Le délai légal de réponse court — nous relançons si besoin.' },
   LRAR_ENVOYEE:     { etape: 3, terminal: null,       label: 'Mise en demeure envoyée',     desc: 'Sans réponse, nous avons envoyé une mise en demeure formelle à la compagnie.' },
   RELANCE_1:        { etape: 3, terminal: null,       label: 'Relance envoyée',             desc: 'Sans réponse de la compagnie, nous l’avons relancée.' },
