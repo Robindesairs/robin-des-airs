@@ -21,7 +21,18 @@ const { extractEticketMulti: extractEticketMultiLib, pdfToImages: pdfToImagesLib
 // Prénom du signataire, joliment capitalisé pour l'affichage (les noms sont stockés en MAJUSCULES) :
 // « CLIMBIE » → « Climbie », « jean-pierre » → « Jean-Pierre », « n'goran » → « N'Goran ».
 function titleCaseName(x) { return String(x || '').toLowerCase().replace(/(^|[\s\-'])([a-zà-ÿ])/g, (m, sep, c) => sep + c.toUpperCase()); }
-function firstNameOf(s) { const n = (s.passengers && s.passengers[s.mandant_idx || 0] && s.passengers[s.mandant_idx || 0].name) || (s.names && s.names[0]) || ''; if (/^passager/i.test(n)) return ''; return titleCaseName(n.split(/\s+/)[0] || ''); }
+function firstNameOf(s) { const p = (s.passengers && s.passengers[s.mandant_idx || 0]) || {}; const src = p.prenomId || p.name || (s.names && s.names[0]) || ''; if (/^passager/i.test(src)) return ''; return titleCaseName(String(src).trim().split(/\s+/)[0] || ''); }
+// Nom affiché « Prénom Nom » (en Titre, pas en capitales) : depuis les champs SÉPARÉS du passeport
+// (prenomId = « Prénom/Given names », 1er prénom ; nomId = « Nom/Surname »). Fallback : nom combiné.
+function paxDisplayName(p, s, i) {
+  if (p && (p.prenomId || p.nomId)) {
+    const pre = titleCaseName(String(p.prenomId || '').trim().split(/\s+/)[0] || '');
+    const nom = titleCaseName(String(p.nomId || '').trim());
+    const out = [pre, nom].filter(Boolean).join(' ');
+    if (out) return out;
+  }
+  return titleCaseName((p && p.name) || (s && s.names && s.names[i]) || '');
+}
 // Alerte temps réel DÉDIÉE « un pax veut être rappelé » (Telegram + e-mail), distincte du miroir
 // des messages → ne pas la noyer dans le flux. Appelée dès qu'un client demande un humain/rappel.
 function notifyCallbackWanted(phone, s, why) {
@@ -3374,23 +3385,24 @@ async function nextPassport(phone, s, cfg) {
   s.step = 'doc_pass'; await setState(phone, s);
   // Intro au 1er passager : on RAPPELLE d'abord ce que le client touche (le chiffre rassure et justifie
   // l'effort), PUIS on demande la pièce d'identité — qui ne sert qu'à réclamer en son nom auprès de la compagnie.
-  const intro = s.doc_idx === 0 ? L(s, `✅ *Almost there* — last step before we file your claim.\n\n`, `✅ *On y est presque* — dernière étape avant de lancer votre réclamation.\n\n`) : '';
+  const _fn = firstNameOf(s);
+  const intro = s.doc_idx === 0 ? L(s, `✅ *Almost done${_fn ? ', ' + _fn : ''}!* Just one thing left to file your claim.\n\n`, `✅ *Presque fini${_fn ? ', ' + _fn : ''} !* Il ne manque qu'une chose pour lancer votre réclamation.\n\n`) : '';
   // En-tête : passagers déjà traités (✅) ou reportés (⏳) — nom affiché s'il est connu (e-billet / pièce lue)
   let done = '';
   for (let i = 0; i < s.doc_idx; i++) {
     const p = (s.passengers && s.passengers[i]) || {};
-    const nm = p.name || (s.names && s.names[i]) || L(s, `Passenger ${i + 1}`, `Passager ${i + 1}`);
+    const nm = paxDisplayName(p, s, i) || L(s, `Passenger ${i + 1}`, `Passager ${i + 1}`);
     if (isMinorPax(p, s)) { done += L(s, `👶 ${i + 1}. ${nm} — _minor, no ID needed_\n`, `👶 ${i + 1}. ${nm} — _mineur, pièce non requise_\n`); continue; }
     done += p.idReceived ? `✅ ${i + 1}. ${nm}\n` : L(s, `⏳ ${i + 1}. ${nm} — _ID to send_\n`, `⏳ ${i + 1}. ${nm} — _pièce à envoyer_\n`);
   }
   const header = done ? `${done}\n` : '';
   // Nom du passager courant : connu seulement si e-billet scanné (sinon lu sur la pièce). Conditionnel.
-  const curName = (s.passengers && s.passengers[s.doc_idx] && s.passengers[s.doc_idx].name) || (s.names && s.names[s.doc_idx]) || '';
+  const curName = paxDisplayName((s.passengers && s.passengers[s.doc_idx]) || {}, s, s.doc_idx);
   const who = curName ? ` — *${curName}*` : '';
-  const passLine = s.pax > 1 ? L(s, `🛂 *Passenger ${s.doc_idx + 1} of ${s.pax}*${who}\n`, `🛂 *Passager ${s.doc_idx + 1} sur ${s.pax}*${who}\n`) : L(s, `🛂 *ID document*${who}\n`, `🛂 *Pièce d'identité*${who}\n`);
+  const passLine = s.pax > 1 ? L(s, `🛂 *Passenger ${s.doc_idx + 1} of ${s.pax}*${who}\n`, `🛂 *Passager ${s.doc_idx + 1} sur ${s.pax}*${who}\n`) : L(s, `🛂 *Your ID document*${who}\n`, `🛂 *Votre pièce d'identité*${who}\n`);
   return sendButtons(phone, { body: L(s,
-    `${bar('documents')}\n${intro}${header}${passLine}📸 Just send a *photo* of your ID (*passport, national ID or residence permit*) — *no form to fill in*, we read everything *automatically* for you. You save time.\n_🔒 Kept for your file only — robindesairs.eu/politique-confidentialite_`,
-    `${bar('documents')}\n${intro}${header}${passLine}📸 Envoyez simplement une *photo* de votre pièce (*passeport, CNI ou carte de séjour*) — *pas de formulaire à remplir*, on lit tout *automatiquement* pour vous. Vous gagnez du temps.\n_🔒 Conservée pour votre seul dossier — robindesairs.eu/politique-confidentialite_`), buttons: [{ id: 'doc_photo', text: L(s, '📸 Send my photo', '📸 Envoyer ma photo') }, ...(curName ? [] : [{ id: 'doc_saisir', text: L(s, '✍️ Type it in', '✍️ Saisir à la main') }]), { id: 'doc_passer', text: L(s, '⏭️ I\'ll send it later', '⏭️ Je l\'envoie après') }] }, cfg);
+    `${bar('documents')}\n${intro}${header}${passLine}📸 *Just one photo* (passport, national ID or residence permit). We read it all for you — nothing to fill in.\n_🔒 Kept for your file only — robindesairs.eu/politique-confidentialite_`,
+    `${bar('documents')}\n${intro}${header}${passLine}📸 *Une seule photo suffit* (passeport, CNI ou carte de séjour). On lit tout pour vous — rien à remplir.\n_🔒 Conservée pour votre seul dossier — robindesairs.eu/politique-confidentialite_`), buttons: [{ id: 'doc_photo', text: L(s, '📸 Send my photo', '📸 Envoyer ma photo') }, ...(curName ? [] : [{ id: 'doc_saisir', text: L(s, '✍️ Type it in', '✍️ Saisir à la main') }]), { id: 'doc_passer', text: L(s, '⏭️ I\'ll send it later', '⏭️ Je l\'envoie après') }] }, cfg);
 }
 async function askMandant(phone, s, cfg) {
   // 1 seul passager → c'est forcément lui le contact, pas de question → adresse puis finalisation.
