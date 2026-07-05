@@ -68,7 +68,11 @@ exports.handler = async (event) => {
       if (!verifyToken(key, String(q.t || ''))) return J(401, { error: 'lien expiré ou invalide' });
       // Les documents GÉNÉRÉS (mise en demeure / notification de cession) vivent dans le store 'robin-claims'
       // (clé claim/…), pas dans 'pieces'. On route la lecture vers le bon store selon le préfixe de la clé.
-      const fileStore = key.indexOf('claim/') === 0 ? (getBlobStore(event, 'robin-claims') || pieces) : pieces;
+      // Route la lecture vers le bon store selon le préfixe : claim/ → robin-claims (docs générés),
+      // pdf/ ou signed/ → robin-signatures (contrat de cession signé Yousign), sinon pieces (dépôts client).
+      let fileStore = pieces;
+      if (key.indexOf('claim/') === 0) fileStore = getBlobStore(event, 'robin-claims') || pieces;
+      else if (key.indexOf('pdf/') === 0 || key.indexOf('signed/') === 0) fileStore = getBlobStore(event, 'robin-signatures') || pieces;
       const res = await fileStore.getWithMetadata(key, { type: 'arrayBuffer' });
       if (!res || !res.data) return J(404, { error: 'pièce introuvable' });
       let mime = (res.metadata && (res.metadata.mime || res.metadata.contentType)) || 'application/octet-stream';
@@ -222,6 +226,26 @@ exports.handler = async (event) => {
             filename: 'Mise en demeure — notification de cession.pdf',
             ts: genAt || md.generatedAt || '',
             url: `/api/crm-pieces?k=${encodeURIComponent(claimKey)}&t=${encodeURIComponent(makeToken(claimKey))}`,
+            status: '', statusReason: '',
+          });
+        }
+      }
+    } catch (_) {}
+
+    // Contrat de cession SIGNÉ (Yousign) — archivé dans 'robin-signatures' clé pdf/<ref> par le webhook
+    // (signature terminée). Visible dans la liste des documents du dossier, à côté des pièces client.
+    try {
+      const sig = getBlobStore(event, 'robin-signatures');
+      if (sig) {
+        const sigKey = 'pdf/' + ref;
+        const sm = await sig.getMetadata(sigKey);
+        if (sm) {
+          const md = (sm && (sm.metadata || sm)) || {};
+          items.push({
+            key: sigKey, source: 'signe', kind: 'contrat_cession_signe', category: 'CONTRAT_SIGNE', passenger: '',
+            filename: 'Contrat de cession signé.pdf',
+            ts: md.signedAt || '',
+            url: `/api/crm-pieces?k=${encodeURIComponent(sigKey)}&t=${encodeURIComponent(makeToken(sigKey))}`,
             status: '', statusReason: '',
           });
         }
