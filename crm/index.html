@@ -672,6 +672,10 @@ async function crmUnlock() {
       return;
     }
     if (j.needTotp) {
+      // Étape 2 : le code d'accès est validé → on masque le champ mot de passe pour que
+      // la suggestion d'autofill du navigateur (« mots de passe enregistrés ») ne recouvre
+      // plus l'encadré 2FA qui s'affiche juste en dessous.
+      if (input) { input.blur(); input.style.display = 'none'; }
       if (totpWrap) totpWrap.style.display = 'block';
       if (totpInput) { totpInput.focus(); }
       err.textContent = j.error || 'Code de vérification requis (application d’authentification).';
