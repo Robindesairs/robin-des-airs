@@ -63,12 +63,10 @@ function checkCrmAccess(event) {
   // Secret MACHINE (automatismes serveur-à-serveur : cron, agents). Distinct du code d'accès humain.
   const machineToken = (process.env.CRM_MACHINE_TOKEN || '').trim();
   if (provided && machineToken && safeEqualString(provided, machineToken)) return { ok: true, configured: true };
-  // Session navigateur = cookie signé posé APRÈS le login 2FA. C'est le chemin humain.
+  // Session navigateur = cookie signé posé APRÈS le login 2FA. C'est le SEUL chemin humain.
   if (verifyCrmSessionCookie(event)) return { ok: true, configured: true };
-  // ⚠️ PHASE 1 (transitoire) : on accepte ENCORE le code d'accès humain en header, le temps de migrer
-  // tous les automatismes vers CRM_MACHINE_TOKEN. À RETIRER en PHASE 2 pour fermer le backdoor (le code
-  // d'accès ne doit plus suffire à l'API sans le 2FA).
-  if (provided && safeEqualString(provided, cfg.accessCode)) return { ok: true, configured: true };
+  // PHASE 2 : le code d'accès humain seul en header n'ouvre PLUS l'API (backdoor fermé). Il ne sert
+  // qu'au login navigateur (crm-auth), toujours couplé au 2FA. Les automatismes utilisent le token machine.
 
   return { ok: false, error: 'Non autorisé', configured: true };
 }

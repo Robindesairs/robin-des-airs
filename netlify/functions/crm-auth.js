@@ -92,7 +92,10 @@ exports.handler = async (event) => {
     // Session valide via cookie rda_crm OU en-tête X-CRM-Code (résilient quand le
     // navigateur bloque les cookies : iframe/preview, Safari ITP, contexte tiers).
     const hdrCode = (event.headers['x-crm-code'] || event.headers['X-CRM-Code'] || '').trim();
-    const ok = verifyToken(token) || (!!hdrCode && safeEqualString(hdrCode, cfg.accessCode));
+    const machineToken = (process.env.CRM_MACHINE_TOKEN || '').trim();
+    // PHASE 2 : le code d'accès seul n'ouvre plus la session (il ne sert qu'au POST login, couplé au 2FA).
+    // Session = cookie 2FA. Le token machine reste accepté pour les automatismes serveur-à-serveur.
+    const ok = verifyToken(token) || (!!hdrCode && !!machineToken && safeEqualString(hdrCode, machineToken));
     return json(200, { ok, configured: true, insecure: !!cfg.insecure });
   }
 
