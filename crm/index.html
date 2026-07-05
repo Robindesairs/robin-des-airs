@@ -112,7 +112,7 @@
   /* File « À rappeler » (Malik) */
   .rappel-head { font-size:15px; font-weight:700; color:var(--text); margin:4px 0 12px; }
   .rappel-empty { color:var(--text2); font-size:14px; text-align:center; padding:40px 16px; background:var(--bg); border:1px dashed var(--border); border-radius:10px; }
-  .rappel-card { display:flex; align-items:center; gap:12px; background:#fff; border:1px solid var(--border); border-radius:10px; padding:12px 14px; margin-bottom:8px; }
+  .rappel-card { display:flex; flex-wrap:wrap; align-items:center; gap:12px; background:#fff; border:1px solid var(--border); border-radius:10px; padding:12px 14px; margin-bottom:8px; }
   .rappel-card.rappel-urgent { border-left:3px solid var(--green); background:#F0FDF4; }
   .rappel-name { font-weight:700; font-size:14px; color:var(--text); }
   .rappel-sub { font-size:12px; color:var(--text2); margin:2px 0; }
@@ -121,6 +121,20 @@
   .rappel-btn { text-decoration:none; font-size:13px; font-weight:600; padding:8px 12px; border-radius:8px; white-space:nowrap; }
   .rappel-btn.call { background:var(--navy); color:#fff; }
   .rappel-btn.wa { background:#25D366; color:#fff; }
+  .rappel-tel { display:inline-block; font-variant-numeric:tabular-nums; color:var(--navy); font-weight:800; font-size:15px; text-decoration:none; margin:3px 0; }
+  .rappel-tel:hover { text-decoration:underline; }
+  .rappel-qrow { flex-basis:100%; display:flex; flex-wrap:wrap; gap:5px; margin-top:8px; padding-top:8px; border-top:1px solid var(--border); }
+  .rappel-qbtn { font-size:11.5px; font-weight:600; padding:5px 9px; border-radius:7px; border:1px solid var(--border); background:#fff; color:var(--text); cursor:pointer; white-space:nowrap; }
+  .rappel-qbtn:hover { background:#F3F4F6; }
+  .rappel-qbtn.ok { border-color:#A7F3D0; color:#047857; }
+  .rappel-qbtn.danger { border-color:#FECACA; color:#B91C1C; }
+  .rappel-sched { flex-basis:100%; display:flex; gap:6px; align-items:center; margin-top:6px; }
+  .rappel-sched input { padding:5px 8px; border:1px solid var(--border); border-radius:7px; font-size:12px; }
+  .elig-badge { font-size:10.5px; font-weight:700; border-radius:7px; padding:1px 6px; margin-left:6px; vertical-align:middle; }
+  .elig-badge.elig-oui { background:#DCFCE7; color:#047857; }
+  .elig-badge.elig-non { background:#FEE2E2; color:#B91C1C; }
+  .rappel-tag { display:inline-block; font-size:10.5px; font-weight:600; color:#6B7280; background:#F3F4F6; border-radius:6px; padding:1px 6px; margin-left:6px; }
+  .rappel-tag.sched { color:#1D4ED8; background:#EFF4FF; }
   @media(max-width:640px){ .rappel-card{ flex-direction:column; align-items:stretch; } .rappel-btn{ flex:1; text-align:center; } }
   .moratoire-soon { background: #F0FAF5; color: var(--green); font-size: 11px; padding: 3px 8px; border-radius: 5px; }
 
@@ -2103,6 +2117,16 @@ function langueBadge(code){ if(!code) return ''; var l=RAPPEL_LANGS[code]||['�
 // Âge : 1re heure = minutes ; au-delà = heures + minutes (ex. « 1h 15min »).
 function fmtRappelAge(min){ if(min==null||isNaN(min)) return ''; min=Math.max(0,Math.round(min));
   if(min<60) return min+' min'; var h=Math.floor(min/60), m=min%60; return h+'h'+(m?' '+m+'min':''); }
+function eligBadge(e){
+  if(e==='oui') return '<span class="elig-badge elig-oui" title="Qualifié éligible au téléphone">✓ Éligible</span>';
+  if(e==='non') return '<span class="elig-badge elig-non" title="Qualifié non éligible">✗ Non éligible</span>';
+  return '';
+}
+function rappelQBtn(tel,action,label,kind,ref){
+  var cls='rappel-qbtn'+(kind?' '+kind:'');
+  var extra = ref ? (",'"+String(ref).replace(/[^A-Za-z0-9_-]/g,'')+"'") : '';
+  return '<button type="button" class="'+cls+'" onclick="rappelAction(\''+tel+'\',\''+action+'\''+extra+')">'+label+'</button>';
+}
 function renderRappelList(leads){
   var rv=document.getElementById('rappel-view'); if(!rv) return;
   if(!leads.length){ rv.innerHTML='<div class="rappel-empty">✅ Personne à rappeler — tout le monde a été contacté.</div>'; return; }
@@ -2113,22 +2137,59 @@ function renderRappelList(leads){
       var reason = l.wantsCall ? '📞 Rappel demandé' : (l.reason==='mandat_non_signe'?'Mandat non signé':(l.reason==='abandon_avant_signature'?'Abandon avant signature':'Fenêtre 24h fermée'));
       var sub=[l.vol,l.route,l.incident].filter(Boolean).map(escHtml).join(' · ');
       var age=fmtRappelAge(l.ageMin!=null?l.ageMin:(l.ageHours!=null?l.ageHours*60:null));
-      // Numéro en clair (à composer dans OnOff/un poste) + clic qui ouvre la FICHE complète si un
-      // dossier existe pour cette réf → toutes les infos déjà saisies sous les yeux avant d'appeler.
       var telTxt = tel ? '+'+tel.replace(/^33(\d)/,'33 $1') : '';
       var ref = String(l.ref||'');
       var hasDossier = !!(ref && typeof DB!=='undefined' && DB.some(function(d){return d.id===ref;}));
-      var openAttr = hasDossier ? ' onclick="openDetail(\''+ref.replace(/'/g,'')+'\')" style="flex:1;min-width:0;cursor:pointer" title="Ouvrir la fiche complète du dossier"' : ' style="flex:1;min-width:0"';
+      var openAttr = hasDossier ? ' onclick="openDetail(\''+ref.replace(/'/g,'')+'\')" style="flex:1;min-width:180px;cursor:pointer" title="Ouvrir la fiche complète du dossier"' : ' style="flex:1;min-width:180px"';
+      var attempts = (l.callAttempts>0) ? '<span class="rappel-tag" title="Tentatives d\'appel">📞×'+l.callAttempts+'</span>' : '';
+      var sched = l.scheduledAt ? '<span class="rappel-tag sched" title="Rappel programmé">⏰ '+new Date(l.scheduledAt).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+'</span>' : '';
       return '<div class="rappel-card'+(l.wantsCall?' rappel-urgent':'')+'">'
-        +'<div'+openAttr+'><div class="rappel-name">'+nom+(l.pax>1?' ×'+l.pax:'')+langueBadge(l.langue)+(hasDossier?' <span style="font-size:11px;color:var(--green);font-weight:700">↗ fiche</span>':'')+'</div>'
-        +'<div class="rappel-sub">'+(sub||'—')+'</div>'
-        +(telTxt?'<div class="rappel-sub" style="font-variant-numeric:tabular-nums;color:var(--text);font-weight:600">📱 '+telTxt+'</div>':'')
-        +'<div class="rappel-meta">'+reason+(age?' · il y a '+age:'')+(l.montant?' · jusqu’à '+l.montant+' €':'')+'</div></div>'
+        +'<div'+openAttr+'>'
+          +'<div class="rappel-name">'+nom+(l.pax>1?' ×'+l.pax:'')+langueBadge(l.langue)+eligBadge(l.eligibility)+(hasDossier?' <span style="font-size:11px;color:var(--green);font-weight:700">↗ fiche</span>':'')+'</div>'
+          +'<div class="rappel-sub">'+(sub||'—')+'</div>'
+          +(telTxt?'<a class="rappel-tel" href="tel:+'+tel+'" onclick="event.stopPropagation()" title="Appeler ce numéro">📱 '+telTxt+'</a>':'<div class="rappel-sub" style="color:#B91C1C">⚠️ pas de numéro</div>')
+          +'<div class="rappel-meta">'+reason+(age?' · il y a '+age:'')+(l.montant?' · jusqu’à '+l.montant+' €':'')+attempts+sched+'</div>'
+        +'</div>'
         +'<div class="rappel-actions">'
-        +(tel?'<a class="rappel-btn call" href="tel:+'+tel+'">📞 Appeler</a><a class="rappel-btn wa" href="https://wa.me/'+tel+'" target="_blank" rel="noopener">💬 WhatsApp</a>':'')
-        +'</div></div>';
+          +(tel?'<a class="rappel-btn call" href="tel:+'+tel+'">📞 Appeler</a><a class="rappel-btn wa" href="https://wa.me/'+tel+'" target="_blank" rel="noopener">💬</a>':'')
+        +'</div>'
+        +(tel?('<div class="rappel-qrow">'
+          +rappelQBtn(tel,'snooze','⏳ Pas dispo (+3h)','')
+          +rappelQBtn(tel,'injoignable','📵 Injoignable','')
+          +'<button type="button" class="rappel-qbtn" onclick="rappelToggleSchedule(\''+tel+'\')">⏰ Programmer</button>'
+          +rappelQBtn(tel,'done','✓ Rappelé','ok')
+          +rappelQBtn(tel,'eligible','✓ Éligible','ok',ref)
+          +rappelQBtn(tel,'non_eligible','✗ Non éligible','danger',ref)
+          +rappelQBtn(tel,'faux_numero','⌀ Faux n°','')
+          +rappelQBtn(tel,'delete','🗑 Supprimer','danger')
+        +'</div>'
+        +'<div class="rappel-sched" id="sched-'+tel+'" style="display:none">'
+          +'<span style="font-size:12px;color:var(--text2)">Rappeler le :</span> <input type="datetime-local" id="schedin-'+tel+'"> <button type="button" class="rappel-qbtn ok" onclick="rappelDoSchedule(\''+tel+'\')">Programmer</button>'
+        +'</div>'):'')
+      +'</div>';
     }).join('');
 }
+var _rappelBusy=false;
+function rappelActionLabel(a){ return ({snooze:'Reporté (+3h)',schedule:'Rappel programmé',injoignable:'Injoignable noté',done:'Marqué rappelé',faux_numero:'Faux numéro',eligible:'Marqué éligible',non_eligible:'Marqué non éligible',delete:'Supprimé'})[a]||a; }
+function rappelAction(phone, action, ref, until){
+  if(_rappelBusy) return;
+  var confirms={ non_eligible:'Marquer NON ÉLIGIBLE ?\nÇa retire de la liste'+(ref?' et passe le dossier « Non éligible » (purge RGPD 30j).':'.'), delete:'Supprimer cette ligne de la file À rappeler ?', faux_numero:'Marquer comme faux numéro ? (retire de la liste)' };
+  if(confirms[action] && !window.confirm(confirms[action])) return;
+  _rappelBusy=true;
+  var payload={ phone:phone, action:action, agent:(typeof getCrmAgent==='function'?getCrmAgent():'') };
+  if(ref) payload.ref=ref;
+  if(until) payload.until=until;
+  crmApiFetch('/api/lead-action',{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) })
+    .then(function(r){ return r.json().catch(function(){return {};}); })
+    .then(function(j){
+      _rappelBusy=false;
+      if(j&&j.ok){ if(typeof showCrmToast==='function') showCrmToast('✓ '+rappelActionLabel(action)); loadRappelView(); }
+      else { alert('Action échouée'+(j&&j.error?' : '+j.error:'')); }
+    })
+    .catch(function(e){ _rappelBusy=false; alert('Erreur réseau : '+e.message); });
+}
+function rappelToggleSchedule(tel){ var el=document.getElementById('sched-'+tel); if(el) el.style.display=(el.style.display==='none')?'flex':'none'; }
+function rappelDoSchedule(tel){ var inp=document.getElementById('schedin-'+tel); if(!inp||!inp.value){ alert('Choisissez une date et une heure.'); return; } var until=Date.parse(inp.value); if(!until||until<Date.now()){ alert('Choisissez une date/heure future.'); return; } rappelAction(tel,'schedule','',until); }
 
 function renderMetrics(){
   const enCours=DB.filter(d=>!['PAYE','REFUSE_DEFINITIF','ABANDON','PRESCRIT'].includes(d.statut)).length;

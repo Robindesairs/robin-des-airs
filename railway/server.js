@@ -3788,21 +3788,67 @@ app.get('/api/leads-a-rappeler', (req, res) => {
   const out = [];
   for (const [, lead] of LEADS) {
     if (!lead || lead.signed) continue;
+    // Issues d'appel qualifiées au Bureau : on masque les leads traités / faux n° / non éligibles / supprimés,
+    // et ceux « programmés plus tard » tant que l'heure prévue n'est pas atteinte.
+    if (lead.callResolved || lead.badNumber || lead.nonEligible || lead.dismissed) continue;
+    if (lead.snoozeUntil && now < lead.snoozeUntil) continue;
     const anchor = lead.lastClientAt || lead.mandatSentAt || lead.engagedAt || now;
     const windowClosed = lead.windowClosed === true || now - anchor > WIN; // flag posé dès qu'un envoi est rejeté « Invalid Conversation »
-    if (!lead.wantsCall && !windowClosed) continue; // encore relançable gratuitement par le bot → pas (encore) à rappeler
-    const since = lead.wantsCall ? (lead.wantsCallAt || anchor) : anchor;
+    if (!lead.wantsCall && !windowClosed && !lead.snoozeUntil) continue; // encore relançable gratuitement par le bot → pas (encore) à rappeler
+    const since = lead.snoozeUntil ? lead.snoozeUntil : (lead.wantsCall ? (lead.wantsCallAt || anchor) : anchor);
     out.push({
       phone: lead.phone || '', name: lead.name || '', vol: lead.vol || '', route: lead.route || '',
       incident: lead.incident || '', pax: lead.pax || 1, montant: 600 * (lead.pax || 1), ref: lead.ref || '', refCourt: shortRef(lead.ref || ''),
       stage: lead.completed ? 'completed' : 'engaged',
       reason: lead.wantsCall ? 'rappel_demande' : (lead.completed ? 'mandat_non_signe' : 'abandon_avant_signature'),
       langue: lead.langue || '',
+      eligibility: lead.eligibility || '', callAttempts: lead.callAttempts || 0, callNote: lead.callNote || '',
+      scheduledAt: lead.scheduledAt || 0, callAgent: lead.callAgent || '',
       wantsCall: !!lead.wantsCall, since, ageHours: Math.max(0, Math.round((now - since) / 3600000)), ageMin: Math.max(0, Math.round((now - since) / 60000)),
     });
   }
   out.sort((a, b) => (Number(b.wantsCall) - Number(a.wantsCall)) || (a.since - b.since)); // rappels demandés d'abord, puis les plus anciens
   res.json({ ok: true, updatedAt: new Date().toISOString(), total: out.length, leads: out });
+});
+
+// ─── Qualification d'un appel « À rappeler » depuis le Bureau : issue d'appel, éligibilité, programmation,
+//     suppression. Même secret partagé. Persisté (survit au redeploy). L'update Airtable (non éligible) est
+//     géré par le proxy Netlify ; ici on ne touche que l'état du lead. ──
+app.post('/api/lead-action', (req, res) => {
+  const secret = (req.headers['x-secret'] || req.headers['x-wati-secret'] || '').toString().trim();
+  const expected = (process.env.WATI_WEBHOOK_SECRET || process.env.CRM_ACCESS_CODE || '').trim();
+  if (!expected) return res.status(503).json({ ok: false, error: 'service indisponible' });
+  if (!safeEq(secret, expected)) return res.status(401).json({ ok: false, error: 'secret invalide' });
+  const body = req.body || {};
+  const key = leadKey(String(body.phone || ''));
+  const action = String(body.action || '').trim();
+  if (!key) return res.status(400).json({ ok: false, error: 'phone requis' });
+  const lead = LEADS.get(key);
+  if (!lead) return res.status(404).json({ ok: false, error: 'lead introuvable' });
+  const now = Date.now();
+  const patch = {};
+  switch (action) {
+    case 'snooze': // « Pas dispo — rappeler + tard » : défaut +3h
+      patch.snoozeUntil = Number(body.until) || (now + 3 * 3600000); patch.scheduledAt = 0; break;
+    case 'schedule': { // « Programmer un rappel » à une date/heure précise
+      const until = Number(body.until);
+      if (!until || until < now - 60000) return res.status(400).json({ ok: false, error: 'date invalide' });
+      patch.snoozeUntil = until; patch.scheduledAt = until; break;
+    }
+    case 'injoignable':
+      patch.callAttempts = (lead.callAttempts || 0) + 1; patch.lastAttemptAt = now; break;
+    case 'done':         patch.callResolved = true; patch.resolvedAt = now; break; // Rappelé — traité
+    case 'faux_numero':  patch.badNumber = true; patch.resolvedAt = now; break;
+    case 'eligible':     patch.eligibility = 'oui'; break; // reste dans la liste (à faire signer), badge vert
+    case 'non_eligible': patch.nonEligible = true; patch.eligibility = 'non'; patch.resolvedAt = now; break;
+    case 'delete':       patch.dismissed = true; patch.resolvedAt = now; break; // Supprimer la ligne
+    default: return res.status(400).json({ ok: false, error: 'action inconnue: ' + action });
+  }
+  if (body.note != null) patch.callNote = String(body.note).slice(0, 200);
+  if (body.agent) patch.callAgent = String(body.agent).slice(0, 80);
+  LEADS.set(key, { ...lead, ...patch });
+  if (typeof persistLeads === 'function') persistLeads();
+  res.json({ ok: true, phone: key, action, applied: patch });
 });
 
 // ─── Conversations récentes pour le panneau « WhatsApp » du Bureau (proxy via Netlify wa-recent). ──
