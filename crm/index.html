@@ -2630,6 +2630,7 @@ var PIECE_CAT_LABEL = {
   EBILLET: '✈️ E-billet / réservation',
   CERTIFICAT: '📄 Certificat / attestation',
   FRAIS: '💶 Justificatif de frais',
+  MISE_EN_DEMEURE: '⚖️ Mise en demeure / notification de cession',
   AUTRE: '📎 Pièce jointe'
 };
 function serverPieceLabel(p){
@@ -2653,7 +2654,7 @@ function loadServerPieces(ref){
       var list = (j && j.pieces) || [];
       if(!list.length){ wrap.innerHTML = '<p class="crm-doc-empty">Aucune pièce déposée par le client (le client n’a pas encore envoyé ses documents).</p>'; return; }
       wrap.innerHTML = '<p style="font-size:11px;color:var(--text3,#9CA3AF);margin:0 0 8px">☑️ Cochées = incluses dans le « 📦 Dossier complet ». Décochez les pièces à exclure.</p><div class="crm-doc-list">' + list.map(function(p){
-        var src = p.source === 'bot' ? 'WhatsApp' : 'Dépôt web';
+        var src = p.source === 'bot' ? 'WhatsApp' : (p.source === 'genere' ? '⚖️ Généré par Robin des Airs' : 'Dépôt web');
         var when = p.ts ? new Date(p.ts).toLocaleDateString('fr-FR') : '';
         var who = p.passenger ? ' <span class="crm-doc-who">— ' + escHtml(p.passenger) + '</span>' : '';
         var fn = p.filename ? (' · ' + escHtml(p.filename)) : '';

@@ -66,9 +66,12 @@ exports.handler = async (event) => {
     if (q.k) {
       const key = String(q.k).replace(/[^A-Za-z0-9._/-]/g, '').slice(0, 200);
       if (!verifyToken(key, String(q.t || ''))) return J(401, { error: 'lien expiré ou invalide' });
-      const res = await pieces.getWithMetadata(key, { type: 'arrayBuffer' });
+      // Les documents GÉNÉRÉS (mise en demeure / notification de cession) vivent dans le store 'robin-claims'
+      // (clé claim/…), pas dans 'pieces'. On route la lecture vers le bon store selon le préfixe de la clé.
+      const fileStore = key.indexOf('claim/') === 0 ? (getBlobStore(event, 'robin-claims') || pieces) : pieces;
+      const res = await fileStore.getWithMetadata(key, { type: 'arrayBuffer' });
       if (!res || !res.data) return J(404, { error: 'pièce introuvable' });
-      let mime = (res.metadata && res.metadata.mime) || 'application/octet-stream';
+      let mime = (res.metadata && (res.metadata.mime || res.metadata.contentType)) || 'application/octet-stream';
       let buf = Buffer.from(res.data);
       let name = key.split('/').pop() || 'piece';
       // Repli mime : si la métadonnée manque, déduire le type des octets magiques
@@ -202,6 +205,28 @@ exports.handler = async (event) => {
       const bot = await pieces.list({ prefix: 'wa/' + phoneKey + '/' });
       for (const it of (bot.blobs || [])) items.push(await describe(it.key, 'bot'));
     }
+
+    // Document GÉNÉRÉ par Robin des Airs : mise en demeure / notification de cession (store 'robin-claims',
+    // clé claim/<ref>/lrar.pdf) → visible dans la liste des documents du dossier, à côté des pièces client.
+    try {
+      const claims = getBlobStore(event, 'robin-claims');
+      if (claims) {
+        const claimKey = 'claim/' + ref + '/lrar.pdf';
+        const cm = await claims.getMetadata(claimKey);
+        if (cm) {
+          let genAt = '';
+          try { const j = await claims.get('claim/' + ref + '/lrar.json', { type: 'json' }); genAt = (j && j.generatedAt) || ''; } catch (_) {}
+          const md = (cm && (cm.metadata || cm)) || {};
+          items.push({
+            key: claimKey, source: 'genere', kind: 'mise_en_demeure', category: 'MISE_EN_DEMEURE', passenger: '',
+            filename: 'Mise en demeure — notification de cession.pdf',
+            ts: genAt || md.generatedAt || '',
+            url: `/api/crm-pieces?k=${encodeURIComponent(claimKey)}&t=${encodeURIComponent(makeToken(claimKey))}`,
+            status: '', statusReason: '',
+          });
+        }
+      }
+    } catch (_) {}
 
     items.sort((a, b) => String(a.ts).localeCompare(String(b.ts)));
 
