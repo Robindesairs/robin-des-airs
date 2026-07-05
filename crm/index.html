@@ -230,6 +230,12 @@
   .crm-gate-card input[type="password"] { width: 100%; font-size: 15px; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-bottom: 12px; box-sizing: border-box; }
   .crm-gate-card .crm-gate-err { color: var(--red); font-size: 12px; margin-bottom: 10px; display: none; }
   .crm-gate-card .crm-gate-err.show { display: block; }
+  #crm-gate-totp-wrap { margin: 2px 0 14px; padding: 14px; border: 1.5px solid var(--green); border-radius: var(--radius-sm); background: rgba(0,122,76,.06); }
+  #crm-gate-totp-wrap .totp-title { font-size: 13px; font-weight: 800; color: var(--navy); margin-bottom: 4px; }
+  #crm-gate-totp-wrap .totp-help { font-size: 12px; color: var(--text2); margin-bottom: 10px; line-height: 1.4; }
+  .crm-gate-card input#crm-gate-totp { width: 100%; font-size: 24px; letter-spacing: .45em; text-indent: .45em; text-align: center; padding: 12px 10px; border-radius: var(--radius-sm); border: 1.5px solid var(--green); background: #fff; box-sizing: border-box; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--navy); }
+  .crm-gate-card input#crm-gate-totp:focus { outline: none; border-color: var(--navy); box-shadow: 0 0 0 3px rgba(0,122,76,.18); }
+  .crm-gate-card input#crm-gate-totp::placeholder { color: #C7CBD1; letter-spacing: .3em; }
   .crm-main-wrap { display: none; }
   .crm-main-wrap.visible { display: block; }
   .topbar-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
@@ -304,8 +310,10 @@
       <label class="sr-only" for="crm-code">Code d’accès</label>
       <input type="password" id="crm-code" name="crm-code" placeholder="Code d’accès" autocomplete="current-password" required autofocus>
       <div id="crm-gate-totp-wrap" style="display:none">
+        <div class="totp-title">🔐 Vérification en 2 étapes</div>
+        <div class="totp-help">Ouvrez votre application d’authentification (Google Authenticator) et saisissez le code à 6 chiffres.</div>
         <label class="sr-only" for="crm-gate-totp">Code de vérification</label>
-        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" id="crm-gate-totp" name="crm-gate-totp" placeholder="Code à 6 chiffres (app. d’authentification)" autocomplete="one-time-code" style="margin-top:8px">
+        <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="6" id="crm-gate-totp" name="crm-gate-totp" placeholder="000000" autocomplete="one-time-code">
       </div>
       <button type="submit" class="btn btn-primary" style="width:100%">Entrer</button>
     </form>
