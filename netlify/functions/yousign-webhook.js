@@ -215,6 +215,9 @@ exports.handler = async (event) => {
     // Relie la signature au DOSSIER : marqueur signed/<ref> (source de vérité is-signed) + bascule
     // du statut Airtable en « Contrat signé » → le dossier quitte « Signature en attente ».
     if (dossierRef) {
+      // Fire-once : si signed/<ref> existe déjà, le client a déjà été confirmé (les retries Yousign ne re-notifient pas).
+      let alreadyNotified = false;
+      try { const prev = await store.get(`signed/${dossierRef}`, { type: "json" }); alreadyNotified = !!(prev && prev.signedAt); } catch (_) {}
       try { await store.setJSON(`signed/${dossierRef}`, { srId, signedAt: new Date().toISOString() }); } catch (_) {}
       try {
         let idx = (await store.get("__index", { type: "json" })) || [];
@@ -234,6 +237,33 @@ exports.handler = async (event) => {
           }
         }
       } catch (e) { console.warn(`[yousign-webhook] statut Airtable → Contrat signé échec:`, e.message); }
+
+      // Confirmation CLIENT par WhatsApp : le bot (/api/mandat-signed) envoie « 🎉 C'est signé, merci de
+      // votre confiance… » + préférence de versement, STOPPE les relances, arme le rappel pièces et alerte
+      // pour un rappel dans la langue africaine. UNE seule fois (alreadyNotified + garde payoutAskedAt côté bot).
+      if (!alreadyNotified) {
+        try {
+          const botUrl = (process.env.MANDAT_SIGNED_WEBHOOK_URL || "https://robin-bot-v8-production.up.railway.app/api/mandat-signed").trim();
+          // Le bot /api/mandat-signed valide UNIQUEMENT WATI_WEBHOOK_SECRET → on l'envoie en priorité
+          // (MANDAT_SIGNED_WEBHOOK_SECRET = repli legacy, cf. leads-a-rappeler.js / lead-action.js).
+          const botSecret = (process.env.WATI_WEBHOOK_SECRET || process.env.MANDAT_SIGNED_WEBHOOK_SECRET || "").trim();
+          if (botUrl && botSecret) {
+            let phone = "";
+            try {
+              const mandats = netlifyBlobsModule && netlifyBlobsModule.getStore("mandats");
+              const dj = mandats && (await mandats.get("m/" + dossierRef, { type: "json" }));
+              phone = (dj && dj.phone) || "";
+            } catch (_) {}
+            await fetch(botUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ ref: dossierRef, phone, secret: botSecret }),
+            });
+          } else {
+            console.warn("[yousign-webhook] confirmation client WhatsApp SKIP : MANDAT_SIGNED_WEBHOOK_URL/secret absent");
+          }
+        } catch (e) { console.warn(`[yousign-webhook] notif client signé (WhatsApp) échec:`, e.message); }
+      }
     }
   }
 
