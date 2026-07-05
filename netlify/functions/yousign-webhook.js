@@ -186,7 +186,7 @@ exports.handler = async (event) => {
   let dossierRef = "";
   if (eventName === "signature_request.done") {
     // Réf du dossier (posée par yousign-init dans map/<sr_id>) → on sait QUEL dossier mettre à jour.
-    try { const m = await store.getJSON(`map/${srId}`); dossierRef = (m && m.ref) || ""; } catch (_) {}
+    try { const m = await store.get(`map/${srId}`, { type: "json" }); dossierRef = (m && m.ref) || ""; } catch (_) {}
     const baseUrl = (process.env.YOUSIGN_BASE_URL || "https://api.yousign.app/v3").replace(/\/+$/, "");
     const apiKey = process.env.YOUSIGN_API_KEY || "";
     if (apiKey) {
@@ -194,7 +194,7 @@ exports.handler = async (event) => {
         archive = await archiveSignatureRequest(srId, baseUrl, apiKey, store, dossierRef);
         // Index global pour browse rapide depuis bureau.html
         try {
-          let index = (await store.getJSON("__yousign_index")) || [];
+          let index = (await store.get("__yousign_index", { type: "json" })) || [];
           index.unshift({
             sr_id: srId,
             ref: dossierRef,

@@ -113,7 +113,7 @@ exports.handler = async (event) => {
 
       // Mise à jour de l'index des signatures (pour audit)
       let index = [];
-      try { index = await store.getJSON('__index') || []; } catch { index = []; }
+      try { index = await store.get('__index', { type: 'json' }) || []; } catch { index = []; }
       index.unshift({ cert_id: certId, phone_hash: hashString(phone), vol, signed_at: ts });
       if (index.length > 500) index = index.slice(0, 500);
       await store.setJSON('__index', index);

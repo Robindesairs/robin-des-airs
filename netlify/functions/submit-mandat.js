@@ -736,7 +736,7 @@ exports.handler = async (event) => {
       try { await store.setJSON(`signed/${ref}`, { ref, signed_at: ts, cert_id: certId }); } catch (_) {}
 
       let index = [];
-      try { index = await store.getJSON('__index') || []; } catch { index = []; }
+      try { index = await store.get('__index', { type: 'json' }) || []; } catch { index = []; }
       index.unshift({
         cert_id: certId,
         ref,
