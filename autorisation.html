@@ -834,6 +834,17 @@ Chaque signataire ci-dessous <span id="declarant" style="display:none"> </span>d
   <button class="btn-submit" id="btnSub" onclick="submitMandat()">
     Continuer vers la signature électronique →
   </button>
+  <style>
+    @keyframes rdaSpin { to { transform: rotate(360deg); } }
+    .sign-spinner { width:17px;height:17px;border:2.5px solid #CBD5E1;border-top-color:var(--green-deep,#047857);border-radius:50%;display:inline-block;animation:rdaSpin .7s linear infinite;flex:0 0 auto; }
+  </style>
+  <div id="signLoader" style="display:none;margin-top:16px;text-align:center" aria-live="polite">
+    <div style="display:inline-flex;align-items:center;gap:10px;font-size:15px;font-weight:700;color:var(--green-deep,#047857)">
+      <span class="sign-spinner"></span>
+      <span id="signLoaderMsg">Préparation en cours…</span>
+    </div>
+    <p style="font-size:12.5px;color:#6B7280;margin:9px 0 0;line-height:1.55">⏳ Cela prend quelques secondes — <strong>ne fermez pas et ne rechargez pas la page</strong>. Vous allez être redirigé·e automatiquement vers la signature.</p>
+  </div>
 </div>
 <div class="trust-bar">
   <div class="trust-item">🔒 SSL sécurisé</div>
@@ -2319,6 +2330,34 @@ function validate() {
   if(!hs) ok=false;
   return ok;
 }
+// ── Loader de préparation signature : phrases tournantes + « ne quittez pas la page ».
+// Le passage plateforme → génération du mandat → Yousign prend plusieurs secondes (PDF + ~10 appels
+// API) ; sans retour vivant, le client croit à un bug et recharge. On fait défiler des étapes.
+var _signLoaderTimer = null;
+var SIGN_LOADER_MSGS = [
+  'Vérification de vos informations…',
+  'Préparation de votre contrat de cession…',
+  'Génération du document à signer…',
+  'Sécurisation via Yousign (signature électronique)…',
+  'Presque prêt — ne quittez pas la page…'
+];
+function startSignLoader() {
+  var box = document.getElementById('signLoader');
+  var msg = document.getElementById('signLoaderMsg');
+  if (box) box.style.display = 'block';
+  var i = 0;
+  if (msg) msg.textContent = SIGN_LOADER_MSGS[0];
+  if (_signLoaderTimer) clearInterval(_signLoaderTimer);
+  _signLoaderTimer = setInterval(function () {
+    i = (i + 1) % SIGN_LOADER_MSGS.length;
+    if (msg) msg.textContent = SIGN_LOADER_MSGS[i];
+  }, 2200);
+}
+function stopSignLoader() {
+  if (_signLoaderTimer) { clearInterval(_signLoaderTimer); _signLoaderTimer = null; }
+  var box = document.getElementById('signLoader');
+  if (box) box.style.display = 'none';
+}
 // ── SOUMISSION ───────────────────────────────────────────────────
 function submitMandat() {
   if (!validate()) {
@@ -2326,7 +2365,8 @@ function submitMandat() {
     return;
   }
   const btn = document.getElementById('btnSub');
-  btn.disabled=true; btn.innerHTML='⏳ Envoi en cours...';
+  btn.disabled=true; btn.innerHTML='⏳ Préparation en cours…';
+  startSignLoader();
   // ── Données vol selon le mode (rétro-compat : flightNum/flightDate/dep/arr/connecting toujours fournis) ──
   let _flightNum, _flightDate, _depA, _arrA, _connecting, _legs = null;
   if (flightMode === 'connecting') {
@@ -2497,6 +2537,7 @@ function submitMandat() {
     console.error('[Yousign flow] error:', err);
     // Fallback : on affiche l'écran succès même si Yousign a échoué — le CRM
     // a au moins reçu les données. Le client peut nous écrire sur WhatsApp.
+    stopSignLoader();
     btn.disabled = false;
     btn.innerHTML = '⚠ Une erreur est survenue';
     setTimeout(() => {
