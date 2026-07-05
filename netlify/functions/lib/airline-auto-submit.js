@@ -97,13 +97,13 @@ function buildBodyText(data, claim, airline) {
   return [
     'Madame, Monsieur,',
     '',
-    `Je vous informe par la présente avoir été mandaté par ${who} pour gérer sa demande d'indemnisation`,
+    `Robin des Airs, cessionnaire de la créance d'indemnisation de ${who}, vous notifie par la présente sa réclamation`,
     `relative au vol ${claim.vol || '—'} du ${claim.dateVol || '—'} (réf. réservation : ${claim.pnr || '—'}), exploité par ${cieNom},`,
     `suite à ${evenement}.`,
     '',
     `Au titre du Règlement (CE) n° 261/2004, nous réclamons une indemnisation forfaitaire de ${claim.montant} € pour ce passager.`,
     '',
-    "Veuillez trouver ci-joint le Mandat de Représentation signé électroniquement (conforme au Règlement eIDAS n° 910/2014)",
+    "Veuillez trouver ci-joint le contrat de cession de créance signé électroniquement (conforme au Règlement eIDAS n° 910/2014)",
     'ainsi que la mise en demeure détaillée.' + cash,
     '',
     `À défaut de paiement sous ${claim.delaiJours} jours, nous saisirons l'organisme national compétent` +

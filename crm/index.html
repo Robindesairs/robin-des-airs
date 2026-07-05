@@ -2153,7 +2153,7 @@ function renderRappelList(leads){
     + leads.map(function(l){
       var tel=rappelTel(l.phone);
       var nom=escHtml((String(l.name||'').trim())||'(sans nom)');
-      var reason = l.wantsCall ? '📞 Rappel demandé' : (l.reason==='mandat_non_signe'?'Mandat non signé':(l.reason==='abandon_avant_signature'?'Abandon avant signature':'Fenêtre 24h fermée'));
+      var reason = l.wantsCall ? '📞 Rappel demandé' : (l.reason==='mandat_non_signe'?'Cession non signée':(l.reason==='abandon_avant_signature'?'Abandon avant signature':'Fenêtre 24h fermée'));
       var sub=[l.vol,l.route,l.incident].filter(Boolean).map(escHtml).join(' · ');
       var age=fmtRappelAge(l.ageMin!=null?l.ageMin:(l.ageHours!=null?l.ageHours*60:null));
       var telTxt = tel ? '+'+tel.replace(/^33(\d)/,'33 $1') : '';

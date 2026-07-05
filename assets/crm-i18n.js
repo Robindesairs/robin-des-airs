@@ -26,7 +26,7 @@
     BROUILLON: 'Draft',
     ELIGIBLE: 'Eligible',
     SIGNATURE_ATTENTE: 'Awaiting signature',
-    MANDAT_SIGNE: 'Mandate signed',
+    MANDAT_SIGNE: 'Contract signed',
     LRAR_ENVOYEE: 'LRAR sent',
     RELANCE_1: '1st reminder',
     RELANCE_2: '2nd reminder',
@@ -50,7 +50,7 @@
   var PC_EN = {
     EMBARQUEMENT: 'Boarding pass / ticket',
     IDENTITE: 'ID / passport',
-    MANDAT: 'Signed mandate',
+    MANDAT: 'Signed assignment contract',
     RIB: 'Bank details (IBAN)',
     LRAR_PREUVE: 'LRAR proof / AR',
     ECHANGE_COMPAGNIE: 'Airline correspondence',

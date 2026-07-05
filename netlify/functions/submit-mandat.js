@@ -413,7 +413,7 @@ function buildClientMandatEmailContent(record) {
 
   const html = `<!DOCTYPE html><html><body style="font-family:system-ui,sans-serif;color:#111;max-width:560px;line-height:1.55">
 <p>Bonjour <strong>${escapeHtml(hello)}</strong>,</p>
-<p>Nous avons bien enregistré la <strong>signature de votre mandat</strong> de représentation Robin des Airs.</p>
+<p>Nous avons bien enregistré la <strong>signature de votre contrat de cession de créance</strong> Robin des Airs.</p>
 <table style="border-collapse:collapse;margin:16px 0;background:#f8f6f0;border:1px solid #e0dcc8">
 <tr><td style="padding:8px 12px;color:#666;font-size:13px">Référence</td><td style="padding:8px 12px;font-size:13px"><strong>${escapeHtml(ref)}</strong></td></tr>
 <tr><td style="padding:8px 12px;color:#666;font-size:13px">Vol</td><td style="padding:8px 12px;font-size:13px"><strong>${escapeHtml(vol)}</strong> — ${escapeHtml(date)}</td></tr>

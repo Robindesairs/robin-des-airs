@@ -143,7 +143,7 @@ function genererMandatPdf(record) {
     ensure(54);
     doc.fillColor(NAVY).fontSize(8.5).font('Helvetica-Bold').text('Journal de preuve', left, doc.y); doc.moveDown(0.2);
     [
-      record.link_sent_at ? `Mandat transmis au signataire — ${fmtDate(record.link_sent_at)}` : null,
+      record.link_sent_at ? `Contrat de cession transmis au signataire — ${fmtDate(record.link_sent_at)}` : null,
       `Document consulté et signé par le Cédant — ${fmtDate(record.signed_at)}`,
       `Acceptation du Cessionnaire (Robin des Airs) — ${fmtDate(record.mandataireAcceptedAt || record.signed_at)}`,
     ].filter(Boolean).forEach((e) => {
@@ -189,7 +189,7 @@ function genererMandatPdf(record) {
     doc.moveDown(0.4);
 
     // ── Texte intégral du mandat (extrait de la page signée — « ce que vous signez = ce que vous recevez ») ──
-    sectionTitle('Texte intégral du mandat');
+    sectionTitle('Texte intégral du contrat de cession');
     (MANDAT_ARTICLES.items || []).forEach((it) => {
       if (it.type === 'table') { clauseTable(it.rows); return; }
       clauseTitle(it.title);
@@ -274,7 +274,7 @@ function genererMandatPdf(record) {
     doc.fillColor(NEON_B).fontSize(8).font('Helvetica-Bold')
       .text('Robin des Airs — robindesairs.eu', left, piedY + 10, { align: 'center', width: contentW, lineBreak: false });
     doc.fillColor('white').fontSize(7.5).font('Helvetica')
-      .text('Copie du mandat signé électroniquement — à conserver. Suivi : robindesairs.eu/suivi-dossier.html', left, piedY + 24, { align: 'center', width: contentW, lineBreak: false });
+      .text('Copie du contrat de cession signé électroniquement — à conserver. Suivi : robindesairs.eu/suivi-dossier.html', left, piedY + 24, { align: 'center', width: contentW, lineBreak: false });
 
     doc.end();
   });
