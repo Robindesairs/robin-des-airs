@@ -1088,6 +1088,25 @@ function crmClientEmailForRef(ref) {
   return String(ref).trim().toLowerCase() + '@robindesairs.eu';
 }
 
+// ── Intégration Gmail (niveau 1 : liens contextuels, zéro OAuth) ──────────────
+// Ouvre Gmail dans un onglet, ciblé sur le compte du bureau. Changez le compte ici si besoin.
+var CRM_GMAIL_ACCOUNT = 'expert@robindesairs.eu';
+function crmGmailBase(){ return 'https://mail.google.com/mail/u/' + encodeURIComponent(CRM_GMAIL_ACCOUNT) + '/'; }
+function crmGmailSearch(ref){
+  ref = String(ref || '').trim(); if (!ref) return;
+  var q = encodeURIComponent(ref + ' OR ' + ref.toLowerCase() + '@robindesairs.eu');
+  window.open(crmGmailBase() + '#search/' + q, '_blank', 'noopener');
+}
+function crmGmailCompose(ref, toEmail){
+  ref = String(ref || '').trim();
+  var d = (typeof DB !== 'undefined' && DB.find) ? (DB.find(function(x){ return x.id === ref; }) || {}) : {};
+  var who = ((d.prenom || '') + ' ' + (d.nom || '')).trim();
+  var su = encodeURIComponent('Dossier ' + ref + (who ? (' — ' + who) : ''));
+  var body = encodeURIComponent('Réf. dossier : ' + ref + '\n\n');
+  var url = crmGmailBase() + '?view=cm&fs=1&su=' + su + '&body=' + body + (toEmail ? ('&to=' + encodeURIComponent(toEmail)) : '');
+  window.open(url, '_blank', 'noopener');
+}
+
 function crmDbHasRef(id) {
   return DB.some(function (x) {
     return x.id === id;
@@ -2385,6 +2404,12 @@ function openDetail(id){
       <button type="button" class="btn btn-sm" onclick="crmMarkLrarSent('${id}')">📮 Marquer « LRAR envoyée » → armer relances</button>
     </div>
     <p style="font-size:11px;color:#9CA3AF;margin:0 0 4px;line-height:1.5">Génère le PDF depuis Airtable (synchronisez le dossier au préalable). « LRAR envoyée » fixe la date du jour et arme les jalons J+15 / J+30 / J+62. <strong>Aucun envoi automatique</strong> : vous validez et expédiez vous-même.</p>
+    <div class="section-title">📧 Emails (Gmail)</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px">
+      <button type="button" class="btn btn-sm" onclick="crmGmailSearch('${id}')">📥 Emails de ce dossier</button>
+      <button type="button" class="btn btn-sm" onclick="crmGmailCompose('${id}')">✉️ Nouvel email (réf pré-remplie)</button>
+    </div>
+    <p style="font-size:11px;color:#9CA3AF;margin:0 0 4px;line-height:1.5">Ouvre Gmail dans un onglet. « Emails de ce dossier » recherche la référence <strong>${id}</strong> — mettez la réf dans l’objet de vos échanges compagnie/client pour les retrouver ici en un clic.</p>
     <div class="section-title">Pièces jointes (${(d.pieces||[]).length})</div>
     <p style="font-size:12px;color:#6B7280;margin-bottom:10px">Vue synthèse — détail et ajout dans l’onglet <strong>Pièces</strong> ou bouton <strong>Pièces du dossier</strong> en haut.</p>
     ${(d.pieces||[]).length?`<ul style="font-size:13px;line-height:1.6;margin:0;padding-left:18px;color:#1A1A2E">${d.pieces.map(p=>`<li>${escHtml(p.filename)} <span style="color:#9CA3AF">(${PIECES_CAT_LABELS[p.cat]||p.cat})</span></li>`).join('')}</ul>`:'<p style="font-size:12px;color:#9CA3AF">Aucune pièce répertoriée.</p>'}
