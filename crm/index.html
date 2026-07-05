@@ -3293,7 +3293,15 @@ function crmDossierSignature(d) {
       return e;
     });
   }
-  return JSON.stringify(copy);
+  return crmStableStringify(copy);
+}
+
+// JSON canonique : clés TRIÉES à tous les niveaux → deux dossiers aux mêmes données mais à l'ordre de
+// clés différent (local navigateur vs cloud serveur) donnent la MÊME signature. Corrige les faux conflits.
+function crmStableStringify(v) {
+  if (v === null || typeof v !== 'object') return JSON.stringify(v);
+  if (Array.isArray(v)) return '[' + v.map(crmStableStringify).join(',') + ']';
+  return '{' + Object.keys(v).sort().map(function (k) { return JSON.stringify(k) + ':' + crmStableStringify(v[k]); }).join(',') + '}';
 }
 
 async function fetchLatestCloudDb() {
