@@ -3476,8 +3476,8 @@ async function finaliser(phone, s, cfg) {
   // sur le contrat.
   const _fnf = firstNameOf(s);
   await send(phone, L(s,
-    `${bar('done')}\n✅ *Your contract is ready${_fnf ? ', ' + _fnf : ''}!* We pre-filled it — read it, then sign (2 min) 👇\n${s.mandat_url}\n\n${montantLine(s)}${minorNote}${docsNote}\n✅ €0 upfront · 25% on success (40% if court action, legal fees included) · no bank details.\n💸 Paid even without a EU bank account: bank transfer, Wave, Orange Money or MTN MoMo.\n${STOP_FOOTER}`,
-    `${bar('done')}\n✅ *Votre contrat est prêt${_fnf ? ', ' + _fnf : ''} !* On l'a pré-rempli — relisez-le, puis signez (2 min) 👇\n${s.mandat_url}\n\n${montantLine(s)}${minorNote}${docsNote}\n✅ 0 € d'avance · 25 % au succès en amiable (40 % si procès, frais d'avocat inclus) · aucune info bancaire.\n💸 Payé même sans compte bancaire en Europe : virement, Wave, Orange Money ou MTN MoMo.\n${STOP_FOOTER}`), cfg);
+    `${bar('done')}\n✅ *All set${_fnf ? ', ' + _fnf : ''}!* Your file — flight ${s.vol || '—'} (${s.compagnie || '—'}). We recover up to *€${perPaxOf(s)} per passenger*.\n\n👉 *Read your contract and sign* (2 min):\n${s.mandat_url}\n\n✅ €0 upfront · up to *75% in your pocket* · no bank details.\n💸 Paid even without a EU bank account: bank transfer, Wave, Orange Money, MoMo.${minorNote}${docsNote}\n${STOP_FOOTER}`,
+    `${bar('done')}\n✅ *C'est prêt${_fnf ? ', ' + _fnf : ''} !* Votre dossier — vol ${s.vol || '—'} (${s.compagnie || '—'}). On récupère jusqu'à *${perPaxOf(s)} € par personne*.\n\n👉 *Relisez votre contrat et signez* (2 min) :\n${s.mandat_url}\n\n✅ 0 € d'avance · jusqu'à *75 % dans votre poche* · aucune info bancaire.\n💸 Payé même sans compte en Europe : virement, Wave, Orange Money, MoMo.${minorNote}${docsNote}\n${STOP_FOOTER}`), cfg);
   // CRM : la fiche Airtable est désormais créée par la synchro DIRECTE (storeDossierDurable →
   // /api/dossier-store → syncNewDossierToAirtable, statut « Signature en attente »). Le webhook
   // Make ci-dessous n'est plus qu'un hook OPTIONNEL pour d'éventuelles automatisations externes :
