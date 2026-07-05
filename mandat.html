@@ -1254,6 +1254,10 @@ function applyLegacyUrlParams() {
     setIfEmpty('fn', fn);
     setIfEmpty('ln', ln);
   }
+  // Params directs prénom/nom (render-mandat-pdf envoie fn + n) → préserve l'édition EXACTE du client
+  // (sinon le nom corrigé était ignoré au profit du dossier stocké, comme l'était l'adresse).
+  if (P.get('fn')) setIfEmpty('fn', P.get('fn'));
+  if (P.get('n')) setIfEmpty('ln', P.get('n'));
   const phone = P.get('phone') || P.get('whatsapp') || P.get('wa') || P.get('waId');
   if (phone && !(document.getElementById('wa-national')?.value || '').trim()) setWaFull(decodeURIComponent(phone));
   setIfEmpty('addr', P.get('address') || '');
@@ -2403,11 +2407,11 @@ function submitMandat() {
         r: payload.ref,
         n: payload.lastName,
         fn: payload.firstName,
-        v: payload.flightNum,
-        d: payload.flightDate,
+        vol: payload.flightNum,
+        date: payload.flightDate,
         dep: payload.depAirport,
         arr: payload.arrAirport,
-        c: payload.airline,
+        compagnie: payload.airline,
         pnr: payload.pnr,
         email: payload.email,
         phone: payload.whatsapp,
