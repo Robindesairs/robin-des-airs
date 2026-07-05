@@ -1090,7 +1090,7 @@ async function _ocrBoardingClaude(media) {
           { type: 'text', text: _OCR_BOARDING_PROMPT },
         ] }] }),
     });
-    if (!res.ok) return null;
+    if (!res.ok) { claudeDownAlert(res); return null; }
     const data = await res.json();
     const txt = (data.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('\n');
     const m = txt.match(/\{[\s\S]*\}/);
@@ -1344,7 +1344,7 @@ async function _ocrPassportClaude(media) {
         ] }],
       }),
     });
-    if (!res.ok) return null;
+    if (!res.ok) { claudeDownAlert(res); return null; }
     const data = await res.json();
     const txt = (data.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('\n');
     const m = txt.match(/\{[\s\S]*\}/);
@@ -1392,6 +1392,19 @@ function warnOpenAIClassifyOff() {
   console.error('🔴 OPENAI_API_KEY absente → lecture/classification automatique des documents DÉSACTIVÉE (pièces acceptées mais non lues).');
   try { if (typeof notifyOwnerWhatsApp === 'function') notifyOwnerWhatsApp('', '🔴 Bot: OPENAI_API_KEY absente → lecture auto des pièces (passeport / e-billet / carte / reçus) DÉSACTIVÉE. Les documents sont reçus mais NON classés/lus. Configure la clé sur Railway.').catch(() => {}); } catch (_) {}
 }
+// Garde-fou OCR : quand Claude (Anthropic) tombe pour CRÉDIT/QUOTA/CLÉ (400/401/402/429), on prévient
+// l'owner par WhatsApp (throttle max 1 / 3 h). Le bot continue en DÉGRADÉ sur gpt-4o, mais l'équipe sait
+// tout de suite qu'il faut recharger — au lieu d'une dégradation silencieuse (cas du 05/07).
+let _claudeDownAt = 0;
+function claudeDownAlert(res) {
+  const st = res && res.status;
+  if (st !== 400 && st !== 401 && st !== 402 && st !== 429) return; // seulement erreurs « compte » (pas flou/timeout)
+  const now = Date.now();
+  if (_claudeDownAt && (now - _claudeDownAt) < 3 * 3600 * 1000) return; // 1 alerte / 3 h max
+  _claudeDownAt = now;
+  console.error(`🔴 Claude (Anthropic) indisponible — HTTP ${st} (souvent crédit épuisé). OCR bascule sur gpt-4o (dégradé).`);
+  try { notifyOwnerWhatsApp('', `🔴 Bot : l'OCR *Claude (Anthropic)* est tombé (HTTP ${st} — souvent crédit épuisé). La lecture des pièces bascule sur *gpt-4o* : dégradée, surtout passeports non-UE / MRZ.\n➜ Recharge : console.anthropic.com → Plans & Billing.`).catch(() => {}); } catch (_) {}
+}
 const _CLASSIFY_PROMPT = `Tu classes une photo/capture envoyée par un passager, et tu juges sa QUALITÉ (une pièce illisible peut être refusée par la compagnie). Réponds UNIQUEMENT en JSON :
 {"kind":"identite|voyage|frais|autre","nom":"","voyageType":"ebooking|carte|","lisible":true,"probleme":"","montant":null,"devise":"","categorie":"","etablissement":"","num_ticket":"","date":"","ville":""}
 - "identite" : passeport, carte nationale d'identité (CNI), titre de séjour. Mets dans "nom" le PRÉNOM puis le NOM de famille, dans cet ordre (ex : "AMINATA DIALLO"), en MAJUSCULES.
@@ -1437,7 +1450,7 @@ async function _classifyDocClaude(media) {
           { type: 'text', text: _CLASSIFY_PROMPT },
         ] }] }),
     });
-    if (!res.ok) return null;
+    if (!res.ok) { claudeDownAlert(res); return null; }
     const data = await res.json();
     const txt = (data.content || []).filter((c) => c.type === 'text').map((c) => c.text).join('\n');
     const m = txt.match(/\{[\s\S]*\}/);
