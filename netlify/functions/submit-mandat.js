@@ -81,6 +81,8 @@ function airtableCfg() {
     fPiecePasseport: (process.env.AIRTABLE_F_PIECE_PASSEPORT || 'fldCTsCendE7smLCG').trim(), // « Copie Passeport / CI »
     fPieceCarte: (process.env.AIRTABLE_F_PIECE_CARTE || 'flddIxlejoKprr2Ok').trim(), // « Carte d'embarquement »
     statutSuiviSigne: (process.env.AIRTABLE_STATUT_SUIVI_MANDAT_SIGNE || 'Contrat signé').trim(),
+    // Statut posé AU CLIC (avant la vraie signature Yousign) : le client va signer, il n'a pas encore signé.
+    statutSignatureAttente: (process.env.AIRTABLE_STATUT_SIGNATURE_ATTENTE || 'Signature en attente').trim(),
   };
 }
 
@@ -133,7 +135,7 @@ async function patchAirtableSigned(record) {
       recs = data.records || [];
     }
   }
-  const signedNote = `Contrat signé le ${record.signed_at || new Date().toISOString()} (cert ${record.cert_id || '—'})`;
+  const signedNote = `Contrat soumis pour signature le ${record.signed_at || new Date().toISOString()} (cert ${record.cert_id || '—'})`;
   const addr = (record.address || '').trim();
   const itin = [record.depAirport, record.arrAirport].filter(Boolean).join(' → ');
   const incidentLabel = INCIDENT_AT[record.incident] || record.incident || '';
@@ -149,7 +151,9 @@ async function patchAirtableSigned(record) {
   ].filter(Boolean).join(' | ');
 
   const common = {};
-  if (cfg.fStatutSuivi && cfg.statutSuiviSigne) common[cfg.fStatutSuivi] = cfg.statutSuiviSigne;
+  // Au CLIC, le client n'a PAS encore signé sur Yousign → « Signature en attente ». Le passage à
+  // « Contrat signé » se fera à la VRAIE signature (webhook Yousign), pas ici (fin de la fausse « signé »).
+  if (cfg.fStatutSuivi && cfg.statutSignatureAttente) common[cfg.fStatutSuivi] = cfg.statutSignatureAttente;
   if (cfg.fCompagnie && record.airline) common[cfg.fCompagnie] = record.airline;
   if (cfg.fVol && record.flightNum) common[cfg.fVol] = record.flightNum;
   const fd = flightDateForAirtable(record.flightDate);
@@ -348,11 +352,11 @@ function buildTeamMandatEmailContent(record) {
     `<tr><td style="padding:6px 12px 6px 0;color:#666;font-size:13px;vertical-align:top">${k}</td><td style="padding:6px 0;font-size:13px"><strong>${escapeHtml(v)}</strong></td></tr>`
   ).join('');
   const html = `<!DOCTYPE html><html><body style="font-family:system-ui,sans-serif;color:#111;max-width:560px">
-<p style="margin:0 0 16px">Un contrat de cession de créance vient d’être <strong>signé</strong> sur robindesairs.eu.</p>
+<p style="margin:0 0 16px">Un contrat de cession de créance vient d’être <strong>soumis pour signature</strong> sur robindesairs.eu (signature Yousign en cours).</p>
 <table style="border-collapse:collapse">${htmlRows}</table>
 <p style="margin:20px 0 0;font-size:12px;color:#888">Robin des Airs — notification automatique</p>
 </body></html>`;
-  return { subject: `Contrat signé — ${record.ref || record.cert_id || 'dossier'} — ${name}`, text, html };
+  return { subject: `Contrat soumis (signature en cours) — ${record.ref || record.cert_id || 'dossier'} — ${name}`, text, html };
 }
 
 function buildClientMandatEmailContent(record) {
@@ -578,8 +582,8 @@ async function sendMandatWhatsappCopy(record, pdfBuffer) {
   const suffixe = String(ref).replace(/[^A-Za-z0-9]/g, '').slice(-4).toUpperCase();
   const fileName = suffixe ? `Contrat-Cession-Robin-des-Airs-${suffixe}.pdf` : 'Contrat-Cession-Robin-des-Airs.pdf';
   const caption = (record.lang === 'en')
-    ? `✅ Contract signed — thank you for your trust! (ref. ${ref})\n\nYour case is now in the hands of our team. Here is your copy to keep.\n\n📎 *To process your case as fast as possible*, for each passenger we need:\n• your *boarding pass* or your *e-ticket* (booking confirmation)\n• your *passport* (or national ID / residence permit)\n\n💶 *Any costs because of the flight?* Meals, hotel, taxi… send the receipts (here on WhatsApp or via your secure link) and we'll get them reimbursed *on top* of your compensation (Art. 9).\n\n✅ *If you've already sent everything, ignore this message* — nothing to do on your side. Once your file is *checked, we get back to you*.\nNot sent yet? Send them here, or upload them in one go via your *secure link* 👉 https://robindesairs.eu/depot-en-ligne.html?r=${ref}\n\n📞 *An expert will call you* from *+33 7 56 86 36 30*. Save this number as "*Robin des Airs*" to recognise our call. 🏹\n\nThe Robin des Airs team`
-    : `✅ Contrat signé — merci de votre confiance ! (réf. ${ref})\n\nVotre dossier passe entre les mains de notre équipe. Voici votre copie à conserver.\n\n📎 *Pour traiter votre dossier au plus vite*, il nous faut, pour chaque passager :\n• votre *carte d'embarquement* ou votre *e-billet* (confirmation de réservation)\n• votre *passeport* (ou CNI / carte de séjour)\n\n💶 *Des frais à cause du vol ?* Repas, hôtel, taxi… envoyez les reçus (ici sur WhatsApp ou sur votre lien sécurisé), on les fait rembourser *en plus* de votre indemnité (art. 9).\n\n✅ *Si vous avez déjà tout envoyé, ignorez ce message* — rien à faire de votre côté. Une fois votre dossier *vérifié, nous revenons vers vous*.\nPas encore envoyé ? Transmettez-les ici, ou déposez-les en une fois sur votre *lien sécurisé* 👉 https://robindesairs.eu/depot-en-ligne.html?r=${ref}\n\n📞 *Un expert va vous appeler* depuis le *+33 7 56 86 36 30*. Enregistrez ce numéro sous « *Robin des Airs* » pour reconnaître notre appel. 🏹\n\nL'équipe Robin des Airs`;
+    ? `📄 *One last step* — finalise your *signature* on the Yousign screen that just opened (ref. ${ref}). Without it, we can't start your claim.\n\nAttached: your contract to review.\n\n📎 *To process your case as fast as possible*, for each passenger we need:\n• your *boarding pass* or your *e-ticket* (booking confirmation)\n• your *passport* (or national ID / residence permit)\n\n💶 *Any costs because of the flight?* Meals, hotel, taxi… send the receipts (here on WhatsApp or via your secure link) and we'll get them reimbursed *on top* of your compensation (Art. 9).\n\n✅ *If you've already sent everything, ignore this message* — nothing to do on your side. Once your file is *checked, we get back to you*.\nNot sent yet? Send them here, or upload them in one go via your *secure link* 👉 https://robindesairs.eu/depot-en-ligne.html?r=${ref}\n\n📞 *An expert will call you* from *+33 7 56 86 36 30*. Save this number as "*Robin des Airs*" to recognise our call. 🏹\n\nThe Robin des Airs team`
+    : `📄 *Plus qu'une étape* — finalisez votre *signature* sur l'écran Yousign qui vient de s'ouvrir (réf. ${ref}). Sans elle, on ne peut pas lancer votre réclamation.\n\nEn pièce jointe : votre contrat à relire.\n\n📎 *Pour traiter votre dossier au plus vite*, il nous faut, pour chaque passager :\n• votre *carte d'embarquement* ou votre *e-billet* (confirmation de réservation)\n• votre *passeport* (ou CNI / carte de séjour)\n\n💶 *Des frais à cause du vol ?* Repas, hôtel, taxi… envoyez les reçus (ici sur WhatsApp ou sur votre lien sécurisé), on les fait rembourser *en plus* de votre indemnité (art. 9).\n\n✅ *Si vous avez déjà tout envoyé, ignorez ce message* — rien à faire de votre côté. Une fois votre dossier *vérifié, nous revenons vers vous*.\nPas encore envoyé ? Transmettez-les ici, ou déposez-les en une fois sur votre *lien sécurisé* 👉 https://robindesairs.eu/depot-en-ligne.html?r=${ref}\n\n📞 *Un expert va vous appeler* depuis le *+33 7 56 86 36 30*. Enregistrez ce numéro sous « *Robin des Airs* » pour reconnaître notre appel. 🏹\n\nL'équipe Robin des Airs`;
   try {
     return await watiSendFile(record.whatsapp, pdfBuffer, fileName, caption);
   } catch (e) {
