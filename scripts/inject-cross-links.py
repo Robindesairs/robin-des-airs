@@ -53,7 +53,7 @@ LINKS = {
         ("comparatif-10-hubs-afrique-ce261-fiabilite-retards", "Comparatif des 10 hubs vers l'Afrique"),
         ("ce261-compagnies-non-eu-emirates-turkish-qatar", "CE 261 et compagnies non-UE"),
     ],
-    "air-cote-divoire-vol-retarde-indemnite.html": [
+    "air-cote-ivoire-vol-retarde-indemnite.html": [
         ("comparatif-10-hubs-afrique-ce261-fiabilite-retards", "Comparatif des 10 hubs vers l'Afrique"),
         ("guide-correspondance-cdg-vers-afrique-ce261", "Guide correspondance CDG vers l'Afrique"),
     ],
@@ -94,19 +94,19 @@ LINKS = {
 
     # === Articles "correspondance/escale" existants → meta GOTCHA ===
     "correspondance-manquee-indemnite-vol.html": [
-        ("correspondance-ratee-a-qui-reclamer-ce261-folkerts", "Correspondance ratée : à qui réclamer ? (arrêt Folkerts)"),
+        ("correspondance-manquee-indemnite-vol", "Correspondance ratée : à qui réclamer ? (arrêt Folkerts)"),
         ("billet-unique-vs-billets-separes-ce261-correspondance", "Billet unique vs billets séparés"),
         ("comparatif-10-hubs-afrique-ce261-fiabilite-retards", "Comparatif des 10 hubs vers l'Afrique"),
     ],
-    "arret-folkerts-correspondance-cjue.html": [
-        ("correspondance-ratee-a-qui-reclamer-ce261-folkerts", "Application pratique de l'arrêt Folkerts : à qui réclamer"),
+    "arret-folkerts-heure-arrivee-ce261.html": [
+        ("correspondance-manquee-indemnite-vol", "Application pratique de l'arrêt Folkerts : à qui réclamer"),
         ("billet-unique-vs-billets-separes-ce261-correspondance", "Billet unique vs billets séparés"),
     ],
     "arret-sturgeon-3h-retard-jurisprudence.html": [
-        ("correspondance-ratee-a-qui-reclamer-ce261-folkerts", "Arrêt Folkerts : la correspondance ratée"),
+        ("correspondance-manquee-indemnite-vol", "Arrêt Folkerts : la correspondance ratée"),
     ],
     "code-share-air-france-klm-quelle-compagnie-recours.html": [
-        ("correspondance-ratee-a-qui-reclamer-ce261-folkerts", "Correspondance ratée : à qui réclamer ?"),
+        ("correspondance-manquee-indemnite-vol", "Correspondance ratée : à qui réclamer ?"),
         ("billet-unique-vs-billets-separes-ce261-correspondance", "Billet unique vs billets séparés"),
     ],
 }
