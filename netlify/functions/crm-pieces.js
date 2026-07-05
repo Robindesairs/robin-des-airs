@@ -128,6 +128,21 @@ exports.handler = async (event) => {
     const ref = String(q.r || q.ref || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 64);
     if (!ref) return J(400, { error: 'r (référence) requis' });
 
+    // ── Mode COMPTE SEUL (pour la liste du CRM) : nb de pièces = dépôt web (p/<ref>/) + WhatsApp
+    // (wa/<téléphone>/, téléphone résolu via le dossier). Léger : pas d'appel Airtable (purge). ──
+    if (q.countOnly === '1') {
+      let phoneKey = '';
+      try {
+        const mandats = getBlobStore(event, 'mandats');
+        const dossier = mandats && (await mandats.get('m/' + ref, { type: 'json' }));
+        if (dossier && dossier.phone) phoneKey = String(dossier.phone).replace(/\D/g, '');
+      } catch (_) {}
+      let count = 0;
+      try { const web = await pieces.list({ prefix: 'p/' + ref + '/' }); count += (web.blobs || []).length; } catch (_) {}
+      if (phoneKey) { try { const bot = await pieces.list({ prefix: 'wa/' + phoneKey + '/' }); count += (bot.blobs || []).length; } catch (_) {} }
+      return J(200, { ref, count });
+    }
+
     // Statuts de qualification (valider/rejeter) — doc unique par dossier (status/<ref>).
     let statusMap = {};
     try { statusMap = (await pieces.get('status/' + ref, { type: 'json' })) || {}; } catch (_) {}

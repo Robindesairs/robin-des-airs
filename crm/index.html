@@ -274,6 +274,7 @@
   .crm-piece-add { background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: var(--radius-sm); padding: 14px; margin-top: 8px; }
   .crm-piece-add-title { font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 10px; }
   .doc-count-pill { display: inline-block; min-width: 22px; text-align: center; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 10px; background: #E0E7FF; color: #3730A3; }
+  .doc-count-pill.has-pieces { background: #DCFCE7; color: #047857; }
 
   /* ── Agent (traçabilité) ── */
   .crm-agent-strip label { font-size: 10px; font-weight: 700; letter-spacing: .4px; text-transform: uppercase; color: rgba(255,255,255,.65); display: block; margin-bottom: 4px; }
@@ -2190,9 +2191,51 @@ function render(){
       <td>${morCell}</td>
       <td>${statutCell}</td>
       <td class="prio-${d.priorite}">${d.priorite}</td>
-      <td><span class="doc-count-pill" title="Pièces jointes">${(d.pieces||[]).length}</span></td>
+      <td><span class="doc-count-pill" data-piece-ref="${d.depotRef||d.id}" title="Pièces client (WhatsApp + dépôt web)">…</span></td>
     </tr>`;
   }).join('');
+  crmEnrichPieceCounts();
+}
+
+// Compte réel des pièces (serveur : dépôt web p/<ref>/ + WhatsApp wa/<tel>/) affiché dans la liste.
+// La pastille montre « … » puis se remplit en async. Cache par réf + concurrence limitée pour ne pas
+// spammer l'API à chaque filtre/recherche.
+var _pieceCountCache = Object.create(null);
+function applyPieceCount(ref, value, isErr){
+  var pills = document.querySelectorAll('.doc-count-pill[data-piece-ref]');
+  for(var k=0;k<pills.length;k++){
+    if(pills[k].getAttribute('data-piece-ref') !== ref) continue;
+    if(isErr){ if(pills[k].textContent==='…') pills[k].textContent='?'; }
+    else { pills[k].textContent = value; if(value>0) pills[k].classList.add('has-pieces'); }
+  }
+}
+function crmEnrichPieceCounts(){
+  var pills = document.querySelectorAll('.doc-count-pill[data-piece-ref]');
+  var refs = [], seen = Object.create(null);
+  for(var k=0;k<pills.length;k++){
+    var ref = pills[k].getAttribute('data-piece-ref');
+    if(!ref){ pills[k].textContent='0'; continue; }
+    if(_pieceCountCache[ref] != null){ applyPieceCount(ref, _pieceCountCache[ref]); continue; }
+    if(!seen[ref]){ seen[ref]=1; refs.push(ref); }
+  }
+  var i = 0, active = 0, MAX = 5;
+  function pump(){
+    while(active < MAX && i < refs.length){
+      var ref = refs[i++]; active++;
+      (function(ref){
+        crmApiFetch('/api/crm-pieces?countOnly=1&r=' + encodeURIComponent(ref))
+          .then(function(r){ return r.ok ? r.json() : null; })
+          .then(function(j){
+            var c = (j && typeof j.count === 'number') ? j.count : null;
+            if(c != null){ _pieceCountCache[ref] = c; applyPieceCount(ref, c); }
+            else { applyPieceCount(ref, null, true); }
+          })
+          .catch(function(){ applyPieceCount(ref, null, true); })
+          .then(function(){ active--; pump(); });
+      })(ref);
+    }
+  }
+  pump();
 }
 
 function openDetail(id){
