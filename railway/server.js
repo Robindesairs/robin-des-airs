@@ -2398,7 +2398,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
       s.step = 'm_vol'; await setState(phone, s); return send(phone, L(s, `📝 Flight number? _(e.g. AF718, AT540)_`, `📝 Numéro de vol ? _(ex. AF718, AT540)_`), cfg);
     }
     if (id === 'scan_photo' || lower.includes('envoyer une photo') || lower.includes('envoie une photo')) {
-      return send(phone, L(s, `👍 Got it — tap 📎 (or 📷) below and send a *photo* of your *e-ticket* (it has all your flights), your *boarding pass*, or even the *baggage tag* on your suitcase. I read everything. 🔒`, `👍 C'est noté — appuyez sur 📎 (ou 📷) en bas et envoyez la *photo* de votre *e-billet* (il contient tous vos vols), de votre *carte d'embarquement*, ou même de l'*étiquette bagage* collée sur votre valise. Je lis tout. 🔒`), cfg);
+      return send(phone, L(s, `👍 Got it — tap *📎/+* (or *📷*) below and send a *photo* of your *e-ticket* (it has all your flights), your *boarding pass*, or even the *baggage tag* on your suitcase. I read everything. 🔒`, `👍 C'est noté — appuyez sur *📎/+* (ou *📷*) en bas et envoyez la *photo* de votre *e-billet* (il contient tous vos vols), de votre *carte d'embarquement*, ou même de l'*étiquette bagage* collée sur votre valise. Je lis tout. 🔒`), cfg);
     }
     if (id === 'scan_manuel' || lower.includes('manuel') || lower.includes('manuelle') || lower.includes('saisir')) {
       if (s.type_vol === 'escale') return askEscDep(phone, s, cfg, `🔄 Pas de souci, on le fait ensemble — une question à la fois.`);
@@ -2725,7 +2725,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
     s.passengers = s.passengers || [];
     if (mediaUrl) { return askOcrConfirm(phone, s, cfg, mediaUrl); }
     if (id === 'doc_photo' || lower.includes('envoyer ma photo') || lower.includes('ma photo')) {
-      return send(phone, L(s, `👍 Got it — tap 📎 (or 📷) and choose the *photo* of the ID (*passport, national ID or residence permit*). We read everything *automatically* — nothing to type. 🔒`, `👍 C'est noté — appuyez sur 📎 (ou 📷) et choisissez la *photo* de la pièce (*passeport, CNI ou carte de séjour*). On lit tout *automatiquement* — rien à taper. 🔒`), cfg);
+      return send(phone, L(s, `👍 *Let's go!* Tap *📷* to snap your ID, or *📎/+* to send one from your gallery. 🔒`, `👍 *C'est parti !* Appuyez sur *📷* pour photographier votre pièce, ou sur *📎/+* pour l'envoyer depuis votre galerie. 🔒`), cfg);
     }
     if (id === 'doc_passer' || lower.includes('envoie après') || lower.includes('passer')) {
       const _nm = (s.passengers[s.doc_idx] && s.passengers[s.doc_idx].name) || (s.names && s.names[s.doc_idx]) || '';
