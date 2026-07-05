@@ -3654,9 +3654,16 @@ function extractInbound(payload) {
     const typeStr = String(item.type || '').toLowerCase();
     const mimeStr = String(item.mimeType || item.mime_type || item.mime || '').toLowerCase();
     const fnameStr = String(item.fileName || item.filename || item.data || item.url || item.mediaUrl || '').toLowerCase();
-    const isImage = typeStr === 'image' || /image/i.test(typeStr) || /^image\//.test(mimeStr);
+    // Image = type/mime image, OU un FICHIER dont l'extension est une image (passeport envoyé en « Document »
+    // et non en « Photo » : arrive avec type 'document' mais c'est bien une image à lire par l'OCR).
+    const isImage = typeStr === 'image' || /image/i.test(typeStr) || /^image\//.test(mimeStr) || /\.(jpe?g|png|webp|heic|heif|gif|bmp|tiff?)(\?|#|$)/.test(fnameStr);
     const isDoc = typeStr === 'document' || typeStr === 'file' || /pdf|document/i.test(typeStr) || /pdf|officedocument|msword/.test(mimeStr) || /\.pdf(\?|#|$)/.test(fnameStr);
-    const mediaUrl = (isImage || isDoc) ? (item.data || item.mediaUrl || item.media_url || item.url || null) : null;
+    const mediaUrl = (isImage || isDoc) ? (
+      item.data || item.mediaUrl || item.media_url || item.url ||
+      (item.document && (item.document.url || item.document.link || item.document.mediaUrl)) ||
+      (item.image && (item.image.url || item.image.link || item.image.mediaUrl)) ||
+      (item.file && (item.file.url || item.file.link)) || null
+    ) : null;
     const text = replyText || item.text || (item.finalText && String(item.finalText)) || (isImage ? '[image]' : isDoc ? '[document]' : (item.type && item.type !== 'text' ? `[${item.type}]` : ''));
     if (!waId) return;
     const phone = normalizeWaPhone(normalizeWatiPhone(waId));
