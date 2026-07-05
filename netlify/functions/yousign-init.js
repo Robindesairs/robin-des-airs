@@ -18,6 +18,7 @@
  */
 
 const { checkRateLimit } = require("./lib/rate-limit");
+const { getBlobStore } = require("./lib/netlify-blobs-store");
 
 const HEADERS = {
   "Content-Type": "application/json",
@@ -71,6 +72,7 @@ exports.handler = async (event) => {
   const techEmail = (ph, idx) => `sign-${idx}-${String(ph || "").replace(/\D/g, "") || "x"}@robindesairs.eu`;
 
   const dossierLabel = String(payload.label || "Dossier Robin des Airs").trim();
+  const dossierRef = String(payload.ref || "").replace(/[^A-Za-z0-9_-]/g, "").slice(0, 64);
 
   const pdfBase64 = String(payload.pdf_base64 || "").trim();
   if (!pdfBase64) return json(400, { error: "pdf_base64 requis (PDF du mandat encodé base64)" });
@@ -165,6 +167,15 @@ exports.handler = async (event) => {
     const reqJson = await reqRes.json();
     const signatureRequestId = reqJson.id;
     if (!signatureRequestId) return json(502, { error: "ID signature_request YouSign absent" });
+
+    // Lien sr_id → réf du dossier : permet au webhook Yousign (signature terminée) de retrouver LE
+    // dossier pour basculer son statut en « Contrat signé » et classer le PDF signé par réf. Best-effort.
+    if (dossierRef) {
+      try {
+        const sigStore = getBlobStore(event, "robin-signatures");
+        if (sigStore) await sigStore.setJSON(`map/${signatureRequestId}`, { ref: dossierRef, createdAt: new Date().toISOString() });
+      } catch (e) { console.warn("[yousign-init] map sr_id→ref échec:", e.message); }
+    }
 
     // 1bis) Upload du PDF du mandat
     const docForm = new FormData();

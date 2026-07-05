@@ -25,6 +25,7 @@
  */
 
 const crypto = require("crypto");
+const { airtableCfg, airtableFindByRef, airtablePatch } = require("./lib/airtable-robin");
 
 let netlifyBlobsModule = null;
 try { netlifyBlobsModule = require("@netlify/blobs"); } catch (_) {}
@@ -73,7 +74,7 @@ async function downloadAsBase64(url, apiKey) {
   return { base64: buf.toString("base64"), size: buf.length, contentType: res.headers.get("content-type") || "application/octet-stream" };
 }
 
-async function archiveSignatureRequest(srId, baseUrl, apiKey, store) {
+async function archiveSignatureRequest(srId, baseUrl, apiKey, store, ref) {
   // 1) Liste des documents de la signature_request
   const docsRes = await fetch(`${baseUrl}/signature_requests/${srId}/documents`, {
     headers: { Authorization: `Bearer ${apiKey}` },
@@ -83,6 +84,7 @@ async function archiveSignatureRequest(srId, baseUrl, apiKey, store) {
   const docList = Array.isArray(docs) ? docs : (docs.documents || docs.data || []);
 
   let signedCount = 0;
+  let pdfSaved = false;
   for (const d of docList) {
     const docId = d.id;
     if (!docId) continue;
@@ -99,6 +101,15 @@ async function archiveSignatureRequest(srId, baseUrl, apiKey, store) {
         base64: dl.base64,
         downloaded_at: new Date().toISOString(),
       });
+      // Classe le PDF signé PAR RÉF (pdf/<ref>) → source de vérité is-signed + affichage dans le dossier.
+      if (ref && !pdfSaved) {
+        try {
+          await store.set(`pdf/${ref}`, Buffer.from(dl.base64, "base64"), {
+            metadata: { contentType: "application/pdf", ref, srId, signedAt: new Date().toISOString() },
+          });
+          pdfSaved = true;
+        } catch (e) { console.warn(`[yousign-webhook] pdf/${ref} write failed:`, e.message); }
+      }
       signedCount++;
     } catch (e) {
       console.warn(`[yousign-webhook] download signed doc ${docId} failed:`, e.message);
@@ -170,19 +181,23 @@ exports.handler = async (event) => {
     console.warn(`[yousign-webhook] persist event failed:`, e.message);
   }
 
-  // 2) Si signature_request.done → on télécharge PDF signés + audit trail
+  // 2) Si signature_request.done → relie la signature AU dossier (statut + PDF par réf) + archive PDF/audit trail.
   let archive = null;
+  let dossierRef = "";
   if (eventName === "signature_request.done") {
+    // Réf du dossier (posée par yousign-init dans map/<sr_id>) → on sait QUEL dossier mettre à jour.
+    try { const m = await store.getJSON(`map/${srId}`); dossierRef = (m && m.ref) || ""; } catch (_) {}
     const baseUrl = (process.env.YOUSIGN_BASE_URL || "https://api.yousign.app/v3").replace(/\/+$/, "");
     const apiKey = process.env.YOUSIGN_API_KEY || "";
     if (apiKey) {
       try {
-        archive = await archiveSignatureRequest(srId, baseUrl, apiKey, store);
+        archive = await archiveSignatureRequest(srId, baseUrl, apiKey, store, dossierRef);
         // Index global pour browse rapide depuis bureau.html
         try {
           let index = (await store.getJSON("__yousign_index")) || [];
           index.unshift({
             sr_id: srId,
+            ref: dossierRef,
             name: sr.name || "",
             signed_at: new Date().toISOString(),
             signer_count: (sr.signers || []).length,
@@ -197,12 +212,36 @@ exports.handler = async (event) => {
         console.error(`[yousign-webhook] archive failed for ${srId}:`, e.message);
       }
     }
+    // Relie la signature au DOSSIER : marqueur signed/<ref> (source de vérité is-signed) + bascule
+    // du statut Airtable en « Contrat signé » → le dossier quitte « Signature en attente ».
+    if (dossierRef) {
+      try { await store.setJSON(`signed/${dossierRef}`, { srId, signedAt: new Date().toISOString() }); } catch (_) {}
+      try {
+        let idx = (await store.get("__index", { type: "json" })) || [];
+        if (Array.isArray(idx) && !idx.some((e) => e && e.ref === dossierRef)) {
+          idx.unshift({ ref: dossierRef, srId, signedAt: new Date().toISOString() });
+          if (idx.length > 1000) idx = idx.slice(0, 1000);
+          await store.setJSON("__index", idx);
+        }
+      } catch (_) {}
+      try {
+        const cfg = airtableCfg();
+        if (cfg) {
+          const recs = await airtableFindByRef(cfg, dossierRef);
+          const rec = recs && recs[0];
+          if (rec && rec.id) {
+            await airtablePatch(cfg, rec.id, { [cfg.labels.statutSuivi]: cfg.statutMandatSigne });
+          }
+        }
+      } catch (e) { console.warn(`[yousign-webhook] statut Airtable → Contrat signé échec:`, e.message); }
+    }
   }
 
   return json(200, {
     ok: true,
     event_name: eventName,
     signature_request_id: srId,
+    ref: dossierRef || undefined,
     archive,
   });
 };
