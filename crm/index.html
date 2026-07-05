@@ -227,7 +227,7 @@
   .crm-gate-card { background: var(--bg); border-radius: var(--radius); padding: 28px 24px; max-width: 400px; width: 100%; box-shadow: 0 24px 80px rgba(0,0,0,.35); border: 1px solid var(--border); }
   .crm-gate-card h1 { font-size: 18px; color: var(--navy); margin-bottom: 8px; }
   .crm-gate-card .crm-gate-lead { font-size: 13px; color: var(--text2); margin-bottom: 16px; line-height: 1.45; }
-  .crm-gate-card input[type="password"] { width: 100%; font-size: 15px; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-bottom: 12px; box-sizing: border-box; }
+  .crm-gate-card input[type="password"], .crm-gate-card input#crm-gate-agent { width: 100%; font-size: 15px; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); margin-bottom: 12px; box-sizing: border-box; }
   .crm-gate-card .crm-gate-err { color: var(--red); font-size: 12px; margin-bottom: 10px; display: none; }
   .crm-gate-card .crm-gate-err.show { display: block; }
   #crm-gate-totp-wrap { margin: 2px 0 14px; padding: 14px; border: 1.5px solid var(--green); border-radius: var(--radius-sm); background: rgba(0,122,76,.06); }
@@ -304,11 +304,13 @@
 <div id="crm-gate" class="crm-gate" role="dialog" aria-labelledby="crm-gate-title">
   <div class="crm-gate-card">
     <h1 id="crm-gate-title">Accès CRM</h1>
-    <p class="crm-gate-lead">Espace réservé à l’équipe Robin des Airs. Saisissez le code d’accès. Ensuite, indiquez <strong>votre nom</strong> en haut de page : chaque modification sera tracée (agent + date/heure).</p>
+    <p class="crm-gate-lead">Espace réservé à l’équipe Robin des Airs. Indiquez <strong>votre nom</strong> et le code d’accès : chaque modification sera tracée (agent + date/heure).</p>
     <div id="crm-gate-err" class="crm-gate-err" role="alert"></div>
     <form id="crm-gate-form" autocomplete="on">
+      <label class="sr-only" for="crm-gate-agent">Votre nom (traçabilité)</label>
+      <input type="text" id="crm-gate-agent" name="crm-gate-agent" placeholder="Votre nom (ex. Marie D.)" autocomplete="name" maxlength="80" autofocus>
       <label class="sr-only" for="crm-code">Code d’accès</label>
-      <input type="password" id="crm-code" name="crm-code" placeholder="Code d’accès" autocomplete="current-password" required autofocus>
+      <input type="password" id="crm-code" name="crm-code" placeholder="Code d’accès" autocomplete="current-password" required>
       <div id="crm-gate-totp-wrap" style="display:none">
         <div class="totp-title">🔐 Vérification en 2 étapes</div>
         <div class="totp-help">Ouvrez votre application d’authentification (Google Authenticator) et saisissez le code à 6 chiffres.</div>
@@ -642,6 +644,12 @@ async function crmUnlock() {
   }
   function openAndRemember() {
     setCrmAccessCode(code);
+    // Nom saisi sur l'écran de connexion → traçabilité (rempli automatiquement dans le bandeau).
+    try {
+      var ga = document.getElementById('crm-gate-agent');
+      var gv = ga ? ga.value.trim() : '';
+      if (gv) sessionStorage.setItem(CRM_AGENT_KEY, gv);
+    } catch (e) {}
     crmOpenMain();
   }
 
@@ -676,6 +684,8 @@ async function crmUnlock() {
       // la suggestion d'autofill du navigateur (« mots de passe enregistrés ») ne recouvre
       // plus l'encadré 2FA qui s'affiche juste en dessous.
       if (input) { input.blur(); input.style.display = 'none'; }
+      var gateAgent = document.getElementById('crm-gate-agent');
+      if (gateAgent) gateAgent.style.display = 'none';
       if (totpWrap) totpWrap.style.display = 'block';
       if (totpInput) { totpInput.focus(); }
       err.textContent = j.error || 'Code de vérification requis (application d’authentification).';
