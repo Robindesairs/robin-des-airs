@@ -3470,12 +3470,14 @@ async function finaliser(phone, s, cfg) {
   // Lead à relancer tant que le mandat n'est pas signé (nudge 2h/8h/22h dans la fenêtre 24h)
   upsertLead(phone, { ref: s.ref, mandatUrl: s.mandat_url, mandatSentAt: Date.now(), lastClientAt: Date.now(), pax: s.pax || 1, name: firstNameOf(s), perPax: s.perPax, flightVerdict: s.flightVerdict || '', langue: s.langue_code || (LEADS.get(leadKey(phone)) || {}).langue || '', signed: false, completed: true, nudges: [] });
   const minorNote = s.minorsCount ? L(s, `\n👶 ${s.minorsCount} minor(s): a parent/guardian's signature is required (an expert guides you).`, `\n👶 ${s.minorsCount} mineur·s : signature d'un parent/tuteur requise (un expert vous guide).`) : '';
-  // Message 1 — le récap (sans le lien). Message 2 — le lien SEUL, court, qui ne se replie
-  // jamais derrière « Lire la suite » sur mobile et déclenche l'aperçu cliquable WhatsApp.
+  // UN SEUL message (fusion récap + lien) : le LIEN en haut (ligne 3, jamais replié derrière « Lire la
+  // suite » → aperçu WhatsApp cliquable), puis la CAROTTE (montant) + la RÉASSURANCE (0 €, mobile money).
+  // Le récap champ-par-champ (nom/vol/date/route) est retiré : redondant, tout est vérifiable/corrigeable
+  // sur le contrat.
+  const _fnf = firstNameOf(s);
   await send(phone, L(s,
-    `${bar('done')}\n${titre} Ref. *${shortRef(s.ref)}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${incidentLabel(s)}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nLast step: *your signature* (2 min).\n✅ €0 upfront — 25% on success (40% if court action, legal fees included) · no bank details.\n💸 Paid even without a EU bank account: bank transfer, Wave, Orange Money or MTN MoMo.`,
-    `${bar('done')}\n${titre} Réf. *${shortRef(s.ref)}*\n\n👤 ${nom}${s.pax > 1 ? ` +${s.pax - 1}` : ''}\n✈️ ${s.vol || '—'} — ${s.compagnie || '—'}\n📅 ${s.date || '—'} — ${incidentLabel(s)}\n🗺️ ${s.route || '—'}\n${montantLine(s)}${minorNote}${docsNote}\n\nDernière étape : *votre signature* (2 min).\n✅ 0 € d'avance — 25 % au succès en amiable (40 % si procès, frais d'avocat inclus) · aucune info bancaire.\n💸 Payé même sans compte bancaire en Europe : virement, Wave, Orange Money ou MTN MoMo.`), cfg);
-  await send(phone, L(s, `✅ *Your contract is ready* — we pre-filled it with your details. Take your time to read it, then sign:\n${s.mandat_url}\n\nWithout your signature, we can't claim your compensation. ${STOP_FOOTER}`, `✅ *Votre contrat est prêt* — on l'a pré-rempli avec vos infos. Prenez le temps de le relire, puis signez :\n${s.mandat_url}\n\nSans votre signature, on ne peut pas réclamer votre indemnité. ${STOP_FOOTER}`), cfg);
+    `${bar('done')}\n✅ *Your contract is ready${_fnf ? ', ' + _fnf : ''}!* We pre-filled it — read it, then sign (2 min) 👇\n${s.mandat_url}\n\n${montantLine(s)}${minorNote}${docsNote}\n✅ €0 upfront · 25% on success (40% if court action, legal fees included) · no bank details.\n💸 Paid even without a EU bank account: bank transfer, Wave, Orange Money or MTN MoMo.\n${STOP_FOOTER}`,
+    `${bar('done')}\n✅ *Votre contrat est prêt${_fnf ? ', ' + _fnf : ''} !* On l'a pré-rempli — relisez-le, puis signez (2 min) 👇\n${s.mandat_url}\n\n${montantLine(s)}${minorNote}${docsNote}\n✅ 0 € d'avance · 25 % au succès en amiable (40 % si procès, frais d'avocat inclus) · aucune info bancaire.\n💸 Payé même sans compte bancaire en Europe : virement, Wave, Orange Money ou MTN MoMo.\n${STOP_FOOTER}`), cfg);
   // CRM : la fiche Airtable est désormais créée par la synchro DIRECTE (storeDossierDurable →
   // /api/dossier-store → syncNewDossierToAirtable, statut « Signature en attente »). Le webhook
   // Make ci-dessous n'est plus qu'un hook OPTIONNEL pour d'éventuelles automatisations externes :
