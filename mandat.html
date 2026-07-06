@@ -831,6 +831,18 @@ Chaque signataire ci-dessous <span id="declarant" style="display:none"> </span>d
       Représentant habilité&nbsp;: <strong>Robin des Airs, SASU en cours d'immatriculation au RCS de Paris, Service recouvrement CE 261/2004</strong> · Réf. dossier&nbsp;: <strong id="sigRdaRef"> </strong> · Acceptation le&nbsp;: <strong id="sigRdaDate"> </strong>
     </p>
   </div>
+  <!-- Consentements obligatoires (art. L.221-25 C. conso) : acceptation du contrat + demande d'exécution immédiate. -->
+  <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px">
+    <label class="single-check" style="display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border:1px solid var(--border);border-radius:10px;cursor:pointer;font-size:13px;line-height:1.55;color:var(--text)">
+      <input type="checkbox" id="ckContrat" onchange="clearCkErr()">
+      <span>J'ai lu et j'accepte le <strong>contrat de cession de créance</strong> et ses conditions ci-dessus.</span>
+    </label>
+    <label class="single-check" style="display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border:1px solid var(--border);border-radius:10px;cursor:pointer;font-size:13px;line-height:1.55;color:var(--text)">
+      <input type="checkbox" id="ckExec" onchange="clearCkErr()">
+      <span>Je <strong>demande expressément l'exécution immédiate</strong> du contrat, sans attendre la fin de mon délai de rétractation (art. L.&nbsp;221-25 C. conso). Je reste libre de me <strong>rétracter sous 14 jours, sans frais</strong> (No&nbsp;Win No&nbsp;Fee).</span>
+    </label>
+    <div class="ferr" id="ckErr" style="display:none">Merci de cocher les deux cases pour continuer.</div>
+  </div>
   <button class="btn-submit" id="btnSub" onclick="submitMandat()">
     Continuer vers la signature électronique →
   </button>
@@ -2359,9 +2371,15 @@ function stopSignLoader() {
   if (box) box.style.display = 'none';
 }
 // ── SOUMISSION ───────────────────────────────────────────────────
+function clearCkErr(){ var e=document.getElementById('ckErr'); if(e) e.style.display='none'; }
 function submitMandat() {
   if (!validate()) {
     document.querySelector('.err,.ferr[style*="block"]')?.scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  var _ckC=document.getElementById('ckContrat'), _ckE=document.getElementById('ckExec');
+  if ((_ckC && !_ckC.checked) || (_ckE && !_ckE.checked)) {
+    var _ce=document.getElementById('ckErr'); if(_ce){ _ce.style.display='block'; _ce.scrollIntoView({behavior:'smooth',block:'center'}); }
     return;
   }
   const btn = document.getElementById('btnSub');
@@ -2395,7 +2413,9 @@ function submitMandat() {
     contactEmail: (document.getElementById('em-perso')?.value || '').trim(),
     email:     clientEmailForRef(REF) || document.getElementById('em').value.trim(),
     address:   document.getElementById('addr').value.trim(),
-    startNow:  false,
+    startNow:  !!(document.getElementById('ckExec') && document.getElementById('ckExec').checked),
+    contratAccepted: !!(document.getElementById('ckContrat') && document.getElementById('ckContrat').checked),
+    consentAt: new Date().toISOString(),
     eligibilityAcknowledged: true,
     coPassAgreement: allCoPassChecked(),
     cessionCreance: true,
