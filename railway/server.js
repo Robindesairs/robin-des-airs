@@ -3953,8 +3953,8 @@ function relanceText(n, lead) {
   if (leadEN(lead)) {
     const nm = lead.name ? ' ' + String(lead.name).split(/\s+/)[0] : '';
     const amt = total ? ` We claim up to *${total}* for you` : '';
-    if (n === 2) return `Just one signature left to start your file for *${tripLbl}*${nm}.${amt} — *€0 if we recover nothing*. 👉 *Sign here* (2 min):\n${url}`;
-    if (n === 8) return `Your file for *${tripLbl}* is ready${nm ? ',' + nm : ''} — only *your signature* is missing (2 min).${amt}, *€0 if we recover nothing*. 👉\n${url}`;
+    if (n === 2) return `Just one signature left to start your file for *${tripLbl}*${nm}.${amt} — *€0 if we recover nothing*. 👉 *Sign here*:\n${url}`;
+    if (n === 8) return `Your file for *${tripLbl}* is ready${nm ? ',' + nm : ''} — only *your signature* is missing.${amt}, *€0 if we recover nothing*. 👉\n${url}`;
     return `Last step for your file for *${tripLbl}*: *your signature*. After that we handle everything.${amt}, *€0 if we recover nothing*. 👉\n${url}`;
   }
   if (!total) return `Il ne reste qu'une signature pour lancer votre dossier (vol ${tripLbl}). Un expert confirme le montant exact (vérification gratuite). 👉 ${url}\n0 € si vous ne touchez rien.`;
@@ -3978,7 +3978,9 @@ function relanceTextEngaged(n, lead, step) {
   if (leadEN(lead)) {
     const nm = lead.name ? ' ' + String(lead.name).split(/\s+/)[0] : '';
     const amt = total ? ` (up to *${total}*, *€0 if we recover nothing*)` : ` (an expert confirms the exact amount, *€0 if we recover nothing*)`;
-    if (n >= 22) return `Last chance before your file closes${nm ? ',' + nm : ''} — 2 min to finish${amt}. Tap *Resume* 👇, or *Call* 📞.`;
+    // ⚖️ Pas de fausse clôture : c'est la FENÊTRE WhatsApp 24 h qui se ferme, PAS le dossier
+    // (le lien reste valable). Affirmer l'inverse = pratique commerciale trompeuse (L.121-2 conso).
+    if (n >= 22) return `Heads-up${nm} — after tonight we can no longer message you here (24h WhatsApp window), but your file stays open. Tap *Resume* to finish${amt} 👇, or *Call* 📞.`;
     return `We've started your file${nm ? ',' + nm : ''} — tap *Resume* 👇 to finish it${amt}, or *Call* 📞. 🙏`;
   }
   if (!total) return `On a commencé votre dossier — appuyez sur *Reprendre* 👇 pour le finaliser (un expert confirme le montant exact, 0 € si vous ne touchez rien), ou *Rappel* 📞. 🙏`;
