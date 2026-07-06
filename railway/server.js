@@ -1683,8 +1683,8 @@ async function askOcrConfirm(phone, s, cfg, mediaUrl) {
       expired ? `⚠️ Pièce *expirée* (${pp.expiry}). On continue, un conseiller vérifiera.` : '',
       `\nC'est bien cette personne ?`,
     ].filter(Boolean).join('\n');
-    await send(phone, lines, cfg);
-    return sendButtons(phone, [{ id: 'pass_ok', text: L(s, '✅ Correct', '✅ C\'est correct') }, { id: 'pass_fix', text: L(s, '✏️ Edit', '✏️ Corriger') }], cfg);
+    // Question + boutons dans UNE seule bulle (sinon « C'est bien cette personne ? » arrive détaché de ses boutons).
+    return sendButtons(phone, { body: lines, buttons: [{ id: 'pass_ok', text: L(s, '✅ Correct', '✅ C\'est correct') }, { id: 'pass_fix', text: L(s, '✏️ Edit', '✏️ Corriger') }] }, cfg);
   } else {
     // OCR échoué → pièce illisible
     s.step = 'doc_pass';
@@ -2809,7 +2809,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
       delete s.doc_pending; s.step = 'doc_name'; await setState(phone, s);
       return send(phone, L(s, `👤 *Passenger ${s.doc_idx + 1}* — First and last name?\n_(e.g. Aminata Diallo)_`, `👤 *Passager ${s.doc_idx + 1}* — Prénom et nom ?\n_(ex : Aminata Diallo)_`), cfg);
     }
-    return sendButtons(phone, [{ id: 'pass_ok', text: L(s, '✅ Correct', '✅ C\'est correct') }, { id: 'pass_fix', text: L(s, '✏️ Edit', '✏️ Corriger') }], cfg);
+    return sendButtons(phone, { body: L(s, `🙂 Tap a button below to confirm 👇`, `🙂 Touchez un bouton ci-dessous pour confirmer 👇`), buttons: [{ id: 'pass_ok', text: L(s, '✅ Correct', '✅ C\'est correct') }, { id: 'pass_fix', text: L(s, '✏️ Edit', '✏️ Corriger') }] }, cfg);
   }
   if (s.step === 'doc_mandant') {
     s.passengers = s.passengers || [];
@@ -3424,11 +3424,13 @@ async function askMandant(phone, s, cfg) {
   s.step = 'doc_mandant'; await setState(phone, s);
   const names = Array.from({ length: s.pax }, (_, i) => paxName(s, i)); // résout passengers[i].name → s.names[i] (e-billet) → « Passager i » : affiche le vrai nom quand on l'a
   // On ne demande PAS « qui signe » (tout le monde signe son mandat) — juste à qui est ce WhatsApp (le contact du dossier).
-  await send(phone, L(s, `✅ Documents collected! One last thing.\n\n📱 *Whose WhatsApp number is this?*\n_(the person following the case — each passenger signs their own claim-assignment contract, whichever it is.)_`, `✅ Pièces collectées ! Une dernière chose.\n\n📱 *À qui appartient ce numéro WhatsApp ?*\n_(la personne qui suit le dossier — chaque passager signera son propre contrat de cession, peu importe lequel.)_`), cfg);
+  // Question posée DANS le message à boutons/liste (une seule bulle) — sinon la question
+  // arrive détachée de ses boutons. Pas de « dernière chose » ici : l'email vient après.
+  const qMandant = L(s, `✅ *Documents collected!*\n\n📱 *Whose WhatsApp number is this?*\n_(the person following the case — each passenger signs their own claim-assignment contract, whichever it is.)_`, `✅ *Pièces collectées !*\n\n📱 *À qui appartient ce numéro WhatsApp ?*\n_(la personne qui suit le dossier — chaque passager signera son propre contrat de cession, peu importe lequel.)_`);
   if (names.length <= 3) {
-    return sendButtons(phone, names.map((nm, i) => ({ id: `mdt_${i}`, text: clip(nm, 20) })), cfg);
+    return sendButtons(phone, { body: qMandant, buttons: names.map((nm, i) => ({ id: `mdt_${i}`, text: clip(nm, 20) })) }, cfg);
   }
-  return sendList(phone, { header: L(s, 'This WhatsApp number', 'Ce numéro WhatsApp'), body: L(s, 'Who does this number belong to?', 'À qui appartient ce numéro ?'), buttonText: L(s, 'Choose', 'Choisir'), items: names.map((nm, i) => ({ id: `mdt_${i}`, title: clip(nm, 24), description: L(s, `Passenger ${i + 1}`, `Passager ${i + 1}`) })) }, cfg);
+  return sendList(phone, { header: L(s, 'This WhatsApp number', 'Ce numéro WhatsApp'), body: qMandant, buttonText: L(s, 'Choose', 'Choisir'), items: names.map((nm, i) => ({ id: `mdt_${i}`, title: clip(nm, 24), description: L(s, `Passenger ${i + 1}`, `Passager ${i + 1}`) })) }, cfg);
 }
 // Adresse du cédant principal = champ OBLIGATOIRE sur le contrat (identification du cédant, art. 1321 C. civ.).
 // Elle est lue en SILENCE sur la pièce (CNI / carte de séjour) — mais un PASSEPORT n'en porte pas.
@@ -3477,8 +3479,8 @@ async function finaliser(phone, s, cfg) {
   // sur le contrat.
   const _fnf = firstNameOf(s);
   await send(phone, L(s,
-    `${bar('done')}\n✅ *All set${_fnf ? ', ' + _fnf : ''}!* Your file — flight ${s.vol || '—'} (${s.compagnie || '—'}). We recover up to *€${perPaxOf(s)} per passenger*.\n\n👉 *Read your contract and sign* (2 min):\n${s.mandat_url}\n\n✅ €0 upfront · up to *75% in your pocket* · no bank details.\n💸 Paid even without a EU bank account: bank transfer, Wave, Orange Money, MoMo.${minorNote}${docsNote}\n${STOP_FOOTER}`,
-    `${bar('done')}\n✅ *C'est prêt${_fnf ? ', ' + _fnf : ''} !* Votre dossier — vol ${s.vol || '—'} (${s.compagnie || '—'}). On récupère jusqu'à *${perPaxOf(s)} € par personne*.\n\n👉 *Relisez votre contrat et signez* (2 min) :\n${s.mandat_url}\n\n✅ 0 € d'avance · jusqu'à *75 % dans votre poche* · aucune info bancaire.\n💸 Payé même sans compte en Europe : virement, Wave, Orange Money, MoMo.${minorNote}${docsNote}\n${STOP_FOOTER}`), cfg);
+    `${bar('done')}\n✅ *All set${_fnf ? ', ' + _fnf : ''}!* Your file — flight ${s.vol || '—'} (${s.compagnie || '—'}). We recover up to *€${perPaxOf(s)} per passenger*.\n\n👉 *Read your contract and sign*:\n${s.mandat_url}\n\n✅ €0 upfront · up to *75% in your pocket* · no bank details.\n💸 Paid even without a EU bank account: bank transfer, Wave, Orange Money, MoMo.${minorNote}${docsNote}\n${STOP_FOOTER}`,
+    `${bar('done')}\n✅ *C'est prêt${_fnf ? ', ' + _fnf : ''} !* Votre dossier — vol ${s.vol || '—'} (${s.compagnie || '—'}). On récupère jusqu'à *${perPaxOf(s)} € par personne*.\n\n👉 *Relisez votre contrat et signez* :\n${s.mandat_url}\n\n✅ 0 € d'avance · jusqu'à *75 % dans votre poche* · aucune info bancaire.\n💸 Payé même sans compte en Europe : virement, Wave, Orange Money, MoMo.${minorNote}${docsNote}\n${STOP_FOOTER}`), cfg);
   // CRM : la fiche Airtable est désormais créée par la synchro DIRECTE (storeDossierDurable →
   // /api/dossier-store → syncNewDossierToAirtable, statut « Signature en attente »). Le webhook
   // Make ci-dessous n'est plus qu'un hook OPTIONNEL pour d'éventuelles automatisations externes :
