@@ -236,7 +236,11 @@ exports.handler = async (event) => {
           first_name: s.first_name,
           last_name: s.last_name,
           email: s.email,
-          phone_number: s.phone || undefined,
+          // ⚠️ N'envoyer le numéro QUE si l'OTP SMS l'exige : en SES sans OTP (défaut prod),
+          // Yousign valide quand même le format E.164 et REJETTE tout le signataire si le numéro
+          // est local/mal formaté (ex. « 0756… » → « +0756… » invalide) → signature impossible.
+          // Le SMS n'étant pas utilisé, on omet simplement le numéro → signature robuste.
+          phone_number: useOtpSms ? s.phone : undefined,
           locale: "fr",
         },
         signature_level: sigLevel,
