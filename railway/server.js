@@ -3353,8 +3353,8 @@ async function applyFlightVerdict(phone, s, cfg) {
   if (v.verdict === 'sous_seuil') {
     return send(phone, L(s, `ℹ️ According to the data, the delay is *below the 3h threshold* for fixed compensation. But you may be entitled to *reimbursement of your expenses* — an expert checks. We keep your case. 🤝`, `ℹ️ Selon les données, le retard est *sous le seuil des 3h* pour l'indemnité forfaitaire. Mais vous avez peut-être droit au *remboursement de vos frais* — un expert vérifie. On garde votre dossier. 🤝`), cfg);
   }
-  // a_verifier
-  return send(phone, L(s, `🔎 An expert will confirm the *exact amount* of your case. Let's continue. 👍`, `🔎 Un expert confirmera le *montant exact* de votre dossier. On continue. 👍`), cfg);
+  // a_verifier → aucun message : le récapitulatif qui suit immédiatement (ligne montant) suffit, la phrase « un expert confirmera » ferait doublon.
+  return;
 }
 
 // après vol+date connus → collecte des noms manquants
