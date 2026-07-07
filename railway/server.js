@@ -3453,8 +3453,8 @@ async function askAddressOrFinalize(phone, s, cfg) {
 async function askEmail(phone, s, cfg) {
   s.step = 'ask_email'; await setState(phone, s);
   return send(phone, L(s,
-    `📧 *Last question — your email?* We'll send your signed contract there.\n✏️ Type it — or, *if you don't have an email*, type *skip*.`,
-    `📧 *Dernière question — votre email ?* On vous y enverra votre contrat signé.\n✏️ Écrivez-le — ou, *si vous n'avez pas d'email*, tapez *passer*.`), cfg);
+    `📧 *Last question: your email?* We'll send your signed contract there.\n✏️ Type it below. *No email?* Type *skip*.`,
+    `📧 *Dernière question : votre email ?* On vous y enverra votre contrat signé.\n✏️ Écrivez-le ci-dessous. *Pas d'email ?* Tapez *passer*.`), cfg);
 }
 async function gotoBoarding(phone, s, cfg) { s.step = 'doc_boarding'; await setState(phone, s); return send(phone, L(s, `🎫 Boarding pass\nSend a photo for the affected flight.\n📧 No pass? An e-ticket, a booking confirmation or a baggage tag work too.\n_🔒 Read by an automated tool (AI) to pre-fill your file — see robindesairs.eu/politique-confidentialite._\n✏️ *skip* · 📞 *call* if all lost, we'll find a solution.`, `🎫 Carte d'embarquement\nEnvoyez-en une photo pour le vol concerné.\n📧 Pas de carte ? Un e-billet, une confirmation de réservation ou une étiquette de bagage fonctionnent aussi.\n_🔒 Lu par un outil automatique (IA) pour pré-remplir votre dossier — voir robindesairs.eu/politique-confidentialite._\n✏️ *passer* · 📞 *appel* si tout perdu, on trouve une solution.`), cfg); }
 async function gotoEticket(phone, s, cfg) { s.step = 'doc_eticket'; await setState(phone, s); return send(phone, L(s, `📧 Booking confirmation (e-ticket)\nSend a screenshot (check spam / the Booking app).\n✏️ *skip* · 📞 *call*.`, `📧 Confirmation de réservation (e-billet)\nEnvoyez une capture (pensez aux spams / appli Booking).\n✏️ *passer* · 📞 *appel*.`), cfg); }
