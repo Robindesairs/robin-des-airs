@@ -2739,7 +2739,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
     s.passengers = s.passengers || [];
     if (mediaUrl) { return askOcrConfirm(phone, s, cfg, mediaUrl); }
     if (id === 'doc_photo' || lower.includes('envoyer ma photo') || lower.includes('ma photo')) {
-      return send(phone, L(s, `👍 *Let's go!* Tap *📷* to snap your ID, or *📎/+* to send one from your gallery. 🔒`, `👍 *C'est parti !* Appuyez sur *📷* pour photographier votre pièce, ou sur *📎/+* pour l'envoyer depuis votre galerie. 🔒`), cfg);
+      return send(phone, L(s, `👍 *Here we go!* At the bottom of your screen:\n📷 tap the *camera* to photograph your ID now,\n📎 or the *paperclip (+)* to send it from your gallery.\n\n🔒 It stays confidential.`, `👍 *C'est parti !* En bas de votre écran :\n📷 appuyez sur l'*appareil photo* pour photographier votre pièce,\n📎 ou sur le *trombone (+)* pour l'envoyer depuis votre galerie.\n\n🔒 Elle reste confidentielle.`), cfg);
     }
     if (id === 'doc_passer' || lower.includes('envoie après') || lower.includes('passer')) {
       const _nm = (s.passengers[s.doc_idx] && s.passengers[s.doc_idx].name) || (s.names && s.names[s.doc_idx]) || '';
