@@ -3445,8 +3445,8 @@ async function askAddressOrFinalize(phone, s, cfg) {
   if (adr.length < 5) { // OCR n'a rien trouvé (cas passeport) → on la demande une fois
     s.step = 'doc_adresse'; await setState(phone, s);
     return send(phone, L(s,
-      `📍 *Your postal address?* District, city and country are enough — no postcode needed. _(e.g. Médina, Dakar, Senegal)_`,
-      `📍 *Votre adresse postale ?* Quartier, ville et pays suffisent — pas besoin de code postal. _(ex : Médina, Dakar, Sénégal)_`), cfg);
+      `📍 *Your postal address?* Number, street, postcode, city and country. _(e.g. 12 rue des Fleurs, 75001 Paris, France — abroad, district + city + country are enough)_`,
+      `📍 *Votre adresse postale ?* Numéro, rue, code postal, ville et pays. _(ex : 12 rue des Fleurs, 75001 Paris, France — à l'étranger, quartier + ville + pays suffisent)_`), cfg);
   }
   return finaliser(phone, s, cfg);
 }
@@ -3602,7 +3602,7 @@ async function relancerEtape(phone, s, cfg) {
     case 'm_pnr': return gotoPnr(phone, s, cfg);
     case 'doc_pass': case 'doc_pass_confirm': case 'doc_dob': case 'doc_name': return nextPassport(phone, s, cfg);
     case 'doc_mandant': return askMandant(phone, s, cfg);
-    case 'doc_adresse': return send(phone, L(s, `📍 *Your postal address?* District, city and country are enough — no postcode needed. _(e.g. Médina, Dakar, Senegal)_`, `📍 *Votre adresse postale ?* Quartier, ville et pays suffisent — pas besoin de code postal. _(ex : Médina, Dakar, Sénégal)_`), cfg);
+    case 'doc_adresse': return send(phone, L(s, `📍 *Your postal address?* Number, street, postcode, city and country. _(e.g. 12 rue des Fleurs, 75001 Paris, France — abroad, district + city + country are enough)_`, `📍 *Votre adresse postale ?* Numéro, rue, code postal, ville et pays. _(ex : 12 rue des Fleurs, 75001 Paris, France — à l'étranger, quartier + ville + pays suffisent)_`), cfg);
     case 'doc_boarding': return gotoBoarding(phone, s, cfg);
     case 'doc_eticket': return gotoEticket(phone, s, cfg);
     case 'doc_cert': return gotoCert(phone, s, cfg);
