@@ -3559,8 +3559,8 @@ async function sendPayoutPreference(lead) {
     upsertLead(lead.phone, { payoutAskedAt: Date.now() });
     const s = await getState(lead.phone); if (!s.ref && lead.ref) s.ref = lead.ref;
     await sendButtons(lead.phone, {
-      body: L(s, `🎉 It's signed, thank you for your trust! We handle everything to recover your money — you pay nothing upfront. How would you like to receive it?\n_(just your preference — no bank details needed right now)_`,
-                 `🎉 C'est signé, merci de votre confiance ! On s'occupe de tout pour récupérer votre argent — vous n'avancez rien. Comment préférez-vous le recevoir ?\n_(juste votre préférence — pas besoin de vos coordonnées maintenant)_`),
+      body: L(s, `🎉 It's signed, thank you for your trust! We handle everything to recover your money — you pay nothing upfront.\n\n📞 *An expert will call you* from *+33 7 56 86 36 30* — save this number as "Robin des Airs" to recognise the call.\n\nHow would you like to receive your money?\n_(just your preference — no bank details needed right now)_`,
+                 `🎉 C'est signé, merci de votre confiance ! On s'occupe de tout pour récupérer votre argent — vous n'avancez rien.\n\n📞 *Un expert va vous appeler* depuis le *+33 7 56 86 36 30* — enregistrez ce numéro sous « Robin des Airs » pour reconnaître l'appel.\n\nComment préférez-vous recevoir votre argent ?\n_(juste votre préférence — pas besoin de vos coordonnées maintenant)_`),
       buttons: [
         { id: 'pay_waveom', text: 'Wave / Orange Money' },
         { id: 'pay_mtn', text: 'MTN MoMo' },
