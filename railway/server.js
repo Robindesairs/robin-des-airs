@@ -3550,24 +3550,18 @@ async function armPiecesReminder(lead) {
   } catch (e) { console.error('armPiecesReminder', e.message); }
 }
 
-// Préférence de versement — posée à la signature (réassurance « votre argent », juste avant les pièces).
-// On ne capture QUE la préférence (1 tap) ; le détail (IBAN / numéro) se prend au versement (rib.html). FR + EN.
-async function sendPayoutPreference(lead) {
+// Confirmation post-signature (texte simple, PAS de question de versement — trop tôt à la signature :
+// le mode de versement est capté au VRAI moment du paiement via rib.html). Réassurance + annonce de l'appel expert.
+async function sendSignedConfirmation(lead) {
   try {
-    if (!lead || !lead.phone || lead.payoutAskedAt) return;   // fire-once (webhook rejoué)
+    if (!lead || !lead.phone || lead.payoutAskedAt) return;   // fire-once (webhook rejoué) — on réutilise le flag existant
     const cfg = watiCfg(); if (!cfg) return;
     upsertLead(lead.phone, { payoutAskedAt: Date.now() });
     const s = await getState(lead.phone); if (!s.ref && lead.ref) s.ref = lead.ref;
-    await sendButtons(lead.phone, {
-      body: L(s, `🎉 It's signed, thank you for your trust! We handle everything to recover your money — you pay nothing upfront.\n\n📞 *An expert will call you* from *+33 7 56 86 36 30* — save this number as "Robin des Airs" to recognise the call.\n\nHow would you like to receive your money?\n_(just your preference — no bank details needed right now)_`,
-                 `🎉 C'est signé, merci de votre confiance ! On s'occupe de tout pour récupérer votre argent — vous n'avancez rien.\n\n📞 *Un expert va vous appeler* depuis le *+33 7 56 86 36 30* — enregistrez ce numéro sous « Robin des Airs » pour reconnaître l'appel.\n\nComment préférez-vous recevoir votre argent ?\n_(juste votre préférence — pas besoin de vos coordonnées maintenant)_`),
-      buttons: [
-        { id: 'pay_waveom', text: 'Wave / Orange Money' },
-        { id: 'pay_mtn', text: 'MTN MoMo' },
-        { id: 'pay_iban', text: L(s, 'Bank transfer', 'Virement bancaire') },
-      ],
-    }, cfg);
-  } catch (e) { console.error('sendPayoutPreference', e.message); }
+    await send(lead.phone, L(s,
+      `🎉 It's signed, thank you for your trust! We handle everything to recover your money — you pay nothing upfront.\n\n📞 *An expert will call you* from *+33 7 56 86 36 30* — save this number as "Robin des Airs" to recognise the call.`,
+      `🎉 C'est signé, merci de votre confiance ! On s'occupe de tout pour récupérer votre argent — vous n'avancez rien.\n\n📞 *Un expert va vous appeler* depuis le *+33 7 56 86 36 30* — enregistrez ce numéro sous « Robin des Airs » pour reconnaître l'appel.`), cfg);
+  } catch (e) { console.error('sendSignedConfirmation', e.message); }
 }
 
 // reprise d'étape (T1) — renvoie l'écran courant
@@ -3908,10 +3902,13 @@ app.post('/api/mandat-signed', (req, res) => {
   const lead = findLead(b.ref || '') || findLead(b.phone || b.waId || '');
   const marked = markLeadSigned(b.ref || '') || markLeadSigned(b.phone || b.waId || '');
   console.log('mandat signe ref=' + (b.ref || '?') + ' marked=' + marked);
-  if (lead && lead.phone) sendPayoutPreference(lead).catch(() => {}); // préférence de versement (réassurance « votre argent ») — juste avant les pièces
-  if (lead && lead.phone) armPiecesReminder(lead).catch(() => {}); // arme 1 rappel pièces différé si le dossier est incomplet (best-effort)
-  // La demande de FRAIS n'est plus envoyée ICI (elle chevauchait la préférence de versement = 2 jeux de boutons
-  // concurrents). Elle part APRÈS la réponse à la préférence (handler pay_*). Fire-once via fraisAskedAt.
+  // Confirmation « C'est signé » (texte simple) PUIS demande des reçus de frais (vraie étape suivante).
+  // Chaînées pour garantir l'ordre (2 envois concurrents non-awaited arriveraient dans le désordre).
+  // Plus de question « comment recevoir votre argent ? » ici : trop tôt à la signature → captée à rib.html au paiement.
+  if (lead && lead.phone) {
+    sendSignedConfirmation(lead).then(() => triggerFraisCollection(lead)).catch(() => {});
+    armPiecesReminder(lead).catch(() => {}); // pose juste un flag (aucun envoi) → l'ordre n'importe pas
+  }
   // « À la fin de la conversation » : le mandat signé = LE moment où l'on prévient qu'un conseiller natif doit
   // rappeler le client dans sa langue africaine (le bot a continué en français). Source = lead.langue (code menu).
   // → fire-once, langues africaines uniquement, + mise en tête de « À rappeler » du Bureau (wantsCall).
