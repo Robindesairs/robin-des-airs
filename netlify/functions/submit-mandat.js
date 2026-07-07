@@ -844,11 +844,13 @@ exports.handler = async (event) => {
   try { await attachPiecesToAirtable(record, event); }
   catch (e) { console.error('submit-mandat: attache pièces Airtable échouée:', e.message); }
 
-  const [webhookResult, emailResult, waCopyResult] = await Promise.all([
+  // Plus d'envoi WhatsApp du contrat à la génération : le client est déjà sur l'écran Yousign (« ça fait trop »).
+  // Le PDF reste envoyé par EMAIL ci-dessous (+ Yousign l'envoie), et après signature le bot confirme « C'est signé ».
+  const [webhookResult, emailResult] = await Promise.all([
     forwardBotWebhook(record).then(() => ({ ok: true })).catch((e) => ({ ok: false, error: e.message })),
     notifyMandatSignedByEmail(record, pdfBuffer, pdfBilingueBuffer),
-    sendMandatWhatsappCopy(record, pdfBuffer),
   ]);
+  const waCopyResult = { skipped: true, reason: 'WhatsApp copie désactivée à la génération' };
 
   return {
     statusCode: 200,
