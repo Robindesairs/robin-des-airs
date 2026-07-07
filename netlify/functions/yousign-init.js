@@ -272,13 +272,17 @@ exports.handler = async (event) => {
       // [3 cases à cocher (2 obligatoires + 1 optionnelle)]
       // [label "Signature de Prénom Nom"]
       // [zone signature 200x60]
-      // Chaque bloc = ~160 px de haut, signataires empilés sur la page.
+      // Chaque bloc = 160 pt de haut pile, signataires empilés sur la page.
+      // ⚠️ Syntaxe Yousign v3 validée empiriquement (07/07) : checkbox = `size` (PAS width/height),
+      // texte statique = type `mention` + attr `mention` + signer_id (PAS type text + content).
+      // L'ancienne syntaxe était REJETÉE silencieusement → contrats signés sans aucune case.
+      // Espacement 26 pt : les mentions font 24 pt de haut (auto) → 18 pt les faisait se chevaucher.
       const blockTop = sigY + i * 160;
       const cb1Y = blockTop;
-      const cb2Y = blockTop + 18;
-      const cb3Y = blockTop + 36;
-      const labelY = blockTop + 62;
-      const fieldY = blockTop + 80;
+      const cb2Y = blockTop + 26;
+      const cb3Y = blockTop + 52;
+      const labelY = blockTop + 73;
+      const fieldY = blockTop + 100;
 
       // Helper pour poster un field, avec catch silencieux pour les optionnels
       async function postField(body, label) {
@@ -307,47 +311,52 @@ exports.handler = async (event) => {
       // Chaque case est liée à signer_id : l'attribution ("qui a coché quoi") est correcte même si
       // le texte imprimé plus bas utilise une formulation générique ("Chaque signataire").
       // Case 1 — OBLIGATOIRE : lecture acceptation mandat
-      await postField({
+      // ⚠️ BLOQUANT : les 2 cases de consentement obligatoires portent l'acceptation du contrat
+      // (cession + déclaration sur l'honneur). Sans elles, le PDF signé sort sans consentement
+      // matérialisé — c'est l'échec silencieux qui a produit des contrats sans cases (07/07).
+      const cb1ok = await postField({
         type: "checkbox",
         signer_id: signerId,
         page: sigPage,
         x: sigX,
         y: cb1Y,
-        width: 14,
-        height: 14,
+        size: 14,
         optional: false,
         name: `lu_accepte_${i + 1}`,
       }, "checkbox lu_accepte");
+      if (!cb1ok) {
+        return json(502, { error: `Echec creation case obligatoire lu_accepte (signataire ${i + 1})`, signature_request_id: signatureRequestId });
+      }
       await postField({
-        type: "text",
+        type: "mention",
+        signer_id: signerId,
         page: sigPage,
         x: sigX + 20,
-        y: cb1Y + 1,
-        width: 360,
-        height: 12,
-        content: "Je confirme accepter ce contrat de cession et les CGV (voir conditions ci-dessus)",
+        y: cb1Y - 3,
+        mention: "Je confirme accepter ce contrat de cession et les CGV (voir conditions ci-dessus)",
       }, "label lu_accepte");
 
-      // Case 2 — OBLIGATOIRE : autorisation reversement compte
-      await postField({
+      // Case 2 — OBLIGATOIRE : autorisation reversement compte (bloquante, comme la case 1)
+      const cb2ok = await postField({
         type: "checkbox",
         signer_id: signerId,
         page: sigPage,
         x: sigX,
         y: cb2Y,
-        width: 14,
-        height: 14,
+        size: 14,
         optional: false,
         name: `declaration_honneur_${i + 1}`,
       }, "checkbox declaration honneur");
+      if (!cb2ok) {
+        return json(502, { error: `Echec creation case obligatoire declaration_honneur (signataire ${i + 1})`, signature_request_id: signatureRequestId });
+      }
       await postField({
-        type: "text",
+        type: "mention",
+        signer_id: signerId,
         page: sigPage,
         x: sigX + 20,
-        y: cb2Y + 1,
-        width: 360,
-        height: 12,
-        content: "Je confirme ma déclaration sur l'honneur (ci-dessus)",
+        y: cb2Y - 3,
+        mention: "Je confirme ma déclaration sur l'honneur (ci-dessus)",
       }, "label declaration honneur");
 
       // Case 3 — OPTIONNELLE : renonciation droit de rétractation 14j
@@ -357,30 +366,27 @@ exports.handler = async (event) => {
         page: sigPage,
         x: sigX,
         y: cb3Y,
-        width: 14,
-        height: 14,
+        size: 14,
         optional: true,
         name: `demarrage_immediat_${i + 1}`,
       }, "checkbox demarrage immediat");
       await postField({
-        type: "text",
+        type: "mention",
+        signer_id: signerId,
         page: sigPage,
         x: sigX + 20,
-        y: cb3Y + 1,
-        width: 380,
-        height: 12,
-        content: "(Facultatif) Je demande le demarrage immediat, sans attendre les 14 j (L.221-25)",
+        y: cb3Y - 3,
+        mention: "(Facultatif) Je demande le demarrage immediat, sans attendre les 14 j (L.221-25)",
       }, "label demarrage immediat");
 
       // Label "Signature de Prénom Nom"
       await postField({
-        type: "text",
+        type: "mention",
+        signer_id: signerId,
         page: sigPage,
         x: sigX,
         y: labelY,
-        width: 220,
-        height: 12,
-        content: `Signature de ${s.first_name} ${s.last_name}`.trim(),
+        mention: `Signature de ${s.first_name} ${s.last_name}`.trim(),
       }, "label signature");
 
       // Zone signature (obligatoire — bloquante si échoue)
