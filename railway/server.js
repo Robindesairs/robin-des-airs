@@ -3552,17 +3552,23 @@ async function armPiecesReminder(lead) {
   } catch (e) { console.error('armPiecesReminder', e.message); }
 }
 
-// Confirmation post-signature (texte simple, PAS de question de versement — trop tôt à la signature :
-// le mode de versement est capté au VRAI moment du paiement via rib.html). Réassurance + annonce de l'appel expert.
+// Confirmation post-signature = LE message récapitulatif unique (décision fondateur 07/07) :
+// « C'est signé » + lien contrat signé + pièces par passager + frais art. 9 + lien sécurisé + appel expert.
+// PAS de question de versement (trop tôt — captée à rib.html au paiement), pas de bulle frais séparée (couverte ici).
 async function sendSignedConfirmation(lead) {
   try {
     if (!lead || !lead.phone || lead.payoutAskedAt) return;   // fire-once (webhook rejoué) — on réutilise le flag existant
     const cfg = watiCfg(); if (!cfg) return;
     upsertLead(lead.phone, { payoutAskedAt: Date.now() });
     const s = await getState(lead.phone); if (!s.ref && lead.ref) s.ref = lead.ref;
+    const ref = s.ref || lead.ref || '';
+    const pdfLine = ref ? `\n\n📄 Your signed contract (keep a copy): https://robindesairs.eu/api/mandat-pdf?r=${encodeURIComponent(ref)}` : '';
+    const pdfLineFR = ref ? `\n\n📄 Votre contrat signé (gardez-en copie) : https://robindesairs.eu/api/mandat-pdf?r=${encodeURIComponent(ref)}` : '';
+    const depotLine = ref ? `\nNot sent yet? Send them here, or upload everything at once via your *secure link* 👉 https://robindesairs.eu/depot-en-ligne.html?r=${encodeURIComponent(ref)}` : `\nNot sent yet? Just send them here.`;
+    const depotLineFR = ref ? `\nPas encore envoyé ? Transmettez-les ici, ou déposez tout en une fois sur votre *lien sécurisé* 👉 https://robindesairs.eu/depot-en-ligne.html?r=${encodeURIComponent(ref)}` : `\nPas encore envoyé ? Transmettez-les simplement ici.`;
     await send(lead.phone, L(s,
-      `🎉 It's signed, thank you for your trust! We handle everything to recover your money — you pay nothing upfront.\n\n📞 *An expert will call you* from *+33 7 56 86 36 30* — save this number as "Robin des Airs" to recognise the call.`,
-      `🎉 C'est signé, merci de votre confiance ! On s'occupe de tout pour récupérer votre argent — vous n'avancez rien.\n\n📞 *Un expert va vous appeler* depuis le *+33 7 56 86 36 30* — enregistrez ce numéro sous « Robin des Airs » pour reconnaître l'appel.`), cfg);
+      `🎉 *It's signed, thank you for your trust!* We handle everything to recover your money — you pay nothing upfront.${pdfLine}\n\n📎 *To process your case as fast as possible*, for each passenger we need:\n• your *boarding pass* or your *e-ticket* (booking confirmation)\n• your *passport* (or national ID / residence permit)\n\n💶 *Any costs because of the flight?* Meals, hotel, taxi… send the receipts here, we get them reimbursed *on top* of your compensation (Art. 9).\n\n✅ *Already sent everything?* Ignore this — nothing to do on your side. Once your file is *checked, we get back to you*.${depotLine}\n\n📞 *An expert will call you* from *+33 7 56 86 36 30*. Save this number as "*Robin des Airs*" to recognise our call. 🏹`,
+      `🎉 *C'est signé, merci de votre confiance !* On s'occupe de tout pour récupérer votre argent — vous n'avancez rien.${pdfLineFR}\n\n📎 *Pour traiter votre dossier au plus vite*, il nous faut, pour chaque passager :\n• votre *carte d'embarquement* ou votre *e-billet* (confirmation de réservation)\n• votre *passeport* (ou CNI / carte de séjour)\n\n💶 *Des frais à cause du vol ?* Repas, hôtel, taxi… envoyez les reçus ici, on les fait rembourser *en plus* de votre indemnité (art. 9).\n\n✅ *Si vous avez déjà tout envoyé, ignorez ce message* — rien à faire de votre côté. Une fois votre dossier *vérifié, nous revenons vers vous*.${depotLineFR}\n\n📞 *Un expert va vous appeler* depuis le *+33 7 56 86 36 30*. Enregistrez ce numéro sous « *Robin des Airs* » pour reconnaître notre appel. 🏹`), cfg);
   } catch (e) { console.error('sendSignedConfirmation', e.message); }
 }
 
@@ -3904,11 +3910,11 @@ app.post('/api/mandat-signed', (req, res) => {
   const lead = findLead(b.ref || '') || findLead(b.phone || b.waId || '');
   const marked = markLeadSigned(b.ref || '') || markLeadSigned(b.phone || b.waId || '');
   console.log('mandat signe ref=' + (b.ref || '?') + ' marked=' + marked);
-  // Confirmation « C'est signé » (texte simple) PUIS demande des reçus de frais (vraie étape suivante).
-  // Chaînées pour garantir l'ordre (2 envois concurrents non-awaited arriveraient dans le désordre).
-  // Plus de question « comment recevoir votre argent ? » ici : trop tôt à la signature → captée à rib.html au paiement.
+  // Confirmation « C'est signé » = message récapitulatif UNIQUE (contrat signé + pièces + frais + lien + expert).
+  // Pas de bulle frais séparée (le bloc 💶 du récap la couvre) ; les reçus envoyés sont captés par le handler média.
+  // Pas de question « comment recevoir votre argent ? » ici : trop tôt à la signature → captée à rib.html au paiement.
   if (lead && lead.phone) {
-    sendSignedConfirmation(lead).then(() => triggerFraisCollection(lead)).catch(() => {});
+    sendSignedConfirmation(lead).catch(() => {});
     armPiecesReminder(lead).catch(() => {}); // pose juste un flag (aucun envoi) → l'ordre n'importe pas
   }
   // « À la fin de la conversation » : le mandat signé = LE moment où l'on prévient qu'un conseiller natif doit
