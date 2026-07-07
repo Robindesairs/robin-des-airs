@@ -1675,11 +1675,13 @@ async function askOcrConfirm(phone, s, cfg, mediaUrl) {
     s.doc_pending = { name: pp.name || '', prenomId: pp.prenom || '', nomId: pp.nom || '', dob: pp.dob || '', expiry: pp.expiry || '', expired, minor, adresse: pp.adresse || '', sexe: pp.sexe || '', lieuNaissance: pp.lieuNaissance || '', docType: pp.docType || '', cniVerso: (pp.docType === 'cni' && (pp.face === 'verso' || pp.face === 'deux')) || false, viaPhoto: true };
     s.step = 'doc_pass_confirm';
     await setState(phone, s);
+    const _ne = pp.sexe === 'F' ? 'Née' : pp.sexe === 'M' ? 'Né' : 'Né(e)';        // accord au sexe lu sur la pièce, sinon inclusif
+    const _min = pp.sexe === 'F' ? 'Mineure' : pp.sexe === 'M' ? 'Mineur' : 'Mineur·e';
     const lines = [
       `📋 *Passager ${i}/${s.pax} — j'ai lu :*`,
       `👤 ${pp.name || '—'}`,
-      pp.dob ? `🎂 Né(e) le ${pp.dob}${pp.lieuNaissance ? ` à ${pp.lieuNaissance}` : ''}` : (pp.lieuNaissance ? `📍 Né(e) à ${pp.lieuNaissance}` : ''),
-      minor ? `👶 *Mineur·e* — signature parentale requise` : '',
+      pp.dob ? `🎂 ${_ne} le ${pp.dob}${pp.lieuNaissance ? ` à ${pp.lieuNaissance}` : ''}` : (pp.lieuNaissance ? `📍 ${_ne} à ${pp.lieuNaissance}` : ''),
+      minor ? `👶 *${_min}* — signature parentale requise` : '',
       expired ? `⚠️ Pièce *expirée* (${pp.expiry}). On continue, un conseiller vérifiera.` : '',
       `\nC'est bien cette personne ?`,
     ].filter(Boolean).join('\n');
