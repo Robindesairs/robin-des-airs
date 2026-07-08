@@ -18,6 +18,7 @@ const { lookupFlightRoutes } = require('./lib/flight-routes');
 const { SYSTEM_PROMPT: FAQ_SYSTEM_PROMPT, FAQ_KNOWLEDGE } = require('./lib/faq-hors-tunnel');
 const { pickRV, fillTpl } = require('./lib/relance-variants');
 const { extractEticketMulti: extractEticketMultiLib, pdfToImages: pdfToImagesLib, normalize: normalizeEticket } = require('./lib/extract-eticket');
+const twilio = require('./lib/wa-twilio'); // adaptateur Twilio WhatsApp (actif si WA_PROVIDER=twilio)
 // Prénom du signataire, joliment capitalisé pour l'affichage (les noms sont stockés en MAJUSCULES) :
 // « CLIMBIE » → « Climbie », « jean-pierre » → « Jean-Pierre », « n'goran » → « N'Goran ».
 function titleCaseName(x) { return String(x || '').toLowerCase().replace(/(^|[\s\-'])([a-zà-ÿ])/g, (m, sep, c) => sep + c.toUpperCase()); }
@@ -62,6 +63,12 @@ function watiCfg() {
   if (!token || !base) return null;
   const channel = (process.env.WATI_CHANNEL_PHONE || process.env.WHATSAPP_CONTACT_NUMBER || '33756863630').replace(/\D/g, '');
   return { token, base, channel };
+}
+// Sélecteur de fournisseur WhatsApp. WA_PROVIDER=twilio bascule TOUS les envois/relances vers Twilio
+// (l'inbound arrive alors sur /api/twilio-webhook). Défaut = WATI : la prod reste strictement inchangée.
+function waCfg() {
+  if ((process.env.WA_PROVIDER || '').toLowerCase() === 'twilio') return twilio.twilioCfg();
+  return watiCfg();
 }
 // Mirror le message SORTANT du bot vers le store conversation Netlify (« robin-wa ») que lit le CRM.
 // L'ENTRANT est déjà loggé côté Netlify (webhook WATI) → on ne mirror QUE le sortant (anti-doublon).
@@ -462,6 +469,14 @@ async function send(phone, text, cfg) {
   recordConvo(phone, 'out', text); // historique léger pour le Bureau
   appendWaMessage(phone, text, 'bot'); // mirror SORTANT → store conversation CRM (fire-and-forget)
   if (!cfg) { console.error('v8 send IGNORÉ — watiCfg null (WATI_API_TOKEN/WATI_API_BASE manquant)'); return; }
+  if (cfg.provider === 'twilio') {
+    const r = await twilio.twilioSendText(phone, text, cfg);
+    // 63016 = message hors fenêtre de session Twilio → même bascule « À rappeler » que « Invalid Conversation » WATI.
+    if (!r.ok && /63016|outside|session|window/i.test(JSON.stringify(r.data || ''))) {
+      try { const k = leadKey(phone); const l = LEADS.get(k); if (l && !l.signed && !l.windowClosed) { l.windowClosed = true; LEADS.set(k, l); persistLeads(); } } catch (_) {}
+    }
+    return;
+  }
   const wa = normalizeWatiPhone(phone);
   const mask = wa.length > 6 ? wa.slice(0, 4) + '***' + wa.slice(-2) : wa;
   const params = new URLSearchParams({ messageText: text, channelPhoneNumber: cfg.channel });
@@ -493,6 +508,7 @@ async function sendButtons(phone, config, cfg) {
   if (body && body !== '👇') appendWaMessage(phone, body, 'bot');
   const wa = normalizeWatiPhone(phone);
   const textFallback = () => send(phone, (body && body !== '👇' ? body + '\n\n' : '') + buttons.map((b, i) => `${i + 1} — ${b.text}`).join('\n'), cfg);
+  if (cfg.provider === 'twilio') return textFallback(); // Sandbox : pas de boutons natifs → repli numéroté (prod : Content Template)
   // ⚠️ Ce compte WATI ne rend PAS l'interactif v3 (cf. sendList → texte). L'endpoint v1
   // sendInteractiveButtonsMessage, lui, rend de VRAIS boutons cliquables (prod depuis ~2 mois).
   // Ne pas rebasculer vers v3 sans avoir vérifié que les boutons s'affichent vraiment.
@@ -518,6 +534,7 @@ async function sendList(phone, { header, body, footer, buttonText, items, lang }
   //    (le /api/v1/sendInteractiveListMessage rend toujours en texte — confirmé support WATI).
   let host; try { host = new URL(cfg.base).origin; } catch { host = cfg.base; }
   const textFallback = () => send(phone, (header ? `*${header}*\n\n` : '') + body + '\n\n' + items.map((it, idx) => `${NUMEMO[idx] || (idx + 1 + '.')} ${it.title}`).join('\n') + numHint, cfg);
+  if (cfg.provider === 'twilio') return textFallback(); // Sandbox : liste rendue en texte numéroté
   try {
     const res = await fetch(`${host}/api/ext/v3/conversations/messages/interactive`, {
       method: 'POST', signal: AbortSignal.timeout(12000), headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
@@ -547,6 +564,7 @@ async function sendDelayed(phone, text, cfg, ms = 700) { await new Promise(r => 
 // parameters = [{name:'1', value:'…'}, …] (format WATI sendTemplateMessage).
 async function watiSendTemplate(phone, templateName, parameters, cfg) {
   if (!cfg || !templateName) return { ok: false };
+  if (cfg.provider === 'twilio') return twilio.twilioSendTemplate(phone, templateName, parameters, cfg);
   const wa = normalizeWatiPhone(phone);
   if (!wa || wa.length < 10) return { ok: false };
   try {
@@ -1027,6 +1045,7 @@ function mediaFetchHeaders(rawUrl, cfg) {
   let u;
   try { u = new URL(String(rawUrl || '')); } catch { return null; }
   if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;
+  if (cfg && cfg.provider === 'twilio') return twilio.twilioMediaHeaders(rawUrl, cfg); // média Twilio : Basic auth, hôtes twilio.com uniquement
   const host = (u.hostname || '').toLowerCase().replace(/^\[|\]$/g, '');
   if (!host) return null;
   let baseHost = '';
@@ -3532,7 +3551,7 @@ async function sendFraisRequest(phone, s, cfg) {
 async function triggerFraisCollection(lead) {
   try {
     if (!lead || !lead.phone || lead.fraisAskedAt) return; // invalide ou déjà demandé (webhook rejoué)
-    const cfg = watiCfg(); if (!cfg) return;
+    const cfg = waCfg(); if (!cfg) return;
     upsertLead(lead.phone, { fraisPending: true, fraisAskedAt: Date.now() }); // garde le lead vivant pour 1 relance frais
     const s = await getState(lead.phone); if (!s.ref && lead.ref) s.ref = lead.ref;
     await sendFraisRequest(lead.phone, s, cfg);
@@ -3558,7 +3577,7 @@ async function armPiecesReminder(lead) {
 async function sendSignedConfirmation(lead) {
   try {
     if (!lead || !lead.phone || lead.payoutAskedAt) return;   // fire-once (webhook rejoué) — on réutilise le flag existant
-    const cfg = watiCfg(); if (!cfg) return;
+    const cfg = waCfg(); if (!cfg) return;
     upsertLead(lead.phone, { payoutAskedAt: Date.now() });
     const s = await getState(lead.phone); if (!s.ref && lead.ref) s.ref = lead.ref;
     const ref = s.ref || lead.ref || '';
@@ -3745,12 +3764,9 @@ function enqueue(phone, task) {
   return next;
 }
 
-app.post('/api/wati-webhook', async (req, res) => {
-  const body = req.body;
-  if (!verifyWatiSecret(body, req.headers, req.query)) return res.status(401).json({ error: 'Secret invalide' });
-  const cfg = watiCfg(); const items = extractInbound(body);
-  saveInboundDebug(JSON.stringify(body), items);
-  res.json({ ok: true, processed: items.length }); // répondre WATI tout de suite
+// Boucle de traitement des messages entrants — PARTAGÉE entre le webhook WATI et le webhook Twilio.
+// items = sortie de extractInbound() (WATI) OU de twilio.parseTwilioInbound() : même forme.
+async function processInboundItems(items, cfg) {
   for (const { phone, text, mediaUrl, dedupId, hasId, replyId, referral } of items) {
     if (!phone) continue;
     if (hasId && memSeen(dedupId)) continue;
@@ -3777,6 +3793,28 @@ app.post('/api/wati-webhook', async (req, res) => {
       if (cfg) return send(phone, phoneIsEN(phone) ? 'Something went wrong. Type *go* to continue your file.' : 'Une erreur est survenue. Écrivez *go* pour continuer votre dossier.', cfg).catch(() => {});
     }));
   }
+}
+
+app.post('/api/wati-webhook', async (req, res) => {
+  const body = req.body;
+  if (!verifyWatiSecret(body, req.headers, req.query)) return res.status(401).json({ error: 'Secret invalide' });
+  const cfg = watiCfg(); const items = extractInbound(body);
+  saveInboundDebug(JSON.stringify(body), items);
+  res.json({ ok: true, processed: items.length }); // répondre WATI tout de suite
+  processInboundItems(items, cfg);
+});
+
+// ─── Webhook entrant TWILIO (form-encoded) — actif quand WA_PROVIDER=twilio ────────
+// URL cible Twilio : https://<railway>/api/twilio-webhook?s=<WATI_WEBHOOK_SECRET>
+// Sécurité : secret partagé en query (fail-closed), comme le webhook WATI.
+// TODO prod : ajouter la validation de la signature X-Twilio-Signature (HMAC) une fois hors Sandbox.
+app.post('/api/twilio-webhook', async (req, res) => {
+  const expected = (process.env.WATI_WEBHOOK_SECRET || '').trim();
+  if (!expected || !safeEq((req.query.s || '').toString(), expected)) return res.status(401).send('');
+  const items = twilio.parseTwilioInbound(req.body, normalizeWaPhone);
+  saveInboundDebug(JSON.stringify(req.body), items);
+  res.set('Content-Type', 'text/xml').send('<Response></Response>'); // ACK Twilio (TwiML vide)
+  processInboundItems(items, twilio.twilioCfg());
 });
 
 // Récupération dossier pour le lien court mandat.html?r=REF (CORS déjà ouvert plus haut)
@@ -4046,7 +4084,7 @@ async function runRelances() {
   if (_relancesRunning) return;
   _relancesRunning = true;
   try {
-    const cfg = watiCfg(); if (!cfg) return;
+    const cfg = waCfg(); if (!cfg) return;
     const now = Date.now();
     for (const [k, lead] of LEADS) {
       if (!lead) continue;
