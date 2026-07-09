@@ -111,6 +111,64 @@ async function twilioSendQuickReply(phone, body, buttons, cfg) {
   } catch (e) { console.error('twilioSendQuickReply', e.message); return { ok: false }; }
 }
 
+// ─── Vraies listes WhatsApp (Content API twilio/list-picker) ──────────────────
+// Même principe que les quick-reply, mais jusqu'à 10 options avec description.
+// Comme les quick-reply : utilisable EN SESSION sans validation Meta.
+function _hashList(body, buttonLabel, items) {
+  const raw = JSON.stringify({ body, buttonLabel, items: items.map(i => [i.title, i.id || '', i.description || '']) });
+  return crypto.createHash('sha256').update(raw).digest('hex').slice(0, 24);
+}
+
+async function getOrCreateListPicker(body, buttonLabel, items, cfg) {
+  const key = _hashList(body, buttonLabel, items);
+  if (_contentCache.has(key)) return _contentCache.get(key);
+  const payload = {
+    friendly_name: 'rda_lp_' + key,
+    language: 'en',
+    variables: {},
+    types: {
+      'twilio/list-picker': {
+        body: String(body || '👇').slice(0, 1024),
+        button: String(buttonLabel || 'Choisir').slice(0, 20),
+        items: items.slice(0, 10).map((it, i) => ({
+          item: String(it.title || '').slice(0, 24),
+          id: it.id || ('item' + i),
+          description: String(it.description || ' ').slice(0, 72), // requis par l'API, jamais vide
+        })),
+      },
+    },
+  };
+  try {
+    const res = await fetch(CONTENT_URL, {
+      method: 'POST', signal: AbortSignal.timeout(12000),
+      headers: { Authorization: basicAuth(cfg), 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.sid) { console.error('twilio list-picker create REJETÉ', res.status, JSON.stringify(data).slice(0, 200)); return null; }
+    _contentCache.set(key, data.sid);
+    return data.sid;
+  } catch (e) { console.error('getOrCreateListPicker', e.message); return null; }
+}
+
+// Envoie une vraie liste tactile. items = [{title, id?, description?}] (max 10).
+async function twilioSendListPicker(phone, body, buttonLabel, items, cfg) {
+  if (!cfg || !items || !items.length) return { ok: false };
+  const contentSid = await getOrCreateListPicker(body, buttonLabel, items, cfg);
+  if (!contentSid) return { ok: false };
+  const params = new URLSearchParams({ From: cfg.from, To: toWa(phone), ContentSid: contentSid, ContentVariables: '{}' });
+  try {
+    const res = await fetch(MSG_URL(cfg.accountSid), {
+      method: 'POST', signal: AbortSignal.timeout(12000),
+      headers: { Authorization: basicAuth(cfg), 'Content-Type': 'application/x-www-form-urlencoded' }, body: params,
+    });
+    const data = await res.json().catch(() => ({}));
+    const ok = res.ok && !data.error_code && !data.code;
+    if (!ok) console.error('twilio list-picker send REJETÉ', res.status, JSON.stringify(data).slice(0, 200));
+    return { ok, data };
+  } catch (e) { console.error('twilioSendListPicker', e.message); return { ok: false }; }
+}
+
 // Template hors fenêtre 24 h. En Twilio on envoie un Content Template par ContentSid + variables.
 // mapping WATI template_name → Twilio ContentSid via TWILIO_TEMPLATE_MAP (JSON en env).
 // parameters WATI [{name:'1',value:'x'}] → Twilio ContentVariables {"1":"x"}.
@@ -174,4 +232,4 @@ function parseTwilioInbound(body, normalizeWaPhone) {
   }];
 }
 
-module.exports = { twilioCfg, twilioSendText, twilioSendTemplate, twilioSendQuickReply, twilioMediaHeaders, parseTwilioInbound, toWa };
+module.exports = { twilioCfg, twilioSendText, twilioSendTemplate, twilioSendQuickReply, twilioSendListPicker, twilioMediaHeaders, parseTwilioInbound, toWa };

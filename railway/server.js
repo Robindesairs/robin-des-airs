@@ -542,7 +542,13 @@ async function sendList(phone, { header, body, footer, buttonText, items, lang }
   //    (le /api/v1/sendInteractiveListMessage rend toujours en texte — confirmé support WATI).
   let host; try { host = new URL(cfg.base).origin; } catch { host = cfg.base; }
   const textFallback = () => send(phone, (header ? `*${header}*\n\n` : '') + body + '\n\n' + items.map((it, idx) => `${NUMEMO[idx] || (idx + 1 + '.')} ${it.title}`).join('\n') + numHint, cfg);
-  if (cfg.provider === 'twilio') return textFallback(); // Sandbox : liste rendue en texte numéroté
+  if (cfg.provider === 'twilio') {
+    TWILIO_LAST_BUTTONS.set(phone, items.map(it => it.title)); // filet : si le client tape quand même un chiffre
+    const btnLabel = lang === 'en' ? (buttonText || 'Choose') : (buttonText || 'Choisir');
+    const r = await twilio.twilioSendListPicker(phone, (header ? `*${header}*\n\n` : '') + body, btnLabel, rows, cfg);
+    if (r.ok) return;
+    return textFallback(); // repli texte numéroté si la création/l'envoi de la liste échoue
+  }
   try {
     const res = await fetch(`${host}/api/ext/v3/conversations/messages/interactive`, {
       method: 'POST', signal: AbortSignal.timeout(12000), headers: { Authorization: `Bearer ${cfg.token}`, 'Content-Type': 'application/json' },
@@ -593,7 +599,15 @@ const NUMEMO = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣'
 async function sendChoices(phone, { body, items, footer, lang }, cfg) {
   const lines = items.map((it, i) => `${NUMEMO[i] || (i + 1 + '.')} ${it.title}${it.description ? ` — _${it.description}_` : ''}`).join('\n');
   const hint = lang === 'en' ? `\n\n👉 Reply with the *number* (e.g. 1)` : `\n\n👉 Répondez avec le *numéro* (ex. 1)`;
-  await send(phone, `${body}\n\n${lines}${hint}${footer ? `\n${footer}` : ''}`, cfg);
+  const textFallback = () => send(phone, `${body}\n\n${lines}${hint}${footer ? `\n${footer}` : ''}`, cfg);
+  if (cfg && cfg.provider === 'twilio') {
+    TWILIO_LAST_BUTTONS.set(phone, items.map(it => it.title)); // filet : si le client tape quand même un chiffre
+    const rows = items.map((it, i) => ({ title: it.title, id: 'item' + i, description: it.description || '' }));
+    const r = await twilio.twilioSendListPicker(phone, body, lang === 'en' ? 'Choose' : 'Choisir', rows, cfg);
+    if (r.ok) return;
+    return textFallback(); // repli texte numéroté si la création/l'envoi de la liste échoue
+  }
+  await textFallback();
 }
 
 // ─── État ──────────────────────────────────────────────────────────────────────
