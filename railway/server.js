@@ -498,6 +498,9 @@ async function send(phone, text, cfg) {
     }
   } catch (e) { console.error('v8 send failed', e.message, '→', mask); }
 }
+// Sandbox Twilio uniquement : dernier jeu de boutons envoyé par téléphone (repli numéroté → traduction
+// en texte côté handleMessage). Usage unique, supprimée au message suivant qu'elle serve ou non.
+const TWILIO_LAST_BUTTONS = new Map();
 async function sendButtons(phone, config, cfg) {
   if (!cfg) return;
   const isArr = Array.isArray(config);
@@ -508,7 +511,7 @@ async function sendButtons(phone, config, cfg) {
   if (body && body !== '👇') appendWaMessage(phone, body, 'bot');
   const wa = normalizeWatiPhone(phone);
   const textFallback = () => send(phone, (body && body !== '👇' ? body + '\n\n' : '') + buttons.map((b, i) => `${i + 1} — ${b.text}`).join('\n'), cfg);
-  if (cfg.provider === 'twilio') return textFallback(); // Sandbox : pas de boutons natifs → repli numéroté (prod : Content Template)
+  if (cfg.provider === 'twilio') { TWILIO_LAST_BUTTONS.set(phone, buttons.map(b => b.text)); return textFallback(); } // Sandbox : pas de boutons natifs → repli numéroté (prod : Content Template)
   // ⚠️ Ce compte WATI ne rend PAS l'interactif v3 (cf. sendList → texte). L'endpoint v1
   // sendInteractiveButtonsMessage, lui, rend de VRAIS boutons cliquables (prod depuis ~2 mois).
   // Ne pas rebasculer vers v3 sans avoir vérifié que les boutons s'affichent vraiment.
@@ -1829,8 +1832,8 @@ async function archivePiece(phone, kind, mediaUrl, cfg, passenger) {
   } catch (e) { console.error('archivePiece', e.message); }
 }
 async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, referral) {
-  const input = (text || '').trim();
-  const lower = input.toLowerCase();
+  let input = (text || '').trim();
+  let lower = input.toLowerCase();
   const id = replyId || ''; // id du bouton/liste envoyé par WATI (ex: 'pass_ok', 'mdt_0'…)
   // Re-dispatch : si l'état a avancé entre la lecture et le traitement (race Blobs),
   // on re-lit l'état et on relance une fois. Évite le silence quand le bouton incident
@@ -1893,6 +1896,21 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
   }
 
   let s = await getState(phone);
+
+  // Twilio Sandbox : pas de boutons natifs → repli texte numéroté (« 1 — X / 2 — Y », cf. sendButtons).
+  // Sur WATI le tap d'un vrai bouton renvoie son TEXTE (c'est ce que les étapes reconnaissent par mot-clé/regex).
+  // Ici, une réponse EN CHIFFRE SEUL au dernier message à boutons est donc traduite vers ce même texte,
+  // pour que la détection fonctionne à l'identique sans dupliquer la logique de chaque étape.
+  // Usage UNIQUE : supprimée qu'elle serve ou non, pour ne jamais s'appliquer à un message plus tard
+  // (ex. une question numérique sans rapport comme le nombre de passagers).
+  if (cfg && cfg.provider === 'twilio') {
+    const _twOpts = TWILIO_LAST_BUTTONS.get(phone);
+    TWILIO_LAST_BUTTONS.delete(phone);
+    if (_twOpts && /^\d+$/.test(input)) {
+      const _twIdx = parseInt(input, 10) - 1;
+      if (_twOpts[_twIdx]) { input = _twOpts[_twIdx]; lower = input.toLowerCase(); }
+    }
+  }
   // Anglais COLLANT : tout message clairement anglais bascule (et garde) le client en EN → la couche de
   // traduction prend alors le relais sur tous les messages restés codés en français en dur.
   if (!isEN(s) && detectLang(input) === 'en') { s.langue_code = 'en'; s.langue = '🇬🇧 English'; await setState(phone, s); }
