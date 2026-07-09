@@ -1,4 +1,5 @@
 'use strict';
+const crypto = require('crypto');
 // ─────────────────────────────────────────────────────────────────────────────
 // Adaptateur Twilio WhatsApp — MÊME interface que la plomberie WATI de server.js.
 //
@@ -49,9 +50,66 @@ async function twilioSendText(phone, text, cfg) {
   } catch (e) { console.error('twilioSendText', e.message); return { ok: false }; }
 }
 
-// Boutons/listes → repli texte numéroté. La Sandbox ne rend PAS les boutons interactifs ;
-// server.js route déjà les boutons vers son textFallback() quand provider==='twilio'.
-// (En prod, on passera par un Content Template quick-reply via twilioSendTemplate.)
+// ─── Vrais boutons WhatsApp (Content API twilio/quick-reply) ──────────────────
+// Utilisables EN SESSION (fenêtre 24h) sans validation Meta : on crée le Content Template
+// via un simple POST (jamais soumis à validation), puis on l'envoie par ContentSid.
+// Cache en mémoire par (body+libellés) pour ne pas recréer un template identique à chaque envoi
+// (beaucoup de prompts — langue, consentement, durée… — sont strictement identiques d'un client à l'autre).
+const CONTENT_URL = 'https://content.twilio.com/v1/Content';
+const _contentCache = new Map(); // hash(body+boutons) → ContentSid
+
+function _hashPrompt(body, buttons) {
+  const raw = JSON.stringify({ body, buttons: buttons.map(b => [b.title, b.id || '']) });
+  return crypto.createHash('sha256').update(raw).digest('hex').slice(0, 24);
+}
+
+// Crée (ou réutilise) un Content Template quick-reply et renvoie son ContentSid, ou null si échec
+// (l'appelant doit alors se rabattre sur le texte numéroté).
+async function getOrCreateQuickReply(body, buttons, cfg) {
+  const key = _hashPrompt(body, buttons);
+  if (_contentCache.has(key)) return _contentCache.get(key);
+  const payload = {
+    friendly_name: 'rda_qr_' + key,
+    language: 'en',
+    variables: {},
+    types: {
+      'twilio/quick-reply': {
+        body: String(body || '👇').slice(0, 1024),
+        actions: buttons.slice(0, 3).map((b, i) => ({ title: String(b.title || '').slice(0, 20), id: b.id || ('opt' + i) })),
+      },
+    },
+  };
+  try {
+    const res = await fetch(CONTENT_URL, {
+      method: 'POST', signal: AbortSignal.timeout(12000),
+      headers: { Authorization: basicAuth(cfg), 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.sid) { console.error('twilio content create REJETÉ', res.status, JSON.stringify(data).slice(0, 200)); return null; }
+    _contentCache.set(key, data.sid);
+    return data.sid;
+  } catch (e) { console.error('getOrCreateQuickReply', e.message); return null; }
+}
+
+// Envoie de vrais boutons quick-reply. buttons = [{title, id?}]. Retourne { ok } ; en cas d'échec
+// (création ou envoi), l'appelant (sendButtons côté server.js) se rabat sur le texte numéroté.
+async function twilioSendQuickReply(phone, body, buttons, cfg) {
+  if (!cfg || !buttons || !buttons.length) return { ok: false };
+  const contentSid = await getOrCreateQuickReply(body, buttons, cfg);
+  if (!contentSid) return { ok: false };
+  const params = new URLSearchParams({ From: cfg.from, To: toWa(phone), ContentSid: contentSid, ContentVariables: '{}' });
+  try {
+    const res = await fetch(MSG_URL(cfg.accountSid), {
+      method: 'POST', signal: AbortSignal.timeout(12000),
+      headers: { Authorization: basicAuth(cfg), 'Content-Type': 'application/x-www-form-urlencoded' }, body: params,
+    });
+    const data = await res.json().catch(() => ({}));
+    const ok = res.ok && !data.error_code && !data.code;
+    if (!ok) console.error('twilio quick-reply REJETÉ', res.status, JSON.stringify(data).slice(0, 200));
+    return { ok, data };
+  } catch (e) { console.error('twilioSendQuickReply', e.message); return { ok: false }; }
+}
 
 // Template hors fenêtre 24 h. En Twilio on envoie un Content Template par ContentSid + variables.
 // mapping WATI template_name → Twilio ContentSid via TWILIO_TEMPLATE_MAP (JSON en env).
@@ -116,4 +174,4 @@ function parseTwilioInbound(body, normalizeWaPhone) {
   }];
 }
 
-module.exports = { twilioCfg, twilioSendText, twilioSendTemplate, twilioMediaHeaders, parseTwilioInbound, toWa };
+module.exports = { twilioCfg, twilioSendText, twilioSendTemplate, twilioSendQuickReply, twilioMediaHeaders, parseTwilioInbound, toWa };

@@ -511,7 +511,12 @@ async function sendButtons(phone, config, cfg) {
   if (body && body !== '👇') appendWaMessage(phone, body, 'bot');
   const wa = normalizeWatiPhone(phone);
   const textFallback = () => send(phone, (body && body !== '👇' ? body + '\n\n' : '') + buttons.map((b, i) => `${i + 1} — ${b.text}`).join('\n'), cfg);
-  if (cfg.provider === 'twilio') { TWILIO_LAST_BUTTONS.set(phone, buttons.map(b => b.text)); return textFallback(); } // Sandbox : pas de boutons natifs → repli numéroté (prod : Content Template)
+  if (cfg.provider === 'twilio') {
+    TWILIO_LAST_BUTTONS.set(phone, buttons.map(b => b.text)); // filet anti-boucle : gardé même si les vrais boutons partent (au cas où le client tape quand même un chiffre)
+    const r = await twilio.twilioSendQuickReply(phone, body || '👇', buttons.map(b => ({ title: b.text, id: b.id })), cfg);
+    if (r.ok) return;
+    return textFallback(); // repli texte numéroté si la création/l'envoi du Content Template échoue
+  }
   // ⚠️ Ce compte WATI ne rend PAS l'interactif v3 (cf. sendList → texte). L'endpoint v1
   // sendInteractiveButtonsMessage, lui, rend de VRAIS boutons cliquables (prod depuis ~2 mois).
   // Ne pas rebasculer vers v3 sans avoir vérifié que les boutons s'affichent vraiment.
