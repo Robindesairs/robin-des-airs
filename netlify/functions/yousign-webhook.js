@@ -233,7 +233,25 @@ exports.handler = async (event) => {
           const recs = await airtableFindByRef(cfg, dossierRef);
           const rec = recs && recs[0];
           if (rec && rec.id) {
-            await airtablePatch(cfg, rec.id, { [cfg.labels.statutSuivi]: cfg.statutMandatSigne });
+            const patch = { [cfg.labels.statutSuivi]: cfg.statutMandatSigne };
+            // Signal MED / rétractation 14 j : le Cédant n'a PAS demandé l'exécution immédiate (case
+            // facultative art. L.221-25 non cochée) → NE PAS envoyer la mise en demeure avant J+14.
+            // On l'écrit UNE fois (à la 1re signature) dans les Remarques, sans écraser l'existant.
+            if (!alreadyNotified && cfg.labels.remarques) {
+              try {
+                let startNow = false;
+                try { const mg = await store.get(`medgate/${dossierRef}`, { type: "json" }); startNow = !!(mg && mg.startNow); } catch (_) {}
+                const medIso = new Date(Date.now() + 14 * 864e5).toISOString().slice(0, 10);
+                const medFr = medIso.split("-").reverse().join("/");
+                const note = startNow
+                  ? "✅ Démarrage immédiat demandé (art. L.221-25) — mise en demeure possible sans attendre."
+                  : `⏳ NE PAS ENVOYER LA MISE EN DEMEURE AVANT LE ${medFr} — démarrage immédiat NON demandé (délai de rétractation 14 j).`;
+                const rem = cfg.labels.remarques;
+                const cur = (rec.fields && rec.fields[rem]) ? String(rec.fields[rem]).trim() : "";
+                patch[rem] = cur ? `${cur}\n${note}` : note;
+              } catch (_) {}
+            }
+            await airtablePatch(cfg, rec.id, patch);
           }
         }
       } catch (e) { console.warn(`[yousign-webhook] statut Airtable → Contrat signé échec:`, e.message); }

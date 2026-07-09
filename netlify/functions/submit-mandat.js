@@ -737,6 +737,9 @@ exports.handler = async (event) => {
       // en priorité pour annuler une relance « signez ». Indépendant de l'__index agrégé (qui
       // peut perdre une entrée si deux signatures s'entrecroisent) et de la génération PDF.
       try { await store.setJSON(`signed/${ref}`, { ref, signed_at: ts, cert_id: certId }); } catch (_) {}
+      // Marqueur « démarrage immédiat » (art. L.221-25) PAR RÉF, lu à la signature (yousign-webhook)
+      // pour afficher dans le CRM « MED pas avant J+14 » quand le Cédant n'a PAS coché l'exécution immédiate.
+      try { await store.setJSON(`medgate/${ref}`, { startNow: !!record.startNow, submittedAt: ts }); } catch (_) {}
 
       let index = [];
       try { index = await store.get('__index', { type: 'json' }) || []; } catch { index = []; }
