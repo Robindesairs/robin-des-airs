@@ -986,15 +986,17 @@ function humanizeRoute(r) { return r ? String(r).replace(/\b([A-Z]{3})\b/g, (m) 
 
 // Villes proposées en liste cliquable (max 9 + « Autre » : WhatsApp plafonne à 10 lignes).
 // Départ/arrivée = corridor Afrique ↔ Europe (campagnes Dakar/Abidjan, diaspora FR/BE) ; escale = hubs.
+// v/d = valeur canonique FR (v est STOCKÉE dans la route/le mandat → jamais traduite).
+// ve/de = affichage anglophone uniquement (titre + description dans la liste WhatsApp).
 const VILLES_COURANTES = [
-  { v: 'Dakar', d: 'Sénégal' }, { v: 'Paris', d: 'France' }, { v: 'Abidjan', d: 'Côte d\'Ivoire' },
-  { v: 'Bruxelles', d: 'Belgique' }, { v: 'Bamako', d: 'Mali' }, { v: 'Conakry', d: 'Guinée' },
-  { v: 'Douala', d: 'Cameroun' }, { v: 'Marseille', d: 'France' }, { v: 'Lyon', d: 'France' },
+  { v: 'Dakar', d: 'Sénégal', de: 'Senegal' }, { v: 'Paris', d: 'France', de: 'France' }, { v: 'Abidjan', d: 'Côte d\'Ivoire', de: 'Ivory Coast' },
+  { v: 'Bruxelles', d: 'Belgique', ve: 'Brussels', de: 'Belgium' }, { v: 'Bamako', d: 'Mali', de: 'Mali' }, { v: 'Conakry', d: 'Guinée', de: 'Guinea' },
+  { v: 'Douala', d: 'Cameroun', de: 'Cameroon' }, { v: 'Marseille', d: 'France', de: 'France' }, { v: 'Lyon', d: 'France', de: 'France' },
 ];
 const VILLES_HUBS = [
   { v: 'Casablanca', d: 'Royal Air Maroc' }, { v: 'Istanbul', d: 'Turkish Airlines' }, { v: 'Paris', d: 'Air France' },
-  { v: 'Lisbonne', d: 'TAP Air Portugal' }, { v: 'Bruxelles', d: 'Brussels Airlines' }, { v: 'Addis-Abeba', d: 'Ethiopian' },
-  { v: 'Alger', d: 'Air Algérie' }, { v: 'Tunis', d: 'Tunisair' }, { v: 'Dubaï', d: 'Emirates' },
+  { v: 'Lisbonne', d: 'TAP Air Portugal', ve: 'Lisbon' }, { v: 'Bruxelles', d: 'Brussels Airlines', ve: 'Brussels' }, { v: 'Addis-Abeba', d: 'Ethiopian', ve: 'Addis Ababa' },
+  { v: 'Alger', d: 'Air Algérie', ve: 'Algiers' }, { v: 'Tunis', d: 'Tunisair' }, { v: 'Dubaï', d: 'Emirates', ve: 'Dubai' },
 ];
 // Interprète la réponse à une liste de villes : tap (id WATI « 0-N » ou titre), numéro du repli texte,
 // « autre » → saisie libre, sinon le texte est traité comme une ville tapée directement.
@@ -1010,7 +1012,7 @@ function cityPick(input, id, cities) {
 }
 async function sendCityList(phone, { header, body }, cities, cfg) {
   const en = phoneIsEN(phone);
-  return sendList(phone, { header, body, buttonText: en ? 'City ▾' : 'Ville ▾', items: cities.map((c) => ({ title: c.v, description: c.d })).concat([{ id: 'ville_autre', title: en ? '✏️ Other city' : '✏️ Autre ville', description: en ? 'Type its name' : 'Tapez son nom' }]) }, cfg);
+  return sendList(phone, { header, body, buttonText: en ? 'City ▾' : 'Ville ▾', items: cities.map((c) => ({ title: en ? (c.ve || c.v) : c.v, description: en ? (c.de || c.d) : c.d })).concat([{ id: 'ville_autre', title: en ? '✏️ Other city' : '✏️ Autre ville', description: en ? 'Type its name' : 'Tapez son nom' }]) }, cfg);
 }
 // Stockage DURABLE du dossier sur Netlify Blobs (survit aux redémarrages Railway).
 // Fire-and-forget : le serveur Railway étant persistant, le POST se termine en arrière-plan.
@@ -1719,12 +1721,14 @@ async function askOcrConfirm(phone, s, cfg, mediaUrl) {
     const _ne = pp.sexe === 'F' ? 'Née' : pp.sexe === 'M' ? 'Né' : 'Né(e)';        // accord au sexe lu sur la pièce, sinon inclusif
     const _min = pp.sexe === 'F' ? 'Mineure' : pp.sexe === 'M' ? 'Mineur' : 'Mineur·e';
     const lines = [
-      `📋 *Passager ${i}/${s.pax} — j'ai lu :*`,
+      L(s, `📋 *Passenger ${i}/${s.pax} — I read:*`, `📋 *Passager ${i}/${s.pax} — j'ai lu :*`),
       `👤 ${pp.name || '—'}`,
-      pp.dob ? `🎂 ${_ne} le ${pp.dob}${pp.lieuNaissance ? ` à ${pp.lieuNaissance}` : ''}` : (pp.lieuNaissance ? `📍 ${_ne} à ${pp.lieuNaissance}` : ''),
-      minor ? `👶 *${_min}* — signature parentale requise` : '',
-      expired ? `⚠️ Pièce *expirée* (${pp.expiry}). On continue, un conseiller vérifiera.` : '',
-      `\nC'est bien cette personne ?`,
+      pp.dob
+        ? L(s, `🎂 Born on ${pp.dob}${pp.lieuNaissance ? ` in ${pp.lieuNaissance}` : ''}`, `🎂 ${_ne} le ${pp.dob}${pp.lieuNaissance ? ` à ${pp.lieuNaissance}` : ''}`)
+        : (pp.lieuNaissance ? L(s, `📍 Born in ${pp.lieuNaissance}`, `📍 ${_ne} à ${pp.lieuNaissance}`) : ''),
+      minor ? L(s, `👶 *Minor* — parental signature required`, `👶 *${_min}* — signature parentale requise`) : '',
+      expired ? L(s, `⚠️ Document *expired* (${pp.expiry}). We continue, an advisor will check.`, `⚠️ Pièce *expirée* (${pp.expiry}). On continue, un conseiller vérifiera.`) : '',
+      L(s, `\nIs this the right person?`, `\nC'est bien cette personne ?`),
     ].filter(Boolean).join('\n');
     // Question + boutons dans UNE seule bulle (sinon « C'est bien cette personne ? » arrive détaché de ses boutons).
     return sendButtons(phone, { body: lines, buttons: [{ id: 'pass_ok', text: L(s, '✅ Correct', '✅ C\'est correct') }, { id: 'pass_fix', text: L(s, '✏️ Edit', '✏️ Corriger') }] }, cfg);
@@ -2473,7 +2477,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
       return send(phone, L(s, `👍 Got it — tap *📎/+* (or *📷*) below and send a photo of *ONE* of these (whichever you have handy):\n🎫 your *e-ticket* — the best one, it has all your flights\n🛂 or your *boarding pass*\n🧳 or the *baggage tag* on your suitcase\n\n_One single document is enough — I read everything._ 🔒`, `👍 C'est noté — appuyez sur *📎/+* (ou *📷*) en bas et envoyez la photo d'*UN* de ces documents (celui que vous avez sous la main) :\n🎫 votre *e-billet* — le mieux, il contient tous vos vols\n🛂 ou votre *carte d'embarquement*\n🧳 ou l'*étiquette bagage* collée sur votre valise\n\n_Un seul document suffit — je lis tout._ 🔒`), cfg);
     }
     if (id === 'scan_manuel' || lower.includes('manuel') || lower.includes('manuelle') || lower.includes('saisir')) {
-      if (s.type_vol === 'escale') return askEscDep(phone, s, cfg, `🔄 Pas de souci, on le fait ensemble — une question à la fois.`);
+      if (s.type_vol === 'escale') return askEscDep(phone, s, cfg, L(s, `🔄 No problem, we'll do it together — one question at a time.`, `🔄 Pas de souci, on le fait ensemble — une question à la fois.`));
       s.step = 'm_vol'; await setState(phone, s); return send(phone, L(s, `📝 Flight number? _(e.g. AF718, AT540)_`, `📝 Numéro de vol ? _(ex. AF718, AT540)_`), cfg);
     }
     // Filet défensif : si l'utilisateur tape un numéro de vol au format standard
@@ -2510,8 +2514,8 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
     if (id === 'scan_ok' || n === '1' || lower.includes('oui') || lower.includes('yes')) {
       delete s.scan_pages; delete s._scanWarn; s.scanConfirmed = true; // déjà confirmé ici (e-billet) → pas de 2e confirmation au récap
       if (needYear(s.date)) { s.step = 'annee'; await setState(phone, s); return askYear(phone, s, cfg); }
-      if (s.date && !isValidStoredDate(s.date)) { const bad = s.date; s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, DATE_INVALIDE(bad), cfg); }
-      if (inFuture(s.date)) { s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, FUTURE_JOKE(), cfg); }
+      if (s.date && !isValidStoredDate(s.date)) { const bad = s.date; s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, DATE_INVALIDE(bad, isEN(s)), cfg); }
+      if (inFuture(s.date)) { s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, FUTURE_JOKE(isEN(s)), cfg); }
       if (tooOld(s.date)) { return finNonEligible(phone, L(s, PRESCRIPTION_5ANS_EN, pickVariant(phone, 'PRESCRIPTION_5ANS')), cfg); }
       return apresVol(phone, s, cfg);
     }
@@ -2586,7 +2590,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
     const year = m ? m[1] : null;
     if (year) {
       const d = `${s.date.replace(/\/$/, '')}/${year}`;
-      if (!isValidStoredDate(d)) { s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, DATE_INVALIDE(d), cfg); }
+      if (!isValidStoredDate(d)) { s.date = ''; s.step = 'm_date'; await setState(phone, s); return send(phone, DATE_INVALIDE(d, isEN(s)), cfg); }
       if (inFuture(d)) { await send(phone, L(s, `😄 ${year}? That flight hasn't happened yet — we claim for a flight *already past*! Pick the correct year 👇`, `😄 ${year} ? Ce vol n'a pas encore eu lieu — on réclame pour un vol *déjà passé* ! Choisissez la bonne année 👇`), cfg); return askYear(phone, s, cfg); }
       s.date = d;
       if (tooOld(s.date)) { return finNonEligible(phone, L(s, PRESCRIPTION_5ANS_EN, pickVariant(phone, 'PRESCRIPTION_5ANS')), cfg); }
@@ -2611,7 +2615,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
       if (inFuture(d)) return send(phone, FUTURE_JOKE(s.langue_code === 'en'), cfg);
       s.date = d;
       if (tooOld(s.date)) { return finNonEligible(phone, L(s, PRESCRIPTION_5ANS_EN, pickVariant(phone, 'PRESCRIPTION_5ANS')), cfg); }
-      const ok = `✅ Vol du *${d}* — le *${dateEnLettres(d)}*.`;
+      const ok = L(s, `✅ Flight on *${d}* — *${dateEnLettres(d)}*.`, `✅ Vol du *${d}* — le *${dateEnLettres(d)}*.`);
       if (s.route) return gotoPnr(phone, s, cfg, ok);
       // Pas de route (ni scan ni saisie) → on tente de la RETROUVER depuis le n° de vol.
       await send(phone, ok, cfg);
@@ -2683,7 +2687,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
     s._verdict = { verdict: 'a_verifier', covered: null, route: picked.route, airline: picked.airline || '' };
     delete s.routeChoices;
     await setState(phone, s);
-    return gotoPnr(phone, s, cfg, `✅ Trajet : *${s.route}*`);
+    return gotoPnr(phone, s, cfg, L(s, `✅ Route: *${s.route}*`, `✅ Trajet : *${s.route}*`));
   }
   // Confirmation du trajet retrouvé automatiquement (AeroDataBox) — 1 tap, ou correction manuelle.
   if (s.step === 'm_route_confirm') {
@@ -2708,7 +2712,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
   // Trajet direct en 2 questions claires : d'où l'avion DÉCOLLE 🛫, puis où il ATTERRIT 🛬.
   if (s.step === 'm_dep') {
     const pair = parseRoutePair(input); // tolère un client qui tape « Dakar → Paris » d'un coup
-    if (!id && pair) { s.route = `${pair[0]} → ${pair[1]}`; await setState(phone, s); return gotoPnr(phone, s, cfg, `✅ Trajet : *${s.route}*`); }
+    if (!id && pair) { s.route = `${pair[0]} → ${pair[1]}`; await setState(phone, s); return gotoPnr(phone, s, cfg, L(s, `✅ Route: *${s.route}*`, `✅ Trajet : *${s.route}*`)); }
     const pk = cityPick(input, id, VILLES_COURANTES);
     if (pk && pk.autre) return send(phone, L(s, `✏️ Type the city your plane *takes off from* _(e.g. Cotonou, or the code DSS)_:`, `✏️ Tapez la ville d'où votre avion *décolle* _(ex : Cotonou, ou le code DSS)_ :`), cfg);
     if (!pk) return askDepCity(phone, s, cfg);
@@ -2724,21 +2728,21 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
       return send(phone, L(s, `🤔 The arrival (*${pk.city}*) is the same as departure — for a *round trip*, describe the flight that had the problem.\n🛬 In which city does your plane *land*?`, `🤔 L'arrivée (*${pk.city}*) est identique au départ — pour un *aller-retour*, décrivez le vol qui a eu le problème.\n🛬 Dans quelle ville votre avion *atterrit*-il ?`), cfg);
     }
     s.route = `${s.depCity} → ${pk.city}`; await setState(phone, s);
-    return gotoPnr(phone, s, cfg, `✅ Trajet : *${s.route}* 🛬`);
+    return gotoPnr(phone, s, cfg, L(s, `✅ Route: *${s.route}* 🛬`, `✅ Trajet : *${s.route}* 🛬`));
   }
   // Vol multi-escales retrouvé (AeroDataBox) : départ = 1er arrêt, on demande OÙ le client est descendu.
   if (s.step === 'm_stop_arr') {
     const stops = s.routeStops || [];
     const downstream = stops.slice(1); // arrivées possibles (le départ = stops[0])
     let chosen = null;
-    if (id === 'stop_autre' || /\bautre\b/.test(lower)) { s.route = ''; s.routeStops = null; await setState(phone, s); return askDepCity(phone, s, cfg, `🗺️ Pas de souci, on précise ensemble.`); }
+    if (id === 'stop_autre' || /\bautre\b/.test(lower)) { s.route = ''; s.routeStops = null; await setState(phone, s); return askDepCity(phone, s, cfg, L(s, `🗺️ No worries, we'll sort it out together.`, `🗺️ Pas de souci, on précise ensemble.`)); }
     if (id && /^stop_\d+$/.test(id)) chosen = downstream[parseInt(id.slice(5))];
     else {
       const ri = listRowIdx(id); if (ri >= 0) { if (ri < downstream.length) chosen = downstream[ri]; else { s.route = ''; s.routeStops = null; await setState(phone, s); return askDepCity(phone, s, cfg); } }
       if (!chosen) { const t = nmStrip(input).trim(); if (t) chosen = downstream.find((d) => nmStrip(d.label).includes(t) || d.code.toLowerCase() === lower.trim()); }
       if (!chosen && /^\d+$/.test(lower.trim())) { const i = parseInt(lower) - 1; if (i >= 0 && i < downstream.length) chosen = downstream[i]; else if (i === downstream.length) { s.route = ''; s.routeStops = null; await setState(phone, s); return askDepCity(phone, s, cfg); } }
     }
-    if (chosen) { s.route = `${stops[0].label} → ${chosen.label}`; s.routeStops = null; await setState(phone, s); return gotoPnr(phone, s, cfg, `✅ Trajet : *${s.route}* 🛬`); }
+    if (chosen) { s.route = `${stops[0].label} → ${chosen.label}`; s.routeStops = null; await setState(phone, s); return gotoPnr(phone, s, cfg, L(s, `✅ Route: *${s.route}* 🛬`, `✅ Trajet : *${s.route}* 🛬`)); }
     return askStopArr(phone, s, cfg);
   }
   if (s.step === 'm_pnr') {
@@ -2939,7 +2943,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
   if (s.step === 'doc_boarding') {
     if (mediaUrl) { await send(phone, L(s, `✅ Boarding pass received!`, `✅ Carte d'embarquement reçue !`), cfg); return gotoEticket(phone, s, cfg); }
     if (lower === 'passer' || lower === 'skip') { s.docs_pending = true; return gotoEticket(phone, s, cfg); }
-    if (lower === 'appel' || lower === 'call') { s.escalade = 'document_perdu'; upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now() }); notifyCallbackWanted(phone, s, 'documents perdus (carte d\'embarquement)'); await send(phone, L(s, `📞 Don't worry — an expert helps you find your documents. Keep the conversation open.\n\n${STOP_FOOTER}`, `📞 Pas de panique — un expert vous aide à retrouver vos documents. Laissez la conversation ouverte.\n\n${STOP_FOOTER}`), cfg); return gotoEticket(phone, s, cfg); }
+    if (lower === 'appel' || lower === 'call') { s.escalade = 'document_perdu'; upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now() }); notifyCallbackWanted(phone, s, 'documents perdus (carte d\'embarquement)'); await send(phone, L(s, `📞 Don't worry — an expert helps you find your documents. Keep the conversation open.\n\n_The Robin des Airs team 🏹_`, `📞 Pas de panique — un expert vous aide à retrouver vos documents. Laissez la conversation ouverte.\n\n${STOP_FOOTER}`), cfg); return gotoEticket(phone, s, cfg); }
     return send(phone, L(s, `🎫 Send the boarding pass, or *skip*, or *call* if you've lost everything.`, `🎫 Envoyez la carte d'embarquement, ou *passer*, ou *appel* si vous avez tout perdu.`), cfg);
   }
   if (s.step === 'doc_eticket') {
@@ -2950,7 +2954,7 @@ async function handleMessage(phone, text, cfg, mediaUrl, replyId, _retried, refe
       await send(phone, e ? L(s, `✅ E-ticket received!${lu}`, `✅ E-billet reçu !${lu}`) : L(s, `✅ Document received — our team will check it and add it to your file. 🙏`, `✅ Document bien reçu — notre équipe le vérifiera et l'ajoute à votre dossier. 🙏`), cfg); return gotoCert(phone, s, cfg);
     }
     if (lower === 'passer' || lower === 'skip') { s.docs_pending = true; return gotoCert(phone, s, cfg); }
-    if (lower === 'appel' || lower === 'call') { s.escalade = 'document_perdu'; upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now() }); notifyCallbackWanted(phone, s, 'documents perdus (e-billet)'); await send(phone, L(s, `📞 An expert helps you recover your e-ticket. Keep the conversation open.\n\n${STOP_FOOTER}`, `📞 Un expert vous aide à récupérer votre e-billet. Laissez la conversation ouverte.\n\n${STOP_FOOTER}`), cfg); return gotoCert(phone, s, cfg); }
+    if (lower === 'appel' || lower === 'call') { s.escalade = 'document_perdu'; upsertLead(phone, { wantsCall: true, wantsCallAt: Date.now() }); notifyCallbackWanted(phone, s, 'documents perdus (e-billet)'); await send(phone, L(s, `📞 An expert helps you recover your e-ticket. Keep the conversation open.\n\n_The Robin des Airs team 🏹_`, `📞 Un expert vous aide à récupérer votre e-billet. Laissez la conversation ouverte.\n\n${STOP_FOOTER}`), cfg); return gotoCert(phone, s, cfg); }
     return send(phone, L(s, `📧 Send the e-ticket (check spam/Booking), or *skip*, or *call*.`, `📧 Envoyez l'e-billet (pensez aux spams/Booking), ou *passer*, ou *appel*.`), cfg);
   }
   if (s.step === 'doc_cert') {
@@ -3174,10 +3178,10 @@ async function sendAccueil(phone, cfg, lang, referral) {
 }
 async function sendLangue(phone, s, cfg) {
   s.step = 'langue'; await setState(phone, s);
-  await sendList(phone, { header: '🌍 Votre langue', body: `${bar('langue')}\n🌍 Dans quelle langue souhaitez-vous être accompagné(e) ?\n_In which language would you like to be assisted?_`, buttonText: '🌍 Choisir', items: [
-    { title: '🇫🇷 Français', description: 'Européenne' }, { title: '🇬🇧 English', description: 'Européenne' },
-    { title: '🇸🇳 Wolof', description: 'Africaine' }, { title: '🇬🇲 Mandinka', description: 'Africaine' }, { title: '🇬🇭 Twi', description: 'Africaine' },
-    { title: '🇳🇬 Yoruba', description: 'Africaine' }, { title: '🇬🇳 Peul / Fulfulde', description: 'Africaine' },
+  await sendList(phone, { header: '🌍 Langue · Language', body: `${bar('langue')}\n🌍 Dans quelle langue souhaitez-vous être accompagné(e) ?\n_In which language would you like to be assisted?_`, buttonText: '🌍 Choisir · Choose', items: [
+    { title: '🇫🇷 Français', description: 'Europe' }, { title: '🇬🇧 English', description: 'Europe' },
+    { title: '🇸🇳 Wolof', description: 'Afrique · Africa' }, { title: '🇬🇲 Mandinka', description: 'Afrique · Africa' }, { title: '🇬🇭 Twi', description: 'Afrique · Africa' },
+    { title: '🇳🇬 Yoruba', description: 'Afrique · Africa' }, { title: '🇬🇳 Peul / Fulfulde', description: 'Afrique · Africa' },
   ] }, cfg);
 }
 // CONSENT UNIFIÉ — CGU + Politique de confidentialité en 1 seule étape.
@@ -3537,7 +3541,7 @@ async function finaliser(phone, s, cfg) {
   // sur le contrat.
   const _fnf = firstNameOf(s);
   await send(phone, L(s,
-    `${bar('done')}\n✅ *All set${_fnf ? ', ' + _fnf : ''}!* Your file — flight ${s.vol || '—'} (${s.compagnie || '—'}). We recover up to *€${perPaxOf(s)} per passenger*.\n\n👉 *Read your contract and sign*:\n${s.mandat_url}\n\n✅ €0 upfront · up to *75% in your pocket* · no bank details.\n💸 Paid even without a EU bank account: bank transfer, Wave, Orange Money, MoMo.${minorNote}${docsNote}\n${STOP_FOOTER}`,
+    `${bar('done')}\n✅ *All set${_fnf ? ', ' + _fnf : ''}!* Your file — flight ${s.vol || '—'} (${s.compagnie || '—'}). We recover up to *€${perPaxOf(s)} per passenger*.\n\n👉 *Read your contract and sign*:\n${s.mandat_url}\n\n✅ €0 upfront · up to *75% in your pocket* · no bank details.\n💸 Paid even without a EU bank account: bank transfer, Wave, Orange Money, MoMo.${minorNote}${docsNote}\n_The Robin des Airs team 🏹_`,
     `${bar('done')}\n✅ *C'est prêt${_fnf ? ', ' + _fnf : ''} !* Votre dossier — vol ${s.vol || '—'} (${s.compagnie || '—'}). On récupère jusqu'à *${perPaxOf(s)} € par personne*.\n\n👉 *Relisez votre contrat et signez* :\n${s.mandat_url}\n\n✅ 0 € d'avance · jusqu'à *75 % dans votre poche* · aucune info bancaire.\n💸 Payé même sans compte en Europe : virement, Wave, Orange Money, MoMo.${minorNote}${docsNote}\n${STOP_FOOTER}`), cfg);
   // CRM : la fiche Airtable est désormais créée par la synchro DIRECTE (storeDossierDurable →
   // /api/dossier-store → syncNewDossierToAirtable, statut « Signature en attente »). Le webhook
