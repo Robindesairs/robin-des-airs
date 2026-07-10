@@ -50,16 +50,24 @@ Trois templates de relance (catégorie utilitaire) sont utilisés hors fenêtre 
 
 Tant que `TWILIO_TEMPLATE_MAP` n'est pas rempli, `twilioSendTemplate` renvoie `unmapped` et ne casse rien (les relances hors fenêtre ne partent simplement pas). Le tunnel dans la fenêtre 24 h, lui, fonctionne sans template.
 
-## Passage en production (après immatriculation SASU + SIREN)
+## Passage en production
 
-L'exigence vient de Meta, pas de Twilio, et vaut aussi pour le Meta Cloud API direct :
+Correction importante : la prod NON-VÉRIFIÉE fonctionne SANS immatriculation. Un numéro enregistré comme sender Twilio est actif immédiatement au palier **250 conversations initiées / 24 h** (réponses dans la fenêtre 24 h illimitées). L'immatriculation SASU + la vérification Business Meta ne servent QU'À lever ce plafond (250 → 1 000 → plus). Le verrou vient de Meta, pas de Twilio, et vaut aussi pour le Meta Cloud API direct.
 
-1. SASU immatriculée (SIREN).
-2. Meta Business Manager + vérification Business (plusieurs semaines, documents de l'entreprise).
-3. Migration du numero `+33 7 56 86 36 30` hors de la WABA WATI vers la WABA Twilio (désactiver la 2FA côté WATI, code de migration, revérification). Bref temps d'indisponibilité : à faire à un moment calme.
-4. Faire approuver les 3 templates, remplir `TWILIO_TEMPLATE_MAP`.
-5. Basculer le webhook Meta/Twilio, mettre `WA_PROVIDER=twilio`, tester, puis fermer le compte WATI.
-6. Durcissement : ajouter la validation `X-Twilio-Signature` sur `/api/twilio-webhook` (aujourd'hui protégé par le secret partagé, suffisant en Sandbox).
+Étapes pour ouvrir aux vrais clients (dès maintenant, sans SASU) :
+
+1. Enregistrer le numéro comme WhatsApp sender (console Twilio → Messaging → Senders → WhatsApp senders) via le parcours Meta embedded signup : Meta Business Manager (créable par un particulier) + validation OTP. Palier non-vérifié 250/24 h.
+2. Configurer le webhook entrant du sender sur `https://<railway>/api/twilio-webhook?s=<WATI_WEBHOOK_SECRET>` (POST).
+3. Sur Railway : `WA_PROVIDER=twilio`, `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_WHATSAPP_FROM=whatsapp:+33756863630`.
+4. Tester le tunnel bout-en-bout (message réel au numéro), puis fermer WATI.
+
+À faire plus tard, seulement pour dépasser 250/24 h : SASU immatriculée (SIREN) + vérification Business Meta (documents de l'entreprise).
+
+Note migration de numéro : un numéro n'existe que sur une seule WABA. Activer `+33 7 56 86 36 30` sur Twilio le retire donc de WATI (désactiver la 2FA côté WATI si demandé, code de migration). Sans client actif, aucune coupure sensible ; le numéro n'a de valeur que d'être publié (bio, `wa.me`), à repointer si on prend un numéro neuf.
+
+Templates hors-fenêtre 24 h : faire approuver les 3 relances par Meta, remplir `TWILIO_TEMPLATE_MAP`.
+
+Durcissement signature (FAIT) : `/api/twilio-webhook` valide désormais `X-Twilio-Signature` (`lib/wa-twilio.js` → `validateTwilioSignature`, HMAC-SHA1). Déploiement sûr : par défaut en OBSERVATION (log « signature NON valide » sans bloquer). Une fois vérifié dans les logs que la signature matche, poser `TWILIO_VALIDATE_SIGNATURE=1` pour ENFORCER (rejet 403). `TWILIO_PUBLIC_URL` force la base d'URL exacte si le proxy Railway ne la reconstitue pas.
 
 ## Alternative Meta Cloud API direct
 

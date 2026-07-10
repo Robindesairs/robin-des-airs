@@ -3847,11 +3847,29 @@ app.post('/api/wati-webhook', async (req, res) => {
 
 // ─── Webhook entrant TWILIO (form-encoded) — actif quand WA_PROVIDER=twilio ────────
 // URL cible Twilio : https://<railway>/api/twilio-webhook?s=<WATI_WEBHOOK_SECRET>
-// Sécurité : secret partagé en query (fail-closed), comme le webhook WATI.
-// TODO prod : ajouter la validation de la signature X-Twilio-Signature (HMAC) une fois hors Sandbox.
+// Sécurité : 1) secret partagé en query (fail-closed), comme le webhook WATI ;
+//            2) signature X-Twilio-Signature (défense en profondeur, cf. ci-dessous).
 app.post('/api/twilio-webhook', async (req, res) => {
   const expected = (process.env.WATI_WEBHOOK_SECRET || '').trim();
   if (!expected || !safeEq((req.query.s || '').toString(), expected)) return res.status(401).send('');
+  // Validation de la signature Twilio. Déploiement SÛR : par défaut en OBSERVATION (log seulement, ne bloque
+  // pas) pour ne pas couper l'inbound sur une simple différence d'URL. Une fois confirmé dans les logs que la
+  // signature matche, passer TWILIO_VALIDATE_SIGNATURE=1 pour ENFORCER (rejet 403). TWILIO_PUBLIC_URL permet
+  // de forcer la base d'URL exacte configurée côté Twilio si le proxy Railway ne la reconstitue pas fidèlement.
+  const authToken = (process.env.TWILIO_AUTH_TOKEN || '').trim();
+  if (authToken) {
+    const enforce = /^(1|true|yes|on)$/i.test((process.env.TWILIO_VALIDATE_SIGNATURE || '').trim());
+    const base = (process.env.TWILIO_PUBLIC_URL || '').trim().replace(/\/+$/, '');
+    const proto = String(req.headers['x-forwarded-proto'] || 'https').split(',')[0].trim();
+    const host = String(req.headers['x-forwarded-host'] || req.headers.host || '').split(',')[0].trim();
+    const fullUrl = base ? base + req.originalUrl : `${proto}://${host}${req.originalUrl}`;
+    const sig = req.headers['x-twilio-signature'] || '';
+    const valid = twilio.validateTwilioSignature(authToken, fullUrl, req.body || {}, sig);
+    if (!valid) {
+      if (enforce) return res.status(403).send('');
+      console.warn('twilio-webhook: X-Twilio-Signature NON valide (OBSERVATION, non bloquant). url=' + fullUrl + ' sigPresent=' + (!!sig));
+    }
+  }
   const items = twilio.parseTwilioInbound(req.body, normalizeWaPhone);
   saveInboundDebug(JSON.stringify(req.body), items);
   res.set('Content-Type', 'text/xml').send('<Response></Response>'); // ACK Twilio (TwiML vide)

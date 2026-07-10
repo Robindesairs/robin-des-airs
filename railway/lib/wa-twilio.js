@@ -232,4 +232,21 @@ function parseTwilioInbound(body, normalizeWaPhone) {
   }];
 }
 
-module.exports = { twilioCfg, twilioSendText, twilioSendTemplate, twilioSendQuickReply, twilioSendListPicker, twilioMediaHeaders, parseTwilioInbound, toWa };
+// ─── Validation de la signature X-Twilio-Signature (défense en profondeur) ──────
+// Algo Twilio (webhook form-encoded) : HMAC-SHA1(authToken) sur  URL_exacte + concat(clé+valeur, clés triées) → base64.
+// L'URL doit être EXACTEMENT celle configurée dans la console Twilio, query « ?s=… » comprise.
+// Comparaison à temps constant. Renvoie false sur toute anomalie (fail-closed côté appelant).
+function validateTwilioSignature(authToken, url, params, signature) {
+  try {
+    if (!authToken || !signature || !url) return false;
+    let data = String(url);
+    const keys = Object.keys(params || {}).sort();
+    for (const k of keys) data += k + (params[k] == null ? '' : params[k]);
+    const digest = crypto.createHmac('sha1', authToken).update(Buffer.from(data, 'utf-8')).digest('base64');
+    const a = Buffer.from(digest);
+    const b = Buffer.from(String(signature));
+    return a.length === b.length && crypto.timingSafeEqual(a, b);
+  } catch (_) { return false; }
+}
+
+module.exports = { twilioCfg, twilioSendText, twilioSendTemplate, twilioSendQuickReply, twilioSendListPicker, twilioMediaHeaders, parseTwilioInbound, toWa, validateTwilioSignature };
