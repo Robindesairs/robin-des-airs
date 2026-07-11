@@ -22,146 +22,116 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=DM+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/portail-premium.css">
   <style>
-    /* ── Tunnel conversationnel « façon WhatsApp » — une question à la fois, zéro friction ── */
-    :root{
-      --navy:#0B1F3A; --neon:#00C87A; --neon-ink:#047857; --neon-dark:#059669;
-      --chat-bg:#EAE3D9; --bot:#FFFFFF; --me:#DCF8C6; --line:#E3DED4;
-      --ink:#132A20; --muted:#6B7A73; --danger:#C0392B;
+    /* ── Tunnel « un écran = une question » aux couleurs du site.
+         Un clic sur une option = réponse enregistrée + écran suivant (aucun bouton Valider).
+         Les réponses restent visibles en chips sous la barre de progression : un tap = correction. ── */
+
+    /* Barre de progression fine */
+    .prog{height:5px; background:var(--line); border-radius:var(--radius-pill); overflow:hidden; margin:2px 0 10px}
+    .prog i{display:block; height:100%; width:0; border-radius:var(--radius-pill);
+      background:linear-gradient(90deg,var(--neon),var(--neon-b)); transition:width .25s var(--ease)}
+
+    /* Chips récap : tout ce qui est rempli reste affiché, cliquable pour corriger */
+    .crumbs{display:flex; flex-wrap:wrap; gap:7px; margin:0 0 14px; min-height:0}
+    .crumbs button{
+      display:inline-flex; align-items:center; gap:6px; max-width:100%;
+      font:inherit; font-size:12.5px; font-weight:700; color:var(--navy);
+      background:var(--green-tint); border:1px solid var(--green-line); border-radius:var(--radius-pill);
+      padding:7px 12px; cursor:pointer; transition:.13s; animation:rise .25s var(--ease) both;
     }
-    *{box-sizing:border-box; margin:0; padding:0}
-    html,body{height:100%}
-    body{
-      font-family:'Montserrat',system-ui,sans-serif; background:var(--chat-bg); color:var(--ink);
-      display:flex; flex-direction:column; min-height:100dvh;
+    .crumbs button:hover{border-color:var(--neon-dark); background:#dff4ea}
+    .crumbs button .x{font-size:11px; opacity:.65}
+    .crumbs button b{font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px}
+
+    /* Écrans : transition rapide (160 ms), jamais d'attente */
+    .screen{animation:slidein .18s var(--ease) both}
+    @keyframes slidein{from{opacity:0; transform:translateX(14px)}to{opacity:1; transform:none}}
+    .screen.backwards{animation:slideback .18s var(--ease) both}
+    @keyframes slideback{from{opacity:0; transform:translateX(-14px)}to{opacity:1; transform:none}}
+    .screen h2{font-size:20px; font-weight:800; letter-spacing:-.02em; color:var(--navy); margin:2px 0 4px}
+    .screen .sub{color:var(--ink-soft); font-size:14px; margin:0 0 12px}
+
+    /* Options rectangulaires : LA réponse = un clic */
+    .opts{display:flex; flex-direction:column; gap:9px}
+    .opts.grid2{display:grid; grid-template-columns:1fr 1fr; gap:9px}
+    .opts button{
+      display:flex; align-items:center; gap:12px; width:100%; text-align:left;
+      min-height:56px; padding:13px 16px;
+      background:var(--surface); border:1.5px solid var(--line); border-radius:var(--radius-sm);
+      font:inherit; font-size:15px; font-weight:700; color:var(--navy); cursor:pointer;
+      transition:border-color .12s, background .12s, transform .08s;
+      box-shadow:var(--shadow-card);
     }
-    /* Barre haute, codes WhatsApp (vert, avatar, « en ligne ») → repère immédiat, confiance */
-    .bar{
-      position:sticky; top:0; z-index:20; display:flex; align-items:center; gap:11px;
-      background:linear-gradient(135deg,#065F46,#047857); color:#fff; padding:10px 14px;
-      padding-top:calc(10px + env(safe-area-inset-top));
-      box-shadow:0 2px 10px rgba(6,53,35,.28);
+    .opts button .ic{flex:0 0 34px; height:34px; border-radius:10px; display:grid; place-items:center; font-size:17px; background:var(--green-tint)}
+    .opts button small{display:block; font-weight:500; font-size:12.5px; color:var(--muted); margin-top:1px}
+    .opts button:hover{border-color:var(--neon); background:var(--green-tint)}
+    .opts button:active,.opts button.hit{transform:scale(.985); border-color:var(--neon-dark); background:var(--green-tint)}
+    .opts button.ghost{box-shadow:none; border-style:dashed; color:var(--ink-soft); font-weight:600}
+
+    /* Saisie : Entrée ou ➜ envoie */
+    .askrow{display:flex; gap:9px; align-items:stretch}
+    .askrow .input{flex:1; min-width:0; font-size:16px}
+    .askrow .ok{
+      flex:0 0 54px; border:0; border-radius:var(--radius-sm); cursor:pointer; font-size:20px; color:#06351f;
+      background:linear-gradient(135deg,var(--neon),var(--neon-b)); box-shadow:var(--shadow-btn); transition:.12s;
     }
-    .bar .ava{width:40px; height:40px; flex:none; border-radius:50%; background:#fff; display:grid; place-items:center; font-size:20px}
-    .bar .who{min-width:0; flex:1}
-    .bar .who b{display:block; font-size:15.5px; letter-spacing:-.01em}
-    .bar .who span{display:block; font-size:12px; color:#BFEAD9}
-    .bar .badge{flex:none; font-size:11px; font-weight:700; background:rgba(255,255,255,.16); border-radius:999px; padding:5px 10px; white-space:nowrap}
-    /* Fil de conversation */
-    .chat{flex:1; width:100%; max-width:560px; margin:0 auto; padding:14px 12px 130px; overflow-anchor:auto}
-    .msg{display:flex; margin:7px 0; animation:pop .22s ease-out both}
-    @keyframes pop{from{opacity:0; transform:translateY(7px)}to{opacity:1; transform:none}}
-    .msg .b{
-      max-width:86%; padding:10px 13px; border-radius:14px; font-size:14.5px; line-height:1.5;
-      box-shadow:0 1px 1.5px rgba(11,31,58,.13); white-space:pre-wrap; word-wrap:break-word;
-    }
-    .msg.bot .b{background:var(--bot); border-top-left-radius:4px}
-    .msg.me{justify-content:flex-end}
-    .msg.me .b{background:var(--me); border-top-right-radius:4px}
-    .msg .b b{color:var(--navy)}
-    .msg .b small{display:block; color:var(--muted); font-size:12px; margin-top:3px}
-    /* « Robin écrit… » */
-    .typing .b{display:inline-flex; gap:5px; align-items:center; padding:13px 15px}
-    .typing .d{width:7px; height:7px; border-radius:50%; background:#B9C4BE; animation:blink 1s infinite}
-    .typing .d:nth-child(2){animation-delay:.18s}.typing .d:nth-child(3){animation-delay:.36s}
-    @keyframes blink{0%,60%,100%{opacity:.35}30%{opacity:1}}
-    /* Boutons de réponse rapide (tap = réponse + question suivante, AUCUNE confirmation) */
-    .qr{display:flex; flex-wrap:wrap; gap:8px; margin:4px 0 10px; padding-left:4px}
-    .qr button{
-      font:inherit; font-size:14px; font-weight:700; color:var(--neon-ink);
-      background:#fff; border:1.5px solid var(--neon); border-radius:999px;
-      padding:10px 16px; min-height:44px; cursor:pointer; transition:.13s;
-      box-shadow:0 1px 1.5px rgba(11,31,58,.10);
-    }
-    .qr button:hover{background:#EAFBF3}
-    .qr button:active{transform:scale(.97)}
-    .qr button.ghost{border-color:var(--line); color:var(--muted); font-weight:600}
-    /* Barre de saisie basse (uniquement quand la question attend du texte) */
-    .inbar{
-      position:fixed; left:0; right:0; bottom:0; z-index:20; display:none;
-      padding:10px 12px calc(10px + env(safe-area-inset-bottom));
-      background:linear-gradient(0deg,var(--chat-bg) 82%,transparent);
-    }
-    .inbar.on{display:block}
-    .inbar .wrap{max-width:560px; margin:0 auto; display:flex; gap:8px; align-items:flex-end}
-    .inbar input,.inbar textarea{
-      flex:1; min-width:0; font:inherit; font-size:16px; color:var(--ink);
-      background:#fff; border:1.5px solid var(--line); border-radius:24px;
-      padding:12px 16px; outline:none; resize:none; max-height:110px;
-    }
-    .inbar input:focus,.inbar textarea:focus{border-color:var(--neon)}
-    .inbar .send{
-      flex:none; width:48px; height:48px; border:0; border-radius:50%; cursor:pointer;
-      background:linear-gradient(135deg,var(--neon),var(--neon-dark)); color:#fff; font-size:20px;
-      display:grid; place-items:center; box-shadow:0 3px 10px rgba(5,150,105,.35); transition:.13s;
-    }
-    .inbar .send:active{transform:scale(.94)}
-    .inbar .err{max-width:560px; margin:6px auto 0; font-size:12.5px; font-weight:600; color:var(--danger); display:none; padding-left:8px}
-    .inbar .err.on{display:block}
-    /* Zone de dépôt passeport (glisser-déposer / photo) */
+    .askrow .ok:active{transform:scale(.96)}
+
+    /* Dépôt passeport */
     .drop{
-      margin-top:9px; border:2px dashed var(--neon); border-radius:12px; background:#F4FBF7;
-      padding:18px 14px; text-align:center; cursor:pointer; transition:.15s;
+      border:2px dashed var(--neon); border-radius:var(--radius-sm); background:var(--green-tint);
+      padding:22px 16px; text-align:center; cursor:pointer; transition:.15s;
     }
-    .drop.over{background:#E2F7EC; border-color:var(--neon-dark)}
-    .drop .big{font-size:30px; line-height:1}
-    .drop p{font-size:13.5px; color:var(--neon-ink); font-weight:700; margin-top:6px}
-    .drop small{display:block; color:var(--muted); font-weight:500; font-size:11.5px; margin-top:3px}
-    /* Carte de confirmation OCR */
-    .idcard{margin-top:8px; background:#F8FBF9; border:1px solid #DCEBE2; border-radius:10px; padding:10px 12px; font-size:14px}
+    .drop.over{background:#dff4ea; border-color:var(--neon-dark)}
+    .drop .big{font-size:32px; line-height:1}
+    .drop p{font-size:14px; color:var(--neon-ink); font-weight:800; margin:7px 0 0}
+    .drop small{display:block; color:var(--muted); font-weight:500; font-size:11.5px; margin-top:4px}
+    .idcard{margin:0 0 12px; background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius-sm); padding:12px 14px; font-size:14.5px; color:var(--navy)}
     .idcard div{padding:2px 0}
-    /* Date inline dans la bulle */
-    .dt{margin-top:9px}
-    .dt input{font:inherit; font-size:16px; padding:11px 13px; border:1.5px solid var(--line); border-radius:10px; background:#fff; width:100%}
-    .dt input:focus{outline:none; border-color:var(--neon)}
-    /* Récap + signature */
-    .recap{margin-top:8px; font-size:14px}
-    .recap .r{display:flex; align-items:center; gap:8px; padding:7px 0; border-bottom:1px dashed #E4E9E4}
-    .recap .r:last-child{border-bottom:0}
-    .recap .k{flex:0 0 84px; color:var(--muted); font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.4px}
-    .recap .v{flex:1; font-weight:600; color:var(--navy); min-width:0; overflow-wrap:anywhere}
-    .recap .e{flex:none; border:0; background:none; cursor:pointer; font-size:15px; padding:4px; opacity:.7}
-    .recap .e:hover{opacity:1}
-    .sig{margin-top:10px; border:1.5px dashed #C9D6CD; border-radius:10px; background:#fff; position:relative; touch-action:none}
-    .sig canvas{display:block; width:100%; height:110px; border-radius:10px; touch-action:none}
-    .sig .ph{position:absolute; inset:0; display:grid; place-items:center; color:#A9B7AE; font-size:13px; pointer-events:none}
-    .sig .clr{position:absolute; top:6px; right:6px; border:1px solid var(--line); background:#fff; border-radius:999px; font-size:11px; font-weight:700; color:var(--muted); padding:4px 10px; cursor:pointer; display:none}
-    .ck{display:flex; gap:9px; align-items:flex-start; margin-top:10px; font-size:12.8px; line-height:1.5; cursor:pointer}
+
+    /* Retour : discret, toujours là quand on peut reculer */
+    .navrow{display:flex; align-items:center; justify-content:space-between; margin-top:16px; min-height:24px}
+    .navrow .prev{border:0; background:none; cursor:pointer; font:inherit; font-size:13px; font-weight:700; color:var(--muted); padding:6px 2px}
+    .navrow .prev:hover{color:var(--navy)}
+    .navrow .skip{border:0; background:none; cursor:pointer; font:inherit; font-size:13px; font-weight:600; color:var(--muted); text-decoration:underline; padding:6px 2px}
+    .navrow .skip:hover{color:var(--navy)}
+
+    /* Signature */
+    .sig{border:1.5px dashed var(--line-2); border-radius:var(--radius-sm); background:#fff; position:relative; touch-action:none; margin:12px 0 0}
+    .sig canvas{display:block; width:100%; height:118px; border-radius:var(--radius-sm); touch-action:none}
+    .sig .ph{position:absolute; inset:0; display:grid; place-items:center; color:#9aa7b6; font-size:13.5px; pointer-events:none}
+    .sig .clr{position:absolute; top:7px; right:7px; border:1px solid var(--line); background:#fff; border-radius:var(--radius-pill); font-size:11.5px; font-weight:700; color:var(--muted); padding:4px 11px; cursor:pointer; display:none}
+    .ck{display:flex; gap:10px; align-items:flex-start; margin-top:11px; font-size:12.9px; line-height:1.55; color:var(--ink-soft); cursor:pointer}
     .ck input{margin-top:2px; width:17px; height:17px; flex:none; accent-color:var(--neon-dark)}
     .ck a{color:var(--neon-ink); font-weight:700}
-    .go{
-      display:block; width:100%; margin-top:13px; border:0; border-radius:12px; cursor:pointer;
-      background:linear-gradient(135deg,var(--neon),var(--neon-dark)); color:#fff;
-      font:inherit; font-size:15.5px; font-weight:800; padding:15px; letter-spacing:.01em;
-      box-shadow:0 4px 14px rgba(5,150,105,.35); transition:.15s;
-    }
-    .go:disabled{opacity:.45; cursor:default; box-shadow:none}
-    .go:not(:disabled):active{transform:scale(.985)}
-    .suberr{display:none; margin-top:9px; font-size:12.8px; font-weight:600; color:var(--danger); background:#FDF0EE; border:1px solid #F3C6C0; border-radius:9px; padding:9px 11px}
+    .suberr{display:none; margin-top:10px; font-size:13px; font-weight:600; color:var(--danger); background:var(--danger-bg); border:1px solid #f3c6c0; border-radius:var(--radius-sm); padding:10px 12px}
     .suberr.on{display:block}
     .suberr a{color:var(--danger)}
-    .foot-secure{max-width:560px; margin:2px auto 0; padding:0 14px; font-size:11px; color:var(--muted); text-align:center}
-    @media (min-width:640px){ .chat{padding-top:22px} .msg .b{font-size:15px} }
+    .wa-alt{margin-top:16px; font-size:12.5px; color:var(--muted); text-align:center}
+    .wa-alt a{color:var(--neon-ink); font-weight:700; text-decoration:none}
   </style>
 </head>
 <body>
-  <!-- Barre type WhatsApp : repère immédiat, « en ligne » = quelqu'un s'occupe de moi -->
-  <header class="bar">
-    <span class="ava" aria-hidden="true">🏹</span>
-    <div class="who"><b>Robin des Airs</b><span>en ligne · répond en direct</span></div>
-    <span class="badge">⏱️ 2 min · 0 € d'avance</span>
+  <header class="topbar">
+    <a class="logo" href="/">Robin <span class="accent">des Airs</span> <span class="bow">🏹</span></a>
+    <span style="color:rgba(255,255,255,.85); font-size:12.5px; font-weight:700">⏱️ 2 min · 0 € d'avance</span>
   </header>
 
-  <main class="chat" id="chat" aria-live="polite"></main>
-
-  <!-- Barre de saisie (montrée uniquement quand une réponse texte est attendue) -->
-  <div class="inbar" id="inbar">
-    <div class="wrap">
-      <input id="inp" type="text" autocomplete="off" placeholder="Votre réponse…" aria-label="Votre réponse">
-      <button class="send" id="sendBtn" aria-label="Envoyer">➤</button>
+  <main class="shell">
+    <div class="pagehead" style="margin-bottom:12px">
+      <h1 style="font-size:22px">Votre dossier, en 2 minutes.</h1>
+      <p class="lead">Un clic par question, c'est tout. Jusqu'à <b>600 € par personne</b> (CE 261/2004).</p>
     </div>
-    <div class="err" id="inpErr"></div>
-  </div>
+
+    <div class="prog" aria-hidden="true"><i id="fill"></i></div>
+    <div class="crumbs" id="crumbs" aria-label="Vos réponses (touchez pour corriger)"></div>
+
+    <section class="panel" id="stage" aria-live="polite"></section>
+
+    <p class="wa-alt">💬 Vous préférez WhatsApp ? <a href="https://wa.me/33756863630" target="_blank" rel="noopener">wa.me/33756863630</a></p>
+  </main>
 
   <input type="file" id="fileInp" accept="image/*,application/pdf" hidden>
   <!-- Honeypot anti-spam (depot-create l'exige vide) -->
@@ -171,159 +141,297 @@
 (function () {
   'use strict';
   var $ = function (id) { return document.getElementById(id); };
-  var chat = $('chat'), inbar = $('inbar'), inp = $('inp');
+  var stage = $('stage');
 
   // ── État du dossier ─────────────────────────────────────────────────────────
   var S = {
     incident: '', flightNum: '', dep: '', arr: '', date: '',
-    pax: 1, names: [], piece: null, pieceFile: null, // pieceFile = {dataBase64, mime, filename}
+    pax: 0, names: [], piece: null, pieceFile: null,
     phone: '', email: '', startNow: false,
   };
   var REF = '';
   var INCIDENT_LABEL = { delay: 'Retard +3 h', cancel: 'Annulation', denied: "Refus d'embarquement" };
-  var editReturn = false; // réponse en cours = correction depuis le récap → on y retourne direct
-
-  // ── Briques de conversation ────────────────────────────────────────────────
   function esc(s){ return String(s == null ? '' : s).replace(/[<>&]/g, function(c){ return c==='<'?'&lt;':c==='>'?'&gt;':'&amp;'; }); }
-  function scrollEnd(){ requestAnimationFrame(function(){ window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' }); }); }
-  function bubble(html, me){
-    var m = document.createElement('div'); m.className = 'msg ' + (me ? 'me' : 'bot');
-    var b = document.createElement('div'); b.className = 'b'; b.innerHTML = html;
-    m.appendChild(b); chat.appendChild(m); scrollEnd(); return b;
-  }
-  // « Robin écrit… » ~450 ms avant chaque question → rythme de vraie conversation, sans ralentir
-  function botSays(html, cb){
-    var t = document.createElement('div'); t.className = 'msg bot typing';
-    t.innerHTML = '<div class="b"><span class="d"></span><span class="d"></span><span class="d"></span></div>';
-    chat.appendChild(t); scrollEnd();
-    setTimeout(function(){ t.remove(); var b = bubble(html, false); if (cb) cb(b); }, 450);
-  }
-  function meSays(text){ bubble(esc(text), true); }
-  // Boutons de réponse rapide : un tap répond ET enchaîne — retirés après usage (pas de retour en arrière)
-  function quick(opts){
-    var w = document.createElement('div'); w.className = 'qr';
-    opts.forEach(function(o){
-      var btn = document.createElement('button'); btn.type = 'button';
-      if (o.ghost) btn.className = 'ghost';
-      btn.textContent = o.t;
-      btn.addEventListener('click', function(){ w.remove(); o.f(); });
-      w.appendChild(btn);
-    });
-    chat.appendChild(w); scrollEnd(); return w;
-  }
-  // Saisie texte : Entrée ou ➤ envoie ; validate() renvoie '' si OK, sinon le message d'erreur
-  var onSend = null;
-  function ask(placeholder, opts){
-    opts = opts || {};
-    inp.value = ''; inp.placeholder = placeholder;
-    inp.type = opts.type || 'text';
-    inp.inputMode = opts.inputmode || 'text';
-    inp.autocomplete = opts.autocomplete || 'off';
-    $('inpErr').classList.remove('on');
-    inbar.classList.add('on');
-    onSend = function(){
-      var v = inp.value.trim();
-      var err = opts.validate ? opts.validate(v) : (v ? '' : 'Écrivez votre réponse.');
-      if (err) { $('inpErr').textContent = err; $('inpErr').classList.add('on'); return; }
-      inbar.classList.remove('on'); onSend = null;
-      meSays(v); opts.done(v);
-    };
-    setTimeout(function(){ inp.focus(); }, 120);
-  }
-  $('sendBtn').addEventListener('click', function(){ if (onSend) onSend(); });
-  inp.addEventListener('keydown', function(e){ if (e.key === 'Enter' && onSend) { e.preventDefault(); onSend(); } });
 
-  // ── Le tunnel : une question, un tap, question suivante ───────────────────
-  function start(){
-    botSays("👋 Bonjour ! Je suis l'assistant Robin des Airs.\nVotre dossier part en <b>2 minutes</b> : je vous pose quelques questions, vous signez, on s'occupe de tout.\n<small>0 € d'avance · 0 € sans résultat · jusqu'à 600 € par personne (CE 261/2004)</small>", function(){
-      askIncident();
+  // ── Moteur d'écrans : clic = suivant, retour possible, chips toujours visibles ──
+  // FLOW = l'ordre nominal. `idx` = position courante ; `far` = écran le plus loin atteint.
+  // Corriger via une chip re-ouvre l'écran, puis la réponse renvoie DIRECT au point le plus loin.
+  var FLOW = ['incident', 'flight', 'date', 'pax', 'passport', 'names', 'phone', 'email', 'sign'];
+  var idx = 0, far = 0, editing = false, backwards = false;
+  function applicable(k){ return k !== 'names' || (S.pax > 1 && !S.namesSkipped && S.names.filter(Boolean).length < S.pax); }
+  function render(){
+    $('fill').style.width = Math.round(far / (FLOW.length - 1) * 100) + '%';
+    renderCrumbs();
+    stage.innerHTML = '';
+    var sc = document.createElement('div'); sc.className = 'screen' + (backwards ? ' backwards' : '');
+    backwards = false;
+    stage.appendChild(sc);
+    SCREENS[FLOW[idx]](sc);
+    window.scrollTo({ top: 0 });
+  }
+  // Un clic d'option : petit flash visuel (90 ms) puis écran suivant — RIEN d'autre à confirmer.
+  function hit(btn, fn){ btn.classList.add('hit'); setTimeout(fn, 90); }
+  function next(){
+    if (editing) { editing = false; idx = far; render(); return; } // correction → retour direct où on en était
+    do { idx++; } while (idx < FLOW.length - 1 && !applicable(FLOW[idx]));
+    if (idx > far) far = idx;
+    render();
+  }
+  function back(){
+    if (idx === 0) return;
+    backwards = true; editing = false;
+    do { idx--; } while (idx > 0 && !applicable(FLOW[idx]));
+    render();
+  }
+  function jump(k){ editing = true; backwards = true; idx = FLOW.indexOf(k); render(); }
+
+  // Chips : chaque réponse déjà donnée, cliquable pour la corriger
+  function renderCrumbs(){
+    var c = $('crumbs'); c.innerHTML = '';
+    var items = [];
+    if (S.incident) items.push(['incident', '⏱️', INCIDENT_LABEL[S.incident]]);
+    if (S.flightNum || (S.dep && S.arr)) items.push(['flight', '✈️', S.flightNum || (S.dep + ' → ' + S.arr)]);
+    if (S.date) items.push(['date', '📅', S.date.split('-').reverse().join('/')]);
+    if (S.pax) items.push(['pax', '👪', S.pax + ' pax']);
+    if (S.names[0]) items.push(['passport', '🛂', S.names[0]]);
+    if (S.phone) items.push(['phone', '📞', S.phone]);
+    if (S.email) items.push(['email', '📧', S.email]);
+    items.forEach(function(it){
+      var b = document.createElement('button'); b.type = 'button';
+      b.innerHTML = it[1] + ' <b>' + esc(it[2]) + '</b> <span class="x">✏️</span>';
+      b.title = 'Corriger';
+      b.addEventListener('click', function(){ jump(it[0]); });
+      c.appendChild(b);
     });
   }
-  function askIncident(){
-    botSays("✈️ Que s'est-il passé avec votre vol ?", function(){
-      quick([
-        { t: '⏱️ Retard de 3 h ou +', f: function(){ pick('delay'); } },
-        { t: '🚫 Vol annulé',        f: function(){ pick('cancel'); } },
-        { t: "🛑 Refus d'embarquement", f: function(){ pick('denied'); } },
-      ]);
-      function pick(k){ S.incident = k; meSays(INCIDENT_LABEL[k]); afterAnswer(askFlight); }
-    });
+  // Bloc navigation bas d'écran : ← Retour (si possible) + éventuel « passer »
+  function navRow(sc, opts){
+    opts = opts || {};
+    var n = document.createElement('div'); n.className = 'navrow';
+    var left = document.createElement('span');
+    if (idx > 0) {
+      var p = document.createElement('button'); p.type = 'button'; p.className = 'prev'; p.textContent = '← Retour';
+      p.addEventListener('click', back); left = p;
+    }
+    n.appendChild(left);
+    if (opts.skip) {
+      var s = document.createElement('button'); s.type = 'button'; s.className = 'skip'; s.textContent = opts.skip;
+      s.addEventListener('click', opts.onSkip); n.appendChild(s);
+    }
+    sc.appendChild(n);
   }
-  function askFlight(){
-    botSays("🔎 Votre <b>numéro de vol</b> ? <small>Il est sur votre billet (ex. AF719, SN204)</small>", function(){
-      var q = quick([{ t: 'Je ne l’ai pas', ghost: true, f: function(){ meSays('Je ne l’ai pas'); askRoute(); } }]);
-      ask('ex. AF719', {
+  function optButton(html, fn, ghost){
+    var b = document.createElement('button'); b.type = 'button';
+    if (ghost) b.className = 'ghost';
+    b.innerHTML = html;
+    b.addEventListener('click', function(){ hit(b, fn); });
+    return b;
+  }
+  // Saisie rectangulaire : Entrée ou ➜ valide et enchaîne
+  function inputRow(sc, cfg){
+    var row = document.createElement('div'); row.className = 'askrow';
+    var i = document.createElement('input'); i.className = 'input' + (cfg.mono ? ' mono' : '');
+    i.type = cfg.type || 'text'; i.placeholder = cfg.placeholder || '';
+    if (cfg.inputmode) i.inputMode = cfg.inputmode;
+    if (cfg.autocomplete) i.autocomplete = cfg.autocomplete;
+    if (cfg.value) i.value = cfg.value;
+    var ok = document.createElement('button'); ok.type = 'button'; ok.className = 'ok'; ok.textContent = '➜';
+    row.appendChild(i); row.appendChild(ok);
+    var hint = document.createElement('div'); hint.className = 'hint idle'; hint.textContent = cfg.hint || '';
+    sc.appendChild(row); sc.appendChild(hint);
+    function go(){
+      var v = i.value.trim();
+      var err = cfg.validate(v);
+      if (err) { i.classList.add('bad'); hint.className = 'hint bad'; hint.textContent = err; return; }
+      i.classList.remove('bad'); cfg.done(v);
+    }
+    ok.addEventListener('click', go);
+    i.addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); go(); } });
+    setTimeout(function(){ i.focus(); }, 120);
+    return i;
+  }
+
+  // ── Les écrans ──────────────────────────────────────────────────────────────
+  var SCREENS = {
+    incident: function(sc){
+      sc.innerHTML = '<h2>✈️ Que s\'est-il passé avec votre vol ?</h2><p class="sub">Un clic, on enchaîne.</p>';
+      var o = document.createElement('div'); o.className = 'opts';
+      o.appendChild(optButton('<span class="ic">⏱️</span><span>Retard de 3 h ou +<small>Arrivée avec au moins 3 h de retard</small></span>', function(){ S.incident = 'delay'; next(); }));
+      o.appendChild(optButton('<span class="ic">🚫</span><span>Vol annulé<small>Votre vol n\'a pas eu lieu</small></span>', function(){ S.incident = 'cancel'; next(); }));
+      o.appendChild(optButton('<span class="ic">🛑</span><span>Refus d\'embarquement<small>Surbooking : embarquement refusé</small></span>', function(){ S.incident = 'denied'; next(); }));
+      sc.appendChild(o); navRow(sc);
+    },
+    flight: function(sc){
+      sc.innerHTML = '<h2>🔎 Votre numéro de vol ?</h2><p class="sub">Il est sur votre billet (ex. AF719, SN204).</p>';
+      inputRow(sc, {
+        placeholder: 'ex. AF719', mono: true, value: S.flightNum,
         validate: function(v){
+          if (!v) return 'Indiquez votre numéro de vol, ou touchez « Je ne l\'ai pas » en dessous.';
           var c = v.toUpperCase().replace(/\s+/g,'');
-          return /^[A-Z]{1,3}\d{1,5}[A-Z]?$/.test(c) ? '' : 'Ce numéro ne ressemble pas à un vol (ex. AF719). Ou touchez « Je ne l’ai pas ».';
+          return /^[A-Z]{1,3}\d{1,5}[A-Z]?$/.test(c) ? '' : 'Ce numéro ne ressemble pas à un vol (ex. AF719).';
         },
-        done: function(v){ q.remove(); S.flightNum = v.toUpperCase().replace(/\s+/g,''); S.dep = ''; S.arr = ''; afterAnswer(askDate); },
+        done: function(v){ S.flightNum = v.toUpperCase().replace(/\s+/g,''); S.dep = ''; S.arr = ''; next(); },
       });
-    });
-  }
-  function askRoute(){
-    botSays("🗺️ Votre <b>trajet</b> alors ? <small>ex. Dakar → Paris (écrivez « Dakar - Paris »)</small>", function(){
-      ask('ex. Dakar - Paris', {
-        validate: function(v){
-          var p = v.split(/→|->|—|,|\/|-/).map(function(x){ return x.trim(); }).filter(Boolean);
-          return (p.length >= 2 && p[0].length >= 2 && p[1].length >= 2) ? '' : 'Écrivez les deux villes, ex. « Dakar - Paris ».';
-        },
-        done: function(v){
-          var p = v.split(/→|->|—|,|\/|-/).map(function(x){ return x.trim(); }).filter(Boolean);
-          S.dep = p[0]; S.arr = p[p.length - 1]; S.flightNum = '';
-          afterAnswer(askDate);
-        },
-      });
-    });
-  }
-  function askDate(){
-    botSays("📅 La <b>date du vol</b> ?", function(b){
-      var w = document.createElement('div'); w.className = 'dt';
-      var d = document.createElement('input'); d.type = 'date';
-      d.max = new Date().toISOString().slice(0, 10); // un vol se réclame après coup, jamais dans le futur
-      w.appendChild(d); b.appendChild(w); scrollEnd();
-      d.addEventListener('change', function(){
-        if (!d.value) return;
-        S.date = d.value; w.remove();
-        meSays(d.value.split('-').reverse().join('/'));
-        afterAnswer(askPax);
-      });
-      setTimeout(function(){ try { d.showPicker ? d.showPicker() : d.focus(); } catch(_) { d.focus(); } }, 300);
-    });
-  }
-  function askPax(){
-    botSays("👪 Combien de <b>passagers</b> sur ce vol ? <small>Chaque billet compte — jusqu'à 600 € par personne</small>", function(){
-      quick([1,2,3,4,5].map(function(n){
-        return { t: n + (n === 1 ? ' passager' : ' passagers'), f: function(){ S.pax = n; meSays(String(n)); afterAnswer(askPassport); } };
-      }).concat([{ t: '6 ou +', f: function(){
-        meSays('6 ou +');
-        ask('Nombre de passagers (ex. 7)', {
-          inputmode: 'numeric',
-          validate: function(v){ var n = parseInt(v, 10); return (n >= 6 && n <= 30) ? '' : 'Indiquez un nombre entre 6 et 30.'; },
-          done: function(v){ S.pax = parseInt(v, 10); afterAnswer(askPassport); },
+      var o = document.createElement('div'); o.className = 'opts'; o.style.marginTop = '10px';
+      o.appendChild(optButton('<span class="ic">🗺️</span><span>Je ne l\'ai pas — je donne le trajet<small>ex. Dakar → Paris</small></span>', function(){
+        sc.innerHTML = '<h2>🗺️ Votre trajet ?</h2><p class="sub">Ville de départ et ville d\'arrivée.</p>';
+        inputRow(sc, {
+          placeholder: 'ex. Dakar - Paris', value: (S.dep && S.arr) ? S.dep + ' - ' + S.arr : '',
+          validate: function(v){
+            var p = v.split(/→|->|—|,|\/|-/).map(function(x){ return x.trim(); }).filter(Boolean);
+            return (p.length >= 2 && p[0].length >= 2 && p[1].length >= 2) ? '' : 'Écrivez les deux villes, ex. « Dakar - Paris ».';
+          },
+          done: function(v){
+            var p = v.split(/→|->|—|,|\/|-/).map(function(x){ return x.trim(); }).filter(Boolean);
+            S.dep = p[0]; S.arr = p[p.length - 1]; S.flightNum = ''; next();
+          },
         });
-      } }]));
-    });
-  }
-  // ── Passeport : glisser-déposer → OCR → confirmation en 1 tap ──────────────
-  function askPassport(){
-    botSays("🛂 <b>Votre passeport</b> (ou carte d'identité) — glissez-le ici ou prenez-le en photo : <b>je lis tout, vous n'écrivez rien.</b>", function(b){
+        navRow(sc);
+      }, true));
+      sc.appendChild(o); navRow(sc);
+    },
+    date: function(sc){
+      sc.innerHTML = '<h2>📅 La date du vol ?</h2><p class="sub">Elle passe toute seule dès que vous la choisissez.</p>';
+      var i = document.createElement('input'); i.className = 'input'; i.type = 'date';
+      i.max = new Date().toISOString().slice(0, 10);
+      if (S.date) i.value = S.date;
+      sc.appendChild(i);
+      i.addEventListener('change', function(){ if (i.value) { S.date = i.value; next(); } });
+      navRow(sc);
+      setTimeout(function(){ try { i.showPicker ? i.showPicker() : i.focus(); } catch(_) { i.focus(); } }, 200);
+    },
+    pax: function(sc){
+      sc.innerHTML = '<h2>👪 Combien de passagers ?</h2><p class="sub">Chaque billet compte — jusqu\'à 600 € par personne.</p>';
+      var o = document.createElement('div'); o.className = 'opts grid2';
+      [1,2,3,4,5].forEach(function(n){
+        o.appendChild(optButton('<span class="ic">' + n + '</span><span>' + (n === 1 ? '1 passager' : n + ' passagers') + '<small>jusqu\'à ' + (600 * n).toLocaleString('fr-FR') + ' €</small></span>', function(){ S.pax = n; next(); }));
+      });
+      o.appendChild(optButton('<span class="ic">6+</span><span>6 ou plus<small>on gère votre groupe</small></span>', function(){
+        sc.innerHTML = '<h2>👪 Combien exactement ?</h2>';
+        inputRow(sc, {
+          placeholder: 'ex. 7', inputmode: 'numeric',
+          validate: function(v){ var n = parseInt(v, 10); return (n >= 6 && n <= 30) ? '' : 'Un nombre entre 6 et 30.'; },
+          done: function(v){ S.pax = parseInt(v, 10); next(); },
+        });
+        navRow(sc);
+      }));
+      sc.appendChild(o); navRow(sc);
+    },
+    passport: function(sc){
+      sc.innerHTML = '<h2>🛂 Votre passeport (ou carte d\'identité)</h2><p class="sub">Glissez-le ici ou prenez-le en photo : <b>on lit tout, vous n\'écrivez rien.</b></p>';
       var drop = document.createElement('div'); drop.className = 'drop';
-      drop.innerHTML = '<div class="big">📄</div><p>Glissez votre pièce ici · ou touchez pour choisir</p><small>Photo ou PDF · lecture automatique · 🔒 lue par une IA pour pré-remplir, jamais revendue</small>';
-      b.appendChild(drop); scrollEnd();
-      var q = quick([{ t: '✏️ Je préfère taper mon nom', ghost: true, f: function(){ meSays('Je préfère taper mon nom'); askNameManual(); } }]);
-      function cleanup(){ drop.remove(); q.remove(); }
+      drop.innerHTML = '<div class="big">📄</div><p>Glissez votre pièce ici · ou touchez pour choisir</p><small>Photo ou PDF · lecture automatique · 🔒 lue par une IA pour pré-remplir votre contrat, jamais revendue</small>';
+      sc.appendChild(drop);
+      var hint = document.createElement('div'); hint.className = 'hint idle'; sc.appendChild(hint);
       drop.addEventListener('click', function(){ $('fileInp').value = ''; $('fileInp').click(); });
       drop.addEventListener('dragover', function(e){ e.preventDefault(); drop.classList.add('over'); });
       drop.addEventListener('dragleave', function(){ drop.classList.remove('over'); });
-      drop.addEventListener('drop', function(e){
-        e.preventDefault(); drop.classList.remove('over');
-        var f = e.dataTransfer.files && e.dataTransfer.files[0]; if (f) handleFile(f, cleanup);
+      drop.addEventListener('drop', function(e){ e.preventDefault(); drop.classList.remove('over'); var f = e.dataTransfer.files && e.dataTransfer.files[0]; if (f) handleFile(f, sc, hint); });
+      $('fileInp').onchange = function(){ var f = $('fileInp').files && $('fileInp').files[0]; if (f) handleFile(f, sc, hint); };
+      navRow(sc, { skip: '✏️ Je préfère taper mon nom', onSkip: function(){ manualName(sc); } });
+    },
+    names: function(sc){
+      sc.innerHTML = '<h2>👥 Les autres passagers ?</h2><p class="sub">Prénom Nom, séparés par une virgule — ou passez, un expert les notera au téléphone.</p>';
+      inputRow(sc, {
+        placeholder: 'ex. Mamadou Diallo, Fatou Diallo',
+        validate: function(v){ return v ? '' : 'Écrivez les noms, ou « passer » en dessous.'; },
+        done: function(v){
+          v.split(/,|;|\n/).map(function(x){ return x.trim(); }).filter(Boolean).slice(0, S.pax - 1)
+            .forEach(function(n, i){ S.names[i + 1] = n.toUpperCase(); });
+          next();
+        },
       });
-      $('fileInp').onchange = function(){ var f = $('fileInp').files && $('fileInp').files[0]; if (f) handleFile(f, cleanup); };
+      navRow(sc, { skip: '⏭️ Plus tard, au téléphone', onSkip: function(){ S.namesSkipped = true; next(); } });
+    },
+    phone: function(sc){
+      sc.innerHTML = '<h2>📞 Votre téléphone ?</h2><p class="sub">Un expert vous rappelle depuis le <b>+33 7 56 86 36 30</b> — enregistrez-le.</p>';
+      inputRow(sc, {
+        placeholder: '+33 6 12 34 56 78', type: 'tel', inputmode: 'tel', autocomplete: 'tel', value: S.phone,
+        validate: function(v){ return v.replace(/\D/g, '').length >= 8 ? '' : 'Ce numéro semble trop court (8 chiffres minimum).'; },
+        done: function(v){ S.phone = v; next(); },
+      });
+      navRow(sc);
+    },
+    email: function(sc){
+      sc.innerHTML = '<h2>📧 Votre email ?</h2><p class="sub">On vous y envoie votre contrat signé (obligatoire pour la signature électronique).</p>';
+      inputRow(sc, {
+        placeholder: 'vous@email.com', type: 'email', inputmode: 'email', autocomplete: 'email', value: S.email,
+        validate: function(v){ return (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) && v.length <= 254) ? '' : 'Vérifiez votre adresse email.'; },
+        done: function(v){ S.email = v; next(); },
+      });
+      navRow(sc);
+    },
+    sign: function(sc){
+      var total = (600 * (S.pax || 1)).toLocaleString('fr-FR');
+      sc.innerHTML = '<h2>✍️ Signez, on s\'occupe du reste</h2><p class="sub">On récupère jusqu\'à <b>' + total + ' €</b> pour vous. Vérifiez vos réponses ci-dessus (touchez pour corriger), signez :</p>';
+      if (S.piece) {
+        var card = document.createElement('div'); card.className = 'idcard';
+        card.innerHTML = '<div>👤 <b>' + esc(S.piece.name) + '</b></div>' + (S.piece.dob ? '<div>🎂 Né(e) le ' + esc(S.piece.dob) + '</div>' : '') + '<div style="color:var(--neon-ink);font-size:12.5px;font-weight:700">✅ Lu sur votre pièce — elle rejoint votre dossier</div>';
+        sc.appendChild(card);
+      }
+      // Signature
+      var sig = document.createElement('div'); sig.className = 'sig';
+      sig.innerHTML = '<canvas></canvas><span class="ph">✍️ Signez ici avec le doigt ou la souris</span><button type="button" class="clr">Effacer</button>';
+      sc.appendChild(sig);
+      var canvas = sig.querySelector('canvas'), ph = sig.querySelector('.ph'), clr = sig.querySelector('.clr');
+      var ctx, drawn = false, down = false;
+      setTimeout(function(){
+        canvas.width = canvas.offsetWidth * 2; canvas.height = 236;
+        ctx = canvas.getContext('2d'); ctx.scale(2, 2);
+        ctx.strokeStyle = '#0B1F3A'; ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      }, 60);
+      function pt(e){ var r = canvas.getBoundingClientRect(); var t = e.touches ? e.touches[0] : e; return { x: t.clientX - r.left, y: t.clientY - r.top }; }
+      function startDraw(e){ e.preventDefault(); down = true; drawn = true; ph.style.display = 'none'; clr.style.display = 'block'; var p = pt(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); refresh(); }
+      function moveDraw(e){ if (!down) return; e.preventDefault(); var p = pt(e); ctx.lineTo(p.x, p.y); ctx.stroke(); }
+      canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', moveDraw);
+      window.addEventListener('mouseup', function(){ down = false; });
+      canvas.addEventListener('touchstart', startDraw, { passive: false });
+      canvas.addEventListener('touchmove', moveDraw, { passive: false });
+      canvas.addEventListener('touchend', function(){ down = false; refresh(); });
+      clr.addEventListener('click', function(){ ctx.clearRect(0, 0, canvas.width, canvas.height); drawn = false; ph.style.display = 'grid'; clr.style.display = 'none'; refresh(); });
+      // Consentements : 2 obligatoires + exécution immédiate FACULTATIVE (art. L.221-25, aligné mandat classique)
+      function ckRow(html){
+        var l = document.createElement('label'); l.className = 'ck';
+        l.innerHTML = '<input type="checkbox"><span>' + html + '</span>';
+        sc.appendChild(l); return l.querySelector('input');
+      }
+      var ck1 = ckRow("J'accepte le <b>contrat de cession de créance</b> : je cède ma créance à Robin des Airs (<b>0 €</b> sans résultat, commission au succès uniquement) — <a href='/autorisation.html' target='_blank' rel='noopener'>lire le contrat</a>.");
+      var ck2 = ckRow("J'accepte la <a href='/politique-confidentialite.html' target='_blank' rel='noopener'>politique de confidentialité</a>.");
+      var ck3 = ckRow("<b>Facultatif :</b> démarrer <b>tout de suite</b>, sans attendre la fin de mes 14 jours de rétractation (art. L.221-25) — je reste libre de me rétracter, sans frais.");
+      var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.disabled = true; go.style.marginTop = '14px';
+      go.textContent = '✍️ Signer et envoyer mon dossier';
+      sc.appendChild(go);
+      var se = document.createElement('div'); se.className = 'suberr'; sc.appendChild(se);
+      var rg = document.createElement('p'); rg.className = 'rgpd'; rg.style.marginTop = '12px';
+      rg.innerHTML = '<span>🔒</span><span>Transmission chiffrée (HTTPS). Signature horodatée et scellée. Rétractation 14 jours. RGPD.</span>';
+      sc.appendChild(rg);
+      function refresh(){ go.disabled = !(drawn && ck1.checked && ck2.checked); }
+      [ck1, ck2, ck3].forEach(function(c){ c.addEventListener('change', refresh); });
+      canvas.addEventListener('mouseup', refresh);
+      go.addEventListener('click', function(){
+        if (go.disabled) return;
+        S.startNow = ck3.checked;
+        go.disabled = true; go.textContent = '⏳ Envoi en cours…'; se.classList.remove('on');
+        submit(canvas.toDataURL('image/png')).catch(function(e){
+          go.disabled = false; go.textContent = '✍️ Signer et envoyer mon dossier';
+          se.innerHTML = '⚠️ ' + esc(e.message || 'Envoi impossible.') + ' Réessayez, ou <a href="https://wa.me/33756863630" target="_blank" rel="noopener">continuez sur WhatsApp</a>.';
+          se.classList.add('on');
+        });
+      });
+      navRow(sc);
+    },
+  };
+
+  // ── Passeport : compression + OCR (repli : saisie manuelle, jamais bloquant) ──
+  function manualName(sc){
+    sc.innerHTML = '<h2>👤 Votre prénom et nom ?</h2><p class="sub">Comme sur votre pièce d\'identité.</p>';
+    inputRow(sc, {
+      placeholder: 'ex. Awa Diallo', autocomplete: 'name', value: S.names[0] || '',
+      validate: function(v){ return v.split(/\s+/).filter(Boolean).length >= 2 ? '' : 'Indiquez votre prénom ET votre nom.'; },
+      done: function(v){ S.piece = null; S.names[0] = v.toUpperCase(); next(); },
     });
+    navRow(sc);
   }
-  // Compression côté client (max 1600 px, JPEG) : OCR rapide, payload léger même depuis un téléphone
   function toJpeg(file){
     return new Promise(function(res, rej){
       var img = new Image();
@@ -338,19 +446,16 @@
       img.src = URL.createObjectURL(file);
     });
   }
-  function handleFile(file, cleanup){
-    if (file.size > 15 * 1024 * 1024) { botSays('😅 Ce fichier est très lourd — reprenez une photo simple de la pièce.'); return; }
-    cleanup();
-    meSays('📎 ' + (file.name || 'photo'));
+  function handleFile(file, sc, hint){
+    if (file.size > 15 * 1024 * 1024) { hint.className = 'hint bad'; hint.textContent = 'Fichier très lourd — reprenez une photo simple de la pièce.'; return; }
     if (/pdf$/i.test(file.type)) {
-      // PDF : on le garde pour le dossier (dépôt après signature), mais l'OCR web lit les photos → nom tapé
       var r = new FileReader();
       r.onload = function(){ S.pieceFile = { dataBase64: String(r.result).split(',')[1], mime: 'application/pdf', filename: file.name || 'passeport.pdf' }; };
       r.readAsDataURL(file);
-      botSays('✅ Document reçu — il rejoindra votre dossier.', function(){ askNameManual(); });
+      manualName(sc); // PDF : rangé au dossier, le nom se tape (l'OCR web lit les photos)
       return;
     }
-    var reading = bubble('🔍 Je lis votre pièce…', false);
+    hint.className = 'hint ok'; hint.textContent = '🔍 Lecture de votre pièce…';
     toJpeg(file).then(function(b64){
       S.pieceFile = { dataBase64: b64, mime: 'image/jpeg', filename: (file.name || 'passeport') + '.jpg' };
       return fetch('/api/ocr-piece', {
@@ -358,159 +463,29 @@
         body: JSON.stringify({ dataBase64: b64, mime: 'image/jpeg' }),
       }).then(function(r){ return r.json(); });
     }).then(function(j){
-      reading.parentElement.remove();
-      if (j && j.ok && j.piece && j.piece.name) return confirmPiece(j.piece);
-      botSays("😕 Je n'arrive pas à bien lire (photo sombre ou floue ?). Pas grave — dites-moi votre nom :", function(){ askNameManual(true); });
+      if (j && j.ok && j.piece && j.piece.name) return confirmPiece(sc, j.piece);
+      hint.className = 'hint bad'; hint.textContent = 'Lecture difficile (photo sombre ou floue ?) — tapez votre nom :';
+      setTimeout(function(){ manualName(sc); }, 600);
     }).catch(function(){
-      reading.parentElement.remove();
-      botSays('😕 Petit souci de lecture — dites-moi votre nom :', function(){ askNameManual(true); });
+      hint.className = 'hint bad'; hint.textContent = 'Petit souci de lecture — tapez votre nom :';
+      setTimeout(function(){ manualName(sc); }, 600);
     });
   }
-  function confirmPiece(p){
-    var card = '<div class="idcard"><div>👤 <b>' + esc(p.name) + '</b></div>'
+  function confirmPiece(sc, p){
+    sc.innerHTML = '<h2>📋 C\'est bien vous ?</h2><p class="sub">Lu automatiquement sur votre pièce :</p>';
+    var card = document.createElement('div'); card.className = 'idcard';
+    card.innerHTML = '<div>👤 <b>' + esc(p.name) + '</b></div>'
       + (p.dob ? '<div>🎂 Né(e) le ' + esc(p.dob) + (p.lieuNaissance ? ' à ' + esc(p.lieuNaissance) : '') + '</div>' : '')
-      + (p.docType ? '<div>🪪 ' + esc(p.docType === 'cni' ? "Carte d'identité" : p.docType === 'titre_sejour' ? 'Titre de séjour' : 'Passeport') + '</div>' : '')
-      + '</div>';
-    botSays("📋 Voilà ce que j'ai lu :" + card + "C'est bien vous ?", function(){
-      quick([
-        { t: '✅ C’est moi', f: function(){
-          meSays('C’est moi');
-          S.piece = p; S.names[0] = p.name;
-          afterAnswer(nextAfterIdentity);
-        } },
-        { t: '✏️ Corriger', ghost: true, f: function(){ meSays('Corriger'); askNameManual(true); } },
-      ]);
-    });
-  }
-  function askNameManual(noIntro){
-    var go = function(){
-      ask('Prénom Nom (ex. Awa Diallo)', {
-        autocomplete: 'name',
-        validate: function(v){ return v.split(/\s+/).filter(Boolean).length >= 2 ? '' : 'Indiquez votre prénom ET votre nom.'; },
-        done: function(v){ S.piece = null; S.names[0] = v.toUpperCase(); afterAnswer(nextAfterIdentity); },
-      });
-    };
-    if (noIntro) go();
-    else botSays('👤 Votre <b>prénom et nom</b> ?', go);
-  }
-  function nextAfterIdentity(){ if (S.pax > 1 && S.names.length < S.pax) return askOtherNames(); askPhone(); }
-  function askOtherNames(){
-    botSays('👥 Les <b>autres passagers</b> ? <small>Un nom par ligne — ou passez, un expert les notera au téléphone</small>', function(){
-      var q = quick([{ t: '⏭️ Plus tard, au téléphone', ghost: true, f: function(){ meSays('Plus tard'); afterAnswer(askPhone); } }]);
-      ask('Un nom par ligne', {
-        validate: function(v){ return v ? '' : 'Écrivez les noms, ou touchez « Plus tard ».'; },
-        done: function(v){
-          q.remove();
-          v.split(/\n|,|;/).map(function(x){ return x.trim(); }).filter(Boolean).slice(0, S.pax - 1)
-            .forEach(function(n, i){ S.names[i + 1] = n.toUpperCase(); });
-          afterAnswer(askPhone);
-        },
-      });
-    });
-  }
-  function askPhone(){
-    botSays("📞 Votre <b>numéro de téléphone</b> ? <small>Un expert vous rappelle depuis le +33 7 56 86 36 30 — enregistrez-le</small>", function(){
-      ask('+33 6 12 34 56 78', {
-        type: 'tel', inputmode: 'tel', autocomplete: 'tel',
-        validate: function(v){ return v.replace(/\D/g, '').length >= 8 ? '' : 'Ce numéro semble trop court (8 chiffres minimum).'; },
-        done: function(v){ S.phone = v; afterAnswer(askEmail); },
-      });
-    });
-  }
-  function askEmail(){
-    botSays("📧 Votre <b>email</b> ? <small>On vous y envoie votre contrat signé (obligatoire pour la signature électronique)</small>", function(){
-      ask('vous@email.com', {
-        type: 'email', inputmode: 'email', autocomplete: 'email',
-        validate: function(v){ return (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) && v.length <= 254) ? '' : 'Vérifiez votre adresse email.'; },
-        done: function(v){ S.email = v; afterAnswer(showRecap); },
-      });
-    });
-  }
-  // Après chaque réponse : correction depuis le récap → retour direct au récap (jamais de marche arrière)
-  function afterAnswer(next){ if (editReturn) { editReturn = false; showRecap(); } else next(); }
-
-  // ── Récapitulatif + signature (le SEUL écran avec plus d'un geste) ─────────
-  function showRecap(){
-    var vol = S.flightNum || (S.dep && S.arr ? S.dep + ' → ' + S.arr : '—');
-    var rows = [
-      ['Vol',      esc(vol),                                          function(){ editReturn = true; askFlight(); }],
-      ['Date',     esc((S.date || '').split('-').reverse().join('/')), function(){ editReturn = true; askDate(); }],
-      ['Incident', esc(INCIDENT_LABEL[S.incident] || '—'),            function(){ editReturn = true; askIncident(); }],
-      ['Vous',     esc(S.names[0] || '—') + (S.pax > 1 ? ' <small>+ ' + (S.pax - 1) + ' passager(s)</small>' : ''), function(){ editReturn = true; askNameManual(); }],
-      ['Contact',  esc(S.phone) + '<br>' + esc(S.email),              function(){ editReturn = true; askPhone(); }],
-    ];
-    botSays("🎯 <b>Tout y est !</b> Vérifiez d'un coup d'œil, signez, et on récupère jusqu'à <b>" + (600 * S.pax) + " €</b> pour vous.", function(b){
-      var rec = document.createElement('div'); rec.className = 'recap';
-      rows.forEach(function(r){
-        var d = document.createElement('div'); d.className = 'r';
-        d.innerHTML = '<span class="k">' + r[0] + '</span><span class="v">' + r[1] + '</span>';
-        var e = document.createElement('button'); e.className = 'e'; e.type = 'button'; e.title = 'Corriger'; e.textContent = '✏️';
-        e.addEventListener('click', r[2]);
-        d.appendChild(e); rec.appendChild(d);
-      });
-      b.appendChild(rec);
-
-      // Signature
-      var sig = document.createElement('div'); sig.className = 'sig';
-      sig.innerHTML = '<canvas></canvas><span class="ph">✍️ Signez ici avec le doigt ou la souris</span><button type="button" class="clr">Effacer</button>';
-      b.appendChild(sig);
-      var canvas = sig.querySelector('canvas'), ph = sig.querySelector('.ph'), clr = sig.querySelector('.clr');
-      var ctx, drawn = false;
-      function setup(){
-        canvas.width = canvas.offsetWidth * 2; canvas.height = 220; // x2 = net sur écrans Retina
-        ctx = canvas.getContext('2d'); ctx.scale(2, 2);
-        ctx.strokeStyle = '#0B1F3A'; ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-      }
-      setTimeout(setup, 60);
-      function pt(e){
-        var r = canvas.getBoundingClientRect();
-        var t = e.touches ? e.touches[0] : e;
-        return { x: t.clientX - r.left, y: t.clientY - r.top };
-      }
-      var down = false;
-      function startDraw(e){ e.preventDefault(); down = true; drawn = true; ph.style.display = 'none'; clr.style.display = 'block'; var p = pt(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); refresh(); }
-      function moveDraw(e){ if (!down) return; e.preventDefault(); var p = pt(e); ctx.lineTo(p.x, p.y); ctx.stroke(); }
-      canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', moveDraw);
-      window.addEventListener('mouseup', function(){ down = false; });
-      canvas.addEventListener('touchstart', startDraw, { passive: false });
-      canvas.addEventListener('touchmove', moveDraw, { passive: false });
-      canvas.addEventListener('touchend', function(){ down = false; });
-      clr.addEventListener('click', function(){ ctx.clearRect(0, 0, canvas.width, canvas.height); drawn = false; ph.style.display = 'grid'; clr.style.display = 'none'; refresh(); });
-
-      // Consentements : 2 obligatoires + exécution immédiate FACULTATIVE (art. L.221-25, aligné mandat classique)
-      function ckRow(id, html){
-        var l = document.createElement('label'); l.className = 'ck';
-        l.innerHTML = '<input type="checkbox" id="' + id + '"><span>' + html + '</span>';
-        b.appendChild(l); return l.querySelector('input');
-      }
-      var ck1 = ckRow('ckM', "J'accepte le <b>contrat de cession de créance</b> : je cède ma créance à Robin des Airs (<b>0 €</b> sans résultat, commission au succès uniquement) — <a href='/autorisation.html' target='_blank' rel='noopener'>lire le contrat</a>.");
-      var ck2 = ckRow('ckR', "J'accepte la <a href='/politique-confidentialite.html' target='_blank' rel='noopener'>politique de confidentialité</a>.");
-      var ck3 = ckRow('ckE', "<b>Facultatif :</b> démarrer <b>tout de suite</b>, sans attendre la fin de mes 14 jours de rétractation (art. L.221-25) — je reste libre de me rétracter, sans frais.");
-
-      var go = document.createElement('button'); go.className = 'go'; go.type = 'button'; go.disabled = true;
-      go.textContent = '✍️ Signer et envoyer mon dossier';
-      b.appendChild(go);
-      var se = document.createElement('div'); se.className = 'suberr'; b.appendChild(se);
-
-      function refresh(){ go.disabled = !(drawn && ck1.checked && ck2.checked); }
-      [ck1, ck2, ck3].forEach(function(c){ c.addEventListener('change', refresh); });
-      canvas.addEventListener('mouseup', refresh); canvas.addEventListener('touchend', refresh);
-
-      go.addEventListener('click', function(){
-        if (go.disabled) return;
-        S.startNow = ck3.checked;
-        go.disabled = true; go.textContent = '⏳ Envoi en cours…'; se.classList.remove('on');
-        submit(canvas.toDataURL('image/png')).catch(function(e){
-          go.disabled = false; go.textContent = '✍️ Signer et envoyer mon dossier';
-          se.innerHTML = '⚠️ ' + esc(e.message || 'Envoi impossible.') + ' Réessayez, ou <a href="https://wa.me/33756863630" target="_blank" rel="noopener">continuez sur WhatsApp</a>.';
-          se.classList.add('on'); scrollEnd();
-        });
-      });
-      scrollEnd();
-    });
+      + (p.docType ? '<div>🪪 ' + esc(p.docType === 'cni' ? "Carte d'identité" : p.docType === 'titre_sejour' ? 'Titre de séjour' : 'Passeport') + '</div>' : '');
+    sc.appendChild(card);
+    var o = document.createElement('div'); o.className = 'opts';
+    o.appendChild(optButton('<span class="ic">✅</span><span>Oui, c\'est moi</span>', function(){ S.piece = p; S.names[0] = p.name; next(); }));
+    o.appendChild(optButton('<span class="ic">✏️</span><span>Corriger mon nom</span>', function(){ manualName(sc.parentElement ? sc : sc); }, true));
+    sc.appendChild(o);
+    navRow(sc);
   }
 
-  // ── Soumission : depot-create → submit-mandat → depot-upload (pièce) ───────
+  // ── Soumission : depot-create → submit-mandat → depot-upload (pièce) ─────────
   function submit(sigPng){
     if ($('website').value) return Promise.reject(new Error('Envoi impossible.')); // honeypot
     var nowIso = new Date().toISOString();
@@ -560,7 +535,7 @@
           signCity: '', signDate: nowIso.slice(0, 10),
           signatureImg: sigPng,
           source: 'depot-express.html', signedAt: nowIso,
-          mandatVersion: 'web-express-v2-chat', watiConversationId: S.phone, linkSentAt: '',
+          mandatVersion: 'web-express-v3-site', watiConversationId: S.phone, linkSentAt: '',
         }),
       });
     })
@@ -578,13 +553,21 @@
   }
   function success(){
     var pieces = '/depot-en-ligne.html?r=' + encodeURIComponent(REF);
-    botSays("🎉 <b>C'est signé, merci de votre confiance !</b>\nRéférence : <b>" + esc(REF) + "</b>\n\n📞 Un expert vous appelle depuis le <b>+33 7 56 86 36 30</b> — enregistrez-le sous « Robin des Airs ».\n" + (S.pieceFile ? '📎 Votre pièce est déjà au dossier. Ajoutez la carte d’embarquement ou l’e-billet et tout est complet.' : '📎 Dernière étape : ajoutez vos pièces (identité + carte d’embarquement).'), function(){
-      quick([{ t: '📎 Ajouter mes pièces →', f: function(){ window.location.href = pieces; } }]);
-      setTimeout(function(){ window.location.href = pieces; }, 6000);
-    });
+    $('crumbs').innerHTML = '';
+    $('fill').style.width = '100%';
+    stage.innerHTML = '';
+    var sc = document.createElement('div'); sc.className = 'screen done'; sc.style.display = 'block';
+    sc.innerHTML = '<div class="seal" aria-hidden="true">✓</div><h2>C\'est signé, merci !</h2>'
+      + '<p>Référence : <b>' + esc(REF) + '</b><br>📞 Un expert vous appelle depuis le <b>+33 7 56 86 36 30</b> — enregistrez-le sous « Robin des Airs ».</p>'
+      + '<p>' + (S.pieceFile ? '📎 Votre pièce est déjà au dossier. Ajoutez la carte d\'embarquement ou l\'e-billet et tout est complet.' : '📎 Dernière étape : ajoutez vos pièces (identité + carte d\'embarquement).') + '</p>'
+      + '<a class="cta-link" href="' + pieces + '">📎 Ajouter mes pièces maintenant →</a>'
+      + '<p class="signoff">On prend le relais. <b>L\'équipe Robin des Airs 🏹</b></p>';
+    stage.appendChild(sc);
+    window.scrollTo({ top: 0 });
+    setTimeout(function(){ window.location.href = pieces; }, 6000);
   }
 
-  start();
+  render();
 })();
 </script>
 </body>
