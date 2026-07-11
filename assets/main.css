@@ -1905,6 +1905,47 @@ textarea.calc-input.calc-input--short-vol { min-height: 96px; resize: vertical; 
   white-space: nowrap;
   color: #ffffff;
 }
+/* Avatar Robin dans la bulle WhatsApp (visage + badge vert) */
+.wa-float-avatar {
+  position: relative;
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+}
+.wa-float-robin {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  background: #16406A;
+  box-sizing: border-box;
+  display: block;
+}
+.wa-float-badge {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: #25D366;
+  border: 2px solid #0F7268;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.wa-float-badge svg {
+  width: 10px;
+  height: 10px;
+  display: block;
+  fill: #ffffff;
+}
+@media (max-width: 480px) {
+  .wa-float-avatar,
+  .wa-float-robin { width: 38px; height: 38px; }
+  .wa-float-badge { width: 18px; height: 18px; }
+}
 @media (min-width: 769px) {
   .wa-float { bottom: 24px; right: 24px; }
 }
