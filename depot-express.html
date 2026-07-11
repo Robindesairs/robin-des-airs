@@ -134,6 +134,7 @@
   </main>
 
   <input type="file" id="fileInp" accept="image/*,application/pdf" hidden>
+  <input type="file" id="camInp" accept="image/*" capture="environment" hidden>
   <!-- Honeypot anti-spam (depot-create l'exige vide) -->
   <input type="text" id="website" name="website" value="" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
 
@@ -347,16 +348,22 @@
       sc.appendChild(o); navRow(sc);
     },
     passport: function(sc){
-      sc.innerHTML = '<h2>🛂 Votre passeport (ou carte d\'identité)</h2><p class="sub">Glissez-le ici ou prenez-le en photo : <b>on lit tout, vous n\'écrivez rien.</b></p>';
+      sc.innerHTML = '<h2>🛂 Votre passeport (ou carte d\'identité)</h2><p class="sub"><b>On lit tout, vous n\'écrivez rien.</b></p>';
       var drop = document.createElement('div'); drop.className = 'drop';
-      drop.innerHTML = '<div class="big">📄</div><p>Glissez votre pièce ici · ou touchez pour choisir</p><small>Photo ou PDF · lecture automatique · 🔒 lue par une IA pour pré-remplir votre contrat, jamais revendue</small>';
+      drop.innerHTML = '<div class="big">📄</div><p>Glissez votre pièce ici</p><small>🔒 Lue par une IA pour pré-remplir votre contrat, jamais revendue</small>';
       sc.appendChild(drop);
+      // 2 vraies options rectangulaires : photo (caméra sur mobile) ou fichier (galerie / PDF)
+      var o = document.createElement('div'); o.className = 'opts grid2'; o.style.marginTop = '10px';
+      o.appendChild(optButton('<span class="ic">📷</span><span>Prendre une photo</span>', function(){ $('camInp').value = ''; $('camInp').click(); }));
+      o.appendChild(optButton('<span class="ic">🖼️</span><span>Choisir un fichier<small>photo ou PDF</small></span>', function(){ $('fileInp').value = ''; $('fileInp').click(); }));
+      sc.appendChild(o);
       var hint = document.createElement('div'); hint.className = 'hint idle'; sc.appendChild(hint);
       drop.addEventListener('click', function(){ $('fileInp').value = ''; $('fileInp').click(); });
       drop.addEventListener('dragover', function(e){ e.preventDefault(); drop.classList.add('over'); });
       drop.addEventListener('dragleave', function(){ drop.classList.remove('over'); });
       drop.addEventListener('drop', function(e){ e.preventDefault(); drop.classList.remove('over'); var f = e.dataTransfer.files && e.dataTransfer.files[0]; if (f) handleFile(f, sc, hint); });
       $('fileInp').onchange = function(){ var f = $('fileInp').files && $('fileInp').files[0]; if (f) handleFile(f, sc, hint); };
+      $('camInp').onchange = function(){ var f = $('camInp').files && $('camInp').files[0]; if (f) handleFile(f, sc, hint); };
       navRow(sc, { skip: '✏️ Je préfère taper mon nom', onSkip: function(){ manualName(sc); } });
     },
     // Co-passagers : nom + date de naissance CHACUN (la cession exige l'identité de chaque cédant ;
@@ -428,9 +435,14 @@
         card.innerHTML = '<div>👤 <b>' + esc(S.piece.name) + '</b></div>' + (S.piece.dob ? '<div>🎂 Né(e) le ' + esc(S.piece.dob) + '</div>' : '') + '<div style="color:var(--neon-ink);font-size:12.5px;font-weight:700">✅ Lu sur votre pièce — elle rejoint votre dossier</div>';
         sc.appendChild(card);
       }
-      // Signature
-      var sig = document.createElement('div'); sig.className = 'sig';
-      sig.innerHTML = '<canvas></canvas><span class="ph">✍️ Signez ici avec le doigt ou la souris</span><button type="button" class="clr">Effacer</button>';
+      // Signature du signataire principal — ON DIT QUI SIGNE (retour fondateur : sinon on ne sait
+      // pas à qui est le 1er cadre quand plusieurs passagers signent à la suite).
+      var mainName = S.names[0] || 'Vous';
+      var mainLbl = document.createElement('div'); mainLbl.className = 'hint idle'; mainLbl.style.margin = '0 0 4px';
+      mainLbl.innerHTML = '✍️ <b>1.</b> Signature de <b>' + esc(mainName) + '</b> — c\'est vous qui signez en premier';
+      sc.appendChild(mainLbl);
+      var sig = document.createElement('div'); sig.className = 'sig'; sig.style.margin = '0';
+      sig.innerHTML = '<canvas></canvas><span class="ph">✍️ ' + esc(mainName.split(' ')[0]) + ', signez ici avec le doigt ou la souris</span><button type="button" class="clr">Effacer</button>';
       sc.appendChild(sig);
       var canvas = sig.querySelector('canvas'), ph = sig.querySelector('.ph'), clr = sig.querySelector('.clr');
       var ctx, drawn = false, down = false;
@@ -460,7 +472,7 @@
           sc.appendChild(note); return;
         }
         var box = document.createElement('div'); box.style.marginTop = '12px';
-        box.innerHTML = '<div class="hint idle" style="margin:0 0 4px">✍️ Signature de <b>' + esc(nm) + '</b> — passez-lui l\'appareil</div>';
+        box.innerHTML = '<div class="hint idle" style="margin:0 0 4px">✍️ <b>' + (coSigs.length + 2) + '.</b> Signature de <b>' + esc(nm) + '</b> — passez-lui l\'appareil</div>';
         var s2 = document.createElement('div'); s2.className = 'sig'; s2.style.margin = '0';
         s2.innerHTML = '<canvas></canvas><span class="ph">✍️ ' + esc(nm.split(' ')[0]) + ', signez ici</span><button type="button" class="clr">Effacer</button>';
         box.appendChild(s2);
