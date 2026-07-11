@@ -146,10 +146,11 @@
 
   // ── État du dossier ─────────────────────────────────────────────────────────
   var S = {
-    incident: '', flightNum: '', dep: '', arr: '', date: '',
-    typeVol: '', via: '',                 // direct | escale (+ ville d'escale facultative)
-    pax: 0, names: [], paxData: [],       // paxData[i] = { dob, minor, sig } pour chaque passager
-    piece: null, pieceFile: null,
+    incident: '', flightNum: '', dep: '', arr: '', date: '', pnr: '',
+    typeVol: '',                          // direct | escale
+    pax: 0, names: [], paxData: [],       // paxData[i] = { prenom, nom, dob, minor, sig, pieceFile }
+    piece: null, pieceFile: null,         // passager 1 : pièce d'identité
+    ticketFile: null, fromTicket: false,  // e-billet/carte lu(e) → pré-remplit vol/date/passagers
     phone: '', email: '', startNow: false,
   };
   // ── Saisie de date RAPIDE : on tape les chiffres, les / se posent seuls (15032026 → 15/03/2026).
@@ -231,11 +232,16 @@
   // ── Moteur d'écrans : clic = suivant, retour possible, chips toujours visibles ──
   // FLOW = l'ordre nominal. `idx` = position courante ; `far` = écran le plus loin atteint.
   // Corriger via une chip re-ouvre l'écran, puis la réponse renvoie DIRECT au point le plus loin.
-  var FLOW = ['incident', 'annul14', 'conn', 'flight', 'date', 'pax', 'passport', 'copax', 'phone', 'email', 'sign'];
+  var FLOW = ['incident', 'annul14', 'eticket', 'conn', 'flight', 'date', 'pax', 'passport', 'copax', 'phone', 'email', 'sign'];
   var idx = 0, far = 0, editing = false, backwards = false;
   function applicable(k){
+    if (k === 'annul14') return S.incident === 'cancel';       // gate 14 jours : annulation uniquement
     if (k === 'copax') return S.pax > 1;
-    if (k === 'annul14') return S.incident === 'cancel'; // gate 14 jours : annulation uniquement
+    // Quand l'e-billet a rempli une info, on SAUTE la question correspondante (mais la chip reste corrigeable).
+    if (k === 'conn') return !(S.fromTicket && S.typeVol);
+    if (k === 'flight') return !(S.fromTicket && (S.flightNum || (S.dep && S.arr)));
+    if (k === 'date') return !(S.fromTicket && S.date);
+    if (k === 'pax') return !(S.fromTicket && S.pax);
     return true;
   }
   function render(){
@@ -439,6 +445,26 @@
       o.appendChild(optButton('<span class="ic">🤔</span><span>Je ne sais plus<small>on continue, un expert vérifie</small></span>', function(){ S.annul14 = 'inconnu'; next(); }));
       sc.appendChild(o); navRow(sc);
     },
+    // E-BILLET / carte d'embarquement → pré-remplit vol, trajet, date, PNR, passagers (comme le bot).
+    // Facultatif : « je saisis à la main » enchaîne sur les questions classiques.
+    eticket: function(sc){
+      sc.innerHTML = '<h2>📄 Votre e-billet ou carte d\'embarquement</h2><p class="sub"><b>On lit tout et on remplit votre dossier</b> — n° de vol, trajet, date, passagers. Zéro erreur de saisie.</p>';
+      var drop = document.createElement('div'); drop.className = 'drop';
+      drop.innerHTML = '<div class="big">📄</div><p>Glissez votre e-billet ici</p><small>Photo ou PDF · lecture automatique · 🔒 lu par une IA, jamais revendu</small>';
+      sc.appendChild(drop);
+      var o = document.createElement('div'); o.className = 'opts grid2'; o.style.marginTop = '10px';
+      o.appendChild(optButton('<span class="ic">📷</span><span>Prendre une photo</span>', function(){ $('camInp').value = ''; $('camInp').click(); }));
+      o.appendChild(optButton('<span class="ic">🖼️</span><span>Choisir un fichier<small>photo ou PDF</small></span>', function(){ $('fileInp').value = ''; $('fileInp').click(); }));
+      sc.appendChild(o);
+      var hint = document.createElement('div'); hint.className = 'hint idle'; sc.appendChild(hint);
+      drop.addEventListener('click', function(){ $('fileInp').value = ''; $('fileInp').click(); });
+      drop.addEventListener('dragover', function(e){ e.preventDefault(); drop.classList.add('over'); });
+      drop.addEventListener('dragleave', function(){ drop.classList.remove('over'); });
+      drop.addEventListener('drop', function(e){ e.preventDefault(); drop.classList.remove('over'); handleEticket(e.dataTransfer.files && e.dataTransfer.files[0], hint); });
+      $('fileInp').onchange = function(){ handleEticket($('fileInp').files && $('fileInp').files[0], hint); };
+      $('camInp').onchange = function(){ handleEticket($('camInp').files && $('camInp').files[0], hint); };
+      navRow(sc, { skip: '✏️ Je n\'ai pas le billet — je saisis à la main', onSkip: function(){ next(); } });
+    },
     conn: function(sc){
       sc.innerHTML = '<h2>🛤️ Ce vol était-il direct ?</h2><p class="sub">Avec une correspondance, on note chaque vol pour calculer l\'indemnité sur le trajet complet.</p>';
       var o = document.createElement('div'); o.className = 'opts';
@@ -507,7 +533,8 @@
     // La cession exige l'identité de chaque cédant ; la DDN détecte les mineurs (un parent signe).
     copax: function(sc, iOverride){
       var i = iOverride != null ? iOverride : 1;
-      while (i < S.pax && S.names[i] && S.paxData[i] && S.paxData[i].dob) i++;
+      // On MONTRE chaque co-passager (même pré-rempli par l'e-billet) pour confirmer + ajouter sa pièce.
+      while (i < S.pax && S.paxData[i] && S.paxData[i].confirmed) i++;
       if (i >= S.pax) return next();
       var pd0 = S.paxData[i] || {};
       sc.innerHTML = '<h2>👥 Passager ' + (i + 1) + ' sur ' + S.pax + '</h2><p class="sub">Sa <b>pièce d\'identité</b> (on lit tout) ou sa saisie — chaque passager compte pour l\'indemnité.</p>';
@@ -567,8 +594,8 @@
         var dobFr = dobInp.value;
         var minor = isMinor(dobFr, S.date);
         S.names[i] = (p + ' ' + n).toUpperCase();
-        // fusion : on garde le fichier pièce éventuellement déjà déposé
-        S.paxData[i] = Object.assign(S.paxData[i] || {}, { prenom: p.toUpperCase(), nom: n.toUpperCase(), dob: dobFr, minor: minor });
+        // fusion : on garde le fichier pièce éventuellement déjà déposé ; confirmed = validé par l'utilisateur
+        S.paxData[i] = Object.assign(S.paxData[i] || {}, { prenom: p.toUpperCase(), nom: n.toUpperCase(), dob: dobFr, minor: minor, confirmed: true });
         if (minor) { hint.className = 'hint ok'; hint.textContent = '👶 Mineur·e : c\'est vous (parent/tuteur) qui signez pour lui/elle.'; }
         setTimeout(function(){
           if (editing) { editing = false; idx = far; render(); return; }
@@ -826,6 +853,57 @@
       setTimeout(function(){ manualName(sc); }, 600);
     });
   }
+  // E-billet : joint le fichier au dossier (kind carte-embarquement) + OCR (image) → applyEticket → avance.
+  function handleEticket(file, hint){
+    if (!file) return;
+    if (file.size > 15 * 1024 * 1024) { hint.className = 'hint bad'; hint.textContent = 'Fichier très lourd — reprenez une photo simple.'; return; }
+    if (/pdf$/i.test(file.type)) {
+      var r = new FileReader();
+      r.onload = function(){ S.ticketFile = { dataBase64: String(r.result).split(',')[1], mime: 'application/pdf', filename: file.name || 'e-billet.pdf' }; };
+      r.readAsDataURL(file);
+      hint.className = 'hint ok'; hint.textContent = '✅ Billet reçu — il rejoint votre dossier. On continue la saisie.';
+      setTimeout(function(){ next(); }, 700); // PDF : joint, mais lecture auto = photos → saisie classique
+      return;
+    }
+    hint.className = 'hint ok'; hint.textContent = '🔍 Lecture de votre billet…';
+    toJpeg(file).then(function(b64){
+      S.ticketFile = { dataBase64: b64, mime: 'image/jpeg', filename: (file.name || 'e-billet') + '.jpg' };
+      return fetch('/api/ocr-eticket', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dataBase64: b64, mime: 'image/jpeg' }) }).then(function(r){ return r.json(); });
+    }).then(function(j){
+      if (j && j.ok && j.eticket) { applyEticket(j.eticket); hint.className = 'hint ok'; hint.textContent = '✅ Lu ! On a pré-rempli votre dossier — vérifiez les étapes.'; setTimeout(function(){ next(); }, 500); return; }
+      hint.className = 'hint bad'; hint.textContent = 'Billet peu lisible — pas grave, on saisit à la main.';
+      setTimeout(function(){ next(); }, 800);
+    }).catch(function(){
+      hint.className = 'hint bad'; hint.textContent = 'Lecture indisponible — on saisit à la main.';
+      setTimeout(function(){ next(); }, 800);
+    });
+  }
+  function applyEticket(e){
+    S.fromTicket = true;
+    S.pnr = e.pnr || '';
+    if (e.escale && e.legs && e.legs.length > 1) {
+      S.typeVol = 'escale';
+      S.legs = e.legs.map(function(l){ return { num: l.num || '', dep: l.dep || '', arr: l.arr || '' }; });
+      S.dep = S.legs[0].dep; S.arr = S.legs[S.legs.length - 1].arr;
+      S.flightNum = S.legs.map(function(l){ return l.num; }).filter(Boolean).join(' / ');
+    } else {
+      S.typeVol = 'direct'; S.legs = [];
+      S.flightNum = e.flightNum || ''; S.dep = e.dep || ''; S.arr = e.arr || '';
+    }
+    if (e.dateIso) S.date = e.dateIso;
+    if (e.passengers && e.passengers.length) {
+      S.pax = e.pax || e.passengers.length;
+      S.names = e.passengers.map(function(p){ return p.name; });
+      S.paxData = e.passengers.map(function(p){
+        var parts = String(p.name || '').trim().split(/\s+/);
+        var nom = parts.length > 1 ? parts.pop() : (parts[0] || '');
+        var prenom = parts.join(' ');
+        return { prenom: prenom.toUpperCase(), nom: nom.toUpperCase(), dob: p.dob || '', minor: !!p.minor };
+      });
+      // Passager 1 : pré-remplit la saisie manuelle (le passeport OCR reste demandé pour la pièce d'identité)
+      if (S.paxData[0]) { S.manualPrenom = S.paxData[0].prenom; S.manualNom = S.paxData[0].nom; }
+    }
+  }
   function confirmPiece(sc, p){
     sc.innerHTML = '<h2>📋 C\'est bien vous ?</h2><p class="sub">Lu automatiquement sur votre pièce :</p>';
     var card = document.createElement('div'); card.className = 'idcard';
@@ -892,7 +970,7 @@
           mandataireAcceptedAt: nowIso,
           airline: (S.dep && S.arr && !S.flightNum) ? (S.dep + ' → ' + S.arr) : '',
           operatedBy: '', flightNum: S.flightNum, flightDate: S.date,
-          pnr: '', incident: S.incident, pax: S.pax,
+          pnr: S.pnr || '', incident: S.incident, pax: S.pax,
           passengerNames: names, passengersData: passengersData,
           depAirport: S.dep, arrAirport: S.arr, connecting: viaTxt, flightMode: isEsc ? 'connecting' : 'direct', flightLegs: legsPayload,
           signCity: '', signDate: nowIso.slice(0, 10),
@@ -904,14 +982,15 @@
     })
     .then(function(r){
       if (!r.ok) return r.json().catch(function(){ return {}; }).then(function(j){ throw new Error((j && j.error) || ('Erreur ' + r.status)); });
-      // Les pièces lues (passager 1 + chaque co-passager) rejoignent le dossier (best-effort)
+      // Les pièces lues (identité de chaque passager + e-billet/carte) rejoignent le dossier (best-effort)
       var uploads = [];
-      if (S.pieceFile) uploads.push({ f: S.pieceFile, who: names[0] || '' });
-      (S.paxData || []).forEach(function(pd, k){ if (k > 0 && pd && pd.pieceFile) uploads.push({ f: pd.pieceFile, who: S.names[k] || '' }); });
+      if (S.pieceFile) uploads.push({ f: S.pieceFile, who: names[0] || '', kind: 'identite' });
+      (S.paxData || []).forEach(function(pd, k){ if (k > 0 && pd && pd.pieceFile) uploads.push({ f: pd.pieceFile, who: S.names[k] || '', kind: 'identite' }); });
+      if (S.ticketFile) uploads.push({ f: S.ticketFile, who: '', kind: 'carte-embarquement' });
       uploads.forEach(function(u){
         fetch('/api/depot-upload', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ref: REF, filename: u.f.filename, mime: u.f.mime, dataBase64: u.f.dataBase64, kind: 'identite', passenger: u.who }),
+          body: JSON.stringify({ ref: REF, filename: u.f.filename, mime: u.f.mime, dataBase64: u.f.dataBase64, kind: u.kind, passenger: u.who }),
         }).catch(function(){});
       });
       success();
