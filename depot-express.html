@@ -146,9 +146,20 @@
   // ── État du dossier ─────────────────────────────────────────────────────────
   var S = {
     incident: '', flightNum: '', dep: '', arr: '', date: '',
-    pax: 0, names: [], piece: null, pieceFile: null,
+    typeVol: '', via: '',                 // direct | escale (+ ville d'escale facultative)
+    pax: 0, names: [], paxData: [],       // paxData[i] = { dob, minor, sig } pour chaque passager
+    piece: null, pieceFile: null,
     phone: '', email: '', startNow: false,
   };
+  // Mineur à la date du vol (même logique que le bot) : un parent signe pour lui.
+  function isMinor(dobFr, flightIso){
+    var b = (dobFr || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); if (!b) return false;
+    var birth = new Date(+b[3], +b[2] - 1, +b[1]);
+    var ref = flightIso ? new Date(flightIso) : new Date();
+    var age = ref.getFullYear() - birth.getFullYear();
+    if (ref.getMonth() < birth.getMonth() || (ref.getMonth() === birth.getMonth() && ref.getDate() < birth.getDate())) age--;
+    return age < 18;
+  }
   var REF = '';
   var INCIDENT_LABEL = { delay: 'Retard +3 h', cancel: 'Annulation', denied: "Refus d'embarquement" };
   function esc(s){ return String(s == null ? '' : s).replace(/[<>&]/g, function(c){ return c==='<'?'&lt;':c==='>'?'&gt;':'&amp;'; }); }
@@ -156,9 +167,9 @@
   // ── Moteur d'écrans : clic = suivant, retour possible, chips toujours visibles ──
   // FLOW = l'ordre nominal. `idx` = position courante ; `far` = écran le plus loin atteint.
   // Corriger via une chip re-ouvre l'écran, puis la réponse renvoie DIRECT au point le plus loin.
-  var FLOW = ['incident', 'flight', 'date', 'pax', 'passport', 'names', 'phone', 'email', 'sign'];
+  var FLOW = ['incident', 'flight', 'conn', 'date', 'pax', 'passport', 'copax', 'phone', 'email', 'sign'];
   var idx = 0, far = 0, editing = false, backwards = false;
-  function applicable(k){ return k !== 'names' || (S.pax > 1 && !S.namesSkipped && S.names.filter(Boolean).length < S.pax); }
+  function applicable(k){ return k !== 'copax' || S.pax > 1; }
   function render(){
     $('fill').style.width = Math.round(far / (FLOW.length - 1) * 100) + '%';
     renderCrumbs();
@@ -191,9 +202,12 @@
     var items = [];
     if (S.incident) items.push(['incident', '⏱️', INCIDENT_LABEL[S.incident]]);
     if (S.flightNum || (S.dep && S.arr)) items.push(['flight', '✈️', S.flightNum || (S.dep + ' → ' + S.arr)]);
+    if (S.typeVol) items.push(['conn', '🛤️', S.typeVol === 'direct' ? 'Direct' : ('Escale' + (S.via ? ' · ' + S.via : ''))]);
     if (S.date) items.push(['date', '📅', S.date.split('-').reverse().join('/')]);
     if (S.pax) items.push(['pax', '👪', S.pax + ' pax']);
     if (S.names[0]) items.push(['passport', '🛂', S.names[0]]);
+    var others = S.names.slice(1).filter(Boolean);
+    if (others.length) items.push(['copax', '👥', others.length + ' co-passager' + (others.length > 1 ? 's' : '')]);
     if (S.phone) items.push(['phone', '📞', S.phone]);
     if (S.email) items.push(['email', '📧', S.email]);
     items.forEach(function(it){
@@ -290,6 +304,21 @@
       }, true));
       sc.appendChild(o); navRow(sc);
     },
+    conn: function(sc){
+      sc.innerHTML = '<h2>🛤️ Ce vol était-il direct ?</h2><p class="sub">Avec une escale, l\'indemnité se calcule sur le trajet complet.</p>';
+      var o = document.createElement('div'); o.className = 'opts';
+      o.appendChild(optButton('<span class="ic">✈️</span><span>Oui, vol direct</span>', function(){ S.typeVol = 'direct'; S.via = ''; next(); }));
+      o.appendChild(optButton('<span class="ic">🔄</span><span>Non, avec escale<small>ex. via Casablanca, Istanbul…</small></span>', function(){
+        sc.innerHTML = '<h2>🔄 Dans quelle ville, l\'escale ?</h2><p class="sub">Si vous ne savez plus, passez — un expert la retrouvera.</p>';
+        inputRow(sc, {
+          placeholder: 'ex. Casablanca', value: S.via,
+          validate: function(v){ return v.length >= 2 ? '' : 'Indiquez la ville, ou passez en dessous.'; },
+          done: function(v){ S.typeVol = 'escale'; S.via = v; next(); },
+        });
+        navRow(sc, { skip: '⏭️ Je ne sais plus', onSkip: function(){ S.typeVol = 'escale'; S.via = ''; next(); } });
+      }));
+      sc.appendChild(o); navRow(sc);
+    },
     date: function(sc){
       sc.innerHTML = '<h2>📅 La date du vol ?</h2><p class="sub">Elle passe toute seule dès que vous la choisissez.</p>';
       var i = document.createElement('input'); i.className = 'input'; i.type = 'date';
@@ -330,18 +359,48 @@
       $('fileInp').onchange = function(){ var f = $('fileInp').files && $('fileInp').files[0]; if (f) handleFile(f, sc, hint); };
       navRow(sc, { skip: '✏️ Je préfère taper mon nom', onSkip: function(){ manualName(sc); } });
     },
-    names: function(sc){
-      sc.innerHTML = '<h2>👥 Les autres passagers ?</h2><p class="sub">Prénom Nom, séparés par une virgule — ou passez, un expert les notera au téléphone.</p>';
-      inputRow(sc, {
-        placeholder: 'ex. Mamadou Diallo, Fatou Diallo',
-        validate: function(v){ return v ? '' : 'Écrivez les noms, ou « passer » en dessous.'; },
-        done: function(v){
-          v.split(/,|;|\n/).map(function(x){ return x.trim(); }).filter(Boolean).slice(0, S.pax - 1)
-            .forEach(function(n, i){ S.names[i + 1] = n.toUpperCase(); });
-          next();
-        },
-      });
-      navRow(sc, { skip: '⏭️ Plus tard, au téléphone', onSkip: function(){ S.namesSkipped = true; next(); } });
+    // Co-passagers : nom + date de naissance CHACUN (la cession exige l'identité de chaque cédant ;
+    // la DDN détecte les mineurs → un parent signe pour eux, les adultes signent eux-mêmes à la fin).
+    copax: function(sc, iOverride){
+      var i = iOverride != null ? iOverride : 1;
+      while (i < S.pax && S.names[i] && S.paxData[i] && S.paxData[i].dob) i++;
+      if (i >= S.pax) return next();
+      sc.innerHTML = '<h2>👥 Passager ' + (i + 1) + ' sur ' + S.pax + '</h2><p class="sub">Son prénom, son nom et sa date de naissance — chaque passager compte pour l\'indemnité.</p>';
+      var nameInp, dobInp;
+      var w1 = document.createElement('div');
+      w1.innerHTML = '<div class="hint idle" style="margin:0 0 4px">Prénom Nom</div>';
+      nameInp = document.createElement('input'); nameInp.className = 'input'; nameInp.placeholder = 'ex. Mamadou Diallo';
+      if (S.names[i]) nameInp.value = S.names[i];
+      w1.appendChild(nameInp); sc.appendChild(w1);
+      var w2 = document.createElement('div'); w2.style.marginTop = '10px';
+      w2.innerHTML = '<div class="hint idle" style="margin:0 0 4px">Date de naissance</div>';
+      dobInp = document.createElement('input'); dobInp.className = 'input'; dobInp.type = 'date';
+      dobInp.max = new Date().toISOString().slice(0, 10);
+      if (S.paxData[i] && S.paxData[i].dobIso) dobInp.value = S.paxData[i].dobIso;
+      w2.appendChild(dobInp); sc.appendChild(w2);
+      var hint = document.createElement('div'); hint.className = 'hint idle'; sc.appendChild(hint);
+      var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.style.marginTop = '12px';
+      go.textContent = (i + 1 < S.pax) ? 'Passager suivant →' : 'Continuer →';
+      sc.appendChild(go);
+      function submitPax(){
+        var nm = nameInp.value.trim();
+        if (nm.split(/\s+/).filter(Boolean).length < 2) { hint.className = 'hint bad'; hint.textContent = 'Indiquez son prénom ET son nom.'; nameInp.classList.add('bad'); return; }
+        if (!dobInp.value) { hint.className = 'hint bad'; hint.textContent = 'Indiquez sa date de naissance.'; return; }
+        var dobFr = dobInp.value.split('-').reverse().join('/');
+        var minor = isMinor(dobFr, S.date);
+        S.names[i] = nm.toUpperCase();
+        S.paxData[i] = { dob: dobFr, dobIso: dobInp.value, minor: minor };
+        if (minor) { hint.className = 'hint ok'; hint.textContent = '👶 Mineur·e : c\'est vous (parent/tuteur) qui signez pour lui/elle.'; }
+        setTimeout(function(){
+          if (editing) { editing = false; idx = far; render(); return; }
+          if (i + 1 < S.pax) { stage.innerHTML = ''; var n2 = document.createElement('div'); n2.className = 'screen'; stage.appendChild(n2); SCREENS.copax(n2, i + 1); renderCrumbs(); }
+          else next();
+        }, minor ? 700 : 90);
+      }
+      go.addEventListener('click', submitPax);
+      dobInp.addEventListener('keydown', function(e){ if (e.key === 'Enter') submitPax(); });
+      setTimeout(function(){ nameInp.focus(); }, 120);
+      navRow(sc);
     },
     phone: function(sc){
       sc.innerHTML = '<h2>📞 Votre téléphone ?</h2><p class="sub">Un expert vous rappelle depuis le <b>+33 7 56 86 36 30</b> — enregistrez-le.</p>';
@@ -389,6 +448,40 @@
       canvas.addEventListener('touchmove', moveDraw, { passive: false });
       canvas.addEventListener('touchend', function(){ down = false; refresh(); });
       clr.addEventListener('click', function(){ ctx.clearRect(0, 0, canvas.width, canvas.height); drawn = false; ph.style.display = 'grid'; clr.style.display = 'none'; refresh(); });
+      // Chaque CO-PASSAGER ADULTE signe aussi (cession : chaque cédant majeur consent lui-même).
+      // Absent ? On continue — sa signature est recueillie ensuite (lien envoyé par l'expert), c'est tracé.
+      var coSigs = [];
+      S.names.forEach(function(nm, i){
+        if (i === 0 || !nm) return;
+        var pd = S.paxData[i] || {};
+        if (pd.minor) {
+          var note = document.createElement('div'); note.className = 'hint idle'; note.style.marginTop = '10px';
+          note.textContent = '👶 ' + nm + ' est mineur·e : votre signature (parent/tuteur) vaut pour lui/elle.';
+          sc.appendChild(note); return;
+        }
+        var box = document.createElement('div'); box.style.marginTop = '12px';
+        box.innerHTML = '<div class="hint idle" style="margin:0 0 4px">✍️ Signature de <b>' + esc(nm) + '</b> — passez-lui l\'appareil</div>';
+        var s2 = document.createElement('div'); s2.className = 'sig'; s2.style.margin = '0';
+        s2.innerHTML = '<canvas></canvas><span class="ph">✍️ ' + esc(nm.split(' ')[0]) + ', signez ici</span><button type="button" class="clr">Effacer</button>';
+        box.appendChild(s2);
+        var abs = document.createElement('button'); abs.type = 'button'; abs.className = 'skip';
+        abs.style.cssText = 'border:0;background:none;cursor:pointer;font:inherit;font-size:12px;font-weight:600;color:var(--muted);text-decoration:underline;padding:5px 2px';
+        abs.textContent = 'Absent·e ? Continuer — on recueillera sa signature ensuite';
+        box.appendChild(abs); sc.appendChild(box);
+        var st = { name: nm, idx: i, drawn: false, absent: false, canvas: s2.querySelector('canvas') };
+        var c2 = st.canvas, ph2 = s2.querySelector('.ph'), clr2 = s2.querySelector('.clr'), ctx2, dn2 = false;
+        setTimeout(function(){ c2.width = c2.offsetWidth * 2; c2.height = 200; ctx2 = c2.getContext('2d'); ctx2.scale(2, 2); ctx2.strokeStyle = '#0B1F3A'; ctx2.lineWidth = 2.2; ctx2.lineCap = 'round'; ctx2.lineJoin = 'round'; }, 60);
+        function pt2(e){ var r = c2.getBoundingClientRect(); var t = e.touches ? e.touches[0] : e; return { x: t.clientX - r.left, y: t.clientY - r.top }; }
+        function sd(e){ e.preventDefault(); dn2 = true; st.drawn = true; if (st.absent) { st.absent = false; abs.textContent = 'Absent·e ? Continuer — on recueillera sa signature ensuite'; abs.style.color = ''; } ph2.style.display = 'none'; clr2.style.display = 'block'; var p = pt2(e); ctx2.beginPath(); ctx2.moveTo(p.x, p.y); refresh(); }
+        function md(e){ if (!dn2) return; e.preventDefault(); var p = pt2(e); ctx2.lineTo(p.x, p.y); ctx2.stroke(); }
+        c2.addEventListener('mousedown', sd); c2.addEventListener('mousemove', md);
+        window.addEventListener('mouseup', function(){ dn2 = false; });
+        c2.addEventListener('touchstart', sd, { passive: false }); c2.addEventListener('touchmove', md, { passive: false });
+        c2.addEventListener('touchend', function(){ dn2 = false; refresh(); });
+        clr2.addEventListener('click', function(){ ctx2.clearRect(0, 0, c2.width, c2.height); st.drawn = false; ph2.style.display = 'grid'; clr2.style.display = 'none'; refresh(); });
+        abs.addEventListener('click', function(){ st.absent = true; st.drawn = false; ph2.style.display = 'grid'; abs.textContent = '✓ Noté — signature recueillie ensuite par notre équipe'; abs.style.color = 'var(--neon-ink)'; refresh(); });
+        coSigs.push(st);
+      });
       // Consentements : 2 obligatoires + exécution immédiate FACULTATIVE (art. L.221-25, aligné mandat classique)
       function ckRow(html){
         var l = document.createElement('label'); l.className = 'ck';
@@ -405,12 +498,21 @@
       var rg = document.createElement('p'); rg.className = 'rgpd'; rg.style.marginTop = '12px';
       rg.innerHTML = '<span>🔒</span><span>Transmission chiffrée (HTTPS). Signature horodatée et scellée. Rétractation 14 jours. RGPD.</span>';
       sc.appendChild(rg);
-      function refresh(){ go.disabled = !(drawn && ck1.checked && ck2.checked); }
+      function refresh(){
+        var coOk = coSigs.every(function(s){ return s.drawn || s.absent; });
+        go.disabled = !(drawn && ck1.checked && ck2.checked && coOk);
+      }
       [ck1, ck2, ck3].forEach(function(c){ c.addEventListener('change', refresh); });
       canvas.addEventListener('mouseup', refresh);
       go.addEventListener('click', function(){
         if (go.disabled) return;
         S.startNow = ck3.checked;
+        // Signatures des co-adultes → attachées à chaque passager (absent = à recueillir, tracé)
+        coSigs.forEach(function(s){
+          S.paxData[s.idx] = S.paxData[s.idx] || {};
+          S.paxData[s.idx].sig = s.drawn ? s.canvas.toDataURL('image/png') : '';
+          S.paxData[s.idx].sigPending = !s.drawn;
+        });
         go.disabled = true; go.textContent = '⏳ Envoi en cours…'; se.classList.remove('on');
         submit(canvas.toDataURL('image/png')).catch(function(e){
           go.disabled = false; go.textContent = '✍️ Signer et envoyer mon dossier';
@@ -495,9 +597,13 @@
     var lastName  = S.piece && S.piece.nom ? S.piece.nom : parts.slice(1).join(' ');
     var names = S.names.filter(Boolean);
     var passengersData = names.map(function(n, i){
-      if (i === 0 && S.piece) return { name: n, prenom: S.piece.prenom || '', nom: S.piece.nom || '', dob: S.piece.dob || '', birth: S.piece.lieuNaissance || '' };
-      return { name: n };
+      var pd = S.paxData[i] || {};
+      var base = { name: n, dob: pd.dob || '', minor: !!pd.minor };
+      if (i === 0 && S.piece) { base.prenom = S.piece.prenom || ''; base.nom = S.piece.nom || ''; base.dob = S.piece.dob || pd.dob || ''; base.birth = S.piece.lieuNaissance || ''; }
+      if (i > 0 && !pd.minor) { base.signatureImg = pd.sig || ''; base.signaturePending = !!pd.sigPending; } // co-adulte : sa signature (ou à recueillir)
+      return base;
     });
+    var viaTxt = S.typeVol === 'escale' ? ('via ' + (S.via || 'escale à préciser')) : '';
     return fetch('/api/depot-create', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -531,7 +637,7 @@
           operatedBy: '', flightNum: S.flightNum, flightDate: S.date,
           pnr: '', incident: S.incident, pax: S.pax,
           passengerNames: names, passengersData: passengersData,
-          depAirport: S.dep, arrAirport: S.arr, connecting: '', flightMode: 'direct', flightLegs: null,
+          depAirport: S.dep, arrAirport: S.arr, connecting: viaTxt, flightMode: S.typeVol === 'escale' ? 'connecting' : 'direct', flightLegs: null,
           signCity: '', signDate: nowIso.slice(0, 10),
           signatureImg: sigPng,
           source: 'depot-express.html', signedAt: nowIso,
