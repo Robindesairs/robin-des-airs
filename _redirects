@@ -62,6 +62,7 @@
 /api/pieces                  /.netlify/functions/pieces                  200
 /api/owner-alert             /.netlify/functions/owner-alert             200
 /api/bot-state               /.netlify/functions/bot-state               200
+/api/depot-create            /.netlify/functions/depot-create            200
 /api/depot-upload            /.netlify/functions/depot-upload            200
 /api/ocr-piece               /.netlify/functions/ocr-piece               200
 /api/rib-submit              /.netlify/functions/rib-submit              200

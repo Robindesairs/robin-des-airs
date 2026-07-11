@@ -179,14 +179,41 @@
     });
     return i;
   }
-  // ── Indicatifs téléphone (diaspora d'abord), France présélectionnée ──
+  // ── Indicatifs téléphone : liste MONDIALE (recherche libre « france », « sénégal »…), France par défaut.
+  //    Diaspora + Europe en tête pour l'autocomplétion, puis tout le reste alphabétique.
   var DIALS = [
-    ['🇫🇷 France', '+33'], ['🇧🇪 Belgique', '+32'], ['🇸🇳 Sénégal', '+221'], ['🇨🇮 Côte d\'Ivoire', '+225'],
-    ['🇲🇱 Mali', '+223'], ['🇬🇳 Guinée', '+224'], ['🇨🇲 Cameroun', '+237'], ['🇳🇬 Nigeria', '+234'],
-    ['🇬🇭 Ghana', '+233'], ['🇬🇲 Gambie', '+220'], ['🇹🇬 Togo', '+228'], ['🇧🇯 Bénin', '+229'],
-    ['🇧🇫 Burkina Faso', '+226'], ['🇳🇪 Niger', '+227'], ['🇨🇩 RD Congo', '+243'], ['🇨🇬 Congo', '+242'],
-    ['🇱🇺 Luxembourg', '+352'], ['🇨🇭 Suisse', '+41'], ['🇬🇧 Royaume-Uni', '+44'], ['🇩🇪 Allemagne', '+49'],
-    ['🇮🇹 Italie', '+39'], ['🇪🇸 Espagne', '+34'], ['🇺🇸 USA / Canada', '+1'],
+    ['France', '+33'], ['Belgique', '+32'], ['Suisse', '+41'], ['Luxembourg', '+352'],
+    ['Sénégal', '+221'], ['Côte d\'Ivoire', '+225'], ['Mali', '+223'], ['Guinée', '+224'], ['Guinée-Bissau', '+245'],
+    ['Cameroun', '+237'], ['Nigeria', '+234'], ['Ghana', '+233'], ['Gambie', '+220'], ['Togo', '+228'], ['Bénin', '+229'],
+    ['Burkina Faso', '+226'], ['Niger', '+227'], ['RD Congo', '+243'], ['Congo', '+242'], ['Mauritanie', '+222'],
+    ['Maroc', '+212'], ['Algérie', '+213'], ['Tunisie', '+216'], ['Gabon', '+241'], ['Tchad', '+235'],
+    ['Centrafrique', '+236'], ['Sierra Leone', '+232'], ['Liberia', '+231'], ['Cap-Vert', '+238'], ['Kenya', '+254'],
+    ['Royaume-Uni', '+44'], ['Allemagne', '+49'], ['Italie', '+39'], ['Espagne', '+34'], ['Portugal', '+351'],
+    ['Pays-Bas', '+31'], ['USA / Canada', '+1'],
+    ['Afghanistan', '+93'], ['Afrique du Sud', '+27'], ['Albanie', '+355'], ['Angola', '+244'], ['Arabie saoudite', '+966'],
+    ['Argentine', '+54'], ['Arménie', '+374'], ['Australie', '+61'], ['Autriche', '+43'], ['Azerbaïdjan', '+994'],
+    ['Bahreïn', '+973'], ['Bangladesh', '+880'], ['Biélorussie', '+375'], ['Bolivie', '+591'], ['Bosnie-Herzégovine', '+387'],
+    ['Botswana', '+267'], ['Brésil', '+55'], ['Bulgarie', '+359'], ['Burundi', '+257'], ['Cambodge', '+855'],
+    ['Chili', '+56'], ['Chine', '+86'], ['Chypre', '+357'], ['Colombie', '+57'], ['Comores', '+269'],
+    ['Corée du Sud', '+82'], ['Costa Rica', '+506'], ['Croatie', '+385'], ['Cuba', '+53'], ['Danemark', '+45'],
+    ['Djibouti', '+253'], ['Égypte', '+20'], ['Émirats arabes unis', '+971'], ['Équateur', '+593'], ['Érythrée', '+291'],
+    ['Estonie', '+372'], ['Éthiopie', '+251'], ['Finlande', '+358'], ['Géorgie', '+995'], ['Grèce', '+30'],
+    ['Guatemala', '+502'], ['Guinée équatoriale', '+240'], ['Haïti', '+509'], ['Honduras', '+504'], ['Hongrie', '+36'],
+    ['Île Maurice', '+230'], ['Inde', '+91'], ['Indonésie', '+62'], ['Irak', '+964'], ['Iran', '+98'],
+    ['Irlande', '+353'], ['Islande', '+354'], ['Israël', '+972'], ['Jamaïque', '+1876'], ['Japon', '+81'],
+    ['Jordanie', '+962'], ['Kazakhstan', '+7'], ['Koweït', '+965'], ['Laos', '+856'], ['Lesotho', '+266'],
+    ['Lettonie', '+371'], ['Liban', '+961'], ['Libye', '+218'], ['Lituanie', '+370'], ['Macédoine du Nord', '+389'],
+    ['Madagascar', '+261'], ['Malaisie', '+60'], ['Malawi', '+265'], ['Maldives', '+960'], ['Malte', '+356'],
+    ['Mexique', '+52'], ['Moldavie', '+373'], ['Monaco', '+377'], ['Mongolie', '+976'], ['Monténégro', '+382'],
+    ['Mozambique', '+258'], ['Myanmar', '+95'], ['Namibie', '+264'], ['Népal', '+977'], ['Nicaragua', '+505'],
+    ['Norvège', '+47'], ['Nouvelle-Zélande', '+64'], ['Oman', '+968'], ['Ouganda', '+256'], ['Ouzbékistan', '+998'],
+    ['Pakistan', '+92'], ['Panama', '+507'], ['Paraguay', '+595'], ['Pérou', '+51'], ['Philippines', '+63'],
+    ['Pologne', '+48'], ['Qatar', '+974'], ['République dominicaine', '+1809'], ['République tchèque', '+420'], ['Roumanie', '+40'],
+    ['Russie', '+7'], ['Rwanda', '+250'], ['Salvador', '+503'], ['São Tomé-et-Principe', '+239'], ['Serbie', '+381'],
+    ['Seychelles', '+248'], ['Singapour', '+65'], ['Slovaquie', '+421'], ['Slovénie', '+386'], ['Somalie', '+252'],
+    ['Soudan', '+249'], ['Sri Lanka', '+94'], ['Suède', '+46'], ['Syrie', '+963'], ['Tanzanie', '+255'],
+    ['Thaïlande', '+66'], ['Turquie', '+90'], ['Ukraine', '+380'], ['Uruguay', '+598'], ['Venezuela', '+58'],
+    ['Vietnam', '+84'], ['Yémen', '+967'], ['Zambie', '+260'], ['Zimbabwe', '+263'],
   ];
   // Mineur à la date du vol (même logique que le bot) : un parent signe pour lui.
   function isMinor(dobFr, flightIso){
@@ -558,32 +585,48 @@
     },
     phone: function(sc){
       sc.innerHTML = '<h2>📞 Votre téléphone ?</h2><p class="sub">Un expert vous rappelle depuis le <b>+33 7 56 86 36 30</b> — enregistrez-le.</p>';
-      var row = document.createElement('div'); row.className = 'askrow';
-      var sel = document.createElement('select'); sel.className = 'input';
-      sel.style.cssText = 'flex:0 0 148px; padding-right:6px';
-      DIALS.forEach(function(d){
-        var op = document.createElement('option'); op.value = d[1]; op.textContent = d[0] + ' ' + d[1];
-        sel.appendChild(op);
-      });
-      sel.value = S.phoneCc || '+33'; // 🇫🇷 présélectionné
+      // Pays du numéro : champ LIBRE (tapez « france », « sénégal »…) alimenté par une liste mondiale.
+      var cw = document.createElement('div');
+      cw.innerHTML = '<div class="hint idle" style="margin:0 0 4px">Pays de votre numéro</div>';
+      var cc = document.createElement('input'); cc.className = 'input'; cc.setAttribute('list', 'dialList'); cc.autocomplete = 'off';
+      cc.placeholder = 'Tapez « france », « sénégal »…'; cc.value = S.phoneCountry || 'France (+33)';
+      cw.appendChild(cc); sc.appendChild(cw);
+      var dl = $('dialList');
+      if (!dl) { dl = document.createElement('datalist'); dl.id = 'dialList'; DIALS.forEach(function(d){ var o = document.createElement('option'); o.value = d[0] + ' (' + d[1] + ')'; dl.appendChild(o); }); document.body.appendChild(dl); }
+      var row = document.createElement('div'); row.className = 'askrow'; row.style.marginTop = '10px';
       var i = document.createElement('input'); i.className = 'input'; i.type = 'tel'; i.inputMode = 'tel';
       i.autocomplete = 'tel-national'; i.placeholder = '6 12 34 56 78'; i.style.minWidth = '0';
       if (S.phoneNat) i.value = S.phoneNat;
       var ok = document.createElement('button'); ok.type = 'button'; ok.className = 'ok'; ok.textContent = '➜';
-      row.appendChild(sel); row.appendChild(i); row.appendChild(ok);
+      row.appendChild(i); row.appendChild(ok);
       var hint = document.createElement('div'); hint.className = 'hint idle'; hint.textContent = 'Le numéro où l\'on peut vous joindre (WhatsApp ou appel).';
       sc.appendChild(row); sc.appendChild(hint);
+      // Résout l'indicatif : « (+33) » dans le texte, ou « +33 » brut, ou par nom de pays (exact/partiel).
+      function resolveCc(){
+        var v = cc.value.trim(); if (!v) return '';
+        var m = v.match(/\(\+?(\d{1,4})\)/); if (m) return '+' + m[1];
+        if (/^\+\d{1,4}$/.test(v)) return v;
+        var lv = v.toLowerCase();
+        var exact = DIALS.find(function(d){ return d[0].toLowerCase() === lv; });
+        if (exact) return exact[1];
+        var part = DIALS.find(function(d){ return d[0].toLowerCase().indexOf(lv) === 0; });
+        return part ? part[1] : '';
+      }
       function go(){
+        var ccode = resolveCc();
+        if (!ccode) { cc.classList.add('bad'); hint.className = 'hint bad'; hint.textContent = 'Choisissez un pays dans la liste (tapez « france », « sénégal »…).'; return; }
+        cc.classList.remove('bad');
         var nat = i.value.replace(/\D/g, '').replace(/^0+/, ''); // on retire le 0 national (06… → 6…)
-        var min = sel.value === '+33' ? 9 : 6;
-        if (nat.length < min) { i.classList.add('bad'); hint.className = 'hint bad'; hint.textContent = sel.value === '+33' ? 'Numéro français : 9 chiffres après le 0 (ex. 6 12 34 56 78).' : 'Ce numéro semble trop court.'; return; }
+        var min = ccode === '+33' ? 9 : 6;
+        if (nat.length < min) { i.classList.add('bad'); hint.className = 'hint bad'; hint.textContent = ccode === '+33' ? 'Numéro français : 9 chiffres après le 0 (ex. 6 12 34 56 78).' : 'Ce numéro semble trop court.'; return; }
         i.classList.remove('bad');
-        S.phoneCc = sel.value; S.phoneNat = i.value.trim();
-        S.phone = sel.value + nat; // format international unique pour le contrat et le rappel
+        S.phoneCountry = cc.value.trim(); S.phoneCc = ccode; S.phoneNat = i.value.trim();
+        S.phone = ccode + nat; // format international unique pour le contrat et le rappel
         next();
       }
       ok.addEventListener('click', go);
       i.addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); go(); } });
+      cc.addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); i.focus(); } });
       setTimeout(function(){ i.focus(); }, 120);
       navRow(sc);
     },
