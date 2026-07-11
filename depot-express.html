@@ -674,8 +674,8 @@
       });
       navRow(sc);
     },
-    // SIGNATURE SIMPLE (SES, comme les concurrents) : pas de dessin — une case « je certifie avoir lu
-    // et j'accepte, et je signe ». Trail solide côté serveur (horodatage + IP + acceptation + empreinte).
+    // Signature MANUSCRITE (dessin) — signataire principal + chaque co-adulte. Encadré « l'essentiel »
+    // en tête + lien vers le contrat complet (pas besoin de le relire en entier dans le tunnel).
     sign: function(sc){
       var total = (600 * (S.pax || 1)).toLocaleString('fr-FR');
       var net = Math.round(600 * (S.pax || 1) * 0.75).toLocaleString('fr-FR');
@@ -689,36 +689,73 @@
         + '<li>📅 <b>14 jours pour vous rétracter</b>, sans frais · correspondances couvertes.</li>'
         + '</ul><a class="ss-link" href="/autorisation.html" target="_blank" rel="noopener">📄 Lire le contrat complet →</a>';
       sc.appendChild(box);
-      function ckRow(html){ var l = document.createElement('label'); l.className = 'ck'; l.innerHTML = '<input type="checkbox"><span>' + html + '</span>'; sc.appendChild(l); return l.querySelector('input'); }
-      var mainName = S.names[0] || '';
-      // La case principale = la signature simple du signataire
-      var ck1 = ckRow("<b>Je certifie avoir lu et j\'accepte</b> le <b>contrat de cession de créance</b> et la <a href='/politique-confidentialite.html' target='_blank' rel='noopener'>politique de confidentialité</a>, et je le <b>signe électroniquement</b>" + (mainName ? " au nom de <b>" + esc(mainName) + "</b>" : "") + ".");
-      // Chaque CO-PASSAGER ADULTE : une case simple (il certifie/signe). Mineur → le parent signe.
-      var coCks = [];
+      // Signature du signataire principal (dessin) — on dit QUI signe.
+      var mainName = S.names[0] || 'Vous';
+      var mainLbl = document.createElement('div'); mainLbl.className = 'hint idle'; mainLbl.style.margin = '2px 0 4px';
+      mainLbl.innerHTML = '✍️ <b>1.</b> Signature de <b>' + esc(mainName) + '</b>';
+      sc.appendChild(mainLbl);
+      var sig = document.createElement('div'); sig.className = 'sig'; sig.style.margin = '0';
+      sig.innerHTML = '<canvas></canvas><span class="ph">✍️ ' + esc(mainName.split(' ')[0]) + ', signez ici avec le doigt ou la souris</span><button type="button" class="clr">Effacer</button>';
+      sc.appendChild(sig);
+      var canvas = sig.querySelector('canvas'), ph = sig.querySelector('.ph'), clr = sig.querySelector('.clr');
+      var ctx, drawn = false, down = false;
+      setTimeout(function(){ canvas.width = canvas.offsetWidth * 2; canvas.height = 236; ctx = canvas.getContext('2d'); ctx.scale(2, 2); ctx.strokeStyle = '#0B1F3A'; ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; }, 60);
+      function pt(e){ var r = canvas.getBoundingClientRect(); var t = e.touches ? e.touches[0] : e; return { x: t.clientX - r.left, y: t.clientY - r.top }; }
+      function startDraw(e){ e.preventDefault(); down = true; drawn = true; ph.style.display = 'none'; clr.style.display = 'block'; var p = pt(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); refresh(); }
+      function moveDraw(e){ if (!down) return; e.preventDefault(); var p = pt(e); ctx.lineTo(p.x, p.y); ctx.stroke(); }
+      canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', moveDraw);
+      window.addEventListener('mouseup', function(){ down = false; refresh(); });
+      canvas.addEventListener('touchstart', startDraw, { passive: false });
+      canvas.addEventListener('touchmove', moveDraw, { passive: false });
+      canvas.addEventListener('touchend', function(){ down = false; refresh(); });
+      clr.addEventListener('click', function(){ ctx.clearRect(0, 0, canvas.width, canvas.height); drawn = false; ph.style.display = 'grid'; clr.style.display = 'none'; refresh(); });
+      // Chaque CO-PASSAGER ADULTE signe aussi (chaque cédant majeur consent lui-même). Absent → tracé.
+      var coSigs = [];
       S.names.forEach(function(nm, i){
         if (i === 0 || !nm) return;
         var pd = S.paxData[i] || {};
-        if (pd.minor) { var note = document.createElement('div'); note.className = 'hint idle'; note.style.marginTop = '8px'; note.textContent = '👶 ' + nm + ' est mineur·e : votre signature (parent/tuteur) vaut pour lui/elle.'; sc.appendChild(note); return; }
-        var ck = ckRow("<b>" + esc(nm) + "</b> certifie avoir lu et accepté le contrat et le <b>signe</b>.");
-        coCks.push({ ck: ck, name: nm, idx: i });
+        if (pd.minor) { var note = document.createElement('div'); note.className = 'hint idle'; note.style.marginTop = '10px'; note.textContent = '👶 ' + nm + ' est mineur·e : votre signature (parent/tuteur) vaut pour lui/elle.'; sc.appendChild(note); return; }
+        var boxc = document.createElement('div'); boxc.style.marginTop = '12px';
+        boxc.innerHTML = '<div class="hint idle" style="margin:0 0 4px">✍️ <b>' + (coSigs.length + 2) + '.</b> Signature de <b>' + esc(nm) + '</b> — passez-lui l\'appareil</div>';
+        var s2 = document.createElement('div'); s2.className = 'sig'; s2.style.margin = '0';
+        s2.innerHTML = '<canvas></canvas><span class="ph">✍️ ' + esc(nm.split(' ')[0]) + ', signez ici</span><button type="button" class="clr">Effacer</button>';
+        boxc.appendChild(s2);
+        var abs = document.createElement('button'); abs.type = 'button';
+        abs.style.cssText = 'border:0;background:none;cursor:pointer;font:inherit;font-size:12px;font-weight:600;color:var(--muted);text-decoration:underline;padding:5px 2px';
+        abs.textContent = 'Absent·e ? Continuer — on recueillera sa signature ensuite';
+        boxc.appendChild(abs); sc.appendChild(boxc);
+        var st = { name: nm, idx: i, drawn: false, absent: false, canvas: s2.querySelector('canvas') };
+        var c2 = st.canvas, ph2 = s2.querySelector('.ph'), clr2 = s2.querySelector('.clr'), ctx2, dn2 = false;
+        setTimeout(function(){ c2.width = c2.offsetWidth * 2; c2.height = 200; ctx2 = c2.getContext('2d'); ctx2.scale(2, 2); ctx2.strokeStyle = '#0B1F3A'; ctx2.lineWidth = 2.2; ctx2.lineCap = 'round'; ctx2.lineJoin = 'round'; }, 60);
+        function pt2(e){ var r = c2.getBoundingClientRect(); var t = e.touches ? e.touches[0] : e; return { x: t.clientX - r.left, y: t.clientY - r.top }; }
+        function sd(e){ e.preventDefault(); dn2 = true; st.drawn = true; if (st.absent) { st.absent = false; abs.textContent = 'Absent·e ? Continuer — on recueillera sa signature ensuite'; abs.style.color = ''; } ph2.style.display = 'none'; clr2.style.display = 'block'; var p = pt2(e); ctx2.beginPath(); ctx2.moveTo(p.x, p.y); refresh(); }
+        function md(e){ if (!dn2) return; e.preventDefault(); var p = pt2(e); ctx2.lineTo(p.x, p.y); ctx2.stroke(); }
+        c2.addEventListener('mousedown', sd); c2.addEventListener('mousemove', md);
+        window.addEventListener('mouseup', function(){ dn2 = false; refresh(); });
+        c2.addEventListener('touchstart', sd, { passive: false }); c2.addEventListener('touchmove', md, { passive: false });
+        c2.addEventListener('touchend', function(){ dn2 = false; refresh(); });
+        clr2.addEventListener('click', function(){ ctx2.clearRect(0, 0, c2.width, c2.height); st.drawn = false; ph2.style.display = 'grid'; clr2.style.display = 'none'; refresh(); });
+        abs.addEventListener('click', function(){ st.absent = true; st.drawn = false; ph2.style.display = 'grid'; abs.textContent = '✓ Noté — signature recueillie ensuite par notre équipe'; abs.style.color = 'var(--neon-ink)'; refresh(); });
+        coSigs.push(st);
       });
+      function ckRow(html){ var l = document.createElement('label'); l.className = 'ck'; l.innerHTML = '<input type="checkbox"><span>' + html + '</span>'; sc.appendChild(l); return l.querySelector('input'); }
+      var ck1 = ckRow("J'ai lu et j'accepte le <b>contrat de cession de créance</b> et la <a href='/politique-confidentialite.html' target='_blank' rel='noopener'>politique de confidentialité</a>.");
       var ck3 = ckRow("<b>Facultatif :</b> démarrer <b>tout de suite</b>, sans attendre la fin des 14 jours de rétractation (art. L.221-25) — je reste libre de me rétracter, sans frais.");
       var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.disabled = true; go.style.marginTop = '14px';
       go.textContent = '✍️ Signer et envoyer mon dossier';
       sc.appendChild(go);
       var se = document.createElement('div'); se.className = 'suberr'; sc.appendChild(se);
       var rg = document.createElement('p'); rg.className = 'rgpd'; rg.style.marginTop = '12px';
-      rg.innerHTML = '<span>🔒</span><span>Signature électronique horodatée, adresse IP enregistrée et document scellé (empreinte). Transmission chiffrée (HTTPS). Rétractation 14 jours. RGPD.</span>';
+      rg.innerHTML = '<span>🔒</span><span>Signature manuscrite horodatée, adresse IP enregistrée et document scellé (empreinte). Transmission chiffrée (HTTPS). Rétractation 14 jours. RGPD.</span>';
       sc.appendChild(rg);
-      function refresh(){ go.disabled = !(ck1.checked && coCks.every(function(c){ return c.ck.checked; })); }
-      [ck1, ck3].concat(coCks.map(function(c){ return c.ck; })).forEach(function(c){ c.addEventListener('change', refresh); });
+      function refresh(){ var coOk = coSigs.every(function(s){ return s.drawn || s.absent; }); go.disabled = !(drawn && ck1.checked && coOk); }
+      [ck1, ck3].forEach(function(c){ c.addEventListener('change', refresh); });
       go.addEventListener('click', function(){
         if (go.disabled) return;
         S.startNow = ck3.checked;
-        // Signature « tapée » (nom en écriture + horodatage) par signataire — SES, visuel pour le PDF.
-        coCks.forEach(function(c){ S.paxData[c.idx] = S.paxData[c.idx] || {}; S.paxData[c.idx].sig = typedSignature(c.name); S.paxData[c.idx].sigPending = false; });
+        coSigs.forEach(function(s){ S.paxData[s.idx] = S.paxData[s.idx] || {}; S.paxData[s.idx].sig = s.drawn ? s.canvas.toDataURL('image/png') : ''; S.paxData[s.idx].sigPending = !s.drawn; });
         go.disabled = true; go.textContent = '⏳ Envoi en cours…'; se.classList.remove('on');
-        submit(typedSignature(mainName || 'Signature')).catch(function(e){
+        submit(canvas.toDataURL('image/png')).catch(function(e){
           go.disabled = false; go.textContent = '✍️ Signer et envoyer mon dossier';
           se.innerHTML = '⚠️ ' + esc(e.message || 'Envoi impossible.') + ' Réessayez, ou <a href="https://wa.me/33756863630" target="_blank" rel="noopener">continuez sur WhatsApp</a>.';
           se.classList.add('on');
@@ -759,18 +796,6 @@
     pInp.addEventListener('keydown', function(e){ if (e.key === 'Enter') nInp.focus(); });
     setTimeout(function(){ pInp.focus(); }, 120);
     navRow(sc);
-  }
-  // Signature électronique SIMPLE : le nom du signataire rendu en écriture + « signé électroniquement · date ».
-  // Fournit un visuel de signature pour le PDF sans dessin manuel (le trail légal = acceptation + IP + empreinte serveur).
-  function typedSignature(name){
-    var c = document.createElement('canvas'); c.width = 520; c.height = 150; var x = c.getContext('2d');
-    x.fillStyle = '#ffffff'; x.fillRect(0, 0, c.width, c.height);
-    x.fillStyle = '#0B1F3A'; x.font = 'italic 46px "Segoe Script","Brush Script MT","Apple Chancery","Snell Roundhand",cursive';
-    x.textBaseline = 'alphabetic'; x.fillText(String(name || 'Signature'), 26, 78);
-    x.strokeStyle = '#c9d6cd'; x.lineWidth = 1; x.beginPath(); x.moveTo(26, 96); x.lineTo(494, 96); x.stroke();
-    x.fillStyle = '#6B7A73'; x.font = '13px Montserrat, Arial, sans-serif';
-    x.fillText('Signé électroniquement · ' + new Date().toLocaleString('fr-FR'), 26, 122);
-    return c.toDataURL('image/png');
   }
   function toJpeg(file){
     return new Promise(function(res, rej){
@@ -941,7 +966,7 @@
           signCity: '', signDate: nowIso.slice(0, 10),
           signatureImg: sigPng,
           source: 'depot-express.html', signedAt: nowIso,
-          mandatVersion: 'web-express-v4-ses-simple', watiConversationId: S.phone, linkSentAt: '',
+          mandatVersion: 'web-express-v5-draw', watiConversationId: S.phone, linkSentAt: '',
         }),
       });
     })
