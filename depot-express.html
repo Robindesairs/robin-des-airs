@@ -168,9 +168,13 @@
   // ── Moteur d'écrans : clic = suivant, retour possible, chips toujours visibles ──
   // FLOW = l'ordre nominal. `idx` = position courante ; `far` = écran le plus loin atteint.
   // Corriger via une chip re-ouvre l'écran, puis la réponse renvoie DIRECT au point le plus loin.
-  var FLOW = ['incident', 'conn', 'flight', 'date', 'pax', 'passport', 'copax', 'phone', 'email', 'sign'];
+  var FLOW = ['incident', 'annul14', 'conn', 'flight', 'date', 'pax', 'passport', 'copax', 'phone', 'email', 'sign'];
   var idx = 0, far = 0, editing = false, backwards = false;
-  function applicable(k){ return k !== 'copax' || S.pax > 1; }
+  function applicable(k){
+    if (k === 'copax') return S.pax > 1;
+    if (k === 'annul14') return S.incident === 'cancel'; // gate 14 jours : annulation uniquement
+    return true;
+  }
   function render(){
     $('fill').style.width = Math.round(far / (FLOW.length - 1) * 100) + '%';
     renderCrumbs();
@@ -202,6 +206,7 @@
     var c = $('crumbs'); c.innerHTML = '';
     var items = [];
     if (S.incident) items.push(['incident', '⏱️', INCIDENT_LABEL[S.incident]]);
+    if (S.incident === 'cancel' && S.annul14) items.push(['annul14', '📅', S.annul14 === 'moins14' ? 'Prévenu < 14 j' : 'Délai à vérifier']);
     if (S.typeVol) items.push(['conn', '🛤️', S.typeVol === 'direct' ? 'Direct' : ('Escale' + (S.via ? ' · ' + S.via : ''))]);
     if (S.flightNum || (S.dep && S.arr)) items.push(['flight', '✈️', S.flightNum || (S.dep + ' → ' + S.arr)]);
     if (S.date) items.push(['date', '📅', S.date.split('-').reverse().join('/')]);
@@ -303,6 +308,27 @@
         });
         navRow(sc);
       }, true));
+      sc.appendChild(o); navRow(sc);
+    },
+    // Gate ANNULATION — règle des 14 jours (art. 5 CE 261), même ancrage que le bot :
+    // ce qui compte, c'est le délai entre LA NOTIFICATION et le vol (pas aujourd'hui → vol).
+    annul14: function(sc){
+      sc.innerHTML = '<h2>📅 Quand vous a-t-on prévenu ?</h2><p class="sub">Pour une annulation, c\'est le <b>moment où la compagnie vous a prévenu</b> qui compte. Quand elle a annoncé l\'annulation, votre vol était dans…</p>';
+      var o = document.createElement('div'); o.className = 'opts';
+      o.appendChild(optButton('<span class="ic">🟢</span><span>Moins de 14 jours<small>l\'indemnité forfaitaire s\'applique</small></span>', function(){ S.annul14 = 'moins14'; next(); }));
+      o.appendChild(optButton('<span class="ic">🔴</span><span>14 jours ou plus</span>', function(){
+        S.annul14 = 'plus14';
+        sc.innerHTML = '<h2>😕 Pas d\'indemnité forfaitaire ici</h2>'
+          + '<p class="sub">La loi européenne (CE 261/2004) ne prévoit l\'indemnité <b>que si</b> la compagnie vous a prévenu <b>moins de 14 jours</b> avant le départ. C\'est la règle, pas nous.</p>'
+          + '<p class="sub">💡 Vous gardez le droit au <b>remboursement du billet</b> ou au <b>réacheminement</b>. Et un vol sur dix a un problème : pensez à vos <b>autres vols des 5 dernières années</b> — retard 3 h+, annulation, surbooking = jusqu\'à <b>600 € par personne</b>.</p>';
+        var o2 = document.createElement('div'); o2.className = 'opts';
+        o2.appendChild(optButton('<span class="ic">✏️</span><span>Je me suis trompé — corriger ma réponse</span>', function(){ S.annul14 = ''; SCREENS.annul14(Object.assign(sc, { innerHTML: '' }) && sc); }));
+        o2.appendChild(optButton('<span class="ic">✈️</span><span>Vérifier un autre vol</span>', function(){ window.location.href = '/depot-express.html'; }));
+        o2.appendChild(optButton('<span class="ic">💬</span><span>Poser ma question sur WhatsApp</span>', function(){ window.open('https://wa.me/33756863630', '_blank'); }, true));
+        sc.appendChild(o2);
+        navRow(sc);
+      }));
+      o.appendChild(optButton('<span class="ic">🤔</span><span>Je ne sais plus<small>on continue, un expert vérifie</small></span>', function(){ S.annul14 = 'inconnu'; next(); }));
       sc.appendChild(o); navRow(sc);
     },
     conn: function(sc){
