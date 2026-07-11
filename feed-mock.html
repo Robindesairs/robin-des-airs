@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Feed Instagram — alternance photo / Robin</title>
+<link rel="stylesheet" href="/assets/main.css">
+<style>
+  body{margin:0;background:#f2f4f7;font-family:'Montserrat',system-ui,sans-serif;color:#0B1F3A}
+  .wrap{max-width:960px;margin:0 auto;background:#fff}
+  .pf{display:flex;align-items:center;gap:22px;padding:26px 28px}
+  .pf-av{width:96px;height:96px;border-radius:50%;border:3px solid #eaeef2;object-fit:cover}
+  .pf-h{font-family:'Syne',sans-serif;font-weight:800;font-size:22px}
+  .pf-stats{display:flex;gap:26px;margin:8px 0 6px;font-size:14px}
+  .pf-stats b{font-family:'Syne',sans-serif}
+  .pf-bio{font-size:13.5px;line-height:1.5;color:#33414f;max-width:520px}
+  .pf-bio .g{color:#047857;font-weight:800}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:4px;background:#fff}
+  .tile{position:relative;aspect-ratio:1/1;overflow:hidden;background:#0B1F3A}
+  .tile img{width:100%;height:100%;object-fit:cover;display:block}
+  /* Tuile cartoon Robin */
+  .cart{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:16px;box-sizing:border-box}
+  .cart::before{content:"";position:absolute;left:0;right:0;bottom:0;height:5px;background:#00C87A}
+  .ct-h{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(16px,3.4vw,26px);line-height:1.05;color:#00E5A0;letter-spacing:.2px;text-transform:uppercase}
+  .cart svg{width:34%;max-width:96px;margin:10px 0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.3))}
+  .ct-sub{font-size:clamp(11px,2.2vw,15px);font-weight:700;color:#fff}
+  .ct-sub .g{color:#00E5A0}
+  .cap{font-size:12px;color:#8a97a5;text-align:center;padding:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="pf">
+    <img class="pf-av" src="/favicon.png" alt="Robin des Airs">
+    <div>
+      <div class="pf-h">robin.des.airs</div>
+      <div class="pf-stats"><span><b>62</b> publications</span><span><b>1 240</b> abonnés</span></div>
+      <div class="pf-bio">Vol Afrique ↔ Europe retardé ou annulé ? <span class="g">Jusqu'à 600 € · 0 € d'avance.</span> On récupère, on rend aux familles. 💬 WhatsApp en bio.</div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- Ligne 1 -->
+    <div class="tile"><img src="/feedmock/photo1.jpg" alt=""></div>
+    <div class="tile cart"><div class="ct-h">Vol retardé&nbsp;?</div>
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="#2C5C88"/><ellipse cx="50" cy="82" rx="30" ry="22" fill="#FB7B57"/><ellipse cx="50" cy="88" rx="16" ry="14" fill="#FFE0B8"/><circle cx="37" cy="44" r="15" fill="#fff"/><circle cx="63" cy="44" r="15" fill="#fff"/><circle cx="39" cy="47" r="7.5" fill="#0B1F3A"/><circle cx="61" cy="47" r="7.5" fill="#0B1F3A"/><circle cx="35" cy="41" r="2.6" fill="#fff"/><circle cx="59" cy="41" r="2.6" fill="#fff"/><polygon points="42,58 58,58 50,70" fill="#F6B93B"/></svg>
+      <div class="ct-sub">On va chercher <span class="g">votre argent</span></div>
+    </div>
+    <div class="tile"><img src="/feedmock/photo2.jpg" alt=""></div>
+
+    <!-- Ligne 2 -->
+    <div class="tile cart"><div class="ct-h">Comment ça marche</div>
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="#2C5C88"/><ellipse cx="50" cy="82" rx="30" ry="22" fill="#FB7B57"/><ellipse cx="50" cy="88" rx="16" ry="14" fill="#FFE0B8"/><circle cx="37" cy="44" r="15" fill="#fff"/><circle cx="63" cy="44" r="15" fill="#fff"/><circle cx="39" cy="47" r="7.5" fill="#0B1F3A"/><circle cx="61" cy="47" r="7.5" fill="#0B1F3A"/><circle cx="35" cy="41" r="2.6" fill="#fff"/><circle cx="59" cy="41" r="2.6" fill="#fff"/><polygon points="42,58 58,58 50,70" fill="#F6B93B"/></svg>
+      <div class="ct-sub">4 étapes, <span class="g">tout sur WhatsApp</span></div>
+    </div>
+    <div class="tile"><img src="/feedmock/photo3.jpg" alt=""></div>
+    <div class="tile cart"><div class="ct-h">0 € d'avance</div>
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="#2C5C88"/><ellipse cx="50" cy="82" rx="30" ry="22" fill="#FB7B57"/><ellipse cx="50" cy="88" rx="16" ry="14" fill="#FFE0B8"/><circle cx="37" cy="44" r="15" fill="#fff"/><circle cx="63" cy="44" r="15" fill="#fff"/><circle cx="39" cy="47" r="7.5" fill="#0B1F3A"/><circle cx="61" cy="47" r="7.5" fill="#0B1F3A"/><circle cx="35" cy="41" r="2.6" fill="#fff"/><circle cx="59" cy="41" r="2.6" fill="#fff"/><polygon points="42,58 58,58 50,70" fill="#F6B93B"/></svg>
+      <div class="ct-sub">Payé <span class="g">seulement si ça marche</span></div>
+    </div>
+
+    <!-- Ligne 3 -->
+    <div class="tile"><img src="/feedmock/photo2.jpg" alt=""></div>
+    <div class="tile cart"><div class="ct-h">On vous paie</div>
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="50" fill="#2C5C88"/><ellipse cx="50" cy="82" rx="30" ry="22" fill="#FB7B57"/><ellipse cx="50" cy="88" rx="16" ry="14" fill="#FFE0B8"/><circle cx="37" cy="44" r="15" fill="#fff"/><circle cx="63" cy="44" r="15" fill="#fff"/><circle cx="39" cy="47" r="7.5" fill="#0B1F3A"/><circle cx="61" cy="47" r="7.5" fill="#0B1F3A"/><circle cx="35" cy="41" r="2.6" fill="#fff"/><circle cx="59" cy="41" r="2.6" fill="#fff"/><polygon points="42,58 58,58 50,70" fill="#F6B93B"/></svg>
+      <div class="ct-sub">Jusqu'à <span class="g">600 € par passager</span></div>
+    </div>
+    <div class="tile"><img src="/feedmock/photo1.jpg" alt=""></div>
+  </div>
+
+  <div class="cap">Maquette de feed — alternance créas photo / tuiles Robin, même habillage navy + vert néon.</div>
+</div>
+</body>
+</html>

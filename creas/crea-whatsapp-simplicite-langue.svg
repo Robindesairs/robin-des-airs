@@ -1,0 +1,177 @@
+<svg width="1080" height="1350" viewBox="0 0 1080 1350" xmlns="http://www.w3.org/2000/svg" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FBF8F2"/>
+      <stop offset="1" stop-color="#F3EEE4"/>
+    </linearGradient>
+    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0B7A55"/>
+      <stop offset="1" stop-color="#065F46"/>
+    </linearGradient>
+    <linearGradient id="cta" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#10B981"/>
+      <stop offset="1" stop-color="#059669"/>
+    </linearGradient>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="14" stdDeviation="22" flood-color="#0B3B2C" flood-opacity="0.20"/>
+    </filter>
+    <filter id="soft2" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0B3B2C" flood-opacity="0.16"/>
+    </filter>
+  </defs>
+
+  <rect width="1080" height="1350" fill="url(#bg)"/>
+  <circle cx="150" cy="120" r="360" fill="#0B7A55" opacity="0.06"/>
+  <circle cx="980" cy="1280" r="320" fill="#F5B301" opacity="0.08"/>
+
+  <!-- Header -->
+  <g transform="translate(64,64)">
+    <text x="0" y="0" font-size="34" font-weight="800" fill="#064E3B" letter-spacing="0.5">Robin des Airs</text>
+    <text x="252" y="-2" font-size="30" fill="#0B7A55">&#127993;</text>
+    <g transform="translate(720,-28)">
+      <rect x="0" y="0" width="232" height="46" rx="23" fill="#064E3B"/>
+      <text x="116" y="30" font-size="20" font-weight="700" fill="#FBF8F2" text-anchor="middle" letter-spacing="1">LOI CE 261/2004</text>
+    </g>
+  </g>
+
+  <!-- Hook -->
+  <g transform="translate(64,168)">
+    <text x="0" y="0" font-size="37" font-weight="700" fill="#0F2E25">Vol retard&#233;, annul&#233; ou surbook&#233; ?</text>
+    <text x="0" y="118" font-size="150" font-weight="900" fill="#047857" letter-spacing="-2">Jusqu&#8217;&#224; 600&#8239;&#8364;</text>
+    <text x="6" y="170" font-size="42" font-weight="800" fill="#0F2E25">par personne.</text>
+    <text x="6" y="222" font-size="30" font-weight="500" fill="#3B564D">On r&#233;cup&#232;re ce que la compagnie vous doit.</text>
+  </g>
+
+  <!-- Phone mockup (WhatsApp simplicity demo) -->
+  <g transform="translate(566,430)" filter="url(#soft)">
+    <rect x="0" y="0" width="452" height="812" rx="52" fill="#0F2E25"/>
+    <rect x="12" y="12" width="428" height="788" rx="42" fill="#ECE5DD"/>
+    <!-- WA header -->
+    <path d="M12 54 A42 42 0 0 1 54 12 L398 12 A42 42 0 0 1 440 54 L440 92 L12 92 Z" fill="#0B7A55"/>
+    <circle cx="66" cy="52" r="24" fill="#FBF8F2"/>
+    <text x="66" y="60" font-size="24" fill="#0B7A55" text-anchor="middle">&#127993;</text>
+    <text x="104" y="46" font-size="23" font-weight="700" fill="#FFFFFF">Robin des Airs</text>
+    <text x="104" y="72" font-size="17" fill="#CFEBDF">en ligne</text>
+
+    <!-- bubble 1 : client (right, green) -->
+    <g transform="translate(120,120)">
+      <rect x="0" y="0" width="308" height="82" rx="18" fill="#DCF8C6"/>
+      <text x="20" y="34" font-size="21" fill="#0F2E25">Vol Dakar &#8594; Paris,</text>
+      <text x="20" y="62" font-size="21" fill="#0F2E25">4h de retard &#128533;</text>
+    </g>
+    <!-- bubble 2 : client photo (right, green) -->
+    <g transform="translate(168,216)">
+      <rect x="0" y="0" width="260" height="94" rx="18" fill="#DCF8C6"/>
+      <rect x="14" y="14" width="66" height="66" rx="10" fill="#0B7A55" opacity="0.15"/>
+      <text x="47" y="55" font-size="30" text-anchor="middle">&#128247;</text>
+      <text x="94" y="42" font-size="19" font-weight="600" fill="#0F2E25">Carte</text>
+      <text x="94" y="66" font-size="19" font-weight="600" fill="#0F2E25">d&#8217;embarquement</text>
+    </g>
+    <!-- bubble 3 : Robin (left, white) -->
+    <g transform="translate(24,326)">
+      <rect x="0" y="0" width="356" height="150" rx="18" fill="#FFFFFF"/>
+      <text x="20" y="38" font-size="21" font-weight="700" fill="#047857">&#9989; &#201;ligible !</text>
+      <text x="20" y="72" font-size="21" fill="#0F2E25">Jusqu&#8217;&#224; 600&#8239;&#8364; par personne.</text>
+      <text x="20" y="104" font-size="21" fill="#0F2E25">On s&#8217;occupe de tout, vous</text>
+      <text x="20" y="132" font-size="21" fill="#0F2E25">n&#8217;avancez rien. &#127993;</text>
+    </g>
+    <!-- steps chips inside chat -->
+    <g transform="translate(24,500)">
+      <rect x="0" y="0" width="404" height="128" rx="18" fill="#FFFFFF" opacity="0.75"/>
+      <text x="24" y="42" font-size="20" font-weight="800" fill="#047857">1.</text>
+      <text x="52" y="42" font-size="20" fill="#0F2E25">Votre num&#233;ro de vol</text>
+      <text x="24" y="78" font-size="20" font-weight="800" fill="#047857">2.</text>
+      <text x="52" y="78" font-size="20" fill="#0F2E25">Une photo de votre carte</text>
+      <text x="24" y="114" font-size="20" font-weight="800" fill="#047857">3.</text>
+      <text x="52" y="114" font-size="20" fill="#0F2E25">C&#8217;est r&#233;gl&#233;. On vous rappelle.</text>
+    </g>
+    <!-- input bar -->
+    <g transform="translate(12,712)">
+      <rect x="16" y="12" width="330" height="52" rx="26" fill="#FFFFFF"/>
+      <text x="40" y="45" font-size="20" fill="#8A9A93">&#201;crivez &#171; retard &#187;&#8230;</text>
+      <circle cx="392" cy="38" r="30" fill="#0B7A55"/>
+      <text x="392" y="47" font-size="26" fill="#FFFFFF" text-anchor="middle">&#10148;</text>
+    </g>
+  </g>
+
+  <!-- Simplicity badge over left column -->
+  <g transform="translate(64,470)" filter="url(#soft2)">
+    <rect x="0" y="0" width="470" height="96" rx="20" fill="#064E3B"/>
+    <text x="30" y="42" font-size="27" font-weight="800" fill="#FFFFFF">3 minutes sur WhatsApp.</text>
+    <text x="30" y="76" font-size="24" font-weight="500" fill="#BFEAD9">Rien &#224; remplir, aucune avance.</text>
+  </g>
+
+  <!-- Language callback block -->
+  <g transform="translate(64,600)">
+    <text x="0" y="0" font-size="26" font-weight="800" fill="#0F2E25">On vous rappelle dans votre langue :</text>
+    <!-- flag chips (SVG tricolores, pas d'emoji) -->
+    <g transform="translate(0,26)">
+      <!-- Senegal -->
+      <g transform="translate(0,0)">
+        <rect x="0" y="0" width="54" height="38" rx="6" fill="#00853F"/>
+        <rect x="18" y="0" width="18" height="38" fill="#FDEF42"/>
+        <rect x="36" y="0" width="18" height="38" rx="0" fill="#E31B23"/>
+        <rect x="36" y="0" width="18" height="38" rx="6" fill="none"/>
+        <text x="27" y="26" font-size="22" fill="#E31B23" text-anchor="middle">&#9733;</text>
+      </g>
+      <text x="66" y="26" font-size="24" font-weight="600" fill="#0F2E25">Wolof</text>
+      <!-- Mali -->
+      <g transform="translate(210,0)">
+        <rect x="0" y="0" width="54" height="38" rx="6" fill="#14B53A"/>
+        <rect x="18" y="0" width="18" height="38" fill="#FCD116"/>
+        <rect x="36" y="0" width="18" height="38" fill="#CE1126"/>
+      </g>
+      <text x="276" y="26" font-size="24" font-weight="600" fill="#0F2E25">Mandinka</text>
+    </g>
+    <g transform="translate(0,76)">
+      <!-- Guinea (Peul) -->
+      <g transform="translate(0,0)">
+        <rect x="0" y="0" width="54" height="38" rx="6" fill="#CE1126"/>
+        <rect x="18" y="0" width="18" height="38" fill="#FCD116"/>
+        <rect x="36" y="0" width="18" height="38" fill="#009460"/>
+      </g>
+      <text x="66" y="26" font-size="24" font-weight="600" fill="#0F2E25">Peul</text>
+      <!-- Ghana (Twi) -->
+      <g transform="translate(150,0)">
+        <rect x="0" y="0" width="54" height="38" rx="6" fill="#CE1126"/>
+        <rect x="0" y="12.6" width="54" height="12.8" fill="#FCD116"/>
+        <rect x="0" y="25.4" width="54" height="12.6" fill="#006B3F"/>
+        <text x="27" y="27" font-size="18" fill="#0F2E25" text-anchor="middle">&#9733;</text>
+      </g>
+      <text x="216" y="26" font-size="24" font-weight="600" fill="#0F2E25">Twi</text>
+      <!-- Nigeria (Yoruba) -->
+      <g transform="translate(296,0)">
+        <rect x="0" y="0" width="54" height="38" rx="6" fill="#008751"/>
+        <rect x="18" y="0" width="18" height="38" fill="#FFFFFF"/>
+      </g>
+      <text x="362" y="26" font-size="24" font-weight="600" fill="#0F2E25">Yoruba</text>
+    </g>
+  </g>
+
+  <!-- Strap line (2 lignes pour rester dans la colonne de gauche) -->
+  <g transform="translate(64,764)">
+    <text x="0" y="0" font-size="30" font-weight="800" fill="#047857">On prend aux compagnies,</text>
+    <text x="0" y="38" font-size="30" font-weight="800" fill="#047857">on rend aux familles.</text>
+  </g>
+
+  <!-- Reassurance chips -->
+  <g transform="translate(64,838)">
+    <g transform="translate(0,0)">
+      <rect x="0" y="0" width="220" height="52" rx="26" fill="#FFFFFF" stroke="#0B7A55" stroke-width="2"/>
+      <text x="110" y="34" font-size="21" font-weight="700" fill="#064E3B" text-anchor="middle">0&#8239;&#8364; d&#8217;avance</text>
+    </g>
+    <g transform="translate(236,0)">
+      <rect x="0" y="0" width="260" height="52" rx="26" fill="#FFFFFF" stroke="#0B7A55" stroke-width="2"/>
+      <text x="130" y="34" font-size="21" font-weight="700" fill="#064E3B" text-anchor="middle">0&#8239;&#8364; sans r&#233;sultat</text>
+    </g>
+  </g>
+
+  <!-- CTA bar -->
+  <g transform="translate(64,1200)" filter="url(#soft)">
+    <rect x="0" y="0" width="952" height="112" rx="56" fill="url(#cta)"/>
+    <circle cx="66" cy="56" r="34" fill="#FFFFFF"/>
+    <text x="66" y="68" font-size="34" text-anchor="middle">&#128241;</text>
+    <text x="120" y="50" font-size="32" font-weight="800" fill="#FFFFFF">&#201;crivez-nous sur WhatsApp</text>
+    <text x="120" y="88" font-size="26" font-weight="600" fill="#EAFBF3">wa.me/33756863630</text>
+  </g>
+</svg>
