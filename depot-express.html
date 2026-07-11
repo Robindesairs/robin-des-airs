@@ -168,7 +168,7 @@
   // ── Moteur d'écrans : clic = suivant, retour possible, chips toujours visibles ──
   // FLOW = l'ordre nominal. `idx` = position courante ; `far` = écran le plus loin atteint.
   // Corriger via une chip re-ouvre l'écran, puis la réponse renvoie DIRECT au point le plus loin.
-  var FLOW = ['incident', 'flight', 'conn', 'date', 'pax', 'passport', 'copax', 'phone', 'email', 'sign'];
+  var FLOW = ['incident', 'conn', 'flight', 'date', 'pax', 'passport', 'copax', 'phone', 'email', 'sign'];
   var idx = 0, far = 0, editing = false, backwards = false;
   function applicable(k){ return k !== 'copax' || S.pax > 1; }
   function render(){
@@ -202,8 +202,8 @@
     var c = $('crumbs'); c.innerHTML = '';
     var items = [];
     if (S.incident) items.push(['incident', '⏱️', INCIDENT_LABEL[S.incident]]);
-    if (S.flightNum || (S.dep && S.arr)) items.push(['flight', '✈️', S.flightNum || (S.dep + ' → ' + S.arr)]);
     if (S.typeVol) items.push(['conn', '🛤️', S.typeVol === 'direct' ? 'Direct' : ('Escale' + (S.via ? ' · ' + S.via : ''))]);
+    if (S.flightNum || (S.dep && S.arr)) items.push(['flight', '✈️', S.flightNum || (S.dep + ' → ' + S.arr)]);
     if (S.date) items.push(['date', '📅', S.date.split('-').reverse().join('/')]);
     if (S.pax) items.push(['pax', '👪', S.pax + ' pax']);
     if (S.names[0]) items.push(['passport', '🛂', S.names[0]]);
@@ -372,31 +372,38 @@
       var i = iOverride != null ? iOverride : 1;
       while (i < S.pax && S.names[i] && S.paxData[i] && S.paxData[i].dob) i++;
       if (i >= S.pax) return next();
-      sc.innerHTML = '<h2>👥 Passager ' + (i + 1) + ' sur ' + S.pax + '</h2><p class="sub">Son prénom, son nom et sa date de naissance — chaque passager compte pour l\'indemnité.</p>';
-      var nameInp, dobInp;
-      var w1 = document.createElement('div');
-      w1.innerHTML = '<div class="hint idle" style="margin:0 0 4px">Prénom Nom</div>';
-      nameInp = document.createElement('input'); nameInp.className = 'input'; nameInp.placeholder = 'ex. Mamadou Diallo';
-      if (S.names[i]) nameInp.value = S.names[i];
-      w1.appendChild(nameInp); sc.appendChild(w1);
+      sc.innerHTML = '<h2>👥 Passager ' + (i + 1) + ' sur ' + S.pax + '</h2><p class="sub">Son identité et sa date de naissance — chaque passager compte pour l\'indemnité.</p>';
+      var pd0 = S.paxData[i] || {};
+      var w0 = document.createElement('div');
+      w0.innerHTML = '<div class="hint idle" style="margin:0 0 4px">Prénom</div>';
+      var pInp = document.createElement('input'); pInp.className = 'input'; pInp.placeholder = 'ex. Mamadou'; pInp.autocomplete = 'off';
+      if (pd0.prenom) pInp.value = pd0.prenom;
+      w0.appendChild(pInp); sc.appendChild(w0);
+      var w1 = document.createElement('div'); w1.style.marginTop = '10px';
+      w1.innerHTML = '<div class="hint idle" style="margin:0 0 4px">Nom</div>';
+      var nInp = document.createElement('input'); nInp.className = 'input'; nInp.placeholder = 'ex. Diallo'; nInp.autocomplete = 'off';
+      if (pd0.nom) nInp.value = pd0.nom;
+      w1.appendChild(nInp); sc.appendChild(w1);
+      var dobInp;
       var w2 = document.createElement('div'); w2.style.marginTop = '10px';
       w2.innerHTML = '<div class="hint idle" style="margin:0 0 4px">Date de naissance</div>';
       dobInp = document.createElement('input'); dobInp.className = 'input'; dobInp.type = 'date';
       dobInp.max = new Date().toISOString().slice(0, 10);
-      if (S.paxData[i] && S.paxData[i].dobIso) dobInp.value = S.paxData[i].dobIso;
+      if (pd0.dobIso) dobInp.value = pd0.dobIso;
       w2.appendChild(dobInp); sc.appendChild(w2);
       var hint = document.createElement('div'); hint.className = 'hint idle'; sc.appendChild(hint);
       var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.style.marginTop = '12px';
       go.textContent = (i + 1 < S.pax) ? 'Passager suivant →' : 'Continuer →';
       sc.appendChild(go);
       function submitPax(){
-        var nm = nameInp.value.trim();
-        if (nm.split(/\s+/).filter(Boolean).length < 2) { hint.className = 'hint bad'; hint.textContent = 'Indiquez son prénom ET son nom.'; nameInp.classList.add('bad'); return; }
+        var p = pInp.value.trim(), n = nInp.value.trim();
+        if (p.length < 2) { hint.className = 'hint bad'; hint.textContent = 'Indiquez son prénom.'; pInp.classList.add('bad'); return; }
+        if (n.length < 2) { hint.className = 'hint bad'; hint.textContent = 'Indiquez son nom.'; nInp.classList.add('bad'); return; }
         if (!dobInp.value) { hint.className = 'hint bad'; hint.textContent = 'Indiquez sa date de naissance.'; return; }
         var dobFr = dobInp.value.split('-').reverse().join('/');
         var minor = isMinor(dobFr, S.date);
-        S.names[i] = nm.toUpperCase();
-        S.paxData[i] = { dob: dobFr, dobIso: dobInp.value, minor: minor };
+        S.names[i] = (p + ' ' + n).toUpperCase();
+        S.paxData[i] = { prenom: p.toUpperCase(), nom: n.toUpperCase(), dob: dobFr, dobIso: dobInp.value, minor: minor };
         if (minor) { hint.className = 'hint ok'; hint.textContent = '👶 Mineur·e : c\'est vous (parent/tuteur) qui signez pour lui/elle.'; }
         setTimeout(function(){
           if (editing) { editing = false; idx = far; render(); return; }
@@ -405,8 +412,10 @@
         }, minor ? 700 : 90);
       }
       go.addEventListener('click', submitPax);
+      pInp.addEventListener('keydown', function(e){ if (e.key === 'Enter') nInp.focus(); });
+      nInp.addEventListener('keydown', function(e){ if (e.key === 'Enter') dobInp.focus(); });
       dobInp.addEventListener('keydown', function(e){ if (e.key === 'Enter') submitPax(); });
-      setTimeout(function(){ nameInp.focus(); }, 120);
+      setTimeout(function(){ pInp.focus(); }, 120);
       navRow(sc);
     },
     phone: function(sc){
@@ -537,13 +546,35 @@
   };
 
   // ── Passeport : compression + OCR (repli : saisie manuelle, jamais bloquant) ──
+  // Prénom et nom SÉPARÉS (retour fondateur) : chacun part dans la bonne case du contrat,
+  // sans devinette sur les noms composés.
   function manualName(sc){
-    sc.innerHTML = '<h2>👤 Votre prénom et nom ?</h2><p class="sub">Comme sur votre pièce d\'identité.</p>';
-    inputRow(sc, {
-      placeholder: 'ex. Awa Diallo', autocomplete: 'name', value: S.names[0] || '',
-      validate: function(v){ return v.split(/\s+/).filter(Boolean).length >= 2 ? '' : 'Indiquez votre prénom ET votre nom.'; },
-      done: function(v){ S.piece = null; S.names[0] = v.toUpperCase(); next(); },
-    });
+    sc.innerHTML = '<h2>👤 Votre identité ?</h2><p class="sub">Comme sur votre pièce d\'identité.</p>';
+    var w1 = document.createElement('div');
+    w1.innerHTML = '<div class="hint idle" style="margin:0 0 4px">Prénom</div>';
+    var pInp = document.createElement('input'); pInp.className = 'input'; pInp.placeholder = 'ex. Awa'; pInp.autocomplete = 'given-name';
+    if (S.manualPrenom) pInp.value = S.manualPrenom;
+    w1.appendChild(pInp); sc.appendChild(w1);
+    var w2 = document.createElement('div'); w2.style.marginTop = '10px';
+    w2.innerHTML = '<div class="hint idle" style="margin:0 0 4px">Nom</div>';
+    var nInp = document.createElement('input'); nInp.className = 'input'; nInp.placeholder = 'ex. Diallo'; nInp.autocomplete = 'family-name';
+    if (S.manualNom) nInp.value = S.manualNom;
+    w2.appendChild(nInp); sc.appendChild(w2);
+    var hint = document.createElement('div'); hint.className = 'hint idle'; sc.appendChild(hint);
+    var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.style.marginTop = '12px'; go.textContent = 'Continuer →';
+    sc.appendChild(go);
+    function submitNm(){
+      var p = pInp.value.trim(), n = nInp.value.trim();
+      if (p.length < 2) { hint.className = 'hint bad'; hint.textContent = 'Indiquez votre prénom.'; pInp.classList.add('bad'); return; }
+      if (n.length < 2) { hint.className = 'hint bad'; hint.textContent = 'Indiquez votre nom.'; nInp.classList.add('bad'); return; }
+      S.piece = null; S.manualPrenom = p.toUpperCase(); S.manualNom = n.toUpperCase();
+      S.names[0] = (S.manualPrenom + ' ' + S.manualNom).trim();
+      next();
+    }
+    go.addEventListener('click', submitNm);
+    nInp.addEventListener('keydown', function(e){ if (e.key === 'Enter') submitNm(); });
+    pInp.addEventListener('keydown', function(e){ if (e.key === 'Enter') nInp.focus(); });
+    setTimeout(function(){ pInp.focus(); }, 120);
     navRow(sc);
   }
   function toJpeg(file){
@@ -605,13 +636,14 @@
     var nowIso = new Date().toISOString();
     var full = (S.names[0] || '').trim();
     var parts = full.split(/\s+/).filter(Boolean);
-    var firstName = S.piece && S.piece.prenom ? S.piece.prenom : (parts[0] || '');
-    var lastName  = S.piece && S.piece.nom ? S.piece.nom : parts.slice(1).join(' ');
+    // Prénom/nom : la pièce OCR d'abord, sinon les cases séparées saisies à la main (jamais de découpe hasardeuse)
+    var firstName = (S.piece && S.piece.prenom) || S.manualPrenom || (parts[0] || '');
+    var lastName  = (S.piece && S.piece.nom) || S.manualNom || parts.slice(1).join(' ');
     var names = S.names.filter(Boolean);
     var passengersData = names.map(function(n, i){
       var pd = S.paxData[i] || {};
-      var base = { name: n, dob: pd.dob || '', minor: !!pd.minor };
-      if (i === 0 && S.piece) { base.prenom = S.piece.prenom || ''; base.nom = S.piece.nom || ''; base.dob = S.piece.dob || pd.dob || ''; base.birth = S.piece.lieuNaissance || ''; }
+      var base = { name: n, prenom: pd.prenom || '', nom: pd.nom || '', dob: pd.dob || '', minor: !!pd.minor };
+      if (i === 0) { base.prenom = firstName; base.nom = lastName; if (S.piece) { base.dob = S.piece.dob || pd.dob || ''; base.birth = S.piece.lieuNaissance || ''; } }
       if (i > 0 && !pd.minor) { base.signatureImg = pd.sig || ''; base.signaturePending = !!pd.sigPending; } // co-adulte : sa signature (ou à recueillir)
       return base;
     });
