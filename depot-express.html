@@ -196,42 +196,44 @@
     function set(v){ var m = String(v || '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); if (m) { jj.value = m[1].padStart(2, '0'); mm.value = m[2].padStart(2, '0'); yy.value = m[3]; } }
     return { el: wrap, value: val, set: set, focus: function(){ jj.focus(); } };
   }
-  // ── Indicatifs téléphone : liste MONDIALE (recherche libre « france », « sénégal »…), France par défaut.
-  //    Diaspora + Europe en tête pour l'autocomplétion, puis tout le reste alphabétique.
+  // ── Indicatifs téléphone : liste MONDIALE [nom, indicatif, ISO2]. Recherche libre + drapeau calculé
+  //    depuis l'ISO. Diaspora + Europe en tête pour l'autocomplétion, France par défaut.
   var DIALS = [
-    ['France', '+33'], ['Belgique', '+32'], ['Suisse', '+41'], ['Luxembourg', '+352'],
-    ['Sénégal', '+221'], ['Côte d\'Ivoire', '+225'], ['Mali', '+223'], ['Guinée', '+224'], ['Guinée-Bissau', '+245'],
-    ['Cameroun', '+237'], ['Nigeria', '+234'], ['Ghana', '+233'], ['Gambie', '+220'], ['Togo', '+228'], ['Bénin', '+229'],
-    ['Burkina Faso', '+226'], ['Niger', '+227'], ['RD Congo', '+243'], ['Congo', '+242'], ['Mauritanie', '+222'],
-    ['Maroc', '+212'], ['Algérie', '+213'], ['Tunisie', '+216'], ['Gabon', '+241'], ['Tchad', '+235'],
-    ['Centrafrique', '+236'], ['Sierra Leone', '+232'], ['Liberia', '+231'], ['Cap-Vert', '+238'], ['Kenya', '+254'],
-    ['Royaume-Uni', '+44'], ['Allemagne', '+49'], ['Italie', '+39'], ['Espagne', '+34'], ['Portugal', '+351'],
-    ['Pays-Bas', '+31'], ['USA / Canada', '+1'],
-    ['Afghanistan', '+93'], ['Afrique du Sud', '+27'], ['Albanie', '+355'], ['Angola', '+244'], ['Arabie saoudite', '+966'],
-    ['Argentine', '+54'], ['Arménie', '+374'], ['Australie', '+61'], ['Autriche', '+43'], ['Azerbaïdjan', '+994'],
-    ['Bahreïn', '+973'], ['Bangladesh', '+880'], ['Biélorussie', '+375'], ['Bolivie', '+591'], ['Bosnie-Herzégovine', '+387'],
-    ['Botswana', '+267'], ['Brésil', '+55'], ['Bulgarie', '+359'], ['Burundi', '+257'], ['Cambodge', '+855'],
-    ['Chili', '+56'], ['Chine', '+86'], ['Chypre', '+357'], ['Colombie', '+57'], ['Comores', '+269'],
-    ['Corée du Sud', '+82'], ['Costa Rica', '+506'], ['Croatie', '+385'], ['Cuba', '+53'], ['Danemark', '+45'],
-    ['Djibouti', '+253'], ['Égypte', '+20'], ['Émirats arabes unis', '+971'], ['Équateur', '+593'], ['Érythrée', '+291'],
-    ['Estonie', '+372'], ['Éthiopie', '+251'], ['Finlande', '+358'], ['Géorgie', '+995'], ['Grèce', '+30'],
-    ['Guatemala', '+502'], ['Guinée équatoriale', '+240'], ['Haïti', '+509'], ['Honduras', '+504'], ['Hongrie', '+36'],
-    ['Île Maurice', '+230'], ['Inde', '+91'], ['Indonésie', '+62'], ['Irak', '+964'], ['Iran', '+98'],
-    ['Irlande', '+353'], ['Islande', '+354'], ['Israël', '+972'], ['Jamaïque', '+1876'], ['Japon', '+81'],
-    ['Jordanie', '+962'], ['Kazakhstan', '+7'], ['Koweït', '+965'], ['Laos', '+856'], ['Lesotho', '+266'],
-    ['Lettonie', '+371'], ['Liban', '+961'], ['Libye', '+218'], ['Lituanie', '+370'], ['Macédoine du Nord', '+389'],
-    ['Madagascar', '+261'], ['Malaisie', '+60'], ['Malawi', '+265'], ['Maldives', '+960'], ['Malte', '+356'],
-    ['Mexique', '+52'], ['Moldavie', '+373'], ['Monaco', '+377'], ['Mongolie', '+976'], ['Monténégro', '+382'],
-    ['Mozambique', '+258'], ['Myanmar', '+95'], ['Namibie', '+264'], ['Népal', '+977'], ['Nicaragua', '+505'],
-    ['Norvège', '+47'], ['Nouvelle-Zélande', '+64'], ['Oman', '+968'], ['Ouganda', '+256'], ['Ouzbékistan', '+998'],
-    ['Pakistan', '+92'], ['Panama', '+507'], ['Paraguay', '+595'], ['Pérou', '+51'], ['Philippines', '+63'],
-    ['Pologne', '+48'], ['Qatar', '+974'], ['République dominicaine', '+1809'], ['République tchèque', '+420'], ['Roumanie', '+40'],
-    ['Russie', '+7'], ['Rwanda', '+250'], ['Salvador', '+503'], ['São Tomé-et-Principe', '+239'], ['Serbie', '+381'],
-    ['Seychelles', '+248'], ['Singapour', '+65'], ['Slovaquie', '+421'], ['Slovénie', '+386'], ['Somalie', '+252'],
-    ['Soudan', '+249'], ['Sri Lanka', '+94'], ['Suède', '+46'], ['Syrie', '+963'], ['Tanzanie', '+255'],
-    ['Thaïlande', '+66'], ['Turquie', '+90'], ['Ukraine', '+380'], ['Uruguay', '+598'], ['Venezuela', '+58'],
-    ['Vietnam', '+84'], ['Yémen', '+967'], ['Zambie', '+260'], ['Zimbabwe', '+263'],
+    ['France', '+33', 'FR'], ['Belgique', '+32', 'BE'], ['Suisse', '+41', 'CH'], ['Luxembourg', '+352', 'LU'],
+    ['Sénégal', '+221', 'SN'], ['Côte d\'Ivoire', '+225', 'CI'], ['Mali', '+223', 'ML'], ['Guinée', '+224', 'GN'], ['Guinée-Bissau', '+245', 'GW'],
+    ['Cameroun', '+237', 'CM'], ['Nigeria', '+234', 'NG'], ['Ghana', '+233', 'GH'], ['Gambie', '+220', 'GM'], ['Togo', '+228', 'TG'], ['Bénin', '+229', 'BJ'],
+    ['Burkina Faso', '+226', 'BF'], ['Niger', '+227', 'NE'], ['RD Congo', '+243', 'CD'], ['Congo', '+242', 'CG'], ['Mauritanie', '+222', 'MR'],
+    ['Maroc', '+212', 'MA'], ['Algérie', '+213', 'DZ'], ['Tunisie', '+216', 'TN'], ['Gabon', '+241', 'GA'], ['Tchad', '+235', 'TD'],
+    ['Centrafrique', '+236', 'CF'], ['Sierra Leone', '+232', 'SL'], ['Liberia', '+231', 'LR'], ['Cap-Vert', '+238', 'CV'], ['Kenya', '+254', 'KE'],
+    ['Royaume-Uni', '+44', 'GB'], ['Allemagne', '+49', 'DE'], ['Italie', '+39', 'IT'], ['Espagne', '+34', 'ES'], ['Portugal', '+351', 'PT'],
+    ['Pays-Bas', '+31', 'NL'], ['USA / Canada', '+1', 'US'],
+    ['Afghanistan', '+93', 'AF'], ['Afrique du Sud', '+27', 'ZA'], ['Albanie', '+355', 'AL'], ['Angola', '+244', 'AO'], ['Arabie saoudite', '+966', 'SA'],
+    ['Argentine', '+54', 'AR'], ['Arménie', '+374', 'AM'], ['Australie', '+61', 'AU'], ['Autriche', '+43', 'AT'], ['Azerbaïdjan', '+994', 'AZ'],
+    ['Bahreïn', '+973', 'BH'], ['Bangladesh', '+880', 'BD'], ['Biélorussie', '+375', 'BY'], ['Bolivie', '+591', 'BO'], ['Bosnie-Herzégovine', '+387', 'BA'],
+    ['Botswana', '+267', 'BW'], ['Brésil', '+55', 'BR'], ['Bulgarie', '+359', 'BG'], ['Burundi', '+257', 'BI'], ['Cambodge', '+855', 'KH'],
+    ['Chili', '+56', 'CL'], ['Chine', '+86', 'CN'], ['Chypre', '+357', 'CY'], ['Colombie', '+57', 'CO'], ['Comores', '+269', 'KM'],
+    ['Corée du Sud', '+82', 'KR'], ['Costa Rica', '+506', 'CR'], ['Croatie', '+385', 'HR'], ['Cuba', '+53', 'CU'], ['Danemark', '+45', 'DK'],
+    ['Djibouti', '+253', 'DJ'], ['Égypte', '+20', 'EG'], ['Émirats arabes unis', '+971', 'AE'], ['Équateur', '+593', 'EC'], ['Érythrée', '+291', 'ER'],
+    ['Estonie', '+372', 'EE'], ['Éthiopie', '+251', 'ET'], ['Finlande', '+358', 'FI'], ['Géorgie', '+995', 'GE'], ['Grèce', '+30', 'GR'],
+    ['Guatemala', '+502', 'GT'], ['Guinée équatoriale', '+240', 'GQ'], ['Haïti', '+509', 'HT'], ['Honduras', '+504', 'HN'], ['Hongrie', '+36', 'HU'],
+    ['Île Maurice', '+230', 'MU'], ['Inde', '+91', 'IN'], ['Indonésie', '+62', 'ID'], ['Irak', '+964', 'IQ'], ['Iran', '+98', 'IR'],
+    ['Irlande', '+353', 'IE'], ['Islande', '+354', 'IS'], ['Israël', '+972', 'IL'], ['Jamaïque', '+1876', 'JM'], ['Japon', '+81', 'JP'],
+    ['Jordanie', '+962', 'JO'], ['Kazakhstan', '+7', 'KZ'], ['Koweït', '+965', 'KW'], ['Laos', '+856', 'LA'], ['Lesotho', '+266', 'LS'],
+    ['Lettonie', '+371', 'LV'], ['Liban', '+961', 'LB'], ['Libye', '+218', 'LY'], ['Lituanie', '+370', 'LT'], ['Macédoine du Nord', '+389', 'MK'],
+    ['Madagascar', '+261', 'MG'], ['Malaisie', '+60', 'MY'], ['Malawi', '+265', 'MW'], ['Maldives', '+960', 'MV'], ['Malte', '+356', 'MT'],
+    ['Mexique', '+52', 'MX'], ['Moldavie', '+373', 'MD'], ['Monaco', '+377', 'MC'], ['Mongolie', '+976', 'MN'], ['Monténégro', '+382', 'ME'],
+    ['Mozambique', '+258', 'MZ'], ['Myanmar', '+95', 'MM'], ['Namibie', '+264', 'NA'], ['Népal', '+977', 'NP'], ['Nicaragua', '+505', 'NI'],
+    ['Norvège', '+47', 'NO'], ['Nouvelle-Zélande', '+64', 'NZ'], ['Oman', '+968', 'OM'], ['Ouganda', '+256', 'UG'], ['Ouzbékistan', '+998', 'UZ'],
+    ['Pakistan', '+92', 'PK'], ['Panama', '+507', 'PA'], ['Paraguay', '+595', 'PY'], ['Pérou', '+51', 'PE'], ['Philippines', '+63', 'PH'],
+    ['Pologne', '+48', 'PL'], ['Qatar', '+974', 'QA'], ['République dominicaine', '+1809', 'DO'], ['République tchèque', '+420', 'CZ'], ['Roumanie', '+40', 'RO'],
+    ['Russie', '+7', 'RU'], ['Rwanda', '+250', 'RW'], ['Salvador', '+503', 'SV'], ['São Tomé-et-Principe', '+239', 'ST'], ['Serbie', '+381', 'RS'],
+    ['Seychelles', '+248', 'SC'], ['Singapour', '+65', 'SG'], ['Slovaquie', '+421', 'SK'], ['Slovénie', '+386', 'SI'], ['Somalie', '+252', 'SO'],
+    ['Soudan', '+249', 'SD'], ['Sri Lanka', '+94', 'LK'], ['Suède', '+46', 'SE'], ['Syrie', '+963', 'SY'], ['Tanzanie', '+255', 'TZ'],
+    ['Thaïlande', '+66', 'TH'], ['Turquie', '+90', 'TR'], ['Ukraine', '+380', 'UA'], ['Uruguay', '+598', 'UY'], ['Venezuela', '+58', 'VE'],
+    ['Vietnam', '+84', 'VN'], ['Yémen', '+967', 'YE'], ['Zambie', '+260', 'ZM'], ['Zimbabwe', '+263', 'ZW'],
   ];
+  // Drapeau emoji depuis l'ISO2 (rendu natif sur mobile — cible principale).
+  function flagEmoji(iso){ return String(iso || '').toUpperCase().replace(/[A-Z]/g, function(c){ return String.fromCodePoint(0x1F1E6 + c.charCodeAt(0) - 65); }); }
   // Mineur à la date du vol (même logique que le bot) : un parent signe pour lui.
   function isMinor(dobFr, flightIso){
     var b = (dobFr || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); if (!b) return false;
@@ -629,10 +631,10 @@
       var cw = document.createElement('div');
       cw.innerHTML = '<div class="hint idle" style="margin:0 0 4px">Pays de votre numéro</div>';
       var cc = document.createElement('input'); cc.className = 'input'; cc.setAttribute('list', 'dialList'); cc.autocomplete = 'off';
-      cc.placeholder = 'Tapez « france », « sénégal »…'; cc.value = S.phoneCountry || 'France (+33)';
+      cc.placeholder = 'Tapez « france », « sénégal »…'; cc.value = S.phoneCountry || (flagEmoji('FR') + ' France (+33)');
       cw.appendChild(cc); sc.appendChild(cw);
       var dl = $('dialList');
-      if (!dl) { dl = document.createElement('datalist'); dl.id = 'dialList'; DIALS.forEach(function(d){ var o = document.createElement('option'); o.value = d[0] + ' (' + d[1] + ')'; dl.appendChild(o); }); document.body.appendChild(dl); }
+      if (!dl) { dl = document.createElement('datalist'); dl.id = 'dialList'; DIALS.forEach(function(d){ var o = document.createElement('option'); o.value = flagEmoji(d[2]) + ' ' + d[0] + ' (' + d[1] + ')'; dl.appendChild(o); }); document.body.appendChild(dl); }
       var row = document.createElement('div'); row.className = 'askrow'; row.style.marginTop = '10px';
       var i = document.createElement('input'); i.className = 'input'; i.type = 'tel'; i.inputMode = 'tel';
       i.autocomplete = 'tel-national'; i.placeholder = '6 12 34 56 78'; i.style.minWidth = '0';
