@@ -243,8 +243,9 @@
     var items = [];
     if (S.incident) items.push(['incident', '⏱️', INCIDENT_LABEL[S.incident]]);
     if (S.incident === 'cancel' && S.annul14) items.push(['annul14', '📅', S.annul14 === 'moins14' ? 'Prévenu < 14 j' : 'Délai à vérifier']);
-    if (S.typeVol) items.push(['conn', '🛤️', S.typeVol === 'direct' ? 'Direct' : ('Escale' + (S.via ? ' · ' + S.via : ''))]);
-    if (S.flightNum || (S.dep && S.arr)) items.push(['flight', '✈️', S.flightNum || (S.dep + ' → ' + S.arr)]);
+    if (S.typeVol) items.push(['conn', '🛤️', S.typeVol === 'direct' ? 'Direct' : ('Correspondance' + (S.legs && S.legs.length ? ' · ' + S.legs.length + ' vols' : ''))]);
+    if (S.dep && S.arr) items.push(['flight', '✈️', S.dep + ' → ' + S.arr]);
+    else if (S.flightNum) items.push(['flight', '✈️', S.flightNum]);
     if (S.date) items.push(['date', '📅', S.date.split('-').reverse().join('/')]);
     if (S.pax) items.push(['pax', '👪', S.pax + ' pax']);
     if (S.names[0]) items.push(['passport', '🛂', S.names[0]]);
@@ -308,6 +309,23 @@
   }
 
   // ── Les écrans ──────────────────────────────────────────────────────────────
+  // Champ rectangulaire étiqueté (réutilisé pour vol/légs/identité)
+  function labeledField(sc, label, value, mono, mt){
+    var w = document.createElement('div'); if (mt) w.style.marginTop = mt;
+    w.innerHTML = '<div class="hint idle" style="margin:0 0 4px">' + label + '</div>';
+    var i = document.createElement('input'); i.className = 'input' + (mono ? ' mono' : ''); i.autocomplete = 'off';
+    if (value) i.value = value;
+    w.appendChild(i); sc.appendChild(w); return i;
+  }
+  // Fin de la saisie des tronçons (correspondance) → dérive vol/dep/arr pour la suite.
+  function finalizeLegs(){
+    S.legs = (S.legs || []).filter(function(l){ return l && l.dep && l.arr; });
+    if (!S.legs.length) { S.typeVol = 'direct'; return; }
+    S.flightNum = S.legs.map(function(l){ return l.num; }).filter(Boolean).join(' / ');
+    S.dep = S.legs[0].dep; S.arr = S.legs[S.legs.length - 1].arr;
+    next();
+  }
+
   var SCREENS = {
     incident: function(sc){
       sc.innerHTML = '<h2>✈️ Que s\'est-il passé avec votre vol ?</h2><p class="sub">Un clic, on enchaîne.</p>';
@@ -318,33 +336,60 @@
       sc.appendChild(o); navRow(sc);
     },
     flight: function(sc){
-      sc.innerHTML = '<h2>🔎 Votre numéro de vol ?</h2><p class="sub">Il est sur votre billet (ex. AF719, SN204).</p>';
-      inputRow(sc, {
-        placeholder: 'ex. AF719', mono: true, value: S.flightNum,
-        validate: function(v){
-          if (!v) return 'Indiquez votre numéro de vol, ou touchez « Je ne l\'ai pas » en dessous.';
-          var c = v.toUpperCase().replace(/\s+/g,'');
-          return /^[A-Z]{1,3}\d{1,5}[A-Z]?$/.test(c) ? '' : 'Ce numéro ne ressemble pas à un vol (ex. AF719).';
-        },
-        done: function(v){ S.flightNum = v.toUpperCase().replace(/\s+/g,''); S.dep = ''; S.arr = ''; next(); },
-      });
-      var o = document.createElement('div'); o.className = 'opts'; o.style.marginTop = '10px';
-      o.appendChild(optButton('<span class="ic">🗺️</span><span>Je ne l\'ai pas — je donne le trajet<small>ex. Dakar → Paris</small></span>', function(){
-        sc.innerHTML = '<h2>🗺️ Votre trajet ?</h2><p class="sub">Ville de départ et ville d\'arrivée.</p>';
-        inputRow(sc, {
-          placeholder: 'ex. Dakar - Paris', value: (S.dep && S.arr) ? S.dep + ' - ' + S.arr : '',
-          validate: function(v){
-            var p = v.split(/→|->|—|,|\/|-/).map(function(x){ return x.trim(); }).filter(Boolean);
-            return (p.length >= 2 && p[0].length >= 2 && p[1].length >= 2) ? '' : 'Écrivez les deux villes, ex. « Dakar - Paris ».';
-          },
-          done: function(v){
-            var p = v.split(/→|->|—|,|\/|-/).map(function(x){ return x.trim(); }).filter(Boolean);
-            S.dep = p[0]; S.arr = p[p.length - 1]; S.flightNum = ''; next();
-          },
-        });
+      if (S.typeVol === 'escale') return SCREENS._leg(sc, 0); // correspondance → saisie tronçon par tronçon
+      // VOL DIRECT : numéro + ville de départ + ville d'arrivée sur un écran
+      sc.innerHTML = '<h2>✈️ Votre vol</h2><p class="sub">Le numéro de vol et le trajet (départ → arrivée).</p>';
+      var num = labeledField(sc, 'Numéro de vol <span style="font-weight:500">(ex. AF719)</span>', S.flightNum, true);
+      var dep = labeledField(sc, 'Ville de départ', S.dep, false, '10px');
+      var arr = labeledField(sc, 'Ville d\'arrivée', S.arr, false, '10px');
+      var hint = document.createElement('div'); hint.className = 'hint idle'; hint.textContent = 'Le numéro est sur votre billet (laissez vide si vous ne l\'avez plus).'; sc.appendChild(hint);
+      var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.style.marginTop = '12px'; go.textContent = 'Continuer →'; sc.appendChild(go);
+      function ok(){
+        var d = dep.value.trim(), a = arr.value.trim();
+        if (d.length < 2) { hint.className = 'hint bad'; hint.textContent = 'Indiquez la ville de départ.'; dep.classList.add('bad'); return; }
+        if (a.length < 2) { hint.className = 'hint bad'; hint.textContent = 'Indiquez la ville d\'arrivée.'; arr.classList.add('bad'); return; }
+        S.flightNum = num.value.trim().toUpperCase().replace(/\s+/g, ''); S.dep = d; S.arr = a; S.legs = []; next();
+      }
+      go.addEventListener('click', ok);
+      num.addEventListener('keydown', function(e){ if (e.key === 'Enter') dep.focus(); });
+      dep.addEventListener('keydown', function(e){ if (e.key === 'Enter') arr.focus(); });
+      arr.addEventListener('keydown', function(e){ if (e.key === 'Enter') ok(); });
+      setTimeout(function(){ num.focus(); }, 120);
+      navRow(sc);
+    },
+    // CORRESPONDANCE : un tronçon à la fois. Le départ du vol N+1 est pré-rempli avec l'arrivée du vol N
+    // (ex. vol 1 Strasbourg → Paris ; vol 2 : départ « Paris » déjà là, on ne tape que la destination).
+    _leg: function(sc, li){
+      var leg = S.legs[li] || {};
+      var prevArr = (li > 0 && S.legs[li - 1]) ? S.legs[li - 1].arr : '';
+      sc.innerHTML = '<h2>✈️ Vol ' + (li + 1) + ' de votre trajet</h2><p class="sub">' + (li > 0 ? 'Le départ est <b>pré-rempli</b> depuis le vol précédent — indiquez juste la suite.' : 'Numéro et trajet de votre <b>premier</b> vol.') + '</p>';
+      var num = labeledField(sc, 'Numéro de vol ' + (li > 0 ? '<span style="font-weight:500">(facultatif)</span>' : '<span style="font-weight:500">(ex. AT540)</span>'), leg.num, true);
+      var dep = labeledField(sc, 'Ville de départ', leg.dep || prevArr, false, '10px');
+      var arr = labeledField(sc, 'Ville d\'arrivée', leg.arr, false, '10px');
+      var hint = document.createElement('div'); hint.className = 'hint idle'; sc.appendChild(hint);
+      var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.style.marginTop = '12px'; go.textContent = 'Ce vol est noté →'; sc.appendChild(go);
+      function ok(){
+        var d = dep.value.trim(), a = arr.value.trim();
+        if (d.length < 2) { hint.className = 'hint bad'; hint.textContent = 'Indiquez la ville de départ.'; dep.classList.add('bad'); return; }
+        if (a.length < 2) { hint.className = 'hint bad'; hint.textContent = 'Indiquez la ville d\'arrivée.'; arr.classList.add('bad'); return; }
+        S.legs[li] = { num: num.value.trim().toUpperCase().replace(/\s+/g, ''), dep: d, arr: a };
+        S.legs = S.legs.slice(0, li + 1); // si on refait ce tronçon, on repart proprement de là
+        // Un autre vol après ?
+        sc.innerHTML = '<h2>🔄 Un autre vol après ?</h2><p class="sub">Vol ' + (li + 1) + ' noté : <b>' + esc(d) + ' → ' + esc(a) + '</b>. Y avait-il encore un vol après (correspondance) ?</p>';
+        var o = document.createElement('div'); o.className = 'opts';
+        o.appendChild(optButton('<span class="ic">➕</span><span>Oui, ajouter le vol suivant<small>départ depuis ' + esc(a) + '</small></span>', function(){
+          stage.innerHTML = ''; var n2 = document.createElement('div'); n2.className = 'screen'; stage.appendChild(n2); SCREENS._leg(n2, li + 1); renderCrumbs();
+        }));
+        o.appendChild(optButton('<span class="ic">✓</span><span>Non, c\'est mon dernier vol</span>', function(){ finalizeLegs(); }));
+        sc.appendChild(o);
         navRow(sc);
-      }, true));
-      sc.appendChild(o); navRow(sc);
+      }
+      go.addEventListener('click', ok);
+      num.addEventListener('keydown', function(e){ if (e.key === 'Enter') dep.focus(); });
+      dep.addEventListener('keydown', function(e){ if (e.key === 'Enter') arr.focus(); });
+      arr.addEventListener('keydown', function(e){ if (e.key === 'Enter') ok(); });
+      setTimeout(function(){ (li > 0 && dep.value ? arr : num).focus(); }, 120);
+      navRow(sc);
     },
     // Gate ANNULATION — règle des 14 jours (art. 5 CE 261), même ancrage que le bot :
     // ce qui compte, c'est le délai entre LA NOTIFICATION et le vol (pas aujourd'hui → vol).
@@ -368,18 +413,10 @@
       sc.appendChild(o); navRow(sc);
     },
     conn: function(sc){
-      sc.innerHTML = '<h2>🛤️ Ce vol était-il direct ?</h2><p class="sub">Avec une escale, l\'indemnité se calcule sur le trajet complet.</p>';
+      sc.innerHTML = '<h2>🛤️ Ce vol était-il direct ?</h2><p class="sub">Avec une correspondance, on note chaque vol pour calculer l\'indemnité sur le trajet complet.</p>';
       var o = document.createElement('div'); o.className = 'opts';
-      o.appendChild(optButton('<span class="ic">✈️</span><span>Oui, vol direct</span>', function(){ S.typeVol = 'direct'; S.via = ''; next(); }));
-      o.appendChild(optButton('<span class="ic">🔄</span><span>Non, avec escale<small>ex. via Casablanca, Istanbul…</small></span>', function(){
-        sc.innerHTML = '<h2>🔄 Dans quelle ville, l\'escale ?</h2><p class="sub">Si vous ne savez plus, passez — un expert la retrouvera.</p>';
-        inputRow(sc, {
-          placeholder: 'ex. Casablanca', value: S.via,
-          validate: function(v){ return v.length >= 2 ? '' : 'Indiquez la ville, ou passez en dessous.'; },
-          done: function(v){ S.typeVol = 'escale'; S.via = v; next(); },
-        });
-        navRow(sc, { skip: '⏭️ Je ne sais plus', onSkip: function(){ S.typeVol = 'escale'; S.via = ''; next(); } });
-      }));
+      o.appendChild(optButton('<span class="ic">✈️</span><span>Oui, vol direct</span>', function(){ S.typeVol = 'direct'; S.legs = []; next(); }));
+      o.appendChild(optButton('<span class="ic">🔄</span><span>Non, avec correspondance<small>plusieurs vols (ex. via Paris, Casablanca…)</small></span>', function(){ S.typeVol = 'escale'; S.legs = []; next(); }));
       sc.appendChild(o); navRow(sc);
     },
     date: function(sc){
@@ -421,7 +458,7 @@
       sc.appendChild(o); navRow(sc);
     },
     passport: function(sc){
-      sc.innerHTML = '<h2>🛂 Votre passeport (ou carte d\'identité)</h2><p class="sub"><b>On lit tout, vous n\'écrivez rien.</b></p>';
+      sc.innerHTML = '<h2>🛂 ' + (S.pax > 1 ? 'Passager 1 — votre' : 'Votre') + ' passeport (ou carte d\'identité)</h2><p class="sub"><b>On lit tout, vous n\'écrivez rien.</b></p>';
       var drop = document.createElement('div'); drop.className = 'drop';
       drop.innerHTML = '<div class="big">📄</div><p>Glissez votre pièce ici</p><small>🔒 Lue par une IA pour pré-remplir votre contrat, jamais revendue</small>';
       sc.appendChild(drop);
@@ -439,36 +476,61 @@
       $('camInp').onchange = function(){ var f = $('camInp').files && $('camInp').files[0]; if (f) handleFile(f, sc, hint); };
       navRow(sc, { skip: '✏️ Je préfère taper mon nom', onSkip: function(){ manualName(sc); } });
     },
-    // Co-passagers : nom + date de naissance CHACUN (la cession exige l'identité de chaque cédant ;
-    // la DDN détecte les mineurs → un parent signe pour eux, les adultes signent eux-mêmes à la fin).
+    // Co-passagers : passeport (OCR) OU saisie — prénom, nom, date de naissance CHACUN.
+    // La cession exige l'identité de chaque cédant ; la DDN détecte les mineurs (un parent signe).
     copax: function(sc, iOverride){
       var i = iOverride != null ? iOverride : 1;
       while (i < S.pax && S.names[i] && S.paxData[i] && S.paxData[i].dob) i++;
       if (i >= S.pax) return next();
-      sc.innerHTML = '<h2>👥 Passager ' + (i + 1) + ' sur ' + S.pax + '</h2><p class="sub">Son identité et sa date de naissance — chaque passager compte pour l\'indemnité.</p>';
       var pd0 = S.paxData[i] || {};
-      var w0 = document.createElement('div');
-      w0.innerHTML = '<div class="hint idle" style="margin:0 0 4px">Prénom</div>';
-      var pInp = document.createElement('input'); pInp.className = 'input'; pInp.placeholder = 'ex. Mamadou'; pInp.autocomplete = 'off';
-      if (pd0.prenom) pInp.value = pd0.prenom;
-      w0.appendChild(pInp); sc.appendChild(w0);
-      var w1 = document.createElement('div'); w1.style.marginTop = '10px';
-      w1.innerHTML = '<div class="hint idle" style="margin:0 0 4px">Nom</div>';
-      var nInp = document.createElement('input'); nInp.className = 'input'; nInp.placeholder = 'ex. Diallo'; nInp.autocomplete = 'off';
-      if (pd0.nom) nInp.value = pd0.nom;
-      w1.appendChild(nInp); sc.appendChild(w1);
+      sc.innerHTML = '<h2>👥 Passager ' + (i + 1) + ' sur ' + S.pax + '</h2><p class="sub">Sa <b>pièce d\'identité</b> (on lit tout) ou sa saisie — chaque passager compte pour l\'indemnité.</p>';
+      // Passeport du co-passager (comme le passager 1)
+      var drop = document.createElement('div'); drop.className = 'drop';
+      drop.innerHTML = '<div class="big">🛂</div><p>Glissez le passeport du passager ' + (i + 1) + '</p><small>ou remplissez à la main ci-dessous · 🔒 lu par une IA, jamais revendu</small>';
+      sc.appendChild(drop);
+      var ob = document.createElement('div'); ob.className = 'opts grid2'; ob.style.marginTop = '10px';
+      ob.appendChild(optButton('<span class="ic">📷</span><span>Prendre une photo</span>', function(){ $('camInp').value = ''; $('camInp').click(); }));
+      ob.appendChild(optButton('<span class="ic">🖼️</span><span>Choisir un fichier<small>photo ou PDF</small></span>', function(){ $('fileInp').value = ''; $('fileInp').click(); }));
+      sc.appendChild(ob);
+      var ocrHint = document.createElement('div'); ocrHint.className = 'hint idle'; sc.appendChild(ocrHint);
+      // Champs (préremplis par l'OCR, toujours corrigeables)
+      var pInp = labeledField(sc, 'Prénom', pd0.prenom, false, '4px'); pInp.placeholder = 'ex. Mamadou';
+      var nInp = labeledField(sc, 'Nom', pd0.nom, false, '10px'); nInp.placeholder = 'ex. Diallo';
       var w2 = document.createElement('div'); w2.style.marginTop = '10px';
       w2.innerHTML = '<div class="hint idle" style="margin:0 0 4px">Date de naissance <span style="font-weight:500">(chiffres seuls : 20061985)</span></div>';
       var dobInp = maskedDateInput({
         value: pd0.dob || '',
         check: function(dd, mm, yyyy){ return (new Date(+yyyy, +mm - 1, +dd).getTime() > Date.now()) ? 'Cette date de naissance est dans le futur.' : ''; },
-        onComplete: function(){}, // pas d'auto-next : l'écran a 3 champs, le bouton valide tout
+        onComplete: function(){},
       });
       w2.appendChild(dobInp); sc.appendChild(w2);
       var hint = document.createElement('div'); hint.className = 'hint idle'; sc.appendChild(hint);
       var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.style.marginTop = '12px';
       go.textContent = (i + 1 < S.pax) ? 'Passager suivant →' : 'Continuer →';
       sc.appendChild(go);
+      // Dépôt pièce → OCR → pré-remplit les 3 cases (et joint la pièce au dossier)
+      function onCopaxFile(file){
+        if (!file) return;
+        if (file.size > 15 * 1024 * 1024) { ocrHint.className = 'hint bad'; ocrHint.textContent = 'Fichier très lourd — reprenez une photo simple.'; return; }
+        ocrHint.className = 'hint ok'; ocrHint.textContent = '🔍 Lecture de la pièce…';
+        fileToPiece(file).then(function(r){
+          if (!r) { ocrHint.className = 'hint bad'; ocrHint.textContent = 'Lecture impossible — saisissez à la main.'; return; }
+          S.paxData[i] = S.paxData[i] || {}; S.paxData[i].pieceFile = r.pieceFile;
+          if (r.pdf) { ocrHint.className = 'hint ok'; ocrHint.textContent = '✅ Document reçu — complétez le nom et la date ci-dessous.'; return; }
+          if (r.piece) {
+            if (r.piece.prenom) pInp.value = r.piece.prenom;
+            if (r.piece.nom) nInp.value = r.piece.nom;
+            if (r.piece.dob) dobInp.value = r.piece.dob;
+            ocrHint.className = 'hint ok'; ocrHint.textContent = '✅ Lu — vérifiez et complétez si besoin.';
+          } else { ocrHint.className = 'hint bad'; ocrHint.textContent = 'Photo peu lisible — saisissez à la main.'; }
+        });
+      }
+      drop.addEventListener('click', function(){ $('fileInp').value = ''; $('fileInp').click(); });
+      drop.addEventListener('dragover', function(e){ e.preventDefault(); drop.classList.add('over'); });
+      drop.addEventListener('dragleave', function(){ drop.classList.remove('over'); });
+      drop.addEventListener('drop', function(e){ e.preventDefault(); drop.classList.remove('over'); onCopaxFile(e.dataTransfer.files && e.dataTransfer.files[0]); });
+      $('fileInp').onchange = function(){ onCopaxFile($('fileInp').files && $('fileInp').files[0]); };
+      $('camInp').onchange = function(){ onCopaxFile($('camInp').files && $('camInp').files[0]); };
       function submitPax(){
         var p = pInp.value.trim(), n = nInp.value.trim();
         if (p.length < 2) { hint.className = 'hint bad'; hint.textContent = 'Indiquez son prénom.'; pInp.classList.add('bad'); return; }
@@ -478,7 +540,8 @@
         var dobFr = dobInp.value;
         var minor = isMinor(dobFr, S.date);
         S.names[i] = (p + ' ' + n).toUpperCase();
-        S.paxData[i] = { prenom: p.toUpperCase(), nom: n.toUpperCase(), dob: dobFr, minor: minor };
+        // fusion : on garde le fichier pièce éventuellement déjà déposé
+        S.paxData[i] = Object.assign(S.paxData[i] || {}, { prenom: p.toUpperCase(), nom: n.toUpperCase(), dob: dobFr, minor: minor });
         if (minor) { hint.className = 'hint ok'; hint.textContent = '👶 Mineur·e : c\'est vous (parent/tuteur) qui signez pour lui/elle.'; }
         setTimeout(function(){
           if (editing) { editing = false; idx = far; render(); return; }
@@ -646,7 +709,7 @@
   // Prénom et nom SÉPARÉS (retour fondateur) : chacun part dans la bonne case du contrat,
   // sans devinette sur les noms composés.
   function manualName(sc){
-    sc.innerHTML = '<h2>👤 Votre identité ?</h2><p class="sub">Comme sur votre pièce d\'identité.</p>';
+    sc.innerHTML = '<h2>👤 ' + (S.pax > 1 ? 'Passager 1 — votre' : 'Votre') + ' identité</h2><p class="sub">Comme sur votre pièce d\'identité.</p>';
     var w1 = document.createElement('div');
     w1.innerHTML = '<div class="hint idle" style="margin:0 0 4px">Prénom</div>';
     var pInp = document.createElement('input'); pInp.className = 'input'; pInp.placeholder = 'ex. Awa'; pInp.autocomplete = 'given-name';
@@ -688,28 +751,35 @@
       img.src = URL.createObjectURL(file);
     });
   }
+  // Fichier → { pieceFile (à joindre au dossier), piece (OCR ou null), pdf } — réutilisé par
+  // le passager 1 ET chaque co-passager (chacun peut déposer son passeport, pas seulement le 1er).
+  function fileToPiece(file){
+    return new Promise(function(res){
+      if (/pdf$/i.test(file.type)) {
+        var r = new FileReader();
+        r.onload = function(){ res({ pieceFile: { dataBase64: String(r.result).split(',')[1], mime: 'application/pdf', filename: file.name || 'piece.pdf' }, piece: null, pdf: true }); };
+        r.onerror = function(){ res(null); };
+        r.readAsDataURL(file);
+        return;
+      }
+      toJpeg(file).then(function(b64){
+        var pieceFile = { dataBase64: b64, mime: 'image/jpeg', filename: (file.name || 'piece') + '.jpg' };
+        fetch('/api/ocr-piece', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dataBase64: b64, mime: 'image/jpeg' }) })
+          .then(function(r){ return r.json(); })
+          .then(function(j){ res({ pieceFile: pieceFile, piece: (j && j.ok && j.piece && j.piece.name) ? j.piece : null, pdf: false }); })
+          .catch(function(){ res({ pieceFile: pieceFile, piece: null, pdf: false }); });
+      }).catch(function(){ res(null); });
+    });
+  }
   function handleFile(file, sc, hint){
     if (file.size > 15 * 1024 * 1024) { hint.className = 'hint bad'; hint.textContent = 'Fichier très lourd — reprenez une photo simple de la pièce.'; return; }
-    if (/pdf$/i.test(file.type)) {
-      var r = new FileReader();
-      r.onload = function(){ S.pieceFile = { dataBase64: String(r.result).split(',')[1], mime: 'application/pdf', filename: file.name || 'passeport.pdf' }; };
-      r.readAsDataURL(file);
-      manualName(sc); // PDF : rangé au dossier, le nom se tape (l'OCR web lit les photos)
-      return;
-    }
     hint.className = 'hint ok'; hint.textContent = '🔍 Lecture de votre pièce…';
-    toJpeg(file).then(function(b64){
-      S.pieceFile = { dataBase64: b64, mime: 'image/jpeg', filename: (file.name || 'passeport') + '.jpg' };
-      return fetch('/api/ocr-piece', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ dataBase64: b64, mime: 'image/jpeg' }),
-      }).then(function(r){ return r.json(); });
-    }).then(function(j){
-      if (j && j.ok && j.piece && j.piece.name) return confirmPiece(sc, j.piece);
+    fileToPiece(file).then(function(r){
+      if (!r) { hint.className = 'hint bad'; hint.textContent = 'Lecture impossible — tapez votre nom :'; setTimeout(function(){ manualName(sc); }, 600); return; }
+      S.pieceFile = r.pieceFile;
+      if (r.pdf) { manualName(sc); return; } // PDF : rangé au dossier, le nom se tape
+      if (r.piece) return confirmPiece(sc, r.piece);
       hint.className = 'hint bad'; hint.textContent = 'Lecture difficile (photo sombre ou floue ?) — tapez votre nom :';
-      setTimeout(function(){ manualName(sc); }, 600);
-    }).catch(function(){
-      hint.className = 'hint bad'; hint.textContent = 'Petit souci de lecture — tapez votre nom :';
       setTimeout(function(){ manualName(sc); }, 600);
     });
   }
@@ -744,7 +814,10 @@
       if (i > 0 && !pd.minor) { base.signatureImg = pd.sig || ''; base.signaturePending = !!pd.sigPending; } // co-adulte : sa signature (ou à recueillir)
       return base;
     });
-    var viaTxt = S.typeVol === 'escale' ? ('via ' + (S.via || 'escale à préciser')) : '';
+    // Correspondance : tronçons structurés (le mandat bascule en mode « correspondance » et pré-remplit chaque vol)
+    var isEsc = S.typeVol === 'escale' && S.legs && S.legs.length > 1;
+    var legsPayload = isEsc ? S.legs.map(function(l){ return { flightNum: l.num || '', flightDate: S.date, depAirport: l.dep, arrAirport: l.arr }; }) : null;
+    var viaTxt = isEsc ? ('via ' + S.legs.slice(0, -1).map(function(l){ return l.arr; }).join(', ')) : '';
     return fetch('/api/depot-create', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -778,7 +851,7 @@
           operatedBy: '', flightNum: S.flightNum, flightDate: S.date,
           pnr: '', incident: S.incident, pax: S.pax,
           passengerNames: names, passengersData: passengersData,
-          depAirport: S.dep, arrAirport: S.arr, connecting: viaTxt, flightMode: S.typeVol === 'escale' ? 'connecting' : 'direct', flightLegs: null,
+          depAirport: S.dep, arrAirport: S.arr, connecting: viaTxt, flightMode: isEsc ? 'connecting' : 'direct', flightLegs: legsPayload,
           signCity: '', signDate: nowIso.slice(0, 10),
           signatureImg: sigPng,
           source: 'depot-express.html', signedAt: nowIso,
@@ -788,13 +861,16 @@
     })
     .then(function(r){
       if (!r.ok) return r.json().catch(function(){ return {}; }).then(function(j){ throw new Error((j && j.error) || ('Erreur ' + r.status)); });
-      // La pièce lue rejoint le dossier (best-effort — le succès de la signature n'en dépend pas)
-      if (S.pieceFile) {
+      // Les pièces lues (passager 1 + chaque co-passager) rejoignent le dossier (best-effort)
+      var uploads = [];
+      if (S.pieceFile) uploads.push({ f: S.pieceFile, who: names[0] || '' });
+      (S.paxData || []).forEach(function(pd, k){ if (k > 0 && pd && pd.pieceFile) uploads.push({ f: pd.pieceFile, who: S.names[k] || '' }); });
+      uploads.forEach(function(u){
         fetch('/api/depot-upload', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ref: REF, filename: S.pieceFile.filename, mime: S.pieceFile.mime, dataBase64: S.pieceFile.dataBase64, kind: 'identite', passenger: names[0] || '' }),
+          body: JSON.stringify({ ref: REF, filename: u.f.filename, mime: u.f.mime, dataBase64: u.f.dataBase64, kind: 'identite', passenger: u.who }),
         }).catch(function(){});
-      }
+      });
       success();
     });
   }
