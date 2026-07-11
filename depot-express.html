@@ -79,6 +79,12 @@
     }
     .askrow .ok:active{transform:scale(.96)}
 
+    /* Date segmentée : Jour · Mois · Année */
+    .seg-date{display:flex; gap:8px}
+    .seg-date input{text-align:center}
+    .seg-date input:first-child{flex:0 0 76px}
+    .seg-date select{flex:1; min-width:0}
+    .seg-date input:last-child{flex:0 0 96px}
     /* Dépôt passeport */
     .drop{
       border:2px dashed var(--neon); border-radius:var(--radius-sm); background:var(--green-tint);
@@ -169,24 +175,26 @@
     var dt = new Date(y, m - 1, d);
     return dt.getFullYear() === y && dt.getMonth() === m - 1 && dt.getDate() === d;
   }
-  function maskedDateInput(cfg){
-    var i = document.createElement('input');
-    i.className = 'input mono'; i.type = 'text'; i.inputMode = 'numeric';
-    i.placeholder = 'JJ/MM/AAAA'; i.maxLength = 10; i.autocomplete = 'off';
-    if (cfg.value) i.value = cfg.value;
-    i.addEventListener('input', function(){
-      var d = i.value.replace(/\D/g, '').slice(0, 8);
-      var v = d.slice(0, 2) + (d.length > 2 ? '/' + d.slice(2, 4) : '') + (d.length > 4 ? '/' + d.slice(4, 8) : '');
-      i.value = v;
-      if (d.length === 8) {
-        var ok = isRealDate(d.slice(0, 2), d.slice(2, 4), d.slice(4, 8));
-        var extra = ok ? (cfg.check ? cfg.check(d.slice(0, 2), d.slice(2, 4), d.slice(4, 8)) : '') : 'Cette date n\'existe pas (vérifiez jour et mois).';
-        if (!ok || extra) { i.classList.add('bad'); if (cfg.onBad) cfg.onBad(extra || 'Date invalide.'); return; }
-        i.classList.remove('bad');
-        cfg.onComplete(v); // date complète et valide → on enchaîne, sans bouton
-      } else { i.classList.remove('bad'); if (cfg.onBad) cfg.onBad(''); }
-    });
-    return i;
+  // Date SEGMENTÉE : Jour (num) · Mois (menu déroulant, noms) · Année (num). Clair, sans ambiguïté JJ/MM,
+  // pavé numérique + auto-avance. Renvoie { el, value(), focus() } ; value() = 'JJ/MM/AAAA' ou ''.
+  var MOIS = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+  function segmentedDate(cfg){
+    cfg = cfg || {};
+    var wrap = document.createElement('div'); wrap.className = 'seg-date';
+    var jj = document.createElement('input'); jj.className = 'input'; jj.inputMode = 'numeric'; jj.maxLength = 2; jj.placeholder = 'Jour'; jj.autocomplete = 'off';
+    var mm = document.createElement('select'); mm.className = 'input';
+    var o0 = document.createElement('option'); o0.value = ''; o0.textContent = 'Mois'; mm.appendChild(o0);
+    MOIS.forEach(function(m, idx){ var o = document.createElement('option'); o.value = String(idx + 1).padStart(2, '0'); o.textContent = m; mm.appendChild(o); });
+    var yy = document.createElement('input'); yy.className = 'input'; yy.inputMode = 'numeric'; yy.maxLength = 4; yy.placeholder = 'Année'; yy.autocomplete = 'off';
+    wrap.appendChild(jj); wrap.appendChild(mm); wrap.appendChild(yy);
+    if (cfg.value) { var pm = String(cfg.value).match(/^(\d{2})\/(\d{2})\/(\d{4})$/); if (pm) { jj.value = pm[1]; mm.value = pm[2]; yy.value = pm[3]; } }
+    function val(){ var d = jj.value.replace(/\D/g, ''), mo = mm.value, y = yy.value.replace(/\D/g, ''); if (d && mo && y.length === 4) return d.padStart(2, '0') + '/' + mo + '/' + y; return ''; }
+    function done(){ var v = val(); if (!v) return; var m = v.match(/(\d{2})\/(\d{2})\/(\d{4})/); if (isRealDate(m[1], m[2], m[3]) && cfg.onComplete) cfg.onComplete(v); }
+    jj.addEventListener('input', function(){ jj.value = jj.value.replace(/\D/g, '').slice(0, 2); if (jj.value.length === 2) mm.focus(); });
+    mm.addEventListener('change', function(){ if (jj.value && !yy.value) yy.focus(); done(); });
+    yy.addEventListener('input', function(){ yy.value = yy.value.replace(/\D/g, '').slice(0, 4); if (yy.value.length === 4) done(); });
+    function set(v){ var m = String(v || '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); if (m) { jj.value = m[1].padStart(2, '0'); mm.value = m[2].padStart(2, '0'); yy.value = m[3]; } }
+    return { el: wrap, value: val, set: set, focus: function(){ jj.focus(); } };
   }
   // ── Indicatifs téléphone : liste MONDIALE (recherche libre « france », « sénégal »…), France par défaut.
   //    Diaspora + Europe en tête pour l'autocomplétion, puis tout le reste alphabétique.
@@ -487,23 +495,19 @@
       sc.appendChild(o); navRow(sc);
     },
     date: function(sc){
-      sc.innerHTML = '<h2>📅 La date du vol ?</h2><p class="sub">Tapez juste les chiffres — les / se placent seuls, et ça passe tout seul.</p>';
-      var hint = document.createElement('div'); hint.className = 'hint idle'; hint.textContent = 'ex. 15032026 pour le 15/03/2026';
-      var i = maskedDateInput({
+      sc.innerHTML = '<h2>📅 La date du vol ?</h2><p class="sub">Jour, mois, année — ça passe tout seul.</p>';
+      var hint = document.createElement('div'); hint.className = 'hint idle'; hint.style.marginTop = '8px';
+      var i = segmentedDate({
         value: S.date ? S.date.split('-').reverse().join('/') : '',
-        check: function(dd, mm, yyyy){
-          var dt = new Date(+yyyy, +mm - 1, +dd);
-          if (dt.getTime() > Date.now()) return 'Ce vol est dans le futur — on réclame pour un vol déjà passé.';
-          return '';
-        },
-        onBad: function(msg){ hint.className = msg ? 'hint bad' : 'hint idle'; hint.textContent = msg || 'ex. 15032026 pour le 15/03/2026'; },
         onComplete: function(v){
           var p = v.split('/');
+          if (new Date(+p[2], +p[1] - 1, +p[0]).getTime() > Date.now()) { hint.className = 'hint bad'; hint.textContent = 'Ce vol est dans le futur — on réclame pour un vol déjà passé.'; return; }
+          hint.className = 'hint idle'; hint.textContent = '';
           S.date = p[2] + '-' + p[1] + '-' + p[0]; // ISO pour le backend
           next();
         },
       });
-      sc.appendChild(i); sc.appendChild(hint);
+      sc.appendChild(i.el); sc.appendChild(hint);
       navRow(sc);
       setTimeout(function(){ i.focus(); }, 120);
     },
@@ -565,13 +569,9 @@
       var pInp = labeledField(sc, 'Prénom', pd0.prenom, false, '4px'); pInp.placeholder = 'ex. Mamadou';
       var nInp = labeledField(sc, 'Nom', pd0.nom, false, '10px'); nInp.placeholder = 'ex. Diallo';
       var w2 = document.createElement('div'); w2.style.marginTop = '10px';
-      w2.innerHTML = '<div class="hint idle" style="margin:0 0 4px">Date de naissance <span style="font-weight:500">(chiffres seuls : 20061985)</span></div>';
-      var dobInp = maskedDateInput({
-        value: pd0.dob || '',
-        check: function(dd, mm, yyyy){ return (new Date(+yyyy, +mm - 1, +dd).getTime() > Date.now()) ? 'Cette date de naissance est dans le futur.' : ''; },
-        onComplete: function(){},
-      });
-      w2.appendChild(dobInp); sc.appendChild(w2);
+      w2.innerHTML = '<div class="hint idle" style="margin:0 0 4px">Date de naissance</div>';
+      var dobObj = segmentedDate({ value: pd0.dob || '', onComplete: function(){} });
+      w2.appendChild(dobObj.el); sc.appendChild(w2);
       var hint = document.createElement('div'); hint.className = 'hint idle'; sc.appendChild(hint);
       var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.style.marginTop = '12px';
       go.textContent = (i + 1 < S.pax) ? 'Passager suivant →' : 'Continuer →';
@@ -588,7 +588,7 @@
           if (r.piece) {
             if (r.piece.prenom) pInp.value = r.piece.prenom;
             if (r.piece.nom) nInp.value = r.piece.nom;
-            if (r.piece.dob) dobInp.value = r.piece.dob;
+            if (r.piece.dob) dobObj.set(r.piece.dob);
             ocrHint.className = 'hint ok'; ocrHint.textContent = '✅ Lu — vérifiez et complétez si besoin.';
           } else { ocrHint.className = 'hint bad'; ocrHint.textContent = 'Photo peu lisible — saisissez à la main.'; }
         });
@@ -603,9 +603,9 @@
         var p = pInp.value.trim(), n = nInp.value.trim();
         if (p.length < 2) { hint.className = 'hint bad'; hint.textContent = 'Indiquez son prénom.'; pInp.classList.add('bad'); return; }
         if (n.length < 2) { hint.className = 'hint bad'; hint.textContent = 'Indiquez son nom.'; nInp.classList.add('bad'); return; }
-        var dm = dobInp.value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-        if (!dm || !isRealDate(dm[1], dm[2], dm[3])) { hint.className = 'hint bad'; hint.textContent = 'Date de naissance : tapez les chiffres, ex. 20061985.'; dobInp.classList.add('bad'); return; }
-        var dobFr = dobInp.value;
+        var dobFr = dobObj.value();
+        var dm = dobFr.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+        if (!dm || !isRealDate(dm[1], dm[2], dm[3])) { hint.className = 'hint bad'; hint.textContent = 'Indiquez sa date de naissance (jour, mois, année).'; return; }
         var minor = isMinor(dobFr, S.date);
         S.names[i] = (p + ' ' + n).toUpperCase();
         // fusion : on garde le fichier pièce éventuellement déjà déposé ; confirmed = validé par l'utilisateur
@@ -619,8 +619,7 @@
       }
       go.addEventListener('click', submitPax);
       pInp.addEventListener('keydown', function(e){ if (e.key === 'Enter') nInp.focus(); });
-      nInp.addEventListener('keydown', function(e){ if (e.key === 'Enter') dobInp.focus(); });
-      dobInp.addEventListener('keydown', function(e){ if (e.key === 'Enter') submitPax(); });
+      nInp.addEventListener('keydown', function(e){ if (e.key === 'Enter') dobObj.focus(); });
       setTimeout(function(){ pInp.focus(); }, 120);
       navRow(sc);
     },
@@ -786,6 +785,10 @@
     var nInp = document.createElement('input'); nInp.className = 'input'; nInp.placeholder = 'ex. Diallo'; nInp.autocomplete = 'family-name';
     if (S.manualNom) nInp.value = S.manualNom;
     w2.appendChild(nInp); sc.appendChild(w2);
+    var w3 = document.createElement('div'); w3.style.marginTop = '10px';
+    w3.innerHTML = '<div class="hint idle" style="margin:0 0 4px">Votre date de naissance</div>';
+    var dobObj = segmentedDate({ value: (S.paxData[0] && S.paxData[0].dob) || (S.piece && S.piece.dob) || '', onComplete: function(){} });
+    w3.appendChild(dobObj.el); sc.appendChild(w3);
     var hint = document.createElement('div'); hint.className = 'hint idle'; sc.appendChild(hint);
     var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.style.marginTop = '12px'; go.textContent = 'Continuer →';
     sc.appendChild(go);
@@ -793,13 +796,17 @@
       var p = pInp.value.trim(), n = nInp.value.trim();
       if (p.length < 2) { hint.className = 'hint bad'; hint.textContent = 'Indiquez votre prénom.'; pInp.classList.add('bad'); return; }
       if (n.length < 2) { hint.className = 'hint bad'; hint.textContent = 'Indiquez votre nom.'; nInp.classList.add('bad'); return; }
+      var dobFr = dobObj.value();
+      var dm = dobFr.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+      if (!dm || !isRealDate(dm[1], dm[2], dm[3])) { hint.className = 'hint bad'; hint.textContent = 'Indiquez votre date de naissance (jour, mois, année).'; return; }
       S.piece = null; S.manualPrenom = p.toUpperCase(); S.manualNom = n.toUpperCase();
       S.names[0] = (S.manualPrenom + ' ' + S.manualNom).trim();
+      S.paxData[0] = Object.assign(S.paxData[0] || {}, { prenom: S.manualPrenom, nom: S.manualNom, dob: dobFr, minor: isMinor(dobFr, S.date) });
       next();
     }
     go.addEventListener('click', submitNm);
-    nInp.addEventListener('keydown', function(e){ if (e.key === 'Enter') submitNm(); });
     pInp.addEventListener('keydown', function(e){ if (e.key === 'Enter') nInp.focus(); });
+    nInp.addEventListener('keydown', function(e){ if (e.key === 'Enter') dobObj.focus(); });
     setTimeout(function(){ pInp.focus(); }, 120);
     navRow(sc);
   }
@@ -927,7 +934,7 @@
     var passengersData = names.map(function(n, i){
       var pd = S.paxData[i] || {};
       var base = { name: n, prenom: pd.prenom || '', nom: pd.nom || '', dob: pd.dob || '', minor: !!pd.minor };
-      if (i === 0) { base.prenom = firstName; base.nom = lastName; if (S.piece) { base.dob = S.piece.dob || pd.dob || ''; base.birth = S.piece.lieuNaissance || ''; } }
+      if (i === 0) { base.prenom = firstName; base.nom = lastName; base.dob = (S.piece && S.piece.dob) || pd.dob || ''; if (S.piece) base.birth = S.piece.lieuNaissance || ''; base.minor = base.dob ? isMinor(base.dob, S.date) : false; }
       if (i > 0 && !pd.minor) { base.signatureImg = pd.sig || ''; base.signaturePending = !!pd.sigPending; } // co-adulte : sa signature (ou à recueillir)
       return base;
     });
