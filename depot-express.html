@@ -152,6 +152,42 @@
     piece: null, pieceFile: null,
     phone: '', email: '', startNow: false,
   };
+  // ── Saisie de date RAPIDE : on tape les chiffres, les / se posent seuls (15032026 → 15/03/2026).
+  //    Pavé numérique sur mobile, zéro calendrier à faire défiler (crucial pour les dates de naissance).
+  function isRealDate(dd, mm, yyyy){
+    var d = +dd, m = +mm, y = +yyyy;
+    if (!(y >= 1900 && y <= 2099) || !(m >= 1 && m <= 12) || !(d >= 1 && d <= 31)) return false;
+    var dt = new Date(y, m - 1, d);
+    return dt.getFullYear() === y && dt.getMonth() === m - 1 && dt.getDate() === d;
+  }
+  function maskedDateInput(cfg){
+    var i = document.createElement('input');
+    i.className = 'input mono'; i.type = 'text'; i.inputMode = 'numeric';
+    i.placeholder = 'JJ/MM/AAAA'; i.maxLength = 10; i.autocomplete = 'off';
+    if (cfg.value) i.value = cfg.value;
+    i.addEventListener('input', function(){
+      var d = i.value.replace(/\D/g, '').slice(0, 8);
+      var v = d.slice(0, 2) + (d.length > 2 ? '/' + d.slice(2, 4) : '') + (d.length > 4 ? '/' + d.slice(4, 8) : '');
+      i.value = v;
+      if (d.length === 8) {
+        var ok = isRealDate(d.slice(0, 2), d.slice(2, 4), d.slice(4, 8));
+        var extra = ok ? (cfg.check ? cfg.check(d.slice(0, 2), d.slice(2, 4), d.slice(4, 8)) : '') : 'Cette date n\'existe pas (vérifiez jour et mois).';
+        if (!ok || extra) { i.classList.add('bad'); if (cfg.onBad) cfg.onBad(extra || 'Date invalide.'); return; }
+        i.classList.remove('bad');
+        cfg.onComplete(v); // date complète et valide → on enchaîne, sans bouton
+      } else { i.classList.remove('bad'); if (cfg.onBad) cfg.onBad(''); }
+    });
+    return i;
+  }
+  // ── Indicatifs téléphone (diaspora d'abord), France présélectionnée ──
+  var DIALS = [
+    ['🇫🇷 France', '+33'], ['🇧🇪 Belgique', '+32'], ['🇸🇳 Sénégal', '+221'], ['🇨🇮 Côte d\'Ivoire', '+225'],
+    ['🇲🇱 Mali', '+223'], ['🇬🇳 Guinée', '+224'], ['🇨🇲 Cameroun', '+237'], ['🇳🇬 Nigeria', '+234'],
+    ['🇬🇭 Ghana', '+233'], ['🇬🇲 Gambie', '+220'], ['🇹🇬 Togo', '+228'], ['🇧🇯 Bénin', '+229'],
+    ['🇧🇫 Burkina Faso', '+226'], ['🇳🇪 Niger', '+227'], ['🇨🇩 RD Congo', '+243'], ['🇨🇬 Congo', '+242'],
+    ['🇱🇺 Luxembourg', '+352'], ['🇨🇭 Suisse', '+41'], ['🇬🇧 Royaume-Uni', '+44'], ['🇩🇪 Allemagne', '+49'],
+    ['🇮🇹 Italie', '+39'], ['🇪🇸 Espagne', '+34'], ['🇺🇸 USA / Canada', '+1'],
+  ];
   // Mineur à la date du vol (même logique que le bot) : un parent signe pour lui.
   function isMinor(dobFr, flightIso){
     var b = (dobFr || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); if (!b) return false;
@@ -347,14 +383,25 @@
       sc.appendChild(o); navRow(sc);
     },
     date: function(sc){
-      sc.innerHTML = '<h2>📅 La date du vol ?</h2><p class="sub">Elle passe toute seule dès que vous la choisissez.</p>';
-      var i = document.createElement('input'); i.className = 'input'; i.type = 'date';
-      i.max = new Date().toISOString().slice(0, 10);
-      if (S.date) i.value = S.date;
-      sc.appendChild(i);
-      i.addEventListener('change', function(){ if (i.value) { S.date = i.value; next(); } });
+      sc.innerHTML = '<h2>📅 La date du vol ?</h2><p class="sub">Tapez juste les chiffres — les / se placent seuls, et ça passe tout seul.</p>';
+      var hint = document.createElement('div'); hint.className = 'hint idle'; hint.textContent = 'ex. 15032026 pour le 15/03/2026';
+      var i = maskedDateInput({
+        value: S.date ? S.date.split('-').reverse().join('/') : '',
+        check: function(dd, mm, yyyy){
+          var dt = new Date(+yyyy, +mm - 1, +dd);
+          if (dt.getTime() > Date.now()) return 'Ce vol est dans le futur — on réclame pour un vol déjà passé.';
+          return '';
+        },
+        onBad: function(msg){ hint.className = msg ? 'hint bad' : 'hint idle'; hint.textContent = msg || 'ex. 15032026 pour le 15/03/2026'; },
+        onComplete: function(v){
+          var p = v.split('/');
+          S.date = p[2] + '-' + p[1] + '-' + p[0]; // ISO pour le backend
+          next();
+        },
+      });
+      sc.appendChild(i); sc.appendChild(hint);
       navRow(sc);
-      setTimeout(function(){ try { i.showPicker ? i.showPicker() : i.focus(); } catch(_) { i.focus(); } }, 200);
+      setTimeout(function(){ i.focus(); }, 120);
     },
     pax: function(sc){
       sc.innerHTML = '<h2>👪 Combien de passagers ?</h2><p class="sub">Chaque billet compte — jusqu\'à 600 € par personne.</p>';
@@ -410,12 +457,13 @@
       var nInp = document.createElement('input'); nInp.className = 'input'; nInp.placeholder = 'ex. Diallo'; nInp.autocomplete = 'off';
       if (pd0.nom) nInp.value = pd0.nom;
       w1.appendChild(nInp); sc.appendChild(w1);
-      var dobInp;
       var w2 = document.createElement('div'); w2.style.marginTop = '10px';
-      w2.innerHTML = '<div class="hint idle" style="margin:0 0 4px">Date de naissance</div>';
-      dobInp = document.createElement('input'); dobInp.className = 'input'; dobInp.type = 'date';
-      dobInp.max = new Date().toISOString().slice(0, 10);
-      if (pd0.dobIso) dobInp.value = pd0.dobIso;
+      w2.innerHTML = '<div class="hint idle" style="margin:0 0 4px">Date de naissance <span style="font-weight:500">(chiffres seuls : 20061985)</span></div>';
+      var dobInp = maskedDateInput({
+        value: pd0.dob || '',
+        check: function(dd, mm, yyyy){ return (new Date(+yyyy, +mm - 1, +dd).getTime() > Date.now()) ? 'Cette date de naissance est dans le futur.' : ''; },
+        onComplete: function(){}, // pas d'auto-next : l'écran a 3 champs, le bouton valide tout
+      });
       w2.appendChild(dobInp); sc.appendChild(w2);
       var hint = document.createElement('div'); hint.className = 'hint idle'; sc.appendChild(hint);
       var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.style.marginTop = '12px';
@@ -425,11 +473,12 @@
         var p = pInp.value.trim(), n = nInp.value.trim();
         if (p.length < 2) { hint.className = 'hint bad'; hint.textContent = 'Indiquez son prénom.'; pInp.classList.add('bad'); return; }
         if (n.length < 2) { hint.className = 'hint bad'; hint.textContent = 'Indiquez son nom.'; nInp.classList.add('bad'); return; }
-        if (!dobInp.value) { hint.className = 'hint bad'; hint.textContent = 'Indiquez sa date de naissance.'; return; }
-        var dobFr = dobInp.value.split('-').reverse().join('/');
+        var dm = dobInp.value.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+        if (!dm || !isRealDate(dm[1], dm[2], dm[3])) { hint.className = 'hint bad'; hint.textContent = 'Date de naissance : tapez les chiffres, ex. 20061985.'; dobInp.classList.add('bad'); return; }
+        var dobFr = dobInp.value;
         var minor = isMinor(dobFr, S.date);
         S.names[i] = (p + ' ' + n).toUpperCase();
-        S.paxData[i] = { prenom: p.toUpperCase(), nom: n.toUpperCase(), dob: dobFr, dobIso: dobInp.value, minor: minor };
+        S.paxData[i] = { prenom: p.toUpperCase(), nom: n.toUpperCase(), dob: dobFr, minor: minor };
         if (minor) { hint.className = 'hint ok'; hint.textContent = '👶 Mineur·e : c\'est vous (parent/tuteur) qui signez pour lui/elle.'; }
         setTimeout(function(){
           if (editing) { editing = false; idx = far; render(); return; }
@@ -446,11 +495,33 @@
     },
     phone: function(sc){
       sc.innerHTML = '<h2>📞 Votre téléphone ?</h2><p class="sub">Un expert vous rappelle depuis le <b>+33 7 56 86 36 30</b> — enregistrez-le.</p>';
-      inputRow(sc, {
-        placeholder: '+33 6 12 34 56 78', type: 'tel', inputmode: 'tel', autocomplete: 'tel', value: S.phone,
-        validate: function(v){ return v.replace(/\D/g, '').length >= 8 ? '' : 'Ce numéro semble trop court (8 chiffres minimum).'; },
-        done: function(v){ S.phone = v; next(); },
+      var row = document.createElement('div'); row.className = 'askrow';
+      var sel = document.createElement('select'); sel.className = 'input';
+      sel.style.cssText = 'flex:0 0 148px; padding-right:6px';
+      DIALS.forEach(function(d){
+        var op = document.createElement('option'); op.value = d[1]; op.textContent = d[0] + ' ' + d[1];
+        sel.appendChild(op);
       });
+      sel.value = S.phoneCc || '+33'; // 🇫🇷 présélectionné
+      var i = document.createElement('input'); i.className = 'input'; i.type = 'tel'; i.inputMode = 'tel';
+      i.autocomplete = 'tel-national'; i.placeholder = '6 12 34 56 78'; i.style.minWidth = '0';
+      if (S.phoneNat) i.value = S.phoneNat;
+      var ok = document.createElement('button'); ok.type = 'button'; ok.className = 'ok'; ok.textContent = '➜';
+      row.appendChild(sel); row.appendChild(i); row.appendChild(ok);
+      var hint = document.createElement('div'); hint.className = 'hint idle'; hint.textContent = 'Le numéro où l\'on peut vous joindre (WhatsApp ou appel).';
+      sc.appendChild(row); sc.appendChild(hint);
+      function go(){
+        var nat = i.value.replace(/\D/g, '').replace(/^0+/, ''); // on retire le 0 national (06… → 6…)
+        var min = sel.value === '+33' ? 9 : 6;
+        if (nat.length < min) { i.classList.add('bad'); hint.className = 'hint bad'; hint.textContent = sel.value === '+33' ? 'Numéro français : 9 chiffres après le 0 (ex. 6 12 34 56 78).' : 'Ce numéro semble trop court.'; return; }
+        i.classList.remove('bad');
+        S.phoneCc = sel.value; S.phoneNat = i.value.trim();
+        S.phone = sel.value + nat; // format international unique pour le contrat et le rappel
+        next();
+      }
+      ok.addEventListener('click', go);
+      i.addEventListener('keydown', function(e){ if (e.key === 'Enter') { e.preventDefault(); go(); } });
+      setTimeout(function(){ i.focus(); }, 120);
       navRow(sc);
     },
     email: function(sc){
