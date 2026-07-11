@@ -350,6 +350,8 @@
   }
 
   // ── Les écrans ──────────────────────────────────────────────────────────────
+  // N° de vol : 2-3 caractères (lettres/chiffres, ex. AF, U2, 3O) + 1 à 4 chiffres (+ suffixe lettre éventuel).
+  var FLIGHTNUM_RE = /^[A-Z0-9]{2,3}\d{1,4}[A-Z]?$/;
   // Champ rectangulaire étiqueté (réutilisé pour vol/légs/identité)
   function labeledField(sc, label, value, mono, mt){
     var w = document.createElement('div'); if (mt) w.style.marginTop = mt;
@@ -380,16 +382,18 @@
       if (S.typeVol === 'escale') return SCREENS._leg(sc, 0); // correspondance → saisie tronçon par tronçon
       // VOL DIRECT : numéro + ville de départ + ville d'arrivée sur un écran
       sc.innerHTML = '<h2>✈️ Votre vol</h2><p class="sub">Le numéro de vol et le trajet (départ → arrivée).</p>';
-      var num = labeledField(sc, 'Numéro de vol <span style="font-weight:500">(ex. AF719)</span>', S.flightNum, true);
-      var dep = labeledField(sc, 'Ville de départ', S.dep, false, '10px');
-      var arr = labeledField(sc, 'Ville d\'arrivée', S.arr, false, '10px');
-      var hint = document.createElement('div'); hint.className = 'hint idle'; hint.textContent = 'Le numéro est sur votre billet (laissez vide si vous ne l\'avez plus).'; sc.appendChild(hint);
+      var num = labeledField(sc, 'Numéro de vol', S.flightNum, true); num.placeholder = 'ex. AF 718';
+      var dep = labeledField(sc, 'Ville de départ', S.dep, false, '10px'); dep.placeholder = 'ex. Dakar';
+      var arr = labeledField(sc, 'Ville d\'arrivée', S.arr, false, '10px'); arr.placeholder = 'ex. Paris';
+      var hint = document.createElement('div'); hint.className = 'hint idle'; hint.textContent = 'Le numéro de vol est sur votre billet (ex. AF 718).'; sc.appendChild(hint);
       var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.style.marginTop = '12px'; go.textContent = 'Continuer →'; sc.appendChild(go);
       function ok(){
+        var fn = num.value.trim().toUpperCase().replace(/\s+/g, '');
         var d = dep.value.trim(), a = arr.value.trim();
+        if (!FLIGHTNUM_RE.test(fn)) { hint.className = 'hint bad'; hint.textContent = 'Indiquez le numéro de vol (ex. AF 718).'; num.classList.add('bad'); return; }
         if (d.length < 2) { hint.className = 'hint bad'; hint.textContent = 'Indiquez la ville de départ.'; dep.classList.add('bad'); return; }
         if (a.length < 2) { hint.className = 'hint bad'; hint.textContent = 'Indiquez la ville d\'arrivée.'; arr.classList.add('bad'); return; }
-        S.flightNum = num.value.trim().toUpperCase().replace(/\s+/g, ''); S.dep = d; S.arr = a; S.legs = []; next();
+        S.flightNum = fn; S.dep = d; S.arr = a; S.legs = []; next();
       }
       go.addEventListener('click', ok);
       num.addEventListener('keydown', function(e){ if (e.key === 'Enter') dep.focus(); });
@@ -404,16 +408,18 @@
       var leg = S.legs[li] || {};
       var prevArr = (li > 0 && S.legs[li - 1]) ? S.legs[li - 1].arr : '';
       sc.innerHTML = '<h2>✈️ Vol ' + (li + 1) + ' de votre trajet</h2><p class="sub">' + (li > 0 ? 'Le départ est <b>pré-rempli</b> depuis le vol précédent — indiquez juste la suite.' : 'Numéro et trajet de votre <b>premier</b> vol.') + '</p>';
-      var num = labeledField(sc, 'Numéro de vol ' + (li > 0 ? '<span style="font-weight:500">(facultatif)</span>' : '<span style="font-weight:500">(ex. AT540)</span>'), leg.num, true);
-      var dep = labeledField(sc, 'Ville de départ', leg.dep || prevArr, false, '10px');
-      var arr = labeledField(sc, 'Ville d\'arrivée', leg.arr, false, '10px');
+      var num = labeledField(sc, 'Numéro de vol', leg.num, true); num.placeholder = 'ex. AF 718';
+      var dep = labeledField(sc, 'Ville de départ', leg.dep || prevArr, false, '10px'); dep.placeholder = 'ex. Dakar';
+      var arr = labeledField(sc, 'Ville d\'arrivée', leg.arr, false, '10px'); arr.placeholder = 'ex. Paris';
       var hint = document.createElement('div'); hint.className = 'hint idle'; sc.appendChild(hint);
       var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.style.marginTop = '12px'; go.textContent = 'Ce vol est noté →'; sc.appendChild(go);
       function ok(){
+        var fn = num.value.trim().toUpperCase().replace(/\s+/g, '');
         var d = dep.value.trim(), a = arr.value.trim();
+        if (!FLIGHTNUM_RE.test(fn)) { hint.className = 'hint bad'; hint.textContent = 'Indiquez le numéro de ce vol (ex. AF 718).'; num.classList.add('bad'); return; }
         if (d.length < 2) { hint.className = 'hint bad'; hint.textContent = 'Indiquez la ville de départ.'; dep.classList.add('bad'); return; }
         if (a.length < 2) { hint.className = 'hint bad'; hint.textContent = 'Indiquez la ville d\'arrivée.'; arr.classList.add('bad'); return; }
-        S.legs[li] = { num: num.value.trim().toUpperCase().replace(/\s+/g, ''), dep: d, arr: a };
+        S.legs[li] = { num: fn, dep: d, arr: a };
         S.legs = S.legs.slice(0, li + 1); // si on refait ce tronçon, on repart proprement de là
         // Un autre vol après ?
         sc.innerHTML = '<h2>🔄 Un autre vol après ?</h2><p class="sub">Vol ' + (li + 1) + ' noté : <b>' + esc(d) + ' → ' + esc(a) + '</b>. Y avait-il encore un vol après (correspondance) ?</p>';
