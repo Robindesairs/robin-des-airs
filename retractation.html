@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Me rétracter, Robin des Airs</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/favicon.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--navy:#0B1F3A;--neon:#00C87A;--neon-ink:#047857;--neon-dark:#059669;--ink:#132A20;--muted:#62718a;--line:#E2E6EE;--surface-2:#f5f8fb;--danger:#c0392b;--danger-bg:#fdecea}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Montserrat',system-ui,sans-serif;background:#F7F8FA;color:var(--ink);min-height:100dvh;display:flex;flex-direction:column}
+    .topbar{background:var(--navy);color:#fff;padding:12px 16px;font-weight:800;font-size:16px}
+    .topbar .accent{color:#00E5A0}
+    main{flex:1;max-width:520px;margin:0 auto;width:100%;padding:24px 16px 48px}
+    .card{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 2px 16px rgba(11,31,58,.06);padding:22px 20px}
+    h1{font-size:21px;color:var(--navy);letter-spacing:-.02em;margin-bottom:8px}
+    p{font-size:14.5px;line-height:1.6;color:var(--muted);margin-bottom:12px}
+    p b{color:var(--navy)}
+    .ref{font-family:ui-monospace,Menlo,monospace;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:13.5px;color:var(--navy);margin:4px 0 14px;word-break:break-all}
+    label{display:block;font-size:12.5px;font-weight:700;color:var(--navy);margin:10px 0 4px}
+    textarea{width:100%;font:inherit;font-size:15px;border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;resize:vertical;min-height:70px;outline:none}
+    textarea:focus{border-color:var(--neon)}
+    .btn{display:block;width:100%;margin-top:16px;border:0;border-radius:12px;cursor:pointer;font:inherit;font-size:15.5px;font-weight:800;padding:15px;color:#fff;background:linear-gradient(135deg,#e05a4a,var(--danger));box-shadow:0 4px 14px rgba(192,57,43,.3);transition:.15s}
+    .btn:disabled{opacity:.5;cursor:default;box-shadow:none}
+    .btn.keep{background:linear-gradient(135deg,var(--neon),var(--neon-dark));box-shadow:0 4px 14px rgba(5,150,105,.3);margin-top:10px}
+    .msg{display:none;margin-top:14px;font-size:13.5px;font-weight:600;border-radius:10px;padding:11px 13px}
+    .msg.err{display:block;background:var(--danger-bg);color:var(--danger);border:1px solid #f3c6c0}
+    .msg.ok{display:block;background:#e8f7f0;color:var(--neon-ink);border:1px solid #bfe6d3}
+    .note{font-size:12px;color:var(--muted);margin-top:14px;line-height:1.5}
+    .done{text-align:center}
+    .done .seal{width:56px;height:56px;border-radius:50%;background:#e8f7f0;color:var(--neon-dark);display:grid;place-items:center;font-size:30px;margin:0 auto 12px}
+    a{color:var(--neon-ink);font-weight:700}
+  </style>
+</head>
+<body>
+  <header class="topbar">Robin <span class="accent">des Airs</span> 🏹</header>
+  <main>
+    <div class="card" id="card">
+      <h1>Me rétracter de mon dossier</h1>
+      <p>Vous êtes dans votre <b>délai de 14 jours</b> : vous pouvez vous rétracter <b>sans frais et sans justification</b>. Votre créance vous revient automatiquement.</p>
+      <div class="ref" id="ref">Référence : —</div>
+      <label for="reason">Un mot sur la raison ? (facultatif)</label>
+      <textarea id="reason" placeholder="Ex. j'ai changé d'avis…"></textarea>
+      <button class="btn" id="confirm">Confirmer ma rétractation</button>
+      <button class="btn keep" onclick="window.location.href='/'">← Non, je garde mon dossier</button>
+      <div class="msg" id="msg"></div>
+      <p class="note">🔒 Votre demande est <b>horodatée et enregistrée</b> comme preuve. Une question ? <a href="https://wa.me/33756863630" target="_blank" rel="noopener">Écrivez-nous sur WhatsApp</a> ou à <a href="mailto:contact@robindesairs.eu">contact@robindesairs.eu</a>.</p>
+    </div>
+  </main>
+<script>
+(function(){
+  var P = new URLSearchParams(location.search);
+  var REF = (P.get('r') || P.get('ref') || '').trim();
+  var $ = function(id){ return document.getElementById(id); };
+  $('ref').textContent = 'Référence : ' + (REF || 'inconnue');
+  if (!REF) { $('confirm').disabled = true; $('msg').className = 'msg err'; $('msg').textContent = 'Lien incomplet : référence de dossier manquante. Écrivez-nous sur WhatsApp et on s\'en occupe.'; }
+  $('confirm').addEventListener('click', function(){
+    var btn = $('confirm'); btn.disabled = true; btn.textContent = 'Enregistrement…'; $('msg').className = 'msg';
+    fetch('/api/retract', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ ref: REF, reason: $('reason').value.trim() }) })
+      .then(function(r){ return r.json().catch(function(){ return {}; }).then(function(j){ if (!r.ok || !j.ok) throw new Error((j && j.error) || ('Erreur ' + r.status)); return j; }); })
+      .then(function(j){
+        $('card').innerHTML = '<div class="done"><div class="seal">✓</div><h1>Rétractation enregistrée</h1>'
+          + '<p>C\'est noté' + (j.already ? ' (déjà enregistrée)' : '') + '. Votre contrat de cession est <b>annulé</b> et votre créance vous revient. Vous n\'avez plus rien à faire.</p>'
+          + '<p>Référence : <b>' + (REF.replace(/[<>&]/g,'')) + '</b></p>'
+          + '<p class="note">Un email de confirmation peut vous être envoyé. Besoin d\'aide ? <a href="https://wa.me/33756863630" target="_blank" rel="noopener">WhatsApp</a>.</p></div>';
+      })
+      .catch(function(e){ btn.disabled = false; btn.textContent = 'Confirmer ma rétractation'; $('msg').className = 'msg err'; $('msg').textContent = '⚠️ ' + (e.message || 'Enregistrement impossible.') + ' Réessayez, ou envoyez un email à contact@robindesairs.eu avec « Je me rétracte, réf. ' + REF + ' » — votre rétractation reste valable.'; });
+  });
+})();
+</script>
+</body>
+</html>

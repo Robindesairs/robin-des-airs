@@ -66,6 +66,7 @@
 /api/depot-upload            /.netlify/functions/depot-upload            200
 /api/ocr-piece               /.netlify/functions/ocr-piece               200
 /api/ocr-eticket             /.netlify/functions/ocr-eticket             200
+/api/retract                 /.netlify/functions/retract                 200
 /api/rib-submit              /.netlify/functions/rib-submit              200
 /api/flight-verdict          /.netlify/functions/flight-verdict          200
 /api/radar-eligible-registry /.netlify/functions/radar-eligible-registry 200
@@ -96,6 +97,7 @@
 # Redirections pour URLs sans .html
 /choix-reclamation           /choix-reclamation.html           200
 /depot-simple                /depot-simple.html                200
+/retractation                /retractation.html                200
 /dossier                     /dossier.html                     200
 /merci-dossier               /merci-dossier.html               200
 /parrainage                  /parrainage.html                  200
