@@ -324,6 +324,8 @@
   // puis on CAPTE le contact tôt (lead récupérable même en cas d'abandon), et seulement après les pièces.
   var FLOW = ['incident', 'tiers', 'annul14', 'eticket', 'conn', 'flight', 'date', 'pax', 'verdict', 'phone', 'email', 'passport', 'copax', 'sign'];
   var idx = 0, far = 0, editing = false, backwards = false, reflow = false;
+  // Tactile (téléphone) : pas de glisser-déposer → on parle de « toucher », pas de « glisser ».
+  var isTouch = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window);
   function applicable(k){
     if (k === 'annul14') return S.incident === 'cancel';       // gate 14 jours : annulation uniquement
     if (k === 'copax') return S.pax > 1;
@@ -617,7 +619,7 @@
     eticket: function(sc){
       sc.innerHTML = '<h2>📄 Votre e-billet ou carte d\'embarquement</h2><p class="sub"><b>On lit tout et on remplit votre dossier</b> — n° de vol, trajet, date, passagers. Zéro erreur de saisie.</p>';
       var drop = document.createElement('div'); drop.className = 'drop';
-      drop.innerHTML = '<div class="big">📄</div><p>Glissez votre e-billet ici</p><small>Photo ou PDF · lecture automatique · 🔒 lu par une IA, jamais revendu</small>';
+      drop.innerHTML = '<div class="big">📄</div><p>' + (isTouch ? 'Touchez pour ajouter votre e-billet' : 'Glissez votre e-billet ici') + '</p><small>Photo ou PDF · lecture automatique · 🔒 lu par une IA, jamais revendu</small>';
       sc.appendChild(drop);
       var o = document.createElement('div'); o.className = 'opts grid2'; o.style.marginTop = '10px';
       o.appendChild(optButton('<span class="ic">📷</span><span>Prendre une photo</span>', function(){ $('camInp').value = ''; $('camInp').click(); }));
@@ -679,7 +681,7 @@
     passport: function(sc){
       sc.innerHTML = '<h2>🛂 ' + (S.pax > 1 ? 'Passager 1 — votre' : 'Votre') + ' passeport <span style="font-weight:500;font-size:14px;color:var(--muted)">(de préférence)</span></h2><p class="sub">Ou carte d\'identité. <b>On lit tout, vous n\'écrivez rien.</b> Ça remplit votre contrat sans erreur.</p>';
       var drop = document.createElement('div'); drop.className = 'drop';
-      drop.innerHTML = '<div class="big">🛂</div><p>Glissez votre passeport ici</p><small>🔒 Lu par une IA pour pré-remplir votre contrat, jamais revendu</small>';
+      drop.innerHTML = '<div class="big">🛂</div><p>' + (isTouch ? 'Touchez pour ajouter votre passeport' : 'Glissez votre passeport ici') + '</p><small>🔒 Lu par une IA pour pré-remplir votre contrat, jamais revendu</small>';
       sc.appendChild(drop);
       // 2 vraies options rectangulaires : photo (caméra sur mobile) ou fichier (galerie / PDF)
       var o = document.createElement('div'); o.className = 'opts grid2'; o.style.marginTop = '10px';
