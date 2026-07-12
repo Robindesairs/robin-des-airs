@@ -855,6 +855,7 @@
         + '<li>🤝 Vous nous <b>cédez votre créance</b> : Robin des Airs se bat en son nom, la compagnie nous paie, <b>on vous reverse votre part</b> — vous ne gérez rien.</li>'
         + '<li>💶 Vous recevez <b>75 %</b> du montant récupéré (<b>60 %</b> si tribunal). <b>0 € si rien n\'est récupéré</b> — vous n\'avancez jamais un centime.</li>'
         + '<li>🛡️ Même au tribunal : avocat, huissier et greffe <b>à notre charge</b>.</li>'
+        + '<li>✍️ <b>Votre signature figurera sur le contrat de cession transmis à la compagnie aérienne</b>, comme preuve que vous nous avez confié votre créance.</li>'
         + '<li>📅 <b>14 jours pour vous rétracter</b>, sans frais · correspondances couvertes.</li>'
         + '</ul>';
       sc.appendChild(box);
@@ -923,7 +924,7 @@
       sc.appendChild(go);
       var se = document.createElement('div'); se.className = 'suberr'; sc.appendChild(se);
       var rg = document.createElement('p'); rg.className = 'rgpd'; rg.style.marginTop = '12px';
-      rg.innerHTML = '<span>🔒</span><span>Signature manuscrite horodatée, adresse IP enregistrée et document scellé (empreinte). Transmission chiffrée (HTTPS). Rétractation 14 jours. RGPD.</span>';
+      rg.innerHTML = '<span>🔒</span><span>Signature manuscrite horodatée, adresse IP enregistrée et document scellé (empreinte). Elle figure sur le contrat de cession transmis à la compagnie (preuve de la cession). Transmission chiffrée (HTTPS). Rétractation 14 jours. RGPD.</span>';
       sc.appendChild(rg);
       function refresh(){ var coOk = coSigs.every(function(s){ return s.drawn || s.absent; }); go.disabled = !(drawn && ck0.checked && ck1.checked && coOk); }
       [ck0, ck1, ck3].forEach(function(c){ c.addEventListener('change', refresh); });
