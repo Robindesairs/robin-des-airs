@@ -186,7 +186,7 @@
 
   // ── État du dossier ─────────────────────────────────────────────────────────
   var S = {
-    incident: '', flightNum: '', dep: '', arr: '', date: '', pnr: '',
+    incident: '', tiers: '', flightNum: '', dep: '', arr: '', date: '', pnr: '',
     typeVol: '',                          // direct | escale
     pax: 0, names: [], paxData: [],       // paxData[i] = { prenom, nom, dob, minor, sig, pieceFile }
     piece: null, pieceFile: null,         // passager 1 : pièce d'identité
@@ -319,7 +319,7 @@
   // Corriger via une chip re-ouvre l'écran, puis la réponse renvoie DIRECT au point le plus loin.
   // Ordre v2 (conversion) : on montre l'ÉLIGIBILITÉ + le MONTANT tôt (dopamine avant l'effort),
   // puis on CAPTE le contact tôt (lead récupérable même en cas d'abandon), et seulement après les pièces.
-  var FLOW = ['incident', 'annul14', 'eticket', 'conn', 'flight', 'date', 'pax', 'verdict', 'phone', 'email', 'passport', 'copax', 'sign'];
+  var FLOW = ['incident', 'tiers', 'annul14', 'eticket', 'conn', 'flight', 'date', 'pax', 'verdict', 'phone', 'email', 'passport', 'copax', 'sign'];
   var idx = 0, far = 0, editing = false, backwards = false;
   function applicable(k){
     if (k === 'annul14') return S.incident === 'cancel';       // gate 14 jours : annulation uniquement
@@ -364,6 +364,7 @@
     if (FLOW[idx] === 'sign') return;
     var items = [];
     if (S.incident) items.push(['incident', '⏱️', INCIDENT_LABEL[S.incident]]);
+    if (S.tiers === 'non') items.push(['tiers', '⚖️', 'Aucun tiers']);
     if (S.incident === 'cancel' && S.annul14) items.push(['annul14', '📅', S.annul14 === 'moins14' ? 'Prévenu < 14 j' : 'Délai à vérifier']);
     if (S.typeVol) items.push(['conn', '🛤️', S.typeVol === 'direct' ? 'Direct' : ('Correspondance' + (S.legs && S.legs.length ? ' · ' + S.legs.length + ' vols' : ''))]);
     if (S.dep && S.arr) items.push(['flight', '✈️', S.dep + ' → ' + S.arr]);
@@ -498,6 +499,27 @@
       o.appendChild(optButton('<span class="ic">⏱️</span><span>Retard de 3 h ou +<small>Arrivée avec au moins 3 h de retard</small></span>', function(){ S.incident = 'delay'; next(); }));
       o.appendChild(optButton('<span class="ic">🚫</span><span>Vol annulé<small>Votre vol n\'a pas eu lieu</small></span>', function(){ S.incident = 'cancel'; next(); }));
       o.appendChild(optButton('<span class="ic">🛑</span><span>Refus d\'embarquement<small>Surbooking : embarquement refusé</small></span>', function(){ S.incident = 'denied'; next(); }));
+      sc.appendChild(o); navRow(sc);
+    },
+    // Filtre TIERS : on ne peut pas prendre en cession une créance déjà confiée à un avocat, une autre
+    // société d'indemnisation, ou déjà portée devant le tribunal (une même créance ne se cède qu'une fois
+    // ; double cession / retrait litigieux). « Oui » => on s'arrête proprement, on n'est pas bloqué.
+    tiers: function(sc){
+      sc.innerHTML = '<h2>⚖️ Ce vol est-il déjà pris en charge ailleurs ?</h2><p class="sub">Avocat, autre société d\'indemnisation, ou procédure déjà lancée au tribunal. Un clic.</p>';
+      var o = document.createElement('div'); o.className = 'opts';
+      o.appendChild(optButton('<span class="ic">✅</span><span>Non, personne d\'autre<small>ni avocat, ni société, aucune procédure en cours</small></span>', function(){ S.tiers = 'non'; next(); }));
+      o.appendChild(optButton('<span class="ic">⚖️</span><span>Oui — avocat, autre société ou tribunal<small>ce vol est déjà confié ailleurs</small></span>', function(){
+        S.tiers = 'oui';
+        sc.innerHTML = '<h2>😕 On ne peut pas reprendre ce dossier</h2>'
+          + '<p class="sub">Ce vol est déjà confié à un avocat, une autre société ou fait l\'objet d\'une procédure. On ne peut pas prendre en charge une créance <b>déjà remise à un tiers</b> — une même créance ne se cède qu\'une fois. C\'est pour <b>vous protéger</b> autant que nous.</p>'
+          + '<p class="sub">💡 Terminez d\'abord avec eux. Et pensez à vos <b>autres vols des 5 dernières années</b> (retard 3 h+, annulation, surbooking) : jusqu\'à <b>600 € par personne</b>, ceux-là, on peut les prendre.</p>';
+        var o2 = document.createElement('div'); o2.className = 'opts';
+        o2.appendChild(optButton('<span class="ic">✏️</span><span>Je me suis trompé — corriger ma réponse</span>', function(){ S.tiers = ''; sc.innerHTML = ''; SCREENS.tiers(sc); }));
+        o2.appendChild(optButton('<span class="ic">✈️</span><span>Vérifier un autre vol</span>', function(){ window.location.href = '/depot-express.html'; }));
+        o2.appendChild(optButton('<span class="ic">💬</span><span>Poser ma question sur WhatsApp</span>', function(){ window.open('https://wa.me/33756863630', '_blank'); }, true));
+        sc.appendChild(o2);
+        navRow(sc);
+      }));
       sc.appendChild(o); navRow(sc);
     },
     flight: function(sc){
@@ -1094,6 +1116,7 @@
         name: full, phone: S.phone, email: S.email,
         flightNum: S.flightNum, route: (S.dep && S.arr) ? (S.dep + ' → ' + S.arr) : '',
         dep: S.dep, arr: S.arr, date: S.date, incident: S.incident,
+        thirdPartyFree: S.tiers === 'non', // déclare : ni avocat, ni autre société, ni procédure en cours
         pax: S.pax, passengers: passengersData, website: $('website').value,
       }),
     })
