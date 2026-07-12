@@ -120,6 +120,14 @@
     .ss-box li b{color:var(--navy)}
     .ss-box .ss-link{display:inline-block; margin-top:9px; font-size:13.5px; font-weight:800; color:var(--neon-ink); text-decoration:none}
     .ss-box .ss-link:hover{text-decoration:underline}
+    /* Accordéon contrat complet (texte physiquement sur la page de signature) */
+    .contract-acc{border:1px solid var(--line); border-radius:var(--radius-sm); margin:0 0 8px; overflow:hidden; background:#fff}
+    .contract-acc summary{cursor:pointer; padding:12px 14px; font-weight:800; font-size:13.5px; color:var(--neon-ink); list-style:none}
+    .contract-acc summary::-webkit-details-marker{display:none}
+    .contract-acc summary::before{content:'▸ '}
+    .contract-acc[open] summary::before{content:'▾ '}
+    .contract-acc .acc-body{border-top:1px solid var(--line)}
+    .contract-acc iframe{width:100%; height:360px; border:0; display:block; background:#fff}
     .ck{display:flex; gap:10px; align-items:flex-start; margin-top:11px; font-size:12.9px; line-height:1.55; color:var(--ink-soft); cursor:pointer}
     .ck input{margin-top:2px; width:17px; height:17px; flex:none; accent-color:var(--neon-dark)}
     .ck a{color:var(--neon-ink); font-weight:700}
@@ -760,8 +768,15 @@
         + '<li>💶 Vous recevez <b>75 %</b> du montant récupéré (<b>60 %</b> si tribunal). <b>0 € si rien n\'est récupéré</b> — vous n\'avancez jamais un centime.</li>'
         + '<li>🛡️ Même au tribunal : avocat, huissier et greffe <b>à notre charge</b>.</li>'
         + '<li>📅 <b>14 jours pour vous rétracter</b>, sans frais · correspondances couvertes.</li>'
-        + '</ul><a class="ss-link" href="/autorisation.html" target="_blank" rel="noopener">📄 Lire le contrat complet →</a>';
+        + '</ul>';
       sc.appendChild(box);
+      // Contrat COMPLET en accordéon, physiquement sur la page (le plus sûr juridiquement).
+      // iframe de la page contrat propre (/documents/mandat-fr) — une seule source de vérité, chargée au dépliage.
+      var acc = document.createElement('details'); acc.className = 'contract-acc';
+      acc.innerHTML = '<summary>📄 Lire le contrat de cession de créance complet</summary><div class="acc-body"><iframe title="Contrat de cession de créance — Robin des Airs" loading="lazy"></iframe></div>';
+      sc.appendChild(acc);
+      var _frm = acc.querySelector('iframe');
+      acc.addEventListener('toggle', function(){ if (acc.open && !_frm.getAttribute('src')) _frm.setAttribute('src', '/documents/mandat-fr.html?print=1'); });
       // Signature du signataire principal (dessin) — on dit QUI signe.
       var mainName = S.names[0] || 'Vous';
       var mainLbl = document.createElement('div'); mainLbl.className = 'hint idle'; mainLbl.style.margin = '2px 0 4px';
@@ -812,8 +827,9 @@
         coSigs.push(st);
       });
       function ckRow(html){ var l = document.createElement('label'); l.className = 'ck'; l.innerHTML = '<input type="checkbox"><span>' + html + '</span>'; sc.appendChild(l); return l.querySelector('input'); }
-      var ck1 = ckRow("J'ai lu et j'accepte le <b>contrat de cession de créance</b> et la <a href='/politique-confidentialite.html' target='_blank' rel='noopener'>politique de confidentialité</a>.");
-      var ck3 = ckRow("<b>Facultatif :</b> démarrer <b>tout de suite</b>, sans attendre la fin des 14 jours de rétractation (art. L.221-25) — je reste libre de me rétracter, sans frais.");
+      var ck0 = ckRow("Je <b>cède ma créance</b> à Robin des Airs afin qu'elle récupère les sommes qui me sont dues.");
+      var ck1 = ckRow("J'ai <b>lu et j'accepte</b> le <b>contrat de cession</b> ci-dessus et la <a href='/politique-confidentialite.html' target='_blank' rel='noopener'>politique de confidentialité</a>.");
+      var ck3 = ckRow("<b>Facultatif :</b> je demande que Robin des Airs <b>commence tout de suite</b>, sans attendre la fin de mes 14 jours de rétractation (art. L.221-25) — je reste libre de me rétracter, sans frais." + (S.pax > 1 ? " <span style='color:var(--muted)'>Cette demande vaut pour tous les passagers du dossier.</span>" : ""));
       var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.disabled = true; go.style.marginTop = '14px';
       go.textContent = '✍️ Signer et envoyer mon dossier';
       sc.appendChild(go);
@@ -821,8 +837,8 @@
       var rg = document.createElement('p'); rg.className = 'rgpd'; rg.style.marginTop = '12px';
       rg.innerHTML = '<span>🔒</span><span>Signature manuscrite horodatée, adresse IP enregistrée et document scellé (empreinte). Transmission chiffrée (HTTPS). Rétractation 14 jours. RGPD.</span>';
       sc.appendChild(rg);
-      function refresh(){ var coOk = coSigs.every(function(s){ return s.drawn || s.absent; }); go.disabled = !(drawn && ck1.checked && coOk); }
-      [ck1, ck3].forEach(function(c){ c.addEventListener('change', refresh); });
+      function refresh(){ var coOk = coSigs.every(function(s){ return s.drawn || s.absent; }); go.disabled = !(drawn && ck0.checked && ck1.checked && coOk); }
+      [ck0, ck1, ck3].forEach(function(c){ c.addEventListener('change', refresh); });
       go.addEventListener('click', function(){
         if (go.disabled) return;
         S.startNow = ck3.checked;
