@@ -91,6 +91,9 @@
       padding:22px 16px; text-align:center; cursor:pointer; transition:.15s;
     }
     .drop.over{background:#dff4ea; border-color:var(--neon-dark)}
+    .drop.busy{border-style:solid; cursor:default}
+    .spin{width:26px; height:26px; border:3px solid var(--green-line); border-top-color:var(--neon-dark); border-radius:50%; margin:0 auto; animation:spin .7s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
     .drop .big{font-size:32px; line-height:1}
     .drop p{font-size:14px; color:var(--neon-ink); font-weight:800; margin:7px 0 0}
     .drop small{display:block; color:var(--muted); font-weight:500; font-size:11.5px; margin-top:4px}
@@ -234,6 +237,47 @@
   ];
   // Drapeau emoji depuis l'ISO2 (rendu natif sur mobile — cible principale).
   function flagEmoji(iso){ return String(iso || '').toUpperCase().replace(/[A-Z]/g, function(c){ return String.fromCodePoint(0x1F1E6 + c.charCodeAt(0) - 65); }); }
+  // ── Aéroports : c'est le CODE qui compte. Afrique + Europe en priorité (corridor diaspora),
+  //    + grands hubs. Autocomplétion dès 2-3 lettres (ville OU code IATA). Format « Ville (IATA) ».
+  var AIRPORTS = [
+    // Afrique de l'Ouest / Centrale
+    'Dakar (DSS)', 'Abidjan (ABJ)', 'Bamako (BKO)', 'Conakry (CKY)', 'Ouagadougou (OUA)', 'Niamey (NIM)',
+    'Lomé (LFW)', 'Cotonou (COO)', 'Accra (ACC)', 'Lagos (LOS)', 'Abuja (ABV)', 'Kano (KAN)', 'Port Harcourt (PHC)',
+    'Banjul (BJL)', 'Bissau (OXB)', 'Nouakchott (NKC)', 'Douala (DLA)', 'Yaoundé (NSI)', 'Libreville (LBV)',
+    'Brazzaville (BZV)', 'Pointe-Noire (PNR)', 'Kinshasa (FIH)', 'Lubumbashi (FBM)', 'Goma (GOM)', 'N\'Djamena (NDJ)',
+    'Bangui (BGF)', 'Malabo (SSG)', 'Freetown (FNA)', 'Monrovia (ROB)', 'Praia (RAI)', 'Sal (SID)',
+    // Afrique du Nord
+    'Casablanca (CMN)', 'Marrakech (RAK)', 'Rabat (RBA)', 'Agadir (AGA)', 'Tanger (TNG)', 'Fès (FEZ)', 'Nador (NDR)', 'Oujda (OUD)',
+    'Alger (ALG)', 'Oran (ORN)', 'Constantine (CZL)', 'Annaba (AAE)', 'Tunis (TUN)', 'Djerba (DJE)', 'Monastir (MIR)',
+    'Le Caire (CAI)', 'Tripoli (TIP)',
+    // Afrique de l'Est / Australe / Océan Indien
+    'Nairobi (NBO)', 'Mombasa (MBA)', 'Addis-Abeba (ADD)', 'Dar es Salaam (DAR)', 'Zanzibar (ZNZ)', 'Kampala (EBB)',
+    'Kigali (KGL)', 'Bujumbura (BJM)', 'Djibouti (JIB)', 'Khartoum (KRT)', 'Antananarivo (TNR)', 'Île Maurice (MRU)',
+    'Mahé (SEZ)', 'Moroni (HAH)', 'Johannesburg (JNB)', 'Le Cap (CPT)', 'Durban (DUR)', 'Luanda (LAD)', 'Maputo (MPM)',
+    'Lusaka (LUN)', 'Harare (HRE)', 'Windhoek (WDH)', 'Gaborone (GBE)',
+    // Europe (France d'abord)
+    'Paris CDG (CDG)', 'Paris Orly (ORY)', 'Paris Beauvais (BVA)', 'Marseille (MRS)', 'Lyon (LYS)', 'Toulouse (TLS)',
+    'Nice (NCE)', 'Bordeaux (BOD)', 'Nantes (NTE)', 'Lille (LIL)', 'Strasbourg (SXB)', 'Mulhouse-Bâle (MLH)',
+    'Montpellier (MPL)', 'Nantes (NTE)', 'Rennes (RNS)', 'Brest (BES)', 'Bruxelles (BRU)', 'Charleroi (CRL)',
+    'Amsterdam (AMS)', 'Luxembourg (LUX)', 'Genève (GVA)', 'Zurich (ZRH)', 'Bâle (BSL)',
+    'Londres Heathrow (LHR)', 'Londres Gatwick (LGW)', 'Londres Stansted (STN)', 'Manchester (MAN)',
+    'Francfort (FRA)', 'Munich (MUC)', 'Berlin (BER)', 'Düsseldorf (DUS)', 'Cologne (CGN)', 'Hambourg (HAM)', 'Stuttgart (STR)',
+    'Madrid (MAD)', 'Barcelone (BCN)', 'Málaga (AGP)', 'Valence (VLC)', 'Séville (SVQ)', 'Lisbonne (LIS)', 'Porto (OPO)', 'Faro (FAO)',
+    'Rome Fiumicino (FCO)', 'Milan Malpensa (MXP)', 'Milan Linate (LIN)', 'Venise (VCE)', 'Naples (NAP)', 'Bologne (BLQ)',
+    'Vienne (VIE)', 'Istanbul (IST)', 'Athènes (ATH)', 'Dublin (DUB)', 'Copenhague (CPH)', 'Stockholm (ARN)', 'Oslo (OSL)',
+    'Helsinki (HEL)', 'Varsovie (WAW)', 'Prague (PRG)', 'Budapest (BUD)', 'Bucarest (OTP)', 'Genève (GVA)',
+    // Grands hubs (autres continents)
+    'Dubaï (DXB)', 'Doha (DOH)', 'Abu Dhabi (AUH)', 'Djeddah (JED)', 'Riyad (RUH)', 'Beyrouth (BEY)',
+    'New York JFK (JFK)', 'Montréal (YUL)', 'Toronto (YYZ)', 'Washington (IAD)', 'Guangzhou (CAN)', 'Pékin (PEK)',
+  ];
+  function ensureAirportList(){
+    if ($('airportList')) return;
+    var dl = document.createElement('datalist'); dl.id = 'airportList';
+    AIRPORTS.forEach(function(a){ var o = document.createElement('option'); o.value = a; dl.appendChild(o); });
+    document.body.appendChild(dl);
+  }
+  // Branche l'autocomplétion aéroport sur un champ ville (suggestions dès 2-3 lettres, ville ou code IATA).
+  function airportAuto(input){ ensureAirportList(); input.setAttribute('list', 'airportList'); input.autocapitalize = 'words'; }
   // Mineur à la date du vol (même logique que le bot) : un parent signe pour lui.
   function isMinor(dobFr, flightIso){
     var b = (dobFr || '').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/); if (!b) return false;
@@ -250,7 +294,9 @@
   // ── Moteur d'écrans : clic = suivant, retour possible, chips toujours visibles ──
   // FLOW = l'ordre nominal. `idx` = position courante ; `far` = écran le plus loin atteint.
   // Corriger via une chip re-ouvre l'écran, puis la réponse renvoie DIRECT au point le plus loin.
-  var FLOW = ['incident', 'annul14', 'eticket', 'conn', 'flight', 'date', 'pax', 'passport', 'copax', 'phone', 'email', 'sign'];
+  // Ordre v2 (conversion) : on montre l'ÉLIGIBILITÉ + le MONTANT tôt (dopamine avant l'effort),
+  // puis on CAPTE le contact tôt (lead récupérable même en cas d'abandon), et seulement après les pièces.
+  var FLOW = ['incident', 'annul14', 'eticket', 'conn', 'flight', 'date', 'pax', 'verdict', 'phone', 'email', 'passport', 'copax', 'sign'];
   var idx = 0, far = 0, editing = false, backwards = false;
   function applicable(k){
     if (k === 'annul14') return S.incident === 'cancel';       // gate 14 jours : annulation uniquement
@@ -393,8 +439,8 @@
       // VOL DIRECT : numéro + ville de départ + ville d'arrivée sur un écran
       sc.innerHTML = '<h2>✈️ Votre vol</h2><p class="sub">Le numéro de vol et le trajet (départ → arrivée).</p>';
       var num = labeledField(sc, 'Numéro de vol', S.flightNum, true); num.placeholder = 'ex. AF 718';
-      var dep = labeledField(sc, 'Ville de départ', S.dep, false, '10px'); dep.placeholder = 'ex. Dakar';
-      var arr = labeledField(sc, 'Ville d\'arrivée', S.arr, false, '10px'); arr.placeholder = 'ex. Paris';
+      var dep = labeledField(sc, 'Ville / aéroport de départ', S.dep, false, '10px'); dep.placeholder = 'ex. Dakar…'; airportAuto(dep);
+      var arr = labeledField(sc, 'Ville / aéroport d\'arrivée', S.arr, false, '10px'); arr.placeholder = 'ex. Paris…'; airportAuto(arr);
       var hint = document.createElement('div'); hint.className = 'hint idle'; hint.textContent = 'Le numéro de vol est sur votre billet (ex. AF 718).'; sc.appendChild(hint);
       var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.style.marginTop = '12px'; go.textContent = 'Continuer →'; sc.appendChild(go);
       function ok(){
@@ -419,8 +465,8 @@
       var prevArr = (li > 0 && S.legs[li - 1]) ? S.legs[li - 1].arr : '';
       sc.innerHTML = '<h2>✈️ Vol ' + (li + 1) + ' de votre trajet</h2><p class="sub">' + (li > 0 ? 'Le départ est <b>pré-rempli</b> depuis le vol précédent — indiquez juste la suite.' : 'Numéro et trajet de votre <b>premier</b> vol.') + '</p>';
       var num = labeledField(sc, 'Numéro de vol', leg.num, true); num.placeholder = 'ex. AF 718';
-      var dep = labeledField(sc, 'Ville de départ', leg.dep || prevArr, false, '10px'); dep.placeholder = 'ex. Dakar';
-      var arr = labeledField(sc, 'Ville d\'arrivée', leg.arr, false, '10px'); arr.placeholder = 'ex. Paris';
+      var dep = labeledField(sc, 'Ville / aéroport de départ', leg.dep || prevArr, false, '10px'); dep.placeholder = 'ex. Dakar…'; airportAuto(dep);
+      var arr = labeledField(sc, 'Ville / aéroport d\'arrivée', leg.arr, false, '10px'); arr.placeholder = 'ex. Paris…'; airportAuto(arr);
       var hint = document.createElement('div'); hint.className = 'hint idle'; sc.appendChild(hint);
       var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.style.marginTop = '12px'; go.textContent = 'Ce vol est noté →'; sc.appendChild(go);
       function ok(){
@@ -531,9 +577,9 @@
       sc.appendChild(o); navRow(sc);
     },
     passport: function(sc){
-      sc.innerHTML = '<h2>🛂 ' + (S.pax > 1 ? 'Passager 1 — votre' : 'Votre') + ' passeport (ou carte d\'identité)</h2><p class="sub"><b>On lit tout, vous n\'écrivez rien.</b></p>';
+      sc.innerHTML = '<h2>🛂 ' + (S.pax > 1 ? 'Passager 1 — votre' : 'Votre') + ' passeport <span style="font-weight:500;font-size:14px;color:var(--muted)">(de préférence)</span></h2><p class="sub">Ou carte d\'identité. <b>On lit tout, vous n\'écrivez rien.</b> Ça remplit votre contrat sans erreur.</p>';
       var drop = document.createElement('div'); drop.className = 'drop';
-      drop.innerHTML = '<div class="big">📄</div><p>Glissez votre pièce ici</p><small>🔒 Lue par une IA pour pré-remplir votre contrat, jamais revendue</small>';
+      drop.innerHTML = '<div class="big">🛂</div><p>Glissez votre passeport ici</p><small>🔒 Lu par une IA pour pré-remplir votre contrat, jamais revendu</small>';
       sc.appendChild(drop);
       // 2 vraies options rectangulaires : photo (caméra sur mobile) ou fichier (galerie / PDF)
       var o = document.createElement('div'); o.className = 'opts grid2'; o.style.marginTop = '10px';
@@ -625,8 +671,28 @@
       setTimeout(function(){ pInp.focus(); }, 120);
       navRow(sc);
     },
+    // Le « moteur » : éligibilité (au conditionnel, conforme) + MONTANT, tôt dans le tunnel → dopamine.
+    verdict: function(sc){
+      var total = (600 * (S.pax || 1)).toLocaleString('fr-FR');
+      var net = Math.round(600 * (S.pax || 1) * 0.75).toLocaleString('fr-FR');
+      var paxTxt = (S.pax > 1) ? (S.pax + ' passagers') : '1 passager';
+      sc.innerHTML = '<h2>🎉 Bonne nouvelle !</h2><p class="sub">Selon nos critères, votre vol <b>' + esc(S.flightNum || (S.dep + ' → ' + S.arr)) + '</b> semble <b>éligible</b> — un expert le confirme, gratuitement.</p>';
+      var b = document.createElement('div'); b.className = 'ss-box'; b.style.textAlign = 'center';
+      b.innerHTML = '<div style="font-size:13px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px">Vous pouvez réclamer jusqu\'à</div>'
+        + '<div style="font-size:40px;font-weight:800;color:var(--neon-ink);letter-spacing:-1px;margin:2px 0">' + total + ' €</div>'
+        + '<div style="font-size:14px;color:var(--navy);font-weight:700">soit <b style="color:var(--neon-ink)">' + net + ' € nets pour vous</b> (75 %) · ' + paxTxt + '</div>'
+        + '<div style="font-size:12.5px;color:var(--muted);margin-top:8px">✅ 0 € d\'avance · 0 € sans résultat · on s\'occupe de tout</div>';
+      sc.appendChild(b);
+      var o = document.createElement('div'); o.className = 'opts'; o.style.marginTop = '4px';
+      o.appendChild(optButton('<span class="ic">🚀</span><span>On y va — je récupère mon argent</span>', function(){ next(); }));
+      sc.appendChild(o);
+      var note = document.createElement('p'); note.className = 'hint idle'; note.style.marginTop = '8px'; note.style.fontSize = '11.5px';
+      note.textContent = 'Montant indicatif selon la distance et la cause (CE 261/2004) — l\'expert confirme l\'éligibilité de votre vol.';
+      sc.appendChild(note);
+      navRow(sc);
+    },
     phone: function(sc){
-      sc.innerHTML = '<h2>📞 Votre téléphone ?</h2><p class="sub">Un expert vous rappelle depuis le <b>+33 7 56 86 36 30</b> — enregistrez-le.</p>';
+      sc.innerHTML = '<h2>📞 Votre téléphone ?</h2><p class="sub">On sécurise votre dossier — un expert vous rappelle depuis le <b>+33 7 56 86 36 30</b>.</p>';
       // Pays du numéro : champ LIBRE (tapez « france », « sénégal »…) alimenté par une liste mondiale.
       var cw = document.createElement('div');
       cw.innerHTML = '<div class="hint idle" style="margin:0 0 4px">Pays de votre numéro</div>';
@@ -846,9 +912,11 @@
       }).catch(function(){ res(null); });
     });
   }
+  // État « lecture en cours » VISIBLE sur la zone de dépôt (le client voit que ça travaille, rien ne « part » en silence).
+  function dropBusy(sc){ var d = sc.querySelector('.drop'); if (d) { d.classList.add('busy'); d.innerHTML = '<div class="spin"></div><p style="margin-top:8px">Lecture de votre pièce en cours…</p><small>Quelques secondes — on récupère votre nom et votre adresse</small>'; } }
   function handleFile(file, sc, hint){
     if (file.size > 15 * 1024 * 1024) { hint.className = 'hint bad'; hint.textContent = 'Fichier très lourd — reprenez une photo simple de la pièce.'; return; }
-    hint.className = 'hint ok'; hint.textContent = '🔍 Lecture de votre pièce…';
+    hint.className = 'hint ok'; hint.textContent = '🔍 Lecture de votre pièce…'; dropBusy(sc);
     fileToPiece(file).then(function(r){
       if (!r) { hint.className = 'hint bad'; hint.textContent = 'Lecture impossible — tapez votre nom :'; setTimeout(function(){ manualName(sc); }, 600); return; }
       S.pieceFile = r.pieceFile;
