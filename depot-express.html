@@ -732,7 +732,7 @@
       // Dépôt pièce → OCR → pré-remplit les 3 cases (et joint la pièce au dossier)
       function onCopaxFile(file){
         if (!file) return;
-        if (file.size > 15 * 1024 * 1024) { ocrHint.className = 'hint bad'; ocrHint.textContent = 'Fichier très lourd — reprenez une photo simple.'; return; }
+        if (tooBig(file, ocrHint)) return;
         ocrHint.className = 'hint ok'; ocrHint.textContent = '🔍 Lecture de la pièce…';
         fileToPiece(file).then(function(r){
           if (!r) { ocrHint.className = 'hint bad'; ocrHint.textContent = 'Lecture impossible — saisissez à la main.'; return; }
@@ -1059,9 +1059,17 @@
     });
   }
   // État « lecture en cours » VISIBLE sur la zone de dépôt (le client voit que ça travaille, rien ne « part » en silence).
+  // Garde de taille : les PHOTOS sont compressées (aucune limite gênante) ; les PDF partent tels quels et
+  // le serveur refuse au-delà de ~4 Mo → on prévient DÈS la sélection pour un PDF trop lourd.
+  function tooBig(file, hint){
+    var isPdf = /pdf$/i.test(file.type || '') || /\.pdf$/i.test(file.name || '');
+    if (isPdf && file.size > 4 * 1000 * 1000) { hint.className = 'hint bad'; hint.textContent = 'PDF trop lourd (max ~4 Mo). Prenez plutôt une photo de la pièce, c\'est plus léger.'; return true; }
+    if (file.size > 15 * 1024 * 1024) { hint.className = 'hint bad'; hint.textContent = 'Fichier très lourd — reprenez une photo simple.'; return true; }
+    return false;
+  }
   function dropBusy(sc){ var d = sc.querySelector('.drop'); if (d) { d.classList.add('busy'); d.innerHTML = '<div class="spin"></div><p style="margin-top:8px">Lecture de votre pièce en cours…</p><small>Quelques secondes — on récupère votre nom et votre adresse</small>'; } }
   function handleFile(file, sc, hint){
-    if (file.size > 15 * 1024 * 1024) { hint.className = 'hint bad'; hint.textContent = 'Fichier très lourd — reprenez une photo simple de la pièce.'; return; }
+    if (tooBig(file, hint)) return;
     hint.className = 'hint ok'; hint.textContent = '🔍 Lecture de votre pièce…'; dropBusy(sc);
     fileToPiece(file).then(function(r){
       if (!r) { hint.className = 'hint bad'; hint.textContent = 'Lecture impossible — tapez votre nom :'; setTimeout(function(){ manualName(sc); }, 600); return; }
@@ -1075,7 +1083,7 @@
   // E-billet : joint le fichier au dossier (kind carte-embarquement) + OCR (image) → applyEticket → avance.
   function handleEticket(file, hint){
     if (!file) return;
-    if (file.size > 15 * 1024 * 1024) { hint.className = 'hint bad'; hint.textContent = 'Fichier très lourd — reprenez une photo simple.'; return; }
+    if (tooBig(file, hint)) return;
     if (/pdf$/i.test(file.type)) {
       var r = new FileReader();
       r.onload = function(){ S.ticketFile = { dataBase64: String(r.result).split(',')[1], mime: 'application/pdf', filename: file.name || 'e-billet.pdf' }; };
