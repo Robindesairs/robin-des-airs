@@ -107,10 +107,15 @@ function genererMandatPdf(record) {
     const headerH = 84;
     doc.rect(0, 0, W, headerH).fill(NAVY);
     const lx = left, ly = 24;
-    doc.moveTo(lx, ly + 6).lineTo(lx + 26, ly + 18).lineWidth(3).stroke(NEON);
-    doc.polygon([lx + 26, ly + 18], [lx + 18, ly + 13], [lx + 20, ly + 22]).fill(NEON);
-    doc.fillColor('white').fontSize(19).font('Helvetica-Bold').text('Robin des Airs', lx + 34, ly + 4);
-    doc.fillColor(NEON_B).fontSize(9).font('Helvetica').text('Indemnisation aérienne — CE 261/2004', lx + 35, ly + 28);
+    // Emblème 🏹 (arc + flèche) — dessiné en vecteur car les polices PDF standard n'ont pas d'emoji.
+    doc.save();
+    doc.path(`M ${lx + 2} ${ly + 2} Q ${lx - 9} ${ly + 14} ${lx + 2} ${ly + 26}`).lineWidth(2.4).stroke(NEON); // arc (le bois de l'arc)
+    doc.moveTo(lx + 2, ly + 2).lineTo(lx + 2, ly + 26).lineWidth(1).stroke(NEON);                            // corde
+    doc.moveTo(lx - 3, ly + 14).lineTo(lx + 26, ly + 14).lineWidth(2).stroke(NEON);                          // hampe de la flèche
+    doc.polygon([lx + 30, ly + 14], [lx + 22, ly + 10], [lx + 22, ly + 18]).fill(NEON);                      // pointe
+    doc.restore();
+    doc.fillColor('white').fontSize(19).font('Helvetica-Bold').text('Robin des Airs', lx + 40, ly + 4);
+    doc.fillColor(NEON_B).fontSize(9).font('Helvetica').text('Indemnisation aérienne — CE 261/2004', lx + 41, ly + 28);
     doc.rect(0, headerH, W, 3).fill(NEON);
     doc.y = headerH + 22;
 
@@ -384,10 +389,15 @@ function genererMandatBilinguePdf(record) {
     const headerH = 84;
     doc.rect(0, 0, W, headerH).fill(NAVY);
     const lx = left, ly = 24;
-    doc.moveTo(lx, ly + 6).lineTo(lx + 26, ly + 18).lineWidth(3).stroke(NEON);
-    doc.polygon([lx + 26, ly + 18], [lx + 18, ly + 13], [lx + 20, ly + 22]).fill(NEON);
-    doc.fillColor('white').fontSize(19).font('Helvetica-Bold').text('Robin des Airs', lx + 34, ly + 4);
-    doc.fillColor(NEON_B).fontSize(9).font('Helvetica').text('Indemnisation aérienne — CE 261/2004', lx + 35, ly + 28);
+    // Emblème 🏹 (arc + flèche) — dessiné en vecteur car les polices PDF standard n'ont pas d'emoji.
+    doc.save();
+    doc.path(`M ${lx + 2} ${ly + 2} Q ${lx - 9} ${ly + 14} ${lx + 2} ${ly + 26}`).lineWidth(2.4).stroke(NEON); // arc (le bois de l'arc)
+    doc.moveTo(lx + 2, ly + 2).lineTo(lx + 2, ly + 26).lineWidth(1).stroke(NEON);                            // corde
+    doc.moveTo(lx - 3, ly + 14).lineTo(lx + 26, ly + 14).lineWidth(2).stroke(NEON);                          // hampe de la flèche
+    doc.polygon([lx + 30, ly + 14], [lx + 22, ly + 10], [lx + 22, ly + 18]).fill(NEON);                      // pointe
+    doc.restore();
+    doc.fillColor('white').fontSize(19).font('Helvetica-Bold').text('Robin des Airs', lx + 40, ly + 4);
+    doc.fillColor(NEON_B).fontSize(9).font('Helvetica').text('Indemnisation aérienne — CE 261/2004', lx + 41, ly + 28);
     doc.rect(0, headerH, W, 3).fill(NEON);
     doc.y = headerH + 22;
 
