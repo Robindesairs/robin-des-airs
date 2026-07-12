@@ -97,6 +97,9 @@
     .drop .big{font-size:32px; line-height:1}
     .drop p{font-size:14px; color:var(--neon-ink); font-weight:800; margin:7px 0 0}
     .drop small{display:block; color:var(--muted); font-weight:500; font-size:11.5px; margin-top:4px}
+    /* Encadré « Pourquoi on demande cette pièce ? » — rassure et réduit l'abandon (surtout passeport) */
+    .why{margin:10px 0 2px; font-size:12.5px; line-height:1.55; color:var(--ink-soft); background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius-sm); padding:9px 12px}
+    .why b{color:var(--navy)}
     .idcard{margin:0 0 12px; background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius-sm); padding:12px 14px; font-size:14.5px; color:var(--navy)}
     .idcard div{padding:2px 0}
 
@@ -620,6 +623,9 @@
       o.appendChild(optButton('<span class="ic">📷</span><span>Prendre une photo</span>', function(){ $('camInp').value = ''; $('camInp').click(); }));
       o.appendChild(optButton('<span class="ic">🖼️</span><span>Choisir un fichier<small>photo ou PDF</small></span>', function(){ $('fileInp').value = ''; $('fileInp').click(); }));
       sc.appendChild(o);
+      var why = document.createElement('div'); why.className = 'why';
+      why.innerHTML = 'ℹ️ <b>Pourquoi ?</b> Votre billet ou carte d\'embarquement <b>prouve que vous étiez sur ce vol</b> — c\'est la pièce qui fait payer la compagnie. On la lit pour remplir votre dossier (n° de vol, trajet, date) <b>sans erreur</b>. 🔒 Jamais revendue.';
+      sc.appendChild(why);
       var hint = document.createElement('div'); hint.className = 'hint idle'; sc.appendChild(hint);
       drop.addEventListener('click', function(){ $('fileInp').value = ''; $('fileInp').click(); });
       drop.addEventListener('dragover', function(e){ e.preventDefault(); drop.classList.add('over'); });
@@ -680,6 +686,9 @@
       o.appendChild(optButton('<span class="ic">📷</span><span>Prendre une photo</span>', function(){ $('camInp').value = ''; $('camInp').click(); }));
       o.appendChild(optButton('<span class="ic">🖼️</span><span>Choisir un fichier<small>photo ou PDF</small></span>', function(){ $('fileInp').value = ''; $('fileInp').click(); }));
       sc.appendChild(o);
+      var why = document.createElement('div'); why.className = 'why';
+      why.innerHTML = 'ℹ️ <b>Pourquoi le passeport ?</b> Il sert à deux choses : <b>écrire votre contrat de cession</b> avec votre identité exacte, et <b>prouver à la compagnie que c\'est bien vous</b> qui devez être payé(e). 🔒 Lu pour pré-remplir, jamais revendu, <b>supprimé</b> une fois le dossier réglé.';
+      sc.appendChild(why);
       var hint = document.createElement('div'); hint.className = 'hint idle'; sc.appendChild(hint);
       drop.addEventListener('click', function(){ $('fileInp').value = ''; $('fileInp').click(); });
       drop.addEventListener('dragover', function(e){ e.preventDefault(); drop.classList.add('over'); });
