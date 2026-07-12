@@ -992,18 +992,48 @@
     setTimeout(function(){ pInp.focus(); }, 120);
     navRow(sc);
   }
+  // Compression photo ROBUSTE MOBILE : on réduit l'image DÈS le décodage (mémoire minimale, évite le
+  // crash « mémoire insuffisante » sur iOS avec les photos 48 Mpx), on libère tout, et on échoue proprement.
+  var MAXPX = 1500, JPEGQ = 0.8;
+  function encodeDrawable(src, w, h, res, rej){
+    if (Math.max(w, h) > MAXPX) { var k = MAXPX / Math.max(w, h); w = Math.round(w * k); h = Math.round(h * k); }
+    var c = document.createElement('canvas'); c.width = w; c.height = h;
+    try { c.getContext('2d').drawImage(src, 0, 0, w, h); } catch (e) { if (src && src.close) try { src.close(); } catch (_) {} rej(e); return; }
+    if (src && src.close) { try { src.close(); } catch (_) {} } // libère l'ImageBitmap tout de suite
+    function freeCanvas(){ try { c.width = 1; c.height = 1; } catch (_) {} }
+    if (c.toBlob) {
+      c.toBlob(function(blob){
+        if (!blob) { freeCanvas(); rej(new Error('encode')); return; }
+        var fr = new FileReader();
+        fr.onload = function(){ freeCanvas(); res(String(fr.result).split(',')[1]); };
+        fr.onerror = function(){ freeCanvas(); rej(fr.error || new Error('read')); };
+        fr.readAsDataURL(blob);
+      }, 'image/jpeg', JPEGQ);
+    } else {
+      try { var d = c.toDataURL('image/jpeg', JPEGQ).split(',')[1]; freeCanvas(); res(d); } catch (e) { freeCanvas(); rej(e); }
+    }
+  }
   function toJpeg(file){
     return new Promise(function(res, rej){
-      var img = new Image();
-      img.onload = function(){
-        var MAX = 1600, w = img.width, h = img.height;
-        if (Math.max(w, h) > MAX) { var k = MAX / Math.max(w, h); w = Math.round(w * k); h = Math.round(h * k); }
-        var c = document.createElement('canvas'); c.width = w; c.height = h;
-        c.getContext('2d').drawImage(img, 0, 0, w, h);
-        res(c.toDataURL('image/jpeg', 0.85).split(',')[1]);
-      };
-      img.onerror = rej;
-      img.src = URL.createObjectURL(file);
+      // 1) createImageBitmap AVEC réduction dès le décodage = le vrai correctif mémoire mobile.
+      if (window.createImageBitmap) {
+        var opt = { resizeWidth: MAXPX, resizeQuality: 'high', imageOrientation: 'from-image' };
+        createImageBitmap(file, opt).then(function(bmp){ encodeDrawable(bmp, bmp.width, bmp.height, res, rej); })
+          .catch(function(){
+            // options resize non supportées → décodage simple puis réduction sur canvas
+            createImageBitmap(file).then(function(bmp){ encodeDrawable(bmp, bmp.width, bmp.height, res, rej); })
+              .catch(function(){ imgFallback(); });
+          });
+        return;
+      }
+      imgFallback();
+      // 2) Repli <img> : on LIBÈRE l'URL objet (sinon fuite mémoire cumulée à chaque essai → crash).
+      function imgFallback(){
+        var img = new Image(), url = URL.createObjectURL(file);
+        img.onload = function(){ try { encodeDrawable(img, img.naturalWidth || img.width, img.naturalHeight || img.height, res, rej); } finally { URL.revokeObjectURL(url); img.src = ''; } };
+        img.onerror = function(){ URL.revokeObjectURL(url); rej(new Error('decode')); };
+        img.src = url;
+      }
     });
   }
   // Fichier → { pieceFile (à joindre au dossier), piece (OCR ou null), pdf } — réutilisé par
