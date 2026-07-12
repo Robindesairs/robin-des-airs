@@ -320,7 +320,7 @@
   // Ordre v2 (conversion) : on montre l'ÉLIGIBILITÉ + le MONTANT tôt (dopamine avant l'effort),
   // puis on CAPTE le contact tôt (lead récupérable même en cas d'abandon), et seulement après les pièces.
   var FLOW = ['incident', 'tiers', 'annul14', 'eticket', 'conn', 'flight', 'date', 'pax', 'verdict', 'phone', 'email', 'passport', 'copax', 'sign'];
-  var idx = 0, far = 0, editing = false, backwards = false;
+  var idx = 0, far = 0, editing = false, backwards = false, reflow = false;
   function applicable(k){
     if (k === 'annul14') return S.incident === 'cancel';       // gate 14 jours : annulation uniquement
     if (k === 'copax') return S.pax > 1;
@@ -344,6 +344,9 @@
   // Un clic d'option : petit flash visuel (90 ms) puis écran suivant — RIEN d'autre à confirmer.
   function hit(btn, fn){ btn.classList.add('hit'); setTimeout(fn, 90); }
   function next(){
+    // Ré-édition du trajet depuis le récap : une fois le vol/les tronçons ressaisis, on revient à la signature
+    // (on ne re-pose pas date/passagers/etc.). 'flight' porte le direct ET la correspondance (_leg).
+    if (reflow && FLOW[idx] === 'flight') { reflow = false; editing = false; idx = FLOW.indexOf('sign'); render(); return; }
     if (editing) { editing = false; idx = far; render(); return; } // correction → retour direct où on en était
     do { idx++; } while (idx < FLOW.length - 1 && !applicable(FLOW[idx]));
     if (idx > far) far = idx;
@@ -351,11 +354,14 @@
   }
   function back(){
     if (idx === 0) return;
-    backwards = true; editing = false;
+    backwards = true; editing = false; reflow = false;
     do { idx--; } while (idx > 0 && !applicable(FLOW[idx]));
     render();
   }
-  function jump(k){ editing = true; backwards = true; idx = FLOW.indexOf(k); render(); }
+  function jump(k){ editing = true; backwards = true; reflow = false; idx = FLOW.indexOf(k); render(); }
+  // Modifier le TRAJET depuis le récap : on re-pose « direct ou correspondance ? » puis les segments,
+  // puis retour direct à la signature. fromTicket=false pour ne plus sauter conn/flight.
+  function editTrajet(){ reflow = true; editing = false; backwards = true; S.fromTicket = false; idx = FLOW.indexOf('conn'); render(); }
 
   // Chips : chaque réponse déjà donnée, cliquable pour la corriger
   function renderCrumbs(){
@@ -400,12 +406,12 @@
         var num = l.num ? '<b>' + esc(l.num) + '</b> · ' : '';
         return '<span class="leg">Vol ' + (n + 1) + ' : ' + num + esc(l.dep || '?') + ' → ' + esc(l.arr || '?') + '</span>';
       }).join('');
-      rows += row('🔄', 'Votre trajet · ' + S.legs.length + ' vols (correspondance)', legHtml, 'conn');
+      rows += row('🔄', 'Votre trajet · ' + S.legs.length + ' vols (correspondance)', legHtml, '__trajet');
     } else {
       var vol = S.flightNum ? '<b>' + esc(S.flightNum) + '</b> · ' : '';
       var trajet = (S.dep || S.arr) ? (vol + esc(S.dep || '?') + ' → ' + esc(S.arr || '?'))
         : (S.flightNum ? esc(S.flightNum) : '<span class="muted">à compléter</span>');
-      rows += row('✈️', 'Votre vol', trajet, 'flight');
+      rows += row('✈️', 'Votre vol', trajet, '__trajet');
     }
     if (S.date) rows += row('📅', 'Date du vol', esc(S.date.split('-').reverse().join('/')), 'date');
     S.names.forEach(function(nm, i){
@@ -421,7 +427,7 @@
     card.innerHTML = '<div class="recap-h">🧾 Votre dossier, en clair — vérifiez avant de signer</div>' + rows
       + '<div class="recap-foot">Une info fausse ? Touchez « Modifier ». Même remplie par la carte d\'embarquement, tout reste corrigeable.</div>';
     Array.prototype.forEach.call(card.querySelectorAll('.recap-edit'), function(b){
-      b.addEventListener('click', function(){ jump(b.getAttribute('data-k')); });
+      b.addEventListener('click', function(){ var k = b.getAttribute('data-k'); if (k === '__trajet') editTrajet(); else jump(k); });
     });
     sc.appendChild(card);
   }
