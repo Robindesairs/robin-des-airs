@@ -1116,7 +1116,8 @@ nav.scrolled { box-shadow: var(--shadow); border-bottom-color: var(--border); }
 }
 .wa-typedemo:hover { border-color: rgba(37,211,102,0.6); box-shadow: 0 8px 22px rgba(11,31,58,0.1); }
 .wa-typedemo-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-.wa-typedemo-avatar { width: 26px; height: 26px; border-radius: 50%; background: #25D366; color: #062b16; font-weight: 900; font-size: 13px; display: grid; place-items: center; flex: 0 0 auto; }
+.wa-typedemo-avatar { width: 26px; height: 26px; border-radius: 50%; background: #16406A; overflow: hidden; flex: 0 0 auto; }
+.wa-typedemo-avatar svg { width: 100%; height: 100%; display: block; }
 .wa-typedemo-name { color: var(--navy); font-weight: 700; font-size: 13px; white-space: nowrap; }
 .wa-typedemo-online { color: #0F7268; font-size: 11px; font-weight: 700; white-space: nowrap; }
 /* Badge « Exemple » : démo clairement étiquetée illustration (pas un cas/donnée réels).
