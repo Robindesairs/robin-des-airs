@@ -102,6 +102,16 @@
     .why b{color:var(--navy)}
     .idcard{margin:0 0 12px; background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius-sm); padding:12px 14px; font-size:14.5px; color:var(--navy)}
     .idcard div{padding:2px 0}
+    /* Révélation « magie » de l'extraction e-billet : les infos lues apparaissent une à une */
+    .reveal-card{background:var(--surface-2); border:1.5px solid var(--green-line); border-radius:var(--radius-sm); padding:6px 16px; margin:4px 0 2px; overflow:hidden}
+    .reveal-row{display:flex; align-items:center; gap:12px; padding:11px 0; border-top:1px solid var(--line); opacity:0; transform:translateY(7px); animation:reveal-in .4s cubic-bezier(.2,.8,.3,1) forwards}
+    .reveal-row:first-child{border-top:0}
+    .reveal-row .ic{flex:0 0 24px; font-size:17px; text-align:center}
+    .reveal-row .txt{display:flex; flex-direction:column; min-width:0; flex:1}
+    .reveal-row .k{font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.03em; color:var(--muted)}
+    .reveal-row .v{font-size:15px; font-weight:700; color:var(--navy); word-break:break-word}
+    .reveal-row .chk{margin-left:auto; color:var(--neon-dark); font-weight:800; flex:0 0 auto}
+    @keyframes reveal-in{to{opacity:1; transform:none}}
 
     /* Retour : discret, toujours là quand on peut reculer */
     .navrow{display:flex; align-items:center; justify-content:space-between; margin-top:16px; min-height:24px}
@@ -1081,7 +1091,33 @@
     if (file.size > 15 * 1024 * 1024) { hint.className = 'hint bad'; hint.textContent = 'Fichier très lourd — reprenez une photo simple.'; return true; }
     return false;
   }
-  function dropBusy(sc){ var d = sc.querySelector('.drop'); if (d) { d.classList.add('busy'); d.innerHTML = '<div class="spin"></div><p style="margin-top:8px">Lecture de votre pièce en cours…</p><small>Quelques secondes — on récupère votre nom et votre adresse</small>'; } }
+  function dropBusy(sc, msg, sub){ var d = sc && sc.querySelector('.drop'); if (d) { d.classList.add('busy'); d.innerHTML = '<div class="spin"></div><p style="margin-top:8px">' + (msg || 'Lecture de votre pièce en cours…') + '</p><small>' + (sub || 'Quelques secondes — on récupère votre nom et votre adresse') + '</small>'; } }
+  // Révélation « magie » : les infos lues sur l'e-billet apparaissent une à une, puis on avance.
+  function revealEticket(sc, e, onDone){
+    if (!sc) { onDone(); return; }
+    var flight = e.flightNum || (e.legs && e.legs.map(function(l){ return l.num; }).filter(Boolean).join(' / ')) || '';
+    var route = '';
+    if (e.escale && e.legs && e.legs.length > 1) route = e.legs.map(function(l){ return (l.dep || '?') + ' → ' + (l.arr || '?'); }).join(' · ');
+    else if (e.dep || e.arr) route = (e.dep || '?') + ' → ' + (e.arr || '?');
+    var date = e.dateIso ? e.dateIso.split('-').reverse().join('/') : '';
+    var names = (e.passengers && e.passengers.length) ? e.passengers.map(function(p){ return p.name; }).filter(Boolean).join(', ') : '';
+    var rows = [];
+    if (flight) rows.push(['✈️', 'Vol', flight]);
+    if (route) rows.push(['🛤️', 'Trajet', route]);
+    if (date) rows.push(['📅', 'Date du vol', date]);
+    if (names) rows.push(['👪', (e.pax > 1 || (e.passengers && e.passengers.length > 1)) ? 'Passagers' : 'Passager', names]);
+    if (!rows.length) { onDone(); return; }
+    sc.innerHTML = '<h2>✨ Billet lu !</h2><p class="sub">On a extrait vos informations automatiquement. Vous les vérifierez juste après.</p>';
+    var card = document.createElement('div'); card.className = 'reveal-card';
+    card.innerHTML = rows.map(function(r, i){
+      return '<div class="reveal-row" style="animation-delay:' + (i * 0.34).toFixed(2) + 's">'
+        + '<span class="ic">' + r[0] + '</span>'
+        + '<span class="txt"><span class="k">' + esc(r[1]) + '</span><span class="v">' + esc(r[2]) + '</span></span>'
+        + '<span class="chk">✓</span></div>';
+    }).join('');
+    sc.appendChild(card);
+    setTimeout(onDone, Math.max(1400, rows.length * 340 + 950));
+  }
   function handleFile(file, sc, hint){
     if (tooBig(file, hint)) return;
     hint.className = 'hint ok'; hint.textContent = '🔍 Lecture de votre pièce…'; dropBusy(sc);
@@ -1098,25 +1134,27 @@
   function handleEticket(file, hint){
     if (!file) return;
     if (tooBig(file, hint)) return;
+    var sc = hint && hint.parentNode; // l'écran e-billet (pour l'état scan + la révélation)
+    function dropText(msg){ var d = sc && sc.querySelector('.drop'); if (d) { d.classList.add('busy'); d.innerHTML = '<p style="margin:0;color:var(--muted)">' + msg + '</p>'; } }
     if (/pdf$/i.test(file.type)) {
       var r = new FileReader();
       r.onload = function(){ S.ticketFile = { dataBase64: String(r.result).split(',')[1], mime: 'application/pdf', filename: file.name || 'e-billet.pdf' }; };
       r.readAsDataURL(file);
-      hint.className = 'hint ok'; hint.textContent = '✅ Billet reçu — il rejoint votre dossier. On continue la saisie.';
-      setTimeout(function(){ next(); }, 700); // PDF : joint, mais lecture auto = photos → saisie classique
+      dropText('Billet reçu. On continue la saisie…'); // PDF : joint, mais lecture auto = photos → saisie classique
+      setTimeout(function(){ next(); }, 700);
       return;
     }
-    hint.className = 'hint ok'; hint.textContent = '🔍 Lecture de votre billet…';
+    dropBusy(sc, 'Lecture de votre billet…', '✨ On extrait vol, trajet, date et passagers');
     toJpeg(file).then(function(b64){
       S.ticketFile = { dataBase64: b64, mime: 'image/jpeg', filename: (file.name || 'e-billet') + '.jpg' };
       return fetch('/api/ocr-eticket', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dataBase64: b64, mime: 'image/jpeg' }) }).then(function(r){ return r.json(); });
     }).then(function(j){
-      if (j && j.ok && j.eticket) { applyEticket(j.eticket); hint.className = 'hint ok'; hint.textContent = '✅ Lu ! On a pré-rempli votre dossier — vérifiez les étapes.'; setTimeout(function(){ next(); }, 500); return; }
-      hint.className = 'hint bad'; hint.textContent = 'Billet peu lisible — pas grave, on saisit à la main.';
-      setTimeout(function(){ next(); }, 800);
+      if (j && j.ok && j.eticket) { applyEticket(j.eticket); revealEticket(sc, j.eticket, function(){ next(); }); return; }
+      dropText('Billet peu lisible — on saisit à la main…');
+      setTimeout(function(){ next(); }, 900);
     }).catch(function(){
-      hint.className = 'hint bad'; hint.textContent = 'Lecture indisponible — on saisit à la main.';
-      setTimeout(function(){ next(); }, 800);
+      dropText('Lecture indisponible — on saisit à la main…');
+      setTimeout(function(){ next(); }, 900);
     });
   }
   function applyEticket(e){
