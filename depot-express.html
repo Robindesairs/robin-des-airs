@@ -203,7 +203,7 @@
     typeVol: '',                          // direct | escale
     pax: 0, names: [], paxData: [],       // paxData[i] = { prenom, nom, dob, minor, sig, pieceFile }
     piece: null, pieceFile: null,         // passager 1 : pièce d'identité
-    ticketFile: null, fromTicket: false,  // e-billet/carte lu(e) → pré-remplit vol/date/passagers
+    ticketFile: null, ticketFiles: [], fromTicket: false, // e-billet/carte(s) lu(e)s → pré-remplit vol/date/passagers (plusieurs cartes OK)
     phone: '', email: '', startNow: false,
   };
   // ── Saisie de date RAPIDE : on tape les chiffres, les / se posent seuls (15032026 → 15/03/2026).
@@ -345,16 +345,23 @@
   // Corriger via une chip re-ouvre l'écran, puis la réponse renvoie DIRECT au point le plus loin.
   // Ordre v2 (conversion) : on montre l'ÉLIGIBILITÉ + le MONTANT tôt (dopamine avant l'effort),
   // puis on CAPTE le contact tôt (lead récupérable même en cas d'abandon), et seulement après les pièces.
-  var FLOW = ['incident', 'tiers', 'annul14', 'eticket', 'conn', 'flight', 'date', 'pax', 'verdict', 'phone', 'email', 'passport', 'copax', 'sign'];
+  var FLOW = ['incident', 'tiers', 'annul14', 'eticket', 'confirm', 'conn', 'flight', 'date', 'pax', 'verdict', 'phone', 'email', 'passport', 'copax', 'sign'];
   var idx = 0, far = 0, editing = false, backwards = false, reflow = false;
+  // Ré-édition du trajet (conn → flight) déclenchée depuis un récap : reflowActive force conn/flight à
+  // s'afficher même quand la carte les avait remplis, reflowReturn = l'écran où revenir (signature OU validation).
+  var reflowActive = false, reflowReturn = 0;
   // Tactile (téléphone) : pas de glisser-déposer → on parle de « toucher », pas de « glisser ».
   var isTouch = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) || ('ontouchstart' in window);
   function applicable(k){
     if (k === 'annul14') return S.incident === 'cancel';       // gate 14 jours : annulation uniquement
+    // Écran de validation après lecture d'une carte/e-billet : on NE le saute pas (le client doit vérifier
+    // les infos extraites, surtout avec plusieurs cartes d'embarquement). Sans lecture, rien à valider ici.
+    if (k === 'confirm') return !!S.fromTicket;
     if (k === 'copax') return S.pax > 1;
     // Quand l'e-billet a rempli une info, on SAUTE la question correspondante (mais la chip reste corrigeable).
-    if (k === 'conn') return !(S.fromTicket && S.typeVol);
-    if (k === 'flight') return !(S.fromTicket && (S.flightNum || (S.dep && S.arr)));
+    // Pendant un reflow (« Modifier le trajet »), on force conn/flight à s'afficher pour re-saisir.
+    if (k === 'conn') return reflowActive || !(S.fromTicket && S.typeVol);
+    if (k === 'flight') return reflowActive || !(S.fromTicket && (S.flightNum || (S.dep && S.arr)));
     if (k === 'date') return !(S.fromTicket && S.date);
     if (k === 'pax') return !(S.fromTicket && S.pax);
     return true;
@@ -372,30 +379,31 @@
   // Un clic d'option : petit flash visuel (90 ms) puis écran suivant — RIEN d'autre à confirmer.
   function hit(btn, fn){ btn.classList.add('hit'); setTimeout(fn, 90); }
   function next(){
-    // Ré-édition du trajet depuis le récap : une fois le vol/les tronçons ressaisis, on revient à la signature
-    // (on ne re-pose pas date/passagers/etc.). 'flight' porte le direct ET la correspondance (_leg).
-    if (reflow && FLOW[idx] === 'flight') { reflow = false; editing = false; idx = FLOW.indexOf('sign'); render(); return; }
+    // Ré-édition du trajet depuis un récap : une fois le vol/les tronçons ressaisis, on revient à l'écran
+    // d'où on est parti (signature OU validation). 'flight' porte le direct ET la correspondance (_leg).
+    if (reflow && FLOW[idx] === 'flight') { reflow = false; reflowActive = false; editing = false; idx = reflowReturn; render(); return; }
     if (editing) { editing = false; idx = far; render(); return; } // correction → retour direct où on en était
     do { idx++; } while (idx < FLOW.length - 1 && !applicable(FLOW[idx]));
-    if (idx > far) far = idx;
+    if (!reflow && idx > far) far = idx; // pendant un reflow, on ne fait pas avancer le « plus loin atteint »
     render();
   }
   function back(){
     if (idx === 0) return;
-    backwards = true; editing = false; reflow = false;
+    backwards = true; editing = false; reflow = false; reflowActive = false;
     do { idx--; } while (idx > 0 && !applicable(FLOW[idx]));
     render();
   }
-  function jump(k){ editing = true; backwards = true; reflow = false; idx = FLOW.indexOf(k); render(); }
-  // Modifier le TRAJET depuis le récap : on re-pose « direct ou correspondance ? » puis les segments,
-  // puis retour direct à la signature. fromTicket=false pour ne plus sauter conn/flight.
-  function editTrajet(){ reflow = true; editing = false; backwards = true; S.fromTicket = false; idx = FLOW.indexOf('conn'); render(); }
+  function jump(k){ editing = true; backwards = true; reflow = false; reflowActive = false; idx = FLOW.indexOf(k); render(); }
+  // Modifier le TRAJET depuis un récap : on re-pose « direct ou correspondance ? » puis les segments, puis
+  // retour à l'écran de départ (reflowReturn). fromTicket reste vrai (le reste du tunnel garde ses sauts) ;
+  // reflowActive force conn/flight à s'afficher malgré la carte lue ; on vide typeVol/legs pour re-choisir.
+  function editTrajet(){ reflow = true; reflowActive = true; reflowReturn = idx; editing = false; backwards = true; S.typeVol = ''; S.legs = []; idx = FLOW.indexOf('conn'); render(); }
 
   // Chips : chaque réponse déjà donnée, cliquable pour la corriger
   function renderCrumbs(){
     var c = $('crumbs'); c.innerHTML = '';
-    // Sur l'écran de signature, le récap détaillé (recapCard) remplace les chips : pas de doublon.
-    if (FLOW[idx] === 'sign') return;
+    // Sur les écrans de validation et de signature, le récap détaillé (recapCard) remplace les chips : pas de doublon.
+    if (FLOW[idx] === 'sign' || FLOW[idx] === 'confirm') return;
     var items = [];
     if (S.incident) items.push(['incident', '⏱️', INCIDENT_LABEL[S.incident]]);
     if (S.tiers === 'non') items.push(['tiers', '⚖️', 'Aucun tiers']);
@@ -641,8 +649,9 @@
     // Facultatif : « je saisis à la main » enchaîne sur les questions classiques.
     eticket: function(sc){
       sc.innerHTML = '<h2>📄 Votre e-billet ou carte d\'embarquement</h2><p class="sub"><b>On lit tout et on remplit votre dossier</b> — n° de vol, trajet, date, passagers. Zéro erreur de saisie.</p>';
+      $('fileInp').multiple = true; // plusieurs cartes d'embarquement (une par passager) sélectionnables d'un coup
       var drop = document.createElement('div'); drop.className = 'drop';
-      drop.innerHTML = '<div class="big">📄</div><p>' + (isTouch ? 'Touchez pour ajouter votre e-billet' : 'Glissez votre e-billet ici') + '</p><small>Photo ou PDF · lecture automatique · 🔒 lu par une IA, jamais revendu</small>';
+      drop.innerHTML = '<div class="big">📄</div><p>' + (isTouch ? 'Touchez pour ajouter votre e-billet' : 'Glissez votre e-billet ici') + '</p><small>Photo ou PDF · <b>plusieurs cartes possibles</b> · lecture automatique · 🔒 lu par une IA, jamais revendu</small>';
       sc.appendChild(drop);
       var o = document.createElement('div'); o.className = 'opts grid2'; o.style.marginTop = '10px';
       o.appendChild(optButton('<span class="ic">📷</span><span>Prendre une photo</span>', function(){ $('camInp').value = ''; $('camInp').click(); }));
@@ -655,10 +664,33 @@
       drop.addEventListener('click', function(){ $('fileInp').value = ''; $('fileInp').click(); });
       drop.addEventListener('dragover', function(e){ e.preventDefault(); drop.classList.add('over'); });
       drop.addEventListener('dragleave', function(){ drop.classList.remove('over'); });
-      drop.addEventListener('drop', function(e){ e.preventDefault(); drop.classList.remove('over'); handleEticket(e.dataTransfer.files && e.dataTransfer.files[0], hint); });
-      $('fileInp').onchange = function(){ handleEticket($('fileInp').files && $('fileInp').files[0], hint); };
-      $('camInp').onchange = function(){ handleEticket($('camInp').files && $('camInp').files[0], hint); };
+      drop.addEventListener('drop', function(e){ e.preventDefault(); drop.classList.remove('over'); handleEticketFiles(e.dataTransfer.files, hint); });
+      $('fileInp').onchange = function(){ handleEticketFiles($('fileInp').files, hint); };
+      $('camInp').onchange = function(){ handleEticketFiles($('camInp').files, hint); };
       navRow(sc, { skip: '✏️ Je n\'ai pas le billet — je saisis à la main', onSkip: function(){ next(); } });
+    },
+    // Validation APRÈS lecture d'une/des carte(s) d'embarquement : le client VÉRIFIE les infos extraites
+    // (vol, trajet, date, chaque passager) avant de continuer — rien ne passe en silence. Il peut corriger
+    // chaque ligne (« Modifier ») et ajouter une 2e carte d'embarquement (un passager de plus).
+    confirm: function(sc){
+      $('fileInp').multiple = true; // « ajouter une autre carte » = encore un e-billet
+      var nb = (S.ticketFiles && S.ticketFiles.length) || (S.ticketFile ? 1 : 0);
+      sc.innerHTML = '<h2>✅ Vérifiez vos informations</h2><p class="sub">Lues automatiquement sur '
+        + (nb > 1 ? 'vos ' + nb + ' cartes d\'embarquement' : 'votre billet') + '. <b>Corrigez ce qui est faux avant de continuer.</b></p>';
+      recapCard(sc); // récap éditable (vol/trajet/date/chaque passager), chaque ligne « Modifier »
+      var hint = document.createElement('div'); hint.className = 'hint idle'; hint.style.marginTop = '8px'; sc.appendChild(hint);
+      // Ajouter une carte d'embarquement supplémentaire (2e passager sur un autre billet)
+      var add = optButton('<span class="ic">➕</span><span>Ajouter une autre carte d\'embarquement<small>un passager sur un billet séparé</small></span>', function(){
+        $('fileInp').value = ''; $('fileInp').click();
+      }, true);
+      add.style.marginTop = '10px'; sc.appendChild(add);
+      $('fileInp').onchange = function(){ addMoreEticket($('fileInp').files, hint); };
+      $('camInp').onchange = function(){ addMoreEticket($('camInp').files, hint); };
+      var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.style.marginTop = '14px';
+      go.textContent = '✅ C\'est correct, on continue';
+      go.addEventListener('click', function(){ next(); });
+      sc.appendChild(go);
+      navRow(sc);
     },
     conn: function(sc){
       sc.innerHTML = '<h2>🛤️ Ce vol était-il direct ?</h2><p class="sub">Avec une correspondance, on note chaque vol pour calculer l\'indemnité sur le trajet complet.</p>';
@@ -703,6 +735,7 @@
       sc.appendChild(o); navRow(sc);
     },
     passport: function(sc){
+      $('fileInp').multiple = false; // pièce d'identité = un seul fichier
       sc.innerHTML = '<h2>🛂 ' + (S.pax > 1 ? 'Passager 1 — votre' : 'Votre') + ' passeport <span style="font-weight:500;font-size:14px;color:var(--muted)">(de préférence)</span></h2><p class="sub">Ou carte d\'identité. <b>On lit tout, vous n\'écrivez rien.</b> Ça remplit votre contrat sans erreur.</p>';
       var drop = document.createElement('div'); drop.className = 'drop';
       drop.innerHTML = '<div class="big">🛂</div><p>' + (isTouch ? 'Touchez pour ajouter votre passeport' : 'Glissez votre passeport ici') + '</p><small>🔒 Lu par une IA pour pré-remplir votre contrat, jamais revendu</small>';
@@ -727,6 +760,7 @@
     // Co-passagers : passeport (OCR) OU saisie — prénom, nom, date de naissance CHACUN.
     // La cession exige l'identité de chaque cédant ; la DDN détecte les mineurs (un parent signe).
     copax: function(sc, iOverride){
+      $('fileInp').multiple = false; // pièce d'identité = un seul fichier
       var i = iOverride != null ? iOverride : 1;
       // On MONTRE chaque co-passager (même pré-rempli par l'e-billet) pour confirmer + ajouter sa pièce.
       while (i < S.pax && S.paxData[i] && S.paxData[i].confirmed) i++;
@@ -1130,31 +1164,100 @@
       setTimeout(function(){ manualName(sc); }, 600);
     });
   }
-  // E-billet : joint le fichier au dossier (kind carte-embarquement) + OCR (image) → applyEticket → avance.
-  function handleEticket(file, hint){
-    if (!file) return;
-    if (tooBig(file, hint)) return;
+  // Un fichier → { ticketFile (à joindre), eticket (OCR ou null) }. PDF : joint sans OCR (lecture = photos).
+  function ocrOneEticket(file){
+    return new Promise(function(res){
+      if (/pdf$/i.test(file.type)) {
+        var r = new FileReader();
+        r.onload = function(){ res({ ticketFile: { dataBase64: String(r.result).split(',')[1], mime: 'application/pdf', filename: file.name || 'e-billet.pdf' }, eticket: null }); };
+        r.onerror = function(){ res(null); };
+        r.readAsDataURL(file);
+        return;
+      }
+      toJpeg(file).then(function(b64){
+        var tf = { dataBase64: b64, mime: 'image/jpeg', filename: (file.name || 'e-billet') + '.jpg' };
+        fetch('/api/ocr-eticket', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dataBase64: b64, mime: 'image/jpeg' }) })
+          .then(function(r){ return r.json(); })
+          .then(function(j){ res({ ticketFile: tf, eticket: (j && j.ok && j.eticket) ? j.eticket : null }); })
+          .catch(function(){ res({ ticketFile: tf, eticket: null }); });
+      }).catch(function(){ res(null); });
+    });
+  }
+  // Fusionne plusieurs cartes d'embarquement / e-billets : vol, trajet, date, PNR pris du 1er qui les porte ;
+  // passagers UNIONNÉS (dédoublonnés par nom) — une carte d'embarquement = souvent un passager.
+  function mergeEtickets(list){
+    var c = { passengers: [], legs: [], escale: false, flightNum: '', dep: '', arr: '', dateIso: '', pnr: '', pax: 0 };
+    var seen = {};
+    list.forEach(function(e){
+      if (!e) return;
+      if (!c.flightNum && e.flightNum) c.flightNum = e.flightNum;
+      if (!c.dep && e.dep) c.dep = e.dep;
+      if (!c.arr && e.arr) c.arr = e.arr;
+      if (!c.dateIso && e.dateIso) c.dateIso = e.dateIso;
+      if (!c.pnr && e.pnr) c.pnr = e.pnr;
+      if (!c.legs.length && e.escale && e.legs && e.legs.length > 1) { c.escale = true; c.legs = e.legs; }
+      (e.passengers || []).forEach(function(p){
+        var key = String(p && p.name || '').trim().toUpperCase().replace(/\s+/g, ' ');
+        if (!key || seen[key]) return; seen[key] = 1; c.passengers.push(p);
+      });
+    });
+    c.pax = c.passengers.length;
+    return c;
+  }
+  // E-billet(s) / carte(s) d'embarquement : joint chaque fichier + OCR (images) → fusion → écran de validation.
+  // Accepte PLUSIEURS fichiers (une carte d'embarquement par passager) sélectionnés d'un coup.
+  function handleEticketFiles(fileList, hint){
+    var files = Array.prototype.slice.call(fileList || []).filter(Boolean);
+    if (!files.length) return;
     var sc = hint && hint.parentNode; // l'écran e-billet (pour l'état scan + la révélation)
     function dropText(msg){ var d = sc && sc.querySelector('.drop'); if (d) { d.classList.add('busy'); d.innerHTML = '<p style="margin:0;color:var(--muted)">' + msg + '</p>'; } }
-    if (/pdf$/i.test(file.type)) {
-      var r = new FileReader();
-      r.onload = function(){ S.ticketFile = { dataBase64: String(r.result).split(',')[1], mime: 'application/pdf', filename: file.name || 'e-billet.pdf' }; };
-      r.readAsDataURL(file);
-      dropText('Billet reçu. On continue la saisie…'); // PDF : joint, mais lecture auto = photos → saisie classique
-      setTimeout(function(){ next(); }, 700);
-      return;
-    }
-    dropBusy(sc, 'Lecture de votre billet…', '✨ On extrait vol, trajet, date et passagers');
-    toJpeg(file).then(function(b64){
-      S.ticketFile = { dataBase64: b64, mime: 'image/jpeg', filename: (file.name || 'e-billet') + '.jpg' };
-      return fetch('/api/ocr-eticket', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dataBase64: b64, mime: 'image/jpeg' }) }).then(function(r){ return r.json(); });
-    }).then(function(j){
-      if (j && j.ok && j.eticket) { applyEticket(j.eticket); revealEticket(sc, j.eticket, function(){ next(); }); return; }
-      dropText('Billet peu lisible — on saisit à la main…');
-      setTimeout(function(){ next(); }, 900);
-    }).catch(function(){
-      dropText('Lecture indisponible — on saisit à la main…');
-      setTimeout(function(){ next(); }, 900);
+    // Garde de taille (PDF trop lourd, etc.) : on écarte les fichiers refusés, on garde les valides.
+    files = files.filter(function(f){ return !tooBig(f, hint); });
+    if (!files.length) return;
+    dropBusy(sc, files.length > 1 ? ('Lecture de vos ' + files.length + ' billets…') : 'Lecture de votre billet…', '✨ On extrait vol, trajet, date et passagers');
+    // Séquentiel : évite de décoder plusieurs grosses images en parallèle (mémoire mobile).
+    var results = [];
+    files.reduce(function(chain, f){
+      return chain.then(function(){ return ocrOneEticket(f).then(function(r){ if (r) results.push(r); }); });
+    }, Promise.resolve()).then(function(){
+      var ticketFiles = results.map(function(r){ return r.ticketFile; }).filter(Boolean);
+      var etickets = results.map(function(r){ return r.eticket; }).filter(Boolean);
+      S.ticketFiles = ticketFiles;
+      S.ticketFile = ticketFiles[0] || null; // rétro-compat
+      if (!etickets.length) { // aucun OCR exploitable (PDF seuls ou illisibles) → saisie classique
+        dropText(ticketFiles.length ? 'Billet reçu. On continue la saisie…' : 'Billet peu lisible — on saisit à la main…');
+        setTimeout(function(){ next(); }, 800);
+        return;
+      }
+      var merged = mergeEtickets(etickets);
+      applyEticket(merged);
+      revealEticket(sc, merged, function(){ next(); }); // next() → écran de validation « confirm »
+    });
+  }
+  // Depuis l'écran de validation : ajoute une carte d'embarquement de plus, la fusionne avec les infos
+  // déjà lues (nouveau passager) et RE-AFFICHE l'écran de validation (sans avancer).
+  function addMoreEticket(fileList, hint){
+    var files = Array.prototype.slice.call(fileList || []).filter(Boolean);
+    if (!files.length) return;
+    files = files.filter(function(f){ return !tooBig(f, hint); });
+    if (!files.length) return;
+    hint.className = 'hint ok'; hint.textContent = '🔍 Lecture de la carte d\'embarquement…';
+    var results = [];
+    files.reduce(function(chain, f){
+      return chain.then(function(){ return ocrOneEticket(f).then(function(r){ if (r) results.push(r); }); });
+    }, Promise.resolve()).then(function(){
+      results.forEach(function(r){ if (r && r.ticketFile) S.ticketFiles.push(r.ticketFile); });
+      S.ticketFile = S.ticketFiles[0] || S.ticketFile;
+      var etickets = results.map(function(r){ return r.eticket; }).filter(Boolean);
+      if (!etickets.length) { hint.className = 'hint bad'; hint.textContent = 'Carte peu lisible — réessayez avec une photo nette, ou continuez et ajoutez le passager plus tard.'; return; }
+      // Instantané de l'état courant + nouvelles cartes → fusion (union des passagers).
+      var cur = {
+        flightNum: S.flightNum, dep: S.dep, arr: S.arr, dateIso: S.date, pnr: S.pnr,
+        escale: S.typeVol === 'escale', legs: S.legs,
+        passengers: (S.names || []).map(function(nm, i){ var pd = S.paxData[i] || {}; return { name: nm, dob: pd.dob, minor: pd.minor }; }).filter(function(p){ return p.name; }),
+      };
+      applyEticket(mergeEtickets([cur].concat(etickets)));
+      render(); // ré-affiche l'écran de validation avec le passager ajouté
     });
   }
   function applyEticket(e){
@@ -1267,7 +1370,9 @@
       var uploads = [];
       if (S.pieceFile) uploads.push({ f: S.pieceFile, who: names[0] || '', kind: 'identite', label: 'Pièce d\'identité' });
       (S.paxData || []).forEach(function(pd, k){ if (k > 0 && pd && pd.pieceFile) uploads.push({ f: pd.pieceFile, who: S.names[k] || '', kind: 'identite', label: 'Pièce du passager ' + (k + 1) }); });
-      if (S.ticketFile) uploads.push({ f: S.ticketFile, who: '', kind: 'carte-embarquement', label: 'Billet ou carte d\'embarquement' });
+      // Toutes les cartes d'embarquement / e-billets déposés (une par passager le cas échéant).
+      var tks = (S.ticketFiles && S.ticketFiles.length) ? S.ticketFiles : (S.ticketFile ? [S.ticketFile] : []);
+      tks.forEach(function(tf, k){ uploads.push({ f: tf, who: '', kind: 'carte-embarquement', label: 'Billet ou carte d\'embarquement' + (tks.length > 1 ? ' (' + (k + 1) + '/' + tks.length + ')' : '') }); });
       return Promise.all(uploads.map(function(u){
         return fetch('/api/depot-upload', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
