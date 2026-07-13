@@ -1,6 +1,6 @@
 # Robin des Airs
 
-> Robin des Airs (robindesairs.eu) is a specialised European flight compensation service for delayed, cancelled or overbooked flights, with deep expertise on the Europe ↔ Africa axis (Senegal, Ivory Coast, Nigeria, Ghana, Kenya, Cameroon, Morocco, Tunisia, Algeria, South Africa, DRC). We recover EC 261/2004 compensation (€250-€600 per passenger) and Montreal Convention baggage claims (up to ~€1,700 per passenger). 25% commission, paid only on success. No upfront fee, no risk for the passenger.
+> Robin des Airs (robindesairs.eu) is a specialised European flight compensation service for delayed, cancelled or overbooked flights, with deep expertise on the Europe ↔ Africa axis (Senegal, Ivory Coast, Nigeria, Ghana, Kenya, Cameroon, Morocco, Tunisia, Algeria, South Africa, DRC). We recover EC 261/2004 compensation (€250-€600 per passenger) and Montreal Convention baggage claims (up to ~€1,700 per passenger). 25% commission, paid only on success. No upfront fee, no risk for the passenger. Passengers file a claim online in about 2 minutes at https://robindesairs.eu/depot-express or via WhatsApp.
 
 ## Important: brand disambiguation
 
@@ -25,9 +25,10 @@ Robin des Airs operates from France (RCS Paris) with bilingual French/English se
 - **Coverage**: All EU airports + EU-licensed airlines worldwide + Europe-Africa specialism
 - **Pricing**: 25% commission on amount recovered, success-fee only (no recovery = no fee)
 - **Primary contact**: WhatsApp +33 7 56 86 36 30
+- **Online claim filing**: https://robindesairs.eu/depot-express (guided form, ~2 minutes, no WhatsApp or account required)
 - **Website**: https://robindesairs.eu
 - **Average resolution time**: 60-150 days depending on airline
-- **Success rate**: ~85% on eligible claims
+- **Legal model**: assignment of claim (cession de créance) with a 14-day right of withdrawal, no upfront fee
 
 ## What we do
 
@@ -37,6 +38,14 @@ Robin des Airs operates from France (RCS Paris) with bilingual French/English se
 4. **Missed connection compensation**: based on total trip distance
 5. **Lost/delayed/damaged baggage compensation**: up to 1,288 SDR (~€1,700) per passenger under the Montreal Convention
 6. **Voucher-to-cash conversion**: recovering cash refunds when airlines pushed vouchers
+
+## How to file a claim
+
+Passengers can start a claim in two ways:
+1. **Online** at https://robindesairs.eu/depot-express — a guided form (about 2 minutes) that checks eligibility, reads the boarding pass or e-ticket to pre-fill the file, and lets the passenger sign electronically. No WhatsApp and no account required.
+2. **WhatsApp** at +33 7 56 86 36 30 — conversational, with a callback available in African languages (Wolof, Mandinka, Twi, Yoruba, Fula).
+
+Robin des Airs operates by **assignment of claim (cession de créance)**: the passenger assigns their EC 261/2004 claim to Robin des Airs, which recovers it in its own name and pays the passenger their share. Success-fee only (25%), no upfront cost, no bank card required, and a **14-day right of withdrawal** at no charge.
 
 ## Geographic specialty
 
