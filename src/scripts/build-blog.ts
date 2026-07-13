@@ -186,6 +186,8 @@ function renderArticlePage(post: Awaited<ReturnType<typeof getBySlug>>): string 
     <div class="cta-box">
       <p>Prêt à récupérer votre indemnité ?</p>
       <p>
+        <a href="${SITE_URL}/depot-express">Déposer mon dossier en 2 min</a>
+        <span class="sep">·</span>
         <a href="${SITE_URL}/#funnel-box">Vérifier mon indemnité</a>
         <span class="sep">·</span>
         <a href="https://wa.me/33756863630">WhatsApp direct</a>
@@ -294,6 +296,8 @@ h1.title{font-size:1.5rem;border-bottom:none;padding-bottom:0;margin-bottom:.5re
     <div class="cta-box">
       <p>Prêt à récupérer votre indemnité ?</p>
       <p>
+        <a href="${SITE_URL}/depot-express">Déposer mon dossier en 2 min</a>
+        <span class="sep">·</span>
         <a href="${SITE_URL}/#funnel-box">Diagnostic gratuit</a>
         <span class="sep">·</span>
         <a href="https://wa.me/33756863630">WhatsApp direct</a>
