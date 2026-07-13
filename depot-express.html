@@ -214,14 +214,27 @@
     var mm = document.createElement('select'); mm.className = 'input';
     var o0 = document.createElement('option'); o0.value = ''; o0.textContent = 'Mois'; mm.appendChild(o0);
     MOIS.forEach(function(m, idx){ var o = document.createElement('option'); o.value = String(idx + 1).padStart(2, '0'); o.textContent = m; mm.appendChild(o); });
-    var yy = document.createElement('input'); yy.className = 'input'; yy.inputMode = 'numeric'; yy.maxLength = 4; yy.placeholder = 'Année'; yy.autocomplete = 'off';
+    // Année : menu déroulant limité à la fenêtre de prescription pour la DATE DU VOL (cfg.yearSelect) —
+    // au-delà, la réclamation est prescrite, inutile de proposer l'année. La date de NAISSANCE, elle,
+    // garde la saisie libre (il faut pouvoir remonter loin).
+    var yy, yySelect = !!cfg.yearSelect;
+    if (yySelect) {
+      yy = document.createElement('select'); yy.className = 'input';
+      var y0 = document.createElement('option'); y0.value = ''; y0.textContent = 'Année'; yy.appendChild(y0);
+      var nowY = new Date().getFullYear(), back = cfg.yearsBack || 6; // 6 ans = couvre France 5 ans + UK 6 ans + marge
+      for (var yv2 = nowY; yv2 >= nowY - back; yv2--) { var oy = document.createElement('option'); oy.value = String(yv2); oy.textContent = String(yv2); yy.appendChild(oy); }
+    } else {
+      yy = document.createElement('input'); yy.className = 'input'; yy.inputMode = 'numeric'; yy.maxLength = 4; yy.placeholder = 'Année'; yy.autocomplete = 'off';
+    }
     wrap.appendChild(jj); wrap.appendChild(mm); wrap.appendChild(yy);
     if (cfg.value) { var pm = String(cfg.value).match(/^(\d{2})\/(\d{2})\/(\d{4})$/); if (pm) { jj.value = pm[1]; mm.value = pm[2]; yy.value = pm[3]; } }
-    function val(){ var d = jj.value.replace(/\D/g, ''), mo = mm.value, y = yy.value.replace(/\D/g, ''); if (d && mo && y.length === 4) return d.padStart(2, '0') + '/' + mo + '/' + y; return ''; }
+    function yval(){ return yySelect ? yy.value : yy.value.replace(/\D/g, ''); }
+    function val(){ var d = jj.value.replace(/\D/g, ''), mo = mm.value, y = yval(); if (d && mo && y.length === 4) return d.padStart(2, '0') + '/' + mo + '/' + y; return ''; }
     function done(){ var v = val(); if (!v) return; var m = v.match(/(\d{2})\/(\d{2})\/(\d{4})/); if (isRealDate(m[1], m[2], m[3]) && cfg.onComplete) cfg.onComplete(v); }
     jj.addEventListener('input', function(){ jj.value = jj.value.replace(/\D/g, '').slice(0, 2); if (jj.value.length === 2) mm.focus(); });
-    mm.addEventListener('change', function(){ if (jj.value && !yy.value) yy.focus(); done(); });
-    yy.addEventListener('input', function(){ yy.value = yy.value.replace(/\D/g, '').slice(0, 4); if (yy.value.length === 4) done(); });
+    mm.addEventListener('change', function(){ if (jj.value && !yval()) yy.focus(); done(); });
+    if (yySelect) { yy.addEventListener('change', done); }
+    else { yy.addEventListener('input', function(){ yy.value = yy.value.replace(/\D/g, '').slice(0, 4); if (yy.value.length === 4) done(); }); }
     function set(v){ var m = String(v || '').match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); if (m) { jj.value = m[1].padStart(2, '0'); mm.value = m[2].padStart(2, '0'); yy.value = m[3]; } }
     return { el: wrap, value: val, set: set, focus: function(){ jj.focus(); } };
   }
@@ -648,6 +661,7 @@
       sc.innerHTML = '<h2>📅 La date du vol ?</h2><p class="sub">Jour, mois, année — ça passe tout seul.</p>';
       var hint = document.createElement('div'); hint.className = 'hint idle'; hint.style.marginTop = '8px';
       var i = segmentedDate({
+        yearSelect: true, yearsBack: 6, // année en menu déroulant, limitée à la fenêtre de prescription
         value: S.date ? S.date.split('-').reverse().join('/') : '',
         onComplete: function(v){
           var p = v.split('/');
