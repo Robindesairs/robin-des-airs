@@ -99,6 +99,31 @@ function getDestinationPages(): Array<{ loc: string; changefreq: string; priorit
     .map((f) => ({ loc: `${SITE_URL}/destinations/${f}`, changefreq: 'monthly', priority: '0.7' }));
 }
 
+/**
+ * Régénère un sitemap de langue (EN/DE/ES) à partir de son dossier /<lang>/blog/*.html,
+ * avec un lastmod frais à chaque build. Inclut la home localisée si elle existe (index-<lang>.html).
+ * Corrige le point Bing « sitemaps non rafraîchis quotidiennement » : ces sub-sitemaps étaient statiques.
+ */
+function writeLangSitemap(lang: string, dirRel: string, homePath: string): void {
+  const urls: Array<{ loc: string; changefreq: string; priority: string }> = [];
+  if (fs.existsSync(path.join(process.cwd(), `index-${lang}.html`))) {
+    urls.push({ loc: SITE_URL + homePath, changefreq: 'weekly', priority: '1.0' });
+  }
+  const dir = path.join(process.cwd(), dirRel);
+  if (fs.existsSync(dir)) {
+    for (const f of fs.readdirSync(dir).filter((x) => x.endsWith('.html') && x !== 'index.html').sort()) {
+      urls.push({ loc: `${SITE_URL}/${dirRel}/${f}`, changefreq: 'monthly', priority: '0.8' });
+    }
+  }
+  if (!urls.length) return;
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.map((u) => `  <url><loc>${u.loc}</loc><lastmod>${LASTMOD}</lastmod><changefreq>${u.changefreq}</changefreq><priority>${u.priority}</priority></url>`).join('\n')}
+</urlset>`;
+  fs.writeFileSync(path.join(process.cwd(), `sitemap-${lang}.xml`), xml, 'utf-8');
+  console.log(`[build:sitemap] sitemap-${lang}.xml écrit (${urls.length} URLs, lastmod ${LASTMOD}).`);
+}
+
 function main(): void {
   const slugs = getAllBlogSlugs();
   const staticPages: Array<{ loc: string; changefreq: string; priority: string }> = [
@@ -137,6 +162,10 @@ ${urls.map((u) => `  <url><loc>${u.loc}</loc><lastmod>${LASTMOD}</lastmod><chang
   fs.writeFileSync(OUT_PATH, xml, 'utf-8');
   fs.writeFileSync(FR_PATH, xml, 'utf-8'); // alias FR identique (contourne le blocage GSC sur sitemap.xml)
   console.log(`[build:sitemap] ${OUT_PATH} + sitemap-fr.xml écrits (${urls.length} URLs).`);
+  // Sitemaps de langue régénérés à chaque build (fini les fichiers statiques périmés).
+  writeLangSitemap('en', 'en/blog', '/en');
+  writeLangSitemap('de', 'de/blog', '/de');
+  writeLangSitemap('es', 'es/blog', '/es');
   writeSitemapIndex();
 }
 
