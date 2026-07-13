@@ -167,9 +167,10 @@ Robin des Airs spécialisé sur les corridors Afrique-Europe :
 - Conteste les refus basés sur des "circonstances extraordinaires"
 - Pas de frais si on ne gagne pas — 25% seulement sur l'indemnité obtenue
 
-**En pratique :** déposez votre dossier en 3 minutes sur WhatsApp. Notre bot vous pose les questions, vous n'avez rien à rédiger.
+**En pratique :** déposez votre dossier **en ligne en 2 minutes** ([formulaire guidé](https://robindesairs.eu/depot-express), sans WhatsApp) ou directement **sur WhatsApp** — dans les deux cas on vous pose les questions, vous n'avez rien à rédiger.
 
 Voir aussi : [Vol retardé Dakar-Paris](/blog/vol-retarde-dakar-paris-indemnite.html), [Vol Air France retardé](/blog/vol-air-france-retarde-indemnite.html), [Corsair vol retardé](/blog/corsair-vol-retarde-indemnite.html), [Panne technique et CE261](/blog/arret-wallentin-hermann-panne-technique.html).
 
+→ [Déposer mon dossier Air Sénégal en 2 min](https://robindesairs.eu/depot-express)
 → [Vérifier mon vol Air Sénégal](https://robindesairs.eu/#funnel-box)
 → [WhatsApp direct](https://wa.me/33756863630)
