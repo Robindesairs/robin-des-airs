@@ -19,7 +19,7 @@ faq:
     a: "**5 ans** devant les juridictions françaises pour le CE 261 (art. 2224 du Code civil), **2 ans** pour la Convention de Montréal (bagages, frais). Gardez billet, carte d'embarquement et justificatifs."
 ---
 
-**Votre vol Ethiopian Airlines a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004) : sur tout vol au départ d'un aéroport de l'UE (par exemple Paris-Paris au départ de Paris), ou si votre vol est opéré par une compagnie européenne.** Ethiopian Airlines étant une compagnie éthiopienne (non-UE), le vol retour depuis Addis-Abeba sur Ethiopian Airlines n'ouvre pas droit au forfait, mais la Convention de Montréal permet de réclamer vos frais réels. Vérification gratuite, 0 € d'avance.
+**Votre vol Ethiopian Airlines a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004) : sur tout vol au départ d'un aéroport de l'UE (par exemple Paris-Addis-Abeba), ou si votre vol est opéré par une compagnie européenne.** Ethiopian Airlines étant une compagnie éthiopienne (non-UE), le vol retour depuis Addis-Abeba sur Ethiopian Airlines n'ouvre pas droit au forfait, mais la Convention de Montréal permet de réclamer vos frais réels. Vérification gratuite, 0 € d'avance.
 
 Ethiopian Airlines relie l'Europe à toute l'Afrique via son hub d'Addis-Abeba. Le point clé à comprendre : Ethiopian Airlines est le premier hub d'Afrique : Addis-Abeba dessert plus de 60 villes africaines en correspondance. Voici, selon le sens et l'opérateur réel de votre vol, ce à quoi vous avez droit.
 

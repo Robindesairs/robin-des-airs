@@ -19,7 +19,7 @@ faq:
     a: "**5 ans** devant les juridictions françaises pour le CE 261 (art. 2224 du Code civil), **2 ans** pour la Convention de Montréal (bagages, frais). Gardez billet, carte d'embarquement et justificatifs."
 ---
 
-**Votre vol Kenya Airways a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004) : sur tout vol au départ d'un aéroport de l'UE (par exemple Paris-Paris au départ de Paris), ou si votre vol est opéré par une compagnie européenne.** Kenya Airways étant une compagnie kényane (non-UE), le vol retour depuis Nairobi sur Kenya Airways n'ouvre pas droit au forfait, mais la Convention de Montréal permet de réclamer vos frais réels. Vérification gratuite, 0 € d'avance.
+**Votre vol Kenya Airways a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004) : sur tout vol au départ d'un aéroport de l'UE (par exemple Paris-Nairobi), ou si votre vol est opéré par une compagnie européenne.** Kenya Airways étant une compagnie kényane (non-UE), le vol retour depuis Nairobi sur Kenya Airways n'ouvre pas droit au forfait, mais la Convention de Montréal permet de réclamer vos frais réels. Vérification gratuite, 0 € d'avance.
 
 Kenya Airways, membre de SkyTeam, partage de nombreux vols avec Air France et KLM. Le point clé à comprendre : Kenya Airways connecte l'Afrique de l'Est et australe depuis son hub de Nairobi. Voici, selon le sens et l'opérateur réel de votre vol, ce à quoi vous avez droit.
 

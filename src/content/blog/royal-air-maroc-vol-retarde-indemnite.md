@@ -19,7 +19,7 @@ faq:
     a: "**5 ans** devant les juridictions françaises pour le CE 261 (art. 2224 du Code civil), **2 ans** pour la Convention de Montréal (bagages, frais). Gardez billet, carte d'embarquement et justificatifs."
 ---
 
-**Votre vol Royal Air Maroc a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004) : sur tout vol au départ d'un aéroport de l'UE (par exemple Paris-Paris au départ de Paris), ou si votre vol est opéré par une compagnie européenne.** Royal Air Maroc étant une compagnie marocaine (non-UE), le vol retour depuis Casablanca sur Royal Air Maroc n'ouvre pas droit au forfait, mais la Convention de Montréal permet de réclamer vos frais réels. Vérification gratuite, 0 € d'avance.
+**Votre vol Royal Air Maroc a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004) : sur tout vol au départ d'un aéroport de l'UE (par exemple Paris-Casablanca), ou si votre vol est opéré par une compagnie européenne.** Royal Air Maroc étant une compagnie marocaine (non-UE), le vol retour depuis Casablanca sur Royal Air Maroc n'ouvre pas droit au forfait, mais la Convention de Montréal permet de réclamer vos frais réels. Vérification gratuite, 0 € d'avance.
 
 Royal Air Maroc est un point de correspondance majeur entre l'Afrique de l'Ouest et l'Europe via Casablanca. Le point clé à comprendre : Royal Air Maroc connecte l'Afrique de l'Ouest (Dakar, Abidjan, Bamako, Conakry) à l'Europe via son hub de Casablanca. Voici, selon le sens et l'opérateur réel de votre vol, ce à quoi vous avez droit.
 

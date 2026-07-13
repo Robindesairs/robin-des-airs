@@ -19,7 +19,7 @@ faq:
     a: "**5 ans** devant les juridictions françaises pour le CE 261 (art. 2224 du Code civil), **2 ans** pour la Convention de Montréal (bagages, frais). Gardez billet, carte d'embarquement et justificatifs."
 ---
 
-**Votre vol Air Peace a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004) : sur tout vol au départ d'un aéroport de l'UE (par exemple Paris-Londres au départ de Paris), ou si votre vol est opéré par une compagnie européenne.** Air Peace étant une compagnie nigériane (non-UE), le vol retour depuis Lagos sur Air Peace n'ouvre pas droit au forfait, mais la Convention de Montréal permet de réclamer vos frais réels. Vérification gratuite, 0 € d'avance.
+**Votre vol Air Peace a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004) : sur tout vol au départ d'un aéroport de l'UE (par exemple Paris-Lagos), ou si votre vol est opéré par une compagnie européenne.** Air Peace étant une compagnie nigériane (non-UE), le vol retour depuis Lagos sur Air Peace n'ouvre pas droit au forfait, mais la Convention de Montréal permet de réclamer vos frais réels. Vérification gratuite, 0 € d'avance.
 
 Air Peace est la principale compagnie privée nigériane, avec des vols vers l'Europe. Le point clé à comprendre : Air Peace dessert le Nigeria et l'Afrique de l'Ouest depuis son hub de Lagos. Voici, selon le sens et l'opérateur réel de votre vol, ce à quoi vous avez droit.
 

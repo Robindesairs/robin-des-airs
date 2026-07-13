@@ -19,7 +19,7 @@ faq:
     a: "**5 ans** devant les juridictions françaises pour le CE 261 (art. 2224 du Code civil), **2 ans** pour la Convention de Montréal (bagages, frais). Gardez billet, carte d'embarquement et justificatifs."
 ---
 
-**Votre vol RwandAir a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004) : sur tout vol au départ d'un aéroport de l'UE (par exemple Paris-Paris au départ de Paris), ou si votre vol est opéré par une compagnie européenne.** RwandAir étant une compagnie rwandaise (non-UE), le vol retour depuis Kigali sur RwandAir n'ouvre pas droit au forfait, mais la Convention de Montréal permet de réclamer vos frais réels. Vérification gratuite, 0 € d'avance.
+**Votre vol RwandAir a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004) : sur tout vol au départ d'un aéroport de l'UE (par exemple Paris-Kigali), ou si votre vol est opéré par une compagnie européenne.** RwandAir étant une compagnie rwandaise (non-UE), le vol retour depuis Kigali sur RwandAir n'ouvre pas droit au forfait, mais la Convention de Montréal permet de réclamer vos frais réels. Vérification gratuite, 0 € d'avance.
 
 RwandAir relie Kigali à Paris, Bruxelles et Londres. Le point clé à comprendre : RwandAir dessert l'Afrique de l'Est et centrale depuis son hub de Kigali. Voici, selon le sens et l'opérateur réel de votre vol, ce à quoi vous avez droit.
 

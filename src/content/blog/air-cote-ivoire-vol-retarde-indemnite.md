@@ -19,7 +19,7 @@ faq:
     a: "**5 ans** devant les juridictions françaises pour le CE 261 (art. 2224 du Code civil), **2 ans** pour la Convention de Montréal (bagages, frais). Gardez billet, carte d'embarquement et justificatifs."
 ---
 
-**Votre vol Air Côte d'Ivoire a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004) : sur tout vol au départ d'un aéroport de l'UE (par exemple Paris-Paris au départ de Paris), ou si votre vol est opéré par une compagnie européenne.** Air Côte d'Ivoire étant une compagnie ivoirienne (non-UE), le vol retour depuis Abidjan sur Air Côte d'Ivoire n'ouvre pas droit au forfait, mais la Convention de Montréal permet de réclamer vos frais réels. Vérification gratuite, 0 € d'avance.
+**Votre vol Air Côte d'Ivoire a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004) : sur tout vol au départ d'un aéroport de l'UE (par exemple Paris-Abidjan), ou si votre vol est opéré par une compagnie européenne.** Air Côte d'Ivoire étant une compagnie ivoirienne (non-UE), le vol retour depuis Abidjan sur Air Côte d'Ivoire n'ouvre pas droit au forfait, mais la Convention de Montréal permet de réclamer vos frais réels. Vérification gratuite, 0 € d'avance.
 
 Air Côte d'Ivoire est la compagnie nationale ivoirienne, très utilisée par la diaspora. Le point clé à comprendre : Air Côte d'Ivoire dessert l'Afrique de l'Ouest depuis son hub d'Abidjan. Voici, selon le sens et l'opérateur réel de votre vol, ce à quoi vous avez droit.
 
