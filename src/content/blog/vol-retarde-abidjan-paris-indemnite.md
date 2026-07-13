@@ -1,38 +1,85 @@
 ---
-title: "Vol retardé Paris-Abidjan ou Abidjan-Paris : vos droits"
-meta_title: "Vol retardé Abidjan-Paris ou Paris-Abidjan : jusqu'à 600€ d'indemnité"
-meta_description: "Retard sur votre vol Paris-Abidjan ? La loi CE 261/2004 vous donne droit à 600€ par passager. Robin des Airs récupère votre argent."
+title: "Vol retardé Paris-Abidjan ou Abidjan-Paris : indemnité jusqu'à 600 €"
+meta_title: "Vol Paris-Abidjan ou Abidjan-Paris retardé : 600 € d'indemnité par passager"
+meta_description: "Vol Paris-Abidjan ou Abidjan-Paris retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
 slug: vol-retarde-abidjan-paris-indemnite
 image_url: /og-blog.png
+faq:
+  - q: "Mon vol Paris-Abidjan a plus de 3h de retard. Combien puis-je réclamer ?"
+    a: "**600 € par passager.** La distance CDG-ABJ est d'environ 4,900 km (vol de plus de 3 500 km) et tout vol au départ de Paris est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
+  - q: "Mon vol retour Abidjan-Paris est retardé. Suis-je couvert ?"
+    a: "Cela dépend de la compagnie. Au départ de Abidjan (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Air France et Corsair sont couvertes. Avec une compagnie non européenne (Air Côte d'Ivoire), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
+  - q: "Mon vol Abidjan-Paris sur Air Côte d'Ivoire a été très retardé. Je n'ai droit à rien ?"
+    a: "Pas au forfait CE 261 sur ce sens (Air Côte d'Ivoire est une compagnie non-UE au départ d'un pays non-UE). Mais la **Convention de Montréal** couvre vos frais réels (repas, hôtel, achats de première nécessité, sur justificatifs), et votre vol aller Paris-Abidjan, lui, reste indemnisable à 600 €."
+  - q: "Nous voyagions en famille. L'indemnité est-elle par personne ?"
+    a: "Oui. **Chaque passager avec un billet compte**, enfants inclus (et bébé si quelque chose a été payé pour lui). Une famille de 4 sur un Abidjan-Paris retardé de 3h+ : 4 x 600 € = 2 400 € bruts, soit 1 800 € nets après la commission de 25 % au succès."
+  - q: "La compagnie parle d'une panne technique. C'est une excuse valable ?"
+    a: "Non, en principe. La CJUE (arrêt Wallentin-Hermann) juge que les pannes techniques ne sont **pas** des circonstances extraordinaires : l'indemnité reste due. Seules la météo extrême, la fermeture d'espace aérien ou une grève externe peuvent exonérer la compagnie."
+  - q: "Mon vol date d'il y a deux ans. Est-ce trop tard ?"
+    a: "Non. Devant les juridictions françaises, vous avez **5 ans** pour réclamer une indemnité CE 261 (art. 2224 du Code civil). Un vol Abidjan-Paris retardé il y a deux ans reste indemnisable."
 ---
 
-**Jusqu'à 600 € par passager** sont peut-être à récupérer sur votre vol Abidjan–Paris retardé de 3 h ou plus. On vérifie gratuitement votre éligibilité, qui dépend de la compagnie et du sens du vol, 0 € d'avance.
+**Votre vol Paris-Abidjan ou Abidjan-Paris a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Paris vers Abidjan est toujours couvert, quelle que soit la compagnie. Le sens Abidjan vers Paris est couvert uniquement avec une compagnie européenne (Air France et Corsair). Vérification gratuite, 0 € d'avance.
 
-La route Paris ↔ Abidjan est une des lignes phares d'Air France vers l'Afrique de l'Ouest. Avec 4 714 km de distance, tout retard de plus de 3h ouvre droit au palier maximum : 600€ par passager.
+Distance CDG-ABJ : environ 4,900 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. La route Abidjan-Paris est l'une des plus fréquentées par la diaspora ivoirienne, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
+
+## Êtes-vous éligible ? La règle en 30 secondes
+
+Le règlement CE 261/2004 s'applique dans deux cas :
+
+- **Le vol part d'un aéroport de l'UE** (Paris) : couvert quelle que soit la compagnie, même non européenne.
+- **La compagnie est européenne** : couverte dans les deux sens, y compris au départ de Abidjan.
+
+| Trajet | Compagnies | Indemnité CE 261 si retard >= 3h |
+|---|---|---|
+| Paris vers Abidjan | Air France et Corsair, Air Côte d'Ivoire | Oui : **600 € par passager** |
+| Abidjan vers Paris | Air France et Corsair | Oui : **600 € par passager** |
+| Abidjan vers Paris | Air Côte d'Ivoire | Non : frais réels via Convention de Montréal |
+
+Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ.
 
 ## Les compagnies sur la ligne
 
-- **Air France** (AF552, AF702) — CDG → ABJ, quotidien. Compagnie UE = éligible dans les deux sens.
-- **Corsair** — ORY → ABJ, saisonnier. Compagnie UE = éligible dans les deux sens.
-- **Air Côte d'Ivoire** — CDG → ABJ. Compagnie non-UE = éligible uniquement au départ de CDG (pas au retour).
+- **Compagnies européennes** (couvertes dans les deux sens) : Air France et Corsair
+- **Compagnies non européennes** (couvertes uniquement au départ de Paris) : Air Côte d'Ivoire
 
-## Pourquoi les retards sont fréquents
+## Vol avec correspondance
 
-Abidjan-Houphouët-Boigny (ABJ) est un aéroport en pleine croissance. Les créneaux horaires sont saturés, les rotations serrées. Les vols du soir (départ CDG vers 21h-22h) arrivent de nuit à Abidjan et sont souvent victimes d'effets en cascade : un retard sur le vol précédent de l'avion décale tout.
+Si votre billet est une **réservation unique** avec correspondance, le retard se mesure à la **destination finale** (arrêt Folkerts, CJUE 2013). Une correspondance manquée qui vous fait arriver avec 3h+ de retard ouvre droit à l'indemnité, calculée sur la distance totale du trajet, même si l'une des étapes est opérée par une autre compagnie.
 
-Les périodes de pointe (Noël, été, fêtes religieuses) aggravent la situation. C'est aussi le moment où les familles de la diaspora ivoirienne voyagent le plus.
+## Vol annulé Abidjan-Paris : vos droits
 
-## Le piège du vol retour
+Si la compagnie annule votre vol et vous prévient **moins de 14 jours** avant le départ, vous avez droit à l'**indemnité de 600 €** par passager, **plus** le remboursement du billet OU un réacheminement, au choix. Ces deux droits se cumulent (art. 7 et art. 8). Un bon d'achat ne remplace le remboursement en argent que si vous l'acceptez : vous pouvez le refuser et exiger le virement.
 
-Air Côte d'Ivoire opère des vols Abidjan → Paris. Si votre retour est sur cette compagnie et que le vol est retardé, le CE 261/2004 ne s'applique pas (compagnie non-UE au départ hors UE). En revanche, si vous étiez sur Air France au retour, vous êtes couvert.
+## Les excuses des compagnies : valables ou non
 
-Vérifiez toujours quelle compagnie opère réellement le vol — parfois le billet est acheté via une compagnie mais opéré par une autre (codeshare).
+La compagnie n'échappe à l'indemnité qu'en cas de **circonstance extraordinaire** qu'elle ne pouvait pas éviter.
 
-## Exemple concret
+**Excuses valables** : météo extrême, fermeture d'espace aérien, grève des contrôleurs aériens.
 
-Famille de 3, vol AF552 CDG → ABJ retardé de 5h15. Indemnité : 3 × 600€ = 1 800€ brut. Commission Robin 25% = 450€. Famille reçoit **1 350€ nets**.
+**Excuses non valables** (l'indemnité reste due) :
 
-Service disponible en français et en langues ivoiriennes.
+- panne technique (arrêt Wallentin-Hermann, CJUE)
+- retard de l'avion sur la rotation précédente
+- grève du personnel de la compagnie elle-même (arrêt Krüsemann, CJUE)
+- sous-effectif ou problème d'organisation
 
-→ [Vérifier mon vol Abidjan](https://robindesairs.eu/#funnel-box)
+Robin des Airs conteste systématiquement les refus fondés sur de fausses circonstances extraordinaires.
+
+## Combien de temps pour réclamer ?
+
+**5 ans** devant les juridictions françaises (art. 2224 du Code civil). Un vol Abidjan-Paris retardé il y a deux ou trois ans reste indemnisable aujourd'hui.
+
+## Famille : chaque passager compte
+
+L'indemnité est due **par passager**, sans distinction d'âge. Exemple : famille de 4 sur un Abidjan-Paris arrivé avec 4h de retard : 4 x 600 € = **2 400 € bruts**, soit **1 800 € nets** après la commission de 25 % au succès.
+
+## Comment réclamer avec Robin des Airs
+
+Spécialiste des corridors Afrique-Europe, Robin des Airs vérifie l'éligibilité de votre vol (sens, compagnie, distance, cause), monte le dossier, envoie la réclamation et conteste les refus. **0 € si rien n'est récupéré**, commission de 25 % uniquement au succès.
+
+**En pratique :** déposez votre dossier **en ligne en 2 minutes** ([formulaire guidé](https://robindesairs.eu/depot-express), sans WhatsApp) ou directement **sur WhatsApp**, avec rappel possible en dioula ou baoulé.
+
+→ [Déposer mon dossier Abidjan-Paris en 2 min](https://robindesairs.eu/depot-express)
+→ [Vérifier mon vol](https://robindesairs.eu/#funnel-box)
 → [WhatsApp direct](https://wa.me/33756863630)

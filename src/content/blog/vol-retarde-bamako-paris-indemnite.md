@@ -1,30 +1,85 @@
 ---
-title: "Vol retardé Paris-Bamako : vos droits à 600€"
-meta_title: "Vol retardé Paris-Bamako : réclamez jusqu'à 600€ par passager"
-meta_description: "Votre vol Paris-Bamako ou Bamako-Paris a été retardé ? Vous avez droit à 600€. Robin des Airs gère votre dossier en français et en bambara."
+title: "Vol retardé Paris-Bamako ou Bamako-Paris : indemnité jusqu'à 600 €"
+meta_title: "Vol Paris-Bamako ou Bamako-Paris retardé : 600 € d'indemnité par passager"
+meta_description: "Vol Paris-Bamako ou Bamako-Paris retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
 slug: vol-retarde-bamako-paris-indemnite
 image_url: /og-blog.png
+faq:
+  - q: "Mon vol Paris-Bamako a plus de 3h de retard. Combien puis-je réclamer ?"
+    a: "**600 € par passager.** La distance CDG-BKO est d'environ 4,050 km (vol de plus de 3 500 km) et tout vol au départ de Paris est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
+  - q: "Mon vol retour Bamako-Paris est retardé. Suis-je couvert ?"
+    a: "Cela dépend de la compagnie. Au départ de Bamako (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Air France et Corsair sont couvertes. Avec une compagnie non européenne (Air Sénégal (via Dakar)), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
+  - q: "Mon vol Bamako-Paris sur Air Sénégal a été très retardé. Je n'ai droit à rien ?"
+    a: "Pas au forfait CE 261 sur ce sens (Air Sénégal est une compagnie non-UE au départ d'un pays non-UE). Mais la **Convention de Montréal** couvre vos frais réels (repas, hôtel, achats de première nécessité, sur justificatifs), et votre vol aller Paris-Bamako, lui, reste indemnisable à 600 €."
+  - q: "Nous voyagions en famille. L'indemnité est-elle par personne ?"
+    a: "Oui. **Chaque passager avec un billet compte**, enfants inclus (et bébé si quelque chose a été payé pour lui). Une famille de 4 sur un Bamako-Paris retardé de 3h+ : 4 x 600 € = 2 400 € bruts, soit 1 800 € nets après la commission de 25 % au succès."
+  - q: "La compagnie parle d'une panne technique. C'est une excuse valable ?"
+    a: "Non, en principe. La CJUE (arrêt Wallentin-Hermann) juge que les pannes techniques ne sont **pas** des circonstances extraordinaires : l'indemnité reste due. Seules la météo extrême, la fermeture d'espace aérien ou une grève externe peuvent exonérer la compagnie."
+  - q: "Mon vol date d'il y a deux ans. Est-ce trop tard ?"
+    a: "Non. Devant les juridictions françaises, vous avez **5 ans** pour réclamer une indemnité CE 261 (art. 2224 du Code civil). Un vol Bamako-Paris retardé il y a deux ans reste indemnisable."
 ---
 
-**Votre vol Bamako–Paris retardé de 3 h peut vous valoir jusqu'à 600 € par passager.** On vérifie gratuitement votre éligibilité, qui dépend de la compagnie et du sens du vol, 0 € d'avance.
+**Votre vol Paris-Bamako ou Bamako-Paris a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Paris vers Bamako est toujours couvert, quelle que soit la compagnie. Le sens Bamako vers Paris est couvert uniquement avec une compagnie européenne (Air France et Corsair). Vérification gratuite, 0 € d'avance.
 
-La route Paris ↔ Bamako (4 170 km) dessert une diaspora malienne très présente en France, notamment en Île-de-France. Air France opère la ligne quotidiennement avec les vols AF732/AF733.
+Distance CDG-BKO : environ 4,050 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Bamako-Paris est un axe central de la diaspora malienne, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
-## Air France : seule compagnie UE directe
+## Êtes-vous éligible ? La règle en 30 secondes
 
-Air France est la principale compagnie européenne sur Paris-Bamako. Éligible CE 261 dans les deux sens. Les correspondances manquées à CDG suite à un retard sur un vol précédent sont également couvertes — c'est le retard à l'arrivée finale qui compte.
+Le règlement CE 261/2004 s'applique dans deux cas :
 
-## Retards fréquents en période de pointe
+- **Le vol part d'un aéroport de l'UE** (Paris) : couvert quelle que soit la compagnie, même non européenne.
+- **La compagnie est européenne** : couverte dans les deux sens, y compris au départ de Bamako.
 
-Les vols vers Bamako-Modibo Keïta (BKO) subissent des retards récurrents en période de Tabaski, de fin d'année, et pendant l'été. Les rotations d'avion depuis d'autres destinations africaines (Dakar, Ouagadougou) créent des effets en cascade.
+| Trajet | Compagnies | Indemnité CE 261 si retard >= 3h |
+|---|---|---|
+| Paris vers Bamako | Air France et Corsair, Air Sénégal (via Dakar) | Oui : **600 € par passager** |
+| Bamako vers Paris | Air France et Corsair | Oui : **600 € par passager** |
+| Bamako vers Paris | Air Sénégal (via Dakar) | Non : frais réels via Convention de Montréal |
 
-## Correspondance manquée à CDG
+Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ.
 
-Beaucoup de passagers maliens transitent par CDG avec une correspondance. Si le premier vol est en retard et que vous manquez votre correspondance vers Bamako, vous êtes éligible à l'indemnité basée sur le retard à l'arrivée finale.
+## Les compagnies sur la ligne
 
-Famille de 3, correspondance manquée à CDG → arrivée à Bamako avec 7h de retard. 3 × 600€ = 1 800€ brut → **1 350€ nets**.
+- **Compagnies européennes** (couvertes dans les deux sens) : Air France et Corsair
+- **Compagnies non européennes** (couvertes uniquement au départ de Paris) : Air Sénégal (via Dakar)
 
-Service disponible en français, bambara et soninké.
+## Vol avec correspondance
 
-→ [Vérifier mon vol Bamako](https://robindesairs.eu/#funnel-box)
+Si votre billet est une **réservation unique** avec correspondance, le retard se mesure à la **destination finale** (arrêt Folkerts, CJUE 2013). Une correspondance manquée qui vous fait arriver avec 3h+ de retard ouvre droit à l'indemnité, calculée sur la distance totale du trajet, même si l'une des étapes est opérée par une autre compagnie.
+
+## Vol annulé Bamako-Paris : vos droits
+
+Si la compagnie annule votre vol et vous prévient **moins de 14 jours** avant le départ, vous avez droit à l'**indemnité de 600 €** par passager, **plus** le remboursement du billet OU un réacheminement, au choix. Ces deux droits se cumulent (art. 7 et art. 8). Un bon d'achat ne remplace le remboursement en argent que si vous l'acceptez : vous pouvez le refuser et exiger le virement.
+
+## Les excuses des compagnies : valables ou non
+
+La compagnie n'échappe à l'indemnité qu'en cas de **circonstance extraordinaire** qu'elle ne pouvait pas éviter.
+
+**Excuses valables** : météo extrême, fermeture d'espace aérien, grève des contrôleurs aériens.
+
+**Excuses non valables** (l'indemnité reste due) :
+
+- panne technique (arrêt Wallentin-Hermann, CJUE)
+- retard de l'avion sur la rotation précédente
+- grève du personnel de la compagnie elle-même (arrêt Krüsemann, CJUE)
+- sous-effectif ou problème d'organisation
+
+Robin des Airs conteste systématiquement les refus fondés sur de fausses circonstances extraordinaires.
+
+## Combien de temps pour réclamer ?
+
+**5 ans** devant les juridictions françaises (art. 2224 du Code civil). Un vol Bamako-Paris retardé il y a deux ou trois ans reste indemnisable aujourd'hui.
+
+## Famille : chaque passager compte
+
+L'indemnité est due **par passager**, sans distinction d'âge. Exemple : famille de 4 sur un Bamako-Paris arrivé avec 4h de retard : 4 x 600 € = **2 400 € bruts**, soit **1 800 € nets** après la commission de 25 % au succès.
+
+## Comment réclamer avec Robin des Airs
+
+Spécialiste des corridors Afrique-Europe, Robin des Airs vérifie l'éligibilité de votre vol (sens, compagnie, distance, cause), monte le dossier, envoie la réclamation et conteste les refus. **0 € si rien n'est récupéré**, commission de 25 % uniquement au succès.
+
+**En pratique :** déposez votre dossier **en ligne en 2 minutes** ([formulaire guidé](https://robindesairs.eu/depot-express), sans WhatsApp) ou directement **sur WhatsApp**, avec rappel possible en bambara ou soninké.
+
+→ [Déposer mon dossier Bamako-Paris en 2 min](https://robindesairs.eu/depot-express)
+→ [Vérifier mon vol](https://robindesairs.eu/#funnel-box)
 → [WhatsApp direct](https://wa.me/33756863630)

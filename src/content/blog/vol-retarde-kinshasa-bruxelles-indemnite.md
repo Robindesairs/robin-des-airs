@@ -1,35 +1,85 @@
 ---
-title: "Vol retardé Bruxelles-Kinshasa ou Kinshasa-Bruxelles : vos droits"
-meta_title: "Vol retardé Kinshasa-Bruxelles : vos droits à 600€ d'indemnité"
-meta_description: "Retard ou annulation sur votre vol Bruxelles-Kinshasa ? La loi européenne vous donne droit à 600€ par passager. Robin des Airs s'en occupe."
+title: "Vol retardé Bruxelles-Kinshasa ou Kinshasa-Bruxelles : indemnité jusqu'à 600 €"
+meta_title: "Vol Bruxelles-Kinshasa ou Kinshasa-Bruxelles retardé : 600 € d'indemnité par passager"
+meta_description: "Vol Bruxelles-Kinshasa ou Kinshasa-Bruxelles retardé de 3h ou annulé ? Jusqu'à 600 € par passager (CE 261/2004). Quelles compagnies doivent payer, dans quel sens, comment réclamer."
 slug: vol-retarde-kinshasa-bruxelles-indemnite
 image_url: /og-blog.png
+faq:
+  - q: "Mon vol Bruxelles-Kinshasa a plus de 3h de retard. Combien puis-je réclamer ?"
+    a: "**600 € par passager.** La distance BRU-FIH est d'environ 6,300 km (vol de plus de 3 500 km) et tout vol au départ de Bruxelles est couvert par le CE 261/2004, quelle que soit la compagnie, dès 3h de retard à l'arrivée."
+  - q: "Mon vol retour Kinshasa-Bruxelles est retardé. Suis-je couvert ?"
+    a: "Cela dépend de la compagnie. Au départ de Kinshasa (hors UE), le CE 261 ne s'applique que si la compagnie est **européenne** : Brussels Airlines et Air France (via Paris) sont couvertes. Avec une compagnie non européenne (Congo Airways et Ethiopian Airlines (via Addis-Abeba)), le forfait n'est pas dû sur ce sens, mais la Convention de Montréal permet de réclamer les frais réels justifiés."
+  - q: "Mon vol Kinshasa-Bruxelles sur Congo Airways a été très retardé. Je n'ai droit à rien ?"
+    a: "Pas au forfait CE 261 sur ce sens (Congo Airways est une compagnie non-UE au départ d'un pays non-UE). Mais la **Convention de Montréal** couvre vos frais réels (repas, hôtel, achats de première nécessité, sur justificatifs), et votre vol aller Bruxelles-Kinshasa, lui, reste indemnisable à 600 €."
+  - q: "Nous voyagions en famille. L'indemnité est-elle par personne ?"
+    a: "Oui. **Chaque passager avec un billet compte**, enfants inclus (et bébé si quelque chose a été payé pour lui). Une famille de 4 sur un Kinshasa-Bruxelles retardé de 3h+ : 4 x 600 € = 2 400 € bruts, soit 1 800 € nets après la commission de 25 % au succès."
+  - q: "La compagnie parle d'une panne technique. C'est une excuse valable ?"
+    a: "Non, en principe. La CJUE (arrêt Wallentin-Hermann) juge que les pannes techniques ne sont **pas** des circonstances extraordinaires : l'indemnité reste due. Seules la météo extrême, la fermeture d'espace aérien ou une grève externe peuvent exonérer la compagnie."
+  - q: "Mon vol date d'il y a deux ans. Est-ce trop tard ?"
+    a: "Non. Devant les juridictions françaises, vous avez **5 ans** pour réclamer une indemnité CE 261 (art. 2224 du Code civil). Un vol Kinshasa-Bruxelles retardé il y a deux ans reste indemnisable."
 ---
 
-**Jusqu'à 600 € par passager** sont peut-être à récupérer sur votre vol Kinshasa–Bruxelles retardé de 3 h ou plus. On vérifie gratuitement votre éligibilité, qui dépend de la compagnie et du sens du vol, 0 € d'avance.
+**Votre vol Bruxelles-Kinshasa ou Kinshasa-Bruxelles a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004).** Le sens Bruxelles vers Kinshasa est toujours couvert, quelle que soit la compagnie. Le sens Kinshasa vers Bruxelles est couvert uniquement avec une compagnie européenne (Brussels Airlines et Air France (via Paris)). Vérification gratuite, 0 € d'avance.
 
-La route Bruxelles ↔ Kinshasa est l'une des plus importantes pour la diaspora congolaise en Europe. Avec plus de 6 200 km, c'est un vol long-courrier qui ouvre droit au maximum : 600€ par passager en cas de retard de plus de 3h.
+Distance BRU-FIH : environ 6,300 km, soit un vol long-courrier de plus de 3 500 km, donc le palier maximal de **600 €**. Kinshasa-Bruxelles est l'axe historique de la diaspora congolaise, Brussels Airlines en tête, et les retards y sont fréquents. Voici précisément qui doit payer, combien, et comment réclamer.
 
-## Les compagnies
+## Êtes-vous éligible ? La règle en 30 secondes
 
-- **Brussels Airlines (SN)** — BRU → FIH, compagnie UE. Éligible dans les deux sens car Bruxelles est un aéroport UE et Brussels Airlines est européenne.
-- **Air France** — CDG → FIH via correspondance ou direct. Éligible.
+Le règlement CE 261/2004 s'applique dans deux cas :
 
-Brussels Airlines est la compagnie historique sur la ligne Congo. Les retards et annulations sont documentés, surtout pendant les périodes de pointe (Noël, vacances scolaires belges).
+- **Le vol part d'un aéroport de l'UE** (Bruxelles) : couvert quelle que soit la compagnie, même non européenne.
+- **La compagnie est européenne** : couverte dans les deux sens, y compris au départ de Kinshasa.
 
-## Bruxelles = aéroport UE
+| Trajet | Compagnies | Indemnité CE 261 si retard >= 3h |
+|---|---|---|
+| Bruxelles vers Kinshasa | Brussels Airlines et Air France (via Paris), Congo Airways et Ethiopian Airlines (via Addis-Abeba) | Oui : **600 € par passager** |
+| Kinshasa vers Bruxelles | Brussels Airlines et Air France (via Paris) | Oui : **600 € par passager** |
+| Kinshasa vers Bruxelles | Congo Airways et Ethiopian Airlines (via Addis-Abeba) | Non : frais réels via Convention de Montréal |
 
-BRU est un aéroport de l'Union européenne. Tout vol au départ de BRU est couvert par le CE 261/2004, quelle que soit la compagnie. Et tout vol arrivant à BRU est couvert si la compagnie est européenne.
+Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ.
 
-## Annulations fréquentes
+## Les compagnies sur la ligne
 
-La ligne BRU-FIH est régulièrement perturbée. Les raisons invoquées par Brussels Airlines vont du "problème technique" à la "météo". Robin vérifie systématiquement les bulletins METAR de Bruxelles-Zaventem et de Kinshasa N'Djili pour contrer ces arguments.
+- **Compagnies européennes** (couvertes dans les deux sens) : Brussels Airlines et Air France (via Paris)
+- **Compagnies non européennes** (couvertes uniquement au départ de Bruxelles) : Congo Airways et Ethiopian Airlines (via Addis-Abeba)
 
-## Combien pour une famille congolaise type
+## Vol avec correspondance
 
-Couple + 2 enfants, vol SN401 BRU → FIH annulé 3 jours avant le départ. Indemnité : 4 × 600€ = 2 400€ brut → **1 800€ nets** pour la famille.
+Si votre billet est une **réservation unique** avec correspondance, le retard se mesure à la **destination finale** (arrêt Folkerts, CJUE 2013). Une correspondance manquée qui vous fait arriver avec 3h+ de retard ouvre droit à l'indemnité, calculée sur la distance totale du trajet, même si l'une des étapes est opérée par une autre compagnie.
 
-Service disponible en français et en lingala.
+## Vol annulé Kinshasa-Bruxelles : vos droits
 
-→ [Vérifier mon vol Kinshasa](https://robindesairs.eu/#funnel-box)
+Si la compagnie annule votre vol et vous prévient **moins de 14 jours** avant le départ, vous avez droit à l'**indemnité de 600 €** par passager, **plus** le remboursement du billet OU un réacheminement, au choix. Ces deux droits se cumulent (art. 7 et art. 8). Un bon d'achat ne remplace le remboursement en argent que si vous l'acceptez : vous pouvez le refuser et exiger le virement.
+
+## Les excuses des compagnies : valables ou non
+
+La compagnie n'échappe à l'indemnité qu'en cas de **circonstance extraordinaire** qu'elle ne pouvait pas éviter.
+
+**Excuses valables** : météo extrême, fermeture d'espace aérien, grève des contrôleurs aériens.
+
+**Excuses non valables** (l'indemnité reste due) :
+
+- panne technique (arrêt Wallentin-Hermann, CJUE)
+- retard de l'avion sur la rotation précédente
+- grève du personnel de la compagnie elle-même (arrêt Krüsemann, CJUE)
+- sous-effectif ou problème d'organisation
+
+Robin des Airs conteste systématiquement les refus fondés sur de fausses circonstances extraordinaires.
+
+## Combien de temps pour réclamer ?
+
+**5 ans** devant les juridictions françaises (art. 2224 du Code civil). Un vol Kinshasa-Bruxelles retardé il y a deux ou trois ans reste indemnisable aujourd'hui.
+
+## Famille : chaque passager compte
+
+L'indemnité est due **par passager**, sans distinction d'âge. Exemple : famille de 4 sur un Kinshasa-Bruxelles arrivé avec 4h de retard : 4 x 600 € = **2 400 € bruts**, soit **1 800 € nets** après la commission de 25 % au succès.
+
+## Comment réclamer avec Robin des Airs
+
+Spécialiste des corridors Afrique-Europe, Robin des Airs vérifie l'éligibilité de votre vol (sens, compagnie, distance, cause), monte le dossier, envoie la réclamation et conteste les refus. **0 € si rien n'est récupéré**, commission de 25 % uniquement au succès.
+
+**En pratique :** déposez votre dossier **en ligne en 2 minutes** ([formulaire guidé](https://robindesairs.eu/depot-express), sans WhatsApp) ou directement **sur WhatsApp**, avec rappel possible en lingala.
+
+→ [Déposer mon dossier Kinshasa-Bruxelles en 2 min](https://robindesairs.eu/depot-express)
+→ [Vérifier mon vol](https://robindesairs.eu/#funnel-box)
 → [WhatsApp direct](https://wa.me/33756863630)
