@@ -1,50 +1,78 @@
 ---
-title: "Air Côte d'Ivoire vol retardé : vos droits à l'indemnité"
-meta_title: "Air Côte d'Ivoire vol retardé depuis Paris : jusqu'à 600€ (CE 261)"
-meta_description: "Vol Air Côte d'Ivoire retardé depuis Paris ou Bruxelles ? Réclamez 600€ par passager. Le retour Abidjan→Paris n'est pas couvert par le CE261."
+title: "Vol Air Côte d'Ivoire retardé ou annulé : indemnité jusqu'à 600 €"
+meta_title: "Vol Air Côte d'Ivoire retardé ou annulé : jusqu'à 600 € d'indemnité par passager"
+meta_description: "Vol Air Côte d'Ivoire retardé de 3h, annulé ou surbooké ? Jusqu'à 600 € par passager (CE 261/2004) selon le sens et l'opérateur. Comment savoir si vous êtes couvert et comment réclamer."
 slug: air-cote-ivoire-vol-retarde-indemnite
 image_url: /og-blog.png
 faq:
-  - q: "Mon vol Paris-Abidjan sur Air Côte d'Ivoire a eu 4h de retard. Combien je touche ?"
-    a: "Distance CDG-ABJ ≈ 4 700 km → **600€ par passager** si retard ≥ 3h à l'arrivée. Couvert car départ de Paris (UE)."
-  - q: "Vol retour Abidjan-Paris sur Air Côte d'Ivoire avec 6h de retard. Je peux réclamer ?"
-    a: "Non. Air Côte d'Ivoire est une compagnie ivoirienne (non-UE), et le départ d'Abidjan n'est pas couvert. Pour les vols retour, Air France ou Corsair (compagnies UE) vous protègent dans les deux sens."
-  - q: "Air Côte d'Ivoire annule mon vol Paris-Abidjan. J'ai droit à quoi ?"
-    a: "En cas d'annulation depuis un aéroport UE : **600€ par passager** + remboursement du billet OU réacheminement. Si la compagnie vous prévient moins de 14 jours avant, l'indemnité est due sauf circonstance extraordinaire prouvée."
+  - q: "Mon vol Air Côte d'Ivoire au départ de Paris a plus de 3h de retard. J'ai droit à quoi ?"
+    a: "**Jusqu'à 600 € par passager.** Tout vol au départ d'un aéroport de l'UE est couvert par le CE 261/2004, quelle que soit la compagnie, Air Côte d'Ivoire comprise. Pour un long-courrier de plus de 3 500 km, le palier est de 600 €."
+  - q: "Air Côte d'Ivoire est-elle une compagnie européenne ?"
+    a: "Non, Air Côte d'Ivoire est une compagnie ivoirienne, donc non européenne. Conséquence : elle n'est couverte par le forfait CE 261 que sur les vols **au départ d'un aéroport de l'UE**. Au départ d'Abidjan, le forfait n'est pas dû, sauf si le vol est opéré par une compagnie européenne."
+  - q: "Mon vol retour vers l'Afrique sur Air Côte d'Ivoire a été très retardé. Rien du tout ?"
+    a: "Pas le forfait CE 261 sur ce sens. Mais la **Convention de Montréal** couvre vos frais réels (repas, hôtel, achats de première nécessité, sur justificatifs), et votre vol aller au départ d'Europe reste, lui, indemnisable jusqu'à 600 €."
+  - q: "Mon billet Air Côte d'Ivoire avait une correspondance. Comment est calculé le retard ?"
+    a: "Sur une **réservation unique**, le retard se mesure à la **destination finale** (arrêt Folkerts, CJUE). Air Côte d'Ivoire dessert l'Afrique de l'Ouest depuis son hub d'Abidjan, donc les correspondances sont fréquentes : un retard de 3h+ à l'arrivée finale ouvre droit à l'indemnité, sur la distance totale."
+  - q: "La compagnie invoque une panne technique pour refuser. C'est valable ?"
+    a: "Non, en principe. La CJUE (arrêt Wallentin-Hermann) juge que les pannes techniques ne sont **pas** des circonstances extraordinaires : l'indemnité reste due. Robin des Airs conteste systématiquement ces refus."
+  - q: "Combien de temps pour réclamer à Air Côte d'Ivoire ?"
+    a: "**5 ans** devant les juridictions françaises pour le CE 261 (art. 2224 du Code civil), **2 ans** pour la Convention de Montréal (bagages, frais). Gardez billet, carte d'embarquement et justificatifs."
 ---
 
-**Vol Air Côte d'Ivoire retardé de 3h ou plus, ou annulé ? Selon votre trajet, jusqu'à 600 € par passager.** Au départ d'Europe, c'est couvert ; au départ d'Abidjan, Air Côte d'Ivoire n'étant pas européenne, l'indemnité n'est en principe pas due. On vérifie gratuitement votre cas.
+**Votre vol Air Côte d'Ivoire a été retardé de 3h ou plus, ou annulé ? Vous pouvez réclamer jusqu'à 600 € par passager (règlement CE 261/2004) : sur tout vol au départ d'un aéroport de l'UE (par exemple Paris-Paris au départ de Paris), ou si votre vol est opéré par une compagnie européenne.** Air Côte d'Ivoire étant une compagnie ivoirienne (non-UE), le vol retour depuis Abidjan sur Air Côte d'Ivoire n'ouvre pas droit au forfait, mais la Convention de Montréal permet de réclamer vos frais réels. Vérification gratuite, 0 € d'avance.
 
-Air Côte d'Ivoire (HF) est la compagnie nationale ivoirienne, créée en 2012, opérant principalement la liaison Abidjan (ABJ) ↔ Paris Charles-de-Gaulle. Pour la diaspora ivoirienne en France — l'une des plus importantes d'Afrique de l'Ouest — c'est souvent le lien direct avec le pays.
+Air Côte d'Ivoire est la compagnie nationale ivoirienne, très utilisée par la diaspora. Le point clé à comprendre : Air Côte d'Ivoire dessert l'Afrique de l'Ouest depuis son hub d'Abidjan. Voici, selon le sens et l'opérateur réel de votre vol, ce à quoi vous avez droit.
 
-## Règle de base : la compagnie est ivoirienne, pas européenne
+## Êtes-vous éligible ? La règle en 30 secondes
 
-Air Côte d'Ivoire est enregistrée à Abidjan — hors UE. Le CE 261/2004 s'applique donc selon le lieu de départ uniquement :
+Le CE 261/2004 s'applique dans deux cas :
 
-| Trajet | Éligible CE261 ? |
+- **Le vol part d'un aéroport de l'UE** : couvert quelle que soit la compagnie, Air Côte d'Ivoire incluse.
+- **Le vol est opéré par une compagnie européenne** : couvert dans les deux sens.
+
+| Trajet | Indemnité CE 261 si retard >= 3h |
 |---|---|
-| Paris CDG → Abidjan ABJ (Air Côte d'Ivoire) | ✅ Oui — départ UE |
-| Abidjan ABJ → Paris CDG (Air Côte d'Ivoire retour) | ❌ Non |
+| Paris (UE) vers Abidjan, sur Air Côte d'Ivoire | Oui : **600 € par passager** (départ UE) |
+| Abidjan vers Paris, opéré par Air France | Oui : **600 €** (opérateur UE) |
+| Abidjan vers Paris, opéré par Air Côte d'Ivoire | Non : frais réels via Convention de Montréal |
 
-**Pour les vols retour couverts**, Air France et Corsair desservent la même route et sont compagnies UE — elles vous protègent dans les deux sens.
+Le seuil se mesure **à l'arrivée** (ouverture des portes), pas au départ.
 
-## Montant Paris-Abidjan
+**Cas particulier codeshare :** Air Côte d'Ivoire partage des vols avec Air France. Ce qui compte pour le CE 261, c'est la compagnie qui **opère réellement** le vol, pas celle qui le vend. Si votre vol Abidjan-Europe est **opéré par Air France** (compagnie européenne), il est **couvert dans les deux sens**, même s'il porte un numéro Air Côte d'Ivoire. Vérifiez la mention « opéré par » sur votre billet.
 
-Distance Paris CDG → Abidjan ABJ : ~4 700 km > 3 500 km → **600€ par passager** en cas de retard ≥ 3h ou annulation.
+## Correspondances : le point important avec Air Côte d'Ivoire
 
-## Retards récurrents sur la ligne
+Air Côte d'Ivoire dessert l'Afrique de l'Ouest depuis son hub d'Abidjan. Beaucoup de passagers voyagent donc en correspondance. Sur un **billet unique**, l'indemnité se calcule sur la **destination finale** et la **distance totale** (arrêt Folkerts, CJUE 2013). Une correspondance manquée qui vous fait arriver avec 3h+ de retard est indemnisable, même si une étape est opérée par une autre compagnie. La créance est déterminée par le vol effectif (arrêt Wegener, CJUE).
 
-Air Côte d'Ivoire opère avec une flotte réduite. Les retards de rotation — vol retour ABJ→CDG en retard, redécollage CDG→ABJ décalé — se produisent régulièrement, notamment en période de fêtes (Noël, Tabaski, vacances scolaires).
+## Vol annulé sur Air Côte d'Ivoire : vos droits
 
-## Famille et groupe
+Si Air Côte d'Ivoire annule votre vol au départ de l'UE et vous prévient **moins de 14 jours** avant, vous avez droit à l'**indemnité de 600 €** par passager, **plus** le remboursement du billet OU un réacheminement, au choix. Ces droits se cumulent (art. 7 et art. 8). Un bon d'achat ne remplace le remboursement en argent que si vous l'acceptez : vous pouvez le refuser.
 
-Famille de 5 sur Paris-Abidjan retardée de 4h : 5 × 600€ = 3 000€ brut, **2 250€ nets** après commission Robin de 25%. Les enfants ayant payé un billet (même à tarif réduit) comptent.
+## Les excuses des compagnies : valables ou non
 
-## Délai de réclamation
+**Excuses valables** : météo extrême, fermeture d'espace aérien, grève des contrôleurs aériens.
 
-Vous avez jusqu'à **2 ans** (droit commun ivoirien applicable) à **5 ans** (prescription française) pour réclamer. Gardez votre carte d'embarquement et votre billet.
+**Excuses non valables** (l'indemnité reste due) :
 
-Voir aussi : [Vol retardé Abidjan-Paris](/blog/vol-retarde-abidjan-paris-indemnite.html), [Corsair vol retardé](/blog/corsair-vol-retarde-indemnite.html), [Vol Air France retardé](/blog/vol-air-france-retarde-indemnite.html).
+- panne technique (arrêt Wallentin-Hermann, CJUE)
+- retard de l'avion sur la rotation précédente
+- grève du personnel de Air Côte d'Ivoire elle-même (arrêt Krüsemann, CJUE)
+- sous-effectif ou problème d'organisation
 
-→ [Vérifier mon vol Air Côte d'Ivoire](https://robindesairs.eu/#funnel-box)
+## Bagages : la Convention de Montréal, dans les deux sens
+
+Quel que soit le sens de votre vol Air Côte d'Ivoire, la **Convention de Montréal** couvre vos bagages : jusqu'à **1 414 €** (1 288 DTS) par passager en cas de perte ou de dommage. Réflexe indispensable : remplir un **PIR (Property Irregularity Report)** au comptoir avant de quitter l'aéroport. Sans PIR, la réclamation est quasi impossible.
+
+## Famille : chaque passager compte
+
+L'indemnité est due **par passager**, sans distinction d'âge. Famille de 4 sur un vol Air Côte d'Ivoire éligible retardé de 4h : 4 x 600 € = **2 400 € bruts**, soit **1 800 € nets** après la commission de 25 % au succès.
+
+## Comment réclamer avec Robin des Airs
+
+Spécialiste des corridors Afrique-Europe, Robin des Airs vérifie l'éligibilité de votre vol (sens, opérateur réel, distance, cause), monte le dossier, envoie la réclamation à Air Côte d'Ivoire et conteste les refus. **0 € si rien n'est récupéré**, commission de 25 % uniquement au succès.
+
+**En pratique :** déposez votre dossier **en ligne en 2 minutes** ([formulaire guidé](https://robindesairs.eu/depot-express), sans WhatsApp) ou directement **sur WhatsApp**, avec rappel possible en dioula ou baoulé.
+
+→ [Déposer mon dossier Air Côte d'Ivoire en 2 min](https://robindesairs.eu/depot-express)
+→ [Vérifier mon vol](https://robindesairs.eu/#funnel-box)
 → [WhatsApp direct](https://wa.me/33756863630)
