@@ -1210,35 +1210,47 @@
     })
     .then(function(r){
       if (!r.ok) return r.json().catch(function(){ return {}; }).then(function(j){ throw new Error((j && j.error) || ('Erreur ' + r.status)); });
-      // Les pièces lues (identité de chaque passager + e-billet/carte) rejoignent le dossier (best-effort)
+      // Les pièces lues (identité de chaque passager + e-billet/carte) rejoignent le dossier.
+      // On ATTEND la fin de chaque envoi avant de confirmer : sinon la redirection coupait l'upload (billet perdu).
       var uploads = [];
-      if (S.pieceFile) uploads.push({ f: S.pieceFile, who: names[0] || '', kind: 'identite' });
-      (S.paxData || []).forEach(function(pd, k){ if (k > 0 && pd && pd.pieceFile) uploads.push({ f: pd.pieceFile, who: S.names[k] || '', kind: 'identite' }); });
-      if (S.ticketFile) uploads.push({ f: S.ticketFile, who: '', kind: 'carte-embarquement' });
-      uploads.forEach(function(u){
-        fetch('/api/depot-upload', {
+      if (S.pieceFile) uploads.push({ f: S.pieceFile, who: names[0] || '', kind: 'identite', label: 'Pièce d\'identité' });
+      (S.paxData || []).forEach(function(pd, k){ if (k > 0 && pd && pd.pieceFile) uploads.push({ f: pd.pieceFile, who: S.names[k] || '', kind: 'identite', label: 'Pièce du passager ' + (k + 1) }); });
+      if (S.ticketFile) uploads.push({ f: S.ticketFile, who: '', kind: 'carte-embarquement', label: 'Billet ou carte d\'embarquement' });
+      return Promise.all(uploads.map(function(u){
+        return fetch('/api/depot-upload', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ref: REF, filename: u.f.filename, mime: u.f.mime, dataBase64: u.f.dataBase64, kind: u.kind, passenger: u.who }),
-        }).catch(function(){});
-      });
-      success();
+        }).then(function(r){ return { label: u.label, kind: u.kind, ok: !!r.ok }; })
+          .catch(function(){ return { label: u.label, kind: u.kind, ok: false }; });
+      })).then(function(results){ success(results); });
     });
   }
-  function success(){
+  function success(results){
+    results = results || [];
     var pieces = '/depot-en-ligne.html?r=' + encodeURIComponent(REF);
     $('crumbs').innerHTML = '';
     $('fill').style.width = '100%';
     stage.innerHTML = '';
+    var failed = results.filter(function(x){ return !x.ok; });
+    var waHref = 'https://wa.me/33756863630?text=' + encodeURIComponent('Bonjour Robin des Airs, réf. ' + REF + ', une pièce n\'est pas passée sur le formulaire, je vous l\'envoie ici.');
+    // Récap CONCRET pièce par pièce : le moment où il ne faut pas aller vite, on montre ce qui est enregistré.
+    var recap = results.length ? ('<div style="text-align:left;margin:14px 0;padding:12px 14px;background:#f2f7f5;border:1px solid #cfe6db;border-radius:12px">'
+      + '<div style="font-weight:800;color:#0B1F3A;margin-bottom:6px">📋 Ce qui est enregistré dans votre dossier</div>'
+      + results.map(function(x){ return '<div style="padding:5px 0;font-weight:700;color:' + (x.ok ? '#0b7a5b' : '#b45309') + '">' + (x.ok ? '✅' : '⚠️') + ' ' + esc(x.label) + ' : ' + (x.ok ? 'bien reçu' : 'non transmis') + '</div>'; }).join('')
+      + '</div>') : '';
     var sc = document.createElement('div'); sc.className = 'screen done'; sc.style.display = 'block';
-    sc.innerHTML = '<div class="seal" aria-hidden="true">✓</div><h2>C\'est signé, merci !</h2>'
-      + '<p>Référence : <b>' + esc(REF) + '</b><br>📞 Un expert vous appelle depuis le <b>+33 7 56 86 36 30</b> — enregistrez-le sous « Robin des Airs ».</p>'
-      + '<p>' + (S.pieceFile ? '📎 Votre pièce est déjà au dossier. Ajoutez la carte d\'embarquement ou l\'e-billet et tout est complet.' : '📎 Dernière étape : ajoutez vos pièces (identité + carte d\'embarquement).') + '</p>'
-      + '<a class="cta-link" href="' + pieces + '">📎 Ajouter mes pièces maintenant →</a>'
+    sc.innerHTML = '<div class="seal" aria-hidden="true">' + (failed.length ? '!' : '✓') + '</div>'
+      + '<h2>' + (failed.length ? 'C\'est signé, une pièce à finir' : 'C\'est signé, merci !') + '</h2>'
+      + '<p>Référence : <b>' + esc(REF) + '</b></p>'
+      + recap
+      + (failed.length
+          ? '<p>⚠️ Une pièce n\'est pas passée (souvent un fichier trop lourd). Envoyez-la en 10 secondes sur WhatsApp, on la range dans votre dossier.</p><a class="cta-link" href="' + waHref + '" target="_blank" rel="noopener">📲 Envoyer la pièce manquante sur WhatsApp →</a>'
+          : '<p>📞 Un expert vous appelle depuis le <b>+33 7 56 86 36 30</b> (enregistrez-le sous « Robin des Airs »).</p><a class="cta-link" href="' + pieces + '">📎 Ajouter des tickets de dépenses (repas, taxi, hôtel) →</a>')
       + '<p class="signoff">On prend le relais. <b>L\'équipe Robin des Airs 🏹</b></p>'
       + '<p style="font-size:11.5px;color:var(--muted);margin-top:12px">Vous avez 14 jours pour vous rétracter, sans frais · <a href="/retractation.html?r=' + encodeURIComponent(REF) + '" style="color:var(--muted);text-decoration:underline">me rétracter</a></p>';
     stage.appendChild(sc);
     window.scrollTo({ top: 0 });
-    setTimeout(function(){ window.location.href = pieces; }, 6000);
+    if (!failed.length) setTimeout(function(){ window.location.href = pieces; }, 6000);
   }
 
   render();
