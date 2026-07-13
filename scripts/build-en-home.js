@@ -217,6 +217,40 @@ function build() {
   ];
   for (const [fr, en] of WA_PREFILL_FR_TO_EN) html = html.split(fr).join(en);
 
+  // --- JSON-LD : localisation EN (pour que les IA anglophones citent des données structurées en anglais)
+  // FAQPage : remplacée en bloc. LegalService : champs texte traduits, scopés au bloc (rien d'autre touché).
+  const EN_FAQPAGE = '<script type="application/ld+json">' + JSON.stringify({
+    '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: [
+      { '@type': 'Question', name: 'How much do I actually receive in my account?', acceptedAnswer: { '@type': 'Answer', text: 'Success fee: 25% only if compensation is recovered; otherwise you pay nothing. You keep 75% net. Long-haul flight (over 3,500 km): €600 means you receive €450. A family of 4 on Paris-Dakar: €1,800 net. 25% fee in the amicable phase; 40% if the case goes to court (lawyer and court costs included, advanced by us).' } },
+      { '@type': 'Question', name: 'How long does it take to receive my compensation?', acceptedAnswer: { '@type': 'Answer', text: 'Three scenarios: the airline cooperates (60%), 4 to 12 weeks; it resists then mediation (30%), 3 to 5 months; it persists (under 10%), court, 5 to 8 months. 25% fee in the amicable phase, 40% for court proceedings. Updates via WhatsApp.' } },
+      { '@type': 'Question', name: 'The airline offered me a voucher — should I accept it?', acceptedAnswer: { '@type': 'Answer', text: 'No. An unused voucher goes back to the airline and is often worth less than the €600 in cash. Do not sign anything; contact us first.' } },
+      { '@type': 'Question', name: 'The airline claims weather or an extraordinary circumstance', acceptedAnswer: { '@type': 'Answer', text: 'Our file includes METAR, TAF and a comparison with flights that departed in the same window. If other aircraft flew that day, we have the evidence.' } },
+      { '@type': 'Question', name: 'I claimed on my own and the airline refused. Can you step in?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. We take over the case, strengthen it with our technical evidence, then mediation and court if needed. Costs are included in our fee.' } },
+      { '@type': 'Question', name: 'How am I paid?', acceptedAnswer: { '@type': 'Answer', text: 'We pay you. After receiving the funds, we ask for your bank details and transfer your share within 5 business days. Never a card or an advance.' } },
+      { '@type': 'Question', name: 'My flight had a connection — can I still claim?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. The final flight determines the amount (distance and delay at the final destination). A missed connection is eligible. Select "with connection" in the check.' } },
+      { '@type': 'Question', name: 'Do you take every case?', acceptedAnswer: { '@type': 'Answer', text: 'No. Free analysis before acceptance. If we do not take your case, we explain why and point you to alternatives.' } },
+      { '@type': 'Question', name: 'Can I withdraw?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. 14-day right of withdrawal after signing the assignment contract. Cancellation free of charge, no justification needed. Art. L221-18 of the French Consumer Code.' } },
+      { '@type': 'Question', name: 'Is the site secure? Are my documents protected?', acceptedAnswer: { '@type': 'Answer', text: 'Yes. Your connection is fully encrypted (HTTPS), rated A+ by SSL Labs, the leading independent test. No bank details are required to start your claim: nothing to pay upfront. Your documents are used only to build your compensation file, and access to our files is protected by two-factor authentication. Under the GDPR, you can request access to or deletion of your data at any time.' } },
+    ],
+  }) + '</script>';
+  const LEGAL_FR_TO_EN = [
+    ['Service de récupération d\'indemnités aériennes CE 261/2004, spécialiste vols Europe-Afrique et diaspora africaine.', 'EC 261/2004 flight compensation recovery service, specialist in Europe-Africa routes and the African diaspora.'],
+    ['Robin des Airs (robindesairs.eu) est un service de récupération d\'indemnités pour passagers aériens (vols retardés, annulés, surbookés) selon le règlement européen CE 261/2004. À ne pas confondre avec d\'autres entités utilisant un nom similaire dans d\'autres secteurs (qualité de l\'air, environnement). Notre activité concerne uniquement le droit des passagers du transport aérien.', 'Robin des Airs (robindesairs.eu) is a compensation recovery service for air passengers (delayed, cancelled or overbooked flights) under EU Regulation EC 261/2004. Not to be confused with other entities using a similar name in unrelated sectors (air quality, environment). Our activity concerns air passenger rights only.'],
+    ['Récupération d\'indemnités aériennes CE 261/2004 et Convention de Montréal', 'EC 261/2004 and Montreal Convention flight compensation recovery'],
+    ['Commission de succès 25% (0€ si pas de récupération)', '25% success fee (€0 if nothing is recovered)'],
+    ['Règlement CE 261/2004', 'EC 261/2004 Regulation'], ['Indemnisation vol retardé', 'Delayed flight compensation'],
+    ['Indemnisation vol annulé', 'Cancelled flight compensation'], ['Refus d\'embarquement', 'Denied boarding'],
+    ['Surbooking aérien', 'Airline overbooking'], ['Convention de Montréal', 'Montreal Convention'],
+    ['Bagage perdu indemnité', 'Lost baggage compensation'], ['Droits passagers aériens', 'Air passenger rights'],
+    ['Médiation aérienne', 'Aviation mediation'], ['Jurisprudence CJUE transport aérien', 'CJEU air transport case law'],
+    ['Déposer une réclamation d\'indemnité de vol en ligne', 'File a flight compensation claim online'],
+  ];
+  html = html.replace(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g, (m, inner) => {
+    if (inner.includes('"@type":"FAQPage"')) return EN_FAQPAGE;
+    if (inner.includes('"@type":"LegalService"')) { let s = m; for (const [fr, en] of LEGAL_FR_TO_EN) s = s.split(fr).join(en); return s; }
+    return m;
+  });
+
   // --- Bandeau « fichier généré »
   const banner = '<!-- ⚠️ FICHIER GÉNÉRÉ par scripts/build-en-home.js : NE PAS ÉDITER À LA MAIN.\n'
     + '     Source : index.html + dico EN de i18n.js. Régénérer : node scripts/build-en-home.js -->\n';
@@ -236,7 +270,7 @@ function build() {
     console.log('  ✓ toutes les clés du HTML ont une traduction EN.');
   }
   console.log('\n  NB : og:title/description et twitter:* sont des traductions fidèles (pas de clé i18n dédiée).');
-  console.log('  NB : les JSON-LD (FAQPage, LegalService) restent en FR — à traduire dans un second temps si besoin.');
+  console.log('  ✓ JSON-LD localisés EN : FAQPage remplacée + champs texte LegalService traduits.');
 }
 
 build();
