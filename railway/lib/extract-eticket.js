@@ -34,6 +34,10 @@ Règles STRICTES :
 - operateur : UNIQUEMENT si le billet indique EXPLICITEMENT que ce segment est « opéré par / operated by / vol opéré par / realizado por / durchgeführt von » une compagnie DIFFÉRENTE de celle du numéro de vol (cas CODE-SHARE). Renvoie alors le CODE IATA 2 lettres de la compagnie qui OPÈRE RÉELLEMENT ce vol (ex. « AF703 — operated by Kenya Airways » → "KQ" ; « KL567 operated by Kenya Airways » → "KQ"). Si la mention « opéré par » nomme la MÊME compagnie que le numéro de vol, ou s'il n'y a AUCUNE mention « opéré par », laisse "" (le transporteur est alors celui du numéro de vol). Ne DEVINE jamais un opérateur.
 - date : "JJ/MM/AAAA" si l'année est imprimée, sinon "JJ/MM". NE JAMAIS deviner ni inventer l'année.
 - passagers : TOUS les passagers nommés. nom = nom de famille en MAJUSCULES ; prenom = prénom(s) (souvent "NOM / Prénom"). date_naissance SEULEMENT si imprimée (JJ/MM/AAAA), sinon "".
+- ⚠️ UN NOM = UN passager. Une carte d'embarquement ne contient QU'UN SEUL passager. Un nom écrit "NOM PRENOM", "NOM/PRENOM", "NOM PRENOM1 PRENOM2" ou "PRENOM NOM" sur UNE MÊME LIGNE / dans UN MÊME champ nom passager = UN SEUL passager (à répartir entre nom et prenom), JAMAIS deux. Ne crée DEUX passagers QUE si le document liste DEUX personnes DISTINCTES (deux lignes/blocs passager séparés, ou deux cartes d'embarquement). Exemples :
+   • « SECK SEYNABOU » (un seul champ nom) → UN passager nom="SECK", prenom="SEYNABOU" (JAMAIS deux passagers "SECK" et "SEYNABOU")
+   • « DIALLO/MAMADOU » → UN passager nom="DIALLO", prenom="MAMADOU"
+   • deux lignes « 1. DIALLO Mamadou » et « 2. NDIAYE Fatou » → DEUX passagers
 - ⚠️ TITRES DE COURTOISIE : SUPPRIME TOUJOURS les titres du nom et du prénom (ils ne font PAS partie de l'identité). Titres à IGNORER (toutes graphies, avec ou sans point, majuscules ou minuscules) :
    • FR : M / M. / MR / MR. / MONSIEUR / MME / MME. / MADAME / MLLE / MLLE. / MADEMOISELLE / DR / DR. / DOCTEUR / PR / PR. / PROF / PROFESSEUR / ME / MAÎTRE
    • EN : MR / MR. / MRS / MRS. / MS / MS. / MISS / MASTER / MSTR / SIR / MADAM / DR / DR. / DOCTOR / PROF / PROF.

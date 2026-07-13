@@ -97,7 +97,7 @@
     .drop .big{font-size:32px; line-height:1}
     .drop p{font-size:14px; color:var(--neon-ink); font-weight:800; margin:7px 0 0}
     .drop small{display:block; color:var(--muted); font-weight:500; font-size:11.5px; margin-top:4px}
-    /* Encadré « Pourquoi on demande cette pièce ? » — rassure et réduit l'abandon (surtout passeport) */
+    /* Encadré « Pourquoi on demande cette pièce ? », rassure et réduit l'abandon (surtout passeport) */
     .why{margin:10px 0 2px; font-size:12.5px; line-height:1.55; color:var(--ink-soft); background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius-sm); padding:9px 12px}
     .why b{color:var(--navy)}
     .idcard{margin:0 0 12px; background:var(--surface-2); border:1px solid var(--line); border-radius:var(--radius-sm); padding:12px 14px; font-size:14.5px; color:var(--navy)}
@@ -224,7 +224,7 @@
     var mm = document.createElement('select'); mm.className = 'input';
     var o0 = document.createElement('option'); o0.value = ''; o0.textContent = 'Mois'; mm.appendChild(o0);
     MOIS.forEach(function(m, idx){ var o = document.createElement('option'); o.value = String(idx + 1).padStart(2, '0'); o.textContent = m; mm.appendChild(o); });
-    // Année : menu déroulant limité à la fenêtre de prescription pour la DATE DU VOL (cfg.yearSelect) —
+    // Année : menu déroulant limité à la fenêtre de prescription pour la DATE DU VOL (cfg.yearSelect)  
     // au-delà, la réclamation est prescrite, inutile de proposer l'année. La date de NAISSANCE, elle,
     // garde la saisie libre (il faut pouvoir remonter loin).
     var yy, yySelect = !!cfg.yearSelect;
@@ -284,7 +284,7 @@
     ['Thaïlande', '+66', 'TH'], ['Turquie', '+90', 'TR'], ['Ukraine', '+380', 'UA'], ['Uruguay', '+598', 'UY'], ['Venezuela', '+58', 'VE'],
     ['Vietnam', '+84', 'VN'], ['Yémen', '+967', 'YE'], ['Zambie', '+260', 'ZM'], ['Zimbabwe', '+263', 'ZW'],
   ];
-  // Drapeau emoji depuis l'ISO2 (rendu natif sur mobile — cible principale).
+  // Drapeau emoji depuis l'ISO2 (rendu natif sur mobile, cible principale).
   function flagEmoji(iso){ return String(iso || '').toUpperCase().replace(/[A-Z]/g, function(c){ return String.fromCodePoint(0x1F1E6 + c.charCodeAt(0) - 65); }); }
   // ── Aéroports : c'est le CODE qui compte. Afrique + Europe en priorité (corridor diaspora),
   //    + grands hubs. Autocomplétion dès 2-3 lettres (ville OU code IATA). Format « Ville (IATA) ».
@@ -376,7 +376,7 @@
     SCREENS[FLOW[idx]](sc);
     window.scrollTo({ top: 0 });
   }
-  // Un clic d'option : petit flash visuel (90 ms) puis écran suivant — RIEN d'autre à confirmer.
+  // Un clic d'option : petit flash visuel (90 ms) puis écran suivant, RIEN d'autre à confirmer.
   function hit(btn, fn){ btn.classList.add('hit'); setTimeout(fn, 90); }
   function next(){
     // Ré-édition du trajet depuis un récap : une fois le vol/les tronçons ressaisis, on revient à l'écran
@@ -427,8 +427,15 @@
     });
   }
   // Récap CONCRET (écran signature) : tout ce qui a été saisi, en clair, chaque ligne « Modifier ».
+  // Découpe un nom complet en prénom / nom (dernier mot = nom), pour re-remplir paxData après correction.
+  function splitName(full){
+    var parts = String(full || '').trim().split(/\s+/).filter(Boolean);
+    var nom = parts.length > 1 ? parts.pop() : (parts[0] || '');
+    return { prenom: parts.join(' ').toUpperCase(), nom: nom.toUpperCase() };
+  }
   // Même si le trajet vient de la carte d'embarquement / e-billet, la personne le voit et peut le corriger.
-  function recapCard(sc){
+  function recapCard(sc, opts){
+    opts = opts || {};
     var card = document.createElement('div'); card.className = 'recap';
     function row(ic, k, vhtml, editKey){
       return '<div class="recap-row"><div class="recap-ic">' + ic + '</div>'
@@ -450,7 +457,7 @@
       rows += row('✈️', 'Votre vol', trajet, '__trajet');
     }
     if (S.date) rows += row('📅', 'Date du vol', esc(S.date.split('-').reverse().join('/')), 'date');
-    S.names.forEach(function(nm, i){
+    if (!opts.skipPax) S.names.forEach(function(nm, i){
       if (!nm) return;
       var pd = S.paxData[i] || {};
       var extra = '';
@@ -460,7 +467,7 @@
     });
     if (S.phone) rows += row('📞', 'Téléphone', esc(S.phone), 'phone');
     if (S.email) rows += row('📧', 'Email', esc(S.email), 'email');
-    card.innerHTML = '<div class="recap-h">🧾 Votre dossier, en clair — vérifiez avant de signer</div>' + rows
+    card.innerHTML = '<div class="recap-h">🧾 Votre dossier, en clair, vérifiez avant de signer</div>' + rows
       + '<div class="recap-foot">Une info fausse ? Touchez « Modifier ». Même remplie par la carte d\'embarquement, tout reste corrigeable.</div>';
     Array.prototype.forEach.call(card.querySelectorAll('.recap-edit'), function(b){
       b.addEventListener('click', function(){ var k = b.getAttribute('data-k'); if (k === '__trajet') editTrajet(); else jump(k); });
@@ -550,13 +557,13 @@
       sc.innerHTML = '<h2>⚖️ Ce vol est-il déjà pris en charge ailleurs ?</h2><p class="sub">Avocat, autre société d\'indemnisation, ou procédure déjà lancée au tribunal. Un clic.</p>';
       var o = document.createElement('div'); o.className = 'opts';
       o.appendChild(optButton('<span class="ic">✅</span><span>Non, personne d\'autre<small>ni avocat, ni société, aucune procédure en cours</small></span>', function(){ S.tiers = 'non'; next(); }));
-      o.appendChild(optButton('<span class="ic">⚖️</span><span>Oui — avocat, autre société ou tribunal<small>ce vol est déjà confié ailleurs</small></span>', function(){
+      o.appendChild(optButton('<span class="ic">⚖️</span><span>Oui, avocat, autre société ou tribunal<small>ce vol est déjà confié ailleurs</small></span>', function(){
         S.tiers = 'oui';
         sc.innerHTML = '<h2>😕 On ne peut pas reprendre ce dossier</h2>'
-          + '<p class="sub">Ce vol est déjà confié à un avocat, une autre société ou fait l\'objet d\'une procédure. On ne peut pas prendre en charge une créance <b>déjà remise à un tiers</b> — une même créance ne se cède qu\'une fois. C\'est pour <b>vous protéger</b> autant que nous.</p>'
+          + '<p class="sub">Ce vol est déjà confié à un avocat, une autre société ou fait l\'objet d\'une procédure. On ne peut pas prendre en charge une créance <b>déjà remise à un tiers</b>, une même créance ne se cède qu\'une fois. C\'est pour <b>vous protéger</b> autant que nous.</p>'
           + '<p class="sub">💡 Terminez d\'abord avec eux. Et pensez à vos <b>autres vols des 5 dernières années</b> (retard 3 h+, annulation, surbooking) : jusqu\'à <b>600 € par personne</b>, ceux-là, on peut les prendre.</p>';
         var o2 = document.createElement('div'); o2.className = 'opts';
-        o2.appendChild(optButton('<span class="ic">✏️</span><span>Je me suis trompé — corriger ma réponse</span>', function(){ S.tiers = ''; sc.innerHTML = ''; SCREENS.tiers(sc); }));
+        o2.appendChild(optButton('<span class="ic">✏️</span><span>Je me suis trompé, corriger ma réponse</span>', function(){ S.tiers = ''; sc.innerHTML = ''; SCREENS.tiers(sc); }));
         o2.appendChild(optButton('<span class="ic">✈️</span><span>Vérifier un autre vol</span>', function(){ window.location.href = '/depot-express.html'; }));
         o2.appendChild(optButton('<span class="ic">💬</span><span>Poser ma question sur WhatsApp</span>', function(){ window.open('https://wa.me/33756863630', '_blank'); }, true));
         sc.appendChild(o2);
@@ -593,7 +600,7 @@
     _leg: function(sc, li){
       var leg = S.legs[li] || {};
       var prevArr = (li > 0 && S.legs[li - 1]) ? S.legs[li - 1].arr : '';
-      sc.innerHTML = '<h2>✈️ Vol ' + (li + 1) + ' de votre trajet</h2><p class="sub">' + (li > 0 ? 'Le départ est <b>pré-rempli</b> depuis le vol précédent — indiquez juste la suite.' : 'Numéro et trajet de votre <b>premier</b> vol.') + '</p>';
+      sc.innerHTML = '<h2>✈️ Vol ' + (li + 1) + ' de votre trajet</h2><p class="sub">' + (li > 0 ? 'Le départ est <b>pré-rempli</b> depuis le vol précédent, indiquez juste la suite.' : 'Numéro et trajet de votre <b>premier</b> vol.') + '</p>';
       var num = labeledField(sc, 'Numéro de vol', leg.num, true); num.placeholder = 'ex. AF 718';
       var dep = labeledField(sc, 'Ville / aéroport de départ', leg.dep || prevArr, false, '10px'); dep.placeholder = 'ex. Dakar…'; airportAuto(dep);
       var arr = labeledField(sc, 'Ville / aéroport d\'arrivée', leg.arr, false, '10px'); arr.placeholder = 'ex. Paris…'; airportAuto(arr);
@@ -624,7 +631,7 @@
       setTimeout(function(){ (li > 0 && dep.value ? arr : num).focus(); }, 120);
       navRow(sc);
     },
-    // Gate ANNULATION — règle des 14 jours (art. 5 CE 261), même ancrage que le bot :
+    // Gate ANNULATION, règle des 14 jours (art. 5 CE 261), même ancrage que le bot :
     // ce qui compte, c'est le délai entre LA NOTIFICATION et le vol (pas aujourd'hui → vol).
     annul14: function(sc){
       sc.innerHTML = '<h2>📅 Quand vous a-t-on prévenu ?</h2><p class="sub">Pour une annulation, c\'est le <b>moment où la compagnie vous a prévenu</b> qui compte. Quand elle a annoncé l\'annulation, votre vol était dans…</p>';
@@ -634,9 +641,9 @@
         S.annul14 = 'plus14';
         sc.innerHTML = '<h2>😕 Pas d\'indemnité forfaitaire ici</h2>'
           + '<p class="sub">La loi européenne (CE 261/2004) ne prévoit l\'indemnité <b>que si</b> la compagnie vous a prévenu <b>moins de 14 jours</b> avant le départ. C\'est la règle, pas nous.</p>'
-          + '<p class="sub">💡 Vous gardez le droit au <b>remboursement du billet</b> ou au <b>réacheminement</b>. Et un vol sur dix a un problème : pensez à vos <b>autres vols des 5 dernières années</b> — retard 3 h+, annulation, surbooking = jusqu\'à <b>600 € par personne</b>.</p>';
+          + '<p class="sub">💡 Vous gardez le droit au <b>remboursement du billet</b> ou au <b>réacheminement</b>. Et un vol sur dix a un problème : pensez à vos <b>autres vols des 5 dernières années</b>, retard 3 h+, annulation, surbooking = jusqu\'à <b>600 € par personne</b>.</p>';
         var o2 = document.createElement('div'); o2.className = 'opts';
-        o2.appendChild(optButton('<span class="ic">✏️</span><span>Je me suis trompé — corriger ma réponse</span>', function(){ S.annul14 = ''; SCREENS.annul14(Object.assign(sc, { innerHTML: '' }) && sc); }));
+        o2.appendChild(optButton('<span class="ic">✏️</span><span>Je me suis trompé, corriger ma réponse</span>', function(){ S.annul14 = ''; SCREENS.annul14(Object.assign(sc, { innerHTML: '' }) && sc); }));
         o2.appendChild(optButton('<span class="ic">✈️</span><span>Vérifier un autre vol</span>', function(){ window.location.href = '/depot-express.html'; }));
         o2.appendChild(optButton('<span class="ic">💬</span><span>Poser ma question sur WhatsApp</span>', function(){ window.open('https://wa.me/33756863630', '_blank'); }, true));
         sc.appendChild(o2);
@@ -648,7 +655,7 @@
     // E-BILLET / carte d'embarquement → pré-remplit vol, trajet, date, PNR, passagers (comme le bot).
     // Facultatif : « je saisis à la main » enchaîne sur les questions classiques.
     eticket: function(sc){
-      sc.innerHTML = '<h2>📄 Votre e-billet ou carte d\'embarquement</h2><p class="sub"><b>On lit tout et on remplit votre dossier</b> — n° de vol, trajet, date, passagers. Zéro erreur de saisie.</p>';
+      sc.innerHTML = '<h2>📄 Votre e-billet ou carte d\'embarquement</h2><p class="sub"><b>On lit tout et on remplit votre dossier</b>, n° de vol, trajet, date, passagers. Zéro erreur de saisie.</p>';
       $('fileInp').multiple = true; // plusieurs cartes d'embarquement (une par passager) sélectionnables d'un coup
       var drop = document.createElement('div'); drop.className = 'drop';
       drop.innerHTML = '<div class="big">📄</div><p>' + (isTouch ? 'Touchez pour ajouter votre e-billet' : 'Glissez votre e-billet ici') + '</p><small>Photo ou PDF · <b>plusieurs cartes possibles</b> · lecture automatique · 🔒 lu par une IA, jamais revendu</small>';
@@ -658,7 +665,7 @@
       o.appendChild(optButton('<span class="ic">🖼️</span><span>Choisir un fichier<small>photo ou PDF</small></span>', function(){ $('fileInp').value = ''; $('fileInp').click(); }));
       sc.appendChild(o);
       var why = document.createElement('div'); why.className = 'why';
-      why.innerHTML = 'ℹ️ <b>Pourquoi ?</b> Votre billet ou carte d\'embarquement <b>prouve que vous étiez sur ce vol</b> — c\'est la pièce qui fait payer la compagnie. On la lit pour remplir votre dossier (n° de vol, trajet, date) <b>sans erreur</b>. 🔒 Jamais revendue.';
+      why.innerHTML = 'ℹ️ <b>Pourquoi ?</b> Votre billet ou carte d\'embarquement <b>prouve que vous étiez sur ce vol</b>, c\'est la pièce qui fait payer la compagnie. On la lit pour remplir votre dossier (n° de vol, trajet, date) <b>sans erreur</b>. 🔒 Jamais revendue.';
       sc.appendChild(why);
       var hint = document.createElement('div'); hint.className = 'hint idle'; sc.appendChild(hint);
       drop.addEventListener('click', function(){ $('fileInp').value = ''; $('fileInp').click(); });
@@ -667,17 +674,44 @@
       drop.addEventListener('drop', function(e){ e.preventDefault(); drop.classList.remove('over'); handleEticketFiles(e.dataTransfer.files, hint); });
       $('fileInp').onchange = function(){ handleEticketFiles($('fileInp').files, hint); };
       $('camInp').onchange = function(){ handleEticketFiles($('camInp').files, hint); };
-      navRow(sc, { skip: '✏️ Je n\'ai pas le billet — je saisis à la main', onSkip: function(){ next(); } });
+      navRow(sc, { skip: '✏️ Je n\'ai pas le billet, je saisis à la main', onSkip: function(){ next(); } });
     },
     // Validation APRÈS lecture d'une/des carte(s) d'embarquement : le client VÉRIFIE les infos extraites
-    // (vol, trajet, date, chaque passager) avant de continuer — rien ne passe en silence. Il peut corriger
+    // (vol, trajet, date, chaque passager) avant de continuer, rien ne passe en silence. Il peut corriger
     // chaque ligne (« Modifier ») et ajouter une 2e carte d'embarquement (un passager de plus).
     confirm: function(sc){
       $('fileInp').multiple = true; // « ajouter une autre carte » = encore un e-billet
       var nb = (S.ticketFiles && S.ticketFiles.length) || (S.ticketFile ? 1 : 0);
       sc.innerHTML = '<h2>✅ Vérifiez vos informations</h2><p class="sub">Lues automatiquement sur '
         + (nb > 1 ? 'vos ' + nb + ' cartes d\'embarquement' : 'votre billet') + '. <b>Corrigez ce qui est faux avant de continuer.</b></p>';
-      recapCard(sc); // récap éditable (vol/trajet/date/chaque passager), chaque ligne « Modifier »
+      recapCard(sc, { skipPax: true }); // vol / trajet / date (les passagers sont gérés juste en dessous, éditables)
+      // ── Passagers : nom corrigeable EN LIGNE + retrait d'un passager créé à tort (ex. un seul nom coupé en deux) ──
+      var paxBox = document.createElement('div'); paxBox.className = 'recap'; paxBox.style.marginTop = '10px';
+      function renderPax(){
+        var count = S.names.filter(Boolean).length;
+        paxBox.innerHTML = '<div class="recap-h">🧑 Passagers (' + count + ')</div>';
+        S.names.forEach(function(nm, i){
+          var pd = S.paxData[i] || {};
+          var rowEl = document.createElement('div'); rowEl.className = 'recap-row';
+          var meta = (pd.dob ? ' · né(e) le ' + esc(pd.dob) : '') + (pd.minor ? ' · mineur·e' : '');
+          rowEl.innerHTML = '<div class="recap-ic">🧑</div><div class="recap-main"><div class="recap-k">Passager ' + (i + 1) + '<span class="muted">' + meta + '</span></div></div>';
+          var main = rowEl.querySelector('.recap-main');
+          var inp = document.createElement('input'); inp.className = 'input'; inp.value = nm || ''; inp.style.marginTop = '4px'; inp.placeholder = 'Prénom NOM';
+          inp.addEventListener('input', function(){ S.names[i] = inp.value.toUpperCase(); var sp = splitName(inp.value); S.paxData[i] = Object.assign(S.paxData[i] || {}, { prenom: sp.prenom, nom: sp.nom }); });
+          main.appendChild(inp);
+          if (S.names.length > 1) {
+            var rm = document.createElement('button'); rm.type = 'button'; rm.className = 'recap-edit'; rm.textContent = '✕ Retirer';
+            rm.addEventListener('click', function(){ S.names.splice(i, 1); S.paxData.splice(i, 1); S.pax = S.names.length; renderPax(); });
+            rowEl.appendChild(rm);
+          }
+          paxBox.appendChild(rowEl);
+        });
+        var foot = document.createElement('div'); foot.className = 'recap-foot';
+        foot.textContent = 'Un nom mal lu ? Corrigez-le ici. Un passager en trop (un seul nom coupé en deux) ? Touchez « Retirer ».';
+        paxBox.appendChild(foot);
+      }
+      renderPax();
+      sc.appendChild(paxBox);
       var hint = document.createElement('div'); hint.className = 'hint idle'; hint.style.marginTop = '8px'; sc.appendChild(hint);
       // Ajouter une carte d'embarquement supplémentaire (2e passager sur un autre billet)
       var add = optButton('<span class="ic">➕</span><span>Ajouter une autre carte d\'embarquement<small>un passager sur un billet séparé</small></span>', function(){
@@ -700,14 +734,14 @@
       sc.appendChild(o); navRow(sc);
     },
     date: function(sc){
-      sc.innerHTML = '<h2>📅 La date du vol ?</h2><p class="sub">Jour, mois, année — ça passe tout seul.</p>';
+      sc.innerHTML = '<h2>📅 La date du vol ?</h2><p class="sub">Jour, mois, année, ça passe tout seul.</p>';
       var hint = document.createElement('div'); hint.className = 'hint idle'; hint.style.marginTop = '8px';
       var i = segmentedDate({
         yearSelect: true, yearsBack: 6, // année en menu déroulant, limitée à la fenêtre de prescription
         value: S.date ? S.date.split('-').reverse().join('/') : '',
         onComplete: function(v){
           var p = v.split('/');
-          if (new Date(+p[2], +p[1] - 1, +p[0]).getTime() > Date.now()) { hint.className = 'hint bad'; hint.textContent = 'Ce vol est dans le futur — on réclame pour un vol déjà passé.'; return; }
+          if (new Date(+p[2], +p[1] - 1, +p[0]).getTime() > Date.now()) { hint.className = 'hint bad'; hint.textContent = 'Ce vol est dans le futur, on réclame pour un vol déjà passé.'; return; }
           hint.className = 'hint idle'; hint.textContent = '';
           S.date = p[2] + '-' + p[1] + '-' + p[0]; // ISO pour le backend
           next();
@@ -718,7 +752,7 @@
       setTimeout(function(){ i.focus(); }, 120);
     },
     pax: function(sc){
-      sc.innerHTML = '<h2>👪 Combien de passagers ?</h2><p class="sub">Chaque billet compte — jusqu\'à 600 € par personne.</p>';
+      sc.innerHTML = '<h2>👪 Combien de passagers ?</h2><p class="sub">Chaque billet compte, jusqu\'à 600 € par personne.</p>';
       var o = document.createElement('div'); o.className = 'opts grid2';
       [1,2,3,4,5].forEach(function(n){
         o.appendChild(optButton('<span class="ic">' + n + '</span><span>' + (n === 1 ? '1 passager' : n + ' passagers') + '<small>jusqu\'à ' + (600 * n).toLocaleString('fr-FR') + ' €</small></span>', function(){ S.pax = n; next(); }));
@@ -736,7 +770,7 @@
     },
     passport: function(sc){
       $('fileInp').multiple = false; // pièce d'identité = un seul fichier
-      sc.innerHTML = '<h2>🛂 ' + (S.pax > 1 ? 'Passager 1 — votre' : 'Votre') + ' passeport <span style="font-weight:500;font-size:14px;color:var(--muted)">(de préférence)</span></h2><p class="sub">Ou carte d\'identité. <b>On lit tout, vous n\'écrivez rien.</b> Ça remplit votre contrat sans erreur.</p>';
+      sc.innerHTML = '<h2>🛂 ' + (S.pax > 1 ? 'Passager 1, votre' : 'Votre') + ' passeport <span style="font-weight:500;font-size:14px;color:var(--muted)">(de préférence)</span></h2><p class="sub">Ou carte d\'identité. <b>On lit tout, vous n\'écrivez rien.</b> Ça remplit votre contrat sans erreur.</p>';
       var drop = document.createElement('div'); drop.className = 'drop';
       drop.innerHTML = '<div class="big">🛂</div><p>' + (isTouch ? 'Touchez pour ajouter votre passeport' : 'Glissez votre passeport ici') + '</p><small>🔒 Lu par une IA pour pré-remplir votre contrat, jamais revendu</small>';
       sc.appendChild(drop);
@@ -757,7 +791,7 @@
       $('camInp').onchange = function(){ var f = $('camInp').files && $('camInp').files[0]; if (f) handleFile(f, sc, hint); };
       navRow(sc, { skip: '✏️ Je préfère taper mon nom', onSkip: function(){ manualName(sc); } });
     },
-    // Co-passagers : passeport (OCR) OU saisie — prénom, nom, date de naissance CHACUN.
+    // Co-passagers : passeport (OCR) OU saisie, prénom, nom, date de naissance CHACUN.
     // La cession exige l'identité de chaque cédant ; la DDN détecte les mineurs (un parent signe).
     copax: function(sc, iOverride){
       $('fileInp').multiple = false; // pièce d'identité = un seul fichier
@@ -766,7 +800,7 @@
       while (i < S.pax && S.paxData[i] && S.paxData[i].confirmed) i++;
       if (i >= S.pax) return next();
       var pd0 = S.paxData[i] || {};
-      sc.innerHTML = '<h2>👥 Passager ' + (i + 1) + ' sur ' + S.pax + '</h2><p class="sub">Sa <b>pièce d\'identité</b> (on lit tout) ou sa saisie — chaque passager compte pour l\'indemnité.</p>';
+      sc.innerHTML = '<h2>👥 Passager ' + (i + 1) + ' sur ' + S.pax + '</h2><p class="sub">Sa <b>pièce d\'identité</b> (on lit tout) ou sa saisie, chaque passager compte pour l\'indemnité.</p>';
       // Passeport du co-passager (comme le passager 1)
       var drop = document.createElement('div'); drop.className = 'drop';
       drop.innerHTML = '<div class="big">🛂</div><p>Glissez le passeport du passager ' + (i + 1) + '</p><small>ou remplissez à la main ci-dessous · 🔒 lu par une IA, jamais revendu</small>';
@@ -791,17 +825,17 @@
       function onCopaxFile(file){
         if (!file) return;
         if (tooBig(file, ocrHint)) return;
-        ocrHint.className = 'hint ok'; ocrHint.textContent = '🔍 Lecture de la pièce…';
+        ocrHint.className = 'hint idle'; ocrHint.textContent = 'Lecture de la pièce…';
         fileToPiece(file).then(function(r){
-          if (!r) { ocrHint.className = 'hint bad'; ocrHint.textContent = 'Lecture impossible — saisissez à la main.'; return; }
+          if (!r) { ocrHint.className = 'hint bad'; ocrHint.textContent = 'Lecture impossible, saisissez à la main.'; return; }
           S.paxData[i] = S.paxData[i] || {}; S.paxData[i].pieceFile = r.pieceFile;
-          if (r.pdf) { ocrHint.className = 'hint ok'; ocrHint.textContent = '✅ Document reçu — complétez le nom et la date ci-dessous.'; return; }
+          if (r.pdf) { ocrHint.className = 'hint idle'; ocrHint.textContent = 'Complétez le nom et la date ci-dessous.'; return; }
           if (r.piece) {
             if (r.piece.prenom) pInp.value = r.piece.prenom;
             if (r.piece.nom) nInp.value = r.piece.nom;
             if (r.piece.dob) dobObj.set(r.piece.dob);
-            ocrHint.className = 'hint ok'; ocrHint.textContent = '✅ Lu — vérifiez et complétez si besoin.';
-          } else { ocrHint.className = 'hint bad'; ocrHint.textContent = 'Photo peu lisible — saisissez à la main.'; }
+            ocrHint.className = 'hint idle'; ocrHint.textContent = ''; // pas de bulle verte : les cases pré-remplies suffisent
+          } else { ocrHint.className = 'hint bad'; ocrHint.textContent = 'Photo peu lisible, saisissez à la main.'; }
         });
       }
       drop.addEventListener('click', function(){ $('fileInp').value = ''; $('fileInp').click(); });
@@ -839,23 +873,23 @@
       var total = (600 * (S.pax || 1)).toLocaleString('fr-FR');
       var net = Math.round(600 * (S.pax || 1) * 0.75).toLocaleString('fr-FR');
       var paxTxt = (S.pax > 1) ? (S.pax + ' passagers') : '1 passager';
-      sc.innerHTML = '<h2>🎉 Bonne nouvelle !</h2><p class="sub">Selon nos critères, votre vol <b>' + esc(S.flightNum || (S.dep + ' → ' + S.arr)) + '</b> semble <b>éligible</b> — un expert le confirme, gratuitement.</p>';
+      sc.innerHTML = '<h2>🎉 Bonne nouvelle !</h2><p class="sub">Selon nos critères, votre vol <b>' + esc(S.flightNum || (S.dep + ' → ' + S.arr)) + '</b> semble <b>éligible</b>, un expert le confirme, gratuitement.</p>';
       var b = document.createElement('div'); b.className = 'ss-box'; b.style.textAlign = 'center';
       b.innerHTML = '<div style="font-size:13px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px">Vous pouvez réclamer jusqu\'à</div>'
         + '<div style="font-size:40px;font-weight:800;color:var(--neon-ink);letter-spacing:-1px;margin:2px 0">' + total + ' €</div>'
-        + '<div style="font-size:14px;color:var(--navy);font-weight:700">soit <b style="color:var(--neon-ink)">' + net + ' € nets pour vous</b> (75 %) · ' + paxTxt + '</div>'
+        + '<div style="font-size:14px;color:var(--navy);font-weight:700">' + (S.pax > 1 ? 'jusqu\'à <b>600 € par personne</b> · ' + paxTxt : paxTxt) + '</div>'
         + '<div style="font-size:12.5px;color:var(--muted);margin-top:8px">✅ 0 € d\'avance · 0 € sans résultat · on s\'occupe de tout</div>';
       sc.appendChild(b);
       var o = document.createElement('div'); o.className = 'opts'; o.style.marginTop = '4px';
-      o.appendChild(optButton('<span class="ic">🚀</span><span>On y va — je récupère mon argent</span>', function(){ next(); }));
+      o.appendChild(optButton('<span class="ic">🚀</span><span>On y va, je récupère mon argent</span>', function(){ next(); }));
       sc.appendChild(o);
       var note = document.createElement('p'); note.className = 'hint idle'; note.style.marginTop = '8px'; note.style.fontSize = '11.5px';
-      note.textContent = 'Montant indicatif selon la distance et la cause (CE 261/2004) — l\'expert confirme l\'éligibilité de votre vol.';
+      note.textContent = 'Montant indicatif selon la distance et la cause (CE 261/2004), l\'expert confirme l\'éligibilité de votre vol.';
       sc.appendChild(note);
       navRow(sc);
     },
     phone: function(sc){
-      sc.innerHTML = '<h2>📞 Votre téléphone ?</h2><p class="sub">On sécurise votre dossier — un expert vous rappelle depuis le <b>+33 7 56 86 36 30</b>.</p>';
+      sc.innerHTML = '<h2>📞 Votre téléphone ?</h2><p class="sub">On sécurise votre dossier, un expert vous rappelle depuis le <b>+33 7 56 86 36 30</b>.</p>';
       // Pays du numéro : champ LIBRE (tapez « france », « sénégal »…) alimenté par une liste mondiale.
       var cw = document.createElement('div');
       cw.innerHTML = '<div class="hint idle" style="margin:0 0 4px">Pays de votre numéro</div>';
@@ -910,32 +944,32 @@
       });
       navRow(sc);
     },
-    // Signature MANUSCRITE (dessin) — signataire principal + chaque co-adulte. Encadré « l'essentiel »
+    // Signature MANUSCRITE (dessin), signataire principal + chaque co-adulte. Encadré « l'essentiel »
     // en tête + lien vers le contrat complet (pas besoin de le relire en entier dans le tunnel).
     sign: function(sc){
       var total = (600 * (S.pax || 1)).toLocaleString('fr-FR');
       var net = Math.round(600 * (S.pax || 1) * 0.75).toLocaleString('fr-FR');
-      sc.innerHTML = '<h2>✍️ Dernière étape : signez</h2><p class="sub">On récupère jusqu\'à <b>' + total + ' €</b> — soit <b>' + net + ' € pour vous</b> (75 %). Vérifiez votre dossier ci-dessous, puis signez.</p>';
-      // Récap CONCRET du dossier (vol, trajet, passagers, contact) — chaque ligne modifiable.
+      sc.innerHTML = '<h2>✍️ Dernière étape : signez</h2><p class="sub">On récupère jusqu\'à <b>' + total + ' €</b>, soit <b>' + net + ' € pour vous</b> (75 %). Vérifiez votre dossier ci-dessous, puis signez.</p>';
+      // Récap CONCRET du dossier (vol, trajet, passagers, contact), chaque ligne modifiable.
       recapCard(sc);
       // Encadré « l'essentiel » (repris du mandat) + lien contrat complet
       var box = document.createElement('div'); box.className = 'ss-box';
       box.innerHTML = '<div class="ss-h">📝 Ce que vous signez, l\'essentiel</div><ul>'
-        + '<li>🤝 Vous nous <b>cédez votre créance</b> : Robin des Airs se bat en son nom, la compagnie nous paie, <b>on vous reverse votre part</b> — vous ne gérez rien.</li>'
-        + '<li>💶 Vous recevez <b>75 %</b> du montant récupéré (<b>60 %</b> si tribunal). <b>0 € si rien n\'est récupéré</b> — vous n\'avancez jamais un centime.</li>'
+        + '<li>🤝 Vous nous <b>cédez votre créance</b> : Robin des Airs se bat en son nom, la compagnie nous paie, <b>on vous reverse votre part</b>, vous ne gérez rien.</li>'
+        + '<li>💶 Vous recevez <b>75 %</b> du montant récupéré (<b>60 %</b> si tribunal). <b>0 € si rien n\'est récupéré</b>, vous n\'avancez jamais un centime.</li>'
         + '<li>🛡️ Même au tribunal : avocat, huissier et greffe <b>à notre charge</b>.</li>'
         + '<li>✍️ <b>Votre signature figurera sur le contrat de cession transmis à la compagnie aérienne</b>, comme preuve que vous nous avez confié votre créance.</li>'
         + '<li>📅 <b>14 jours pour vous rétracter</b>, sans frais · correspondances couvertes.</li>'
         + '</ul>';
       sc.appendChild(box);
       // Contrat COMPLET en accordéon, physiquement sur la page (le plus sûr juridiquement).
-      // iframe de la page contrat propre (/documents/mandat-fr) — une seule source de vérité, chargée au dépliage.
+      // iframe de la page contrat propre (/documents/mandat-fr), une seule source de vérité, chargée au dépliage.
       var acc = document.createElement('details'); acc.className = 'contract-acc';
-      acc.innerHTML = '<summary>📄 Lire le contrat de cession de créance complet</summary><div class="acc-body"><iframe title="Contrat de cession de créance — Robin des Airs" loading="lazy"></iframe></div>';
+      acc.innerHTML = '<summary>📄 Lire le contrat de cession de créance complet</summary><div class="acc-body"><iframe title="Contrat de cession de créance, Robin des Airs" loading="lazy"></iframe></div>';
       sc.appendChild(acc);
       var _frm = acc.querySelector('iframe');
       acc.addEventListener('toggle', function(){ if (acc.open && !_frm.getAttribute('src')) _frm.setAttribute('src', '/documents/mandat-fr.html?print=1'); });
-      // Signature du signataire principal (dessin) — on dit QUI signe.
+      // Signature du signataire principal (dessin), on dit QUI signe.
       var mainName = S.names[0] || 'Vous';
       var mainLbl = document.createElement('div'); mainLbl.className = 'hint idle'; mainLbl.style.margin = '2px 0 4px';
       mainLbl.innerHTML = '✍️ <b>1.</b> Signature de <b>' + esc(mainName) + '</b>';
@@ -962,32 +996,32 @@
         var pd = S.paxData[i] || {};
         if (pd.minor) { var note = document.createElement('div'); note.className = 'hint idle'; note.style.marginTop = '10px'; note.textContent = '👶 ' + nm + ' est mineur·e : votre signature (parent/tuteur) vaut pour lui/elle.'; sc.appendChild(note); return; }
         var boxc = document.createElement('div'); boxc.style.marginTop = '12px';
-        boxc.innerHTML = '<div class="hint idle" style="margin:0 0 4px">✍️ <b>' + (coSigs.length + 2) + '.</b> Signature de <b>' + esc(nm) + '</b> — passez-lui l\'appareil</div>';
+        boxc.innerHTML = '<div class="hint idle" style="margin:0 0 4px">✍️ <b>' + (coSigs.length + 2) + '.</b> Signature de <b>' + esc(nm) + '</b>, passez-lui l\'appareil</div>';
         var s2 = document.createElement('div'); s2.className = 'sig'; s2.style.margin = '0';
         s2.innerHTML = '<canvas></canvas><span class="ph">✍️ ' + esc(nm.split(' ')[0]) + ', signez ici</span><button type="button" class="clr">Effacer</button>';
         boxc.appendChild(s2);
         var abs = document.createElement('button'); abs.type = 'button';
         abs.style.cssText = 'border:0;background:none;cursor:pointer;font:inherit;font-size:12px;font-weight:600;color:var(--muted);text-decoration:underline;padding:5px 2px';
-        abs.textContent = 'Absent·e ? Continuer — on recueillera sa signature ensuite';
+        abs.textContent = 'Absent·e ? Continuer, on recueillera sa signature ensuite';
         boxc.appendChild(abs); sc.appendChild(boxc);
         var st = { name: nm, idx: i, drawn: false, absent: false, canvas: s2.querySelector('canvas') };
         var c2 = st.canvas, ph2 = s2.querySelector('.ph'), clr2 = s2.querySelector('.clr'), ctx2, dn2 = false;
         setTimeout(function(){ c2.width = c2.offsetWidth * 2; c2.height = 200; ctx2 = c2.getContext('2d'); ctx2.scale(2, 2); ctx2.strokeStyle = '#0B1F3A'; ctx2.lineWidth = 2.2; ctx2.lineCap = 'round'; ctx2.lineJoin = 'round'; }, 60);
         function pt2(e){ var r = c2.getBoundingClientRect(); var t = e.touches ? e.touches[0] : e; return { x: t.clientX - r.left, y: t.clientY - r.top }; }
-        function sd(e){ e.preventDefault(); dn2 = true; st.drawn = true; if (st.absent) { st.absent = false; abs.textContent = 'Absent·e ? Continuer — on recueillera sa signature ensuite'; abs.style.color = ''; } ph2.style.display = 'none'; clr2.style.display = 'block'; var p = pt2(e); ctx2.beginPath(); ctx2.moveTo(p.x, p.y); refresh(); }
+        function sd(e){ e.preventDefault(); dn2 = true; st.drawn = true; if (st.absent) { st.absent = false; abs.textContent = 'Absent·e ? Continuer, on recueillera sa signature ensuite'; abs.style.color = ''; } ph2.style.display = 'none'; clr2.style.display = 'block'; var p = pt2(e); ctx2.beginPath(); ctx2.moveTo(p.x, p.y); refresh(); }
         function md(e){ if (!dn2) return; e.preventDefault(); var p = pt2(e); ctx2.lineTo(p.x, p.y); ctx2.stroke(); }
         c2.addEventListener('mousedown', sd); c2.addEventListener('mousemove', md);
         window.addEventListener('mouseup', function(){ dn2 = false; refresh(); });
         c2.addEventListener('touchstart', sd, { passive: false }); c2.addEventListener('touchmove', md, { passive: false });
         c2.addEventListener('touchend', function(){ dn2 = false; refresh(); });
         clr2.addEventListener('click', function(){ ctx2.clearRect(0, 0, c2.width, c2.height); st.drawn = false; ph2.style.display = 'grid'; clr2.style.display = 'none'; refresh(); });
-        abs.addEventListener('click', function(){ st.absent = true; st.drawn = false; ph2.style.display = 'grid'; abs.textContent = '✓ Noté — signature recueillie ensuite par notre équipe'; abs.style.color = 'var(--neon-ink)'; refresh(); });
+        abs.addEventListener('click', function(){ st.absent = true; st.drawn = false; ph2.style.display = 'grid'; abs.textContent = '✓ Noté, signature recueillie ensuite par notre équipe'; abs.style.color = 'var(--neon-ink)'; refresh(); });
         coSigs.push(st);
       });
       function ckRow(html){ var l = document.createElement('label'); l.className = 'ck'; l.innerHTML = '<input type="checkbox"><span>' + html + '</span>'; sc.appendChild(l); return l.querySelector('input'); }
       var ck0 = ckRow("Je <b>déclare avoir été passager(e)</b> du vol indiqué et je <b>cède ma créance</b> à Robin des Airs afin qu'elle récupère les sommes qui me sont dues.");
       var ck1 = ckRow("J'ai <b>lu et j'accepte</b> le <b>contrat de cession</b> ci-dessus, les <a href='/cgv.html' target='_blank' rel='noopener'>CGV</a> et la <a href='/politique-confidentialite.html' target='_blank' rel='noopener'>politique de confidentialité</a> ; je <b>comprends que l'indemnité n'est pas garantie</b>.");
-      var ck3 = ckRow("<b>Facultatif :</b> je demande que Robin des Airs <b>commence tout de suite</b>, sans attendre la fin de mes 14 jours de rétractation (art. L.221-25) — je reste libre de me rétracter, sans frais." + (S.pax > 1 ? " <span style='color:var(--muted)'>Cette demande vaut pour tous les passagers du dossier.</span>" : ""));
+      var ck3 = ckRow("<b>Facultatif :</b> je demande que Robin des Airs <b>commence tout de suite</b>, sans attendre la fin de mes 14 jours de rétractation (art. L.221-25), je reste libre de me rétracter, sans frais." + (S.pax > 1 ? " <span style='color:var(--muted)'>Cette demande vaut pour tous les passagers du dossier.</span>" : ""));
       var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.disabled = true; go.style.marginTop = '14px';
       go.textContent = '✍️ Signer et envoyer mon dossier';
       sc.appendChild(go);
@@ -1016,7 +1050,7 @@
   // Prénom et nom SÉPARÉS (retour fondateur) : chacun part dans la bonne case du contrat,
   // sans devinette sur les noms composés.
   function manualName(sc){
-    sc.innerHTML = '<h2>👤 ' + (S.pax > 1 ? 'Passager 1 — votre' : 'Votre') + ' identité</h2><p class="sub">Comme sur votre pièce d\'identité.</p>';
+    sc.innerHTML = '<h2>👤 ' + (S.pax > 1 ? 'Passager 1, votre' : 'Votre') + ' identité</h2><p class="sub">Comme sur votre pièce d\'identité.</p>';
     var w1 = document.createElement('div');
     w1.innerHTML = '<div class="hint idle" style="margin:0 0 4px">Prénom</div>';
     var pInp = document.createElement('input'); pInp.className = 'input'; pInp.placeholder = 'ex. Awa'; pInp.autocomplete = 'given-name';
@@ -1096,7 +1130,7 @@
       }
     });
   }
-  // Fichier → { pieceFile (à joindre au dossier), piece (OCR ou null), pdf } — réutilisé par
+  // Fichier → { pieceFile (à joindre au dossier), piece (OCR ou null), pdf }, réutilisé par
   // le passager 1 ET chaque co-passager (chacun peut déposer son passeport, pas seulement le 1er).
   function fileToPiece(file){
     return new Promise(function(res){
@@ -1122,10 +1156,10 @@
   function tooBig(file, hint){
     var isPdf = /pdf$/i.test(file.type || '') || /\.pdf$/i.test(file.name || '');
     if (isPdf && file.size > 4 * 1000 * 1000) { hint.className = 'hint bad'; hint.textContent = 'PDF trop lourd (max ~4 Mo). Prenez plutôt une photo de la pièce, c\'est plus léger.'; return true; }
-    if (file.size > 15 * 1024 * 1024) { hint.className = 'hint bad'; hint.textContent = 'Fichier très lourd — reprenez une photo simple.'; return true; }
+    if (file.size > 15 * 1024 * 1024) { hint.className = 'hint bad'; hint.textContent = 'Fichier très lourd, reprenez une photo simple.'; return true; }
     return false;
   }
-  function dropBusy(sc, msg, sub){ var d = sc && sc.querySelector('.drop'); if (d) { d.classList.add('busy'); d.innerHTML = '<div class="spin"></div><p style="margin-top:8px">' + (msg || 'Lecture de votre pièce en cours…') + '</p><small>' + (sub || 'Quelques secondes — on récupère votre nom et votre adresse') + '</small>'; } }
+  function dropBusy(sc, msg, sub){ var d = sc && sc.querySelector('.drop'); if (d) { d.classList.add('busy'); d.innerHTML = '<div class="spin"></div><p style="margin-top:8px">' + (msg || 'Lecture de votre pièce en cours…') + '</p><small>' + (sub || 'Quelques secondes, on récupère votre nom et votre adresse') + '</small>'; } }
   // Révélation « magie » : les infos lues sur l'e-billet apparaissent une à une, puis on avance.
   function revealEticket(sc, e, onDone){
     if (!sc) { onDone(); return; }
@@ -1154,13 +1188,13 @@
   }
   function handleFile(file, sc, hint){
     if (tooBig(file, hint)) return;
-    hint.className = 'hint ok'; hint.textContent = '🔍 Lecture de votre pièce…'; dropBusy(sc);
+    hint.className = 'hint idle'; hint.textContent = 'Lecture de votre pièce…'; dropBusy(sc);
     fileToPiece(file).then(function(r){
-      if (!r) { hint.className = 'hint bad'; hint.textContent = 'Lecture impossible — tapez votre nom :'; setTimeout(function(){ manualName(sc); }, 600); return; }
+      if (!r) { hint.className = 'hint bad'; hint.textContent = 'Lecture impossible, tapez votre nom :'; setTimeout(function(){ manualName(sc); }, 600); return; }
       S.pieceFile = r.pieceFile;
       if (r.pdf) { manualName(sc); return; } // PDF : rangé au dossier, le nom se tape
       if (r.piece) return confirmPiece(sc, r.piece);
-      hint.className = 'hint bad'; hint.textContent = 'Lecture difficile (photo sombre ou floue ?) — tapez votre nom :';
+      hint.className = 'hint bad'; hint.textContent = 'Lecture difficile (photo sombre ou floue ?), tapez votre nom :';
       setTimeout(function(){ manualName(sc); }, 600);
     });
   }
@@ -1184,7 +1218,7 @@
     });
   }
   // Fusionne plusieurs cartes d'embarquement / e-billets : vol, trajet, date, PNR pris du 1er qui les porte ;
-  // passagers UNIONNÉS (dédoublonnés par nom) — une carte d'embarquement = souvent un passager.
+  // passagers UNIONNÉS (dédoublonnés par nom), une carte d'embarquement = souvent un passager.
   function mergeEtickets(list){
     var c = { passengers: [], legs: [], escale: false, flightNum: '', dep: '', arr: '', dateIso: '', pnr: '', pax: 0 };
     var seen = {};
@@ -1225,7 +1259,7 @@
       S.ticketFiles = ticketFiles;
       S.ticketFile = ticketFiles[0] || null; // rétro-compat
       if (!etickets.length) { // aucun OCR exploitable (PDF seuls ou illisibles) → saisie classique
-        dropText(ticketFiles.length ? 'Billet reçu. On continue la saisie…' : 'Billet peu lisible — on saisit à la main…');
+        dropText(ticketFiles.length ? 'Billet reçu. On continue la saisie…' : 'Billet peu lisible, on saisit à la main…');
         setTimeout(function(){ next(); }, 800);
         return;
       }
@@ -1241,7 +1275,7 @@
     if (!files.length) return;
     files = files.filter(function(f){ return !tooBig(f, hint); });
     if (!files.length) return;
-    hint.className = 'hint ok'; hint.textContent = '🔍 Lecture de la carte d\'embarquement…';
+    hint.className = 'hint idle'; hint.textContent = 'Lecture de la carte d\'embarquement…';
     var results = [];
     files.reduce(function(chain, f){
       return chain.then(function(){ return ocrOneEticket(f).then(function(r){ if (r) results.push(r); }); });
@@ -1249,7 +1283,7 @@
       results.forEach(function(r){ if (r && r.ticketFile) S.ticketFiles.push(r.ticketFile); });
       S.ticketFile = S.ticketFiles[0] || S.ticketFile;
       var etickets = results.map(function(r){ return r.eticket; }).filter(Boolean);
-      if (!etickets.length) { hint.className = 'hint bad'; hint.textContent = 'Carte peu lisible — réessayez avec une photo nette, ou continuez et ajoutez le passager plus tard.'; return; }
+      if (!etickets.length) { hint.className = 'hint bad'; hint.textContent = 'Carte peu lisible, réessayez avec une photo nette, ou continuez et ajoutez le passager plus tard.'; return; }
       // Instantané de l'état courant + nouvelles cartes → fusion (union des passagers).
       var cur = {
         flightNum: S.flightNum, dep: S.dep, arr: S.arr, dateIso: S.date, pnr: S.pnr,
@@ -1345,7 +1379,7 @@
           whatsapp: S.phone, contactPhone: S.phone,
           contactEmail: S.email, email: S.email,
           address: (S.piece && S.piece.adresse) || '',
-          startNow: S.startNow, // FACULTATIF (art. L.221-25) — non coché = MED après les 14 j de rétractation
+          startNow: S.startNow, // FACULTATIF (art. L.221-25), non coché = MED après les 14 j de rétractation
           eligibilityAcknowledged: true,
           coPassAgreement: S.pax > 1,
           cessionCreance: true, mandataireAccepted: true,
