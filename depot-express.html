@@ -319,6 +319,22 @@
     // Grands hubs (autres continents)
     'Dubaï (DXB)', 'Doha (DOH)', 'Abu Dhabi (AUH)', 'Djeddah (JED)', 'Riyad (RUH)', 'Beyrouth (BEY)',
     'New York JFK (JFK)', 'Montréal (YUL)', 'Toronto (YYZ)', 'Washington (IAD)', 'Guangzhou (CAN)', 'Pékin (PEK)',
+    // Villes secondaires Afrique (correspondances fréquentes)
+    'Enugu (ENU)', 'Kano (KAN)', 'Kaduna (KAD)', 'Tamale (TML)', 'Kumasi (KMS)', 'Ziguinchor (ZIG)', 'Saint-Louis (XLS)',
+    'Bobo-Dioulasso (BOY)', 'Kayes (KYS)', 'Garoua (GOU)', 'Maroua (MVR)', 'Ngaoundéré (NGE)', 'Port-Gentil (POG)',
+    'Franceville (MVB)', 'Mbuji-Mayi (MJM)', 'Kisangani (FKI)', 'Kananga (KGA)', 'Bukavu (BKY)', 'Kolwezi (KWZ)',
+    'Kilimandjaro (JRO)', 'Mwanza (MWZ)', 'Kisumu (KIS)', 'Eldoret (EDL)', 'Entebbe (EBB)', 'Hargeisa (HGA)', 'Mogadiscio (MGQ)',
+    'Asmara (ASM)', 'Juba (JUB)', 'Bamenda', 'Sfax (SFA)', 'Béjaïa (BJA)', 'Sétif (QSF)', 'Tlemcen (TLM)', 'Ghardaïa (GHA)',
+    'Laâyoune (EUN)', 'Dakhla (VIL)', 'Essaouira (ESU)', 'Ouarzazate (OZZ)', 'Al Hoceïma (AHU)',
+    // Golfe / Moyen-Orient
+    'Koweït (KWI)', 'Bahreïn (BAH)', 'Mascate (MCT)', 'Amman (AMM)', 'Charm el-Cheikh (SSH)',
+    // Europe (villes secondaires)
+    'Bilbao (BIO)', 'Palma (PMI)', 'Alicante (ALC)', 'Turin (TRN)', 'Florence (FLR)', 'Catane (CTA)', 'Palerme (PMO)',
+    'Bari (BRI)', 'Nuremberg (NUE)', 'Hanovre (HAJ)', 'Édimbourg (EDI)', 'Birmingham (BHX)', 'Glasgow (GLA)',
+    'Rotterdam (RTM)', 'Eindhoven (EIN)', 'Milan Bergame (BGY)', 'Rome Ciampino (CIA)',
+    // Grandes escales monde
+    'Los Angeles (LAX)', 'Miami (MIA)', 'Chicago (ORD)', 'Atlanta (ATL)', 'São Paulo (GRU)', 'Mumbai (BOM)',
+    'Delhi (DEL)', 'Bangkok (BKK)', 'Singapour (SIN)', 'Hong Kong (HKG)', 'Shanghai (PVG)', 'Tokyo (HND)',
   ];
   function ensureAirportList(){
     if ($('airportList')) return;
@@ -458,6 +474,10 @@
       rows += row('✈️', 'Votre vol', trajet, '__trajet');
     }
     if (S.date) rows += row('📅', 'Date du vol', esc(S.date.split('-').reverse().join('/')), 'date');
+    // PNR / référence de réservation, éditable en ligne (souvent mal lu ou absent → le client peut le compléter).
+    rows += '<div class="recap-row"><div class="recap-ic">🔖</div><div class="recap-main">'
+      + '<div class="recap-k">Référence / PNR <span class="muted" style="font-weight:400">· 5-6 caractères, lettres + chiffres, sur votre billet</span></div>'
+      + '<input class="input recap-pnrinp" value="' + esc(S.pnr || '') + '" placeholder="ex. 2ABCDE" maxlength="8" style="margin-top:4px;text-transform:uppercase"></div></div>';
     if (!opts.skipPax) S.names.forEach(function(nm, i){
       if (!nm) return;
       var pd = S.paxData[i] || {};
@@ -473,6 +493,8 @@
     Array.prototype.forEach.call(card.querySelectorAll('.recap-edit'), function(b){
       b.addEventListener('click', function(){ var k = b.getAttribute('data-k'); if (k === '__trajet') editTrajet(); else jump(k); });
     });
+    var pnrInp = card.querySelector('.recap-pnrinp');
+    if (pnrInp) pnrInp.addEventListener('input', function(){ S.pnr = pnrInp.value.toUpperCase().replace(/[^A-Z0-9]/g, ''); });
     sc.appendChild(card);
   }
   // Bloc navigation bas d'écran : ← Retour (si possible) + éventuel « passer »
@@ -576,10 +598,11 @@
       if (S.typeVol === 'escale') return SCREENS._leg(sc, 0); // correspondance → saisie tronçon par tronçon
       // VOL DIRECT : numéro + ville de départ + ville d'arrivée sur un écran
       sc.innerHTML = '<h2>✈️ Votre vol</h2><p class="sub">Le numéro de vol et le trajet (départ → arrivée).</p>';
-      var num = labeledField(sc, 'Numéro de vol', S.flightNum, true); num.placeholder = 'ex. AF 718';
+      var num = labeledField(sc, 'Numéro de vol', S.flightNum, true); num.placeholder = 'ex. AF718';
+      var numHelp = document.createElement('div'); numHelp.className = 'hint idle'; numHelp.style.margin = '2px 0 0'; numHelp.innerHTML = '2 lettres (la compagnie) + des chiffres, ex. <b>AF718</b>. C\'est écrit sur votre billet.'; sc.appendChild(numHelp);
       var dep = labeledField(sc, 'Ville / aéroport de départ', S.dep, false, '10px'); dep.placeholder = 'ex. Dakar…'; airportAuto(dep);
       var arr = labeledField(sc, 'Ville / aéroport d\'arrivée', S.arr, false, '10px'); arr.placeholder = 'ex. Paris…'; airportAuto(arr);
-      var hint = document.createElement('div'); hint.className = 'hint idle'; hint.textContent = 'Le numéro de vol est sur votre billet (ex. AF 718).'; sc.appendChild(hint);
+      var hint = document.createElement('div'); hint.className = 'hint idle'; sc.appendChild(hint);
       var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.style.marginTop = '12px'; go.textContent = 'Continuer →'; sc.appendChild(go);
       function ok(){
         var fn = num.value.trim().toUpperCase().replace(/\s+/g, '');
@@ -733,6 +756,13 @@
         var foot = document.createElement('div'); foot.className = 'recap-foot';
         foot.textContent = 'Un nom mal lu ? Corrigez-le ici. Un passager en trop (un seul nom coupé en deux) ? Touchez « Retirer ».';
         paxBox.appendChild(foot);
+        // Complétude : on annonce ce qu'on a détecté et on invite à ajouter les billets manquants.
+        var chk = document.createElement('div'); chk.className = 'recap-foot';
+        chk.style.color = 'var(--navy)'; chk.style.fontWeight = '600'; chk.style.marginTop = '2px';
+        chk.innerHTML = '🧳 <b>' + count + ' passager' + (count > 1 ? 's' : '') + '</b> détecté' + (count > 1 ? 's' : '')
+          + (nb > 1 ? ' sur <b>' + nb + ' billets</b>' : '') + '. <b>Avez-vous bien envoyé tous vos billets ?</b> '
+          + 'S\'il manque quelqu\'un, ajoutez sa carte d\'embarquement ci-dessous.';
+        paxBox.appendChild(chk);
       }
       renderPax();
       sc.appendChild(paxBox);
@@ -1241,24 +1271,56 @@
       }).catch(function(){ res(null); });
     });
   }
-  // Fusionne plusieurs cartes d'embarquement / e-billets : vol, trajet, date, PNR pris du 1er qui les porte ;
-  // passagers UNIONNÉS (dédoublonnés par nom), une carte d'embarquement = souvent un passager.
+  // Normalise une ville/aéroport pour comparer les correspondances (sans accents/espaces/casse).
+  function normAp(x){ return String(x || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, ''); }
+  // Remet des segments dans l'ordre par la CORRESPONDANCE (arrivée d'un = départ du suivant). Repli : ordre reçu.
+  function orderSegments(segs){
+    if (segs.length < 2) return segs.slice();
+    var arrs = {}; segs.forEach(function(s){ arrs[normAp(s.arr)] = true; });
+    // départ de tout le trajet = un segment dont le départ n'est l'arrivée d'aucun autre
+    var start = segs.filter(function(s){ return !arrs[normAp(s.dep)]; });
+    if (start.length !== 1) return segs.slice(); // ambigu (aller-retour, villes non lues…) → on garde l'ordre reçu
+    var used = {}, chain = [start[0]]; used[segs.indexOf(start[0])] = true;
+    for (var guard = 0; guard < segs.length; guard++){
+      var last = chain[chain.length - 1];
+      var next = -1;
+      for (var i = 0; i < segs.length; i++){ if (!used[i] && normAp(segs[i].dep) === normAp(last.arr)) { next = i; break; } }
+      if (next < 0) break;
+      used[next] = true; chain.push(segs[next]);
+    }
+    return chain.length === segs.length ? chain : segs.slice(); // chaîne incomplète → repli
+  }
+  // Fusionne plusieurs cartes d'embarquement / e-billets : PNR/date pris du 1er qui les porte ; passagers
+  // UNIONNÉS (dédoublonnés par nom) ; SEGMENTS collectés, dédoublonnés (même vol = même segment, cas famille)
+  // et REMIS DANS L'ORDRE par la correspondance (cartes envoyées en désordre → trajet reconstitué).
   function mergeEtickets(list){
     var c = { passengers: [], legs: [], escale: false, flightNum: '', dep: '', arr: '', dateIso: '', pnr: '', pax: 0 };
-    var seen = {};
+    var seen = {}, segs = [], segSeen = {};
     list.forEach(function(e){
       if (!e) return;
-      if (!c.flightNum && e.flightNum) c.flightNum = e.flightNum;
-      if (!c.dep && e.dep) c.dep = e.dep;
-      if (!c.arr && e.arr) c.arr = e.arr;
       if (!c.dateIso && e.dateIso) c.dateIso = e.dateIso;
       if (!c.pnr && e.pnr) c.pnr = e.pnr;
-      if (!c.legs.length && e.escale && e.legs && e.legs.length > 1) { c.escale = true; c.legs = e.legs; }
       (e.passengers || []).forEach(function(p){
         var key = String(p && p.name || '').trim().toUpperCase().replace(/\s+/g, ' ');
         if (!key || seen[key]) return; seen[key] = 1; c.passengers.push(p);
       });
+      // segments de CE billet : soit ses tronçons (correspondance dans un même billet), soit son unique vol
+      var these = (e.escale && e.legs && e.legs.length > 1)
+        ? e.legs.map(function(l){ return { num: l.num || '', dep: l.dep || '', arr: l.arr || '' }; })
+        : ((e.dep || e.arr || e.flightNum) ? [{ num: e.flightNum || '', dep: e.dep || '', arr: e.arr || '' }] : []);
+      these.forEach(function(s){
+        var k = String(s.num || '').toUpperCase().replace(/\s+/g, '') || (normAp(s.dep) + '>' + normAp(s.arr));
+        if (segSeen[k]) return; segSeen[k] = 1; segs.push(s); // même vol = même segment (plusieurs passagers)
+      });
     });
+    var ordered = orderSegments(segs);
+    if (ordered.length > 1){
+      c.escale = true; c.legs = ordered;
+      c.dep = ordered[0].dep; c.arr = ordered[ordered.length - 1].arr;
+      c.flightNum = ordered.map(function(s){ return s.num; }).filter(Boolean).join(' / ');
+    } else if (ordered.length === 1){
+      c.escale = false; c.legs = []; c.dep = ordered[0].dep; c.arr = ordered[0].arr; c.flightNum = ordered[0].num;
+    }
     c.pax = c.passengers.length;
     return c;
   }
