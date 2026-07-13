@@ -47,6 +47,24 @@ function sha256(str) {
   return require('crypto').createHash('sha256').update(String(str), 'utf8').digest('hex');
 }
 
+// ── Double-write append-only vers Supabase (best-effort) : un DOUBLE infalsifiable du journal de preuve.
+// Reste TOTALEMENT INERTE tant que SUPABASE_URL + SUPABASE_SERVICE_KEY ne sont pas posés en env (aucun impact).
+// N'utilise QUE fetch (zéro dépendance npm), timeboxé, et ne casse JAMAIS la signature (try/catch). Blobs reste
+// le stockage principal ; ceci est la copie immuable (table en INSERT seul, UPDATE/DELETE révoqués côté Supabase).
+async function logSignatureEvent(row) {
+  const url = (process.env.SUPABASE_URL || '').trim().replace(/\/$/, '');
+  const key = (process.env.SUPABASE_SERVICE_KEY || '').trim();
+  if (!url || !key) return; // non configuré → on ignore silencieusement
+  try {
+    await fetch(url + '/rest/v1/signature_events', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify(row),
+      signal: AbortSignal.timeout(4000),
+    });
+  } catch (e) { console.error('submit-mandat: Supabase log KO (non bloquant):', e.message); }
+}
+
 function generateCertId(phone, ref, ts) {
   const date = (ts || new Date().toISOString()).substring(0, 10).replace(/-/g, '');
   const shortPhone = (phone || '').replace(/\D/g, '').slice(-4) || 'XXXX';
@@ -756,6 +774,15 @@ exports.handler = async (event) => {
       console.error('submit-mandat: Blobs error:', e.message);
     }
   }
+
+  // DOUBLE du journal de preuve dans Supabase (append-only), en plus de Blobs. Best-effort : inerte si non configuré.
+  await logSignatureEvent({
+    ref, cert_id: certId, event: 'signed', signed_at: ts,
+    ip_hash: ipHash, user_agent: record.user_agent, doc_hash: record.doc_hash,
+    flight_num: record.flightNum || null, pax: record.pax || null,
+    consent_docs: body.documentsConsent === true, start_now: !!record.startNow,
+    source: record.source || 'web', lang: record.lang,
+  });
 
   // Met à jour le dossier (store 'mandats') avec les données FRAÎCHEMENT saisies par le client
   // (adresse par passager notamment) : le navigateur appelle /api/render-mandat-pdf juste après

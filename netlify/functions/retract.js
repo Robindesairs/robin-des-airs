@@ -25,6 +25,20 @@ const corsFor = (event) => {
 };
 const sha256 = (s) => crypto.createHash('sha256').update(String(s || '')).digest('hex').slice(0, 32);
 
+// Double append-only vers Supabase (best-effort, inerte sans SUPABASE_URL/KEY) : copie infalsifiable du journal.
+async function logSignatureEvent(row) {
+  const url = (process.env.SUPABASE_URL || '').trim().replace(/\/$/, '');
+  const key = (process.env.SUPABASE_SERVICE_KEY || '').trim();
+  if (!url || !key) return;
+  try {
+    await fetch(url + '/rest/v1/signature_events', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify(row), signal: AbortSignal.timeout(4000),
+    });
+  } catch (e) { console.error('retract: Supabase log KO (non bloquant):', e.message); }
+};
+
 exports.handler = async (event) => {
   const H = corsFor(event);
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: H, body: '' };
@@ -45,6 +59,8 @@ exports.handler = async (event) => {
     try { const prev = await mandats.get('retracted/' + ref, { type: 'json' }); if (prev && prev.at) return { statusCode: 200, headers: H, body: JSON.stringify({ ok: true, already: true, at: prev.at }) }; } catch (_) {}
     try { await mandats.setJSON('retracted/' + ref, { ref, at, ip_hash: ipHash, ua, reason }); } catch (_) {}
   }
+  // Double append-only du journal dans Supabase (best-effort).
+  await logSignatureEvent({ ref, cert_id: null, event: 'retracted', signed_at: at, ip_hash: ipHash, user_agent: ua, doc_hash: null, source: 'web', lang: null });
 
   // 2) Airtable : statut « Rétracté » (best-effort) + ligne Remarques garantie.
   try {
