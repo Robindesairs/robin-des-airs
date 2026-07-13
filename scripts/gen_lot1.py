@@ -69,7 +69,7 @@ LOT1 = [
   <li>Conservez tout : carte d'embarquement, e-mails de la compagnie, photos des écrans d'affichage à l'aéroport, reçus repas/hôtel.</li>
   <li>Envoyez une <a href="/blog/lettre-mise-en-demeure-compagnie-aerienne-modele.html">mise en demeure formelle</a> à la compagnie sous 30 jours.</li>
   <li>En cas de refus, saisissez la <a href="https://www.ecologie.gouv.fr/direction-generale-laviation-civile-dgac" target="_blank" rel="noopener external">DGAC</a> ou le tribunal de proximité.</li>
-  <li>Ou confiez votre dossier à Robin des Airs : <a href="/depot-en-ligne.html">dépôt en ligne</a>, 0 € si pas de récupération.</li>
+  <li>Ou confiez votre dossier à Robin des Airs : <a href="/depot-express">dépôt en ligne</a>, 0 € si pas de récupération.</li>
 </ol>""",
     "faq": [
         {"q": "Emirates est-elle couverte par le CE 261 ?", "a": "Oui sur les vols au départ d'un aéroport de l'UE (Paris, Bruxelles, Amsterdam, Lisbonne, etc.). Non sur les vols au départ de Dubaï ou de toute destination hors UE. Pour un Paris-Dubaï-Nairobi en billet unique, l'ensemble du voyage est couvert (jurisprudence Folkerts), avec Emirates comme transporteur responsable."},

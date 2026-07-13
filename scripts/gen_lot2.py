@@ -39,7 +39,7 @@ def body_compagnie(c):
   <li>Conservez votre carte d'embarquement, l'e-mail de confirmation du PNR, et toute preuve du retard (photos écrans aéroport, reçus repas, heure tampon d'arrivée à destination).</li>
   <li>{c["reclamation"]}</li>
   <li>Envoyez une <a href="/blog/lettre-mise-en-demeure-compagnie-aerienne-modele.html">mise en demeure formelle</a> par email tracké ou LRAR sous 30 jours.</li>
-  <li>En cas de refus ou de silence au-delà de 60 jours, saisissez la <a href="https://www.ecologie.gouv.fr/direction-generale-laviation-civile-dgac" target="_blank" rel="noopener external">DGAC</a> {"ou le " + c.get("mediateur", "Médiateur du Tourisme et du Voyage (MTV)") if c.get("mediateur") else ""}, ou Robin des Airs prend le dossier pour vous : <a href="/depot-en-ligne.html">dépôt en ligne</a> en 2 minutes.</li>
+  <li>En cas de refus ou de silence au-delà de 60 jours, saisissez la <a href="https://www.ecologie.gouv.fr/direction-generale-laviation-civile-dgac" target="_blank" rel="noopener external">DGAC</a> {"ou le " + c.get("mediateur", "Médiateur du Tourisme et du Voyage (MTV)") if c.get("mediateur") else ""}, ou Robin des Airs prend le dossier pour vous : <a href="/depot-express">dépôt en ligne</a> en 2 minutes.</li>
 </ol>
 
 <h2>Particularités à connaître sur {c["nom"]}</h2>

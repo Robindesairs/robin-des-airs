@@ -54,7 +54,7 @@ def body_hub(h):
   <li>Constituez votre dossier (carte d'embarquement, e-mail PNR, preuves de retard, reçus repas/hôtel).</li>
   <li>Identifiez la <strong>compagnie responsable</strong> (transporteur effectif du segment qui a causé l'incident).</li>
   <li>Envoyez une <a href="/blog/lettre-mise-en-demeure-compagnie-aerienne-modele.html">mise en demeure formelle</a> sous 30 jours.</li>
-  <li>En cas de refus, saisissez la <a href="https://www.ecologie.gouv.fr/direction-generale-laviation-civile-dgac" target="_blank" rel="noopener external">DGAC</a>, le Médiateur compétent, ou Robin des Airs : <a href="/depot-en-ligne.html">dépôt en ligne</a> en 2 minutes.</li>
+  <li>En cas de refus, saisissez la <a href="https://www.ecologie.gouv.fr/direction-generale-laviation-civile-dgac" target="_blank" rel="noopener external">DGAC</a>, le Médiateur compétent, ou Robin des Airs : <a href="/depot-express">dépôt en ligne</a> en 2 minutes.</li>
 </ol>
 """
 
