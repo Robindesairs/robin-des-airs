@@ -362,7 +362,7 @@
   // Corriger via une chip re-ouvre l'écran, puis la réponse renvoie DIRECT au point le plus loin.
   // Ordre v2 (conversion) : on montre l'ÉLIGIBILITÉ + le MONTANT tôt (dopamine avant l'effort),
   // puis on CAPTE le contact tôt (lead récupérable même en cas d'abandon), et seulement après les pièces.
-  var FLOW = ['incident', 'tiers', 'annul14', 'consent', 'eticket', 'confirm', 'conn', 'flight', 'date', 'pax', 'verdict', 'phone', 'email', 'passport', 'copax', 'sign'];
+  var FLOW = ['incident', 'tiers', 'annul14', 'consent', 'conn', 'eticket', 'confirm', 'flight', 'date', 'pax', 'verdict', 'phone', 'email', 'passport', 'copax', 'sign'];
   var idx = 0, far = 0, editing = false, backwards = false, reflow = false;
   // Ré-édition du trajet (conn → flight) déclenchée depuis un récap : reflowActive force conn/flight à
   // s'afficher même quand la carte les avait remplis, reflowReturn = l'écran où revenir (signature OU validation).
@@ -702,7 +702,9 @@
     // E-BILLET / carte d'embarquement → pré-remplit vol, trajet, date, PNR, passagers (comme le bot).
     // Facultatif : « je saisis à la main » enchaîne sur les questions classiques.
     eticket: function(sc){
-      sc.innerHTML = '<h2>📄 Votre e-billet ou carte d\'embarquement</h2><p class="sub"><b>On lit tout et on remplit votre dossier</b>, n° de vol, trajet, date, passagers. Zéro erreur de saisie.</p>';
+      var esc2 = (S.typeVol === 'escale');
+      sc.innerHTML = '<h2>📄 Votre e-billet ou carte d\'embarquement</h2><p class="sub"><b>On lit tout et on remplit votre dossier</b>, n° de vol, trajet, date, passagers. Zéro erreur de saisie.'
+        + (esc2 ? ' <b>Correspondance :</b> déposez <b>toutes vos cartes d\'embarquement</b> (une par vol) d\'un coup, on reconstitue le trajet.' : '') + '</p>';
       $('fileInp').multiple = true; // plusieurs cartes d'embarquement (une par passager) sélectionnables d'un coup
       var drop = document.createElement('div'); drop.className = 'drop';
       drop.innerHTML = '<div class="big">📄</div><p>' + (isTouch ? 'Touchez pour ajouter votre e-billet' : 'Glissez votre e-billet ici') + '</p><small>Photo ou PDF · <b>plusieurs cartes possibles</b> · lecture automatique · 🔒 lu par une IA, jamais revendu</small>';
@@ -1407,15 +1409,19 @@
     }
   }
   function confirmPiece(sc, p){
-    sc.innerHTML = '<h2>📋 C\'est bien vous ?</h2><p class="sub">Lu automatiquement sur votre pièce :</p>';
+    // TEMPS D'ARRÊT passeport : on montre TOUT ce qu'on a lu (nom, date de naissance, adresse) pour validation.
+    sc.innerHTML = '<h2>📋 Vérifiez vos informations</h2><p class="sub">Lu automatiquement sur votre pièce. <b>Corrigez si besoin, puis validez.</b></p>';
     var card = document.createElement('div'); card.className = 'idcard';
-    card.innerHTML = '<div>👤 <b>' + esc(p.name) + '</b></div>'
+    card.innerHTML = '<div>👤 <b>' + esc(p.name || '') + '</b></div>'
       + (p.dob ? '<div>🎂 Né(e) le ' + esc(p.dob) + (p.lieuNaissance ? ' à ' + esc(p.lieuNaissance) : '') + '</div>' : '')
       + (p.docType ? '<div>🪪 ' + esc(p.docType === 'cni' ? "Carte d'identité" : p.docType === 'titre_sejour' ? 'Titre de séjour' : 'Passeport') + '</div>' : '');
     sc.appendChild(card);
-    var o = document.createElement('div'); o.className = 'opts';
-    o.appendChild(optButton('<span class="ic">✅</span><span>Oui, c\'est moi</span>', function(){ S.piece = p; S.names[0] = p.name; next(); }));
-    o.appendChild(optButton('<span class="ic">✏️</span><span>Corriger mon nom</span>', function(){ manualName(sc.parentElement ? sc : sc); }, true));
+    // Adresse : affichée ET corrigeable (sert à la mise en demeure et au contrat). Si absente de la pièce, champ à remplir.
+    var adrInp = labeledField(sc, '🏠 Votre adresse' + (p.adresse ? '' : ' (non lue sur la pièce, complétez-la)'), p.adresse || '', false, '10px');
+    adrInp.placeholder = 'ex. 12 rue de la Paix, 75002 Paris';
+    var o = document.createElement('div'); o.className = 'opts'; o.style.marginTop = '10px';
+    o.appendChild(optButton('<span class="ic">✅</span><span>Oui, tout est correct</span>', function(){ p.adresse = adrInp.value.trim(); S.piece = p; S.names[0] = p.name; next(); }));
+    o.appendChild(optButton('<span class="ic">✏️</span><span>Corriger mon nom</span>', function(){ p.adresse = adrInp.value.trim(); manualName(sc); }, true));
     sc.appendChild(o);
     navRow(sc);
   }
