@@ -711,21 +711,28 @@
       sc.innerHTML = '<h2>📄 Votre e-billet ou carte d\'embarquement</h2><p class="sub"><b>On lit tout et on remplit votre dossier</b>, n° de vol, trajet, date, passagers. Zéro erreur de saisie.'
         + (esc2 ? ' <b>Correspondance :</b> déposez <b>toutes vos cartes d\'embarquement</b> (une par vol) d\'un coup, on reconstitue le trajet.' : '') + '</p>';
       $('fileInp').multiple = true; // plusieurs cartes d'embarquement (une par passager) sélectionnables d'un coup
-      var drop = document.createElement('div'); drop.className = 'drop';
-      drop.innerHTML = '<div class="big">📄</div><p>' + (isTouch ? 'Touchez pour ajouter votre e-billet' : 'Glissez votre e-billet ici') + '</p><small>Photo ou PDF · <b>plusieurs cartes possibles</b> · lecture automatique · 🔒 lu par une IA, jamais revendu</small>';
-      sc.appendChild(drop);
-      var o = document.createElement('div'); o.className = 'opts grid2'; o.style.marginTop = '10px';
-      o.appendChild(optButton('<span class="ic">📷</span><span>Prendre une photo</span>', function(){ $('camInp').value = ''; $('camInp').click(); }));
-      o.appendChild(optButton('<span class="ic">🖼️</span><span>Choisir un fichier<small>photo ou PDF</small></span>', function(){ $('fileInp').value = ''; $('fileInp').click(); }));
+      // Contrôles adaptés à l'appareil : ORDI = zone glisser + fichier (webcam inutile pour un document) ;
+      // MOBILE = photo + fichier (glisser-déposer inutile). Toujours 2 options utiles, jamais l'inutile.
+      var drop = null;
+      if (!isTouch) {
+        drop = document.createElement('div'); drop.className = 'drop';
+        drop.innerHTML = '<div class="big">📄</div><p>Glissez votre e-billet ici</p><small>Photo ou PDF · <b>plusieurs cartes possibles</b> · lecture automatique · 🔒 lu par une IA, jamais revendu</small>';
+        sc.appendChild(drop);
+      }
+      var o = document.createElement('div'); o.className = 'opts' + (isTouch ? ' grid2' : ''); o.style.marginTop = '10px';
+      if (isTouch) o.appendChild(optButton('<span class="ic">📷</span><span>Prendre une photo</span>', function(){ $('camInp').value = ''; $('camInp').click(); }));
+      o.appendChild(optButton('<span class="ic">🖼️</span><span>' + (isTouch ? 'Choisir un fichier' : 'Choisir mon e-billet') + '<small>photo ou PDF · plusieurs possibles</small></span>', function(){ $('fileInp').value = ''; $('fileInp').click(); }));
       sc.appendChild(o);
       var why = document.createElement('div'); why.className = 'why';
       why.innerHTML = 'ℹ️ <b>Pourquoi ?</b> Votre billet ou carte d\'embarquement <b>prouve que vous étiez sur ce vol</b>, c\'est la pièce qui fait payer la compagnie. On la lit pour remplir votre dossier (n° de vol, trajet, date) <b>sans erreur</b>. 🔒 Jamais revendue.';
       sc.appendChild(why);
       var hint = document.createElement('div'); hint.className = 'hint idle'; sc.appendChild(hint);
-      drop.addEventListener('click', function(){ $('fileInp').value = ''; $('fileInp').click(); });
-      drop.addEventListener('dragover', function(e){ e.preventDefault(); drop.classList.add('over'); });
-      drop.addEventListener('dragleave', function(){ drop.classList.remove('over'); });
-      drop.addEventListener('drop', function(e){ e.preventDefault(); drop.classList.remove('over'); handleEticketFiles(e.dataTransfer.files, hint); });
+      if (drop) {
+        drop.addEventListener('click', function(){ $('fileInp').value = ''; $('fileInp').click(); });
+        drop.addEventListener('dragover', function(e){ e.preventDefault(); drop.classList.add('over'); });
+        drop.addEventListener('dragleave', function(){ drop.classList.remove('over'); });
+        drop.addEventListener('drop', function(e){ e.preventDefault(); drop.classList.remove('over'); handleEticketFiles(e.dataTransfer.files, hint); });
+      }
       $('fileInp').onchange = function(){ handleEticketFiles($('fileInp').files, hint); };
       $('camInp').onchange = function(){ handleEticketFiles($('camInp').files, hint); };
       navRow(sc, { skip: '✏️ Je n\'ai pas le billet, je saisis à la main', onSkip: function(){ next(); } });
@@ -832,25 +839,31 @@
     passport: function(sc){
       $('fileInp').multiple = false; // pièce d'identité = un seul fichier
       sc.innerHTML = '<h2>🛂 ' + (S.pax > 1 ? 'Passager 1, votre' : 'Votre') + ' passeport <span style="font-weight:500;font-size:14px;color:var(--muted)">(de préférence)</span></h2><p class="sub">Ou carte d\'identité. <b>On lit tout, vous n\'écrivez rien.</b> Ça remplit votre contrat sans erreur.</p>';
-      var drop = document.createElement('div'); drop.className = 'drop';
-      drop.innerHTML = '<div class="big">🛂</div><p>' + (isTouch ? 'Touchez pour ajouter votre passeport' : 'Glissez votre passeport ici') + '</p><small>🔒 Lu par une IA pour pré-remplir votre contrat, jamais revendu</small>';
-      sc.appendChild(drop);
+      // ORDI = glisser + fichier (webcam inutile) ; MOBILE = photo + fichier (glisser inutile).
+      var drop = null;
+      if (!isTouch) {
+        drop = document.createElement('div'); drop.className = 'drop';
+        drop.innerHTML = '<div class="big">🛂</div><p>Glissez votre passeport ici</p><small>🔒 Lu par une IA pour pré-remplir votre contrat, jamais revendu</small>';
+        sc.appendChild(drop);
+      }
       var tip = document.createElement('div'); tip.style.cssText = 'margin:8px 0 0;font-size:12.5px;color:var(--muted);line-height:1.45';
       tip.innerHTML = '📸 <b>Pour une lecture sans erreur :</b> cadrez tout le document, <b>la bande de chiffres du bas comprise</b>, à plat et sans reflet. Carte d\'identité ? Photographiez le <b>verso (le dos)</b>, c\'est là que se trouve cette bande.';
       sc.appendChild(tip);
       // 2 vraies options rectangulaires : photo (caméra sur mobile) ou fichier (galerie / PDF)
-      var o = document.createElement('div'); o.className = 'opts grid2'; o.style.marginTop = '10px';
-      o.appendChild(optButton('<span class="ic">📷</span><span>Prendre une photo</span>', function(){ $('camInp').value = ''; $('camInp').click(); }));
-      o.appendChild(optButton('<span class="ic">🖼️</span><span>Choisir un fichier<small>photo ou PDF</small></span>', function(){ $('fileInp').value = ''; $('fileInp').click(); }));
+      var o = document.createElement('div'); o.className = 'opts' + (isTouch ? ' grid2' : ''); o.style.marginTop = '10px';
+      if (isTouch) o.appendChild(optButton('<span class="ic">📷</span><span>Prendre une photo</span>', function(){ $('camInp').value = ''; $('camInp').click(); }));
+      o.appendChild(optButton('<span class="ic">🖼️</span><span>' + (isTouch ? 'Choisir un fichier' : 'Choisir ma pièce') + '<small>photo ou PDF</small></span>', function(){ $('fileInp').value = ''; $('fileInp').click(); }));
       sc.appendChild(o);
       var why = document.createElement('div'); why.className = 'why';
       why.innerHTML = 'ℹ️ <b>Pourquoi le passeport ?</b> Il sert à deux choses : <b>écrire votre contrat de cession</b> avec votre identité exacte, et <b>prouver à la compagnie que c\'est bien vous</b> qui devez être payé(e). 🔒 Lu pour pré-remplir, jamais revendu, <b>supprimé</b> une fois le dossier réglé.';
       sc.appendChild(why);
       var hint = document.createElement('div'); hint.className = 'hint idle'; sc.appendChild(hint);
-      drop.addEventListener('click', function(){ $('fileInp').value = ''; $('fileInp').click(); });
-      drop.addEventListener('dragover', function(e){ e.preventDefault(); drop.classList.add('over'); });
-      drop.addEventListener('dragleave', function(){ drop.classList.remove('over'); });
-      drop.addEventListener('drop', function(e){ e.preventDefault(); drop.classList.remove('over'); var f = e.dataTransfer.files && e.dataTransfer.files[0]; if (f) handleFile(f, sc, hint); });
+      if (drop) {
+        drop.addEventListener('click', function(){ $('fileInp').value = ''; $('fileInp').click(); });
+        drop.addEventListener('dragover', function(e){ e.preventDefault(); drop.classList.add('over'); });
+        drop.addEventListener('dragleave', function(){ drop.classList.remove('over'); });
+        drop.addEventListener('drop', function(e){ e.preventDefault(); drop.classList.remove('over'); var f = e.dataTransfer.files && e.dataTransfer.files[0]; if (f) handleFile(f, sc, hint); });
+      }
       $('fileInp').onchange = function(){ var f = $('fileInp').files && $('fileInp').files[0]; if (f) handleFile(f, sc, hint); };
       $('camInp').onchange = function(){ var f = $('camInp').files && $('camInp').files[0]; if (f) handleFile(f, sc, hint); };
       navRow(sc, { skip: '✏️ Je préfère taper mon nom', onSkip: function(){ manualName(sc); } });
@@ -866,15 +879,19 @@
       var pd0 = S.paxData[i] || {};
       sc.innerHTML = '<h2>👥 Passager ' + (i + 1) + ' sur ' + S.pax + '</h2><p class="sub">Sa <b>pièce d\'identité</b> (on lit tout) ou sa saisie, chaque passager compte pour l\'indemnité.</p>';
       // Passeport du co-passager (comme le passager 1)
-      var drop = document.createElement('div'); drop.className = 'drop';
-      drop.innerHTML = '<div class="big">🛂</div><p>Glissez le passeport du passager ' + (i + 1) + '</p><small>ou remplissez à la main ci-dessous · 🔒 lu par une IA, jamais revendu</small>';
-      sc.appendChild(drop);
+      // ORDI = glisser + fichier (webcam inutile) ; MOBILE = photo + fichier (glisser inutile).
+      var drop = null;
+      if (!isTouch) {
+        drop = document.createElement('div'); drop.className = 'drop';
+        drop.innerHTML = '<div class="big">🛂</div><p>Glissez le passeport du passager ' + (i + 1) + '</p><small>ou remplissez à la main ci-dessous · 🔒 lu par une IA, jamais revendu</small>';
+        sc.appendChild(drop);
+      }
       var tipc = document.createElement('div'); tipc.style.cssText = 'margin:8px 0 0;font-size:12.5px;color:var(--muted);line-height:1.45';
       tipc.innerHTML = '📸 Cadrez tout le document, <b>la bande de chiffres du bas comprise</b>, à plat, sans reflet. Carte d\'identité ? Le <b>verso (dos)</b>.';
       sc.appendChild(tipc);
-      var ob = document.createElement('div'); ob.className = 'opts grid2'; ob.style.marginTop = '10px';
-      ob.appendChild(optButton('<span class="ic">📷</span><span>Prendre une photo</span>', function(){ $('camInp').value = ''; $('camInp').click(); }));
-      ob.appendChild(optButton('<span class="ic">🖼️</span><span>Choisir un fichier<small>photo ou PDF</small></span>', function(){ $('fileInp').value = ''; $('fileInp').click(); }));
+      var ob = document.createElement('div'); ob.className = 'opts' + (isTouch ? ' grid2' : ''); ob.style.marginTop = '10px';
+      if (isTouch) ob.appendChild(optButton('<span class="ic">📷</span><span>Prendre une photo</span>', function(){ $('camInp').value = ''; $('camInp').click(); }));
+      ob.appendChild(optButton('<span class="ic">🖼️</span><span>' + (isTouch ? 'Choisir un fichier' : 'Choisir la pièce') + '<small>photo ou PDF</small></span>', function(){ $('fileInp').value = ''; $('fileInp').click(); }));
       sc.appendChild(ob);
       var ocrHint = document.createElement('div'); ocrHint.className = 'hint idle'; sc.appendChild(ocrHint);
       // Champs (préremplis par l'OCR, toujours corrigeables)
@@ -905,10 +922,13 @@
           } else { ocrHint.className = 'hint bad'; ocrHint.textContent = 'Photo peu lisible, saisissez à la main.'; }
         });
       }
-      drop.addEventListener('click', function(){ $('fileInp').value = ''; $('fileInp').click(); });
-      drop.addEventListener('dragover', function(e){ e.preventDefault(); drop.classList.add('over'); });
-      drop.addEventListener('dragleave', function(){ drop.classList.remove('over'); });
-      drop.addEventListener('drop', function(e){ e.preventDefault(); drop.classList.remove('over'); onCopaxFile(e.dataTransfer.files && e.dataTransfer.files[0]); });
+      if (drop) {
+        drop.addEventListener('click', function(){ $('fileInp').value = ''; $('fileInp').click(); });
+        drop.addEventListener('dragover', function(e){ e.preventDefault(); drop.classList.add('over'); });
+        drop.addEventListener('dragleave', function(){ drop.classList.remove('over'); });
+        drop.addEventListener('drop', function(e){ e.preventDefault(); drop.classList.remove('over'); onCopaxFile(e.dataTransfer.files && e.dataTransfer.files[0]); });
+      }
+
       $('fileInp').onchange = function(){ onCopaxFile($('fileInp').files && $('fileInp').files[0]); };
       $('camInp').onchange = function(){ onCopaxFile($('camInp').files && $('camInp').files[0]); };
       function submitPax(){
