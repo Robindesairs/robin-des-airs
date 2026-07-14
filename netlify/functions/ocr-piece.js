@@ -22,7 +22,10 @@ const corsFor = (event) => {
 };
 
 // ── Prompt IDENTIQUE au bot (railway/server.js _OCR_PASSPORT_PROMPT) ──
-const OCR_PASSPORT_PROMPT = `Tu lis une pièce d'identité (PASSEPORT, carte nationale d'identité, titre de séjour, carte de résident…) — utilise aussi la zone MRZ en bas si présente. La pièce peut être rédigée UNIQUEMENT EN ANGLAIS (ex. passeports nigérian, ghanéen, gambien, sierra-léonais, libérien) ou bilingue français/anglais (ex. cartes CEDEAO/ECOWAS) : les libellés anglais ci-dessous sont donc à traiter EXACTEMENT comme leurs équivalents français, pas comme un repli en cas d'échec. Réponds UNIQUEMENT en JSON :
+const OCR_PASSPORT_PROMPT = `Tu lis une pièce d'identité (PASSEPORT, carte nationale d'identité, titre de séjour, carte de résident…).
+⚠️ PRIORITÉ ABSOLUE À LA MRZ. La MRZ (les 2 ou 3 lignes de caractères majuscules remplis de « < » en bas du document) est la source la PLUS FIABLE : lecture machine, format ICAO normalisé, aucune police stylisée. Lis-la EN PRIORITÉ pour : NOM, PRÉNOM(S), DATE DE NAISSANCE, SEXE, DATE D'EXPIRATION, nationalité. La zone visuelle (photo, texte imprimé) sert à COMPLÉTER, pas à contredire la MRZ.
+- Format du nom dans la MRZ : « NOM<<PRENOM<PRENOM2 » : le « << » sépare le nom de famille des prénoms, un « < » sépare deux mots. Remplace les « < » par des espaces et retire les « < » de fin de ligne.
+- ⚠️ ACCENTS : la MRZ n'a NI accents NI caractères spéciaux (É→E, È→E, Ç→C, Ñ→N, Ü→UE ou U, ß→SS). Donc : prends les LETTRES et la STRUCTURE dans la MRZ, mais RESTAURE les accents/caractères d'origine depuis la zone visuelle imprimée (ex. MRZ « NGUEMA » + visuel « N'GUÉMA » → garde « N'GUÉMA »). En cas de DÉSACCORD sur les lettres entre visuel et MRZ, la MRZ fait foi. La pièce peut être rédigée UNIQUEMENT EN ANGLAIS (ex. passeports nigérian, ghanéen, gambien, sierra-léonais, libérien) ou bilingue français/anglais (ex. cartes CEDEAO/ECOWAS) : les libellés anglais ci-dessous sont donc à traiter EXACTEMENT comme leurs équivalents français, pas comme un repli en cas d'échec. Réponds UNIQUEMENT en JSON :
 {"nom":"","prenom":"","date_naissance":"","lieu_naissance":"","date_expiration":"","adresse":"","pays_adresse":"","sexe":"","type_piece":"","face":""}
 Règles (libellé FR / EN équivalent) :
 - nom : nom de famille en MAJUSCULES. Champ "Nom" / "Surname" / "Name" / "Last name".

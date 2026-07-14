@@ -1145,7 +1145,7 @@
   }
   // Compression photo ROBUSTE MOBILE : on réduit l'image DÈS le décodage (mémoire minimale, évite le
   // crash « mémoire insuffisante » sur iOS avec les photos 48 Mpx), on libère tout, et on échoue proprement.
-  var MAXPX = 1500, JPEGQ = 0.8;
+  var MAXPX = 1600, JPEGQ = 0.9; // qualité relevée : petits caractères MRZ (passeport) mieux préservés
   function encodeDrawable(src, w, h, res, rej){
     if (Math.max(w, h) > MAXPX) { var k = MAXPX / Math.max(w, h); w = Math.round(w * k); h = Math.round(h * k); }
     var c = document.createElement('canvas'); c.width = w; c.height = h;
