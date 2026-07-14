@@ -552,7 +552,7 @@ ES_FILES = [
         <li><strong>Salida desde un aeropuerto de la UE, EEE o Suiza</strong> — cualquier aerolínea (p. ej. Madrid–Casablanca con Royal Air Maroc).</li>
         <li><strong>Llegada a la UE</strong> en aerolínea europea (p. ej. Iberia Nueva York–Madrid).</li>
       </ul>
-      <p>Incluye Iberia, Vueling, Air Europa, Ryanair, Lufthansa, Air France, TAP, easyJet, etc.</p>
+      <p>Incluye Iberia, Vueling, Air Europa, Ryanair, Lufthansa, Air France, TAP, etc.</p>
 
       <h2>2. Tres supuestos de indemnización</h2>
       <h3>Cancelación (artículo 5)</h3>

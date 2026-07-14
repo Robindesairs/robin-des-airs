@@ -65,7 +65,7 @@ Si vous voyagez en service UM (Unaccompanied Minor — typiquement étudiants de
 
 1. WhatsApp Robin avec : carte d'embarquement + certificat de scolarité + heure d'arrivée réelle
 2. On monte le dossier sous 48h
-3. Indemnité versée en 4-6 mois sur votre RIB français
+3. Indemnité versée sur votre RIB français
 
 Service en français, anglais, wolof, bambara, lingala, peul.
 

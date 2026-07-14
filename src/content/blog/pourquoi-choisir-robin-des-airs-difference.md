@@ -70,7 +70,6 @@ Aucun frais de dossier, aucune TVA ajoutée. Si le dossier va au tribunal, un av
 - Réponse WhatsApp en **moins de 2 heures** en journée.
 - Confirmation de réception du dossier sous **24 heures**.
 - Premier diagnostic sous **48 heures**.
-- Indemnité versée en **4 à 6 mois** en moyenne.
 
 ## Pour qui Robin des Airs est conçu
 

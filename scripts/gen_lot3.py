@@ -91,7 +91,7 @@ HUBS = [
         "Afrique centrale (vols directs Air France)": "Douala (DLA), Yaoundé (NSI), Libreville (LBV), Brazzaville (BZV), Kinshasa (FIH), Bangui (BGF), N'Djamena (NDJ), Pointe-Noire (PNR)",
         "Afrique de l'Est (vols directs Air France et codeshare Kenya Airways)": "Nairobi (NBO), Addis-Abeba (ADD), Dar es Salaam (DAR via NBO), Kigali (KGL), Kampala (EBB via NBO), Khartoum (KRT)",
         "Afrique australe (Air France)": "Johannesburg (JNB), Antananarivo (TNR), Maputo (MPM via JNB)",
-        "Maghreb (Air France, RAM, Air Algérie, Tunisair, Transavia, easyJet)": "Casablanca (CMN), Rabat (RBA), Marrakech (RAK), Agadir (AGA), Tanger (TNG), Tunis (TUN), Djerba (DJE), Alger (ALG), Oran (ORN), Constantine (CZL), Tripoli (TIP)",
+        "Maghreb (Air France, RAM, Air Algérie, Tunisair, Transavia)": "Casablanca (CMN), Rabat (RBA), Marrakech (RAK), Agadir (AGA), Tanger (TNG), Tunis (TUN), Djerba (DJE), Alger (ALG), Oran (ORN), Constantine (CZL), Tripoli (TIP)",
         "Océan Indien (Air France, Corsair)": "La Réunion (RUN), Mayotte (DZA), Île Maurice (MRU)",
     },
     "correspondance_ratee": "Si vous ratez votre correspondance à CDG en raison du retard d'un vol antérieur, et que vous avez un <strong>billet unique</strong>, la compagnie responsable doit vous réacheminer dès que possible vers votre destination finale, sans frais. Elle doit également prendre en charge vos repas et un hôtel si une nuit est nécessaire. Si votre billet est <strong>séparé</strong> (deux PNR distincts), vous êtes livré à vous-même : la deuxième compagnie n'a aucune obligation. Voir notre article <a href=\"/blog/billet-unique-vs-billets-separes-ce261-correspondance.html\">billet unique vs séparé</a>.",

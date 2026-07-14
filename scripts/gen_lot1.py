@@ -135,7 +135,7 @@ LOT1 = [
 <ul>
   <li>Mention "self-transfer" ou "transferts auto" sur l'écran de réservation.</li>
   <li>Le temps de correspondance proposé est inférieur au MCT officiel de l'aéroport (1h à CDG, 1h30 à BRU, 2h à CMN, etc.).</li>
-  <li>Deux compagnies différentes ne faisant pas partie d'une alliance commune (ex. Easyjet + Royal Air Maroc).</li>
+  <li>Deux compagnies différentes ne faisant pas partie d'une alliance commune (ex. Ryanair + Royal Air Maroc).</li>
   <li>La plateforme propose une "assurance correspondance" (= aveu qu'il n'y a pas de protection légale).</li>
 </ul>
 

@@ -69,7 +69,7 @@ Notre équipe parle français, wolof, bambara, lingala, peul. Vous pouvez expliq
 1. Récupérer les preuves (cartes embarquement, photos, mails compagnie)
 2. WhatsApp Robin des Airs avec photo + description rapide
 3. On monte le dossier (CE 261 + Montréal si préjudice médical)
-4. Indemnité versée en 4-6 mois
+4. Indemnité versée sur votre compte
 
 Voir : [Indemnité famille](/blog/indemnite-vol-retarde-famille-enfants.html), [Convention Montréal](/blog/ce261-vs-convention-montreal.html).
 
