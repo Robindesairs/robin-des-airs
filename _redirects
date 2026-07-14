@@ -1,3 +1,50 @@
+# === SÉCURITÉ : publish='.' sert TOUT le repo. Bloquer les fichiers internes/sensibles. ===
+# (code source, SQL, docs internes, audits, financier, preuves clients). Ajouté 2026-07-14.
+/src/*    /404.html    404!
+/scripts/*    /404.html    404!
+/supabase/*    /404.html    404!
+/tests/*    /404.html    404!
+/railway/*    /404.html    404!
+/netlify/*    /404.html    404!
+/node_modules/*    /404.html    404!
+/protocole-siege/*    /404.html    404!
+/docs/*    /404.html    404!
+/financement-adie/*    /404.html    404!
+/proofs/*    /404.html    404!
+/robin-dossiers/*    /404.html    404!
+/feedmock/*    /404.html    404!
+# --- guides/docs internes .md à la racine ---
+/AMADEUS-API.md    /404.html    404!
+/CRM-guide-operateur.md    /404.html    404!
+/Contrat-Cession-Synthese.md    /404.html    404!
+/DEPLOI.md    /404.html    404!
+/GUIDE-MAKE-GOOGLE-SHEET.md    /404.html    404!
+/NETLIFY-FIX.md    /404.html    404!
+/OVERNIGHT-REPORT.md    /404.html    404!
+/PLAYBOOK-MANYCHAT-AISSA.md    /404.html    404!
+/PLAYBOOK-OPERATIONNEL.md    /404.html    404!
+/PRODUCT.md    /404.html    404!
+/README-AVAL.md    /404.html    404!
+/RENDRE-SITE-PUBLIC.md    /404.html    404!
+/TUNNEL-ROBIN.md    /404.html    404!
+/VERIF-NETLIFY.md    /404.html    404!
+/WEBHOOK-WHATSAPP.md    /404.html    404!
+/WHATSAPP-AUTO.md    /404.html    404!
+/audience-meta-anglophone.md    /404.html    404!
+/audience-meta-facebook.md    /404.html    404!
+/cheminement-whatsapp-yousign-ar24.md    /404.html    404!
+/contestations-compagnies-defenses.md    /404.html    404!
+/conventions-honoraires-3-options.md    /404.html    404!
+/email-lec-questions-blocantes.md    /404.html    404!
+/emails-avocats-recrutement.md    /404.html    404!
+/gabarit-formulaire-A-RPL-SN.md    /404.html    404!
+/guide-ads-manager-step-by-step.md    /404.html    404!
+/ig-copies-pub-finales.md    /404.html    404!
+/instagram-ciblage-q3-2026.md    /404.html    404!
+/instagram-legendes-pretes.md    /404.html    404!
+/prompt-make-scenario.md    /404.html    404!
+/scripts-reels-15s.md    /404.html    404!
+
 # Espace agence — essai sans code
 /espace-agence/trial        /espace-agence.html?trial=1    302
 
