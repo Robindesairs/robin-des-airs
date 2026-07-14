@@ -17,6 +17,10 @@ faq:
 
 Depuis 2026, la **médiation est obligatoire** avant tout recours au tribunal pour un litige aérien. L'organisme principal en France est le **Médiateur Tourisme et Voyage (MTV)**. Voici comment le saisir efficacement.
 
+> ⏱️ **Avant de vous lancer dans une médiation de 3 à 5 mois :** la saisine du MTV est **gratuite mais longue et incertaine** (environ 60 % de succès, plusieurs mois d'attente, dossier technique à monter). Robin des Airs peut **tout gérer à votre place** (la demande préalable, la saisine, le dossier jurisprudence, le suivi) : vérification **gratuite**, **0 € d'avance**, et vous ne payez qu'en cas de succès. Pour une famille, c'est **jusqu'à 600 € par passager**.
+>
+> → [**Vérifier mon vol en 2 minutes**](https://robindesairs.eu/depot-express) · [WhatsApp, mon vol est refusé](https://wa.me/33756863630)
+
 ## Avant de saisir le MTV : 2 conditions
 
 1. Vous avez **déjà réclamé directement** à la compagnie (par mail ou courrier) — au moins une fois
