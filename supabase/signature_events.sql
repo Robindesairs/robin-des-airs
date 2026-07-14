@@ -20,11 +20,15 @@ create table if not exists public.signature_events (
   doc_hash      text,                                 -- SHA-256 du document signé (intégrité)
   flight_num    text,
   pax           int,
+  passenger_names text,                               -- noms de TOUS les passagers du dossier (famille)
   consent_docs  boolean,                              -- consentement RGPD collecte documents
   start_now     boolean,                              -- exécution immédiate (art. L.221-25)
   source        text,
   lang          text
 );
+
+-- Ajout de la colonne sur une table déjà existante (idempotent).
+alter table public.signature_events add column if not exists passenger_names text;
 
 create index if not exists signature_events_ref_idx     on public.signature_events (ref);
 create index if not exists signature_events_created_idx  on public.signature_events (created_at);

@@ -775,11 +775,17 @@ exports.handler = async (event) => {
     }
   }
 
+  // Liste des noms de TOUS les passagers du dossier (famille) → journal auto-suffisant.
+  var paxNames = ((record.passengerNames && record.passengerNames.length)
+    ? record.passengerNames
+    : (record.passengersData || []).map(function (p) { return [p && p.prenom, p && p.nom].filter(Boolean).join(' '); })
+  ).filter(Boolean).join(', ');
   // DOUBLE du journal de preuve dans Supabase (append-only), en plus de Blobs. Best-effort : inerte si non configuré.
   await logSignatureEvent({
     ref, cert_id: certId, event: 'signed', signed_at: ts,
     ip_hash: ipHash, user_agent: record.user_agent, doc_hash: record.doc_hash,
     flight_num: record.flightNum || null, pax: record.pax || null,
+    passenger_names: paxNames || null,
     consent_docs: body.documentsConsent === true, start_now: !!record.startNow,
     source: record.source || 'web', lang: record.lang,
   });
