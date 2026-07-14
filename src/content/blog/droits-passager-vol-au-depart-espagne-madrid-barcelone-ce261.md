@@ -73,7 +73,7 @@ Robin des Airs est spécialisé dans la **diaspora Afrique ↔ Europe**, et les 
 
 Nous ne promettons ni résultat garanti ni délai ferme : chaque dossier dépend des faits et des preuves. Mais quand le vol décolle d'un aéroport de l'UE comme Madrid ou Barcelone, sur une compagnie européenne comme Iberia ou Air Europa, le dossier mérite très souvent d'être défendu.
 
-Voir aussi : [Montants d'indemnité : 250, 400 ou 600 €](/blog/indemnite-vol-montants-250-400-600.html), [Réclamer seul ou passer par un service](/blog/reclamer-seul-ou-passer-par-un-service-indemnite-vol.html), et notre [comparatif Robin des Airs vs AirHelp](/blog/robin-des-airs-vs-airhelp-comparatif.html).
+Voir aussi : [Montants d'indemnité : 250, 400 ou 600 €](/blog/indemnite-vol-montants-250-400-600.html), [Réclamer seul ou passer par un service](/blog/reclamer-seul-ou-passer-par-un-service-indemnite-vol.html), et notre [pourquoi choisir Robin des Airs](/blog/pourquoi-choisir-robin-des-airs-difference.html).
 
 → [Vérifier mon vol Madrid / Barcelone](https://robindesairs.eu/#funnel-box)
 → [WhatsApp — mon vol au départ d'Espagne était retardé](https://wa.me/33756863630?text=Bonjour%20Robin%2C%20mon%20vol%20au%20d%C3%A9part%20de%20Madrid%20ou%20Barcelone%20a%20%C3%A9t%C3%A9%20retard%C3%A9.)

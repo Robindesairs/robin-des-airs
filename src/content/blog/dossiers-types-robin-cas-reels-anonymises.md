@@ -77,7 +77,7 @@ Voici 8 cas représentatifs traités par Robin des Airs ces 18 derniers mois. No
 - **Taux de succès** : 89 % sur dossiers complets
 - **Délai moyen** : 4,7 mois entre dépôt et virement
 - **Commission transparente** : 25 % en amiable, 40 % si procédure judiciaire (frais d'avocat et de justice inclus, 0 € si échec)
-- **Langues actives** : français, anglais, wolof, bambara, lingala, soninké, peul, créole
+- **Langues actives** : français, anglais, wolof, bambara, lingala, soninké, peul, yoruba, twi
 
 ## Confidentialité
 
