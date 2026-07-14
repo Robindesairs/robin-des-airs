@@ -122,8 +122,8 @@ On continue ?
 
 Voici ce que nous avons détecté — *vérifiez avant de poursuivre* :
 
-✈️ *EJU7524*
-easyJet
+✈️ *FR7524*
+Ryanair
 🎫 *6 août*
 _(jour/mois sur le billet — l'année est demandée juste après.)_
 📋 *K5FW8BX*
@@ -193,8 +193,8 @@ Parmi les passagers suivants, y a-t-il des mineurs (moins de 18 ans) ?
 ✈️ *Parcours :* vol *direct* (sans correspondance)
 📞 *Langue des experts (vocal) :* 🇫🇷 Français
 ⚖️ *Incident déclaré :* Retard +3h
-🛫 *Compagnie :* easyJet
-🔢 *N° de vol :* EJU7524
+🛫 *Compagnie :* Ryanair
+🔢 *N° de vol :* FR7524
 📅 *Date du vol :* 06/08/2025
 🎫 *PNR :* K5FW8BX
 🌍 *Itinéraire :* BSL → FAO

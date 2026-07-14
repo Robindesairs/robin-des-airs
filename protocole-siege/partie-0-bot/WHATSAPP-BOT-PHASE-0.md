@@ -382,7 +382,7 @@ _L'équipe Robin 🏹_
 
 **`{{mandat_url}}`** = sortie Make (voir `WATI-LIEN-MANDAT.md`). Exemple :
 
-`https://robindesairs.eu/mandat.html?ref=RDA-20260515-E448&phone=%2B33...&name=...&vol=EJU7524&date=06/08/2025&pnr=K5FW8BX&route=BSL-FAO&compagnie=easyJet&motif=retard&indemnite=600&source=wati`
+`https://robindesairs.eu/mandat.html?ref=RDA-20260515-E448&phone=%2B33...&name=...&vol=FR7524&date=06/08/2025&pnr=K5FW8BX&route=BSL-FAO&compagnie=Ryanair&motif=retard&indemnite=600&source=wati`
 
 ---
 

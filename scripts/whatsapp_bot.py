@@ -125,7 +125,7 @@ AIRLINE_PREFIXES = {
     "AF": "Air France", "KL": "KLM", "SN": "Brussels Airlines",
     "LH": "Lufthansa", "TP": "TAP Portugal", "IB": "Iberia",
     "BA": "British Airways", "AZ": "ITA Airways", "FR": "Ryanair",
-    "U2": "EasyJet", "VY": "Vueling", "W6": "Wizz Air",
+    "VY": "Vueling", "W6": "Wizz Air",
     "TO": "Transavia", "BJ": "Corsair", "SS": "Corsair",
     "HC": "Air Sénégal", "SC": "Air Sénégal",
     "AT": "Royal Air Maroc", "TU": "Tunisair",

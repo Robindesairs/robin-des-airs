@@ -51,7 +51,6 @@ const AIRLINE_MAP = {
   'Air France': /\b(air france|airfrance)\b/i,
   'Transavia': /\b(transavia)\b/i,
   'Ryanair': /\b(ryanair)\b/i,
-  'easyJet': /\b(easyjet|easy jet)\b/i,
   'Brussels Airlines': /\b(brussels airlines?|brusselsairlines)\b/i,
   'Air Sénégal': /\b(air sénégal|air senegal|airsénégal)\b/i,
   'Corsair': /\b(corsair)\b/i,
@@ -90,7 +89,7 @@ function extractHandles(caption) {
   const out = new Set();
   for (const m of String(caption || '').matchAll(/@([a-z0-9._]{3,30})/gi)) {
     const h = m[1].toLowerCase().replace(/\.+$/, '');
-    if (h.length >= 3 && !['airfrance', 'transavia', 'ryanair', 'easyjet'].includes(h)) out.add(h);
+    if (h.length >= 3 && !['airfrance', 'transavia', 'ryanair'].includes(h)) out.add(h);
   }
   return [...out];
 }

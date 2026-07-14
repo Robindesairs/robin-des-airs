@@ -19,7 +19,7 @@ const TARGET_CITIES = {
   CI: [{ ville: 'Abidjan', lat: 5.3599, lng: -4.0083, radius: 13000 }],
   GM: [{ ville: 'Serrekunda / Banjul', lat: 13.4399, lng: -16.6781, radius: 15000 }],
   // Corridor diaspora élargi (destinations radar/pubs). Coords = centre-ville (les agences sont en
-  // ville, pas à l'aéroport). Maroc VOLONTAIREMENT exclu (conflit easyJet). Couvert par rotation.
+  // ville, pas à l'aéroport). Maroc VOLONTAIREMENT exclu (hors périmètre). Couvert par rotation.
   ML: [{ ville: 'Bamako', lat: 12.6392, lng: -8.0029, radius: 13000 }],
   CM: [{ ville: 'Douala', lat: 4.0483, lng: 9.7043, radius: 14000 }],
   CG: [{ ville: 'Brazzaville', lat: -4.2634, lng: 15.2429, radius: 12000 }],
@@ -67,7 +67,7 @@ function isAirlineOffice(name) {
   const n = String(name || '');
   if (/\b(airlines?|airways)\b/i.test(n)) return true;
   if (/\bair\b/i.test(n)) return true; // « Air Mali », « Royal Air Maroc », « Air Côte d'Ivoire »…
-  if (/\b(asky|corsair|tunisair|egyptair|ethiopian|emirates|qatar|turkish|transavia|ryanair|easyjet|vueling|brussels|iberia|lufthansa|klm|tap)\b/i.test(n)) return true;
+  if (/\b(asky|corsair|tunisair|egyptair|ethiopian|emirates|qatar|turkish|transavia|ryanair|vueling|brussels|iberia|lufthansa|klm|tap)\b/i.test(n)) return true;
   return false;
 }
 

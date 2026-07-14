@@ -281,7 +281,7 @@ Le lien de signature est l'action la plus à risque de perçue-comme-arnaque dan
 
 **Cadrage recommandé :**
 
-> "1️⃣ *Votre contrat de cession de créance* — ce document permet à Robin des Airs de recouvrer votre indemnité auprès d'easyJet, à titre de recouvrement (vous restez bénéficiaire). Vous pouvez le lire en entier avant de signer.
+> "1️⃣ *Votre contrat de cession de créance* — ce document permet à Robin des Airs de recouvrer votre indemnité auprès d'Ryanair, à titre de recouvrement (vous restez bénéficiaire). Vous pouvez le lire en entier avant de signer.
 > 
 > Signature sur notre site officiel *robindesairs.eu* :
 > [lien avec URL complète visible, pas raccourcie]
@@ -338,7 +338,7 @@ Ces trois actions ont des niveaux d'effort et d'urgence très différents. Les r
 > 
 > Voici votre récapitulatif — vérifiez avant de continuer :
 > 
-> ✈️ *EJU7524* — easyJet
+> ✈️ *FR7524* — Ryanair
 > 📅 *06/08/2025*
 > 🛤️ BSL → FAO
 > 👤 M. SAMIR DRIDI
@@ -358,7 +358,7 @@ Ces trois actions ont des niveaux d'effort et d'urgence très différents. Les r
 
 > ✅ *Parfait — dossier enregistré.*
 > 
-> Pour que Robin des Airs recouvre légalement votre indemnité auprès d'easyJet, vous devez signer un *contrat de cession de créance*.
+> Pour que Robin des Airs recouvre légalement votre indemnité auprès d'Ryanair, vous devez signer un *contrat de cession de créance*.
 > 
 > Ce document est lisible en entier avant signature. Aucune information bancaire demandée.
 > 
@@ -486,14 +486,14 @@ Ces trois actions ont des niveaux d'effort et d'urgence très différents. Les r
 
 > ✅ *Dossier RDA-20260515-E448 enregistré.*
 > 
-> Pour que Robin des Airs recouvre l'indemnité de M. SAMIR DRIDI auprès d'easyJet, il faut signer un *contrat de cession de créance*.
+> Pour que Robin des Airs recouvre l'indemnité de M. SAMIR DRIDI auprès d'Ryanair, il faut signer un *contrat de cession de créance*.
 > 
 > Ce document explique exactement ce que vous nous autorisez à faire. Vous pouvez le lire avant de signer.
 > 
 > *Aucune information bancaire n'est demandée à cette étape.*
 > 
 > 👉 Signez en 2 minutes sur *robindesairs.eu* :
-> https://robindesairs.eu/mandat.html?ref=RDA-20260515-E448&nom=SAMIR+DRIDI&vol=EJU7524&date=06/08/2025&pnr=K5FW8BX&route=BSL-FAO&compagnie=easyJet&motif=retard
+> https://robindesairs.eu/mandat.html?ref=RDA-20260515-E448&nom=SAMIR+DRIDI&vol=FR7524&date=06/08/2025&pnr=K5FW8BX&route=BSL-FAO&compagnie=Ryanair&motif=retard
 
 **Changements :**
 - Dossier nommé avec le nom du passager : personnalisation rassurante

@@ -23,9 +23,9 @@ const AIRLINE_NAMES = {
   AF: 'Air France', KL: 'KLM', SN: 'Brussels Airlines', LH: 'Lufthansa',
   IB: 'Iberia', TP: 'TAP Air Portugal', AT: 'Royal Air Maroc', TK: 'Turkish Airlines',
   HC: 'Air Sénégal', HF: 'Air Côte d\'Ivoire', KQ: 'Kenya Airways', ET: 'Ethiopian Airlines',
-  DS: 'easyJet (DS/Corsair)', SS: 'Corsair', MS: 'EgyptAir', RAM: 'Royal Air Maroc',
+  DS: 'Corsair', SS: 'Corsair', MS: 'EgyptAir', RAM: 'Royal Air Maroc',
   AC: 'Air Canada', DL: 'Delta', UA: 'United', BA: 'British Airways', LX: 'SWISS',
-  OS: 'Austrian', FR: 'Ryanair', VY: 'Vueling', U2: 'easyJet', W6: 'Wizz Air',
+  OS: 'Austrian', FR: 'Ryanair', VY: 'Vueling', W6: 'Wizz Air',
   QC: 'Camair-Co', WB: 'RwandAir', KP: 'ASKY', '2J': 'Air Burkina',
 };
 

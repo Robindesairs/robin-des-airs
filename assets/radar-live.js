@@ -89,7 +89,6 @@
     TP: 'TAP Air Portugal',
     IB: 'Iberia',
     FR: 'Ryanair',
-    U2: 'easyJet',
     VY: 'Vueling',
     TO: 'Transavia',
     DS: 'Corsair',

@@ -32,7 +32,7 @@ Je ne les ai **pas** marquées test (au cas où ce seraient de vrais leads). Vé
 - **Marion CAMBESSÉDÈS** — `RDA-20260514-FD79`
 - **M. SAMIR DRIDI** (×3) + **Aminata TRAORÉ** (×2) — refs `…-41F9`, `…-E448`, `…-6FEE` (ressemblent à des extractions OCR de cartes d'embarquement de test)
 - **M. LIVIA HEJOAKA** — `RDA-20260513-B1EE`
-- **3 lignes SANS nom** — `RDA-20260610-0979…` (MRS→CDG), `RDA-20260613-051862…` (easyJet SXB→BCN), `RDA-20260610-AAB…` (DSS→CDG, Air France — celle-ci ressemble à un **vrai** dossier diaspora récent)
+- **3 lignes SANS nom** — `RDA-20260610-0979…` (MRS→CDG), `RDA-20260613-051862…` (compagnie UE, SXB→BCN), `RDA-20260610-AAB…` (DSS→CDG, Air France — celle-ci ressemble à un **vrai** dossier diaspora récent)
 
 ---
 

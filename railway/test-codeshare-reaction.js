@@ -8,8 +8,8 @@
 const { normalize } = require('./lib/extract-eticket');
 
 // ── Verbatim server.js ────────────────────────────────────────────────────────
-const AIRLINES = { AF: 'Air France', SN: 'Brussels Airlines', TP: 'TAP Air Portugal', AT: 'Royal Air Maroc', HC: 'Air Sénégal', KQ: 'Kenya Airways', ET: 'Ethiopian Airlines', EK: 'Emirates', TK: 'Turkish Airlines', KL: 'KLM', LH: 'Lufthansa', IB: 'Iberia', EJU: 'easyJet', U2: 'easyJet', FR: 'Ryanair', TO: 'Transavia', KP: 'ASKY', DN: 'Senegal Airlines' };
-const UE_CARRIERS = new Set(['AF', 'KL', 'SN', 'TP', 'LH', 'IB', 'U2', 'EJU', 'FR', 'TO', 'HV', 'LX', 'OS', 'EW', 'AZ', 'A3', 'SK', 'AY', 'LO', 'VY', 'DY', 'EN', 'WK', 'WF', 'IG']);
+const AIRLINES = { AF: 'Air France', SN: 'Brussels Airlines', TP: 'TAP Air Portugal', AT: 'Royal Air Maroc', HC: 'Air Sénégal', KQ: 'Kenya Airways', ET: 'Ethiopian Airlines', EK: 'Emirates', TK: 'Turkish Airlines', KL: 'KLM', LH: 'Lufthansa', IB: 'Iberia', FR: 'Ryanair', TO: 'Transavia', KP: 'ASKY', DN: 'Senegal Airlines' };
+const UE_CARRIERS = new Set(['AF', 'KL', 'SN', 'TP', 'LH', 'IB', 'FR', 'TO', 'HV', 'LX', 'OS', 'EW', 'AZ', 'A3', 'SK', 'AY', 'LO', 'VY', 'DY', 'EN', 'WK', 'WF', 'IG']);
 function isCarrierUE(code) { return UE_CARRIERS.has(String(code || '').toUpperCase().replace(/\s+/g, '')); }
 const EU_AIRPORTS = new Set(['CDG', 'ORY', 'LYS', 'MRS', 'NCE', 'BOD', 'TLS', 'NTE', 'SXB', 'MLH', 'LIL', 'RNS', 'CLY', 'AJA', 'BIA', 'BRU', 'CRL', 'AMS', 'EIN', 'LHR', 'LGW', 'STN', 'LTN', 'LCY', 'MAN', 'BHX', 'EDI', 'GLA', 'BRS', 'DUB', 'FRA', 'MUC', 'BER', 'DUS', 'HAM', 'CGN', 'STR', 'NUE', 'VIE', 'ZRH', 'GVA', 'BSL', 'OSL', 'ARN', 'CPH', 'HEL', 'LIS', 'OPO', 'MAD', 'BCN', 'VLC', 'FCO', 'MXP', 'VCE', 'NAP', 'ATH', 'WAW', 'PRG', 'BUD', 'SOF', 'OTP']);
 function isEUAirport(code) { return EU_AIRPORTS.has(String(code || '').toUpperCase().trim()); }

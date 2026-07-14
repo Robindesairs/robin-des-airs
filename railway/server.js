@@ -650,7 +650,7 @@ function genRef() {
 // « RDA-20260703-4X8K2M9P… » → « RDA-4X8K2M ». Le court est un préfixe du long → le bureau le retrouve par recherche.
 function shortRef(ref) { const p = String(ref || '').split('-'); return (p.length >= 3 && p[2]) ? `RDA-${p[2].slice(0, 6).toUpperCase()}` : String(ref || ''); }
 function normInput(raw, options) { const t = (raw || '').trim().toLowerCase(); if (/^\d+$/.test(t)) return t; const i = options.findIndex(o => t.includes(o.toLowerCase())); return i >= 0 ? String(i + 1) : t; }
-const AIRLINES = { AF: 'Air France', SN: 'Brussels Airlines', TP: 'TAP Air Portugal', AT: 'Royal Air Maroc', HC: 'Air Sénégal', KQ: 'Kenya Airways', ET: 'Ethiopian Airlines', EK: 'Emirates', TK: 'Turkish Airlines', KL: 'KLM', LH: 'Lufthansa', IB: 'Iberia', EJU: 'easyJet', U2: 'easyJet', FR: 'Ryanair', TO: 'Transavia', KP: 'ASKY', DN: 'Senegal Airlines' };
+const AIRLINES = { AF: 'Air France', SN: 'Brussels Airlines', TP: 'TAP Air Portugal', AT: 'Royal Air Maroc', HC: 'Air Sénégal', KQ: 'Kenya Airways', ET: 'Ethiopian Airlines', EK: 'Emirates', TK: 'Turkish Airlines', KL: 'KLM', LH: 'Lufthansa', IB: 'Iberia', FR: 'Ryanair', TO: 'Transavia', KP: 'ASKY', DN: 'Senegal Airlines' };
 function deduceAirline(vol) { const m = (vol || '').toUpperCase().match(/^([A-Z]{2,3})\d/); return (m && AIRLINES[m[1]]) || ''; }
 // Transporteurs EFFECTIFS européens (UE + EEE/Suisse, couverts par le CE261). Sert UNIQUEMENT au cas
 // « vol ENTRANT en Europe » : il n'est couvert que si la compagnie qui OPÈRE réellement le vol est

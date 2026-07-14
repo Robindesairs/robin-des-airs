@@ -197,8 +197,8 @@ Vous n'avez rien à taper.
 
 Voici ce que nous avons détecté — *vérifiez avant de poursuivre* :
 
-✈️ *EJU7524*
-easyJet
+✈️ *FR7524*
+Ryanair
 🎫 *6 août*
 _(jour/mois sur le billet — l'année est demandée juste après.)_
 📋 *K5FW8BX*
@@ -219,7 +219,7 @@ Points d'amélioration :
 
 1. **"Vérifiez avant de poursuivre"** a une légère connotation d'avertissement administratif. En soi ce n'est pas catastrophique, mais le remplacement par un ton de confirmation positive ("Voici votre vol") réduit la charge mentale associée à "vérifier" (tâche) vs "confirmer" (validation).
 
-2. **Le formatage à deux vitesses** (éléments avec emoji / texte sans émoji comme "easyJet") crée une inconsistance visuelle qui ralentit la lecture sur petit écran. Chaque ligne devrait avoir une structure identique.
+2. **Le formatage à deux vitesses** (éléments avec emoji / texte sans émoji comme "Ryanair") crée une inconsistance visuelle qui ralentit la lecture sur petit écran. Chaque ligne devrait avoir une structure identique.
 
 3. **L'ordre des informations** : le nom du passager est en dernière ligne, alors que c'est la donnée la plus personnelle et la plus facilement vérifiable par le client (il reconnaît son nom immédiatement). La placer en premier active l'identification personnelle ("c'est bien moi") avant les données techniques.
 
@@ -231,7 +231,7 @@ Points d'amélioration :
 📸 *Vol détecté — c'est bien ça ?*
 
 👤 *M. SAMIR DRIDI*
-✈️ *EJU7524* — easyJet
+✈️ *FR7524* — Ryanair
 🛤️ *BSL → FAO*
 🗓️ *6 août* _(l'année est confirmée à l'étape suivante)_
 📋 *K5FW8BX*
@@ -312,8 +312,8 @@ _(Date antérieure à 2021 ? Tapez la date complète : ex. 15/03/2019)_
 ✈️ *Parcours :* vol *direct* (sans correspondance)
 📞 *Langue des experts (vocal) :* 🇫🇷 Français
 ⚖️ *Incident déclaré :* Retard +3h
-🛫 *Compagnie :* easyJet
-🔢 *N° de vol :* EJU7524
+🛫 *Compagnie :* Ryanair
+🔢 *N° de vol :* FR7524
 📅 *Date du vol :* 06/08/2025
 🎫 *PNR :* K5FW8BX
 🌍 *Itinéraire :* BSL → FAO
@@ -360,7 +360,7 @@ Réf. *RDA-20260515-E448*
 Voici ce que nous allons défendre pour vous :
 
 👤 M. SAMIR DRIDI
-✈️ EJU7524 — easyJet — BSL → FAO
+✈️ FR7524 — Ryanair — BSL → FAO
 📅 06/08/2025 — Retard +3h
 💵 *Objectif : 450 € net*
 
