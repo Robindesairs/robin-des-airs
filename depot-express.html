@@ -362,7 +362,7 @@
   // Corriger via une chip re-ouvre l'écran, puis la réponse renvoie DIRECT au point le plus loin.
   // Ordre v2 (conversion) : on montre l'ÉLIGIBILITÉ + le MONTANT tôt (dopamine avant l'effort),
   // puis on CAPTE le contact tôt (lead récupérable même en cas d'abandon), et seulement après les pièces.
-  var FLOW = ['incident', 'tiers', 'annul14', 'consent', 'conn', 'eticket', 'confirm', 'flight', 'date', 'pax', 'verdict', 'phone', 'email', 'passport', 'copax', 'sign'];
+  var FLOW = ['incident', 'tiers', 'annul14', 'pax', 'verdict', 'consent', 'conn', 'eticket', 'confirm', 'flight', 'date', 'phone', 'email', 'passport', 'copax', 'sign'];
   var idx = 0, far = 0, editing = false, backwards = false, reflow = false;
   // Ré-édition du trajet (conn → flight) déclenchée depuis un récap : reflowActive force conn/flight à
   // s'afficher même quand la carte les avait remplis, reflowReturn = l'écran où revenir (signature OU validation).
@@ -929,7 +929,8 @@
       var total = (600 * (S.pax || 1)).toLocaleString('fr-FR');
       var net = Math.round(600 * (S.pax || 1) * 0.75).toLocaleString('fr-FR');
       var paxTxt = (S.pax > 1) ? (S.pax + ' passagers') : '1 passager';
-      sc.innerHTML = '<h2>🎉 Bonne nouvelle !</h2><p class="sub">Selon nos critères, votre vol <b>' + esc(S.flightNum || (S.dep + ' → ' + S.arr)) + '</b> semble <b>éligible</b>, un expert le confirme, gratuitement.</p>';
+      var volTxt = S.flightNum || ((S.dep && S.arr) ? (S.dep + ' → ' + S.arr) : '');
+      sc.innerHTML = '<h2>🎉 Bonne nouvelle !</h2><p class="sub">Selon nos critères, votre vol' + (volTxt ? ' <b>' + esc(volTxt) + '</b>' : '') + ' semble <b>éligible</b>, un expert le confirme, gratuitement.</p>';
       var b = document.createElement('div'); b.className = 'ss-box'; b.style.textAlign = 'center';
       b.innerHTML = '<div style="font-size:13px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px">Vous pouvez réclamer jusqu\'à</div>'
         + '<div style="font-size:40px;font-weight:800;color:var(--neon-ink);letter-spacing:-1px;margin:2px 0">' + total + ' €</div>'
