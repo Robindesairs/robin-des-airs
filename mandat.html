@@ -989,6 +989,70 @@ const SRC   = P.get('source')    || 'web';
 const CID   = P.get('cid')       || '';   // ID conversation WhatsApp (liant identité)
 const LSA   = P.get('lsa')       || '';   // horodatage d'envoi du lien (preuve de délivrance)
 const MANDAT_VERSION = '2026-07-v4-sans-1699-mineurs-mandat';  // v4 : v3 + retrait 1699 déclaré inapplicable (1700, pré-contentieux) + prix réel = stipulation subsidiaire + réalité économique anti-requalif + anti-prix dérisoire (1169/1591/1964) + mineurs = mandat spécial d'encaissement (382 s., exclusion cession, fin garantie 2321) + signature à chaud : déclaration & garantie adaptées créance à naître, clôture créance non née + Art.5quater élargi (réclamation perso, paiement direct, DelayFix C-519/19) + Art.10bis formation électronique/convention de preuve/date certaine
+// ── Signature EMBARQUÉE (invisible) Yousign — option A ─────────────
+// Le client signe dans un cadre sur CETTE page au lieu d'être redirigé vers yousign.app.
+// 🔴 NE FONCTIONNE QU'APRÈS DEUX conditions (sinon Yousign refuse l'iframe → le repli redirige) :
+//   1) Whitelister « robindesairs.eu » dans Yousign → Paramètres → iFraming (fait par le fondateur).
+//   2) CSP _headers : cdn.yousign.tech (script) + *.yousign.app (frame) ajoutés ✅ (déjà fait).
+// Tant que (1) n'est pas fait, laisser YOUSIGN_EMBED = false : le flux de redirection reste 100% intact.
+window.YOUSIGN_EMBED = true; // ← activé le 2026-07-14 (domaine robindesairs.eu whitelisté côté Yousign iFraming)
+var YOUSIGN_SDK_URL = 'https://cdn.yousign.tech/iframe-sdk-1.6.0.min.js';
+
+// Charge le SDK une seule fois. Résout quand window.Yousign est prêt, rejette au timeout.
+function loadYousignSdk() {
+  return new Promise(function (resolve, reject) {
+    if (window.Yousign) return resolve();
+    var s = document.createElement('script');
+    s.src = YOUSIGN_SDK_URL; s.async = true;
+    s.onload = function () { window.Yousign ? resolve() : reject(new Error('SDK sans Yousign')); };
+    s.onerror = function () { reject(new Error('SDK Yousign injoignable')); };
+    document.head.appendChild(s);
+    setTimeout(function () { window.Yousign ? resolve() : reject(new Error('SDK Yousign timeout')); }, 6000);
+  });
+}
+
+// Ouvre la signature dans un cadre plein écran. Repli AUTOMATIQUE sur la redirection classique
+// si le SDK échoue, si le domaine n'est pas whitelisté, ou sur erreur → la signature n'est jamais bloquée.
+window.embedYousign = function (signatureLink, opts) {
+  opts = opts || {};
+  var srId = opts.srId || '', signerIdx = opts.signerIdx || 1, total = opts.total || 1;
+  var done = false;
+  function fallbackRedirect() { if (done) return; done = true; window.location.href = signatureLink; }
+  loadYousignSdk().then(function () {
+    var overlay = document.createElement('div');
+    overlay.id = 'ys-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:99999;background:#0b1220;display:flex;flex-direction:column';
+    var bar = document.createElement('div');
+    bar.style.cssText = 'flex:0 0 auto;padding:10px 16px;color:#fff;font:600 13px Inter,system-ui,sans-serif;display:flex;align-items:center;justify-content:space-between;gap:12px';
+    // Lien de secours TOUJOURS visible : si l'iframe ne s'affiche pas, le client ouvre la signature en plein écran.
+    bar.innerHTML = '<span><span style="color:#00C87A">🔒</span> Signature électronique sécurisée</span>' +
+      '<a href="' + String(signatureLink).replace(/"/g, '%22') + '" style="color:#9fb3c8;font-weight:600;font-size:12px;text-decoration:underline;white-space:nowrap">Un souci ? Ouvrir en plein écran →</a>';
+    var container = document.createElement('div');
+    container.id = 'ys-iframe-container';
+    container.style.cssText = 'flex:1 1 auto;min-height:0';
+    overlay.appendChild(bar); overlay.appendChild(container);
+    document.body.appendChild(overlay);
+    function close() { try { document.body.removeChild(overlay); } catch (_) {} }
+    // Chien de garde : si l'iframe ne "vit" pas (aucun started/ping) sous 8 s → blocage probable (CSP,
+    // domaine non whitelisté...) → on ferme et on bascule sur la redirection classique. Zéro client bloqué.
+    var alive = false;
+    var watchdog = setTimeout(function () { if (!alive && !done) { close(); fallbackRedirect(); } }, 8000);
+    try {
+      var ys = new window.Yousign({
+        signatureLink: signatureLink,
+        iframeContainerId: 'ys-iframe-container',
+        isSandbox: /sandbox/i.test(signatureLink),
+      });
+      if (ys.onStarted) ys.onStarted(function () { alive = true; clearTimeout(watchdog); });
+      if (ys.onPing) ys.onPing(function () { alive = true; });
+      // onSuccess → on renvoie sur ?signed=1 : réutilise l'écran de succès + le chaînage multi-signataires existants.
+      ys.onSuccess(function () { done = true; clearTimeout(watchdog); close(); window.location.href = 'mandat.html?signed=1&ref=' + encodeURIComponent(srId) + '&signer=' + signerIdx + '&total=' + total; });
+      ys.onError(function () { clearTimeout(watchdog); close(); fallbackRedirect(); });
+      if (ys.onDeclined) ys.onDeclined(function () { done = true; clearTimeout(watchdog); close(); window.location.href = 'mandat.html?cancelled=1&ref=' + encodeURIComponent(srId); });
+    } catch (e) { clearTimeout(watchdog); close(); fallbackRedirect(); }
+  }).catch(function () { fallbackRedirect(); });
+};
+
 // ── INIT ─────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
   // Retour depuis Yousign post-signature : on saute direct sur l'écran succès.
@@ -1034,7 +1098,10 @@ window.addEventListener('DOMContentLoaded', () => {
             '</div>';
           document.body.appendChild(wrap);
           const bn = document.getElementById('btnNext');
-          if (bn) bn.onclick = function () { window.location.href = next.signing_url; };
+          if (bn) bn.onclick = function () {
+            if (window.YOUSIGN_EMBED) window.embedYousign(next.signing_url, { srId: ref, signerIdx: next.index, total: totalSigners });
+            else window.location.href = next.signing_url;
+          };
           return; // skip successScreen
         }
         // Pas de liste locale (ex : signataire distant venu par le lien partagé) → simple merci.
@@ -2552,8 +2619,18 @@ function submitMandat() {
         localStorage.setItem('yousign_signers_' + yousignRes.signature_request_id, JSON.stringify(yousignRes.signers));
       } catch (_) {}
     }
-    btn.innerHTML = '✓ Redirection vers Yousign...';
-    window.location.href = yousignRes.signing_url;
+    if (window.YOUSIGN_EMBED) {
+      // Signature invisible : cadre Yousign sur cette page (repli auto sur redirection si indispo).
+      btn.innerHTML = '✓ Ouverture de la signature...';
+      window.embedYousign(yousignRes.signing_url, {
+        srId: yousignRes.signature_request_id,
+        signerIdx: 1,
+        total: (yousignRes.signers && yousignRes.signers.length) || 1,
+      });
+    } else {
+      btn.innerHTML = '✓ Redirection vers Yousign...';
+      window.location.href = yousignRes.signing_url;
+    }
   })
   .catch(err => {
     console.error('[Yousign flow] error:', err);
