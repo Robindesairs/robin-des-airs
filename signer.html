@@ -2,61 +2,155 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <title>Signer votre contrat — Robin des Airs</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:-apple-system,'Segoe UI',Roboto,system-ui,sans-serif;background:#0B1F3A;color:#0B1F3A;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:22px}
+  html,body{height:100%}
+  body{font-family:-apple-system,'Segoe UI',Roboto,system-ui,sans-serif;background:#0B1F3A;color:#0B1F3A;display:flex;flex-direction:column;min-height:100vh}
+  /* ── En-tête marque, fine : le client reste visiblement sur robindesairs.eu ── */
+  .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;background:#0B1F3A;color:#fff}
+  .bar .logo{font-weight:900;letter-spacing:.5px;font-size:13.5px}
+  .bar .logo span{color:#00C87A}
+  .bar .lvl{font-size:11px;color:rgba(255,255,255,.8);font-weight:700}
+  /* ── Carte centrée (sélecteur multi-signataires + états) ── */
+  .wrap{flex:1;display:grid;place-items:center;padding:22px}
   .card{max-width:460px;width:100%;background:#fff;border-radius:16px;padding:30px 26px;box-shadow:0 20px 60px rgba(0,0,0,.25)}
-  .logo{font-weight:900;letter-spacing:.5px;font-size:15px;color:#0B1F3A;text-align:center;margin-bottom:4px}
-  .logo span{color:#047857}
-  .eyebrow{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.2em;color:#047857;font-weight:700;text-align:center;margin:14px 0 6px}
+  .eyebrow{font-family:'DM Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.2em;color:#047857;font-weight:700;text-align:center;margin:0 0 6px}
   h1{font-size:22px;font-weight:800;text-align:center;margin-bottom:8px}
   .sub{font-size:14px;line-height:1.6;color:#51607A;text-align:center;margin-bottom:22px}
   .who{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;background:#F7F8FA;border:1.5px solid #E2E6EE;border-radius:10px;padding:15px 16px;margin-bottom:10px;cursor:pointer;font-size:15px;font-weight:700;color:#0B1F3A;text-align:left;transition:border-color .15s,background .15s}
   .who:hover{border-color:#00C87A;background:#EFF9F4}
+  .who[data-done="1"]{opacity:.55;cursor:default;border-color:#cfe6db;background:#EFF9F4}
   .who .arrow{color:#047857;font-weight:800;flex:none}
   .note{font-size:11.5px;color:#8a94a6;text-align:center;margin-top:16px;line-height:1.5}
   .err{background:#FEF2F2;border:1px solid #FECACA;color:#9A3412;border-radius:10px;padding:14px 16px;font-size:13.5px;line-height:1.6;text-align:center}
+  .seal{width:56px;height:56px;border-radius:50%;background:#EFF9F4;border:2px solid #00C87A;color:#047857;font-size:30px;font-weight:800;display:grid;place-items:center;margin:0 auto 14px}
+  /* ── Zone iframe de signature ── */
+  .frame{flex:1;display:none;flex-direction:column;background:#fff}
+  .frame iframe{flex:1;width:100%;border:0;display:block;background:#fff;min-height:60vh}
+  .fallback{padding:9px 16px;background:#F7F8FA;border-top:1px solid #E2E6EE;font-size:12.5px;color:#51607A;text-align:center}
+  .fallback a{color:#047857;font-weight:700;text-decoration:none}
+  .fallback a:hover{text-decoration:underline}
 </style>
 </head>
 <body>
-  <div class="card">
-    <div class="logo">ROBIN <span>DES AIRS</span></div>
-    <div id="content"></div>
+  <div class="bar">
+    <span class="logo">ROBIN <span>DES AIRS</span></span>
+    <span class="lvl">🔒 Signature certifiée</span>
   </div>
+
+  <div class="wrap" id="wrap"><div class="card" id="card"></div></div>
+
+  <div class="frame" id="frame">
+    <iframe id="sigFrame" title="Signature électronique certifiée" allow="camera; microphone"></iframe>
+    <div class="fallback">La signature ne s'affiche pas ?
+      <a id="fbLink" href="#" rel="noopener">Ouvrir en plein écran →</a>
+    </div>
+  </div>
+
 <script>
 (function () {
-  var c = document.getElementById('content');
+  'use strict';
+  var card = document.getElementById('card');
+  var wrap = document.getElementById('wrap');
+  var frame = document.getElementById('frame');
+  var sigFrame = document.getElementById('sigFrame');
+  var fbLink = document.getElementById('fbLink');
   function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(m){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]; }); }
-  function fail(msg){ c.innerHTML = '<div class="err">' + esc(msg) + '</div><div class="note">Un souci ? Écrivez-nous sur WhatsApp au +33 7 56 86 36 30.</div>'; }
+  function fail(msg){ show(); card.innerHTML = '<div class="err">' + esc(msg) + '</div><div class="note">Un souci ? Écrivez-nous sur WhatsApp au +33 7 56 86 36 30.</div>'; }
+  function show(){ frame.style.display = 'none'; wrap.style.display = 'grid'; }
+
+  // ── Entrée : soit un lien unique (?u=), soit une liste multi-signataires (?d= base64) ──
+  // EMBARQUÉ (iframe sur le site) = OPT-IN via ?embed=1. Sans ce paramètre, comportement HISTORIQUE
+  // strictement conservé (redirection vers Yousign) → aucune régression du hub multi-signataires en prod.
+  var q = new URLSearchParams(location.search);
+  var EMBED = q.get('embed') === '1';
   var list = [];
-  try {
-    var d = new URLSearchParams(location.search).get('d') || '';
-    if (!d) throw new Error('no d');
-    var json = decodeURIComponent(escape(atob(decodeURIComponent(d))));
-    list = JSON.parse(json);
-  } catch (e) { list = []; }
-  if (!Array.isArray(list) || !list.length) {
-    fail("Ce lien de signature n'est pas valide ou a expiré. Demandez à la personne qui vous l'a envoyé de le renvoyer.");
+  var single = q.get('u');
+  if (single) {
+    list = [{ n: q.get('n') || 'Signer', u: single }];
   } else {
-    var rows = list.filter(function(s){ return s && s.u; }).map(function (s) {
-      return '<button class="who" data-u="' + esc(s.u) + '"><span>' + (esc(s.n) || 'Signer') + '</span><span class="arrow">Signer →</span></button>';
+    try {
+      var d = q.get('d') || '';
+      if (!d) throw new Error('no d');
+      list = JSON.parse(decodeURIComponent(escape(atob(decodeURIComponent(d)))));
+    } catch (e) { list = []; }
+  }
+  list = (Array.isArray(list) ? list : []).filter(function (s) { return s && s.u; });
+  if (!list.length) {
+    return fail("Ce lien de signature n'est pas valide ou a expiré. Demandez à la personne qui vous l'a envoyé de le renvoyer.");
+  }
+
+  var done = {}; // url signée → true (permet le multi-signataires sur le même appareil)
+
+  // ── Écran de choix « Qui êtes-vous ? » (masqué si un seul signataire non signé) ──
+  function renderSelector(){
+    show();
+    var remaining = list.filter(function (s) { return !done[s.u]; });
+    if (!remaining.length) return renderAllDone();
+    if (list.length === 1) return go(list[0]); // 1 seul signataire → direct (iframe si embarqué, sinon redirection)
+
+    var rows = list.map(function (s) {
+      var d1 = done[s.u];
+      return '<button class="who" data-u="' + esc(s.u) + '"' + (d1 ? ' data-done="1" disabled' : '') + '>'
+        + '<span>' + (esc(s.n) || 'Signer') + '</span>'
+        + '<span class="arrow">' + (d1 ? '✓ Signé' : 'Signer →') + '</span></button>';
     }).join('');
-    c.innerHTML =
+    card.innerHTML =
       '<div class="eyebrow">Contrat de cession — CE 261/2004</div>' +
       '<h1>Qui êtes-vous ?</h1>' +
       '<p class="sub">Touchez <strong>votre nom</strong> pour relire et signer votre contrat, depuis ce téléphone.</p>' +
       rows +
       '<div class="note">Chaque personne signe la sienne. Signature électronique certifiée (Yousign).</div>';
-    Array.prototype.forEach.call(c.querySelectorAll('.who'), function (b) {
+    Array.prototype.forEach.call(card.querySelectorAll('.who'), function (b) {
+      if (b.getAttribute('data-done') === '1') return;
       b.addEventListener('click', function () {
         var u = b.getAttribute('data-u');
-        if (u) window.location.href = u;
+        var item = list.filter(function (s) { return s.u === u; })[0];
+        if (item) go(item);
       });
     });
   }
+
+  function renderAllDone(){
+    show();
+    card.innerHTML =
+      '<div class="seal" aria-hidden="true">✓</div>' +
+      '<h1>C\'est signé, merci !</h1>' +
+      '<p class="sub">Toutes les signatures sont enregistrées. On prend le relais pour récupérer votre argent, vous n\'avancez rien.</p>' +
+      '<div class="note">📞 Un expert vous appelle depuis le +33 7 56 86 36 30 (enregistrez-le sous « Robin des Airs »).</div>';
+  }
+
+  // Aiguillage : embarqué → iframe sur le site ; sinon → redirection Yousign (comportement historique).
+  function go(item){ if (EMBED) openSigner(item); else { location.href = item.u; } }
+
+  // ── Ouvre le signataire DANS l'iframe embarquée (le client ne quitte pas le site) ──
+  var current = null;
+  function openSigner(item){
+    current = item;
+    wrap.style.display = 'none';
+    frame.style.display = 'flex';
+    fbLink.setAttribute('href', item.u);            // repli : plein écran si l'iframe est bloquée
+    sigFrame.setAttribute('src', item.u);
+    try { sigFrame.scrollIntoView(); } catch (_) {}
+  }
+
+  // ── Fin de signature : signe-ok.html (chargé DANS l'iframe après signature) nous prévient ──
+  window.addEventListener('message', function (ev) {
+    var data = ev && ev.data;
+    if (!data || data.t !== 'yousign:signed') return;
+    // Sécurité : on n'agit que sur un message de NOTRE origine (signe-ok.html auto-hébergé).
+    // (En preview localhost l'origine diffère ; en prod c'est le même domaine.)
+    if (ev.origin && ev.origin !== location.origin && !/localhost|127\.0\.0\.1/.test(ev.origin)) return;
+    if (current && current.u) done[current.u] = true;
+    current = null;
+    sigFrame.setAttribute('src', 'about:blank');
+    renderSelector();
+  }, false);
+
+  renderSelector();
 })();
 </script>
 </body>

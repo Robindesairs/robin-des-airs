@@ -217,7 +217,13 @@ exports.handler = async (event) => {
       const s = signers[i];
 
       // 2a) Créer le signataire
-      const successUrl = `${returnOrigin}/mandat.html?signed=1&ref=${encodeURIComponent(signatureRequestId)}&signer=${i + 1}&total=${signers.length}`;
+      // Retour post-signature : par défaut l'écran succès mandat.html (flux redirection historique, inchangé).
+      // En mode EMBARQUÉ (iframe sur robindesairs.eu, payload.embed) : on renvoie vers signe-ok.html, qui
+      // « casse » l'iframe et prévient la page parente (signer.html) → signataire suivant / écran final, sur le site.
+      const embedSrc = String(payload.embed_src || payload.source || "").replace(/[^a-z0-9\-]/gi, "");
+      const successUrl = payload.embed
+        ? `${returnOrigin}/signe-ok.html?ref=${encodeURIComponent(signatureRequestId)}&signer=${i + 1}&total=${signers.length}${embedSrc ? "&src=" + encodeURIComponent(embedSrc) : ""}`
+        : `${returnOrigin}/mandat.html?signed=1&ref=${encodeURIComponent(signatureRequestId)}&signer=${i + 1}&total=${signers.length}`;
 
       // Niveau et mode d'auth configurables via env.
       // Défaut : SES (signature simple) + no_otp — décision fondateur 04/07 : signature simple, pas de code SMS,

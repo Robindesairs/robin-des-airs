@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Signature enregistrée — Robin des Airs</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,'Segoe UI',Roboto,system-ui,sans-serif;background:#0B1F3A;color:#0B1F3A;min-height:100vh;display:grid;place-items:center;padding:22px}
+  .card{max-width:420px;width:100%;background:#fff;border-radius:16px;padding:34px 26px;box-shadow:0 20px 60px rgba(0,0,0,.25);text-align:center}
+  .seal{width:56px;height:56px;border-radius:50%;background:#EFF9F4;border:2px solid #00C87A;color:#047857;font-size:30px;font-weight:800;display:grid;place-items:center;margin:0 auto 14px}
+  h1{font-size:20px;font-weight:800;margin-bottom:8px}
+  p{font-size:14px;line-height:1.6;color:#51607A}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="seal" aria-hidden="true">✓</div>
+    <h1>Signature enregistrée</h1>
+    <p>Merci, un instant…</p>
+  </div>
+<script>
+(function () {
+  'use strict';
+  var q = new URLSearchParams(location.search);
+  var payload = {
+    t: 'yousign:signed',
+    ref: q.get('ref') || '',
+    signer: parseInt(q.get('signer') || '1', 10),
+    total: parseInt(q.get('total') || '1', 10),
+    src: q.get('src') || '',
+  };
+  var framed = false;
+  try { framed = window.top !== window.self; } catch (_) { framed = true; } // cross-origin top => on est bien dans une iframe
+
+  if (framed) {
+    // Embarqué : on prévient la page parente (signer.html) qui gère la suite (signataire suivant / écran final).
+    // On poste large (parent + top) car la chaîne d'iframes Yousign peut varier.
+    try { window.parent.postMessage(payload, '*'); } catch (_) {}
+    try { if (window.top !== window.parent) window.top.postMessage(payload, '*'); } catch (_) {}
+    return;
+  }
+
+  // Cas de repli : la signature s'est faite en PLEIN ÉCRAN (iframe bloquée → redirection manuelle).
+  // Yousign nous a ramenés ici en haut de page → on renvoie vers l'écran de succès du bon parcours.
+  var dest;
+  if (payload.src === 'depot-express') {
+    dest = '/depot-express.html?signed=1&ref=' + encodeURIComponent(payload.ref);
+  } else {
+    dest = '/mandat.html?signed=1&ref=' + encodeURIComponent(payload.ref)
+      + '&signer=' + payload.signer + '&total=' + payload.total;
+  }
+  location.replace(dest);
+})();
+</script>
+</body>
+</html>
