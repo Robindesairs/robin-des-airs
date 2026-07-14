@@ -23,6 +23,8 @@ create table if not exists public.signature_events (
   passenger_names text,                               -- noms + date de naissance de TOUS les passagers (famille)
   address       text,                                 -- adresse du signataire
   flight_mode   text,                                 -- 'direct' | 'correspondance'
+  doc_kind      text,                                 -- (event='document') type : identite | carte-embarquement | contrat-signe-pdf
+  doc_filename  text,                                 -- (event='document') nom du fichier déposé
   consent_docs  boolean,                              -- consentement RGPD collecte documents
   start_now     boolean,                              -- exécution immédiate (art. L.221-25)
   source        text,
@@ -33,6 +35,8 @@ create table if not exists public.signature_events (
 alter table public.signature_events add column if not exists passenger_names text;
 alter table public.signature_events add column if not exists address text;
 alter table public.signature_events add column if not exists flight_mode text;
+alter table public.signature_events add column if not exists doc_kind text;
+alter table public.signature_events add column if not exists doc_filename text;
 
 create index if not exists signature_events_ref_idx     on public.signature_events (ref);
 create index if not exists signature_events_created_idx  on public.signature_events (created_at);

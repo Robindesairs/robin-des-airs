@@ -29,6 +29,20 @@ function inferKind(explicit, filename) {
   return explicit || '';
 }
 
+// Double append-only vers Supabase (best-effort, inerte sans SUPABASE_URL/KEY) : empreinte de chaque document.
+async function logSignatureEvent(row) {
+  const url = (process.env.SUPABASE_URL || '').trim().replace(/\/$/, '');
+  const key = (process.env.SUPABASE_SERVICE_KEY || '').trim();
+  if (!url || !key) return;
+  try {
+    await fetch(url + '/rest/v1/signature_events', {
+      method: 'POST',
+      headers: { apikey: key, Authorization: 'Bearer ' + key, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+      body: JSON.stringify(row), signal: AbortSignal.timeout(4000),
+    });
+  } catch (e) { console.error('depot-upload: Supabase log KO (non bloquant):', e.message); }
+}
+
 exports.handler = async (event) => {
   const H = corsFor(event);
   if (event.httpMethod === 'OPTIONS') return { statusCode: 204, headers: H, body: '' };
@@ -55,7 +69,13 @@ exports.handler = async (event) => {
     const key = 'p/' + ref + '/' + Date.now() + '_' + safe;
     const kind = inferKind(b.kind, b.filename);
     const passenger = String(b.passenger || b.name || '').replace(/\s+/g, ' ').trim().slice(0, 80);
-    await pieces.set(key, buf, { metadata: { ref, filename: safe, mime, kind, passenger, ts: new Date().toISOString() } });
+    const ts = new Date().toISOString();
+    await pieces.set(key, buf, { metadata: { ref, filename: safe, mime, kind, passenger, ts } });
+
+    // Empreinte du document dans le journal de preuve Supabase (append-only) : prouve qu'un document précis
+    // a été déposé, sans stocker son contenu (SHA-256 non réversible → pas de donnée sensible dupliquée).
+    const fileSha = require('crypto').createHash('sha256').update(buf).digest('hex');
+    await logSignatureEvent({ ref, event: 'document', signed_at: ts, doc_hash: fileSha, doc_kind: kind || null, doc_filename: safe, passenger_names: passenger || null, source: 'depot' });
 
     // Attache la pièce à la/les fiche·s CRM du dossier dès maintenant (réf connue). Best-effort —
     // si la fiche n'existe pas encore (avant signature), no-op : submit-mandat l'attachera à la signature.

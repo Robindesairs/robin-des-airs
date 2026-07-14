@@ -852,6 +852,8 @@ exports.handler = async (event) => {
           metadata: { ref, cert_id: certId, sha256: pdfSha, signed_at: ts, bytes: pdfBuffer.length },
         });
         console.log(`submit-mandat: PDF archivé pdf/${ref} (${pdfBuffer.length} o · sha ${pdfSha.slice(0, 12)}…)`);
+        // Empreinte du contrat signé dans le journal de preuve Supabase (append-only). Best-effort.
+        await logSignatureEvent({ ref, cert_id: certId, event: 'document', signed_at: ts, doc_hash: pdfSha, doc_kind: 'contrat-signe-pdf', doc_filename: 'Mandat-Robin-des-Airs-' + ref + '.pdf' });
       }
     } catch (e) { console.error('submit-mandat: archive PDF échouée:', e.message); }
   }
