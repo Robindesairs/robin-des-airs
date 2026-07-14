@@ -266,7 +266,7 @@ h1.title{font-size:1.5rem;border-bottom:none;padding-bottom:0;margin-bottom:.5re
 .card{display:block;padding:1.25rem;border-radius:.75rem;border:1px solid #E5E7EB;background:#fff;text-decoration:none;transition:all .15s ease}
 .card:hover{border-color:#00C87A;box-shadow:0 4px 6px -1px rgba(0,0,0,.1)}
 .card h2{font-size:1rem;font-weight:700;color:#0B1F3A;margin:0}
-.card p{font-size:.875rem;color:#6B7280;margin:.25rem 0 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}`;
+.card p{font-size:.875rem;color:#6B7280;margin:.25rem 0 0;line-height:1.5}`;
   return `<!DOCTYPE html>
 <html lang="fr">
 <head>

@@ -316,11 +316,11 @@ nav.topbar a.back:hover{color:#fff}
 .card{display:block;padding:1rem 1.1rem;border-radius:.75rem;border:1px solid #E5E7EB;background:#fff;text-decoration:none;transition:all .15s ease}
 .card:hover{border-color:#00C87A;box-shadow:0 4px 12px -2px rgba(11,31,58,.08);transform:translateY(-1px)}
 .card h3{font-size:.9375rem;font-weight:700;color:#0B1F3A;margin:0;line-height:1.35}
-.card p{font-size:.8125rem;color:#6B7280;margin:.35rem 0 0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.45}
+.card p{font-size:.8125rem;color:#6B7280;margin:.35rem 0 0;line-height:1.5}
 .card.featured{border:1px solid rgba(245,158,11,.3);background:linear-gradient(135deg,#fff 0%,#FFFBEB 100%);padding:1.25rem 1.35rem;position:relative}
 .card.featured::before{content:'★';position:absolute;top:.7rem;right:.85rem;color:#F59E0B;font-size:.875rem}
 .card.featured h3{font-size:1rem;padding-right:1.2rem}
-.card.featured p{font-size:.8125rem;-webkit-line-clamp:3}
+.card.featured p{font-size:.8125rem}
 .card.featured:hover{border-color:#F59E0B}
 .no-results{display:none;text-align:center;padding:2rem;color:#6B7280;font-size:.875rem}
 .no-results.visible{display:block}
