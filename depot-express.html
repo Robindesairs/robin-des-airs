@@ -191,6 +191,8 @@
   <!-- Honeypot anti-spam (depot-create l'exige vide) -->
   <input type="text" id="website" name="website" value="" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
 
+<!-- Signature Yousign embarquée (helper partagé) : définit window.embedYousign avant le tunnel -->
+<script src="/assets/yousign-embed.js"></script>
 <script>
 (function () {
   'use strict';
@@ -1058,76 +1060,40 @@
       sc.appendChild(acc);
       var _frm = acc.querySelector('iframe');
       acc.addEventListener('toggle', function(){ if (acc.open && !_frm.getAttribute('src')) _frm.setAttribute('src', '/documents/mandat-fr.html?print=1'); });
-      // Signature du signataire principal (dessin), on dit QUI signe.
-      var mainName = S.names[0] || 'Vous';
-      var mainLbl = document.createElement('div'); mainLbl.className = 'hint idle'; mainLbl.style.margin = '2px 0 4px';
-      mainLbl.innerHTML = '✍️ <b>1.</b> Signature de <b>' + esc(mainName) + '</b>';
-      sc.appendChild(mainLbl);
-      var sig = document.createElement('div'); sig.className = 'sig'; sig.style.margin = '0';
-      sig.innerHTML = '<canvas></canvas><span class="ph">✍️ ' + esc(mainName.split(' ')[0]) + ', signez ici avec le doigt ou la souris</span><button type="button" class="clr">Effacer</button>';
-      sc.appendChild(sig);
-      var canvas = sig.querySelector('canvas'), ph = sig.querySelector('.ph'), clr = sig.querySelector('.clr');
-      var ctx, drawn = false, down = false;
-      setTimeout(function(){ canvas.width = canvas.offsetWidth * 2; canvas.height = 236; ctx = canvas.getContext('2d'); ctx.scale(2, 2); ctx.strokeStyle = '#0B1F3A'; ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; }, 60);
-      function pt(e){ var r = canvas.getBoundingClientRect(); var t = e.touches ? e.touches[0] : e; return { x: t.clientX - r.left, y: t.clientY - r.top }; }
-      function startDraw(e){ e.preventDefault(); down = true; drawn = true; ph.style.display = 'none'; clr.style.display = 'block'; var p = pt(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); refresh(); }
-      function moveDraw(e){ if (!down) return; e.preventDefault(); var p = pt(e); ctx.lineTo(p.x, p.y); ctx.stroke(); }
-      canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', moveDraw);
-      window.addEventListener('mouseup', function(){ down = false; refresh(); });
-      canvas.addEventListener('touchstart', startDraw, { passive: false });
-      canvas.addEventListener('touchmove', moveDraw, { passive: false });
-      canvas.addEventListener('touchend', function(){ down = false; refresh(); });
-      clr.addEventListener('click', function(){ ctx.clearRect(0, 0, canvas.width, canvas.height); drawn = false; ph.style.display = 'grid'; clr.style.display = 'none'; refresh(); });
-      // Chaque CO-PASSAGER ADULTE signe aussi (chaque cédant majeur consent lui-même). Absent → tracé.
-      var coSigs = [];
-      S.names.forEach(function(nm, i){
-        if (i === 0 || !nm) return;
-        var pd = S.paxData[i] || {};
-        if (pd.minor) { var note = document.createElement('div'); note.className = 'hint idle'; note.style.marginTop = '10px'; note.textContent = '👶 ' + nm + ' est mineur·e : votre signature (parent/tuteur) vaut pour lui/elle.'; sc.appendChild(note); return; }
-        var boxc = document.createElement('div'); boxc.style.marginTop = '12px';
-        boxc.innerHTML = '<div class="hint idle" style="margin:0 0 4px">✍️ <b>' + (coSigs.length + 2) + '.</b> Signature de <b>' + esc(nm) + '</b>, passez-lui l\'appareil</div>';
-        var s2 = document.createElement('div'); s2.className = 'sig'; s2.style.margin = '0';
-        s2.innerHTML = '<canvas></canvas><span class="ph">✍️ ' + esc(nm.split(' ')[0]) + ', signez ici</span><button type="button" class="clr">Effacer</button>';
-        boxc.appendChild(s2);
-        var abs = document.createElement('button'); abs.type = 'button';
-        abs.style.cssText = 'border:0;background:none;cursor:pointer;font:inherit;font-size:12px;font-weight:600;color:var(--muted);text-decoration:underline;padding:5px 2px';
-        abs.textContent = 'Absent·e ? Continuer, on recueillera sa signature ensuite';
-        boxc.appendChild(abs); sc.appendChild(boxc);
-        var st = { name: nm, idx: i, drawn: false, absent: false, canvas: s2.querySelector('canvas') };
-        var c2 = st.canvas, ph2 = s2.querySelector('.ph'), clr2 = s2.querySelector('.clr'), ctx2, dn2 = false;
-        setTimeout(function(){ c2.width = c2.offsetWidth * 2; c2.height = 200; ctx2 = c2.getContext('2d'); ctx2.scale(2, 2); ctx2.strokeStyle = '#0B1F3A'; ctx2.lineWidth = 2.2; ctx2.lineCap = 'round'; ctx2.lineJoin = 'round'; }, 60);
-        function pt2(e){ var r = c2.getBoundingClientRect(); var t = e.touches ? e.touches[0] : e; return { x: t.clientX - r.left, y: t.clientY - r.top }; }
-        function sd(e){ e.preventDefault(); dn2 = true; st.drawn = true; if (st.absent) { st.absent = false; abs.textContent = 'Absent·e ? Continuer, on recueillera sa signature ensuite'; abs.style.color = ''; } ph2.style.display = 'none'; clr2.style.display = 'block'; var p = pt2(e); ctx2.beginPath(); ctx2.moveTo(p.x, p.y); refresh(); }
-        function md(e){ if (!dn2) return; e.preventDefault(); var p = pt2(e); ctx2.lineTo(p.x, p.y); ctx2.stroke(); }
-        c2.addEventListener('mousedown', sd); c2.addEventListener('mousemove', md);
-        window.addEventListener('mouseup', function(){ dn2 = false; refresh(); });
-        c2.addEventListener('touchstart', sd, { passive: false }); c2.addEventListener('touchmove', md, { passive: false });
-        c2.addEventListener('touchend', function(){ dn2 = false; refresh(); });
-        clr2.addEventListener('click', function(){ ctx2.clearRect(0, 0, c2.width, c2.height); st.drawn = false; ph2.style.display = 'grid'; clr2.style.display = 'none'; refresh(); });
-        abs.addEventListener('click', function(){ st.absent = true; st.drawn = false; ph2.style.display = 'grid'; abs.textContent = '✓ Noté, signature recueillie ensuite par notre équipe'; abs.style.color = 'var(--neon-ink)'; refresh(); });
-        coSigs.push(st);
-      });
+      // ── Signature ÉLECTRONIQUE CERTIFIÉE (Yousign embarqué) — plus de dessin ──────────────
+      //    Chaque ADULTE signe sa propre signature dans un cadre Yousign, sur cette page (voir submit()).
+      //    Les mineurs sont couverts par le parent/tuteur signataire (pas de signature directe).
+      var adultsInfo = document.createElement('div'); adultsInfo.className = 'ss-box'; adultsInfo.style.marginTop = '10px';
+      var adultNames = S.names.filter(function(nm, i){ var pd = S.paxData[i] || {}; return nm && !pd.minor; });
+      var minorNames = S.names.filter(function(nm, i){ var pd = S.paxData[i] || {}; return nm && pd.minor; });
+      var who = '<div class="ss-h">✍️ Qui signe</div><ul>';
+      adultNames.forEach(function(nm){ who += '<li>🖊️ <b>' + esc(nm) + '</b> signe sa signature électronique</li>'; });
+      if (minorNames.length) who += '<li>👶 ' + minorNames.map(esc).join(', ') + ' (mineur·e·s) : couvert·e·s par le parent/tuteur signataire</li>';
+      if (adultNames.length > 1) who += '<li style="list-style:none;color:var(--muted);font-size:12.5px;margin-top:4px">Chacun signe à son tour sur cet appareil (on se passe le téléphone).</li>';
+      who += '</ul>';
+      adultsInfo.innerHTML = who;
+      sc.appendChild(adultsInfo);
+
       function ckRow(html){ var l = document.createElement('label'); l.className = 'ck'; l.innerHTML = '<input type="checkbox"><span>' + html + '</span>'; sc.appendChild(l); return l.querySelector('input'); }
       var ck0 = ckRow("Je <b>déclare avoir été passager(e)</b> du vol indiqué et je <b>cède ma créance</b> à Robin des Airs afin qu'elle récupère les sommes qui me sont dues.");
       var ck1 = ckRow("J'ai <b>lu et j'accepte</b> le <b>contrat de cession</b> ci-dessus, les <a href='/cgv.html' target='_blank' rel='noopener'>CGV</a> et la <a href='/politique-confidentialite.html' target='_blank' rel='noopener'>politique de confidentialité</a> ; je <b>comprends que l'indemnité n'est pas garantie</b>.");
       var ck3 = ckRow("<b>Facultatif :</b> je demande que Robin des Airs <b>commence tout de suite</b>, sans attendre la fin de mes 14 jours de rétractation (art. L.221-25), je reste libre de me rétracter, sans frais." + (S.pax > 1 ? " <span style='color:var(--muted)'>Cette demande vaut pour tous les passagers du dossier.</span>" : ""));
       var go = document.createElement('button'); go.className = 'btn'; go.type = 'button'; go.disabled = true; go.style.marginTop = '14px';
-      go.textContent = '✍️ Signer et envoyer mon dossier';
+      go.textContent = '✍️ Signer électroniquement mon dossier';
       sc.appendChild(go);
       var se = document.createElement('div'); se.className = 'suberr'; sc.appendChild(se);
       var rg = document.createElement('p'); rg.className = 'rgpd'; rg.style.marginTop = '12px';
-      rg.innerHTML = '<span>🔒</span><span>Signature manuscrite horodatée, adresse IP enregistrée et document scellé (empreinte). Elle figure sur le contrat de cession transmis à la compagnie (preuve de la cession). Transmission chiffrée (HTTPS). Rétractation 14 jours. RGPD.</span>';
+      rg.innerHTML = '<span>🔒</span><span>Signature électronique certifiée (Yousign) : horodatée, adresse IP enregistrée, document scellé et piste d\'audit. Elle figure sur le contrat de cession transmis à la compagnie (preuve de la cession). Transmission chiffrée (HTTPS). Rétractation 14 jours. RGPD.</span>';
       sc.appendChild(rg);
-      function refresh(){ var coOk = coSigs.every(function(s){ return s.drawn || s.absent; }); go.disabled = !(drawn && ck0.checked && ck1.checked && coOk); }
+      function refresh(){ go.disabled = !(ck0.checked && ck1.checked); } // signature = étape suivante (Yousign)
       [ck0, ck1, ck3].forEach(function(c){ c.addEventListener('change', refresh); });
       go.addEventListener('click', function(){
         if (go.disabled) return;
         S.startNow = ck3.checked;
-        coSigs.forEach(function(s){ S.paxData[s.idx] = S.paxData[s.idx] || {}; S.paxData[s.idx].sig = s.drawn ? s.canvas.toDataURL('image/png') : ''; S.paxData[s.idx].sigPending = !s.drawn; });
-        go.disabled = true; go.textContent = '⏳ Envoi en cours…'; se.classList.remove('on');
-        submit(canvas.toDataURL('image/png')).catch(function(e){
-          go.disabled = false; go.textContent = '✍️ Signer et envoyer mon dossier';
-          se.innerHTML = '⚠️ ' + esc(e.message || 'Envoi impossible.') + ' Réessayez, ou <a href="https://wa.me/33756863630" target="_blank" rel="noopener">continuez sur WhatsApp</a>.';
+        go.disabled = true; go.textContent = '⏳ Préparation de la signature…'; se.classList.remove('on');
+        submit().catch(function(e){
+          go.disabled = false; go.textContent = '✍️ Signer électroniquement mon dossier';
+          se.innerHTML = '⚠️ ' + esc(e.message || 'Signature impossible.') + ' Réessayez, ou <a href="https://wa.me/33756863630" target="_blank" rel="noopener">continuez sur WhatsApp</a>.';
           se.classList.add('on');
         });
       });
@@ -1472,7 +1438,7 @@
   }
 
   // ── Soumission : depot-create → submit-mandat → depot-upload (pièce) ─────────
-  function submit(sigPng){
+  function submit(){
     if ($('website').value) return Promise.reject(new Error('Envoi impossible.')); // honeypot
     var nowIso = new Date().toISOString();
     var full = (S.names[0] || '').trim();
@@ -1492,6 +1458,47 @@
     var isEsc = S.typeVol === 'escale' && S.legs && S.legs.length > 1;
     var legsPayload = isEsc ? S.legs.map(function(l){ return { flightNum: l.num || '', flightDate: S.date, depAirport: l.dep, arrAirport: l.arr }; }) : null;
     var viaTxt = isEsc ? ('via ' + S.legs.slice(0, -1).map(function(l){ return l.arr; }).join(', ')) : '';
+    // ── Signature Yousign EMBARQUÉE : PDF du contrat → création de la demande → cadre de signature SUR le site.
+    //    Repli auto (helper embedYousign) vers la signature plein écran si l'iframe est indisponible.
+    //    Multi-signataires en chaîne : chaque adulte signe à son tour, écran de succès après le dernier.
+    function chainSign(list, i, uploadResults){
+      if (i >= list.length) { success(uploadResults); return; }
+      var s = list[i];
+      if (!s || !s.signing_url) { chainSign(list, i + 1, uploadResults); return; }
+      window.embedYousign(s.signing_url, {
+        onSuccess: function(){ chainSign(list, i + 1, uploadResults); },
+        onDeclined: function(){ render(); } // annulation dans Yousign → on ré-affiche l'écran de signature
+      });
+    }
+    function doSign(uploadResults){
+      var address = (function(){ var a = (S.piece && S.piece.adresse) || ''; var py = (S.piece && S.piece.pays) || ''; return (a && py && a.toLowerCase().indexOf(py.toLowerCase()) < 0) ? (a + ', ' + py) : (a || py); })();
+      return fetch('/api/render-mandat-pdf', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ r: REF, n: lastName, fn: firstName, vol: S.flightNum, date: S.date, dep: S.dep, arr: S.arr,
+          compagnie: (S.dep && S.arr && !S.flightNum) ? (S.dep + ' → ' + S.arr) : '', pnr: S.pnr || '', email: S.email, phone: S.phone, address: address, indemnite: '600' }),
+      }).then(function(r){ return r.json(); }).then(function(pdfRes){
+        if (!pdfRes || !pdfRes.ok || !pdfRes.pdf_base64) throw new Error('PDF : ' + ((pdfRes && pdfRes.error) || 'génération impossible'));
+        // Un signataire Yousign par ADULTE (mineurs exclus → couverts par le parent/tuteur signataire).
+        var adults = [];
+        names.forEach(function(n, i){
+          var pd = S.paxData[i] || {}; if (!n || pd.minor) return;
+          if (i === 0) adults.push({ first_name: firstName, last_name: lastName, email: S.email || '', phone: S.phone });
+          else { var p = String(n).trim().split(/\s+/).filter(Boolean); adults.push({ first_name: pd.prenom || p[0] || '', last_name: pd.nom || p.slice(1).join(' ') || '', email: '', phone: S.phone }); }
+        });
+        return fetch('/api/yousign-init', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ first_name: firstName, last_name: lastName, email: S.email, phone: S.phone,
+            signers: adults, ref: REF,
+            label: 'Contrat de cession Robin des Airs — ' + lastName + ' ' + firstName + ' — vol ' + (S.flightNum || '—'),
+            pdf_base64: pdfRes.pdf_base64, signature_page: 'last', embed: true, embed_src: 'depot-express' }),
+        }).then(function(r){ return r.json(); });
+      }).then(function(yousignRes){
+        if (!yousignRes || !yousignRes.signing_url) throw new Error('Signature : ' + ((yousignRes && yousignRes.error) || 'lien Yousign absent'));
+        var list = (yousignRes.signers && yousignRes.signers.length) ? yousignRes.signers.slice() : [{ signing_url: yousignRes.signing_url, index: 1 }];
+        list.sort(function(a, b){ return (a.index || 0) - (b.index || 0); });
+        chainSign(list, 0, uploadResults); // ouvre le cadre de signature du 1er signataire ; la suite en callbacks
+      });
+    }
     return fetch('/api/depot-create', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1529,9 +1536,9 @@
           passengerNames: names, passengersData: passengersData,
           depAirport: S.dep, arrAirport: S.arr, connecting: viaTxt, flightMode: isEsc ? 'connecting' : 'direct', flightLegs: legsPayload,
           signCity: '', signDate: nowIso.slice(0, 10),
-          signatureImg: sigPng,
+          signatureImg: '', // signature réelle = Yousign embarqué (plus de dessin) ; posée par le webhook Yousign
           source: 'depot-express.html', signedAt: nowIso,
-          mandatVersion: 'web-express-v5-draw', watiConversationId: S.phone, linkSentAt: '',
+          mandatVersion: 'web-express-v6-yousign', watiConversationId: S.phone, linkSentAt: '',
         }),
       });
     })
@@ -1551,7 +1558,7 @@
           body: JSON.stringify({ ref: REF, filename: u.f.filename, mime: u.f.mime, dataBase64: u.f.dataBase64, kind: u.kind, passenger: u.who }),
         }).then(function(r){ return { label: u.label, kind: u.kind, ok: !!r.ok }; })
           .catch(function(){ return { label: u.label, kind: u.kind, ok: false }; });
-      })).then(function(results){ success(results); });
+      })).then(function(results){ return doSign(results); }); // pièces envoyées → PDF + signature Yousign embarquée
     });
   }
   // Écran de confirmation UNIQUE après signature, calqué sur le message « C'est signé » du bot WhatsApp
@@ -1591,7 +1598,21 @@
     window.scrollTo({ top: 0 });
   }
 
-  render();
+  // Retour depuis la signature Yousign en PLEIN ÉCRAN (repli quand l'iframe embarquée est indisponible) :
+  // Yousign → signe-ok.html → nous ramène ici avec ?signed=1. L'état du tunnel est perdu après la redirection,
+  // mais le dossier est déjà créé et signé → on affiche un simple écran de confirmation.
+  if (new URLSearchParams(location.search).get('signed') === '1') {
+    $('crumbs').innerHTML = ''; $('fill').style.width = '100%'; stage.innerHTML = '';
+    var _done = document.createElement('div'); _done.className = 'screen done'; _done.style.display = 'block';
+    _done.innerHTML = '<div class="seal" aria-hidden="true">✓</div>'
+      + '<h2>🎉 C\'est signé, merci de votre confiance !</h2>'
+      + '<p>On s\'occupe de tout pour récupérer votre argent, <b>vous n\'avancez rien</b>.</p>'
+      + '<p>📞 Un expert vous appelle depuis le <b>+33 7 56 86 36 30</b> (enregistrez-le sous « Robin des Airs »).</p>'
+      + '<p class="signoff">On prend le relais. <b>L\'équipe Robin des Airs 🏹</b></p>';
+    stage.appendChild(_done);
+  } else {
+    render();
+  }
 })();
 </script>
 </body>
