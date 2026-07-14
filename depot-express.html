@@ -830,6 +830,9 @@
       var drop = document.createElement('div'); drop.className = 'drop';
       drop.innerHTML = '<div class="big">🛂</div><p>' + (isTouch ? 'Touchez pour ajouter votre passeport' : 'Glissez votre passeport ici') + '</p><small>🔒 Lu par une IA pour pré-remplir votre contrat, jamais revendu</small>';
       sc.appendChild(drop);
+      var tip = document.createElement('div'); tip.style.cssText = 'margin:8px 0 0;font-size:12.5px;color:var(--muted);line-height:1.45';
+      tip.innerHTML = '📸 <b>Pour une lecture sans erreur :</b> cadrez tout le document, <b>la bande de chiffres du bas comprise</b>, à plat et sans reflet. Carte d\'identité ? Photographiez le <b>verso (le dos)</b>, c\'est là que se trouve cette bande.';
+      sc.appendChild(tip);
       // 2 vraies options rectangulaires : photo (caméra sur mobile) ou fichier (galerie / PDF)
       var o = document.createElement('div'); o.className = 'opts grid2'; o.style.marginTop = '10px';
       o.appendChild(optButton('<span class="ic">📷</span><span>Prendre une photo</span>', function(){ $('camInp').value = ''; $('camInp').click(); }));
@@ -861,6 +864,9 @@
       var drop = document.createElement('div'); drop.className = 'drop';
       drop.innerHTML = '<div class="big">🛂</div><p>Glissez le passeport du passager ' + (i + 1) + '</p><small>ou remplissez à la main ci-dessous · 🔒 lu par une IA, jamais revendu</small>';
       sc.appendChild(drop);
+      var tipc = document.createElement('div'); tipc.style.cssText = 'margin:8px 0 0;font-size:12.5px;color:var(--muted);line-height:1.45';
+      tipc.innerHTML = '📸 Cadrez tout le document, <b>la bande de chiffres du bas comprise</b>, à plat, sans reflet. Carte d\'identité ? Le <b>verso (dos)</b>.';
+      sc.appendChild(tipc);
       var ob = document.createElement('div'); ob.className = 'opts grid2'; ob.style.marginTop = '10px';
       ob.appendChild(optButton('<span class="ic">📷</span><span>Prendre une photo</span>', function(){ $('camInp').value = ''; $('camInp').click(); }));
       ob.appendChild(optButton('<span class="ic">🖼️</span><span>Choisir un fichier<small>photo ou PDF</small></span>', function(){ $('fileInp').value = ''; $('fileInp').click(); }));
