@@ -1,5 +1,8 @@
 # === SÉCURITÉ : publish='.' sert TOUT le repo. Bloquer les fichiers internes/sensibles. ===
 # (code source, SQL, docs internes, audits, financier, preuves clients). Ajouté 2026-07-14.
+# --- variante interne easyJet : conflit d'intérêts (navigant actuel), NE PAS publier ---
+/easyjet-retard-annulation.html    /404.html    404!
+/easyjet-retard-annulation         /404.html    404!
 /src/*    /404.html    404!
 /scripts/*    /404.html    404!
 /supabase/*    /404.html    404!
